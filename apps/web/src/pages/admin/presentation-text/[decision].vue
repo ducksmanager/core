@@ -3,16 +3,14 @@ meta:
   layout: bare
 </route>
 <script setup lang="ts">
-import { io, Socket } from "socket.io-client";
-
 import {
   Decision,
   NamespaceEndpoint as PresentationTextNamespaceEndpoint,
   Services as PresentationTextServices,
 } from "~services/presentation-text/types";
 
-let socket: Socket<PresentationTextServices> = io(
-  import.meta.env.VITE_SOCKET_URL + PresentationTextNamespaceEndpoint,
+const services = useSocket<PresentationTextServices>(
+  PresentationTextNamespaceEndpoint,
 );
 
 let router = useRouter();
@@ -23,7 +21,7 @@ let router = useRouter();
     sentence: string;
     userId: string;
   };
-  await socket.emitWithAck(
+  await services(
     "approveOrDenyPresentationText",
     sentence,
     parseInt(userId),

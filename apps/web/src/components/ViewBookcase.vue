@@ -162,8 +162,6 @@
 </template>
 
 <script setup lang="ts">
-import { watch } from "vue";
-
 import { BookcaseEdgeWithPopularity } from "~/stores/bookcase";
 import { BookcaseEdgeSprite } from "~dm-types/BookcaseEdge";
 import { SimpleIssue } from "~dm-types/SimpleIssue";

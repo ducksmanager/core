@@ -1,7 +1,8 @@
-import { Socket } from "socket.io-client";
-
 import { BookcaseEdge } from "~dm-types/BookcaseEdge";
-import { Services as BookcaseServices } from "~services/bookcase/types";
+import {
+  NamespaceEndpoint as BookcaseNamespaceEndpoint,
+  Services as BookcaseServices,
+} from "~services/bookcase/types";
 import { EventReturnType } from "~services/types";
 
 import { collection } from "./collection";
@@ -12,7 +13,7 @@ export interface BookcaseEdgeWithPopularity extends BookcaseEdge {
   popularity?: number | undefined;
 }
 
-let socket: Socket<BookcaseServices>;
+const services = useSocket<BookcaseServices>(BookcaseNamespaceEndpoint);
 
 export const bookcase = defineStore("bookcase", () => {
   const route = useRoute();
@@ -62,10 +63,7 @@ export const bookcase = defineStore("bookcase", () => {
     },
     loadBookcase = async () => {
       if (!bookcase.value) {
-        const response = await socket.emitWithAck(
-          "getBookcase",
-          bookcaseUsername.value!,
-        );
+        const response = await services("getBookcase", bookcaseUsername.value!);
         switch (response.error) {
           case "Forbidden":
             isPrivateBookcase.value = true;
@@ -80,7 +78,7 @@ export const bookcase = defineStore("bookcase", () => {
     },
     loadBookcaseOptions = async () => {
       if (!bookcaseOptions.value) {
-        const response = await socket.emitWithAck(
+        const response = await services(
           "getBookcaseOptions",
           bookcaseUsername.value!,
         );
@@ -92,11 +90,11 @@ export const bookcase = defineStore("bookcase", () => {
       }
     },
     updateBookcaseOptions = async () => {
-      await socket.emitWithAck("setBookcaseOptions", bookcaseOptions.value!);
+      await services("setBookcaseOptions", bookcaseOptions.value!);
     },
     loadBookcaseOrder = async () => {
       if (!bookcaseOrder.value) {
-        const response = await socket.emitWithAck(
+        const response = await services(
           "getBookcaseOrder",
           bookcaseUsername.value!,
         );
@@ -108,13 +106,10 @@ export const bookcase = defineStore("bookcase", () => {
       }
     },
     updateBookcaseOrder = async () => {
-      await socket.emitWithAck("setBookcaseOrder", bookcaseOrder.value!);
+      await services("setBookcaseOrder", bookcaseOrder.value!);
     };
 
   return {
-    setSocket: (params: { socket: typeof socket }) => {
-      socket = params.socket;
-    },
     loadedSprites,
     isPrivateBookcase,
     isUserNotExisting,

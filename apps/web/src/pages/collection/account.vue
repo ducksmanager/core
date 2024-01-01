@@ -219,8 +219,6 @@ alias: [/collection/compte]
 </template>
 
 <script setup lang="ts">
-import { io, Socket } from "socket.io-client";
-
 import { ScopedError } from "~dm-types/ScopedError";
 import {
   NamespaceEndpoint as CollectionNamespaceEndpoint,
@@ -245,9 +243,7 @@ const { t: $t } = useI18n();
 const t = $t;
 const router = useRouter();
 
-const socket: Socket<CollectionServices> = io(
-  import.meta.env.VITE_SOCKET_URL + CollectionNamespaceEndpoint,
-);
+const services = useSocket<CollectionServices>(CollectionNamespaceEndpoint);
 
 const { updateMarketplaceContactMethods, loadMarketplaceContactMethods } =
   collection();
@@ -256,14 +252,14 @@ const { userForAccountForm, marketplaceContactMethods } =
 
 const emptyCollection = async () => {
   if (confirm(t("Votre collection va être vidée. Continuer ?"))) {
-    await socket.emitWithAck("emptyCollection");
+    await services("emptyCollection");
     await router.push("/collection/show");
   }
 };
 
 const updateAccount = async () => {
   error = undefined;
-  const response = await socket.emitWithAck("updateUser", {
+  const response = await services("updateUser", {
     ...userForAccountForm.value!,
     oldPassword,
     password,
@@ -296,7 +292,7 @@ const deleteAccount = async () => {
       ),
     )
   ) {
-    await socket.emitWithAck("deleteUser");
+    await services("deleteUser");
     await router.push("/logout");
   }
 };

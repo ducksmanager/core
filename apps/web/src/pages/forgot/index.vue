@@ -50,7 +50,7 @@ import {
   Services as AuthServices,
 } from "~services/auth/types";
 
-const authSocket = useSocket<AuthServices>(AuthNamespaceEndpoint);
+const authServices = useSocket<AuthServices>(AuthNamespaceEndpoint);
 let error = $ref<string | null>(null);
 
 const email = $ref("" as string);
@@ -58,10 +58,7 @@ let token = $ref("" as string);
 const { t: $t } = useI18n();
 
 const sendPasswordToken = async () => {
-  const response = await authSocket.emitWithAck(
-    "requestTokenForForgotPassword",
-    email,
-  );
+  const response = await authServices("requestTokenForForgotPassword", email);
   if (response.error) {
     error = response.error;
   } else {

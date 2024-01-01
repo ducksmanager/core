@@ -89,7 +89,7 @@ const { t: $t } = useI18n();
 const { loadRatings } = stats();
 const { ratings } = storeToRefs(stats());
 
-const statsSocket = useSocket<StatsServices>(StatsNamespaceEndpoint);
+const statsServices = useSocket<StatsServices>(StatsNamespaceEndpoint);
 
 const unitTypes = {
   number: $t("Afficher en valeurs réelles"),
@@ -193,9 +193,7 @@ watch(
 
 (async () => {
   await loadRatings();
-  watchedAuthorsStoryCount = await statsSocket.emitWithAck(
-    "getWatchedAuthorsStats",
-  );
+  watchedAuthorsStoryCount = await statsServices("getWatchedAuthorsStats");
 })();
 </script>
 

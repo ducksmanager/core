@@ -115,7 +115,6 @@ meta:
 </template>
 
 <script setup lang="ts">
-import { watch } from "vue";
 const { getImagePath } = images();
 const doubleNumberRegex = /^(\d{1,2})(\d{2})-(\d{2})$/;
 const lines = 2;

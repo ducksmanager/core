@@ -3,12 +3,20 @@ import { ScopedError } from "~dm-types/ScopedError";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 type Last<T extends unknown[]> = T extends [...infer I, infer L] ? L : never;
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-type LastParameter<F extends (...args: any) => unknown> = Last<Parameters<F>>;
+export type LastParameter<F extends (...args: any) => unknown> = Last<
+  Parameters<F>
+>;
+
+export type EventReturnTypeIncludingError<
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  T extends (...args: any[]) => unknown,
+> =
+  // @ts-expect-error ???
+  LastParameter<LastParameter<T>>;
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type EventReturnType<T extends (...args: any[]) => unknown> =
-  // @ts-expect-error ???
-  LastParameter<LastParameter<T>> & { error?: never };
+  EventReturnTypeIncludingError<T> & { error?: never };
 
 type EitherOr<A, B> = A | B extends object
   ?

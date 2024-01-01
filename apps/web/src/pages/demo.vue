@@ -7,7 +7,6 @@ meta:
 
 <script setup lang="ts">
 import Cookies from "js-cookie";
-import { io, Socket } from "socket.io-client";
 
 import { NamespaceEndpoint as DemoNamespaceEndpoint } from "~services/demo/types";
 import { Services as DemoServices } from "~services/demo/types";
@@ -16,9 +15,7 @@ const { user } = storeToRefs(collection());
 
 const router = useRouter();
 
-const socket: Socket<DemoServices> = io(
-  import.meta.env.VITE_SOCKET_URL + DemoNamespaceEndpoint,
-);
+const services = useSocket<DemoServices>(DemoNamespaceEndpoint);
 
 watch(
   user,
@@ -31,7 +28,7 @@ watch(
 );
 
 async () => {
-  const result = await socket.emitWithAck("loginAsDemo");
+  const result = await services("loginAsDemo");
   switch (result.error) {
     case "No demo user found":
       console.error(result.error);

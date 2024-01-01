@@ -81,8 +81,6 @@ alias: [/collection/abonnements]
 
 <script setup lang="ts">
 import dayjs from "dayjs";
-import { io, Socket } from "socket.io-client";
-import { onMounted, watch } from "vue";
 
 import {
   SubscriptionTransformed,
@@ -98,9 +96,7 @@ type AssociatedPublication = {
   publicationcode: string;
 };
 
-const socket: Socket<SubscriptionServices> = io(
-  import.meta.env.VITE_SOCKET_URL + SubscriptionNamespaceEndpoint,
-);
+const services = useSocket<SubscriptionServices>(SubscriptionNamespaceEndpoint);
 
 const { fetchPublicationNames } = coa();
 const { publicationNames } = storeToRefs(coa());
@@ -134,7 +130,7 @@ const toSubscriptionWithStringDates = (
 });
 
 const createSubscription = async (subscription: SubscriptionTransformed) => {
-  await socket.emitWithAck(
+  await services(
     "createSubscription",
     toSubscriptionWithStringDates(subscription),
   );
@@ -155,7 +151,7 @@ const createSubscriptionLike = async (
 };
 
 const editSubscription = async (subscription: SubscriptionTransformed) => {
-  await socket.emitWithAck(
+  await services(
     "updateSubscription",
     subscription.id,
     toSubscriptionWithStringDates(subscription),
@@ -164,7 +160,7 @@ const editSubscription = async (subscription: SubscriptionTransformed) => {
   currentSubscription = null;
 };
 const deleteSubscription = async (id: number) => {
-  await socket.emitWithAck("deleteSubscription", id);
+  await services("deleteSubscription", id);
   await loadSubscriptions(true);
   currentSubscription = null;
 };

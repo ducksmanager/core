@@ -37,7 +37,7 @@ const addPartInfo = (issueDetails: InducksIssueDetails) => {
   };
 };
 
-const socket = useSocket<CoaServices>(CoaNamespaceEndpoint);
+const services = useSocket<CoaServices>(CoaNamespaceEndpoint);
 
 export const coa = defineStore("coa", () => {
   const ISSUECODE_REGEX =
@@ -134,7 +134,7 @@ export const coa = defineStore("coa", () => {
         afterUpdate
       ) {
         isLoadingCountryNames.value = true;
-        countryNames.value = await socket.emitWithAck(
+        countryNames.value = await services(
           "getCountryList",
           getCurrentLocaleShortKey(locale.value),
           [],
@@ -154,7 +154,7 @@ export const coa = defineStore("coa", () => {
       return (
         actualNewPublicationCodes.length &&
         addPublicationNames(
-          await socket.emitWithAck(
+          await services(
             "getPublicationListFromPublicationcodeList",
             actualNewPublicationCodes,
           ),
@@ -175,32 +175,29 @@ export const coa = defineStore("coa", () => {
       return (
         actualNewPublicationCodes.length &&
         addIssueQuotations(
-          await socket
-            .emitWithAck(
-              "getQuotationsByPublicationCodes",
-              actualNewPublicationCodes,
-            )
-            .then((data) =>
-              data.reduce(
-                (issueAcc, issue) => ({
-                  ...issueAcc,
-                  [`${issue.publicationcode} ${issue.issuenumber}`]: {
-                    min: issue.estimationMin,
-                    max: issue.estimationMax,
-                  },
-                }),
-                {} as { [issuecode: string]: InducksIssueQuotationSimple },
-              ),
+          await services(
+            "getQuotationsByPublicationCodes",
+            actualNewPublicationCodes,
+          ).then((data) =>
+            data.reduce(
+              (issueAcc, issue) => ({
+                ...issueAcc,
+                [`${issue.publicationcode} ${issue.issuenumber}`]: {
+                  min: issue.estimationMin,
+                  max: issue.estimationMax,
+                },
+              }),
+              {} as { [issuecode: string]: InducksIssueQuotationSimple },
             ),
+          ),
         )
       );
     },
     fetchPublicationNamesFromCountry = async (countrycode: string) =>
       publicationNamesFullCountries.value.includes(countrycode)
         ? void 0
-        : socket
-            .emitWithAck("getPublicationListFromCountrycode", countrycode)
-            .then((data) => {
+        : services("getPublicationListFromCountrycode", countrycode).then(
+            (data) => {
               addPublicationNames({
                 ...(publicationNames.value || {}),
                 ...data,
@@ -209,7 +206,8 @@ export const coa = defineStore("coa", () => {
                 ...publicationNamesFullCountries.value,
                 countrycode,
               ];
-            }),
+            },
+          ),
     fetchPersonNames = async (newPersonCodes: string[]) => {
       const actualNewPersonCodes = [
         ...new Set(
@@ -223,12 +221,12 @@ export const coa = defineStore("coa", () => {
         actualNewPersonCodes.length &&
         setPersonNames({
           ...(personNames.value || {}),
-          ...(await socket.emitWithAck("getAuthorList", actualNewPersonCodes)),
+          ...(await services("getAuthorList", actualNewPersonCodes)),
         })
       );
     },
     fetchIssueNumbersWithTitles = async (publicationcode: string) => {
-      issuesWithTitles.value[publicationcode] = await socket.emitWithAck(
+      issuesWithTitles.value[publicationcode] = await services(
         "getIssuesWithTitles",
         publicationcode,
       );
@@ -245,10 +243,7 @@ export const coa = defineStore("coa", () => {
       if (newPublicationCodes.length) {
         addIssueNumbers(
           (
-            await socket.emitWithAck(
-              "getIssuesByPublicationCodes",
-              newPublicationCodes,
-            )
+            await services("getIssuesByPublicationCodes", newPublicationCodes)
           ).reduce(
             (acc, issue) => ({
               ...acc,
@@ -273,18 +268,14 @@ export const coa = defineStore("coa", () => {
       ];
       return (
         newIssueCodes.length &&
-        addIssueCodeDetails(
-          await socket.emitWithAck("decompose", newIssueCodes),
-        )
+        addIssueCodeDetails(await services("decompose", newIssueCodes))
       );
     },
     fetchIssueCounts = async () => {
       if (!issueCounts.value)
-        issueCounts.value = await socket.emitWithAck(
-          "getCountByPublicationcode",
-        );
+        issueCounts.value = await services("getCountByPublicationcode");
     },
-    fetchRecentIssues = async () => await socket.emitWithAck("getRecentIssues"),
+    fetchRecentIssues = async () => await services("getRecentIssues"),
     fetchIssueUrls = async ({
       publicationcode,
       issuenumber,
@@ -294,7 +285,7 @@ export const coa = defineStore("coa", () => {
     }) => {
       const issueCode = `${publicationcode} ${issuenumber}`;
       if (!issueDetails.value[issueCode]) {
-        const newIssueDetails = await socket.emitWithAck(
+        const newIssueDetails = await services(
           "getIssueDetails",
           publicationcode,
           issuenumber,

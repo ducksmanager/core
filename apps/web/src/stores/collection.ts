@@ -48,9 +48,11 @@ export type purchaseWithStringDate = Omit<purchase, "date"> & {
   date: string;
 };
 
-const statsSocket = useSocket<StatsServices>(StatsNamespaceEndpoint),
-  loginSocket = useSocket<LoginServices>(LoginNamespaceEndpoint),
-  collectionSocket = useSocket<CollectionServices>(CollectionNamespaceEndpoint);
+const statsServices = useSocket<StatsServices>(StatsNamespaceEndpoint),
+  loginServices = useSocket<LoginServices>(LoginNamespaceEndpoint),
+  collectionServices = useSocket<CollectionServices>(
+    CollectionNamespaceEndpoint,
+  );
 let sessionExistsFn: () => Promise<boolean>,
   clearSessionFn: () => Promise<void>;
 
@@ -165,25 +167,25 @@ export const collection = defineStore("collection", () => {
       };
     }),
     updateCollectionSingleIssue = async (data: CollectionUpdateSingleIssue) => {
-      await collectionSocket.emitWithAck("addOrChangeCopies", data);
+      await collectionServices("addOrChangeCopies", data);
       await loadCollection(true);
     },
     updateCollectionMultipleIssues = async (
       data: CollectionUpdateMultipleIssues,
     ) => {
-      await collectionSocket.emitWithAck("addOrChangeIssues", data);
+      await collectionServices("addOrChangeIssues", data);
       await loadCollection(true);
     },
     createPurchase = async (date: string, description: string) => {
-      await collectionSocket.emitWithAck("createPurchase", date, description);
+      await collectionServices("createPurchase", date, description);
       await loadPurchases(true);
     },
     deletePurchase = async (id: number) => {
-      await collectionSocket.emitWithAck("deletePurchase", id);
+      await collectionServices("deletePurchase", id);
       await loadPurchases(true);
     },
     loadPreviousVisit = async () => {
-      const result = await collectionSocket.emitWithAck("getLastVisit");
+      const result = await collectionServices("getLastVisit");
       if (typeof result === "object" && result?.error) {
         console.error(result.error);
       } else if (result) {
@@ -193,24 +195,22 @@ export const collection = defineStore("collection", () => {
     loadCollection = async (afterUpdate = false) => {
       if (afterUpdate || (!isLoadingCollection.value && !issues.value)) {
         isLoadingCollection.value = true;
-        issues.value = (await collectionSocket.emitWithAck("getIssues")).map(
-          (issue) => ({
-            ...issue,
-            publicationcode: `${issue.country}/${issue.magazine}`,
-          }),
-        );
+        issues.value = (await collectionServices("getIssues")).map((issue) => ({
+          ...issue,
+          publicationcode: `${issue.country}/${issue.magazine}`,
+        }));
         isLoadingCollection.value = false;
       }
     },
     loadPurchases = async (afterUpdate = false) => {
       if (afterUpdate || (!isLoadingPurchases.value && !purchases.value)) {
         isLoadingPurchases.value = true;
-        purchases.value = (
-          await collectionSocket.emitWithAck("getPurchases")
-        ).map((purchase) => ({
-          ...purchase,
-          date: new Date(purchase.date),
-        }));
+        purchases.value = (await collectionServices("getPurchases")).map(
+          (purchase) => ({
+            ...purchase,
+            date: new Date(purchase.date),
+          }),
+        );
         isLoadingPurchases.value = false;
       }
     },
@@ -221,7 +221,7 @@ export const collection = defineStore("collection", () => {
           !watchedPublicationsWithSales.value)
       ) {
         isLoadingWatchedPublicationsWithSales.value = true;
-        watchedPublicationsWithSales.value = await collectionSocket.emitWithAck(
+        watchedPublicationsWithSales.value = await collectionServices(
           "getOption",
           "sales_notification_publications",
         );
@@ -235,7 +235,7 @@ export const collection = defineStore("collection", () => {
           !marketplaceContactMethods.value)
       ) {
         isLoadingMarketplaceContactMethods.value = true;
-        marketplaceContactMethods.value = await collectionSocket.emitWithAck(
+        marketplaceContactMethods.value = await collectionServices(
           "getOption",
           "marketplace_contact_methods",
         );
@@ -243,12 +243,9 @@ export const collection = defineStore("collection", () => {
       }
     },
     updateMarketplaceContactMethods = async () =>
-      await collectionSocket.emitWithAck(
-        "getOption",
-        "marketplace_contact_methods",
-      ),
+      await collectionServices("getOption", "marketplace_contact_methods"),
     updateWatchedPublicationsWithSales = async () =>
-      await collectionSocket.emitWithAck(
+      await collectionServices(
         "setOption",
         "sales_notification_publications",
         watchedPublicationsWithSales.value!,
@@ -264,7 +261,7 @@ export const collection = defineStore("collection", () => {
     }) => {
       if (!isLoadingSuggestions.value) {
         isLoadingSuggestions.value = true;
-        suggestions.value = await statsSocket.emitWithAck(
+        suggestions.value = await statsServices(
           "getSuggestionsForCountry",
           countryCode || "ALL",
           sinceLastVisit ? "since_previous_visit" : "_",
@@ -281,7 +278,7 @@ export const collection = defineStore("collection", () => {
       ) {
         isLoadingSubscriptions.value = true;
         subscriptions.value = (
-          await collectionSocket.emitWithAck("getSubscriptions")
+          await collectionServices("getSubscriptions")
         ).map((subscription: SubscriptionTransformedStringDates) => ({
           ...subscription,
           startDate: new Date(Date.parse(subscription.startDate)),
@@ -293,7 +290,7 @@ export const collection = defineStore("collection", () => {
     loadPopularIssuesInCollection = async () => {
       if (!popularIssuesInCollection.value) {
         popularIssuesInCollection.value = (
-          await collectionSocket.emitWithAck("getCollectionPopularity")
+          await collectionServices("getCollectionPopularity")
         ).reduce(
           (acc, issue) => ({
             ...acc,
@@ -306,8 +303,9 @@ export const collection = defineStore("collection", () => {
     },
     loadLastPublishedEdgesForCurrentUser = async () => {
       if (!lastPublishedEdgesForCurrentUser.value) {
-        lastPublishedEdgesForCurrentUser.value =
-          await collectionSocket.emitWithAck("getLastPublishedEdges");
+        lastPublishedEdgesForCurrentUser.value = await collectionServices(
+          "getLastPublishedEdges",
+        );
       }
     },
     login = async (
@@ -316,7 +314,7 @@ export const collection = defineStore("collection", () => {
       onSuccess: (token: string) => void,
       onError: (e: string) => void,
     ) => {
-      const response = await loginSocket.emitWithAck("login", {
+      const response = await loginServices("login", {
         username,
         password,
       });
@@ -334,7 +332,7 @@ export const collection = defineStore("collection", () => {
       onSuccess: (token: string) => void,
       onError: (e: ScopedError) => void,
     ) => {
-      const response = await collectionSocket.emitWithAck("createUser", {
+      const response = await collectionServices("createUser", {
         username,
         password,
         password2,
@@ -355,7 +353,7 @@ export const collection = defineStore("collection", () => {
         isLoadingUser.value = true;
         try {
           if (await sessionExistsFn()) {
-            const response = await collectionSocket.emitWithAck("getUser");
+            const response = await collectionServices("getUser");
             if ("error" in response) {
               throw new Error(response.error);
             } else {

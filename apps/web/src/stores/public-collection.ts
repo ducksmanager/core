@@ -1,11 +1,14 @@
-import { Socket } from "socket.io-client";
-
 import { IssueWithPublicationcode } from "~dm-types/IssueWithPublicationcode";
-import { Services as PublicCollectionServices } from "~services/public-collection/types";
+import {
+  NamespaceEndpoint as PublicCollectionNamespaceEndpoint,
+  Services as PublicCollectionServices,
+} from "~services/public-collection/types";
 
 import useCollection from "../composables/useCollection";
 
-let socket: Socket<PublicCollectionServices>;
+const services = useSocket<PublicCollectionServices>(
+  PublicCollectionNamespaceEndpoint,
+);
 
 export const publicCollection = defineStore("publicCollection", () => {
   const issues = ref(null as IssueWithPublicationcode[] | null),
@@ -18,18 +21,15 @@ export const publicCollection = defineStore("publicCollection", () => {
   const collectionUtils = useCollection(issues),
     loadPublicCollection = async (username: string) => {
       publicUsername.value = username;
-      issues.value = (
-        await socket.emitWithAck("getPublicCollection", username)
-      ).map((issue) => ({
-        ...issue,
-        publicationcode: `${issue.country}/${issue.magazine}`,
-      }));
+      issues.value = (await services("getPublicCollection", username)).map(
+        (issue) => ({
+          ...issue,
+          publicationcode: `${issue.country}/${issue.magazine}`,
+        }),
+      );
     };
   return {
     ...collectionUtils,
-    setSocket: (params: { socket: typeof socket }) => {
-      socket = params.socket;
-    },
     publicationUrlRoot,
     issues,
     purchases,

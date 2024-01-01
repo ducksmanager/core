@@ -84,8 +84,6 @@
 </template>
 
 <script setup lang="ts">
-import { watch } from "vue";
-
 import condition from "~/composables/useCondition";
 import { IssueWithPublicationcode } from "~dm-types/IssueWithPublicationcode";
 import { SimpleIssue } from "~dm-types/SimpleIssue";
@@ -113,7 +111,7 @@ const { findInCollection } = isPublic ? publicCollection() : collection();
 const { issues } = storeToRefs(collection());
 const { fetchPublicationNames, fetchCountryNames } = coa();
 const { publicationNames } = storeToRefs(coa());
-let coaSocket = useSocket<CoaServices>(CoaNamespaceEndpoint);
+let coaServices = useSocket<CoaServices>(CoaNamespaceEndpoint);
 
 let isSearching = $ref(false as boolean);
 let pendingSearch = $ref(null as string | null);
@@ -166,7 +164,7 @@ const runSearch = async (value: string) => {
   isSearching = true;
   try {
     if (isSearchByCode) {
-      const data = await coaSocket.emitWithAck(
+      const data = await coaServices(
         "getIssuesByStorycode",
         value.replace(/^code=/, ""),
       );
@@ -181,11 +179,7 @@ const runSearch = async (value: string) => {
         issueResults.results.map(({ publicationcode }) => publicationcode),
       );
     } else {
-      const data = await coaSocket.emitWithAck(
-        "searchStory",
-        value.split(","),
-        true,
-      );
+      const data = await coaServices("searchStory", value.split(","), true);
       storyResults.results = data.results.map((story) => ({
         ...story,
         collectionIssue:

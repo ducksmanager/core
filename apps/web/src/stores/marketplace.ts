@@ -5,7 +5,7 @@ import {
 } from "~services/collection/types";
 import { EventReturnType } from "~services/types";
 
-const socket = useSocket<CollectionServices>(CollectionNamespaceEndpoint);
+const services = useSocket<CollectionServices>(CollectionNamespaceEndpoint);
 export const marketplace = defineStore("marketplace", () => {
   const issuesOnSaleByOthers = ref(
       null as EventReturnType<CollectionServices["getIssuesForSale"]> | null,
@@ -104,11 +104,11 @@ export const marketplace = defineStore("marketplace", () => {
       ),
     ),
     requestIssues = async (issueIds: number[]) => {
-      await socket.emitWithAck("createRequests", issueIds);
+      await services("createRequests", issueIds);
       await loadIssueRequestsAsBuyer();
     },
     loadContactMethods = async (userId: number) => {
-      const result = await socket.emitWithAck("getContactMethods", userId);
+      const result = await services("getContactMethods", userId);
       switch (result.error) {
         case undefined:
           contactMethods.value[userId] = result;
@@ -125,10 +125,7 @@ export const marketplace = defineStore("marketplace", () => {
         return;
       }
       isLoadingIssueRequestsAsBuyer.value = true;
-      issueRequestsAsBuyer.value = await socket.emitWithAck(
-        "getRequests",
-        "buyer",
-      );
+      issueRequestsAsBuyer.value = await services("getRequests", "buyer");
       isLoadingIssueRequestsAsBuyer.value = false;
     },
     loadIssueRequestsAsSeller = async (afterUpdate = false) => {
@@ -139,10 +136,7 @@ export const marketplace = defineStore("marketplace", () => {
         return;
       }
       isLoadingIssueRequestsAsSeller.value = true;
-      issueRequestsAsSeller.value = await socket.emitWithAck(
-        "getRequests",
-        "seller",
-      );
+      issueRequestsAsSeller.value = await services("getRequests", "seller");
       isLoadingIssueRequestsAsSeller.value = false;
     },
     loadIssuesOnSaleByOthers = async (afterUpdate = false) => {
@@ -153,11 +147,11 @@ export const marketplace = defineStore("marketplace", () => {
         return;
       }
       isLoadingIssuesOnSaleByOthers.value = true;
-      issuesOnSaleByOthers.value = await socket.emitWithAck("getIssuesForSale");
+      issuesOnSaleByOthers.value = await services("getIssuesForSale");
       isLoadingIssuesOnSaleByOthers.value = false;
     },
     deleteRequestToSeller = async (issueId: number) => {
-      await socket.emitWithAck("deleteRequests", issueId);
+      await services("deleteRequests", issueId);
     };
 
   return {

@@ -6,7 +6,6 @@ import "bootstrap-vue-next/dist/bootstrap-vue-next.css";
 import { Integrations } from "@sentry/tracing";
 import * as Sentry from "@sentry/vue";
 import { createHead } from "@unhead/vue";
-import axios from "axios";
 import Cookies from "js-cookie";
 // @ts-ignore
 import contextmenu from "v-contextmenu";
@@ -17,7 +16,6 @@ import { createRouter, createWebHistory } from "vue-router";
 
 import App from "~/App.vue";
 import i18n from "~/i18n";
-import { addUrlParamsRequestInterceptor } from "~axios-helper";
 import en from "~translations/messages.en.json";
 
 const head = createHead();
@@ -34,8 +32,6 @@ router.beforeResolve(async (to) => {
 });
 
 const store = createPinia();
-
-addUrlParamsRequestInterceptor(axios);
 
 const app = createApp(App);
 app.use(i18n("fr", { en }).instance);

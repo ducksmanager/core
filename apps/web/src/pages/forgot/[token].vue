@@ -37,7 +37,7 @@ import {
   Services as AuthServices,
 } from "~services/auth/types";
 
-const socket = useSocket<AuthServices>(AuthNamespaceEndpoint);
+const services = useSocket<AuthServices>(AuthNamespaceEndpoint);
 
 const router = useRouter();
 const { loadUser } = collection();
@@ -51,7 +51,7 @@ const password2 = $ref("" as string);
 
 const { t: $t } = useI18n();
 const changePassword = async () => {
-  const response = await socket.emitWithAck("changePassword", {
+  const response = await services("changePassword", {
     token,
     password,
     password2,

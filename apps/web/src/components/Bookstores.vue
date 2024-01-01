@@ -170,8 +170,6 @@
 
 <script setup lang="ts">
 import MapboxGeocoder from "@mapbox/mapbox-gl-geocoder";
-import { io, Socket } from "socket.io-client";
-import { onMounted } from "vue";
 import { MapboxMap, MapboxMarker, MapboxPopup } from "vue-mapbox-ts";
 
 import { SimpleBookstore } from "~dm-types/SimpleBookstore";
@@ -183,9 +181,7 @@ import {
 const { fetchStats } = users();
 const { stats: userStats } = storeToRefs(users());
 
-const socket: Socket<BookstoreServices> = io(
-  import.meta.env.VITE_SOCKET_URL + BookstoreNamespaceEndpoint,
-);
+const services = useSocket<BookstoreServices>(BookstoreNamespaceEndpoint);
 
 let bookstores = $ref(null as SimpleBookstore[] | null);
 let existingBookstore = $ref(null as SimpleBookstore | null);
@@ -229,7 +225,7 @@ const decodeText = (value: string) => {
   }
 };
 const fetchBookstores = async () => {
-  bookstores = (await socket.emitWithAck("getActiveBookstores"))
+  bookstores = (await services("getActiveBookstores"))
     .map((bookstore) => {
       bookstore.name = decodeText(bookstore.name);
       bookstore.address = decodeText(bookstore.address);
@@ -249,7 +245,7 @@ const suggestComment = async (bookstore: SimpleBookstore) => {
     );
     return false;
   }
-  await socket.emitWithAck("createBookstoreComment", bookstore);
+  await services("createBookstoreComment", bookstore);
   if (bookstore.id) {
     existingBookstoreSent = true;
     existingBookstore = null;

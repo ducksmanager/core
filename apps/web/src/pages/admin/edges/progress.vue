@@ -131,7 +131,7 @@ import {
 } from "~services/edges/types";
 const { getImagePath } = images();
 
-const socket = useSocket<EdgesServices>(EdgesNamespaceEndpoint);
+const services = useSocket<EdgesServices>(EdgesNamespaceEndpoint);
 
 let hasData = $ref(false as boolean);
 let mostWanted = $ref(null as WantedEdge[] | null);
@@ -198,15 +198,13 @@ const sortedBookcase = computed(() =>
 );
 
 (async () => {
-  mostWanted = (await socket.emitWithAck("getWantedEdges")).map(
-    (mostWantedIssue) => ({
-      ...mostWantedIssue,
-      country: mostWantedIssue.publicationcode.split("/")[0],
-      magazine: mostWantedIssue.publicationcode.split("/")[1],
-    }),
-  );
+  mostWanted = (await services("getWantedEdges")).map((mostWantedIssue) => ({
+    ...mostWantedIssue,
+    country: mostWantedIssue.publicationcode.split("/")[0],
+    magazine: mostWantedIssue.publicationcode.split("/")[1],
+  }));
 
-  publishedEdges = (await socket.emitWithAck("getPublishedEdges")).reduce(
+  publishedEdges = (await services("getPublishedEdges")).reduce(
     (acc, { publicationcode, issuenumber }) => ({
       ...acc,
       [publicationcode]: [...(acc[publicationcode] || []), issuenumber],

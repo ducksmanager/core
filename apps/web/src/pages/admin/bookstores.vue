@@ -26,8 +26,6 @@ meta:
 </template>
 
 <script setup lang="ts">
-import { io, Socket } from "socket.io-client";
-
 import { SimpleBookstore } from "~dm-types/SimpleBookstore";
 import type { bookstoreComment } from "~prisma-clients/client_dm";
 import {
@@ -35,18 +33,16 @@ import {
   Services as BookstoresServices,
 } from "~services/bookstores/types";
 
-const socket: Socket<BookstoresServices> = io(
-  import.meta.env.VITE_SOCKET_URL + BookstoresNamespaceEndpoint,
-);
+const services = useSocket<BookstoresServices>(BookstoresNamespaceEndpoint);
 
 let bookstores = $ref(null as SimpleBookstore[] | null);
 
 const validateBookstoreComment = async ({ id }: bookstoreComment) => {
-  await socket.emitWithAck("approveBookstoreComment", id);
+  await services("approveBookstoreComment", id);
 };
 
 (async () => {
-  bookstores = await socket.emitWithAck("getActiveBookstores");
+  bookstores = await services("getActiveBookstores");
 })();
 </script>
 

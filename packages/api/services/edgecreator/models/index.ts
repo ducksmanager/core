@@ -1,9 +1,7 @@
 import { Socket } from "socket.io";
 
 import { prismaDm, prismaEdgeCreator } from "~/prisma";
-import { EdgeModel } from "~dm-types/EdgeModel";
 import { ModelSteps } from "~dm-types/ModelSteps";
-import { ExpressCall } from "~routes/_express-call";
 
 import { Services } from "../types";
 export default (socket: Socket<Services>) => {
@@ -129,39 +127,3 @@ export default (socket: Socket<Services>) => {
     callback(model && modelIsPublished ? model : null);
   });
 };
-
-export const get = async (
-  ...[req, res]: ExpressCall<{ resBody: EdgeModel[] }>
-) =>
-  res.json(
-    (await prismaEdgeCreator.edgeModel.findMany({
-      select: {
-        id: true,
-        country: true,
-        magazine: true,
-        issuenumber: true,
-        username: true,
-        photos: {
-          include: {
-            elementImage: true,
-          },
-        },
-      },
-      where: {
-        isActive: true,
-        OR: [
-          {
-            username: req.user!.username,
-          },
-          {
-            contributors: {
-              some: {
-                userId: req.user!.id,
-                contribution: "photographe",
-              },
-            },
-          },
-        ],
-      },
-    })) as EdgeModel[]
-  );

@@ -9,8 +9,8 @@ import {
 } from "~services/collection/types";
 import { EventReturnType } from "~services/types";
 
-const coaSocket = useSocket<CoaServices>(CoaNamespaceEndpoint);
-const collectionSocket = useSocket<CollectionServices>(
+const coaServices = useSocket<CoaServices>(CoaNamespaceEndpoint);
+const collectionServices = useSocket<CollectionServices>(
   CollectionNamespaceEndpoint,
 );
 
@@ -35,7 +35,7 @@ export const stats = defineStore("stats", () => {
   const loadRatings = async (afterUpdate = false) => {
     if (afterUpdate || (!isLoadingWatchedAuthors.value && !ratings.value)) {
       isLoadingWatchedAuthors.value = true;
-      ratings.value = await collectionSocket.emitWithAck("getWatchedAuthors");
+      ratings.value = await collectionServices("getWatchedAuthors");
       isLoadingWatchedAuthors.value = false;
     }
   };
@@ -45,10 +45,7 @@ export const stats = defineStore("stats", () => {
     if (!isSearching.value) {
       try {
         isSearching.value = true;
-        authorSearchResults.value = await coaSocket.emitWithAck(
-          "searchAuthor",
-          value,
-        );
+        authorSearchResults.value = await coaServices("searchAuthor", value);
         console.log(authorSearchResults.value);
       } finally {
         isSearching.value = false;
@@ -60,14 +57,14 @@ export const stats = defineStore("stats", () => {
   };
 
   const createRating = async (personcode: string) => {
-    await collectionSocket.emitWithAck("addWatchedAuthor", personcode);
+    await collectionServices("addWatchedAuthor", personcode);
     await loadRatings(true);
   };
   const updateRating = async (data: authorUser) => {
-    await collectionSocket.emitWithAck("updateWatchedAuthor", data);
+    await collectionServices("updateWatchedAuthor", data);
   };
   const deleteAuthor = async (personcode: string) => {
-    await collectionSocket.emitWithAck("deleteWatchedAuthor", personcode);
+    await collectionServices("deleteWatchedAuthor", personcode);
     await loadRatings(true);
   };
 

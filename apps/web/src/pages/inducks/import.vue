@@ -287,7 +287,7 @@ import {
 } from "~services/collection/types";
 const { getImagePath } = images();
 
-const collectionSocket = useSocket<CollectionServices>(CollectionNamespace);
+const collectionServices = useSocket<CollectionServices>(CollectionNamespace);
 
 let step = $ref(1 as number);
 const rawData = $ref("" as string);
@@ -362,7 +362,7 @@ const importIssues = async () => {
   );
   for (const publicationcode in importableIssuesByPublicationCode) {
     if (importableIssuesByPublicationCode.hasOwnProperty(publicationcode)) {
-      await collectionSocket.emitWithAck("addOrChangeIssues", {
+      await collectionServices("addOrChangeIssues", {
         publicationcode,
         issuenumbers: importableIssuesByPublicationCode[publicationcode],
         condition: issueDefaultCondition,

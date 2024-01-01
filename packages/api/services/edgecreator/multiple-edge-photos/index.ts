@@ -1,10 +1,8 @@
-import bodyParser from "body-parser";
 import dayjs from "dayjs";
 import { Socket } from "socket.io";
 
 import EdgePhotoSent from "~/emails/edge-photo-sent";
 import { prismaDm, prismaEdgeCreator } from "~/prisma";
-import { ExpressCall } from "~routes/_express-call";
 
 import { Services } from "../types";
 export default (socket: Socket<Services>) => {
@@ -64,28 +62,3 @@ export default (socket: Socket<Services>) => {
       .catch(() => callback(null))
   );
 };
-
-const parseForm = bodyParser.json();
-export const put = [
-  parseForm,
-  async (
-    ...[req, res]: ExpressCall<{
-      resBody: {
-        photo: { id: number };
-      };
-      reqBody: {
-        hash: string;
-        filename: string;
-      };
-    }>
-  ) =>
-    res.json({
-      photo: {
-        id: (
-          await prismaEdgeCreator.elementImage.create({
-            data: { hash: req.body.hash, fileName: req.body.filename },
-          })
-        ).id,
-      },
-    }),
-];
