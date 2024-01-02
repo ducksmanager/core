@@ -17,10 +17,20 @@ export default <Services extends EventsMap>(namespaceName: string) => {
       });
     },
   });
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  return <Event extends keyof Services>(
-    event: Event,
-    ...args: AllButLast<Parameters<Services[Event]>>
-  ): Promise<EventReturnTypeIncludingError<Services[Event]>> =>
-    socket.emitWithAck(event as string, ...args);
+  type StringKeyOf<T> = keyof T & string;
+
+  type EventCalls<S extends Services> = {
+    [EventName in StringKeyOf<S>]: (
+      ...args: AllButLast<Parameters<S[EventName]>>
+    ) => Promise<EventReturnTypeIncludingError<S[EventName]>>;
+  };
+
+  return new Proxy<EventCalls<Services>>({} as EventCalls<Services>, {
+    get:
+      <EventName extends StringKeyOf<Services>>(_: never, event: EventName) =>
+      (
+        ...args: AllButLast<Parameters<Services[EventName]>>
+      ): Promise<EventReturnTypeIncludingError<Services[EventName]>> =>
+        socket.emitWithAck(event, ...args),
+  });
 };

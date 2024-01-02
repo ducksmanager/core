@@ -1,12 +1,15 @@
 <template>
   <LinkToCollectionIfNoIssue />
-  <ConditionsComponent :conditions="conditionsWithoutMissing" />
+  <ConditionsComponent
+    :conditions="conditionsWithoutMissing"
+    :number-per-condition="numberPerCondition"
+  />
 </template>
 
 <script setup lang="ts">
 import condition from "~/composables/useCondition";
 
-const { loadCollection } = collection();
+const { loadCollection, numberPerCondition } = collection();
 
 const conditionsWithoutMissing = condition()
   .conditions.filter(({ dbValue }) => dbValue !== "missing")

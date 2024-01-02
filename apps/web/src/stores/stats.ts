@@ -35,7 +35,7 @@ export const stats = defineStore("stats", () => {
   const loadRatings = async (afterUpdate = false) => {
     if (afterUpdate || (!isLoadingWatchedAuthors.value && !ratings.value)) {
       isLoadingWatchedAuthors.value = true;
-      ratings.value = await collectionServices("getWatchedAuthors");
+      ratings.value = await collectionServices.getWatchedAuthors();
       isLoadingWatchedAuthors.value = false;
     }
   };
@@ -45,7 +45,7 @@ export const stats = defineStore("stats", () => {
     if (!isSearching.value) {
       try {
         isSearching.value = true;
-        authorSearchResults.value = await coaServices("searchAuthor", value);
+        authorSearchResults.value = await coaServices.searchAuthor(value);
         console.log(authorSearchResults.value);
       } finally {
         isSearching.value = false;
@@ -57,14 +57,14 @@ export const stats = defineStore("stats", () => {
   };
 
   const createRating = async (personcode: string) => {
-    await collectionServices("addWatchedAuthor", personcode);
+    await collectionServices.addWatchedAuthor(personcode);
     await loadRatings(true);
   };
   const updateRating = async (data: authorUser) => {
-    await collectionServices("updateWatchedAuthor", data);
+    await collectionServices.updateWatchedAuthor(data);
   };
   const deleteAuthor = async (personcode: string) => {
-    await collectionServices("deleteWatchedAuthor", personcode);
+    await collectionServices.deleteWatchedAuthor(personcode);
     await loadRatings(true);
   };
 

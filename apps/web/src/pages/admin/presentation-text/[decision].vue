@@ -21,8 +21,7 @@ let router = useRouter();
     sentence: string;
     userId: string;
   };
-  await services(
-    "approveOrDenyPresentationText",
+  await services.approveOrDenyPresentationText(
     sentence,
     parseInt(userId),
     currentRoute.params.decision as Decision,

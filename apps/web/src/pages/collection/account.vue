@@ -252,14 +252,14 @@ const { userForAccountForm, marketplaceContactMethods } =
 
 const emptyCollection = async () => {
   if (confirm(t("Votre collection va être vidée. Continuer ?"))) {
-    await services("emptyCollection");
+    await services.emptyCollection();
     await router.push("/collection/show");
   }
 };
 
 const updateAccount = async () => {
   error = undefined;
-  const response = await services("updateUser", {
+  const response = await services.updateUser({
     ...userForAccountForm.value!,
     oldPassword,
     password,
@@ -292,7 +292,7 @@ const deleteAccount = async () => {
       ),
     )
   ) {
-    await services("deleteUser");
+    await services.deleteUser();
     await router.push("/logout");
   }
 };

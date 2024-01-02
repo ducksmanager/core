@@ -15,6 +15,6 @@ import {
 const services = useSocket<EdgeCreatorServices>(EdgeCreatorNamespaceEndpoint);
 
 const generateSprites = async () => {
-  await services("uploadEdges");
+  await services.uploadEdges();
 };
 </script>

@@ -28,7 +28,7 @@ watch(
 );
 
 async () => {
-  const result = await services("loginAsDemo");
+  const result = await services.loginAsDemo();
   switch (result.error) {
     case "No demo user found":
       console.error(result.error);

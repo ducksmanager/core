@@ -45,10 +45,11 @@ export default (io: Server) => {
         "getUsersPointsAndStats",
         async (userIds: number[], callback) => {
           if (userIds.length) {
-            callback({
+            const result = {
               points: await getMedalPoints(userIds),
               stats: await getUsersQuickStats(userIds),
-            });
+            };
+            callback(result);
           } else {
             callback({ points: {}, stats: [] });
           }

@@ -58,7 +58,7 @@ let token = $ref("" as string);
 const { t: $t } = useI18n();
 
 const sendPasswordToken = async () => {
-  const response = await authServices("requestTokenForForgotPassword", email);
+  const response = await authServices.requestTokenForForgotPassword(email);
   if (response.error) {
     error = response.error;
   } else {

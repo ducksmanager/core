@@ -164,8 +164,7 @@ const runSearch = async (value: string) => {
   isSearching = true;
   try {
     if (isSearchByCode) {
-      const data = await coaServices(
-        "getIssuesByStorycode",
+      const data = await coaServices.getIssuesByStorycode(
         value.replace(/^code=/, ""),
       );
       issueResults = {
@@ -179,7 +178,7 @@ const runSearch = async (value: string) => {
         issueResults.results.map(({ publicationcode }) => publicationcode),
       );
     } else {
-      const data = await coaServices("searchStory", value.split(","), true);
+      const data = await coaServices.searchStory(value.split(","), true);
       storyResults.results = data.results.map((story) => ({
         ...story,
         collectionIssue:

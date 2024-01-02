@@ -20,7 +20,7 @@ import { Pie } from "vue-chartjs";
 const props = defineProps<{
   conditions: { dbValue: string; color: string; text: string }[];
   numberPerCondition: Record<string, number>;
-  style: Record<string, string>;
+  style?: Record<string, string>;
 }>();
 
 Chart.register(Legend, PieController, Tooltip, Title, ArcElement);

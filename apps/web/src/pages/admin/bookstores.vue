@@ -38,11 +38,11 @@ const services = useSocket<BookstoresServices>(BookstoresNamespaceEndpoint);
 let bookstores = $ref(null as SimpleBookstore[] | null);
 
 const validateBookstoreComment = async ({ id }: bookstoreComment) => {
-  await services("approveBookstoreComment", id);
+  await services.approveBookstoreComment(id);
 };
 
 (async () => {
-  bookstores = await services("getActiveBookstores");
+  bookstores = await services.getActiveBookstores();
 })();
 </script>
 

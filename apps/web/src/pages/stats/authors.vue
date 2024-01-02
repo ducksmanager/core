@@ -193,7 +193,7 @@ watch(
 
 (async () => {
   await loadRatings();
-  watchedAuthorsStoryCount = await statsServices("getWatchedAuthorsStats");
+  watchedAuthorsStoryCount = await statsServices.getWatchedAuthorsStats();
 })();
 </script>
 

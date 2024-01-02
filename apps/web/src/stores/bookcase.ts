@@ -63,7 +63,7 @@ export const bookcase = defineStore("bookcase", () => {
     },
     loadBookcase = async () => {
       if (!bookcase.value) {
-        const response = await services("getBookcase", bookcaseUsername.value!);
+        const response = await services.getBookcase(bookcaseUsername.value!);
         switch (response.error) {
           case "Forbidden":
             isPrivateBookcase.value = true;
@@ -78,8 +78,7 @@ export const bookcase = defineStore("bookcase", () => {
     },
     loadBookcaseOptions = async () => {
       if (!bookcaseOptions.value) {
-        const response = await services(
-          "getBookcaseOptions",
+        const response = await services.getBookcaseOptions(
           bookcaseUsername.value!,
         );
         if ("error" in response) {
@@ -90,12 +89,11 @@ export const bookcase = defineStore("bookcase", () => {
       }
     },
     updateBookcaseOptions = async () => {
-      await services("setBookcaseOptions", bookcaseOptions.value!);
+      await services.setBookcaseOptions(bookcaseOptions.value!);
     },
     loadBookcaseOrder = async () => {
       if (!bookcaseOrder.value) {
-        const response = await services(
-          "getBookcaseOrder",
+        const response = await services.getBookcaseOrder(
           bookcaseUsername.value!,
         );
         if ("error" in response) {
@@ -106,7 +104,7 @@ export const bookcase = defineStore("bookcase", () => {
       }
     },
     updateBookcaseOrder = async () => {
-      await services("setBookcaseOrder", bookcaseOrder.value!);
+      await services.setBookcaseOrder(bookcaseOrder.value!);
     };
 
   return {

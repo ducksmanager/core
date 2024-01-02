@@ -231,7 +231,7 @@ watch(
   await fetchCount();
   const { userScores } = await useSocket<GlobalStatsServices>(
     GlobalStatsNamespaceEndpoint,
-  )("getUsersCollectionRarity");
+  ).getUsersCollectionRarity();
   rarityValue =
     userScores.length -
     userScores.findIndex(({ userId }) => userId === user.value?.id);

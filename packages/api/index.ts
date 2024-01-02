@@ -23,6 +23,12 @@ import stats from "./services/stats";
 import status from "./services/status";
 import { ServerWithUser } from "./services/types-server";
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+(BigInt.prototype as any).toJSON = function () {
+  const int = Number.parseInt(this.toString());
+  return int ?? this.toString();
+};
+
 dotenv.config({
   path: "./.env",
 });

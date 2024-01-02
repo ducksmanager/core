@@ -104,11 +104,11 @@ export const marketplace = defineStore("marketplace", () => {
       ),
     ),
     requestIssues = async (issueIds: number[]) => {
-      await services("createRequests", issueIds);
+      await services.createRequests(issueIds);
       await loadIssueRequestsAsBuyer();
     },
     loadContactMethods = async (userId: number) => {
-      const result = await services("getContactMethods", userId);
+      const result = await services.getContactMethods(userId);
       switch (result.error) {
         case undefined:
           contactMethods.value[userId] = result;
@@ -125,7 +125,7 @@ export const marketplace = defineStore("marketplace", () => {
         return;
       }
       isLoadingIssueRequestsAsBuyer.value = true;
-      issueRequestsAsBuyer.value = await services("getRequests", "buyer");
+      issueRequestsAsBuyer.value = await services.getRequests("buyer");
       isLoadingIssueRequestsAsBuyer.value = false;
     },
     loadIssueRequestsAsSeller = async (afterUpdate = false) => {
@@ -136,7 +136,7 @@ export const marketplace = defineStore("marketplace", () => {
         return;
       }
       isLoadingIssueRequestsAsSeller.value = true;
-      issueRequestsAsSeller.value = await services("getRequests", "seller");
+      issueRequestsAsSeller.value = await services.getRequests("seller");
       isLoadingIssueRequestsAsSeller.value = false;
     },
     loadIssuesOnSaleByOthers = async (afterUpdate = false) => {
@@ -147,11 +147,11 @@ export const marketplace = defineStore("marketplace", () => {
         return;
       }
       isLoadingIssuesOnSaleByOthers.value = true;
-      issuesOnSaleByOthers.value = await services("getIssuesForSale");
+      issuesOnSaleByOthers.value = await services.getIssuesForSale();
       isLoadingIssuesOnSaleByOthers.value = false;
     },
     deleteRequestToSeller = async (issueId: number) => {
-      await services("deleteRequests", issueId);
+      await services.deleteRequests(issueId);
     };
 
   return {

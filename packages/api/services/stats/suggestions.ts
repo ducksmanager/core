@@ -1,3 +1,5 @@
+import { Socket } from "socket.io";
+
 import { prismaCoa, prismaDm, prismaDmStats } from "~/prisma";
 import { IssueSuggestion } from "~dm-types/IssueSuggestion";
 import { IssueSuggestionList } from "~dm-types/IssueSuggestionList";
@@ -8,7 +10,7 @@ import { Prisma as PrismaDmStats } from "~prisma-clients/client_dm_stats";
 
 import { getPublicationTitles } from "../coa/publications";
 import { COUNTRY_CODE_OPTION } from "../notifications";
-import { Socket } from "./types";
+import { Services } from "./types";
 
 export default (socket: Socket<Services>) => {
   socket.on(

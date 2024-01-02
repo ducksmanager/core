@@ -134,8 +134,7 @@ export const coa = defineStore("coa", () => {
         afterUpdate
       ) {
         isLoadingCountryNames.value = true;
-        countryNames.value = await services(
-          "getCountryList",
+        countryNames.value = await services.getCountryList(
           getCurrentLocaleShortKey(locale.value),
           [],
         );
@@ -154,8 +153,7 @@ export const coa = defineStore("coa", () => {
       return (
         actualNewPublicationCodes.length &&
         addPublicationNames(
-          await services(
-            "getPublicationListFromPublicationcodeList",
+          await services.getPublicationListFromPublicationcodeList(
             actualNewPublicationCodes,
           ),
         )
@@ -175,29 +173,29 @@ export const coa = defineStore("coa", () => {
       return (
         actualNewPublicationCodes.length &&
         addIssueQuotations(
-          await services(
-            "getQuotationsByPublicationCodes",
-            actualNewPublicationCodes,
-          ).then((data) =>
-            data.reduce(
-              (issueAcc, issue) => ({
-                ...issueAcc,
-                [`${issue.publicationcode} ${issue.issuenumber}`]: {
-                  min: issue.estimationMin,
-                  max: issue.estimationMax,
-                },
-              }),
-              {} as { [issuecode: string]: InducksIssueQuotationSimple },
+          await services
+            .getQuotationsByPublicationCodes(actualNewPublicationCodes)
+            .then((data) =>
+              data.reduce(
+                (issueAcc, issue) => ({
+                  ...issueAcc,
+                  [`${issue.publicationcode} ${issue.issuenumber}`]: {
+                    min: issue.estimationMin,
+                    max: issue.estimationMax,
+                  },
+                }),
+                {} as { [issuecode: string]: InducksIssueQuotationSimple },
+              ),
             ),
-          ),
         )
       );
     },
     fetchPublicationNamesFromCountry = async (countrycode: string) =>
       publicationNamesFullCountries.value.includes(countrycode)
         ? void 0
-        : services("getPublicationListFromCountrycode", countrycode).then(
-            (data) => {
+        : services
+            .getPublicationListFromCountrycode(countrycode)
+            .then((data) => {
               addPublicationNames({
                 ...(publicationNames.value || {}),
                 ...data,
@@ -206,8 +204,7 @@ export const coa = defineStore("coa", () => {
                 ...publicationNamesFullCountries.value,
                 countrycode,
               ];
-            },
-          ),
+            }),
     fetchPersonNames = async (newPersonCodes: string[]) => {
       const actualNewPersonCodes = [
         ...new Set(
@@ -221,15 +218,13 @@ export const coa = defineStore("coa", () => {
         actualNewPersonCodes.length &&
         setPersonNames({
           ...(personNames.value || {}),
-          ...(await services("getAuthorList", actualNewPersonCodes)),
+          ...(await services.getAuthorList(actualNewPersonCodes)),
         })
       );
     },
     fetchIssueNumbersWithTitles = async (publicationcode: string) => {
-      issuesWithTitles.value[publicationcode] = await services(
-        "getIssuesWithTitles",
-        publicationcode,
-      );
+      issuesWithTitles.value[publicationcode] =
+        await services.getIssuesWithTitles(publicationcode);
     },
     fetchIssueNumbers = async function (publicationCodes: string[]) {
       const newPublicationCodes = [
@@ -243,7 +238,7 @@ export const coa = defineStore("coa", () => {
       if (newPublicationCodes.length) {
         addIssueNumbers(
           (
-            await services("getIssuesByPublicationCodes", newPublicationCodes)
+            await services.getIssuesByPublicationCodes(newPublicationCodes)
           ).reduce(
             (acc, issue) => ({
               ...acc,
@@ -268,14 +263,14 @@ export const coa = defineStore("coa", () => {
       ];
       return (
         newIssueCodes.length &&
-        addIssueCodeDetails(await services("decompose", newIssueCodes))
+        addIssueCodeDetails(await services.decompose(newIssueCodes))
       );
     },
     fetchIssueCounts = async () => {
       if (!issueCounts.value)
-        issueCounts.value = await services("getCountByPublicationcode");
+        issueCounts.value = await services.getCountByPublicationcode();
     },
-    fetchRecentIssues = async () => await services("getRecentIssues"),
+    fetchRecentIssues = async () => await services.getRecentIssues(),
     fetchIssueUrls = async ({
       publicationcode,
       issuenumber,
@@ -285,8 +280,7 @@ export const coa = defineStore("coa", () => {
     }) => {
       const issueCode = `${publicationcode} ${issuenumber}`;
       if (!issueDetails.value[issueCode]) {
-        const newIssueDetails = await services(
-          "getIssueDetails",
+        const newIssueDetails = await services.getIssueDetails(
           publicationcode,
           issuenumber,
         );

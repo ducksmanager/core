@@ -130,8 +130,7 @@ const toSubscriptionWithStringDates = (
 });
 
 const createSubscription = async (subscription: SubscriptionTransformed) => {
-  await services(
-    "createSubscription",
+  await services.createSubscription(
     toSubscriptionWithStringDates(subscription),
   );
   await loadSubscriptions(true);
@@ -151,8 +150,7 @@ const createSubscriptionLike = async (
 };
 
 const editSubscription = async (subscription: SubscriptionTransformed) => {
-  await services(
-    "updateSubscription",
+  await services.updateSubscription(
     subscription.id,
     toSubscriptionWithStringDates(subscription),
   );
@@ -160,7 +158,7 @@ const editSubscription = async (subscription: SubscriptionTransformed) => {
   currentSubscription = null;
 };
 const deleteSubscription = async (id: number) => {
-  await services("deleteSubscription", id);
+  await services.deleteSubscription(id);
   await loadSubscriptions(true);
   currentSubscription = null;
 };

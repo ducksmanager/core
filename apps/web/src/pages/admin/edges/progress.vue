@@ -198,13 +198,13 @@ const sortedBookcase = computed(() =>
 );
 
 (async () => {
-  mostWanted = (await services("getWantedEdges")).map((mostWantedIssue) => ({
+  mostWanted = (await services.getWantedEdges()).map((mostWantedIssue) => ({
     ...mostWantedIssue,
     country: mostWantedIssue.publicationcode.split("/")[0],
     magazine: mostWantedIssue.publicationcode.split("/")[1],
   }));
 
-  publishedEdges = (await services("getPublishedEdges")).reduce(
+  publishedEdges = (await services.getPublishedEdges()).reduce(
     (acc, { publicationcode, issuenumber }) => ({
       ...acc,
       [publicationcode]: [...(acc[publicationcode] || []), issuenumber],

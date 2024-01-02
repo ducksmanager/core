@@ -7,7 +7,7 @@ import { ScopedError } from "~dm-types/ScopedError";
 import { authorUser, purchase, subscription } from "~prisma-clients/client_dm";
 import {
   NamespaceEndpoint as CollectionNamespaceEndpoint,
-  Services as CollectionServices,
+  Services as collectionServices,
 } from "~services/collection/types";
 import {
   NamespaceEndpoint as LoginNamespaceEndpoint,
@@ -50,7 +50,7 @@ export type purchaseWithStringDate = Omit<purchase, "date"> & {
 
 const statsServices = useSocket<StatsServices>(StatsNamespaceEndpoint),
   loginServices = useSocket<LoginServices>(LoginNamespaceEndpoint),
-  collectionServices = useSocket<CollectionServices>(
+  collectionServices = useSocket<collectionServices>(
     CollectionNamespaceEndpoint,
   );
 let sessionExistsFn: () => Promise<boolean>,
@@ -73,7 +73,7 @@ export const collection = defineStore("collection", () => {
     ),
     lastPublishedEdgesForCurrentUser = ref(
       null as EventReturnType<
-        CollectionServices["getLastPublishedEdges"]
+        collectionServices["getLastPublishedEdges"]
       > | null,
     ),
     isLoadingUser = ref(false as boolean),
@@ -85,7 +85,7 @@ export const collection = defineStore("collection", () => {
     isLoadingSubscriptions = ref(false as boolean),
     user = ref(
       undefined as
-        | EventReturnType<CollectionServices["getUser"]>
+        | EventReturnType<collectionServices["getUser"]>
         | undefined
         | null,
     ),
@@ -167,25 +167,25 @@ export const collection = defineStore("collection", () => {
       };
     }),
     updateCollectionSingleIssue = async (data: CollectionUpdateSingleIssue) => {
-      await collectionServices("addOrChangeCopies", data);
+      await collectionServices.addOrChangeCopies(data);
       await loadCollection(true);
     },
     updateCollectionMultipleIssues = async (
       data: CollectionUpdateMultipleIssues,
     ) => {
-      await collectionServices("addOrChangeIssues", data);
+      await collectionServices.addOrChangeIssues(data);
       await loadCollection(true);
     },
     createPurchase = async (date: string, description: string) => {
-      await collectionServices("createPurchase", date, description);
+      await collectionServices.createPurchase(date, description);
       await loadPurchases(true);
     },
     deletePurchase = async (id: number) => {
-      await collectionServices("deletePurchase", id);
+      await collectionServices.deletePurchase(id);
       await loadPurchases(true);
     },
     loadPreviousVisit = async () => {
-      const result = await collectionServices("getLastVisit");
+      const result = await collectionServices.getLastVisit();
       if (typeof result === "object" && result?.error) {
         console.error(result.error);
       } else if (result) {
@@ -195,7 +195,7 @@ export const collection = defineStore("collection", () => {
     loadCollection = async (afterUpdate = false) => {
       if (afterUpdate || (!isLoadingCollection.value && !issues.value)) {
         isLoadingCollection.value = true;
-        issues.value = (await collectionServices("getIssues")).map((issue) => ({
+        issues.value = (await collectionServices.getIssues()).map((issue) => ({
           ...issue,
           publicationcode: `${issue.country}/${issue.magazine}`,
         }));
@@ -205,7 +205,7 @@ export const collection = defineStore("collection", () => {
     loadPurchases = async (afterUpdate = false) => {
       if (afterUpdate || (!isLoadingPurchases.value && !purchases.value)) {
         isLoadingPurchases.value = true;
-        purchases.value = (await collectionServices("getPurchases")).map(
+        purchases.value = (await collectionServices.getPurchases()).map(
           (purchase) => ({
             ...purchase,
             date: new Date(purchase.date),
@@ -221,8 +221,7 @@ export const collection = defineStore("collection", () => {
           !watchedPublicationsWithSales.value)
       ) {
         isLoadingWatchedPublicationsWithSales.value = true;
-        watchedPublicationsWithSales.value = await collectionServices(
-          "getOption",
+        watchedPublicationsWithSales.value = await collectionServices.getOption(
           "sales_notification_publications",
         );
         isLoadingWatchedPublicationsWithSales.value = false;
@@ -235,18 +234,16 @@ export const collection = defineStore("collection", () => {
           !marketplaceContactMethods.value)
       ) {
         isLoadingMarketplaceContactMethods.value = true;
-        marketplaceContactMethods.value = await collectionServices(
-          "getOption",
+        marketplaceContactMethods.value = await collectionServices.getOption(
           "marketplace_contact_methods",
         );
         isLoadingMarketplaceContactMethods.value = false;
       }
     },
     updateMarketplaceContactMethods = async () =>
-      await collectionServices("getOption", "marketplace_contact_methods"),
+      await collectionServices.getOption("marketplace_contact_methods"),
     updateWatchedPublicationsWithSales = async () =>
-      await collectionServices(
-        "setOption",
+      await collectionServices.setOption(
         "sales_notification_publications",
         watchedPublicationsWithSales.value!,
       ),
@@ -261,8 +258,7 @@ export const collection = defineStore("collection", () => {
     }) => {
       if (!isLoadingSuggestions.value) {
         isLoadingSuggestions.value = true;
-        suggestions.value = await statsServices(
-          "getSuggestionsForCountry",
+        suggestions.value = await statsServices.getSuggestionsForCountry(
           countryCode || "ALL",
           sinceLastVisit ? "since_previous_visit" : "_",
           sort,
@@ -277,20 +273,20 @@ export const collection = defineStore("collection", () => {
         (!isLoadingSubscriptions.value && !subscriptions.value)
       ) {
         isLoadingSubscriptions.value = true;
-        subscriptions.value = (
-          await collectionServices("getSubscriptions")
-        ).map((subscription: SubscriptionTransformedStringDates) => ({
-          ...subscription,
-          startDate: new Date(Date.parse(subscription.startDate)),
-          endDate: new Date(Date.parse(subscription.endDate)),
-        }));
+        subscriptions.value = (await collectionServices.getSubscriptions()).map(
+          (subscription: SubscriptionTransformedStringDates) => ({
+            ...subscription,
+            startDate: new Date(Date.parse(subscription.startDate)),
+            endDate: new Date(Date.parse(subscription.endDate)),
+          }),
+        );
         isLoadingSubscriptions.value = false;
       }
     },
     loadPopularIssuesInCollection = async () => {
       if (!popularIssuesInCollection.value) {
         popularIssuesInCollection.value = (
-          await collectionServices("getCollectionPopularity")
+          await collectionServices.getCollectionPopularity()
         ).reduce(
           (acc, issue) => ({
             ...acc,
@@ -303,9 +299,8 @@ export const collection = defineStore("collection", () => {
     },
     loadLastPublishedEdgesForCurrentUser = async () => {
       if (!lastPublishedEdgesForCurrentUser.value) {
-        lastPublishedEdgesForCurrentUser.value = await collectionServices(
-          "getLastPublishedEdges",
-        );
+        lastPublishedEdgesForCurrentUser.value =
+          await collectionServices.getLastPublishedEdges();
       }
     },
     login = async (
@@ -314,7 +309,7 @@ export const collection = defineStore("collection", () => {
       onSuccess: (token: string) => void,
       onError: (e: string) => void,
     ) => {
-      const response = await loginServices("login", {
+      const response = await loginServices.login({
         username,
         password,
       });
@@ -332,7 +327,7 @@ export const collection = defineStore("collection", () => {
       onSuccess: (token: string) => void,
       onError: (e: ScopedError) => void,
     ) => {
-      const response = await collectionServices("createUser", {
+      const response = await collectionServices.createUser({
         username,
         password,
         password2,
@@ -353,7 +348,7 @@ export const collection = defineStore("collection", () => {
         isLoadingUser.value = true;
         try {
           if (await sessionExistsFn()) {
-            const response = await collectionServices("getUser");
+            const response = await collectionServices.getUser();
             if ("error" in response) {
               throw new Error(response.error);
             } else {

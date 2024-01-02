@@ -51,7 +51,7 @@ const password2 = $ref("" as string);
 
 const { t: $t } = useI18n();
 const changePassword = async () => {
-  const response = await services("changePassword", {
+  const response = await services.changePassword({
     token,
     password,
     password2,

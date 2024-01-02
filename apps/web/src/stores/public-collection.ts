@@ -21,7 +21,7 @@ export const publicCollection = defineStore("publicCollection", () => {
   const collectionUtils = useCollection(issues),
     loadPublicCollection = async (username: string) => {
       publicUsername.value = username;
-      issues.value = (await services("getPublicCollection", username)).map(
+      issues.value = (await services.getPublicCollection(username)).map(
         (issue) => ({
           ...issue,
           publicationcode: `${issue.country}/${issue.magazine}`,

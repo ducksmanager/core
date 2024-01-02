@@ -32,7 +32,7 @@ export const users = defineStore("users", () => {
     bookcaseContributors = ref(null as BookcaseContributor[] | null),
     fetchCount = async () => {
       if (count.value === null) {
-        count.value = await globalStatsServices("getUserCount");
+        count.value = await globalStatsServices.getUserCount();
       }
     },
     fetchStats = async (userIds: number[] /*, clearCacheEntry = true*/) => {
@@ -44,10 +44,8 @@ export const users = defineStore("users", () => {
       );
       if (!missingUserIds.length) return;
 
-      const data = await globalStatsServices(
-        "getUsersPointsAndStats",
-        missingUserIds,
-      );
+      const data =
+        await globalStatsServices.getUsersPointsAndStats(missingUserIds);
       points.value = {
         ...points.value,
         ...data.points,
@@ -65,13 +63,12 @@ export const users = defineStore("users", () => {
     },
     fetchBookcaseContributors = async () => {
       if (!bookcaseContributors.value) {
-        bookcaseContributors.value = await globalStatsServices(
-          "getBookcaseContributors",
-        );
+        bookcaseContributors.value =
+          await globalStatsServices.getBookcaseContributors();
       }
     },
     fetchEvents = async () => {
-      events.value = (await eventsServices("getEvents"))
+      events.value = (await eventsServices.getEvents())
         .sort(({ timestamp: timestamp1 }, { timestamp: timestamp2 }) =>
           Math.sign(timestamp2 - timestamp1),
         )

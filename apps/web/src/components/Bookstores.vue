@@ -225,7 +225,7 @@ const decodeText = (value: string) => {
   }
 };
 const fetchBookstores = async () => {
-  bookstores = (await services("getActiveBookstores"))
+  bookstores = (await services.getActiveBookstores())
     .map((bookstore) => {
       bookstore.name = decodeText(bookstore.name);
       bookstore.address = decodeText(bookstore.address);
@@ -245,7 +245,7 @@ const suggestComment = async (bookstore: SimpleBookstore) => {
     );
     return false;
   }
-  await services("createBookstoreComment", bookstore);
+  await services.createBookstoreComment(bookstore);
   if (bookstore.id) {
     existingBookstoreSent = true;
     existingBookstore = null;

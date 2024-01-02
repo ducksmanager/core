@@ -362,7 +362,7 @@ const importIssues = async () => {
   );
   for (const publicationcode in importableIssuesByPublicationCode) {
     if (importableIssuesByPublicationCode.hasOwnProperty(publicationcode)) {
-      await collectionServices("addOrChangeIssues", {
+      await collectionServices.addOrChangeIssues({
         publicationcode,
         issuenumbers: importableIssuesByPublicationCode[publicationcode],
         condition: issueDefaultCondition,
