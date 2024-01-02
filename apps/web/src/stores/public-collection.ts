@@ -1,14 +1,7 @@
+import { publicCollectionServices } from "~/composables/useSocket";
 import { IssueWithPublicationcode } from "~dm-types/IssueWithPublicationcode";
-import {
-  NamespaceEndpoint as PublicCollectionNamespaceEndpoint,
-  Services as PublicCollectionServices,
-} from "~services/public-collection/types";
 
 import useCollection from "../composables/useCollection";
-
-const services = useSocket<PublicCollectionServices>(
-  PublicCollectionNamespaceEndpoint,
-);
 
 export const publicCollection = defineStore("publicCollection", () => {
   const issues = ref(null as IssueWithPublicationcode[] | null),
@@ -21,12 +14,12 @@ export const publicCollection = defineStore("publicCollection", () => {
   const collectionUtils = useCollection(issues),
     loadPublicCollection = async (username: string) => {
       publicUsername.value = username;
-      issues.value = (await services.getPublicCollection(username)).map(
-        (issue) => ({
-          ...issue,
-          publicationcode: `${issue.country}/${issue.magazine}`,
-        }),
-      );
+      issues.value = (
+        await publicCollectionServices.getPublicCollection(username)
+      ).map((issue) => ({
+        ...issue,
+        publicationcode: `${issue.country}/${issue.magazine}`,
+      }));
     };
   return {
     ...collectionUtils,

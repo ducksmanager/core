@@ -1,19 +1,9 @@
+import { eventsServices, globalStatsServices } from "~/composables/useSocket";
 import { BookcaseContributor } from "~dm-types/BookcaseContributor";
 import { AbstractEvent } from "~dm-types/events/AbstractEvent";
-import {
-  NamespaceEndpoint as EventsNamespaceEndpoint,
-  Services as EventsServices,
-} from "~services/events/types";
-import {
-  NamespaceEndpoint as GlobalStatsNamespaceEndpoint,
-  Services as GlobalStatsServices,
-} from "~services/global-stats/types";
+import { Services as GlobalStatsServices } from "~services/global-stats/types";
 import { EventReturnType } from "~services/types";
 
-const eventsServices = useSocket<EventsServices>(EventsNamespaceEndpoint),
-  globalStatsServices = useSocket<GlobalStatsServices>(
-    GlobalStatsNamespaceEndpoint,
-  );
 export const users = defineStore("users", () => {
   const count = ref(
       null as EventReturnType<GlobalStatsServices["getUserCount"]> | null,

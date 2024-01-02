@@ -1,11 +1,8 @@
+import { collectionServices } from "~/composables/useSocket";
 import type { issue, requestedIssue } from "~prisma-clients/client_dm";
-import {
-  NamespaceEndpoint as CollectionNamespaceEndpoint,
-  Services as CollectionServices,
-} from "~services/collection/types";
+import { Services as CollectionServices } from "~services/collection/types";
 import { EventReturnType } from "~services/types";
 
-const services = useSocket<CollectionServices>(CollectionNamespaceEndpoint);
 export const marketplace = defineStore("marketplace", () => {
   const issuesOnSaleByOthers = ref(
       null as EventReturnType<CollectionServices["getIssuesForSale"]> | null,
@@ -104,11 +101,11 @@ export const marketplace = defineStore("marketplace", () => {
       ),
     ),
     requestIssues = async (issueIds: number[]) => {
-      await services.createRequests(issueIds);
+      await collectionServices.createRequests(issueIds);
       await loadIssueRequestsAsBuyer();
     },
     loadContactMethods = async (userId: number) => {
-      const result = await services.getContactMethods(userId);
+      const result = await collectionServices.getContactMethods(userId);
       switch (result.error) {
         case undefined:
           contactMethods.value[userId] = result;
@@ -125,7 +122,8 @@ export const marketplace = defineStore("marketplace", () => {
         return;
       }
       isLoadingIssueRequestsAsBuyer.value = true;
-      issueRequestsAsBuyer.value = await services.getRequests("buyer");
+      issueRequestsAsBuyer.value =
+        await collectionServices.getRequests("buyer");
       isLoadingIssueRequestsAsBuyer.value = false;
     },
     loadIssueRequestsAsSeller = async (afterUpdate = false) => {
@@ -136,7 +134,8 @@ export const marketplace = defineStore("marketplace", () => {
         return;
       }
       isLoadingIssueRequestsAsSeller.value = true;
-      issueRequestsAsSeller.value = await services.getRequests("seller");
+      issueRequestsAsSeller.value =
+        await collectionServices.getRequests("seller");
       isLoadingIssueRequestsAsSeller.value = false;
     },
     loadIssuesOnSaleByOthers = async (afterUpdate = false) => {
@@ -147,11 +146,11 @@ export const marketplace = defineStore("marketplace", () => {
         return;
       }
       isLoadingIssuesOnSaleByOthers.value = true;
-      issuesOnSaleByOthers.value = await services.getIssuesForSale();
+      issuesOnSaleByOthers.value = await collectionServices.getIssuesForSale();
       isLoadingIssuesOnSaleByOthers.value = false;
     },
     deleteRequestToSeller = async (issueId: number) => {
-      await services.deleteRequests(issueId);
+      await collectionServices.deleteRequests(issueId);
     };
 
   return {

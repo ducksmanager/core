@@ -280,14 +280,10 @@ meta:
 </template>
 
 <script setup lang="ts">
+import { collectionServices } from "~/composables/useSocket";
 import type { inducks_issue } from "~prisma-clients/client_coa";
-import {
-  NamespaceEndpoint as CollectionNamespace,
-  Services as CollectionServices,
-} from "~services/collection/types";
-const { getImagePath } = images();
 
-const collectionServices = useSocket<CollectionServices>(CollectionNamespace);
+const { getImagePath } = images();
 
 let step = $ref(1 as number);
 const rawData = $ref("" as string);

@@ -8,13 +8,8 @@ meta:
 </template>
 
 <script setup lang="ts">
-import {
-  NamespaceEndpoint as EdgeCreatorNamespaceEndpoint,
-  Services as EdgeCreatorServices,
-} from "~services/edgecreator/types";
-const services = useSocket<EdgeCreatorServices>(EdgeCreatorNamespaceEndpoint);
-
+import { edgeCreatorServices } from "~/composables/useSocket";
 const generateSprites = async () => {
-  await services.uploadEdges();
+  await edgeCreatorServices.uploadEdges();
 };
 </script>

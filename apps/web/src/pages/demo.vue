@@ -8,14 +8,11 @@ meta:
 <script setup lang="ts">
 import Cookies from "js-cookie";
 
-import { NamespaceEndpoint as DemoNamespaceEndpoint } from "~services/demo/types";
-import { Services as DemoServices } from "~services/demo/types";
+import { demoServices } from "~/composables/useSocket";
 const { loadUser } = collection();
 const { user } = storeToRefs(collection());
 
 const router = useRouter();
-
-const services = useSocket<DemoServices>(DemoNamespaceEndpoint);
 
 watch(
   user,
@@ -28,7 +25,7 @@ watch(
 );
 
 async () => {
-  const result = await services.loginAsDemo();
+  const result = await demoServices.loginAsDemo();
   switch (result.error) {
     case "No demo user found":
       console.error(result.error);

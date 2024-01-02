@@ -3,15 +3,8 @@ meta:
   layout: bare
 </route>
 <script setup lang="ts">
-import {
-  Decision,
-  NamespaceEndpoint as PresentationTextNamespaceEndpoint,
-  Services as PresentationTextServices,
-} from "~services/presentation-text/types";
-
-const services = useSocket<PresentationTextServices>(
-  PresentationTextNamespaceEndpoint,
-);
+import { presentationTextServices } from "~/composables/useSocket";
+import { Decision } from "~services/presentation-text/types";
 
 let router = useRouter();
 
@@ -21,7 +14,7 @@ let router = useRouter();
     sentence: string;
     userId: string;
   };
-  await services.approveOrDenyPresentationText(
+  await presentationTextServices.approveOrDenyPresentationText(
     sentence,
     parseInt(userId),
     currentRoute.params.decision as Decision,

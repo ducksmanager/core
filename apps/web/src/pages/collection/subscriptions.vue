@@ -82,21 +82,15 @@ alias: [/collection/abonnements]
 <script setup lang="ts">
 import dayjs from "dayjs";
 
+import { subscriptionServices } from "~/composables/useSocket";
 import {
   SubscriptionTransformed,
   SubscriptionTransformedStringDates,
 } from "~/stores/collection";
-import {
-  NamespaceEndpoint as SubscriptionNamespaceEndpoint,
-  Services as SubscriptionServices,
-} from "~services/collection/types";
-
 type AssociatedPublication = {
   referencePublicationcode: string;
   publicationcode: string;
 };
-
-const services = useSocket<SubscriptionServices>(SubscriptionNamespaceEndpoint);
 
 const { fetchPublicationNames } = coa();
 const { publicationNames } = storeToRefs(coa());
@@ -130,7 +124,7 @@ const toSubscriptionWithStringDates = (
 });
 
 const createSubscription = async (subscription: SubscriptionTransformed) => {
-  await services.createSubscription(
+  await subscriptionServices.createSubscription(
     toSubscriptionWithStringDates(subscription),
   );
   await loadSubscriptions(true);
@@ -150,7 +144,7 @@ const createSubscriptionLike = async (
 };
 
 const editSubscription = async (subscription: SubscriptionTransformed) => {
-  await services.updateSubscription(
+  await subscriptionServices.updateSubscription(
     subscription.id,
     toSubscriptionWithStringDates(subscription),
   );
@@ -158,7 +152,7 @@ const editSubscription = async (subscription: SubscriptionTransformed) => {
   currentSubscription = null;
 };
 const deleteSubscription = async (id: number) => {
-  await services.deleteSubscription(id);
+  await subscriptionServices.deleteSubscription(id);
   await loadSubscriptions(true);
   currentSubscription = null;
 };

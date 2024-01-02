@@ -1,18 +1,8 @@
+import { coaServices, collectionServices } from "~/composables/useSocket";
 import { authorUser } from "~prisma-clients/client_dm";
-import {
-  NamespaceEndpoint as CoaNamespaceEndpoint,
-  Services as CoaServices,
-} from "~services/coa/types";
-import {
-  NamespaceEndpoint as CollectionNamespaceEndpoint,
-  Services as CollectionServices,
-} from "~services/collection/types";
+import { Services as CoaServices } from "~services/coa/types";
+import { Services as CollectionServices } from "~services/collection/types";
 import { EventReturnType } from "~services/types";
-
-const coaServices = useSocket<CoaServices>(CoaNamespaceEndpoint);
-const collectionServices = useSocket<CollectionServices>(
-  CollectionNamespaceEndpoint,
-);
 
 export const stats = defineStore("stats", () => {
   const ratings = ref(

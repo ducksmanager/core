@@ -1,5 +1,3 @@
-export { createCachedCoaApi, getCommonCacheOptions } from "./src/api";
-
 import MedalImage from "./src/components/MedalImage.vue";
 import StarRating from "./src/components/StarRating.vue";
 import Conditions from "./src/components/stats/ConditionsComponent.vue";

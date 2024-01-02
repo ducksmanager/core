@@ -1,22 +1,17 @@
 import {
+  collectionServices,
+  loginServices,
+  statsServices,
+} from "~/composables/useSocket";
+import {
   CollectionUpdateMultipleIssues,
   CollectionUpdateSingleIssue,
 } from "~dm-types/CollectionUpdate";
 import { IssueWithPublicationcode } from "~dm-types/IssueWithPublicationcode";
 import { ScopedError } from "~dm-types/ScopedError";
 import { authorUser, purchase, subscription } from "~prisma-clients/client_dm";
-import {
-  NamespaceEndpoint as CollectionNamespaceEndpoint,
-  Services as collectionServices,
-} from "~services/collection/types";
-import {
-  NamespaceEndpoint as LoginNamespaceEndpoint,
-  Services as LoginServices,
-} from "~services/login/types";
-import {
-  NamespaceEndpoint as StatsNamespaceEndpoint,
-  Services as StatsServices,
-} from "~services/stats/types";
+import { Services as CollectionServices } from "~services/collection/types";
+import { Services as StatsServices } from "~services/stats/types";
 import { EventReturnType } from "~services/types";
 
 import useCollection from "../composables/useCollection";
@@ -48,11 +43,6 @@ export type purchaseWithStringDate = Omit<purchase, "date"> & {
   date: string;
 };
 
-const statsServices = useSocket<StatsServices>(StatsNamespaceEndpoint),
-  loginServices = useSocket<LoginServices>(LoginNamespaceEndpoint),
-  collectionServices = useSocket<collectionServices>(
-    CollectionNamespaceEndpoint,
-  );
 let sessionExistsFn: () => Promise<boolean>,
   clearSessionFn: () => Promise<void>;
 
@@ -73,7 +63,7 @@ export const collection = defineStore("collection", () => {
     ),
     lastPublishedEdgesForCurrentUser = ref(
       null as EventReturnType<
-        collectionServices["getLastPublishedEdges"]
+        CollectionServices["getLastPublishedEdges"]
       > | null,
     ),
     isLoadingUser = ref(false as boolean),
@@ -85,7 +75,7 @@ export const collection = defineStore("collection", () => {
     isLoadingSubscriptions = ref(false as boolean),
     user = ref(
       undefined as
-        | EventReturnType<collectionServices["getUser"]>
+        | EventReturnType<CollectionServices["getUser"]>
         | undefined
         | null,
     ),

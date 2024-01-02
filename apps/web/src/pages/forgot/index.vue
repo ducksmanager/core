@@ -45,12 +45,8 @@ meta:
 </template>
 
 <script setup lang="ts">
-import {
-  NamespaceEndpoint as AuthNamespaceEndpoint,
-  Services as AuthServices,
-} from "~services/auth/types";
+import { authServices } from "~/composables/useSocket";
 
-const authServices = useSocket<AuthServices>(AuthNamespaceEndpoint);
 let error = $ref<string | null>(null);
 
 const email = $ref("" as string);

@@ -123,15 +123,11 @@ meta:
 </template>
 
 <script setup lang="ts">
+import { edgesServices } from "~/composables/useSocket";
 import { BookcaseEdgeWithPopularity } from "~/stores/bookcase";
 import { WantedEdge } from "~dm-types/WantedEdge";
-import {
-  NamespaceEndpoint as EdgesNamespaceEndpoint,
-  Services as EdgesServices,
-} from "~services/edges/types";
-const { getImagePath } = images();
 
-const services = useSocket<EdgesServices>(EdgesNamespaceEndpoint);
+const { getImagePath } = images();
 
 let hasData = $ref(false as boolean);
 let mostWanted = $ref(null as WantedEdge[] | null);
@@ -198,13 +194,15 @@ const sortedBookcase = computed(() =>
 );
 
 (async () => {
-  mostWanted = (await services.getWantedEdges()).map((mostWantedIssue) => ({
-    ...mostWantedIssue,
-    country: mostWantedIssue.publicationcode.split("/")[0],
-    magazine: mostWantedIssue.publicationcode.split("/")[1],
-  }));
+  mostWanted = (await edgesServices.getWantedEdges()).map(
+    (mostWantedIssue) => ({
+      ...mostWantedIssue,
+      country: mostWantedIssue.publicationcode.split("/")[0],
+      magazine: mostWantedIssue.publicationcode.split("/")[1],
+    }),
+  );
 
-  publishedEdges = (await services.getPublishedEdges()).reduce(
+  publishedEdges = (await edgesServices.getPublishedEdges()).reduce(
     (acc, { publicationcode, issuenumber }) => ({
       ...acc,
       [publicationcode]: [...(acc[publicationcode] || []), issuenumber],

@@ -85,13 +85,10 @@
 
 <script setup lang="ts">
 import condition from "~/composables/useCondition";
+import { coaServices } from "~/composables/useSocket";
 import { IssueWithPublicationcode } from "~dm-types/IssueWithPublicationcode";
 import { SimpleIssue } from "~dm-types/SimpleIssue";
 import { SimpleStory } from "~dm-types/SimpleStory";
-import {
-  NamespaceEndpoint as CoaNamespaceEndpoint,
-  Services as CoaServices,
-} from "~services/coa/types";
 
 const {
   withTitle = true,
@@ -111,7 +108,6 @@ const { findInCollection } = isPublic ? publicCollection() : collection();
 const { issues } = storeToRefs(collection());
 const { fetchPublicationNames, fetchCountryNames } = coa();
 const { publicationNames } = storeToRefs(coa());
-let coaServices = useSocket<CoaServices>(CoaNamespaceEndpoint);
 
 let isSearching = $ref(false as boolean);
 let pendingSearch = $ref(null as string | null);

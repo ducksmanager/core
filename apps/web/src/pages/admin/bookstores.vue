@@ -26,23 +26,18 @@ meta:
 </template>
 
 <script setup lang="ts">
+import { bookstoreServices } from "~/composables/useSocket";
 import { SimpleBookstore } from "~dm-types/SimpleBookstore";
 import type { bookstoreComment } from "~prisma-clients/client_dm";
-import {
-  NamespaceEndpoint as BookstoresNamespaceEndpoint,
-  Services as BookstoresServices,
-} from "~services/bookstores/types";
-
-const services = useSocket<BookstoresServices>(BookstoresNamespaceEndpoint);
 
 let bookstores = $ref(null as SimpleBookstore[] | null);
 
 const validateBookstoreComment = async ({ id }: bookstoreComment) => {
-  await services.approveBookstoreComment(id);
+  await bookstoreServices.approveBookstoreComment(id);
 };
 
 (async () => {
-  bookstores = await services.getActiveBookstores();
+  bookstores = await bookstoreServices.getActiveBookstores();
 })();
 </script>
 

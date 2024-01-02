@@ -68,10 +68,8 @@ import {
 } from "chart.js";
 import { Bar } from "vue-chartjs";
 
-import {
-  NamespaceEndpoint as StatsNamespaceEndpoint,
-  Services as StatsServices,
-} from "~services/stats/types";
+import { statsServices } from "~/composables/useSocket";
+import { Services as StatsServices } from "~services/stats/types";
 import { EventReturnType } from "~services/types";
 
 Chart.register(
@@ -88,8 +86,6 @@ const { t: $t } = useI18n();
 
 const { loadRatings } = stats();
 const { ratings } = storeToRefs(stats());
-
-const statsServices = useSocket<StatsServices>(StatsNamespaceEndpoint);
 
 const unitTypes = {
   number: $t("Afficher en valeurs réelles"),

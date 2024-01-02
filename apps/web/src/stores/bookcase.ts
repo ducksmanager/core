@@ -1,8 +1,6 @@
+import { bookcaseServices } from "~/composables/useSocket";
 import { BookcaseEdge } from "~dm-types/BookcaseEdge";
-import {
-  NamespaceEndpoint as BookcaseNamespaceEndpoint,
-  Services as BookcaseServices,
-} from "~services/bookcase/types";
+import { Services as BookcaseServices } from "~services/bookcase/types";
 import { EventReturnType } from "~services/types";
 
 import { collection } from "./collection";
@@ -12,8 +10,6 @@ export interface BookcaseEdgeWithPopularity extends BookcaseEdge {
   issueCode: string;
   popularity?: number | undefined;
 }
-
-const services = useSocket<BookcaseServices>(BookcaseNamespaceEndpoint);
 
 export const bookcase = defineStore("bookcase", () => {
   const route = useRoute();
@@ -63,7 +59,9 @@ export const bookcase = defineStore("bookcase", () => {
     },
     loadBookcase = async () => {
       if (!bookcase.value) {
-        const response = await services.getBookcase(bookcaseUsername.value!);
+        const response = await bookcaseServices.getBookcase(
+          bookcaseUsername.value!,
+        );
         switch (response.error) {
           case "Forbidden":
             isPrivateBookcase.value = true;
@@ -78,7 +76,7 @@ export const bookcase = defineStore("bookcase", () => {
     },
     loadBookcaseOptions = async () => {
       if (!bookcaseOptions.value) {
-        const response = await services.getBookcaseOptions(
+        const response = await bookcaseServices.getBookcaseOptions(
           bookcaseUsername.value!,
         );
         if ("error" in response) {
@@ -89,11 +87,11 @@ export const bookcase = defineStore("bookcase", () => {
       }
     },
     updateBookcaseOptions = async () => {
-      await services.setBookcaseOptions(bookcaseOptions.value!);
+      await bookcaseServices.setBookcaseOptions(bookcaseOptions.value!);
     },
     loadBookcaseOrder = async () => {
       if (!bookcaseOrder.value) {
-        const response = await services.getBookcaseOrder(
+        const response = await bookcaseServices.getBookcaseOrder(
           bookcaseUsername.value!,
         );
         if ("error" in response) {
@@ -104,7 +102,7 @@ export const bookcase = defineStore("bookcase", () => {
       }
     },
     updateBookcaseOrder = async () => {
-      await services.setBookcaseOrder(bookcaseOrder.value!);
+      await bookcaseServices.setBookcaseOrder(bookcaseOrder.value!);
     };
 
   return {

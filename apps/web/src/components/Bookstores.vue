@@ -172,16 +172,11 @@
 import MapboxGeocoder from "@mapbox/mapbox-gl-geocoder";
 import { MapboxMap, MapboxMarker, MapboxPopup } from "vue-mapbox-ts";
 
+import { bookstoreServices } from "~/composables/useSocket";
 import { SimpleBookstore } from "~dm-types/SimpleBookstore";
-import {
-  NamespaceEndpoint as BookstoreNamespaceEndpoint,
-  Services as BookstoreServices,
-} from "~services/bookstores/types";
 
 const { fetchStats } = users();
 const { stats: userStats } = storeToRefs(users());
-
-const services = useSocket<BookstoreServices>(BookstoreNamespaceEndpoint);
 
 let bookstores = $ref(null as SimpleBookstore[] | null);
 let existingBookstore = $ref(null as SimpleBookstore | null);
@@ -225,7 +220,7 @@ const decodeText = (value: string) => {
   }
 };
 const fetchBookstores = async () => {
-  bookstores = (await services.getActiveBookstores())
+  bookstores = (await bookstoreServices.getActiveBookstores())
     .map((bookstore) => {
       bookstore.name = decodeText(bookstore.name);
       bookstore.address = decodeText(bookstore.address);
@@ -245,7 +240,7 @@ const suggestComment = async (bookstore: SimpleBookstore) => {
     );
     return false;
   }
-  await services.createBookstoreComment(bookstore);
+  await bookstoreServices.createBookstoreComment(bookstore);
   if (bookstore.id) {
     existingBookstoreSent = true;
     existingBookstore = null;
