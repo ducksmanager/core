@@ -262,10 +262,9 @@ export const getSuggestions = async (
   }
 
   const publicationTitles = await getPublicationTitles({
-    publicationcodes: referencedIssues.map(
+    in: [...new Set(referencedIssues.map(
       ({ publicationcode }) => publicationcode
-    ),
-  });
+    ))]})
 
   return { suggestionsPerUser, authors, storyDetails, publicationTitles };
 };

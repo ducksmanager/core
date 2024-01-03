@@ -12,6 +12,7 @@ import collection from "./services/collection";
 import coverId from "./services/cover-id";
 import demo from "./services/demo";
 import edgecreator from "./services/edgecreator";
+import edges from "./services/edges";
 import events from "./services/events";
 import feedback from "./services/feedback";
 import globalStats from "./services/global-stats";
@@ -77,6 +78,7 @@ Sentry.init({
   coverId(io);
   demo(io);
   edgecreator(io);
+  edges(io);
   events(io);
   feedback(io);
   globalStats(io);

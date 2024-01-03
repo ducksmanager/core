@@ -81,12 +81,12 @@ const { countryNames } = storeToRefs(coa());
 
 const countryNamesWithAllCountriesOption = $computed(
   () =>
-    countryNames && [
+    countryNames.value && [
       {
         value: "ALL",
         text: $t("Tous les pays"),
       },
-      ...Object.entries(countryNames)
+      ...Object.entries(countryNames.value)
         .map(([value, text]) => ({ text, value }))
         .sort(({ text: text1 }, { text: text2 }) => text1.localeCompare(text2)),
     ],
@@ -105,6 +105,10 @@ watch(
 
 loadCollection();
 loadRatings();
+
+(async () => {
+  watchedAuthors.value = await collectionServices.getWatchedAuthors();
+})();
 </script>
 
 <style scoped lang="scss">
