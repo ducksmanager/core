@@ -27,7 +27,6 @@
       "~/*": ["src/*"],
       "~services/*": ["../../packages/api/services/*"],
       "~dm-types/*": ["../../packages/types/*"],
-      "~axios-helper/*": ["../../packages/axios-helper/*"],
       "~prisma-clients/*": ["../../packages/prisma-clients/*"],
       "~translations/*": ["translations/*"]
     }

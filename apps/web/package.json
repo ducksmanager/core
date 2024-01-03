@@ -45,7 +45,6 @@
     "vue-mapbox-ts": "^0.9.8",
     "vue-router": "^4.2.5",
     "vue-slicksort": "^2.0.5",
-    "~axios-helper": "workspace:*",
     "~prisma-clients": "workspace:*",
     "~dm-types": "workspace:*",
     "~api": "workspace:*"

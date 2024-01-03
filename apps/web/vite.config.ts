@@ -20,7 +20,6 @@ export default defineConfig({
       "~/": `${path.resolve(__dirname, "src")}/`,
       "~services": path.resolve(__dirname, "../../packages/api/services"),
       "~dm-types": path.resolve(__dirname, "../../packages/types"),
-      "~axios-helper": path.resolve(__dirname, "../../packages/axios-helper"),
       "~prisma-clients": path.resolve(
         __dirname,
         "../../packages/prisma-clients",
