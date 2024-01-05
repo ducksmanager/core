@@ -23,12 +23,12 @@ export default (io: Server) => {
           callback({ error: "This user does not allow sharing" });
           return;
         }
-        callback(
+        callback({issues:
           await prismaDm.issue.findMany({
             where: {
               userId: user.id,
             },
-          })
+          })}
         );
       });
     }

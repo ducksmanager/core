@@ -17,6 +17,6 @@ export default interface Issues {
   getRecentIssues: (callback: (value: inducks_issue[]) => void) => void;
   getIssuesByPublicationCodes: (
     publicationCodes: string[],
-    callback: (value: Errorable<SimpleIssue[], "Too many requests">) => void
+    callback: (value: Errorable<{issues: SimpleIssue[]}, "Too many requests">) => void
   ) => void;
 }

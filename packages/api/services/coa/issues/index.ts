@@ -28,31 +28,28 @@ export default (socket: Socket<Services>) => {
 
   socket.on(
     "getIssuesByPublicationCodes",
-    async (publicationCodes, callback) => {
-      if (publicationCodes.length > 50) {
-        callback({ error: "Too many requests" });
-        return;
-      }
-      callback(
-        (
-          await prismaCoa.inducks_issue.findMany({
-            select: {
-              publicationcode: true,
-              issuenumber: true,
-            },
-            where: {
-              publicationcode: {
-                in: publicationCodes,
+    async (publicationCodes, callback) =>
+      prismaCoa.inducks_issue
+            .findMany({
+              select: {
+                publicationcode: true,
+                issuenumber: true,
               },
-            },
-          })
-        ).map(({ publicationcode, issuenumber }) => ({
-          code: "",
-          publicationcode: publicationcode!,
-          issuenumber: issuenumber!.replace(/ +/g, " "),
-        }))
-      );
-    }
+              where: {
+                publicationcode: {
+                  in: publicationCodes,
+                },
+              },
+            })
+            .then((issues) => {
+              callback({
+                issues: issues.map(({ publicationcode, issuenumber }) => ({
+                  code: "",
+                  publicationcode: publicationcode!,
+                  issuenumber: issuenumber!.replace(/ +/g, " "),
+                })),
+              });
+            })
   );
 
   socket.on("getIssuesByStorycode", async (storycode, callback) =>

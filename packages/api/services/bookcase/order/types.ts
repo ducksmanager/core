@@ -16,3 +16,4 @@ export default interface Options {
     callback: (max: number | undefined) => void
   ) => void;
 }
+

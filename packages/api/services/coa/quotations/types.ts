@@ -6,7 +6,7 @@ export default interface Quotations {
     issueCodes: string[],
     callback: (
       value: Errorable<
-        inducks_issuequotation[],
+        {quotations: inducks_issuequotation[]},
         "Bad request" | "Too many requests"
       >
     ) => void
@@ -14,7 +14,7 @@ export default interface Quotations {
   getQuotationsByPublicationCodes: (
     publicationCodes: string[],
     callback: (
-      value: Errorable<inducks_issuequotation[], "Bad request">
+      value: Errorable<{quotations: inducks_issuequotation[]}, "Bad request">
     ) => void
   ) => void;
 }

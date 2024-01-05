@@ -14,7 +14,7 @@ export default (socket: Socket<Services>) => {
     } else if (codes.length > 4) {
       callback({ error: "Too many requests" });
     } else {
-      callback(
+      callback({quotations:
         await prismaCoa.inducks_issuequotation.findMany({
           where: {
             issuecode: {
@@ -22,7 +22,7 @@ export default (socket: Socket<Services>) => {
             },
             estimationMin: { not: { equals: null } },
           },
-        })
+        })}
       );
     }
   });
@@ -35,13 +35,13 @@ export default (socket: Socket<Services>) => {
       if (!codes.length) {
         callback({ error: "Bad request" });
       } else {
-        callback(
+        callback({quotations:
           await prismaCoa.inducks_issuequotation.findMany({
             where: {
               publicationcode: { in: codes.map(([code]) => code) },
               estimationMin: { not: { equals: null } },
             },
-          })
+          })}
         );
       }
     }

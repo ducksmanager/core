@@ -14,12 +14,15 @@ export const publicCollection = defineStore("publicCollection", () => {
   const collectionUtils = useCollection(issues),
     loadPublicCollection = async (username: string) => {
       publicUsername.value = username;
-      issues.value = (
-        await publicCollectionServices.getPublicCollection(username)
-      ).map((issue) => ({
-        ...issue,
-        publicationcode: `${issue.country}/${issue.magazine}`,
-      }));
+      const data = await publicCollectionServices.getPublicCollection(username);
+      if (data.error) {
+        console.error(data.error);
+      } else {
+        issues.value = data.issues.map((issue) => ({
+          ...issue,
+          publicationcode: `${issue.country}/${issue.magazine}`,
+        }));
+      }
     };
   return {
     ...collectionUtils,

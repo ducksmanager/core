@@ -57,7 +57,7 @@ export default (socket: Socket<Services>) => {
       return;
     }
     callback(
-      (
+      { covers:(
         (await prismaCoa.$queryRaw`
           SELECT publicationcode,
                  issuenumber,
@@ -79,7 +79,7 @@ export default (socket: Socket<Services>) => {
         }),
         {} as Record<string, IssueCoverDetails>
       )
-    );
+      });
   });
 
   socket.on("getIssuesByCode", async (issueCodes, callback) => {

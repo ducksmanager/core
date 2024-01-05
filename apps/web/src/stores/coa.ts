@@ -166,25 +166,27 @@ export const coa = defineStore("coa", () => {
           ),
         ),
       ];
-      return (
-        actualNewPublicationCodes.length &&
-        addIssueQuotations(
-          await coaServices
-            .getQuotationsByPublicationCodes(actualNewPublicationCodes)
-            .then((data) =>
-              data.reduce(
-                (issueAcc, issue) => ({
-                  ...issueAcc,
-                  [`${issue.publicationcode} ${issue.issuenumber}`]: {
-                    min: issue.estimationMin,
-                    max: issue.estimationMax,
-                  },
-                }),
-                {} as { [issuecode: string]: InducksIssueQuotationSimple },
-              ),
-            ),
-        )
+
+      const data = await coaServices.getQuotationsByPublicationCodes(
+        actualNewPublicationCodes,
       );
+
+      if (data.quotations) {
+        addIssueQuotations(
+          data.quotations.reduce(
+            (issueAcc, issue) => ({
+              ...issueAcc,
+              [`${issue.publicationcode} ${issue.issuenumber}`]: {
+                min: issue.estimationMin,
+                max: issue.estimationMax,
+              },
+            }),
+            {} as { [issuecode: string]: InducksIssueQuotationSimple },
+          ),
+        );
+      } else {
+        console.error(data.error);
+      }
     },
     fetchPublicationNamesFromCountry = async (countrycode: string) =>
       publicationNamesFullCountries.value.includes(countrycode)
@@ -232,20 +234,24 @@ export const coa = defineStore("coa", () => {
         ),
       ];
       if (newPublicationCodes.length) {
-        addIssueNumbers(
-          (
-            await coaServices.getIssuesByPublicationCodes(newPublicationCodes)
-          ).reduce(
-            (acc, issue) => ({
-              ...acc,
-              [issue.publicationcode]: [
-                ...(acc[issue.publicationcode] || []),
-                issue.issuenumber,
-              ],
-            }),
-            {} as typeof issueNumbers.value,
-          ),
-        );
+        const data =
+          await coaServices.getIssuesByPublicationCodes(newPublicationCodes);
+        if (data.error) {
+          console.error(data);
+        } else {
+          addIssueNumbers(
+            data.issues.reduce<typeof issueNumbers.value>(
+              (acc, issue) => ({
+                ...acc,
+                [issue.publicationcode]: [
+                  ...(acc[issue.publicationcode] || []),
+                  issue.issuenumber,
+                ],
+              }),
+              {},
+            ),
+          );
+        }
       }
     },
     fetchIssueCodesDetails = async (issueCodes: string[]) => {

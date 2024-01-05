@@ -7,7 +7,7 @@ export interface Services {
     username: string,
     callback: (
       value: Errorable<
-        issue[],
+        {issues: issue[]},
         "User not found" | "This user does not allow sharing"
       >
     ) => void

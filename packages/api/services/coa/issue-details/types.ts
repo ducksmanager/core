@@ -21,7 +21,7 @@ export default interface IssueDetails {
   getIssueCoverDetails: (
     publicationCodes: string[],
     callback: (
-      value: Errorable<Record<string, IssueCoverDetails>, "Too many requests">
+      value: Errorable<{covers: Record<string, IssueCoverDetails>}, "Too many requests">
     ) => void
   ) => void;
   getIssuesByCode: (
