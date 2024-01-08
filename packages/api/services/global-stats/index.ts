@@ -7,10 +7,10 @@ import { Prisma } from "~prisma-clients/client_dm";
 
 import { OptionalAuthMiddleware } from "../auth/util";
 import { getMedalPoints } from "../collection/util";
-import { NamespaceEndpoint, Services } from "./types";
+import  Services from "./types";
 
 export default (io: Server) => {
-  (io.of(NamespaceEndpoint) as Namespace<Services>)
+  (io.of(Services.namespaceEndpoint) as Namespace<Services>)
     .use(OptionalAuthMiddleware)
     .on("connection", (socket) => {
       socket.on("getBookcaseContributors", async (callback) =>

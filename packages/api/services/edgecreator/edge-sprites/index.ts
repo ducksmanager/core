@@ -4,7 +4,7 @@ import { Socket } from "socket.io";
 import { prismaDm } from "~/prisma";
 import { edge } from "~prisma-clients/client_dm";
 
-import { Services } from "../types";
+import Services from "../types";
 const SPRITE_SIZES = [10, 20, 50, 100, "full"];
 const MAX_SPRITE_SIZE = 100;
 

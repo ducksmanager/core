@@ -1,7 +1,7 @@
 import { collectionServices } from "~/composables/useSocket";
 import type { requestedIssue } from "~prisma-clients/client_dm";
 import { issueWithPublicationcode } from "~prisma-clients/extended/dm.extends";
-import { Services as CollectionServices } from "~services/collection/types";
+import CollectionServices from "~services/collection/types";
 import { EventReturnType } from "~services/types";
 
 export const marketplace = defineStore("marketplace", () => {

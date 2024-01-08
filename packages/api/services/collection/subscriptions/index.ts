@@ -3,7 +3,7 @@ import { Socket } from "socket.io";
 import { EditSubscription } from "~dm-types/EditSubscription";
 import prismaDm from "~prisma-clients/extended/dm.extends";
 
-import { Services } from "../types";
+import Services from "../types";
 export default (socket: Socket<Services>) => {
   socket.on("getSubscriptions", async (callback) =>
     prismaDm.subscription

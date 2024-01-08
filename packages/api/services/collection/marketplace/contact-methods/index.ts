@@ -3,7 +3,7 @@ import { Socket } from "socket.io";
 import { prismaDm } from "~/prisma";
 import { userOptionType } from "~prisma-clients/client_dm";
 
-import { Services } from "../../types";
+import Services from "../../types";
 import { getIssuesForSale } from "..";
 
 export default (socket: Socket<Services>) => {

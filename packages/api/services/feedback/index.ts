@@ -3,10 +3,10 @@ import { Namespace, Server } from "socket.io";
 import feedbackSent from "~/emails/feedback-sent";
 import { prismaDm } from "~/prisma";
 
-import { NamespaceEndpoint, Services } from "./types";
+import Services from "./types";
 
 export default (io: Server) => {
-  (io.of(NamespaceEndpoint) as Namespace<Services>).on(
+  (io.of(Services.namespaceEndpoint) as Namespace<Services>).on(
     "connection",
     async (socket) => {
       socket.on("sendFeedback", async (feedbackMessage, callback) => {

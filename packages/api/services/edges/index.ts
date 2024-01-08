@@ -6,10 +6,10 @@ import { EdgeWithModelId } from "~dm-types/EdgeWithModelId";
 import { WantedEdge } from "~dm-types/WantedEdge";
 import { edgeModel } from "~prisma-clients/client_edgecreator";
 
-import { NamespaceEndpoint, Services } from "./types";
+import Services from "./types";
 
 export default (io: Server) => {
-  (io.of(NamespaceEndpoint) as Namespace<Services>).on(
+  (io.of(Services.namespaceEndpoint) as Namespace<Services>).on(
     "connection",
     (socket) => {
       socket.on("getWantedEdges", async (callback) =>

@@ -2,7 +2,7 @@ import { Socket } from "socket.io";
 
 import { prismaCoa } from "~/prisma";
 import { SimpleIssue } from "~dm-types/SimpleIssue";
-import { Services } from "~services/coa/types";
+import Services  from "~services/coa/types";
 
 export default (socket: Socket<Services>) => {
   socket.on("decompose", (issueCodes, callback) =>

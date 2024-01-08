@@ -1,13 +1,15 @@
 import { Errorable } from "../types";
 
-export interface Services {
-  forgot: (token: string, callback: (data: { error?: string }) => void) => void;
-  requestTokenForForgotPassword: (
+export default abstract class {
+  static namespaceEndpoint: string = "/auth";
+
+  abstract forgot: (token: string, callback: (data: { error?: string }) => void) => void;
+  abstract requestTokenForForgotPassword: (
     email: string,
     callback: (data: Errorable<{ token: string }, "Invalid email">) => void
   ) => void;
 
-  changePassword: (
+  abstract changePassword: (
     data: { password: string; password2: string; token: string },
     callback: (
       value: Errorable<
@@ -20,5 +22,3 @@ export interface Services {
     ) => void
   ) => void;
 }
-
-export const NamespaceEndpoint = "/auth";

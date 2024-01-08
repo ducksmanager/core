@@ -69,7 +69,7 @@ import {
 import { Bar } from "vue-chartjs";
 
 import { statsServices } from "~/composables/useSocket";
-import { Services as StatsServices } from "~services/stats/types";
+import StatsServices from "~services/stats/types";
 import { EventReturnType } from "~services/types";
 
 Chart.register(

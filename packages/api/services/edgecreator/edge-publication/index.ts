@@ -8,7 +8,7 @@ import {
   userContribution,
 } from "~prisma-clients/client_dm";
 
-import { Services } from "../types";
+import Services from "../types";
 export default (socket: Socket<Services>) => {
   socket.on(
     "publishEdge",

@@ -2,8 +2,10 @@ import { issue } from "~prisma-clients/client_dm";
 
 import { Errorable } from "../types";
 
-export interface Services {
-  getPublicCollection: (
+export default abstract class {
+  static namespaceEndpoint = "/public-collection";
+  
+  abstract getPublicCollection: (
     username: string,
     callback: (
       value: Errorable<
@@ -14,4 +16,3 @@ export interface Services {
   ) => void;
 }
 
-export const NamespaceEndpoint = "/public-collection";

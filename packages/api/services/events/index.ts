@@ -23,10 +23,10 @@ import {
 import { MedalEvent } from "~dm-types/events/MedalEvent";
 import { SignupEvent } from "~dm-types/events/SignupEvent";
 
-import { NamespaceEndpoint, Services } from "./types";
+import Services from "./types";
 
 export default (io: Server) => {
-  (io.of(NamespaceEndpoint) as Namespace<Services>).on(
+  (io.of(Services.namespaceEndpoint) as Namespace<Services>).on(
     "connection",
     (socket) => {
       socket.on("getEvents", async (callback) => getEvents().then(callback));

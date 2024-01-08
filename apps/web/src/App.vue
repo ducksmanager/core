@@ -3,16 +3,22 @@
 </template>
 
 <script setup lang="ts">
+import { buildWebStorage } from "axios-cache-interceptor";
 import Cookies from "js-cookie";
+
+import {
+  cacheStorage,
+  clearSessionFn,
+  getTokenFn,
+} from "~/composables/useSocket";
 
 const collectionStore = collection();
 
 onBeforeMount(() => {
-  collectionStore.setApi({
-    clearSessionFn: () => Promise.resolve(Cookies.remove("token")),
-    sessionExistsFn: () =>
-      Promise.resolve(typeof Cookies.get("token") === "string"),
-  });
+  getTokenFn.value = () => Promise.resolve(Cookies.get("token"));
+  clearSessionFn.value = () => Promise.resolve(Cookies.remove("token"));
+  cacheStorage.value = buildWebStorage(sessionStorage);
+
   collectionStore.loadUser();
 });
 </script>

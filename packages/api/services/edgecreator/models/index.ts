@@ -3,7 +3,7 @@ import { Socket } from "socket.io";
 import { prismaDm, prismaEdgeCreator } from "~/prisma";
 import { ModelSteps } from "~dm-types/ModelSteps";
 
-import { Services } from "../types";
+import Services from "../types";
 export default (socket: Socket<Services>) => {
   socket.on("getUnassignedEdges", async (callback) =>
     prismaEdgeCreator.edgeModel

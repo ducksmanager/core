@@ -1,7 +1,7 @@
 import { coaServices, collectionServices } from "~/composables/useSocket";
 import { authorUser } from "~prisma-clients/client_dm";
-import { Services as CoaServices } from "~services/coa/types";
-import { Services as CollectionServices } from "~services/collection/types";
+import CoaServices from "~services/coa/types";
+import CollectionServices from "~services/collection/types";
 import { EventReturnType } from "~services/types";
 
 export const stats = defineStore("stats", () => {

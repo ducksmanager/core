@@ -7,10 +7,10 @@ import issues from "./issues";
 import publications from "./publications";
 import quotations from "./quotations";
 import stories from "./stories";
-import { Services } from "./types";
+import Services from "./types";
 
 export default (io: Server) => {
-  (io.of("/coa") as Namespace<Services>).on("connection", (socket) => {
+  (io.of(Services.namespaceEndpoint) as Namespace<Services>).on("connection", (socket) => {
     countries(socket);
     publications(socket);
     issues(socket);

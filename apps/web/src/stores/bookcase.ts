@@ -1,6 +1,6 @@
 import { bookcaseServices } from "~/composables/useSocket";
 import { BookcaseEdge } from "~dm-types/BookcaseEdge";
-import { Services as BookcaseServices } from "~services/bookcase/types";
+import BookcaseServices from "~services/bookcase/types";
 import { EventReturnType } from "~services/types";
 
 import { collection } from "./collection";

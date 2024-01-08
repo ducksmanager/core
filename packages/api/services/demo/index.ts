@@ -7,10 +7,10 @@ import { user } from "~prisma-clients/client_dm";
 
 import { getHashedPassword, loginAs } from "../auth/util";
 import { conditionToEnum } from "../collection/issues/util";
-import { NamespaceEndpoint, Services } from "./types";
+import Services from "./types";
 
 export default (io: Server) => {
-  (io.of(NamespaceEndpoint) as Namespace<Services>).on(
+  (io.of(Services.namespaceEndpoint) as Namespace<Services>).on(
     "connection",
     (socket) => {
       socket.on("loginAsDemo", async (callback) => {

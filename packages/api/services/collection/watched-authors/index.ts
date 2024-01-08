@@ -2,7 +2,7 @@ import { Socket } from "socket.io";
 
 import { prismaDm } from "~/prisma";
 
-import { Services } from "../types";
+import Services from "../types";
 const maxWatchedAuthors = 5;
 
 export default (socket: Socket<Services>) => {

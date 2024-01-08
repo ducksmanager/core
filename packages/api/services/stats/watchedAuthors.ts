@@ -3,7 +3,7 @@ import { Socket } from "socket.io";
 import { prismaDmStats } from "~/prisma";
 
 import { getAuthorFullNames } from "../coa/authors";
-import { Services } from "./types";
+import Services from "./types";
 
 export interface AuthorDetails {
   personcode: string;

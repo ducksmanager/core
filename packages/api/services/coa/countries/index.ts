@@ -3,7 +3,7 @@ import { Socket } from "socket.io";
 import { prismaCoa } from "~/prisma";
 import { Prisma } from "~prisma-clients/client_coa";
 
-import { Services } from "../types";
+import Services from "../types";
 
 export default (socket: Socket<Services>) => {
   socket.on("getCountryList", (locale, countryCodes, callback) =>

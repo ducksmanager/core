@@ -1,5 +1,5 @@
-export interface Services {
-  sendFeedback: (feedback: string, callback: () => void) => void;
+export default abstract class {
+  static namespaceEndpoint = "/feedback";
+  abstract sendFeedback: (feedback: string, callback: () => void) => void;
 }
 
-export const NamespaceEndpoint = "/feedback";

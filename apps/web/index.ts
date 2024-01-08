@@ -3,6 +3,12 @@ import StarRating from "./src/components/StarRating.vue";
 import Conditions from "./src/components/stats/ConditionsComponent.vue";
 import useCollection from "./src/composables/useCollection";
 import useMedal from "./src/composables/useMedal";
+import {
+  cacheStorage,
+  clearSessionFn,
+  coaServices,
+  getTokenFn,
+} from "./src/composables/useSocket";
 import { bookcase } from "./src/stores/bookcase";
 import { coa } from "./src/stores/coa";
 import { collection } from "./src/stores/collection";
@@ -25,6 +31,12 @@ export const components = {
 export const composables = {
   useCollection,
   useMedal,
+  useSocket: {
+    getTokenFn,
+    clearSessionFn,
+    cacheStorage,
+    coaServices,
+  },
 };
 
 export { default as i18n } from "./src/i18n";

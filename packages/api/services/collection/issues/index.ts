@@ -5,7 +5,7 @@ import { issue_condition } from "~prisma-clients/client_dm";
 import prismaDm from "~prisma-clients/extended/dm.extends";
 import { resetDemo } from "~services/demo";
 
-import { Services } from "../types";
+import Services from "../types";
 import {
   checkPurchaseIdsBelongToUser,
   conditionToEnum,

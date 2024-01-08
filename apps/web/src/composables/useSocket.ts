@@ -1,71 +1,25 @@
-import { buildWebStorage, CacheOptions } from "axios-cache-interceptor";
+import { CacheOptions } from "axios-cache-interceptor";
 import dayjs from "dayjs";
-import Cookies from "js-cookie";
 import { io, Socket } from "socket.io-client";
 import { AllButLast } from "socket.io-client/build/esm/socket";
 
-import {
-  NamespaceEndpoint as AuthNamespaceEndpoint,
-  Services as AuthServices,
-} from "~services/auth/types";
-import {
-  NamespaceEndpoint as BookcaseNamespaceEndpoint,
-  Services as BookcaseServices,
-} from "~services/bookcase/types";
-import {
-  NamespaceEndpoint as BookstoreNamespaceEndpoint,
-  Services as BookstoreServices,
-} from "~services/bookstores/types";
-import {
-  NamespaceEndpoint as CoaNamespaceEndpoint,
-  Services as CoaServices,
-} from "~services/coa/types";
-import {
-  NamespaceEndpoint as SubscriptionNamespaceEndpoint,
-  Services as SubscriptionServices,
-} from "~services/collection/types";
-import {
-  NamespaceEndpoint as CollectionNamespaceEndpoint,
-  Services as CollectionServices,
-} from "~services/collection/types";
-import {
-  NamespaceEndpoint as DemoNamespaceEndpoint,
-  Services as DemoServices,
-} from "~services/demo/types";
-import {
-  NamespaceEndpoint as EdgeCreatorNamespaceEndpoint,
-  Services as EdgeCreatorServices,
-} from "~services/edgecreator/types";
-import {
-  NamespaceEndpoint as EdgesNamespaceEndpoint,
-  Services as EdgesServices,
-} from "~services/edges/types";
-import {
-  NamespaceEndpoint as EventsNamespaceEndpoint,
-  Services as EventsServices,
-} from "~services/events/types";
-import {
-  NamespaceEndpoint as GlobalStatsNamespaceEndpoint,
-  Services as GlobalStatsServices,
-} from "~services/global-stats/types";
-import {
-  NamespaceEndpoint as LoginNamespaceEndpoint,
-  Services as LoginServices,
-} from "~services/login/types";
-import {
-  NamespaceEndpoint as PresentationTextNamespaceEndpoint,
-  Services as PresentationTextServices,
-} from "~services/presentation-text/types";
-import {
-  NamespaceEndpoint as PublicCollectionNamespaceEndpoint,
-  Services as PublicCollectionServices,
-} from "~services/public-collection/types";
-import {
-  NamespaceEndpoint as StatsNamespaceEndpoint,
-  Services as StatsServices,
-} from "~services/stats/types";
+import AuthServices from "~services/auth/types";
+import BookcaseServices from "~services/bookcase/types";
+import BookstoreServices from "~services/bookstores/types";
+import CoaServices from "~services/coa/types";
+import SubscriptionServices from "~services/collection/types";
+import CollectionServices from "~services/collection/types";
+import DemoServices from "~services/demo/types";
+import EdgeCreatorServices from "~services/edgecreator/types";
+import EdgesServices from "~services/edges/types";
+import EventsServices from "~services/events/types";
+import GlobalStatsServices from "~services/global-stats/types";
+import LoginServices from "~services/login/types";
+import PresentationTextServices from "~services/presentation-text/types";
+import PublicCollectionServices from "~services/public-collection/types";
+import StatsServices from "~services/stats/types";
 import { EventReturnTypeIncludingError } from "~services/types";
-type SocketCacheOptions = Pick<CacheOptions, "storage" | "ttl">;
+type SocketCacheOptions = Pick<CacheOptions, "ttl"> & { cached: boolean };
 
 interface EventsMap {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -80,6 +34,18 @@ type EventCalls<S extends EventsMap> = {
   ) => Promise<EventReturnTypeIncludingError<S[EventName]>>;
 };
 
+export const getTokenFn = ref((): Promise<string | undefined> => {
+  throw new Error("getTokenFn must be defined");
+});
+
+export const clearSessionFn = ref((): Promise<void> => {
+  throw new Error("clearSessionFn must be defined");
+});
+
+export const cacheStorage = ref(
+  undefined as CacheOptions["storage"] | undefined,
+);
+
 const useSocket = <Services extends EventsMap>(
   namespaceName: string,
   cacheOptions?: Required<SocketCacheOptions>,
@@ -87,10 +53,17 @@ const useSocket = <Services extends EventsMap>(
   const socket = io(import.meta.env.VITE_SOCKET_URL + namespaceName, {
     auth: (cb) => {
       cb({
-        token: Cookies.get("token"),
+        token: getTokenFn.value(),
       });
     },
   });
+
+  let storage: CacheOptions["storage"] | undefined;
+  if (cacheOptions?.cached) {
+    if (!storage) {
+      throw new Error("storage must be defined");
+    }
+  }
 
   return new Proxy<EventCalls<Services>>({} as EventCalls<Services>, {
     get:
@@ -101,12 +74,12 @@ const useSocket = <Services extends EventsMap>(
         let data;
         if (cacheOptions) {
           const cacheKey = `${event} ${JSON.stringify(args)}`;
-          const cacheData = await cacheOptions.storage.get(cacheKey);
+          const cacheData = await storage!.get(cacheKey);
           if (cacheData !== undefined) {
             return cacheData as Awaited<ReturnType<Socket["emitWithAck"]>>;
           }
           data = await socket.emitWithAck(event, ...args);
-          cacheOptions.storage.set(cacheKey, data);
+          storage!.set(cacheKey, data);
         } else {
           data = await socket.emitWithAck(event, ...args);
         }
@@ -131,47 +104,60 @@ const until4am = () => {
 };
 
 export const publicCollectionServices = useSocket<PublicCollectionServices>(
-  PublicCollectionNamespaceEndpoint,
+  PublicCollectionServices.namespaceEndpoint,
 );
-export const loginServices = useSocket<LoginServices>(LoginNamespaceEndpoint);
+export const loginServices = useSocket<LoginServices>(
+  LoginServices.namespaceEndpoint,
+);
 
 export const bookcaseServices = useSocket<BookcaseServices>(
-  BookcaseNamespaceEndpoint,
+  BookcaseServices.namespaceEndpoint,
 );
-export const demoServices = useSocket<DemoServices>(DemoNamespaceEndpoint);
-export const statsServices = useSocket<StatsServices>(StatsNamespaceEndpoint);
+export const demoServices = useSocket<DemoServices>(
+  DemoServices.namespaceEndpoint,
+);
+export const statsServices = useSocket<StatsServices>(
+  StatsServices.namespaceEndpoint,
+);
 
-export const authServices = useSocket<AuthServices>(AuthNamespaceEndpoint);
+export const authServices = useSocket<AuthServices>(
+  AuthServices.namespaceEndpoint,
+);
 export const edgeCreatorServices = useSocket<EdgeCreatorServices>(
-  EdgeCreatorNamespaceEndpoint,
+  EdgeCreatorServices.namespaceEndpoint,
 );
 
 export const presentationTextServices = useSocket<PresentationTextServices>(
-  PresentationTextNamespaceEndpoint,
+  PresentationTextServices.namespaceEndpoint,
 );
-export const edgesServices = useSocket<EdgesServices>(EdgesNamespaceEndpoint);
+export const edgesServices = useSocket<EdgesServices>(
+  EdgesServices.namespaceEndpoint,
+);
 
-export const coaServices = useSocket<CoaServices>(CoaNamespaceEndpoint, {
-  storage: buildWebStorage(sessionStorage),
-  ttl: until4am(),
-});
-export const globalStatsServices = useSocket<GlobalStatsServices>(
-  GlobalStatsNamespaceEndpoint,
+export const coaServices = useSocket<CoaServices>(
+  CoaServices.namespaceEndpoint,
   {
-    storage: buildWebStorage(sessionStorage),
+    cached: true,
+    ttl: until4am(),
+  },
+);
+export const globalStatsServices = useSocket<GlobalStatsServices>(
+  GlobalStatsServices.namespaceEndpoint,
+  {
+    cached: true,
     ttl: oneHour(),
   },
 );
 export const eventsServices = useSocket<EventsServices>(
-  EventsNamespaceEndpoint,
+  EventsServices.namespaceEndpoint,
 );
 export const bookstoreServices = useSocket<BookstoreServices>(
-  BookstoreNamespaceEndpoint,
+  BookcaseServices.namespaceEndpoint,
 );
 export const collectionServices = useSocket<CollectionServices>(
-  CollectionNamespaceEndpoint,
+  CollectionServices.namespaceEndpoint,
 );
 
 export const subscriptionServices = useSocket<SubscriptionServices>(
-  SubscriptionNamespaceEndpoint,
+  SubscriptionServices.namespaceEndpoint,
 );

@@ -1,7 +1,9 @@
 import { Errorable } from "../types";
 
-export interface Services {
-  getDbStatus: (
+export default abstract class {
+  static namespaceEndpoint = "/status";
+
+  abstract getDbStatus: (
     callback: (
       value: Errorable<
         void,
@@ -9,7 +11,7 @@ export interface Services {
       >
     ) => void
   ) => void;
-  getPastecStatus: (
+  abstract getPastecStatus: (
     callback: (
       value: Errorable<
         { numberOfImages: number },
@@ -17,7 +19,7 @@ export interface Services {
       >
     ) => void
   ) => void;
-  getPastecSearchStatus: (
+  abstract getPastecSearchStatus: (
     callback: (
       value: Errorable<
         { numberOfImages: number },
@@ -28,5 +30,3 @@ export interface Services {
     ) => void
   ) => void;
 }
-
-export const NamespaceEndpoint = "/status";

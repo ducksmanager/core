@@ -7,7 +7,7 @@ import { SimpleIssueWithPublication } from "~dm-types/SimpleIssueWithPublication
 import { Prisma as PrismaCoa } from "~prisma-clients/client_coa";
 import { cover } from "~prisma-clients/client_cover_info";
 
-import { Services } from "../types";
+import Services from "../types";
 export default (socket: Socket<Services>) => {
   socket.on("getIssuesWithTitles", async (publicationcode, callback) =>
     prismaCoa.inducks_issue

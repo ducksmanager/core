@@ -1,9 +1,3 @@
-import useCollection from "~/composables/useCollection";
-import {
-  collectionServices,
-  loginServices,
-  statsServices,
-} from "~/composables/useSocket";
 import {
   CollectionUpdateMultipleIssues,
   CollectionUpdateSingleIssue,
@@ -14,10 +8,16 @@ import {
   issueWithPublicationcode,
   subscriptionWithPublicationcode,
 } from "~prisma-clients/extended/dm.extends";
-import { Services as CollectionServices } from "~services/collection/types";
-import { Services as StatsServices } from "~services/stats/types";
+import CollectionServices from "~services/collection/types";
+import StatsServices from "~services/stats/types";
 import { EventReturnType } from "~services/types";
 
+import useCollection from "../composables/useCollection";
+import {
+  collectionServices,
+  loginServices,
+  statsServices,
+} from "../composables/useSocket";
 import { bookcase } from "./bookcase";
 
 export type IssueWithPublicationcodeOptionalId = Omit<

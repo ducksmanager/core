@@ -10,13 +10,13 @@ import marketplace from "./marketplace";
 import options from "./options";
 import purchases from "./purchases";
 import subscriptions from "./subscriptions";
-import { NamespaceEndpoint, Services } from "./types";
+import Services from "./types";
 import user from "./user";
 import { getUser } from "./user/util";
 import watchedAuthors from "./watched-authors";
 
 export default (io: Server) => {
-  (io.of(NamespaceEndpoint) as Namespace<Services>)
+  (io.of(Services.namespaceEndpoint) as Namespace<Services>)
     .use(RequiredAuthMiddleware)
     .on("connection", (socket) => {
       watchedAuthors(socket);

@@ -3,9 +3,10 @@ import { bookstoreComment } from "~prisma-clients/client_dm";
 
 import { Errorable } from "../types";
 
-export interface Services {
-  getActiveBookstores: (callback: (value: SimpleBookstore[]) => void) => void;
-  createBookstoreComment: (
+export default abstract class {
+  static namespaceEndpoint: string = "/bookstores";
+  abstract getActiveBookstores: (callback: (value: SimpleBookstore[]) => void) => void;
+  abstract createBookstoreComment: (
     data: SimpleBookstore,
     callback: (
       value: Errorable<
@@ -14,10 +15,9 @@ export interface Services {
       >
     ) => void
   ) => void;
-  approveBookstoreComment: (
+  abstract approveBookstoreComment: (
     id: number,
     callback: (data: Errorable<void, "Invalid bookstore comment ID">) => void
   ) => void;
 }
 
-export const NamespaceEndpoint = "/bookstores";

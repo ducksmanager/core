@@ -1,7 +1,7 @@
 import { eventsServices, globalStatsServices } from "~/composables/useSocket";
 import { BookcaseContributor } from "~dm-types/BookcaseContributor";
 import { AbstractEvent } from "~dm-types/events/AbstractEvent";
-import { Services as GlobalStatsServices } from "~services/global-stats/types";
+import GlobalStatsServices from "~services/global-stats/types";
 import { EventReturnType } from "~services/types";
 
 export const users = defineStore("users", () => {

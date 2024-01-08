@@ -2,7 +2,7 @@ import { Socket } from "socket.io";
 
 import { dmExtends } from "~prisma-clients/extended";
 
-import { Services } from "../types";
+import Services from "../types";
 import { checkValidBookcaseUser } from "../util";
 
 const prismaDm = dmExtends.default;

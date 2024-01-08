@@ -6,7 +6,7 @@ import PresentationSentenceRequested from "~emails/presentation-sentence-request
 import { user } from "~prisma-clients/client_dm";
 import { generateAccessToken, getHashedPassword } from "~services/auth/util";
 
-import { Services } from "../types";
+import Services from "../types";
 import {
   DiscordIdValidation,
   EmailCreationValidation,

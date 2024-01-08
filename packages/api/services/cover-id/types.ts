@@ -2,8 +2,10 @@ import { CoverSearchResults } from "~dm-types/CoverSearchResults";
 
 import { Errorable } from "../types";
 
-export interface Services {
-  searchFromCover: (
+export default abstract class {
+  static namespaceEndpoint: string = "/cover-id";
+
+  abstract searchFromCover: (
     base64: string,
     callback: (
       value: Errorable<
@@ -12,10 +14,8 @@ export interface Services {
       >
     ) => void
   ) => void;
-  downloadCover: (
+  abstract downloadCover: (
     coverId: number,
     callback: (value: Errorable<string, "Error">) => void
   ) => void;
 }
-
-export const NamespaceEndpoint = "/cover-id";

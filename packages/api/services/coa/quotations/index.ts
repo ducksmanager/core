@@ -2,7 +2,7 @@ import { Socket } from "socket.io";
 
 import { prismaCoa } from "~/prisma";
 
-import { Services } from "../types";
+import Services from "../types";
 const PUBLICATION_CODE_REGEX = /[a-z]+\/[-A-Z0-9]+/g;
 const ISSUE_CODE_REGEX = /[a-z]+\/[-A-Z0-9 ]+/g;
 

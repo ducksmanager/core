@@ -8,7 +8,7 @@ import options from "./options/index";
 import { authenticated as authenticatedOptions } from "./options/index";
 import order from "./order/index";
 import { authenticated as authenticatedOrder } from "./order/index";
-import { NamespaceEndpoint, Services } from "./types";
+import Services from "./types";
 import { checkValidBookcaseUser } from "./util";
 
 export enum COUNTRY_CODE_OPTION {
@@ -21,7 +21,7 @@ type BookcaseEdgeRaw = Omit<BookcaseEdge, "sprites"> & {
 };
 
 export default (io: Server) => {
-  const namespace = io.of(NamespaceEndpoint) as Namespace<Services>;
+  const namespace = io.of(Services.namespaceEndpoint) as Namespace<Services>;
   namespace.use(RequiredAuthMiddleware).on("connection", (socket) => {
     authenticatedOptions(socket);
     authenticatedOrder(socket);

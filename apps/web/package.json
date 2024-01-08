@@ -5,7 +5,7 @@
     "node": ">=18.0.0 <19.0.0"
   },
   "scripts": {
-    "web": "concurrently -p \"[dm-{name}]\" --kill-others-on-fail -n web,api \"pnpm -F ~web dev\" \"pnpm -F ~api dev\"",
+    "web": "concurrently -p \"[dm-{name}]\" --kill-others-on-fail -n front,api \"pnpm -F ~web dev\" \"pnpm -F ~api dev\"",
     "build": "vite build",
     "lint": "eslint --fix --cache .",
     "preview": "vite preview",
