@@ -1,3 +1,4 @@
+import useCollection from "~/composables/useCollection";
 import {
   collectionServices,
   loginServices,
@@ -7,29 +8,29 @@ import {
   CollectionUpdateMultipleIssues,
   CollectionUpdateSingleIssue,
 } from "~dm-types/CollectionUpdate";
-import { IssueWithPublicationcode } from "~dm-types/IssueWithPublicationcode";
 import { ScopedError } from "~dm-types/ScopedError";
-import { authorUser, purchase, subscription } from "~prisma-clients/client_dm";
+import { authorUser, purchase } from "~prisma-clients/client_dm";
+import {
+  issueWithPublicationcode,
+  subscriptionWithPublicationcode,
+} from "~prisma-clients/extended/dm.extends";
 import { Services as CollectionServices } from "~services/collection/types";
 import { Services as StatsServices } from "~services/stats/types";
 import { EventReturnType } from "~services/types";
 
-import useCollection from "../composables/useCollection";
 import { bookcase } from "./bookcase";
 
 export type IssueWithPublicationcodeOptionalId = Omit<
-  IssueWithPublicationcode,
+  issueWithPublicationcode,
   "id"
 > & {
   id: number | null;
 };
 
 export type SubscriptionTransformed = Omit<
-  subscription,
+  subscriptionWithPublicationcode,
   "country" | "magazine"
-> & {
-  publicationcode: string;
-};
+>;
 
 export type SubscriptionTransformedStringDates = Omit<
   SubscriptionTransformed,
@@ -47,7 +48,7 @@ let sessionExistsFn: () => Promise<boolean>,
   clearSessionFn: () => Promise<void>;
 
 export const collection = defineStore("collection", () => {
-  const issues = ref(null as IssueWithPublicationcode[] | null);
+  const issues = ref(null as issueWithPublicationcode[] | null);
 
   const collectionUtils = useCollection(issues),
     watchedPublicationsWithSales = ref(null as string[] | null),
@@ -185,10 +186,7 @@ export const collection = defineStore("collection", () => {
     loadCollection = async (afterUpdate = false) => {
       if (afterUpdate || (!isLoadingCollection.value && !issues.value)) {
         isLoadingCollection.value = true;
-        issues.value = (await collectionServices.getIssues()).map((issue) => ({
-          ...issue,
-          publicationcode: `${issue.country}/${issue.magazine}`,
-        }));
+        issues.value = await collectionServices.getIssues();
         isLoadingCollection.value = false;
       }
     },

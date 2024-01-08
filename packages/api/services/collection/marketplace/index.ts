@@ -1,8 +1,7 @@
 import { Socket } from "socket.io";
 
-import { IssueWithPublicationcode } from "~dm-types/IssueWithPublicationcode";
 import { issue } from "~prisma-clients/client_dm";
-import prismaDm from "~prisma-clients/extended/dm.extends";
+import prismaDm, { issueWithPublicationcode } from "~prisma-clients/extended/dm.extends";
 
 import { Services } from "../types";
 import contactMethods from "./contact-methods";
@@ -134,7 +133,7 @@ export const getIssuesForSale = async (buyerId: number) =>
       })
     )
     .then((issuesForSale) =>
-      issuesForSale.reduce<Record<string, IssueWithPublicationcode[]>>(
+      issuesForSale.reduce<Record<string, issueWithPublicationcode[]>>(
         (acc, issue) => ({
           ...acc,
           [issue.publicationcode]: [

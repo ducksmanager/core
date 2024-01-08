@@ -1,5 +1,5 @@
-import { IssueWithPublicationcode } from "~dm-types/IssueWithPublicationcode";
 import { issue_condition } from "~prisma-clients/client_dm";
+import { issueWithPublicationcode } from "~prisma-clients/extended/dm.extends";
 
 export type QuotedIssue = {
   publicationcode: string;
@@ -9,7 +9,7 @@ export type QuotedIssue = {
   estimationGivenCondition: number;
 };
 
-export default (issues: Ref<IssueWithPublicationcode[] | null>) => {
+export default (issues: Ref<issueWithPublicationcode[] | null>) => {
   const total = computed(() => issues.value?.length);
   const mostPossessedPublication = computed(
     () =>
@@ -48,12 +48,12 @@ export default (issues: Ref<IssueWithPublicationcode[] | null>) => {
               [issuecode]: [...(acc[issuecode] || []), issue],
             };
           },
-          {} as { [issuecode: string]: IssueWithPublicationcode[] },
+          {} as { [issuecode: string]: issueWithPublicationcode[] },
         ),
     ),
     duplicateIssues = computed(
       (): {
-        [issuecode: string]: IssueWithPublicationcode[];
+        [issuecode: string]: issueWithPublicationcode[];
       } =>
         (issuesByIssueCode.value &&
           Object.keys(issuesByIssueCode.value).reduce(

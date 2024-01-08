@@ -1,10 +1,9 @@
 import { publicCollectionServices } from "~/composables/useSocket";
-import { IssueWithPublicationcode } from "~dm-types/IssueWithPublicationcode";
 
 import useCollection from "../composables/useCollection";
 
 export const publicCollection = defineStore("publicCollection", () => {
-  const issues = ref(null as IssueWithPublicationcode[] | null),
+  const issues = ref(null as issueWithPublicationcode[] | null),
     publicUsername = ref(null as string | null),
     publicationUrlRoot = computed(
       () => `/collection/user/${publicUsername.value || ""}`,

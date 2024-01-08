@@ -1,5 +1,5 @@
-import { IssueWithPublicationcode } from "~dm-types/IssueWithPublicationcode";
 import { requestedIssue } from "~prisma-clients/client_dm";
+import { issueWithPublicationcode } from "~prisma-clients/extended/dm.extends";
 import { Errorable } from "~services/types";
 
 import ContactMethods from "./contact-methods/types";
@@ -22,6 +22,6 @@ export default interface WatchedAuthors extends ContactMethods {
   ) => void;
 
   getIssuesForSale: (
-    callback: (data: Record<string, IssueWithPublicationcode[]>) => void
+    callback: (data: Record<string, issueWithPublicationcode[]>) => void
   ) => void;
 }

@@ -1,8 +1,4 @@
-import {
-  buildWebStorage,
-  CacheOptions,
-  NotEmptyStorageValue,
-} from "axios-cache-interceptor";
+import { buildWebStorage, CacheOptions } from "axios-cache-interceptor";
 import dayjs from "dayjs";
 import Cookies from "js-cookie";
 import { io, Socket } from "socket.io-client";
@@ -69,7 +65,7 @@ import {
   Services as StatsServices,
 } from "~services/stats/types";
 import { EventReturnTypeIncludingError } from "~services/types";
-type SocketCacheOptions = Pick<CacheOptions, "storage" | "generateKey" | "ttl">;
+type SocketCacheOptions = Pick<CacheOptions, "storage" | "ttl">;
 
 interface EventsMap {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -86,7 +82,7 @@ type EventCalls<S extends EventsMap> = {
 
 const useSocket = <Services extends EventsMap>(
   namespaceName: string,
-  cacheOptions?: SocketCacheOptions,
+  cacheOptions?: Required<SocketCacheOptions>,
 ) => {
   const socket = io(import.meta.env.VITE_SOCKET_URL + namespaceName, {
     auth: (cb) => {
@@ -102,22 +98,17 @@ const useSocket = <Services extends EventsMap>(
       async (
         ...args: AllButLast<Parameters<Services[EventName]>>
       ): Promise<EventReturnTypeIncludingError<Services[EventName]>> => {
+        let data;
         if (cacheOptions) {
-          const cachedValue = await cacheOptions.storage!.get(
-            JSON.stringify(args),
-          );
-          if (cachedValue.state === "cached") {
-            return cachedValue.data as Awaited<
-              ReturnType<Socket["emitWithAck"]>
-            >;
+          const cacheKey = `${event} ${JSON.stringify(args)}`;
+          const cacheData = await cacheOptions.storage.get(cacheKey);
+          if (cacheData !== undefined) {
+            return cacheData as Awaited<ReturnType<Socket["emitWithAck"]>>;
           }
-        }
-        const data = await socket.emitWithAck(event, ...args);
-        if (cacheOptions) {
-          cacheOptions.storage?.set(
-            JSON.stringify(args),
-            data as NotEmptyStorageValue,
-          );
+          data = await socket.emitWithAck(event, ...args);
+          cacheOptions.storage.set(cacheKey, data);
+        } else {
+          data = await socket.emitWithAck(event, ...args);
         }
         return data;
       },
@@ -162,14 +153,12 @@ export const edgesServices = useSocket<EdgesServices>(EdgesNamespaceEndpoint);
 
 export const coaServices = useSocket<CoaServices>(CoaNamespaceEndpoint, {
   storage: buildWebStorage(sessionStorage),
-  generateKey: (event, ...args) => `${event} ${JSON.stringify(args)}`,
   ttl: until4am(),
 });
 export const globalStatsServices = useSocket<GlobalStatsServices>(
   GlobalStatsNamespaceEndpoint,
   {
     storage: buildWebStorage(sessionStorage),
-    generateKey: (event, ...args) => `${event} ${JSON.stringify(args)}`,
     ttl: oneHour(),
   },
 );

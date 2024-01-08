@@ -86,9 +86,9 @@
 <script setup lang="ts">
 import condition from "~/composables/useCondition";
 import { coaServices } from "~/composables/useSocket";
-import { IssueWithPublicationcode } from "~dm-types/IssueWithPublicationcode";
 import { SimpleIssue } from "~dm-types/SimpleIssue";
 import { SimpleStory } from "~dm-types/SimpleStory";
+import { issueWithPublicationcode } from "~prisma-clients/extended/dm.extends";
 
 const {
   withTitle = true,
@@ -115,7 +115,7 @@ let search = $ref("" as string);
 let storyResults = $ref(
   {} as {
     results: (SimpleStory & {
-      collectionIssue: IssueWithPublicationcode | null;
+      collectionIssue: issueWithPublicationcode | null;
     })[];
     hasMore: boolean;
   },

@@ -1,11 +1,9 @@
 
-import { subscription } from "~prisma-clients/client_dm";
-
-import { EditSubscription } from "../../../../types/EditSubscription";
+import { EditSubscription } from "~dm-types/EditSubscription";
+import { subscriptionWithPublicationcode } from "~prisma-clients/extended/dm.extends";
 
 export default interface User {
-  getSubscriptions: (callback: (data: (Omit<subscription, "startDate" | "endDate"> & {
-    publicationcode: string;
+  getSubscriptions: (callback: (data: (Omit<subscriptionWithPublicationcode, "startDate" | "endDate"> & {
     startDate: string;
     endDate: string;
   })[]) => void) => void;
