@@ -21,8 +21,8 @@ dependencies:
     specifier: ^1.20.2
     version: 1.20.2
   cloudinary:
-    specifier: ^1.41.0
-    version: 1.41.0
+    specifier: ^1.41.3
+    version: 1.41.3
   connect-busboy:
     specifier: ^1.0.0
     version: 1.0.0
@@ -1132,8 +1132,8 @@ packages:
       lodash: 4.17.21
     dev: false
 
-  /cloudinary@1.41.0:
-    resolution: {integrity: sha512-qFf2McjvILJITePf4VF1PrY/8c2zy+/q5FVV6V3VWrP/gpIZsusPqXL4QZ6ZKXibPRukzMYqsQEhaSQgJHKKow==}
+  /cloudinary@1.41.3:
+    resolution: {integrity: sha512-4o84y+E7dbif3lMns+p3UW6w6hLHEifbX/7zBJvaih1E9QNMZITENQ14GPYJC4JmhygYXsuuBb9bRA3xWEoOfg==}
     engines: {node: '>=0.6'}
     dependencies:
       cloudinary-core: 2.13.0(lodash@4.17.21)
