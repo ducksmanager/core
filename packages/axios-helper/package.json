@@ -7,7 +7,7 @@
     "build": "rm -rf dist && ./node_modules/.bin/tsc"
   },
   "devDependencies": {
-    "ts-node": "^10.9.1",
+    "ts-node": "^10.9.2",
     "typescript": "^5.3.2"
   },
   "peerDependencies": {
