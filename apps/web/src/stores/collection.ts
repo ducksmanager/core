@@ -44,9 +44,6 @@ export type purchaseWithStringDate = Omit<purchase, "date"> & {
   date: string;
 };
 
-let sessionExistsFn: () => Promise<boolean>,
-  clearSessionFn: () => Promise<void>;
-
 export const collection = defineStore("collection", () => {
   const issues = ref(null as issueWithPublicationcode[] | null);
 
@@ -335,13 +332,11 @@ export const collection = defineStore("collection", () => {
       if (!isLoadingUser.value && (afterUpdate || !user.value)) {
         isLoadingUser.value = true;
         try {
-          if (await sessionExistsFn()) {
-            const response = await collectionServices.getUser();
-            if ("error" in response) {
-              throw new Error(response.error);
-            } else {
-              user.value = response;
-            }
+          const response = await collectionServices.getUser();
+          if ("error" in response) {
+            throw new Error(response.error);
+          } else {
+            user.value = response;
           }
         } catch (e) {
           console.error(e);
@@ -354,13 +349,6 @@ export const collection = defineStore("collection", () => {
     };
   return {
     ...collectionUtils,
-    setApi: (params: {
-      sessionExistsFn: typeof sessionExistsFn;
-      clearSessionFn: typeof clearSessionFn;
-    }) => {
-      sessionExistsFn = params.sessionExistsFn;
-      clearSessionFn = params.clearSessionFn;
-    },
     issues,
     publicationUrlRoot,
     createPurchase,

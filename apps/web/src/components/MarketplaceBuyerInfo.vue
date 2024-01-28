@@ -10,9 +10,9 @@
         <template v-if="isBooked">{{ $t("Réservé pour") }}</template
         ><template v-else>{{ $t("Demandé par") }}</template
         >&nbsp;<UserPopover
-          v-if="buyerPoints?.[`${buyerId}`] && buyerStats?.[`${buyerId}`]"
-          :points="buyerPoints[`${buyerId}`]"
-          :stats="buyerStats[`${buyerId}`]"
+          v-if="buyerPoints?.[buyerId] && buyerStats?.[buyerId]"
+          :points="buyerPoints[buyerId]"
+          :stats="buyerStats[buyerId]"
         /></div
     ></template>
 
@@ -30,11 +30,10 @@ const { issueRequestsAsSeller } = storeToRefs(marketplace());
 const { points, stats } = storeToRefs(users());
 const { issuesInOnSaleStack } = storeToRefs(collection());
 
-const receivedRequests = $computed(
-  () =>
-    issueRequestsAsSeller.value?.filter(
-      ({ issueId: requestIssueId }) => requestIssueId === issueId,
-    ),
+const receivedRequests = $computed(() =>
+  issueRequestsAsSeller.value?.filter(
+    ({ issueId: requestIssueId }) => requestIssueId === issueId,
+  ),
 );
 
 const buyerPoints = $computed(
@@ -53,8 +52,8 @@ const buyerStats = $computed(
     ) || {},
 );
 
-const isOnSale = $computed(
-  () => issuesInOnSaleStack.value?.find(({ id }) => id === issueId),
+const isOnSale = $computed(() =>
+  issuesInOnSaleStack.value?.find(({ id }) => id === issueId),
 );
 </script>
 

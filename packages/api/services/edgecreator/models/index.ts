@@ -4,22 +4,13 @@ import { prismaDm, prismaEdgeCreator } from "~/prisma";
 import { ModelSteps } from "~dm-types/ModelSteps";
 
 import Services from "../types";
+import { edgeEditedByOthersFields,unassignedEdgeFields } from "../types";
+
 export default (socket: Socket<Services>) => {
   socket.on("getUnassignedEdges", async (callback) =>
     prismaEdgeCreator.edgeModel
       .findMany({
-        select: {
-          id: true,
-          country: true,
-          magazine: true,
-          issuenumber: true,
-          photos: {
-            include: {
-              elementImage: true,
-            },
-          },
-          contributors: true,
-        },
+        select: unassignedEdgeFields,
         where: {
           username: null,
           isActive: false,
@@ -31,12 +22,7 @@ export default (socket: Socket<Services>) => {
   socket.on("getEdgesEditedByOthers", async (callback) =>
     prismaEdgeCreator.edgeModel
       .findMany({
-        select: {
-          id: true,
-          country: true,
-          magazine: true,
-          issuenumber: true,
-        },
+        select: edgeEditedByOthersFields,
         where: {
           isActive: true,
           contributors: {

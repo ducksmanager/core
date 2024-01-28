@@ -4,10 +4,10 @@
     "node": ">=18.0.0 <19.0.0"
   },
   "dependencies": {
-    "husky": "^8.0.3"
+    "husky": "^9.0.6"
   },
   "scripts": {
     "build": "pnpm run -r build",
-    "prepare": "husky install"
+    "prepare": "husky"
   }
 }

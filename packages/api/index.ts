@@ -1,5 +1,5 @@
 import "module-alias/register";
-
+import { instrument } from "@socket.io/admin-ui";
 import * as Sentry from "@sentry/node";
 import dotenv from "dotenv";
 
@@ -43,10 +43,15 @@ Sentry.init({
 
   const io = new ServerWithUser({
     cors: {
-      origin: process.env.WEBSITE_ROOT,
+      origin: '*',
     },
   });
+
+  instrument(io, {
+    auth: false
+  });
   io.listen(4000);
+  console.log('WebSocket open on port 4000')
   io.use(OptionalAuthMiddleware);
   io.use((socket, next) => {
     next();

@@ -19,7 +19,7 @@ import PresentationTextServices from "~services/presentation-text/types";
 import PublicCollectionServices from "~services/public-collection/types";
 import StatsServices from "~services/stats/types";
 import { EventReturnTypeIncludingError } from "~services/types";
-type SocketCacheOptions = Pick<CacheOptions, "ttl"> & { cached: boolean };
+type SocketCacheOptions = Pick<CacheOptions, "ttl">;
 
 interface EventsMap {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -34,13 +34,11 @@ type EventCalls<S extends EventsMap> = {
   ) => Promise<EventReturnTypeIncludingError<S[EventName]>>;
 };
 
-export const getTokenFn = ref((): Promise<string | undefined> => {
-  throw new Error("getTokenFn must be defined");
-});
-
-export const clearSessionFn = ref((): Promise<void> => {
-  throw new Error("clearSessionFn must be defined");
-});
+export const session = ref<{
+  getToken: () => Promise<string | undefined>;
+  clearSession: () => Promise<void>;
+  sessionExists: () => Promise<boolean>;
+}>();
 
 export const cacheStorage = ref(
   undefined as CacheOptions["storage"] | undefined,
@@ -52,34 +50,35 @@ const useSocket = <Services extends EventsMap>(
 ) => {
   const socket = io(import.meta.env.VITE_SOCKET_URL + namespaceName, {
     auth: (cb) => {
+      if (!session.value) {
+        return;
+      }
       cb({
-        token: getTokenFn.value(),
+        token: session.value.getToken(),
       });
     },
   });
-
-  let storage: CacheOptions["storage"] | undefined;
-  if (cacheOptions?.cached) {
-    if (!storage) {
-      throw new Error("storage must be defined");
-    }
-  }
 
   return new Proxy<EventCalls<Services>>({} as EventCalls<Services>, {
     get:
       <EventName extends StringKeyOf<Services>>(_: never, event: EventName) =>
       async (
         ...args: AllButLast<Parameters<Services[EventName]>>
-      ): Promise<EventReturnTypeIncludingError<Services[EventName]>> => {
+      ): Promise<
+        EventReturnTypeIncludingError<Services[EventName]> | undefined
+      > => {
         let data;
         if (cacheOptions) {
+          if (!cacheStorage.value) {
+            throw new Error("storage must be defined");
+          }
           const cacheKey = `${event} ${JSON.stringify(args)}`;
-          const cacheData = await storage!.get(cacheKey);
+          const cacheData = await cacheStorage.value.get(cacheKey);
           if (cacheData !== undefined) {
             return cacheData as Awaited<ReturnType<Socket["emitWithAck"]>>;
           }
           data = await socket.emitWithAck(event, ...args);
-          storage!.set(cacheKey, data);
+          cacheStorage.value.set(cacheKey, data);
         } else {
           data = await socket.emitWithAck(event, ...args);
         }
@@ -137,14 +136,12 @@ export const edgesServices = useSocket<EdgesServices>(
 export const coaServices = useSocket<CoaServices>(
   CoaServices.namespaceEndpoint,
   {
-    cached: true,
     ttl: until4am(),
   },
 );
 export const globalStatsServices = useSocket<GlobalStatsServices>(
   GlobalStatsServices.namespaceEndpoint,
   {
-    cached: true,
     ttl: oneHour(),
   },
 );
