@@ -11,6 +11,7 @@ import {
   Chart,
   ChartData,
   ChartOptions,
+  DefaultDataPoint,
   Legend,
   PieController,
   Title,
@@ -42,8 +43,8 @@ const totalPerPublicationGroupSmallCounts: {
 } = $computed(
   () =>
     (smallCountPublications &&
-      totalPerPublication && {
-        ...Object.keys(totalPerPublication)
+      totalPerPublication.value && {
+        ...Object.keys(totalPerPublication.value)
           .filter(
             (publicationcode) =>
               !smallCountPublications.includes(publicationcode),
@@ -112,9 +113,11 @@ const sortByCount = (
       totalPerPublicationGroupSmallCounts[publicationCode2],
   );
 
-let hasPublicationNames = $ref(false as boolean);
-let chartData = $ref(null as ChartData<"pie"> | null);
-let options = $ref({} as ChartOptions<"pie">);
+let hasPublicationNames = $ref<boolean>(false);
+let chartData = $ref<ChartData<"pie", DefaultDataPoint<"pie">, string> | null>(
+  null,
+);
+let options = $ref<ChartOptions<"pie">>({});
 
 watch(
   $$(totalPerPublicationGroupSmallCounts),
@@ -170,7 +173,7 @@ watch(
             },
 
             title: (tooltipItems) =>
-              chartData!.labels![tooltipItems[0].dataIndex] as string,
+              chartData!.labels![tooltipItems[0].dataIndex],
           },
         },
       },
