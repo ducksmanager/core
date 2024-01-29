@@ -28,7 +28,9 @@ export default (io: Server) => {
     `.then(callback));
 
       socket.on("getUserCount", async (callback) =>
-        prismaDm.user.count().then(callback)
+        prismaDm.user.count().then((data => {
+          callback(data)
+        }))
       );
 
       socket.on("getUserList", async (callback) =>
@@ -39,7 +41,7 @@ export default (io: Server) => {
               username: true,
             },
           })
-          .then((data) => callback(data))
+          .then(callback)
       );
 
       socket.on(
@@ -109,16 +111,16 @@ const getUsersQuickStats = async (userIds: number[]) => Promise.all([
       }
     }),
     prismaDm.$queryRaw<{ userId: number, numberOfPublications: number }[]>`
-    select u.ID                                        AS userId,
+    select issue.ID                                        AS userId,
            count(distinct concat(Pays, '/', Magazine)) as numberOfPublications
     from numeros AS issue
-    where userId IN (${Prisma.join(userIds)})
-    group by u.ID`
+    where issue.ID_Utilisateur IN (${Prisma.join(userIds)})
+    group by issue.ID`
   ]).then(([users, counts, usersAndNumberOfPublications]) => {
     const usersById = users.reduce<Record<string, typeof users[0]>>((acc, user) => ({ ...acc, [user.id]: user }), {});
     const numberOfPublicationsPerUser = usersAndNumberOfPublications.reduce<Record<number, number>>((acc, { userId, numberOfPublications }) => ({ ...acc, [userId]: numberOfPublications }), {})
 
-    return counts.reduce((acc, { userId, _count }) => ({
+    return counts.reduce<QuickStatsPerUser>((acc, { userId, _count }) => ({
       ...acc,
       [userId]: {
         ...usersById[userId],
@@ -126,5 +128,5 @@ const getUsersQuickStats = async (userIds: number[]) => Promise.all([
         numberOfIssues: _count.id,
         numberOfPublications: numberOfPublicationsPerUser[userId] || 0
       }
-    }), {} as QuickStatsPerUser)
+    }), {})
   })

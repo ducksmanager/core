@@ -329,20 +329,13 @@ export const collection = defineStore("collection", () => {
     loadUser = async (afterUpdate = false) => {
       if (!isLoadingUser.value && (afterUpdate || !user.value)) {
         isLoadingUser.value = true;
-        try {
-          const response = await collectionServices.getUser();
-          if ("error" in response) {
-            throw new Error(response.error);
-          } else {
-            user.value = response;
-          }
-        } catch (e) {
-          console.error(e);
-          await clearSessionFn();
-          user.value = null;
-        } finally {
-          isLoadingUser.value = false;
+        const response = await collectionServices.getUser();
+        if ("error" in response) {
+          session.value?.clearSession();
+        } else {
+          user.value = response;
         }
+        isLoadingUser.value = false;
       }
     };
   return {
@@ -352,6 +345,7 @@ export const collection = defineStore("collection", () => {
     createPurchase,
     deletePurchase,
     hasSuggestions,
+    isLoadingUser,
     issueNumbersPerPublication,
     lastPublishedEdgesForCurrentUser,
     loadCollection,

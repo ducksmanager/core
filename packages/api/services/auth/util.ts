@@ -50,7 +50,9 @@ const AuthMiddleware = (
       if (required && err) {
         next(new Error(`Invalid token: ${err}`));
       } else {
-        socket.data.user = user as User;
+        if (user) {
+          socket.data.user = user as User;
+        }
         next();
       }
     }

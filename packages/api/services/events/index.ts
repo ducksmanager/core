@@ -2,7 +2,6 @@ import dayjs from "dayjs";
 import { Namespace, Server } from "socket.io";
 
 import { prismaDm } from "~/prisma";
-import { Event } from "~dm-types/Event";
 import {
   AbstractEvent,
   AbstractEventRaw,
@@ -31,20 +30,17 @@ export default (io: Server) => {
     (socket) => {
       console.log("connected to events");
 
-      socket.on("getEvents", async (callback) => getEvents().then(callback));
+      socket.on("getEvents", async (callback) => Promise.all([
+        retrieveSignups(),
+        retrieveCollectionUpdates(),
+        retrieveCollectionSubscriptionAdditions(),
+        retrieveBookstoreCreations(),
+        retrieveEdgeCreations(),
+        retrieveNewMedals(),
+      ]).then((data) => data.flat()).then(callback));
     }
   );
 };
-
-const getEvents = async (): Promise<Event[]> =>
-  Promise.all([
-    ...(await retrieveSignups()),
-    ...(await retrieveCollectionUpdates()),
-    ...(await retrieveCollectionSubscriptionAdditions()),
-    ...(await retrieveBookstoreCreations()),
-    ...(await retrieveEdgeCreations()),
-    ...(await retrieveNewMedals()),
-  ]);
 
 const MEDAL_LEVELS = {
   edge_photographer: { 1: 50, 2: 150, 3: 600 },

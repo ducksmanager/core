@@ -9,6 +9,7 @@ import Cookies from "js-cookie";
 import { session } from "~/composables/useSocket";
 import { cacheStorage } from "~/composables/useSocket";
 const collectionStore = collection();
+const { user, isLoadingUser } = storeToRefs(collectionStore);
 
 onBeforeMount(() => {
   session.value = {
@@ -16,6 +17,11 @@ onBeforeMount(() => {
     clearSession: () => Promise.resolve(Cookies.remove("token")),
     sessionExists: () =>
       Promise.resolve(typeof Cookies.get("token") === "string"),
+    onConnectError: async () => {
+      await session.value!.clearSession();
+      isLoadingUser.value = false;
+      user.value = null;
+    },
   };
   cacheStorage.value = buildWebStorage(sessionStorage);
 

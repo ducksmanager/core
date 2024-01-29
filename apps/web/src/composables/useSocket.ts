@@ -38,6 +38,7 @@ export const session = ref<{
   getToken: () => Promise<string | undefined>;
   clearSession: () => Promise<void>;
   sessionExists: () => Promise<boolean>;
+  onConnectError: () => void;
 }>();
 
 export const cacheStorage = ref(
@@ -60,10 +61,14 @@ const useSocket = <Services extends EventsMap>(
     },
   });
 
-  socket.on("connect_error", (err) => {
-    console.log(namespaceName);
-    console.log(err instanceof Error); // true
-    console.log(err.message); // not authorized
+  socket.on("connect_error", () => {
+    if (session.value?.onConnectError) {
+      session.value.onConnectError();
+    } else {
+      console.error(
+        `Namespace ${namespaceName}: onConnectError is not defined`,
+      );
+    }
   });
 
   return new Proxy<EventCalls<Services>>({} as EventCalls<Services>, {
