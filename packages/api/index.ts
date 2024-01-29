@@ -1,11 +1,12 @@
 import "module-alias/register";
-import { instrument } from "@socket.io/admin-ui";
+
 import * as Sentry from "@sentry/node";
+import { instrument } from "@socket.io/admin-ui";
 import dotenv from "dotenv";
 
 import auth from "./services/auth";
 import { OptionalAuthMiddleware } from "./services/auth/util";
-import bookcase from "./services/bookcase";
+import bookcase from "./services/bookcase"; 
 import bookstores from "./services/bookstores";
 import coa from "./services/coa";
 import collection from "./services/collection";
@@ -53,7 +54,7 @@ Sentry.init({
   io.listen(4000);
   console.log('WebSocket open on port 4000')
   io.use(OptionalAuthMiddleware);
-  io.use((socket, next) => {
+  io.use((_socket, next) => {
     next();
 
     // app.all(

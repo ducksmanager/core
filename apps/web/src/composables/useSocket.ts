@@ -49,14 +49,21 @@ const useSocket = <Services extends EventsMap>(
   cacheOptions?: Required<SocketCacheOptions>,
 ) => {
   const socket = io(import.meta.env.VITE_SOCKET_URL + namespaceName, {
-    auth: (cb) => {
+    auth: async (cb) => {
       if (!session.value) {
         return;
       }
+      const token = await session.value.getToken();
       cb({
-        token: session.value.getToken(),
+        token,
       });
     },
+  });
+
+  socket.on("connect_error", (err) => {
+    console.log(namespaceName);
+    console.log(err instanceof Error); // true
+    console.log(err.message); // not authorized
   });
 
   return new Proxy<EventCalls<Services>>({} as EventCalls<Services>, {
@@ -74,8 +81,8 @@ const useSocket = <Services extends EventsMap>(
           }
           const cacheKey = `${event} ${JSON.stringify(args)}`;
           const cacheData = await cacheStorage.value.get(cacheKey);
-          if (cacheData !== undefined) {
-            return cacheData as Awaited<ReturnType<Socket["emitWithAck"]>>;
+          if (cacheData.state !== "empty") {
+            return cacheData.data as Awaited<ReturnType<Socket["emitWithAck"]>>;
           }
           data = await socket.emitWithAck(event, ...args);
           cacheStorage.value.set(cacheKey, data);
