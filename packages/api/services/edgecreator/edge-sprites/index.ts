@@ -181,12 +181,12 @@ const updateTags = async (edges: edge[]) => {
 
 const generateSprites = async () => {
   const spritesWithNoUrl = (
-    (await prismaDm.$queryRaw`
+    (await prismaDm.$queryRaw<{ spriteName: string }[]>`
       select distinct Sprite_name AS spriteName
       from tranches_pretes_sprites
       where Sprite_name not in (select sprite_name from tranches_pretes_sprites_urls)
         and Sprite_size < 100
-    `) as { spriteName: string }[]
+    `)
   ).map(({ spriteName }) => spriteName);
 
   const insertOperations = [];

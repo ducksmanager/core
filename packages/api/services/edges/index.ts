@@ -15,7 +15,7 @@ export default (io: Server) => {
       console.log("connected to edges");
 
       socket.on("getWantedEdges", async (callback) =>
-        prismaDm.$queryRaw`
+        prismaDm.$queryRaw<WantedEdge[]>`
     SELECT Count(Numero) as numberOfIssues, CONCAT(Pays, '/', Magazine) AS publicationcode, Numero AS issuenumber
     FROM numeros
     WHERE NOT EXISTS(
@@ -27,7 +27,7 @@ export default (io: Server) => {
     GROUP BY Pays, Magazine, Numero
     ORDER BY numberOfIssues DESC, Pays, Magazine, Numero
     LIMIT 20
-  `.then((data) => callback(data as WantedEdge[]))
+  `.then(callback)
       );
 
       socket.on("getPublishedEdges", async (callback) =>

@@ -63,12 +63,12 @@ export default (socket: Socket<Services>) => {
   socket.on("getRequests", async (as, callback) => {
     switch (as) {
       case "seller":
-        const requestedIssuesOnSaleIds = (await prismaDm.$queryRaw`
+        const requestedIssuesOnSaleIds = (await prismaDm.$queryRaw<{ id: number }[]>`
             SELECT requestedIssue.ID AS id
             FROM numeros_demandes requestedIssue
             INNER JOIN numeros issue ON requestedIssue.ID_Numero = issue.ID
             WHERE issue.ID_Utilisateur = ${socket.data.user!.id}
-        `) as { id: number }[];
+        `);
         callback(
           await prismaDm.requestedIssue.findMany({
             where: {

@@ -53,18 +53,16 @@ export default (socket: Socket<Services>) => {
   );
 
   socket.on("getIssuesByStorycode", async (storycode, callback) =>
-    prismaCoa.$queryRaw`
-        SELECT issuecode as code,
-               publicationcode,
-               issuenumber
-        FROM inducks_issue issue
-                 INNER JOIN inducks_entry entry using (issuecode)
-                 INNER JOIN inducks_storyversion sv using (storyversioncode)
-        WHERE sv.storycode = ${storycode}
-        GROUP BY publicationcode, issuenumber
-        ORDER BY publicationcode`.then((data) => {
-      callback(data as SimpleIssue[]);
-    })
+    prismaCoa.$queryRaw<SimpleIssue[]>`
+      SELECT issuecode as code,
+              publicationcode,
+              issuenumber
+      FROM inducks_issue issue
+                INNER JOIN inducks_entry entry using (issuecode)
+                INNER JOIN inducks_storyversion sv using (storyversioncode)
+      WHERE sv.storycode = ${storycode}
+      GROUP BY publicationcode, issuenumber
+      ORDER BY publicationcode`.then(callback)
   );
 
   socket.on("getCountByPublicationcode", async (callback) =>

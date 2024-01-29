@@ -3,7 +3,11 @@ import { Prisma } from "~prisma-clients/client_dm";
 
 export const getMedalPoints = async (userIds: number[]) =>
   (
-    (await prismaDm.$queryRaw`
+    (await prismaDm.$queryRaw<{
+      contribution: "edge_photographer" | "edge_designer" | "duckhunter";
+      userId: number;
+      totalPoints: string;
+    }[]>`
         select contributionType.contribution_external_name as contribution,
                userIds.userId,
                ifnull(userContributions.totalPoints, 0)    as totalPoints
@@ -20,11 +24,7 @@ export const getMedalPoints = async (userIds: number[]) =>
                             GROUP BY userId, uc.contribution) as userContributions
                            ON contributionType.contribution = userContributions.contribution
                                AND userIds.userId = userContributions.userId
-    `) as {
-      contribution: "edge_photographer" | "edge_designer" | "duckhunter";
-      userId: number;
-      totalPoints: string;
-    }[]
+    `)
   ).reduce(
     (acc, { contribution, totalPoints, userId }) => ({
       ...acc,

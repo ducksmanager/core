@@ -1,11 +1,12 @@
 import { Socket } from "socket.io";
 
-import { prismaCoa, prismaCoverInfo, prismaDm } from "~/prisma";
+import { prismaCoa, prismaCoverInfo } from "~/prisma";
 import { IssueCoverDetails } from "~dm-types/IssueCoverDetails";
 import { SimpleEntry } from "~dm-types/SimpleEntry";
 import { SimpleIssueWithPublication } from "~dm-types/SimpleIssueWithPublication";
 import { Prisma as PrismaCoa } from "~prisma-clients/client_coa";
 import { cover } from "~prisma-clients/client_cover_info";
+import prismaDm from "~prisma-clients/extended/dm.extends";
 
 import Services from "../types";
 export default (socket: Socket<Services>) => {
@@ -34,13 +35,13 @@ export default (socket: Socket<Services>) => {
     "getIssueDetails",
     async (publicationcode, issuenumber, callback) => {
       const releaseDate = (
-        (await prismaCoa.$queryRaw`
+        (await prismaCoa.$queryRaw<{
+          oldestdate: string;
+        }[]>`
           SELECT issue.oldestdate
           FROM inducks_issue issue
           WHERE issue.publicationcode = ${publicationcode}
-            AND REPLACE(issue.issuenumber, ' ', '') = ${issuenumber}`) as {
-          oldestdate: string;
-        }[]
+            AND REPLACE(issue.issuenumber, ' ', '') = ${issuenumber}`)
       )[0]?.oldestdate;
 
       const entries = await getEntries(
@@ -58,7 +59,7 @@ export default (socket: Socket<Services>) => {
     }
     callback(
       { covers:(
-        (await prismaCoa.$queryRaw`
+        (await prismaCoa.$queryRaw<IssueCoverDetails[]>`
           SELECT publicationcode,
                  issuenumber,
                  title,
@@ -71,7 +72,7 @@ export default (socket: Socket<Services>) => {
           FROM inducks_issue
           WHERE inducks_issue.publicationcode IN(${PrismaCoa.join(
             publicationCodes
-          )})`) as IssueCoverDetails[]
+          )})`)
       ).reduce(
         (acc, row) => ({
           ...acc,
@@ -94,12 +95,12 @@ export default (socket: Socket<Services>) => {
     ).groupBy("issuecode");
 
     const issues = (
-      (await prismaCoa.$queryRaw`
+      (await prismaCoa.$queryRaw<SimpleIssueWithPublication[]>`
       SELECT pub.countrycode, pub.publicationcode, pub.title, issue.issuenumber, issue.issuecode
       FROM inducks_issue issue
       INNER JOIN coa.inducks_publication pub USING(publicationcode)
       WHERE issue.issuecode IN ${PrismaCoa.join(issueCodes)}
-    `) as SimpleIssueWithPublication[]
+    `)
     )
       .filter(({ issuecode }) => {
         if (!covers[issuecode]) {
@@ -126,12 +127,12 @@ export default (socket: Socket<Services>) => {
 
     // const quotations = await getIssueQuotations(issueCodes);
 
-    const popularities = (await prismaDm.$queryRaw`
+    const popularities = (await prismaDm.$queryRaw< { issuecode: string; userCount: number }[]>`
       SELECT issuecode, COUNT(DISTINCT ID_Utilisateur) AS userCount
       FROM numeros
       WHERE issuecode IN (${PrismaCoa.join(Object.values(shortIssueCodes))})
       GROUP BY issuecode
-    `) as { issuecode: string; userCount: number }[];
+    `);
 
     for (const { issuecode, userCount } of popularities) {
       const longIssueCode: string = Object.entries(shortIssueCodes).find(
@@ -169,8 +170,8 @@ Array.prototype.groupBy = function (fieldName, valueFieldName?) {
 const getEntries = async (
   publicationcode: string,
   issuenumber: string
-): Promise<SimpleEntry[]> =>
-  await prismaCoa.$queryRaw`
+) =>
+  await prismaCoa.$queryRaw<SimpleEntry[]>`
       SELECT sv.storycode,
              sv.kind,
              sv.entirepages,

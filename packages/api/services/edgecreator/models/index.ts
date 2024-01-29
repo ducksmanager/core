@@ -49,7 +49,12 @@ export default (socket: Socket<Services>) => {
   socket.on("getModelsSteps", async (modelIds, callback) => {
     callback(
       (
-        (await prismaEdgeCreator.$queryRaw`
+        (await prismaEdgeCreator.$queryRaw<{
+          issuenumber: string;
+          stepNumber: number;
+          functionName: string;
+          options: string;
+        }[]>`
           select model.numero AS issuenumber,
                   optionValue.ordre AS stepNumber,
                   optionValue.Nom_fonction AS functionName,
@@ -62,12 +67,7 @@ export default (socket: Socket<Services>) => {
           where model.ID IN (${modelIds})
           group by model.numero, optionValue.ordre
           order by optionValue.ordre
-      `) as {
-          issuenumber: string;
-          stepNumber: number;
-          functionName: string;
-          options: string;
-        }[]
+      `)
       ).reduce(
         (
           acc: ModelSteps,

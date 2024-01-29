@@ -16,7 +16,7 @@ export default (io: Server) => {
       console.log("connected to global-stats");
 
       socket.on("getBookcaseContributors", async (callback) =>
-        prismaDm.$queryRaw`
+        prismaDm.$queryRaw<BookcaseContributor[]>`
       SELECT distinct users.ID AS userId, users.username AS name, '' AS text
       from dm.users
              inner join dm.users_contributions c on users.ID = c.ID_user
@@ -25,8 +25,7 @@ export default (io: Server) => {
       SELECT '' as userId, Nom AS name, Texte AS text
       FROM dm.bibliotheque_contributeurs
       ORDER BY name
-    `.then((data: unknown) => callback(data as BookcaseContributor[]))
-      );
+    `.then(callback));
 
       socket.on("getUserCount", async (callback) =>
         prismaDm.user.count().then(callback)
@@ -61,7 +60,7 @@ export default (io: Server) => {
       socket.on("getUsersCollectionRarity", async (callback) => {
         {
           const userCount = await prismaDm.user.count();
-          const userScores = (await prismaDm.$queryRaw`
+          const userScores = (await prismaDm.$queryRaw<{ userId: number; averageRarity: number }[]>`
             SELECT ID_Utilisateur AS userId, round(sum(rarity)) AS averageRarity
             FROM numeros
             LEFT JOIN
@@ -70,7 +69,7 @@ export default (io: Server) => {
               group by issuecode) AS issues_rarity ON numeros.issuecode = issues_rarity.issuecode
             GROUP BY ID_Utilisateur
             ORDER BY averageRarity
-        `) as { userId: number; averageRarity: number }[];
+        `);
 
           const myScore =
             userScores.find(({ userId }) => userId === socket.data.user?.id)

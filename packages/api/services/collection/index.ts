@@ -48,7 +48,7 @@ export default (io: Server) => {
       );
 
       socket.on("getCollectionPopularity", async (callback) =>
-        prismaDm.$queryRaw`
+        prismaDm.$queryRaw<issuePopularity[]>`
       select issuePopularity.pays       AS country,
              issuePopularity.magazine   AS magazine,
              issuePopularity.numero     AS issuenumber,
@@ -58,10 +58,7 @@ export default (io: Server) => {
                         on issuePopularity.pays = issue.pays AND issuePopularity.magazine = issue.magazine AND
                            issuePopularity.numero = issue.numero
       where ID_Utilisateur = ${socket.data.user!.id}
-      order by popularity DESC`.then((data) =>
-          callback(data as issuePopularity[])
-        )
-      );
+      order by popularity DESC`.then(callback));
 
       socket.on("getNotificationToken", async (username, callback) => {
         if (username !== socket.data.user!.username) {

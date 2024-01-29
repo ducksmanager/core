@@ -42,9 +42,9 @@ export default (io: Server) => {
         }
 
         const coaTables = (
-          (await prismaCoa.$queryRaw`SHOW FULL TABLES WHERE Table_type = 'BASE TABLE'`) as {
+          (await prismaCoa.$queryRaw<{
             Tables_in_coa: string;
-          }[]
+          }[]>`SHOW FULL TABLES WHERE Table_type = 'BASE TABLE'`)
         ).map(({ Tables_in_coa }) => Tables_in_coa);
         const query = coaTables
           .map(
