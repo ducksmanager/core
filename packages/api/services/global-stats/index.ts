@@ -1,18 +1,20 @@
 import { Namespace, Server } from "socket.io";
 
-import { prismaDm } from "~/prisma";
 import { BookcaseContributor } from "~dm-types/BookcaseContributor";
-import { SimpleUserWithQuickStats } from "~dm-types/SimpleUserWithQuickStats";
+import { QuickStatsPerUser } from "~dm-types/QuickStatsPerUser";
 import { Prisma } from "~prisma-clients/client_dm";
+import prismaDm from "~prisma-clients/extended/dm.extends";
 
 import { OptionalAuthMiddleware } from "../auth/util";
 import { getMedalPoints } from "../collection/util";
-import  Services from "./types";
+import Services from "./types";
 
 export default (io: Server) => {
   (io.of(Services.namespaceEndpoint) as Namespace<Services>)
     .use(OptionalAuthMiddleware)
     .on("connection", (socket) => {
+      console.log("connected to global-stats");
+
       socket.on("getBookcaseContributors", async (callback) =>
         prismaDm.$queryRaw`
       SELECT distinct users.ID AS userId, users.username AS name, '' AS text
@@ -51,7 +53,7 @@ export default (io: Server) => {
             };
             callback(result);
           } else {
-            callback({ points: {}, stats: [] });
+            callback({ points: {}, stats: {} });
           }
         }
       );
@@ -83,17 +85,47 @@ export default (io: Server) => {
     });
 };
 
-const getUsersQuickStats = async (userIds: number[]) =>
-  (await prismaDm.$queryRaw`
+const getUsersQuickStats = async (userIds: number[]) => Promise.all([
+    prismaDm.user.findMany({
+      select: {
+        id: true,
+        presentationText: true,
+        allowSharing: true,
+        marketplaceAcceptsExchanges: true
+      }, where: {
+        id: {
+          in: userIds
+        }
+      }
+    }), prismaDm.issue.groupBy({
+      by: ['userId'],
+      _count: {
+        id: true,
+        country: true,
+      },
+      where: {
+        id: {
+          in: userIds
+        }
+      }
+    }),
+    prismaDm.$queryRaw<{ userId: number, numberOfPublications: number }[]>`
     select u.ID                                        AS userId,
-           u.username,
-           u.TextePresentation                         as presentationText,
-           u.AccepterPartage                           as allowSharing,
-           u.MarketplaceAccepteEchanges                as okForExchanges,
-           count(distinct Pays)                        AS numberOfCountries,
-           count(distinct concat(Pays, '/', Magazine)) as numberOfPublications,
-           count(Numero)                               as numberOfIssues
-    from users u
-           left join numeros on numeros.ID_Utilisateur = u.ID
-    where u.ID IN (${Prisma.join(userIds)})
-    group by u.ID`) as SimpleUserWithQuickStats[];
+           count(distinct concat(Pays, '/', Magazine)) as numberOfPublications
+    from numeros AS issue
+    where userId IN (${Prisma.join(userIds)})
+    group by u.ID`
+  ]).then(([users, counts, usersAndNumberOfPublications]) => {
+    const usersById = users.reduce<Record<string, typeof users[0]>>((acc, user) => ({ ...acc, [user.id]: user }), {});
+    const numberOfPublicationsPerUser = usersAndNumberOfPublications.reduce<Record<number, number>>((acc, { userId, numberOfPublications }) => ({ ...acc, [userId]: numberOfPublications }), {})
+
+    return counts.reduce((acc, { userId, _count }) => ({
+      ...acc,
+      [userId]: {
+        ...usersById[userId],
+        numberOfCountries: _count.country,
+        numberOfIssues: _count.id,
+        numberOfPublications: numberOfPublicationsPerUser[userId] || 0
+      }
+    }), {} as QuickStatsPerUser)
+  })

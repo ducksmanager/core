@@ -10,6 +10,8 @@ export default (io: Server) => {
   (io.of(Services.namespaceEndpoint) as Namespace<Services>).on(
     "connection",
     (socket) => {
+      console.log("connected to presentation-text");
+
       socket.on(
         "approveOrDenyPresentationText",
         async (sentence, userId, decision, callback) => {

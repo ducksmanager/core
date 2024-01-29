@@ -41,11 +41,10 @@ const countryCodesSortedByName = $computed(
   () =>
     countryCodes &&
     countryNames &&
-    [...countryCodes].sort(
-      (countryCodeA, countryCodeB) =>
-        countryNames.value![countryCodeA]?.localeCompare(
-          countryNames.value![countryCodeB],
-        ),
+    [...countryCodes].sort((countryCodeA, countryCodeB) =>
+      countryNames.value![countryCodeA]?.localeCompare(
+        countryNames.value![countryCodeB],
+      ),
     ),
 );
 const publicationCodes = $computed(

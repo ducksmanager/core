@@ -1,8 +1,7 @@
 import { prismaDm } from "~/prisma";
-import { MedalPoints } from "~dm-types/MedalPoints";
 import { Prisma } from "~prisma-clients/client_dm";
 
-export const getMedalPoints = async (userIds: number[]): Promise<MedalPoints> =>
+export const getMedalPoints = async (userIds: number[]) =>
   (
     (await prismaDm.$queryRaw`
         select contributionType.contribution_external_name as contribution,

@@ -9,6 +9,8 @@ export default (io: Server) => {
   (io.of(Services.namespaceEndpoint) as Namespace<Services>).on(
     "connection",
     (socket) => {
+      console.log("connected to login");
+
       socket.on("getCsrf", async (callback) => callback(""));
       socket.on("login", async ({ username, password }, callback) => {
         const hashedPassword = getHashedPassword(password);

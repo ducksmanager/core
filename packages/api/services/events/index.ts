@@ -29,6 +29,8 @@ export default (io: Server) => {
   (io.of(Services.namespaceEndpoint) as Namespace<Services>).on(
     "connection",
     (socket) => {
+      console.log("connected to events");
+
       socket.on("getEvents", async (callback) => getEvents().then(callback));
     }
   );

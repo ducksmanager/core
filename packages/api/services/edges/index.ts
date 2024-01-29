@@ -12,6 +12,8 @@ export default (io: Server) => {
   (io.of(Services.namespaceEndpoint) as Namespace<Services>).on(
     "connection",
     (socket) => {
+      console.log("connected to edges");
+
       socket.on("getWantedEdges", async (callback) =>
         prismaDm.$queryRaw`
     SELECT Count(Numero) as numberOfIssues, CONCAT(Pays, '/', Magazine) AS publicationcode, Numero AS issuenumber

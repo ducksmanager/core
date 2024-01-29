@@ -9,6 +9,8 @@ export default (io: Server) => {
   (io.of(Services.namespaceEndpoint) as Namespace<Services>).on(
     "connection",
     (socket) => {
+      console.log("connected to edgecreator");
+
       edgeSprites(socket);
       edgePublication(socket);
       multipleEdgePhotos(socket);

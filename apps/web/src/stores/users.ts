@@ -42,13 +42,7 @@ export const users = defineStore("users", () => {
       };
       stats.value = {
         ...stats.value,
-        ...data.stats.reduce(
-          (acc, data) => ({
-            ...acc,
-            [data.userId]: data,
-          }),
-          {},
-        ),
+        ...data.stats,
       };
     },
     fetchBookcaseContributors = async () => {

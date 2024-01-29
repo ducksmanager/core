@@ -13,6 +13,8 @@ export default (io: Server) => {
   (io.of(Services.namespaceEndpoint) as Namespace<Services>).on(
     "connection",
     (socket) => {
+      console.log("connected to demo");
+
       socket.on("loginAsDemo", async (callback) => {
         const demoUser = await prismaDm.user.findFirst({
           where: { username: "demo" },

@@ -9,6 +9,8 @@ export default (io: Server) => {
   (io.of(Services.namespaceEndpoint) as Namespace<Services>).on(
     "connection",
     (socket) => {
+      console.log("connected to public-collection");
+
       socket.on("getPublicCollection", async (username, callback) => {
         let user: user;
         try {

@@ -38,18 +38,17 @@ export default (issues: Ref<issueWithPublicationcode[] | null>) => {
           {} as { [publicationcode: string]: number },
         ) || null,
     ),
-    issuesByIssueCode = computed(
-      () =>
-        issues.value?.reduce(
-          (acc, issue) => {
-            const issuecode = `${issue.publicationcode} ${issue.issuenumber}`;
-            return {
-              ...acc,
-              [issuecode]: [...(acc[issuecode] || []), issue],
-            };
-          },
-          {} as { [issuecode: string]: issueWithPublicationcode[] },
-        ),
+    issuesByIssueCode = computed(() =>
+      issues.value?.reduce(
+        (acc, issue) => {
+          const issuecode = `${issue.publicationcode} ${issue.issuenumber}`;
+          return {
+            ...acc,
+            [issuecode]: [...(acc[issuecode] || []), issue],
+          };
+        },
+        {} as { [issuecode: string]: issueWithPublicationcode[] },
+      ),
     ),
     duplicateIssues = computed(
       (): {
@@ -68,11 +67,11 @@ export default (issues: Ref<issueWithPublicationcode[] | null>) => {
           )) ||
         {},
     ),
-    issuesInToReadStack = computed(
-      () => issues.value?.filter(({ isToRead }) => isToRead),
+    issuesInToReadStack = computed(() =>
+      issues.value?.filter(({ isToRead }) => isToRead),
     ),
-    issuesInOnSaleStack = computed(
-      () => issues.value?.filter(({ isOnSale }) => isOnSale),
+    issuesInOnSaleStack = computed(() =>
+      issues.value?.filter(({ isOnSale }) => isOnSale),
     ),
     totalUniqueIssues = computed(
       () =>
@@ -86,15 +85,14 @@ export default (issues: Ref<issueWithPublicationcode[] | null>) => {
               ))) ||
         0,
     ),
-    totalPerCountry = computed(
-      () =>
-        issues.value?.reduce(
-          (acc, issue) => ({
-            ...acc,
-            [issue.country]: (acc[issue.country] || 0) + 1,
-          }),
-          {} as { [countrycode: string]: number },
-        ),
+    totalPerCountry = computed(() =>
+      issues.value?.reduce(
+        (acc, issue) => ({
+          ...acc,
+          [issue.country]: (acc[issue.country] || 0) + 1,
+        }),
+        {} as { [countrycode: string]: number },
+      ),
     ),
     numberPerCondition = computed(
       () =>

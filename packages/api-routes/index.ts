@@ -12,10 +12,10 @@ import { Event } from "~dm-types/Event";
 import { ImageElement } from "~dm-types/ImageElement";
 import {  } from "~dm-types/IssueSuggestionList";
 import { IssueWithPublicationcode } from "~dm-types/IssueWithPublicationcode";
-import { MedalPoints } from "~dm-types/MedalPoints";
+import { MedalPointsPerUser } from "~dm-types/MedalPointsPerUser";
 import { ModelSteps } from "~dm-types/ModelSteps";
+import { QuickStatsPerUser } from "~dm-types/QuickStatsPerUser";
 import { SimplePopularity } from "~dm-types/SimplePopularity";
-import { SimpleUserWithQuickStats } from "~dm-types/SimpleUserWithQuickStats";
 import { TransactionResults } from "~dm-types/TransactionResults";
 import { UserForAccountForm } from "~dm-types/UserForAccountForm";
 import { WantedEdge } from "~dm-types/WantedEdge";
@@ -74,7 +74,7 @@ export class GET__collection__on_sale_by_others  extends ContractWithMethodAndUr
             static readonly method = "get";
             static readonly url = "/collection/on-sale-by-others";
         }
-export class GET__collection__points  extends ContractWithMethodAndUrl<{ resBody: MedalPoints }> {
+export class GET__collection__points  extends ContractWithMethodAndUrl<{ resBody: MedalPointsPerUser }> {
             static readonly method = "get";
             static readonly url = "/collection/points";
         }
@@ -336,8 +336,8 @@ export class GET__edgecreator__model__unassigned__all  extends ContractWithMetho
         }
 export class GET__global_stats__user__$userIds  extends ContractWithMethodAndUrl<{
     resBody: {
-      points: MedalPoints;
-      stats: SimpleUserWithQuickStats[];
+      points: MedalPointsPerUser;
+      stats: QuickStatsPerUser;
     };
     params: { userIds: string };
   }> {

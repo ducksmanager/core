@@ -17,6 +17,7 @@ export default (io: Server) => {
   (io.of(Services.namespaceEndpoint) as Namespace<Services>).on(
     "connection",
     (socket) => {
+      console.log("connected to auth");
       socket.on("forgot", async (token, callback) => {
         jwt.verify(token, process.env.TOKEN_SECRET as string, (err) => {
           callback({ error: err!.message || "" });

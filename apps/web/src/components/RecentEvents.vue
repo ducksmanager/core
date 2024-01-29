@@ -27,14 +27,12 @@ const { events } = storeToRefs(users());
 const { fetchPublicationNames } = coa();
 
 let isLoaded = $ref(false as boolean);
-const eventUserIds = $computed(
-  () =>
-    events.value
-      ?.reduce<(number | null)[]>(
-        (acc, event) => [...acc, ...(event.users || [])],
-        [],
-      )
-      .filter((userId) => !!userId),
+const eventUserIds = $computed(() =>
+  events.value
+    ?.reduce<
+      (number | null)[]
+    >((acc, event) => [...acc, ...(event.users || [])], [])
+    .filter((userId) => !!userId),
 );
 const isCollectionUpdateEvent = (event: AbstractEvent) =>
   event.hasOwnProperty("numberOfIssues");

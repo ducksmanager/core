@@ -1,6 +1,6 @@
 import { BookcaseContributor } from "~dm-types/BookcaseContributor";
-import { MedalPoints } from "~dm-types/MedalPoints";
-import { SimpleUserWithQuickStats } from "~dm-types/SimpleUserWithQuickStats";
+import { MedalPointsPerUser } from "~dm-types/MedalPointsPerUser";
+import { QuickStatsPerUser } from "~dm-types/QuickStatsPerUser";
 import { user } from "~prisma-clients/client_dm";
 
 export default abstract class {
@@ -16,8 +16,8 @@ export default abstract class {
   abstract getUsersPointsAndStats: (
     userIds: number[],
     callback: (value: {
-      points: MedalPoints;
-      stats: SimpleUserWithQuickStats[];
+      points: MedalPointsPerUser;
+      stats: QuickStatsPerUser;
     }) => void
   ) => void;
   abstract getUsersCollectionRarity: (
