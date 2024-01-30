@@ -26,21 +26,18 @@ meta:
 </template>
 
 <script setup lang="ts">
-import axios from "axios";
-
-import { call } from "~axios-helper";
+import { bookstoreServices } from "~/composables/useSocket";
 import { SimpleBookstore } from "~dm-types/SimpleBookstore";
 import type { bookstoreComment } from "~prisma-clients/client_dm";
 
 let bookstores = $ref(null as SimpleBookstore[] | null);
 
 const validateBookstoreComment = async ({ id }: bookstoreComment) => {
-  await call(axios, new POST__bookstores__approve({ reqBody: { id } }));
-  bookstores = (await call(axios, new GET__bookstores())).data;
+  await bookstoreServices.approveBookstoreComment(id);
 };
 
 (async () => {
-  bookstores = (await call(axios, new GET__bookstores())).data;
+  bookstores = await bookstoreServices.getActiveBookstores();
 })();
 </script>
 

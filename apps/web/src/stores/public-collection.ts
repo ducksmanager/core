@@ -1,14 +1,10 @@
-import { AxiosInstance } from "axios";
-
-import { addUrlParamsRequestInterceptor, call } from "~axios-helper";
-import { IssueWithPublicationcode } from "~dm-types/IssueWithPublicationcode";
+import { publicCollectionServices } from "~/composables/useSocket";
+import { issueWithPublicationcode } from "~prisma-clients/extended/dm.extends";
 
 import useCollection from "../composables/useCollection";
 
-let api: AxiosInstance;
-
 export const publicCollection = defineStore("publicCollection", () => {
-  const issues = ref(null as IssueWithPublicationcode[] | null),
+  const issues = ref(null as issueWithPublicationcode[] | null),
     publicUsername = ref(null as string | null),
     publicationUrlRoot = computed(
       () => `/collection/user/${publicUsername.value || ""}`,
@@ -18,23 +14,18 @@ export const publicCollection = defineStore("publicCollection", () => {
   const collectionUtils = useCollection(issues),
     loadPublicCollection = async (username: string) => {
       publicUsername.value = username;
-      issues.value = (
-        await call(
-          api,
-          new GET__collection_public__$username({
-            params: { username },
-          }),
-        )
-      ).data.map((issue) => ({
-        ...issue,
-        publicationcode: `${issue.country}/${issue.magazine}`,
-      }));
+      const data = await publicCollectionServices.getPublicCollection(username);
+      if (data.error) {
+        console.error(data.error);
+      } else {
+        issues.value = data.issues.map((issue) => ({
+          ...issue,
+          publicationcode: `${issue.country}/${issue.magazine}`,
+        }));
+      }
     };
   return {
     ...collectionUtils,
-    setApi: (params: { api: typeof api }) => {
-      api = addUrlParamsRequestInterceptor(params.api);
-    },
     publicationUrlRoot,
     issues,
     purchases,

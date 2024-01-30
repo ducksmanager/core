@@ -50,8 +50,8 @@ const key = $computed(
   () => publicationcode + (issuenumber ? ` ${issuenumber}` : ""),
 );
 
-const isWatched = $computed(
-  () => watchedPublicationsWithSales.value?.includes(key),
+const isWatched = $computed(() =>
+  watchedPublicationsWithSales.value?.includes(key),
 );
 const isPublicationWatchedButNotIssueNumber = $computed(
   () =>

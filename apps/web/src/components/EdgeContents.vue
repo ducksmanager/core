@@ -38,7 +38,6 @@
 </template>
 
 <script setup lang="ts">
-import axios from "axios";
 const {
   id,
   issuenumber = null,
@@ -77,7 +76,7 @@ const onImageLoad = async (event: Event) => {
     } else {
       try {
         const css = (
-          (await axios.get(`${SPRITES_ROOT}${spritePath}.css`)).data as string
+          await (await fetch(`${SPRITES_ROOT}${spritePath}.css`)).text()
         ).replaceAll(
           new RegExp("url\\('[^']+", "g"),
           `url('${SPRITES_ROOT}${spritePath}.png`,

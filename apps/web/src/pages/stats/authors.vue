@@ -54,7 +54,6 @@ alias: [/auteurs]
 </template>
 
 <script setup lang="ts">
-import axios from "axios";
 import {
   BarController,
   BarElement,
@@ -69,7 +68,9 @@ import {
 } from "chart.js";
 import { Bar } from "vue-chartjs";
 
-import { call } from "~axios-helper";
+import { statsServices } from "~/composables/useSocket";
+import StatsServices from "~services/stats/types";
+import { EventReturnType } from "~services/types";
 
 Chart.register(
   Legend,
@@ -91,15 +92,9 @@ const unitTypes = {
   percentage: $t("Afficher en pourcentages"),
 };
 
-type WatchedAuthorsStoryCount = {
-  [personcode: string]: {
-    missingstorycount: number;
-    storycount: number;
-    fullname: string;
-  };
-};
-
-let watchedAuthorsStoryCount = $ref(null as WatchedAuthorsStoryCount | null);
+let watchedAuthorsStoryCount = $ref(
+  null as EventReturnType<StatsServices["getWatchedAuthorsStats"]> | null,
+);
 let unitTypeCurrent = $ref("number");
 let width = $ref(null as string | null),
   height = $ref("300px" as string),
@@ -109,9 +104,7 @@ let width = $ref(null as string | null),
 const labels = $computed(
   () =>
     watchedAuthorsStoryCount &&
-    Object.values(watchedAuthorsStoryCount).map(
-      ({ fullname: fullName }) => fullName,
-    ),
+    watchedAuthorsStoryCount.map(({ fullname: fullName }) => fullName),
 );
 
 const changeWidth = (value: number) => {
@@ -122,12 +115,11 @@ watch(
   () => labels && unitTypeCurrent,
   (newValue) => {
     if (newValue && watchedAuthorsStoryCount) {
-      let ownedStories = Object.values(watchedAuthorsStoryCount).map(
-        ({ storycount: storyCount, missingstorycount: missingStoryCount }) =>
-          storyCount - missingStoryCount,
+      let ownedStories = watchedAuthorsStoryCount.map(
+        ({ storyCount, missingStoryCount }) => storyCount - missingStoryCount,
       );
-      let missingStories = Object.values(watchedAuthorsStoryCount).map(
-        ({ missingstorycount: missingStoryCount }) => missingStoryCount,
+      let missingStories = watchedAuthorsStoryCount.map(
+        ({ missingStoryCount }) => missingStoryCount,
       );
 
       if (unitTypeCurrent === "percentage") {
@@ -197,9 +189,7 @@ watch(
 
 (async () => {
   await loadRatings();
-  watchedAuthorsStoryCount = ((
-    await call(axios, new GET__collection__stats__watchedauthorsstorycount())
-  ).data || {}) as WatchedAuthorsStoryCount;
+  watchedAuthorsStoryCount = await statsServices.getWatchedAuthorsStats();
 })();
 </script>
 

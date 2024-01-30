@@ -128,7 +128,7 @@ meta:
       </div>
       <div v-if="hasPublicationNames" role="tablist">
         <Accordion
-          v-for="(issues, publicationcode) in groupByPublicationCode(
+          v-for="(publicationIssues, publicationcode) in groupByPublicationCode(
             issuesImportable,
           )"
           :id="String(publicationcode).replace('/', '-')"
@@ -144,10 +144,10 @@ meta:
                 publicationNames[publicationcode] || publicationcode
               "
             />
-            x {{ issues.length }}
+            x {{ publicationIssues.length }}
           </template>
           <template #content>
-            <div v-for="issue in issues" :key="issue">
+            <div v-for="issue in publicationIssues" :key="issue">
               {{ $t("Numéro") }} {{ issue }}
             </div>
           </template>
@@ -280,11 +280,9 @@ meta:
 </template>
 
 <script setup lang="ts">
-import axios from "axios";
-import { watch } from "vue";
-
-import { call } from "~axios-helper";
+import { collectionServices } from "~/composables/useSocket";
 import type { inducks_issue } from "~prisma-clients/client_coa";
+
 const { getImagePath } = images();
 
 let step = $ref(1 as number);
@@ -360,19 +358,14 @@ const importIssues = async () => {
   );
   for (const publicationcode in importableIssuesByPublicationCode) {
     if (importableIssuesByPublicationCode.hasOwnProperty(publicationcode)) {
-      await call(
-        axios,
-        new POST__collection__issues__multiple({
-          reqBody: {
-            publicationcode,
-            issuenumbers: importableIssuesByPublicationCode[publicationcode],
-            condition: issueDefaultCondition,
-            isOnSale: undefined,
-            isToRead: undefined,
-            purchaseId: undefined,
-          },
-        }),
-      );
+      await collectionServices.addOrChangeIssues({
+        publicationcode,
+        issuenumbers: importableIssuesByPublicationCode[publicationcode],
+        condition: issueDefaultCondition,
+        isOnSale: undefined,
+        isToRead: undefined,
+        purchaseId: undefined,
+      });
       importProgress +=
         100 / Object.keys(importableIssuesByPublicationCode).length;
     }

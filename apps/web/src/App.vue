@@ -3,49 +3,28 @@
 </template>
 
 <script setup lang="ts">
-import axios from "axios";
 import { buildWebStorage } from "axios-cache-interceptor";
 import Cookies from "js-cookie";
 
-import { addTokenRequestInterceptor } from "~axios-helper";
-
-import { createCachedCoaApi } from "./api";
-
-const usersStore = users();
-const statsStore = stats();
-const publicCollectionStore = publicCollection();
+import { session } from "~/composables/useSocket";
+import { cacheStorage } from "~/composables/useSocket";
 const collectionStore = collection();
-const coaStore = coa();
+const { user, isLoadingUser } = storeToRefs(collectionStore);
 
 onBeforeMount(() => {
-  const defaultApi = addTokenRequestInterceptor(
-    axios.create({
-      baseURL: import.meta.env.VITE_GATEWAY_URL,
-    }),
-    () => Promise.resolve(Cookies.get("token") || ""),
-  );
-
-  usersStore.setApi({
-    api: defaultApi,
-  });
-  statsStore.setApi({
-    api: defaultApi,
-  });
-  publicCollectionStore.setApi({
-    api: defaultApi,
-  });
-  collectionStore.setApi({
-    api: defaultApi,
-    clearSessionFn: () => Promise.resolve(Cookies.remove("token")),
-    sessionExistsFn: () =>
+  session.value = {
+    getToken: () => Promise.resolve(Cookies.get("token")),
+    clearSession: () => Promise.resolve(Cookies.remove("token")),
+    sessionExists: () =>
       Promise.resolve(typeof Cookies.get("token") === "string"),
-  });
-  coaStore.setApi({
-    api: createCachedCoaApi(
-      buildWebStorage(sessionStorage),
-      import.meta.env.VITE_GATEWAY_URL,
-    ),
-  });
+    onConnectError: async () => {
+      await session.value!.clearSession();
+      isLoadingUser.value = false;
+      user.value = null;
+    },
+  };
+  cacheStorage.value = buildWebStorage(sessionStorage);
+
   collectionStore.loadUser();
 });
 </script>

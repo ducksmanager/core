@@ -18,14 +18,12 @@
     "preserveWatchOutput": true,
     "paths": {
       "~/*": ["*"],
+      "~services/*": ["services/*"],
+      "~dm-types/*": ["../dm-types/*"],
       "~emails/*": ["emails/*"],
       "~prisma-clients/*": ["../prisma-clients/*"],
-      "~routes/*": ["routes/*"],
       "~translations/*": ["translations/*"]
     }
   },
-  "exclude": ["node_modules"],
-  "ts-node": {
-    "swc": true
-  }
+  "exclude": ["node_modules"]
 }

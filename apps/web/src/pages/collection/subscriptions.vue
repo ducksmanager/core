@@ -80,16 +80,13 @@ alias: [/collection/abonnements]
 </template>
 
 <script setup lang="ts">
-import axios from "axios";
 import dayjs from "dayjs";
-import { onMounted, watch } from "vue";
 
+import { subscriptionServices } from "~/composables/useSocket";
 import {
   SubscriptionTransformed,
   SubscriptionTransformedStringDates,
 } from "~/stores/collection";
-import { call } from "~axios-helper";
-
 type AssociatedPublication = {
   referencePublicationcode: string;
   publicationcode: string;
@@ -127,13 +124,8 @@ const toSubscriptionWithStringDates = (
 });
 
 const createSubscription = async (subscription: SubscriptionTransformed) => {
-  await call(
-    axios,
-    new PUT__collection__subscriptions({
-      reqBody: {
-        subscription: toSubscriptionWithStringDates(subscription),
-      },
-    }),
+  await subscriptionServices.createSubscription(
+    toSubscriptionWithStringDates(subscription),
   );
   await loadSubscriptions(true);
   currentSubscription = null;
@@ -152,25 +144,15 @@ const createSubscriptionLike = async (
 };
 
 const editSubscription = async (subscription: SubscriptionTransformed) => {
-  await call(
-    axios,
-    new POST__collection__subscriptions__$id({
-      reqBody: {
-        subscription: toSubscriptionWithStringDates(subscription),
-      },
-      params: { id: String(subscription.id) },
-    }),
+  await subscriptionServices.updateSubscription(
+    subscription.id,
+    toSubscriptionWithStringDates(subscription),
   );
   await loadSubscriptions(true);
   currentSubscription = null;
 };
 const deleteSubscription = async (id: number) => {
-  await call(
-    axios,
-    new DELETE__collection__subscriptions__$id({
-      params: { id: String(id) },
-    }),
-  );
+  await subscriptionServices.deleteSubscription(id);
   await loadSubscriptions(true);
   currentSubscription = null;
 };

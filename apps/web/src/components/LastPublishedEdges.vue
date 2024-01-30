@@ -62,11 +62,10 @@ const publishedEdgesSincePreviousVisit = $computed(
         previousVisit.value && new Date(creationDate) >= previousVisit.value,
     ) || [],
 );
-const hasPublicationNames = $computed(
-  () =>
-    publishedEdgesSincePreviousVisit?.every(
-      ({ publicationcode }) => publicationNames.value[publicationcode],
-    ),
+const hasPublicationNames = $computed(() =>
+  publishedEdgesSincePreviousVisit?.every(
+    ({ publicationcode }) => publicationNames.value[publicationcode],
+  ),
 );
 
 loadLastPublishedEdgesForCurrentUser();

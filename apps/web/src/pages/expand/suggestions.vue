@@ -68,7 +68,6 @@ alias: [/agrandir/suggestions]
 </template>
 
 <script setup lang="ts">
-import { watch } from "vue";
 const countryCode = $ref("ALL" as string);
 const { t: $t } = useI18n();
 
@@ -106,6 +105,10 @@ watch(
 
 loadCollection();
 loadRatings();
+
+(async () => {
+  watchedAuthors.value = await collectionServices.getWatchedAuthors();
+})();
 </script>
 
 <style scoped lang="scss">

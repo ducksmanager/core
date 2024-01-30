@@ -1,8 +1,7 @@
-import axios, { AxiosError } from "axios";
-
-import { GET__bookcase__$username__options } from "~api-routes/index";
-import { call } from "~axios-helper";
+import { bookcaseServices } from "~/composables/useSocket";
 import { BookcaseEdge } from "~dm-types/BookcaseEdge";
+import BookcaseServices from "~services/bookcase/types";
+import { EventReturnType } from "~services/types";
 
 import { collection } from "./collection";
 
@@ -20,7 +19,7 @@ export const bookcase = defineStore("bookcase", () => {
     bookcaseUsername = ref(null as string | null),
     bookcase = ref(null as BookcaseEdge[] | null),
     bookcaseOptions = ref(
-      null as GET__bookcase__$username__options["resBody"] | null,
+      null as EventReturnType<BookcaseServices["getBookcaseOptions"]> | null,
     ),
     bookcaseOrder = ref(null as string[] | null),
     edgeIndexToLoad = ref(0 as number),
@@ -60,66 +59,50 @@ export const bookcase = defineStore("bookcase", () => {
     },
     loadBookcase = async () => {
       if (!bookcase.value) {
-        try {
-          bookcase.value = (
-            await call(
-              axios,
-              new GET__bookcase__$username({
-                params: { username: bookcaseUsername.value! },
-              }),
-            )
-          ).data;
-        } catch (e) {
-          switch ((e as AxiosError).response?.status) {
-            case 403:
-              isPrivateBookcase.value = true;
-              break;
-            case 404:
-              isUserNotExisting.value = true;
-              break;
-          }
+        const response = await bookcaseServices.getBookcase(
+          bookcaseUsername.value!,
+        );
+        switch (response.error) {
+          case "Forbidden":
+            isPrivateBookcase.value = true;
+            return;
+          case "Not found":
+            isUserNotExisting.value = true;
+            return;
+          case undefined:
+            bookcase.value = response.edges;
         }
       }
     },
     loadBookcaseOptions = async () => {
       if (!bookcaseOptions.value) {
-        bookcaseOptions.value = (
-          await call(
-            axios,
-            new GET__bookcase__$username__options({
-              params: { username: bookcaseUsername.value! },
-            }),
-          )
-        ).data;
+        const response = await bookcaseServices.getBookcaseOptions(
+          bookcaseUsername.value!,
+        );
+        if ("error" in response) {
+          console.error(response.error);
+        } else {
+          bookcaseOptions.value = response;
+        }
       }
     },
     updateBookcaseOptions = async () => {
-      await call(
-        axios,
-        new POST__bookcase__options({
-          reqBody: bookcaseOptions.value!,
-        }),
-      );
+      await bookcaseServices.setBookcaseOptions(bookcaseOptions.value!);
     },
     loadBookcaseOrder = async () => {
       if (!bookcaseOrder.value) {
-        bookcaseOrder.value = (
-          await call(
-            axios,
-            new GET__bookcase__$username__sort({
-              params: { username: bookcaseUsername.value! },
-            }),
-          )
-        ).data;
+        const response = await bookcaseServices.getBookcaseOrder(
+          bookcaseUsername.value!,
+        );
+        if ("error" in response) {
+          console.error(response.error);
+        } else {
+          bookcaseOrder.value = response.publicationCodes;
+        }
       }
     },
     updateBookcaseOrder = async () => {
-      await call(
-        axios,
-        new POST__bookcase__sort({
-          reqBody: { sorts: bookcaseOrder.value as string[] },
-        }),
-      );
+      await bookcaseServices.setBookcaseOrder(bookcaseOrder.value!);
     };
 
   return {

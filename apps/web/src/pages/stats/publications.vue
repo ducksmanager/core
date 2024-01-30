@@ -163,9 +163,7 @@ watch(
         tooltip: {
           callbacks: {
             label: ({ dataset: { data }, parsed: currentValue }) => {
-              const total = data
-                .map((value) => value as number)
-                .reduce((acc, value) => acc + value, 0);
+              const total = data.reduce((acc, value) => acc + value, 0);
               const percentage = total
                 ? parseFloat(((currentValue / total) * 100).toFixed(1))
                 : 0;

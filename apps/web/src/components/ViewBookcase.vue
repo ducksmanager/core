@@ -162,9 +162,6 @@
 </template>
 
 <script setup lang="ts">
-import { watch } from "vue";
-import { RouterLink } from "vue-router";
-
 import { BookcaseEdgeWithPopularity } from "~/stores/bookcase";
 import { BookcaseEdgeSprite } from "~dm-types/BookcaseEdge";
 import { SimpleIssue } from "~dm-types/SimpleIssue";
@@ -230,14 +227,13 @@ const percentVisible = $computed(() =>
       ).toFixed(0)
     : null,
 );
-const mostPopularIssuesInCollectionWithoutEdge = $computed(
-  () =>
-    [...(popularIssuesInCollectionWithoutEdge.value || [])]
-      ?.sort(
-        ({ popularity: popularity1 }, { popularity: popularity2 }) =>
-          (popularity2 || 0) - (popularity1 || 0),
-      )
-      .filter((_, index) => index < 10),
+const mostPopularIssuesInCollectionWithoutEdge = $computed(() =>
+  [...(popularIssuesInCollectionWithoutEdge.value || [])]
+    ?.sort(
+      ({ popularity: popularity1 }, { popularity: popularity2 }) =>
+        (popularity2 || 0) - (popularity1 || 0),
+    )
+    .filter((_, index) => index < 10),
 );
 const sortedBookcase = $computed(
   () =>

@@ -6,7 +6,6 @@ import "bootstrap-vue-next/dist/bootstrap-vue-next.css";
 import { Integrations } from "@sentry/tracing";
 import * as Sentry from "@sentry/vue";
 import { createHead } from "@unhead/vue";
-import axios from "axios";
 import Cookies from "js-cookie";
 // @ts-ignore
 import contextmenu from "v-contextmenu";
@@ -17,10 +16,7 @@ import { createRouter, createWebHistory } from "vue-router";
 
 import App from "~/App.vue";
 import i18n from "~/i18n";
-import { addUrlParamsRequestInterceptor } from "~axios-helper";
 import en from "~translations/messages.en.json";
-
-import { ongoingRequests } from "./stores/ongoing-requests";
 
 const head = createHead();
 
@@ -36,38 +32,6 @@ router.beforeResolve(async (to) => {
 });
 
 const store = createPinia();
-
-const useOngoingRequests = ongoingRequests(store);
-
-axios.defaults.baseURL = import.meta.env.VITE_GATEWAY_URL;
-
-addUrlParamsRequestInterceptor(axios);
-
-axios.interceptors.request.use(
-  (config) => {
-    const token = Cookies.get("token");
-    if (config.headers && token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
-    if (useOngoingRequests.numberOfOngoingAjaxCalls === null)
-      useOngoingRequests.numberOfOngoingAjaxCalls = 1;
-    else useOngoingRequests.numberOfOngoingAjaxCalls++;
-
-    return config;
-  },
-  (error) => Promise.reject(error),
-);
-
-axios.interceptors.response.use(
-  (response) => {
-    useOngoingRequests.numberOfOngoingAjaxCalls!--;
-    return response;
-  },
-  (error) => {
-    useOngoingRequests.numberOfOngoingAjaxCalls!--;
-    return Promise.reject(error);
-  },
-);
 
 const app = createApp(App);
 app.use(i18n("fr", { en }).instance);

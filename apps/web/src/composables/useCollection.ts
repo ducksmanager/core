@@ -1,5 +1,5 @@
-import { IssueWithPublicationcode } from "~dm-types/IssueWithPublicationcode";
 import { issue_condition } from "~prisma-clients/client_dm";
+import { issueWithPublicationcode } from "~prisma-clients/extended/dm.extends";
 
 export type QuotedIssue = {
   publicationcode: string;
@@ -9,7 +9,7 @@ export type QuotedIssue = {
   estimationGivenCondition: number;
 };
 
-export default (issues: Ref<IssueWithPublicationcode[] | null>) => {
+export default (issues: Ref<issueWithPublicationcode[] | null>) => {
   const total = computed(() => issues.value?.length);
   const mostPossessedPublication = computed(
     () =>
@@ -38,22 +38,21 @@ export default (issues: Ref<IssueWithPublicationcode[] | null>) => {
           {} as { [publicationcode: string]: number },
         ) || null,
     ),
-    issuesByIssueCode = computed(
-      () =>
-        issues.value?.reduce(
-          (acc, issue) => {
-            const issuecode = `${issue.publicationcode} ${issue.issuenumber}`;
-            return {
-              ...acc,
-              [issuecode]: [...(acc[issuecode] || []), issue],
-            };
-          },
-          {} as { [issuecode: string]: IssueWithPublicationcode[] },
-        ),
+    issuesByIssueCode = computed(() =>
+      issues.value?.reduce(
+        (acc, issue) => {
+          const issuecode = `${issue.publicationcode} ${issue.issuenumber}`;
+          return {
+            ...acc,
+            [issuecode]: [...(acc[issuecode] || []), issue],
+          };
+        },
+        {} as { [issuecode: string]: issueWithPublicationcode[] },
+      ),
     ),
     duplicateIssues = computed(
       (): {
-        [issuecode: string]: IssueWithPublicationcode[];
+        [issuecode: string]: issueWithPublicationcode[];
       } =>
         (issuesByIssueCode.value &&
           Object.keys(issuesByIssueCode.value).reduce(
@@ -68,11 +67,11 @@ export default (issues: Ref<IssueWithPublicationcode[] | null>) => {
           )) ||
         {},
     ),
-    issuesInToReadStack = computed(
-      () => issues.value?.filter(({ isToRead }) => isToRead),
+    issuesInToReadStack = computed(() =>
+      issues.value?.filter(({ isToRead }) => isToRead),
     ),
-    issuesInOnSaleStack = computed(
-      () => issues.value?.filter(({ isOnSale }) => isOnSale),
+    issuesInOnSaleStack = computed(() =>
+      issues.value?.filter(({ isOnSale }) => isOnSale),
     ),
     totalUniqueIssues = computed(
       () =>
@@ -86,15 +85,14 @@ export default (issues: Ref<IssueWithPublicationcode[] | null>) => {
               ))) ||
         0,
     ),
-    totalPerCountry = computed(
-      () =>
-        issues.value?.reduce(
-          (acc, issue) => ({
-            ...acc,
-            [issue.country]: (acc[issue.country] || 0) + 1,
-          }),
-          {} as { [countrycode: string]: number },
-        ),
+    totalPerCountry = computed(() =>
+      issues.value?.reduce(
+        (acc, issue) => ({
+          ...acc,
+          [issue.country]: (acc[issue.country] || 0) + 1,
+        }),
+        {} as { [countrycode: string]: number },
+      ),
     ),
     numberPerCondition = computed(
       () =>

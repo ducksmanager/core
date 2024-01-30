@@ -19,7 +19,6 @@
 <script setup lang="ts">
 import { useHead } from "@unhead/vue";
 import Cookies from "js-cookie";
-import { useRouter } from "vue-router";
 
 const { user } = storeToRefs(collection());
 

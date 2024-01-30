@@ -36,12 +36,7 @@ meta:
           :placeholder="$t('Mot de passe')"
         />
 
-        <b-button
-          variant="primary"
-          size="lg"
-          type="submit"
-          :disabled="!csrfToken"
-        >
+        <b-button variant="primary" size="lg" type="submit">
           {{ $t("Connexion") }}
         </b-button>
         <div>
@@ -55,10 +50,7 @@ meta:
 </template>
 
 <script setup lang="ts">
-import axios from "axios";
 import Cookies from "js-cookie";
-
-import { call } from "~axios-helper";
 
 const { login: userLogin, loadUser } = collection();
 const { user } = storeToRefs(collection());
@@ -66,7 +58,6 @@ const { user } = storeToRefs(collection());
 let router = useRouter();
 let route = useRoute();
 
-let csrfToken = $ref(null as string | null);
 let username = $ref("" as string);
 let error = $ref(null as string | null);
 let password = $ref("" as string);
@@ -83,7 +74,7 @@ const login = async () => {
       await loadUser();
     },
     (e) => {
-      error = e.message;
+      error = e;
     },
   );
 };
@@ -101,8 +92,4 @@ watch(
   },
   { immediate: true },
 );
-
-(async () => {
-  csrfToken = (await call(axios, new GET__csrf())).data?.csrfToken;
-})();
 </script>

@@ -1,15 +1,12 @@
-import axios from "axios";
-
-import {
-  GET__collection__on_sale_by_others,
-  GET__collection__on_sale_by_others__contact_methods__$sellerId,
-} from "~api-routes/index";
-import { call } from "~axios-helper";
-import type { issue, requestedIssue } from "~prisma-clients/client_dm";
+import { collectionServices } from "~/composables/useSocket";
+import type { requestedIssue } from "~prisma-clients/client_dm";
+import { issueWithPublicationcode } from "~prisma-clients/extended/dm.extends";
+import CollectionServices from "~services/collection/types";
+import { EventReturnType } from "~services/types";
 
 export const marketplace = defineStore("marketplace", () => {
   const issuesOnSaleByOthers = ref(
-      null as GET__collection__on_sale_by_others["resBody"] | null,
+      null as EventReturnType<CollectionServices["getIssuesForSale"]> | null,
     ),
     issueRequestsAsBuyer = ref(null as requestedIssue[] | null),
     issueRequestsAsSeller = ref(null as requestedIssue[] | null),
@@ -18,13 +15,13 @@ export const marketplace = defineStore("marketplace", () => {
     isLoadingIssuesOnSaleByOthers = ref(false as boolean),
     contactMethods = ref(
       {} as {
-        [
-          userId: number
-        ]: GET__collection__on_sale_by_others__contact_methods__$sellerId["resBody"];
+        [userId: number]: EventReturnType<
+          CollectionServices["getContactMethods"]
+        >;
       },
     ),
-    sentRequestIssueIds = computed(
-      () => issueRequestsAsBuyer.value?.map(({ issueId }) => issueId),
+    sentRequestIssueIds = computed(() =>
+      issueRequestsAsBuyer.value?.map(({ issueId }) => issueId),
     ),
     sellerUserIds = computed(
       () =>
@@ -55,19 +52,16 @@ export const marketplace = defineStore("marketplace", () => {
           {} as { [userId: number]: string },
         ) || null,
     ),
-    sellerUserNames = computed(
-      () =>
-        sellerUserIds.value
-          ?.reduce(
-            (acc, userId) => [
-              ...acc,
-              { value: userId, text: users().stats[userId]?.username },
-            ],
-            [] as { value: number; text: string }[],
-          )
-          .sort(({ text: text1 }, { text: text2 }) =>
-            text1.localeCompare(text2),
-          ),
+    sellerUserNames = computed(() =>
+      sellerUserIds.value
+        ?.reduce(
+          (acc, userId) => [
+            ...acc,
+            { value: userId, text: users().stats[userId]?.username },
+          ],
+          [] as { value: number; text: string }[],
+        )
+        .sort(({ text: text1 }, { text: text2 }) => text1.localeCompare(text2)),
     ),
     requestIssueIdsBySellerId = computed(
       () =>
@@ -93,35 +87,27 @@ export const marketplace = defineStore("marketplace", () => {
           ...issues.reduce(
             (acc2, issue) => ({
               ...acc2,
-              [issue.id]: {
-                ...issue,
-                publicationcode: `${issue.country}/${issue.magazine}`,
-              },
+              [issue.id]: issue,
             }),
-            {} as Record<number, issue & { publicationcode: string }>,
+            {} as Record<number, issueWithPublicationcode>,
           ),
         }),
-        {} as Record<number, issue & { publicationcode: string }>,
+        {} as Record<number, issueWithPublicationcode>,
       ),
     ),
     requestIssues = async (issueIds: number[]) => {
-      await call(
-        axios,
-        new PUT__collection__on_sale_by_others__requests({
-          reqBody: { issueIds },
-        }),
-      );
+      await collectionServices.createRequests(issueIds);
       await loadIssueRequestsAsBuyer();
     },
     loadContactMethods = async (userId: number) => {
-      contactMethods.value[userId] = (
-        await call(
-          axios,
-          new GET__collection__on_sale_by_others__contact_methods__$sellerId({
-            params: { sellerId: String(userId) },
-          }),
-        )
-      ).data;
+      const result = await collectionServices.getContactMethods(userId);
+      switch (result.error) {
+        case undefined:
+          contactMethods.value[userId] = result;
+          break;
+        default:
+          console.error(result.error, result.errorDetails);
+      }
     },
     loadIssueRequestsAsBuyer = async (afterUpdate = false) => {
       if (
@@ -131,14 +117,8 @@ export const marketplace = defineStore("marketplace", () => {
         return;
       }
       isLoadingIssueRequestsAsBuyer.value = true;
-      issueRequestsAsBuyer.value = (
-        await call(
-          axios,
-          new GET__collection__on_sale_by_others__requests__as__$as({
-            params: { as: "buyer" },
-          }),
-        )
-      ).data;
+      issueRequestsAsBuyer.value =
+        await collectionServices.getRequests("buyer");
       isLoadingIssueRequestsAsBuyer.value = false;
     },
     loadIssueRequestsAsSeller = async (afterUpdate = false) => {
@@ -149,14 +129,8 @@ export const marketplace = defineStore("marketplace", () => {
         return;
       }
       isLoadingIssueRequestsAsSeller.value = true;
-      issueRequestsAsSeller.value = (
-        await call(
-          axios,
-          new GET__collection__on_sale_by_others__requests__as__$as({
-            params: { as: "seller" },
-          }),
-        )
-      ).data;
+      issueRequestsAsSeller.value =
+        await collectionServices.getRequests("seller");
       isLoadingIssueRequestsAsSeller.value = false;
     },
     loadIssuesOnSaleByOthers = async (afterUpdate = false) => {
@@ -167,18 +141,11 @@ export const marketplace = defineStore("marketplace", () => {
         return;
       }
       isLoadingIssuesOnSaleByOthers.value = true;
-      issuesOnSaleByOthers.value = (
-        await call(axios, new GET__collection__on_sale_by_others())
-      ).data;
+      issuesOnSaleByOthers.value = await collectionServices.getIssuesForSale();
       isLoadingIssuesOnSaleByOthers.value = false;
     },
     deleteRequestToSeller = async (issueId: number) => {
-      await call(
-        axios,
-        new DELETE__collection__on_sale_by_others__requests({
-          reqBody: { issueId },
-        }),
-      );
+      await collectionServices.deleteRequests(issueId);
     };
 
   return {

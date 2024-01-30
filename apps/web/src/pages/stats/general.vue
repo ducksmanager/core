@@ -159,11 +159,9 @@
 </template>
 
 <script setup lang="ts">
-import axios from "axios";
-
 import { QuotedIssue } from "~/composables/useCollection";
 import condition from "~/composables/useCondition";
-import { call } from "~axios-helper";
+import { globalStatsServices } from "~/composables/useSocket";
 
 const { getConditionLabel } = condition();
 
@@ -180,14 +178,13 @@ const { totalPerPublication, quotedIssues, quotationSum, user } =
 const { fetchPublicationNames, fetchIssueQuotations } = coa();
 const { publicationNames } = storeToRefs(coa());
 
-const quotedIssuesForCollection = $computed(
-  () =>
-    quotedIssues.value?.sort(
-      (
-        { estimationGivenCondition: estimation1 },
-        { estimationGivenCondition: estimation2 },
-      ) => Math.sign(estimation2 - estimation1),
-    ),
+const quotedIssuesForCollection = $computed(() =>
+  quotedIssues.value?.sort(
+    (
+      { estimationGivenCondition: estimation1 },
+      { estimationGivenCondition: estimation2 },
+    ) => Math.sign(estimation2 - estimation1),
+  ),
 );
 const quotationFields = [
   { key: "issue", label: $t("Numéro") },
@@ -228,9 +225,7 @@ watch(
 (async () => {
   await loadCollection();
   await fetchCount();
-  const { userScores } = (
-    await call(axios, new GET__global_stats__user__collection__rarity())
-  ).data;
+  const { userScores } = await globalStatsServices.getUsersCollectionRarity();
   rarityValue =
     userScores.length -
     userScores.findIndex(({ userId }) => userId === user.value?.id);

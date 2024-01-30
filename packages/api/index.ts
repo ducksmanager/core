@@ -1,75 +1,97 @@
 import "module-alias/register";
 
 import * as Sentry from "@sentry/node";
-import busboy from "connect-busboy";
-import cookieParser from "cookie-parser";
-import cors from "cors";
+import { instrument } from "@socket.io/admin-ui";
 import dotenv from "dotenv";
-import express from "express";
-import { router } from "express-file-routing";
 
-import {
-  authenticateToken,
-  checkUserIsAdmin,
-  checkUserIsEdgeCreatorEditor,
-  injectTokenIfValid,
-} from "~routes/_auth";
+import auth from "./services/auth";
+import { OptionalAuthMiddleware } from "./services/auth/util";
+import bookcase from "./services/bookcase"; 
+import bookstores from "./services/bookstores";
+import coa from "./services/coa";
+import collection from "./services/collection";
+import coverId from "./services/cover-id";
+import demo from "./services/demo";
+import edgecreator from "./services/edgecreator";
+import edges from "./services/edges";
+import events from "./services/events";
+import feedback from "./services/feedback";
+import globalStats from "./services/global-stats";
+import login from "./services/login";
+import notifications from "./services/notifications";
+import presentationText from "./services/presentation-text";
+import publicCollection from "./services/public-collection";
+import stats from "./services/stats";
+import status from "./services/status";
+import { ServerWithUser } from "./services/types-server";
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+(BigInt.prototype as any).toJSON = function () {
+  const int = Number.parseInt(this.toString());
+  return int ?? this.toString();
+};
 
 dotenv.config({
   path: "./.env",
 });
 
-const port = 3000;
-
 Sentry.init({
   dsn: process.env.SENTRY_DSN,
 });
 
-const app = express();
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-app.set("json replacer", (key: string, value: any) =>
-  typeof value === "bigint" ? Number(value) : value
-);
-app.use(
-  Sentry.Handlers.requestHandler({
-    user: ["id", "username"],
-  }) as express.RequestHandler
-);
-app.use(
-  cors({
-    optionsSuccessStatus: 200, // some legacy browsers (IE11, various SmartTVs) choke on 204
-  })
-);
-app.use(cookieParser());
-
-app.use(busboy({ immediate: true }));
-
-app.all(/^.+$/, injectTokenIfValid);
-app.all(
-  /^\/(edgecreator\/(publish|edgesprites)|notifications)|(edges\/(published))|(\/demo\/reset)|(\/notification\/send)|(bookstores\/(approve|refuse))|(presentation-text\/(approve|refuse))/,
-  [checkUserIsAdmin]
-);
-
-app.all(/^\/edgecreator\/(.+)/, [
-  authenticateToken,
-  checkUserIsEdgeCreatorEditor,
-]);
-
-app.all(/^\/global-stats\/user\/list$/, [
-  authenticateToken,
-  checkUserIsEdgeCreatorEditor,
-]);
-
-app.all(/^\/collection\/(.+)/, authenticateToken);
-app.all("/global-stats/user/collection/rarity", authenticateToken);
-
-app.use(express.json({ limit: "5mb" }));
-
 (async () => {
-  app.use("/", await router());
-  app.use(Sentry.Handlers.errorHandler() as express.ErrorRequestHandler);
+  // app.use(Sentry.Handlers.errorHandler() as express.ErrorRequestHandler);
 
-  app.listen(port, () => {
-    console.log(`API listening on port ${port}`);
+  const io = new ServerWithUser({
+    cors: {
+      origin: '*',
+    },
   });
+
+  instrument(io, {
+    auth: false
+  });
+  io.listen(4000);
+  console.log('WebSocket open on port 4000')
+  io.use(OptionalAuthMiddleware);
+  io.use((_socket, next) => {
+    next();
+
+    // app.all(
+    //   /^\/(edgecreator\/(publish|edgesprites)|notifications)|(edges\/(published))|(\/demo\/reset)|(\/notification\/send)|(bookstores\/(approve|refuse))|(presentation-text\/(approve|refuse))/,
+    //   [checkUserIsAdmin]
+    // );
+
+    // app.all(/^\/edgecreator\/(.+)/, [
+    //   authenticateToken,
+    //   checkUserIsEdgeCreatorEditor,
+    // ]);
+
+    // app.all(/^\/global-stats\/user\/list$/, [
+    //   authenticateToken,
+    //   checkUserIsEdgeCreatorEditor,
+    // ]);
+
+    // app.all(/^\/collection\/(.+)/, authenticateToken);
+    // app.all("/global-stats/user/collection/rarity", authenticateToken);
+  });
+
+  auth(io);
+  bookcase(io);
+  bookstores(io);
+  coa(io);
+  collection(io);
+  coverId(io);
+  demo(io);
+  edgecreator(io);
+  edges(io);
+  events(io);
+  feedback(io);
+  globalStats(io);
+  login(io);
+  notifications(io);
+  presentationText(io);
+  publicCollection(io);
+  stats(io);
+  status(io);
 })();

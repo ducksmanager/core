@@ -41,11 +41,10 @@ const countryCodesSortedByName = $computed(
   () =>
     countryCodes &&
     countryNames &&
-    [...countryCodes].sort(
-      (countryCodeA, countryCodeB) =>
-        countryNames.value![countryCodeA]?.localeCompare(
-          countryNames.value![countryCodeB],
-        ),
+    [...countryCodes].sort((countryCodeA, countryCodeB) =>
+      countryNames.value![countryCodeA]?.localeCompare(
+        countryNames.value![countryCodeB],
+      ),
     ),
 );
 const publicationCodes = $computed(
@@ -75,7 +74,7 @@ watch(
 );
 
 watch(
-  () => Object.keys(issueNumbers).length && collection,
+  () => Object.keys(issueNumbers).length && issues.value?.length,
   (newValue) => {
     if (newValue) {
       const collectionWithPublicationcodes = issues

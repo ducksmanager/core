@@ -219,10 +219,9 @@ alias: [/collection/compte]
 </template>
 
 <script setup lang="ts">
-import axios, { AxiosError } from "axios";
-
-import { call } from "~axios-helper";
+import { collectionServices } from "~/composables/useSocket";
 import { ScopedError } from "~dm-types/ScopedError";
+
 const { getImagePath } = images();
 
 const i18n = useI18n();
@@ -249,27 +248,26 @@ const { userForAccountForm, marketplaceContactMethods } =
 
 const emptyCollection = async () => {
   if (confirm(t("Votre collection va être vidée. Continuer ?"))) {
-    await call(axios, new POST__collection__empty());
+    await collectionServices.emptyCollection();
     await router.push("/collection/show");
   }
 };
 
 const updateAccount = async () => {
-  try {
-    error = undefined;
-    const response = (
-      await call(
-        axios,
-        new POST__collection__user({
-          reqBody: {
-            ...userForAccountForm.value!,
-            oldPassword,
-            password,
-            password2,
-          },
-        }),
-      )
-    ).data;
+  error = undefined;
+  const response = await collectionServices.updateUser({
+    ...userForAccountForm.value!,
+    oldPassword,
+    password,
+    password2,
+  });
+  if (response.error) {
+    if (response.selector) {
+      error = response;
+    } else {
+      console.error(response.error);
+    }
+  } else {
     hasRequestedPresentationSentenceUpdate =
       response.hasRequestedPresentationSentenceUpdate;
     error = null;
@@ -279,10 +277,6 @@ const updateAccount = async () => {
       hasDiscordContactMethod ? "discordId" : "",
     ].filter((value) => value);
     await updateMarketplaceContactMethods();
-  } catch (e) {
-    error = ((e as AxiosError)?.response?.data as ScopedError) || {
-      message: $t("Une erreur s'est produite."),
-    };
   }
 };
 
@@ -294,7 +288,7 @@ const deleteAccount = async () => {
       ),
     )
   ) {
-    await call(axios, new DELETE__collection__user());
+    await collectionServices.deleteUser();
     await router.push("/logout");
   }
 };

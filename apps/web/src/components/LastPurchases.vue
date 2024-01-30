@@ -41,7 +41,7 @@
 </template>
 
 <script setup lang="ts">
-import { IssueWithPublicationcode } from "~dm-types/IssueWithPublicationcode";
+import { issueWithPublicationcode } from "~prisma-clients/extended/dm.extends";
 
 const { publicationNames } = storeToRefs(coa());
 const { purchasesById, issues: allIssues } = storeToRefs(collection());
@@ -84,7 +84,7 @@ const hasPublicationNames = $computed(() => Object.keys(publicationNames)),
           },
           [] as {
             purchase: { date: Date; description: string };
-            issues: IssueWithPublicationcode[];
+            issues: issueWithPublicationcode[];
           }[],
         )
         .sort(({ purchase: purchase1 }, { purchase: purchase2 }) =>

@@ -1,36 +1,36 @@
-import { AxiosInstance } from "axios";
-import { AxiosError } from "axios";
-
-import {
-  GET__collection__edges__lastPublished,
-  GET__collection__purchases,
-  GET__collection__stats__suggestedissues__$countrycode__$sincePreviousVisit__$sort__$limit,
-  GET__collection__user,
-} from "~api-routes/index";
-import { addUrlParamsRequestInterceptor, call } from "~axios-helper";
 import {
   CollectionUpdateMultipleIssues,
   CollectionUpdateSingleIssue,
 } from "~dm-types/CollectionUpdate";
-import { IssueWithPublicationcode } from "~dm-types/IssueWithPublicationcode";
-import { authorUser, purchase, subscription } from "~prisma-clients/client_dm";
+import { ScopedError } from "~dm-types/ScopedError";
+import { authorUser, purchase } from "~prisma-clients/client_dm";
+import {
+  issueWithPublicationcode,
+  subscriptionWithPublicationcode,
+} from "~prisma-clients/extended/dm.extends";
+import CollectionServices from "~services/collection/types";
+import StatsServices from "~services/stats/types";
+import { EventReturnType } from "~services/types";
 
 import useCollection from "../composables/useCollection";
+import {
+  collectionServices,
+  loginServices,
+  statsServices,
+} from "../composables/useSocket";
 import { bookcase } from "./bookcase";
 
 export type IssueWithPublicationcodeOptionalId = Omit<
-  IssueWithPublicationcode,
+  issueWithPublicationcode,
   "id"
 > & {
   id: number | null;
 };
 
 export type SubscriptionTransformed = Omit<
-  subscription,
+  subscriptionWithPublicationcode,
   "country" | "magazine"
-> & {
-  publicationcode: string;
-};
+>;
 
 export type SubscriptionTransformedStringDates = Omit<
   SubscriptionTransformed,
@@ -44,12 +44,8 @@ export type purchaseWithStringDate = Omit<purchase, "date"> & {
   date: string;
 };
 
-let api: AxiosInstance,
-  sessionExistsFn: () => Promise<boolean>,
-  clearSessionFn: () => Promise<void>;
-
 export const collection = defineStore("collection", () => {
-  const issues = ref(null as IssueWithPublicationcode[] | null);
+  const issues = ref(null as issueWithPublicationcode[] | null);
 
   const collectionUtils = useCollection(issues),
     watchedPublicationsWithSales = ref(null as string[] | null),
@@ -57,16 +53,16 @@ export const collection = defineStore("collection", () => {
     watchedAuthors = ref(null as authorUser[] | null),
     marketplaceContactMethods = ref(null as string[] | null),
     suggestions = ref(
-      null as
-        | GET__collection__stats__suggestedissues__$countrycode__$sincePreviousVisit__$sort__$limit["resBody"]
-        | null,
+      null as EventReturnType<StatsServices["getSuggestionsForCountry"]> | null,
     ),
     subscriptions = ref(null as SubscriptionTransformed[] | null),
     popularIssuesInCollection = ref(
       null as { [issuecode: string]: number } | null,
     ),
     lastPublishedEdgesForCurrentUser = ref(
-      null as GET__collection__edges__lastPublished["resBody"] | null,
+      null as EventReturnType<
+        CollectionServices["getLastPublishedEdges"]
+      > | null,
     ),
     isLoadingUser = ref(false as boolean),
     isLoadingCollection = ref(false as boolean),
@@ -76,16 +72,18 @@ export const collection = defineStore("collection", () => {
     isLoadingSuggestions = ref(false as boolean),
     isLoadingSubscriptions = ref(false as boolean),
     user = ref(
-      undefined as GET__collection__user["resBody"] | undefined | null,
+      undefined as
+        | EventReturnType<CollectionServices["getUser"]>
+        | undefined
+        | null,
     ),
     previousVisit = ref(null as Date | null),
     publicationUrlRoot = computed(() => "/collection/show"),
-    purchasesById = computed(
-      (): Record<string, purchase> | undefined =>
-        purchases.value?.reduce(
-          (acc, purchase) => ({ ...acc, [purchase.id as number]: purchase }),
-          {},
-        ),
+    purchasesById = computed((): Record<string, purchase> | undefined =>
+      purchases.value?.reduce(
+        (acc, purchase) => ({ ...acc, [purchase.id as number]: purchase }),
+        {},
+      ),
     ),
     hasSuggestions = computed(
       () =>
@@ -131,15 +129,14 @@ export const collection = defineStore("collection", () => {
             ),
         ),
     ),
-    popularIssuesInCollectionWithoutEdge = computed(
-      () =>
-        bookcase()
-          .bookcaseWithPopularities?.filter(
-            ({ edgeId, popularity }) => !edgeId && popularity && popularity > 0,
-          )
-          .sort(({ popularity: popularity1 }, { popularity: popularity2 }) =>
-            popularity2 && popularity1 ? popularity2 - popularity1 : 0,
-          ),
+    popularIssuesInCollectionWithoutEdge = computed(() =>
+      bookcase()
+        .bookcaseWithPopularities?.filter(
+          ({ edgeId, popularity }) => !edgeId && popularity && popularity > 0,
+        )
+        .sort(({ popularity: popularity1 }, { popularity: popularity2 }) =>
+          popularity2 && popularity1 ? popularity2 - popularity1 : 0,
+        ),
     ),
     userForAccountForm = computed(() => {
       if (!user.value) {
@@ -156,68 +153,47 @@ export const collection = defineStore("collection", () => {
       };
     }),
     updateCollectionSingleIssue = async (data: CollectionUpdateSingleIssue) => {
-      await call(
-        api,
-        new POST__collection__issues__single({
-          reqBody: data,
-        }),
-      );
+      await collectionServices.addOrChangeCopies(data);
       await loadCollection(true);
     },
     updateCollectionMultipleIssues = async (
       data: CollectionUpdateMultipleIssues,
     ) => {
-      await call(
-        api,
-        new POST__collection__issues__multiple({
-          reqBody: data,
-        }),
-      );
+      await collectionServices.addOrChangeIssues(data);
       await loadCollection(true);
     },
     createPurchase = async (date: string, description: string) => {
-      await call(
-        api,
-        new PUT__collection__purchases({
-          reqBody: { date, description },
-        }),
-      );
+      await collectionServices.createPurchase(date, description);
       await loadPurchases(true);
     },
     deletePurchase = async (id: number) => {
-      await call(
-        api,
-        new DELETE__collection__purchases__$id({
-          params: { id: String(id) },
-        }),
-      );
+      await collectionServices.deletePurchase(id);
       await loadPurchases(true);
     },
     loadPreviousVisit = async () => {
-      previousVisit.value = (await call(api, new POST__collection__lastvisit()))
-        .data?.previousVisit;
+      const result = await collectionServices.getLastVisit();
+      if (typeof result === "object" && result?.error) {
+        console.error(result.error);
+      } else if (result) {
+        previousVisit.value = new Date(result as string);
+      }
     },
     loadCollection = async (afterUpdate = false) => {
       if (afterUpdate || (!isLoadingCollection.value && !issues.value)) {
         isLoadingCollection.value = true;
-        issues.value = (
-          await call(api, new GET__collection__issues())
-        ).data.map((issue) => ({
-          ...issue,
-          publicationcode: `${issue.country}/${issue.magazine}`,
-        }));
+        issues.value = await collectionServices.getIssues();
         isLoadingCollection.value = false;
       }
     },
     loadPurchases = async (afterUpdate = false) => {
       if (afterUpdate || (!isLoadingPurchases.value && !purchases.value)) {
         isLoadingPurchases.value = true;
-        purchases.value = (
-          await call(api, new GET__collection__purchases())
-        ).data.map((purchase) => ({
-          ...purchase,
-          date: new Date(purchase.date),
-        }));
+        purchases.value = (await collectionServices.getPurchases()).map(
+          (purchase) => ({
+            ...purchase,
+            date: new Date(purchase.date),
+          }),
+        );
         isLoadingPurchases.value = false;
       }
     },
@@ -228,16 +204,9 @@ export const collection = defineStore("collection", () => {
           !watchedPublicationsWithSales.value)
       ) {
         isLoadingWatchedPublicationsWithSales.value = true;
-        watchedPublicationsWithSales.value = (
-          await call(
-            api,
-            new GET__collection__options__$optionName({
-              params: {
-                optionName: "sales_notification_publications",
-              },
-            }),
-          )
-        ).data;
+        watchedPublicationsWithSales.value = await collectionServices.getOption(
+          "sales_notification_publications",
+        );
         isLoadingWatchedPublicationsWithSales.value = false;
       }
     },
@@ -248,38 +217,18 @@ export const collection = defineStore("collection", () => {
           !marketplaceContactMethods.value)
       ) {
         isLoadingMarketplaceContactMethods.value = true;
-        marketplaceContactMethods.value = (
-          await call(
-            api,
-            new GET__collection__options__$optionName({
-              params: { optionName: "marketplace_contact_methods" },
-            }),
-          )
-        ).data;
+        marketplaceContactMethods.value = await collectionServices.getOption(
+          "marketplace_contact_methods",
+        );
         isLoadingMarketplaceContactMethods.value = false;
       }
     },
     updateMarketplaceContactMethods = async () =>
-      await call(
-        api,
-        new POST__collection__options__$optionName({
-          reqBody: { values: marketplaceContactMethods.value! },
-          params: {
-            optionName: "marketplace_contact_methods",
-          },
-        }),
-      ),
+      await collectionServices.getOption("marketplace_contact_methods"),
     updateWatchedPublicationsWithSales = async () =>
-      await call(
-        api,
-        new POST__collection__options__$optionName({
-          reqBody: {
-            values: watchedPublicationsWithSales.value!,
-          },
-          params: {
-            optionName: "sales_notification_publications",
-          },
-        }),
+      await collectionServices.setOption(
+        "sales_notification_publications",
+        watchedPublicationsWithSales.value!,
       ),
     loadSuggestions = async ({
       countryCode,
@@ -292,23 +241,12 @@ export const collection = defineStore("collection", () => {
     }) => {
       if (!isLoadingSuggestions.value) {
         isLoadingSuggestions.value = true;
-        suggestions.value = (
-          await call(
-            api,
-            new GET__collection__stats__suggestedissues__$countrycode__$sincePreviousVisit__$sort__$limit(
-              {
-                params: {
-                  countrycode: countryCode || "ALL",
-                  sincePreviousVisit: sinceLastVisit
-                    ? "since_previous_visit"
-                    : "_",
-                  sort,
-                  limit: sinceLastVisit ? "100" : "20",
-                },
-              },
-            ),
-          )
-        ).data;
+        suggestions.value = await statsServices.getSuggestionsForCountry(
+          countryCode || "ALL",
+          sinceLastVisit ? "since_previous_visit" : "_",
+          sort,
+          sinceLastVisit ? 100 : 20,
+        );
         isLoadingSuggestions.value = false;
       }
     },
@@ -318,21 +256,21 @@ export const collection = defineStore("collection", () => {
         (!isLoadingSubscriptions.value && !subscriptions.value)
       ) {
         isLoadingSubscriptions.value = true;
-        subscriptions.value = (
-          await call(api, new GET__collection__subscriptions())
-        ).data.map((subscription: SubscriptionTransformedStringDates) => ({
-          ...subscription,
-          startDate: new Date(Date.parse(subscription.startDate)),
-          endDate: new Date(Date.parse(subscription.endDate)),
-        }));
+        subscriptions.value = (await collectionServices.getSubscriptions()).map(
+          (subscription: SubscriptionTransformedStringDates) => ({
+            ...subscription,
+            startDate: new Date(Date.parse(subscription.startDate)),
+            endDate: new Date(Date.parse(subscription.endDate)),
+          }),
+        );
         isLoadingSubscriptions.value = false;
       }
     },
     loadPopularIssuesInCollection = async () => {
       if (!popularIssuesInCollection.value) {
         popularIssuesInCollection.value = (
-          await call(api, new GET__collection__popular())
-        ).data.reduce(
+          await collectionServices.getCollectionPopularity()
+        ).reduce(
           (acc, issue) => ({
             ...acc,
             [`${issue.country}/${issue.magazine} ${issue.issuenumber}`]:
@@ -344,33 +282,24 @@ export const collection = defineStore("collection", () => {
     },
     loadLastPublishedEdgesForCurrentUser = async () => {
       if (!lastPublishedEdgesForCurrentUser.value) {
-        lastPublishedEdgesForCurrentUser.value = (
-          await call(api, new GET__collection__edges__lastPublished())
-        ).data;
+        lastPublishedEdgesForCurrentUser.value =
+          await collectionServices.getLastPublishedEdges();
       }
     },
     login = async (
       username: string,
       password: string,
       onSuccess: (token: string) => void,
-      onError: (e: AxiosError) => void,
+      onError: (e: string) => void,
     ) => {
-      try {
-        onSuccess(
-          (
-            await call(
-              api,
-              new POST__login({
-                reqBody: {
-                  username,
-                  password,
-                },
-              }),
-            )
-          ).data.token,
-        );
-      } catch (e) {
-        onError(e as AxiosError);
+      const response = await loginServices.login({
+        username,
+        password,
+      });
+      if (typeof response !== "string" && "error" in response) {
+        onError(response.error!);
+      } else {
+        onSuccess(response as string);
       }
     },
     signup = async (
@@ -379,60 +308,44 @@ export const collection = defineStore("collection", () => {
       password2: string,
       email: string,
       onSuccess: (token: string) => void,
-      onError: (e: AxiosError) => void,
+      onError: (e: ScopedError) => void,
     ) => {
-      try {
-        onSuccess(
-          (
-            await call(
-              api,
-              new PUT__collection__user({
-                reqBody: {
-                  username,
-                  password,
-                  password2,
-                  email,
-                },
-              }),
-            )
-          ).data.token,
-        );
-      } catch (e) {
-        onError(e as AxiosError);
+      const response = await collectionServices.createUser({
+        username,
+        password,
+        password2,
+        email,
+      });
+      if (response.error) {
+        if (response.selector) {
+          onError(response);
+        } else {
+          console.error(response.error, response.errorDetails);
+        }
+      } else {
+        onSuccess(response.token);
       }
     },
     loadUser = async (afterUpdate = false) => {
       if (!isLoadingUser.value && (afterUpdate || !user.value)) {
         isLoadingUser.value = true;
-        try {
-          if (await sessionExistsFn()) {
-            user.value = (await call(api, new GET__collection__user())).data;
-          }
-        } catch (e) {
-          console.error(e);
-          await clearSessionFn();
-          user.value = null;
-        } finally {
-          isLoadingUser.value = false;
+        const response = await collectionServices.getUser();
+        if ("error" in response) {
+          session.value?.clearSession();
+        } else {
+          user.value = response;
         }
+        isLoadingUser.value = false;
       }
     };
   return {
     ...collectionUtils,
-    setApi: (params: {
-      api: typeof api;
-      sessionExistsFn: typeof sessionExistsFn;
-      clearSessionFn: typeof clearSessionFn;
-    }) => {
-      api = addUrlParamsRequestInterceptor(params.api);
-      sessionExistsFn = params.sessionExistsFn;
-      clearSessionFn = params.clearSessionFn;
-    },
     issues,
     publicationUrlRoot,
     createPurchase,
     deletePurchase,
     hasSuggestions,
+    isLoadingUser,
     issueNumbersPerPublication,
     lastPublishedEdgesForCurrentUser,
     loadCollection,

@@ -10,9 +10,9 @@
         <template v-if="isBooked">{{ $t("Réservé pour") }}</template
         ><template v-else>{{ $t("Demandé par") }}</template
         >&nbsp;<UserPopover
-          v-if="buyerPoints?.[`${buyerId}`] && buyerStats?.[`${buyerId}`]"
-          :points="buyerPoints[`${buyerId}`]"
-          :stats="buyerStats[`${buyerId}`]"
+          v-if="buyerPoints?.[buyerId] && buyerStats?.[buyerId]"
+          :points="buyerPoints[buyerId]"
+          :stats="buyerStats[buyerId]"
         /></div
     ></template>
 
@@ -21,6 +21,9 @@
 </template>
 
 <script setup lang="ts">
+import { MedalPointsPerUser } from "~dm-types/MedalPointsPerUser";
+import { QuickStatsPerUser } from "~dm-types/QuickStatsPerUser";
+
 const { issueId } = defineProps<{
   issueId: number;
 }>();
@@ -30,31 +33,30 @@ const { issueRequestsAsSeller } = storeToRefs(marketplace());
 const { points, stats } = storeToRefs(users());
 const { issuesInOnSaleStack } = storeToRefs(collection());
 
-const receivedRequests = $computed(
-  () =>
-    issueRequestsAsSeller.value?.filter(
-      ({ issueId: requestIssueId }) => requestIssueId === issueId,
-    ),
+const receivedRequests = $computed(() =>
+  issueRequestsAsSeller.value?.filter(
+    ({ issueId: requestIssueId }) => requestIssueId === issueId,
+  ),
 );
 
 const buyerPoints = $computed(
-  (): { [buyerId: number]: { [contribution: string]: number } } =>
-    receivedRequests?.reduce(
+  () =>
+    receivedRequests?.reduce<Record<number, MedalPointsPerUser[0]>>(
       (acc, { buyerId }) => ({ ...acc, [buyerId]: points.value[buyerId] }),
       {},
     ) || {},
 );
 
 const buyerStats = $computed(
-  (): { [buyerId: number]: { [contribution: string]: number } } =>
-    receivedRequests?.reduce(
+  () =>
+    receivedRequests?.reduce<Record<number, QuickStatsPerUser[0]>>(
       (acc, { buyerId }) => ({ ...acc, [buyerId]: stats.value[buyerId] }),
       {},
     ) || {},
 );
 
-const isOnSale = $computed(
-  () => issuesInOnSaleStack.value?.find(({ id }) => id === issueId),
+const isOnSale = $computed(() =>
+  issuesInOnSaleStack.value?.find(({ id }) => id === issueId),
 );
 </script>
 

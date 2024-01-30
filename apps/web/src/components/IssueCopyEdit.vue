@@ -311,12 +311,11 @@ const issuenumbers = $computed(() =>
     : (copyState as CollectionUpdateMultipleIssues).issuenumbers,
 );
 
-const collectionForCurrentPublication = $computed(
-  () =>
-    issues.value?.filter(
-      ({ publicationcode: issuePublicationcode }) =>
-        copyState.publicationcode === issuePublicationcode,
-    ),
+const collectionForCurrentPublication = $computed(() =>
+  issues.value?.filter(
+    ({ publicationcode: issuePublicationcode }) =>
+      copyState.publicationcode === issuePublicationcode,
+  ),
 );
 
 let isSingleIssueSelected = $computed(() => "copyIndex" in copyState);
@@ -404,11 +403,10 @@ const userIdsWhoSentRequestsForAllSelected = $computed(() =>
   ),
 );
 
-const receivedRequests = $computed(
-  () =>
-    issueRequestsAsSeller.value?.filter(({ issueId }) =>
-      issueIds.includes(issueId),
-    ),
+const receivedRequests = $computed(() =>
+  issueRequestsAsSeller.value?.filter(({ issueId }) =>
+    issueIds.includes(issueId),
+  ),
 );
 
 const formatDate = (value: string) =>

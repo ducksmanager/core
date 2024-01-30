@@ -84,14 +84,11 @@
 </template>
 
 <script setup lang="ts">
-import axios from "axios";
-import { watch } from "vue";
-
 import condition from "~/composables/useCondition";
-import { call } from "~axios-helper";
-import { IssueWithPublicationcode } from "~dm-types/IssueWithPublicationcode";
+import { coaServices } from "~/composables/useSocket";
 import { SimpleIssue } from "~dm-types/SimpleIssue";
 import { SimpleStory } from "~dm-types/SimpleStory";
+import { issueWithPublicationcode } from "~prisma-clients/extended/dm.extends";
 
 const {
   withTitle = true,
@@ -118,7 +115,7 @@ let search = $ref("" as string);
 let storyResults = $ref(
   {} as {
     results: (SimpleStory & {
-      collectionIssue: IssueWithPublicationcode | null;
+      collectionIssue: issueWithPublicationcode | null;
     })[];
     hasMore: boolean;
   },
@@ -163,14 +160,9 @@ const runSearch = async (value: string) => {
   isSearching = true;
   try {
     if (isSearchByCode) {
-      const data = (
-        await call(
-          axios,
-          new GET__coa__list__issues__by_storycode({
-            query: { storycode: value.replace(/^code=/, "") },
-          }),
-        )
-      ).data;
+      const data = await coaServices.getIssuesByStorycode(
+        value.replace(/^code=/, ""),
+      );
       issueResults = {
         results: data.sort((issue1, issue2) =>
           Math.sign(
@@ -182,14 +174,7 @@ const runSearch = async (value: string) => {
         issueResults.results.map(({ publicationcode }) => publicationcode),
       );
     } else {
-      const data = (
-        await call(
-          axios,
-          new POST__coa__stories__search__withIssues({
-            reqBody: { keywords: value },
-          }),
-        )
-      ).data;
+      const data = await coaServices.searchStory(value.split(","), true);
       storyResults.results = data.results.map((story) => ({
         ...story,
         collectionIssue:
