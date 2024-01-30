@@ -101,11 +101,11 @@ const getUsersQuickStats = async (userIds: number[]) => Promise.all([
     }), prismaDm.issue.groupBy({
       by: ['userId'],
       _count: {
-        id: true,
+        userId: true,
         country: true,
       },
       where: {
-        id: {
+        userId: {
           in: userIds
         }
       }
@@ -125,7 +125,7 @@ const getUsersQuickStats = async (userIds: number[]) => Promise.all([
       [userId]: {
         ...usersById[userId],
         numberOfCountries: _count.country,
-        numberOfIssues: _count.id,
+        numberOfIssues: _count.userId,
         numberOfPublications: numberOfPublicationsPerUser[userId] || 0
       }
     }), {})
