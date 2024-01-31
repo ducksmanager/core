@@ -52,8 +52,6 @@
 </template>
 
 <script setup lang="ts">
-import { getCurrentLocaleShortKey } from "~/composables/useLocales";
-
 const i18n = useI18n();
 const currentLocaleShortKey = getCurrentLocaleShortKey(i18n.locale.value);
 

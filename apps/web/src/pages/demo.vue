@@ -8,7 +8,6 @@ meta:
 <script setup lang="ts">
 import Cookies from "js-cookie";
 
-import { demoServices } from "~/composables/useSocket";
 const { loadUser } = collection();
 const { user } = storeToRefs(collection());
 
@@ -25,7 +24,7 @@ watch(
 );
 
 async () => {
-  const result = await demoServices.loginAsDemo();
+  const result = await loginServices.loginAsDemo();
   switch (result.error) {
     case "No demo user found":
       console.error(result.error);

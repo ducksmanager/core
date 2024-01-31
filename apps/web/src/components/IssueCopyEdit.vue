@@ -251,12 +251,11 @@
   </template>
 </template>
 <script setup lang="ts">
-import cond from "~/composables/useCondition";
 import { IssueWithPublicationcodeOptionalId } from "~/stores/collection";
 import { CollectionUpdateMultipleIssues } from "~dm-types/CollectionUpdate";
 import type { issue_condition } from "~prisma-clients/client_dm";
 
-const { conditions } = cond();
+const { conditions } = useCondition();
 
 const { copy: copyState, copyIndex = null } = defineProps<{
   copy: IssueWithPublicationcodeOptionalId | CollectionUpdateMultipleIssues;

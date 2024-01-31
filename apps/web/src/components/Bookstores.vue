@@ -172,7 +172,6 @@
 import MapboxGeocoder from "@mapbox/mapbox-gl-geocoder";
 import { MapboxMap, MapboxMarker, MapboxPopup } from "vue-mapbox-ts";
 
-import { bookstoreServices } from "~/composables/useSocket";
 import { SimpleBookstore } from "~dm-types/SimpleBookstore";
 
 const { fetchStats } = users();

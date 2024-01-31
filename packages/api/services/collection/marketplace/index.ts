@@ -87,7 +87,7 @@ export default (socket: Socket<Services>) => {
     }
   });
 
-  socket.on("getIssuesForSale", async (callback) =>
+  socket.on("getIssuesForSale", (callback) =>
     getIssuesForSale(socket.data.user!.id).then(callback)
   );
 };

@@ -12,8 +12,6 @@
 </template>
 
 <script setup lang="ts">
-import { availableLocales } from "~/composables/useLocales";
-
 const { fixed = false } = defineProps<{
   fixed?: boolean;
 }>();

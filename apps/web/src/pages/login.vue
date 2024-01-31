@@ -71,6 +71,7 @@ const login = async () => {
       Cookies.set("token", newToken, {
         domain,
       });
+      collectionServices.connect();
       await loadUser();
     },
     (e) => {

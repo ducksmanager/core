@@ -68,7 +68,6 @@ import {
 } from "chart.js";
 import { Bar } from "vue-chartjs";
 
-import { statsServices } from "~/composables/useSocket";
 import StatsServices from "~services/stats/types";
 import { EventReturnType } from "~services/types";
 

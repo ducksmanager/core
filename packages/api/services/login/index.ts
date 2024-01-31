@@ -11,7 +11,7 @@ export default (io: Server) => {
     (socket) => {
       console.log("connected to login");
 
-      socket.on("getCsrf", async (callback) => callback(""));
+      socket.on("getCsrf", (callback) => callback(""));
       socket.on("login", async ({ username, password }, callback) => {
         const hashedPassword = getHashedPassword(password);
         const user = await prismaDm.user.findFirst({
@@ -28,6 +28,24 @@ export default (io: Server) => {
           callback({ error: "Invalid username or password" });
         }
       });
+
+      socket.on("loginAsDemo", async (callback) => {
+        const demoUser = await prismaDm.user.findFirst({
+          where: { username: "demo" },
+        });
+        if (!demoUser) {
+          callback({ error: "No demo user found" });
+        } else {
+          const token = await loginAs(
+            demoUser,
+            getHashedPassword(demoUser!.password)
+          );
+
+          callback({ token });
+        }
+      });
     }
   );
 };
+
+

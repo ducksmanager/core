@@ -6,7 +6,7 @@ import Services from "../types";
 const maxWatchedAuthors = 5;
 
 export default (socket: Socket<Services>) => {
-  socket.on("getWatchedAuthors", async (callback) =>
+  socket.on("getWatchedAuthors", (callback) =>
     prismaDm.authorUser
       .findMany({
         where: { userId: socket.data.user!.id },

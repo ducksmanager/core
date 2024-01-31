@@ -6,7 +6,7 @@ import { getUserPurchase } from "../issues/util";
 import Services from "../types";
 
 export default (socket: Socket<Services>) => {
-  socket.on("getPurchases", async (callback) =>
+  socket.on("getPurchases", (callback) =>
     prismaDm.purchase
       .findMany({
         where: {

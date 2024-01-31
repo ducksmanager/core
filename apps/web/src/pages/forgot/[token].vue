@@ -31,8 +31,6 @@ meta:
 <script setup lang="ts">
 import Cookies from "js-cookie";
 
-import { authServices } from "~/composables/useSocket";
-
 const router = useRouter();
 const { loadUser } = collection();
 const { user } = storeToRefs(collection());

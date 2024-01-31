@@ -65,7 +65,7 @@ export default (socket: Socket<Services>) => {
       ORDER BY publicationcode`.then(callback)
   );
 
-  socket.on("getCountByPublicationcode", async (callback) =>
+  socket.on("getCountByPublicationcode", (callback) =>
     prismaCoa.inducks_issue
       .groupBy({
         _count: {

@@ -1,4 +1,3 @@
-import { publicCollectionServices } from "~/composables/useSocket";
 import { issueWithPublicationcode } from "~prisma-clients/extended/dm.extends";
 
 import useCollection from "../composables/useCollection";

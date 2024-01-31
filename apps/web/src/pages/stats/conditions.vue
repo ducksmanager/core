@@ -7,11 +7,9 @@
 </template>
 
 <script setup lang="ts">
-import condition from "~/composables/useCondition";
-
 const { loadCollection, numberPerCondition } = collection();
 
-const conditionsWithoutMissing = condition()
+const conditionsWithoutMissing = useCondition()
   .conditions.filter(({ dbValue }) => dbValue !== "missing")
   .map(({ dbValue, color, text }) => ({
     dbValue: dbValue as string,

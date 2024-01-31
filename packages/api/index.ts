@@ -11,7 +11,6 @@ import bookstores from "./services/bookstores";
 import coa from "./services/coa";
 import collection from "./services/collection";
 import coverId from "./services/cover-id";
-import demo from "./services/demo";
 import edgecreator from "./services/edgecreator";
 import edges from "./services/edges";
 import events from "./services/events";
@@ -82,7 +81,6 @@ Sentry.init({
   coa(io);
   collection(io);
   coverId(io);
-  demo(io);
   edgecreator(io);
   edges(io);
   events(io);

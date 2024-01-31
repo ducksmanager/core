@@ -1,4 +1,3 @@
-import { eventsServices, globalStatsServices } from "~/composables/useSocket";
 import { BookcaseContributor } from "~dm-types/BookcaseContributor";
 import { AbstractEvent } from "~dm-types/events/AbstractEvent";
 import GlobalStatsServices from "~services/global-stats/types";

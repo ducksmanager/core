@@ -26,7 +26,6 @@ meta:
 </template>
 
 <script setup lang="ts">
-import { bookstoreServices } from "~/composables/useSocket";
 import { SimpleBookstore } from "~dm-types/SimpleBookstore";
 import type { bookstoreComment } from "~prisma-clients/client_dm";
 

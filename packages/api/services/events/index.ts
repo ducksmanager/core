@@ -30,7 +30,7 @@ export default (io: Server) => {
     (socket) => {
       console.log("connected to events");
 
-      socket.on("getEvents", async (callback) => Promise.all([
+      socket.on("getEvents", (callback) => Promise.all([
         retrieveSignups(),
         retrieveCollectionUpdates(),
         retrieveCollectionSubscriptionAdditions(),

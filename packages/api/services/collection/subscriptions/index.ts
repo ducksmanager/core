@@ -5,7 +5,7 @@ import prismaDm from "~prisma-clients/extended/dm.extends";
 
 import Services from "../types";
 export default (socket: Socket<Services>) => {
-  socket.on("getSubscriptions", async (callback) =>
+  socket.on("getSubscriptions", (callback) =>
     prismaDm.subscription
       .findMany({
         where: {

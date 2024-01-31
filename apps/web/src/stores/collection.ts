@@ -296,6 +296,7 @@ export const collection = defineStore("collection", () => {
         username,
         password,
       });
+      debugger;
       if (typeof response !== "string" && "error" in response) {
         onError(response.error!);
       } else {

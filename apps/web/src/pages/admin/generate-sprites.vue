@@ -8,7 +8,6 @@ meta:
 </template>
 
 <script setup lang="ts">
-import { edgeCreatorServices } from "~/composables/useSocket";
 const generateSprites = async () => {
   await edgeCreatorServices.uploadEdges();
 };

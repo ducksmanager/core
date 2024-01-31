@@ -14,7 +14,7 @@ export default (io: Server) => {
     (socket) => {
       console.log("connected to edges");
 
-      socket.on("getWantedEdges", async (callback) =>
+      socket.on("getWantedEdges", (callback) =>
         prismaDm.$queryRaw<WantedEdge[]>`
     SELECT Count(Numero) as numberOfIssues, CONCAT(Pays, '/', Magazine) AS publicationcode, Numero AS issuenumber
     FROM numeros
@@ -30,7 +30,7 @@ export default (io: Server) => {
   `.then(callback)
       );
 
-      socket.on("getPublishedEdges", async (callback) =>
+      socket.on("getPublishedEdges", (callback) =>
         prismaDm.edge
           .findMany({
             select: { publicationcode: true, issuenumber: true },

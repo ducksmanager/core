@@ -9,7 +9,6 @@ import BookstoreServices from "~services/bookstores/types";
 import CoaServices from "~services/coa/types";
 import SubscriptionServices from "~services/collection/types";
 import CollectionServices from "~services/collection/types";
-import DemoServices from "~services/demo/types";
 import EdgeCreatorServices from "~services/edgecreator/types";
 import EdgesServices from "~services/edges/types";
 import EventsServices from "~services/events/types";
@@ -55,15 +54,17 @@ const useSocket = <Services extends EventsMap>(
         return;
       }
       const token = await session.value.getToken();
+      console.log(token);
       cb({
         token,
       });
     },
   });
 
-  socket.on("connect_error", () => {
+  socket.on("connect_error", (e) => {
     if (session.value?.onConnectError) {
       session.value.onConnectError();
+      console.debug(`Namespace ${namespaceName}: connect_error: ${e}`);
     } else {
       console.error(
         `Namespace ${namespaceName}: onConnectError is not defined`,
@@ -71,7 +72,7 @@ const useSocket = <Services extends EventsMap>(
     }
   });
 
-  return new Proxy<EventCalls<Services>>({} as EventCalls<Services>, {
+  return new Proxy({} as EventCalls<Services> & { connect: () => void }, {
     get:
       <EventName extends StringKeyOf<Services>>(_: never, event: EventName) =>
       async (
@@ -79,6 +80,10 @@ const useSocket = <Services extends EventsMap>(
       ): Promise<
         EventReturnTypeIncludingError<Services[EventName]> | undefined
       > => {
+        if (event === "connect") {
+          socket.connect();
+          return;
+        }
         let data;
         if (cacheOptions) {
           if (!cacheStorage.value) {
@@ -123,9 +128,6 @@ export const loginServices = useSocket<LoginServices>(
 
 export const bookcaseServices = useSocket<BookcaseServices>(
   BookcaseServices.namespaceEndpoint,
-);
-export const demoServices = useSocket<DemoServices>(
-  DemoServices.namespaceEndpoint,
 );
 export const statsServices = useSocket<StatsServices>(
   StatsServices.namespaceEndpoint,

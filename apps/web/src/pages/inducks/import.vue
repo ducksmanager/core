@@ -280,7 +280,6 @@ meta:
 </template>
 
 <script setup lang="ts">
-import { collectionServices } from "~/composables/useSocket";
 import type { inducks_issue } from "~prisma-clients/client_coa";
 
 const { getImagePath } = images();

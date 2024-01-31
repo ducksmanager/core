@@ -219,7 +219,6 @@ alias: [/collection/compte]
 </template>
 
 <script setup lang="ts">
-import { collectionServices } from "~/composables/useSocket";
 import { ScopedError } from "~dm-types/ScopedError";
 
 const { getImagePath } = images();

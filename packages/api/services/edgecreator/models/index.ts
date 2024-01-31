@@ -7,7 +7,7 @@ import Services from "../types";
 import { edgeEditedByOthersFields,unassignedEdgeFields } from "../types";
 
 export default (socket: Socket<Services>) => {
-  socket.on("getUnassignedEdges", async (callback) =>
+  socket.on("getUnassignedEdges", (callback) =>
     prismaEdgeCreator.edgeModel
       .findMany({
         select: unassignedEdgeFields,
@@ -19,7 +19,7 @@ export default (socket: Socket<Services>) => {
       .then(callback)
   );
 
-  socket.on("getEdgesEditedByOthers", async (callback) =>
+  socket.on("getEdgesEditedByOthers", (callback) =>
     prismaEdgeCreator.edgeModel
       .findMany({
         select: edgeEditedByOthersFields,

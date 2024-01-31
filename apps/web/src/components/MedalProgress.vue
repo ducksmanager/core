@@ -35,15 +35,13 @@
 </template>
 
 <script setup lang="ts">
-import medal from "~/composables/useMedal";
-
 const { contribution = "edge_photographer", userLevelPoints } = defineProps<{
   contribution?: string;
   userLevelPoints: number;
   extraPoints: number;
 }>();
 
-const medalData = medal(contribution, userLevelPoints);
+const medalData = useMedal(contribution, userLevelPoints);
 
 const medalProgressCurrentPercentage = medalData.medalProgressCurrentPercentage;
 const getLevelProgressPercentage = medalData.getLevelProgressPercentage;

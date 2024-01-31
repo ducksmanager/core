@@ -5,35 +5,33 @@ import { QuickStatsPerUser } from "~dm-types/QuickStatsPerUser";
 import { Prisma } from "~prisma-clients/client_dm";
 import prismaDm from "~prisma-clients/extended/dm.extends";
 
-import { OptionalAuthMiddleware } from "../auth/util";
 import { getMedalPoints } from "../collection/util";
 import Services from "./types";
 
 export default (io: Server) => {
   (io.of(Services.namespaceEndpoint) as Namespace<Services>)
-    .use(OptionalAuthMiddleware)
     .on("connection", (socket) => {
       console.log("connected to global-stats");
 
-      socket.on("getBookcaseContributors", async (callback) =>
+      socket.on("getBookcaseContributors", (callback) =>
         prismaDm.$queryRaw<BookcaseContributor[]>`
       SELECT distinct users.ID AS userId, users.username AS name, '' AS text
-      from dm.users
-             inner join dm.users_contributions c on users.ID = c.ID_user
+      from users
+             inner join users_contributions c on users.ID = c.ID_user
       where c.contribution IN ('photographe', 'createur')
       UNION
       SELECT '' as userId, Nom AS name, Texte AS text
-      FROM dm.bibliotheque_contributeurs
+      FROM bibliotheque_contributeurs
       ORDER BY name
     `.then(callback));
 
-      socket.on("getUserCount", async (callback) =>
+      socket.on("getUserCount", (callback) =>
         prismaDm.user.count().then((data => {
           callback(data)
         }))
       );
 
-      socket.on("getUserList", async (callback) =>
+      socket.on("getUserList", (callback) =>
         prismaDm.user
           .findMany({
             select: {
@@ -47,6 +45,7 @@ export default (io: Server) => {
       socket.on(
         "getUsersPointsAndStats",
         async (userIds: number[], callback) => {
+          console.log('!')
           if (userIds.length) {
             const result = {
               points: await getMedalPoints(userIds),

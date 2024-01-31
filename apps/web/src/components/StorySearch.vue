@@ -84,8 +84,6 @@
 </template>
 
 <script setup lang="ts">
-import condition from "~/composables/useCondition";
-import { coaServices } from "~/composables/useSocket";
 import { SimpleIssue } from "~dm-types/SimpleIssue";
 import { SimpleStory } from "~dm-types/SimpleStory";
 import { issueWithPublicationcode } from "~prisma-clients/extended/dm.extends";
@@ -102,7 +100,7 @@ const {
 const emit = defineEmits<{
   (e: "issue-selected", story: SimpleIssue): void;
 }>();
-const { conditions } = condition();
+const { conditions } = useCondition();
 
 const { findInCollection } = isPublic ? publicCollection() : collection();
 const { issues } = storeToRefs(collection());

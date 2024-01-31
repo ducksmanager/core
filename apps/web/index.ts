@@ -5,9 +5,8 @@ import useCollection from "./src/composables/useCollection";
 import useMedal from "./src/composables/useMedal";
 import {
   cacheStorage,
-  clearSessionFn,
   coaServices,
-  getTokenFn,
+  session,
 } from "./src/composables/useSocket";
 import { bookcase } from "./src/stores/bookcase";
 import { coa } from "./src/stores/coa";
@@ -32,8 +31,7 @@ export const composables = {
   useCollection,
   useMedal,
   useSocket: {
-    getTokenFn,
-    clearSessionFn,
+    session,
     cacheStorage,
     coaServices,
   },

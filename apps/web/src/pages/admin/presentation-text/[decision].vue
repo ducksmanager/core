@@ -3,7 +3,6 @@ meta:
   layout: bare
 </route>
 <script setup lang="ts">
-import { presentationTextServices } from "~/composables/useSocket";
 import { Decision } from "~services/presentation-text/types";
 
 let router = useRouter();

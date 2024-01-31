@@ -14,7 +14,7 @@ export default (io: Server) => {
   (io.of(Services.namespaceEndpoint) as Namespace<Services>).on(
     "connection",
     (socket) => {
-      socket.on("getActiveBookstores", async (callback) =>
+      socket.on("getActiveBookstores", (callback) =>
         prismaDm.bookstore
           .findMany({
             select: {
@@ -47,14 +47,12 @@ export default (io: Server) => {
             id,
             name,
             address,
-            coordX: coordXParam,
-            coordY: coordYParam,
+            coordX,
+            coordY,
             comments,
           },
           callback
         ) => {
-          const coordX = coordXParam;
-          const coordY = coordYParam;
           if (!id && !name) {
             callback({ error: "No bookstore ID or name was provided" });
             return;

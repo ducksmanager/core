@@ -82,7 +82,6 @@ alias: [/collection/abonnements]
 <script setup lang="ts">
 import dayjs from "dayjs";
 
-import { subscriptionServices } from "~/composables/useSocket";
 import {
   SubscriptionTransformed,
   SubscriptionTransformedStringDates,

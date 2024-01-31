@@ -45,8 +45,6 @@ meta:
 </template>
 
 <script setup lang="ts">
-import { authServices } from "~/composables/useSocket";
-
 let error = $ref<string | null>(null);
 
 const email = $ref("" as string);

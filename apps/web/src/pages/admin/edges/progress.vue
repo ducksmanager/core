@@ -123,7 +123,6 @@ meta:
 </template>
 
 <script setup lang="ts">
-import { edgesServices } from "~/composables/useSocket";
 import { BookcaseEdgeWithPopularity } from "~/stores/bookcase";
 import { WantedEdge } from "~dm-types/WantedEdge";
 

@@ -7,4 +7,9 @@ export default abstract class {
     callback: (data: Errorable<string, "Invalid username or password">) => void
   ) => void;
   abstract getCsrf: (callback: (value: string) => void) => void;
+
+
+  abstract loginAsDemo: (
+    callback: (data: Errorable<{ token: string }, "No demo user found">) => void
+  ) => void;
 }

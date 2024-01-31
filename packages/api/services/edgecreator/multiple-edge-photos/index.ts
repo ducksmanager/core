@@ -33,7 +33,7 @@ export default (socket: Socket<Services>) => {
       .then(callback)
   );
 
-  socket.on("checkTodayLimit", async (callback) =>
+  socket.on("checkTodayLimit", (callback) =>
     prismaEdgeCreator.elementImage
       .findMany({
         select: { fileName: true },

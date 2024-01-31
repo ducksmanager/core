@@ -160,10 +160,7 @@
 
 <script setup lang="ts">
 import { QuotedIssue } from "~/composables/useCollection";
-import condition from "~/composables/useCondition";
-import { globalStatsServices } from "~/composables/useSocket";
-
-const { getConditionLabel } = condition();
+const { getConditionLabel } = useCondition();
 
 const { t: $t } = useI18n();
 let currentPage = $ref(1);

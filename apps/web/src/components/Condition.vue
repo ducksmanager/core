@@ -12,7 +12,6 @@
 </template>
 
 <script setup lang="ts">
-import condition from "~/composables/useCondition";
 import type { issue_condition } from "~prisma-clients/client_dm";
 const {
   issuenumber = null,
@@ -28,7 +27,7 @@ const {
 
 const store = $computed(() => (isPublic ? publicCollection() : collection()));
 
-const { conditions } = condition();
+const { conditions } = useCondition();
 const currentCondition = $computed(() => {
   if (value !== undefined) {
     return (

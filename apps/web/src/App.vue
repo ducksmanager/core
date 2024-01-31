@@ -6,8 +6,6 @@
 import { buildWebStorage } from "axios-cache-interceptor";
 import Cookies from "js-cookie";
 
-import { session } from "~/composables/useSocket";
-import { cacheStorage } from "~/composables/useSocket";
 const collectionStore = collection();
 const { user, isLoadingUser } = storeToRefs(collectionStore);
 

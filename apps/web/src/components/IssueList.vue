@@ -335,7 +335,6 @@
 </template>
 
 <script setup lang="ts">
-import condition from "~/composables/useCondition";
 import { issueWithPublicationcode } from "~prisma-clients/extended/dm.extends";
 
 import ContextMenuOnSaleByOthers from "./ContextMenuOnSaleByOthers.vue";
@@ -376,7 +375,7 @@ const { updateCollectionMultipleIssues, loadPurchases } = collection();
 const { issues: collectionIssues, purchases: collectionPurchases } =
   storeToRefs(readonly ? publicCollection() : collection());
 
-const { conditions } = condition();
+const { conditions } = useCondition();
 const { t: $t } = useI18n();
 
 let clicks = $ref(0);

@@ -37,7 +37,7 @@ export default (io: Server) => {
           })
       );
 
-      socket.on("getUserPermissions", async (callback) =>
+      socket.on("getUserPermissions", (callback) =>
         prismaDm.userPermission
           .findMany({
             where: {
@@ -47,7 +47,7 @@ export default (io: Server) => {
           .then(callback)
       );
 
-      socket.on("getCollectionPopularity", async (callback) =>
+      socket.on("getCollectionPopularity", (callback) =>
         prismaDm.$queryRaw<issuePopularity[]>`
       select issuePopularity.pays       AS country,
              issuePopularity.magazine   AS magazine,
