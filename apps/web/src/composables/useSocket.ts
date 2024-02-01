@@ -90,9 +90,14 @@ const useSocket = <Services extends EventsMap>(
             throw new Error("storage must be defined");
           }
           const cacheKey = `${event} ${JSON.stringify(args)}`;
-          const cacheData = await cacheStorage.value.get(cacheKey);
-          if (cacheData.state !== "empty") {
-            return cacheData.data as Awaited<ReturnType<Socket["emitWithAck"]>>;
+          const cacheData = (await cacheStorage.value.get(cacheKey)) as Awaited<
+            ReturnType<Socket["emitWithAck"]>
+          >;
+          const hasCacheData =
+            cacheData !== undefined &&
+            !(typeof cacheData === "object" && cacheData.state === "empty");
+          if (hasCacheData) {
+            return cacheData;
           }
           data = await socket.emitWithAck(event, ...args);
           cacheStorage.value.set(cacheKey, data);
