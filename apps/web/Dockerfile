@@ -41,7 +41,7 @@ COPY packages/api/emails ./packages/api/emails
 RUN --mount=type=cache,id=pnpm-store,target=/app/.pnpm-store \
     pnpm i --production
 
-COPY ./packages/api/routes/demo/*.csv ./routes/demo/
+COPY ./packages/api/services ./services/
 COPY ./packages/api/emails ./emails/
 COPY ./packages/api/.env ./.env
 

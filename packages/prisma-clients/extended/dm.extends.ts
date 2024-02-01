@@ -1,4 +1,4 @@
-import { edge, issue, subscription } from "~prisma-clients/client_dm";
+import { edge, issue, subscription } from "../client_dm";
 import { prismaDm } from "../prisma";
 import { computeTimestamp } from "./dm.edge.timestamp";
 import { computePublicationcode } from "./dm.publicationcode";
