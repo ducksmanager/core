@@ -50,8 +50,8 @@ const { countryNames, publicationNames, publicationNamesFullCountries } =
   storeToRefs(coa());
 const countryNamesForPublication = $computed(
   () =>
-    (countryNames &&
-      Object.entries(countryNames)
+    (countryNames.value &&
+      Object.entries(countryNames.value)
         .map(([countrycode, countryName]) => ({
           text: countryName,
           value: countrycode,

@@ -19,7 +19,7 @@
         :visible="false"
       >
         <template #header>
-          <b>{{ purchase.date }}</b
+          <b>{{ purchase.date.toLocaleDateString(locale) }}</b
           >&nbsp;<i v-if="purchase.description"
             >{{ purchase.description }}&nbsp;</i
           >{{ issues.length }}
@@ -44,14 +44,14 @@
 import { IssueWithPublicationcode } from "~dm-types/IssueWithPublicationcode";
 
 const { publicationNames } = storeToRefs(coa());
-const { purchasesById, issues } = storeToRefs(collection());
+const { purchasesById, issues: allIssues } = storeToRefs(collection());
 
-const { t } = useI18n();
+const { t, locale } = useI18n();
 const hasPublicationNames = $computed(() => Object.keys(publicationNames)),
   collectionPerPurchaseDate = $computed(
     () =>
       purchasesById.value &&
-      issues.value
+      allIssues.value
         ?.reduce(
           (acc, issue) => {
             const existingPurchase =
@@ -62,19 +62,17 @@ const hasPublicationNames = $computed(() => Object.keys(publicationNames)),
                   description: existingPurchase.description,
                 }
               : {
-                  date: (
-                    (issue.creationDate || "0001-01-01T00:00:00") as string
-                  ).split("T")[0],
+                  date: issue.creationDate,
                   description: "",
                 };
             let purchaseIndex = acc.findIndex(
               ({ purchase: currentPurchase }) =>
-                (currentPurchase.date as string) === (purchase.date as string),
+                currentPurchase.date === purchase.date,
             );
-            if (purchaseIndex === -1) {
+            if (purchaseIndex === -1 && purchase.date) {
               acc.push({
                 purchase: {
-                  date: purchase.date as string,
+                  date: purchase.date,
                   description: purchase.description,
                 },
                 issues: [],
@@ -85,7 +83,7 @@ const hasPublicationNames = $computed(() => Object.keys(publicationNames)),
             return acc;
           },
           [] as {
-            purchase: { date: string; description: string };
+            purchase: { date: Date; description: string };
             issues: IssueWithPublicationcode[];
           }[],
         )

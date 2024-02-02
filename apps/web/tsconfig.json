@@ -2,6 +2,7 @@
   "compilerOptions": {
     "baseUrl": ".",
     "module": "ESNext",
+    "declaration": true,
     "target": "es2020",
     "lib": ["dom", "dom.iterable", "ESNext"],
     "strict": true,

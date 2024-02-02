@@ -17,7 +17,7 @@ let router = useRouter();
       params: { decision: currentRoute.params.decision as string },
       reqBody: currentRoute.query as unknown as {
         sentence: string;
-        userId: number;
+        userId: string;
       },
     }),
   );

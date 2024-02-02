@@ -12,10 +12,11 @@ export const post = [
   async (
     ...[req, res]: ExpressCall<{
       params: { decision: string };
-      reqBody: { sentence: string; userId: number };
+      reqBody: { sentence: string; userId: string };
     }>
   ) => {
-    const { sentence, userId } = req.body;
+    const { sentence, userId: userIdString } = req.body;
+    const userId = parseInt(userIdString);
     const { decision } = req.params;
     if (!["approve", "refuse"].includes(decision as string)) {
       res.writeHead(400);

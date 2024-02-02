@@ -1,4 +1,4 @@
-FROM node:18 as pnpm
+FROM node:18.18 as pnpm
 
 ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
@@ -36,6 +36,7 @@ COPY --from=build /app/packages/api/dist/api ./packages/api
 
 COPY packages/api/package.json ./packages/api
 COPY packages/api/translations ./packages/api/translations
+COPY packages/api/emails ./packages/api/emails
 
 RUN --mount=type=cache,id=pnpm-store,target=/app/.pnpm-store \
     pnpm i --production

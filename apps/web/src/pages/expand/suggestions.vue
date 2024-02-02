@@ -82,18 +82,18 @@ const { countryNames } = storeToRefs(coa());
 
 const countryNamesWithAllCountriesOption = $computed(
   () =>
-    countryNames && [
+    countryNames.value && [
       {
         value: "ALL",
         text: $t("Tous les pays"),
       },
-      ...Object.entries(countryNames)
+      ...Object.entries(countryNames.value)
         .map(([value, text]) => ({ text, value }))
         .sort(({ text: text1 }, { text: text2 }) => text1.localeCompare(text2)),
     ],
 );
-const watchedAuthorsWithNotation = $computed(
-  () => watchedAuthors.value?.filter(({ notation }) => notation > 0),
+const watchedAuthorsWithNotation = $computed(() =>
+  watchedAuthors.value?.filter(({ notation }) => notation > 0),
 );
 
 watch(

@@ -24,21 +24,34 @@
         :id="`edge-${edgeIndex}`"
         :key="`edge-${edgeIndex}`"
         :invisible="
-          currentEdgeOpened === sortedBookcase[edgeIndex] ||
+          currentEdgeOpened === sortedBookcaseWithPopularity![edgeIndex] ||
           edgeIndex > lastEdgeIndexContinuouslyLoaded
         "
-        :highlighted="currentEdgeHighlighted === sortedBookcase[edgeIndex].id"
-        :publicationcode="sortedBookcase[edgeIndex].publicationcode"
-        :issuenumber="sortedBookcase[edgeIndex].issuenumber"
-        :issuenumber-reference="sortedBookcase[edgeIndex].issuenumberReference"
-        :creation-date="sortedBookcase[edgeIndex].creationDate?.toString()"
-        :popularity="sortedBookcase[edgeIndex].popularity || null"
-        :existing="!!sortedBookcase[edgeIndex].edgeId"
+        :highlighted="
+          currentEdgeHighlighted === sortedBookcaseWithPopularity![edgeIndex].id
+        "
+        :publicationcode="
+          sortedBookcaseWithPopularity![edgeIndex].publicationcode
+        "
+        :issuenumber="sortedBookcaseWithPopularity![edgeIndex].issuenumber"
+        :issuenumber-reference="
+          sortedBookcaseWithPopularity![edgeIndex].issuenumberReference
+        "
+        :creation-date="
+          sortedBookcaseWithPopularity![edgeIndex].creationDate?.toString()
+        "
+        :popularity="
+          sortedBookcaseWithPopularity![edgeIndex].popularity || null
+        "
+        :existing="!!sortedBookcaseWithPopularity![edgeIndex].edgeId"
         :sprite-path="
-          edgesUsingSprites[sortedBookcase[edgeIndex].edgeId] || null
+          edgesUsingSprites[sortedBookcaseWithPopularity![edgeIndex].edgeId] ||
+          null
         "
         @loaded="onEdgeLoaded(edgeIndex)"
-        @open-book="$emit('open-book', sortedBookcase[edgeIndex])"
+        @open-book="
+          $emit('open-book', sortedBookcaseWithPopularity![edgeIndex])
+        "
       />
     </template>
   </div>
@@ -75,6 +88,10 @@ const {
       }
   )
 >();
+
+const sortedBookcaseWithPopularity = $computed(() =>
+  embedded ? undefined : (sortedBookcase as BookcaseEdgeWithPopularity[]),
+);
 
 const MAX_BATCH_SIZE = 50;
 
