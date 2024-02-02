@@ -4,6 +4,7 @@ import Conditions from "./src/components/stats/ConditionsComponent.vue";
 import useCollection from "./src/composables/useCollection";
 import useMedal from "./src/composables/useMedal";
 import {
+  authServices,
   cacheStorage,
   coaServices,
   session,
@@ -34,6 +35,7 @@ export const composables = {
     session,
     cacheStorage,
     coaServices,
+    authServices,
   },
 };
 
