@@ -28,11 +28,11 @@
                 <ion-label>{{ t("Pas de date d'achat") }}</ion-label>
               </div>
             </ion-item>
-            <ion-item v-for="purchase of purchases">
-              <ion-radio :value="purchase.id" :aria-label="purchase.description" />
+            <ion-item v-for="thisPurchase of purchases">
+              <ion-radio :value="thisPurchase.id" :aria-label="thisPurchase.description" />
               <div>
-                <ion-label>{{ purchase.date }}</ion-label>
-                <ion-label>{{ purchase.description }}</ion-label>
+                <ion-label>{{ thisPurchase.date }}</ion-label>
+                <ion-label>{{ thisPurchase.description }}</ion-label>
               </div>
             </ion-item>
           </ion-list>
@@ -45,8 +45,7 @@
 import type { Issue } from '~/persistence/models/dm/Issue';
 import { condition } from '~/stores/condition';
 import { wtdcollection } from '~/stores/wtdcollection';
-import { IssueWithPublicationcode } from '~dm-types/IssueWithPublicationcode';
-import { purchase } from '~prisma-clients/client_dm';
+import type { purchase } from '~prisma-clients/client_dm';
 
 const { t } = useI18n();
 const route = useRoute();
@@ -75,9 +74,9 @@ watch(
   () => issue.value && collectionStore.purchases?.length,
   (isReady) => {
     if (isReady) {
-      const purchase = collectionStore.purchases?.find(({ id }) => id === issue.value.purchaseId) || null;
-      if (purchase) {
-        selectedPurchase.value = purchase;
+      const thisPurchase = collectionStore.purchases?.find(({ id }) => id === issue.value.purchaseId) || null;
+      if (thisPurchase) {
+        selectedPurchase.value = thisPurchase;
       }
       const newCondition = issue.value.condition;
       selectedCondition.value = newCondition

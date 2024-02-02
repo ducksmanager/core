@@ -11,7 +11,7 @@
 </template>
 
 <script setup lang="ts">
-import type { IssueWithPublicationcode } from '~dm-types/IssueWithPublicationcode';
+import { issueWithPublicationcode } from '~prisma-clients/extended/dm.extends';
 import { stores as webStores } from '~web';
 
 import { getConditionText } from '~/composables/useCondition';
@@ -27,7 +27,7 @@ const coaStore = webStores.coa();
 const appStore = app();
 
 defineSlots<{
-  rowPrefix: { item: IssueWithPublicationcode };
+  rowPrefix: { item: issueWithPublicationcode };
   rowLabel: { text: string };
 }>();
 

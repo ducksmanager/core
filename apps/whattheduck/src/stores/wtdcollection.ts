@@ -2,9 +2,6 @@ import { defineStore } from 'pinia';
 import type { purchase } from '~prisma-clients/client_dm';
 import { stores as webStores, composables as webComposables } from '~web';
 
-import { app } from './app';
-
-import { User } from '~/persistence/models/dm/User';
 
 export type purchaseWithStringDate = Omit<purchase, 'date' | 'userId'> & {
   date: string;
@@ -23,41 +20,25 @@ export const wtdcollection = defineStore('wtdcollection', () => {
       [...new Set((issues.value || []).map(({ publicationcode }) => publicationcode))].sort(),
     ),
     fetchAndTrackCollection = async () => {
-      const isObsoleteSync = await app().isObsoleteSync();
-      try {
-        await webCollectionStore.loadCollection();
-        // TODO retrieve user points
-        // TODO retrieve user notification countries
+      await webCollectionStore.loadCollection();
+      // TODO retrieve user points
+      // TODO retrieve user notification countries
 
-        // TODO get app version
-        //await webCollectionStore.loadSuggestions({
-        //  countryCode: 'ALL',
-        //  sinceLastVisit: false,
-        //  sort: 'score',
-        //});
-        //await webCollectionStore.loadSuggestions({ countryCode: 'ALL', sinceLastVisit: false, sort: 'oldestdate' });
-        await statsStore.loadRatings();
-        await coaStore.fetchCountryNames(true);
-        await coaStore.fetchPublicationNames(['ALL']);
-        await coaStore.fetchIssueCounts();
-        await coaStore.fetchIssueNumbers(ownedPublications.value || []);
-        await usersStore.fetchStats([webCollectionStore.user?.id || 0]);
+      // TODO get app version
+      //await webCollectionStore.loadSuggestions({
+      //  countryCode: 'ALL',
+      //  sinceLastVisit: false,
+      //  sort: 'score',
+      //});
+      //await webCollectionStore.loadSuggestions({ countryCode: 'ALL', sinceLastVisit: false, sort: 'oldestdate' });
+      await statsStore.loadRatings();
+      await coaStore.fetchCountryNames(true);
+      await coaStore.fetchPublicationNames(['ALL']);
+      await coaStore.fetchIssueCounts();
+      await coaStore.fetchIssueNumbers(ownedPublications.value || []);
+      await usersStore.fetchStats([webCollectionStore.user?.id || 0]);
 
-        // TODO register for notifications
-      } catch (e) {
-        console.error(e);
-        switch ((e as AxiosError).response?.status) {
-          case 404:
-            if (isObsoleteSync) {
-              app().isOfflineMode = true;
-            }
-            break;
-          case 401:
-            await app().dbInstance.getRepository(User).clear();
-            throw new Error('Unauthorized');
-          default: // Alert error
-        }
-      }
+      // TODO register for notifications
     },
     highestQuotedIssue = computed(
       () => quotedIssues.value?.sort((a, b) => b.estimationGivenCondition - a.estimationGivenCondition)[0],
@@ -78,7 +59,6 @@ export const wtdcollection = defineStore('wtdcollection', () => {
     purchases: computed(() => webCollectionStore.purchases),
     purchasesById: computed(() => webCollectionStore.purchasesById),
     quotationSum,
-    setApi: webCollectionStore.setApi,
     signup: webCollectionStore.signup,
     total: computed(() => webCollectionStore.total),
     totalPerCountry: computed(() => webCollectionStore.totalPerCountry),

@@ -40,7 +40,6 @@
 
 <script setup lang="ts">
 import { FilePicker } from '@capawesome/capacitor-file-picker';
-import axios from 'axios';
 import {
   pencilOutline,
   searchOutline,
@@ -67,8 +66,9 @@ const pickCoverFile = async () => {
     const formData = new FormData();
     formData.append('image', coverFile.files[0].blob!);
 
-    // Make the POST request with axios
-    const response = await axios.post('http://localhost:5000/search_image', formData, {
+    const response = await fetch('http://localhost:5000/search_image', {
+      method: 'post',
+      body: formData,
       headers: {
         'Content-Type': 'multipart/form-data',
       },
@@ -80,7 +80,7 @@ const pickCoverFile = async () => {
     //     reqBody: { base64: coverFile.files[0].data! },
     //   })
     // );
-    console.log(response.data);
+    console.log(response.body);
   }
 };
 </script>

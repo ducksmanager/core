@@ -1,7 +1,8 @@
 {
   "compilerOptions": {
     "baseUrl": ".",
-    "target": "ESNext",
+    "target": "es2020",
+    "lib": ["dom", "dom.iterable", "ESNext"],
     "useDefineForClassFields": true,
     "module": "ESNext",
     "moduleResolution": "Node",
@@ -13,18 +14,18 @@
     "allowSyntheticDefaultImports": true,
     "sourceMap": true,
     "importHelpers": true,
-    "lib": ["ESNext", "DOM"],
     "skipLibCheck": true,
     "noEmit": true,
+    "noUnusedLocals": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
+    "types": ["vite/client", "vue/ref-macros"],
     "paths": {
       "~/*": ["./src/*"],
       "~translations/*": ["./translations/*"],
       "~types/*": ["./types/*"],
       "~dm-types/*": ["../../packages/types/*"],
-      "~axios-helper/*": ["../../packages/axios-helper/*"],
-      "~api-routes/*": ["../../packages/api-routes/*"],
+      "~services/*": ["../../packages/api/services/*"],
       "~prisma-clients/*": ["../../packages/prisma-clients/*"],
       "~web/*": ["../web/*"],
       "~/composables/useCollection": ["../../apps/web/composables/useCollection"],
@@ -32,5 +33,4 @@
   },
   "exclude": ["node_modules"],
   "references": [{ "path": "./tsconfig.node.json" }],
-  "types": ["vite/client", "vue/ref-macros"]
 }

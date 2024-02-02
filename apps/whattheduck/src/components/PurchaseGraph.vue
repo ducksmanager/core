@@ -7,7 +7,6 @@
 import type { ChartOptions } from 'chart.js';
 import { BarController, BarElement, CategoryScale, Chart, Legend, LinearScale, Title, Tooltip } from 'chart.js';
 import dayjs from 'dayjs';
-import { watch } from 'vue';
 import { Bar } from 'vue-chartjs';
 import { useI18n } from 'vue-i18n';
 import type { issue as dm_issue } from '~prisma-clients/client_dm';
@@ -26,7 +25,7 @@ const hasPublicationNames = ref(false as boolean),
   options = ref({} as ChartOptions<'bar'>);
 
 const wtdCollectionStore = wtdcollection(),
-  { totalPerPublication, purchases, purchasesById } = storeToRefs(wtdcollection()),
+  { totalPerPublication, purchasesById } = storeToRefs(wtdcollection()),
   { t } = useI18n();
 
 const compareDates = (a: string, b: string) =>

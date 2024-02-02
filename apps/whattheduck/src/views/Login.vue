@@ -93,11 +93,9 @@ import { eyeOutline, eyeOffOutline, eyeSharp, eyeOffSharp } from 'ionicons/icons
 import { stores } from '~web';
 
 import useFormErrorHandling from '~/composables/useFormErrorHandling';
-import { InducksIssuequotation } from '~/persistence/models/coa/InducksIssuequotation';
 import { User } from '~/persistence/models/dm/User';
 import { app } from '~/stores/app';
 import { wtdcollection } from '~/stores/wtdcollection';
-import { AxiosError } from 'axios';
 
 const isOfflineMode = ref(false);
 
@@ -121,10 +119,7 @@ const showPassword = ref(false);
 
 const token = ref(null as string | null);
 
-const { validInputs, invalidInputs, touchedInputs, errorTexts, showError, clearErrors } = useFormErrorHandling([
-  'username',
-  'password',
-]);
+const { validInputs, invalidInputs, touchedInputs, errorTexts } = useFormErrorHandling(['username', 'password']);
 
 const forgotPassword = () => {
   router.push('/forgot');
@@ -140,8 +135,8 @@ const submitLogin = async () => {
     (newToken: string) => {
       token.value = newToken;
     },
-    (e: AxiosError) => {
-      showError(e);
+    (e) => {
+      errorTexts.value['password'] = e;
     },
   );
 };

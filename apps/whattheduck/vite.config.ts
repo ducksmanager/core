@@ -19,10 +19,11 @@ export default defineConfig({
 
     AutoImport({
       dts: true,
+      vueTemplate: true,
       eslintrc: {
         enabled: true,
       },
-      dirs: ['../../packages/api-routes', '../web/src/stores'],
+      dirs: ['../web/src/composables', '../web/src/stores', "../../packages/types"],
       imports: [
         // presets
         'pinia',
@@ -36,11 +37,6 @@ export default defineConfig({
           imports: ['RouteLocationNamedRaw'],
           type: true,
         },
-        {
-          from: 'axios',
-          imports: ['AxiosInstance', 'InternalAxiosRequestConfig', 'AxiosError'],
-          type: true,
-        },
       ],
     }),
   ],
@@ -50,8 +46,7 @@ export default defineConfig({
       '~translations/': `${path.resolve(__dirname, 'translations')}/`,
       '~types/': `${path.resolve(__dirname, 'types')}/`,
       '~dm-types/': `${path.resolve(__dirname, '../../packages/types')}/`,
-      '~axios-helper/': `${path.resolve(__dirname, '../../packages/axios-helper')}/`,
-      '~api-routes/': `${path.resolve(__dirname, '../../packages/api-routes')}/`,
+      '~services': path.resolve(__dirname, '../../packages/api/services'),
       '~prisma-clients/': `${path.resolve(__dirname, '../../packages/prisma-clients')}/`,
       '~web/': `${path.resolve(__dirname, '../../apps/web')}/`,
       '~/composables/useCollection': `${path.resolve(__dirname, '../../apps/web/composables/useCollection')}`,

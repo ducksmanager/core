@@ -57,7 +57,7 @@ import {
   statsChartOutline,
   statsChartSharp,
 } from 'ionicons/icons';
-import { components as webComponents, stores as webStores } from '~web';
+import { stores as webStores } from '~web';
 
 import { wtdcollection } from '~/stores/wtdcollection';
 

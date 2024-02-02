@@ -36,7 +36,7 @@
             ></StarRating>
           </ion-col>
           <ion-col lg="2">
-            <ion-button @click="statsStore.deleteAuthor(author)">
+            <ion-button @click="statsStore.deleteAuthor(author.personcode)">
               {{ t('Supprimer') }}
             </ion-button>
           </ion-col>
@@ -48,11 +48,9 @@
       <ion-list v-if="authorResults">
         <ion-item
           v-for="(author, personcode) of authorResults"
-          :class="{ disabled: statsStore.isAuthorWatched(personcode as string) }"
+          :class="{ disabled: statsStore.isAuthorWatched(personcode) }"
           @click="
-            statsStore.createRating({
-              personcode: personcode as string,
-            });
+            statsStore.createRating(personcode);
             authorName = '';
           "
         >

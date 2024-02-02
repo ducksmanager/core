@@ -1,35 +1,35 @@
 import { Entity, Column, PrimaryColumn } from 'typeorm';
 import type { issue } from '~prisma-clients/client_dm';
 
-export type IssueWithPublicationcode = issue & {
+export type issueWithPublicationcode = issue & {
   publicationcode: string;
 };
 @Entity('issue')
 export class Issue {
   @PrimaryColumn('integer')
-  id!: IssueWithPublicationcode['id'];
+  id!: issueWithPublicationcode['id'];
 
   @Column('text', { nullable: false })
-  country!: IssueWithPublicationcode['country'];
+  country!: issueWithPublicationcode['country'];
 
   @Column('text', { nullable: false })
-  magazine!: IssueWithPublicationcode['magazine'];
+  magazine!: issueWithPublicationcode['magazine'];
 
   @Column('text', { nullable: true })
-  publicationcode!: IssueWithPublicationcode['publicationcode'];
+  publicationcode!: issueWithPublicationcode['publicationcode'];
 
   @Column('text', { nullable: false })
-  issuenumber!: IssueWithPublicationcode['issuenumber'];
+  issuenumber!: issueWithPublicationcode['issuenumber'];
 
   @Column('text', { nullable: false })
-  condition!: IssueWithPublicationcode['condition'];
+  condition!: issueWithPublicationcode['condition'];
 
   @Column('integer', { nullable: false })
-  isToRead!: IssueWithPublicationcode['isToRead'];
+  isToRead!: issueWithPublicationcode['isToRead'];
 
   @Column('date', { nullable: true })
-  creationDate!: IssueWithPublicationcode['creationDate'];
+  creationDate!: issueWithPublicationcode['creationDate'];
 
   @Column('integer', { nullable: true })
-  purchaseId!: IssueWithPublicationcode['purchaseId'];
+  purchaseId!: issueWithPublicationcode['purchaseId'];
 }

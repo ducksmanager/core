@@ -44,16 +44,14 @@
 </template>
 
 <script setup lang="ts">
-import { POST__coa__stories__search__withIssues } from '~api-routes';
-import { call } from '~axios-helper';
 import type { SimpleIssue } from '~dm-types/SimpleIssue';
 import type { SimpleStory } from '~dm-types/SimpleStory';
 import { stores } from '~web';
 
-import { defaultApi } from '~/api';
 import { getConditionText } from '~/composables/useCondition';
 import type { Issue } from '~/persistence/models/dm/Issue';
 import { wtdcollection } from '~/stores/wtdcollection';
+import { coaServices } from '~web/src/composables/useSocket';
 
 const { t } = useI18n();
 
@@ -83,15 +81,7 @@ watch(
       return;
     }
     selectedStory.value = null;
-    const data = (
-      await call(
-        defaultApi,
-        new POST__coa__stories__search__withIssues({
-          reqBody: { keywords: newValue },
-        }),
-      )
-    ).data.results;
-
+    const { results: data } = await coaServices.searchStory([newValue], true);
     const publicationcodes = [
       ...new Set(
         data.reduce(

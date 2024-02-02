@@ -8,35 +8,54 @@
 </template>
 
 <script setup lang="ts">
-import { stores as webStores } from '~web';
-
 import { User } from './persistence/models/dm/User';
 import { app } from './stores/app';
 import { wtdcollection } from './stores/wtdcollection';
 
-import { coaApi, defaultApi } from '~/api';
+import { buildStorage } from 'axios-cache-interceptor';
+import { HttpCache } from './persistence/models/internal/HttpCache';
+import { cacheStorage, session } from '~web/src/composables/useSocket';
 
 const appStore = app();
-const coaStore = webStores.coa();
-const statsStore = webStores.stats();
 const collectionStore = wtdcollection();
-const usersStore = webStores.users();
 const route = useRoute();
 
 onBeforeMount(() => {
-  coaStore.setApi({ api: coaApi });
-  statsStore.setApi({ api: defaultApi });
-
-  usersStore.setApi({
-    api: defaultApi,
-  });
-  collectionStore.setApi({
-    api: defaultApi,
-    sessionExistsFn: () =>
+  session.value = {
+    getToken: () =>
       app()
         .dbInstance.getRepository(User)
-        .exist({ select: ['token'] }),
-    clearSessionFn: async () => Promise.resolve(),
+        .findOneOrFail({ select: ['token'] })
+        .then((user) => user.token),
+
+    clearSession: async () => {
+      await app().dbInstance.getRepository(User).delete(1);
+    },
+    onConnectError: () => {
+      app().isOfflineMode = true;
+    },
+    sessionExists: async () =>
+      app()
+        .dbInstance.getRepository(User)
+        .find({ select: ['token'] })
+        .then((results) => results.length > 0),
+  };
+
+  cacheStorage.value = buildStorage({
+    set: async (key, data) => {
+      await app()
+        .dbInstance.getRepository(HttpCache)
+        .upsert({ key, data: JSON.stringify(data) }, ['key']);
+    },
+    find: async (key) => {
+      const data = (await app().dbInstance.getRepository(HttpCache).findOne({ where: { key } }))?.data;
+      if (data) {
+        return JSON.parse(data);
+      }
+    },
+    remove: async (key) => {
+      await app().dbInstance.getRepository(HttpCache).delete({ key });
+    },
   });
   collectionStore.loadUser();
 });

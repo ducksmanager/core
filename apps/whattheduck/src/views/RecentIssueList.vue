@@ -10,19 +10,20 @@
 </template>
 
 <script setup lang="ts">
-import type { GET__coa__list__issues__recent } from '~api-routes';
 import { stores as webStores } from '~web';
 
 import { getConditionText } from '~/composables/useCondition';
 import type { Issue } from '~/persistence/models/dm/Issue';
 import { wtdcollection } from '~/stores/wtdcollection';
+import { EventReturnType } from '~services/types';
+import CoaServices from '~services/coa/types';
 
 const router = useRouter();
 
 const collectionStore = wtdcollection();
 const coaStore = webStores.coa();
 
-type Item = GET__coa__list__issues__recent['resBody'][0] & { owned?: Issue };
+type Item = EventReturnType<CoaServices['getRecentIssues']>[0] & { owned?: Issue };
 
 defineSlots<{
   rowPrefix: { item: Item };

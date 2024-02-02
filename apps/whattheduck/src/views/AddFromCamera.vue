@@ -15,7 +15,6 @@
 import type { CameraPreviewOptions } from '@capacitor-community/camera-preview';
 import { CameraPreview } from '@capacitor-community/camera-preview';
 import { isPlatform } from '@ionic/vue';
-import axios from 'axios';
 import { apertureOutline, apertureSharp } from 'ionicons/icons';
 
 const getDataURIFromImageElement = () => {
@@ -91,12 +90,14 @@ const takePhoto = async () => {
   const blob = base64ToBlob(base64);
 
   data.append('image', blob);
-  const response = await axios.post('http://localhost:5000/search_image', data, {
+  const response = await fetch('http://localhost:5000/search_image', {
+    method: 'post',
+    body: data,
     headers: {
       'Content-Type': 'multipart/form-data',
     },
   });
-  console.log(response.data);
+  console.log(response.body);
 };
 </script>
 <style lang="scss" scoped>
