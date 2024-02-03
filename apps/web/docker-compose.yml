@@ -10,9 +10,29 @@ services:
       - public-network
       - dm2-network
 
+  web-websocket:
+    container_name: ducksmanager-web-websocket
+    image: ghcr.io/bperel/ducksmanager-web:websocket
+    depends_on:
+      - api-websocket
+    restart: always
+    networks:
+      - public-network
+      - dm2-network
+
   api:
     container_name: ducksmanager-api
     image: ghcr.io/bperel/ducksmanager-api
+    restart: always
+    networks:
+      - public-network
+      - dm2-network
+      - dm-server_db-network
+      - dm-server_cover-id-network
+
+  api-websocket:
+    container_name: ducksmanager-api-websocket
+    image: ghcr.io/bperel/ducksmanager-api:websocket
     restart: always
     networks:
       - public-network

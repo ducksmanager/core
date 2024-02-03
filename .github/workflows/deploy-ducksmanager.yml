@@ -10,6 +10,7 @@ on:
       - "pnpm-lock.yaml"
     branches:
       - "master"
+      - "migrate-api-to-websocket"
 jobs:
   deploy-dm:
     runs-on: ubuntu-latest
@@ -63,7 +64,7 @@ jobs:
           cache-from: type=registry,ref=ghcr.io/bperel/ducksmanager-web:buildcache
           cache-to: type=registry,ref=ghcr.io/bperel/ducksmanager-web:buildcache,mode=max
           tags: |
-            ghcr.io/bperel/ducksmanager-web:latest
+            ghcr.io/bperel/ducksmanager-web:websocket
 
       - name: Build and push api
         uses: docker/build-push-action@v5
@@ -76,7 +77,7 @@ jobs:
           cache-from: type=registry,ref=ghcr.io/bperel/ducksmanager-api:buildcache
           cache-to: type=registry,ref=ghcr.io/bperel/ducksmanager-api:buildcache,mode=max
           tags: |
-            ghcr.io/bperel/ducksmanager-api:latest
+            ghcr.io/bperel/ducksmanager-api:websocket
 
       - name: Upload docker-compose.yml file
         uses: nicklasfrahm/scp-action@v1.0.1
@@ -89,7 +90,7 @@ jobs:
           source: apps/web/docker-compose.yml
           target: /home/bperel/workspace/DucksManager2/docker-compose.yml
 
-      - name: Recreate container
+      - name: Recreate containers
         uses: appleboy/ssh-action@v1.0.0
         env:
           DOCKER_REGISTRY_TOKEN: ${{ secrets.DOCKER_REGISTRY_TOKEN_DM }}
@@ -102,4 +103,4 @@ jobs:
           script: |
             cd workspace/DucksManager2
             echo `grep GITHUB_TOKEN .env | cut -d'=' -f2` | docker login ghcr.io -u bperel --password-stdin
-            docker compose pull && docker compose up -d --force-recreate web api sentry-relay
+            docker compose pull && docker compose up -d --force-recreate web-websocket api-websocket sentry-relay
