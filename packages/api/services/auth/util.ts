@@ -3,17 +3,24 @@ import jwt from "jsonwebtoken";
 import { Socket } from "socket.io";
 
 import { prismaDm } from "~/prisma";
-import { User } from "~dm-types/SessionUser";
+import { SessionUser } from "~dm-types/SessionUser";
 import { user } from "~prisma-clients/client_dm";
 
-import { SocketWithUser } from "../types-server";
+export type SocketWithUser = Socket<
+  Record<string, never>,
+  Record<string, never>,
+  Record<string, never>,
+  { user?: SessionUser }
+>;
+
+
 
 const EMAIL_REGEX =
   /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,24}))$/;
 
 export const isValidEmail = (email: string) => EMAIL_REGEX.test(email);
 
-export const generateAccessToken = (payload: User) =>
+export const generateAccessToken = (payload: SessionUser) =>
   jwt.sign(payload, process.env.TOKEN_SECRET!, {
     expiresIn: `${60 * 24 * 14}m`,
   });
@@ -51,7 +58,7 @@ const AuthMiddleware = (
         next(new Error(`Invalid token: ${err}`));
       } else {
         if (user) {
-          socket.data.user = user as User;
+          socket.data.user = user as SessionUser;
         }
         next();
       }

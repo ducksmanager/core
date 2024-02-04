@@ -28,9 +28,10 @@ WORKDIR /app
 COPY package.json ./
 COPY pnpm-*.yaml ./
 
+COPY packages/socket.io-services ./packages/socket.io-services
 COPY --from=build /app/packages/prisma-clients ./packages/prisma-clients
-COPY --from=build /app/packages/types ./packages/types
 COPY --from=build /app/packages/prisma-clients/dist/ ./packages/prisma-clients
+COPY --from=build /app/packages/types ./packages/types
 COPY --from=build /app/packages/types/dist/ ./packages/types
 COPY --from=build /app/packages/api/dist/api ./packages/api
 

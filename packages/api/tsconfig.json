@@ -22,6 +22,7 @@
       "~dm-types/*": ["../dm-types/*"],
       "~emails/*": ["emails/*"],
       "~prisma-clients/*": ["../prisma-clients/*"],
+      "~socket.io-services/*": ["../socket.io-types/*"],
       "~translations/*": ["translations/*"]
     }
   },

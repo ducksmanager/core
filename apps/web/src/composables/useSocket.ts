@@ -17,7 +17,7 @@ import LoginServices from "~services/login/types";
 import PresentationTextServices from "~services/presentation-text/types";
 import PublicCollectionServices from "~services/public-collection/types";
 import StatsServices from "~services/stats/types";
-import { EventReturnTypeIncludingError } from "~services/types";
+import { EventReturnTypeIncludingError } from "~socket.io-services/types";
 type SocketCacheOptions = Pick<CacheOptions, "ttl">;
 
 interface EventsMap {

@@ -86,6 +86,9 @@ dependencies:
   ~prisma-clients:
     specifier: workspace:*
     version: link:../../packages/prisma-clients
+  ~socket.io-services:
+    specifier: workspace:*
+    version: link:../../packages/socket.io-services
 
 devDependencies:
   '@antfu/eslint-config':

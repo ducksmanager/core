@@ -1,11 +1,10 @@
 import { prismaDm } from "~/prisma";
-import { User } from "~dm-types/SessionUser";
+import { SessionUser } from "~dm-types/SessionUser";
 import { user } from "~prisma-clients/client_dm";
-
-import { Errorable } from "../types";
+import { Errorable } from "~socket.io-services/types";
 
 export const checkValidBookcaseUser = async (
-  user?: User | null,
+  user?: SessionUser | null,
   username?: string
 ): Promise<Errorable<user, 'Unauthorized' | 'Forbidden' | 'Not found'>> => {
   try {

@@ -1,8 +1,7 @@
 import { ImageElement } from "~dm-types/ImageElement";
 import { ModelSteps } from "~dm-types/ModelSteps";
 import { edgeContributor, edgeModel, elementImage, Prisma } from "~prisma-clients/client_edgecreator";
-
-import { Errorable } from "../types";
+import { Errorable } from "~socket.io-services/types";
 
 export const unassignedEdgeFields = {
   id: true,

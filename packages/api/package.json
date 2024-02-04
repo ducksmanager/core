@@ -26,7 +26,8 @@
     "nodemailer": "^6.9.8",
     "socket.io": "^4.7.4",
     "~dm-types": "workspace:*",
-    "~prisma-clients": "workspace:*"
+    "~prisma-clients": "workspace:*",
+    "~socket.io-services": "workspace:*"
   },
   "devDependencies": {
     "@types/ejs": "^3.1.5",
@@ -43,6 +44,7 @@
     "eslint-plugin-simple-import-sort": "^10.0.0",
     "eslint-plugin-unused-imports": "^3.0.0",
     "nodemon": "^3.0.3",
+    "prettier": "^3.2.4",
     "ts-node": "^10.9.2",
     "tsc-alias": "^1.8.8",
     "tsconfig-paths": "^4.2.0",

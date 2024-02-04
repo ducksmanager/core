@@ -1,6 +1,5 @@
 import { CoverSearchResults } from "~dm-types/CoverSearchResults";
-
-import { Errorable } from "../types";
+import { Errorable } from "~socket.io-services/types";
 
 export default abstract class {
   static namespaceEndpoint: string = "/cover-id";

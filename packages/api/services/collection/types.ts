@@ -5,8 +5,7 @@ import { TransactionResults } from "~dm-types/TransactionResults";
 import { UserForAccountForm } from "~dm-types/UserForAccountForm";
 import { authorUser, issuePopularity, purchase, requestedIssue, user, userOptionType, userPermission } from "~prisma-clients/client_dm";
 import { issueWithPublicationcode, subscriptionWithPublicationcode } from "~prisma-clients/extended/dm.extends";
-
-import { Errorable } from "../types";
+import { Errorable } from "~socket.io-services/types";
 
 export default abstract class {
   static namespaceEndpoint: string = "/collection";

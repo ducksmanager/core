@@ -3,6 +3,9 @@ import "module-alias/register";
 import * as Sentry from "@sentry/node";
 import { instrument } from "@socket.io/admin-ui";
 import dotenv from "dotenv";
+import { Server } from "socket.io";
+
+import { SessionUser } from "~dm-types/SessionUser";
 
 import auth from "./services/auth";
 import { OptionalAuthMiddleware } from "./services/auth/util";
@@ -22,7 +25,14 @@ import presentationText from "./services/presentation-text";
 import publicCollection from "./services/public-collection";
 import stats from "./services/stats";
 import status from "./services/status";
-import { ServerWithUser } from "./services/types-server";
+
+ class ServerWithUser extends Server<
+  Record<string, never>,
+  Record<string, never>,
+  Record<string, never>,
+  { user?: SessionUser }
+> {}
+
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 (BigInt.prototype as any).toJSON = function () {

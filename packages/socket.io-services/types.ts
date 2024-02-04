@@ -1,7 +1,10 @@
-import { ScopedError } from "~dm-types/ScopedError";
-
+interface ScopedError<ErrorKey extends string = string> {
+  error: ErrorKey;
+  message: string;
+  selector: string;
+}
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-type Last<T extends unknown[]> = T extends [...infer I, infer L] ? L : never;
+type Last<T extends unknown[]> = T extends [...infer _I, infer L] ? L : never;
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type LastParameter<F extends (...args: any) => unknown> = Last<
   Parameters<F>

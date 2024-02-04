@@ -4,8 +4,7 @@ import { SimpleIssue } from "~dm-types/SimpleIssue";
 import { SimpleIssueWithPublication } from "~dm-types/SimpleIssueWithPublication";
 import { StorySearchResults } from "~dm-types/StorySearchResults";
 import { inducks_issue, inducks_issuequotation } from "~prisma-clients/client_coa";
-
-import { Errorable } from "../types";
+import { Errorable } from "~socket.io-services/types";
 
 
 export default abstract class {
