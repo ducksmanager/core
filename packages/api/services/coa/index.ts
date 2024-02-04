@@ -10,7 +10,8 @@ import stories from "./stories";
 import Services from "./types";
 
 export default (io: Server) => {
-  (io.of(Services.namespaceEndpoint) as Namespace<Services>).on("connection", (socket) => {      console.log("connected to coa");
+  (io.of(Services.namespaceEndpoint) as Namespace<Services>).on("connection", (socket) => {      
+    console.log("connected to coa");
 
     countries(socket);
     publications(socket);

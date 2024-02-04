@@ -48,29 +48,7 @@ const useSocket = <Services extends EventsMap>(
   namespaceName: string,
   cacheOptions?: Required<SocketCacheOptions>,
 ) => {
-  const socket = io(import.meta.env.VITE_SOCKET_URL + namespaceName, {
-    auth: async (cb) => {
-      if (!session.value) {
-        return;
-      }
-      const token = await session.value.getToken();
-      console.log(token);
-      cb({
-        token,
-      });
-    },
-  });
-
-  socket.on("connect_error", (e) => {
-    if (session.value?.onConnectError) {
-      session.value.onConnectError();
-      console.debug(`Namespace ${namespaceName}: connect_error: ${e}`);
-    } else {
-      console.error(
-        `Namespace ${namespaceName}: onConnectError is not defined`,
-      );
-    }
-  });
+  let socket: Socket;
 
   return new Proxy({} as EventCalls<Services> & { connect: () => void }, {
     get:
@@ -80,6 +58,27 @@ const useSocket = <Services extends EventsMap>(
       ): Promise<
         EventReturnTypeIncludingError<Services[EventName]> | undefined
       > => {
+        if (!socket) {
+          socket = io(import.meta.env.VITE_SOCKET_URL + namespaceName, {
+            auth: async (cb) => {
+              if (!session.value) {
+                return;
+              }
+              cb({
+                token: await session.value.getToken(),
+              });
+            },
+          }).on("connect_error", (e) => {
+            if (session.value?.onConnectError) {
+              session.value.onConnectError();
+              console.debug(`Namespace ${namespaceName}: connect_error: ${e}`);
+            } else {
+              console.error(
+                `Namespace ${namespaceName}: onConnectError is not defined`,
+              );
+            }
+          });
+        }
         if (event === "connect") {
           socket.connect();
           return;
@@ -168,7 +167,7 @@ export const eventsServices = useSocket<EventsServices>(
   EventsServices.namespaceEndpoint,
 );
 export const bookstoreServices = useSocket<BookstoreServices>(
-  BookcaseServices.namespaceEndpoint,
+  BookstoreServices.namespaceEndpoint,
 );
 export const collectionServices = useSocket<CollectionServices>(
   CollectionServices.namespaceEndpoint,

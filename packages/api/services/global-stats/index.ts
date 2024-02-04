@@ -45,7 +45,6 @@ export default (io: Server) => {
       socket.on(
         "getUsersPointsAndStats",
         async (userIds: number[], callback) => {
-          console.log('!')
           if (userIds.length) {
             const result = {
               points: await getMedalPoints(userIds),
