@@ -10,13 +10,10 @@ const simpleUserValidator = Prisma.validator<Prisma.userDefaultArgs>()({
 
 export type QuickStatsPerUser = Record<
   string,
-  Omit<
-    Prisma.userGetPayload<typeof simpleUserValidator> & {
-      numberOfCountries: number;
-      numberOfPublications: number;
-      numberOfIssues: number;
-      okForExchanges: boolean;
-    },
-    "id"
-  > & { userId: number }
+  Prisma.userGetPayload<typeof simpleUserValidator> & {
+    numberOfCountries: number;
+    numberOfPublications: number;
+    numberOfIssues: number;
+    okForExchanges: boolean;
+  }
 >;

@@ -86,46 +86,54 @@ export default (io: Server) => {
 };
 
 const getUsersQuickStats = async (userIds: number[]) => Promise.all([
-    prismaDm.user.findMany({
-      select: {
-        id: true,
-        presentationText: true,
-        allowSharing: true,
-        marketplaceAcceptsExchanges: true
-      }, where: {
-        id: {
-          in: userIds
-        }
+  prismaDm.user.findMany({
+    select: {
+      id: true,
+      username: true,
+      presentationText: true,
+      allowSharing: true,
+      marketplaceAcceptsExchanges: true
+    }, where: {
+      id: {
+        in: userIds
       }
-    }), prismaDm.issue.groupBy({
-      by: ['userId'],
-      _count: {
-        userId: true,
-        country: true,
-      },
-      where: {
-        userId: {
-          in: userIds
-        }
+    }
+  }), prismaDm.issue.groupBy({
+    by: ['userId'],
+    _count: {
+      id: true
+    },
+    where: {
+      userId: {
+        in: userIds
       }
-    }),
-    prismaDm.$queryRaw<{ userId: number, numberOfPublications: number }[]>`
-    select issue.ID                                        AS userId,
-           count(distinct concat(Pays, '/', Magazine)) as numberOfPublications
+    }
+  }),
+  prismaDm.$queryRaw<{ userId: number, numberOfCountries: number, numberOfPublications: number }[]>`
+    select issue.ID_Utilisateur                        AS userId,
+           count(distinct Pays) AS numberOfCountries,
+           count(distinct concat(Pays, '/', Magazine)) AS numberOfPublications
     from numeros AS issue
     where issue.ID_Utilisateur IN (${Prisma.join(userIds)})
-    group by issue.ID`
-  ]).then(([users, counts, usersAndNumberOfPublications]) => {
-    const usersById = users.reduce<Record<string, typeof users[0]>>((acc, user) => ({ ...acc, [user.id]: user }), {});
-    const numberOfPublicationsPerUser = usersAndNumberOfPublications.reduce<Record<number, number>>((acc, { userId, numberOfPublications }) => ({ ...acc, [userId]: numberOfPublications }), {})
+    group by issue.ID_Utilisateur`,
+    
+  prismaDm.$queryRaw<{ userId: number, numberOfPublications: number }[]>`
+    select issue.ID_Utilisateur                        AS userId,
+           count(distinct concat(Pays, '/', Magazine)) AS numberOfPublications
+    from numeros AS issue
+    where issue.ID_Utilisateur IN (${Prisma.join(userIds)})
+    group by issue.ID_Utilisateur`
+]).then(([users, counts, usersAndNumberOfCountriesAndPublications]) => {
+  const usersById = users.reduce<Record<string, typeof users[0]>>((acc, user) => ({ ...acc, [user.id]: user }), {});
+  const numberOfCountriesAndPublicationsPerUser = usersAndNumberOfCountriesAndPublications.reduce<Record<number, {numberOfCountries: number, numberOfPublications: number}>>((acc, { userId, numberOfCountries, numberOfPublications }) => ({ ...acc, [userId]: {numberOfCountries, numberOfPublications} }), {})
 
-    return counts.reduce<QuickStatsPerUser>((acc, { userId, _count }) => ({
-      ...acc,
-      [userId]: {
-        ...usersById[userId],
-        numberOfCountries: _count.country,
-        numberOfIssues: _count.userId,
-        numberOfPublications: numberOfPublicationsPerUser[userId] || 0
-      }
-    }), {})
-  })
+  return counts.reduce<QuickStatsPerUser>((acc, { userId, _count }) => ({
+    ...acc,
+    [userId]: {
+      ...usersById[userId],
+      numberOfCountries: numberOfCountriesAndPublicationsPerUser[userId]?.numberOfCountries || 0, 
+      numberOfPublications: numberOfCountriesAndPublicationsPerUser[userId]?.numberOfPublications || 0,      numberOfIssues: _count.id,
+
+    }
+  }), {})
+})

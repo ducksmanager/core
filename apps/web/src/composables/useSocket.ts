@@ -109,7 +109,7 @@ const useSocket = <Services extends EventsMap>(
   });
 };
 
-const oneHour = () => dayjs().add(1, "hour").diff(dayjs());
+// const oneHour = () => dayjs().add(1, "hour").diff(dayjs());
 const until4am = () => {
   const now = dayjs();
   let coaCacheExpiration = dayjs();
@@ -160,9 +160,9 @@ export const coaServices = useSocket<CoaServices>(
 );
 export const globalStatsServices = useSocket<GlobalStatsServices>(
   GlobalStatsServices.namespaceEndpoint,
-  {
-    ttl: oneHour(),
-  },
+  // {
+  //   ttl: oneHour(),
+  // },
 );
 export const eventsServices = useSocket<EventsServices>(
   EventsServices.namespaceEndpoint,
