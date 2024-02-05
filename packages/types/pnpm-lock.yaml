@@ -35,8 +35,8 @@ devDependencies:
     specifier: ^9.18.1
     version: 9.18.1(eslint@8.54.0)
   prettier:
-    specifier: ^3.1.0
-    version: 3.1.0
+    specifier: ^3.2.5
+    version: 3.2.5
 
 packages:
 
@@ -619,7 +619,7 @@ packages:
     dependencies:
       '@vue/compiler-sfc': 3.3.9
       picocolors: 1.0.0
-      prettier: 3.1.0
+      prettier: 3.2.5
       prettier-linter-helpers: 1.0.0
       synckit: 0.8.5
     dev: true
@@ -1288,8 +1288,8 @@ packages:
       fast-diff: 1.3.0
     dev: true
 
-  /prettier@3.1.0:
-    resolution: {integrity: sha512-TQLvXjq5IAibjh8EpBIkNKxO749UEWABoiIZehEPiY4GNpVdhaFKqSTu+QrlU6D2dPAfubRmtJTi4K4YkQ5eXw==}
+  /prettier@3.2.5:
+    resolution: {integrity: sha512-3/GWa9aOC0YeD7LUfvOG2NiDyhOWRvt1k+rcKhOuYnMY24iiCphgneUfJDyFXd6rZCAnuLBv6UeAULtrhT/F4A==}
     engines: {node: '>=14'}
     hasBin: true
     dev: true
