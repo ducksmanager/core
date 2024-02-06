@@ -2,13 +2,12 @@ import MedalImage from "./src/components/MedalImage.vue";
 import StarRating from "./src/components/StarRating.vue";
 import Conditions from "./src/components/stats/ConditionsComponent.vue";
 import useCollection from "./src/composables/useCollection";
-import useMedal from "./src/composables/useMedal";
 import {
   authServices,
-  cacheStorage,
   coaServices,
-  session,
-} from "./src/composables/useSocket";
+  coverIdServices,
+} from "./src/composables/useDmSocket";
+import useMedal from "./src/composables/useMedal";
 import { bookcase } from "./src/stores/bookcase";
 import { coa } from "./src/stores/coa";
 import { collection } from "./src/stores/collection";
@@ -31,10 +30,9 @@ export const components = {
 export const composables = {
   useCollection,
   useMedal,
-  useSocket: {
-    session,
-    cacheStorage,
+  useDmSocket: {
     coaServices,
+    coverIdServices,
     authServices,
   },
 };
