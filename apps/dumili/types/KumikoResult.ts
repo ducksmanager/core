@@ -5,10 +5,10 @@ export type Boundaries = {
   height: number;
 };
 
-export type KumikoResults = {
+export type KumikoResult = {
   filename: string;
-  size: [number, number];
+  size: number[];
   background: string;
-  gutters: [number, number];
+  gutters: number[];
   panels: Boundaries[];
-}[];
+};

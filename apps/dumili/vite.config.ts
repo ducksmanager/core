@@ -37,7 +37,11 @@ export default defineConfig({
       dts: true,
       imports: ["vue", "vue-router", "vue-i18n", "pinia"],
       vueTemplate: true,
-      dirs: ["../../packages/api-routes"],
+      dirs: [
+        "../web/src/composables",
+        "../web/src/stores",
+        "../../packages/types",
+      ],
     }),
     Components({
       resolvers: [BootstrapVueNextResolver(), IconsResolver({})],
@@ -56,17 +60,19 @@ export default defineConfig({
   resolve: {
     alias: {
       "~": path.resolve(__dirname, "src"),
-      "~dumili-types/": `${path.resolve(__dirname, "types")}/`,
-      "~dm-types/": `${path.resolve(__dirname, "../../packages/types")}/`,
-      "~web/": `${path.resolve(__dirname, "../web")}/`,
-      "~axios-helper/": `${path.resolve(
+      "~dm-services": path.resolve(__dirname, "../../packages/api/services"),
+      "~dm-types": path.resolve(__dirname, "../../packages/types"),
+      "~dumili-services": path.resolve(__dirname, "api/services"),
+      "~dumili-types": path.resolve(__dirname, "types"),
+      "~web": path.resolve(__dirname, "../web"),
+      "~socket.io-client-services": path.resolve(
         __dirname,
-        "../../packages/axios-helper"
-      )}/`,
-      "~api-routes/": `${path.resolve(
+        "../../packages/socket.io-client-services"
+      ),
+      "~socket.io-services": path.resolve(
         __dirname,
-        "../../packages/api-routes"
-      )}/`,
+        "../../packages/socket.io-services"
+      ),
       "~translations": path.resolve(__dirname, "translations"),
     },
   },

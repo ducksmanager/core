@@ -22,13 +22,10 @@
 </template>
 
 <script setup lang="ts">
-import axios from "axios";
-import { watch } from "vue";
-import { useI18n } from "vue-i18n";
-
-import { POST__coa__stories__search } from "~api-routes";
-import { call } from "~axios-helper";
 import { SimpleStory } from "~dm-types/SimpleStory";
+import { composables as dmComposables } from "~web";
+
+const { coaServices } = dmComposables.useDmSocket;
 
 const emit = defineEmits<{
   (e: "story-selected", story: Pick<SimpleStory, "storycode" | "title">): void;
@@ -52,15 +49,8 @@ const selectSearchResult = (searchResult: SimpleStory) => {
 const runSearch = async (value: string) => {
   isSearching.value = true;
   try {
-    const data = (
-      await call(
-        axios,
-        new POST__coa__stories__search({
-          reqBody: { keywords: value },
-        })
-      )
-    ).data;
-    storyResults.value.results = data.results.results;
+    const data = await coaServices.searchStory({ keywords: value });
+    storyResults.value.results = data.results;
   } finally {
     isSearching.value = false;
     // The input value as changed since the beginning of the search, searching again

@@ -15,8 +15,6 @@
 <script setup lang="ts">
 const { t: $t } = useI18n();
 
-import { useI18n } from "vue-i18n";
-
 import { EntrySuggestion, suggestions } from "~/stores/suggestions";
 
 const textContentError = ref("" as string);

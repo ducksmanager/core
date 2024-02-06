@@ -22,8 +22,6 @@
 </template>
 
 <script lang="ts" setup>
-import { useI18n } from "vue-i18n";
-
 import { IssueSuggestion, suggestions } from "~/stores/suggestions";
 
 const { t: $t } = useI18n();

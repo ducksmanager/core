@@ -53,8 +53,6 @@
   <slot v-if="showCustomizeForm" name="customize-form" />
 </template>
 <script setup lang="ts" generic="S extends Suggestion">
-import { useI18n } from "vue-i18n";
-
 import type { Suggestion, SuggestionMetaAi } from "../stores/suggestions";
 
 const $slots = useSlots();

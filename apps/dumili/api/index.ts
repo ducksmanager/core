@@ -1,11 +1,21 @@
-import * as Sentry from "@sentry/node";
-import busboy from "connect-busboy";
-import cors from "cors";
 import dotenv from "dotenv";
-import express from "express";
-import { router } from "express-file-routing";
+import { Namespace, Server } from "socket.io";
+import { EventsMap } from "socket.io/dist/typed-events";
 
-import { authenticateToken } from "~routes/_auth";
+import { SessionUser } from "~dm-types/SessionUser";
+
+import { getIndexationResources } from "./services/cloudinary-indexations";
+
+export type SessionDataWithIndexation =  { user: SessionUser, indexation: { id: string } & Awaited<ReturnType<typeof getIndexationResources>>}
+export type SessionData =  Pick<SessionDataWithIndexation, 'user'> & Partial<Pick<SessionDataWithIndexation, 'indexation'>>
+export class ServerWithData<Data extends object> extends Server<
+  Record<string, never>,
+  Record<string, never>,
+  Record<string, never>,
+  Data
+> { }
+
+export type NamespaceWithData<Services extends EventsMap,Data extends object = object> = Namespace<Services, Record<string,never>,Record<string,never>, Data >
 
 dotenv.config({
   path: ".env",
@@ -16,34 +26,10 @@ dotenv.config({
   override: true,
 });
 
-const port = 3002;
-
-Sentry.init({
-  dsn: process.env.SENTRY_DSN,
+const io = new ServerWithData({
+  cors: {
+    origin: '*',
+  },
 });
 
-const app = express();
-app.use(
-  Sentry.Handlers.requestHandler({
-    user: ["id", "username"],
-  }) as express.RequestHandler
-);
-app.use(
-  cors({
-    optionsSuccessStatus: 200, // some legacy browsers (IE11, various SmartTVs) choke on 204
-  })
-);
-app.use(busboy({ immediate: true }));
-
-app.all(/^.+$/, authenticateToken);
-
-app.use(express.json({ limit: "5mb" }));
-
-router().then((r) => {
-  app.use("/", r);
-  app.use(Sentry.Handlers.errorHandler() as express.ErrorRequestHandler);
-
-  app.listen(port, () => {
-    console.log(`API listening on port ${port}`);
-  });
-});
+io.listen(3002);

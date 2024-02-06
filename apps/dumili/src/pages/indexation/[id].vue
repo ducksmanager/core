@@ -22,10 +22,7 @@
 </template>
 
 <script setup lang="ts">
-import { storeToRefs } from "pinia";
-import { computed, ref } from "vue";
-
-import { defaultApi } from "~/api";
+import { getIndexationSocket } from "~/composables/useDumiliSocket";
 import {
   EntrySuggestion,
   StoryversionKind,
@@ -49,13 +46,13 @@ const images = computed(() =>
   }))
 );
 const getPageImages = async () => {
-  const urls = (
-    await defaultApi.get<{ url: string }[]>(
-      `${import.meta.env.VITE_BACKEND_URL}/cloudinary/indexation/${
-        route.params.id
-      }`
-    )
-  ).data.map(({ url }) => url.replace(/^http:/, "https:"));
+  const indexationId = route.params.id as string;
+  const data = await getIndexationSocket(indexationId).getIndexationResources();
+  if ("error" in data) {
+    console.error(data.error);
+    return;
+  }
+  const urls = data.resources.map(({ url }) => url.replace(/^http:/, "https:"));
   entrySuggestions.value = urls.reduce(
     (acc, url) => ({
       ...acc,

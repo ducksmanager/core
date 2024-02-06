@@ -8,7 +8,7 @@
     fluid
     class="d-flex flex-column flex-grow-1 overflow-y-auto justify-content-center"
   >
-    <router-view v-if="user().user" />
+    <router-view v-if="user" />
 
     <h4 v-else>
       Vous devez être connecté pour accéder à cette page.
@@ -26,13 +26,16 @@
 </template>
 
 <script setup lang="ts">
-import { storeToRefs } from "pinia";
+import { buildWebStorage } from "axios-cache-interceptor";
+import Cookies from "js-cookie";
 
-import { cachedCoaApi, defaultApi } from "~/api";
+import { cacheStorage, session } from "~socket.io-client-services";
+import { stores as webStores } from "~web";
 
-import { coa } from "./stores/coa";
 import { tabs } from "./stores/tabs";
-import { user } from "./stores/user";
+import { user as userStore } from "./stores/user";
+
+const { user } = storeToRefs(userStore());
 
 const route = useRoute();
 
@@ -50,11 +53,24 @@ watch(
   { immediate: true }
 );
 
-(async () => {
-  coa().setApi({ api: cachedCoaApi });
-  user().user = {
-    username: (await defaultApi.get(`${import.meta.env.VITE_BACKEND_URL}/me`))
-      .data.user.username,
+const collectionStore = webStores.collection();
+const { loadUser } = collectionStore;
+const { isLoadingUser } = storeToRefs(collectionStore);
+
+onBeforeMount(() => {
+  session.value = {
+    getToken: () => Promise.resolve(Cookies.get("token")),
+    clearSession: () => Promise.resolve(Cookies.remove("token")),
+    sessionExists: () =>
+      Promise.resolve(typeof Cookies.get("token") === "string"),
+    onConnectError: async () => {
+      await session.value!.clearSession();
+      isLoadingUser.value = false;
+      user.value = null;
+    },
   };
-})();
+  cacheStorage.value = buildWebStorage(sessionStorage);
+
+  loadUser();
+});
 </script>

@@ -29,33 +29,47 @@
 </template>
 
 <script lang="ts" setup>
-import { storeToRefs } from "pinia";
+import { IssueSuggestion, suggestions } from "~/stores/suggestions";
+import { composables as dmComposables } from "~web";
 
-import { suggestions } from "~/stores/suggestions";
-import { GET__cover_id__download__$coverId } from "~api-routes";
+const { coverIdServices } = dmComposables.useDmSocket;
 
 const { acceptSuggestion, rejectAllSuggestions } = suggestions();
 const { hasPendingIssueSuggestions, issueSuggestions } = storeToRefs(
   suggestions()
 );
 
-const selectedExistingCoverIssuecode = ref(null as string | null);
+const issueSuggestionsWithUrls = ref<
+  (IssueSuggestion["data"] & { url: string })[]
+>([]);
 
-const issueSuggestionsWithUrls = computed(() =>
-  suggestions()
-    .issueSuggestions.filter(({ data }) => data.coverId)
-    .map((issueSuggestion) => ({
-      ...issueSuggestion,
-      url:
-        import.meta.env.VITE_DM_API_URL +
-        GET__cover_id__download__$coverId.url.replace(
-          ":coverId",
-          String(issueSuggestion.data.coverId)
-        ),
-    }))
+const selectedExistingCoverIssuecode = ref<string | null>(null);
+
+const validIssueSuggestions = computed(() =>
+  issueSuggestions.value.filter(({ data }) => data.coverId)
 );
+
+watch(
+  () => validIssueSuggestions.value,
+  async (newValue) => {
+    if (newValue.length) {
+      issueSuggestionsWithUrls.value = (
+        await Promise.all(
+          newValue.map((issueSuggestion) =>
+            coverIdServices.downloadCover(issueSuggestion.data.coverId)
+          )
+        )
+      ).map((url, i) => ({
+        ...newValue[i].data,
+        url: url as string,
+      }));
+    }
+  },
+  { immediate: true }
+);
+
 const images = computed(() =>
-  issueSuggestionsWithUrls.value.map(({ url, data }) => ({
+  issueSuggestionsWithUrls.value.map(({ url, ...data }) => ({
     text: `${data.publicationcode} ${data.issuenumber}`,
     url,
   }))
@@ -64,7 +78,7 @@ const images = computed(() =>
 const coverUrlToIssuecode = (url: string): string =>
   issueSuggestionsWithUrls.value.find(
     ({ url: issueSuggestionUrl }) => issueSuggestionUrl === url
-  )?.data.issuecode || "";
+  )?.issuecode || "";
 
 const getPublicationcodeFromIssuecode = (issuecode: string) =>
   issuecode.split(" ")[0];

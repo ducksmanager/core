@@ -40,13 +40,10 @@
   </div>
 </template>
 <script setup lang="ts">
-import { useI18n } from "vue-i18n";
-
-import { coa } from "~/stores/coa";
-
+import { stores as webStores } from "~web";
 const { t: $t } = useI18n();
 
-const coaStore = coa();
+const coaStore = webStores.coa();
 
 const emit = defineEmits<(e: "change", issuecode: string | null) => void>();
 

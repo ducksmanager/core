@@ -108,7 +108,7 @@
             class="ms-2 hint"
             :disabled="ai.status.value === 'loading'"
             :class="ai.status.value"
-            @click="ai.runKumiko(indexationId)"
+            @click="ai.runKumiko()"
           >
             <i-bi-lightbulb-fill
           /></b-button></div
@@ -142,8 +142,6 @@
 
 <script setup lang="ts">
 import { PageFlip } from "page-flip";
-import { storeToRefs } from "pinia";
-import { computed, ref, watch } from "vue";
 
 import useAi from "~/composables/useAi";
 import { ai as aiStore } from "~/stores/ai";
@@ -151,7 +149,7 @@ import { suggestions } from "~/stores/suggestions";
 import { user } from "~/stores/user";
 
 const route = useRoute();
-const ai = useAi();
+let ai: ReturnType<typeof useAi>;
 const aiDetails = storeToRefs(aiStore()).aiDetails;
 
 const coverWidth = ref(null as number | null);
@@ -257,8 +255,9 @@ watch(
 watch(
   () => storyversionKindSuggestions.value,
   async () => {
-    await ai.runCoverSearch(indexationId.value);
-    await ai.runStorycodeOcr(indexationId.value);
+    ai = useAi(indexationId.value);
+    await ai.runCoverSearch();
+    await ai.runStorycodeOcr();
     ai.status.value = "loaded";
   },
   { deep: true }

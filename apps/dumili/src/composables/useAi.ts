@@ -1,20 +1,17 @@
-import axios from "axios";
-import { storeToRefs } from "pinia";
-
-import { defaultApi } from "~/api";
 import { ai as aiStore } from "~/stores/ai";
 import { StoryversionKind, suggestions } from "~/stores/suggestions";
-import { POST__coa__stories__search } from "~api-routes";
-import { call } from "~axios-helper";
-import { KumikoResults } from "~dumili-types/KumikoResults";
-import { OcrResult } from "~dumili-types/OcrResults";
+import { composables } from "~web";
 
+import { getIndexationSocket } from "./useDumiliSocket";
 import useHintMaker from "./useHint";
 
-export default () => {
+const coaServices = composables.useDmSocket.coaServices;
+
+export default (indexationId: string) => {
   const status = ref("idle" as "idle" | "loading" | "loaded");
 
   const aiDetails = storeToRefs(aiStore()).aiDetails;
+  const indexationServices = getIndexationSocket(indexationId);
 
   const hint = useHintMaker();
 
@@ -24,36 +21,27 @@ export default () => {
     storyversionKindSuggestions,
   } = storeToRefs(suggestions());
 
-  const runKumiko = async (indexationId: string) => {
+  const runKumiko = async () => {
     status.value = "loading";
     nextTick(async () => {
       console.log("Kumiko...");
-      const { data }: { data: KumikoResults } = await defaultApi
-        .get(
-          `${
-            import.meta.env.VITE_BACKEND_URL
-          }/cloudinary/indexation/${indexationId}/ai/kumiko`
-        )
-        .catch((e) => {
-          console.error(e);
-          return { data: [] };
-        });
+      const { data } = await indexationServices.getKumikoResults();
 
       console.log("Kumiko OK");
-      if (data.length) {
+      if (data?.length) {
         hint.applyHintsFromKumiko(data);
-      }
 
-      for (const { filename, panels } of data) {
-        aiDetails.value[filename] = {
-          ...(aiDetails.value[filename] || {}),
-          panels: panels.map((panel) => ({ bbox: panel })),
-        };
+        for (const { filename, panels } of data) {
+          aiDetails.value[filename] = {
+            ...(aiDetails.value[filename] || {}),
+            panels: panels.map((panel) => ({ bbox: panel })),
+          };
+        }
       }
     });
   };
 
-  const runCoverSearch = async (indexationId: string) => {
+  const runCoverSearch = async () => {
     if (
       acceptedStoryKinds.value[Object.keys(entrySuggestions)[0]]?.data?.kind ===
       StoryversionKind.Cover
@@ -62,28 +50,23 @@ export default () => {
         "La première page est une couverture, on va chercher si on la détecte parmi les résultats de la recherche par image..."
       );
 
+      const url = Object.entries(storyversionKindSuggestions.value)[0];
       nextTick(async () => {
-        const { data } = await defaultApi
-          .get(
-            `${
-              import.meta.env.VITE_BACKEND_URL
-            }/cloudinary/indexation/${indexationId}/ai/cover-search`
-          )
-          .catch((e) => {
-            console.error(e);
-            return { data: { results: [] } };
-          })
-          .finally(() => {
-            console.log("Recherche par image terminée");
-          });
-        hint.applyHintsFromCoverSearch(data);
+        coverIdServices.searchFromCover({ url }).then((results) => {
+          if ("error" in results) {
+            console.error(results.error);
+          } else {
+            hint.applyHintsFromCoverSearch(results);
+          }
+          console.log("Recherche par image terminée");
+        });
       });
     } else {
       console.warn("La première page n'est pas une couverture");
     }
   };
 
-  const runStorycodeOcr = async (indexationId: string) => {
+  const runStorycodeOcr = async () => {
     const storyFirstPages = Object.entries(storyversionKindSuggestions.value)
       .filter(([, suggestionsForEntry]) =>
         suggestionsForEntry.some(
@@ -94,42 +77,25 @@ export default () => {
       .map(([url]) => url);
 
     for (const url of storyFirstPages) {
-      const ocrResults = (
-        await defaultApi
-          .get<OcrResult[]>(
-            `${
-              import.meta.env.VITE_BACKEND_URL
-            }/cloudinary/indexation/${indexationId}/ai/ocr/${url}`
-          )
-          .catch((e) => {
-            console.error(e);
-            return { data: [] };
-          })
-          .finally(() => {
-            console.log(`${url} : Recherche par OCR terminée`);
-          })
-      ).data;
+      const ocrResults = await indexationServices.getOcrResults(url);
 
-      if (!ocrResults.length) {
+      if ("error" in ocrResults) {
+        console.error(ocrResults.error);
         return;
       }
+      console.log(`${url} : Recherche par OCR terminée`);
 
       try {
         const possibleStories = (
-          await call(
-            axios,
-            new POST__coa__stories__search({
-              reqBody: {
-                keywords: ocrResults.map(({ text }) => text).join(","),
-              },
-            })
+          await coaServices.searchStory(
+            ocrResults.data.map(({ text }) => text).join(",")
           )
-        ).data.results.results;
+        ).results;
 
         hint.applyHintsFromKeywordSearch(url, possibleStories);
 
         aiDetails.value[url!].texts = {
-          ocrResults,
+          ocrResults: ocrResults.data,
           possibleStories: possibleStories.map(({ storycode, title }) => ({
             storyversion: {
               storycode,

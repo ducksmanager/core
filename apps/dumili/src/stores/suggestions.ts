@@ -1,6 +1,4 @@
-import { defineStore } from "pinia";
-
-import { Boundaries } from "~dumili-types/KumikoResults";
+import { Boundaries } from "~dumili-types/KumikoResult";
 import {
   inducks_entry,
   inducks_issue,

@@ -1,1 +1,3 @@
-export type CloudinaryResourceContext = { custom: { user: string } };
+export type CloudinaryResourceContext = {
+  custom: { user: string; indexation: string };
+};

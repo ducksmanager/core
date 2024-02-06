@@ -1,6 +1,4 @@
-import { defineStore } from "pinia";
-
-import { Boundaries } from "~dumili-types/KumikoResults";
+import { Boundaries } from "~dumili-types/KumikoResult";
 import { OcrResult } from "~dumili-types/OcrResults";
 
 import { EntrySuggestion } from "./suggestions";

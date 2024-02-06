@@ -15,15 +15,11 @@
     "allowJs": true,
     "forceConsistentCasingInFileNames": true,
     "outDir": "./dist",
+    "preserveWatchOutput": true,
     "paths": {
       "~/*": ["*"],
-      "~dumili-types/*": ["../types/*"],
-      "~axios-helper/*": ["../../../packages/axios-helper/*"],
-      "~routes/*": ["routes/*"]
+      "~dumili-types/*": ["../types/*"]
     }
   },
-  "include": ["index.ts", "routes/**/*.ts"],
-  "ts-node": {
-    "swc": true
-  }
+  "include": ["index.ts", "services/**/*.ts"]
 }

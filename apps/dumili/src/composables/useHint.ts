@@ -1,21 +1,20 @@
-import { storeToRefs } from "pinia";
-
-import { coa } from "~/stores/coa";
 import {
   EntrySuggestion,
   IssueSuggestion,
   StoryversionKind,
   suggestions,
 } from "~/stores/suggestions";
-import { POST__cover_id__search } from "~api-routes";
+import CoverIdServices from "~dm-services/cover-id/types";
 import { StorySearchResults } from "~dm-types/StorySearchResults";
-import { KumikoResults } from "~dumili-types/KumikoResults";
+import { KumikoResult } from "~dumili-types/KumikoResult";
+import { EventReturnType } from "~socket.io-services/types";
+import { stores as webStores } from "~web";
 
 export default () => {
   const suggestionsStore = suggestions();
   const { acceptedEntries } = storeToRefs(suggestionsStore);
-  const coaStore = coa();
-  const applyHintsFromKumiko = (results: KumikoResults) => {
+  const coaStore = webStores.coa();
+  const applyHintsFromKumiko = (results: KumikoResult[]) => {
     results?.forEach((result, idx) => {
       const entryurl = Object.keys(suggestionsStore.entrySuggestions)[idx];
       const shouldBeAccepted = acceptedEntries.value[entryurl] === undefined;
@@ -38,7 +37,7 @@ export default () => {
   };
 
   const applyHintsFromCoverSearch = async (
-    results: POST__cover_id__search["resBody"]
+    results: EventReturnType<CoverIdServices["searchFromCover"]>
   ) => {
     if (!results.covers?.length) {
       console.error("Erreur lors de la recherche par image de la couverture");

@@ -26,17 +26,21 @@
     "types": [
       "vite/client",
       "vite-plugin-pages/client",
-      "vue/ref-macros",
-      "unplugin-icons/types/vue"],
+      "unplugin-icons/types/vue"
+    ],
     "paths": {
       "~/*": ["src/*"],
-      "~dumili-types/*": ["types/*"],
+      "~dm-services/*": ["../../packages/api/services/*"],
       "~dm-types/*": ["../../packages/types/*"],
+      "~dumili-services/*": ["api/services/*"],
+      "~dumili-types/*": ["types/*"],
       "~web/*": ["../web/*"],
       "~translations/*": ["translations/*"],
       "~prisma-clients/*": ["../../packages/prisma-clients/*"],
-      "~axios-helper/*": ["../../packages/axios-helper/*"],
-      "~api-routes/*": ["../../packages/api-routes/*"]
+      "~socket.io-client-services/*": [
+        "../../packages/socket.io-client-services/*"
+      ],
+      "~socket.io-services/*": ["../../packages/socket.io-services/*"]
     }
   },
   "include": [

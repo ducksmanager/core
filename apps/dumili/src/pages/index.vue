@@ -50,9 +50,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
-
-import { defaultApi } from "~/api";
+import { cloudinaryIndexationsServices } from "~/composables/useDumiliSocket";
 
 const router = useRouter();
 
@@ -60,10 +58,10 @@ const currentIndexations = ref(
   null as { url: string; indexation: string }[] | null
 );
 const modal = ref(false);
-const cloudinaryFolderName = ref(null as string | null);
+const cloudinaryFolderName = ref<string | null>(null);
 const stepNumber = ref(0);
-const uploadType = ref(null as "all" | "some" | null);
-const showUploadWidget = ref(false as boolean);
+const uploadType = ref<"all" | "some" | null>(null);
+const showUploadWidget = ref(false);
 
 watch(
   () => uploadType.value,
@@ -79,13 +77,15 @@ watch(
 );
 
 (async () => {
-  currentIndexations.value = (
-    await defaultApi.get<
-      { url: string; context: { custom: { indexation: string } } }[]
-    >(`${import.meta.env.VITE_BACKEND_URL}/cloudinary/indexation`)
-  ).data.map(({ url, context }) => ({
-    url,
-    indexation: context.custom.indexation,
-  }));
+  const { error, resources } =
+    await cloudinaryIndexationsServices.getResources();
+  if (error) {
+    console.error(error);
+  } else {
+    currentIndexations.value = resources.map(({ url, context }) => ({
+      url,
+      indexation: context.custom.indexation,
+    }));
+  }
 })();
 </script>

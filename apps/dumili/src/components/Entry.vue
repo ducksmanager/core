@@ -147,10 +147,6 @@
   </b-row>
 </template>
 <script setup lang="ts">
-import { storeToRefs } from "pinia";
-import { computed } from "vue";
-import { useI18n } from "vue-i18n";
-
 import { ai as aiStore } from "~/stores/ai";
 import {
   StoryversionKind,
