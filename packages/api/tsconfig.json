@@ -1,11 +1,10 @@
 {
   "compilerOptions": {
     "baseUrl": ".",
-    "module": "commonjs",
-    "target": "es2018",
-    "lib": ["DOM", "ESNext"],
+    "module": "ESNext",
+    "target": "es2020",
+    "lib": ["ESNext"],
     "strict": true,
-    "jsx": "preserve",
     "esModuleInterop": true,
     "skipLibCheck": true,
     "moduleResolution": "node",

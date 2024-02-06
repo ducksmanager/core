@@ -174,7 +174,7 @@ import { MapboxMap, MapboxMarker, MapboxPopup } from "vue-mapbox-ts";
 
 import { SimpleBookstore } from "~dm-types/SimpleBookstore";
 
-import { bookstoreServices } from "../composables/useSocket";
+import { bookstoreServices } from "../composables/useDmSocket";
 
 const { fetchStats } = users();
 const { stats: userStats } = storeToRefs(users());

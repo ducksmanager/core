@@ -14,6 +14,7 @@ import LoginServices from "~dm-services/login/types";
 import PresentationTextServices from "~dm-services/presentation-text/types";
 import PublicCollectionServices from "~dm-services/public-collection/types";
 import StatsServices from "~dm-services/stats/types";
+import { useSocket } from "~socket.io-client-services";
 
 // const oneHour = () => dayjs().add(1, "hour").diff(dayjs());
 const until4am = () => {

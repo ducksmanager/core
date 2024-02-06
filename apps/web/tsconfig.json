@@ -6,7 +6,6 @@
     "target": "es2020",
     "lib": ["dom", "dom.iterable", "ESNext"],
     "strict": true,
-    "jsx": "preserve",
     "esModuleInterop": true,
     "skipLibCheck": true,
     "moduleResolution": "node",
@@ -19,7 +18,6 @@
     "types": [
       "vite/client",
       "vite-plugin-pages/client",
-      "vue/ref-macros",
       "unplugin-icons/types/vue",
       "@vue-macros/reactivity-transform/macros-global"
     ],
@@ -39,5 +37,5 @@
     "src/**/*.vue",
     "auto-imports.d.ts"
   ],
-  "exclude": ["dist", "node_modules", "vendor"],
+  "exclude": ["dist", "node_modules"],
 }

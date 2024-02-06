@@ -9,6 +9,7 @@ import {
   issueWithPublicationcode,
   subscriptionWithPublicationcode,
 } from "~prisma-clients/extended/dm.extends";
+import { session } from "~socket.io-client-services";
 import { EventReturnType, ScopedError } from "~socket.io-services/types";
 
 import useCollection from "../composables/useCollection";
@@ -16,7 +17,7 @@ import {
   collectionServices,
   loginServices,
   statsServices,
-} from "../composables/useSocket";
+} from "../composables/useDmSocket";
 import { bookcase } from "./bookcase";
 
 export type IssueWithPublicationcodeOptionalId = Omit<

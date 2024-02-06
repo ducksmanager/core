@@ -4,8 +4,8 @@ import { InducksIssueQuotationSimple } from "~dm-types/InducksIssueQuotationSimp
 import type { inducks_issue } from "~prisma-clients/client_coa";
 import { EventReturnType } from "~socket.io-services/types";
 
+import { coaServices } from "../composables/useDmSocket";
 import { getCurrentLocaleShortKey } from "../composables/useLocales";
-import { coaServices } from "../composables/useSocket";
 
 const addPartInfo = (issueDetails: InducksIssueDetails) => {
   const storyPartCounter = Object.entries(

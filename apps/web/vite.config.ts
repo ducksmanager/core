@@ -56,6 +56,7 @@ export default defineConfig({
         "vue-router",
         "@vueuse/core",
         "pinia",
+
         "vue-i18n",
       ],
       dts: true,
