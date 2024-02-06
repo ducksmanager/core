@@ -4,8 +4,8 @@ import { prismaCoa } from "~/prisma";
 import { SimpleIssue } from "~dm-types/SimpleIssue";
 import { SimpleStory } from "~dm-types/SimpleStory";
 
-import Services from "../types";
-export default (socket: Socket<Services>) => {
+import Events from "../types";
+export default (socket: Socket<Events>) => {
   socket.on("searchStory", async (keywords, withIssues, callback) => {
     const limit = 10;
 

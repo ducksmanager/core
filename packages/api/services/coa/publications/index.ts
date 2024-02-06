@@ -2,9 +2,9 @@ import { Socket } from "socket.io";
 
 import { prismaCoa } from "~/prisma";
 
-import Services from "../types";
+import Events from "../types";
 
-export default (socket: Socket<Services>) => {
+export default (socket: Socket<Events>) => {
   socket.on("getPublicationListFromCountrycode", (countrycode, callback) =>
     getPublicationTitles({ startsWith: `${countrycode}/` }).then(callback)
   );

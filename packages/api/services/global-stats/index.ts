@@ -6,10 +6,10 @@ import { Prisma } from "~prisma-clients/client_dm";
 import prismaDm from "~prisma-clients/extended/dm.extends";
 
 import { getMedalPoints } from "../collection/util";
-import Services from "./types";
+import Events from "./types";
 
 export default (io: Server) => {
-  (io.of(Services.namespaceEndpoint) as Namespace<Services>)
+  (io.of(Events.namespaceEndpoint) as Namespace<Events>)
     .on("connection", (socket) => {
       console.log("connected to global-stats");
 

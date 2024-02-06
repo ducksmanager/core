@@ -3,13 +3,14 @@ import "module-alias/register";
 import * as Sentry from "@sentry/node";
 import { instrument } from "@socket.io/admin-ui";
 import dotenv from "dotenv";
+import { createServer } from "http";
 import { Server } from "socket.io";
 
 import { SessionUser } from "~dm-types/SessionUser";
 
 import auth from "./services/auth";
 import { OptionalAuthMiddleware } from "./services/auth/util";
-import bookcase from "./services/bookcase"; 
+import bookcase from "./services/bookcase";
 import bookstores from "./services/bookstores";
 import coa from "./services/coa";
 import collection from "./services/collection";
@@ -24,15 +25,14 @@ import notifications from "./services/notifications";
 import presentationText from "./services/presentation-text";
 import publicCollection from "./services/public-collection";
 import stats from "./services/stats";
-import status from "./services/status";
+import { getDbStatus, getPastecSearchStatus, getPastecStatus } from "./status";
 
- class ServerWithUser extends Server<
+class ServerWithUser extends Server<
   Record<string, never>,
   Record<string, never>,
   Record<string, never>,
   { user?: SessionUser }
-> {}
-
+> { }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 (BigInt.prototype as any).toJSON = function () {
@@ -48,58 +48,76 @@ Sentry.init({
   dsn: process.env.SENTRY_DSN,
 });
 
-(async () => {
-  // app.use(Sentry.Handlers.errorHandler() as express.ErrorRequestHandler);
+const httpServer = createServer(async (req, res) => {
+  let data: { error: string } | object
+  switch (req.url) {
+    case '/status/db':
+      data = await getDbStatus()
+      break;
+    case '/status/pastecsearch':
+      data = await getPastecStatus()
+      break;
+    case '/status/pastec':
+      data = await getPastecSearchStatus()
+    default:
+      res.writeHead(404);
+      res.end();
+      return
+  }
 
-  const io = new ServerWithUser({
-    cors: {
-      origin: '*',
-    },
-  });
+  res.writeHead("error" in data ? 500 : 200, { 'Content-Type': 'text/json' });
+  res.write(JSON.stringify(data));
+  res.end();
+});
+const io = new ServerWithUser(httpServer, {
+  cors: {
+    origin: '*',
+  },
+});
 
-  instrument(io, {
-    auth: false
-  });
-  io.listen(4000);
-  console.log('WebSocket open on port 4000')
-  io.use(OptionalAuthMiddleware);
-  io.use((_socket, next) => {
-    next();
+instrument(io, {
+  auth: false
+});
 
-    // app.all(
-    //   /^\/(edgecreator\/(publish|edgesprites)|notifications)|(edges\/(published))|(\/demo\/reset)|(\/notification\/send)|(bookstores\/(approve|refuse))|(presentation-text\/(approve|refuse))/,
-    //   [checkUserIsAdmin]
-    // );
+httpServer.listen(3000);
+console.log('WebSocket open on port 3000')
 
-    // app.all(/^\/edgecreator\/(.+)/, [
-    //   authenticateToken,
-    //   checkUserIsEdgeCreatorEditor,
-    // ]);
+io.use(OptionalAuthMiddleware);
+io.use((_socket, next) => {
+  next();
 
-    // app.all(/^\/global-stats\/user\/list$/, [
-    //   authenticateToken,
-    //   checkUserIsEdgeCreatorEditor,
-    // ]);
+  // app.all(
+  //   /^\/(edgecreator\/(publish|edgesprites)|notifications)|(edges\/(published))|(\/demo\/reset)|(\/notification\/send)|(bookstores\/(approve|refuse))|(presentation-text\/(approve|refuse))/,
+  //   [checkUserIsAdmin]
+  // );
 
-    // app.all(/^\/collection\/(.+)/, authenticateToken);
-    // app.all("/global-stats/user/collection/rarity", authenticateToken);
-  });
+  // app.all(/^\/edgecreator\/(.+)/, [
+  //   authenticateToken,
+  //   checkUserIsEdgeCreatorEditor,
+  // ]);
 
-  auth(io);
-  bookcase(io);
-  bookstores(io);
-  coa(io);
-  collection(io);
-  coverId(io);
-  edgecreator(io);
-  edges(io);
-  events(io);
-  feedback(io);
-  globalStats(io);
-  login(io);
-  notifications(io);
-  presentationText(io);
-  publicCollection(io);
-  stats(io);
-  status(io);
-})();
+  // app.all(/^\/global-stats\/user\/list$/, [
+  //   authenticateToken,
+  //   checkUserIsEdgeCreatorEditor,
+  // ]);
+
+  // app.all(/^\/collection\/(.+)/, authenticateToken);
+  // app.all("/global-stats/user/collection/rarity", authenticateToken);
+});
+
+auth(io);
+bookcase(io);
+bookstores(io);
+coa(io);
+collection(io);
+coverId(io);
+edgecreator(io);
+edges(io);
+events(io);
+feedback(io);
+globalStats(io);
+login(io);
+notifications(io);
+presentationText(io);
+publicCollection(io);
+stats(io);

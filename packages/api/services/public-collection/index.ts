@@ -3,10 +3,10 @@ import { Namespace, Server } from "socket.io";
 import { prismaDm } from "~/prisma";
 import { user } from "~prisma-clients/client_dm";
 
-import Services from "./types";
+import Events from "./types";
 
 export default (io: Server) => {
-  (io.of(Services.namespaceEndpoint) as Namespace<Services>).on(
+  (io.of(Events.namespaceEndpoint) as Namespace<Events>).on(
     "connection",
     (socket) => {
       console.log("connected to public-collection");

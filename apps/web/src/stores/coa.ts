@@ -1,8 +1,8 @@
+import CoaServices from "~dm-services/coa/types";
 import { InducksIssueDetails } from "~dm-types/InducksIssueDetails";
 import { InducksIssueQuotationSimple } from "~dm-types/InducksIssueQuotationSimple";
 import type { inducks_issue } from "~prisma-clients/client_coa";
-import CoaServices from "~services/coa/types";
-import { EventReturnType } from "~services/types";
+import { EventReturnType } from "~socket.io-services/types";
 
 import { getCurrentLocaleShortKey } from "../composables/useLocales";
 import { coaServices } from "../composables/useSocket";

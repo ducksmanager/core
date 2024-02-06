@@ -6,7 +6,7 @@ import { prismaDm } from "~/prisma";
 import { user } from "~prisma-clients/client_dm";
 
 import { getSuggestions } from "../stats/suggestions";
-import Services from "./types";
+import Events from "./types";
 
 export enum COUNTRY_CODE_OPTION {
   ALL = "ALL",
@@ -14,7 +14,7 @@ export enum COUNTRY_CODE_OPTION {
 }
 
 export default (io: Server) => {
-  (io.of(Services.namespaceEndpoint) as Namespace<Services>).on(
+  (io.of(Events.namespaceEndpoint) as Namespace<Events>).on(
     "connection",
     (socket) => {
       socket.on("send", async (callback) => {

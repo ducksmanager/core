@@ -1,7 +1,7 @@
+import CollectionServices from "~dm-services/collection/types";
 import type { requestedIssue } from "~prisma-clients/client_dm";
 import { issueWithPublicationcode } from "~prisma-clients/extended/dm.extends";
-import CollectionServices from "~services/collection/types";
-import { EventReturnType } from "~services/types";
+import { EventReturnType } from "~socket.io-services/types";
 
 export const marketplace = defineStore("marketplace", () => {
   const issuesOnSaleByOthers = ref(

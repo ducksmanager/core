@@ -3,10 +3,10 @@ import { Socket } from "socket.io";
 import { issue } from "~prisma-clients/client_dm";
 import prismaDm, { issueWithPublicationcode } from "~prisma-clients/extended/dm.extends";
 
-import Services from "../types";
+import Events from "../types";
 import contactMethods from "./contact-methods";
 
-export default (socket: Socket<Services>) => {
+export default (socket: Socket<Events>) => {
   contactMethods(socket);
 
   socket.on("deleteRequests", async (issueId, callback) => {

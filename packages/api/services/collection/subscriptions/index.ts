@@ -3,8 +3,8 @@ import { Socket } from "socket.io";
 import { EditSubscription } from "~dm-types/EditSubscription";
 import prismaDm from "~prisma-clients/extended/dm.extends";
 
-import Services from "../types";
-export default (socket: Socket<Services>) => {
+import Events from "../types";
+export default (socket: Socket<Events>) => {
   socket.on("getSubscriptions", (callback) =>
     prismaDm.subscription
       .findMany({

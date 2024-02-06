@@ -2,12 +2,11 @@ import { Socket } from "socket.io";
 
 import { dmExtends } from "~prisma-clients/extended";
 
-import Services from "../types";
+import Events from "../types";
 import { checkValidBookcaseUser } from "../util";
-
 const prismaDm = dmExtends.default;
 
-export default (socket: Socket<Services>) => {
+export default (socket: Socket<Events>) => {
   socket.on("getBookcaseOrder", async (username, callback) => {
     const user = await checkValidBookcaseUser(socket.data.user, username);
     if (user.error) {

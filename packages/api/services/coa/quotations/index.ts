@@ -2,11 +2,11 @@ import { Socket } from "socket.io";
 
 import { prismaCoa } from "~/prisma";
 
-import Services from "../types";
 const PUBLICATION_CODE_REGEX = /[a-z]+\/[-A-Z0-9]+/g;
 const ISSUE_CODE_REGEX = /[a-z]+\/[-A-Z0-9 ]+/g;
 
-export default (socket: Socket<Services>) => {
+import Events from "../types";
+export default (socket: Socket<Events>) => {
   socket.on("getQuotationsByIssueCodes", async (issueCodes, callback) => {
     const codes = issueCodes.filter((code) => ISSUE_CODE_REGEX.test(code));
     if (!codes.length) {

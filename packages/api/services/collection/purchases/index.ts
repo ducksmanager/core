@@ -3,9 +3,9 @@ import { Socket } from "socket.io";
 import { prismaDm } from "~/prisma";
 
 import { getUserPurchase } from "../issues/util";
-import Services from "../types";
+import Events from "../types";
 
-export default (socket: Socket<Services>) => {
+export default (socket: Socket<Events>) => {
   socket.on("getPurchases", (callback) =>
     prismaDm.purchase
       .findMany({

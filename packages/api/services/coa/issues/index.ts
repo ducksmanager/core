@@ -2,9 +2,9 @@ import { Socket } from "socket.io";
 
 import { prismaCoa } from "~/prisma";
 import { SimpleIssue } from "~dm-types/SimpleIssue";
-import Services  from "~services/coa/types";
 
-export default (socket: Socket<Services>) => {
+import Events from "../types";
+export default (socket: Socket<Events>) => {
   socket.on("decompose", (issueCodes, callback) =>
     prismaCoa.inducks_issue
       .findMany({

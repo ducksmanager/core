@@ -1,6 +1,6 @@
+import BookcaseServices from "~dm-services/bookcase/types";
 import { BookcaseEdge } from "~dm-types/BookcaseEdge";
-import BookcaseServices from "~services/bookcase/types";
-import { EventReturnType } from "~services/types";
+import { EventReturnType } from "~socket.io-services/types";
 
 import { collection } from "./collection";
 

@@ -10,9 +10,8 @@ import { Prisma as PrismaDmStats } from "~prisma-clients/client_dm_stats";
 
 import { getPublicationTitles } from "../coa/publications";
 import { COUNTRY_CODE_OPTION } from "../notifications";
-import  Services  from "./types";
-
-export default (socket: Socket<Services>) => {
+import Events from "./types";
+export default (socket: Socket<Events>) => {
   socket.on(
     "getSuggestionsForCountry",
     async (countrycode, sincePreviousVisit, sort, limit, callback) => {

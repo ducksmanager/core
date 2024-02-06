@@ -1,0 +1,16 @@
+{
+  "name": "~socket.io-client-services",
+  "type": "module",
+  "engines": {
+    "node": ">=18.0.0 <19.0.0"
+  },
+  "dependencies": {
+    "~socket.io-services": "workspace:*"
+  },
+  "peerDependencies": {
+    "axios-cache-interceptor": "^1.5.1",
+    "socket.io-client": "^4.7.4",
+    "typescript": "^5.3.3",
+    "vue": "^3.4.15"
+  }
+}

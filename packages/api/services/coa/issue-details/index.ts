@@ -8,8 +8,8 @@ import { Prisma as PrismaCoa } from "~prisma-clients/client_coa";
 import { cover } from "~prisma-clients/client_cover_info";
 import prismaDm from "~prisma-clients/extended/dm.extends";
 
-import Services from "../types";
-export default (socket: Socket<Services>) => {
+import Events from "../types";
+export default (socket: Socket<Events>) => {
   socket.on("getIssuesWithTitles", async (publicationcode, callback) =>
     prismaCoa.inducks_issue
       .findMany({

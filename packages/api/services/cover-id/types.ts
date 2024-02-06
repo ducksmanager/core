@@ -1,11 +1,9 @@
 import { CoverSearchResults } from "~dm-types/CoverSearchResults";
-import { Errorable } from "~socket.io-services/types";
+import { EitherOr,Errorable } from "~socket.io-services/types";
 
-export default abstract class {
-  static namespaceEndpoint: string = "/cover-id";
-
+export abstract class InterServerEvents {
   abstract searchFromCover: (
-    base64: string,
+    input: EitherOr<{base64: string}, {url: string}>,
     callback: (
       value: Errorable<
         CoverSearchResults,
@@ -13,6 +11,11 @@ export default abstract class {
       >
     ) => void
   ) => void;
+}
+
+export default abstract class extends InterServerEvents {
+  static namespaceEndpoint: string = "/cover-id";
+
   abstract downloadCover: (
     coverId: number,
     callback: (value: Errorable<string, "Error">) => void

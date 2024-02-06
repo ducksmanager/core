@@ -1,7 +1,7 @@
+import GlobalStatsServices from "~dm-services/global-stats/types";
 import { BookcaseContributor } from "~dm-types/BookcaseContributor";
 import { AbstractEvent } from "~dm-types/events/AbstractEvent";
-import GlobalStatsServices from "~services/global-stats/types";
-import { EventReturnType } from "~services/types";
+import { EventReturnType } from "~socket.io-services/types";
 
 export const users = defineStore("users", () => {
   const count = ref(

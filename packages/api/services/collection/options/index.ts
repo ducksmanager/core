@@ -3,7 +3,7 @@ import { Socket } from "socket.io";
 import { prismaDm } from "~/prisma";
 import { userOptionType } from "~prisma-clients/client_dm";
 
-import Services from "../types";
+import Events from "../types";
 const optionNameToEnum = (
   optionName:
     | "suggestion_notification_country"
@@ -11,7 +11,7 @@ const optionNameToEnum = (
     | "marketplace_contact_methods"
 ) => userOptionType[optionName];
 
-export default (socket: Socket<Services>) => {
+export default (socket: Socket<Events>) => {
   socket.on("getOption", async (optionName, callback) =>
     prismaDm.userOption
       .findMany({

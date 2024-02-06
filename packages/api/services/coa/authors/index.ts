@@ -2,8 +2,8 @@ import { Socket } from "socket.io";
 
 import { prismaCoa } from "~/prisma";
 
-import Services from "../types";
-export default (socket: Socket<Services>) => {
+import Events from "../types";
+export default (socket: Socket<Events>) => {
   socket.on("getAuthorList", async (personcodes, callback) =>
     getAuthorFullNames([...new Set(personcodes)]).then(callback)
   );

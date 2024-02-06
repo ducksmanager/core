@@ -68,8 +68,8 @@ import {
 } from "chart.js";
 import { Bar } from "vue-chartjs";
 
-import StatsServices from "~services/stats/types";
-import { EventReturnType } from "~services/types";
+import StatsServices from "~dm-services/stats/types";
+import { EventReturnType } from "~socket.io-services/types";
 
 Chart.register(
   Legend,
@@ -174,9 +174,7 @@ watch(
             callbacks: {
               title: ([tooltip]) => tooltip.label,
               label: ({ dataset, raw }) =>
-                `${dataset.label}: ${raw}${
-                  unitTypeCurrent === "percentage" ? "%" : ""
-                }`,
+                `${dataset.label}: ${raw}${unitTypeCurrent === "percentage" ? "%" : ""}`,
             },
           },
         },

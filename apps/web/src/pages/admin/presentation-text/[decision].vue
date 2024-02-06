@@ -3,7 +3,7 @@ meta:
   layout: bare
 </route>
 <script setup lang="ts">
-import { Decision } from "~services/presentation-text/types";
+import { Decision } from "~dm-services/presentation-text/types";
 
 let router = useRouter();
 

@@ -3,7 +3,7 @@ import { Socket } from "socket.io";
 import { prismaDmStats } from "~/prisma";
 
 import { getAuthorFullNames } from "../coa/authors";
-import Services from "./types";
+import Events from "./types";
 
 export interface AuthorDetails {
   personcode: string;
@@ -52,7 +52,7 @@ const getMissingStoryCountPerAuthor = async (
     {}
   );
 
-export default (socket: Socket<Services>) => {
+export default (socket: Socket<Events>) => {
   socket.on("getWatchedAuthorsStats", async (callback) => {
     const missingStoryCountPerAuthor = await getMissingStoryCountPerAuthor(
       socket.data.user!.id

@@ -5,14 +5,17 @@ import { Namespace, Server } from "socket.io";
 import { prismaCoa, prismaCoverInfo } from "~/prisma";
 import { SimilarImagesResult } from "~dm-types/CoverSearchResults";
 
-import Services from "./types";
+import Events, {InterServerEvents} from "./types"
 
 export default (io: Server) => {
-  (io.of(Services.namespaceEndpoint) as Namespace<Services>).on(
+  (io.of(Events.namespaceEndpoint) as Namespace<Events, Record<string,never>, Record<string,never>, InterServerEvents>).on(
     "connection",
     (socket) => {
-      socket.on("searchFromCover", async (base64, callback) => {
-        const buffer = Buffer.from(base64, "base64");
+      socket.on("searchFromCover", async ({base64, url}, callback) => {
+        const buffer = url ? (await axios.get(url, {
+          responseType: "arraybuffer",
+        })).data : Buffer.from(base64!, "base64");
+        
         const pastecResponse: SimilarImagesResult | null =
           await getSimilarImages(buffer);
 

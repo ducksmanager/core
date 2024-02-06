@@ -1,7 +1,12 @@
 import { prismaDm } from "~/prisma";
-import { ScopedError } from "~dm-types/ScopedError";
+import { getHashedPassword, isValidEmail } from "~dm-services/auth/util";
 import { user } from "~prisma-clients/client_dm";
-import { getHashedPassword, isValidEmail } from "~services/auth/util";
+
+interface ScopedError<ErrorKey extends string = string> {
+  error: ErrorKey;
+  message: string;
+  selector: string;
+}
 
 export type ScopedErrorDetails<> = {
   message: ScopedError["message"];

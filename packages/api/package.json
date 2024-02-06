@@ -8,7 +8,7 @@
     "build": "rm -rf dist && ./node_modules/.bin/tsc && tsc-alias",
     "dev": "concurrently -n api,docker-compose,db \"pnpm -F ~api nodemon-watch\" \"docker compose -f docker-compose-dev.yml up\" \"pnpm -F ~prisma-clients dev\"",
     "nodemon-watch": "concurrently -n nodemon,tsc \"nodemon\" \"tsc --noEmit --watch\"",
-    "lint": "eslint --fix --cache ."
+    "lint": "eslint --fix ."
   },
   "dependencies": {
     "@pusher/push-notifications-server": "^1.2.6",
@@ -40,7 +40,6 @@
     "concurrently": "^8.2.2",
     "eslint": "^8.56.0",
     "eslint-config-prettier": "^9.1.0",
-    "eslint-plugin-prettier-vue": "^5.0.0",
     "eslint-plugin-simple-import-sort": "^10.0.0",
     "eslint-plugin-unused-imports": "^3.0.0",
     "nodemon": "^3.0.3",

@@ -8,10 +8,10 @@ import {
   userContributionType,
 } from "~prisma-clients/client_dm";
 
-import Services from "./types";
+import Events from "./types";
 
 export default (io: Server) => {
-  (io.of(Services.namespaceEndpoint) as Namespace<Services>).on(
+  (io.of(Events.namespaceEndpoint) as Namespace<Events>).on(
     "connection",
     (socket) => {
       socket.on("getActiveBookstores", (callback) =>

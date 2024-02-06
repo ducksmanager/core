@@ -1,16 +1,15 @@
+import CollectionServices from "~dm-services/collection/types";
+import StatsServices from "~dm-services/stats/types";
 import {
   CollectionUpdateMultipleIssues,
   CollectionUpdateSingleIssue,
 } from "~dm-types/CollectionUpdate";
-import { ScopedError } from "~dm-types/ScopedError";
 import { authorUser, purchase } from "~prisma-clients/client_dm";
 import {
   issueWithPublicationcode,
   subscriptionWithPublicationcode,
 } from "~prisma-clients/extended/dm.extends";
-import CollectionServices from "~services/collection/types";
-import StatsServices from "~services/stats/types";
-import { EventReturnType } from "~services/types";
+import { EventReturnType, ScopedError } from "~socket.io-services/types";
 
 import useCollection from "../composables/useCollection";
 import {

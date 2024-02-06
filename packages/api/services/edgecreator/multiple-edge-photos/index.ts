@@ -4,8 +4,8 @@ import { Socket } from "socket.io";
 import EdgePhotoSent from "~/emails/edge-photo-sent";
 import { prismaDm, prismaEdgeCreator } from "~/prisma";
 
-import Services from "../types";
-export default (socket: Socket<Services>) => {
+import Events from "../types";
+export default (socket: Socket<Events>) => {
   socket.on(
     "sendNewEdgePhotoEmail",
     async (publicationcode, issuenumber, callback) => {

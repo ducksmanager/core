@@ -3,10 +3,10 @@ import { Socket } from "socket.io";
 import { prismaDm } from "~/prisma";
 import { userOptionType } from "~prisma-clients/client_dm";
 
-import Services from "../../types";
+import Events from "../../types";
 import { getIssuesForSale } from "..";
 
-export default (socket: Socket<Services>) => {
+export default (socket: Socket<Events>) => {
   socket.on("getContactMethods", async (sellerId, callback) => {
     const issuesForSale = await getIssuesForSale(socket.data.user!.id);
     if (

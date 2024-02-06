@@ -4,10 +4,10 @@ import { prismaDm } from "~/prisma";
 import PresentationSentenceApproved from "~emails/presentation-sentence-approved";
 import PresentationSentenceRefused from "~emails/presentation-sentence-refused";
 
-import Services from "./types";
+import Events from "./types";
 
 export default (io: Server) => {
-  (io.of(Services.namespaceEndpoint) as Namespace<Services>).on(
+  (io.of(Events.namespaceEndpoint) as Namespace<Events>).on(
     "connection",
     (socket) => {
       console.log("connected to presentation-text");

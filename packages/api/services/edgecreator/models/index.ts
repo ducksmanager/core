@@ -3,10 +3,10 @@ import { Socket } from "socket.io";
 import { prismaDm, prismaEdgeCreator } from "~/prisma";
 import { ModelSteps } from "~dm-types/ModelSteps";
 
-import Services from "../types";
+import Events from "../types";
 import { edgeEditedByOthersFields,unassignedEdgeFields } from "../types";
 
-export default (socket: Socket<Services>) => {
+export default (socket: Socket<Events>) => {
   socket.on("getUnassignedEdges", (callback) =>
     prismaEdgeCreator.edgeModel
       .findMany({

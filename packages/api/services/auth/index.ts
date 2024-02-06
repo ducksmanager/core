@@ -5,7 +5,7 @@ import { Namespace, Server } from "socket.io";
 import resetPassword from "~/emails/reset-password";
 import { prismaDm } from "~/prisma";
 
-import Services from "./types";
+import Events from "./types";
 import { isValidEmail, loginAs } from "./util";
 
 export enum COUNTRY_CODE_OPTION {
@@ -14,7 +14,7 @@ export enum COUNTRY_CODE_OPTION {
 }
 
 export default (io: Server) => {
-  (io.of(Services.namespaceEndpoint) as Namespace<Services>).on(
+  (io.of(Events.namespaceEndpoint) as Namespace<Events>).on(
     "connection",
     (socket) => {
       console.log("connected to auth");

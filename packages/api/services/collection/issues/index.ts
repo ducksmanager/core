@@ -6,7 +6,7 @@ import { TransactionResults } from "~dm-types/TransactionResults";
 import { issue_condition, user } from "~prisma-clients/client_dm";
 import prismaDm from "~prisma-clients/extended/dm.extends";
 
-import Services from "../types";
+import Events from "../types";
 import {
   checkPurchaseIdsBelongToUser,
   conditionToEnum,
@@ -14,7 +14,7 @@ import {
   handleIsOnSale,
 } from "./util";
 
-export default (socket: Socket<Services>) => {
+export default (socket: Socket<Events>) => {
   socket.on("getIssues", async (callback) => {
     if (socket.data.user!.username === "demo") {
       await resetDemo();

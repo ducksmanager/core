@@ -25,7 +25,7 @@
     ],
     "paths": {
       "~/*": ["src/*"],
-      "~services/*": ["../../packages/api/services/*"],
+      "~dm-services/*": ["../../packages/api/services/*"],
       "~dm-types/*": ["../../packages/types/*"],
       "~prisma-clients/*": ["../../packages/prisma-clients/*"],
       "~socket.io-services/*": ["../../packages/socket.io-services/*"],

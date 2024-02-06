@@ -1,12 +1,12 @@
 import { Socket } from "socket.io";
 
 import { prismaDm } from "~/prisma";
+import { generateAccessToken, getHashedPassword } from "~dm-services/auth/util";
 import { exclude } from "~dm-types/exclude";
 import PresentationSentenceRequested from "~emails/presentation-sentence-requested";
 import { user } from "~prisma-clients/client_dm";
-import { generateAccessToken, getHashedPassword } from "~services/auth/util";
 
-import Services from "../types";
+import Events from "../types";
 import {
   DiscordIdValidation,
   EmailCreationValidation,
@@ -23,7 +23,7 @@ import {
   Validation,
 } from "./util";
 
-export default (socket: Socket<Services>) => {
+export default (socket: Socket<Events>) => {
   socket.on("getUser", async (callback) => {
     const userWithoutPassword = exclude<user, "password">(
       await getUser(socket.data.user!.id),

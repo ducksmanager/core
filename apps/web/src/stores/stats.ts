@@ -1,7 +1,7 @@
+import CoaServices from "~dm-services/coa/types";
+import CollectionServices from "~dm-services/collection/types";
 import { authorUser } from "~prisma-clients/client_dm";
-import CoaServices from "~services/coa/types";
-import CollectionServices from "~services/collection/types";
-import { EventReturnType } from "~services/types";
+import { EventReturnType } from "~socket.io-services/types";
 
 export const stats = defineStore("stats", () => {
   const ratings = ref(
