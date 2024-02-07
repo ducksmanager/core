@@ -24,6 +24,10 @@ export default defineConfig({
         __dirname,
         "../../packages/socket.io-services",
       ),
+      "~socket.io-client-services": path.resolve(
+        __dirname,
+        "../../packages/socket.io-client-services",
+      ),
       "~prisma-clients": path.resolve(
         __dirname,
         "../../packages/prisma-clients",
