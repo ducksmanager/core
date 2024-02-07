@@ -71,7 +71,6 @@
     "eslint-plugin-vue": "^9.20.1",
     "histoire": "^0.17.9",
     "prettier": "^3.2.4",
-    "prettier-plugin-prisma": "^5.0.0",
     "rollup-plugin-typescript-paths": "^1.5.0",
     "sass": "^1.70.0",
     "typescript": "^5.3.3",

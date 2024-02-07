@@ -8,7 +8,7 @@ interface ScopedError<ErrorKey extends string = string> {
   selector: string;
 }
 
-export type ScopedErrorDetails<> = {
+export type ScopedErrorDetails = {
   message: ScopedError["message"];
   selector: ScopedError["selector"];
 };

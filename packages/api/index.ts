@@ -1,5 +1,3 @@
-import "module-alias/register";
-
 import * as Sentry from "@sentry/node";
 import { instrument } from "@socket.io/admin-ui";
 import dotenv from "dotenv";
@@ -8,10 +6,10 @@ import { Server } from "socket.io";
 
 import { SessionUser } from "~dm-types/SessionUser";
 
-import auth from "./services/auth";
+import auth from "./services/auth/index";
 import { OptionalAuthMiddleware } from "./services/auth/util";
-import bookcase from "./services/bookcase";
-import bookstores from "./services/bookstores";
+import bookcase from "./services/bookcase/index";
+import bookstores from "./services/bookstores/index";
 import coa from "./services/coa";
 import collection from "./services/collection";
 import coverId from "./services/cover-id";

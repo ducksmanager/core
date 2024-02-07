@@ -1,8 +1,8 @@
 import { CacheOptions } from "axios-cache-interceptor";
 import { io, Socket } from "socket.io-client";
-import { AllButLast } from "socket.io-client/build/esm/socket";
 import { ref } from "vue";
 
+type AllButLast<T extends any[]> = T extends [...infer H, infer _L] ? H : any[]
 
 type Last<T extends unknown[]> = T extends [...infer _I, infer L] ? L : never;
 export type LastParameter<F extends (...args: any) => unknown> = Last<
