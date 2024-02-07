@@ -39,8 +39,10 @@
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-simple-import-sort": "^10.0.0",
     "eslint-plugin-unused-imports": "^3.0.0",
+    "nodemon": "^3.0.3",
     "tsc-alias": "^1.8.8",
     "tsconfig-paths": "^4.2.0",
+    "ts-node": "^10.9.2",
     "tsx": "^4.6.2",
     "typescript": "^5.3.3"
   }

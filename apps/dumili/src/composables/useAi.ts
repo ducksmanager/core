@@ -50,7 +50,7 @@ export default (indexationId: string) => {
         "La première page est une couverture, on va chercher si on la détecte parmi les résultats de la recherche par image..."
       );
 
-      const url = Object.entries(storyversionKindSuggestions.value)[0];
+      const url = Object.entries(storyversionKindSuggestions.value)[0][0];
       nextTick(async () => {
         coverIdServices.searchFromCover({ url }).then((results) => {
           if ("error" in results) {
@@ -88,7 +88,8 @@ export default (indexationId: string) => {
       try {
         const possibleStories = (
           await coaServices.searchStory(
-            ocrResults.data.map(({ text }) => text).join(",")
+            ocrResults.data.map(({ text }) => text),
+            false
           )
         ).results;
 

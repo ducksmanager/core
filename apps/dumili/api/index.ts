@@ -33,3 +33,4 @@ const io = new ServerWithData({
 });
 
 io.listen(3002);
+console.log('Dumuli API open on port 3002')

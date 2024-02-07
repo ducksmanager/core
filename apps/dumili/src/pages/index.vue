@@ -51,6 +51,7 @@
 
 <script setup lang="ts">
 import { cloudinaryIndexationsServices } from "~/composables/useDumiliSocket";
+import { ResourceCustomContext } from "~dumili-services/cloudinary-indexations/types";
 
 const router = useRouter();
 
@@ -84,7 +85,7 @@ watch(
   } else {
     currentIndexations.value = resources.map(({ url, context }) => ({
       url,
-      indexation: context.custom.indexation,
+      indexation: (context as ResourceCustomContext).custom.indexation,
     }));
   }
 })();

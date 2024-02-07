@@ -6,8 +6,8 @@
     "node": ">=18.0.0 <19.0.0"
   },
   "scripts": {
-    "dumili": "concurrently --kill-others-on-fail -n dm,app,api \"pnpm -r web\" \"pnpm -F ~dumili... -F !~prisma-clients -F !~web dev\" \"pnpm -F ~dumili-api... dev\"",
-    "dev": "concurrently --kill-others-on-fail -p \"[dumili-{name}]\" -n vite,vue-tsc,docker-compose \"vite --port 8004\" \"vue-tsc --noEmit --watch\" \"docker compose -f docker-compose-dev.yml up\"",
+    "dumili": "concurrently -p \"[dumili-{name}]\" --kill-others-on-fail -n front,api,dm,kumiko,paddleocr \"pnpm -F ~dumili dev\" \"pnpm -F ~dumili-api dev\" \"pnpm -F ~web dev\"  \"docker compose -f docker-compose-dev.yml up kumiko\"  \"docker compose -f docker-compose-dev.yml up paddleocr\"",
+    "dev": "concurrently -n vite,vue-tsc \"vite --port 8004\" \"vue-tsc --noEmit --watch\"",
     "build": "vite build",
     "preview": "vite preview",
     "typecheck": "vue-tsc --noEmit",
@@ -29,7 +29,7 @@
     "vue": "^3.4.15",
     "vue-i18n": "^9.9.1",
     "vue-router": "^4.2.5",
-    "~dm-types": "workspace:*",
+    "~dumili-api": "workspace:*",
     "~socket.io-client-services": "workspace:*",
     "~socket.io-services": "workspace:*",
     "~web": "workspace:*"

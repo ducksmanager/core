@@ -49,7 +49,7 @@ const selectSearchResult = (searchResult: SimpleStory) => {
 const runSearch = async (value: string) => {
   isSearching.value = true;
   try {
-    const data = await coaServices.searchStory({ keywords: value });
+    const data = await coaServices.searchStory(value.split(" "), true);
     storyResults.value.results = data.results;
   } finally {
     isSearching.value = false;

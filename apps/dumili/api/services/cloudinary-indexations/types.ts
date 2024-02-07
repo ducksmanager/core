@@ -4,13 +4,12 @@ import { KumikoResult } from "~dumili-types/KumikoResult";
 import { OcrResult } from "~dumili-types/OcrResults";
 import { Errorable } from '~socket.io-services/types';
 
-export type ResourceApiResponseWithCustomUser = ResourceApiResponse & { resources: [{ context: {custom: { user: string, indexation: string } }}] };
-
+export type ResourceCustomContext =  {custom: { user: string, indexation: string } }
 
 export default abstract class {
   static namespaceEndpoint: string = "/cloudinary-indexations";
 
-  abstract getResources: (callback: (data: Errorable<ResourceApiResponseWithCustomUser, "Cloudinary error">) => void) => void;
+  abstract getResources: (callback: (data: Errorable<ResourceApiResponse, "Cloudinary error">) => void) => void;
 }
 export abstract class IndexationEvents {
   abstract getIndexationResources: (callback: (data: Errorable<ResourceApiResponse, "Cloudinary error">) => void) => void;

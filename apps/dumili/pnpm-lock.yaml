@@ -50,9 +50,9 @@ dependencies:
   vue-router:
     specifier: ^4.2.5
     version: 4.2.5(vue@3.4.15)
-  ~dm-types:
+  ~dumili-api:
     specifier: workspace:*
-    version: link:../../packages/types
+    version: link:api
   ~socket.io-client-services:
     specifier: workspace:*
     version: link:../../packages/socket.io-client-services

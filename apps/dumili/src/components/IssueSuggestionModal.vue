@@ -56,7 +56,7 @@ watch(
       issueSuggestionsWithUrls.value = (
         await Promise.all(
           newValue.map((issueSuggestion) =>
-            coverIdServices.downloadCover(issueSuggestion.data.coverId)
+            coverIdServices.downloadCover(issueSuggestion.data.coverId!)
           )
         )
       ).map((url, i) => ({
