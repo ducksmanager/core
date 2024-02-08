@@ -21,8 +21,8 @@ dependencies:
     specifier: ^1.20.2
     version: 1.20.2
   cloudinary:
-    specifier: ^1.41.0
-    version: 1.41.0
+    specifier: ^2.0.1
+    version: 2.0.1
   connect-busboy:
     specifier: ^1.0.0
     version: 1.0.0
@@ -1124,20 +1124,10 @@ packages:
       wrap-ansi: 7.0.0
     dev: true
 
-  /cloudinary-core@2.13.0(lodash@4.17.21):
-    resolution: {integrity: sha512-Nt0Q5I2FtenmJghtC4YZ3MZZbGg1wLm84SsxcuVwZ83OyJqG9CNIGp86CiI6iDv3QobaqBUpOT7vg+HqY5HxEA==}
-    peerDependencies:
-      lodash: '>=4.0'
+  /cloudinary@2.0.1:
+    resolution: {integrity: sha512-+j5GswtCwjAmLhjs/K26id4Zvh53zL/YWzgyenxgbdXdXmdFM8d5H1FV1sJCkpS77AqylJKBzyztySdILM+F+A==}
+    engines: {node: '>=9'}
     dependencies:
-      lodash: 4.17.21
-    dev: false
-
-  /cloudinary@1.41.0:
-    resolution: {integrity: sha512-qFf2McjvILJITePf4VF1PrY/8c2zy+/q5FVV6V3VWrP/gpIZsusPqXL4QZ6ZKXibPRukzMYqsQEhaSQgJHKKow==}
-    engines: {node: '>=0.6'}
-    dependencies:
-      cloudinary-core: 2.13.0(lodash@4.17.21)
-      core-js: 3.33.3
       lodash: 4.17.21
       q: 1.5.1
     dev: false
@@ -1226,11 +1216,6 @@ packages:
   /cookie@0.5.0:
     resolution: {integrity: sha512-YZ3GUyn/o8gfKJlnlX7g7xq4gyO6OSuhGPKaaGssGB2qgDUS0gPgtTvoyZLTt9Ab6dC4hfc9dV5arkvc/OCmrw==}
     engines: {node: '>= 0.6'}
-    dev: false
-
-  /core-js@3.33.3:
-    resolution: {integrity: sha512-lo0kOocUlLKmm6kv/FswQL8zbkH7mVsLJ/FULClOhv8WRVmKLVcs6XPNQAzstfeJTCHMyButEwG+z1kHxHoDZw==}
-    requiresBuild: true
     dev: false
 
   /cors@2.8.5:
