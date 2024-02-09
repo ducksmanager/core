@@ -6,9 +6,10 @@ import { Socket } from "socket.io";
 import { NamespaceWithData, ServerWithData, SessionData, SessionDataWithIndexation } from "~/index";
 import { CloudinaryResourceContext } from '~dumili-types/CloudinaryResourceContext'
 
+import { RequiredAuthMiddleware } from "../_auth";
 import { runKumiko } from "./kumiko";
 import { extendBoundaries, runOcr } from "./ocr";
-import Events, { IndexationEvents, ResourceApiResponseWithCustomUser } from "./types";
+import Events, { IndexationEvents } from "./types";
 
 const GetIndexationResourcesMiddleware = async (
   socket: Socket,
@@ -19,10 +20,12 @@ const GetIndexationResourcesMiddleware = async (
 }
 
 export default (io: ServerWithData<SessionData>) => {
+  io.use(RequiredAuthMiddleware)
   const namespace = io.of(Events.namespaceEndpoint) as NamespaceWithData<Events, SessionData>;
+  namespace.use(RequiredAuthMiddleware)
   namespace.on("connection", (socket) => {
     socket.on("getResources", async (callback) => getIndexationResources(socket.data.user.username).then(data => {
-      callback(data as ResourceApiResponseWithCustomUser)
+      callback(data)
       for (const indexation of data.resources) {
         const indexationId = (indexation.context as CloudinaryResourceContext).custom.indexation
         const indexationNamespace = io.of(`${Events.namespaceEndpoint}/${indexationId}`) as NamespaceWithData<IndexationEvents, SessionDataWithIndexation>;

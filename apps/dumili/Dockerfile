@@ -28,8 +28,6 @@ COPY {package.json,pnpm-*.yaml} /app/
 
 WORKDIR /app/apps/dumili/api
 COPY --from=build /app/apps/dumili/api/dist/api ./
-COPY --from=build /app/packages/axios-helper/package.json ./packages/axios-helper/
-COPY --from=build /app/packages/axios-helper/dist ./packages/axios-helper
 
 COPY apps/dumili/api/package.json ./
 RUN --mount=type=cache,id=pnpm-store-dumili,target=/app/.pnpm-store \

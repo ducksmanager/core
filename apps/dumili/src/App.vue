@@ -33,9 +33,6 @@ import { cacheStorage, session } from "~socket.io-client-services";
 import { stores as webStores } from "~web";
 
 import { tabs } from "./stores/tabs";
-import { user as userStore } from "./stores/user";
-
-const { user } = storeToRefs(userStore());
 
 const route = useRoute();
 
@@ -53,14 +50,13 @@ watch(
   { immediate: true }
 );
 
-const collectionStore = webStores.collection();
-const { loadUser } = collectionStore;
-const { isLoadingUser } = storeToRefs(collectionStore);
+const { loadUser } = webStores.collection();
+const { user, isLoadingUser } = storeToRefs(webStores.collection());
 
 onBeforeMount(() => {
   session.value = {
     getToken: () => Promise.resolve(Cookies.get("token")),
-    clearSession: () => Promise.resolve(Cookies.remove("token")),
+    clearSession: () => {}, //Promise.resolve(Cookies.remove("token")),
     sessionExists: () =>
       Promise.resolve(typeof Cookies.get("token") === "string"),
     onConnectError: async () => {

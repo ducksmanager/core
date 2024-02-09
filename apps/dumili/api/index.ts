@@ -4,7 +4,7 @@ import { EventsMap } from "socket.io/dist/typed-events";
 
 import { SessionUser } from "~dm-types/SessionUser";
 
-import { getIndexationResources } from "./services/cloudinary-indexations";
+import cloudinaryIndexations, { getIndexationResources } from "./services/cloudinary-indexations";
 
 export type SessionDataWithIndexation =  { user: SessionUser, indexation: { id: string } & Awaited<ReturnType<typeof getIndexationResources>>}
 export type SessionData =  Pick<SessionDataWithIndexation, 'user'> & Partial<Pick<SessionDataWithIndexation, 'indexation'>>
@@ -26,11 +26,13 @@ dotenv.config({
   override: true,
 });
 
-const io = new ServerWithData({
+const io = new ServerWithData<SessionData>({
   cors: {
     origin: '*',
   },
 });
+
+cloudinaryIndexations(io)
 
 io.listen(3002);
 console.log('Dumuli API open on port 3002')
