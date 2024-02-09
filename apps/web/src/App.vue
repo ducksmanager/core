@@ -8,13 +8,13 @@ import Cookies from "js-cookie";
 
 import { cacheStorage, session } from "~socket.io-client-services";
 
-const collectionStore = collection();
-const { user, isLoadingUser } = storeToRefs(collectionStore);
+const { loadUser } = collection();
+const { user, isLoadingUser } = storeToRefs(collection());
 
 onBeforeMount(() => {
   session.value = {
     getToken: () => Promise.resolve(Cookies.get("token")),
-    clearSession: () => Promise.resolve(Cookies.remove("token")),
+    clearSession: () => {}, // Promise.resolve(Cookies.remove("token")),
     sessionExists: () =>
       Promise.resolve(typeof Cookies.get("token") === "string"),
     onConnectError: async () => {
@@ -25,7 +25,7 @@ onBeforeMount(() => {
   };
   cacheStorage.value = buildWebStorage(sessionStorage);
 
-  collectionStore.loadUser();
+  loadUser();
 });
 </script>
 

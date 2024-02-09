@@ -6,6 +6,7 @@ import {
   authServices,
   coaServices,
   coverIdServices,
+  statsServices,
 } from "./src/composables/useDmSocket";
 import useMedal from "./src/composables/useMedal";
 import { bookcase } from "./src/stores/bookcase";
@@ -34,6 +35,7 @@ export const composables = {
     coaServices,
     coverIdServices,
     authServices,
+    statsServices,
   },
 };
 
