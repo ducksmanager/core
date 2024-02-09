@@ -1,7 +1,3 @@
-<route lang="yaml">
-alias: [/auteurs]
-</route>
-
 <template>
   <div v-if="ratings && chartData">
     <b-alert v-if="!ratings.length" :model-value="true" variant="warning">

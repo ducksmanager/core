@@ -25,9 +25,9 @@
       "~dm-types/*": ["../../packages/types/*"],
       "~dm-services/*": ["../../packages/api/services/*"],
       "~prisma-clients/*": ["../../packages/prisma-clients/*"],
-      "~socket.io-services/*": ["../socket.io-services/*"],
+      "~socket.io-client-services/*": ["../../packages/socket.io-client-services/*"],
+      "~socket.io-services/*": ["../../packages/socket.io-services/*"],
       "~web/*": ["../web/*"],
-      "~/composables/useCollection": ["../../apps/web/composables/useCollection"],
     }
   },
   "exclude": ["node_modules"],

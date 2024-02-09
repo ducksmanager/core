@@ -53,8 +53,8 @@ export default defineConfig({
       '~dm-services': path.resolve(__dirname, '../../packages/api/services'),
       '~prisma-clients': path.resolve(__dirname, '../../packages/prisma-clients'),
       '~web': path.resolve(__dirname, '../../apps/web'),
-      '~socket.io-services': path.resolve(__dirname, '../../apps/socket.io-services'),
-      '~/composables/useCollection': path.resolve(__dirname, '../../apps/web/composables/useCollection'),
+      '~socket.io-services': path.resolve(__dirname, '../../packages/socket.io-services'),
+      '~socket.io-client-services': path.resolve(__dirname, '../../packages/socket.io-client-services')
     },
   },
 });
