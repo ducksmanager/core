@@ -1,68 +1,187 @@
+<route lang="yaml">
+alias: [/auteurs]
+</route>
+
 <template>
-  <List v-if="hasData" :items="sortedItems" :get-target-route-fn="getTargetUrlFn" :get-item-text-fn="getItemTextFn">
-    <template #row-prefix="{ item }">
-      <Condition v-if="item.owned" :value="getConditionText(item.owned.condition)" />
-    </template>
-    <template #row-label="{ item }">
-      {{ coaStore.publicationNames[item.publicationcode!] }} {{ item.issuenumber }}
-    </template>
-  </List>
+  <div v-if="ratings && chartData">
+    <b-alert v-if="!ratings.length" :model-value="true" variant="warning">
+      {{
+        $t(
+          'Aucun auteur surveillé. Ajoutez vos auteurs préférés ci-dessous pour savoir quel pourcentage de leurs histoires vous possédez.',
+        )
+      }}
+    </b-alert>
+    <div v-else>
+      <template v-if="!watchedAuthorsStoryCount">
+        {{ $t('Chargement...') }}
+      </template>
+      <b-alert v-else-if="!Object.keys(watchedAuthorsStoryCount).length" :model-value="true">
+        {{
+          $t(
+            "Les calculs n'ont pas encore été effectués. Les statistiques sont générées quotidiennement, revenez demain !",
+          )
+        }}
+      </b-alert>
+      <div v-else>
+        <b-button-group>
+          <b-button
+            v-for="(text, unitType) in unitTypes"
+            :key="unitType"
+            :pressed="unitTypeCurrent === unitType"
+            @click="unitTypeCurrent = unitType"
+          >
+            {{ text }}
+          </b-button>
+        </b-button-group>
+        <div class="wrapper">
+          <bar :data="chartData" :options="options" :style="{ width, height }" />
+        </div>
+        <b-alert variant="info" :model-value="true" class="mt-3">
+          {{ $t('Les statistiques sont mises à jour quotidiennement.') }}
+        </b-alert>
+      </div>
+      <hr />
+    </div>
+    <AuthorList :ratings="ratings" />
+  </div>
 </template>
 
 <script setup lang="ts">
-import { stores as webStores } from '~web';
+import {
+  BarController,
+  BarElement,
+  CategoryScale,
+  Chart,
+  ChartData,
+  ChartOptions,
+  Legend,
+  LinearScale,
+  Title,
+  Tooltip,
+} from 'chart.js';
+import { Bar } from 'vue-chartjs';
 
-import { getConditionText } from '~/composables/useCondition';
-import type { Issue } from '~/persistence/models/dm/Issue';
-import { wtdcollection } from '~/stores/wtdcollection';
-import { EventReturnType } from '~services/types';
-import CoaServices from '~services/coa/types';
+import { composables as webComposables } from '~web';
+import { EventReturnType } from '~socket.io-services/types';
+import StatsEvents from "~dm-services/stats/types";
 
-const router = useRouter();
+const {statsServices} = webComposables.useDmSocket;
 
-const collectionStore = wtdcollection();
-const coaStore = webStores.coa();
+Chart.register(Legend, CategoryScale, BarElement, LinearScale, BarController, Tooltip, Title);
 
-type Item = EventReturnType<CoaServices['getRecentIssues']>[0] & { owned?: Issue };
+const { t: $t } = useI18n();
 
-defineSlots<{
-  rowPrefix: { item: Item };
-  rowLabel: { text: string };
-}>();
+const { loadRatings } = stats();
+const { ratings } = storeToRefs(stats());
 
-const items = ref(undefined as Item[] | undefined);
+const unitTypes = {
+  number: $t('Afficher en valeurs réelles'),
+  percentage: $t('Afficher en pourcentages'),
+};
 
-const getItemTextFn = ({ publicationcode, issuenumber }: Item) =>
-  `${coaStore.publicationNames[publicationcode!]} ${issuenumber}`;
 
-const hasData = computed(() => !!items?.value?.length);
+let watchedAuthorsStoryCount = $ref<EventReturnType<StatsEvents['getWatchedAuthorsStats']> | null>(null);
+let unitTypeCurrent = $ref<'percentage' | 'number'>('number');
+let width = $ref<string | null>(null),
+  height = $ref<string>('300px'),
+  chartData = $ref<ChartData<'bar', number[]> | null>(null),
+  options = $ref<ChartOptions<'bar'>>({});
 
-const getTargetUrlFn = (key: string) => ({
-  name: 'OwnedIssueCopies',
-  params: key.match(coaStore.ISSUECODE_REGEX)!.groups,
-});
+const labels = $computed(() => watchedAuthorsStoryCount?.map(({ fullname: fullName }) => fullName));
 
-const sortedItems = computed(() =>
-  [...(items.value || [])]
-    .sort((itemA, itemB) => (itemB.oldestdate! > itemA.oldestdate! ? -1 : 1))
-    .map((item) => ({
-      key: item.issuecode,
-      item,
-    })),
+const changeWidth = (value: number) => {
+  width = `${value}px`;
+};
+
+watch(
+  () => labels && unitTypeCurrent,
+  (newValue) => {
+    if (newValue && watchedAuthorsStoryCount) {
+      let ownedStories = watchedAuthorsStoryCount.map(
+        ({ storyCount, missingStoryCount }) => storyCount - missingStoryCount,
+      );
+      let missingStories = watchedAuthorsStoryCount.map(({ missingStoryCount }) => missingStoryCount);
+
+      if (unitTypeCurrent === 'percentage') {
+        ownedStories = ownedStories.map((possessedCount, key) =>
+          Math.round(possessedCount * (100 / (possessedCount + missingStories[key]))),
+        );
+        missingStories = ownedStories.map((possessedCount) => 100 - possessedCount);
+      }
+
+      const values = [ownedStories, missingStories];
+
+      changeWidth(250 + 30 * labels!.length);
+      chartData = {
+        datasets: [
+          {
+            data: values[0],
+            backgroundColor: '#FF8000',
+            label: $t('Histoires possédées'),
+          },
+          {
+            data: values[1],
+            backgroundColor: '#04B404',
+            label: $t('Histoires non possédées'),
+          },
+        ],
+        labels: labels!,
+      };
+      options = {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+          x: {
+            stacked: true,
+            ticks: {
+              autoSkip: false,
+            },
+          },
+          y: {
+            stacked: true,
+          },
+        },
+        plugins: {
+          title: {
+            display: true,
+            text: $t("Possession des histoires d'auteurs"),
+          },
+          tooltip: {
+            enabled: true,
+            callbacks: {
+              title: ([tooltip]) => tooltip.label,
+              label: ({ dataset, raw }) => `${dataset.label}: ${raw}${unitTypeCurrent === 'percentage' ? '%' : ''}`,
+            },
+          },
+        },
+      };
+    }
+  },
+  { immediate: true },
 );
 
-collectionStore
-  .fetchAndTrackCollection()
-  .then(async () => {
-    items.value = (await coaStore.fetchRecentIssues()).map((item) => ({
-      ...item,
-      owned: collectionStore.findInCollection(item.publicationcode!, item.issuenumber!),
-    }));
-  })
-  .then(() => {
-    coaStore.fetchPublicationNames([...items.value!.map(({ publicationcode }) => publicationcode!)]);
-  })
-  .catch(() => {
-    router.push('/');
-  });
+(async () => {
+  await loadRatings();
+  watchedAuthorsStoryCount = await statsServices.getWatchedAuthorsStats();
+})();
 </script>
+
+<style scoped lang="scss">
+.btn-group + div {
+  background: #ddd;
+}
+.wrapper {
+  width: v-bind(width);
+  height: v-bind(height);
+
+  > div {
+    max-width: 100%;
+    max-height: 100%;
+  }
+
+  :deep(canvas) {
+    max-width: 100% !important;
+    max-height: 100% !important;
+  }
+}
+</style>

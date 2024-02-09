@@ -51,7 +51,7 @@ import { stores } from '~web';
 import { getConditionText } from '~/composables/useCondition';
 import type { Issue } from '~/persistence/models/dm/Issue';
 import { wtdcollection } from '~/stores/wtdcollection';
-import { coaServices } from '~web/src/composables/useSocket';
+import { coaServices } from '~web/src/composables/useDmSocket';
 
 const { t } = useI18n();
 

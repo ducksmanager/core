@@ -14,7 +14,7 @@ import { wtdcollection } from './stores/wtdcollection';
 
 import { buildStorage } from 'axios-cache-interceptor';
 import { HttpCache } from './persistence/models/internal/HttpCache';
-import { cacheStorage, session } from '~web/src/composables/useSocket';
+import { cacheStorage, session } from '~socket.io-client-services';
 
 const appStore = app();
 const collectionStore = wtdcollection();

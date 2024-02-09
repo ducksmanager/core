@@ -2,6 +2,8 @@ import vue from '@vitejs/plugin-vue';
 import path from 'path';
 import AutoImport from 'unplugin-auto-import/vite';
 import { IonicResolver } from 'unplugin-vue-components/resolvers';
+import ReactivityTransform from "@vue-macros/reactivity-transform/vite";
+
 import Components from 'unplugin-vue-components/vite';
 import { defineConfig } from 'vite';
 
@@ -12,6 +14,7 @@ export default defineConfig({
   },
   plugins: [
     vue(),
+    ReactivityTransform(),
     Components({
       resolvers: [IonicResolver()],
       dts: true,
@@ -28,6 +31,7 @@ export default defineConfig({
         // presets
         'pinia',
         'vue',
+        "vue/macros",
         'vue-router',
         {
           'vue-i18n': ['useI18n', 'createI18n'],
@@ -43,13 +47,14 @@ export default defineConfig({
   resolve: {
     alias: {
       '~': path.resolve(__dirname, './src'),
-      '~translations/': `${path.resolve(__dirname, 'translations')}/`,
-      '~types/': `${path.resolve(__dirname, 'types')}/`,
-      '~dm-types/': `${path.resolve(__dirname, '../../packages/types')}/`,
-      '~services': path.resolve(__dirname, '../../packages/api/services'),
-      '~prisma-clients/': `${path.resolve(__dirname, '../../packages/prisma-clients')}/`,
-      '~web/': `${path.resolve(__dirname, '../../apps/web')}/`,
-      '~/composables/useCollection': `${path.resolve(__dirname, '../../apps/web/composables/useCollection')}`,
+      '~translations': path.resolve(__dirname, 'translations'),
+      '~types': path.resolve(__dirname, 'types'),
+      '~dm-types': path.resolve(__dirname, '../../packages/types'),
+      '~dm-services': path.resolve(__dirname, '../../packages/api/services'),
+      '~prisma-clients': path.resolve(__dirname, '../../packages/prisma-clients'),
+      '~web': path.resolve(__dirname, '../../apps/web'),
+      '~socket.io-services': path.resolve(__dirname, '../../apps/socket.io-services'),
+      '~/composables/useCollection': path.resolve(__dirname, '../../apps/web/composables/useCollection'),
     },
   },
 });

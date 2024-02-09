@@ -1,4 +1,4 @@
-import type { ScopedError } from '~dm-types/ScopedError';
+import { ScopedError } from "~socket.io-services/types";
 
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export default (fields: string[]) => {

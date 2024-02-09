@@ -7,7 +7,7 @@
 </template>
 
 <script lang="ts" setup>
-import type { ScopedError } from '~dm-types/ScopedError';
+import { ScopedError } from "~socket.io-services/types";
 
 const { t } = useI18n();
 const props = defineProps<{

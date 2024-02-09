@@ -35,7 +35,7 @@
 </template>
 
 <script setup lang="ts">
-import { authServices } from '~web/src/composables/useSocket';
+import { authServices } from '~web/src/composables/useDmSocket';
 
 const { t } = useI18n();
 
