@@ -106,8 +106,8 @@
             variant="success"
             pill
             class="ms-2 hint"
-            :disabled="ai.status.value === 'loading'"
-            :class="ai.status.value"
+            :disabled="!ai || ai.status.value === 'loading'"
+            :class="ai?.status?.value"
             @click="ai.runKumiko()"
           >
             <i-bi-lightbulb-fill

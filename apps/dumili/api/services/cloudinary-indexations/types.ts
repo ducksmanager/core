@@ -9,10 +9,10 @@ export type ResourceCustomContext =  {custom: { user: string, indexation: string
 export default abstract class {
   static namespaceEndpoint: string = "/cloudinary-indexations";
 
-  abstract getResources: (callback: (data: Errorable<ResourceApiResponse, "Cloudinary error">) => void) => void;
+  abstract getResources: (callback: (data: Errorable<{resources: ResourceApiResponse['resources']}, "Cloudinary error">) => void) => void;
 }
 export abstract class IndexationEvents {
-  abstract getIndexationResources: (callback: (data: Errorable<ResourceApiResponse, "Cloudinary error">) => void) => void;
+  abstract getIndexationResources: (callback: (data: Errorable<{resources: ResourceApiResponse['resources']}, "Cloudinary error">) => void) => void;
 
   abstract getKumikoResults: (callback: (data: Errorable<{data: KumikoResult[]}, "Kumiko output could not be parsed">) => void) => void;
 
