@@ -24,14 +24,20 @@
         :status="suggestion.meta.status"
     /></b-dropdown-item>
     <b-dropdown-divider v-if="suggestions.length" />
-    <b-dropdown-item><slot name="unknown" /></b-dropdown-item>
-    <b-dropdown-divider />
     <b-dropdown-item
-      v-if="allowCustomizeForm"
-      @click="emit('toggle-customize-form', true)"
-      ><slot v-if="$slots.customize" name="customize" /><template v-else>{{
-        $t("Personnaliser...")
-      }}</template></b-dropdown-item
+      @click="
+        emit('select', undefined);
+        emit('toggle-customize-form', false);
+      "
+      ><slot name="unknown"
+    /></b-dropdown-item>
+    <template v-if="allowCustomizeForm">
+      <b-dropdown-divider />
+      <b-dropdown-item @click="emit('toggle-customize-form', true)"
+        ><slot v-if="$slots.customize" name="customize" /><template v-else>{{
+          $t("Personnaliser...")
+        }}</template></b-dropdown-item
+      ></template
     >
     <template #button-content>
       <template v-if="showCustomizeForm"

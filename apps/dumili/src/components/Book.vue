@@ -260,7 +260,7 @@ watch(
     await ai.runStorycodeOcr();
     ai.status.value = "loaded";
   },
-  { deep: true }
+  { deep: true, immediate: true }
 );
 </script>
 

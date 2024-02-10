@@ -9,6 +9,7 @@ import {
   SessionData,
   SessionDataWithIndexation,
 } from "~/index";
+import { CloudinaryResourceContext } from "~dumili-types/CloudinaryResourceContext";
 
 import { RequiredAuthMiddleware } from "../_auth";
 import { runKumiko } from "./kumiko";
@@ -19,12 +20,22 @@ const GetIndexationResourcesMiddleware = async (
   socket: Socket,
   next: (error?: Error) => void
 ) => {
-  const username = socket.data.user!.username
-  const indexationId =  socket.nsp.name.split("/").pop()!
+  const username = socket.data.user!.username;
+  const indexationId = socket.nsp.name.split("/").pop()!;
+  const resources = await getIndexationResources("indexation", indexationId);
+  const firstResourceBelongingToOtherUser = resources.find(
+    ({ context }) =>
+      (context as CloudinaryResourceContext).custom.user === username
+  );
+  if (firstResourceBelongingToOtherUser) {
+    throw new Error(
+      `Resource ${firstResourceBelongingToOtherUser.secure_url} in the indexation belong to the user`
+    );
+  }
   socket.data.indexation = {
     id: indexationId,
-    resources: await getIndexationResources(username)
-  }
+    resources,
+  };
 
   next();
 };
@@ -40,7 +51,7 @@ export default (io: ServerWithData<SessionData>) => {
     .use(GetIndexationResourcesMiddleware)
     .on("connection", (indexationSocket) => {
       indexationSocket.on("getIndexationResources", async (callback) => {
-        callback({resources: indexationSocket.data.indexation.resources});
+        callback({ resources: indexationSocket.data.indexation.resources });
       });
 
       indexationSocket.on("getKumikoResults", async (callback) => {
@@ -94,25 +105,25 @@ export default (io: ServerWithData<SessionData>) => {
   namespace.use(RequiredAuthMiddleware);
   namespace.on("connection", async (socket) => {
     socket.on("getResources", async (callback) => {
-      callback({ resources: (await getIndexationResources(
-        socket.data.user.username
-      )) });
+      callback({
+        resources: await getIndexationResources(
+          "user",
+          socket.data.user.username
+        ),
+      });
     });
   });
 };
 
 export const getIndexationResources = async (
-  username: string,
-  indexation?: string
+  key: "user" | "indexation",
+  value: string
 ) =>
   cloudinary.api
-    .resources_by_context(
-      indexation ? "indexation" : "first_image",
-      indexation || "true",
-      {
-        context: true,
-      }
-    ).then(({ resources }) => resources)
+    .resources_by_context(key, value, {
+      context: true,
+    })
+    .then(({ resources }) => resources)
     .catch(async (err) => {
       console.error(err);
       throw err;
