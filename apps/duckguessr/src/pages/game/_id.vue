@@ -71,7 +71,7 @@ const firstRoundStartDate = ref(null as Date | null);
 
 const game = ref(null as GameFullNoPersoncode | null);
 
-const gameSocket = io(`${import.meta.env.VITE_SOCKET_URL}/game/${gameId}`, {
+const gameSocket = io(`${import.meta.env.VITE_DM_SOCKET_URL}/game/${gameId}`, {
   auth: {
     cookie: useCookies().getAll(),
   },
@@ -104,7 +104,7 @@ const gameSocket = io(`${import.meta.env.VITE_SOCKET_URL}/game/${gameId}`, {
       game.value!.rounds[currentRoundNumber.value! - 1]!.personcode = answer;
     }
     game.value!.rounds[currentRoundNumber.value! - 1]!.roundScores.push(
-      roundScore
+      roundScore,
     );
   });
 
@@ -113,7 +113,7 @@ const currentRoundNumber = ref(null as number | null);
 const scoreToVariant = useScoreToVariant;
 
 const players = computed(
-  () => game.value?.gamePlayers?.map(({ player }) => player) || []
+  () => game.value?.gamePlayers?.map(({ player }) => player) || [],
 );
 
 const hasUrlLoaded = ref(false as boolean);
@@ -124,7 +124,7 @@ const getRound = (searchedRoundNumber: number | null) =>
   searchedRoundNumber == null
     ? null
     : (game.value?.rounds || []).find(
-        (round) => round?.roundNumber === searchedRoundNumber
+        (round) => round?.roundNumber === searchedRoundNumber,
       ) || null;
 
 const currentRound = computed(() => getRound(currentRoundNumber.value));
@@ -134,7 +134,7 @@ const availableTime = computed(() =>
     ? Infinity
     : (new Date(currentRound.value!.finishedAt!).getTime() -
         new Date(currentRound.value!.startedAt!).getTime()) /
-      1000
+      1000,
 );
 
 const remainingTime = computed(() =>
@@ -144,9 +144,9 @@ const remainingTime = computed(() =>
         Math.max(
           0,
           (new Date(currentRound.value!.finishedAt!).getTime() - now.value) /
-            1000
-        )
-      )
+            1000,
+        ),
+      ),
 );
 
 const nextRoundStartDate = computed(() => {
@@ -154,7 +154,7 @@ const nextRoundStartDate = computed(() => {
     currentRoundNumber.value == null
       ? null
       : game.value?.rounds.find(
-          (round) => round?.roundNumber === currentRoundNumber.value! + 1
+          (round) => round?.roundNumber === currentRoundNumber.value! + 1,
         ) || null;
   return nextRound?.startedAt ? new Date(nextRound?.startedAt) : null;
 });
@@ -162,20 +162,20 @@ const nextRoundStartDate = computed(() => {
 const validateGuess = async () => {
   const hasEverybodyGuessedResult = await gameSocket.emitWithAck(
     "guess",
-    chosenAuthor.value
+    chosenAuthor.value,
   );
   hasEverybodyGuessed.value =
     hasEverybodyGuessedResult || hasEverybodyGuessed.value;
 };
 
 const loadGame = async () => {
-  game.value = await io(import.meta.env.VITE_SOCKET_URL).emitWithAck(
-    "getPodium"
+  game.value = await io(import.meta.env.VITE_DM_SOCKET_URL).emitWithAck(
+    "getPodium",
   );
   if (game.value) {
     const now = new Date().toISOString();
     gameIsFinished.value = game.value.rounds.every(
-      (round) => round?.finishedAt && round?.finishedAt.toString() < now
+      (round) => round?.finishedAt && round?.finishedAt.toString() < now,
     );
   } else {
     console.error("No game for this ID");
@@ -183,13 +183,13 @@ const loadGame = async () => {
 };
 
 const currentRoundScores = computed(() =>
-  !currentRound.value ? null : currentRound.value.roundScores
+  !currentRound.value ? null : currentRound.value.roundScores,
 );
 
 const currentRoundPlayerScore = computed(() =>
   (currentRoundScores.value || []).find(
-    ({ playerId }) => duckguessrId === playerId
-  )
+    ({ playerId }) => duckguessrId === playerId,
+  ),
 );
 
 const getAuthor = (personcode2: string) =>

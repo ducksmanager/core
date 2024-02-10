@@ -1,8 +1,6 @@
 **/node_modules/
-.nuxt-storybook
 /.idea/
-/.nuxt/
-/test/output
+=/test/output
 /server/datasets/*
 storybook-static
 .env.prod
@@ -10,3 +8,6 @@ sessions
 
 !.gitkeep
 /dist/
+
+/*.d.ts
+api/prisma/client_*

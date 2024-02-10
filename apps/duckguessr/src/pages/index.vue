@@ -55,7 +55,7 @@
       <div>
         {{
           t(
-            "All the Disney characters and products are © The Walt Disney Company."
+            "All the Disney characters and products are © The Walt Disney Company.",
           )
         }}
       </div>
@@ -79,11 +79,11 @@ const isAnonymous = computed(() => userStore().isAnonymous);
 const matchCreationSocket = ref(null as Socket | null);
 
 const youtubeVideoId = computed(() =>
-  locale.value === "fr" ? "21Zfy5bOQkA" : "F0j-MMTiT3w"
+  locale.value === "fr" ? "21Zfy5bOQkA" : "F0j-MMTiT3w",
 );
 
 const datasetsSocket: Socket<ClientToServerEventsDatasets> = io(
-  import.meta.env.VITE_SOCKET_URL + "/datasets"
+  import.meta.env.VITE_DM_SOCKET_URL + "/datasets",
 );
 
 const createMatch = (datasetName: string) => {
@@ -93,7 +93,7 @@ const createMatch = (datasetName: string) => {
     (gameId: number) => {
       matchCreationSocket.value!.close();
       router.replace(`/matchmaking/${gameId}`);
-    }
+    },
   );
 };
 
@@ -102,16 +102,16 @@ watch(
   (username) => {
     if (username) {
       matchCreationSocket.value = io(
-        `${import.meta.env.VITE_SOCKET_URL}/match`,
+        `${import.meta.env.VITE_DM_SOCKET_URL}/match`,
         {
           auth: {
             cookie: useCookies().getAll(),
           },
-        }
+        },
       );
     }
   },
-  { immediate: true }
+  { immediate: true },
 );
 
 (async () => {

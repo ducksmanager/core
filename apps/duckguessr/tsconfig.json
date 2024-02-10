@@ -4,43 +4,43 @@
     "baseUrl": ".",
     "esModuleInterop": true,
     "experimentalDecorators": true,
-    "lib": [
-      "ESNext",
-      "ESNext.AsyncIterable",
-      "DOM"
-    ],
-    "module": "commonjs",
-    "moduleResolution": "Node",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "target": "es2020",
+    "lib": ["dom", "dom.iterable", "ESNext"],
     "noEmit": true,
     "outDir": "dist",
-    "paths": {
-      "~/*": [
-        "./*"
-      ],
-      "@/*": [
-        "./*"
-      ]
-    },
-    "sourceMap": true,
+
+    /* Linting */
     "strict": true,
-    "target": "ES2018",
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true,
+    "preserveWatchOutput": true,
+    "paths": {
+      "~/*": ["./*"],
+      "~dm-services/*": ["../../packages/api/services/*"],
+      "~dm-types/*": ["../../packages/types/*"],
+      "~prisma-clients/*": ["../../packages/prisma-clients/*"],
+      "~socket.io-client-services/*": [
+        "../../packages/socket.io-client-services/*"
+      ],
+      "~socket.io-services/*": ["../../packages/socket.io-services/*"]
+    },
+    "resolveJsonModule": true,
+    "sourceMap": true,
     "types": [
-      "@nuxt/types",
-      "@nuxtjs/axios",
-      "@types/node",
       "codeceptjs",
-      "unplugin-vue2-script-setup/types"
-    ]
+      "vite/client",
+      "vite-plugin-pages/client",
+      "unplugin-icons/types/vue"
+    ],
   },
   "ts-node": {
     "files": true
   },
   "exclude": [
     "node_modules",
-    ".nuxt",
     "dist"
-  ],
-  "vueCompilerOptions": {
-    "experimentalCompatMode": 2
-  }
+  ]
 }

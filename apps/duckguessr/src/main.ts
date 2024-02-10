@@ -13,10 +13,10 @@ import { createRouter, createWebHistory } from "vue-router";
 
 import App from "~/App.vue";
 import i18n from "~web/src/i18n";
-import de from "~locales/de.json";
-import fr from "~locales/fr-FR.json";
-import en from "~locales/en-US";
-import es from "~locales/es.json";
+import de from "~/locales/de.json";
+import fr from "~/locales/fr-FR.json";
+import en from "~/locales/en-US";
+import es from "~/locales/es.json";
 
 const head = createHead();
 

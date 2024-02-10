@@ -273,8 +273,6 @@ io.of("/game").on("connection", async (socket) => {
 createPlayerSocket(io);
 createMatchmakingSocket(io);
 
-//app.use(Sentry.Handlers.errorHandler() as express.ErrorRequestHandler);
-
 const pendingGames = await prisma.game.findMany({
   where: {
     rounds: {
@@ -293,4 +291,3 @@ for (const pendingGame of pendingGames) {
 
 
 io.listen(4000);
-console.log('hello')
