@@ -159,7 +159,8 @@
 </template>
 
 <script setup lang="ts">
-import { QuotedIssue } from "~/composables/useCollection";
+import { QuotedIssue } from "~dm-types/QuotedIssue";
+
 const { getConditionLabel } = useCondition();
 
 const { t: $t } = useI18n();

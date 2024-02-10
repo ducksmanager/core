@@ -1,13 +1,5 @@
-import { issue_condition } from "~prisma-clients/client_dm";
+import { QuotedIssue } from "~dm-types/QuotedIssue";
 import { issueWithPublicationcode } from "~prisma-clients/extended/dm.extends";
-
-export type QuotedIssue = {
-  publicationcode: string;
-  issuenumber: string;
-  condition: issue_condition;
-  estimation: number;
-  estimationGivenCondition: number;
-};
 
 export default (issues: Ref<issueWithPublicationcode[] | null>) => {
   const total = computed(() => issues.value?.length);
