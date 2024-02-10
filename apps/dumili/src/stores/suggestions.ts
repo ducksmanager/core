@@ -112,7 +112,9 @@ export class IssueSuggestion extends Suggestion {
 }
 
 export const suggestions = defineStore("suggestions", () => {
-  const entrySuggestions = ref({} as Record<string, EntrySuggestion[]>),
+  const entrySuggestions = ref<
+      { url: string; suggestions: EntrySuggestion[] }[]
+    >([]),
     storyversionKindSuggestions = ref(
       {} as Record<string, StoryversionKindSuggestion[]>
     ),
@@ -162,12 +164,12 @@ export const suggestions = defineStore("suggestions", () => {
       getAcceptedSuggestion(issueSuggestions.value)
     ),
     acceptedEntries: computed(() =>
-      Object.entries(entrySuggestions.value).reduce<
+      entrySuggestions.value.reduce<
         Record<string, EntrySuggestion | undefined>
       >(
-        (acc, [entrycode, suggestions]) => ({
+        (acc, { url, suggestions }) => ({
           ...acc,
-          [entrycode]: getAcceptedSuggestion(suggestions),
+          [url]: getAcceptedSuggestion(suggestions),
         }),
         {}
       )

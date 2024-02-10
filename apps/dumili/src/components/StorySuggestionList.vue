@@ -3,7 +3,6 @@
     :suggestions="entrySuggestions"
     :get-current="() => acceptedEntry"
     :show-customize-form="showEntrySelect"
-    allow-customize-form
     @toggle-customize-form="showEntrySelect = $event"
     @select="
       acceptEntrySuggestion(
@@ -15,7 +14,8 @@
     <template #item="suggestion: EntrySuggestion">
       <Story :entry="suggestion.data" />
     </template>
-    <template #unknown>Contenu inconnu</template>
+    <template #unknown-text>{{ $t("Contenu inconnu") }}</template>
+    <template #customize-text>{{ $t("Rechercher...") }}</template>
     <template #customize-form>
       <StorySearch @story-selected="addCustomEntrycodeToEntrySuggestions" />
     </template>
@@ -25,18 +25,27 @@
 <script lang="ts" setup>
 import { EntrySuggestion, suggestions } from "~/stores/suggestions";
 
+const { t: $t } = useI18n();
+
 const props = defineProps<{
   entryurl: string;
 }>();
 
 const showEntrySelect = ref(false);
-const suggestionsStore = suggestions();
+const { acceptSuggestion } = suggestions();
+const { acceptedEntries, entrySuggestions: allEntrySuggestions } = storeToRefs(
+  suggestions()
+);
 
-const acceptedEntry = computed(
-  () => suggestionsStore.acceptedEntries[props.entryurl]
+const acceptedEntry = computed(() => acceptedEntries.value[props.entryurl]);
+const entryIndex = computed(() =>
+  allEntrySuggestions.value.findIndex(({ url }) => url === props.entryurl)
 );
 const entrySuggestions = computed(
-  () => suggestionsStore.entrySuggestions[props.entryurl]
+  () =>
+    allEntrySuggestions.value[entryIndex.value].suggestions.filter(
+      (suggestion) => suggestion !== undefined
+    ) as EntrySuggestion[]
 );
 
 const addCustomEntrycodeToEntrySuggestions = ({
@@ -56,10 +65,8 @@ const addCustomEntrycodeToEntrySuggestions = ({
       },
       { source: "user", isAccepted: true }
     );
-    suggestionsStore.entrySuggestions[props.entryurl] = [
-      ...suggestionsStore.entrySuggestions[props.entryurl].filter(
-        ({ meta }) => meta.source === "ai"
-      ),
+    allEntrySuggestions.value[entryIndex.value].suggestions = [
+      ...entrySuggestions.value.filter(({ meta }) => meta.source === "ai"),
       userSuggestion,
     ];
     acceptEntrySuggestion(storycode);
@@ -67,8 +74,8 @@ const addCustomEntrycodeToEntrySuggestions = ({
 };
 
 const acceptEntrySuggestion = (storycode?: string) => {
-  suggestionsStore.acceptSuggestion(
-    suggestionsStore.entrySuggestions[props.entryurl],
+  acceptSuggestion(
+    entrySuggestions.value,
     (suggestion) => suggestion.data.storyversion?.storycode === storycode
   );
   showEntrySelect.value = false;

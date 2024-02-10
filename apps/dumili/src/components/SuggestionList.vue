@@ -17,7 +17,7 @@
       "
     >
       <div>
-        <slot name="item" v-bind="suggestion as S" />
+        <slot name="item" v-bind="suggestion" />
       </div>
       <AiSuggestionIcon
         v-if="suggestion.meta.source === 'ai'"
@@ -29,26 +29,19 @@
         emit('select', undefined);
         emit('toggle-customize-form', false);
       "
-      ><slot name="unknown"
+      ><slot name="unknown-text"
     /></b-dropdown-item>
     <template v-if="allowCustomizeForm">
       <b-dropdown-divider />
       <b-dropdown-item @click="emit('toggle-customize-form', true)"
-        ><slot v-if="$slots.customize" name="customize" /><template v-else>{{
-          $t("Personnaliser...")
-        }}</template></b-dropdown-item
-      ></template
-    >
+        ><slot name="customize-text" /></b-dropdown-item
+    ></template>
     <template #button-content>
-      <template v-if="showCustomizeForm"
-        ><slot v-if="$slots.customize" name="customize" /><template v-else>{{
-          $t("Personnaliser...")
-        }}</template></template
-      >
+      <slot v-if="showCustomizeForm" name="customize-text" />
       <div v-else class="d-flex justify-content-between align-items-center">
         <div>
-          <slot v-if="!getCurrent()" name="unknown" />
-          <slot v-else name="item" v-bind="(getCurrent() as S)" />
+          <slot v-if="!getCurrent()" name="unknown-text" />
+          <slot v-else name="item" v-bind="(getCurrent()!)" />
         </div>
         <AiSuggestionIcon
           v-if="getCurrent()?.meta.source === 'ai'"
@@ -67,19 +60,26 @@ defineSlots<{
   default(props: { issuecode: string }): never;
   item(suggestion: S): never;
   "customize-form"(): never;
-  customize(): never;
-  unknown(): never;
+  "customize-text"(): never;
+  "unknown-text"(): never;
 }>();
 
-defineProps<{
-  suggestions: S[];
-  getCurrent: () => S | undefined;
-  showCustomizeForm: boolean;
-  allowCustomizeForm: boolean;
-  itemClass?: (suggestion: S) => string[];
-}>();
+withDefaults(
+  defineProps<{
+    suggestions: S[];
+    getCurrent: () => S | undefined;
+    itemClass?: (suggestion: S) => string[];
+    showCustomizeForm?: boolean;
+  }>(),
+  {
+    itemClass: undefined,
+    showCustomizeForm: false,
+  }
+);
 
-const { t: $t } = useI18n();
+const allowCustomizeForm = computed(
+  () => $slots["customize-form"] !== undefined
+);
 
 const emit = defineEmits<{
   (e: "select", suggestion?: S): void;

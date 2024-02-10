@@ -4,8 +4,6 @@
       <b-col cols="3">
         <suggestion-list
           :suggestions="storyversionKinds"
-          :show-customize-form="false"
-          :allow-customize-form="false"
           :get-current="() => acceptedStoryversionKind"
           :item-class="(suggestion: StoryversionKindSuggestion) => ( [`kind-${suggestion.data?.kind}`])"
           @select="
@@ -15,7 +13,7 @@
           <template #item="suggestion: StoryversionKindSuggestion">
             {{ getStoryversionKind(suggestion) }}
           </template>
-          <template #unknown>{{ $t("Type inconnu") }}</template>
+          <template #unknown-text>{{ $t("Type inconnu") }}</template>
         </suggestion-list> </b-col
       ><b-col cols="3"><StorySuggestionList :entryurl="entryurl" /></b-col>
       <b-col cols="3">

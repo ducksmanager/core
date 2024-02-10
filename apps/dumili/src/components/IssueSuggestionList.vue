@@ -2,7 +2,6 @@
   <suggestion-list
     :suggestions="issueSuggestions"
     :get-current="() => issue as IssueSuggestion"
-    allow-customize-form
     :show-customize-form="showIssueSelect"
     @toggle-customize-form="showIssueSelect = $event"
     @select="acceptIssueSuggestion($event as IssueSuggestion)"
@@ -11,13 +10,13 @@
       <Issue
         :publicationcode="suggestion.data.publicationcode"
         :issuenumber="suggestion.data.issuenumber" /></template
-    ><template #unknown>{{ $t("Numéro inconnu") }}</template>
+    ><template #unknown-text>{{ $t("Numéro inconnu") }}</template>
     <template #customize-form>
       <IssueSelect
         @change="
           (issuecode: string|null) => addCustomIssuecodeToIssueSuggestions(issuecode)
-        "
-    /></template>
+        " /></template
+    ><template #customize-text> {{ $t("Sélectionner...") }}</template>
   </suggestion-list>
 </template>
 

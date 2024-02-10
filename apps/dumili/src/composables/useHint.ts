@@ -11,12 +11,17 @@ import { EventReturnType } from "~socket.io-services/types";
 import { stores as webStores } from "~web";
 
 export default () => {
-  const suggestionsStore = suggestions();
-  const { acceptedEntries } = storeToRefs(suggestionsStore);
+  const { acceptSuggestion } = suggestions();
+  const {
+    acceptedEntries,
+    entrySuggestions,
+    issueSuggestions,
+    storyversionKindSuggestions,
+  } = storeToRefs(suggestions());
   const coaStore = webStores.coa();
   const applyHintsFromKumiko = (results: KumikoResult[]) => {
     results?.forEach((result, idx) => {
-      const entryurl = Object.keys(suggestionsStore.entrySuggestions)[idx];
+      const entryurl = Object.keys(entrySuggestions.value)[idx];
       const shouldBeAccepted = acceptedEntries.value[entryurl] === undefined;
 
       if (shouldBeAccepted) {
@@ -26,8 +31,8 @@ export default () => {
               ? StoryversionKind.Cover
               : StoryversionKind.Illustration
             : StoryversionKind.Story;
-        suggestionsStore.acceptSuggestion(
-          suggestionsStore.storyversionKindSuggestions[entryurl],
+        acceptSuggestion(
+          storyversionKindSuggestions.value[entryurl],
           ({ data }) => data.kind === inferredKind,
           { source: "ai", status: "success" },
           (suggestion) => (suggestion.data.panels = result.panels)
@@ -43,7 +48,7 @@ export default () => {
       console.error("Erreur lors de la recherche par image de la couverture");
       return;
     }
-    suggestionsStore.issueSuggestions = results.covers.map(
+    issueSuggestions.value = results.covers.map(
       ({ issuecode, publicationcode, issuenumber, id: coverId }) =>
         new IssueSuggestion(
           {
@@ -69,11 +74,13 @@ export default () => {
     entryurl: string,
     results: StorySearchResults["results"]
   ) => {
-    suggestionsStore.entrySuggestions[entryurl] =
-      suggestionsStore.entrySuggestions[entryurl].filter(
-        ({ meta }) => meta.source === "ai"
-      );
-    suggestionsStore.entrySuggestions[entryurl] = results.map(
+    const entryIndex = entrySuggestions.value.findIndex(
+      ({ url }) => url === entryurl
+    );
+    // entrySuggestions.value[entryurl] = entrySuggestions.value[entryurl].filter(
+    //   ({ meta }) => meta.source === "ai"
+    // );
+    entrySuggestions.value[entryIndex].suggestions = results.map(
       ({ storycode, title }) =>
         new EntrySuggestion(
           {

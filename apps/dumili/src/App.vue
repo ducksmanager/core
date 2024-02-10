@@ -26,10 +26,13 @@
 </template>
 
 <script setup lang="ts">
-import { buildWebStorage } from "axios-cache-interceptor";
 import Cookies from "js-cookie";
 
-import { cacheStorage, session } from "~socket.io-client-services";
+import {
+  buildWebStorage,
+  cacheStorage,
+  session,
+} from "~socket.io-client-services";
 import { stores as webStores } from "~web";
 
 import { tabs } from "./stores/tabs";

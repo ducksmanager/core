@@ -24,7 +24,6 @@
 <script setup lang="ts">
 import { getIndexationSocket } from "~/composables/useDumiliSocket";
 import {
-  EntrySuggestion,
   StoryversionKind,
   StoryversionKindSuggestion,
   suggestions,
@@ -53,13 +52,10 @@ const getPageImages = async () => {
     return;
   }
   const urls = data.resources.map(({ url }) => url.replace(/^http:/, "https:"));
-  entrySuggestions.value = urls.reduce(
-    (acc, url) => ({
-      ...acc,
-      [url]: [],
-    }),
-    {} as Record<string, EntrySuggestion[]>
-  );
+  entrySuggestions.value = urls.map((url) => ({
+    url,
+    suggestions: [],
+  }));
   storyversionKindSuggestions.value = urls.reduce(
     (acc, url) => ({
       ...acc,

@@ -1,8 +1,8 @@
 <template>
   <img
-    v-if="Object.keys(entries).length"
+    v-if="Object.keys(entrySuggestions).length"
     class="d-none"
-    :src="Object.keys(entries)[0]"
+    :src="Object.keys(entrySuggestions)[0]"
     @load="
       ({ target }) => {
         coverHeight = (target as HTMLImageElement).height;
@@ -17,7 +17,7 @@
     <b-container class="book-container d-flex w-50 h-100 m-0">
       <div id="book" class="flip-book">
         <div
-          v-for="(url, index) in Object.keys(entries)"
+          v-for="(entry, index) in entrySuggestions"
           :key="`page-${index}`"
           class="page"
           :class="{ single: isSinglePage }"
@@ -26,7 +26,7 @@
             <div
               class="page-image"
               :style="{
-                backgroundImage: `url(${url})`,
+                backgroundImage: `url(${entry.url})`,
                 marginLeft: 0,
               }"
             >
@@ -35,7 +35,7 @@
                   showAiDetections !== undefined &&
                   xOffset !== undefined &&
                   displayRatioNoCropping &&
-                  aiDetails[url].panels?.length
+                  aiDetails[entry.url].panels?.length
                 "
                 class="position-absolute h-100"
                 :style="{
@@ -45,7 +45,7 @@
               >
                 <div
                   v-for="({ bbox: { x, y, width, height } }, idx) in aiDetails[
-                    url
+                    entry.url
                   ].panels"
                   :key="`ocr-match-${idx}`"
                   class="position-absolute ocr-match panel"
@@ -58,11 +58,11 @@
                 ></div>
                 <div
                   class="position-absolute"
-                  :style="toPx(firstPanelPosition(url))"
+                  :style="toPx(firstPanelPosition(entry.url))"
                 >
                   <div
-                    v-for="({ box }, idx) in aiDetails[url].texts?.ocrResults ||
-                    []"
+                    v-for="({ box }, idx) in aiDetails[entry.url].texts
+                      ?.ocrResults || []"
                     :key="`ocr-match-${idx}`"
                     class="position-absolute ocr-match text"
                     :style="{
@@ -73,7 +73,7 @@
                               (dimension, idx) =>
                                 `${
                                   [x, y][idx] /
-                                  (aiDetails[url].panels[0].bbox[dimension] /
+                                  (aiDetails[entry.url].panels[0].bbox[dimension] /
                                     100)
                                 }%`
                             )
@@ -114,34 +114,33 @@
           /></b-button></div
       ></template>
 
-      <b-tabs
-        v-if="entries"
-        v-model="currentTabIndex"
-        pills
-        card
-        vertical
-        class="flex-grow-1"
+      <slick-list
+        v-if="entrySuggestions"
+        v-model:list="entrySuggestions"
+        axis="y"
+        lock-axis="y"
+        use-drag-handle
+        class="flex-grow-1 nav nav-pills flex-column me-3 card-header-tabs w-100 h-100"
         :class="{ disabled: !acceptedIssue?.data }"
-        nav-wrapper-class="w-100 h-100 flex-grow-1"
-        nav-class="w-100 h-100"
       >
-        <b-tab
-          v-for="(entryurl, index) in Object.keys(entries)"
-          :key="entryurl"
-          title-link-class="w-100 h-100 d-flex align-items-left"
-          title-item-class="w-100"
-          ><template #title
-            ><Entry
-              :entryurl="entryurl"
-              :editable="currentTabIndex === index" /></template
-        ></b-tab>
-      </b-tabs>
+        <slick-item
+          v-for="(entry, index) in entrySuggestions"
+          :key="entry.url"
+          :index="index"
+          class="nav-item nav-link d-flex align-items-left"
+          :class="{ active: currentTabIndex === index }"
+        >
+          <Entry :entryurl="entry.url" :editable="currentTabIndex === index" />
+        </slick-item>
+        ²
+      </slick-list>
     </b-card>
   </div>
 </template>
 
 <script setup lang="ts">
 import { PageFlip } from "page-flip";
+import { SlickItem, SlickList } from "vue-slicksort";
 
 import useAi from "~/composables/useAi";
 import { ai as aiStore } from "~/stores/ai";
@@ -157,16 +156,13 @@ let coverHeight = ref(null as number | null);
 let book = ref(null as PageFlip | null);
 const currentTabIndex = ref(0 as number);
 
-const {
-  storyversionKindSuggestions,
-  acceptedIssue,
-  entrySuggestions: entries,
-} = storeToRefs(suggestions());
+const { storyversionKindSuggestions, acceptedIssue, entrySuggestions } =
+  storeToRefs(suggestions());
 
 const { showAiDetectionsOn: showAiDetections } = user();
 
 const indexationId = computed(() => route.params.id as string);
-const isSinglePage = computed(() => Object.keys(entries.value).length === 1);
+const isSinglePage = computed(() => entrySuggestions.value.length === 1);
 
 const displayedWidth = computed(() => book.value?.getSettings().width);
 const displayedHeight = computed(() => book.value?.getSettings().height);
@@ -265,6 +261,10 @@ watch(
 </script>
 
 <style scoped lang="scss">
+:deep(.drag-handle) {
+  cursor: grab;
+}
+
 #book-and-toc-container {
   height: 100%;
 }
