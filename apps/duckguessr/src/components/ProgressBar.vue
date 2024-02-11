@@ -10,15 +10,16 @@
 </template>
 
 <script setup lang="ts">
-const { availableTime, remainingTime } = toRefs(
-  defineProps<{
-    availableTime: number;
-    remainingTime: number;
-  }>()
-);
+const { availableTime, remainingTime } =
+  toRefs(
+    defineProps<{
+      availableTime: number;
+      remainingTime: number;
+    }>(),
+  );
 
 const remainingTimePercentage = computed(
-  () => remainingTime.value * (100 / availableTime.value)
+  () => remainingTime.value * (100 / availableTime.value),
 );
 const progressbarVariant = computed(() => {
   if (remainingTimePercentage.value <= 20) {

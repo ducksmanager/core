@@ -11,7 +11,7 @@
     <div>
       {{
         t(
-          "During each round, be the fastest to guess which of these artists drew the drawing shown on the screen."
+          "During each round, be the fastest to guess which of these artists drew the drawing shown on the screen.",
         )
       }}
     </div>
@@ -35,7 +35,7 @@
 </template>
 
 <script lang="ts" setup>
-import { Author } from "~types/roundWithScoresAndAuthor";
+import { Author } from "~duckguessr-types/roundWithScoresAndAuthor";
 
 const props = defineProps<{
   authors: Author[];
@@ -50,7 +50,7 @@ const updateTimeBeforeNextRound = () => {
   const time = new Date().getTime();
   timeBeforeFirstRound.value = Math.max(
     0,
-    Math.ceil((new Date(props.firstRoundStartDate).getTime() - time) / 1000)
+    Math.ceil((new Date(props.firstRoundStartDate).getTime() - time) / 1000),
   );
 };
 

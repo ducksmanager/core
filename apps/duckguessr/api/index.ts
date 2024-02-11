@@ -273,21 +273,23 @@ io.of("/game").on("connection", async (socket) => {
 createPlayerSocket(io);
 createMatchmakingSocket(io);
 
-const pendingGames = await prisma.game.findMany({
-  where: {
-    rounds: {
-      some: {
-        finishedAt: { gt: new Date() },
+(async () => {
+
+  const pendingGames = await prisma.game.findMany({
+    where: {
+      rounds: {
+        some: {
+          finishedAt: { gt: new Date() },
+        },
       },
     },
-  },
-});
-for (const pendingGame of pendingGames) {
-  console.debug(
-    `Creating socket for unfinished game with ID ${pendingGame.id}`
-  );
-  await createGameSocket(io, pendingGame.id);
-}
-
+  });
+  for (const pendingGame of pendingGames) {
+    console.debug(
+      `Creating socket for unfinished game with ID ${pendingGame.id}`
+    );
+    await createGameSocket(io, pendingGame.id);
+  }
+})()
 
 io.listen(4000);

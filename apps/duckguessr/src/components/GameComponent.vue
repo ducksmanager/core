@@ -55,25 +55,26 @@ import {
   Author,
   OngoingRoundScore,
   RoundWithScoresAndAuthor,
-} from "~types/roundWithScoresAndAuthor";
+} from "~duckguessr-types/roundWithScoresAndAuthor";
 import { getUrl } from "~/composables/url";
-import { player } from "~duckguessr-api/types/prisma-client";
+import { player } from "~duckguessr-prisma-client";
 
-const emit = defineEmits<{
+defineEmits<{
   (e: "select-author", personcode: string): void;
 }>();
 
-const { currentRound, players, availableTime, remainingTime } = toRefs(
-  defineProps<{
-    currentRound: RoundWithScoresAndAuthor;
-    hasEverybodyGuessed: boolean;
-    availableTime: number;
-    authors: Author[];
-    players: player[];
-    previousPersoncodes: string[];
-    remainingTime: number;
-  }>()
-);
+const { currentRound, players, availableTime, remainingTime } =
+  toRefs(
+    defineProps<{
+      currentRound: RoundWithScoresAndAuthor;
+      hasEverybodyGuessed: boolean;
+      availableTime: number;
+      authors: Author[];
+      players: player[];
+      previousPersoncodes: string[];
+      remainingTime: number;
+    }>(),
+  );
 
 const url = computed(() => getUrl(currentRound.value.sitecodeUrl));
 
@@ -82,35 +83,35 @@ const roundScoresAllPlayers = computed(() =>
     .map(
       (player) =>
         currentRound.value.roundScores.find(
-          ({ playerId }) => playerId === player.id
+          ({ playerId }) => playerId === player.id,
         ) ||
         ({
           timeSpentGuessing: 1000 * (availableTime.value - remainingTime.value),
           playerId: player.id,
           roundId: currentRound.value.id,
           speedBonus: 0,
-        } as OngoingRoundScore)
+        } as OngoingRoundScore),
     )
     // Correct scores first, then ongoing players, then wrong scores
     .sort(
       (
         { score: score1, speedBonus: speedBonus1 },
-        { score: score2, speedBonus: speedBonus2 }
+        { score: score2, speedBonus: speedBonus2 },
       ) =>
         score1 === 0
           ? 1
           : score2 === 0
-          ? -1
-          : (score1 || 0) + (speedBonus1 || 0) >
-            (score2 || 0) + (speedBonus2 || 0)
-          ? -1
-          : 1
-    )
+            ? -1
+            : (score1 || 0) + (speedBonus1 || 0) >
+                (score2 || 0) + (speedBonus2 || 0)
+              ? -1
+              : 1,
+    ),
 );
 
 const roundDuration = ref(
   new Date(currentRound.value.finishedAt!).getTime() -
-    new Date(currentRound.value.startedAt!).getTime()
+    new Date(currentRound.value.startedAt!).getTime(),
 );
 </script>
 <style lang="scss">

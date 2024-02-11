@@ -54,7 +54,7 @@ import { io } from "socket.io-client";
 import { useCookies } from "@vueuse/integrations/useCookies";
 import { getDuckguessrId } from "~/composables/user";
 import { useScoreToVariant } from "~/composables/use-score-to-variant";
-import { GameFullNoPersoncode } from "~types/game";
+import { GameFullNoPersoncode } from "~duckguessr-types/game";
 
 const duckguessrId = getDuckguessrId();
 const { t } = useI18n();

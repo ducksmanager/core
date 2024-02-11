@@ -13,15 +13,16 @@
 </template>
 
 <script setup lang="ts">
-const { total, remaining } = toRefs(
-  defineProps<{
-    total: number;
-    remaining: number;
-  }>()
-);
+const { total, remaining } =
+  toRefs(
+    defineProps<{
+      total: number;
+      remaining: number;
+    }>(),
+  );
 
 const percentage = computed(() =>
-  Math.max(0, parseInt((100 * (remaining.value / total.value)).toFixed(0)))
+  Math.max(0, parseInt((100 * (remaining.value / total.value)).toFixed(0))),
 );
 const offset = computed(() => -51 - (51 / 100) * percentage.value);
 </script>

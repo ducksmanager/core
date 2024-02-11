@@ -1,5 +1,4 @@
-import { player, PrismaClient, round, roundScore } from "./prisma/client_duckguessr";
-
+import { player, PrismaClient, round } from "./prisma/client_duckguessr";
 import { GuessRequest, GuessResponse } from "./types/guess";
 const prisma = new PrismaClient();
 
@@ -56,10 +55,14 @@ export const guess = async (
     return;
   }
 
-  let roundScore: Pick<roundScore, "playerId" | "roundId"> = {
-    playerId: player.id,
-    roundId: thisRound.id,
-  };
+  let roundScore: {
+    playerId: player['id'];
+    roundId: round['id'];
+    scoreTypeName: string;
+    score: number;
+    timeSpentGuessing?: number;
+    speedBonus?: number;
+  }
 
   if (personcode === thisRound.personcode) {
     const timeSpentGuessing = Date.now() - thisRound.startedAt!.getTime();
@@ -68,7 +71,8 @@ export const guess = async (
         ? Number((100 - timeSpentGuessing * (100 / (roundTime / 2))).toFixed(0))
         : 0;
     roundScore = {
-      ...roundScore,
+      playerId: player.id,
+      roundId: thisRound.id,
       scoreTypeName: "Correct author",
       score: 100,
       timeSpentGuessing,
@@ -76,7 +80,8 @@ export const guess = async (
     };
   } else {
     roundScore = {
-      ...roundScore,
+      playerId: player.id,
+      roundId: thisRound.id,
       scoreTypeName: "Wrong author",
       score: 0,
     };

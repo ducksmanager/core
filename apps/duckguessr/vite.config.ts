@@ -14,16 +14,22 @@ export default defineConfig({
   resolve: {
     alias: {
       "~": path.resolve(__dirname, "src"),
+      "~locales": path.resolve(__dirname, "locales"),
       "~dm-services": path.resolve(__dirname, "../../packages/api/services"),
       "~dm-types": path.resolve(__dirname, "../../packages/types"),
+      "~duckguessr-prisma-client": path.resolve(
+        __dirname,
+        "api/prisma/client_duckguessr",
+      ),
+      "~duckguessr-types": path.resolve(__dirname, "api/types"),
       "~socket.io-client-services": path.resolve(
         __dirname,
-        "../../packages/socket.io-client-services"
+        "../../packages/socket.io-client-services",
       ),
       "~socket.io-services": path.resolve(
         __dirname,
-        "../../packages/socket.io-services"
-      )
+        "../../packages/socket.io-services",
+      ),
     },
   },
   plugins: [
@@ -42,7 +48,12 @@ export default defineConfig({
     AutoImport({
       imports: ["pinia", "vue", "vue/macros", "vue-router", "vue-i18n"],
       dts: true,
-      dirs: ["./src/composables"],
+      dirs: [
+        "./src/composables",
+        "../web/src/composables",
+        "../web/src/stores",
+        "../../packages/types",
+      ],
       vueTemplate: true,
     }),
 

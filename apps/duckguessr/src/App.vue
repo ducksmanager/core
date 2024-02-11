@@ -1,5 +1,5 @@
 <template>
-  <b-container fluid id="main">
+  <b-container id="main" fluid>
     <b-row>
       <b-col cols="2" class="p-0"><medals-and-login /></b-col
       ><b-col cols="1" /><b-col cols="8"><banner /></b-col
@@ -29,7 +29,7 @@ watch(
       i18n.locale.value = storedLocale;
     }
   },
-  { immediate: true }
+  { immediate: true },
 );
 </script>
 

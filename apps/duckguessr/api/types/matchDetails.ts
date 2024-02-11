@@ -1,9 +1,7 @@
-import {player} from '@prisma/client'
-
-import { UserMedalPoints } from './playerStats'
+import { player, userMedalPoints } from "../prisma/client_duckguessr";
 
 export interface MatchDetails {
   isBotAvailable: boolean
   players: player[]
-  playerStats: UserMedalPoints[]
+  playerStats: userMedalPoints[]
 }

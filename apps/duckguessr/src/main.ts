@@ -5,25 +5,22 @@ import { BrowserTracing } from "@sentry/browser";
 import * as Sentry from "@sentry/vue";
 import { createHead } from "@unhead/vue";
 import { createPinia } from "pinia";
-// @ts-ignore
-import { setupLayouts } from "virtual:generated-layouts";
 import generatedRoutes from "virtual:generated-pages";
 import { createApp } from "vue";
 import { createRouter, createWebHistory } from "vue-router";
 
 import App from "~/App.vue";
 import i18n from "~web/src/i18n";
-import de from "~/locales/de.json";
-import fr from "~/locales/fr-FR.json";
-import en from "~/locales/en-US";
-import es from "~/locales/es.json";
+import de from "~locales/de.json";
+import fr from "~locales/fr-FR.json";
+import en from "~locales/en-US";
+import es from "~locales/es.json";
 
 const head = createHead();
 
-const routes = setupLayouts(generatedRoutes);
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
-  routes,
+  routes: generatedRoutes,
 });
 
 const store = createPinia();

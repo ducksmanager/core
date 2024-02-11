@@ -30,7 +30,7 @@
 </template>
 
 <script lang="ts" setup>
-import { PlayerWithSumScore } from "~types/playerStats";
+import { PlayerWithSumScore } from "~duckguessr-types/playerStats";
 const props = defineProps<{
   currentPlayer: PlayerWithSumScore;
   maxScoreAllPlayers: number;
@@ -42,11 +42,11 @@ const props = defineProps<{
 const { currentPlayer, maxScoreAllPlayers, rank } = toRefs(props);
 
 const barSizePct = computed(
-  () => (100 * currentPlayer.value.sumScore) / maxScoreAllPlayers.value
+  () => (100 * currentPlayer.value.sumScore) / maxScoreAllPlayers.value,
 );
 
 const size = computed(() =>
-  rank.value < 3 ? 4 : rank.value < 10 ? 3 : rank.value < 20 ? 2 : 1
+  rank.value < 3 ? 4 : rank.value < 10 ? 3 : rank.value < 20 ? 2 : 1,
 );
 </script>
 

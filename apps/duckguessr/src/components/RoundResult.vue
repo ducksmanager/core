@@ -24,14 +24,15 @@
 </template>
 
 <script lang="ts" setup>
-import { RoundWithScoresAndAuthor } from "~types/roundWithScoresAndAuthor";
+import { RoundWithScoresAndAuthor } from "~duckguessr-types/roundWithScoresAndAuthor";
 import { getUrl } from "~/composables/url";
 
-const { round } = toRefs(
-  defineProps<{
-    round: RoundWithScoresAndAuthor;
-  }>()
-);
+const { round } =
+  toRefs(
+    defineProps<{
+      round: RoundWithScoresAndAuthor;
+    }>(),
+  );
 
 const personUrl = ref();
 watch(
@@ -39,7 +40,7 @@ watch(
   ({ personcode }) => {
     personUrl.value = `https://inducks.org/creators/photos/${personcode}.jpg`;
   },
-  { immediate: true }
+  { immediate: true },
 );
 const setDefaultAuthorUrl = () => {
   personUrl.value =

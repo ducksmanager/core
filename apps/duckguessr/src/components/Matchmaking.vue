@@ -13,25 +13,25 @@
 
 <script lang="ts" setup>
 import { Socket } from "socket.io-client";
-import { MatchDetails } from "~types/matchDetails";
+import { MatchDetails } from "~duckguessr-types/matchDetails";
 import { userStore } from "~/stores/user";
 import {
   ClientToServerEvents,
   ServerToClientEvents,
-} from "~types/socketEvents";
-import { UserMedalPoints } from "~types/playerStats";
-import { player } from "~duckguessr-api/types/prisma-client";
+} from "~duckguessr-types/socketEvents";
+import { player, userMedalPoints } from "~duckguessr-prisma-client";
 
 const players = ref([] as player[]);
-const gamePlayersStats = ref(null as UserMedalPoints[] | null);
-const isBotAvailableForGame = ref(null as Boolean | null);
+const gamePlayersStats = ref(null as userMedalPoints[] | null);
+const isBotAvailableForGame = ref(null as boolean | null);
 
-const { gameId, gameSocket } = toRefs(
-  defineProps<{
-    gameId: number;
-    gameSocket: Socket<ServerToClientEvents, ClientToServerEvents>;
-  }>()
-);
+const { gameId, gameSocket } =
+  toRefs(
+    defineProps<{
+      gameId: number;
+      gameSocket: Socket<ServerToClientEvents, ClientToServerEvents>;
+    }>(),
+  );
 
 const emit = defineEmits<{
   (e: "start-match"): void;
@@ -45,7 +45,7 @@ const addPlayer = (player: player) => {
 
 const removePlayer = (player: player) => {
   players.value = players.value.filter(
-    ({ username }) => username !== player.username
+    ({ username }) => username !== player.username,
   );
 };
 
@@ -75,7 +75,7 @@ watch(
               for (const currentPlayer of players) {
                 addPlayer(currentPlayer);
               }
-            }
+            },
           );
         })
         .on("playerJoined", (player: player) => {
@@ -92,6 +92,6 @@ watch(
         });
     }
   },
-  { immediate: true }
+  { immediate: true },
 );
 </script>

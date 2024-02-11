@@ -3,8 +3,8 @@
 </template>
 <script lang="ts" setup>
 import { Socket, io } from "socket.io-client";
-import { player } from "~duckguessr-api/types/prisma-client";
-import { ClientToServerEventsPodium } from "~duckguessr-api/types/socketEvents";
+import type { player } from "~duckguessr-prisma-client";
+import { ClientToServerEventsPodium } from "~duckguessr-types/socketEvents";
 
 const players = ref(null as (player & { sumScore: number })[] | null);
 

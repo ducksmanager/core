@@ -4,9 +4,13 @@
 
 <script setup lang="ts">
 import Cookies from "js-cookie";
-import { stores as webStores} from '~web'
+import { stores as webStores } from "~web";
 
-import { buildWebStorage, cacheStorage, session } from "~socket.io-client-services";
+import {
+  buildWebStorage,
+  cacheStorage,
+  session,
+} from "~socket.io-client-services";
 
 const { loadUser } = webStores.collection();
 const { user, isLoadingUser } = storeToRefs(webStores.collection());

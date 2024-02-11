@@ -67,8 +67,8 @@
 import { io, Socket } from "socket.io-client";
 import { useCookies } from "@vueuse/integrations/useCookies";
 import { userStore } from "~/stores/user";
-import { DatasetWithCounts } from "~types/dataset";
-import { ClientToServerEventsDatasets } from "~types/socketEvents";
+import { DatasetWithCounts } from "~duckguessr-types/dataset";
+import { ClientToServerEventsDatasets } from "~duckguessr-types/socketEvents";
 const router = useRouter();
 
 const { t, locale } = useI18n();

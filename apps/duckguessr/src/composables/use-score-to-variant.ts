@@ -1,8 +1,8 @@
-import { roundScore } from "~types/prisma-client";
-import { OngoingRoundScore } from "~types/roundWithScoresAndAuthor";
+import { roundScore } from "~duckguessr-prisma-client";
+import { OngoingRoundScore } from "~duckguessr-types/roundWithScoresAndAuthor";
 
 export const useScoreToVariant = (
-  roundScore: roundScore | OngoingRoundScore | null
+  roundScore: roundScore | OngoingRoundScore | null,
 ) => {
   switch (roundScore?.scoreTypeName) {
     case null:

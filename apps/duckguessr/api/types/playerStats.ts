@@ -1,4 +1,4 @@
-import {player} from '@prisma/client'
+import { player } from "../prisma/client_duckguessr";
 
 export type MedalLevel = {
   medalType: string;
@@ -13,17 +13,4 @@ export type MedalLevelAndProgress = {
 
 export interface PlayerWithSumScore extends player {
   sumScore: number
-}
-
-export interface UserMedalPoints {
-  medalType: string;
-  playerId: number;
-  points: number;
-}
-
-export interface UserGameMedalPoints {
-  medalType: string;
-  playerId: number;
-  gameId: number;
-  points: number;
 }

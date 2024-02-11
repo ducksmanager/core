@@ -1,5 +1,5 @@
 import Medal from "~/components/Medal";
-import { MedalLevelAndProgress } from "~types/playerStats";
+import { MedalLevelAndProgress } from "~duckguessr-types/playerStats";
 
 export default {
   title: "Medal",

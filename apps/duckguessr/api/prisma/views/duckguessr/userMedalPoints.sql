@@ -1,7 +1,9 @@
 SELECT
   `duckguessr`.`dataset`.`name` AS `medalType`,
   `duckguessr`.`game_player`.`player_id` AS `playerId`,
-  sum(`duckguessr`.`round_score`.`score`) AS `playerPoints`
+  cast(
+    sum(`duckguessr`.`round_score`.`score`) AS signed
+  ) AS `playerPoints`
 FROM
   (
     (

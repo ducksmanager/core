@@ -35,7 +35,7 @@
       <b-col>
         {{
           t(
-            "Waiting for other players... Send this link to your friends to invite them to this game:"
+            "Waiting for other players... Send this link to your friends to invite them to this game:",
           )
         }}
       </b-col>
@@ -70,17 +70,17 @@
 import { useSeoMeta } from "@unhead/vue";
 import { getDuckguessrUsername } from "~/composables/user";
 import { userStore } from "~/stores/user";
-import { UserMedalPoints } from "~types/playerStats";
-import { player } from "~duckguessr-api/types/prisma-client";
+import { player, userMedalPoints } from "~duckguessr-prisma-client";
 
-const { players, gameId, gamePlayersStats } = toRefs(
-  defineProps<{
-    players: player[];
-    gamePlayersStats: UserMedalPoints[];
-    gameId: number;
-    isBotAvailable: boolean;
-  }>()
-);
+const { players, gameId, gamePlayersStats } =
+  toRefs(
+    defineProps<{
+      players: player[];
+      gamePlayersStats: userMedalPoints[];
+      gameId: number;
+      isBotAvailable: boolean;
+    }>(),
+  );
 
 const emit = defineEmits<{
   (e: "start-match"): void;
@@ -94,14 +94,14 @@ const { t } = useI18n();
 const title = computed(() =>
   t("Join {username}'s Duckguessr game!")
     .toString()
-    .replace("{username}", players.value[0].username)
+    .replace("{username}", players.value[0].username),
 );
 const gameUrl = computed(() => `${location.origin}/game/${gameId.value}`);
 const isMatchCreator = computed(
-  () => getDuckguessrUsername() === players.value[0].username
+  () => getDuckguessrUsername() === players.value[0].username,
 );
 const isBotPlaying = computed(() =>
-  players.value.find(({ username }) => isBot(username))
+  players.value.find(({ username }) => isBot(username)),
 );
 
 const isBot = (username: string) => /^bot_/.test(username);
@@ -110,7 +110,7 @@ const isAnonymous = computed(() => userStore().isAnonymous);
 
 const getGamePlayerStats = (playerId: number) =>
   gamePlayersStats.value.filter(
-    ({ playerId: statsPlayerId }) => playerId === statsPlayerId
+    ({ playerId: statsPlayerId }) => playerId === statsPlayerId,
   );
 
 useSeoMeta(() => ({

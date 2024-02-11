@@ -10,13 +10,13 @@ import {
 import {
   ClientToServerEvents,
   ServerToClientEvents,
-} from "~types/socketEvents";
+} from "~duckguessr-types/socketEvents";
+import { MedalLevel } from "~duckguessr-types/playerStats";
 import {
-  MedalLevel,
-  UserGameMedalPoints,
-  UserMedalPoints,
-} from "~types/playerStats";
-import { player } from "~duckguessr-api/types/prisma-client";
+  player,
+  userGameMedalPoints,
+  userMedalPoints,
+} from "~duckguessr-prisma-client";
 
 export const MEDAL_LEVELS: MedalLevel[] = [
   { medalType: "fast", levels: [25, 150, 500] },
@@ -31,8 +31,8 @@ export const userStore = defineStore("user", () => {
     null as Socket<ServerToClientEvents, ClientToServerEvents> | null,
   );
   const user = ref(null as player | null);
-  const stats = ref(null as UserMedalPoints[] | null);
-  const gameStats = ref(null as UserGameMedalPoints[] | null);
+  const stats = ref(null as userMedalPoints[] | null);
+  const gameStats = ref(null as userGameMedalPoints[] | null);
   const attempts = ref(0 as number);
 
   const isAnonymous = computed(
@@ -76,7 +76,7 @@ export const userStore = defineStore("user", () => {
           medalType: currentGameDatasetName,
           gameId,
           playerId: user.value!.id,
-          points: isWinningPlayer ? 1 : 0,
+          playerPoints: isWinningPlayer ? 1 : 0,
         });
       }
     });

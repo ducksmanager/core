@@ -27,7 +27,7 @@ watch(
       userStore().loadStats();
     }
   },
-  { immediate: true }
+  { immediate: true },
 );
 </script>
 <style lang="scss">

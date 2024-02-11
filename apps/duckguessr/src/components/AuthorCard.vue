@@ -7,7 +7,7 @@
       enabled,
       'p-1': true,
     }"
-    @click="$emit('select', author.personcode)"
+    @click="emit('select', author.personcode)"
   >
     <div
       class="author-image"
@@ -27,14 +27,19 @@
   </b-col>
 </template>
 <script lang="ts" setup>
-import { Author } from "~types/roundWithScoresAndAuthor";
-const { author, enabled, selectable } = toRefs(
-  defineProps<{
-    author: Author;
-    enabled: Boolean;
-    selectable: Boolean;
-  }>()
-);
+import { Author } from "~duckguessr-types/roundWithScoresAndAuthor";
+const { author, enabled, selectable } =
+  toRefs(
+    defineProps<{
+      author: Author;
+      enabled: boolean;
+      selectable: boolean;
+    }>(),
+  );
+
+const emit = defineEmits<{
+  (e: "select", personcode: string): void;
+}>();
 
 const authorImageUrl = ref("");
 const setDefaultAuthorUrl = () => {
@@ -49,7 +54,7 @@ watch(
   },
   {
     immediate: true,
-  }
+  },
 );
 </script>
 <style lang="scss">

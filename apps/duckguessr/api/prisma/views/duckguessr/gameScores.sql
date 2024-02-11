@@ -4,8 +4,10 @@ SELECT
   IFNULL(
     (
       SELECT
-        sum(
-          `duckguessr`.`round_score`.`score` + `duckguessr`.`round_score`.`speed_bonus`
+        cast(
+          sum(
+            `duckguessr`.`round_score`.`score` + `duckguessr`.`round_score`.`speed_bonus`
+          ) AS signed
         )
       FROM
         `duckguessr`.`round_score`

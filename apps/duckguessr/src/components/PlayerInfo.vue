@@ -66,7 +66,7 @@ const props = withDefaults(
     size: 4,
     noRightPanel: false,
     nowrap: true,
-  }
+  },
 );
 
 const { username, avatar } = toRefs(props);
@@ -78,7 +78,7 @@ const emit = defineEmits<{
 const src = computed(() =>
   isBot(username.value) || isPotentialBot(username.value)
     ? "/avatars/Little Helper.png"
-    : `/avatars/${avatar.value}.png`
+    : `/avatars/${avatar.value}.png`,
 );
 
 const { t } = useI18n();

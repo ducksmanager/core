@@ -57,26 +57,27 @@
 </template>
 
 <script lang="ts" setup>
-import { Author } from "~types/roundWithScoresAndAuthor";
+import { Author } from "~duckguessr-types/roundWithScoresAndAuthor";
 import { getUrl } from "~/composables/url";
 import { BaseColorVariant } from "node_modules/bootstrap-vue-next/dist/src/types";
 
-const { nextRoundStartDate, roundUrl } = toRefs(
-  defineProps<{
-    status: keyof BaseColorVariant;
-    roundNumber: number;
-    roundUrl: string;
-    correctAuthor: Author;
-    speedBonus?: number | null;
-    nextRoundStartDate: Date | null;
-    hasEverybodyGuessed: boolean;
-  }>()
-);
+const { nextRoundStartDate, roundUrl } =
+  toRefs(
+    defineProps<{
+      status: keyof BaseColorVariant;
+      roundNumber: number;
+      roundUrl: string;
+      correctAuthor: Author;
+      speedBonus?: number | null;
+      nextRoundStartDate: Date | null;
+      hasEverybodyGuessed: boolean;
+    }>(),
+  );
 
 const nextRoundStartTime = computed(() => nextRoundStartDate.value?.getTime());
 const time = new Date().getTime();
 const initialTimeBeforeNextRound = computed(() =>
-  nextRoundStartTime.value ? nextRoundStartTime.value - time : null
+  nextRoundStartTime.value ? nextRoundStartTime.value - time : null,
 );
 const timeBeforeNextRound = ref(null as number | null);
 
@@ -95,8 +96,8 @@ const updateTimeBeforeNextRound = () => {
       : Math.max(
           0,
           Math.ceil(
-            (nextRoundStartDate.value.getTime() - new Date().getTime()) / 1000
-          )
+            (nextRoundStartDate.value.getTime() - new Date().getTime()) / 1000,
+          ),
         );
 };
 

@@ -103,15 +103,16 @@
 import { getDuckguessrId, getShownUsername } from "~/composables/user";
 
 import { userStore } from "~/stores/user";
-import { GameFullNoPersoncode } from "~types/game";
+import { GameFullNoPersoncode } from "~duckguessr-types/game";
 import { ColorVariant } from "bootstrap-vue-next";
-import { player, roundScore } from "~duckguessr-api/types/prisma-client";
+import { player, roundScore } from "~duckguessr-prisma-client";
 
-const { game } = toRefs(
-  defineProps<{
-    game: GameFullNoPersoncode;
-  }>()
-);
+const { game } =
+  toRefs(
+    defineProps<{
+      game: GameFullNoPersoncode;
+    }>(),
+  );
 
 const duckguessrId = getDuckguessrId();
 const isAnonymous = computed(() => userStore().isAnonymous);
@@ -119,16 +120,16 @@ const isAnonymous = computed(() => userStore().isAnonymous);
 const playerIds = game.value.gamePlayers.map(({ playerId }) => playerId);
 const players = game.value.gamePlayers.reduce(
   (acc, { player }) => ({ ...acc, [player.id]: player }),
-  {} as Record<number, player>
+  {} as Record<number, player>,
 );
 const roundsWithPersonUrls = ref(
   game.value.rounds.map((roundScore) => ({
     ...roundScore,
     ...game.value.authors.find(
-      ({ personcode }) => personcode === roundScore.personcode
+      ({ personcode }) => personcode === roundScore.personcode,
     ),
     personurl: `https://inducks.org/creators/photos/${roundScore.personcode}.jpg`,
-  }))
+  })),
 );
 const playersWithScores: Record<
   number,
@@ -146,13 +147,13 @@ const playersWithScores: Record<
               ...acc3,
               [scoreTypeName]: { score, speedBonus },
             }),
-            {}
+            {},
           ),
       }),
-      {}
+      {},
     ),
   }),
-  {}
+  {},
 );
 const playersWithScoresAndTotalScore = playerIds
   .map((playerId) => ({
@@ -164,15 +165,15 @@ const playersWithScoresAndTotalScore = playerIds
         Object.values(roundScores || {}).reduce(
           (
             accTotalRoundScore: number,
-            { score: roundScore, speedBonus: roundSpeedBonus }
+            { score: roundScore, speedBonus: roundSpeedBonus },
           ) => accTotalRoundScore + roundScore + (roundSpeedBonus || 0),
-          0
+          0,
         ),
-      0
+      0,
     ),
   }))
   .sort((player1WithScores, player2WithScores) =>
-    player1WithScores.totalScore < player2WithScores.totalScore ? 1 : -1
+    player1WithScores.totalScore < player2WithScores.totalScore ? 1 : -1,
   )
   .map((playerWithScores, idx) => ({
     ...playerWithScores,
@@ -180,28 +181,28 @@ const playersWithScoresAndTotalScore = playerIds
   }));
 
 const currentUserHasParticipated = computed(() =>
-  game.value.gamePlayers.map(({ playerId }) => playerId).includes(duckguessrId)
+  game.value.gamePlayers.map(({ playerId }) => playerId).includes(duckguessrId),
 );
 
 const currentUserScores = game.value.rounds.map(({ roundScores }) =>
-  roundScores.find(({ playerId }) => playerId === duckguessrId)
+  roundScores.find(({ playerId }) => playerId === duckguessrId),
 );
 
 const currentUserWonRounds = currentUserScores.filter(
-  (roundScore) => roundScore?.scoreTypeName === "Correct author"
+  (roundScore) => roundScore?.scoreTypeName === "Correct author",
 );
 
 const winningPlayerScores = computed(() =>
   playersWithScoresAndTotalScore?.find(
-    (player) => player._rowVariant === "success"
-  )
+    (player) => player._rowVariant === "success",
+  ),
 );
 
 const winningPlayer = computed(
   () =>
     game.value.gamePlayers.find(
-      ({ playerId }) => playerId === winningPlayerScores.value?.playerId
-    )!.player
+      ({ playerId }) => playerId === winningPlayerScores.value?.playerId,
+    )!.player,
 );
 
 const currentUserWonFastestRounds = currentUserWonRounds.filter(
@@ -211,9 +212,9 @@ const currentUserWonFastestRounds = currentUserWonRounds.filter(
       ...game.value.rounds
         .find((score) => score?.id === roundScore!.roundId)!
         .roundScores.map(
-          (otherPlayerRoundScore) => otherPlayerRoundScore!.speedBonus || 0
-        )
-    )
+          (otherPlayerRoundScore) => otherPlayerRoundScore!.speedBonus || 0,
+        ),
+    ),
 );
 
 const hasUserStats = computed(() => userStore().stats && userStore().gameStats);
@@ -226,11 +227,11 @@ watch(
       userStore().loadGameStats(
         game.value.id!,
         game.value.dataset.name,
-        winningPlayer.value?.id === duckguessrId
+        winningPlayer.value?.id === duckguessrId,
       );
     }
   },
-  { immediate: true }
+  { immediate: true },
 );
 
 const { t } = useI18n();

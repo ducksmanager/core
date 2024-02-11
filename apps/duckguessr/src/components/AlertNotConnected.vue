@@ -3,7 +3,7 @@
     <b-alert show variant="warning" class="text-center">
       {{
         t(
-          "You are not connected. You can still play but you won't get any medals."
+          "You are not connected. You can still play but you won't get any medals.",
         )
       }}
       <div>

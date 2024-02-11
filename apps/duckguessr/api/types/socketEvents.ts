@@ -7,13 +7,13 @@ import {
   PrismaClient,
   round,
   roundScore,
-} from "./prisma/client_duckguessr";
-
+userGameMedalPoints,
+userMedalPoints, 
+} from "../prisma/client_duckguessr";
 import { DatasetWithCounts } from "./dataset";
-import { GameFullNoPersoncode } from "./game";
+import { GameFull } from "./game";
 import { GuessResponse } from "./guess";
 import { MatchDetails } from "./matchDetails";
-import { UserGameMedalPoints, UserMedalPoints } from "./playerStats";
 
 const prisma = new PrismaClient();
 
@@ -78,14 +78,14 @@ export interface ClientToServerEvents {
   ) => void;
   getStats: (
     gameId: number | null,
-    callback: (stats: UserMedalPoints[]) => void
+    callback: (stats: userMedalPoints[]) => void
   ) => void;
   getGameStats: (
     gameId: number,
-    callback: (stats: UserGameMedalPoints[]) => void
+    callback: (stats: userGameMedalPoints[]) => void
   ) => void;
   updateUser: (updatedUser: player, callback: (player: player) => void) => void;
-  getGame: (gameId: number, callback: (game: GameFullNoPersoncode | null) => void) => void;
+  getGame: (gameId: number, callback: (game: GameFull | null) => void) => void;
   getGameRounds: (gameId: number, callback: (game: null | {
     roundScores: roundScore[]
   } | (Pick<round, "gameId" | 'roundNumber'> & { base64: string })) => void) => void;

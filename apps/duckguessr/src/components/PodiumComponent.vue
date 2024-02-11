@@ -34,7 +34,7 @@
   </div>
 </template>
 <script lang="ts" setup>
-import { player } from "~duckguessr-api/types/prisma-client";
+import { player } from "~duckguessr-prisma-client";
 
 const { t } = useI18n();
 const props = defineProps<{
@@ -46,14 +46,14 @@ const { players } = toRefs(props);
 const topPlayers = computed(() =>
   players.value.length >= 3
     ? [players.value[1], players.value[0], players.value[2]]
-    : []
+    : [],
 );
 
 const maxPoints = computed(() =>
   topPlayers.value.reduce(
     (acc, currentPlayer) => Math.max(acc, currentPlayer.sumScore),
-    0
-  )
+    0,
+  ),
 );
 
 const otherPlayers = players.value.slice(3);

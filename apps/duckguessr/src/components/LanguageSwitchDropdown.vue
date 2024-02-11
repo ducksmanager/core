@@ -8,27 +8,30 @@
       <i-bi-globe2 />
     </template>
     <div
-      v-for="(title, possibleLocale) in availableLocales"
-      :key="possibleLocale"
+      v-for="{ code, label } in availableLocales"
+      :key="code"
       class="mx-2"
-      @click.prevent="changeLocale(possibleLocale)"
+      @click.prevent="changeLocale(code)"
     >
       <a
         href="javascript:void(0)"
-        :class="{ active: i18n.locale.value === possibleLocale }"
+        :class="{ active: i18n.locale.value === code }"
       >
-        {{ title }}
+        {{ label }}
       </a>
     </div>
   </b-dropdown>
 </template>
 <script setup lang="ts">
-const availableLocales = {
-  fr: "Français",
-  en: "English",
-  es: "Español",
-  de: "Deutsch",
-};
+const availableLocales = [
+  {
+    code: "fr",
+    label: "Français",
+  },
+  { code: "en", label: "English" },
+  { code: "es", label: "Español" },
+  { code: "de", label: "Deutsch" },
+];
 
 const i18n = useI18n();
 if (localStorage.getItem("locale")) {

@@ -118,28 +118,28 @@ model entryurlDetails {
 }
 
 view gameScores {
-  gameId    Int     @map("game_id")
-  playerId  Int     @map("player_id")
-  gameScore Decimal @default(0) @map("game_score") @db.Decimal(33, 0)
+  gameId    Int    @map("game_id")
+  playerId  Int    @map("player_id")
+  gameScore Int @default(0) @map("game_score")
 
   @@unique([gameId, playerId])
   @@map("game_scores")
 }
 
 view userGameMedalPoints {
-  medalType    String   @db.VarChar(30)
+  medalType    String  @db.VarChar(30)
   gameId       Int
   playerId     Int
-  playerPoints Decimal? @db.Decimal(27, 0)
+  playerPoints Int
 
   @@unique([medalType, playerId, gameId])
   @@map("user_medals_game")
 }
 
 view userMedalPoints {
-  medalType    String   @db.VarChar(30)
+  medalType    String  @db.VarChar(30)
   playerId     Int
-  playerPoints Decimal? @db.Decimal(27, 0)
+  playerPoints Int
 
   @@unique([medalType, playerId])
   @@map("user_medals")

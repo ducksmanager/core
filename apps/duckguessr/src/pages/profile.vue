@@ -7,7 +7,7 @@
       Vous pouvez seulement choisir un avatar si vous êtes connecté(e).<br />
       {{
         t(
-          "Log in on DucksManager then refresh this page to be able to choose your avatar :-)"
+          "Log in on DucksManager then refresh this page to be able to choose your avatar :-)",
         )
       }}
     </b-alert>
@@ -21,7 +21,7 @@
           <b-alert show variant="info">
             {{
               t(
-                "You haven't earned medals yet. Play Duckguessr to unlock medals!"
+                "You haven't earned medals yet. Play Duckguessr to unlock medals!",
               )
             }}
           </b-alert>
@@ -35,7 +35,7 @@
           <div>
             {{
               t(
-                "Choose an avatar among the characters of the Donald Duck family tree."
+                "Choose an avatar among the characters of the Donald Duck family tree.",
               )
             }}
           </div>
@@ -82,13 +82,13 @@
 </template>
 
 <script lang="ts" setup>
-import { Avatar } from "~types/avatar";
+import { Avatar } from "~duckguessr-types/avatar";
 import { userStore } from "~/stores/user";
 const { t } = useI18n();
 
 const isAnonymous = computed(() => userStore().isAnonymous);
 
-import { avatars, avatarDiskDiameter } from "~types/avatar.ts";
+import { avatars, avatarDiskDiameter } from "~duckguessr-types/avatar";
 const tree = ref(null as any | null);
 
 const treeImageNaturalWidth = ref(null as number | null);
@@ -102,11 +102,11 @@ const hasMedals = computed(
   () =>
     currentUserStats.value &&
     Object.values(currentUserStats.value).filter(({ points }) => points > 0)
-      .length
+      .length,
 );
 
 const treeImageRatio = computed(
-  () => treeImageNaturalWidth.value! / tree.value!.width
+  () => treeImageNaturalWidth.value! / tree.value!.width,
 );
 
 const currentAvatar = ref(null as AvatarWithLocalPosition | null);
@@ -119,14 +119,14 @@ const resizeAvatars = () => {
 
 const calculateLocalPosition = (avatar: Avatar) =>
   avatar.position.map(
-    (coordinate) => coordinate / treeImageRatio.value - avatarSize.value! / 2
+    (coordinate) => coordinate / treeImageRatio.value - avatarSize.value! / 2,
   );
 
 watch(
   () => userStore().user?.avatar,
   (avatarName) => {
     const avatar = avatars.find(
-      ({ character }: Avatar) => character === avatarName
+      ({ character }: Avatar) => character === avatarName,
     )!;
     if (avatar) {
       resizeAvatars();
@@ -135,14 +135,14 @@ watch(
         localPosition: calculateLocalPosition(avatar),
       };
     }
-  }
+  },
 );
 
 const onMouseMove = ({ clientX, clientY, target }: any) => {
   const rect = target.getBoundingClientRect();
   const position = [clientX - rect.left, clientY - rect.top];
   const positionUsingNaturalDimensions = position.map(
-    (coordinate) => coordinate * (treeImageNaturalWidth.value! / rect.width)
+    (coordinate) => coordinate * (treeImageNaturalWidth.value! / rect.width),
   );
 
   const avatar =
@@ -151,14 +151,14 @@ const onMouseMove = ({ clientX, clientY, target }: any) => {
         Math.sqrt(
           Math.pow(
             positionUsingNaturalDimensions[0] - characterCoordinates[0],
-            2
+            2,
           ) +
             Math.pow(
               positionUsingNaturalDimensions[1] - characterCoordinates[1],
-              2
-            )
+              2,
+            ),
         ) <
-        avatarDiskDiameter / 2
+        avatarDiskDiameter / 2,
     ) || null;
 
   if (avatar) {
@@ -183,7 +183,7 @@ const onSelectAvatar = () => {
     userStore().user!,
     (updatedUser) => {
       userStore().user = updatedUser;
-    }
+    },
   );
 };
 </script>

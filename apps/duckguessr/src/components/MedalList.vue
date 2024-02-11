@@ -46,9 +46,9 @@
 
 <script setup lang="ts">
 import { MEDAL_LEVELS, userStore } from "~/stores/user";
-import { MedalLevelAndProgress, UserMedalPoints } from "~types/playerStats";
+import { MedalLevelAndProgress } from "~duckguessr-types/playerStats";
 import { getDuckguessrId } from "~/composables/user";
-import { dataset } from "~duckguessr-api/types/prisma-client";
+import type { dataset, userMedalPoints } from "~duckguessr-prisma-client";
 
 const DATASET_WITH_MEDALS: string[] = ["published-fr-recent", "it", "us"];
 
@@ -59,7 +59,7 @@ const props = withDefaults(
   defineProps<{
     dataset?: dataset | null;
     withDetails: boolean;
-    statsOverride?: UserMedalPoints[] | null;
+    statsOverride?: userMedalPoints[] | null;
     cols?: number | null;
     colsLg?: number | null;
   }>(),
@@ -68,7 +68,7 @@ const props = withDefaults(
     statsOverride: null,
     cols: null,
     colsLg: 3,
-  }
+  },
 );
 
 const { dataset, statsOverride } = toRefs(props);
@@ -76,20 +76,20 @@ const { dataset, statsOverride } = toRefs(props);
 const stats = computed(() =>
   dataset.value
     ? userStore().gameStats
-    : statsOverride.value || userStore().stats
+    : statsOverride.value || userStore().stats,
 );
 
 const statsMatchingMedals = computed(() =>
   stats.value
     ?.filter(
-      ({ medalType, playerId, points }) =>
-        points > 0 &&
+      ({ medalType, playerId, playerPoints }) =>
+        playerPoints! > 0 &&
         (statsOverride.value || duckguessrId === playerId) &&
         (/^(ultra_)?fast/.test(medalType) ||
           !dataset.value ||
-          DATASET_WITH_MEDALS.includes(dataset.value.name))
+          DATASET_WITH_MEDALS.includes(dataset.value.name)),
     )
-    ?.map(({ medalType }) => medalType)
+    ?.map(({ medalType }) => medalType),
 );
 
 const levelsAndProgress = computed(
@@ -104,11 +104,11 @@ const levelsAndProgress = computed(
                 (
                   stats.value!.find(
                     ({ medalType: statsMedalType }) =>
-                      medalType === statsMedalType
+                      medalType === statsMedalType,
                   ) || {
                     points: 0,
                   }
-                ).points >= levelThreshold
+                ).playerPoints! >= levelThreshold,
             );
 
           if (level === 4) {
@@ -128,20 +128,20 @@ const levelsAndProgress = computed(
           const currentLevelPoints =
             (
               stats.value!.find(
-                ({ medalType: statsMedalType }) => medalType === statsMedalType
+                ({ medalType: statsMedalType }) => medalType === statsMedalType,
               ) || {
-                points: 0,
+                playerPoints: 0,
               }
-            ).points - currentLevelThreshold;
+            ).playerPoints - currentLevelThreshold;
           const currentLevelProgressPoints = userStore().gameStats
             ? (
                 userStore().gameStats!.find(
                   ({ medalType: statsMedalType }) =>
-                    medalType === statsMedalType
+                    medalType === statsMedalType,
                 ) || {
-                  points: 0,
+                  playerPoints: 0,
                 }
-              ).points
+              ).playerPoints
             : 0;
 
           const medalLevelAndProgress = {
@@ -153,15 +153,15 @@ const levelsAndProgress = computed(
             ...acc,
             [medalType]: medalLevelAndProgress,
           };
-        }, {})
+        }, {}),
 );
 
 const noMedalProgress = computed(
   () =>
     levelsAndProgress.value &&
     !Object.values(levelsAndProgress.value).some(
-      ({ currentLevelProgressPoints }) => currentLevelProgressPoints > 0
-    )
+      ({ currentLevelProgressPoints }) => currentLevelProgressPoints > 0,
+    ),
 );
 </script>
 

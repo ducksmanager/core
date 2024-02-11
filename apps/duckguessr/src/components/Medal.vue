@@ -37,7 +37,7 @@
 
 <script setup lang="ts">
 import { MEDAL_LEVELS } from "~/stores/user";
-import { MedalLevelAndProgress } from "~duckguessr-api/types/playerStats";
+import { MedalLevelAndProgress } from "~duckguessr-types/playerStats";
 
 const { t } = useI18n();
 const medalTypes = computed(
@@ -53,7 +53,7 @@ const medalTypes = computed(
     "published-fr-recent": {
       title: t("French Publications Expert"),
       description: t(
-        "You won a game guessing authors from French publications"
+        "You won a game guessing authors from French publications",
       ),
     },
     fast: {
@@ -68,7 +68,7 @@ const medalTypes = computed(
       title: t("US Expert"),
       description: t("You won a game guessing American authors"),
     },
-  })
+  }),
 );
 
 const props = withDefaults(
@@ -83,32 +83,32 @@ const props = withDefaults(
     withGameData: false,
     withDetails: false,
     withTitle: true,
-  }
+  },
 );
 
 const { medalLevelAndProgress, type, withGameData } = toRefs(props);
 
 const levels = computed(
-  () => MEDAL_LEVELS.find(({ medalType }) => medalType === type.value!)!.levels
+  () => MEDAL_LEVELS.find(({ medalType }) => medalType === type.value!)!.levels,
 );
 
 const currentLevelThreshold = computed(() =>
   medalLevelAndProgress.value.level === 0
     ? 0
-    : levels.value[medalLevelAndProgress.value.level - 1]
+    : levels.value[medalLevelAndProgress.value.level - 1],
 );
 const nextLevelThreshold = computed(
-  () => levels.value[medalLevelAndProgress.value.level]
+  () => levels.value[medalLevelAndProgress.value.level],
 );
 
 const totalPointsToReachNextLevel = computed(
-  () => nextLevelThreshold.value - currentLevelThreshold.value
+  () => nextLevelThreshold.value - currentLevelThreshold.value,
 );
 
 const levelPercentage = computed(
   () =>
     (100 * medalLevelAndProgress.value.currentLevelPoints) /
-    totalPointsToReachNextLevel.value
+    totalPointsToReachNextLevel.value,
 );
 
 const shownLevelPercentage = computed(() => (levelPercentage.value + 15) / 1.5);
@@ -116,7 +116,7 @@ const shownLevelPercentage = computed(() => (levelPercentage.value + 15) / 1.5);
 const levelPercentageProgress = computed(
   () =>
     (100 * medalLevelAndProgress.value.currentLevelProgressPoints) /
-    totalPointsToReachNextLevel.value
+    totalPointsToReachNextLevel.value,
 );
 
 const medalTitle = computed(() => {
@@ -144,7 +144,7 @@ const medalTitle = computed(() => {
           totalPointsToReachNextLevel: totalPointsToReachNextLevel.value,
           currentLevelPoints,
           currentLevelProgressPoints,
-        })
+        }),
       );
     }
     title += t(
@@ -152,7 +152,7 @@ const medalTitle = computed(() => {
       {
         pointsToNextThreshold,
         nextMedal: t(medalColors[nextLevel]),
-      }
+      },
     );
   }
   return title;
@@ -169,17 +169,17 @@ const getMedalUrl = (level: number) =>
   ].toUpperCase()}.png')`;
 
 const currentMedalUrl = computed(() =>
-  getMedalUrl(Math.max(0, medalLevelAndProgress.value.level))
+  getMedalUrl(Math.max(0, medalLevelAndProgress.value.level)),
 );
 const nextMedalUrl = computed(() =>
-  getMedalUrl(Math.min(3, medalLevelAndProgress.value.level + 1))
+  getMedalUrl(Math.min(3, medalLevelAndProgress.value.level + 1)),
 );
 
 onMounted(() => {
   console.log(
     `Type: ${type.value}, Current level and progress: ${JSON.stringify(
-      medalLevelAndProgress.value
-    )}`
+      medalLevelAndProgress.value,
+    )}`,
   );
   setInterval(() => {
     if (!withGameData.value) {

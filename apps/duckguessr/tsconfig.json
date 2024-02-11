@@ -18,9 +18,12 @@
     "noFallthroughCasesInSwitch": true,
     "preserveWatchOutput": true,
     "paths": {
-      "~/*": ["./*"],
+      "~/*": ["src/*"],
+      "~locales/*": ["locales/*"],
       "~dm-services/*": ["../../packages/api/services/*"],
       "~dm-types/*": ["../../packages/types/*"],
+      "~duckguessr-prisma-client": ["api/prisma/client_duckguessr"],
+      "~duckguessr-types/*": ["api/types/*"],
       "~prisma-clients/*": ["../../packages/prisma-clients/*"],
       "~socket.io-client-services/*": [
         "../../packages/socket.io-client-services/*"
