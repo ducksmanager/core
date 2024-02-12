@@ -1,3 +1,4 @@
 export const tabs = defineStore("tabs", () => ({
-  activeTab: ref(undefined as number | undefined),
+  tabNames: ["page-gallery", "book", "text-editor"] as const,
+  activeTab: ref<number>(0),
 }));

@@ -8,9 +8,9 @@ import useHintMaker from "./useHint";
 const coaServices = composables.useDmSocket.coaServices;
 
 export default (indexationId: string) => {
-  const status = ref("idle" as "idle" | "loading" | "loaded");
+  const status = ref<"idle" | "loading" | "loaded">("idle");
 
-  const aiDetails = storeToRefs(aiStore()).aiDetails;
+  const { aiDetails } = storeToRefs(aiStore());
   const indexationServices = getIndexationSocket(indexationId);
 
   const hint = useHintMaker();

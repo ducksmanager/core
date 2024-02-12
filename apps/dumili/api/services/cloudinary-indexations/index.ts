@@ -15,27 +15,18 @@ import { RequiredAuthMiddleware } from "../_auth";
 import { runKumiko } from "./kumiko";
 import { extendBoundaries, runOcr } from "./ocr";
 import Events, { IndexationEvents } from "./types";
+import { ResourceApiResponse } from "cloudinary";
 
 const GetIndexationResourcesMiddleware = async (
   socket: Socket,
   next: (error?: Error) => void
 ) => {
-  const username = socket.data.user!.username;
   const indexationId = socket.nsp.name.split("/").pop()!;
-  const resources = await getIndexationResources("indexation", indexationId);
-  const firstResourceBelongingToOtherUser = resources.find(
-    ({ context }) =>
-      (context as CloudinaryResourceContext).custom.user === username
-  );
-  if (firstResourceBelongingToOtherUser) {
-    throw new Error(
-      `Resource ${firstResourceBelongingToOtherUser.secure_url} in the indexation belong to the user`
-    );
-  }
   socket.data.indexation = {
     id: indexationId,
-    resources,
+    resources: await getIndexationResources("indexation", indexationId),
   };
+
 
   next();
 };
@@ -115,6 +106,7 @@ export default (io: ServerWithData<SessionData>) => {
   });
 };
 
+
 export const getIndexationResources = async (
   key: "user" | "indexation",
   value: string
@@ -123,7 +115,7 @@ export const getIndexationResources = async (
     .resources_by_context(key, value, {
       context: true,
     })
-    .then(({ resources }) => resources)
+    .then(({ resources }) => resources.filter(({ context }) => key === 'user' ? (context as CloudinaryResourceContext).custom.page === '1' : true) as ResourceApiResponse['resources'])
     .catch(async (err) => {
       console.error(err);
       throw err;

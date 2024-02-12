@@ -145,16 +145,16 @@ import { SlickItem, SlickList } from "vue-slicksort";
 import useAi from "~/composables/useAi";
 import { ai as aiStore } from "~/stores/ai";
 import { suggestions } from "~/stores/suggestions";
-import { user } from "~/stores/user";
+import { user } from "~/stores/ui";
 
 const route = useRoute();
 let ai: ReturnType<typeof useAi>;
-const aiDetails = storeToRefs(aiStore()).aiDetails;
+const { aiDetails } = storeToRefs(aiStore());
 
-const coverWidth = ref(null as number | null);
-let coverHeight = ref(null as number | null);
-let book = ref(null as PageFlip | null);
-const currentTabIndex = ref(0 as number);
+const coverWidth = ref<number | null>(null);
+let coverHeight = ref<number | null>(null);
+let book = ref<PageFlip | null>(null);
+const currentTabIndex = ref<number>(0);
 
 const { storyversionKindSuggestions, acceptedIssue, entrySuggestions } =
   storeToRefs(suggestions());

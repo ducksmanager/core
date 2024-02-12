@@ -1,13 +1,13 @@
 <template>
   <b-container
     fluid
-    class="d-flex flex-column align-items-center justify-content-center flex-grow-1"
+    class="d-flex flex-column align-items-center justify-content-center flex-grow-1 overflow-y-auto"
   >
-    <b-row v-if="images" align-h="center">
+    <b-row v-if="images" align-h="center" class="overflow-y-auto">
       <b-col
         v-for="{ url, text } of images"
         :key="url"
-        class="col position-relative d-flex justify-content-center align-items-center p-3 pb-5"
+        class="position-relative d-flex justify-content-center align-items-center p-3 pb-5 border"
         :class="{ selectable, selected: selectedUrl === url }"
         cols="12"
         md="4"
@@ -15,7 +15,7 @@
       >
         <b-img :src="url" fluid thumbnail />
         <div class="position-absolute bottom-0 text-center">
-          <slot v-if="$slots" :issuecode="text" />
+          <slot v-if="$slots['default']" :issuecode="text" />
           <template v-else>{{ text || "Titre inconnu" }}</template>
         </div>
       </b-col>

@@ -29,11 +29,10 @@ const showIssueSelect = ref(false);
 const suggestionsStore = suggestions();
 
 const issue = computed(() => suggestionsStore.acceptedIssue);
-const issueSuggestions = computed(
-  () =>
-    suggestionsStore.issueSuggestions.filter(
-      (suggestion) => suggestion !== undefined
-    ) as IssueSuggestion[]
+const issueSuggestions = computed(() =>
+  suggestionsStore.issueSuggestions.filter(
+    (suggestion) => suggestion !== undefined
+  )
 );
 
 const addCustomIssuecodeToIssueSuggestions = (issuecode: string | null) => {

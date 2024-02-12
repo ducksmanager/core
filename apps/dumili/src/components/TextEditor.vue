@@ -17,7 +17,7 @@ const { t: $t } = useI18n();
 
 import { EntrySuggestion, suggestions } from "~/stores/suggestions";
 
-const textContentError = ref("" as string);
+const textContentError = ref("");
 const acceptedEntries = computed(() => suggestions().acceptedEntries);
 
 const issue = computed(() => suggestions().acceptedIssue);

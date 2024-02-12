@@ -26,15 +26,15 @@
           class="d-flex w-100 justify-content-between"
           :disabled="!aiDetails[entryurl]"
           @click="
-            showAiDetections =
-              showAiDetections === undefined ? entryurl : undefined
+            showAiDetectionsOn =
+              showAiDetectionsOn === undefined ? entryurl : undefined
           "
         >
           <div>{{ $t("Détections AI") }}</div>
           <i-bi-chevron-down />
         </b-button>
       </b-col>
-      <template v-if="showAiDetections">
+      <template v-if="showAiDetectionsOn">
         <b-col cols="3" class="text-start white-space-normal">
           <div>
             {{
@@ -145,13 +145,13 @@
   </b-row>
 </template>
 <script setup lang="ts">
-import { ai as aiStore } from "~/stores/ai";
+import { ai } from "~/stores/ai";
 import {
   StoryversionKind,
   StoryversionKindSuggestion,
 } from "~/stores/suggestions";
 import { suggestions } from "~/stores/suggestions";
-import { user } from "~/stores/user";
+import { user } from "~/stores/ui";
 
 const { t: $t } = useI18n();
 const props = defineProps<{
@@ -165,8 +165,8 @@ defineEmits<{
 
 const suggestionsStore = suggestions();
 
-const showAiDetections = storeToRefs(user()).showAiDetectionsOn;
-const aiDetails = storeToRefs(aiStore()).aiDetails;
+const { showAiDetectionsOn } = storeToRefs(user());
+const { aiDetails } = storeToRefs(ai());
 
 const acceptedEntry = computed(
   () => suggestionsStore.acceptedEntries[props.entryurl]

@@ -9,8 +9,8 @@ export type BoundariesWithText = {
 }[];
 
 export const ai = defineStore("ai", () => ({
-  aiDetails: ref(
-    {} as Record<
+  aiDetails: ref<
+    Record<
       string /* entry URL */,
       {
         panels: Omit<BoundariesWithText[0], "text">[];
@@ -20,5 +20,5 @@ export const ai = defineStore("ai", () => ({
         };
       }
     >
-  ),
+  >({}),
 }));

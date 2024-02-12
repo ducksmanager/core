@@ -115,10 +115,10 @@ export const suggestions = defineStore("suggestions", () => {
   const entrySuggestions = ref<
       { url: string; suggestions: EntrySuggestion[] }[]
     >([]),
-    storyversionKindSuggestions = ref(
-      {} as Record<string, StoryversionKindSuggestion[]>
-    ),
-    issueSuggestions = ref([] as IssueSuggestion[]),
+    storyversionKindSuggestions = ref<
+      Record<string, StoryversionKindSuggestion[]>
+    >({}),
+    issueSuggestions = ref<IssueSuggestion[]>([]),
     pendingIssueSuggestions = computed(() =>
       issueSuggestions.value.filter(({ meta }) => meta.isAccepted === undefined)
     );

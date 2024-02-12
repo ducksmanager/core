@@ -11,18 +11,10 @@
     <router-view v-if="user" />
 
     <h4 v-else>
-      Vous devez être connecté pour accéder à cette page.
-      <a :href="loginUrl">Se connecter</a>
+      {{ $t("Vous devez être connecté pour accéder à cette page.") }}
+      <a :href="loginUrl">{{ $t("Se connecter") }}</a>
     </h4>
   </b-container>
-
-  <b-container
-    v-if="activeTab !== undefined"
-    class="start-0 bottom-0 mw-100 pt-2"
-    ><b-tabs v-model:modelValue="activeTab" align="center"
-      ><b-tab title="Page gallery" /><b-tab title="Book" /><b-tab
-        title="Text editor" /></b-tabs
-  ></b-container>
 </template>
 
 <script setup lang="ts">
@@ -35,22 +27,10 @@ import {
 } from "~socket.io-client-services";
 import { stores as webStores } from "~web";
 
-import { tabs } from "./stores/tabs";
-
-const route = useRoute();
-
-const { activeTab } = storeToRefs(tabs());
+const { t: $t } = useI18n();
 
 const loginUrl = computed(
   () => `${import.meta.env.VITE_DM_URL}/login?redirect=${document.URL}`
-);
-
-watch(
-  () => route?.params?.id,
-  (id) => {
-    activeTab.value = id ? 0 : undefined;
-  },
-  { immediate: true }
 );
 
 const { loadUser } = webStores.collection();

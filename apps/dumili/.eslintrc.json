@@ -11,7 +11,7 @@
   "parserOptions": { "parser": "@typescript-eslint/parser" },
   "overrides": [
     {
-      "files": ["*.js", "*.ts", "*.vue"]
+      "files": ["*.ts", "*.vue"]
     }
   ],
   "root": true,

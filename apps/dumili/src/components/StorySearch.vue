@@ -5,7 +5,7 @@
       list="search"
       :placeholder="$t('Rechercher une histoire')"
     />
-    <datalist v-if="storyResults.results && !isSearching">
+    <datalist v-if="storyResults?.results && !isSearching">
       <option v-if="!storyResults.results.length">
         {{ $t("Aucun résultat.") }}
       </option>
@@ -31,15 +31,16 @@ const emit = defineEmits<{
   (e: "story-selected", story: Pick<SimpleStory, "storycode" | "title">): void;
 }>();
 
-let isSearching = ref(false as boolean);
-let pendingSearch = ref(null as string | null);
-let search = ref("" as string);
-let storyResults = ref(
-  {} as {
-    results: SimpleStory[];
-    hasMore: boolean;
-  }
-);
+let isSearching = ref(false);
+let pendingSearch = ref<string | null>(null);
+let search = ref("");
+let storyResults = ref<
+  | {
+      results: SimpleStory[];
+      hasMore: boolean;
+    }
+  | undefined
+>(undefined);
 
 const { t: $t } = useI18n();
 const selectSearchResult = (searchResult: SimpleStory) => {
@@ -49,11 +50,10 @@ const selectSearchResult = (searchResult: SimpleStory) => {
 const runSearch = async (value: string) => {
   isSearching.value = true;
   try {
-    const data = await coaServices.searchStory(value.split(" "), true);
-    storyResults.value.results = data.results;
+    storyResults.value = await coaServices.searchStory(value.split(" "), true);
   } finally {
     isSearching.value = false;
-    // The input value as changed since the beginning of the search, searching again
+    // The input value has changed since the beginning of the search, searching again
     if (value !== pendingSearch.value) {
       await runSearch(pendingSearch.value!);
     }

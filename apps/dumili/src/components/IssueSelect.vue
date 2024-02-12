@@ -60,9 +60,9 @@ const props = withDefaults(
   }
 );
 
-const currentCountryCode = ref(undefined as string | undefined);
-const currentPublicationCode = ref(undefined as string | undefined);
-const currentIssueNumber = ref(undefined as string | undefined);
+const currentCountryCode = ref<string | undefined>(undefined);
+const currentPublicationCode = ref<string | undefined>(undefined);
+const currentIssueNumber = ref<string | undefined>(undefined);
 
 const issuecode = computed(() => {
   if (
