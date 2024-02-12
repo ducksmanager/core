@@ -23,7 +23,8 @@
 </template>
 
 <script lang="ts" setup>
-import { EntrySuggestion, suggestions } from "~/stores/suggestions";
+import { suggestions } from "~/stores/suggestions";
+import { EntrySuggestion } from "~dumili-types/suggestions";
 
 const { t: $t } = useI18n();
 

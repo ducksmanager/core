@@ -1,12 +1,12 @@
+import { suggestions } from "~/stores/suggestions";
+import CoverIdServices from "~dm-services/cover-id/types";
+import { StorySearchResults } from "~dm-types/StorySearchResults";
+import { KumikoResult } from "~dumili-types/KumikoResult";
 import {
   EntrySuggestion,
   IssueSuggestion,
   StoryversionKind,
-  suggestions,
-} from "~/stores/suggestions";
-import CoverIdServices from "~dm-services/cover-id/types";
-import { StorySearchResults } from "~dm-types/StorySearchResults";
-import { KumikoResult } from "~dumili-types/KumikoResult";
+} from "~dumili-types/suggestions";
 import { EventReturnType } from "~socket.io-services/types";
 import { stores as webStores } from "~web";
 
@@ -21,7 +21,7 @@ export default () => {
   const coaStore = webStores.coa();
   const applyHintsFromKumiko = (results: KumikoResult[]) => {
     results?.forEach((result, idx) => {
-      const entryurl = Object.keys(entrySuggestions.value)[idx];
+      const { url: entryurl } = entrySuggestions.value[idx];
       const shouldBeAccepted = acceptedEntries.value[entryurl] === undefined;
 
       if (shouldBeAccepted) {

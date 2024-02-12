@@ -339,7 +339,6 @@ class PaddleOCRRequestHandler(BaseHTTPRequestHandler):
     def do_POST(self):
         content_length = int(self.headers['Content-Length']) 
         base64Text = self.rfile.read(content_length)
-        print(base64Text)
 
         file_name = ''.join((random.choice('abcdefghi') for i in range(5))) + '.png'
         try:

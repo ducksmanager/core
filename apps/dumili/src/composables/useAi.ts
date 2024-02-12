@@ -1,5 +1,6 @@
 import { ai as aiStore } from "~/stores/ai";
-import { StoryversionKind, suggestions } from "~/stores/suggestions";
+import { suggestions } from "~/stores/suggestions";
+import { StoryversionKind } from "~dumili-types/suggestions";
 import { composables } from "~web";
 
 import { getIndexationSocket } from "./useDumiliSocket";
@@ -17,7 +18,6 @@ export default (indexationId: string) => {
 
   const {
     acceptedStoryversionKinds: acceptedStoryKinds,
-    entrySuggestions,
     storyversionKindSuggestions,
   } = storeToRefs(suggestions());
 
@@ -42,10 +42,7 @@ export default (indexationId: string) => {
   };
 
   const runCoverSearch = async () => {
-    if (
-      acceptedStoryKinds.value[Object.keys(entrySuggestions)[0]]?.data?.kind ===
-      StoryversionKind.Cover
-    ) {
+    if (acceptedStoryKinds.value[0]?.data?.kind === StoryversionKind.Cover) {
       console.info(
         "La première page est une couverture, on va chercher si on la détecte parmi les résultats de la recherche par image..."
       );

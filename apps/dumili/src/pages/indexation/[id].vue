@@ -1,5 +1,9 @@
 <template>
-  <b-container style="max-height: calc(100% - 35px)" class="d-flex flex-column">
+  <b-container
+    fluid
+    style="max-height: calc(100% - 35px); flex-grow: 1"
+    class="d-flex flex-column"
+  >
     <template v-if="tabNames[activeTab] === 'page-gallery'"
       ><Gallery :images="images" />
       <upload-widget
@@ -35,12 +39,12 @@
 
 <script setup lang="ts">
 import { getIndexationSocket } from "~/composables/useDumiliSocket";
+import { suggestions } from "~/stores/suggestions";
+import { tabs } from "~/stores/tabs";
 import {
   StoryversionKind,
   StoryversionKindSuggestion,
-  suggestions,
-} from "~/stores/suggestions";
-import { tabs } from "~/stores/tabs";
+} from "~dumili-types/suggestions";
 const showUploadWidget = ref(false);
 const route = useRoute();
 
@@ -49,9 +53,8 @@ const { t: $t } = useI18n();
 const { activeTab } = storeToRefs(tabs());
 const { tabNames } = tabs();
 
-const { entrySuggestions, storyversionKindSuggestions } = storeToRefs(
-  suggestions()
-);
+const { entrySuggestions, storyversionKindSuggestions, indexationId } =
+  storeToRefs(suggestions());
 const images = computed(() =>
   entrySuggestions.value.map(({ url }) => ({
     url,
@@ -59,8 +62,10 @@ const images = computed(() =>
   }))
 );
 const getPageImages = async () => {
-  const indexationId = route.params.id as string;
-  const data = await getIndexationSocket(indexationId).getIndexationResources();
+  indexationId.value = route.params.id as string;
+  const data = await getIndexationSocket(
+    indexationId.value
+  ).getIndexationResources();
   if ("error" in data) {
     console.error(data.error);
     return;

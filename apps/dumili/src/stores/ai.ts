@@ -1,7 +1,6 @@
 import { Boundaries } from "~dumili-types/KumikoResult";
 import { OcrResult } from "~dumili-types/OcrResults";
-
-import { EntrySuggestion } from "./suggestions";
+import { EntrySuggestion } from "~dumili-types/suggestions";
 
 export type BoundariesWithText = {
   bbox: Boundaries;

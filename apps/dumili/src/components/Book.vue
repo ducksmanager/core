@@ -1,8 +1,8 @@
 <template>
   <img
-    v-if="Object.keys(entrySuggestions).length"
+    v-if="entrySuggestions.length"
     class="d-none"
-    :src="Object.keys(entrySuggestions)[0]"
+    :src="entrySuggestions[0].url"
     @load="
       ({ target }) => {
         coverHeight = (target as HTMLImageElement).height;

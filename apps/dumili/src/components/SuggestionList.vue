@@ -52,7 +52,7 @@
   <slot v-if="showCustomizeForm" name="customize-form" />
 </template>
 <script setup lang="ts" generic="S extends Suggestion">
-import type { Suggestion, SuggestionMetaAi } from "../stores/suggestions";
+import { Suggestion, SuggestionMetaAi } from "~dumili-types/suggestions";
 
 const $slots = useSlots();
 

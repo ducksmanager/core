@@ -3,7 +3,7 @@
   >&nbsp;{{ entry.title }}
 </template>
 <script setup lang="ts">
-import { EntrySuggestion } from "~/stores/suggestions";
+import { EntrySuggestion } from "~dumili-types/suggestions";
 
 defineProps<{
   entry: EntrySuggestion["data"];

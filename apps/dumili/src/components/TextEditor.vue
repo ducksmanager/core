@@ -15,7 +15,8 @@
 <script setup lang="ts">
 const { t: $t } = useI18n();
 
-import { EntrySuggestion, suggestions } from "~/stores/suggestions";
+import { suggestions } from "~/stores/suggestions";
+import { EntrySuggestion } from "~dumili-types/suggestions";
 
 const textContentError = ref("");
 const acceptedEntries = computed(() => suggestions().acceptedEntries);

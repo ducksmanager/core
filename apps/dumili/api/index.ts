@@ -63,7 +63,7 @@ const httpServer = createServer(async (req, res) => {
               break;
             case 'application/pdf':
               const chunks = []
-              for await (let chunk of file) {
+              for await (const chunk of file) {
                 chunks.push(chunk)
               }
               const buffer = (Buffer.concat(chunks));

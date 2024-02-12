@@ -146,12 +146,13 @@
 </template>
 <script setup lang="ts">
 import { ai } from "~/stores/ai";
+import {} from "~/stores/suggestions";
+import { suggestions } from "~/stores/suggestions";
+import { user } from "~/stores/ui";
 import {
   StoryversionKind,
   StoryversionKindSuggestion,
-} from "~/stores/suggestions";
-import { suggestions } from "~/stores/suggestions";
-import { user } from "~/stores/ui";
+} from "~dumili-types/suggestions";
 
 const { t: $t } = useI18n();
 const props = defineProps<{

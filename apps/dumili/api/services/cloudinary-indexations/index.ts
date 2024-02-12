@@ -1,5 +1,6 @@
 import axios from "axios";
 import { v2 as cloudinary } from "cloudinary";
+import { ResourceApiResponse } from "cloudinary";
 import sharp from "sharp";
 import { Socket } from "socket.io";
 
@@ -15,7 +16,6 @@ import { RequiredAuthMiddleware } from "../_auth";
 import { runKumiko } from "./kumiko";
 import { extendBoundaries, runOcr } from "./ocr";
 import Events, { IndexationEvents } from "./types";
-import { ResourceApiResponse } from "cloudinary";
 
 const GetIndexationResourcesMiddleware = async (
   socket: Socket,
@@ -87,6 +87,20 @@ export default (io: ServerWithData<SessionData>) => {
         ).toString("base64");
         callback({ data: await runOcr(base64) });
       });
+
+      indexationSocket.on('updateIndexationResource', (url, suggestions, callback) => {
+        const resourceToUpdate = indexationSocket.data.indexation.resources.find(({ secure_url }) => secure_url === url)
+        if (!resourceToUpdate) {
+          callback({ error: 'You are not allowed to update this resource' })
+          return
+        }
+
+        const context = Object.entries(suggestions).filter(([, suggestions]) => suggestions).map(([suggestionsType, suggestions]) => `${suggestionsType}=${JSON.stringify(suggestions)}`).join('|')
+
+        cloudinary.uploader.add_context(context, [resourceToUpdate.public_id])
+        
+          callback()
+      })
     });
 
   const namespace = io.of(Events.namespaceEndpoint) as NamespaceWithData<
