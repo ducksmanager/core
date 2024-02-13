@@ -21,16 +21,18 @@ export const suggestions = defineStore("suggestions", () => {
     );
 
   watch(
-    { entrySuggestions, storyversionKindSuggestions },
-    async (newValue) => {
+    [entrySuggestions, storyversionKindSuggestions],
+    async ([newEntrySuggestions, newStoryversionKindSuggestions]) => {
       debugger;
-      for (const { url, suggestions: suggestionsForUrl } of newValue
-        .entrySuggestions.value) {
+      for (const {
+        url,
+        suggestions: suggestionsForUrl,
+      } of newEntrySuggestions) {
         await getIndexationSocket(indexationId.value!).updateIndexationResource(
           url,
           {
             entrySuggestions: suggestionsForUrl,
-            storyversionKindSuggestions: storyversionKindSuggestions.value[url],
+            storyversionKindSuggestions: newStoryversionKindSuggestions[url],
           }
         );
       }

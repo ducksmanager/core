@@ -1,6 +1,5 @@
 import axios from "axios";
 import { v2 as cloudinary } from "cloudinary";
-import { ResourceApiResponse } from "cloudinary";
 import sharp from "sharp";
 import { Socket } from "socket.io";
 
@@ -10,12 +9,11 @@ import {
   SessionData,
   SessionDataWithIndexation,
 } from "~/index";
-import { CloudinaryResourceContext } from "~dumili-types/CloudinaryResourceContext";
 
 import { RequiredAuthMiddleware } from "../_auth";
 import { runKumiko } from "./kumiko";
 import { extendBoundaries, runOcr } from "./ocr";
-import Events, { IndexationEvents } from "./types";
+import Events, { IndexationEvents, ResourceCustomContextStrings, ResourcesWithContext } from "./types";
 
 const GetIndexationResourcesMiddleware = async (
   socket: Socket,
@@ -85,7 +83,11 @@ export default (io: ServerWithData<SessionData>) => {
             .extract(extendBoundaries(firstPanel, 20))
             .toBuffer()
         ).toString("base64");
-        callback({ data: await runOcr(base64) });
+        runOcr(base64).then((output) => {
+          callback({ data: output });
+        }).catch((err) => {
+          callback({ error: "OCR error", errorDetails: err as string });
+        })
       });
 
       indexationSocket.on('updateIndexationResource', (url, suggestions, callback) => {
@@ -98,8 +100,8 @@ export default (io: ServerWithData<SessionData>) => {
         const context = Object.entries(suggestions).filter(([, suggestions]) => suggestions).map(([suggestionsType, suggestions]) => `${suggestionsType}=${JSON.stringify(suggestions)}`).join('|')
 
         cloudinary.uploader.add_context(context, [resourceToUpdate.public_id])
-        
-          callback()
+
+        callback()
       })
     });
 
@@ -129,7 +131,24 @@ export const getIndexationResources = async (
     .resources_by_context(key, value, {
       context: true,
     })
-    .then(({ resources }) => resources.filter(({ context }) => key === 'user' ? (context as CloudinaryResourceContext).custom.page === '1' : true) as ResourceApiResponse['resources'])
+    .then(({ resources }) => resources
+      .filter(({ context }) => key === 'user' ? (context as ResourceCustomContextStrings).custom.page === '1' : true)
+      .map((resource) => {
+        const context = resource.context as ResourceCustomContextStrings
+        const {entrySuggestions,
+        storyversionKindSuggestions} = context.custom
+        return {
+          ...resource,
+          context: {
+            ...context,
+            custom: {
+              ...context.custom,
+              entrySuggestions: entrySuggestions && JSON.parse(entrySuggestions || '[]'),
+              storyversionKindSuggestions: storyversionKindSuggestions && JSON.parse(storyversionKindSuggestions),
+            }
+          }
+        } as unknown as ResourcesWithContext['0']
+      }))
     .catch(async (err) => {
       console.error(err);
       throw err;

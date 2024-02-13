@@ -326,13 +326,8 @@ for item in data:
 
 # https://github.com/PaddlePaddle/PaddleOCR/issues/1048
 ocr_languages = {
-    "en": PaddleOCR(use_angle_cls=True, lang='en', cls_thresh=1),
-    "fr": PaddleOCR(use_angle_cls=True, lang='en', cls_thresh=1)
-}
-
-ocr_languages = {
     lang: PaddleOCR(use_angle_cls=True, lang=lang, cls_thresh=1)
-    for lang in ['ch', 'en', 'fr', 'ar', 'es', 'pt', 'ru', 'ge', 'kr', 'jp', 'it', 'hi', 'ug', 'fa', 'ur', 'oc', 'mr', 'ne', 'bg', 'uk', 'be', 'te', 'kn', 'ta']
+    for lang in ['ch', 'en', 'french', 'ar', 'es', 'pt', 'ru', 'german', 'korean', 'japan', 'it', 'ug', 'fa', 'ur', 'oc']
 }
 
 class PaddleOCRRequestHandler(BaseHTTPRequestHandler):
@@ -348,7 +343,7 @@ class PaddleOCRRequestHandler(BaseHTTPRequestHandler):
         except Exception as e:
             print(str(e))
 
-        result = ocrFr.ocr(file_name, cls=True)
+        result = ocr_languages['french'].ocr(file_name, cls=True)
         result = result[0]
         if result is None:
             os.remove(file_name)

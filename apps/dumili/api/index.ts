@@ -23,9 +23,10 @@ import { EventsMap } from "socket.io/dist/typed-events";
 import { SessionUser } from "~dm-types/SessionUser";
 
 import { authenticateUser } from './services/_auth'
-import cloudinaryIndexations, { getIndexationResources } from "./services/cloudinary-indexations";
+import cloudinaryIndexations from "./services/cloudinary-indexations";
+import { ResourcesWithContext } from "./services/cloudinary-indexations/types";
 
-export type SessionDataWithIndexation = { user: SessionUser, indexation: { id: string, resources: Awaited<ReturnType<typeof getIndexationResources>> } }
+export type SessionDataWithIndexation = { user: SessionUser, indexation: { id: string, resources: ResourcesWithContext } }
 export type SessionData = Pick<SessionDataWithIndexation, 'user' | 'indexation'>
 export class ServerWithData<Data extends object> extends Server<
   Record<string, never>,

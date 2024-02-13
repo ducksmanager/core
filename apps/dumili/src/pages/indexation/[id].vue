@@ -70,26 +70,28 @@ const getPageImages = async () => {
     console.error(data.error);
     return;
   }
-  const urls = data.resources.map(({ url }) => url);
-  entrySuggestions.value = urls.map((url) => ({
+  const urls = data.resources.map(({ secure_url }) => secure_url);
+  entrySuggestions.value = urls.map((url, idx) => ({
     url,
-    suggestions: [],
+    suggestions: data.resources[idx].context.custom.entrySuggestions || [],
   }));
   storyversionKindSuggestions.value = urls.reduce<
     Record<string, StoryversionKindSuggestion[]>
   >(
-    (acc, url) => ({
+    (acc, url, idx) => ({
       ...acc,
-      [url]: Object.values(StoryversionKind).map(
-        (key) =>
-          new StoryversionKindSuggestion(
-            { kind: key },
-            {
-              isAccepted: false,
-              source: "default",
-            }
-          )
-      ),
+      [url]:
+        data.resources[idx].context.custom.storyversionKindSuggestions ||
+        Object.values(StoryversionKind).map(
+          (key) =>
+            new StoryversionKindSuggestion(
+              { kind: key },
+              {
+                isAccepted: false,
+                source: "default",
+              }
+            )
+        ),
     }),
     {}
   );

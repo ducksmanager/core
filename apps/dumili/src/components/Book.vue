@@ -132,7 +132,6 @@
         >
           <Entry :entryurl="entry.url" :editable="currentTabIndex === index" />
         </slick-item>
-        ²
       </slick-list>
     </b-card>
   </div>
