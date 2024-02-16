@@ -107,39 +107,58 @@
             pill
             class="ms-2 hint"
             :disabled="!ai || ai.status.value === 'loading'"
-            :class="ai?.status?.value"
+            :class="ai?.status"
             @click="ai.runKumiko()"
           >
             <i-bi-lightbulb-fill
           /></b-button></div
       ></template>
 
-      <slick-list
-        v-if="entrySuggestions"
-        v-model:list="entrySuggestions"
-        axis="y"
-        lock-axis="y"
-        use-drag-handle
+      <b-table-simple
         class="flex-grow-1 nav nav-pills flex-column me-3 card-header-tabs w-100 h-100"
-        :class="{ disabled: !acceptedIssue?.data }"
       >
-        <slick-item
-          v-for="(entry, index) in entrySuggestions"
-          :key="entry.url"
-          :index="index"
-          class="nav-item nav-link d-flex align-items-left"
-          :class="{ active: currentTabIndex === index }"
-        >
-          <Entry :entryurl="entry.url" :editable="currentTabIndex === index" />
-        </slick-item>
-      </slick-list>
+        <b-tbody style="display: table">
+          <template v-for="pageNumber in numberOfPages" :key="pageNumber">
+            <b-tr
+              v-for="sectionPart in 4"
+              :key="sectionPart"
+              :variant="currentPage === pageNumber ? 'secondary' : 'light'"
+              class="g-0 px-0 py-0 align-items-left"
+            >
+              <b-th
+                v-if="sectionPart % 4 === 1"
+                style="vertical-align: middle"
+                rowspan="4"
+                @click="currentPage = pageNumber"
+                >Page {{ pageNumber }}</b-th
+              >
+              <b-td
+                :class="`kind-${
+                  acceptedStoryversionKinds[
+                    Object.keys(acceptedStoryversionKinds)[pageNumber - 1]
+                  ]?.data.kind
+                }`"
+                :title="
+                  acceptedEntries[
+                    Object.keys(acceptedStoryversionKinds)[pageNumber - 1]
+                  ]?.data.title
+                "
+              ></b-td
+              ><b-td v-if="sectionPart % 4 === 1" rowspan="4">
+                <Entry
+                  :entryurl="
+                    Object.keys(acceptedStoryversionKinds)[pageNumber - 1]
+                  "
+                  :editable="currentPage === pageNumber" /></b-td></b-tr
+          ></template>
+        </b-tbody>
+      </b-table-simple>
     </b-card>
   </div>
 </template>
 
 <script setup lang="ts">
 import { PageFlip } from "page-flip";
-import { SlickItem, SlickList } from "vue-slicksort";
 
 import useAi from "~/composables/useAi";
 import { ai as aiStore } from "~/stores/ai";
@@ -153,10 +172,15 @@ const { aiDetails } = storeToRefs(aiStore());
 const coverWidth = ref<number | null>(null);
 let coverHeight = ref<number | null>(null);
 let book = ref<PageFlip | null>(null);
-const currentTabIndex = ref<number>(0);
+const currentPage = ref(0);
+const numberOfPages = ref(9);
 
-const { storyversionKindSuggestions, acceptedIssue, entrySuggestions } =
-  storeToRefs(suggestions());
+const {
+  storyversionKindSuggestions,
+  acceptedStoryversionKinds,
+  acceptedEntries,
+  entrySuggestions,
+} = storeToRefs(suggestions());
 
 const { showAiDetectionsOn: showAiDetections } = user();
 
@@ -203,7 +227,7 @@ const toPx = (position: Record<string, number>) =>
   );
 
 watch(
-  () => currentTabIndex.value,
+  () => currentPage.value,
   (newValue) => {
     if (book.value) {
       book.value.flip(newValue);
@@ -240,7 +264,7 @@ watch(
       book.value.loadFromHTML(document.querySelectorAll(".page"));
 
       book.value.on("flip", ({ data }) => {
-        currentTabIndex.value = parseInt(data.toString());
+        currentPage.value = parseInt(data.toString());
       });
     }
   },
@@ -411,5 +435,9 @@ watch(
       height: 100%;
     }
   }
+}
+
+td {
+  vertical-align: middle;
 }
 </style>

@@ -30,6 +30,7 @@
     "js-cookie": "^3.0.5",
     "page-flip": "^2.0.7",
     "pinia": "^2.1.7",
+    "sortablejs": "^1",
     "vue": "^3.4.18",
     "vue-i18n": "^9.9.1",
     "vue-router": "^4.2.5",

@@ -81,11 +81,8 @@ onMounted(async () => {
         "x-dumili-indexation-id": props.folderName,
         "x-token": (await session.value!.getToken())!,
       },
-      getResponseError: (responseText) => {
-        debugger;
-        const { error } = JSON.parse(responseText);
-        return new Error(error);
-      },
+      getResponseError: (responseText) =>
+        new Error(JSON.parse(responseText).error),
     });
 });
 </script>

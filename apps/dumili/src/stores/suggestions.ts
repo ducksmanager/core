@@ -23,7 +23,6 @@ export const suggestions = defineStore("suggestions", () => {
   watch(
     [entrySuggestions, storyversionKindSuggestions],
     async ([newEntrySuggestions, newStoryversionKindSuggestions]) => {
-      debugger;
       for (const {
         url,
         suggestions: suggestionsForUrl,

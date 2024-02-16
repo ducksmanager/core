@@ -31,7 +31,7 @@ dependencies:
     version: 3.6.0(@uppy/core@3.8.0)
   '@vueuse/integrations':
     specifier: ^10.7.2
-    version: 10.7.2(async-validator@4.2.5)(vue@3.4.18)
+    version: 10.7.2(async-validator@4.2.5)(sortablejs@1.15.2)(vue@3.4.18)
   async-validator:
     specifier: ^4.2.5
     version: 4.2.5
@@ -53,6 +53,9 @@ dependencies:
   pinia:
     specifier: ^2.1.7
     version: 2.1.7(typescript@5.3.3)(vue@3.4.18)
+  sortablejs:
+    specifier: ^1
+    version: 1.15.2
   vue:
     specifier: ^3.4.18
     version: 3.4.18(typescript@5.3.3)
@@ -1563,7 +1566,7 @@ packages:
       - vue
     dev: false
 
-  /@vueuse/integrations@10.7.2(async-validator@4.2.5)(vue@3.4.18):
+  /@vueuse/integrations@10.7.2(async-validator@4.2.5)(sortablejs@1.15.2)(vue@3.4.18):
     resolution: {integrity: sha512-+u3RLPFedjASs5EKPc69Ge49WNgqeMfSxFn+qrQTzblPXZg6+EFzhjarS5edj2qAf6xQ93f95TUxRwKStXj/sQ==}
     peerDependencies:
       async-validator: '*'
@@ -1607,6 +1610,7 @@ packages:
       '@vueuse/core': 10.7.2(vue@3.4.18)
       '@vueuse/shared': 10.7.2(vue@3.4.18)
       async-validator: 4.2.5
+      sortablejs: 1.15.2
       vue-demi: 0.14.7(vue@3.4.18)
     transitivePeerDependencies:
       - '@vue/composition-api'
@@ -3955,6 +3959,10 @@ packages:
     resolution: {integrity: sha512-g9Q1haeby36OSStwb4ntCGGGaKsaVSjQ68fBxoQcutl5fS1vuY18H3wSt3jFyFtrkx+Kz0V1G85A4MyAdDMi2Q==}
     engines: {node: '>=8'}
     dev: true
+
+  /sortablejs@1.15.2:
+    resolution: {integrity: sha512-FJF5jgdfvoKn1MAKSdGs33bIqLi3LmsgVTliuX6iITj834F+JRQZN90Z93yql8h0K2t0RwDPBmxwlbZfDcxNZA==}
+    dev: false
 
   /source-map-js@1.0.2:
     resolution: {integrity: sha512-R0XvVJ9WusLiqTCEiGCmICCMplcCkIwwR11mOSD9CR5u+IXYdiseeEuXCVAjS54zqwkLcPNnmU4OeJ6tUrWhDw==}
