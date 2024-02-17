@@ -12,16 +12,12 @@ import { stores as webStores } from "~web";
 
 export default () => {
   const { acceptSuggestion } = suggestions();
-  const {
-    acceptedEntries,
-    entrySuggestions,
-    issueSuggestions,
-    storyversionKindSuggestions,
-  } = storeToRefs(suggestions());
+  const { acceptedEntries, entries, issueSuggestions, storyversionKinds } =
+    storeToRefs(suggestions());
   const coaStore = webStores.coa();
   const applyHintsFromKumiko = (results: KumikoResult[]) => {
     results?.forEach((result, idx) => {
-      const { url: entryurl } = entrySuggestions.value[idx];
+      const { url: entryurl } = entries.value[idx];
       const shouldBeAccepted = acceptedEntries.value[entryurl] === undefined;
 
       if (shouldBeAccepted) {
@@ -31,8 +27,11 @@ export default () => {
               ? StoryversionKind.Cover
               : StoryversionKind.Illustration
             : StoryversionKind.Story;
+        const suggestions = storyversionKinds.value.find(
+          ({ url: thisUrl }) => thisUrl === entryurl
+        )!.suggestions;
         acceptSuggestion(
-          storyversionKindSuggestions.value[entryurl],
+          suggestions,
           ({ data }) => data.kind === inferredKind,
           { source: "ai", status: "success" },
           (suggestion) => (suggestion.data.panels = result.panels)
@@ -74,13 +73,8 @@ export default () => {
     entryurl: string,
     results: StorySearchResults["results"]
   ) => {
-    const entryIndex = entrySuggestions.value.findIndex(
-      ({ url }) => url === entryurl
-    );
-    // entrySuggestions.value[entryurl] = entrySuggestions.value[entryurl].filter(
-    //   ({ meta }) => meta.source === "ai"
-    // );
-    entrySuggestions.value[entryIndex].suggestions = results.map(
+    const entryIndex = entries.value.findIndex(({ url }) => url === entryurl);
+    entries.value[entryIndex].suggestions = results.map(
       ({ storycode, title }) =>
         new EntrySuggestion(
           {

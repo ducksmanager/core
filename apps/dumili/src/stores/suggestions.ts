@@ -9,19 +9,17 @@ import {
 
 export const suggestions = defineStore("suggestions", () => {
   const indexationId = ref<string>();
-  const entrySuggestions = ref<
-      { url: string; suggestions: EntrySuggestion[] }[]
+  const entries = ref<{ url: string; suggestions: EntrySuggestion[] }[]>([]),
+    storyversionKinds = ref<
+      { url: string; suggestions: StoryversionKindSuggestion[] }[]
     >([]),
-    storyversionKindSuggestions = ref<
-      Record<string, StoryversionKindSuggestion[]>
-    >({}),
     issueSuggestions = ref<IssueSuggestion[]>([]),
     pendingIssueSuggestions = computed(() =>
       issueSuggestions.value.filter(({ meta }) => meta.isAccepted === undefined)
     );
 
   watch(
-    [entrySuggestions, storyversionKindSuggestions],
+    [entries, storyversionKinds],
     async ([newEntrySuggestions, newStoryversionKindSuggestions]) => {
       for (const {
         url,
@@ -31,7 +29,9 @@ export const suggestions = defineStore("suggestions", () => {
           url,
           {
             entrySuggestions: suggestionsForUrl,
-            storyversionKindSuggestions: newStoryversionKindSuggestions[url],
+            storyversionKindSuggestions: newStoryversionKindSuggestions.find(
+              ({ url: thisUrl }) => url === thisUrl
+            )!.suggestions,
           }
         );
       }
@@ -68,8 +68,8 @@ export const suggestions = defineStore("suggestions", () => {
 
   return {
     indexationId,
-    entrySuggestions,
-    storyversionKindSuggestions,
+    entries,
+    storyversionKinds,
     issueSuggestions,
     getAcceptedSuggestion,
     acceptSuggestion,
@@ -81,9 +81,7 @@ export const suggestions = defineStore("suggestions", () => {
       getAcceptedSuggestion(issueSuggestions.value)
     ),
     acceptedEntries: computed(() =>
-      entrySuggestions.value.reduce<
-        Record<string, EntrySuggestion | undefined>
-      >(
+      entries.value.reduce<Record<string, EntrySuggestion | undefined>>(
         (acc, { url, suggestions }) => ({
           ...acc,
           [url]: getAcceptedSuggestion(suggestions),
@@ -92,12 +90,12 @@ export const suggestions = defineStore("suggestions", () => {
       )
     ),
     acceptedStoryversionKinds: computed(() =>
-      Object.entries(storyversionKindSuggestions.value).reduce<
+      storyversionKinds.value.reduce<
         Record<string, StoryversionKindSuggestion | undefined>
       >(
-        (acc, [entrycode, suggestions]) => ({
+        (acc, { url, suggestions }) => ({
           ...acc,
-          [entrycode]: getAcceptedSuggestion(suggestions),
+          [url]: getAcceptedSuggestion(suggestions),
         }),
         {}
       )

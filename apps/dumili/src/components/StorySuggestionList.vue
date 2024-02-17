@@ -34,7 +34,7 @@ const props = defineProps<{
 
 const showEntrySelect = ref(false);
 const { acceptSuggestion } = suggestions();
-const { acceptedEntries, entrySuggestions: allEntrySuggestions } = storeToRefs(
+const { acceptedEntries, entries: allEntrySuggestions } = storeToRefs(
   suggestions()
 );
 

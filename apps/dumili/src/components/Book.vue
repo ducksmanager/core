@@ -1,8 +1,8 @@
 <template>
   <img
-    v-if="entrySuggestions.length"
+    v-if="entries.length"
     class="d-none"
-    :src="entrySuggestions[0].url"
+    :src="entries[0].url"
     @load="
       ({ target }) => {
         coverHeight = (target as HTMLImageElement).height;
@@ -17,7 +17,7 @@
     <b-container class="book-container d-flex w-50 h-100 m-0">
       <div id="book" class="flip-book">
         <div
-          v-for="(entry, index) in entrySuggestions"
+          v-for="(entry, index) in entries"
           :key="`page-${index}`"
           class="page"
           :class="{ single: isSinglePage }"
@@ -134,21 +134,13 @@
               >
               <b-td
                 :class="`kind-${
-                  acceptedStoryversionKinds[
-                    Object.keys(acceptedStoryversionKinds)[pageNumber - 1]
-                  ]?.data.kind
+                  acceptedStoryversionKinds[urls[pageNumber - 1]]?.data.kind
                 }`"
-                :title="
-                  acceptedEntries[
-                    Object.keys(acceptedStoryversionKinds)[pageNumber - 1]
-                  ]?.data.title
-                "
-              ></b-td
+                :title="acceptedEntries[urls[pageNumber - 1]]?.data.title"
+                ><div class="resize-handle" /></b-td
               ><b-td v-if="sectionPart % 4 === 1" rowspan="4">
                 <Entry
-                  :entryurl="
-                    Object.keys(acceptedStoryversionKinds)[pageNumber - 1]
-                  "
+                  :entryurl="urls[pageNumber - 1]"
                   :editable="currentPage === pageNumber" /></b-td></b-tr
           ></template>
         </b-tbody>
@@ -165,7 +157,6 @@ import { ai as aiStore } from "~/stores/ai";
 import { suggestions } from "~/stores/suggestions";
 import { user } from "~/stores/ui";
 
-const route = useRoute();
 let ai: ReturnType<typeof useAi>;
 const { aiDetails } = storeToRefs(aiStore());
 
@@ -175,17 +166,25 @@ let book = ref<PageFlip | null>(null);
 const currentPage = ref(0);
 const numberOfPages = ref(9);
 
+const { indexationId } = toRefs(defineProps<{ indexationId: string }>());
+
+const urls = computed(() =>
+  Array.from(
+    { length: numberOfPages.value },
+    (_, i) => Object.keys(acceptedStoryversionKinds.value)[i]
+  )
+);
+
 const {
-  storyversionKindSuggestions,
+  storyversionKinds,
   acceptedStoryversionKinds,
   acceptedEntries,
-  entrySuggestions,
+  entries,
 } = storeToRefs(suggestions());
 
 const { showAiDetectionsOn: showAiDetections } = user();
 
-const indexationId = computed(() => route.params.id as string);
-const isSinglePage = computed(() => entrySuggestions.value.length === 1);
+const isSinglePage = computed(() => entries.value.length === 1);
 
 const displayedWidth = computed(() => book.value?.getSettings().width);
 const displayedHeight = computed(() => book.value?.getSettings().height);
@@ -272,7 +271,7 @@ watch(
 );
 
 watch(
-  () => storyversionKindSuggestions.value,
+  () => storyversionKinds.value,
   async () => {
     ai = useAi(indexationId.value);
     await ai.runCoverSearch();
@@ -439,5 +438,15 @@ watch(
 
 td {
   vertical-align: middle;
+
+  .resize-handle {
+    content: " ";
+    cursor: ns-resize;
+    position: absolute;
+    height: 11px;
+    display: flex;
+    background: red;
+    width: 5px;
+  }
 }
 </style>

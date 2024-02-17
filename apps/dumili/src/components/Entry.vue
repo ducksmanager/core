@@ -190,7 +190,10 @@ const urlEncodedStorycode = computed(
 );
 
 const storyversionKinds = computed(
-  () => suggestionsStore.storyversionKindSuggestions[props.entryurl]
+  () =>
+    suggestionsStore.storyversionKinds.find(
+      ({ url }) => props.entryurl === url
+    )!.suggestions
 );
 
 const getStoryversionKind = (
@@ -204,7 +207,7 @@ const getStoryversionKind = (
 
 const acceptStoryversionKindSuggestion = (storyversionKind: string) => {
   suggestionsStore.acceptSuggestion(
-    suggestionsStore.storyversionKindSuggestions[props.entryurl],
+    storyversionKinds.value,
     (suggestion: StoryversionKindSuggestion) =>
       suggestion.data.kind === storyversionKind
   );

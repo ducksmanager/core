@@ -1,5 +1,6 @@
 <template>
   <b-container
+    v-if="indexationId"
     fluid
     style="max-height: calc(100% - 35px); flex-grow: 1"
     class="d-flex flex-column"
@@ -8,7 +9,7 @@
       ><Gallery :images="images" />
       <upload-widget
         v-if="showUploadWidget"
-        :folder-name="route.params.id as string"
+        :folder-name="indexationId"
         @done="
           showUploadWidget = !showUploadWidget;
           getPageImages();
@@ -22,7 +23,9 @@
         {{ $t("Upload page files") }}
       </b-button>
     </template>
-    <Book v-else-if="tabNames[activeTab] === 'book'" />
+    <Book
+      v-else-if="tabNames[activeTab] === 'book'"
+      :indexation-id="indexationId" />
     <TextEditor v-else-if="tabNames[activeTab] === 'text-editor'"
   /></b-container>
   <b-container>
@@ -53,53 +56,51 @@ const { t: $t } = useI18n();
 const { activeTab } = storeToRefs(tabs());
 const { tabNames } = tabs();
 
-const { entrySuggestions, storyversionKindSuggestions, indexationId } =
-  storeToRefs(suggestions());
+const { entries, storyversionKinds, indexationId } = storeToRefs(suggestions());
 const images = computed(() =>
-  entrySuggestions.value.map(({ url }) => ({
+  entries.value.map(({ url }) => ({
     url,
     text: url,
   }))
 );
 const getPageImages = async () => {
-  indexationId.value = route.params.id as string;
   const data = await getIndexationSocket(
-    indexationId.value
+    indexationId.value!
   ).getIndexationResources();
   if ("error" in data) {
     console.error(data.error);
     return;
   }
   const urls = data.resources.map(({ secure_url }) => secure_url);
-  entrySuggestions.value = urls.map((url, idx) => ({
+  entries.value = urls.map((url, idx) => ({
     url,
     suggestions: data.resources[idx].context.custom.entrySuggestions || [],
   }));
-  storyversionKindSuggestions.value = urls.reduce<
-    Record<string, StoryversionKindSuggestion[]>
-  >(
-    (acc, url, idx) => ({
-      ...acc,
-      [url]:
-        data.resources[idx].context.custom.storyversionKindSuggestions ||
-        Object.values(StoryversionKind).map(
-          (key) =>
-            new StoryversionKindSuggestion(
-              { kind: key },
-              {
-                isAccepted: false,
-                source: "default",
-              }
-            )
-        ),
-    }),
-    {}
-  );
+  storyversionKinds.value = urls.map((url, idx) => ({
+    url,
+    suggestions:
+      data.resources[idx].context.custom.storyversionKindSuggestions ||
+      Object.values(StoryversionKind).map(
+        (key) =>
+          new StoryversionKindSuggestion(
+            { kind: key },
+            {
+              isAccepted: false,
+              source: "default",
+            }
+          )
+      ),
+  }));
 };
 
-(async () => {
-  getPageImages();
-})();
+watch(
+  () => route.params.id,
+  (id) => {
+    indexationId.value = id as string;
+    getPageImages();
+  },
+  { immediate: true }
+);
 </script>
 
 <style lang="scss" scoped>

@@ -16,10 +16,8 @@ export default (indexationId: string) => {
 
   const hint = useHintMaker();
 
-  const {
-    acceptedStoryversionKinds: acceptedStoryKinds,
-    storyversionKindSuggestions,
-  } = storeToRefs(suggestions());
+  const { acceptedStoryversionKinds: acceptedStoryKinds, storyversionKinds } =
+    storeToRefs(suggestions());
 
   const runKumiko = async () => {
     status.value = "loading";
@@ -47,7 +45,7 @@ export default (indexationId: string) => {
         "La première page est une couverture, on va chercher si on la détecte parmi les résultats de la recherche par image..."
       );
 
-      const url = Object.entries(storyversionKindSuggestions.value)[0][0];
+      const url = storyversionKinds.value[0].url;
       nextTick(async () => {
         coverIdServices.searchFromCover({ url }).then((results) => {
           if ("error" in results) {
@@ -64,14 +62,14 @@ export default (indexationId: string) => {
   };
 
   const runStorycodeOcr = async () => {
-    const storyFirstPages = Object.entries(storyversionKindSuggestions.value)
-      .filter(([, suggestionsForEntry]) =>
+    const storyFirstPages = storyversionKinds.value
+      .filter(({ suggestions: suggestionsForEntry }) =>
         suggestionsForEntry.some(
           ({ data, meta }) =>
             meta.isAccepted && data.kind === StoryversionKind.Story
         )
       )
-      .map(([url]) => url);
+      .map(({ url }) => url);
 
     for (const url of storyFirstPages) {
       const ocrResults = await indexationServices.getOcrResults(url);
