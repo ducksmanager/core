@@ -16,3 +16,10 @@ services:
     build:
       context: paddleocr
       dockerfile: Dockerfile
+  cloudinary-cache:
+    restart: always
+    image: redis/redis-stack
+    ports:
+      - "6379:6379"
+    volumes:
+      - /data

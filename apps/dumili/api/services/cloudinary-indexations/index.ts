@@ -5,6 +5,7 @@ import { Socket } from "socket.io";
 
 import {
   NamespaceWithData,
+  redisClient,
   ServerWithData,
   SessionData,
   SessionDataWithIndexation,
@@ -90,12 +91,15 @@ export default (io: ServerWithData<SessionData>) => {
         })
       });
 
-      indexationSocket.on('updateIndexationResource', (url, suggestions, callback) => {
+      indexationSocket.on('updateIndexationResource', async (url, suggestions, callback) => {
         const resourceToUpdate = indexationSocket.data.indexation.resources.find(({ secure_url }) => secure_url === url)
         if (!resourceToUpdate) {
           callback({ error: 'You are not allowed to update this resource' })
           return
         }
+
+        // Invalidates the cache
+        (await redisClient).del(`cloudinary:${getRedisKey('indexation', indexationSocket.data.indexation.id)}`)
 
         const context = Object.entries(suggestions).filter(([, suggestions]) => suggestions).map(([suggestionsType, suggestions]) => `${suggestionsType}=${JSON.stringify(suggestions)}`).join('|')
 
@@ -127,29 +131,45 @@ export const getIndexationResources = async (
   key: "user" | "indexation",
   value: string
 ) =>
-  cloudinary.api
-    .resources_by_context(key, value, {
-      context: true,
+  redisClient
+    .then((client) =>
+      client.get(`cloudinary:${getRedisKey(key, value)}`)
+    ).then((resources) => {
+      if (resources) {
+        return JSON.parse(resources) as ResourcesWithContext;
+      }
+      throw new Error(`key not found: ${key}:${value}`)
     })
-    .then(({ resources }) => resources
-      .filter(({ context }) => key === 'user' ? (context as ResourceCustomContextStrings).custom.page === '1' : true)
-      .map((resource) => {
-        const context = resource.context as ResourceCustomContextStrings
-        const {entrySuggestions,
-        storyversionKindSuggestions} = context.custom
-        return {
-          ...resource,
-          context: {
-            ...context,
-            custom: {
-              ...context.custom,
-              entrySuggestions: entrySuggestions && JSON.parse(entrySuggestions || '[]'),
-              storyversionKindSuggestions: storyversionKindSuggestions && JSON.parse(storyversionKindSuggestions),
-            }
-          }
-        } as unknown as ResourcesWithContext['0']
-      }))
-    .catch(async (err) => {
-      console.error(err);
-      throw err;
-    });
+    .catch(async () =>
+      cloudinary.api
+        .resources_by_context(key, value, {
+          context: true,
+        })
+        .then(async ({ resources }) => {
+          (await redisClient).set(getRedisKey(key, value), JSON.stringify(resources))
+          return resources
+        }).then((resources) => resources
+          .filter(({ context }) => key === 'user' ? (context as ResourceCustomContextStrings).custom.page === '1' : true)
+          .map((resource) => {
+            const context = resource.context as ResourceCustomContextStrings
+            const { entrySuggestions,
+              storyversionKindSuggestions } = context.custom
+            return {
+              ...resource,
+              context: {
+                ...context,
+                custom: {
+                  ...context.custom,
+                  entrySuggestions: entrySuggestions && JSON.parse(entrySuggestions || '[]'),
+                  storyversionKindSuggestions: storyversionKindSuggestions && JSON.parse(storyversionKindSuggestions),
+                }
+              }
+            } as unknown as ResourcesWithContext['0']
+          }))
+        .catch(async (err) => {
+          console.error(err);
+          throw err;
+        })
+    )
+
+const getRedisKey = (key: 'indexation' | 'user', id: string) => `cloudinary:${key}:${id}`

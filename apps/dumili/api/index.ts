@@ -1,6 +1,6 @@
-
 import dotenv from "dotenv";
 import { fromBuffer } from "pdf2pic";
+import { createClient as createRedisClient } from 'redis';
 dotenv.config({
   path: ".env",
 });
@@ -133,3 +133,7 @@ cloudinaryIndexations(io)
 
 httpServer.listen(3002);
 console.log('Dumuli API open on port 3002')
+
+export const redisClient = createRedisClient()
+  .on('error', err => console.log('Redis Client Error', err))
+  .connect()

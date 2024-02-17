@@ -343,8 +343,9 @@ class PaddleOCRRequestHandler(BaseHTTPRequestHandler):
         except Exception as e:
             print(str(e))
 
-        result = ocr_languages['french'].ocr(file_name, cls=True)
-        result = result[0]
+        result = None
+        # result = ocr_languages['french'].ocr(file_name, cls=True)
+        # result = result[0]
         if result is None:
             os.remove(file_name)
             self.send_response(200)

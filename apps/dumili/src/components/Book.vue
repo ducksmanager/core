@@ -137,7 +137,7 @@
                   acceptedStoryversionKinds[urls[pageNumber - 1]]?.data.kind
                 }`"
                 :title="acceptedEntries[urls[pageNumber - 1]]?.data.title"
-                ><div class="resize-handle" /></b-td
+                ><div class="resize-handle" @mousedown="startDrag" /></b-td
               ><b-td v-if="sectionPart % 4 === 1" rowspan="4">
                 <Entry
                   :entryurl="urls[pageNumber - 1]"
@@ -150,6 +150,7 @@
 </template>
 
 <script setup lang="ts">
+import { useDraggable } from "@vueuse/core";
 import { PageFlip } from "page-flip";
 
 import useAi from "~/composables/useAi";
@@ -160,13 +161,21 @@ import { user } from "~/stores/ui";
 let ai: ReturnType<typeof useAi>;
 const { aiDetails } = storeToRefs(aiStore());
 
+const dragged = ref<HTMLDivElement | undefined>(undefined);
+
+const startDrag = (e: MouseEvent) => {
+  dragged.value = e.target as HTMLDivElement;
+  useDraggable(dragged);
+};
+
 const coverWidth = ref<number | null>(null);
 let coverHeight = ref<number | null>(null);
 let book = ref<PageFlip | null>(null);
 const currentPage = ref(0);
 const numberOfPages = ref(9);
 
-const { indexationId } = toRefs(defineProps<{ indexationId: string }>());
+const props = defineProps<{ indexationId: string }>();
+const { indexationId } = toRefs(props);
 
 const urls = computed(() =>
   Array.from(

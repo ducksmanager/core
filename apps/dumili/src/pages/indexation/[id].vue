@@ -32,7 +32,7 @@
     <b-container
       v-if="activeTab !== undefined"
       class="start-0 bottom-0 mw-100 pt-2 h-5"
-      style="height: : 35px"
+      style="height: 35px"
       ><b-tabs v-model:modelValue="activeTab" align="center"
         ><b-tab :title="$t('Page gallery')" /><b-tab
           :title="$t('Book')" /><b-tab
