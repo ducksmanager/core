@@ -128,10 +128,10 @@
         }}</template
         ><template v-else>{{ $t("Contenu inconnu") }}</template>
       </b-col>
-      <b-col cols="3"
+      <b-col cols="6"
         >{{ title || $t("Sans titre") }}
-        <template v-if="part"> - {{ $t("partie") }} {{ part }}</template></b-col
-      ><b-col cols="3">
+        <template v-if="part"> - {{ $t("partie") }} {{ part }}</template>
+        <br />
         <small>{{ comment }}</small>
         &nbsp;<a
           v-if="urlEncodedStorycode"
@@ -231,7 +231,7 @@ const acceptStoryversionKindSuggestion = (storyversionKind: string) => {
 @mixin storyKindBackground($bg) {
   background-color: $bg !important;
   color: invert($bg);
-  &:hover {
+  &.btn:hover {
     background-color: lighten($bg, 10%) !important;
   }
 }

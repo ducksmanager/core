@@ -69,22 +69,21 @@ export default (io: ServerWithData<SessionData>) => {
         ) {
           callback({ error: "Invalid page URL" });
         }
-        const kumikoResultsForPage = (await runKumiko([pageUrl]))[0];
-        const firstPanel = kumikoResultsForPage.panels[0];
-
-        const input: Buffer = (
-          await axios({
+        Promise.all([
+          runKumiko([pageUrl]),
+          axios({
             url: pageUrl,
             responseType: "arraybuffer",
           })
-        ).data;
-
-        const base64 = (
-          await sharp(input)
-            .extract(extendBoundaries(firstPanel, 20))
-            .toBuffer()
-        ).toString("base64");
-        runOcr(base64).then((output) => {
+        ]).then(async ([[kumikoResultsForPage], { data: imageData }]) => {
+          const firstPanel = kumikoResultsForPage.panels[0];
+          const base64 = (
+            await sharp(imageData as Buffer)
+              .extract(extendBoundaries(firstPanel, 20))
+              .toBuffer()
+          ).toString("base64");
+          return runOcr(base64)
+        }).then((output) => {
           callback({ data: output });
         }).catch((err) => {
           callback({ error: "OCR error", errorDetails: err as string });

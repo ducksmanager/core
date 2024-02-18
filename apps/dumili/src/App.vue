@@ -53,3 +53,6 @@ onBeforeMount(() => {
   loadUser();
 });
 </script>
+<style>
+@import "vue-draggable-resizable/style.css";
+</style>

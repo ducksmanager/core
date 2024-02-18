@@ -114,43 +114,89 @@
           /></b-button></div
       ></template>
 
-      <b-table-simple
-        class="flex-grow-1 nav nav-pills flex-column me-3 card-header-tabs w-100 h-100"
-      >
-        <b-tbody style="display: table">
-          <template v-for="pageNumber in numberOfPages" :key="pageNumber">
-            <b-tr
-              v-for="sectionPart in 4"
-              :key="sectionPart"
-              :variant="currentPage === pageNumber ? 'secondary' : 'light'"
-              class="g-0 px-0 py-0 align-items-left"
-            >
-              <b-th
-                v-if="sectionPart % 4 === 1"
-                style="vertical-align: middle"
-                rowspan="4"
-                @click="currentPage = pageNumber"
-                >Page {{ pageNumber }}</b-th
-              >
-              <b-td
-                :class="`kind-${
-                  acceptedStoryversionKinds[urls[pageNumber - 1]]?.data.kind
-                }`"
-                :title="acceptedEntries[urls[pageNumber - 1]]?.data.title"
-                ><div class="resize-handle" @mousedown="startDrag" /></b-td
-              ><b-td v-if="sectionPart % 4 === 1" rowspan="4">
-                <Entry
-                  :entryurl="urls[pageNumber - 1]"
-                  :editable="currentPage === pageNumber" /></b-td></b-tr
-          ></template>
-        </b-tbody>
-      </b-table-simple>
+      <b-row>
+        <b-col :cols="1" style="padding: 0">
+          <b-row
+            v-for="pageNumber in numberOfPages"
+            :key="pageNumber"
+            style="height: 50px"
+            :variant="currentPage === pageNumber ? 'secondary' : 'light'"
+            class="g-0 px-0 py-0 align-items-center border"
+          >
+            <b-col rowspan="4" @click="currentPage = pageNumber"
+              >Page {{ pageNumber }}<br /><b-button disabled variant="light"
+                ><i-bi-scissors /></b-button
+            ></b-col>
+          </b-row>
+        </b-col>
+        <b-col
+          :cols="1"
+          class="position-relative border"
+          :style="{ padding: 0 }"
+        >
+          <!-- <b-row
+            v-for="pageNumber in numberOfPages"
+            :key="pageNumber"
+            style="height: 50px"
+            :variant="currentPage === pageNumber ? 'secondary' : 'light'"
+            class="g-0 px-0 py-0 align-items-center border position-relative"
+          > -->
+          <template v-for="entry in entries" :key="entry.url">
+            <!-- <vue-draggable-resizable
+              class="position-absolute border-0"
+              :parent="true"
+              :y="50 * (idx + 1) - 1"
+              :style="{
+                height: '5px',
+                width: '100%',
+                cursor: 'ns-resize',
+                zIndex: 50,
+              }"
+              axis="y"
+              w="100%"
+              h="5px"
+              :resizable="false"
+              :grid="[25, 25]"
+              ><hr class="m-0"
+            /></vue-draggable-resizable> -->
+            <b-col
+              :class="`w-100 kind-${
+                acceptedStoryversionKinds[entry.url]?.data.kind
+              }`"
+              :style="{
+                height: `${
+                  50 *
+                  (acceptedEntries[entry.url]?.data.storyversion?.entirepages ||
+                    1)
+                }px`,
+              }"
+              :title="`${acceptedEntries[entry.url]?.data.title} (${
+                acceptedEntries[entry.url]?.data.storyversion?.entirepages || 1
+              } pages)`"
+            ></b-col>
+          </template>
+        </b-col>
+        <b-col :cols="10" style="padding: 0">
+          <b-row
+            v-for="(entry, idx) in entries"
+            :key="entry.url"
+            :style="currentPage === idx ? {} : { height: '50px' }"
+            :variant="currentPage === idx ? 'secondary' : 'light'"
+            :class="`g-0 px-0 py-0 align-items-center border bg-${
+              currentPage === idx ? 'secondary' : 'light'
+            }`"
+          >
+            <b-col @click="currentPage = idx"
+              ><Entry :entryurl="urls[idx]" :editable="currentPage === idx"
+            /></b-col>
+          </b-row>
+        </b-col>
+      </b-row>
     </b-card>
   </div>
 </template>
 
 <script setup lang="ts">
-import { useDraggable } from "@vueuse/core";
 import { PageFlip } from "page-flip";
 
 import useAi from "~/composables/useAi";
@@ -160,13 +206,6 @@ import { user } from "~/stores/ui";
 
 let ai: ReturnType<typeof useAi>;
 const { aiDetails } = storeToRefs(aiStore());
-
-const dragged = ref<HTMLDivElement | undefined>(undefined);
-
-const startDrag = (e: MouseEvent) => {
-  dragged.value = e.target as HTMLDivElement;
-  useDraggable(dragged);
-};
 
 const coverWidth = ref<number | null>(null);
 let coverHeight = ref<number | null>(null);
@@ -445,17 +484,14 @@ watch(
   }
 }
 
-td {
-  vertical-align: middle;
-
-  .resize-handle {
-    content: " ";
-    cursor: ns-resize;
-    position: absolute;
-    height: 11px;
-    display: flex;
-    background: red;
-    width: 5px;
-  }
+.resize-handle {
+  position: absolute;
+  content: " ";
+  cursor: ns-resize;
+  bottom: 0;
+  height: 11px;
+  display: flex;
+  background: red;
+  width: 5px;
 }
 </style>

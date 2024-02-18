@@ -92,12 +92,15 @@ export default (indexationId: string) => {
 
         aiDetails.value[url!].texts = {
           ocrResults: ocrResults.data,
-          possibleStories: possibleStories.map(({ storycode, title }) => ({
-            storyversion: {
-              storycode,
-            },
-            title,
-          })),
+          possibleStories: possibleStories.map(
+            ({ storycode, title, entirepages }) => ({
+              storyversion: {
+                storycode,
+                entirepages,
+              },
+              title,
+            })
+          ),
         };
       } catch (e) {
         console.error(e);

@@ -28,7 +28,7 @@ import { composables as dmComposables } from "~web";
 const { coaServices } = dmComposables.useDmSocket;
 
 const emit = defineEmits<{
-  (e: "story-selected", story: Pick<SimpleStory, "storycode" | "title">): void;
+  (e: "story-selected", searchResult: SimpleStory): void;
 }>();
 
 let isSearching = ref(false);
@@ -44,13 +44,12 @@ let storyResults = ref<
 
 const { t: $t } = useI18n();
 const selectSearchResult = (searchResult: SimpleStory) => {
-  const { storycode, title } = searchResult;
-  emit("story-selected", { storycode, title });
+  emit("story-selected", searchResult);
 };
 const runSearch = async (value: string) => {
   isSearching.value = true;
   try {
-    storyResults.value = await coaServices.searchStory(value.split(" "), true);
+    storyResults.value = await coaServices.searchStory(value.split(" "), false);
   } finally {
     isSearching.value = false;
     // The input value has changed since the beginning of the search, searching again

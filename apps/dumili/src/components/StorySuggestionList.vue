@@ -17,13 +17,14 @@
     <template #unknown-text>{{ $t("Contenu inconnu") }}</template>
     <template #customize-text>{{ $t("Rechercher...") }}</template>
     <template #customize-form>
-      <StorySearch @story-selected="addCustomEntrycodeToEntrySuggestions" />
+      <StorySearch @story-selected="addCustomStoryversionToEntrySuggestions" />
     </template>
   </suggestion-list>
 </template>
 
 <script lang="ts" setup>
 import { suggestions } from "~/stores/suggestions";
+import { SimpleStory } from "~dm-types/SimpleStory";
 import { EntrySuggestion } from "~dumili-types/suggestions";
 
 const { t: $t } = useI18n();
@@ -49,29 +50,22 @@ const entrySuggestions = computed(
     ) as EntrySuggestion[]
 );
 
-const addCustomEntrycodeToEntrySuggestions = ({
-  storycode,
-  title,
-}: {
-  storycode: string;
-  title: string;
-}) => {
-  if (storycode) {
-    const userSuggestion = new EntrySuggestion(
-      {
-        title,
-        storyversion: {
-          storycode,
-        },
+const addCustomStoryversionToEntrySuggestions = (searchResult: SimpleStory) => {
+  const userSuggestion = new EntrySuggestion(
+    {
+      title: searchResult.title,
+      storyversion: {
+        storycode: searchResult.storycode,
+        entirepages: searchResult.entirepages,
       },
-      { source: "user", isAccepted: true }
-    );
-    allEntrySuggestions.value[entryIndex.value].suggestions = [
-      ...entrySuggestions.value.filter(({ meta }) => meta.source === "ai"),
-      userSuggestion,
-    ];
-    acceptEntrySuggestion(storycode);
-  }
+    },
+    { source: "user", isAccepted: true }
+  );
+  allEntrySuggestions.value[entryIndex.value].suggestions = [
+    ...entrySuggestions.value.filter(({ meta }) => meta.source === "ai"),
+    userSuggestion,
+  ];
+  acceptEntrySuggestion(searchResult.storycode);
 };
 
 const acceptEntrySuggestion = (storycode?: string) => {
