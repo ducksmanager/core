@@ -4,17 +4,17 @@
     <template v-if="currentIndexations">
       <b-row align-h="center">
         <b-col
-          v-for="indexation of currentIndexations"
-          :key="indexation.indexation"
+          v-for="{ id, pages } of currentIndexations"
+          :key="id"
           class="col"
           cols="12"
           md="4"
         >
           <router-link
-            :to="`/indexation/${indexation.indexation}`"
+            :to="`/indexation/${id}`"
             class="d-flex flex-column align-items-center border"
           >
-            <b-img :src="indexation.url" fluid thumbnail />
+            <b-img :src="pages[0].url" fluid thumbnail />
             Numéro inconnu
           </router-link>
         </b-col>
@@ -52,14 +52,11 @@
 </template>
 
 <script setup lang="ts">
-import { cloudinaryIndexationsServices } from "~/composables/useDumiliSocket";
-import { ResourceCustomContext } from "~dumili-services/cloudinary-indexations/types";
-
+import { indexationsEvents } from "~/composables/useDumiliSocket";
+import { IndexationWithFirstPage } from "~dumili-services/indexations/types";
 const router = useRouter();
 
-const currentIndexations = ref<{ url: string; indexation: string }[] | null>(
-  null
-);
+const currentIndexations = ref<IndexationWithFirstPage[] | null>(null);
 const modal = ref(false);
 const cloudinaryFolderName = ref<string | null>(null);
 const stepNumber = ref(0);
@@ -80,15 +77,11 @@ watch(
 );
 
 (async () => {
-  const { error, resources } =
-    await cloudinaryIndexationsServices.getResources();
+  const { error, indexations } = await indexationsEvents.getIndexations();
   if (error) {
     console.error(error);
   } else {
-    currentIndexations.value = resources.map(({ url, context }) => ({
-      url,
-      indexation: (context as ResourceCustomContext).custom.indexation,
-    }));
+    currentIndexations.value = indexations;
   }
 })();
 </script>

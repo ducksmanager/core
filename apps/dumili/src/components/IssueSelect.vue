@@ -3,7 +3,7 @@
     <b-form-select
       v-model="currentCountryCode"
       :options="countryNames"
-      @change="emit('change', null)"
+      @change="emit('change')"
     >
       <template #first>
         <b-form-select-option :value="undefined" disabled>{{
@@ -15,7 +15,7 @@
       v-show="currentCountryCode"
       v-model="currentPublicationCode"
       :options="publicationNamesForCurrentCountry"
-      @change="emit('change', null)"
+      @change="emit('change')"
     />
     <template v-if="currentCountryCode && currentPublicationCode">
       <b-form-input
@@ -33,7 +33,7 @@
       v-if="currentIssueNumber !== undefined"
       variant="success"
       :disabled="!isValid"
-      @click="emit('change', issuecode)"
+      @click="emit('change', {publicationcode: currentPublicationCode!, issuenumber: currentIssueNumber})"
       >OK</b-button
     >
     <slot v-if="$slots.dimensions && currentIssueNumber !== null" />
@@ -45,7 +45,13 @@ const { t: $t } = useI18n();
 
 const coaStore = webStores.coa();
 
-const emit = defineEmits<(e: "change", issuecode: string | null) => void>();
+const emit =
+  defineEmits<
+    (
+      e: "change",
+      data?: { publicationcode: string | null; issuenumber: string | null }
+    ) => void
+  >();
 
 const props = withDefaults(
   defineProps<{
@@ -64,16 +70,6 @@ const currentCountryCode = ref<string | undefined>(undefined);
 const currentPublicationCode = ref<string | undefined>(undefined);
 const currentIssueNumber = ref<string | undefined>(undefined);
 
-const issuecode = computed(() => {
-  if (
-    currentCountryCode.value &&
-    currentPublicationCode.value &&
-    currentIssueNumber.value
-  ) {
-    return `${currentPublicationCode.value} ${currentIssueNumber.value}`;
-  }
-  return null;
-});
 const countryNames = computed(
   () =>
     (coaStore.countryNames &&

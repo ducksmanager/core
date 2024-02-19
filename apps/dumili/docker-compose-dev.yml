@@ -16,10 +16,15 @@ services:
     build:
       context: paddleocr
       dockerfile: Dockerfile
-  cloudinary-cache:
+  db:
     restart: always
-    image: redis/redis-stack
+    image: mariadb:10.11
+    env_file:
+      - ./api/.env
     ports:
-      - "6379:6379"
+      - "64097:3306"
     volumes:
-      - /data
+      - /var/lib/mysql
+    environment:
+      MYSQL_DATABASE: dumili
+      MARIADB_ROOT_PASSWORD: $MYSQL_ROOT_PASSWORD

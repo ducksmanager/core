@@ -29,35 +29,38 @@
 </template>
 
 <script lang="ts" setup>
+import { getIndexationSocket } from "~/composables/useDumiliSocket";
 import { suggestions } from "~/stores/suggestions";
-import { IssueSuggestion } from "~dumili-types/suggestions";
+import { issueSuggestion } from "~prisma/client_dumili";
 import { composables as dmComposables } from "~web";
 
 const { coverIdServices } = dmComposables.useDmSocket;
 
 const { acceptSuggestion, rejectAllSuggestions } = suggestions();
-const { hasPendingIssueSuggestions, issueSuggestions } = storeToRefs(
-  suggestions()
+const { hasPendingIssueSuggestions, indexation } = storeToRefs(suggestions());
+
+const indexationSocket = computed(() =>
+  getIndexationSocket(indexation.value!.id)
 );
 
-const issueSuggestionsWithUrls = ref<
-  (IssueSuggestion["data"] & { url: string })[]
+const issueSuggestions = ref<
+  (issueSuggestion & { url: string; coverId: number })[]
 >([]);
 
 const selectedExistingCoverIssuecode = ref<string | null>(null);
 
 const validIssueSuggestions = computed(() =>
-  issueSuggestions.value.filter(({ data }) => data.coverId)
+  issueSuggestions.value.filter(({ coverId }) => coverId)
 );
 
 watch(
   () => validIssueSuggestions.value,
   async (newValue) => {
     if (newValue.length) {
-      issueSuggestionsWithUrls.value = (
+      issueSuggestions.value = (
         await Promise.all(
           newValue.map((issueSuggestion) =>
-            coverIdServices.downloadCover(issueSuggestion.data.coverId!)
+            coverIdServices.downloadCover(issueSuggestion.coverId)
           )
         )
       ).map((url, i) => ({
@@ -70,14 +73,14 @@ watch(
 );
 
 const images = computed(() =>
-  issueSuggestionsWithUrls.value.map(({ url, ...data }) => ({
-    text: `${data.publicationcode} ${data.issuenumber}`,
+  issueSuggestions.value.map(({ url, issuecode }) => ({
+    text: issuecode,
     url,
   }))
 );
 
 const coverUrlToIssuecode = (url: string): string =>
-  issueSuggestionsWithUrls.value.find(
+  issueSuggestions.value.find(
     ({ url: issueSuggestionUrl }) => issueSuggestionUrl === url
   )?.issuecode || "";
 
@@ -86,15 +89,21 @@ const getPublicationcodeFromIssuecode = (issuecode: string) =>
 const getIssuenumberFromIssuecode = (issuecode: string) =>
   issuecode.split(" ")[1];
 
-const acceptIssueSuggestion = (issuecode: string) => {
-  acceptSuggestion(
-    issueSuggestions.value,
-    (suggestion) => suggestion.data.issuecode === issuecode
+const acceptIssueSuggestion = async (issuecode: string) => {
+  await indexationSocket.value.createIssueSuggestion(
+    {
+      source: "ai",
+      indexationId: indexation.value!.id,
+      issuecode,
+    },
+    true
   );
   selectedExistingCoverIssuecode.value = null;
 };
 
 const rejectAllIssueSuggestions = () => {
-  rejectAllSuggestions(issueSuggestions.value);
+  for (const issueSuggestion of issueSuggestions.value) {
+    issueSuggestion.seen = true;
+  }
 };
 </script>

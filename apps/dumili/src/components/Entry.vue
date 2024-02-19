@@ -3,24 +3,24 @@
     <template v-if="editable">
       <b-col cols="3">
         <suggestion-list
-          :suggestions="storyversionKinds"
+          :suggestions="storyversionKindsForThisEntry"
           :get-current="() => acceptedStoryversionKind"
-          :item-class="(suggestion: StoryversionKindSuggestion) => ( [`kind-${suggestion.data?.kind}`])"
+          :item-class="(suggestion) => [`kind-${suggestion.kind}`]"
           @select="
-            acceptStoryversionKindSuggestion($event?.data?.kind as string)
+            acceptStoryversionKindSuggestion($event?.kind as string)
           "
         >
-          <template #item="suggestion: StoryversionKindSuggestion">
+          <template #item="suggestion">
             {{ getStoryversionKind(suggestion) }}
           </template>
           <template #unknown-text>{{ $t("Type inconnu") }}</template>
         </suggestion-list> </b-col
-      ><b-col cols="3"><StorySuggestionList :entryurl="entryurl" /></b-col>
+      ><b-col cols="3"><StorySuggestionList :entry="entry" /></b-col>
       <b-col cols="3">
         <b-form-input
           type="text"
           class="w-100"
-          :value="acceptedEntry?.data.title || ''" /></b-col
+          :value="entry.title || ''" /></b-col
       ><b-col cols="3">
         <b-button
           class="d-flex w-100 justify-content-between"
@@ -54,7 +54,9 @@
             <i-bi-arrow-right />&nbsp;<AiSuggestionIcon status="success" />
             {{
               getStoryversionKind(
-                storyversionKinds.find(({ meta }) => meta.source === "ai")
+                storyversionKindsForThisEntry.find(
+                  ({ meta }) => meta.source === "ai"
+                )
               )
             }}
           </div>
@@ -116,15 +118,15 @@
       <b-col cols="3">
         <b-badge
           size="xl"
-          :class="{ [`kind-${acceptedStoryversionKind?.data?.kind}`]: true }"
+          :class="{ [`kind-${acceptedStoryversionKind?.kind}`]: true }"
           >{{
             getStoryversionKind(acceptedStoryversionKind) || $t("Type inconnu")
           }}</b-badge
         ></b-col
       >
       <b-col cols="3">
-        <template v-if="acceptedEntry?.data.storyversion?.storycode">{{
-          acceptedEntry?.data.storyversion?.storycode
+        <template v-if="acceptedStory?.storyversion?.storycode">{{
+          acceptedStory?.storyversion?.storycode
         }}</template
         ><template v-else>{{ $t("Contenu inconnu") }}</template>
       </b-col>
@@ -153,47 +155,45 @@ import {
   StoryversionKind,
   StoryversionKindSuggestion,
 } from "~dumili-types/suggestions";
+import { entry } from "~prisma/client_dumili";
 
 const { t: $t } = useI18n();
 const props = defineProps<{
-  entryurl: string;
+  entry: entry;
   editable: boolean;
 }>();
+
+const { entry, editable } = toRefs(props);
 
 defineEmits<{
   (params: { toggle: boolean; type: "storyversionKind" }): void;
 }>();
 
-const suggestionsStore = suggestions();
+const { acceptedStories, acceptedStoryKinds, storyversionKinds } =
+  storeToRefs(suggestions());
 
 const { showAiDetectionsOn } = storeToRefs(user());
 const { aiDetails } = storeToRefs(ai());
 
-const acceptedEntry = computed(
-  () => suggestionsStore.acceptedEntries[props.entryurl]
-);
+const acceptedStory = computed(() => acceptedStories.value[props.entry.id]);
 
 const acceptedStoryversionKind = computed(
-  () => suggestionsStore.acceptedStoryversionKinds[props.entryurl]
+  () => acceptedStoryKinds.value[props.entry.id]
 );
 
-const storyversion = computed(() => acceptedEntry.value?.data.storyversion);
-const storycode = computed(() => storyversion.value?.storycode);
-const part = computed(() => acceptedEntry.value?.data.part);
-const title = computed(
-  () => acceptedEntry.value?.data.title || $t("Sans titre")
-);
-const comment = computed(() => acceptedEntry.value?.data.entrycomment);
+const storycode = computed(() => acceptedStory.value?.storyversion.storycode);
+const part = computed(() => entry.value.part);
+const title = computed(() => entry.value.title || $t("Sans titre"));
+const comment = computed(() => entry.value.entrycomment);
 
 const urlEncodedStorycode = computed(
   () => storycode.value && encodeURIComponent(storycode.value)
 );
 
-const storyversionKinds = computed(
+const storyversionKindsForThisEntry = computed(
   () =>
-    suggestionsStore.storyversionKinds.find(
-      ({ url }) => props.entryurl === url
-    )!.suggestions
+    storyversionKinds.value.find(({ url }) => props.entryurl === url)!
+      .suggestions
 );
 
 const getStoryversionKind = (
@@ -207,7 +207,7 @@ const getStoryversionKind = (
 
 const acceptStoryversionKindSuggestion = (storyversionKind: string) => {
   suggestionsStore.acceptSuggestion(
-    storyversionKinds.value,
+    storyversionKindsForThisEntry.value,
     (suggestion: StoryversionKindSuggestion) =>
       suggestion.data.kind === storyversionKind
   );

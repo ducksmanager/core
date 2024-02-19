@@ -36,6 +36,7 @@
       "~dumili-types/*": ["types/*"],
       "~web/*": ["../web/*"],
       "~translations/*": ["translations/*"],
+      "~prisma/*": ["api/prisma/*"],
       "~prisma-clients/*": ["../../packages/prisma-clients/*"],
       "~socket.io-client-services/*": [
         "../../packages/socket.io-client-services/*"

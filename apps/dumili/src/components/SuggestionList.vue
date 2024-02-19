@@ -19,9 +19,7 @@
       <div>
         <slot name="item" v-bind="suggestion" />
       </div>
-      <AiSuggestionIcon
-        v-if="suggestion.meta.source === 'ai'"
-        :status="suggestion.meta.status"
+      <AiSuggestionIcon v-if="suggestion.source === 'ai'" status="success"
     /></b-dropdown-item>
     <b-dropdown-divider v-if="suggestions.length" />
     <b-dropdown-item
@@ -44,20 +42,24 @@
           <slot v-else name="item" v-bind="(getCurrent()!)" />
         </div>
         <AiSuggestionIcon
-          v-if="getCurrent()?.meta.source === 'ai'"
-          :status="(getCurrent()?.meta as SuggestionMetaAi).status"
+          v-if="getCurrent()?.source === 'ai'"
+          status="success"
         /></div
     ></template>
   </b-dropdown>
   <slot v-if="showCustomizeForm" name="customize-form" />
 </template>
-<script setup lang="ts" generic="S extends Suggestion">
-import { Suggestion, SuggestionMetaAi } from "~dumili-types/suggestions";
+<script setup lang="ts" generic="S extends issueSuggestion|storyKindSuggestion|storySuggestion">
+import {
+  issueSuggestion,
+  storyKindSuggestion,
+  storySuggestion,
+} from "~prisma/client_dumili";
 
 const $slots = useSlots();
 
 defineSlots<{
-  default(props: { issuecode: string }): never;
+  default(props: { suggestion: S }): never;
   item(suggestion: S): never;
   "customize-form"(): never;
   "customize-text"(): never;

@@ -1,6 +1,6 @@
 import dotenv from "dotenv";
 import { fromBuffer } from "pdf2pic";
-import { createClient as createRedisClient } from 'redis';
+
 dotenv.config({
   path: ".env",
 });
@@ -22,12 +22,13 @@ import { EventsMap } from "socket.io/dist/typed-events";
 
 import { SessionUser } from "~dm-types/SessionUser";
 
+import { PrismaClient } from "./prisma/client_dumili";
 import { authenticateUser } from './services/_auth'
-import cloudinaryIndexations from "./services/cloudinary-indexations";
-import { ResourcesWithContext } from "./services/cloudinary-indexations/types";
+import cloudinaryIndexations from "./services/indexations";
+import { FullIndexation } from "./services/indexations/types";
 
-export type SessionDataWithIndexation = { user: SessionUser, indexation: { id: string, resources: ResourcesWithContext } }
-export type SessionData = Pick<SessionDataWithIndexation, 'user' | 'indexation'>
+export type SessionDataWithIndexation = { user: SessionUser, indexation: FullIndexation }
+export type SessionData = { user: SessionUser }
 export class ServerWithData<Data extends object> extends Server<
   Record<string, never>,
   Record<string, never>,
@@ -36,6 +37,8 @@ export class ServerWithData<Data extends object> extends Server<
 > { }
 
 export type NamespaceWithData<Services extends EventsMap, Data extends object = object> = Namespace<Services, Record<string, never>, Record<string, never>, Data>
+
+export const prisma = new PrismaClient();
 
 const httpServer = createServer(async (req, res) => {
   if (req.url === '/upload') {
@@ -78,6 +81,16 @@ const httpServer = createServer(async (req, res) => {
               return
           }
 
+          const firstNewPageNumber = (await prisma.page.findFirst({
+            where: {
+              indexationId: indexationId
+            },
+            orderBy: {
+              pageNumber: 'desc'
+            }
+          }))?.pageNumber ?? 1
+
+          const uploadedImages: string[] = []
           for (let idx = 0; idx < imagesToUpload.length; idx++) {
             const filename = imagesToUpload[idx]
             await cloudinary.uploader.upload(filename, {
@@ -90,9 +103,9 @@ const httpServer = createServer(async (req, res) => {
                 project: "dumili",
                 user: user.username,
                 indexation: indexationId,
-                page: idx+1,
+                page: idx + 1,
               },
-            }).catch(e => {
+            }).then((value) => { uploadedImages.push(value.secure_url) }).catch(e => {
               console.error(e)
               res.writeHead(500, { 'Content-Type': 'text/plain' });
               res.end(e);
@@ -100,6 +113,34 @@ const httpServer = createServer(async (req, res) => {
               fs.unlinkSync(filename)
             })
           }
+          const pagesToCreate = {
+            pages: {
+              create: uploadedImages.map((url, idx) => ({
+                pageNumber: firstNewPageNumber + idx + 1, url
+              }))
+            }
+          }
+          prisma.indexation.upsert({
+            where: {
+              id: indexationId
+            },
+            update: {
+              ...pagesToCreate
+            },
+            create: {
+              dmUserId: user.id,
+              id: indexationId,
+              ...pagesToCreate
+            }
+          }).then(() => {
+            res.writeHead(200, { 'Content-Type': 'text/plain' });
+            res.end(`upload success: ${filename}`);
+          }).catch(e => {
+            console.error(e)
+            res.writeHead(401, { 'Content-Type': 'text/plain' });
+            res.end(e);
+
+          })
         });
         bb.on('close', () => {
           res.writeHead(200, { 'Content-Type': 'text/plain' });
@@ -133,7 +174,3 @@ cloudinaryIndexations(io)
 
 httpServer.listen(3002);
 console.log('Dumuli API open on port 3002')
-
-export const redisClient = createRedisClient()
-  .on('error', err => console.log('Redis Client Error', err))
-  .connect()

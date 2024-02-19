@@ -8,9 +8,11 @@
     "clean": "rm -rf dist",
     "build": "rm -rf dist/{api,types} && ./node_modules/.bin/tsc && tsc-alias",
     "dev": "concurrently -n nodemon,tsx \"nodemon\" \"tsx --watch\"",
-    "lint": "eslint --fix ."
+    "lint": "eslint --fix .",
+    "prisma": "prisma db pull && prisma generate"
   },
   "dependencies": {
+    "@prisma/client": "^5.9.1",
     "@sentry/node": "^7.100.1",
     "@socket.io/admin-ui": "^0.5.1",
     "axios": "^1.6.7",
@@ -24,7 +26,7 @@
     "js-cookie": "^3.0.5",
     "jsonwebtoken": "^9.0.2",
     "pdf2pic": "^3.1.1",
-    "redis": "^4.6.13",
+    "prisma": "^5.9.1",
     "sharp": "^0.33.2",
     "socket.io": "^4.7.4",
     "~socket.io-services": "workspace:*"

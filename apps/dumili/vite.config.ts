@@ -64,6 +64,7 @@ export default defineConfig({
       "~dm-types": path.resolve(__dirname, "../../packages/types"),
       "~dumili-services": path.resolve(__dirname, "api/services"),
       "~dumili-types": path.resolve(__dirname, "types"),
+      "~prisma": path.resolve(__dirname, "api/prisma"),
       "~web": path.resolve(__dirname, "../web"),
       "~socket.io-client-services": path.resolve(
         __dirname,

@@ -1,8 +1,8 @@
 <template>
   <img
-    v-if="entries.length"
+    v-if="indexation?.pages.length"
     class="d-none"
-    :src="entries[0].url"
+    :src="indexation.pages[0].url"
     @load="
       ({ target }) => {
         coverHeight = (target as HTMLImageElement).height;
@@ -17,7 +17,7 @@
     <b-container class="book-container d-flex w-50 h-100 m-0">
       <div id="book" class="flip-book">
         <div
-          v-for="(entry, index) in entries"
+          v-for="(entry, index) in indexation!.pages"
           :key="`page-${index}`"
           class="page"
           :class="{ single: isSinglePage }"
@@ -117,8 +117,8 @@
       <b-row>
         <b-col :cols="1" style="padding: 0">
           <b-row
-            v-for="pageNumber in numberOfPages"
-            :key="pageNumber"
+            v-for="{id, pageNumber} in indexation!.pages"
+            :key="id"
             style="height: 50px"
             :variant="currentPage === pageNumber ? 'secondary' : 'light'"
             class="g-0 px-0 py-0 align-items-center border"
@@ -141,7 +141,7 @@
             :variant="currentPage === pageNumber ? 'secondary' : 'light'"
             class="g-0 px-0 py-0 align-items-center border position-relative"
           > -->
-          <template v-for="entry in entries" :key="entry.url">
+          <template v-for="entry in indexation!.entries" :key="entry.url">
             <!-- <vue-draggable-resizable
               class="position-absolute border-0"
               :parent="true"
@@ -160,26 +160,23 @@
               ><hr class="m-0"
             /></vue-draggable-resizable> -->
             <b-col
-              :class="`w-100 kind-${
-                acceptedStoryversionKinds[entry.url]?.data.kind
-              }`"
+              :class="`w-100 kind-${acceptedStoryKinds[entry.id]?.kind}`"
               :style="{
                 height: `${
                   50 *
-                  (acceptedEntries[entry.url]?.data.storyversion?.entirepages ||
-                    1)
+                  (acceptedStories[entry.id]?.storyversion?.entirepages || 1)
                 }px`,
               }"
-              :title="`${acceptedEntries[entry.url]?.data.title} (${
-                acceptedEntries[entry.url]?.data.storyversion?.entirepages || 1
+              :title="`${entry.title} (${
+                acceptedStories[entry.id]?.storyversion?.entirepages || 1
               } pages)`"
             ></b-col>
           </template>
         </b-col>
         <b-col :cols="10" style="padding: 0">
           <b-row
-            v-for="(entry, idx) in entries"
-            :key="entry.url"
+            v-for="(entry, idx) in indexation!.entries"
+            :key="entry.id"
             :style="currentPage === idx ? {} : { height: '50px' }"
             :variant="currentPage === idx ? 'secondary' : 'light'"
             :class="`g-0 px-0 py-0 align-items-center border bg-${
@@ -187,7 +184,7 @@
             }`"
           >
             <b-col @click="currentPage = idx"
-              ><Entry :entryurl="urls[idx]" :editable="currentPage === idx"
+              ><Entry :entry="entry" :editable="currentPage === idx"
             /></b-col>
           </b-row>
         </b-col>
@@ -211,28 +208,16 @@ const coverWidth = ref<number | null>(null);
 let coverHeight = ref<number | null>(null);
 let book = ref<PageFlip | null>(null);
 const currentPage = ref(0);
-const numberOfPages = ref(9);
 
-const props = defineProps<{ indexationId: string }>();
-const { indexationId } = toRefs(props);
+defineProps<{ indexationId: string }>();
 
-const urls = computed(() =>
-  Array.from(
-    { length: numberOfPages.value },
-    (_, i) => Object.keys(acceptedStoryversionKinds.value)[i]
-  )
+const { indexation, acceptedStoryKinds, acceptedStories } = storeToRefs(
+  suggestions()
 );
-
-const {
-  storyversionKinds,
-  acceptedStoryversionKinds,
-  acceptedEntries,
-  entries,
-} = storeToRefs(suggestions());
 
 const { showAiDetectionsOn: showAiDetections } = user();
 
-const isSinglePage = computed(() => entries.value.length === 1);
+const isSinglePage = computed(() => indexation.value?.pages.length === 1);
 
 const displayedWidth = computed(() => book.value?.getSettings().width);
 const displayedHeight = computed(() => book.value?.getSettings().height);
@@ -318,16 +303,16 @@ watch(
   { immediate: true }
 );
 
-watch(
-  () => storyversionKinds.value,
-  async () => {
-    ai = useAi(indexationId.value);
-    await ai.runCoverSearch();
-    await ai.runStorycodeOcr();
-    ai.status.value = "loaded";
-  },
-  { deep: true, immediate: true }
-);
+// watch(
+//   () => storyversionKinds.value,
+//   async () => {
+//     ai = useAi(indexationId.value);
+//     await ai.runCoverSearch();
+//     await ai.runStorycodeOcr();
+//     ai.status.value = "loaded";
+//   },
+//   { deep: true, immediate: true }
+// );
 </script>
 
 <style scoped lang="scss">

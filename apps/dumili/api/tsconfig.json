@@ -19,7 +19,8 @@
     "paths": {
       "~/*": ["*"],
       "~dm-types/*": ["../../../packages/types/*"],
-      "~dumili-types/*": ["../types/*"]
+      "~dumili-types/*": ["../types/*"],
+      "~prisma/*": ["prisma/*"]
     }
   },
   "include": ["index.ts", "services/**/*.ts"]

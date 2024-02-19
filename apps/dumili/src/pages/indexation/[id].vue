@@ -12,7 +12,7 @@
         :folder-name="indexationId"
         @done="
           showUploadWidget = !showUploadWidget;
-          getPageImages();
+          getIndexation();
         "
         @abort="showUploadWidget = !showUploadWidget"
       />
@@ -44,10 +44,7 @@
 import { getIndexationSocket } from "~/composables/useDumiliSocket";
 import { suggestions } from "~/stores/suggestions";
 import { tabs } from "~/stores/tabs";
-import {
-  StoryversionKind,
-  StoryversionKindSuggestion,
-} from "~dumili-types/suggestions";
+
 const showUploadWidget = ref(false);
 const route = useRoute();
 
@@ -56,48 +53,29 @@ const { t: $t } = useI18n();
 const { activeTab } = storeToRefs(tabs());
 const { tabNames } = tabs();
 
-const { entries, storyversionKinds, indexationId } = storeToRefs(suggestions());
+const indexationId = ref<string | null>(null);
+
+const { indexation } = storeToRefs(suggestions());
 const images = computed(() =>
-  entries.value.map(({ url }) => ({
+  indexation.value!.pages.map(({ url }) => ({
     url,
     text: url,
   }))
 );
-const getPageImages = async () => {
-  const data = await getIndexationSocket(
-    indexationId.value!
-  ).getIndexationResources();
+const getIndexation = async () => {
+  const data = await getIndexationSocket(indexationId.value!).getIndexation();
   if ("error" in data) {
     console.error(data.error);
     return;
   }
-  const urls = data.resources.map(({ secure_url }) => secure_url);
-  entries.value = urls.map((url, idx) => ({
-    url,
-    suggestions: data.resources[idx].context.custom.entrySuggestions || [],
-  }));
-  storyversionKinds.value = urls.map((url, idx) => ({
-    url,
-    suggestions:
-      data.resources[idx].context.custom.storyversionKindSuggestions ||
-      Object.values(StoryversionKind).map(
-        (key) =>
-          new StoryversionKindSuggestion(
-            { kind: key },
-            {
-              isAccepted: false,
-              source: "default",
-            }
-          )
-      ),
-  }));
+  indexation.value = data.indexation;
 };
 
 watch(
   () => route.params.id,
   (id) => {
     indexationId.value = id as string;
-    getPageImages();
+    getIndexation();
   },
   { immediate: true }
 );

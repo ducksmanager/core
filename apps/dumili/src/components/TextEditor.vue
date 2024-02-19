@@ -5,7 +5,7 @@
     >
     <b-form-textarea
       v-model="textContent"
-      :rows="Object.keys(acceptedEntries).length + 1"
+      :rows="Object.keys(acceptedStories).length + 1"
       readonly
       :disabled="!issue"
       :placeholder="textContentError"
@@ -16,10 +16,9 @@
 const { t: $t } = useI18n();
 
 import { suggestions } from "~/stores/suggestions";
-import { EntrySuggestion } from "~dumili-types/suggestions";
 
 const textContentError = ref("");
-const acceptedEntries = computed(() => suggestions().acceptedEntries);
+const acceptedStories = computed(() => suggestions().acceptedStories);
 
 const issue = computed(() => suggestions().acceptedIssue);
 
@@ -27,26 +26,24 @@ const textContent = computed(() => {
   if (!issue.value) {
     return undefined;
   }
-  const shortIssuecode = issue.value?.data.issuecode.split("/")[1];
+  const shortIssuecode = issue.value?.issuecode.split("/")[1];
   const rows = [
     [shortIssuecode],
-    ...(
-      Object.values(acceptedEntries.value).filter(
-        (entry) => entry !== undefined
-      ) as EntrySuggestion[]
-    ).map((entry, idx) => [
-      `${shortIssuecode}${String.fromCharCode(97 + idx)}`,
-      entry.data.storyversion?.storycode,
-      String(entry.data.storyversion?.entirepages || 1),
-      ...["plot", "writer", "artist", "ink"].map(
-        (job) =>
-          entry.data.storyjobs?.find(
-            ({ plotwritartink }) => plotwritartink === job
-          )?.personcode
-      ),
-      entry.data.printedhero,
-      entry.data.title,
-    ]),
+    ...Object.values(acceptedStories.value)
+      .filter((entry) => entry !== undefined)
+      .map((entry, idx) => [
+        `${shortIssuecode}${String.fromCharCode(97 + idx)}`,
+        entry!.storyversion?.storycode,
+        String(entry!.storyversion?.entirepages || 1),
+        ...["plot", "writer", "artist", "ink"].map(
+          (job) =>
+            entry!.storyjobs?.find(
+              ({ plotwritartink }) => plotwritartink === job
+            )?.personcode
+        ),
+        entry!.printedhero,
+        entry!.title,
+      ]),
   ];
   const colsMaxLengths = rows.reduce<number[]>((acc, row) => {
     row.forEach((col, i) => {

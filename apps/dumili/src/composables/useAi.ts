@@ -13,11 +13,11 @@ export default (indexationId: string) => {
 
   const { aiDetails } = storeToRefs(aiStore());
   const indexationServices = getIndexationSocket(indexationId);
+  const { indexation, acceptedStories, acceptedStoryKinds } = storeToRefs(
+    suggestions()
+  );
 
   const hint = useHintMaker();
-
-  const { acceptedStoryversionKinds: acceptedStoryKinds, storyversionKinds } =
-    storeToRefs(suggestions());
 
   const runKumiko = async () => {
     status.value = "loading";
@@ -40,12 +40,15 @@ export default (indexationId: string) => {
   };
 
   const runCoverSearch = async () => {
-    if (acceptedStoryKinds.value[0]?.data?.kind === StoryversionKind.Cover) {
+    const firstEntry = indexation.value!.entries[0];
+    if (
+      firstEntry?.acceptedSuggestedStoryKind?.kind === StoryversionKind.Cover
+    ) {
       console.info(
         "La première page est une couverture, on va chercher si on la détecte parmi les résultats de la recherche par image..."
       );
 
-      const url = storyversionKinds.value[0].url;
+      const url = indexation.value!.pages[0].url;
       nextTick(async () => {
         coverIdServices.searchFromCover({ url }).then((results) => {
           if ("error" in results) {
@@ -62,16 +65,24 @@ export default (indexationId: string) => {
   };
 
   const runStorycodeOcr = async () => {
-    const storyFirstPages = storyversionKinds.value
-      .filter(({ suggestions: suggestionsForEntry }) =>
-        suggestionsForEntry.some(
-          ({ data, meta }) =>
-            meta.isAccepted && data.kind === StoryversionKind.Story
-        )
-      )
-      .map(({ url }) => url);
+    const storiesFirstPages: { entryId: number; startsAtPage: number }[] = [];
 
-    for (const url of storyFirstPages) {
+    let pageCounter = 0;
+    for (const [entryId, acceptedStory] of Object.entries(
+      acceptedStories.value
+    )) {
+      const storyKind = acceptedStoryKinds.value[entryId]!.kind;
+      if (storyKind === StoryversionKind.Story) {
+        storiesFirstPages.push({
+          entryId: parseInt(entryId),
+          startsAtPage: pageCounter,
+        });
+      }
+      pageCounter += Math.max(1, acceptedStory?.storyversion.entirepages || 1);
+    }
+
+    for (const { startsAtPage, entryId } of storiesFirstPages) {
+      const url = indexation.value!.pages[startsAtPage].url;
       const ocrResults = await indexationServices.getOcrResults(url);
 
       if ("error" in ocrResults) {
@@ -90,18 +101,14 @@ export default (indexationId: string) => {
 
         hint.applyHintsFromKeywordSearch(url, possibleStories);
 
-        aiDetails.value[url!].texts = {
-          ocrResults: ocrResults.data,
-          possibleStories: possibleStories.map(
-            ({ storycode, title, entirepages }) => ({
-              storyversion: {
-                storycode,
-                entirepages,
-              },
-              title,
-            })
-          ),
-        };
+        for (const { storycode } of possibleStories) {
+          await indexationServices.createStorySuggestion({
+            entryId,
+            source: "ai",
+            storyversioncode: storycode,
+            ocrResults: JSON.stringify(ocrResults.data),
+          });
+        }
       } catch (e) {
         console.error(e);
       } finally {

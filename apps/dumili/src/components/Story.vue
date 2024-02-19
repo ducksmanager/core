@@ -1,11 +1,11 @@
 <template>
-  <b>{{ entry.storyversion?.storycode }}</b
-  >&nbsp;{{ entry.title }}
+  <b>{{ suggestion?.storyversioncode }}</b
+  >&nbsp;{{ suggestion }}
 </template>
 <script setup lang="ts">
-import { EntrySuggestion } from "~dumili-types/suggestions";
+import { storySuggestion } from "~prisma/client_dumili";
 
 defineProps<{
-  entry: EntrySuggestion["data"];
+  suggestion: storySuggestion;
 }>();
 </script>

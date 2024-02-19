@@ -1,71 +1,53 @@
 <template>
   <suggestion-list
-    :suggestions="issueSuggestions"
-    :get-current="() => issue as IssueSuggestion"
+    :suggestions="indexation!.issueSuggestions"
+    :get-current="() => issue!"
     :show-customize-form="showIssueSelect"
     @toggle-customize-form="showIssueSelect = $event"
-    @select="acceptIssueSuggestion($event as IssueSuggestion)"
+    @select="$event && acceptIssueSuggestion($event, $event.source)"
   >
-    <template #item="suggestion: IssueSuggestion">
-      <Issue
-        :publicationcode="suggestion.data.publicationcode"
-        :issuenumber="suggestion.data.issuenumber" /></template
+    <template #item="suggestion: issueSuggestion">
+      <Issue v-bind="suggestion" /></template
     ><template #unknown-text>{{ $t("Numéro inconnu") }}</template>
     <template #customize-form>
       <IssueSelect
-        @change="
-          (issuecode: string|null) => addCustomIssuecodeToIssueSuggestions(issuecode)
-        " /></template
+        @change="$event && acceptIssueSuggestion($event, 'user')" /></template
     ><template #customize-text> {{ $t("Sélectionner...") }}</template>
   </suggestion-list>
 </template>
 
 <script lang="ts" setup>
 import { suggestions } from "~/stores/suggestions";
-import { IssueSuggestion } from "~dumili-types/suggestions";
 
 const { t: $t } = useI18n();
 
 const showIssueSelect = ref(false);
 const suggestionsStore = suggestions();
+const { indexation } = storeToRefs(suggestionsStore);
+
+import { getIndexationSocket } from "~/composables/useDumiliSocket";
+import { issueSuggestion } from "~prisma/client_dumili";
 
 const issue = computed(() => suggestionsStore.acceptedIssue);
-const issueSuggestions = computed(() =>
-  suggestionsStore.issueSuggestions.filter(
-    (suggestion) => suggestion !== undefined
-  )
-);
 
-const addCustomIssuecodeToIssueSuggestions = (issuecode: string | null) => {
-  if (issuecode) {
-    suggestionsStore.issueSuggestions =
-      suggestionsStore.issueSuggestions.filter(
-        ({ meta }) => meta.source !== "user"
-      );
-    const [publicationcode, issuenumber] = issuecode.split(" ");
-    const userSuggestion = new IssueSuggestion(
-      {
-        publicationcode,
-        issuenumber,
-        issuecode,
-        coverId: null,
-      },
-      {
-        source: "user",
-        isAccepted: false,
-      }
-    );
-    suggestionsStore.issueSuggestions.push(userSuggestion);
-    acceptIssueSuggestion(userSuggestion);
+const acceptIssueSuggestion = async (
+  {
+    publicationcode,
+    issuenumber,
+  }: {
+    publicationcode: string | null;
+    issuenumber: string | null;
+  },
+  source: issueSuggestion["source"]
+) => {
+  if (publicationcode && issuenumber) {
+    await getIndexationSocket(indexation.value!.id).acceptIssueSuggestion({
+      source,
+      indexationId: indexation.value!.id,
+      publicationcode,
+      issuenumber,
+    });
   }
-};
-
-const acceptIssueSuggestion = (suggestion?: IssueSuggestion) => {
-  suggestionsStore.acceptSuggestion(
-    suggestionsStore.issueSuggestions,
-    (existingSuggestion) =>
-      suggestion?.data?.issuecode === existingSuggestion.data.issuecode
-  );
   showIssueSelect.value = false;
 };
 </script>

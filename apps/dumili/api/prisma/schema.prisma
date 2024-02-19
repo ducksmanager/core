@@ -1,0 +1,108 @@
+generator client {
+  provider      = "prisma-client-js"
+  output        = "client_dumili"
+  binaryTargets = ["native", "debian-openssl-1.1.x", "debian-openssl-3.0.x"]
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model entry {
+  id                           Int                   @id @default(autoincrement())
+  title                        String?               @db.VarChar(100)
+  order                        Int                   @db.SmallInt
+  acceptedStorySuggestedId     Int                   @map("accepted_story_suggested_id")
+  acceptedStoryKindSuggestedId Int                   @map("accepted_story_kind_suggested_id")
+  indexationId                 String                @map("indexation_id") @db.VarChar(20)
+  part                         String?               @db.VarChar(5)
+  entrycomment                 String?               @db.VarChar(2009)
+  indexation                   indexation            @relation(fields: [indexationId], references: [id], onUpdate: Restrict, map: "entry_indexation_id_fk")
+  acceptedSuggestedStoryKind   storyKindSuggestion   @relation("entry_accepted_story_kind_suggested_idTostory_kind_suggestion", fields: [acceptedStoryKindSuggestedId], references: [id], onUpdate: Restrict, map: "entry_story_kind_suggestion_id_fk")
+  acceptedSuggestedStory       storySuggestion       @relation("entry_accepted_story_suggested_idTostory_suggestion", fields: [acceptedStorySuggestedId], references: [id], onUpdate: Restrict, map: "entry_story_suggestion_id_fk")
+  storyKindSuggestions         storyKindSuggestion[]
+  storySuggestions             storySuggestion[]
+
+  @@index([indexationId], map: "entry_indexation_id_fk")
+  @@index([acceptedStoryKindSuggestedId], map: "entry_story_kind_suggestion_id_fk")
+  @@index([acceptedStorySuggestedId], map: "entry_story_suggestion_id_fk")
+}
+
+model page {
+  id           Int        @id @default(autoincrement())
+  pageNumber   Int        @map("page_number") @db.SmallInt
+  url          String     @unique(map: "page_url_uindex") @db.VarChar(255)
+  indexationId String     @map("indexation_id") @db.VarChar(20)
+  indexation   indexation @relation(fields: [indexationId], references: [id], onUpdate: Restrict, map: "page_indexation_id_fk")
+
+  @@index([indexationId], map: "page_indexation_id_fk")
+}
+
+model indexation {
+  id                        String            @id @db.VarChar(20)
+  issuecode                 String?           @db.VarChar(9)
+  dmUserId                  Int               @map("dm_user_id")
+  acceptedIssueSuggestionId Int?              @map("accepted_issue_suggestion_id")
+  entries                   entry[]
+  acceptedIssueSuggestion   issueSuggestion?  @relation("indexation_accepted_issue_suggestion_idToissue_suggestion", fields: [acceptedIssueSuggestionId], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "indexation_issue_suggestion_id_fk")
+  issueSuggestions          issueSuggestion[]
+  pages                     page[]
+
+  @@index([acceptedIssueSuggestionId], map: "indexation_issue_suggestion_id_fk")
+}
+
+model storyKindSuggestion {
+  id                Int                       @id @default(autoincrement())
+  kind              String                    @db.VarChar(1)
+  panelBoundaries   String?                   @map("panel_boundaries") @db.LongText
+  source            storyKindSuggestionSource
+  entryId           Int                       @map("entry_id")
+  acceptedOnEntries entry[]                   @relation("entry_accepted_story_kind_suggested_idTostory_kind_suggestion")
+  entry             entry                     @relation(fields: [entryId], references: [id], onUpdate: Restrict, map: "story_kind_suggestion_entry_id_fk")
+
+  @@index([entryId], map: "story_kind_suggestion_entry_id_fk")
+  @@map("story_kind_suggestion")
+}
+
+model storySuggestion {
+  id                Int                   @id @default(autoincrement())
+  storyversioncode  String                @db.VarChar(9)
+  source            storySuggestionSource
+  entryId           Int                   @map("entry_id")
+  ocrResults        String?               @map("ocr_results") @db.LongText
+  acceptedOnEntries entry[]               @relation("entry_accepted_story_suggested_idTostory_suggestion")
+  entry             entry                 @relation(fields: [entryId], references: [id], onUpdate: Restrict, map: "story_suggestion_entry_id_fk")
+
+  @@index([entryId], map: "story_suggestion_entry_id_fk")
+  @@map("story_suggestion")
+}
+
+model issueSuggestion {
+  id                Int                     @id @default(autoincrement())
+  indexationId      String                  @map("indexation_id") @db.VarChar(20)
+  source            issue_suggestion_source
+  publicationcode   String?                 @db.VarChar(12)
+  issuenumber       String?                 @db.VarChar(13)
+  issuecode         String?                 @db.VarChar(25)
+  acceptedOnEntries indexation[]            @relation("indexation_accepted_issue_suggestion_idToissue_suggestion")
+  indexation        indexation              @relation(fields: [indexationId], references: [id], onUpdate: Restrict, map: "issue_suggestion_indexation_id_fk")
+
+  @@index([indexationId], map: "issue_suggestion_indexation_id_fk")
+  @@map("issue_suggestion")
+}
+
+enum storySuggestionSource {
+  user
+  ai
+}
+
+enum storyKindSuggestionSource {
+  default
+  ai
+}
+
+enum issue_suggestion_source {
+  ai
+  user
+}

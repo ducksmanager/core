@@ -1,78 +1,63 @@
 <template>
   <suggestion-list
-    :suggestions="entrySuggestions"
+    :suggestions="entry.storySuggestions"
     :get-current="() => acceptedEntry"
     :show-customize-form="showEntrySelect"
     @toggle-customize-form="showEntrySelect = $event"
-    @select="
-      acceptEntrySuggestion(
-        ($event as EntrySuggestion | undefined)?.data?.storyversion
-          ?.storycode || undefined
-      )
-    "
+    @select="acceptStorySuggestion($event!)"
   >
-    <template #item="suggestion: EntrySuggestion">
-      <Story :entry="suggestion.data" />
+    <template #item="suggestion">
+      <Story :suggestion="suggestion" />
     </template>
     <template #unknown-text>{{ $t("Contenu inconnu") }}</template>
     <template #customize-text>{{ $t("Rechercher...") }}</template>
     <template #customize-form>
-      <StorySearch @story-selected="addCustomStoryversionToEntrySuggestions" />
+      <StorySearch
+        @story-selected="addAndAcceptStoryversionToStorySuggestions"
+      />
     </template>
   </suggestion-list>
 </template>
 
 <script lang="ts" setup>
+import { getIndexationSocket } from "~/composables/useDumiliSocket";
 import { suggestions } from "~/stores/suggestions";
 import { SimpleStory } from "~dm-types/SimpleStory";
-import { EntrySuggestion } from "~dumili-types/suggestions";
+import { FullIndexation } from "~dumili-services/indexations/types";
+import { entry, storySuggestion } from "~prisma/client_dumili";
 
 const { t: $t } = useI18n();
 
 const props = defineProps<{
-  entryurl: string;
+  entry: FullIndexation["entries"][number];
 }>();
 
+const { entry } = toRefs(props);
+
+const indexationSocket = computed(() =>
+  getIndexationSocket(entry.value.indexationId)
+);
+
 const showEntrySelect = ref(false);
-const { acceptSuggestion } = suggestions();
-const { acceptedEntries, entries: allEntrySuggestions } = storeToRefs(
-  suggestions()
-);
+const { acceptedStories } = storeToRefs(suggestions());
 
-const acceptedEntry = computed(() => acceptedEntries.value[props.entryurl]);
-const entryIndex = computed(() =>
-  allEntrySuggestions.value.findIndex(({ url }) => url === props.entryurl)
-);
-const entrySuggestions = computed(
-  () =>
-    allEntrySuggestions.value[entryIndex.value].suggestions.filter(
-      (suggestion) => suggestion !== undefined
-    ) as EntrySuggestion[]
-);
+const acceptedEntry = computed(() => acceptedStories.value[entry.value.id]);
 
-const addCustomStoryversionToEntrySuggestions = (searchResult: SimpleStory) => {
-  const userSuggestion = new EntrySuggestion(
-    {
-      title: searchResult.title,
-      storyversion: {
-        storycode: searchResult.storycode,
-        entirepages: searchResult.entirepages,
-      },
+const addAndAcceptStoryversionToStorySuggestions = async (
+  searchResult: SimpleStory
+) => {
+  await indexationSocket.value.createStorySuggestion({
+    source: "user",
+    entryId: entry.value.id,
+    storyversioncode: searchResult.storycode,
+    acceptedOnEntries: {
+      connect: { id: entry.value.id },
     },
-    { source: "user", isAccepted: true }
-  );
-  allEntrySuggestions.value[entryIndex.value].suggestions = [
-    ...entrySuggestions.value.filter(({ meta }) => meta.source === "ai"),
-    userSuggestion,
-  ];
-  acceptEntrySuggestion(searchResult.storycode);
+  });
 };
 
-const acceptEntrySuggestion = (storycode?: string) => {
-  acceptSuggestion(
-    entrySuggestions.value,
-    (suggestion) => suggestion.data.storyversion?.storycode === storycode
-  );
+const acceptStorySuggestion = async (suggestion: storySuggestion) => {
+  await indexationSocket.value.acceptStorySuggestion(suggestion);
   showEntrySelect.value = false;
 };
 </script>

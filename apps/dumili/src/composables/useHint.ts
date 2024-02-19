@@ -2,23 +2,29 @@ import { suggestions } from "~/stores/suggestions";
 import CoverIdServices from "~dm-services/cover-id/types";
 import { StorySearchResults } from "~dm-types/StorySearchResults";
 import { KumikoResult } from "~dumili-types/KumikoResult";
-import {
-  EntrySuggestion,
-  IssueSuggestion,
-  StoryversionKind,
-} from "~dumili-types/suggestions";
+import { StoryversionKind } from "~dumili-types/suggestions";
 import { EventReturnType } from "~socket.io-services/types";
 import { stores as webStores } from "~web";
 
 export default () => {
   const { acceptSuggestion } = suggestions();
-  const { acceptedEntries, entries, issueSuggestions, storyversionKinds } =
-    storeToRefs(suggestions());
+  const { acceptedStories, indexation } = storeToRefs(suggestions());
   const coaStore = webStores.coa();
   const applyHintsFromKumiko = (results: KumikoResult[]) => {
     results?.forEach((result, idx) => {
-      const { url: entryurl } = entries.value[idx];
-      const shouldBeAccepted = acceptedEntries.value[entryurl] === undefined;
+      const page = indexation.value!.pages[idx];
+      let thisEntry;
+      let pageCounter = 0;
+      for (const entry of indexation.value!.entries) {
+        pageCounter +=
+          acceptedStories.value[entry.id]?.storyversion.entirepages || 1;
+        if (pageCounter > idx) {
+          thisEntry = entry;
+          break;
+        }
+      }
+
+      const shouldBeAccepted = acceptedStories.value[entryurl] === undefined;
 
       if (shouldBeAccepted) {
         const inferredKind =
@@ -75,20 +81,19 @@ export default () => {
   ) => {
     const entryIndex = entries.value.findIndex(({ url }) => url === entryurl);
     entries.value[entryIndex].suggestions = results.map(
-      ({ storycode, title }) =>
-        new EntrySuggestion(
-          {
-            storyversion: {
-              storycode,
-            },
-            title,
+      ({ storycode, title }) => (
+        {
+          storyversion: {
+            storycode,
           },
-          {
-            source: "ai",
-            isAccepted: false,
-            status: "success",
-          }
-        )
+          title,
+        },
+        {
+          source: "ai",
+          isAccepted: false,
+          status: "success",
+        }
+      )
     );
   };
 
