@@ -12,7 +12,7 @@
   },
   "dependencies": {
     "@prisma/client": "^5.7.0",
-    "prisma": "^5.7.0"
+    "prisma": "^5.10.2"
   },
   "devDependencies": {
     "ts-node": "^10.9.1"
