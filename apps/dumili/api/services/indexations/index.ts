@@ -8,7 +8,7 @@ import {
   SessionData,
   SessionDataWithIndexation,
 } from "~/index";
-import { Prisma, storySuggestion } from "~/prisma/client_dumili";
+import { entry, Prisma, storyKindSuggestion, storySuggestion } from "~/prisma/client_dumili";
 import CoaServices from "~dm-services/coa/types";
 import { storyKinds } from "~dumili-types/storyKinds";
 import { useSocket } from "~socket.io-client-services/index";
@@ -19,11 +19,12 @@ const coaServices = socket.addNamespace<CoaServices>(
   CoaServices.namespaceEndpoint
 );
 
+import { Server } from "socket.io";
+
 import { RequiredAuthMiddleware } from "../_auth";
 import { runKumiko } from "./kumiko";
 import { extendBoundaries, runOcr } from "./ocr";
-import Events, { FullIndexation, IndexationEvents, indexationPayloadInclude } from "./types";
-import { Server } from "socket.io";
+import Events, { IndexationEvents, indexationPayloadInclude } from "./types";
 
 const getFullIndexation = (indexationId: string) => prisma.indexation.findUnique({
   where: { id: indexationId },
@@ -157,8 +158,13 @@ export default (io: Server) => {
             ({ url }) => url
           )
         ).then(async (data) => {
-          let currentEntry: FullIndexation["entries"]["0"];
-          data.forEach(async (result, idx) => {
+          const storyStoryKind = storyKinds.find(({ label }) => label === 'Story')!
+          let previousPosition = String.fromCharCode(
+            "a".charCodeAt(0) - 1);
+
+          const indexationId = indexationSocket.data.indexation.id;
+          const entriesToCreate: ({ position: entry['position'] } & Pick<storyKindSuggestion, 'kind' | 'panelBoundaries'>)[] = []
+          data.forEach((result, idx) => {
             const inferredKind = storyKinds.find(
               ({ label }) =>
                 label ===
@@ -169,20 +175,53 @@ export default (io: Server) => {
                   : "Story")
             )!.code;
 
-            if (currentEntry?.acceptedSuggestedStoryKind?.kind !== inferredKind) {
-              const { entryId } = await createEntry({
-                indexationId: indexationSocket.data.indexation.id,
-                position: String.fromCharCode(
-                  "a".charCodeAt(0) + indexationSocket.data.indexation.entries.length
-                ),
-              });
-              await acceptStoryKindSuggestion({
-                entryId,
+            // Don't create a new entry if both the previous one and this one are stories
+            if (!(inferredKind === storyStoryKind.code && entriesToCreate[entriesToCreate.length - 1]?.kind === storyStoryKind.code)) {
+              const position = String.fromCharCode(previousPosition.charCodeAt(0) + 1)
+              entriesToCreate.push({
+                position,
                 kind: inferredKind,
-                panelBoundaries: JSON.stringify(result.panels),
-              });
+                panelBoundaries: JSON.stringify(result.panels)
+              })
+              previousPosition = position
             }
           })
+
+          await prisma.$transaction(entriesToCreate.map(({ position, kind, panelBoundaries }) =>
+            prisma.entry.create({
+              data: {
+                indexationId,
+                position,
+                storyKindSuggestions: {
+                  create: [{
+                    kind,
+                    panelBoundaries
+                  }]
+                }
+              }
+            })))
+          const entriesWithStoryKindSuggestions = await prisma.entry.findMany({
+            where: {
+              indexationId
+            },
+            include: {
+              storyKindSuggestions: true
+            }
+          })
+
+          await prisma.$transaction(entriesWithStoryKindSuggestions.map((entry) => prisma.entry.update(({
+            data: {
+              acceptedSuggestedStoryKind: {
+                connect: {
+                  id: entry.storyKindSuggestions[0].id
+                }
+              }
+            },
+            where: {
+              id: entry.id
+            }
+          }))))
+
           callback({ status: 'OK' });
         }).catch((err) => {
           console.error(err);
@@ -254,40 +293,49 @@ export default (io: Server) => {
           return
         }
 
-        await prisma.issueSuggestion.deleteMany({
-          where: {
-            indexationId: indexation.id
-          }
-        });
+        // await prisma.issueSuggestion.deleteMany({
+        //   where: {
+        //     indexationId: indexation.id
+        //   }
+        // });
 
-        await prisma.entry.deleteMany({
-          where: {
-            indexationId: indexation.id
-          }
-        });
+        // await prisma.entry.deleteMany({
+        //   where: {
+        //     indexationId: indexation.id
+        //   }
+        // });
 
-        await prisma.entry.createMany({
-          data: indexation.entries
-        });
+        // await prisma.entry.createMany({
+        //   data: indexation.entries
+        // });
 
         callback()
       })
     });
 };
 
-const createEntry = async (entry: Prisma.entryUncheckedCreateInput) => {
-  const { id } = await prisma.entry.create({
-    data: entry,
-  });
-  return ({ entryId: id })
-}
+const acceptStorySuggestion = (suggestion: storySuggestion) => prisma.entry.update({
+  data: {
+    acceptedSuggestedStoryKind: {
+      connect: {
+        id: suggestion.id
+      }
+    }
+  },
+  where: {
+    id: suggestion.entryId
+  }
+});
 
-const acceptStorySuggestion = async (suggestion: storySuggestion) => {
-  await prisma.entry.update({
+const acceptStoryKindSuggestion = (suggestion: Prisma.storyKindSuggestionUncheckedCreateInput) =>
+  prisma.entry.update({
     data: {
       acceptedSuggestedStoryKind: {
-        connect: {
-          id: suggestion.id
+        connectOrCreate: {
+          create: suggestion,
+          where: {
+            id: suggestion.id
+          }
         }
       }
     },
@@ -295,19 +343,3 @@ const acceptStorySuggestion = async (suggestion: storySuggestion) => {
       id: suggestion.entryId
     }
   });
-}
-
-const acceptStoryKindSuggestion = async (suggestion: Prisma.storyKindSuggestionUncheckedCreateInput) => {
-  await prisma.entry.update({
-    data: {
-      acceptedSuggestedStoryKind: {
-        connect: {
-          id: suggestion.id
-        }
-      }
-    },
-    where: {
-      id: suggestion.entryId
-    }
-  });
-}

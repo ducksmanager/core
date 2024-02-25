@@ -1,70 +1,72 @@
 <template>
-  <img
-    v-if="indexation?.pages.length"
-    class="d-none"
-    :src="indexation.pages[0].url"
-    @load="
+  <template v-if="indexation">
+    <img
+      v-if="indexation.pages.length"
+      class="d-none"
+      :src="indexation.pages[0].url"
+      @load="
       ({ target }) => {
         coverHeight = (target as HTMLImageElement).height;
         coverWidth = (target as HTMLImageElement).width;
       }
     "
-  />
-  <div
-    id="book-and-toc-container"
-    class="start-0 top-0 d-flex flex-row align-items-center justify-content-space-around"
-  >
-    <b-container class="book-container d-flex w-50 h-100 m-0">
-      <div id="book" class="flip-book">
-        <div
-          v-for="(page, index) in indexation!.pages"
-          :key="`page-${index}`"
-          class="page"
-          :class="{ single: isSinglePage }"
-        >
-          <div class="page-content" :class="{ 'first-page': index === 0 }">
-            <div
-              class="page-image"
-              :style="{
-                backgroundImage: `url(${page.url})`,
-                marginLeft: 0,
-              }"
-            >
+    />
+    <div
+      class="start-0 top-0 h-100 d-flex flex-row align-items-center justify-content-space-around"
+    >
+      <b-container class="book-container d-flex w-50 h-100 m-0">
+        <div id="book" class="flip-book">
+          <div
+            v-for="(page, index) in indexation.pages"
+            :key="`page-${index}`"
+            class="page"
+            :class="{ single: isSinglePage }"
+          >
+            <div class="page-content" :class="{ 'first-page': index === 0 }">
               <div
-                v-if="
-                  showAiDetections !== undefined &&
-                  xOffset !== undefined &&
-                  displayRatioNoCropping &&
-                  page.aiKumikoResults.length
-                "
-                class="position-absolute h-100"
+                class="page-image"
                 :style="{
-                  left: `${xOffset || 0}px`,
-                  width: `${displayedWidth! - (xOffset || 0)*2}px`,
+                  backgroundImage: `url(${page.url})`,
+                  marginLeft: 0,
                 }"
               >
                 <div
-                  v-for="({ x, y, width, height }, idx) in page.aiKumikoResults"
-                  :key="`ocr-match-${idx}`"
-                  class="position-absolute ocr-match panel"
+                  v-if="
+                    showAiDetections !== undefined &&
+                    xOffset !== undefined &&
+                    displayRatioNoCropping &&
+                    page.aiKumikoResults.length
+                  "
+                  class="position-absolute h-100"
                   :style="{
-                    left: `${x * displayRatioNoCropping}px`,
-                    top: `${y * displayRatioNoCropping}px`,
-                    width: `${width * displayRatioNoCropping}px`,
-                    height: `${height * displayRatioNoCropping}px`,
-                  }"
-                ></div>
-                <div
-                  class="position-absolute"
-                  :style="toPx(firstPanelPosition(page.url))"
+                  left: `${xOffset || 0}px`,
+                  width: `${displayedWidth! - (xOffset || 0)*2}px`,
+                }"
                 >
                   <div
                     v-for="(
-                      { x1, x2, x3, x4, y1, y2, y3, y4 }, idx
-                    ) in page.aiOcrResults || []"
+                      { x, y, width, height }, idx
+                    ) in page.aiKumikoResults"
                     :key="`ocr-match-${idx}`"
-                    class="position-absolute ocr-match text"
+                    class="position-absolute ocr-match panel"
                     :style="{
+                      left: `${x * displayRatioNoCropping}px`,
+                      top: `${y * displayRatioNoCropping}px`,
+                      width: `${width * displayRatioNoCropping}px`,
+                      height: `${height * displayRatioNoCropping}px`,
+                    }"
+                  ></div>
+                  <div
+                    class="position-absolute"
+                    :style="toPx(firstPanelPosition(page.url))"
+                  >
+                    <div
+                      v-for="(
+                        { x1, x2, x3, x4, y1, y2, y3, y4 }, idx
+                      ) in page.aiOcrResults || []"
+                      :key="`ocr-match-${idx}`"
+                      class="position-absolute ocr-match text"
+                      :style="{
                       clipPath: `polygon(${[[x1, y1], [x2, y2], [x3, y3], [x4, y4]]
                         .map(([x, y]) =>
                           (['width', 'height'] as const)
@@ -80,75 +82,75 @@
                         )
                         .join(',')})`,
                     }"
-                  >
-                    {{
-                      `polygon(${[
-                        [x1, y1],
-                        [x2, y2],
-                        [x3, y3],
-                        [x4, y4],
-                      ]
-                        .map(([x, y]) => `${x}% ${y}%`)
-                        .join(",")})`
-                    }}
+                    >
+                      {{
+                        `polygon(${[
+                          [x1, y1],
+                          [x2, y2],
+                          [x3, y3],
+                          [x4, y4],
+                        ]
+                          .map(([x, y]) => `${x}% ${y}%`)
+                          .join(",")})`
+                      }}
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
-    </b-container>
-    <b-card
-      no-body
-      class="table-of-contents d-flex w-50 h-100 m-0 overflow-auto"
-      body-class="flex-grow-1 w-100 h-100"
-    >
-      <template #header>
-        <IssueSuggestionModal />
-        <IssueSuggestionList />
-        <div>
-          <b-button
-            variant="success"
-            pill
-            class="ms-2 hint"
-            :disabled="!ai || ai.status.value === 'loading'"
-            :class="ai?.status"
-            @click="ai.runKumiko()"
-          >
-            <i-bi-lightbulb-fill
-          /></b-button></div
-      ></template>
+      </b-container>
+      <b-card
+        no-body
+        class="table-of-contents d-flex w-50 h-100 m-0 overflow-auto"
+        body-class="flex-grow-1 w-100 h-100"
+      >
+        <template #header>
+          <IssueSuggestionModal />
+          <IssueSuggestionList />
+          <div>
+            <b-button
+              variant="success"
+              pill
+              class="ms-2 hint"
+              :disabled="!ai || ai.status.value === 'loading'"
+              :class="ai?.status"
+              @click="ai.runKumiko()"
+            >
+              <i-bi-lightbulb-fill
+            /></b-button></div
+        ></template>
 
-      <b-row>
-        <b-col :cols="1" style="padding: 0">
-          <b-row
-            v-for="{id, pageNumber} in indexation!.pages"
-            :key="id"
-            style="height: 50px"
-            :variant="currentPage === pageNumber ? 'secondary' : 'light'"
-            class="g-0 px-0 py-0 align-items-center border"
+        <b-row>
+          <b-col :cols="1" style="padding: 0">
+            <b-row
+              v-for="{ id, pageNumber } in indexation.pages"
+              :key="id"
+              style="height: 50px"
+              :variant="currentPage === pageNumber ? 'secondary' : 'light'"
+              class="g-0 px-0 py-0 align-items-center border"
+            >
+              <b-col rowspan="4" @click="currentPage = pageNumber"
+                >Page {{ pageNumber }}<br /><b-button disabled variant="light"
+                  ><i-bi-scissors /></b-button
+              ></b-col>
+            </b-row>
+          </b-col>
+          <b-col
+            :cols="1"
+            class="position-relative border"
+            :style="{ padding: 0 }"
           >
-            <b-col rowspan="4" @click="currentPage = pageNumber"
-              >Page {{ pageNumber }}<br /><b-button disabled variant="light"
-                ><i-bi-scissors /></b-button
-            ></b-col>
-          </b-row>
-        </b-col>
-        <b-col
-          :cols="1"
-          class="position-relative border"
-          :style="{ padding: 0 }"
-        >
-          <!-- <b-row
+            <!-- <b-row
             v-for="pageNumber in numberOfPages"
             :key="pageNumber"
             style="height: 50px"
             :variant="currentPage === pageNumber ? 'secondary' : 'light'"
             class="g-0 px-0 py-0 align-items-center border position-relative"
           > -->
-          <template v-for="entry in indexation!.entries" :key="entry.url">
-            <!-- <vue-draggable-resizable
+            <template v-for="entry in indexation.entries" :key="entry.url">
+              <!-- <vue-draggable-resizable
               class="position-absolute border-0"
               :parent="true"
               :y="50 * (idx + 1) - 1"
@@ -165,38 +167,39 @@
               :grid="[25, 25]"
               ><hr class="m-0"
             /></vue-draggable-resizable> -->
-            <b-col
-              :class="`w-100 kind-${acceptedStoryKinds[entry.id]?.kind}`"
-              :style="{
-                height: `${
-                  50 *
-                  (acceptedStories[entry.id]?.storyversion?.entirepages || 1)
-                }px`,
-              }"
-              :title="`${entry.title} (${
-                acceptedStories[entry.id]?.storyversion?.entirepages || 1
-              } pages)`"
-            ></b-col>
-          </template>
-        </b-col>
-        <b-col :cols="10" style="padding: 0">
-          <b-row
-            v-for="(entry, idx) in indexation!.entries"
-            :key="entry.id"
-            :style="currentPage === idx ? {} : { height: '50px' }"
-            :variant="currentPage === idx ? 'secondary' : 'light'"
-            :class="`g-0 px-0 py-0 align-items-center border bg-${
-              currentPage === idx ? 'secondary' : 'light'
-            }`"
-          >
-            <b-col @click="currentPage = idx"
-              ><Entry :entry="entry" :editable="currentPage === idx"
-            /></b-col>
-          </b-row>
-        </b-col>
-      </b-row>
-    </b-card>
-  </div>
+              <b-col
+                :class="`w-100 kind-${acceptedStoryKinds[entry.id]?.kind}`"
+                :style="{
+                  height: `${
+                    50 *
+                    (acceptedStories[entry.id]?.storyversion?.entirepages || 1)
+                  }px`,
+                }"
+                :title="`${entry.title} (${
+                  acceptedStories[entry.id]?.storyversion?.entirepages || 1
+                } pages)`"
+              ></b-col>
+            </template>
+          </b-col>
+          <b-col :cols="10" style="padding: 0">
+            <b-row
+              v-for="(entry, idx) in indexation.entries"
+              :key="entry.id"
+              :style="currentPage === idx ? {} : { height: '50px' }"
+              :variant="currentPage === idx ? 'secondary' : 'light'"
+              :class="`g-0 px-0 py-0 align-items-center border bg-${
+                currentPage === idx ? 'secondary' : 'light'
+              }`"
+            >
+              <b-col @click="currentPage = idx"
+                ><Entry :entry="entry" :editable="currentPage === idx"
+              /></b-col>
+            </b-row>
+          </b-col>
+        </b-row>
+      </b-card>
+    </div>
+  </template>
 </template>
 
 <script setup lang="ts">
@@ -206,14 +209,15 @@ import useAi from "~/composables/useAi";
 import { suggestions } from "~/stores/suggestions";
 import { user } from "~/stores/ui";
 
-let ai: ReturnType<typeof useAi>;
-
 const coverWidth = ref<number | null>(null);
 let coverHeight = ref<number | null>(null);
 let book = ref<PageFlip | null>(null);
 const currentPage = ref(0);
 
-defineProps<{ indexationId: string }>();
+const props = defineProps<{ indexationId: string }>();
+const { indexationId } = toRefs(props);
+
+let ai = useAi(indexationId.value);
 
 const { indexation, acceptedStoryKinds, acceptedStories } = storeToRefs(
   suggestions()
@@ -283,31 +287,33 @@ watch(
   }
 );
 
-watch(
-  () => coverWidth.value && coverHeight.value,
-  (hasCoverDimensions) => {
-    if (hasCoverDimensions) {
-      const bookContainer = document.querySelector(".book-container")!;
-      book.value = new PageFlip(
-        document.getElementById("book") as HTMLElement,
-        {
-          width: Math.min(bookContainer.clientWidth / 2, coverWidth.value!),
-          height: Math.min(bookContainer.clientHeight, coverHeight.value!),
-          maxShadowOpacity: 0.5,
-          showCover: true,
-          usePortrait: false,
-          mobileScrollSupport: false,
-        }
-      );
-      book.value.loadFromHTML(document.querySelectorAll(".page"));
+nextTick(() => {
+  watch(
+    () => coverWidth.value && coverHeight.value,
+    (hasCoverDimensions) => {
+      if (hasCoverDimensions) {
+        const bookContainer = document.querySelector(".book-container")!;
+        book.value = new PageFlip(
+          document.getElementById("book") as HTMLElement,
+          {
+            width: Math.min(bookContainer.clientWidth / 2, coverWidth.value!),
+            height: Math.min(bookContainer.clientHeight, coverHeight.value!),
+            maxShadowOpacity: 0.5,
+            showCover: true,
+            usePortrait: false,
+            mobileScrollSupport: false,
+          }
+        );
+        book.value.loadFromHTML(document.querySelectorAll(".page"));
 
-      book.value.on("flip", ({ data }) => {
-        currentPage.value = parseInt(data.toString());
-      });
-    }
-  },
-  { immediate: true }
-);
+        book.value.on("flip", ({ data }) => {
+          currentPage.value = parseInt(data.toString());
+        });
+      }
+    },
+    { immediate: true }
+  );
+});
 
 // watch(
 //   () => storyversionKinds.value,
@@ -324,10 +330,6 @@ watch(
 <style scoped lang="scss">
 :deep(.drag-handle) {
   cursor: grab;
-}
-
-#book-and-toc-container {
-  height: 100%;
 }
 
 @keyframes pulse-yellow {

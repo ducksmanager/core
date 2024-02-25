@@ -5,7 +5,7 @@
     style="max-height: calc(100% - 35px); flex-grow: 1"
     class="d-flex flex-column"
   >
-    <template v-if="tabNames[activeTab] === 'page-gallery'"
+    <template v-if="tabNames[activeTab] === 'Page gallery'"
       ><Gallery :images="images" />
       <upload-widget
         v-if="showUploadWidget"
@@ -24,9 +24,9 @@
       </b-button>
     </template>
     <Book
-      v-else-if="tabNames[activeTab] === 'book'"
+      v-else-if="tabNames[activeTab] === 'Book'"
       :indexation-id="indexationId" />
-    <TextEditor v-else-if="tabNames[activeTab] === 'text-editor'"
+    <TextEditor v-else-if="tabNames[activeTab] === 'Text editor'"
   /></b-container>
   <b-container>
     <b-container
@@ -34,9 +34,10 @@
       class="start-0 bottom-0 mw-100 pt-2 h-5"
       style="height: 35px"
       ><b-tabs v-model:modelValue="activeTab" align="center"
-        ><b-tab :title="$t('Page gallery')" /><b-tab
-          :title="$t('Book')" /><b-tab
-          :title="$t('Text editor')" /></b-tabs></b-container
+        ><b-tab
+          v-for="tabName of tabNames"
+          :key="tabName"
+          :title="$t(tabName)" /></b-tabs></b-container
   ></b-container>
 </template>
 
@@ -58,7 +59,7 @@ const { loadIndexation } = suggestions();
 const { indexation } = storeToRefs(suggestions());
 
 const images = computed(() =>
-  indexation.value!.pages.map(({ url }) => ({
+  indexation.value?.pages.map(({ url }) => ({
     url,
     text: url,
   }))

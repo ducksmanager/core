@@ -38,11 +38,11 @@
       <slot v-if="showCustomizeForm" name="customize-text" />
       <div v-else class="d-flex justify-content-between align-items-center">
         <div>
-          <slot v-if="!getCurrent()" name="unknown-text" />
-          <slot v-else name="item" v-bind="(getCurrent()!)" />
+          <slot v-if="getCurrent()" name="item" v-bind="getCurrent()!" />
+          <slot v-else name="unknown-text" />
         </div>
         <AiSuggestionIcon
-          v-if="isAiSource(getCurrent()!)"
+          v-if="getCurrent() && isAiSource(getCurrent()!)"
           status="success"
         /></div
     ></template>

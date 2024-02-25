@@ -96,12 +96,12 @@ const httpServer = createServer(async (req, res) => {
             orderBy: {
               pageNumber: 'desc'
             }
-          }))?.pageNumber ?? 1
+          }))?.pageNumber ?? 0
 
           const uploadedImages = await Promise.all(imagesToUpload.map(async (filename, idx) => cloudinary.uploader.upload(filename, {
             upload_preset: "p1urov1k",
             folder: `dumili/${user.username}/${indexationId}`,
-            context: `project=dumili|user=${user.username}|indexation=${indexationId}|page=${idx + 1}`
+            context: `project=dumili|user=${user.username}|indexation=${indexationId}|page=${firstNewPageNumber + idx + 1}`
           }).then(({ secure_url }) => secure_url).catch(e => {
             console.error(e)
             res.writeHead(500, { 'Content-Type': 'text/plain' });

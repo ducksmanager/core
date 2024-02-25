@@ -62,14 +62,14 @@ export const suggestions = defineStore("suggestions", () => {
   );
 
   watch(
-    () => indexation.value!.entries,
-    async () => {
+    () => indexation.value?.entries,
+    async (entries) => {
       acceptedStories.value = {};
       for (const {
         id,
         storySuggestions,
         acceptedStorySuggestedId,
-      } of indexation.value!.entries) {
+      } of entries || []) {
         const acceptedStory = storySuggestions.find(
           (suggestion) => suggestion.id === acceptedStorySuggestedId
         )!;

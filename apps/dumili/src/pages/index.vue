@@ -25,7 +25,7 @@
     >
     <template v-else>Loading...</template></b-container
   >
-  <b-container fluid class="position-absolute bottom-0">
+  <b-container fluid class="position-absolute bottom-0 start-0">
     <div>
       <b-button @click="modal = !modal">Nouvelle indexation</b-button>
     </div>
