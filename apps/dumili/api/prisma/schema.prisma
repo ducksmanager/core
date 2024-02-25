@@ -18,6 +18,7 @@ model entry {
   part                         String?               @db.VarChar(5)
   title                        String?               @db.VarChar(100)
   position                     String?               @db.VarChar(9)
+  entirepages                  Int                   @db.SmallInt
   indexation                   indexation            @relation(fields: [indexationId], references: [id], onUpdate: Restrict, map: "entry_indexation_id_fk")
   acceptedSuggestedStoryKind   storyKindSuggestion?  @relation("entry_accepted_story_kind_suggested_idTostory_kind_suggestion", fields: [acceptedStoryKindSuggestedId], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "entry_story_kind_suggestion_id_fk")
   acceptedSuggestedStory       storySuggestion?      @relation("entry_accepted_story_suggested_idTostory_suggestion", fields: [acceptedStorySuggestedId], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "entry_story_suggestion_id_fk")

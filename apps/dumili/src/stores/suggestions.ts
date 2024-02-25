@@ -24,18 +24,20 @@ export const suggestions = defineStore("suggestions", () => {
       endsAtPage: number;
     }[] = [];
     let pageCounter = 0;
-    for (const [entryId, story] of Object.entries(acceptedStories.value)) {
-      const entryIdNumber = parseInt(entryId);
+    for (const { id, entirepages } of indexation.value?.entries || []) {
       if (firstPages.length) {
         firstPages[firstPages.length - 1].endsAtPage = pageCounter - 1;
       }
       firstPages.push({
-        entryId: entryIdNumber,
+        entryId: id,
         startsAtPage: pageCounter,
         endsAtPage: pageCounter,
       });
 
-      pageCounter += Math.max(1, story?.storyversion?.entirepages || 1);
+      pageCounter += entirepages;
+    }
+    if (firstPages.length) {
+      firstPages[firstPages.length - 1].endsAtPage = pageCounter - 1;
     }
     return firstPages;
   });
@@ -72,18 +74,20 @@ export const suggestions = defineStore("suggestions", () => {
       } of entries || []) {
         const acceptedStory = storySuggestions.find(
           (suggestion) => suggestion.id === acceptedStorySuggestedId
-        )!;
-
-        const storyversion = await coaServices.getStoryversionDetails(
-          acceptedStory!.storyversioncode
         );
-        if ("error" in storyversion) {
-          console.error(storyversion.errorDetails);
-        } else {
-          acceptedStories.value[id] = {
-            ...acceptedStory,
-            storyversion: storyversion.data,
-          };
+
+        if (acceptedStory) {
+          const storyversion = await coaServices.getStoryversionDetails(
+            acceptedStory!.storyversioncode
+          );
+          if ("error" in storyversion) {
+            console.error(storyversion.errorDetails);
+          } else {
+            acceptedStories.value[id] = {
+              ...acceptedStory,
+              storyversion: storyversion.data,
+            };
+          }
         }
       }
     }

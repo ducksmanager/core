@@ -163,7 +163,7 @@ export default (io: Server) => {
             "a".charCodeAt(0) - 1);
 
           const indexationId = indexationSocket.data.indexation.id;
-          const entriesToCreate: ({ position: entry['position'] } & Pick<storyKindSuggestion, 'kind' | 'panelBoundaries'>)[] = []
+          const entriesToCreate: (Pick<entry, 'position' | 'entirepages'> & Pick<storyKindSuggestion, 'kind' | 'panelBoundaries'>)[] = []
           data.forEach((result, idx) => {
             const inferredKind = storyKinds.find(
               ({ label }) =>
@@ -181,17 +181,22 @@ export default (io: Server) => {
               entriesToCreate.push({
                 position,
                 kind: inferredKind,
-                panelBoundaries: JSON.stringify(result.panels)
+                panelBoundaries: JSON.stringify(result.panels),
+                entirepages: 1
               })
               previousPosition = position
             }
+            else {
+              entriesToCreate[entriesToCreate.length - 1].entirepages++
+            }
           })
 
-          await prisma.$transaction(entriesToCreate.map(({ position, kind, panelBoundaries }) =>
+          await prisma.$transaction(entriesToCreate.map(({ position, kind, entirepages, panelBoundaries }) =>
             prisma.entry.create({
               data: {
                 indexationId,
                 position,
+                entirepages,
                 storyKindSuggestions: {
                   create: [{
                     kind,

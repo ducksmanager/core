@@ -137,11 +137,7 @@
               ></b-col>
             </b-row>
           </b-col>
-          <b-col
-            :cols="1"
-            class="position-relative border"
-            :style="{ padding: 0 }"
-          >
+          <b-col :cols="1" class="position-relative p-0">
             <!-- <b-row
             v-for="pageNumber in numberOfPages"
             :key="pageNumber"
@@ -170,26 +166,20 @@
               <b-col
                 :class="`w-100 kind-${acceptedStoryKinds[entry.id]?.kind}`"
                 :style="{
-                  height: `${
-                    50 *
-                    (acceptedStories[entry.id]?.storyversion?.entirepages || 1)
-                  }px`,
+                  height: `${50 * entry.entirepages}px`,
                 }"
-                :title="`${entry.title} (${
-                  acceptedStories[entry.id]?.storyversion?.entirepages || 1
+                :title="`${entry.title || 'Inconnu'} (${
+                  entry.entirepages
                 } pages)`"
               ></b-col>
             </template>
           </b-col>
-          <b-col :cols="10" style="padding: 0">
+          <b-col :cols="10" class="d-flex" style="padding: 0">
             <b-row
               v-for="(entry, idx) in indexation.entries"
               :key="entry.id"
               :style="currentPage === idx ? {} : { height: '50px' }"
-              :variant="currentPage === idx ? 'secondary' : 'light'"
-              :class="`g-0 px-0 py-0 align-items-center border bg-${
-                currentPage === idx ? 'secondary' : 'light'
-              }`"
+              class="flex-grow-1 g-0 px-0 py-0 align-items-top border bg-light"
             >
               <b-col @click="currentPage = idx"
                 ><Entry :entry="entry" :editable="currentPage === idx"
@@ -219,9 +209,7 @@ const { indexationId } = toRefs(props);
 
 let ai = useAi(indexationId.value);
 
-const { indexation, acceptedStoryKinds, acceptedStories } = storeToRefs(
-  suggestions()
-);
+const { indexation, acceptedStoryKinds } = storeToRefs(suggestions());
 
 const { showAiDetectionsOn: showAiDetections } = user();
 
