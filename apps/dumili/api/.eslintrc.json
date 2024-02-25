@@ -19,5 +19,6 @@
     "unused-imports/no-unused-imports": "error"
   },
   "plugins": ["simple-import-sort", "@typescript-eslint", "unused-imports"],
-  "ignorePatterns": ["**/node_modules", "**/dist"]
+  "ignorePatterns": ["**/node_modules", "**/dist", 
+  "prisma/client_dumili"]
 }

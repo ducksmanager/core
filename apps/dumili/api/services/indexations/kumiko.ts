@@ -1,6 +1,19 @@
 import axios from "axios";
 
-import { KumikoResult } from "~dumili-types/KumikoResult";
+ type Boundaries = {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+};
+
+ type KumikoResult = {
+  filename: string;
+  size: number[];
+  background: string;
+  gutters: number[];
+  panels: Boundaries[];
+};
 
 type KumikoResultWithNumberPanels = Omit<KumikoResult, "panels"> & {
   panels: [number, number, number, number][];

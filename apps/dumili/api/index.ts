@@ -1,5 +1,21 @@
+import { instrument } from "@socket.io/admin-ui";
+import busboy from 'busboy';
+import { v2 as cloudinary } from "cloudinary";
 import dotenv from "dotenv";
+import fs from 'fs';
+import { createServer } from "http";
+import path from 'path';
 import { fromBuffer } from "pdf2pic";
+import { Namespace, Server } from "socket.io";
+import { EventsMap } from "socket.io/dist/typed-events";
+
+import { SessionUser } from "~dm-types/SessionUser";
+
+import { PrismaClient } from "./prisma/client_dumili";
+import { authenticateUser } from './services/_auth'
+import indexations from "./services/indexations";
+import { FullIndexation } from "./services/indexations/types";
+
 
 dotenv.config({
   path: ".env",
@@ -10,22 +26,13 @@ dotenv.config({
   override: true,
 });
 
+const [, API_KEY, API_SECRET, CLOUD_NAME] = process.env.CLOUDINARY_URL?.match(/cloudinary:\/\/(\d+):(\w+)@(\w+)/) ?? []
+cloudinary.config({
+  cloud_name: CLOUD_NAME,
+  api_key: API_KEY,
+  api_secret: API_SECRET,
+});
 
-import { instrument } from "@socket.io/admin-ui";
-import busboy from 'busboy';
-import { v2 as cloudinary } from "cloudinary";
-import fs from 'fs';
-import { createServer } from "http";
-import path from 'path';
-import { Namespace, Server } from "socket.io";
-import { EventsMap } from "socket.io/dist/typed-events";
-
-import { SessionUser } from "~dm-types/SessionUser";
-
-import { PrismaClient } from "./prisma/client_dumili";
-import { authenticateUser } from './services/_auth'
-import cloudinaryIndexations from "./services/indexations";
-import { FullIndexation } from "./services/indexations/types";
 
 export type SessionDataWithIndexation = { user: SessionUser, indexation: FullIndexation }
 export type SessionData = { user: SessionUser }
@@ -39,6 +46,7 @@ export class ServerWithData<Data extends object> extends Server<
 export type NamespaceWithData<Services extends EventsMap, Data extends object = object> = Namespace<Services, Record<string, never>, Record<string, never>, Data>
 
 export const prisma = new PrismaClient();
+
 
 const httpServer = createServer(async (req, res) => {
   if (req.url === '/upload') {
@@ -90,29 +98,17 @@ const httpServer = createServer(async (req, res) => {
             }
           }))?.pageNumber ?? 1
 
-          const uploadedImages: string[] = []
-          for (let idx = 0; idx < imagesToUpload.length; idx++) {
-            const filename = imagesToUpload[idx]
-            await cloudinary.uploader.upload(filename, {
-              uploadPreset: "p1urov1k",
-              folder: `dumili/${user.username}/${indexationId}`,
-              sources: ["local"],
-              multiple: true,
-              maxImageFileSize: 5000000,
-              context: {
-                project: "dumili",
-                user: user.username,
-                indexation: indexationId,
-                page: idx + 1,
-              },
-            }).then((value) => { uploadedImages.push(value.secure_url) }).catch(e => {
-              console.error(e)
-              res.writeHead(500, { 'Content-Type': 'text/plain' });
-              res.end(e);
-            }).finally(() => {
-              fs.unlinkSync(filename)
-            })
-          }
+          const uploadedImages = await Promise.all(imagesToUpload.map(async (filename, idx) => cloudinary.uploader.upload(filename, {
+            upload_preset: "p1urov1k",
+            folder: `dumili/${user.username}/${indexationId}`,
+            context: `project=dumili|user=${user.username}|indexation=${indexationId}|page=${idx + 1}`
+          }).then(({ secure_url }) => secure_url).catch(e => {
+            console.error(e)
+            res.writeHead(500, { 'Content-Type': 'text/plain' });
+            res.end(e);
+          }).finally(() => {
+            fs.unlinkSync(filename)
+          }))) as string[]
           const pagesToCreate = {
             pages: {
               create: uploadedImages.map((url, idx) => ({
@@ -160,17 +156,17 @@ const httpServer = createServer(async (req, res) => {
   }
 });
 
-const io = new ServerWithData<SessionData>(httpServer, {
+const io = new Server(httpServer, {
   cors: {
     origin: '*',
   },
 });
 
+indexations(io)
+
 instrument(io, {
   auth: false
 });
-
-cloudinaryIndexations(io)
 
 httpServer.listen(3002);
 console.log('Dumuli API open on port 3002')

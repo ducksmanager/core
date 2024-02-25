@@ -12,7 +12,7 @@
         :folder-name="indexationId"
         @done="
           showUploadWidget = !showUploadWidget;
-          getIndexation();
+          loadIndexation(indexationId);
         "
         @abort="showUploadWidget = !showUploadWidget"
       />
@@ -41,7 +41,6 @@
 </template>
 
 <script setup lang="ts">
-import { getIndexationSocket } from "~/composables/useDumiliSocket";
 import { suggestions } from "~/stores/suggestions";
 import { tabs } from "~/stores/tabs";
 
@@ -55,27 +54,21 @@ const { tabNames } = tabs();
 
 const indexationId = ref<string | null>(null);
 
+const { loadIndexation } = suggestions();
 const { indexation } = storeToRefs(suggestions());
+
 const images = computed(() =>
   indexation.value!.pages.map(({ url }) => ({
     url,
     text: url,
   }))
 );
-const getIndexation = async () => {
-  const data = await getIndexationSocket(indexationId.value!).getIndexation();
-  if ("error" in data) {
-    console.error(data.error);
-    return;
-  }
-  indexation.value = data.indexation;
-};
 
 watch(
   () => route.params.id,
   (id) => {
     indexationId.value = id as string;
-    getIndexation();
+    loadIndexation(indexationId.value);
   },
   { immediate: true }
 );

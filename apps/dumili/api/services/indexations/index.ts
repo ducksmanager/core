@@ -5,34 +5,29 @@ import { Socket } from "socket.io";
 import {
   NamespaceWithData,
   prisma,
-  ServerWithData,
   SessionData,
   SessionDataWithIndexation,
 } from "~/index";
+import { Prisma, storySuggestion } from "~/prisma/client_dumili";
+import CoaServices from "~dm-services/coa/types";
+import { storyKinds } from "~dumili-types/storyKinds";
+import { useSocket } from "~socket.io-client-services/index";
+
+
+const socket = useSocket(process.env.DM_SOCKET_URL!);
+const coaServices = socket.addNamespace<CoaServices>(
+  CoaServices.namespaceEndpoint
+);
 
 import { RequiredAuthMiddleware } from "../_auth";
 import { runKumiko } from "./kumiko";
 import { extendBoundaries, runOcr } from "./ocr";
-import Events, { IndexationEvents } from "./types";
+import Events, { FullIndexation, IndexationEvents, indexationPayloadInclude } from "./types";
+import { Server } from "socket.io";
 
 const getFullIndexation = (indexationId: string) => prisma.indexation.findUnique({
   where: { id: indexationId },
-  include: {
-    acceptedIssueSuggestion: true,
-    pages: true,
-    issueSuggestions: true,
-    entries: {
-      include: {
-        acceptedSuggestedStory: true,
-        acceptedSuggestedStoryKind: true,
-        storyKindSuggestions: true,
-        storySuggestions: true
-      },
-      orderBy: {
-        order: 'asc'
-      }
-    }
-  }
+  include: indexationPayloadInclude
 });
 
 const getIndexationsWithFirstPage = (userId: number) => prisma.indexation.findMany({
@@ -59,8 +54,20 @@ const getIndexationMiddleware = async (
   next();
 };
 
-export default (io: ServerWithData<SessionData>) => {
+export default (io: Server) => {
   io.use(RequiredAuthMiddleware);
+
+  (io.of(Events.namespaceEndpoint) as NamespaceWithData<
+    Events,
+    SessionData
+  >).use(RequiredAuthMiddleware)
+    .on("connection", async (socket) => {
+      socket.on("getIndexations", async (callback) => {
+        callback({
+          indexations: await getIndexationsWithFirstPage(socket.data.user.id),
+        });
+      });
+    });
 
   const indexationNamespace = io.of(
     new RegExp(`^${Events.namespaceEndpoint}\\/.+$`)
@@ -69,7 +76,7 @@ export default (io: ServerWithData<SessionData>) => {
     .use(RequiredAuthMiddleware)
     .use(getIndexationMiddleware)
     .on("connection", (indexationSocket) => {
-      indexationSocket.on("getIndexation", async (callback) => {
+      indexationSocket.on("loadIndexation", async (callback) => {
         callback({ indexation: indexationSocket.data.indexation });
       });
 
@@ -96,7 +103,6 @@ export default (io: ServerWithData<SessionData>) => {
           }
         })
         callback({ status: 'OK' })
-
       })
 
       indexationSocket.on('createStorySuggestion', async (suggestion, callback) => {
@@ -105,8 +111,20 @@ export default (io: ServerWithData<SessionData>) => {
           return
         }
 
-        await prisma.storySuggestion.create({
+        const { id } = await prisma.storySuggestion.create({
           data: suggestion
+        });
+        callback({ suggestionId: id })
+      })
+
+      indexationSocket.on('createOcrDetails', async (ocrDetails, callback) => {
+        if (!indexationSocket.data.indexation.pages.some(({ id }) => id === ocrDetails.page.connect!.id)) {
+          callback({ error: 'You are not allowed to update this resource' })
+          return
+        }
+
+        await prisma.aiOcrPossibleStory.create({
+          data: ocrDetails
         });
         callback({ status: 'OK' })
       })
@@ -118,66 +136,117 @@ export default (io: ServerWithData<SessionData>) => {
           return
         }
 
-        await prisma.entry.update({
-          data: {
-            acceptedSuggestedStory: {
-              connect: {
-                id: suggestion.id
-              }
-            }
-          },
-          where: {
-            id: entry.id
-          }
-        });
+        await acceptStorySuggestion(suggestion);
         callback({ status: 'OK' })
       })
 
-      indexationSocket.on("getKumikoResults", async (callback) => {
-        const output = await runKumiko(
+      indexationSocket.on('acceptStoryKindSuggestion', async (suggestion, callback) => {
+        const entry = indexationSocket.data.indexation.entries.find(({ id }) => id === suggestion.entryId);
+        if (!entry) {
+          callback({ error: 'You are not allowed to update this resource' })
+          return
+        }
+
+        await acceptStoryKindSuggestion(suggestion)
+        callback({ status: 'OK' })
+      })
+
+      indexationSocket.on("runKumiko", async (callback) =>
+        runKumiko(
           indexationSocket.data.indexation.pages.map(
             ({ url }) => url
           )
-        );
-        try {
-          callback({ data: output });
-        } catch (err) {
+        ).then(async (data) => {
+          let currentEntry: FullIndexation["entries"]["0"];
+          data.forEach(async (result, idx) => {
+            const inferredKind = storyKinds.find(
+              ({ label }) =>
+                label ===
+                (result.panels.length === 1
+                  ? idx === 0
+                    ? "Cover"
+                    : "Illustration"
+                  : "Story")
+            )!.code;
+
+            if (currentEntry?.acceptedSuggestedStoryKind?.kind !== inferredKind) {
+              const { entryId } = await createEntry({
+                indexationId: indexationSocket.data.indexation.id,
+                position: String.fromCharCode(
+                  "a".charCodeAt(0) + indexationSocket.data.indexation.entries.length
+                ),
+              });
+              await acceptStoryKindSuggestion({
+                entryId,
+                kind: inferredKind,
+                panelBoundaries: JSON.stringify(result.panels),
+              });
+            }
+          })
+          callback({ status: 'OK' });
+        }).catch((err) => {
           console.error(err);
-          console.error(output);
           callback({
             error: "Kumiko output could not be parsed",
-          });
-        }
-      });
+          })
+        }))
 
-      indexationSocket.on("getOcrResults", async (pageUrl, callback) => {
+      indexationSocket.on("runOcr", async (pageUrl, callback) => {
+        const page = indexationSocket.data.indexation.pages.find(
+          ({ url }) => url === pageUrl
+        )
         if (
-          !indexationSocket.data.indexation.pages.some(
-            ({ url }) => url === pageUrl
-          )
+          !page
         ) {
           callback({ error: "Invalid page URL" });
         }
-        Promise.all([
-          runKumiko([pageUrl]),
-          axios({
+        prisma.aiKumikoResult.findFirstOrThrow({
+          where: {
+            page: {
+              url: pageUrl,
+            },
+          }
+        }).then((firstPanel) =>
+          axios<Buffer>({
             url: pageUrl,
             responseType: "arraybuffer",
-          })
-        ]).then(async ([[kumikoResultsForPage], { data: imageData }]) => {
-          const firstPanel = kumikoResultsForPage.panels[0];
-          const base64 = (
-            await sharp(imageData as Buffer)
+          }).then(async ({ data: imageData }) =>
+            sharp(imageData)
               .extract(extendBoundaries(firstPanel, 20))
-              .toBuffer()
-          ).toString("base64");
-          return runOcr(base64)
-        }).then((output) => {
-          callback({ data: output });
-        }).catch((err) => {
-          callback({ error: "OCR error", errorDetails: err as string });
-        })
-      });
+              .toBuffer()).then((buffer) => runOcr(buffer.toString("base64"))).then(async (ocrResults) =>
+                prisma.aiOcrResult.createMany({
+                  data: ocrResults.map(({ confidence, text, box: [[x1, y1], [x2, y2], [x3, y3], [x4, y4]] }) => ({
+                    pageId: page!.id,
+                    confidence,
+                    text,
+                    x1,
+                    x2,
+                    y1,
+                    y2,
+                    x3,
+                    x4,
+                    y3,
+                    y4,
+                  }))
+                }).then(() =>
+                (
+                  coaServices.searchStory(
+                    ocrResults.map(({ text }) => text),
+                    false
+                  )
+                )
+                ).then(({ results }) => prisma.aiOcrPossibleStory.createMany({
+                  data: results.map(({ storycode, score }) => ({
+                    pageId: page!.id,
+                    storyversioncode: storycode,
+                    confidenceScore: score
+                  }))
+                }).then(() => callback({ status: 'OK' })).catch((err) => {
+                  console.error(err);
+                  callback({ error: "OCR error", errorDetails: err });
+                })
+                )))
+      })
 
       indexationSocket.on('updateIndexation', async (indexation, callback) => {
         if (indexationSocket.data.indexation.id !== indexation.id) {
@@ -204,17 +273,41 @@ export default (io: ServerWithData<SessionData>) => {
         callback()
       })
     });
-
-  const namespace = io.of(Events.namespaceEndpoint) as NamespaceWithData<
-    Events,
-    SessionData
-  >;
-  namespace.use(RequiredAuthMiddleware);
-  namespace.on("connection", async (socket) => {
-    socket.on("getIndexations", async (callback) => {
-      callback({
-        indexations: await getIndexationsWithFirstPage(socket.data.user.id),
-      });
-    });
-  });
 };
+
+const createEntry = async (entry: Prisma.entryUncheckedCreateInput) => {
+  const { id } = await prisma.entry.create({
+    data: entry,
+  });
+  return ({ entryId: id })
+}
+
+const acceptStorySuggestion = async (suggestion: storySuggestion) => {
+  await prisma.entry.update({
+    data: {
+      acceptedSuggestedStoryKind: {
+        connect: {
+          id: suggestion.id
+        }
+      }
+    },
+    where: {
+      id: suggestion.entryId
+    }
+  });
+}
+
+const acceptStoryKindSuggestion = async (suggestion: Prisma.storyKindSuggestionUncheckedCreateInput) => {
+  await prisma.entry.update({
+    data: {
+      acceptedSuggestedStoryKind: {
+        connect: {
+          id: suggestion.id
+        }
+      }
+    },
+    where: {
+      id: suggestion.entryId
+    }
+  });
+}

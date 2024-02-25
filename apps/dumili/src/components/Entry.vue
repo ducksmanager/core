@@ -3,15 +3,13 @@
     <template v-if="editable">
       <b-col cols="3">
         <suggestion-list
-          :suggestions="storyversionKindsForThisEntry"
+          :suggestions="entry.storyKindSuggestions"
           :get-current="() => acceptedStoryversionKind"
           :item-class="(suggestion) => [`kind-${suggestion.kind}`]"
-          @select="
-            acceptStoryversionKindSuggestion($event?.kind as string)
-          "
+          @select="acceptStoryversionKindSuggestion($event!.kind)"
         >
           <template #item="suggestion">
-            {{ getStoryversionKind(suggestion) }}
+            {{ getStoryversionKind(suggestion.kind) }}
           </template>
           <template #unknown-text>{{ $t("Type inconnu") }}</template>
         </suggestion-list> </b-col
@@ -24,10 +22,10 @@
       ><b-col cols="3">
         <b-button
           class="d-flex w-100 justify-content-between"
-          :disabled="!aiDetails[entryurl]"
+          :disabled="!(storyAiSuggestions.length || storyKindAiSuggestion)"
           @click="
             showAiDetectionsOn =
-              showAiDetectionsOn === undefined ? entryurl : undefined
+              showAiDetectionsOn === undefined ? entry.id : undefined
           "
         >
           <div>{{ $t("Détections AI") }}</div>
@@ -38,68 +36,58 @@
         <b-col cols="3" class="text-start white-space-normal">
           <div>
             {{
-              $t("{panelNumber} cases trouvées", {
-                panelNumber: aiDetails[entryurl].panels.length,
+              $t("{numberOfPanels} cases trouvées", {
+                numberOfPanels: pages[0].aiKumikoResults.length,
               })
             }}
-            <table-tooltip
-              :target="`panels-${entryurl}`"
-              :data="
-                aiDetails[entryurl].panels.map(({ bbox }) => ({ ...bbox }))
-              "
-            />
-            <i-bi-info-circle-fill :id="`panels-${entryurl}`" />
+            <table-tooltip target="panels" :data="pages[0].aiKumikoResults" />
+            <i-bi-info-circle-fill id="panels" />
           </div>
-          <div>
+          <div v-if="storyKindAiSuggestion">
             <i-bi-arrow-right />&nbsp;<AiSuggestionIcon status="success" />
-            {{
-              getStoryversionKind(
-                storyversionKindsForThisEntry.find(
-                  ({ meta }) => meta.source === "ai"
-                )
-              )
-            }}
+            {{ getStoryversionKind(storyKindAiSuggestion.kind) }}
           </div>
         </b-col>
         <b-col cols="3" class="text-start white-space-normal">
-          <div v-if="aiDetails[entryurl].texts?.ocrResults?.length">
+          <div v-if="pages[0].aiOcrResults.length">
             {{
               $t("{textNumber} textes trouvés", {
-                textNumber: aiDetails[entryurl].texts.ocrResults.length,
+                textNumber: pages[0].aiOcrResults.length,
               })
             }}
-            <table-tooltip
-              :target="`texts-${entryurl}`"
-              :data="aiDetails[entryurl].texts.ocrResults"
-            />
-            <i-bi-info-circle-fill :id="`texts-${entryurl}`" />
-            <div v-if="aiDetails[entryurl].texts.possibleStories?.length">
+            <table-tooltip target="texts" :data="pages[0].aiOcrResults" />
+            <i-bi-info-circle-fill id="texts" />
+            <div v-if="pages[0].aiOcrPossibleStories.length">
               <div>
                 {{
-                  $t("{storyNumber} histoires trouvées avec ces mots-clés", {
-                    storyNumber:
-                      aiDetails[entryurl].texts.possibleStories.length,
-                  })
+                  $t(
+                    "{numberOfStories} histoires trouvées avec ces mots-clés",
+                    {
+                      numberOfStories: pages[0].aiOcrPossibleStories.length,
+                    }
+                  )
                 }}
                 <table-tooltip
-                  :target="`stories-${entryurl}`"
-                  :data="aiDetails[entryurl].texts.possibleStories"
+                  target="stories"
+                  :data="pages[0].aiOcrPossibleStories"
                 />
-                <i-bi-info-circle-fill :id="`stories-${entryurl}`" />
+                <i-bi-info-circle-fill id="stories" />
               </div>
               <div
-                v-for="possibleStory in aiDetails[entryurl].texts
-                  .possibleStories"
-                :key="possibleStory.storyversion!.storycode || 'unknown'"
+                v-for="possibleStory in pages[0].aiOcrPossibleStories"
+                :key="
+                  possibleStory.storySuggestions[0].storyversioncode ||
+                  'unknown'
+                "
               >
                 <i-bi-arrow-right />&nbsp;<AiSuggestionIcon status="success" />
-                <Story :entry="possibleStory" />
+                <Story :suggestion="possibleStory.storySuggestions[0]" />
               </div>
             </div>
             <div v-else>
               {{
-                $t("{storyNumber} histoires trouvées avec ces mots-clés", {
-                  storyNumber: 0,
+                $t("{numberOfStories} histoires trouvées avec ces mots-clés", {
+                  numberOfStories: 0,
                 })
               }}
             </div>
@@ -120,7 +108,9 @@
           size="xl"
           :class="{ [`kind-${acceptedStoryversionKind?.kind}`]: true }"
           >{{
-            getStoryversionKind(acceptedStoryversionKind) || $t("Type inconnu")
+            (entry.acceptedSuggestedStoryKind &&
+              getStoryversionKind(entry.acceptedSuggestedStoryKind.kind)) ||
+            $t("Type inconnu")
           }}</b-badge
         ></b-col
       >
@@ -147,19 +137,16 @@
   </b-row>
 </template>
 <script setup lang="ts">
-import { ai } from "~/stores/ai";
-import {} from "~/stores/suggestions";
+import { getIndexationSocket } from "~/composables/useDumiliSocket";
 import { suggestions } from "~/stores/suggestions";
 import { user } from "~/stores/ui";
-import {
-  StoryversionKind,
-  StoryversionKindSuggestion,
-} from "~dumili-types/suggestions";
-import { entry } from "~prisma/client_dumili";
+import { FullIndexation } from "~dumili-services/indexations/types";
+import { storyKinds } from "~dumili-types/storyKinds";
+import { entry, story_kind_suggestion_kind } from "~prisma/client_dumili";
 
 const { t: $t } = useI18n();
 const props = defineProps<{
-  entry: entry;
+  entry: FullIndexation["entries"][0];
   editable: boolean;
 }>();
 
@@ -169,13 +156,31 @@ defineEmits<{
   (params: { toggle: boolean; type: "storyversionKind" }): void;
 }>();
 
-const { acceptedStories, acceptedStoryKinds, storyversionKinds } =
+const { indexation, acceptedStories, acceptedStoryKinds, entriesFirstPages } =
   storeToRefs(suggestions());
 
+const pages = computed(() => {
+  const { startsAtPage, endsAtPage } = entriesFirstPages.value.find(
+    ({ entryId }) => entry.value.id === entryId
+  )!;
+  return indexation.value!.pages.filter(
+    ({ pageNumber }) => pageNumber >= startsAtPage && pageNumber <= endsAtPage
+  );
+});
+
 const { showAiDetectionsOn } = storeToRefs(user());
-const { aiDetails } = storeToRefs(ai());
 
 const acceptedStory = computed(() => acceptedStories.value[props.entry.id]);
+
+const storyKindAiSuggestion = computed(() =>
+  entry.value.storyKindSuggestions.find(
+    ({ panelBoundaries }) => panelBoundaries
+  )
+);
+
+const storyAiSuggestions = computed(() =>
+  entry.value.storySuggestions.filter(({ ocrDetailsId }) => ocrDetailsId)
+);
 
 const acceptedStoryversionKind = computed(
   () => acceptedStoryKinds.value[props.entry.id]
@@ -190,27 +195,14 @@ const urlEncodedStorycode = computed(
   () => storycode.value && encodeURIComponent(storycode.value)
 );
 
-const storyversionKindsForThisEntry = computed(
-  () =>
-    storyversionKinds.value.find(({ url }) => props.entryurl === url)!
-      .suggestions
-);
+const getStoryversionKind = (storyversionKind: story_kind_suggestion_kind) =>
+  storyKinds.find(({ code }) => code === storyversionKind)?.label;
 
-const getStoryversionKind = (
-  storyversionKind: StoryversionKindSuggestion | undefined
-) =>
-  !storyversionKind
-    ? $t("Type inconnu")
-    : Object.keys(StoryversionKind)[
-        Object.values(StoryversionKind).indexOf(storyversionKind.data.kind)
-      ];
-
-const acceptStoryversionKindSuggestion = (storyversionKind: string) => {
-  suggestionsStore.acceptSuggestion(
-    storyversionKindsForThisEntry.value,
-    (suggestion: StoryversionKindSuggestion) =>
-      suggestion.data.kind === storyversionKind
-  );
+const acceptStoryversionKindSuggestion = (kind: story_kind_suggestion_kind) => {
+  getIndexationSocket(entry.value.indexationId).acceptStoryKindSuggestion({
+    entryId: entry.value.id,
+    kind,
+  });
 };
 </script>
 

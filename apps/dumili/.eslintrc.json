@@ -39,12 +39,9 @@
   },
   "plugins": ["simple-import-sort", "@typescript-eslint", "unused-imports"],
   "ignorePatterns": [
-    "**/node_modules",
     "../**",
+    "*.d.ts",
     "**/dist",
-    "shims.d.ts",
-    "vendor",
-    "auto-imports.d.ts",
-    "component.d.ts"
+    "**/node_modules"
   ]
 }

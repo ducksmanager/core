@@ -38,7 +38,7 @@
       ok-title="Toutes les pages"
       cancel-title="Seulement certaines pages"
       @ok.prevent="uploadType = 'all'"
-      @cancel="uploadType = 'some'"
+      @cancel.prevent="uploadType = 'some'"
     >
       De quelles pages du numéro que vous souhaitez indexer possédez vous des
       scans ?

@@ -19,7 +19,7 @@
       <div>
         <slot name="item" v-bind="suggestion" />
       </div>
-      <AiSuggestionIcon v-if="suggestion.source === 'ai'" status="success"
+      <AiSuggestionIcon v-if="isAiSource(suggestion)" status="success"
     /></b-dropdown-item>
     <b-dropdown-divider v-if="suggestions.length" />
     <b-dropdown-item
@@ -42,14 +42,14 @@
           <slot v-else name="item" v-bind="(getCurrent()!)" />
         </div>
         <AiSuggestionIcon
-          v-if="getCurrent()?.source === 'ai'"
+          v-if="isAiSource(getCurrent()!)"
           status="success"
         /></div
     ></template>
   </b-dropdown>
   <slot v-if="showCustomizeForm" name="customize-form" />
 </template>
-<script setup lang="ts" generic="S extends issueSuggestion|storyKindSuggestion|storySuggestion">
+<script setup lang="ts" generic="S extends Partial<issueSuggestion|storyKindSuggestion|storySuggestion>">
 import {
   issueSuggestion,
   storyKindSuggestion,
@@ -82,6 +82,9 @@ withDefaults(
 const allowCustomizeForm = computed(
   () => $slots["customize-form"] !== undefined
 );
+
+const isAiSource = (suggestion: S) =>
+  "source" in suggestion && suggestion.source === "ai";
 
 const emit = defineEmits<{
   (e: "select", suggestion?: S): void;

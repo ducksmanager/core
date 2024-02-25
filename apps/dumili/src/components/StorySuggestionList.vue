@@ -47,7 +47,6 @@ const addAndAcceptStoryversionToStorySuggestions = async (
   searchResult: SimpleStory
 ) => {
   await indexationSocket.value.createStorySuggestion({
-    source: "user",
     entryId: entry.value.id,
     storyversioncode: searchResult.storycode,
     acceptedOnEntries: {

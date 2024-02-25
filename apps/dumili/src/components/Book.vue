@@ -17,7 +17,7 @@
     <b-container class="book-container d-flex w-50 h-100 m-0">
       <div id="book" class="flip-book">
         <div
-          v-for="(entry, index) in indexation!.pages"
+          v-for="(page, index) in indexation!.pages"
           :key="`page-${index}`"
           class="page"
           :class="{ single: isSinglePage }"
@@ -26,7 +26,7 @@
             <div
               class="page-image"
               :style="{
-                backgroundImage: `url(${entry.url})`,
+                backgroundImage: `url(${page.url})`,
                 marginLeft: 0,
               }"
             >
@@ -35,7 +35,7 @@
                   showAiDetections !== undefined &&
                   xOffset !== undefined &&
                   displayRatioNoCropping &&
-                  aiDetails[entry.url].panels?.length
+                  page.aiKumikoResults.length
                 "
                 class="position-absolute h-100"
                 :style="{
@@ -44,9 +44,7 @@
                 }"
               >
                 <div
-                  v-for="({ bbox: { x, y, width, height } }, idx) in aiDetails[
-                    entry.url
-                  ].panels"
+                  v-for="({ x, y, width, height }, idx) in page.aiKumikoResults"
                   :key="`ocr-match-${idx}`"
                   class="position-absolute ocr-match panel"
                   :style="{
@@ -58,22 +56,23 @@
                 ></div>
                 <div
                   class="position-absolute"
-                  :style="toPx(firstPanelPosition(entry.url))"
+                  :style="toPx(firstPanelPosition(page.url))"
                 >
                   <div
-                    v-for="({ box }, idx) in aiDetails[entry.url].texts
-                      ?.ocrResults || []"
+                    v-for="(
+                      { x1, x2, x3, x4, y1, y2, y3, y4 }, idx
+                    ) in page.aiOcrResults || []"
                     :key="`ocr-match-${idx}`"
                     class="position-absolute ocr-match text"
                     :style="{
-                      clipPath: `polygon(${box
+                      clipPath: `polygon(${[[x1, y1], [x2, y2], [x3, y3], [x4, y4]]
                         .map(([x, y]) =>
                           (['width', 'height'] as const)
                             .map(
                               (dimension, idx) =>
                                 `${
                                   [x, y][idx] /
-                                  (aiDetails[entry.url].panels[0].bbox[dimension] /
+                                  (page.aiKumikoResults[0][dimension] /
                                     100)
                                 }%`
                             )
@@ -83,7 +82,14 @@
                     }"
                   >
                     {{
-                      `polygon(${box.map(([x, y]) => `${x}% ${y}%`).join(",")})`
+                      `polygon(${[
+                        [x1, y1],
+                        [x2, y2],
+                        [x3, y3],
+                        [x4, y4],
+                      ]
+                        .map(([x, y]) => `${x}% ${y}%`)
+                        .join(",")})`
                     }}
                   </div>
                 </div>
@@ -197,12 +203,10 @@
 import { PageFlip } from "page-flip";
 
 import useAi from "~/composables/useAi";
-import { ai as aiStore } from "~/stores/ai";
 import { suggestions } from "~/stores/suggestions";
 import { user } from "~/stores/ui";
 
 let ai: ReturnType<typeof useAi>;
-const { aiDetails } = storeToRefs(aiStore());
 
 const coverWidth = ref<number | null>(null);
 let coverHeight = ref<number | null>(null);
@@ -239,13 +243,15 @@ const displayRatioNoCropping = computed(
     displayedHeight.value / coverHeight.value
 );
 
-const firstPanelPosition = (url: string) => {
-  const { bbox } = aiDetails.value[url].panels[0];
+const firstPanelPosition = (pageUrl: string) => {
+  const { x, y, width, height } = indexation.value!.pages.find(
+    ({ url }) => url === pageUrl
+  )!.aiKumikoResults[0];
   return {
-    left: bbox.x * displayRatioNoCropping.value!,
-    top: bbox.y * displayRatioNoCropping.value!,
-    width: bbox.width * displayRatioNoCropping.value!,
-    height: bbox.height * displayRatioNoCropping.value!,
+    left: x * displayRatioNoCropping.value!,
+    top: y * displayRatioNoCropping.value!,
+    width: width * displayRatioNoCropping.value!,
+    height: height * displayRatioNoCropping.value!,
   };
 };
 

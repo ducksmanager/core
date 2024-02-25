@@ -34,9 +34,10 @@ import { suggestions } from "~/stores/suggestions";
 import { issueSuggestion } from "~prisma/client_dumili";
 import { composables as dmComposables } from "~web";
 
+const { t: $t } = useI18n();
+
 const { coverIdServices } = dmComposables.useDmSocket;
 
-const { acceptSuggestion, rejectAllSuggestions } = suggestions();
 const { hasPendingIssueSuggestions, indexation } = storeToRefs(suggestions());
 
 const indexationSocket = computed(() =>
@@ -64,7 +65,7 @@ watch(
           )
         )
       ).map((url, i) => ({
-        ...newValue[i].data,
+        ...newValue[i],
         url: url as string,
       }));
     }
@@ -74,7 +75,7 @@ watch(
 
 const images = computed(() =>
   issueSuggestions.value.map(({ url, issuecode }) => ({
-    text: issuecode,
+    text: issuecode || $t("Titre inconnu"),
     url,
   }))
 );
@@ -90,20 +91,17 @@ const getIssuenumberFromIssuecode = (issuecode: string) =>
   issuecode.split(" ")[1];
 
 const acceptIssueSuggestion = async (issuecode: string) => {
-  await indexationSocket.value.createIssueSuggestion(
-    {
-      source: "ai",
-      indexationId: indexation.value!.id,
-      issuecode,
-    },
-    true
-  );
+  await indexationSocket.value.acceptIssueSuggestion({
+    source: "ai",
+    indexationId: indexation.value!.id,
+    issuecode,
+  });
   selectedExistingCoverIssuecode.value = null;
 };
 
 const rejectAllIssueSuggestions = () => {
-  for (const issueSuggestion of issueSuggestions.value) {
-    issueSuggestion.seen = true;
-  }
+  // for (const issueSuggestion of issueSuggestions.value) {
+  //   issueSuggestion.seen = true;
+  // }
 };
 </script>

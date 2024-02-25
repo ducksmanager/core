@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "baseUrl": ".",
-    "module": "commonjs",
+    "module": "ES6",
     "target": "esnext",
     "lib": ["ESNext"],
     "strict": true,
@@ -20,6 +20,7 @@
       "~/*": ["*"],
       "~dm-types/*": ["../../../packages/types/*"],
       "~dumili-types/*": ["../types/*"],
+      "~dm-services/*": ["../../../packages/api/services/*"],
       "~prisma/*": ["prisma/*"]
     }
   },

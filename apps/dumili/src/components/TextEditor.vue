@@ -18,39 +18,67 @@ const { t: $t } = useI18n();
 import { suggestions } from "~/stores/suggestions";
 
 const textContentError = ref("");
-const acceptedStories = computed(() => suggestions().acceptedStories);
+const { acceptedStories, acceptedIssue: issue } = storeToRefs(suggestions());
 
-const issue = computed(() => suggestions().acceptedIssue);
+const storiesWithDetails =
+  ref<Awaited<ReturnType<typeof getStoriesWithDetails>>>();
+
+watch(
+  () => acceptedStories.value,
+  async (value) => {
+    if (!issue.value?.issuecode) {
+      return undefined;
+    }
+    storiesWithDetails.value = await getStoriesWithDetails(value);
+  },
+  { immediate: true, deep: true }
+);
+
+const getStoriesWithDetails = async (
+  stories: (typeof acceptedStories)["value"]
+) =>
+  await Promise.all(
+    Object.values(stories)
+      .filter((story) => story !== undefined)
+      .map(async (story) => ({
+        ...story,
+        ...(await coaServices.getStoryDetails(story!.storyversioncode)).data,
+        storyversion: (
+          await coaServices.getStoryversionDetails(story!.storyversioncode)
+        ).data,
+        storyjobs: (
+          await coaServices.getStoryjobs(story!.storyversioncode)
+        ).data,
+      }))
+  );
 
 const textContent = computed(() => {
-  if (!issue.value) {
+  if (!storiesWithDetails.value?.length) {
     return undefined;
   }
-  const shortIssuecode = issue.value?.issuecode.split("/")[1];
+  const shortIssuecode = issue.value!.issuecode!.split("/")[1];
   const rows = [
     [shortIssuecode],
-    ...Object.values(acceptedStories.value)
-      .filter((entry) => entry !== undefined)
-      .map((entry, idx) => [
-        `${shortIssuecode}${String.fromCharCode(97 + idx)}`,
-        entry!.storyversion?.storycode,
-        String(entry!.storyversion?.entirepages || 1),
-        ...["plot", "writer", "artist", "ink"].map(
-          (job) =>
-            entry!.storyjobs?.find(
-              ({ plotwritartink }) => plotwritartink === job
-            )?.personcode
-        ),
-        entry!.printedhero,
-        entry!.title,
-      ]),
+    ...storiesWithDetails.value.map((story, idx) => [
+      `${shortIssuecode}${String.fromCharCode(97 + idx)}`,
+      story!.storyversion?.storycode,
+      ,
+      String(story!.storyversion?.entirepages || 1),
+      ...["plot", "writer", "artist", "ink"].map(
+        (job) =>
+          story!.storyjobs?.find(({ plotwritartink }) => plotwritartink === job)
+            ?.personcode
+      ),
+      "", //story!.printedhero,
+      story!.title,
+    ]),
   ];
   const colsMaxLengths = rows.reduce<number[]>((acc, row) => {
     row.forEach((col, i) => {
       acc[i] = Math.max(acc[i], col?.length || 0);
     });
     return acc;
-  }, [] as number[]);
+  }, []);
 
   return rows
     .map((row) =>
@@ -62,16 +90,6 @@ const textContent = computed(() => {
     )
     .join("\n");
 });
-
-watch(
-  () => issue.value,
-  () => {
-    if (!issue.value) {
-      textContentError.value = "No data";
-    }
-  },
-  { immediate: true }
-);
 </script>
 <style scoped lang="scss">
 textarea {
