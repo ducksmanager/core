@@ -6,12 +6,38 @@ import { SimpleStory } from "~dm-types/SimpleStory";
 
 import Events from "../types";
 export default (socket: Socket<Events>) => {
+  socket.on('getStoryDetails', (storycode, callback) => prismaCoa.inducks_story.findUniqueOrThrow({
+    where: {
+      storycode,
+    }
+  }).then(results => {callback({data: results})}).catch((e) => {
+    callback({error: 'Error', errorDetails: e});
+  }))
+  
+  socket.on('getStoryversionDetails', (storyversioncode, callback) => prismaCoa.inducks_storyversion.findUniqueOrThrow({
+    where: {
+      storyversioncode,
+    }
+  }).then(results => {callback({data: results})}).catch((e) => {
+    callback({error: 'Error', errorDetails: e});
+  }))
+  
+  socket.on('getStoryjobs', (storyversioncode, callback) => prismaCoa.inducks_storyjob.findMany({
+    where: {
+      storyversioncode
+    }
+  }).then(results => {callback({data: results})}).catch((e) => {
+    callback({error: 'Error', errorDetails: e});
+  }))
+
+
   socket.on("searchStory", async (keywords, withIssues, callback) => {
     const limit = 10;
 
     const joinedKeywords = keywords.join(" ");
     let results = await prismaCoa.$queryRaw<SimpleStory[]>`
       SELECT inducks_storyversion.storycode,
+             inducks_storyversion.entirepages,
              inducks_entry.title                         AS title,
              MATCH (inducks_entry.title) AGAINST (${joinedKeywords}) /
              (IF(inducks_storyversion.kind = 'n', 1, 2)) AS score

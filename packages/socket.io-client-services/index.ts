@@ -1,4 +1,5 @@
 import { CacheOptions } from "axios-cache-interceptor";
+export { buildStorage, buildWebStorage } from "axios-cache-interceptor";
 import { io, Socket } from "socket.io-client";
 import { ref } from "vue";
 

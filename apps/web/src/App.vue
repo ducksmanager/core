@@ -3,10 +3,13 @@
 </template>
 
 <script setup lang="ts">
-import { buildWebStorage } from "axios-cache-interceptor";
 import Cookies from "js-cookie";
 
-import { cacheStorage, session } from "~socket.io-client-services";
+import {
+  buildWebStorage,
+  cacheStorage,
+  session,
+} from "~socket.io-client-services";
 
 const { loadUser } = collection();
 const { user, isLoadingUser } = storeToRefs(collection());

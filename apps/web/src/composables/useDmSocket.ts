@@ -31,62 +31,59 @@ const until4am = () => {
     .diff(now);
 };
 
-const socketWrapper = useSocket(import.meta.env.VITE_DM_SOCKET_URL);
+const socket = useSocket(import.meta.env.VITE_DM_SOCKET_URL);
 
 export const publicCollectionServices =
-  socketWrapper.addNamespace<PublicCollectionServices>(
+  socket.addNamespace<PublicCollectionServices>(
     PublicCollectionServices.namespaceEndpoint,
   );
-export const loginServices = socketWrapper.addNamespace<LoginServices>(
+export const loginServices = socket.addNamespace<LoginServices>(
   LoginServices.namespaceEndpoint,
 );
 
-export const bookcaseServices = socketWrapper.addNamespace<BookcaseServices>(
+export const bookcaseServices = socket.addNamespace<BookcaseServices>(
   BookcaseServices.namespaceEndpoint,
 );
-export const statsServices = socketWrapper.addNamespace<StatsServices>(
+export const statsServices = socket.addNamespace<StatsServices>(
   StatsServices.namespaceEndpoint,
 );
 
-export const authServices = socketWrapper.addNamespace<AuthServices>(
+export const authServices = socket.addNamespace<AuthServices>(
   AuthServices.namespaceEndpoint,
 );
-export const edgeCreatorServices =
-  socketWrapper.addNamespace<EdgeCreatorServices>(
-    EdgeCreatorServices.namespaceEndpoint,
-  );
+export const edgeCreatorServices = socket.addNamespace<EdgeCreatorServices>(
+  EdgeCreatorServices.namespaceEndpoint,
+);
 
 export const presentationTextServices =
-  socketWrapper.addNamespace<PresentationTextServices>(
+  socket.addNamespace<PresentationTextServices>(
     PresentationTextServices.namespaceEndpoint,
   );
-export const edgesServices = socketWrapper.addNamespace<EdgesServices>(
+export const edgesServices = socket.addNamespace<EdgesServices>(
   EdgesServices.namespaceEndpoint,
 );
 
-export const coaServices = socketWrapper.addNamespace<CoaServices>(
+export const coaServices = socket.addNamespace<CoaServices>(
   CoaServices.namespaceEndpoint,
   {
     ttl: until4am(),
   },
 );
-export const globalStatsServices =
-  socketWrapper.addNamespace<GlobalStatsServices>(
-    GlobalStatsServices.namespaceEndpoint,
-    // {
-    //   ttl: oneHour(),
-    // },
-  );
-export const eventsServices = socketWrapper.addNamespace<EventsServices>(
+export const globalStatsServices = socket.addNamespace<GlobalStatsServices>(
+  GlobalStatsServices.namespaceEndpoint,
+  // {
+  //   ttl: oneHour(),
+  // },
+);
+export const eventsServices = socket.addNamespace<EventsServices>(
   EventsServices.namespaceEndpoint,
 );
-export const bookstoreServices = socketWrapper.addNamespace<BookstoreServices>(
+export const bookstoreServices = socket.addNamespace<BookstoreServices>(
   BookstoreServices.namespaceEndpoint,
 );
-export const collectionServices =
-  socketWrapper.addNamespace<CollectionServices>(
-    CollectionServices.namespaceEndpoint,
-  );
-export const coverIdServices = socketWrapper.addNamespace<CoverIdServices>(
+export const collectionServices = socket.addNamespace<CollectionServices>(
+  CollectionServices.namespaceEndpoint,
+);
+export const coverIdServices = socket.addNamespace<CoverIdServices>(
   CoverIdServices.namespaceEndpoint,
 );
