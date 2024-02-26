@@ -35,7 +35,7 @@
                     showAiDetections !== undefined &&
                     xOffset !== undefined &&
                     displayRatioNoCropping &&
-                    page.aiKumikoResults.length
+                    page.aiKumikoResultPanels.length
                   "
                   class="position-absolute h-100"
                   :style="{
@@ -46,7 +46,7 @@
                   <div
                     v-for="(
                       { x, y, width, height }, idx
-                    ) in page.aiKumikoResults"
+                    ) in page.aiKumikoResultPanels"
                     :key="`ocr-match-${idx}`"
                     class="position-absolute ocr-match panel"
                     :style="{
@@ -74,7 +74,7 @@
                               (dimension, idx) =>
                                 `${
                                   [x, y][idx] /
-                                  (page.aiKumikoResults[0][dimension] /
+                                  (page.aiKumikoResultPanels[0][dimension] /
                                     100)
                                 }%`
                             )
@@ -166,15 +166,15 @@
               <b-col
                 :class="`w-100 kind-${acceptedStoryKinds[entry.id]?.kind}`"
                 :style="{
-                  height: `${50 * entry.entirepages}px`,
+                  height: `${50 * entry.entryPages.length}px`,
                 }"
                 :title="`${entry.title || 'Inconnu'} (${
-                  entry.entirepages
+                  entry.entryPages.length
                 } pages)`"
               ></b-col>
             </template>
           </b-col>
-          <b-col :cols="10" class="d-flex" style="padding: 0">
+          <b-col :cols="10" class="d-flex flex-column" style="padding: 0">
             <b-row
               v-for="(entry, idx) in indexation.entries"
               :key="entry.id"
@@ -238,7 +238,7 @@ const displayRatioNoCropping = computed(
 const firstPanelPosition = (pageUrl: string) => {
   const { x, y, width, height } = indexation.value!.pages.find(
     ({ url }) => url === pageUrl
-  )!.aiKumikoResults[0];
+  )!.aiKumikoResultPanels[0];
   return {
     left: x * displayRatioNoCropping.value!,
     top: y * displayRatioNoCropping.value!,

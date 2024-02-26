@@ -5,7 +5,7 @@ import { Errorable } from '~socket.io-services/types';
 export const indexationPayloadInclude = {
     pages: {
       include: {
-        aiKumikoResults: true,
+        aiKumikoResultPanels: true,
         aiOcrPossibleStories: {
           include: {
             storySuggestions: true
@@ -18,9 +18,14 @@ export const indexationPayloadInclude = {
     issueSuggestions: true,
     entries: {
       include: {
+        entryPages: true,
         acceptedSuggestedStory: true,
         acceptedSuggestedStoryKind: true,
-        storyKindSuggestions: true,
+        storyKindSuggestions: {
+          include: {
+            acceptedOnEntries: true
+          }
+        },
         storySuggestions: true,
       }
     }

@@ -45,8 +45,7 @@ export class ServerWithData<Data extends object> extends Server<
 
 export type NamespaceWithData<Services extends EventsMap, Data extends object = object> = Namespace<Services, Record<string, never>, Record<string, never>, Data>
 
-export const prisma = new PrismaClient();
-
+export const prisma = new PrismaClient()
 
 const httpServer = createServer(async (req, res) => {
   if (req.url === '/upload') {
@@ -98,10 +97,9 @@ const httpServer = createServer(async (req, res) => {
             }
           }))?.pageNumber ?? 0
 
-          const uploadedImages = await Promise.all(imagesToUpload.map(async (filename, idx) => cloudinary.uploader.upload(filename, {
+          const uploadedImages = await Promise.all(imagesToUpload.map(async (filename) => cloudinary.uploader.upload(filename, {
             upload_preset: "p1urov1k",
-            folder: `dumili/${user.username}/${indexationId}`,
-            context: `project=dumili|user=${user.username}|indexation=${indexationId}|page=${firstNewPageNumber + idx + 1}`
+            folder: `dumili/${user.username}/${indexationId}`
           }).then(({ secure_url }) => secure_url).catch(e => {
             console.error(e)
             res.writeHead(500, { 'Content-Type': 'text/plain' });

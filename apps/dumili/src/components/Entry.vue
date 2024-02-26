@@ -4,12 +4,12 @@
       <b-col cols="3">
         <suggestion-list
           :suggestions="entry.storyKindSuggestions"
-          :get-current="() => acceptedStoryversionKind"
+          :get-current="() => acceptedStoryKind"
           :item-class="(suggestion) => [`kind-${suggestion.kind}`]"
-          @select="acceptStoryversionKindSuggestion($event!.kind)"
+          @select="acceptStoryKindSuggestion($event!.kind)"
         >
           <template #item="suggestion">
-            {{ getStoryversionKind(suggestion.kind) }}
+            {{ getStoryKind(suggestion.kind) }}
           </template>
           <template #unknown-text>{{ $t("Type inconnu") }}</template>
         </suggestion-list> </b-col
@@ -37,15 +37,18 @@
           <div>
             {{
               $t("{numberOfPanels} cases trouvées", {
-                numberOfPanels: pages[0].aiKumikoResults.length,
+                numberOfPanels: pages[0].aiKumikoResultPanels.length,
               })
             }}
-            <table-tooltip target="panels" :data="pages[0].aiKumikoResults" />
+            <table-tooltip
+              target="panels"
+              :data="pages[0].aiKumikoResultPanels"
+            />
             <i-bi-info-circle-fill id="panels" />
           </div>
           <div v-if="storyKindAiSuggestion">
             <i-bi-arrow-right />&nbsp;<AiSuggestionIcon status="success" />
-            {{ getStoryversionKind(storyKindAiSuggestion.kind) }}
+            {{ getStoryKind(storyKindAiSuggestion.kind) }}
           </div>
         </b-col>
         <b-col cols="3" class="text-start white-space-normal">
@@ -106,10 +109,10 @@
       <b-col cols="3">
         <b-badge
           size="xl"
-          :class="{ [`kind-${acceptedStoryversionKind?.kind}`]: true }"
+          :class="{ [`kind-${acceptedStoryKind?.kind}`]: true }"
           >{{
             (entry.acceptedSuggestedStoryKind &&
-              getStoryversionKind(entry.acceptedSuggestedStoryKind.kind)) ||
+              getStoryKind(entry.acceptedSuggestedStoryKind.kind)) ||
             $t("Type inconnu")
           }}</b-badge
         ></b-col
@@ -142,7 +145,7 @@ import { suggestions } from "~/stores/suggestions";
 import { user } from "~/stores/ui";
 import { FullIndexation } from "~dumili-services/indexations/types";
 import { storyKinds } from "~dumili-types/storyKinds";
-import { entry, story_kind_suggestion_kind } from "~prisma/client_dumili";
+import { entry, storyKind } from "~prisma/client_dumili";
 
 const { t: $t } = useI18n();
 const props = defineProps<{
@@ -151,10 +154,6 @@ const props = defineProps<{
 }>();
 
 const { entry, editable } = toRefs(props);
-
-defineEmits<{
-  (params: { toggle: boolean; type: "storyversionKind" }): void;
-}>();
 
 const { indexation, acceptedStories, acceptedStoryKinds, entriesFirstPages } =
   storeToRefs(suggestions());
@@ -174,7 +173,7 @@ const acceptedStory = computed(() => acceptedStories.value[props.entry.id]);
 
 const storyKindAiSuggestion = computed(() =>
   entry.value.storyKindSuggestions.find(
-    ({ panelBoundaries }) => panelBoundaries
+    ({ aiSourcePageId }) => aiSourcePageId !== null
   )
 );
 
@@ -182,7 +181,7 @@ const storyAiSuggestions = computed(() =>
   entry.value.storySuggestions.filter(({ ocrDetailsId }) => ocrDetailsId)
 );
 
-const acceptedStoryversionKind = computed(
+const acceptedStoryKind = computed(
   () => acceptedStoryKinds.value[props.entry.id]
 );
 
@@ -195,10 +194,10 @@ const urlEncodedStorycode = computed(
   () => storycode.value && encodeURIComponent(storycode.value)
 );
 
-const getStoryversionKind = (storyversionKind: story_kind_suggestion_kind) =>
-  storyKinds.find(({ code }) => code === storyversionKind)?.label;
+const getStoryKind = (storyKind: storyKind) =>
+  storyKinds.find(({ code }) => code === storyKind)?.label;
 
-const acceptStoryversionKindSuggestion = (kind: story_kind_suggestion_kind) => {
+const acceptStoryKindSuggestion = (kind: storyKind) => {
   getIndexationSocket(entry.value.indexationId).acceptStoryKindSuggestion({
     entryId: entry.value.id,
     kind,

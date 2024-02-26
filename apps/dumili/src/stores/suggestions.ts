@@ -24,7 +24,7 @@ export const suggestions = defineStore("suggestions", () => {
       endsAtPage: number;
     }[] = [];
     let pageCounter = 0;
-    for (const { id, entirepages } of indexation.value?.entries || []) {
+    for (const { id, entryPages } of indexation.value?.entries || []) {
       if (firstPages.length) {
         firstPages[firstPages.length - 1].endsAtPage = pageCounter - 1;
       }
@@ -34,7 +34,7 @@ export const suggestions = defineStore("suggestions", () => {
         endsAtPage: pageCounter,
       });
 
-      pageCounter += entirepages;
+      pageCounter += entryPages.length;
     }
     if (firstPages.length) {
       firstPages[firstPages.length - 1].endsAtPage = pageCounter - 1;

@@ -8,7 +8,7 @@ import {
   SessionData,
   SessionDataWithIndexation,
 } from "~/index";
-import { entry, Prisma, storyKindSuggestion, storySuggestion } from "~/prisma/client_dumili";
+import { entry, page, Prisma, storyKindSuggestion, storySuggestion } from "~/prisma/client_dumili";
 import CoaServices from "~dm-services/coa/types";
 import { storyKinds } from "~dumili-types/storyKinds";
 import { useSocket } from "~socket.io-client-services/index";
@@ -157,75 +157,92 @@ export default (io: Server) => {
           indexationSocket.data.indexation.pages.map(
             ({ url }) => url
           )
-        ).then(async (data) => {
+        ).then(async (panelsPerPage) => {
           const storyStoryKind = storyKinds.find(({ label }) => label === 'Story')!
           let previousPosition = String.fromCharCode(
             "a".charCodeAt(0) - 1);
 
           const indexationId = indexationSocket.data.indexation.id;
-          const entriesToCreate: (Pick<entry, 'position' | 'entirepages'> & Pick<storyKindSuggestion, 'kind' | 'panelBoundaries'>)[] = []
-          data.forEach((result, idx) => {
+          const entriesToCreate: (Pick<entry, 'position'> & Pick<storyKindSuggestion, 'kind'> & Pick<page, 'pageNumber'> & { pages: { pageId: number, panels: typeof panelsPerPage[number] }[] })[] = []
+          panelsPerPage.forEach((panelsOfPage, idx) => {
+            const pageId = indexationSocket.data.indexation.pages[idx].id
             const inferredKind = storyKinds.find(
               ({ label }) =>
                 label ===
-                (result.panels.length === 1
+                (panelsOfPage.length === 1
                   ? idx === 0
                     ? "Cover"
                     : "Illustration"
                   : "Story")
             )!.code;
 
+            const page = { pageId, panels: panelsOfPage }
+
             // Don't create a new entry if both the previous one and this one are stories
-            if (!(inferredKind === storyStoryKind.code && entriesToCreate[entriesToCreate.length - 1]?.kind === storyStoryKind.code)) {
+            if (!(
+              storyStoryKind.code === inferredKind &&
+              storyStoryKind.code === entriesToCreate[entriesToCreate.length - 1]?.kind
+            )) {
               const position = String.fromCharCode(previousPosition.charCodeAt(0) + 1)
               entriesToCreate.push({
                 position,
                 kind: inferredKind,
-                panelBoundaries: JSON.stringify(result.panels),
-                entirepages: 1
+                pageNumber: idx + 1,
+                pages: [page]
               })
               previousPosition = position
             }
             else {
-              entriesToCreate[entriesToCreate.length - 1].entirepages++
+              entriesToCreate[entriesToCreate.length - 1].pages.push(page)
             }
           })
 
-          await prisma.$transaction(entriesToCreate.map(({ position, kind, entirepages, panelBoundaries }) =>
+          await prisma.$transaction(entriesToCreate.map(({ pages }, idx) =>
+            prisma.page.update({
+              where: {
+                id: pages[idx].pageId
+              },
+              include: {
+                aiKumikoResultPanels: true
+              },
+              data: {
+                aiKumikoResultPanels: {
+                  createMany: {
+                    data: pages[idx].panels
+                  }
+                },
+              }
+            })
+          ))
+
+          await prisma.$transaction(entriesToCreate.map(({ position, pages }) =>
             prisma.entry.create({
               data: {
                 indexationId,
                 position,
-                entirepages,
-                storyKindSuggestions: {
-                  create: [{
-                    kind,
-                    panelBoundaries
-                  }]
+                entryPages: {
+                  createMany: {
+                    data: pages.map(({ pageId }) => ({ pageId }))
+                  }
+                }
+              },
+            })))
+
+          await prisma.$transaction(entriesToCreate.map(({ position, kind, pages }) =>
+            prisma.storyKindSuggestion.create({
+              data: {
+                kind,
+                aiSourcePageId: pages[0].pageId,
+                entry: {
+                  connect: {
+                    indexationId_position: {
+                      indexationId,
+                      position,
+                    }
+                  }
                 }
               }
             })))
-          const entriesWithStoryKindSuggestions = await prisma.entry.findMany({
-            where: {
-              indexationId
-            },
-            include: {
-              storyKindSuggestions: true
-            }
-          })
-
-          await prisma.$transaction(entriesWithStoryKindSuggestions.map((entry) => prisma.entry.update(({
-            data: {
-              acceptedSuggestedStoryKind: {
-                connect: {
-                  id: entry.storyKindSuggestions[0].id
-                }
-              }
-            },
-            where: {
-              id: entry.id
-            }
-          }))))
 
           callback({ status: 'OK' });
         }).catch((err) => {
@@ -244,7 +261,10 @@ export default (io: Server) => {
         ) {
           callback({ error: "Invalid page URL" });
         }
-        prisma.aiKumikoResult.findFirstOrThrow({
+        prisma.aiKumikoResultPanel.findFirstOrThrow({
+          include: {
+            page: true
+          },
           where: {
             page: {
               url: pageUrl,

@@ -107,15 +107,15 @@ button:focus-visible {
   }
 }
 
-$storyversionKinds: (
+$storyKinds: (
   'c': #ffcc33,
   'n': #cbdced,
   'n_g': #ff99ff
 );
 
-@each $storyversionKind,
-$storyversionColor in $storyversionKinds {
-  .kind-#{$storyversionKind} {
+@each $storyKind,
+$storyversionColor in $storyKinds {
+  .kind-#{$storyKind} {
     @include storyKindBackground($storyversionColor);
   }
 }

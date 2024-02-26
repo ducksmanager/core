@@ -1,32 +1,21 @@
 import axios from "axios";
 
- type Boundaries = {
-  x: number;
-  y: number;
-  width: number;
-  height: number;
-};
+import { aiKumikoResultPanel } from "~/prisma/client_dumili";
 
- type KumikoResult = {
+type KumikoResult = {
   filename: string;
   size: number[];
   background: string;
   gutters: number[];
-  panels: Boundaries[];
-};
-
-type KumikoResultWithNumberPanels = Omit<KumikoResult, "panels"> & {
   panels: [number, number, number, number][];
 };
-export const runKumiko = async (urls: string[]): Promise<KumikoResult[]> =>
-  (axios.get(`${process.env.KUMIKO_HOST}?i=${urls.join(",")}`)).then(({ data }) => data.map(
-    (result: KumikoResultWithNumberPanels) => ({
-      ...result,
-      panels: result.panels.map(([x, y, width, height]) => ({
-        x,
-        y,
-        width,
-        height,
-      })),
-    })
-  ))
+
+export const runKumiko = async (urls: string[]): Promise<Pick<aiKumikoResultPanel, 'x' | 'y' | 'width' | 'height'>[][]> =>
+  (axios.get(`${process.env.KUMIKO_HOST}?i=${urls.join(",")}`))
+  .then((result) => { return result.data as KumikoResult[]}).then(data => data.map(
+    ({ panels }) => panels.map(([ x, y, width, height ]) => ({
+      x,
+      y,
+      width,
+      height,
+    }))))

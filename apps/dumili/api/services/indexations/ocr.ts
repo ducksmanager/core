@@ -1,6 +1,6 @@
 import axios from "axios";
 
-import { aiKumikoResult } from "~/prisma/client_dumili";
+import { aiKumikoResultPanel } from "~/prisma/client_dumili";
 
 type OcrResult = {
   box: [[number, number], [number, number], [number, number], [number, number]];
@@ -10,7 +10,7 @@ type OcrResult = {
 
 /* Adding a bit of extra in case the storycode is just outside the panel */
 export const extendBoundaries = (
-  { x, y, width, height }: aiKumikoResult,
+  { x, y, width, height }: aiKumikoResultPanel,
   extendBy: number
 ) => ({
   left: x,
