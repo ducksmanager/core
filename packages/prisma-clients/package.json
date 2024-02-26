@@ -12,8 +12,8 @@
     "lint": "prettier -w schemas"
   },
   "dependencies": {
-    "@prisma/client": "^5.9.1",
-    "prisma": "^5.9.1"
+    "@prisma/client": "^5.10.2",
+    "prisma": "^5.10.2"
   },
   "devDependencies": {
     "prettier": "^3.2.5",
