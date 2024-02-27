@@ -215,6 +215,33 @@ export default (io: Server) => {
             })
           ))
 
+          await prisma.entryPage.deleteMany({
+            where: {
+              entry: {
+                indexationId
+              }
+            },
+          });
+          await prisma.storyKindSuggestion.deleteMany({
+            where: {
+              entry: {
+                indexationId
+              }
+            },
+          });
+          await prisma.storySuggestion.deleteMany({
+            where: {
+              entry: {
+                indexationId
+              }
+            },
+          });
+          await prisma.entry.deleteMany({
+            where: {
+              indexationId
+            },
+          });
+
           await prisma.$transaction(entriesToCreate.map(({ position, pages }) =>
             prisma.entry.create({
               data: {
@@ -226,23 +253,17 @@ export default (io: Server) => {
                   }
                 }
               },
-            })))
+            })));
 
-          await prisma.$transaction(entriesToCreate.map(({ position, kind, pages }) =>
-            prisma.storyKindSuggestion.create({
-              data: {
-                kind,
-                aiSourcePageId: pages[0].pageId,
-                entry: {
-                  connect: {
-                    indexationId_position: {
-                      indexationId,
-                      position,
-                    }
-                  }
-                }
-              }
-            })))
+          await prisma.$transaction(entriesToCreate.map(({ position, kind, pages }) => prisma.$queryRaw`
+            INSERT INTO story_kind_suggestion (kind, ai_source_page_id, entry_id)
+            VALUES (${kind}, ${pages[0].pageId}, (SELECT id FROM entry WHERE indexation_id = ${indexationId} AND position = ${position}))`
+          ))
+
+          await prisma.$transaction(entriesToCreate.map(({ position, kind }) => prisma.$queryRaw`
+            UPDATE entry
+            SET accepted_story_kind_suggested_id = (SELECT id FROM story_kind_suggestion WHERE entry_id = (SELECT id FROM entry WHERE indexation_id = ${indexationId} AND position = ${position}) AND kind = ${kind})`
+          ))
 
           callback({ status: 'OK' });
         }).catch((err) => {

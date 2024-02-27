@@ -19,8 +19,8 @@ model entry {
   title                        String?               @db.VarChar(100)
   position                     String                @db.VarChar(9)
   indexation                   indexation            @relation(fields: [indexationId], references: [id], onUpdate: Restrict, map: "entry_indexation_id_fk")
-  acceptedSuggestedStoryKind   storyKindSuggestion?  @relation("entry_accepted_story_kind_suggested_idTostory_kind_suggestion", fields: [acceptedStoryKindSuggestedId], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "entry_story_kind_suggestion_id_fk")
-  acceptedSuggestedStory       storySuggestion?      @relation("entry_accepted_story_suggested_idTostory_suggestion", fields: [acceptedStorySuggestedId], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "entry_story_suggestion_id_fk")
+  acceptedSuggestedStoryKind   storyKindSuggestion?  @relation("entry_accepted_story_kind_suggested_idTostory_kind_suggestion", fields: [acceptedStoryKindSuggestedId], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "entry_story_kind_suggestion_id_fk")
+  acceptedSuggestedStory       storySuggestion?      @relation("entry_accepted_story_suggested_idTostory_suggestion", fields: [acceptedStorySuggestedId], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "entry_story_suggestion_id_fk")
   entryPages                   entryPage[]
   storyKindSuggestions         storyKindSuggestion[] @relation("story_kind_suggestion_entry_idToentry")
   storySuggestions             storySuggestion[]
@@ -66,7 +66,7 @@ model storyKindSuggestion {
   entryId           Int       @map("entry_id")
   acceptedOnEntries entry[]   @relation("entry_accepted_story_kind_suggested_idTostory_kind_suggestion")
   aiSourcePage      page?     @relation(fields: [aiSourcePageId], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "story_kind_suggestion_page_id_fk")
-  entry             entry     @relation("story_kind_suggestion_entry_idToentry", fields: [entryId], references: [id], onUpdate: Restrict, map: "story_kind_suggestion_entry_id_fk")
+  entry             entry     @relation("story_kind_suggestion_entry_idToentry", fields: [entryId], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "story_kind_suggestion_entry_id_fk")
 
   @@index([entryId], map: "story_kind_suggestion_entry_id_fk")
   @@index([aiSourcePageId], map: "story_kind_suggestion_ai_source_page_id_fk")
@@ -80,7 +80,7 @@ model storySuggestion {
   ocrDetailsId      Int?                @map("ocr_details_id")
   acceptedOnEntries entry[]             @relation("entry_accepted_story_suggested_idTostory_suggestion")
   ocrDetails        aiOcrPossibleStory? @relation(fields: [ocrDetailsId], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "story_suggestion_ai_ocr_possible_story_id_fk")
-  entry             entry               @relation(fields: [entryId], references: [id], onUpdate: Restrict, map: "story_suggestion_entry_id_fk")
+  entry             entry               @relation(fields: [entryId], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "story_suggestion_entry_id_fk")
 
   @@index([entryId], map: "story_suggestion_entry_id_fk")
   @@index([ocrDetailsId], map: "story_suggestion_ai_ocr_possible_story_id_fk")
@@ -152,7 +152,7 @@ model entryPage {
   id      Int   @id @default(autoincrement())
   entryId Int   @map("entry_id")
   pageId  Int   @map("page_id")
-  entry   entry @relation(fields: [entryId], references: [id], onUpdate: Restrict, map: "entry_page_entry_id_fk")
+  entry   entry @relation(fields: [entryId], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "entry_page_entry_id_fk")
   page    page  @relation(fields: [pageId], references: [id], onUpdate: Restrict, map: "entry_page_page_id_fk")
 
   @@unique([pageId, entryId], map: "entry_page_unique")

@@ -1,5 +1,4 @@
-import { instrument } from "@socket.io/admin-ui";
-import busboy from 'busboy';
+  import busboy from 'busboy';
 import { v2 as cloudinary } from "cloudinary";
 import dotenv from "dotenv";
 import fs from 'fs';
@@ -118,9 +117,7 @@ const httpServer = createServer(async (req, res) => {
             where: {
               id: indexationId
             },
-            update: {
-              ...pagesToCreate
-            },
+            update: pagesToCreate,
             create: {
               dmUserId: user.id,
               id: indexationId,
@@ -161,10 +158,6 @@ const io = new Server(httpServer, {
 });
 
 indexations(io)
-
-instrument(io, {
-  auth: false
-});
 
 httpServer.listen(3002);
 console.log('Dumuli API open on port 3002')
