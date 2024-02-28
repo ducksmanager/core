@@ -30,7 +30,7 @@
     "page-flip": "^2.0.7",
     "pinia": "^2.1.7",
     "sortablejs": "^1.15.2",
-    "vue": "^3.4.20",
+    "vue": "^3.4.21",
     "vue-draggable-resizable": "^3.0.0",
     "vue-i18n": "^9.9.1",
     "vue-router": "^4.3.0",

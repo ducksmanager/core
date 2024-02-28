@@ -1,7 +1,8 @@
 <template>
   <suggestion-list
     :suggestions="indexation!.issueSuggestions"
-    :get-current="() => issue!"
+    :is-ai-source="(suggestion) => suggestion.source === 'ai'"
+    :current="issue!"
     :show-customize-form="showIssueSelect"
     @toggle-customize-form="showIssueSelect = $event"
     @select="$event && acceptIssueSuggestion($event, $event.source)"

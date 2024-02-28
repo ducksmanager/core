@@ -1,5 +1,5 @@
 <template>
-  <b-tooltip :target="target">
+  <b-tooltip :target="target" click>
     <table>
       <thead>
         <th

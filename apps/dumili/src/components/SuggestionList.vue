@@ -1,7 +1,10 @@
 <template>
   <b-dropdown
     class="my-2"
-    :toggle-class="['text-wrap', ...(itemClass && getCurrent() ? itemClass(getCurrent()!) : [])]"
+    :toggle-class="[
+      'text-wrap',
+      ...(itemClass && current ? itemClass(current as S) : []),
+    ]"
     ><b-dropdown-item
       v-for="(suggestion, idx) of suggestions"
       :key="`suggestion-${idx}`"
@@ -38,11 +41,11 @@
       <slot v-if="showCustomizeForm" name="customize-text" />
       <div v-else class="d-flex justify-content-between align-items-center">
         <div>
-          <slot v-if="getCurrent()" name="item" v-bind="getCurrent()!" />
+          <slot v-if="current" name="item" v-bind="current as S" />
           <slot v-else name="unknown-text" />
         </div>
         <AiSuggestionIcon
-          v-if="getCurrent() && isAiSource(getCurrent()!)"
+          v-if="current && isAiSource(current as S)"
           status="success"
         /></div
     ></template>
@@ -59,7 +62,7 @@ import {
 const $slots = useSlots();
 
 defineSlots<{
-  default(props: { suggestion: S }): never;
+  default(suggestion: S): never;
   item(suggestion: S): never;
   "customize-form"(): never;
   "customize-text"(): never;
@@ -69,7 +72,8 @@ defineSlots<{
 withDefaults(
   defineProps<{
     suggestions: S[];
-    getCurrent: () => S | undefined;
+    current: S | undefined;
+    isAiSource: (suggestion: S) => boolean;
     itemClass?: (suggestion: S) => string[];
     showCustomizeForm?: boolean;
   }>(),
@@ -82,9 +86,6 @@ withDefaults(
 const allowCustomizeForm = computed(
   () => $slots["customize-form"] !== undefined
 );
-
-const isAiSource = (suggestion: S) =>
-  "source" in suggestion && suggestion.source === "ai";
 
 const emit = defineEmits<{
   (e: "select", suggestion?: S): void;

@@ -1,7 +1,8 @@
 <template>
   <suggestion-list
     :suggestions="entry.storySuggestions"
-    :get-current="() => acceptedEntry"
+    :is-ai-source="(suggestion) => suggestion.ocrDetailsId !== null"
+    :current="acceptedEntry"
     :show-customize-form="showEntrySelect"
     @toggle-customize-form="showEntrySelect = $event"
     @select="acceptStorySuggestion($event!)"

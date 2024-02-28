@@ -4,7 +4,8 @@
       <b-col cols="3">
         <suggestion-list
           :suggestions="entry.storyKindSuggestions"
-          :get-current="() => acceptedStoryKind"
+          :is-ai-source="(suggestion) => suggestion.aiSourcePageId !== null"
+          :current="acceptedStoryKind"
           :item-class="(suggestion) => [`kind-${suggestion.kind}`]"
           @select="acceptStoryKindSuggestion($event!.kind)"
         >

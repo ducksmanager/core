@@ -6,8 +6,8 @@
       :src="indexation.pages[0].url"
       @load="
       ({ target }) => {
-        coverHeight = (target as HTMLImageElement).height;
-        coverWidth = (target as HTMLImageElement).width;
+        coverHeight = (target as HTMLImageElement).naturalHeight;
+        coverWidth = (target as HTMLImageElement).naturalWidth;
       }
     "
     />
@@ -18,6 +18,7 @@
         <div id="book" class="flip-book">
           <div
             v-for="(page, index) in indexation.pages"
+            ref="pageRefs"
             :key="`page-${index}`"
             class="page"
             :class="{ single: isSinglePage }"
@@ -30,43 +31,62 @@
                   marginLeft: 0,
                 }"
               >
-                <div
-                  v-if="
-                    showAiDetections !== undefined &&
-                    xOffset !== undefined &&
-                    displayRatioNoCropping &&
-                    page.aiKumikoResultPanels.length
-                  "
-                  class="position-absolute h-100"
-                  :style="{
-                  left: `${xOffset || 0}px`,
-                  width: `${displayedWidth! - (xOffset || 0)*2}px`,
-                }"
-                >
+                <template v-if="displayRatioCropped && naturalToDisplayRatio">
                   <div
-                    v-for="(
-                      { x, y, width, height }, idx
-                    ) in page.aiKumikoResultPanels"
-                    :key="`ocr-match-${idx}`"
-                    class="position-absolute ocr-match panel"
+                    v-for="(shownPage, idx) in shownPages.map(
+                      (pageIdx) => indexation!.pages[pageIdx]
+                    )"
+                    :key="shownPage.url"
+                    :class="`position-absolute start-${idx * 100}`"
                     :style="{
-                      left: `${x * displayRatioNoCropping}px`,
-                      top: `${y * displayRatioNoCropping}px`,
-                      width: `${width * displayRatioNoCropping}px`,
-                      height: `${height * displayRatioNoCropping}px`,
+                      width: `${displayedWidthNoBackground!}px`,
+                      height: `${displayedHeightNoBackground!}px`
                     }"
-                  ></div>
-                  <div
-                    class="position-absolute"
-                    :style="toPx(firstPanelPosition(page.url))"
                   >
                     <div
-                      v-for="(
-                        { x1, x2, x3, x4, y1, y2, y3, y4 }, idx
-                      ) in page.aiOcrResults || []"
-                      :key="`ocr-match-${idx}`"
-                      class="position-absolute ocr-match text"
+                      v-for="{
+                        id,
+                        x,
+                        y,
+                        width,
+                        height,
+                      } in shownPage.aiKumikoResultPanels"
+                      :key="`kumiko-match-${id}`"
+                      class="position-absolute kumiko-match panel"
                       :style="{
+                        left: `${
+                          (x * displayRatioCropped) / naturalToDisplayRatio
+                        }px`,
+                        top: `${
+                          (y * displayRatioCropped) / naturalToDisplayRatio
+                        }px`,
+                        width: `${
+                          (width * displayRatioCropped) / naturalToDisplayRatio
+                        }px`,
+                        height: `${
+                          (height * displayRatioCropped) / naturalToDisplayRatio
+                        }px`,
+                      }"
+                    ></div>
+                    <div
+                      class="position-absolute"
+                      :style="toPx(firstPanelPosition(shownPage.url))"
+                    >
+                      <div
+                        v-for="{
+                          id,
+                          x1,
+                          x2,
+                          x3,
+                          x4,
+                          y1,
+                          y2,
+                          y3,
+                          y4,
+                        } in shownPage.aiOcrResults || []"
+                        :key="`ocr-match-${id}`"
+                        class="position-absolute ocr-match text"
+                        :style="{
                       clipPath: `polygon(${[[x1, y1], [x2, y2], [x3, y3], [x4, y4]]
                         .map(([x, y]) =>
                           (['width', 'height'] as const)
@@ -74,7 +94,7 @@
                               (dimension, idx) =>
                                 `${
                                   [x, y][idx] /
-                                  (page.aiKumikoResultPanels[0][dimension] /
+                                  (shownPage.aiKumikoResultPanels[0][dimension] /
                                     100)
                                 }%`
                             )
@@ -82,20 +102,21 @@
                         )
                         .join(',')})`,
                     }"
-                    >
-                      {{
-                        `polygon(${[
-                          [x1, y1],
-                          [x2, y2],
-                          [x3, y3],
-                          [x4, y4],
-                        ]
-                          .map(([x, y]) => `${x}% ${y}%`)
-                          .join(",")})`
-                      }}
+                      >
+                        {{
+                          `polygon(${[
+                            [x1, y1],
+                            [x2, y2],
+                            [x3, y3],
+                            [x4, y4],
+                          ]
+                            .map(([x, y]) => `${x}% ${y}%`)
+                            .join(",")})`
+                        }}
+                      </div>
                     </div>
-                  </div>
-                </div>
+                  </div></template
+                >
               </div>
             </div>
           </div>
@@ -125,16 +146,32 @@
         <b-row>
           <b-col :cols="1" style="padding: 0">
             <b-row
-              v-for="{ id, pageNumber } in indexation.pages"
+              v-for="{
+                id,
+                pageNumber,
+                aiKumikoResultPanels,
+              } in indexation.pages"
               :key="id"
               style="height: 50px"
               :variant="currentPage === pageNumber ? 'secondary' : 'light'"
               class="g-0 px-0 py-0 align-items-center border"
             >
-              <b-col rowspan="4" @click="currentPage = pageNumber"
+              <b-col
+                role="button"
+                :class="{
+                  'fw-bold': shownPages.includes(pageNumber - 1),
+                }"
+                @click="currentPage = pageNumber - 1"
                 >Page {{ pageNumber }}<br /><b-button disabled variant="light"
-                  ><i-bi-scissors /></b-button
-              ></b-col>
+                  ><i-bi-scissors
+                /></b-button>
+                <table-tooltip
+                  :target="`ai-results-page-${pageNumber}`"
+                  :data="aiKumikoResultPanels" />
+                <i-bi-info-circle-fill
+                  :id="`ai-results-page-${pageNumber}`"
+                  @click.stop="() => {}"
+              /></b-col>
             </b-row>
           </b-col>
           <b-col :cols="1" class="position-relative p-0">
@@ -197,7 +234,6 @@ import { PageFlip } from "page-flip";
 
 import useAi from "~/composables/useAi";
 import { suggestions } from "~/stores/suggestions";
-import { user } from "~/stores/ui";
 
 const coverWidth = ref<number | null>(null);
 let coverHeight = ref<number | null>(null);
@@ -211,28 +247,66 @@ let ai = useAi(indexationId.value);
 
 const { indexation, acceptedStoryKinds } = storeToRefs(suggestions());
 
-const { showAiDetectionsOn: showAiDetections } = user();
+const pageRefs = ref<HTMLDivElement[]>([]);
 
 const isSinglePage = computed(() => indexation.value?.pages.length === 1);
 
 const displayedWidth = computed(() => book.value?.getSettings().width);
 const displayedHeight = computed(() => book.value?.getSettings().height);
 
-const xOffset = computed(
+const naturalAspectRatio = computed(
   () =>
-    displayedHeight.value &&
-    pageRatio.value &&
-    displayedWidth.value &&
-    (displayedWidth.value - displayedHeight.value * pageRatio.value) / 2
+    coverWidth.value &&
+    coverHeight.value &&
+    coverWidth.value / coverHeight.value
 );
 
-const pageRatio = computed(() => coverWidth.value! / coverHeight.value!);
+const displayedHeightNoBackground = computed(() =>
+  naturalAspectRatio.value
+    ? naturalAspectRatio.value < 1
+      ? displayedHeight.value
+      : displayedHeight.value! / naturalAspectRatio.value
+    : null
+);
 
-const displayRatioNoCropping = computed(
+console.log(displayedHeightNoBackground.value);
+
+const displayedWidthNoBackground = computed(() =>
+  naturalAspectRatio.value
+    ? naturalAspectRatio.value > 1
+      ? displayedWidth.value
+      : displayedWidth.value! * naturalAspectRatio.value
+    : null
+);
+
+console.log(displayedWidthNoBackground.value);
+
+console.log(naturalAspectRatio.value);
+
+const shownPages = computed(() =>
+  book.value
+    ? [
+        ...new Set([
+          book.value.getCurrentPageIndex(),
+          (book.value as unknown as { pages: { currentSpreadIndex: number } })!
+            .pages.currentSpreadIndex * 2,
+        ]),
+      ]
+    : []
+);
+
+const displayRatioCropped = computed(
   () =>
     displayedHeight.value &&
     coverHeight.value &&
     displayedHeight.value / coverHeight.value
+);
+
+const naturalToDisplayRatio = computed(
+  () =>
+    coverWidth.value &&
+    displayedWidthNoBackground.value &&
+    coverWidth.value / displayedWidthNoBackground.value
 );
 
 const firstPanelPosition = (pageUrl: string) => {
@@ -240,10 +314,10 @@ const firstPanelPosition = (pageUrl: string) => {
     ({ url }) => url === pageUrl
   )!.aiKumikoResultPanels[0];
   return {
-    left: x * displayRatioNoCropping.value!,
-    top: y * displayRatioNoCropping.value!,
-    width: width * displayRatioNoCropping.value!,
-    height: height * displayRatioNoCropping.value!,
+    left: x * displayRatioCropped.value!,
+    top: y * displayRatioCropped.value!,
+    width: width * displayRatioCropped.value!,
+    height: height * displayRatioCropped.value!,
   };
 };
 
@@ -406,6 +480,8 @@ nextTick(() => {
       background-size: contain;
       background-position: center center;
       background-repeat: no-repeat;
+      display: flex;
+      align-items: center;
     }
 
     &.first-page {
@@ -454,7 +530,8 @@ nextTick(() => {
     right: 0 !important;
   }
 
-  .ocr-match {
+  .ocr-match,
+  .kumiko-match {
     border: 1px solid red;
 
     &.text {
