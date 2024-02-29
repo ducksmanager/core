@@ -14,9 +14,6 @@ dependencies:
   '@uppy/drag-drop':
     specifier: ^3.0.3
     version: 3.0.3(@uppy/core@3.9.2)
-  '@uppy/file-input':
-    specifier: ^3.0.4
-    version: 3.0.4(@uppy/core@3.9.2)
   '@uppy/progress-bar':
     specifier: ^3.0.4
     version: 3.0.4(@uppy/core@3.9.2)
@@ -28,19 +25,13 @@ dependencies:
     version: 10.8.0(vue@3.4.21)
   '@vueuse/integrations':
     specifier: ^10.8.0
-    version: 10.8.0(async-validator@4.2.5)(sortablejs@1.15.2)(vue@3.4.21)
-  async-validator:
-    specifier: ^4.2.5
-    version: 4.2.5
+    version: 10.8.0(vue@3.4.21)
   bootstrap:
     specifier: ^5.3.3
     version: 5.3.3(@popperjs/core@2.11.8)
   bootstrap-vue-next:
     specifier: ^0.15.5
     version: 0.15.5(vue@3.4.21)
-  dayjs:
-    specifier: ^1.11.10
-    version: 1.11.10
   js-cookie:
     specifier: ^3.0.5
     version: 3.0.5
@@ -50,9 +41,6 @@ dependencies:
   pinia:
     specifier: ^2.1.7
     version: 2.1.7(typescript@5.3.3)(vue@3.4.21)
-  sortablejs:
-    specifier: ^1.15.2
-    version: 1.15.2
   vue:
     specifier: ^3.4.21
     version: 3.4.21(typescript@5.3.3)
@@ -68,9 +56,6 @@ dependencies:
   vue-slicksort:
     specifier: ^2.0.5
     version: 2.0.5(vue@3.4.21)
-  ~dumili-api:
-    specifier: workspace:*
-    version: link:api
   ~socket.io-client-services:
     specifier: workspace:*
     version: link:../../packages/socket.io-client-services
@@ -1321,16 +1306,6 @@ packages:
       preact: 10.19.6
     dev: false
 
-  /@uppy/file-input@3.0.4(@uppy/core@3.9.2):
-    resolution: {integrity: sha512-D7Nw9GgpABYTcC8SZluDyxd+ppe7+gJejNbPZqMpQyW1S/ME3me55dkDQaVWn8yrgv7347zO2ciue9Rfmko+rQ==}
-    peerDependencies:
-      '@uppy/core': ^3.6.0
-    dependencies:
-      '@uppy/core': 3.9.2
-      '@uppy/utils': 5.7.3
-      preact: 10.19.6
-    dev: false
-
   /@uppy/informer@3.0.4(@uppy/core@3.9.2):
     resolution: {integrity: sha512-gzocdxn8qAFsW2EryehwjghladaBgv6Isjte53FTBV7o/vjaHPP6huKGbYpljyuQi8i9V+KrmvNGslofssgJ4g==}
     peerDependencies:
@@ -1578,7 +1553,7 @@ packages:
       - '@vue/composition-api'
       - vue
 
-  /@vueuse/integrations@10.8.0(async-validator@4.2.5)(sortablejs@1.15.2)(vue@3.4.21):
+  /@vueuse/integrations@10.8.0(vue@3.4.21):
     resolution: {integrity: sha512-sw3P/7cXOfNLQfERp7P0IJ2ODjLE2C3BGXpBQJQkS309c1jbJak9yu4EnY70WaZjkj53aeWSFU6BbHrUxXJ7SA==}
     peerDependencies:
       async-validator: '*'
@@ -1621,8 +1596,6 @@ packages:
     dependencies:
       '@vueuse/core': 10.8.0(vue@3.4.21)
       '@vueuse/shared': 10.8.0(vue@3.4.21)
-      async-validator: 4.2.5
-      sortablejs: 1.15.2
       vue-demi: 0.14.7(vue@3.4.21)
     transitivePeerDependencies:
       - '@vue/composition-api'
@@ -1711,10 +1684,6 @@ packages:
     resolution: {integrity: sha512-HGyxoOTYUyCM6stUe6EJgnd4EoewAI7zMdfqO+kGjnlZmBDz/cR5pf8r/cR4Wq60sL/p0IkcjUEEPwS3GFrIyw==}
     engines: {node: '>=8'}
     dev: true
-
-  /async-validator@4.2.5:
-    resolution: {integrity: sha512-7HhHjtERjqlNbZtqNqy2rckN/SpOOlmDliet+lP7k+eKZEjPk3DgyeU9lIXLdeLz0uBbbVp+9Qdow9wJWgwwfg==}
-    dev: false
 
   /available-typed-arrays@1.0.7:
     resolution: {integrity: sha512-wvUjBtSGN7+7SjNpq/9M2Tg350UZD3q62IFZLbRAR1bSMlCo1ZaeW+BJ+D090e4hIIZLBcTDWe4Mh4jvUDajzQ==}
@@ -1946,10 +1915,6 @@ packages:
     dependencies:
       '@babel/runtime': 7.23.9
     dev: true
-
-  /dayjs@1.11.10:
-    resolution: {integrity: sha512-vjAczensTgRcqDERK0SR2XMwsF/tSvnvlv6VcF2GIhg6Sx4yOIt/irsr1RDJsKiIyBzJDpCoXiWWq28MqH2cnQ==}
-    dev: false
 
   /de-indent@1.0.2:
     resolution: {integrity: sha512-e/1zu3xH5MQryN2zdVaF0OrdNLUbvWxzMbi+iNA6Bky7l1RoP8a2fIbRocyHclXt/arDrrR6lL3TqFD9pMQTsg==}
@@ -4014,10 +3979,6 @@ packages:
     resolution: {integrity: sha512-g9Q1haeby36OSStwb4ntCGGGaKsaVSjQ68fBxoQcutl5fS1vuY18H3wSt3jFyFtrkx+Kz0V1G85A4MyAdDMi2Q==}
     engines: {node: '>=8'}
     dev: true
-
-  /sortablejs@1.15.2:
-    resolution: {integrity: sha512-FJF5jgdfvoKn1MAKSdGs33bIqLi3LmsgVTliuX6iITj834F+JRQZN90Z93yql8h0K2t0RwDPBmxwlbZfDcxNZA==}
-    dev: false
 
   /source-map-js@1.0.2:
     resolution: {integrity: sha512-R0XvVJ9WusLiqTCEiGCmICCMplcCkIwwR11mOSD9CR5u+IXYdiseeEuXCVAjS54zqwkLcPNnmU4OeJ6tUrWhDw==}
