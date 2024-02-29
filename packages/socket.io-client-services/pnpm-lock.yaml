@@ -17,9 +17,6 @@ dependencies:
   vue:
     specifier: ^3.4.15
     version: 3.4.20(typescript@5.3.3)
-  ~socket.io-services:
-    specifier: workspace:*
-    version: link:../socket.io-services
 
 packages:
 
