@@ -255,9 +255,17 @@ export default (io: Server) => {
               },
             })));
 
-          await prisma.$transaction(entriesToCreate.map(({ position, kind, pages }) => prisma.$queryRaw`
+          const storyKindSuggestionsToCreate = entriesToCreate
+            .map(({ position, kind, pages }) => [
+              { position, kind, aiSourcePageId: pages[0].pageId },
+              ...storyKinds
+                .filter(({ code }) => code !== kind)
+                .map(({ code }) => ({ position, kind: code, aiSourcePageId: null }))])
+            .flat()
+
+          await prisma.$transaction(storyKindSuggestionsToCreate.map(({ position, kind, aiSourcePageId }) => prisma.$queryRaw`
             INSERT INTO story_kind_suggestion (kind, ai_source_page_id, entry_id)
-            VALUES (${kind}, ${pages[0].pageId}, (SELECT id FROM entry WHERE indexation_id = ${indexationId} AND position = ${position}))`
+            VALUES (${kind}, ${aiSourcePageId}, (SELECT id FROM entry WHERE indexation_id = ${indexationId} AND position = ${position}))`
           ))
 
           await prisma.$transaction(entriesToCreate.map(({ position, kind }) => prisma.$queryRaw`

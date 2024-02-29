@@ -37,7 +37,9 @@
                       (pageIdx) => indexation!.pages[pageIdx]
                     )"
                     :key="shownPage.url"
-                    :class="`position-absolute start-${idx * 100}`"
+                    :class="`position-absolute start-${
+                      idx * 100
+                    } ai-results-page-${shownPage.pageNumber}`"
                     :style="{
                       width: `${displayedWidthNoBackground!}px`,
                       height: `${displayedHeightNoBackground!}px`
@@ -175,40 +177,20 @@
             </b-row>
           </b-col>
           <b-col :cols="1" class="position-relative p-0">
-            <!-- <b-row
-            v-for="pageNumber in numberOfPages"
-            :key="pageNumber"
-            style="height: 50px"
-            :variant="currentPage === pageNumber ? 'secondary' : 'light'"
-            class="g-0 px-0 py-0 align-items-center border position-relative"
-          > -->
             <template v-for="entry in indexation.entries" :key="entry.url">
-              <!-- <vue-draggable-resizable
-              class="position-absolute border-0"
-              :parent="true"
-              :y="50 * (idx + 1) - 1"
-              :style="{
-                height: '5px',
-                width: '100%',
-                cursor: 'ns-resize',
-                zIndex: 50,
-              }"
-              axis="y"
-              w="100%"
-              h="5px"
-              :resizable="false"
-              :grid="[25, 25]"
-              ><hr class="m-0"
-            /></vue-draggable-resizable> -->
-              <b-col
-                :class="`w-100 kind-${acceptedStoryKinds[entry.id]?.kind}`"
-                :style="{
-                  height: `${50 * entry.entryPages.length}px`,
-                }"
+              <vue-draggable-resizable
+                :draggable="false"
+                :handles="['bm']"
+                w="auto"
+                :h="50 * entry.entryPages.length"
+                :max-height="50 * entry.entryPages.length"
+                :class-name="`col w-100 kind-${
+                  acceptedStoryKinds[entry.id]?.kind
+                }`"
                 :title="`${entry.title || 'Inconnu'} (${
                   entry.entryPages.length
                 } pages)`"
-              ></b-col>
+              ></vue-draggable-resizable>
             </template>
           </b-col>
           <b-col :cols="10" class="d-flex flex-column" style="padding: 0">
@@ -219,7 +201,17 @@
               class="flex-grow-1 g-0 px-0 py-0 align-items-top border bg-light"
             >
               <b-col @click="currentPage = idx"
-                ><Entry :entry="entry" :editable="currentPage === idx"
+                ><Entry
+                  :entry="entry"
+                  :editable="
+                    entry.entryPages
+                      .map(({ pageId }) =>
+                        shownPages
+                          .map((shownPage) => indexation!.pages[shownPage].id)
+                          .includes(pageId)
+                      )
+                      .includes(true)
+                  "
               /></b-col>
             </b-row>
           </b-col>
@@ -312,7 +304,7 @@ const naturalToDisplayRatio = computed(
 const firstPanelPosition = (pageUrl: string) => {
   const { x, y, width, height } = indexation.value!.pages.find(
     ({ url }) => url === pageUrl
-  )!.aiKumikoResultPanels[0];
+  )!.aiKumikoResultPanels?.[0] || { x: 0, y: 0, width: 0, height: 0 };
   return {
     left: x * displayRatioCropped.value!,
     top: y * displayRatioCropped.value!,
@@ -542,14 +534,7 @@ nextTick(() => {
   }
 }
 
-.resize-handle {
-  position: absolute;
-  content: " ";
-  cursor: ns-resize;
-  bottom: 0;
-  height: 11px;
-  display: flex;
-  background: red;
-  width: 5px;
+:deep(.resizable .handle) {
+  bottom: -5px;
 }
 </style>
