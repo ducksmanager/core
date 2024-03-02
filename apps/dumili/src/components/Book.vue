@@ -18,7 +18,6 @@
         <div id="book" class="flip-book">
           <div
             v-for="(page, index) in indexation.pages"
-            ref="pageRefs"
             :key="`page-${index}`"
             class="page"
             :class="{ single: isSinglePage }"
@@ -46,29 +45,21 @@
                     }"
                   >
                     <div
-                      v-for="{
-                        id,
-                        x,
-                        y,
-                        width,
-                        height,
-                      } in shownPage.aiKumikoResultPanels"
-                      :key="`kumiko-match-${id}`"
+                      v-for="panel in shownPage.aiKumikoResultPanels"
+                      :key="`kumiko-match-${panel.id}`"
                       class="position-absolute kumiko-match panel"
-                      :style="{
-                        left: `${
-                          (x * displayRatioCropped) / naturalToDisplayRatio
-                        }px`,
-                        top: `${
-                          (y * displayRatioCropped) / naturalToDisplayRatio
-                        }px`,
-                        width: `${
-                          (width * displayRatioCropped) / naturalToDisplayRatio
-                        }px`,
-                        height: `${
-                          (height * displayRatioCropped) / naturalToDisplayRatio
-                        }px`,
-                      }"
+                      :style="
+                        (['left', 'top', 'width', 'height'] as const).reduce(
+                          (acc, key) => ({
+                            ...acc,
+                            [key]: `${
+                              (panel[key === 'left' ? 'x': (key === 'top' ? 'x' : key)] * displayRatioCropped!) /
+                              naturalToDisplayRatio!
+                            }px`,
+                          }),
+                          {}
+                        )
+                      "
                     ></div>
                     <div
                       class="position-absolute"
@@ -124,99 +115,11 @@
           </div>
         </div>
       </b-container>
-      <b-card
-        no-body
-        class="table-of-contents d-flex w-50 h-100 m-0 overflow-auto"
-        body-class="flex-grow-1 w-100 h-100"
-      >
-        <template #header>
-          <IssueSuggestionModal />
-          <IssueSuggestionList />
-          <div>
-            <b-button
-              variant="success"
-              pill
-              class="ms-2 hint"
-              :disabled="!ai || ai.status.value === 'loading'"
-              :class="ai?.status"
-              @click="ai.runKumiko()"
-            >
-              <i-bi-lightbulb-fill
-            /></b-button></div
-        ></template>
-
-        <b-row>
-          <b-col :cols="1" style="padding: 0">
-            <b-row
-              v-for="{
-                id,
-                pageNumber,
-                aiKumikoResultPanels,
-              } in indexation.pages"
-              :key="id"
-              style="height: 50px"
-              :variant="currentPage === pageNumber ? 'secondary' : 'light'"
-              class="g-0 px-0 py-0 align-items-center border"
-            >
-              <b-col
-                role="button"
-                :class="{
-                  'fw-bold': shownPages.includes(pageNumber - 1),
-                }"
-                @click="currentPage = pageNumber - 1"
-                >Page {{ pageNumber }}<br /><b-button disabled variant="light"
-                  ><i-bi-scissors
-                /></b-button>
-                <table-tooltip
-                  :target="`ai-results-page-${pageNumber}`"
-                  :data="aiKumikoResultPanels" />
-                <i-bi-info-circle-fill
-                  :id="`ai-results-page-${pageNumber}`"
-                  @click.stop="() => {}"
-              /></b-col>
-            </b-row>
-          </b-col>
-          <b-col :cols="1" class="position-relative p-0">
-            <template v-for="entry in indexation.entries" :key="entry.url">
-              <vue-draggable-resizable
-                :draggable="false"
-                :handles="['bm']"
-                w="auto"
-                :h="50 * entry.entryPages.length"
-                :max-height="50 * entry.entryPages.length"
-                :class-name="`col w-100 kind-${
-                  acceptedStoryKinds[entry.id]?.kind
-                }`"
-                :title="`${entry.title || 'Inconnu'} (${
-                  entry.entryPages.length
-                } pages)`"
-              ></vue-draggable-resizable>
-            </template>
-          </b-col>
-          <b-col :cols="10" class="d-flex flex-column" style="padding: 0">
-            <b-row
-              v-for="(entry, idx) in indexation.entries"
-              :key="entry.id"
-              :style="currentPage === idx ? {} : { height: '50px' }"
-              class="flex-grow-1 g-0 px-0 py-0 align-items-top border bg-light"
-            >
-              <b-col @click="currentPage = idx"
-                ><Entry
-                  :entry="entry"
-                  :editable="
-                    entry.entryPages
-                      .map(({ pageId }) =>
-                        shownPages
-                          .map((shownPage) => indexation!.pages[shownPage].id)
-                          .includes(pageId)
-                      )
-                      .includes(true)
-                  "
-              /></b-col>
-            </b-row>
-          </b-col>
-        </b-row>
-      </b-card>
+      <table-of-contents
+        v-model="currentPage"
+        :indexation="indexation"
+        :shown-pages="shownPages"
+      />
     </div>
   </template>
 </template>
@@ -224,25 +127,18 @@
 <script setup lang="ts">
 import { PageFlip } from "page-flip";
 
-import useAi from "~/composables/useAi";
 import { suggestions } from "~/stores/suggestions";
 
-const coverWidth = ref<number | null>(null);
-let coverHeight = ref<number | null>(null);
 let book = ref<PageFlip | null>(null);
+const coverWidth = ref<number | null>(null);
+const coverHeight = ref<number | null>(null);
 const currentPage = ref(0);
 
-const props = defineProps<{ indexationId: string }>();
-const { indexationId } = toRefs(props);
+defineProps<{ indexationId: string }>();
 
-let ai = useAi(indexationId.value);
-
-const { indexation, acceptedStoryKinds } = storeToRefs(suggestions());
-
-const pageRefs = ref<HTMLDivElement[]>([]);
+const { indexation } = storeToRefs(suggestions());
 
 const isSinglePage = computed(() => indexation.value?.pages.length === 1);
-
 const displayedWidth = computed(() => book.value?.getSettings().width);
 const displayedHeight = computed(() => book.value?.getSettings().height);
 
@@ -261,8 +157,6 @@ const displayedHeightNoBackground = computed(() =>
     : null
 );
 
-console.log(displayedHeightNoBackground.value);
-
 const displayedWidthNoBackground = computed(() =>
   naturalAspectRatio.value
     ? naturalAspectRatio.value > 1
@@ -270,10 +164,6 @@ const displayedWidthNoBackground = computed(() =>
       : displayedWidth.value! * naturalAspectRatio.value
     : null
 );
-
-console.log(displayedWidthNoBackground.value);
-
-console.log(naturalAspectRatio.value);
 
 const shownPages = computed(() =>
   book.value
@@ -368,17 +258,6 @@ nextTick(() => {
     { immediate: true }
   );
 });
-
-// watch(
-//   () => storyversionKinds.value,
-//   async () => {
-//     ai = useAi(indexationId.value);
-//     await ai.runCoverSearch();
-//     await ai.runStorycodeOcr();
-//     ai.status.value = "loaded";
-//   },
-//   { deep: true, immediate: true }
-// );
 </script>
 
 <style scoped lang="scss">
@@ -395,55 +274,6 @@ nextTick(() => {
   }
   100% {
     color: #999;
-  }
-}
-
-.table-of-contents {
-  background-color: #eee;
-  color: black;
-  white-space: nowrap;
-
-  .hint {
-    svg {
-      color: #999;
-    }
-    &:hover,
-    &.loaded {
-      svg {
-        color: yellow;
-      }
-    }
-    &.loading {
-      svg {
-        animation: pulse-yellow 2s infinite;
-      }
-    }
-  }
-
-  .card-header {
-    text-align: center;
-
-    :deep(a),
-    :deep(h6) {
-      color: #666;
-    }
-
-    h3 {
-      margin: 6px 6px 0 6px;
-      text-align: center;
-    }
-  }
-
-  .col-auto {
-    width: 100%;
-  }
-
-  :deep(ul) {
-    overflow-x: auto;
-  }
-
-  :deep(.tab-content) {
-    display: none;
   }
 }
 
@@ -532,9 +362,5 @@ nextTick(() => {
       height: 100%;
     }
   }
-}
-
-:deep(.resizable .handle) {
-  bottom: -5px;
 }
 </style>

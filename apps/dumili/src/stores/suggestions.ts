@@ -13,10 +13,6 @@ export const suggestions = defineStore("suggestions", () => {
     acceptedStories = ref<Record<number, storyWithStoryversion | undefined>>(
       {}
     );
-  // pendingIssueSuggestions = computed(
-  //   () => indexation.value?.issueSuggestions
-  // );
-
   const entriesFirstPages = computed(() => {
     const firstPages: {
       entryId: number;
@@ -50,18 +46,6 @@ export const suggestions = defineStore("suggestions", () => {
     }
     indexation.value = data.indexation;
   };
-
-  watch(
-    indexation,
-    async (newIndexation) => {
-      if (newIndexation) {
-        await getIndexationSocket(newIndexation.id).updateIndexation(
-          newIndexation
-        );
-      }
-    },
-    { deep: true }
-  );
 
   watch(
     () => indexation.value?.entries,

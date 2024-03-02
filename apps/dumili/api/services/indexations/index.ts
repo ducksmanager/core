@@ -8,7 +8,8 @@ import {
   SessionData,
   SessionDataWithIndexation,
 } from "~/index";
-import { entry, page, Prisma, storyKindSuggestion, storySuggestion } from "~/prisma/client_dumili";
+import { entry, Prisma, storyKindSuggestion, storySuggestion } from "~/prisma/client_dumili";
+import { FullEntry } from "~/services/indexations/types";
 import CoaServices from "~dm-services/coa/types";
 import { storyKinds } from "~dumili-types/storyKinds";
 import { useSocket } from "~socket.io-client-services/index";
@@ -163,7 +164,7 @@ export default (io: Server) => {
             "a".charCodeAt(0) - 1);
 
           const indexationId = indexationSocket.data.indexation.id;
-          const entriesToCreate: (Pick<entry, 'position'> & Pick<storyKindSuggestion, 'kind'> & Pick<page, 'pageNumber'> & { pages: { pageId: number, panels: typeof panelsPerPage[number] }[] })[] = []
+          const entriesToCreate: (Pick<entry, 'position'> & Pick<storyKindSuggestion, 'kind'> & { entryPages: { pageId: number, panels: typeof panelsPerPage[number] }[] })[] = []
           panelsPerPage.forEach((panelsOfPage, idx) => {
             const pageId = indexationSocket.data.indexation.pages[idx].id
             const inferredKind = storyKinds.find(
@@ -187,20 +188,19 @@ export default (io: Server) => {
               entriesToCreate.push({
                 position,
                 kind: inferredKind,
-                pageNumber: idx + 1,
-                pages: [page]
+                entryPages: [page]
               })
               previousPosition = position
             }
             else {
-              entriesToCreate[entriesToCreate.length - 1].pages.push(page)
+              entriesToCreate[entriesToCreate.length - 1].entryPages.push(page)
             }
           })
 
-          await prisma.$transaction(entriesToCreate.map(({ pages }, idx) =>
+          await prisma.$transaction(entriesToCreate.map(({ entryPages }, idx) =>
             prisma.page.update({
               where: {
-                id: pages[idx].pageId
+                id: entryPages[idx].pageId
               },
               include: {
                 aiKumikoResultPanels: true
@@ -208,7 +208,7 @@ export default (io: Server) => {
               data: {
                 aiKumikoResultPanels: {
                   createMany: {
-                    data: pages[idx].panels
+                    data: entryPages[idx].panels
                   }
                 },
               }
@@ -242,22 +242,11 @@ export default (io: Server) => {
             },
           });
 
-          await prisma.$transaction(entriesToCreate.map(({ position, pages }) =>
-            prisma.entry.create({
-              data: {
-                indexationId,
-                position,
-                entryPages: {
-                  createMany: {
-                    data: pages.map(({ pageId }) => ({ pageId }))
-                  }
-                }
-              },
-            })));
+          await upsertEntries(entriesToCreate, indexationId)
 
           const storyKindSuggestionsToCreate = entriesToCreate
-            .map(({ position, kind, pages }) => [
-              { position, kind, aiSourcePageId: pages[0].pageId },
+            .map(({ position, kind, entryPages }) => [
+              { position, kind, aiSourcePageId: entryPages[0].pageId },
               ...storyKinds
                 .filter(({ code }) => code !== kind)
                 .map(({ code }) => ({ position, kind: code, aiSourcePageId: null }))])
@@ -279,7 +268,7 @@ export default (io: Server) => {
           callback({
             error: "Kumiko output could not be parsed",
           })
-        }))
+        }));
 
       indexationSocket.on("runOcr", async (pageUrl, callback) => {
         const page = indexationSocket.data.indexation.pages.find(
@@ -341,27 +330,13 @@ export default (io: Server) => {
                 )))
       })
 
-      indexationSocket.on('updateIndexation', async (indexation, callback) => {
-        if (indexationSocket.data.indexation.id !== indexation.id) {
-          callback({ error: 'You are not allowed to update this resource' })
-          return
-        }
-
-        // await prisma.issueSuggestion.deleteMany({
-        //   where: {
-        //     indexationId: indexation.id
-        //   }
-        // });
-
-        // await prisma.entry.deleteMany({
-        //   where: {
-        //     indexationId: indexation.id
-        //   }
-        // });
-
-        // await prisma.entry.createMany({
-        //   data: indexation.entries
-        // });
+      indexationSocket.on('upsertEntries', async (entries, callback) => {
+        await Promise.all(upsertEntries(entries.map(({ id, pageIds }, idx) => ({
+          id,
+          entryPages: pageIds.map((pageId) => ({ pageId })),
+          position: String.fromCharCode(
+            "a".charCodeAt(0) + idx)
+        })), indexationSocket.data.indexation.id))
 
         callback()
       })
@@ -397,3 +372,31 @@ const acceptStoryKindSuggestion = (suggestion: Prisma.storyKindSuggestionUncheck
       id: suggestion.entryId
     }
   });
+
+const upsertEntries = (
+  entries: (Pick<FullEntry, 'position'> & { id?: number, entryPages: { pageId: number }[] })[],
+  indexationId: string) =>
+(entries.map(({ id, position, entryPages }) => prisma.entry.upsert({
+  where: {
+    id: id || -1,
+  },
+  update: {
+    position,
+    entryPages: {
+      connectOrCreate: entryPages.map(({ pageId }) => ({
+        where: { pageId_entryId: { pageId, entryId: id || -1 } },
+        create: { pageId }
+      }))
+    }
+  },
+  create: {
+    indexationId,
+    position,
+    entryPages: {
+      createMany: {
+        data: entryPages.map(({ pageId }) => ({ pageId }))
+      }
+    }
+  },
+})
+));
