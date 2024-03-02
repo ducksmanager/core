@@ -90,11 +90,9 @@ export const suggestions = defineStore("suggestions", () => {
       indexation.value!.entries.reduce<
         Record<string, storyKindSuggestion | undefined>
       >(
-        (acc, { id, storyKindSuggestions, acceptedStoryKindSuggestedId }) => ({
+        (acc, { id, acceptedSuggestedStoryKind }) => ({
           ...acc,
-          [id]: storyKindSuggestions.find(
-            (suggestion) => suggestion.id === acceptedStoryKindSuggestedId
-          ),
+          [id]: acceptedSuggestedStoryKind,
         }),
         {}
       )

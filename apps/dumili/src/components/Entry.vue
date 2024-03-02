@@ -144,13 +144,13 @@
 import { getIndexationSocket } from "~/composables/useDumiliSocket";
 import { suggestions } from "~/stores/suggestions";
 import { user } from "~/stores/ui";
-import { FullIndexation } from "~dumili-services/indexations/types";
+import { FullEntry } from "~dumili-services/indexations/types";
 import { storyKinds } from "~dumili-types/storyKinds";
 import { entry, storyKind } from "~prisma/client_dumili";
 
 const { t: $t } = useI18n();
 const props = defineProps<{
-  entry: FullIndexation["entries"][0];
+  entry: FullEntry;
   editable: boolean;
 }>();
 

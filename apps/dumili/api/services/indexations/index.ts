@@ -8,7 +8,7 @@ import {
   SessionData,
   SessionDataWithIndexation,
 } from "~/index";
-import { entry, Prisma, storyKindSuggestion, storySuggestion } from "~/prisma/client_dumili";
+import { entry, Prisma, storyKind, storyKindSuggestion, storySuggestion } from "~/prisma/client_dumili";
 import { FullEntry } from "~/services/indexations/types";
 import CoaServices from "~dm-services/coa/types";
 import { storyKinds } from "~dumili-types/storyKinds";
@@ -23,7 +23,7 @@ const coaServices = socket.addNamespace<CoaServices>(
 import { Server } from "socket.io";
 
 import { RequiredAuthMiddleware } from "../_auth";
-import { runKumiko } from "./kumiko";
+import { KumikoProcessedResult, runKumiko } from "./kumiko";
 import { extendBoundaries, runOcr } from "./ocr";
 import Events, { IndexationEvents, indexationPayloadInclude } from "./types";
 
@@ -160,37 +160,29 @@ export default (io: Server) => {
           )
         ).then(async (panelsPerPage) => {
           const storyStoryKind = storyKinds.find(({ label }) => label === 'Story')!
-          let previousPosition = String.fromCharCode(
-            "a".charCodeAt(0) - 1);
-
           const indexationId = indexationSocket.data.indexation.id;
           const entriesToCreate: (Pick<entry, 'position'> & Pick<storyKindSuggestion, 'kind'> & { entryPages: { pageId: number, panels: typeof panelsPerPage[number] }[] })[] = []
           panelsPerPage.forEach((panelsOfPage, idx) => {
-            const pageId = indexationSocket.data.indexation.pages[idx].id
-            const inferredKind = storyKinds.find(
-              ({ label }) =>
-                label ===
-                (panelsOfPage.length === 1
-                  ? idx === 0
-                    ? "Cover"
-                    : "Illustration"
-                  : "Story")
-            )!.code;
+            const pageNumber = idx + 1
+            const inferredKind = inferStoryKindFromAiResults(panelsOfPage, pageNumber);
 
-            const page = { pageId, panels: panelsOfPage }
+            const page = {
+              pageId: indexationSocket.data.indexation.pages[idx].id,
+              panels: panelsOfPage
+            }
 
             // Don't create a new entry if both the previous one and this one are stories
             if (!(
               storyStoryKind.code === inferredKind &&
               storyStoryKind.code === entriesToCreate[entriesToCreate.length - 1]?.kind
             )) {
-              const position = String.fromCharCode(previousPosition.charCodeAt(0) + 1)
+              const position = String.fromCharCode(([...entriesToCreate].pop()?.position || String.fromCharCode(
+                "a".charCodeAt(0) - 1)).charCodeAt(0) + 1)
               entriesToCreate.push({
                 position,
                 kind: inferredKind,
                 entryPages: [page]
               })
-              previousPosition = position
             }
             else {
               entriesToCreate[entriesToCreate.length - 1].entryPages.push(page)
@@ -244,18 +236,7 @@ export default (io: Server) => {
 
           await upsertEntries(entriesToCreate, indexationId)
 
-          const storyKindSuggestionsToCreate = entriesToCreate
-            .map(({ position, kind, entryPages }) => [
-              { position, kind, aiSourcePageId: entryPages[0].pageId },
-              ...storyKinds
-                .filter(({ code }) => code !== kind)
-                .map(({ code }) => ({ position, kind: code, aiSourcePageId: null }))])
-            .flat()
-
-          await prisma.$transaction(storyKindSuggestionsToCreate.map(({ position, kind, aiSourcePageId }) => prisma.$queryRaw`
-            INSERT INTO story_kind_suggestion (kind, ai_source_page_id, entry_id)
-            VALUES (${kind}, ${aiSourcePageId}, (SELECT id FROM entry WHERE indexation_id = ${indexationId} AND position = ${position}))`
-          ))
+          await createStoryKindSuggestions(indexationId, entriesToCreate)
 
           await prisma.$transaction(entriesToCreate.map(({ position, kind }) => prisma.$queryRaw`
             UPDATE entry
@@ -331,17 +312,60 @@ export default (io: Server) => {
       })
 
       indexationSocket.on('upsertEntries', async (entries, callback) => {
-        await Promise.all(upsertEntries(entries.map(({ id, pageIds }, idx) => ({
+        const maxEntryId = (await prisma.entry.findFirst({
+          select: {
+            id: true
+          },
+          orderBy: {
+            id: 'desc'
+          }
+        }))?.id || -1;
+        const newAndUpdatedEntries = await upsertEntries(entries.map(({ id, pageIds }, idx) => ({
           id,
           entryPages: pageIds.map((pageId) => ({ pageId })),
           position: String.fromCharCode(
             "a".charCodeAt(0) + idx)
-        })), indexationSocket.data.indexation.id))
+        })), indexationSocket.data.indexation.id)
+
+        const newEntries = await prisma.entry.findMany({
+          include: {
+            entryPages: {
+              include: {
+                page: {
+                  include: {
+                    aiKumikoResultPanels: true
+                  }
+                }
+              }
+            }
+          },
+          where: {
+            id: {
+              in: newAndUpdatedEntries.map(({ id }) => id).filter((id) => id > maxEntryId)
+            }
+          }
+        });
+
+        await createStoryKindSuggestions(indexationSocket.data.indexation.id, newEntries.map(({ position, entryPages }) => ({
+          entryPages,
+          position,
+          kind: inferStoryKindFromAiResults(entryPages[0].page.aiKumikoResultPanels, entryPages[0].page.pageNumber)
+        })));
 
         callback()
       })
     });
 };
+
+const inferStoryKindFromAiResults = (panelsOfPage: KumikoProcessedResult[], pageNumber: number) => storyKinds.find(
+  ({ label }) =>
+    label ===
+    (panelsOfPage.length === 1
+      ? pageNumber === 1
+        ? "Cover"
+        : "Illustration"
+      : "Story")
+)!.code;
 
 const acceptStorySuggestion = (suggestion: storySuggestion) => prisma.entry.update({
   data: {
@@ -373,30 +397,58 @@ const acceptStoryKindSuggestion = (suggestion: Prisma.storyKindSuggestionUncheck
     }
   });
 
-const upsertEntries = (
+const createStoryKindSuggestions = (
+  indexationId: string,
+  entries: { entryPages: { pageId: number }[], position: string, kind: storyKind }[]
+) => Promise.all([
+  prisma.$transaction(
+    entries
+      .map(({ position, kind, entryPages }) => [
+        { position, kind, aiSourcePageId: entryPages[0].pageId },
+        ...storyKinds
+          .filter(({ code }) => code !== kind)
+          .map(({ code }) => ({ position, kind: code, aiSourcePageId: null }))])
+      .flat().map(({ position, kind, aiSourcePageId }) =>
+        prisma.$queryRaw`
+  INSERT INTO story_kind_suggestion (kind, ai_source_page_id, entry_id)
+  VALUES (${kind}, ${aiSourcePageId}, (SELECT id FROM entry WHERE indexation_id = ${indexationId} AND position = ${position}))`
+      )),
+
+  prisma.$transaction(entries.map(({ position, kind }) =>
+    prisma.$queryRaw`
+      UPDATE entry
+      SET accepted_story_kind_suggested_id = (SELECT id FROM story_kind_suggestion WHERE entry_id = (SELECT id FROM entry WHERE indexation_id = ${indexationId} AND position = ${position}) AND kind = ${kind})`
+  ))]);
+
+const upsertEntries = async (
   entries: (Pick<FullEntry, 'position'> & { id?: number, entryPages: { pageId: number }[] })[],
   indexationId: string) =>
-(entries.map(({ id, position, entryPages }) => prisma.entry.upsert({
-  where: {
-    id: id || -1,
-  },
-  update: {
-    position,
-    entryPages: {
-      connectOrCreate: entryPages.map(({ pageId }) => ({
-        where: { pageId_entryId: { pageId, entryId: id || -1 } },
-        create: { pageId }
-      }))
-    }
-  },
-  create: {
-    indexationId,
-    position,
-    entryPages: {
-      createMany: {
-        data: entryPages.map(({ pageId }) => ({ pageId }))
+  await Promise.all(entries.map(({ id, position, entryPages }) => prisma.entry.upsert({
+    where: {
+      id: id || -1,
+    },
+    update: {
+      position,
+      entryPages: {
+        connectOrCreate: entryPages.map(({ pageId }) => ({
+          where: { pageId_entryId: { pageId, entryId: id || -1 } },
+          create: { pageId }
+        })),
+        deleteMany: {
+          pageId: {
+            notIn: entryPages.map(({ pageId }) => pageId)
+          }
+        }
       }
-    }
-  },
-})
-));
+    },
+    create: {
+      indexationId,
+      position,
+      entryPages: {
+        createMany: {
+          data: entryPages.map(({ pageId }) => ({ pageId }))
+        }
+      }
+    },
+  })
+  ));

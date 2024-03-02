@@ -36,9 +36,10 @@
               'fw-bold': shownPages.includes(pageNumber - 1),
             }"
             @click="currentPage = pageNumber - 1"
-            >Page {{ pageNumber }}<br /><b-button disabled variant="light"
+            >Page {{ pageNumber }}<br /><!--<b-button disabled variant="light"
               ><i-bi-scissors
-            /></b-button>
+            /></b-button
+            >-->
             <table-tooltip
               :target="`ai-results-page-${pageNumber}`"
               :data="aiKumikoResultPanels" />
@@ -53,24 +54,28 @@
           v-for="({ entry, pageIds }, idx) in entryPages"
           :key="entry.url"
         >
+          <div style="height: 1px"></div>
           <vue-draggable-resizable
             active
             prevent-deactivation
+            w="auto"
+            :h="tocPageHeight * pageIds.length - 1"
             :resizable="!isEntryGoingUntilEndOfBook(pageIds)"
             :draggable="false"
             :handles="['bm']"
             :grid="[1, tocPageHeight]"
-            w="auto"
-            :h="tocPageHeight * pageIds.length"
-            :max-height="tocPageHeight * pageIds.length"
-            :min-height="tocPageHeight"
-            :class-name="`col w-100 kind-${acceptedStoryKinds[entry.id]?.kind}`"
+            :max-height="tocPageHeight * pageIds.length - 1"
+            :min-height="tocPageHeight - 1"
+            :class-name="`entry-pages col w-100 kind-${
+              acceptedStoryKinds[entry.id]?.kind
+            }`"
             :title="`${entry.title || 'Inconnu'} (${pageIds.length} pages)`"
             @mouseover="showCreateEntryButtonAfter = entry"
           ></vue-draggable-resizable>
           <button
             v-if="showCreateEntryButtonAfter?.id === entry.id"
-            class="create-entry mt-1 fw-bold position-absolute w-100 start-0 d-flex justify-content-center align-items-center"
+            class="create-entry fw-bold position-absolute w-25 start-100 d-flex justify-content-center align-items-center"
+            title="Create an entry here"
             @click="createEntry(idx)"
           >
             &plus;
@@ -79,22 +84,23 @@
       </b-col>
       <b-col :cols="10" class="d-flex flex-column" style="padding: 0">
         <b-row
-          v-for="(entry, idx) in indexation.entries"
+          v-for="entry in indexation.entries"
           :key="entry.id"
-          :style="currentPage === idx ? {} : { height: '50px' }"
+          :style="currentEntry === entry ? {} : { height: '50px' }"
           class="flex-grow-1 g-0 px-0 py-0 align-items-top border bg-light"
         >
-          <b-col @click="currentPage = idx"
+          <b-col
+            @click="
+              if (entry !== currentEntry) currentPage = firstPageOfEntry(entry);
+            "
             ><Entry
               :entry="entry"
               :editable="
-                entry.entryPages
-                  .map(({ pageId }) =>
-                    shownPages
-                      .map((shownPage) => indexation.pages[shownPage].id)
-                      .includes(pageId)
-                  )
-                  .includes(true)
+                entry.entryPages.some(({ pageId }) =>
+                  shownPages
+                    .map((shownPage) => indexation.pages[shownPage].id)
+                    .includes(pageId)
+                )
               "
           /></b-col>
         </b-row>
@@ -107,7 +113,7 @@
 import useAi from "~/composables/useAi";
 import { getIndexationSocket } from "~/composables/useDumiliSocket";
 import { suggestions } from "~/stores/suggestions";
-import { FullIndexation } from "~dumili-services/indexations/types";
+import { FullEntry, FullIndexation } from "~dumili-services/indexations/types";
 import { entry as entryModel } from "~prisma/client_dumili";
 
 defineProps<{
@@ -125,6 +131,8 @@ const showCreateEntryButtonAfter = ref<entryModel | null>(null);
 
 const entryPages = ref<{ entry: entryModel; pageIds: number[] }[]>([]);
 
+const currentEntry = ref<FullEntry | null>(null);
+
 const isEntryGoingUntilEndOfBook = (pageIds: number[]) =>
   pageIds[pageIds.length - 1] ===
   indexation.value.pages[indexation.value.pages.length - 1].id;
@@ -141,16 +149,39 @@ watch(
 );
 
 const createEntry = async (idx: number) => {
+  const lastPageOfPreviousEntry = [
+    ...indexation.value.entries[idx].entryPages,
+  ].pop()!.pageId;
   const entries: { id?: number; pageIds: number[] }[] =
     indexation.value.entries.map(({ id, entryPages }) => ({
       id,
-      pageIds: entryPages.map(({ pageId }) => pageId),
+      pageIds: entryPages
+        .map(({ pageId }) => pageId)
+        .filter((pageId) => pageId !== lastPageOfPreviousEntry),
     }));
   entries.splice(idx + 1, 0, {
-    pageIds: [indexation.value.pages[0].id],
+    pageIds: [lastPageOfPreviousEntry],
   });
   await getIndexationSocket(indexation.value.id).upsertEntries(entries);
 };
+
+const firstPageOfEntry = (entry: FullEntry) =>
+  indexation.value.pages.find(({ id }) =>
+    entry.entryPages.some(({ pageId }) => pageId === id)
+  )!.pageNumber - 1;
+
+watch(
+  () => currentPage.value,
+  () => {
+    const currentPageId = indexation.value.pages.find(
+      ({ pageNumber }) => pageNumber === currentPage.value! + 1
+    )!.id;
+    currentEntry.value = indexation.value.entries.find(({ entryPages }) =>
+      entryPages.some(({ pageId }) => pageId === currentPageId)
+    )!;
+  },
+  { immediate: true }
+);
 </script>
 
 <style scoped lang="scss">
@@ -203,15 +234,12 @@ const createEntry = async (idx: number) => {
   }
 
   button.create-entry {
-    opacity: 0.5;
-    height: 50px;
-    &:last-child {
-      bottom: 0px;
-    }
+    margin-top: -12.5px;
+    height: 25px;
   }
 }
 
 :deep(.resizable .handle) {
-  bottom: -5px;
+  bottom: 0;
 }
 </style>
