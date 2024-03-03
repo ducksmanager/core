@@ -17,6 +17,7 @@
       ><b-col cols="3"><StorySuggestionList :entry="entry" /></b-col>
       <b-col cols="3">
         <b-form-input
+          placeholder="Titre de l'histoire"
           type="text"
           class="w-100"
           :value="entry.title || ''" /></b-col

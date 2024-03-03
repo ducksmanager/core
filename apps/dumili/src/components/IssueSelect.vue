@@ -117,7 +117,7 @@ const issues = computed(
 
 const isValid = computed(
   () =>
-    currentIssueNumber.value &&
+    !!currentIssueNumber.value &&
     !issues.value?.some(({ value }) => value === currentIssueNumber.value),
 );
 

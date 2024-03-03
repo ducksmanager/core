@@ -45,6 +45,7 @@
               :data="aiKumikoResultPanels" />
             <i-bi-info-circle-fill
               :id="`ai-results-page-${pageNumber}`"
+              style="cursor: help"
               @click.stop="() => {}"
           /></b-col>
         </b-row>
