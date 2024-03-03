@@ -41,7 +41,7 @@ const { coverIdServices } = dmComposables.useDmSocket;
 const { hasPendingIssueSuggestions, indexation } = storeToRefs(suggestions());
 
 const indexationSocket = computed(() =>
-  getIndexationSocket(indexation.value!.id)
+  getIndexationSocket(indexation.value!.id),
 );
 
 const issueSuggestions = ref<
@@ -51,7 +51,7 @@ const issueSuggestions = ref<
 const selectedExistingCoverIssuecode = ref<string | null>(null);
 
 const validIssueSuggestions = computed(() =>
-  issueSuggestions.value.filter(({ coverId }) => coverId)
+  issueSuggestions.value.filter(({ coverId }) => coverId),
 );
 
 watch(
@@ -61,8 +61,8 @@ watch(
       issueSuggestions.value = (
         await Promise.all(
           newValue.map((issueSuggestion) =>
-            coverIdServices.downloadCover(issueSuggestion.coverId)
-          )
+            coverIdServices.downloadCover(issueSuggestion.coverId),
+          ),
         )
       ).map((url, i) => ({
         ...newValue[i],
@@ -70,19 +70,19 @@ watch(
       }));
     }
   },
-  { immediate: true }
+  { immediate: true },
 );
 
 const images = computed(() =>
   issueSuggestions.value.map(({ url, issuecode }) => ({
     text: issuecode || $t("Titre inconnu"),
     url,
-  }))
+  })),
 );
 
 const coverUrlToIssuecode = (url: string): string =>
   issueSuggestions.value.find(
-    ({ url: issueSuggestionUrl }) => issueSuggestionUrl === url
+    ({ url: issueSuggestionUrl }) => issueSuggestionUrl === url,
   )?.issuecode || "";
 
 const getPublicationcodeFromIssuecode = (issuecode: string) =>

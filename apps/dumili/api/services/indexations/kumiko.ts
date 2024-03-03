@@ -10,14 +10,26 @@ type KumikoResult = {
   panels: [number, number, number, number][];
 };
 
-export type KumikoProcessedResult = Pick<aiKumikoResultPanel, 'x' | 'y' | 'width' | 'height'>;
+export type KumikoProcessedResult = Pick<
+  aiKumikoResultPanel,
+  "x" | "y" | "width" | "height"
+>;
 
-export const runKumiko = async (urls: string[]): Promise<KumikoProcessedResult[][]> =>
-  (axios.get(`${process.env.KUMIKO_HOST}?i=${urls.join(",")}`))
-  .then((result) => { return result.data as KumikoResult[]}).then(data => data.map(
-    ({ panels }) => panels.map(([ x, y, width, height ]) => ({
-      x,
-      y,
-      width,
-      height,
-    }))))
+export const runKumiko = async (
+  urls: string[],
+): Promise<KumikoProcessedResult[][]> =>
+  axios
+    .get(`${process.env.KUMIKO_HOST}?i=${urls.join(",")}`)
+    .then((result) => {
+      return result.data as KumikoResult[];
+    })
+    .then((data) =>
+      data.map(({ panels }) =>
+        panels.map(([x, y, width, height]) => ({
+          x,
+          y,
+          width,
+          height,
+        })),
+      ),
+    );

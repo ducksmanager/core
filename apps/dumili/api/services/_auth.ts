@@ -10,11 +10,13 @@ type SocketWithUser = Socket<
   { user: SessionUser }
 >;
 
-export const authenticateUser = async (token?: string | null): Promise<SessionUser> => {
-  return new Promise(((resolve, reject) => {
+export const authenticateUser = async (
+  token?: string | null,
+): Promise<SessionUser> => {
+  return new Promise((resolve, reject) => {
     if (!token) {
-      reject('No token provided')
-      return
+      reject("No token provided");
+      return;
     }
 
     jwt.verify(
@@ -29,19 +31,21 @@ export const authenticateUser = async (token?: string | null): Promise<SessionUs
           }
           reject(`Invalid user: ${user}`);
         }
-      }
+      },
     );
-  }))
-}
+  });
+};
 
 export const RequiredAuthMiddleware = (
   socket: SocketWithUser,
   next: (error?: Error) => void,
 ) => {
-  authenticateUser(socket.handshake.auth.token).then(user => {
-    socket.data.user = user
-    next()
-  }).catch(e => {
-    next(e)
-  })
+  authenticateUser(socket.handshake.auth.token)
+    .then((user) => {
+      socket.data.user = user;
+      next();
+    })
+    .catch((e) => {
+      next(e);
+    });
 };

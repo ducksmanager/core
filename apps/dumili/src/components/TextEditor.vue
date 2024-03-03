@@ -31,11 +31,11 @@ watch(
     }
     storiesWithDetails.value = await getStoriesWithDetails(value);
   },
-  { immediate: true, deep: true }
+  { immediate: true, deep: true },
 );
 
 const getStoriesWithDetails = async (
-  stories: (typeof acceptedStories)["value"]
+  stories: (typeof acceptedStories)["value"],
 ) =>
   await Promise.all(
     Object.values(stories)
@@ -46,10 +46,9 @@ const getStoriesWithDetails = async (
         storyversion: (
           await coaServices.getStoryversionDetails(story!.storyversioncode)
         ).data,
-        storyjobs: (
-          await coaServices.getStoryjobs(story!.storyversioncode)
-        ).data,
-      }))
+        storyjobs: (await coaServices.getStoryjobs(story!.storyversioncode))
+          .data,
+      })),
   );
 
 const textContent = computed(() => {
@@ -67,7 +66,7 @@ const textContent = computed(() => {
       ...["plot", "writer", "artist", "ink"].map(
         (job) =>
           story!.storyjobs?.find(({ plotwritartink }) => plotwritartink === job)
-            ?.personcode
+            ?.personcode,
       ),
       "", //story!.printedhero,
       story!.title,
@@ -84,9 +83,9 @@ const textContent = computed(() => {
     .map((row) =>
       row
         .map((col, colIndex) =>
-          (col || "").padEnd(colsMaxLengths[colIndex], " ")
+          (col || "").padEnd(colsMaxLengths[colIndex], " "),
         )
-        .join(" ")
+        .join(" "),
     )
     .join("\n");
 });

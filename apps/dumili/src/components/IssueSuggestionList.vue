@@ -39,7 +39,7 @@ const acceptIssueSuggestion = async (
     publicationcode: string | null;
     issuenumber: string | null;
   },
-  source: issueSuggestion["source"]
+  source: issueSuggestion["source"],
 ) => {
   if (publicationcode && issuenumber) {
     await getIndexationSocket(indexation.value!.id).acceptIssueSuggestion({

@@ -30,7 +30,7 @@ import { stores as webStores } from "~web";
 const { t: $t } = useI18n();
 
 const loginUrl = computed(
-  () => `${import.meta.env.VITE_DM_URL}/login?redirect=${document.URL}`
+  () => `${import.meta.env.VITE_DM_URL}/login?redirect=${document.URL}`,
 );
 
 const { loadUser } = webStores.collection();

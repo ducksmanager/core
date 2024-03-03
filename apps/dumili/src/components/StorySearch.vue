@@ -66,7 +66,7 @@ watch(
       pendingSearch.value = newValue;
       if (!isSearching.value) await runSearch(newValue);
     }
-  }
+  },
 );
 </script>
 

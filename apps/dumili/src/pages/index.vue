@@ -73,7 +73,7 @@ watch(
         .toISOString()
         .replace(/[-:.Z]/g, "");
     }
-  }
+  },
 );
 
 (async () => {

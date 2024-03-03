@@ -36,7 +36,7 @@ const props = defineProps<{
 const { entry } = toRefs(props);
 
 const indexationSocket = computed(() =>
-  getIndexationSocket(entry.value.indexationId)
+  getIndexationSocket(entry.value.indexationId),
 );
 
 const showEntrySelect = ref(false);
@@ -45,7 +45,7 @@ const { acceptedStories } = storeToRefs(suggestions());
 const acceptedEntry = computed(() => acceptedStories.value[entry.value.id]);
 
 const addAndAcceptStoryversionToStorySuggestions = async (
-  searchResult: SimpleStory
+  searchResult: SimpleStory,
 ) => {
   await indexationSocket.value.createStorySuggestion({
     entryId: entry.value.id,

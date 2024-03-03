@@ -11,7 +11,7 @@ export default () => {
   const coaStore = webStores.coa();
 
   const applyHintsFromCoverSearch = async (
-    results: EventReturnType<CoverIdServices["searchFromCover"]>
+    results: EventReturnType<CoverIdServices["searchFromCover"]>,
   ) => {
     if (!results.covers?.length) {
       console.error("Erreur lors de la recherche par image de la couverture");
@@ -27,14 +27,14 @@ export default () => {
             issuenumber,
             // coverId,
             indexationId: indexation.value!.id,
-          })
-      )
+          }),
+      ),
     );
 
     await loadIndexation(indexation.value!.id);
 
     await coaStore.fetchPublicationNames(
-      results.covers.map(({ publicationcode }) => publicationcode!)
+      results.covers.map(({ publicationcode }) => publicationcode!),
     );
   };
 

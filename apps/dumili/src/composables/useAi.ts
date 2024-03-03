@@ -5,7 +5,7 @@ import { getIndexationSocket } from "./useDumiliSocket";
 import useHint from "./useHint";
 
 const coverStoryKindCode = storyKinds.find(
-  ({ label }) => label === "Cover"
+  ({ label }) => label === "Cover",
 )!.code;
 
 export default (indexationId: string) => {
@@ -35,7 +35,7 @@ export default (indexationId: string) => {
     const firstEntry = indexation.value!.entries[0];
     if (firstEntry?.acceptedSuggestedStoryKind?.kind === coverStoryKindCode) {
       console.info(
-        "La première page est une couverture, on va chercher si on la détecte parmi les résultats de la recherche par image..."
+        "La première page est une couverture, on va chercher si on la détecte parmi les résultats de la recherche par image...",
       );
 
       const url = indexation.value!.pages[0].url;
@@ -56,20 +56,20 @@ export default (indexationId: string) => {
 
   const runStorycodeOcr = async () => {
     const storyStoryKindCode = storyKinds.find(
-      ({ label }) => label === "Story"
+      ({ label }) => label === "Story",
     )!.code;
     const storiesFirstPages = entriesFirstPages.value.filter(
       ({ entryId }) =>
         indexation.value?.entries[entryId].acceptedSuggestedStoryKind?.kind ===
-        storyStoryKindCode
+        storyStoryKindCode,
     );
     for (const { startsAtPage } of storiesFirstPages.filter(
       ({ entryId }) =>
         indexation.value?.entries[entryId].acceptedSuggestedStoryKind?.kind ===
-        storyStoryKindCode
+        storyStoryKindCode,
     )) {
       const url = indexation.value!.pages.find(
-        ({ pageNumber }) => pageNumber === startsAtPage
+        ({ pageNumber }) => pageNumber === startsAtPage,
       )!.url;
       const ocrResults = await indexationServices.runOcr(url);
 

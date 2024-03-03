@@ -23,7 +23,7 @@ const props = defineProps<{
 const publicationName = computed(() =>
   props.publicationcode
     ? webStores.coa().publicationNames[props.publicationcode]
-    : null
+    : null,
 );
 </script>
 

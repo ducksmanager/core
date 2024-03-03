@@ -62,7 +62,7 @@ const images = computed(() =>
   indexation.value?.pages.map(({ url }) => ({
     url,
     text: url,
-  }))
+  })),
 );
 
 watch(
@@ -71,7 +71,7 @@ watch(
     indexationId.value = id as string;
     loadIndexation(indexationId.value);
   },
-  { immediate: true }
+  { immediate: true },
 );
 </script>
 

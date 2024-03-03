@@ -11,7 +11,7 @@ type OcrResult = {
 /* Adding a bit of extra in case the storycode is just outside the panel */
 export const extendBoundaries = (
   { x, y, width, height }: aiKumikoResultPanel,
-  extendBy: number
+  extendBy: number,
 ) => ({
   left: x,
   top: y,
@@ -20,4 +20,4 @@ export const extendBoundaries = (
 });
 
 export const runOcr = async (base64: string): Promise<OcrResult[]> =>
-  (axios.post(process.env.OCR_HOST!, base64)).then(({ data }) => data);
+  axios.post(process.env.OCR_HOST!, base64).then(({ data }) => data);

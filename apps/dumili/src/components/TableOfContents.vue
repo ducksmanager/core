@@ -54,9 +54,9 @@
           v-for="({ entry, pageIds }, idx) in entryPages"
           :key="entry.url"
         >
-          <div style="height: 1px"></div>
+          <div style="height: 1px" class="bg-black"></div>
           <vue-draggable-resizable
-            active
+            :active="showCreateEntryButtonAfter === entry"
             prevent-deactivation
             w="auto"
             :h="tocPageHeight * pageIds.length - 1"
@@ -64,13 +64,17 @@
             :draggable="false"
             :handles="['bm']"
             :grid="[1, tocPageHeight]"
-            :max-height="tocPageHeight * pageIds.length - 1"
+            :max-height="tocPageHeight * pageIds.length"
             :min-height="tocPageHeight - 1"
             :class-name="`entry-pages col w-100 kind-${
               acceptedStoryKinds[entry.id]?.kind
             }`"
             :title="`${entry.title || 'Inconnu'} (${pageIds.length} pages)`"
             @mouseover="showCreateEntryButtonAfter = entry"
+            @click="
+              if (entry !== currentEntry)
+                currentPage = firstPageOfEntry(pageIds);
+            "
           ></vue-draggable-resizable>
           <button
             v-if="showCreateEntryButtonAfter?.id === entry.id"
@@ -91,7 +95,10 @@
         >
           <b-col
             @click="
-              if (entry !== currentEntry) currentPage = firstPageOfEntry(entry);
+              if (entry !== currentEntry)
+                currentPage = firstPageOfEntry(
+                  entry.entryPages.map(({ pageId }) => pageId),
+                );
             "
             ><Entry
               :entry="entry"
@@ -99,7 +106,7 @@
                 entry.entryPages.some(({ pageId }) =>
                   shownPages
                     .map((shownPage) => indexation.pages[shownPage].id)
-                    .includes(pageId)
+                    .includes(pageId),
                 )
               "
           /></b-col>
@@ -145,7 +152,7 @@ watch(
       pageIds: entry.entryPages.map(({ pageId }) => pageId),
     }));
   },
-  { immediate: true }
+  { immediate: true },
 );
 
 const createEntry = async (idx: number) => {
@@ -165,22 +172,22 @@ const createEntry = async (idx: number) => {
   await getIndexationSocket(indexation.value.id).upsertEntries(entries);
 };
 
-const firstPageOfEntry = (entry: FullEntry) =>
+const firstPageOfEntry = (pageIds: number[]) =>
   indexation.value.pages.find(({ id }) =>
-    entry.entryPages.some(({ pageId }) => pageId === id)
+    pageIds.some((pageId) => pageId === id),
   )!.pageNumber - 1;
 
 watch(
   () => currentPage.value,
   () => {
     const currentPageId = indexation.value.pages.find(
-      ({ pageNumber }) => pageNumber === currentPage.value! + 1
+      ({ pageNumber }) => pageNumber === currentPage.value! + 1,
     )!.id;
     currentEntry.value = indexation.value.entries.find(({ entryPages }) =>
-      entryPages.some(({ pageId }) => pageId === currentPageId)
+      entryPages.some(({ pageId }) => pageId === currentPageId),
     )!;
   },
-  { immediate: true }
+  { immediate: true },
 );
 </script>
 

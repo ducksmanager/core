@@ -146,7 +146,7 @@ const naturalAspectRatio = computed(
   () =>
     coverWidth.value &&
     coverHeight.value &&
-    coverWidth.value / coverHeight.value
+    coverWidth.value / coverHeight.value,
 );
 
 const displayedHeightNoBackground = computed(() =>
@@ -154,7 +154,7 @@ const displayedHeightNoBackground = computed(() =>
     ? naturalAspectRatio.value < 1
       ? displayedHeight.value
       : displayedHeight.value! / naturalAspectRatio.value
-    : null
+    : null,
 );
 
 const displayedWidthNoBackground = computed(() =>
@@ -162,7 +162,7 @@ const displayedWidthNoBackground = computed(() =>
     ? naturalAspectRatio.value > 1
       ? displayedWidth.value
       : displayedWidth.value! * naturalAspectRatio.value
-    : null
+    : null,
 );
 
 const shownPages = computed(() =>
@@ -174,26 +174,26 @@ const shownPages = computed(() =>
             .pages.currentSpreadIndex * 2,
         ]),
       ]
-    : []
+    : [],
 );
 
 const displayRatioCropped = computed(
   () =>
     displayedHeight.value &&
     coverHeight.value &&
-    displayedHeight.value / coverHeight.value
+    displayedHeight.value / coverHeight.value,
 );
 
 const naturalToDisplayRatio = computed(
   () =>
     coverWidth.value &&
     displayedWidthNoBackground.value &&
-    coverWidth.value / displayedWidthNoBackground.value
+    coverWidth.value / displayedWidthNoBackground.value,
 );
 
 const firstPanelPosition = (pageUrl: string) => {
   const { x, y, width, height } = indexation.value!.pages.find(
-    ({ url }) => url === pageUrl
+    ({ url }) => url === pageUrl,
   )!.aiKumikoResultPanels?.[0] || { x: 0, y: 0, width: 0, height: 0 };
   return {
     left: x * displayRatioCropped.value!,
@@ -209,7 +209,7 @@ const toPx = (position: Record<string, number>) =>
       ...acc,
       [key]: `${value}px`,
     }),
-    {}
+    {},
   );
 
 watch(
@@ -218,7 +218,7 @@ watch(
     if (book.value) {
       book.value.flip(newValue);
     }
-  }
+  },
 );
 
 watch(
@@ -228,7 +228,7 @@ watch(
     if (newValue && newValue > availableWidthPerPage) {
       coverHeight.value! /= newValue / availableWidthPerPage;
     }
-  }
+  },
 );
 
 nextTick(() => {
@@ -246,7 +246,7 @@ nextTick(() => {
             showCover: true,
             usePortrait: false,
             mobileScrollSupport: false,
-          }
+          },
         );
         book.value.loadFromHTML(document.querySelectorAll(".page"));
 
@@ -255,7 +255,7 @@ nextTick(() => {
         });
       }
     },
-    { immediate: true }
+    { immediate: true },
   );
 });
 </script>

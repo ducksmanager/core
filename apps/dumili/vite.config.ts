@@ -68,11 +68,11 @@ export default defineConfig({
       "~web": path.resolve(__dirname, "../web"),
       "~socket.io-client-services": path.resolve(
         __dirname,
-        "../../packages/socket.io-client-services"
+        "../../packages/socket.io-client-services",
       ),
       "~socket.io-services": path.resolve(
         __dirname,
-        "../../packages/socket.io-services"
+        "../../packages/socket.io-services",
       ),
       "~translations": path.resolve(__dirname, "translations"),
     },

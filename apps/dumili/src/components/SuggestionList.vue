@@ -80,11 +80,11 @@ withDefaults(
   {
     itemClass: undefined,
     showCustomizeForm: false,
-  }
+  },
 );
 
 const allowCustomizeForm = computed(
-  () => $slots["customize-form"] !== undefined
+  () => $slots["customize-form"] !== undefined,
 );
 
 const emit = defineEmits<{
