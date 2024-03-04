@@ -1,16 +1,10 @@
-import { Capacitor } from '@capacitor/core';
-import type { SQLiteDBConnection } from '@capacitor-community/sqlite';
-import { CapacitorSQLite, SQLiteConnection } from '@capacitor-community/sqlite';
-import { defineCustomElements } from '@ionic/pwa-elements/loader';
 import { IonicVue } from '@ionic/vue';
-import { JeepSqlite } from 'jeep-sqlite/dist/components/jeep-sqlite';
 import { createPinia } from 'pinia';
 import { i18n } from '~web';
 
 import App from './App.vue';
 import router from './router';
 
-import db from '~/persistence/data-sources/db';
 import en from '~translations/en.json';
 import sv from '~translations/sv.json';
 
@@ -34,52 +28,12 @@ import '@ionic/vue/css/display.css';
 import './theme/variables.scss';
 import './theme/global.scss';
 
-customElements.define('jeep-sqlite', JeepSqlite);
-
-const initSqlite = async () => {
-  const platform = Capacitor.getPlatform();
-  const sqlite = new SQLiteConnection(CapacitorSQLite);
-  try {
-    if (platform === 'web') {
-      const jeepSqliteEl = document.createElement('jeep-sqlite');
-      document.body.appendChild(jeepSqliteEl);
-      await customElements.whenDefined('jeep-sqlite');
-      await sqlite.initWebStore();
-    }
-    const ret = await sqlite.checkConnectionsConsistency();
-    const isConn = (await sqlite.isConnection('wtd', false)).result;
-    let connection: SQLiteDBConnection | null = null;
-    if (ret.result && isConn) {
-      connection = await sqlite.retrieveConnection('wtd', false);
-    } else {
-      connection = await sqlite.createConnection('wtd', false, 'no-encryption', 1, false);
-    }
-    await connection.open();
-
-    if (platform === 'web') {
-      setInterval(async () => {
-        await sqlite.saveToStore('wtd');
-      }, 5000);
-    }
-
-    await sqlite.closeConnection('wtd', false);
-
-    if (!db.isInitialized) {
-      await db.initialize();
-    }
-    app.provide('dbInstance', db);
-  } catch (err) {
-    console.log(`Error: ${err}`);
-    throw new Error(`Error: ${err}`);
-  }
-};
-
 const store = createPinia();
+
 const app = createApp(App, {
-  async setup() {
-    const { t } = useI18n();
-    return { t };
-  },
+  setup: () => ({
+    t: useI18n().t,
+  }),
 })
   .use(IonicVue)
   .use(router)
@@ -87,7 +41,5 @@ const app = createApp(App, {
   .use(i18n('fr', { en, sv }).instance);
 
 router.isReady().then(async () => {
-  await initSqlite();
   app.mount('#app');
-  defineCustomElements(window);
 });

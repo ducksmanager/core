@@ -15,7 +15,6 @@ import { issueWithPublicationcode } from '~prisma-clients/extended/dm.extends';
 import { stores as webStores } from '~web';
 
 import { getConditionText } from '~/composables/useCondition';
-import { Issue } from '~/persistence/models/dm/Issue';
 import { app } from '~/stores/app';
 import { wtdcollection } from '~/stores/wtdcollection';
 

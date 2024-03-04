@@ -30,6 +30,7 @@
       </ion-list>
       <div v-if="selectedStory">
         {{ selectedStory.title }} {{ t('a été publiée dans les numéros suivants :') }}
+        
         <div v-for="issue of selectedStory.issues">
           <Country :countrycode="issue.countrycode" :countryname="issue.countryname" /><condition
             v-if="issue.collectionIssue"
@@ -49,9 +50,9 @@ import type { SimpleStory } from '~dm-types/SimpleStory';
 import { stores } from '~web';
 
 import { getConditionText } from '~/composables/useCondition';
-import type { Issue } from '~/persistence/models/dm/Issue';
 import { wtdcollection } from '~/stores/wtdcollection';
 import { coaServices } from '~web/src/composables/useDmSocket';
+import { issueWithPublicationcode } from '~prisma-clients/extended/dm.extends';
 
 const { t } = useI18n();
 
@@ -68,7 +69,7 @@ const selectedStory = ref(
           countrycode: string;
           countryname: string;
           publicationName: string;
-          collectionIssue: Issue | null;
+          collectionIssue: issueWithPublicationcode | null;
         })[];
       })
     | null,

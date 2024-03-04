@@ -1,6 +1,6 @@
 <template>
   <ion-app>
-    <ion-split-pane content-id="main-content">
+    <ion-split-pane content-id="main-content" v-if="isReady">
       <NavigationDrawer v-if="isConnected" />
       <ion-router-outlet id="main-content" />
     </ion-split-pane>
@@ -8,56 +8,44 @@
 </template>
 
 <script setup lang="ts">
-import { User } from './persistence/models/dm/User';
 import { app } from './stores/app';
 import { wtdcollection } from './stores/wtdcollection';
+import { buildStorage, session, cacheStorage } from '~socket.io-client-services';
 
-import { buildStorage } from 'axios-cache-interceptor';
-import { HttpCache } from './persistence/models/internal/HttpCache';
-import { cacheStorage, session } from '~socket.io-client-services';
-
-const appStore = app();
+const { isCoaView, isOfflineMode, token, socketCache } = storeToRefs(app());
 const collectionStore = wtdcollection();
 const route = useRoute();
 
+const isReady = ref(false);
+
 onBeforeMount(() => {
   session.value = {
-    getToken: () =>
-      app()
-        .dbInstance.getRepository(User)
-        .findOneOrFail({ select: ['token'] })
-        .then((user) => user.token),
+    getToken: async () => token.value,
 
-    clearSession: async () => {
-      await app().dbInstance.getRepository(User).delete(1);
+    clearSession: () => {
+      token.value = undefined;
     },
     onConnectError: () => {
-      app().isOfflineMode = true;
+      isOfflineMode.value = true;
     },
-    sessionExists: async () =>
-      app()
-        .dbInstance.getRepository(User)
-        .find({ select: ['token'] })
-        .then((results) => results.length > 0),
+    sessionExists: async () => token.value !== undefined,
   };
-
   cacheStorage.value = buildStorage({
-    set: async (key, data) => {
-      await app()
-        .dbInstance.getRepository(HttpCache)
-        .upsert({ key, data: JSON.stringify(data) }, ['key']);
+    set: (key, data) => {
+      socketCache.value[key] = data;
     },
-    find: async (key) => {
-      const data = (await app().dbInstance.getRepository(HttpCache).findOne({ where: { key } }))?.data;
-      if (data) {
-        return JSON.parse(data);
-      }
-    },
-    remove: async (key) => {
-      await app().dbInstance.getRepository(HttpCache).delete({ key });
+    find: (key) => socketCache.value[key],
+    remove: (key) => {
+      delete socketCache.value[key];
     },
   });
-  collectionStore.loadUser();
+
+  watch(() => token.value, async (newValue) => {
+    if (newValue) {
+      await collectionStore.loadUser();
+    }
+    isReady.value = true;
+  });
 });
 
 const isConnected = computed(() => !!collectionStore.user);
@@ -65,7 +53,7 @@ const isConnected = computed(() => !!collectionStore.user);
 watch(
   () => route.query?.coa,
   (newValue) => {
-    appStore.isCoaView = newValue === 'true';
+    isCoaView.value = newValue === 'true';
   },
   { immediate: true },
 );

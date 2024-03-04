@@ -9,11 +9,12 @@
       </ion-toolbar>
     </ion-header>
     <ion-content :fullscreen="true">
-      <ion-text class="ion-padding">{{
+      <ion-text class="mb-2">{{
         t(
           'Ajoutez vos auteurs préférés et indiquez les notes que vous leur attribuez.\nGrâce à ces notes, What The Duck déterminera ensuite les magazines susceptibles de vous intéresser.',
         )
       }}</ion-text>
+      &nbsp;<br />&nbsp;
 
       <div v-if="ratings && !ratings.length" class="ion-padding">
         <ion-text color="warning">

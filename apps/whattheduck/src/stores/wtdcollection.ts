@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia';
 import type { purchase } from '~prisma-clients/client_dm';
 import { stores as webStores, composables as webComposables } from '~web';
-
+import { app } from './app';
 
 export type purchaseWithStringDate = Omit<purchase, 'date' | 'userId'> & {
   date: string;
@@ -10,7 +10,7 @@ export type purchaseWithStringDate = Omit<purchase, 'date' | 'userId'> & {
 export const wtdcollection = defineStore('wtdcollection', () => {
   const coaStore = webStores.coa();
   const webCollectionStore = webStores.collection();
-  const { issues } = storeToRefs(webCollectionStore);
+  const { issues, purchases } = storeToRefs(webCollectionStore);
   const statsStore = webStores.stats();
   const usersStore = webStores.users();
   const { quotedIssues, quotationSum } = webComposables.useCollection(issues);
@@ -43,8 +43,10 @@ export const wtdcollection = defineStore('wtdcollection', () => {
     highestQuotedIssue = computed(
       () => quotedIssues.value?.sort((a, b) => b.estimationGivenCondition - a.estimationGivenCondition)[0],
     );
+
+  app().addPersistedData({ issues });
   return {
-    issues: computed(() => webCollectionStore.issues),
+    issues,
     fetchAndTrackCollection,
     findInCollection: webCollectionStore.findInCollection,
     highestQuotedIssue,
@@ -56,7 +58,7 @@ export const wtdcollection = defineStore('wtdcollection', () => {
     numberPerCondition: computed(() => webCollectionStore.numberPerCondition),
     ownedCountries,
     ownedPublications,
-    purchases: computed(() => webCollectionStore.purchases),
+    purchases,
     purchasesById: computed(() => webCollectionStore.purchasesById),
     quotationSum,
     signup: webCollectionStore.signup,

@@ -42,7 +42,6 @@
   </ion-page>
 </template>
 <script setup lang="ts">
-import type { Issue } from '~/persistence/models/dm/Issue';
 import { condition } from '~/stores/condition';
 import { wtdcollection } from '~/stores/wtdcollection';
 import type { purchase } from '~prisma-clients/client_dm';
@@ -64,7 +63,8 @@ const issue = computed(
     collectionStore.issuesByIssueCode?.[issuecode.value!]?.[copyIndex.value!] ||
     ({
       purchaseId: null,
-    } as Issue),
+      isToRead: false,
+    }),
 );
 
 const selectedCondition = ref(null as string | null);
@@ -78,7 +78,7 @@ watch(
       if (thisPurchase) {
         selectedPurchase.value = thisPurchase;
       }
-      const newCondition = issue.value.condition;
+      const newCondition = 'condition' in issue.value && issue.value.condition;
       selectedCondition.value = newCondition
         ? conditionStore.conditionL10n.find(({ fr }) => fr === newCondition)?.en || 'none'
         : 'none';

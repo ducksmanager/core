@@ -62,9 +62,3 @@ collectionStore.fetchAndTrackCollection().catch(() => {
   router.push('/');
 });
 </script>
-<style lang="scss" scoped>
-:deep(img) {
-  width: 18px;
-  margin-right: 1rem;
-}
-</style>

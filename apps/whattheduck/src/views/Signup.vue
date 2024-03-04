@@ -101,15 +101,15 @@
 import { eyeOutline, eyeOffOutline, eyeSharp, eyeOffSharp } from 'ionicons/icons';
 
 import useFormErrorHandling from '~/composables/useFormErrorHandling';
-import { User } from '~/persistence/models/dm/User';
 import { app } from '~/stores/app';
 import { wtdcollection } from '~/stores/wtdcollection';
 
 const isOfflineMode = ref(false);
 
-const appStore = app();
+const {token} = storeToRefs(app());
 
 const collectionStore = wtdcollection();
+const { user} = storeToRefs(collectionStore);
 
 const { t } = useI18n();
 
@@ -131,8 +131,6 @@ const showForm = ref(false);
 
 const showPassword = ref(false);
 const showPasswordConfirmation = ref(false);
-
-const token = ref(null as string | null);
 
 const cancelSignup = () => {
   router.push('/');
@@ -162,7 +160,7 @@ watch(
   () => token.value,
   async () => {
     if (token.value) {
-      await appStore.dbInstance.getRepository(User).save({ username: username.value, token: token.value });
+      user.value = { username: username.value };
       router.push('/collection');
     }
   },

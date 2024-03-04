@@ -9,3 +9,10 @@ defineProps<{
   countryname: string;
 }>();
 </script>
+
+<style lang="scss" scoped>
+img {
+  width: 18px;
+  margin-right: 1rem;
+}
+</style>
