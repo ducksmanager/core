@@ -2,7 +2,7 @@ apply plugin: 'com.android.application'
 
 android {
     namespace "net.ducksmanager.whattheduck2"
-    compileSdkVersion rootProject.ext.compileSdkVersion
+    compileSdk rootProject.ext.compileSdkVersion
     defaultConfig {
         applicationId "net.ducksmanager.whattheduck2"
         minSdkVersion rootProject.ext.minSdkVersion

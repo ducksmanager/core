@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia';
 import type { purchase } from '~prisma-clients/client_dm';
 import { stores as webStores, composables as webComposables } from '~web';
-import { app } from './app';
+import usePersistedData from '~/composables/usePersistedData';
 
 export type purchaseWithStringDate = Omit<purchase, 'date' | 'userId'> & {
   date: string;
@@ -15,12 +15,22 @@ export const wtdcollection = defineStore('wtdcollection', () => {
   const usersStore = webStores.users();
   const { quotedIssues, quotationSum } = webComposables.useCollection(issues);
 
+  const {
+    findInCollection,
+    loadCollection,
+    loadPurchases,
+    loadUser,
+    login,
+    signup,
+  } = webCollectionStore
+
   const ownedCountries = computed(() => [...new Set((issues.value || []).map(({ country }) => country))].sort()),
     ownedPublications = computed(() =>
       [...new Set((issues.value || []).map(({ publicationcode }) => publicationcode))].sort(),
     ),
     fetchAndTrackCollection = async () => {
-      await webCollectionStore.loadCollection();
+      await loadCollection();
+      await loadUser();
       // TODO retrieve user points
       // TODO retrieve user notification countries
 
@@ -44,24 +54,24 @@ export const wtdcollection = defineStore('wtdcollection', () => {
       () => quotedIssues.value?.sort((a, b) => b.estimationGivenCondition - a.estimationGivenCondition)[0],
     );
 
-  app().addPersistedData({ issues });
+  usePersistedData({ issues });
   return {
     issues,
     fetchAndTrackCollection,
-    findInCollection: webCollectionStore.findInCollection,
+    findInCollection,
     highestQuotedIssue,
     issuesByIssueCode: computed(() => webCollectionStore.issuesByIssueCode),
-    loadCollection: webCollectionStore.loadCollection,
-    loadPurchases: webCollectionStore.loadPurchases,
-    loadUser: webCollectionStore.loadUser,
-    login: webCollectionStore.login,
+    loadCollection,
+    loadPurchases,
+    loadUser,
+    login,
     numberPerCondition: computed(() => webCollectionStore.numberPerCondition),
     ownedCountries,
     ownedPublications,
     purchases,
     purchasesById: computed(() => webCollectionStore.purchasesById),
     quotationSum,
-    signup: webCollectionStore.signup,
+    signup,
     total: computed(() => webCollectionStore.total),
     totalPerCountry: computed(() => webCollectionStore.totalPerCountry),
     totalPerPublication: computed(() => webCollectionStore.totalPerPublication),

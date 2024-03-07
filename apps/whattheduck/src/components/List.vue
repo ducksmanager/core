@@ -106,23 +106,23 @@ const onRowClick = (key: string) => {
   router.push({ ...props.getTargetRouteFn(key), query: { coa: route.query.coa } });
 };
 
-const hasList = computed((): boolean => {
-  if (!hasCoaData.value) {
-    return false;
-  }
-  switch (itemType.value) {
-    case 'Country':
-      return !!collectionStore.ownedCountries;
-    case 'Publication':
-      return !!collectionStore.ownedPublications /* &&
-          collectionStore.ownedPublications.filter((publicationCode) =>
-            Object.keys(coaStore.publicationNames).includes(publicationCode)
-          ).length === collectionStore.ownedPublications.length
-        )*/;
-    case 'Issue':
-      return !!collectionStore.issues && !!coaStore.issueNumbers[appStore.currentNavigationItem || ''];
-  }
-});
+// const hasList = computed((): boolean => {
+//   if (!hasCoaData.value) {
+//     return false;
+//   }
+//   switch (itemType.value) {
+//     case 'Country':
+//       return !!collectionStore.ownedCountries;
+//     case 'Publication':
+//       return !!collectionStore.ownedPublications /* &&
+//           collectionStore.ownedPublications.filter((publicationCode) =>
+//             Object.keys(coaStore.publicationNames).includes(publicationCode)
+//           ).length === collectionStore.ownedPublications.length
+//         )*/;
+//     case 'Issue':
+//       return !!collectionStore.issues && !!coaStore.issueNumbers[appStore.currentNavigationItem || ''];
+//   }
+// });
 
 const itemType = computed(() => {
   switch (appStore.currentNavigationItem?.indexOf('/')) {
@@ -146,25 +146,25 @@ const title = computed(() =>
     : t('Ma collection'),
 );
 
-const ownershipAllItems = computed(() => {
-  switch (itemType.value) {
-    case 'Country':
-      return [collectionStore.totalPerCountry, coaStore.issueCountsPerCountry!];
-    case 'Publication':
-      return [collectionStore.totalPerPublication, coaStore.issueCounts!];
-  }
-});
+// const ownershipAllItems = computed(() => {
+//   switch (itemType.value) {
+//     case 'Country':
+//       return [collectionStore.totalPerCountry, coaStore.issueCountsPerCountry!];
+//     case 'Publication':
+//       return [collectionStore.totalPerPublication, coaStore.issueCounts!];
+//   }
+// });
 
-const ownership = computed(() =>
-  !ownershipAllItems.value?.length
-    ? undefined
-    : Object.entries(ownershipAllItems.value![0]!)
-        .map(([key, owned]) => ({ key, owned: owned as number, total: ownershipAllItems.value![1]![key] as number }))
-        .reduce<Record<string, [number, number]>>(
-          (acc, { key, owned, total }) => ({ ...acc, [key]: [owned, total] }),
-          {},
-        ),
-);
+// const ownership = computed(() =>
+//   !ownershipAllItems.value?.length
+//     ? undefined
+//     : Object.entries(ownershipAllItems.value![0]!)
+//         .map(([key, owned]) => ({ key, owned: owned as number, total: ownershipAllItems.value![1]![key] as number }))
+//         .reduce<Record<string, [number, number]>>(
+//           (acc, { key, owned, total }) => ({ ...acc, [key]: [owned, total] }),
+//           {},
+//         ),
+// );
 
 watch(
   () => itemType.value,

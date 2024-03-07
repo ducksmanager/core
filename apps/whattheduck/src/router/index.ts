@@ -11,7 +11,6 @@ import Login from '~/views/Login.vue';
 import Logout from '~/views/Logout.vue';
 import OwnedIssueCopies from '~/views/OwnedIssueCopies.vue';
 import PublicationList from '~/views/PublicationList.vue';
-import RecentIssueList from '~/views/RecentIssueList.vue';
 import Report from '~/views/Report.vue';
 import Search from '~/views/Search.vue';
 import Signup from '~/views/Signup.vue';
@@ -75,11 +74,6 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/logout',
     component: Logout,
-  },
-  {
-    name: 'RecentIssueList',
-    path: '/recent',
-    component: RecentIssueList,
   },
   {
     path: '/',

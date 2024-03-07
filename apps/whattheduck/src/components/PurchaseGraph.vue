@@ -22,7 +22,7 @@ const props = defineProps<{
 Chart.register(Legend, CategoryScale, BarElement, LinearScale, BarController, Tooltip, Title);
 
 const hasPublicationNames = ref(false as boolean),
-  options = ref({} as ChartOptions<'bar'>);
+  options = ref();
 
 const wtdCollectionStore = wtdcollection(),
   { totalPerPublication, purchasesById } = storeToRefs(wtdcollection()),
@@ -187,7 +187,7 @@ watch(
             },
           },
         },
-      };
+      } as ChartOptions<'bar'>;
     }
   },
   { immediate: true },

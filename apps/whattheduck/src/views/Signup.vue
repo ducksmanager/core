@@ -109,7 +109,6 @@ const isOfflineMode = ref(false);
 const {token} = storeToRefs(app());
 
 const collectionStore = wtdcollection();
-const { user} = storeToRefs(collectionStore);
 
 const { t } = useI18n();
 
@@ -160,7 +159,6 @@ watch(
   () => token.value,
   async () => {
     if (token.value) {
-      user.value = { username: username.value };
       router.push('/collection');
     }
   },

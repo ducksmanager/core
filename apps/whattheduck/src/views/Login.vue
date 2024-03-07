@@ -142,7 +142,6 @@ watch(
   () => token.value,
   async () => {
     if (token.value) {
-      collectionStore.user = { username: username.value};
       router.push('/collection');
     }
   },

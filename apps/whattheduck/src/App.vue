@@ -14,6 +14,8 @@ import { buildStorage, session, cacheStorage } from '~socket.io-client-services'
 
 const { isCoaView, isOfflineMode, token, socketCache } = storeToRefs(app());
 const collectionStore = wtdcollection();
+const { loadUser } = collectionStore;
+const { user } = storeToRefs(collectionStore);
 const route = useRoute();
 
 const isReady = ref(false);
@@ -40,15 +42,18 @@ onBeforeMount(() => {
     },
   });
 
-  watch(() => token.value, async (newValue) => {
-    if (newValue) {
-      await collectionStore.loadUser();
-    }
-    isReady.value = true;
-  });
+  watch(
+    () => token.value,
+    async (newValue) => {
+      if (newValue) {
+        await loadUser();
+      }
+      isReady.value = true;
+    }, { immediate: true}
+  );
 });
 
-const isConnected = computed(() => !!collectionStore.user);
+const isConnected = computed(() => !!user.value);
 
 watch(
   () => route.query?.coa,
