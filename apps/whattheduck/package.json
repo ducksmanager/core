@@ -6,6 +6,7 @@
   },
   "scripts": {
     "whattheduck": "concurrently -p \"[whattheduck-{name}]\" --kill-others-on-fail -n front,web \"pnpm dev\" \"pnpm -F ~web web\"",
+    "whattheduck-android": "concurrently -p \"[whattheduck-{name}]\" --kill-others-on-fail -n front+web,android \"pnpm whattheduck\" \"ionic cap run android --external --target Pixel_3_API_31 --livereload --public-host=192.168.1.211\"",
     "lint": "eslint --fix .",
     "dev": "concurrently -n vite,vue-tsc \"vite --port 8003 --host\" \"vue-tsc --noEmit --watch\"",
     "build": "vue-tsc --noEmit && vite build",

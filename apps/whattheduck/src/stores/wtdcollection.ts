@@ -1,7 +1,6 @@
 import { defineStore } from 'pinia';
 import type { purchase } from '~prisma-clients/client_dm';
 import { stores as webStores, composables as webComposables } from '~web';
-import usePersistedData from '~/composables/usePersistedData';
 
 export type purchaseWithStringDate = Omit<purchase, 'date' | 'userId'> & {
   date: string;
@@ -14,6 +13,8 @@ export const wtdcollection = defineStore('wtdcollection', () => {
   const statsStore = webStores.stats();
   const usersStore = webStores.users();
   const { quotedIssues, quotationSum } = webComposables.useCollection(issues);
+
+  const isDataLoaded = ref(false)
 
   const {
     findInCollection,
@@ -54,8 +55,11 @@ export const wtdcollection = defineStore('wtdcollection', () => {
       () => quotedIssues.value?.sort((a, b) => b.estimationGivenCondition - a.estimationGivenCondition)[0],
     );
 
-  usePersistedData({ issues });
+  // usePersistedData({ issues }).then(() => {
+    isDataLoaded.value = true
+  // })
   return {
+    isDataLoaded,
     issues,
     fetchAndTrackCollection,
     findInCollection,

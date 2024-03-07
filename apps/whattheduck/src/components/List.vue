@@ -7,13 +7,17 @@
         </ion-buttons>
         <ion-title>{{ title }}</ion-title>
       </ion-toolbar>
+      <template v-if="filteredItems?.length">
       <Navigation />
-      <ion-searchbar v-if="showFilter" v-model="filterText" placeholder="Filter" />
+      <ion-searchbar v-if="showFilter" v-model="filterText" placeholder="Filter" /></template>
     </ion-header>
 
     <ion-content v-if="!filteredItems" ref="content">
       {{ t('Chargement de votre collection…') }}
     </ion-content>
+    <ion-content v-else-if="!filteredItems.length" ref="content">
+      {{ t('Votre collection est vide.') }}
+      </ion-content>
     <ion-content v-else ref="content" class="no-padding">
       <Row
         v-for="{ key, item, ownsNext } in filteredItems"

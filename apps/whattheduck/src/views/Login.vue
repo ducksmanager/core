@@ -1,7 +1,9 @@
 <template>
   <ion-page v-if="showForm">
-    <ion-header>
-      <ion-title>{{ t('Connexion') }}</ion-title>
+    <ion-header :translucent="true">
+      <ion-toolbar>
+        <ion-title>{{ t('Connexion') }}</ion-title>
+      </ion-toolbar>
     </ion-header>
     <ion-content>
       <ion-item v-if="isOfflineMode">
