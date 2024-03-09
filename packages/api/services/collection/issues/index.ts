@@ -1,5 +1,6 @@
 import { parse } from "csv-parse/sync";
-import { readFileSync } from "fs";
+import { existsSync, readFileSync } from "fs";
+import { cwd } from "process";
 import { Socket } from "socket.io";
 
 import { TransactionResults } from "~dm-types/TransactionResults";
@@ -272,6 +273,8 @@ export const resetDemo = async () => {
     return;
   }
 
+  const csvPath = existsSync("/app/services/demo_issues.csv") ? "/app/services/": cwd() + "/services/";
+
   demo.lastReset = new Date();
   await prismaDm.demo.update({
     data: demo,
@@ -293,8 +296,11 @@ export const resetDemo = async () => {
     issuenumber: string;
   }
 
+  const currentDir = process.cwd();
+  console.log(currentDir)
+
   const csvIssues: CsvIssue[] = parse(
-    readFileSync("/app/routes/demo/demo_issues.csv"),
+    readFileSync(`${csvPath}demo_issues.csv`),
     { columns: true }
   );
   await prismaDm.$transaction(
@@ -320,7 +326,7 @@ export const resetDemo = async () => {
   }
 
   const csvPurchases: CsvPurchase[] = parse(
-    readFileSync("/app/routes/demo/demo_purchases.csv"),
+    readFileSync(`${csvPath}demo_purchases.csv`),
     { columns: true }
   );
   await prismaDm.$transaction(

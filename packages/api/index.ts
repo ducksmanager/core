@@ -53,10 +53,10 @@ const httpServer = createServer(async (req, res) => {
       data = await getDbStatus()
       break;
     case '/status/pastecsearch':
-      data = await getPastecStatus()
+      data = await getPastecSearchStatus()
       break;
     case '/status/pastec':
-      data = await getPastecSearchStatus()
+      data = await getPastecStatus()
     default:
       res.writeHead(404);
       res.end();

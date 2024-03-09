@@ -12,7 +12,7 @@ export type LastParameter<F extends (...args: any) => unknown> = Last<
 export type EventReturnTypeIncludingError<
   T extends (...args: any[]) => unknown,
 > =
-  // @ts-expect-error ???
+  // @ts-ignore ???
   LastParameter<LastParameter<T>>;
 
 export type EventReturnType<T extends (...args: any[]) => unknown> =
