@@ -1,5 +1,5 @@
 <template>
-  <ion-page>
+  
     <ion-header>
       <ion-title>{{ t('Numéro {issuenumber}', { issuenumber }) }}</ion-title>
     </ion-header>
@@ -15,7 +15,7 @@
         </ion-tab-bar>
       </ion-tabs>
     </ion-content>
-  </ion-page>
+  
 </template>
 
 <script lang="ts" setup>

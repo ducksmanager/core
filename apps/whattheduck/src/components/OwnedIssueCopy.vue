@@ -1,5 +1,5 @@
 <template>
-  <ion-page>
+  
     <ion-item>
       <ion-label>{{ t('Etat') }}</ion-label>
 
@@ -39,7 +39,7 @@
         </ion-radio-group>
       </ion-list>
     </ion-item>
-  </ion-page>
+  
 </template>
 <script setup lang="ts">
 import { condition } from '~/stores/condition';

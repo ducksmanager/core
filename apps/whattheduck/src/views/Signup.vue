@@ -1,5 +1,5 @@
 <template>
-  <ion-page v-if="showForm">
+  
     <ion-header>
       <ion-title>{{ t('Inscription') }}</ion-title>
     </ion-header>
@@ -94,7 +94,7 @@
         </ion-button>
       </ion-item>
     </ion-content>
-  </ion-page>
+  
 </template>
 
 <script lang="ts" setup>
@@ -125,8 +125,6 @@ const username = ref('' as string);
 const email = ref('' as string);
 const password = ref('' as string);
 const passwordConfirmation = ref('' as string);
-
-const showForm = ref(false);
 
 const showPassword = ref(false);
 const showPasswordConfirmation = ref(false);

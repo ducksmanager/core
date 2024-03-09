@@ -1,13 +1,31 @@
 <template>
-  <ion-app>
-    <ion-split-pane content-id="main-content" v-if="isReady">
+  <ion-app v-if="isReady">
+    <ion-item v-if="isOfflineMode && (routeMeta.onOffline === 'unavailable' || !user)">
+      <ion-label>{{
+        t(
+          'La connexion à votre compte DucksManager a échoué, vérifiez que votre connexion Internet est active. Vous pourrez consulter votre collection hors-ligne une fois que votre collection sera synchronisée.',
+        )
+      }}</ion-label>
+    </ion-item>
+    <ion-split-pane v-else content-id="main-content">
       <NavigationDrawer v-if="isConnected" />
-      <ion-router-outlet id="main-content" />
-    </ion-split-pane>
+      <ion-page>
+        <template v-if="isOfflineMode">
+          <ion-item v-if="routeMeta.onOffline === 'readonly'">
+            <ion-label>{{
+              t(
+                'Vous êtes en mode hors-ligne. Vous pouvez naviguer dans votre collection mais pas la modifier. Certaines fonctionnalités ne sont pas disponibles.',
+              )
+            }}</ion-label>
+          </ion-item>
+        </template>
+        <ion-router-outlet id="main-content" /></ion-page
+    ></ion-split-pane>
   </ion-app>
 </template>
 
 <script setup lang="ts">
+import { RouteMeta } from '~/router';
 import { app } from './stores/app';
 import { wtdcollection } from './stores/wtdcollection';
 import { buildStorage, session, cacheStorage } from '~socket.io-client-services';
@@ -18,7 +36,11 @@ const { loadUser } = collectionStore;
 const { user } = storeToRefs(collectionStore);
 const route = useRoute();
 
+const { t } = useI18n();
+
 const isReady = computed(() => isDataLoaded.value && collectionStore.isDataLoaded);
+
+const routeMeta = computed(() => route.meta as RouteMeta);
 
 watch(isReady, (newValue) => {
   if (newValue) {
@@ -56,7 +78,7 @@ watch(isReady, (newValue) => {
   }
 });
 
-const isConnected = computed(() => !!user.value);
+const isConnected = computed(() => typeof user.value === 'object');
 
 watch(
   () => route.query?.coa,

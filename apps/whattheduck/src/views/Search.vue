@@ -1,5 +1,5 @@
 <template>
-  <ion-page>
+  
     <ion-header :translucent="true">
       <ion-toolbar>
         <ion-buttons slot="start">
@@ -41,7 +41,7 @@
         </div>
       </div>
     </ion-content>
-  </ion-page>
+  
 </template>
 
 <script setup lang="ts">
