@@ -60,6 +60,7 @@ export const useSocket = (socketRootUrl: string) => ({
         > => {
           const socket = io(socketRootUrl + namespaceName, {
             multiplex: false,
+            timeout: 2500,
             auth: async (cb) => {
               if (!session.value) {
                 return;
