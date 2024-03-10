@@ -1,5 +1,5 @@
 <template>
-  
+  <ion-page>>
     <ion-header :translucent="true">
       <ion-toolbar>
         <ion-buttons slot="start">
@@ -32,7 +32,7 @@
         {{ selectedStory.title }} {{ t('a été publiée dans les numéros suivants :') }}
         
         <div v-for="issue of selectedStory.issues">
-          <Country :countrycode="issue.countrycode" :countryname="issue.countryname" /><condition
+          <Country :key="issue.countrycode" :label="issue.countryname" /><condition
             v-if="issue.collectionIssue"
             :value="getConditionText(issue.collectionIssue.condition)"
           />
@@ -41,7 +41,7 @@
         </div>
       </div>
     </ion-content>
-  
+  </ion-page>
 </template>
 
 <script setup lang="ts">

@@ -1,5 +1,4 @@
-<template>
-  
+<template><ion-page id="main-content">
     <ion-header :translucent="true">
       <ion-toolbar>
         <ion-buttons slot="start">
@@ -47,7 +46,7 @@
         {{ getItemTextFn(itemInCenterOfViewport) }}
       </div>
     </ion-content>
-  
+  </ion-page>
 </template>
 
 <script setup lang="ts" generic="Item extends Required<any>">

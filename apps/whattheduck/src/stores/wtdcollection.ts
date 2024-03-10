@@ -26,9 +26,9 @@ export const wtdcollection = defineStore('wtdcollection', () => {
     signup,
   } = webCollectionStore
 
-  const ownedCountries = computed(() => [...new Set((issues.value || []).map(({ country }) => country))].sort()),
-    ownedPublications = computed(() =>
-      [...new Set((issues.value || []).map(({ publicationcode }) => publicationcode))].sort(),
+  const ownedCountries = computed(() => issues.value ?[...new Set((issues.value || []).map(({ country }) => country))].sort() : issues.value),
+    ownedPublications = computed(() => issues.value ?
+      [...new Set((issues.value || []).map(({ publicationcode }) => publicationcode))].sort() : issues.value,
     ),
     fetchAndTrackCollection = async () => {
       await loadCollection();

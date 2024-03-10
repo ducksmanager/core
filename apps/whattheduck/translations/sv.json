@@ -73,7 +73,7 @@
   "L'image est trop grande, veuillez réessayer.": "Bilden är för stor, försök igen.",
   "L'inscription à DucksManager est terminée,\nvous pouvez maintenant vous connecter.": "Du har registrerat dig på DucksManager, vänligen logga in.",
   "L'insertion du numéro dans votre collection a échoué": "Adderingen av utgåvan i din samling misslyckades",
-  "La connexion à votre compte DucksManager a échoué, vérifiez que votre connexion Internet est active. Vous pourrez consulter votre collection hors-ligne une fois que votre collection sera synchronisée.": "Inläsning av ditt DucksManager-konto misslyckades. Säkerställ att din internetuppkoppling är aktiv. Du kommer att kunna bläddra igenom din samling offline när samlingen har synkroniserats.",
+  "La connexion à DucksManager a échoué, vérifiez que votre connexion Internet est active. Vous pourrez consulter votre collection hors-ligne une fois que votre collection sera synchronisée.": "Inläsning av ditt DucksManager-konto misslyckades. Säkerställ att din internetuppkoppling är aktiv. Du kommer att kunna bläddra igenom din samling offline när samlingen har synkroniserats.",
   "La création de la date d'achat a échoué": "Skapandet av inköpsdatum misslyckades",
   "La largeur de votre sélection doit être comprise entre 100 et 350 millimètres": "Bokryggens längd måste vara mellan 100 och 350 millimeter",
   "La largeur de votre sélection doit être comprise entre 5 et 50 millimètres": "Bokryggens bredd måste vara mellan 5 och 50 millimeter",

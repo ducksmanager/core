@@ -1,5 +1,5 @@
 <template>
-  
+  <ion-page>>
     <ion-header :translucent="true">
       <ion-toolbar>
         <ion-buttons slot="start">
@@ -11,8 +11,8 @@
     <ion-content :fullscreen="true" v-if="wtdCollectionStore.issues">
       <ion-row style="height: 25vh" class="ion-text-center">
         <ion-row class="ion-text-center" style="height: 75%">
-          <ion-col size="4" class="text-big">{{ wtdCollectionStore.ownedCountries.length }}</ion-col
-          ><ion-col size="4" class="text-big">{{ wtdCollectionStore.ownedPublications.length }}</ion-col
+          <ion-col size="4" class="text-big">{{ wtdCollectionStore.ownedCountries!.length }}</ion-col
+          ><ion-col size="4" class="text-big">{{ wtdCollectionStore.ownedPublications!.length }}</ion-col
           ><ion-col size="4" class="text-big">{{ wtdCollectionStore.total }}</ion-col></ion-row
         >
         <ion-row class="ion-text-center" style="height: 25%">
@@ -68,7 +68,7 @@
           <PurchaseGraph :since="currentCollectionProgressionGraphType" :style="{ height: 'calc(100% - 140px)' }"
         /></ion-col>
       </ion-row>
-    </ion-content>
+    </ion-content></ion-page>
   
 </template>
 
@@ -102,7 +102,7 @@ const numberPerCondition = computed(() => wtdCollectionStore.numberPerCondition)
 const highestQuotedIssue = computed(() => wtdCollectionStore.highestQuotedIssue);
 
 wtdCollectionStore.loadCollection().then(() => {
-  coaStore.fetchIssueQuotations(wtdCollectionStore.ownedPublications);
+  coaStore.fetchIssueQuotations(wtdCollectionStore.ownedPublications!);
 });
 </script>
 

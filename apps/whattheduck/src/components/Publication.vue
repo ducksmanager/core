@@ -1,9 +1,9 @@
 <template>
-  {{ publicationname }}
+  {{ label }}
 </template>
 
 <script setup lang="ts">
 defineProps<{
-  publicationname: string;
+  label: string;
 }>();
 </script>

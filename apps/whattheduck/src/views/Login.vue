@@ -8,7 +8,7 @@
     <ion-item v-if="isOfflineMode">
       <ion-label>{{
         t(
-          'La connexion à votre compte DucksManager a échoué, vérifiez que votre connexion Internet est active. Vous pourrez consulter votre collection hors-ligne une fois que votre collection sera synchronisée.',
+          'La connexion à DucksManager a échoué, vérifiez que votre connexion Internet est active. Vous pourrez consulter votre collection hors-ligne une fois que votre collection sera synchronisée.',
         )
       }}</ion-label>
     </ion-item>
@@ -40,7 +40,7 @@
           :error-text="
             errorTexts.password ||
             t(
-              'La connexion à votre compte DucksManager a échoué, vérifiez que votre connexion Internet est active. Vous pourrez consulter votre collection hors-ligne une fois que votre collection sera synchronisée.',
+              'La connexion à DucksManager a échoué, vérifiez que votre connexion Internet est active. Vous pourrez consulter votre collection hors-ligne une fois que votre collection sera synchronisée.',
             )
           "
           :aria-label="t('Mot de passe')"
@@ -90,7 +90,6 @@
 <script lang="ts" setup>
 import { SplashScreen } from '@capacitor/splash-screen';
 import { eyeOutline, eyeOffOutline, eyeSharp, eyeOffSharp } from 'ionicons/icons';
-import { stores } from '~web';
 
 import useFormErrorHandling from '~/composables/useFormErrorHandling';
 import { app } from '~/stores/app';
@@ -100,8 +99,6 @@ const isOfflineMode = ref(false);
 
 const { token } = storeToRefs(app());
 const collectionStore = wtdcollection();
-
-const coaStore = stores.coa();
 
 const dmUrl = import.meta.env.VITE_DM_URL as string;
 
@@ -140,9 +137,14 @@ const submitLogin = async () => {
 
 watch(
   () => token.value,
-  async () => {
-    if (token.value) {
-      router.push('/collection');
+  async (newValue) => {
+    if (newValue) {
+      collectionStore
+        .fetchAndTrackCollection()
+        .catch(() => {
+          showForm.value = true;
+        })
+        .then(() => router.replace('/collection'));
     }
   },
   { immediate: true },
@@ -157,50 +159,10 @@ watch(
   },
 );
 
-watch(
-  () => collectionStore.issues,
-  async (value) => {
-    if (value) {
-      await collectionStore.loadPurchases();
-    }
-  },
-  { immediate: true },
-);
-
-watch(
-  () => collectionStore.ownedPublications,
-  async (newValue) => {
-    if (newValue) {
-      await coaStore.fetchIssueQuotations(collectionStore.ownedPublications);
-    }
-  },
-  { immediate: true },
-);
-
-watch(
-  () => app().isOfflineMode,
-  (isOfflineMode) => {
-    if (isOfflineMode) {
-      showForm.value = true;
-    }
-  },
-);
-
 (async () => {
   await SplashScreen.show({
     autoHide: true,
   });
-
-  try {
-    await collectionStore
-      .fetchAndTrackCollection()
-      .catch(() => {
-        showForm.value = true;
-      })
-      .then(() => router.push('/collection'));
-  } catch (e) {
-    showForm.value = true;
-  }
 })();
 </script>
 

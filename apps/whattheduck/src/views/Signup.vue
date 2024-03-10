@@ -1,5 +1,5 @@
 <template>
-  
+  <ion-page>>
     <ion-header>
       <ion-title>{{ t('Inscription') }}</ion-title>
     </ion-header>
@@ -7,7 +7,7 @@
       <ion-item v-if="isOfflineMode">
         <ion-label>{{
           t(
-            'La connexion à votre compte DucksManager a échoué, vérifiez que votre connexion Internet est active. Vous pourrez consulter votre collection hors-ligne une fois que votre collection sera synchronisée.',
+            'La connexion à DucksManager a échoué, vérifiez que votre connexion Internet est active. Vous pourrez consulter votre collection hors-ligne une fois que votre collection sera synchronisée.',
           )
         }}</ion-label>
       </ion-item>
@@ -48,7 +48,7 @@
           }"
           :error-text="
             t(
-              'La connexion à votre compte DucksManager a échoué, vérifiez que votre connexion Internet est active. Vous pourrez consulter votre collection hors-ligne une fois que votre collection sera synchronisée.',
+              'La connexion à DucksManager a échoué, vérifiez que votre connexion Internet est active. Vous pourrez consulter votre collection hors-ligne une fois que votre collection sera synchronisée.',
             )
           "
           :aria-label="t('Mot de passe')"
@@ -93,7 +93,7 @@
           {{ t('Annuler') }}
         </ion-button>
       </ion-item>
-    </ion-content>
+    </ion-content></ion-page>
   
 </template>
 

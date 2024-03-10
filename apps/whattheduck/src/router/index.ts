@@ -123,8 +123,12 @@ const routes: RouteRecordRaw[] = [
     component: Logout,
   },
   {
-    path: '/',
+    path: '/login',
     component: Login,
+  },
+  {
+    path: '/',
+    redirect: '/login',
   },
 ];
 

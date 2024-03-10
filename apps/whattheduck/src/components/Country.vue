@@ -1,12 +1,12 @@
 <template>
-  <img :src="`/icons/flags_${countrycode}.png`" :alt="countrycode" />
-  {{ countryname }}
+  <img :src="`/icons/flags_${key}.png`" :alt="key" />
+  {{ label }}
 </template>
 
 <script setup lang="ts">
 defineProps<{
-  countrycode: string;
-  countryname: string;
+  key: string;
+  label: string;
 }>();
 </script>
 

@@ -7,7 +7,7 @@
     :get-item-text-fn="getItemTextFn"
   >
     <template #row-label="{ item }">
-      <Publication v-bind="item" />
+      <Publication :key="item.publicationcode" :label="item.publicationname" />
     </template>
     <template #row-suffix="{ item }" v-if="ownershipPercentages">
       {{ getOwnershipText(ownershipPercentages[item.publicationcode], false) }}
@@ -67,7 +67,7 @@ const items = computed(() =>
             key: publicationcode,
             item: { publicationcode, publicationname },
           }))
-      : collectionStore.ownedPublications
+      : collectionStore.ownedPublications!
           .filter((publication) => publication.indexOf(`${route.params.countrycode}/`) === 0)
           .map((publicationcode) => ({
             key: publicationcode,

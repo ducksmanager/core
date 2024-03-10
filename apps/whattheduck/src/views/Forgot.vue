@@ -1,5 +1,5 @@
 <template>
-  
+  <ion-page>>
     <ion-header>
       <ion-title>{{ t('Indiquez votre addresse e-mail pour réinitialiser votre mot de passe') }}</ion-title>
     </ion-header>
@@ -31,7 +31,7 @@
         }}
       </ion-item>
     </ion-content>
-  
+  </ion-page>
 </template>
 
 <script setup lang="ts">

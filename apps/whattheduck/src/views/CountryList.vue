@@ -6,7 +6,7 @@
     :get-item-text-fn="getItemTextFn"
   >
     <template #row-label="{ item }">
-      <Country v-bind="item" />
+      <Country :key="item.countrycode" :label="item.countryname" />
     </template>
     <template #row-suffix="{ item }" v-if="ownershipPercentages">
       {{ getOwnershipText(ownershipPercentages[item.countrycode]) }}
@@ -37,7 +37,7 @@ const ownershipPercentages = computed(() =>
 const items = computed(() =>
   coaStore.countryNames
     ? Object.entries(coaStore.countryNames)
-        .filter(([countrycode]) => appStore.isCoaView || collectionStore.ownedCountries.includes(countrycode))
+        .filter(([countrycode]) => appStore.isCoaView || collectionStore.ownedCountries!.includes(countrycode))
         .map(([countrycode, countryname]) => ({
           key: countrycode,
           item: { countrycode, countryname },

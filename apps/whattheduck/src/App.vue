@@ -1,17 +1,18 @@
 <template>
   <ion-app v-if="isReady">
-    <ion-item v-if="isOfflineMode && (routeMeta.onOffline === 'unavailable' || !user)">
-      <ion-label>{{
-        t(
-          'La connexion à votre compte DucksManager a échoué, vérifiez que votre connexion Internet est active. Vous pourrez consulter votre collection hors-ligne une fois que votre collection sera synchronisée.',
-        )
-      }}</ion-label>
-    </ion-item>
-    <ion-split-pane v-else content-id="main-content">
-      <NavigationDrawer v-if="isConnected" />
-      <ion-page>
-        <template v-if="isOfflineMode">
-          <ion-item v-if="routeMeta.onOffline === 'readonly'">
+    <template v-if="isOfflineMode && routeMeta.onOffline !== 'readonly'">
+      <ion-item>
+        <ion-label>{{
+          t(
+            'La connexion à DucksManager a échoué, vérifiez que votre connexion Internet est active. Vous pourrez consulter votre collection hors-ligne une fois que votre collection sera synchronisée.',
+          )
+        }}</ion-label>
+      </ion-item></template
+    >
+    <ion-split-pane v-if="!(isOfflineMode && routeMeta.onOffline === 'unavailable')" content-id="main-content">
+      <NavigationDrawer />
+        <template v-if="isOfflineMode && routeMeta.onOffline === 'readonly'">
+          <ion-item>
             <ion-label>{{
               t(
                 'Vous êtes en mode hors-ligne. Vous pouvez naviguer dans votre collection mais pas la modifier. Certaines fonctionnalités ne sont pas disponibles.',
@@ -19,8 +20,8 @@
             }}</ion-label>
           </ion-item>
         </template>
-        <ion-router-outlet id="main-content" /></ion-page
-    ></ion-split-pane>
+        <ion-router-outlet id="main-content" />
+    </ion-split-pane>
   </ion-app>
 </template>
 
@@ -33,7 +34,6 @@ import { buildStorage, session, cacheStorage } from '~socket.io-client-services'
 const { isCoaView, isOfflineMode, token, socketCache, isDataLoaded } = storeToRefs(app());
 const collectionStore = wtdcollection();
 const { loadUser } = collectionStore;
-const { user } = storeToRefs(collectionStore);
 const route = useRoute();
 
 const { t } = useI18n();
@@ -77,8 +77,6 @@ watch(isReady, (newValue) => {
     );
   }
 });
-
-const isConnected = computed(() => typeof user.value === 'object');
 
 watch(
   () => route.query?.coa,

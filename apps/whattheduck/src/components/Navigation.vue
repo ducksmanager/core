@@ -1,7 +1,8 @@
 <template>
   <ion-segment v-if="parts" :value="appStore.currentNavigationItem" @ionChange="onChange">
-    <ion-segment-button v-for="{ key, text } in parts" :key="key" :value="key">
-      <ion-label>{{ text }}</ion-label>
+    <ion-segment-button v-for="{ key, text, component } in parts" :key="key" :value="key">
+      <component v-if="component" :is="component" :key="key" :label="text" />
+      <ion-label v-else>{{ text }}</ion-label>
     </ion-segment-button>
   </ion-segment>
 </template>
@@ -10,6 +11,8 @@
 import { stores } from '~web';
 
 import { app } from '~/stores/app.js';
+import Country from './Country.vue';
+import Publication from './Publication.vue';
 
 const router = useRouter();
 
@@ -23,7 +26,7 @@ const parts = computed(() => {
   if (!coaStore.countryNames) {
     return [];
   }
-  const parts = [
+  const parts: {key: string, text: string, component?: any}[] = [
     {
       key: '',
       text: t('Tous les pays'),
@@ -32,11 +35,13 @@ const parts = computed(() => {
   if (appStore.currentNavigationItem) {
     const publicationParts = appStore.currentNavigationItem.split('/');
     parts.push({
+      component: Country,
       key: publicationParts[0],
       text: coaStore.countryNames?.[publicationParts[0]] || publicationParts[0],
     });
     if (publicationParts.length === 2) {
-      parts.push({
+      parts.push({ 
+      component: Publication,
         key: appStore.currentNavigationItem,
         text: coaStore.publicationNames[appStore.currentNavigationItem]!,
       });

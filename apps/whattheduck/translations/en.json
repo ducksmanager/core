@@ -77,7 +77,7 @@
   "L'image est trop grande, veuillez réessayer.": "The picture is too big, please try again.",
   "L'inscription à DucksManager est terminée,\nvous pouvez maintenant vous connecter.": "You have signed up to DucksManager successfully, please login.",
   "L'insertion du numéro dans votre collection a échoué": "Adding the issue in your collection failed",
-  "La connexion à votre compte DucksManager a échoué, vérifiez que votre connexion Internet est active. Vous pourrez consulter votre collection hors-ligne une fois que votre collection sera synchronisée.": "Loading your DucksManager account failed, check that your Internet connection is active. You will be able to browse through your collection while offline once your collection is synchronized.",
+  "La connexion à DucksManager a échoué, vérifiez que votre connexion Internet est active. Vous pourrez consulter votre collection hors-ligne une fois que votre collection sera synchronisée.": "Connecting to DucksManager failed, check that your Internet connection is active. You will be able to browse through your collection while offline once your collection is synchronized.",
   "La création de la date d'achat a échoué": "The creation of the purchase date failed",
   "La largeur de votre sélection doit être comprise entre 100 et 350 millimètres": "The height of the edge must be between 100 and 350 millimeters",
   "La largeur de votre sélection doit être comprise entre 5 et 50 millimètres": "The width of the edge must be between 5 and 50 millimeters",

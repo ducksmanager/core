@@ -1,5 +1,6 @@
 <template>
   
+  <ion-page>>
     <div id="cameraPreview">
       <img v-if="isPlatform('desktop')" id="cover-mock" src="/covers/fr/mpp/fr_mpp_1415d_001.jpg" />
     </div>
@@ -8,7 +9,7 @@
         <ion-icon :ios="apertureOutline" :md="apertureSharp" />
       </ion-button>
     </div>
-  
+  </ion-page>
 </template>
 
 <script setup lang="ts">

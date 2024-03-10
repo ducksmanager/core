@@ -1,5 +1,6 @@
 <template>
   
+  <ion-page>>
     <ion-header :translucent="true">
       <ion-toolbar>
         <ion-buttons slot="start">
@@ -32,7 +33,7 @@
         {{ t('Merci pour votre retour !') }}
       </ion-item>
     </ion-content>
-  
+  </ion-page>
 </template>
 
 <script setup lang="ts">
