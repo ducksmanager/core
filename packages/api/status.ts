@@ -12,26 +12,30 @@ export const getDbStatus = async (): Promise<
   { error: string } | { status: "ok" }
 > => {
   const checks = [
-    { db: "dm", check: async () => prismaDm.user.count() },
-    { db: "coverInfo", check: async () => prismaCoverInfo.cover.count() },
+    { db: "dm", check: prismaDm.user.count() },
+    { db: "coverInfo", check: prismaCoverInfo.cover.count() },
     {
       db: "dmStats",
-      check: async () => prismaDmStats.missingStoryForUser.count(),
+      check: prismaDmStats.missingStoryForUser.count(),
     },
     {
       db: "edgecreator",
-      check: async () => prismaEdgeCreator.edgeModel.count(),
+      check: prismaEdgeCreator.edgeModel.count(),
     },
   ];
 
-  const failedChecks = checks.filter(
-    async ({ check }) => (await check()) === 0,
-  );
+  const failedChecks = []
+  for (const {db, check} of checks) {
+    if (await check === 0) {
+      failedChecks.push(db)
+    }
+  }
+
   if (failedChecks.length) {
     return {
       error:
         "Some DB checks have failed: " +
-        failedChecks.map(({ db }) => db).join(", "),
+        failedChecks.join(", "),
     };
   }
 
@@ -45,7 +49,7 @@ export const getDbStatus = async (): Promise<
   const query = coaTables
     .map(
       (coaTable) =>
-        `(SELECT ${coaTable} AS tableName, SELECT COUNT(*) FROM ${coaTable} AS tableCount)`,
+        `(SELECT '${coaTable}' AS tableName, (SELECT COUNT(*) FROM ${coaTable} AS tableCount))`,
     )
     .join(" UNION ");
   const coaTablesWithCount = (await prismaCoa.$queryRawUnsafe(query)) as {
@@ -57,7 +61,7 @@ export const getDbStatus = async (): Promise<
   );
   if (emptyCoaTables.length) {
     return {
-      error: "Some COA tables are empty: " + emptyCoaTables.join(", "),
+      error: `Some COA tables are empty: ${emptyCoaTables.join(", ")}`,
     };
   }
 
