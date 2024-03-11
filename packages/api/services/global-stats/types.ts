@@ -2,6 +2,7 @@ import { BookcaseContributor } from "~dm-types/BookcaseContributor";
 import { MedalPointsPerUser } from "~dm-types/MedalPointsPerUser";
 import { QuickStatsPerUser } from "~dm-types/QuickStatsPerUser";
 import { user } from "~prisma-clients/client_dm";
+import { Errorable } from "~socket.io-services/types";
 
 export default abstract class {
   static namespaceEndpoint = "/global-stats";
@@ -15,10 +16,10 @@ export default abstract class {
   abstract getUserCount: (callback: (count: number) => void) => void;
   abstract getUsersPointsAndStats: (
     userIds: number[],
-    callback: (value: {
+    callback: (value: Errorable<{
       points: MedalPointsPerUser;
       stats: QuickStatsPerUser;
-    }) => void
+    }, 'Bad request'>) => void
   ) => void;
   abstract getUsersCollectionRarity: (
     callback: (value: {

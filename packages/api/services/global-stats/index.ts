@@ -52,7 +52,7 @@ export default (io: Server) => {
             };
             callback(result);
           } else {
-            callback({ points: {}, stats: {} });
+            callback({ error: 'Bad request', errorDetails: 'Empty user IDs list' });
           }
         }
       );
