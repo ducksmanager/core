@@ -24,6 +24,14 @@ ion-content {
 
 ion-searchbar {
   padding-inline-start: 0 !important;
+  min-height: initial !important;
+}
+
+ion-button {
+  &::part(native) {
+    min-height: initial;
+    padding: .5rem;
+  }
 }
 
 .dm-condition-background {

@@ -22,11 +22,11 @@
         </ion-text>
       </div>
       <div v-if="personNames">
-        <ion-row v-for="author in ratings" :key="author.personcode" align-v="center" class="mb-2">
-          <ion-col lg="1">
+        <ion-row v-for="author in ratings" :key="author.personcode" class="mb-2 ion-align-items-center">
+          <ion-col size="4">
             {{ personNames[author.personcode] }}
           </ion-col>
-          <ion-col lg="2">
+          <ion-col size="5">
             <StarRating
               :readonly="appStore.isOfflineMode"
               v-model:rating="author.notation"
@@ -36,7 +36,7 @@
               ><template #emptyStarIcon><ion-icon :ios="star" :android="star" /></template
             ></StarRating>
           </ion-col>
-          <ion-col lg="2">
+          <ion-col size="3">
             <ion-button @click="statsStore.deleteAuthor(author.personcode)">
               {{ t('Supprimer') }}
             </ion-button>

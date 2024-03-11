@@ -25,15 +25,15 @@ const hasPublicationNames = ref(false as boolean),
   options = ref();
 
 const wtdCollectionStore = wtdcollection(),
-  { totalPerPublication, purchasesById } = storeToRefs(wtdcollection()),
+  { issues, totalPerPublication, purchasesById } = storeToRefs(wtdcollection()),
   { t } = useI18n();
 
 const compareDates = (a: string, b: string) =>
     dayjs(a === '?' ? '0001-01-01' : a).diff(dayjs(b === '?' ? '0001-01-01' : b)),
   randomColor = () =>
-    `rgb(${[Math.floor(Math.random() * 255), Math.floor(Math.random() * 255), Math.floor(Math.random() * 255)].join(
-      ',',
-    )})`,
+    `rgb(${Array.from({ length: 3 })
+      .map(() => Math.floor(Math.random() * 255))
+      .join(',')})`,
   getIssueMonth = (issue: dm_issue): string =>
     getIssueDate(issue).isValid() ? getIssueDate(issue).format('YYYY-MM') : '?',
   getIssueDate = (issue: dm_issue) =>
@@ -41,8 +41,8 @@ const compareDates = (a: string, b: string) =>
   publicationNames = computed(() => coa().publicationNames),
   publicationCodesWithOther = computed(
     () =>
-      totalPerPublication &&
-      Object.entries(totalPerPublication || {})
+      totalPerPublication.value &&
+      Object.entries(totalPerPublication.value || {})
         .sort(([, count1], [, count2]) => Math.sign(count2 - count1))
         .filter((_entry, idx) => idx < 5)
         .map(([publicationcode]) => publicationcode)
@@ -51,17 +51,38 @@ const compareDates = (a: string, b: string) =>
   collectionWithDates = computed(
     () =>
       (purchasesById.value &&
-        wtdCollectionStore.issues?.map((issue) => ({
+        issues.value?.map((issue) => ({
           ...issue,
           date: getIssueMonth(issue),
         }))) ||
       null,
   ),
-  labels = computed(
-    () =>
+  labels = computed(() => {
+    const months =
       collectionWithDates.value &&
-      [...new Set(collectionWithDates.value.map(({ date }) => date))].filter((date) => date).sort(compareDates),
-  ),
+      [...new Set(collectionWithDates.value.map(({ date }) => date))].filter((date) => date).sort(compareDates);
+    if (!months) {
+      return months;
+    }
+
+    return months;
+
+    // const dayToMonth = (day: dayjs.Dayjs) => day.set('day', 1).format('YYYY-MM');
+
+    // const lastMonthOnGraph = dayToMonth(dayjs());
+    // let currentMonthIdx = months.findIndex((month) => month !== '?');
+    // let currentMonth = dayjs(months[currentMonthIdx] + '-01');
+    // while (currentMonth.format('YYYY-MM') < lastMonthOnGraph) {
+    //   let nextDateMonth = dayToMonth(currentMonth.add(1, 'month'));
+    //   currentMonthIdx++;
+    //   while (months[currentMonthIdx] > nextDateMonth) {
+    //     months.splice(currentMonthIdx, 0, nextDateMonth);
+    //     currentMonthIdx++;
+    //     nextDateMonth = dayToMonth(currentMonth.add(1, 'month'));
+    //   }
+    // }
+    // return months;
+  }),
   ready = computed(() => labels.value && hasPublicationNames.value),
   values = computed(() => {
     if (!collectionWithDates.value) {
@@ -75,7 +96,7 @@ const compareDates = (a: string, b: string) =>
       {},
     );
 
-    let accDate: { [label: string]: number } = labels.value!.reduce((acc, value) => ({ ...acc, [value]: 0 }), {});
+    let accDate = labels.value!.reduce<{ [label: string]: number }>((acc, value) => ({ ...acc, [value]: 0 }), {});
     return collectionWithDates.value
       .sort(({ date: dateA }, { date: dateB }) => compareDates(dateA, dateB))
       .reduce(
@@ -119,12 +140,11 @@ const compareDates = (a: string, b: string) =>
     !(datasets.value && labels.value)
       ? null
       : {
-          datasets: datasets.value!.map((value) =>
+          datasets:
             props.since === 'allTime'
-              ? value
-              : { ...value, data: value.data.filter((_, idx) => idx > value.data.length - 12) },
-          ),
-          labels: labels.value.filter((_, idx) => (props.since === 'allTime' ? true : idx > labels.value!.length - 12)),
+              ? datasets.value
+              : datasets.value!.map((value) => ({ ...value, data: value.data.slice(value.data.length - 11) })),
+          labels: props.since === 'allTime' ? labels.value : labels.value.slice(labels.value.length - 11),
         },
   );
 

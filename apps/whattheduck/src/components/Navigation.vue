@@ -1,7 +1,7 @@
 <template>
-  <ion-segment v-if="parts" :value="appStore.currentNavigationItem" @ionChange="onChange">
-    <ion-segment-button v-for="{ key, text, component } in parts" :key="key" :value="key">
-      <component v-if="component" :is="component" :key="key" :label="text" />
+  <ion-segment v-if="parts" :value="currentNavigationItem" @ionChange="onChange">
+    <ion-segment-button v-for="{ id, text, component } in parts" :id="id" :value="id">
+      <component v-if="component" :is="component" :id="id" :label="text" />
       <ion-label v-else>{{ text }}</ion-label>
     </ion-segment-button>
   </ion-segment>
@@ -10,40 +10,40 @@
 <script setup lang="ts">
 import { stores } from '~web';
 
-import { app } from '~/stores/app.js';
+import { app } from '~/stores/app';
 import Country from './Country.vue';
 import Publication from './Publication.vue';
 
 const router = useRouter();
 
-const appStore = app();
-const coaStore = stores.coa();
+const coaStore = coa()
+const {currentNavigationItem} = storeToRefs(app());
+const {countryNames, publicationNames} = storeToRefs(stores.coa());
 
 const { t } = useI18n();
 
-// eslint-disable-next-line no-undef
 const parts = computed(() => {
-  if (!coaStore.countryNames) {
+  if (!countryNames.value) {
     return [];
   }
-  const parts: {key: string, text: string, component?: any}[] = [
+  const parts: { text: string; id?: string; component?: any }[] = [
     {
-      key: '',
+      id: '',
       text: t('Tous les pays'),
     },
   ];
-  if (appStore.currentNavigationItem) {
-    const publicationParts = appStore.currentNavigationItem.split('/');
+  if (currentNavigationItem.value) {
+    const publicationParts = currentNavigationItem.value.split('/');
     parts.push({
       component: Country,
-      key: publicationParts[0],
-      text: coaStore.countryNames?.[publicationParts[0]] || publicationParts[0],
+      id: publicationParts[0],
+      text: countryNames.value?.[publicationParts[0]] || publicationParts[0],
     });
     if (publicationParts.length === 2) {
-      parts.push({ 
-      component: Publication,
-        key: appStore.currentNavigationItem,
-        text: coaStore.publicationNames[appStore.currentNavigationItem]!,
+      parts.push({
+        component: Publication,
+        id: currentNavigationItem.value,
+        text: publicationNames.value[currentNavigationItem.value]!,
       });
     }
   }

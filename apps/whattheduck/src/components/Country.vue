@@ -1,11 +1,11 @@
 <template>
-  <img :src="`/icons/flags_${key}.png`" :alt="key" />
+  <img :src="`/icons/flags_${id}.png`" :alt="id" />
   {{ label }}
 </template>
 
 <script setup lang="ts">
 defineProps<{
-  key: string;
+  id: string;
   label: string;
 }>();
 </script>
@@ -13,6 +13,5 @@ defineProps<{
 <style lang="scss" scoped>
 img {
   width: 18px;
-  margin-right: 1rem;
 }
 </style>

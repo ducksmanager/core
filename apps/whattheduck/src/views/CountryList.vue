@@ -6,7 +6,7 @@
     :get-item-text-fn="getItemTextFn"
   >
     <template #row-label="{ item }">
-      <Country :key="item.countrycode" :label="item.countryname" />
+      <Country :id="item.countrycode" :label="item.countryname" />
     </template>
     <template #row-suffix="{ item }" v-if="ownershipPercentages">
       {{ getOwnershipText(ownershipPercentages[item.countrycode]) }}

@@ -1,4 +1,5 @@
-<template><ion-page id="main-content">
+<template>
+  <ion-page id="main-content">
     <ion-header :translucent="true">
       <ion-toolbar>
         <ion-buttons slot="start">
@@ -6,17 +7,18 @@
         </ion-buttons>
         <ion-title>{{ title }}</ion-title>
       </ion-toolbar>
-      <template v-if="filteredItems?.length">
-      <Navigation />
-      <ion-searchbar v-if="showFilter" v-model="filterText" placeholder="Filter" /></template>
+      <template v-if="items?.length">
+        <Navigation />
+        <ion-searchbar v-if="showFilter" v-model="filterText" placeholder="Filter"
+      /></template>
     </ion-header>
 
-    <ion-content v-if="!filteredItems" ref="content">
+    <ion-content v-if="!items" ref="content">
       {{ t('Chargement de votre collection…') }}
     </ion-content>
-    <ion-content v-else-if="!filteredItems.length" ref="content">
+    <ion-content v-else-if="!items.length" ref="content">
       {{ t('Votre collection est vide.') }}
-      </ion-content>
+    </ion-content>
     <ion-content v-else ref="content" class="no-padding">
       <Row
         v-for="{ key, item, ownsNext } in filteredItems"
@@ -211,8 +213,8 @@ watch(
 </script>
 
 <style scoped>
-img {
-  width: 18px;
+::v-deep(ion-content img) {
+  margin-right: 1rem;
 }
 strong {
   font-size: 20px;

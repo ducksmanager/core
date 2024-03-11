@@ -32,7 +32,7 @@
         {{ selectedStory.title }} {{ t('a été publiée dans les numéros suivants :') }}
         
         <div v-for="issue of selectedStory.issues">
-          <Country :key="issue.countrycode" :label="issue.countryname" /><condition
+          <Country :id="issue.countrycode" :label="issue.countryname" /><condition
             v-if="issue.collectionIssue"
             :value="getConditionText(issue.collectionIssue.condition)"
           />
