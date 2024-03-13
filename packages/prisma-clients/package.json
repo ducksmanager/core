@@ -11,7 +11,7 @@
     "build": "pnpm run generate && ./node_modules/.pnpm/node_modules/.bin/tsc"
   },
   "dependencies": {
-    "@prisma/client": "^5.7.0",
+    "@prisma/client": "^5.11.0",
     "prisma": "^5.7.0"
   },
   "devDependencies": {
