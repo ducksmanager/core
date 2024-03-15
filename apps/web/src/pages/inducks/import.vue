@@ -128,7 +128,7 @@ meta:
       </div>
       <div v-if="hasPublicationNames" role="tablist">
         <Accordion
-          v-for="(issues, publicationcode) in groupByPublicationCode(
+          v-for="(publicationIssues, publicationcode) in groupByPublicationCode(
             issuesImportable,
           )"
           :id="String(publicationcode).replace('/', '-')"
@@ -144,10 +144,10 @@ meta:
                 publicationNames[publicationcode] || publicationcode
               "
             />
-            x {{ issues.length }}
+            x {{ publicationIssues.length }}
           </template>
           <template #content>
-            <div v-for="issue in issues" :key="issue">
+            <div v-for="issue in publicationIssues" :key="issue">
               {{ $t("Numéro") }} {{ issue }}
             </div>
           </template>
@@ -320,8 +320,8 @@ const processRawData = async () => {
   const REGEX_VALID_ROW = /^([^^]+\^[^^]+)\^/;
   const issueCodes = rawData
     .split("\n")
-    .filter((row) => !/^country/.test(row) && REGEX_VALID_ROW.test(row))
-    .map((row) => row.match(REGEX_VALID_ROW)![1].replace("^", "/"));
+    .filter((row: string) => !/^country/.test(row) && REGEX_VALID_ROW.test(row))
+    .map((row: string) => row.match(REGEX_VALID_ROW)![1].replace("^", "/"));
   await fetchIssueCodesDetails(issueCodes);
 
   if (!issueCodeDetails) {

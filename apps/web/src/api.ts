@@ -48,7 +48,9 @@ export const createCachedCoaApi = (
 
         generateKey: (options: CacheRequestConfig) =>
           `${options.method} ${options.url}${
-            options.params ? `?${new URLSearchParams(options.params).toString()}` : ""
+            options.params
+              ? `?${new URLSearchParams(options.params).toString()}`
+              : ""
           } ${options.data ? JSON.stringify(options.data) : ""}`,
         methods: ["get", "post"],
         ttl: coaCacheExpiration.diff(now),

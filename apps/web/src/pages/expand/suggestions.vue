@@ -92,8 +92,8 @@ const countryNamesWithAllCountriesOption = $computed(
         .sort(({ text: text1 }, { text: text2 }) => text1.localeCompare(text2)),
     ],
 );
-const watchedAuthorsWithNotation = $computed(() =>
-  watchedAuthors.value?.filter(({ notation }) => notation > 0),
+const watchedAuthorsWithNotation = $computed(
+  () => watchedAuthors.value?.filter(({ notation }) => notation > 0),
 );
 
 watch(

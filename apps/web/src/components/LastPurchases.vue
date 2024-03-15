@@ -52,41 +52,40 @@ const hasPublicationNames = $computed(() => Object.keys(publicationNames)),
     () =>
       purchasesById.value &&
       allIssues.value
-        ?.reduce(
-          (acc, issue) => {
-            const existingPurchase =
-              issue.purchaseId && purchasesById.value![issue.purchaseId];
-            const purchase = existingPurchase
-              ? {
-                  date: existingPurchase.date,
-                  description: existingPurchase.description,
-                }
-              : {
-                  date: issue.creationDate,
-                  description: "",
-                };
-            let purchaseIndex = acc.findIndex(
-              ({ purchase: currentPurchase }) =>
-                currentPurchase.date === purchase.date,
-            );
-            if (purchaseIndex === -1 && purchase.date) {
-              acc.push({
-                purchase: {
-                  date: purchase.date,
-                  description: purchase.description,
-                },
-                issues: [],
-              });
-              purchaseIndex = acc.length - 1;
-            }
-            acc[purchaseIndex].issues.push(issue);
-            return acc;
-          },
-          [] as {
+        ?.reduce<
+          {
             purchase: { date: Date; description: string };
             issues: IssueWithPublicationcode[];
-          }[],
-        )
+          }[]
+        >((acc, issue) => {
+          const existingPurchase =
+            issue.purchaseId && purchasesById.value![issue.purchaseId];
+          const purchase = existingPurchase
+            ? {
+                date: existingPurchase.date,
+                description: existingPurchase.description,
+              }
+            : {
+                date: issue.creationDate,
+                description: "",
+              };
+          let purchaseIndex = acc.findIndex(
+            ({ purchase: currentPurchase }) =>
+              currentPurchase.date === purchase.date,
+          );
+          if (purchaseIndex === -1 && purchase.date) {
+            acc.push({
+              purchase: {
+                date: purchase.date,
+                description: purchase.description,
+              },
+              issues: [],
+            });
+            purchaseIndex = acc.length - 1;
+          }
+          acc[purchaseIndex]?.issues?.push(issue);
+          return acc;
+        }, [])
         .sort(({ purchase: purchase1 }, { purchase: purchase2 }) =>
           purchase1.date < purchase2.date ? 1 : -1,
         )
