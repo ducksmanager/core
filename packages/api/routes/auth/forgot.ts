@@ -11,7 +11,7 @@ const parseForm = bodyParser.json();
 
 const generateToken = (payload: string) =>
   jwt.sign(payload, process.env.TOKEN_SECRET!, {
-    expiresIn: "60m",
+    expiresIn: 3600,
   });
 
 export const get = async (

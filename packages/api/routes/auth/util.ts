@@ -11,7 +11,7 @@ export const isValidEmail = (email: string) => EMAIL_REGEX.test(email);
 
 export const generateAccessToken = (payload: User) =>
   jwt.sign(payload, process.env.TOKEN_SECRET!, {
-    expiresIn: `${60 * 24 * 14}m`,
+    expiresIn: 60 * 24 * 14,
   });
 export const loginAs = async (user: user, hashedPassword: string) =>
   generateAccessToken({
