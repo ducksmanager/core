@@ -33,7 +33,7 @@
     "jsonwebtoken": "^9.0.2",
     "mariadb": "^3.2.2",
     "module-alias": "^2.2.3",
-    "nodemailer": "^6.9.7",
+    "nodemailer": "^6.9.13",
     "nodemon": "^3.0.1",
     "ts-node": "^10.9.1",
     "~dm-types": "workspace:*",
