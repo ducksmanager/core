@@ -1,5 +1,6 @@
 <template>
-  <ion-page>>
+  <ion-page
+    >>
     <ion-header>
       <ion-title>{{ t('Paramètres') }}</ion-title>
     </ion-header>
@@ -23,8 +24,8 @@
         {{ t('Notez What The Duck sur le Play Store :-)') }}
       </ion-item>
       <ion-item>{{ t('Me suggérer des magazines des pays suivants :') }}</ion-item>
-    </ion-content></ion-page>
-  
+    </ion-content></ion-page
+  >
 </template>
 
 <script setup lang="ts">

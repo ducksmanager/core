@@ -11,6 +11,7 @@ $dmConditions: (
 
 /** Ionic CSS Variables **/
 :root {
+  --ion-margin: 48px;
   --ion-background-color: #303030;
   --ion-background-color-rgb: 48,48,48;
 
@@ -271,3 +272,4 @@ $dmConditions: (
     --ion-card-background: #1e1e1e;
   }
 }
+

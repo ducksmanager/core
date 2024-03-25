@@ -1,9 +1,8 @@
 import vue from '@vitejs/plugin-vue';
+import ReactivityTransform from '@vue-macros/reactivity-transform/vite';
 import path from 'path';
 import AutoImport from 'unplugin-auto-import/vite';
 import { IonicResolver } from 'unplugin-vue-components/resolvers';
-import ReactivityTransform from "@vue-macros/reactivity-transform/vite";
-
 import Components from 'unplugin-vue-components/vite';
 import { defineConfig } from 'vite';
 
@@ -26,12 +25,12 @@ export default defineConfig({
       eslintrc: {
         enabled: true,
       },
-      dirs: ['../web/src/composables', '../web/src/stores', "../../packages/types"],
+      dirs: ['../web/src/composables', '../web/src/stores', '../../packages/types'],
       imports: [
         // presets
         'pinia',
         'vue',
-        "vue/macros",
+        'vue/macros',
         'vue-router',
         {
           'vue-i18n': ['useI18n', 'createI18n'],
@@ -54,7 +53,7 @@ export default defineConfig({
       '~prisma-clients': path.resolve(__dirname, '../../packages/prisma-clients'),
       '~web': path.resolve(__dirname, '../../apps/web'),
       '~socket.io-services': path.resolve(__dirname, '../../packages/socket.io-services'),
-      '~socket.io-client-services': path.resolve(__dirname, '../../packages/socket.io-client-services')
+      '~socket.io-client-services': path.resolve(__dirname, '../../packages/socket.io-client-services'),
     },
   },
 });

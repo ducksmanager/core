@@ -10,15 +10,16 @@
 <script setup lang="ts">
 import { stores } from '~web';
 
-import { app } from '~/stores/app';
 import Country from './Country.vue';
 import Publication from './Publication.vue';
 
+import { app } from '~/stores/app';
+
 const router = useRouter();
 
-const coaStore = coa()
-const {currentNavigationItem} = storeToRefs(app());
-const {countryNames, publicationNames} = storeToRefs(stores.coa());
+const coaStore = coa();
+const { currentNavigationItem } = storeToRefs(app());
+const { countryNames, publicationNames } = storeToRefs(stores.coa());
 
 const { t } = useI18n();
 

@@ -1,5 +1,6 @@
 <template>
-  <ion-page>>
+  <ion-page
+    >>
     <ion-header :translucent="true">
       <ion-toolbar>
         <ion-buttons slot="start">
@@ -44,7 +45,7 @@
         </ion-row>
       </div>
 
-      <ion-searchbar v-model="authorName" :placeholder="t('Entrez le nom d\'un auteur')" />
+      <ion-searchbar autocapitalize="words" v-model="authorName" :placeholder="t('Entrez le nom d\'un auteur')" />
 
       <ion-list v-if="authorResults">
         <ion-item

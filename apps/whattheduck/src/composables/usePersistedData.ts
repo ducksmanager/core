@@ -2,7 +2,7 @@ import { Storage } from '@ionic/storage';
 
 const storage = new Storage().create();
 
-export default async (entries: Record<string, Ref<any>>) =>
+export default async (entries: Record<string, Ref<any>>): Promise<void> =>
   storage.then(async (persistedStorage) => {
     for (const [persistedRefKey, persistedRef] of Object.entries(entries)) {
       const persistedValue = await persistedStorage.get(persistedRefKey);

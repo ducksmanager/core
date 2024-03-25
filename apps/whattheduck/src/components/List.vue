@@ -9,7 +9,7 @@
       </ion-toolbar>
       <template v-if="items?.length">
         <Navigation />
-        <ion-searchbar v-if="showFilter" v-model="filterText" placeholder="Filter"
+        <ion-searchbar autocapitalize="sentences" v-if="showFilter" v-model="filterText" placeholder="Filter"
       /></template>
     </ion-header>
 

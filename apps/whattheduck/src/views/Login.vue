@@ -5,13 +5,7 @@
     </ion-toolbar>
   </ion-header>
   <ion-content>
-    <ion-item v-if="isOfflineMode">
-      <ion-label>{{
-        t(
-          'La connexion à DucksManager a échoué, vérifiez que votre connexion Internet est active. Vous pourrez consulter votre collection hors-ligne une fois que votre collection sera synchronisée.',
-        )
-      }}</ion-label>
-    </ion-item>
+    <OfflineBanner v-if="isOfflineMode" />
     <ion-row>
       <ion-col>
         <ion-input

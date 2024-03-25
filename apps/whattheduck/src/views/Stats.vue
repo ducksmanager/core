@@ -1,5 +1,6 @@
 <template>
-  <ion-page>>
+  <ion-page
+    >>
     <ion-header :translucent="true">
       <ion-toolbar>
         <ion-buttons slot="start">
@@ -67,9 +68,8 @@
           >
           <PurchaseGraph :since="currentCollectionProgressionGraphType" :style="{ height: 'calc(100% - 140px)' }"
         /></ion-col>
-      </ion-row>
-    </ion-content></ion-page>
-  
+      </ion-row> </ion-content
+  ></ion-page>
 </template>
 
 <script setup lang="ts">

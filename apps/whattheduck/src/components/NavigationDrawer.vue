@@ -108,7 +108,7 @@ const appFooterPages = [
   },
 ];
 
-const {user} = storeToRefs(collectionStore);
+const { user } = storeToRefs(collectionStore);
 </script>
 <style scoped lang="scss">
 ion-menu {

@@ -1,6 +1,6 @@
 <template>
-  
-  <ion-page>>
+  <ion-page
+    >>
     <div id="cameraPreview">
       <img v-if="isPlatform('desktop')" id="cover-mock" src="/covers/fr/mpp/fr_mpp_1415d_001.jpg" />
     </div>

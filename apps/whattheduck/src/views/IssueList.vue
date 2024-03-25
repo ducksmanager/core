@@ -11,7 +11,7 @@
 </template>
 
 <script setup lang="ts">
-import { issueWithPublicationcode } from '~prisma-clients/extended/dm.extends';
+import type { issueWithPublicationcode } from '~prisma-clients/extended/dm.extends';
 import { stores as webStores } from '~web';
 
 import { getConditionText } from '~/composables/useCondition';
