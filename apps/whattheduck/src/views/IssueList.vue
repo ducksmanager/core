@@ -1,7 +1,7 @@
 <template>
   <List v-if="hasCoaData" :items="sortedItems" :get-target-route-fn="getTargetUrlFn" :get-item-text-fn="getItemTextFn">
     <template #row-prefix="{ item }">
-      <ion-checkbox v-if="isCoaList" />
+      <ion-checkbox v-if="isCoaView" />
       <Condition :value="getConditionText(item.condition)" />
     </template>
     <template #row-label="{ item }">
@@ -23,7 +23,7 @@ const router = useRouter();
 
 const collectionStore = wtdcollection();
 const coaStore = webStores.coa();
-const appStore = app();
+const { isCoaView, currentNavigationItem } = storeToRefs(app());
 
 defineSlots<{
   rowPrefix: { item: issueWithPublicationcode };
@@ -31,8 +31,6 @@ defineSlots<{
 }>();
 
 const getItemTextFn = (item: (typeof items)['value'][0]['item']) => item.issuenumber;
-
-const isCoaList = computed(() => route.params.type === 'coa');
 
 const hasCoaData = computed(() => !!coaStore.issueNumbers?.[publicationcode.value]);
 
@@ -46,7 +44,7 @@ const publicationcode = computed(() => `${route.params.countrycode}/${route.para
 watch(
   () => publicationcode.value,
   async (newValue) => {
-    appStore.currentNavigationItem = newValue as string;
+    currentNavigationItem.value = newValue as string;
   },
   { immediate: true },
 );
@@ -59,7 +57,7 @@ const userIssues = computed(() =>
 
 const items = computed(() =>
   coaIssues.value
-    ? appStore.isCoaView
+    ? isCoaView.value
       ? coaIssues.value.map(({ issuenumber }) => ({
           key: `${publicationcode.value} ${issuenumber}`,
           item: userIssues.value.find(({ issuenumber: userIssueNumber }) => issuenumber === userIssueNumber)!,

@@ -1,44 +1,42 @@
-module.exports = {
-  env: {
-    browser: true,
-  }, extends: [
+{
+  "env": {
+    "browser": true
+  }, "extends": [
     "plugin:import/typescript",
     "eslint:recommended",
     "plugin:@typescript-eslint/recommended",
     "prettier",
     "plugin:prettier-vue/recommended",
-    './.eslintrc-auto-import.json',
+    "./.eslintrc-auto-import.json"
   ],
-  plugins: ["simple-import-sort", "@typescript-eslint", "unused-imports"],
-  parser: "vue-eslint-parser",
-  parserOptions: {
-    parser: "@typescript-eslint/parser",
-    project: "tsconfig.json",
-    tsconfigRootDir: __dirname,
-    extraFileExtensions: ['.vue']
+    
+  "parser": "vue-eslint-parser",
+  "parserOptions": {
+    "parser": "@typescript-eslint/parser",
+    "extraFileExtensions": [".vue"],
+    "project": "./tsconfig.json"
   },
-  overrides: [
+  "overrides": [
     {
-      files: ["*.js", "*.ts", "*.vue"],
-    },
+      "files": ["*.js", "*.ts", "*.vue"]
+    }
   ],
-  ignorePatterns: [
+  "ignorePatterns": [
     "**/.vscode",
     "**/android",
     "**/dist",
     "**/ios",
-    "**/node_modules",
-    "/.eslintrc.js",
+    "**/node_modules"
   ],
-  plugins: ["import", "@typescript-eslint"],
-  rules: {
+  "plugins": ["import", "@typescript-eslint", "simple-import-sort", "@typescript-eslint", "unused-imports"],
+  "rules": {
     // https://eslint.org/docs/rules/
     "no-fallthrough": "off", // https://github.com/ionic-team/eslint-config/issues/7
     "no-constant-condition": "off",
 
     "vue/multi-word-component-names": "off",
 
-    'vue/no-deprecated-slot-attribute': 'off',
+    "vue/no-deprecated-slot-attribute": "off",
 
     // https://github.com/typescript-eslint/typescript-eslint/tree/master/packages/eslint-plugin/docs/rules
     "@typescript-eslint/no-this-alias": "off",

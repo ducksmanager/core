@@ -1,5 +1,6 @@
 <template>
-  <ion-page>>
+  <ion-page
+    >>
     <ion-header :translucent="true">
       <ion-toolbar>
         <ion-buttons slot="start">
@@ -15,7 +16,11 @@
           "Entrez le titre d'une histoire. What The Duck vous indiquera les magazines qui contiennent cette histoire et précisera les histoires et magazines correspondants que vous possédez.",
         )
       }}</ion-text>
-      <ion-searchbar v-model="storyTitle" :placeholder="t('Entrez le titre d\'une histoire')" />
+      <ion-searchbar
+        autocapitalize="sentences"
+        v-model="storyTitle"
+        :placeholder="t('Entrez le titre d\'une histoire')"
+      />
 
       <ion-list v-if="storyResults?.results && !selectedStory">
         <ion-item
@@ -30,7 +35,7 @@
       </ion-list>
       <div v-if="selectedStory">
         {{ selectedStory.title }} {{ t('a été publiée dans les numéros suivants :') }}
-        
+
         <div v-for="issue of selectedStory.issues">
           <Country :id="issue.countrycode" :label="issue.countryname" /><condition
             v-if="issue.collectionIssue"
@@ -47,12 +52,12 @@
 <script setup lang="ts">
 import type { SimpleIssue } from '~dm-types/SimpleIssue';
 import type { SimpleStory } from '~dm-types/SimpleStory';
+import type { issueWithPublicationcode } from '~prisma-clients/extended/dm.extends';
 import { stores } from '~web';
+const { coaServices } = stores.socket().dmSocket!;
 
 import { getConditionText } from '~/composables/useCondition';
 import { wtdcollection } from '~/stores/wtdcollection';
-import { coaServices } from '~web/src/composables/useDmSocket';
-import { issueWithPublicationcode } from '~prisma-clients/extended/dm.extends';
 
 const { t } = useI18n();
 

@@ -1,5 +1,6 @@
 <template>
-  <ion-page>>
+  <ion-page
+    >>
     <ion-header>
       <ion-title>{{ t('Indiquez votre addresse e-mail pour réinitialiser votre mot de passe') }}</ion-title>
     </ion-header>
@@ -35,7 +36,9 @@
 </template>
 
 <script setup lang="ts">
-import { authServices } from '~web/src/composables/useDmSocket';
+import { stores } from '~web';
+
+const { authServices } = stores.socket().dmSocket!;
 
 const { t } = useI18n();
 
