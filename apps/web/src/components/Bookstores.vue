@@ -172,9 +172,10 @@
 import MapboxGeocoder from "@mapbox/mapbox-gl-geocoder";
 import { MapboxMap, MapboxMarker, MapboxPopup } from "vue-mapbox-ts";
 
+import { socket } from "~/stores/socket";
 import { SimpleBookstore } from "~dm-types/SimpleBookstore";
 
-import { bookstoreServices } from "../composables/useDmSocket";
+const { bookstoreServices } = socket().dmSocket!;
 
 const { fetchStats } = users();
 const { stats: userStats } = storeToRefs(users());

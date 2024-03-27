@@ -5,33 +5,30 @@
 <script setup lang="ts">
 import Cookies from "js-cookie";
 
-import {
-  buildWebStorage,
-  cacheStorage,
-  session,
-} from "~socket.io-client-services";
+import { buildWebStorage } from "~socket.io-client-services/index";
 
-const { loadUser } = collection();
-const { user, isLoadingUser } = storeToRefs(collection());
-
-onBeforeMount(() => {
-  session.value = {
-    getToken: () => Promise.resolve(Cookies.get("token")),
-    clearSession: () => {}, // Promise.resolve(Cookies.remove("token")),
-    sessionExists: () =>
-      Promise.resolve(typeof Cookies.get("token") === "string"),
-    onConnectError: async () => {
-      await session.value!.clearSession();
-      isLoadingUser.value = false;
-      user.value = null;
+import { socket } from "./stores/socket";
+(async () => {
+  socket().init({
+    cacheStorage: buildWebStorage(sessionStorage),
+    session: {
+      onConnectError: () => {
+        isLoadingUser.value = false;
+        user.value = null;
+      },
+      getToken: () => Promise.resolve(Cookies.get("token")),
+      clearSession: () => {}, // Promise.resolve(Cookies.remove("token")),
+      sessionExists: () =>
+        Promise.resolve(typeof Cookies.get("token") === "string"),
     },
-  };
-  cacheStorage.value = buildWebStorage(sessionStorage);
+  });
+})();
+const { loadUser } = collection();
+const { isLoadingUser, user } = storeToRefs(collection());
 
-  loadUser();
-});
+loadUser();
 </script>
 
 <style lang="scss">
 @import "./styles/main.scss";
-</style>
+</style>./stores/socket

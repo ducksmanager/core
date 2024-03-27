@@ -4,8 +4,8 @@ import { InducksIssueQuotationSimple } from "~dm-types/InducksIssueQuotationSimp
 import type { inducks_issue } from "~prisma-clients/client_coa";
 import { EventReturnType } from "~socket.io-services/types";
 
-import { coaServices } from "../composables/useDmSocket";
 import { getCurrentLocaleShortKey } from "../composables/useLocales";
+import { socket } from "./socket";
 
 const addPartInfo = (issueDetails: InducksIssueDetails) => {
   const storyPartCounter = Object.entries(
@@ -37,6 +37,8 @@ const addPartInfo = (issueDetails: InducksIssueDetails) => {
 };
 
 export const coa = defineStore("coa", () => {
+  const { coaServices } = socket().dmSocket!;
+
   const ISSUECODE_REGEX =
       /^(?<countrycode>[^/]+)\/(?<magazinecode>[^ ]+) (?<issuenumber>.+)/,
     locale = useI18n().locale,

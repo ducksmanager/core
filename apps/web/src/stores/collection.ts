@@ -9,16 +9,11 @@ import {
   issueWithPublicationcode,
   subscriptionWithPublicationcode,
 } from "~prisma-clients/extended/dm.extends";
-import { session } from "~socket.io-client-services";
 import { EventReturnType, ScopedError } from "~socket.io-services/types";
 
 import useCollection from "../composables/useCollection";
-import {
-  collectionServices,
-  loginServices,
-  statsServices,
-} from "../composables/useDmSocket";
 import { bookcase } from "./bookcase";
+import { socket } from "./socket";
 
 export type IssueWithPublicationcodeOptionalId = Omit<
   issueWithPublicationcode,
@@ -45,6 +40,13 @@ export type purchaseWithStringDate = Omit<purchase, "date"> & {
 };
 
 export const collection = defineStore("collection", () => {
+  const {
+    collectionServices,
+    statsServices,
+    loginServices,
+    options: socketOptions,
+  } = socket().dmSocket!;
+
   const issues = ref(null as issueWithPublicationcode[] | null);
 
   const collectionUtils = useCollection(issues),
@@ -331,7 +333,7 @@ export const collection = defineStore("collection", () => {
         isLoadingUser.value = true;
         const response = await collectionServices.getUser();
         if ("error" in response) {
-          session.value?.clearSession();
+          socketOptions.session.clearSession();
         } else {
           user.value = response;
         }

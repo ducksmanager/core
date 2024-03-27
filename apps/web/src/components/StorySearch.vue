@@ -102,6 +102,8 @@ const emit = defineEmits<{
 }>();
 const { conditions } = useCondition();
 
+const { coaServices } = socket().dmSocket!;
+
 const { findInCollection } = isPublic ? publicCollection() : collection();
 const { issues } = storeToRefs(collection());
 const { fetchPublicationNames, fetchCountryNames } = coa();

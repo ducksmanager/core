@@ -62,6 +62,8 @@ let username = $ref("" as string);
 let error = $ref(null as string | null);
 let password = $ref("" as string);
 
+const { collectionServices } = socket().dmSocket!;
+
 const login = async () => {
   await userLogin(
     username,
@@ -71,7 +73,7 @@ const login = async () => {
       Cookies.set("token", newToken, {
         domain,
       });
-      collectionServices.connect();
+      (await collectionServices.socket()).connect();
       await loadUser();
     },
     (e) => {

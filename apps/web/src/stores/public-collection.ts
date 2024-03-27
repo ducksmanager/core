@@ -3,6 +3,8 @@ import { issueWithPublicationcode } from "~prisma-clients/extended/dm.extends";
 import useCollection from "../composables/useCollection";
 
 export const publicCollection = defineStore("publicCollection", () => {
+  const { publicCollectionServices } = socket().dmSocket!;
+
   const issues = ref(null as issueWithPublicationcode[] | null),
     publicUsername = ref(null as string | null),
     publicationUrlRoot = computed(

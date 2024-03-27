@@ -161,6 +161,8 @@
 <script setup lang="ts">
 import { QuotedIssue } from "~dm-types/QuotedIssue";
 
+const { globalStatsServices } = socket().dmSocket!;
+
 const { getConditionLabel } = useCondition();
 
 const { t: $t } = useI18n();

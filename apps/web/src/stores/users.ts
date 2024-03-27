@@ -4,6 +4,7 @@ import { AbstractEvent } from "~dm-types/events/AbstractEvent";
 import { EventReturnType } from "~socket.io-services/types";
 
 export const users = defineStore("users", () => {
+  const { eventsServices, globalStatsServices } = socket().dmSocket!;
   const count = ref(
       null as EventReturnType<GlobalStatsServices["getUserCount"]> | null,
     ),

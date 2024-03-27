@@ -137,6 +137,8 @@ const bookcaseTextures = $ref({
   bookshelf: "bois/KNOTTY PINE",
 });
 
+const { edgesServices } = socket().dmSocket!;
+
 const { fetchPublicationNames, fetchIssueNumbers } = coa();
 const { publicationNames, issueNumbers } = storeToRefs(coa());
 

@@ -14,76 +14,92 @@ import LoginServices from "~dm-services/login/types";
 import PresentationTextServices from "~dm-services/presentation-text/types";
 import PublicCollectionServices from "~dm-services/public-collection/types";
 import StatsServices from "~dm-services/stats/types";
+import type { AxiosStorage } from "~socket.io-client-services";
 import { useSocket } from "~socket.io-client-services";
 
-// const oneHour = () => dayjs().add(1, "hour").diff(dayjs());
-const until4am = () => {
-  const now = dayjs();
-  let coaCacheExpiration = dayjs();
-  if (now.get("hour") >= 4) {
-    coaCacheExpiration = coaCacheExpiration.add(1, "day");
-  }
-  return coaCacheExpiration
-    .set("hour", 4)
-    .set("minute", 0)
-    .set("second", 0)
-    .set("millisecond", 0)
-    .diff(now);
+export default (options: {
+  cacheStorage: AxiosStorage;
+  session: {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    onConnectError: (e: any, namespace: string) => Promise<void> | void;
+    getToken: () => Promise<string | undefined>;
+    clearSession: () => void;
+    sessionExists: () => Promise<boolean>;
+  };
+}) => {
+  const { session } = options;
+  const until4am = () => {
+    const now = dayjs();
+    let coaCacheExpiration = dayjs();
+    if (now.get("hour") >= 4) {
+      coaCacheExpiration = coaCacheExpiration.add(1, "day");
+    }
+    return coaCacheExpiration
+      .set("hour", 4)
+      .set("minute", 0)
+      .set("second", 0)
+      .set("millisecond", 0)
+      .diff(now);
+  };
+
+  const { addNamespace } = useSocket(import.meta.env.VITE_DM_SOCKET_URL, {
+    cacheStorage: options.cacheStorage,
+  });
+
+  return {
+    options,
+    publicCollectionServices: addNamespace<PublicCollectionServices>(
+      PublicCollectionServices.namespaceEndpoint,
+    ),
+    loginServices: addNamespace<LoginServices>(LoginServices.namespaceEndpoint),
+
+    bookcaseServices: addNamespace<BookcaseServices>(
+      BookcaseServices.namespaceEndpoint,
+      {
+        session,
+      },
+    ),
+    statsServices: addNamespace<StatsServices>(
+      StatsServices.namespaceEndpoint,
+      {
+        session,
+      },
+    ),
+    authServices: addNamespace<AuthServices>(AuthServices.namespaceEndpoint, {
+      session,
+    }),
+    edgeCreatorServices: addNamespace<EdgeCreatorServices>(
+      EdgeCreatorServices.namespaceEndpoint,
+    ),
+    presentationTextServices: addNamespace<PresentationTextServices>(
+      PresentationTextServices.namespaceEndpoint,
+    ),
+    edgesServices: addNamespace<EdgesServices>(EdgesServices.namespaceEndpoint),
+    coaServices: addNamespace<CoaServices>(CoaServices.namespaceEndpoint, {
+      cache: {
+        ttl: until4am(),
+      },
+    }),
+    globalStatsServices: addNamespace<GlobalStatsServices>(
+      GlobalStatsServices.namespaceEndpoint,
+      // {
+      //   ttl: oneHour(),
+      // },
+    ),
+    eventsServices: addNamespace<EventsServices>(
+      EventsServices.namespaceEndpoint,
+    ),
+    bookstoreServices: addNamespace<BookstoreServices>(
+      BookstoreServices.namespaceEndpoint,
+    ),
+    collectionServices: addNamespace<CollectionServices>(
+      CollectionServices.namespaceEndpoint,
+      {
+        session,
+      },
+    ),
+    coverIdServices: addNamespace<CoverIdServices>(
+      CoverIdServices.namespaceEndpoint,
+    ),
+  };
 };
-
-const socket = useSocket(import.meta.env.VITE_DM_SOCKET_URL);
-
-export const publicCollectionServices =
-  socket.addNamespace<PublicCollectionServices>(
-    PublicCollectionServices.namespaceEndpoint,
-  );
-export const loginServices = socket.addNamespace<LoginServices>(
-  LoginServices.namespaceEndpoint,
-);
-
-export const bookcaseServices = socket.addNamespace<BookcaseServices>(
-  BookcaseServices.namespaceEndpoint,
-);
-export const statsServices = socket.addNamespace<StatsServices>(
-  StatsServices.namespaceEndpoint,
-);
-
-export const authServices = socket.addNamespace<AuthServices>(
-  AuthServices.namespaceEndpoint,
-);
-export const edgeCreatorServices = socket.addNamespace<EdgeCreatorServices>(
-  EdgeCreatorServices.namespaceEndpoint,
-);
-
-export const presentationTextServices =
-  socket.addNamespace<PresentationTextServices>(
-    PresentationTextServices.namespaceEndpoint,
-  );
-export const edgesServices = socket.addNamespace<EdgesServices>(
-  EdgesServices.namespaceEndpoint,
-);
-
-export const coaServices = socket.addNamespace<CoaServices>(
-  CoaServices.namespaceEndpoint,
-  {
-    ttl: until4am(),
-  },
-);
-export const globalStatsServices = socket.addNamespace<GlobalStatsServices>(
-  GlobalStatsServices.namespaceEndpoint,
-  // {
-  //   ttl: oneHour(),
-  // },
-);
-export const eventsServices = socket.addNamespace<EventsServices>(
-  EventsServices.namespaceEndpoint,
-);
-export const bookstoreServices = socket.addNamespace<BookstoreServices>(
-  BookstoreServices.namespaceEndpoint,
-);
-export const collectionServices = socket.addNamespace<CollectionServices>(
-  CollectionServices.namespaceEndpoint,
-);
-export const coverIdServices = socket.addNamespace<CoverIdServices>(
-  CoverIdServices.namespaceEndpoint,
-);
