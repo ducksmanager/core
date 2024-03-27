@@ -71,18 +71,13 @@ export abstract class Email {
         console.log(
           `Sending email of type ${this.getTemplateDirName()} to ${options.to}`
         );
-        try {
-          await Email.transporter.sendMail(options);
-        } catch (e) {
-          console.log(
-            `Can't send e-mail '${JSON.stringify(options)}': failed with ${e}`
-          );
-        }
+        await Email.transporter.sendMail(options);
       }
     } catch (e) {
-      console.log(
+      console.error(
         `Can't send e-mail '${JSON.stringify(options)}': failed with ${e}`
       );
+      return Promise.reject(e);
     }
   };
 

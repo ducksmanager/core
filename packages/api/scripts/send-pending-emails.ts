@@ -7,6 +7,7 @@ dotenv.config({
 import BookstoreApproved from "~/emails/bookstore-approved";
 import EdgesPublishedWithCreator from "~/emails/edges-published-with-creator";
 import EdgesPublishedWithPhotographer from "~/emails/edges-published-with-photographer";
+import { Email } from "~/emails/email";
 import {
   PrismaClient,
   userContribution,
@@ -20,7 +21,7 @@ const medalLevels = {
 } as const;
 
 (async () => {
-  const emailsSent = [];
+  const emailPromises: Promise<Email>[] = [];
   for (const contributionTypeStr in medalLevels) {
     const contributionType = contributionTypeStr as userContributionType;
     const pendingEmailContributionsForType =
@@ -99,17 +100,17 @@ const medalLevels = {
         });
 
         const locale = "fr";
-        let email;
+        let email: Email;
         switch (contributionType) {
           case "duckhunter":
-            email = await new BookstoreApproved({
+            email = new BookstoreApproved({
               user,
               locale,
               newMedalLevel: medalReached,
             });
             break;
           case "photographe":
-            email = await new EdgesPublishedWithPhotographer({
+            email = new EdgesPublishedWithPhotographer({
               user,
               locale,
               extraEdges: pendingEmailContributionsForUser.length,
@@ -118,7 +119,7 @@ const medalLevels = {
             });
             break;
           case "createur":
-            email = await new EdgesPublishedWithCreator({
+            email = new EdgesPublishedWithCreator({
               user,
               locale,
               extraEdges: pendingEmailContributionsForUser.length,
@@ -127,16 +128,15 @@ const medalLevels = {
             });
             break;
         }
-        emailsSent.push(email);
-        email.send();
+        emailPromises.push(email.send().then(() => email));
       }
     }
   }
   console.log(
     JSON.stringify({
-      emails_sent: emailsSent.map((emailHelper) => ({
-        to: emailHelper.getTo(),
-        subject: emailHelper.getSubject(),
+      emails_sent: (await Promise.all(emailPromises)).map((email) => ({
+        to: email.getTo(),
+        subject: email.getSubject(),
       })),
     })
   );
