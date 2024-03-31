@@ -8,11 +8,6 @@ import { prismaDm } from "~/prisma";
 import Events from "./types";
 import { isValidEmail, loginAs } from "./util";
 
-export enum COUNTRY_CODE_OPTION {
-  ALL = "ALL",
-  countries_to_notify = "countries_to_notify",
-}
-
 export default (io: Server) => {
   (io.of(Events.namespaceEndpoint) as Namespace<Events>).on(
     "connection",
@@ -33,7 +28,7 @@ export default (io: Server) => {
           });
           if (user) {
             console.log(
-              `A visitor requested to reset a password for a valid e-mail: ${email}`
+              `A visitor requested to reset a password for a valid e-mail: ${email}`,
             );
             const token = jwt.sign(email, process.env.TOKEN_SECRET!, {
               expiresIn: "60m",
@@ -46,7 +41,7 @@ export default (io: Server) => {
             callback({ token });
           } else {
             console.log(
-              `A visitor requested to reset a password for an invalid e-mail: ${email}`
+              `A visitor requested to reset a password for an invalid e-mail: ${email}`,
             );
             callback({ error: "Invalid email" });
           }
@@ -90,11 +85,11 @@ export default (io: Server) => {
 
                 callback({ token });
               }
-            }
+            },
           );
           callback({ error: "Something went wrong" });
-        }
+        },
       );
-    }
+    },
   );
 };

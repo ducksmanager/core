@@ -19,7 +19,6 @@ import events from "./services/events";
 import feedback from "./services/feedback";
 import globalStats from "./services/global-stats";
 import login from "./services/login";
-import notifications from "./services/notifications";
 import presentationText from "./services/presentation-text";
 import publicCollection from "./services/public-collection";
 import stats from "./services/stats";
@@ -30,7 +29,7 @@ class ServerWithUser extends Server<
   Record<string, never>,
   Record<string, never>,
   { user?: SessionUser }
-> { }
+> {}
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 (BigInt.prototype as any).toJSON = function () {
@@ -47,45 +46,45 @@ Sentry.init({
 });
 
 const httpServer = createServer(async (req, res) => {
-  let data: { error: string } | object
+  let data: { error: string } | object;
   switch (req.url) {
-    case '/status/db':
-      data = await getDbStatus()
+    case "/status/db":
+      data = await getDbStatus();
       break;
-    case '/status/pastecsearch':
-      data = await getPastecSearchStatus()
+    case "/status/pastecsearch":
+      data = await getPastecSearchStatus();
       break;
-    case '/status/pastec':
-      data = await getPastecStatus()
+    case "/status/pastec":
+      data = await getPastecStatus();
     default:
       res.writeHead(404);
       res.end();
-      return
+      return;
   }
 
-  res.writeHead("error" in data ? 500 : 200, { 'Content-Type': 'text/json' });
+  res.writeHead("error" in data ? 500 : 200, { "Content-Type": "text/json" });
   res.write(JSON.stringify(data));
   res.end();
 });
 const io = new ServerWithUser(httpServer, {
   cors: {
-    origin: '*',
+    origin: "*",
   },
 });
 
 instrument(io, {
-  auth: false
+  auth: false,
 });
 
 httpServer.listen(3000);
-console.log('WebSocket open on port 3000')
+console.log("WebSocket open on port 3000");
 
 io.use(OptionalAuthMiddleware);
 io.use((_socket, next) => {
   next();
 
   // app.all(
-  //   /^\/(edgecreator\/(publish|edgesprites)|notifications)|(edges\/(published))|(\/demo\/reset)|(\/notification\/send)|(bookstores\/(approve|refuse))|(presentation-text\/(approve|refuse))/,
+  //   /^\/(edgecreator\/(publish|edgesprites)|notifications)|(edges\/(published))|(\/demo\/reset)|(bookstores\/(approve|refuse))|(presentation-text\/(approve|refuse))/,
   //   [checkUserIsAdmin]
   // );
 
@@ -115,7 +114,6 @@ events(io);
 feedback(io);
 globalStats(io);
 login(io);
-notifications(io);
 presentationText(io);
 publicCollection(io);
 stats(io);

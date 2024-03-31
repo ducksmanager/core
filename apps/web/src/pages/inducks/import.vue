@@ -317,8 +317,8 @@ const processRawData = async () => {
   const REGEX_VALID_ROW = /^([^^]+\^[^^]+)\^/;
   const issueCodes = rawData
     .split("\n")
-    .filter((row) => !/^country/.test(row) && REGEX_VALID_ROW.test(row))
-    .map((row) => row.match(REGEX_VALID_ROW)![1].replace("^", "/"));
+    .filter((row: string) => !/^country/.test(row) && REGEX_VALID_ROW.test(row))
+    .map((row: string) => row.match(REGEX_VALID_ROW)![1].replace("^", "/"));
   await fetchIssueCodesDetails(issueCodes);
 
   if (!issueCodeDetails) {

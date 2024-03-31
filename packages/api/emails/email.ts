@@ -10,9 +10,9 @@ const fr = Object.keys(en).reduce((acc, key) => ({ ...acc, [key]: key }), {});
 export const i18n = new I18n({
   locales: ["fr", "en-US"],
 
-  defaultLocale: "en-US",
+  defaultLocale: "fr",
   staticCatalog: {
-    en: Object.entries(en).reduce(
+    "en-US": Object.entries(en).reduce(
       (acc, [key, value]) => ({
         ...acc,
         [key]: value,
@@ -71,18 +71,13 @@ export abstract class Email {
         console.log(
           `Sending email of type ${this.getTemplateDirName()} to ${options.to}`
         );
-        try {
-          await Email.transporter.sendMail(options);
-        } catch (e) {
-          console.log(
-            `Can't send e-mail '${JSON.stringify(options)}': failed with ${e}`
-          );
-        }
+        await Email.transporter.sendMail(options);
       }
     } catch (e) {
-      console.log(
+      console.error(
         `Can't send e-mail '${JSON.stringify(options)}': failed with ${e}`
       );
+      return Promise.reject(e);
     }
   };
 

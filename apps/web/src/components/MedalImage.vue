@@ -72,7 +72,7 @@ const props = defineProps<{
 
 const {
   contribution,
-  nextLevel = false,
+  nextLevel,
   userLevelPoints,
   small = false,
   xSmall = false,
@@ -86,7 +86,7 @@ const { t } = useI18n();
 
 const medalColors = ["bronze", "argent", "or"];
 const level = computed(() =>
-  nextLevel && currentLevel.value !== null
+  nextLevel.value && currentLevel.value !== null
     ? currentLevel.value + 1
     : currentLevel.value,
 );

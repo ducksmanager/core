@@ -11,11 +11,6 @@ import { authenticated as authenticatedOrder } from "./order/index";
 import Events from "./types";
 import { checkValidBookcaseUser } from "./util";
 
-export enum COUNTRY_CODE_OPTION {
-  ALL = "ALL",
-  countries_to_notify = "countries_to_notify",
-}
-
 type BookcaseEdgeRaw = Omit<BookcaseEdge, "sprites"> & {
   sprites?: string;
 };

@@ -9,7 +9,12 @@ import { userOptionType } from "~prisma-clients/client_dm";
 import { Prisma as PrismaDmStats } from "~prisma-clients/client_dm_stats";
 
 import { getPublicationTitles } from "../coa/publications";
-import { COUNTRY_CODE_OPTION } from "../notifications";
+
+export enum COUNTRY_CODE_OPTION {
+  ALL = "ALL",
+  countries_to_notify = "countries_to_notify",
+}
+
 import Events from "./types";
 export default (socket: Socket<Events>) => {
   socket.on(
@@ -36,7 +41,7 @@ export default (socket: Socket<Events>) => {
         storyDetails,
         publicationTitles,
       });
-    }
+    },
   );
 };
 
@@ -55,7 +60,7 @@ const missingPublications =
   PrismaDmStats.validator<PrismaDmStats.utilisateurs_publications_manquantesArgs>()(
     {
       select: { personcode: true, storycode: true },
-    }
+    },
   );
 
 interface Suggestion
@@ -69,7 +74,7 @@ interface Suggestion
 const getStoryDetails = async (
   storyCodes: string[],
   associatedPublicationCodes: string[],
-  associatedIssueNumbers: string[]
+  associatedIssueNumbers: string[],
 ) => {
   if (!storyCodes.length) {
     return {};
@@ -88,7 +93,7 @@ const getStoryDetails = async (
           WHERE ${storyCodes
             .map(
               (storyCode, idx) =>
-                `story.storycode = '${storyCode}' AND issue.publicationcode = '${associatedPublicationCodes[idx]}' AND issue.issuenumber = '${associatedIssueNumbers[idx]}'`
+                `story.storycode = '${storyCode}' AND issue.publicationcode = '${associatedPublicationCodes[idx]}' AND issue.issuenumber = '${associatedIssueNumbers[idx]}'`,
             )
             .join(" OR ")}
       ORDER BY story.storycode
@@ -117,7 +122,7 @@ export const getSuggestions = async (
   sort: "score" | "oldestdate",
   singleUserId: number | null,
   limit: number | null,
-  withStoryDetails: boolean
+  withStoryDetails: boolean,
 ): Promise<SuggestionList> => {
   const emptySuggestionList = {
     storyDetails: {},
@@ -129,7 +134,7 @@ export const getSuggestions = async (
     return emptySuggestionList;
   }
   const singleCountry = Object.values(COUNTRY_CODE_OPTION).includes(
-    countrycode as COUNTRY_CODE_OPTION
+    countrycode as COUNTRY_CODE_OPTION,
   )
     ? null
     : countrycode;
@@ -166,7 +171,7 @@ export const getSuggestions = async (
   const countriesToNotifyPerUser =
     countrycode === COUNTRY_CODE_OPTION.countries_to_notify
       ? await getOptionValueAllUsers(
-          userOptionType.suggestion_notification_country
+          userOptionType.suggestion_notification_country,
         )
       : null;
 
@@ -180,7 +185,7 @@ export const getSuggestions = async (
       isSuggestionInCountriesToNotify(
         countriesToNotifyPerUser,
         userId,
-        suggestedStory
+        suggestedStory,
       )
     ) {
       if (!suggestionsPerUser[userId]) {
@@ -225,7 +230,7 @@ export const getSuggestions = async (
 
   for (const userId in suggestionsPerUser) {
     const scores = Object.values(suggestionsPerUser[userId].issues).map(
-      ({ score }) => score
+      ({ score }) => score,
     );
     suggestionsPerUser[userId].minScore = Math.min(...scores);
     suggestionsPerUser[userId].maxScore = Math.max(...scores);
@@ -243,7 +248,7 @@ export const getSuggestions = async (
     })
   ).reduce(
     (acc, value) => ({ ...acc, [value.personcode]: value.fullname }),
-    {}
+    {},
   ) as { [personcode: string]: string };
 
   let storyDetails: { [storycode: string]: StoryDetail } = {};
@@ -251,7 +256,7 @@ export const getSuggestions = async (
     storyDetails = await getStoryDetails(
       referencedStories.map(({ storycode }) => storycode),
       referencedStories.map(({ publicationcode }) => publicationcode),
-      referencedStories.map(({ issuenumber }) => issuenumber)
+      referencedStories.map(({ issuenumber }) => issuenumber),
     );
 
     for (const referencedStory of referencedStories) {
@@ -261,9 +266,12 @@ export const getSuggestions = async (
   }
 
   const publicationTitles = await getPublicationTitles({
-    in: [...new Set(referencedIssues.map(
-      ({ publicationcode }) => publicationcode
-    ))]})
+    in: [
+      ...new Set(
+        referencedIssues.map(({ publicationcode }) => publicationcode),
+      ),
+    ],
+  });
 
   return { suggestionsPerUser, authors, storyDetails, publicationTitles };
 };
@@ -271,7 +279,7 @@ export const getSuggestions = async (
 const isSuggestionInCountriesToNotify = (
   countriesToNotify: { [userId: number]: string[] } | null,
   userId: number,
-  suggestion: Suggestion
+  suggestion: Suggestion,
 ): boolean =>
   !countriesToNotify
     ? true
@@ -279,7 +287,7 @@ const isSuggestionInCountriesToNotify = (
       ? false
       : countriesToNotify[userId].some(
           (countryToNotify) =>
-            suggestion.publicationcode.indexOf(`${countryToNotify}/`) === 0
+            suggestion.publicationcode.indexOf(`${countryToNotify}/`) === 0,
         );
 
 const getOptionValueAllUsers = async (optionName: userOptionType) =>
@@ -294,5 +302,5 @@ const getOptionValueAllUsers = async (optionName: userOptionType) =>
       ...acc,
       [value.userId]: [...(acc[value.userId] || []), value],
     }),
-    {} as { [userId: string]: string[] }
+    {} as { [userId: string]: string[] },
   );

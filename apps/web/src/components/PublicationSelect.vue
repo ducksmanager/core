@@ -63,7 +63,7 @@ const countryNamesForPublication = $computed(
 );
 const publicationNamesForCurrentCountry = $computed(() =>
   publicationNamesFullCountries.value.includes(currentCountryCode || "")
-    ? Object.keys(publicationNames)
+    ? Object.keys(publicationNames.value)
         .filter((publicationcode) =>
           new RegExp(`^${currentCountryCode}/`).test(publicationcode),
         )
