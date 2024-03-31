@@ -12,7 +12,7 @@
   },
   "dependencies": {
     "@pusher/push-notifications-server": "^1.2.6",
-    "@sentry/node": "^7.108.0",
+    "@sentry/node": "^7.109.0",
     "@socket.io/admin-ui": "^0.5.1",
     "axios": "^1.6.8",
     "cloudinary": "^1.41.3",
@@ -32,7 +32,7 @@
     "@types/ejs": "^3.1.5",
     "@types/i18n": "^0.13.10",
     "@types/jsonwebtoken": "^9.0.6",
-    "@types/node": "^18.19.26",
+    "@types/node": "^18.19.28",
     "@types/nodemailer": "^6.4.14",
     "concurrently": "^8.2.2",
     "eslint": "^8.57.0",
@@ -45,6 +45,6 @@
     "tsc-alias": "^1.8.8",
     "tsconfig-paths": "^4.2.0",
     "typescript": "^5.4.3",
-    "typescript-eslint": "^7.3.1"
+    "typescript-eslint": "^7.4.0"
   }
 }
