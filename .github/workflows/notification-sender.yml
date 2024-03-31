@@ -1,0 +1,22 @@
+name: notification-sender
+
+on:
+  workflow_dispatch:
+jobs:
+  send-notifications:
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - name: Send emails
+        uses: appleboy/ssh-action@v1.0.3
+        env:
+          DOCKER_REGISTRY_TOKEN: ${{ secrets.DOCKER_REGISTRY_TOKEN_DM }}
+        with:
+          host: ${{ secrets.PRODUCTION_SSH_HOST }}
+          username: ${{ secrets.PRODUCTION_SSH_USER }}
+          key: ${{ secrets.PRODUCTION_SSH_KEY }}
+          command_timeout: 2m
+          envs: DOCKER_REGISTRY_TOKEN_DM
+          script: |
+            cd workspace/DucksManager2
+            docker compose exec -w /app/packages api node ./api/scripts/send-notifications.js

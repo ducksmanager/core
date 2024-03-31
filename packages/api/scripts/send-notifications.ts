@@ -1,3 +1,9 @@
+import dotenv from "dotenv";
+
+dotenv.config({
+  path: "../.env",
+});
+
 import PushNotifications from "@pusher/push-notifications-server";
 import dayjs from "dayjs";
 
@@ -76,19 +82,18 @@ export const post = async (...[, res]: ExpressCall<Record<string, never>>) => {
       false
     );
 
-  const usersById = (await prismaDm.user.findMany()).reduce(
-    (acc, user) => ({ ...acc, [user.id]: user }),
-    {} as { [userId: number]: user }
-  );
+  const usersById = (await prismaDm.user.findMany()).reduce<{
+    [userId: number]: user;
+  }>((acc, user) => ({ ...acc, [user.id]: user }), {});
 
   const allSuggestedIssues = [
     ...new Set(
-      Object.values(suggestionsPerUser).reduce(
+      Object.values(suggestionsPerUser).reduce<string[]>(
         (acc, suggestion) => [
           ...acc,
           ...Object.values(suggestion.issues).map((issue) => issue.issuecode),
         ],
-        [] as string[]
+        []
       )
     ),
   ];
@@ -101,13 +106,13 @@ export const post = async (...[, res]: ExpressCall<Record<string, never>>) => {
         },
       },
     })
-  ).reduce(
+  ).reduce<{ [userId: number]: string[] }>(
     (acc, notification) => ({
       [notification.userId]: [
         ...new Set(...(acc[notification.userId] || []), notification.issuecode),
       ],
     }),
-    {} as { [userId: number]: string[] }
+    {}
   );
 
   for (const [userId, suggestionsForUser] of Object.entries(

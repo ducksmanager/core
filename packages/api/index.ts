@@ -46,7 +46,7 @@ app.use(busboy({ immediate: true }));
 
 app.all(/^.+$/, injectTokenIfValid);
 app.all(
-  /^\/(edgecreator\/(publish|edgesprites)|notifications)|(edges\/(published))|(\/demo\/reset)|(\/notification\/send)|(bookstores\/(approve|refuse))|(presentation-text\/(approve|refuse))/,
+  /^\/(edgecreator\/(publish|edgesprites)|notifications)|(edges\/(published))|(\/demo\/reset)|(bookstores\/(approve|refuse))|(presentation-text\/(approve|refuse))/,
   [checkUserIsAdmin]
 );
 
