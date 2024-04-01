@@ -140,14 +140,6 @@ let { publicationcode, selectedIssueIdsByIssuenumber } = defineProps<{
 }>();
 const emit = defineEmits<{
   (e: "clear-selection"): void;
-  (
-    e: "launch-modal",
-    options: {
-      contactMethod: string;
-      sellerId: number;
-    },
-  ): void;
-  (e: "close"): void;
 }>();
 const { t: $t } = useI18n();
 
