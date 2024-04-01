@@ -50,9 +50,12 @@ dependencies:
   '@ionic/vue-router':
     specifier: ^7.8.2
     version: 7.8.2
+  '@vueuse/core':
+    specifier: ^10.9.0
+    version: 10.9.0(vue@3.4.21)
   '@vueuse/integrations':
     specifier: ^10.9.0
-    version: 10.9.0(universal-cookie@7.1.1)(vue@3.4.21)
+    version: 10.9.0(universal-cookie@7.1.2)(vue@3.4.21)
   chart.js:
     specifier: ^4.4.2
     version: 4.4.2
@@ -62,6 +65,9 @@ dependencies:
   ionicons:
     specifier: ^7.3.1
     version: 7.3.1
+  js-cookie:
+    specifier: ^3.0.5
+    version: 3.0.5
   pinia:
     specifier: ^2.1.7
     version: 2.1.7(typescript@5.4.3)(vue@3.4.21)
@@ -69,8 +75,8 @@ dependencies:
     specifier: ^1.72.0
     version: 1.72.0
   universal-cookie:
-    specifier: ^7.1.1
-    version: 7.1.1
+    specifier: ^7.1.2
+    version: 7.1.2
   vue:
     specifier: ^3.4.21
     version: 3.4.21(typescript@5.4.3)
@@ -106,6 +112,9 @@ devDependencies:
   '@ionic/prettier-config':
     specifier: ^4.0.0
     version: 4.0.0(prettier@3.2.5)
+  '@types/js-cookie':
+    specifier: ^3.0.6
+    version: 3.0.6
   '@types/node':
     specifier: ^18.19.28
     version: 18.19.28
@@ -165,7 +174,7 @@ devDependencies:
     version: 7.4.0(eslint@8.57.0)(typescript@5.4.3)
   unplugin-auto-import:
     specifier: ^0.17.5
-    version: 0.17.5
+    version: 0.17.5(@vueuse/core@10.9.0)
   unplugin-vue-components:
     specifier: ^0.26.0
     version: 0.26.0(vue@3.4.21)
@@ -1075,6 +1084,10 @@ packages:
       '@types/node': 18.19.28
     dev: true
 
+  /@types/js-cookie@3.0.6:
+    resolution: {integrity: sha512-wkw9yd1kEXOPnvEeEV1Go1MmxtBJL0RR79aOTAApecWFVu7w0NNXNqhcWgvw2YgZDYadliXkl14pa3WXw5jlCQ==}
+    dev: true
+
   /@types/json-schema@7.0.15:
     resolution: {integrity: sha512-5+fP8P8MFNC+AyZCDxrB2pkZFPGzqQWUzpSeuuVLvm8VMcorNYavBqoFcxK8bQz4Qsbn4oUEEem4wDLfcysGHA==}
     dev: true
@@ -1107,7 +1120,6 @@ packages:
 
   /@types/web-bluetooth@0.0.20:
     resolution: {integrity: sha512-g9gZnnXVq7gM7v3tJCWV/qw7w+KeOlSHAhgF9RytFyifW6AF61hdT2ucrYhPq9hLs5JIryeupHV3qGk95dH9ow==}
-    dev: false
 
   /@types/yauzl@2.10.3:
     resolution: {integrity: sha512-oJoftv0LSuaDZE3Le4DbKX+KS9G36NzOeSap90UIK0yMA/NhKJhqlSGtNDORNRaIbQfzjXDrQa0ytJ6mNRGz/Q==}
@@ -1485,9 +1497,8 @@ packages:
     transitivePeerDependencies:
       - '@vue/composition-api'
       - vue
-    dev: false
 
-  /@vueuse/integrations@10.9.0(universal-cookie@7.1.1)(vue@3.4.21):
+  /@vueuse/integrations@10.9.0(universal-cookie@7.1.2)(vue@3.4.21):
     resolution: {integrity: sha512-acK+A01AYdWSvL4BZmCoJAcyHJ6EqhmkQEXbQLwev1MY7NBnS+hcEMx/BzVoR9zKI+UqEPMD9u6PsyAuiTRT4Q==}
     peerDependencies:
       async-validator: '*'
@@ -1530,7 +1541,7 @@ packages:
     dependencies:
       '@vueuse/core': 10.9.0(vue@3.4.21)
       '@vueuse/shared': 10.9.0(vue@3.4.21)
-      universal-cookie: 7.1.1
+      universal-cookie: 7.1.2
       vue-demi: 0.14.7(vue@3.4.21)
     transitivePeerDependencies:
       - '@vue/composition-api'
@@ -1539,7 +1550,6 @@ packages:
 
   /@vueuse/metadata@10.9.0:
     resolution: {integrity: sha512-iddNbg3yZM0X7qFY2sAotomgdHK7YJ6sKUvQqbvwnf7TmaVPxS4EJydcNsVejNdS8iWCtDk+fYXr7E32nyTnGA==}
-    dev: false
 
   /@vueuse/shared@10.9.0(vue@3.4.21):
     resolution: {integrity: sha512-Uud2IWncmAfJvRaFYzv5OHDli+FbOzxiVEQdLCKQKLyhz94PIyFC3CHcH7EDMwIn8NPtD06+PNbC/PiO0LGLtw==}
@@ -1548,7 +1558,6 @@ packages:
     transitivePeerDependencies:
       - '@vue/composition-api'
       - vue
-    dev: false
 
   /@xmldom/xmldom@0.8.10:
     resolution: {integrity: sha512-2WALfTl4xo2SkGCYRt6rDTFfk9R1czmBvUQy12gK2KuRKIpWEhcbbzy8EZXtz/jkRqHX8bFEc6FC1HjX4TUWYw==}
@@ -3543,7 +3552,6 @@ packages:
   /js-cookie@3.0.5:
     resolution: {integrity: sha512-cEiJEAEoIbWfCZYKWhVwFuvPX1gETRYPw6LlaTKoxD3s2AkXzkCjnp6h0V77ozyqj0jakteJ4YqDJT830+lVGw==}
     engines: {node: '>=14'}
-    dev: true
 
   /js-tokens@9.0.0:
     resolution: {integrity: sha512-WriZw1luRMlmV3LGJaR6QOJjWwgLUTf89OwT2lUOyjX2dJGBwgmIkbcz+7WFZjrZM635JOIR517++e/67CP9dQ==}
@@ -5032,8 +5040,8 @@ packages:
       - rollup
     dev: true
 
-  /universal-cookie@7.1.1:
-    resolution: {integrity: sha512-4sUgfE9iwAJ3v6NdYu2wy1yHzbIOmG4ETq3sHZ/XMaoLJKE6Vs9QdIwC1hnFqz3Pz2gES7MVERsExu1pVsf6cg==}
+  /universal-cookie@7.1.2:
+    resolution: {integrity: sha512-GK9ygNUNk+u1umTtFoWItePuIGYy0TEu2w084mfjBpIIg9pikcN18EM6IMt+9VJCyR3uftu3yF2fFUMbwH1Kdw==}
     dependencies:
       '@types/cookie': 0.6.0
       cookie: 0.6.0
@@ -5049,7 +5057,7 @@ packages:
     engines: {node: '>= 10.0.0'}
     dev: true
 
-  /unplugin-auto-import@0.17.5:
+  /unplugin-auto-import@0.17.5(@vueuse/core@10.9.0):
     resolution: {integrity: sha512-fHNDkDSxv3PGagX1wmKBYBkgaM4AKAgZmdJw/bxjhNljx9KSXSgHpGfX0MwUrq9qw6q1bhHIZVWyOwoY2koo4w==}
     engines: {node: '>=14'}
     peerDependencies:
@@ -5063,6 +5071,7 @@ packages:
     dependencies:
       '@antfu/utils': 0.7.7
       '@rollup/pluginutils': 5.1.0
+      '@vueuse/core': 10.9.0(vue@3.4.21)
       fast-glob: 3.3.2
       local-pkg: 0.5.0
       magic-string: 0.30.8
@@ -5290,7 +5299,6 @@ packages:
         optional: true
     dependencies:
       vue: 3.4.21(typescript@5.4.3)
-    dev: false
 
   /vue-eslint-parser@9.4.2(eslint@8.57.0):
     resolution: {integrity: sha512-Ry9oiGmCAK91HrKMtCrKFWmSFWvYkpGglCeFAIqDdr9zdXmMMpJOmUJS7WWsW7fX81h6mwHmUZCQQ1E0PkSwYQ==}

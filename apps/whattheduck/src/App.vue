@@ -23,37 +23,49 @@
 
 <script setup lang="ts">
 import { buildStorage } from '~socket.io-client-services';
+import Cookies from 'js-cookie';
 
 import { app } from './stores/app';
 import { wtdcollection } from './stores/wtdcollection';
-import { stores as dmStores } from '~web';
 
 import type { RouteMeta } from '~/router';
+import { Storage } from '@ionic/storage';
+
+const session = {
+  getToken: async () => token.value,
+  clearSession: () => {
+    token.value = undefined;
+    Cookies.remove('token');
+    new Storage().clear();
+  },
+  sessionExists: async () => token.value !== undefined,
+};
+
+provideLocal(
+  'dmSocket',
+  useDmSocket({
+    cacheStorage: buildStorage({
+      set: (key, data) => {
+        socketCache.value[key] = data;
+      },
+      find: (key) => socketCache.value[key],
+      remove: (key) => {
+        delete socketCache.value[key];
+      },
+    }),
+    onConnectError: (e: Error) => {
+      if (e.message.indexOf('jwt expired') !== -1) {
+        session.clearSession();
+      }
+    },
+    session,
+  }),
+);
 
 const { isOfflineMode, token, isDataLoaded, socketCache } = storeToRefs(app());
 
-dmStores.socket().init({
-  cacheStorage: buildStorage({
-    set: (key, data) => {
-      socketCache.value[key] = data;
-    },
-    find: (key) => socketCache.value[key],
-    remove: (key) => {
-      delete socketCache.value[key];
-    },
-  }),
-  session: {
-    getToken: async () => token.value,
-    clearSession: () => {
-      token.value = undefined;
-    },
-    onConnectError: (_: any, namespace: string) => {},
-    sessionExists: async () => token.value !== undefined,
-  },
-});
-
 const collectionStore = wtdcollection();
-const { loadUser } = collectionStore;
+// const { loadUser } = collectionStore;
 const route = useRoute();
 
 const { t } = useI18n();
@@ -62,19 +74,19 @@ const isReady = computed(() => isDataLoaded.value && collectionStore.isDataLoade
 
 const routeMeta = computed(() => route.meta as RouteMeta);
 
-watch(isReady, (newValue) => {
-  if (newValue) {
-    isDataLoaded.value = true;
+// watch(isReady, (newValue) => {
+//   if (newValue) {
+//     isDataLoaded.value = true;
 
-    watch(
-      () => token.value,
-      async (newValue) => {
-        if (newValue) {
-          await loadUser();
-        }
-      },
-      { immediate: true },
-    );
-  }
-});
+//     watch(
+//       () => token.value,
+//       async (newValue) => {
+//         if (newValue) {
+//           await loadUser();
+//         }
+//       },
+//       { immediate: true },
+//     );
+//   }
+// });
 </script>

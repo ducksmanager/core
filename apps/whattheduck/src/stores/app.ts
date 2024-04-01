@@ -3,12 +3,8 @@ import type { NotEmptyStorageValue } from '~socket.io-client-services';
 
 import usePersistedData from '~/composables/usePersistedData';
 
-export const app = defineStore('app', () => {
-  const coaSocket = ref<Awaited<ReturnType<typeof coaServices['socket']>>>();
-
-  nextTick(async () => {
-    coaSocket.value = await socket().dmSocket!.coaServices.socket();
-  })
+export const app = defineStore('app',  () => { 
+  const socket = injectLocal('dmSocket') as ReturnType<typeof useDmSocket>;
 
   const route = useRoute();
   const lastSync = ref<Date>();
@@ -29,7 +25,7 @@ export const app = defineStore('app', () => {
     lastSync,
     currentNavigationItem: ref(undefined as string | undefined),
     token,
-    isOfflineMode: computed(() => coaSocket.value && !coaSocket.value.connected || false),
+    isOfflineMode: computed(() => (socket['coaServices'] && !socket['coaServices'].socket.connected) || false),
     isCoaView: computed(() => route.query.coa === 'true'),
     isObsoleteSync: computed(
       () => !lastSync.value || new Date().getTime() - lastSync.value.getTime() > 12 * 60 * 60 * 1000,

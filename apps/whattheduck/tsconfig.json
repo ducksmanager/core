@@ -1,14 +1,14 @@
 {
   "compilerOptions": {
-    "rootDir": "../..",
+    "rootDir": "../..", 
     "baseUrl": ".",
     "module": "ESNext",
-    "target": "es2020",
-    "lib": ["dom", "dom.iterable", "ESNext"],
+    "target": "es2020", 
+    "lib": ["dom", "dom.iterable", "ESNext"], 
     "strict": true,
     "esModuleInterop": true,
     "sourceMap": true,
-    "skipLibCheck": true,
+    "skipLibCheck": true, 
     "moduleResolution": "node",
     "resolveJsonModule": true,
     "noUnusedLocals": true,

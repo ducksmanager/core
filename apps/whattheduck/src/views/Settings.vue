@@ -1,6 +1,5 @@
 <template>
-  <ion-page
-    >>
+  <ion-page>
     <ion-header>
       <ion-title>{{ t('Paramètres') }}</ion-title>
     </ion-header>

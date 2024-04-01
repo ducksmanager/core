@@ -27,8 +27,10 @@ import '@ionic/vue/css/display.css';
 /* Theme variables */
 import './theme/variables.scss';
 import './theme/global.scss';
+import { useSocket } from '~socket.io-client-services/index';
 
 const store = createPinia();
+
 
 const app = createApp(App, {
   setup: () => ({
@@ -38,7 +40,8 @@ const app = createApp(App, {
   .use(IonicVue)
   .use(router)
   .use(store)
-  .use(i18n('fr', { en, sv }).instance);
+  .use(i18n('fr', { en, sv }).instance)
+  .provide('socket', useSocket(import.meta.env.VITE_DM_SOCKET_URL));
 
 router.isReady().then(async () => {
   app.mount('#app');

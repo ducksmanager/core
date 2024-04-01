@@ -1,6 +1,5 @@
 <template>
-  <ion-page
-    >>
+  <ion-page>
     <ion-header :translucent="true">
       <ion-toolbar>
         <ion-buttons slot="start">
@@ -54,10 +53,11 @@ import type { SimpleIssue } from '~dm-types/SimpleIssue';
 import type { SimpleStory } from '~dm-types/SimpleStory';
 import type { issueWithPublicationcode } from '~prisma-clients/extended/dm.extends';
 import { stores } from '~web';
-const { coaServices } = stores.socket().dmSocket!;
 
 import { getConditionText } from '~/composables/useCondition';
 import { wtdcollection } from '~/stores/wtdcollection';
+
+const { coaServices } = injectLocal('dmSocket') as ReturnType<typeof useDmSocket>;
 
 const { t } = useI18n();
 

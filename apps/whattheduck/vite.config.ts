@@ -28,6 +28,7 @@ export default defineConfig({
       dirs: ['../web/src/composables', '../web/src/stores', '../../packages/types'],
       imports: [
         // presets
+        "@vueuse/core",
         'pinia',
         'vue',
         'vue/macros',

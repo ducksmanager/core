@@ -1,6 +1,5 @@
 <template>
-  <ion-page
-    >>
+  <ion-page>
     <ion-header>
       <ion-title>{{ t('Numéro {issuenumber}', { issuenumber }) }}</ion-title>
     </ion-header>

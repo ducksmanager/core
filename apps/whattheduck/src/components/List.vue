@@ -22,7 +22,7 @@
     <ion-content v-else ref="content" class="no-padding">
       <Row
         v-for="{ key, item, ownsNext } in filteredItems"
-        :fill-percentage="fillPercentages?.[key]?.ownershipPercentage ||0"
+        :fill-percentage="fillPercentages?.[key]?.ownershipPercentage || 0"
         :is-next-owned="ownsNext"
         @click="onRowClick(key)"
       >
@@ -210,11 +210,6 @@ watch(
     }
   },
 );
-
-
-watch(() => route.query, (newId, oldId) => {
-  debugger
-}, {deep: true})
 </script>
 
 <style scoped>

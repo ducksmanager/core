@@ -1,11 +1,10 @@
 <template>
-  <ion-page
-    >>
+  <ion-page>
     <ion-header>
       <ion-title>{{ t('Inscription') }}</ion-title>
     </ion-header>
     <ion-content>
-    <OfflineBanner v-if="isOfflineMode" />
+      <OfflineBanner v-if="isOfflineMode" />
       <ion-item>
         <ion-input
           v-model="username"
