@@ -13,7 +13,6 @@ import { EventReturnType, ScopedError } from "~socket.io-services/types";
 
 import useCollection from "../composables/useCollection";
 import { bookcase } from "./bookcase";
-import { socket } from "./socket";
 
 export type IssueWithPublicationcodeOptionalId = Omit<
   issueWithPublicationcode,
@@ -45,7 +44,7 @@ export const collection = defineStore("collection", () => {
     statsServices,
     loginServices,
     options: socketOptions,
-  } = socket().dmSocket!;
+  } = injectLocal("dmSocket") as ReturnType<typeof useDmSocket>;
 
   const issues = ref(null as issueWithPublicationcode[] | null);
 

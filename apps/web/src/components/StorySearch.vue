@@ -32,7 +32,7 @@
               searchContext === 'story'
                 ? $t('Rechercher une histoire')
                 : $t(
-                    `Rechercher les publications d'une histoire à partir d'un code histoire`,
+                    `Rechercher les publications d'une histoire à partir d'un code histoire`
                   )
             "
           />
@@ -52,7 +52,7 @@
                   :value="
                     conditions.find(
                       ({ dbValue }) =>
-                        dbValue === searchResult!.collectionIssue.condition,
+                        dbValue === searchResult!.collectionIssue.condition
                     )?.value || undefined
                   "
                 />&nbsp;{{ searchResult!.title }}
@@ -102,7 +102,9 @@ const emit = defineEmits<{
 }>();
 const { conditions } = useCondition();
 
-const { coaServices } = socket().dmSocket!;
+const { coaServices } = injectLocal("dmSocket") as ReturnType<
+  typeof useDmSocket
+>;
 
 const { findInCollection } = isPublic ? publicCollection() : collection();
 const { issues } = storeToRefs(collection());
@@ -118,7 +120,7 @@ let storyResults = $ref(
       collectionIssue: issueWithPublicationcode | null;
     })[];
     hasMore: boolean;
-  },
+  }
 );
 let issueResults = $ref({} as { results: SimpleIssue[] });
 let searchContext = $ref("story" as "story" | "storycode");
@@ -141,12 +143,12 @@ const searchContextsWithoutCurrent = $computed(
           [currentSearchContext]:
             searchContexts[currentSearchContext as "story" | "storycode"],
         }),
-        {},
-      ),
+        {}
+      )
 );
 const isSearchByCode = $computed(() => searchContext === "storycode");
 const searchResults = $computed(() =>
-  isSearchByCode ? issueResults : storyResults,
+  isSearchByCode ? issueResults : storyResults
 );
 const selectSearchResult = (searchResult: SimpleStory | SimpleIssue) => {
   if (isSearchByCode) {
@@ -161,17 +163,17 @@ const runSearch = async (value: string) => {
   try {
     if (isSearchByCode) {
       const data = await coaServices.getIssuesByStorycode(
-        value.replace(/^code=/, ""),
+        value.replace(/^code=/, "")
       );
       issueResults = {
         results: data.sort((issue1, issue2) =>
           Math.sign(
-            (isInCollection(issue2) ? 1 : 0) - (isInCollection(issue1) ? 1 : 0),
-          ),
+            (isInCollection(issue2) ? 1 : 0) - (isInCollection(issue1) ? 1 : 0)
+          )
         ),
       };
       await fetchPublicationNames(
-        issueResults.results.map(({ publicationcode }) => publicationcode),
+        issueResults.results.map(({ publicationcode }) => publicationcode)
       );
     } else {
       const data = await coaServices.searchStory(value.split(","), true);
@@ -186,11 +188,11 @@ const runSearch = async (value: string) => {
               story
                 .issues!.map(
                   ({ publicationcode, issuenumber }) =>
-                    `${publicationcode}-${issuenumber}`,
+                    `${publicationcode}-${issuenumber}`
                 )
                 .includes(
-                  `${collectionPublicationCode}-${collectionIssueNumber}`,
-                ),
+                  `${collectionPublicationCode}-${collectionIssueNumber}`
+                )
           ) || null,
       }));
     }

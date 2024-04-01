@@ -7,14 +7,12 @@ import useMedal from "./src/composables/useMedal";
 import { bookcase } from "./src/stores/bookcase";
 import { coa } from "./src/stores/coa";
 import { collection } from "./src/stores/collection";
-import { socket } from "./src/stores/socket";
 import { stats } from "./src/stores/stats";
 import { users } from "./src/stores/users";
 export const stores = {
   coa,
   collection,
   bookcase,
-  socket,
   stats,
   users,
 };

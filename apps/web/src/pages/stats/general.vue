@@ -21,7 +21,7 @@
             <small>
               {{
                 $t(
-                  "La rareté de votre collection est calculée sur la base du nombre d'autres utilisateurs qui possèdent chacun des magazines de votre collection.",
+                  "La rareté de votre collection est calculée sur la base du nombre d'autres utilisateurs qui possèdent chacun des magazines de votre collection."
                 )
               }}</small
             >
@@ -111,7 +111,7 @@
           <div>
             {{
               $t(
-                "Si certains des magazines de votre collection sont cotés, DucksManager peut en calculer la valeur approximative.",
+                "Si certains des magazines de votre collection sont cotés, DucksManager peut en calculer la valeur approximative."
               )
             }}
           </div>
@@ -124,13 +124,13 @@
                   `<a href='http://comicsmania.gr'>ComicsMania</a>`,
                   `<a href='https://seriesam.com'>Seriesam</a>`,
                   `<a href='https://gocollect.com'>Gocollect</a>`,
-                ],
+                ]
               )
             "
           />
           {{
             $t(
-              "Ces cotes sont ensuite ajustées en fonction des états que vous spécifiez pour chacun des numéros, selon le barème suivant :",
+              "Ces cotes sont ensuite ajustées en fonction des états que vous spécifiez pour chacun des numéros, selon le barème suivant :"
             )
           }}
           <ul>
@@ -145,7 +145,7 @@
                 `Une cote présente sur les sites indiqués ci-dessus n'est pas incluse dans la valeur de votre collection calculée par DucksManager ? Faites-le nous savoir en envoyant un e-mail à {0} :-)`,
                 [
                   `<a href='mailto:admin@ducksmanager.net'>admin@ducksmanager.net</a>`,
-                ],
+                ]
               )
             "
           />
@@ -161,7 +161,9 @@
 <script setup lang="ts">
 import { QuotedIssue } from "~dm-types/QuotedIssue";
 
-const { globalStatsServices } = socket().dmSocket!;
+const { globalStatsServices } = injectLocal("dmSocket") as ReturnType<
+  typeof useDmSocket
+>;
 
 const { getConditionLabel } = useCondition();
 
@@ -178,13 +180,14 @@ const { totalPerPublication, quotedIssues, quotationSum, user } =
 const { fetchPublicationNames, fetchIssueQuotations } = coa();
 const { publicationNames } = storeToRefs(coa());
 
-const quotedIssuesForCollection = $computed(() =>
-  quotedIssues.value?.sort(
-    (
-      { estimationGivenCondition: estimation1 },
-      { estimationGivenCondition: estimation2 },
-    ) => Math.sign(estimation2 - estimation1),
-  ),
+const quotedIssuesForCollection = $computed(
+  () =>
+    quotedIssues.value?.sort(
+      (
+        { estimationGivenCondition: estimation1 },
+        { estimationGivenCondition: estimation2 }
+      ) => Math.sign(estimation2 - estimation1)
+    )
 );
 const quotationFields = [
   { key: "issue", label: $t("Numéro") },
@@ -206,7 +209,7 @@ watch(
       await fetchIssueQuotations(Object.keys(newValue));
     }
   },
-  { immediate: true },
+  { immediate: true }
 );
 
 watch(
@@ -214,12 +217,12 @@ watch(
   async (newValue) => {
     if (newValue) {
       await fetchPublicationNames(
-        newValue.map(({ publicationcode }) => publicationcode),
+        newValue.map(({ publicationcode }) => publicationcode)
       );
       hasPublicationNames = true;
     }
   },
-  { immediate: true },
+  { immediate: true }
 );
 
 (async () => {

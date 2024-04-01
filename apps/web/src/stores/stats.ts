@@ -3,10 +3,10 @@ import CollectionServices from "~dm-services/collection/types";
 import { authorUser } from "~prisma-clients/client_dm";
 import { EventReturnType } from "~socket.io-services/types";
 
-import { socket } from "./socket";
-
 export const stats = defineStore("stats", () => {
-  const { coaServices, collectionServices } = socket().dmSocket!;
+  const { coaServices, collectionServices } = injectLocal(
+    "dmSocket",
+  ) as ReturnType<typeof useDmSocket>;
 
   const ratings = ref(
     undefined as

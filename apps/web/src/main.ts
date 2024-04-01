@@ -16,6 +16,7 @@ import { createRouter, createWebHistory } from "vue-router";
 
 import App from "~/App.vue";
 import i18n from "~/i18n";
+import { useSocket } from "~socket.io-client-services/index";
 import en from "~translations/messages.en.json";
 
 const head = createHead();
@@ -33,13 +34,14 @@ router.beforeResolve(async (to) => {
 
 const store = createPinia();
 
-const app = createApp(App);
-app.use(i18n("fr", { en }).instance);
-app.use(store);
-app.use(contextmenu);
-app.use(head);
-app.use(router);
-app.mount("#app");
+const app = createApp(App)
+  .use(i18n("fr", { en }).instance)
+  .use(store)
+  .use(contextmenu)
+  .use(head)
+  .use(router)
+  .provide("socket", useSocket(import.meta.env.VITE_DM_SOCKET_URL))
+  .mount("#app");
 
 if (process.env.NODE_ENV === "production") {
   Sentry.init({

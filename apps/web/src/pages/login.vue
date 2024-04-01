@@ -14,7 +14,7 @@ meta:
         <b-alert v-if="error" :model-value="true" variant="danger">
           {{
             $t(
-              "Les identifiants que vous avez entré sont invalides, veuillez réessayer.",
+              "Les identifiants que vous avez entré sont invalides, veuillez réessayer."
             )
           }}
         </b-alert>
@@ -62,7 +62,9 @@ let username = $ref("" as string);
 let error = $ref(null as string | null);
 let password = $ref("" as string);
 
-const { collectionServices } = socket().dmSocket!;
+const { collectionServices } = injectLocal("dmSocket") as ReturnType<
+  typeof useDmSocket
+>;
 
 const login = async () => {
   await userLogin(
@@ -73,12 +75,12 @@ const login = async () => {
       Cookies.set("token", newToken, {
         domain,
       });
-      (await collectionServices.socket()).connect();
+      collectionServices.socket.connect();
       await loadUser();
     },
     (e) => {
       error = e;
-    },
+    }
   );
 };
 
@@ -93,6 +95,6 @@ watch(
       }
     }
   },
-  { immediate: true },
+  { immediate: true }
 );
 </script>

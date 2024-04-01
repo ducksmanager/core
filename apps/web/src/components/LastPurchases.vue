@@ -55,7 +55,7 @@ const hasPublicationNames = $computed(() => Object.keys(publicationNames)),
         ?.reduce<
           {
             purchase: { date: Date; description: string };
-            issues: IssueWithPublicationcode[];
+            issues: issueWithPublicationcode[];
           }[]
         >(
           (acc, issue) => {
