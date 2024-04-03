@@ -41,26 +41,27 @@ const session = {
   sessionExists: async () => token.value !== undefined,
 };
 
-provideLocal(
-  'dmSocket',
-  useDmSocket({
-    cacheStorage: buildStorage({
-      set: (key, data) => {
-        socketCache.value[key] = data;
-      },
-      find: (key) => socketCache.value[key],
-      remove: (key) => {
-        delete socketCache.value[key];
-      },
-    }),
-    onConnectError: (e: Error) => {
-      if (e.message.indexOf('jwt expired') !== -1) {
-        session.clearSession();
-      }
+const dmSocket = useDmSocket({
+  cacheStorage: buildStorage({
+    set: (key, data) => {
+      socketCache.value[key] = data;
     },
-    session,
+    find: (key) => socketCache.value[key],
+    remove: (key) => {
+      delete socketCache.value[key];
+    },
   }),
-);
+  onConnectError: (e: Error) => {
+    if (e.message.indexOf('jwt expired') !== -1) {
+      session.clearSession();
+    }
+  },
+  session,
+});
+
+provideLocal('dmSocket', dmSocket);
+
+console.log('app setup');
 
 const { isOfflineMode, token, isDataLoaded, socketCache } = storeToRefs(app());
 

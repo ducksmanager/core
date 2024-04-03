@@ -57,7 +57,9 @@ import { stores } from '~web';
 import { getConditionText } from '~/composables/useCondition';
 import { wtdcollection } from '~/stores/wtdcollection';
 
-const { coaServices } = injectLocal('dmSocket') as ReturnType<typeof useDmSocket>;
+const {
+  coa: { services: coaServices },
+} = injectLocal('dmSocket') as ReturnType<typeof useDmSocket>;
 
 const { t } = useI18n();
 

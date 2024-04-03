@@ -35,7 +35,9 @@
 </template>
 
 <script setup lang="ts">
-const { authServices } = injectLocal('dmSocket') as ReturnType<typeof useDmSocket>;
+const {
+  auth: { services: authServices },
+} = injectLocal('dmSocket') as ReturnType<typeof useDmSocket>;
 
 const { t } = useI18n();
 
