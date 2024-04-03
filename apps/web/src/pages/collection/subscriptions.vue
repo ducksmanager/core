@@ -7,7 +7,7 @@ alias: [/collection/abonnements]
     <b-alert variant="info" :model-value="true">
       {{
         $t(
-          "Indiquez les magazines auxquels vous êtes abonné. DucksManager les ajoutera automatiquement à votre collection à leur sortie.",
+          "Indiquez les magazines auxquels vous êtes abonné. DucksManager les ajoutera automatiquement à votre collection à leur sortie."
         )
       }}
     </b-alert>
@@ -36,7 +36,7 @@ alias: [/collection/abonnements]
             ],
             publicationNames[currentAssociatedPublication.publicationcode],
             publicationNames[currentAssociatedPublication.publicationcode],
-          ],
+          ]
         )
       }}
       <p>
@@ -97,6 +97,10 @@ const { publicationNames } = storeToRefs(coa());
 const { loadSubscriptions } = collection();
 const { subscriptions } = storeToRefs(collection());
 
+const {
+  collection: { services: collectionServices },
+} = injectLocal("dmServices") as ReturnType<typeof useDmSocket>;
+
 const newSubscription = $ref({
   publicationcode: "fr/SPG",
   startDate: new Date(),
@@ -115,7 +119,7 @@ const associatedPublications = $ref([
 ] as AssociatedPublication[]);
 
 const toSubscriptionWithStringDates = (
-  subscription: SubscriptionTransformed,
+  subscription: SubscriptionTransformed
 ): SubscriptionTransformedStringDates => ({
   ...subscription,
   startDate: subscription.startDate.toISOString().split("Z")[0],
@@ -124,19 +128,19 @@ const toSubscriptionWithStringDates = (
 
 const createSubscription = async (subscription: SubscriptionTransformed) => {
   await collectionServices.createSubscription(
-    toSubscriptionWithStringDates(subscription),
+    toSubscriptionWithStringDates(subscription)
   );
   await loadSubscriptions(true);
   currentSubscription = null;
 };
 
 const createSubscriptionLike = async (
-  associatedPublication: AssociatedPublication,
+  associatedPublication: AssociatedPublication
 ) => {
   await createSubscription({
     ...subscriptions.value!.find(
       ({ publicationcode }) =>
-        publicationcode === associatedPublication.referencePublicationcode,
+        publicationcode === associatedPublication.referencePublicationcode
     )!,
     publicationcode: associatedPublication.publicationcode,
   });
@@ -145,7 +149,7 @@ const createSubscriptionLike = async (
 const editSubscription = async (subscription: SubscriptionTransformed) => {
   await collectionServices.updateSubscription(
     subscription.id,
-    toSubscriptionWithStringDates(subscription),
+    toSubscriptionWithStringDates(subscription)
   );
   await loadSubscriptions(true);
   currentSubscription = null;
@@ -167,12 +171,12 @@ watch(
         }) =>
           newValue.find(
             ({ publicationcode }) =>
-              referencePublicationcode === publicationcode,
+              referencePublicationcode === publicationcode
           ) &&
           !newValue.find(
             ({ publicationcode }) =>
-              associatedPublicationcode === publicationcode,
-          ),
+              associatedPublicationcode === publicationcode
+          )
       );
       await fetchPublicationNames([
         ...associatedPublications.map(({ publicationcode }) => publicationcode),
@@ -181,7 +185,7 @@ watch(
       hasPublicationNames = true;
     }
   },
-  { immediate: true },
+  { immediate: true }
 );
 
 onMounted(() => {

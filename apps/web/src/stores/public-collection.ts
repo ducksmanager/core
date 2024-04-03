@@ -10,7 +10,7 @@ export const publicCollection = defineStore("publicCollection", () => {
   const issues = ref(null as issueWithPublicationcode[] | null),
     publicUsername = ref(null as string | null),
     publicationUrlRoot = computed(
-      () => `/collection/user/${publicUsername.value || ""}`
+      () => `/collection/user/${publicUsername.value || ""}`,
     ),
     purchases = ref([]);
 

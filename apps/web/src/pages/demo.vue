@@ -13,6 +13,10 @@ const { user } = storeToRefs(collection());
 
 const router = useRouter();
 
+const {
+  login: { services: loginServices },
+} = injectLocal("dmServices") as ReturnType<typeof useDmSocket>;
+
 watch(
   user,
   async (newValue) => {
@@ -20,7 +24,7 @@ watch(
       await router.push("/collection");
     }
   },
-  { immediate: true },
+  { immediate: true }
 );
 
 async () => {

@@ -42,6 +42,11 @@ const password = $ref("" as string);
 const password2 = $ref("" as string);
 
 const { t: $t } = useI18n();
+
+const {
+  auth: { services: authServices },
+} = injectLocal("dmSocket") as ReturnType<typeof useDmSocket>;
+
 const changePassword = async () => {
   const response = await authServices.changePassword({
     token,
@@ -69,6 +74,6 @@ watch(
       await router.push("/collection");
     }
   },
-  { immediate: true },
+  { immediate: true }
 );
 </script>

@@ -63,7 +63,7 @@ let error = $ref(null as string | null);
 let password = $ref("" as string);
 
 const {
-  collection: { services: collectionServices },
+  collection: { socket: collectionSocket },
 } = injectLocal("dmSocket") as ReturnType<typeof useDmSocket>;
 
 const login = async () => {
@@ -75,7 +75,7 @@ const login = async () => {
       Cookies.set("token", newToken, {
         domain,
       });
-      collectionServices.socket.connect();
+      collectionSocket.connect();
       await loadUser();
     },
     (e) => {

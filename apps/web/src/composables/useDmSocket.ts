@@ -48,7 +48,7 @@ export default (options: {
     options,
     publicCollection: addNamespace<PublicCollectionServices>(
       PublicCollectionServices.namespaceEndpoint,
-      { onConnectError }
+      { onConnectError },
     ),
     login: addNamespace<LoginServices>(LoginServices.namespaceEndpoint, {
       onConnectError,
@@ -56,7 +56,7 @@ export default (options: {
 
     bookcase: addNamespace<BookcaseServices>(
       BookcaseServices.namespaceEndpoint,
-      { onConnectError, session }
+      { onConnectError, session },
     ),
     stats: addNamespace<StatsServices>(StatsServices.namespaceEndpoint, {
       onConnectError,
@@ -68,11 +68,11 @@ export default (options: {
     }),
     edgeCreator: addNamespace<EdgeCreatorServices>(
       EdgeCreatorServices.namespaceEndpoint,
-      { onConnectError }
+      { onConnectError },
     ),
     presentationText: addNamespace<PresentationTextServices>(
       PresentationTextServices.namespaceEndpoint,
-      { onConnectError }
+      { onConnectError },
     ),
     edges: addNamespace<EdgesServices>(EdgesServices.namespaceEndpoint, {
       onConnectError,
@@ -85,7 +85,7 @@ export default (options: {
     }),
     globalStats: addNamespace<GlobalStatsServices>(
       GlobalStatsServices.namespaceEndpoint,
-      { onConnectError }
+      { onConnectError },
       // {
       //   ttl: oneHour(),
       // },
@@ -95,11 +95,11 @@ export default (options: {
     }),
     bookstore: addNamespace<BookstoreServices>(
       BookstoreServices.namespaceEndpoint,
-      { onConnectError }
+      { onConnectError },
     ),
     collection: addNamespace<CollectionServices>(
       CollectionServices.namespaceEndpoint,
-      { onConnectError, session }
+      { onConnectError, session },
     ),
     coverId: addNamespace<CoverIdServices>(CoverIdServices.namespaceEndpoint, {
       onConnectError,

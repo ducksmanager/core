@@ -7,6 +7,10 @@ import { Decision } from "~dm-services/presentation-text/types";
 
 let router = useRouter();
 
+const {
+  presentationText: { services: presentationTextServices },
+} = injectLocal("dmServices") as ReturnType<typeof useDmSocket>;
+
 (async () => {
   let currentRoute = router.currentRoute.value;
   const { sentence, userId } = currentRoute.query as unknown as {
@@ -16,7 +20,7 @@ let router = useRouter();
   await presentationTextServices.approveOrDenyPresentationText(
     sentence,
     parseInt(userId),
-    currentRoute.params.decision as Decision,
+    currentRoute.params.decision as Decision
   );
 })();
 </script>

@@ -8,6 +8,9 @@ meta:
 </template>
 
 <script setup lang="ts">
+const {
+  edgeCreator: { services: edgeCreatorServices },
+} = injectLocal("dmServices") as ReturnType<typeof useDmSocket>;
 const generateSprites = async () => {
   await edgeCreatorServices.uploadEdges();
 };

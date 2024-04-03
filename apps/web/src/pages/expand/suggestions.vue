@@ -44,7 +44,7 @@ alias: [/agrandir/suggestions]
     >
       {{
         $t(
-          "Vous n'avez pas encore noté vos auteurs favoris. Attribuez des notes à vos auteurs préférés pour que DucksManager vous suggère des numéros à ajouter à votre collection.",
+          "Vous n'avez pas encore noté vos auteurs favoris. Attribuez des notes à vos auteurs préférés pour que DucksManager vous suggère des numéros à ajouter à votre collection."
         )
       }}
     </b-alert>
@@ -60,7 +60,7 @@ alias: [/agrandir/suggestions]
       </i18n-t>
       {{
         $t(
-          "Grâce à ces notes, DucksManager déterminera ensuite les magazines susceptibles de vous intéresser.",
+          "Grâce à ces notes, DucksManager déterminera ensuite les magazines susceptibles de vous intéresser."
         )
       }}
     </b-alert>
@@ -79,6 +79,10 @@ const { loadRatings } = stats();
 const { fetchCountryNames } = coa();
 const { countryNames } = storeToRefs(coa());
 
+const {
+  collection: { services: collectionServices },
+} = injectLocal("dmServices") as ReturnType<typeof useDmSocket>;
+
 const countryNamesWithAllCountriesOption = $computed(
   () =>
     countryNames.value && [
@@ -89,10 +93,10 @@ const countryNamesWithAllCountriesOption = $computed(
       ...Object.entries(countryNames.value)
         .map(([value, text]) => ({ text, value }))
         .sort(({ text: text1 }, { text: text2 }) => text1.localeCompare(text2)),
-    ],
+    ]
 );
 const watchedAuthorsWithNotation = $computed(() =>
-  watchedAuthors.value?.filter(({ notation }) => notation > 0),
+  watchedAuthors.value?.filter(({ notation }) => notation > 0)
 );
 
 watch(
@@ -100,7 +104,7 @@ watch(
   async (newValue) => {
     if (newValue?.length) await fetchCountryNames();
   },
-  { immediate: true },
+  { immediate: true }
 );
 
 loadCollection();

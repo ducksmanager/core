@@ -31,6 +31,10 @@ import type { bookstoreComment } from "~prisma-clients/client_dm";
 
 let bookstores = $ref(null as SimpleBookstore[] | null);
 
+const {
+  bookstore: { services: bookstoreServices },
+} = injectLocal("dmServices") as ReturnType<typeof useDmSocket>;
+
 const validateBookstoreComment = async ({ id }: bookstoreComment) => {
   await bookstoreServices.approveBookstoreComment(id);
 };
