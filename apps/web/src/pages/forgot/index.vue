@@ -7,7 +7,7 @@ meta:
     <b-alert v-if="token" :model-value="true" variant="info">{{
       $t(
         `Si l'e-mail indiqué correspond à un compte DucksManager, un lien permettant de modifier votre mot de passe vient
-      d'y être envoyé. Si l'e-mail ne vous parvient pas d'ici quelques minutes, pensez à vérifier le dossier Spam.`
+      d'y être envoyé. Si l'e-mail ne vous parvient pas d'ici quelques minutes, pensez à vérifier le dossier Spam.`,
       )
     }}</b-alert>
     <form v-else method="post" @submit.prevent="sendPasswordToken">
@@ -17,7 +17,7 @@ meta:
       <div>
         {{
           $t(
-            "Un lien vous permettant de réinitialiser votre mot de passe va être envoyé à l'adresse que vous indiquerez ci-dessous."
+            "Un lien vous permettant de réinitialiser votre mot de passe va être envoyé à l'adresse que vous indiquerez ci-dessous.",
           )
         }}
         <b-form-row>

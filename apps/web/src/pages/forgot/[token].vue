@@ -74,6 +74,6 @@ watch(
       await router.push("/collection");
     }
   },
-  { immediate: true }
+  { immediate: true },
 );
 </script>
