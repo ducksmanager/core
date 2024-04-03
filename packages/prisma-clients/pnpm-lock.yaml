@@ -6,8 +6,8 @@ settings:
 
 dependencies:
   '@prisma/client':
-    specifier: ^5.11.0
-    version: 5.11.0(prisma@5.11.0)
+    specifier: ^5.12.0
+    version: 5.12.0(prisma@5.11.0)
   prisma:
     specifier: ^5.11.0
     version: 5.11.0
@@ -42,8 +42,8 @@ packages:
       '@jridgewell/sourcemap-codec': 1.4.15
     dev: true
 
-  /@prisma/client@5.11.0(prisma@5.11.0):
-    resolution: {integrity: sha512-SWshvS5FDXvgJKM/a0y9nDC1rqd7KG0Q6ZVzd+U7ZXK5soe73DJxJJgbNBt2GNXOa+ysWB4suTpdK5zfFPhwiw==}
+  /@prisma/client@5.12.0(prisma@5.11.0):
+    resolution: {integrity: sha512-bk/+KPpRm0+IzqFCtAxrj+/TNiHzulspnO+OkysaYY/atc/eX0Gx8V3tTLxbHKVX0LKD4Hi8KKCcSbU1U72n7Q==}
     engines: {node: '>=16.13'}
     requiresBuild: true
     peerDependencies:
