@@ -21,7 +21,7 @@ provideLocal(
       sessionExists: () =>
         Promise.resolve(typeof Cookies.get("token") === "string"),
     },
-  })
+  }),
 );
 const { loadUser } = collection();
 const { isLoadingUser, user } = storeToRefs(collection());

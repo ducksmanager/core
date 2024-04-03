@@ -137,9 +137,9 @@ const bookcaseTextures = $ref({
   bookshelf: "bois/KNOTTY PINE",
 });
 
-const { edgesServices } = injectLocal("dmSocket") as ReturnType<
-  typeof useDmSocket
->;
+const {
+  edges: { services: edgesServices },
+} = injectLocal("dmSocket") as ReturnType<typeof useDmSocket>;
 
 const { fetchPublicationNames, fetchIssueNumbers } = coa();
 const { publicationNames, issueNumbers } = storeToRefs(coa());

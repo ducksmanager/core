@@ -174,9 +174,9 @@ import { MapboxMap, MapboxMarker, MapboxPopup } from "vue-mapbox-ts";
 
 import { SimpleBookstore } from "~dm-types/SimpleBookstore";
 
-const { bookstoreServices } = injectLocal("dmSocket") as ReturnType<
-  typeof useDmSocket
->;
+const {
+  bookstore: { services: bookstoreServices },
+} = injectLocal("dmSocket") as ReturnType<typeof useDmSocket>;
 
 const { fetchStats } = users();
 const { stats: userStats } = storeToRefs(users());

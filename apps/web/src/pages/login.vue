@@ -62,9 +62,9 @@ let username = $ref("" as string);
 let error = $ref(null as string | null);
 let password = $ref("" as string);
 
-const { collectionServices } = injectLocal("dmSocket") as ReturnType<
-  typeof useDmSocket
->;
+const {
+  collection: { services: collectionServices },
+} = injectLocal("dmSocket") as ReturnType<typeof useDmSocket>;
 
 const login = async () => {
   await userLogin(

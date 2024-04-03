@@ -26,13 +26,13 @@ interface EventsMap {
   [event: string]: any;
 }
 
-type StringKeyOf<T> = (keyof T | "socket") & string;
+type StringKeyOf<T> = keyof T & string;
 
 type EventCalls<S extends EventsMap> = {
   [EventName in StringKeyOf<S>]: (
     ...args: AllButLast<Parameters<S[EventName]>>
   ) => Promise<EventReturnTypeIncludingError<S[EventName]>>;
-} & { socket: () => Promise<Socket> };
+};
 
 export const useSocket = (
   socketRootUrl: string,
@@ -43,7 +43,7 @@ export const useSocket = (
   addNamespace: <Services extends EventsMap>(
     namespaceName: string,
     namespaceOptions: {
-      onConnectError: (e: Error, namespace: string) => void,
+      onConnectError: (e: Error, namespace: string) => void;
       session?: {
         getToken: () => Promise<string | undefined>;
         clearSession: () => Promise<void> | void;
@@ -56,64 +56,60 @@ export const useSocket = (
       },
     }
   ) => {
-    console.log('Namespace '+namespaceName)
     const socket = io(socketRootUrl + namespaceName, {
       multiplex: false,
       timeout: 2500,
       auth: async (cb) => {
-        if (!namespaceOptions.session) {
-          return;
-        }
-        const token = await namespaceOptions.session.getToken();
-        cb({
-          token,
-        });
-      },  
-    })
-    .on('connect', () => {
-      console.log('Connected to '+namespaceName)
-    }).on('disconnect', (reason) => {
-      console.log('Disconnected from '+namespaceName+', reason: '+reason)
+        cb(
+          namespaceOptions.session
+            ? { token: await namespaceOptions.session.getToken() }
+            : {}
+        );
+      },
     }).on("connect_error", (e) => {
       namespaceOptions.onConnectError(e, namespaceName);
       console.error(`${namespaceName}: connect_error: ${e}`);
-      throw e;
     });
-    return new Proxy({} as EventCalls<Services> & { socket: Socket }, {
-      get:
-        <EventName extends StringKeyOf<Services>>(_: never, event: EventName) =>
-        async (
-          ...args: AllButLast<Parameters<Services[EventName]>>
-        ): Promise<
-          EventName extends "socket"
-            ? Socket
-            : EventReturnTypeIncludingError<Services[EventName]> | undefined
-        > => {
-          if (event === "socket" || event === "toJSON") {
-            return new Promise(() => socket);
-          }
-          let data;
-          console.log('Emitting '+event+' with args: '+args)
-          if (namespaceOptions.cache) {
-            if (!options.cacheStorage) {
-              throw new Error("storage must be defined");
+    return {
+      socket,
+      services: new Proxy({} as EventCalls<Services>, {
+        get:
+          <EventName extends StringKeyOf<Services>>(
+            _: never,
+            event: EventName
+          ) =>
+          async (
+            ...args: AllButLast<Parameters<Services[EventName]>>
+          ): Promise<
+            EventReturnTypeIncludingError<Services[EventName]> | undefined
+          > => {
+            let data;
+            if (namespaceName === "/login") {
+              debugger;
             }
-            const cacheKey = `${event} ${JSON.stringify(args)}`;
-            const cacheData = (await options!.cacheStorage.get(
-              cacheKey
-            )) as Awaited<ReturnType<Socket["emitWithAck"]>>;
-            const hasCacheData =
-              cacheData !== undefined &&
-              !(typeof cacheData === "object" && cacheData.state === "empty");
-            if (hasCacheData) {
-              return cacheData;
+            console.log("Emitting " + event + " with args: " + args);
+            if (namespaceOptions.cache) {
+              if (!options.cacheStorage) {
+                throw new Error("storage must be defined");
+              }
+              const cacheKey = `${event} ${JSON.stringify(args)}`;
+              const cacheData = (await options!.cacheStorage.get(
+                cacheKey
+              )) as Awaited<ReturnType<Socket["emitWithAck"]>>;
+              const hasCacheData =
+                cacheData !== undefined &&
+                !(typeof cacheData === "object" && cacheData.state === "empty");
+              if (hasCacheData) {
+                return cacheData;
+              }
+              data = await socket.emitWithAck(event, ...args);
+              options.cacheStorage.set(cacheKey, data);
+            } else {
+              data = await socket.emitWithAck(event, ...args);
             }
-            data = await socket.emitWithAck(event, ...args);
-            options.cacheStorage.set(cacheKey, data);
-          } else {
-            data = await socket.emitWithAck(event, ...args);
-          }
-          return data;
-        },
-  })},
+            return data;
+          },
+      }),
+    };
+  },
 });

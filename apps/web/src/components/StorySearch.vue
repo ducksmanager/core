@@ -102,9 +102,9 @@ const emit = defineEmits<{
 }>();
 const { conditions } = useCondition();
 
-const { coaServices } = injectLocal("dmSocket") as ReturnType<
-  typeof useDmSocket
->;
+const {
+  coa: { services: coaServices },
+} = injectLocal("dmSocket") as ReturnType<typeof useDmSocket>;
 
 const { findInCollection } = isPublic ? publicCollection() : collection();
 const { issues } = storeToRefs(collection());

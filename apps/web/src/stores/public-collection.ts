@@ -3,14 +3,14 @@ import { issueWithPublicationcode } from "~prisma-clients/extended/dm.extends";
 import useCollection from "../composables/useCollection";
 
 export const publicCollection = defineStore("publicCollection", () => {
-  const { publicCollectionServices } = injectLocal("dmSocket") as ReturnType<
-    typeof useDmSocket
-  >;
+  const {
+    publicCollection: { services: publicCollectionServices },
+  } = injectLocal("dmSocket") as ReturnType<typeof useDmSocket>;
 
   const issues = ref(null as issueWithPublicationcode[] | null),
     publicUsername = ref(null as string | null),
     publicationUrlRoot = computed(
-      () => `/collection/user/${publicUsername.value || ""}`,
+      () => `/collection/user/${publicUsername.value || ""}`
     ),
     purchases = ref([]);
 

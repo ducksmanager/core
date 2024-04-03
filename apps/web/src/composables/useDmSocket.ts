@@ -46,67 +46,63 @@ export default (options: {
 
   return {
     options,
-    publicCollectionServices: addNamespace<PublicCollectionServices>(
+    publicCollection: addNamespace<PublicCollectionServices>(
       PublicCollectionServices.namespaceEndpoint,
-      { onConnectError },
+      { onConnectError }
     ),
-    loginServices: addNamespace<LoginServices>(
-      LoginServices.namespaceEndpoint,
-      { onConnectError },
-    ),
+    login: addNamespace<LoginServices>(LoginServices.namespaceEndpoint, {
+      onConnectError,
+    }),
 
-    bookcaseServices: addNamespace<BookcaseServices>(
+    bookcase: addNamespace<BookcaseServices>(
       BookcaseServices.namespaceEndpoint,
-      { onConnectError, session },
+      { onConnectError, session }
     ),
-    statsServices: addNamespace<StatsServices>(
-      StatsServices.namespaceEndpoint,
-      { onConnectError, session },
-    ),
-    authServices: addNamespace<AuthServices>(AuthServices.namespaceEndpoint, {
+    stats: addNamespace<StatsServices>(StatsServices.namespaceEndpoint, {
       onConnectError,
       session,
     }),
-    edgeCreatorServices: addNamespace<EdgeCreatorServices>(
+    auth: addNamespace<AuthServices>(AuthServices.namespaceEndpoint, {
+      onConnectError,
+      session,
+    }),
+    edgeCreator: addNamespace<EdgeCreatorServices>(
       EdgeCreatorServices.namespaceEndpoint,
-      { onConnectError },
+      { onConnectError }
     ),
-    presentationTextServices: addNamespace<PresentationTextServices>(
+    presentationText: addNamespace<PresentationTextServices>(
       PresentationTextServices.namespaceEndpoint,
-      { onConnectError },
+      { onConnectError }
     ),
-    edgesServices: addNamespace<EdgesServices>(
-      EdgesServices.namespaceEndpoint,
-      { onConnectError },
-    ),
-    coaServices: addNamespace<CoaServices>(CoaServices.namespaceEndpoint, {
+    edges: addNamespace<EdgesServices>(EdgesServices.namespaceEndpoint, {
+      onConnectError,
+    }),
+    coa: addNamespace<CoaServices>(CoaServices.namespaceEndpoint, {
       onConnectError,
       cache: {
         ttl: until4am(),
       },
     }),
-    globalStatsServices: addNamespace<GlobalStatsServices>(
+    globalStats: addNamespace<GlobalStatsServices>(
       GlobalStatsServices.namespaceEndpoint,
-      { onConnectError },
+      { onConnectError }
       // {
       //   ttl: oneHour(),
       // },
     ),
-    eventsServices: addNamespace<EventsServices>(
-      EventsServices.namespaceEndpoint,
-      { onConnectError },
-    ),
-    bookstoreServices: addNamespace<BookstoreServices>(
+    events: addNamespace<EventsServices>(EventsServices.namespaceEndpoint, {
+      onConnectError,
+    }),
+    bookstore: addNamespace<BookstoreServices>(
       BookstoreServices.namespaceEndpoint,
-      { onConnectError },
+      { onConnectError }
     ),
-    collectionServices: addNamespace<CollectionServices>(
+    collection: addNamespace<CollectionServices>(
       CollectionServices.namespaceEndpoint,
-      { onConnectError, session },
+      { onConnectError, session }
     ),
-    coverIdServices: addNamespace<CoverIdServices>(
-      CoverIdServices.namespaceEndpoint,
-      { onConnectError },
-    ),
+    coverId: addNamespace<CoverIdServices>(CoverIdServices.namespaceEndpoint, {
+      onConnectError,
+    }),
   };
 };
