@@ -1,21 +1,8 @@
 <template>
   <ion-app v-if="isReady">
-    <OfflineBanner v-if="isOfflineMode && routeMeta.onOffline !== 'readonly'" />
-    <ion-split-pane
-      :class="{ 'ion-margin-top': isOfflineMode && routeMeta.onOffline !== 'readonly' }"
-      v-if="!(isOfflineMode && routeMeta.onOffline === 'unavailable')"
-      content-id="main-content"
-    >
-      <NavigationDrawer />
-      <template v-if="isOfflineMode && routeMeta.onOffline === 'readonly'">
-        <ion-item>
-          <ion-label>{{
-            t(
-              'Vous êtes en mode hors-ligne. Vous pouvez naviguer dans votre collection mais pas la modifier. Certaines fonctionnalités ne sont pas disponibles.',
-            )
-          }}</ion-label>
-        </ion-item>
-      </template>
+    <OfflineBanner :on-offline="routeMeta.onOffline" v-if="isOfflineMode" />
+    <ion-split-pane :class="{ 'ion-margin-top': isOfflineMode }" content-id="main-content">
+      <NavigationDrawer v-if="token" />
       <ion-router-outlet id="main-content" />
     </ion-split-pane>
   </ion-app>
@@ -66,10 +53,9 @@ provideLocal('dmSocket', dmSocket);
 const { isOfflineMode, token, isDataLoaded, socketCache } = storeToRefs(app());
 
 const collectionStore = wtdcollection();
-const { loadUser } = collectionStore;
+const { loadUser, fetchAndTrackCollection } = collectionStore;
 const route = useRoute();
-
-const { t } = useI18n();
+const router = useRouter();
 
 const isReady = computed(() => isDataLoaded.value && collectionStore.isDataLoaded);
 
@@ -84,6 +70,9 @@ watch(isReady, (newValue) => {
       async (newValue) => {
         if (newValue) {
           await loadUser();
+          fetchAndTrackCollection().then(() =>
+            route.path === '/login' ? router.replace('/collection') : Promise.resolve(),
+          );
         }
       },
       { immediate: true },

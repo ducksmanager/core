@@ -4,7 +4,6 @@
       <ion-title>{{ t('Inscription') }}</ion-title>
     </ion-header>
     <ion-content>
-      <OfflineBanner v-if="isOfflineMode" />
       <ion-item>
         <ion-input
           v-model="username"
@@ -97,8 +96,6 @@ import { eyeOutline, eyeOffOutline, eyeSharp, eyeOffSharp } from 'ionicons/icons
 import useFormErrorHandling from '~/composables/useFormErrorHandling';
 import { app } from '~/stores/app';
 import { wtdcollection } from '~/stores/wtdcollection';
-
-const isOfflineMode = ref(false);
 
 const { token } = storeToRefs(app());
 

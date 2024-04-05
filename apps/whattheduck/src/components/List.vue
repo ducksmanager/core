@@ -60,7 +60,6 @@
 
 <script setup lang="ts" generic="Item extends Required<any>">
 import { IonContent, ScrollDetail } from '@ionic/vue';
-import { stores } from '~web';
 
 import type { OwnershipWithPercentage } from '~/composables/useOwnership';
 import { app } from '~/stores/app';
@@ -101,10 +100,8 @@ const router = useRouter();
 const route = useRoute();
 
 const collectionStore = wtdcollection();
-const coaStore = stores.coa();
 const appStore = app();
 const filterText = ref('' as string);
-const hasCoaData = ref(false);
 
 const itemInCenterOfViewport = computed(() => {
   if (!props.items.length) {
@@ -118,35 +115,6 @@ const onRowClick = (key: string) => {
   router.push({ ...props.getTargetRouteFn(key), query: { coa: route.query.coa } });
 };
 
-// const hasList = computed((): boolean => {
-//   if (!hasCoaData.value) {
-//     return false;
-//   }
-//   switch (itemType.value) {
-//     case 'Country':
-//       return !!collectionStore.ownedCountries;
-//     case 'Publication':
-//       return !!collectionStore.ownedPublications /* &&
-//           collectionStore.ownedPublications.filter((publicationCode) =>
-//             Object.keys(coaStore.publicationNames).includes(publicationCode)
-//           ).length === collectionStore.ownedPublications.length
-//         )*/;
-//     case 'Issue':
-//       return !!collectionStore.issues && !!coaStore.issueNumbers[appStore.currentNavigationItem || ''];
-//   }
-// });
-
-const itemType = computed(() => {
-  switch (appStore.currentNavigationItem?.indexOf('/')) {
-    case undefined:
-      return 'Country';
-    case -1:
-      return 'Publication';
-    default:
-      return 'Issue';
-  }
-});
-
 const filteredItems = computed(() =>
   props.items.filter(({ item }) => props.getItemTextFn(item).toLowerCase().indexOf(filterText.value) !== -1),
 );
@@ -156,57 +124,6 @@ const title = computed(() =>
   typeof collectionStore.total === 'number'
     ? t('Ma collection ({issueCount} numéros)', { issueCount: collectionStore.total })
     : t('Ma collection'),
-);
-
-// const ownershipAllItems = computed(() => {
-//   switch (itemType.value) {
-//     case 'Country':
-//       return [collectionStore.totalPerCountry, coaStore.issueCountsPerCountry!];
-//     case 'Publication':
-//       return [collectionStore.totalPerPublication, coaStore.issueCounts!];
-//   }
-// });
-
-// const ownership = computed(() =>
-//   !ownershipAllItems.value?.length
-//     ? undefined
-//     : Object.entries(ownershipAllItems.value![0]!)
-//         .map(([key, owned]) => ({ key, owned: owned as number, total: ownershipAllItems.value![1]![key] as number }))
-//         .reduce<Record<string, [number, number]>>(
-//           (acc, { key, owned, total }) => ({ ...acc, [key]: [owned, total] }),
-//           {},
-//         ),
-// );
-
-watch(
-  () => itemType.value,
-  async (newValue) => {
-    hasCoaData.value = false;
-    await coaStore.fetchIssueCounts();
-    switch (newValue) {
-      case 'Country':
-        await coaStore.fetchCountryNames();
-        break;
-      case 'Publication':
-        await coaStore.fetchPublicationNames([appStore.currentNavigationItem || '']);
-        break;
-      case 'Issue':
-        await coaStore.fetchIssueNumbers([appStore.currentNavigationItem || '']);
-        break;
-    }
-    hasCoaData.value = true;
-  },
-  { immediate: true },
-);
-
-watch(
-  () => collectionStore.totalPerPublication,
-  async (newValue) => {
-    if (newValue) {
-      await coaStore.fetchPublicationNames(Object.keys(newValue));
-    }
-  },
-  { immediate: true },
 );
 
 watch(

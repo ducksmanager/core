@@ -21,23 +21,19 @@ import { getOwnershipText, getOwnershipPercentages } from '~/composables/useOwne
 import { app } from '~/stores/app';
 import { wtdcollection } from '~/stores/wtdcollection';
 
-const router = useRouter();
 const route = useRoute();
-const collectionStore = wtdcollection();
-const coaStore = stores.coa();
-const appStore = app();
-
-const totalPerCountry = computed(() => collectionStore.totalPerCountry);
-const issueCountsPerCountry = computed(() => coaStore.issueCountsPerCountry!);
+const { totalPerCountry, ownedCountries } = storeToRefs(wtdcollection());
+const { issueCountsPerCountry, countryNames } = storeToRefs(stores.coa());
+const { isCoaView } = storeToRefs(app());
 
 const ownershipPercentages = computed(() =>
-  getOwnershipPercentages(totalPerCountry.value, issueCountsPerCountry.value),
+  getOwnershipPercentages(totalPerCountry.value, issueCountsPerCountry.value!),
 );
 
 const items = computed(() =>
-  coaStore.countryNames
-    ? Object.entries(coaStore.countryNames)
-        .filter(([countrycode]) => appStore.isCoaView || collectionStore.ownedCountries!.includes(countrycode))
+  countryNames.value
+    ? Object.entries(countryNames.value)
+        .filter(([countrycode]) => isCoaView.value || ownedCountries.value!.includes(countrycode))
         .map(([countrycode, countryname]) => ({
           key: countrycode,
           item: { countrycode, countryname },
@@ -56,9 +52,5 @@ const sortedItems = computed(() =>
 const getTargetUrlFn = (key: string) => ({
   name: 'PublicationList',
   params: { type: route.params.type, countrycode: key },
-});
-
-collectionStore.fetchAndTrackCollection().catch(() => {
-  router.push('/');
 });
 </script>

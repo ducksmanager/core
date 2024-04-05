@@ -90,15 +90,6 @@ watch(
     }
     selectedStory.value = null;
     const { results: data } = await coaServices.searchStory([newValue], true);
-    const publicationcodes = [
-      ...new Set(
-        data.reduce(
-          (acc, story) => [...acc, ...(story.issues?.map(({ publicationcode }) => publicationcode) || [])],
-          [] as string[],
-        ),
-      ),
-    ];
-    await coaStore.fetchPublicationNames(publicationcodes);
 
     storyResults.value = {
       results: data.map((story) => ({
@@ -118,9 +109,6 @@ watch(
     };
   },
 );
-
-collectionStore.loadCollection();
-coaStore.fetchCountryNames();
 </script>
 
 <style scoped>

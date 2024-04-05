@@ -17,7 +17,6 @@ import { app } from '~/stores/app';
 
 const router = useRouter();
 
-const coaStore = coa();
 const { currentNavigationItem } = storeToRefs(app());
 const { countryNames, publicationNames } = storeToRefs(stores.coa());
 
@@ -54,10 +53,6 @@ const parts = computed(() => {
 const onChange = (event: any) => {
   router.push((event.detail.value ? `/collection/${event.detail.value}` : '/collection') + window.location.search);
 };
-
-(async () => {
-  await coaStore.fetchCountryNames();
-})();
 </script>
 
 <style lang="scss" scoped>

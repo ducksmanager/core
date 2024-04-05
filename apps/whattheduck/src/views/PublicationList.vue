@@ -19,7 +19,6 @@
 import { stores } from '~web';
 
 import { getOwnershipPercentages, getOwnershipText } from '~/composables/useOwnership';
-import router from '~/router';
 import { app } from '~/stores/app';
 import { wtdcollection } from '~/stores/wtdcollection';
 
@@ -88,8 +87,4 @@ const sortedItems = computed(() =>
     text1.toLowerCase().localeCompare(text2.toLowerCase()),
   ),
 );
-
-collectionStore.fetchAndTrackCollection().catch(() => {
-  router.push('/');
-});
 </script>

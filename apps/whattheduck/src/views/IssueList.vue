@@ -19,7 +19,6 @@ import { app } from '~/stores/app';
 import { wtdcollection } from '~/stores/wtdcollection';
 
 const route = useRoute();
-const router = useRouter();
 
 const collectionStore = wtdcollection();
 const coaStore = webStores.coa();
@@ -32,7 +31,7 @@ defineSlots<{
 
 const getItemTextFn = (item: (typeof items)['value'][0]['item']) => item.issuenumber;
 
-const hasCoaData = computed(() => !!coaStore.issueNumbers?.[publicationcode.value]);
+const hasCoaData = computed(() => !!coaStore.issuesWithTitles?.[publicationcode.value]);
 
 const getTargetUrlFn = (key: string) => ({
   name: 'OwnedIssueCopies',
@@ -86,13 +85,4 @@ const sortedItems = computed(() =>
       };
     }),
 );
-
-collectionStore
-  .fetchAndTrackCollection()
-  .then(() => {
-    coaStore.fetchIssueNumbersWithTitles(publicationcode.value);
-  })
-  .catch(() => {
-    router.push('/');
-  });
 </script>

@@ -21,10 +21,9 @@ const props = defineProps<{
 
 Chart.register(Legend, CategoryScale, BarElement, LinearScale, BarController, Tooltip, Title);
 
-const hasPublicationNames = ref(false as boolean),
-  options = ref();
+const options = ref();
 
-const wtdCollectionStore = wtdcollection(),
+const { loadCollection, loadPurchases } = wtdcollection(),
   { issues, totalPerPublication, purchasesById } = storeToRefs(wtdcollection()),
   { t } = useI18n();
 
@@ -83,7 +82,7 @@ const compareDates = (a: string, b: string) =>
     // }
     // return months;
   }),
-  ready = computed(() => labels.value && hasPublicationNames.value),
+  ready = computed(() => labels.value),
   values = computed(() => {
     if (!collectionWithDates.value) {
       return null;
@@ -149,17 +148,6 @@ const compareDates = (a: string, b: string) =>
   );
 
 watch(
-  () => publicationCodesWithOther.value,
-  async (newValue) => {
-    if (newValue) {
-      await coa().fetchPublicationNames(newValue.filter((value) => value !== 'Other'));
-      hasPublicationNames.value = true;
-    }
-  },
-  { immediate: true },
-);
-
-watch(
   () => datasets.value && labels.value,
   (newValue) => {
     if (newValue) {
@@ -213,8 +201,8 @@ watch(
   { immediate: true },
 );
 
-wtdCollectionStore.loadCollection();
-wtdCollectionStore.loadPurchases();
+loadCollection();
+loadPurchases();
 </script>
 
 <style scoped lang="scss">

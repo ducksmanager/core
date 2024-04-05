@@ -6,7 +6,6 @@
       </ion-toolbar>
     </ion-header>
     <ion-content>
-      <OfflineBanner v-if="isOfflineMode" />
       <ion-row>
         <ion-col>
           <ion-input
@@ -91,8 +90,6 @@ import useFormErrorHandling from '~/composables/useFormErrorHandling';
 import { app } from '~/stores/app';
 import { wtdcollection } from '~/stores/wtdcollection';
 
-const isOfflineMode = ref(false);
-
 const { token } = storeToRefs(app());
 const collectionStore = wtdcollection();
 
@@ -137,10 +134,10 @@ watch(
     if (newValue) {
       collectionStore
         .fetchAndTrackCollection()
+        .then(() => router.replace('/collection'))
         .catch(() => {
           showForm.value = true;
-        })
-        .then(() => router.replace('/collection'));
+        });
     }
   },
   { immediate: true },

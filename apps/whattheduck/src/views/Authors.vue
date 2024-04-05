@@ -31,13 +31,13 @@
               :readonly="appStore.isOfflineMode"
               v-model:rating="author.notation"
               :max-rating="10"
-              @update:rating="statsStore.updateRating(author)"
+              @update:rating="updateRating(author)"
               ><template #filledStarIcon><ion-icon :ios="starOutline" :android="starSharp" /></template
               ><template #emptyStarIcon><ion-icon :ios="star" :android="star" /></template
             ></StarRating>
           </ion-col>
           <ion-col size="3">
-            <ion-button @click="statsStore.deleteAuthor(author.personcode)">
+            <ion-button @click="deleteAuthor(author.personcode)">
               {{ t('Supprimer') }}
             </ion-button>
           </ion-col>
@@ -49,9 +49,9 @@
       <ion-list v-if="authorResults">
         <ion-item
           v-for="(author, personcode) of authorResults"
-          :class="{ disabled: statsStore.isAuthorWatched(personcode) }"
+          :class="{ disabled: isAuthorWatched(personcode) }"
           @click="
-            statsStore.createRating(personcode);
+            createRating(personcode);
             authorName = '';
           "
         >
@@ -74,22 +74,20 @@ const StarRating = components['StarRating'];
 
 const { t } = useI18n();
 
-const statsStore = stats();
-const coaStore = coa();
+const { loadRatings, searchAuthors, isAuthorWatched, createRating, updateRating, deleteAuthor } = stats();
+const { authorSearchResults: authorResults, ratings } = storeToRefs(stats());
+const { personNames } = storeToRefs(coa());
 const appStore = app();
 
 const authorName = ref('');
-const ratings = computed(() => statsStore.ratings);
-const authorResults = computed(() => statsStore.authorSearchResults);
-const personNames = computed(() => coaStore.personNames);
 
-statsStore.loadRatings();
+loadRatings();
 
 watch(
   () => authorName.value,
   (newValue) => {
     if (newValue) {
-      statsStore.searchAuthors(newValue);
+      searchAuthors(newValue);
     }
   },
 );

@@ -18,6 +18,10 @@ export const wtdcollection = defineStore('wtdcollection', () => {
 
   const isDataLoaded = ref(false);
 
+  const {
+    coa: { services: coaServices },
+  } = injectLocal('dmSocket') as ReturnType<typeof useDmSocket>;
+
   const { findInCollection, loadCollection, loadPurchases, loadUser, login, signup } = webCollectionStore;
 
   const ownedCountries = computed(() =>
@@ -43,8 +47,9 @@ export const wtdcollection = defineStore('wtdcollection', () => {
       //await webCollectionStore.loadSuggestions({ countryCode: 'ALL', sinceLastVisit: false, sort: 'oldestdate' });
       await statsStore.loadRatings();
       await coaStore.fetchCountryNames(true);
-      await coaStore.fetchPublicationNames(['ALL']);
+      coaStore.addPublicationNames(await coaServices.getFullPublicationList());
       await coaStore.fetchIssueCounts();
+      await coaStore.fetchIssueNumbersWithTitles();
       await coaStore.fetchIssueNumbers(ownedPublications.value || []);
       await usersStore.fetchStats([webCollectionStore.user?.id || 0]);
 
