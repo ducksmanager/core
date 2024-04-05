@@ -68,12 +68,16 @@ const items = computed(() =>
             item: { publicationcode, publicationname },
           }))
       : collectionStore
-          .ownedPublications!.filter((publication) => publication.indexOf(`${route.params.countrycode}/`) === 0)
+          .ownedPublications!.filter(
+            (publicationcode) =>
+              publicationcode.indexOf(`${route.params.countrycode}/`) === 0 &&
+              coaStore.publicationNames![publicationcode],
+          )
           .map((publicationcode) => ({
             key: publicationcode,
             item: {
               publicationcode,
-              publicationname: coaStore.publicationNames?.[publicationcode] || publicationcode,
+              publicationname: coaStore.publicationNames![publicationcode] || publicationcode,
             },
           }))
     : [],
