@@ -13,8 +13,8 @@ const addPartInfo = (issueDetails: InducksIssueDetails) => {
         ...acc,
         [storycode]: !storycode ? 0 : (acc[storycode] || 0) + 1,
       }),
-      {} as { [storycode: string]: number },
-    ),
+      {} as { [storycode: string]: number }
+    )
   )
     .filter(([, occurrences]) => occurrences > 1)
     .reduce(
@@ -22,7 +22,7 @@ const addPartInfo = (issueDetails: InducksIssueDetails) => {
         ...acc,
         [storycode]: 1,
       }),
-      {},
+      {}
     ) as { [storycode: string]: number };
   return {
     ...issueDetails,
@@ -45,14 +45,14 @@ export const coa = defineStore("coa", () => {
     locale = useI18n().locale,
     coverUrls = ref({} as { [issuenumber: string]: string }),
     countryNames = ref(
-      null as EventReturnType<CoaServices["getCountryList"]> | null,
+      null as EventReturnType<CoaServices["getCountryList"]> | null
     ),
     publicationNames = ref(
-      {} as EventReturnType<CoaServices["getPublicationListFromCountrycode"]>,
+      {} as EventReturnType<CoaServices["getPublicationListFromCountrycode"]>
     ),
     publicationNamesFullCountries = ref([] as string[]),
     personNames = ref(
-      null as EventReturnType<CoaServices["getAuthorList"]> | null,
+      null as EventReturnType<CoaServices["getAuthorList"]> | null
     ),
     issueNumbers = ref({} as { [issuecode: string]: string[] }),
     issuesWithTitles = ref(
@@ -60,18 +60,18 @@ export const coa = defineStore("coa", () => {
         [issuenumber: string]: EventReturnType<
           CoaServices["getIssuesWithTitles"]
         >;
-      },
+      }
     ),
     issueDetails = ref({} as { [issuecode: string]: InducksIssueDetails }),
     isLoadingCountryNames = ref(false as boolean),
     issueCounts = ref(null as { [publicationcode: string]: number } | null),
     issueCodeDetails = ref(
-      null as { [issuecode: string]: inducks_issue } | null,
+      null as { [issuecode: string]: inducks_issue } | null
     ),
     issueQuotations = ref(
       null as {
         [issuecode: string]: InducksIssueQuotationSimple;
-      } | null,
+      } | null
     ),
     issueCountsPerCountry = computed(
       () =>
@@ -84,12 +84,13 @@ export const coa = defineStore("coa", () => {
               [countrycode]: (acc[countrycode] || 0) + count,
             };
           },
-          {},
-        ),
+          {}
+        )
     ),
     addPublicationNames = (
-      newPublicationNames: typeof publicationNames.value,
+      newPublicationNames: typeof publicationNames.value
     ) => {
+      debugger;
       publicationNames.value = {
         ...publicationNames.value,
         ...newPublicationNames,
@@ -101,7 +102,7 @@ export const coa = defineStore("coa", () => {
           ...acc,
           [personcode]: newPersonNames[personcode],
         }),
-        {},
+        {}
       );
     },
     setCoverUrl = (issuenumber: string, url: string) => {
@@ -136,7 +137,7 @@ export const coa = defineStore("coa", () => {
         isLoadingCountryNames.value = true;
         countryNames.value = await coaServices.getCountryList(
           getCurrentLocaleShortKey(locale.value),
-          [],
+          []
         );
         isLoadingCountryNames.value = false;
       }
@@ -146,16 +147,16 @@ export const coa = defineStore("coa", () => {
         ...new Set(
           newPublicationCodes.filter(
             (publicationcode) =>
-              !Object.keys(publicationNames.value).includes(publicationcode),
-          ),
+              !Object.keys(publicationNames.value).includes(publicationcode)
+          )
         ),
       ];
       return (
         actualNewPublicationCodes.length &&
         addPublicationNames(
           await coaServices.getPublicationListFromPublicationcodeList(
-            actualNewPublicationCodes,
-          ),
+            actualNewPublicationCodes
+          )
         )
       );
     },
@@ -165,14 +166,14 @@ export const coa = defineStore("coa", () => {
           newPublicationCodes.filter(
             (publicationcode) =>
               !Object.keys(issueQuotations.value || {}).includes(
-                publicationcode,
-              ),
-          ),
+                publicationcode
+              )
+          )
         ),
       ];
 
       const data = await coaServices.getQuotationsByPublicationCodes(
-        actualNewPublicationCodes,
+        actualNewPublicationCodes
       );
 
       if (data.quotations) {
@@ -185,8 +186,8 @@ export const coa = defineStore("coa", () => {
                 max: issue.estimationMax,
               },
             }),
-            {} as { [issuecode: string]: InducksIssueQuotationSimple },
-          ),
+            {} as { [issuecode: string]: InducksIssueQuotationSimple }
+          )
         );
       } else {
         console.error(data.error);
@@ -212,8 +213,8 @@ export const coa = defineStore("coa", () => {
         ...new Set(
           newPersonCodes.filter(
             (personCode) =>
-              !Object.keys(personNames.value || {}).includes(personCode),
-          ),
+              !Object.keys(personNames.value || {}).includes(personCode)
+          )
         ),
       ];
       return (
@@ -224,17 +225,21 @@ export const coa = defineStore("coa", () => {
         })
       );
     },
-    fetchIssueNumbersWithTitles = async (publicationcode: string) => {
-      issuesWithTitles.value[publicationcode] =
-        await coaServices.getIssuesWithTitles(publicationcode);
+    fetchIssueNumbersWithTitles = async (publicationcode?: string) => {
+      if (publicationcode) {
+        issuesWithTitles.value[publicationcode] =
+          await coaServices.getIssuesWithTitles(publicationcode);
+      } else {
+        await coaServices.getAllIssuesWithTitles();
+      }
     },
     fetchIssueNumbers = async function (publicationCodes: string[]) {
       const newPublicationCodes = [
         ...new Set(
           publicationCodes.filter(
             (publicationcode) =>
-              !Object.keys(issueNumbers.value || {}).includes(publicationcode),
-          ),
+              !Object.keys(issueNumbers.value || {}).includes(publicationcode)
+          )
         ),
       ];
       if (newPublicationCodes.length) {
@@ -252,8 +257,8 @@ export const coa = defineStore("coa", () => {
                   issue.issuenumber,
                 ],
               }),
-              {},
-            ),
+              {}
+            )
           );
         }
       }
@@ -263,8 +268,8 @@ export const coa = defineStore("coa", () => {
         ...new Set(
           issueCodes.filter(
             (issueCode) =>
-              !Object.keys(issueCodeDetails.value || {}).includes(issueCode),
-          ),
+              !Object.keys(issueCodeDetails.value || {}).includes(issueCode)
+          )
         ),
       ];
       return (
@@ -288,7 +293,7 @@ export const coa = defineStore("coa", () => {
       if (!issueDetails.value[issueCode]) {
         const newIssueDetails = await coaServices.getIssueDetails(
           publicationcode,
-          issuenumber,
+          issuenumber
         );
 
         issueDetails.value = {

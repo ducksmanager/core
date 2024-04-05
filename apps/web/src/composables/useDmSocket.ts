@@ -27,7 +27,7 @@ export default (options: {
     sessionExists: () => Promise<boolean>;
   };
 }) => {
-  const { session, onConnectError } = options;
+  const { session, onConnectError, cacheStorage } = options;
   const until4am = () => {
     const now = dayjs();
     let coaCacheExpiration = dayjs();
@@ -80,6 +80,7 @@ export default (options: {
     coa: addNamespace<CoaServices>(CoaServices.namespaceEndpoint, {
       onConnectError,
       cache: {
+        storage: cacheStorage,
         ttl: until4am(),
       },
     }),

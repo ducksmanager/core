@@ -6,9 +6,9 @@ import { StorySearchResults } from "~dm-types/StorySearchResults";
 import {
   inducks_issue,
   inducks_issuequotation,
-inducks_story,
-inducks_storyjob,
-inducks_storyversion,
+  inducks_story,
+  inducks_storyjob,
+  inducks_storyversion,
 } from "~prisma-clients/client_coa";
 import { Errorable } from "~socket.io-services/types";
 
@@ -29,6 +29,17 @@ export default abstract class {
     callback: (value: Record<string, string>) => void,
   ) => void;
 
+  abstract getAllIssuesWithTitles: (
+    callback: (
+      value: Record<
+        string,
+        {
+          issuenumber: string;
+          title: string | null;
+        }[]
+      >,
+    ) => void,
+  ) => void;
   abstract getIssuesWithTitles: (
     publicationcode: string,
     callback: (
@@ -78,6 +89,9 @@ export default abstract class {
     ) => void,
   ) => void;
 
+  abstract getFullPublicationList: (
+    callback: (value: Record<string, string>) => void,
+  ) => void;
   abstract getPublicationListFromCountrycode: (
     countrycode: string,
     callback: (value: Record<string, string>) => void,
@@ -109,7 +123,18 @@ export default abstract class {
     callback: (value: StorySearchResults) => void,
   ) => void;
 
-  abstract getStoryDetails: (storycode: string, callback: (value: Errorable<{data: inducks_story}, 'Error'>) => void) => void;
-  abstract getStoryversionDetails: (storyversioncode: string, callback: (value: Errorable<{data: inducks_storyversion}, 'Error'>) => void) => void;
-  abstract getStoryjobs: (storyversioncode: string, callback: (value: Errorable<{data: inducks_storyjob[]}, 'Error'>) => void) => void;
+  abstract getStoryDetails: (
+    storycode: string,
+    callback: (value: Errorable<{ data: inducks_story }, "Error">) => void,
+  ) => void;
+  abstract getStoryversionDetails: (
+    storyversioncode: string,
+    callback: (
+      value: Errorable<{ data: inducks_storyversion }, "Error">,
+    ) => void,
+  ) => void;
+  abstract getStoryjobs: (
+    storyversioncode: string,
+    callback: (value: Errorable<{ data: inducks_storyjob[] }, "Error">) => void,
+  ) => void;
 }

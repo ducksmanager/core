@@ -10,6 +10,33 @@ import prismaDm from "~prisma-clients/extended/dm.extends";
 
 import Events from "../types";
 export default (socket: Socket<Events>) => {
+  socket.on("getAllIssuesWithTitles", async (callback) =>
+    prismaCoa.inducks_issue
+      .findMany({
+        select: {
+          publicationcode: true,
+          issuenumber: true,
+          title: true,
+        },
+      })
+      .then((data) => {
+        callback(
+          data.reduce(
+            (acc, { publicationcode, issuenumber, title }) => ({
+              ...acc,
+              [publicationcode!]: [
+                ...(acc[publicationcode!] || []),
+                { issuenumber: issuenumber!.replace(/ +/g, " "), title },
+              ],
+            }),
+            {} as Record<
+              string,
+              { issuenumber: string; title: string | null }[]
+            >,
+          ),
+        );
+      }),
+  );
   socket.on("getIssuesWithTitles", async (publicationcode, callback) =>
     prismaCoa.inducks_issue
       .findMany({
@@ -26,30 +53,32 @@ export default (socket: Socket<Events>) => {
           data.map(({ issuenumber, title }) => ({
             issuenumber: issuenumber!.replace(/ +/g, " "),
             title,
-          }))
+          })),
         );
-      })
+      }),
   );
 
   socket.on(
     "getIssueDetails",
     async (publicationcode, issuenumber, callback) => {
       const releaseDate = (
-        (await prismaCoa.$queryRaw<{
-          oldestdate: string;
-        }[]>`
+        await prismaCoa.$queryRaw<
+          {
+            oldestdate: string;
+          }[]
+        >`
           SELECT issue.oldestdate
           FROM inducks_issue issue
           WHERE issue.publicationcode = ${publicationcode}
-            AND REPLACE(issue.issuenumber, ' ', '') = ${issuenumber}`)
+            AND REPLACE(issue.issuenumber, ' ', '') = ${issuenumber}`
       )[0]?.oldestdate;
 
       const entries = await getEntries(
         publicationcode as string,
-        issuenumber as string
+        issuenumber as string,
       );
       callback({ releaseDate, entries });
-    }
+    },
   );
 
   socket.on("getIssueCoverDetails", async (publicationCodes, callback) => {
@@ -57,9 +86,9 @@ export default (socket: Socket<Events>) => {
       callback({ error: "Too many requests" });
       return;
     }
-    callback(
-      { covers:(
-        (await prismaCoa.$queryRaw<IssueCoverDetails[]>`
+    callback({
+      covers: (
+        await prismaCoa.$queryRaw<IssueCoverDetails[]>`
           SELECT publicationcode,
                  issuenumber,
                  title,
@@ -71,16 +100,16 @@ export default (socket: Socket<Events>) => {
                   LIMIT 1) AS coverUrl
           FROM inducks_issue
           WHERE inducks_issue.publicationcode IN(${PrismaCoa.join(
-            publicationCodes
-          )})`)
+            publicationCodes,
+          )})`
       ).reduce(
         (acc, row) => ({
           ...acc,
           [row.issuenumber.replace(/ +/g, " ")]: row,
         }),
-        {} as Record<string, IssueCoverDetails>
-      )
-      });
+        {} as Record<string, IssueCoverDetails>,
+      ),
+    });
   });
 
   socket.on("getIssuesByCode", async (issueCodes, callback) => {
@@ -95,12 +124,12 @@ export default (socket: Socket<Events>) => {
     ).groupBy("issuecode");
 
     const issues = (
-      (await prismaCoa.$queryRaw<SimpleIssueWithPublication[]>`
+      await prismaCoa.$queryRaw<SimpleIssueWithPublication[]>`
       SELECT pub.countrycode, pub.publicationcode, pub.title, issue.issuenumber, issue.issuecode
       FROM inducks_issue issue
       INNER JOIN coa.inducks_publication pub USING(publicationcode)
       WHERE issue.issuecode IN ${PrismaCoa.join(issueCodes)}
-    `)
+    `
     )
       .filter(({ issuecode }) => {
         if (!covers[issuecode]) {
@@ -122,21 +151,23 @@ export default (socket: Socket<Events>) => {
       (acc, longIssueCode) => ({
         [longIssueCode]: longIssueCode.replace(/ +/g, " "),
       }),
-      {}
+      {},
     );
 
     // const quotations = await getIssueQuotations(issueCodes);
 
-    const popularities = (await prismaDm.$queryRaw< { issuecode: string; userCount: number }[]>`
+    const popularities = await prismaDm.$queryRaw<
+      { issuecode: string; userCount: number }[]
+    >`
       SELECT issuecode, COUNT(DISTINCT ID_Utilisateur) AS userCount
       FROM numeros
       WHERE issuecode IN (${PrismaCoa.join(Object.values(shortIssueCodes))})
       GROUP BY issuecode
-    `);
+    `;
 
     for (const { issuecode, userCount } of popularities) {
       const longIssueCode: string = Object.entries(shortIssueCodes).find(
-        ([, shortIssueCode]) => shortIssueCode === issuecode
+        ([, shortIssueCode]) => shortIssueCode === issuecode,
       )![0];
       issues[longIssueCode].popularity = userCount;
     }
@@ -150,7 +181,7 @@ declare global {
   interface Array<T> {
     groupBy<FieldValue>(
       fieldName: string,
-      valueFieldName?: FieldValue
+      valueFieldName?: FieldValue,
     ): { [key: string]: ReturnType<FieldValue, T> };
   }
 }
@@ -163,14 +194,11 @@ Array.prototype.groupBy = function (fieldName, valueFieldName?) {
         ? object[valueFieldName] || undefined
         : object,
     }),
-    {}
+    {},
   );
 };
 
-const getEntries = async (
-  publicationcode: string,
-  issuenumber: string
-) =>
+const getEntries = async (publicationcode: string, issuenumber: string) =>
   await prismaCoa.$queryRaw<SimpleEntry[]>`
       SELECT sv.storycode,
              sv.kind,

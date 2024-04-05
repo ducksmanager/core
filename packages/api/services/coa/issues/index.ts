@@ -20,36 +20,34 @@ export default (socket: Socket<Events>) => {
             ...acc,
             [value.issuecode]: value,
           }),
-          {}
-        )
+          {},
+        ),
       )
-      .then(callback)
+      .then(callback),
   );
 
-  socket.on(
-    "getIssuesByPublicationCodes",
-    async (publicationCodes, callback) =>
-      prismaCoa.inducks_issue
-            .findMany({
-              select: {
-                publicationcode: true,
-                issuenumber: true,
-              },
-              where: {
-                publicationcode: {
-                  in: publicationCodes,
-                },
-              },
-            })
-            .then((issues) => {
-              callback({
-                issues: issues.map(({ publicationcode, issuenumber }) => ({
-                  code: "",
-                  publicationcode: publicationcode!,
-                  issuenumber: issuenumber!.replace(/ +/g, " "),
-                })),
-              });
-            })
+  socket.on("getIssuesByPublicationCodes", async (publicationCodes, callback) =>
+    prismaCoa.inducks_issue
+      .findMany({
+        select: {
+          publicationcode: true,
+          issuenumber: true,
+        },
+        where: {
+          publicationcode: {
+            in: publicationCodes,
+          },
+        },
+      })
+      .then((issues) => {
+        callback({
+          issues: issues.map(({ publicationcode, issuenumber }) => ({
+            code: "",
+            publicationcode: publicationcode!,
+            issuenumber: issuenumber!.replace(/ +/g, " "),
+          })),
+        });
+      }),
   );
 
   socket.on("getIssuesByStorycode", async (storycode, callback) =>
@@ -62,7 +60,7 @@ export default (socket: Socket<Events>) => {
                 INNER JOIN inducks_storyversion sv using (storyversioncode)
       WHERE sv.storycode = ${storycode}
       GROUP BY publicationcode, issuenumber
-      ORDER BY publicationcode`.then(callback)
+      ORDER BY publicationcode`.then(callback),
   );
 
   socket.on("getCountByPublicationcode", (callback) =>
@@ -80,10 +78,10 @@ export default (socket: Socket<Events>) => {
               ...acc,
               [publicationcode!]: _count.issuenumber,
             }),
-            {} as { [publicationcode: string]: number }
-          )
+            {} as { [publicationcode: string]: number },
+          ),
         );
-      })
+      }),
   );
 
   socket.on("getRecentIssues", (callback) =>
@@ -97,6 +95,6 @@ export default (socket: Socket<Events>) => {
         orderBy: [{ oldestdate: "desc" }],
         take: 50,
       })
-      .then(callback)
+      .then(callback),
   );
 };

@@ -20,7 +20,7 @@ export type EventReturnTypeIncludingError<
   // @ts-ignore ???
   LastParameter<LastParameter<T>>;
 
-type SocketCacheOptions = Pick<CacheOptions, "ttl">;
+type SocketCacheOptions = Pick<CacheOptions, "ttl" | "storage">;
 
 interface EventsMap {
   [event: string]: any;
@@ -34,12 +34,7 @@ type EventCalls<S extends EventsMap> = {
   ) => Promise<EventReturnTypeIncludingError<S[EventName]>>;
 };
 
-export const useSocket = (
-  socketRootUrl: string,
-  options: {
-    cacheStorage?: CacheOptions["storage"];
-  } = {}
-) => ({
+export const useSocket = (socketRootUrl: string) => ({
   addNamespace: <Services extends EventsMap>(
     namespaceName: string,
     namespaceOptions: {
@@ -56,18 +51,15 @@ export const useSocket = (
       },
     }
   ) => {
+    const { session, onConnectError, cache } = namespaceOptions;
     const socket = io(socketRootUrl + namespaceName, {
       multiplex: false,
       timeout: 2500,
       auth: async (cb) => {
-        cb(
-          namespaceOptions.session
-            ? { token: await namespaceOptions.session.getToken() }
-            : {}
-        );
+        cb(session ? { token: await session.getToken() } : {});
       },
     }).on("connect_error", (e) => {
-      namespaceOptions.onConnectError(e, namespaceName);
+      onConnectError(e, namespaceName);
       console.error(`${namespaceName}: connect_error: ${e}`);
     });
     return {
@@ -84,18 +76,11 @@ export const useSocket = (
             EventReturnTypeIncludingError<Services[EventName]> | undefined
           > => {
             let data;
-            if (namespaceName === "/login") {
-              debugger;
-            }
-            console.log("Emitting " + event + " with args: " + args);
-            if (namespaceOptions.cache) {
-              if (!options.cacheStorage) {
-                throw new Error("storage must be defined");
-              }
+            if (cache) {
               const cacheKey = `${event} ${JSON.stringify(args)}`;
-              const cacheData = (await options!.cacheStorage.get(
-                cacheKey
-              )) as Awaited<ReturnType<Socket["emitWithAck"]>>;
+              const cacheData = (await cache.storage.get(cacheKey)) as Awaited<
+                ReturnType<Socket["emitWithAck"]>
+              >;
               const hasCacheData =
                 cacheData !== undefined &&
                 !(typeof cacheData === "object" && cacheData.state === "empty");
@@ -103,7 +88,7 @@ export const useSocket = (
                 return cacheData;
               }
               data = await socket.emitWithAck(event, ...args);
-              options.cacheStorage.set(cacheKey, data);
+              cache.storage.set(cacheKey, data);
             } else {
               data = await socket.emitWithAck(event, ...args);
             }
