@@ -32,17 +32,15 @@ import type { RouteMeta } from '~/router';
 import { Storage } from '@ionic/storage';
 
 const session = {
-  getToken: async () => token.value,
-  clearSession: () => {
-    token.value = undefined;
-    Cookies.remove('token');
-    new Storage().clear();
+    getToken: async () => token.value,
+    clearSession: () => {
+      token.value = undefined;
+      Cookies.remove('token');
+      new Storage().clear();
+    },
+    sessionExists: async () => token.value !== undefined,
   },
-  sessionExists: async () => token.value !== undefined,
-};
-
-const dmSocket = useDmSocket({
-  cacheStorage: buildStorage({
+  cacheStorage = buildStorage({
     set: (key, data) => {
       socketCache.value[key] = data;
     },
@@ -51,22 +49,24 @@ const dmSocket = useDmSocket({
       delete socketCache.value[key];
     },
   }),
-  onConnectError: (e: Error) => {
+  onConnectError = (e: Error) => {
     if (e.message.indexOf('jwt expired') !== -1) {
       session.clearSession();
     }
-  },
+  };
+
+const dmSocket = useDmSocket({
+  cacheStorage,
   session,
+  onConnectError,
 });
 
 provideLocal('dmSocket', dmSocket);
 
-console.log('app setup');
-
 const { isOfflineMode, token, isDataLoaded, socketCache } = storeToRefs(app());
 
 const collectionStore = wtdcollection();
-// const { loadUser } = collectionStore;
+const { loadUser } = collectionStore;
 const route = useRoute();
 
 const { t } = useI18n();
@@ -75,19 +75,19 @@ const isReady = computed(() => isDataLoaded.value && collectionStore.isDataLoade
 
 const routeMeta = computed(() => route.meta as RouteMeta);
 
-// watch(isReady, (newValue) => {
-//   if (newValue) {
-//     isDataLoaded.value = true;
+watch(isReady, (newValue) => {
+  if (newValue) {
+    isDataLoaded.value = true;
 
-//     watch(
-//       () => token.value,
-//       async (newValue) => {
-//         if (newValue) {
-//           await loadUser();
-//         }
-//       },
-//       { immediate: true },
-//     );
-//   }
-// });
+    watch(
+      () => token.value,
+      async (newValue) => {
+        if (newValue) {
+          await loadUser();
+        }
+      },
+      { immediate: true },
+    );
+  }
+});
 </script>

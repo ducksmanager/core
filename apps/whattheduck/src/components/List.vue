@@ -19,7 +19,14 @@
     <ion-content v-else-if="!items.length" ref="content">
       {{ t('Votre collection est vide.') }}
     </ion-content>
-    <ion-content v-else ref="content" class="no-padding">
+    <ion-content
+      v-else
+      ref="content"
+      class="no-padding"
+      scroll-events
+      @ion-scroll="onScroll"
+      @ion-scroll-end="isScrolling = false"
+    >
       <Row
         v-for="{ key, item, ownsNext } in filteredItems"
         :fill-percentage="fillPercentages?.[key]?.ownershipPercentage || 0"
@@ -39,11 +46,11 @@
       <EditIssuesButton />
 
       <div
-        v-show="scrollPosition"
+        v-show="isScrolling"
         v-if="itemInCenterOfViewport"
         id="scroll-text"
         slot="fixed"
-        :style="{ top: scrollPosition + '%' }"
+        :style="{ top: scrollPositionPct + '%' }"
       >
         {{ getItemTextFn(itemInCenterOfViewport) }}
       </div>
@@ -52,7 +59,7 @@
 </template>
 
 <script setup lang="ts" generic="Item extends Required<any>">
-import { IonContent } from '@ionic/vue';
+import { IonContent, ScrollDetail } from '@ionic/vue';
 import { stores } from '~web';
 
 import type { OwnershipWithPercentage } from '~/composables/useOwnership';
@@ -73,21 +80,21 @@ const props = defineProps<{
 }>();
 
 const content = ref<InstanceType<typeof IonContent> | null>(null);
-const scrollPosition = ref<number>(0);
 
-watch(
-  () => content.value,
-  async (newValue) => {
-    if (newValue) {
-      const scrollElement = await newValue.$el.getScrollElement()!;
-      setInterval(() => {
-        scrollPosition.value =
-          (100 * scrollElement.scrollTop) / (scrollElement.scrollHeight - scrollElement.clientHeight);
-      }, 100);
-    }
-  },
-  { immediate: true },
-);
+const scrollPositionPct = ref<number>(0);
+const isScrolling = ref(false);
+
+const onScroll = (e: CustomEvent<ScrollDetail>) => {
+  const scrollTop = e.detail.scrollTop;
+  isScrolling.value = e.detail.isScrolling;
+  const innerScrollElement = content.value!.$el.shadowRoot.querySelector('.inner-scroll');
+  const scrollHeight = innerScrollElement.scrollHeight;
+  const clientHeight = innerScrollElement.clientHeight;
+
+  const middleOfViewport = scrollTop + clientHeight / 2;
+
+  scrollPositionPct.value = (middleOfViewport / scrollHeight) * 100;
+};
 
 const { t } = useI18n();
 const router = useRouter();
@@ -100,10 +107,10 @@ const filterText = ref('' as string);
 const hasCoaData = ref(false);
 
 const itemInCenterOfViewport = computed(() => {
-  if (!props.items.length || !scrollPosition.value) {
+  if (!props.items.length) {
     return undefined;
   }
-  const itemIndex = Math.floor((scrollPosition.value * props.items.length) / 100);
+  const itemIndex = Math.floor((scrollPositionPct.value * props.items.length) / 100);
   return props.items[itemIndex].item;
 });
 
