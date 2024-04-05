@@ -49,10 +49,8 @@ export const wtdcollection = defineStore('wtdcollection', () => {
       await coaStore.fetchCountryNames(true);
       coaStore.addPublicationNames(await coaServices.getFullPublicationList());
       await coaStore.fetchIssueCounts();
-      await coaStore.fetchIssueNumbersWithTitles();
       await coaStore.fetchIssueNumbers(ownedPublications.value || []);
       await usersStore.fetchStats([webCollectionStore.user?.id || 0]);
-
       // TODO register for notifications
     },
     highestQuotedIssue = computed(
@@ -71,7 +69,6 @@ export const wtdcollection = defineStore('wtdcollection', () => {
     issuesByIssueCode: computed(() => webCollectionStore.issuesByIssueCode),
     loadCollection,
     loadPurchases,
-    loadUser,
     login,
     numberPerCondition: computed(() => webCollectionStore.numberPerCondition),
     ownedCountries,

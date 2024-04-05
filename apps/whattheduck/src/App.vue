@@ -53,7 +53,7 @@ provideLocal('dmSocket', dmSocket);
 const { isOfflineMode, token, isDataLoaded, socketCache } = storeToRefs(app());
 
 const collectionStore = wtdcollection();
-const { loadUser, fetchAndTrackCollection } = collectionStore;
+const { fetchAndTrackCollection } = collectionStore;
 const route = useRoute();
 const router = useRouter();
 
@@ -69,7 +69,6 @@ watch(isReady, (newValue) => {
       () => token.value,
       async (newValue) => {
         if (newValue) {
-          await loadUser();
           fetchAndTrackCollection().then(() =>
             route.path === '/login' ? router.replace('/collection') : Promise.resolve(),
           );

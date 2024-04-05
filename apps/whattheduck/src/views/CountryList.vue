@@ -9,7 +9,7 @@
       <Country :id="item.countrycode" :label="item.countryname" />
     </template>
     <template #row-suffix="{ item }" v-if="ownershipPercentages">
-      {{ getOwnershipText(ownershipPercentages[item.countrycode]) }}
+      {{ ownershipPercentages[item.countrycode] ? getOwnershipText(ownershipPercentages[item.countrycode]) : '' }}
     </template>
   </List>
 </template>

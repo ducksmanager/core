@@ -85,4 +85,6 @@ const sortedItems = computed(() =>
       };
     }),
 );
+
+coaStore.fetchIssueNumbersWithTitles([publicationcode.value]);
 </script>
