@@ -4,36 +4,40 @@
       <ion-icon :ios="pencilOutline" :md="pencilSharp" />
     </ion-fab-button>
     <ion-fab-list side="top">
-      <ion-row class="ion-align-items-center" @click="pickCoverFile">
+      <ion-item button class="ion-align-items-center ion-text-nowrap" @click="pickCoverFile">
         <ion-label>{{ t('Depuis un fichier de couverture') }}</ion-label>
         <ion-fab-button size="small">
           <ion-icon :ios="imageOutline" :md="imageSharp" />
         </ion-fab-button>
-      </ion-row>
-      <ion-row class="ion-align-items-center" router-link="/add-from-camera">
+      </ion-item>
+      <ion-item button class="ion-align-items-center ion-text-nowrap" router-link="/add-from-camera">
         <ion-label>{{ t('Depuis une photo de couverture') }}</ion-label>
         <ion-fab-button size="small">
           <ion-icon :ios="cameraOutline" :md="cameraSharp" />
         </ion-fab-button>
-      </ion-row>
-      <ion-row class="ion-align-items-center" router-link="/recent">
+      </ion-item>
+      <ion-item button class="ion-align-items-center ion-text-nowrap" router-link="/recent">
         <ion-label>{{ t('Depuis un magazine récent') }}</ion-label>
         <ion-fab-button size="small">
           <ion-icon :ios="calendarOutline" :md="calendarSharp" />
         </ion-fab-button>
-      </ion-row>
-      <ion-row class="ion-align-items-center" @click="router.push({ path: route.path, query: { coa: 'true' } })">
+      </ion-item>
+      <ion-item
+        button
+        class="ion-align-items-center ion-text-nowrap"
+        @click="router.push({ path: route.path, query: { coa: 'true' } })"
+      >
         <ion-label>{{ t('Par sélection de numéro') }}</ion-label>
         <ion-fab-button size="small">
           <ion-icon :ios="listOutline" :md="listSharp" />
         </ion-fab-button>
-      </ion-row>
-      <ion-row class="ion-align-items-center" router-link="/search">
+      </ion-item>
+      <ion-item button class="ion-align-items-center ion-text-nowrap" router-link="/search">
         <ion-label>{{ t("Par titre d'histoire") }}</ion-label>
         <ion-fab-button size="small">
           <ion-icon :ios="searchOutline" :md="searchSharp" />
         </ion-fab-button>
-      </ion-row>
+      </ion-item>
     </ion-fab-list>
   </ion-fab>
 </template>
@@ -85,9 +89,26 @@ const pickCoverFile = async () => {
 };
 </script>
 
-<style>
+<style lang="scss">
+ion-fab-button {
+  opacity: 0.5;
+  &:hover {
+    opacity: 1;
+  }
+}
+
 ion-fab-list {
-  margin-left: -250px;
+  right: 0;
+  width: 360px;
   align-items: end;
+
+  background: rgba(0, 0, 0, 0.7);
+  padding: 1rem;
+  border-radius: 1rem;
+
+  ion-item {
+    background: inherit;
+    width: 100%;
+  }
 }
 </style>

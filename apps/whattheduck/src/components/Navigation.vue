@@ -16,6 +16,7 @@ import Publication from './Publication.vue';
 import { app } from '~/stores/app';
 
 const router = useRouter();
+const route = useRoute();
 
 const { currentNavigationItem } = storeToRefs(app());
 const { countryNames, publicationNames } = storeToRefs(stores.coa());
@@ -51,7 +52,10 @@ const parts = computed(() => {
 });
 
 const onChange = (event: any) => {
-  router.push((event.detail.value ? `/collection/${event.detail.value}` : '/collection') + window.location.search);
+  router.push({
+    path: event.detail.value ? `/collection/${event.detail.value}` : '/collection',
+    query: { coa: route.query.coa },
+  });
 };
 </script>
 

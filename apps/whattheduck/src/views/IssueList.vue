@@ -86,5 +86,7 @@ const sortedItems = computed(() =>
     }),
 );
 
-coaStore.fetchIssueNumbersWithTitles([publicationcode.value]);
+onMounted(async () => {
+  await coaStore.fetchIssueNumbersWithTitles([publicationcode.value]);
+});
 </script>

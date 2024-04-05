@@ -15,14 +15,14 @@
               :user-level-points="numberOfPoints"
             />
           </ion-row>
-          <ion-menu-toggle v-for="(p, i) in appPages" :key="i" :auto-hide="false">
+          <ion-menu-toggle v-for="p in appPages" :key="p.url" :auto-hide="false">
             <ion-item
               router-direction="root"
               :router-link="p.url"
               lines="none"
               :detail="false"
-              :class="{ selected: selectedIndex === i }"
-              @click="selectedIndex = i"
+              :class="{ selected: route.path === p.url }"
+              @click="router.push(p.url)"
             >
               <ion-icon slot="start" aria-hidden="true" :ios="p.iosIcon" :md="p.mdIcon" />
               <ion-label>{{ p.title }}</ion-label>
@@ -31,13 +31,14 @@
         </template>
       </ion-list>
       <ion-list id="footer">
-        <ion-menu-toggle v-for="(p, i) in appFooterPages" :key="i" :auto-hide="false">
+        <ion-menu-toggle v-for="p in appFooterPages" :key="p.url" :auto-hide="false">
           <ion-item
             router-direction="root"
             :router-link="p.url"
             lines="none"
             :detail="false"
-            @click="selectedIndex = i"
+            :class="{ selected: route.path === p.url }"
+            @click="router.push(p.url)"
           >
             <ion-label>{{ p.title }}</ion-label>
           </ion-item>
@@ -65,7 +66,6 @@ const { t } = useI18n();
 const collectionStore = wtdcollection();
 const points = computed(() => webStores.users().points);
 
-const selectedIndex = ref(0);
 const appPages = [
   {
     title: t('Rechercher une histoire'),
@@ -93,10 +93,9 @@ const appPages = [
   },
 ];
 
-const path = window.location.pathname;
-if (path !== undefined) {
-  selectedIndex.value = appPages.findIndex((page) => page.url.toLowerCase() === path.toLowerCase());
-}
+const router = useRouter();
+const route = useRoute();
+
 const appFooterPages = [
   {
     title: t('Signaler un problème'),

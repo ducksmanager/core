@@ -10,7 +10,11 @@
       <Publication :key="item.publicationcode" :label="item.publicationname" />
     </template>
     <template #row-suffix="{ item }" v-if="ownershipPercentages">
-      {{ getOwnershipText(ownershipPercentages[item.publicationcode], false) }}
+      {{
+        ownershipPercentages[item.publicationcode]
+          ? getOwnershipText(ownershipPercentages[item.publicationcode], false)
+          : ''
+      }}
     </template>
   </List>
 </template>
