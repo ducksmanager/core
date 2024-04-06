@@ -1,8 +1,9 @@
-import { dmSocketInjectionKey } from "../composables/useDmSocket";
 import CollectionServices from "~dm-services/collection/types";
 import type { requestedIssue } from "~prisma-clients/client_dm";
 import { issueWithPublicationcode } from "~prisma-clients/extended/dm.extends";
 import { EventReturnType } from "~socket.io-services/types";
+
+import { dmSocketInjectionKey } from "../composables/useDmSocket";
 
 export const marketplace = defineStore("marketplace", () => {
   const {
@@ -10,7 +11,7 @@ export const marketplace = defineStore("marketplace", () => {
   } = injectLocal(dmSocketInjectionKey)!;
 
   const issuesOnSaleByOthers = ref(
-      null as EventReturnType<CollectionServices["getIssuesForSale"]> | null
+      null as EventReturnType<CollectionServices["getIssuesForSale"]> | null,
     ),
     issueRequestsAsBuyer = ref(null as requestedIssue[] | null),
     issueRequestsAsSeller = ref(null as requestedIssue[] | null),
@@ -22,10 +23,10 @@ export const marketplace = defineStore("marketplace", () => {
         [userId: number]: EventReturnType<
           CollectionServices["getContactMethods"]
         >;
-      }
+      },
     ),
     sentRequestIssueIds = computed(() =>
-      issueRequestsAsBuyer.value?.map(({ issueId }) => issueId)
+      issueRequestsAsBuyer.value?.map(({ issueId }) => issueId),
     ),
     sellerUserIds = computed(
       () =>
@@ -33,18 +34,18 @@ export const marketplace = defineStore("marketplace", () => {
           ...new Set(
             Object.values(issuesOnSaleByOthers.value).reduce(
               (acc, issues) => [...acc, ...issues.map((issue) => issue.userId)],
-              [] as number[]
-            )
+              [] as number[],
+            ),
           ),
         ]) ||
-        []
+        [],
     ),
     buyerUserIds = computed(
       () =>
         (issueRequestsAsSeller.value && [
           ...new Set(issueRequestsAsSeller.value.map((issue) => issue.buyerId)),
         ]) ||
-        []
+        [],
     ),
     buyerUserNamesById = computed(
       () =>
@@ -53,8 +54,8 @@ export const marketplace = defineStore("marketplace", () => {
             ...acc,
             [userId]: users().stats[userId]?.username,
           }),
-          {} as { [userId: number]: string }
-        ) || null
+          {} as { [userId: number]: string },
+        ) || null,
     ),
     sellerUserNames = computed(() =>
       sellerUserIds.value
@@ -63,9 +64,9 @@ export const marketplace = defineStore("marketplace", () => {
             ...acc,
             { value: userId, text: users().stats[userId]?.username },
           ],
-          [] as { value: number; text: string }[]
+          [] as { value: number; text: string }[],
         )
-        .sort(({ text: text1 }, { text: text2 }) => text1.localeCompare(text2))
+        .sort(({ text: text1 }, { text: text2 }) => text1.localeCompare(text2)),
     ),
     requestIssueIdsBySellerId = computed(
       () =>
@@ -80,9 +81,9 @@ export const marketplace = defineStore("marketplace", () => {
                   issueId,
                 ],
               }),
-              {} as { [userId: number]: number[] }
+              {} as { [userId: number]: number[] },
             )) ||
-        {}
+        {},
     ),
     issuesOnSaleById = computed(() =>
       Object.values(issuesOnSaleByOthers.value || {}).reduce(
@@ -93,11 +94,11 @@ export const marketplace = defineStore("marketplace", () => {
               ...acc2,
               [issue.id]: issue,
             }),
-            {} as Record<number, issueWithPublicationcode>
+            {} as Record<number, issueWithPublicationcode>,
           ),
         }),
-        {} as Record<number, issueWithPublicationcode>
-      )
+        {} as Record<number, issueWithPublicationcode>,
+      ),
     ),
     requestIssues = async (issueIds: number[]) => {
       await collectionServices.createRequests(issueIds);

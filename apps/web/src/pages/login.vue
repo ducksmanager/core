@@ -14,7 +14,7 @@ meta:
         <b-alert v-if="error" :model-value="true" variant="danger">
           {{
             $t(
-              "Les identifiants que vous avez entré sont invalides, veuillez réessayer."
+              "Les identifiants que vous avez entré sont invalides, veuillez réessayer.",
             )
           }}
         </b-alert>
@@ -82,7 +82,7 @@ const login = async () => {
     },
     (e) => {
       error = e;
-    }
+    },
   );
 };
 
@@ -97,6 +97,6 @@ watch(
       }
     }
   },
-  { immediate: true }
+  { immediate: true },
 );
 </script>

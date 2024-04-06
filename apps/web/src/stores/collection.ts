@@ -1,4 +1,3 @@
-import { dmSocketInjectionKey } from "../composables/useDmSocket";
 import CollectionServices from "~dm-services/collection/types";
 import StatsServices from "~dm-services/stats/types";
 import {
@@ -13,6 +12,7 @@ import {
 import { EventReturnType, ScopedError } from "~socket.io-services/types";
 
 import useCollection from "../composables/useCollection";
+import { dmSocketInjectionKey } from "../composables/useDmSocket";
 import { bookcase } from "./bookcase";
 
 export type IssueWithPublicationcodeOptionalId = Omit<
@@ -55,16 +55,16 @@ export const collection = defineStore("collection", () => {
     watchedAuthors = ref(null as authorUser[] | null),
     marketplaceContactMethods = ref(null as string[] | null),
     suggestions = ref(
-      null as EventReturnType<StatsServices["getSuggestionsForCountry"]> | null
+      null as EventReturnType<StatsServices["getSuggestionsForCountry"]> | null,
     ),
     subscriptions = ref(null as SubscriptionTransformed[] | null),
     popularIssuesInCollection = ref(
-      null as { [issuecode: string]: number } | null
+      null as { [issuecode: string]: number } | null,
     ),
     lastPublishedEdgesForCurrentUser = ref(
       null as EventReturnType<
         CollectionServices["getLastPublishedEdges"]
-      > | null
+      > | null,
     ),
     isLoadingUser = ref(false as boolean),
     isLoadingCollection = ref(false as boolean),
@@ -77,20 +77,20 @@ export const collection = defineStore("collection", () => {
       undefined as
         | EventReturnType<CollectionServices["getUser"]>
         | undefined
-        | null
+        | null,
     ),
     previousVisit = ref(null as Date | null),
     publicationUrlRoot = computed(() => "/collection/show"),
     purchasesById = computed((): Record<string, purchase> | undefined =>
       purchases.value?.reduce(
         (acc, purchase) => ({ ...acc, [purchase.id as number]: purchase }),
-        {}
-      )
+        {},
+      ),
     ),
     hasSuggestions = computed(
       () =>
         suggestions.value?.issues &&
-        Object.keys(suggestions.value.issues).length
+        Object.keys(suggestions.value.issues).length,
     ),
     issueNumbersPerPublication = computed(
       () =>
@@ -102,8 +102,8 @@ export const collection = defineStore("collection", () => {
               issuenumber,
             ],
           }),
-          {} as { [publicationcode: string]: string[] }
-        ) || {}
+          {} as { [publicationcode: string]: string[] },
+        ) || {},
     ),
     totalPerPublicationUniqueIssueNumbers = computed(
       (): {
@@ -117,8 +117,8 @@ export const collection = defineStore("collection", () => {
               ...new Set(issueNumbersPerPublication.value[publicationcode]),
             ].length,
           }),
-          {}
-        )
+          {},
+        ),
     ),
     totalPerPublicationUniqueIssueNumbersSorted = computed(
       () =>
@@ -127,18 +127,18 @@ export const collection = defineStore("collection", () => {
           ([publicationcode1], [publicationcode2]) =>
             Math.sign(
               totalPerPublicationUniqueIssueNumbers.value[publicationcode2]! -
-                totalPerPublicationUniqueIssueNumbers.value[publicationcode1]!
-            )
-        )
+                totalPerPublicationUniqueIssueNumbers.value[publicationcode1]!,
+            ),
+        ),
     ),
     popularIssuesInCollectionWithoutEdge = computed(() =>
       bookcase()
         .bookcaseWithPopularities?.filter(
-          ({ edgeId, popularity }) => !edgeId && popularity && popularity > 0
+          ({ edgeId, popularity }) => !edgeId && popularity && popularity > 0,
         )
         .sort(({ popularity: popularity1 }, { popularity: popularity2 }) =>
-          popularity2 && popularity1 ? popularity2 - popularity1 : 0
-        )
+          popularity2 && popularity1 ? popularity2 - popularity1 : 0,
+        ),
     ),
     userForAccountForm = computed(() => {
       if (!user.value) {
@@ -159,7 +159,7 @@ export const collection = defineStore("collection", () => {
       await loadCollection(true);
     },
     updateCollectionMultipleIssues = async (
-      data: CollectionUpdateMultipleIssues
+      data: CollectionUpdateMultipleIssues,
     ) => {
       await collectionServices.addOrChangeIssues(data);
       await loadCollection(true);
@@ -194,7 +194,7 @@ export const collection = defineStore("collection", () => {
           (purchase) => ({
             ...purchase,
             date: new Date(purchase.date),
-          })
+          }),
         );
         isLoadingPurchases.value = false;
       }
@@ -207,7 +207,7 @@ export const collection = defineStore("collection", () => {
       ) {
         isLoadingWatchedPublicationsWithSales.value = true;
         watchedPublicationsWithSales.value = await collectionServices.getOption(
-          "sales_notification_publications"
+          "sales_notification_publications",
         );
         isLoadingWatchedPublicationsWithSales.value = false;
       }
@@ -220,7 +220,7 @@ export const collection = defineStore("collection", () => {
       ) {
         isLoadingMarketplaceContactMethods.value = true;
         marketplaceContactMethods.value = await collectionServices.getOption(
-          "marketplace_contact_methods"
+          "marketplace_contact_methods",
         );
         isLoadingMarketplaceContactMethods.value = false;
       }
@@ -230,7 +230,7 @@ export const collection = defineStore("collection", () => {
     updateWatchedPublicationsWithSales = async () =>
       await collectionServices.setOption(
         "sales_notification_publications",
-        watchedPublicationsWithSales.value!
+        watchedPublicationsWithSales.value!,
       ),
     loadSuggestions = async ({
       countryCode,
@@ -247,7 +247,7 @@ export const collection = defineStore("collection", () => {
           countryCode || "ALL",
           sinceLastVisit ? "since_previous_visit" : "_",
           sort,
-          sinceLastVisit ? 100 : 20
+          sinceLastVisit ? 100 : 20,
         );
         isLoadingSuggestions.value = false;
       }
@@ -263,7 +263,7 @@ export const collection = defineStore("collection", () => {
             ...subscription,
             startDate: new Date(Date.parse(subscription.startDate)),
             endDate: new Date(Date.parse(subscription.endDate)),
-          })
+          }),
         );
         isLoadingSubscriptions.value = false;
       }
@@ -278,7 +278,7 @@ export const collection = defineStore("collection", () => {
             [`${issue.country}/${issue.magazine} ${issue.issuenumber}`]:
               issue.popularity,
           }),
-          {}
+          {},
         );
       }
     },
@@ -292,7 +292,7 @@ export const collection = defineStore("collection", () => {
       username: string,
       password: string,
       onSuccess: (token: string) => void,
-      onError: (e: string) => void
+      onError: (e: string) => void,
     ) => {
       const response = await loginServices.login({
         username,
@@ -310,7 +310,7 @@ export const collection = defineStore("collection", () => {
       password2: string,
       email: string,
       onSuccess: (token: string) => void,
-      onError: (e: ScopedError) => void
+      onError: (e: ScopedError) => void,
     ) => {
       const response = await collectionServices.createUser({
         username,

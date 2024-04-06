@@ -1,7 +1,7 @@
-import { dmSocketInjectionKey } from "../composables/useDmSocket";
 import { issueWithPublicationcode } from "~prisma-clients/extended/dm.extends";
 
 import useCollection from "../composables/useCollection";
+import { dmSocketInjectionKey } from "../composables/useDmSocket";
 
 export const publicCollection = defineStore("publicCollection", () => {
   const {
@@ -11,7 +11,7 @@ export const publicCollection = defineStore("publicCollection", () => {
   const issues = ref(null as issueWithPublicationcode[] | null),
     publicUsername = ref(null as string | null),
     publicationUrlRoot = computed(
-      () => `/collection/user/${publicUsername.value || ""}`
+      () => `/collection/user/${publicUsername.value || ""}`,
     ),
     purchases = ref([]);
 

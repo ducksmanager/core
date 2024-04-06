@@ -1,10 +1,10 @@
-import { dmSocketInjectionKey } from "../composables/useDmSocket";
 import CoaServices from "~dm-services/coa/types";
 import { InducksIssueDetails } from "~dm-types/InducksIssueDetails";
 import { InducksIssueQuotationSimple } from "~dm-types/InducksIssueQuotationSimple";
 import type { inducks_issue } from "~prisma-clients/client_coa";
 import { EventReturnType } from "~socket.io-services/types";
 
+import { dmSocketInjectionKey } from "../composables/useDmSocket";
 import { getCurrentLocaleShortKey } from "../composables/useLocales";
 
 const addPartInfo = (issueDetails: InducksIssueDetails) => {
@@ -14,8 +14,8 @@ const addPartInfo = (issueDetails: InducksIssueDetails) => {
         ...acc,
         [storycode]: !storycode ? 0 : (acc[storycode] || 0) + 1,
       }),
-      {} as { [storycode: string]: number }
-    )
+      {} as { [storycode: string]: number },
+    ),
   )
     .filter(([, occurrences]) => occurrences > 1)
     .reduce(
@@ -23,7 +23,7 @@ const addPartInfo = (issueDetails: InducksIssueDetails) => {
         ...acc,
         [storycode]: 1,
       }),
-      {}
+      {},
     ) as { [storycode: string]: number };
   return {
     ...issueDetails,
@@ -46,18 +46,18 @@ export const coa = defineStore("coa", () => {
     locale = useI18n().locale,
     coverUrls = ref<{ [issuenumber: string]: string }>({}),
     countryNames = ref<EventReturnType<CoaServices["getCountryList"]> | null>(
-      null
+      null,
     ),
     publicationNames = ref<
       EventReturnType<CoaServices["getPublicationListFromCountrycode"]>
     >({}),
     publicationNamesFullCountries = ref<string[]>([]),
     personNames = ref<EventReturnType<CoaServices["getAuthorList"]> | null>(
-      null
+      null,
     ),
     issueNumbers = ref<{ [issuecode: string]: string[] }>({}),
     issuesWithTitles = ref<EventReturnType<CoaServices["getIssuesWithTitles"]>>(
-      {}
+      {},
     ),
     issueDetails = ref<{ [issuecode: string]: InducksIssueDetails }>({}),
     isLoadingCountryNames = ref(false),
@@ -77,11 +77,11 @@ export const coa = defineStore("coa", () => {
               [countrycode]: (acc[countrycode] || 0) + count,
             };
           },
-          {}
-        )
+          {},
+        ),
     ),
     addPublicationNames = (
-      newPublicationNames: typeof publicationNames.value
+      newPublicationNames: typeof publicationNames.value,
     ) => {
       publicationNames.value = {
         ...publicationNames.value,
@@ -94,7 +94,7 @@ export const coa = defineStore("coa", () => {
           ...acc,
           [personcode]: newPersonNames[personcode],
         }),
-        {}
+        {},
       );
     },
     setCoverUrl = (issuenumber: string, url: string) => {
@@ -123,7 +123,7 @@ export const coa = defineStore("coa", () => {
         isLoadingCountryNames.value = true;
         countryNames.value = await coaServices.getCountryList(
           getCurrentLocaleShortKey(locale.value),
-          []
+          [],
         );
         isLoadingCountryNames.value = false;
       }
@@ -133,16 +133,16 @@ export const coa = defineStore("coa", () => {
         ...new Set(
           newPublicationCodes.filter(
             (publicationcode) =>
-              !Object.keys(publicationNames.value).includes(publicationcode)
-          )
+              !Object.keys(publicationNames.value).includes(publicationcode),
+          ),
         ),
       ];
       return (
         actualNewPublicationCodes.length &&
         addPublicationNames(
           await coaServices.getPublicationListFromPublicationcodeList(
-            actualNewPublicationCodes
-          )
+            actualNewPublicationCodes,
+          ),
         )
       );
     },
@@ -152,14 +152,14 @@ export const coa = defineStore("coa", () => {
           newPublicationCodes.filter(
             (publicationcode) =>
               !Object.keys(issueQuotations.value || {}).includes(
-                publicationcode
-              )
-          )
+                publicationcode,
+              ),
+          ),
         ),
       ];
 
       const data = await coaServices.getQuotationsByPublicationCodes(
-        actualNewPublicationCodes
+        actualNewPublicationCodes,
       );
 
       if (data.quotations) {
@@ -172,8 +172,8 @@ export const coa = defineStore("coa", () => {
                 max: issue.estimationMax,
               },
             }),
-            {} as { [issuecode: string]: InducksIssueQuotationSimple }
-          )
+            {} as { [issuecode: string]: InducksIssueQuotationSimple },
+          ),
         );
       } else {
         console.error(data.error);
@@ -199,8 +199,8 @@ export const coa = defineStore("coa", () => {
         ...new Set(
           newPersonCodes.filter(
             (personCode) =>
-              !Object.keys(personNames.value || {}).includes(personCode)
-          )
+              !Object.keys(personNames.value || {}).includes(personCode),
+          ),
         ),
       ];
       return (
@@ -217,9 +217,9 @@ export const coa = defineStore("coa", () => {
         await coaServices.getIssuesWithTitles(
           publicationcodes.filter(
             (publicationcode) =>
-              !Object.keys(issuesWithTitles.value).includes(publicationcode)
-          )
-        )
+              !Object.keys(issuesWithTitles.value).includes(publicationcode),
+          ),
+        ),
       );
     },
     fetchIssueNumbers = async function (publicationCodes: string[]) {
@@ -227,8 +227,8 @@ export const coa = defineStore("coa", () => {
         ...new Set(
           publicationCodes.filter(
             (publicationcode) =>
-              !Object.keys(issueNumbers.value || {}).includes(publicationcode)
-          )
+              !Object.keys(issueNumbers.value || {}).includes(publicationcode),
+          ),
         ),
       ];
       if (newPublicationCodes.length) {
@@ -246,8 +246,8 @@ export const coa = defineStore("coa", () => {
                   issue.issuenumber,
                 ],
               }),
-              {}
-            )
+              {},
+            ),
           );
         }
       }
@@ -257,8 +257,8 @@ export const coa = defineStore("coa", () => {
         ...new Set(
           issueCodes.filter(
             (issueCode) =>
-              !Object.keys(issueCodeDetails.value || {}).includes(issueCode)
-          )
+              !Object.keys(issueCodeDetails.value || {}).includes(issueCode),
+          ),
         ),
       ];
       return (
@@ -282,7 +282,7 @@ export const coa = defineStore("coa", () => {
       if (!issueDetails.value[issueCode]) {
         const newIssueDetails = await coaServices.getIssueDetails(
           publicationcode,
-          issuenumber
+          issuenumber,
         );
 
         Object.assign(issueDetails.value, {

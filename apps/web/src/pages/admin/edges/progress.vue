@@ -19,7 +19,7 @@ meta:
       <img
         :src="
           getImagePath(
-            `flags/${mostWantedIssue.publicationcode.split('/')[0]}.png`
+            `flags/${mostWantedIssue.publicationcode.split('/')[0]}.png`,
           )
         "
       />
@@ -37,7 +37,7 @@ meta:
     >
       <div
         v-for="[publicationcode, issuenumbers] in Object.entries(
-          publishedEdges
+          publishedEdges,
         )"
         :key="publicationcode"
         v-memo="[
@@ -55,7 +55,7 @@ meta:
           @click="
             showEdgesForPublication.splice(
               showEdgesForPublication.indexOf(publicationcode),
-              1
+              1,
             )
           "
         />
@@ -105,7 +105,7 @@ meta:
           Object.keys(publishedEdges).reduce(
             (acc, publicationcode) =>
               acc + publishedEdges[publicationcode].length,
-            0
+            0,
           )
         }}
         tranches prêtes.</b
@@ -123,9 +123,10 @@ meta:
 </template>
 
 <script setup lang="ts">
-import { dmSocketInjectionKey } from "../../../composables/useDmSocket";
 import { BookcaseEdgeWithPopularity } from "~/stores/bookcase";
 import { WantedEdge } from "~dm-types/WantedEdge";
+
+import { dmSocketInjectionKey } from "../../../composables/useDmSocket";
 
 const { getImagePath } = images();
 
@@ -164,11 +165,11 @@ const inducksIssueNumbersNoSpace = $computed(() =>
     (acc, publicationcode) => ({
       ...acc,
       [publicationcode]: Object.values(issueNumbers.value[publicationcode]).map(
-        (issuenumber) => issuenumber.replace(/ /g, "")
+        (issuenumber) => issuenumber.replace(/ /g, ""),
       ),
     }),
-    {}
-  )
+    {},
+  ),
 );
 
 const sortedBookcase = computed(() =>
@@ -193,8 +194,8 @@ const sortedBookcase = computed(() =>
           sprites: [],
         })) || [],
     }),
-    {}
-  )
+    {},
+  ),
 );
 
 (async () => {
@@ -203,7 +204,7 @@ const sortedBookcase = computed(() =>
       ...mostWantedIssue,
       country: mostWantedIssue.publicationcode.split("/")[0],
       magazine: mostWantedIssue.publicationcode.split("/")[1],
-    })
+    }),
   );
 
   publishedEdges = (await edgesServices.getPublishedEdges()).reduce(
@@ -211,7 +212,7 @@ const sortedBookcase = computed(() =>
       ...acc,
       [publicationcode]: [...(acc[publicationcode] || []), issuenumber],
     }),
-    {} as Record<string, string[]>
+    {} as Record<string, string[]>,
   );
 
   await fetchPublicationNames([

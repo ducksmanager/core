@@ -1,8 +1,9 @@
-import { dmSocketInjectionKey } from "../composables/useDmSocket";
 import CoaServices from "~dm-services/coa/types";
 import CollectionServices from "~dm-services/collection/types";
 import { authorUser } from "~prisma-clients/client_dm";
 import { EventReturnType } from "~socket.io-services/types";
+
+import { dmSocketInjectionKey } from "../composables/useDmSocket";
 
 export const stats = defineStore("stats", () => {
   const {
@@ -13,18 +14,18 @@ export const stats = defineStore("stats", () => {
   const ratings = ref(
     undefined as
       | EventReturnType<CollectionServices["getWatchedAuthors"]>
-      | undefined
+      | undefined,
   );
   const isSearching = ref(false as boolean);
   const isLoadingWatchedAuthors = ref(false as boolean);
   const authorSearchResults = ref(
-    undefined as EventReturnType<CoaServices["searchAuthor"]> | undefined
+    undefined as EventReturnType<CoaServices["searchAuthor"]> | undefined,
   );
   const pendingSearch = ref(null as string | null);
 
   const isAuthorWatched = (personcode: string) =>
     ratings.value?.some(
-      ({ personcode: watchedPersonCode }) => personcode === watchedPersonCode
+      ({ personcode: watchedPersonCode }) => personcode === watchedPersonCode,
     );
 
   const loadRatings = async (afterUpdate = false) => {
