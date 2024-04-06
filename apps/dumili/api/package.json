@@ -13,7 +13,7 @@
     "prisma": "prisma db pull && prisma generate"
   },
   "dependencies": {
-    "@prisma/client": "^5.11.0",
+    "@prisma/client": "^5.12.1",
     "@sentry/node": "^7.109.0",
     "axios": "^1.6.8",
     "body-parser": "^1.20.2",
@@ -39,15 +39,15 @@
     "@types/express": "^4.17.21",
     "@types/i18n": "^0.13.10",
     "@types/jsonwebtoken": "^9.0.6",
-    "@types/node": "^18.19.28",
+    "@types/node": "^18.19.30",
     "concurrently": "^8.2.2",
     "eslint": "^8.57.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-simple-import-sort": "^12.0.0",
     "eslint-plugin-unused-imports": "^3.1.0",
-    "prisma": "^5.11.0",
-    "tsx": "^4.7.1",
-    "typescript": "^5.4.3",
-    "typescript-eslint": "^7.4.0"
+    "prisma": "^5.12.1",
+    "tsx": "^4.7.2",
+    "typescript": "^5.4.4",
+    "typescript-eslint": "^7.5.0"
   }
 }
