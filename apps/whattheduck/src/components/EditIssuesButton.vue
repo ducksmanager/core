@@ -1,5 +1,5 @@
 <template>
-  <ion-fab slot="fixed" vertical="bottom" horizontal="end">
+  <ion-fab ref="fab" slot="fixed" vertical="bottom" horizontal="end">
     <ion-fab-button>
       <ion-icon :ios="pencilOutline" :md="pencilSharp" />
     </ion-fab-button>
@@ -59,6 +59,8 @@ import {
   calendarSharp,
 } from 'ionicons/icons';
 
+const fab = ref<HTMLIonFabElement | null>(null);
+
 const { t } = useI18n();
 const router = useRouter();
 const route = useRoute();
@@ -87,6 +89,10 @@ const pickCoverFile = async () => {
     console.log(response.body);
   }
 };
+
+watch(route, () => {
+  nextTick(() => (fab.value!.activated = false));
+});
 </script>
 
 <style lang="scss">

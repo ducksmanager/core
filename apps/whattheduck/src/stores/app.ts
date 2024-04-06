@@ -2,11 +2,12 @@ import { defineStore } from 'pinia';
 import type { NotEmptyStorageValue } from '~socket.io-client-services';
 
 import usePersistedData from '~/composables/usePersistedData';
+import { dmSocketInjectionKey } from '~web/src/composables/useDmSocket';
 
 export const app = defineStore('app', () => {
   const {
     coa: { socket: coaSocket },
-  } = injectLocal('dmSocket') as ReturnType<typeof useDmSocket>;
+  } = injectLocal(dmSocketInjectionKey)!;
 
   const isOfflineMode = ref(false);
   setInterval(() => {

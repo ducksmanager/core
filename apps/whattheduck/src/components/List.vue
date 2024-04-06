@@ -50,7 +50,7 @@
         v-if="itemInCenterOfViewport"
         id="scroll-text"
         slot="fixed"
-        :style="{ top: scrollPositionPct + '%' }"
+        :style="{ top: `${scrollPositionPct}%` }"
       >
         {{ getItemTextFn(itemInCenterOfViewport) }}
       </div>

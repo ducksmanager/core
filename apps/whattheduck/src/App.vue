@@ -17,6 +17,7 @@ import { wtdcollection } from './stores/wtdcollection';
 
 import type { RouteMeta } from '~/router';
 import { Storage } from '@ionic/storage';
+import { dmSocketInjectionKey } from '~web/src/composables/useDmSocket';
 
 const session = {
     getToken: async () => token.value,
@@ -48,7 +49,7 @@ const dmSocket = useDmSocket({
   onConnectError,
 });
 
-provideLocal('dmSocket', dmSocket);
+provideLocal(dmSocketInjectionKey, dmSocket);
 
 const { isOfflineMode, token, isDataLoaded, socketCache } = storeToRefs(app());
 

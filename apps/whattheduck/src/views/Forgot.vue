@@ -35,9 +35,11 @@
 </template>
 
 <script setup lang="ts">
+import { dmSocketInjectionKey } from '~web/src/composables/useDmSocket';
+
 const {
   auth: { services: authServices },
-} = injectLocal('dmSocket') as ReturnType<typeof useDmSocket>;
+} = injectLocal(dmSocketInjectionKey)!;
 
 const { t } = useI18n();
 

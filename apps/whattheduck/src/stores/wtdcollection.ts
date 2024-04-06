@@ -3,12 +3,17 @@ import type { purchase } from '~prisma-clients/client_dm';
 import { stores as webStores, composables as webComposables } from '~web';
 
 import usePersistedData from '~/composables/usePersistedData';
+import { dmSocketInjectionKey } from '~web/src/composables/useDmSocket';
 
 export type purchaseWithStringDate = Omit<purchase, 'date' | 'userId'> & {
   date: string;
 };
 
 export const wtdcollection = defineStore('wtdcollection', () => {
+  const {
+    coa: { services: coaServices },
+  } = injectLocal(dmSocketInjectionKey)!;
+
   const coaStore = webStores.coa();
   const webCollectionStore = webStores.collection();
   const { issues, purchases, user } = storeToRefs(webCollectionStore);
@@ -17,10 +22,6 @@ export const wtdcollection = defineStore('wtdcollection', () => {
   const { quotedIssues, quotationSum } = webComposables.useCollection(issues);
 
   const isDataLoaded = ref(false);
-
-  const {
-    coa: { services: coaServices },
-  } = injectLocal('dmSocket') as ReturnType<typeof useDmSocket>;
 
   const { findInCollection, loadCollection, loadPurchases, loadUser, login, signup } = webCollectionStore;
 
