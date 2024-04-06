@@ -6,29 +6,34 @@
 import Cookies from "js-cookie";
 import { stores as webStores } from "~web";
 
-import {
-  buildWebStorage,
-  cacheStorage,
-  session,
-} from "~socket.io-client-services";
+import { buildWebStorage } from "~socket.io-client-services";
+import { dmSocketInjectionKey } from "~web/src/composables/useDmSocket";
 
 const { loadUser } = webStores.collection();
 const { user, isLoadingUser } = storeToRefs(webStores.collection());
 
-onBeforeMount(() => {
-  session.value = {
+const session = {
     getToken: () => Promise.resolve(Cookies.get("token")),
-    clearSession: () => {}, // Promise.resolve(Cookies.remove("token")),
+    clearSession: () => Promise.resolve(Cookies.remove("token")),
     sessionExists: () =>
       Promise.resolve(typeof Cookies.get("token") === "string"),
-    onConnectError: async () => {
-      await session.value!.clearSession();
-      isLoadingUser.value = false;
-      user.value = null;
-    },
-  };
-  cacheStorage.value = buildWebStorage(sessionStorage);
+  },
+  onConnectError = async () => {
+    await session.clearSession();
+    isLoadingUser.value = false;
+    user.value = null;
+  },
+  cacheStorage = buildWebStorage(sessionStorage);
 
+const dmSocket = useDmSocket({
+  cacheStorage,
+  session,
+  onConnectError,
+});
+
+provideLocal(dmSocketInjectionKey, dmSocket);
+
+onBeforeMount(() => {
   loadUser();
 });
 </script>

@@ -46,7 +46,17 @@ export default defineConfig({
 
     // https://github.com/antfu/unplugin-auto-import
     AutoImport({
-      imports: ["pinia", "vue", "vue/macros", "vue-router", "vue-i18n"],
+      eslintrc: {
+        enabled: true,
+      },
+      imports: [
+        "pinia",
+        "vue",
+        "vue/macros",
+        "vue-router",
+        "vue-i18n",
+        "@vueuse/core",
+      ],
       dts: true,
       dirs: [
         "./src/composables",
