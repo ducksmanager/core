@@ -2,7 +2,7 @@
   <div>
     {{
       $t(
-        "Cette page vous permet de trouver près de chez vous des bouquineries qui proposent fréquemment des magazines Disney.",
+        "Cette page vous permet de trouver près de chez vous des bouquineries qui proposent fréquemment des magazines Disney."
       )
     }}
     <br /><br />
@@ -38,7 +38,7 @@
                       creationDate,
                       comment,
                     } in currentBookstore.comments.filter(
-                      ({ creationDate }) => creationDate,
+                      ({ creationDate }) => creationDate
                     )"
                     :key="`bookstore-${currentBookstore.id}-comment-${creationDate}`"
                     class="mb-2"
@@ -60,7 +60,7 @@
                     {{ $t("Un e-mail vient d'être envoyé au webmaster.") }}
                     {{
                       $t(
-                        "Si votre commentaire est valide, il sera ajouté sur le site très prochainement.",
+                        "Si votre commentaire est valide, il sera ajouté sur le site très prochainement."
                       )
                     }}
                     {{ $t("Merci pour votre contribution !") }}
@@ -113,19 +113,19 @@
     </h2>
     {{
       $t(
-        "Vous connaissez une bouquinerie sympa ? Faites-en profiter d'autres collectionneurs !",
+        "Vous connaissez une bouquinerie sympa ? Faites-en profiter d'autres collectionneurs !"
       )
     }}
     <br />
     {{
       $t(
-        "Entrez ci-dessous les informations sur la bouquinerie que vous connaissez, puis entrez des exemples de prix de magazines.",
+        "Entrez ci-dessous les informations sur la bouquinerie que vous connaissez, puis entrez des exemples de prix de magazines."
       )
     }}
     <br />
     {{
       $t(
-        "Nous comptons sur votre honnêteté concernant les prix si vous en mentionnez.",
+        "Nous comptons sur votre honnêteté concernant les prix si vous en mentionnez."
       )
     }}
     <br />
@@ -134,7 +134,7 @@
       {{ $t("Un e-mail vient d'être envoyé au webmaster.") }}
       {{
         $t(
-          "Si votre bouquinerie est valide, elle sera ajoutée sur le site très prochainement.",
+          "Si votre bouquinerie est valide, elle sera ajoutée sur le site très prochainement."
         )
       }}
       {{ $t("Merci pour votre contribution !") }}
@@ -172,11 +172,12 @@
 import MapboxGeocoder from "@mapbox/mapbox-gl-geocoder";
 import { MapboxMap, MapboxMarker, MapboxPopup } from "vue-mapbox-ts";
 
+import { dmSocketInjectionKey } from "../composables/useDmSocket";
 import { SimpleBookstore } from "~dm-types/SimpleBookstore";
 
 const {
   bookstore: { services: bookstoreServices },
-} = injectLocal("dmSocket") as ReturnType<typeof useDmSocket>;
+} = injectLocal(dmSocketInjectionKey)!;
 
 const { fetchStats } = users();
 const { stats: userStats } = storeToRefs(users());
@@ -211,8 +212,8 @@ const bookstoreCommentsUserIds = $computed(
             .filter((userId) => userId !== null) as number[]),
         ]),
       ],
-      [] as number[],
-    ) || null,
+      [] as number[]
+    ) || null
 );
 
 const decodeText = (value: string) => {
@@ -238,8 +239,8 @@ const suggestComment = async (bookstore: SimpleBookstore) => {
   if (!bookstore.id && !bookstore.coordX) {
     window.alert(
       $t(
-        'Vous devez sélectionner une adresse dans la liste lorsque vous l\'entrez dans le champ "Adresse"',
-      ),
+        'Vous devez sélectionner une adresse dans la liste lorsque vous l\'entrez dans le champ "Adresse"'
+      )
     );
     return false;
   }
@@ -276,7 +277,7 @@ watch(
       await fetchStats(value);
     }
   },
-  { immediate: true },
+  { immediate: true }
 );
 
 const geocoder = new MapboxGeocoder({

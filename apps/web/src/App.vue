@@ -7,8 +7,10 @@ import Cookies from "js-cookie";
 
 import { buildWebStorage } from "~socket.io-client-services/index";
 
+import { dmSocketInjectionKey } from "./composables/useDmSocket";
+
 provideLocal(
-  "dmSocket",
+  dmSocketInjectionKey,
   useDmSocket({
     cacheStorage: buildWebStorage(sessionStorage),
     onConnectError: () => {

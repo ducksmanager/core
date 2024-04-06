@@ -7,7 +7,7 @@ meta:
     <b-alert v-if="token" :model-value="true" variant="info">{{
       $t(
         `Si l'e-mail indiqué correspond à un compte DucksManager, un lien permettant de modifier votre mot de passe vient
-      d'y être envoyé. Si l'e-mail ne vous parvient pas d'ici quelques minutes, pensez à vérifier le dossier Spam.`,
+      d'y être envoyé. Si l'e-mail ne vous parvient pas d'ici quelques minutes, pensez à vérifier le dossier Spam.`
       )
     }}</b-alert>
     <form v-else method="post" @submit.prevent="sendPasswordToken">
@@ -17,7 +17,7 @@ meta:
       <div>
         {{
           $t(
-            "Un lien vous permettant de réinitialiser votre mot de passe va être envoyé à l'adresse que vous indiquerez ci-dessous.",
+            "Un lien vous permettant de réinitialiser votre mot de passe va être envoyé à l'adresse que vous indiquerez ci-dessous."
           )
         }}
         <b-form-row>
@@ -45,6 +45,8 @@ meta:
 </template>
 
 <script setup lang="ts">
+import { dmSocketInjectionKey } from "../../composables/useDmSocket";
+
 let error = $ref<string | null>(null);
 
 const email = $ref("" as string);
@@ -53,7 +55,7 @@ const { t: $t } = useI18n();
 
 const {
   auth: { services: authServices },
-} = injectLocal("dmSocket") as ReturnType<typeof useDmSocket>;
+} = injectLocal(dmSocketInjectionKey)!;
 
 const sendPasswordToken = async () => {
   const response = await authServices.requestTokenForForgotPassword(email);

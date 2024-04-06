@@ -29,7 +29,8 @@ export default abstract class {
     callback: (value: Record<string, string>) => void,
   ) => void;
 
-  abstract getAllIssuesWithTitles: (
+  abstract getIssuesWithTitles: (
+    publicationcodes: string[],
     callback: (
       value: Record<
         string,
@@ -38,15 +39,6 @@ export default abstract class {
           title: string | null;
         }[]
       >,
-    ) => void,
-  ) => void;
-  abstract getIssuesWithTitles: (
-    publicationcode: string,
-    callback: (
-      value: {
-        issuenumber: string;
-        title: string | null;
-      }[],
     ) => void,
   ) => void;
   abstract getIssueDetails: (

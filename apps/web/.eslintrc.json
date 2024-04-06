@@ -43,6 +43,6 @@
     "**/dist",
     "shims.d.ts",
     "auto-imports.d.ts",
-    "component.d.ts"
+    "components.d.ts"
   ]
 }

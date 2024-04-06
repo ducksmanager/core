@@ -7,7 +7,7 @@ alias: [/auteurs]
     <b-alert v-if="!ratings.length" :model-value="true" variant="warning">
       {{
         $t(
-          "Aucun auteur surveillé. Ajoutez vos auteurs préférés ci-dessous pour savoir quel pourcentage de leurs histoires vous possédez.",
+          "Aucun auteur surveillé. Ajoutez vos auteurs préférés ci-dessous pour savoir quel pourcentage de leurs histoires vous possédez."
         )
       }}
     </b-alert>
@@ -21,7 +21,7 @@ alias: [/auteurs]
       >
         {{
           $t(
-            "Les calculs n'ont pas encore été effectués. Les statistiques sont générées quotidiennement, revenez demain !",
+            "Les calculs n'ont pas encore été effectués. Les statistiques sont générées quotidiennement, revenez demain !"
           )
         }}
       </b-alert>
@@ -68,6 +68,7 @@ import {
 } from "chart.js";
 import { Bar } from "vue-chartjs";
 
+import { dmSocketInjectionKey } from "../../composables/useDmSocket";
 import StatsServices from "~dm-services/stats/types";
 import { EventReturnType } from "~socket.io-services/types";
 
@@ -78,7 +79,7 @@ Chart.register(
   LinearScale,
   BarController,
   Tooltip,
-  Title,
+  Title
 );
 
 const { t: $t } = useI18n();
@@ -88,7 +89,7 @@ const { ratings } = storeToRefs(stats());
 
 const {
   stats: { services: statsServices },
-} = injectLocal("dmSocket") as ReturnType<typeof useDmSocket>;
+} = injectLocal(dmSocketInjectionKey)!;
 
 const unitTypes = {
   number: $t("Afficher en valeurs réelles"),
@@ -96,7 +97,7 @@ const unitTypes = {
 };
 
 let watchedAuthorsStoryCount = $ref(
-  null as EventReturnType<StatsServices["getWatchedAuthorsStats"]> | null,
+  null as EventReturnType<StatsServices["getWatchedAuthorsStats"]> | null
 );
 let unitTypeCurrent = $ref("number");
 let width = $ref(null as string | null),
@@ -107,7 +108,7 @@ let width = $ref(null as string | null),
 const labels = $computed(
   () =>
     watchedAuthorsStoryCount &&
-    watchedAuthorsStoryCount.map(({ fullname: fullName }) => fullName),
+    watchedAuthorsStoryCount.map(({ fullname: fullName }) => fullName)
 );
 
 const changeWidth = (value: number) => {
@@ -119,20 +120,20 @@ watch(
   (newValue) => {
     if (newValue && watchedAuthorsStoryCount) {
       let ownedStories = watchedAuthorsStoryCount.map(
-        ({ storyCount, missingStoryCount }) => storyCount - missingStoryCount,
+        ({ storyCount, missingStoryCount }) => storyCount - missingStoryCount
       );
       let missingStories = watchedAuthorsStoryCount.map(
-        ({ missingStoryCount }) => missingStoryCount,
+        ({ missingStoryCount }) => missingStoryCount
       );
 
       if (unitTypeCurrent === "percentage") {
         ownedStories = ownedStories.map((possessedCount, key) =>
           Math.round(
-            possessedCount * (100 / (possessedCount + missingStories[key])),
-          ),
+            possessedCount * (100 / (possessedCount + missingStories[key]))
+          )
         );
         missingStories = ownedStories.map(
-          (possessedCount) => 100 - possessedCount,
+          (possessedCount) => 100 - possessedCount
         );
       }
 
@@ -185,7 +186,7 @@ watch(
       };
     }
   },
-  { immediate: true },
+  { immediate: true }
 );
 
 (async () => {

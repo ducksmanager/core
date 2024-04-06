@@ -17,7 +17,7 @@ import StatsServices from "~dm-services/stats/types";
 import type { AxiosStorage } from "~socket.io-client-services";
 import { useSocket } from "~socket.io-client-services";
 
-export default (options: {
+const defaultExport = (options: {
   cacheStorage: AxiosStorage;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   onConnectError: (e: any, namespace: string) => Promise<void> | void;
@@ -107,3 +107,9 @@ export default (options: {
     }),
   };
 };
+
+export default defaultExport;
+
+export const dmSocketInjectionKey = Symbol() as InjectionKey<
+  ReturnType<typeof defaultExport>
+>;

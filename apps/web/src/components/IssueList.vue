@@ -606,7 +606,7 @@ const loadIssues = async () => {
         ).value,
       }));
 
-    await fetchIssueNumbersWithTitles(publicationcode);
+    await fetchIssueNumbersWithTitles([publicationcode]);
 
     const coaIssues = issuesWithTitles.value[publicationcode];
     if (groupUserCopies) {

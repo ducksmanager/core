@@ -28,7 +28,7 @@ meta:
     <p>
       {{
         $t(
-          "DucksManager utilise la base de données Inducks pour lister les numéros référencés pour chacun des magazines Disney.",
+          "DucksManager utilise la base de données Inducks pour lister les numéros référencés pour chacun des magazines Disney."
         )
       }}
     </p>
@@ -36,14 +36,14 @@ meta:
       <span
         v-html="
           $t(
-            `Si vous possédez déjà une collection Inducks, vous pouvez <b>l'importer sur DucksManager en quelques clics.</b>`,
+            `Si vous possédez déjà une collection Inducks, vous pouvez <b>l'importer sur DucksManager en quelques clics.</b>`
           )
         "
       /><br />
       {{
         $t(
           'Pour cela, créez une nouvelle collection DucksManager ou connectez-vous à votre collection DucksManager existante, puis sélectionnez "{0}" dans le menu.',
-          [$t("Collection Inducks")],
+          [$t("Collection Inducks")]
         )
       }}
     </p>
@@ -77,7 +77,7 @@ meta:
       <div>
         {{
           $t(
-            "Cette page vous permet d'importer votre collection Inducks dans DucksManager.",
+            "Cette page vous permet d'importer votre collection Inducks dans DucksManager."
           )
         }}
       </div>
@@ -86,7 +86,7 @@ meta:
         <li>
           {{
             $t(
-              "Sur l'écran de gauche, connectez-vous, si ce n'est déjà fait, sur Inducks.",
+              "Sur l'écran de gauche, connectez-vous, si ce n'est déjà fait, sur Inducks."
             )
           }}
         </li>
@@ -129,7 +129,7 @@ meta:
       <div v-if="hasPublicationNames" role="tablist">
         <Accordion
           v-for="(publicationIssues, publicationcode) in groupByPublicationCode(
-            issuesImportable,
+            issuesImportable
           )"
           :id="String(publicationcode).replace('/', '-')"
           :key="String(publicationcode).replace('/', '-')"
@@ -165,7 +165,7 @@ meta:
           {{ issuesAlreadyInCollection.length }}
           {{
             $t(
-              "numéros ne peuvent pas être importés car vous les possédez déjà dans votre collection.",
+              "numéros ne peuvent pas être importés car vous les possédez déjà dans votre collection."
             )
           }}
         </div>
@@ -208,7 +208,7 @@ meta:
           {{ issuesNotReferenced.length }}
           {{
             $t(
-              "numéros ne peuvent pas être importés car ils n'existent plus sur Inducks.",
+              "numéros ne peuvent pas être importés car ils n'existent plus sur Inducks."
             )
           }}
         </div>
@@ -280,6 +280,7 @@ meta:
 </template>
 
 <script setup lang="ts">
+import { dmSocketInjectionKey } from "../../composables/useDmSocket";
 import type { inducks_issue } from "~prisma-clients/client_coa";
 
 const { getImagePath } = images();
@@ -299,7 +300,7 @@ let importProgress = $ref(0 as number);
 
 const {
   collection: { services: collectionServices },
-} = injectLocal("dmSocket") as ReturnType<typeof useDmSocket>;
+} = injectLocal(dmSocketInjectionKey)!;
 
 const { t: $t } = useI18n();
 
@@ -314,7 +315,7 @@ const conditions = {
   bon: $t("En bon état"),
 };
 const importDataReady = $computed(
-  () => issuesToImport && issues.value && hasIssueNumbers,
+  () => issuesToImport && issues.value && hasIssueNumbers
 );
 const router = useRouter();
 const processRawData = async () => {
@@ -332,7 +333,7 @@ const processRawData = async () => {
     .filter((issueCode) => issueCodeDetails.value![issueCode])
     .reduce(
       (acc, issueCode) => [...acc, issueCodeDetails.value![issueCode]],
-      [] as inducks_issue[],
+      [] as inducks_issue[]
     );
   if (issues.length) {
     issuesToImport = issues;
@@ -352,12 +353,12 @@ const groupByPublicationCode = (issues: inducks_issue[]) =>
         ]),
       ],
     }),
-    {} as Record<Publicationcode, string[]>,
+    {} as Record<Publicationcode, string[]>
   );
 
 const importIssues = async () => {
   const importableIssuesByPublicationCode = groupByPublicationCode(
-    issuesImportable as inducks_issue[],
+    issuesImportable as inducks_issue[]
   );
   for (const publicationcode in importableIssuesByPublicationCode) {
     if (importableIssuesByPublicationCode.hasOwnProperty(publicationcode)) {
@@ -386,7 +387,7 @@ watch($$(importDataReady), (newValue) => {
       const { publicationcode, issuenumber } = issue;
       if (
         !issueNumbers.value[publicationcode!].includes(
-          issuenumber!.replace(/[ ]+/g, " "),
+          issuenumber!.replace(/[ ]+/g, " ")
         )
       )
         issuesNotReferenced!.push(issue);
@@ -405,7 +406,7 @@ watch($$(issuesToImport), async (newValue) => {
   }
   const publicationCodes = newValue.reduce(
     (acc, { publicationcode }) => [...acc, publicationcode!],
-    [] as string[],
+    [] as string[]
   );
   await fetchPublicationNames(publicationCodes);
   hasPublicationNames = true;

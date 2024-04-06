@@ -43,6 +43,6 @@ module.exports = {
     "shims.d.ts",
     "vendor",
     "auto-imports.d.ts",
-    "component.d.ts"
+    "components.d.ts"
   ]
 };

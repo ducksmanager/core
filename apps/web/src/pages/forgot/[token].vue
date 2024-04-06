@@ -31,6 +31,8 @@ meta:
 <script setup lang="ts">
 import Cookies from "js-cookie";
 
+import { dmSocketInjectionKey } from "../../composables/useDmSocket";
+
 const router = useRouter();
 const { loadUser } = collection();
 const { user } = storeToRefs(collection());
@@ -45,7 +47,7 @@ const { t: $t } = useI18n();
 
 const {
   auth: { services: authServices },
-} = injectLocal("dmSocket") as ReturnType<typeof useDmSocket>;
+} = injectLocal(dmSocketInjectionKey)!;
 
 const changePassword = async () => {
   const response = await authServices.changePassword({
@@ -74,6 +76,6 @@ watch(
       await router.push("/collection");
     }
   },
-  { immediate: true },
+  { immediate: true }
 );
 </script>

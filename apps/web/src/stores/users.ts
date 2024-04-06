@@ -1,3 +1,4 @@
+import { dmSocketInjectionKey } from "../composables/useDmSocket";
 import GlobalStatsServices from "~dm-services/global-stats/types";
 import { BookcaseContributor } from "~dm-types/BookcaseContributor";
 import { AbstractEvent } from "~dm-types/events/AbstractEvent";
@@ -7,19 +8,19 @@ export const users = defineStore("users", () => {
   const {
     events: { services: eventsServices },
     globalStats: { services: globalStatsServices },
-  } = injectLocal("dmSocket") as ReturnType<typeof useDmSocket>;
+  } = injectLocal(dmSocketInjectionKey)!;
   const count = ref(
-      null as EventReturnType<GlobalStatsServices["getUserCount"]> | null,
+      null as EventReturnType<GlobalStatsServices["getUserCount"]> | null
     ),
     stats = ref(
       {} as EventReturnType<
         GlobalStatsServices["getUsersPointsAndStats"]
-      >["stats"],
+      >["stats"]
     ),
     points = ref(
       {} as EventReturnType<
         GlobalStatsServices["getUsersPointsAndStats"]
-      >["points"],
+      >["points"]
     ),
     events = ref([] as AbstractEvent[]),
     bookcaseContributors = ref(null as BookcaseContributor[] | null),
@@ -33,7 +34,7 @@ export const users = defineStore("users", () => {
         (userId) =>
           !Object.keys(points.value)
             .map((userIdHavingPoints) => parseInt(userIdHavingPoints))
-            .includes(userId),
+            .includes(userId)
       );
       if (!missingUserIds.length) return;
 
@@ -57,7 +58,7 @@ export const users = defineStore("users", () => {
     fetchEvents = async () => {
       events.value = (await eventsServices.getEvents())
         .sort(({ timestamp: timestamp1 }, { timestamp: timestamp2 }) =>
-          Math.sign(timestamp2 - timestamp1),
+          Math.sign(timestamp2 - timestamp1)
         )
         .filter((_, index) => index < 50);
     };
