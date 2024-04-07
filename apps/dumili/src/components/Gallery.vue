@@ -39,14 +39,11 @@ const emit = defineEmits<{
 
 const selectedUrl = ref<string | undefined>(undefined);
 
-watch(
-  () => selectedUrl.value,
-  (url) => {
-    if (url) {
-      emit("selected", url);
-    }
-  },
-);
+watch(selectedUrl, (url) => {
+  if (url) {
+    emit("selected", url);
+  }
+});
 </script>
 <style scoped lang="scss">
 .col {

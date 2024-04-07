@@ -59,15 +59,12 @@ const runSearch = async (value: string) => {
   }
 };
 
-watch(
-  () => search.value,
-  async (newValue) => {
-    if (newValue) {
-      pendingSearch.value = newValue;
-      if (!isSearching.value) await runSearch(newValue);
-    }
-  },
-);
+watch(search, async (newValue) => {
+  if (newValue) {
+    pendingSearch.value = newValue;
+    if (!isSearching.value) await runSearch(newValue);
+  }
+});
 </script>
 
 <style scoped lang="scss">

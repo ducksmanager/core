@@ -63,18 +63,15 @@ const stepNumber = ref(0);
 const uploadType = ref<"all" | "some" | null>(null);
 const showUploadWidget = ref(false);
 
-watch(
-  () => uploadType.value,
-  (newUploadType) => {
-    if (newUploadType !== null) {
-      stepNumber.value = 1;
-      showUploadWidget.value = true;
-      cloudinaryFolderName.value = new Date()
-        .toISOString()
-        .replace(/[-:.Z]/g, "");
-    }
-  },
-);
+watch(uploadType, (newUploadType) => {
+  if (newUploadType !== null) {
+    stepNumber.value = 1;
+    showUploadWidget.value = true;
+    cloudinaryFolderName.value = new Date()
+      .toISOString()
+      .replace(/[-:.Z]/g, "");
+  }
+});
 
 (async () => {
   const { error, indexations } = await indexationsEvents.getIndexations();

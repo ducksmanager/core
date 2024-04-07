@@ -33,7 +33,12 @@
       v-if="currentIssueNumber !== undefined"
       variant="success"
       :disabled="!isValid"
-      @click="emit('change', {publicationcode: currentPublicationCode!, issuenumber: currentIssueNumber})"
+      @click="
+        emit('change', {
+          publicationcode: currentPublicationCode!,
+          issuenumber: currentIssueNumber,
+        })
+      "
       >OK</b-button
     >
     <slot v-if="$slots.dimensions && currentIssueNumber !== null" />
@@ -49,7 +54,7 @@ const emit =
   defineEmits<
     (
       e: "change",
-      data?: { publicationcode: string | null; issuenumber: string | null },
+      data?: { publicationcode: string | null; issuenumber: string | null }
     ) => void
   >();
 
@@ -63,7 +68,7 @@ const props = withDefaults(
     countryCode: undefined,
     publicationCode: undefined,
     issueCode: undefined,
-  },
+  }
 );
 
 const currentCountryCode = ref<string | undefined>(undefined);
@@ -79,31 +84,31 @@ const countryNames = computed(
           value: countrycode,
         }))
         .sort(({ text: text1 }, { text: text2 }) =>
-          (text1 || "").localeCompare(text2),
+          (text1 || "").localeCompare(text2)
         )) ||
-    undefined,
+    undefined
 );
 
 const publicationNamesForCurrentCountry = computed(() =>
   coaStore.publicationNamesFullCountries.includes(
-    currentCountryCode.value || "",
+    currentCountryCode.value || ""
   )
     ? Object.keys(coaStore.publicationNames)
         .filter(
           (publicationcode) =>
-            publicationcode.indexOf(`${currentCountryCode.value}/`) === 0,
+            publicationcode.indexOf(`${currentCountryCode.value}/`) === 0
         )
         .map((publicationcode) => ({
           text: coaStore.publicationNames[publicationcode],
           value: publicationcode,
         }))
         .sort(({ text: text1 }, { text: text2 }) =>
-          (text1 || "").localeCompare(text2 || ""),
+          (text1 || "").localeCompare(text2 || "")
         )
-    : [],
+    : []
 );
 const publicationIssues = computed(
-  () => coaStore.issueNumbers[currentPublicationCode.value!],
+  () => coaStore.issueNumbers[currentPublicationCode.value!]
 );
 
 const issues = computed(
@@ -112,17 +117,17 @@ const issues = computed(
     coaStore.issueNumbers[currentPublicationCode.value!].map((issuenumber) => ({
       value: issuenumber,
       text: issuenumber,
-    })),
+    }))
 );
 
 const isValid = computed(
   () =>
     !!currentIssueNumber.value &&
-    !issues.value?.some(({ value }) => value === currentIssueNumber.value),
+    !issues.value?.some(({ value }) => value === currentIssueNumber.value)
 );
 
 watch(
-  () => currentCountryCode.value,
+  currentCountryCode,
   async (newValue) => {
     if (newValue) {
       currentPublicationCode.value = props.publicationCode!;
@@ -133,18 +138,15 @@ watch(
   },
   {
     immediate: true,
-  },
+  }
 );
 
-watch(
-  () => currentPublicationCode.value,
-  async (newValue) => {
-    if (newValue) {
-      currentIssueNumber.value = undefined;
-      await coaStore.fetchIssueNumbers([newValue]);
-    }
-  },
-);
+watch(currentPublicationCode, async (newValue) => {
+  if (newValue) {
+    currentIssueNumber.value = undefined;
+    await coaStore.fetchIssueNumbers([newValue]);
+  }
+});
 if (props.countryCode) {
   currentCountryCode.value = props.countryCode;
 }

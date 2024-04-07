@@ -5,11 +5,11 @@
       class="d-none"
       :src="indexation.pages[0].url"
       @load="
-      ({ target }) => {
-        coverHeight = (target as HTMLImageElement).naturalHeight;
-        coverWidth = (target as HTMLImageElement).naturalWidth;
-      }
-    "
+        ({ target }) => {
+          coverHeight = (target as HTMLImageElement).naturalHeight;
+          coverWidth = (target as HTMLImageElement).naturalWidth;
+        }
+      "
     />
     <div
       class="start-0 top-0 h-100 d-flex flex-row align-items-center justify-content-space-around"
@@ -41,7 +41,7 @@
                     } ai-results-page-${shownPage.pageNumber}`"
                     :style="{
                       width: `${displayedWidthNoBackground!}px`,
-                      height: `${displayedHeightNoBackground!}px`
+                      height: `${displayedHeightNoBackground!}px`,
                     }"
                   >
                     <div
@@ -53,7 +53,10 @@
                           (acc, key) => ({
                             ...acc,
                             [key]: `${
-                              (panel[key === 'left' ? 'x': (key === 'top' ? 'x' : key)] * displayRatioCropped!) /
+                              (panel[
+                                key === 'left' ? 'x' : key === 'top' ? 'x' : key
+                              ] *
+                                displayRatioCropped!) /
                               naturalToDisplayRatio!
                             }px`,
                           }),
@@ -80,21 +83,28 @@
                         :key="`ocr-match-${id}`"
                         class="position-absolute ocr-match text"
                         :style="{
-                      clipPath: `polygon(${[[x1, y1], [x2, y2], [x3, y3], [x4, y4]]
-                        .map(([x, y]) =>
-                          (['width', 'height'] as const)
-                            .map(
-                              (dimension, idx) =>
-                                `${
-                                  [x, y][idx] /
-                                  (shownPage.aiKumikoResultPanels[0][dimension] /
-                                    100)
-                                }%`
+                          clipPath: `polygon(${[
+                            [x1, y1],
+                            [x2, y2],
+                            [x3, y3],
+                            [x4, y4],
+                          ]
+                            .map(([x, y]) =>
+                              (['width', 'height'] as const)
+                                .map(
+                                  (dimension, idx) =>
+                                    `${
+                                      [x, y][idx] /
+                                      (shownPage.aiKumikoResultPanels[0][
+                                        dimension
+                                      ] /
+                                        100)
+                                    }%`
+                                )
+                                .join(' ')
                             )
-                            .join(' ')
-                        )
-                        .join(',')})`,
-                    }"
+                            .join(',')})`,
+                        }"
                       >
                         {{
                           `polygon(${[
@@ -146,7 +156,7 @@ const naturalAspectRatio = computed(
   () =>
     coverWidth.value &&
     coverHeight.value &&
-    coverWidth.value / coverHeight.value,
+    coverWidth.value / coverHeight.value
 );
 
 const displayedHeightNoBackground = computed(() =>
@@ -154,7 +164,7 @@ const displayedHeightNoBackground = computed(() =>
     ? naturalAspectRatio.value < 1
       ? displayedHeight.value
       : displayedHeight.value! / naturalAspectRatio.value
-    : null,
+    : null
 );
 
 const displayedWidthNoBackground = computed(() =>
@@ -162,7 +172,7 @@ const displayedWidthNoBackground = computed(() =>
     ? naturalAspectRatio.value > 1
       ? displayedWidth.value
       : displayedWidth.value! * naturalAspectRatio.value
-    : null,
+    : null
 );
 
 const shownPages = computed(() =>
@@ -174,26 +184,26 @@ const shownPages = computed(() =>
             .pages.currentSpreadIndex * 2,
         ]),
       ]
-    : [],
+    : []
 );
 
 const displayRatioCropped = computed(
   () =>
     displayedHeight.value &&
     coverHeight.value &&
-    displayedHeight.value / coverHeight.value,
+    displayedHeight.value / coverHeight.value
 );
 
 const naturalToDisplayRatio = computed(
   () =>
     coverWidth.value &&
     displayedWidthNoBackground.value &&
-    coverWidth.value / displayedWidthNoBackground.value,
+    coverWidth.value / displayedWidthNoBackground.value
 );
 
 const firstPanelPosition = (pageUrl: string) => {
   const { x, y, width, height } = indexation.value!.pages.find(
-    ({ url }) => url === pageUrl,
+    ({ url }) => url === pageUrl
   )!.aiKumikoResultPanels?.[0] || { x: 0, y: 0, width: 0, height: 0 };
   return {
     left: x * displayRatioCropped.value!,
@@ -209,27 +219,21 @@ const toPx = (position: Record<string, number>) =>
       ...acc,
       [key]: `${value}px`,
     }),
-    {},
+    {}
   );
 
-watch(
-  () => currentPage.value,
-  (newValue) => {
-    if (book.value) {
-      book.value.flip(newValue);
-    }
-  },
-);
+watch(currentPage, (newValue) => {
+  if (book.value) {
+    book.value.flip(newValue);
+  }
+});
 
-watch(
-  () => coverWidth.value,
-  (newValue) => {
-    const availableWidthPerPage = document.body.clientWidth / 2 - 15;
-    if (newValue && newValue > availableWidthPerPage) {
-      coverHeight.value! /= newValue / availableWidthPerPage;
-    }
-  },
-);
+watch(coverWidth, (newValue) => {
+  const availableWidthPerPage = document.body.clientWidth / 2 - 15;
+  if (newValue && newValue > availableWidthPerPage) {
+    coverHeight.value! /= newValue / availableWidthPerPage;
+  }
+});
 
 nextTick(() => {
   watch(
@@ -246,7 +250,7 @@ nextTick(() => {
             showCover: true,
             usePortrait: false,
             mobileScrollSupport: false,
-          },
+          }
         );
         book.value.loadFromHTML(document.querySelectorAll(".page"));
 
@@ -255,7 +259,7 @@ nextTick(() => {
         });
       }
     },
-    { immediate: true },
+    { immediate: true }
   );
 });
 </script>

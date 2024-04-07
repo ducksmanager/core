@@ -98,7 +98,7 @@
             @click="
               if (entry !== currentEntry)
                 currentPage = firstPageOfEntry(
-                  entry.entryPages.map(({ pageId }) => pageId),
+                  entry.entryPages.map(({ pageId }) => pageId)
                 );
             "
             ><Entry
@@ -107,7 +107,7 @@
                 entry.entryPages.some(({ pageId }) =>
                   shownPages
                     .map((shownPage) => indexation.pages[shownPage].id)
-                    .includes(pageId),
+                    .includes(pageId)
                 )
               "
           /></b-col>
@@ -153,7 +153,7 @@ watch(
       pageIds: entry.entryPages.map(({ pageId }) => pageId),
     }));
   },
-  { immediate: true },
+  { immediate: true }
 );
 
 const createEntry = async (idx: number) => {
@@ -175,20 +175,20 @@ const createEntry = async (idx: number) => {
 
 const firstPageOfEntry = (pageIds: number[]) =>
   indexation.value.pages.find(({ id }) =>
-    pageIds.some((pageId) => pageId === id),
+    pageIds.some((pageId) => pageId === id)
   )!.pageNumber - 1;
 
 watch(
-  () => currentPage.value,
+  currentPage,
   () => {
     const currentPageId = indexation.value.pages.find(
-      ({ pageNumber }) => pageNumber === currentPage.value! + 1,
+      ({ pageNumber }) => pageNumber === currentPage.value! + 1
     )!.id;
     currentEntry.value = indexation.value.entries.find(({ entryPages }) =>
-      entryPages.some(({ pageId }) => pageId === currentPageId),
+      entryPages.some(({ pageId }) => pageId === currentPageId)
     )!;
   },
-  { immediate: true },
+  { immediate: true }
 );
 </script>
 
