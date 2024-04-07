@@ -12,16 +12,17 @@ export const getOwnershipPercentages = (
       [key]: {
         total: totals[key],
         ownership: ownerships[key] || 0,
-        ownershipPercentage: ownerships[key] ? Math.max(0.1 / 100, ownerships[key] / (totals[key] || 1)) : 0,
+        ownershipPercentage: ownerships[key] ? ownerships[key] / (totals[key] || 1) : 0,
       },
     }),
     {},
   );
 
+const getOwnershipPercentageString = (ownershipPercentage: number) =>
+  ownershipPercentage === 0 ? '0' : ownershipPercentage < 0.1 / 100 ? '< 0.1' : (100 * ownershipPercentage).toFixed(1);
+
 export const getOwnershipText = (
   { ownership, ownershipPercentage, total }: OwnershipWithPercentage,
   withPercentage: boolean = true,
 ): string =>
-  withPercentage
-    ? `${ownership} (${ownershipPercentage! < 0.1 / 100 ? '< 0.1' : (100 * ownershipPercentage)!.toFixed(1)}%)`
-    : `${ownership} / ${total}`;
+  `${ownership} ${withPercentage ? `(${getOwnershipPercentageString(ownershipPercentage)}%)` : `/ ${total}`}`;
