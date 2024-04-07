@@ -1,6 +1,6 @@
 <template>
-  <ion-item button :class="{ 'is-next-owned': isNextOwned, 'is-owned': fillPercentage }">
-    <ion-progress-bar v-if="fillPercentage" :value="fillPercentage" />
+  <ion-item button :class="{ 'is-next-owned': isNextOwned, 'is-owned': isOwned }">
+    <slot name="fill-bar" />
     <slot name="checkbox" />
     <ion-label class="text">
       <slot name="prefix" />
@@ -14,8 +14,16 @@
 
 <script setup lang="ts">
 defineProps<{
-  fillPercentage?: number;
+  isOwned?: boolean;
   isNextOwned?: boolean;
+}>();
+
+defineSlots<{
+  'fill-bar'(): any;
+  'checkbox'(): any;
+  'prefix'(): any;
+  'label'(): any;
+  'suffix'(): any;
 }>();
 </script>
 
@@ -36,60 +44,6 @@ ion-item {
         font-weight: bold;
       }
     }
-  }
-  &.is-next-owned {
-    &:deep(.dm-condition-background)::after,
-    + ion-item:deep(.dm-condition-background)::before {
-      position: absolute;
-      width: 2px;
-      margin-left: 6px;
-      height: 50%;
-      content: ' ';
-    }
-
-    :deep(.dm-condition-background) {
-      @each $condition, $conditionColor in $dmConditions {
-        &.#{$condition}::after {
-          background: $conditionColor;
-        }
-      }
-      &::after {
-        bottom: 0;
-      }
-    }
-
-    + ion-item {
-      :deep(.dm-condition-background) {
-        @each $condition, $conditionColor in $dmConditions {
-          &.#{$condition}::before {
-            background: $conditionColor;
-          }
-        }
-        &::before {
-          top: 0;
-        }
-      }
-    }
-  }
-}
-
-ion-label {
-  z-index: 1;
-  display: flex !important;
-  align-items: center !important;
-  &.suffix {
-    color: grey;
-  }
-}
-ion-progress-bar {
-  position: absolute;
-  height: 100%;
-  &::part(track) {
-    background-color: transparent;
-    opacity: 0.2;
-  }
-  &::part(progress) {
-    height: 100%;
   }
 }
 </style>

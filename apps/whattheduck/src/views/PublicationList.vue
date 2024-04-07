@@ -2,10 +2,12 @@
   <List
     v-if="collectionStore.totalPerPublication && coaStore.issueCounts"
     :items="sortedItems"
-    :fill-percentages="ownershipPercentages"
     :get-target-route-fn="getTargetUrlFn"
     :get-item-text-fn="getItemTextFn"
   >
+    <template #fill-bar="{ item }" v-if="ownershipPercentages">
+      <ion-progress-bar :value="ownershipPercentages[item.publicationcode].ownershipPercentage || 0" />
+    </template>
     <template #row-label="{ item }">
       <Publication :key="item.publicationcode" :label="item.publicationname" />
     </template>

@@ -28,11 +28,14 @@
       @ion-scroll-end="isScrolling = false"
     >
       <Row
-        v-for="{ key, item, ownsNext } in filteredItems"
-        :fill-percentage="fillPercentages?.[key]?.ownershipPercentage || 0"
-        :is-next-owned="ownsNext"
+        v-for="{ key, item, isOwned, isNextOwned } in filteredItems"
+        :is-owned="isOwned"
+        :is-next-owned="isNextOwned"
         @click="onRowClick(key)"
       >
+        <template #fill-bar v-if="item">
+          <slot name="fill-bar" :item="item" />
+        </template>
         <template #prefix v-if="item">
           <slot name="row-prefix" :item="item" />
         </template>
@@ -60,22 +63,20 @@
 
 <script setup lang="ts" generic="Item extends Required<any>">
 import { IonContent, ScrollDetail } from '@ionic/vue';
-
-import type { OwnershipWithPercentage } from '~/composables/useOwnership';
 import { app } from '~/stores/app';
 import { wtdcollection } from '~/stores/wtdcollection';
 
 defineSlots<{
+  'fill-bar'(props: { item: Item }): any;
   'row-prefix'(props: { item: Item }): any;
   'row-label'(props: { item: Item }): any;
   'row-suffix'(props: { item: Item }): any;
 }>();
 
 const props = defineProps<{
-  items: { key: string; item: Item; ownsNext?: boolean }[];
+  items: { key: string; item: Item; isOwned?: boolean; isNextOwned?: boolean }[];
   getTargetRouteFn: (key: string) => Pick<RouteLocationNamedRaw, 'name' | 'params'>;
   getItemTextFn: (item: Item) => string;
-  fillPercentages?: Record<string, OwnershipWithPercentage>;
 }>();
 
 const content = ref<InstanceType<typeof IonContent> | null>(null);
@@ -167,5 +168,22 @@ ion-searchbar {
   color: black;
   background: white;
   z-index: 1000;
+}
+
+:deep(ion-label) {
+  z-index: 1;
+  display: flex !important;
+  align-items: center !important;
+  &.suffix {
+    color: grey;
+  }
+}
+:deep(ion-progress-bar) {
+  position: absolute;
+  height: 100%;
+  :deep(&::part(track)) {
+    background-color: transparent;
+    opacity: 0.2;
+  }
 }
 </style>

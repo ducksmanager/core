@@ -1,15 +1,21 @@
 <template>
   <List
+    v-if="ownershipPercentages"
     :items="sortedItems"
-    :fill-percentages="ownershipPercentages"
     :get-target-route-fn="getTargetUrlFn"
     :get-item-text-fn="getItemTextFn"
   >
+    <template #fill-bar="{ item }">
+      <ion-progress-bar
+        v-if="ownershipPercentages[item.countrycode]"
+        :value="ownershipPercentages[item.countrycode].ownershipPercentage || 0"
+      />
+    </template>
+    <template #row-suffix="{ item }">
+      {{ ownershipPercentages[item.countrycode] ? getOwnershipText(ownershipPercentages[item.countrycode]) : '' }}
+    </template>
     <template #row-label="{ item }">
       <Country :id="item.countrycode" :label="item.countryname" />
-    </template>
-    <template #row-suffix="{ item }" v-if="ownershipPercentages">
-      {{ ownershipPercentages[item.countrycode] ? getOwnershipText(ownershipPercentages[item.countrycode]) : '' }}
     </template>
   </List>
 </template>
