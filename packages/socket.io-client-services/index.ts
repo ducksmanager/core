@@ -40,7 +40,7 @@ export const useSocket = (socketRootUrl: string) => ({
     namespaceOptions: {
       onConnectError: (e: Error, namespace: string) => void;
       session?: {
-        getToken: () => Promise<string | undefined>;
+        getToken: () => Promise<string | null | undefined>;
         clearSession: () => Promise<void> | void;
         sessionExists: () => Promise<boolean>;
       };
