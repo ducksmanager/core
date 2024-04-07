@@ -3,7 +3,7 @@
     <OfflineBanner :on-offline="routeMeta.onOffline" v-if="isOfflineMode" />
     <ion-split-pane :class="{ 'ion-margin-top': isOfflineMode }" content-id="main-content">
       <NavigationDrawer v-if="token" />
-      <ion-router-outlet id="main-content" />
+      <ion-router-outlet id="main-content" :animate="false" />
     </ion-split-pane>
   </ion-app>
 </template>
@@ -67,7 +67,7 @@ watch(isReady, (newValue) => {
     isDataLoaded.value = true;
 
     watch(
-      () => token.value,
+      token,
       async (newValue) => {
         if (newValue) {
           fetchAndTrackCollection().then(() =>

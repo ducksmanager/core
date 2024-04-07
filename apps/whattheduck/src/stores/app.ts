@@ -16,7 +16,7 @@ export const app = defineStore('app', () => {
 
   const route = useRoute();
   const lastSync = ref<Date>();
-  const token = ref<string>();
+  const token = ref<string | null>(); // undefined === we haven't checked whether there is a token ; null === we have checked and there is no token
   const socketCache = ref<Record<string, NotEmptyStorageValue>>({});
   const isDataLoaded = ref(false);
 

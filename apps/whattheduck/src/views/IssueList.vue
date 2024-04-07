@@ -41,7 +41,7 @@ const getTargetUrlFn = (key: string) => ({
 const publicationcode = computed(() => `${route.params.countrycode}/${route.params.magazinecode}`);
 
 watch(
-  () => publicationcode.value,
+  publicationcode,
   async (newValue) => {
     currentNavigationItem.value = newValue as string;
   },

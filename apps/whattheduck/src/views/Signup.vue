@@ -143,14 +143,4 @@ const submitSignup = async () => {
     },
   );
 };
-
-watch(
-  () => token.value,
-  async () => {
-    if (token.value) {
-      router.push('/collection');
-    }
-  },
-  { immediate: true },
-);
 </script>

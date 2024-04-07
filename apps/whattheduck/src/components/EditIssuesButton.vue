@@ -89,10 +89,6 @@ const pickCoverFile = async () => {
     console.log(response.body);
   }
 };
-
-watch(route, () => {
-  nextTick(() => (fab.value!.activated = false));
-});
 </script>
 
 <style lang="scss">

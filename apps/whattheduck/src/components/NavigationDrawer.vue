@@ -1,11 +1,11 @@
 <template>
   <ion-menu content-id="main-content" type="overlay">
-    <ion-content>
-      <ion-list id="header">
+    <ion-content class="ion-padding-top">
+      <ion-list id="header" class="ion-no-padding">
         <ion-list-header><div class="ion-text-center" style="width: 100%">What The Duck</div></ion-list-header>
         <template v-if="user">
           <ion-row class="ion-justify-content-center ion-padding"
-            ><ion-note>{{ user.username }}</ion-note>
+            ><ion-note class="ion-no-padding">{{ user.username }}</ion-note>
           </ion-row>
           <ion-row class="ion-padding-vertical">
             <Medal
@@ -130,12 +130,6 @@ ion-menu {
     ion-content {
       --padding-start: 8px;
       --padding-end: 8px;
-      --padding-top: 20px;
-      --padding-bottom: 20px;
-    }
-
-    ion-note {
-      margin-bottom: 30px;
     }
 
     ion-list-header,
@@ -200,7 +194,6 @@ ion-menu {
 
       ion-note {
         line-height: 24px;
-        margin-bottom: 20px;
       }
 
       ion-item {

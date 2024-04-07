@@ -83,17 +83,14 @@ const authorName = ref('');
 
 loadRatings();
 
-watch(
-  () => authorName.value,
-  (newValue) => {
-    if (newValue) {
-      searchAuthors(newValue);
-    }
-  },
-);
+watch(authorName, (newValue) => {
+  if (newValue) {
+    searchAuthors(newValue);
+  }
+});
 
 watch(
-  () => ratings.value,
+  ratings,
   async (newValue) => {
     if (newValue?.length) {
       await coa().fetchPersonNames(newValue.map(({ personcode }) => personcode));

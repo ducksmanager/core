@@ -83,33 +83,30 @@ const selectedStory = ref(
     | null,
 );
 
-watch(
-  () => storyTitle.value,
-  async (newValue) => {
-    if (!newValue) {
-      return;
-    }
-    selectedStory.value = null;
-    const { results: data } = await coaServices.searchStory([newValue], true);
+watch(storyTitle, async (newValue) => {
+  if (!newValue) {
+    return;
+  }
+  selectedStory.value = null;
+  const { results: data } = await coaServices.searchStory([newValue], true);
 
-    storyResults.value = {
-      results: data.map((story) => ({
-        ...story,
-        issues: story.issues?.map(({ publicationcode, issuenumber }) => ({
-          publicationcode,
-          countrycode: publicationcode.split('/')[0],
-          publicationName: coaStore.publicationNames[publicationcode] || publicationcode,
-          issuenumber,
-          collectionIssue:
-            collectionStore.issues!.find(
-              ({ publicationcode: collectionPublicationCode, issuenumber: collectionIssueNumber }) =>
-                collectionPublicationCode === publicationcode && collectionIssueNumber === issuenumber,
-            ) || null,
-        })),
+  storyResults.value = {
+    results: data.map((story) => ({
+      ...story,
+      issues: story.issues?.map(({ publicationcode, issuenumber }) => ({
+        publicationcode,
+        countrycode: publicationcode.split('/')[0],
+        publicationName: coaStore.publicationNames[publicationcode] || publicationcode,
+        issuenumber,
+        collectionIssue:
+          collectionStore.issues!.find(
+            ({ publicationcode: collectionPublicationCode, issuenumber: collectionIssueNumber }) =>
+              collectionPublicationCode === publicationcode && collectionIssueNumber === issuenumber,
+          ) || null,
       })),
-    };
-  },
-);
+    })),
+  };
+});
 </script>
 
 <style scoped>

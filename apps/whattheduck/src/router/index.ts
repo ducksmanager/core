@@ -130,6 +130,10 @@ const routes: RouteRecordRaw[] = [
     path: '/',
     redirect: '/login',
   },
+  {
+    path: '/:pathMatch(.*)*',
+    redirect: '/login',
+  },
 ];
 
 const router = createRouter({

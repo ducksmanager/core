@@ -1,5 +1,5 @@
 <template>
-  <ion-page>
+  <ion-page v-show="token === null">
     <ion-header :translucent="true">
       <ion-toolbar>
         <ion-title>{{ t('Connexion') }}</ion-title>
@@ -102,8 +102,6 @@ const router = useRouter();
 const username = ref('' as string);
 const password = ref('' as string);
 
-const showForm = ref(false);
-
 const showPassword = ref(false);
 
 const { validInputs, invalidInputs, touchedInputs, errorTexts } = useFormErrorHandling(['username', 'password']);
@@ -128,29 +126,11 @@ const submitLogin = async () => {
   );
 };
 
-watch(
-  () => token.value,
-  async (newValue) => {
-    if (newValue) {
-      collectionStore
-        .fetchAndTrackCollection()
-        .then(() => router.replace('/collection'))
-        .catch(() => {
-          showForm.value = true;
-        });
-    }
-  },
-  { immediate: true },
-);
-
-watch(
-  () => showForm.value,
-  async (value) => {
-    if (value) {
-      await SplashScreen.hide();
-    }
-  },
-);
+watch(token, async () => {
+  if (token.value === null) {
+    await SplashScreen.hide();
+  }
+});
 
 (async () => {
   await SplashScreen.show({
