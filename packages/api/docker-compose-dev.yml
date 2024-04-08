@@ -1,22 +1,20 @@
 version: '2.4'
 services:
-  # pastec:
-  #   container_name: pastec
-  #   image: "bperel/pastec-ubuntu-1704-timestamps"
-  #   restart: always
-  #   command: "./pastec -p 4212 -i /pastec-index-last.dat /pastec/data/visualWordsORB.dat"
-  #   volumes:
-  #     - pastec_index:/pastec-index-last.dat:ro
+  pastec:
+    container_name: pastec
+    image: "bperel/pastec-ubuntu-1704-timestamps"
+    ports:
+      - "4212:4212"
+    command: "./pastec -p 4212 -i /pastec-index-last.dat /pastec/data/visualWordsORB.dat"
+    volumes:
+      - ./pastec-index-last.dat:/pastec-index-last.dat:ro
 
   mailcatcher:
     container_name: mailcatcher
     image: yappabe/mailcatcher
-    restart: always
     ports:
       - "1025:1025"
       - "1080:1080"
-    networks:
-      - mail-network
   # duck-estimator:
   #   container_name: duck-estimator
   #   image: "mcr.microsoft.com/playwright:focal"
@@ -37,10 +35,6 @@ services:
   #    - node_cache:/root/.cache
   #   command: "bash -c 'git clone --depth 1 --single-branch https://github.com/bperel/duck-estimator && cd duck-estimator && npm install && node duck-estimator.js --cache-dir=/home/cache'"
 
-
-networks:
-  mail-network:
-    driver: bridge
 
 volumes:
   # duck_estimator_cache:

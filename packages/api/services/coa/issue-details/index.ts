@@ -64,35 +64,24 @@ export default (socket: Socket<Events>) => {
     },
   );
 
-  socket.on("getIssueCoverDetails", async (publicationCodes, callback) => {
-    if (publicationCodes.length > 10) {
+  socket.on("getIssueCoverDetails", async (issuecodes, callback) => {
+    if (issuecodes.length > 10) {
       callback({ error: "Too many requests" });
       return;
     }
-    callback({
-      covers: (
-        await prismaCoa.$queryRaw<IssueCoverDetails[]>`
-          SELECT publicationcode,
-                 issuenumber,
-                 title,
-                 (SELECT CONCAT(IF(sitecode = 'thumbnails', 'webusers', sitecode), '/', url) AS coverUrl
-                  FROM inducks_entry
-                           INNER JOIN inducks_entryurl ON inducks_entry.entrycode = inducks_entryurl.entrycode
-                  WHERE inducks_entry.issuecode = inducks_issue.issuecode
-                    AND SUBSTR(inducks_entry.position, 0, 1) <> 'p'
-                  LIMIT 1) AS coverUrl
-          FROM inducks_issue
-          WHERE inducks_issue.publicationcode IN(${PrismaCoa.join(
-            publicationCodes,
-          )})`
-      ).reduce(
-        (acc, row) => ({
-          ...acc,
-          [row.issuenumber.replace(/ +/g, " ")]: row,
-        }),
-        {} as Record<string, IssueCoverDetails>,
-      ),
-    });
+    getCoverUrls(issuecodes)
+      .then((data) =>
+        data.reduce(
+          (acc, row) => ({
+            ...acc,
+            [row.issuenumber.replace(/ +/g, " ")]: row,
+          }),
+          {} as Record<string, IssueCoverDetails>,
+        ),
+      )
+      .then((data) => {
+        callback({ covers: data });
+      });
   });
 
   socket.on("getIssuesByCode", async (issueCodes, callback) => {
@@ -125,7 +114,7 @@ export default (socket: Socket<Events>) => {
         ...issue,
         issuenumber: issue.issuenumber.replace(/ +/g, " "),
         coverId: covers[issue.issuecode].id,
-        coverUrl: covers[issue.issuecode].url,
+        fullUrl: covers[issue.issuecode].url,
       }))
       .groupBy("issuecode");
 
@@ -180,6 +169,22 @@ Array.prototype.groupBy = function (fieldName, valueFieldName?) {
     {},
   );
 };
+
+export const getCoverUrls = (issuecodes: string[]) => prismaCoa.$queryRaw<
+  IssueCoverDetails[]
+>`
+SELECT publicationcode,
+       issuecode,
+       issuenumber,
+       title,
+       (SELECT CONCAT(IF(sitecode = 'thumbnails', 'webusers', sitecode), '/', url) AS fullUrl
+        FROM inducks_entry
+                 INNER JOIN inducks_entryurl ON inducks_entry.entrycode = inducks_entryurl.entrycode
+        WHERE inducks_entry.issuecode = inducks_issue.issuecode
+          AND SUBSTR(inducks_entry.position, 0, 1) <> 'p'
+        LIMIT 1) AS fullUrl
+FROM inducks_issue
+WHERE inducks_issue.issuecode IN(${PrismaCoa.join(issuecodes)})`;
 
 const getEntries = async (publicationcode: string, issuenumber: string) =>
   await prismaCoa.$queryRaw<SimpleEntry[]>`

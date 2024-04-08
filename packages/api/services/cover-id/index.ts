@@ -5,64 +5,88 @@ import { Namespace, Server } from "socket.io";
 import { prismaCoa, prismaCoverInfo } from "~/prisma";
 import { SimilarImagesResult } from "~dm-types/CoverSearchResults";
 
-import Events, {InterServerEvents} from "./types"
+import Events from "./types";
+import { writeFileSync } from "fs";
+import { getCoverUrls } from "../coa/issue-details";
 
 export default (io: Server) => {
-  (io.of(Events.namespaceEndpoint) as Namespace<Events, Record<string,never>, Record<string,never>, InterServerEvents>).on(
+  (io.of(Events.namespaceEndpoint) as Namespace<Events>).on(
     "connection",
     (socket) => {
-      socket.on("searchFromCover", async ({base64, url}, callback) => {
-        const buffer = url ? (await axios.get(url, {
-          responseType: "arraybuffer",
-        })).data : Buffer.from(base64!, "base64");
-        
+      socket.on("searchFromCover", async ({ base64, url }, callback) => {
+        const buffer = url
+          ? (
+              await axios.get(url, {
+                responseType: "arraybuffer",
+              })
+            ).data
+          : Buffer.from(base64!.split(";base64,").pop()!, "base64");
+
         const pastecResponse: SimilarImagesResult | null =
           await getSimilarImages(buffer);
 
         console.log("Cover ID search: processing done");
 
+        writeFileSync("cover.jpg", buffer);
+
         if (!pastecResponse) {
           callback({ error: "Pastec returned NULL" });
           return;
         }
-        if (!pastecResponse?.image_ids?.length) {
+        if (!pastecResponse?.image_ids) {
           callback({
             error: "Pastec returned en error",
             errorDetails: JSON.stringify(pastecResponse),
           });
         }
         console.log(
-          `Cover ID search: matched cover IDs ${pastecResponse?.image_ids}`
+          `Cover ID search: matched cover IDs ${pastecResponse?.image_ids}`,
         );
         console.log(
-          `Cover ID search: scores=${JSON.stringify(pastecResponse.scores)}`
+          `Cover ID search: scores=${JSON.stringify(pastecResponse.scores)}`,
         );
 
-        const coverInfos = (
-          await getIssuesCodesFromCoverIds(pastecResponse.image_ids)
-        ).sort((cover1, cover2) =>
-          Math.sign(
-            pastecResponse.image_ids.indexOf(cover1.id) -
-              pastecResponse.image_ids.indexOf(cover2.id)
-          )
-        );
+        const coverInfos = await getIssuesCodesFromCoverIds(
+          pastecResponse.image_ids,
+        )
+          .then(async (covers) => {
+            const coversIdsAndIssueCodes = covers.reduce<
+              Record<string, number>
+            >((acc, { id, issuecode }) => ({ ...acc, [issuecode]: id }), {});
+            return getCoverUrls(Object.keys(coversIdsAndIssueCodes)).then(
+              (coverUrls) =>
+                coverUrls.map(({ issuecode, fullUrl }) => ({
+                  issuecode,
+                  fullUrl,
+                  id: coversIdsAndIssueCodes[issuecode],
+                })),
+            );
+          })
+          .then((covers) =>
+            covers.sort((cover1, cover2) =>
+              Math.sign(
+                pastecResponse.image_ids.indexOf(cover1.id) -
+                  pastecResponse.image_ids.indexOf(cover2.id),
+              ),
+            ),
+          );
         const foundIssueCodes = [
           ...new Set(coverInfos.map(({ issuecode }) => issuecode)),
         ];
         console.log(
-          `Cover ID search: matched issue codes ${foundIssueCodes.join(",")}`
+          `Cover ID search: matched issue codes ${foundIssueCodes.join(",")}`,
         );
 
         const issues = await getIssuesFromIssueCodes(foundIssueCodes);
         console.log(`Cover ID search: matched ${coverInfos.length} issues`);
 
-        // TODO sort
-
         callback({
-          covers: coverInfos.map((cover) => ({
-            ...cover,
-            ...issues.find(({ issuecode }) => cover.issuecode === issuecode)!,
-          })),
+          covers: coverInfos.map((cover) =>
+            Object.assign(
+              cover,
+              issues.find(({ issuecode }) => cover.issuecode === issuecode)!,
+            ),
+          ),
         });
       });
 
@@ -88,13 +112,10 @@ export default (io: Server) => {
                 data.push(chunk);
               })
               .on("end", function () {
-                //at this point data is an array of Buffers
-                //so Buffer.concat() can make us a new Buffer
-                //of all of them together
-                const buffer = Buffer.concat(data);
-                callback(buffer.toString("base64"));
+                //at this point data is an array of Buffers so Buffer.concat() can make us a new Buffer of all of them together
+                callback({ buffer: Buffer.concat(data) });
               });
-          }
+          },
         );
         externalRequest.on("error", function (err) {
           console.error(err);
@@ -102,23 +123,31 @@ export default (io: Server) => {
         });
         externalRequest.end();
       });
-    }
+    },
   );
 };
 
 const getIssuesFromIssueCodes = async (foundIssueCodes: string[]) =>
-  await prismaCoa.inducks_issue.findMany({
+  prismaCoa.inducks_issue.findMany({
     select: {
       issuecode: true,
       publicationcode: true,
       issuenumber: true,
     },
     where: {
+      publicationcode: {
+        not: null,
+      },
+      issuenumber: {
+        not: null,
+      },
       issuecode: {
         in: foundIssueCodes,
       },
     },
-  });
+  }) as Promise<
+    { publicationcode: string; issuenumber: string; issuecode: string }[]
+  >;
 
 const getIssuesCodesFromCoverIds = async (coverIds: number[]) =>
   await prismaCoverInfo.cover.findMany({
@@ -131,14 +160,19 @@ const getIssuesCodesFromCoverIds = async (coverIds: number[]) =>
   });
 
 const getSimilarImages = async (
-  cover: Buffer
+  cover: Buffer,
 ): Promise<SimilarImagesResult | null> =>
   axios
     .post(
       `http://${process.env.PASTEC_HOSTS!}:${
         process.env.PASTEC_PORT
       }/index/searcher`,
-      cover
+      cover,
+      {
+        headers: {
+          "Content-Type": "application/octet-stream",
+        },
+      },
     )
     .then(({ data }) => data)
     .catch((e) => {
