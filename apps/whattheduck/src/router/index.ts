@@ -5,6 +5,7 @@ import OwnedIssueCopy from '~/components/OwnedIssueCopy.vue';
 import AddFromCamera from '~/views/AddFromCamera.vue';
 import Authors from '~/views/Authors.vue';
 import CountryList from '~/views/CountryList.vue';
+import CoverSearchResults from '~/views/CoverSearchResults.vue';
 import Forgot from '~/views/Forgot.vue';
 import IssueList from '~/views/IssueList.vue';
 import Login from '~/views/Login.vue';
@@ -75,6 +76,14 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/add-from-camera',
     component: AddFromCamera,
+    meta: {
+      onOffline: 'unavailable',
+      onNoToken: 'logout',
+    } as RouteMeta,
+  },
+  {
+    path: '/cover-search-results',
+    component: CoverSearchResults,
     meta: {
       onOffline: 'unavailable',
       onNoToken: 'logout',

@@ -58,35 +58,27 @@ import {
   imageSharp,
   calendarSharp,
 } from 'ionicons/icons';
+import { dmSocketInjectionKey } from '~web/src/composables/useDmSocket';
 
 const fab = ref<HTMLIonFabElement | null>(null);
 
 const { t } = useI18n();
 const router = useRouter();
 const route = useRoute();
+const {
+  coverId: { services: coverIdServices },
+} = injectLocal(dmSocketInjectionKey)!;
 
 const pickCoverFile = async () => {
   const coverFile = await FilePicker.pickImages({ readData: true });
   if (coverFile.files.length) {
-    // Create a FormData object
-    const formData = new FormData();
-    formData.append('image', coverFile.files[0].blob!);
-
-    const response = await fetch('http://localhost:5000/search_image', {
-      method: 'post',
-      body: formData,
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-    });
-
-    // const response = await call(
-    //   defaultApi,
-    //   new POST__cover_id__search({
-    //     reqBody: { base64: coverFile.files[0].data! },
-    //   })
-    // );
-    console.log(response.body);
+    const reader = new FileReader();
+    reader.onload = function (event) {
+      coverIdServices.searchFromCover({ base64: event.target!.result?.toString() }).then((results) => {
+        router.push({ path: '/cover-search-results', query: { searchResults: JSON.stringify(results) } });
+      });
+    };
+    reader.readAsDataURL(coverFile.files[0].blob!);
   }
 };
 </script>

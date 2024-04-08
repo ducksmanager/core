@@ -56,7 +56,12 @@ export const wtdcollection = defineStore('wtdcollection', () => {
     },
     highestQuotedIssue = computed(
       () => quotedIssues.value?.sort((a, b) => b.estimationGivenCondition - a.estimationGivenCondition)[0],
-    );
+    ),
+    getCollectionIssue = (publicationcode: string, issuenumber: string) =>
+      issues.value!.find(
+        ({ publicationcode: collectionPublicationCode, issuenumber: collectionIssueNumber }) =>
+          collectionPublicationCode === publicationcode && collectionIssueNumber === issuenumber,
+      ) || null;
 
   usePersistedData({ user, issues }).then(() => {
     isDataLoaded.value = true;
@@ -66,6 +71,7 @@ export const wtdcollection = defineStore('wtdcollection', () => {
     issues,
     fetchAndTrackCollection,
     findInCollection,
+    getCollectionIssue,
     highestQuotedIssue,
     issuesByIssueCode: computed(() => webCollectionStore.issuesByIssueCode),
     loadCollection,

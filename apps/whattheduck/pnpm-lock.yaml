@@ -50,6 +50,9 @@ dependencies:
   '@ionic/vue-router':
     specifier: ^7.8.3
     version: 7.8.3
+  '@nanoandrew4/vue3-carousel-3d':
+    specifier: ^1.0.0
+    version: 1.0.0(typescript@5.4.4)
   '@vueuse/core':
     specifier: ^10.9.0
     version: 10.9.0(vue@3.4.21)
@@ -887,6 +890,14 @@ packages:
 
   /@kurkle/color@0.3.2:
     resolution: {integrity: sha512-fuscdXJ9G1qb7W8VdHi+IwRqij3lBkosAm4ydQtEmbY58OzHXqQhvlxqEkoz0yssNVn38bcpRWgA9PP+OGoisw==}
+    dev: false
+
+  /@nanoandrew4/vue3-carousel-3d@1.0.0(typescript@5.4.4):
+    resolution: {integrity: sha512-/J6sCJqzfKSc9cWr6GdoLSnxFTDFi5OzIE3KMcQPVbLN86zOpvuyzjOels8vznNX5Hw5gA1FtCZalQwiWWKFcQ==}
+    dependencies:
+      vue: 3.4.21(typescript@5.4.4)
+    transitivePeerDependencies:
+      - typescript
     dev: false
 
   /@nodelib/fs.scandir@2.1.5:

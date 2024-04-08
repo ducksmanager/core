@@ -36,12 +36,7 @@
         {{ selectedStory.title }} {{ t('a été publiée dans les numéros suivants :') }}
 
         <div v-for="issue of selectedStory.issues">
-          <Country :id="issue.countrycode" :label="issue.countryname" /><condition
-            v-if="issue.collectionIssue"
-            :value="getConditionText(issue.collectionIssue.condition)"
-          />
-          {{ issue.publicationName }}
-          {{ issue.issuenumber }}
+          <FullIssue :issue="issue" />
         </div>
       </div>
     </ion-content>
@@ -54,7 +49,6 @@ import type { SimpleStory } from '~dm-types/SimpleStory';
 import type { issueWithPublicationcode } from '~prisma-clients/extended/dm.extends';
 import { stores } from '~web';
 
-import { getConditionText } from '~/composables/useCondition';
 import { wtdcollection } from '~/stores/wtdcollection';
 import { dmSocketInjectionKey } from '~web/src/composables/useDmSocket';
 
@@ -64,7 +58,7 @@ const {
 
 const { t } = useI18n();
 
-const collectionStore = wtdcollection();
+const { getCollectionIssue } = wtdcollection();
 const coaStore = stores.coa();
 
 const storyTitle = ref('' as string);
@@ -98,11 +92,7 @@ watch(storyTitle, async (newValue) => {
         countrycode: publicationcode.split('/')[0],
         publicationName: coaStore.publicationNames[publicationcode] || publicationcode,
         issuenumber,
-        collectionIssue:
-          collectionStore.issues!.find(
-            ({ publicationcode: collectionPublicationCode, issuenumber: collectionIssueNumber }) =>
-              collectionPublicationCode === publicationcode && collectionIssueNumber === issuenumber,
-          ) || null,
+        collectionIssue: getCollectionIssue(publicationcode, issuenumber),
       })),
     })),
   };
