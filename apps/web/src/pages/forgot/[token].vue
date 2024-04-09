@@ -65,6 +65,7 @@ const changePassword = async () => {
         domain: import.meta.env.VITE_COOKIE_DOMAIN,
       },
     );
+    await loadUser();
   } catch (e: unknown) {
     error = (e as AxiosError)?.response?.data || "Error";
   }
@@ -74,11 +75,10 @@ const changePassword = async () => {
   try {
     await call(
       axios,
-      new POST__auth__change_password({
-        reqBody: { token, password, password2 },
+      new GET__auth__forgot({
+        query: { token },
       }),
     );
-    await loadUser();
   } catch (e: unknown) {
     initError = e as AxiosError;
   }
