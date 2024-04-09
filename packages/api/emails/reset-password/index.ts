@@ -5,6 +5,8 @@ export default class extends Email {
   data: { user: user; token: string };
   templatePath = __dirname;
 
+  sendCopyToAdmin = false;
+
   constructor(data: { user: user; token: string }) {
     super();
     this.data = data;
