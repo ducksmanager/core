@@ -10,7 +10,7 @@ import { isValidEmail } from "./util";
 const parseForm = bodyParser.json();
 
 const generateToken = (payload: string) =>
-  jwt.sign(payload, process.env.TOKEN_SECRET!, {
+  jwt.sign({ payload }, process.env.TOKEN_SECRET!, {
     expiresIn: 3600,
   });
 
