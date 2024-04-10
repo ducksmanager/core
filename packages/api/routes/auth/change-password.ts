@@ -55,7 +55,5 @@ export const post = [
         }
       }
     );
-    res.statusCode = 400;
-    res.end();
   },
 ];
