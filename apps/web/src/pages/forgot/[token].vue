@@ -24,7 +24,7 @@ meta:
         type="password"
         :placeholder="$t('Nouveau mot de passe (confirmation)')"
       />
-      <b-form-submit>{{ $t("OK") }}</b-form-submit>
+      <b-button type="submit">{{ $t("OK") }}</b-button>
     </form>
   </div>
 </template>
