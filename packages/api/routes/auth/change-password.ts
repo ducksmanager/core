@@ -49,9 +49,8 @@ export const post = [
               email: (data as { payload: string }).payload,
             },
           }))!;
-          await loginAs(user, hashedPassword);
 
-          return res.json({ token });
+          return res.json({ token: await loginAs(user, hashedPassword) });
         }
       }
     );
