@@ -21,7 +21,7 @@ export const post = [
     jwt.verify(
       (token as string) || "",
       process.env.TOKEN_SECRET as string,
-      async (err: unknown, email: unknown) => {
+      async (err: unknown, data: unknown) => {
         if (err) {
           res.writeHead(400, { "Content-Type": "application/text" });
           res.end("Invalid token");
@@ -41,12 +41,12 @@ export const post = [
               password: hashedPassword,
             },
             where: {
-              email: email as string,
+              email: (data as { payload: string }).payload,
             },
           });
           const user = (await prismaDm.user.findFirst({
             where: {
-              email: email as string,
+              email: (data as { payload: string }).payload,
             },
           }))!;
           await loginAs(user, hashedPassword);
