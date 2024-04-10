@@ -37,7 +37,6 @@ import { call } from "~axios-helper";
 
 const router = useRouter();
 const { loadUser } = collection();
-const { user } = storeToRefs(collection());
 
 let initError = $ref(null as AxiosError | null);
 let error = $ref(null as unknown | null);
@@ -67,6 +66,7 @@ const changePassword = async () => {
       },
     );
     await loadUser();
+    await router.push("/collection");
   } catch (e: unknown) {
     error = (e as AxiosError)?.response?.data || "Error";
   }
@@ -84,14 +84,4 @@ const changePassword = async () => {
     initError = e as AxiosError;
   }
 })();
-
-watch(
-  user,
-  async (newValue) => {
-    if (newValue) {
-      await router.push("/collection");
-    }
-  },
-  { immediate: true },
-);
 </script>
