@@ -29,8 +29,11 @@ import './theme/variables.scss';
 import './theme/global.scss';
 import { useSocket } from '~socket.io-client-services/index';
 
+import { defineCustomElements } from '@ionic/pwa-elements/loader';
+
 const store = createPinia();
 
+defineCustomElements(window);
 
 const app = createApp(App, {
   setup: () => ({

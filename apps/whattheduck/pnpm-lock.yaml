@@ -41,6 +41,9 @@ dependencies:
   '@capawesome/capacitor-file-picker':
     specifier: ^5.3.0
     version: 5.3.0(@capacitor/core@6.0.0-rc.2)
+  '@ionic/pwa-elements':
+    specifier: ^3.2.2
+    version: 3.2.2
   '@ionic/storage':
     specifier: ^4.0.0
     version: 4.0.0
@@ -704,6 +707,11 @@ packages:
     dependencies:
       prettier: 3.2.5
     dev: true
+
+  /@ionic/pwa-elements@3.2.2:
+    resolution: {integrity: sha512-gCQsHdvkaWa83T3ToKsr6FOtzSmLIYFWy+zZisXVDqU3ry4Hv581dFSxDUgokgoWSxIERe/nvYnhoN8zIIEKQQ==}
+    engines: {node: '>=16.0.0', npm: '>=8.0.0'}
+    dev: false
 
   /@ionic/storage@4.0.0:
     resolution: {integrity: sha512-3N21P19Xk6cICLnSXZ3ilRqbSXAGSFeIF3HNqz+1kARcm0UFT/vwmZreaXtFyq437vvEWOfJ2enlj3JHLKS0FA==}

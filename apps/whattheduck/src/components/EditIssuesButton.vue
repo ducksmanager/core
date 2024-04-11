@@ -10,7 +10,7 @@
           <ion-icon :ios="imageOutline" :md="imageSharp" />
         </ion-fab-button>
       </ion-item>
-      <ion-item button class="ion-align-items-center ion-text-nowrap" router-link="/add-from-camera">
+      <ion-item button class="ion-align-items-center ion-text-nowrap" @click="takePhoto">
         <ion-label>{{ t('Depuis une photo de couverture') }}</ion-label>
         <ion-fab-button size="small">
           <ion-icon :ios="cameraOutline" :md="cameraSharp" />
@@ -43,7 +43,6 @@
 </template>
 
 <script setup lang="ts">
-import { FilePicker } from '@capawesome/capacitor-file-picker';
 import {
   pencilOutline,
   searchOutline,
@@ -58,29 +57,18 @@ import {
   imageSharp,
   calendarSharp,
 } from 'ionicons/icons';
-import { dmSocketInjectionKey } from '~web/src/composables/useDmSocket';
+
+import useCoverSearch from '../composables/useCoverSearch';
+const {
+  coverId: { services: coverIdServices },
+} = injectLocal(dmSocketInjectionKey)!;
+const { pickCoverFile, takePhoto } = useCoverSearch(useRouter(), coverIdServices);
 
 const fab = ref<HTMLIonFabElement | null>(null);
 
 const { t } = useI18n();
 const router = useRouter();
 const route = useRoute();
-const {
-  coverId: { services: coverIdServices },
-} = injectLocal(dmSocketInjectionKey)!;
-
-const pickCoverFile = async () => {
-  const coverFile = await FilePicker.pickImages({ readData: true });
-  if (coverFile.files.length) {
-    const reader = new FileReader();
-    reader.onload = function (event) {
-      coverIdServices.searchFromCover({ base64: event.target!.result?.toString() }).then((results) => {
-        router.push({ path: '/cover-search-results', query: { searchResults: JSON.stringify(results) } });
-      });
-    };
-    reader.readAsDataURL(coverFile.files[0].blob!);
-  }
-};
 </script>
 
 <style lang="scss">

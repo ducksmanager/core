@@ -51,6 +51,7 @@ import { stores } from '~web';
 
 import { wtdcollection } from '~/stores/wtdcollection';
 import { dmSocketInjectionKey } from '~web/src/composables/useDmSocket';
+import FullIssue from './FullIssue.vue';
 
 const {
   coa: { services: coaServices },

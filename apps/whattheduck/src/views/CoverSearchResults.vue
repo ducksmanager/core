@@ -9,21 +9,31 @@
       </ion-toolbar>
     </ion-header>
     <ion-content :fullscreen="true">
-      <Carousel3d :loop="false">
-        <Slide v-for="(cover, index) in covers" :key="index" :index="index">
+      <Carousel3d ref="carousel" :loop="false" :on-main-slide-click="test">
+        <Slide
+          v-for="(cover, index) in covers"
+          :key="index"
+          :index="index"
+          :style="{ width: `${slideWidths[index]}px` }"
+        >
           <ion-card>
             <ion-img :src="`${cloudinaryBaseUrl}${cover.fullUrl}`" />
-            <ion-card-header>
+            <ion-card-header @vue:updated="(e) => onUpdatedSlide(index, e)">
               <ion-card-title class="ion-align-items-center"><FullIssue :issue="cover" /></ion-card-title>
             </ion-card-header>
           </ion-card>
         </Slide>
       </Carousel3d>
       <ion-note
-        ><div>{{ t('Cliquez sur la couverture\npour ajouter le numéro à la collection') }}</div>
+        ><div style="white-space: pre; margin-bottom: 1rem">
+          {{ t('Cliquez sur une couverture\npour ajouter le numéro à la collection') }}
+        </div>
         <div>
-          <div>{{ t('ou') }}</div>
-          <ion-button router-link="/add-from-camera">{{ t('Prenez une nouvelle photo') }}</ion-button>
+          <div>{{ t('ou') }}&nbsp;</div>
+          <ion-button v-if="origin === 'takePhoto'" @click="takePhoto">{{ t('Prenez une nouvelle photo') }}</ion-button>
+          <ion-button v-else-if="origin === 'pickCoverFile'" @click="pickCoverFile">{{
+            t('Sélectionnez une nouvelle photo')
+          }}</ion-button>
         </div></ion-note
       >
     </ion-content>
@@ -36,14 +46,33 @@ import { Carousel3d, Slide } from '@nanoandrew4/vue3-carousel-3d';
 import CoverIdServices from '~dm-services/cover-id/types';
 
 import { EventReturnType } from '~socket.io-services/types';
-import FullIssue from './FullIssue.vue';
 import { wtdcollection } from '~/stores/wtdcollection';
+import useCoverSearch from '../composables/useCoverSearch';
 
 import { stores as webStores } from '~web';
+import FullIssue from './FullIssue.vue';
 
 const { publicationNames } = storeToRefs(webStores.coa());
 
+const carousel = ref();
+
+const slideWidths = ref<number[]>([]);
+
+const onUpdatedSlide = (idx: number, { el }: { el: HTMLElement }) => {
+  debugger;
+  nextTick(() => {
+    slideWidths.value[idx] = el.clientWidth;
+  });
+};
+
+const {
+  coverId: { services: coverIdServices },
+} = injectLocal(dmSocketInjectionKey)!;
+
+const { pickCoverFile, takePhoto } = useCoverSearch(useRouter(), coverIdServices);
+
 const route = useRoute();
+
 const cloudinaryBaseUrl = 'https://res.cloudinary.com/dl7hskxab/image/upload/f_auto/inducks-covers/';
 
 const { getCollectionIssue } = wtdcollection();
@@ -52,16 +81,25 @@ const searchResults = computed(
   () => JSON.parse(route.query.searchResults as string) as EventReturnType<CoverIdServices['searchFromCover']>,
 );
 
+const origin = computed(() => route.query.origin as 'pickCoverFile' | 'takePhoto');
+
 const covers = computed(() =>
   searchResults.value.covers.map((cover) => ({
     ...cover,
     code: cover.issuecode,
     countrycode: cover.publicationcode.split('/')[0],
-    countryname: publicationNames.value[cover.publicationcode.split('/')[0]],
     publicationName: publicationNames.value[cover.publicationcode],
     collectionIssue: getCollectionIssue(cover.publicationcode, cover.issuenumber),
   })),
 );
+
+watch(covers, () => {
+  slideWidths.value = covers.value.map(() => 200);
+});
+
+const test = () => {
+  console.log('!');
+};
 
 const { t } = useI18n();
 </script>
@@ -69,12 +107,16 @@ const { t } = useI18n();
 ion-content::part(scroll) {
   display: flex;
   flex-direction: column;
-  align-content: space-between;
+  justify-content: space-around;
   align-items: center;
 }
 
 ion-card {
-  height: calc(100% - 20px);
+  $margin: 8;
+  height: calc(100% - #{$margin * 2}px);
+  border-radius: #{$margin}px;
+  margin-inline: #{$margin}px;
+  margin-top: #{$margin}px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -82,6 +124,11 @@ ion-card {
   ion-img {
     max-height: 100%;
     max-width: 100%;
+  }
+
+  ion-card-title {
+    font-size: initial;
+    white-space: nowrap;
   }
 
   ion-card-header {
@@ -96,8 +143,6 @@ ion-card {
 }
 
 ion-note {
-  position: absolute;
-  bottom: 0;
   text-align: center;
   display: flex;
   flex-direction: column;
@@ -107,5 +152,19 @@ ion-note {
     align-items: center;
     justify-content: center;
   }
+}
+
+ion-button {
+  min-height: initial;
+}
+
+.carousel-3d-slider {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.carousel-3d-slide {
+  border-radius: 12px;
 }
 </style>

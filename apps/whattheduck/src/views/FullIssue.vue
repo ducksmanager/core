@@ -15,7 +15,7 @@ import { issueWithPublicationcode } from '~prisma-clients/extended/dm.extends';
 defineProps<{
   issue: SimpleIssue & {
     countrycode: string;
-    countryname: string;
+    countryname?: string;
     publicationName: string;
     collectionIssue: issueWithPublicationcode | null;
   };

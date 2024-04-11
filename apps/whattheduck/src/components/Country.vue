@@ -1,12 +1,12 @@
 <template>
   <img :src="`/icons/flags_${id}.png`" :alt="id" />
-  {{ label }}
+  <template v-if="label">{{ label }}</template>
 </template>
 
 <script setup lang="ts">
 defineProps<{
   id: string;
-  label: string;
+  label?: string;
 }>();
 </script>
 
