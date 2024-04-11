@@ -33,7 +33,7 @@ let bookstores = $ref(null as SimpleBookstore[] | null);
 
 const {
   bookstore: { services: bookstoreServices },
-} = injectLocal("dmServices") as ReturnType<typeof useDmSocket>;
+} = injectLocal(dmSocketInjectionKey)!;
 
 const validateBookstoreComment = async ({ id }: bookstoreComment) => {
   await bookstoreServices.approveBookstoreComment(id);

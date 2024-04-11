@@ -27,8 +27,6 @@ export default (io: Server) => {
 
         console.log("Cover ID search: processing done");
 
-        writeFileSync("cover.jpg", buffer);
-
         if (!pastecResponse) {
           callback({ error: "Pastec returned NULL" });
           return;

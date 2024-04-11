@@ -9,7 +9,7 @@ let router = useRouter();
 
 const {
   presentationText: { services: presentationTextServices },
-} = injectLocal("dmServices") as ReturnType<typeof useDmSocket>;
+} = injectLocal(dmSocketInjectionKey)!;
 
 (async () => {
   let currentRoute = router.currentRoute.value;
@@ -20,7 +20,7 @@ const {
   await presentationTextServices.approveOrDenyPresentationText(
     sentence,
     parseInt(userId),
-    currentRoute.params.decision as Decision,
+    currentRoute.params.decision as Decision
   );
 })();
 </script>

@@ -14,11 +14,11 @@ alias: [/collection/compte]
           :model-value="!marketplaceContactMethods.length"
           >{{
             $t(
-              "Vous n'avez pas indiqué de moyen de contact pour les collectionneurs intéressés par vos numéros.",
+              "Vous n'avez pas indiqué de moyen de contact pour les collectionneurs intéressés par vos numéros."
             )
           }}<br />{{
             $t(
-              "Si vous souhaitez vendre des numéros, indiquez au moins un moyen de contact.",
+              "Si vous souhaitez vendre des numéros, indiquez au moins un moyen de contact."
             )
           }}</b-alert
         >
@@ -47,13 +47,13 @@ alias: [/collection/compte]
         >
           {{
             $t(
-              "Montrer mon adresse e-mail aux collectionneurs qui souhaitent me contacter pour acheter mes numéros à vendre",
+              "Montrer mon adresse e-mail aux collectionneurs qui souhaitent me contacter pour acheter mes numéros à vendre"
             )
           }}
           <template v-if="!userForAccountForm.email"
             >({{
               $t(
-                "Vous devez spécifier une adresse e-mail pour activer cette option",
+                "Vous devez spécifier une adresse e-mail pour activer cette option"
               )
             }})</template
           >
@@ -85,7 +85,7 @@ alias: [/collection/compte]
             ><div class="text-black mb-2">
               {{
                 $t(
-                  'Vous pouvez trouver votre identifiant de profil Discord en vous rendant dans le menu "Paramètres utilisateur" > "Mon compte". Faites un clic droit sur "..." puis cliquez sur "Copier l\'identifiant".',
+                  'Vous pouvez trouver votre identifiant de profil Discord en vous rendant dans le menu "Paramètres utilisateur" > "Mon compte". Faites un clic droit sur "..." puis cliquez sur "Copier l\'identifiant".'
                 )
               }}
             </div>
@@ -103,13 +103,13 @@ alias: [/collection/compte]
         >
           {{
             $t(
-              "Montrer mon identifiant Discord aux collectionneurs qui souhaitent me contacter pour acheter mes numéros à vendre",
+              "Montrer mon identifiant Discord aux collectionneurs qui souhaitent me contacter pour acheter mes numéros à vendre"
             )
           }}
           <template v-if="!userForAccountForm.discordId"
             >({{
               $t(
-                "Vous devez spécifier un identifiant de profil Discord pour activer cette option",
+                "Vous devez spécifier un identifiant de profil Discord pour activer cette option"
               )
             }})</template
           ></b-form-checkbox
@@ -123,7 +123,7 @@ alias: [/collection/compte]
         <b-form-checkbox v-model="userForAccountForm.okForExchanges">
           {{
             $t(
-              "Indiquer aux autres utilisateurs que je suis disposé à échanger des magazines, et pas seulement à en acheter ou en vendre.",
+              "Indiquer aux autres utilisateurs que je suis disposé à échanger des magazines, et pas seulement à en acheter ou en vendre."
             )
           }}
         </b-form-checkbox>
@@ -139,14 +139,14 @@ alias: [/collection/compte]
           <template v-if="hasRequestedPresentationSentenceUpdate">
             {{
               $t(
-                "Votre phrase de présentation est en cours de modération, un e-mail vous sera envoyé lorsqu'elle sera validée.",
+                "Votre phrase de présentation est en cours de modération, un e-mail vous sera envoyé lorsqu'elle sera validée."
               )
             }}
           </template>
           <template v-else>
             {{
               $t(
-                "Votre phrase de présentation sera soumise à modération. Les messages à caractère politique ou contraires à la loi ne sont pas acceptés.",
+                "Votre phrase de présentation sera soumise à modération. Les messages à caractère politique ou contraires à la loi ne sont pas acceptés."
               )
             }}
           </template>
@@ -247,7 +247,7 @@ const { userForAccountForm, marketplaceContactMethods } =
 
 const {
   collection: { services: collectionServices },
-} = injectLocal("dmServices") as ReturnType<typeof useDmSocket>;
+} = injectLocal(dmSocketInjectionKey)!;
 
 const emptyCollection = async () => {
   if (confirm(t("Votre collection va être vidée. Continuer ?"))) {
@@ -287,8 +287,8 @@ const deleteAccount = async () => {
   if (
     confirm(
       t(
-        "Votre compte DucksManager va être supprimé incluant toutes les informations de votre collection. Continuer ?",
-      ),
+        "Votre compte DucksManager va être supprimé incluant toutes les informations de votre collection. Continuer ?"
+      )
     )
   ) {
     await collectionServices.deleteUser();
@@ -306,7 +306,7 @@ watch(
       hasDiscordContactMethod = newValue.includes("discordId");
     }
   },
-  { immediate: true },
+  { immediate: true }
 );
 </script>
 

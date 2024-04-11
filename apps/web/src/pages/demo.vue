@@ -15,7 +15,7 @@ const router = useRouter();
 
 const {
   login: { services: loginServices },
-} = injectLocal("dmServices") as ReturnType<typeof useDmSocket>;
+} = injectLocal(dmSocketInjectionKey)!;
 
 watch(
   user,
@@ -24,7 +24,7 @@ watch(
       await router.push("/collection");
     }
   },
-  { immediate: true },
+  { immediate: true }
 );
 
 async () => {
