@@ -9,7 +9,8 @@
       </ion-toolbar>
     </ion-header>
     <ion-content :fullscreen="true">
-      <Carousel3d ref="carousel" :loop="false" :on-main-slide-click="test">
+      <div v-if="!covers.length"></div>
+      <Carousel3d :loop="false" :on-main-slide-click="test" v-else>
         <Slide
           v-for="(cover, index) in covers"
           :key="index"
@@ -18,8 +19,12 @@
         >
           <ion-card>
             <ion-img :src="`${cloudinaryBaseUrl}${cover.fullUrl}`" />
-            <ion-card-header @vue:updated="(e) => onUpdatedSlide(index, e)">
-              <ion-card-title class="ion-align-items-center"><FullIssue :issue="cover" /></ion-card-title>
+            <ion-card-header :ref="(el) => addSlideElement(index, (el as ComponentPublicInstance).$el)">
+              <ion-card-title class="ion-align-items-center"
+                ><ion-row
+                  ><FullIssue :issue="cover" /><ion-col size="2" class="ion-text-right">Details</ion-col></ion-row
+                ></ion-card-title
+              >
             </ion-card-header>
           </ion-card>
         </Slide>
@@ -51,18 +56,16 @@ import useCoverSearch from '../composables/useCoverSearch';
 
 import { stores as webStores } from '~web';
 import FullIssue from './FullIssue.vue';
+import { ComponentPublicInstance } from 'vue';
 
 const { publicationNames } = storeToRefs(webStores.coa());
 
-const carousel = ref();
-
 const slideWidths = ref<number[]>([]);
 
-const onUpdatedSlide = (idx: number, { el }: { el: HTMLElement }) => {
-  debugger;
-  nextTick(() => {
-    slideWidths.value[idx] = el.clientWidth;
-  });
+const addSlideElement = (idx: number, el: HTMLElement) => {
+  new ResizeObserver(function () {
+    slideWidths.value[idx] = el.clientWidth + 32;
+  }).observe(el);
 };
 
 const {
@@ -84,18 +87,16 @@ const searchResults = computed(
 const origin = computed(() => route.query.origin as 'pickCoverFile' | 'takePhoto');
 
 const covers = computed(() =>
-  searchResults.value.covers.map((cover) => ({
-    ...cover,
-    code: cover.issuecode,
-    countrycode: cover.publicationcode.split('/')[0],
-    publicationName: publicationNames.value[cover.publicationcode],
-    collectionIssue: getCollectionIssue(cover.publicationcode, cover.issuenumber),
-  })),
+  Object.keys(publicationNames.value).length
+    ? searchResults.value.covers.map((cover) => ({
+        ...cover,
+        code: cover.issuecode,
+        countrycode: cover.publicationcode.split('/')[0],
+        publicationName: publicationNames.value[cover.publicationcode],
+        collectionIssue: getCollectionIssue(cover.publicationcode, cover.issuenumber),
+      }))
+    : [],
 );
-
-watch(covers, () => {
-  slideWidths.value = covers.value.map(() => 200);
-});
 
 const test = () => {
   console.log('!');
@@ -158,7 +159,11 @@ ion-button {
   min-height: initial;
 }
 
-.carousel-3d-slider {
+.carousel-3d.invisible {
+  visibility: hidden;
+}
+
+:deep(.carousel-3d-slider) {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -166,5 +171,7 @@ ion-button {
 
 .carousel-3d-slide {
   border-radius: 12px;
+  width: 100%;
+  overflow-x: auto;
 }
 </style>

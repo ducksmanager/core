@@ -59,3 +59,12 @@ ion-button {
     }
   }
 }
+
+.toast-error {
+  text-align: center;
+  opacity: .85;
+  &::part(container) {
+    background: #db663b;
+    color: white
+  }
+}

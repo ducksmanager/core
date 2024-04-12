@@ -1,14 +1,28 @@
 import { FilePicker } from '@capawesome/capacitor-file-picker';
 import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
 import { Router } from 'vue-router';
+import { toastController } from '@ionic/vue';
 
 export default (router: Router, coverIdServices: ReturnType<typeof useDmSocket>['coverId']['services']) => {
+  const { t } = useI18n();
   const searchCoverFromBase64String = async (base64: string, origin: 'pickCoverFile' | 'takePhoto') =>
-    coverIdServices.searchFromCover({ base64 }).then((results) => {
-      router.push({
-        path: '/cover-search-results',
-        query: { searchResults: JSON.stringify(results), origin },
-      });
+    coverIdServices.searchFromCover({ base64 }).then(async (results) => {
+      if (results.covers?.length) {
+        router.push({
+          path: '/cover-search-results',
+          query: { searchResults: JSON.stringify(results), origin },
+        });
+      } else {
+        const toast = await toastController.create({
+          message: t('Aucun résultat pour votre photo, veuillez réessayer.'),
+          duration: 2000,
+          cssClass: 'toast-error',
+          position: 'middle',
+          translucent: true,
+        });
+
+        await toast.present();
+      }
     });
   return {
     pickCoverFile: async () => {
