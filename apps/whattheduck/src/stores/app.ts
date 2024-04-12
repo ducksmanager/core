@@ -10,8 +10,10 @@ export const app = defineStore('app', () => {
   } = injectLocal(dmSocketInjectionKey)!;
 
   const isOfflineMode = ref(false);
-  setInterval(() => {
-    isOfflineMode.value = !coaSocket.connected;
+  setTimeout(() => {
+    setInterval(() => {
+      isOfflineMode.value = coaSocket && !coaSocket.connected;
+    }, 1000);
   }, 1000);
 
   const route = useRoute();
