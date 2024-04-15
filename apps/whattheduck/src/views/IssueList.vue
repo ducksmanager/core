@@ -8,12 +8,33 @@
     <template #row-label="{ item }">
       <Issue v-bind="item" />
     </template>
+    <template #sheet-modal>
+      <ion-modal
+        :initial-breakpoint="0.4"
+        :is-open="true"
+        :breakpoints="[0.4, 1]"
+        handle-behavior="cycle"
+        class="ion-padding"
+        ><ion-row class="ion-text-center ion-padding"><ion-title>Zoom</ion-title></ion-row>
+        <ion-row>
+          <ion-range
+            ref="zoomRange"
+            aria-label="Range with ticks"
+            :ticks="true"
+            :snaps="true"
+            :min="0"
+            :max="4"
+          ></ion-range></ion-row
+        ><ion-row class="ion-justify-content-between">
+          <ion-icon :ios="listOutline" :md="listSharp" /></ion-row></ion-modal
+    ></template>
   </List>
 </template>
 
 <script setup lang="ts">
 import type { issueWithPublicationcode } from '~prisma-clients/extended/dm.extends';
 import { stores as webStores } from '~web';
+import { listOutline, listSharp } from 'ionicons/icons';
 
 import { app } from '~/stores/app';
 import { wtdcollection } from '~/stores/wtdcollection';
@@ -22,12 +43,14 @@ const route = useRoute();
 
 const collectionStore = wtdcollection();
 const coaStore = webStores.coa();
-const { isCoaView, currentNavigationItem } = storeToRefs(app());
+const { isCoaView } = storeToRefs(app());
 
 defineSlots<{
   rowPrefix: { item: issueWithPublicationcode };
   rowLabel: { text: string };
 }>();
+
+const zoomRange = ref<{ $el: HTMLIonRangeElement }>();
 
 const getItemTextFn = (item: (typeof items)['value'][0]['item']) => item.issuenumber;
 
@@ -38,15 +61,7 @@ const getTargetUrlFn = (key: string) => ({
   params: key.match(coaStore.ISSUECODE_REGEX)!.groups,
 });
 
-const publicationcode = computed(() => `${route.params.countrycode}/${route.params.magazinecode}`);
-
-watch(
-  publicationcode,
-  async (newValue) => {
-    currentNavigationItem.value = newValue as string;
-  },
-  { immediate: true },
-);
+const publicationcode = computed(() => `${route.params.publicationcode}`);
 
 const coaIssues = computed(() => coaStore.issuesWithTitles[publicationcode.value]);
 const coaIssuenumbers = computed(() => coaIssues.value?.map(({ issuenumber }) => issuenumber));
@@ -148,5 +163,14 @@ ion-checkbox {
       }
     }
   }
+}
+
+ion-modal {
+  width: 100%;
+  --height: auto;
+}
+
+ion-range {
+  padding: 0 8px;
 }
 </style>

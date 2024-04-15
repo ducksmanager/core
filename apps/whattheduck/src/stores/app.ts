@@ -34,7 +34,7 @@ export const app = defineStore('app', () => {
     isDataLoaded,
     socketCache,
     lastSync,
-    currentNavigationItem: ref(undefined as string | undefined),
+    currentNavigationItem: computed(() => (route.params.publicationcode || route.params.countrycode) as string),
     token,
     isOfflineMode,
     isCoaView: computed(() => route.query.coa === 'true'),

@@ -1,6 +1,7 @@
 <template>
   <ion-segment v-if="parts" :value="currentNavigationItem" @ionChange="onChange">
-    <ion-segment-button v-for="{ id, text, component } in parts" :id="id" :value="id">
+    <ion-segment-button v-for="{ id, badge, text, component } in parts" :id="id" :value="id">
+      <ion-chip v-if="badge">{{ badge }}</ion-chip>
       <component v-if="component" :is="component" :id="id" :label="text" />
       <ion-label v-else>{{ text }}</ion-label>
     </ion-segment-button>
@@ -27,9 +28,9 @@ const parts = computed(() => {
   if (!countryNames.value) {
     return [];
   }
-  const parts: { text: string; id?: string; component?: any }[] = [
+  const parts: { text?: string; id: string; component?: any; badge?: string }[] = [
     {
-      id: '',
+      id: 'root',
       text: t('Tous les pays'),
     },
   ];
@@ -44,6 +45,7 @@ const parts = computed(() => {
       parts.push({
         component: Publication,
         id: currentNavigationItem.value,
+        badge: currentNavigationItem.value,
         text: publicationNames.value[currentNavigationItem.value]!,
       });
     }
@@ -71,7 +73,13 @@ ion-segment-button {
   width: 33.333%;
   max-width: 33.333%;
   align-items: center;
+  align-self: start;
   text-transform: none;
+  white-space: normal;
+
+  ion-badge {
+    margin-top: 8px;
+  }
 
   ion-label {
     width: 100%;

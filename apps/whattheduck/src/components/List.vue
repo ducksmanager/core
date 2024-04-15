@@ -56,8 +56,8 @@
         :style="{ top: `${scrollPositionPct}%` }"
       >
         {{ getItemTextFn(itemInCenterOfViewport) }}
-      </div>
-    </ion-content>
+      </div></ion-content
+    ><slot name="sheet-modal" v-if="$slots['sheet-modal']" />
   </ion-page>
 </template>
 
@@ -70,6 +70,7 @@ defineSlots<{
   'row-prefix'(props: { item: Item }): any;
   'row-label'(props: { item: Item }): any;
   'row-suffix'(props: { item: Item }): any;
+  'sheet-modal'(): any;
 }>();
 
 const props = defineProps<{
@@ -112,6 +113,7 @@ const itemInCenterOfViewport = computed(() => {
 });
 
 const onRowClick = (key: string) => {
+  console.log(props.getTargetRouteFn(key));
   router.push({ ...props.getTargetRouteFn(key), query: { coa: route.query.coa } });
 };
 

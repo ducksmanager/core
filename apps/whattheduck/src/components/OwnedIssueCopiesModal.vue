@@ -108,10 +108,9 @@ const submitIssueCopies = async () => {
     issuenumber: issuenumber.value,
     copies: copies.value,
   });
-  const [countrycode, magazinecode] = publicationcode.value.split('/');
   router.push({
     name: 'IssueList',
-    params: { type: 'collection', countrycode, magazinecode },
+    params: { type: 'collection', publicationcode: publicationcode.value },
   });
 };
 </script>

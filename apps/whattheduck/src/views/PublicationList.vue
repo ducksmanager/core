@@ -48,19 +48,11 @@ const ownershipPercentages = computed(() => getOwnershipPercentages(totalPerPubl
 
 const route = useRoute();
 
-watch(
-  () => route.params.countrycode,
-  async (newValue) => {
-    appStore.currentNavigationItem = newValue as string;
-  },
-  { immediate: true },
-);
-
 const getItemTextFn = (item: (typeof items)['value'][0]['item']) => item.publicationname || item.publicationcode;
 
 const getTargetUrlFn = (key: string) => ({
   name: 'IssueList',
-  params: { type: route.params.type, countrycode: key.split('/')[0], magazinecode: key.split('/')[1] },
+  params: { type: route.params.type, publicationcode: key },
 });
 
 const items = computed(() =>

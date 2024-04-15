@@ -25,7 +25,7 @@ export type RouteMeta = {
 const routes: RouteRecordRaw[] = [
   {
     name: 'OwnedIssueCopiesModal',
-    path: '/collection/:countrycode/:magazinecode/:issuenumber',
+    path: '/collection/:publicationcode([^/]+/[^/]+)/:issuenumber',
     component: OwnedIssueCopiesModal,
     children: [
       {
@@ -39,9 +39,9 @@ const routes: RouteRecordRaw[] = [
     } as RouteMeta,
   },
   {
-    name: 'IssueList',
-    path: '/:type(collection|coa)/:countrycode/:magazinecode',
-    component: IssueList,
+    name: 'CountryList',
+    path: '/:type(collection|coa)',
+    component: CountryList,
     meta: {
       onOffline: 'readonly',
       onNoToken: 'logout',
@@ -49,7 +49,7 @@ const routes: RouteRecordRaw[] = [
   },
   {
     name: 'PublicationList',
-    path: '/:type(collection|coa)/:countrycode',
+    path: '/:type(collection|coa)/:countrycode([a-z]+)',
     component: PublicationList,
     meta: {
       onOffline: 'readonly',
@@ -57,9 +57,9 @@ const routes: RouteRecordRaw[] = [
     } as RouteMeta,
   },
   {
-    name: 'CountryList',
-    path: '/:type(collection|coa)',
-    component: CountryList,
+    name: 'IssueList',
+    path: '/:type(collection|coa)/:publicationcode([^/]+/[^/]+)',
+    component: IssueList,
     meta: {
       onOffline: 'readonly',
       onNoToken: 'logout',
