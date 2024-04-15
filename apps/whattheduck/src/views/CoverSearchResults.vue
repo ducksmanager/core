@@ -84,9 +84,9 @@ import { wtdcollection } from '~/stores/wtdcollection';
 import useCoverSearch from '../composables/useCoverSearch';
 
 import { stores as webStores } from '~web';
-import FullIssue from './FullIssue.vue';
 import { ComponentPublicInstance } from 'vue';
-import OwnedIssueCopiesModal from './OwnedIssueCopiesModal.vue';
+import FullIssue from '~/components/FullIssue.vue';
+import OwnedIssueCopiesModal from '~/components/OwnedIssueCopiesModal.vue';
 
 const { t } = useI18n();
 const { publicationNames } = storeToRefs(webStores.coa());

@@ -65,7 +65,6 @@
 import { IonContent, ScrollDetail } from '@ionic/vue';
 import { app } from '~/stores/app';
 import { wtdcollection } from '~/stores/wtdcollection';
-
 defineSlots<{
   'fill-bar'(props: { item: Item }): any;
   'row-prefix'(props: { item: Item }): any;
@@ -181,6 +180,7 @@ ion-searchbar {
 :deep(ion-progress-bar) {
   position: absolute;
   height: 100%;
+
   :deep(&::part(track)) {
     background-color: transparent;
     opacity: 0.2;

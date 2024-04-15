@@ -49,8 +49,8 @@ import { stores } from '~web';
 
 import { wtdcollection } from '~/stores/wtdcollection';
 import { dmSocketInjectionKey } from '~web/src/composables/useDmSocket';
-import FullIssue from './FullIssue.vue';
 import type { IssueWithCollectionIssues } from '~/stores/wtdcollection';
+import FullIssue from '~/components/FullIssue.vue';
 
 const {
   coa: { services: coaServices },

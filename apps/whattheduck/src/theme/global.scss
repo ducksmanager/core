@@ -34,6 +34,12 @@ ion-button {
   }
 }
 
+ion-segment-button {
+  ion-label {
+    justify-content: center;
+  }
+}
+
 .dm-condition-background {
 
   @each $condition,

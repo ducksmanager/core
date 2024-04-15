@@ -25,7 +25,8 @@ export const wtdcollection = defineStore('wtdcollection', () => {
 
   const isDataLoaded = ref(false);
 
-  const { findInCollection, loadCollection, loadPurchases, loadUser, login, signup } = webCollectionStore;
+  const { findInCollection, loadCollection, loadPurchases, loadUser, login, signup, updateCollectionSingleIssue } =
+    webCollectionStore;
 
   const ownedCountries = computed(() =>
       issues.value ? [...new Set((issues.value || []).map(({ country }) => country))].sort() : issues.value,
@@ -37,6 +38,7 @@ export const wtdcollection = defineStore('wtdcollection', () => {
     ),
     fetchAndTrackCollection = async () => {
       await loadCollection();
+      await loadPurchases();
       await loadUser();
       // TODO retrieve user points
       // TODO retrieve user notification countries
@@ -90,6 +92,7 @@ export const wtdcollection = defineStore('wtdcollection', () => {
     totalPerCountry: computed(() => webCollectionStore.totalPerCountry),
     totalPerPublication: computed(() => webCollectionStore.totalPerPublication),
     totalUniqueIssues: computed(() => webCollectionStore.totalUniqueIssues),
+    updateCollectionSingleIssue,
     user,
   };
 });
@@ -98,5 +101,5 @@ export type IssueWithCollectionIssues = SimpleIssue & {
   countrycode: string;
   countryname?: string;
   publicationName: string;
-  collectionIssues: issueWithPublicationcode[];
+  collectionIssues?: issueWithPublicationcode[];
 };

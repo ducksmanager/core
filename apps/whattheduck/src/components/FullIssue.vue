@@ -1,7 +1,7 @@
 <template>
   <ion-col class="ion-align-items-center ion-text-nowrap">
     <condition
-      v-if="!hideCollectionIssueConditions"
+      v-if="showIssueConditions"
       v-for="collectionIssue of issue.collectionIssues"
       :value="collectionIssue.condition"
     /><Country :id="issue.countrycode" :label="issue.countryname" />&nbsp;
@@ -13,12 +13,16 @@
 </template>
 
 <script setup lang="ts">
-import type { IssueWithCollectionIssues } from '~/stores/wtdcollection';
+import { IssueWithCollectionIssues } from '~/stores/wtdcollection';
 
-defineProps<{
-  hideCollectionIssueConditions?: false;
-  issue: IssueWithCollectionIssues;
+const props = defineProps<{
+  issue: Pick<
+    IssueWithCollectionIssues,
+    'countrycode' | 'countryname' | 'publicationName' | 'issuenumber' | 'collectionIssues'
+  >;
 }>();
+
+const showIssueConditions = computed(() => 'collectionIssues' in props.issue);
 </script>
 
 <style scoped lang="scss">

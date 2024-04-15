@@ -1,21 +1,17 @@
 <template>
   <ion-grid>
     <ion-row>
-      <ion-col size="4">
+      <ion-col size="4" class="ion-padding">
         <ion-label>{{ t('Etat') }}</ion-label></ion-col
       >
-      <ion-col size="8">
-        <ion-row style="flex-direction: column" class="ion-align-items-center">
-          <ion-radio-group :model-value="issue.condition">
-            <ion-checkbox
-              v-for="{ dbValue, label, themeColor } of conditionsWithoutMissing"
-              :key="dbValue || 'missing'"
-              :color="themeColor"
-              :checked="issue.condition === dbValue"
-              @ion-change="onChangeCondition($event, dbValue)"
-              :aria-label="label"
-            />
-          </ion-radio-group>
+      <ion-col size="8" class="ion-padding">
+        <ion-row style="flex-direction: column" class="ion-align-items-end">
+          <checkbox-group-with-radio-behavior
+            :list="conditionsWithoutMissing"
+            v-model:id="issue.condition"
+            :getItemId="(item) => item.dbValue"
+            :getCheckboxColor="(item) => item.themeColor"
+          />
           <ion-label>{{
             conditionsWithoutMissing.find(({ dbValue }) => dbValue === issue.condition)?.label
           }}</ion-label></ion-row
@@ -23,42 +19,43 @@
       >
     </ion-row>
     <ion-row>
-      <ion-col size="4">
+      <ion-col size="4" class="ion-padding">
         <ion-label>{{ t('A lire') }}</ion-label></ion-col
       >
-      <ion-col size="8" style="display: flex" class="ion-justify-content-center"
+      <ion-col size="8" style="display: flex" class="ion-padding ion-justify-content-end"
         ><ion-checkbox v-model="issue.isToRead" :aria-label="t('A lire')" /></ion-col
     ></ion-row>
     <ion-row>
-      <ion-col size="4">
-        <ion-label>{{ t("Date d'achat") }}</ion-label></ion-col
-      >
-      <ion-col size="8">
-        <ion-button>{{ t("Créer une date d'achat") }}</ion-button>
+      <ion-col size="4" class="ion-padding">
+        <ion-label>{{ t("Date d'achat") }}</ion-label>
 
-        <ion-radio-group :model-value="issue.purchaseId" :value="issue.purchaseId" class="vertical">
-          <ion-list>
-            <ion-item>
-              <ion-radio :value="null" :aria-label="t('Pas de date d\'achat')" />
-              <div>
-                <ion-label>{{ t("Pas de date d'achat") }}</ion-label>
-              </div>
-            </ion-item>
-            <ion-item v-for="thisPurchase of purchases">
-              <ion-radio :value="thisPurchase.id" :aria-label="thisPurchase.description" />
-              <div>
-                <ion-label>{{ thisPurchase.date }}</ion-label>
-                <ion-label>{{ thisPurchase.description }}</ion-label>
-              </div>
-            </ion-item>
-          </ion-list>
-        </ion-radio-group></ion-col
+        <!-- TODO -->
+        <!-- <ion-button style="visibility: hidden" size="small">{{ t("Créer une date d'achat") }}</ion-button> -->
+      </ion-col>
+      <ion-col size="8" class="ion-padding ion-text-right">
+        <checkbox-group-with-radio-behavior
+          class="ion-text-right ion-padding-bottom vertical"
+          label-placement="start"
+          justify="end"
+          v-model:id="issue.purchaseId"
+          :list="purchasesIncludingNone"
+          :getItemId="(item) => item.id"
+        >
+          <template #default="{ item }">
+            <div
+              :style="{ fontStyle: item.id === null ? 'italic' : 'normal' }"
+              v-for="descriptionLine of item.dateAndDescription"
+            >
+              {{ descriptionLine }}
+            </div></template
+          ></checkbox-group-with-radio-behavior
+        ></ion-col
       >
     </ion-row></ion-grid
   >
 </template>
 <script setup lang="ts">
-import { type purchase, type issue, issue_condition } from '~prisma-clients/client_dm';
+import { type purchase, type issue } from '~prisma-clients/client_dm';
 
 import { wtdcollection } from '~/stores/wtdcollection';
 import { SingleCopyState } from '~dm-types/CollectionUpdate';
@@ -73,13 +70,16 @@ const collectionStore = wtdcollection();
 
 const purchases = computed(() => collectionStore.purchases);
 
-const onChangeCondition = (event: Event & { detail: { checked: boolean } }, dbValue: issue_condition) => {
-  if (event.detail.checked) {
-    issue.value.condition = dbValue;
-  } else {
-    event.preventDefault();
-  }
-};
+const purchasesIncludingNone = computed(() => [
+  {
+    id: null,
+    dateAndDescription: [t("Pas de date d'achat")],
+  },
+  ...purchases.value!.map(({ id, date, description }) => ({
+    id,
+    dateAndDescription: [date.toLocaleDateString(), description],
+  })),
+]);
 
 const selectedPurchase = ref(null as purchase | null);
 
