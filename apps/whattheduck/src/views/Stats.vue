@@ -44,7 +44,7 @@
           <template v-if="highestQuotedIssue">
             <ion-text>{{ t('Numéro le plus côté :') }}</ion-text>
             <ion-text>
-              <Condition :value="getConditionText(highestQuotedIssue.condition)" />
+              <Condition :value="highestQuotedIssue.condition" />
               {{ coaStore.publicationNames[highestQuotedIssue.publicationcode] }}
               {{ highestQuotedIssue.issuenumber }}</ion-text
             ></template
@@ -75,8 +75,9 @@
 import { components } from '~web';
 import { coa } from '~web/src/stores/coa';
 
-import { conditionsWithoutMissing, getConditionText } from '~/composables/useCondition';
 import { wtdcollection } from '~/stores/wtdcollection';
+
+const { conditionsWithoutMissing } = useCondition();
 
 const ConditionsComponent = components['Conditions'];
 const { t } = useI18n();
@@ -100,9 +101,9 @@ const coaStore = coa();
 const numberPerCondition = computed(() => wtdCollectionStore.numberPerCondition);
 const highestQuotedIssue = computed(() => wtdCollectionStore.highestQuotedIssue);
 
-wtdCollectionStore.loadCollection().then(() => {
+(async () => {
   coaStore.fetchIssueQuotations(wtdCollectionStore.ownedPublications!);
-});
+})();
 </script>
 
 <style lang="scss" scoped>

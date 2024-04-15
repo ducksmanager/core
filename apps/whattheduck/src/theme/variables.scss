@@ -2,12 +2,13 @@
 http://ionicframework.com/docs/theming/ */
 
 $dmConditions: (
-  'missing': white,
-  'bad': red,
-  'notsogood': orange,
-  'good': rgb(44, 167, 123),
-  'none': rgb(128, 128, 128),
+  'missing': #f6f8fc, // light
+  'bad': red, // danger
+  'notsogood': orange, //warning
+  'good': rgb(44, 167, 123), // success
+  'none': rgb(128, 128, 128), // medium
 );
+
 
 /** Ionic CSS Variables **/
 :root {
@@ -63,20 +64,20 @@ $dmConditions: (
   --ion-color-tertiary-tint: #6370ff;
 
   /** success **/
-  --ion-color-success: #2dd36f;
-  --ion-color-success-rgb: 45, 211, 111;
-  --ion-color-success-contrast: white;
-  --ion-color-success-contrast-rgb: 255, 255, 255;
-  --ion-color-success-shade: #28ba62;
-  --ion-color-success-tint: #42d77d;
+	--ion-color-success: #2ca77c;
+	--ion-color-success-rgb: 44,167,124;
+	--ion-color-success-contrast: #000000;
+	--ion-color-success-contrast-rgb: 0,0,0;
+	--ion-color-success-shade: #27936d;
+	--ion-color-success-tint: #41b089;
 
   /** warning **/
-  --ion-color-warning: #ffc409;
-  --ion-color-warning-rgb: 255, 196, 9;
-  --ion-color-warning-contrast: #000000;
-  --ion-color-warning-contrast-rgb: 0, 0, 0;
-  --ion-color-warning-shade: #e0ac08;
-  --ion-color-warning-tint: #ffca22;
+	--ion-color-warning: #ffa500;
+	--ion-color-warning-rgb: 255,165,0;
+	--ion-color-warning-contrast: #000000;
+	--ion-color-warning-contrast-rgb: 0,0,0;
+	--ion-color-warning-shade: #e09100;
+	--ion-color-warning-tint: #ffae1a;
 
   /** danger **/
   --ion-color-danger: #eb445a;
@@ -95,20 +96,20 @@ $dmConditions: (
   --ion-color-dark-tint: #383a3e;
 
   /** medium **/
-  --ion-color-medium: #92949c;
-  --ion-color-medium-rgb: 146, 148, 156;
-  --ion-color-medium-contrast: white;
-  --ion-color-medium-contrast-rgb: 255, 255, 255;
-  --ion-color-medium-shade: #808289;
-  --ion-color-medium-tint: #9d9fa6;
+	--ion-color-medium: #808080;
+	--ion-color-medium-rgb: 128,128,128;
+	--ion-color-medium-contrast: #000000;
+	--ion-color-medium-contrast-rgb: 0,0,0;
+	--ion-color-medium-shade: #717171;
+	--ion-color-medium-tint: #8d8d8d;
 
   /** light **/
-  --ion-color-light: #f4f5f8;
-  --ion-color-light-rgb: 244, 245, 248;
-  --ion-color-light-contrast: #000000;
-  --ion-color-light-contrast-rgb: 0, 0, 0;
-  --ion-color-light-shade: #d7d8da;
-  --ion-color-light-tint: #f5f6f9;
+	--ion-color-light: #f6f8fc;
+	--ion-color-light-rgb: 246,248,252;
+	--ion-color-light-contrast: #000000;
+	--ion-color-light-contrast-rgb: 0,0,0;
+	--ion-color-light-shade: #d8dade;
+	--ion-color-light-tint: #f7f9fc;
 
   @each $condition, $color in $dmConditions {
     --dm-condition-#{$condition}: #{$color};

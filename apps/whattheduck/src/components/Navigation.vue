@@ -51,7 +51,7 @@ const parts = computed(() => {
   return parts;
 });
 
-const onChange = (event: any) => {
+const onChange = (event: { detail: { value?: number | string } }) => {
   router.push({
     path: event.detail.value ? `/collection/${event.detail.value}` : '/collection',
     query: { coa: route.query.coa },

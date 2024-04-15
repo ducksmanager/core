@@ -2,7 +2,7 @@
   <List v-if="hasCoaData" :items="sortedItems" :get-target-route-fn="getTargetUrlFn" :get-item-text-fn="getItemTextFn">
     <template #row-prefix="{ item }">
       <ion-checkbox v-if="isCoaView">&nbsp;</ion-checkbox>
-      <Condition v-if="item.condition" :value="getConditionText(item.condition)" />
+      <Condition v-if="item.condition" :value="item.condition" />
       <span v-else class="not-owned-space" />
     </template>
     <template #row-label="{ item }">
@@ -15,7 +15,6 @@
 import type { issueWithPublicationcode } from '~prisma-clients/extended/dm.extends';
 import { stores as webStores } from '~web';
 
-import { getConditionText } from '~/composables/useCondition';
 import { app } from '~/stores/app';
 import { wtdcollection } from '~/stores/wtdcollection';
 
@@ -35,7 +34,7 @@ const getItemTextFn = (item: (typeof items)['value'][0]['item']) => item.issuenu
 const hasCoaData = computed(() => !!coaStore.issuesWithTitles?.[publicationcode.value]);
 
 const getTargetUrlFn = (key: string) => ({
-  name: 'OwnedIssueCopies',
+  name: 'OwnedIssueCopiesModal',
   params: key.match(coaStore.ISSUECODE_REGEX)!.groups,
 });
 

@@ -23,8 +23,7 @@ Chart.register(Legend, CategoryScale, BarElement, LinearScale, BarController, To
 
 const options = ref();
 
-const { loadCollection, loadPurchases } = wtdcollection(),
-  { issues, totalPerPublication, purchasesById } = storeToRefs(wtdcollection()),
+const { issues, totalPerPublication, purchasesById } = storeToRefs(wtdcollection()),
   { t } = useI18n();
 
 const compareDates = (a: string, b: string) =>
@@ -200,9 +199,6 @@ watch(
   },
   { immediate: true },
 );
-
-loadCollection();
-loadPurchases();
 </script>
 
 <style scoped lang="scss">

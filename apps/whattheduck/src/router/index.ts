@@ -10,7 +10,7 @@ import Forgot from '~/views/Forgot.vue';
 import IssueList from '~/views/IssueList.vue';
 import Login from '~/views/Login.vue';
 import Logout from '~/views/Logout.vue';
-import OwnedIssueCopies from '~/views/OwnedIssueCopies.vue';
+import OwnedIssueCopiesModal from '~/views/OwnedIssueCopiesModal.vue';
 import PublicationList from '~/views/PublicationList.vue';
 import Report from '~/views/Report.vue';
 import Search from '~/views/Search.vue';
@@ -24,9 +24,9 @@ export type RouteMeta = {
 
 const routes: RouteRecordRaw[] = [
   {
-    name: 'OwnedIssueCopies',
+    name: 'OwnedIssueCopiesModal',
     path: '/collection/:countrycode/:magazinecode/:issuenumber',
-    component: OwnedIssueCopies,
+    component: OwnedIssueCopiesModal,
     children: [
       {
         path: 'copy/:copyIndex',

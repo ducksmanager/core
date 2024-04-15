@@ -44,14 +44,13 @@
 </template>
 
 <script setup lang="ts">
-import type { SimpleIssue } from '~dm-types/SimpleIssue';
 import type { SimpleStory } from '~dm-types/SimpleStory';
-import type { issueWithPublicationcode } from '~prisma-clients/extended/dm.extends';
 import { stores } from '~web';
 
 import { wtdcollection } from '~/stores/wtdcollection';
 import { dmSocketInjectionKey } from '~web/src/composables/useDmSocket';
 import FullIssue from './FullIssue.vue';
+import type { IssueWithCollectionIssues } from '~/stores/wtdcollection';
 
 const {
   coa: { services: coaServices },
@@ -59,7 +58,7 @@ const {
 
 const { t } = useI18n();
 
-const { getCollectionIssue } = wtdcollection();
+const { getCollectionIssues } = wtdcollection();
 const coaStore = stores.coa();
 
 const storyTitle = ref('' as string);
@@ -68,12 +67,7 @@ const storyResults = ref(null as { results: any[] } | null);
 const selectedStory = ref(
   null as
     | (SimpleStory & {
-        issues: (SimpleIssue & {
-          countrycode: string;
-          countryname: string;
-          publicationName: string;
-          collectionIssue: issueWithPublicationcode | null;
-        })[];
+        issues: IssueWithCollectionIssues[];
       })
     | null,
 );
@@ -93,7 +87,7 @@ watch(storyTitle, async (newValue) => {
         countrycode: publicationcode.split('/')[0],
         publicationName: coaStore.publicationNames[publicationcode] || publicationcode,
         issuenumber,
-        collectionIssue: getCollectionIssue(publicationcode, issuenumber),
+        collectionIssues: getCollectionIssues(publicationcode, issuenumber),
       })),
     })),
   };

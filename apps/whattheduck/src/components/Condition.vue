@@ -1,9 +1,16 @@
 <template>
-  <span :class="`dm-condition-background ${value}`" />
+  <span
+    :class="`dm-condition-background ${conditions.find((condition) => condition.dbValue === value)?.dbEnValue} ${noMargin ? 'ion-no-margin' : ''}`"
+  />
 </template>
 <script setup lang="ts">
+import { issue_condition } from '~prisma-clients/client_dm';
+
+const { conditions } = useCondition();
+
 defineProps<{
-  value?: string;
+  value?: issue_condition;
+  noMargin?: boolean;
 }>();
 </script>
 <style lang="scss">

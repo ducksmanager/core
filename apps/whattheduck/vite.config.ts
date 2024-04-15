@@ -28,7 +28,7 @@ export default defineConfig({
       dirs: ['../web/src/composables', '../web/src/stores', '../../packages/types'],
       imports: [
         // presets
-        "@vueuse/core",
+        '@vueuse/core',
         'pinia',
         'vue',
         'vue/macros',
@@ -52,7 +52,7 @@ export default defineConfig({
       '~dm-types': path.resolve(__dirname, '../../packages/types'),
       '~dm-services': path.resolve(__dirname, '../../packages/api/services'),
       '~prisma-clients': path.resolve(__dirname, '../../packages/prisma-clients'),
-      '~web': path.resolve(__dirname, '../../apps/web'),
+      '~web': path.resolve(__dirname, '../web'),
       '~socket.io-services': path.resolve(__dirname, '../../packages/socket.io-services'),
       '~socket.io-client-services': path.resolve(__dirname, '../../packages/socket.io-client-services'),
     },
