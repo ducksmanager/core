@@ -74,7 +74,7 @@ const items = computed(() =>
 );
 
 const sortedItems = computed(() =>
-  [...items.value]
+  items.value
     .map(({ key, item }) => ({
       key,
       item,
@@ -84,11 +84,12 @@ const sortedItems = computed(() =>
     .sort(({ indexInCoaList: indexInCoaList1 }, { indexInCoaList: indexInCoaList2 }) =>
       Math.sign(indexInCoaList1 - indexInCoaList2),
     )
-    .map(({ key, item }, idx, allItems) => ({
+    .map(({ key, item, indexInCoaList }, idx, allItems) => ({
       key,
       item,
       isOwned: item.condition !== undefined,
-      isNextOwned: allItems[idx + 1]?.item?.condition !== undefined,
+      isNextOwned:
+        allItems[idx + 1]?.indexInCoaList === indexInCoaList + 1 && allItems[idx + 1]?.item?.condition !== undefined,
     })),
 );
 
