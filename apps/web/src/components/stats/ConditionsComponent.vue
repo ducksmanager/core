@@ -17,9 +17,13 @@ import {
 } from "chart.js";
 import { Pie } from "vue-chartjs";
 
+import { issue_condition } from "~prisma-clients/client_dm";
+
+import { Condition } from "../../composables/useCondition";
+
 const props = defineProps<{
-  conditions: { dbValue: string; color: string; text: string }[];
-  numberPerCondition: Record<string, number>;
+  conditions: Condition<boolean>[];
+  numberPerCondition: Record<issue_condition, number>;
   style?: Record<string, string>;
 }>();
 

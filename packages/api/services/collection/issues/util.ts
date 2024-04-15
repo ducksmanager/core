@@ -1,6 +1,5 @@
 import { prismaDm } from "~/prisma";
 import { SaleState } from "~dm-types/CollectionUpdate";
-import { issue_condition } from "~prisma-clients/client_dm";
 
 export const getUserPurchase = async (id: number | null, userId: number) =>
   id === null
@@ -14,25 +13,10 @@ export const getUserPurchase = async (id: number | null, userId: number) =>
         })
       )?.[0];
 
-export const conditionToEnum = (
-  condition: string | undefined
-): issue_condition | undefined => {
-  switch (condition) {
-    case undefined:
-      return undefined;
-    case "mauvais":
-    case "moyen":
-    case "bon":
-      return issue_condition[condition];
-    default:
-      return issue_condition.indefini;
-  }
-};
-
 export const deleteIssues = async (
   userId: number,
   publicationcode: string,
-  issueNumbers: string[]
+  issueNumbers: string[],
 ) => {
   const [country, magazine] = publicationcode.split("/");
   await prismaDm.issue.deleteMany({
@@ -49,14 +33,14 @@ export const deleteIssues = async (
 
 export const checkPurchaseIdsBelongToUser = async (
   purchaseIds: number[],
-  userId: number
+  userId: number,
 ): Promise<(number | null)[]> => {
   const checkedPromiseIds: (number | null)[] = [];
   for (const purchaseId of purchaseIds) {
     checkedPromiseIds.push(
       (await getUserPurchase(purchaseId as number, userId))
         ? (purchaseId as number)
-        : null
+        : null,
     );
   }
   return checkedPromiseIds;

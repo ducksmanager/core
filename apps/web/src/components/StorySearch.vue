@@ -53,7 +53,7 @@
                     conditions.find(
                       ({ dbValue }) =>
                         dbValue === searchResult!.collectionIssue.condition
-                    )?.value || undefined
+                    )?.dbValue || undefined
                   "
                 />&nbsp;{{ searchResult!.title }}
               </option>

@@ -576,7 +576,8 @@ const deletePublicationIssues = async (
       publicationcode,
       issuenumbers: issuesToDelete.map(({ issuenumber }) => issuenumber),
       condition:
-        conditions.find(({ value }) => value === null)?.dbValue || "indefini",
+        conditions.find(({ dbValue }) => dbValue === null)?.dbValue ||
+        "indefini",
       isToRead: false,
       isOnSale: false,
       purchaseId: null,
@@ -603,7 +604,7 @@ const loadIssues = async () => {
           conditions.find(({ dbValue }) => dbValue === issue.condition) || {
             value: "possessed",
           }
-        ).value,
+        ).dbValue,
       }));
 
     await fetchIssueNumbersWithTitles([publicationcode]);

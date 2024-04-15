@@ -13,13 +13,7 @@
 <script setup lang="ts">
 const { loadCollection, numberPerCondition } = collection();
 
-const conditionsWithoutMissing = useCondition()
-  .conditions.filter(({ dbValue }) => dbValue !== "missing")
-  .map(({ dbValue, color, text }) => ({
-    dbValue: dbValue as string,
-    color,
-    text,
-  }));
+const { conditionsWithoutMissing } = useCondition();
 
 loadCollection();
 </script>

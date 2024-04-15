@@ -281,6 +281,7 @@ meta:
 
 <script setup lang="ts">
 import type { inducks_issue } from "~prisma-clients/client_coa";
+import { issue_condition } from "~prisma-clients/client_dm";
 
 import { dmSocketInjectionKey } from "../../composables/useDmSocket";
 
@@ -292,7 +293,7 @@ const expandedPublicationAccordion = $ref(null as string | null);
 const expandedNotImportableAccordion = $ref(null as string | null);
 let hasPublicationNames = $ref(false as boolean);
 let hasIssueNumbers = $ref(false as boolean);
-const issueDefaultCondition = $ref("bon" as string);
+const issueDefaultCondition = $ref("bon" as issue_condition);
 let issuesToImport = $ref(null as inducks_issue[] | null);
 let issuesNotReferenced = $ref(null as inducks_issue[] | null);
 let issuesAlreadyInCollection = $ref(null as inducks_issue[] | null);
@@ -311,9 +312,11 @@ const { issues, user } = storeToRefs(collection());
 const { fetchPublicationNames, fetchIssueNumbers, fetchIssueCodesDetails } =
   coa();
 const { publicationNames, issueNumbers, issueCodeDetails } = storeToRefs(coa());
-const conditions = {
+const conditions: Record<issue_condition, string> = {
   mauvais: $t("En mauvais état"),
+  moyen: $t("En état moyen"),
   bon: $t("En bon état"),
+  indefini: $t("En état indéfini"),
 };
 const importDataReady = $computed(
   () => issuesToImport && issues.value && hasIssueNumbers,

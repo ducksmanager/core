@@ -5,9 +5,8 @@ import { Namespace, Server } from "socket.io";
 import { prismaCoa, prismaCoverInfo } from "~/prisma";
 import { SimilarImagesResult } from "~dm-types/CoverSearchResults";
 
-import Events from "./types";
-import { writeFileSync } from "fs";
 import { getCoverUrls } from "../coa/issue-details";
+import Events from "./types";
 
 export default (io: Server) => {
   (io.of(Events.namespaceEndpoint) as Namespace<Events>).on(

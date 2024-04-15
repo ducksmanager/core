@@ -10,7 +10,6 @@ import prismaDm from "~prisma-clients/extended/dm.extends";
 import Events from "../types";
 import {
   checkPurchaseIdsBelongToUser,
-  conditionToEnum,
   deleteIssues,
   handleIsOnSale,
 } from "./util";
@@ -25,7 +24,7 @@ export default (socket: Socket<Events>) => {
         where: {
           userId: socket.data.user!.id,
         },
-      })
+      }),
     );
   });
 
@@ -40,7 +39,7 @@ export default (socket: Socket<Events>) => {
         condition,
         isToRead,
       },
-      callback
+      callback,
     ) => {
       const user = socket.data.user!;
 
@@ -84,10 +83,10 @@ export default (socket: Socket<Events>) => {
           condition,
           isOnSale === undefined ? undefined : isOnSale !== false,
           isToRead,
-          checkedPurchaseId
-        )
+          checkedPurchaseId,
+        ),
       );
-    }
+    },
   );
   socket.on(
     "addOrChangeCopies",
@@ -100,7 +99,7 @@ export default (socket: Socket<Events>) => {
         copies
           .map(({ purchaseId }) => purchaseId)
           .filter((purchaseId) => !!purchaseId) as number[],
-        userId
+        userId,
       );
 
       const output = await addOrChangeCopies(
@@ -110,10 +109,10 @@ export default (socket: Socket<Events>) => {
         copies.map(({ id }) => id),
         copies.map(({ condition }) => condition),
         copies.map(({ isOnSale }) =>
-          isOnSale === undefined ? undefined : isOnSale !== false
+          isOnSale === undefined ? undefined : isOnSale !== false,
         ),
         copies.map(({ isToRead }) => isToRead),
-        checkedPurchaseIds
+        checkedPurchaseIds,
       );
 
       const currentCopyIds = (
@@ -137,7 +136,7 @@ export default (socket: Socket<Events>) => {
         }
       }
       callback(output);
-    }
+    },
   );
 };
 
@@ -145,10 +144,10 @@ const addOrChangeIssues = async (
   userId: number,
   publicationcode: string,
   issueNumbers: string[],
-  condition: string | undefined,
+  condition: issue_condition | undefined,
   isOnSale: boolean | undefined,
   isToRead: boolean | undefined,
-  purchaseId: number | null | undefined
+  purchaseId: number | null | undefined,
 ): Promise<TransactionResults> => {
   const [country, magazine] = publicationcode.split("/");
 
@@ -167,13 +166,13 @@ const addOrChangeIssues = async (
     prismaDm.issue.update({
       data: {
         ...existingIssue,
-        condition: conditionToEnum(condition),
+        condition,
         isOnSale,
         isToRead,
         purchaseId: purchaseId === null ? -1 : purchaseId,
       },
       where: { id: existingIssue.id },
-    })
+    }),
   );
   await prismaDm.$transaction(updateOperations);
 
@@ -182,7 +181,7 @@ const addOrChangeIssues = async (
       (issuenumber) =>
         !existingIssues
           .map(({ issuenumber: existingIssueNumber }) => existingIssueNumber)
-          .includes(issuenumber)
+          .includes(issuenumber),
     )
     .map((issuenumber) =>
       prismaDm.issue.create({
@@ -190,17 +189,14 @@ const addOrChangeIssues = async (
           country,
           magazine,
           issuenumber,
-          condition:
-            condition === undefined
-              ? issue_condition.indefini
-              : conditionToEnum(condition),
+          condition: condition || issue_condition.indefini,
           isOnSale: isOnSale || false,
           isToRead: isToRead || false,
           purchaseId: purchaseId === null ? -1 : purchaseId,
           userId,
           creationDate: new Date(),
         },
-      })
+      }),
     );
   await prismaDm.$transaction(insertOperations);
 
@@ -215,10 +211,10 @@ const addOrChangeCopies = async (
   publicationcode: string,
   issuenumber: string,
   issueIds: (number | null)[],
-  conditions: (string | null)[],
+  conditions: (issue_condition | null)[],
   areOnSale: (boolean | undefined)[],
   areToRead: (boolean | undefined)[],
-  purchaseIds: (number | null)[]
+  purchaseIds: (number | null)[],
 ): Promise<TransactionResults> => {
   const [country, magazine] = publicationcode.split("/");
 
@@ -229,7 +225,7 @@ const addOrChangeCopies = async (
       });
     }
     const common = {
-      condition: conditionToEnum(conditions[copyNumber]!),
+      condition: conditions[copyNumber]!,
       isOnSale:
         areOnSale[copyNumber] !== undefined
           ? (areOnSale[copyNumber] as boolean)
@@ -260,8 +256,6 @@ const addOrChangeCopies = async (
   };
 };
 
-
-
 export const resetDemo = async () => {
   const demo = (await prismaDm.demo.findUnique({ where: { id: 1 } }))!;
   if (
@@ -273,7 +267,9 @@ export const resetDemo = async () => {
     return;
   }
 
-  const csvPath = existsSync("/app/services/demo_issues.csv") ? "/app/services/": cwd() + "/services/";
+  const csvPath = existsSync("/app/services/demo_issues.csv")
+    ? "/app/services/"
+    : cwd() + "/services/";
 
   demo.lastReset = new Date();
   await prismaDm.demo.update({
@@ -291,17 +287,17 @@ export const resetDemo = async () => {
 
   interface CsvIssue {
     publicationcode: string;
-    condition: string;
+    condition: issue_condition;
     purchaseId: string;
     issuenumber: string;
   }
 
   const currentDir = process.cwd();
-  console.log(currentDir)
+  console.log(currentDir);
 
   const csvIssues: CsvIssue[] = parse(
     readFileSync(`${csvPath}demo_issues.csv`),
-    { columns: true }
+    { columns: true },
   );
   await prismaDm.$transaction(
     csvIssues.map(({ publicationcode, condition, purchaseId, issuenumber }) => {
@@ -312,12 +308,12 @@ export const resetDemo = async () => {
           country,
           magazine,
           issuenumber,
-          condition: conditionToEnum(condition),
+          condition,
           purchaseId: parseInt(purchaseId),
           isOnSale: false,
         },
       });
-    })
+    }),
   );
 
   interface CsvPurchase {
@@ -327,7 +323,7 @@ export const resetDemo = async () => {
 
   const csvPurchases: CsvPurchase[] = parse(
     readFileSync(`${csvPath}demo_purchases.csv`),
-    { columns: true }
+    { columns: true },
   );
   await prismaDm.$transaction(
     csvPurchases.map(({ date, description }) =>
@@ -337,14 +333,14 @@ export const resetDemo = async () => {
           date: new Date(date),
           description,
         },
-      })
-    )
+      }),
+    ),
   );
 };
 
 const deleteUserData = async (
   user: user,
-  issuesOnly = false
+  issuesOnly = false,
 ): Promise<void> => {
   await prismaDm.issue.deleteMany({ where: { userId: user.id } });
 
@@ -356,8 +352,6 @@ const deleteUserData = async (
   await prismaDm.userOption.deleteMany({ where: { userId: user.id } });
   await prismaDm.authorUser.deleteMany({ where: { userId: user.id } });
 };
-
-
 
 const getHoursFromDate = (date: Date) =>
   parseInt(date.toISOString().match(/(?<=T)[^:]+/)![0]);
@@ -374,4 +368,3 @@ const resetBookcaseOptions = async (user: user) => {
     where: { id: user.id },
   });
 };
-

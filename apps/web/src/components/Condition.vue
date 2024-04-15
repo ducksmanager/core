@@ -3,7 +3,7 @@
     v-if="currentCondition"
     class="issue-condition"
     :class="{
-      [`issue-condition-${currentCondition!.value}`]: true,
+      [`issue-condition-${currentCondition!.dbValue}`]: true,
     }"
     :style="{ backgroundColor: currentCondition!.color }"
     :title="currentCondition!.label"
@@ -32,9 +32,9 @@ const currentCondition = $computed(() => {
   if (value !== undefined) {
     return (
       conditions.find(
-        ({ value: conditionValue }) =>
+        ({ dbValue: conditionValue }) =>
           (value?.toString() || null) === conditionValue,
-      ) || conditions.find(({ value }) => value === null)!
+      ) || conditions.find(({ dbValue }) => dbValue === null)!
     );
   } else if (publicationcode && issuenumber) {
     const issueInCollection = store.findInCollection(
@@ -49,7 +49,7 @@ const currentCondition = $computed(() => {
       undefined
     );
   }
-  return conditions.find(({ value }) => value === null);
+  return conditions.find(({ dbValue }) => dbValue === null);
 });
 </script>
 

@@ -1,4 +1,5 @@
 import { QuotedIssue } from "~dm-types/QuotedIssue";
+import { issue_condition } from "~prisma-clients/client_dm";
 import { issueWithPublicationcode } from "~prisma-clients/extended/dm.extends";
 
 export default (issues: Ref<issueWithPublicationcode[] | null>) => {
@@ -88,13 +89,13 @@ export default (issues: Ref<issueWithPublicationcode[] | null>) => {
     ),
     numberPerCondition = computed(
       () =>
-        issues.value?.reduce(
+        issues.value?.reduce<Record<issue_condition, number>>(
           (acc, { condition }) => ({
             ...acc,
             [condition || "indefini"]: (acc[condition || "indefini"] || 0) + 1,
           }),
-          {} as { [condition: string]: number },
-        ) || {},
+          {} as Record<issue_condition, number>,
+        ) || ({} as Record<issue_condition, number>),
     ),
     findInCollection = (publicationcode: string, issuenumber: string) =>
       issues.value?.find(

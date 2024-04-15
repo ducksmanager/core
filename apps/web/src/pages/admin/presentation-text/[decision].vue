@@ -20,7 +20,7 @@ const {
   await presentationTextServices.approveOrDenyPresentationText(
     sentence,
     parseInt(userId),
-    currentRoute.params.decision as Decision
+    currentRoute.params.decision as Decision,
   );
 })();
 </script>

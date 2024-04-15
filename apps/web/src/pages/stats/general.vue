@@ -135,7 +135,7 @@
           }}
           <ul>
             <li>{{ $t("Numéro en bon état : pas d'ajustement") }}</li>
-            <li>{{ $t("Numéro en moyen état : 70% de la cote") }}</li>
+            <li>{{ $t("Numéro en état moyen : 70% de la cote") }}</li>
             <li>{{ $t("Numéro en mauvais état : 30% de la cote") }}</li>
             <li>{{ $t("Etat non défini : 70% de la cote") }}</li>
           </ul>

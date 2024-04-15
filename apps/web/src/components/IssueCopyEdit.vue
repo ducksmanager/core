@@ -328,8 +328,8 @@ const conditionStates = $computed(
       value: undefined,
       labelContextMenu: $t("Conserver l'état actuel"),
     },
-    ...conditions.map(({ value, labelContextMenu }) => ({
-      value,
+    ...conditions.map(({ dbValue, labelContextMenu }) => ({
+      value: dbValue,
       labelContextMenu,
     })),
   ],
