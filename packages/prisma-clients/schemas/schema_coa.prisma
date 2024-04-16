@@ -5,7 +5,7 @@ generator client {
 }
 
 datasource db {
-  provider = "mysql"
+  provider = "postgresql"
   url      = env("DATABASE_URL_COA")
 }
 
@@ -173,12 +173,12 @@ model inducks_entry_nofulltext {
   entrycomment            String?                                           @db.VarChar(3476)
   error                   inducks_entry_nofulltext_error?
 
-  @@index([issuecode], map: "fk0")
-  @@index([storyversioncode], map: "fk1")
-  @@index([languagecode], map: "fk2")
-  @@index([includedinentrycode], map: "fk3")
-  @@index([position], map: "fk4")
-  @@index([entrycode], map: "pk0")
+  @@index([issuecode], map: "inducks_entry_nofulltext_fk0")
+  @@index([storyversioncode], map: "inducks_entry_nofulltext_fk1")
+  @@index([languagecode], map: "inducks_entry_nofulltext_fk2")
+  @@index([includedinentrycode], map: "inducks_entry_nofulltext_fk3")
+  @@index([position], map: "inducks_entry_nofulltext_fk4")
+  @@index([entrycode], map: "inducks_entry_nofulltext_pk0")
 }
 
 model inducks_entrycharactername {
@@ -315,9 +315,9 @@ model inducks_issuequotation {
   id              Int       @id @default(autoincrement()) @map("ID")
   publicationcode String    @db.VarChar(15)
   issuenumber     String    @db.VarChar(12)
-  estimationMin   Float?    @map("estimationmin") @db.Float
-  estimationMax   Float?    @map("estimationmax") @db.Float
-  scrapeDate      DateTime? @map("scrapedate") @db.DateTime(0)
+  estimationMin   Float?    @map("estimationmin") @db.DoublePrecision
+  estimationMax   Float?    @map("estimationmax") @db.DoublePrecision
+  scrapeDate      DateTime? @map("scrapedate") @db.Time()
   source          String    @db.VarChar(15)
   issuecode       String?   @unique(map: "inducks_issuequotation__uindex_issuecode") @db.VarChar(28)
 
