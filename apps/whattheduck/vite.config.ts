@@ -17,6 +17,13 @@ export default defineConfig({
     Components({
       resolvers: [IonicResolver()],
       dts: true,
+      globs: [
+        'src/components/**/*.vue',
+        '../web/src/components/Bookcase.vue',
+        '../web/src/components/Edge.vue',
+        '../web/src/components/EdgeContents.vue',
+      ],
+      allowOverrides: true,
     }),
 
     AutoImport({

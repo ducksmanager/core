@@ -1,29 +1,55 @@
 <template>
   <List v-if="hasCoaData" :items="sortedItems" :get-target-route-fn="getTargetUrlFn" :get-item-text-fn="getItemTextFn">
-    <template #row-prefix="{ item }">
+    <template v-if="issueViewMode === 'list'" #row-prefix="{ item }">
       <ion-checkbox v-if="isCoaView">&nbsp;</ion-checkbox>
       <Condition v-if="item.condition" :value="item.condition" />
       <span v-else class="not-owned-space" />
     </template>
-    <template #row-label="{ item }">
+    <template v-if="issueViewMode === 'list'" #row-label="{ item }">
       <Issue v-bind="item" />
     </template>
+    <template v-if="issueViewMode === 'edges'">
+      <Bookcase
+        orientation="horizontal"
+        :embedded="true"
+        :currentEdgeHighlighted="null"
+        :bookcaseTextures="bookcaseOptions!.textures"
+        :sortedBookcase="sortedItemsForBookcase"
+      />
+    </template>
+    <!-- <template v-if="issueViewMode === 'edges'" #row-label="{ item }">
+      <EdgeContents
+        src="https://res.cloudinary.com/dl7hskxab/image/upload/t_rotate/v1523605655/edges-fr-MP-1.png"
+        :sprite-path="null"
+        :id="String(Math.random())"
+        :publicationcode="item.publicationcode!"
+        :issuenumber="item.issuenumber"
+        orientation="horizontal"
+      />
+    </template> -->
     <template #sheet-modal>
       <ion-modal
-        :initial-breakpoint="0.4"
-        :is-open="true"
-        :breakpoints="[0.4, 1]"
+        ref="modalRef"
         handle-behavior="cycle"
         class="ion-padding"
+        :initial-breakpoint="0.4"
+        :is-open="true"
+        :backdrop-dismiss="true"
+        :can-dismiss="true"
+        :breakpoints="[0.4, 1]"
+        :backdrop-breakpoint="0.4"
+        @ion-modal-did-dismiss="modalRef!.$el.present()"
         ><ion-row class="ion-text-center ion-padding"><ion-title>Zoom</ion-title></ion-row>
         <ion-row>
           <ion-range
             ref="zoomRange"
+            :value="viewModes.indexOf(issueViewMode)"
+            @ionChange="issueViewMode = viewModes[$event.detail.value as number]"
             aria-label="Range with ticks"
             :ticks="true"
             :snaps="true"
             :min="0"
-            :max="4"
+            :max="viewModes.length - 1"
           ></ion-range></ion-row
         ><ion-row class="ion-justify-content-between">
           <ion-icon :ios="listOutline" :md="listSharp" /></ion-row></ion-modal
@@ -39,11 +65,21 @@ import { listOutline, listSharp } from 'ionicons/icons';
 import { app } from '~/stores/app';
 import { wtdcollection } from '~/stores/wtdcollection';
 
+import { components as webComponents } from '~web';
+const { Bookcase } = webComponents;
+
 const route = useRoute();
 
-const collectionStore = wtdcollection();
+const { issues, user } = storeToRefs(wtdcollection());
 const coaStore = webStores.coa();
-const { isCoaView } = storeToRefs(app());
+
+const { viewModes } = app();
+const { isCoaView, issueViewMode } = storeToRefs(app());
+
+const { bookcaseOptions, bookcaseUsername } = storeToRefs(bookcase());
+const { loadBookcaseOptions, loadBookcaseOrder } = bookcase();
+
+const modalRef = ref<{ $el: HTMLIonModalElement }>();
 
 defineSlots<{
   rowPrefix: { item: issueWithPublicationcode };
@@ -66,7 +102,7 @@ const publicationcode = computed(() => `${route.params.publicationcode}`);
 const coaIssues = computed(() => coaStore.issuesWithTitles[publicationcode.value]);
 const coaIssuenumbers = computed(() => coaIssues.value?.map(({ issuenumber }) => issuenumber));
 const userIssues = computed(() =>
-  (collectionStore.issues || []).filter((issue) => issue.publicationcode === publicationcode.value),
+  (issues.value || []).filter((issue) => issue.publicationcode === publicationcode.value),
 );
 
 const items = computed(() =>
@@ -79,7 +115,7 @@ const items = computed(() =>
             ...(userIssues.value.find(({ issuenumber: userIssueNumber }) => issuenumber === userIssueNumber) || {}),
           },
         }))
-      : (collectionStore.issues || [])
+      : (issues.value || [])
           .filter((issue) => issue.publicationcode === publicationcode.value)
           .map(({ issuenumber, ...issue }) => ({
             key: `${publicationcode.value} ${issuenumber}`,
@@ -108,13 +144,25 @@ const sortedItems = computed(() =>
     })),
 );
 
+const sortedItemsForBookcase = computed(() =>
+  sortedItems.value.map(({ item }) => ({ publicationcode: item.publicationcode!, issuenumber: item.issuenumber })),
+);
+
 onMounted(async () => {
   await coaStore.fetchIssueNumbersWithTitles([publicationcode.value]);
+  bookcaseUsername.value = user.value!.username;
+
+  await loadBookcaseOptions();
+  await loadBookcaseOrder();
 });
 </script>
 
 <style lang="scss" scoped>
 @import '../theme/variables.scss';
+
+:deep(ion-content) {
+  margin-bottom: 60px !important;
+}
 
 ion-checkbox {
   margin-right: 0.5rem;

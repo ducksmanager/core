@@ -27,25 +27,27 @@
       @ion-scroll="onScroll"
       @ion-scroll-end="isScrolling = false"
     >
-      <Row
-        v-for="{ key, item, isOwned, isNextOwned } in filteredItems"
-        :is-owned="isOwned"
-        :is-next-owned="isNextOwned"
-        @click="onRowClick(key)"
-      >
-        <template #fill-bar v-if="item">
-          <slot name="fill-bar" :item="item" />
-        </template>
-        <template #prefix v-if="item">
-          <slot name="row-prefix" :item="item" />
-        </template>
-        <template #label>
-          <slot name="row-label" :item="item" />
-        </template>
-        <template #suffix>
-          <slot name="row-suffix" :item="item" />
-        </template>
-      </Row>
+      <slot v-if="$slots.default" name="default" />
+      <template v-else>
+        <Row
+          v-for="{ key, item, isOwned, isNextOwned } in filteredItems"
+          :is-owned="isOwned"
+          :is-next-owned="isNextOwned"
+          @click="onRowClick(key)"
+        >
+          <template #fill-bar v-if="item">
+            <slot name="fill-bar" :item="item" />
+          </template>
+          <template #prefix v-if="item">
+            <slot name="row-prefix" :item="item" />
+          </template>
+          <template #label>
+            <slot name="row-label" :item="item" />
+          </template>
+          <template #suffix>
+            <slot name="row-suffix" :item="item" />
+          </template> </Row
+      ></template>
       <EditIssuesButton />
 
       <div
@@ -66,6 +68,7 @@ import { IonContent, ScrollDetail } from '@ionic/vue';
 import { app } from '~/stores/app';
 import { wtdcollection } from '~/stores/wtdcollection';
 defineSlots<{
+  'default'(): any;
   'fill-bar'(props: { item: Item }): any;
   'row-prefix'(props: { item: Item }): any;
   'row-label'(props: { item: Item }): any;

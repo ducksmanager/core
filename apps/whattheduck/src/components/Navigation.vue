@@ -30,7 +30,7 @@ const parts = computed(() => {
   }
   const parts: { text?: string; id: string; component?: any; badge?: string }[] = [
     {
-      id: 'root',
+      id: '',
       text: t('Tous les pays'),
     },
   ];
