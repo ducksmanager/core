@@ -5,6 +5,7 @@
     class="edge"
     :class="{
       visible: !invisible && (imageLoaded || spriteLoaded),
+      vertical: orientation === 'vertical',
       [spriteClass]: true,
     }"
     :style="
@@ -45,6 +46,7 @@ const {
   spritePath = null,
   invisible = false,
   highlighted = false,
+  orientation = "vertical",
 } = defineProps<{
   id: string;
   publicationcode: string;
@@ -53,6 +55,7 @@ const {
   spritePath: string | null;
   invisible?: boolean;
   highlighted?: boolean;
+  orientation?: "vertical" | "horizontal";
 }>();
 const emit = defineEmits<{
   (e: "loaded", ids: string[]): void;
@@ -67,7 +70,7 @@ const { loadedSprites } = storeToRefs(bookcase());
 const spriteClass = $computed(() =>
   id && spritePath
     ? `edges-${publicationcode.replace(/\//g, "-")}-${issuenumber}`
-    : "",
+    : ""
 );
 const onImageLoad = async (event: Event) => {
   if (spritePath && !ignoreSprite) {
@@ -79,7 +82,7 @@ const onImageLoad = async (event: Event) => {
           await (await fetch(`${SPRITES_ROOT}${spritePath}.css`)).text()
         ).replaceAll(
           new RegExp("url\\('[^']+", "g"),
-          `url('${SPRITES_ROOT}${spritePath}.png`,
+          `url('${SPRITES_ROOT}${spritePath}.png`
         );
         const style = document.createElement("style");
         style.textContent = css;
@@ -138,7 +141,7 @@ let height = $ref(null as number | null);
 watch($$(ignoreSprite), (value) => {
   if (value) {
     console.error(
-      `Could not load sprite for edge ${publicationcode} ${issuenumber}: ${spritePath}`,
+      `Could not load sprite for edge ${publicationcode} ${issuenumber}: ${spritePath}`
     );
     emit("ignore-sprite");
   }
@@ -157,7 +160,7 @@ watch($$(ignoreSprite), (value) => {
   background-color: transparent;
   margin-top: 20px;
 
-  &:not(.visible-book)::after {
+  &.vertical:not(.visible-book)::after {
     position: absolute;
     content: "";
     top: 100%;
