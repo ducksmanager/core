@@ -1,5 +1,5 @@
-import MedalImage from "./src/components/MedalImage.vue";
 import Bookcase from "./src/components/Bookcase.vue";
+import MedalImage from "./src/components/MedalImage.vue";
 import StarRating from "./src/components/StarRating.vue";
 import Conditions from "./src/components/stats/ConditionsComponent.vue";
 import useCollection from "./src/composables/useCollection";

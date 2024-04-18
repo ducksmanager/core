@@ -70,7 +70,7 @@ const { loadedSprites } = storeToRefs(bookcase());
 const spriteClass = $computed(() =>
   id && spritePath
     ? `edges-${publicationcode.replace(/\//g, "-")}-${issuenumber}`
-    : ""
+    : "",
 );
 const onImageLoad = async (event: Event) => {
   if (spritePath && !ignoreSprite) {
@@ -82,7 +82,7 @@ const onImageLoad = async (event: Event) => {
           await (await fetch(`${SPRITES_ROOT}${spritePath}.css`)).text()
         ).replaceAll(
           new RegExp("url\\('[^']+", "g"),
-          `url('${SPRITES_ROOT}${spritePath}.png`
+          `url('${SPRITES_ROOT}${spritePath}.png`,
         );
         const style = document.createElement("style");
         style.textContent = css;
@@ -141,7 +141,7 @@ let height = $ref(null as number | null);
 watch($$(ignoreSprite), (value) => {
   if (value) {
     console.error(
-      `Could not load sprite for edge ${publicationcode} ${issuenumber}: ${spritePath}`
+      `Could not load sprite for edge ${publicationcode} ${issuenumber}: ${spritePath}`,
     );
     emit("ignore-sprite");
   }
@@ -155,10 +155,17 @@ watch($$(ignoreSprite), (value) => {
 
 .edge {
   position: relative;
-  display: inline-block;
   visibility: hidden;
   background-color: transparent;
-  margin-top: 20px;
+
+  &.visible {
+    visibility: visible;
+  }
+
+  &.vertical {
+    display: inline-block;
+    margin-top: 20px;
+  }
 
   &.vertical:not(.visible-book)::after {
     position: absolute;

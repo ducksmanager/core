@@ -8,6 +8,7 @@
     :sprite-path="spritePath"
     :invisible="invisible"
     :highlighted="highlighted"
+    :orientation="orientation"
     @loaded="$emit('loaded')"
     @open-book="$emit('open-book')"
     @ignore-sprite="ignoreSprite = true"
@@ -32,6 +33,7 @@
       :sprite-path="spritePath"
       :invisible="invisible"
       :highlighted="highlighted"
+      :orientation="orientation"
       @loaded="$emit('loaded')"
       @open-book="$emit('open-book')"
       @ignore-sprite="ignoreSprite = true"
@@ -51,6 +53,7 @@ const {
   invisible = false,
   highlighted = false,
   embedded = false,
+  orientation = "vertical",
 } = defineProps<{
   id: string;
   publicationcode: string;
@@ -63,9 +66,13 @@ const {
   invisible?: boolean;
   highlighted?: boolean;
   embedded?: boolean;
+  orientation?: "horizontal" | "vertical";
 }>();
 
 defineEmits<{ (e: "loaded"): void; (e: "open-book"): void }>();
+
+const CLOUDINARY_ROTATED_URL =
+  "https://res.cloudinary.com/dl7hskxab/image/upload/a_270/edges/";
 
 const { publicationNames } = storeToRefs(coa());
 
@@ -74,9 +81,12 @@ let countryCode = $computed(() => publicationcode.split("/")[0]),
   src = $computed(() =>
     spritePath && !ignoreSprite
       ? `${SPRITES_ROOT}${spritePath}.png`
-      : `${import.meta.env.VITE_EDGES_ROOT}${countryCode}/gen/${magazineCode}.${
+      : `${orientation === "vertical" ? import.meta.env.VITE_EDGES_ROOT : CLOUDINARY_ROTATED_URL}${countryCode}/gen/${magazineCode}.${(
           issuenumberReference || issuenumber
-        }.png?${!creationDate ? "" : new Date(creationDate).getTime()}`,
+        ).replaceAll(
+          " ",
+          "",
+        )}.png?${!creationDate ? "" : new Date(creationDate).getTime()}`,
   ),
   ignoreSprite = $ref(false);
 </script>
