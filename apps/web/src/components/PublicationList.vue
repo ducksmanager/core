@@ -149,6 +149,19 @@ fetchCountryNames();
   .navbar-nav {
     flex-wrap: wrap;
 
+    @media (max-width: 767px) {
+      width: 100%;
+      align-items: end;
+
+      :deep(.collapse) {
+        display: initial;
+
+        .navbar-nav {
+          align-items: initial !important;
+        }
+      }
+    }
+
     :deep(ul) {
       max-height: calc(100vh - 100px);
       z-index: 1030;
