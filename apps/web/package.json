@@ -17,6 +17,7 @@
   "dependencies": {
     "@bperel/vue3-popper-teleport": "^1.4.3",
     "@mapbox/mapbox-gl-geocoder": "^5.0.2",
+    "@mapbox/mapbox-gl-geocoder": "^5.0.2",
     "@popperjs/core": "^2.11.8",
     "@sentry/tracing": "^7.109.0",
     "@sentry/vue": "^7.109.0",
@@ -55,6 +56,8 @@
     "@vue/test-utils": "^2.4.5",
     "concurrently": "^8.2.2",
     "ejs-lint": "^2.0.0",
+    "eslint": "^8.57.0",
+    "eslint-config-prettier": "^9.1.0",
     "eslint": "^8.57.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-prettier-vue": "^5.0.0",

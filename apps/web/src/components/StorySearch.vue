@@ -227,6 +227,7 @@ fetchCountryNames();
 
   .navbar-nav {
     flex-wrap: wrap;
+    align-items: end;
 
     input {
       width: auto;

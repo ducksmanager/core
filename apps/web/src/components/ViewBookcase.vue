@@ -154,7 +154,11 @@
           (edge: BookcaseEdgeWithPopularity) => (currentEdgeOpened = edge)
         "
       />
-      <b-alert v-else :model-value="true" variant="warning">
+      <b-alert
+        v-else-if="sortedBookcase && !sortedBookcase.length"
+        :model-value="true"
+        variant="warning"
+      >
         {{ $t("Cette bibliothèque est vide.") }}
       </b-alert>
     </div>

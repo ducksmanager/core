@@ -54,7 +54,7 @@ export default (io: Server) => {
           jwt.verify(
             token,
             process.env.TOKEN_SECRET as string,
-            async (err: unknown, email: unknown) => {
+            async (err: unknown, data: unknown) => {
               if (err) {
                 callback({ error: "Invalid token" });
               } else if (password.length < 6) {
@@ -73,17 +73,16 @@ export default (io: Server) => {
                     password: hashedPassword,
                   },
                   where: {
-                    email: email as string,
+                    email: (data as { payload: string }).payload,
                   },
                 });
                 const user = (await prismaDm.user.findFirst({
                   where: {
-                    email: email as string,
+                    email: (data as { payload: string }).payload,
                   },
                 }))!;
-                await loginAs(user, hashedPassword);
 
-                callback({ token });
+                callback({ token: await loginAs(user, hashedPassword) });
               }
             },
           );

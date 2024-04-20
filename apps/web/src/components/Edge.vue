@@ -86,7 +86,7 @@ let countryCode = $computed(() => publicationcode.split("/")[0]),
         ).replaceAll(
           " ",
           "",
-        )}.png?${!creationDate ? "" : new Date(creationDate).getTime()}`,
+        )}.png?${creationDate ? new Date(creationDate).getTime() : "default"}`,
   ),
   ignoreSprite = $ref(false);
 </script>

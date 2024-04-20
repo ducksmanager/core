@@ -29,6 +29,8 @@ export abstract class Email {
   abstract templatePath: string;
   data?: { [key: string]: unknown };
 
+  sendCopyToAdmin = true;
+
   protected constructor() {
     if (!Email.transporter) {
       Email.transporter = nodemailer.createTransport({
@@ -65,7 +67,10 @@ export abstract class Email {
 
     try {
       await Email.transporter.sendMail(options);
-      if ((options.to as Address).address !== process.env.SMTP_USERNAME) {
+      if (
+        this.sendCopyToAdmin &&
+        (options.to as Address).address !== process.env.SMTP_USERNAME
+      ) {
         options.subject = `[Sent to ${to.address}] ${options.subject}`;
         options.to = process.env.SMTP_USERNAME;
         console.log(
