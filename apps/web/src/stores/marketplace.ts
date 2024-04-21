@@ -23,8 +23,8 @@ export const marketplace = defineStore("marketplace", () => {
         ]: GET__collection__on_sale_by_others__contact_methods__$sellerId["resBody"];
       },
     ),
-    sentRequestIssueIds = computed(
-      () => issueRequestsAsBuyer.value?.map(({ issueId }) => issueId),
+    sentRequestIssueIds = computed(() =>
+      issueRequestsAsBuyer.value?.map(({ issueId }) => issueId),
     ),
     sellerUserIds = computed(
       () =>
@@ -55,19 +55,16 @@ export const marketplace = defineStore("marketplace", () => {
           {} as { [userId: number]: string },
         ) || null,
     ),
-    sellerUserNames = computed(
-      () =>
-        sellerUserIds.value
-          ?.reduce(
-            (acc, userId) => [
-              ...acc,
-              { value: userId, text: users().stats[userId]?.username },
-            ],
-            [] as { value: number; text: string }[],
-          )
-          .sort(({ text: text1 }, { text: text2 }) =>
-            text1.localeCompare(text2),
-          ),
+    sellerUserNames = computed(() =>
+      sellerUserIds.value
+        ?.reduce(
+          (acc, userId) => [
+            ...acc,
+            { value: userId, text: users().stats[userId]?.username },
+          ],
+          [] as { value: number; text: string }[],
+        )
+        .sort(({ text: text1 }, { text: text2 }) => text1.localeCompare(text2)),
     ),
     requestIssueIdsBySellerId = computed(
       () =>

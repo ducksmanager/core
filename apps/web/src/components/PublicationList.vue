@@ -2,7 +2,7 @@
   <nav
     v-if="countryNames && hasPublicationNames"
     id="publication-list"
-    class="navbar navbar-expand-lg navbar-dark bg-dark flex-row justify-content-between position-sticky"
+    class="navbar navbar-expand-lg navbar-dark bg-dark flex-row justify-content-between"
   >
     <div class="d-flex flex-row align-items-center">
       <button
@@ -52,14 +52,14 @@
         </b-navbar-nav>
       </b-collapse>
     </div>
-    <div class="navbar-nav justify-content-end">
-      <form class="d-flex">
-        <StorySearch :with-title="false" :is-public="isPublic" />
-      </form>
-    </div>
   </nav>
   <div v-else>
     {{ $t("Chargement...") }}
+  </div>
+  <div class="navbar-nav">
+    <form class="d-flex justify-content-end">
+      <StorySearch :with-title="false" :is-public="isPublic" />
+    </form>
   </div>
 </template>
 
@@ -149,7 +149,7 @@ fetchCountryNames();
   .navbar-nav {
     flex-wrap: wrap;
 
-    @media (max-width: 767px) {
+    @media (max-width: 992px) {
       width: 100%;
       align-items: end;
 

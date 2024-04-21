@@ -507,19 +507,18 @@ const filteredIssues = $computed(
       ?.map((issue, idx) => ({ ...issue, idx })) || [],
 );
 
-const filteredIssuesCopyIndexes = $computed(
-  () =>
-    filteredIssues?.reduce(
-      (acc, { issuenumber }, idx) => [
-        ...acc,
-        idx === 0
-          ? 0
-          : filteredIssues[idx - 1].issuenumber === issuenumber
-            ? acc[idx - 1] + 1
-            : 0,
-      ],
-      [] as number[],
-    ),
+const filteredIssuesCopyIndexes = $computed(() =>
+  filteredIssues?.reduce(
+    (acc, { issuenumber }, idx) => [
+      ...acc,
+      idx === 0
+        ? 0
+        : filteredIssues[idx - 1].issuenumber === issuenumber
+          ? acc[idx - 1] + 1
+          : 0,
+    ],
+    [] as number[],
+  ),
 );
 
 const ownedIssuesCount = $computed(

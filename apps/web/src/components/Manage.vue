@@ -169,6 +169,7 @@ watch(
   top: 0;
   margin-bottom: 20px;
   z-index: 1;
+  position: sticky;
 }
 
 .navbar {
@@ -186,9 +187,12 @@ watch(
   }
 }
 
-@media (max-width: 767px) {
+@media (max-width: 992px) {
   #publication-list {
     top: $navbar-height;
+    max-height: calc(100vh - $navbar-height);
+    overflow-y: auto;
+    position: initial;
   }
 }
 </style>

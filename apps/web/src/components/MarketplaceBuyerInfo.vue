@@ -30,11 +30,10 @@ const { issueRequestsAsSeller } = storeToRefs(marketplace());
 const { points, stats } = storeToRefs(users());
 const { issuesInOnSaleStack } = storeToRefs(collection());
 
-const receivedRequests = $computed(
-  () =>
-    issueRequestsAsSeller.value?.filter(
-      ({ issueId: requestIssueId }) => requestIssueId === issueId,
-    ),
+const receivedRequests = $computed(() =>
+  issueRequestsAsSeller.value?.filter(
+    ({ issueId: requestIssueId }) => requestIssueId === issueId,
+  ),
 );
 
 const buyerPoints = $computed(
@@ -53,8 +52,8 @@ const buyerStats = $computed(
     ) || {},
 );
 
-const isOnSale = $computed(
-  () => issuesInOnSaleStack.value?.find(({ id }) => id === issueId),
+const isOnSale = $computed(() =>
+  issuesInOnSaleStack.value?.find(({ id }) => id === issueId),
 );
 </script>
 

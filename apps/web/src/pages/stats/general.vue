@@ -180,14 +180,13 @@ const { totalPerPublication, quotedIssues, quotationSum, user } =
 const { fetchPublicationNames, fetchIssueQuotations } = coa();
 const { publicationNames } = storeToRefs(coa());
 
-const quotedIssuesForCollection = $computed(
-  () =>
-    quotedIssues.value?.sort(
-      (
-        { estimationGivenCondition: estimation1 },
-        { estimationGivenCondition: estimation2 },
-      ) => Math.sign(estimation2 - estimation1),
-    ),
+const quotedIssuesForCollection = $computed(() =>
+  quotedIssues.value?.sort(
+    (
+      { estimationGivenCondition: estimation1 },
+      { estimationGivenCondition: estimation2 },
+    ) => Math.sign(estimation2 - estimation1),
+  ),
 );
 const quotationFields = [
   { key: "issue", label: $t("Numéro") },

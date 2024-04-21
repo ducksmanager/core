@@ -1,11 +1,14 @@
 <template>
-  <nav class="navbar navbar-expand-lg navbar-dark position-sticky">
+  <nav
+    class="navbar navbar-expand-lg navbar-dark position-relative"
+    style="z-index: 9"
+  >
     <div class="container-fluid">
       <div v-if="withTitle" class="navbar-brand">
         {{ $t("Rechercher une histoire") }}
       </div>
-      <div class="collapse navbar-collapse">
-        <ul class="navbar-nav">
+      <div class="collapse navbar-collapse d-block">
+        <ul class="navbar-nav position-relative">
           <b-dropdown
             class="dropdown search-type"
             :text="searchContexts[searchContext as 'story' | 'storycode']"
@@ -231,6 +234,11 @@ fetchCountryNames();
 <style scoped lang="scss">
 .navbar {
   flex-flow: row nowrap;
+  padding: 0 !important;
+
+  > * {
+    padding: 0 !important;
+  }
 
   .navbar-brand {
     min-width: 120px;
@@ -238,7 +246,6 @@ fetchCountryNames();
 
   .navbar-nav {
     flex-wrap: wrap;
-    align-items: end;
 
     input {
       width: auto;
@@ -265,8 +272,8 @@ fetchCountryNames();
         display: block;
         position: absolute;
         background: #eee;
-        min-width: 275px;
-        top: 36px;
+        right: 0;
+        top: 26px;
         padding-left: 0;
 
         option {

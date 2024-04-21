@@ -28,8 +28,8 @@ const { points, stats } = storeToRefs(users());
 const { sentRequestIssueIds, issuesOnSaleByOthers, issueRequestsAsBuyer } =
   storeToRefs(marketplace());
 
-const sentRequest = $computed(
-  () => sentRequestIssueIds.value?.includes(issueOnSale?.id),
+const sentRequest = $computed(() =>
+  sentRequestIssueIds.value?.includes(issueOnSale?.id),
 );
 
 const issueOnSale = $computed(

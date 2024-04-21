@@ -80,12 +80,11 @@ export const collection = defineStore("collection", () => {
     ),
     previousVisit = ref(null as Date | null),
     publicationUrlRoot = computed(() => "/collection/show"),
-    purchasesById = computed(
-      (): Record<string, purchase> | undefined =>
-        purchases.value?.reduce(
-          (acc, purchase) => ({ ...acc, [purchase.id as number]: purchase }),
-          {},
-        ),
+    purchasesById = computed((): Record<string, purchase> | undefined =>
+      purchases.value?.reduce(
+        (acc, purchase) => ({ ...acc, [purchase.id as number]: purchase }),
+        {},
+      ),
     ),
     hasSuggestions = computed(
       () =>
@@ -131,15 +130,14 @@ export const collection = defineStore("collection", () => {
             ),
         ),
     ),
-    popularIssuesInCollectionWithoutEdge = computed(
-      () =>
-        bookcase()
-          .bookcaseWithPopularities?.filter(
-            ({ edgeId, popularity }) => !edgeId && popularity && popularity > 0,
-          )
-          .sort(({ popularity: popularity1 }, { popularity: popularity2 }) =>
-            popularity2 && popularity1 ? popularity2 - popularity1 : 0,
-          ),
+    popularIssuesInCollectionWithoutEdge = computed(() =>
+      bookcase()
+        .bookcaseWithPopularities?.filter(
+          ({ edgeId, popularity }) => !edgeId && popularity && popularity > 0,
+        )
+        .sort(({ popularity: popularity1 }, { popularity: popularity2 }) =>
+          popularity2 && popularity1 ? popularity2 - popularity1 : 0,
+        ),
     ),
     userForAccountForm = computed(() => {
       if (!user.value) {
@@ -194,8 +192,9 @@ export const collection = defineStore("collection", () => {
       await loadPurchases(true);
     },
     loadPreviousVisit = async () => {
-      previousVisit.value = (await call(api, new POST__collection__lastvisit()))
-        .data?.previousVisit;
+      previousVisit.value = (
+        await call(api, new POST__collection__lastvisit())
+      ).data?.previousVisit;
     },
     loadCollection = async (afterUpdate = false) => {
       if (afterUpdate || (!isLoadingCollection.value && !issues.value)) {
