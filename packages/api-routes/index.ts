@@ -242,10 +242,6 @@ export class PUT__edgecreator__submit  extends ContractWithMethodAndUrl<{
             static readonly method = "put";
             static readonly url = "/edgecreator/submit";
         }
-export class POST__notification__send  extends ContractWithMethodAndUrl<Record<string, never>> {
-            static readonly method = "post";
-            static readonly url = "/notification/send";
-        }
 export class GET__status__db  extends ContractWithMethodAndUrl<{ resBody: { status: string } }> {
             static readonly method = "get";
             static readonly url = "/status/db";

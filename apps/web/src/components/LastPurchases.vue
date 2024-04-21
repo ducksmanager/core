@@ -66,7 +66,7 @@ const hasPublicationNames = $computed(() => Object.keys(publicationNames)),
                 description: existingPurchase.description,
               }
             : {
-                date: issue.creationDate,
+                date: new Date(issue.creationDate as unknown as string),
                 description: "",
               };
           let purchaseIndex = acc.findIndex(
