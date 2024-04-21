@@ -1,6 +1,6 @@
 <template>
   <nav
-    class="navbar navbar-expand-lg navbar-dark position-relative"
+    class="navbar navbar-expand-lg navbar-dark position-relative d-flex flex-column"
     style="z-index: 9"
   >
     <div class="container-fluid">
@@ -39,50 +39,46 @@
                   )
             "
           />
-          <datalist v-if="searchResults.results && !isSearching">
-            <option v-if="!searchResults.results.length">
-              {{ $t("Aucun résultat.") }}
-            </option>
-            <template v-if="!isSearchByCode">
-              <option
-                v-for="searchResult in searchResults.results as typeof issueResults.results"
-                :key="searchResult!.storycode"
-                class="d-flex align-items-center"
-                @click="selectSearchResult(searchResult!)"
-              >
-                <Condition
-                  v-if="searchResult!.collectionIssue"
-                  :value="
-                    conditions.find(
-                      ({ dbValue }) =>
-                        dbValue === searchResult!.collectionIssue.condition,
-                    )?.value || undefined
-                  "
-                />&nbsp;{{ searchResult!.title }}
-              </option>
-            </template>
-            <template v-else>
-              <option
-                v-for="searchResult in searchResults.results as typeof storyResults.results"
-                :key="searchResult!.storycode"
-                class="d-flex align-items-center"
-                @click="selectSearchResult(searchResult!)"
-              >
-                <Issue
-                  v-if="publicationNames[searchResult.publicationcode]"
-                  :publicationcode="searchResult.publicationcode"
-                  :publicationname="
-                    publicationNames[searchResult.publicationcode]!
-                  "
-                  :is-public="isPublic"
-                  :issuenumber="searchResult.issuenumber"
-                  :clickable="withStoryLink"
-                /></option
-            ></template>
-          </datalist>
         </ul>
       </div>
     </div>
+    <b-list-group
+      v-if="searchResults.results && !isSearching"
+      class="position-absolute"
+    >
+      <b-list-group-item v-if="!searchResults.results.length">
+        {{ $t("Aucun résultat.") }}
+      </b-list-group-item>
+      <b-list-group-item
+        v-for="searchResult in searchResults.results as typeof issueResults.results"
+        :key="searchResult!.storycode"
+        class="d-flex align-items-center"
+        @click="selectSearchResult(searchResult!)"
+      >
+        <template v-if="!isSearchByCode">
+          <div class="me-1 d-flex">
+            <Condition
+              v-if="searchResult!.collectionIssue"
+              :value="
+                conditions.find(
+                  ({ dbValue }) =>
+                    dbValue === searchResult!.collectionIssue.condition,
+                )?.value || undefined
+              "
+            />
+          </div>
+          <div>{{ searchResult!.title }}</div>
+        </template>
+        <Issue
+          v-else-if="publicationNames[searchResult.publicationcode]"
+          :publicationcode="searchResult.publicationcode"
+          :publicationname="publicationNames[searchResult.publicationcode]!"
+          :is-public="isPublic"
+          :issuenumber="searchResult.issuenumber"
+          :clickable="withStoryLink"
+        />
+      </b-list-group-item>
+    </b-list-group>
   </nav>
 </template>
 
@@ -244,6 +240,33 @@ fetchCountryNames();
     min-width: 120px;
   }
 
+  .list-group {
+    top: 26px;
+    right: 0;
+    width: max-content;
+
+    .list-group-item {
+      cursor: pointer;
+      height: 26px;
+      padding: 5px;
+      overflow: auto;
+      border-bottom: 1px solid #888;
+      color: #888;
+
+      > * {
+        display: flex !important;
+      }
+
+      :deep(.issue-condition) {
+        display: inline-block;
+
+        &:before {
+          margin-top: -12px;
+        }
+      }
+    }
+  }
+
   .navbar-nav {
     flex-wrap: wrap;
 
@@ -266,34 +289,6 @@ fetchCountryNames();
 
       ~ .form-control {
         padding-left: 135px;
-      }
-
-      ~ datalist {
-        display: block;
-        position: absolute;
-        background: #eee;
-        right: 0;
-        top: 26px;
-        padding-left: 0;
-
-        option {
-          cursor: pointer;
-          height: 26px;
-          padding: 5px;
-          overflow: auto;
-          border-bottom: 1px solid #888;
-          color: #888;
-
-          :deep(a) {
-            .issue-condition {
-              display: inline-block;
-
-              &:before {
-                margin-top: -12px;
-              }
-            }
-          }
-        }
       }
     }
   }

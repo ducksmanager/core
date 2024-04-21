@@ -16,7 +16,7 @@ const { paths } = defineProps<{
   icon: string;
 }>();
 
-const active = $computed(() =>
-  paths.some((path) => path.test(useRoute().path)),
-);
+const route = useRoute();
+
+const active = $computed(() => paths.some((path) => path.test(route.path)));
 </script>
