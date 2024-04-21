@@ -71,7 +71,7 @@ const router = useRouter();
 const route = useRoute();
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 ion-fab-button {
   opacity: 0.5;
   &:hover {

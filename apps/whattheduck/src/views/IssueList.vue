@@ -1,5 +1,11 @@
 <template>
-  <List v-if="hasCoaData" :items="sortedItems" :get-target-route-fn="getTargetUrlFn" :get-item-text-fn="getItemTextFn">
+  <List
+    v-if="hasCoaData"
+    :items="sortedItems"
+    :get-target-route-fn="getTargetUrlFn"
+    :get-item-text-fn="getItemTextFn"
+    :view-modes="viewModes"
+  >
     <template v-if="issueViewMode === 'list'" #row-prefix="{ item }">
       <ion-checkbox v-if="isCoaView">&nbsp;</ion-checkbox>
       <Condition v-if="item.condition" :value="item.condition" />
@@ -43,13 +49,13 @@
         <ion-row>
           <ion-range
             ref="zoomRange"
-            :value="viewModes.indexOf(issueViewMode)"
-            @ionChange="issueViewMode = viewModes[$event.detail.value as number]"
+            :value="viewModeIds.indexOf(issueViewMode)"
+            @ionChange="issueViewMode = viewModeIds[$event.detail.value as number]"
             aria-label="Range with ticks"
             :ticks="true"
             :snaps="true"
             :min="0"
-            :max="viewModes.length - 1"
+            :max="viewModeIds.length - 1"
           ></ion-range></ion-row
         ><ion-row class="ion-justify-content-between">
           <ion-icon :ios="listOutline" :md="listSharp" /></ion-row></ion-modal
@@ -73,7 +79,14 @@ const route = useRoute();
 const { issues, user } = storeToRefs(wtdcollection());
 const coaStore = webStores.coa();
 
-const { viewModes } = app();
+const { viewModeIds } = app();
+const viewModes = [
+  { label: 'List', icon: { ios: listOutline, md: listSharp } },
+  { label: 'Edges', icon: { ios: listOutline, md: listSharp } },
+  { label: 'Covers (small)', icon: { ios: listOutline, md: listSharp } },
+  { label: 'Covers (medium)', icon: { ios: listOutline, md: listSharp } },
+  { label: 'Covers (large)', icon: { ios: listOutline, md: listSharp } },
+];
 const { isCoaView, issueViewMode } = storeToRefs(app());
 
 const { bookcaseOptions, bookcaseUsername } = storeToRefs(bookcase());

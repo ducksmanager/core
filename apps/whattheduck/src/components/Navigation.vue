@@ -1,7 +1,6 @@
 <template>
   <ion-segment v-if="parts" :value="currentNavigationItem" @ionChange="onChange">
-    <ion-segment-button v-for="{ id, badge, text, component } in parts" :id="id" :value="id">
-      <ion-chip v-if="badge">{{ badge }}</ion-chip>
+    <ion-segment-button v-for="{ id, text, component } in parts" :id="id" :value="id">
       <component v-if="component" :is="component" :id="id" :label="text" />
       <ion-label v-else>{{ text }}</ion-label>
     </ion-segment-button>
@@ -45,7 +44,6 @@ const parts = computed(() => {
       parts.push({
         component: Publication,
         id: currentNavigationItem.value,
-        badge: currentNavigationItem.value,
         text: publicationNames.value[currentNavigationItem.value]!,
       });
     }

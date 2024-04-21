@@ -26,6 +26,7 @@
             >
               <ion-icon slot="start" aria-hidden="true" :ios="p.iosIcon" :md="p.mdIcon" />
               <ion-label>{{ p.title }}</ion-label>
+              <ion-chip slot="end" v-if="p.chip" outline>{{ p.chip }}</ion-chip>
             </ion-item>
           </ion-menu-toggle>
         </template>
@@ -78,6 +79,7 @@ const appPages = [
     url: '/collection',
     iosIcon: listOutline,
     mdIcon: listSharp,
+    chip: collectionStore.total,
   },
   {
     title: t('Mes auteurs favoris'),

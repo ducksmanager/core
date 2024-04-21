@@ -21,8 +21,8 @@ export const app = defineStore('app', () => {
   const token = ref<string | null>(); // undefined === we haven't checked whether there is a token ; null === we have checked and there is no token
   const socketCache = ref<Record<string, NotEmptyStorageValue>>({});
   const isDataLoaded = ref(false);
-  const viewModes = ['list', 'edges', 'covers-small', 'covers-medium', 'covers-big'] as const;
-  const issueViewMode = ref<(typeof viewModes)[number]>('list');
+  const viewModeIds = ['list', 'edges', 'covers-small', 'covers-medium', 'covers-big'] as const;
+  const issueViewMode = ref<(typeof viewModeIds)[number]>('list');
 
   usePersistedData({
     token,
@@ -36,14 +36,14 @@ export const app = defineStore('app', () => {
     isDataLoaded,
     socketCache,
     lastSync,
-    currentNavigationItem: computed(() => (route.params.publicationcode || route.params.countrycode) as string),
+    currentNavigationItem: computed(() => (route.params.publicationcode[0] || route.params.countrycode) as string),
     token,
     isOfflineMode,
     isCoaView: computed(() => route.query.coa === 'true'),
     isObsoleteSync: computed(
       () => !lastSync.value || new Date().getTime() - lastSync.value.getTime() > 12 * 60 * 60 * 1000,
     ),
-    viewModes,
+    viewModeIds,
     issueViewMode,
   };
 });
