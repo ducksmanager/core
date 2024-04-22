@@ -47,6 +47,7 @@
     <b-list-group
       v-if="searchResults.results && !isSearching && showSearchResults"
       class="position-absolute"
+      :class="{ 'issues-list': isSearchByCode, 'story-list': !isSearchByCode }"
     >
       <b-list-group-item v-if="!searchResults.results.length">
         {{ $t("Aucun résultat.") }}
@@ -251,6 +252,13 @@ fetchCountryNames();
     right: 0;
     width: max-content;
 
+    &.story-list {
+      :deep(> *) {
+        width: 100%;
+        height: 100%;
+      }
+    }
+
     .list-group-item {
       cursor: pointer;
       height: 26px;
@@ -261,11 +269,6 @@ fetchCountryNames();
 
       > * {
         display: flex !important;
-      }
-
-      :deep(> *) {
-        width: 100%;
-        height: 100%;
       }
 
       :deep(.issue-condition) {
