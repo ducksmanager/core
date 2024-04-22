@@ -58,7 +58,11 @@
   </div>
   <div class="navbar-nav">
     <form class="d-flex justify-content-end">
-      <StorySearch :with-title="false" :is-public="isPublic" />
+      <StorySearch
+        :with-title="false"
+        :is-public="isPublic"
+        @issue-selected="() => {}"
+      />
     </form>
   </div>
 </template>

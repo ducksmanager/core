@@ -1,5 +1,6 @@
 <template>
   <nav
+    ref="nav"
     class="navbar navbar-expand-lg navbar-dark position-relative d-flex flex-column"
     style="z-index: 9"
   >
@@ -38,12 +39,13 @@
                     `Rechercher les publications d'une histoire à partir d'un code histoire`,
                   )
             "
+            @focus="showSearchResults = true"
           />
         </ul>
       </div>
     </div>
     <b-list-group
-      v-if="searchResults.results && !isSearching"
+      v-if="searchResults.results && !isSearching && showSearchResults"
       class="position-absolute"
     >
       <b-list-group-item v-if="!searchResults.results.length">
@@ -75,7 +77,6 @@
           :publicationname="publicationNames[searchResult.publicationcode]!"
           :is-public="isPublic"
           :issuenumber="searchResult.issuenumber"
-          :clickable="withStoryLink"
         />
       </b-list-group-item>
     </b-list-group>
@@ -83,6 +84,7 @@
 </template>
 
 <script setup lang="ts">
+import { onClickOutside } from "@vueuse/core";
 import axios from "axios";
 import { watch } from "vue";
 
@@ -92,13 +94,8 @@ import { IssueWithPublicationcode } from "~dm-types/IssueWithPublicationcode";
 import { SimpleIssue } from "~dm-types/SimpleIssue";
 import { SimpleStory } from "~dm-types/SimpleStory";
 
-const {
-  withTitle = true,
-  withStoryLink = true,
-  isPublic = false,
-} = defineProps<{
+const { withTitle = true, isPublic = false } = defineProps<{
   withTitle?: boolean;
-  withStoryLink?: boolean;
   isPublic?: boolean;
 }>();
 const emit = defineEmits<{
@@ -110,6 +107,12 @@ const { findInCollection } = isPublic ? publicCollection() : collection();
 const { issues } = storeToRefs(collection());
 const { fetchPublicationNames, fetchCountryNames } = coa();
 const { publicationNames } = storeToRefs(coa());
+
+const nav = ref<HTMLElement | null>(null);
+
+onClickOutside(nav, () => {
+  showSearchResults = false;
+});
 
 let isSearching = $ref(false as boolean);
 let pendingSearch = $ref(null as string | null);
@@ -124,6 +127,7 @@ let storyResults = $ref(
 );
 let issueResults = $ref({} as { results: SimpleIssue[] });
 let searchContext = $ref("story" as "story" | "storycode");
+let showSearchResults = $ref(true);
 
 const { t: $t } = useI18n();
 const isInCollection = ({ publicationcode, issuenumber }: SimpleIssue) =>
@@ -153,6 +157,7 @@ const searchResults = $computed(() =>
 const selectSearchResult = (searchResult: SimpleStory | SimpleIssue) => {
   if (isSearchByCode) {
     emit("issue-selected", searchResult as SimpleIssue);
+    showSearchResults = false;
   } else {
     searchContext = "storycode";
     search = (searchResult as SimpleStory).storycode;
@@ -210,6 +215,7 @@ const runSearch = async (value: string) => {
     }
   } finally {
     isSearching = false;
+    showSearchResults = true;
     // The input value as changed since the beginning of the search, searching again
     if (value !== pendingSearch && pendingSearch) {
       await runSearch(pendingSearch);
@@ -255,6 +261,11 @@ fetchCountryNames();
 
       > * {
         display: flex !important;
+      }
+
+      :deep(> *) {
+        width: 100%;
+        height: 100%;
       }
 
       :deep(.issue-condition) {
