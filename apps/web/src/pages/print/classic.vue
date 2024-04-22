@@ -74,7 +74,7 @@ watch(
 );
 
 watch(
-  () => Object.keys(issueNumbers).length && issues.value?.length,
+  () => Object.keys(issueNumbers.value).length && issues.value,
   (newValue) => {
     if (newValue) {
       const collectionWithPublicationcodes = issues

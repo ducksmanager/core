@@ -24,6 +24,7 @@ meta:
         type="password"
         :placeholder="$t('Nouveau mot de passe (confirmation)')"
       />
+      <b-button type="submit">{{ $t("OK") }}</b-button>
     </form>
   </div>
 </template>
@@ -33,9 +34,7 @@ import Cookies from "js-cookie";
 
 import { dmSocketInjectionKey } from "../../composables/useDmSocket";
 
-const router = useRouter();
 const { loadUser } = collection();
-const { user } = storeToRefs(collection());
 
 let initError = $ref(null as string | null);
 let error = $ref(null as string | null);
@@ -68,14 +67,4 @@ const changePassword = async () => {
   await changePassword();
   loadUser();
 })();
-
-watch(
-  user,
-  async (newValue) => {
-    if (newValue) {
-      await router.push("/collection");
-    }
-  },
-  { immediate: true },
-);
 </script>

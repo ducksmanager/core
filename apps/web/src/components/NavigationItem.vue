@@ -7,14 +7,14 @@
 <script setup lang="ts">
 import { RouteRecordNormalized } from "vue-router";
 
-const { route = null, icon = null } = defineProps<{
+const { route: currentRoute = null, icon = null } = defineProps<{
   route?: RouteRecordNormalized;
   icon?: string;
 }>();
 
 const { path: currentPath } = useRoute();
 
-const active = $computed(() => currentPath === route?.path);
+const active = $computed(() => currentPath === currentRoute?.path);
 </script>
 
 <style scoped lang="scss">

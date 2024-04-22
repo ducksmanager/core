@@ -1,11 +1,15 @@
 <template>
-  <nav class="navbar navbar-expand-lg navbar-dark position-sticky">
+  <nav
+    ref="nav"
+    class="navbar navbar-expand-lg navbar-dark position-relative d-flex flex-column"
+    style="z-index: 9"
+  >
     <div class="container-fluid">
       <div v-if="withTitle" class="navbar-brand">
         {{ $t("Rechercher une histoire") }}
       </div>
-      <div class="collapse navbar-collapse">
-        <ul class="navbar-nav">
+      <div class="collapse navbar-collapse d-block">
+        <ul class="navbar-nav position-relative">
           <b-dropdown
             class="dropdown search-type"
             :text="searchContexts[searchContext as 'story' | 'storycode']"
@@ -35,51 +39,49 @@
                     `Rechercher les publications d'une histoire à partir d'un code histoire`,
                   )
             "
+            @focus="showSearchResults = true"
           />
-          <datalist v-if="searchResults.results && !isSearching">
-            <option v-if="!searchResults.results.length">
-              {{ $t("Aucun résultat.") }}
-            </option>
-            <template v-if="!isSearchByCode">
-              <option
-                v-for="searchResult in searchResults.results as typeof issueResults.results"
-                :key="searchResult!.storycode"
-                class="d-flex align-items-center"
-                @click="selectSearchResult(searchResult!)"
-              >
-                <Condition
-                  v-if="searchResult!.collectionIssue"
-                  :value="
-                    conditions.find(
-                      ({ dbValue }) =>
-                        dbValue === searchResult!.collectionIssue.condition
-                    )?.dbValue || undefined
-                  "
-                />&nbsp;{{ searchResult!.title }}
-              </option>
-            </template>
-            <template v-else>
-              <option
-                v-for="searchResult in searchResults.results as typeof storyResults.results"
-                :key="searchResult!.storycode"
-                class="d-flex align-items-center"
-                @click="selectSearchResult(searchResult!)"
-              >
-                <Issue
-                  v-if="publicationNames[searchResult.publicationcode]"
-                  :publicationcode="searchResult.publicationcode"
-                  :publicationname="
-                    publicationNames[searchResult.publicationcode]!
-                  "
-                  :is-public="isPublic"
-                  :issuenumber="searchResult.issuenumber"
-                  :clickable="withStoryLink"
-                /></option
-            ></template>
-          </datalist>
         </ul>
       </div>
     </div>
+    <b-list-group
+      v-if="searchResults.results && !isSearching && showSearchResults"
+      class="position-absolute"
+      :class="{ 'issues-list': isSearchByCode, 'story-list': !isSearchByCode }"
+    >
+      <b-list-group-item v-if="!searchResults.results.length">
+        {{ $t("Aucun résultat.") }}
+      </b-list-group-item>
+      <b-list-group-item
+        v-for="searchResult in searchResults.results as typeof issueResults.results"
+        :key="searchResult!.storycode"
+        class="d-flex align-items-center"
+        @click="selectSearchResult(searchResult!)"
+      >
+        <template v-if="!isSearchByCode">
+          <div class="me-1 d-flex">
+            <Condition
+              v-if="searchResult!.collectionIssue"
+              :value="
+                conditions.find(
+                  ({ dbValue }) =>
+                    dbValue === searchResult!.collectionIssue.condition
+                )?.dbValue || undefined
+              "
+            />
+          </div>
+          <div>{{ searchResult!.title }}</div>
+        </template>
+        <Issue
+          v-else-if="publicationNames[searchResult.publicationcode]"
+          :publicationcode="searchResult.publicationcode"
+          :publicationname="publicationNames[searchResult.publicationcode]!"
+          :is-public="isPublic"
+          :issuenumber="searchResult.issuenumber"
+          clickable
+        />
+      </b-list-group-item>
+    </b-list-group>
   </nav>
 </template>
 
@@ -90,13 +92,8 @@ import { issueWithPublicationcode } from "~prisma-clients/extended/dm.extends";
 
 import { dmSocketInjectionKey } from "../composables/useDmSocket";
 
-const {
-  withTitle = true,
-  withStoryLink = true,
-  isPublic = false,
-} = defineProps<{
+const { withTitle = true, isPublic = false } = defineProps<{
   withTitle?: boolean;
-  withStoryLink?: boolean;
   isPublic?: boolean;
 }>();
 const emit = defineEmits<{
@@ -113,6 +110,12 @@ const { issues } = storeToRefs(collection());
 const { fetchPublicationNames, fetchCountryNames } = coa();
 const { publicationNames } = storeToRefs(coa());
 
+const nav = ref<HTMLElement | null>(null);
+
+onClickOutside(nav, () => {
+  showSearchResults = false;
+});
+
 let isSearching = $ref(false as boolean);
 let pendingSearch = $ref(null as string | null);
 let search = $ref("" as string);
@@ -126,6 +129,7 @@ let storyResults = $ref(
 );
 let issueResults = $ref({} as { results: SimpleIssue[] });
 let searchContext = $ref("story" as "story" | "storycode");
+let showSearchResults = $ref(true);
 
 const { t: $t } = useI18n();
 const isInCollection = ({ publicationcode, issuenumber }: SimpleIssue) =>
@@ -155,6 +159,7 @@ const searchResults = $computed(() =>
 const selectSearchResult = (searchResult: SimpleStory | SimpleIssue) => {
   if (isSearchByCode) {
     emit("issue-selected", searchResult as SimpleIssue);
+    showSearchResults = false;
   } else {
     searchContext = "storycode";
     search = (searchResult as SimpleStory).storycode;
@@ -200,6 +205,7 @@ const runSearch = async (value: string) => {
     }
   } finally {
     isSearching = false;
+    showSearchResults = true;
     // The input value as changed since the beginning of the search, searching again
     if (value !== pendingSearch && pendingSearch) {
       await runSearch(pendingSearch);
@@ -220,9 +226,48 @@ fetchCountryNames();
 <style scoped lang="scss">
 .navbar {
   flex-flow: row nowrap;
+  padding: 0 !important;
+
+  > * {
+    padding: 0 !important;
+  }
 
   .navbar-brand {
     min-width: 120px;
+  }
+
+  .list-group {
+    top: 26px;
+    right: 0;
+    width: max-content;
+
+    &.story-list {
+      :deep(> *) {
+        width: 100%;
+        height: 100%;
+      }
+    }
+
+    .list-group-item {
+      cursor: pointer;
+      height: 26px;
+      padding: 5px;
+      overflow: auto;
+      border-bottom: 1px solid #888;
+      color: #888;
+
+      > * {
+        display: flex !important;
+      }
+
+      :deep(.issue-condition) {
+        display: inline-block;
+
+        &:before {
+          margin-top: -12px;
+        }
+      }
+    }
   }
 
   .navbar-nav {
@@ -248,34 +293,6 @@ fetchCountryNames();
 
       ~ .form-control {
         padding-left: 135px;
-      }
-
-      ~ datalist {
-        display: block;
-        position: absolute;
-        background: #eee;
-        min-width: 275px;
-        top: 36px;
-        padding-left: 0;
-
-        option {
-          cursor: pointer;
-          height: 26px;
-          padding: 5px;
-          overflow: auto;
-          border-bottom: 1px solid #888;
-          color: #888;
-
-          :deep(a) {
-            .issue-condition {
-              display: inline-block;
-
-              &:before {
-                margin-top: -12px;
-              }
-            }
-          }
-        }
       }
     }
   }
