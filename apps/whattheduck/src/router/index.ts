@@ -49,7 +49,7 @@ const routes: RouteRecordRaw[] = [
   },
   {
     name: 'PublicationList',
-    path: '/:type(collection|coa)/:countrycode([a-z]+)',
+    path: '/:type(collection|coa)/publications/:countrycode([a-z]+)',
     component: PublicationList,
     meta: {
       onOffline: 'readonly',
@@ -58,7 +58,7 @@ const routes: RouteRecordRaw[] = [
   },
   {
     name: 'IssueList',
-    path: '/:type(collection|coa)/:publicationcode*',
+    path: '/:type(collection|coa)/issues/:publicationcode*',
     component: IssueList,
     props: true,
     meta: {

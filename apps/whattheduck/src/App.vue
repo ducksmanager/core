@@ -22,7 +22,7 @@ import { dmSocketInjectionKey } from '~web/src/composables/useDmSocket';
 const session = {
     getToken: async () => token.value,
     clearSession: () => {
-      token.value = undefined;
+      token.value = null;
       Cookies.remove('token');
       new Storage().clear();
     },
@@ -38,7 +38,7 @@ const session = {
     },
   }),
   onConnectError = (e: Error) => {
-    if (e.message.indexOf('jwt expired') !== -1) {
+    if (/No token provided/.test(e.message) || /jwt expired/.test(e.message)) {
       session.clearSession();
     }
   };

@@ -80,17 +80,6 @@ ion-fab-button {
 }
 
 ion-fab-list {
-  right: 0;
   width: 360px;
-  align-items: end;
-
-  background: rgba(0, 0, 0, 0.7);
-  padding: 1rem;
-  border-radius: 1rem;
-
-  ion-item {
-    background: inherit;
-    width: 100%;
-  }
 }
 </style>

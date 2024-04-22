@@ -3,6 +3,7 @@ import type { NotEmptyStorageValue } from '~socket.io-client-services';
 
 import usePersistedData from '~/composables/usePersistedData';
 import { dmSocketInjectionKey } from '~web/src/composables/useDmSocket';
+import { gridOutline, gridSharp, libraryOutline, librarySharp, listOutline, listSharp } from 'ionicons/icons';
 
 export const app = defineStore('app', () => {
   const {
@@ -21,8 +22,28 @@ export const app = defineStore('app', () => {
   const token = ref<string | null>(); // undefined === we haven't checked whether there is a token ; null === we have checked and there is no token
   const socketCache = ref<Record<string, NotEmptyStorageValue>>({});
   const isDataLoaded = ref(false);
-  const viewModeIds = ['list', 'edges', 'covers-small', 'covers-medium', 'covers-big'] as const;
-  const issueViewMode = ref<(typeof viewModeIds)[number]>('list');
+
+  const issueViewModes = [
+    { id: 'list', label: 'List', icon: { ios: listOutline, md: listSharp } },
+    { id: 'edges', label: 'Edges', icon: { ios: libraryOutline, md: librarySharp } },
+    {
+      id: 'covers-small',
+      label: 'Covers (small)',
+      icon: { ios: '/icons/grid-sharp-small.svg', md: '/icons/grid-sharp-small.svg' },
+    },
+    {
+      id: 'covers-medium',
+      label: 'Covers (medium)',
+      icon: { ios: '/icons/grid-sharp-medium.svg', md: '/icons/grid-sharp-medium.svg' },
+    },
+    {
+      id: 'covers-big',
+      label: 'Covers (large)',
+      icon: { ios: '/icons/grid-sharp-large.svg', md: '/icons/grid-sharp-large.svg' },
+    },
+  ] as const;
+
+  const currentIssueViewMode = ref<(typeof issueViewModes)[number]>(issueViewModes[0]);
 
   usePersistedData({
     token,
@@ -36,14 +57,18 @@ export const app = defineStore('app', () => {
     isDataLoaded,
     socketCache,
     lastSync,
-    currentNavigationItem: computed(() => (route.params.publicationcode[0] || route.params.countrycode) as string),
+    currentNavigationItem: computed(
+      () =>
+        (route.params.publicationcode && String(route.params.publicationcode)) ||
+        (route.params.countrycode && String(route.params.countrycode)),
+    ),
     token,
     isOfflineMode,
     isCoaView: computed(() => route.query.coa === 'true'),
     isObsoleteSync: computed(
       () => !lastSync.value || new Date().getTime() - lastSync.value.getTime() > 12 * 60 * 60 * 1000,
     ),
-    viewModeIds,
-    issueViewMode,
+    issueViewModes,
+    currentIssueViewMode,
   };
 });

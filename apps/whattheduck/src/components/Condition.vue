@@ -13,7 +13,7 @@ defineProps<{
   noMargin?: boolean;
 }>();
 </script>
-<style lang="scss">
+<style lang="scss" scoped>
 span {
   width: 14px;
   height: 14px;

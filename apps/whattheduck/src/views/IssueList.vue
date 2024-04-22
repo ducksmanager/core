@@ -1,20 +1,14 @@
 <template>
-  <List
-    v-if="hasCoaData"
-    :items="sortedItems"
-    :get-target-route-fn="getTargetUrlFn"
-    :get-item-text-fn="getItemTextFn"
-    :view-modes="viewModes"
-  >
-    <template v-if="issueViewMode === 'list'" #row-prefix="{ item }">
+  <List v-if="hasCoaData" :items="sortedItems" :get-target-route-fn="getTargetUrlFn" :get-item-text-fn="getItemTextFn">
+    <template v-if="currentIssueViewMode.id === 'list'" #row-prefix="{ item }">
       <ion-checkbox v-if="isCoaView">&nbsp;</ion-checkbox>
       <Condition v-if="item.condition" :value="item.condition" />
       <span v-else class="not-owned-space" />
     </template>
-    <template v-if="issueViewMode === 'list'" #row-label="{ item }">
+    <template v-if="currentIssueViewMode.id === 'list'" #row-label="{ item }">
       <Issue v-bind="item" />
     </template>
-    <template v-if="issueViewMode === 'edges'">
+    <template v-if="currentIssueViewMode.id === 'edges'">
       <Bookcase
         orientation="horizontal"
         :embedded="true"
@@ -23,7 +17,7 @@
         :sortedBookcase="sortedItemsForBookcase"
       />
     </template>
-    <!-- <template v-if="issueViewMode === 'edges'" #row-label="{ item }">
+    <!-- <template v-if="currentIssueViewMode === 'edges'" #row-label="{ item }">
       <EdgeContents
         src="https://res.cloudinary.com/dl7hskxab/image/upload/t_rotate/v1523605655/edges-fr-MP-1.png"
         :sprite-path="null"
@@ -33,40 +27,12 @@
         orientation="horizontal"
       />
     </template> -->
-    <template #sheet-modal>
-      <ion-modal
-        ref="modalRef"
-        handle-behavior="cycle"
-        class="ion-padding"
-        :initial-breakpoint="0.4"
-        :is-open="true"
-        :backdrop-dismiss="true"
-        :can-dismiss="true"
-        :breakpoints="[0.4, 1]"
-        :backdrop-breakpoint="0.4"
-        @ion-modal-did-dismiss="modalRef!.$el.present()"
-        ><ion-row class="ion-text-center ion-padding"><ion-title>Zoom</ion-title></ion-row>
-        <ion-row>
-          <ion-range
-            ref="zoomRange"
-            :value="viewModeIds.indexOf(issueViewMode)"
-            @ionChange="issueViewMode = viewModeIds[$event.detail.value as number]"
-            aria-label="Range with ticks"
-            :ticks="true"
-            :snaps="true"
-            :min="0"
-            :max="viewModeIds.length - 1"
-          ></ion-range></ion-row
-        ><ion-row class="ion-justify-content-between">
-          <ion-icon :ios="listOutline" :md="listSharp" /></ion-row></ion-modal
-    ></template>
   </List>
 </template>
 
 <script setup lang="ts">
 import type { issueWithPublicationcode } from '~prisma-clients/extended/dm.extends';
 import { stores as webStores } from '~web';
-import { listOutline, listSharp } from 'ionicons/icons';
 
 import { app } from '~/stores/app';
 import { wtdcollection } from '~/stores/wtdcollection';
@@ -79,27 +45,15 @@ const route = useRoute();
 const { issues, user } = storeToRefs(wtdcollection());
 const coaStore = webStores.coa();
 
-const { viewModeIds } = app();
-const viewModes = [
-  { label: 'List', icon: { ios: listOutline, md: listSharp } },
-  { label: 'Edges', icon: { ios: listOutline, md: listSharp } },
-  { label: 'Covers (small)', icon: { ios: listOutline, md: listSharp } },
-  { label: 'Covers (medium)', icon: { ios: listOutline, md: listSharp } },
-  { label: 'Covers (large)', icon: { ios: listOutline, md: listSharp } },
-];
-const { isCoaView, issueViewMode } = storeToRefs(app());
+const { isCoaView, currentIssueViewMode } = storeToRefs(app());
 
 const { bookcaseOptions, bookcaseUsername } = storeToRefs(bookcase());
 const { loadBookcaseOptions, loadBookcaseOrder } = bookcase();
-
-const modalRef = ref<{ $el: HTMLIonModalElement }>();
 
 defineSlots<{
   rowPrefix: { item: issueWithPublicationcode };
   rowLabel: { text: string };
 }>();
-
-const zoomRange = ref<{ $el: HTMLIonRangeElement }>();
 
 const getItemTextFn = (item: (typeof items)['value'][0]['item']) => item.issuenumber;
 

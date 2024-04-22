@@ -1,3 +1,4 @@
+/// <reference types="histoire" />
 import vue from '@vitejs/plugin-vue';
 import ReactivityTransform from '@vue-macros/reactivity-transform/vite';
 import path from 'path';
@@ -51,6 +52,7 @@ export default defineConfig({
       ],
     }),
   ],
+
   resolve: {
     alias: {
       '~': path.resolve(__dirname, './src'),

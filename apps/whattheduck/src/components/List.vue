@@ -65,23 +65,13 @@
         :style="{ top: `${scrollPositionPct}%` }"
       >
         {{ getItemTextFn(itemInCenterOfViewport) }}
-      </div></ion-content
-    ><slot name="sheet-modal" v-if="$slots['sheet-modal']" />
-    <ion-fab v-if="viewModes" slot="fixed" vertical="top" horizontal="end" ref="isViewModeFabOpen">
-      <ion-fab-button><ion-icon :ios="eyeOutline" :android="eyeSharp"></ion-icon> </ion-fab-button>
-
-      <ion-item button class="ion-align-items-center ion-text-nowrap" v-for="{ label, icon } of viewModes">
-        <ion-label>{{ label }}</ion-label>
-        <ion-fab-button size="small">
-          <ion-icon :ios="icon.ios" :md="icon.md" />
-        </ion-fab-button> </ion-item
-    ></ion-fab>
+      </div> </ion-content
+    ><ViewModesButton />
   </ion-page>
 </template>
 
 <script setup lang="ts" generic="Item extends Required<any>">
 import { IonContent, ScrollDetail } from '@ionic/vue';
-import { eyeOutline, eyeSharp } from 'ionicons/icons';
 import { app } from '~/stores/app';
 import { wtdcollection } from '~/stores/wtdcollection';
 defineSlots<{
@@ -90,14 +80,13 @@ defineSlots<{
   'row-prefix'(props: { item: Item }): any;
   'row-label'(props: { item: Item }): any;
   'row-suffix'(props: { item: Item }): any;
-  'sheet-modal'(): any;
 }>();
 
 const props = defineProps<{
   items: { key: string; item: Item; isOwned?: boolean; isNextOwned?: boolean }[];
   getTargetRouteFn: (key: string) => Pick<RouteLocationNamedRaw, 'name' | 'params'>;
   getItemTextFn: (item: Item) => string;
-  viewModes?: { label: string; icon: { ios: string; md: string } }[];
+  issueViewModes?: { label: string; icon: { ios: string; md: string } }[];
   filter?: { label: string; icon: { ios: string; md: string } }[];
 }>();
 
@@ -214,10 +203,5 @@ ion-title {
       margin-left: 0.5rem;
     }
   }
-}
-
-ion-fab-button {
-  width: 36px;
-  height: 36px;
 }
 </style>

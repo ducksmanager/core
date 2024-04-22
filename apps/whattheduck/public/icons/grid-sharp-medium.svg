@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   class="ionicon"
+   viewBox="0 0 512 512"
+   version="1.1"
+   id="svg1"
+   width="512"
+   height="512"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs1">
+    <clipPath
+       clipPathUnits="userSpaceOnUse"
+       id="clipPath7">
+      <rect
+         style="fill:#000000;stroke-width:0.998727"
+         id="rect7"
+         width="661.61237"
+         height="510.53552"
+         x="-41.676369"
+         y="1.3023866" />
+    </clipPath>
+    <clipPath
+       clipPathUnits="userSpaceOnUse"
+       id="clipPath8">
+      <rect
+         style="fill:#000000;stroke-width:0.998727"
+         id="rect8"
+         width="661.61237"
+         height="510.53552"
+         x="-41.676369"
+         y="1.3023866" />
+    </clipPath>
+    <clipPath
+       clipPathUnits="userSpaceOnUse"
+       id="clipPath9">
+      <rect
+         style="fill:#000000;stroke-width:0.998727"
+         id="rect9"
+         width="661.61237"
+         height="510.53552"
+         x="-41.676369"
+         y="1.3023866" />
+    </clipPath>
+    <clipPath
+       clipPathUnits="userSpaceOnUse"
+       id="clipPath10">
+      <rect
+         style="fill:#000000;stroke-width:0.998727"
+         id="rect10"
+         width="661.61237"
+         height="510.53552"
+         x="-41.676369"
+         y="1.3023866" />
+    </clipPath>
+  </defs>
+  <path
+     d="M 166.76596,214.89678 H 27.040776 V 25.491525 H 166.76596 Z m 161.22137,0 H 188.26214 V 25.491525 H 327.98733 Z M 166.76596,433.44131 H 27.040776 V 244.03605 H 166.76596 Z m 161.22137,0 H 188.26214 V 244.03605 h 139.72519 z"
+     id="path1"
+     style="stroke-width:0.782114"
+     clip-path="url(#clipPath10)" />
+  <path
+     d="M 325.56516,216.35897 H 185.83998 V 26.953711 h 139.72518 z m 161.22137,0 H 347.06134 V 26.953711 H 486.78653 Z M 325.56516,434.9035 H 185.83998 V 245.49824 h 139.72518 z m 161.22137,0 H 347.06134 V 245.49824 h 139.72519 z"
+     id="path1-6"
+     style="stroke-width:0.782114"
+     clip-path="url(#clipPath9)" />
+  <path
+     d="M 325.78425,433.0366 H 186.05907 V 243.63135 h 139.72518 z m 161.22136,0 H 347.28044 V 243.63135 H 487.00561 Z M 325.78425,651.58112 H 186.05907 V 462.17586 h 139.72518 z m 161.22136,0 H 347.28044 V 462.17586 h 139.72517 z"
+     id="path1-3"
+     style="stroke-width:0.782114"
+     clip-path="url(#clipPath8)" />
+  <path
+     d="M 166.14236,433.15084 H 26.417174 V 243.74558 H 166.14236 Z m 161.22137,0 H 187.63854 V 243.74558 H 327.36373 Z M 166.14236,651.69535 H 26.417174 V 462.2901 H 166.14236 Z m 161.22137,0 H 187.63854 V 462.2901 h 139.72519 z"
+     id="path1-1"
+     style="stroke-width:0.782114"
+     clip-path="url(#clipPath7)" />
+</svg>

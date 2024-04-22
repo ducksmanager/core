@@ -74,3 +74,16 @@ ion-segment-button {
     color: white
   }
 }
+
+ion-fab-list {
+  right: 0;
+  align-items: end;
+
+  background: rgba(0, 0, 0, 0.7);
+  border-radius: 1rem;
+
+  ion-item {
+    background: inherit;
+    width: 100%;
+  }
+}
