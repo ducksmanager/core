@@ -1,7 +1,7 @@
 <template>
   <div :class="`d-${noWrap ? 'inline' : 'block'}`">
     <router-link
-      :class="{ flex }"
+      :class="{ clickable, flex }"
       :to="`/collection/show/${publicationcode}#${issuenumber}`"
     >
       <span v-if="!hideCondition" class="me-1 d-flex"
@@ -24,6 +24,7 @@
 
 <script setup lang="ts">
 const {
+  clickable = false,
   hideCondition = false,
   noWrap = true,
   flex = true,
@@ -32,6 +33,7 @@ const {
   publicationcode: string;
   publicationname: string | null;
   issuenumber: string;
+  clickable?: boolean;
   hideCondition?: boolean;
   noWrap?: boolean;
   flex?: boolean;
@@ -50,7 +52,11 @@ a {
 
   &.flex {
     display: inline-flex;
-    height: initial;
+  }
+
+  &.clickable {
+    pointer-events: initial;
+    border-bottom: initial;
   }
 }
 </style>

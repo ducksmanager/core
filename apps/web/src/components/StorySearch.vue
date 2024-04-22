@@ -78,6 +78,7 @@
           :publicationname="publicationNames[searchResult.publicationcode]!"
           :is-public="isPublic"
           :issuenumber="searchResult.issuenumber"
+          clickable
         />
       </b-list-group-item>
     </b-list-group>
