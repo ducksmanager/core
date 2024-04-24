@@ -14,13 +14,14 @@ export type ScopedErrorDetails = {
 };
 
 export const getUser = async (id: number) =>
-  await prismaDm.user.findUnique({
+  await prismaDm.user.findUniqueOrThrow({
+    omit: { password: true },
     where: { id },
   });
 
 export const validate = async (
   input: Record<string, unknown>,
-  validators: Validation[]
+  validators: Validation[],
 ): Promise<ScopedErrorDetails | undefined> => {
   for (const validator of validators) {
     const result = await validator.run(input);
@@ -32,7 +33,7 @@ export const validate = async (
 
 export abstract class Validation {
   abstract run(
-    data: Record<string, unknown>
+    data: Record<string, unknown>,
   ): Promise<ScopedErrorDetails | undefined>;
 }
 
@@ -59,7 +60,7 @@ export class UsernameCreationValidation extends Validation {
           ({
             message: "Ce nom d'utilisateur est déjà pris",
             selector: "#username",
-          }) as const
+          }) as const,
       );
 }
 
@@ -74,7 +75,7 @@ export class EmailCreationValidation extends Validation {
           ({
             message: "Cet e-mail est déjà utilisé par un autre compte",
             selector: "#email",
-          }) as const
+          }) as const,
       )
       .catch(() => undefined);
 }
@@ -95,7 +96,7 @@ export class EmailUpdateValidation extends Validation {
               where: {
                 email,
               },
-            })) === 0
+            })) === 0,
       )
       .then(() => undefined)
       .catch(
@@ -103,7 +104,7 @@ export class EmailUpdateValidation extends Validation {
           ({
             message: "Cet e-mail est déjà utilisé par un autre compte",
             selector: "#email",
-          }) as const
+          }) as const,
       );
 }
 
@@ -178,7 +179,7 @@ export class OldPasswordValidation extends Validation {
           ({
             message: "L'ancien mot de passe est invalide.",
             selector: "#oldPassword",
-          }) as const
+          }) as const,
       );
 }
 

@@ -34,7 +34,7 @@ export default (io: Server) => {
           })
           .finally(() => {
             callback();
-          })
+          }),
       );
 
       socket.on("getUserPermissions", (callback) =>
@@ -44,7 +44,7 @@ export default (io: Server) => {
               username: socket.data.user!.username,
             },
           })
-          .then(callback)
+          .then(callback),
       );
 
       socket.on("getCollectionPopularity", (callback) =>
@@ -58,7 +58,8 @@ export default (io: Server) => {
                         on issuePopularity.pays = issue.pays AND issuePopularity.magazine = issue.magazine AND
                            issuePopularity.numero = issue.numero
       where ID_Utilisateur = ${socket.data.user!.id}
-      order by popularity DESC`.then(callback));
+      order by popularity DESC`.then(callback),
+      );
 
       socket.on("getNotificationToken", async (username, callback) => {
         if (username !== socket.data.user!.username) {
@@ -69,7 +70,7 @@ export default (io: Server) => {
               new PushNotifications({
                 instanceId: process.env.PUSHER_INSTANCE_ID || "",
                 secretKey: process.env.PUSHER_SECRET_KEY || "",
-              }).generateToken(socket.data.user!.username).token
+              }).generateToken(socket.data.user!.username).token,
             );
           } catch (e) {
             console.error(e);
@@ -79,14 +80,16 @@ export default (io: Server) => {
       });
 
       socket.on("getLastVisit", async (callback) => {
-        const user = await getUser(socket.data.user!.id);
-        if (!user) {
+        let user: Awaited<ReturnType<typeof getUser>>;
+        try {
+          user = await getUser(socket.data.user!.id);
+        } catch (e) {
           callback({ error: "This user does not exist" });
           return;
         }
         if (!user.lastAccess) {
           console.log(
-            `Initializing last access for user ${socket.data.user!.id}`
+            `Initializing last access for user ${socket.data.user!.id}`,
           );
           user.previousAccess = null;
           user.lastAccess = new Date();
@@ -120,7 +123,7 @@ export default (io: Server) => {
             },
           })
         ).map(
-          (issue) => `${issue.publicationcode} ${issue.issuenumber}`
+          (issue) => `${issue.publicationcode} ${issue.issuenumber}`,
         ) as string[];
         callback(
           (
@@ -138,7 +141,7 @@ export default (io: Server) => {
           ).map((edge) => ({
             ...edge,
             creationDate: edge.creationDate.toISOString(),
-          }))
+          })),
         );
       });
     });

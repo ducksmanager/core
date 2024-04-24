@@ -24,13 +24,11 @@ import {
 } from "./util";
 
 export default (socket: Socket<Events>) => {
-  socket.on("getUser", async (callback) => {
-    const userWithoutPassword = exclude<user, "password">(
-      await getUser(socket.data.user!.id),
-      "password"
-    );
-    callback(userWithoutPassword || { error: "User not found" });
-  });
+  socket.on("getUser", async (callback) =>
+    getUser(socket.data.user!.id)
+      .then(callback)
+      .catch(() => callback({ error: "User not found" })),
+  );
 
   socket.on("deleteUser", async (callback) => {
     const userId = socket.data.user!.id;
