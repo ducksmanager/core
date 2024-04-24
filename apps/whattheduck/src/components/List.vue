@@ -1,5 +1,6 @@
 <template>
   <ion-page id="main-content">
+    <slot name="page-menu" v-if="$slots['page-menu']" />
     <ion-header :translucent="true">
       <ion-toolbar>
         <ion-buttons slot="start">
@@ -9,15 +10,7 @@
           ><div class="content">
             <div class="title">
               <div>{{ t('Ma collection') }}</div>
-              <ion-chip outline v-if="collectionStore.total">{{ collectionStore.total }}</ion-chip>
-            </div>
-          </div></ion-title
-        >
-        <ion-title
-          ><div class="content">
-            <div class="title">
-              <div>{{ t('Ma collection') }}</div>
-              <ion-chip outline v-if="collectionStore.total">{{ collectionStore.total }}</ion-chip>
+              <ion-chip outline v-if="total !== undefined">{{ total }}</ion-chip>
             </div>
           </div></ion-title
         >
@@ -43,7 +36,6 @@
       @ion-scroll-end="isScrolling = false"
     >
       <template v-if="$slots['row-label']">
-      <template v-if="$slots['row-label']">
         <Row
           v-for="{ key, item, isOwned, isNextOwned } in filteredItems"
           :is-owned="isOwned"
@@ -64,7 +56,6 @@
           </template> </Row
       ></template>
       <slot v-else name="default" />
-      <slot v-else name="default" />
       <EditIssuesButton />
 
       <div
@@ -75,18 +66,18 @@
         :style="{ top: `${scrollPositionPct}%` }"
       >
         {{ getItemTextFn(itemInCenterOfViewport) }}
-      </div> </ion-content
-    ><ViewModesButton />
+      </div></ion-content
+    >
   </ion-page>
 </template>
 
 <script setup lang="ts" generic="Item extends Required<any>">
 import { IonContent, ScrollDetail } from '@ionic/vue';
-import { eyeOutline, eyeSharp } from 'ionicons/icons';
 import { app } from '~/stores/app';
 import { wtdcollection } from '~/stores/wtdcollection';
 defineSlots<{
   'default'(): any;
+  'page-menu'(): any;
   'fill-bar'(props: { item: Item }): any;
   'row-prefix'(props: { item: Item }): any;
   'row-label'(props: { item: Item }): any;
@@ -122,8 +113,8 @@ const { t } = useI18n();
 const router = useRouter();
 const route = useRoute();
 
-const collectionStore = wtdcollection();
-const appStore = app();
+const { total } = storeToRefs(wtdcollection());
+const { currentNavigationItem } = storeToRefs(app());
 const filterText = ref('' as string);
 
 const itemInCenterOfViewport = computed(() => {
@@ -144,14 +135,11 @@ const filteredItems = computed(() =>
 );
 const showFilter = computed(() => true);
 
-watch(
-  () => appStore.currentNavigationItem,
-  async (newValue) => {
-    if (newValue && /^[a-z]+\/[A-Z0-9]+ /.test(newValue)) {
-      router.push('/edit-issues');
-    }
-  },
-);
+watch(currentNavigationItem, async (newValue) => {
+  if (newValue && /^[a-z]+\/[A-Z0-9]+ /.test(newValue)) {
+    router.push('/edit-issues');
+  }
+});
 </script>
 
 <style scoped>

@@ -17,16 +17,22 @@
         :sortedBookcase="sortedItemsForBookcase"
       />
     </template>
-    <!-- <template v-if="currentIssueViewMode === 'edges'" #row-label="{ item }">
-      <EdgeContents
-        src="https://res.cloudinary.com/dl7hskxab/image/upload/t_rotate/v1523605655/edges-fr-MP-1.png"
-        :sprite-path="null"
-        :id="String(Math.random())"
-        :publicationcode="item.publicationcode!"
-        :issuenumber="item.issuenumber"
-        orientation="horizontal"
-      />
-    </template> -->
+    <template v-if="['covers-small', 'covers-medium', 'covers-large'].includes(currentIssueViewMode.id)">
+      <ion-grid>
+        <ion-row>
+          <ion-col
+            v-for="item in sortedItems"
+            :key="item.key"
+            class="ion-text-center"
+            :size="
+              currentIssueViewMode.id === 'covers-small' ? '3' : currentIssueViewMode.id === 'covers-medium' ? '4' : '6'
+            "
+            >{{ item.item.issuenumber }}</ion-col
+          ></ion-row
+        ></ion-grid
+      >
+    </template>
+    <template #page-menu><ViewModesButton /></template>
   </List>
 </template>
 

@@ -55,8 +55,7 @@ ion-icon.indicator {
   position: absolute;
   bottom: 0;
   right: 1rem;
-  width: 1rem;
-  height: 1rem;
+  font-size: 1rem;
   margin-left: 0.5rem;
 }
 </style>

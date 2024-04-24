@@ -3,7 +3,6 @@ import type { NotEmptyStorageValue } from '~socket.io-client-services';
 
 import usePersistedData from '~/composables/usePersistedData';
 import { dmSocketInjectionKey } from '~web/src/composables/useDmSocket';
-import { gridOutline, gridSharp, libraryOutline, librarySharp, listOutline, listSharp } from 'ionicons/icons';
 
 export const app = defineStore('app', () => {
   const {
@@ -24,8 +23,8 @@ export const app = defineStore('app', () => {
   const isDataLoaded = ref(false);
 
   const issueViewModes = [
-    { id: 'list', label: 'List', icon: { ios: listOutline, md: listSharp } },
-    { id: 'edges', label: 'Edges', icon: { ios: libraryOutline, md: librarySharp } },
+    { id: 'list', label: 'List', icon: { ios: '/icons/list.svg', md: '/icons/list.svg' } },
+    { id: 'edges', label: 'Edges', icon: { ios: '/icons/edges.svg', md: '/icons/edges.svg' } },
     {
       id: 'covers-small',
       label: 'Covers (small)',
@@ -37,7 +36,7 @@ export const app = defineStore('app', () => {
       icon: { ios: '/icons/grid-sharp-medium.svg', md: '/icons/grid-sharp-medium.svg' },
     },
     {
-      id: 'covers-big',
+      id: 'covers-large',
       label: 'Covers (large)',
       icon: { ios: '/icons/grid-sharp-large.svg', md: '/icons/grid-sharp-large.svg' },
     },
