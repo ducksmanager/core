@@ -13,6 +13,14 @@
             </div>
           </div></ion-title
         >
+        <ion-title
+          ><div class="content">
+            <div class="title">
+              <div>{{ t('Ma collection') }}</div>
+              <ion-chip outline v-if="collectionStore.total">{{ collectionStore.total }}</ion-chip>
+            </div>
+          </div></ion-title
+        >
       </ion-toolbar>
       <template v-if="items?.length">
         <Navigation />
@@ -35,6 +43,7 @@
       @ion-scroll-end="isScrolling = false"
     >
       <template v-if="$slots['row-label']">
+      <template v-if="$slots['row-label']">
         <Row
           v-for="{ key, item, isOwned, isNextOwned } in filteredItems"
           :is-owned="isOwned"
@@ -55,6 +64,7 @@
           </template> </Row
       ></template>
       <slot v-else name="default" />
+      <slot v-else name="default" />
       <EditIssuesButton />
 
       <div
@@ -72,6 +82,7 @@
 
 <script setup lang="ts" generic="Item extends Required<any>">
 import { IonContent, ScrollDetail } from '@ionic/vue';
+import { eyeOutline, eyeSharp } from 'ionicons/icons';
 import { app } from '~/stores/app';
 import { wtdcollection } from '~/stores/wtdcollection';
 defineSlots<{

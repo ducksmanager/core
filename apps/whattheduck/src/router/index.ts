@@ -61,6 +61,7 @@ const routes: RouteRecordRaw[] = [
     path: '/:type(collection|coa)/issues/:publicationcode*',
     component: IssueList,
     props: true,
+    props: true,
     meta: {
       onOffline: 'readonly',
       onNoToken: 'logout',
