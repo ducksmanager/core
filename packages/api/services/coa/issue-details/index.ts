@@ -69,20 +69,18 @@ export default (socket: Socket<Events>) => {
       callback({ error: "Too many requests" });
       return;
     }
-    getCoverUrls(issuecodes)
-      .then((data) =>
-        data.reduce(
-          (acc, row) => ({
-            ...acc,
-            [row.issuenumber.replace(/ +/g, " ")]: row,
-          }),
-          {} as Record<string, IssueCoverDetails>,
-        ),
-      )
-      .then((data) => {
-        callback({ covers: data });
-      });
+    getIssueCoverDetails(issuecodes, callback);
   });
+
+  socket.on(
+    "getIssueCoverDetailsByPublicationcode",
+    async (publicationcode, callback) => {
+      const issuecodes = (
+        await prismaCoa.inducks_issue.findMany({ where: { publicationcode } })
+      ).map((issue) => issue.issuecode);
+      getIssueCoverDetails(issuecodes, callback);
+    },
+  );
 
   socket.on("getIssuesByCode", async (issueCodes, callback) => {
     const covers: { [issuecode: string]: cover } = (
@@ -121,6 +119,7 @@ export default (socket: Socket<Events>) => {
     const longIssueCodes = Object.keys(issues);
     const shortIssueCodes = longIssueCodes.reduce(
       (acc, longIssueCode) => ({
+        ...acc,
         [longIssueCode]: longIssueCode.replace(/ +/g, " "),
       }),
       {},
@@ -204,3 +203,23 @@ const getEntries = async (publicationcode: string, issuenumber: string) =>
       GROUP BY entry.entrycode, position
       ORDER BY position
   `;
+
+const getIssueCoverDetails = (
+  issuecodes: string[],
+  callback: ({ covers }: { covers: Record<string, IssueCoverDetails> }) => void,
+) =>
+  issuecodes.length
+    ? getCoverUrls(issuecodes)
+        .then((data) =>
+          data.reduce(
+            (acc, row) => ({
+              ...acc,
+              [row.issuenumber.replace(/ +/g, " ")]: row,
+            }),
+            {} as Record<string, IssueCoverDetails>,
+          ),
+        )
+        .then((data) => {
+          callback({ covers: data });
+        })
+    : callback({ covers: {} });

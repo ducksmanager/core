@@ -46,8 +46,12 @@ export default abstract class {
     issuenumber: string,
     callback: (value: { releaseDate: string; entries: SimpleEntry[] }) => void,
   ) => void;
+  abstract getIssueCoverDetailsByPublicationcode: (
+    publicationcode: string,
+    callback: (value: { covers: Record<string, IssueCoverDetails> }) => void,
+  ) => void;
   abstract getIssueCoverDetails: (
-    publicationCodes: string[],
+    issuecodes: string[],
     callback: (
       value: Errorable<
         { covers: Record<string, IssueCoverDetails> },
@@ -56,7 +60,7 @@ export default abstract class {
     ) => void,
   ) => void;
   abstract getIssuesByCode: (
-    issueCodes: string[],
+    issuecodes: string[],
     callback: (value: Record<string, SimpleIssueWithPublication>) => void,
   ) => void;
 
