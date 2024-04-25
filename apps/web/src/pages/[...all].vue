@@ -100,7 +100,7 @@ meta:
           <div>
             {{
               $t(
-                "Parce que votre bibliothèque est unique, DucksManager vous propose de choisir entre différents types de bois pour le cadre de la bibliothèque et ses égères.",
+                "Parce que votre bibliothèque est unique, DucksManager vous propose de choisir entre différents types de bois pour le cadre de la bibliothèque et ses étagères.",
               )
             }}
           </div>
