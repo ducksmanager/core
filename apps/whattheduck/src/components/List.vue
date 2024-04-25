@@ -92,6 +92,10 @@ const props = defineProps<{
   filter?: { label: string; icon: { ios: string; md: string } }[];
 }>();
 
+const emit = defineEmits<{
+  (e: 'items-filtered', items: string[]): void;
+}>();
+
 const content = ref<InstanceType<typeof IonContent> | null>(null);
 
 const scrollPositionPct = ref<number>(0);
@@ -133,6 +137,18 @@ const onRowClick = (key: string) => {
 const filteredItems = computed(() =>
   props.items.filter(({ item }) => props.getItemTextFn(item).toLowerCase().indexOf(filterText.value) !== -1),
 );
+
+watch(
+  filteredItems,
+  (items) => {
+    emit(
+      'items-filtered',
+      items.map(({ key }) => key),
+    );
+  },
+  { immediate: true },
+);
+
 const showFilter = computed(() => true);
 
 watch(currentNavigationItem, async (newValue) => {

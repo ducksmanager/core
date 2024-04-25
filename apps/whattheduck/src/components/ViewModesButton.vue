@@ -1,6 +1,7 @@
 <template>
   <ion-fab v-if="issueViewModes" slot="fixed" vertical="top" horizontal="end" id="view-modes">
-    <ion-fab-button><ion-icon :ios="eyeOutline" :android="eyeSharp"></ion-icon></ion-fab-button
+    <ion-fab-button :disabled="isOfflineMode"
+      ><ion-icon :ios="eyeOutline" :android="eyeSharp"></ion-icon></ion-fab-button
     ><ion-icon class="indicator" :ios="currentIssueViewMode.icon.ios" :android="currentIssueViewMode.icon.md" />
     <ion-fab-list side="bottom">
       <ion-item
@@ -18,7 +19,7 @@
 import { eyeOutline, eyeSharp } from 'ionicons/icons';
 import { app } from '~/stores/app';
 
-const { issueViewModes } = app();
+const { issueViewModes, isOfflineMode } = app();
 const { currentIssueViewMode } = storeToRefs(app());
 </script>
 <style scoped lang="scss">

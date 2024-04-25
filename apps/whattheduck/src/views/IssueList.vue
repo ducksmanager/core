@@ -1,5 +1,11 @@
 <template>
-  <List v-if="hasCoaData" :items="sortedItems" :get-target-route-fn="getTargetUrlFn" :get-item-text-fn="getItemTextFn">
+  <List
+    v-if="hasCoaData"
+    :items="sortedItems"
+    :get-target-route-fn="getTargetUrlFn"
+    :get-item-text-fn="getItemTextFn"
+    @items-filtered="filteredIssuenumbers = $event"
+  >
     <template v-if="currentIssueViewMode.id === 'list'" #row-prefix="{ item }">
       <ion-checkbox v-if="isCoaView">&nbsp;</ion-checkbox>
       <Condition v-if="item.condition" :value="item.condition" />
@@ -21,16 +27,20 @@
       <ion-grid>
         <ion-row>
           <ion-col
-            v-for="item in sortedItems"
-            :key="item.key"
+            v-for="{ key, item } in sortedItemsForCovers?.filter(({ item }) =>
+              filteredIssuenumbers.includes(item.issuenumber),
+            )"
+            :key="key"
             class="ion-text-center"
             :size="
               currentIssueViewMode.id === 'covers-small' ? '3' : currentIssueViewMode.id === 'covers-medium' ? '4' : '6'
             "
-            >{{ item.item.issuenumber }}</ion-col
-          ></ion-row
-        ></ion-grid
-      >
+            ><ion-img
+              @click="showIssueToast(item)"
+              :src="`${COVER_ROOT_URL}${item.cover}`"
+              :alt="item.issuenumber"
+            ></ion-img></ion-col></ion-row
+      ></ion-grid>
     </template>
     <template #page-menu><ViewModesButton /></template>
   </List>
@@ -44,12 +54,18 @@ import { app } from '~/stores/app';
 import { wtdcollection } from '~/stores/wtdcollection';
 
 import { components as webComponents } from '~web';
+import { toastController } from '@ionic/vue';
 const { Bookcase } = webComponents;
+
+const filteredIssuenumbers = ref<string[]>([]);
+
+const COVER_ROOT_URL = import.meta.env.VITE_CLOUDINARY_BASE_URL;
 
 const route = useRoute();
 
 const { issues, user } = storeToRefs(wtdcollection());
 const coaStore = webStores.coa();
+const {} = storeToRefs(webStores.coa());
 
 const { isCoaView, currentIssueViewMode } = storeToRefs(app());
 
@@ -82,7 +98,7 @@ const items = computed(() =>
   coaIssues.value
     ? isCoaView.value
       ? coaIssues.value.map(({ issuenumber }) => ({
-          key: `${publicationcode.value} ${issuenumber}`,
+          key: issuenumber,
           item: {
             issuenumber,
             ...(userIssues.value.find(({ issuenumber: userIssueNumber }) => issuenumber === userIssueNumber) || {}),
@@ -91,7 +107,7 @@ const items = computed(() =>
       : (issues.value || [])
           .filter((issue) => issue.publicationcode === publicationcode.value)
           .map(({ issuenumber, ...issue }) => ({
-            key: `${publicationcode.value} ${issuenumber}`,
+            key: issuenumber,
             item: { ...issue, issuenumber }!,
           }))
     : [],
@@ -120,6 +136,35 @@ const sortedItems = computed(() =>
 const sortedItemsForBookcase = computed(() =>
   sortedItems.value.map(({ item }) => ({ publicationcode: item.publicationcode!, issuenumber: item.issuenumber })),
 );
+
+const showIssueToast = async (item: (typeof items)['value'][0]['item']) => {
+  const toast = await toastController.create({
+    message: item.issuenumber,
+    translucent: true,
+    duration: 1000,
+  });
+  toast.present();
+};
+
+const sortedItemsForCovers = ref<Awaited<ReturnType<typeof getSortedItemsWithCovers>>>();
+
+const getSortedItemsWithCovers = async () => {
+  const coverUrls = (await coaStore.fetchCoverUrls(publicationcode.value)).covers;
+
+  return sortedItems.value.map(({ key, item }) => ({
+    key,
+    item: {
+      ...item,
+      cover: coverUrls[item.issuenumber]!.fullUrl,
+    },
+  }));
+};
+
+watch([sortedItems, currentIssueViewMode], async () => {
+  if (sortedItems.value && ['covers-large', 'covers-medium', 'covers-small'].includes(currentIssueViewMode.value.id)) {
+    sortedItemsForCovers.value = await getSortedItemsWithCovers();
+  }
+});
 
 onMounted(async () => {
   await coaStore.fetchIssueNumbersWithTitles([publicationcode.value]);
