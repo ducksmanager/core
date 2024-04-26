@@ -3,8 +3,8 @@
         {
             "appId": "d5426d00",
             "root": "apps/whattheduck-ionic",
-            "dependencyInstallCommand": "curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash && mkdir -p dist && $HOME/.nvm/nvm.sh install 18 && $HOME/.nvm/nvm.sh use 18 && cd ../.. && pnpm i -r --prod -F '~whattheduck-ionic...'",
-            "webBuildCommand": "$HOME/.nvm/nvm.sh use 18 && cd ../.. && pnpm -r -F '~whattheduck-ionic...' build",
+            "dependencyInstallCommand": "curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash && mkdir -p dist && $HOME/.nvm/nvm-exec install 18 && $HOME/.nvm/nvm-exec use 18 && cd ../.. && pnpm i -r --prod -F '~whattheduck-ionic...'",
+            "webBuildCommand": "$HOME/.nvm/nvm-exec use 18 && cd ../.. && pnpm -r -F '~whattheduck-ionic...' build",
             "appName": "What The Duck"
         }
     ]
