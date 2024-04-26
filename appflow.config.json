@@ -1,7 +1,7 @@
 {
     "apps": [
         {
-            "appId": "net.ducksmanager.whattheduck2",
+            "appId": "d5426d00",
             "dependencyInstallCommand": "npm i -g pnpm && pnpm i -r --prod -F '~whattheduck-ionic...'"
         }
     ]
