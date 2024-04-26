@@ -2,7 +2,7 @@
     "apps": [
         {
             "appId": "d5426d00",
-            "dependencyInstallCommand": "pnpm i -r --prod -F '~whattheduck-ionic...'",
+            "dependencyInstallCommand": "nvm use 18 && pnpm i -r --prod -F '~whattheduck-ionic...'",
             "appName": "What The Duck"
         }
     ]
