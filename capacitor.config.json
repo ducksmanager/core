@@ -1,4 +1,7 @@
 {
+  "appId": "d5426d00",
+  "appName": "What The Duck",
+  "webDir": "dist",
   "plugins": {
     "SplashScreen": {
       "launchShowDuration": 3000,
