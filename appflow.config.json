@@ -2,7 +2,9 @@
     "apps": [
         {
             "appId": "d5426d00",
-            "dependencyInstallCommand": "curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash && export NVM_DIR=\"$([ -z \"${XDG_CONFIG_HOME-}\" ] && printf %s \"${HOME}/.nvm\" || printf %s \"${XDG_CONFIG_HOME}/nvm\")\" && [ -s \"$NVM_DIR/nvm.sh\" ] && \\. \"$NVM_DIR/nvm.sh\" && mkdir -p dist && nvm use 18 && pnpm i -r --prod -F '~whattheduck-ionic...'",
+            "root": "apps/whattheduck-ionic",
+            "dependencyInstallCommand": "curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash && mkdir -p dist && ~/.nvm/nvm.sh use 18 && cd ../.. && pnpm i -r --prod -F '~whattheduck-ionic...'",
+            "webBuildCommand": "~/.nvm/nvm.sh use 18 && cd ../.. && pnpm -r -F '~whattheduck-ionic...' build",
             "appName": "What The Duck"
         }
     ]
