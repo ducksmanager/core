@@ -1,24 +1,24 @@
 [submodule "whattheduck-ionic"]
 	path = apps/whattheduck-ionic
-	url = git@github.com:ducksmanager/whattheduck-ionic.git
+	url = ../whattheduck-ionic.git
 	branch=master
 [submodule "dumili"]
 	path = apps/dumili
-	url = git@github.com:ducksmanager/dumili.git
+	url = ../dumili.git
 	branch=master
 [submodule "duck-estimator"]
 	path = apps/duck-estimator
-	url = git@github.com:ducksmanager/duck-estimator.git
+	url = ../duck-estimator.git
 	branch=master
 [submodule "duckguessr-old"]
 	path = apps/duckguessr-old
-	url = git@github.com:ducksmanager/duckguessr.git
+	url = ../duckguessr.git
 	branch = master
 [submodule "duckguessr"]
 	path = apps/duckguessr
-	url = git@github.com:ducksmanager/duckguessr.git
+	url = ../duckguessr.git
 	branch=nuxt3-to-vite-vue3
 [submodule "duckguessr-ml"]
 	branch=ts
 	path = packages/duckguessr-ml
-	url = git@github.com:ducksmanager/duckguessr-ml.git
+	url = ../duckguessr-ml.git
