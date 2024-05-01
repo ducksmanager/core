@@ -54,7 +54,6 @@ export const useSocket = (socketRootUrl: string) => ({
     const { session, onConnectError, cache } = namespaceOptions;
     const socket = io(socketRootUrl + namespaceName, {
       multiplex: false,
-      timeout: 2500,
       auth: async (cb) => {
         cb(session ? { token: await session.getToken() } : {});
       },
@@ -85,13 +84,17 @@ export const useSocket = (socketRootUrl: string) => ({
                 cacheData !== undefined &&
                 !(typeof cacheData === "object" && cacheData.state === "empty");
               if (hasCacheData) {
+                console.debug("Using cache for socket event", event, args);
                 return cacheData;
               }
+              console.debug("Calling socket event", event, args);
               data = await socket.emitWithAck(event, ...args);
               cache.storage.set(cacheKey, data);
             } else {
+              console.debug("Calling socket event", event, args);
               data = await socket.emitWithAck(event, ...args);
             }
+            console.debug("Called socket event", event, args);
             return data;
           },
       }),
