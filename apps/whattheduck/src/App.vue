@@ -65,21 +65,17 @@ const isReady = computed(() => isDataLoaded.value && collectionStore.isDataLoade
 
 const routeMeta = computed(() => route.meta as RouteMeta);
 
-watch(isReady, (newValue) => {
-  if (newValue) {
-    watch(
-      token,
-      async (newValue) => {
-        if (newValue) {
-          fetchAndTrackCollection().then(() => {
-            if (route.path === '/login') {
-              router.push('/collection');
-            }
-          });
+watch(
+  [isReady, token],
+  () => {
+    if (isReady.value && token.value) {
+      fetchAndTrackCollection().then(() => {
+        if (route.path === '/login') {
+          router.push('/collection');
         }
-      },
-      { immediate: true },
-    );
-  }
-});
+      });
+    }
+  },
+  { immediate: true },
+);
 </script>

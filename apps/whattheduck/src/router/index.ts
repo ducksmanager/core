@@ -16,6 +16,7 @@ import Report from '~/views/Report.vue';
 import Search from '~/views/Search.vue';
 import Signup from '~/views/Signup.vue';
 import Stats from '~/views/Stats.vue';
+import Suggestions from '~/views/Suggestions.vue';
 
 export type RouteMeta = {
   onOffline?: 'readonly' | 'unavailable';
@@ -135,6 +136,10 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/login',
     component: Login,
+  },
+  {
+    path: '/suggestions',
+    component: Suggestions,
   },
   {
     path: '/',

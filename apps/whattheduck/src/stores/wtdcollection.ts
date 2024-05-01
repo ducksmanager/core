@@ -44,12 +44,12 @@ export const wtdcollection = defineStore('wtdcollection', () => {
       // TODO retrieve user notification countries
 
       // TODO get app version
-      //await webCollectionStore.loadSuggestions({
-      //  countryCode: 'ALL',
-      //  sinceLastVisit: false,
-      //  sort: 'score',
-      //});
-      //await webCollectionStore.loadSuggestions({ countryCode: 'ALL', sinceLastVisit: false, sort: 'oldestdate' });
+      await webCollectionStore.loadSuggestions({
+        countryCode: 'ALL',
+        sinceLastVisit: false,
+        sort: 'score',
+      });
+      await webCollectionStore.loadSuggestions({ countryCode: 'ALL', sinceLastVisit: false, sort: 'oldestdate' });
       await statsStore.loadRatings();
       await coaStore.fetchCountryNames(true);
       coaStore.addPublicationNames(await coaServices.getFullPublicationList());

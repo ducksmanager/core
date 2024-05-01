@@ -22,7 +22,6 @@
               lines="none"
               :detail="false"
               :class="{ selected: route.path === p.url }"
-              @click="router.push(p.url)"
             >
               <ion-icon slot="start" aria-hidden="true" :ios="p.iosIcon" :md="p.mdIcon" />
               <ion-label>{{ p.title }}</ion-label>
@@ -58,6 +57,8 @@ import {
   starSharp,
   statsChartOutline,
   statsChartSharp,
+  flameOutline,
+  flameSharp,
 } from 'ionicons/icons';
 import { stores as webStores } from '~web';
 
@@ -86,6 +87,12 @@ const appPages = [
     url: '/authors',
     iosIcon: starOutline,
     mdIcon: starSharp,
+  },
+  {
+    title: t('Mes suggestions'),
+    url: '/suggestions',
+    iosIcon: flameOutline,
+    mdIcon: flameSharp,
   },
   {
     title: t('Statistiques'),
