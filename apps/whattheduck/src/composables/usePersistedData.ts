@@ -1,9 +1,7 @@
-import { Storage } from '@ionic/storage';
-
-const storage = new Storage().create();
+import type { Storage } from '@ionic/storage';
 
 export default async (entries: Record<string, Ref<any>>): Promise<void> =>
-  storage.then(async (persistedStorage) => {
+  injectLocal<Promise<Storage>>('storage')!.then(async (persistedStorage) => {
     for (const [persistedRefKey, persistedRef] of Object.entries(entries)) {
       const persistedValue = await persistedStorage.get(persistedRefKey);
       if (persistedValue !== null) {

@@ -23,7 +23,7 @@
         :sortedBookcase="sortedItemsForBookcase"
       />
     </template>
-    <template v-if="['covers-small', 'covers-medium', 'covers-large'].includes(currentIssueViewMode.id)">
+    <template v-if="colSize">
       <ion-grid>
         <ion-row>
           <ion-col
@@ -32,9 +32,7 @@
             )"
             :key="key"
             class="ion-text-center"
-            :size="
-              currentIssueViewMode.id === 'covers-small' ? '3' : currentIssueViewMode.id === 'covers-medium' ? '4' : '6'
-            "
+            :size="String(colSize)"
             ><ion-img
               @click="showIssueToast(item)"
               :src="`${COVER_ROOT_URL}${item.cover}`"
@@ -62,6 +60,19 @@ const filteredIssuenumbers = ref<string[]>([]);
 const COVER_ROOT_URL = import.meta.env.VITE_CLOUDINARY_BASE_URL;
 
 const route = useRoute();
+
+const colSize = computed(() => {
+  switch (currentIssueViewMode.value.id) {
+    case 'covers-small':
+      return 3;
+    case 'covers-medium':
+      return 4;
+    case 'covers-large':
+      return 6;
+    default:
+      return undefined;
+  }
+});
 
 const { issues, user } = storeToRefs(wtdcollection());
 const coaStore = webStores.coa();

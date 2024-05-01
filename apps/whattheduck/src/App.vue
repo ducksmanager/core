@@ -14,17 +14,19 @@ import Cookies from 'js-cookie';
 
 import { app } from './stores/app';
 import { wtdcollection } from './stores/wtdcollection';
+import type { Storage } from '@ionic/storage';
 
 import type { RouteMeta } from '~/router';
-import { Storage } from '@ionic/storage';
 import { dmSocketInjectionKey } from '~web/src/composables/useDmSocket';
+
+const storage = injectLocal<Promise<Storage>>('storage')!;
 
 const session = {
     getToken: async () => token.value,
     clearSession: () => {
       token.value = null;
       Cookies.remove('token');
-      new Storage().clear();
+      storage.then((storage) => storage.clear());
     },
     sessionExists: async () => token.value !== undefined,
   },
@@ -51,7 +53,8 @@ const dmSocket = useDmSocket({
 
 provideLocal(dmSocketInjectionKey, dmSocket);
 
-const { isOfflineMode, token, isDataLoaded, socketCache } = storeToRefs(app());
+const appStore = app();
+const { isOfflineMode, token, isDataLoaded, socketCache } = storeToRefs(appStore);
 
 const collectionStore = wtdcollection();
 const { fetchAndTrackCollection } = collectionStore;
@@ -70,9 +73,11 @@ watch(isReady, (newValue) => {
       token,
       async (newValue) => {
         if (newValue) {
-          fetchAndTrackCollection().then(() =>
-            route.path === '/login' ? router.replace('/collection') : Promise.resolve(),
-          );
+          fetchAndTrackCollection().then(() => {
+            if (route.path === '/login') {
+              router.push('/collection');
+            }
+          });
         }
       },
       { immediate: true },

@@ -30,6 +30,7 @@ import './theme/global.scss';
 import { useSocket } from '~socket.io-client-services/index';
 
 import { defineCustomElements } from '@ionic/pwa-elements/loader';
+import { Storage } from '@ionic/storage';
 
 const store = createPinia();
 
@@ -44,7 +45,8 @@ const app = createApp(App, {
   .use(router)
   .use(store)
   .use(i18n('fr', { en, sv }).instance)
-  .provide('socket', useSocket(import.meta.env.VITE_DM_SOCKET_URL));
+  .provide('socket', useSocket(import.meta.env.VITE_DM_SOCKET_URL))
+  .provide('storage', new Storage().create());
 
 router.isReady().then(async () => {
   app.mount('#app');

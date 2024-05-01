@@ -3,7 +3,6 @@ import type { NotEmptyStorageValue } from '~socket.io-client-services';
 
 import usePersistedData from '~/composables/usePersistedData';
 import { dmSocketInjectionKey } from '~web/src/composables/useDmSocket';
-
 export const app = defineStore('app', () => {
   const {
     coa: { socket: coaSocket },
