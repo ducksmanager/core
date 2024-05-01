@@ -19,6 +19,7 @@
   },
   "dependencies": {
     "@capacitor-community/camera-preview": "^5.0.0",
+    "@capacitor-community/sqlite": "5.7.3-3",
     "@capacitor/android": "^6.0.0",
     "@capacitor/app": "^6.0.0",
     "@capacitor/camera": "^6.0.0",
@@ -38,7 +39,6 @@
     "@vueuse/core": "^10.9.0",
     "@vueuse/integrations": "^10.9.0",
     "chart.js": "^4.4.2",
-    "cordova-sqlite-storage": "^6.1.0",
     "dayjs": "^1.11.11",
     "ionicons": "^7.3.1",
     "js-cookie": "^3.0.5",
