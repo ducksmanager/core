@@ -20,7 +20,12 @@ export type EventReturnTypeIncludingError<
   // @ts-ignore ???
   LastParameter<LastParameter<T>>;
 
-type SocketCacheOptions = Pick<CacheOptions, "ttl" | "storage">;
+type SocketCacheOptions<Services extends EventsMap> = Pick<
+  CacheOptions,
+  "storage"
+> & {
+  ttl: number | ((event: StringKeyOf<Services>, args: any[]) => number);
+};
 
 interface EventsMap {
   [event: string]: any;
@@ -44,7 +49,7 @@ export const useSocket = (socketRootUrl: string) => ({
         clearSession: () => Promise<void> | void;
         sessionExists: () => Promise<boolean>;
       };
-      cache?: Required<SocketCacheOptions>;
+      cache?: Required<SocketCacheOptions<Services>>;
     } = {
       onConnectError(e, namespace) {
         console.error(`${namespace}: connect_error: ${e}`);
@@ -75,11 +80,17 @@ export const useSocket = (socketRootUrl: string) => ({
             EventReturnTypeIncludingError<Services[EventName]> | undefined
           > => {
             let data;
+            let startTime = Date.now();
             if (cache) {
               const cacheKey = `${event} ${JSON.stringify(args)}`;
-              const cacheData = (await cache.storage.get(cacheKey)) as Awaited<
-                ReturnType<Socket["emitWithAck"]>
-              >;
+              const cacheData = (await cache.storage.get(cacheKey, {
+                cache: {
+                  ttl:
+                    typeof cache.ttl === "function"
+                      ? cache.ttl(event, args)
+                      : cache.ttl,
+                },
+              })) as Awaited<ReturnType<Socket["emitWithAck"]>>;
               const hasCacheData =
                 cacheData !== undefined &&
                 !(typeof cacheData === "object" && cacheData.state === "empty");
@@ -87,14 +98,27 @@ export const useSocket = (socketRootUrl: string) => ({
                 console.debug("Using cache for socket event", event, args);
                 return cacheData;
               }
-              console.debug("Calling socket event", event, args);
+              console.debug(
+                "Calling socket event",
+                `${namespaceName}.${event}`,
+                args
+              );
               data = await socket.emitWithAck(event, ...args);
               cache.storage.set(cacheKey, data);
             } else {
-              console.debug("Calling socket event", event, args);
+              console.debug(
+                "Calling socket event",
+                `${namespaceName}.${event}`,
+                args
+              );
               data = await socket.emitWithAck(event, ...args);
             }
-            console.debug("Called socket event", event, args);
+            console.debug(
+              "Called socket event",
+              `${namespaceName}.${event}`,
+              args,
+              `in ${Date.now() - startTime}ms`
+            );
             return data;
           },
       }),

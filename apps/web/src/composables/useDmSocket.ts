@@ -48,7 +48,7 @@ const defaultExport = (options: {
     options,
     publicCollection: addNamespace<PublicCollectionServices>(
       PublicCollectionServices.namespaceEndpoint,
-      { onConnectError },
+      { onConnectError }
     ),
     login: addNamespace<LoginServices>(LoginServices.namespaceEndpoint, {
       onConnectError,
@@ -56,11 +56,15 @@ const defaultExport = (options: {
 
     bookcase: addNamespace<BookcaseServices>(
       BookcaseServices.namespaceEndpoint,
-      { onConnectError, session },
+      { onConnectError, session }
     ),
     stats: addNamespace<StatsServices>(StatsServices.namespaceEndpoint, {
       onConnectError,
       session,
+      cache: {
+        storage: cacheStorage,
+        ttl: (event) => (event === "getSuggestionsForCountry" ? until4am() : 0),
+      },
     }),
     auth: addNamespace<AuthServices>(AuthServices.namespaceEndpoint, {
       onConnectError,
@@ -68,11 +72,11 @@ const defaultExport = (options: {
     }),
     edgeCreator: addNamespace<EdgeCreatorServices>(
       EdgeCreatorServices.namespaceEndpoint,
-      { onConnectError },
+      { onConnectError }
     ),
     presentationText: addNamespace<PresentationTextServices>(
       PresentationTextServices.namespaceEndpoint,
-      { onConnectError },
+      { onConnectError }
     ),
     edges: addNamespace<EdgesServices>(EdgesServices.namespaceEndpoint, {
       onConnectError,
@@ -86,7 +90,7 @@ const defaultExport = (options: {
     }),
     globalStats: addNamespace<GlobalStatsServices>(
       GlobalStatsServices.namespaceEndpoint,
-      { onConnectError },
+      { onConnectError }
       // {
       //   ttl: oneHour(),
       // },
@@ -96,11 +100,11 @@ const defaultExport = (options: {
     }),
     bookstore: addNamespace<BookstoreServices>(
       BookstoreServices.namespaceEndpoint,
-      { onConnectError },
+      { onConnectError }
     ),
     collection: addNamespace<CollectionServices>(
       CollectionServices.namespaceEndpoint,
-      { onConnectError, session },
+      { onConnectError, session }
     ),
     coverId: addNamespace<CoverIdServices>(CoverIdServices.namespaceEndpoint, {
       onConnectError,
