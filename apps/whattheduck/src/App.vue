@@ -19,14 +19,14 @@ import type { Storage } from '@ionic/storage';
 import type { RouteMeta } from '~/router';
 import { dmSocketInjectionKey } from '~web/src/composables/useDmSocket';
 
-const storage = injectLocal<Promise<Storage>>('storage')!;
+const storage = injectLocal<Storage>('storage')!;
 
 const session = {
     getToken: async () => token.value,
     clearSession: () => {
       token.value = null;
       Cookies.remove('token');
-      storage.then((storage) => storage.clear());
+      storage.clear();
     },
     sessionExists: async () => token.value !== undefined,
   },
@@ -67,8 +67,6 @@ const routeMeta = computed(() => route.meta as RouteMeta);
 
 watch(isReady, (newValue) => {
   if (newValue) {
-    isDataLoaded.value = true;
-
     watch(
       token,
       async (newValue) => {

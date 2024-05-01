@@ -6,6 +6,7 @@ import { dmSocketInjectionKey } from '~web/src/composables/useDmSocket';
 export const app = defineStore('app', () => {
   const {
     coa: { socket: coaSocket },
+    collection: { socket: collectionSocket },
   } = injectLocal(dmSocketInjectionKey)!;
 
   const isOfflineMode = ref(false);
@@ -20,6 +21,11 @@ export const app = defineStore('app', () => {
   const token = ref<string | null>(); // undefined === we haven't checked whether there is a token ; null === we have checked and there is no token
   const socketCache = ref<Record<string, NotEmptyStorageValue>>({});
   const isDataLoaded = ref(false);
+
+  watch(token, () => {
+    collectionSocket.disconnect();
+    collectionSocket.connect();
+  });
 
   const issueViewModes = [
     { id: 'list', label: 'List', icon: { ios: '/icons/list.svg', md: '/icons/list.svg' } },
@@ -47,6 +53,7 @@ export const app = defineStore('app', () => {
     token,
     socketCache,
   }).then(() => {
+    console.log('token: ', JSON.stringify({ token: token.value }));
     isDataLoaded.value = true;
   });
 

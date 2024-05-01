@@ -68,6 +68,9 @@ importers:
       chart.js:
         specifier: ^4.4.2
         version: 4.4.2
+      cordova-sqlite-storage:
+        specifier: ^6.1.0
+        version: 6.1.0
       dayjs:
         specifier: ^1.11.11
         version: 1.11.11
@@ -77,6 +80,9 @@ importers:
       js-cookie:
         specifier: ^3.0.5
         version: 3.0.5
+      localforage-cordovasqlitedriver:
+        specifier: ^1.8.0
+        version: 1.8.0
       pinia:
         specifier: ^2.1.7
         version: 2.1.7(typescript@5.4.5)(vue@3.4.26(typescript@5.4.5))
@@ -1353,6 +1359,12 @@ packages:
     resolution: {integrity: sha512-U71cyTamuh1CRNCfpGY6to28lxvNwPG4Guz/EVjgf3Jmzv0vlDp1atT9eS5dDjMYHucpHbWns6Lwf3BKz6svdw==}
     engines: {node: '>= 0.6'}
 
+  cordova-sqlite-storage-dependencies@4.1.0:
+    resolution: {integrity: sha512-D0ZXfNkS3z9GO+Ha2rC2odvOOMcx/moL8lpVDFxXqcsCEZbJimuki4wZfdrQrGlNd/d7r4DNodljRmO20v6Ntg==}
+
+  cordova-sqlite-storage@6.1.0:
+    resolution: {integrity: sha512-ko/edy+u9MJVYrXdB6OXUklH0eIRWpa/Rvang7YkvQvsswc9vZr0pM/Ty6eX0MJtLOMJuCXIOiiHZZZbZSZikw==}
+
   core-util-is@1.0.2:
     resolution: {integrity: sha512-3lqz5YjWTYnW6dlDa5TLaTCcShfar1e40rmcJVwCBJC6mWlFuj0eCHIElmG1g5kyuJ/GD+8Wn4FFCcz4gJPfaQ==}
 
@@ -2323,6 +2335,9 @@ packages:
   local-pkg@0.5.0:
     resolution: {integrity: sha512-ok6z3qlYyCDS4ZEU27HaU6x/xZa9Whf8jD4ptH5UZTQYZVYeb9bnZ3ojVhiJNLiXK1Hfc0GNbLXcmZ5plLDDBg==}
     engines: {node: '>=14'}
+
+  localforage-cordovasqlitedriver@1.8.0:
+    resolution: {integrity: sha512-AeYiVPURow8gPAGHNOiGMS9rlgv81wUuQLtnyCP6Eh1mq+IsqNl9fwAOP+RiTi6aO/Wfy3TTWiW2WtbTdJaUnQ==}
 
   localforage@1.10.0:
     resolution: {integrity: sha512-14/H1aX7hzBBmmh7sGPd+AOMkkIrHM3Z1PAyGgZigA1H1p5O5ANnMyWzvpAETtG68/dC4pC0ncy3+PPGzXZHPg==}
@@ -4813,6 +4828,12 @@ snapshots:
 
   cookie@0.6.0: {}
 
+  cordova-sqlite-storage-dependencies@4.1.0: {}
+
+  cordova-sqlite-storage@6.1.0:
+    dependencies:
+      cordova-sqlite-storage-dependencies: 4.1.0
+
   core-util-is@1.0.2: {}
 
   crelt@1.0.6: {}
@@ -6054,6 +6075,10 @@ snapshots:
     dependencies:
       mlly: 1.7.0
       pkg-types: 1.1.0
+
+  localforage-cordovasqlitedriver@1.8.0:
+    dependencies:
+      localforage: 1.10.0
 
   localforage@1.10.0:
     dependencies:

@@ -1,6 +1,7 @@
 import { IonicVue } from '@ionic/vue';
 import { createPinia } from 'pinia';
 import { i18n } from '~web';
+import CordovaSQLiteDriver from 'localforage-cordovasqlitedriver';
 
 import App from './App.vue';
 import router from './router';
@@ -30,7 +31,7 @@ import './theme/global.scss';
 import { useSocket } from '~socket.io-client-services/index';
 
 import { defineCustomElements } from '@ionic/pwa-elements/loader';
-import { Storage } from '@ionic/storage';
+import { Drivers, Storage } from '@ionic/storage';
 
 const store = createPinia();
 
@@ -45,9 +46,15 @@ const app = createApp(App, {
   .use(router)
   .use(store)
   .use(i18n('fr', { en, sv }).instance)
-  .provide('socket', useSocket(import.meta.env.VITE_DM_SOCKET_URL))
-  .provide('storage', new Storage().create());
+  .provide('socket', useSocket(import.meta.env.VITE_DM_SOCKET_URL));
 
 router.isReady().then(async () => {
+  const storage = new Storage({
+    driverOrder: [CordovaSQLiteDriver._driver, Drivers.IndexedDB, Drivers.LocalStorage],
+    name: 'whattheduck',
+  });
+  await storage.defineDriver(CordovaSQLiteDriver);
+  await storage.create();
+  app.provide('storage', storage);
   app.mount('#app');
 });

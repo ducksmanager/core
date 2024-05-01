@@ -1,6 +1,6 @@
 <template>
   <List
-    v-if="ownershipPercentages"
+    v-if="ownershipPercentages && sortedItems"
     :items="sortedItems"
     :get-target-route-fn="getTargetUrlFn"
     :get-item-text-fn="getItemTextFn"
