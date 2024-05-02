@@ -25,7 +25,7 @@ export const wtdcollection = defineStore('wtdcollection', () => {
 
   const isDataLoaded = ref(false);
 
-  const { findInCollection, loadCollection, loadPurchases, loadUser, login, signup, updateCollectionSingleIssue } =
+  const { findInCollection, fetchIssueCounts, issueCounts, loadCollection, loadPurchases, loadUser, login, signup, updateCollectionSingleIssue } =
     webCollectionStore;
 
   const ownedCountries = computed(() =>
@@ -38,6 +38,7 @@ export const wtdcollection = defineStore('wtdcollection', () => {
     ),
     fetchAndTrackCollection = async () => {
       await loadCollection();
+      await coaStore.fetchCountryNames(true);
       await loadPurchases();
       await loadUser();
       // TODO retrieve user points
@@ -51,9 +52,8 @@ export const wtdcollection = defineStore('wtdcollection', () => {
       });
       await webCollectionStore.loadSuggestions({ countryCode: 'ALL', sinceLastVisit: false, sort: 'oldestdate' });
       await statsStore.loadRatings();
-      await coaStore.fetchCountryNames(true);
       coaStore.addPublicationNames(await coaServices.getFullPublicationList());
-      await coaStore.fetchIssueCounts();
+      await fetchIssueCounts();
       await coaStore.fetchIssueNumbers(ownedPublications.value || []);
       await usersStore.fetchStats([webCollectionStore.user?.id || 0]);
       // TODO register for notifications
@@ -61,6 +61,7 @@ export const wtdcollection = defineStore('wtdcollection', () => {
     highestQuotedIssue = computed(
       () => quotedIssues.value?.sort((a, b) => b.estimationGivenCondition - a.estimationGivenCondition)[0],
     ),
+
     getCollectionIssues = (publicationcode: string, issuenumber: string) =>
       issues.value!.filter(
         ({ publicationcode: collectionPublicationCode, issuenumber: collectionIssueNumber }) =>
@@ -74,9 +75,11 @@ export const wtdcollection = defineStore('wtdcollection', () => {
     isDataLoaded,
     issues,
     fetchAndTrackCollection,
+    fetchIssueCounts,
     findInCollection,
     getCollectionIssues,
     highestQuotedIssue,
+    issueCounts,
     issuesByIssueCode: computed(() => webCollectionStore.issuesByIssueCode),
     loadCollection,
     loadPurchases,

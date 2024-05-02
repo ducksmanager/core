@@ -1,6 +1,6 @@
 <template>
   <List
-    v-if="collectionStore.totalPerPublication && coaStore.issueCounts"
+    v-if="totalPerPublication && allIssueCounts"
     :items="sortedItems"
     :get-target-route-fn="getTargetUrlFn"
     :get-item-text-fn="getItemTextFn"
@@ -28,8 +28,8 @@ import { getOwnershipPercentages, getOwnershipText } from '~/composables/useOwne
 import { app } from '~/stores/app';
 import { wtdcollection } from '~/stores/wtdcollection';
 
-const collectionStore = wtdcollection();
-const coaStore = stores.coa();
+const { issueCounts, totalPerPublication, ownedPublications } = storeToRefs(wtdcollection());
+const { publicationNames } = storeToRefs(stores.coa());
 const appStore = app();
 
 const getIssueCountPerMagazinecode = (issueCountPerPublicationcode: Record<string, number>) =>
@@ -37,14 +37,14 @@ const getIssueCountPerMagazinecode = (issueCountPerPublicationcode: Record<strin
     .filter(([publicationcode]) => publicationcode.startsWith(`${route.params.countrycode}/`))
     .reduce((acc, [publicationcode, total]) => ({ ...acc, [publicationcode]: total }), {});
 
-const totalPerPublication = computed(
-  () =>
-    (collectionStore.totalPerPublication && getIssueCountPerMagazinecode(collectionStore.totalPerPublication)) ||
-    undefined,
-);
-const issueCounts = computed(() => getIssueCountPerMagazinecode(coaStore.issueCounts || {}));
+const allIssueCounts = computed(() => issueCounts.value && getIssueCountPerMagazinecode(issueCounts.value));
 
-const ownershipPercentages = computed(() => getOwnershipPercentages(totalPerPublication.value, issueCounts.value));
+const ownershipPercentages = computed(
+  () =>
+    issueCounts.value &&
+    totalPerPublication.value &&
+    getOwnershipPercentages(totalPerPublication.value, issueCounts.value),
+);
 
 const route = useRoute();
 
@@ -56,25 +56,24 @@ const getTargetUrlFn = (key: string) => ({
 });
 
 const items = computed(() =>
-  coaStore.publicationNames
+  publicationNames.value
     ? appStore.isCoaView
-      ? Object.entries(coaStore.publicationNames)
+      ? Object.entries(publicationNames.value)
           .filter(([publicationcode]) => new RegExp(`^${route.params.countrycode}/`).test(publicationcode))
           .map(([publicationcode, publicationname]) => ({
             key: publicationcode,
             item: { publicationcode, publicationname },
           }))
-      : collectionStore
-          .ownedPublications!.filter(
+      : ownedPublications
+          .value!.filter(
             (publicationcode) =>
-              publicationcode.indexOf(`${route.params.countrycode}/`) === 0 &&
-              coaStore.publicationNames![publicationcode],
+              publicationcode.indexOf(`${route.params.countrycode}/`) === 0 && publicationNames.value![publicationcode],
           )
           .map((publicationcode) => ({
             key: publicationcode,
             item: {
               publicationcode,
-              publicationname: coaStore.publicationNames![publicationcode] || publicationcode,
+              publicationname: publicationNames.value![publicationcode] || publicationcode,
             },
           }))
     : [],
