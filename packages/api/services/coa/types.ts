@@ -72,9 +72,6 @@ export default abstract class {
     storycode: string,
     callback: (value: SimpleIssue[]) => void,
   ) => void;
-  abstract getCountByPublicationcode: (
-    callback: (value: Record<string, number>) => void,
-  ) => void;
   abstract getRecentIssues: (
     callback: (value: inducks_issue[]) => void,
   ) => void;

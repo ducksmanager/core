@@ -266,10 +266,6 @@ export const coa = defineStore("coa", () => {
         addIssueCodeDetails(await coaServices.decompose(newIssueCodes))
       );
     },
-    fetchIssueCounts = async () => {
-      if (!issueCounts.value)
-        issueCounts.value = await coaServices.getCountByPublicationcode();
-    },
     fetchRecentIssues = () => coaServices.getRecentIssues(),
     fetchCoverUrls = (publicationcode: string) =>
       coaServices.getIssueCoverDetailsByPublicationcode(publicationcode),
@@ -302,7 +298,6 @@ export const coa = defineStore("coa", () => {
     fetchCountryNames,
     fetchCoverUrls,
     fetchIssueCodesDetails,
-    fetchIssueCounts,
     fetchIssueNumbers,
     fetchIssueNumbersWithTitles,
     fetchIssueQuotations,

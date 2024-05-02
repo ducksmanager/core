@@ -73,6 +73,11 @@ export const collection = defineStore("collection", () => {
     isLoadingPurchases = ref(false as boolean),
     isLoadingSuggestions = ref(false as boolean),
     isLoadingSubscriptions = ref(false as boolean),
+    issueCounts = ref(
+      null as EventReturnType<
+        CollectionServices["getCoaCountByPublicationcode"]
+      > | null,
+    ),
     user = ref(
       undefined as
         | EventReturnType<CollectionServices["getUser"]>
@@ -171,6 +176,11 @@ export const collection = defineStore("collection", () => {
     deletePurchase = async (id: number) => {
       await collectionServices.deletePurchase(id);
       await loadPurchases(true);
+    },
+    fetchIssueCounts = async () => {
+      if (!issueCounts.value)
+        issueCounts.value =
+          await collectionServices.getCoaCountByPublicationcode();
     },
     loadPreviousVisit = async () => {
       const result = await collectionServices.getLastVisit();
@@ -347,8 +357,10 @@ export const collection = defineStore("collection", () => {
     publicationUrlRoot,
     createPurchase,
     deletePurchase,
+    fetchIssueCounts,
     hasSuggestions,
     isLoadingUser,
+    issueCounts,
     issueNumbersPerPublication,
     lastPublishedEdgesForCurrentUser,
     loadCollection,

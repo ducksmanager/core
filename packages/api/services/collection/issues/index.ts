@@ -3,6 +3,7 @@ import { existsSync, readFileSync } from "fs";
 import { cwd } from "process";
 import { Socket } from "socket.io";
 
+import { prismaCoa } from "~/prisma";
 import { TransactionResults } from "~dm-types/TransactionResults";
 import { issue_condition, user } from "~prisma-clients/client_dm";
 import prismaDm from "~prisma-clients/extended/dm.extends";
@@ -137,6 +138,43 @@ export default (socket: Socket<Events>) => {
       }
       callback(output);
     },
+  );
+
+  socket.on("getCoaCountByPublicationcode", async (callback) =>
+    prismaCoa.inducks_issue
+      .groupBy({
+        _count: {
+          issuenumber: true,
+        },
+        where: {
+          publicationcode: {
+            in: await prismaDm.issue
+              .findMany({
+                select: {
+                  publicationcode: true,
+                },
+                where: {
+                  userId: socket.data.user!.id,
+                },
+              })
+              .then((data) => [
+                ...data.map(({ publicationcode }) => publicationcode!),
+              ]),
+          },
+        },
+        by: ["publicationcode"],
+      })
+      .then((data) => {
+        callback(
+          data.reduce(
+            (acc, { publicationcode, _count }) => ({
+              ...acc,
+              [publicationcode!]: _count.issuenumber,
+            }),
+            {} as { [publicationcode: string]: number },
+          ),
+        );
+      }),
   );
 };
 

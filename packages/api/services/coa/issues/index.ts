@@ -63,27 +63,6 @@ export default (socket: Socket<Events>) => {
       ORDER BY publicationcode`.then(callback),
   );
 
-  socket.on("getCountByPublicationcode", (callback) =>
-    prismaCoa.inducks_issue
-      .groupBy({
-        _count: {
-          issuenumber: true,
-        },
-        by: ["publicationcode"],
-      })
-      .then((data) => {
-        callback(
-          data.reduce(
-            (acc, { publicationcode, _count }) => ({
-              ...acc,
-              [publicationcode!]: _count.issuenumber,
-            }),
-            {} as { [publicationcode: string]: number },
-          ),
-        );
-      }),
-  );
-
   socket.on("getRecentIssues", (callback) =>
     prismaCoa.inducks_issue
       .findMany({
