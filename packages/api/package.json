@@ -12,12 +12,12 @@
   },
   "dependencies": {
     "@pusher/push-notifications-server": "^1.2.6",
-    "@sentry/node": "^7.112.2",
+    "@sentry/node": "^7.114.0",
     "@socket.io/admin-ui": "^0.5.1",
     "axios": "^1.6.8",
     "cloudinary": "^1.41.3",
     "csv-parse": "^5.5.5",
-    "dayjs": "^1.11.10",
+    "dayjs": "^1.11.11",
     "dotenv": "^16.4.5",
     "ejs": "^3.1.10",
     "i18n": "^0.15.1",
@@ -32,19 +32,19 @@
     "@types/ejs": "^3.1.5",
     "@types/i18n": "^0.13.12",
     "@types/jsonwebtoken": "^9.0.6",
-    "@types/node": "^18.19.30",
-    "@types/nodemailer": "^6.4.14",
+    "@types/node": "^18.19.32",
+    "@types/nodemailer": "^6.4.15",
     "concurrently": "^8.2.2",
     "eslint": "^8.57.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-simple-import-sort": "^12.1.0",
-    "eslint-plugin-unused-imports": "^3.1.0",
+    "eslint-plugin-unused-imports": "^3.2.0",
     "nodemon": "^3.1.0",
     "prettier": "^3.2.5",
     "ts-node": "^10.9.2",
     "tsc-alias": "^1.8.8",
     "tsconfig-paths": "^4.2.0",
     "typescript": "^5.4.5",
-    "typescript-eslint": "^7.7.1"
+    "typescript-eslint": "^7.8.0"
   }
 }
