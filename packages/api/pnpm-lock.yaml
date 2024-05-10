@@ -67,8 +67,8 @@ importers:
         specifier: ^9.0.6
         version: 9.0.6
       '@types/node':
-        specifier: ^18.19.32
-        version: 18.19.32
+        specifier: ^18.19.33
+        version: 18.19.33
       '@types/nodemailer':
         specifier: ^6.4.15
         version: 6.4.15
@@ -95,10 +95,10 @@ importers:
         version: 3.2.5
       ts-node:
         specifier: ^10.9.2
-        version: 10.9.2(@types/node@18.19.32)(typescript@5.4.5)
+        version: 10.9.2(@types/node@18.19.33)(typescript@5.4.5)
       tsc-alias:
-        specifier: ^1.8.8
-        version: 1.8.8
+        specifier: ^1.8.9
+        version: 1.8.9
       tsconfig-paths:
         specifier: ^4.2.0
         version: 4.2.0
@@ -253,8 +253,8 @@ packages:
   '@types/jsonwebtoken@9.0.6':
     resolution: {integrity: sha512-/5hndP5dCjloafCXns6SZyESp3Ldq7YjH3zwzwczYnjxIT0Fqzk5ROSYVGfFyczIue7IUEj8hkvLbPoLQ18vQw==}
 
-  '@types/node@18.19.32':
-    resolution: {integrity: sha512-2bkg93YBSDKk8DLmmHnmj/Rwr18TLx7/n+I23BigFwgexUJoMHZOd8X1OFxuF/W3NN0S2W2E5sVabI5CPinNvA==}
+  '@types/node@18.19.33':
+    resolution: {integrity: sha512-NR9+KrpSajr2qBVp/Yt5TU/rp+b5Mayi3+OlMlcg2cVCfRmcG5PWZ7S4+MG9PZ5gWBoc9Pd0BKSRViuBCRPu0A==}
 
   '@types/nodemailer@6.4.15':
     resolution: {integrity: sha512-0EBJxawVNjPkng1zm2vopRctuWVCxk34JcIlRuXSf54habUWdz1FB7wHDqOqvDa8Mtpt0Q3LTXQkAs2LNyK5jQ==}
@@ -1031,8 +1031,8 @@ packages:
     resolution: {integrity: sha512-cBznnQ9KjJqU67B52RMC65CMarK2600WFnbkcaiwWq3xy/5haFJlshgnpjovMVJ+Hff49d8GEn0b87C5pDQ10g==}
     hasBin: true
 
-  semver@7.6.1:
-    resolution: {integrity: sha512-f/vbBsu+fOiYt+lmwZV0rVwJScl46HppnOA1ZvIuBWKOTlllpyJ3bfVax76/OrhCH38dyxoDIA8K7uB963IYgA==}
+  semver@7.6.2:
+    resolution: {integrity: sha512-FNAIBWCx9qcRhoHcgcJ0gvU7SN1lYU2ZXuSfl04bSC5OpvDHFyJCjdNHomPXxjQlCBU67YW64PzY7/VIEH7F2w==}
     engines: {node: '>=10'}
     hasBin: true
 
@@ -1132,8 +1132,8 @@ packages:
       '@swc/wasm':
         optional: true
 
-  tsc-alias@1.8.8:
-    resolution: {integrity: sha512-OYUOd2wl0H858NvABWr/BoSKNERw3N9GTi3rHPK8Iv4O1UyUXIrTTOAZNHsjlVpXFOhpJBVARI1s+rzwLivN3Q==}
+  tsc-alias@1.8.9:
+    resolution: {integrity: sha512-Bkxu+LlUp/VG2qkcXGmj9wBkJuJID0mEC9t+bZaEbl9kyk/QJX6uo8/+z8DxTqUoqKPcbSApO2Ep42bsIVm9DA==}
     hasBin: true
 
   tsconfig-paths@4.2.0:
@@ -1378,7 +1378,7 @@ snapshots:
 
   '@types/cors@2.8.17':
     dependencies:
-      '@types/node': 18.19.32
+      '@types/node': 18.19.33
 
   '@types/ejs@3.1.5': {}
 
@@ -1388,15 +1388,15 @@ snapshots:
 
   '@types/jsonwebtoken@9.0.6':
     dependencies:
-      '@types/node': 18.19.32
+      '@types/node': 18.19.33
 
-  '@types/node@18.19.32':
+  '@types/node@18.19.33':
     dependencies:
       undici-types: 5.26.5
 
   '@types/nodemailer@6.4.15':
     dependencies:
-      '@types/node': 18.19.32
+      '@types/node': 18.19.33
 
   '@types/semver@7.5.8': {}
 
@@ -1413,7 +1413,7 @@ snapshots:
       graphemer: 1.4.0
       ignore: 5.3.1
       natural-compare: 1.4.0
-      semver: 7.6.1
+      semver: 7.6.2
       ts-api-utils: 1.3.0(typescript@5.4.5)
     optionalDependencies:
       typescript: 5.4.5
@@ -1460,7 +1460,7 @@ snapshots:
       globby: 11.1.0
       is-glob: 4.0.3
       minimatch: 9.0.4
-      semver: 7.6.1
+      semver: 7.6.2
       ts-api-utils: 1.3.0(typescript@5.4.5)
     optionalDependencies:
       typescript: 5.4.5
@@ -1476,7 +1476,7 @@ snapshots:
       '@typescript-eslint/types': 7.8.0
       '@typescript-eslint/typescript-estree': 7.8.0(typescript@5.4.5)
       eslint: 8.57.0
-      semver: 7.6.1
+      semver: 7.6.2
     transitivePeerDependencies:
       - supports-color
       - typescript
@@ -1689,7 +1689,7 @@ snapshots:
     dependencies:
       '@types/cookie': 0.4.1
       '@types/cors': 2.8.17
-      '@types/node': 18.19.32
+      '@types/node': 18.19.33
       accepts: 1.3.8
       base64id: 2.0.0
       cookie: 0.4.2
@@ -1981,7 +1981,7 @@ snapshots:
       lodash.isstring: 4.0.1
       lodash.once: 4.1.1
       ms: 2.1.3
-      semver: 7.6.1
+      semver: 7.6.2
 
   jwa@1.4.1:
     dependencies:
@@ -2089,7 +2089,7 @@ snapshots:
       ignore-by-default: 1.0.1
       minimatch: 3.1.2
       pstree.remy: 1.1.8
-      semver: 7.6.1
+      semver: 7.6.2
       simple-update-notifier: 2.0.0
       supports-color: 5.5.0
       touch: 3.1.0
@@ -2188,7 +2188,7 @@ snapshots:
 
   semver@5.7.2: {}
 
-  semver@7.6.1: {}
+  semver@7.6.2: {}
 
   shebang-command@2.0.0:
     dependencies:
@@ -2200,7 +2200,7 @@ snapshots:
 
   simple-update-notifier@2.0.0:
     dependencies:
-      semver: 7.6.1
+      semver: 7.6.2
 
   slash@3.0.0: {}
 
@@ -2278,14 +2278,14 @@ snapshots:
     dependencies:
       typescript: 5.4.5
 
-  ts-node@10.9.2(@types/node@18.19.32)(typescript@5.4.5):
+  ts-node@10.9.2(@types/node@18.19.33)(typescript@5.4.5):
     dependencies:
       '@cspotcode/source-map-support': 0.8.1
       '@tsconfig/node10': 1.0.11
       '@tsconfig/node12': 1.0.11
       '@tsconfig/node14': 1.0.3
       '@tsconfig/node16': 1.0.4
-      '@types/node': 18.19.32
+      '@types/node': 18.19.33
       acorn: 8.11.3
       acorn-walk: 8.3.2
       arg: 4.1.3
@@ -2296,7 +2296,7 @@ snapshots:
       v8-compile-cache-lib: 3.0.1
       yn: 3.1.1
 
-  tsc-alias@1.8.8:
+  tsc-alias@1.8.9:
     dependencies:
       chokidar: 3.6.0
       commander: 9.5.0
