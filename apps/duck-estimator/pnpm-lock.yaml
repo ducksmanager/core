@@ -25,7 +25,7 @@ importers:
         version: 1.44.0
       ts-node:
         specifier: ^10.9.2
-        version: 10.9.2(@types/node@18.19.32)(typescript@5.4.5)
+        version: 10.9.2(@types/node@18.19.33)(typescript@5.4.5)
       yargs:
         specifier: ^17.7.2
         version: 17.7.2
@@ -34,8 +34,8 @@ importers:
         version: link:../../packages/prisma-clients
     devDependencies:
       '@types/node':
-        specifier: ^18.19.32
-        version: 18.19.32
+        specifier: ^18.19.33
+        version: 18.19.33
       '@types/yargs':
         specifier: ^17.0.32
         version: 17.0.32
@@ -67,8 +67,8 @@ importers:
         specifier: ^3.2.5
         version: 3.2.5
       tsc-alias:
-        specifier: ^1.8.8
-        version: 1.8.8
+        specifier: ^1.8.9
+        version: 1.8.9
       typescript:
         specifier: ^5.4.5
         version: 5.4.5
@@ -151,8 +151,8 @@ packages:
   '@types/json5@0.0.29':
     resolution: {integrity: sha512-dRLjCWHYg4oaA77cxO64oO+7JwCwnIzkZPdrrC71jQmQtlhM556pwKo5bUzqvZndkVbeFLIIi+9TC40JNF5hNQ==}
 
-  '@types/node@18.19.32':
-    resolution: {integrity: sha512-2bkg93YBSDKk8DLmmHnmj/Rwr18TLx7/n+I23BigFwgexUJoMHZOd8X1OFxuF/W3NN0S2W2E5sVabI5CPinNvA==}
+  '@types/node@18.19.33':
+    resolution: {integrity: sha512-NR9+KrpSajr2qBVp/Yt5TU/rp+b5Mayi3+OlMlcg2cVCfRmcG5PWZ7S4+MG9PZ5gWBoc9Pd0BKSRViuBCRPu0A==}
 
   '@types/semver@7.5.8':
     resolution: {integrity: sha512-I8EUhyrgfLrcTkzV3TSsGyl1tSuPrEDzr0yd5m90UgNxQkyDXULk3b6MlQqTCpZpNtWe1K0hzclnZkTcLBe2UQ==}
@@ -733,8 +733,8 @@ packages:
     resolution: {integrity: sha512-g0QYk1dZBxGwk+Ngc+ltRH2IBp2f7zBkBMBJZCDerh6EhlhSR6+9irMCuT/09zD6qkarHUSn529sK/yL4S27mg==}
     engines: {node: '>= 0.4'}
 
-  get-tsconfig@4.7.4:
-    resolution: {integrity: sha512-ofbkKj+0pjXjhejr007J/fLf+sW+8H7K5GCm+msC8q3IpvgjobpyPqSRFemNyIMxklC0zeJpi7VDFna19FacvQ==}
+  get-tsconfig@4.7.5:
+    resolution: {integrity: sha512-ZCuZCnlqNzjb4QprAzXKdpp/gh6KTxSJuw3IBsPnV/7fV4NxC9ckB+vPTt8w7fJA0TaSD7c55BR47JD6MEDyDw==}
 
   glob-parent@5.1.2:
     resolution: {integrity: sha512-AOIgSQCepiJYwP3ARnGx+5VnTu2HBYdzbGP45eLw1vr3zB3vZLeyed1sC9hnbcOc9/SrMyM5RPQrkGz4aS9Zow==}
@@ -1148,8 +1148,8 @@ packages:
     resolution: {integrity: sha512-BR7VvDCVHO+q2xBEWskxS6DJE1qRnb7DxzUrogb71CWoSficBxYsiAGd+Kl0mmq/MprG9yArRkyrQxTO6XjMzA==}
     hasBin: true
 
-  semver@7.6.1:
-    resolution: {integrity: sha512-f/vbBsu+fOiYt+lmwZV0rVwJScl46HppnOA1ZvIuBWKOTlllpyJ3bfVax76/OrhCH38dyxoDIA8K7uB963IYgA==}
+  semver@7.6.2:
+    resolution: {integrity: sha512-FNAIBWCx9qcRhoHcgcJ0gvU7SN1lYU2ZXuSfl04bSC5OpvDHFyJCjdNHomPXxjQlCBU67YW64PzY7/VIEH7F2w==}
     engines: {node: '>=10'}
     hasBin: true
 
@@ -1239,8 +1239,8 @@ packages:
       '@swc/wasm':
         optional: true
 
-  tsc-alias@1.8.8:
-    resolution: {integrity: sha512-OYUOd2wl0H858NvABWr/BoSKNERw3N9GTi3rHPK8Iv4O1UyUXIrTTOAZNHsjlVpXFOhpJBVARI1s+rzwLivN3Q==}
+  tsc-alias@1.8.9:
+    resolution: {integrity: sha512-Bkxu+LlUp/VG2qkcXGmj9wBkJuJID0mEC9t+bZaEbl9kyk/QJX6uo8/+z8DxTqUoqKPcbSApO2Ep42bsIVm9DA==}
     hasBin: true
 
   tsconfig-paths@3.15.0:
@@ -1414,7 +1414,7 @@ snapshots:
 
   '@types/json5@0.0.29': {}
 
-  '@types/node@18.19.32':
+  '@types/node@18.19.33':
     dependencies:
       undici-types: 5.26.5
 
@@ -1439,7 +1439,7 @@ snapshots:
       graphemer: 1.4.0
       ignore: 5.3.1
       natural-compare: 1.4.0
-      semver: 7.6.1
+      semver: 7.6.2
       ts-api-utils: 1.3.0(typescript@5.4.5)
     optionalDependencies:
       typescript: 5.4.5
@@ -1486,7 +1486,7 @@ snapshots:
       globby: 11.1.0
       is-glob: 4.0.3
       minimatch: 9.0.4
-      semver: 7.6.1
+      semver: 7.6.2
       ts-api-utils: 1.3.0(typescript@5.4.5)
     optionalDependencies:
       typescript: 5.4.5
@@ -1502,7 +1502,7 @@ snapshots:
       '@typescript-eslint/types': 7.8.0
       '@typescript-eslint/typescript-estree': 7.8.0(typescript@5.4.5)
       eslint: 8.57.0
-      semver: 7.6.1
+      semver: 7.6.2
     transitivePeerDependencies:
       - supports-color
       - typescript
@@ -1643,7 +1643,7 @@ snapshots:
 
   builtins@5.1.0:
     dependencies:
-      semver: 7.6.1
+      semver: 7.6.2
 
   call-bind@1.0.7:
     dependencies:
@@ -1895,7 +1895,7 @@ snapshots:
   eslint-compat-utils@0.5.0(eslint@8.57.0):
     dependencies:
       eslint: 8.57.0
-      semver: 7.6.1
+      semver: 7.6.2
 
   eslint-config-prettier@9.1.0(eslint@8.57.0):
     dependencies:
@@ -1972,14 +1972,14 @@ snapshots:
       builtins: 5.1.0
       eslint: 8.57.0
       eslint-plugin-es-x: 7.6.0(eslint@8.57.0)
-      get-tsconfig: 4.7.4
+      get-tsconfig: 4.7.5
       globals: 13.24.0
       ignore: 5.3.1
       is-builtin-module: 3.2.1
       is-core-module: 2.13.1
       minimatch: 3.1.2
       resolve: 1.22.8
-      semver: 7.6.1
+      semver: 7.6.2
 
   eslint-plugin-node@11.1.0(eslint@8.57.0):
     dependencies:
@@ -2159,7 +2159,7 @@ snapshots:
       es-errors: 1.3.0
       get-intrinsic: 1.2.4
 
-  get-tsconfig@4.7.4:
+  get-tsconfig@4.7.5:
     dependencies:
       resolve-pkg-maps: 1.0.0
 
@@ -2557,7 +2557,7 @@ snapshots:
 
   semver@6.3.1: {}
 
-  semver@7.6.1: {}
+  semver@7.6.2: {}
 
   set-function-length@1.2.2:
     dependencies:
@@ -2639,14 +2639,14 @@ snapshots:
     dependencies:
       typescript: 5.4.5
 
-  ts-node@10.9.2(@types/node@18.19.32)(typescript@5.4.5):
+  ts-node@10.9.2(@types/node@18.19.33)(typescript@5.4.5):
     dependencies:
       '@cspotcode/source-map-support': 0.8.1
       '@tsconfig/node10': 1.0.11
       '@tsconfig/node12': 1.0.11
       '@tsconfig/node14': 1.0.3
       '@tsconfig/node16': 1.0.4
-      '@types/node': 18.19.32
+      '@types/node': 18.19.33
       acorn: 8.11.3
       acorn-walk: 8.3.2
       arg: 4.1.3
@@ -2657,7 +2657,7 @@ snapshots:
       v8-compile-cache-lib: 3.0.1
       yn: 3.1.1
 
-  tsc-alias@1.8.8:
+  tsc-alias@1.8.9:
     dependencies:
       chokidar: 3.6.0
       commander: 9.5.0

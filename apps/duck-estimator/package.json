@@ -28,7 +28,7 @@
     "~prisma-clients": "workspace:*"
   },
   "devDependencies": {
-    "@types/node": "^18.19.32",
+    "@types/node": "^18.19.33",
     "@types/yargs": "^17.0.32",
     "eslint": "^8.57.0",
     "eslint-config-prettier": "^9.1.0",
@@ -39,7 +39,7 @@
     "eslint-plugin-simple-import-sort": "^12.1.0",
     "eslint-plugin-unused-imports": "^3.2.0",
     "prettier": "^3.2.5",
-    "tsc-alias": "^1.8.8",
+    "tsc-alias": "^1.8.9",
     "typescript": "^5.4.5",
     "typescript-eslint": "^7.8.0"
   }
