@@ -2,21 +2,23 @@ import type { SimpleBookstore } from "~dm-types/SimpleBookstore";
 import type { bookstoreComment } from "~prisma-clients/client_dm";
 import type { Errorable } from "~socket.io-services/types";
 
+export const namespaceEndpoint = "/bookstores";
 export default abstract class {
-  static namespaceEndpoint: string = "/bookstores";
-  abstract getActiveBookstores: (callback: (value: SimpleBookstore[]) => void) => void;
+  static namespaceEndpoint = namespaceEndpoint;
+  abstract getActiveBookstores: (
+    callback: (value: SimpleBookstore[]) => void,
+  ) => void;
   abstract createBookstoreComment: (
     data: SimpleBookstore,
     callback: (
       value: Errorable<
         bookstoreComment,
         "No bookstore ID or name was provided" | "No bookstore exists"
-      >
-    ) => void
+      >,
+    ) => void,
   ) => void;
   abstract approveBookstoreComment: (
     id: number,
-    callback: (data: Errorable<void, "Invalid bookstore comment ID">) => void
+    callback: (data: Errorable<void, "Invalid bookstore comment ID">) => void,
   ) => void;
 }
-

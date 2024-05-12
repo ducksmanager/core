@@ -1,6 +1,11 @@
 import type { ImageElement } from "~dm-types/ImageElement";
 import type { ModelSteps } from "~dm-types/ModelSteps";
-import type { edgeContributor, edgeModel, elementImage, Prisma } from "~prisma-clients/client_edgecreator";
+import type {
+  edgeContributor,
+  edgeModel,
+  elementImage,
+  Prisma,
+} from "~prisma-clients/client_edgecreator";
 import type { Errorable } from "~socket.io-services/types";
 
 export const unassignedEdgeFields = {
@@ -14,31 +19,31 @@ export const unassignedEdgeFields = {
     },
   },
   contributors: true,
-}
+};
 
 export const edgeEditedByOthersFields = {
   id: true,
   country: true,
   magazine: true,
   issuenumber: true,
-}
+};
 
+export const namespaceEndpoint = "/edgecreator";
 export default abstract class {
-  static namespaceEndpoint = "/edgecreator";
+  static namespaceEndpoint = namespaceEndpoint;
   abstract submitEdge: (
     publicationcode: string,
     issuenumber: string,
-    callback: (value: { url: string }) => void
+    callback: (value: { url: string }) => void,
   ) => void;
   abstract getModelContributors: (
     modelId: number,
-    callback: (value: edgeContributor[]) => void
+    callback: (value: edgeContributor[]) => void,
   ) => void;
   abstract getImagesFromFilename: (
     filename: string,
-    callback: (value: ImageElement[]) => void
+    callback: (value: ImageElement[]) => void,
   ) => void;
-
 
   abstract publishEdge: (
     data: {
@@ -58,27 +63,55 @@ export default abstract class {
           url: string;
         },
         "Invalid publication code"
-      >
-    ) => void
+      >,
+    ) => void,
   ) => void;
 
   abstract uploadEdges: (callback: () => void) => void;
 
+  abstract getUnassignedEdges: (
+    callback: (
+      data: Prisma.edgeModelGetPayload<{
+        select: typeof unassignedEdgeFields;
+      }>[],
+    ) => void,
+  ) => void;
+  abstract getEdgesEditedByOthers: (
+    callback: (
+      data: Prisma.edgeModelGetPayload<{
+        select: typeof edgeEditedByOthersFields;
+      }>[],
+    ) => void,
+  ) => void;
+  abstract getModelsSteps: (
+    modelIds: number[],
+    callback: (data: ModelSteps) => void,
+  ) => void;
+  abstract getModelMainPhoto: (
+    modelId: number,
+    callback: (data: Pick<elementImage, "id" | "fileName">) => void,
+  ) => void;
+  abstract getModel: (
+    publicationcode: string,
+    issuenumber: string,
+    callback: (data: edgeModel | null) => void,
+  ) => void;
 
-  abstract getUnassignedEdges: (callback: (data: Prisma.edgeModelGetPayload<{select: typeof unassignedEdgeFields}>[]) => void) => void;
-  abstract getEdgesEditedByOthers: (callback: (data: Prisma.edgeModelGetPayload<{select: typeof edgeEditedByOthersFields}>[]) => void) => void;
-  abstract getModelsSteps: (modelIds: number[], callback: (data: ModelSteps) => void) => void;
-  abstract getModelMainPhoto: (modelId: number, callback: (data: Pick<elementImage, "id" | "fileName">) => void) => void;
-  abstract getModel: (publicationcode: string, issuenumber: string, callback: (data: edgeModel | null) => void) => void;
-
-
-  abstract sendNewEdgePhotoEmail: (publicationcode: string,
-    issuenumber: string, callback: (data: { url: string }) => void) => void;
-  abstract createElementImage: (hash: string,
-    fileName: string, callback: (data: { photoId: number }) => void) => void;
-  abstract checkTodayLimit: (callback: (data: {
-    uploadedFilesToday: string[];
-  }) => void) => void;
-  abstract getImageByHash: (hash: string, callback: (data: elementImage | null) => void) => void;
+  abstract sendNewEdgePhotoEmail: (
+    publicationcode: string,
+    issuenumber: string,
+    callback: (data: { url: string }) => void,
+  ) => void;
+  abstract createElementImage: (
+    hash: string,
+    fileName: string,
+    callback: (data: { photoId: number }) => void,
+  ) => void;
+  abstract checkTodayLimit: (
+    callback: (data: { uploadedFilesToday: string[] }) => void,
+  ) => void;
+  abstract getImageByHash: (
+    hash: string,
+    callback: (data: elementImage | null) => void,
+  ) => void;
 }
-

@@ -1,23 +1,24 @@
 import type { Errorable } from "~socket.io-services/types";
 
+export const namespaceEndpoint = "/status";
 export default abstract class {
-  static namespaceEndpoint = "/status";
+  static namespaceEndpoint = namespaceEndpoint;
 
   abstract getDbStatus: (
     callback: (
       value: Errorable<
         void,
         "Some DB checks have failed" | "Some COA tables are empty"
-      >
-    ) => void
+      >,
+    ) => void,
   ) => void;
   abstract getPastecStatus: (
     callback: (
       value: Errorable<
         { numberOfImages: number },
         "Pastec /imageIds response is invalid" | "Pastec is unreachable"
-      >
-    ) => void
+      >,
+    ) => void,
   ) => void;
   abstract getPastecSearchStatus: (
     callback: (
@@ -26,7 +27,7 @@ export default abstract class {
         | "Pastec search returned no image"
         | "Pastec /searcher response is invalid"
         | "Pastec is unreachable"
-      >
-    ) => void
+      >,
+    ) => void,
   ) => void;
 }

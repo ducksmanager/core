@@ -21,8 +21,9 @@ import type {
 } from "~prisma-clients/extended/dm.extends";
 import type { Errorable } from "~socket.io-services/types";
 
+export const namespaceEndpoint = "/collection";
 export default abstract class {
-  static namespaceEndpoint: string = "/collection";
+  static namespaceEndpoint = namespaceEndpoint;
 
   abstract emptyCollection: (callback: () => void) => void;
   abstract getUserPermissions: (

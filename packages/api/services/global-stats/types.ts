@@ -4,27 +4,33 @@ import type { QuickStatsPerUser } from "~dm-types/QuickStatsPerUser";
 import type { user } from "~prisma-clients/client_dm";
 import type { Errorable } from "~socket.io-services/types";
 
+export const namespaceEndpoint = "/global-stats";
 export default abstract class {
-  static namespaceEndpoint = "/global-stats";
+  static namespaceEndpoint = namespaceEndpoint;
 
   abstract getBookcaseContributors: (
-    callback: (value: BookcaseContributor[]) => void
+    callback: (value: BookcaseContributor[]) => void,
   ) => void;
   abstract getUserList: (
-    callback: (value: Pick<user, "id" | "username">[]) => void
+    callback: (value: Pick<user, "id" | "username">[]) => void,
   ) => void;
   abstract getUserCount: (callback: (count: number) => void) => void;
   abstract getUsersPointsAndStats: (
     userIds: number[],
-    callback: (value: Errorable<{
-      points: MedalPointsPerUser;
-      stats: QuickStatsPerUser;
-    }, 'Bad request'>) => void
+    callback: (
+      value: Errorable<
+        {
+          points: MedalPointsPerUser;
+          stats: QuickStatsPerUser;
+        },
+        "Bad request"
+      >,
+    ) => void,
   ) => void;
   abstract getUsersCollectionRarity: (
     callback: (value: {
       userScores: { userId: number; averageRarity: number }[];
       myScore: number;
-    }) => void
+    }) => void,
   ) => void;
 }

@@ -8,7 +8,8 @@ import options from "./options/index";
 import { authenticated as authenticatedOptions } from "./options/index";
 import order from "./order/index";
 import { authenticated as authenticatedOrder } from "./order/index";
-import Events from "./types";
+import type Events from "./types";
+import { namespaceEndpoint } from "./types";
 import { checkValidBookcaseUser } from "./util";
 
 type BookcaseEdgeRaw = Omit<BookcaseEdge, "sprites"> & {
@@ -16,7 +17,7 @@ type BookcaseEdgeRaw = Omit<BookcaseEdge, "sprites"> & {
 };
 
 export default (io: Server) => {
-  const namespace = io.of(Events.namespaceEndpoint) as Namespace<Events>;
+  const namespace = io.of(namespaceEndpoint) as Namespace<Events>;
   namespace.use(RequiredAuthMiddleware).on("connection", (socket) => {
     authenticatedOptions(socket);
     authenticatedOrder(socket);

@@ -12,8 +12,9 @@ import type {
 } from "~prisma-clients/client_coa";
 import type { Errorable } from "~socket.io-services/types";
 
+export const namespaceEndpoint = "/coa";
 export default abstract class {
-  static namespaceEndpoint: string = "/coa";
+  static namespaceEndpoint = namespaceEndpoint;
   abstract getAuthorList: (
     personcodes: string[],
     callback: (value: { [_personcode: string]: string }) => void,

@@ -7,9 +7,10 @@ import issues from "./issues";
 import publications from "./publications";
 import quotations from "./quotations";
 import stories from "./stories";
-import Events from "./types";
+import type Events from "./types";
+import { namespaceEndpoint } from "./types";
 export default (io: Server) => {
-  (io.of(Events.namespaceEndpoint) as Namespace<Events>).on("connection", (socket) => {      
+  (io.of(namespaceEndpoint) as Namespace<Events>).on("connection", (socket) => {
     console.log("connected to coa");
 
     countries(socket);

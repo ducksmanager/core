@@ -6,15 +6,15 @@ import { Prisma } from "~prisma-clients/client_dm";
 import prismaDm from "~prisma-clients/extended/dm.extends";
 
 import { getMedalPoints } from "../collection/util";
-import Events from "./types";
+import type Events from "./types";
+import { namespaceEndpoint } from "./types";
 
 export default (io: Server) => {
-  (io.of(Events.namespaceEndpoint) as Namespace<Events>)
-    .on("connection", (socket) => {
-      console.log("connected to global-stats");
+  (io.of(namespaceEndpoint) as Namespace<Events>).on("connection", (socket) => {
+    console.log("connected to global-stats");
 
-      socket.on("getBookcaseContributors", (callback) =>
-        prismaDm.$queryRaw<BookcaseContributor[]>`
+    socket.on("getBookcaseContributors", (callback) =>
+      prismaDm.$queryRaw<BookcaseContributor[]>`
       SELECT distinct users.ID AS userId, users.username AS name, '' AS text
       from users
              inner join users_contributions c on users.ID = c.ID_user
@@ -23,44 +23,47 @@ export default (io: Server) => {
       SELECT '' as userId, Nom AS name, Texte AS text
       FROM bibliotheque_contributeurs
       ORDER BY name
-    `.then(callback));
+    `.then(callback),
+    );
 
-      socket.on("getUserCount", (callback) =>
-        prismaDm.user.count().then((data => {
-          callback(data)
-        }))
-      );
+    socket.on("getUserCount", (callback) =>
+      prismaDm.user.count().then((data) => {
+        callback(data);
+      }),
+    );
 
-      socket.on("getUserList", (callback) =>
-        prismaDm.user
-          .findMany({
-            select: {
-              id: true,
-              username: true,
-            },
-          })
-          .then(callback)
-      );
+    socket.on("getUserList", (callback) =>
+      prismaDm.user
+        .findMany({
+          select: {
+            id: true,
+            username: true,
+          },
+        })
+        .then(callback),
+    );
 
-      socket.on(
-        "getUsersPointsAndStats",
-        async (userIds: number[], callback) => {
-          if (userIds.length) {
-            const result = {
-              points: await getMedalPoints(userIds),
-              stats: await getUsersQuickStats(userIds),
-            };
-            callback(result);
-          } else {
-            callback({ error: 'Bad request', errorDetails: 'Empty user IDs list' });
-          }
-        }
-      );
+    socket.on("getUsersPointsAndStats", async (userIds: number[], callback) => {
+      if (userIds.length) {
+        const result = {
+          points: await getMedalPoints(userIds),
+          stats: await getUsersQuickStats(userIds),
+        };
+        callback(result);
+      } else {
+        callback({
+          error: "Bad request",
+          errorDetails: "Empty user IDs list",
+        });
+      }
+    });
 
-      socket.on("getUsersCollectionRarity", async (callback) => {
-        {
-          const userCount = await prismaDm.user.count();
-          const userScores = (await prismaDm.$queryRaw<{ userId: number; averageRarity: number }[]>`
+    socket.on("getUsersCollectionRarity", async (callback) => {
+      {
+        const userCount = await prismaDm.user.count();
+        const userScores = await prismaDm.$queryRaw<
+          { userId: number; averageRarity: number }[]
+        >`
             SELECT ID_Utilisateur AS userId, round(sum(rarity)) AS averageRarity
             FROM numeros
             LEFT JOIN
@@ -69,70 +72,101 @@ export default (io: Server) => {
               group by issuecode) AS issues_rarity ON numeros.issuecode = issues_rarity.issuecode
             GROUP BY ID_Utilisateur
             ORDER BY averageRarity
-        `);
+        `;
 
-          const myScore =
-            userScores.find(({ userId }) => userId === socket.data.user?.id)
-              ?.averageRarity || 0;
+        const myScore =
+          userScores.find(({ userId }) => userId === socket.data.user?.id)
+            ?.averageRarity || 0;
 
-          callback({
-            userScores,
-            myScore,
-          });
-        }
-      });
+        callback({
+          userScores,
+          myScore,
+        });
+      }
     });
+  });
 };
 
-const getUsersQuickStats = async (userIds: number[]) => Promise.all([
-  prismaDm.user.findMany({
-    select: {
-      id: true,
-      username: true,
-      presentationText: true,
-      allowSharing: true,
-      marketplaceAcceptsExchanges: true
-    }, where: {
-      id: {
-        in: userIds
-      }
-    }
-  }), prismaDm.issue.groupBy({
-    by: ['userId'],
-    _count: {
-      id: true
-    },
-    where: {
-      userId: {
-        in: userIds
-      }
-    }
-  }),
-  prismaDm.$queryRaw<{ userId: number, numberOfCountries: number, numberOfPublications: number }[]>`
+const getUsersQuickStats = async (userIds: number[]) =>
+  Promise.all([
+    prismaDm.user.findMany({
+      select: {
+        id: true,
+        username: true,
+        presentationText: true,
+        allowSharing: true,
+        marketplaceAcceptsExchanges: true,
+      },
+      where: {
+        id: {
+          in: userIds,
+        },
+      },
+    }),
+    prismaDm.issue.groupBy({
+      by: ["userId"],
+      _count: {
+        id: true,
+      },
+      where: {
+        userId: {
+          in: userIds,
+        },
+      },
+    }),
+    prismaDm.$queryRaw<
+      {
+        userId: number;
+        numberOfCountries: number;
+        numberOfPublications: number;
+      }[]
+    >`
     select issue.ID_Utilisateur                        AS userId,
            count(distinct Pays) AS numberOfCountries,
            count(distinct concat(Pays, '/', Magazine)) AS numberOfPublications
     from numeros AS issue
     where issue.ID_Utilisateur IN (${Prisma.join(userIds)})
     group by issue.ID_Utilisateur`,
-    
-  prismaDm.$queryRaw<{ userId: number, numberOfPublications: number }[]>`
+
+    prismaDm.$queryRaw<{ userId: number; numberOfPublications: number }[]>`
     select issue.ID_Utilisateur                        AS userId,
            count(distinct concat(Pays, '/', Magazine)) AS numberOfPublications
     from numeros AS issue
     where issue.ID_Utilisateur IN (${Prisma.join(userIds)})
-    group by issue.ID_Utilisateur`
-]).then(([users, counts, usersAndNumberOfCountriesAndPublications]) => {
-  const usersById = users.reduce<Record<string, typeof users[0]>>((acc, user) => ({ ...acc, [user.id]: user }), {});
-  const numberOfCountriesAndPublicationsPerUser = usersAndNumberOfCountriesAndPublications.reduce<Record<number, {numberOfCountries: number, numberOfPublications: number}>>((acc, { userId, numberOfCountries, numberOfPublications }) => ({ ...acc, [userId]: {numberOfCountries, numberOfPublications} }), {})
+    group by issue.ID_Utilisateur`,
+  ]).then(([users, counts, usersAndNumberOfCountriesAndPublications]) => {
+    const usersById = users.reduce<Record<string, (typeof users)[0]>>(
+      (acc, user) => ({ ...acc, [user.id]: user }),
+      {},
+    );
+    const numberOfCountriesAndPublicationsPerUser =
+      usersAndNumberOfCountriesAndPublications.reduce<
+        Record<
+          number,
+          { numberOfCountries: number; numberOfPublications: number }
+        >
+      >(
+        (acc, { userId, numberOfCountries, numberOfPublications }) => ({
+          ...acc,
+          [userId]: { numberOfCountries, numberOfPublications },
+        }),
+        {},
+      );
 
-  return counts.reduce<QuickStatsPerUser>((acc, { userId, _count }) => ({
-    ...acc,
-    [userId]: {
-      ...usersById[userId],
-      numberOfCountries: numberOfCountriesAndPublicationsPerUser[userId]?.numberOfCountries || 0, 
-      numberOfPublications: numberOfCountriesAndPublicationsPerUser[userId]?.numberOfPublications || 0,      numberOfIssues: _count.id,
-
-    }
-  }), {})
-})
+    return counts.reduce<QuickStatsPerUser>(
+      (acc, { userId, _count }) => ({
+        ...acc,
+        [userId]: {
+          ...usersById[userId],
+          numberOfCountries:
+            numberOfCountriesAndPublicationsPerUser[userId]
+              ?.numberOfCountries || 0,
+          numberOfPublications:
+            numberOfCountriesAndPublicationsPerUser[userId]
+              ?.numberOfPublications || 0,
+          numberOfIssues: _count.id,
+        },
+      }),
+      {},
+    );
+  });

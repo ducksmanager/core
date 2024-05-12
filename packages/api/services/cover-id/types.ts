@@ -13,8 +13,9 @@ export abstract class InterServerEvents {
   ) => void;
 }
 
+export const namespaceEndpoint = "/cover-id";
 export default abstract class extends InterServerEvents {
-  static namespaceEndpoint: string = "/cover-id";
+  static namespaceEndpoint = namespaceEndpoint;
 
   abstract downloadCover: (
     coverId: number,
