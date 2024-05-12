@@ -3,9 +3,9 @@ import fs from "fs";
 import multer from "multer";
 import { dirname } from "path";
 
-import { getUserCredentials } from "~routes/_auth";
-import { ExpressCall } from "~routes/_express-call";
-import { getNextAvailableFile } from "~routes/_upload_utils";
+import { getUserCredentials } from "~/services/_auth";
+import { ExpressCall } from "~/services/_express-call";
+import { getNextAvailableFile } from "~/services/_upload_utils";
 
 import { call, createAxios } from "../../axios-helper";
 const dmApi = createAxios(process.env.VITE_DM_API_URL!);

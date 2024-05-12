@@ -10,28 +10,6 @@ export const getUserCredentials = (user: User) => ({
   "x-dm-pass": user.hashedPassword,
 });
 
-export const authenticateToken = (
-  req: Request,
-  res: Response,
-  next: CallableFunction,
-) => {
-  const authHeader = req.headers.authorization;
-  const token = authHeader?.split(" ")?.[1];
-
-  if (token == null) return res.sendStatus(401);
-
-  jwt.verify(
-    token,
-    process.env.TOKEN_SECRET!,
-    (err: unknown, user: unknown) => {
-      if (err) {
-        return res.sendStatus(401);
-      }
-      req.user = user as User;
-      next();
-    },
-  );
-};
 
 export const checkUserIsAdminForExportOrIsEditorForSaveOrIsFirstFileForModel = (
   req: Request,

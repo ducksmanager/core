@@ -23,12 +23,14 @@
 <script setup lang="ts">
 import useBase64Legacy from "~/composables/useBase64Legacy";
 import useTextTemplate from "~/composables/useTextTemplate";
-import { api } from "~/stores/api";
 import { step } from "~/stores/step";
 import { ui } from "~/stores/ui";
-import { GET__fs__text } from "~types/routes";
 
-import { call } from "../../../axios-helper";
+import { edgecreatorSocketInjectionKey } from "~/composables/useEdgecreatorSocket";
+
+const {
+  text: { services: textServices },
+} = injectLocal(edgecreatorSocketInjectionKey)!;
 
 const { resolveIssueNumberTemplate, resolveIssueNumberPartTemplate } =
   useTextTemplate();
@@ -80,15 +82,15 @@ const textImage = ref(
     width: number | null;
     height: number | null;
     url: string;
-  } | null,
+  } | null
 );
 const textImageOptions = ref(null as typeof props.options | null);
 
 const effectiveText = computed(() =>
   resolveIssueNumberTemplate(
     props.options.text,
-    resolveIssueNumberPartTemplate(props.options.text, props.issuenumber),
-  ),
+    resolveIssueNumberPartTemplate(props.options.text, props.issuenumber)
+  )
 );
 
 const { width, attributes, enableDragResize } = useStepOptions(props, "Text", [
@@ -108,7 +110,7 @@ watch(
       });
     }
   },
-  { immediate: true },
+  { immediate: true }
 );
 
 watch(
@@ -149,49 +151,45 @@ watch(
           applyTextImageDimensions();
         },
         2000,
-        100,
+        100
       );
     }
   },
   {
     immediate: true,
-  },
+  }
 );
 
 watch(
   () => props.options.fgColor,
   async () => {
     await refreshPreview();
-  },
+  }
 );
 watch(
   () => props.options.bgColor,
   async () => {
     await refreshPreview();
-  },
+  }
 );
 watch(
   () => props.options.internalWidth,
   async () => {
     await refreshPreview();
-  },
+  }
 );
 watch(
   () => props.options.text,
   async () => {
     await refreshPreview();
-  },
+  }
 );
 watch(
   () => props.options.font,
   async () => {
     await refreshPreview();
-  },
+  }
 );
-
-type TypedErrorResponse<T> = {
-  response: { data: T };
-};
 
 const refreshPreview = async () => {
   if (
@@ -201,41 +199,25 @@ const refreshPreview = async () => {
   }
   textImageOptions.value = { ...props.options };
   const { fgColor, bgColor, internalWidth, font } = props.options;
-  try {
-    const textData = (
-      await call(
-        api().edgeCreatorApi,
-        new GET__fs__text({
-          query: {
-            color: fgColor.replace("#", ""),
-            colorBackground: bgColor.replace("#", ""),
-            width: Math.round(internalWidth * 100) / 100,
-            font,
-            text: effectiveText.value,
-          },
-        }),
-      )
-    ).data;
-    if ("width" in textData) {
-      textImage.value = textData;
-    } else {
-      window.alert(textData.error);
-    }
-  } catch (e) {
-    window.alert(
-      (
-        e as TypedErrorResponse<
-          GET__fs__text["resBody"]
-        > as TypedErrorResponse<{ error: string }>
-      ).response.data.error,
-    );
+
+  const textData = await textServices.getText({
+    color: fgColor.replace("#", ""),
+    colorBackground: bgColor.replace("#", ""),
+    width: Math.round(internalWidth * 100) / 100,
+    font,
+    text: effectiveText.value,
+  });
+  if (textData.results) {
+    textImage.value = textData.results;
+  } else {
+    window.alert(textData.error);
   }
 };
 const waitUntil = (
   condition: () => SVGImageElement | null,
   okCallback: () => void,
   timeout: number,
-  loopEvery: number,
+  loopEvery: number
 ) => {
   let iterations = 0;
   const interval = setInterval(() => {

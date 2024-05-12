@@ -13,6 +13,7 @@ import SimpleTypeahead from "vue3-simple-typeahead";
 
 import App from "./App.vue";
 import i18n from "./i18n";
+import { useSocket } from "~socket.io-client-services/index";
 const head = createHead();
 
 const routes = setupLayouts(generatedRoutes) as RouteRecordRaw[];
@@ -27,10 +28,12 @@ const app = createApp(App);
 app.component("BCarousel", BCarousel);
 app.component("BCarouselSlide", BCarousel);
 
-app.use(SimpleTypeahead);
-app.use(i18n);
-app.use(store);
-app.use(BToastPlugin);
-app.use(head);
-app.use(router);
-app.mount("#app");
+app
+  .use(SimpleTypeahead)
+  .use(i18n)
+  .use(store)
+  .use(BToastPlugin)
+  .use(head)
+  .use(router)
+  .provide("socket", useSocket(import.meta.env.VITE_EDGECREATOR_SOCKET_URL))
+  .mount("#app");

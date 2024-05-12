@@ -8,7 +8,8 @@
         width: 0.5,
         stroke: 'black',
         x: dimensions.width / 2 - 0.25,
-        y: dimensions.height / 2 - options.yDistanceFromCenter! - options.height,
+        y:
+          dimensions.height / 2 - options.yDistanceFromCenter! - options.height,
       }"
     >
     </rect>
@@ -27,11 +28,9 @@
 </template>
 
 <script setup lang="ts">
-import useTextTemplate from "~/composables/useTextTemplate";
 import { step } from "~/stores/step";
 import { ui } from "~/stores/ui";
 
-const { resolveHeightTemplate } = useTextTemplate();
 const rect1 = ref(null as SVGRectElement | null);
 const rect2 = ref(null as SVGRectElement | null);
 
@@ -54,7 +53,7 @@ const dimensions = computed(
   () =>
     step().getFilteredDimensions({
       issuenumbers: [props.issuenumber],
-    })[0],
+    })[0]
 );
 
 const onmove = ({
@@ -71,9 +70,9 @@ const onmove = ({
     Math.max(
       stapleHeight,
       (props.options.yDistanceFromCenter ?? 0) +
-        ((isStaple2 ? 1 : -1) * dy) / ui().zoom,
+        ((isStaple2 ? 1 : -1) * dy) / ui().zoom
     ),
-    height.value / 2 - stapleHeight * 2,
+    height.value / 2 - stapleHeight * 2
   );
   step().setOptionValues({
     yDistanceFromCenter,
@@ -105,6 +104,6 @@ onMounted(() => {
 const { enableDragResize, height, attributes } = useStepOptions(
   props,
   "Staple",
-  ["height"],
+  ["height"]
 );
 </script>

@@ -1,7 +1,7 @@
 import fs from "fs";
 import sharp from "sharp";
 
-import { ExpressCall } from "~routes/_express-call";
+import { ExpressCall } from "~/services/_express-call";
 // eslint-disable-next-line max-len
 const REGEX_EDGE_URL =
   /^edges\/(?<countryCode>[^/]+)\/gen\/_?(?<magazineCode>[^.]+)\.(?<issueNumber>[^.]+)\.(?<extension>[^?]+)?(?:\?.+)?$/;

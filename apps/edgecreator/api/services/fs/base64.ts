@@ -1,7 +1,7 @@
 import axios from "axios";
 import sizeOf from "image-size";
 
-import { ExpressCall } from "~routes/_express-call";
+import { ExpressCall } from "~/services/_express-call";
 
 export const get = async (
   ...[req, res]: ExpressCall<{

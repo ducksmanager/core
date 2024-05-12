@@ -92,6 +92,9 @@ importers:
       ~prisma-clients:
         specifier: workspace:*
         version: link:../../packages/prisma-clients
+      ~socket.io-client-services:
+        specifier: workspace:*
+        version: link:../../packages/socket.io-client-services
     devDependencies:
       '@iconify-json/bi':
         specifier: ^1.1.23

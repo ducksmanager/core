@@ -21,8 +21,8 @@ COPY types /app/types
 COPY api .
 RUN mv tsconfig.prod.json tsconfig.json
 RUN mkdir dm_types && cp -r node_modules/ducksmanager/types/* dm_types/
-RUN mkdir prisma_clients && cp -r node_modules/ducksmanager/api/dist/prisma/* prisma_clients/
-RUN sed -i 's#../api/dist/prisma#~prisma_clients#g' dm_types/*.ts
+RUN mkdir prisma-clients && cp -r node_modules/ducksmanager/api/dist/prisma/* prisma-clients/
+RUN sed -i 's#../api/dist/prisma#~prisma-clients#g' dm_types/*.ts
 RUN pnpm run generate-route-types
 RUN pnpm run build
 
