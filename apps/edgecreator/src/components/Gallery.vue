@@ -99,7 +99,7 @@ withDefaults(
     loading: false,
     selected: () => [],
     allowUpload: true,
-  }
+  },
 );
 
 const emit = defineEmits<(e: "change", value: string) => void>();

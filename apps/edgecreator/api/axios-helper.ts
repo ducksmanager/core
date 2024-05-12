@@ -9,20 +9,20 @@ import { AxiosCacheInstance } from "axios-cache-interceptor";
 import { Call, ContractWithMethodAndUrl } from "~types/Call";
 
 export const addUrlParamsRequestInterceptor = <
-  Type extends AxiosInstance | AxiosCacheInstance
+  Type extends AxiosInstance | AxiosCacheInstance,
 >(
-  axiosInstance: Type
+  axiosInstance: Type,
 ) => {
   axiosInstance.interceptors.request.use(
     (config: InternalAxiosRequestConfig) => {
       if (config.url) {
         const currentUrl = new URL(config.url, config.baseURL);
         currentUrl.pathname = Object.entries(
-          config.urlParams ?? ({} as Record<string, string>)
+          config.urlParams ?? ({} as Record<string, string>),
         ).reduce(
           (pathname, [k, v]) =>
             pathname.replace(`:${k}`, encodeURIComponent(v)),
-          currentUrl.pathname
+          currentUrl.pathname,
         );
         return {
           ...config,
@@ -31,7 +31,7 @@ export const addUrlParamsRequestInterceptor = <
         };
       }
       return config;
-    }
+    },
   );
   return axiosInstance;
 };
@@ -50,7 +50,7 @@ type MyCall = Call<unknown>;
 
 export const call = <Contract extends ContractWithMethodAndUrl<MyCall>>(
   instance: AxiosInstance | AxiosCacheInstance,
-  contract: Contract
+  contract: Contract,
 ): Promise<AxiosResponse<Contract["resBody"]>> =>
   instance.request<Contract["resBody"]>({
     method: contract.getMethod(),
@@ -61,7 +61,7 @@ export const call = <Contract extends ContractWithMethodAndUrl<MyCall>>(
   });
 
 export const getChunkedRequests = async <
-  Contract extends ContractWithMethodAndUrl<MyCall>
+  Contract extends ContractWithMethodAndUrl<MyCall>,
 >({
   callFn,
   valuesToChunk,
@@ -75,7 +75,7 @@ export const getChunkedRequests = async <
 }): Promise<Contract["resBody"]> => {
   const slices = Array.from(
     { length: Math.ceil(valuesToChunk.length / chunkSize) },
-    (_, i) => valuesToChunk.slice(i * chunkSize, i * chunkSize + chunkSize)
+    (_, i) => valuesToChunk.slice(i * chunkSize, i * chunkSize + chunkSize),
   );
   let acc: Contract["resBody"] = (await callFn(slices[0].join(","))).data;
   for (const slice of slices.slice(1)) {
@@ -103,7 +103,7 @@ export const createAxios = (baseURL: string) => {
       }
       return config;
     },
-    (error) => Promise.reject(error)
+    (error) => Promise.reject(error),
   );
 
   addUrlParamsRequestInterceptor(newInstance);

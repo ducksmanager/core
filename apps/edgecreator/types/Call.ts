@@ -2,7 +2,7 @@ export interface Call<
   ResBody,
   Params = Record<string, string> | undefined,
   ReqBody = unknown,
-  Query = unknown
+  Query = unknown,
 > {
   resBody?: ResBody;
   params?: Params;
@@ -13,7 +13,7 @@ export interface Call<
 export interface CallWithoutResBody<
   Params = Record<string, string> | undefined,
   ReqBody = unknown,
-  Query = unknown
+  Query = unknown,
 > {
   params?: Params;
   reqBody?: ReqBody;

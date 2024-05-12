@@ -24,7 +24,7 @@ export const post = async (
   const tentativeFileName = `${magazine}.${issuenumber}.photo`;
   const fileName = getNextAvailableFile(
     `${path}/${tentativeFileName}`,
-    "jpg"
+    "jpg",
   ).match(/\/([^/]+)$/)![1];
 
   await decode(data, {
@@ -42,7 +42,7 @@ export const post = async (
           publicationcode,
           issuenumber,
         },
-      })
+      }),
     );
   } catch (e) {
     res.writeHead(500);

@@ -1,9 +1,8 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
 import "bootstrap/dist/css/bootstrap.css";
 import "bootstrap-vue-next/dist/bootstrap-vue-next.css";
 import "vue3-simple-typeahead/dist/vue3-simple-typeahead.css"; //Optional default CSS
 
-import { createHead } from "@vueuse/head";
+import { createHead } from "@unhead/vue";
 import { BCarousel, BToastPlugin } from "bootstrap-vue-next";
 import { createPinia } from "pinia";
 import { setupLayouts } from "virtual:generated-layouts";

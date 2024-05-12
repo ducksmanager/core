@@ -13,7 +13,7 @@ export const getUserCredentials = (user: User) => ({
 export const authenticateToken = (
   req: Request,
   res: Response,
-  next: CallableFunction
+  next: CallableFunction,
 ) => {
   const authHeader = req.headers.authorization;
   const token = authHeader?.split(" ")?.[1];
@@ -29,14 +29,14 @@ export const authenticateToken = (
       }
       req.user = user as User;
       next();
-    }
+    },
   );
 };
 
 export const checkUserIsAdminForExportOrIsEditorForSaveOrIsFirstFileForModel = (
   req: Request,
   res: Response,
-  next: CallableFunction
+  next: CallableFunction,
 ) => {
   const { runExport, country, magazine, issuenumber } = req.body as {
     runExport: boolean;
@@ -63,7 +63,7 @@ export const checkUserIsAdminForExportOrIsEditorForSaveOrIsFirstFileForModel = (
 export const checkUserIsAdminOrEditor = (
   req: Request,
   res: Response,
-  next: CallableFunction
+  next: CallableFunction,
 ) => {
   const user = req.user;
   if (!(user && ["Admin", "Edition"].includes(user.privileges.EdgeCreator))) {
@@ -75,7 +75,7 @@ export const checkUserIsAdminOrEditor = (
 export const injectTokenIfValid = (
   req: Request,
   _: Response,
-  next: CallableFunction
+  next: CallableFunction,
 ) => {
   const authHeader = req.headers.authorization;
   const token = authHeader?.split(" ")[1];
@@ -93,7 +93,7 @@ export const injectTokenIfValid = (
           console.log(`Invalid token: ${err as string}`);
         }
         next();
-      }
+      },
     );
   }
 };

@@ -7,7 +7,7 @@ export default () => {
       .filter(
         (node) =>
           node.nodeName === "metadata" &&
-          node.attributes.getNamedItem("type")!.nodeValue === metadataType
+          node.attributes.getNamedItem("type")!.nodeValue === metadataType,
       )
       .map((metadataNode) => metadataNode.textContent!.trim());
 
@@ -16,14 +16,14 @@ export default () => {
     magazine: string,
     issuenumber: string,
     mtime: string,
-    publishedVersion = false
+    publishedVersion = false,
   ) => {
     const edgeUrl = getEdgeUrl(
       country,
       magazine,
       issuenumber,
       `svg?${mtime}`,
-      publishedVersion
+      publishedVersion,
     );
     const svgString = (await axios.get(edgeUrl)).data as string;
     if (!svgString) {
@@ -40,7 +40,7 @@ export default () => {
     magazine: string,
     issuenumber: string,
     extension: string,
-    publishedVersion: boolean
+    publishedVersion: boolean,
   ) =>
     `${import.meta.env.VITE_EDGES_URL as string}/${country}/gen/${
       publishedVersion ? "" : "_"

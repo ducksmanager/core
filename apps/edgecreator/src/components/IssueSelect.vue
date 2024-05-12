@@ -104,7 +104,7 @@ const props = withDefaults(
     canBeMultiple: false,
     edgeGallery: false,
     baseIssueNumbers: () => [],
-  }
+  },
 );
 
 const currentCountryCode = ref(undefined as string | undefined);
@@ -124,7 +124,7 @@ const publications = computed(
     coaStore.publicationNames &&
     Object.keys(coaStore.publicationNames)
       .filter((publicationCode) =>
-        publicationCode.startsWith(`${currentCountryCode.value!}/`)
+        publicationCode.startsWith(`${currentCountryCode.value!}/`),
       )
       .map((publicationCode) => ({
         text: coaStore.publicationNames[publicationCode],
@@ -132,12 +132,12 @@ const publications = computed(
       }))
       .filter(({ text }) => text !== null)
       .sort(({ text: text1 }, { text: text2 }) =>
-        text1! < text2! ? -1 : text2! < text1! ? 1 : 0
-      )
+        text1! < text2! ? -1 : text2! < text1! ? 1 : 0,
+      ),
 );
 
 const publicationIssues = computed(
-  () => coaStore.issueNumbers[currentPublicationCode.value!]
+  () => coaStore.issueNumbers[currentPublicationCode.value!],
 );
 
 const issues = computed(
@@ -157,7 +157,7 @@ const issues = computed(
           (props.disableOngoingOrPublished && status !== "none") ||
           (props.disableNotOngoingNorPublished && status === "none"),
       };
-    })
+    }),
 );
 
 watch(
@@ -172,7 +172,7 @@ watch(
   },
   {
     immediate: true,
-  }
+  },
 );
 
 watch(
@@ -183,12 +183,12 @@ watch(
       await coaStore.fetchIssueNumbers([newValue]);
       await loadEdges();
     }
-  }
+  },
 );
 
 watch(
   () => surroundingIssuesToLoad.value,
-  async () => await loadEdges()
+  async () => await loadEdges(),
 );
 
 if (props.countryCode) {
@@ -199,10 +199,10 @@ const loadEdges = async () => {
   let issueNumbersFilter = "";
   if (props.withEdgeGallery) {
     const minBaseIssueNumberIndex = publicationIssues.value.indexOf(
-      props.baseIssueNumbers[0]
+      props.baseIssueNumbers[0],
     );
     const maxBaseIssueNumberIndex = publicationIssues.value.indexOf(
-      props.baseIssueNumbers[props.baseIssueNumbers.length - 1]
+      props.baseIssueNumbers[props.baseIssueNumbers.length - 1],
     );
     issueNumbersFilter = `/${publicationIssues.value
       .filter(
@@ -211,7 +211,7 @@ const loadEdges = async () => {
             surroundingIssuesToLoad.value.before &&
           index - maxBaseIssueNumberIndex <
             surroundingIssuesToLoad.value.after &&
-          !props.baseIssueNumbers.includes(issueNumber)
+          !props.baseIssueNumbers.includes(issueNumber),
       )
       .join(",")}`;
     hasMoreIssuesToLoad.value = {
@@ -226,7 +226,7 @@ const loadEdges = async () => {
 };
 
 const onChange = (
-  data: { width: number; height: number } | Record<string, never>
+  data: { width: number; height: number } | Record<string, never>,
 ) =>
   emit("change", {
     width: data.width,

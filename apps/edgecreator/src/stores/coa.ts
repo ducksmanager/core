@@ -18,7 +18,7 @@ export const coa = defineStore("coa", () => {
     issueNumbers = ref({} as Record<string, string[]>),
     isLoadingCountryNames = ref(false as boolean),
     addPublicationNames = (
-      newPublicationNames: Record<string, string | null>
+      newPublicationNames: Record<string, string | null>,
     ) => {
       publicationNames.value = {
         ...publicationNames.value,
@@ -39,13 +39,13 @@ export const coa = defineStore("coa", () => {
               new GET__coa__list__countries__$locale({
                 query: { countryCodes: null },
                 params: { locale: locale.split("-")[0] },
-              })
+              }),
             )
-          ).data
+          ).data,
         )
           .reduce(
             (acc, [value, text]) => [...acc, { value, text }],
-            [] as { value: string; text: string }[]
+            [] as { value: string; text: string }[],
           )
           .sort(({ text: text1 }, { text: text2 }) => (text1 < text2 ? -1 : 1));
       }
@@ -55,8 +55,8 @@ export const coa = defineStore("coa", () => {
         ...new Set(
           publicationCodes.filter(
             (publicationcode) =>
-              !Object.keys(publicationNames.value).includes(publicationcode)
-          )
+              !Object.keys(publicationNames.value).includes(publicationcode),
+          ),
         ),
       ];
       return (
@@ -67,9 +67,9 @@ export const coa = defineStore("coa", () => {
               api().dmApi,
               new POST__coa__list__publications({
                 reqBody: { publicationCodes: newPublicationCodes },
-              })
+              }),
             )
-          ).data
+          ).data,
         )
       );
     },
@@ -84,7 +84,7 @@ export const coa = defineStore("coa", () => {
             params: {
               countrycode: countryCode,
             },
-          })
+          }),
         )
       ).data;
       addPublicationNames({
@@ -101,8 +101,8 @@ export const coa = defineStore("coa", () => {
         ...new Set(
           publicationCodes.filter(
             (publicationcode) =>
-              !Object.keys(issueNumbers.value || {}).includes(publicationcode)
-          )
+              !Object.keys(issueNumbers.value || {}).includes(publicationcode),
+          ),
         ),
       ];
       if (newPublicationCodes.length) {
@@ -114,11 +114,11 @@ export const coa = defineStore("coa", () => {
                   api().dmApi,
                   new GET__coa__list__issues__by_publication_codes({
                     query: { publicationCodes: chunk },
-                  })
+                  }),
                 ),
               valuesToChunk: newPublicationCodes,
               chunkSize: 50,
-            }
+            },
           );
 
         addIssueNumbers(
@@ -130,8 +130,8 @@ export const coa = defineStore("coa", () => {
                 issue.issuenumber,
               ],
             }),
-            {}
-          )
+            {},
+          ),
         );
       }
     };

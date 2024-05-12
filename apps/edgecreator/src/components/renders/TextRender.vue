@@ -80,15 +80,15 @@ const textImage = ref(
     width: number | null;
     height: number | null;
     url: string;
-  } | null
+  } | null,
 );
 const textImageOptions = ref(null as typeof props.options | null);
 
 const effectiveText = computed(() =>
   resolveIssueNumberTemplate(
     props.options.text,
-    resolveIssueNumberPartTemplate(props.options.text, props.issuenumber)
-  )
+    resolveIssueNumberPartTemplate(props.options.text, props.issuenumber),
+  ),
 );
 
 const { width, attributes, enableDragResize } = useStepOptions(props, "Text", [
@@ -108,7 +108,7 @@ watch(
       });
     }
   },
-  { immediate: true }
+  { immediate: true },
 );
 
 watch(
@@ -149,44 +149,44 @@ watch(
           applyTextImageDimensions();
         },
         2000,
-        100
+        100,
       );
     }
   },
   {
     immediate: true,
-  }
+  },
 );
 
 watch(
   () => props.options.fgColor,
   async () => {
     await refreshPreview();
-  }
+  },
 );
 watch(
   () => props.options.bgColor,
   async () => {
     await refreshPreview();
-  }
+  },
 );
 watch(
   () => props.options.internalWidth,
   async () => {
     await refreshPreview();
-  }
+  },
 );
 watch(
   () => props.options.text,
   async () => {
     await refreshPreview();
-  }
+  },
 );
 watch(
   () => props.options.font,
   async () => {
     await refreshPreview();
-  }
+  },
 );
 
 type TypedErrorResponse<T> = {
@@ -213,7 +213,7 @@ const refreshPreview = async () => {
             font,
             text: effectiveText.value,
           },
-        })
+        }),
       )
     ).data;
     if ("width" in textData) {
@@ -227,7 +227,7 @@ const refreshPreview = async () => {
         e as TypedErrorResponse<
           GET__fs__text["resBody"]
         > as TypedErrorResponse<{ error: string }>
-      ).response.data.error
+      ).response.data.error,
     );
   }
 };
@@ -235,7 +235,7 @@ const waitUntil = (
   condition: () => SVGImageElement | null,
   okCallback: () => void,
   timeout: number,
-  loopEvery: number
+  loopEvery: number,
 ) => {
   let iterations = 0;
   const interval = setInterval(() => {

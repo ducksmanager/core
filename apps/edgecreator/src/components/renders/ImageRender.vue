@@ -45,7 +45,7 @@ const props = withDefaults(defineProps<Props>(), {
 });
 
 const effectiveSource = computed(() =>
-  resolveIssueNumberTemplate(props.options.src!, props.issuenumber)
+  resolveIssueNumberTemplate(props.options.src!, props.issuenumber),
 );
 
 watch(
@@ -57,11 +57,11 @@ watch(
           .country!}/elements/${effectiveSource.value}`,
         (img) => {
           enableDragResize(img, {});
-        }
+        },
       );
     }
   },
-  { immediate: true }
+  { immediate: true },
 );
 
 watch(
@@ -71,7 +71,7 @@ watch(
       enableDragResize(value);
     }
   },
-  { immediate: true }
+  { immediate: true },
 );
 
 const { enableDragResize } = useStepOptions(props, "Image", [

@@ -4,9 +4,8 @@ module.exports = {
     // 'eslint:recommended',
     "plugin:vue/vue3-recommended",
     "plugin:prettier-vue/recommended",
-    "@vue/typescript/recommended",
-    "plugin:@typescript-eslint/recommended-requiring-type-checking",
-    "@vue/eslint-config-prettier"
+    "prettier",
+    "plugin:@typescript-eslint/recommended"
   ],
   parser: "vue-eslint-parser",
   parserOptions: {
@@ -16,7 +15,7 @@ module.exports = {
   },
   overrides: [
     {
-      files: ["*.js", "*.ts", "*.vue"]
+      files: ["*.ts", "*.vue"]
     }
   ],
   root: true,
@@ -52,7 +51,6 @@ module.exports = {
     "**/dist",
     "*.d.ts",
     "vendor",
-    "vite.config.ts",
-    ".eslintrc.js"
+    "vite.config.ts"
   ]
 };

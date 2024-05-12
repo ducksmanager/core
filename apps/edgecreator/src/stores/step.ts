@@ -25,11 +25,11 @@ export interface Dimensions {
 export type DimensionsArray = Dimensions[];
 
 export const optionObjectToArray = (
-  optionObject: Record<string, OptionValue>
+  optionObject: Record<string, OptionValue>,
 ): OptionsArray =>
   Object.entries(optionObject).reduce<OptionsArray>(
     (acc, [optionName, optionValue]) => [...acc, { optionName, optionValue }],
-    []
+    [],
   );
 
 const isColorOption = (optionName: string) =>
@@ -42,14 +42,14 @@ export const step = defineStore("step", () => {
     colors = computed(() =>
       options.value.filter(
         ({ optionName, optionValue }) =>
-          isColorOption(optionName) && optionValue !== "transparent"
-      )
+          isColorOption(optionName) && optionValue !== "transparent",
+      ),
     ),
     maxStepNumber = computed(() =>
       options.value.reduce(
         (max, { stepNumber }) => Math.max(max, stepNumber),
-        -1
-      )
+        -1,
+      ),
     ),
     optionsPerStepNumber = computed(() =>
       options.value.reduce<Record<string, Options>>(
@@ -57,8 +57,8 @@ export const step = defineStore("step", () => {
           ...acc,
           [stepNumber]: [...(acc[stepNumber] || []), { ...rest }],
         }),
-        {}
-      )
+        {},
+      ),
     ),
     getFilteredOptions = ({
       stepNumbers,
@@ -70,12 +70,13 @@ export const step = defineStore("step", () => {
       return options.value.filter(
         ({ stepNumber, issuenumber }) =>
           (!stepNumbers || stepNumbers.includes(stepNumber)) &&
-          (!issuenumbers || issuenumbers.includes(issuenumber))
+          (!issuenumbers || issuenumbers.includes(issuenumber)),
       );
     },
     getFilteredDimensions = ({ issuenumbers }: { issuenumbers?: string[] }) =>
       dimensions.value.filter(
-        ({ issuenumber }) => !issuenumbers || issuenumbers.includes(issuenumber)
+        ({ issuenumber }) =>
+          !issuenumbers || issuenumbers.includes(issuenumber),
       ),
     removeOptionValues = ({
       stepNumber: defaultStepNumber,
@@ -90,14 +91,14 @@ export const step = defineStore("step", () => {
         ({ stepNumber, issuenumber, optionName }) =>
           defaultStepNumber !== stepNumber ||
           !defaultIssuenumbers?.includes(issuenumber) ||
-          !optionNames?.includes(optionName)
+          !optionNames?.includes(optionName),
       ),
     setOptionValues = (
       newOptions: OptionsArray | Record<string, OptionValue>,
       overrides: {
         issuenumbers?: string[];
         stepNumber?: number;
-      } = { issuenumbers: undefined, stepNumber: undefined }
+      } = { issuenumbers: undefined, stepNumber: undefined },
     ) => {
       const optionsAsArray = newOptions.hasOwnProperty("length")
         ? (newOptions as OptionsArray)
@@ -131,7 +132,7 @@ export const step = defineStore("step", () => {
                 options.value[idx].optionValue = optionValueToUpdate;
                 processedOptions.push({ stepNumber, issuenumber, optionName });
               }
-            }
+            },
           );
         }
       });
@@ -142,7 +143,7 @@ export const step = defineStore("step", () => {
               ({ stepNumber, issuenumber, optionName }) =>
                 stepNumber === defaultStepNumber &&
                 issuenumber === issuenumberToProcess &&
-                optionName === optionNameToProcess
+                optionName === optionNameToProcess,
             )
           ) {
             options.value.push({
@@ -150,7 +151,7 @@ export const step = defineStore("step", () => {
               issuenumber: issuenumberToProcess,
               optionName: optionNameToProcess,
               optionValue: optionsAsArray.find(
-                ({ optionName }) => optionName === optionNameToProcess
+                ({ optionName }) => optionName === optionNameToProcess,
               )!.optionValue,
             });
           }
@@ -161,19 +162,19 @@ export const step = defineStore("step", () => {
       newDimensions: { width: number; height: number },
       overrides: {
         issuenumbers?: string[];
-      }
+      },
     ) => {
       dimensions.value = [
         ...dimensions.value.filter(
           ({ issuenumber }) =>
             overrides.issuenumbers &&
-            !overrides.issuenumbers.includes(issuenumber)
+            !overrides.issuenumbers.includes(issuenumber),
         ),
         ...(overrides.issuenumbers ?? main().issuenumbers).map(
           (issuenumber) => ({
             issuenumber,
             ...newDimensions,
-          })
+          }),
         ),
       ];
     },
@@ -187,7 +188,7 @@ export const step = defineStore("step", () => {
     },
     checkSameComponentsAsCompletedEdge = (
       issuenumber: string,
-      issueSteps: StepOption[]
+      issueSteps: StepOption[],
     ) => {
       let completedIssuenumber: string | null = null;
       for (
@@ -216,7 +217,7 @@ export const step = defineStore("step", () => {
           .map(({ optionValue }) => optionValue)
           .join("+");
       const previousIssueComponents = getComponents(
-        Object.values(completedIssueSteps)
+        Object.values(completedIssueSteps),
       );
       const currentIssueComponents = getComponents(issueSteps);
       if (
@@ -234,15 +235,15 @@ export const step = defineStore("step", () => {
                 issuenumber,
                 previousIssueComponents,
                 currentIssueComponents,
-              }
+              },
             )
-            .toString()
+            .toString(),
         );
       }
     },
     copyDimensionsAndSteps = (
       issuenumber: string,
-      otherIssuenumber: string
+      otherIssuenumber: string,
     ) => {
       setDimensions(
         getFilteredDimensions({
@@ -250,7 +251,7 @@ export const step = defineStore("step", () => {
         }).map((dimension) => ({ ...dimension, issuenumber }))[0],
         {
           issuenumbers: [issuenumber],
-        }
+        },
       );
 
       const steps = getFilteredOptions({
@@ -266,9 +267,9 @@ export const step = defineStore("step", () => {
           steps
             .filter(
               ({ stepNumber: optionStepNumber }) =>
-                optionStepNumber === stepNumber
+                optionStepNumber === stepNumber,
             )
-            .map((step) => ({ ...step, issuenumber: otherIssuenumber }))
+            .map((step) => ({ ...step, issuenumber: otherIssuenumber })),
         );
       }
     },
@@ -283,12 +284,12 @@ export const step = defineStore("step", () => {
         {
           issuenumbers: main().issuenumbers,
           stepNumber: maxStepNumber.value + 1,
-        }
+        },
       );
     },
     removeStep = (stepNumberToRemove: number) => {
       options.value = options.value.filter(
-        ({ stepNumber }) => stepNumberToRemove !== stepNumber
+        ({ stepNumber }) => stepNumberToRemove !== stepNumber,
       );
       for (
         let optionIndex = 0;
@@ -309,7 +310,7 @@ export const step = defineStore("step", () => {
         existingStepOptions.map((option) => ({
           ...option,
           stepNumber: maxStepNumber.value + 1,
-        }))
+        })),
       );
     },
     swapSteps = (stepNumbers: [number, number]) => {
@@ -326,7 +327,7 @@ export const step = defineStore("step", () => {
       }
       options.value.sort(
         ({ stepNumber: stepNumber1 }, { stepNumber: stepNumber2 }) =>
-          Math.sign(stepNumber1 - stepNumber2)
+          Math.sign(stepNumber1 - stepNumber2),
       );
     };
   return {

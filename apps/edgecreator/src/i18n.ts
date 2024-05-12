@@ -5,7 +5,7 @@ import fr from "../locales/fr-FR.json";
 const messages = {
   "en-US": Object.keys(fr).reduce(
     (acc, value) => ({ ...acc, [value]: value }),
-    {}
+    {},
   ),
   fr,
 };

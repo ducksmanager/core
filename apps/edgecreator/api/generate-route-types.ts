@@ -29,7 +29,7 @@ const routes: Route[] = [];
           }
         });
       }
-    }
+    },
   );
 
   const imports: string[] = [
@@ -46,9 +46,9 @@ const routes: Route[] = [];
             ...readFileSync(`../types/${file}`)
               .toString()
               .matchAll(/(?:(?<=export type )|(?<=export interface ))\w+/g)!,
-          ].join(", ")} } from "./${file.replace(/\.ts$/, "")}";`
+          ].join(", ")} } from "./${file.replace(/\.ts$/, "")}";`,
       )
-      .join("\n")
+      .join("\n"),
   );
   const types: string[] = [];
 
@@ -65,7 +65,7 @@ const routes: Route[] = [];
         let routeFile;
         const routeBasePath = `routes/${(route.path as string).replace(
           /^\//,
-          ""
+          "",
         )}`;
         try {
           routeFile = readFileSync(`${routeBasePath}/index.ts`);
@@ -74,12 +74,11 @@ const routes: Route[] = [];
         }
         const callType = new RegExp(
           `export const ${realMethod} =.+?ExpressCall<( *.+?)>[ \\n]*\\) =>`,
-          "gms"
+          "gms",
         ).exec(routeFile.toString())![1];
 
-        acc[
-          routePathWithMethod
-        ] = ` extends ContractWithMethodAndUrl<${callType}> {
+        acc[routePathWithMethod] =
+          ` extends ContractWithMethodAndUrl<${callType}> {
             static readonly method = "${method}";
             static readonly url = "${route.path as string}";
         }`;
@@ -98,9 +97,9 @@ const routes: Route[] = [];
               .replaceAll("/", "__")
               .replaceAll(/ /g, "")
               .replaceAll(/:/g, "$")
-              .replaceAll(/-/g, "_")} ${callback}`
+              .replaceAll(/-/g, "_")} ${callback}`,
         )
         .join("\n"),
-    ].join("\n")
+    ].join("\n"),
   );
 })();

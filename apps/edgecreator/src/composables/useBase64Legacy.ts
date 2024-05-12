@@ -7,7 +7,7 @@ export default () => {
   const image = ref(null as ImageMetadata | null);
   const loadImage = (
     src: string,
-    callback: (img: HTMLImageElement) => void
+    callback: (img: HTMLImageElement) => void,
   ) => {
     const img = new Image();
     img.crossOrigin = "Anonymous";
@@ -28,7 +28,7 @@ export default () => {
       console.error(
         `Base64 image could not be retrieved : ${src} : ${JSON.stringify({
           e,
-        })}`
+        })}`,
       );
       image.value = { base64: undefined, width: null, height: null };
     };

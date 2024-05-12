@@ -1,10 +1,10 @@
 import { AxiosInstance } from "axios";
-import { userContributionType } from "ducksmanager/api/dist/prisma/client_dm";
 import { defineStore } from "pinia";
 
 import { api } from "~/stores/api";
 import { EdgeWithModelId } from "~dm_types/EdgeWithModelId";
 import { GET__edges__$countrycode__$magazinecode__$issuenumbers } from "~dm_types/routes";
+import { userContributionType } from "~prisma-clients/client_dm";
 import { ModelContributor } from "~types/ModelContributor";
 import { GET__fs__browse__$imageType__$country__$magazine } from "~types/routes";
 import { SimpleUser } from "~types/SimpleUser";
@@ -30,12 +30,12 @@ export const main = defineStore("main", () => {
     warnings = ref([] as string[]),
     publicationcode = computed(
       () =>
-        country.value && magazine.value && `${country.value}/${magazine.value}`
+        country.value && magazine.value && `${country.value}/${magazine.value}`,
     ),
     publicationIssues = computed(
       () =>
         (publicationcode.value && coa().issueNumbers[publicationcode.value]) ||
-        []
+        [],
     ),
     publicationElementsForGallery = computed(
       () =>
@@ -45,7 +45,7 @@ export const main = defineStore("main", () => {
           url: `${
             import.meta.env.VITE_EDGES_URL as string
           }/${country.value!}/elements/${elementFileName}`,
-        }))
+        })),
     ),
     publicationPhotosForGallery = computed(
       () =>
@@ -55,7 +55,7 @@ export const main = defineStore("main", () => {
           url: `${
             import.meta.env.VITE_EDGES_URL as string
           }/${country.value!}/photos/${elementFileName}`,
-        }))
+        })),
     ),
     addContributor = ({
       issuenumber,
@@ -83,7 +83,7 @@ export const main = defineStore("main", () => {
       contributors.value = contributors.value.filter(
         ({ contributionType: thisContributionType, user: thisUser }) =>
           thisContributionType !== contributionType &&
-          thisUser.id !== userToRemove.id
+          thisUser.id !== userToRemove.id,
       );
     },
     addWarning = (warning: string) => {
@@ -102,7 +102,7 @@ export const main = defineStore("main", () => {
       others?: string;
     }) => {
       const firstIssueIndex = publicationIssues.value.findIndex(
-        (issue) => issue === min
+        (issue) => issue === min,
       );
       if (firstIssueIndex === -1) {
         throw new Error(`Issue ${min} doesn't exist`);
@@ -112,17 +112,17 @@ export const main = defineStore("main", () => {
       } else {
         isRange.value = true;
         let lastIssueIndex = publicationIssues.value.findIndex(
-          (issue) => issue === max
+          (issue) => issue === max,
         );
         if (lastIssueIndex === -1) {
           lastIssueIndex = publicationIssues.value.length - 1;
           console.warn(
-            `Issue ${max} doesn't exist, falling back to ${publicationIssues.value[lastIssueIndex]}`
+            `Issue ${max} doesn't exist, falling back to ${publicationIssues.value[lastIssueIndex]}`,
           );
         }
 
         issuenumbers.value = publicationIssues.value.filter(
-          (_, index) => index >= firstIssueIndex && index <= lastIssueIndex
+          (_, index) => index >= firstIssueIndex && index <= lastIssueIndex,
         );
       }
     },
@@ -136,7 +136,7 @@ export const main = defineStore("main", () => {
               country: country.value!,
               magazine: magazine.value!,
             },
-          })
+          }),
         )
       ).data.sort((a, b) => numericSortCollator.compare(a, b));
       if (itemType === "elements") {
@@ -160,32 +160,32 @@ export const main = defineStore("main", () => {
                     magazinecode: publicationcode.value!.split("/")[1],
                     issuenumbers: edges.join(","),
                   },
-                })
+                }),
               )
-            ).data
-          )
+            ).data,
+          ),
         ),
       ].sort((a, b) =>
-        Math.sign(edges.indexOf(a.issuenumber) - edges.indexOf(b.issuenumber))
+        Math.sign(edges.indexOf(a.issuenumber) - edges.indexOf(b.issuenumber)),
       ),
     loadSurroundingEdges = async () => {
       const firstIssueIndex = publicationIssues.value.findIndex(
-        (issue) => issue === issuenumbers.value[0]
+        (issue) => issue === issuenumbers.value[0],
       );
       const lastIssueIndex = publicationIssues.value.findIndex(
-        (issue) => issue === issuenumbers.value[issuenumbers.value.length - 1]
+        (issue) => issue === issuenumbers.value[issuenumbers.value.length - 1],
       );
       const issuesBefore = publicationIssues.value.filter(
         (_, index) =>
           firstIssueIndex !== -1 &&
           index >= firstIssueIndex - 10 &&
-          index < firstIssueIndex
+          index < firstIssueIndex,
       );
       const issuesAfter = publicationIssues.value.filter(
         (_, index) =>
           lastIssueIndex !== -1 &&
           index > lastIssueIndex &&
-          index <= lastIssueIndex + 10
+          index <= lastIssueIndex + 10,
       );
 
       if (issuesBefore.length) {
@@ -213,14 +213,14 @@ export const main = defineStore("main", () => {
         await Array.from(
           { length: Math.ceil(parametersToChunk.length / chunkSize) },
           (_, i) =>
-            parametersToChunk.slice(i * chunkSize, i * chunkSize + chunkSize)
+            parametersToChunk.slice(i * chunkSize, i * chunkSize + chunkSize),
         ).reduce(
           async (acc, codeChunk) =>
-            (
-              await acc
-            ).concat(await api.get(`${url}${codeChunk.join(",")}${suffix}`)),
-          Promise.resolve([])
-        )
+            (await acc).concat(
+              await api.get(`${url}${codeChunk.join(",")}${suffix}`),
+            ),
+          Promise.resolve([]),
+        ),
       );
   return {
     country,

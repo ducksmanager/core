@@ -39,14 +39,14 @@ const props = withDefaults(
   {
     width: 15,
     height: 200,
-  }
+  },
 );
 
 const values = ref(
   props as {
     width?: number;
     height?: number;
-  }
+  },
 );
 
 const emit =

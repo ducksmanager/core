@@ -46,7 +46,7 @@ const points = computed((): [number, number][] =>
     .map((point) => [
       parseFloat(point.split(",")[0]),
       parseFloat(point.split(",")[1]),
-    ])
+    ]),
 );
 
 onMounted(() => {
@@ -54,7 +54,10 @@ onMounted(() => {
     onmove: ({ dy, dx }): void => {
       step().setOptionValues({
         points: pointsAsString(
-          points.value.map(([x, y]) => [x + dx / ui().zoom, y + dy / ui().zoom])
+          points.value.map(([x, y]) => [
+            x + dx / ui().zoom,
+            y + dy / ui().zoom,
+          ]),
         ),
       });
     },
@@ -73,7 +76,7 @@ onMounted(() => {
           points.value.map(([x, y]) => [
             x + widthMaxGrowth * ((x - minX) / currentWidth),
             y + heightMaxGrowth * ((y - minY) / currentHeight),
-          ])
+          ]),
         ),
       });
     },

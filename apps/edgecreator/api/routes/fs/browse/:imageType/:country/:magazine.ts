@@ -26,8 +26,8 @@ export const get = (
       fs
         .readdirSync(`${process.env.EDGES_PATH!}/${country}/${imageType}`)
         .filter((item) =>
-          new RegExp(`(?:^|[. ])${magazine}(?:[. ]|$)`).test(item)
-        )
+          new RegExp(`(?:^|[. ])${magazine}(?:[. ]|$)`).test(item),
+        ),
     );
   } catch (e) {
     return res.json([]);

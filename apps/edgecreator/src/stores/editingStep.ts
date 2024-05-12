@@ -9,12 +9,12 @@ export const editingStep = defineStore("editingStep", () => {
       step().getFilteredOptions({
         stepNumbers: [stepNumber.value],
         issuenumbers: issuenumbers.value,
-      })
+      }),
     ),
     dimensions = computed(() =>
       step().getFilteredDimensions({
         issuenumbers: issuenumbers.value,
-      })
+      }),
     ),
     addIssuenumber = (issuenumber: string) => {
       issuenumbers.value = issuenumbers.value.concat(issuenumber).sort();

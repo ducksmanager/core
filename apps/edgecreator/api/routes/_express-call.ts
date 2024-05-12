@@ -7,11 +7,11 @@ export type ExpressCall<
     params?: object;
     reqBody?: object;
     query?: object;
-  }
+  },
 > = [
   Request<T["params"], T["resBody"], T["reqBody"], T["query"]> & {
     busboy: Busboy;
   },
 
-  Response<T["resBody"]>
+  Response<T["resBody"]>,
 ];

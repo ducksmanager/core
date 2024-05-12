@@ -29,12 +29,12 @@ const app = express();
 app.use(
   Sentry.Handlers.requestHandler({
     user: ["id", "username"],
-  }) as express.RequestHandler
+  }) as express.RequestHandler,
 );
 app.use(
   cors({
     optionsSuccessStatus: 200, // some legacy browsers (IE11, various SmartTVs) choke on 204
-  })
+  }),
 );
 app.use(cookieParser());
 
@@ -54,6 +54,6 @@ app.use(Sentry.Handlers.errorHandler() as express.ErrorRequestHandler);
 (async () => {
   app.use("/", await router({ directory: `${process.cwd()}/routes` }));
   app.listen(port, () =>
-    console.log(`EdgeCreator API listening on port ${port}`)
+    console.log(`EdgeCreator API listening on port ${port}`),
   );
 })();

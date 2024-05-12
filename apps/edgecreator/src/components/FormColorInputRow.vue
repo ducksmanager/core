@@ -107,7 +107,7 @@ const props = withDefaults(
   {
     label: null,
     canBeTransparent: false,
-  }
+  },
 );
 
 const originalColor = ref(null as string | null);
@@ -126,7 +126,7 @@ watch(
   (inputValues) => {
     isTransparent.value = inputValues[0] === "transparent";
   },
-  { immediate: true }
+  { immediate: true },
 );
 
 const getOptionStringValuesByStepNumber = (options: Options) =>
@@ -138,7 +138,7 @@ const getOptionStringValuesByStepNumber = (options: Options) =>
         option.optionValue as string,
       ],
     }),
-    {}
+    {},
   );
 
 const otherColorsByLocationAndStepNumber = computed(() => ({
@@ -146,10 +146,10 @@ const otherColorsByLocationAndStepNumber = computed(() => ({
     mainStore.issuenumbers.length === 1
       ? null
       : getOptionStringValuesByStepNumber(
-          props.otherColors.differentIssuenumber
+          props.otherColors.differentIssuenumber,
         ),
   sameIssuenumber: getOptionStringValuesByStepNumber(
-    props.otherColors.sameIssuenumber
+    props.otherColors.sameIssuenumber,
   ),
 }));
 watch(
@@ -161,7 +161,7 @@ watch(
     }
     originalColor.value = newColor as string;
   },
-  { immediate: true }
+  { immediate: true },
 );
 
 watch(
@@ -173,7 +173,7 @@ watch(
         optionValue: newValue ? "transparent" : originalColor.value,
       },
     ]);
-  }
+  },
 );
 
 const onColorChange = (value: string) => {
