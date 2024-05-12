@@ -1,10 +1,12 @@
-import { api } from "~/stores/api";
 import type { ModelContributor } from "~types/ModelContributor";
-import { POST__fs__save } from "~types/routes";
 
-import { call } from "../../axios-helper";
+import { edgecreatorSocketInjectionKey } from "./useEdgecreatorSocket";
 
 export default () => {
+  const {
+    save: { services: saveServices },
+  } = injectLocal(edgecreatorSocketInjectionKey)!;
+
   const removeVueMarkup = (element: HTMLElement) => {
     Object.values(element.attributes || [])
       .filter(
@@ -32,22 +34,17 @@ export default () => {
     const cleanSvg = removeVueMarkup(
       document.getElementById(svgElementId)!.cloneNode(true) as HTMLElement,
     );
-    return (
-      await call(
-        api().edgeCreatorApi,
-        new POST__fs__save({
-          reqBody: {
-            runExport: withExport,
-            runSubmit: withSubmit,
-            country,
-            magazine,
-            issuenumber,
-            contributors,
-            content: cleanSvg.outerHTML,
-          },
-        }),
-      )
-    ).data;
+    return saveServices
+      .saveEdge({
+        runExport: withExport,
+        runSubmit: withSubmit,
+        country,
+        magazine,
+        issuenumber,
+        contributors,
+        content: cleanSvg.outerHTML,
+      })
+      .then(({ results }) => results);
   };
 
   return {
