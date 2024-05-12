@@ -22,3 +22,7 @@
 	branch=ts
 	path = packages/duckguessr-ml
 	url = ../duckguessr-ml.git
+[submodule "edgecreator"]
+	path = apps/edgecreator
+	url = git@github.com:ducksmanager/edgecreator.git
+	branch = nuxt-to-vue3-and-express
