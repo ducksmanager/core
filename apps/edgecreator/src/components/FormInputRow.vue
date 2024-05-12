@@ -65,24 +65,24 @@ const props = withDefaults(
     range: undefined,
     listId: undefined,
     selectOptions: undefined,
-  }
+  },
 );
 
 const shouldWaitForBlurToUpdate = computed(() =>
-  ["text", "font"].includes(props.optionName)
+  ["text", "font"].includes(props.optionName),
 );
 
 const inputValue = ref(
-  props.inputValues[0] as PossibleInputValueType | undefined
+  props.inputValues[0] as PossibleInputValueType | undefined,
 );
 
 const values = computed(() => [
   ...new Set(
     props.optionName === "xlink:href"
       ? (props.inputValues as string[]).map(
-          (value) => value.match(/\/([^/]+)$/)![1]
+          (value) => value.match(/\/([^/]+)$/)![1],
         )
-      : props.inputValues
+      : props.inputValues,
   ),
 ]);
 
@@ -99,7 +99,7 @@ watch(
   },
   {
     immediate: true,
-  }
+  },
 );
 
 watch(
@@ -112,7 +112,7 @@ watch(
     ) {
       onChangeValue(newValue);
     }
-  }
+  },
 );
 
 const onChangeValue = (optionValue: OptionValue) => {

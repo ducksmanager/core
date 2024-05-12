@@ -1,42 +1,32 @@
 {
   "compilerOptions": {
-    "allowJs": true,
     "baseUrl": ".",
-    "esModuleInterop": true,
-    "forceConsistentCasingInFileNames": true,
-    "jsx": "preserve",
-    "lib": [
-      "dom",
-      "dom.iterable",
-      "ESNext"
-    ],
     "module": "ESNext",
+    "target": "es2020",
+    "lib": ["dom", "dom.iterable", "ESNext"],
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
     "moduleResolution": "node",
+    "resolveJsonModule": true,
     "noUnusedLocals": true,
+    "strictNullChecks": true,
+    "forceConsistentCasingInFileNames": true,
+    "preserveWatchOutput": true,
     "paths": {
-      "~/*": [
-        "src/*",
-        "node_modules/ducksmanager/dist/src/*"
-      ],
+      "~/*": ["src/*"],
+      "~dm-services/*": ["../../packages/api/services/*"],
+      "~dm-types/*": ["../../packages/types/*"],
+      "~prisma-clients/*": ["../../packages/prisma-clients/*"],
+      "~socket.io-client-services/*": ["../../packages/socket.io-client-services/*"],
+      "~socket.io-services/*": ["../../packages/socket.io-services/*"],
       "~types/*": [
         "types/*"
       ],
-      "~dm_types/*": [
-        "node_modules/ducksmanager/types/*"
-      ],
-      "~prisma_clients/*": [
-        "node_modules/ducksmanager/api/dist/prisma/*"
-      ]
     },
-    "resolveJsonModule": true,
-    "skipLibCheck": true,
-    "strict": true,
-    "strictNullChecks": true,
-    "target": "es2020",
     "types": [
       "vite/client",
       "vite-plugin-pages/client",
-      "vue/ref-macros",
       "unplugin-icons/types/vue",
       "vite-plugin-vue-layouts/client"
     ]

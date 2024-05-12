@@ -43,7 +43,7 @@ export const get = (
       .readFileSync("assets/default.svg")
       .toString()
       .replace("My text", decodeURIComponent(text)),
-    "utf8"
+    "utf8",
   );
   sharp(content).toBuffer((error, buffer) => {
     if (error) {

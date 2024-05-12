@@ -18,7 +18,7 @@ export const get = (
     try {
       const files = fs.readdirSync(dir);
       const filteredFiles = files.filter((file) =>
-        REGEX_IS_BROWSABLE_FILE.test(file)
+        REGEX_IS_BROWSABLE_FILE.test(file),
       );
       for (const file of filteredFiles) {
         const filePath = path.join(dir, file);

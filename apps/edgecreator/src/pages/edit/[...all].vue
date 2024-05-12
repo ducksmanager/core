@@ -101,7 +101,7 @@
                   :contributors="
                     mainStore.contributors.filter(
                       ({ issuenumber: thisIssuenumber }) =>
-                        thisIssuenumber === issuenumber
+                        thisIssuenumber === issuenumber,
                     )
                   "
                 />
@@ -181,8 +181,8 @@ const dimensionsPerIssuenumber = computed(() =>
         issuenumbers: [issuenumber],
       })[0],
     }),
-    {}
-  )
+    {},
+  ),
 );
 
 const stepsPerIssuenumber = computed(() =>
@@ -193,8 +193,8 @@ const stepsPerIssuenumber = computed(() =>
         issuenumbers: [issuenumber],
       }),
     }),
-    {}
-  )
+    {},
+  ),
 );
 watch(
   () => editingStepStore.issuenumbers,
@@ -202,7 +202,7 @@ watch(
     await mainStore.loadItems({ itemType: "elements" });
     await mainStore.loadItems({ itemType: "photos" });
     await mainStore.loadSurroundingEdges();
-  }
+  },
 );
 
 (async () => {
@@ -248,7 +248,7 @@ watch(
         } else {
           stepStore.setDimensions(
             { width: 15, height: 200 },
-            { issuenumbers: [issuenumber] }
+            { issuenumbers: [issuenumber] },
           );
 
           stepStore.setOptionValues([]);
@@ -285,7 +285,7 @@ const overwriteDimensions = ({
 }) => {
   stepStore.setDimensions(
     { width, height },
-    { issuenumbers: editingStepStore.issuenumbers }
+    { issuenumbers: editingStepStore.issuenumbers },
   );
 };
 

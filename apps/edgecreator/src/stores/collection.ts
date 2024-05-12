@@ -42,22 +42,22 @@ export const collection = defineStore("collection", () => {
                 : popularIssuesInCollection.value?.[issueCode] ?? 0,
             };
           })) ||
-        null
+        null,
     ),
     popularIssuesInCollectionWithoutEdge = computed(
       (): BookcaseEdgeWithPopularity[] | undefined =>
         bookcaseWithPopularities.value
           ?.filter(
-            ({ edgeId, popularity }) => !edgeId && popularity && popularity > 0
+            ({ edgeId, popularity }) => !edgeId && popularity && popularity > 0,
           )
           .sort(({ popularity: popularity1 }, { popularity: popularity2 }) =>
-            popularity2 && popularity1 ? popularity2 - popularity1 : 0
-          )
+            popularity2 && popularity1 ? popularity2 - popularity1 : 0,
+          ),
     ),
     hasRole = (thisPrivilege: string) =>
       userPermissions.value!.some(
         ({ privilege, role }) =>
-          role === "EdgeCreator" && privilege === thisPrivilege
+          role === "EdgeCreator" && privilege === thisPrivilege,
       ),
     loadBookcase = async () => {
       bookcase.value = (
@@ -65,7 +65,7 @@ export const collection = defineStore("collection", () => {
           api().dmApi,
           new GET__bookcase__$username({
             params: { username: user.value!.username as string },
-          })
+          }),
         )
       ).data;
     },
@@ -78,7 +78,7 @@ export const collection = defineStore("collection", () => {
             ...acc,
             [`${country}/${magazine} ${issuenumber}`]: popularity,
           }),
-          {}
+          {},
         );
       }
     },
@@ -89,7 +89,7 @@ export const collection = defineStore("collection", () => {
           api().dmApi,
           new GET__global_stats__user__$userIds({
             params: { userIds: String(userId) },
-          })
+          }),
         )
       ).data;
       userPhotographerPoints.value = userData.points[userId].edge_photographer;

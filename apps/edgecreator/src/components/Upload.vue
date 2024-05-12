@@ -27,7 +27,7 @@ const props = withDefaults(
     photo: false,
     multiple: false,
     edge: null,
-  }
+  },
 );
 
 const mainStore = main();

@@ -44,7 +44,7 @@
           $t(
             "Once your edge is ready, indicate the photographers and the designers of the edge. " +
               'When you click "Submit", the edge will be sent to an administrator for validation ' +
-              "before it is published on DucksManager"
+              "before it is published on DucksManager",
           )
         }}</b-alert>
         <div
@@ -53,20 +53,34 @@
         >
           <h2>{{ $t(ucFirst(userContributionEnL10n[contributionType])) }}</h2>
           <b-alert
-            :model-value="!hasAtLeastOneUser(contributionType as userContributionType)"
+            :model-value="
+              !hasAtLeastOneUser(contributionType as userContributionType)
+            "
             variant="warning"
             >{{ $t("You should select at least one user") }}</b-alert
           ><vue3-simple-typeahead
             :ref="`${userContributionEnL10n[contributionType]}Typeahead`"
-            :items="getUsersWithoutContributors(contributionType as userContributionType)"
+            :items="
+              getUsersWithoutContributors(
+                contributionType as userContributionType,
+              )
+            "
             :item-projection="({ username }: SimpleUser) => username"
             :placeholder="$t('Enter a user name').toString()"
             :min-input-length="0"
-            @select-item="(user: SimpleUser) => onUserSelect(user.username, contributionType as userContributionType, )"
+            @select-item="
+              (user: SimpleUser) =>
+                onUserSelect(
+                  user.username,
+                  contributionType as userContributionType,
+                )
+            "
           />
           <ul>
             <li
-              v-for="contributor in getContributors(contributionType as userContributionType)"
+              v-for="contributor in getContributors(
+                contributionType as userContributionType,
+              )"
               :key="contributor.username"
             >
               {{ contributor.username }}
@@ -93,7 +107,6 @@
   </b-button>
 </template>
 <script setup lang="ts">
-import { userContributionType } from "ducksmanager/api/dist/prisma/client_dm";
 import { nextTick } from "vue";
 import { useI18n } from "vue-i18n";
 import Vue3SimpleTypeahead from "vue3-simple-typeahead";
@@ -103,6 +116,7 @@ import { collection } from "~/stores/collection";
 import { main } from "~/stores/main";
 import { ui } from "~/stores/ui";
 import { users } from "~/stores/users";
+import { userContributionType } from "~prisma-clients/client_dm";
 import { SimpleUser } from "~types/SimpleUser";
 
 const userContributionEnL10n: Record<string, string> = {
@@ -125,7 +139,7 @@ const props = withDefaults(
   {
     withSubmit: false,
     withExport: false,
-  }
+  },
 );
 
 const showModal = ref(false as boolean);
@@ -138,22 +152,22 @@ const photographersTypeahead = ref();
 const progressLeft = computed(() => 100 - progress.value);
 
 const label = computed(() =>
-  $t(props.withExport ? "Export" : props.withSubmit ? "Submit" : "Save")
+  $t(props.withExport ? "Export" : props.withSubmit ? "Submit" : "Save"),
 );
 
 const variant = computed((): "success" | "primary" =>
-  props.withExport || props.withSubmit ? "success" : "primary"
+  props.withExport || props.withSubmit ? "success" : "primary",
 );
 
 const outlineVariant = computed(
-  (): "outline-success" | "outline-primary" => `outline-${variant.value}`
+  (): "outline-success" | "outline-primary" => `outline-${variant.value}`,
 );
 
 const isOkDisabled = computed(() =>
   Object.keys(["photographers", "designers"]).some(
     (contributionType) =>
-      !hasAtLeastOneUser(contributionType as userContributionType)
-  )
+      !hasAtLeastOneUser(contributionType as userContributionType),
+  ),
 );
 
 watch(
@@ -168,7 +182,7 @@ watch(
         }, 2000);
       }, 1000);
     }
-  }
+  },
 );
 watch(
   () => issueIndexToSave.value,
@@ -186,10 +200,10 @@ watch(
         mainStore.magazine!,
         currentIssueNumber,
         mainStore.contributors.filter(
-          ({ issuenumber }) => issuenumber === currentIssueNumber
+          ({ issuenumber }) => issuenumber === currentIssueNumber,
         ),
         props.withExport,
-        props.withSubmit
+        props.withSubmit,
       ).then((response) => {
         const isSuccess = response.paths.svgPath;
         if (isSuccess) {
@@ -202,7 +216,7 @@ watch(
         }
       });
     });
-  }
+  },
 );
 
 watch(
@@ -211,21 +225,21 @@ watch(
     if (newValue && props.withSubmit) {
       addContributorAllIssues(
         userStore.allUsers!.find(
-          (thisUser) => thisUser.username === collectionStore.user!.username
+          (thisUser) => thisUser.username === collectionStore.user!.username,
         )!,
-        "createur"
+        "createur",
       );
     }
-  }
+  },
 );
 
 const onUserSelect = (
   username: string,
-  contributionType: userContributionType
+  contributionType: userContributionType,
 ) => {
   addContributorAllIssues(
     userStore.allUsers!.find((thisUser) => thisUser.username === username)!,
-    contributionType
+    contributionType,
   );
   switch (contributionType) {
     case "photographe":
@@ -243,27 +257,27 @@ const getContributors = (contributionType: userContributionType) =>
 
 const getUsersWithoutContributors = (contributionType: userContributionType) =>
   userStore.allUsers!.filter(
-    (contributor) => !isContributor(contributor, contributionType)
+    (contributor) => !isContributor(contributor, contributionType),
   );
 
 const isContributor = (
   user: SimpleUser,
-  contributionType: userContributionType
+  contributionType: userContributionType,
 ) =>
   mainStore.contributors.some(
     ({ user: thisUser, contributionType: thisContributionType }) =>
-      thisUser.id === user.id && thisContributionType === contributionType
+      thisUser.id === user.id && thisContributionType === contributionType,
   );
 const addContributorAllIssues = (
   user: SimpleUser,
-  contributionType: userContributionType
+  contributionType: userContributionType,
 ) =>
   mainStore.issuenumbers.forEach((issuenumber) =>
     mainStore.addContributor({
       issuenumber,
       contributionType,
       user,
-    })
+    }),
   );
 const hasAtLeastOneUser = (contributionType: userContributionType) =>
   [
@@ -271,9 +285,9 @@ const hasAtLeastOneUser = (contributionType: userContributionType) =>
       mainStore.contributors
         .filter(
           ({ contributionType: thisContributionType }) =>
-            contributionType === thisContributionType
+            contributionType === thisContributionType,
         )
-        .map(({ issuenumber }) => issuenumber)
+        .map(({ issuenumber }) => issuenumber),
     ),
   ].length === mainStore.issuenumbers.length;
 

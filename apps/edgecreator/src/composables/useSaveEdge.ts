@@ -10,10 +10,10 @@ export default () => {
       .filter(
         (attribute) =>
           attribute.name.startsWith("data-v-") ||
-          attribute.name === "is-visible"
+          attribute.name === "is-visible",
       )
       .forEach(({ name: attributeName }) =>
-        element.removeAttribute(attributeName)
+        element.removeAttribute(attributeName),
       );
     for (const childNode of Object.values(element.childNodes)) {
       removeVueMarkup(childNode as HTMLElement);
@@ -26,11 +26,11 @@ export default () => {
     issuenumber: string,
     contributors: ModelContributor[],
     withExport = false,
-    withSubmit = false
+    withSubmit = false,
   ) => {
     const svgElementId = `edge-canvas-${issuenumber}`;
     const cleanSvg = removeVueMarkup(
-      document.getElementById(svgElementId)!.cloneNode(true) as HTMLElement
+      document.getElementById(svgElementId)!.cloneNode(true) as HTMLElement,
     );
     return (
       await call(
@@ -45,7 +45,7 @@ export default () => {
             contributors,
             content: cleanSvg.outerHTML,
           },
-        })
+        }),
       )
     ).data;
   };

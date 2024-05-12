@@ -1,4 +1,3 @@
-
 import VueI18n from "@intlify/unplugin-vue-i18n/vite";
 import Vue from "@vitejs/plugin-vue";
 import fs from "fs";
@@ -25,11 +24,21 @@ export default defineConfig({
   resolve: {
     alias: {
       "~/": `${path.resolve(__dirname, "src")}/`,
-      "~types/": `${path.resolve(__dirname, "types")}/`,
-      "~dm_types/": `${path.resolve(
+      "~dm-services": path.resolve(__dirname, "../../packages/api/services"),
+      "~dm-types": path.resolve(__dirname, "../../packages/types"),
+      "~socket.io-services": path.resolve(
         __dirname,
-        "node_modules/ducksmanager/types"
-      )}/`,
+        "../../packages/socket.io-services",
+      ),
+      "~socket.io-client-services": path.resolve(
+        __dirname,
+        "../../packages/socket.io-client-services",
+      ),
+      "~prisma-clients": path.resolve(
+        __dirname,
+        "../../packages/prisma-clients",
+      ),
+      "~types/": `${path.resolve(__dirname, "types")}/`,
     },
   },
 

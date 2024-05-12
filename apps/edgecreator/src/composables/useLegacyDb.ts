@@ -42,7 +42,7 @@ export default () => {
     stepNumber: number,
     { component: targetComponent, options: dbOptions }: LegacyComponent,
     edgeDimensions: EdgeDimensions,
-    calculateBase64 = true
+    calculateBase64 = true,
   ) => {
     switch (targetComponent) {
       case "ArcCircle": {
@@ -55,7 +55,7 @@ export default () => {
             "Hauteur",
             "Couleur",
           ],
-          dbOptions
+          dbOptions,
         );
         const filled = dbOptions.Rempli === "Oui";
 
@@ -73,12 +73,12 @@ export default () => {
         validateOptions(["Pos_x", "Pos_y", "Couleur"], dbOptions);
         if (parseFloat(dbOptions.Pos_x) !== 0) {
           console.error(
-            `Step ${stepNumber}: Pos_x !== 0, this is not supported`
+            `Step ${stepNumber}: Pos_x !== 0, this is not supported`,
           );
         }
         if (parseFloat(dbOptions.Pos_y) !== 0) {
           console.error(
-            `Step ${stepNumber}: Pos_y !== 0, this is not supported`
+            `Step ${stepNumber}: Pos_y !== 0, this is not supported`,
           );
         }
         return {
@@ -97,7 +97,7 @@ export default () => {
             "Couleur_fin",
             "Sens",
           ],
-          dbOptions
+          dbOptions,
         );
         return {
           component: targetComponent,
@@ -121,12 +121,12 @@ export default () => {
             "Compression_x",
             "Compression_y",
           ],
-          dbOptions
+          dbOptions,
         );
         try {
           const elementPath = `${country}/elements/${resolveIssueNumberTemplate(
             dbOptions.Source,
-            issuenumber
+            issuenumber,
           )}`;
 
           const image = calculateBase64
@@ -137,7 +137,7 @@ export default () => {
                     query: {
                       targetUrl: elementPath,
                     },
-                  })
+                  }),
                 )
               ).data
             : { dimensions: await getImageSize(`/edges/${elementPath}`) };
@@ -189,7 +189,7 @@ export default () => {
             "Pos_y_fin",
             "Couleur",
           ],
-          dbOptions
+          dbOptions,
         );
         const xStart = parseFloat(dbOptions.Pos_x_debut);
         const yStart = parseFloat(dbOptions.Pos_y_debut);
@@ -229,7 +229,7 @@ export default () => {
             "Compression_x",
             "Compression_y",
           ],
-          dbOptions
+          dbOptions,
         );
         let legacyRotation = Math.round(parseFloat(dbOptions.Rotation));
         if (legacyRotation < 0) {

@@ -75,7 +75,7 @@ export const post = async (
               designers,
               photographers,
             },
-          })
+          }),
         )
       ).data;
       try {
@@ -104,7 +104,7 @@ export const post = async (
               publicationcode,
               issuenumber,
             },
-          })
+          }),
         );
       } catch (error) {
         res.writeHead(500);

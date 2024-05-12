@@ -21,7 +21,7 @@ watch(
           !userPermissions.value?.some(
             ({ privilege, role }) =>
               role === "EdgeCreator" &&
-              ["Edition", "Admin"].includes(privilege as string)
+              ["Edition", "Admin"].includes(privilege as string),
           )
         ) {
           location.replace("/");
@@ -31,11 +31,11 @@ watch(
       location.replace(
         `${import.meta.env.VITE_DM_URL as string}/login?redirect=${
           window.location.href
-        }`
+        }`,
       );
     }
   },
-  { immediate: true }
+  { immediate: true },
 );
 </script>
 

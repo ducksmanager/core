@@ -35,9 +35,9 @@ export const get = async (
       `tags=${font} AND ${Object.keys(context)
         .reduce<string[]>(
           (acc, key) => [...acc, `context.${key}="${String(context[key])}"`],
-          []
+          [],
         )
-        .join(" AND ")}`
+        .join(" AND ")}`,
     )
     .execute()
     .then(
@@ -61,7 +61,7 @@ export const get = async (
               res.status(500).send({ error: response.message });
             });
         }
-      }
+      },
     )
     .catch((e) => {
       console.error(e);
@@ -79,7 +79,7 @@ const generateImage = (parameters: {
     .get(
       parameters.font.includes("/")
         ? process.env.FONT_BASE_URL!
-        : `${process.env.FONT_PRODUCT_BASE_URL!}${parameters.font}`
+        : `${process.env.FONT_PRODUCT_BASE_URL!}${parameters.font}`,
     )
     .then(({ data }: { data: string }) => {
       const sessionHashMatch = data.match(/(?<=font_rend.php\?id=)[a-z\d]+/);
@@ -89,7 +89,7 @@ const generateImage = (parameters: {
         throw new Error(
           `No session ID found in URL ${process.env.FONT_BASE_URL!}${
             parameters.font
-          }`
+          }`,
         );
       }
     })
@@ -114,6 +114,6 @@ const generateImage = (parameters: {
           }
           const { width, height, secure_url: url } = result!;
           return { width, height, url };
-        }
-      )
+        },
+      ),
     );

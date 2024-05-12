@@ -30,19 +30,19 @@ const { getOptionsFromDb } = useLegacyDb();
 export default () => {
   const loadDimensionsFromSvg = (
     issuenumber: string,
-    svgElement: SVGElement
+    svgElement: SVGElement,
   ) => {
     stepStore.setDimensions(
       {
         width: parseInt(svgElement.getAttribute("width")!) / 1.5,
         height: parseInt(svgElement.getAttribute("height")!) / 1.5,
       },
-      { issuenumbers: [issuenumber] }
+      { issuenumbers: [issuenumber] },
     );
   };
   const loadStepsFromSvg = (
     issuenumber: string,
-    svgChildNodes: SVGElement[]
+    svgChildNodes: SVGElement[],
   ) => {
     svgChildNodes
       .filter(({ nodeName }) => nodeName === "g")
@@ -55,21 +55,21 @@ export default () => {
             },
             ...optionObjectToArray(
               JSON.parse(
-                group.getElementsByTagName("metadata")[0].textContent!
-              ) as Record<string, OptionValue>
+                group.getElementsByTagName("metadata")[0].textContent!,
+              ) as Record<string, OptionValue>,
             ),
           ],
           {
             stepNumber,
             issuenumbers: [issuenumber],
-          }
+          },
         );
       });
   };
 
   const setPhotoUrlsFromSvg = (
     issuenumber: string,
-    svgChildNodes: SVGElement[]
+    svgChildNodes: SVGElement[],
   ) => {
     for (const photoUrl of getSvgMetadata(svgChildNodes, "photo")) {
       mainStore.photoUrls[issuenumber] = photoUrl;
@@ -78,12 +78,12 @@ export default () => {
 
   const setContributorsFromSvg = (
     issuenumber: string,
-    svgChildNodes: SVGElement[]
+    svgChildNodes: SVGElement[],
   ) => {
     for (const contributionType of ["photographer", "designer"]) {
       for (const username of getSvgMetadata(
         svgChildNodes,
-        `contributor-${contributionType}`
+        `contributor-${contributionType}`,
       )) {
         mainStore.addContributor({
           issuenumber,
@@ -105,12 +105,12 @@ export default () => {
         functionName: string;
         options: StepOptions;
       }
-    >
+    >,
   ) => {
     const defaultDimensions: EdgeDimensions = { width: 15, height: 200 };
     const dimensions = Object.values(stepData).find(
       ({ stepNumber: originalStepNumber, issuenumber: currentIssuenumber }) =>
-        issuenumber === currentIssuenumber && originalStepNumber === -1
+        issuenumber === currentIssuenumber && originalStepNumber === -1,
     )?.options;
 
     const dimensionsToLoad = {
@@ -135,7 +135,7 @@ export default () => {
       }
     >,
     calculateBase64: boolean,
-    onError: (error: string, stepNumber: number) => void
+    onError: (error: string, stepNumber: number) => void,
   ): Promise<OptionNameAndValue[][]> => {
     const dimensions = stepStore.getFilteredDimensions({
       issuenumbers: [issuenumber],
@@ -150,10 +150,10 @@ export default () => {
       functionName: originalComponentName,
       options: originalOptions,
     } of Object.values(apiSteps).filter(
-      ({ stepNumber: originalStepNumber }) => originalStepNumber !== -1
+      ({ stepNumber: originalStepNumber }) => originalStepNumber !== -1,
     )) {
       const { component } = rendersStore.supportedRenders.find(
-        (component) => component.originalName === originalComponentName
+        (component) => component.originalName === originalComponentName,
       ) ?? { component: null };
       if (component) {
         try {
@@ -168,26 +168,26 @@ export default () => {
                   options: originalOptions,
                 } as LegacyComponent,
                 dimensions[0],
-                calculateBase64
-              )
+                calculateBase64,
+              ),
             ),
             {
               issuenumbers: [issuenumber],
               stepNumber: stepNumber++,
-            }
+            },
           );
         } catch (e) {
           onError(
             `Invalid step ${originalStepNumber} (${component}) : ${
               e as string
             }, step will be ignored.`,
-            originalStepNumber
+            originalStepNumber,
           );
         }
       } else {
         onError(
           `Unrecognized step name : ${originalComponentName}, step will be ignored.`,
-          originalStepNumber
+          originalStepNumber,
         );
       }
     }
@@ -195,7 +195,7 @@ export default () => {
   };
   const setContributorsFromApi = async (
     issuenumber: string,
-    edgeId: number
+    edgeId: number,
   ) => {
     const contributors = (
       await call(
@@ -204,7 +204,7 @@ export default () => {
           params: {
             modelId: String(edgeId),
           },
-        })
+        }),
       )
     ).data;
     for (const { contribution, userId } of contributors) {
@@ -220,7 +220,7 @@ export default () => {
     countrycode: string,
     magazinecode: string,
     issuenumber: string,
-    targetIssuenumber: string
+    targetIssuenumber: string,
   ) => {
     const onlyLoadStepsAndDimensions = issuenumber !== targetIssuenumber;
 
@@ -230,7 +230,7 @@ export default () => {
         magazinecode,
         issuenumber,
         new Date().toISOString(),
-        publishedVersion
+        publishedVersion,
       );
 
       loadDimensionsFromSvg(issuenumber, svgElement);
@@ -258,8 +258,8 @@ export default () => {
                   magazinecode,
                   issuenumber,
                 },
-              }
-            )
+              },
+            ),
           )
         ).data;
         await edgeCatalogStore.getPublishedEdgesSteps({
@@ -274,7 +274,7 @@ export default () => {
           issuenumber,
           apiSteps,
           true,
-          (error: string) => mainStore.addWarning(error)
+          (error: string) => mainStore.addWarning(error),
         );
 
         if (!onlyLoadStepsAndDimensions) {
@@ -296,7 +296,7 @@ export default () => {
           params: {
             modelId: String(edgeId),
           },
-        })
+        }),
       )
     ).data;
     mainStore.photoUrls[issuenumber] = photo.fileName;

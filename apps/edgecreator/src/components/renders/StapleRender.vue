@@ -54,7 +54,7 @@ const dimensions = computed(
   () =>
     step().getFilteredDimensions({
       issuenumbers: [props.issuenumber],
-    })[0]
+    })[0],
 );
 
 const onmove = ({
@@ -71,9 +71,9 @@ const onmove = ({
     Math.max(
       stapleHeight,
       (props.options.yDistanceFromCenter ?? 0) +
-        ((isStaple2 ? 1 : -1) * dy) / ui().zoom
+        ((isStaple2 ? 1 : -1) * dy) / ui().zoom,
     ),
-    height.value / 2 - stapleHeight * 2
+    height.value / 2 - stapleHeight * 2,
   );
   step().setOptionValues({
     yDistanceFromCenter,
@@ -105,6 +105,6 @@ onMounted(() => {
 const { enableDragResize, height, attributes } = useStepOptions(
   props,
   "Staple",
-  ["height"]
+  ["height"],
 );
 </script>

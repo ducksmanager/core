@@ -40,7 +40,7 @@
         getImagePath(
           `medals/${contribution}_${level}_${
             xSmall ? 'fond' : currentLocaleShortKey
-          }.png`
+          }.png`,
         )
       "
     />
@@ -86,7 +86,7 @@ const {
 
 const medalColors = ["bronze", "argent", "or"];
 const level = computed(() =>
-  nextLevel ? currentLevel.value + 1 : currentLevel.value
+  nextLevel ? currentLevel.value + 1 : currentLevel.value,
 );
 const medalTitle = computed(() => {
   switch (contribution) {

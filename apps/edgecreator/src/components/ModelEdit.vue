@@ -27,8 +27,8 @@
             {{
               $t(
                 rendersStore.supportedRenders.find(
-                  (render) => render.component === components[stepNumber]
-                )?.labelL10nKey || ""
+                  (render) => render.component === components[stepNumber],
+                )?.labelL10nKey || "",
               )
             }}
           </span>
@@ -43,7 +43,7 @@
               @click.stop="
                 stepStore.setOptionValues(
                   { visible: true },
-                  { stepNumber, issuenumbers: mainStore.issuenumbers }
+                  { stepNumber, issuenumbers: mainStore.issuenumbers },
                 )
               "
             />
@@ -53,7 +53,7 @@
               @click.stop="
                 stepStore.setOptionValues(
                   { visible: false },
-                  { stepNumber, issuenumbers: mainStore.issuenumbers }
+                  { stepNumber, issuenumbers: mainStore.issuenumbers },
                 )
               "
             />
@@ -86,7 +86,7 @@
                 ><b-alert variant="info" :model-value="true"
                   >{{
                     $t(
-                      "You can use special text parts to make your text dynamic :"
+                      "You can use special text parts to make your text dynamic :",
                     )
                   }}
                   <ul>
@@ -174,7 +174,7 @@
               $t(
                 editingStepStore.issuenumbers.length === 1
                   ? "Fill the edge with this image"
-                  : "Split this image to fit all selected edges"
+                  : "Split this image to fit all selected edges",
               )
             }}
           </b-button>
@@ -220,7 +220,7 @@
             :option-name="optionName"
             :label="
               $t(
-                optionName === 'colorStart' ? 'Start color' : 'End color'
+                optionName === 'colorStart' ? 'Start color' : 'End color',
               ).toString()
             "
           />
@@ -284,7 +284,7 @@ const inputValues = computed(
   (): Record<number, Record<string, PossibleInputValueType[]>> =>
     stepStore.options
       .filter(({ issuenumber }) =>
-        editingStepStore.issuenumbers.includes(issuenumber)
+        editingStepStore.issuenumbers.includes(issuenumber),
       )
       .reduce<Record<number, Record<string, PossibleInputValueType[]>>>(
         (acc, { stepNumber, optionName, optionValue }) => {
@@ -303,24 +303,24 @@ const inputValues = computed(
             },
           };
         },
-        {}
-      )
+        {},
+      ),
 );
 
 const stepNumbers = computed(() =>
-  Object.keys(inputValues.value).map((stepNumber) => parseInt(stepNumber))
+  Object.keys(inputValues.value).map((stepNumber) => parseInt(stepNumber)),
 );
 
 const fontSearchUrl = computed(
-  () => import.meta.env.VITE_FONT_SEARCH_URL as string
+  () => import.meta.env.VITE_FONT_SEARCH_URL as string,
 );
 
 type PossibleInputValueType = string | number | boolean;
 
 const components = computed(() =>
   Object.values(inputValues.value).map(
-    (stepOptions) => stepOptions.component[0] as string
-  )
+    (stepOptions) => stepOptions.component[0] as string,
+  ),
 );
 
 const otherColors = computed(() =>
@@ -328,13 +328,13 @@ const otherColors = computed(() =>
     sameIssuenumber: stepStore.colors.filter(
       ({ issuenumber: thisIssuenumber, stepNumber: thisStepNumber }) =>
         issueNumbers.value.includes(thisIssuenumber) &&
-        thisStepNumber !== currentStepNumber
+        thisStepNumber !== currentStepNumber,
     ),
     differentIssuenumber: stepStore.colors.filter(
       ({ issuenumber: thisIssuenumber }) =>
-        !issueNumbers.value.includes(thisIssuenumber)
+        !issueNumbers.value.includes(thisIssuenumber),
     ),
-  }))
+  })),
 );
 
 const ucFirst = (text: string) =>
@@ -357,7 +357,7 @@ const resetPositionAndSize = (stepNumber: number) => {
       {
         issuenumbers: [issuenumber],
         stepNumber,
-      }
+      },
     );
   }
 };
@@ -370,7 +370,7 @@ const splitImageAcrossEdges = () => {
       stepStore.getFilteredDimensions({
         issuenumbers: [issuenumber],
       })[0]!.width,
-    0
+    0,
   );
   for (const issuenumber of editingStepStore.issuenumbers) {
     const issueDimensions = stepStore.getFilteredDimensions({
@@ -383,7 +383,7 @@ const splitImageAcrossEdges = () => {
         width: widthSum,
         height: issueDimensions.height,
       },
-      { issuenumbers: [issuenumber] }
+      { issuenumbers: [issuenumber] },
     );
     leftOffset -= issueDimensions.width;
   }

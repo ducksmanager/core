@@ -98,26 +98,26 @@ const props = withDefaults(
     photoUrl?: string | null;
     contributors: Omit<ModelContributor, "issuenumber">[];
   }>(),
-  { photoUrl: null }
+  { photoUrl: null },
 );
 
 const photographers = computed(() =>
   props.contributors.filter(
-    (contributor) => contributor.contributionType === "photographe"
-  )
+    (contributor) => contributor.contributionType === "photographe",
+  ),
 );
 const designers = computed(() =>
   props.contributors.filter(
-    (contributor) => contributor.contributionType === "createur"
-  )
+    (contributor) => contributor.contributionType === "createur",
+  ),
 );
 
 const stepComponents = computed(() =>
-  props.steps.filter(({ optionName }) => optionName === "component")
+  props.steps.filter(({ optionName }) => optionName === "component"),
 );
 
 const stepComponentNames = computed(() =>
-  stepComponents.value.map(({ optionValue }) => optionValue as string)
+  stepComponents.value.map(({ optionValue }) => optionValue as string),
 );
 
 const visibleSteps = computed(() =>
@@ -125,16 +125,16 @@ const visibleSteps = computed(() =>
     ({ stepNumber }) =>
       !getStepOptions(stepNumber).some(
         ({ optionName, optionValue }) =>
-          optionName === "visible" && optionValue === false
-      )
-  )
+          optionName === "visible" && optionValue === false,
+      ),
+  ),
 );
 
 const getStepOptions = (stepNumber: number, withComponentOption = true) =>
   props.steps.filter(
     ({ stepNumber: thisStepNumber, optionName }) =>
       stepNumber === thisStepNumber &&
-      (withComponentOption || optionName !== "component")
+      (withComponentOption || optionName !== "component"),
   );
 
 const toKeyValue = (arr: OptionNameAndValue[]) => {
@@ -143,7 +143,7 @@ const toKeyValue = (arr: OptionNameAndValue[]) => {
       ...acc,
       [optionName]: optionValue,
     }),
-    {}
+    {},
   );
   return Object.keys(val).length ? val : undefined;
 };
@@ -163,7 +163,7 @@ const height = computed(() => props.dimensions.height);
 const setPosition = ({ clientX: left, clientY: top }: MouseEvent) => {
   const { left: svgLeft, top: svgTop } = canvas.value!.getBoundingClientRect();
   uiStore.positionInCanvas = [left - svgLeft, top - svgTop].map(
-    (value) => value / zoom.value
+    (value) => value / zoom.value,
   ) as [number, number];
 };
 const replaceEditingIssuenumberIfNotAlreadyEditing = (issuenumber: string) => {
@@ -173,14 +173,14 @@ const replaceEditingIssuenumberIfNotAlreadyEditing = (issuenumber: string) => {
 };
 const renderComponents: Record<string, unknown> = {
   ArcCircle: defineAsyncComponent(
-    () => import("./renders/ArcCircleRender.vue")
+    () => import("./renders/ArcCircleRender.vue"),
   ),
   Fill: defineAsyncComponent(() => import("./renders/FillRender.vue")),
   Gradient: defineAsyncComponent(() => import("./renders/GradientRender.vue")),
   Image: defineAsyncComponent(() => import("./renders/ImageRender.vue")),
   Polygon: defineAsyncComponent(() => import("./renders/PolygonRender.vue")),
   Rectangle: defineAsyncComponent(
-    () => import("./renders/RectangleRender.vue")
+    () => import("./renders/RectangleRender.vue"),
   ),
   Staple: defineAsyncComponent(() => import("./renders/StapleRender.vue")),
   Text: defineAsyncComponent(() => import("./renders/TextRender.vue")),

@@ -58,7 +58,10 @@ export const edgeCatalog = defineStore("edgeCatalog", () => {
   const isCatalogLoaded = ref(false as boolean),
     currentEdges = ref({} as Record<string, EdgeWithVersionAndStatus>),
     publishedEdges = ref(
-      {} as Record<string, Record<string, { issuenumber: string; v3: boolean }>>
+      {} as Record<
+        string,
+        Record<string, { issuenumber: string; v3: boolean }>
+      >,
     ),
     publishedEdgesSteps = ref({} as Record<string, ModelSteps>),
     edgesByStatus = computed(() => {
@@ -70,7 +73,7 @@ export const edgeCatalog = defineStore("edgeCatalog", () => {
           ...acc,
           [status]: {},
         }),
-        {}
+        {},
       );
       return Object.values(currentEdges.value).reduce(
         (acc: typeof currentEdgesByStatus, edge) => {
@@ -81,7 +84,7 @@ export const edgeCatalog = defineStore("edgeCatalog", () => {
           acc[edge.status!][publicationcode].push(edge);
           return acc;
         },
-        currentEdgesByStatus
+        currentEdgesByStatus,
       );
     }),
     fetchPublishedEdges = async (publicationcode: string) => {
@@ -92,7 +95,7 @@ export const edgeCatalog = defineStore("edgeCatalog", () => {
             api().dmApi,
             new GET__edges__$countrycode__$magazinecode__$issuenumbers({
               params: { countrycode, magazinecode, issuenumbers: "_" },
-            })
+            }),
           )
         ).data,
       });
@@ -104,7 +107,7 @@ export const edgeCatalog = defineStore("edgeCatalog", () => {
       newPublishedEdges: Record<
         string,
         Record<string, { issuenumber: string; v3: boolean }>
-      >
+      >,
     ) => {
       for (const publicationcode of Object.keys(newPublishedEdges)) {
         const publicationEdgesForPublication =
@@ -160,7 +163,7 @@ export const edgeCatalog = defineStore("edgeCatalog", () => {
                 api().dmApi,
                 new GET__edgecreator__model__$modelIds__steps({
                   params: { modelIds: chunk },
-                })
+                }),
               ),
             valuesToChunk: newModelIds.map((modelId) => String(modelId)),
             chunkSize: 10,
@@ -169,7 +172,7 @@ export const edgeCatalog = defineStore("edgeCatalog", () => {
     },
     getEdgeFromApi = (
       { country, magazine, issuenumber, contributors, photos }: EdgeModel,
-      status: string
+      status: string,
     ) => {
       const issuecode = `${country}/${magazine} ${issuenumber}`;
       const getContributorsOfType = (contributionType: string) =>
@@ -178,7 +181,7 @@ export const edgeCatalog = defineStore("edgeCatalog", () => {
           .map(
             ({ userId }) =>
               users().allUsers!.find(({ id }) => id === userId)!
-                .username as string
+                .username as string,
           );
       const photo = photos?.find(({ isMainPhoto }) => isMainPhoto);
       return {
@@ -202,7 +205,7 @@ export const edgeCatalog = defineStore("edgeCatalog", () => {
           (svgCheckFn(edge, collection().user!.username as string)
             ? status
             : null),
-        null
+        null,
       ),
     }),
     canEditEdge = (status: string) =>
@@ -255,7 +258,7 @@ export const edgeCatalog = defineStore("edgeCatalog", () => {
           edgeStatus as "current" | "published"
         ]) {
           const [, country, magazine, issuenumber] = filename.match(
-            /([^/]+)\/gen\/_?([^.]+)\.(.+).svg$/
+            /([^/]+)\/gen\/_?([^.]+)\.(.+).svg$/,
           )!;
           // if ([country, magazine, issuenumber].includes(undefined)) {
           //   console.error(`Invalid SVG file name : ${fileName}`);
@@ -277,15 +280,15 @@ export const edgeCatalog = defineStore("edgeCatalog", () => {
                 magazine,
                 issuenumber,
                 mtime,
-                edgeStatus === "published"
+                edgeStatus === "published",
               ).then(({ country, magazine, issuenumber, svgChildNodes }) => {
                 const designers = getSvgMetadata(
                   svgChildNodes,
-                  "contributor-designer"
+                  "contributor-designer",
                 );
                 const photographers = getSvgMetadata(
                   svgChildNodes,
-                  "contributor-photographer"
+                  "contributor-photographer",
                 );
 
                 const publicationcode = `${country}/${magazine}`;
@@ -310,7 +313,7 @@ export const edgeCatalog = defineStore("edgeCatalog", () => {
             }
           } catch (e) {
             console.error(
-              `No SVG found : ${country}/${magazine} ${issuenumber}`
+              `No SVG found : ${country}/${magazine} ${issuenumber}`,
             );
           }
         }
@@ -320,14 +323,14 @@ export const edgeCatalog = defineStore("edgeCatalog", () => {
         await coa().fetchPublicationNames([
           ...new Set(
             Object.values(newCurrentEdges).map(
-              ({ country, magazine }) => `${country}/${magazine}`
-            )
+              ({ country, magazine }) => `${country}/${magazine}`,
+            ),
           ),
         ]);
 
         for (const edgeIssueCode of Object.keys(newCurrentEdges)) {
           newCurrentEdges[edgeIssueCode].published = getEdgeStatus(
-            newCurrentEdges[edgeIssueCode]
+            newCurrentEdges[edgeIssueCode],
           );
         }
 

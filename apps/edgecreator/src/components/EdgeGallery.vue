@@ -43,7 +43,7 @@ const props = withDefaults(
     hasMoreBefore?: boolean;
     hasMoreAfter?: boolean;
   }>(),
-  { selected: null, hasMoreBefore: false, hasMoreAfter: false }
+  { selected: null, hasMoreBefore: false, hasMoreAfter: false },
 );
 
 const emit = defineEmits<{
@@ -59,7 +59,7 @@ const issueNumbers = computed(() => coa().issueNumbers);
 
 const populateItems = async (
   publicationcode: string,
-  itemsForPublication: Record<string, { modelId?: number; v3: boolean }>
+  itemsForPublication: Record<string, { modelId?: number; v3: boolean }>,
 ) => {
   const [countryCode, magazineCode] = publicationcode.split("/");
   const publishedIssueModels = Object.values(itemsForPublication)
@@ -106,9 +106,9 @@ const populateItems = async (
                   issueStepWarnings[stepNumber] = [];
                 }
                 issueStepWarnings[stepNumber].push(
-                  `Step ${stepNumber}: ${error}`
+                  `Step ${stepNumber}: ${error}`,
                 );
-              }
+              },
             );
           } catch (e) {
             issueStepWarnings[-1] = [e as string];
@@ -122,7 +122,7 @@ const populateItems = async (
           } else {
             quality = Math.max(
               0,
-              1 - Object.keys(issueStepWarnings).length / issueSteps.length
+              1 - Object.keys(issueStepWarnings).length / issueSteps.length,
             );
           }
           tooltip = Object.values(issueStepWarnings).join("\n");
@@ -134,13 +134,13 @@ const populateItems = async (
           tooltip,
           url,
         };
-      })
+      }),
     )
   ).sort(({ name: name1 }, { name: name2 }) =>
     Math.sign(
       issueNumbers.value[props.publicationcode].indexOf(name1) -
-        issueNumbers.value[props.publicationcode].indexOf(name2)
-    )
+        issueNumbers.value[props.publicationcode].indexOf(name2),
+    ),
   );
 };
 
@@ -150,7 +150,7 @@ const onPublicationOrEdgeChange = async () => {
       isPopulating.value = true;
       await populateItems(
         props.publicationcode,
-        publishedEdges.value[props.publicationcode]
+        publishedEdges.value[props.publicationcode],
       );
       isPopulating.value = false;
     }
