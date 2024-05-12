@@ -1,26 +1,26 @@
 import dayjs from "dayjs";
-import { Namespace, Server } from "socket.io";
+import type { Namespace, Server } from "socket.io";
 
 import { prismaDm } from "~/prisma";
-import {
+import type {
   AbstractEvent,
   AbstractEventRaw,
 } from "~dm-types/events/AbstractEvent";
-import { BookstoreCommentEvent } from "~dm-types/events/BookstoreCommentEvent";
-import {
+import type { BookstoreCommentEvent } from "~dm-types/events/BookstoreCommentEvent";
+import type {
   CollectionSubscriptionAdditionEvent,
   CollectionSubscriptionAdditionEventRaw,
 } from "~dm-types/events/CollectionSubscriptionAdditionEvent";
-import {
+import type {
   CollectionUpdateEvent,
   CollectionUpdateEventRaw,
 } from "~dm-types/events/CollectionUpdateEvent";
-import {
+import type {
   EdgeCreationEvent,
   EdgeCreationEventRaw,
 } from "~dm-types/events/EdgeCreationEvent";
-import { MedalEvent } from "~dm-types/events/MedalEvent";
-import { SignupEvent } from "~dm-types/events/SignupEvent";
+import type { MedalEvent } from "~dm-types/events/MedalEvent";
+import type { SignupEvent } from "~dm-types/events/SignupEvent";
 
 import Events from "./types";
 

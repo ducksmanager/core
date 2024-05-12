@@ -1,19 +1,19 @@
-import { Socket } from "socket.io";
+import type { Socket } from "socket.io";
 
 import { prismaCoa } from "~/prisma";
 import { Prisma } from "~prisma-clients/client_coa";
 
-import Events from "../types";
+import type Events from "../types";
 
 export default (socket: Socket<Events>) => {
   socket.on("getCountryList", (locale, countryCodes, callback) =>
-    getCountryNames(locale, countryCodes).then(callback)
+    getCountryNames(locale, countryCodes).then(callback),
   );
 };
 
 const getCountryNames = async (
   locale: string,
-  countryIds?: string[]
+  countryIds?: string[],
 ): Promise<Record<string, string>> =>
   prismaCoa
     .$queryRawUnsafe<
@@ -34,7 +34,7 @@ const getCountryNames = async (
           countryIds?.length
             ? `inducks_country.countrycode IN (${Prisma.join(countryIds)})`
             : `inducks_country.countrycode != 'zz'`
-        }`
+        }`,
     )
     .then((results) =>
       results.reduce(
@@ -42,6 +42,6 @@ const getCountryNames = async (
           ...acc,
           [value.countrycode]: value.countryname || value.default_countryname,
         }),
-        {}
-      )
+        {},
+      ),
     );

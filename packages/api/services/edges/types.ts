@@ -1,6 +1,6 @@
-import { EdgeWithModelId } from "~dm-types/EdgeWithModelId";
-import { WantedEdge } from "~dm-types/WantedEdge";
-import { edge } from "~prisma-clients/client_dm";
+import type { EdgeWithModelId } from "~dm-types/EdgeWithModelId";
+import type { WantedEdge } from "~dm-types/WantedEdge";
+import type { edge } from "~prisma-clients/client_dm";
 
 export default abstract class {
   static namespaceEndpoint = "/edges";

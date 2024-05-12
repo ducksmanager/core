@@ -16,7 +16,8 @@
     "@typescript-eslint/no-non-null-assertion": "off",
     "simple-import-sort/exports": "error",
     "simple-import-sort/imports": "error",
-    "unused-imports/no-unused-imports": "error"
+    "unused-imports/no-unused-imports": "error",
+    "@typescript-eslint/consistent-type-imports": "error"
   },
   "plugins": ["simple-import-sort", "@typescript-eslint", "unused-imports"],
   "ignorePatterns": ["**/node_modules", "**/dist"]

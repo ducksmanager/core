@@ -1,7 +1,7 @@
-import { Namespace, Server } from "socket.io";
+import type { Namespace, Server } from "socket.io";
 
-import { BookcaseContributor } from "~dm-types/BookcaseContributor";
-import { QuickStatsPerUser } from "~dm-types/QuickStatsPerUser";
+import type { BookcaseContributor } from "~dm-types/BookcaseContributor";
+import type { QuickStatsPerUser } from "~dm-types/QuickStatsPerUser";
 import { Prisma } from "~prisma-clients/client_dm";
 import prismaDm from "~prisma-clients/extended/dm.extends";
 

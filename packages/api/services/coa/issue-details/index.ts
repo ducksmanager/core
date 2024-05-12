@@ -1,14 +1,14 @@
-import { Socket } from "socket.io";
+import type { Socket } from "socket.io";
 
 import { prismaCoa, prismaCoverInfo } from "~/prisma";
-import { IssueCoverDetails } from "~dm-types/IssueCoverDetails";
-import { SimpleEntry } from "~dm-types/SimpleEntry";
-import { SimpleIssueWithPublication } from "~dm-types/SimpleIssueWithPublication";
+import type { IssueCoverDetails } from "~dm-types/IssueCoverDetails";
+import type { SimpleEntry } from "~dm-types/SimpleEntry";
+import type { SimpleIssueWithPublication } from "~dm-types/SimpleIssueWithPublication";
 import { Prisma as PrismaCoa } from "~prisma-clients/client_coa";
-import { cover } from "~prisma-clients/client_cover_info";
+import type { cover } from "~prisma-clients/client_cover_info";
 import prismaDm from "~prisma-clients/extended/dm.extends";
 
-import Events from "../types";
+import type Events from "../types";
 
 export default (socket: Socket<Events>) => {
   socket.on("getIssuesWithTitles", async (publicationcodes, callback) =>

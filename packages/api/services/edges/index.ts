@@ -1,10 +1,10 @@
-import { Namespace, Server } from "socket.io";
+import type { Namespace, Server } from "socket.io";
 
 import { prismaDm } from "~/prisma";
 import { prismaEdgeCreator } from "~/prisma";
-import { EdgeWithModelId } from "~dm-types/EdgeWithModelId";
-import { WantedEdge } from "~dm-types/WantedEdge";
-import { edgeModel } from "~prisma-clients/client_edgecreator";
+import type { EdgeWithModelId } from "~dm-types/EdgeWithModelId";
+import type { WantedEdge } from "~dm-types/WantedEdge";
+import type { edgeModel } from "~prisma-clients/client_edgecreator";
 
 import Events from "./types";
 

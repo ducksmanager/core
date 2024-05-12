@@ -1,9 +1,9 @@
-import { Socket } from "socket.io";
+import type { Socket } from "socket.io";
 
-import { EditSubscription } from "~dm-types/EditSubscription";
+import type { EditSubscription } from "~dm-types/EditSubscription";
 import prismaDm from "~prisma-clients/extended/dm.extends";
 
-import Events from "../types";
+import type Events from "../types";
 export default (socket: Socket<Events>) => {
   socket.on("getSubscriptions", (callback) =>
     prismaDm.subscription
@@ -20,9 +20,9 @@ export default (socket: Socket<Events>) => {
             ...subscription,
             startDate: subscription.startDate.toISOString(),
             endDate: subscription.endDate.toISOString(),
-          }))
-        )
-      )
+          })),
+        ),
+      ),
   );
 
   socket.on("createSubscription", async (subscription, callback) => {
@@ -51,7 +51,7 @@ export default (socket: Socket<Events>) => {
 export async function upsertSubscription(
   id: number | null,
   subscription: EditSubscription,
-  userId: number
+  userId: number,
 ) {
   const publicationCodeParts = subscription.publicationcode!.split("/");
 

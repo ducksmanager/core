@@ -1,9 +1,9 @@
-import { Socket } from "socket.io";
+import type { Socket } from "socket.io";
 
 import { prismaDm } from "~/prisma";
 
 import { getUserPurchase } from "../issues/util";
-import Events from "../types";
+import type Events from "../types";
 
 export default (socket: Socket<Events>) => {
   socket.on("getPurchases", (callback) =>
@@ -21,9 +21,9 @@ export default (socket: Socket<Events>) => {
           data.map((purchase) => ({
             ...purchase,
             date: purchase.date.toISOString().split("T")[0],
-          }))
-        )
-      )
+          })),
+        ),
+      ),
   );
 
   socket.on("createPurchase", async (date, description, callback) => {

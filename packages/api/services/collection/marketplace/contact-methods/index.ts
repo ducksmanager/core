@@ -1,9 +1,9 @@
-import { Socket } from "socket.io";
+import type { Socket } from "socket.io";
 
 import { prismaDm } from "~/prisma";
 import { userOptionType } from "~prisma-clients/client_dm";
 
-import Events from "../../types";
+import type Events from "../../types";
 import { getIssuesForSale } from "..";
 
 export default (socket: Socket<Events>) => {

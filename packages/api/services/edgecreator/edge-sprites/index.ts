@@ -1,10 +1,10 @@
 import { v2 as cloudinaryV2 } from "cloudinary";
-import { Socket } from "socket.io";
+import type { Socket } from "socket.io";
 
 import { prismaDm } from "~/prisma";
-import { edge } from "~prisma-clients/client_dm";
+import type { edge } from "~prisma-clients/client_dm";
 
-import Events from "../types";
+import type Events from "../types";
 const SPRITE_SIZES = [10, 20, 50, 100, "full"];
 const MAX_SPRITE_SIZE = 100;
 
@@ -26,7 +26,7 @@ export default (socket: Socket<Events>) => {
         allCloudinarySlugs = [
           ...allCloudinarySlugs,
           ...results.resources.map(
-            (edge: { public_id: string }) => edge.public_id
+            (edge: { public_id: string }) => edge.public_id,
           ),
         ];
         nextCursor = results.next_cursor;
@@ -48,13 +48,13 @@ export default (socket: Socket<Events>) => {
           edgeNotInCloudinary.publicationcode.split("/");
 
         console.log(
-          `Uploading edge with ID ${edgeNotInCloudinary.id} and slug ${edgeNotInCloudinary.slug}...`
+          `Uploading edge with ID ${edgeNotInCloudinary.id} and slug ${edgeNotInCloudinary.slug}...`,
         );
         await cloudinaryV2.uploader.upload(
           `${process.env.VITE_EDGES_ROOT}${countryCode}/gen/${magazineCode}.${edgeNotInCloudinary.issuenumber}.png`,
           {
             public_id: edgeNotInCloudinary.slug!,
-          }
+          },
         );
       }
       callback();
@@ -78,8 +78,8 @@ export default (socket: Socket<Events>) => {
 
     console.log(
       `Edges without sprites: ${JSON.stringify(
-        edgesWithoutSprites.map(({ slug }) => slug)
-      )}`
+        edgesWithoutSprites.map(({ slug }) => slug),
+      )}`,
     );
 
     await updateTags(edgesWithoutSprites);
@@ -127,7 +127,7 @@ const updateTags = async (edges: edge[]) => {
         publicationcode,
         spriteSize === "full"
           ? "full"
-          : getSpriteRange(edge.issuenumber, spriteSize as number)
+          : getSpriteRange(edge.issuenumber, spriteSize as number),
       );
 
       let actualSpriteSize;
@@ -137,7 +137,7 @@ const updateTags = async (edges: edge[]) => {
         });
         if (actualSpriteSize > MAX_SPRITE_SIZE) {
           console.log(
-            `Not creating a full sprite for publication ${publicationcode} : sprite size is too big (${spriteSize})`
+            `Not creating a full sprite for publication ${publicationcode} : sprite size is too big (${spriteSize})`,
           );
           continue;
         }
@@ -159,7 +159,7 @@ const updateTags = async (edges: edge[]) => {
             spriteName,
             spriteSize: actualSpriteSize,
           },
-        })
+        }),
       );
     }
   }
@@ -173,7 +173,7 @@ const updateTags = async (edges: edge[]) => {
       prismaDm.edgeSprite.updateMany({
         data: { spriteSize },
         where: { spriteName },
-      })
+      }),
     );
   }
   await prismaDm.$transaction(updateOperations);
@@ -181,12 +181,12 @@ const updateTags = async (edges: edge[]) => {
 
 const generateSprites = async () => {
   const spritesWithNoUrl = (
-    (await prismaDm.$queryRaw<{ spriteName: string }[]>`
+    await prismaDm.$queryRaw<{ spriteName: string }[]>`
       select distinct Sprite_name AS spriteName
       from tranches_pretes_sprites
       where Sprite_name not in (select sprite_name from tranches_pretes_sprites_urls)
         and Sprite_size < 100
-    `)
+    `
   ).map(({ spriteName }) => spriteName);
 
   const insertOperations = [];
@@ -200,7 +200,7 @@ const generateSprites = async () => {
             version: String(version),
             spriteName,
           },
-        })
+        }),
       );
     } catch (err: unknown) {
       console.error(err);

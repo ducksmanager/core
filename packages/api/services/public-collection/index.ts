@@ -1,7 +1,7 @@
-import { Namespace, Server } from "socket.io";
+import type { Namespace, Server } from "socket.io";
 
 import { prismaDm } from "~/prisma";
-import { user } from "~prisma-clients/client_dm";
+import type { user } from "~prisma-clients/client_dm";
 
 import Events from "./types";
 

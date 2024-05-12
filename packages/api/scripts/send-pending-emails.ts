@@ -7,10 +7,11 @@ dotenv.config({
 import BookstoreApproved from "~/emails/bookstore-approved";
 import EdgesPublishedWithCreator from "~/emails/edges-published-with-creator";
 import EdgesPublishedWithPhotographer from "~/emails/edges-published-with-photographer";
-import { Email } from "~/emails/email";
+import type { Email } from "~/emails/email";
+import type {
+  userContribution} from "~prisma-clients/client_dm";
 import {
   PrismaClient,
-  userContribution,
   userContributionType,
 } from "~prisma-clients/client_dm";
 const prismaDmClient = new PrismaClient();

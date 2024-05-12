@@ -1,20 +1,20 @@
-import { Socket } from "socket.io";
+import type { Socket } from "socket.io";
 
 import { prismaDm } from "~/prisma";
-import {
+import type {
   bookstoreComment,
   edge,
   user,
   userContribution,
 } from "~prisma-clients/client_dm";
 
-import Events from "../types";
+import type Events from "../types";
 export default (socket: Socket<Events>) => {
   socket.on(
     "publishEdge",
     async (
       { publicationcode, issuenumber, designers, photographers },
-      callback
+      callback,
     ) => {
       if (!isValidPublicationcode(publicationcode)) {
         callback({ error: "Invalid publication code" });
@@ -28,19 +28,19 @@ export default (socket: Socket<Events>) => {
           (userId) => ({
             userId,
             contribution: "createur",
-          })
+          }),
         ),
         ...Object.values(await getUserIdsByUsername(photographers)).map(
           (userId) => ({
             userId,
             contribution: "photographe",
-          })
+          }),
         ),
       ];
       const { edgeId, contributors, isNew } = await publishEdgeOnDm(
         modelContributors,
         publicationcode,
-        issuenumber
+        issuenumber,
       );
 
       callback({
@@ -51,7 +51,7 @@ export default (socket: Socket<Events>) => {
         contributors,
         url: `${process.env.VITE_EDGES_ROOT}/${country}/gen/${magazine}.${issuenumber}.png`,
       });
-    }
+    },
   );
 };
 
@@ -59,7 +59,7 @@ const isValidPublicationcode = (publicationcode: string) =>
   /^[a-z]+\/[-A-Z0-9]+$/.test(publicationcode);
 
 const getUserIdsByUsername = async (
-  usernames: string[]
+  usernames: string[],
 ): Promise<{ [username: string]: number }> =>
   (
     await prismaDm.user.findMany({
@@ -76,7 +76,7 @@ const getUserIdsByUsername = async (
       ...acc,
       [value.username]: value.id,
     }),
-    {}
+    {},
   );
 
 const createContribution = async (
@@ -84,7 +84,7 @@ const createContribution = async (
   contribution: string,
   issuePopularity: number,
   edgeToPublish: edge | null,
-  bookstoreCommentToPublish: bookstoreComment | null = null
+  bookstoreCommentToPublish: bookstoreComment | null = null,
 ) => {
   const currentUserPoints =
     (
@@ -111,7 +111,7 @@ const createContribution = async (
 const publishEdgeOnDm = async (
   contributors: { contribution: string; userId: number }[],
   publicationcode: string,
-  issuenumber: string
+  issuenumber: string,
 ) => {
   const [country, magazine] = publicationcode.split("/");
   let contributions: userContribution[];
@@ -161,7 +161,7 @@ const publishEdgeOnDm = async (
       !contributions.find(
         (existingContribution) =>
           existingContribution.contribution === contribution &&
-          existingContribution.userId === userId
+          existingContribution.userId === userId,
       )
     ) {
       contributions.push(
@@ -169,8 +169,8 @@ const publishEdgeOnDm = async (
           user,
           contribution,
           issuePopularity,
-          edgeToPublish
-        )
+          edgeToPublish,
+        ),
       );
     }
   }

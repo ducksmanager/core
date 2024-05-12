@@ -1,10 +1,12 @@
-import { Socket } from "socket.io";
+import type { Socket } from "socket.io";
 
 import { prismaDm } from "~/prisma";
 import PresentationSentenceRequested from "~emails/presentation-sentence-requested";
 import { generateAccessToken, getHashedPassword } from "~services/auth/util";
 
-import Events from "../types";
+import type Events from "../types";
+import type {
+  Validation} from "./util";
 import {
   DiscordIdValidation,
   EmailCreationValidation,
@@ -17,8 +19,7 @@ import {
   PresentationTextValidation,
   UsernameCreationValidation,
   UsernameValidation,
-  validate,
-  Validation,
+  validate
 } from "./util";
 
 export default (socket: Socket<Events>) => {

@@ -1,5 +1,5 @@
 import { Email, i18n } from "~emails/email";
-import { user } from "~prisma-clients/client_dm";
+import type { user } from "~prisma-clients/client_dm";
 
 type InputData = {
   user: user;

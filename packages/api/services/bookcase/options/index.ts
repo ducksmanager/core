@@ -1,8 +1,8 @@
-import { Socket } from "socket.io";
+import type { Socket } from "socket.io";
 
 import { prismaDm } from "~/prisma";
 
-import Events from "../types";
+import type Events from "../types";
 import { checkValidBookcaseUser } from "../util";
 export default (socket: Socket<Events>) => {
   socket.on("getBookcaseOptions", async (username, callback) => {
@@ -42,6 +42,6 @@ export const authenticated = (socket: Socket) => {
       });
 
       callback("OK");
-    }
+    },
   );
 };

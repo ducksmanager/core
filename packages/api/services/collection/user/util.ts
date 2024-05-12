@@ -1,5 +1,5 @@
 import { prismaDm } from "~/prisma";
-import { user } from "~prisma-clients/client_dm";
+import type { user } from "~prisma-clients/client_dm";
 import { getHashedPassword, isValidEmail } from "~services/auth/util";
 
 interface ScopedError<ErrorKey extends string = string> {

@@ -1,8 +1,8 @@
-import { Socket } from "socket.io";
+import type { Socket } from "socket.io";
 
 import prismaDm from "~prisma-clients/extended/dm.extends";
 
-import Events from "../types";
+import type Events from "../types";
 import { checkValidBookcaseUser } from "../util";
 
 export default (socket: Socket<Events>) => {
@@ -32,10 +32,10 @@ export default (socket: Socket<Events>) => {
 
       const missingPublicationCodesInOrder = userPublicationcodes.filter(
         (publicationcode) =>
-          !userSortedPublicationcodes.includes(publicationcode)
+          !userSortedPublicationcodes.includes(publicationcode),
       );
       const obsoletePublicationCodesInOrder = userSortedPublicationcodes.filter(
-        (publicationcode) => !userPublicationcodes.includes(publicationcode)
+        (publicationcode) => !userPublicationcodes.includes(publicationcode),
       );
 
       const insertOperations = missingPublicationCodesInOrder.map(
@@ -46,7 +46,7 @@ export default (socket: Socket<Events>) => {
               order: ++maxSort,
               userId,
             },
-          })
+          }),
       );
       await prismaDm.$transaction(insertOperations);
 
@@ -54,7 +54,7 @@ export default (socket: Socket<Events>) => {
         (publicationcode) =>
           prismaDm.bookcasePublicationOrder.delete({
             where: { userId_publicationcode: { publicationcode, userId } },
-          })
+          }),
       );
       await prismaDm.$transaction(deleteOperations);
 
@@ -92,7 +92,7 @@ export const authenticated = (socket: Socket) => {
       });
 
       callback("OK");
-    }
+    },
   );
 };
 

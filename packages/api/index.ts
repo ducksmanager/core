@@ -4,7 +4,7 @@ import dotenv from "dotenv";
 import { createServer } from "http";
 import { Server } from "socket.io";
 
-import { SessionUser } from "~dm-types/SessionUser";
+import type { SessionUser } from "~dm-types/SessionUser";
 
 import auth from "./services/auth/index";
 import { OptionalAuthMiddleware } from "./services/auth/util";

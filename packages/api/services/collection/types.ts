@@ -1,12 +1,12 @@
-import {
+import type {
   CollectionUpdateMultipleIssues,
   CollectionUpdateSingleIssue,
 } from "~dm-types/CollectionUpdate";
-import { EdgeWithStringCreationDate } from "~dm-types/EdgeWithStringCreationDate";
-import { EditSubscription } from "~dm-types/EditSubscription";
-import { TransactionResults } from "~dm-types/TransactionResults";
-import { UserForAccountForm } from "~dm-types/UserForAccountForm";
-import {
+import type { EdgeWithStringCreationDate } from "~dm-types/EdgeWithStringCreationDate";
+import type { EditSubscription } from "~dm-types/EditSubscription";
+import type { TransactionResults } from "~dm-types/TransactionResults";
+import type { UserForAccountForm } from "~dm-types/UserForAccountForm";
+import type {
   authorUser,
   issuePopularity,
   purchase,
@@ -15,11 +15,11 @@ import {
   userOptionType,
   userPermission,
 } from "~prisma-clients/client_dm";
-import {
+import type {
   issueWithPublicationcode,
   subscriptionWithPublicationcode,
 } from "~prisma-clients/extended/dm.extends";
-import { Errorable } from "~socket.io-services/types";
+import type { Errorable } from "~socket.io-services/types";
 
 export default abstract class {
   static namespaceEndpoint: string = "/collection";

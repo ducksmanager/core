@@ -1,5 +1,5 @@
 import { prismaDm } from "~/prisma";
-import { SaleState } from "~dm-types/CollectionUpdate";
+import type { SaleState } from "~dm-types/CollectionUpdate";
 
 export const getUserPurchase = async (id: number | null, userId: number) =>
   id === null

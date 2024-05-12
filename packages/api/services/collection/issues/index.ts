@@ -1,14 +1,15 @@
 import { parse } from "csv-parse/sync";
 import { existsSync, readFileSync } from "fs";
 import { cwd } from "process";
-import { Socket } from "socket.io";
+import type { Socket } from "socket.io";
 
 import { prismaCoa } from "~/prisma";
-import { TransactionResults } from "~dm-types/TransactionResults";
-import { issue_condition, user } from "~prisma-clients/client_dm";
+import type { TransactionResults } from "~dm-types/TransactionResults";
+import type { user } from "~prisma-clients/client_dm";
+import { issue_condition } from "~prisma-clients/client_dm";
 import prismaDm from "~prisma-clients/extended/dm.extends";
 
-import Events from "../types";
+import type Events from "../types";
 import {
   checkPurchaseIdsBelongToUser,
   deleteIssues,

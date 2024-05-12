@@ -1,9 +1,9 @@
-import { Socket } from "socket.io";
+import type { Socket } from "socket.io";
 
 import { prismaDmStats } from "~/prisma";
 
 import { getAuthorFullNames } from "../coa/authors";
-import Events from "./types";
+import type Events from "./types";
 
 export interface AuthorDetails {
   personcode: string;

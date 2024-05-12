@@ -1,5 +1,5 @@
-import { BookcaseEdge } from "~dm-types/BookcaseEdge";
-import { Errorable } from "~socket.io-services/types";
+import type { BookcaseEdge } from "~dm-types/BookcaseEdge";
+import type { Errorable } from "~socket.io-services/types";
 
 export default abstract class {
   static namespaceEndpoint: string = "/bookcase";

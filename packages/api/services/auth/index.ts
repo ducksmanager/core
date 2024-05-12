@@ -1,6 +1,6 @@
 import crypto from "crypto";
 import jwt from "jsonwebtoken";
-import { Namespace, Server } from "socket.io";
+import type { Namespace, Server } from "socket.io";
 
 import resetPassword from "~/emails/reset-password";
 import { prismaDm } from "~/prisma";

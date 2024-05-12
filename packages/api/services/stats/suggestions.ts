@@ -1,10 +1,10 @@
-import { Socket } from "socket.io";
+import type { Socket } from "socket.io";
 
 import { prismaCoa, prismaDm, prismaDmStats } from "~/prisma";
-import { IssueSuggestion } from "~dm-types/IssueSuggestion";
+import type { IssueSuggestion } from "~dm-types/IssueSuggestion";
 import { IssueSuggestionList } from "~dm-types/IssueSuggestionList";
-import { StoryDetail } from "~dm-types/StoryDetail";
-import { SuggestionList } from "~dm-types/SuggestionList";
+import type { StoryDetail } from "~dm-types/StoryDetail";
+import type { SuggestionList } from "~dm-types/SuggestionList";
 import { userOptionType } from "~prisma-clients/client_dm";
 import { Prisma as PrismaDmStats } from "~prisma-clients/client_dm_stats";
 
@@ -15,7 +15,7 @@ export enum COUNTRY_CODE_OPTION {
   countries_to_notify = "countries_to_notify",
 }
 
-import Events from "./types";
+import type Events from "./types";
 export default (socket: Socket<Events>) => {
   socket.on(
     "getSuggestionsForCountry",

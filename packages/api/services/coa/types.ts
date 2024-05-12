@@ -1,16 +1,16 @@
-import { IssueCoverDetails } from "~dm-types/IssueCoverDetails";
-import { SimpleEntry } from "~dm-types/SimpleEntry";
-import { SimpleIssue } from "~dm-types/SimpleIssue";
-import { SimpleIssueWithPublication } from "~dm-types/SimpleIssueWithPublication";
-import { StorySearchResults } from "~dm-types/StorySearchResults";
-import {
+import type { IssueCoverDetails } from "~dm-types/IssueCoverDetails";
+import type { SimpleEntry } from "~dm-types/SimpleEntry";
+import type { SimpleIssue } from "~dm-types/SimpleIssue";
+import type { SimpleIssueWithPublication } from "~dm-types/SimpleIssueWithPublication";
+import type { StorySearchResults } from "~dm-types/StorySearchResults";
+import type {
   inducks_issue,
   inducks_issuequotation,
   inducks_story,
   inducks_storyjob,
   inducks_storyversion,
 } from "~prisma-clients/client_coa";
-import { Errorable } from "~socket.io-services/types";
+import type { Errorable } from "~socket.io-services/types";
 
 export default abstract class {
   static namespaceEndpoint: string = "/coa";

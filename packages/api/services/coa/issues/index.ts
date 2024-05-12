@@ -1,9 +1,9 @@
-import { Socket } from "socket.io";
+import type { Socket } from "socket.io";
 
 import { prismaCoa } from "~/prisma";
-import { SimpleIssue } from "~dm-types/SimpleIssue";
+import type { SimpleIssue } from "~dm-types/SimpleIssue";
 
-import Events from "../types";
+import type Events from "../types";
 export default (socket: Socket<Events>) => {
   socket.on("decompose", (issueCodes, callback) =>
     prismaCoa.inducks_issue

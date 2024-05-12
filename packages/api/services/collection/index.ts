@@ -1,7 +1,7 @@
 import PushNotifications from "@pusher/push-notifications-server";
-import { Namespace, Server } from "socket.io";
+import type { Namespace, Server } from "socket.io";
 
-import { issuePopularity } from "~prisma-clients/client_dm";
+import type { issuePopularity } from "~prisma-clients/client_dm";
 import prismaDm from "~prisma-clients/extended/dm.extends";
 
 import { RequiredAuthMiddleware } from "../auth/util";

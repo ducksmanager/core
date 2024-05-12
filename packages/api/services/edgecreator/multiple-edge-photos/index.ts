@@ -1,10 +1,10 @@
 import dayjs from "dayjs";
-import { Socket } from "socket.io";
+import type { Socket } from "socket.io";
 
 import EdgePhotoSent from "~/emails/edge-photo-sent";
 import { prismaDm, prismaEdgeCreator } from "~/prisma";
 
-import Events from "../types";
+import type Events from "../types";
 export default (socket: Socket<Events>) => {
   socket.on(
     "sendNewEdgePhotoEmail",
@@ -21,7 +21,7 @@ export default (socket: Socket<Events>) => {
       await email.send();
 
       callback({ url: edgeUrl });
-    }
+    },
   );
   socket.on("createElementImage", async (hash, fileName, callback) =>
     prismaEdgeCreator.elementImage
@@ -30,7 +30,7 @@ export default (socket: Socket<Events>) => {
         data: { hash, fileName },
       })
       .then(({ id }) => ({ photoId: id }))
-      .then(callback)
+      .then(callback),
   );
 
   socket.on("checkTodayLimit", (callback) =>
@@ -48,7 +48,7 @@ export default (socket: Socket<Events>) => {
       .then((data) => ({
         uploadedFilesToday: data.map(({ fileName }) => fileName),
       }))
-      .then(callback)
+      .then(callback),
   );
   socket.on("getImageByHash", async (hash, callback) =>
     prismaEdgeCreator.elementImage
@@ -59,6 +59,6 @@ export default (socket: Socket<Events>) => {
         },
       })
       .then(callback)
-      .catch(() => callback(null))
+      .catch(() => callback(null)),
   );
 };

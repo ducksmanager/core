@@ -1,6 +1,6 @@
-import { SimpleBookstore } from "~dm-types/SimpleBookstore";
-import { bookstoreComment } from "~prisma-clients/client_dm";
-import { Errorable } from "~socket.io-services/types";
+import type { SimpleBookstore } from "~dm-types/SimpleBookstore";
+import type { bookstoreComment } from "~prisma-clients/client_dm";
+import type { Errorable } from "~socket.io-services/types";
 
 export default abstract class {
   static namespaceEndpoint: string = "/bookstores";

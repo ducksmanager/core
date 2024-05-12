@@ -1,35 +1,55 @@
-import { Socket } from "socket.io";
+import type { Socket } from "socket.io";
 
 import { prismaCoa } from "~/prisma";
-import { SimpleIssue } from "~dm-types/SimpleIssue";
-import { SimpleStory } from "~dm-types/SimpleStory";
+import type { SimpleIssue } from "~dm-types/SimpleIssue";
+import type { SimpleStory } from "~dm-types/SimpleStory";
 
-import Events from "../types";
+import type Events from "../types";
 export default (socket: Socket<Events>) => {
-  socket.on('getStoryDetails', (storycode, callback) => prismaCoa.inducks_story.findUniqueOrThrow({
-    where: {
-      storycode,
-    }
-  }).then(results => {callback({data: results})}).catch((e) => {
-    callback({error: 'Error', errorDetails: e});
-  }))
-  
-  socket.on('getStoryversionDetails', (storyversioncode, callback) => prismaCoa.inducks_storyversion.findUniqueOrThrow({
-    where: {
-      storyversioncode,
-    }
-  }).then(results => {callback({data: results})}).catch((e) => {
-    callback({error: 'Error', errorDetails: e});
-  }))
-  
-  socket.on('getStoryjobs', (storyversioncode, callback) => prismaCoa.inducks_storyjob.findMany({
-    where: {
-      storyversioncode
-    }
-  }).then(results => {callback({data: results})}).catch((e) => {
-    callback({error: 'Error', errorDetails: e});
-  }))
+  socket.on("getStoryDetails", (storycode, callback) =>
+    prismaCoa.inducks_story
+      .findUniqueOrThrow({
+        where: {
+          storycode,
+        },
+      })
+      .then((results) => {
+        callback({ data: results });
+      })
+      .catch((e) => {
+        callback({ error: "Error", errorDetails: e });
+      }),
+  );
 
+  socket.on("getStoryversionDetails", (storyversioncode, callback) =>
+    prismaCoa.inducks_storyversion
+      .findUniqueOrThrow({
+        where: {
+          storyversioncode,
+        },
+      })
+      .then((results) => {
+        callback({ data: results });
+      })
+      .catch((e) => {
+        callback({ error: "Error", errorDetails: e });
+      }),
+  );
+
+  socket.on("getStoryjobs", (storyversioncode, callback) =>
+    prismaCoa.inducks_storyjob
+      .findMany({
+        where: {
+          storyversioncode,
+        },
+      })
+      .then((results) => {
+        callback({ data: results });
+      })
+      .catch((e) => {
+        callback({ error: "Error", errorDetails: e });
+      }),
+  );
 
   socket.on("searchStory", async (keywords, withIssues, callback) => {
     const limit = 10;
@@ -56,7 +76,7 @@ export default (socket: Socket<Events>) => {
     if (withIssues) {
       for (const idx of results.keys()) {
         results[idx].issues = await listIssuesFromStoryCode(
-          results[idx].storycode
+          results[idx].storycode,
         );
       }
     }

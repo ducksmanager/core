@@ -1,4 +1,4 @@
-import { Namespace, Server } from "socket.io";
+import type { Namespace, Server } from "socket.io";
 
 import { RequiredAuthMiddleware } from "../auth/util";
 import suggestions from "./suggestions";

@@ -1,9 +1,12 @@
-import { Socket } from "socket.io";
+import type { Socket } from "socket.io";
 
-import { issue } from "~prisma-clients/client_dm";
-import prismaDm, { issueWithPublicationcode } from "~prisma-clients/extended/dm.extends";
+import type { issue } from "~prisma-clients/client_dm";
+import type {
+  issueWithPublicationcode,
+} from "~prisma-clients/extended/dm.extends";
+import prismaDm from "~prisma-clients/extended/dm.extends";
 
-import Events from "../types";
+import type Events from "../types";
 import contactMethods from "./contact-methods";
 
 export default (socket: Socket<Events>) => {
@@ -49,7 +52,7 @@ export default (socket: Socket<Events>) => {
       })
     ).map(({ issueId }) => issueId);
     const newlyRequestedIssueIds = issueIds.filter(
-      (issueId: number) => !alreadyRequestedIssueIds.includes(issueId)
+      (issueId: number) => !alreadyRequestedIssueIds.includes(issueId),
     );
     await prismaDm.requestedIssue.createMany({
       data: newlyRequestedIssueIds.map((issueId: number) => ({
@@ -63,18 +66,20 @@ export default (socket: Socket<Events>) => {
   socket.on("getRequests", async (as, callback) => {
     switch (as) {
       case "seller":
-        const requestedIssuesOnSaleIds = (await prismaDm.$queryRaw<{ id: number }[]>`
+        const requestedIssuesOnSaleIds = await prismaDm.$queryRaw<
+          { id: number }[]
+        >`
             SELECT requestedIssue.ID AS id
             FROM numeros_demandes requestedIssue
             INNER JOIN numeros issue ON requestedIssue.ID_Numero = issue.ID
             WHERE issue.ID_Utilisateur = ${socket.data.user!.id}
-        `);
+        `;
         callback(
           await prismaDm.requestedIssue.findMany({
             where: {
               id: { in: requestedIssuesOnSaleIds.map(({ id }) => id) },
             },
-          })
+          }),
         );
       case "buyer":
         callback(
@@ -82,13 +87,13 @@ export default (socket: Socket<Events>) => {
             where: {
               buyerId: socket.data.user!.id,
             },
-          })
+          }),
         );
     }
   });
 
   socket.on("getIssuesForSale", (callback) =>
-    getIssuesForSale(socket.data.user!.id).then(callback)
+    getIssuesForSale(socket.data.user!.id).then(callback),
   );
 };
 
@@ -130,7 +135,7 @@ export const getIssuesForSale = async (buyerId: number) =>
     .then(async (forSale) =>
       prismaDm.issue.findMany({
         where: { id: { in: forSale.map(({ id }) => id) } },
-      })
+      }),
     )
     .then((issuesForSale) =>
       issuesForSale.reduce<Record<string, issueWithPublicationcode[]>>(
@@ -141,6 +146,6 @@ export const getIssuesForSale = async (buyerId: number) =>
             issue,
           ],
         }),
-        {}
-      )
+        {},
+      ),
     );

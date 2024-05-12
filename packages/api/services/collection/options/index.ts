@@ -1,14 +1,14 @@
-import { Socket } from "socket.io";
+import type { Socket } from "socket.io";
 
 import { prismaDm } from "~/prisma";
 import { userOptionType } from "~prisma-clients/client_dm";
 
-import Events from "../types";
+import type Events from "../types";
 const optionNameToEnum = (
   optionName:
     | "suggestion_notification_country"
     | "sales_notification_publications"
-    | "marketplace_contact_methods"
+    | "marketplace_contact_methods",
 ) => userOptionType[optionName];
 
 export default (socket: Socket<Events>) => {
@@ -20,7 +20,7 @@ export default (socket: Socket<Events>) => {
           optionName: optionNameToEnum(optionName),
         },
       })
-      .then((data) => callback(data.map(({ optionValue }) => optionValue)))
+      .then((data) => callback(data.map(({ optionValue }) => optionValue))),
   );
 
   socket.on("setOption", async (optionName, optionValues, callback) => {
@@ -41,8 +41,8 @@ export default (socket: Socket<Events>) => {
               optionValue,
               userId,
             },
-          })
-        )
+          }),
+        ),
       );
 
       callback();

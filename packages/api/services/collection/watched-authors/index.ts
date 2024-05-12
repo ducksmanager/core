@@ -1,8 +1,8 @@
-import { Socket } from "socket.io";
+import type { Socket } from "socket.io";
 
 import { prismaDm } from "~/prisma";
 
-import Events from "../types";
+import type Events from "../types";
 const maxWatchedAuthors = 5;
 
 export default (socket: Socket<Events>) => {
@@ -11,7 +11,7 @@ export default (socket: Socket<Events>) => {
       .findMany({
         where: { userId: socket.data.user!.id },
       })
-      .then(callback)
+      .then(callback),
   );
 
   socket.on("addWatchedAuthor", async (personcode, callback) => {
@@ -49,7 +49,7 @@ export default (socket: Socket<Events>) => {
 const upsertAuthorUser = async (
   personcode: string,
   userId: number,
-  notation?: number
+  notation?: number,
 ) => {
   const criteria = {
     personcode,

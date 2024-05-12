@@ -1,8 +1,8 @@
-import { Socket } from "socket.io";
+import type { Socket } from "socket.io";
 
 import { prismaCoa } from "~/prisma";
 
-import Events from "../types";
+import type Events from "../types";
 
 export default (socket: Socket<Events>) => {
   socket.on("getPublicationListFromCountrycode", (countrycode, callback) =>

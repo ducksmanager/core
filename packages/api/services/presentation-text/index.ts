@@ -1,4 +1,4 @@
-import { Namespace, Server } from "socket.io";
+import type { Namespace, Server } from "socket.io";
 
 import { prismaDm } from "~/prisma";
 import PresentationSentenceApproved from "~emails/presentation-sentence-approved";

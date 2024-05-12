@@ -9,7 +9,7 @@ import dayjs from "dayjs";
 
 import { i18n } from "~/emails/email";
 import { prismaDm } from "~/prisma";
-import { user } from "~prisma-clients/client_dm";
+import type { user } from "~prisma-clients/client_dm";
 import {
   COUNTRY_CODE_OPTION,
   getSuggestions,

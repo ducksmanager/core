@@ -1,10 +1,10 @@
 import crypto from "crypto";
 import jwt from "jsonwebtoken";
-import { Socket } from "socket.io";
+import type { Socket } from "socket.io";
 
 import { prismaDm } from "~/prisma";
-import { SessionUser } from "~dm-types/SessionUser";
-import { user } from "~prisma-clients/client_dm";
+import type { SessionUser } from "~dm-types/SessionUser";
+import type { user } from "~prisma-clients/client_dm";
 
 type SocketWithUser = Socket<
   Record<string, never>,

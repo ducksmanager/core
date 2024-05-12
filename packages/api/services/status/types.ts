@@ -1,4 +1,4 @@
-import { Errorable } from "~socket.io-services/types";
+import type { Errorable } from "~socket.io-services/types";
 
 export default abstract class {
   static namespaceEndpoint = "/status";

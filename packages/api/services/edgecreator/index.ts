@@ -1,4 +1,4 @@
-import { Namespace,Server } from "socket.io";
+import type { Namespace,Server } from "socket.io";
 
 import edgePublication from "./edge-publication";
 import edgeSprites from "./edge-sprites";

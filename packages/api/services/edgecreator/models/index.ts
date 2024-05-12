@@ -1,10 +1,10 @@
-import { Socket } from "socket.io";
+import type { Socket } from "socket.io";
 
 import { prismaDm, prismaEdgeCreator } from "~/prisma";
-import { ModelSteps } from "~dm-types/ModelSteps";
+import type { ModelSteps } from "~dm-types/ModelSteps";
 
-import Events from "../types";
-import { edgeEditedByOthersFields,unassignedEdgeFields } from "../types";
+import type Events from "../types";
+import { edgeEditedByOthersFields, unassignedEdgeFields } from "../types";
 
 export default (socket: Socket<Events>) => {
   socket.on("getUnassignedEdges", (callback) =>
@@ -16,7 +16,7 @@ export default (socket: Socket<Events>) => {
           isActive: false,
         },
       })
-      .then(callback)
+      .then(callback),
   );
 
   socket.on("getEdgesEditedByOthers", (callback) =>
@@ -43,18 +43,20 @@ export default (socket: Socket<Events>) => {
           ],
         },
       })
-      .then(callback)
+      .then(callback),
   );
 
   socket.on("getModelsSteps", async (modelIds, callback) => {
     callback(
       (
-        (await prismaEdgeCreator.$queryRaw<{
-          issuenumber: string;
-          stepNumber: number;
-          functionName: string;
-          options: string;
-        }[]>`
+        await prismaEdgeCreator.$queryRaw<
+          {
+            issuenumber: string;
+            stepNumber: number;
+            functionName: string;
+            options: string;
+          }[]
+        >`
           select model.numero AS issuenumber,
                   optionValue.ordre AS stepNumber,
                   optionValue.Nom_fonction AS functionName,
@@ -67,11 +69,11 @@ export default (socket: Socket<Events>) => {
           where model.ID IN (${modelIds})
           group by model.numero, optionValue.ordre
           order by optionValue.ordre
-      `)
+      `
       ).reduce(
         (
           acc: ModelSteps,
-          { issuenumber, stepNumber, functionName, options }
+          { issuenumber, stepNumber, functionName, options },
         ) => ({
           ...acc,
           [issuenumber]: {
@@ -89,8 +91,8 @@ export default (socket: Socket<Events>) => {
             },
           },
         }),
-        {}
-      )
+        {},
+      ),
     );
   });
 

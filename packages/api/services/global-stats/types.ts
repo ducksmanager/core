@@ -1,8 +1,8 @@
-import { BookcaseContributor } from "~dm-types/BookcaseContributor";
-import { MedalPointsPerUser } from "~dm-types/MedalPointsPerUser";
-import { QuickStatsPerUser } from "~dm-types/QuickStatsPerUser";
-import { user } from "~prisma-clients/client_dm";
-import { Errorable } from "~socket.io-services/types";
+import type { BookcaseContributor } from "~dm-types/BookcaseContributor";
+import type { MedalPointsPerUser } from "~dm-types/MedalPointsPerUser";
+import type { QuickStatsPerUser } from "~dm-types/QuickStatsPerUser";
+import type { user } from "~prisma-clients/client_dm";
+import type { Errorable } from "~socket.io-services/types";
 
 export default abstract class {
   static namespaceEndpoint = "/global-stats";

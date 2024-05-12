@@ -1,5 +1,5 @@
-import { issue } from "~prisma-clients/client_dm";
-import { Errorable } from "~socket.io-services/types";
+import type { issue } from "~prisma-clients/client_dm";
+import type { Errorable } from "~socket.io-services/types";
 
 export default abstract class {
   static namespaceEndpoint = "/public-collection";

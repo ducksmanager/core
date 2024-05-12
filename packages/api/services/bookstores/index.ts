@@ -1,10 +1,11 @@
-import { Namespace, Server } from "socket.io";
+import type { Namespace, Server } from "socket.io";
 
 import { prismaDm } from "~/prisma";
-import {
+import type {
   bookstore,
   bookstoreComment,
-  user,
+  user} from "~prisma-clients/client_dm";
+import {
   userContributionType,
 } from "~prisma-clients/client_dm";
 
