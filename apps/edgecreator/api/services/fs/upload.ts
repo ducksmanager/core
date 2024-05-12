@@ -4,7 +4,7 @@ import multer from "multer";
 import { dirname } from "path";
 
 import { getUserCredentials } from "~/services/_auth";
-import { ExpressCall } from "~/services/_express-call";
+import type { ExpressCall } from "~/services/_express-call";
 import { getNextAvailableFile } from "~/services/_upload_utils";
 
 import { call, createAxios } from "../../axios-helper";

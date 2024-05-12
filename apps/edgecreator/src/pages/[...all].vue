@@ -172,12 +172,10 @@ import { storeToRefs } from "pinia";
 
 import { api } from "~/stores/api";
 import { coa } from "~/stores/coa";
-import { BookcaseEdgeWithPopularity, collection } from "~/stores/collection";
-import {
-  edgeCatalog,
-  edgeCategories,
-  EdgeWithVersionAndStatus,
-} from "~/stores/edgeCatalog";
+import type { BookcaseEdgeWithPopularity } from "~/stores/collection";
+import { collection } from "~/stores/collection";
+import type { EdgeWithVersionAndStatus } from "~/stores/edgeCatalog";
+import { edgeCatalog, edgeCategories } from "~/stores/edgeCatalog";
 import { GET__edges__wanted__data } from "~dm_types/routes";
 
 import { call } from "../../axios-helper";

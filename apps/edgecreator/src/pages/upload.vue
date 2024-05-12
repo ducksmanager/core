@@ -136,14 +136,14 @@ import "cropperjs/dist/cropper.css";
 import { useCookies } from "@vueuse/integrations/useCookies";
 import { useToast } from "bootstrap-vue-next";
 import { nextTick } from "vue";
-import { CropperData } from "vue-cropperjs";
+import type { CropperData } from "vue-cropperjs";
 import { useI18n } from "vue-i18n";
 
 import useSaveEdge from "~/composables/useSaveEdge";
 import { api } from "~/stores/api";
 import { coa } from "~/stores/coa";
-import { Crop } from "~types/Crop";
-import { ModelContributor } from "~types/ModelContributor";
+import type { Crop } from "~types/Crop";
+import type { ModelContributor } from "~types/ModelContributor";
 import { POST__fs__upload_base64 } from "~types/routes";
 
 import { call } from "../../axios-helper";

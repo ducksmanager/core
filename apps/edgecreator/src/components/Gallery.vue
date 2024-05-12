@@ -85,7 +85,7 @@
 
 <script setup lang="ts">
 import { main } from "~/stores/main";
-import { GalleryItem } from "~/types/GalleryItem";
+import type { GalleryItem } from "~/types/GalleryItem";
 
 withDefaults(
   defineProps<{

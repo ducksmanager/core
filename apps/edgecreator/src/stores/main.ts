@@ -1,13 +1,13 @@
-import { AxiosInstance } from "axios";
+import type { AxiosInstance } from "axios";
 import { defineStore } from "pinia";
 
 import { api } from "~/stores/api";
-import { EdgeWithModelId } from "~dm_types/EdgeWithModelId";
+import type { EdgeWithModelId } from "~dm_types/EdgeWithModelId";
 import { GET__edges__$countrycode__$magazinecode__$issuenumbers } from "~dm_types/routes";
-import { userContributionType } from "~prisma-clients/client_dm";
-import { ModelContributor } from "~types/ModelContributor";
+import type { userContributionType } from "~prisma-clients/client_dm";
+import type { ModelContributor } from "~types/ModelContributor";
 import { GET__fs__browse__$imageType__$country__$magazine } from "~types/routes";
-import { SimpleUser } from "~types/SimpleUser";
+import type { SimpleUser } from "~types/SimpleUser";
 
 import { call } from "../../axios-helper";
 import { coa } from "./coa";

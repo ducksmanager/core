@@ -89,7 +89,8 @@
 </template>
 <script setup lang="ts">
 import { main } from "~/stores/main";
-import { Options, step } from "~/stores/step";
+import type { Options } from "~/stores/step";
+import { step } from "~/stores/step";
 import { ui } from "~/stores/ui";
 
 type PossibleInputValueType = string | number;

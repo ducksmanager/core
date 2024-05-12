@@ -4,11 +4,11 @@ import { main } from "~/stores/main";
 import { renders } from "~/stores/renders";
 import { optionObjectToArray, step } from "~/stores/step";
 import { users } from "~/stores/users";
-import { EdgeDimensions } from "~/types/EdgeDimensions";
-import { LegacyComponent } from "~/types/LegacyComponent";
-import { OptionNameAndValue } from "~/types/OptionNameAndValue";
-import { OptionValue } from "~/types/OptionValue";
-import { StepOptions } from "~/types/StepOptions";
+import type { EdgeDimensions } from "~/types/EdgeDimensions";
+import type { LegacyComponent } from "~/types/LegacyComponent";
+import type { OptionNameAndValue } from "~/types/OptionNameAndValue";
+import type { OptionValue } from "~/types/OptionValue";
+import type { StepOptions } from "~/types/StepOptions";
 import {
   GET__edgecreator__contributors__$modelId,
   GET__edgecreator__model__$countrycode__$magazinecode__$issuenumber,

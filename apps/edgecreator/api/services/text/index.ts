@@ -1,6 +1,6 @@
-import type { Namespace, Server } from "socket.io";
-import { v2 as cloudinary } from "cloudinary";
 import axios from "axios";
+import { v2 as cloudinary } from "cloudinary";
+import type { Namespace, Server } from "socket.io";
 
 import type Events from "./types";
 import { namespaceEndpoint } from "./types";
@@ -18,7 +18,7 @@ const generateImage = (parameters: {
     .get(
       parameters.font.includes("/")
         ? process.env.FONT_BASE_URL!
-        : `${process.env.FONT_PRODUCT_BASE_URL!}${parameters.font}`
+        : `${process.env.FONT_PRODUCT_BASE_URL!}${parameters.font}`,
     )
     .then(({ data }: { data: string }) => {
       const sessionHashMatch = data.match(/(?<=font_rend.php\?id=)[a-z\d]+/);
@@ -28,7 +28,7 @@ const generateImage = (parameters: {
         throw new Error(
           `No session ID found in URL ${process.env.FONT_BASE_URL!}${
             parameters.font
-          }`
+          }`,
         );
       }
     })
@@ -56,8 +56,8 @@ const generateImage = (parameters: {
           }
           const { width, height, secure_url: url } = result!;
           Promise.resolve({ width, height, url });
-        }
-      )
+        },
+      ),
     );
 
 export default (io: Server) => {
@@ -80,9 +80,9 @@ export default (io: Server) => {
                 ...acc,
                 `context.${key}="${String(context[key])}"`,
               ],
-              []
+              [],
             )
-            .join(" AND ")}`
+            .join(" AND ")}`,
         )
         .execute()
         .then(
@@ -113,7 +113,7 @@ export default (io: Server) => {
                   });
                 });
             }
-          }
+          },
         )
         .catch((e) => {
           console.error(e);

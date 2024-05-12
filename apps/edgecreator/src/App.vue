@@ -3,13 +3,14 @@
 </template>
 
 <script setup lang="ts">
-import { collection } from "~/stores/collection";
+import { provideLocal } from "@vueuse/core";
 import Cookies from "js-cookie";
+
+import { collection } from "~/stores/collection";
 
 import useEdgecreatorSocket, {
   edgecreatorSocketInjectionKey,
 } from "./composables/useEdgecreatorSocket";
-import { provideLocal } from "@vueuse/core";
 
 provideLocal(
   edgecreatorSocketInjectionKey,
@@ -20,7 +21,7 @@ provideLocal(
       sessionExists: () =>
         Promise.resolve(typeof Cookies.get("token") === "string"),
     },
-  })
+  }),
 );
 const route = useRoute();
 
@@ -39,7 +40,7 @@ watch(
           !userPermissions.value?.some(
             ({ privilege, role }) =>
               role === "EdgeCreator" &&
-              ["Edition", "Admin"].includes(privilege as string)
+              ["Edition", "Admin"].includes(privilege as string),
           )
         ) {
           location.replace("/");
@@ -49,11 +50,11 @@ watch(
       location.replace(
         `${import.meta.env.VITE_DM_URL as string}/login?redirect=${
           window.location.href
-        }`
+        }`,
       );
     }
   },
-  { immediate: true }
+  { immediate: true },
 );
 </script>
 

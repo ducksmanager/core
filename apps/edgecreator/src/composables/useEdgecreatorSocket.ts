@@ -1,5 +1,6 @@
+import ImageInfoServices from "~edgecreator-services/image-info/types";
 import TextServices from "~edgecreator-services/text/types";
-import { useSocket } from "~socket.io-client-services";
+import type { useSocket } from "~socket.io-client-services";
 
 const defaultExport = (options: {
   session: {
@@ -12,6 +13,9 @@ const defaultExport = (options: {
 
   return {
     options,
+    imageInfo: addNamespace<ImageInfoServices>(
+      ImageInfoServices.namespaceEndpoint,
+    ),
     text: addNamespace<TextServices>(TextServices.namespaceEndpoint),
   };
 };

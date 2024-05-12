@@ -3,13 +3,13 @@ import path from "path";
 import sharp from "sharp";
 
 import { getSvgPath } from "~/_utils";
+import type { ExpressCall } from "~/services/_express-call";
 import {
   PUT__edgecreator__publish__$country__$magazine__$issuenumber,
   PUT__edgecreator__submit,
 } from "~dm_types/routes";
-import { ExpressCall } from "~/services/_express-call";
-import { ExportPaths } from "~types/ExportPaths";
-import { ModelContributor } from "~types/ModelContributor";
+import type { ExportPaths } from "~types/ExportPaths";
+import type { ModelContributor } from "~types/ModelContributor";
 
 import { call, createAxios } from "../../axios-helper";
 

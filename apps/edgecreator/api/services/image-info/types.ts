@@ -1,27 +1,21 @@
 import type { Errorable } from "~socket.io-services/types";
 
-export const namespaceEndpoint = "/text";
+export const namespaceEndpoint = "/image-info";
 export default abstract class {
   static namespaceEndpoint = namespaceEndpoint;
 
-  abstract getText: (
-    parameters: {
-      color: string;
-      colorBackground: string;
-      width: number;
-      font: string;
-      text: string;
-    },
+  abstract getImageInfo: (
+    targetUrl: string,
     callback: (
       value: Errorable<
         {
           results: {
-            width: number;
-            height: number;
+            dimensions: { width: number; height: number };
+            base64: string;
             url: string;
           };
         },
-        "Image generation error"
+        "Cloudinary error"
       >,
     ) => void,
   ) => void;

@@ -1,7 +1,7 @@
 import fs from "fs";
 import path from "path";
 
-import { ExpressCall } from "~/services/_express-call";
+import type { ExpressCall } from "~/services/_express-call";
 
 const edgesPath = `${process.env.PWD!}/../${process.env.EDGES_PATH!}`;
 const REGEX_IS_BROWSABLE_FILE = /^[-+(). _A-Za-z\d]+$/;

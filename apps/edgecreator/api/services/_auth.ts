@@ -1,15 +1,14 @@
-import { Request, Response } from "express";
+import type { Request, Response } from "express";
 import fs from "fs";
 import jwt from "jsonwebtoken";
 
 import { getSvgPath } from "~/_utils";
-import { User } from "~types/SessionUser";
+import type { User } from "~types/SessionUser";
 
 export const getUserCredentials = (user: User) => ({
   "x-dm-user": user.username,
   "x-dm-pass": user.hashedPassword,
 });
-
 
 export const checkUserIsAdminForExportOrIsEditorForSaveOrIsFirstFileForModel = (
   req: Request,

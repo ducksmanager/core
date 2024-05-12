@@ -8,12 +8,14 @@ import { createPinia } from "pinia";
 import { setupLayouts } from "virtual:generated-layouts";
 import generatedRoutes from "virtual:generated-pages";
 import { createApp } from "vue";
-import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router";
+import type { RouteRecordRaw } from "vue-router";
+import { createRouter, createWebHistory } from "vue-router";
 import SimpleTypeahead from "vue3-simple-typeahead";
+
+import { useSocket } from "~socket.io-client-services/index";
 
 import App from "./App.vue";
 import i18n from "./i18n";
-import { useSocket } from "~socket.io-client-services/index";
 const head = createHead();
 
 const routes = setupLayouts(generatedRoutes) as RouteRecordRaw[];

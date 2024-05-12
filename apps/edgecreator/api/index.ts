@@ -1,11 +1,9 @@
 import * as Sentry from "@sentry/node";
-
 import dotenv from "dotenv";
-import { OptionalAuthMiddleware } from "~api/services/auth/util";
-
 import { createServer } from "http";
 import { Server } from "socket.io";
 
+import { OptionalAuthMiddleware } from "~api/services/auth/util";
 import type { SessionUser } from "~dm-types/SessionUser";
 
 import text from "./services/text";

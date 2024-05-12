@@ -154,7 +154,8 @@ import useSurroundingEdge from "~/composables/useSurroundingEdge";
 import { edgeCatalog } from "~/stores/edgeCatalog";
 import { editingStep } from "~/stores/editingStep";
 import { main } from "~/stores/main";
-import { Dimensions, Options, step } from "~/stores/step";
+import type { Dimensions, Options } from "~/stores/step";
+import { step } from "~/stores/step";
 import { ui } from "~/stores/ui";
 import { users } from "~/stores/users";
 

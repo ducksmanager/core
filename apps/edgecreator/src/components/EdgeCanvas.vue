@@ -85,10 +85,10 @@
 <script setup lang="ts">
 import { editingStep } from "~/stores/editingStep";
 import { hoveredStep } from "~/stores/hoveredStep";
-import { StepOption } from "~/stores/step";
+import type { StepOption } from "~/stores/step";
 import { ui } from "~/stores/ui";
-import { OptionNameAndValue } from "~/types/OptionNameAndValue";
-import { ModelContributor } from "~types/ModelContributor";
+import type { OptionNameAndValue } from "~/types/OptionNameAndValue";
+import type { ModelContributor } from "~types/ModelContributor";
 
 const props = withDefaults(
   defineProps<{

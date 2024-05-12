@@ -1,12 +1,13 @@
 import { useCookies } from "@vueuse/integrations/useCookies";
-import axios, {
+import type {
   AxiosInstance,
   AxiosResponse,
   InternalAxiosRequestConfig,
 } from "axios";
-import { AxiosCacheInstance } from "axios-cache-interceptor";
+import axios from "axios";
+import type { AxiosCacheInstance } from "axios-cache-interceptor";
 
-import { Call, ContractWithMethodAndUrl } from "~types/Call";
+import type { Call, ContractWithMethodAndUrl } from "~types/Call";
 
 export const addUrlParamsRequestInterceptor = <
   Type extends AxiosInstance | AxiosCacheInstance,

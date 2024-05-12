@@ -79,7 +79,7 @@ import { useI18n } from "vue-i18n";
 
 import { coa } from "~/stores/coa";
 import { edgeCatalog } from "~/stores/edgeCatalog";
-import { Crop } from "~types/Crop";
+import type { Crop } from "~types/Crop";
 
 const { t: $t, locale } = useI18n();
 

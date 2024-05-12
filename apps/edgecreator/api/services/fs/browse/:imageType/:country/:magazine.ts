@@ -1,6 +1,6 @@
 import fs from "fs";
 
-import { ExpressCall } from "~/services/_express-call";
+import type { ExpressCall } from "~/services/_express-call";
 
 export const get = (
   ...[req, res]: ExpressCall<{

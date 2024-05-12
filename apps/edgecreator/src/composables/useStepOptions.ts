@@ -4,7 +4,7 @@ import { useI18n } from "vue-i18n";
 
 import { step } from "~/stores/step";
 import { ui } from "~/stores/ui";
-import { BaseProps } from "~/types/StepOptionBaseProps";
+import type { BaseProps } from "~/types/StepOptionBaseProps";
 const uiStore = ui();
 const stepStore = step();
 

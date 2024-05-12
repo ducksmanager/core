@@ -32,7 +32,7 @@
 import { coa } from "~/stores/coa";
 import { edgeCatalog } from "~/stores/edgeCatalog";
 import { step } from "~/stores/step";
-import { GalleryItem } from "~/types/GalleryItem";
+import type { GalleryItem } from "~/types/GalleryItem";
 
 const { loadDimensionsFromApi, loadStepsFromApi } = useModelLoad();
 

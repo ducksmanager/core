@@ -40,7 +40,7 @@
 
 <script setup lang="ts">
 import { step } from "~/stores/step";
-import { OptionValue } from "~/types/OptionValue";
+import type { OptionValue } from "~/types/OptionValue";
 
 type PossibleInputValueType = string | number;
 const props = withDefaults(

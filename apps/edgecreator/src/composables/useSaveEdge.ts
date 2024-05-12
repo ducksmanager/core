@@ -1,5 +1,5 @@
 import { api } from "~/stores/api";
-import { ModelContributor } from "~types/ModelContributor";
+import type { ModelContributor } from "~types/ModelContributor";
 import { POST__fs__save } from "~types/routes";
 
 import { call } from "../../axios-helper";

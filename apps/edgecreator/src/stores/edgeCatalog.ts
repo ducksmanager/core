@@ -1,8 +1,8 @@
 import { defineStore } from "pinia";
 
 import { api } from "~/stores/api";
-import { EdgeModel } from "~dm_types/EdgeModel";
-import { ModelSteps } from "~dm_types/ModelSteps";
+import type { EdgeModel } from "~dm_types/EdgeModel";
+import type { ModelSteps } from "~dm_types/ModelSteps";
 import {
   GET__edgecreator__model,
   GET__edgecreator__model__$modelIds__steps,

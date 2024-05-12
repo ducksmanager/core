@@ -1,5 +1,5 @@
-import { userContributionType } from "~prisma-clients/client_dm";
-import { SimpleUser } from "~types/SimpleUser";
+import type { userContributionType } from "~prisma-clients/client_dm";
+import type { SimpleUser } from "~types/SimpleUser";
 
 export interface ModelContributor {
   issuenumber: string;

@@ -23,7 +23,7 @@
 </template>
 
 <script setup lang="ts">
-import Placement from "bootstrap-vue-next/dist/src/types/BPopoverPlacement";
+import type Placement from "bootstrap-vue-next/dist/src/types/BPopoverPlacement";
 
 const { placement = "top" } = defineProps<{
   placement?: Placement;

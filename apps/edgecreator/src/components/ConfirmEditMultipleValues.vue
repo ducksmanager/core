@@ -21,7 +21,7 @@
   </div>
 </template>
 <script setup lang="ts">
-import { OptionValue } from "~/types/OptionValue";
+import type { OptionValue } from "~/types/OptionValue";
 
 const emit = defineEmits<(e: "change", value: OptionValue) => void>();
 

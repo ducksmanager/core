@@ -22,11 +22,10 @@
 
 <script setup lang="ts">
 import useBase64Legacy from "~/composables/useBase64Legacy";
+import { edgecreatorSocketInjectionKey } from "~/composables/useEdgecreatorSocket";
 import useTextTemplate from "~/composables/useTextTemplate";
 import { step } from "~/stores/step";
 import { ui } from "~/stores/ui";
-
-import { edgecreatorSocketInjectionKey } from "~/composables/useEdgecreatorSocket";
 
 const {
   text: { services: textServices },
@@ -82,15 +81,15 @@ const textImage = ref(
     width: number | null;
     height: number | null;
     url: string;
-  } | null
+  } | null,
 );
 const textImageOptions = ref(null as typeof props.options | null);
 
 const effectiveText = computed(() =>
   resolveIssueNumberTemplate(
     props.options.text,
-    resolveIssueNumberPartTemplate(props.options.text, props.issuenumber)
-  )
+    resolveIssueNumberPartTemplate(props.options.text, props.issuenumber),
+  ),
 );
 
 const { width, attributes, enableDragResize } = useStepOptions(props, "Text", [
@@ -110,7 +109,7 @@ watch(
       });
     }
   },
-  { immediate: true }
+  { immediate: true },
 );
 
 watch(
@@ -151,44 +150,44 @@ watch(
           applyTextImageDimensions();
         },
         2000,
-        100
+        100,
       );
     }
   },
   {
     immediate: true,
-  }
+  },
 );
 
 watch(
   () => props.options.fgColor,
   async () => {
     await refreshPreview();
-  }
+  },
 );
 watch(
   () => props.options.bgColor,
   async () => {
     await refreshPreview();
-  }
+  },
 );
 watch(
   () => props.options.internalWidth,
   async () => {
     await refreshPreview();
-  }
+  },
 );
 watch(
   () => props.options.text,
   async () => {
     await refreshPreview();
-  }
+  },
 );
 watch(
   () => props.options.font,
   async () => {
     await refreshPreview();
-  }
+  },
 );
 
 const refreshPreview = async () => {
@@ -217,7 +216,7 @@ const waitUntil = (
   condition: () => SVGImageElement | null,
   okCallback: () => void,
   timeout: number,
-  loopEvery: number
+  loopEvery: number,
 ) => {
   let iterations = 0;
   const interval = setInterval(() => {

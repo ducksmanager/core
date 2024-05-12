@@ -2,7 +2,7 @@ import { useCookies } from "@vueuse/integrations/useCookies";
 import { defineStore } from "pinia";
 
 import { api } from "~/stores/api";
-import { BookcaseEdge } from "~dm_types/BookcaseEdge";
+import type { BookcaseEdge } from "~dm_types/BookcaseEdge";
 import {
   GET__bookcase__$username,
   GET__collection__popular,
@@ -10,7 +10,10 @@ import {
   GET__collection__user_privileges,
   GET__global_stats__user__$userIds,
 } from "~dm_types/routes";
-import { user as userModel, userPermission } from "~prisma-clients/client_dm";
+import type {
+  user as userModel,
+  userPermission,
+} from "~prisma-clients/client_dm";
 
 import { call } from "../../axios-helper";
 

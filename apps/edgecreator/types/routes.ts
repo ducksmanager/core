@@ -1,8 +1,8 @@
 // noinspection ES6PreferShortImport
 
 import { ContractWithMethodAndUrl } from "./Call";
-import { ExportPaths } from "./ExportPaths";
-import { ModelContributor } from "./ModelContributor";
+import type { ExportPaths } from "./ExportPaths";
+import type { ModelContributor } from "./ModelContributor";
 
 export class GET__fs__base64 extends ContractWithMethodAndUrl<{
   resBody: {

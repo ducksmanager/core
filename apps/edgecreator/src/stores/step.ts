@@ -3,8 +3,8 @@ import { useI18n } from "vue-i18n";
 
 import { editingStep } from "~/stores/editingStep";
 import { main } from "~/stores/main";
-import { OptionNameAndValue } from "~/types/OptionNameAndValue";
-import { OptionValue } from "~/types/OptionValue";
+import type { OptionNameAndValue } from "~/types/OptionNameAndValue";
+import type { OptionValue } from "~/types/OptionValue";
 
 export interface StepOption {
   stepNumber: number;
