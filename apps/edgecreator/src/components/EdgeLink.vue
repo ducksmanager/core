@@ -22,7 +22,7 @@
 </template>
 
 <script setup lang="ts">
-import { coa } from "~/stores/coa";
+import { stores as webStores } from "~web";
 
 defineProps<{
   publicationcode: string;
@@ -32,5 +32,5 @@ defineProps<{
   published: boolean;
 }>();
 
-const publicationNames = computed(() => coa().publicationNames);
+const publicationNames = computed(() => webStores.coa().publicationNames);
 </script>

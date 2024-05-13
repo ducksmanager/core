@@ -20,17 +20,16 @@
 import { useI18n } from "vue-i18n";
 
 import { availableLocales } from "~/composables/useLocales";
-import { coa } from "~/stores/coa";
-import { collection } from "~/stores/collection";
+import { stores as webStores } from "~web";
 
 const { locale } = useI18n();
 const locales = computed(() => availableLocales);
 
-const collectionStore = collection();
+const collectionStore = webStores.collection();
 const username = computed(() => collectionStore.user?.username as string);
 const reloadWithLocale = async (key: string) => {
   locale.value = key;
-  await coa().fetchCountryNames(locale.value);
+  await webStores.coa().fetchCountryNames();
 };
 </script>
 <style lang="scss">

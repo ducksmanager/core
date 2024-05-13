@@ -12,7 +12,7 @@
 import { step } from "~/stores/step";
 import { ui } from "~/stores/ui";
 
-const polygon = ref(null as SVGPolygonElement | null);
+const polygon = ref<SVGPolygonElement | null>(null);
 
 interface Props {
   issuenumber: string;

@@ -6,8 +6,8 @@
 import { provideLocal } from "@vueuse/core";
 import Cookies from "js-cookie";
 
-import { collection } from "~/stores/collection";
 import { buildWebStorage } from "~socket.io-client-services/index";
+import { stores as webStores } from "~web";
 import useDmSocket, {
   dmSocketInjectionKey,
 } from "~web/src/composables/useDmSocket";
@@ -41,10 +41,10 @@ const dmSocket = useDmSocket({
 provideLocal(dmSocketInjectionKey, dmSocket);
 const route = useRoute();
 
-const user = computed(() => collection().user);
-const userPermissions = computed(() => collection().userPermissions);
+const user = computed(() => webStores.collection().user);
+const userPermissions = computed(() => webStores.collection().userPermissions);
 
-collection().loadUser();
+webStores.collection().loadUser();
 
 watch(
   () => user.value,

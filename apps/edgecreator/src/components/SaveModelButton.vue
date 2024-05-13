@@ -62,7 +62,7 @@
             :ref="`${userContributionEnL10n[contributionType]}Typeahead`"
             :items="
               getUsersWithoutContributors(
-                contributionType as userContributionType,
+                contributionType as userContributionType
               )
             "
             :item-projection="({ username }: SimpleUser) => username"
@@ -72,14 +72,14 @@
               (user: SimpleUser) =>
                 onUserSelect(
                   user.username,
-                  contributionType as userContributionType,
+                  contributionType as userContributionType
                 )
             "
           />
           <ul>
             <li
               v-for="contributor in getContributors(
-                contributionType as userContributionType,
+                contributionType as userContributionType
               )"
               :key="contributor.username"
             >
@@ -112,12 +112,11 @@ import { useI18n } from "vue-i18n";
 import Vue3SimpleTypeahead from "vue3-simple-typeahead";
 
 import saveEdge from "~/composables/useSaveEdge";
-import { collection } from "~/stores/collection";
 import { main } from "~/stores/main";
 import { ui } from "~/stores/ui";
-import { users } from "~/stores/users";
 import type { userContributionType } from "~prisma-clients/client_dm";
 import type { SimpleUser } from "~types/SimpleUser";
+import { stores as webStores } from "~web";
 
 const userContributionEnL10n: Record<string, string> = {
   photographes: "photographers",
@@ -127,8 +126,8 @@ const userContributionEnL10n: Record<string, string> = {
 const { saveEdgeSvg } = saveEdge();
 
 const { t: $t } = useI18n();
-const userStore = users();
-const collectionStore = collection();
+const userStore = webStores.users();
+const collectionStore = webStores.collection();
 const mainStore = main();
 
 const props = withDefaults(
@@ -142,10 +141,10 @@ const props = withDefaults(
   },
 );
 
-const showModal = ref(false as boolean);
-const progress = ref(0 as number);
-const issueIndexToSave = ref(null as number | null);
-const result = ref(null as string | null);
+const showModal = ref<boolean>(false);
+const progress = ref<number>(0);
+const issueIndexToSave = ref<number | null>(null);
+const result = ref<string | null>(null);
 const designersTypeahead = ref();
 const photographersTypeahead = ref();
 
@@ -205,7 +204,7 @@ watch(
         props.withExport,
         props.withSubmit,
       ).then((response) => {
-        const isSuccess = response.paths.svgPath;
+        const isSuccess = response!.paths.svgPath;
         if (isSuccess) {
           progress.value += 100 / mainStore.issuenumbers.length;
           issueIndexToSave.value!++;

@@ -80,9 +80,7 @@ meta:
               <issue
                 no-wrap
                 :publicationcode="crop.publicationCode"
-                :publicationname="
-                  coaStore.publicationNames[crop.publicationCode]
-                "
+                :publicationname="publicationNames[crop.publicationCode]"
                 :issuenumber="crop.issueNumber"
             /></template>
             <img
@@ -141,9 +139,9 @@ import { useI18n } from "vue-i18n";
 
 import { edgecreatorSocketInjectionKey } from "~/composables/useEdgecreatorSocket";
 import useSaveEdge from "~/composables/useSaveEdge";
-import { coa } from "~/stores/coa";
 import type { Crop } from "~types/Crop";
 import type { ModelContributor } from "~types/ModelContributor";
+import { stores as webStores } from "~web";
 
 const i18n = useI18n();
 
@@ -152,7 +150,6 @@ const {
 } = injectLocal(edgecreatorSocketInjectionKey)!;
 
 const { saveEdgeSvg } = useSaveEdge();
-const coaStore = coa();
 
 type CropWithData = Crop & {
   data: CropperData;
@@ -161,10 +158,12 @@ type CropWithData = Crop & {
   sent: boolean;
 };
 
-const currentCrop = ref(null as CropWithData | null);
-const crops = ref([] as CropWithData[]);
-const uploadedImageData = ref(null as { url: string } | null);
-const cropper = ref(null as any | null);
+const currentCrop = ref<CropWithData | null>(null);
+const crops = ref<CropWithData[]>([]);
+const uploadedImageData = ref<{ url: string } | null>(null);
+const cropper = ref<any | null>(null);
+
+const publicationNames = computed(() => webStores.coa().publicationNames);
 
 const initialContributors = computed(
   (): Omit<ModelContributor, "issuenumber">[] => [
@@ -178,8 +177,8 @@ const initialContributors = computed(
 const addCrop = () => {
   const data = cropper.value!.getData() as CropperData;
   if (data.height < data.width) {
-    useToast()!.show(
-      {
+    useToast().show!({
+      props: {
         body: i18n
           .t(
             `The width of your selection is bigger than its height! Make sure that the edges appear vertically on the photo.`,
@@ -187,11 +186,7 @@ const addCrop = () => {
           .toString(),
         title: i18n.t("Error").toString(),
       },
-      {
-        delay: 5000,
-        autoHide: true,
-      },
-    );
+    });
   } else {
     crops.value.push({
       ...currentCrop.value!,

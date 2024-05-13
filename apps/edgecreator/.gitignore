@@ -24,4 +24,5 @@ dist-ssr
 *.sw?
 
 .env.*
-.eslintcache.json
+.eslintcache
+/*.d.ts

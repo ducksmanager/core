@@ -147,9 +147,9 @@ const toKeyValue = (arr: OptionNameAndValue[]) => {
   );
   return Object.keys(val).length ? val : undefined;
 };
-const borderWidth = ref(1 as number);
+const borderWidth = ref<number>(1);
 
-const canvas = ref(null as HTMLElement | null);
+const canvas = ref<HTMLElement | null>(null);
 
 const hoveredStepStore = hoveredStep();
 const editingStepStore = editingStep();

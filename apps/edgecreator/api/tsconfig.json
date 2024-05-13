@@ -1,11 +1,10 @@
 {
   "compilerOptions": {
     "baseUrl": ".",
-    "module": "ESNext",
-    "target": "es2020",
-    "lib": ["DOM", "ESNext"],
+    "module": "commonjs",
+    "target": "es2018",
+    "lib": ["ESNext"],
     "strict": true,
-    "jsx": "preserve",
     "esModuleInterop": true,
     "skipLibCheck": true,
     "moduleResolution": "node",
@@ -15,6 +14,7 @@
     "allowJs": true,
     "forceConsistentCasingInFileNames": true,
     "outDir": "./dist",
+    "preserveWatchOutput": true,
     "paths": {
       "~/*": ["./*"],
       "~types/*": ["../types/*"],

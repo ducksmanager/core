@@ -33,7 +33,6 @@ WORKDIR /app
 COPY . .
 COPY .env.prod ./.env
 COPY --from=api-build /app/api api
-COPY --from=api-build /app/types/routes.ts types/routes.ts
 RUN pnpm run build
 
 FROM nginx AS app

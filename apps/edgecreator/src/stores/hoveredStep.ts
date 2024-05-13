@@ -1,6 +1,6 @@
 import { defineStore } from "pinia";
 
 export const hoveredStep = defineStore("hoveredStep", () => ({
-  issuenumber: ref(null as string | null),
-  stepNumber: ref(null as number | null),
+  issuenumber: ref<string | null>(null),
+  stepNumber: ref<number | null>(null),
 }));

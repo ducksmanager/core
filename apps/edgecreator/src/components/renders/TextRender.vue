@@ -34,7 +34,7 @@ const {
 const { resolveIssueNumberTemplate, resolveIssueNumberPartTemplate } =
   useTextTemplate();
 
-const imageRef = ref(null as SVGImageElement | null);
+const imageRef = ref<SVGImageElement | null>(null);
 
 interface Props {
   issuenumber: string;
@@ -83,7 +83,7 @@ const textImage = ref(
     url: string;
   } | null,
 );
-const textImageOptions = ref(null as typeof props.options | null);
+const textImageOptions = ref<typeof props.options | null>(null);
 
 const effectiveText = computed(() =>
   resolveIssueNumberTemplate(

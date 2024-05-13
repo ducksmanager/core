@@ -6,9 +6,8 @@ import type { EdgeWithModelId } from "~dm-types/EdgeWithModelId";
 import type { userContributionType } from "~prisma-clients/client_dm";
 import type { ModelContributor } from "~types/ModelContributor";
 import type { SimpleUser } from "~types/SimpleUser";
+import { stores as webStores } from "~web";
 import { dmSocketInjectionKey } from "~web/src/composables/useDmSocket";
-
-import { coa } from "./coa";
 
 const numericSortCollator = new Intl.Collator(undefined, {
   numeric: true,
@@ -22,24 +21,25 @@ export const main = defineStore("main", () => {
     edges: { services: edgesServices },
   } = injectLocal(dmSocketInjectionKey)!;
 
-  const country = ref(null as string | null),
-    magazine = ref(null as string | null),
-    issuenumbers = ref([] as string[]),
-    isRange = ref(false as boolean),
-    photoUrls = ref({} as Record<string, string>),
-    contributors = ref([] as ModelContributor[]),
-    edgesBefore = ref([] as EdgeWithModelId[]),
-    edgesAfter = ref([] as EdgeWithModelId[]),
-    publicationElements = ref([] as string[]),
-    publicationPhotos = ref([] as string[]),
-    warnings = ref([] as string[]),
+  const country = ref<string | null>(null),
+    magazine = ref<string | null>(null),
+    issuenumbers = ref<string[]>([]),
+    isRange = ref<boolean>(false),
+    photoUrls = ref<Record<string, string>>({}),
+    contributors = ref<ModelContributor[]>([]),
+    edgesBefore = ref<EdgeWithModelId[]>([]),
+    edgesAfter = ref<EdgeWithModelId[]>([]),
+    publicationElements = ref<string[]>([]),
+    publicationPhotos = ref<string[]>([]),
+    warnings = ref<string[]>([]),
     publicationcode = computed(
       () =>
         country.value && magazine.value && `${country.value}/${magazine.value}`,
     ),
     publicationIssues = computed(
       () =>
-        (publicationcode.value && coa().issueNumbers[publicationcode.value]) ||
+        (publicationcode.value &&
+          webStores.coa().issueNumbers[publicationcode.value]) ||
         [],
     ),
     publicationElementsForGallery = computed(
@@ -146,7 +146,7 @@ export const main = defineStore("main", () => {
       }
     },
     loadPublicationIssues = async () =>
-      coa().fetchIssueNumbers([publicationcode.value!]),
+      webStores.coa().fetchIssueNumbers([publicationcode.value!]),
     getEdgePublicationStates = async (edges: string[]) =>
       [
         ...new Set(

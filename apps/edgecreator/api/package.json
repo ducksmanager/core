@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "scripts": {
     "clean": "rm -rf dist",
-    "build": "rm -rf dist/api dist/types && tsc && tsc-alias",
+    "build": "rm -rf dist && tsc && tsc-alias",
     "start": "tsx index.ts",
     "dev": "nodemon"
   },
@@ -16,7 +16,6 @@
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
-    "ducksmanager": "^0.0.51",
     "express": "^4.19.2",
     "express-file-routing": "^3.0.3",
     "i18n": "^0.15.1",

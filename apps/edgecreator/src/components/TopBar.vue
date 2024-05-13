@@ -258,16 +258,15 @@
 </template>
 <script setup lang="ts">
 import surroundingEdge from "~/composables/useSurroundingEdge";
-import { coa } from "~/stores/coa";
-import { collection } from "~/stores/collection";
 import { main } from "~/stores/main";
 import { ui } from "~/stores/ui";
+import { stores as webStores } from "~web";
 
 const uiStore = ui();
 const mainStore = main();
 
 const { showPreviousEdge, showNextEdge } = surroundingEdge();
-const { hasRole } = collection();
+const { hasRole } = webStores.collection();
 
 interface ModelToClone {
   editMode: string;
@@ -289,14 +288,17 @@ const props = defineProps<{
   };
 }>();
 
-const showPhotoModal = ref(false as boolean);
-const modelToBeCloned = ref(null as ModelToClone | null);
-const collapseDimensions = ref(false as boolean);
-const collapseClone = ref(false as boolean);
+const showPhotoModal = ref<boolean>(false);
+const modelToBeCloned = ref<ModelToClone | null>(null);
+const collapseDimensions = ref<boolean>(false);
+const collapseClone = ref<boolean>(false);
 
 const hasPhotoUrl = computed(() => Object.keys(mainStore.photoUrls).length);
 const publicationName = computed(
-  () => coa().publicationNames[`${mainStore.country!}/${mainStore.magazine!}`],
+  () =>
+    webStores.coa().publicationNames[
+      `${mainStore.country!}/${mainStore.magazine!}`
+    ],
 );
 const uniqueDimensions = computed(() =>
   [
@@ -314,7 +316,9 @@ const addPhoto = (src: string) => {
   mainStore.photoUrls[mainStore.issuenumbers[0]] = src;
 };
 
-coa().fetchPublicationNames([`${mainStore.country!}/${mainStore.magazine!}`]);
+webStores
+  .coa()
+  .fetchPublicationNames([`${mainStore.country!}/${mainStore.magazine!}`]);
 </script>
 <style lang="scss">
 .options {

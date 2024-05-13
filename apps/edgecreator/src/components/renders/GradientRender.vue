@@ -25,7 +25,7 @@
 </template>
 
 <script setup lang="ts">
-const rect = ref(null as SVGRectElement | null);
+const rect = ref<SVGRectElement | null>(null);
 
 interface Props {
   issuenumber: string;

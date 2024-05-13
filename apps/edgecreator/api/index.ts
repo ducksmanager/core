@@ -9,10 +9,10 @@ import { OptionalAuthMiddleware } from "~api/services/auth/util";
 import type { SessionUser } from "~dm-types/SessionUser";
 
 import * as generateDefaultEdge from "./generateDefaultEdge";
-import text from "./services/text";
 import browse from "./services/browse";
 import imageInfo from "./services/image-info";
 import save from "./services/save";
+import text from "./services/text";
 import uploadServices, { upload } from "./services/upload";
 dotenv.config({
   path: "../.env",

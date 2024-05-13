@@ -20,7 +20,7 @@ const props = defineProps<{
 
 defineEmits<(event: "load" | "error") => void>();
 
-const naturalHeight = ref(0 as number);
+const naturalHeight = ref<number>(0);
 const zoom = computed(() => ui().zoom);
 const getEdgeUrl = () =>
   `${import.meta.env.VITE_EDGES_URL as string}/${main()

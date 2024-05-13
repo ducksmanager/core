@@ -16,6 +16,7 @@
     "paths": {
       "~/*": ["src/*"],
       "~dm-services/*": ["../../packages/api/services/*"],
+      "~web/*": ["../web/*"],
       "~edgecreator-services/*": ["api/services/*"],
       "~dm-types/*": ["../../packages/types/*"],
       "~prisma-clients/*": ["../../packages/prisma-clients/*"],

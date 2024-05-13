@@ -18,7 +18,7 @@ meta:
         <b-alert variant="info" :model-value="true">
           <template v-if="mostPopularIssuesInCollectionWithoutEdge?.length">
             <uploadable-edges-carousel
-              :user-points="collectionStore.userPhotographerPoints"
+              :user-points="userPhotographerPoints"
               :issues="mostPopularIssuesInCollectionWithoutEdge"
               :publication-names="publicationNames"
             >
@@ -40,7 +40,7 @@ meta:
           </template>
           <uploadable-edges-carousel
             v-if="mostWantedEdges"
-            :user-points="collectionStore.userPhotographerPoints"
+            :user-points="userPhotographerPoints"
             :issues="mostWantedEdges"
             :publication-names="publicationNames"
           >
@@ -170,9 +170,6 @@ meta:
 <script setup lang="ts">
 import { storeToRefs } from "pinia";
 
-import { coa } from "~/stores/coa";
-import type { BookcaseEdgeWithPopularity } from "~/stores/collection";
-import { collection } from "~/stores/collection";
 import type { EdgeWithVersionAndStatus } from "~/stores/edgeCatalog";
 import { edgeCatalog, edgeCategories } from "~/stores/edgeCatalog";
 
@@ -180,11 +177,15 @@ const {
   edges: { services: edgesServices },
 } = injectLocal(dmSocketInjectionKey)!;
 
+import { stores as webStores } from "~web";
 import { dmSocketInjectionKey } from "~web/src/composables/useDmSocket";
+import type { BookcaseEdgeWithPopularity } from "~web/src/stores/bookcase";
 
 const { getEdgeUrl } = useSvgUtils();
 
-const collectionStore = collection();
+const collectionStore = webStores.collection();
+const bookcaseStore = webStores.bookcase();
+const usersStore = webStores.users();
 const { hasRole } = collectionStore;
 
 const edgeCatalogStore = edgeCatalog();
@@ -192,18 +193,20 @@ const { loadCatalog, canEditEdge } = edgeCatalogStore;
 const { edgesByStatus, currentEdges, isCatalogLoaded } =
   storeToRefs(edgeCatalogStore);
 
-const publicationNames = computed(() => coa().publicationNames);
+const userPhotographerPoints = computed(
+  () => usersStore.points[collectionStore.user!.id].edge_photographer,
+);
 
-const isUploadableEdgesCarouselReady = ref(false as boolean);
-const mostWantedEdges = ref(null as BookcaseEdgeWithPopularity[] | null);
+const publicationNames = computed(() => webStores.coa().publicationNames);
+
+const isUploadableEdgesCarouselReady = ref<boolean>(false);
+const mostWantedEdges = ref<BookcaseEdgeWithPopularity[] | null>(null);
 
 const mostPopularIssuesInCollectionWithoutEdge = computed(() =>
   collectionStore.popularIssuesInCollectionWithoutEdge
     ?.sort(
-      (
-        { popularity: popularity1 }: { popularity: number | null },
-        { popularity: popularity2 }: { popularity: number | null },
-      ) => (popularity2 ?? 0) - (popularity1 ?? 0),
+      ({ popularity: popularity1 }, { popularity: popularity2 }) =>
+        (popularity2 ?? 0) - (popularity1 ?? 0),
     )
     .filter((_, index) => index < 10),
 );
@@ -237,23 +240,25 @@ const loadMostWantedEdges = async () => {
 };
 
 (async () => {
-  await collectionStore.fetchUserPoints();
+  await usersStore.fetchStats([collectionStore.user!.id]);
   await collectionStore.loadPopularIssuesInCollection();
-  await collectionStore.loadBookcase();
+  await bookcaseStore.loadBookcase();
   await loadMostWantedEdges();
   await loadCatalog(true);
-  await coa().fetchPublicationNames([
-    ...new Set([
-      ...collectionStore.bookcase!.map(
-        ({ countryCode, magazineCode }) => `${countryCode}/${magazineCode}`,
-      ),
-      ...mostWantedEdges.value!.map(({ publicationcode }) => publicationcode),
-      ...Object.values(currentEdges).map(
-        ({ country, magazine }: EdgeWithVersionAndStatus) =>
-          `${country}/${magazine}`,
-      ),
-    ]),
-  ]);
+  await webStores
+    .coa()
+    .fetchPublicationNames([
+      ...new Set([
+        ...bookcaseStore.bookcase!.map(
+          ({ countryCode, magazineCode }) => `${countryCode}/${magazineCode}`,
+        ),
+        ...mostWantedEdges.value!.map(({ publicationcode }) => publicationcode),
+        ...Object.values(currentEdges).map(
+          ({ country, magazine }: EdgeWithVersionAndStatus) =>
+            `${country}/${magazine}`,
+        ),
+      ]),
+    ]);
   isUploadableEdgesCarouselReady.value = true;
 })();
 </script>

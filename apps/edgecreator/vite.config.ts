@@ -1,6 +1,5 @@
 import VueI18n from "@intlify/unplugin-vue-i18n/vite";
 import Vue from "@vitejs/plugin-vue";
-import fs from "fs";
 import path from "path";
 import AutoImport from "unplugin-auto-import/vite";
 import IconsResolve from "unplugin-icons/resolver";
@@ -15,7 +14,8 @@ import Layouts from "vite-plugin-vue-layouts";
 export default defineConfig({
   resolve: {
     alias: {
-      "~/": `${path.resolve(__dirname, "src")}/`,
+      "~": `${path.resolve(__dirname, "src")}/`,
+      "~web": path.resolve(__dirname, "../web"),
       "~dm-services": path.resolve(__dirname, "../../packages/api/services"),
       "~edgecreator-services": path.resolve(__dirname, "api/services"),
       "~dm-types": path.resolve(__dirname, "../../packages/types"),
@@ -53,7 +53,10 @@ export default defineConfig({
 
     // https://github.com/antfu/unplugin-auto-import
     AutoImport({
-      imports: ["vue", "vue/macros", "vue-router", "@vueuse/core", "pinia"],
+      eslintrc: {
+        enabled: true,
+      },
+      imports: ["vue", "vue-router", "@vueuse/core", "pinia"],
       dts: true,
       dirs: ["./src/composables", "./types", "../../packages/types"],
       vueTemplate: true,
@@ -67,11 +70,7 @@ export default defineConfig({
     // https://github.com/antfu/vite-plugin-components
     Components({
       resolvers: [BootstrapVueNextResolver(), IconsResolve()],
-      dirs: [
-        "src/components",
-        "src/layouts",
-        "node_modules/ducksmanager/dist/src/components",
-      ],
+      dirs: ["src/components", "src/layouts"],
       dts: true,
       deep: true,
     }),

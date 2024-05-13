@@ -111,12 +111,12 @@ const props = withDefaults(
   },
 );
 
-const originalColor = ref(null as string | null);
+const originalColor = ref<string | null>(null);
 
 const stepStore = step();
 const mainStore = main();
 
-const isTransparent = ref(false as boolean);
+const isTransparent = ref<boolean>(false);
 const photoUrls = computed(() => main().photoUrls);
 const hasPhotoUrl = computed(() => Object.keys(photoUrls.value).length);
 const colorPickerOption = computed(() => ui().colorPickerOption);

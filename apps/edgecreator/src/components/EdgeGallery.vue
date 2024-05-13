@@ -29,10 +29,10 @@
 </template>
 
 <script setup lang="ts">
-import { coa } from "~/stores/coa";
 import { edgeCatalog } from "~/stores/edgeCatalog";
 import { step } from "~/stores/step";
 import type { GalleryItem } from "~/types/GalleryItem";
+import { stores as webStores } from "~web";
 
 const { loadDimensionsFromApi, loadStepsFromApi } = useModelLoad();
 
@@ -50,12 +50,13 @@ const emit = defineEmits<{
   (e: "load-more", where: "before" | "after"): void;
   (e: "change", value: string): void;
 }>();
-const items = ref([] as GalleryItem[]);
-const isPopulating = ref(false as boolean);
+
+const items = ref<GalleryItem[]>([]);
+const isPopulating = ref<boolean>(false);
 
 const publishedEdges = computed(() => edgeCatalog().publishedEdges);
 const publishedEdgesSteps = computed(() => edgeCatalog().publishedEdgesSteps);
-const issueNumbers = computed(() => coa().issueNumbers);
+const issueNumbers = computed(() => webStores.coa().issueNumbers);
 
 const populateItems = async (
   publicationcode: string,

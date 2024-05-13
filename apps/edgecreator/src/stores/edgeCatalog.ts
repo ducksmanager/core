@@ -2,10 +2,8 @@ import { defineStore } from "pinia";
 
 import { edgecreatorSocketInjectionKey } from "~/composables/useEdgecreatorSocket";
 import type { ModelSteps } from "~dm-types/ModelSteps";
+import { stores as webStores } from "~web";
 import { dmSocketInjectionKey } from "~web/src/composables/useDmSocket";
-
-import { coa } from "./coa";
-import { collection } from "./collection";
 
 const { getSvgMetadata, loadSvgFromString } = useSvgUtils();
 
@@ -54,15 +52,15 @@ export const edgeCatalog = defineStore("edgeCatalog", () => {
   const {
     browse: { services: browseServices },
   } = injectLocal(edgecreatorSocketInjectionKey)!;
-  const isCatalogLoaded = ref(false as boolean),
-    currentEdges = ref({} as Record<string, EdgeWithVersionAndStatus>),
+  const isCatalogLoaded = ref<boolean>(false),
+    currentEdges = ref<Record<string, EdgeWithVersionAndStatus>>({}),
     publishedEdges = ref(
       {} as Record<
         string,
         Record<string, { issuenumber: string; v3: boolean }>
       >,
     ),
-    publishedEdgesSteps = ref({} as Record<string, ModelSteps>),
+    publishedEdgesSteps = ref<Record<string, ModelSteps>>({}),
     edgesByStatus = computed(() => {
       const currentEdgesByStatus: Record<
         string,
@@ -188,14 +186,15 @@ export const edgeCatalog = defineStore("edgeCatalog", () => {
       status: edgeCategories.reduce(
         (acc: string | null, { status, svgCheckFn }) =>
           acc ??
-          (svgCheckFn(edge, collection().user!.username as string)
+          (svgCheckFn(edge, webStores.collection().user!.username)
             ? status
             : null),
         null,
       ),
     }),
     canEditEdge = (status: string) =>
-      collection().hasRole("Admin") || status !== "ongoing by another user",
+      webStores.collection().hasRole("Admin") ||
+      status !== "ongoing by another user",
     getEdgeStatus = ({
       country,
       magazine,
@@ -300,13 +299,15 @@ export const edgeCatalog = defineStore("edgeCatalog", () => {
       }
 
       if (Object.keys(newCurrentEdges).length) {
-        await coa().fetchPublicationNames([
-          ...new Set(
-            Object.values(newCurrentEdges).map(
-              ({ country, magazine }) => `${country}/${magazine}`,
+        await webStores
+          .coa()
+          .fetchPublicationNames([
+            ...new Set(
+              Object.values(newCurrentEdges).map(
+                ({ country, magazine }) => `${country}/${magazine}`,
+              ),
             ),
-          ),
-        ]);
+          ]);
 
         for (const edgeIssueCode of Object.keys(newCurrentEdges)) {
           newCurrentEdges[edgeIssueCode].published = getEdgeStatus(

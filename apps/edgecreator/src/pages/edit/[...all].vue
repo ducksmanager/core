@@ -157,7 +157,7 @@ import { main } from "~/stores/main";
 import type { Dimensions, Options } from "~/stores/step";
 import { step } from "~/stores/step";
 import { ui } from "~/stores/ui";
-import { users } from "~/stores/users";
+import { stores as webStores } from "~web";
 
 const route = useRoute();
 const uiStore = ui();
@@ -168,7 +168,7 @@ const { showPreviousEdge, showNextEdge } = useSurroundingEdge();
 
 const { loadModel } = useModelLoad();
 
-const error = ref(null as string | null);
+const error = ref<string | null>(null);
 
 const dimensions = computed(() => stepStore.dimensions);
 
@@ -207,7 +207,7 @@ watch(
 );
 
 (async () => {
-  await users().fetchAllUsers();
+  await webStores.users().fetchAllUsers();
   let country, magazine, issuenumberMin, issuenumberMax, issuenumberOthers;
   try {
     const pathParts = (route.params.all as string).split(" ");

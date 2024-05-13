@@ -35,7 +35,7 @@ const props = withDefaults(defineProps<Props>(), {
   }),
 });
 
-const ellipse = ref(null as HTMLElement | null);
+const ellipse = ref<HTMLElement | null>(null);
 
 const { attributes, enableDragResize } = useStepOptions(props, "ArcCircle", [
   "cx",

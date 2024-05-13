@@ -31,8 +31,8 @@
 import { step } from "~/stores/step";
 import { ui } from "~/stores/ui";
 
-const rect1 = ref(null as SVGRectElement | null);
-const rect2 = ref(null as SVGRectElement | null);
+const rect1 = ref<SVGRectElement | null>(null);
+const rect2 = ref<SVGRectElement | null>(null);
 
 interface Props {
   issuenumber: string;

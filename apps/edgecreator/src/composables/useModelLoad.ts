@@ -2,18 +2,18 @@ import { edgeCatalog } from "~/stores/edgeCatalog";
 import { main } from "~/stores/main";
 import { renders } from "~/stores/renders";
 import { optionObjectToArray, step } from "~/stores/step";
-import { users } from "~/stores/users";
 import type { EdgeDimensions } from "~/types/EdgeDimensions";
 import type { LegacyComponent } from "~/types/LegacyComponent";
 import type { OptionNameAndValue } from "~/types/OptionNameAndValue";
 import type { OptionValue } from "~/types/OptionValue";
 import type { StepOptions } from "~/types/StepOptions";
+import { stores as webStores } from "~web";
 import { dmSocketInjectionKey } from "~web/src/composables/useDmSocket";
 
 const mainStore = main();
 const stepStore = step();
 const rendersStore = renders();
-const userStore = users();
+const userStore = webStores.users();
 const edgeCatalogStore = edgeCatalog();
 
 const { getSvgMetadata, loadSvgFromString } = useSvgUtils();

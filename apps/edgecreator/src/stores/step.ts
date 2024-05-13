@@ -37,8 +37,8 @@ const isColorOption = (optionName: string) =>
   ["fill", "stroke"].includes(optionName);
 
 export const step = defineStore("step", () => {
-  const options = ref([] as Options),
-    dimensions = ref([] as DimensionsArray),
+  const options = ref<Options>([]),
+    dimensions = ref<DimensionsArray>([]),
     colors = computed(() =>
       options.value.filter(
         ({ optionName, optionValue }) =>
