@@ -1,13 +1,22 @@
 import { mkdirSync, unlinkSync, writeFileSync } from "fs";
 import path from "path";
 import sharp from "sharp";
-import type { Namespace, Server } from "socket.io";
+import type { Namespace } from "socket.io";
+import type { Server } from "socket.io";
 
 import { getSvgPath } from "~/_utils";
+import EdgeCreatorServices from "~dm-services/edgecreator/types";
+import { useSocket } from "~socket.io-client-services";
 import type { ExportPaths } from "~types/ExportPaths";
 
 import type Events from "./types";
 import { namespaceEndpoint } from "./types";
+
+const socket = useSocket(process.env.DM_SOCKET_URL!);
+const { services: edgeCreatorServices } =
+  socket.addNamespace<EdgeCreatorServices>(
+    EdgeCreatorServices.namespaceEndpoint,
+  );
 export default (io: Server) => {
   (io.of(namespaceEndpoint) as Namespace<Events>).on("connection", (socket) => {
     console.log("connected to save");
@@ -50,57 +59,36 @@ export default (io: Server) => {
           .filter(({ contributionType }) => contributionType === "photographe")
           .map(({ user }) => user.username);
 
-        try {
-          const { isNew } = (
-            await call(
-              dmApi,
-              new PUT__edgecreator__publish__$country__$magazine__$issuenumber({
-                params: { country, magazine, issuenumber },
-                reqBody: {
-                  designers,
-                  photographers,
-                },
-              }),
-            )
-          ).data;
-          try {
-            unlinkSync(getSvgPath(false, country, magazine, issuenumber));
-          } catch (errorDetails) {
-            if ((errorDetails as { code?: string }).code === "ENOENT") {
-              console.log("No temporary SVG file to delete was found");
-            } else {
-              callback({
-                error: "Generic error",
-                errorDetails: errorDetails as string,
-              });
-            }
-          }
-
-          callback({ results: { paths, isNew } });
-        } catch (errorDetails) {
+        const publicationResult = await edgeCreatorServices.publishEdge({
+          publicationcode,
+          issuenumber,
+          designers,
+          photographers,
+        });
+        if (publicationResult.error) {
           callback({
             error: "Generic error",
-            errorDetails: errorDetails as string,
+            errorDetails: publicationResult.errorDetails as string,
           });
+          return;
         }
-      } else {
-        if (runSubmit) {
-          try {
-            await call(
-              dmApi,
-              new PUT__edgecreator__submit({
-                reqBody: {
-                  publicationcode,
-                  issuenumber,
-                },
-              }),
-            );
-          } catch (errorDetails) {
+        try {
+          unlinkSync(getSvgPath(false, country, magazine, issuenumber));
+        } catch (errorDetails) {
+          if ((errorDetails as { code?: string }).code === "ENOENT") {
+            console.log("No temporary SVG file to delete was found");
+          } else {
             callback({
               error: "Generic error",
               errorDetails: errorDetails as string,
             });
           }
+        }
+
+        callback({ results: { paths, isNew: publicationResult.isNew } });
+      } else {
+        if (runSubmit) {
+          await edgeCreatorServices.submitEdge(publicationcode, issuenumber);
         }
         callback({ results: { paths, isNew: false } });
       }

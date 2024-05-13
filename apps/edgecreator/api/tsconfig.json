@@ -21,7 +21,6 @@
       "~dm-services/*": ["../../../packages/api/services/*"],
       "~dm-types/*": ["../../../packages/types/*"],
       "~prisma-clients/*": ["../../../packages/prisma-types/*"],
-      "~routes/*": ["services/*"],
       "~socket.io-services/*": ["../../../packages/socket.io-services/*"]
     }
   },

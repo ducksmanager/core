@@ -6,6 +6,8 @@ import { dirname } from "path";
 import type { Namespace, Server } from "socket.io";
 
 import { getUserCredentials } from "~/services/_auth";
+import EdgeCreatorServices from "~dm-services/edgecreator/types";
+import { useSocket } from "~socket.io-client-services";
 
 import { getNextAvailableFile } from "../_upload_utils";
 import type Events from "./types";
@@ -13,7 +15,11 @@ import { namespaceEndpoint } from "./types";
 
 const edgesPath: string = process.env.EDGES_PATH!;
 
-const dmApi = createAxios(process.env.VITE_DM_API_URL!);
+const socket = useSocket(process.env.DM_SOCKET_URL!);
+const { services: edgeCreatorServices } =
+  socket.addNamespace<EdgeCreatorServices>(
+    EdgeCreatorServices.namespaceEndpoint,
+  );
 
 export default (io: Server) => {
   (io.of(namespaceEndpoint) as Namespace<Events>).on("connection", (socket) => {
@@ -33,26 +39,17 @@ export default (io: Server) => {
         ext: "jpg",
       });
 
-      try {
-        await call(
-          dmApi,
-          new PUT__edgecreator__multiple_edge_photo__v2({
-            reqBody: {
-              publicationcode: `${country}/${magazine}`,
-              issuenumber,
-            },
-          }),
-        );
-      } catch (e) {
-        callback({ error: "Generic error", errorDetails: e as string });
-      }
+      await edgeCreatorServices.sendNewEdgePhotoEmail(
+        `${country}/${magazine}`,
+        issuenumber,
+      );
 
       callback({ fileName });
     });
   });
 };
 
-export const upload = (
+export const upload = async (
   req: Request<
     Record<string, never>,
     {
@@ -209,24 +206,10 @@ const validateUpload = async (
 };
 
 const hasReachedDailyUploadLimit = async () =>
-  (
-    await call(
-      dmApi,
-      new GET__edgecreator__multiple_edge_photo__check_today_limit(),
-    )
-  ).data.uploadedFilesToday.length > 10;
+  (await edgeCreatorServices.checkTodayLimit()).uploadedFilesToday.length > 10;
 
 const hasAlreadySentPhoto = async (hash: string) =>
-  (
-    await call(
-      dmApi,
-      new GET__edgecreator__multiple_edge_photo__hash__$hash({
-        params: {
-          hash,
-        },
-      }),
-    )
-  ).data !== undefined;
+  (await edgeCreatorServices.getImageByHash(hash)) === null;
 
 const readContentsAndCalculateHash = (
   fileName: string,
@@ -242,16 +225,7 @@ const getFilenameUsagesInOtherModels = async (
   filename: string,
   currentModel: { country: string; magazine: string; issuenumber: string },
 ) =>
-  (
-    await call(
-      dmApi,
-      new GET__edgecreator__elements__images__$filename({
-        params: {
-          filename,
-        },
-      }),
-    )
-  ).data.filter(
+  (await edgeCreatorServices.getImagesFromFilename(filename)).filter(
     (otherUse) =>
       currentModel.country !== otherUse.country ||
       currentModel.magazine !== otherUse.magazine ||
@@ -264,13 +238,5 @@ const saveFile = (temporaryPath: string, finalPath: string) => {
 };
 
 const storePhotoHash = async (filename: string, hash: string) => {
-  await call(
-    dmApi,
-    new PUT__edgecreator__multiple_edge_photo({
-      reqBody: {
-        hash,
-        filename,
-      },
-    }),
-  );
+  await edgeCreatorServices.createElementImage(hash, filename);
 };

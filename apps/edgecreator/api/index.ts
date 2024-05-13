@@ -10,7 +10,10 @@ import type { SessionUser } from "~dm-types/SessionUser";
 
 import * as generateDefaultEdge from "./generateDefaultEdge";
 import text from "./services/text";
-import { upload } from "./services/upload";
+import browse from "./services/browse";
+import imageInfo from "./services/image-info";
+import save from "./services/save";
+import uploadServices, { upload } from "./services/upload";
 dotenv.config({
   path: "../.env",
 });
@@ -20,40 +23,6 @@ const port = 3001;
 Sentry.init({
   dsn: process.env.SENTRY_DSN,
 });
-
-// const app = express();
-
-// app.use(
-//   Sentry.Handlers.requestHandler({
-//     user: ["id", "username"],
-//   }) as express.RequestHandler
-// );
-// app.use(
-//   cors({
-//     optionsSuccessStatus: 200, // some legacy browsers (IE11, various SmartTVs) choke on 204
-//   })
-// );
-// app.use(cookieParser());
-
-// app.all(/^.+$/, injectTokenIfValid);
-// app.all(/^\/fs\/save$/, [
-//   authenticateToken,
-//   parseForm,
-//   checkUserIsAdminForExportOrIsEditorForSaveOrIsFirstFileForModel,
-// ]);
-// app.all(/^\/fs\/(text|upload|upload-base64)$/, [
-//   authenticateToken,
-//   checkUserIsAdminOrEditor,
-// ]);
-
-// app.use(Sentry.Handlers.errorHandler() as express.ErrorRequestHandler);
-
-// (async () => {
-//   app.use("/", await router({ directory: `${process.cwd()}/routes` }));
-//   app.listen(port, () =>
-//     console.log(`EdgeCreator API listening on port ${port}`)
-//   );
-// })();
 
 class ServerWithUser extends Server<
   Record<string, never>,
@@ -120,26 +89,9 @@ httpServer.listen(port);
 console.log(`WebSocket open on port ${port}`);
 
 io.use(OptionalAuthMiddleware);
-io.use((_socket, next) => {
-  next();
-
-  // app.all(
-  //   /^\/(edgecreator\/(publish|edgesprites)|notifications)|(edges\/(published))|(\/demo\/reset)|(bookstores\/(approve|refuse))|(presentation-text\/(approve|refuse))/,
-  //   [checkUserIsAdmin]
-  // );
-
-  // app.all(/^\/edgecreator\/(.+)/, [
-  //   authenticateToken,
-  //   checkUserIsEdgeCreatorEditor,
-  // ]);
-
-  // app.all(/^\/global-stats\/user\/list$/, [
-  //   authenticateToken,
-  //   checkUserIsEdgeCreatorEditor,
-  // ]);
-
-  // app.all(/^\/collection\/(.+)/, authenticateToken);
-  // app.all("/global-stats/user/collection/rarity", authenticateToken);
-});
 
 text(io);
+browse(io);
+imageInfo(io);
+save(io);
+uploadServices(io);
