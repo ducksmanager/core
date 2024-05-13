@@ -25,7 +25,7 @@ export default (io: Server) => {
       const tentativeFileName = `${magazine}.${issuenumber}.photo`;
       const fileName = getNextAvailableFile(
         `${path}/${tentativeFileName}`,
-        "jpg"
+        "jpg",
       ).match(/\/([^/]+)$/)![1];
 
       await decode(data, {
@@ -41,7 +41,7 @@ export default (io: Server) => {
               publicationcode: `${country}/${magazine}`,
               issuenumber,
             },
-          })
+          }),
         );
       } catch (e) {
         callback({ error: "Generic error", errorDetails: e as string });
@@ -65,7 +65,7 @@ export const upload = (
       };
     }
   >,
-  res: Response
+  res: Response,
 ) => {
   const userCredentials = getUserCredentials(req.user!);
 
@@ -87,7 +87,7 @@ export const upload = (
       filename,
       isMultipleEdgePhoto,
       edge,
-      isEdgePhoto
+      isEdgePhoto,
     );
     try {
       const { hash } = await validateUpload(
@@ -97,15 +97,15 @@ export const upload = (
         isEdgePhoto,
         userCredentials,
         edge,
-        temporaryPath
+        temporaryPath,
       );
       saveFile(temporaryPath, targetFilename);
       await storePhotoHash(targetFilename, hash);
       targetFilesnames.push(
         targetFilename.replace(
           process.env.EDGES_PATH!,
-          process.env.VITE_EDGES_URL!
-        )
+          process.env.VITE_EDGES_URL!,
+        ),
       );
     } catch (e: unknown) {
       res.writeHead(400, {
@@ -127,21 +127,21 @@ const getTargetFilename = (
     magazine: string;
     issuenumber: string;
   },
-  isEdgePhoto: boolean
+  isEdgePhoto: boolean,
 ) => {
   filename = filename.normalize("NFD").replace(/[\u0300-\u036F]/g, "");
 
   if (isMultipleEdgePhoto) {
     return getNextAvailableFile(
       `${edgesPath}/tranches_multiples/photo.multiple`,
-      "jpg"
+      "jpg",
     );
   } else {
     const { country, issuenumber, magazine } = edge;
     if (isEdgePhoto) {
       return getNextAvailableFile(
         `${edgesPath}/${country}/photos/${magazine}.${issuenumber}.photo`,
-        "jpg"
+        "jpg",
       );
     } else {
       return `${edgesPath}/${country}/elements/${
@@ -162,7 +162,7 @@ const validateUpload = async (
     magazine: string;
     issuenumber: string;
   },
-  filePath: string
+  filePath: string,
 ): Promise<{ hash: string }> => {
   if (!allowedMimeTypes.includes(mimetype)) {
     throw new Error(
@@ -170,7 +170,7 @@ const validateUpload = async (
         error:
           "Invalid file type: {mimetype}, the following types are allowed: {allowedMimeTypes}",
         placeholders: { mimetype, allowedMimeTypes },
-      })
+      }),
     );
   }
   const { hash } = readContentsAndCalculateHash(filePath);
@@ -179,19 +179,19 @@ const validateUpload = async (
       throw new Error(
         JSON.stringify({
           error: "You have reached your daily upload limit",
-        })
+        }),
       );
     }
     if (await hasAlreadySentPhoto(hash)) {
       throw new Error(
-        JSON.stringify({ error: "You have already sent this photo" })
+        JSON.stringify({ error: "You have already sent this photo" }),
       );
     }
   } else {
     // await readFile(filestream);
     const otherElementUses = await getFilenameUsagesInOtherModels(
       filename,
-      edge
+      edge,
     );
     if (fs.existsSync(filename) && otherElementUses.length) {
       throw new Error(
@@ -201,7 +201,7 @@ const validateUpload = async (
           placeholders: {
             otherElementUses: JSON.stringify(otherElementUses),
           },
-        })
+        }),
       );
     }
   }
@@ -212,7 +212,7 @@ const hasReachedDailyUploadLimit = async () =>
   (
     await call(
       dmApi,
-      new GET__edgecreator__multiple_edge_photo__check_today_limit()
+      new GET__edgecreator__multiple_edge_photo__check_today_limit(),
     )
   ).data.uploadedFilesToday.length > 10;
 
@@ -224,12 +224,12 @@ const hasAlreadySentPhoto = async (hash: string) =>
         params: {
           hash,
         },
-      })
+      }),
     )
   ).data !== undefined;
 
 const readContentsAndCalculateHash = (
-  fileName: string
+  fileName: string,
 ): { contents: Buffer; hash: string } => {
   const fileBuffer = fs.readFileSync(fileName);
   const hashSum = crypto.createHash("sha256");
@@ -240,7 +240,7 @@ const readContentsAndCalculateHash = (
 
 const getFilenameUsagesInOtherModels = async (
   filename: string,
-  currentModel: { country: string; magazine: string; issuenumber: string }
+  currentModel: { country: string; magazine: string; issuenumber: string },
 ) =>
   (
     await call(
@@ -249,13 +249,13 @@ const getFilenameUsagesInOtherModels = async (
         params: {
           filename,
         },
-      })
+      }),
     )
   ).data.filter(
     (otherUse) =>
       currentModel.country !== otherUse.country ||
       currentModel.magazine !== otherUse.magazine ||
-      currentModel.issuenumber !== otherUse.issuenumberStart
+      currentModel.issuenumber !== otherUse.issuenumberStart,
   );
 
 const saveFile = (temporaryPath: string, finalPath: string) => {
@@ -271,6 +271,6 @@ const storePhotoHash = async (filename: string, hash: string) => {
         hash,
         filename,
       },
-    })
+    }),
   );
 };

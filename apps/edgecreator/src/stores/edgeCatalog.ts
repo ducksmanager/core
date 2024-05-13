@@ -1,21 +1,11 @@
 import { defineStore } from "pinia";
 
 import { edgecreatorSocketInjectionKey } from "~/composables/useEdgecreatorSocket";
-import { api } from "~/stores/api";
-import type { EdgeModel } from "~dm-types/EdgeModel";
 import type { ModelSteps } from "~dm-types/ModelSteps";
-import {
-  GET__edgecreator__model,
-  GET__edgecreator__model__$modelIds__steps,
-  GET__edgecreator__model__editedbyother__all,
-  GET__edgecreator__model__unassigned__all,
-  GET__edges__$countrycode__$magazinecode__$issuenumbers,
-} from "~dm-types/routes";
+import { dmSocketInjectionKey } from "~web/src/composables/useDmSocket";
 
-import { call, getChunkedRequests } from "../../axios-helper";
 import { coa } from "./coa";
 import { collection } from "./collection";
-import { users } from "./users";
 
 const { getSvgMetadata, loadSvgFromString } = useSvgUtils();
 
@@ -33,24 +23,29 @@ export type EdgeWithVersionAndStatus = Edge & {
   published?: string | null;
 };
 
+const {
+  edgeCreator: { services: edgeCreatorServices },
+  edges: { services: edgesServices },
+} = injectLocal(dmSocketInjectionKey)!;
+
 export const edgeCategories = [
   {
     status: "ongoing",
     l10n: "Ongoing edges",
-    apiCall: GET__edgecreator__model,
+    apiCall: edgesServices.getAllEdges,
     svgCheckFn: (edge: Edge, currentUser: string) =>
       edge.designers.includes(currentUser),
   },
   {
     status: "ongoing by another user",
     l10n: "Ongoing edges handled by other users",
-    apiCall: GET__edgecreator__model__editedbyother__all,
+    apiCall: edgeCreatorServices.getEdgesEditedByOthers,
     svgCheckFn: (edge: Edge) => edge.designers.length,
   },
   {
     status: "pending",
     l10n: "Pending edges",
-    apiCall: GET__edgecreator__model__unassigned__all,
+    apiCall: edgeCreatorServices.getUnassignedEdges,
     svgCheckFn: () => true,
   },
 ];
@@ -94,14 +89,10 @@ export const edgeCatalog = defineStore("edgeCatalog", () => {
     fetchPublishedEdges = async (publicationcode: string) => {
       const [countrycode, magazinecode] = publicationcode.split("/");
       addPublishedEdges({
-        [publicationcode]: (
-          await call(
-            api().dmApi,
-            new GET__edges__$countrycode__$magazinecode__$issuenumbers({
-              params: { countrycode, magazinecode, issuenumbers: "_" },
-            }),
-          )
-        ).data,
+        [publicationcode]: await edgesServices.getEdges(
+          `${countrycode}/${magazinecode}`,
+          undefined,
+        ),
       });
     },
     addCurrentEdges = (edges: Record<string, EdgeWithVersionAndStatus>) => {
@@ -160,46 +151,37 @@ export const edgeCatalog = defineStore("edgeCatalog", () => {
 
       addPublishedEdgesSteps({
         publicationcode,
-        newPublishedEdgesSteps:
-          await getChunkedRequests<GET__edgecreator__model__$modelIds__steps>({
-            callFn: (chunk) =>
-              call(
-                api().dmApi,
-                new GET__edgecreator__model__$modelIds__steps({
-                  params: { modelIds: chunk },
-                }),
-              ),
-            valuesToChunk: newModelIds.map((modelId) => String(modelId)),
-            chunkSize: 10,
-          }),
+        newPublishedEdgesSteps: await edgeCreatorServices.getModelsSteps(
+          newModelIds.map((modelId) => modelId),
+        ),
       });
     },
-    getEdgeFromApi = (
-      { country, magazine, issuenumber, contributors, photos }: EdgeModel,
-      status: string,
-    ) => {
-      const issuecode = `${country}/${magazine} ${issuenumber}`;
-      const getContributorsOfType = (contributionType: string) =>
-        (contributors ?? [])
-          .filter(({ contribution }) => contribution === contributionType)
-          .map(
-            ({ userId }) =>
-              users().allUsers!.find(({ id }) => id === userId)!
-                .username as string,
-          );
-      const photo = photos?.find(({ isMainPhoto }) => isMainPhoto);
-      return {
-        country,
-        magazine,
-        issuenumber,
-        issuecode,
-        v3: false,
-        designers: getContributorsOfType("createur"),
-        photographers: getContributorsOfType("photographe"),
-        photo: photo?.elementImage.fileName,
-        status,
-      };
-    },
+    // getEdgeFromApi = (
+    //   { country, magazine, issuenumber, contributors, photos }: EdgeModel,
+    //   status: string
+    // ) => {
+    //   const issuecode = `${country}/${magazine} ${issuenumber}`;
+    //   const getContributorsOfType = (contributionType: string) =>
+    //     (contributors ?? [])
+    //       .filter(({ contribution }) => contribution === contributionType)
+    //       .map(
+    //         ({ userId }) =>
+    //           users().allUsers!.find(({ id }) => id === userId)!
+    //             .username as string
+    //       );
+    //   const photo = photos?.find(({ isMainPhoto }) => isMainPhoto);
+    //   return {
+    //     country,
+    //     magazine,
+    //     issuenumber,
+    //     issuecode,
+    //     v3: false,
+    //     designers: getContributorsOfType("createur"),
+    //     photographers: getContributorsOfType("photographe"),
+    //     photo: photo?.elementImage.fileName,
+    //     status,
+    //   };
+    // },
     getEdgeFromSvg = (edge: Edge): EdgeWithVersionAndStatus => ({
       ...edge,
       v3: true,
@@ -246,12 +228,8 @@ export const edgeCatalog = defineStore("edgeCatalog", () => {
       let newCurrentEdges: typeof currentEdges.value = {};
       const publishedSvgEdges: typeof publishedEdges.value = {};
 
-      for (const { status, apiCall } of edgeCategories) {
-        const data = (await call(api().dmApi, new apiCall())).data;
-        newCurrentEdges = data.reduce((acc, edgeData) => {
-          const edge = getEdgeFromApi(edgeData, status);
-          return { ...acc, [edge.issuecode]: edge };
-        }, newCurrentEdges);
+      for (const { apiCall } of edgeCategories) {
+        newCurrentEdges = Object.assign(newCurrentEdges, await apiCall());
       }
 
       const edges = (await browseServices.listEdgeModels()).results;

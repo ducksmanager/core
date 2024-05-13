@@ -170,15 +170,17 @@ meta:
 <script setup lang="ts">
 import { storeToRefs } from "pinia";
 
-import { api } from "~/stores/api";
 import { coa } from "~/stores/coa";
 import type { BookcaseEdgeWithPopularity } from "~/stores/collection";
 import { collection } from "~/stores/collection";
 import type { EdgeWithVersionAndStatus } from "~/stores/edgeCatalog";
 import { edgeCatalog, edgeCategories } from "~/stores/edgeCatalog";
-import { GET__edges__wanted__data } from "~dm-types/routes";
 
-import { call } from "../../axios-helper";
+const {
+  edges: { services: edgesServices },
+} = injectLocal(dmSocketInjectionKey)!;
+
+import { dmSocketInjectionKey } from "~web/src/composables/useDmSocket";
 
 const { getEdgeUrl } = useSvgUtils();
 
@@ -207,9 +209,7 @@ const mostPopularIssuesInCollectionWithoutEdge = computed(() =>
 );
 
 const loadMostWantedEdges = async () => {
-  mostWantedEdges.value = (
-    await call(api().dmApi, new GET__edges__wanted__data())
-  ).data
+  mostWantedEdges.value = (await edgesServices.getWantedEdges())
     .slice(0, 10)
     .map(
       ({

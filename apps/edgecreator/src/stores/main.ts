@@ -2,13 +2,12 @@ import type { AxiosInstance } from "axios";
 import { defineStore } from "pinia";
 
 import { edgecreatorSocketInjectionKey } from "~/composables/useEdgecreatorSocket";
-import { api } from "~/stores/api";
 import type { EdgeWithModelId } from "~dm-types/EdgeWithModelId";
 import type { userContributionType } from "~prisma-clients/client_dm";
 import type { ModelContributor } from "~types/ModelContributor";
 import type { SimpleUser } from "~types/SimpleUser";
+import { dmSocketInjectionKey } from "~web/src/composables/useDmSocket";
 
-import { call } from "../../axios-helper";
 import { coa } from "./coa";
 
 const numericSortCollator = new Intl.Collator(undefined, {
@@ -19,6 +18,9 @@ export const main = defineStore("main", () => {
   const {
     browse: { services: browseServices },
   } = injectLocal(edgecreatorSocketInjectionKey)!;
+  const {
+    edges: { services: edgesServices },
+  } = injectLocal(dmSocketInjectionKey)!;
 
   const country = ref(null as string | null),
     magazine = ref(null as string | null),
@@ -148,19 +150,8 @@ export const main = defineStore("main", () => {
     getEdgePublicationStates = async (edges: string[]) =>
       [
         ...new Set(
-          Object.values<EdgeWithModelId[]>(
-            (
-              await call(
-                api().dmApi,
-                new GET__edges__$countrycode__$magazinecode__$issuenumbers({
-                  params: {
-                    countrycode: publicationcode.value!.split("/")[0],
-                    magazinecode: publicationcode.value!.split("/")[1],
-                    issuenumbers: edges.join(","),
-                  },
-                }),
-              )
-            ).data,
+          Object.values(
+            await edgesServices.getEdges(publicationcode.value!, edges),
           ),
         ),
       ].sort((a, b) =>

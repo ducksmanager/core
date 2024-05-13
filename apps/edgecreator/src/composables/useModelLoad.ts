@@ -1,4 +1,3 @@
-import { api } from "~/stores/api";
 import { edgeCatalog } from "~/stores/edgeCatalog";
 import { main } from "~/stores/main";
 import { renders } from "~/stores/renders";
@@ -9,13 +8,7 @@ import type { LegacyComponent } from "~/types/LegacyComponent";
 import type { OptionNameAndValue } from "~/types/OptionNameAndValue";
 import type { OptionValue } from "~/types/OptionValue";
 import type { StepOptions } from "~/types/StepOptions";
-import {
-  GET__edgecreator__contributors__$modelId,
-  GET__edgecreator__model__$countrycode__$magazinecode__$issuenumber,
-  GET__edgecreator__model__$modelId__photo__main,
-} from "~dm-types/routes";
-
-import { call } from "../../axios-helper";
+import { dmSocketInjectionKey } from "~web/src/composables/useDmSocket";
 
 const mainStore = main();
 const stepStore = step();
@@ -28,6 +21,10 @@ const { getSvgMetadata, loadSvgFromString } = useSvgUtils();
 const { getOptionsFromDb } = useLegacyDb();
 
 export default () => {
+  const {
+    edgeCreator: { services: edgeCreatorServices },
+  } = injectLocal(dmSocketInjectionKey)!;
+
   const loadDimensionsFromSvg = (
     issuenumber: string,
     svgElement: SVGElement,
@@ -159,7 +156,7 @@ export default () => {
         try {
           stepStore.setOptionValues(
             optionObjectToArray(
-              await getOptionsFromDb(
+              (await getOptionsFromDb(
                 publicationcode,
                 issuenumber,
                 stepNumber,
@@ -169,7 +166,7 @@ export default () => {
                 } as LegacyComponent,
                 dimensions[0],
                 calculateBase64,
-              ),
+              ))!,
             ),
             {
               issuenumbers: [issuenumber],
@@ -197,16 +194,7 @@ export default () => {
     issuenumber: string,
     edgeId: number,
   ) => {
-    const contributors = (
-      await call(
-        api().dmApi,
-        new GET__edgecreator__contributors__$modelId({
-          params: {
-            modelId: String(edgeId),
-          },
-        }),
-      )
-    ).data;
+    const contributors = await edgeCreatorServices.getModelContributors(edgeId);
     for (const { contribution, userId } of contributors) {
       mainStore.addContributor({
         issuenumber,
@@ -248,20 +236,10 @@ export default () => {
         await loadSvg(true);
       } catch {
         const publicationcode = `${countrycode}/${magazinecode}`;
-        const edge = (
-          await call(
-            api().dmApi,
-            new GET__edgecreator__model__$countrycode__$magazinecode__$issuenumber(
-              {
-                params: {
-                  countrycode,
-                  magazinecode,
-                  issuenumber,
-                },
-              },
-            ),
-          )
-        ).data;
+        const edge = (await edgeCreatorServices.getModel(
+          publicationcode,
+          issuenumber,
+        ))!;
         await edgeCatalogStore.getPublishedEdgesSteps({
           publicationcode,
           edgeModelIds: [edge.id],
@@ -289,16 +267,7 @@ export default () => {
   };
 
   const setPhotoUrlsFromApi = async (issuenumber: string, edgeId: number) => {
-    const photo = (
-      await call(
-        api().dmApi,
-        new GET__edgecreator__model__$modelId__photo__main({
-          params: {
-            modelId: String(edgeId),
-          },
-        }),
-      )
-    ).data;
+    const photo = await edgeCreatorServices.getModelMainPhoto(edgeId);
     mainStore.photoUrls[issuenumber] = photo.fileName;
   };
 

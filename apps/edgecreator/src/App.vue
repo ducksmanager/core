@@ -7,22 +7,38 @@ import { provideLocal } from "@vueuse/core";
 import Cookies from "js-cookie";
 
 import { collection } from "~/stores/collection";
+import { buildWebStorage } from "~socket.io-client-services/index";
+import useDmSocket, {
+  dmSocketInjectionKey,
+} from "~web/src/composables/useDmSocket";
 
 import useEdgecreatorSocket, {
   edgecreatorSocketInjectionKey,
 } from "./composables/useEdgecreatorSocket";
 
+const session = {
+  getToken: () => Promise.resolve(Cookies.get("token")),
+  clearSession: () => {}, // Promise.resolve(Cookies.remove("token")),
+  sessionExists: () =>
+    Promise.resolve(typeof Cookies.get("token") === "string"),
+};
+
 provideLocal(
   edgecreatorSocketInjectionKey,
   useEdgecreatorSocket({
-    session: {
-      getToken: () => Promise.resolve(Cookies.get("token")),
-      clearSession: () => {}, // Promise.resolve(Cookies.remove("token")),
-      sessionExists: () =>
-        Promise.resolve(typeof Cookies.get("token") === "string"),
-    },
+    session,
   }),
 );
+
+const dmSocket = useDmSocket({
+  cacheStorage: buildWebStorage(sessionStorage),
+  session,
+  onConnectError: (e) => {
+    console.error(e);
+  },
+});
+
+provideLocal(dmSocketInjectionKey, dmSocket);
 const route = useRoute();
 
 const user = computed(() => collection().user);

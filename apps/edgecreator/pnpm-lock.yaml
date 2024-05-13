@@ -95,6 +95,9 @@ importers:
       ~socket.io-client-services:
         specifier: workspace:*
         version: link:../../packages/socket.io-client-services
+      ~web:
+        specifier: workspace:*
+        version: link:../web
     devDependencies:
       '@iconify-json/bi':
         specifier: ^1.1.23
