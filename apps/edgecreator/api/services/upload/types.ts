@@ -17,7 +17,7 @@ export default abstract class {
           fileName: string;
         },
         "Generic error"
-      >
-    ) => void
+      >,
+    ) => void,
   ) => void;
 }

@@ -5,9 +5,7 @@
     "clean": "rm -rf dist",
     "build": "rm -rf dist/api dist/types && tsc && tsc-alias",
     "start": "tsx index.ts",
-    "dev": "nodemon",
-    "generate-route-types": "tsx generate-route-types.ts",
-    "generate-route-types:clean": "tsx generate-route-types.ts && cd .. && node_modules/.bin/eslint --fix types/routes.ts"
+    "dev": "nodemon"
   },
   "dependencies": {
     "@sentry/node": "^7.114.0",

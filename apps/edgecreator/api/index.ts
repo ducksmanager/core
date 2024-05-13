@@ -1,12 +1,16 @@
 import * as Sentry from "@sentry/node";
 import dotenv from "dotenv";
+import express from "express";
 import { createServer } from "http";
+import multer from "multer";
 import { Server } from "socket.io";
 
 import { OptionalAuthMiddleware } from "~api/services/auth/util";
 import type { SessionUser } from "~dm-types/SessionUser";
 
+import * as generateDefaultEdge from "./generateDefaultEdge";
 import text from "./services/text";
+import { upload } from "./services/upload";
 dotenv.config({
   path: "../.env",
 });
@@ -72,27 +76,40 @@ Sentry.init({
   dsn: process.env.SENTRY_DSN,
 });
 
-const httpServer = createServer(async (req, res) => {
-  let data: { error: string } | object;
-  switch (req.url) {
-    //   case "/status/db":
-    //     data = await getDbStatus();
-    //     break;
-    //   case "/status/pastecsearch":
-    //     data = await getPastecSearchStatus();
-    //     break;
-    //   case "/status/pastec":
-    //     data = await getPastecStatus();
-    default:
-      res.writeHead(404);
-      res.end();
-      return;
-  }
+const app = express();
 
-  res.writeHead("error" in data ? 500 : 200, { "Content-Type": "text/json" });
-  res.write(JSON.stringify(data));
-  res.end();
+app.get("/upload", (req, res) => {
+  if (req.method === "POST") {
+    multer({
+      dest: "/tmp/",
+      limits: {
+        fileSize: 3 * 1024 * 1024,
+        files: 1,
+      },
+    }).array("files");
+    upload(req, res);
+  } else {
+    res.writeHead(405);
+  }
 });
+
+app.get("/default-edge", (req, res) => {
+  if (req.method === "OPTIONS") {
+    generateDefaultEdge.options(req, res);
+  } else if (req.method === "GET") {
+    multer({
+      dest: "/tmp/",
+      limits: {
+        fileSize: 3 * 1024 * 1024,
+        files: 1,
+      },
+    }).array("files");
+    generateDefaultEdge.get(req, res);
+  } else {
+    res.writeHead(405);
+  }
+});
+const httpServer = createServer(app);
 const io = new ServerWithUser(httpServer, {
   cors: {
     origin: "*",

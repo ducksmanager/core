@@ -38,7 +38,7 @@ meta:
           {{
             // eslint-disable-next-line max-len
             $t(
-              'For each edge present on the picture, please select the part of the picture corresponding to the edge, fill in the information related to the edge hereunder then click on "Add". Once all the edges on the picture have been indicated, click on "Send the edge pictures".'
+              'For each edge present on the picture, please select the part of the picture corresponding to the edge, fill in the information related to the edge hereunder then click on "Add". Once all the edges on the picture have been indicated, click on "Send the edge pictures".',
             )
           }}
         </b-container>
@@ -139,11 +139,11 @@ import { nextTick } from "vue";
 import type { CropperData } from "vue-cropperjs";
 import { useI18n } from "vue-i18n";
 
+import { edgecreatorSocketInjectionKey } from "~/composables/useEdgecreatorSocket";
 import useSaveEdge from "~/composables/useSaveEdge";
 import { coa } from "~/stores/coa";
 import type { Crop } from "~types/Crop";
 import type { ModelContributor } from "~types/ModelContributor";
-import { edgecreatorSocketInjectionKey } from "~/composables/useEdgecreatorSocket";
 
 const i18n = useI18n();
 
@@ -172,7 +172,7 @@ const initialContributors = computed(
       contributionType: "photographe",
       user: { id: 0, username: useCookies().get("dm-user") },
     },
-  ]
+  ],
 );
 
 const addCrop = () => {
@@ -182,7 +182,7 @@ const addCrop = () => {
       {
         body: i18n
           .t(
-            `The width of your selection is bigger than its height! Make sure that the edges appear vertically on the photo.`
+            `The width of your selection is bigger than its height! Make sure that the edges appear vertically on the photo.`,
           )
           .toString(),
         title: i18n.t("Error").toString(),
@@ -190,14 +190,14 @@ const addCrop = () => {
       {
         delay: 5000,
         autoHide: true,
-      }
+      },
     );
   } else {
     crops.value.push({
       ...currentCrop.value!,
       data,
       url: (cropper.value.getCroppedCanvas() as HTMLCanvasElement).toDataURL(
-        "image/jpeg"
+        "image/jpeg",
       ),
     });
     currentCrop.value = null;
@@ -222,7 +222,7 @@ const uploadAll = async () => {
         initialContributors.value.map((contribution) => ({
           ...contribution,
           issuenumber: crop.issueNumber,
-        }))
+        })),
       );
       const isSuccess = response!.paths.svgPath;
       crop.sent = !!isSuccess;

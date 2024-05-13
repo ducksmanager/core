@@ -17,7 +17,7 @@ const defaultExport = (options: {
   return {
     options,
     imageInfo: addNamespace<ImageInfoServices>(
-      ImageInfoServices.namespaceEndpoint
+      ImageInfoServices.namespaceEndpoint,
     ),
     browse: addNamespace<BrowseServices>(BrowseServices.namespaceEndpoint),
     save: addNamespace<SaveServices>(SaveServices.namespaceEndpoint),

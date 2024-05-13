@@ -1,7 +1,7 @@
-import fs from "fs";
+import type { Request, Response } from "express";
+import { readFileSync } from "fs";
 import sharp from "sharp";
 
-import type { ExpressCall } from "~/services/_express-call";
 // eslint-disable-next-line max-len
 const REGEX_EDGE_URL =
   /^edges\/(?<countryCode>[^/]+)\/gen\/_?(?<magazineCode>[^.]+)\.(?<issueNumber>[^.]+)\.(?<extension>[^?]+)?(?:\?.+)?$/;
@@ -14,14 +14,7 @@ const corsHeaders = {
     "DNT,X-CustomHeader,Keep-Alive,User-Agent,X-Requested-With," +
     "If-Modified-Since,Cache-Control,Content-Type,x-dm-user,x-dm-pass",
 };
-export const get = (
-  ...[req, res]: ExpressCall<{
-    resBody: {
-      current: string[];
-      published: string[];
-    };
-  }>
-) => {
+export const get = (req: Request, res: Response) => {
   const input = req.url.replace(/^\//, "");
   let text;
   const match = input.match(REGEX_EDGE_URL);
@@ -39,8 +32,7 @@ export const get = (
   }
 
   const content = Buffer.from(
-    fs
-      .readFileSync("assets/default.svg")
+    readFileSync("assets/default.svg")
       .toString()
       .replace("My text", decodeURIComponent(text)),
     "utf8",
@@ -55,14 +47,7 @@ export const get = (
   });
 };
 
-export const options = (
-  ...[, res]: ExpressCall<{
-    resBody: {
-      current: string[];
-      published: string[];
-    };
-  }>
-) => {
+export const options = (req: Request, res: Response) => {
   res.writeHead(200, corsHeaders);
   return res.end();
 };
