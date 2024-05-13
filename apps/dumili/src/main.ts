@@ -11,6 +11,7 @@ import { plugin as Slicksort } from "vue-slicksort";
 
 import App from "./App.vue";
 import i18n from "./i18n.js";
+import { useSocket } from "~socket.io-client-services/index.js";
 
 const router = createRouter({
   history: createWebHistory(),
@@ -24,4 +25,5 @@ createApp(App)
   .use(createPinia())
   .use(router)
   .use(Slicksort)
+  .provide("socket", useSocket(import.meta.env.VITE_DUMILI_SOCKET_URL))
   .mount("#app");

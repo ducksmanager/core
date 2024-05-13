@@ -170,7 +170,9 @@ const createEntry = async (idx: number) => {
   entries.splice(idx + 1, 0, {
     pageIds: [lastPageOfPreviousEntry],
   });
-  await getIndexationSocket(indexation.value.id).upsertEntries(entries);
+  await getIndexationSocket(indexation.value.id).services.upsertEntries(
+    entries
+  );
 };
 
 const firstPageOfEntry = (pageIds: number[]) =>

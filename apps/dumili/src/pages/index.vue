@@ -52,9 +52,13 @@
 </template>
 
 <script setup lang="ts">
-import { indexationsEvents } from "~/composables/useDumiliSocket";
+import { injectLocal } from "@vueuse/core";
+import { dumiliSocketInjectionKey } from "~/composables/useDumiliSocket";
 import { IndexationWithFirstPage } from "~dumili-services/indexations/types";
 const router = useRouter();
+const {
+  indexations: { services: indexationsServices },
+} = injectLocal(dumiliSocketInjectionKey)!;
 
 const currentIndexations = ref<IndexationWithFirstPage[] | null>(null);
 const modal = ref(false);
@@ -74,7 +78,7 @@ watch(uploadType, (newUploadType) => {
 });
 
 (async () => {
-  const { error, indexations } = await indexationsEvents.getIndexations();
+  const { error, indexations } = await indexationsServices.getIndexations();
   if (error) {
     console.error(error);
   } else {

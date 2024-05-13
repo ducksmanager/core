@@ -22,10 +22,13 @@
 </template>
 
 <script setup lang="ts">
+import { injectLocal } from "@vueuse/core";
 import { SimpleStory } from "~dm-types/SimpleStory";
-import { composables as dmComposables } from "~web";
+import { dmSocketInjectionKey } from "~web/src/composables/useDmSocket";
 
-const { coaServices } = dmComposables.useDmSocket;
+const {
+  coa: { services: coaServices },
+} = injectLocal(dmSocketInjectionKey)!;
 
 const emit = defineEmits<{
   (e: "story-selected", searchResult: SimpleStory): void;

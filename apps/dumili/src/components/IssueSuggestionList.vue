@@ -18,6 +18,8 @@
 </template>
 
 <script lang="ts" setup>
+import { injectLocal } from "@vueuse/core";
+import { dumiliSocketInjectionKey } from "~/composables/useDumiliSocket";
 import { suggestions } from "~/stores/suggestions";
 
 const { t: $t } = useI18n();
@@ -26,8 +28,9 @@ const showIssueSelect = ref(false);
 const suggestionsStore = suggestions();
 const { indexation } = storeToRefs(suggestionsStore);
 
-import { getIndexationSocket } from "~/composables/useDumiliSocket";
 import { issueSuggestion } from "~prisma/client_dumili";
+
+const { getIndexationSocket } = injectLocal(dumiliSocketInjectionKey)!;
 
 const issue = computed(() => suggestionsStore.acceptedIssue);
 
@@ -39,10 +42,12 @@ const acceptIssueSuggestion = async (
     publicationcode: string | null;
     issuenumber: string | null;
   },
-  source: issueSuggestion["source"],
+  source: issueSuggestion["source"]
 ) => {
   if (publicationcode && issuenumber) {
-    await getIndexationSocket(indexation.value!.id).acceptIssueSuggestion({
+    await getIndexationSocket(
+      indexation.value!.id
+    ).services.acceptIssueSuggestion({
       source,
       indexationId: indexation.value!.id,
       publicationcode,

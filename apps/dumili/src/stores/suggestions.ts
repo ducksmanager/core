@@ -1,4 +1,4 @@
-import { getIndexationSocket } from "~/composables/useDumiliSocket";
+import { dumiliSocketInjectionKey } from "~/composables/useDumiliSocket";
 import { FullIndexation } from "~dumili-services/indexations/types";
 import { storyKindSuggestion, storySuggestion } from "~prisma/client_dumili";
 import { inducks_storyversion } from "~prisma-clients/client_coa";
@@ -8,9 +8,13 @@ export type storyWithStoryversion = storySuggestion & {
 };
 
 export const suggestions = defineStore("suggestions", () => {
+  const {
+    getIndexationSocket,
+    coa: { services: coaServices },
+  } = inject(dumiliSocketInjectionKey)!;
   const indexation = ref<FullIndexation>(),
     acceptedStories = ref<Record<number, storyWithStoryversion | undefined>>(
-      {},
+      {}
     );
   const entriesFirstPages = computed(() => {
     const firstPages: {
@@ -38,7 +42,8 @@ export const suggestions = defineStore("suggestions", () => {
   });
 
   const loadIndexation = async (indexationId: string) => {
-    const data = await getIndexationSocket(indexationId).loadIndexation();
+    const data =
+      await getIndexationSocket(indexationId).services.loadIndexation();
     if ("error" in data) {
       console.error(data.error);
       return;
@@ -56,12 +61,12 @@ export const suggestions = defineStore("suggestions", () => {
         acceptedStorySuggestedId,
       } of entries || []) {
         const acceptedStory = storySuggestions.find(
-          (suggestion) => suggestion.id === acceptedStorySuggestedId,
+          (suggestion) => suggestion.id === acceptedStorySuggestedId
         );
 
         if (acceptedStory) {
           const storyversion = await coaServices.getStoryversionDetails(
-            acceptedStory!.storyversioncode,
+            acceptedStory!.storyversioncode
           );
           if ("error" in storyversion) {
             console.error(storyversion.errorDetails);
@@ -73,7 +78,7 @@ export const suggestions = defineStore("suggestions", () => {
           }
         }
       }
-    },
+    }
   );
 
   return {
@@ -81,7 +86,7 @@ export const suggestions = defineStore("suggestions", () => {
     loadIndexation,
     entriesFirstPages,
     hasPendingIssueSuggestions: computed(
-      () => false, //pendingIssueSuggestions.value.length > 0
+      () => false //pendingIssueSuggestions.value.length > 0
     ),
     acceptedIssue: computed(() => indexation.value!.acceptedIssueSuggestion),
     acceptedStories,
@@ -93,8 +98,8 @@ export const suggestions = defineStore("suggestions", () => {
           ...acc,
           [id]: acceptedSuggestedStoryKind,
         }),
-        {},
-      ),
+        {}
+      )
     ),
   };
 });

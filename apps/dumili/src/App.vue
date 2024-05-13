@@ -20,17 +20,33 @@
 <script setup lang="ts">
 import Cookies from "js-cookie";
 
-import {
-  buildWebStorage,
-  cacheStorage,
-  session,
-} from "~socket.io-client-services";
 import { stores as webStores } from "~web";
+
+import useDumiliSocket, {
+  dumiliSocketInjectionKey,
+} from "./composables/useDumiliSocket";
+import { provideLocal } from "@vueuse/core";
+
+provideLocal(
+  dumiliSocketInjectionKey,
+  useDumiliSocket({
+    onConnectError: () => {
+      isLoadingUser.value = false;
+      user.value = null;
+    },
+    session: {
+      getToken: () => Promise.resolve(Cookies.get("token")),
+      clearSession: () => {}, // Promise.resolve(Cookies.remove("token")),
+      sessionExists: () =>
+        Promise.resolve(typeof Cookies.get("token") === "string"),
+    },
+  })
+);
 
 const { t: $t } = useI18n();
 
 const loginUrl = computed(
-  () => `${import.meta.env.VITE_DM_URL}/login?redirect=${document.URL}`,
+  () => `${import.meta.env.VITE_DM_URL}/login?redirect=${document.URL}`
 );
 
 const { loadUser } = webStores.collection();
@@ -48,7 +64,6 @@ onBeforeMount(() => {
       user.value = null;
     },
   };
-  cacheStorage.value = buildWebStorage(sessionStorage);
 
   loadUser();
 });

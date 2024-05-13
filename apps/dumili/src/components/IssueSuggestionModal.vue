@@ -30,14 +30,17 @@
 </template>
 
 <script lang="ts" setup>
-import { getIndexationSocket } from "~/composables/useDumiliSocket";
+import { injectLocal } from "@vueuse/core";
+import { dumiliSocketInjectionKey } from "~/composables/useDumiliSocket";
 import { suggestions } from "~/stores/suggestions";
 import { issueSuggestion } from "~prisma/client_dumili";
-import { composables as dmComposables } from "~web";
+import { dmSocketInjectionKey } from "~web/src/composables/useDmSocket";
 
 const { t: $t } = useI18n();
-
-const { coverIdServices } = dmComposables.useDmSocket;
+const {
+  coverId: { services: coverIdServices },
+} = injectLocal(dmSocketInjectionKey)!;
+const { getIndexationSocket } = injectLocal(dumiliSocketInjectionKey)!;
 
 const { hasPendingIssueSuggestions, indexation } = storeToRefs(suggestions());
 
@@ -92,7 +95,7 @@ const getIssuenumberFromIssuecode = (issuecode: string) =>
   issuecode.split(" ")[1];
 
 const acceptIssueSuggestion = async (issuecode: string) => {
-  await indexationSocket.value.acceptIssueSuggestion({
+  await indexationSocket.value.services.acceptIssueSuggestion({
     source: "ai",
     indexationId: indexation.value!.id,
     issuecode,

@@ -21,11 +21,12 @@
 </template>
 
 <script lang="ts" setup>
-import { getIndexationSocket } from "~/composables/useDumiliSocket";
+import { injectLocal } from "@vueuse/core";
+import { dumiliSocketInjectionKey } from "~/composables/useDumiliSocket";
 import { suggestions } from "~/stores/suggestions";
 import { SimpleStory } from "~dm-types/SimpleStory";
 import { FullIndexation } from "~dumili-services/indexations/types";
-import { entry, storySuggestion } from "~prisma/client_dumili";
+import type { entry, storySuggestion } from "~prisma/client_dumili";
 
 const { t: $t } = useI18n();
 
@@ -35,8 +36,10 @@ const props = defineProps<{
 
 const { entry } = toRefs(props);
 
-const indexationSocket = computed(() =>
-  getIndexationSocket(entry.value.indexationId),
+const { getIndexationSocket } = injectLocal(dumiliSocketInjectionKey)!;
+
+const indexationSocket = computed(async () =>
+  getIndexationSocket(entry.value.indexationId)
 );
 
 const showEntrySelect = ref(false);
@@ -45,9 +48,11 @@ const { acceptedStories } = storeToRefs(suggestions());
 const acceptedEntry = computed(() => acceptedStories.value[entry.value.id]);
 
 const addAndAcceptStoryversionToStorySuggestions = async (
-  searchResult: SimpleStory,
+  searchResult: SimpleStory
 ) => {
-  await indexationSocket.value.createStorySuggestion({
+  await (
+    await indexationSocket.value
+  ).services.createStorySuggestion({
     entryId: entry.value.id,
     storyversioncode: searchResult.storycode,
     acceptedOnEntries: {
@@ -57,7 +62,9 @@ const addAndAcceptStoryversionToStorySuggestions = async (
 };
 
 const acceptStorySuggestion = async (suggestion: storySuggestion) => {
-  await indexationSocket.value.acceptStorySuggestion(suggestion);
+  await (
+    await indexationSocket.value
+  ).services.acceptStorySuggestion(suggestion);
   showEntrySelect.value = false;
 };
 </script>

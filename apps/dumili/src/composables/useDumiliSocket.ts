@@ -1,20 +1,36 @@
+import CoaEvents from "~dm-services/coa/types";
 import CoverIdEvents from "~dm-services/cover-id/types";
 import IndexationsEvents, {
   IndexationEvents,
 } from "~dumili-services/indexations/types";
 import { useSocket } from "~socket.io-client-services";
 
-const socketWrapper = useSocket(import.meta.env.VITE_DUMILI_SOCKET_URL);
+const defaultExport = (options: {
+  onConnectError: (e: any, namespace: string) => Promise<void> | void;
+  session: {
+    getToken: () => Promise<string | null | undefined>;
+    clearSession: () => void;
+    sessionExists: () => Promise<boolean>;
+  };
+}) => {
+  const { addNamespace } = inject("socket") as ReturnType<typeof useSocket>;
 
-export const coverIdServices = socketWrapper.addNamespace<CoverIdEvents>(
-  CoverIdEvents.namespaceEndpoint,
-);
+  return {
+    options,
+    coverId: addNamespace<CoverIdEvents>(CoverIdEvents.namespaceEndpoint),
+    coa: addNamespace<CoaEvents>(CoaEvents.namespaceEndpoint),
+    indexations: addNamespace<IndexationsEvents>(
+      IndexationsEvents.namespaceEndpoint
+    ),
+    getIndexationSocket: (indexationId: string) =>
+      addNamespace<IndexationEvents>(
+        `${IndexationsEvents.namespaceEndpoint}/${indexationId}`
+      ),
+  };
+};
 
-export const indexationsEvents = socketWrapper.addNamespace<IndexationsEvents>(
-  IndexationsEvents.namespaceEndpoint,
-);
+export default defaultExport;
 
-export const getIndexationSocket = (indexationId: string) =>
-  socketWrapper.addNamespace<IndexationEvents>(
-    `${IndexationsEvents.namespaceEndpoint}/${indexationId}`,
-  );
+export const dumiliSocketInjectionKey = Symbol() as InjectionKey<
+  ReturnType<typeof defaultExport>
+>;
