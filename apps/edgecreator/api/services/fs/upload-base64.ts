@@ -2,7 +2,7 @@ import { decode } from "node-base64-image";
 
 import type { ExpressCall } from "~/services/_express-call";
 import { getNextAvailableFile } from "~/services/_upload_utils";
-import { PUT__edgecreator__multiple_edge_photo__v2 } from "~dm_types/routes";
+import { PUT__edgecreator__multiple_edge_photo__v2 } from "~dm-types/routes";
 
 import { call, createAxios } from "../../axios-helper";
 const edgesPath: string = process.env.EDGES_PATH!;

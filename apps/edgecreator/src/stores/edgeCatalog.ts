@@ -1,15 +1,16 @@
 import { defineStore } from "pinia";
 
+import { edgecreatorSocketInjectionKey } from "~/composables/useEdgecreatorSocket";
 import { api } from "~/stores/api";
-import type { EdgeModel } from "~dm_types/EdgeModel";
-import type { ModelSteps } from "~dm_types/ModelSteps";
+import type { EdgeModel } from "~dm-types/EdgeModel";
+import type { ModelSteps } from "~dm-types/ModelSteps";
 import {
   GET__edgecreator__model,
   GET__edgecreator__model__$modelIds__steps,
   GET__edgecreator__model__editedbyother__all,
   GET__edgecreator__model__unassigned__all,
   GET__edges__$countrycode__$magazinecode__$issuenumbers,
-} from "~dm_types/routes";
+} from "~dm-types/routes";
 
 import { call, getChunkedRequests } from "../../axios-helper";
 import { coa } from "./coa";
@@ -55,6 +56,9 @@ export const edgeCategories = [
 ];
 
 export const edgeCatalog = defineStore("edgeCatalog", () => {
+  const {
+    browse: { services: browseServices },
+  } = injectLocal(edgecreatorSocketInjectionKey)!;
   const isCatalogLoaded = ref(false as boolean),
     currentEdges = ref({} as Record<string, EdgeWithVersionAndStatus>),
     publishedEdges = ref(
@@ -250,9 +254,7 @@ export const edgeCatalog = defineStore("edgeCatalog", () => {
         }, newCurrentEdges);
       }
 
-      const edges = (
-        await call(api().edgeCreatorApi, new GET__fs__browseEdges())
-      ).data;
+      const edges = (await browseServices.listEdgeModels()).results;
       for (const edgeStatus in edges) {
         for (const { filename, mtime } of edges[
           edgeStatus as "current" | "published"

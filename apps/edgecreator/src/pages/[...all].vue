@@ -176,7 +176,7 @@ import type { BookcaseEdgeWithPopularity } from "~/stores/collection";
 import { collection } from "~/stores/collection";
 import type { EdgeWithVersionAndStatus } from "~/stores/edgeCatalog";
 import { edgeCatalog, edgeCategories } from "~/stores/edgeCatalog";
-import { GET__edges__wanted__data } from "~dm_types/routes";
+import { GET__edges__wanted__data } from "~dm-types/routes";
 
 import { call } from "../../axios-helper";
 

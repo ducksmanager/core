@@ -14,7 +14,7 @@ import {
   GET__edgecreator__multiple_edge_photo__check_today_limit,
   GET__edgecreator__multiple_edge_photo__hash__$hash,
   PUT__edgecreator__multiple_edge_photo,
-} from "~dm_types/routes";
+} from "~dm-types/routes";
 
 const edgesPath: string = process.env.EDGES_PATH!;
 

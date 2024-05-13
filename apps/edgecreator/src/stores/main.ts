@@ -1,12 +1,11 @@
 import type { AxiosInstance } from "axios";
 import { defineStore } from "pinia";
 
+import { edgecreatorSocketInjectionKey } from "~/composables/useEdgecreatorSocket";
 import { api } from "~/stores/api";
-import type { EdgeWithModelId } from "~dm_types/EdgeWithModelId";
-import { GET__edges__$countrycode__$magazinecode__$issuenumbers } from "~dm_types/routes";
+import type { EdgeWithModelId } from "~dm-types/EdgeWithModelId";
 import type { userContributionType } from "~prisma-clients/client_dm";
 import type { ModelContributor } from "~types/ModelContributor";
-import { GET__fs__browse__$imageType__$country__$magazine } from "~types/routes";
 import type { SimpleUser } from "~types/SimpleUser";
 
 import { call } from "../../axios-helper";
@@ -17,6 +16,10 @@ const numericSortCollator = new Intl.Collator(undefined, {
   sensitivity: "base",
 });
 export const main = defineStore("main", () => {
+  const {
+    browse: { services: browseServices },
+  } = injectLocal(edgecreatorSocketInjectionKey)!;
+
   const country = ref(null as string | null),
     magazine = ref(null as string | null),
     issuenumbers = ref([] as string[]),
@@ -128,17 +131,12 @@ export const main = defineStore("main", () => {
     },
     loadItems = async ({ itemType }: { itemType: "elements" | "photos" }) => {
       const items = (
-        await call(
-          api().edgeCreatorApi,
-          new GET__fs__browse__$imageType__$country__$magazine({
-            params: {
-              imageType: itemType,
-              country: country.value!,
-              magazine: magazine.value!,
-            },
-          }),
-        )
-      ).data.sort((a, b) => numericSortCollator.compare(a, b));
+        await browseServices.listEdgeParts({
+          imageType: itemType,
+          country: country.value!,
+          magazine: magazine.value!,
+        })
+      ).results!.sort((a, b) => numericSortCollator.compare(a, b));
       if (itemType === "elements") {
         publicationElements.value = items;
       } else {

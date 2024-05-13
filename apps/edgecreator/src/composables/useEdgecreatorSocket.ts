@@ -1,3 +1,4 @@
+import BrowseServices from "~edgecreator-services/browse/types";
 import ImageInfoServices from "~edgecreator-services/image-info/types";
 import SaveServices from "~edgecreator-services/save/types";
 import TextServices from "~edgecreator-services/text/types";
@@ -17,6 +18,7 @@ const defaultExport = (options: {
     imageInfo: addNamespace<ImageInfoServices>(
       ImageInfoServices.namespaceEndpoint,
     ),
+    browse: addNamespace<BrowseServices>(BrowseServices.namespaceEndpoint),
     save: addNamespace<SaveServices>(SaveServices.namespaceEndpoint),
     text: addNamespace<TextServices>(TextServices.namespaceEndpoint),
   };

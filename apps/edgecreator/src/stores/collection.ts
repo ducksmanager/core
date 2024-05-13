@@ -2,14 +2,14 @@ import { useCookies } from "@vueuse/integrations/useCookies";
 import { defineStore } from "pinia";
 
 import { api } from "~/stores/api";
-import type { BookcaseEdge } from "~dm_types/BookcaseEdge";
+import type { BookcaseEdge } from "~dm-types/BookcaseEdge";
 import {
   GET__bookcase__$username,
   GET__collection__popular,
   GET__collection__user,
   GET__collection__user_privileges,
   GET__global_stats__user__$userIds,
-} from "~dm_types/routes";
+} from "~dm-types/routes";
 import type {
   user as userModel,
   userPermission,
