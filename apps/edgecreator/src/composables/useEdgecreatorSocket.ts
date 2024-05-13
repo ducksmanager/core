@@ -2,6 +2,7 @@ import BrowseServices from "~edgecreator-services/browse/types";
 import ImageInfoServices from "~edgecreator-services/image-info/types";
 import SaveServices from "~edgecreator-services/save/types";
 import TextServices from "~edgecreator-services/text/types";
+import UploadServices from "~edgecreator-services/upload/types";
 import type { useSocket } from "~socket.io-client-services";
 
 const defaultExport = (options: {
@@ -16,11 +17,12 @@ const defaultExport = (options: {
   return {
     options,
     imageInfo: addNamespace<ImageInfoServices>(
-      ImageInfoServices.namespaceEndpoint,
+      ImageInfoServices.namespaceEndpoint
     ),
     browse: addNamespace<BrowseServices>(BrowseServices.namespaceEndpoint),
     save: addNamespace<SaveServices>(SaveServices.namespaceEndpoint),
     text: addNamespace<TextServices>(TextServices.namespaceEndpoint),
+    upload: addNamespace<UploadServices>(UploadServices.namespaceEndpoint),
   };
 };
 

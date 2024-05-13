@@ -12,7 +12,7 @@ import type { RouteRecordRaw } from "vue-router";
 import { createRouter, createWebHistory } from "vue-router";
 import SimpleTypeahead from "vue3-simple-typeahead";
 
-import { useSocket } from "~socket.io-client-services/index";
+import { useSocket } from "~socket.io-client-services";
 
 import App from "./App.vue";
 import i18n from "./i18n";
