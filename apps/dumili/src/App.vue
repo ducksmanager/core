@@ -18,6 +18,7 @@
 </template>
 
 <script setup lang="ts">
+import { provideLocal } from "@vueuse/core";
 import Cookies from "js-cookie";
 
 import { stores as webStores } from "~web";
@@ -25,7 +26,6 @@ import { stores as webStores } from "~web";
 import useDumiliSocket, {
   dumiliSocketInjectionKey,
 } from "./composables/useDumiliSocket";
-import { provideLocal } from "@vueuse/core";
 
 provideLocal(
   dumiliSocketInjectionKey,
@@ -40,13 +40,13 @@ provideLocal(
       sessionExists: () =>
         Promise.resolve(typeof Cookies.get("token") === "string"),
     },
-  })
+  }),
 );
 
 const { t: $t } = useI18n();
 
 const loginUrl = computed(
-  () => `${import.meta.env.VITE_DM_URL}/login?redirect=${document.URL}`
+  () => `${import.meta.env.VITE_DM_URL}/login?redirect=${document.URL}`,
 );
 
 const { loadUser } = webStores.collection();

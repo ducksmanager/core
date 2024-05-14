@@ -98,7 +98,7 @@
             @click="
               if (entry !== currentEntry)
                 currentPage = firstPageOfEntry(
-                  entry.entryPages.map(({ pageId }) => pageId)
+                  entry.entryPages.map(({ pageId }) => pageId),
                 );
             "
             ><Entry
@@ -107,7 +107,7 @@
                 entry.entryPages.some(({ pageId }) =>
                   shownPages
                     .map((shownPage) => indexation.pages[shownPage].id)
-                    .includes(pageId)
+                    .includes(pageId),
                 )
               "
           /></b-col>
@@ -119,7 +119,7 @@
 
 <script setup lang="ts">
 import useAi from "~/composables/useAi";
-import { getIndexationSocket } from "~/composables/useDumiliSocket";
+import { dumiliSocketInjectionKey } from "~/composables/useDumiliSocket";
 import { suggestions } from "~/stores/suggestions";
 import { FullEntry, FullIndexation } from "~dumili-services/indexations/types";
 import { entry as entryModel } from "~prisma/client_dumili";
@@ -127,6 +127,9 @@ import { entry as entryModel } from "~prisma/client_dumili";
 defineProps<{
   shownPages: number[];
 }>();
+
+const { getIndexationSocket } = inject(dumiliSocketInjectionKey)!;
+
 const { acceptedStoryKinds } = storeToRefs(suggestions());
 const indexation = storeToRefs(suggestions()).indexation as Ref<FullIndexation>;
 const currentPage = defineModel<number>();
@@ -153,7 +156,7 @@ watch(
       pageIds: entry.entryPages.map(({ pageId }) => pageId),
     }));
   },
-  { immediate: true }
+  { immediate: true },
 );
 
 const createEntry = async (idx: number) => {
@@ -171,26 +174,26 @@ const createEntry = async (idx: number) => {
     pageIds: [lastPageOfPreviousEntry],
   });
   await getIndexationSocket(indexation.value.id).services.upsertEntries(
-    entries
+    entries,
   );
 };
 
 const firstPageOfEntry = (pageIds: number[]) =>
   indexation.value.pages.find(({ id }) =>
-    pageIds.some((pageId) => pageId === id)
+    pageIds.some((pageId) => pageId === id),
   )!.pageNumber - 1;
 
 watch(
   currentPage,
   () => {
     const currentPageId = indexation.value.pages.find(
-      ({ pageNumber }) => pageNumber === currentPage.value! + 1
+      ({ pageNumber }) => pageNumber === currentPage.value! + 1,
     )!.id;
     currentEntry.value = indexation.value.entries.find(({ entryPages }) =>
-      entryPages.some(({ pageId }) => pageId === currentPageId)
+      entryPages.some(({ pageId }) => pageId === currentPageId),
     )!;
   },
-  { immediate: true }
+  { immediate: true },
 );
 </script>
 

@@ -10,13 +10,13 @@ import "@uppy/dashboard/dist/style.css";
 import Uppy from "@uppy/core";
 import Dashboard from "@uppy/dashboard";
 import XHR from "@uppy/xhr-upload";
+// import { injectLocal } from "@vueuse/core";
 
-import { injectLocal } from "@vueuse/core";
-import { dmSocketInjectionKey } from "~web/src/composables/useDmSocket";
+// import { dmSocketInjectionKey } from "~web/src/composables/useDmSocket";
 
-const {
-  coverId: { socket: coverIdSocket },
-} = injectLocal(dmSocketInjectionKey)!;
+// const {
+//   coverId: { socket: coverIdSocket },
+// } = injectLocal(dmSocketInjectionKey)!;
 
 const props = defineProps<{
   folderName: string;

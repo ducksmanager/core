@@ -19,6 +19,7 @@
 
 <script lang="ts" setup>
 import { injectLocal } from "@vueuse/core";
+
 import { dumiliSocketInjectionKey } from "~/composables/useDumiliSocket";
 import { suggestions } from "~/stores/suggestions";
 
@@ -42,11 +43,11 @@ const acceptIssueSuggestion = async (
     publicationcode: string | null;
     issuenumber: string | null;
   },
-  source: issueSuggestion["source"]
+  source: issueSuggestion["source"],
 ) => {
   if (publicationcode && issuenumber) {
     await getIndexationSocket(
-      indexation.value!.id
+      indexation.value!.id,
     ).services.acceptIssueSuggestion({
       source,
       indexationId: indexation.value!.id,

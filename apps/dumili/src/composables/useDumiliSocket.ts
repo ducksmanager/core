@@ -6,6 +6,7 @@ import IndexationsEvents, {
 import { useSocket } from "~socket.io-client-services";
 
 const defaultExport = (options: {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   onConnectError: (e: any, namespace: string) => Promise<void> | void;
   session: {
     getToken: () => Promise<string | null | undefined>;
@@ -20,11 +21,11 @@ const defaultExport = (options: {
     coverId: addNamespace<CoverIdEvents>(CoverIdEvents.namespaceEndpoint),
     coa: addNamespace<CoaEvents>(CoaEvents.namespaceEndpoint),
     indexations: addNamespace<IndexationsEvents>(
-      IndexationsEvents.namespaceEndpoint
+      IndexationsEvents.namespaceEndpoint,
     ),
     getIndexationSocket: (indexationId: string) =>
       addNamespace<IndexationEvents>(
-        `${IndexationsEvents.namespaceEndpoint}/${indexationId}`
+        `${IndexationsEvents.namespaceEndpoint}/${indexationId}`,
       ),
   };
 };

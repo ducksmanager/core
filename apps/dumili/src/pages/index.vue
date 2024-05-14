@@ -53,6 +53,7 @@
 
 <script setup lang="ts">
 import { injectLocal } from "@vueuse/core";
+
 import { dumiliSocketInjectionKey } from "~/composables/useDumiliSocket";
 import { IndexationWithFirstPage } from "~dumili-services/indexations/types";
 const router = useRouter();

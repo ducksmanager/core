@@ -1,7 +1,7 @@
 import { suggestions } from "~/stores/suggestions";
 import { storyKinds } from "~dumili-types/storyKinds";
 
-import { getIndexationSocket } from "./useDumiliSocket";
+import { dumiliSocketInjectionKey } from "./useDumiliSocket";
 import useHint from "./useHint";
 
 const coverStoryKindCode = storyKinds.find(
@@ -11,7 +11,12 @@ const coverStoryKindCode = storyKinds.find(
 export default (indexationId: string) => {
   const status = ref<"idle" | "loading" | "loaded">("idle");
 
-  const indexationServices = getIndexationSocket(indexationId);
+  const {
+    getIndexationSocket,
+    coverId: { services: coverIdServices },
+  } = inject(dumiliSocketInjectionKey)!;
+
+  const indexationServices = getIndexationSocket(indexationId).services;
   const { indexation, entriesFirstPages } = storeToRefs(suggestions());
 
   const hint = useHint();

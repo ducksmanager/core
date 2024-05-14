@@ -9,9 +9,10 @@ import VueDraggableResizable from "vue-draggable-resizable";
 import { createRouter, createWebHistory } from "vue-router";
 import { plugin as Slicksort } from "vue-slicksort";
 
+import { useSocket } from "~socket.io-client-services/index.js";
+
 import App from "./App.vue";
 import i18n from "./i18n.js";
-import { useSocket } from "~socket.io-client-services/index.js";
 
 const router = createRouter({
   history: createWebHistory(),

@@ -22,6 +22,7 @@
 
 <script lang="ts" setup>
 import { injectLocal } from "@vueuse/core";
+
 import { dumiliSocketInjectionKey } from "~/composables/useDumiliSocket";
 import { suggestions } from "~/stores/suggestions";
 import { SimpleStory } from "~dm-types/SimpleStory";
@@ -39,7 +40,7 @@ const { entry } = toRefs(props);
 const { getIndexationSocket } = injectLocal(dumiliSocketInjectionKey)!;
 
 const indexationSocket = computed(async () =>
-  getIndexationSocket(entry.value.indexationId)
+  getIndexationSocket(entry.value.indexationId),
 );
 
 const showEntrySelect = ref(false);
@@ -48,7 +49,7 @@ const { acceptedStories } = storeToRefs(suggestions());
 const acceptedEntry = computed(() => acceptedStories.value[entry.value.id]);
 
 const addAndAcceptStoryversionToStorySuggestions = async (
-  searchResult: SimpleStory
+  searchResult: SimpleStory,
 ) => {
   await (
     await indexationSocket.value

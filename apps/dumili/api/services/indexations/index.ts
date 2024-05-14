@@ -1,6 +1,6 @@
 import axios from "axios";
 import sharp from "sharp";
-import { Socket } from "socket.io";
+import { Server, Socket } from "socket.io";
 
 import {
   NamespaceWithData,
@@ -21,11 +21,9 @@ import { storyKinds } from "~dumili-types/storyKinds";
 import { useSocket } from "~socket.io-client-services";
 
 const socket = useSocket(process.env.DM_SOCKET_URL!);
-const coaServices = socket.addNamespace<CoaServices>(
+const { services: coaServices } = socket.addNamespace<CoaServices>(
   CoaServices.namespaceEndpoint,
 );
-
-import { Server } from "socket.io";
 
 import { RequiredAuthMiddleware } from "../_auth";
 import { KumikoProcessedResult, runKumiko } from "./kumiko";

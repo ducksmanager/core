@@ -69,7 +69,7 @@
                     "{numberOfStories} histoires trouvées avec ces mots-clés",
                     {
                       numberOfStories: pages[0].aiOcrPossibleStories.length,
-                    }
+                    },
                   )
                 }}
                 <table-tooltip
@@ -143,6 +143,7 @@
 </template>
 <script setup lang="ts">
 import { injectLocal } from "@vueuse/core";
+
 import { dumiliSocketInjectionKey } from "~/composables/useDumiliSocket";
 import { suggestions } from "~/stores/suggestions";
 import { user } from "~/stores/ui";
@@ -165,10 +166,10 @@ const { indexation, acceptedStories, acceptedStoryKinds, entriesFirstPages } =
 
 const pages = computed(() => {
   const { startsAtPage, endsAtPage } = entriesFirstPages.value.find(
-    ({ entryId }) => entry.value.id === entryId
+    ({ entryId }) => entry.value.id === entryId,
   )!;
   return indexation.value!.pages.filter(
-    ({ pageNumber }) => pageNumber >= startsAtPage && pageNumber <= endsAtPage
+    ({ pageNumber }) => pageNumber >= startsAtPage && pageNumber <= endsAtPage,
   );
 });
 
@@ -178,16 +179,16 @@ const acceptedStory = computed(() => acceptedStories.value[props.entry.id]);
 
 const storyKindAiSuggestion = computed(() =>
   entry.value.storyKindSuggestions.find(
-    ({ aiSourcePageId }) => aiSourcePageId !== null
-  )
+    ({ aiSourcePageId }) => aiSourcePageId !== null,
+  ),
 );
 
 const storyAiSuggestions = computed(() =>
-  entry.value.storySuggestions.filter(({ ocrDetailsId }) => ocrDetailsId)
+  entry.value.storySuggestions.filter(({ ocrDetailsId }) => ocrDetailsId),
 );
 
 const acceptedStoryKind = computed(
-  () => acceptedStoryKinds.value[props.entry.id]
+  () => acceptedStoryKinds.value[props.entry.id],
 );
 
 const storycode = computed(() => acceptedStory.value?.storyversion.storycode);
@@ -196,7 +197,7 @@ const title = computed(() => entry.value.title || $t("Sans titre"));
 const comment = computed(() => entry.value.entrycomment);
 
 const urlEncodedStorycode = computed(
-  () => storycode.value && encodeURIComponent(storycode.value)
+  () => storycode.value && encodeURIComponent(storycode.value),
 );
 
 const getStoryKind = (storyKind: storyKind) =>
@@ -204,7 +205,7 @@ const getStoryKind = (storyKind: storyKind) =>
 
 const acceptStoryKindSuggestion = (kind: storyKind) => {
   getIndexationSocket(
-    entry.value.indexationId
+    entry.value.indexationId,
   ).services.acceptStoryKindSuggestion({
     entryId: entry.value.id,
     kind,
