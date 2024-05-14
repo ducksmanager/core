@@ -9,15 +9,15 @@
 </template>
 
 <script setup lang="ts">
-import { buildStorage } from '~socket.io-client-services';
+import type { Storage } from '@ionic/storage';
 import Cookies from 'js-cookie';
+import { buildStorage } from '~socket.io-client-services';
+import { dmSocketInjectionKey } from '~web/src/composables/useDmSocket';
 
 import { app } from './stores/app';
 import { wtdcollection } from './stores/wtdcollection';
-import type { Storage } from '@ionic/storage';
 
 import type { RouteMeta } from '~/router';
-import { dmSocketInjectionKey } from '~web/src/composables/useDmSocket';
 
 const storage = injectLocal<Storage>('storage')!;
 

@@ -59,6 +59,7 @@ import {
 } from 'ionicons/icons';
 
 import useCoverSearch from '../composables/useCoverSearch';
+
 const {
   coverId: { services: coverIdServices },
 } = injectLocal(dmSocketInjectionKey)!;

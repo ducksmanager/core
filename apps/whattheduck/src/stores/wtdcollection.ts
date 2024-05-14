@@ -1,11 +1,11 @@
 import { defineStore } from 'pinia';
+import type { SimpleIssue } from '~dm-types/SimpleIssue';
 import type { purchase } from '~prisma-clients/client_dm';
+import type { issueWithPublicationcode } from '~prisma-clients/extended/dm.extends';
 import { stores as webStores, composables as webComposables } from '~web';
+import { dmSocketInjectionKey } from '~web/src/composables/useDmSocket';
 
 import usePersistedData from '~/composables/usePersistedData';
-import { dmSocketInjectionKey } from '~web/src/composables/useDmSocket';
-import { SimpleIssue } from '~dm-types/SimpleIssue';
-import { issueWithPublicationcode } from '~prisma-clients/extended/dm.extends';
 
 export type purchaseWithStringDate = Omit<purchase, 'date' | 'userId'> & {
   date: string;
@@ -25,8 +25,17 @@ export const wtdcollection = defineStore('wtdcollection', () => {
 
   const isDataLoaded = ref(false);
 
-  const { findInCollection, fetchIssueCounts, issueCounts, loadCollection, loadPurchases, loadUser, login, signup, updateCollectionSingleIssue } =
-    webCollectionStore;
+  const {
+    findInCollection,
+    fetchIssueCounts,
+    issueCounts,
+    loadCollection,
+    loadPurchases,
+    loadUser,
+    login,
+    signup,
+    updateCollectionSingleIssue,
+  } = webCollectionStore;
 
   const ownedCountries = computed(() =>
       issues.value ? [...new Set((issues.value || []).map(({ country }) => country))].sort() : issues.value,
@@ -61,7 +70,6 @@ export const wtdcollection = defineStore('wtdcollection', () => {
     highestQuotedIssue = computed(
       () => quotedIssues.value?.sort((a, b) => b.estimationGivenCondition - a.estimationGivenCondition)[0],
     ),
-
     getCollectionIssues = (publicationcode: string, issuenumber: string) =>
       issues.value!.filter(
         ({ publicationcode: collectionPublicationCode, issuenumber: collectionIssueNumber }) =>

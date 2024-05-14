@@ -65,11 +65,13 @@
 </template>
 
 <script lang="ts" setup>
-import { wtdcollection } from '~/stores/wtdcollection';
 import { modalController } from '@ionic/vue';
-import { SingleCopyState } from '~dm-types/CollectionUpdate';
 import { addOutline, addSharp, closeOutline, closeSharp } from 'ionicons/icons';
+import type { SingleCopyState } from '~dm-types/CollectionUpdate';
+
 import FullIssue from '../components/FullIssue.vue';
+
+import { wtdcollection } from '~/stores/wtdcollection';
 
 const collectionStore = wtdcollection();
 const coaStore = coa();

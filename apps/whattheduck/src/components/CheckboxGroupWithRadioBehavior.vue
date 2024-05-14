@@ -19,6 +19,7 @@
 </template>
 <script setup lang="ts" generic="Id extends string | number | null, Item extends object">
 import { IonCheckbox } from '@ionic/vue';
+
 const id = defineModel<Id>('id', {
   required: true,
 });

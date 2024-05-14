@@ -72,9 +72,12 @@
 </template>
 
 <script setup lang="ts" generic="Item extends Required<any>">
-import { IonContent, ScrollDetail } from '@ionic/vue';
+import type { ScrollDetail } from '@ionic/vue';
+import { IonContent } from '@ionic/vue';
+
 import { app } from '~/stores/app';
 import { wtdcollection } from '~/stores/wtdcollection';
+
 defineSlots<{
   'default'(): any;
   'page-menu'(): any;

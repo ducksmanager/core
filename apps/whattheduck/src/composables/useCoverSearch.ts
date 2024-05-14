@@ -1,7 +1,7 @@
-import { FilePicker } from '@capawesome/capacitor-file-picker';
 import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
-import { Router } from 'vue-router';
+import { FilePicker } from '@capawesome/capacitor-file-picker';
 import { toastController } from '@ionic/vue';
+import type { Router } from 'vue-router';
 
 export default (router: Router, coverIdServices: ReturnType<typeof useDmSocket>['coverId']['services']) => {
   const { t } = useI18n();

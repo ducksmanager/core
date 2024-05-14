@@ -1,7 +1,8 @@
 import { IonicVue } from '@ionic/vue';
-import { createPinia } from 'pinia';
-import { i18n } from '~web';
 import CordovaSQLiteDriver from 'localforage-cordovasqlitedriver';
+import { createPinia } from 'pinia';
+import { useSocket } from '~socket.io-client-services/index';
+import { i18n } from '~web';
 
 import App from './App.vue';
 import router from './router';
@@ -28,8 +29,6 @@ import '@ionic/vue/css/display.css';
 /* Theme variables */
 import './theme/variables.scss';
 import './theme/global.scss';
-import { useSocket } from '~socket.io-client-services/index';
-
 import { defineCustomElements } from '@ionic/pwa-elements/loader';
 import { Drivers, Storage } from '@ionic/storage';
 

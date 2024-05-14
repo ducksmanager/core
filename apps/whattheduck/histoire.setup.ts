@@ -18,18 +18,16 @@ import '@ionic/vue/css/display.css';
 import '~/theme/variables.scss';
 import '~/theme/global.scss';
 
+import { defineSetupVue3 } from '@histoire/plugin-vue';
 import { IonicVue } from '@ionic/vue';
 import { createPinia } from 'pinia';
+import { useSocket } from '~socket.io-client-services/index';
 import { i18n } from '~web';
 
 import router from './src/router';
 
 import en from '~translations/en.json';
 import sv from '~translations/sv.json';
-
-import { useSocket } from '~socket.io-client-services/index';
-
-import { defineSetupVue3 } from '@histoire/plugin-vue';
 
 export const setupVue3 = defineSetupVue3(({ app }) => {
   app

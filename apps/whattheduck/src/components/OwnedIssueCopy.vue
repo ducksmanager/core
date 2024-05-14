@@ -55,10 +55,10 @@
   >
 </template>
 <script setup lang="ts">
+import type { SingleCopyState } from '~dm-types/CollectionUpdate';
 import { type purchase, type issue } from '~prisma-clients/client_dm';
 
 import { wtdcollection } from '~/stores/wtdcollection';
-import { SingleCopyState } from '~dm-types/CollectionUpdate';
 
 const { t } = useI18n();
 const issue = defineModel<SingleCopyState>({

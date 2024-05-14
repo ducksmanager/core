@@ -13,7 +13,7 @@
 </template>
 
 <script setup lang="ts">
-import { IssueWithCollectionIssues } from '~/stores/wtdcollection';
+import type { IssueWithCollectionIssues } from '~/stores/wtdcollection';
 
 const props = defineProps<{
   issue: Pick<

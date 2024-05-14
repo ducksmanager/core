@@ -4,7 +4,7 @@
   />
 </template>
 <script setup lang="ts">
-import { issue_condition } from '~prisma-clients/client_dm';
+import type { issue_condition } from '~prisma-clients/client_dm';
 
 const { conditions } = useCondition();
 

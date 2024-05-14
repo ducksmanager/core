@@ -27,7 +27,7 @@
         >
           <ion-card>
             <ion-img :src="getCoverUrl(cover.fullUrl)" />
-            <ion-card-header :ref="(el) => addSlideElement(index, (el as ComponentPublicInstance).$el)">
+            <ion-card-header :ref="(el: ComponentPublicInstance) => addSlideElement(index, el.$el)">
               <ion-card-title class="ion-align-items-center"
                 ><ion-row class="ion-justify-content-between"
                   ><ion-col style="display: flex" size="9"><FullIssue :issue="cover" /></ion-col
@@ -76,17 +76,17 @@
 <script setup lang="ts">
 import '@nanoandrew4/vue3-carousel-3d/dist/style.css';
 import { Carousel3d, Slide } from '@nanoandrew4/vue3-carousel-3d';
-import CoverIdServices from '~dm-services/cover-id/types';
 import { personOutline, personSharp, pricetagOutline, pricetagSharp, bookOutline, bookSharp } from 'ionicons/icons';
+import type { ComponentPublicInstance } from 'vue';
+import type { EventReturnType } from '~socket.io-services/types';
+import { stores as webStores } from '~web';
 
-import { EventReturnType } from '~socket.io-services/types';
-import { wtdcollection } from '~/stores/wtdcollection';
 import useCoverSearch from '../composables/useCoverSearch';
 
-import { stores as webStores } from '~web';
-import { ComponentPublicInstance } from 'vue';
 import FullIssue from '~/components/FullIssue.vue';
 import OwnedIssueCopiesModal from '~/components/OwnedIssueCopiesModal.vue';
+import { wtdcollection } from '~/stores/wtdcollection';
+import type CoverIdServices from '~dm-services/cover-id/types';
 
 const { t } = useI18n();
 const { publicationNames } = storeToRefs(webStores.coa());

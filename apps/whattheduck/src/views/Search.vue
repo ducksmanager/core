@@ -46,11 +46,11 @@
 <script setup lang="ts">
 import type { SimpleStory } from '~dm-types/SimpleStory';
 import { stores } from '~web';
-
-import { wtdcollection } from '~/stores/wtdcollection';
 import { dmSocketInjectionKey } from '~web/src/composables/useDmSocket';
-import type { IssueWithCollectionIssues } from '~/stores/wtdcollection';
+
 import FullIssue from '~/components/FullIssue.vue';
+import { wtdcollection } from '~/stores/wtdcollection';
+import type { IssueWithCollectionIssues } from '~/stores/wtdcollection';
 
 const {
   coa: { services: coaServices },

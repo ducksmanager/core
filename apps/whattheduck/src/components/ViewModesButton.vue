@@ -17,6 +17,7 @@
 </template>
 <script setup lang="ts">
 import { eyeOutline, eyeSharp } from 'ionicons/icons';
+
 import { app } from '~/stores/app';
 
 const { issueViewModes, isOfflineMode } = app();
