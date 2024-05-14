@@ -20,8 +20,5 @@
       "~prisma-clients/*": ["../../packages/prisma-clients/*"],
     }
   },
-  "include": ["*.ts", "scrapes/**/*.ts"],
-  "ts-node": {
-    "swc": true
-  }
+  "include": ["*.ts", "scrapes/**/*.ts"]
 }
