@@ -148,7 +148,7 @@ const result = ref<string | null>(null);
 const designersTypeahead = ref();
 const photographersTypeahead = ref();
 
-const progressLeft = computed(() => 100 - progress.value);
+// const progressLeft = computed(() => 100 - progress.value);
 
 const label = computed(() =>
   $t(props.withExport ? "Export" : props.withSubmit ? "Submit" : "Save"),

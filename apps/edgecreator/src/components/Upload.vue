@@ -35,10 +35,10 @@ const { locale, t: $t } = useI18n();
 
 const bytesUploaded = ref(0);
 
-const uppyTranslations = {
-  // "fr-FR": frTranslation,
-  // "en-US": enTranslation,
-};
+// const uppyTranslations = {
+// "fr-FR": frTranslation,
+// "en-US": enTranslation,
+// };
 
 const uppy = Uppy({
   debug: true,

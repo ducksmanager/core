@@ -21,10 +21,10 @@ export default () =>
           break;
         case "#403":
           toastError(
-            "You don't have enough rights to access the requested page"
+            "You don't have enough rights to access the requested page",
           );
           break;
       }
     },
-    { immediate: true }
+    { immediate: true },
   );

@@ -133,6 +133,7 @@ import "cropperjs/dist/cropper.css";
 
 import { useCookies } from "@vueuse/integrations/useCookies";
 import { useToast } from "bootstrap-vue-next";
+import type Cropper from "cropperjs";
 import { nextTick } from "vue";
 import type { CropperData } from "vue-cropperjs";
 import { useI18n } from "vue-i18n";
@@ -156,12 +157,13 @@ type CropWithData = Crop & {
   filename?: string;
   url: string;
   sent: boolean;
+  error?: string;
 };
 
 const currentCrop = ref<CropWithData | null>(null);
 const crops = ref<CropWithData[]>([]);
 const uploadedImageData = ref<{ url: string } | null>(null);
-const cropper = ref<any | null>(null);
+const cropper = ref<Cropper | null>(null);
 
 const publicationNames = computed(() => webStores.coa().publicationNames);
 
@@ -191,7 +193,7 @@ const addCrop = () => {
     crops.value.push({
       ...currentCrop.value!,
       data,
-      url: (cropper.value.getCroppedCanvas() as HTMLCanvasElement).toDataURL(
+      url: (cropper.value!.getCroppedCanvas() as HTMLCanvasElement).toDataURL(
         "image/jpeg",
       ),
     });
