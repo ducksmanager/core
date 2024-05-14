@@ -2,9 +2,11 @@ import crypto from "crypto";
 import jwt from "jsonwebtoken";
 import type { Socket } from "socket.io";
 
-import { prismaDm } from "~/prisma";
 import type { SessionUser } from "~dm-types/SessionUser";
-import type { user } from "~prisma-clients/client_dm";
+import { PrismaClient, user } from "~prisma-clients/client_dm";
+import "~prisma-clients/extended/dm.extends"; // For Array.groupBy
+
+const prismaDm = new PrismaClient();
 
 type SocketWithUser = Socket<
   Record<string, never>,
@@ -39,7 +41,7 @@ export const loginAs = async (user: user, hashedPassword: string) =>
 const AuthMiddleware = (
   socket: SocketWithUser,
   next: (error?: Error) => void,
-  required: boolean
+  required: boolean,
 ) => {
   const token = socket.handshake.auth.token;
 
@@ -60,23 +62,23 @@ const AuthMiddleware = (
         }
         next();
       }
-    }
+    },
   );
 };
 
 export const RequiredAuthMiddleware = (
   socket: Socket,
-  next: (error?: Error) => void
+  next: (error?: Error) => void,
 ) => AuthMiddleware(socket, next, true);
 
 export const OptionalAuthMiddleware = (
   socket: Socket,
-  next: (error?: Error) => void
+  next: (error?: Error) => void,
 ) => AuthMiddleware(socket, next, false);
 
 export const UserIsEdgeCreatorEditorAuthMiddleware = (
   socket: SocketWithUser,
-  next: (error?: Error) => void
+  next: (error?: Error) => void,
 ) => {
   if (
     !socket.data.user ||
@@ -90,7 +92,7 @@ export const UserIsEdgeCreatorEditorAuthMiddleware = (
 
 export const UserIsAdminMiddleware = (
   socket: SocketWithUser,
-  next: (error?: Error) => void
+  next: (error?: Error) => void,
 ) => {
   if (
     !socket.data.user ||

@@ -6,10 +6,10 @@ import { Server } from "socket.io";
 
 import type { SessionUser } from "~dm-types/SessionUser";
 
-import auth from "./services/auth/index";
+import auth from "./services/auth";
 import { OptionalAuthMiddleware } from "./services/auth/util";
-import bookcase from "./services/bookcase/index";
-import bookstores from "./services/bookstores/index";
+import bookcase from "./services/bookcase";
+import bookstores from "./services/bookstores";
 import coa from "./services/coa";
 import collection from "./services/collection";
 import coverId from "./services/cover-id";

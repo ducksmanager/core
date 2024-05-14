@@ -2,12 +2,56 @@ import type { Namespace, Server } from "socket.io";
 
 import { prismaDm } from "~/prisma";
 import { prismaEdgeCreator } from "~/prisma";
-import type { EdgeWithModelId } from "~dm-types/EdgeWithModelId";
 import type { WantedEdge } from "~dm-types/WantedEdge";
 import type { edgeModel } from "~prisma-clients/client_edgecreator";
 
 import type Events from "./types";
 import { namespaceEndpoint } from "./types";
+
+const getEdges = async (publicationcode?: string, issuenumbers?: string[]) => {
+  const issuenumber = issuenumbers
+    ? {
+        in: issuenumbers,
+      }
+    : undefined;
+  const [countrycode, magazinecode] = publicationcode
+    ? publicationcode.split("/")
+    : [undefined, undefined];
+  const edgeModels: Record<string, edgeModel> = (
+    await prismaEdgeCreator.edgeModel.findMany({
+      where: {
+        country: countrycode,
+        magazine: magazinecode,
+        issuenumber,
+      },
+    })
+  ).reduce((acc, model) => ({ ...acc, [model.issuenumber]: model }), {});
+
+  return (
+    await prismaDm.edge.findMany({
+      select: {
+        id: true,
+        publicationcode: true,
+        issuenumber: true,
+        issuecode: true,
+      },
+      where: {
+        publicationcode,
+        issuenumber,
+      },
+    })
+  ).reduce(
+    (acc, edge) => ({
+      ...acc,
+      [edge.issuecode!]: {
+        ...edge,
+        modelId: edgeModels[edge.issuenumber]?.id,
+        v3: edgeModels[edge.issuenumber] !== undefined,
+      },
+    }),
+    {},
+  );
+};
 
 export default (io: Server) => {
   (io.of(namespaceEndpoint) as Namespace<Events>).on("connection", (socket) => {
@@ -37,43 +81,12 @@ export default (io: Server) => {
         .then(callback),
     );
 
-    socket.on("getEdge", async (publicationcode, issuenumbers, callback) => {
-      const issuenumber = issuenumbers
-        ? {
-            in: issuenumbers,
-          }
-        : undefined;
-      const [countrycode, magazinecode] = publicationcode.split("/");
-      const edgeModels: Record<string, edgeModel> = (
-        await prismaEdgeCreator.edgeModel.findMany({
-          where: {
-            country: countrycode,
-            magazine: magazinecode,
-            issuenumber,
-          },
-        })
-      ).reduce((acc, model) => ({ ...acc, [model.issuenumber]: model }), {});
+    socket.on("getAllEdges", async (callback) => {
+      callback(await getEdges());
+    });
 
-      const publishedEdges: Record<string, EdgeWithModelId> = (
-        await prismaDm.edge.findMany({
-          select: { id: true, publicationcode: true, issuenumber: true },
-          where: {
-            publicationcode,
-            issuenumber,
-          },
-        })
-      ).reduce(
-        (acc, edge) => ({
-          ...acc,
-          [edge.issuenumber]: {
-            ...edge,
-            modelId: edgeModels[edge.issuenumber]?.id,
-            v3: edgeModels[edge.issuenumber] !== undefined,
-          },
-        }),
-        {},
-      );
-      callback(publishedEdges);
+    socket.on("getEdges", async (publicationcode, issuenumbers, callback) => {
+      callback(await getEdges(publicationcode, issuenumbers));
     });
   });
 };

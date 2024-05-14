@@ -84,6 +84,11 @@ export const collection = defineStore("collection", () => {
         | undefined
         | null,
     ),
+    userPermissions = ref(
+      undefined as
+        | EventReturnType<CollectionServices["getUserPermissions"]>
+        | undefined,
+    ),
     previousVisit = ref(null as Date | null),
     publicationUrlRoot = computed(() => "/collection/show"),
     purchasesById = computed((): Record<string, purchase> | undefined =>
@@ -349,7 +354,15 @@ export const collection = defineStore("collection", () => {
         }
         isLoadingUser.value = false;
       }
-    };
+    },
+    loadUserPermissions = async () => {
+      userPermissions.value = await collectionServices.getUserPermissions();
+    },
+    hasRole = (thisPrivilege: string) =>
+      userPermissions.value?.some(
+        ({ privilege, role }) =>
+          role === "EdgeCreator" && privilege === thisPrivilege,
+      ) || false;
   return {
     ...collectionUtils,
     loginServices,
@@ -358,6 +371,7 @@ export const collection = defineStore("collection", () => {
     createPurchase,
     deletePurchase,
     fetchIssueCounts,
+    hasRole,
     hasSuggestions,
     isLoadingUser,
     issueCounts,
@@ -372,6 +386,7 @@ export const collection = defineStore("collection", () => {
     loadSubscriptions,
     loadSuggestions,
     loadUser,
+    loadUserPermissions,
     loadWatchedPublicationsWithSales,
     login,
     marketplaceContactMethods,
@@ -391,6 +406,7 @@ export const collection = defineStore("collection", () => {
     updateWatchedPublicationsWithSales,
     user,
     userForAccountForm,
+    userPermissions,
     watchedAuthors,
     watchedPublicationsWithSales,
   };

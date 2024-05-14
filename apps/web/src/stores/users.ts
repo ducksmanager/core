@@ -1,9 +1,12 @@
 import GlobalStatsServices from "~dm-services/global-stats/types";
 import { BookcaseContributor } from "~dm-types/BookcaseContributor";
 import { AbstractEvent } from "~dm-types/events/AbstractEvent";
+import { user } from "~prisma-clients/client_dm";
 import { EventReturnType } from "~socket.io-services/types";
 
 import { dmSocketInjectionKey } from "../composables/useDmSocket";
+
+type SimpleUser = Pick<user, "id" | "username">;
 
 export const users = defineStore("users", () => {
   const {
@@ -25,6 +28,12 @@ export const users = defineStore("users", () => {
     ),
     events = ref([] as AbstractEvent[]),
     bookcaseContributors = ref(null as BookcaseContributor[] | null),
+    allUsers = ref<SimpleUser[] | null>(null),
+    fetchAllUsers = async () => {
+      if (!allUsers.value) {
+        allUsers.value = await globalStatsServices.getUserList();
+      }
+    },
     fetchCount = async () => {
       if (count.value === null) {
         count.value = await globalStatsServices.getUserCount();
@@ -65,9 +74,11 @@ export const users = defineStore("users", () => {
     };
 
   return {
+    allUsers,
+    fetchAllUsers,
     count,
     stats,
-    points: points,
+    points,
     events,
     bookcaseContributors,
     fetchCount,

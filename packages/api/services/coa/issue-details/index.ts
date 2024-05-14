@@ -146,28 +146,6 @@ export default (socket: Socket<Events>) => {
     callback(issues);
   });
 };
-type ReturnType<FieldValue, T> = FieldValue extends string ? never : T;
-
-declare global {
-  interface Array<T> {
-    groupBy<FieldValue>(
-      fieldName: string,
-      valueFieldName?: FieldValue,
-    ): { [key: string]: ReturnType<FieldValue, T> };
-  }
-}
-
-Array.prototype.groupBy = function (fieldName, valueFieldName?) {
-  return this.reduce(
-    (acc, object) => ({
-      ...acc,
-      [object[fieldName]]: valueFieldName
-        ? object[valueFieldName] || undefined
-        : object,
-    }),
-    {},
-  );
-};
 
 export const getCoverUrls = (issuecodes: string[]) => prismaCoa.$queryRaw<
   IssueCoverDetails[]

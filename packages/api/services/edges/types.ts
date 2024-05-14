@@ -6,9 +6,13 @@ export const namespaceEndpoint = "/edges";
 export default abstract class {
   static namespaceEndpoint = namespaceEndpoint;
 
-  abstract getEdge: (
+  abstract getAllEdges: (
+    callback: (value: Record<string, EdgeWithModelId>) => void,
+  ) => void;
+
+  abstract getEdges: (
     publicationcode: string,
-    issuenumbers: string[],
+    issuenumbers: string[] | undefined,
     callback: (value: Record<string, EdgeWithModelId>) => void,
   ) => void;
   abstract getPublishedEdges: (

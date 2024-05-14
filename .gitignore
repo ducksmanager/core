@@ -14,5 +14,4 @@ dist
 dist-ssr
 node_modules
 **/.eslintcache
-packages/api-routes/index.ts
 packages/api/pastec-*.dat

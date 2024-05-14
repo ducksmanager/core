@@ -4,10 +4,8 @@ import { prismaDm } from "~/prisma";
 import type { BookcaseEdge, BookcaseEdgeSprite } from "~dm-types/BookcaseEdge";
 
 import { RequiredAuthMiddleware } from "../auth/util";
-import options from "./options/index";
-import { authenticated as authenticatedOptions } from "./options/index";
-import order from "./order/index";
-import { authenticated as authenticatedOrder } from "./order/index";
+import options, { authenticated as authenticatedOptions } from "./options";
+import order, { authenticated as authenticatedOrder } from "./order";
 import type Events from "./types";
 import { namespaceEndpoint } from "./types";
 import { checkValidBookcaseUser } from "./util";
