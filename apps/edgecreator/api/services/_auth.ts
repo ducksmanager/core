@@ -3,9 +3,9 @@ import fs from "fs";
 import jwt from "jsonwebtoken";
 
 import { getSvgPath } from "~/_utils";
-import type { User } from "~types/SessionUser";
+import { SessionUser } from "~dm-types/SessionUser";
 
-export const getUserCredentials = (user: User) => ({
+export const getUserCredentials = (user: SessionUser) => ({
   "x-dm-user": user.username,
   "x-dm-pass": user.hashedPassword,
 });
@@ -13,7 +13,7 @@ export const getUserCredentials = (user: User) => ({
 export const checkUserIsAdminForExportOrIsEditorForSaveOrIsFirstFileForModel = (
   req: Request,
   res: Response,
-  next: CallableFunction,
+  next: CallableFunction
 ) => {
   const { runExport, country, magazine, issuenumber } = req.body as {
     runExport: boolean;
@@ -40,7 +40,7 @@ export const checkUserIsAdminForExportOrIsEditorForSaveOrIsFirstFileForModel = (
 export const checkUserIsAdminOrEditor = (
   req: Request,
   res: Response,
-  next: CallableFunction,
+  next: CallableFunction
 ) => {
   const user = req.user;
   if (!(user && ["Admin", "Edition"].includes(user.privileges.EdgeCreator))) {
@@ -52,7 +52,7 @@ export const checkUserIsAdminOrEditor = (
 export const injectTokenIfValid = (
   req: Request,
   _: Response,
-  next: CallableFunction,
+  next: CallableFunction
 ) => {
   const authHeader = req.headers.authorization;
   const token = authHeader?.split(" ")[1];
@@ -65,12 +65,12 @@ export const injectTokenIfValid = (
       process.env.TOKEN_SECRET!,
       (err: unknown, user: unknown) => {
         if (user) {
-          req.user = user as User;
+          req.user = user as SessionUser;
         } else {
           console.log(`Invalid token: ${err as string}`);
         }
         next();
-      },
+      }
     );
   }
 };

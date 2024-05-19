@@ -1,13 +1,33 @@
 {
   "name": "~edgecreator-api",
+  "pnpm": {
+    "supportedArchitectures": {
+      "os": [
+        "linux",
+        "darwin",
+        "current"
+      ],
+      "cpu": [
+        "x64",
+        "arm64"
+      ]
+    }
+  },
+  "type": "module",
   "version": "1.0.0",
+  "files": [
+    "dist",
+    "node_modules"
+  ],
   "scripts": {
     "clean": "rm -rf dist",
     "build": "rm -rf dist && tsc && tsc-alias",
+    "postbuild": "cp -r ../../../packages/prisma-clients/dist/client_* dist/packages/prisma-clients",
     "start": "tsx index.ts",
     "dev": "nodemon"
   },
   "dependencies": {
+    "@rollup/plugin-json": "^6.1.0",
     "@sentry/node": "^7.114.0",
     "@vueuse/integrations": "^10.9.0",
     "axios": "^1.6.8",
@@ -26,12 +46,19 @@
     "nodemon": "^2.0.22",
     "sharp": "^0.33.3",
     "socket.io": "^4.7.5",
+    "socket.io-client": "^4.7.5",
     "universal-cookie": "^4.0.4",
     "~api": "workspace:*",
     "~dm-types": "workspace:*",
+    "~prisma-clients": "workspace:*",
+    "~socket.io-client-services": "workspace:*",
     "~socket.io-services": "workspace:*"
   },
   "devDependencies": {
+    "@rollup/plugin-commonjs": "^25.0.7",
+    "@rollup/plugin-esm-shim": "^0.1.6",
+    "@rollup/plugin-node-resolve": "^15.2.3",
+    "@rollup/plugin-typescript": "^11.1.6",
     "@types/body-parser": "^1.19.5",
     "@types/busboy": "^1.5.4",
     "@types/cookie-parser": "^1.4.7",
@@ -41,6 +68,8 @@
     "@types/jsonwebtoken": "^9.0.6",
     "@types/multer": "^1.4.11",
     "@types/node": "^18.19.33",
+    "rollup-plugin-node-globals": "^1.4.0",
+    "rollup-plugin-tsc-alias": "^1.1.2",
     "tsc-alias": "^1.8.9",
     "tsx": "^4.10.1",
     "typescript": "^5.4.5"

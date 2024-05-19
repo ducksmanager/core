@@ -5,7 +5,7 @@ import { createServer } from "http";
 import multer from "multer";
 import { Server } from "socket.io";
 
-import { OptionalAuthMiddleware } from "~api/services/auth/util";
+import { OptionalAuthMiddleware } from "~dm-services/auth/util";
 import type { SessionUser } from "~dm-types/SessionUser";
 
 import * as generateDefaultEdge from "./generateDefaultEdge";
