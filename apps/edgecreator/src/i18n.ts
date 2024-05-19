@@ -5,7 +5,7 @@ import fr from "../locales/fr-FR.json";
 const messages = {
   "en-US": Object.keys(fr).reduce(
     (acc, value) => ({ ...acc, [value]: value }),
-    {},
+    {}
   ),
   fr,
 };
@@ -23,6 +23,7 @@ const instance = createI18n({
   silentTranslationWarn: true,
   messages,
   globalInjection: true,
+  legacy: false,
 });
 
 export default instance;

@@ -9,12 +9,10 @@
   },
   "scripts": {
     "build": "vite build",
-    "dev": "concurrently -n front,back \"pnpm run start:front\" \"pnpm run start:back\"",
+    "dev": "concurrently -n vite,vue-tsc \"vite --port 8002\" \"vue-tsc --noEmit --watch\"",
     "lint": "eslint --fix --cache .",
     "prepare": "husky install",
     "preview": "vite preview",
-    "start:back": "cd api && pnpm run dev",
-    "start:front": "concurrently -n vite,vue-tsc \"vite --port 8002\" \"vue-tsc --noEmit --watch\"",
     "typecheck": "vue-tsc --noEmit"
   },
   "dependencies": {
@@ -46,6 +44,7 @@
     "vue-router": "^4.3.2",
     "vue3-simple-typeahead": "^1.0.11",
     "xmldom": "^0.6.0",
+    "~edgecreator-api": "workspace:*",
     "~web": "workspace:*",
     "~prisma-clients": "workspace:*",
     "~socket.io-client-services": "workspace:*"

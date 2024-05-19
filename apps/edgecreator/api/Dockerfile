@@ -2,12 +2,10 @@ FROM pnpm
 LABEL org.opencontainers.image.authors="Bruno Perel"
 WORKDIR /app
 
-COPY dist /app
-COPY package.json /app
-COPY pnpm-lock.yaml /app
-RUN pnpm i --production --frozen-lockfile
+RUN apt update && apt install -y imagemagick && apt clean && rm -rf /var/lib/apt/lists/*
+
+COPY dist/bundle.js /app/index.mjs
 
 EXPOSE 3001
 
-WORKDIR /app/apps/edgecreator/api
-CMD ["node", "index.js"]
+CMD ["node", "index.mjs"]
