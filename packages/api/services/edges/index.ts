@@ -8,7 +8,12 @@ import type { edgeModel } from "~prisma-clients/client_edgecreator";
 import type Events from "./types";
 import { namespaceEndpoint } from "./types";
 
-const getEdges = async (publicationcode?: string, issuenumbers?: string[]) => {
+const getEdges = async (filters: {
+  publicationcode?: string;
+  issuenumbers?: string[];
+  isActive?: boolean;
+}) => {
+  const { publicationcode, issuenumbers, isActive } = filters;
   const issuenumber = issuenumbers
     ? {
         in: issuenumbers,
@@ -23,6 +28,7 @@ const getEdges = async (publicationcode?: string, issuenumbers?: string[]) => {
         country: countrycode,
         magazine: magazinecode,
         issuenumber,
+        isActive,
       },
     })
   ).reduce((acc, model) => ({ ...acc, [model.issuenumber]: model }), {});
@@ -81,12 +87,8 @@ export default (io: Server) => {
         .then(callback),
     );
 
-    socket.on("getAllEdges", async (callback) => {
-      callback(await getEdges());
-    });
-
     socket.on("getEdges", async (publicationcode, issuenumbers, callback) => {
-      callback(await getEdges(publicationcode, issuenumbers));
+      callback(await getEdges({ publicationcode, issuenumbers }));
     });
   });
 };

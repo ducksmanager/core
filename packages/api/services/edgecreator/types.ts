@@ -21,13 +21,6 @@ export const unassignedEdgeFields = {
   contributors: true,
 };
 
-export const edgeEditedByOthersFields = {
-  id: true,
-  country: true,
-  magazine: true,
-  issuenumber: true,
-};
-
 export const namespaceEndpoint = "/edgecreator";
 export default abstract class {
   static namespaceEndpoint = namespaceEndpoint;
@@ -73,13 +66,6 @@ export default abstract class {
     callback: (
       data: Prisma.edgeModelGetPayload<{
         select: typeof unassignedEdgeFields;
-      }>[],
-    ) => void,
-  ) => void;
-  abstract getEdgesEditedByOthers: (
-    callback: (
-      data: Prisma.edgeModelGetPayload<{
-        select: typeof edgeEditedByOthersFields;
       }>[],
     ) => void,
   ) => void;

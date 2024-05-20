@@ -5,13 +5,13 @@
 <script setup lang="ts">
 import Cookies from "js-cookie";
 
-import { buildWebStorage } from "~socket.io-client-services";
+import { buildWebStorage, useSocket } from "~socket.io-client-services";
 
 import { dmSocketInjectionKey } from "./composables/useDmSocket";
 
 provideLocal(
   dmSocketInjectionKey,
-  useDmSocket({
+  useDmSocket(inject("dmSocket") as ReturnType<typeof useSocket>, {
     cacheStorage: buildWebStorage(sessionStorage),
     onConnectError: () => {
       isLoadingUser.value = false;

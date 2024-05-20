@@ -17,16 +17,19 @@ import StatsServices from "~dm-services/stats/types";
 import type { AxiosStorage } from "~socket.io-client-services";
 import { useSocket } from "~socket.io-client-services";
 
-const defaultExport = (options: {
-  cacheStorage: AxiosStorage;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  onConnectError: (e: any, namespace: string) => Promise<void> | void;
-  session: {
-    getToken: () => Promise<string | null | undefined>;
-    clearSession: () => void;
-    sessionExists: () => Promise<boolean>;
-  };
-}) => {
+const defaultExport = (
+  socket: ReturnType<typeof useSocket>,
+  options: {
+    cacheStorage: AxiosStorage;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    onConnectError: (e: any, namespace: string) => Promise<void> | void;
+    session: {
+      getToken: () => Promise<string | null | undefined>;
+      clearSession: () => void;
+      sessionExists: () => Promise<boolean>;
+    };
+  },
+) => {
   const { session, onConnectError, cacheStorage } = options;
   const until4am = () => {
     const now = dayjs();
@@ -42,7 +45,7 @@ const defaultExport = (options: {
       .diff(now);
   };
 
-  const { addNamespace } = inject("socket") as ReturnType<typeof useSocket>;
+  const { addNamespace } = socket;
 
   return {
     options,
@@ -72,7 +75,7 @@ const defaultExport = (options: {
     }),
     edgeCreator: addNamespace<EdgeCreatorServices>(
       EdgeCreatorServices.namespaceEndpoint,
-      { onConnectError },
+      { onConnectError, session },
     ),
     presentationText: addNamespace<PresentationTextServices>(
       PresentationTextServices.namespaceEndpoint,

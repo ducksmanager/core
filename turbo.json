@@ -3,6 +3,9 @@
     "pipeline": {
         "prisma-pull-generate": {},
         "prisma-generate": {},
+        "wait": {
+            "cache": false
+        },
         "build": {
             "dependsOn": [
                 "prisma-generate",
@@ -13,14 +16,10 @@
             ]
         },
         "dev": {
+            "persistent": true,
             "dependsOn": [
                 "prisma-generate",
-                "^dev"
-            ]
-        },
-        "~edgecreator#dev": {
-            "dependsOn": [
-                "prisma-generate"
+                "^wait"
             ]
         }
     }

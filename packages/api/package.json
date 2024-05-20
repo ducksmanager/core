@@ -8,15 +8,16 @@
     "build": "rm -rf dist && ./node_modules/.bin/tsc && tsc-alias",
     "dev": "concurrently -n api,docker-compose,db \"pnpm -F ~api nodemon-watch\" \"docker compose -f docker-compose-dev.yml up pastec mailcatcher\" \"pnpm -F ~prisma-clients dev\"",
     "nodemon-watch": "concurrently -n nodemon,tsc \"nodemon\" \"tsc --noEmit --watch\"",
-    "lint": "eslint --fix ."
+    "lint": "eslint --fix .",
+    "wait": "wait-on tcp:3000"
   },
   "dependencies": {
     "@pusher/push-notifications-server": "^1.2.6",
-    "@sentry/node": "^7.114.0",
+    "@sentry/node": "^7.116.0",
     "@socket.io/admin-ui": "^0.5.1",
-    "axios": "^1.6.8",
+    "axios": "^1.7.0",
     "cloudinary": "^1.41.3",
-    "csv-parse": "^5.5.5",
+    "csv-parse": "^5.5.6",
     "dayjs": "^1.11.11",
     "dotenv": "^16.4.5",
     "ejs": "^3.1.10",
@@ -42,9 +43,10 @@
     "nodemon": "^3.1.0",
     "prettier": "^3.2.5",
     "ts-node": "^10.9.2",
-    "tsc-alias": "^1.8.9",
+    "tsc-alias": "^1.8.10",
     "tsconfig-paths": "^4.2.0",
     "typescript": "^5.4.5",
-    "typescript-eslint": "^7.8.0"
+    "typescript-eslint": "^7.9.0",
+    "wait-on": "^7.2.0"
   }
 }

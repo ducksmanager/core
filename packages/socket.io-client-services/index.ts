@@ -33,7 +33,7 @@ interface EventsMap {
 
 type StringKeyOf<T> = keyof T & string;
 
-type EventCalls<S extends EventsMap> = {
+export type EventCalls<S extends EventsMap> = {
   [EventName in StringKeyOf<S>]: (
     ...args: AllButLast<Parameters<S[EventName]>>
   ) => Promise<EventReturnTypeIncludingError<S[EventName]>>;

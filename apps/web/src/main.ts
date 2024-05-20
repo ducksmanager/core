@@ -40,7 +40,7 @@ const app = createApp(App)
   .use(contextmenu)
   .use(head)
   .use(router)
-  .provide("socket", useSocket(import.meta.env.VITE_DM_SOCKET_URL));
+  .provide("dmSocket", useSocket(import.meta.env.VITE_DM_SOCKET_URL));
 
 app.mount("#app");
 

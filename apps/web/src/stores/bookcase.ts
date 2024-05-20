@@ -64,6 +64,7 @@ export const bookcase = defineStore("bookcase", () => {
       };
     },
     loadBookcase = async () => {
+      debugger;
       if (!bookcase.value) {
         const response = await bookcaseServices.getBookcase(
           bookcaseUsername.value!,

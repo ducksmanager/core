@@ -4,48 +4,8 @@ import type { ModelSteps } from "~dm-types/ModelSteps";
 import { prismaDm, prismaEdgeCreator } from "~prisma-clients";
 
 import type Events from "../types";
-import { edgeEditedByOthersFields, unassignedEdgeFields } from "../types";
 
 export default (socket: Socket<Events>) => {
-  socket.on("getUnassignedEdges", (callback) =>
-    prismaEdgeCreator.edgeModel
-      .findMany({
-        select: unassignedEdgeFields,
-        where: {
-          username: null,
-          isActive: false,
-        },
-      })
-      .then(callback),
-  );
-
-  socket.on("getEdgesEditedByOthers", (callback) =>
-    prismaEdgeCreator.edgeModel
-      .findMany({
-        select: edgeEditedByOthersFields,
-        where: {
-          isActive: true,
-          contributors: {
-            some: {
-              userId: socket.data.user!.id,
-              contribution: "photographe",
-            },
-          },
-          OR: [
-            {
-              username: {
-                not: socket.data.user!.username,
-              },
-            },
-            {
-              username: null,
-            },
-          ],
-        },
-      })
-      .then(callback),
-  );
-
   socket.on("getModelsSteps", async (modelIds, callback) => {
     callback(
       (

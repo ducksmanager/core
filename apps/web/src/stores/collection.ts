@@ -349,6 +349,7 @@ export const collection = defineStore("collection", () => {
         const response = await collectionServices.getUser();
         if ("error" in response) {
           socketOptions.session.clearSession();
+          user.value = null;
         } else {
           user.value = response;
         }
