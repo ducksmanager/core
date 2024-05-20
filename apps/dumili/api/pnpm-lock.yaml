@@ -50,6 +50,9 @@ importers:
       socket.io:
         specifier: ^4.7.5
         version: 4.7.5
+      ~prisma-clients:
+        specifier: workspace:*
+        version: link:../../../packages/prisma-clients
       ~socket.io-client-services:
         specifier: workspace:*
         version: link:../../../packages/socket.io-client-services

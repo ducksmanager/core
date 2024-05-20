@@ -21,6 +21,7 @@
       "~dm-types/*": ["../../../packages/types/*"],
       "~dumili-types/*": ["../types/*"],
       "~dm-services/*": ["../../../packages/api/services/*"],
+      "~prisma-clients/*": ["../../../packages/prisma-clients/*"],
       "~prisma/*": ["prisma/*"]
     }
   },

@@ -8,9 +8,10 @@
   "scripts": {
     "clean": "rm -rf dist",
     "build": "rm -rf dist/{api,types} && ./node_modules/.bin/tsc && tsc-alias",
+    "prisma-pull-generate": "prisma db pull && prisma generate",
+    "prisma-generate": "prisma generate",
     "dev": "concurrently -n typecheck,tsx \"tsc --noEmit\" \"tsx watch index.ts\"",
-    "lint": "eslint --fix .",
-    "prisma": "prisma db pull && prisma generate"
+    "lint": "eslint --fix ."
   },
   "dependencies": {
     "@prisma/client": "^5.13.0",
@@ -27,6 +28,7 @@
     "pdf2pic": "^3.1.1",
     "sharp": "^0.33.3",
     "socket.io": "^4.7.5",
+    "~prisma-clients": "workspace:*",
     "~socket.io-client-services": "workspace:*",
     "~socket.io-services": "workspace:*"
   },

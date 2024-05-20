@@ -14,7 +14,7 @@ import {
   storyKind,
   storyKindSuggestion,
   storySuggestion,
-} from "~/prisma/client_dumili";
+} from "~prisma/client_dumili";
 import { FullEntry } from "~/services/indexations/types";
 import CoaServices from "~dm-services/coa/types";
 import { storyKinds } from "~dumili-types/storyKinds";
