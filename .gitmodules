@@ -1,28 +1,28 @@
 [submodule "whattheduck-ionic"]
-	path = apps/whattheduck-ionic
-	url = ../whattheduck-ionic.git
-	branch=master
+path = apps/whattheduck-ionic
+url = ../whattheduck-ionic.git
+branch=master
 [submodule "dumili"]
-	path = apps/dumili
-	url = ../dumili.git
-	branch=master
+path = apps/dumili
+url = ../dumili.git
+branch=master
 [submodule "duck-estimator"]
-	path = apps/duck-estimator
-	url = ../duck-estimator.git
-	branch=master
+path = apps/duck-estimator
+url = ../duck-estimator.git
+branch=master
 [submodule "duckguessr-old"]
-	path = apps/duckguessr-old
-	url = ../duckguessr.git
-	branch = master
+path = apps/duckguessr-old
+url = ../duckguessr.git
+branch = master
 [submodule "duckguessr"]
-	path = apps/duckguessr
-	url = ../duckguessr.git
-	branch=nuxt3-to-vite-vue3
+path = apps/duckguessr
+url = ../duckguessr.git
+branch=nuxt3-to-vite-vue3
 [submodule "duckguessr-ml"]
-	branch=ts
-	path = packages/duckguessr-ml
-	url = ../duckguessr-ml.git
+branch=ts
+path = packages/duckguessr-ml
+url = ../duckguessr-ml.git
 [submodule "edgecreator"]
-	path = apps/edgecreator
-	url = git@github.com:ducksmanager/edgecreator.git
-	branch = nuxt-to-vue3-and-express
+path = apps/edgecreator
+url = git@github.com:ducksmanager/edgecreator.git
+branch = websocket

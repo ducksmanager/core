@@ -11,6 +11,7 @@
     "turbo": "^1.13.3"
   },
   "scripts": {
-    "prepare": "husky"
+    "prepare": "husky",
+    "dev:edgecreator": "turbo dev -F '~edgecreator-api...' -F '~edgecreator' -F '~web'"
   }
 }
