@@ -14,9 +14,9 @@
     "lint": "eslint --fix ."
   },
   "dependencies": {
-    "@prisma/client": "^5.13.0",
-    "@sentry/node": "^7.114.0",
-    "axios": "^1.6.8",
+    "@prisma/client": "^5.14.0",
+    "@sentry/node": "^7.116.0",
+    "axios": "^1.7.0",
     "body-parser": "^1.20.2",
     "busboy": "^1.6.0",
     "cloudinary": "^1.41.3",
@@ -26,7 +26,7 @@
     "express": "^4.19.2",
     "jsonwebtoken": "^9.0.2",
     "pdf2pic": "^3.1.1",
-    "sharp": "^0.33.3",
+    "sharp": "^0.33.4",
     "socket.io": "^4.7.5",
     "~prisma-clients": "workspace:*",
     "~socket.io-client-services": "workspace:*",
@@ -47,10 +47,10 @@
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-simple-import-sort": "^12.1.0",
     "eslint-plugin-unused-imports": "^3.2.0",
-    "prisma": "^5.13.0",
+    "prisma": "^5.14.0",
     "tsc-alias": "^1.8.10",
-    "tsx": "^4.9.3",
+    "tsx": "^4.10.5",
     "typescript": "^5.4.5",
-    "typescript-eslint": "^7.8.0"
+    "typescript-eslint": "^7.9.0"
   }
 }
