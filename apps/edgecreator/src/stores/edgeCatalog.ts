@@ -31,20 +31,17 @@ export const edgeCatalog = defineStore("edgeCatalog", () => {
     {
       status: "ongoing",
       l10n: "Ongoing edges",
-      apiCall: edgesServices.getAllEdges,
       svgCheckFn: (edge: Edge, currentUser: string) =>
         edge.designers.includes(currentUser),
     },
     {
       status: "ongoing by another user",
       l10n: "Ongoing edges handled by other users",
-      apiCall: edgeCreatorServices.getEdgesEditedByOthers,
       svgCheckFn: (edge: Edge) => edge.designers.length,
     },
     {
       status: "pending",
       l10n: "Pending edges",
-      apiCall: edgeCreatorServices.getUnassignedEdges,
       svgCheckFn: () => true,
     },
   ];
@@ -224,13 +221,10 @@ export const edgeCatalog = defineStore("edgeCatalog", () => {
       let newCurrentEdges: typeof currentEdges.value = {};
       const publishedSvgEdges: typeof publishedEdges.value = {};
 
-      for (const { apiCall } of edgeCategories) {
-        newCurrentEdges = Object.assign(newCurrentEdges, await apiCall());
-      }
       const edges = (await browseServices.listEdgeModels()).results;
       for (const edgeStatus in edges) {
         for (const { filename, mtime } of edges[
-          edgeStatus as "current" | "published"
+          edgeStatus as keyof typeof edges
         ]) {
           const [, country, magazine, issuenumber] = filename.match(
             /([^/]+)\/gen\/_?([^.]+)\.(.+).svg$/

@@ -6,7 +6,7 @@
     "clean": "rm -rf dist",
     "build": "rm -rf dist && tsc && tsc-alias",
     "postbuild": "cp -r ../../../packages/prisma-clients/dist/client_* dist/packages/prisma-clients",
-    "dev": "concurrently -n bun,tsc \"bun run --hot index.ts\" \"tsc --noEmit --watch\""
+    "dev": "concurrently -n bun,tsc \"bun --inspect run --hot index.ts\" \"tsc --noEmit --watch\""
   },
   "dependencies": {
     "@sentry/node": "^7.114.0",
