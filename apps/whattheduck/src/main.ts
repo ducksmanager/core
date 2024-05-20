@@ -45,7 +45,7 @@ const app = createApp(App, {
   .use(router)
   .use(store)
   .use(i18n('fr', { en, sv }).instance)
-  .provide('socket', useSocket(import.meta.env.VITE_DM_SOCKET_URL));
+  .provide('dmSocket', useSocket(import.meta.env.VITE_DM_SOCKET_URL));
 
 router.isReady().then(async () => {
   const storage = new Storage({

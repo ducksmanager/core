@@ -35,5 +35,5 @@ export const setupVue3 = defineSetupVue3(({ app }) => {
     .use(router)
     .use(createPinia())
     .use(i18n('fr', { en, sv }).instance)
-    .provide('socket', useSocket(import.meta.env.VITE_DM_SOCKET_URL));
+    .provide('dmSocket', useSocket(import.meta.env.VITE_DM_SOCKET_URL));
 });
