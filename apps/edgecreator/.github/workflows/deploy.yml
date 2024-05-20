@@ -15,6 +15,7 @@ jobs:
         with:
           repository: ducksmanager/core
           submodules: recursive
+          path: .
 
       - name: Download .env file
         uses: nicklasfrahm/scp-action@main
@@ -43,7 +44,6 @@ jobs:
           context: ./apps/edgecreator
           platforms: linux/x86_64
           push: true
-          target: app
           cache-from: type=registry,ref=ghcr.io/bperel/edgecreator-app:buildcache
           cache-to: type=registry,ref=ghcr.io/bperel/edgecreator-app:buildcache,mode=max
           tags: |
@@ -58,7 +58,6 @@ jobs:
           context: ./apps/edgecreator/api
           platforms: linux/x86_64
           push: true
-          target: api
           cache-from: type=registry,ref=ghcr.io/bperel/edgecreator-api:buildcache
           cache-to: type=registry,ref=ghcr.io/bperel/edgecreator-api:buildcache,mode=max
           tags: |
