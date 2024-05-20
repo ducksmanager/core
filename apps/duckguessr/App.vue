@@ -6,7 +6,7 @@
 import Cookies from "js-cookie";
 import { stores as webStores } from "~web";
 
-import { buildWebStorage } from "~socket.io-client-services";
+import { buildWebStorage, useSocket } from "~socket.io-client-services";
 import { dmSocketInjectionKey } from "~web/src/composables/useDmSocket";
 
 const { loadUser } = webStores.collection();
@@ -25,11 +25,14 @@ const session = {
   },
   cacheStorage = buildWebStorage(sessionStorage);
 
-const dmSocket = useDmSocket({
-  cacheStorage,
-  session,
-  onConnectError,
-});
+const dmSocket = useDmSocket(
+  inject("dmSocket") as ReturnType<typeof useSocket>,
+  {
+    cacheStorage,
+    session,
+    onConnectError,
+  },
+);
 
 provideLocal(dmSocketInjectionKey, dmSocket);
 

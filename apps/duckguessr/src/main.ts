@@ -15,6 +15,7 @@ import de from "~locales/de.json";
 import fr from "~locales/fr-FR.json";
 import en from "~locales/en-US";
 import es from "~locales/es.json";
+import { useSocket } from "~socket.io-client-services/index";
 
 const head = createHead();
 
@@ -25,11 +26,13 @@ const router = createRouter({
 
 const store = createPinia();
 
-const app = createApp(App);
-app.use(i18n("fr", { de, en: await en(), fr, es }).instance);
-app.use(store);
-app.use(head);
-app.use(router);
+const app = createApp(App)
+  .use(i18n("fr", { de, en: await en(), fr, es }).instance)
+  .use(store)
+  .use(head)
+  .use(router)
+  .provide("dmSocket", useSocket(import.meta.env.VITE_DM_SOCKET_URL));
+
 app.mount("#app");
 
 if (import.meta.env.NODE_ENV === "production") {
