@@ -17,6 +17,9 @@ jobs:
           submodules: recursive
           path: ./dm
 
+      - name: Debug
+        run: pwd && ls -la dm
+
       - name: Download .env file
         uses: nicklasfrahm/scp-action@main
         with:
@@ -41,7 +44,7 @@ jobs:
       - name: Build and push app
         uses: docker/build-push-action@v3
         with:
-          context: .
+          context: ./dm/apps/edgecreator
           platforms: linux/x86_64
           file: ./dm/apps/edgecreator/Dockerfile
           push: true
@@ -51,14 +54,11 @@ jobs:
             ghcr.io/bperel/edgecreator-app:latest
 
       - uses: oven-sh/setup-bun@v1
-      - run: (cd dm/apps/edgecreator/api && bun build ./index.ts --outdir dist --minify --target node)
-
-      - run: pwd
+      - run: cd dm/apps/edgecreator/api && bun build ./index.ts --outdir dist --minify --target node
 
       - name: Build and push api
         uses: docker/build-push-action@v3
         with:
-          file: .
           context: ./dm/apps/edgecreator/api
           platforms: linux/x86_64
           push: true
