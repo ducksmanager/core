@@ -40,7 +40,7 @@ jobs:
       - name: Build and push app
         uses: docker/build-push-action@v3
         with:
-          context: apps/edgecreator
+          context: ./apps/edgecreator
           platforms: linux/x86_64
           push: true
           target: app
@@ -55,7 +55,7 @@ jobs:
       - name: Build and push api
         uses: docker/build-push-action@v3
         with:
-          context: apps/edgecreator/api
+          context: ./apps/edgecreator/api
           platforms: linux/x86_64
           push: true
           target: api
