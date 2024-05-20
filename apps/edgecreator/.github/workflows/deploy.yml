@@ -15,7 +15,7 @@ jobs:
         with:
           repository: ducksmanager/core
           submodules: recursive
-          path: .
+          path: ./dm
 
       - name: Download .env file
         uses: nicklasfrahm/scp-action@main
@@ -26,7 +26,7 @@ jobs:
           username: ${{ secrets.PRODUCTION_SSH_USER }}
           key: ${{ secrets.PRODUCTION_SSH_KEY }}
           source: /home/bperel/workspace/EdgeCreator2/.env.prod
-          target: .env.prod
+          target: dm/.env.prod
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
@@ -41,7 +41,7 @@ jobs:
       - name: Build and push app
         uses: docker/build-push-action@v3
         with:
-          context: ./apps/edgecreator
+          context: ./dm/apps/edgecreator
           platforms: linux/x86_64
           push: true
           cache-from: type=registry,ref=ghcr.io/bperel/edgecreator-app:buildcache
@@ -50,12 +50,12 @@ jobs:
             ghcr.io/bperel/edgecreator-app:latest
 
       - uses: oven-sh/setup-bun@v1
-      - run: cd apps/edgecreator/api && bun build ./index.ts --outdir dist --minify --target node
+      - run: cd dm/apps/edgecreator/api && bun build ./index.ts --outdir dist --minify --target node
 
       - name: Build and push api
         uses: docker/build-push-action@v3
         with:
-          context: ./apps/edgecreator/api
+          context: ./dm/apps/edgecreator/api
           platforms: linux/x86_64
           push: true
           cache-from: type=registry,ref=ghcr.io/bperel/edgecreator-api:buildcache
@@ -71,7 +71,7 @@ jobs:
           fingerprint: ${{ secrets.PRODUCTION_SSH_FINGERPRINT }}
           username: ${{ secrets.PRODUCTION_SSH_USER }}
           key: ${{ secrets.PRODUCTION_SSH_KEY }}
-          source: docker-compose.yml
+          source: dm/apps/edgecreator/docker-compose.yml
           target: /home/bperel/workspace/EdgeCreator2/docker-compose.yml
 
       - name: Upload Sentry config
@@ -82,7 +82,7 @@ jobs:
           fingerprint: ${{ secrets.PRODUCTION_SSH_FINGERPRINT }}
           username: ${{ secrets.PRODUCTION_SSH_USER }}
           key: ${{ secrets.PRODUCTION_SSH_KEY }}
-          source: config/sentry-relay/config.yml
+          source: dm/apps/edgecreator/config/sentry-relay/config.yml
           target: /home/bperel/workspace/EdgeCreator2/config/sentry-relay/config.yml
 
       - name: Upload Sentry project config
@@ -93,7 +93,7 @@ jobs:
           fingerprint: ${{ secrets.PRODUCTION_SSH_FINGERPRINT }}
           username: ${{ secrets.PRODUCTION_SSH_USER }}
           key: ${{ secrets.PRODUCTION_SSH_KEY }}
-          source: config/sentry-relay/projects/5595460.json
+          source: dm/apps/edgecreator/config/sentry-relay/projects/5595460.json
           target: /home/bperel/workspace/EdgeCreator2/config/sentry-relay/projects/5595460.json
 
       - name: Recreate container
