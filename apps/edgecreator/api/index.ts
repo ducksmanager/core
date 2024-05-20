@@ -9,6 +9,8 @@ import { OptionalAuthMiddleware } from "~dm-services/auth/util";
 import type { SessionUser } from "~dm-types/SessionUser";
 
 import * as generateDefaultEdge from "./generateDefaultEdge";
+import { instrument } from "@socket.io/admin-ui";
+
 import browse from "./services/browse";
 import imageInfo from "./services/image-info";
 import save from "./services/save";
@@ -62,27 +64,34 @@ app.get("/upload", (req, res) => {
   }
 });
 
-app.get("/default-edge", (req, res) => {
-  if (req.method === "OPTIONS") {
-    generateDefaultEdge.options(req, res);
-  } else if (req.method === "GET") {
-    multer({
-      dest: "/tmp/",
-      limits: {
-        fileSize: 3 * 1024 * 1024,
-        files: 1,
-      },
-    }).array("files");
-    generateDefaultEdge.get(req, res);
-  } else {
-    res.writeHead(405);
+app.get(
+  "/default-edge/edges/:countrycode/gen/:magazinecode([^.]+).:issuenumber([^.]+).:extension(svg|png)",
+  (req, res) => {
+    if (req.method === "OPTIONS") {
+      generateDefaultEdge.options(req, res);
+    } else if (req.method === "GET") {
+      multer({
+        dest: "/tmp/",
+        limits: {
+          fileSize: 3 * 1024 * 1024,
+          files: 1,
+        },
+      }).array("files");
+      generateDefaultEdge.get(req, res);
+    } else {
+      res.writeHead(405);
+    }
   }
-});
+);
 const httpServer = createServer(app);
 const io = new ServerWithUser(httpServer, {
   cors: {
     origin: "*",
   },
+});
+
+instrument(io, {
+  auth: false,
 });
 
 httpServer.listen(port);

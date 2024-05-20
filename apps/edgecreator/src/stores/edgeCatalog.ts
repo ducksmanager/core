@@ -21,44 +21,41 @@ export type EdgeWithVersionAndStatus = Edge & {
   published?: string | null;
 };
 
-const {
-  edgeCreator: { services: edgeCreatorServices },
-  edges: { services: edgesServices },
-} = injectLocal(dmSocketInjectionKey)!;
-
-export const edgeCategories = [
-  {
-    status: "ongoing",
-    l10n: "Ongoing edges",
-    apiCall: edgesServices.getAllEdges,
-    svgCheckFn: (edge: Edge, currentUser: string) =>
-      edge.designers.includes(currentUser),
-  },
-  {
-    status: "ongoing by another user",
-    l10n: "Ongoing edges handled by other users",
-    apiCall: edgeCreatorServices.getEdgesEditedByOthers,
-    svgCheckFn: (edge: Edge) => edge.designers.length,
-  },
-  {
-    status: "pending",
-    l10n: "Pending edges",
-    apiCall: edgeCreatorServices.getUnassignedEdges,
-    svgCheckFn: () => true,
-  },
-];
-
 export const edgeCatalog = defineStore("edgeCatalog", () => {
+  const {
+    edgeCreator: { services: edgeCreatorServices },
+    edges: { services: edgesServices },
+  } = injectLocal(dmSocketInjectionKey)!;
+
+  const edgeCategories = [
+    {
+      status: "ongoing",
+      l10n: "Ongoing edges",
+      apiCall: edgesServices.getAllEdges,
+      svgCheckFn: (edge: Edge, currentUser: string) =>
+        edge.designers.includes(currentUser),
+    },
+    {
+      status: "ongoing by another user",
+      l10n: "Ongoing edges handled by other users",
+      apiCall: edgeCreatorServices.getEdgesEditedByOthers,
+      svgCheckFn: (edge: Edge) => edge.designers.length,
+    },
+    {
+      status: "pending",
+      l10n: "Pending edges",
+      apiCall: edgeCreatorServices.getUnassignedEdges,
+      svgCheckFn: () => true,
+    },
+  ];
+
   const {
     browse: { services: browseServices },
   } = injectLocal(edgecreatorSocketInjectionKey)!;
   const isCatalogLoaded = ref<boolean>(false),
     currentEdges = ref<Record<string, EdgeWithVersionAndStatus>>({}),
     publishedEdges = ref(
-      {} as Record<
-        string,
-        Record<string, { issuenumber: string; v3: boolean }>
-      >,
+      {} as Record<string, Record<string, { issuenumber: string; v3: boolean }>>
     ),
     publishedEdgesSteps = ref<Record<string, ModelSteps>>({}),
     edgesByStatus = computed(() => {
@@ -70,7 +67,7 @@ export const edgeCatalog = defineStore("edgeCatalog", () => {
           ...acc,
           [status]: {},
         }),
-        {},
+        {}
       );
       return Object.values(currentEdges.value).reduce(
         (acc: typeof currentEdgesByStatus, edge) => {
@@ -81,7 +78,7 @@ export const edgeCatalog = defineStore("edgeCatalog", () => {
           acc[edge.status!][publicationcode].push(edge);
           return acc;
         },
-        currentEdgesByStatus,
+        currentEdgesByStatus
       );
     }),
     fetchPublishedEdges = async (publicationcode: string) => {
@@ -89,7 +86,7 @@ export const edgeCatalog = defineStore("edgeCatalog", () => {
       addPublishedEdges({
         [publicationcode]: await edgesServices.getEdges(
           `${countrycode}/${magazinecode}`,
-          undefined,
+          undefined
         ),
       });
     },
@@ -100,7 +97,7 @@ export const edgeCatalog = defineStore("edgeCatalog", () => {
       newPublishedEdges: Record<
         string,
         Record<string, { issuenumber: string; v3: boolean }>
-      >,
+      >
     ) => {
       for (const publicationcode of Object.keys(newPublishedEdges)) {
         const publicationEdgesForPublication =
@@ -150,7 +147,7 @@ export const edgeCatalog = defineStore("edgeCatalog", () => {
       addPublishedEdgesSteps({
         publicationcode,
         newPublishedEdgesSteps: await edgeCreatorServices.getModelsSteps(
-          newModelIds.map((modelId) => modelId),
+          newModelIds.map((modelId) => modelId)
         ),
       });
     },
@@ -189,7 +186,7 @@ export const edgeCatalog = defineStore("edgeCatalog", () => {
           (svgCheckFn(edge, webStores.collection().user!.username)
             ? status
             : null),
-        null,
+        null
       ),
     }),
     canEditEdge = (status: string) =>
@@ -230,14 +227,13 @@ export const edgeCatalog = defineStore("edgeCatalog", () => {
       for (const { apiCall } of edgeCategories) {
         newCurrentEdges = Object.assign(newCurrentEdges, await apiCall());
       }
-
       const edges = (await browseServices.listEdgeModels()).results;
       for (const edgeStatus in edges) {
         for (const { filename, mtime } of edges[
           edgeStatus as "current" | "published"
         ]) {
           const [, country, magazine, issuenumber] = filename.match(
-            /([^/]+)\/gen\/_?([^.]+)\.(.+).svg$/,
+            /([^/]+)\/gen\/_?([^.]+)\.(.+).svg$/
           )!;
           // if ([country, magazine, issuenumber].includes(undefined)) {
           //   console.error(`Invalid SVG file name : ${fileName}`);
@@ -259,15 +255,15 @@ export const edgeCatalog = defineStore("edgeCatalog", () => {
                 magazine,
                 issuenumber,
                 mtime,
-                edgeStatus === "published",
+                edgeStatus === "published"
               ).then(({ country, magazine, issuenumber, svgChildNodes }) => {
                 const designers = getSvgMetadata(
                   svgChildNodes,
-                  "contributor-designer",
+                  "contributor-designer"
                 );
                 const photographers = getSvgMetadata(
                   svgChildNodes,
-                  "contributor-photographer",
+                  "contributor-photographer"
                 );
 
                 const publicationcode = `${country}/${magazine}`;
@@ -292,7 +288,7 @@ export const edgeCatalog = defineStore("edgeCatalog", () => {
             }
           } catch (e) {
             console.error(
-              `No SVG found : ${country}/${magazine} ${issuenumber}`,
+              `No SVG found : ${country}/${magazine} ${issuenumber}`
             );
           }
         }
@@ -304,14 +300,14 @@ export const edgeCatalog = defineStore("edgeCatalog", () => {
           .fetchPublicationNames([
             ...new Set(
               Object.values(newCurrentEdges).map(
-                ({ country, magazine }) => `${country}/${magazine}`,
-              ),
+                ({ country, magazine }) => `${country}/${magazine}`
+              )
             ),
           ]);
 
         for (const edgeIssueCode of Object.keys(newCurrentEdges)) {
           newCurrentEdges[edgeIssueCode].published = getEdgeStatus(
-            newCurrentEdges[edgeIssueCode],
+            newCurrentEdges[edgeIssueCode]
           );
         }
 

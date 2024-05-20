@@ -1,10 +1,7 @@
+import { exec } from "child_process";
 import type { Request, Response } from "express";
 import { readFileSync } from "fs";
-import sharp from "sharp";
-
-// eslint-disable-next-line max-len
-const REGEX_EDGE_URL =
-  /^edges\/(?<countryCode>[^/]+)\/gen\/_?(?<magazineCode>[^.]+)\.(?<issueNumber>[^.]+)\.(?<extension>[^?]+)?(?:\?.+)?$/;
+import { pipeline } from "stream";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -15,35 +12,36 @@ const corsHeaders = {
     "If-Modified-Since,Cache-Control,Content-Type,x-dm-user,x-dm-pass",
 };
 export const get = (req: Request, res: Response) => {
-  const input = req.url.replace(/^\//, "");
-  let text;
-  const match = input.match(REGEX_EDGE_URL);
-  if (match) {
-    const { countryCode, magazineCode, issueNumber, extension } = match.groups!;
+  const { countrycode, magazinecode, issuenumber, extension } = req.params!;
 
-    if (countryCode && extension !== "png") {
-      res.writeHead(404, corsHeaders);
-      res.end("");
-      return;
-    }
-    text = `${countryCode}/${magazineCode} ${issueNumber}`;
-  } else {
-    text = input;
+  if (countrycode && extension !== "png") {
+    res.writeHead(404, corsHeaders);
+    res.end("");
+    return;
   }
+  const text = `${countrycode}/${magazinecode} ${issuenumber}`;
 
-  const content = Buffer.from(
-    readFileSync("assets/default.svg")
-      .toString()
-      .replace("My text", decodeURIComponent(text)),
-    "utf8",
+  const convert = exec("convert svg:- png:-", {
+    encoding: "buffer",
+  });
+
+  convert.stdin!.write(
+    Buffer.from(
+      readFileSync("assets/default.svg")
+        .toString()
+        .replace("My text", decodeURIComponent(text)),
+      "utf8"
+    )
   );
-  sharp(content).toBuffer((error, buffer) => {
-    if (error) {
-      res.writeHead(500, corsHeaders);
-      return res.end(`Error : ${JSON.stringify({ error })}`);
+  convert.stdin!.end();
+
+  res.setHeader("Content-Type", "image/png");
+
+  pipeline(convert.stdout!, res, (err) => {
+    if (err) {
+      console.error("Pipeline failed", err);
+      res.status(500).send("Conversion failed");
     }
-    res.writeHead(200, { ...corsHeaders, "Content-Type": "image/png" });
-    return res.end(buffer);
   });
 };
 

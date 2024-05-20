@@ -1,34 +1,18 @@
 {
   "name": "~edgecreator-api",
-  "pnpm": {
-    "supportedArchitectures": {
-      "os": [
-        "linux",
-        "darwin",
-        "current"
-      ],
-      "cpu": [
-        "x64",
-        "arm64"
-      ]
-    }
-  },
   "type": "module",
   "version": "1.0.0",
-  "files": [
-    "dist",
-    "node_modules"
-  ],
   "scripts": {
     "clean": "rm -rf dist",
     "build": "rm -rf dist && tsc && tsc-alias",
     "postbuild": "cp -r ../../../packages/prisma-clients/dist/client_* dist/packages/prisma-clients",
-    "dev": "nodemon"
+    "dev": "concurrently -n bun,tsc \"bun run --hot index.ts\" \"tsc --noEmit --watch\""
   },
   "dependencies": {
-    "@sentry/node": "^7.116.0",
+    "@sentry/node": "^7.114.0",
+    "@socket.io/admin-ui": "^0.5.1",
     "@vueuse/integrations": "^10.9.0",
-    "axios": "^1.7.0",
+    "axios": "^1.6.8",
     "cloudinary": "^1.41.3",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
@@ -38,7 +22,6 @@
     "jsonwebtoken": "^9.0.2",
     "multer": "1.4.5-lts.1",
     "node-base64-image": "^2.0.6",
-    "sharp": "^0.33.4",
     "socket.io": "^4.7.5",
     "socket.io-client": "^4.7.5",
     "universal-cookie": "^4.0.4",
@@ -60,10 +43,11 @@
     "@types/jsonwebtoken": "^9.0.6",
     "@types/multer": "^1.4.11",
     "@types/node": "^18.19.33",
-    "nodemon": "^3.1.0",
+    "concurrently": "^8.2.2",
     "rollup-plugin-node-globals": "^1.4.0",
     "rollup-plugin-tsc-alias": "^1.1.2",
-    "tsc-alias": "^1.8.10",
+    "tsc-alias": "^1.8.9",
+    "tsx": "^4.10.1",
     "typescript": "^5.4.5"
   }
 }

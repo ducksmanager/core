@@ -11,7 +11,7 @@ export default (io: Server) => {
     socket.on("getImageInfo", async (targetUrl, callback) => {
       const url = targetUrl.startsWith("https://res.cloudinary.com")
         ? targetUrl
-        : `${process.env.VITE_EDGES_URL!}/${targetUrl}`;
+        : `${process.env.EDGES_URL!}/${targetUrl}`;
 
       const response = await axios.get<string>(url);
       if (response.status === 200) {

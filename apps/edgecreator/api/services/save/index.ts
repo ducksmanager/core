@@ -1,6 +1,6 @@
 import { mkdirSync, unlinkSync, writeFileSync } from "fs";
 import path from "path";
-import sharp from "sharp";
+// import sharp from "sharp";
 import type { Namespace } from "socket.io";
 import type { Server } from "socket.io";
 
@@ -15,7 +15,7 @@ import { namespaceEndpoint } from "./types";
 const socket = useSocket(process.env.DM_SOCKET_URL!);
 const { services: edgeCreatorServices } =
   socket.addNamespace<EdgeCreatorServices>(
-    EdgeCreatorServices.namespaceEndpoint,
+    EdgeCreatorServices.namespaceEndpoint
   );
 export default (io: Server) => {
   (io.of(namespaceEndpoint) as Namespace<Events>).on("connection", (socket) => {
@@ -40,14 +40,14 @@ export default (io: Server) => {
       let paths: ExportPaths = { svgPath };
       if (runExport) {
         const pngPath = svgPath.replace(".svg", ".png");
-        try {
-          await sharp(svgPath).png().toFile(pngPath);
-        } catch (errorDetails) {
-          callback({
-            error: "Generic error",
-            errorDetails: errorDetails as string,
-          });
-        }
+        // try {
+        //   await sharp(svgPath).png().toFile(pngPath);
+        // } catch (errorDetails) {
+        //   callback({
+        //     error: "Generic error",
+        //     errorDetails: errorDetails as string,
+        //   });
+        // }
 
         paths = { ...paths, pngPath };
 

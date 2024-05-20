@@ -5,7 +5,7 @@
     "target": "es2018",
     "lib": ["ESNext"],
     "strict": true,
-    "esModuleInterop": true,
+    "esModuleInterop": true, 
     "skipLibCheck": true,
     "moduleResolution": "node",
     "resolveJsonModule": true,

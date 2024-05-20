@@ -34,5 +34,9 @@ createApp(App)
   .use(store)
   .use(head)
   .use(router)
-  .provide("socket", useSocket(import.meta.env.VITE_EDGECREATOR_SOCKET_URL))
+  .provide("dmSocket", useSocket(import.meta.env.VITE_DM_SOCKET_URL))
+  .provide(
+    "edgecreatorSocket",
+    useSocket(import.meta.env.VITE_EDGECREATOR_SOCKET_URL)
+  )
   .mount("#app");
