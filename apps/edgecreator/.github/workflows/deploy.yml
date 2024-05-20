@@ -51,7 +51,9 @@ jobs:
             ghcr.io/bperel/edgecreator-app:latest
 
       - uses: oven-sh/setup-bun@v1
-      - run: cd dm/apps/edgecreator/api && bun build ./index.ts --outdir dist --minify --target node
+      - run: (cd dm/apps/edgecreator/api && bun build ./index.ts --outdir dist --minify --target node)
+
+      - run: pwd
 
       - name: Build and push api
         uses: docker/build-push-action@v3
