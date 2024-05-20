@@ -1,30 +1,58 @@
-import "./style.scss";
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+import "v-contextmenu/dist/themes/default.css";
 import "bootstrap/dist/css/bootstrap.css";
 import "bootstrap-vue-next/dist/bootstrap-vue-next.css";
 
-import { useColorMode } from "bootstrap-vue-next";
+import { Integrations } from "@sentry/tracing";
+import * as Sentry from "@sentry/vue";
+import { createHead } from "@unhead/vue";
+import Cookies from "js-cookie";
+// @ts-ignore
+import contextmenu from "v-contextmenu";
+// @ts-ignore
+import { setupLayouts } from "virtual:generated-layouts";
 import generatedRoutes from "virtual:generated-pages";
-// @ts-expect-error No type definitions available
-import VueDraggableResizable from "vue-draggable-resizable";
 import { createRouter, createWebHistory } from "vue-router";
-import { plugin as Slicksort } from "vue-slicksort";
 
-import { useSocket } from "~socket.io-client-services/index.js";
+import App from "~/App.vue";
+import i18n from "~/i18n";
+import { useSocket } from "~socket.io-client-services";
+import en from "~translations/messages.en.json";
 
-import App from "./App.vue";
-import i18n from "./i18n.js";
+const head = createHead();
 
+const routes = setupLayouts(generatedRoutes);
 const router = createRouter({
-  history: createWebHistory(),
-  routes: generatedRoutes,
+  history: createWebHistory(import.meta.env.BASE_URL),
+  routes,
+});
+router.beforeResolve(async (to) => {
+  if (!to.meta.public && !Cookies.get("token") && to.name !== "login") {
+    return { name: "login" };
+  }
 });
 
-useColorMode().value = "dark";
-createApp(App)
-  .component("vue-draggable-resizable", VueDraggableResizable)
-  .use(i18n)
-  .use(createPinia())
+const store = createPinia();
+
+const app = createApp(App)
+  .use(i18n("fr", { en }).instance)
+  .use(store)
+  .use(contextmenu)
+  .use(head)
   .use(router)
-  .use(Slicksort)
-  .provide("socket", useSocket(import.meta.env.VITE_DUMILI_SOCKET_URL))
-  .mount("#app");
+  .provide("dmSocket", useSocket(import.meta.env.VITE_DM_SOCKET_URL));
+
+app.mount("#app");
+
+if (process.env.NODE_ENV === "production") {
+  Sentry.init({
+    app,
+    dsn: "https://a225a6550b8c4c07914327618685a61c@sentry.ducksmanager.net/1385898",
+    logErrors: true,
+    integrations: [new Integrations.BrowserTracing()],
+    tracesSampleRate: 1.0,
+    tracingOptions: {
+      trackComponents: true,
+    },
+  });
+}
