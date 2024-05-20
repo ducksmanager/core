@@ -120,7 +120,7 @@ model entryurlDetails {
 view gameScores {
   gameId    Int    @map("game_id")
   playerId  Int    @map("player_id")
-  gameScore Int @default(0) @map("game_score")
+  gameScore BigInt @default(0) @map("game_score")
 
   @@unique([gameId, playerId])
   @@map("game_scores")
@@ -130,7 +130,7 @@ view userGameMedalPoints {
   medalType    String  @db.VarChar(30)
   gameId       Int
   playerId     Int
-  playerPoints Int
+  playerPoints BigInt?
 
   @@unique([medalType, playerId, gameId])
   @@map("user_medals_game")
@@ -139,7 +139,7 @@ view userGameMedalPoints {
 view userMedalPoints {
   medalType    String  @db.VarChar(30)
   playerId     Int
-  playerPoints Int
+  playerPoints BigInt?
 
   @@unique([medalType, playerId])
   @@map("user_medals")

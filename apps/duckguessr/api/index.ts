@@ -27,7 +27,7 @@ const prisma = new PrismaClient();
 const prismaCoa = new PrismaCoaClient();
 
 const cors = {
-  origin: process.env.FRONTEND_URL
+  origin: process.env.FRONTEND_URL,
 };
 
 const io = new Server<
@@ -39,7 +39,8 @@ const io = new Server<
   cors,
 });
 
-const maintenanceNamespace: Namespace<ClientToServerEventsMaintenance> = io.of("/maintenance");
+const maintenanceNamespace: Namespace<ClientToServerEventsMaintenance> =
+  io.of("/maintenance");
 maintenanceNamespace.on("connection", async (socket) => {
   socket.on("getMaintenanceData", async (callback) => {
     callback(
@@ -49,7 +50,7 @@ maintenanceNamespace.on("connection", async (socket) => {
               left join dataset_entryurl de on dataset.id = de.dataset_id
               left join entryurl_details using (sitecode_url)
               group by dataset_id, decision
-            `
+            `,
     );
   });
 
@@ -88,9 +89,9 @@ maintenanceNamespace.on("connection", async (socket) => {
           orderBy: {
             sitecodeUrl: "asc",
           },
-        })
+        }),
       );
-    }
+    },
   );
 
   socket.on("updateMaintenanceData", async (data) => {
@@ -104,13 +105,14 @@ maintenanceNamespace.on("connection", async (socket) => {
             decision,
             updatedAt: new Date(),
           },
-        })
-      )
+        }),
+      ),
     );
   });
 });
 
-const datasetsNamespace: Namespace<ClientToServerEventsDatasets> = io.of("/datasets");
+const datasetsNamespace: Namespace<ClientToServerEventsDatasets> =
+  io.of("/datasets");
 datasetsNamespace.on("connection", async (socket) => {
   socket.on("getDatasets", async (callback) => {
     callback(
@@ -122,7 +124,7 @@ datasetsNamespace.on("connection", async (socket) => {
       WHERE dataset.active = 1
       AND dataset.name NOT LIKE '%-ml'
       AND decision = 'ok'
-      GROUP BY dataset.name`
+      GROUP BY dataset.name`,
     );
   });
 });
@@ -139,7 +141,7 @@ podiumNamespace.on("connection", async (socket) => {
       GROUP BY player.id
       HAVING sumScore > 0
       ORDER BY sumScore DESC
-    `) as (player & { sumScore: number })[]
+    `) as (player & { sumScore: number })[],
     );
   });
 });
@@ -196,8 +198,8 @@ io.of("/round").on("connection", async (socket) => {
       .then(
         async (response) =>
           `data:${response.headers.get(
-            "content-type"
-          )};base64,${convertBlobToBase64(await response.blob())}`
+            "content-type",
+          )};base64,${convertBlobToBase64(await response.blob())}`,
       )
       .then((base64) => {
         callback({
@@ -264,7 +266,7 @@ io.of("/game").on("connection", async (socket) => {
         }),
       authors: personDetails.sort(
         ({ personcode: personcode1 }, { personcode: personcode2 }) =>
-          personcode1 < personcode2 ? -1 : 1
+          personcode1 < personcode2 ? -1 : 1,
       ),
     });
   });
@@ -274,7 +276,6 @@ createPlayerSocket(io);
 createMatchmakingSocket(io);
 
 (async () => {
-
   const pendingGames = await prisma.game.findMany({
     where: {
       rounds: {
@@ -286,10 +287,10 @@ createMatchmakingSocket(io);
   });
   for (const pendingGame of pendingGames) {
     console.debug(
-      `Creating socket for unfinished game with ID ${pendingGame.id}`
+      `Creating socket for unfinished game with ID ${pendingGame.id}`,
     );
     await createGameSocket(io, pendingGame.id);
   }
-})()
+})();
 
 io.listen(4000);

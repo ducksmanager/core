@@ -11,9 +11,7 @@ export const getUser = async (username: string) =>
     },
   }))!;
 
-export const getPlayer = async (
-  cookies: Record<string, string>
-) => {
+export const getPlayer = async (cookies: Record<string, string>) => {
   const { token, "duckguessr-user": duckguessrName } = cookies;
   let player: player | null;
   if (token) {
@@ -21,7 +19,7 @@ export const getPlayer = async (
     try {
       const { id: ducksmanagerId, username } = jwt.verify(
         token,
-        process.env.TOKEN_SECRET as string
+        process.env.TOKEN_SECRET as string,
       ) as jwt.JwtPayload;
       player = await prisma.player.findFirst({
         where: {
@@ -62,35 +60,30 @@ export const getPlayer = async (
   return player!;
 };
 
-export const updatePlayer = async (
-  playerId: number,
-  player: player
-) =>
+export const updatePlayer = async (playerId: number, player: player) =>
   await prisma.player.update({
     where: { id: playerId },
     data: player,
   });
 
-export const getPlayerGameStatistics = async (
-  gameId: number
-) => await prisma.userGameMedalPoints.findMany({
-  where: {
-    gameId,
-    medalType: {
-      notIn: ['published-fr-small']
-    }
-  }
-})
-
-export const getPlayerStatistics = async (
-  playerIds: number[]
-) => await prisma.userMedalPoints.findMany({
-  where: {
-    playerId: {
-      in: playerIds,
+export const getPlayerGameStatistics = async (gameId: number) =>
+  await prisma.userGameMedalPoints.findMany({
+    where: {
+      gameId,
+      medalType: {
+        notIn: ["published-fr-small"],
+      },
     },
-    medalType: {
-      notIn: ['published-fr-small']
-    }
-  }
-})
+  });
+
+export const getPlayerStatistics = async (playerIds: number[]) =>
+  await prisma.userMedalPoints.findMany({
+    where: {
+      playerId: {
+        in: playerIds,
+      },
+      medalType: {
+        notIn: ["published-fr-small"],
+      },
+    },
+  });

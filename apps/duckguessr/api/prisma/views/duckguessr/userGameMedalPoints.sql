@@ -2,9 +2,7 @@ SELECT
   `duckguessr`.`dataset`.`name` AS `medalType`,
   `duckguessr`.`game_player`.`game_id` AS `gameId`,
   `duckguessr`.`game_player`.`player_id` AS `playerId`,
-  cast(
-    sum(`duckguessr`.`round_score`.`score`) AS signed
-  ) AS `playerPoints`
+  sum(`duckguessr`.`round_score`.`score`) DIV 1 AS `playerPoints`
 FROM
   (
     (

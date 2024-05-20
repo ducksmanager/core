@@ -21,6 +21,7 @@
       "~/*": ["src/*"],
       "~locales/*": ["locales/*"],
       "~dm-services/*": ["../../packages/api/services/*"],
+      "~web/*": ["../web/*"],
       "~dm-types/*": ["../../packages/types/*"],
       "~duckguessr-prisma-client": ["api/prisma/client_duckguessr"],
       "~duckguessr-types/*": ["api/types/*"],

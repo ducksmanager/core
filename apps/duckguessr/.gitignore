@@ -1,5 +1,6 @@
 **/node_modules/
 /.idea/
+.turbo
 =/test/output
 /server/datasets/*
 storybook-static
