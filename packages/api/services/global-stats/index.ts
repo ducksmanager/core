@@ -2,8 +2,8 @@ import type { Namespace, Server } from "socket.io";
 
 import type { BookcaseContributor } from "~dm-types/BookcaseContributor";
 import type { QuickStatsPerUser } from "~dm-types/QuickStatsPerUser";
+import { prismaDm } from "~prisma-clients";
 import { Prisma } from "~prisma-clients/client_dm";
-import prismaDm from "~prisma-clients/extended/dm.extends";
 
 import { getMedalPoints } from "../collection/util";
 import type Events from "./types";

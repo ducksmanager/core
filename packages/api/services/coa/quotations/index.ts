@@ -1,6 +1,6 @@
 import type { Socket } from "socket.io";
 
-import { prismaCoa } from "~/prisma";
+import { prismaCoa } from "~prisma-clients";
 
 const PUBLICATION_CODE_REGEX = /[a-z]+\/[-A-Z0-9]+/g;
 const ISSUE_CODE_REGEX = /[a-z]+\/[-A-Z0-9 ]+/g;

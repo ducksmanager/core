@@ -1,5 +1,4 @@
-import { edge, issue, subscription } from "../client_dm";
-import { prismaDm } from "../prisma";
+import { PrismaClient, edge, issue, subscription } from "../client_dm";
 import { computeTimestamp } from "./dm.edge.timestamp";
 import { computePublicationcode } from "./dm.publicationcode";
 
@@ -25,13 +24,14 @@ Array.prototype.groupBy = function (fieldName, valueFieldName?) {
   );
 };
 
-export default prismaDm.$extends({
-  result: {
-    issue: computePublicationcode,
-    subscription: computePublicationcode,
-    edge: computeTimestamp,
-  },
-});
+export default (prismaClient: PrismaClient) =>
+  prismaClient.$extends({
+    result: {
+      issue: computePublicationcode,
+      subscription: computePublicationcode,
+      edge: computeTimestamp,
+    },
+  });
 
 type ExtendedType<
   T,

@@ -1,7 +1,7 @@
 import type { Socket } from "socket.io";
 
-import { prismaDm, prismaEdgeCreator } from "~/prisma";
 import type { ModelSteps } from "~dm-types/ModelSteps";
+import { prismaDm, prismaEdgeCreator } from "~prisma-clients";
 
 import type Events from "../types";
 import { edgeEditedByOthersFields, unassignedEdgeFields } from "../types";

@@ -24,6 +24,6 @@ export default class extends Email {
       {
         publicationName: this.data.publicationName,
         issuenumber: this.data.issuenumber,
-      }
+      },
     );
 }

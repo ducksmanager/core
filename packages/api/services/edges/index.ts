@@ -1,8 +1,8 @@
 import type { Namespace, Server } from "socket.io";
 
-import { prismaDm } from "~/prisma";
-import { prismaEdgeCreator } from "~/prisma";
 import type { WantedEdge } from "~dm-types/WantedEdge";
+import { prismaDm } from "~prisma-clients";
+import { prismaEdgeCreator } from "~prisma-clients";
 import type { edgeModel } from "~prisma-clients/client_edgecreator";
 
 import type Events from "./types";

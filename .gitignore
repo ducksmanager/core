@@ -5,6 +5,7 @@
 .DS_Store
 .eslintcache
 .idea/
+**/.turbo/
 .vite-ssg-dist
 .vite-ssg-temp
 .vscode

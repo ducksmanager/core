@@ -1,6 +1,6 @@
 import type { Socket } from "socket.io";
 
-import prismaDm from "~prisma-clients/extended/dm.extends";
+import { prismaDm } from "~prisma-clients";
 
 import type Events from "../types";
 import { checkValidBookcaseUser } from "../util";

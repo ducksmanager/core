@@ -3,8 +3,12 @@
   "engines": {
     "node": ">=18.0.0 <19.0.0"
   },
+  "type": "module",
   "dependencies": {
     "husky": "^9.0.11"
+  },
+  "devDependencies": {
+    "turbo": "^1.13.3"
   },
   "scripts": {
     "prepare": "husky"

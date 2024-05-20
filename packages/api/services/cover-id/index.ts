@@ -2,8 +2,8 @@ import axios from "axios";
 import https from "https";
 import type { Namespace, Server } from "socket.io";
 
-import { prismaCoa, prismaCoverInfo } from "~/prisma";
 import type { SimilarImagesResult } from "~dm-types/CoverSearchResults";
+import { prismaCoa, prismaCoverInfo } from "~prisma-clients";
 
 import { getCoverUrls } from "../coa/issue-details";
 import type Events from "./types";

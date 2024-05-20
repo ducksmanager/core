@@ -6,7 +6,7 @@ import {
   prismaDm,
   prismaDmStats,
   prismaEdgeCreator,
-} from "~/prisma";
+} from "~prisma-clients";
 
 export const getDbStatus = async (): Promise<
   { error: string } | { status: "ok" }
@@ -24,18 +24,16 @@ export const getDbStatus = async (): Promise<
     },
   ];
 
-  const failedChecks = []
-  for (const {db, check} of checks) {
-    if (await check === 0) {
-      failedChecks.push(db)
+  const failedChecks = [];
+  for (const { db, check } of checks) {
+    if ((await check) === 0) {
+      failedChecks.push(db);
     }
   }
 
   if (failedChecks.length) {
     return {
-      error:
-        "Some DB checks have failed: " +
-        failedChecks.join(", "),
+      error: "Some DB checks have failed: " + failedChecks.join(", "),
     };
   }
 

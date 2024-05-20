@@ -1,12 +1,12 @@
 import type { Socket } from "socket.io";
 
-import { prismaCoa, prismaCoverInfo } from "~/prisma";
 import type { IssueCoverDetails } from "~dm-types/IssueCoverDetails";
 import type { SimpleEntry } from "~dm-types/SimpleEntry";
 import type { SimpleIssueWithPublication } from "~dm-types/SimpleIssueWithPublication";
+import { prismaCoa, prismaCoverInfo } from "~prisma-clients";
+import { prismaDm } from "~prisma-clients";
 import { Prisma as PrismaCoa } from "~prisma-clients/client_coa";
 import type { cover } from "~prisma-clients/client_cover_info";
-import prismaDm from "~prisma-clients/extended/dm.extends";
 
 import type Events from "../types";
 

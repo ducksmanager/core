@@ -1,4 +1,4 @@
-import { prismaDm } from "~/prisma";
+import { prismaDm } from "~prisma-clients";
 import type { user } from "~prisma-clients/client_dm";
 import { getHashedPassword, isValidEmail } from "~services/auth/util";
 

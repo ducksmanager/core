@@ -1,10 +1,10 @@
 import type { Socket } from "socket.io";
 
-import { prismaCoa, prismaDm, prismaDmStats } from "~/prisma";
 import type { IssueSuggestion } from "~dm-types/IssueSuggestion";
 import { IssueSuggestionList } from "~dm-types/IssueSuggestionList";
 import type { StoryDetail } from "~dm-types/StoryDetail";
 import type { SuggestionList } from "~dm-types/SuggestionList";
+import { prismaCoa, prismaDm, prismaDmStats } from "~prisma-clients";
 import { userOptionType } from "~prisma-clients/client_dm";
 import { Prisma as PrismaDmStats } from "~prisma-clients/client_dm_stats";
 

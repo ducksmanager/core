@@ -1,6 +1,6 @@
 import type { Socket } from "socket.io";
 
-import { prismaDm } from "~/prisma";
+import { prismaDm } from "~prisma-clients";
 import { userOptionType } from "~prisma-clients/client_dm";
 
 import type Events from "../types";

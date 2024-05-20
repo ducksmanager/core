@@ -1,12 +1,12 @@
+import "~prisma-clients/extended/dm.extends"; // For Array.groupBy
+
 import crypto from "crypto";
 import jwt from "jsonwebtoken";
 import type { Socket } from "socket.io";
 
 import type { SessionUser } from "~dm-types/SessionUser";
-import { PrismaClient, user } from "~prisma-clients/client_dm";
-import "~prisma-clients/extended/dm.extends"; // For Array.groupBy
-
-const prismaDm = new PrismaClient();
+import { prismaDm } from "~prisma-clients";
+import type { user } from "~prisma-clients/client_dm";
 
 type SocketWithUser = Socket<
   Record<string, never>,

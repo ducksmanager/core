@@ -9,6 +9,7 @@
     "build": "vite build",
     "lint": "eslint --fix --cache .",
     "dev": "concurrently -n vite,vue-tsc \"vite --port 8001\" \"vue-tsc --noEmit --watch\"",
+    "start": "node index.js",
     "story:dev": "histoire dev",
     "test": "vitest",
     "typecheck": "vue-tsc --noEmit",

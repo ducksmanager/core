@@ -8,12 +8,8 @@ import BookstoreApproved from "~/emails/bookstore-approved";
 import EdgesPublishedWithCreator from "~/emails/edges-published-with-creator";
 import EdgesPublishedWithPhotographer from "~/emails/edges-published-with-photographer";
 import type { Email } from "~/emails/email";
-import type {
-  userContribution} from "~prisma-clients/client_dm";
-import {
-  PrismaClient,
-  userContributionType,
-} from "~prisma-clients/client_dm";
+import type { userContribution } from "~prisma-clients/client_dm";
+import { PrismaClient, userContributionType } from "~prisma-clients/client_dm";
 const prismaDmClient = new PrismaClient();
 const medalLevels = {
   [userContributionType.photographe]: { 1: 50, 2: 150, 3: 600 },
@@ -54,14 +50,14 @@ const medalLevels = {
               contribution,
             ],
           }),
-          {}
+          {},
         );
 
       for (const [userId, pendingEmailContributionsForUser] of Object.entries(
-        pendingEmailContributionsByUser
+        pendingEmailContributionsByUser,
       )) {
         console.info(
-          `${pendingEmailContributionsForUser.length} contributions pending for user ${userId}`
+          `${pendingEmailContributionsForUser.length} contributions pending for user ${userId}`,
         );
         const initialPointsCount =
           pendingEmailContributionsForUser[0].totalPoints -
@@ -73,14 +69,14 @@ const medalLevels = {
         const pointsEarned = finalPointsCount - initialPointsCount;
 
         const medalReached = Object.entries(
-          medalLevels[contributionType]
+          medalLevels[contributionType],
         ).reduce(
           (medalReached, [medal, medalThreshold]) =>
             initialPointsCount < medalThreshold &&
             finalPointsCount >= medalThreshold
               ? parseInt(medal)
               : medalReached,
-          null as number | null
+          null as number | null,
         );
 
         await prismaDmClient.$transaction(
@@ -92,8 +88,8 @@ const medalLevels = {
               data: {
                 isEmailSent: true,
               },
-            })
-          )
+            }),
+          ),
         );
 
         const user = await prismaDmClient.user.findUniqueOrThrow({
@@ -139,6 +135,6 @@ const medalLevels = {
         to: email.getTo(),
         subject: email.getSubject(),
       })),
-    })
+    }),
   );
 })();

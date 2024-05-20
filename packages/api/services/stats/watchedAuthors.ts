@@ -1,6 +1,6 @@
 import type { Socket } from "socket.io";
 
-import { prismaDmStats } from "~/prisma";
+import { prismaDmStats } from "~prisma-clients";
 
 import { getAuthorFullNames } from "../coa/authors";
 import type Events from "./types";
@@ -13,7 +13,7 @@ export interface AuthorDetails {
 }
 
 const getStoryCountPerAuthor = async (
-  personcodes: string[]
+  personcodes: string[],
 ): Promise<{ [personcode: string]: number }> =>
   (
     await prismaDmStats.authorStory.groupBy({
@@ -30,11 +30,11 @@ const getStoryCountPerAuthor = async (
       ...acc,
       [personcode]: _count.storycode,
     }),
-    {}
+    {},
   );
 
 const getMissingStoryCountPerAuthor = async (
-  userId: number
+  userId: number,
 ): Promise<{ [personcode: string]: number }> =>
   (
     await prismaDmStats.missingStoryForUser.groupBy({
@@ -49,13 +49,13 @@ const getMissingStoryCountPerAuthor = async (
       ...acc,
       [personcode]: _count.storycode,
     }),
-    {}
+    {},
   );
 
 export default (socket: Socket<Events>) => {
   socket.on("getWatchedAuthorsStats", async (callback) => {
     const missingStoryCountPerAuthor = await getMissingStoryCountPerAuthor(
-      socket.data.user!.id
+      socket.data.user!.id,
     );
     const personcodes = Object.keys(missingStoryCountPerAuthor);
 
@@ -70,7 +70,7 @@ export default (socket: Socket<Events>) => {
           storyCountPerAuthor[personcode] ||
           missingStoryCountPerAuthor[personcode],
         fullname: personNames[personcode],
-      }))
+      })),
     );
   });
 };

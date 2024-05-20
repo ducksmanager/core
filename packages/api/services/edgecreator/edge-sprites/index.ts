@@ -1,7 +1,7 @@
 import { v2 as cloudinaryV2 } from "cloudinary";
 import type { Socket } from "socket.io";
 
-import { prismaDm } from "~/prisma";
+import { prismaDm } from "~prisma-clients";
 import type { edge } from "~prisma-clients/client_dm";
 
 import type Events from "../types";

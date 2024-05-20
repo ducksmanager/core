@@ -1,12 +1,12 @@
-import { prismaDm } from "~/prisma";
 import type { SessionUser } from "~dm-types/SessionUser";
+import { prismaDm } from "~prisma-clients";
 import type { user } from "~prisma-clients/client_dm";
 import type { Errorable } from "~socket.io-services/types";
 
 export const checkValidBookcaseUser = async (
   user?: SessionUser | null,
-  username?: string
-): Promise<Errorable<user, 'Unauthorized' | 'Forbidden' | 'Not found'>> => {
+  username?: string,
+): Promise<Errorable<user, "Unauthorized" | "Forbidden" | "Not found">> => {
   try {
     const dbUser = await prismaDm.user.findFirstOrThrow({
       where: { username },
@@ -16,8 +16,7 @@ export const checkValidBookcaseUser = async (
     } else if (!user) {
       return { error: "Unauthorized" };
     } else return { error: "Forbidden" };
-  }
-  catch (error) {
+  } catch (error) {
     return { error: "Not found" };
   }
 };

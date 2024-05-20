@@ -1,7 +1,6 @@
 import dayjs from "dayjs";
 import type { Namespace, Server } from "socket.io";
 
-import { prismaDm } from "~/prisma";
 import type {
   AbstractEvent,
   AbstractEventRaw,
@@ -21,6 +20,7 @@ import type {
 } from "~dm-types/events/EdgeCreationEvent";
 import type { MedalEvent } from "~dm-types/events/MedalEvent";
 import type { SignupEvent } from "~dm-types/events/SignupEvent";
+import { prismaDm } from "~prisma-clients";
 
 import type Events from "./types";
 import { namespaceEndpoint } from "./types";

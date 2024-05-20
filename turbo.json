@@ -1,0 +1,27 @@
+{
+    "$schema": "https://turborepo.org/schema.json",
+    "pipeline": {
+        "prisma-pull-generate": {},
+        "prisma-generate": {},
+        "build": {
+            "dependsOn": [
+                "prisma-generate",
+                "^build"
+            ],
+            "outputs": [
+                "dist/**"
+            ]
+        },
+        "dev": {
+            "dependsOn": [
+                "prisma-generate",
+                "^dev"
+            ]
+        },
+        "~edgecreator#dev": {
+            "dependsOn": [
+                "prisma-generate"
+            ]
+        }
+    }
+}

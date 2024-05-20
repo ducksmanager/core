@@ -2,6 +2,8 @@ import { QuotedIssue } from "~dm-types/QuotedIssue";
 import { issue_condition } from "~prisma-clients/client_dm";
 import { issueWithPublicationcode } from "~prisma-clients/extended/dm.extends";
 
+import { coa } from "../stores/coa";
+
 export default (issues: Ref<issueWithPublicationcode[] | null>) => {
   const total = computed(() => issues.value?.length);
   const mostPossessedPublication = computed(
