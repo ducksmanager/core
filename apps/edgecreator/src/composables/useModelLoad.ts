@@ -10,17 +10,16 @@ import type { StepOptions } from "~/types/StepOptions";
 import { stores as webStores } from "~web";
 import { dmSocketInjectionKey } from "~web/src/composables/useDmSocket";
 
-const mainStore = main();
-const stepStore = step();
-const rendersStore = renders();
-const userStore = webStores.users();
-const edgeCatalogStore = edgeCatalog();
-
-const { getSvgMetadata, loadSvgFromString } = useSvgUtils();
-
-const { getOptionsFromDb } = useLegacyDb();
-
 export default () => {
+  const { getSvgMetadata, loadSvgFromString } = useSvgUtils();
+
+  const { getOptionsFromDb } = useLegacyDb();
+
+  const mainStore = main();
+  const stepStore = step();
+  const rendersStore = renders();
+  const userStore = webStores.users();
+  const edgeCatalogStore = edgeCatalog();
   const {
     edgeCreator: { services: edgeCreatorServices },
   } = injectLocal(dmSocketInjectionKey)!;
@@ -240,7 +239,7 @@ export default () => {
           publicationcode,
           issuenumber,
         ))!;
-        await edgeCatalogStore.getPublishedEdgesSteps({
+        await edgeCatalogStore.loadPublishedEdgesSteps({
           publicationcode,
           edgeModelIds: [edge.id],
         });

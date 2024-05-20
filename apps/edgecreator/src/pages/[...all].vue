@@ -170,7 +170,6 @@ meta:
 <script setup lang="ts">
 import { storeToRefs } from "pinia";
 
-import type { EdgeWithVersionAndStatus } from "~/stores/edgeCatalog";
 import { edgeCatalog } from "~/stores/edgeCatalog";
 
 const {
@@ -186,6 +185,7 @@ const { getEdgeUrl } = useSvgUtils();
 const collectionStore = webStores.collection();
 const bookcaseStore = webStores.bookcase();
 const usersStore = webStores.users();
+const coaStore = webStores.coa();
 const { hasRole } = collectionStore;
 const { user } = storeToRefs(collectionStore);
 
@@ -229,8 +229,6 @@ const loadMostWantedEdges = async () => {
         edgeId: 0,
         creationDate: new Date(),
         sprites: [],
-        countryCode: publicationcode.split("/")[0],
-        magazineCode: publicationcode.split("/")[0],
         issueCode: `${publicationcode} ${issuenumber}`,
         publicationcode,
         issuenumber,
@@ -251,22 +249,14 @@ watch(
     await bookcaseStore.loadBookcase();
     await loadMostWantedEdges();
     await loadCatalog(true);
-    await webStores
-      .coa()
-      .fetchPublicationNames([
-        ...new Set([
-          ...bookcaseStore.bookcase!.map(
-            ({ countryCode, magazineCode }) => `${countryCode}/${magazineCode}`
-          ),
-          ...mostWantedEdges.value!.map(
-            ({ publicationcode }) => publicationcode
-          ),
-          ...Object.values(currentEdges).map(
-            ({ country, magazine }: EdgeWithVersionAndStatus) =>
-              `${country}/${magazine}`
-          ),
-        ]),
-      ]);
+    await coaStore.fetchPublicationNames([
+      ...new Set([
+        ...mostWantedEdges.value!.map(({ publicationcode }) => publicationcode),
+        ...Object.values(currentEdges).map(
+          ({ country, magazine }) => `${country}/${magazine}`
+        ),
+      ]),
+    ]);
     isUploadableEdgesCarouselReady.value = true;
   },
   { immediate: true }

@@ -1,6 +1,5 @@
 import { mkdirSync, unlinkSync, writeFileSync } from "fs";
 import path from "path";
-// import sharp from "sharp";
 import type { Namespace } from "socket.io";
 import type { Server } from "socket.io";
 
@@ -11,6 +10,7 @@ import type { ExportPaths } from "~types/ExportPaths";
 
 import type Events from "./types";
 import { namespaceEndpoint } from "./types";
+import { exec } from "child_process";
 
 const socket = useSocket(process.env.DM_SOCKET_URL!);
 const { services: edgeCreatorServices } =
@@ -40,14 +40,8 @@ export default (io: Server) => {
       let paths: ExportPaths = { svgPath };
       if (runExport) {
         const pngPath = svgPath.replace(".svg", ".png");
-        // try {
-        //   await sharp(svgPath).png().toFile(pngPath);
-        // } catch (errorDetails) {
-        //   callback({
-        //     error: "Generic error",
-        //     errorDetails: errorDetails as string,
-        //   });
-        // }
+
+        exec(`convert ${svgPath} ${pngPath}`);
 
         paths = { ...paths, pngPath };
 

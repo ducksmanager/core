@@ -129,7 +129,7 @@ export const edgeCatalog = defineStore("edgeCatalog", () => {
         ...newPublishedEdgesSteps,
       };
     },
-    getPublishedEdgesSteps = async ({
+    loadPublishedEdgesSteps = async ({
       publicationcode,
       edgeModelIds,
     }: {
@@ -327,6 +327,6 @@ export const edgeCatalog = defineStore("edgeCatalog", () => {
     addCurrentEdges,
     addPublishedEdges,
     addPublishedEdgesSteps,
-    getPublishedEdgesSteps,
+    loadPublishedEdgesSteps,
   };
 });

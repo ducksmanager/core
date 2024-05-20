@@ -32,7 +32,6 @@
 <script setup lang="ts">
 import type { BookcaseEdge } from "~dm-types/BookcaseEdge";
 interface BookcaseEdgeWithPopularity extends BookcaseEdge {
-  publicationcode: string;
   issueCode: string;
   popularity?: number | undefined;
 }

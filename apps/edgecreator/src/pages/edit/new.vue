@@ -29,13 +29,12 @@ const showUploadModal = ref<boolean>(false);
 const issueData = ref(
   null as {
     editMode: "range" | "single";
-    countryCode: string;
     publicationCode: string;
     issueNumber: string;
     issueNumberEnd: string;
     width: number;
     height: number;
-  } | null,
+  } | null
 );
 
 const issueSpecification = computed(() =>
@@ -43,7 +42,7 @@ const issueSpecification = computed(() =>
     ? null
     : issueData.value.editMode === "range"
       ? `${issueData.value.issueNumber} to ${issueData.value.issueNumberEnd}`
-      : issueData.value.issueNumber,
+      : issueData.value.issueNumber
 );
 
 const toDashboard = async () => {
@@ -53,7 +52,7 @@ const toDashboard = async () => {
 const startEditing = async () => {
   assert(issueSpecification.value !== null);
   await router.push(
-    `/edit/${issueData.value!.publicationCode} ${issueSpecification.value!}`,
+    `/edit/${issueData.value!.publicationCode} ${issueSpecification.value!}`
   );
 };
 
