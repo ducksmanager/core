@@ -92,6 +92,9 @@ importers:
       xmldom:
         specifier: ^0.6.0
         version: 0.6.0
+      ~edgecreator-api:
+        specifier: workspace:*
+        version: link:api
       ~prisma-clients:
         specifier: workspace:*
         version: link:../../packages/prisma-clients
