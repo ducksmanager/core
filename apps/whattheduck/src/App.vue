@@ -45,7 +45,7 @@ const session = {
     }
   };
 
-const dmSocket = useDmSocket({
+const dmSocket = useDmSocket(injectLocal('dmSocket')!, {
   cacheStorage,
   session,
   onConnectError,
