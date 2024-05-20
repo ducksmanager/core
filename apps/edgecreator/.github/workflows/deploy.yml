@@ -41,7 +41,7 @@ jobs:
       - name: Build and push app
         uses: docker/build-push-action@v3
         with:
-          context: ./dm/apps/edgecreator
+          context: .
           platforms: linux/x86_64
           file: ./dm/apps/edgecreator/Dockerfile
           push: true
@@ -56,7 +56,7 @@ jobs:
       - name: Build and push api
         uses: docker/build-push-action@v3
         with:
-          file: ./dm/apps/edgecreator/api/Dockerfile
+          file: .
           context: ./dm/apps/edgecreator/api
           platforms: linux/x86_64
           push: true
