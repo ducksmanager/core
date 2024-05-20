@@ -17,6 +17,8 @@ jobs:
           submodules: recursive
           path: ./dm
 
+      - run: pwd && ls -la
+
       - name: Download .env file
         uses: nicklasfrahm/scp-action@main
         with:
