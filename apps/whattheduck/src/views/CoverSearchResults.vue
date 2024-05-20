@@ -27,7 +27,12 @@
         >
           <ion-card>
             <ion-img :src="getCoverUrl(cover.fullUrl)" />
-            <ion-card-header :ref="(el: ComponentPublicInstance) => addSlideElement(index, el.$el)">
+            <ion-card-header
+              :ref="
+                (el: Element | ComponentPublicInstance | null) =>
+                  addSlideElement(index, (el as ComponentPublicInstance).$el)
+              "
+            >
               <ion-card-title class="ion-align-items-center"
                 ><ion-row class="ion-justify-content-between"
                   ><ion-col style="display: flex" size="9"><FullIssue :issue="cover" /></ion-col
