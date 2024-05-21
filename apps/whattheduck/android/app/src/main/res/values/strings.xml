@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">What The Duck</string>
+    <string name="title_activity_main">What The Duck</string>
+    <string name="package_name">net.ducksmanager.whattheduck</string>
+    <string name="custom_url_scheme">net.ducksmanager.whattheduck</string>
+</resources>

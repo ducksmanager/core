@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" class="ionicon"
+    viewBox="-128 -128 768 768"
+    width="1024"
+    height="1024">
+    <path stroke-linecap="round" stroke-linejoin="round" d="M160 144h288M160 256h288M160 368h288"
+        class="ionicon-fill-none ionicon-stroke-width"></path>
+    <circle cx="80" cy="144" r="16" stroke-linecap="round" stroke-linejoin="round"
+        class="ionicon-fill-none ionicon-stroke-width"></circle>
+    <circle cx="80" cy="256" r="16" stroke-linecap="round" stroke-linejoin="round"
+        class="ionicon-fill-none ionicon-stroke-width"></circle>
+    <circle cx="80" cy="368" r="16" stroke-linecap="round" stroke-linejoin="round"
+        class="ionicon-fill-none ionicon-stroke-width"></circle>
+</svg>

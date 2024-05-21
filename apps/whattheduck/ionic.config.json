@@ -1,0 +1,7 @@
+{
+  "name": "What The Duck",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "vue-vite"
+}
