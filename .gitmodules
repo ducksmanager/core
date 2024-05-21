@@ -22,7 +22,3 @@ branch=nuxt3-to-vite-vue3
 branch=ts
 path = packages/duckguessr-ml
 url = ../duckguessr-ml.git
-[submodule "edgecreator"]
-path = apps/edgecreator
-url = git@github.com:ducksmanager/edgecreator.git
-branch = websocket
