@@ -2,10 +2,6 @@
 path = apps/whattheduck-ionic
 url = ../whattheduck-ionic.git
 branch=master
-[submodule "dumili"]
-path = apps/dumili
-url = ../dumili.git
-branch=master
 [submodule "duck-estimator"]
 path = apps/duck-estimator
 url = ../duck-estimator.git
