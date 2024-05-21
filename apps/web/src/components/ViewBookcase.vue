@@ -61,7 +61,7 @@
         <b-button v-else size="sm" @click="showShareButtons = true">
           {{
             $t(
-              "Fier(e) de votre collection ? Montrez votre bibliothèque à vos amis !"
+              "Fier(e) de votre collection ? Montrez votre bibliothèque à vos amis !",
             )
           }}
         </b-button>
@@ -113,7 +113,7 @@
             {{
               $t(
                 "Envoyez des photos de tranches de magazines et gagnez jusqu'à {0} points par tranche !",
-                [mostPopularIssuesInCollectionWithoutEdge[0].popularity]
+                [mostPopularIssuesInCollectionWithoutEdge[0].popularity],
               )
             }}
           </template>
@@ -206,7 +206,7 @@ const showShareButtons = $ref(false as boolean);
 let userPoints = $ref(null as { [contribution: string]: number } | null);
 
 const inputBookcaseUsername = $computed(
-  () => (route.params.username as string) || user.value?.username || null
+  () => (route.params.username as string) || user.value?.username || null,
 );
 const allowSharing = $computed(() => user.value?.allowSharing);
 const bookcaseUrl = $computed(
@@ -214,13 +214,13 @@ const bookcaseUrl = $computed(
     (!isPrivateBookcase &&
       user.value &&
       `${window.location.origin}/bookcase/show/${user.value.username}`) ||
-    null
+    null,
 );
 const loading = $computed(
   () =>
     !isPrivateBookcase &&
     !isUserNotExisting &&
-    !(sortedBookcase && bookcaseOptions && edgesUsingSprites)
+    !(sortedBookcase && bookcaseOptions && edgesUsingSprites),
 );
 const percentVisible = $computed(() =>
   thisBookcase.value?.length
@@ -228,15 +228,15 @@ const percentVisible = $computed(() =>
         (100 * thisBookcase.value.filter(({ edgeId }) => edgeId).length) /
         thisBookcase.value.length
       ).toFixed(0)
-    : null
+    : null,
 );
 const mostPopularIssuesInCollectionWithoutEdge = $computed(() =>
   [...(popularIssuesInCollectionWithoutEdge.value || [])]
     ?.sort(
       ({ popularity: popularity1 }, { popularity: popularity2 }) =>
-        (popularity2 || 0) - (popularity1 || 0)
+        (popularity2 || 0) - (popularity1 || 0),
     )
-    .filter((_, index) => index < 10)
+    .filter((_, index) => index < 10),
 );
 const sortedBookcase = $computed(
   () =>
@@ -246,7 +246,7 @@ const sortedBookcase = $computed(
     [...bookcaseWithPopularities.value].sort(
       (
         { publicationcode: publicationcode1, issuenumber: issueNumber1 },
-        { publicationcode: publicationcode2, issuenumber: issueNumber2 }
+        { publicationcode: publicationcode2, issuenumber: issueNumber2 },
       ) => {
         if (!issueNumbers.value[publicationcode1]) return -1;
 
@@ -254,24 +254,24 @@ const sortedBookcase = $computed(
 
         const publicationOrderSign = Math.sign(
           bookcaseOrder.value!.indexOf(publicationcode1) -
-            bookcaseOrder.value!.indexOf(publicationcode2)
+            bookcaseOrder.value!.indexOf(publicationcode2),
         );
         return (
           publicationOrderSign ||
           Math.sign(
             issueNumbers.value[publicationcode1].indexOf(issueNumber1) -
-              issueNumbers.value[publicationcode2].indexOf(issueNumber2)
+              issueNumbers.value[publicationcode2].indexOf(issueNumber2),
           )
         );
-      }
-    )
+      },
+    ),
 );
 const highlightIssue = (issue: SimpleIssue) => {
   currentEdgeHighlighted =
     thisBookcase.value?.find(
       (issueInCollection) =>
         issue.publicationcode === issueInCollection.publicationcode &&
-        issue.issuenumber === issueInCollection.issuenumber
+        issue.issuenumber === issueInCollection.issuenumber,
     )?.id || null;
 };
 
@@ -287,14 +287,14 @@ watch(
           thisBookcase.value?.some(
             ({ publicationcode: issuePublicationcode, issuenumber }) =>
               issuePublicationcode === publicationcode &&
-              !/^[0-9]+$/.test(issuenumber)
-          )
+              !/^[0-9]+$/.test(issuenumber),
+          ),
       );
       addIssueNumbers(
         newValue
           .filter(
             (publicationcode) =>
-              !nonObviousPublicationIssueNumbers.includes(publicationcode)
+              !nonObviousPublicationIssueNumbers.includes(publicationcode),
           )
           .reduce(
             (acc, publicationcode) => ({
@@ -304,22 +304,22 @@ watch(
                   thisBookcase.value
                     ?.filter(
                       ({ publicationcode: issuePublicationCode }) =>
-                        issuePublicationCode === publicationcode
+                        issuePublicationCode === publicationcode,
                     )
                     .map(({ issuenumber }) => issuenumber)
                     .sort((issuenumber, issuenumber2) =>
-                      Math.sign(parseInt(issuenumber) - parseInt(issuenumber2))
+                      Math.sign(parseInt(issuenumber) - parseInt(issuenumber2)),
                     ) || [],
               },
             }),
-            {}
-          )
+            {},
+          ),
       );
       await fetchIssueNumbers(nonObviousPublicationIssueNumbers);
       hasIssueNumbers = true;
     }
   },
-  { immediate: true }
+  { immediate: true },
 );
 
 watch(
@@ -343,14 +343,14 @@ watch(
           },
           {} as {
             [spriteId: string]: BookcaseEdgeSprite & { edges: number[] };
-          }
+          },
         );
 
       const usableSprites = Object.values(usableSpritesBySpriteId).map(
         (usableSprite) => ({
           ...usableSprite,
           edges: [...new Set(usableSprite.edges)],
-        })
+        }),
       );
 
       edgesUsingSprites = usableSprites
@@ -366,11 +366,11 @@ watch(
             });
             return acc;
           },
-          {} as { [edgeId: number]: string }
+          {} as { [edgeId: number]: string },
         );
     }
   },
-  { immediate: true }
+  { immediate: true },
 );
 
 watch(
@@ -379,7 +379,7 @@ watch(
     if (hasNonSharedBookcase && user.value) {
       await fetchStats([user.value.id]);
     }
-  }
+  },
 );
 
 watch($$(currentEdgeHighlighted), (newValue) => {
@@ -399,6 +399,6 @@ watch(
       }
     }
   },
-  { immediate: true }
+  { immediate: true },
 );
 </script>
