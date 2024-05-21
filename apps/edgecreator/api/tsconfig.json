@@ -1,0 +1,30 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "module": "ESNext",
+    "target": "es2018",
+    "lib": ["ESNext"],
+    "strict": true,
+    "esModuleInterop": true, 
+    "skipLibCheck": true,
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "noUnusedLocals": true,
+    "strictNullChecks": true,
+    "allowJs": true,
+    "forceConsistentCasingInFileNames": true,
+    "outDir": "./dist",
+    "preserveWatchOutput": true,
+    "paths": {
+      "~/*": ["./*"],
+      "~types/*": ["../types/*"],
+      "~dm-services/*": ["../../../packages/api/services/*"],
+      "~dm-types/*": ["../../../packages/types/*"],
+      "~prisma-clients": ["../../../packages/prisma-clients"],
+      "~prisma-clients/*": ["../../../packages/prisma-clients/*"],
+      "~socket.io-services/*": ["../../../packages/socket.io-services/*"],
+      "~socket.io-client-services": ["../../../packages/socket.io-client-services"]
+    }
+  },
+  "exclude": ["node_modules"],
+}

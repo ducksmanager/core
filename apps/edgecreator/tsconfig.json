@@ -1,0 +1,45 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "module": "ESNext",
+    "target": "es2020",
+    "lib": ["dom", "dom.iterable", "ESNext"],
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "noUnusedLocals": true,
+    "strictNullChecks": true,
+    "forceConsistentCasingInFileNames": true,
+    "preserveWatchOutput": true,
+    "paths": {
+      "~/*": ["src/*"],
+      "~dm-services/*": ["../../packages/api/services/*"],
+      "~web/*": ["../web/*"],
+      "~edgecreator-services/*": ["api/services/*"],
+      "~dm-types/*": ["../../packages/types/*"],
+      "~prisma-clients/*": ["../../packages/prisma-clients/*"],
+      "~socket.io-client-services/*": ["../../packages/socket.io-client-services/*"],
+      "~socket.io-services/*": ["../../packages/socket.io-services/*"],
+      "~types/*": [
+        "types/*"
+      ],
+    },
+    "types": [
+      "vite/client",
+      "vite-plugin-pages/client",
+      "unplugin-icons/types/vue",
+      "vite-plugin-vue-layouts/client"
+    ]
+  },
+  "include": [
+    "types/*.ts",
+    "src/**/*.ts",
+    "src/**/*.d.ts",
+    "src/**/*.tsx",
+    "src/**/*.vue",
+    "auto-imports.d.ts"
+  ],
+  "exclude": ["dist", "node_modules"]
+}
