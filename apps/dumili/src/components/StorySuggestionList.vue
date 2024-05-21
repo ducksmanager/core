@@ -1,76 +1,71 @@
 <template>
   <suggestion-list
-    :suggestions="entrySuggestions"
-    :get-current="() => acceptedEntry"
+    :suggestions="entry.storySuggestions"
+    :is-ai-source="(suggestion) => suggestion.ocrDetailsId !== null"
+    :current="acceptedEntry"
     :show-customize-form="showEntrySelect"
-    allow-customize-form
     @toggle-customize-form="showEntrySelect = $event"
-    @select="
-      acceptEntrySuggestion(
-        ($event as EntrySuggestion | undefined)?.data?.storyversion
-          ?.storycode || undefined
-      )
-    "
+    @select="acceptStorySuggestion($event!)"
   >
-    <template #item="suggestion: EntrySuggestion">
-      <Story :entry="suggestion.data" />
+    <template #item="suggestion">
+      <Story :suggestion="suggestion" />
     </template>
-    <template #unknown>Contenu inconnu</template>
+    <template #unknown-text>{{ $t("Contenu inconnu") }}</template>
+    <template #customize-text>{{ $t("Rechercher...") }}</template>
     <template #customize-form>
-      <StorySearch @story-selected="addCustomEntrycodeToEntrySuggestions" />
+      <StorySearch
+        @story-selected="addAndAcceptStoryversionToStorySuggestions"
+      />
     </template>
   </suggestion-list>
 </template>
 
 <script lang="ts" setup>
-import { EntrySuggestion, suggestions } from "~/stores/suggestions";
+import { injectLocal } from "@vueuse/core";
+
+import { dumiliSocketInjectionKey } from "~/composables/useDumiliSocket";
+import { suggestions } from "~/stores/suggestions";
+import { SimpleStory } from "~dm-types/SimpleStory";
+import { FullIndexation } from "~dumili-services/indexations/types";
+import type { entry, storySuggestion } from "~prisma/client_dumili";
+
+const { t: $t } = useI18n();
 
 const props = defineProps<{
-  entryurl: string;
+  entry: FullIndexation["entries"][number];
 }>();
 
+const { entry } = toRefs(props);
+
+const { getIndexationSocket } = injectLocal(dumiliSocketInjectionKey)!;
+
+const indexationSocket = computed(async () =>
+  getIndexationSocket(entry.value.indexationId),
+);
+
 const showEntrySelect = ref(false);
-const suggestionsStore = suggestions();
+const { acceptedStories } = storeToRefs(suggestions());
 
-const acceptedEntry = computed(
-  () => suggestionsStore.acceptedEntries[props.entryurl]
-);
-const entrySuggestions = computed(
-  () => suggestionsStore.entrySuggestions[props.entryurl]
-);
+const acceptedEntry = computed(() => acceptedStories.value[entry.value.id]);
 
-const addCustomEntrycodeToEntrySuggestions = ({
-  storycode,
-  title,
-}: {
-  storycode: string;
-  title: string;
-}) => {
-  if (storycode) {
-    const userSuggestion = new EntrySuggestion(
-      {
-        title,
-        storyversion: {
-          storycode,
-        },
-      },
-      { source: "user", isAccepted: true }
-    );
-    suggestionsStore.entrySuggestions[props.entryurl] = [
-      ...suggestionsStore.entrySuggestions[props.entryurl].filter(
-        ({ meta }) => meta.source === "ai"
-      ),
-      userSuggestion,
-    ];
-    acceptEntrySuggestion(storycode);
-  }
+const addAndAcceptStoryversionToStorySuggestions = async (
+  searchResult: SimpleStory,
+) => {
+  await (
+    await indexationSocket.value
+  ).services.createStorySuggestion({
+    entryId: entry.value.id,
+    storyversioncode: searchResult.storycode,
+    acceptedOnEntries: {
+      connect: { id: entry.value.id },
+    },
+  });
 };
 
-const acceptEntrySuggestion = (storycode?: string) => {
-  suggestionsStore.acceptSuggestion(
-    suggestionsStore.entrySuggestions[props.entryurl],
-    (suggestion) => suggestion.data.storyversion?.storycode === storycode
-  );
+const acceptStorySuggestion = async (suggestion: storySuggestion) => {
+  await (
+    await indexationSocket.value
+  ).services.acceptStorySuggestion(suggestion);
   showEntrySelect.value = false;
 };
 </script>

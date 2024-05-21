@@ -1,5 +1,4 @@
-import { defineStore } from "pinia";
-
 export const tabs = defineStore("tabs", () => ({
-  activeTab: ref(undefined as number | undefined),
+  tabNames: ["Book", "Page gallery", "Text editor"] as const,
+  activeTab: ref<number>(0),
 }));

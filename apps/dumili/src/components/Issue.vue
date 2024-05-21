@@ -12,7 +12,7 @@
 </template>
 
 <script setup lang="ts">
-import { coa } from "~/stores/coa";
+import { stores as webStores } from "~web";
 
 const props = defineProps<{
   publicationcode: string | null;
@@ -21,7 +21,9 @@ const props = defineProps<{
 }>();
 
 const publicationName = computed(() =>
-  props.publicationcode ? coa().publicationNames[props.publicationcode] : null
+  props.publicationcode
+    ? webStores.coa().publicationNames[props.publicationcode]
+    : null,
 );
 </script>
 

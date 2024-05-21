@@ -98,3 +98,24 @@ button:focus-visible {
     background-color: #f9f9f9;
   }
 }
+
+@mixin storyKindBackground($bg) {
+  background-color: $bg !important;
+  color: invert($bg);
+  &.btn:hover {
+    background-color: lighten($bg, 10%) !important;
+  }
+}
+
+$storyKinds: (
+  'c': #ffcc33,
+  'n': #cbdced,
+  'n_g': #ff99ff
+);
+
+@each $storyKind,
+$storyversionColor in $storyKinds {
+  .kind-#{$storyKind} {
+    @include storyKindBackground($storyversionColor);
+  }
+}

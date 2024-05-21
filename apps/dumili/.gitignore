@@ -27,3 +27,4 @@ dist-ssr
 .eslintcache
 auto-imports.d.ts
 components.d.ts
+api/prisma/client_*

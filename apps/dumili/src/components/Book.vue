@@ -1,202 +1,215 @@
 <template>
-  <img
-    v-if="Object.keys(entries).length"
-    class="d-none"
-    :src="Object.keys(entries)[0]"
-    @load="
-      ({ target }) => {
-        coverHeight = (target as HTMLImageElement).height;
-        coverWidth = (target as HTMLImageElement).width;
-      }
-    "
-  />
-  <div
-    id="book-and-toc-container"
-    class="start-0 top-0 d-flex flex-row align-items-center justify-content-space-around"
-  >
-    <b-container class="book-container d-flex w-50 h-100 m-0">
-      <div id="book" class="flip-book">
-        <div
-          v-for="(url, index) in Object.keys(entries)"
-          :key="`page-${index}`"
-          class="page"
-          :class="{ single: isSinglePage }"
-        >
-          <div class="page-content" :class="{ 'first-page': index === 0 }">
-            <div
-              class="page-image"
-              :style="{
-                backgroundImage: `url(${url})`,
-                marginLeft: 0,
-              }"
-            >
+  <template v-if="indexation">
+    <img
+      v-if="indexation.pages.length"
+      class="d-none"
+      :src="indexation.pages[0].url"
+      @load="
+        ({ target }) => {
+          coverHeight = (target as HTMLImageElement).naturalHeight;
+          coverWidth = (target as HTMLImageElement).naturalWidth;
+        }
+      "
+    />
+    <div
+      class="start-0 top-0 h-100 d-flex flex-row align-items-center justify-content-space-around"
+    >
+      <b-container class="book-container d-flex w-50 h-100 m-0">
+        <div id="book" class="flip-book">
+          <div
+            v-for="(page, index) in indexation.pages"
+            :key="`page-${index}`"
+            class="page"
+            :class="{ single: isSinglePage }"
+          >
+            <div class="page-content" :class="{ 'first-page': index === 0 }">
               <div
-                v-if="
-                  showAiDetections !== undefined &&
-                  xOffset !== undefined &&
-                  displayRatioNoCropping &&
-                  aiDetails[url].panels?.length
-                "
-                class="position-absolute h-100"
+                class="page-image"
                 :style="{
-                  left: `${xOffset || 0}px`,
-                  width: `${displayedWidth! - (xOffset || 0)*2}px`,
+                  backgroundImage: `url(${page.url})`,
+                  marginLeft: 0,
                 }"
               >
-                <div
-                  v-for="({ bbox: { x, y, width, height } }, idx) in aiDetails[
-                    url
-                  ].panels"
-                  :key="`ocr-match-${idx}`"
-                  class="position-absolute ocr-match panel"
-                  :style="{
-                    left: `${x * displayRatioNoCropping}px`,
-                    top: `${y * displayRatioNoCropping}px`,
-                    width: `${width * displayRatioNoCropping}px`,
-                    height: `${height * displayRatioNoCropping}px`,
-                  }"
-                ></div>
-                <div
-                  class="position-absolute"
-                  :style="toPx(firstPanelPosition(url))"
-                >
+                <template v-if="displayRatioCropped && naturalToDisplayRatio">
                   <div
-                    v-for="({ box }, idx) in aiDetails[url].texts?.ocrResults ||
-                    []"
-                    :key="`ocr-match-${idx}`"
-                    class="position-absolute ocr-match text"
+                    v-for="(shownPage, idx) in shownPages.map(
+                      (pageIdx) => indexation!.pages[pageIdx]
+                    )"
+                    :key="shownPage.url"
+                    :class="`position-absolute start-${
+                      idx * 100
+                    } ai-results-page-${shownPage.pageNumber}`"
                     :style="{
-                      clipPath: `polygon(${box
-                        .map(([x, y]) =>
-                          (['width', 'height'] as const)
-                            .map(
-                              (dimension, idx) =>
-                                `${
-                                  [x, y][idx] /
-                                  (aiDetails[url].panels[0].bbox[dimension] /
-                                    100)
-                                }%`
-                            )
-                            .join(' ')
-                        )
-                        .join(',')})`,
+                      width: `${displayedWidthNoBackground!}px`,
+                      height: `${displayedHeightNoBackground!}px`,
                     }"
                   >
-                    {{
-                      `polygon(${box.map(([x, y]) => `${x}% ${y}%`).join(",")})`
-                    }}
-                  </div>
-                </div>
+                    <div
+                      v-for="panel in shownPage.aiKumikoResultPanels"
+                      :key="`kumiko-match-${panel.id}`"
+                      class="position-absolute kumiko-match panel"
+                      :style="
+                        (['left', 'top', 'width', 'height'] as const).reduce(
+                          (acc, key) => ({
+                            ...acc,
+                            [key]: `${
+                              (panel[
+                                key === 'left' ? 'x' : key === 'top' ? 'x' : key
+                              ] *
+                                displayRatioCropped!) /
+                              naturalToDisplayRatio!
+                            }px`,
+                          }),
+                          {}
+                        )
+                      "
+                    ></div>
+                    <div
+                      class="position-absolute"
+                      :style="toPx(firstPanelPosition(shownPage.url))"
+                    >
+                      <div
+                        v-for="{
+                          id,
+                          x1,
+                          x2,
+                          x3,
+                          x4,
+                          y1,
+                          y2,
+                          y3,
+                          y4,
+                        } in shownPage.aiOcrResults || []"
+                        :key="`ocr-match-${id}`"
+                        class="position-absolute ocr-match text"
+                        :style="{
+                          clipPath: `polygon(${[
+                            [x1, y1],
+                            [x2, y2],
+                            [x3, y3],
+                            [x4, y4],
+                          ]
+                            .map(([x, y]) =>
+                              (['width', 'height'] as const)
+                                .map(
+                                  (dimension, idx) =>
+                                    `${
+                                      [x, y][idx] /
+                                      (shownPage.aiKumikoResultPanels[0][
+                                        dimension
+                                      ] /
+                                        100)
+                                    }%`
+                                )
+                                .join(' ')
+                            )
+                            .join(',')})`,
+                        }"
+                      >
+                        {{
+                          `polygon(${[
+                            [x1, y1],
+                            [x2, y2],
+                            [x3, y3],
+                            [x4, y4],
+                          ]
+                            .map(([x, y]) => `${x}% ${y}%`)
+                            .join(",")})`
+                        }}
+                      </div>
+                    </div>
+                  </div></template
+                >
               </div>
             </div>
           </div>
         </div>
-      </div>
-    </b-container>
-    <b-card
-      no-body
-      class="table-of-contents d-flex w-50 h-100 m-0 overflow-auto"
-      body-class="flex-grow-1 w-100 h-100"
-    >
-      <template #header>
-        <IssueSuggestionModal />
-        <IssueSuggestionList />
-        <div>
-          <b-button
-            variant="success"
-            pill
-            class="ms-2 hint"
-            :disabled="ai.status.value === 'loading'"
-            :class="ai.status.value"
-            @click="ai.runKumiko(indexationId)"
-          >
-            <i-bi-lightbulb-fill
-          /></b-button></div
-      ></template>
-
-      <b-tabs
-        v-if="entries"
-        v-model="currentTabIndex"
-        pills
-        card
-        vertical
-        class="flex-grow-1"
-        :class="{ disabled: !acceptedIssue?.data }"
-        nav-wrapper-class="w-100 h-100 flex-grow-1"
-        nav-class="w-100 h-100"
-      >
-        <b-tab
-          v-for="(entryurl, index) in Object.keys(entries)"
-          :key="entryurl"
-          title-link-class="w-100 h-100 d-flex align-items-left"
-          title-item-class="w-100"
-          ><template #title
-            ><Entry
-              :entryurl="entryurl"
-              :editable="currentTabIndex === index" /></template
-        ></b-tab>
-      </b-tabs>
-    </b-card>
-  </div>
+      </b-container>
+      <table-of-contents
+        v-model="currentPage"
+        :indexation="indexation"
+        :shown-pages="shownPages"
+      />
+    </div>
+  </template>
 </template>
 
 <script setup lang="ts">
 import { PageFlip } from "page-flip";
-import { storeToRefs } from "pinia";
-import { computed, ref, watch } from "vue";
 
-import useAi from "~/composables/useAi";
-import { ai as aiStore } from "~/stores/ai";
 import { suggestions } from "~/stores/suggestions";
-import { user } from "~/stores/user";
 
-const route = useRoute();
-const ai = useAi();
-const aiDetails = storeToRefs(aiStore()).aiDetails;
+let book = ref<PageFlip | null>(null);
+const coverWidth = ref<number | null>(null);
+const coverHeight = ref<number | null>(null);
+const currentPage = ref(0);
 
-const coverWidth = ref(null as number | null);
-let coverHeight = ref(null as number | null);
-let book = ref(null as PageFlip | null);
-const currentTabIndex = ref(0 as number);
+defineProps<{ indexationId: string }>();
 
-const {
-  storyversionKindSuggestions,
-  acceptedIssue,
-  entrySuggestions: entries,
-} = storeToRefs(suggestions());
+const { indexation } = storeToRefs(suggestions());
 
-const { showAiDetectionsOn: showAiDetections } = user();
-
-const indexationId = computed(() => route.params.id as string);
-const isSinglePage = computed(() => Object.keys(entries.value).length === 1);
-
+const isSinglePage = computed(() => indexation.value?.pages.length === 1);
 const displayedWidth = computed(() => book.value?.getSettings().width);
 const displayedHeight = computed(() => book.value?.getSettings().height);
 
-const xOffset = computed(
+const naturalAspectRatio = computed(
   () =>
-    displayedHeight.value &&
-    pageRatio.value &&
-    displayedWidth.value &&
-    (displayedWidth.value - displayedHeight.value * pageRatio.value) / 2
+    coverWidth.value &&
+    coverHeight.value &&
+    coverWidth.value / coverHeight.value,
 );
 
-const pageRatio = computed(() => coverWidth.value! / coverHeight.value!);
+const displayedHeightNoBackground = computed(() =>
+  naturalAspectRatio.value
+    ? naturalAspectRatio.value < 1
+      ? displayedHeight.value
+      : displayedHeight.value! / naturalAspectRatio.value
+    : null,
+);
 
-const displayRatioNoCropping = computed(
+const displayedWidthNoBackground = computed(() =>
+  naturalAspectRatio.value
+    ? naturalAspectRatio.value > 1
+      ? displayedWidth.value
+      : displayedWidth.value! * naturalAspectRatio.value
+    : null,
+);
+
+const shownPages = computed(() =>
+  book.value
+    ? [
+        ...new Set([
+          book.value.getCurrentPageIndex(),
+          (book.value as unknown as { pages: { currentSpreadIndex: number } })!
+            .pages.currentSpreadIndex * 2,
+        ]),
+      ]
+    : [],
+);
+
+const displayRatioCropped = computed(
   () =>
     displayedHeight.value &&
     coverHeight.value &&
-    displayedHeight.value / coverHeight.value
+    displayedHeight.value / coverHeight.value,
 );
 
-const firstPanelPosition = (url: string) => {
-  const { bbox } = aiDetails.value[url].panels[0];
+const naturalToDisplayRatio = computed(
+  () =>
+    coverWidth.value &&
+    displayedWidthNoBackground.value &&
+    coverWidth.value / displayedWidthNoBackground.value,
+);
+
+const firstPanelPosition = (pageUrl: string) => {
+  const { x, y, width, height } = indexation.value!.pages.find(
+    ({ url }) => url === pageUrl,
+  )!.aiKumikoResultPanels?.[0] || { x: 0, y: 0, width: 0, height: 0 };
   return {
-    left: bbox.x * displayRatioNoCropping.value!,
-    top: bbox.y * displayRatioNoCropping.value!,
-    width: bbox.width * displayRatioNoCropping.value!,
-    height: bbox.height * displayRatioNoCropping.value!,
+    left: x * displayRatioCropped.value!,
+    top: y * displayRatioCropped.value!,
+    width: width * displayRatioCropped.value!,
+    height: height * displayRatioCropped.value!,
   };
 };
 
@@ -206,68 +219,54 @@ const toPx = (position: Record<string, number>) =>
       ...acc,
       [key]: `${value}px`,
     }),
-    {}
+    {},
   );
 
-watch(
-  () => currentTabIndex.value,
-  (newValue) => {
-    if (book.value) {
-      book.value.flip(newValue);
-    }
+watch(currentPage, (newValue) => {
+  if (book.value) {
+    book.value.flip(newValue);
   }
-);
+});
 
-watch(
-  () => coverWidth.value,
-  (newValue) => {
-    const availableWidthPerPage = document.body.clientWidth / 2 - 15;
-    if (newValue && newValue > availableWidthPerPage) {
-      coverHeight.value! /= newValue / availableWidthPerPage;
-    }
+watch(coverWidth, (newValue) => {
+  const availableWidthPerPage = document.body.clientWidth / 2 - 15;
+  if (newValue && newValue > availableWidthPerPage) {
+    coverHeight.value! /= newValue / availableWidthPerPage;
   }
-);
+});
 
-watch(
-  () => coverWidth.value && coverHeight.value,
-  (hasCoverDimensions) => {
-    if (hasCoverDimensions) {
-      const bookContainer = document.querySelector(".book-container")!;
-      book.value = new PageFlip(
-        document.getElementById("book") as HTMLElement,
-        {
-          width: Math.min(bookContainer.clientWidth / 2, coverWidth.value!),
-          height: Math.min(bookContainer.clientHeight, coverHeight.value!),
-          maxShadowOpacity: 0.5,
-          showCover: true,
-          usePortrait: false,
-          mobileScrollSupport: false,
-        }
-      );
-      book.value.loadFromHTML(document.querySelectorAll(".page"));
+nextTick(() => {
+  watch(
+    () => coverWidth.value && coverHeight.value,
+    (hasCoverDimensions) => {
+      if (hasCoverDimensions) {
+        const bookContainer = document.querySelector(".book-container")!;
+        book.value = new PageFlip(
+          document.getElementById("book") as HTMLElement,
+          {
+            width: Math.min(bookContainer.clientWidth / 2, coverWidth.value!),
+            height: Math.min(bookContainer.clientHeight, coverHeight.value!),
+            maxShadowOpacity: 0.5,
+            showCover: true,
+            usePortrait: false,
+            mobileScrollSupport: false,
+          },
+        );
+        book.value.loadFromHTML(document.querySelectorAll(".page"));
 
-      book.value.on("flip", ({ data }) => {
-        currentTabIndex.value = parseInt(data.toString());
-      });
-    }
-  },
-  { immediate: true }
-);
-
-watch(
-  () => storyversionKindSuggestions.value,
-  async () => {
-    await ai.runCoverSearch(indexationId.value);
-    await ai.runStorycodeOcr(indexationId.value);
-    ai.status.value = "loaded";
-  },
-  { deep: true }
-);
+        book.value.on("flip", ({ data }) => {
+          currentPage.value = parseInt(data.toString());
+        });
+      }
+    },
+    { immediate: true },
+  );
+});
 </script>
 
 <style scoped lang="scss">
-#book-and-toc-container {
-  height: 100%;
+:deep(.drag-handle) {
+  cursor: grab;
 }
 
 @keyframes pulse-yellow {
@@ -279,55 +278,6 @@ watch(
   }
   100% {
     color: #999;
-  }
-}
-
-.table-of-contents {
-  background-color: #eee;
-  color: black;
-  white-space: nowrap;
-
-  .hint {
-    svg {
-      color: #999;
-    }
-    &:hover,
-    &.loaded {
-      svg {
-        color: yellow;
-      }
-    }
-    &.loading {
-      svg {
-        animation: pulse-yellow 2s infinite;
-      }
-    }
-  }
-
-  .card-header {
-    text-align: center;
-
-    :deep(a),
-    :deep(h6) {
-      color: #666;
-    }
-
-    h3 {
-      margin: 6px 6px 0 6px;
-      text-align: center;
-    }
-  }
-
-  .col-auto {
-    width: 100%;
-  }
-
-  :deep(ul) {
-    overflow-x: auto;
-  }
-
-  :deep(.tab-content) {
-    display: none;
   }
 }
 
@@ -356,6 +306,8 @@ watch(
       background-size: contain;
       background-position: center center;
       background-repeat: no-repeat;
+      display: flex;
+      align-items: center;
     }
 
     &.first-page {
@@ -404,7 +356,8 @@ watch(
     right: 0 !important;
   }
 
-  .ocr-match {
+  .ocr-match,
+  .kumiko-match {
     border: 1px solid red;
 
     &.text {

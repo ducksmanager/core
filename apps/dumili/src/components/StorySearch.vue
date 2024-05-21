@@ -5,7 +5,7 @@
       list="search"
       :placeholder="$t('Rechercher une histoire')"
     />
-    <datalist v-if="storyResults.results && !isSearching">
+    <datalist v-if="storyResults?.results && !isSearching">
       <option v-if="!storyResults.results.length">
         {{ $t("Aucun résultat.") }}
       </option>
@@ -22,63 +22,53 @@
 </template>
 
 <script setup lang="ts">
-import axios from "axios";
-import { watch } from "vue";
-import { useI18n } from "vue-i18n";
+import { injectLocal } from "@vueuse/core";
 
-import { POST__coa__stories__search } from "~api-routes";
-import { call } from "~axios-helper";
 import { SimpleStory } from "~dm-types/SimpleStory";
+import { dmSocketInjectionKey } from "~web/src/composables/useDmSocket";
+
+const {
+  coa: { services: coaServices },
+} = injectLocal(dmSocketInjectionKey)!;
 
 const emit = defineEmits<{
-  (e: "story-selected", story: Pick<SimpleStory, "storycode" | "title">): void;
+  (e: "story-selected", searchResult: SimpleStory): void;
 }>();
 
-let isSearching = ref(false as boolean);
-let pendingSearch = ref(null as string | null);
-let search = ref("" as string);
-let storyResults = ref(
-  {} as {
-    results: SimpleStory[];
-    hasMore: boolean;
-  }
-);
+let isSearching = ref(false);
+let pendingSearch = ref<string | null>(null);
+let search = ref("");
+let storyResults = ref<
+  | {
+      results: SimpleStory[];
+      hasMore: boolean;
+    }
+  | undefined
+>(undefined);
 
 const { t: $t } = useI18n();
 const selectSearchResult = (searchResult: SimpleStory) => {
-  const { storycode, title } = searchResult;
-  emit("story-selected", { storycode, title });
+  emit("story-selected", searchResult);
 };
 const runSearch = async (value: string) => {
   isSearching.value = true;
   try {
-    const data = (
-      await call(
-        axios,
-        new POST__coa__stories__search({
-          reqBody: { keywords: value },
-        })
-      )
-    ).data;
-    storyResults.value.results = data.results.results;
+    storyResults.value = await coaServices.searchStory(value.split(" "), false);
   } finally {
     isSearching.value = false;
-    // The input value as changed since the beginning of the search, searching again
+    // The input value has changed since the beginning of the search, searching again
     if (value !== pendingSearch.value) {
       await runSearch(pendingSearch.value!);
     }
   }
 };
 
-watch(
-  () => search.value,
-  async (newValue) => {
-    if (newValue) {
-      pendingSearch.value = newValue;
-      if (!isSearching.value) await runSearch(newValue);
-    }
+watch(search, async (newValue) => {
+  if (newValue) {
+    pendingSearch.value = newValue;
+    if (!isSearching.value) await runSearch(newValue);
   }
-);
+});
 </script>
 
 <style scoped lang="scss">

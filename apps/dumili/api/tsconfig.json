@@ -1,9 +1,9 @@
 {
   "compilerOptions": {
     "baseUrl": ".",
-    "module": "commonjs",
+    "module": "ES6",
     "target": "esnext",
-    "lib": ["DOM", "ESNext"],
+    "lib": ["ESNext"],
     "strict": true,
     "jsx": "preserve",
     "esModuleInterop": true,
@@ -15,15 +15,15 @@
     "allowJs": true,
     "forceConsistentCasingInFileNames": true,
     "outDir": "./dist",
+    "preserveWatchOutput": true,
     "paths": {
       "~/*": ["*"],
+      "~dm-types/*": ["../../../packages/types/*"],
       "~dumili-types/*": ["../types/*"],
-      "~axios-helper/*": ["../../../packages/axios-helper/*"],
-      "~routes/*": ["routes/*"]
+      "~dm-services/*": ["../../../packages/api/services/*"],
+      "~prisma-clients/*": ["../../../packages/prisma-clients/*"],
+      "~prisma/*": ["prisma/*"]
     }
   },
-  "include": ["index.ts", "routes/**/*.ts"],
-  "ts-node": {
-    "swc": true
-  }
+  "include": ["index.ts", "services/**/*.ts"]
 }

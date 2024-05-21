@@ -1,5 +1,5 @@
 <template>
-  <b-tooltip :target="target">
+  <b-tooltip :target="target" hover>
     <table>
       <thead>
         <th

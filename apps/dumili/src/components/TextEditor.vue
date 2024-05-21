@@ -5,7 +5,7 @@
     >
     <b-form-textarea
       v-model="textContent"
-      :rows="Object.keys(acceptedEntries).length + 1"
+      :rows="Object.keys(acceptedStories).length + 1"
       readonly
       :disabled="!issue"
       :placeholder="textContentError"
@@ -15,38 +15,68 @@
 <script setup lang="ts">
 const { t: $t } = useI18n();
 
-import { useI18n } from "vue-i18n";
+import { injectLocal } from "@vueuse/core";
 
-import { EntrySuggestion, suggestions } from "~/stores/suggestions";
+import { suggestions } from "~/stores/suggestions";
+import { dmSocketInjectionKey } from "~web/src/composables/useDmSocket";
 
-const textContentError = ref("" as string);
-const acceptedEntries = computed(() => suggestions().acceptedEntries);
+const {
+  coa: { services: coaServices },
+} = injectLocal(dmSocketInjectionKey)!;
 
-const issue = computed(() => suggestions().acceptedIssue);
+const textContentError = ref("");
+const { acceptedStories, acceptedIssue: issue } = storeToRefs(suggestions());
+
+const storiesWithDetails =
+  ref<Awaited<ReturnType<typeof getStoriesWithDetails>>>();
+
+watch(
+  acceptedStories,
+  async (value) => {
+    if (!issue.value?.issuecode) {
+      return undefined;
+    }
+    storiesWithDetails.value = await getStoriesWithDetails(value);
+  },
+  { immediate: true, deep: true },
+);
+
+const getStoriesWithDetails = async (
+  stories: (typeof acceptedStories)["value"],
+) =>
+  await Promise.all(
+    Object.values(stories)
+      .filter((story) => story !== undefined)
+      .map(async (story) => ({
+        ...story,
+        ...(await coaServices.getStoryDetails(story!.storyversioncode)).data,
+        storyversion: (
+          await coaServices.getStoryversionDetails(story!.storyversioncode)
+        ).data,
+        storyjobs: (await coaServices.getStoryjobs(story!.storyversioncode))
+          .data,
+      })),
+  );
 
 const textContent = computed(() => {
-  if (!issue.value) {
+  if (!storiesWithDetails.value?.length) {
     return undefined;
   }
-  const shortIssuecode = issue.value?.data.issuecode.split("/")[1];
+  const shortIssuecode = issue.value!.issuecode!.split("/")[1];
   const rows = [
     [shortIssuecode],
-    ...(
-      Object.values(acceptedEntries.value).filter(
-        (entry) => entry !== undefined
-      ) as EntrySuggestion[]
-    ).map((entry, idx) => [
+    ...storiesWithDetails.value.map((story, idx) => [
       `${shortIssuecode}${String.fromCharCode(97 + idx)}`,
-      entry.data.storyversion?.storycode,
-      String(entry.data.storyversion?.entirepages || 1),
+      story!.storyversion?.storycode,
+      ,
+      String(story!.storyversion?.entirepages || 1),
       ...["plot", "writer", "artist", "ink"].map(
         (job) =>
-          entry.data.storyjobs?.find(
-            ({ plotwritartink }) => plotwritartink === job
-          )?.personcode
+          story!.storyjobs?.find(({ plotwritartink }) => plotwritartink === job)
+            ?.personcode,
       ),
-      entry.data.printedhero,
-      entry.data.title,
+      "", //story!.printedhero,
+      story!.title,
     ]),
   ];
   const colsMaxLengths = rows.reduce<number[]>((acc, row) => {
@@ -54,28 +84,18 @@ const textContent = computed(() => {
       acc[i] = Math.max(acc[i], col?.length || 0);
     });
     return acc;
-  }, [] as number[]);
+  }, []);
 
   return rows
     .map((row) =>
       row
         .map((col, colIndex) =>
-          (col || "").padEnd(colsMaxLengths[colIndex], " ")
+          (col || "").padEnd(colsMaxLengths[colIndex], " "),
         )
-        .join(" ")
+        .join(" "),
     )
     .join("\n");
 });
-
-watch(
-  () => issue.value,
-  () => {
-    if (!issue.value) {
-      textContentError.value = "No data";
-    }
-  },
-  { immediate: true }
-);
 </script>
 <style scoped lang="scss">
 textarea {

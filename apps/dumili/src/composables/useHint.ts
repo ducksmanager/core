@@ -1,100 +1,48 @@
-import { storeToRefs } from "pinia";
+import { suggestions } from "~/stores/suggestions";
+import CoverIdServices from "~dm-services/cover-id/types";
+import { EventReturnType } from "~socket.io-services/types";
+import { stores as webStores } from "~web";
 
-import { coa } from "~/stores/coa";
-import {
-  EntrySuggestion,
-  IssueSuggestion,
-  StoryversionKind,
-  suggestions,
-} from "~/stores/suggestions";
-import { POST__cover_id__search } from "~api-routes";
-import { StorySearchResults } from "~dm-types/StorySearchResults";
-import { KumikoResults } from "~dumili-types/KumikoResults";
+import { dumiliSocketInjectionKey } from "./useDumiliSocket";
 
 export default () => {
-  const suggestionsStore = suggestions();
-  const { acceptedEntries } = storeToRefs(suggestionsStore);
-  const coaStore = coa();
-  const applyHintsFromKumiko = (results: KumikoResults) => {
-    results?.forEach((result, idx) => {
-      const entryurl = Object.keys(suggestionsStore.entrySuggestions)[idx];
-      const shouldBeAccepted = acceptedEntries.value[entryurl] === undefined;
+  const { loadIndexation } = suggestions();
+  const { indexation } = storeToRefs(suggestions());
+  const coaStore = webStores.coa();
 
-      if (shouldBeAccepted) {
-        const inferredKind =
-          result.panels.length === 1
-            ? idx === 0
-              ? StoryversionKind.Cover
-              : StoryversionKind.Illustration
-            : StoryversionKind.Story;
-        suggestionsStore.acceptSuggestion(
-          suggestionsStore.storyversionKindSuggestions[entryurl],
-          ({ data }) => data.kind === inferredKind,
-          { source: "ai", status: "success" },
-          (suggestion) => (suggestion.data.panels = result.panels)
-        );
-      }
-    });
-  };
+  const { getIndexationSocket } = inject(dumiliSocketInjectionKey)!;
 
   const applyHintsFromCoverSearch = async (
-    results: POST__cover_id__search["resBody"]
+    results: EventReturnType<CoverIdServices["searchFromCover"]>,
   ) => {
     if (!results.covers?.length) {
       console.error("Erreur lors de la recherche par image de la couverture");
       return;
     }
-    suggestionsStore.issueSuggestions = results.covers.map(
-      ({ issuecode, publicationcode, issuenumber, id: coverId }) =>
-        new IssueSuggestion(
-          {
+    Promise.all(
+      results.covers.map(
+        ({ issuecode, publicationcode, issuenumber /*, id: coverId*/ }) =>
+          getIndexationSocket(
+            indexation.value!.id,
+          ).services.acceptIssueSuggestion({
+            source: "ai",
             issuecode,
             publicationcode,
             issuenumber,
-            coverId,
-          },
-          {
-            source: "ai",
-            isAccepted: false,
-            status: "success",
-          }
-        )
+            // coverId,
+            indexationId: indexation.value!.id,
+          }),
+      ),
     );
+
+    await loadIndexation(indexation.value!.id);
 
     await coaStore.fetchPublicationNames(
-      results.covers.map(({ publicationcode }) => publicationcode!)
-    );
-  };
-
-  const applyHintsFromKeywordSearch = (
-    entryurl: string,
-    results: StorySearchResults["results"]
-  ) => {
-    suggestionsStore.entrySuggestions[entryurl] =
-      suggestionsStore.entrySuggestions[entryurl].filter(
-        ({ meta }) => meta.source === "ai"
-      );
-    suggestionsStore.entrySuggestions[entryurl] = results.map(
-      ({ storycode, title }) =>
-        new EntrySuggestion(
-          {
-            storyversion: {
-              storycode,
-            },
-            title,
-          },
-          {
-            source: "ai",
-            isAccepted: false,
-            status: "success",
-          }
-        )
+      results.covers.map(({ publicationcode }) => publicationcode!),
     );
   };
 
   return {
-    applyHintsFromKumiko,
     applyHintsFromCoverSearch,
-    applyHintsFromKeywordSearch,
   };
 };

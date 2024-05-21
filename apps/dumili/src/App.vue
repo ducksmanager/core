@@ -8,53 +8,66 @@
     fluid
     class="d-flex flex-column flex-grow-1 overflow-y-auto justify-content-center"
   >
-    <router-view v-if="user().user" />
+    <router-view v-if="user" />
 
     <h4 v-else>
-      Vous devez être connecté pour accéder à cette page.
-      <a :href="loginUrl">Se connecter</a>
+      {{ $t("Vous devez être connecté pour accéder à cette page.") }}
+      <a :href="loginUrl">{{ $t("Se connecter") }}</a>
     </h4>
   </b-container>
-
-  <b-container
-    v-if="activeTab !== undefined"
-    class="start-0 bottom-0 mw-100 pt-2"
-    ><b-tabs v-model:modelValue="activeTab" align="center"
-      ><b-tab title="Page gallery" /><b-tab title="Book" /><b-tab
-        title="Text editor" /></b-tabs
-  ></b-container>
 </template>
 
 <script setup lang="ts">
-import { storeToRefs } from "pinia";
+import { provideLocal } from "@vueuse/core";
+import Cookies from "js-cookie";
 
-import { cachedCoaApi, defaultApi } from "~/api";
+import { stores as webStores } from "~web";
 
-import { coa } from "./stores/coa";
-import { tabs } from "./stores/tabs";
-import { user } from "./stores/user";
+import useDumiliSocket, {
+  dumiliSocketInjectionKey,
+} from "./composables/useDumiliSocket";
 
-const route = useRoute();
+provideLocal(
+  dumiliSocketInjectionKey,
+  useDumiliSocket({
+    onConnectError: () => {
+      isLoadingUser.value = false;
+      user.value = null;
+    },
+    session: {
+      getToken: () => Promise.resolve(Cookies.get("token")),
+      clearSession: () => {}, // Promise.resolve(Cookies.remove("token")),
+      sessionExists: () =>
+        Promise.resolve(typeof Cookies.get("token") === "string"),
+    },
+  }),
+);
 
-const { activeTab } = storeToRefs(tabs());
+const { t: $t } = useI18n();
 
 const loginUrl = computed(
-  () => `${import.meta.env.VITE_DM_URL}/login?redirect=${document.URL}`
+  () => `${import.meta.env.VITE_DM_URL}/login?redirect=${document.URL}`,
 );
 
-watch(
-  () => route?.params?.id,
-  (id) => {
-    activeTab.value = id ? 0 : undefined;
-  },
-  { immediate: true }
-);
+const { loadUser } = webStores.collection();
+const { user, isLoadingUser } = storeToRefs(webStores.collection());
 
-(async () => {
-  coa().setApi({ api: cachedCoaApi });
-  user().user = {
-    username: (await defaultApi.get(`${import.meta.env.VITE_BACKEND_URL}/me`))
-      .data.user.username,
+onBeforeMount(() => {
+  session.value = {
+    getToken: () => Promise.resolve(Cookies.get("token")),
+    clearSession: () => {}, //Promise.resolve(Cookies.remove("token")),
+    sessionExists: () =>
+      Promise.resolve(typeof Cookies.get("token") === "string"),
+    onConnectError: async () => {
+      await session.value!.clearSession();
+      isLoadingUser.value = false;
+      user.value = null;
+    },
   };
-})();
+
+  loadUser();
+});
 </script>
+<style>
+@import "vue-draggable-resizable/style.css";
+</style>

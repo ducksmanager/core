@@ -1,2 +1,2 @@
 paddleocr>=2.7.0.2
-paddlepaddle>=2.5.1
+paddlepaddle>=2.6.0
