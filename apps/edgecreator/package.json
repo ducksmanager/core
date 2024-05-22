@@ -11,7 +11,6 @@
     "build": "vite build",
     "dev": "concurrently -n vite,vue-tsc \"vite --port 8002\" \"vue-tsc --noEmit --watch\"",
     "lint": "eslint --fix --cache .",
-    "prepare": "husky install",
     "preview": "vite preview",
     "typecheck": "vue-tsc --noEmit"
   },
@@ -70,7 +69,6 @@
     "eslint-plugin-simple-import-sort": "^12.1.0",
     "eslint-plugin-unused-imports": "^3.2.0",
     "eslint-plugin-vue": "^9.26.0",
-    "husky": "^8.0.3",
     "prettier": "^3.2.5",
     "typescript": "^5.4.5",
     "unplugin-auto-import": "^0.17.6",
