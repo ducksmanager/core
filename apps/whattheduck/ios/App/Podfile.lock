@@ -5,8 +5,12 @@ PODS:
     - Capacitor
   - CapacitorCamera (6.0.0):
     - Capacitor
-  - CapacitorCommunityCameraPreview (2.0.0):
+  - CapacitorCommunityCameraPreview (6.0.0):
     - Capacitor
+  - CapacitorCommunitySqlite (5.7.3-3):
+    - Capacitor
+    - SQLCipher
+    - ZIPFoundation
   - CapacitorCordova (6.0.0)
   - CapacitorHaptics (6.0.0):
     - Capacitor
@@ -20,12 +24,19 @@ PODS:
     - Capacitor
   - CapawesomeCapacitorFilePicker (6.0.0):
     - Capacitor
+  - SQLCipher (4.5.5):
+    - SQLCipher/standard (= 4.5.5)
+  - SQLCipher/common (4.5.5)
+  - SQLCipher/standard (4.5.5):
+    - SQLCipher/common
+  - ZIPFoundation (0.9.16)
 
 DEPENDENCIES:
   - "Capacitor (from `../../node_modules/.pnpm/@capacitor+ios@6.0.0_@capacitor+core@6.0.0/node_modules/@capacitor/ios`)"
   - "CapacitorApp (from `../../node_modules/.pnpm/@capacitor+app@6.0.0_@capacitor+core@6.0.0/node_modules/@capacitor/app`)"
   - "CapacitorCamera (from `../../node_modules/.pnpm/@capacitor+camera@6.0.0_@capacitor+core@6.0.0/node_modules/@capacitor/camera`)"
-  - "CapacitorCommunityCameraPreview (from `../../node_modules/.pnpm/@capacitor-community+camera-preview@5.0.0_@capacitor+core@6.0.0/node_modules/@capacitor-community/camera-preview`)"
+  - "CapacitorCommunityCameraPreview (from `../../node_modules/.pnpm/@capacitor-community+camera-preview@6.0.0_@capacitor+core@6.0.0/node_modules/@capacitor-community/camera-preview`)"
+  - "CapacitorCommunitySqlite (from `../../node_modules/.pnpm/@capacitor-community+sqlite@5.7.3-3_@capacitor+core@6.0.0/node_modules/@capacitor-community/sqlite`)"
   - "CapacitorCordova (from `../../node_modules/.pnpm/@capacitor+ios@6.0.0_@capacitor+core@6.0.0/node_modules/@capacitor/ios`)"
   - "CapacitorHaptics (from `../../node_modules/.pnpm/@capacitor+haptics@6.0.0_@capacitor+core@6.0.0/node_modules/@capacitor/haptics`)"
   - "CapacitorKeyboard (from `../../node_modules/.pnpm/@capacitor+keyboard@6.0.0_@capacitor+core@6.0.0/node_modules/@capacitor/keyboard`)"
@@ -33,6 +44,11 @@ DEPENDENCIES:
   - "CapacitorSplashScreen (from `../../node_modules/.pnpm/@capacitor+splash-screen@6.0.0_@capacitor+core@6.0.0/node_modules/@capacitor/splash-screen`)"
   - "CapacitorStatusBar (from `../../node_modules/.pnpm/@capacitor+status-bar@6.0.0_@capacitor+core@6.0.0/node_modules/@capacitor/status-bar`)"
   - "CapawesomeCapacitorFilePicker (from `../../node_modules/.pnpm/@capawesome+capacitor-file-picker@6.0.0_@capacitor+core@6.0.0/node_modules/@capawesome/capacitor-file-picker`)"
+
+SPEC REPOS:
+  trunk:
+    - SQLCipher
+    - ZIPFoundation
 
 EXTERNAL SOURCES:
   Capacitor:
@@ -42,7 +58,9 @@ EXTERNAL SOURCES:
   CapacitorCamera:
     :path: "../../node_modules/.pnpm/@capacitor+camera@6.0.0_@capacitor+core@6.0.0/node_modules/@capacitor/camera"
   CapacitorCommunityCameraPreview:
-    :path: "../../node_modules/.pnpm/@capacitor-community+camera-preview@5.0.0_@capacitor+core@6.0.0/node_modules/@capacitor-community/camera-preview"
+    :path: "../../node_modules/.pnpm/@capacitor-community+camera-preview@6.0.0_@capacitor+core@6.0.0/node_modules/@capacitor-community/camera-preview"
+  CapacitorCommunitySqlite:
+    :path: "../../node_modules/.pnpm/@capacitor-community+sqlite@5.7.3-3_@capacitor+core@6.0.0/node_modules/@capacitor-community/sqlite"
   CapacitorCordova:
     :path: "../../node_modules/.pnpm/@capacitor+ios@6.0.0_@capacitor+core@6.0.0/node_modules/@capacitor/ios"
   CapacitorHaptics:
@@ -62,7 +80,8 @@ SPEC CHECKSUMS:
   Capacitor: 559d073c4ca6c27f8e7002c807eea94c3ba435a9
   CapacitorApp: 9d53aec7101f7b030a950c5bdc4df8612576b279
   CapacitorCamera: b61f125d92a0ef75d7becb7956fed7dd13187ee0
-  CapacitorCommunityCameraPreview: 47070b2c66a79a424afe7c73bd951dfabfbc0f76
+  CapacitorCommunityCameraPreview: 9319cde1da660b7643833dac20aaa85135bd1441
+  CapacitorCommunitySqlite: 51e28e15b178468ff8761d4ac21feaf074b6c125
   CapacitorCordova: 8c4bfdf69368512e85b1d8b724dd7546abeb30af
   CapacitorHaptics: 9ebc9363f0e9b8eb4295088a0b474530acf1859b
   CapacitorKeyboard: deacbd09d8d1029c3681197fb05d206b721d5f73
@@ -70,7 +89,9 @@ SPEC CHECKSUMS:
   CapacitorSplashScreen: 5431ab8d19c1c6e95777d53bfaa7a36a6c3d94c7
   CapacitorStatusBar: 2e4369f99166125435641b1908d05f561eaba6f6
   CapawesomeCapacitorFilePicker: 983e8d272d200897cf1c12cf9a62439fa2fb2c35
+  SQLCipher: f2e96b3822e3006b379181a0e4fd145f6de29b56
+  ZIPFoundation: d170fa8e270b2a32bef9dcdcabff5b8f1a5deced
 
-PODFILE CHECKSUM: d4b922be3284bee5b23648c9f04988881da34728
+PODFILE CHECKSUM: 396ffea15640aefd8be1e2fa85590a125336a027
 
 COCOAPODS: 1.13.0
