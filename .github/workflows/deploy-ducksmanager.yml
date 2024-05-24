@@ -79,21 +79,6 @@ jobs:
       - name: Install dependencies
         run: pnpm -r install
 
-      - name: Build web
-        run: pnpm build:web
-
-      - name: Build and push web
-        uses: docker/build-push-action@v5
-        with:
-          context: .
-          file: apps/web/Dockerfile
-          platforms: linux/x86_64
-          push: true
-          cache-from: type=registry,ref=ghcr.io/bperel/ducksmanager-web:buildcache
-          cache-to: type=registry,ref=ghcr.io/bperel/ducksmanager-web:buildcache,mode=max
-          tags: |
-            ghcr.io/bperel/ducksmanager-web:websocket
-
       - name: Build api bundle
         run: pnpm build:api
 
@@ -108,6 +93,21 @@ jobs:
           cache-to: type=registry,ref=ghcr.io/bperel/ducksmanager-api:buildcache,mode=max
           tags: |
             ghcr.io/bperel/ducksmanager-api:websocket
+
+      - name: Build web
+        run: pnpm build:web
+
+      - name: Build and push web
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: apps/web/Dockerfile
+          platforms: linux/x86_64
+          push: true
+          cache-from: type=registry,ref=ghcr.io/bperel/ducksmanager-web:buildcache
+          cache-to: type=registry,ref=ghcr.io/bperel/ducksmanager-web:buildcache,mode=max
+          tags: |
+            ghcr.io/bperel/ducksmanager-web:websocket
 
       - name: Upload docker-compose.yml file
         uses: nicklasfrahm/scp-action@v1.0.1
