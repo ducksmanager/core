@@ -76,10 +76,11 @@ jobs:
           node-version: 18
           cache: "pnpm"
 
+      - name: Install dependencies
+        run: pnpm -r install
+
       - name: Build web
-        run: |
-          pnpm install
-          NODE_ENV=production turbo build -F '~web...'
+        run: pnpm build:web
 
       - name: Build and push web
         uses: docker/build-push-action@v5
@@ -94,10 +95,7 @@ jobs:
             ghcr.io/bperel/ducksmanager-web:websocket
 
       - name: Build api bundle
-        run: |
-          cd packages/api
-          pnpm install
-          pnpm build
+        run: pnpm build:api
 
       - name: Build and push api
         uses: docker/build-push-action@v5
