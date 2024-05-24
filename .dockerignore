@@ -8,4 +8,3 @@
 **/node_modules
 **/Pods
 docker-compose*
-packages/prisma-clients/client_*
