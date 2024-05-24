@@ -79,6 +79,7 @@ export default (socket: Socket<Events>) => {
             },
           }),
         );
+        break;
       case "buyer":
         callback(
           await prismaDm.requestedIssue.findMany({

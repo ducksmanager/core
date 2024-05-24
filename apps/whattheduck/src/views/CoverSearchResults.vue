@@ -9,7 +9,7 @@
       </ion-toolbar>
     </ion-header>
     <ion-content :fullscreen="true">
-      <ion-modal v-if="selectedCover" :is-open="selectedCover !== null">
+      <ion-modal v-if="selectedCover" is-open>
         <OwnedIssueCopiesModal
           @cancel="selectedCover = null"
           :publicationcode="selectedCover.publicationcode"

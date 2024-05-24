@@ -252,7 +252,7 @@ const {
 const emptyCollection = async () => {
   if (confirm(t("Votre collection va être vidée. Continuer ?"))) {
     await collectionServices.emptyCollection();
-    await router.push("/collection/show");
+    router.push("/collection/show");
   }
 };
 
@@ -292,7 +292,7 @@ const deleteAccount = async () => {
     )
   ) {
     await collectionServices.deleteUser();
-    await router.push("/logout");
+    router.push("/logout");
   }
 };
 

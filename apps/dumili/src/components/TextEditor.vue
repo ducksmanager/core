@@ -68,7 +68,7 @@ const textContent = computed(() => {
     ...storiesWithDetails.value.map((story, idx) => [
       `${shortIssuecode}${String.fromCharCode(97 + idx)}`,
       story!.storyversion?.storycode,
-      ,
+      undefined,
       String(story!.storyversion?.entirepages || 1),
       ...["plot", "writer", "artist", "ink"].map(
         (job) =>

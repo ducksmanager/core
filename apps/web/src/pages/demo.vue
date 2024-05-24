@@ -21,13 +21,13 @@ watch(
   user,
   async (newValue) => {
     if (newValue) {
-      await router.push("/collection");
+      router.push("/collection");
     }
   },
   { immediate: true },
 );
 
-async () => {
+(async () => {
   const result = await loginServices.loginAsDemo();
   switch (result.error) {
     case "No demo user found":
@@ -39,5 +39,5 @@ async () => {
       });
       await loadUser();
   }
-};
+})();
 </script>

@@ -379,7 +379,7 @@ const importIssues = async () => {
     }
   }
 
-  await router.push("/collection/show");
+  router.push("/collection/show");
 };
 
 watch($$(importDataReady), (newValue) => {

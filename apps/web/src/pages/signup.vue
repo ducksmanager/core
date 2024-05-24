@@ -106,7 +106,7 @@ watch(
   user,
   async (newValue) => {
     if (newValue) {
-      await router.push("/collection");
+      router.push("/collection");
     }
   },
   { immediate: true },

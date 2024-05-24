@@ -34,7 +34,7 @@ const issueData = ref(
     issueNumberEnd: string;
     width: number;
     height: number;
-  } | null
+  } | null,
 );
 
 const issueSpecification = computed(() =>
@@ -42,17 +42,17 @@ const issueSpecification = computed(() =>
     ? null
     : issueData.value.editMode === "range"
       ? `${issueData.value.issueNumber} to ${issueData.value.issueNumberEnd}`
-      : issueData.value.issueNumber
+      : issueData.value.issueNumber,
 );
 
 const toDashboard = async () => {
-  await router.push(`/`);
+  router.push(`/`);
 };
 
 const startEditing = async () => {
   assert(issueSpecification.value !== null);
-  await router.push(
-    `/edit/${issueData.value!.publicationCode} ${issueSpecification.value!}`
+  router.push(
+    `/edit/${issueData.value!.publicationCode} ${issueSpecification.value!}`,
   );
 };
 

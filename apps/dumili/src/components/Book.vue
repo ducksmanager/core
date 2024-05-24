@@ -314,10 +314,8 @@ nextTick(() => {
       background: transparent;
 
       .page-image {
-        transform: rotate3d(0, 1, 0, -90deg);
         transform-origin: left;
         transition: all 1s linear;
-
         transform: rotate3d(0, 1, 0, 0deg);
       }
     }

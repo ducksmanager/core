@@ -93,7 +93,7 @@ watch(
       if (route.query.redirect) {
         window.location.href = route.query.redirect as string;
       } else {
-        await router.push("/collection");
+        router.push("/collection");
       }
     }
   },
