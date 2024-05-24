@@ -3,7 +3,7 @@ LABEL org.opencontainers.image.authors="Bruno Perel"
 
 WORKDIR /app
 
-COPY bundle.mjs /app
+COPY packages/api/bundle.mjs /app
 
 EXPOSE 3000
 
