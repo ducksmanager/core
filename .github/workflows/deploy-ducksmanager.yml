@@ -16,6 +16,7 @@ jobs:
     runs-on: ubuntu-latest
     environment: production
     steps:
+      - uses: oven-sh/setup-bun@v1
       - name: Check out repository
         uses: actions/checkout@master
         with:
@@ -71,20 +72,35 @@ jobs:
           file: apps/web/Dockerfile
           platforms: linux/x86_64
           push: true
-          target: web
           cache-from: type=registry,ref=ghcr.io/bperel/ducksmanager-web:buildcache
           cache-to: type=registry,ref=ghcr.io/bperel/ducksmanager-web:buildcache,mode=max
           tags: |
             ghcr.io/bperel/ducksmanager-web:websocket
 
+      - name: Install pnpm
+        uses: pnpm/action-setup@v3
+        with:
+          version: 9
+
+      - name: Use Node.js 18
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          cache: "pnpm"
+
+      - name: Build api bundle
+        run: |
+          cd packages/api
+          pnpm install
+          pnpm build
+
       - name: Build and push api
         uses: docker/build-push-action@v5
         with:
           context: .
-          file: apps/web/Dockerfile
+          file: packages/api/Dockerfile
           platforms: linux/x86_64
           push: true
-          target: api
           cache-from: type=registry,ref=ghcr.io/bperel/ducksmanager-api:buildcache
           cache-to: type=registry,ref=ghcr.io/bperel/ducksmanager-api:buildcache,mode=max
           tags: |
