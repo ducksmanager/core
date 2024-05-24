@@ -68,12 +68,23 @@ const routeMeta = computed(() => route.meta as RouteMeta);
 watch(
   [isReady, token],
   () => {
-    if (isReady.value && token.value) {
-      fetchAndTrackCollection().then(() => {
-        if (route.path === '/login') {
-          router.push('/collection');
-        }
-      });
+    if (isReady.value) {
+      switch (token.value) {
+        case undefined:
+          console.error('Token is undefined but data is loaded');
+          break;
+        case null:
+          if (route.path !== '/login') {
+            router.push('/login');
+          }
+          break;
+        default:
+          fetchAndTrackCollection().then(() => {
+            if (route.path === '/login') {
+              router.push('/collection');
+            }
+          });
+      }
     }
   },
   { immediate: true },

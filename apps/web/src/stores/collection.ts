@@ -187,6 +187,20 @@ export const collection = defineStore("collection", () => {
         issueCounts.value =
           await collectionServices.getCoaCountByPublicationcode();
     },
+    issueCountsPerCountry = computed(
+      () =>
+        issueCounts.value &&
+        Object.entries(issueCounts.value).reduce<Record<string, number>>(
+          (acc, [publicationcode, count]) => {
+            const [countrycode] = publicationcode.split("/");
+            return {
+              ...acc,
+              [countrycode]: (acc[countrycode] || 0) + count,
+            };
+          },
+          {},
+        ),
+    ),
     loadPreviousVisit = async () => {
       const result = await collectionServices.getLastVisit();
       if (typeof result === "object" && result?.error) {
@@ -376,6 +390,7 @@ export const collection = defineStore("collection", () => {
     hasSuggestions,
     isLoadingUser,
     issueCounts,
+    issueCountsPerCountry,
     issueNumbersPerPublication,
     lastPublishedEdgesForCurrentUser,
     loadCollection,

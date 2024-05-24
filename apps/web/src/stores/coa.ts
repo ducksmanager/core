@@ -61,25 +61,10 @@ export const coa = defineStore("coa", () => {
     ),
     issueDetails = ref<{ [issuecode: string]: InducksIssueDetails }>({}),
     isLoadingCountryNames = ref(false),
-    issueCounts = ref<{ [publicationcode: string]: number } | null>(null),
     issueCodeDetails = ref<{ [issuecode: string]: inducks_issue }>({}),
     issueQuotations = ref<{
       [issuecode: string]: InducksIssueQuotationSimple;
     }>({}),
-    issueCountsPerCountry = computed(
-      () =>
-        issueCounts.value &&
-        Object.entries(issueCounts.value).reduce<Record<string, number>>(
-          (acc, [publicationcode, count]) => {
-            const [countrycode] = publicationcode.split("/");
-            return {
-              ...acc,
-              [countrycode]: (acc[countrycode] || 0) + count,
-            };
-          },
-          {},
-        ),
-    ),
     addPublicationNames = (
       newPublicationNames: typeof publicationNames.value,
     ) => {
@@ -308,8 +293,6 @@ export const coa = defineStore("coa", () => {
     fetchRecentIssues,
     isLoadingCountryNames,
     issueCodeDetails,
-    issueCounts,
-    issueCountsPerCountry,
     issueDetails,
     issueNumbers,
     issueQuotations,
