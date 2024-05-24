@@ -38,7 +38,7 @@ Chart.register(
   BarController,
   Tooltip,
   Title,
-  ArcElement,
+  ArcElement
 );
 
 let height = $ref("400px" as string);
@@ -47,11 +47,11 @@ let chartData = $ref(null as ChartData<"bar", number[]> | null),
   unitTypeCurrent = $ref("number" as string),
   options = $ref({} as ChartOptions<"bar">);
 
-const { loadCollection } = collection();
+const { loadCollection, fetchIssueCounts } = collection();
 const { totalPerPublicationUniqueIssueNumbersSorted } =
   storeToRefs(collection());
 
-const { fetchPublicationNames, fetchIssueCounts } = coa();
+const { fetchPublicationNames } = coa();
 const { issueCounts, publicationNames } = storeToRefs(coa());
 
 const { t: $t } = useI18n(),
@@ -63,8 +63,8 @@ const { t: $t } = useI18n(),
     () =>
       hasCoaData &&
       totalPerPublicationUniqueIssueNumbersSorted.value?.map(
-        ([publicationcode]) => publicationNames.value[publicationcode],
-      ),
+        ([publicationcode]) => publicationNames.value[publicationcode]
+      )
   ),
   values = $computed(() => {
     if (
@@ -77,20 +77,20 @@ const { t: $t } = useI18n(),
       return null;
     }
     let possessedIssues = totalPerPublicationUniqueIssueNumbersSorted.value.map(
-      ([, userIssueCount]) => userIssueCount,
+      ([, userIssueCount]) => userIssueCount
     );
     let missingIssues = totalPerPublicationUniqueIssueNumbersSorted.value.map(
       ([publicationcode, userIssueCount]) =>
-        issueCounts.value![publicationcode] - userIssueCount,
+        issueCounts.value![publicationcode] - userIssueCount
     );
     if (unitTypeCurrent === "percentage") {
       possessedIssues = possessedIssues.map((possessedCount, key) =>
         Math.round(
-          possessedCount * (100 / (possessedCount + missingIssues[key])),
-        ),
+          possessedCount * (100 / (possessedCount + missingIssues[key]))
+        )
       );
       missingIssues = possessedIssues.map(
-        (possessedCount) => 100 - possessedCount,
+        (possessedCount) => 100 - possessedCount
       );
     }
     return [possessedIssues, missingIssues];
@@ -103,12 +103,12 @@ watch(
       return;
     }
     await fetchPublicationNames(
-      newValue.map(([publicationcode]) => publicationcode),
+      newValue.map(([publicationcode]) => publicationcode)
     );
     await fetchIssueCounts();
     hasCoaData = true;
   },
-  { immediate: true },
+  { immediate: true }
 );
 
 watch(
@@ -119,7 +119,7 @@ watch(
     }
     height = `${100 + 30 * newValue.length}px`;
   },
-  { immediate: true },
+  { immediate: true }
 );
 
 watch(
@@ -194,7 +194,7 @@ watch(
       };
     }
   },
-  { immediate: true },
+  { immediate: true }
 );
 
 loadCollection();
