@@ -69,7 +69,7 @@ const httpServer = createServer(async (req, res) => {
 });
 const io = new ServerWithUser(httpServer, {
   cors: {
-    origin: false,
+    origin: true,
   },
 });
 
