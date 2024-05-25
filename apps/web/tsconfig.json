@@ -2,33 +2,30 @@
   "compilerOptions": {
     "baseUrl": ".",
     "module": "ESNext",
-    "declaration": true,
     "target": "es2020",
     "lib": ["dom", "dom.iterable", "ESNext"],
     "strict": true,
-    "jsx": "preserve",
     "esModuleInterop": true,
     "skipLibCheck": true,
     "moduleResolution": "node",
     "resolveJsonModule": true,
     "noUnusedLocals": true,
     "strictNullChecks": true,
-    "allowJs": true,
     "forceConsistentCasingInFileNames": true,
     "preserveWatchOutput": true,
     "types": [
       "vite/client",
       "vite-plugin-pages/client",
-      "vue/ref-macros",
       "unplugin-icons/types/vue",
       "@vue-macros/reactivity-transform/macros-global"
     ],
     "paths": {
       "~/*": ["src/*"],
+      "~dm-services/*": ["../../packages/api/services/*"],
       "~dm-types/*": ["../../packages/types/*"],
-      "~axios-helper/*": ["../../packages/axios-helper/*"],
-      "~api-routes/*": ["../../packages/api-routes/*"],
       "~prisma-clients/*": ["../../packages/prisma-clients/*"],
+      "~socket.io-client-services/*": ["../../packages/socket.io-client-services/*"],
+      "~socket.io-services/*": ["../../packages/socket.io-services/*"],
       "~translations/*": ["translations/*"]
     }
   },
@@ -39,5 +36,5 @@
     "src/**/*.vue",
     "auto-imports.d.ts"
   ],
-  "exclude": ["dist", "node_modules", "vendor"],
+  "exclude": ["dist", "node_modules"],
 }

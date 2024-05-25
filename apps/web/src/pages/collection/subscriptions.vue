@@ -80,16 +80,12 @@ alias: [/collection/abonnements]
 </template>
 
 <script setup lang="ts">
-import axios from "axios";
 import dayjs from "dayjs";
-import { onMounted, watch } from "vue";
 
 import {
   SubscriptionTransformed,
   SubscriptionTransformedStringDates,
 } from "~/stores/collection";
-import { call } from "~axios-helper";
-
 type AssociatedPublication = {
   referencePublicationcode: string;
   publicationcode: string;
@@ -100,6 +96,10 @@ const { publicationNames } = storeToRefs(coa());
 
 const { loadSubscriptions } = collection();
 const { subscriptions } = storeToRefs(collection());
+
+const {
+  collection: { services: collectionServices },
+} = injectLocal(dmSocketInjectionKey)!;
 
 const newSubscription = $ref({
   publicationcode: "fr/SPG",
@@ -127,13 +127,8 @@ const toSubscriptionWithStringDates = (
 });
 
 const createSubscription = async (subscription: SubscriptionTransformed) => {
-  await call(
-    axios,
-    new PUT__collection__subscriptions({
-      reqBody: {
-        subscription: toSubscriptionWithStringDates(subscription),
-      },
-    }),
+  await collectionServices.createSubscription(
+    toSubscriptionWithStringDates(subscription),
   );
   await loadSubscriptions(true);
   currentSubscription = null;
@@ -152,25 +147,15 @@ const createSubscriptionLike = async (
 };
 
 const editSubscription = async (subscription: SubscriptionTransformed) => {
-  await call(
-    axios,
-    new POST__collection__subscriptions__$id({
-      reqBody: {
-        subscription: toSubscriptionWithStringDates(subscription),
-      },
-      params: { id: String(subscription.id) },
-    }),
+  await collectionServices.updateSubscription(
+    subscription.id,
+    toSubscriptionWithStringDates(subscription),
   );
   await loadSubscriptions(true);
   currentSubscription = null;
 };
 const deleteSubscription = async (id: number) => {
-  await call(
-    axios,
-    new DELETE__collection__subscriptions__$id({
-      params: { id: String(id) },
-    }),
-  );
+  await collectionServices.deleteSubscription(id);
   await loadSubscriptions(true);
   currentSubscription = null;
 };

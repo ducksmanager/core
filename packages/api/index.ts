@@ -1,75 +1,120 @@
-import "module-alias/register";
-
 import * as Sentry from "@sentry/node";
-import busboy from "connect-busboy";
-import cookieParser from "cookie-parser";
-import cors from "cors";
+import { instrument } from "@socket.io/admin-ui";
 import dotenv from "dotenv";
-import express from "express";
-import { router } from "express-file-routing";
+import { createServer } from "http";
+import { Server } from "socket.io";
 
-import {
-  authenticateToken,
-  checkUserIsAdmin,
-  checkUserIsEdgeCreatorEditor,
-  injectTokenIfValid,
-} from "~routes/_auth";
+import type { SessionUser } from "~dm-types/SessionUser";
+
+import auth from "./services/auth";
+import { OptionalAuthMiddleware } from "./services/auth/util";
+import bookcase from "./services/bookcase";
+import bookstores from "./services/bookstores";
+import coa from "./services/coa";
+import collection from "./services/collection";
+import coverId from "./services/cover-id";
+import edgecreator from "./services/edgecreator";
+import edges from "./services/edges";
+import events from "./services/events";
+import feedback from "./services/feedback";
+import globalStats from "./services/global-stats";
+import login from "./services/login";
+import presentationText from "./services/presentation-text";
+import publicCollection from "./services/public-collection";
+import stats from "./services/stats";
+import { getDbStatus, getPastecSearchStatus, getPastecStatus } from "./status";
+
+class ServerWithUser extends Server<
+  Record<string, never>,
+  Record<string, never>,
+  Record<string, never>,
+  { user?: SessionUser }
+> {}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+(BigInt.prototype as any).toJSON = function () {
+  const int = Number.parseInt(this.toString());
+  return int ?? this.toString();
+};
 
 dotenv.config({
   path: "./.env",
 });
 
-const port = 3000;
-
 Sentry.init({
   dsn: process.env.SENTRY_DSN,
 });
 
-const app = express();
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-app.set("json replacer", (key: string, value: any) =>
-  typeof value === "bigint" ? Number(value) : value
-);
-app.use(
-  Sentry.Handlers.requestHandler({
-    user: ["id", "username"],
-  }) as express.RequestHandler
-);
-app.use(
-  cors({
-    optionsSuccessStatus: 200, // some legacy browsers (IE11, various SmartTVs) choke on 204
-  })
-);
-app.use(cookieParser());
+const httpServer = createServer(async (req, res) => {
+  let data: { error: string } | object;
+  switch (req.url) {
+    case "/status/db":
+      data = await getDbStatus();
+      break;
+    case "/status/pastecsearch":
+      data = await getPastecSearchStatus();
+      break;
+    case "/status/pastec":
+      data = await getPastecStatus();
+      break;
+    default:
+      res.writeHead(404);
+      res.end();
+      return;
+  }
 
-app.use(busboy({ immediate: true }));
+  res.writeHead("error" in data ? 500 : 200, { "Content-Type": "text/json" });
+  res.write(JSON.stringify(data));
+  res.end();
+});
+const io = new ServerWithUser(httpServer, {
+  cors: {
+    origin: true,
+  },
+});
 
-app.all(/^.+$/, injectTokenIfValid);
-app.all(
-  /^\/(edgecreator\/(publish|edgesprites)|notifications)|(edges\/(published))|(\/demo\/reset)|(bookstores\/(approve|refuse))|(presentation-text\/(approve|refuse))/,
-  [checkUserIsAdmin]
-);
+instrument(io, {
+  auth: false,
+});
 
-app.all(/^\/edgecreator\/(.+)/, [
-  authenticateToken,
-  checkUserIsEdgeCreatorEditor,
-]);
+httpServer.listen(3000);
+console.log("WebSocket open on port 3000");
 
-app.all(/^\/global-stats\/user\/list$/, [
-  authenticateToken,
-  checkUserIsEdgeCreatorEditor,
-]);
+io.use(OptionalAuthMiddleware);
+io.use((_socket, next) => {
+  next();
 
-app.all(/^\/collection\/(.+)/, authenticateToken);
-app.all("/global-stats/user/collection/rarity", authenticateToken);
+  // app.all(
+  //   /^\/(edgecreator\/(publish|edgesprites)|notifications)|(edges\/(published))|(\/demo\/reset)|(bookstores\/(approve|refuse))|(presentation-text\/(approve|refuse))/,
+  //   [checkUserIsAdmin]
+  // );
 
-app.use(express.json({ limit: "5mb" }));
+  // app.all(/^\/edgecreator\/(.+)/, [
+  //   authenticateToken,
+  //   checkUserIsEdgeCreatorEditor,
+  // ]);
 
-(async () => {
-  app.use("/", await router());
-  app.use(Sentry.Handlers.errorHandler() as express.ErrorRequestHandler);
+  // app.all(/^\/global-stats\/user\/list$/, [
+  //   authenticateToken,
+  //   checkUserIsEdgeCreatorEditor,
+  // ]);
 
-  app.listen(port, () => {
-    console.log(`API listening on port ${port}`);
-  });
-})();
+  // app.all(/^\/collection\/(.+)/, authenticateToken);
+  // app.all("/global-stats/user/collection/rarity", authenticateToken);
+});
+
+auth(io);
+bookcase(io);
+bookstores(io);
+coa(io);
+collection(io);
+coverId(io);
+edgecreator(io);
+edges(io);
+events(io);
+feedback(io);
+globalStats(io);
+login(io);
+presentationText(io);
+publicCollection(io);
+stats(io);

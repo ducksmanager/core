@@ -68,7 +68,6 @@ alias: [/agrandir/suggestions]
 </template>
 
 <script setup lang="ts">
-import { watch } from "vue";
 const countryCode = $ref("ALL" as string);
 const { t: $t } = useI18n();
 
@@ -79,6 +78,10 @@ const { loadRatings } = stats();
 
 const { fetchCountryNames } = coa();
 const { countryNames } = storeToRefs(coa());
+
+const {
+  collection: { services: collectionServices },
+} = injectLocal(dmSocketInjectionKey)!;
 
 const countryNamesWithAllCountriesOption = $computed(
   () =>
@@ -106,6 +109,10 @@ watch(
 
 loadCollection();
 loadRatings();
+
+(async () => {
+  watchedAuthors.value = await collectionServices.getWatchedAuthors();
+})();
 </script>
 
 <style scoped lang="scss">

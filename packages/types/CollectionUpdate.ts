@@ -1,3 +1,5 @@
+import type { issue_condition } from "~prisma-clients/client_dm";
+
 export type SaleState =
   | boolean
   | { transferTo: number }
@@ -5,14 +7,14 @@ export type SaleState =
 
 export type SingleCopyState = {
   id: number | null;
-  condition: string;
+  condition: issue_condition;
   isToRead: boolean;
   isOnSale: SaleState;
   purchaseId: number | null;
 };
 
 export type CopyStateWithUndefined = {
-  condition: string | null | undefined;
+  condition: issue_condition | null | undefined;
   isToRead: boolean | undefined;
   isOnSale: SaleState | undefined;
   purchaseId: number | null | undefined;

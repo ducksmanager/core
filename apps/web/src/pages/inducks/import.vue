@@ -280,11 +280,11 @@ meta:
 </template>
 
 <script setup lang="ts">
-import axios from "axios";
-import { watch } from "vue";
-
-import { call } from "~axios-helper";
 import type { inducks_issue } from "~prisma-clients/client_coa";
+import { issue_condition } from "~prisma-clients/client_dm";
+
+import { dmSocketInjectionKey } from "../../composables/useDmSocket";
+
 const { getImagePath } = images();
 
 let step = $ref(1 as number);
@@ -293,12 +293,16 @@ const expandedPublicationAccordion = $ref(null as string | null);
 const expandedNotImportableAccordion = $ref(null as string | null);
 let hasPublicationNames = $ref(false as boolean);
 let hasIssueNumbers = $ref(false as boolean);
-const issueDefaultCondition = $ref("bon" as string);
+const issueDefaultCondition = $ref("bon" as issue_condition);
 let issuesToImport = $ref(null as inducks_issue[] | null);
 let issuesNotReferenced = $ref(null as inducks_issue[] | null);
 let issuesAlreadyInCollection = $ref(null as inducks_issue[] | null);
 let issuesImportable = $ref(null as inducks_issue[] | null);
 let importProgress = $ref(0 as number);
+
+const {
+  collection: { services: collectionServices },
+} = injectLocal(dmSocketInjectionKey)!;
 
 const { t: $t } = useI18n();
 
@@ -308,9 +312,11 @@ const { issues, user } = storeToRefs(collection());
 const { fetchPublicationNames, fetchIssueNumbers, fetchIssueCodesDetails } =
   coa();
 const { publicationNames, issueNumbers, issueCodeDetails } = storeToRefs(coa());
-const conditions = {
+const conditions: Record<issue_condition, string> = {
   mauvais: $t("En mauvais état"),
+  moyen: $t("En état moyen"),
   bon: $t("En bon état"),
+  indefini: $t("En état indéfini"),
 };
 const importDataReady = $computed(
   () => issuesToImport && issues.value && hasIssueNumbers,
@@ -360,25 +366,20 @@ const importIssues = async () => {
   );
   for (const publicationcode in importableIssuesByPublicationCode) {
     if (importableIssuesByPublicationCode.hasOwnProperty(publicationcode)) {
-      await call(
-        axios,
-        new POST__collection__issues__multiple({
-          reqBody: {
-            publicationcode,
-            issuenumbers: importableIssuesByPublicationCode[publicationcode],
-            condition: issueDefaultCondition,
-            isOnSale: undefined,
-            isToRead: undefined,
-            purchaseId: undefined,
-          },
-        }),
-      );
+      await collectionServices.addOrChangeIssues({
+        publicationcode,
+        issuenumbers: importableIssuesByPublicationCode[publicationcode],
+        condition: issueDefaultCondition,
+        isOnSale: undefined,
+        isToRead: undefined,
+        purchaseId: undefined,
+      });
       importProgress +=
         100 / Object.keys(importableIssuesByPublicationCode).length;
     }
   }
 
-  await router.push("/collection/show");
+  router.push("/collection/show");
 };
 
 watch($$(importDataReady), (newValue) => {

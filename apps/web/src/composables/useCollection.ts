@@ -1,15 +1,10 @@
-import { IssueWithPublicationcode } from "~dm-types/IssueWithPublicationcode";
+import { QuotedIssue } from "~dm-types/QuotedIssue";
 import { issue_condition } from "~prisma-clients/client_dm";
+import { issueWithPublicationcode } from "~prisma-clients/extended/dm.extends";
 
-export type QuotedIssue = {
-  publicationcode: string;
-  issuenumber: string;
-  condition: issue_condition;
-  estimation: number;
-  estimationGivenCondition: number;
-};
+import { coa } from "../stores/coa";
 
-export default (issues: Ref<IssueWithPublicationcode[] | null>) => {
+export default (issues: Ref<issueWithPublicationcode[] | null>) => {
   const total = computed(() => issues.value?.length);
   const mostPossessedPublication = computed(
     () =>
@@ -47,12 +42,12 @@ export default (issues: Ref<IssueWithPublicationcode[] | null>) => {
             [issuecode]: [...(acc[issuecode] || []), issue],
           };
         },
-        {} as { [issuecode: string]: IssueWithPublicationcode[] },
+        {} as { [issuecode: string]: issueWithPublicationcode[] },
       ),
     ),
     duplicateIssues = computed(
       (): {
-        [issuecode: string]: IssueWithPublicationcode[];
+        [issuecode: string]: issueWithPublicationcode[];
       } =>
         (issuesByIssueCode.value &&
           Object.keys(issuesByIssueCode.value).reduce(
@@ -96,13 +91,13 @@ export default (issues: Ref<IssueWithPublicationcode[] | null>) => {
     ),
     numberPerCondition = computed(
       () =>
-        issues.value?.reduce(
+        issues.value?.reduce<Record<issue_condition, number>>(
           (acc, { condition }) => ({
             ...acc,
             [condition || "indefini"]: (acc[condition || "indefini"] || 0) + 1,
           }),
-          {} as { [condition: string]: number },
-        ) || {},
+          {} as Record<issue_condition, number>,
+        ) || ({} as Record<issue_condition, number>),
     ),
     findInCollection = (publicationcode: string, issuenumber: string) =>
       issues.value?.find(

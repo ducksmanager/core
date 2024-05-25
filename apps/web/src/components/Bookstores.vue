@@ -170,13 +170,15 @@
 
 <script setup lang="ts">
 import MapboxGeocoder from "@mapbox/mapbox-gl-geocoder";
-import axios from "axios";
-import { onMounted } from "vue";
 import { MapboxMap, MapboxMarker, MapboxPopup } from "vue-mapbox-ts";
 
-import { GET__bookstores, PUT__bookstores } from "~api-routes";
-import { call } from "~axios-helper";
 import { SimpleBookstore } from "~dm-types/SimpleBookstore";
+
+import { dmSocketInjectionKey } from "../composables/useDmSocket";
+
+const {
+  bookstore: { services: bookstoreServices },
+} = injectLocal(dmSocketInjectionKey)!;
 
 const { fetchStats } = users();
 const { stats: userStats } = storeToRefs(users());
@@ -223,7 +225,7 @@ const decodeText = (value: string) => {
   }
 };
 const fetchBookstores = async () => {
-  bookstores = (await call(axios, new GET__bookstores())).data
+  bookstores = (await bookstoreServices.getActiveBookstores())
     .map((bookstore) => {
       bookstore.name = decodeText(bookstore.name);
       bookstore.address = decodeText(bookstore.address);
@@ -243,7 +245,7 @@ const suggestComment = async (bookstore: SimpleBookstore) => {
     );
     return false;
   }
-  await call(axios, new PUT__bookstores({ reqBody: { bookstore } }));
+  await bookstoreServices.createBookstoreComment(bookstore);
   if (bookstore.id) {
     existingBookstoreSent = true;
     existingBookstore = null;

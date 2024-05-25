@@ -5,6 +5,6 @@ export interface SimpleIssueWithPublication {
   issuenumber: string;
   issuecode: string;
   coverId: number | null;
-  coverUrl: string | null;
+  fullUrl: string | null;
   popularity: number | null;
 }

@@ -18,8 +18,6 @@ alias: [/collection/doubles]
 </template>
 
 <script setup lang="ts">
-import { watch } from "vue";
-
 let hasPublicationNames = $ref(false as boolean);
 let publicationCodes = $ref(null as string[] | null);
 

@@ -343,9 +343,7 @@
 </template>
 
 <script setup lang="ts">
-import condition from "~/composables/useCondition";
-import { IssueWithPublicationcode } from "~dm-types/IssueWithPublicationcode";
-import type { issue as dm_issue } from "~prisma-clients/client_dm";
+import { issueWithPublicationcode } from "~prisma-clients/extended/dm.extends";
 
 import ContextMenuOnSaleByOthers from "./ContextMenuOnSaleByOthers.vue";
 import ContextMenuOwnCollection from "./ContextMenuOwnCollection.vue";
@@ -356,7 +354,7 @@ type simpleIssue = {
   key: string;
 };
 type issueWithPublicationCodeAndCopies = simpleIssue & {
-  userCopies: (dm_issue & { copyIndex: number; publicationcode: string })[];
+  userCopies: (issueWithPublicationcode & { copyIndex: number })[];
 };
 
 const {
@@ -374,7 +372,7 @@ const {
   duplicatesOnly?: boolean;
   readStackOnly?: boolean;
   onSaleStackOnly?: boolean;
-  customIssues?: IssueWithPublicationcode[];
+  customIssues?: issueWithPublicationcode[];
   onSaleByOthers?: boolean;
   groupUserCopies?: boolean;
   contextMenuComponentName?: "context-menu-on-sale-by-others";
@@ -385,7 +383,7 @@ const { updateCollectionMultipleIssues, loadPurchases } = collection();
 const { issues: collectionIssues, purchases: collectionPurchases } =
   storeToRefs(readonly ? publicCollection() : collection());
 
-const { conditions } = condition();
+const { conditions } = useCondition();
 const { t: $t } = useI18n();
 
 let clicks = $ref(0);
@@ -434,16 +432,16 @@ const contextmenuInstance = $ref(
 );
 let issues = $shallowRef(null as issueWithPublicationCodeAndCopies[] | null);
 let userIssuesForPublication = $shallowRef(
-  null as IssueWithPublicationcode[] | null,
+  null as issueWithPublicationcode[] | null,
 );
 let userIssuesNotFoundForPublication = $shallowRef(
-  [] as IssueWithPublicationcode[] | null,
+  [] as issueWithPublicationcode[] | null,
 );
 let selected = $shallowRef([] as string[]);
 const filteredUserCopies = $computed(() =>
   filteredIssues.reduce(
     (acc, { userCopies }) => [...acc, ...userCopies],
-    [] as IssueWithPublicationcode[],
+    [] as issueWithPublicationcode[],
   ),
 );
 const copiesBySelectedIssuenumber = $computed(() =>
@@ -464,7 +462,7 @@ const copiesBySelectedIssuenumber = $computed(() =>
         ],
       };
     },
-    {} as { [issuenumber: string]: IssueWithPublicationcode[] },
+    {} as { [issuenumber: string]: issueWithPublicationcode[] },
   ),
 );
 let preselected = $shallowRef([] as string[]);
@@ -570,7 +568,7 @@ const updateSelected = () => {
   }
 };
 const deletePublicationIssues = async (
-  issuesToDelete: IssueWithPublicationcode[],
+  issuesToDelete: issueWithPublicationcode[],
 ) => {
   contextmenuInstance!.hide();
   if (!readonly) {
@@ -578,7 +576,8 @@ const deletePublicationIssues = async (
       publicationcode,
       issuenumbers: issuesToDelete.map(({ issuenumber }) => issuenumber),
       condition:
-        conditions.find(({ value }) => value === null)?.dbValue || "indefini",
+        conditions.find(({ dbValue }) => dbValue === null)?.dbValue ||
+        "indefini",
       isToRead: false,
       isOnSale: false,
       purchaseId: null,
@@ -605,10 +604,10 @@ const loadIssues = async () => {
           conditions.find(({ dbValue }) => dbValue === issue.condition) || {
             value: "possessed",
           }
-        ).value,
+        ).dbValue,
       }));
 
-    await fetchIssueNumbersWithTitles(publicationcode);
+    await fetchIssueNumbersWithTitles([publicationcode]);
 
     const coaIssues = issuesWithTitles.value[publicationcode];
     if (groupUserCopies) {

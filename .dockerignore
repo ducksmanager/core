@@ -1,7 +1,10 @@
-**/dist
-**/node_modules
-**/Dockerfile*
-**/docker-compose*
 .git
-.idea
-packages/prisma-clients/client_*
+**/.gradle
+**/.idea
+**/build
+**/cache
+**/Dockerfile*
+**/gradle
+**/node_modules
+**/Pods
+docker-compose*

@@ -3,51 +3,32 @@
 </template>
 
 <script setup lang="ts">
-import axios from "axios";
-import { buildWebStorage } from "axios-cache-interceptor";
 import Cookies from "js-cookie";
 
-import { addTokenRequestInterceptor } from "~axios-helper";
+import { buildWebStorage, useSocket } from "~socket.io-client-services";
 
-import { createCachedCoaApi } from "./api";
+import { dmSocketInjectionKey } from "./composables/useDmSocket";
 
-const usersStore = users();
-const statsStore = stats();
-const publicCollectionStore = publicCollection();
-const collectionStore = collection();
-const coaStore = coa();
+provideLocal(
+  dmSocketInjectionKey,
+  useDmSocket(inject("dmSocket") as ReturnType<typeof useSocket>, {
+    cacheStorage: buildWebStorage(sessionStorage),
+    onConnectError: () => {
+      isLoadingUser.value = false;
+      user.value = null;
+    },
+    session: {
+      getToken: () => Promise.resolve(Cookies.get("token")),
+      clearSession: () => {}, // Promise.resolve(Cookies.remove("token")),
+      sessionExists: () =>
+        Promise.resolve(typeof Cookies.get("token") === "string"),
+    },
+  }),
+);
+const { loadUser } = collection();
+const { isLoadingUser, user } = storeToRefs(collection());
 
-onBeforeMount(() => {
-  const defaultApi = addTokenRequestInterceptor(
-    axios.create({
-      baseURL: import.meta.env.VITE_GATEWAY_URL,
-    }),
-    () => Promise.resolve(Cookies.get("token") || ""),
-  );
-
-  usersStore.setApi({
-    api: defaultApi,
-  });
-  statsStore.setApi({
-    api: defaultApi,
-  });
-  publicCollectionStore.setApi({
-    api: defaultApi,
-  });
-  collectionStore.setApi({
-    api: defaultApi,
-    clearSessionFn: () => Promise.resolve(Cookies.remove("token")),
-    sessionExistsFn: () =>
-      Promise.resolve(typeof Cookies.get("token") === "string"),
-  });
-  coaStore.setApi({
-    api: createCachedCoaApi(
-      buildWebStorage(sessionStorage),
-      import.meta.env.VITE_GATEWAY_URL,
-    ),
-  });
-  collectionStore.loadUser();
-});
+loadUser();
 </script>
 
 <style lang="scss">

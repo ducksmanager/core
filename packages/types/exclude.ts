@@ -1,6 +1,6 @@
 export const exclude = <Type, Key extends keyof Type>(
   object: Type | null,
-  key: Key
+  key: Key,
 ): Omit<Type, Key> | null => {
   if (!object) {
     return object;

@@ -12,9 +12,7 @@ const { route: currentRoute = null, icon = null } = defineProps<{
   icon?: string;
 }>();
 
-const route = useRoute();
-
-const currentPath = $computed(() => route.path);
+const { path: currentPath } = useRoute();
 
 const active = $computed(() => currentPath === currentRoute?.path);
 </script>

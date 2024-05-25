@@ -165,9 +165,6 @@
 </template>
 
 <script setup lang="ts">
-import { watch } from "vue";
-import { RouterLink } from "vue-router";
-
 import { BookcaseEdgeWithPopularity } from "~/stores/bookcase";
 import { BookcaseEdgeSprite } from "~dm-types/BookcaseEdge";
 import { SimpleIssue } from "~dm-types/SimpleIssue";
@@ -248,32 +245,22 @@ const sortedBookcase = $computed(
     hasIssueNumbers &&
     [...bookcaseWithPopularities.value].sort(
       (
-        {
-          countryCode: countryCode1,
-          magazineCode: magazineCode1,
-          issuenumber: issueNumber1,
-        },
-        {
-          countryCode: countryCode2,
-          magazineCode: magazineCode2,
-          issuenumber: issueNumber2,
-        },
+        { publicationcode: publicationcode1, issuenumber: issueNumber1 },
+        { publicationcode: publicationcode2, issuenumber: issueNumber2 },
       ) => {
-        const publicationCode1 = `${countryCode1}/${magazineCode1}`;
-        if (!issueNumbers.value[publicationCode1]) return -1;
+        if (!issueNumbers.value[publicationcode1]) return -1;
 
-        const publicationCode2 = `${countryCode2}/${magazineCode2}`;
-        if (!issueNumbers.value[publicationCode2]) return 1;
+        if (!issueNumbers.value[publicationcode2]) return 1;
 
         const publicationOrderSign = Math.sign(
-          bookcaseOrder.value!.indexOf(publicationCode1) -
-            bookcaseOrder.value!.indexOf(publicationCode2),
+          bookcaseOrder.value!.indexOf(publicationcode1) -
+            bookcaseOrder.value!.indexOf(publicationcode2),
         );
         return (
           publicationOrderSign ||
           Math.sign(
-            issueNumbers.value[publicationCode1].indexOf(issueNumber1) -
-              issueNumbers.value[publicationCode2].indexOf(issueNumber2),
+            issueNumbers.value[publicationcode1].indexOf(issueNumber1) -
+              issueNumbers.value[publicationcode2].indexOf(issueNumber2),
           )
         );
       },
@@ -298,12 +285,8 @@ watch(
       const nonObviousPublicationIssueNumbers = newValue.filter(
         (publicationcode) =>
           thisBookcase.value?.some(
-            ({
-              countryCode: issueCountryCode,
-              magazineCode: issueMagazineCode,
-              issuenumber,
-            }) =>
-              `${issueCountryCode}/${issueMagazineCode}` === publicationcode &&
+            ({ publicationcode: issuePublicationcode, issuenumber }) =>
+              issuePublicationcode === publicationcode &&
               !/^[0-9]+$/.test(issuenumber),
           ),
       );

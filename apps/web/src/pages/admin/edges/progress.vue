@@ -123,11 +123,11 @@ meta:
 </template>
 
 <script setup lang="ts">
-import axios from "axios";
-
 import { BookcaseEdgeWithPopularity } from "~/stores/bookcase";
-import { call } from "~axios-helper";
 import { WantedEdge } from "~dm-types/WantedEdge";
+
+import { dmSocketInjectionKey } from "../../../composables/useDmSocket";
+
 const { getImagePath } = images();
 
 let hasData = $ref(false as boolean);
@@ -138,6 +138,10 @@ const bookcaseTextures = $ref({
   bookcase: "bois/HONDURAS MAHOGANY",
   bookshelf: "bois/KNOTTY PINE",
 });
+
+const {
+  edges: { services: edgesServices },
+} = injectLocal(dmSocketInjectionKey)!;
 
 const { fetchPublicationNames, fetchIssueNumbers } = coa();
 const { publicationNames, issueNumbers } = storeToRefs(coa());
@@ -195,7 +199,7 @@ const sortedBookcase = computed(() =>
 );
 
 (async () => {
-  mostWanted = (await call(axios, new GET__edges__wanted__data())).data.map(
+  mostWanted = (await edgesServices.getWantedEdges()).map(
     (mostWantedIssue) => ({
       ...mostWantedIssue,
       country: mostWantedIssue.publicationcode.split("/")[0],
@@ -203,9 +207,7 @@ const sortedBookcase = computed(() =>
     }),
   );
 
-  publishedEdges = (
-    await call(axios, new GET__edges__published__data())
-  ).data.reduce(
+  publishedEdges = (await edgesServices.getPublishedEdges()).reduce(
     (acc, { publicationcode, issuenumber }) => ({
       ...acc,
       [publicationcode]: [...(acc[publicationcode] || []), issuenumber],

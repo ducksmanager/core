@@ -3,23 +3,24 @@ meta:
   layout: bare
 </route>
 <script setup lang="ts">
-import axios from "axios";
-
-import { call } from "~axios-helper";
+import { Decision } from "~dm-services/presentation-text/types";
 
 let router = useRouter();
 
+const {
+  presentationText: { services: presentationTextServices },
+} = injectLocal(dmSocketInjectionKey)!;
+
 (async () => {
   let currentRoute = router.currentRoute.value;
-  await call(
-    axios,
-    new POST__presentation_text__$decision({
-      params: { decision: currentRoute.params.decision as string },
-      reqBody: currentRoute.query as unknown as {
-        sentence: string;
-        userId: string;
-      },
-    }),
+  const { sentence, userId } = currentRoute.query as unknown as {
+    sentence: string;
+    userId: string;
+  };
+  await presentationTextServices.approveOrDenyPresentationText(
+    sentence,
+    parseInt(userId),
+    currentRoute.params.decision as Decision,
   );
 })();
 </script>

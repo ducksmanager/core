@@ -7,20 +7,22 @@ dotenv.config({
 import PushNotifications from "@pusher/push-notifications-server";
 import dayjs from "dayjs";
 
-import { prismaDm } from "~/prisma";
-import { i18n } from "~emails/email";
-import { user } from "~prisma-clients/client_dm";
-import { ExpressCall } from "~routes/_express-call";
+import { i18n } from "~/emails/email";
+import { prismaDm } from "~prisma-clients";
+import type { user } from "~prisma-clients/client_dm";
 import {
   COUNTRY_CODE_OPTION,
   getSuggestions,
-} from "~routes/collection/stats/suggestedissues/:countrycode/:sincePreviousVisit/:sort/:limit";
+} from "~services/stats/suggestions";
+
+const suggestionsSince = dayjs().add(-7, "days");
+let notificationsSent = 0;
 
 const sendSuggestedIssueNotification = async (
   issuecode: string,
   issueTitle: string,
   storyCountPerAuthor: { [personcode: string]: number },
-  userToNotify: user
+  userToNotify: user,
 ) => {
   const pusher = new PushNotifications({
     instanceId: process.env.PUSHER_INSTANCE_ID!,
@@ -40,8 +42,8 @@ const sendSuggestedIssueNotification = async (
           {
             authorName,
             newStoriesNumber: `${storyCountPerAuthor[authorName]}`,
-          }
-        )
+          },
+        ),
       )
       .join(""),
   };
@@ -56,7 +58,7 @@ const sendSuggestedIssueNotification = async (
     },
   });
   console.log(
-    `Notification sent to user ${userToNotify.username} concerning the release of issue ${issueTitle}`
+    `Notification sent to user ${userToNotify.username} concerning the release of issue ${issueTitle}`,
   );
   await prismaDm.userSuggestionNotification.create({
     data: {
@@ -68,20 +70,14 @@ const sendSuggestedIssueNotification = async (
   });
 };
 
-export const post = async (...[, res]: ExpressCall<Record<string, never>>) => {
-  const suggestionsSince = dayjs().add(-7, "days");
-  let notificationsSent = 0;
-
-  const { suggestionsPerUser, authors, publicationTitles } =
-    await getSuggestions(
-      suggestionsSince.toDate(),
-      COUNTRY_CODE_OPTION.countries_to_notify,
-      "score",
-      null,
-      null,
-      false
-    );
-
+getSuggestions(
+  suggestionsSince.toDate(),
+  COUNTRY_CODE_OPTION.countries_to_notify,
+  "score",
+  null,
+  null,
+  false,
+).then(async ({ suggestionsPerUser, authors, publicationTitles }) => {
   const usersById = (await prismaDm.user.findMany()).reduce<{
     [userId: number]: user;
   }>((acc, user) => ({ ...acc, [user.id]: user }), {});
@@ -93,8 +89,8 @@ export const post = async (...[, res]: ExpressCall<Record<string, never>>) => {
           ...acc,
           ...Object.values(suggestion.issues).map((issue) => issue.issuecode),
         ],
-        []
-      )
+        [],
+      ),
     ),
   ];
 
@@ -112,31 +108,31 @@ export const post = async (...[, res]: ExpressCall<Record<string, never>>) => {
         ...new Set(...(acc[notification.userId] || []), notification.issuecode),
       ],
     }),
-    {}
+    {},
   );
 
   for (const [userId, suggestionsForUser] of Object.entries(
-    suggestionsPerUser
+    suggestionsPerUser,
   )) {
     const userIdNumber = parseInt(userId);
     const pendingNotificationsForUser = Object.values(
-      suggestionsForUser.issues
+      suggestionsForUser.issues,
     ).filter(
       (suggestion) =>
         !alreadySentNotificationsPerUser[userIdNumber] ||
         !alreadySentNotificationsPerUser[userIdNumber].includes(
-          suggestion.issuecode
-        )
+          suggestion.issuecode,
+        ),
     );
 
     console.log(
-      `${pendingNotificationsForUser.length} new issue(s) will be suggested to user ${userId}`
+      `${pendingNotificationsForUser.length} new issue(s) will be suggested to user ${userId}`,
     );
     console.log(
       `${
         Object.values(suggestionsForUser.issues).length -
         pendingNotificationsForUser.length
-      } issue(s) have already been suggested to user ${userId}`
+      } issue(s) have already been suggested to user ${userId}`,
     );
 
     for (const suggestedIssue of pendingNotificationsForUser) {
@@ -149,14 +145,14 @@ export const post = async (...[, res]: ExpressCall<Record<string, never>>) => {
           ...acc,
           [authors[personcode]]: suggestedIssue.stories[personcode].length,
         }),
-        {}
+        {},
       );
       try {
         await sendSuggestedIssueNotification(
           suggestedIssue.issuecode,
           issueTitle,
           storyCountPerAuthor,
-          usersById[userIdNumber]
+          usersById[userIdNumber],
         );
         notificationsSent++;
       } catch (e) {
@@ -165,6 +161,5 @@ export const post = async (...[, res]: ExpressCall<Record<string, never>>) => {
     }
   }
   console.log(`${notificationsSent} notification(s) sent.`);
-  res.writeHead(200, { "Content-Type": "application/text" });
-  res.end(`${notificationsSent} notification(s) sent.`);
-};
+  process.exit(0);
+});

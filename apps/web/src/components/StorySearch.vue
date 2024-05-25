@@ -65,8 +65,8 @@
               :value="
                 conditions.find(
                   ({ dbValue }) =>
-                    dbValue === searchResult!.collectionIssue.condition,
-                )?.value || undefined
+                    dbValue === searchResult!.collectionIssue.condition
+                )?.dbValue || undefined
               "
             />
           </div>
@@ -86,15 +86,11 @@
 </template>
 
 <script setup lang="ts">
-import { onClickOutside } from "@vueuse/core";
-import axios from "axios";
-import { watch } from "vue";
-
-import condition from "~/composables/useCondition";
-import { call } from "~axios-helper";
-import { IssueWithPublicationcode } from "~dm-types/IssueWithPublicationcode";
 import { SimpleIssue } from "~dm-types/SimpleIssue";
 import { SimpleStory } from "~dm-types/SimpleStory";
+import { issueWithPublicationcode } from "~prisma-clients/extended/dm.extends";
+
+import { dmSocketInjectionKey } from "../composables/useDmSocket";
 
 const { withTitle = true, isPublic = false } = defineProps<{
   withTitle?: boolean;
@@ -103,7 +99,11 @@ const { withTitle = true, isPublic = false } = defineProps<{
 const emit = defineEmits<{
   (e: "issue-selected", story: SimpleIssue): void;
 }>();
-const { conditions } = condition();
+const { conditions } = useCondition();
+
+const {
+  coa: { services: coaServices },
+} = injectLocal(dmSocketInjectionKey)!;
 
 const { findInCollection } = isPublic ? publicCollection() : collection();
 const { issues } = storeToRefs(collection());
@@ -122,7 +122,7 @@ let search = $ref("" as string);
 let storyResults = $ref(
   {} as {
     results: (SimpleStory & {
-      collectionIssue: IssueWithPublicationcode | null;
+      collectionIssue: issueWithPublicationcode | null;
     })[];
     hasMore: boolean;
   },
@@ -169,14 +169,9 @@ const runSearch = async (value: string) => {
   isSearching = true;
   try {
     if (isSearchByCode) {
-      const data = (
-        await call(
-          axios,
-          new GET__coa__list__issues__by_storycode({
-            query: { storycode: value.replace(/^code=/, "") },
-          }),
-        )
-      ).data;
+      const data = await coaServices.getIssuesByStorycode(
+        value.replace(/^code=/, ""),
+      );
       issueResults = {
         results: data.sort((issue1, issue2) =>
           Math.sign(
@@ -188,14 +183,7 @@ const runSearch = async (value: string) => {
         issueResults.results.map(({ publicationcode }) => publicationcode),
       );
     } else {
-      const data = (
-        await call(
-          axios,
-          new POST__coa__stories__search__withIssues({
-            reqBody: { keywords: value },
-          }),
-        )
-      ).data;
+      const data = await coaServices.searchStory(value.split(","), true);
       storyResults.results = data.results.map((story) => ({
         ...story,
         collectionIssue:
@@ -284,6 +272,7 @@ fetchCountryNames();
 
   .navbar-nav {
     flex-wrap: wrap;
+    align-items: end;
 
     input {
       width: auto;

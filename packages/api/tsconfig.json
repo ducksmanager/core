@@ -3,9 +3,8 @@
     "baseUrl": ".",
     "module": "commonjs",
     "target": "es2018",
-    "lib": ["DOM", "ESNext"],
+    "lib": ["ESNext"],
     "strict": true,
-    "jsx": "preserve",
     "esModuleInterop": true,
     "skipLibCheck": true,
     "moduleResolution": "node",
@@ -18,14 +17,13 @@
     "preserveWatchOutput": true,
     "paths": {
       "~/*": ["*"],
+      "~services/*": ["services/*"],
+      "~dm-types/*": ["../dm-types/*"],
       "~emails/*": ["emails/*"],
       "~prisma-clients/*": ["../prisma-clients/*"],
-      "~routes/*": ["routes/*"],
+      "~socket.io-services/*": ["../socket.io-types/*"],
       "~translations/*": ["translations/*"]
     }
   },
-  "exclude": ["node_modules"],
-  "ts-node": {
-    "swc": true
-  }
+  "exclude": ["node_modules"]
 }

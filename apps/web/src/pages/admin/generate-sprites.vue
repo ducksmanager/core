@@ -8,11 +8,10 @@ meta:
 </template>
 
 <script setup lang="ts">
-import axios from "axios";
-
-import { call } from "~axios-helper";
-
+const {
+  edgeCreator: { services: edgeCreatorServices },
+} = injectLocal(dmSocketInjectionKey)!;
 const generateSprites = async () => {
-  await call(axios, new PUT__edgecreator__edgesprites());
+  await edgeCreatorServices.uploadEdges();
 };
 </script>

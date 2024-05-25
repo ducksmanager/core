@@ -135,7 +135,7 @@
           }}
           <ul>
             <li>{{ $t("Numéro en bon état : pas d'ajustement") }}</li>
-            <li>{{ $t("Numéro en moyen état : 70% de la cote") }}</li>
+            <li>{{ $t("Numéro en état moyen : 70% de la cote") }}</li>
             <li>{{ $t("Numéro en mauvais état : 30% de la cote") }}</li>
             <li>{{ $t("Etat non défini : 70% de la cote") }}</li>
           </ul>
@@ -159,13 +159,15 @@
 </template>
 
 <script setup lang="ts">
-import axios from "axios";
+import { QuotedIssue } from "~dm-types/QuotedIssue";
 
-import { QuotedIssue } from "~/composables/useCollection";
-import condition from "~/composables/useCondition";
-import { call } from "~axios-helper";
+import { dmSocketInjectionKey } from "../../composables/useDmSocket";
 
-const { getConditionLabel } = condition();
+const {
+  globalStats: { services: globalStatsServices },
+} = injectLocal(dmSocketInjectionKey)!;
+
+const { getConditionLabel } = useCondition();
 
 const { t: $t } = useI18n();
 let currentPage = $ref(1);
@@ -227,9 +229,7 @@ watch(
 (async () => {
   await loadCollection();
   await fetchCount();
-  const { userScores } = (
-    await call(axios, new GET__global_stats__user__collection__rarity())
-  ).data;
+  const { userScores } = await globalStatsServices.getUsersCollectionRarity();
   rarityValue =
     userScores.length -
     userScores.findIndex(({ userId }) => userId === user.value?.id);

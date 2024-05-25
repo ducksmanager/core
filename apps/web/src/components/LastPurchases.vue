@@ -41,7 +41,7 @@
 </template>
 
 <script setup lang="ts">
-import { IssueWithPublicationcode } from "~dm-types/IssueWithPublicationcode";
+import { issueWithPublicationcode } from "~prisma-clients/extended/dm.extends";
 
 const { publicationNames } = storeToRefs(coa());
 const { purchasesById, issues: allIssues } = storeToRefs(collection());
@@ -55,37 +55,43 @@ const hasPublicationNames = $computed(() => Object.keys(publicationNames)),
         ?.reduce<
           {
             purchase: { date: Date; description: string };
-            issues: IssueWithPublicationcode[];
+            issues: issueWithPublicationcode[];
           }[]
-        >((acc, issue) => {
-          const existingPurchase =
-            issue.purchaseId && purchasesById.value![issue.purchaseId];
-          const purchase = existingPurchase
-            ? {
-                date: existingPurchase.date,
-                description: existingPurchase.description,
-              }
-            : {
-                date: new Date(issue.creationDate as unknown as string),
-                description: "",
-              };
-          let purchaseIndex = acc.findIndex(
-            ({ purchase: currentPurchase }) =>
-              currentPurchase.date === purchase.date,
-          );
-          if (purchaseIndex === -1 && purchase.date) {
-            acc.push({
-              purchase: {
-                date: purchase.date,
-                description: purchase.description,
-              },
-              issues: [],
-            });
-            purchaseIndex = acc.length - 1;
-          }
-          acc[purchaseIndex]?.issues?.push(issue);
-          return acc;
-        }, [])
+        >(
+          (acc, issue) => {
+            const existingPurchase =
+              issue.purchaseId && purchasesById.value![issue.purchaseId];
+            const purchase = existingPurchase
+              ? {
+                  date: existingPurchase.date,
+                  description: existingPurchase.description,
+                }
+              : {
+                  date: new Date(issue.creationDate as unknown as string),
+                  description: "",
+                };
+            let purchaseIndex = acc.findIndex(
+              ({ purchase: currentPurchase }) =>
+                currentPurchase.date === purchase.date,
+            );
+            if (purchaseIndex === -1 && purchase.date) {
+              acc.push({
+                purchase: {
+                  date: purchase.date,
+                  description: purchase.description,
+                },
+                issues: [],
+              });
+              purchaseIndex = acc.length - 1;
+            }
+            acc[purchaseIndex]?.issues?.push(issue);
+            return acc;
+          },
+          [] as {
+            purchase: { date: Date; description: string };
+            issues: issueWithPublicationcode[];
+          }[],
+        )
         .sort(({ purchase: purchase1 }, { purchase: purchase2 }) =>
           purchase1.date < purchase2.date ? 1 : -1,
         )

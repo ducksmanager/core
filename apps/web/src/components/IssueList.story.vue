@@ -14,9 +14,9 @@
 <script lang="ts" setup>
 import dayjs from "dayjs";
 
-import { IssueWithPublicationcode } from "~dm-types/IssueWithPublicationcode";
+import { issueWithPublicationcode } from "~prisma-clients/extended/dm.extends";
 
-const customIssues: IssueWithPublicationcode[] = [
+const customIssues: issueWithPublicationcode[] = [
   {
     id: 167808,
     country: "fr",

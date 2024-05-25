@@ -47,12 +47,12 @@ let chartData = $ref(null as ChartData<"bar", number[]> | null),
   unitTypeCurrent = $ref("number" as string),
   options = $ref({} as ChartOptions<"bar">);
 
-const { loadCollection } = collection();
-const { totalPerPublicationUniqueIssueNumbersSorted } =
+const { loadCollection, fetchIssueCounts } = collection();
+const { totalPerPublicationUniqueIssueNumbersSorted, issueCounts } =
   storeToRefs(collection());
 
-const { fetchPublicationNames, fetchIssueCounts } = coa();
-const { issueCounts, publicationNames } = storeToRefs(coa());
+const { fetchPublicationNames } = coa();
+const { publicationNames } = storeToRefs(coa());
 
 const { t: $t } = useI18n(),
   unitTypes = {

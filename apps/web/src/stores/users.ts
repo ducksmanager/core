@@ -1,28 +1,45 @@
-import { AxiosInstance } from "axios";
-import { buildWebStorage } from "axios-cache-interceptor";
-
-import { GET__global_stats__user__$userIds } from "~api-routes/index";
-import { addUrlParamsRequestInterceptor, call } from "~axios-helper";
+import GlobalStatsServices from "~dm-services/global-stats/types";
 import { BookcaseContributor } from "~dm-types/BookcaseContributor";
 import { AbstractEvent } from "~dm-types/events/AbstractEvent";
+import { user } from "~prisma-clients/client_dm";
+import { EventReturnType } from "~socket.io-services/types";
 
-import { createCachedUserApi } from "../api";
+import { dmSocketInjectionKey } from "../composables/useDmSocket";
 
-let api: AxiosInstance;
+type SimpleUser = Pick<user, "id" | "username">;
+
 export const users = defineStore("users", () => {
-  const count = ref(null as number | null),
-    stats = ref({} as GET__global_stats__user__$userIds["resBody"]["stats"]),
-    points = ref({} as GET__global_stats__user__$userIds["resBody"]["points"]),
+  const {
+    events: { services: eventsServices },
+    globalStats: { services: globalStatsServices },
+  } = injectLocal(dmSocketInjectionKey)!;
+  const count = ref(
+      null as EventReturnType<GlobalStatsServices["getUserCount"]> | null,
+    ),
+    stats = ref(
+      {} as EventReturnType<
+        GlobalStatsServices["getUsersPointsAndStats"]
+      >["stats"],
+    ),
+    points = ref(
+      {} as EventReturnType<
+        GlobalStatsServices["getUsersPointsAndStats"]
+      >["points"],
+    ),
     events = ref([] as AbstractEvent[]),
     bookcaseContributors = ref(null as BookcaseContributor[] | null),
-    fetchCount = async () => {
-      if (count.value === null) {
-        count.value = (
-          await call(api, new GET__global_stats__user__count())
-        ).data!.count;
+    allUsers = ref<SimpleUser[] | null>(null),
+    fetchAllUsers = async () => {
+      if (!allUsers.value) {
+        allUsers.value = await globalStatsServices.getUserList();
       }
     },
-    fetchStats = async (userIds: number[], clearCacheEntry = true) => {
+    fetchCount = async () => {
+      if (count.value === null) {
+        count.value = await globalStatsServices.getUserCount();
+      }
+    },
+    fetchStats = async (userIds: number[] /*, clearCacheEntry = true*/) => {
       const missingUserIds = [...new Set(userIds)].filter(
         (userId) =>
           !Object.keys(points.value)
@@ -31,51 +48,25 @@ export const users = defineStore("users", () => {
       );
       if (!missingUserIds.length) return;
 
-      const data = (
-        await call(
-          api,
-          new GET__global_stats__user__$userIds({
-            ...(clearCacheEntry ? {} : { cache: false }),
-            params: {
-              userIds: missingUserIds
-                .sort((a, b) => Math.sign(a - b))
-                .join(","),
-            },
-          }),
-        )
-      ).data;
+      const data =
+        await globalStatsServices.getUsersPointsAndStats(missingUserIds);
       points.value = {
         ...points.value,
         ...data.points,
       };
       stats.value = {
         ...stats.value,
-        ...data.stats.reduce(
-          (acc, data) => ({
-            ...acc,
-            [data.userId]: data,
-          }),
-          {},
-        ),
+        ...data.stats,
       };
     },
     fetchBookcaseContributors = async () => {
       if (!bookcaseContributors.value) {
-        bookcaseContributors.value = (
-          await call(api, new GET__global_stats__bookcase__contributors())
-        ).data;
+        bookcaseContributors.value =
+          await globalStatsServices.getBookcaseContributors();
       }
     },
     fetchEvents = async () => {
-      events.value = (
-        await call(
-          createCachedUserApi(
-            buildWebStorage(sessionStorage),
-            import.meta.env.VITE_GATEWAY_URL,
-          ),
-          new GET__events(),
-        )
-      ).data
+      events.value = (await eventsServices.getEvents())
         .sort(({ timestamp: timestamp1 }, { timestamp: timestamp2 }) =>
           Math.sign(timestamp2 - timestamp1),
         )
@@ -83,9 +74,8 @@ export const users = defineStore("users", () => {
     };
 
   return {
-    setApi: (params: { api: typeof api }) => {
-      api = addUrlParamsRequestInterceptor(params.api);
-    },
+    allUsers,
+    fetchAllUsers,
     count,
     stats,
     points,

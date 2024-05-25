@@ -5,6 +5,7 @@
     class="edge"
     :class="{
       visible: !invisible && (imageLoaded || spriteLoaded),
+      vertical: orientation === 'vertical',
       [spriteClass]: true,
     }"
     :style="
@@ -38,7 +39,6 @@
 </template>
 
 <script setup lang="ts">
-import axios from "axios";
 const {
   id,
   issuenumber = null,
@@ -46,6 +46,7 @@ const {
   spritePath = null,
   invisible = false,
   highlighted = false,
+  orientation = "vertical",
 } = defineProps<{
   id: string;
   publicationcode: string;
@@ -54,6 +55,7 @@ const {
   spritePath: string | null;
   invisible?: boolean;
   highlighted?: boolean;
+  orientation?: "vertical" | "horizontal";
 }>();
 const emit = defineEmits<{
   (e: "loaded", ids: string[]): void;
@@ -77,7 +79,7 @@ const onImageLoad = async (event: Event) => {
     } else {
       try {
         const css = (
-          (await axios.get(`${SPRITES_ROOT}${spritePath}.css`)).data as string
+          await (await fetch(`${SPRITES_ROOT}${spritePath}.css`)).text()
         ).replaceAll(
           new RegExp("url\\('[^']+", "g"),
           `url('${SPRITES_ROOT}${spritePath}.png`,
@@ -153,12 +155,19 @@ watch($$(ignoreSprite), (value) => {
 
 .edge {
   position: relative;
-  display: inline-block;
   visibility: hidden;
   background-color: transparent;
-  margin-top: 20px;
 
-  &:not(.visible-book)::after {
+  &.visible {
+    visibility: visible;
+  }
+
+  &.vertical {
+    display: inline-block;
+    margin-top: 20px;
+  }
+
+  &.vertical:not(.visible-book)::after {
     position: absolute;
     content: "";
     top: 100%;

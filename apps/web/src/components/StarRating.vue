@@ -4,7 +4,10 @@
       v-for="index in maxRating"
       :key="index"
       @mouseover="currentRating = index"
-      @click="emit('update:rating', currentRating)"
+      @click="
+        currentRating = index;
+        emit('update:rating', currentRating);
+      "
       ><slot v-if="index <= currentRating" name="emptyStarIcon" />
       <slot v-else name="filledStarIcon"></slot>
     </span>

@@ -1,0 +1,29 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "module": "ES6",
+    "target": "esnext",
+    "lib": ["ESNext"],
+    "strict": true,
+    "jsx": "preserve",
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "noUnusedLocals": true,
+    "strictNullChecks": true,
+    "allowJs": true,
+    "forceConsistentCasingInFileNames": true,
+    "outDir": "./dist",
+    "preserveWatchOutput": true,
+    "paths": {
+      "~/*": ["*"],
+      "~dm-types/*": ["../../../packages/types/*"],
+      "~dumili-types/*": ["../types/*"],
+      "~dm-services/*": ["../../../packages/api/services/*"],
+      "~prisma-clients/*": ["../../../packages/prisma-clients/*"],
+      "~prisma/*": ["prisma/*"]
+    }
+  },
+  "include": ["index.ts", "services/**/*.ts"]
+}

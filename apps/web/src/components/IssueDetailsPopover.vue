@@ -29,12 +29,12 @@
       <div v-if="isCoverLoading" class="flex-grow-1">
         {{ $t("Chargement...") }}
       </div>
-      <template v-else-if="coverUrl">
+      <template v-else-if="fullUrl">
         <img
           :alt="issuenumber"
-          :src="coverUrl"
+          :src="fullUrl"
           class="cover"
-          @error="coverUrl = null"
+          @error="fullUrl = null"
           @click="$emit('click')"
         />
         <div>
@@ -56,7 +56,7 @@ const { issuenumber, publicationcode } = defineProps<{
 defineEmits<{ (e: "click"): void }>();
 
 let isCoverLoading = $ref(true as boolean);
-let coverUrl = $ref(null as string | null);
+let fullUrl = $ref(null as string | null);
 
 const { fetchIssueUrls, setCoverUrl } = coa();
 const { publicationNames, issueDetails, coverUrls } = storeToRefs(coa());
@@ -76,10 +76,10 @@ const loadIssueUrls = async () => {
   const possibleCoverUrl = issueDetails.value?.[issueCode]?.entries?.find(
     ({ position }) => !/^p/.test(position),
   )?.url;
-  coverUrl = possibleCoverUrl ? cloudinaryBaseUrl + possibleCoverUrl : null;
+  fullUrl = possibleCoverUrl ? cloudinaryBaseUrl + possibleCoverUrl : null;
 };
 
-watch($$(coverUrl), (value) => {
+watch($$(fullUrl), (value) => {
   if (value) {
     setCoverUrl(issuenumber, value);
   }

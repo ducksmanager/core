@@ -18,9 +18,16 @@ export default defineConfig({
   resolve: {
     alias: {
       "~/": `${path.resolve(__dirname, "src")}/`,
+      "~dm-services": path.resolve(__dirname, "../../packages/api/services"),
       "~dm-types": path.resolve(__dirname, "../../packages/types"),
-      "~axios-helper": path.resolve(__dirname, "../../packages/axios-helper"),
-      "~api-routes": path.resolve(__dirname, "../../packages/api-routes"),
+      "~socket.io-services": path.resolve(
+        __dirname,
+        "../../packages/socket.io-services",
+      ),
+      "~socket.io-client-services": path.resolve(
+        __dirname,
+        "../../packages/socket.io-client-services",
+      ),
       "~prisma-clients": path.resolve(
         __dirname,
         "../../packages/prisma-clients",
@@ -56,12 +63,7 @@ export default defineConfig({
         "vue-i18n",
       ],
       dts: true,
-      dirs: [
-        "./src/composables",
-        "./src/stores",
-        "./types",
-        "../../packages/api-routes",
-      ],
+      dirs: ["./src/composables", "./src/stores", "../../packages/types"],
       vueTemplate: true,
     }),
 
@@ -77,11 +79,6 @@ export default defineConfig({
       dts: true,
     }),
   ],
-
-  // https://github.com/vitest-dev/vitest
-  test: {
-    environment: "jsdom",
-  },
   server: {
     watch: {
       ignored: ["**/api/**", "**/.idea/**"],

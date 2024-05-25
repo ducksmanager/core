@@ -1,22 +1,25 @@
-import { AxiosInstance } from "axios";
+import CoaServices from "~dm-services/coa/types";
+import CollectionServices from "~dm-services/collection/types";
+import { authorUser } from "~prisma-clients/client_dm";
+import { EventReturnType } from "~socket.io-services/types";
 
-import {
-  GET__coa__authorsfullnames__search__$partialAuthorName,
-  GET__collection__authors__watched,
-} from "~api-routes/index";
-import { addUrlParamsRequestInterceptor, call } from "~axios-helper";
+import { dmSocketInjectionKey } from "../composables/useDmSocket";
 
-let api: AxiosInstance;
 export const stats = defineStore("stats", () => {
+  const {
+    coa: { services: coaServices },
+    collection: { services: collectionServices },
+  } = injectLocal(dmSocketInjectionKey)!;
+
   const ratings = ref(
-    undefined as GET__collection__authors__watched["resBody"] | undefined,
+    undefined as
+      | EventReturnType<CollectionServices["getWatchedAuthors"]>
+      | undefined,
   );
   const isSearching = ref(false as boolean);
   const isLoadingWatchedAuthors = ref(false as boolean);
   const authorSearchResults = ref(
-    undefined as
-      | GET__coa__authorsfullnames__search__$partialAuthorName["resBody"]
-      | undefined,
+    undefined as EventReturnType<CoaServices["searchAuthor"]> | undefined,
   );
   const pendingSearch = ref(null as string | null);
 
@@ -28,9 +31,7 @@ export const stats = defineStore("stats", () => {
   const loadRatings = async (afterUpdate = false) => {
     if (afterUpdate || (!isLoadingWatchedAuthors.value && !ratings.value)) {
       isLoadingWatchedAuthors.value = true;
-      ratings.value = (
-        await call(api, new GET__collection__authors__watched())
-      ).data;
+      ratings.value = await collectionServices.getWatchedAuthors();
       isLoadingWatchedAuthors.value = false;
     }
   };
@@ -40,16 +41,7 @@ export const stats = defineStore("stats", () => {
     if (!isSearching.value) {
       try {
         isSearching.value = true;
-        authorSearchResults.value = (
-          await call(
-            api,
-            new GET__coa__authorsfullnames__search__$partialAuthorName({
-              params: {
-                partialAuthorName: value,
-              },
-            }),
-          )
-        ).data;
+        authorSearchResults.value = await coaServices.searchAuthor(value);
         console.log(authorSearchResults.value);
       } finally {
         isSearching.value = false;
@@ -60,33 +52,19 @@ export const stats = defineStore("stats", () => {
     }
   };
 
-  const createRating = async (data: { personcode: string }) => {
-    await call(
-      api,
-      new PUT__collection__authors__watched({
-        reqBody: data,
-      }),
-    );
+  const createRating = async (personcode: string) => {
+    await collectionServices.addWatchedAuthor(personcode);
     await loadRatings(true);
   };
-  const updateRating = async (data: {
-    personcode: string;
-    notation: number;
-  }) => {
-    await call(api, new POST__collection__authors__watched({ reqBody: data }));
+  const updateRating = async (data: authorUser) => {
+    await collectionServices.updateWatchedAuthor(data);
   };
-  const deleteAuthor = async (data: { personcode: string }) => {
-    await call(
-      api,
-      new DELETE__collection__authors__watched({ reqBody: data }),
-    );
+  const deleteAuthor = async (personcode: string) => {
+    await collectionServices.deleteWatchedAuthor(personcode);
     await loadRatings(true);
   };
 
   return {
-    setApi: (params: { api: typeof api }) => {
-      api = addUrlParamsRequestInterceptor(params.api);
-    },
     isAuthorWatched,
     isSearching,
     ratings,

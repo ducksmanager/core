@@ -79,11 +79,11 @@
 </template>
 
 <script setup lang="ts">
-import { SimpleUserWithQuickStats } from "~dm-types/SimpleUserWithQuickStats";
+import { QuickStatsPerUser } from "~dm-types/QuickStatsPerUser";
 
 defineProps<{
   points: { [contribution: string]: number };
-  stats: SimpleUserWithQuickStats;
+  stats: QuickStatsPerUser[0];
   showOkForExchanges?: boolean;
 }>();
 const { t: $t } = useI18n();

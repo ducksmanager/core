@@ -95,11 +95,11 @@
 </template>
 
 <script setup lang="ts">
-import { IssueWithPublicationcode } from "~dm-types/IssueWithPublicationcode";
+import { issueWithPublicationcode } from "~prisma-clients/extended/dm.extends";
 
 const { selectedIssueIdsByIssuenumber } = defineProps<{
   selectedIssueIdsByIssuenumber: {
-    [issuenumber: string]: IssueWithPublicationcode[];
+    [issuenumber: string]: issueWithPublicationcode[];
   };
   publicationcode: string;
 }>();

@@ -36,12 +36,7 @@ meta:
           :placeholder="$t('Mot de passe')"
         />
 
-        <b-button
-          variant="primary"
-          size="lg"
-          type="submit"
-          :disabled="!csrfToken"
-        >
+        <b-button variant="primary" size="lg" type="submit">
           {{ $t("Connexion") }}
         </b-button>
         <div>
@@ -55,10 +50,9 @@ meta:
 </template>
 
 <script setup lang="ts">
-import axios from "axios";
 import Cookies from "js-cookie";
 
-import { call } from "~axios-helper";
+import { dmSocketInjectionKey } from "../composables/useDmSocket";
 
 const { login: userLogin, loadUser } = collection();
 const { user } = storeToRefs(collection());
@@ -66,10 +60,13 @@ const { user } = storeToRefs(collection());
 let router = useRouter();
 let route = useRoute();
 
-let csrfToken = $ref(null as string | null);
 let username = $ref("" as string);
 let error = $ref(null as string | null);
 let password = $ref("" as string);
+
+const {
+  collection: { socket: collectionSocket },
+} = injectLocal(dmSocketInjectionKey)!;
 
 const login = async () => {
   await userLogin(
@@ -80,10 +77,11 @@ const login = async () => {
       Cookies.set("token", newToken, {
         domain,
       });
+      collectionSocket.connect();
       await loadUser();
     },
     (e) => {
-      error = e.message;
+      error = e;
     },
   );
 };
@@ -95,14 +93,10 @@ watch(
       if (route.query.redirect) {
         window.location.href = route.query.redirect as string;
       } else {
-        await router.push("/collection");
+        router.push("/collection");
       }
     }
   },
   { immediate: true },
 );
-
-(async () => {
-  csrfToken = (await call(axios, new GET__csrf())).data?.csrfToken;
-})();
 </script>

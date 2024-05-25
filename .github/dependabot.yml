@@ -9,14 +9,6 @@ updates:
     schedule:
       interval: "daily"
   - package-ecosystem: "npm"
-    directory: "/packages/api-routes"
-    schedule:
-      interval: "daily"
-  - package-ecosystem: "npm"
-    directory: "/packages/axios-helper"
-    schedule:
-      interval: "daily"
-  - package-ecosystem: "npm"
     directory: "/packages/prisma-clients"
     schedule:
       interval: "daily"
