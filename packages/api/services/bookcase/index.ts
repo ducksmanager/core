@@ -35,37 +35,33 @@ export default (io: Server) => {
         : "numeros.issuecode";
       callback({
         edges: (
-          (await prismaDm.$queryRawUnsafe(`
-                  SELECT numeros.ID                                                AS id,
-                         numeros.Pays                                              AS countryCode,
-                         numeros.Magazine                                          AS magazineCode,
-                         CONCAT(numeros.Pays,'/',numeros.Magazine)                 AS publicationcode,
-                         numeros.Numero                                            AS issuenumber,
-                         IFNULL(reference.NumeroReference, numeros.Numero_nospace) AS issuenumberReference,
-                         tp.ID                                                     AS edgeId,
-                         tp.DateAjout                                              AS creationDate,
-                         IF(tp.ID IS NULL, '', GROUP_CONCAT(
-                                 IF(sprites.Sprite_name is null, '',
-                                    JSON_OBJECT('name', sprites.Sprite_name, 'version', sprites.Version, 'size',
-                                                sprites.Sprite_size))
-                                 ORDER BY sprites.Sprite_size ASC
-                             ))                                                    AS sprites
-                  FROM numeros
-                           LEFT JOIN tranches_doublons reference
-                                     ON numeros.Pays = reference.Pays
-                                         AND numeros.Magazine = reference.Magazine
-                                         AND numeros.Numero_nospace = reference.Numero
-                           LEFT JOIN tranches_pretes tp
-                                     ON CONCAT(numeros.Pays, '/', numeros.Magazine) = tp.publicationcode
-                                         AND IFNULL(reference.NumeroReference, numeros.Numero_nospace) = tp.issuenumber
-                           LEFT JOIN (SELECT sprites.ID_Tranche, sprites.sprite_name, sprites.Sprite_size, sprite_urls.Version
-                                      FROM tranches_pretes_sprites sprites
-                                               INNER JOIN tranches_pretes_sprites_urls sprite_urls
-                                                          ON sprites.Sprite_name = sprite_urls.Sprite_name) AS sprites
-                                     ON sprites.ID_Tranche = tp.ID
-                  WHERE ID_Utilisateur = ${user.id}
-                  GROUP BY ${groupBy}
-              `)) as BookcaseEdgeRaw[]
+          (await prismaDm.$queryRaw`
+            SELECT issue.ID AS id,
+              issue.Pays AS countryCode,
+              issue.Magazine AS magazineCode,
+              CONCAT(issue.Pays, '/', issue.Magazine) AS publicationcode,
+              issue.Numero AS issuenumber,
+              IFNULL(edgeDuplicate.NumeroReference, issue.Numero_nospace) AS issuenumberReference,
+              edge.ID AS edgeId,
+              edge.DateAjout AS creationDate,
+              IF(edge.ID IS NULL, '', GROUP_CONCAT(
+                IF(edgeSprite.Sprite_name IS NULL, '',
+                  JSON_OBJECT('name', edgeSprite.Sprite_name, 'version', edgeSpriteUrl.Version, 'size', edgeSprite.Sprite_size))
+                ORDER BY edgeSprite.Sprite_size ASC)) AS sprites
+            FROM numeros issue
+            LEFT JOIN tranches_doublons edgeDuplicate
+              ON issue.Pays = edgeDuplicate.Pays
+                AND issue.Magazine = edgeDuplicate.Magazine
+                AND issue.Numero_nospace = edgeDuplicate.Numero
+            LEFT JOIN tranches_pretes edge
+              ON issue.issuecode = edge.issuecode
+            LEFT JOIN tranches_pretes_sprites edgeSprite
+              ON edgeSprite.ID_Tranche = edge.ID
+            LEFT JOIN tranches_pretes_sprites_urls edgeSpriteUrl
+              ON edgeSprite.Sprite_name = edgeSpriteUrl.Sprite_name
+            WHERE ID_Utilisateur = ${user.id}
+            GROUP BY ${groupBy}
+          `) as BookcaseEdgeRaw[]
         ).map(mapEdges),
       });
     });
