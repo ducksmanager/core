@@ -23,7 +23,7 @@ export const wtdcollection = defineStore('wtdcollection', () => {
   const usersStore = webStores.users();
   const { quotedIssues, quotationSum } = webComposables.useCollection(issues);
 
-  const isDataLoaded = ref(false);
+  const isPersistedDataLoaded = ref(false);
 
   const {
     findInCollection,
@@ -76,10 +76,10 @@ export const wtdcollection = defineStore('wtdcollection', () => {
       );
 
   usePersistedData({ user, issues }).then(() => {
-    isDataLoaded.value = true;
+    isPersistedDataLoaded.value = true;
   });
   return {
-    isDataLoaded,
+    isPersistedDataLoaded,
     issues,
     fetchAndTrackCollection,
     fetchIssueCounts,

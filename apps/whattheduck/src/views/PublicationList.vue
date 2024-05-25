@@ -1,22 +1,27 @@
 <template>
   <List
-    v-if="totalPerPublication && allIssueCounts"
+    v-if="totalPerPublication && allIssueCounts && ownershipPercentages"
     :items="sortedItems"
     :get-target-route-fn="getTargetUrlFn"
     :get-item-text-fn="getItemTextFn"
   >
-    <template #fill-bar="{ item }" v-if="ownershipPercentages">
-      <ion-progress-bar :value="ownershipPercentages[item.publicationcode].ownershipPercentage || 0" />
+    <template #fill-bar="{ item }">
+      <ion-progress-bar
+        v-if="ownershipPercentages[item.publicationcode]"
+        :value="ownershipPercentages[item.publicationcode].ownershipPercentage || 0"
+      />
     </template>
     <template #row-label="{ item }">
       <Publication :key="item.publicationcode" :label="item.publicationname" />
     </template>
-    <template #row-suffix="{ item }" v-if="ownershipPercentages">
-      {{
-        ownershipPercentages[item.publicationcode]
-          ? getOwnershipText(ownershipPercentages[item.publicationcode], false)
-          : ''
-      }}
+    <template #row-suffix="{ item }">
+      <template v-if="ownershipPercentages[item.publicationcode]">
+        {{
+          ownershipPercentages[item.publicationcode]
+            ? getOwnershipText(ownershipPercentages[item.publicationcode], false)
+            : ''
+        }}</template
+      >
     </template>
   </List>
 </template>

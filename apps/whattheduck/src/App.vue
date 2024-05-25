@@ -54,20 +54,28 @@ const dmSocket = useDmSocket(injectLocal('dmSocket')!, {
 provideLocal(dmSocketInjectionKey, dmSocket);
 
 const appStore = app();
-const { isOfflineMode, token, isDataLoaded, socketCache } = storeToRefs(appStore);
+const { isOfflineMode, token, socketCache } = storeToRefs(appStore);
 
 const collectionStore = wtdcollection();
 const { fetchAndTrackCollection } = collectionStore;
+const { issues, purchases } = storeToRefs(collectionStore);
 const route = useRoute();
 const router = useRouter();
 
-const isReady = computed(() => isDataLoaded.value && collectionStore.isDataLoaded);
+const isReady = computed(() => appStore.isPersistedDataLoaded && collectionStore.isPersistedDataLoaded);
+const isCollectionLoaded = computed(() => issues.value && purchases.value);
 
 const routeMeta = computed(() => route.meta as RouteMeta);
 
+watch(isCollectionLoaded, (value) => {
+  if (value && route.path === '/login') {
+    router.push('/collection');
+  }
+});
+
 watch(
   [isReady, token],
-  () => {
+  async () => {
     if (isReady.value) {
       switch (token.value) {
         case undefined:
@@ -79,11 +87,7 @@ watch(
           }
           break;
         default:
-          fetchAndTrackCollection().then(() => {
-            if (route.path === '/login') {
-              router.push('/collection');
-            }
-          });
+          await fetchAndTrackCollection();
       }
     }
   },

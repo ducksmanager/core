@@ -33,6 +33,7 @@ defineSlots<{
 ion-item {
   --padding-start: 0;
   ion-label {
+    margin: 0 !important;
     &:first-of-type {
       padding-left: 1rem;
     }

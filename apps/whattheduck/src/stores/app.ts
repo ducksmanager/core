@@ -21,7 +21,7 @@ export const app = defineStore('app', () => {
   const lastSync = ref<Date>();
   const token = ref<string | null>(); // undefined === we haven't checked whether there is a token ; null === we have checked and there is no token
   const socketCache = ref<Record<string, NotEmptyStorageValue>>({});
-  const isDataLoaded = ref(false);
+  const isPersistedDataLoaded = ref(false);
 
   watch(token, () => {
     collectionSocket.disconnect();
@@ -55,12 +55,12 @@ export const app = defineStore('app', () => {
     socketCache,
   }).then(() => {
     console.log('token: ', JSON.stringify({ token: token.value }));
-    isDataLoaded.value = true;
+    isPersistedDataLoaded.value = true;
   });
 
   return {
     coaSocket,
-    isDataLoaded,
+    isPersistedDataLoaded,
     socketCache,
     lastSync,
     currentNavigationItem: computed(

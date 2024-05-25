@@ -34,6 +34,7 @@
       </ion-col>
       <ion-col size="8" class="ion-padding ion-text-right">
         <checkbox-group-with-radio-behavior
+          v-if="purchasesIncludingNone"
           class="ion-text-right ion-padding-bottom vertical"
           label-placement="start"
           justify="end"
@@ -68,18 +69,20 @@ const issue = defineModel<SingleCopyState>({
 const { conditionsWithoutMissing } = useCondition();
 const collectionStore = wtdcollection();
 
-const purchases = computed(() => collectionStore.purchases);
-
-const purchasesIncludingNone = computed(() => [
-  {
-    id: null,
-    dateAndDescription: [t("Pas de date d'achat")],
-  },
-  ...purchases.value!.map(({ id, date, description }) => ({
-    id,
-    dateAndDescription: [date.toLocaleDateString(), description],
-  })),
-]);
+const purchasesIncludingNone = computed(() =>
+  collectionStore.purchases
+    ? [
+        {
+          id: null,
+          dateAndDescription: [t("Pas de date d'achat")],
+        },
+        ...collectionStore.purchases.map(({ id, date, description }) => ({
+          id,
+          dateAndDescription: [date.toLocaleDateString(), description],
+        })),
+      ]
+    : null,
+);
 
 const selectedPurchase = ref(null as purchase | null);
 

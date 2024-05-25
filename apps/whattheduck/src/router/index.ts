@@ -26,7 +26,7 @@ export type RouteMeta = {
 const routes: RouteRecordRaw[] = [
   {
     name: 'OwnedIssueCopiesModal',
-    path: '/collection/:publicationcode([^/]+/[^/]+)/:issuenumber',
+    path: '/collection/:publicationcode*/:issuenumber',
     component: OwnedIssueCopiesModal,
     children: [
       {

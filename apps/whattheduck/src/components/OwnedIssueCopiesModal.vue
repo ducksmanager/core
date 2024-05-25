@@ -6,7 +6,7 @@
       </ion-buttons>
       <ion-title
         ><ion-row class="ion-align-items-center ion-justify-content-center"
-          ><ion-col size="2"><ion-img :src="coverUrl" /></ion-col
+          ><ion-col size="2"><ion-img v-if="fullUrl" :src="coverUrl" /></ion-col
           ><ion-col size="8"
             ><FullIssue
               :issue="{
@@ -21,43 +21,33 @@
     </ion-toolbar>
   </ion-header>
   <ion-content class="ion-padding">
-    <ion-segment v-model="currentCopyIndex">
-      <ion-segment-button v-for="(_, idx) of copies" :id="idx" :value="idx">
-        <ion-label>{{ t('Exemplaire {index}', { index: idx + 1 }) }}</ion-label>
-        <ion-icon
-          :ios="closeOutline"
-          :android="closeSharp"
-          color="danger"
-          size="small"
-          style="pointer-events: all"
-          class="delete no-padding"
-          @click.stop.prevent="
-            copies.splice(idx, 1);
-            currentCopyIndex = idx - 1 < 0 ? undefined : idx - 1;
-          "
-        />
+    <ion-segment :value="currentCopyIndex">
+      <ion-segment-button v-for="(_, idx) in 3" :id="idx" :value="idx">
+        <template v-if="copies[idx]">
+          <ion-label
+            ><Condition :value="copies[idx].condition" /> {{ t('Exemplaire {index}', { index: idx + 1 }) }}</ion-label
+          >
+          <ion-icon
+            :ios="closeOutline"
+            :android="closeSharp"
+            color="danger"
+            size="small"
+            style="pointer-events: all"
+            class="delete no-padding"
+            @click.stop.prevent="
+              copies.splice(idx, 1);
+              currentCopyIndex = idx - 1 < 0 ? undefined : idx - 1;
+            "
+        /></template>
       </ion-segment-button>
       <ion-button
-        :style="{ gridColumn: copies.length ? 3 : 0 }"
+        if="add-button"
+        :style="{ gridColumn: copies.length + 1 }"
         size="small"
         v-if="copies.length <= 2"
-        @click="
-          copies = [
-            ...copies,
-            {
-              id: null,
-              condition: 'indefini',
-              purchaseId: null,
-              isToRead: false,
-              isOnSale: false,
-            },
-          ];
-          currentCopyIndex = copies.length - 1;
-        "
+        @click="addCopy"
       >
-        <ion-icon :ios="addOutline" :android="addSharp" />&nbsp;<template v-if="!copies.length">{{
-          t('Ajouter un exemplaire')
-        }}</template>
+        <ion-icon :ios="addOutline" :android="addSharp" />&nbsp;{{ t('Ajouter un exemplaire') }}
       </ion-button>
     </ion-segment>
     <owned-issue-copy v-if="currentCopyIndex !== undefined" v-model="copies[currentCopyIndex]" />
@@ -72,16 +62,26 @@ import type { SingleCopyState } from '~dm-types/CollectionUpdate';
 import FullIssue from '../components/FullIssue.vue';
 
 import { wtdcollection } from '~/stores/wtdcollection';
+import Condition from './Condition.vue';
 
 const collectionStore = wtdcollection();
 const coaStore = coa();
 
-const props = defineProps<{
-  publicationcode: string;
-  issuenumber: string;
-  fullUrl: string;
-}>();
-const { publicationcode, issuenumber, fullUrl } = toRefs(props);
+const route = useRoute();
+
+const publicationcode = computed(() => (route.params.publicationcode as string[]).join(''));
+const issuenumber = computed(() => route.params.issuenumber as string);
+const fullUrl = ref<string>();
+
+watch(
+  issuenumber,
+  async () => {
+    const covers = await coaStore.fetchCoverUrls(publicationcode.value);
+    fullUrl.value = covers.covers[issuenumber.value].fullUrl;
+  },
+  { immediate: true },
+);
+
 const router = useRouter();
 
 const emit = defineEmits<{
@@ -99,7 +99,20 @@ const issuecode = computed(() => `${publicationcode.value} ${issuenumber.value}`
 const publicationName = computed(() => coaStore.publicationNames[publicationcode.value]);
 const copies = ref<SingleCopyState[]>(collectionStore.issuesByIssueCode?.[issuecode.value!] || []);
 
-const currentCopyIndex = ref<number | undefined>(undefined);
+const currentCopyIndex = ref<number | undefined>(copies.value.length ? 0 : undefined);
+
+const addCopy = () => {
+  copies.value.push({
+    id: null,
+    condition: 'indefini',
+    purchaseId: null,
+    isToRead: false,
+    isOnSale: false,
+  });
+  nextTick().then(() => {
+    currentCopyIndex.value = copies.value.length - 1;
+  });
+};
 
 const cancel = () => modalController.dismiss(null, 'cancel');
 const submitIssueCopies = async () => {
@@ -118,6 +131,13 @@ const submitIssueCopies = async () => {
 </script>
 
 <style scoped lang="scss">
+ion-segment {
+  ion-label,
+  ion-icon {
+    margin: 0 !important;
+  }
+}
+
 ion-img {
   height: 50px;
 }

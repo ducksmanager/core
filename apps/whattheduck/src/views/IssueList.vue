@@ -93,7 +93,7 @@ const hasCoaData = computed(() => !!coaStore.issuesWithTitles?.[publicationcode.
 
 const getTargetUrlFn = (key: string) => ({
   name: 'OwnedIssueCopiesModal',
-  params: key.match(coaStore.ISSUECODE_REGEX)!.groups,
+  params: `${publicationcode.value} ${key}`.match(coaStore.ISSUECODE_REGEX)!.groups,
 });
 
 const publicationcode = computed(() => `${route.params.publicationcode}`);
