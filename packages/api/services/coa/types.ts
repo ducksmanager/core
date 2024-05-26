@@ -86,8 +86,9 @@ export default abstract class {
   abstract getFullPublicationList: (
     callback: (value: Record<string, string>) => void,
   ) => void;
-  abstract getPublicationListFromCountrycode: (
-    countrycode: string,
+
+  abstract getPublicationListFromCountrycodes: (
+    countrycodes: string[],
     callback: (value: Record<string, string>) => void,
   ) => void;
   abstract getPublicationListFromPublicationcodeList: (

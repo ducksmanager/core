@@ -55,7 +55,13 @@
         @open-book="
           $emit('open-book', sortedBookcaseWithPopularity![edgeIndex])
         "
-      />
+        ><template #edge-prefix="{ edge }"
+          ><slot
+            name="edge-prefix"
+            :edge="{
+              issueCondition: edge.issueCondition!,
+            }" /></template
+      ></Edge>
     </template>
   </div>
 </template>
@@ -64,44 +70,49 @@
 import { BookcaseEdgeWithPopularity } from "../stores/bookcase";
 import { images } from "../stores/images";
 
-const {
-  bookcaseTextures,
-  sortedBookcase,
-  embedded,
-  currentEdgeHighlighted,
-  currentEdgeOpened,
-  edgesUsingSprites,
-  orientation,
-} = toRefs(
-  withDefaults(
-    defineProps<
-      {
-        bookcaseTextures: { bookshelf: string; bookcase: string };
-        currentEdgeHighlighted?: number | null;
-        currentEdgeOpened?: BookcaseEdgeWithPopularity | null;
-        edgesUsingSprites?: { [edgeId: number]: string };
-        orientation?: "vertical" | "horizontal";
-      } & (
-        | {
-            embedded?: true;
-            sortedBookcase:
-              | { publicationcode: string; issuenumber: string }[]
-              | null;
-          }
-        | {
-            embedded?: false;
-            sortedBookcase: BookcaseEdgeWithPopularity[] | null;
-          }
-      )
-    >(),
-    {
-      embedded: false,
-      currentEdgeHighlighted: null,
-      currentEdgeOpened: null,
-      orientation: "vertical",
-    },
-  ),
+const props = defineProps<
+  {
+    bookcaseTextures: { bookshelf: string; bookcase: string };
+    currentEdgeHighlighted?: number | null;
+    currentEdgeOpened?: BookcaseEdgeWithPopularity | null;
+    edgesUsingSprites?: { [edgeId: number]: string };
+    orientation?: "vertical" | "horizontal";
+  } & (
+    | {
+        embedded?: true;
+        sortedBookcase:
+          | { publicationcode: string; issuenumber: string }[]
+          | null;
+      }
+    | {
+        embedded?: false;
+        sortedBookcase: BookcaseEdgeWithPopularity[] | null;
+      }
+  )
+>();
+
+const { bookcaseTextures, sortedBookcase, edgesUsingSprites } = toRefs(props);
+
+const embedded = computed(() =>
+  props.embedded !== undefined ? props.embedded : false,
 );
+const currentEdgeHighlighted = computed(() =>
+  props.currentEdgeHighlighted !== undefined
+    ? props.currentEdgeHighlighted
+    : null,
+);
+const currentEdgeOpened = computed(() =>
+  props.currentEdgeOpened !== undefined ? props.currentEdgeOpened : null,
+);
+const orientation = computed(() =>
+  props.orientation !== undefined ? props.orientation : "vertical",
+);
+
+defineSlots<{
+  "edge-prefix"(props: {
+    edge: Pick<BookcaseEdgeWithPopularity, "issueCondition">;
+  }): never;
+}>();
 
 const sortedBookcaseWithPopularity = computed(() =>
   embedded ? undefined : (sortedBookcase.value as BookcaseEdgeWithPopularity[]),

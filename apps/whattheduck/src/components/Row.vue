@@ -32,7 +32,15 @@ defineSlots<{
 
 ion-item {
   --padding-start: 0;
+  height: 32px;
+  font-size: 0.8rem;
+
+  &::part(native) {
+    --min-height: 32px;
+    // height: 32px;
+  }
   ion-label {
+    display: flex !important;
     margin: 0 !important;
     &:first-of-type {
       padding-left: 1rem;

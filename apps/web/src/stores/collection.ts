@@ -187,6 +187,7 @@ export const collection = defineStore("collection", () => {
         issueCounts.value =
           await collectionServices.getCoaCountByPublicationcode();
     },
+    fetchPublicationNames = () => collectionServices.getPublicationTitles(),
     issueCountsPerCountry = computed(
       () =>
         issueCounts.value &&
@@ -386,6 +387,7 @@ export const collection = defineStore("collection", () => {
     createPurchase,
     deletePurchase,
     fetchIssueCounts,
+    fetchPublicationNames,
     hasRole,
     hasSuggestions,
     isLoadingUser,

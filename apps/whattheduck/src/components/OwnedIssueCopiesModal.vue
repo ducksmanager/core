@@ -61,15 +61,16 @@ import type { SingleCopyState } from '~dm-types/CollectionUpdate';
 
 import FullIssue from '../components/FullIssue.vue';
 
-import { wtdcollection } from '~/stores/wtdcollection';
 import Condition from './Condition.vue';
+
+import { wtdcollection } from '~/stores/wtdcollection';
 
 const collectionStore = wtdcollection();
 const coaStore = coa();
 
 const route = useRoute();
 
-const publicationcode = computed(() => (route.params.publicationcode as string[]).join(''));
+const publicationcode = computed(() => `${route.params.countrycode}/${route.params.magazinecode}`);
 const issuenumber = computed(() => route.params.issuenumber as string);
 const fullUrl = ref<string>();
 

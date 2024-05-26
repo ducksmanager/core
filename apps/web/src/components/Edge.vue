@@ -1,4 +1,9 @@
 <template>
+  <slot
+    v-if="$slots['edge-prefix']"
+    name="edge-prefix"
+    :edge="{ issueCondition: issueCondition! }"
+  />
   <EdgeContents
     v-if="embedded"
     :id="id"
@@ -42,12 +47,15 @@
 </template>
 
 <script setup lang="ts">
+import { issue_condition } from "~prisma-clients/client_dm";
+
 const SPRITES_ROOT = "https://res.cloudinary.com/dl7hskxab/image/sprite/";
 const {
   creationDate = null,
   issuenumber,
   issuenumberReference = null,
   publicationcode,
+  issueCondition,
   spritePath = null,
   popularity = null,
   invisible = false,
@@ -59,6 +67,7 @@ const {
   publicationcode: string;
   issuenumber: string;
   issuenumberReference?: string;
+  issueCondition?: issue_condition;
   creationDate?: string;
   popularity?: number | null;
   spritePath?: string | null;
@@ -70,6 +79,10 @@ const {
 }>();
 
 defineEmits<{ (e: "loaded"): void; (e: "open-book"): void }>();
+
+defineSlots<{
+  "edge-prefix"(props: { edge: { issueCondition: issue_condition } }): never;
+}>();
 
 const CLOUDINARY_ROTATED_URL =
   "https://res.cloudinary.com/dl7hskxab/image/upload/a_270/edges/";

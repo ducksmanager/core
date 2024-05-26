@@ -1,12 +1,17 @@
 import type { Socket } from "socket.io";
 
-import { prismaCoa } from "~prisma-clients";
+import type { client_coa} from "~prisma-clients";
+import {prismaCoa } from "~prisma-clients";
 
 import type Events from "../types";
 
 export default (socket: Socket<Events>) => {
-  socket.on("getPublicationListFromCountrycode", (countrycode, callback) =>
-    getPublicationTitles({ startsWith: `${countrycode}/` }).then(callback),
+  socket.on("getPublicationListFromCountrycodes", (countrycodes, callback) =>
+    getPublicationTitles({
+      OR: countrycodes.map((countrycode) => ({
+        publicationcode: { startsWith: `${countrycode}/` },
+      })),
+    }).then(callback),
   );
   socket.on("getFullPublicationList", (callback) =>
     getPublicationTitles().then(callback),
@@ -15,21 +20,19 @@ export default (socket: Socket<Events>) => {
     "getPublicationListFromPublicationcodeList",
     (publicationCodes, callback) =>
       getPublicationTitles(
-        publicationCodes.length ? { in: publicationCodes } : {},
+        publicationCodes.length
+          ? { publicationcode: { in: publicationCodes } }
+          : {},
       ).then(callback),
   );
 };
 
-export const getPublicationTitles = async (filter?: {
-  [operator: string]: string | string[];
-}): Promise<Record<string, string>> =>
+export const getPublicationTitles = async (
+  filter?: client_coa.Prisma.inducks_publicationWhereInput,
+): Promise<Record<string, string>> =>
   prismaCoa.inducks_publication
     .findMany({
-      where: filter
-        ? {
-            publicationcode: filter,
-          }
-        : undefined,
+      where: filter,
     })
     .then((results) =>
       results.reduce(

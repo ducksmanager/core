@@ -162,6 +162,7 @@ export const getSuggestions = async (
             : "1=1"
         })
       ORDER BY ID_User, ${sort} DESC, publicationcode, issuenumber
+      LIMIT 50
   `);
 
   if (!suggestions.length) {
@@ -266,11 +267,13 @@ export const getSuggestions = async (
   }
 
   const publicationTitles = await getPublicationTitles({
-    in: [
-      ...new Set(
-        referencedIssues.map(({ publicationcode }) => publicationcode),
-      ),
-    ],
+    publicationcode: {
+      in: [
+        ...new Set(
+          referencedIssues.map(({ publicationcode }) => publicationcode),
+        ),
+      ],
+    },
   });
 
   return { suggestionsPerUser, authors, storyDetails, publicationTitles };

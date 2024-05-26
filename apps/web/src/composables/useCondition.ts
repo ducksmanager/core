@@ -71,11 +71,11 @@ export default () => {
     conditions,
 
     conditionsWithoutMissing: computed(
-      () => conditions.filter(({ dbValue }) => dbValue) as Condition<false>[]
+      () => conditions.filter(({ dbValue }) => dbValue) as Condition<false>[],
     ),
     getConditionLabel: (givenDbValue: string) =>
       conditions.find(
-        ({ dbValue }) => givenDbValue.toUpperCase() === dbValue?.toUpperCase()
+        ({ dbValue }) => givenDbValue.toUpperCase() === dbValue?.toUpperCase(),
       )?.label || conditions.find(({ dbValue }) => dbValue === null)!.label,
   };
 };

@@ -3,7 +3,13 @@ import { FilePicker } from '@capawesome/capacitor-file-picker';
 import { toastController } from '@ionic/vue';
 import type { Router } from 'vue-router';
 
-export default (router: Router, coverIdServices: ReturnType<typeof useDmSocket>['coverId']['services']) => {
+export default (
+  router: Router,
+  coverIdServices: ReturnType<typeof useDmSocket>['coverId']['services'],
+): {
+  pickCoverFile: () => Promise<void>;
+  takePhoto: () => Promise<void>;
+} => {
   const { t } = useI18n();
   const searchCoverFromBase64String = async (base64: string, origin: 'pickCoverFile' | 'takePhoto') =>
     coverIdServices.searchFromCover({ base64 }).then(async (results) => {
@@ -30,7 +36,7 @@ export default (router: Router, coverIdServices: ReturnType<typeof useDmSocket>[
       if (coverFile.files.length) {
         const reader = new FileReader();
         reader.onload = function (event) {
-          searchCoverFromBase64String(event.target!.result?.toString()!, 'pickCoverFile');
+          searchCoverFromBase64String(event.target!.result!.toString()!, 'pickCoverFile');
         };
         reader.readAsDataURL(coverFile.files[0].blob!);
       }

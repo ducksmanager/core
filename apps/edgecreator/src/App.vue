@@ -6,7 +6,8 @@
 import { provideLocal } from "@vueuse/core";
 import Cookies from "js-cookie";
 
-import { buildWebStorage, useSocket } from "~socket.io-client-services/index";
+import type { useSocket } from "~socket.io-client-services/index";
+import { buildWebStorage } from "~socket.io-client-services/index";
 import { stores as webStores } from "~web";
 import useDmSocket, {
   dmSocketInjectionKey,
@@ -33,7 +34,7 @@ const onConnectError = (e: Error) => {
     location.replace(
       `${import.meta.env.VITE_DM_URL as string}/login?redirect=${
         window.location.href
-      }`
+      }`,
     );
   }
 };
@@ -45,8 +46,8 @@ provideLocal(
     {
       session,
       onConnectError,
-    }
-  )
+    },
+  ),
 );
 
 const dmSocket = useDmSocket(
@@ -55,7 +56,7 @@ const dmSocket = useDmSocket(
     cacheStorage: buildWebStorage(sessionStorage),
     session,
     onConnectError,
-  }
+  },
 );
 
 provideLocal(dmSocketInjectionKey, dmSocket);
@@ -76,7 +77,7 @@ watch(
           !userPermissions.value?.some(
             ({ privilege, role }) =>
               role === "EdgeCreator" &&
-              ["Edition", "Admin"].includes(privilege as string)
+              ["Edition", "Admin"].includes(privilege as string),
           )
         ) {
           location.replace("/");
@@ -84,7 +85,7 @@ watch(
       }
     }
   },
-  { immediate: true }
+  { immediate: true },
 );
 </script>
 

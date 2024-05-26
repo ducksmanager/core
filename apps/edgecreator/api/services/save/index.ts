@@ -1,3 +1,4 @@
+import { exec } from "child_process";
 import { mkdirSync, unlinkSync, writeFileSync } from "fs";
 import path from "path";
 import type { Namespace } from "socket.io";
@@ -10,12 +11,11 @@ import type { ExportPaths } from "~types/ExportPaths";
 
 import type Events from "./types";
 import { namespaceEndpoint } from "./types";
-import { exec } from "child_process";
 
 const socket = useSocket(process.env.DM_SOCKET_URL!);
 const { services: edgeCreatorServices } =
   socket.addNamespace<EdgeCreatorServices>(
-    EdgeCreatorServices.namespaceEndpoint
+    EdgeCreatorServices.namespaceEndpoint,
   );
 export default (io: Server) => {
   (io.of(namespaceEndpoint) as Namespace<Events>).on("connection", (socket) => {

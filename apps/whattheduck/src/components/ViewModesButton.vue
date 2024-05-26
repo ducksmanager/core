@@ -52,7 +52,7 @@ ion-fab {
 }
 
 ion-icon.indicator {
-  background-color: red;
+  background-color: darkgray;
   border-radius: 1rem;
   position: absolute;
   bottom: 0;

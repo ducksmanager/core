@@ -15,7 +15,7 @@ const defaultExport = (
       clearSession: () => void;
       sessionExists: () => Promise<boolean>;
     };
-  }
+  },
 ) => {
   const { addNamespace } = socket;
 
@@ -25,7 +25,7 @@ const defaultExport = (
     options,
     imageInfo: addNamespace<ImageInfoServices>(
       ImageInfoServices.namespaceEndpoint,
-      { session, onConnectError }
+      { session, onConnectError },
     ),
     browse: addNamespace<BrowseServices>(BrowseServices.namespaceEndpoint, {
       session,

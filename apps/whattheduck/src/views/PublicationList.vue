@@ -34,8 +34,9 @@ import { app } from '~/stores/app';
 import { wtdcollection } from '~/stores/wtdcollection';
 
 const { issueCounts, totalPerPublication, ownedPublications } = storeToRefs(wtdcollection());
+const { fetchPublicationNamesFromCountry } = stores.coa();
 const { publicationNames } = storeToRefs(stores.coa());
-const appStore = app();
+const { isCoaView } = storeToRefs(app());
 
 const getIssueCountPerMagazinecode = (issueCountPerPublicationcode: Record<string, number>) =>
   Object.entries(issueCountPerPublicationcode)
@@ -62,7 +63,7 @@ const getTargetUrlFn = (key: string) => ({
 
 const items = computed(() =>
   publicationNames.value
-    ? appStore.isCoaView
+    ? isCoaView.value
       ? Object.entries(publicationNames.value)
           .filter(([publicationcode]) => new RegExp(`^${route.params.countrycode}/`).test(publicationcode))
           .map(([publicationcode, publicationname]) => ({
@@ -88,5 +89,15 @@ const sortedItems = computed(() =>
   [...items.value].sort(({ item: { publicationname: text1 } }, { item: { publicationname: text2 } }) =>
     text1.toLowerCase().localeCompare(text2.toLowerCase()),
   ),
+);
+
+watch(
+  isCoaView,
+  async () => {
+    if (isCoaView.value) {
+      await fetchPublicationNamesFromCountry(route.params.countrycode as string);
+    }
+  },
+  { immediate: true },
 );
 </script>

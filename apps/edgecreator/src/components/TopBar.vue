@@ -145,21 +145,21 @@
                 <li>
                   {{
                     $t(
-                      "If you want your changes to be applied to a single edge, click on its issue number."
+                      "If you want your changes to be applied to a single edge, click on its issue number.",
                     )
                   }}
                 </li>
                 <li>
                   {{
                     $t(
-                      "If you want to add an edge to the list of edges to apply changes on, click on its issue number while maintaining the Shift key pressed."
+                      "If you want to add an edge to the list of edges to apply changes on, click on its issue number while maintaining the Shift key pressed.",
                     )
                   }}
                 </li>
                 <li>
                   {{
                     $t(
-                      "If you want to apply your changes to all the edges at the same time, double-click on any issue number."
+                      "If you want to apply your changes to all the edges at the same time, double-click on any issue number.",
                     )
                   }}
                 </li>
@@ -297,18 +297,18 @@ const publicationName = computed(
   () =>
     webStores.coa().publicationNames[
       `${mainStore.country!}/${mainStore.magazine!}`
-    ]
+    ],
 );
 const uniqueDimensions = computed(() =>
   [
     ...new Set(
-      Object.values(props.dimensions).map((item) => JSON.stringify(item))
+      Object.values(props.dimensions).map((item) => JSON.stringify(item)),
     ),
-  ].map((item) => JSON.parse(item) as { width: number; height: number })
+  ].map((item) => JSON.parse(item) as { width: number; height: number }),
 );
 
 const isEditingMultiple = computed(
-  () => mainStore.isRange || mainStore.issuenumbers.length > 1
+  () => mainStore.isRange || mainStore.issuenumbers.length > 1,
 );
 
 const addPhoto = (src: string) => {

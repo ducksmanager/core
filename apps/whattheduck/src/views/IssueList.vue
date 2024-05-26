@@ -21,7 +21,8 @@
         :currentEdgeHighlighted="null"
         :bookcaseTextures="bookcaseOptions!.textures"
         :sortedBookcase="sortedItemsForBookcase"
-      />
+        ><template #edge-prefix="{ edge }"><Condition :value="edge.issueCondition" /></template
+      ></Bookcase>
     </template>
     <template v-if="colSize">
       <ion-grid>
@@ -75,7 +76,6 @@ const colSize = computed(() => {
 
 const { issues, user } = storeToRefs(wtdcollection());
 const coaStore = webStores.coa();
-const {} = storeToRefs(webStores.coa());
 
 const { isCoaView, currentIssueViewMode } = storeToRefs(app());
 

@@ -1,5 +1,6 @@
 import BookcaseServices from "~dm-services/bookcase/types";
 import { BookcaseEdge } from "~dm-types/BookcaseEdge";
+import { issue_condition } from "~prisma-clients/client_dm";
 import { EventReturnType } from "~socket.io-services/types";
 
 import { dmSocketInjectionKey } from "../composables/useDmSocket";
@@ -9,6 +10,7 @@ export interface BookcaseEdgeWithPopularity extends BookcaseEdge {
   publicationcode: string;
   issueCode: string;
   popularity?: number | undefined;
+  issueCondition?: issue_condition;
 }
 
 export const bookcase = defineStore("bookcase", () => {

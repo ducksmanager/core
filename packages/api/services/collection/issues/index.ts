@@ -3,6 +3,7 @@ import { existsSync, readFileSync } from "fs";
 import { cwd } from "process";
 import type { Socket } from "socket.io";
 
+import { getPublicationTitles } from "~/services/coa/publications";
 import type { TransactionResults } from "~dm-types/TransactionResults";
 import { prismaCoa } from "~prisma-clients";
 import { prismaDm } from "~prisma-clients";
@@ -16,7 +17,29 @@ import {
   handleIsOnSale,
 } from "./util";
 
+export const getCollectionPublicationcodes = (userId: number) =>
+  prismaDm.issue
+    .findMany({
+      // distinct: ["country", "magazine"],
+      select: {
+        publicationcode: true,
+      },
+      where: {
+        userId,
+      },
+    })
+    .then((data) => [...data.map(({ publicationcode }) => publicationcode!)]);
+
 export default (socket: Socket<Events>) => {
+  socket.on("getPublicationTitles", async (callback) =>
+    getPublicationTitles({
+      publicationcode: {
+        in: await getCollectionPublicationcodes(socket.data.user!.id),
+      },
+    }).then((results) => {
+      callback(results);
+    }),
+  );
   socket.on("getIssues", async (callback) => {
     if (socket.data.user!.username === "demo") {
       await resetDemo();
@@ -149,18 +172,7 @@ export default (socket: Socket<Events>) => {
         },
         where: {
           publicationcode: {
-            in: await prismaDm.issue
-              .findMany({
-                select: {
-                  publicationcode: true,
-                },
-                where: {
-                  userId: socket.data.user!.id,
-                },
-              })
-              .then((data) => [
-                ...data.map(({ publicationcode }) => publicationcode!),
-              ]),
+            in: await getCollectionPublicationcodes(socket.data.user!.id),
           },
         },
         by: ["publicationcode"],

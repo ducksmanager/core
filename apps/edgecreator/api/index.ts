@@ -1,4 +1,5 @@
 import * as Sentry from "@sentry/node";
+import { instrument } from "@socket.io/admin-ui";
 import dotenv from "dotenv";
 import express from "express";
 import { createServer } from "http";
@@ -9,8 +10,6 @@ import { OptionalAuthMiddleware } from "~dm-services/auth/util";
 import type { SessionUser } from "~dm-types/SessionUser";
 
 import * as generateDefaultEdge from "./generateDefaultEdge";
-import { instrument } from "@socket.io/admin-ui";
-
 import browse from "./services/browse";
 import imageInfo from "./services/image-info";
 import save from "./services/save";
@@ -81,7 +80,7 @@ app.get(
     } else {
       res.writeHead(405);
     }
-  }
+  },
 );
 const httpServer = createServer(app);
 const io = new ServerWithUser(httpServer, {

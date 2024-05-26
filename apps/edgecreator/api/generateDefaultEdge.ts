@@ -30,8 +30,8 @@ export const get = (req: Request, res: Response) => {
       readFileSync("assets/default.svg")
         .toString()
         .replace("My text", decodeURIComponent(text)),
-      "utf8"
-    )
+      "utf8",
+    ),
   );
   convert.stdin!.end();
 

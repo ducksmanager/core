@@ -3,7 +3,6 @@ import type { SimpleIssue } from '~dm-types/SimpleIssue';
 import type { purchase } from '~prisma-clients/client_dm';
 import type { issueWithPublicationcode } from '~prisma-clients/extended/dm.extends';
 import { stores as webStores, composables as webComposables } from '~web';
-import { dmSocketInjectionKey } from '~web/src/composables/useDmSocket';
 
 import usePersistedData from '~/composables/usePersistedData';
 
@@ -12,10 +11,6 @@ export type purchaseWithStringDate = Omit<purchase, 'date' | 'userId'> & {
 };
 
 export const wtdcollection = defineStore('wtdcollection', () => {
-  const {
-    coa: { services: coaServices },
-  } = injectLocal(dmSocketInjectionKey)!;
-
   const coaStore = webStores.coa();
   const webCollectionStore = webStores.collection();
   const { issues, purchases, user } = storeToRefs(webCollectionStore);
@@ -60,9 +55,9 @@ export const wtdcollection = defineStore('wtdcollection', () => {
       });
       await webCollectionStore.loadSuggestions({ countryCode: 'ALL', sinceLastVisit: false, sort: 'oldestdate' });
       await statsStore.loadRatings();
-      coaStore.addPublicationNames(await coaServices.getFullPublicationList());
       await webCollectionStore.fetchIssueCounts();
-      await coaStore.fetchIssueNumbers(ownedPublications.value || []);
+      coaStore.addPublicationNames(await webCollectionStore.fetchPublicationNames());
+      await coaStore.fetchIssueNumbers(ownedPublications.value as string[]);
       await usersStore.fetchStats([webCollectionStore.user?.id || 0]);
       // TODO register for notifications
     },

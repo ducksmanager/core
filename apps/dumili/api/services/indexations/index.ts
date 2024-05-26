@@ -8,6 +8,9 @@ import {
   SessionData,
   SessionDataWithIndexation,
 } from "~/index";
+import { FullEntry } from "~/services/indexations/types";
+import CoaServices from "~dm-services/coa/types";
+import { storyKinds } from "~dumili-types/storyKinds";
 import {
   entry,
   Prisma,
@@ -15,9 +18,6 @@ import {
   storyKindSuggestion,
   storySuggestion,
 } from "~prisma/client_dumili";
-import { FullEntry } from "~/services/indexations/types";
-import CoaServices from "~dm-services/coa/types";
-import { storyKinds } from "~dumili-types/storyKinds";
 import { useSocket } from "~socket.io-client-services";
 
 const socket = useSocket(process.env.DM_SOCKET_URL!);

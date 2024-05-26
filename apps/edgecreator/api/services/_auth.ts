@@ -3,7 +3,7 @@ import fs from "fs";
 import jwt from "jsonwebtoken";
 
 import { getSvgPath } from "~/_utils";
-import { SessionUser } from "~dm-types/SessionUser";
+import type { SessionUser } from "~dm-types/SessionUser";
 
 export const getUserCredentials = (user: SessionUser) => ({
   "x-dm-user": user.username,
@@ -13,7 +13,7 @@ export const getUserCredentials = (user: SessionUser) => ({
 export const checkUserIsAdminForExportOrIsEditorForSaveOrIsFirstFileForModel = (
   req: Request,
   res: Response,
-  next: CallableFunction
+  next: CallableFunction,
 ) => {
   const { runExport, country, magazine, issuenumber } = req.body as {
     runExport: boolean;
@@ -40,7 +40,7 @@ export const checkUserIsAdminForExportOrIsEditorForSaveOrIsFirstFileForModel = (
 export const checkUserIsAdminOrEditor = (
   req: Request,
   res: Response,
-  next: CallableFunction
+  next: CallableFunction,
 ) => {
   const user = req.user;
   if (!(user && ["Admin", "Edition"].includes(user.privileges.EdgeCreator))) {
@@ -52,7 +52,7 @@ export const checkUserIsAdminOrEditor = (
 export const injectTokenIfValid = (
   req: Request,
   _: Response,
-  next: CallableFunction
+  next: CallableFunction,
 ) => {
   const authHeader = req.headers.authorization;
   const token = authHeader?.split(" ")[1];
@@ -70,7 +70,7 @@ export const injectTokenIfValid = (
           console.log(`Invalid token: ${err as string}`);
         }
         next();
-      }
+      },
     );
   }
 };

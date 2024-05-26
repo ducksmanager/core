@@ -65,6 +65,7 @@ const {
 } = injectLocal(dmSocketInjectionKey)!;
 const { pickCoverFile, takePhoto } = useCoverSearch(useRouter(), coverIdServices);
 
+// eslint-disable-next-line no-undef
 const fab = ref<HTMLIonFabElement | null>(null);
 
 const { t } = useI18n();
