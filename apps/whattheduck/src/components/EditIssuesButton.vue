@@ -25,7 +25,10 @@
       <ion-item
         button
         class="ion-align-items-center ion-text-nowrap"
-        @click="router.push({ path: route.path, query: { coa: 'true' } })"
+        @click="
+          (fab?.$el as HTMLIonFabElement).close();
+          router.push({ path: route.path, query: { coa: 'true' } });
+        "
       >
         <ion-label>{{ t('Par sélection de numéro') }}</ion-label>
         <ion-fab-button size="small">
@@ -66,7 +69,7 @@ const {
 const { pickCoverFile, takePhoto } = useCoverSearch(useRouter(), coverIdServices);
 
 // eslint-disable-next-line no-undef
-const fab = ref<HTMLIonFabElement | null>(null);
+const fab = ref<ComponentPublicInstance<HTMLIonFabElement> | null>(null);
 
 const { t } = useI18n();
 const router = useRouter();

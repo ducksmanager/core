@@ -5,7 +5,7 @@
       <b-carousel v-model="currentSlide" controls>
         <b-carousel-slide
           v-for="(popularIssueWithoutEdge, index) in issues"
-          :key="popularIssueWithoutEdge.issueCode"
+          :key="popularIssueWithoutEdge.edgeId"
           :active="currentSlide === index"
         >
           <Issue

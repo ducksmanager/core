@@ -6,12 +6,17 @@ import { EventReturnType } from "~socket.io-services/types";
 import { dmSocketInjectionKey } from "../composables/useDmSocket";
 import { collection } from "./collection";
 
-export interface BookcaseEdgeWithPopularity extends BookcaseEdge {
-  publicationcode: string;
-  issueCode: string;
-  popularity?: number | undefined;
+export type SimpleBookcaseEdge = Pick<
+  BookcaseEdge,
+  "publicationcode" | "issuenumber"
+> & {
   issueCondition?: issue_condition;
-}
+};
+
+export type BookcaseEdgeWithPopularity = BookcaseEdge & {
+  issueCondition?: issue_condition;
+  popularity?: number | undefined;
+};
 
 export const bookcase = defineStore("bookcase", () => {
   const route = useRoute();

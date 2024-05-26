@@ -1,5 +1,5 @@
 <template>
-  <ion-fab v-if="issueViewModes" slot="fixed" vertical="top" horizontal="end" id="view-modes">
+  <ion-fab ref="fab" v-if="issueViewModes" slot="fixed" vertical="top" horizontal="end" id="view-modes">
     <ion-fab-button :disabled="isOfflineMode"
       ><ion-icon :ios="eyeOutline" :android="eyeSharp"></ion-icon></ion-fab-button
     ><ion-icon class="indicator" :ios="currentIssueViewMode.icon.ios" :android="currentIssueViewMode.icon.md" />
@@ -8,7 +8,11 @@
         button
         class="ion-align-items-center ion-text-nowrap"
         v-for="viewMode of issueViewModes"
-        @click="currentIssueViewMode = viewMode"
+        @click="
+          currentIssueViewMode = viewMode;
+          (fab?.$el as HTMLIonFabElement).close();
+          isActivated = false;
+        "
       >
         <ion-label>{{ viewMode.label }}</ion-label>
         <ion-fab-button size="small">
@@ -22,6 +26,10 @@ import { app } from '~/stores/app';
 
 const { issueViewModes, isOfflineMode } = app();
 const { currentIssueViewMode } = storeToRefs(app());
+
+// eslint-disable-next-line no-undef
+const fab = ref<ComponentPublicInstance<HTMLIonFabElement> | null>(null);
+const isActivated = ref<boolean>(false);
 </script>
 <style scoped lang="scss">
 ion-fab {

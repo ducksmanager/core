@@ -6,24 +6,31 @@
       backgroundImage: getTextureBackgroundImage(bookcaseTextures.bookcase),
     }"
   >
-    <template v-if="embedded">
+    <template v-for="edgeIndex of edgeIndexesToLoad" :key="`edge-${edgeIndex}`">
       <Edge
-        v-for="edgeIndex of edgeIndexesToLoad"
+        v-if="embedded"
         :id="`edge-${edgeIndex}${embedded}`"
-        :key="`edge-${edgeIndex}`"
-        :publicationcode="sortedBookcase[edgeIndex].publicationcode"
-        :issuenumber="sortedBookcase[edgeIndex].issuenumber"
+        v-bind="
+          (({ publicationcode, issueCondition, issuenumber }) => ({
+            publicationcode,
+            issueCondition,
+            issuenumber,
+          }))(sortedBookcase[edgeIndex] as SimpleBookcaseEdge)
+        "
         :orientation="orientation"
         existing
         embedded
         @loaded="onEdgeLoaded(edgeIndex)"
-      />
-    </template>
-    <template v-else>
+        ><template #edge-prefix="{ edge }"
+          ><slot
+            name="edge-prefix"
+            :edge="{
+              issueCondition: edge.issueCondition!,
+            }" /></template
+      ></Edge>
       <Edge
-        v-for="edgeIndex of edgeIndexesToLoad"
+        v-else
         :id="`edge-${edgeIndex}`"
-        :key="`edge-${edgeIndex}`"
         :invisible="
           currentEdgeOpened === sortedBookcaseWithPopularity![edgeIndex] ||
           edgeIndex > lastEdgeIndexContinuouslyLoaded
@@ -31,18 +38,23 @@
         :highlighted="
           currentEdgeHighlighted === sortedBookcaseWithPopularity![edgeIndex].id
         "
-        :publicationcode="
-          sortedBookcaseWithPopularity![edgeIndex].publicationcode
-        "
-        :issuenumber="sortedBookcaseWithPopularity![edgeIndex].issuenumber"
-        :issuenumber-reference="
-          sortedBookcaseWithPopularity![edgeIndex].issuenumberReference
+        v-bind="
+          (({
+            publicationcode,
+            issueCondition,
+            issuenumber,
+            issuenumberReference,
+            popularity,
+          }: BookcaseEdgeWithPopularity) => ({
+            publicationcode,
+            issueCondition,
+            issuenumber,
+            issuenumberReference,
+            popularity,
+          }))(sortedBookcaseWithPopularity![edgeIndex])
         "
         :creation-date="
           sortedBookcaseWithPopularity![edgeIndex].creationDate?.toString()
-        "
-        :popularity="
-          sortedBookcaseWithPopularity![edgeIndex].popularity || null
         "
         :existing="!!sortedBookcaseWithPopularity![edgeIndex].edgeId"
         :sprite-path="
@@ -60,17 +72,27 @@
             name="edge-prefix"
             :edge="{
               issueCondition: edge.issueCondition!,
-            }" /></template
-      ></Edge>
-    </template>
+            }" /></template></Edge
+    ></template>
   </div>
 </template>
 
 <script setup lang="ts">
-import { BookcaseEdgeWithPopularity } from "../stores/bookcase";
+import {
+  BookcaseEdgeWithPopularity,
+  SimpleBookcaseEdge,
+} from "../stores/bookcase";
 import { images } from "../stores/images";
 
-const props = defineProps<
+const {
+  bookcaseTextures,
+  edgesUsingSprites,
+  embedded = false,
+  currentEdgeHighlighted = null,
+  currentEdgeOpened = null,
+  orientation = "vertical",
+  sortedBookcase,
+} = defineProps<
   {
     bookcaseTextures: { bookshelf: string; bookcase: string };
     currentEdgeHighlighted?: number | null;
@@ -80,9 +102,7 @@ const props = defineProps<
   } & (
     | {
         embedded?: true;
-        sortedBookcase:
-          | { publicationcode: string; issuenumber: string }[]
-          | null;
+        sortedBookcase: SimpleBookcaseEdge[] | null;
       }
     | {
         embedded?: false;
@@ -91,23 +111,6 @@ const props = defineProps<
   )
 >();
 
-const { bookcaseTextures, sortedBookcase, edgesUsingSprites } = toRefs(props);
-
-const embedded = computed(() =>
-  props.embedded !== undefined ? props.embedded : false,
-);
-const currentEdgeHighlighted = computed(() =>
-  props.currentEdgeHighlighted !== undefined
-    ? props.currentEdgeHighlighted
-    : null,
-);
-const currentEdgeOpened = computed(() =>
-  props.currentEdgeOpened !== undefined ? props.currentEdgeOpened : null,
-);
-const orientation = computed(() =>
-  props.orientation !== undefined ? props.orientation : "vertical",
-);
-
 defineSlots<{
   "edge-prefix"(props: {
     edge: Pick<BookcaseEdgeWithPopularity, "issueCondition">;
@@ -115,7 +118,7 @@ defineSlots<{
 }>();
 
 const sortedBookcaseWithPopularity = computed(() =>
-  embedded ? undefined : (sortedBookcase.value as BookcaseEdgeWithPopularity[]),
+  embedded ? undefined : (sortedBookcase as BookcaseEdgeWithPopularity[]),
 );
 
 const MAX_BATCH_SIZE = 50;
@@ -154,7 +157,7 @@ const getTextureBackgroundImage = (textureName: string) =>
 
 const onEdgeLoaded = (edgeIndex: number) => {
   loadedImages.value.add(edgeIndex);
-  const nextEdgeIndexToLoad = sortedBookcase.value?.findIndex(
+  const nextEdgeIndexToLoad = sortedBookcase?.findIndex(
     (_, idx) => !edgeIndexesToLoad.value.includes(idx),
   );
   if (nextEdgeIndexToLoad !== undefined && nextEdgeIndexToLoad > -1) {
@@ -163,7 +166,7 @@ const onEdgeLoaded = (edgeIndex: number) => {
 };
 
 watch(
-  sortedBookcase,
+  () => sortedBookcase,
   (newValue) => {
     if (newValue && !edgeIndexesToLoad.value.length) {
       const firstBatchSize = Math.min(MAX_BATCH_SIZE, newValue.length || 0);
@@ -177,7 +180,7 @@ watch(
 
 onMounted(() => {
   if (!document.querySelector("style#bookshelves")) {
-    const { bookshelf: bookshelfTexture } = bookcaseTextures.value;
+    const { bookshelf: bookshelfTexture } = bookcaseTextures;
     const bookshelfTextureUrl = getImagePath(
       `textures/${bookshelfTexture}.jpg`,
     );

@@ -21,7 +21,7 @@
         :currentEdgeHighlighted="null"
         :bookcaseTextures="bookcaseOptions!.textures"
         :sortedBookcase="sortedItemsForBookcase"
-        ><template #edge-prefix="{ edge }"><Condition :value="edge.issueCondition" /></template
+        ><template #edge-prefix="{ edge }"><br /><Condition :value="edge.issueCondition" /></template
       ></Bookcase>
     </template>
     <template v-if="colSize">
@@ -144,7 +144,11 @@ const sortedItems = computed(() =>
 );
 
 const sortedItemsForBookcase = computed(() =>
-  sortedItems.value.map(({ item }) => ({ publicationcode: item.publicationcode!, issuenumber: item.issuenumber })),
+  sortedItems.value.map(({ item }) => ({
+    publicationcode: item.publicationcode!,
+    issuenumber: item.issuenumber,
+    issueCondition: item.condition,
+  })),
 );
 
 const showIssueToast = async (item: (typeof items)['value'][0]['item']) => {
@@ -202,6 +206,10 @@ ion-checkbox {
 
   width: 14px;
   height: 14px;
+}
+
+:deep(.edge) {
+  display: inline-block;
 }
 
 :deep(ion-item) {
