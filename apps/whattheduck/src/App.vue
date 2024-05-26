@@ -1,7 +1,12 @@
 <template>
   <ion-app v-if="isReady">
-    <OfflineBanner :on-offline="routeMeta.onOffline" v-if="isOfflineMode" />
-    <ion-split-pane :class="{ 'ion-margin-top': isOfflineMode }" content-id="main-content">
+    <OfflineBanner
+      :on-offline="routeMeta.onOffline"
+      v-if="isOfflineMode"
+      @destroy="innerTopMargin = 0"
+      @updated="innerTopMargin = $event"
+    />
+    <ion-split-pane :style="{ 'margin-top': `${innerTopMargin}px` }" content-id="main-content">
       <NavigationDrawer v-if="token" />
       <ion-router-outlet id="main-content" :animate="false" />
     </ion-split-pane>
@@ -55,6 +60,8 @@ provideLocal(dmSocketInjectionKey, dmSocket);
 
 const appStore = app();
 const { isOfflineMode, token, socketCache } = storeToRefs(appStore);
+
+const innerTopMargin = ref(0);
 
 const collectionStore = wtdcollection();
 const { fetchAndTrackCollection } = collectionStore;

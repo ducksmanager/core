@@ -1,5 +1,5 @@
 <template>
-  <ion-item class="ion-text-center">
+  <ion-item class="ion-text-center offline-banner">
     <ion-label color="warning" v-if="onOffline === 'readonly'">
       {{
         t(
@@ -21,4 +21,25 @@ const { t } = useI18n();
 defineProps<{
   onOffline: 'readonly' | 'unavailable' | undefined;
 }>();
+
+const emit = defineEmits<{
+  (e: 'destroy'): void;
+  (e: 'updated', topMargin: number): void;
+}>();
+
+onUpdated(() => {
+  setTimeout(() => {
+    emit('updated', document.querySelector('.offline-banner')!.clientHeight);
+  }, 10);
+});
+
+onMounted(() => {
+  setTimeout(() => {
+    emit('updated', document.querySelector('.offline-banner')!.clientHeight);
+  }, 10);
+});
+
+onBeforeUnmount(() => {
+  emit('destroy');
+});
 </script>
