@@ -7,6 +7,7 @@
       <ion-item
         button
         class="ion-align-items-center ion-text-nowrap"
+        :class="{ selected: currentIssueViewMode.id === viewMode.id }"
         v-for="viewMode of issueViewModes"
         @click="
           currentIssueViewMode = viewMode;
@@ -39,10 +40,16 @@ ion-fab {
   right: -0.3rem;
 
   ion-fab-list {
-    margin-top: 2rem;
+    margin-top: 3rem;
     right: -2.5rem;
     ion-item {
       padding-right: 2.5rem;
+
+      &.selected {
+        ::part(native) {
+          background-color: darkgray;
+        }
+      }
     }
   }
 

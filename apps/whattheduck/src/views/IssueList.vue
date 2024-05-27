@@ -197,6 +197,7 @@ onMounted(async () => {
 }
 
 ion-checkbox {
+  flex-grow: 0;
   margin-right: 0.5rem;
   width: auto;
 }
@@ -204,7 +205,7 @@ ion-checkbox {
 .not-owned-space {
   display: inline-block;
 
-  width: 14px;
+  width: calc(14px + 8px /* margin-right */);
   height: 14px;
 }
 

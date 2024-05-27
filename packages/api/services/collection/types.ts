@@ -65,6 +65,10 @@ export default abstract class {
     callback: (value: Record<string, number>) => void,
   ) => void;
 
+  abstract getCoaCountByCountrycode: (
+    callback: (value: Record<string, number>) => void,
+  ) => void;
+
   abstract createRequests: (
     issueIds: number[],
     callback: (

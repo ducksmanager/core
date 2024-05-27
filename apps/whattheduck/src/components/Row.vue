@@ -41,6 +41,7 @@ ion-item {
   }
   ion-label {
     display: flex !important;
+    align-items: center;
     margin: 0 !important;
     &:first-of-type {
       padding-left: 1rem;

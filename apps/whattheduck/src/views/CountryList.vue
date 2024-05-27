@@ -29,12 +29,12 @@ import { app } from '~/stores/app';
 import { wtdcollection } from '~/stores/wtdcollection';
 
 const route = useRoute();
-const { totalPerCountry, ownedCountries, issueCountsPerCountry } = storeToRefs(wtdcollection());
+const { totalPerCountry, ownedCountries, coaIssueCountsPerCountrycode } = storeToRefs(wtdcollection());
 const { countryNames } = storeToRefs(stores.coa());
 const { isCoaView } = storeToRefs(app());
 
 const ownershipPercentages = computed(() =>
-  getOwnershipPercentages(totalPerCountry.value, issueCountsPerCountry.value!),
+  getOwnershipPercentages(totalPerCountry.value, coaIssueCountsPerCountrycode.value!),
 );
 
 const items = computed(() =>

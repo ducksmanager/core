@@ -42,7 +42,7 @@ export const coa = defineStore("coa", () => {
   } = injectLocal(dmSocketInjectionKey)!;
 
   const ISSUECODE_REGEX =
-      /^(?<publicationcode>[^/]+\/[^ ]+) (?<issuenumber>.+)/,
+      /^(?<countrycode>[^/]+)\/(?<magazinecode>[^ ]+) (?<issuenumber>.+)/,
     locale = useI18n().locale,
     coverUrls = ref<{ [issuenumber: string]: string }>({}),
     countryNames = ref<EventReturnType<CoaServices["getCountryList"]> | null>(

@@ -1,6 +1,6 @@
 <template>
   <List
-    v-if="totalPerPublication && allIssueCounts && ownershipPercentages"
+    v-if="totalPerPublication && coaIssueCountsByPublicationcode && ownershipPercentages"
     :items="sortedItems"
     :get-target-route-fn="getTargetUrlFn"
     :get-item-text-fn="getItemTextFn"
@@ -33,23 +33,16 @@ import { getOwnershipPercentages, getOwnershipText } from '~/composables/useOwne
 import { app } from '~/stores/app';
 import { wtdcollection } from '~/stores/wtdcollection';
 
-const { issueCounts, totalPerPublication, ownedPublications } = storeToRefs(wtdcollection());
+const { coaIssueCountsByPublicationcode, totalPerPublication, ownedPublications } = storeToRefs(wtdcollection());
 const { fetchPublicationNamesFromCountry } = stores.coa();
 const { publicationNames } = storeToRefs(stores.coa());
 const { isCoaView } = storeToRefs(app());
 
-const getIssueCountPerMagazinecode = (issueCountPerPublicationcode: Record<string, number>) =>
-  Object.entries(issueCountPerPublicationcode)
-    .filter(([publicationcode]) => publicationcode.startsWith(`${route.params.countrycode}/`))
-    .reduce((acc, [publicationcode, total]) => ({ ...acc, [publicationcode]: total }), {});
-
-const allIssueCounts = computed(() => issueCounts.value && getIssueCountPerMagazinecode(issueCounts.value));
-
 const ownershipPercentages = computed(
   () =>
-    issueCounts.value &&
+    coaIssueCountsByPublicationcode.value &&
     totalPerPublication.value &&
-    getOwnershipPercentages(totalPerPublication.value, issueCounts.value),
+    getOwnershipPercentages(totalPerPublication.value, coaIssueCountsByPublicationcode.value),
 );
 
 const route = useRoute();

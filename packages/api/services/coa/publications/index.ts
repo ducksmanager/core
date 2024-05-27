@@ -1,7 +1,7 @@
 import type { Socket } from "socket.io";
 
-import type { client_coa} from "~prisma-clients";
-import {prismaCoa } from "~prisma-clients";
+import { prismaCoa } from "~prisma-clients";
+import type { Prisma as PrismaCoa } from "~prisma-clients/client_coa";
 
 import type Events from "../types";
 
@@ -28,7 +28,7 @@ export default (socket: Socket<Events>) => {
 };
 
 export const getPublicationTitles = async (
-  filter?: client_coa.Prisma.inducks_publicationWhereInput,
+  filter?: PrismaCoa.inducks_publicationWhereInput,
 ): Promise<Record<string, string>> =>
   prismaCoa.inducks_publication
     .findMany({

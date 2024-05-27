@@ -22,7 +22,7 @@ export const wtdcollection = defineStore('wtdcollection', () => {
 
   const {
     findInCollection,
-    fetchIssueCounts,
+    fetchIssueCountsByPublicationcode,
     loadCollection,
     loadPurchases,
     loadUser,
@@ -55,7 +55,8 @@ export const wtdcollection = defineStore('wtdcollection', () => {
       });
       await webCollectionStore.loadSuggestions({ countryCode: 'ALL', sinceLastVisit: false, sort: 'oldestdate' });
       await statsStore.loadRatings();
-      await webCollectionStore.fetchIssueCounts();
+      await webCollectionStore.fetchIssueCountsByCountrycode();
+      await webCollectionStore.fetchIssueCountsByPublicationcode();
       coaStore.addPublicationNames(await webCollectionStore.fetchPublicationNames());
       await coaStore.fetchIssueNumbers(ownedPublications.value as string[]);
       await usersStore.fetchStats([webCollectionStore.user?.id || 0]);
@@ -77,12 +78,12 @@ export const wtdcollection = defineStore('wtdcollection', () => {
     isPersistedDataLoaded,
     issues,
     fetchAndTrackCollection,
-    fetchIssueCounts,
+    fetchIssueCountsByPublicationcode,
     findInCollection,
     getCollectionIssues,
     highestQuotedIssue,
-    issueCounts: computed(() => webCollectionStore.issueCounts),
-    issueCountsPerCountry: computed(() => webCollectionStore.issueCountsPerCountry),
+    coaIssueCountsByPublicationcode: computed(() => webCollectionStore.coaIssueCountsByPublicationcode),
+    coaIssueCountsPerCountrycode: computed(() => webCollectionStore.coaIssueCountsPerCountrycode),
     issuesByIssueCode: computed(() => webCollectionStore.issuesByIssueCode),
     loadCollection,
     loadPurchases,

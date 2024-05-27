@@ -17,10 +17,23 @@ import {
   handleIsOnSale,
 } from "./util";
 
+export const getCollectionCountrycodes = (userId: number) =>
+  prismaDm.issue
+    .findMany({
+      distinct: ["country"],
+      select: {
+        country: true,
+      },
+      where: {
+        userId,
+      },
+    })
+    .then((data) => [...data.map(({ country }) => country!)]);
+
 export const getCollectionPublicationcodes = (userId: number) =>
   prismaDm.issue
     .findMany({
-      // distinct: ["country", "magazine"],
+      distinct: ["country", "magazine"],
       select: {
         publicationcode: true,
       },
@@ -164,6 +177,39 @@ export default (socket: Socket<Events>) => {
     },
   );
 
+  socket.on("getCoaCountByCountrycode", async (callback) =>
+    prismaCoa.inducks_issue
+      .groupBy({
+        _count: {
+          issuenumber: true,
+        },
+        where: {
+          OR: (await getCollectionCountrycodes(socket.data.user!.id)).map(
+            (countrycode) => ({
+              publicationcode: {
+                startsWith: `${countrycode}/`,
+              },
+            }),
+          ),
+        },
+        by: ["publicationcode"],
+      })
+      .then((data) => {
+        callback(
+          data.reduce<{ [countrycode: string]: number }>(
+            (acc, { publicationcode, _count }) => {
+              const countrycode = publicationcode!.split("/")[0];
+              return {
+                ...acc,
+                [countrycode!]: (acc[countrycode] || 0) + _count.issuenumber,
+              };
+            },
+            {},
+          ),
+        );
+      }),
+  );
+
   socket.on("getCoaCountByPublicationcode", async (callback) =>
     prismaCoa.inducks_issue
       .groupBy({
@@ -179,12 +225,12 @@ export default (socket: Socket<Events>) => {
       })
       .then((data) => {
         callback(
-          data.reduce(
+          data.reduce<{ [publicationcode: string]: number }>(
             (acc, { publicationcode, _count }) => ({
               ...acc,
               [publicationcode!]: _count.issuenumber,
             }),
-            {} as { [publicationcode: string]: number },
+            {},
           ),
         );
       }),
