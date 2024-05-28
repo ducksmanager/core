@@ -58,7 +58,6 @@ export const wtdcollection = defineStore('wtdcollection', () => {
       await webCollectionStore.fetchIssueCountsByCountrycode();
       await webCollectionStore.fetchIssueCountsByPublicationcode();
       coaStore.addPublicationNames(await webCollectionStore.fetchPublicationNames());
-      await coaStore.fetchIssueNumbers(ownedPublications.value as string[]);
       await usersStore.fetchStats([webCollectionStore.user?.id || 0]);
       // TODO register for notifications
     },

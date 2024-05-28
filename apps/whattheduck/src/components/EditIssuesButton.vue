@@ -77,14 +77,27 @@ const route = useRoute();
 </script>
 
 <style lang="scss" scoped>
-ion-fab-button {
-  opacity: 0.5;
+ion-fab > ion-fab-button {
+  opacity: 0.7;
   &:hover {
     opacity: 1;
   }
 }
 
 ion-fab-list {
-  width: 360px;
+  background: rgba(25, 25, 25, 0.85);
+  border-radius: 1.5rem;
+}
+
+ion-icon {
+  fill: white;
+}
+
+ion-item {
+  --inner-padding-end: 0;
+
+  &::part(native) {
+    background: transparent;
+  }
 }
 </style>

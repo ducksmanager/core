@@ -183,6 +183,7 @@ a {
 
 ion-searchbar {
   padding: 0;
+  height: 25px !important;
 }
 
 #scroll-text {
@@ -205,6 +206,7 @@ ion-searchbar {
 :deep(ion-progress-bar) {
   position: absolute;
   height: 100%;
+  border-radius: 0;
 
   :deep(&::part(track)) {
     background-color: transparent;

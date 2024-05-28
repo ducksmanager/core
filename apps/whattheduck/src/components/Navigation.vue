@@ -72,7 +72,6 @@ ion-segment-button {
   width: 33.333%;
   max-width: 33.333%;
   align-items: center;
-  align-self: start;
   text-transform: none;
   white-space: normal;
 
