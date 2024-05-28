@@ -1,74 +1,51 @@
 <template>
-  <ion-page id="main-content">
-    <slot name="page-menu" v-if="$slots['page-menu']" />
-    <ion-header :translucent="true">
-      <ion-toolbar>
-        <ion-buttons slot="start">
-          <ion-menu-button color="primary" />
-        </ion-buttons>
-        <ion-title
-          ><div class="content">
-            <div class="title">
-              <div>{{ t('Ma collection') }}</div>
-              <ion-chip outline v-if="total !== undefined">{{ total }}</ion-chip>
-            </div>
-          </div></ion-title
-        >
-      </ion-toolbar>
-      <template v-if="items?.length">
-        <Navigation />
-        <ion-searchbar autocapitalize="sentences" v-if="showFilter" v-model="filterText" placeholder="Filter"
-      /></template>
-    </ion-header>
-
-    <ion-content v-if="!items" ref="content">
-      {{ t('Chargement de votre collection…') }}
-    </ion-content>
-    <ion-content v-else-if="!items.length" ref="content">
-      {{ t('Votre collection est vide.') }}
-    </ion-content>
-    <ion-content
-      v-else
-      ref="content"
-      class="no-padding"
-      scroll-events
-      @ion-scroll="onScroll"
-      @ion-scroll-end="isScrolling = false"
-    >
-      <template v-if="$slots['row-label']">
-        <Row
-          v-for="{ key, item, isOwned, isNextOwned } in filteredItems"
-          :is-owned="isOwned"
-          :is-next-owned="isNextOwned"
-          @click="onRowClick(key)"
-        >
-          <template #fill-bar v-if="item">
-            <slot name="fill-bar" :item="item" />
-          </template>
-          <template #prefix v-if="item">
-            <slot name="row-prefix" :item="item" />
-          </template>
-          <template #label>
-            <slot name="row-label" :item="item" />
-          </template>
-          <template #suffix>
-            <slot name="row-suffix" :item="item" />
-          </template> </Row
-      ></template>
-      <slot v-else name="default" />
-      <EditIssuesButton />
-
-      <div
-        v-show="isScrolling"
-        v-if="itemInCenterOfViewport"
-        id="scroll-text"
-        slot="fixed"
-        :style="{ top: `${scrollPositionPct}%` }"
+  <ion-content v-if="!items" ref="content">
+    {{ t('Chargement...') }}
+  </ion-content>
+  <ion-content v-else-if="!items.length" ref="content">
+    {{ t('Votre collection est vide.') }}
+  </ion-content>
+  <ion-content
+    v-else
+    ref="content"
+    class="no-padding"
+    scroll-events
+    @ion-scroll="onScroll"
+    @ion-scroll-end="isScrolling = false"
+  >
+    <template v-if="$slots['row-label']">
+      <Row
+        v-for="{ key, item, isOwned, isNextOwned } in filteredItems"
+        :is-owned="isOwned"
+        :is-next-owned="isNextOwned"
+        @click="onRowClick(key)"
       >
-        {{ getItemTextFn(itemInCenterOfViewport) }}
-      </div></ion-content
+        <template #fill-bar v-if="item">
+          <slot name="fill-bar" :item="item" />
+        </template>
+        <template #prefix v-if="item">
+          <slot name="row-prefix" :item="item" />
+        </template>
+        <template #label>
+          <slot name="row-label" :item="item" />
+        </template>
+        <template #suffix>
+          <slot name="row-suffix" :item="item" />
+        </template> </Row
+    ></template>
+    <slot v-else name="default" />
+    <EditIssuesButton />
+
+    <div
+      v-show="isScrolling"
+      v-if="itemInCenterOfViewport"
+      id="scroll-text"
+      slot="fixed"
+      :style="{ top: `${scrollPositionPct}%` }"
     >
-  </ion-page>
+      {{ getItemTextFn(itemInCenterOfViewport) }}
+    </div></ion-content
+  >
 </template>
 
 <script setup lang="ts" generic="Item extends Required<any>">
@@ -76,7 +53,6 @@ import type { ScrollDetail } from '@ionic/vue';
 import { IonContent } from '@ionic/vue';
 
 import { app } from '~/stores/app';
-import { wtdcollection } from '~/stores/wtdcollection';
 
 defineSlots<{
   'default'(): any;
@@ -96,6 +72,7 @@ const props = defineProps<{
 }>();
 
 const emit = defineEmits<{
+  (e: 'load', hasItems: boolean): void;
   (e: 'items-filtered', items: string[]): void;
 }>();
 
@@ -120,7 +97,6 @@ const { t } = useI18n();
 const router = useRouter();
 const route = useRoute();
 
-const { total } = storeToRefs(wtdcollection());
 const { currentNavigationItem } = storeToRefs(app());
 const filterText = ref('' as string);
 
@@ -133,12 +109,21 @@ const itemInCenterOfViewport = computed(() => {
 });
 
 const onRowClick = (key: string) => {
-  console.log(props.getTargetRouteFn(key));
   router.push({ ...props.getTargetRouteFn(key), query: { coa: route.query.coa } });
 };
 
 const filteredItems = computed(() =>
   props.items.filter(({ item }) => props.getItemTextFn(item).toLowerCase().indexOf(filterText.value) !== -1),
+);
+
+watch(
+  props.items,
+  () => {
+    if (props.items) {
+      emit('load', props.items.length > 0);
+    }
+  },
+  { immediate: true },
 );
 
 watch(
@@ -151,8 +136,6 @@ watch(
   },
   { immediate: true },
 );
-
-const showFilter = computed(() => true);
 
 watch(currentNavigationItem, async (newValue) => {
   if (newValue && /^[a-z]+\/[A-Z0-9]+ /.test(newValue)) {

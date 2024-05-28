@@ -1,5 +1,5 @@
 <template>
-  <ion-fab ref="fab" v-if="issueViewModes" slot="fixed" vertical="top" horizontal="end" id="view-modes">
+  <ion-fab ref="fab" v-if="issueViewModes" vertical="top" horizontal="end" id="view-modes">
     <ion-fab-button :disabled="isOfflineMode"
       ><ion-icon :ios="eyeOutline" :android="eyeSharp"></ion-icon></ion-fab-button
     ><ion-icon class="indicator" :ios="currentIssueViewMode.icon.ios" :android="currentIssueViewMode.icon.md" />
@@ -60,9 +60,9 @@ ion-fab {
   }
 
   > ion-fab-button {
-    margin-right: 1.5rem;
-    width: 2rem;
-    height: 2rem;
+    margin-right: 1rem;
+    width: 1.8rem;
+    height: 1.8rem;
   }
 }
 
@@ -71,7 +71,7 @@ ion-icon.indicator {
   border-radius: 1rem;
   position: absolute;
   bottom: 0;
-  right: 1rem;
+  right: 0.5rem;
   font-size: 1rem;
   margin-left: 0.5rem;
 }

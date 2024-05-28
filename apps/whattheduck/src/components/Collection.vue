@@ -1,0 +1,101 @@
+<template>
+  <ion-page id="main-content">
+    <ion-header :translucent="true">
+      <ion-toolbar>
+        <ion-buttons slot="start">
+          <ion-menu-button color="primary" />
+        </ion-buttons>
+        <ion-buttons slot="end">
+          <ViewModesButton v-if="componentName === IssueList" />
+        </ion-buttons>
+        <ion-title
+          ><div class="content">
+            <div class="title">
+              <div>{{ t('Ma collection') }}</div>
+              <ion-chip outline v-if="total !== undefined">{{ total }}</ion-chip>
+            </div>
+          </div></ion-title
+        >
+      </ion-toolbar>
+      <template v-if="hasItems">
+        <Navigation />
+        <ion-searchbar autocapitalize="sentences" v-if="showFilter" v-model="filterText" placeholder="Filter"
+      /></template>
+    </ion-header>
+
+    <component :is="componentName" @load="hasItems = $event" />
+  </ion-page>
+</template>
+
+<script setup lang="ts" generic="Item extends Required<any>">
+import { app } from '~/stores/app';
+import { wtdcollection } from '~/stores/wtdcollection';
+import CountryList from '~/views/CountryList.vue';
+import IssueList from '~/views/IssueList.vue';
+import PublicationList from '~/views/PublicationList.vue';
+
+const { t } = useI18n();
+const router = useRouter();
+const route = useRoute();
+
+const { total } = storeToRefs(wtdcollection());
+const { currentNavigationItem } = storeToRefs(app());
+const filterText = ref('' as string);
+
+const hasItems = ref<boolean | undefined>();
+
+const componentName = computed(() => {
+  if (route.params.magazinecode) {
+    return IssueList;
+  } else if (route.params.countrycode) {
+    return PublicationList;
+  } else {
+    return CountryList;
+  }
+});
+
+const showFilter = computed(() => true);
+
+watch(currentNavigationItem, async (newValue) => {
+  if (newValue && /^[a-z]+\/[A-Z0-9]+ /.test(newValue)) {
+    router.push('/edit-issues');
+  }
+});
+</script>
+
+<style scoped>
+::v-deep(ion-content img) {
+  margin-right: 1rem;
+}
+strong {
+  font-size: 20px;
+  line-height: 26px;
+}
+
+p {
+  font-size: 16px;
+  line-height: 22px;
+  color: #8c8c8c;
+  margin: 0;
+}
+
+a {
+  text-decoration: none;
+}
+
+ion-searchbar {
+  padding: 0;
+  height: 25px !important;
+}
+
+ion-title {
+  .title {
+    display: flex !important;
+    align-items: center;
+
+    ion-chip {
+      margin-left: 0.5rem;
+    }
+  }
+}
+</style>

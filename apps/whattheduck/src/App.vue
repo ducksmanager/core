@@ -8,7 +8,7 @@
     />
     <ion-split-pane :style="{ 'margin-top': `${innerTopMargin}px` }" content-id="main-content">
       <NavigationDrawer v-if="token" />
-      <ion-router-outlet id="main-content" :animate="false" />
+      <ion-router-outlet id="main-content" />
     </ion-split-pane>
   </ion-app>
 </template>

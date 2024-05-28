@@ -5,6 +5,7 @@
     :get-target-route-fn="getTargetUrlFn"
     :get-item-text-fn="getItemTextFn"
     @items-filtered="filteredIssuenumbers = $event"
+    @load="emit('load', $event)"
   >
     <template v-if="currentIssueViewMode.id === 'list'" #row-prefix="{ item }">
       <ion-checkbox v-if="isCoaView">&nbsp;</ion-checkbox>
@@ -61,6 +62,10 @@ const COVER_ROOT_URL = import.meta.env.VITE_CLOUDINARY_BASE_URL;
 
 const route = useRoute();
 
+const emit = defineEmits<{
+  (e: 'load', hasItems: boolean): void;
+}>();
+
 const colSize = computed(() => {
   switch (currentIssueViewMode.value.id) {
     case 'covers-small':
@@ -96,7 +101,7 @@ const getTargetUrlFn = (key: string) => ({
   params: `${publicationcode.value} ${key}`.match(coaStore.ISSUECODE_REGEX)!.groups,
 });
 
-const publicationcode = computed(() => `${route.params.publicationcode}`);
+const publicationcode = computed(() => `${route.params.countrycode}/${route.params.magazinecode}`);
 
 const coaIssues = computed(() => coaStore.issuesWithTitles[publicationcode.value]);
 const coaIssuenumbers = computed(() => coaIssues.value?.map(({ issuenumber }) => issuenumber));

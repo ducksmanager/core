@@ -1,17 +1,15 @@
 import { createRouter, createWebHistory } from '@ionic/vue-router';
 import type { RouteRecordRaw } from 'vue-router';
+import Collection from '~/components/Collection.vue';
 
 import OwnedIssueCopiesModal from '~/components/OwnedIssueCopiesModal.vue';
 import OwnedIssueCopy from '~/components/OwnedIssueCopy.vue';
 import AddFromCamera from '~/views/AddFromCamera.vue';
 import Authors from '~/views/Authors.vue';
-import CountryList from '~/views/CountryList.vue';
 import CoverSearchResults from '~/views/CoverSearchResults.vue';
 import Forgot from '~/views/Forgot.vue';
-import IssueList from '~/views/IssueList.vue';
 import Login from '~/views/Login.vue';
 import Logout from '~/views/Logout.vue';
-import PublicationList from '~/views/PublicationList.vue';
 import Report from '~/views/Report.vue';
 import Search from '~/views/Search.vue';
 import Signup from '~/views/Signup.vue';
@@ -25,27 +23,9 @@ export type RouteMeta = {
 
 const routes: RouteRecordRaw[] = [
   {
-    name: 'CountryList',
-    path: '/:type(collection|coa)',
-    component: CountryList,
-    meta: {
-      onOffline: 'readonly',
-      onNoToken: 'logout',
-    } as RouteMeta,
-  },
-  {
-    name: 'PublicationList',
-    path: '/:type(collection|coa)/publications/:countrycode([a-z]+)',
-    component: PublicationList,
-    meta: {
-      onOffline: 'readonly',
-      onNoToken: 'logout',
-    } as RouteMeta,
-  },
-  {
-    name: 'IssueList',
-    path: '/:type(collection|coa)/issues/:publicationcode*',
-    component: IssueList,
+    name: 'Collection',
+    path: '/:type(collection|coa)/:countrycode?/:magazinecode?',
+    component: Collection,
     props: true,
     meta: {
       onOffline: 'readonly',

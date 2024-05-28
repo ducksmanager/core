@@ -4,6 +4,7 @@
     :items="sortedItems"
     :get-target-route-fn="getTargetUrlFn"
     :get-item-text-fn="getItemTextFn"
+    @load="emit('load', $event)"
   >
     <template #fill-bar="{ item }">
       <ion-progress-bar
@@ -27,6 +28,10 @@ import { stores } from '~web';
 import { getOwnershipText, getOwnershipPercentages } from '~/composables/useOwnership';
 import { app } from '~/stores/app';
 import { wtdcollection } from '~/stores/wtdcollection';
+
+const emit = defineEmits<{
+  (e: 'load', hasItems: boolean): void;
+}>();
 
 const route = useRoute();
 const { totalPerCountry, ownedCountries, coaIssueCountsPerCountrycode } = storeToRefs(wtdcollection());
@@ -57,7 +62,6 @@ const sortedItems = computed(() =>
 );
 
 const getTargetUrlFn = (key: string) => ({
-  name: 'PublicationList',
-  params: { type: route.params.type, countrycode: key },
+  params: { ...route.params, countrycode: key },
 });
 </script>

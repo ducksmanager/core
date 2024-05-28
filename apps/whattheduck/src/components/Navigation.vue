@@ -1,5 +1,5 @@
 <template>
-  <ion-segment v-if="parts" :value="currentNavigationItem" @ionChange="onChange">
+  <ion-segment v-if="parts" v-model="currentNavigationItem" @ionChange="onChange">
     <ion-segment-button v-for="{ id, text, component } in parts" :id="id" :value="id">
       <component v-if="component" :is="component" :id="id" :label="text" />
       <ion-label v-else>{{ text }}</ion-label>
@@ -24,27 +24,25 @@ const { countryNames, publicationNames } = storeToRefs(stores.coa());
 const { t } = useI18n();
 
 const parts = computed(() => {
-  if (!countryNames.value) {
-    return [];
-  }
   const parts: { text?: string; id: string; component?: any; badge?: string }[] = [
     {
       id: '',
       text: t('Tous les pays'),
     },
   ];
-  if (currentNavigationItem.value) {
-    const publicationParts = currentNavigationItem.value.split('/');
+  const { countrycode, magazinecode } = route.params as { countrycode?: string; magazinecode?: string };
+  if (countrycode) {
     parts.push({
       component: Country,
-      id: publicationParts[0],
-      text: countryNames.value?.[publicationParts[0]] || publicationParts[0],
+      id: countrycode,
+      text: countryNames.value?.[countrycode] || countrycode,
     });
-    if (publicationParts.length === 2) {
+    if (magazinecode) {
+      const publicationcode = `${countrycode}/${magazinecode}`;
       parts.push({
         component: Publication,
-        id: currentNavigationItem.value,
-        text: publicationNames.value[currentNavigationItem.value]!,
+        id: publicationcode,
+        text: publicationNames.value[publicationcode]!,
       });
     }
   }
@@ -52,9 +50,10 @@ const parts = computed(() => {
 });
 
 const onChange = (event: { detail: { value?: number | string } }) => {
-  const target = event.detail.value as string | undefined;
+  const [countrycode, magazinecode] = (event.detail.value as string)?.split('/') || [];
   router.push({
-    path: target ? `/collection/${(/\//.test(target) ? 'issues' : 'publications') + target}` : '/collection',
+    name: 'Collection',
+    params: { ...route.params, countrycode, magazinecode },
     query: { coa: route.query.coa },
   });
 };
@@ -74,6 +73,7 @@ ion-segment-button {
   align-items: center;
   text-transform: none;
   white-space: normal;
+  padding: 0.5rem;
 
   ion-badge {
     margin-top: 8px;

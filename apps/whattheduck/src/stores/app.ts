@@ -65,7 +65,7 @@ export const app = defineStore('app', () => {
     lastSync,
     currentNavigationItem: computed(
       () =>
-        (route.params.publicationcode && String(route.params.publicationcode)) ||
+        (route.params.magazinecode && String(`${route.params.countrycode}/${route.params.magazinecode}`)) ||
         (route.params.countrycode && String(route.params.countrycode)),
     ),
     token,
