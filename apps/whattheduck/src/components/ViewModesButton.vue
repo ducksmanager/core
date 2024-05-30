@@ -1,5 +1,5 @@
 <template>
-  <ion-fab ref="fab" v-if="issueViewModes" vertical="top" horizontal="end" id="view-modes">
+  <ion-fab ref="fab" v-if="issueViewModes" horizontal="end" id="view-modes">
     <ion-fab-button :disabled="isOfflineMode"
       ><ion-icon :ios="eyeOutline" :android="eyeSharp"></ion-icon></ion-fab-button
     ><ion-icon class="indicator" :ios="currentIssueViewMode.icon.ios" :android="currentIssueViewMode.icon.md" />

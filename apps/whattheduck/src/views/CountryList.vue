@@ -2,7 +2,6 @@
   <List
     v-if="ownershipPercentages && sortedItems"
     :items="sortedItems"
-    :get-target-route-fn="getTargetUrlFn"
     :get-item-text-fn="getItemTextFn"
     @load="emit('load', $event)"
   >
@@ -33,7 +32,6 @@ const emit = defineEmits<{
   (e: 'load', hasItems: boolean): void;
 }>();
 
-const route = useRoute();
 const { totalPerCountry, ownedCountries, coaIssueCountsPerCountrycode } = storeToRefs(wtdcollection());
 const { countryNames } = storeToRefs(stores.coa());
 const { isCoaView } = storeToRefs(app());
@@ -60,8 +58,4 @@ const sortedItems = computed(() =>
     text1.toLowerCase().localeCompare(text2.toLowerCase()),
   ),
 );
-
-const getTargetUrlFn = (key: string) => ({
-  params: { ...route.params, countrycode: key },
-});
 </script>

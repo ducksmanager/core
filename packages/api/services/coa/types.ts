@@ -36,6 +36,7 @@ export default abstract class {
       value: Record<
         string,
         {
+          issuecode: string;
           issuenumber: string;
           title: string | null;
         }[]

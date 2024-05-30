@@ -2,7 +2,6 @@
   <List
     v-if="totalPerPublication && coaIssueCountsByPublicationcode && ownershipPercentages"
     :items="sortedItems"
-    :get-target-route-fn="getTargetUrlFn"
     :get-item-text-fn="getItemTextFn"
     @load="emit('load', $event)"
   >
@@ -41,7 +40,7 @@ const emit = defineEmits<{
 const { coaIssueCountsByPublicationcode, totalPerPublication, ownedPublications } = storeToRefs(wtdcollection());
 const { fetchPublicationNamesFromCountry } = stores.coa();
 const { publicationNames } = storeToRefs(stores.coa());
-const { isCoaView } = storeToRefs(app());
+const { isCoaView, currentNavigationItem } = storeToRefs(app());
 
 const ownershipPercentages = computed(
   () =>
@@ -53,10 +52,6 @@ const ownershipPercentages = computed(
 const route = useRoute();
 
 const getItemTextFn = (item: (typeof items)['value'][0]['item']) => item.publicationname || item.publicationcode;
-
-const getTargetUrlFn = (key: string) => ({
-  params: { ...route.params, magazinecode: key.split('/')[1] },
-});
 
 const items = computed(() =>
   publicationNames.value
@@ -70,7 +65,8 @@ const items = computed(() =>
       : ownedPublications
           .value!.filter(
             (publicationcode) =>
-              publicationcode.indexOf(`${route.params.countrycode}/`) === 0 && publicationNames.value![publicationcode],
+              publicationcode.indexOf(`${currentNavigationItem.value}/`) === 0 &&
+              publicationNames.value![publicationcode],
           )
           .map((publicationcode) => ({
             key: publicationcode,
@@ -92,7 +88,7 @@ watch(
   isCoaView,
   async () => {
     if (isCoaView.value) {
-      await fetchPublicationNamesFromCountry(route.params.countrycode as string);
+      await fetchPublicationNamesFromCountry(currentNavigationItem.value!);
     }
   },
   { immediate: true },

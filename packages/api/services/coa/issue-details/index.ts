@@ -16,6 +16,7 @@ export default (socket: Socket<Events>) => {
       .findMany({
         select: {
           publicationcode: true,
+          issuecode: true,
           issuenumber: true,
           title: true,
         },
@@ -28,11 +29,11 @@ export default (socket: Socket<Events>) => {
       .then((data) => {
         callback(
           data.reduce<Parameters<typeof callback>[0]>(
-            (acc, { publicationcode, issuenumber, title }) => ({
+            (acc, { publicationcode, issuenumber, title, issuecode }) => ({
               ...acc,
               [publicationcode!]: [
                 ...(acc[publicationcode!] || []),
-                { issuenumber: issuenumber!, title },
+                { issuecode, issuenumber: issuenumber!, title },
               ],
             }),
             {},

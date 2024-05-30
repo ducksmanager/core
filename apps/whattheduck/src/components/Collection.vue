@@ -28,6 +28,8 @@
 </template>
 
 <script setup lang="ts" generic="Item extends Required<any>">
+import OwnedIssueCopiesModal from './OwnedIssueCopiesModal.vue';
+
 import { app } from '~/stores/app';
 import { wtdcollection } from '~/stores/wtdcollection';
 import CountryList from '~/views/CountryList.vue';
@@ -36,23 +38,23 @@ import PublicationList from '~/views/PublicationList.vue';
 
 const { t } = useI18n();
 const router = useRouter();
-const route = useRoute();
 
 const { total } = storeToRefs(wtdcollection());
 const { currentNavigationItem } = storeToRefs(app());
+const { ISSUECODE_REGEX } = coa();
 const filterText = ref('' as string);
 
 const hasItems = ref<boolean | undefined>();
 
-const componentName = computed(() => {
-  if (route.params.magazinecode) {
-    return IssueList;
-  } else if (route.params.countrycode) {
-    return PublicationList;
-  } else {
-    return CountryList;
-  }
-});
+const componentName = computed(() =>
+  currentNavigationItem.value
+    ? ISSUECODE_REGEX.test(currentNavigationItem.value)
+      ? OwnedIssueCopiesModal
+      : /\//.test(currentNavigationItem.value)
+        ? IssueList
+        : PublicationList
+    : CountryList,
+);
 
 const showFilter = computed(() => true);
 

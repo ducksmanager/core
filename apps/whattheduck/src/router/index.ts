@@ -1,7 +1,7 @@
 import { createRouter, createWebHistory } from '@ionic/vue-router';
 import type { RouteRecordRaw } from 'vue-router';
-import Collection from '~/components/Collection.vue';
 
+import Collection from '~/components/Collection.vue';
 import OwnedIssueCopiesModal from '~/components/OwnedIssueCopiesModal.vue';
 import OwnedIssueCopy from '~/components/OwnedIssueCopy.vue';
 import AddFromCamera from '~/views/AddFromCamera.vue';

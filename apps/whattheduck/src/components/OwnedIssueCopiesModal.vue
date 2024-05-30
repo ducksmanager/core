@@ -63,14 +63,18 @@ import FullIssue from '../components/FullIssue.vue';
 
 import Condition from './Condition.vue';
 
+import { app } from '~/stores/app';
 import { wtdcollection } from '~/stores/wtdcollection';
 
 const collectionStore = wtdcollection();
 const coaStore = coa();
+const appStore = app();
 
 const route = useRoute();
 
-const publicationcode = computed(() => `${route.params.countrycode}/${route.params.magazinecode}`);
+const publicationcode = computed(
+  () => `${coaStore.ISSUECODE_REGEX.exec(appStore.currentNavigationItem!)!.groups!.countrycode}`,
+);
 const issuenumber = computed(() => route.params.issuenumber as string);
 const fullUrl = ref<string>();
 

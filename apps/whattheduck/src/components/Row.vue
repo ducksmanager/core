@@ -1,5 +1,5 @@
 <template>
-  <ion-item button :class="{ 'is-next-owned': isNextOwned, 'is-owned': isOwned }">
+  <ion-item :button="!isOfflineMode" :class="{ 'is-next-owned': isNextOwned, 'is-owned': isOwned }">
     <slot name="fill-bar" />
     <slot name="checkbox" />
     <ion-label class="text">
@@ -13,6 +13,8 @@
 </template>
 
 <script setup lang="ts">
+import { app } from '~/stores/app';
+
 defineProps<{
   isOwned?: boolean;
   isNextOwned?: boolean;
@@ -25,6 +27,8 @@ defineSlots<{
   'label'(): any;
   'suffix'(): any;
 }>();
+
+const { isOfflineMode } = app();
 </script>
 
 <style lang="scss" scoped>

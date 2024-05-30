@@ -11,51 +11,57 @@
 import { stores } from '~web';
 
 import Country from './Country.vue';
+import GlobeIcon from './GlobeIcon.vue';
+import OwnedIssueCopiesModal from './OwnedIssueCopiesModal.vue';
 import Publication from './Publication.vue';
 
 import { app } from '~/stores/app';
 
-const router = useRouter();
-const route = useRoute();
-
 const { currentNavigationItem } = storeToRefs(app());
 const { countryNames, publicationNames } = storeToRefs(stores.coa());
-
-const { t } = useI18n();
+const { ISSUECODE_REGEX } = stores.coa();
 
 const parts = computed(() => {
   const parts: { text?: string; id: string; component?: any; badge?: string }[] = [
     {
       id: '',
-      text: t('Tous les pays'),
+      component: GlobeIcon,
+      text: '',
     },
   ];
-  const { countrycode, magazinecode } = route.params as { countrycode?: string; magazinecode?: string };
+  let countrycode: string | undefined, magazinecode: string | undefined, issuenumber: string | undefined;
+  const issuecodeGroups = ISSUECODE_REGEX.exec(currentNavigationItem.value || '')?.groups;
+  if (issuecodeGroups) {
+    ({ countrycode, magazinecode, issuenumber } = issuecodeGroups);
+  } else {
+    [countrycode, magazinecode] = currentNavigationItem.value?.split('/') || [];
+  }
   if (countrycode) {
     parts.push({
       component: Country,
       id: countrycode,
       text: countryNames.value?.[countrycode] || countrycode,
     });
-    if (magazinecode) {
-      const publicationcode = `${countrycode}/${magazinecode}`;
-      parts.push({
-        component: Publication,
-        id: publicationcode,
-        text: publicationNames.value[publicationcode]!,
-      });
-    }
+  }
+  if (magazinecode) {
+    parts.push({
+      component: Publication,
+      id: `${countrycode}/${magazinecode}`,
+      text: publicationNames.value[currentNavigationItem.value!],
+    });
+  }
+  if (issuenumber !== undefined) {
+    parts.push({
+      component: OwnedIssueCopiesModal,
+      id: currentNavigationItem.value!,
+      text: '...',
+    });
   }
   return parts;
 });
 
 const onChange = (event: { detail: { value?: number | string } }) => {
-  const [countrycode, magazinecode] = (event.detail.value as string)?.split('/') || [];
-  router.push({
-    name: 'Collection',
-    params: { ...route.params, countrycode, magazinecode },
-    query: { coa: route.query.coa },
-  });
+  currentNavigationItem.value = event.detail.value as string;
 };
 </script>
 
@@ -68,12 +74,16 @@ ion-segment {
 }
 
 ion-segment-button {
-  width: 33.333%;
-  max-width: 33.333%;
+  // width: 33.333%;
+  // max-width: 33.333%;
   align-items: center;
   text-transform: none;
   white-space: normal;
-  padding: 0.5rem;
+
+  &:first-child,
+  &:last-child {
+    flex-shrink: 1;
+  }
 
   ion-badge {
     margin-top: 8px;

@@ -2,7 +2,6 @@
   <List
     v-if="hasCoaData"
     :items="sortedItems"
-    :get-target-route-fn="getTargetUrlFn"
     :get-item-text-fn="getItemTextFn"
     @items-filtered="filteredIssuenumbers = $event"
     @load="emit('load', $event)"
@@ -60,8 +59,6 @@ const filteredIssuenumbers = ref<string[]>([]);
 
 const COVER_ROOT_URL = import.meta.env.VITE_CLOUDINARY_BASE_URL;
 
-const route = useRoute();
-
 const emit = defineEmits<{
   (e: 'load', hasItems: boolean): void;
 }>();
@@ -82,7 +79,7 @@ const colSize = computed(() => {
 const { issues, user } = storeToRefs(wtdcollection());
 const coaStore = webStores.coa();
 
-const { isCoaView, currentIssueViewMode } = storeToRefs(app());
+const { isCoaView, currentIssueViewMode, currentNavigationItem } = storeToRefs(app());
 
 const { bookcaseOptions, bookcaseUsername } = storeToRefs(bookcase());
 const { loadBookcaseOptions, loadBookcaseOrder } = bookcase();
@@ -96,12 +93,7 @@ const getItemTextFn = (item: (typeof items)['value'][0]['item']) => item.issuenu
 
 const hasCoaData = computed(() => !!coaStore.issuesWithTitles?.[publicationcode.value]);
 
-const getTargetUrlFn = (key: string) => ({
-  name: 'OwnedIssueCopiesModal',
-  params: `${publicationcode.value} ${key}`.match(coaStore.ISSUECODE_REGEX)!.groups,
-});
-
-const publicationcode = computed(() => `${route.params.countrycode}/${route.params.magazinecode}`);
+const publicationcode = computed(() => currentNavigationItem.value!);
 
 const coaIssues = computed(() => coaStore.issuesWithTitles[publicationcode.value]);
 const coaIssuenumbers = computed(() => coaIssues.value?.map(({ issuenumber }) => issuenumber));
@@ -112,8 +104,8 @@ const userIssues = computed(() =>
 const items = computed(() =>
   coaIssues.value
     ? isCoaView.value
-      ? coaIssues.value.map(({ issuenumber }) => ({
-          key: issuenumber,
+      ? coaIssues.value.map(({ issuecode, issuenumber }) => ({
+          key: issuecode,
           item: {
             issuenumber,
             ...(userIssues.value.find(({ issuenumber: userIssueNumber }) => issuenumber === userIssueNumber) || {}),
@@ -121,9 +113,9 @@ const items = computed(() =>
         }))
       : (issues.value || [])
           .filter((issue) => issue.publicationcode === publicationcode.value)
-          .map(({ issuenumber, ...issue }) => ({
-            key: issuenumber,
-            item: { ...issue, issuenumber }!,
+          .map(({ publicationcode, issuenumber, ...issue }) => ({
+            key: `${publicationcode} ${issuenumber}`,
+            item: { ...issue, publicationcode, issuenumber }!,
           }))
     : [],
 );

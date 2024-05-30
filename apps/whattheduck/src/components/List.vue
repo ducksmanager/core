@@ -18,7 +18,7 @@
         v-for="{ key, item, isOwned, isNextOwned } in filteredItems"
         :is-owned="isOwned"
         :is-next-owned="isNextOwned"
-        @click="onRowClick(key)"
+        @click="currentNavigationItem = key"
       >
         <template #fill-bar v-if="item">
           <slot name="fill-bar" :item="item" />
@@ -65,7 +65,6 @@ defineSlots<{
 
 const props = defineProps<{
   items: { key: string; item: Item; isOwned?: boolean; isNextOwned?: boolean }[];
-  getTargetRouteFn: (key: string) => Pick<RouteLocationNamedRaw, 'name' | 'params'>;
   getItemTextFn: (item: Item) => string;
   issueViewModes?: { label: string; icon: { ios: string; md: string } }[];
   filter?: { label: string; icon: { ios: string; md: string } }[];
@@ -95,10 +94,9 @@ const onScroll = (e: CustomEvent<ScrollDetail>) => {
 
 const { t } = useI18n();
 const router = useRouter();
-const route = useRoute();
 
 const { currentNavigationItem } = storeToRefs(app());
-const filterText = ref('' as string);
+const filterText = ref('');
 
 const itemInCenterOfViewport = computed(() => {
   if (!props.items.length) {
@@ -107,10 +105,6 @@ const itemInCenterOfViewport = computed(() => {
   const itemIndex = Math.floor((scrollPositionPct.value * props.items.length) / 100);
   return props.items[itemIndex].item;
 });
-
-const onRowClick = (key: string) => {
-  router.push({ ...props.getTargetRouteFn(key), query: { coa: route.query.coa } });
-};
 
 const filteredItems = computed(() =>
   props.items.filter(({ item }) => props.getItemTextFn(item).toLowerCase().indexOf(filterText.value) !== -1),
