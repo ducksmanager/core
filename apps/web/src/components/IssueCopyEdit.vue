@@ -136,7 +136,7 @@
               }"
               @click.stop="newCopyState.purchaseId = id"
             >
-              <small class="date">{{ date }}</small>
+              <small class="date">{{ date.toISOString().split("T")[0] }}</small>
               <div class="mx-2">
                 {{ description }}
               </div>
