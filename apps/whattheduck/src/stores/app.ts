@@ -5,7 +5,7 @@ import { dmSocketInjectionKey } from '~web/src/composables/useDmSocket';
 import usePersistedData from '~/composables/usePersistedData';
 
 export const NAVIGATION_ITEM_REGEX =
-  /^(?:$|(?<countrycode>[^/]+)(?:$|(?:\/(?<magazinecode>[^\n ]+)(?:$|(?<issuenumber> .+)))))$/;
+  /^(?:$|(?<countrycode>[^/]+)(?:$|(?:\/(?<magazinecode>[^ ]+)(?:$|(?: (?<issuenumber>.+))))))$/;
 
 export const app = defineStore('app', () => {
   const {
@@ -73,6 +73,15 @@ export const app = defineStore('app', () => {
       },
   );
 
+  const countrycode = computed(() => navigationItemGroups.value.countrycode);
+  const magazinecode = computed(() => navigationItemGroups.value.magazinecode);
+  const publicationcode = computed(() =>
+    navigationItemGroups.value.magazinecode
+      ? `${navigationItemGroups.value.countrycode}/${navigationItemGroups.value.magazinecode}`
+      : null,
+  );
+  const issuenumber = computed(() => navigationItemGroups.value.issuenumber);
+
   return {
     coaSocket,
     filterText,
@@ -80,6 +89,10 @@ export const app = defineStore('app', () => {
     socketCache,
     lastSync,
     currentNavigationItem,
+    countrycode,
+    magazinecode,
+    publicationcode,
+    issuenumber,
     navigationItemGroups,
     token,
     isOfflineMode,

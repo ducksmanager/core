@@ -1,5 +1,5 @@
 <template>
-  <ion-fab ref="fab" v-if="issueViewModes" horizontal="end" id="view-modes">
+  <ion-fab ref="fab" v-if="issueViewModes" vertical="top" horizontal="end" id="view-modes" slot="fixed">
     <ion-fab-button :disabled="isOfflineMode"
       ><ion-icon :ios="eyeOutline" :android="eyeSharp"></ion-icon></ion-fab-button
     ><ion-icon class="indicator" :ios="currentIssueViewMode.icon.ios" :android="currentIssueViewMode.icon.md" />
@@ -34,11 +34,6 @@ const isActivated = ref<boolean>(false);
 </script>
 <style scoped lang="scss">
 ion-fab {
-  display: flex;
-  flex-direction: column;
-  align-items: end;
-  right: -0.3rem;
-
   ion-fab-list {
     margin-top: 3rem;
     right: -2.5rem;

@@ -56,7 +56,6 @@ import { app } from '~/stores/app';
 
 defineSlots<{
   'default'(): any;
-  'page-menu'(): any;
   'fill-bar'(props: { item: Item }): any;
   'row-prefix'(props: { item: Item }): any;
   'row-label'(props: { item: Item }): any;
@@ -93,7 +92,6 @@ const onScroll = (e: CustomEvent<ScrollDetail>) => {
 };
 
 const { t } = useI18n();
-const router = useRouter();
 
 const { currentNavigationItem, filterText } = storeToRefs(app());
 
@@ -129,12 +127,6 @@ watch(
   },
   { immediate: true },
 );
-
-watch(currentNavigationItem, async (newValue) => {
-  if (newValue && /^[a-z]+\/[A-Z0-9]+ /.test(newValue)) {
-    router.push('/edit-issues');
-  }
-});
 </script>
 
 <style scoped>

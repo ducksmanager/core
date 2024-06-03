@@ -1,8 +1,8 @@
 <template>
   <ion-content class="ion-padding">
     <ion-row>
-      <ion-col v-if="!isOfflineMode" cols="4"><ion-img v-if="fullUrl" :src="coverUrl" /></ion-col>
-      <ion-col :cols="isOfflineMode ? 12 : 8">
+      <ion-col v-if="!isOfflineMode" size="4"><ion-img v-if="fullUrl" :src="coverUrl" /></ion-col>
+      <ion-col :size="isOfflineMode ? '12' : '8'">
         <ion-segment v-model="currentCopyIndex">
           <ion-segment-button v-for="(_, idx) in 3" :id="idx" :value="idx">
             <template v-if="copies[idx]">
@@ -36,14 +36,16 @@
         <owned-issue-copy v-if="currentCopyIndex !== undefined" v-model="copies[currentCopyIndex]" />
       </ion-col>
     </ion-row>
-    <template v-if="!isOfflineMode">
-      <ion-fab ref="fab" slot="fixed" vertical="bottom" horizontal="end">
-        <ion-fab-button @click="submitIssueCopies"
-          ><ion-icon :ios="checkmarkOutline" :md="checkmarkSharp" /></ion-fab-button></ion-fab
-      ><ion-fab ref="fab" slot="fixed" vertical="bottom" horizontal="end">
-        <ion-fab-button @click="currentNavigationItem = issuecode"
-          ><ion-icon :ios="closeOutline" :md="closeSharp" /></ion-fab-button></ion-fab
-    ></template>
+    <div id="edit-issues-buttons" v-if="!isOfflineMode">
+      <ion-fab>
+        <ion-fab-button color="light" @click="currentNavigationItem = issuecode"
+          ><ion-icon :ios="closeOutline" :md="closeSharp" /></ion-fab-button
+      ></ion-fab>
+      <ion-fab>
+        <ion-fab-button color="success" @click="submitIssueCopies"
+          ><ion-icon :ios="checkmarkOutline" :md="checkmarkSharp" /></ion-fab-button
+      ></ion-fab>
+    </div>
   </ion-content>
 </template>
 
@@ -57,21 +59,18 @@ import Condition from './Condition.vue';
 import { app } from '~/stores/app';
 import { wtdcollection } from '~/stores/wtdcollection';
 
-const collectionStore = wtdcollection();
-const coaStore = coa();
-const { isOfflineMode, navigationItemGroups, currentNavigationItem, isCoaView } = storeToRefs(app());
+const { updateCollectionSingleIssue } = wtdcollection();
+const { issuesByIssueCode } = storeToRefs(wtdcollection());
+const { fetchCoverUrls } = coa();
+const { isOfflineMode, currentNavigationItem, isCoaView, issuenumber, publicationcode } = storeToRefs(app());
 
-const publicationcode = computed(
-  () => `${navigationItemGroups.value.countrycode}/${navigationItemGroups.value.magazinecode}`,
-);
-const issuenumber = computed(() => `${navigationItemGroups.value.issuenumber}`);
 const fullUrl = ref<string>();
 
 watch(
   issuenumber,
   async () => {
-    const covers = await coaStore.fetchCoverUrls(publicationcode.value);
-    fullUrl.value = covers.covers[issuenumber.value]?.fullUrl;
+    const covers = await fetchCoverUrls(publicationcode.value!);
+    fullUrl.value = covers.covers[issuenumber.value!]?.fullUrl;
   },
   { immediate: true },
 );
@@ -87,7 +86,7 @@ const coverUrl = computed(() => `${import.meta.env.VITE_CLOUDINARY_BASE_URL}${fu
 
 const issuecode = computed(() => `${publicationcode.value} ${issuenumber.value}`);
 
-const copies = ref<SingleCopyState[]>(collectionStore.issuesByIssueCode?.[issuecode.value!] || []);
+const copies = ref<SingleCopyState[]>(issuesByIssueCode.value?.[issuecode.value!] || []);
 
 const currentCopyIndex = ref<number | undefined>(copies.value.length ? 0 : undefined);
 
@@ -107,9 +106,9 @@ const addCopy = () => {
 const submitIssueCopies = async () => {
   modalController.dismiss(null, 'confirm');
   emit('confirm');
-  await collectionStore.updateCollectionSingleIssue({
-    publicationcode: publicationcode.value,
-    issuenumber: issuenumber.value,
+  await updateCollectionSingleIssue({
+    publicationcode: publicationcode.value!,
+    issuenumber: issuenumber.value!,
     copies: copies.value,
   });
   currentNavigationItem.value = issuecode.value;
@@ -118,6 +117,23 @@ const submitIssueCopies = async () => {
 </script>
 
 <style scoped lang="scss">
+ion-content > ion-row {
+  height: 100%;
+  flex-wrap: nowrap;
+
+  > ion-col {
+    display: flex;
+    align-items: center;
+    &:first-child {
+      justify-content: center;
+    }
+
+    &:last-child {
+      flex-direction: column;
+      overflow-y: auto;
+    }
+  }
+}
 ion-segment {
   ion-label,
   ion-icon {
@@ -125,9 +141,6 @@ ion-segment {
   }
 }
 
-ion-img {
-  height: 50px;
-}
 ion-button {
   grid-row: 1;
 }
@@ -137,5 +150,18 @@ ion-icon.delete {
   left: -5px;
   height: calc(100% - 10px);
   width: 28px;
+}
+
+#edit-issues-buttons {
+  position: fixed;
+  width: 100%;
+  bottom: 1rem;
+  display: flex;
+  justify-content: center;
+
+  ion-fab {
+    position: static;
+    margin: 0 0.5rem;
+  }
 }
 </style>

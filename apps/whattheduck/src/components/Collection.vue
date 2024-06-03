@@ -1,12 +1,12 @@
 <template>
   <ion-page id="main-content">
+    <ion-buttons slot="end">
+      <ViewModesButton v-if="componentName === IssueList" />
+    </ion-buttons>
     <ion-header :translucent="true">
       <ion-toolbar>
         <ion-buttons slot="start">
           <ion-menu-button color="primary" />
-        </ion-buttons>
-        <ion-buttons slot="end">
-          <ViewModesButton v-if="componentName === IssueList" />
         </ion-buttons>
         <ion-title
           ><div class="content">
@@ -41,10 +41,9 @@ import IssueList from '~/views/IssueList.vue';
 import PublicationList from '~/views/PublicationList.vue';
 
 const { t } = useI18n();
-const router = useRouter();
 
 const { total } = storeToRefs(wtdcollection());
-const { currentNavigationItem, filterText, navigationItemGroups } = storeToRefs(app());
+const { filterText, navigationItemGroups } = storeToRefs(app());
 
 const hasItems = ref<boolean | undefined>();
 
@@ -61,12 +60,6 @@ const componentName = computed(() =>
 watch(componentName, () => {
   filterText.value = '';
 });
-
-watch(currentNavigationItem, async (newValue) => {
-  if (newValue && /^[a-z]+\/[A-Z0-9]+ /.test(newValue)) {
-    router.push('/edit-issues');
-  }
-});
 </script>
 
 <style scoped>
@@ -76,6 +69,14 @@ watch(currentNavigationItem, async (newValue) => {
 strong {
   font-size: 20px;
   line-height: 26px;
+}
+
+ion-buttons {
+  &[slot='end'] {
+    position: fixed;
+    top: 0.2rem;
+    right: 0;
+  }
 }
 
 p {

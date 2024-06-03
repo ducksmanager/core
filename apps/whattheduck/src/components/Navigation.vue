@@ -1,22 +1,18 @@
 <template>
   <ion-segment v-model="currentNavigationItem">
-    <ion-col :size="[1, maxParts].includes(partIdx) ? 2 : 4" v-for="partIdx in maxParts">
-      <ion-segment-button
-        :id="shownParts[partIdx - 1]?.id || partIdx - 1"
-        :value="partIdx - 1"
-        :class="{ invisible: partIdx < shownParts.length }"
-      >
-        <template v-if="shownParts[partIdx - 1]">
-          <component
-            v-if="shownParts[partIdx - 1].component"
-            :is="shownParts[partIdx - 1].component"
-            :id="shownParts[partIdx - 1].id"
-            :label="shownParts[partIdx - 1].text"
-          />
-          <ion-label v-else>{{ shownParts[partIdx - 1].text }}</ion-label>
-        </template>
-      </ion-segment-button></ion-col
-    >
+    <ion-col :size="[1, maxParts].includes(partIdx) ? '2' : '4'" v-for="partIdx in maxParts">
+      <ion-segment-button :value="shownParts[partIdx - 1]" :class="{ invisible: partIdx < shownParts.length }">
+        <globe-icon v-if="partIdx === 1" />
+        <Country
+          v-if="partIdx === 2 && countrycode"
+          :id="countrycode"
+          :label="countryNames?.[countrycode] || countrycode" />
+        <Publication
+          v-if="partIdx === 3 && publicationcode"
+          :publicationcode="publicationcode"
+          :title="publicationNames?.[publicationcode] || publicationcode" />
+        <EditIcon v-if="partIdx === 4 && issuenumber !== undefined" /></ion-segment-button
+    ></ion-col>
   </ion-segment>
 </template>
 
@@ -35,35 +31,22 @@ const { countryNames, publicationNames } = storeToRefs(stores.coa());
 
 const maxParts = 4;
 
-const shownParts = computed(() => {
-  const parts: { text?: string; id: string; component?: any; badge?: string }[] = [
-    {
-      id: '',
-      component: GlobeIcon,
-      text: '',
-    },
-  ];
-  const { countrycode, magazinecode, issuenumber } = navigationItemGroups.value;
+const countrycode = computed(() => navigationItemGroups.value.countrycode);
+const magazinecode = computed(() => navigationItemGroups.value.magazinecode);
+const issuenumber = computed(() => navigationItemGroups.value.issuenumber);
+const publicationcode = computed(() => magazinecode.value && `${countrycode.value}/${magazinecode.value}`);
 
-  if (countrycode) {
-    parts.push({
-      component: Country,
-      id: countrycode,
-      text: countryNames.value?.[countrycode] || countrycode,
-    });
+const shownParts = computed(() => {
+  const parts = [''];
+
+  if (countrycode.value) {
+    parts.push(countrycode.value);
   }
   if (magazinecode) {
-    parts.push({
-      component: Publication,
-      id: `${countrycode}/${magazinecode}`,
-      text: publicationNames.value[currentNavigationItem.value!],
-    });
+    parts.push(`${countrycode.value}/${magazinecode.value}`);
   }
-  if (issuenumber !== undefined) {
-    parts.push({
-      component: EditIcon,
-      id: currentNavigationItem.value!,
-    });
+  if (issuenumber.value !== undefined) {
+    parts.push(currentNavigationItem.value!);
   }
   return parts;
 });

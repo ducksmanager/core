@@ -1,9 +1,7 @@
 <template>
-  {{ label }}
+  {{ title }}
 </template>
 
 <script setup lang="ts">
-defineProps<{
-  label: string;
-}>();
+defineProps<{ publicationcode: string; title: string }>();
 </script>

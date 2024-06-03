@@ -28,9 +28,7 @@
       <ion-grid>
         <ion-row>
           <ion-col
-            v-for="{ key, item } in sortedItemsForCovers?.filter(({ item }) =>
-              filteredIssuenumbers.includes(item.issuenumber),
-            )"
+            v-for="{ key, item } in sortedItemsForCovers?.filter(({ key }) => filteredIssuenumbers.includes(key))"
             :key="key"
             class="ion-text-center"
             :size="String(colSize)"
@@ -41,7 +39,6 @@
             ></ion-img></ion-col></ion-row
       ></ion-grid>
     </template>
-    <template #page-menu><ViewModesButton /></template>
   </List>
 </template>
 
