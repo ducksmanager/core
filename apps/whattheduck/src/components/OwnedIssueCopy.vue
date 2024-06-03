@@ -6,7 +6,7 @@
       >
       <ion-col size="8" class="ion-padding">
         <ion-row style="flex-direction: column" class="ion-align-items-end">
-          <checkbox-group-with-radio-behavior
+          <ColorfulRadioGroup
             :list="conditionsWithoutMissing"
             v-model:id="issue.condition"
             :getItemId="(item) => item.dbValue"
@@ -33,7 +33,7 @@
         <!-- <ion-button style="visibility: hidden" size="small">{{ t("Créer une date d'achat") }}</ion-button> -->
       </ion-col>
       <ion-col size="8" class="ion-padding ion-text-right">
-        <checkbox-group-with-radio-behavior
+        <ColorfulRadioGroup
           v-if="purchasesIncludingNone"
           class="ion-text-right ion-padding-bottom vertical"
           label-placement="start"
@@ -49,7 +49,7 @@
             >
               {{ descriptionLine }}
             </div></template
-          ></checkbox-group-with-radio-behavior
+          ></ColorfulRadioGroup
         ></ion-col
       >
     </ion-row></ion-grid
@@ -58,6 +58,8 @@
 <script setup lang="ts">
 import type { SingleCopyState } from '~dm-types/CollectionUpdate';
 import { type purchase } from '~prisma-clients/client_dm';
+
+import ColorfulRadioGroup from './ColorfulRadioGroup.vue';
 
 import { wtdcollection } from '~/stores/wtdcollection';
 

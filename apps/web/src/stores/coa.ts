@@ -41,9 +41,7 @@ export const coa = defineStore("coa", () => {
     coa: { services: coaServices },
   } = injectLocal(dmSocketInjectionKey)!;
 
-  const ISSUECODE_REGEX =
-      /^(?<countrycode>[^/]+)\/(?<magazinecode>[^ ]+) (?<issuenumber>.+)/,
-    locale = useI18n().locale,
+  const locale = useI18n().locale,
     coverUrls = ref<{ [issuenumber: string]: string }>({}),
     countryNames = ref<EventReturnType<CoaServices["getCountryList"]> | null>(
       null,
@@ -302,7 +300,5 @@ export const coa = defineStore("coa", () => {
     publicationNamesFullCountries,
     setCoverUrl,
     setPersonNames,
-
-    ISSUECODE_REGEX,
   };
 });

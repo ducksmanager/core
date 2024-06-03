@@ -95,8 +95,7 @@ const onScroll = (e: CustomEvent<ScrollDetail>) => {
 const { t } = useI18n();
 const router = useRouter();
 
-const { currentNavigationItem } = storeToRefs(app());
-const filterText = ref('');
+const { currentNavigationItem, filterText } = storeToRefs(app());
 
 const itemInCenterOfViewport = computed(() => {
   if (!props.items.length) {
@@ -160,7 +159,6 @@ a {
 
 ion-searchbar {
   padding: 0;
-  height: 25px !important;
 }
 
 #scroll-text {

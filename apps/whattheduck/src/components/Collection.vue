@@ -19,7 +19,11 @@
       </ion-toolbar>
       <template v-if="hasItems">
         <Navigation />
-        <ion-searchbar autocapitalize="sentences" v-if="showFilter" v-model="filterText" placeholder="Filter"
+        <ion-searchbar
+          autocapitalize="sentences"
+          v-if="componentName !== OwnedIssueCopies"
+          v-model="filterText"
+          placeholder="Filter"
       /></template>
     </ion-header>
 
@@ -28,7 +32,7 @@
 </template>
 
 <script setup lang="ts" generic="Item extends Required<any>">
-import OwnedIssueCopiesModal from './OwnedIssueCopiesModal.vue';
+import OwnedIssueCopies from './OwnedIssueCopies.vue';
 
 import { app } from '~/stores/app';
 import { wtdcollection } from '~/stores/wtdcollection';
@@ -40,23 +44,23 @@ const { t } = useI18n();
 const router = useRouter();
 
 const { total } = storeToRefs(wtdcollection());
-const { currentNavigationItem } = storeToRefs(app());
-const { ISSUECODE_REGEX } = coa();
-const filterText = ref('' as string);
+const { currentNavigationItem, filterText, navigationItemGroups } = storeToRefs(app());
 
 const hasItems = ref<boolean | undefined>();
 
 const componentName = computed(() =>
-  currentNavigationItem.value
-    ? ISSUECODE_REGEX.test(currentNavigationItem.value)
-      ? OwnedIssueCopiesModal
-      : /\//.test(currentNavigationItem.value)
-        ? IssueList
-        : PublicationList
-    : CountryList,
+  navigationItemGroups.value.issuenumber !== undefined
+    ? OwnedIssueCopies
+    : navigationItemGroups.value.magazinecode
+      ? IssueList
+      : navigationItemGroups.value.countrycode
+        ? PublicationList
+        : CountryList,
 );
 
-const showFilter = computed(() => true);
+watch(componentName, () => {
+  filterText.value = '';
+});
 
 watch(currentNavigationItem, async (newValue) => {
   if (newValue && /^[a-z]+\/[A-Z0-9]+ /.test(newValue)) {
@@ -83,11 +87,6 @@ p {
 
 a {
   text-decoration: none;
-}
-
-ion-searchbar {
-  padding: 0;
-  height: 25px !important;
 }
 
 ion-title {

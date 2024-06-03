@@ -10,11 +10,11 @@
     </ion-header>
     <ion-content :fullscreen="true">
       <ion-modal v-if="selectedCover" is-open>
-        <OwnedIssueCopiesModal
-          @cancel="selectedCover = null"
+        <OwnedIssueCopies
           :publicationcode="selectedCover.publicationcode"
           :issuenumber="selectedCover.issuenumber"
           :fullUrl="selectedCover.fullUrl"
+          @cancel="selectedCover = null"
         />
       </ion-modal>
       <div v-if="!covers.length"></div>
@@ -89,7 +89,7 @@ import { stores as webStores } from '~web';
 import useCoverSearch from '../composables/useCoverSearch';
 
 import FullIssue from '~/components/FullIssue.vue';
-import OwnedIssueCopiesModal from '~/components/OwnedIssueCopiesModal.vue';
+import OwnedIssueCopies from '~/components/OwnedIssueCopies.vue';
 import { wtdcollection } from '~/stores/wtdcollection';
 import type CoverIdServices from '~dm-services/cover-id/types';
 

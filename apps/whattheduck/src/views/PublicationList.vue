@@ -49,15 +49,13 @@ const ownershipPercentages = computed(
     getOwnershipPercentages(totalPerPublication.value, coaIssueCountsByPublicationcode.value),
 );
 
-const route = useRoute();
-
 const getItemTextFn = (item: (typeof items)['value'][0]['item']) => item.publicationname || item.publicationcode;
 
 const items = computed(() =>
   publicationNames.value
     ? isCoaView.value
       ? Object.entries(publicationNames.value)
-          .filter(([publicationcode]) => new RegExp(`^${route.params.countrycode}/`).test(publicationcode))
+          .filter(([publicationcode]) => publicationcode.startsWith(`${currentNavigationItem.value}/`))
           .map(([publicationcode, publicationname]) => ({
             key: publicationcode,
             item: { publicationcode, publicationname },

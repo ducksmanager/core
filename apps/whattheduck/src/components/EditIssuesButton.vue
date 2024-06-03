@@ -27,7 +27,7 @@
         class="ion-align-items-center ion-text-nowrap"
         @click="
           (fab?.$el as HTMLIonFabElement).close();
-          router.push({ path: route.path, query: { coa: 'true' } });
+          isCoaView = true;
         "
       >
         <ion-label>{{ t('Par sélection de numéro') }}</ion-label>
@@ -63,17 +63,18 @@ import {
 
 import useCoverSearch from '../composables/useCoverSearch';
 
+import { app } from '~/stores/app';
+
 const {
   coverId: { services: coverIdServices },
 } = injectLocal(dmSocketInjectionKey)!;
 const { pickCoverFile, takePhoto } = useCoverSearch(useRouter(), coverIdServices);
+const { isCoaView } = storeToRefs(app());
 
 // eslint-disable-next-line no-undef
 const fab = ref<ComponentPublicInstance<HTMLIonFabElement> | null>(null);
 
 const { t } = useI18n();
-const router = useRouter();
-const route = useRoute();
 </script>
 
 <style lang="scss" scoped>

@@ -1,9 +1,22 @@
 <template>
-  <ion-segment v-if="parts" v-model="currentNavigationItem" @ionChange="onChange">
-    <ion-segment-button v-for="{ id, text, component } in parts" :id="id" :value="id">
-      <component v-if="component" :is="component" :id="id" :label="text" />
-      <ion-label v-else>{{ text }}</ion-label>
-    </ion-segment-button>
+  <ion-segment v-model="currentNavigationItem">
+    <ion-col :size="[1, maxParts].includes(partIdx) ? 2 : 4" v-for="partIdx in maxParts">
+      <ion-segment-button
+        :id="shownParts[partIdx - 1]?.id || partIdx - 1"
+        :value="partIdx - 1"
+        :class="{ invisible: partIdx < shownParts.length }"
+      >
+        <template v-if="shownParts[partIdx - 1]">
+          <component
+            v-if="shownParts[partIdx - 1].component"
+            :is="shownParts[partIdx - 1].component"
+            :id="shownParts[partIdx - 1].id"
+            :label="shownParts[partIdx - 1].text"
+          />
+          <ion-label v-else>{{ shownParts[partIdx - 1].text }}</ion-label>
+        </template>
+      </ion-segment-button></ion-col
+    >
   </ion-segment>
 </template>
 
@@ -11,17 +24,18 @@
 import { stores } from '~web';
 
 import Country from './Country.vue';
+import EditIcon from './EditIcon.vue';
 import GlobeIcon from './GlobeIcon.vue';
-import OwnedIssueCopiesModal from './OwnedIssueCopiesModal.vue';
 import Publication from './Publication.vue';
 
 import { app } from '~/stores/app';
 
-const { currentNavigationItem } = storeToRefs(app());
+const { currentNavigationItem, navigationItemGroups } = storeToRefs(app());
 const { countryNames, publicationNames } = storeToRefs(stores.coa());
-const { ISSUECODE_REGEX } = stores.coa();
 
-const parts = computed(() => {
+const maxParts = 4;
+
+const shownParts = computed(() => {
   const parts: { text?: string; id: string; component?: any; badge?: string }[] = [
     {
       id: '',
@@ -29,13 +43,8 @@ const parts = computed(() => {
       text: '',
     },
   ];
-  let countrycode: string | undefined, magazinecode: string | undefined, issuenumber: string | undefined;
-  const issuecodeGroups = ISSUECODE_REGEX.exec(currentNavigationItem.value || '')?.groups;
-  if (issuecodeGroups) {
-    ({ countrycode, magazinecode, issuenumber } = issuecodeGroups);
-  } else {
-    [countrycode, magazinecode] = currentNavigationItem.value?.split('/') || [];
-  }
+  const { countrycode, magazinecode, issuenumber } = navigationItemGroups.value;
+
   if (countrycode) {
     parts.push({
       component: Country,
@@ -52,17 +61,12 @@ const parts = computed(() => {
   }
   if (issuenumber !== undefined) {
     parts.push({
-      component: OwnedIssueCopiesModal,
+      component: EditIcon,
       id: currentNavigationItem.value!,
-      text: '...',
     });
   }
   return parts;
 });
-
-const onChange = (event: { detail: { value?: number | string } }) => {
-  currentNavigationItem.value = event.detail.value as string;
-};
 </script>
 
 <style lang="scss" scoped>
@@ -74,16 +78,10 @@ ion-segment {
 }
 
 ion-segment-button {
-  // width: 33.333%;
-  // max-width: 33.333%;
   align-items: center;
   text-transform: none;
   white-space: normal;
-
-  &:first-child,
-  &:last-child {
-    flex-shrink: 1;
-  }
+  min-width: initial;
 
   ion-badge {
     margin-top: 8px;

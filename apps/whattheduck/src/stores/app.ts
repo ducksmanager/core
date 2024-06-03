@@ -4,6 +4,9 @@ import { dmSocketInjectionKey } from '~web/src/composables/useDmSocket';
 
 import usePersistedData from '~/composables/usePersistedData';
 
+export const NAVIGATION_ITEM_REGEX =
+  /^(?:$|(?<countrycode>[^/]+)(?:$|(?:\/(?<magazinecode>[^\n ]+)(?:$|(?<issuenumber> .+)))))$/;
+
 export const app = defineStore('app', () => {
   const {
     coa: { socket: coaSocket },
@@ -22,6 +25,7 @@ export const app = defineStore('app', () => {
   const token = ref<string | null>(); // undefined === we haven't checked whether there is a token ; null === we have checked and there is no token
   const socketCache = ref<Record<string, NotEmptyStorageValue>>({});
   const isPersistedDataLoaded = ref(false);
+  const filterText = ref('');
 
   watch(token, () => {
     collectionSocket.disconnect();
@@ -58,15 +62,28 @@ export const app = defineStore('app', () => {
     isPersistedDataLoaded.value = true;
   });
 
+  const currentNavigationItem = ref<string>('');
+
+  const navigationItemGroups = computed(
+    () =>
+      (NAVIGATION_ITEM_REGEX.exec(currentNavigationItem.value)?.groups || {}) as {
+        countrycode?: string;
+        magazinecode?: string;
+        issuenumber?: string;
+      },
+  );
+
   return {
     coaSocket,
+    filterText,
     isPersistedDataLoaded,
     socketCache,
     lastSync,
-    currentNavigationItem: ref(null as string | null),
+    currentNavigationItem,
+    navigationItemGroups,
     token,
     isOfflineMode,
-    isCoaView: computed(() => route.query.coa === 'true'),
+    isCoaView: ref(route.query.coa === 'true'),
     isObsoleteSync: computed(
       () => !lastSync.value || new Date().getTime() - lastSync.value.getTime() > 12 * 60 * 60 * 1000,
     ),

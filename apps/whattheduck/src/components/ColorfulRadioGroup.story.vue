@@ -1,6 +1,6 @@
 <template>
   <Story>
-    <CheckboxGroupWithRadioBehavior
+    <ColorfulRadioGroup
       v-model:id="currentItemId"
       :list="[
         { id: 1, name: 'item 1' },
