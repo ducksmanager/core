@@ -63,7 +63,7 @@ export const app = defineStore('app', () => {
     isPersistedDataLoaded.value = true;
   });
 
-  const currentNavigationItem = ref<string>('');
+  const currentNavigationItem = ref<string>(route.hash.replace('#', ''));
 
   const navigationItemGroups = computed(
     () =>
@@ -80,8 +80,8 @@ export const app = defineStore('app', () => {
       query: route.query,
       params: {
         type: 'collection',
-        code,
       },
+      hash: `#${code}`,
     });
   });
 

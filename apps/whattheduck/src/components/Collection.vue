@@ -27,7 +27,7 @@
       /></template>
     </ion-header>
 
-    <component :is="componentName" @load="hasItems = $event" />
+    <component :is="componentName" @load="hasItems = $event as boolean" />
   </ion-page>
 </template>
 

@@ -22,7 +22,7 @@ export type RouteMeta = {
 const routes: RouteRecordRaw[] = [
   {
     name: 'Collection',
-    path: '/:type(collection|coa)/:code',
+    path: '/:type(collection|coa)',
     component: Collection,
     props: true,
     meta: {
