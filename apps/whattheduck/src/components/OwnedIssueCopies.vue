@@ -4,28 +4,17 @@
       <ion-col v-if="!isOfflineMode" size="4"><ion-img v-if="fullUrl" :src="coverUrl" /></ion-col>
       <ion-col :size="isOfflineMode ? '12' : '8'">
         <ion-segment v-model="currentCopyIndex">
-          <ion-segment-button v-for="(_, idx) in 3" :id="idx" :value="idx">
+          <ion-segment-button v-for="(_, idx) in 3" :id="idx" :value="idx" v-show="copies[idx]">
             <template v-if="copies[idx]">
               <ion-label
-                ><Condition :value="copies[idx].condition" />
-                {{ t('Exemplaire {index}', { index: idx + 1 }) }}</ion-label
-              >
-              <ion-icon
-                v-if="!isOfflineMode"
-                :ios="closeOutline"
-                :android="closeSharp"
-                color="danger"
-                size="small"
-                style="pointer-events: all"
-                class="delete no-padding"
-                @click.stop.prevent="
-                  copies.splice(idx, 1);
-                  currentCopyIndex = idx - 1 < 0 ? undefined : idx - 1;
-                "
-            /></template>
+                ><div>
+                  {{ t('Ex. {index}', { index: idx + 1 }) }}
+                </div>
+                <Condition :value="copies[idx].condition" /></ion-label
+            ></template>
           </ion-segment-button>
           <ion-button
-            :style="{ gridColumn: copies.length + 1 }"
+            :style="{ gridColumn: 4 }"
             size="small"
             v-if="!isOfflineMode && copies.length <= 2"
             @click="addCopy"
@@ -33,12 +22,19 @@
             <ion-icon :ios="addOutline" :android="addSharp" />&nbsp;{{ t('Ajouter un exemplaire') }}
           </ion-button>
         </ion-segment>
-        <owned-issue-copy v-if="currentCopyIndex !== undefined" v-model="copies[currentCopyIndex]" />
+        <owned-issue-copy
+          v-if="currentCopyIndex !== undefined"
+          v-model="copies[currentCopyIndex]"
+          @delete="
+            copies.splice(currentCopyIndex, 1);
+            currentCopyIndex = currentCopyIndex - 1 < 0 ? undefined : currentCopyIndex - 1;
+          "
+        />
       </ion-col>
     </ion-row>
     <div id="edit-issues-buttons" v-if="!isOfflineMode">
       <ion-fab>
-        <ion-fab-button color="light" @click="currentNavigationItem = issuecode"
+        <ion-fab-button color="light" @click="currentNavigationItem = publicationcode!"
           ><ion-icon :ios="closeOutline" :md="closeSharp" /></ion-fab-button
       ></ion-fab>
       <ion-fab>
@@ -50,7 +46,6 @@
 </template>
 
 <script lang="ts" setup>
-import { modalController } from '@ionic/vue';
 import { addOutline, addSharp, closeOutline, closeSharp, checkmarkOutline, checkmarkSharp } from 'ionicons/icons';
 import type { SingleCopyState } from '~dm-types/CollectionUpdate';
 
@@ -74,11 +69,6 @@ watch(
   },
   { immediate: true },
 );
-
-const emit = defineEmits<{
-  (e: 'cancel'): void;
-  (e: 'confirm'): void;
-}>();
 
 const { t } = useI18n();
 
@@ -104,14 +94,12 @@ const addCopy = () => {
 };
 
 const submitIssueCopies = async () => {
-  modalController.dismiss(null, 'confirm');
-  emit('confirm');
   await updateCollectionSingleIssue({
     publicationcode: publicationcode.value!,
     issuenumber: issuenumber.value!,
     copies: copies.value,
   });
-  currentNavigationItem.value = issuecode.value;
+  currentNavigationItem.value = publicationcode.value!;
   isCoaView.value = false;
 };
 </script>
@@ -130,7 +118,6 @@ ion-content > ion-row {
 
     &:last-child {
       flex-direction: column;
-      overflow-y: auto;
     }
   }
 }
@@ -158,6 +145,8 @@ ion-icon.delete {
   bottom: 1rem;
   display: flex;
   justify-content: center;
+  z-index: 2;
+  opacity: 0.7;
 
   ion-fab {
     position: static;

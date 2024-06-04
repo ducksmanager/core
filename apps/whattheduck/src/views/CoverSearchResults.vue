@@ -9,14 +9,6 @@
       </ion-toolbar>
     </ion-header>
     <ion-content :fullscreen="true">
-      <ion-modal v-if="selectedCover" is-open>
-        <OwnedIssueCopies
-          :publicationcode="selectedCover.publicationcode"
-          :issuenumber="selectedCover.issuenumber"
-          :fullUrl="selectedCover.fullUrl"
-          @cancel="selectedCover = null"
-        />
-      </ion-modal>
       <div v-if="!covers.length"></div>
       <Carousel3d :loop="false" v-else :onMainSlideClick="onMainSlideClick">
         <Slide
@@ -89,16 +81,15 @@ import { stores as webStores } from '~web';
 import useCoverSearch from '../composables/useCoverSearch';
 
 import FullIssue from '~/components/FullIssue.vue';
-import OwnedIssueCopies from '~/components/OwnedIssueCopies.vue';
+import { app } from '~/stores/app';
 import { wtdcollection } from '~/stores/wtdcollection';
 import type CoverIdServices from '~dm-services/cover-id/types';
 
 const { t } = useI18n();
 const { publicationNames } = storeToRefs(webStores.coa());
+const { currentNavigationItem } = storeToRefs(app());
 
 const slideWidths = ref<number[]>([]);
-
-const selectedCover = ref<(typeof covers.value)[0] | null>(null);
 
 const getCoverUrl = (url: string) => `${import.meta.env.VITE_CLOUDINARY_BASE_URL}${url}`;
 
@@ -137,7 +128,7 @@ const covers = computed(() =>
 );
 
 const onMainSlideClick = async ({ index }: { index: number }) => {
-  selectedCover.value = covers.value[index]!;
+  currentNavigationItem.value = covers.value[index]!.issuecode.replace(/[ ]{2,}/g, ' ');
 };
 </script>
 <style lang="scss" scoped>
@@ -193,6 +184,11 @@ ion-card {
             flex-grow: 0;
             min-width: 50%;
             max-width: 50%;
+            justify-content: center;
+
+            &:deep(.dm-condition-background) {
+              margin-right: 0;
+            }
 
             &:first-child {
               text-align: right;

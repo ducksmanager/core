@@ -2,8 +2,6 @@ import { createRouter, createWebHistory } from '@ionic/vue-router';
 import type { RouteRecordRaw } from 'vue-router';
 
 import Collection from '~/components/Collection.vue';
-import OwnedIssueCopies from '~/components/OwnedIssueCopies.vue';
-import OwnedIssueCopy from '~/components/OwnedIssueCopy.vue';
 import AddFromCamera from '~/views/AddFromCamera.vue';
 import Authors from '~/views/Authors.vue';
 import CoverSearchResults from '~/views/CoverSearchResults.vue';
@@ -24,26 +22,11 @@ export type RouteMeta = {
 const routes: RouteRecordRaw[] = [
   {
     name: 'Collection',
-    path: '/:type(collection|coa)/:countrycode?/:magazinecode?',
+    path: '/:type(collection|coa)/:code',
     component: Collection,
     props: true,
     meta: {
       onOffline: 'readonly',
-      onNoToken: 'logout',
-    } as RouteMeta,
-  },
-  {
-    name: 'OwnedIssueCopies',
-    path: '/collection/:countrycode/:magazinecode/:issuenumber',
-    component: OwnedIssueCopies,
-    children: [
-      {
-        path: 'copy/:copyIndex',
-        component: OwnedIssueCopy,
-      },
-    ],
-    meta: {
-      onOffline: 'unavailable',
       onNoToken: 'logout',
     } as RouteMeta,
   },

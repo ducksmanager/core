@@ -1,7 +1,11 @@
 <template>
   <ion-segment v-model="currentNavigationItem">
-    <ion-col :size="[1, maxParts].includes(partIdx) ? '2' : '4'" v-for="partIdx in maxParts">
-      <ion-segment-button :value="shownParts[partIdx - 1]" :class="{ invisible: partIdx < shownParts.length }">
+    <ion-col
+      :size="[1, maxParts].includes(partIdx) ? '2' : '4'"
+      v-for="partIdx in maxParts"
+      v-show="partIdx <= shownParts.length"
+    >
+      <ion-segment-button :value="shownParts[partIdx - 1]">
         <globe-icon v-if="partIdx === 1" />
         <Country
           v-if="partIdx === 2 && countrycode"
@@ -11,7 +15,7 @@
           v-if="partIdx === 3 && publicationcode"
           :publicationcode="publicationcode"
           :title="publicationNames?.[publicationcode] || publicationcode" />
-        <EditIcon v-if="partIdx === 4 && issuenumber !== undefined" /></ion-segment-button
+        <Issue v-if="partIdx === 4 && issuenumber !== undefined" :issuenumber="issuenumber" /></ion-segment-button
     ></ion-col>
   </ion-segment>
 </template>
@@ -20,8 +24,8 @@
 import { stores } from '~web';
 
 import Country from './Country.vue';
-import EditIcon from './EditIcon.vue';
 import GlobeIcon from './GlobeIcon.vue';
+import Issue from './Issue.vue';
 import Publication from './Publication.vue';
 
 import { app } from '~/stores/app';
@@ -58,27 +62,31 @@ ion-segment {
   justify-content: start;
   height: 48px;
   background-color: var(--ion-background-color);
-}
 
-ion-segment-button {
-  align-items: center;
-  text-transform: none;
-  white-space: normal;
-  min-width: initial;
-
-  ion-badge {
-    margin-top: 8px;
+  ion-col {
+    padding: 0 !important;
   }
 
-  ion-label {
-    width: 100%;
+  ion-segment-button {
+    align-items: center;
+    text-transform: none;
     white-space: normal;
-    overflow-y: auto;
-  }
+    min-width: initial;
 
-  &::part(native) {
-    padding: 0;
-    max-width: 100%;
+    ion-badge {
+      margin-top: 8px;
+    }
+
+    ion-label {
+      width: 100%;
+      white-space: normal;
+      overflow-y: auto;
+    }
+
+    &::part(native) {
+      padding: 0;
+      max-width: 100%;
+    }
   }
 }
 </style>

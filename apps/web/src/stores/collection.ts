@@ -172,7 +172,8 @@ export const collection = defineStore("collection", () => {
       };
     }),
     updateCollectionSingleIssue = async (data: CollectionUpdateSingleIssue) => {
-      await collectionServices.addOrChangeCopies(data);
+      const results = await collectionServices.addOrChangeCopies(data);
+      console.log(results);
       await loadCollection(true);
     },
     updateCollectionMultipleIssues = async (

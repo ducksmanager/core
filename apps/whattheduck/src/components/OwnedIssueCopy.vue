@@ -1,4 +1,7 @@
 <template>
+  <ion-button @click="emit('delete')" color="danger" size="small" v-if="!isOfflineMode">{{
+    t('Supprimer cet exemplaire')
+  }}</ion-button>
   <ion-grid>
     <ion-row>
       <ion-col size="4" class="ion-padding">
@@ -6,12 +9,17 @@
       >
       <ion-col size="8" class="ion-padding">
         <ion-row style="flex-direction: column" class="ion-align-items-end">
-          <ColorfulRadioGroup
-            :list="conditionsWithoutMissing"
-            v-model:id="issue.condition"
-            :getItemId="(item) => item.dbValue"
-            :getCheckboxColor="(item) => item.themeColor"
-          />
+          <ion-radio-group v-model="issue.condition">
+            <ion-radio
+              v-for="item of conditionsWithoutMissing"
+              label-placement="start"
+              justify="end"
+              :disabled="isOfflineMode"
+              :color="item.themeColor"
+              :value="item.dbValue"
+              class="ion-text-right ion-padding-bottom"
+            />
+          </ion-radio-group>
           <ion-label>{{
             conditionsWithoutMissing.find(({ dbValue }) => dbValue === issue.condition)?.label
           }}</ion-label></ion-row
@@ -23,7 +31,7 @@
         <ion-label>{{ t('A lire') }}</ion-label></ion-col
       >
       <ion-col size="8" style="display: flex" class="ion-padding ion-justify-content-end"
-        ><ion-checkbox v-model="issue.isToRead" :aria-label="t('A lire')" /></ion-col
+        ><ion-checkbox :disabled="isOfflineMode" v-model="issue.isToRead" :aria-label="t('A lire')" /></ion-col
     ></ion-row>
     <ion-row>
       <ion-col size="4" class="ion-padding">
@@ -33,24 +41,23 @@
         <!-- <ion-button style="visibility: hidden" size="small">{{ t("Créer une date d'achat") }}</ion-button> -->
       </ion-col>
       <ion-col size="8" class="ion-padding ion-text-right">
-        <ColorfulRadioGroup
-          v-if="purchasesIncludingNone"
-          class="ion-text-right ion-padding-bottom vertical"
-          label-placement="start"
-          justify="end"
-          v-model:id="issue.purchaseId"
-          :list="purchasesIncludingNone"
-          :getItemId="(item) => item.id"
-        >
-          <template #default="{ item }">
+        <ion-radio-group v-model="issue.purchaseId" v-if="purchasesIncludingNone" class="vertical">
+          <ion-radio
+            v-for="item of purchasesIncludingNone"
+            label-placement="start"
+            justify="end"
+            :disabled="isOfflineMode"
+            :value="item.id"
+            class="ion-text-right ion-padding-bottom"
+          >
             <div
               :style="{ fontStyle: item.id === null ? 'italic' : 'normal' }"
               v-for="descriptionLine of item.dateAndDescription"
             >
               {{ descriptionLine }}
-            </div></template
-          ></ColorfulRadioGroup
-        ></ion-col
+            </div>
+          </ion-radio>
+        </ion-radio-group></ion-col
       >
     </ion-row></ion-grid
   >
@@ -59,14 +66,19 @@
 import type { SingleCopyState } from '~dm-types/CollectionUpdate';
 import { type purchase } from '~prisma-clients/client_dm';
 
-import ColorfulRadioGroup from './ColorfulRadioGroup.vue';
-
+import { app } from '~/stores/app';
 import { wtdcollection } from '~/stores/wtdcollection';
 
 const { t } = useI18n();
 const issue = defineModel<SingleCopyState>({
   required: true,
 });
+
+const emit = defineEmits<{
+  (event: 'delete'): void;
+}>();
+
+const { isOfflineMode } = storeToRefs(app());
 
 const { conditionsWithoutMissing } = useCondition();
 const collectionStore = wtdcollection();
@@ -103,11 +115,34 @@ watch(
 </script>
 
 <style scoped lang="scss">
-ion-radio-group {
-  display: flex;
+ion-grid {
+  overflow-y: auto;
 
-  &.vertical {
+  ion-col {
+    display: flex;
     flex-direction: column;
+
+    &:first-child {
+      align-items: start;
+    }
+
+    &:last-child {
+      align-items: end;
+    }
+
+    ion-radio-group {
+      &.vertical {
+        display: flex;
+        flex-direction: column;
+        padding: initial;
+      }
+
+      &:not(.vertical) {
+        ion-radio {
+          padding: 0;
+        }
+      }
+    }
   }
 }
 </style>

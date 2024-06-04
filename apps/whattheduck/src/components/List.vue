@@ -150,6 +150,42 @@ a {
 }
 
 ion-searchbar {
+  display: flex;
+  align-items: center;
+  padding: 0 !important;
+  height: 25px !important;
+
+  > div,
+  > div > input {
+    height: 100% !important;
+  }
+
+  .searchbar-input-container {
+    display: flex;
+    align-items: center;
+
+    .searchbar-clear-button {
+      left: 0;
+      width: 24px;
+    }
+
+    .searchbar-search-icon {
+      inset-inline-end: 16px;
+      inset-inline-start: initial;
+      top: 0 !important;
+    }
+
+    ion-icon {
+      top: initial !important;
+    }
+    input {
+      padding-top: 0 !important;
+      text-align: right !important;
+    }
+  }
+}
+
+ion-searchbar {
   padding: 0;
 }
 
