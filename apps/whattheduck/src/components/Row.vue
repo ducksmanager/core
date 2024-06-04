@@ -1,5 +1,5 @@
 <template>
-  <ion-item :button="!isOfflineMode" :class="{ 'is-next-owned': isNextOwned, 'is-owned': isOwned }">
+  <ion-item :button="!isOfflineMode" :class="{ [`next-item-${nextItemType}`]: !!nextItemType, 'is-owned': isOwned }">
     <slot name="fill-bar" />
     <slot name="checkbox" />
     <ion-label class="text">
@@ -17,7 +17,7 @@ import { app } from '~/stores/app';
 
 defineProps<{
   isOwned?: boolean;
-  isNextOwned?: boolean;
+  nextItemType?: 'same' | 'owned';
 }>();
 
 defineSlots<{

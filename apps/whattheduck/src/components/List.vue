@@ -15,9 +15,9 @@
   >
     <template v-if="$slots['row-label']">
       <Row
-        v-for="{ key, item, isOwned, isNextOwned } in filteredItems"
+        v-for="{ key, item, isOwned, nextItemType } in filteredItems"
         :is-owned="isOwned"
-        :is-next-owned="isNextOwned"
+        :next-item-type="nextItemType"
         @click="currentNavigationItem = key"
       >
         <template #fill-bar v-if="item">
@@ -63,7 +63,7 @@ defineSlots<{
 }>();
 
 const props = defineProps<{
-  items: { key: string; item: Item; isOwned?: boolean; isNextOwned?: boolean }[];
+  items: { key: string; item: Item; isOwned?: boolean; nextItemType: 'same' | 'owned' | undefined }[];
   getItemTextFn: (item: Item) => string;
   issueViewModes?: { label: string; icon: { ios: string; md: string } }[];
   filter?: { label: string; icon: { ios: string; md: string } }[];

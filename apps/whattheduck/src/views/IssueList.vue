@@ -128,13 +128,21 @@ const sortedItems = computed(() =>
     .sort(({ indexInCoaList: indexInCoaList1 }, { indexInCoaList: indexInCoaList2 }) =>
       Math.sign(indexInCoaList1 - indexInCoaList2),
     )
-    .map(({ key, item, indexInCoaList }, idx, allItems) => ({
-      key,
-      item,
-      isOwned: item.condition !== undefined,
-      isNextOwned:
-        allItems[idx + 1]?.indexInCoaList === indexInCoaList + 1 && allItems[idx + 1]?.item?.condition !== undefined,
-    })),
+    .map(({ key, item, indexInCoaList }, idx, allItems) => {
+      const nextItemIndexInCoaList = allItems[idx + 1]?.indexInCoaList;
+      return {
+        key,
+        item,
+        isOwned: item.condition !== undefined,
+        nextItemType: nextItemIndexInCoaList
+          ? nextItemIndexInCoaList === indexInCoaList
+            ? ('same' as const)
+            : nextItemIndexInCoaList === indexInCoaList + 1
+              ? ('owned' as const)
+              : undefined
+          : undefined,
+      };
+    }),
 );
 
 const sortedItemsForBookcase = computed(() =>
@@ -208,7 +216,8 @@ ion-checkbox {
 }
 
 :deep(ion-item) {
-  &.is-owned.is-next-owned {
+  &.is-owned.next-item-owned,
+  &.is-owned.next-item-same {
     .dm-condition-background::after,
     + ion-item .dm-condition-background::before {
       position: absolute;
@@ -240,6 +249,14 @@ ion-checkbox {
           top: 0;
         }
       }
+    }
+  }
+
+  &.is-owned.next-item-same {
+    .dm-condition-background::after,
+    + ion-item .dm-condition-background::before {
+      width: 14px;
+      margin-left: 0;
     }
   }
 }
