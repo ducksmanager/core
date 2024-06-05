@@ -7,6 +7,6 @@ const router = useRouter();
 
 (async () => {
   app().token = null;
-  await router.push('/');
+  await router.replace('/');
 })();
 </script>

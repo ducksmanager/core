@@ -1,5 +1,9 @@
 @import 'variables.scss';
 
+.ion-page:last-child {
+  display: initial !important;
+}
+
 ion-radio {
   background: initial !important;
 }
@@ -20,9 +24,14 @@ ion-content {
     --padding-bottom: 0;
     --padding-start: 0;
   }
+
+  &::part(scroll) {
+    padding: O;
+  }
 }
 
 ion-searchbar {
+  padding: 0 !important;
   padding-inline-start: 0 !important;
   min-height: initial !important;
 }

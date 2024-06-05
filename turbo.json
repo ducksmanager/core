@@ -1,28 +1,28 @@
 {
-    "$schema": "https://turborepo.org/schema.json",
-    "pipeline": {
-        "prisma-pull-generate": {},
-        "prisma-generate": {
-            "cache": false
-        },
-        "wait": {
-            "cache": false
-        },
-        "build": {
-            "dependsOn": [
-                "prisma-generate",
-                "^build"
-            ],
-            "outputs": [
-                "dist/**"
-            ]
-        },
-        "dev": {
-            "persistent": true,
-            "dependsOn": [
-                "prisma-generate",
-                "^wait"
-            ]
-        }
+  "$schema": "https://turborepo.org/schema.json",
+  "tasks": {
+    "prisma-pull-generate": {},
+    "prisma-generate": {
+      "cache": false
+    },
+    "wait": {
+      "cache": false
+    },
+    "build": {
+      "dependsOn": [
+        "prisma-generate",
+        "^build"
+      ],
+      "outputs": [
+        "dist/**"
+      ]
+    },
+    "dev": {
+      "persistent": true,
+      "dependsOn": [
+        "prisma-generate",
+        "^wait"
+      ]
     }
+  }
 }

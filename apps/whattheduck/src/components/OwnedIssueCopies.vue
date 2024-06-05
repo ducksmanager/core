@@ -1,5 +1,5 @@
 <template>
-  <ion-content class="ion-padding">
+  <ion-content class="no-padding">
     <ion-row>
       <ion-col v-if="!isOfflineMode" size="4"><ion-img v-if="fullUrl" :src="coverUrl" /></ion-col>
       <ion-col :size="isOfflineMode ? '12' : '8'">

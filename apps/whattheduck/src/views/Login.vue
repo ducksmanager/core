@@ -84,6 +84,7 @@
 
 <script lang="ts" setup>
 import { SplashScreen } from '@capacitor/splash-screen';
+import { onIonViewWillEnter } from '@ionic/vue';
 import { eyeOutline, eyeOffOutline, eyeSharp, eyeOffSharp } from 'ionicons/icons';
 
 import useFormErrorHandling from '~/composables/useFormErrorHandling';
@@ -106,6 +107,21 @@ const showPassword = ref(false);
 
 const { validInputs, invalidInputs, touchedInputs, errorTexts } = useFormErrorHandling(['username', 'password']);
 
+const { issues, purchases } = storeToRefs(collectionStore);
+
+onIonViewWillEnter(() => {
+  console.log('onIonViewWillEnter');
+  watch(
+    () => issues.value !== null && purchases.value !== null,
+    (value) => {
+      console.log('value', value);
+      if (value) {
+        router.push('/collection');
+      }
+    },
+    { immediate: true, deep: true },
+  );
+});
 const forgotPassword = () => {
   router.push('/forgot');
 };

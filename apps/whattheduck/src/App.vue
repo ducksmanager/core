@@ -65,20 +65,12 @@ const innerTopMargin = ref(0);
 
 const collectionStore = wtdcollection();
 const { fetchAndTrackCollection } = collectionStore;
-const { issues, purchases } = storeToRefs(collectionStore);
 const route = useRoute();
 const router = useRouter();
 
 const isReady = computed(() => appStore.isPersistedDataLoaded && collectionStore.isPersistedDataLoaded);
-const isCollectionLoaded = computed(() => issues.value && purchases.value);
 
 const routeMeta = computed(() => route.meta as RouteMeta);
-
-watch(isCollectionLoaded, (value) => {
-  if (value && route.path === '/login') {
-    router.push('/collection');
-  }
-});
 
 watch(
   [isReady, token],
