@@ -23,7 +23,7 @@
         }}</template
         ><template v-else>{{ $t("Votre collection est composée de") }}</template
         >&nbsp;<b>{{ Object.keys(totalPerPublication).length }}</b>
-        {{ $t("magazines différents issus de") }}
+        {{ $t("publications différentes issues de") }}
         <b>{{ Object.keys(totalPerCountry).length }}</b>
         {{ t("pays | pays", Object.keys(totalPerCountry).length) }}.
       </div>

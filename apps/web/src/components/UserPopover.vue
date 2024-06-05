@@ -23,7 +23,8 @@
           {{ stats.numberOfIssues }}
           {{ $t("numéro | numéros", stats.numberOfIssues) }}<br />
           {{ stats.numberOfPublications }}
-          {{ $t("magazine | magazines", stats.numberOfPublications) }}<br />
+          {{ $t("publication | publications", stats.numberOfPublications)
+          }}<br />
           {{ stats.numberOfCountries }}
           {{ $t("pays | pays", stats.numberOfCountries) }}
         </div>

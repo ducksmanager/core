@@ -17,7 +17,7 @@
         >
         <ion-row class="ion-text-center" style="height: 25%">
           <ion-col size="4">{{ t('pays') }}</ion-col
-          ><ion-col size="4">{{ t('magazines') }}</ion-col
+          ><ion-col size="4">{{ t('publications') }}</ion-col
           ><ion-col size="4" style="flex-direction: column"
             ><div>{{ t('numéros') }}</div>
             <small>{{

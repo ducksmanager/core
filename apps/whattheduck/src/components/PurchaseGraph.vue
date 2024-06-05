@@ -188,7 +188,7 @@ watch(
               label: (tooltipItem) => tooltipItem.raw as string,
               footer: ([tooltipItem]) =>
                 [
-                  t('Tous magazines'),
+                  t('Toutes publications'),
                   datasets.value!.reduce((acc, dataset) => acc + dataset.data[tooltipItem.dataIndex], 0),
                 ].join('\n'),
             },

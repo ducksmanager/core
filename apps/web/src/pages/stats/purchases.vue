@@ -322,7 +322,7 @@ watch(
               label: (tooltipItem) => tooltipItem.raw as string,
               footer: ([tooltipItem]) =>
                 [
-                  $t("Tous magazines"),
+                  $t("Toutes publications"),
                   datasets!.reduce(
                     (acc, dataset) => acc + dataset.data[tooltipItem.dataIndex],
                     0,

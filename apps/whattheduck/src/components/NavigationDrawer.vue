@@ -40,6 +40,7 @@
             :class="{ selected: route.path === p.url }"
             @click="router.push(p.url)"
           >
+            <ion-icon slot="start" aria-hidden="true" :ios="p.iosIcon" :md="p.mdIcon" />
             <ion-label>{{ p.title }}</ion-label>
           </ion-item>
         </ion-menu-toggle>
@@ -59,6 +60,10 @@ import {
   statsChartSharp,
   flameOutline,
   flameSharp,
+  warningOutline,
+  warningSharp,
+  logOutOutline,
+  logOutSharp,
 } from 'ionicons/icons';
 import { stores as webStores } from '~web';
 
@@ -107,12 +112,16 @@ const route = useRoute();
 
 const appFooterPages = [
   {
+    iosIcon: warningOutline,
+    mdIcon: warningSharp,
     title: t('Signaler un problème'),
     url: '/report',
   },
   {
+    iosIcon: logOutOutline,
+    mdIcon: logOutSharp,
     title: t('Déconnexion'),
-    url: '/logout',
+    url: '/llogOutSharpogout',
   },
 ];
 
