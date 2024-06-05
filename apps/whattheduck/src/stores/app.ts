@@ -20,7 +20,6 @@ export const app = defineStore('app', () => {
     }, 1000);
   }, 1000);
 
-  const router = useRouter();
   const route = useRoute();
   const lastSync = ref<Date>();
   const token = ref<string | null>(); // undefined === we haven't checked whether there is a token ; null === we have checked and there is no token
@@ -75,14 +74,7 @@ export const app = defineStore('app', () => {
   );
 
   watch(currentNavigationItem, async (code) => {
-    await router.push({
-      name: 'Collection',
-      query: route.query,
-      params: {
-        type: 'collection',
-      },
-      hash: `#${code}`,
-    });
+    window.location.hash = code;
   });
 
   const countrycode = computed(() => navigationItemGroups.value.countrycode);

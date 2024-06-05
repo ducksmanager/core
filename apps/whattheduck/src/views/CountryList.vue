@@ -1,10 +1,5 @@
 <template>
-  <List
-    v-if="ownershipPercentages && sortedItems"
-    :items="sortedItems"
-    :get-item-text-fn="getItemTextFn"
-    @load="emit('load', $event)"
-  >
+  <List v-if="ownershipPercentages && sortedItems" :items="sortedItems" :get-item-text-fn="getItemTextFn">
     <template #fill-bar="{ item }">
       <ion-progress-bar
         type="determinate"
@@ -58,4 +53,8 @@ const sortedItems = computed(() =>
     text1.toLowerCase().localeCompare(text2.toLowerCase()),
   ),
 );
+
+watch(sortedItems, () => {
+  emit('load', sortedItems.value.length > 0);
+});
 </script>

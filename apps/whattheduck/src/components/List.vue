@@ -63,14 +63,13 @@ defineSlots<{
 }>();
 
 const props = defineProps<{
-  items: { key: string; item: Item; isOwned?: boolean; nextItemType: 'same' | 'owned' | undefined }[];
+  items: { key: string; item: Item; isOwned?: boolean; nextItemType?: 'same' | 'owned' | undefined }[];
   getItemTextFn: (item: Item) => string;
   issueViewModes?: { label: string; icon: { ios: string; md: string } }[];
   filter?: { label: string; icon: { ios: string; md: string } }[];
 }>();
 
 const emit = defineEmits<{
-  (e: 'load', hasItems: boolean): void;
   (e: 'items-filtered', items: string[]): void;
 }>();
 
@@ -105,16 +104,6 @@ const itemInCenterOfViewport = computed(() => {
 
 const filteredItems = computed(() =>
   props.items.filter(({ item }) => props.getItemTextFn(item).toLowerCase().indexOf(filterText.value) !== -1),
-);
-
-watch(
-  props.items,
-  () => {
-    if (props.items) {
-      emit('load', props.items.length > 0);
-    }
-  },
-  { immediate: true },
 );
 
 watch(
