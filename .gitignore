@@ -5,6 +5,7 @@
 .vite-ssg-temp
 .vscode
 *.local
+local.properties
 *.log
 **/.eslintcache
 **/.turbo/
