@@ -3,9 +3,7 @@
   "type": "module",
   "version": "1.0.0",
   "scripts": {
-    "clean": "rm -rf dist",
-    "build": "rm -rf dist && tsc && tsc-alias",
-    "postbuild": "cp -r ../../../packages/prisma-clients/dist/client_* dist/packages/prisma-clients",
+    "build": "bun build --target node --sourcemap index.ts --outfile bundle.mjs",
     "dev": "concurrently -n bun,tsc \"bun --inspect run --hot index.ts\" \"tsc --noEmit --watch\""
   },
   "dependencies": {

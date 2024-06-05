@@ -15,6 +15,7 @@
     "prepare": "husky",
     "lint": "pnpm -r --parallel -F '!~duckguessr' run lint --fix",
     "build:web": "NODE_ENV=production turbo build -F '~web...'",
+    "build:edgecreator": "NODE_ENV=production turbo build -F '~edgecreator' -F '~edgecreator-api'",
     "build:api": "NODE_ENV=production turbo build -F '~api...'",
     "dev:edgecreator": "turbo dev -F '~edgecreator-api...' -F '~edgecreator' -F '~web'",
     "dev:whattheduck": "turbo dev -F '~whattheduck' -F '~api' -F '~web'"
