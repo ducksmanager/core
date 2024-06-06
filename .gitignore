@@ -18,3 +18,4 @@ dist
 dist-ssr
 node_modules
 packages/api/pastec-*.dat
+output-metadata.json

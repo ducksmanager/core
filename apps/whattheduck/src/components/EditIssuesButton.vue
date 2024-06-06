@@ -16,7 +16,7 @@
           <ion-icon :ios="cameraOutline" :md="cameraSharp" />
         </ion-fab-button>
       </ion-item>
-      <ion-item button class="ion-align-items-center ion-text-nowrap" router-link="/recent">
+      <ion-item disabled button class="ion-align-items-center ion-text-nowrap" router-link="/recent">
         <ion-label>{{ t('Depuis un magazine récent') }}</ion-label>
         <ion-fab-button size="small">
           <ion-icon :ios="calendarOutline" :md="calendarSharp" />
@@ -78,16 +78,20 @@ const { t } = useI18n();
 </script>
 
 <style lang="scss" scoped>
-ion-fab > ion-fab-button {
-  opacity: 0.7;
-  &:hover {
-    opacity: 1;
+ion-fab {
+  position: fixed;
+  bottom: 8px;
+  > ion-fab-button {
+    opacity: 0.7;
+    &:hover {
+      opacity: 1;
+    }
   }
-}
 
-ion-fab-list {
-  background: rgba(25, 25, 25, 0.85);
-  border-radius: 1.5rem;
+  ion-fab-list {
+    background: rgba(25, 25, 25, 0.85);
+    border-radius: 1.5rem;
+  }
 }
 
 ion-icon {

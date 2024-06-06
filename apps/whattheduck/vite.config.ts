@@ -54,6 +54,7 @@ export default defineConfig({
   ],
 
   resolve: {
+    dedupe: ['pinia', 'vue', 'vue-i18n', 'vue-router', '@vueuse/core'],
     alias: {
       '~': path.resolve(__dirname, './src'),
       '~translations': path.resolve(__dirname, 'translations'),

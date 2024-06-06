@@ -1,4 +1,4 @@
-package net.ducksmanager.whattheduck;
+package net.ducksmanager.whattheduck3;
 
 import com.getcapacitor.BridgeActivity;
 

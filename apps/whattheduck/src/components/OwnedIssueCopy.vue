@@ -34,13 +34,16 @@
         ><ion-checkbox :disabled="isOfflineMode" v-model="issue.isToRead" :aria-label="t('A lire')" /></ion-col
     ></ion-row>
     <ion-row>
-      <ion-col size="4" class="ion-padding">
+      <ion-col class="ion-padding-horizontal ion-text-left">
         <ion-label>{{ t("Date d'achat") }}</ion-label>
-
-        <!-- TODO -->
-        <!-- <ion-button style="visibility: hidden" size="small">{{ t("Créer une date d'achat") }}</ion-button> -->
       </ion-col>
-      <ion-col size="8" class="ion-padding ion-text-right">
+      <!-- <ion-col size="8" class="ion-padding">
+        <ion-button style="visibility: hidden" size="small">{{ t("Créer une date d'achat") }}</ion-button>
+      </ion-col> -->
+    </ion-row>
+    <ion-row>
+      <!-- TODO -->
+      <ion-col class="ion-padding-horizontal ion-text-right">
         <ion-radio-group v-model="issue.purchaseId" v-if="purchasesIncludingNone" class="vertical">
           <ion-radio
             v-for="item of purchasesIncludingNone"
@@ -116,21 +119,24 @@ watch(
 
 <style scoped lang="scss">
 ion-grid {
+  width: 100%;
   overflow-y: auto;
 
   ion-col {
     display: flex;
     flex-direction: column;
 
-    &:first-child {
-      align-items: start;
-    }
-
-    &:last-child {
+    &:first-child + ion-col:last-child {
       align-items: end;
     }
 
+    &:first-child:not(+ ion-col) {
+      align-items: start;
+    }
+
     ion-radio-group {
+      width: 100%;
+      font-size: small;
       &.vertical {
         display: flex;
         flex-direction: column;
