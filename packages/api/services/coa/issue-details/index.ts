@@ -148,9 +148,9 @@ export default (socket: Socket<Events>) => {
   });
 };
 
-export const getCoverUrls = (issuecodes: string[]) => prismaCoa.$queryRaw<
-  IssueCoverDetails[]
->`
+export const getCoverUrls = (issuecodes: string[]) =>
+  issuecodes.length
+    ? prismaCoa.$queryRaw<IssueCoverDetails[]>`
 SELECT publicationcode,
        issuecode,
        issuenumber,
@@ -162,7 +162,8 @@ SELECT publicationcode,
           AND SUBSTR(inducks_entry.position, 0, 1) <> 'p'
         LIMIT 1) AS fullUrl
 FROM inducks_issue
-WHERE inducks_issue.issuecode IN(${PrismaCoa.join(issuecodes)})`;
+WHERE inducks_issue.issuecode IN(${PrismaCoa.join(issuecodes)})`
+    : Promise.resolve([]);
 
 const getEntries = async (publicationcode: string, issuenumber: string) =>
   await prismaCoa.$queryRaw<SimpleEntry[]>`
