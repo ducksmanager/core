@@ -34,11 +34,15 @@ export default (
     pickCoverFile: async () => {
       const coverFile = await FilePicker.pickImages({ readData: true });
       if (coverFile.files.length) {
-        const reader = new FileReader();
-        reader.onload = function (event) {
-          searchCoverFromBase64String(event.target!.result!.toString()!, 'pickCoverFile');
-        };
-        reader.readAsDataURL(coverFile.files[0].blob!);
+        if (coverFile.files[0].data) {
+          searchCoverFromBase64String(coverFile.files[0].data, 'pickCoverFile');
+        } else {
+          const reader = new FileReader();
+          reader.onload = function (event) {
+            searchCoverFromBase64String(event.target!.result!.toString()!, 'pickCoverFile');
+          };
+          reader.readAsDataURL(coverFile.files[0].blob!);
+        }
       }
     },
 
