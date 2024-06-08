@@ -6,8 +6,8 @@ WORKDIR /app
 RUN apt-get update && apt-get install -y openssl && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 COPY packages/prisma-clients /app/
-COPY packages/api/.env /app/
-COPY packages/api/bundle.mjs /app/
+COPY apps/edgecreator/api/.env /app/
+COPY apps/edgecreator/api/bundle.mjs /app/
 
 EXPOSE 3000
 CMD ["node", "bundle.mjs"]
