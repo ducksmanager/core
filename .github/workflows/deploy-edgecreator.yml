@@ -25,8 +25,19 @@ jobs:
           fingerprint: ${{ secrets.PRODUCTION_SSH_FINGERPRINT }}
           username: ${{ secrets.PRODUCTION_SSH_USER }}
           key: ${{ secrets.PRODUCTION_SSH_KEY }}
-          source: /home/bperel/workspace/EdgeCreator2/.env.prod
+          source: /home/bperel/workspace/EdgeCreator2/.env.prod.local
           target: apps/edgecreator/.env
+
+      - name: Download api .env file
+        uses: nicklasfrahm/scp-action@main
+        with:
+          direction: download
+          host: ${{ secrets.PRODUCTION_SSH_HOST }}
+          fingerprint: ${{ secrets.PRODUCTION_SSH_FINGERPRINT }}
+          username: ${{ secrets.PRODUCTION_SSH_USER }}
+          key: ${{ secrets.PRODUCTION_SSH_KEY }}
+          source: /home/bperel/workspace/EdgeCreator2/api/.env.prod.local
+          target: apps/edgecreator/api/.env
 
       - name: Download prisma-clients .env file
         uses: nicklasfrahm/scp-action@main
