@@ -104,9 +104,6 @@ jobs:
           source: apps/edgecreator/docker-compose.yml
           target: /home/bperel/workspace/EdgeCreator2/docker-compose.yml
 
-      - name: Recreate containers
-        uses: appleboy/ssh-action@v1.0.0
-
       - name: Upload Sentry config
         uses: nicklasfrahm/scp-action@v1.0.1
         with:
@@ -140,6 +137,7 @@ jobs:
           command_timeout: 2m
           envs: DOCKER_REGISTRY_TOKEN_DM
           script: |
-            cd workspace/DucksManager2
+            cd ~/workspace/DucksManager2
             echo `grep GITHUB_TOKEN .env | cut -d'=' -f2` | docker login ghcr.io -u bperel --password-stdin
+            cd ~/workspace/EdgeCreator2
             docker compose pull && docker compose up -d --force-recreate web-websocket api-websocket sentry-relay
