@@ -3,6 +3,7 @@
 .idea/
 .vite-ssg-dist
 .vite-ssg-temp
+**/.venv
 .vscode
 *.local
 local.properties

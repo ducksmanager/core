@@ -116,7 +116,7 @@ onIonViewWillEnter(() => {
     (value) => {
       console.log('value', value);
       if (value) {
-        router.push('/collection');
+        window.location.replace('/collection');
       }
     },
     { immediate: true, deep: true },
@@ -151,6 +151,7 @@ watch(token, async () => {
 (async () => {
   await SplashScreen.show({
     autoHide: true,
+    showDuration: 1000,
   });
 })();
 </script>

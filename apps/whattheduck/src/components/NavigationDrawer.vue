@@ -67,9 +67,11 @@ import {
 } from 'ionicons/icons';
 import { stores as webStores } from '~web';
 
+import { app } from '~/stores/app';
 import { wtdcollection } from '~/stores/wtdcollection';
 
 const { t } = useI18n();
+const { token } = storeToRefs(app());
 const collectionStore = wtdcollection();
 const points = computed(() => webStores.users().points);
 
@@ -110,6 +112,12 @@ const appPages = [
 const router = useRouter();
 const route = useRoute();
 
+router.beforeEach((to) => {
+  if (to.path === '/login') {
+    token.value = null;
+  }
+});
+
 const appFooterPages = [
   {
     iosIcon: warningOutline,
@@ -121,7 +129,7 @@ const appFooterPages = [
     iosIcon: logOutOutline,
     mdIcon: logOutSharp,
     title: t('Déconnexion'),
-    url: '/llogOutSharpogout',
+    url: '/login',
   },
 ];
 

@@ -81,6 +81,7 @@ import { stores as webStores } from '~web';
 import useCoverSearch from '../composables/useCoverSearch';
 
 import FullIssue from '~/components/FullIssue.vue';
+import router from '~/router';
 import { app } from '~/stores/app';
 import { wtdcollection } from '~/stores/wtdcollection';
 import type CoverIdServices from '~dm-services/cover-id/types';
@@ -109,8 +110,8 @@ const route = useRoute();
 
 const { getCollectionIssues } = wtdcollection();
 
-const searchResults = computed(
-  () => JSON.parse(route.query.searchResults as string) as EventReturnType<CoverIdServices['searchFromCover']>,
+const searchResults = ref(
+  JSON.parse(route.query.searchResults as string) as EventReturnType<CoverIdServices['searchFromCover']>,
 );
 
 const origin = computed(() => route.query.origin as 'pickCoverFile' | 'takePhoto');
@@ -129,6 +130,7 @@ const covers = computed(() =>
 
 const onMainSlideClick = async ({ index }: { index: number }) => {
   currentNavigationItem.value = covers.value[index]!.issuecode.replace(/[ ]{2,}/g, ' ');
+  router.push('/collection');
 };
 </script>
 <style lang="scss" scoped>

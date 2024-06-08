@@ -1,3 +1,4 @@
+import { Capacitor } from '@capacitor/core';
 import { defineCustomElements } from '@ionic/pwa-elements/loader';
 import { Drivers, Storage } from '@ionic/storage';
 import { IonicVue } from '@ionic/vue';
@@ -45,7 +46,14 @@ const app = createApp(App, {
   .use(router)
   .use(store)
   .use(i18n('fr', { en, sv }).instance)
-  .provide('dmSocket', useSocket(import.meta.env.VITE_DM_SOCKET_URL));
+  .provide(
+    'dmSocket',
+    useSocket(
+      Capacitor.getPlatform() === 'web'
+        ? import.meta.env.VITE_DM_SOCKET_URL
+        : import.meta.env.VITE_DM_SOCKET_URL_NATIVE,
+    ),
+  );
 
 router.isReady().then(async () => {
   const storage = new Storage({

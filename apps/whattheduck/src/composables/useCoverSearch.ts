@@ -48,11 +48,11 @@ export default (
 
     takePhoto: async () =>
       Camera.getPhoto({
-        resultType: CameraResultType.Base64,
+        resultType: CameraResultType.DataUrl,
         source: CameraSource.Camera,
         quality: 100,
       }).then((photo) => {
-        searchCoverFromBase64String(photo.base64String!, 'takePhoto');
+        searchCoverFromBase64String(photo.dataUrl!.split(',')[1], 'takePhoto');
       }),
   };
 };
