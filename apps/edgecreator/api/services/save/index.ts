@@ -12,14 +12,26 @@ import type { ExportPaths } from "~types/ExportPaths";
 import type Events from "./types";
 import { namespaceEndpoint } from "./types";
 
-const socket = useSocket(process.env.DM_SOCKET_URL!);
-const { services: edgeCreatorServices } =
-  socket.addNamespace<EdgeCreatorServices>(
-    EdgeCreatorServices.namespaceEndpoint,
-  );
 export default (io: Server) => {
   (io.of(namespaceEndpoint) as Namespace<Events>).on("connection", (socket) => {
     console.log("connected to save");
+    const getToken = () => Promise.resolve(socket.data.token);
+
+    const dmSocket = useSocket(process.env.DM_SOCKET_URL!);
+    const { services: edgeCreatorServices } =
+      dmSocket.addNamespace<EdgeCreatorServices>(
+        EdgeCreatorServices.namespaceEndpoint,
+        {
+          onConnectError: () => {},
+          session: {
+            getToken,
+            sessionExists: () => getToken().then((token) => !!token),
+            clearSession: () => {
+              console.log("not allowed");
+            },
+          },
+        }
+      );
 
     socket.on("saveEdge", async (parameters, callback) => {
       const {

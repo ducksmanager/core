@@ -4,22 +4,20 @@ on:
   workflow_dispatch:
   push:
     branches:
-      - "websocket"
+      - "master"
+      - "migrate-api-to-websocket"
 jobs:
-  deploy:
+  deploy-edgecreator:
     runs-on: ubuntu-latest
     environment: production
     steps:
+      - uses: oven-sh/setup-bun@v1
       - name: Check out repository
         uses: actions/checkout@v3
         with:
-          repository: ducksmanager/core
           submodules: recursive
 
-      - name: Debug
-        run: pwd && ls -la
-
-      - name: Download .env file
+      - name: Download app .env file
         uses: nicklasfrahm/scp-action@main
         with:
           direction: download
@@ -28,7 +26,18 @@ jobs:
           username: ${{ secrets.PRODUCTION_SSH_USER }}
           key: ${{ secrets.PRODUCTION_SSH_KEY }}
           source: /home/bperel/workspace/EdgeCreator2/.env.prod
-          target: .env.prod
+          target: apps/edgecreator/.env
+
+      - name: Download prisma-clients .env file
+        uses: nicklasfrahm/scp-action@main
+        with:
+          direction: download
+          host: ${{ secrets.PRODUCTION_SSH_HOST }}
+          fingerprint: ${{ secrets.PRODUCTION_SSH_FINGERPRINT }}
+          username: ${{ secrets.PRODUCTION_SSH_USER }}
+          key: ${{ secrets.PRODUCTION_SSH_KEY }}
+          source: /home/bperel/workspace/DucksManager2/packages/prisma-clients/.env.prod.local
+          target: packages/prisma-clients/.env
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
@@ -50,7 +59,7 @@ jobs:
           cache-from: type=registry,ref=ghcr.io/bperel/edgecreator-app:buildcache
           cache-to: type=registry,ref=ghcr.io/bperel/edgecreator-app:buildcache,mode=max
           tags: |
-            ghcr.io/bperel/edgecreator-app:latest
+            ghcr.io/bperel/edgecreator-app:websocket
 
       - uses: oven-sh/setup-bun@v1
       - run: cd apps/edgecreator/api && bun build ./index.ts --outdir dist --minify --target node
@@ -64,9 +73,9 @@ jobs:
           cache-from: type=registry,ref=ghcr.io/bperel/edgecreator-api:buildcache
           cache-to: type=registry,ref=ghcr.io/bperel/edgecreator-api:buildcache,mode=max
           tags: |
-            ghcr.io/bperel/edgecreator-api:latest
+            ghcr.io/bperel/edgecreator-api:websocket
 
-      - name: Upload docker-compose.yml config
+      - name: Upload docker-compose.yml file
         uses: nicklasfrahm/scp-action@v1.0.1
         with:
           direction: upload
@@ -76,6 +85,9 @@ jobs:
           key: ${{ secrets.PRODUCTION_SSH_KEY }}
           source: apps/edgecreator/docker-compose.yml
           target: /home/bperel/workspace/EdgeCreator2/docker-compose.yml
+
+      - name: Recreate containers
+        uses: appleboy/ssh-action@v1.0.0
 
       - name: Upload Sentry config
         uses: nicklasfrahm/scp-action@v1.0.1
@@ -112,4 +124,4 @@ jobs:
           script: |
             cd workspace/EdgeCreator2
             echo $DOCKER_REGISTRY_TOKEN | docker login ghcr.io -u bperel --password-stdin
-            docker compose pull && docker compose up -d --force-recreate
+            docker compose pull && docker compose up -d --force-recreate web-websocket api-websocket sentry-relay

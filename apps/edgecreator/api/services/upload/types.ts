@@ -1,6 +1,6 @@
 import type { Errorable } from "~socket.io-services/types";
 
-export const namespaceEndpoint = "/save";
+export const namespaceEndpoint = "/upload";
 export default abstract class {
   static namespaceEndpoint = namespaceEndpoint;
 

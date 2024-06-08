@@ -20,6 +20,27 @@ services:
       - public-network
       - ec2-network
       - dm-server_db-network
+      
+  app-websocket:
+    container_name: edgecreator-app-websocket
+    image: ghcr.io/bperel/edgecreator-app:websocket
+    depends_on:
+      - api
+    restart: always
+    networks:
+      - public-network
+      - ec2-network
+
+  api-websocket:
+    container_name: edgecreator-api-websocket
+    image: ghcr.io/bperel/edgecreator-api:websocket
+    restart: always
+    volumes:
+      - '../edges:/home/edges'
+    networks:
+      - public-network
+      - ec2-network
+      - dm-server_db-network
 
   sentry-relay:
     image: getsentry/relay

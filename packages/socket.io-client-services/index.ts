@@ -100,7 +100,7 @@ export const useSocket = (socketRootUrl: string) => ({
               }
               console.debug(
                 "Calling socket event",
-                `${namespaceName}.${event}`,
+                `${namespaceName}/${event}`,
                 args
               );
               data = await socket.emitWithAck(event, ...args);
@@ -108,14 +108,14 @@ export const useSocket = (socketRootUrl: string) => ({
             } else {
               console.debug(
                 "Calling socket event",
-                `${namespaceName}.${event}`,
+                `${namespaceName}/${event}`,
                 args
               );
               data = await socket.emitWithAck(event, ...args);
             }
             console.debug(
               "Called socket event",
-              `${namespaceName}.${event}`,
+              `${namespaceName}/${event}`,
               args,
               `in ${Date.now() - startTime}ms`
             );

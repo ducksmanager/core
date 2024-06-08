@@ -252,7 +252,7 @@ watch(
     await coaStore.fetchPublicationNames([
       ...new Set([
         ...mostWantedEdges.value!.map(({ publicationcode }) => publicationcode),
-        ...Object.values(currentEdges).map(
+        ...Object.values(currentEdges.value).map(
           ({ country, magazine }) => `${country}/${magazine}`,
         ),
       ]),
@@ -267,14 +267,17 @@ await collectionStore.loadUser();
 <style scoped lang="scss">
 :deep(.carousel) {
   height: 100px;
+
   * {
     line-height: 10px;
     font-size: 11px !important;
+
     a span {
       color: #666;
     }
   }
 }
+
 .card {
   margin: 15px 0;
 
@@ -285,6 +288,7 @@ await collectionStore.loadUser();
     height: 100%;
   }
 }
+
 .disabled {
   pointer-events: none;
 }
