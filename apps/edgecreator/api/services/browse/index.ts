@@ -4,7 +4,9 @@ import type { Namespace, Server } from "socket.io";
 
 import type Events from "./types";
 import { namespaceEndpoint } from "./types";
-const edgesPath = `${process.env.PWD!}/../${process.env.EDGES_PATH!}`;
+const edgesPath = process.env.EDGES_PATH!.startsWith("/")
+  ? process.env.EDGES_PATH
+  : `${process.env.PWD!}/../${process.env.EDGES_PATH!}`;
 const REGEX_IS_BROWSABLE_FILE = /^[-+(). _A-Za-z\d]+$/;
 const REGEX_IS_SVG_FILE = /^_?.+\.svg$/;
 
@@ -16,7 +18,7 @@ const findInDir = (dir: string) => {
   try {
     const files = readdirSync(dir);
     const filteredFiles = files.filter((file) =>
-      REGEX_IS_BROWSABLE_FILE.test(file),
+      REGEX_IS_BROWSABLE_FILE.test(file)
     );
     for (const file of filteredFiles) {
       const filePath = path.join(dir, file);
@@ -47,7 +49,7 @@ export default (io: Server) => {
           callback({
             error: "Generic error",
             errorDetails: errorDetails as string,
-          }),
+          })
         );
     });
 
@@ -63,9 +65,9 @@ export default (io: Server) => {
       try {
         callback({
           results: readdirSync(
-            `${process.env.EDGES_PATH!}/${country}/${imageType}`,
+            `${process.env.EDGES_PATH!}/${country}/${imageType}`
           ).filter((item) =>
-            new RegExp(`(?:^|[. ])${magazine}(?:[. ]|$)`).test(item),
+            new RegExp(`(?:^|[. ])${magazine}(?:[. ]|$)`).test(item)
           ),
         });
       } catch (e) {
