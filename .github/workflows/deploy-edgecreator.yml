@@ -140,4 +140,4 @@ jobs:
             cd ~/workspace/DucksManager2
             echo `grep GITHUB_TOKEN .env | cut -d'=' -f2` | docker login ghcr.io -u bperel --password-stdin
             cd ~/workspace/EdgeCreator2
-            docker compose pull && docker compose up -d --force-recreate web-websocket api-websocket sentry-relay
+            docker compose pull && docker compose up -d --force-recreate app-websocket api-websocket sentry-relay
