@@ -13,6 +13,7 @@ import Layouts from "vite-plugin-vue-layouts";
 // https://vitejs.dev/config/
 export default defineConfig({
   resolve: {
+    dedupe: ["pinia", "vue", "vue-i18n", "vue-router", "@vueuse/core"],
     alias: {
       "~": `${path.resolve(__dirname, "src")}/`,
       "~web": path.resolve(__dirname, "../web"),
