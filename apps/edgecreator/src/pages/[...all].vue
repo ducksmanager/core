@@ -110,6 +110,8 @@ meta:
                 cols="12"
                 md="6"
                 lg="3"
+                @mouseover="hoveredEdge = edge"
+                @mouseout="hoveredEdge = null"
               >
                 <b-card class="text-center">
                   <b-link
@@ -118,7 +120,7 @@ meta:
                   >
                     <b-card-text>
                       <img
-                        v-if="edge.v3 || status === 'pending'"
+                        v-if="hoveredEdge === edge && edge.v3 || status === 'pending'"
                         :alt="`${edge.country}/${edge.magazine} ${edge.issuenumber}`"
                         class="edge-preview"
                         :src="
@@ -170,7 +172,7 @@ meta:
 <script setup lang="ts">
 import { storeToRefs } from "pinia";
 
-import { edgeCatalog } from "~/stores/edgeCatalog";
+import { EdgeWithVersionAndStatus, edgeCatalog } from "~/stores/edgeCatalog";
 
 const {
   edges: { services: edgesServices },
@@ -202,6 +204,8 @@ const publicationNames = computed(() => webStores.coa().publicationNames);
 
 const isUploadableEdgesCarouselReady = ref<boolean>(false);
 const mostWantedEdges = ref<BookcaseEdgeWithPopularity[] | null>(null);
+
+const hoveredEdge = ref<EdgeWithVersionAndStatus | null>(null);
 
 const mostPopularIssuesInCollectionWithoutEdge = computed(() =>
   collectionStore.popularIssuesInCollectionWithoutEdge
