@@ -206,7 +206,6 @@ watch(
   },
 );
 
-(async () => {
   await webStores.users().fetchAllUsers();
   let country, magazine, issuenumberMin, issuenumberMax, issuenumberOthers;
   try {
@@ -218,10 +217,7 @@ watch(
       [, issuenumberMin, issuenumberOthers] =
         pathParts[1].match(/^([^,]+),?(.*)$/)!;
     }
-  } catch (_) {
-    error.value = "Invalid URL";
-    return;
-  }
+
   mainStore.country = country;
   mainStore.magazine = magazine;
   editingStepStore.addIssuenumber(issuenumberMin);
@@ -259,7 +255,9 @@ watch(
   } catch (e) {
     error.value = e as string;
   }
-})();
+  } catch (_) {
+    error.value = "Invalid URL";
+  }
 
 const overwriteModel = async ({
   publicationCode,

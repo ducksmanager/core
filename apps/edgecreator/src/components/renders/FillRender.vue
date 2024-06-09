@@ -1,6 +1,7 @@
 <template>
   <rect
     ref="rect"
+    stroke-width="0"
     v-bind="attributes"
     x="0"
     y="0"
@@ -25,5 +26,5 @@ const props = withDefaults(defineProps<Props>(), {
   }),
 });
 
-const { attributes, width, height } = useStepOptions(props, "Fill", ["fill"]);
+const { attributes, width, height } = useStepOptions(props, ["fill"]);
 </script>

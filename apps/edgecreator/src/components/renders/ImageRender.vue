@@ -74,7 +74,7 @@ watch(
   { immediate: true },
 );
 
-const { enableDragResize } = useStepOptions(props, "Image", [
+const { enableDragResize } = useStepOptions(props, [
   "x",
   "y",
   "width",

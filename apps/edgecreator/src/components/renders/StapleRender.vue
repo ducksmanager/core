@@ -103,7 +103,6 @@ onMounted(() => {
 
 const { enableDragResize, height, attributes } = useStepOptions(
   props,
-  "Staple",
   ["height"],
 );
 </script>

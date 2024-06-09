@@ -1,10 +1,9 @@
 import { main } from "~/stores/main";
 import { ui } from "~/stores/ui";
 
-const uiStore = ui();
-const mainStore = main();
-
 export default () => {
+  const uiStore = ui();
+  const mainStore = main();
   const showPreviousEdge = computed({
     get: (): boolean | undefined =>
       (uiStore.showPreviousEdge && mainStore.edgesBefore.length > 0) ||

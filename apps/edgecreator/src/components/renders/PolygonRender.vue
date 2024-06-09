@@ -83,5 +83,5 @@ onMounted(() => {
   });
 });
 
-const { enableDragResize } = useStepOptions(props, "Polygon", []);
+const { enableDragResize } = useStepOptions(props, []);
 </script>

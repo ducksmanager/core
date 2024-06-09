@@ -8,7 +8,7 @@ const MEDAL_LEVELS: Record<string, Record<number, number>> = {
 
 const RADIUS = 42;
 
-export default function (contribution: string, userLevelPoints: number) {
+export default (contribution: string, userLevelPoints: number) => {
   const circumference = Math.PI * RADIUS * 2,
     currentLevel = computed(() => {
       const level = MEDAL_LEVELS[contribution];
@@ -23,23 +23,23 @@ export default function (contribution: string, userLevelPoints: number) {
       );
     }),
     currentLevelPoints = computed(
-      () => MEDAL_LEVELS[contribution][currentLevel.value] || 0,
+      () => MEDAL_LEVELS[contribution][currentLevel.value] || 0
     ),
     currentLevelThreshold = computed(() =>
       currentLevel.value === 3
         ? null
-        : MEDAL_LEVELS[contribution][currentLevel.value + 1],
+        : MEDAL_LEVELS[contribution][currentLevel.value + 1]
     ),
     pointsDiffNextLevel = computed(() =>
       currentLevel.value >= 3
         ? null
-        : MEDAL_LEVELS[contribution][currentLevel.value + 1] - userLevelPoints,
+        : MEDAL_LEVELS[contribution][currentLevel.value + 1] - userLevelPoints
     ),
     medalProgressCurrentPercentage = computed(() =>
       currentLevelThreshold.value === null
         ? 0
         : (100 * (userLevelPoints - currentLevelPoints.value)) /
-          (currentLevelThreshold.value - currentLevelPoints.value),
+          (currentLevelThreshold.value - currentLevelPoints.value)
     ),
     levelProgressPercentage = computed(() => {
       if (pointsDiffNextLevel.value === null) {
@@ -72,4 +72,4 @@ export default function (contribution: string, userLevelPoints: number) {
     levelProgressPercentage,
     getLevelProgressPercentage,
   };
-}
+};

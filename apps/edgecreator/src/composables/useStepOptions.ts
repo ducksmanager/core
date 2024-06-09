@@ -5,8 +5,6 @@ import { useI18n } from "vue-i18n";
 import { step } from "~/stores/step";
 import { ui } from "~/stores/ui";
 import type { BaseProps } from "~/types/StepOptionBaseProps";
-const uiStore = ui();
-const stepStore = step();
 
 // type Interactive = {
 //   onmove: (params: { dx: number; dy: number }) => void;
@@ -15,11 +13,9 @@ const stepStore = step();
 
 const shownTips: string[] = [];
 
-export const useStepOptions = (
-  props: BaseProps,
-  component: string,
-  attributeKeys: string[],
-) => {
+export const useStepOptions = (props: BaseProps, attributeKeys: string[]) => {
+  const uiStore = ui();
+  const stepStore = step();
   const toast = useToast();
   const { t } = useI18n();
   const zoom = computed(() => uiStore.zoom);
@@ -27,13 +23,13 @@ export const useStepOptions = (
     () =>
       stepStore.getFilteredDimensions({
         issuenumbers: [props.issuenumber],
-      })[0]!.width,
+      })[0]!.width
   );
   const height = computed(
     () =>
       stepStore.getFilteredDimensions({
         issuenumbers: [props.issuenumber],
-      })[0]!.height,
+      })[0]!.height
   );
   const attributes = computed(() =>
     Object.keys(props.options!)
@@ -43,13 +39,13 @@ export const useStepOptions = (
           ...acc,
           [optionKey]: props.options![optionKey],
         }),
-        {},
-      ),
+        {}
+      )
   );
 
   const showMoveResizeToast = (
     type: string,
-    options?: { edges: { right: number; bottom: number } } | null,
+    options?: { edges: { right: number; bottom: number } } | null
   ) => {
     if (shownTips.includes(type)) {
       return;
@@ -58,7 +54,7 @@ export const useStepOptions = (
     switch (type) {
       case "move":
         text = t(
-          `You can make your selection snap to the top left corner of the edge by holding Shift while you drag it`,
+          `You can make your selection snap to the top left corner of the edge by holding Shift while you drag it`
         );
         break;
       case "resize":
@@ -70,9 +66,9 @@ export const useStepOptions = (
                 ? "width and height"
                 : options!.edges.bottom
                   ? "height"
-                  : "width",
+                  : "width"
             ),
-          },
+          }
         );
     }
     toast.show!({
@@ -110,7 +106,7 @@ export const useStepOptions = (
     } = {
       onmove: null,
       onresizemove: null,
-    },
+    }
   ) =>
     interact(element)
       .draggable({

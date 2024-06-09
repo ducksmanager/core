@@ -35,7 +35,7 @@ onMounted(() => {
   enableDragResize(rect.value!);
 });
 
-const { enableDragResize } = useStepOptions(props, "Rectangle", [
+const { enableDragResize } = useStepOptions(props, [
   "x",
   "y",
   "width",

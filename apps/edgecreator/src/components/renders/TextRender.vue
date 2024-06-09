@@ -92,7 +92,7 @@ const effectiveText = computed(() =>
   ),
 );
 
-const { width, attributes, enableDragResize } = useStepOptions(props, "Text", [
+const { width, attributes, enableDragResize } = useStepOptions(props, [
   "x",
   "y",
   "width",
