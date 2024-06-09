@@ -69,18 +69,11 @@ app.get(
     if (req.method === "OPTIONS") {
       generateDefaultEdge.options(req, res);
     } else if (req.method === "GET") {
-      multer({
-        dest: "/tmp/",
-        limits: {
-          fileSize: 3 * 1024 * 1024,
-          files: 1,
-        },
-      }).array("files");
       generateDefaultEdge.get(req, res);
     } else {
       res.writeHead(405);
     }
-  },
+  }
 );
 const httpServer = createServer(app);
 const io = new ServerWithUser(httpServer, {

@@ -5,7 +5,7 @@ import type { Namespace, Server } from "socket.io";
 import type Events from "./types";
 import { namespaceEndpoint } from "./types";
 const edgesPath = process.env.EDGES_PATH!.startsWith("/")
-  ? process.env.EDGES_PATH
+  ? process.env.EDGES_PATH!
   : `${process.env.PWD!}/../${process.env.EDGES_PATH!}`;
 const REGEX_IS_BROWSABLE_FILE = /^[-+(). _A-Za-z\d]+$/;
 const REGEX_IS_SVG_FILE = /^_?.+\.svg$/;

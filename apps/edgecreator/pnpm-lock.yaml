@@ -95,6 +95,9 @@ importers:
       ~edgecreator-api:
         specifier: workspace:*
         version: link:api
+      ~edges:
+        specifier: workspace:*
+        version: link:../edges
       ~prisma-clients:
         specifier: workspace:*
         version: link:../../packages/prisma-clients

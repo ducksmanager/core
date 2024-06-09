@@ -1,0 +1,19 @@
+version: '3.2'
+
+services:
+  edges:
+    image: "nginx"
+    container_name: edges
+    restart: always
+    volumes:
+      - "./edges:/usr/share/nginx/html/edges"
+      - "./nginx.conf:/etc/nginx/conf.d/default.conf"
+      - ./template-variables.conf:/etc/nginx/templates/10-variables.conf.template:ro
+    environment:
+      EDGECREATOR_URL: "https://edgecreator-websocket.ducksmanager.net"
+    networks:
+      - public-network
+
+networks:
+  public-network:
+    external: true
