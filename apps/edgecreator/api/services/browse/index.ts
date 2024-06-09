@@ -18,7 +18,7 @@ const findInDir = (dir: string) => {
   try {
     const files = readdirSync(dir);
     const filteredFiles = files.filter((file) =>
-      REGEX_IS_BROWSABLE_FILE.test(file)
+      REGEX_IS_BROWSABLE_FILE.test(file),
     );
     for (const file of filteredFiles) {
       const filePath = path.join(dir, file);
@@ -49,7 +49,7 @@ export default (io: Server) => {
           callback({
             error: "Generic error",
             errorDetails: errorDetails as string,
-          })
+          }),
         );
     });
 
@@ -65,9 +65,9 @@ export default (io: Server) => {
       try {
         callback({
           results: readdirSync(
-            `${process.env.EDGES_PATH!}/${country}/${imageType}`
+            `${process.env.EDGES_PATH!}/${country}/${imageType}`,
           ).filter((item) =>
-            new RegExp(`(?:^|[. ])${magazine}(?:[. ]|$)`).test(item)
+            new RegExp(`(?:^|[. ])${magazine}(?:[. ]|$)`).test(item),
           ),
         });
       } catch (e) {
