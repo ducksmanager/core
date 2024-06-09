@@ -295,7 +295,6 @@ export const edgeCatalog = defineStore("edgeCatalog", () => {
         }
       }
 
-      debugger;
       if (Object.keys(newCurrentEdges).length) {
         await webStores
           .coa()
