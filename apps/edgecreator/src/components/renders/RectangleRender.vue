@@ -1,7 +1,9 @@
 <template>
-  <rect ref="rect" v-bind="options">
-    <metadata>{{ options }}</metadata>
-  </rect>
+  <svg>
+    <rect ref="rect" v-bind="options">
+      <metadata>{{ options }}</metadata>
+    </rect>
+  </svg>
 </template>
 
 <script setup lang="ts">

@@ -1,11 +1,13 @@
 <template>
-  <polygon
-    ref="polygon"
-    :points="options.points"
-    :style="{ fill: options.fill }"
-  >
-    <metadata>{{ options }}</metadata>
-  </polygon>
+  <svg>
+    <polygon
+      ref="polygon"
+      :points="options.points"
+      :style="{ fill: options.fill }"
+    >
+      <metadata>{{ options }}</metadata>
+    </polygon>
+  </svg>
 </template>
 
 <script setup lang="ts">

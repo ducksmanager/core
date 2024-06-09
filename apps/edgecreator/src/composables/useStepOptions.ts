@@ -23,13 +23,13 @@ export const useStepOptions = (props: BaseProps, attributeKeys: string[]) => {
     () =>
       stepStore.getFilteredDimensions({
         issuenumbers: [props.issuenumber],
-      })[0]!.width
+      })[0]!.width,
   );
   const height = computed(
     () =>
       stepStore.getFilteredDimensions({
         issuenumbers: [props.issuenumber],
-      })[0]!.height
+      })[0]!.height,
   );
   const attributes = computed(() =>
     Object.keys(props.options!)
@@ -39,13 +39,13 @@ export const useStepOptions = (props: BaseProps, attributeKeys: string[]) => {
           ...acc,
           [optionKey]: props.options![optionKey],
         }),
-        {}
-      )
+        {},
+      ),
   );
 
   const showMoveResizeToast = (
     type: string,
-    options?: { edges: { right: number; bottom: number } } | null
+    options?: { edges: { right: number; bottom: number } } | null,
   ) => {
     if (shownTips.includes(type)) {
       return;
@@ -54,7 +54,7 @@ export const useStepOptions = (props: BaseProps, attributeKeys: string[]) => {
     switch (type) {
       case "move":
         text = t(
-          `You can make your selection snap to the top left corner of the edge by holding Shift while you drag it`
+          `You can make your selection snap to the top left corner of the edge by holding Shift while you drag it`,
         );
         break;
       case "resize":
@@ -66,9 +66,9 @@ export const useStepOptions = (props: BaseProps, attributeKeys: string[]) => {
                 ? "width and height"
                 : options!.edges.bottom
                   ? "height"
-                  : "width"
+                  : "width",
             ),
-          }
+          },
         );
     }
     toast.show!({
@@ -106,7 +106,7 @@ export const useStepOptions = (props: BaseProps, attributeKeys: string[]) => {
     } = {
       onmove: null,
       onresizemove: null,
-    }
+    },
   ) =>
     interact(element)
       .draggable({

@@ -206,17 +206,17 @@ watch(
   },
 );
 
-  await webStores.users().fetchAllUsers();
-  let country, magazine, issuenumberMin, issuenumberMax, issuenumberOthers;
-  try {
-    const pathParts = (route.params.all as string).split(" ");
-    [country, magazine] = pathParts[0].split("/");
-    if (pathParts[2] === "to") {
-      [, issuenumberMin, , issuenumberMax] = pathParts;
-    } else {
-      [, issuenumberMin, issuenumberOthers] =
-        pathParts[1].match(/^([^,]+),?(.*)$/)!;
-    }
+await webStores.users().fetchAllUsers();
+let country, magazine, issuenumberMin, issuenumberMax, issuenumberOthers;
+try {
+  const pathParts = (route.params.all as string).split(" ");
+  [country, magazine] = pathParts[0].split("/");
+  if (pathParts[2] === "to") {
+    [, issuenumberMin, , issuenumberMax] = pathParts;
+  } else {
+    [, issuenumberMin, issuenumberOthers] =
+      pathParts[1].match(/^([^,]+),?(.*)$/)!;
+  }
 
   mainStore.country = country;
   mainStore.magazine = magazine;
@@ -255,9 +255,9 @@ watch(
   } catch (e) {
     error.value = e as string;
   }
-  } catch (_) {
-    error.value = "Invalid URL";
-  }
+} catch (_) {
+  error.value = "Invalid URL";
+}
 
 const overwriteModel = async ({
   publicationCode,

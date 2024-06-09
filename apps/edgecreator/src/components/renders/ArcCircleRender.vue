@@ -1,8 +1,10 @@
 <!--suppress RequiredAttributes -->
 <template>
-  <ellipse ref="ellipse" v-bind="attributes">
-    <metadata>{{ options }}</metadata>
-  </ellipse>
+  <svg>
+    <ellipse ref="ellipse" v-bind="attributes">
+      <metadata>{{ options }}</metadata>
+    </ellipse>
+  </svg>
 </template>
 
 <script setup lang="ts">

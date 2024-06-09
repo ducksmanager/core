@@ -1,9 +1,10 @@
 <template>
-  <g>
-    <metadata>{{ options }}</metadata>
-    <rect
-      ref="rect1"
-      v-bind="{
+  <svg>
+    <g>
+      <metadata>{{ options }}</metadata>
+      <rect
+        ref="rect1"
+        v-bind="{
         ...attributes,
         width: 0.5,
         stroke: 'black',
@@ -11,20 +12,19 @@
         y:
           dimensions.height / 2 - options.yDistanceFromCenter! - options.height,
       }"
-    >
-    </rect>
-    <rect
-      ref="rect2"
-      v-bind="{
+      ></rect>
+      <rect
+        ref="rect2"
+        v-bind="{
         ...attributes,
         width: 0.5,
         stroke: 'black',
         x: dimensions.width / 2 - 0.25,
         y: dimensions.height / 2 + options.yDistanceFromCenter!,
       }"
-    >
-    </rect>
-  </g>
+      ></rect>
+    </g>
+  </svg>
 </template>
 
 <script setup lang="ts">
@@ -101,8 +101,7 @@ onMounted(() => {
   });
 });
 
-const { enableDragResize, height, attributes } = useStepOptions(
-  props,
-  ["height"],
-);
+const { enableDragResize, height, attributes } = useStepOptions(props, [
+  "height",
+]);
 </script>

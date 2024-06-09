@@ -1,15 +1,17 @@
 <template>
-  <rect
-    ref="rect"
-    stroke-width="0"
-    v-bind="attributes"
-    x="0"
-    y="0"
-    :width="width"
-    :height="height"
-  >
-    <metadata>{{ options }}</metadata>
-  </rect>
+  <svg>
+    <rect
+      ref="rect"
+      stroke-width="0"
+      v-bind="attributes"
+      x="0"
+      y="0"
+      :width="width"
+      :height="height"
+    >
+      <metadata>{{ options }}</metadata>
+    </rect>
+  </svg>
 </template>
 
 <script setup lang="ts">
