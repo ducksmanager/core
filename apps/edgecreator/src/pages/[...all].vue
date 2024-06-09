@@ -190,8 +190,8 @@ const { hasRole } = collectionStore;
 const { user } = storeToRefs(collectionStore);
 
 const edgeCatalogStore = edgeCatalog();
-const { loadCatalog, canEditEdge } = edgeCatalogStore;
-const { edgesByStatus, edgeCategories, currentEdges, isCatalogLoaded } =
+const { loadCatalog, canEditEdge, edgeCategories } = edgeCatalogStore;
+const { edgesByStatus, currentEdges, isCatalogLoaded } =
   storeToRefs(edgeCatalogStore);
 
 const userPhotographerPoints = computed(
