@@ -1,0 +1,18 @@
+<svg width="15" height="200" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <style>
+        @import url("https://fonts.googleapis.com/css?family=Roboto:500");
+      </style>
+    </defs>
+    <g>
+      <rect fill="#ffffff" height="200" width="15" y="0" x="0"/>
+    </g>
+    <g>
+      <text transform="rotate(-90, 6, 175)" xml:space="preserve" font-family="Roboto" font-size="12"
+            y="180.5" x="-10" stroke-width="0" stroke="#000" fill="#000000">AH 23</text>
+      <line x1="0" y1="0" x2="15" y2="0" stroke="black"/>
+      <line x1="0" y1="0" x2="0" y2="200" stroke="black"/>
+      <line x1="15" y1="0" x2="15" y2="200" stroke="black"/>
+      <line x1="0" y1="200" x2="15" y2="200" stroke="black"/>
+    </g>
+  </svg>

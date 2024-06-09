@@ -224,7 +224,15 @@ export const edgeCatalog = defineStore("edgeCatalog", () => {
       const newCurrentEdges: typeof currentEdges.value = {};
       const publishedSvgEdges: typeof publishedEdges.value = {};
 
-      const edges = (await browseServices.listEdgeModels()).results;
+      const {
+        results: edges,
+        error,
+        errorDetails,
+      } = await browseServices.listEdgeModels();
+      if (error) {
+        console.error("Error while loading edge catalog", error, errorDetails);
+        return;
+      }
       for (const edgeStatus in edges) {
         for (const { filename, mtime } of edges[
           edgeStatus as keyof typeof edges

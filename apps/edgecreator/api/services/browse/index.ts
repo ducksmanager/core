@@ -7,25 +7,25 @@ import { namespaceEndpoint } from "./types";
 const edgesPath = process.env.EDGES_PATH!.startsWith("/")
   ? process.env.EDGES_PATH!
   : `${process.env.PWD!}/../${process.env.EDGES_PATH!}`;
-const REGEX_IS_BROWSABLE_FILE = /^[-+(). _A-Za-z\d]+$/;
 const REGEX_IS_SVG_FILE = /^_?.+\.svg$/;
 
 const findInDir = (dir: string) => {
-  const fileList = {
-    current: [] as { filename: string; mtime: string }[],
-    published: [] as { filename: string; mtime: string }[],
+  const fileList: {
+    current: { filename: string; mtime: string }[];
+    published: { filename: string; mtime: string }[];
+  } = {
+    current: [],
+    published: [],
   };
   try {
-    const files = readdirSync(dir);
-    const filteredFiles = files.filter((file) =>
-      REGEX_IS_BROWSABLE_FILE.test(file),
-    );
+    const filteredFiles = readdirSync(dir, {
+      recursive: true,
+      withFileTypes: true,
+    }).filter((file) => REGEX_IS_SVG_FILE.test(file.name));
     for (const file of filteredFiles) {
-      const filePath = path.join(dir, file);
-      if (!file.includes(".")) {
-        findInDir(filePath);
-      } else if (REGEX_IS_SVG_FILE.test(file)) {
-        const edgeStatus = file.startsWith("_") ? "current" : "published";
+      const filePath = path.join(file.parentPath, file.name);
+      if (REGEX_IS_SVG_FILE.test(file.name)) {
+        const edgeStatus = file.name.startsWith("_") ? "current" : "published";
         fileList[edgeStatus].push({
           filename: filePath.replace(/.+\/edges\//, ""),
           mtime: statSync(filePath).mtime.toISOString(),
@@ -44,7 +44,9 @@ export default (io: Server) => {
 
     socket.on("listEdgeModels", async (callback) => {
       findInDir(edgesPath)
-        .then((results) => callback({ results }))
+        .then((results) => {
+          callback({ results });
+        })
         .catch((errorDetails) =>
           callback({
             error: "Generic error",

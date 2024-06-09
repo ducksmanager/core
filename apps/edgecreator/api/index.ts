@@ -73,7 +73,7 @@ app.get(
     } else {
       res.writeHead(405);
     }
-  }
+  },
 );
 const httpServer = createServer(app);
 const io = new ServerWithUser(httpServer, {
