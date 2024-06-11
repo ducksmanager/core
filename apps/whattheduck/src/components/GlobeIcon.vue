@@ -1,4 +1,4 @@
-<template><ion-icon :ios="globeOutline" :md="globeSharp" /></template>
+<template><ion-icon :ios="globeOutline" :md="globeOutline" size="large" /></template>
 <script setup lang="ts">
-import { globeOutline, globeSharp } from 'ionicons/icons';
+import { globeOutline } from 'ionicons/icons';
 </script>
