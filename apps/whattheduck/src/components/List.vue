@@ -103,7 +103,7 @@ const itemInCenterOfViewport = computed(() => {
 });
 
 const filteredItems = computed(() =>
-  props.items.filter(({ item }) => props.getItemTextFn(item).toLowerCase().indexOf(filterText.value) !== -1),
+  props.items.filter(({ item }) => props.getItemTextFn(item).toLowerCase().includes(filterText.value.toLowerCase())),
 );
 
 watch(
