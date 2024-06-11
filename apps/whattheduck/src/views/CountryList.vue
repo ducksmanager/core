@@ -54,7 +54,11 @@ const sortedItems = computed(() =>
   ),
 );
 
-watch(sortedItems, () => {
-  emit('load', sortedItems.value.length > 0);
-});
+watch(
+  sortedItems,
+  () => {
+    emit('load', sortedItems.value.length > 0);
+  },
+  { immediate: true },
+);
 </script>

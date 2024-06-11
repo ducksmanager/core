@@ -176,9 +176,13 @@ const getSortedItemsWithCovers = async () => {
   }));
 };
 
-watch(sortedItems, () => {
-  emit('load', sortedItems.value.length > 0);
-});
+watch(
+  sortedItems,
+  () => {
+    emit('load', sortedItems.value.length > 0);
+  },
+  { immediate: true },
+);
 
 watch([sortedItems, currentIssueViewMode], async () => {
   if (sortedItems.value && ['covers-large', 'covers-medium', 'covers-small'].includes(currentIssueViewMode.value.id)) {
