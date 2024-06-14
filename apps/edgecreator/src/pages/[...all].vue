@@ -120,7 +120,10 @@ meta:
                   >
                     <b-card-text>
                       <img
-                        v-if="hoveredEdge === edge && edge.v3 || status === 'pending'"
+                        v-if="
+                          (hoveredEdge === edge && edge.v3) ||
+                          status === 'pending'
+                        "
                         :alt="`${edge.country}/${edge.magazine} ${edge.issuenumber}`"
                         class="edge-preview"
                         :src="
@@ -172,7 +175,8 @@ meta:
 <script setup lang="ts">
 import { storeToRefs } from "pinia";
 
-import { EdgeWithVersionAndStatus, edgeCatalog } from "~/stores/edgeCatalog";
+import type { EdgeWithVersionAndStatus } from "~/stores/edgeCatalog";
+import { edgeCatalog } from "~/stores/edgeCatalog";
 
 const {
   edges: { services: edgesServices },
@@ -252,7 +256,7 @@ watch(
     await collectionStore.loadPopularIssuesInCollection();
     await bookcaseStore.loadBookcase();
     await loadMostWantedEdges();
-    await loadCatalog(true);
+    await loadCatalog();
     await coaStore.fetchPublicationNames([
       ...new Set([
         ...mostWantedEdges.value!.map(({ publicationcode }) => publicationcode),

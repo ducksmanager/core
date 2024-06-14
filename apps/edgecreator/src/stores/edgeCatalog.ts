@@ -5,8 +5,6 @@ import type { ModelSteps } from "~dm-types/ModelSteps";
 import { stores as webStores } from "~web";
 import { dmSocketInjectionKey } from "~web/src/composables/useDmSocket";
 
-const { getSvgMetadata, loadSvgFromString } = useSvgUtils();
-
 interface Edge {
   country: string;
   magazine: string;
@@ -216,7 +214,7 @@ export const edgeCatalog = defineStore("edgeCatalog", () => {
         }
       ).status;
     },
-    loadCatalog = async (withDetails: boolean) => {
+    loadCatalog = async () => {
       if (isCatalogLoaded.value) {
         return;
       }
@@ -234,7 +232,7 @@ export const edgeCatalog = defineStore("edgeCatalog", () => {
         return;
       }
       for (const edgeStatus in edges) {
-        for (const { filename, mtime } of edges[
+        for (const { filename, designers, photographers } of edges[
           edgeStatus as keyof typeof edges
         ]) {
           const [, country, magazine, issuenumber] = filename.match(
@@ -254,23 +252,7 @@ export const edgeCatalog = defineStore("edgeCatalog", () => {
                 issuenumber,
                 v3: true,
               };
-            } else if (withDetails) {
-              const { svgChildNodes } = await loadSvgFromString(
-                country,
-                magazine,
-                issuenumber,
-                mtime,
-                edgeStatus === "published",
-              );
-              const designers = getSvgMetadata(
-                svgChildNodes,
-                "contributor-designer",
-              );
-              const photographers = getSvgMetadata(
-                svgChildNodes,
-                "contributor-photographer",
-              );
-
+            } else {
               const publicationcode = `${country}/${magazine}`;
               const issuecode = `${publicationcode} ${issuenumber}`;
               newCurrentEdges[issuecode] = getEdgeFromSvg({
@@ -279,15 +261,6 @@ export const edgeCatalog = defineStore("edgeCatalog", () => {
                 issuenumber,
                 designers,
                 photographers,
-              });
-            } else {
-              const issuecode = `${publicationcode} ${issuenumber}`;
-              newCurrentEdges[issuecode] = getEdgeFromSvg({
-                country,
-                magazine,
-                issuenumber,
-                designers: [],
-                photographers: [],
               });
             }
           } catch (e) {

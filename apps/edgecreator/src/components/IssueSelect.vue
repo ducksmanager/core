@@ -247,7 +247,7 @@ const onChange = (
 
 (async () => {
   await coaStore.fetchCountryNames();
-  await edgeCatalogStore.loadCatalog(false);
+  await edgeCatalogStore.loadCatalog();
 })();
 </script>
 <style scoped lang="scss">

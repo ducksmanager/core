@@ -1,6 +1,13 @@
 import type { Errorable } from "~socket.io-services/types";
 
 export const namespaceEndpoint = "/browse";
+
+export type EdgeModelDetails = {
+  filename: string;
+  designers: string[];
+  photographers: string[];
+};
+
 export default abstract class {
   static namespaceEndpoint = namespaceEndpoint;
 
@@ -9,8 +16,8 @@ export default abstract class {
       value: Errorable<
         {
           results: {
-            current: { filename: string; mtime: string }[];
-            published: { filename: string; mtime: string }[];
+            current: EdgeModelDetails[];
+            published: EdgeModelDetails[];
           };
         },
         "Generic error"

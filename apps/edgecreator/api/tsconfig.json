@@ -26,5 +26,5 @@
       "~socket.io-client-services": ["../../../packages/socket.io-client-services"]
     }
   },
-  "exclude": ["node_modules"],
+  "exclude": ["node_modules", "dist"],
 }

@@ -1,18 +1,34 @@
-import { readdirSync, statSync } from "fs";
+import { XMLParser } from "fast-xml-parser";
+import { readdirSync, readFileSync } from "fs";
 import path from "path";
 import type { Namespace, Server } from "socket.io";
 
 import type Events from "./types";
+import type { EdgeModelDetails } from "./types";
 import { namespaceEndpoint } from "./types";
+
+const parser = new XMLParser({
+  ignoreAttributes: false,
+  attributeNamePrefix: "",
+});
+
 const edgesPath = process.env.EDGES_PATH!.startsWith("/")
   ? process.env.EDGES_PATH!
   : `${process.env.PWD!}/../${process.env.EDGES_PATH!}`;
 const REGEX_IS_SVG_FILE = /^_?.+\.svg$/;
 
+const getSvgMetadata = (
+  metadataNodes: { "#text": string; type?: string }[],
+  metadataType: string,
+) =>
+  metadataNodes
+    .filter(({ type }) => type === metadataType)
+    .map(({ "#text": text }) => text.trim());
+
 const findInDir = (dir: string) => {
   const fileList: {
-    current: { filename: string; mtime: string }[];
-    published: { filename: string; mtime: string }[];
+    current: EdgeModelDetails[];
+    published: EdgeModelDetails[];
   } = {
     current: [],
     published: [],
@@ -24,13 +40,22 @@ const findInDir = (dir: string) => {
     }).filter((file) => REGEX_IS_SVG_FILE.test(file.name));
     for (const file of filteredFiles) {
       const filePath = path.join(file.parentPath, file.name);
-      if (REGEX_IS_SVG_FILE.test(file.name)) {
-        const edgeStatus = file.name.startsWith("_") ? "current" : "published";
-        fileList[edgeStatus].push({
-          filename: filePath.replace(/.+\/edges\//, ""),
-          mtime: statSync(filePath).mtime.toISOString(),
-        });
-      }
+      const edgeStatus = file.name.startsWith("_") ? "current" : "published";
+
+      const doc = parser.parse(readFileSync(filePath));
+      const metadataNodes = doc.svg.metadata;
+
+      const designers = getSvgMetadata(metadataNodes, "contributor-designer");
+      const photographers = getSvgMetadata(
+        metadataNodes,
+        "contributor-photographer",
+      );
+
+      fileList[edgeStatus].push({
+        filename: filePath.replace(/.+\/edges\//, ""),
+        designers,
+        photographers,
+      });
     }
   } catch (e) {
     return Promise.reject(e);
