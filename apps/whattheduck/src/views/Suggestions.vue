@@ -45,11 +45,8 @@
             }}</ion-chip
             ><ion-chip v-if="authors.length > 2" :outline="true">+{{ authors.length - 2 }}</ion-chip
             ><ion-col class="story-title"
-              ><a target="_blank" :href="`https://inducks.org/story.php?c=${storycode}`">{{ title }}</a></ion-col
-            >
-          </ion-row></template
-        ></template
-      >
+              ><InducksStory show-link="outer" :storycode="storycode" :title="title" /></ion-col></ion-row></template
+      ></template>
     </ion-content>
   </ion-page>
 </template>
@@ -57,6 +54,7 @@
 <script setup lang="ts">
 import { toastController } from '@ionic/vue';
 import { calendarOutline, calendarSharp, flameOutline, flameSharp } from 'ionicons/icons';
+import InducksStory from '~web/src/components/InducksStory.vue';
 
 import { wtdcollection } from '~/stores/wtdcollection';
 

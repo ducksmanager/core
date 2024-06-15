@@ -1,5 +1,5 @@
 <template>
-  <ion-menu content-id="main-content" type="overlay">
+  <ion-menu :max-edge-start="100" content-id="main-content" type="overlay">
     <ion-content class="ion-padding-top">
       <ion-list id="header" class="ion-no-padding">
         <ion-list-header><div class="ion-text-center" style="width: 100%">What The Duck</div></ion-list-header>

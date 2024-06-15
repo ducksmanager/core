@@ -18,8 +18,6 @@ PODS:
     - Capacitor
   - CapacitorPreferences (6.0.0):
     - Capacitor
-  - CapacitorSplashScreen (6.0.0):
-    - Capacitor
   - CapacitorStatusBar (6.0.0):
     - Capacitor
   - CapawesomeCapacitorFilePicker (6.0.0):
@@ -41,7 +39,6 @@ DEPENDENCIES:
   - "CapacitorHaptics (from `../../node_modules/.pnpm/@capacitor+haptics@6.0.0_@capacitor+core@6.0.0/node_modules/@capacitor/haptics`)"
   - "CapacitorKeyboard (from `../../node_modules/.pnpm/@capacitor+keyboard@6.0.0_@capacitor+core@6.0.0/node_modules/@capacitor/keyboard`)"
   - "CapacitorPreferences (from `../../node_modules/.pnpm/@capacitor+preferences@6.0.0_@capacitor+core@6.0.0/node_modules/@capacitor/preferences`)"
-  - "CapacitorSplashScreen (from `../../node_modules/.pnpm/@capacitor+splash-screen@6.0.0_@capacitor+core@6.0.0/node_modules/@capacitor/splash-screen`)"
   - "CapacitorStatusBar (from `../../node_modules/.pnpm/@capacitor+status-bar@6.0.0_@capacitor+core@6.0.0/node_modules/@capacitor/status-bar`)"
   - "CapawesomeCapacitorFilePicker (from `../../node_modules/.pnpm/@capawesome+capacitor-file-picker@6.0.0_@capacitor+core@6.0.0/node_modules/@capawesome/capacitor-file-picker`)"
 
@@ -69,8 +66,6 @@ EXTERNAL SOURCES:
     :path: "../../node_modules/.pnpm/@capacitor+keyboard@6.0.0_@capacitor+core@6.0.0/node_modules/@capacitor/keyboard"
   CapacitorPreferences:
     :path: "../../node_modules/.pnpm/@capacitor+preferences@6.0.0_@capacitor+core@6.0.0/node_modules/@capacitor/preferences"
-  CapacitorSplashScreen:
-    :path: "../../node_modules/.pnpm/@capacitor+splash-screen@6.0.0_@capacitor+core@6.0.0/node_modules/@capacitor/splash-screen"
   CapacitorStatusBar:
     :path: "../../node_modules/.pnpm/@capacitor+status-bar@6.0.0_@capacitor+core@6.0.0/node_modules/@capacitor/status-bar"
   CapawesomeCapacitorFilePicker:
@@ -86,12 +81,11 @@ SPEC CHECKSUMS:
   CapacitorHaptics: 9ebc9363f0e9b8eb4295088a0b474530acf1859b
   CapacitorKeyboard: deacbd09d8d1029c3681197fb05d206b721d5f73
   CapacitorPreferences: c9b839a80baa72e4ed4bdb117618e1950d3046b5
-  CapacitorSplashScreen: 5431ab8d19c1c6e95777d53bfaa7a36a6c3d94c7
   CapacitorStatusBar: 2e4369f99166125435641b1908d05f561eaba6f6
   CapawesomeCapacitorFilePicker: 983e8d272d200897cf1c12cf9a62439fa2fb2c35
   SQLCipher: f2e96b3822e3006b379181a0e4fd145f6de29b56
   ZIPFoundation: d170fa8e270b2a32bef9dcdcabff5b8f1a5deced
 
-PODFILE CHECKSUM: 396ffea15640aefd8be1e2fa85590a125336a027
+PODFILE CHECKSUM: 12bdfef37e2ac04501a34df1c3925cf4971c8fe0
 
 COCOAPODS: 1.13.0

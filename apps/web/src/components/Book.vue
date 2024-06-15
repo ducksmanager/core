@@ -61,7 +61,7 @@
             >
               <template #title>
                 <InducksStory
-                  no-link
+                  :show-link="false"
                   :kind="`${kind}${
                     kind === 'n' && entirepages < 1 ? '_g' : ''
                   }`"

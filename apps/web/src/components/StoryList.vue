@@ -5,6 +5,7 @@
         <b-badge>{{ authors[author] }}</b-badge>
         <InducksStory
           v-if="storyDetails"
+          show-link="inner"
           :storycode="storyCode"
           :title="storyDetails[storyCode].title"
           :comment="storyDetails[storyCode].storycomment"

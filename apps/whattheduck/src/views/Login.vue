@@ -83,7 +83,6 @@
 </template>
 
 <script lang="ts" setup>
-import { SplashScreen } from '@capacitor/splash-screen';
 import { onIonViewWillEnter } from '@ionic/vue';
 import { eyeOutline, eyeOffOutline, eyeSharp, eyeOffSharp } from 'ionicons/icons';
 
@@ -141,19 +140,6 @@ const submitLogin = async () => {
     },
   );
 };
-
-watch(token, async () => {
-  if (token.value === null) {
-    await SplashScreen.hide();
-  }
-});
-
-(async () => {
-  await SplashScreen.show({
-    autoHide: true,
-    showDuration: 1000,
-  });
-})();
 </script>
 
 <style lang="scss" scoped>
