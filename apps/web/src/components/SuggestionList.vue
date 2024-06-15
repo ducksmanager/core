@@ -27,7 +27,7 @@
         oldestdate,
         score,
         stories,
-      } in suggestions!.issues"
+      } in sortedSuggestions!.issues"
       :key="`${publicationcode} ${issuenumber}`"
     >
       <div
@@ -51,7 +51,7 @@
             <Issue
               :publicationcode="publicationcode"
               :publicationname="
-                suggestions!.publicationTitles[publicationcode]!
+                sortedSuggestions!.publicationTitles[publicationcode]!
               "
               :issuenumber="issuenumber"
               no-wrap
@@ -70,9 +70,9 @@
       </div>
       <StoryList
         :key="`${publicationcode} ${issuenumber}-stories`"
-        :authors="suggestions!.authors"
+        :authors="sortedSuggestions!.authors"
         :stories="stories"
-        :story-details="suggestions!.storyDetails"
+        :story-details="sortedSuggestions!.storyDetails"
       />
     </div>
   </template>
@@ -90,15 +90,20 @@ const suggestionSorts = () => ({
   oldestdate: $t("Trier par date de parution"),
   score: $t("Trier par score"),
 });
+
+const sortedSuggestions = computed(
+  () => suggestions.value![suggestionSortCurrent.value],
+);
+
 const getImportance = (score: number) =>
-  suggestions.value?.maxScore === score
+  sortedSuggestions.value?.maxScore === score
     ? 1
-    : suggestions.value?.minScore === score
+    : sortedSuggestions.value?.minScore === score
       ? 3
       : 2;
 
 let loading = $ref(true);
-const suggestionSortCurrent = $ref("score" as "score" | "oldestdate");
+const suggestionSortCurrent = ref("score" as "score" | "oldestdate");
 
 watch(
   $$(countrycode),
@@ -109,25 +114,12 @@ watch(
     loading = true;
     await loadSuggestions({
       countryCode: newValue,
-      sort: suggestionSortCurrent,
       sinceLastVisit,
     });
     loading = false;
   },
   { immediate: true },
 );
-watch($$(suggestionSortCurrent), async (newValue) => {
-  if (!countrycode) {
-    return;
-  }
-  loading = true;
-  await loadSuggestions({
-    countryCode: countrycode,
-    sort: newValue,
-    sinceLastVisit,
-  });
-  loading = false;
-});
 </script>
 
 <style scoped lang="scss">

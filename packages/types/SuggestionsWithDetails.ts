@@ -9,3 +9,5 @@ export type SuggestionsWithDetails = Omit<
   minScore: number;
   maxScore: number;
 };
+
+export type SuggestionSorts = "score" | "oldestdate";

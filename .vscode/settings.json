@@ -18,7 +18,10 @@
     }
   ],
   "i18n-ally.localesPaths": [
-    "translations"
+    "translations",
+    "apps/duckguessr/locales",
+    "apps/duckguessr-old/locales",
+    "apps/edgecreator/locales"
   ],
   "eslint.format.enable": true,
   "editor.formatOnSave": true

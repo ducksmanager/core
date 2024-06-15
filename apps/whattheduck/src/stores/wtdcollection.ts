@@ -94,6 +94,7 @@ export const wtdcollection = defineStore('wtdcollection', () => {
     purchasesById: computed(() => webCollectionStore.purchasesById),
     quotationSum,
     signup,
+    suggestions: computed(() => webCollectionStore.suggestions),
     total: computed(() => webCollectionStore.total),
     totalPerCountry: computed(() => webCollectionStore.totalPerCountry),
     totalPerPublication: computed(() => webCollectionStore.totalPerPublication),

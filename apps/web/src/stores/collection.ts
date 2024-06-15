@@ -105,9 +105,7 @@ export const collection = defineStore("collection", () => {
       ),
     ),
     hasSuggestions = computed(
-      () =>
-        suggestions.value?.issues &&
-        Object.keys(suggestions.value.issues).length,
+      () => Object.keys(suggestions.value?.oldestdate.issues || {}).length,
     ),
     issueNumbersPerPublication = computed(
       () =>
@@ -263,11 +261,9 @@ export const collection = defineStore("collection", () => {
       ),
     loadSuggestions = async ({
       countryCode,
-      sort,
       sinceLastVisit,
     }: {
       countryCode: string;
-      sort: "score" | "oldestdate";
       sinceLastVisit: boolean;
     }) => {
       if (!isLoadingSuggestions.value) {
@@ -275,7 +271,6 @@ export const collection = defineStore("collection", () => {
         suggestions.value = await statsServices.getSuggestionsForCountry(
           countryCode || "ALL",
           sinceLastVisit ? "since_previous_visit" : "_",
-          sort,
           sinceLastVisit ? 100 : 20,
         );
         isLoadingSuggestions.value = false;

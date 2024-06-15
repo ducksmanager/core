@@ -1,5 +1,5 @@
 <template>
-  <ion-col class="ion-align-items-center ion-text-nowrap">
+  <ion-col :class="`ion-align-items-center ion-text-nowrap ${(classes || []).join(' ')}`">
     <condition
       v-if="showIssueConditions"
       v-for="collectionIssue of issue.collectionIssues"
@@ -16,6 +16,7 @@
 import type { IssueWithCollectionIssues } from '~/stores/wtdcollection';
 
 const props = defineProps<{
+  classes?: string[];
   issue: Pick<
     IssueWithCollectionIssues,
     'countrycode' | 'countryname' | 'publicationName' | 'issuenumber' | 'collectionIssues'
