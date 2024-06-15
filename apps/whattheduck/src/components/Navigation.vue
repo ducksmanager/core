@@ -1,7 +1,7 @@
 <template>
   <ion-segment v-model="currentNavigationItem">
     <ion-col
-      :class="{ 'non-clickable': partIdx >= shownParts.length - 1 }"
+      :class="{ 'non-clickable': partIdx >= shownParts.length }"
       :size="[1, maxParts].includes(partIdx) ? '2' : '4'"
       v-for="partIdx in maxParts"
       v-show="partIdx <= shownParts.length"
