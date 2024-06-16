@@ -125,7 +125,7 @@ const submitLogin = async () => {
 watch(
   token,
   () => {
-    if (token) {
+    if (token.value) {
       window.location.replace('/collection');
     }
   },
