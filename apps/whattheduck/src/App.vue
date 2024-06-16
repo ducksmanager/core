@@ -1,95 +1,83 @@
 <template>
-  <ion-app v-if="isReady">
+  <ion-app>
     <OfflineBanner
       :on-offline="routeMeta.onOffline"
       v-if="isOfflineMode"
       @destroy="innerTopMargin = 0"
       @updated="innerTopMargin = $event"
     />
-    <ion-split-pane :style="{ 'margin-top': `${innerTopMargin}px` }" content-id="main-content">
-      <NavigationDrawer v-if="token" />
+    <AppWithPersistedData v-if="socket" />
+
+    <ion-split-pane
+      v-else-if="route.path === 'login'"
+      :style="{ 'margin-top': `${innerTopMargin}px` }"
+      content-id="main-content"
+    >
       <ion-router-outlet id="main-content" />
     </ion-split-pane>
   </ion-app>
 </template>
 
 <script setup lang="ts">
+import { Capacitor } from '@capacitor/core';
 import type { Storage } from '@ionic/storage';
 import Cookies from 'js-cookie';
-import { buildStorage } from '~socket.io-client-services';
-import { dmSocketInjectionKey } from '~web/src/composables/useDmSocket';
+import { buildStorage, useSocket } from '~socket.io-client-services';
 
 import { app } from './stores/app';
-import { wtdcollection } from './stores/wtdcollection';
+import AppWithPersistedData from './views/AppWithPersistedData.vue';
 
 import type { RouteMeta } from '~/router';
 
 const storage = injectLocal<Storage>('storage')!;
 
-const session = {
-    getToken: async () => token.value,
-    clearSession: () => {
-      token.value = null;
-      Cookies.remove('token');
-      storage.clear();
-    },
-    sessionExists: async () => token.value !== undefined,
-  },
-  cacheStorage = buildStorage({
-    set: (key, data) => {
-      socketCache.value[key] = data;
-    },
-    find: (key) => socketCache.value[key],
-    remove: (key) => {
-      delete socketCache.value[key];
-    },
-  }),
-  onConnectError = (e: Error) => {
-    if (/No token provided/.test(e.message) || /jwt expired/.test(e.message)) {
-      session.clearSession();
-    }
-  };
-
-const dmSocket = useDmSocket(injectLocal('dmSocket')!, {
-  cacheStorage,
-  session,
-  onConnectError,
-});
-
-provideLocal(dmSocketInjectionKey, dmSocket);
-
 const appStore = app();
-const { isOfflineMode, token, socketCache } = storeToRefs(appStore);
+const { isOfflineMode, token, socket, socketCache, innerTopMargin } = storeToRefs(appStore);
 
-const innerTopMargin = ref(0);
-
-const collectionStore = wtdcollection();
-const { fetchAndTrackCollection } = collectionStore;
 const route = useRoute();
 const router = useRouter();
 
-const isReady = computed(() => appStore.isPersistedDataLoaded && collectionStore.isPersistedDataLoaded);
-
 const routeMeta = computed(() => route.meta as RouteMeta);
 
-watch(
-  [isReady, token],
-  async () => {
-    if (isReady.value) {
-      switch (token.value) {
-        case undefined:
-          console.error('Token is undefined but data is loaded');
-          break;
-        case null:
-          if (route.path !== '/login') {
-            router.push('/login');
-          }
-          break;
-        default:
-          await fetchAndTrackCollection();
-      }
-    }
-  },
-  { immediate: true },
-);
+watch(token, async () => {
+  if (token.value === null && route.path !== '/login') {
+    router.push('/login');
+  } else if (token.value) {
+    const session = {
+        getToken: async () => token.value,
+        clearSession: () => {
+          token.value = null;
+          Cookies.remove('token');
+          storage.clear();
+        },
+        sessionExists: async () => token.value !== undefined,
+      },
+      cacheStorage = buildStorage({
+        set: (key, data) => {
+          socketCache.value[key] = data;
+        },
+        find: (key) => socketCache.value[key],
+        remove: (key) => {
+          delete socketCache.value[key];
+        },
+      }),
+      onConnectError = (e: Error) => {
+        if ([/jwt expired/, /invalid signature/].some((regex) => regex.test(e.message))) {
+          session.clearSession();
+        }
+      };
+    socket.value = useDmSocket(
+      useSocket(
+        Capacitor.getPlatform() === 'web'
+          ? import.meta.env.VITE_DM_SOCKET_URL
+          : import.meta.env.VITE_DM_SOCKET_URL_NATIVE,
+      ),
+      {
+        cacheStorage,
+        session,
+        onConnectError,
+      },
+    );
+  }
+});
 </script>

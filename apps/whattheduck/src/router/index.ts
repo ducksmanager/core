@@ -2,7 +2,6 @@ import { createRouter, createWebHistory } from '@ionic/vue-router';
 import type { RouteRecordRaw } from 'vue-router';
 
 import Collection from '~/components/Collection.vue';
-import AddFromCamera from '~/views/AddFromCamera.vue';
 import Authors from '~/views/Authors.vue';
 import CoverSearchResults from '~/views/CoverSearchResults.vue';
 import Forgot from '~/views/Forgot.vue';
@@ -33,14 +32,6 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/search',
     component: Search,
-    meta: {
-      onOffline: 'unavailable',
-      onNoToken: 'logout',
-    } as RouteMeta,
-  },
-  {
-    path: '/add-from-camera',
-    component: AddFromCamera,
     meta: {
       onOffline: 'unavailable',
       onNoToken: 'logout',

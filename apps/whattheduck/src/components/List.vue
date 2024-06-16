@@ -34,7 +34,29 @@
         </template> </Row
     ></template>
     <slot v-else name="default" />
-    <EditIssuesButton />
+    <EditIssuesButton @show-camera-preview="showCameraPreview = true" />
+
+    <template v-if="showCameraPreview">
+      <div :id="cameraPreviewElementId">
+        <img v-if="isPlatform('desktop')" id="cover-mock" src="/covers/fr/mpp/fr_mpp_1415d_001.jpg" />
+      </div>
+      <div class="overlay">
+        <ion-button @click="takePhoto" size="large">
+          <ion-icon :ios="apertureOutline" :md="apertureSharp" />
+        </ion-button>
+        <ion-button
+          size="large"
+          color="danger"
+          @click="
+            if (cameraIsRunning) {
+              CameraPreview.stop();
+              showCameraPreview = false;
+            }
+          "
+        >
+          <ion-icon :ios="closeOutline" :md="closeSharp" />
+        </ion-button></div
+    ></template>
 
     <div
       v-show="isScrolling"
@@ -49,9 +71,13 @@
 </template>
 
 <script setup lang="ts" generic="Item extends Required<any>">
+import type { CameraPreviewOptions } from '@capacitor-community/camera-preview';
+import { CameraPreview } from '@capacitor-community/camera-preview';
 import type { ScrollDetail } from '@ionic/vue';
-import { IonContent } from '@ionic/vue';
+import { IonContent, isPlatform } from '@ionic/vue';
+import { apertureOutline, apertureSharp, closeOutline, closeSharp } from 'ionicons/icons';
 
+import useCoverSearch from '~/composables/useCoverSearch';
 import { app } from '~/stores/app';
 
 defineSlots<{
@@ -72,6 +98,33 @@ const props = defineProps<{
 const emit = defineEmits<{
   (e: 'items-filtered', items: string[]): void;
 }>();
+
+const {
+  coverId: { services: coverIdServices },
+} = injectLocal(dmSocketInjectionKey)!;
+
+const cameraWidth = parseInt(String(window.screen.width * 0.5));
+const cameraHeight = parseInt(String((cameraWidth * 30) / 21));
+const cameraX = parseInt(String(cameraWidth / 2));
+const cameraY = 150 + parseInt(String(cameraHeight / 2));
+
+const showCameraPreview = ref(false);
+const cameraPreviewElementId = 'cameraPreview';
+const { takePhoto } = useCoverSearch(useRouter(), coverIdServices);
+const cameraIsRunning = ref(false);
+
+watch(showCameraPreview, () => {
+  const cameraPreviewOptions: CameraPreviewOptions = {
+    parent: cameraPreviewElementId,
+    position: 'rear',
+    width: cameraWidth,
+    height: cameraHeight,
+    x: cameraX,
+    y: cameraY,
+  };
+  CameraPreview.start(cameraPreviewOptions);
+  cameraIsRunning.value = true;
+});
 
 const content = ref<InstanceType<typeof IonContent> | null>(null);
 
@@ -215,5 +268,33 @@ ion-title {
       margin-left: 0.5rem;
     }
   }
+}
+
+#cameraPreview {
+  position: absolute;
+  display: flex;
+  justify-content: center;
+  left: 25%;
+  top: 25%;
+  z-index: 1;
+  width: 50%;
+  height: 50%;
+}
+.overlay {
+  position: absolute;
+  display: flex;
+  align-items: end;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  text-align: center;
+  bottom: 0;
+  z-index: 1;
+}
+
+img {
+  position: absolute;
+  width: 50%;
+  height: 50%;
 }
 </style>

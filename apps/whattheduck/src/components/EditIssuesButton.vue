@@ -10,7 +10,14 @@
           <ion-icon :ios="imageOutline" :md="imageSharp" />
         </ion-fab-button>
       </ion-item>
-      <ion-item button class="ion-align-items-center ion-text-nowrap" @click="takePhoto">
+      <ion-item
+        button
+        class="ion-align-items-center ion-text-nowrap"
+        @click="
+          (fab?.$el as HTMLIonFabElement).close();
+          emit('show-camera-preview');
+        "
+      >
         <ion-label>{{ t('Depuis une photo de couverture') }}</ion-label>
         <ion-fab-button size="small">
           <ion-icon :ios="cameraOutline" :md="cameraSharp" />
@@ -68,7 +75,12 @@ import { app } from '~/stores/app';
 const {
   coverId: { services: coverIdServices },
 } = injectLocal(dmSocketInjectionKey)!;
-const { pickCoverFile, takePhoto } = useCoverSearch(useRouter(), coverIdServices);
+
+const emit = defineEmits<{
+  (e: 'show-camera-preview'): void;
+}>();
+
+const { pickCoverFile } = useCoverSearch(useRouter(), coverIdServices);
 const { isCoaView } = storeToRefs(app());
 
 // eslint-disable-next-line no-undef

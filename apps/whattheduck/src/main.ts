@@ -1,10 +1,8 @@
-import { Capacitor } from '@capacitor/core';
 import { defineCustomElements } from '@ionic/pwa-elements/loader';
 import { Drivers, Storage } from '@ionic/storage';
 import { IonicVue } from '@ionic/vue';
 import CordovaSQLiteDriver from 'localforage-cordovasqlitedriver';
 import { createPinia } from 'pinia';
-import { useSocket } from '~socket.io-client-services/index';
 import { i18n } from '~web';
 
 import App from './App.vue';
@@ -45,15 +43,7 @@ const app = createApp(App, {
   .use(IonicVue)
   .use(router)
   .use(store)
-  .use(i18n('fr', { en, sv }).instance)
-  .provide(
-    'dmSocket',
-    useSocket(
-      Capacitor.getPlatform() === 'web'
-        ? import.meta.env.VITE_DM_SOCKET_URL
-        : import.meta.env.VITE_DM_SOCKET_URL_NATIVE,
-    ),
-  );
+  .use(i18n('fr', { en, sv }).instance);
 
 router.isReady().then(async () => {
   const storage = new Storage({

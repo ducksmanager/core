@@ -36,7 +36,7 @@ const ownershipPercentages = computed(() =>
 );
 
 const items = computed(() =>
-  countryNames.value
+  ownedCountries.value && countryNames.value
     ? Object.entries(countryNames.value)
         .filter(([countrycode]) => isCoaView.value || ownedCountries.value!.includes(countrycode))
         .map(([countrycode, countryname]) => ({
@@ -46,12 +46,14 @@ const items = computed(() =>
     : [],
 );
 
-const getItemTextFn = (item: (typeof items)['value'][0]['item']) => item.countryname || item.countrycode;
+const getItemTextFn = (item: (typeof items)['value'][number]['item']) => item.countryname || item.countrycode;
 
-const sortedItems = computed(() =>
-  [...items.value].sort(({ item: { countryname: text1 } }, { item: { countryname: text2 } }) =>
-    text1.toLowerCase().localeCompare(text2.toLowerCase()),
-  ),
+const sortedItems = computed(
+  () =>
+    items.value &&
+    [...items.value].sort(({ item: { countryname: text1 } }, { item: { countryname: text2 } }) =>
+      text1.toLowerCase().localeCompare(text2.toLowerCase()),
+    ),
 );
 
 watch(

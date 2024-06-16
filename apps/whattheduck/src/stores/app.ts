@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia';
 import type { NotEmptyStorageValue } from '~socket.io-client-services';
-import { dmSocketInjectionKey } from '~web/src/composables/useDmSocket';
+import type useDmSocket from '~web/src/composables/useDmSocket';
 
 import usePersistedData from '~/composables/usePersistedData';
 
@@ -8,15 +8,13 @@ export const NAVIGATION_ITEM_REGEX =
   /^(?:$|(?<countrycode>[^/]+)(?:$|(?:\/(?<magazinecode>[^ ]+)(?:$|(?: (?<issuenumber>.+))))))$/;
 
 export const app = defineStore('app', () => {
-  const {
-    coa: { socket: coaSocket },
-    collection: { socket: collectionSocket },
-  } = injectLocal(dmSocketInjectionKey)!;
+  const innerTopMargin = ref(0);
+  const socket = ref<ReturnType<typeof useDmSocket> | null>(null);
 
   const isOfflineMode = ref(false);
   setTimeout(() => {
     setInterval(() => {
-      isOfflineMode.value = coaSocket && !coaSocket.connected;
+      isOfflineMode.value = (socket.value?.coa.socket || false) && !socket.value?.coa.socket.connected;
     }, 1000);
   }, 1000);
 
@@ -26,11 +24,6 @@ export const app = defineStore('app', () => {
   const socketCache = ref<Record<string, NotEmptyStorageValue>>({});
   const isPersistedDataLoaded = ref(false);
   const filterText = ref('');
-
-  watch(token, () => {
-    collectionSocket.disconnect();
-    collectionSocket.connect();
-  });
 
   const issueViewModes = [
     { id: 'list', label: 'List', icon: { ios: '/icons/list.svg', md: '/icons/list.svg' } },
@@ -59,6 +52,9 @@ export const app = defineStore('app', () => {
     socketCache,
   }).then(() => {
     console.log('token: ', JSON.stringify({ token: token.value }));
+    if (!token.value) {
+      token.value = null;
+    }
     isPersistedDataLoaded.value = true;
   });
 
@@ -87,7 +83,7 @@ export const app = defineStore('app', () => {
   const issuenumber = computed(() => navigationItemGroups.value.issuenumber);
 
   return {
-    coaSocket,
+    socket,
     filterText,
     isPersistedDataLoaded,
     socketCache,
@@ -99,6 +95,7 @@ export const app = defineStore('app', () => {
     issuenumber,
     navigationItemGroups,
     token,
+    innerTopMargin,
     isOfflineMode,
     isCoaView: ref(route.query.coa === 'true'),
     isObsoleteSync: computed(

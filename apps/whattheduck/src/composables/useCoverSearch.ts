@@ -1,4 +1,4 @@
-import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
+import { CameraPreview } from '@capacitor-community/camera-preview';
 import { FilePicker } from '@capawesome/capacitor-file-picker';
 import { toastController } from '@ionic/vue';
 import type { Router } from 'vue-router';
@@ -13,6 +13,7 @@ export default (
   const { t } = useI18n();
   const searchCoverFromBase64String = async (base64: string, origin: 'pickCoverFile' | 'takePhoto') =>
     coverIdServices.searchFromCover({ base64 }).then(async (results) => {
+      CameraPreview.stop();
       if (results.covers?.length) {
         router.push({
           path: '/cover-search-results',
@@ -47,12 +48,8 @@ export default (
     },
 
     takePhoto: async () =>
-      Camera.getPhoto({
-        resultType: CameraResultType.DataUrl,
-        source: CameraSource.Camera,
-        quality: 100,
-      }).then((photo) => {
-        searchCoverFromBase64String(photo.dataUrl!.split(',')[1], 'takePhoto');
+      CameraPreview.captureSample({ quality: 50 }).then(({ value: photoBase64 }) => {
+        searchCoverFromBase64String(photoBase64, 'takePhoto');
       }),
   };
 };

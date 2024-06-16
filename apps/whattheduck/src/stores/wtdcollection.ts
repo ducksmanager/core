@@ -48,12 +48,7 @@ export const wtdcollection = defineStore('wtdcollection', () => {
       // TODO retrieve user notification countries
 
       // TODO get app version
-      await webCollectionStore.loadSuggestions({
-        countryCode: 'ALL',
-        sinceLastVisit: false,
-        sort: 'score',
-      });
-      await webCollectionStore.loadSuggestions({ countryCode: 'ALL', sinceLastVisit: false, sort: 'oldestdate' });
+      await webCollectionStore.loadSuggestions({ countryCode: 'ALL', sinceLastVisit: false });
       await statsStore.loadRatings();
       await webCollectionStore.fetchIssueCountsByCountrycode();
       await webCollectionStore.fetchIssueCountsByPublicationcode();
