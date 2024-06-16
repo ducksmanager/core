@@ -25,43 +25,47 @@ const getSvgMetadata = (
     .filter(({ type }) => type === metadataType)
     .map(({ "#text": text }) => text.trim());
 
-const findInDir = (dir: string) => {
-  const fileList: {
+const findInDir = (dir: string) =>
+  new Promise<{
     current: EdgeModelDetails[];
     published: EdgeModelDetails[];
-  } = {
-    current: [],
-    published: [],
-  };
-  try {
-    const filteredFiles = readdirSync(dir, {
-      recursive: true,
-      withFileTypes: true,
-    }).filter((file) => REGEX_IS_SVG_FILE.test(file.name));
-    for (const file of filteredFiles) {
-      const filePath = path.join(file.parentPath, file.name);
-      const edgeStatus = file.name.startsWith("_") ? "current" : "published";
+  }>((resolve, reject) => {
+    const fileList: {
+      current: EdgeModelDetails[];
+      published: EdgeModelDetails[];
+    } = {
+      current: [],
+      published: [],
+    };
+    try {
+      const filteredFiles = readdirSync(dir, {
+        recursive: true,
+        withFileTypes: true,
+      }).filter((file) => REGEX_IS_SVG_FILE.test(file.name));
+      for (const file of filteredFiles) {
+        const filePath = path.join(file.parentPath, file.name);
+        const edgeStatus = file.name.startsWith("_") ? "current" : "published";
 
-      const doc = parser.parse(readFileSync(filePath));
-      const metadataNodes = doc.svg.metadata;
+        const doc = parser.parse(readFileSync(filePath));
+        const metadataNodes = doc.svg.metadata;
 
-      const designers = getSvgMetadata(metadataNodes, "contributor-designer");
-      const photographers = getSvgMetadata(
-        metadataNodes,
-        "contributor-photographer",
-      );
+        const designers = getSvgMetadata(metadataNodes, "contributor-designer");
+        const photographers = getSvgMetadata(
+          metadataNodes,
+          "contributor-photographer",
+        );
 
-      fileList[edgeStatus].push({
-        filename: filePath.replace(/.+\/edges\//, ""),
-        designers,
-        photographers,
-      });
+        fileList[edgeStatus].push({
+          filename: filePath.replace(/.+\/edges\//, ""),
+          designers,
+          photographers,
+        });
+        resolve(fileList);
+      }
+    } catch (e) {
+      return reject(e);
     }
-  } catch (e) {
-    return Promise.reject(e);
-  }
-  return Promise.resolve(fileList);
-};
+  });
 
 export default (io: Server) => {
   (io.of(namespaceEndpoint) as Namespace<Events>).on("connection", (socket) => {
