@@ -1,8 +1,8 @@
 import bodyParser from "body-parser";
 
-import { prismaDm } from "~/prisma";
-import { authorUser } from "~prisma-clients/client_dm";
+import { prismaCoa, prismaDm } from "~/prisma";
 import { ExpressCall } from "~routes/_express-call";
+import { AuthorWithUserRating } from "~dm-types/AuthorWithUserRating";
 
 const parseForm = bodyParser.json();
 
@@ -43,12 +43,26 @@ const upsertAuthorUser = async (
 };
 
 export const get = async (
-  ...[req, res]: ExpressCall<{ resBody: authorUser[] }>
+  ...[req, res]: ExpressCall<{ resBody: AuthorWithUserRating[] }>
 ) => {
   const authorsUsers = await prismaDm.authorUser.findMany({
     where: { userId: req.user!.id },
   });
-  return res.json(authorsUsers);
+  const authorNames = await prismaCoa.inducks_person.findMany({
+    where: {
+      personcode: {
+        in: authorsUsers.map((au) => au.personcode),
+      }
+    }
+  })
+
+  return res.json(authorsUsers.map((au) => {
+    const author = authorNames.find((an) => an.personcode === au.personcode);
+    return {
+      ...au,
+      fullname: author!.fullname,
+    };
+  }))
 };
 
 export const put = [

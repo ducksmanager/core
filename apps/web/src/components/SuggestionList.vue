@@ -41,7 +41,7 @@
           :title="`${$t('Score')} : ${score}`"
         >
           <div class="d-flex justify-content-center importance-bills">
-            <i-bi-cash
+            <i-bi-fire
               v-for="i in 4 - getImportance(score)"
               :key="i"
               class="me-1"

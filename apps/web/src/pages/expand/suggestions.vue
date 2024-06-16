@@ -15,12 +15,10 @@ alias: [/agrandir/suggestions]
       <br /><br />
       {{ $t("Les suggestions d'achat sont mises à jour quotidiennement.") }}
     </b-alert>
-    <div v-if="!watchedAuthors">
+    <div v-if="!ratings">
       {{ $t("Chargement...") }}
     </div>
-    <div
-      v-else-if="watchedAuthors.length && watchedAuthorsWithNotation!.length"
-    >
+    <div v-else-if="ratings.length && watchedAuthorsWithNotation!.length">
       {{ $t("Montrer les magazines de") }}
       <b-form-select
         v-if="countryNamesWithAllCountriesOption"
@@ -73,9 +71,10 @@ const countryCode = $ref("ALL" as string);
 const { t: $t } = useI18n();
 
 const { loadCollection } = collection();
-const { issues, watchedAuthors } = storeToRefs(collection());
+const { issues } = storeToRefs(collection());
 
 const { loadRatings } = stats();
+const { ratings } = storeToRefs(stats());
 
 const { fetchCountryNames } = coa();
 const { countryNames } = storeToRefs(coa());
@@ -93,11 +92,11 @@ const countryNamesWithAllCountriesOption = $computed(
     ],
 );
 const watchedAuthorsWithNotation = $computed(() =>
-  watchedAuthors.value?.filter(({ notation }) => notation > 0),
+  ratings.value?.filter(({ notation }) => notation > 0),
 );
 
 watch(
-  watchedAuthors,
+  ratings,
   async (newValue) => {
     if (newValue?.length) await fetchCountryNames();
   },
