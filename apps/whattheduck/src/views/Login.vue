@@ -83,15 +83,12 @@
 </template>
 
 <script lang="ts" setup>
-import { onIonViewWillEnter } from '@ionic/vue';
 import { eyeOutline, eyeOffOutline, eyeSharp, eyeOffSharp } from 'ionicons/icons';
 
 import useFormErrorHandling from '~/composables/useFormErrorHandling';
 import { app } from '~/stores/app';
-import { wtdcollection } from '~/stores/wtdcollection';
 
-const { token } = storeToRefs(app());
-const collectionStore = wtdcollection();
+const { token, socket } = storeToRefs(app());
 
 const dmUrl = import.meta.env.VITE_DM_URL as string;
 
@@ -106,21 +103,6 @@ const showPassword = ref(false);
 
 const { validInputs, invalidInputs, touchedInputs, errorTexts } = useFormErrorHandling(['username', 'password']);
 
-const { issues, purchases } = storeToRefs(collectionStore);
-
-onIonViewWillEnter(() => {
-  console.log('onIonViewWillEnter');
-  watch(
-    () => issues.value !== null && purchases.value !== null,
-    (value) => {
-      console.log('value', value);
-      if (value) {
-        window.location.replace('/collection');
-      }
-    },
-    { immediate: true, deep: true },
-  );
-});
 const forgotPassword = () => {
   router.push('/forgot');
 };
@@ -129,17 +111,26 @@ const signup = () => {
 };
 
 const submitLogin = async () => {
-  await collectionStore.login(
-    username.value,
-    password.value,
-    (newToken: string) => {
-      token.value = newToken;
-    },
-    (e) => {
-      errorTexts.value['password'] = e;
-    },
-  );
+  const response = await socket.value?.login.services.login({
+    username: username.value,
+    password: password.value,
+  });
+  if (typeof response !== 'string' && response && 'error' in response) {
+    errorTexts.value['password'] = response.error;
+  } else {
+    token.value = response;
+  }
 };
+
+watch(
+  token,
+  () => {
+    if (token) {
+      window.location.replace('/collection');
+    }
+  },
+  { immediate: true },
+);
 </script>
 
 <style lang="scss" scoped>

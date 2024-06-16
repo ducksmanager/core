@@ -30,26 +30,30 @@ export default (
 
         await toast.present();
       }
+      return Promise.resolve();
     });
   return {
     pickCoverFile: async () => {
       const coverFile = await FilePicker.pickImages({ readData: true });
       if (coverFile.files.length) {
         if (coverFile.files[0].data) {
-          searchCoverFromBase64String(coverFile.files[0].data, 'pickCoverFile');
+          return searchCoverFromBase64String(coverFile.files[0].data, 'pickCoverFile');
         } else {
           const reader = new FileReader();
           reader.onload = function (event) {
-            searchCoverFromBase64String(event.target!.result!.toString()!, 'pickCoverFile');
+            return searchCoverFromBase64String(event.target!.result!.toString()!, 'pickCoverFile');
           };
           reader.readAsDataURL(coverFile.files[0].blob!);
         }
       }
     },
 
-    takePhoto: async () =>
-      CameraPreview.captureSample({ quality: 50 }).then(({ value: photoBase64 }) => {
-        searchCoverFromBase64String(photoBase64, 'takePhoto');
+    takePhoto: () =>
+      new Promise((resolve) => {
+        CameraPreview.captureSample({ quality: 50 }).then(({ value: photoBase64 }) => {
+          resolve();
+          searchCoverFromBase64String(photoBase64, 'takePhoto');
+        });
       }),
   };
 };

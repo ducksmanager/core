@@ -41,19 +41,10 @@
         <img v-if="isPlatform('desktop')" id="cover-mock" src="/covers/fr/mpp/fr_mpp_1415d_001.jpg" />
       </div>
       <div class="overlay">
-        <ion-button @click="takePhoto" size="large">
+        <ion-button @click="takePhoto().then(() => (showCameraPreview = false))" size="large">
           <ion-icon :ios="apertureOutline" :md="apertureSharp" />
         </ion-button>
-        <ion-button
-          size="large"
-          color="danger"
-          @click="
-            if (cameraIsRunning) {
-              CameraPreview.stop();
-              showCameraPreview = false;
-            }
-          "
-        >
+        <ion-button size="large" color="danger" @click="showCameraPreview = false">
           <ion-icon :ios="closeOutline" :md="closeSharp" />
         </ion-button></div
     ></template>
@@ -111,19 +102,21 @@ const cameraY = 150 + parseInt(String(cameraHeight / 2));
 const showCameraPreview = ref(false);
 const cameraPreviewElementId = 'cameraPreview';
 const { takePhoto } = useCoverSearch(useRouter(), coverIdServices);
-const cameraIsRunning = ref(false);
 
 watch(showCameraPreview, () => {
-  const cameraPreviewOptions: CameraPreviewOptions = {
-    parent: cameraPreviewElementId,
-    position: 'rear',
-    width: cameraWidth,
-    height: cameraHeight,
-    x: cameraX,
-    y: cameraY,
-  };
-  CameraPreview.start(cameraPreviewOptions);
-  cameraIsRunning.value = true;
+  if (showCameraPreview.value) {
+    const cameraPreviewOptions: CameraPreviewOptions = {
+      parent: cameraPreviewElementId,
+      position: 'rear',
+      width: cameraWidth,
+      height: cameraHeight,
+      x: cameraX,
+      y: cameraY,
+    };
+    CameraPreview.start(cameraPreviewOptions);
+  } else {
+    CameraPreview.stop();
+  }
 });
 
 const content = ref<InstanceType<typeof IonContent> | null>(null);

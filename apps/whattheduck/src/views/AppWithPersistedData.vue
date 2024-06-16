@@ -1,5 +1,6 @@
 <template>
   <ion-split-pane :style="{ 'margin-top': `${innerTopMargin}px` }" content-id="main-content">
+    <NavigationDrawer />
     <ion-router-outlet id="main-content" />
   </ion-split-pane>
 </template>

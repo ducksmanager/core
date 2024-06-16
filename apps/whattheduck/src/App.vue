@@ -9,7 +9,7 @@
     <AppWithPersistedData v-if="socket" />
 
     <ion-split-pane
-      v-else-if="route.path === 'login'"
+      v-else-if="route.path === '/login'"
       :style="{ 'margin-top': `${innerTopMargin}px` }"
       content-id="main-content"
     >
@@ -39,45 +39,49 @@ const router = useRouter();
 
 const routeMeta = computed(() => route.meta as RouteMeta);
 
+const assignSocket = () => {
+  const session = {
+      getToken: async () => token.value,
+      clearSession: () => {
+        token.value = null;
+        Cookies.remove('token');
+        storage.clear();
+      },
+      sessionExists: async () => token.value !== undefined,
+    },
+    cacheStorage = buildStorage({
+      set: (key, data) => {
+        socketCache.value[key] = data;
+      },
+      find: (key) => socketCache.value[key],
+      remove: (key) => {
+        delete socketCache.value[key];
+      },
+    }),
+    onConnectError = (e: Error) => {
+      if ([/jwt expired/, /invalid signature/].some((regex) => regex.test(e.message))) {
+        session.clearSession();
+      }
+    };
+  socket.value = useDmSocket(
+    useSocket(
+      Capacitor.getPlatform() === 'web'
+        ? import.meta.env.VITE_DM_SOCKET_URL
+        : import.meta.env.VITE_DM_SOCKET_URL_NATIVE,
+    ),
+    {
+      cacheStorage,
+      session,
+      onConnectError,
+    },
+  );
+};
+
 watch(token, async () => {
   if (token.value === null && route.path !== '/login') {
     router.push('/login');
-  } else if (token.value) {
-    const session = {
-        getToken: async () => token.value,
-        clearSession: () => {
-          token.value = null;
-          Cookies.remove('token');
-          storage.clear();
-        },
-        sessionExists: async () => token.value !== undefined,
-      },
-      cacheStorage = buildStorage({
-        set: (key, data) => {
-          socketCache.value[key] = data;
-        },
-        find: (key) => socketCache.value[key],
-        remove: (key) => {
-          delete socketCache.value[key];
-        },
-      }),
-      onConnectError = (e: Error) => {
-        if ([/jwt expired/, /invalid signature/].some((regex) => regex.test(e.message))) {
-          session.clearSession();
-        }
-      };
-    socket.value = useDmSocket(
-      useSocket(
-        Capacitor.getPlatform() === 'web'
-          ? import.meta.env.VITE_DM_SOCKET_URL
-          : import.meta.env.VITE_DM_SOCKET_URL_NATIVE,
-      ),
-      {
-        cacheStorage,
-        session,
-        onConnectError,
-      },
-    );
+  } else {
+    assignSocket();
   }
 });
 </script>
