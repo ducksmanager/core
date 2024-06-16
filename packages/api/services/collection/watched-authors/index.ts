@@ -1,18 +1,28 @@
 import type { Socket } from "socket.io";
 
-import { prismaDm } from "~prisma-clients";
+import { prismaCoa,prismaDm } from "~prisma-clients";
 
 import type Events from "../types";
 const maxWatchedAuthors = 5;
 
 export default (socket: Socket<Events>) => {
-  socket.on("getWatchedAuthors", (callback) =>
-    prismaDm.authorUser
-      .findMany({
-        where: { userId: socket.data.user!.id },
-      })
-      .then(callback),
-  );
+  socket.on("getWatchedAuthors", async (callback) => {
+    const authorsUsers = await prismaDm.authorUser.findMany({
+      where: { userId: socket.data.user!.id },
+    });
+    const authorNames = await prismaCoa.inducks_person.findMany({
+      where: {
+        personcode: {
+          in: authorsUsers.map((au) => au.personcode),
+        }
+      }
+    })
+
+    callback(authorsUsers.map((au) => ({
+      ...au,
+      fullname: authorNames.find((an) => an.personcode === au.personcode)!.fullname,
+    })))
+  });
 
   socket.on("addWatchedAuthor", async (personcode, callback) => {
     try {

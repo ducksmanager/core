@@ -1,3 +1,4 @@
+import type { AuthorWithUserRating } from "~dm-types/AuthorWithUserRating";
 import type {
   CollectionUpdateMultipleIssues,
   CollectionUpdateSingleIssue,
@@ -174,7 +175,7 @@ export default abstract class {
     callback: (data: Errorable<{ token: string }, "Bad request">) => void,
   ) => void;
 
-  abstract getWatchedAuthors: (callback: (value: authorUser[]) => void) => void;
+  abstract getWatchedAuthors: (callback: (value: AuthorWithUserRating[]) => void) => void;
   abstract deleteWatchedAuthor: (
     personcode: string,
     callback: () => void,
