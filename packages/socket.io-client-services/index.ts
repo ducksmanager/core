@@ -51,10 +51,10 @@ export const useSocket = (socketRootUrl: string) => ({
       };
       cache?: Required<SocketCacheOptions<Services>>;
     } = {
-      onConnectError(e, namespace) {
-        console.error(`${namespace}: connect_error: ${e}`);
-      },
-    }
+        onConnectError(e, namespace) {
+          console.error(`${namespace}: connect_error: ${e}`);
+        },
+      }
   ) => {
     const { session, onConnectError, cache } = namespaceOptions;
     const socket = io(socketRootUrl + namespaceName, {
@@ -74,53 +74,46 @@ export const useSocket = (socketRootUrl: string) => ({
             _: never,
             event: EventName
           ) =>
-          async (
-            ...args: AllButLast<Parameters<Services[EventName]>>
-          ): Promise<
-            EventReturnTypeIncludingError<Services[EventName]> | undefined
-          > => {
-            let data;
-            let startTime = Date.now();
-            if (cache) {
-              const cacheKey = `${event} ${JSON.stringify(args)}`;
-              const cacheData = (await cache.storage.get(cacheKey, {
-                cache: {
-                  ttl:
-                    typeof cache.ttl === "function"
-                      ? cache.ttl(event, args)
-                      : cache.ttl,
-                },
-              })) as Awaited<ReturnType<Socket["emitWithAck"]>>;
-              const hasCacheData =
-                cacheData !== undefined &&
-                !(typeof cacheData === "object" && cacheData.state === "empty");
-              if (hasCacheData) {
-                console.debug("Using cache for socket event", event, args);
-                return cacheData;
+            async (
+              ...args: AllButLast<Parameters<Services[EventName]>>
+            ): Promise<
+              EventReturnTypeIncludingError<Services[EventName]> | undefined
+            > => {
+              let data;
+              let startTime = Date.now();
+              const debugCall = (post: boolean = false) => console.debug(
+                `${post ? 'Called' : 'Calling'} socket event`,
+                `${namespaceName}/${event}`,
+                args,
+                post ? `in ${Date.now() - startTime}ms` : ''
+              );
+              if (cache) {
+                const cacheKey = `${event} ${JSON.stringify(args)}`;
+                const cacheData = (await cache.storage.get(cacheKey, {
+                  cache: {
+                    ttl:
+                      typeof cache.ttl === "function"
+                        ? cache.ttl(event, args)
+                        : cache.ttl,
+                  },
+                })) as Awaited<ReturnType<Socket["emitWithAck"]>>;
+                const hasCacheData =
+                  cacheData !== undefined &&
+                  !(typeof cacheData === "object" && cacheData.state === "empty");
+                if (hasCacheData) {
+                  console.debug("Using cache for socket event", event, args);
+                  return cacheData;
+                }
+                debugCall()
+                data = await socket.emitWithAck(event, ...args);
+                cache.storage.set(cacheKey, data);
+              } else {
+                debugCall()
+                data = await socket.emitWithAck(event, ...args);
               }
-              console.debug(
-                "Calling socket event",
-                `${namespaceName}/${event}`,
-                args
-              );
-              data = await socket.emitWithAck(event, ...args);
-              cache.storage.set(cacheKey, data);
-            } else {
-              console.debug(
-                "Calling socket event",
-                `${namespaceName}/${event}`,
-                args
-              );
-              data = await socket.emitWithAck(event, ...args);
-            }
-            console.debug(
-              "Called socket event",
-              `${namespaceName}/${event}`,
-              args,
-              `in ${Date.now() - startTime}ms`
-            );
-            return data;
-          },
+              debugCall(true)
+              return data;
+            },
       }),
     };
   },
