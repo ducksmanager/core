@@ -19,7 +19,6 @@
       {{ warning }}
     </b-alert>
     <top-bar
-      :dimensions="editingDimensions"
       @overwrite-model="overwriteModel"
       @set-dimensions="overwriteDimensions"
     />
@@ -174,8 +173,6 @@ const error = ref<string | null>(null);
 
 const dimensions = computed(() => stepStore.dimensions);
 
-const editingDimensions = computed(() => editingStepStore.dimensions);
-
 const dimensionsPerIssuenumber = computed(() =>
   mainStore.issuenumbers.reduce<Record<string, Dimensions>>(
     (acc, issuenumber) => ({
@@ -287,18 +284,6 @@ const overwriteModel = async ({
       mainStore.addWarning(e as string);
     }
   }
-};
-const overwriteDimensions = ({
-  width,
-  height,
-}: {
-  width: number;
-  height: number;
-}) => {
-  stepStore.setDimensions(
-    { width, height },
-    { issuenumbers: editingStepStore.issuenumbers },
-  );
 };
 
 const getImageUrl = (fileType: string, fileName: string) =>

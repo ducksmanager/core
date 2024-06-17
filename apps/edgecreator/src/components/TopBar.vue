@@ -229,7 +229,7 @@
               <dimensions
                 :width="uniqueDimensions[0].width"
                 :height="uniqueDimensions[0].height"
-                @change="$emit('set-dimensions', $event)"
+                @change="overwriteDimensions($event)"
               />
             </confirm-edit-multiple-values>
           </b-collapse>
@@ -244,9 +244,7 @@
               disable-not-ongoing-nor-published
               @change="modelToBeCloned = $event"
             />
-            <b-button
-              :disabled="!modelToBeCloned"
-              @click="emit('overwrite-model', modelToBeCloned)"
+            <b-button :disabled="!modelToBeCloned" @click="overwriteModel()"
               >{{ $t("Clone") }}
             </b-button>
           </b-collapse>
@@ -258,15 +256,20 @@
 </template>
 <script setup lang="ts">
 import surroundingEdge from "~/composables/useSurroundingEdge";
+import { editingStep } from "~/stores/editingStep";
 import { main } from "~/stores/main";
+import { step } from "~/stores/step";
 import { ui } from "~/stores/ui";
 import { stores as webStores } from "~web";
 
 const uiStore = ui();
 const mainStore = main();
+const { loadModel } = useModelLoad();
 
 const { showPreviousEdge, showNextEdge } = surroundingEdge();
+const { dimensions: editingDimensions } = storeToRefs(editingStep());
 const { hasRole } = webStores.collection();
+const stepStore = step();
 
 interface ModelToClone {
   editMode: string;
@@ -274,18 +277,6 @@ interface ModelToClone {
   issuenumber: string;
   issuenumberEnd: string;
 }
-
-const emit = defineEmits<{
-  (e: "overwrite-model", value: ModelToClone | null): void;
-  (e: "set-dimensions", value: { width: number; height: number }): void;
-}>();
-
-const props = defineProps<{
-  dimensions: {
-    width: number;
-    height: number;
-  };
-}>();
 
 const showPhotoModal = ref<boolean>(false);
 const modelToBeCloned = ref<ModelToClone | null>(null);
@@ -302,7 +293,9 @@ const publicationName = computed(
 const uniqueDimensions = computed(() =>
   [
     ...new Set(
-      Object.values(props.dimensions).map((item) => JSON.stringify(item)),
+      Object.values(editingDimensions.value).map((item) =>
+        JSON.stringify(item),
+      ),
     ),
   ].map((item) => JSON.parse(item) as { width: number; height: number }),
 );
@@ -313,6 +306,30 @@ const isEditingMultiple = computed(
 
 const addPhoto = (src: string) => {
   mainStore.photoUrls[mainStore.issuenumbers[0]] = src;
+};
+
+const overwriteModel = async () => {
+  const { publicationcode, issuenumber } = modelToBeCloned.value!;
+  const [country, magazine] = publicationcode.split("/");
+  for (const targetIssuenumber of mainStore.issuenumbers) {
+    try {
+      await loadModel(country, magazine, issuenumber, targetIssuenumber);
+    } catch (e) {
+      mainStore.addWarning(e as string);
+    }
+  }
+};
+const overwriteDimensions = ({
+  width,
+  height,
+}: {
+  width: number;
+  height: number;
+}) => {
+  stepStore.setDimensions(
+    { width, height },
+    { issuenumbers: mainStore.issuenumbers },
+  );
 };
 
 webStores

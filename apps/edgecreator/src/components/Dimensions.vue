@@ -7,7 +7,7 @@
       <b-col cols="5">
         <b-form-input
           :id="dimension"
-          v-model="values[dimension as 'width'|'height']"
+          v-model="values[dimension as 'width' | 'height']"
           size="sm"
           autocomplete="off"
           type="number"
@@ -17,8 +17,8 @@
             $emit(
               'change',
               dimension === 'width'
-                ? { width: parseInt($event)!, height: height! }
-                : { width: width!, height: parseInt($event)! }
+                ? { width: ($event.data)!, height: height! }
+                : { width: width!, height: parseInt($event.data)! }
             )
           "
         />
@@ -42,12 +42,7 @@ const props = withDefaults(
   },
 );
 
-const values = ref(
-  props as {
-    width?: number;
-    height?: number;
-  },
-);
+const values = ref(props);
 
 const emit =
   defineEmits<
