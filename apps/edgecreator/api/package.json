@@ -1,0 +1,47 @@
+{
+  "name": "dm-api",
+  "version": "1.0.0",
+  "scripts": {
+    "clean": "rm -rf dist",
+    "build": "rm -rf dist/api dist/types && tsc && tsc-alias",
+    "start": "tsx index.ts",
+    "dev": "nodemon",
+    "generate-route-types": "tsx generate-route-types.ts",
+    "generate-route-types:clean": "tsx generate-route-types.ts && cd .. && node_modules/.bin/eslint --fix types/routes.ts"
+  },
+  "dependencies": {
+    "@sentry/node": "^7.114.0",
+    "@vueuse/integrations": "^10.9.0",
+    "axios": "^1.6.8",
+    "body-parser": "^1.20.2",
+    "cloudinary": "^1.41.3",
+    "cookie-parser": "^1.4.6",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "ducksmanager": "^0.0.51",
+    "express": "^4.19.2",
+    "express-file-routing": "^3.0.3",
+    "i18n": "^0.15.1",
+    "image-size": "^1.1.1",
+    "jsonwebtoken": "^9.0.2",
+    "multer": "1.4.5-lts.1",
+    "node-base64-image": "^2.0.6",
+    "nodemon": "^2.0.22",
+    "sharp": "^0.33.3",
+    "universal-cookie": "^4.0.4"
+  },
+  "devDependencies": {
+    "@types/body-parser": "^1.19.5",
+    "@types/busboy": "^1.5.4",
+    "@types/cookie-parser": "^1.4.7",
+    "@types/cors": "^2.8.17",
+    "@types/express": "^4.17.21",
+    "@types/i18n": "^0.13.12",
+    "@types/jsonwebtoken": "^9.0.6",
+    "@types/multer": "^1.4.11",
+    "@types/node": "^18.19.33",
+    "tsc-alias": "^1.8.9",
+    "tsx": "^4.10.1",
+    "typescript": "^5.4.5"
+  }
+}
