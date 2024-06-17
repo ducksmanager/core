@@ -36,10 +36,16 @@ export const main = defineStore("main", () => {
       () =>
         country.value && magazine.value && `${country.value}/${magazine.value}`,
     ),
-    publicationIssues = computed(
+    publicationIssuenumbers = computed(
       () =>
         (publicationcode.value &&
           webStores.coa().issueNumbers[publicationcode.value]) ||
+        [],
+    ),
+    publicationIssuecodes = computed(
+      () =>
+        (publicationcode.value &&
+          webStores.coa().issuecodes[publicationcode.value]) ||
         [],
     ),
     publicationElementsForGallery = computed(
@@ -97,36 +103,29 @@ export const main = defineStore("main", () => {
     removeWarning = (idx: number) => {
       warnings.value.splice(idx, 1);
     },
-    setIssuenumbers = ({
-      min,
-      max,
-      others,
-    }: {
-      min: string;
-      max?: string;
-      others?: string;
-    }) => {
-      const firstIssueIndex = publicationIssues.value.findIndex(
-        (issue) => issue === min,
+    setIssuenumbers = (
+      firstIssuenumber: string,
+      lastIssuenumber?: string,
+      otherIssuenumbers?: string[],
+    ) => {
+      const firstIssueIndex = publicationIssuenumbers.value.findIndex(
+        (issuenumber) => issuenumber === firstIssuenumber,
       );
-      if (firstIssueIndex === -1) {
-        throw new Error(`Issue ${min} doesn't exist`);
-      }
-      if (max === undefined) {
-        issuenumbers.value = [min, ...(others ? others.split(",") : [])];
+      if (lastIssuenumber === undefined) {
+        issuenumbers.value = [firstIssuenumber, ...(otherIssuenumbers || [])];
       } else {
         isRange.value = true;
-        let lastIssueIndex = publicationIssues.value.findIndex(
-          (issue) => issue === max,
+        let lastIssueIndex = publicationIssuenumbers.value.findIndex(
+          (issuenumber) => issuenumber === lastIssuenumber,
         );
         if (lastIssueIndex === -1) {
-          lastIssueIndex = publicationIssues.value.length - 1;
+          lastIssueIndex = publicationIssuenumbers.value.length - 1;
           console.warn(
-            `Issue ${max} doesn't exist, falling back to ${publicationIssues.value[lastIssueIndex]}`,
+            `Issue ${lastIssuenumber} doesn't exist, falling back to ${publicationIssuenumbers.value[lastIssueIndex]}`,
           );
         }
 
-        issuenumbers.value = publicationIssues.value.filter(
+        issuenumbers.value = publicationIssuenumbers.value.filter(
           (_, index) => index >= firstIssueIndex && index <= lastIssueIndex,
         );
       }
@@ -158,19 +157,19 @@ export const main = defineStore("main", () => {
         Math.sign(edges.indexOf(a.issuenumber) - edges.indexOf(b.issuenumber)),
       ),
     loadSurroundingEdges = async () => {
-      const firstIssueIndex = publicationIssues.value.findIndex(
+      const firstIssueIndex = publicationIssuenumbers.value.findIndex(
         (issue) => issue === issuenumbers.value[0],
       );
-      const lastIssueIndex = publicationIssues.value.findIndex(
+      const lastIssueIndex = publicationIssuenumbers.value.findIndex(
         (issue) => issue === issuenumbers.value[issuenumbers.value.length - 1],
       );
-      const issuesBefore = publicationIssues.value.filter(
+      const issuesBefore = publicationIssuenumbers.value.filter(
         (_, index) =>
           firstIssueIndex !== -1 &&
           index >= firstIssueIndex - 10 &&
           index < firstIssueIndex,
       );
-      const issuesAfter = publicationIssues.value.filter(
+      const issuesAfter = publicationIssuenumbers.value.filter(
         (_, index) =>
           lastIssueIndex !== -1 &&
           index > lastIssueIndex &&
@@ -224,7 +223,8 @@ export const main = defineStore("main", () => {
     publicationPhotos,
     warnings,
     publicationcode,
-    publicationIssues,
+    publicationIssuecodes,
+    publicationIssuenumbers,
     publicationElementsForGallery,
     publicationPhotosForGallery,
     addContributor,

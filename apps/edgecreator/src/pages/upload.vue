@@ -79,9 +79,9 @@ meta:
             <template #header>
               <issue
                 no-wrap
-                :publicationcode="crop.publicationCode"
-                :publicationname="publicationNames[crop.publicationCode]"
-                :issuenumber="crop.issueNumber"
+                :publicationcode="crop.publicationcode"
+                :publicationname="publicationNames[crop.publicationcode]"
+                :issuenumber="crop.issuenumber"
             /></template>
             <img
               class="edge-crop"
@@ -91,7 +91,7 @@ meta:
             />
             <edge-canvas
               :steps="[]"
-              :issuenumber="crop.issueNumber"
+              :issuenumber="crop.issuenumber"
               :dimensions="{ width: crop.width, height: crop.height }"
               :photo-url="crop.filename"
               :contributors="initialContributors"
@@ -202,12 +202,12 @@ const addCrop = () => {
 };
 const uploadAll = async () => {
   for (const crop of crops.value.filter(({ sent }) => !sent)) {
-    const [country, magazine] = crop.publicationCode.split("/");
+    const [country, magazine] = crop.publicationcode.split("/");
     crop.filename = (
       await uploadServices.uploadFromBase64({
         country,
         magazine,
-        issuenumber: crop.issueNumber,
+        issuenumber: crop.issuenumber,
         data: crop.url,
       })
     ).fileName;
@@ -215,10 +215,10 @@ const uploadAll = async () => {
       const response = await saveEdgeSvg(
         country,
         magazine,
-        crop.issueNumber,
+        crop.issuenumber,
         initialContributors.value.map((contribution) => ({
           ...contribution,
-          issuenumber: crop.issueNumber,
+          issuenumber: crop.issuenumber,
         })),
       );
       const isSuccess = response!.paths.svgPath;

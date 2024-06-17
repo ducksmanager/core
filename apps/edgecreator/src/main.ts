@@ -3,7 +3,7 @@ import "bootstrap-vue-next/dist/bootstrap-vue-next.css";
 import "vue3-simple-typeahead/dist/vue3-simple-typeahead.css"; //Optional default CSS
 
 import { createHead } from "@unhead/vue";
-import { BCarousel } from "bootstrap-vue-next";
+import { BCarousel, BCarouselSlide } from "bootstrap-vue-next";
 import { createPinia } from "pinia";
 import { setupLayouts } from "virtual:generated-layouts";
 import generatedRoutes from "virtual:generated-pages";
@@ -28,7 +28,7 @@ const store = createPinia();
 
 createApp(App)
   .component("BCarousel", BCarousel)
-  .component("BCarouselSlide", BCarousel)
+  .component("BCarouselSlide", BCarouselSlide)
   .use(SimpleTypeahead)
   .use(i18n)
   .use(store)

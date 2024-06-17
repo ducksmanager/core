@@ -101,7 +101,7 @@ const { width, attributes, enableDragResize } = useStepOptions(props, [
 const { image, loadImage } = useBase64Legacy();
 
 watch(
-  () => textImage.value,
+  textImage,
   (newValue) => {
     if (newValue) {
       loadImage(textImage.value!.url, (img) => {
@@ -113,7 +113,7 @@ watch(
 );
 
 watch(
-  () => image.value,
+  image,
   (newValue) => {
     if (newValue?.base64) {
       waitUntil(

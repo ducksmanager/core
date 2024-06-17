@@ -1,7 +1,7 @@
 <template>
   <div v-if="countryNames">
     <b-form-select
-      v-model="currentCountryCode"
+      v-model="currentCountrycode"
       :options="countryNames"
       @change="emit('change', null)"
     >
@@ -12,17 +12,17 @@
       </template>
     </b-form-select>
     <b-form-select
-      v-show="currentCountryCode"
-      v-model="currentPublicationCode"
+      v-show="currentCountrycode"
+      v-model="currentPublicationcode"
       :options="publications"
       @change="emit('change', null)"
     />
-    <template v-if="currentCountryCode && currentPublicationCode">
+    <template v-if="currentCountrycode && currentPublicationcode">
       <template v-if="withEdgeGallery">
         <edge-gallery
           v-if="edgeCatalogStore.isCatalogLoaded"
-          :publicationcode="currentPublicationCode"
-          :selected="currentIssueNumber"
+          :publicationcode="currentPublicationcode"
+          :selected="currentFirstIssue"
           :has-more-before="hasMoreIssuesToLoad.before"
           :has-more-after="hasMoreIssuesToLoad.after"
           @load-more="
@@ -32,8 +32,8 @@
             }
           "
           @change="
-            currentIssueNumber = $event;
-            onChange({});
+            currentFirstIssue = $event;
+            onChange();
           "
         />
         <b-alert v-else :model-value="true" variant="info"
@@ -42,10 +42,10 @@
       </template>
       <template v-else>
         <b-form-select
-          v-show="currentCountryCode && currentPublicationCode"
-          v-model="currentIssueNumber"
+          v-show="currentPublicationcode"
+          v-model="currentFirstIssue"
           :options="issues"
-          @input="onChange({})"
+          @change="onChange()"
         >
           <template #first>
             <b-form-select-option :value="undefined" disabled>{{
@@ -53,7 +53,7 @@
             }}</b-form-select-option>
           </template>
         </b-form-select>
-        <template v-if="canBeMultiple && currentIssueNumber !== null">
+        <template v-if="canBeMultiple && currentFirstIssue !== null">
           <b-form-group class="mt-2">
             <b-form-radio v-model="editMode" name="editMode" value="single">{{
               $t("Edit a single edge")
@@ -64,21 +64,20 @@
           </b-form-group>
           <b-form-select
             v-show="editMode === 'range'"
-            v-model="currentIssueNumberEnd"
+            v-model="currentLastIssue"
             :options="issues"
-            @input="onChange({})"
+            @change="onChange()"
           />
         </template>
       </template>
     </template>
-    <slot v-if="$slots.dimensions && currentIssueNumber !== null" />
+    <slot v-if="$slots.dimensions && currentFirstIssue !== null" />
   </div>
 </template>
 <script setup lang="ts">
 import { useI18n } from "vue-i18n";
 
 import { edgeCatalog } from "~/stores/edgeCatalog";
-import type { Crop } from "~types/Crop";
 import { stores as webStores } from "~web";
 
 const { t: $t } = useI18n();
@@ -86,31 +85,41 @@ const { t: $t } = useI18n();
 const edgeCatalogStore = edgeCatalog();
 const coaStore = webStores.coa();
 
-const emit = defineEmits<(e: "change", value: Crop | null) => void>();
+type Selection = {
+  editMode: "single" | "range";
+  countrycode: string;
+  publicationcode: string;
+  issuecode: string;
+  issuenumberEnd?: string;
+};
+
+const emit = defineEmits<(e: "change", value: Selection | null) => void>();
 
 const props = withDefaults(
   defineProps<{
-    countryCode?: string | null;
-    publicationCode?: string | null;
+    countrycode?: string | null;
+    publicationcode?: string | null;
     canBeMultiple?: boolean;
     disableOngoingOrPublished: boolean;
     disableNotOngoingNorPublished: boolean;
     withEdgeGallery?: boolean;
-    baseIssueNumbers?: string[];
+    baseIssuenumbers?: string[];
   }>(),
   {
-    countryCode: null,
-    publicationCode: null,
+    countrycode: null,
+    publicationcode: null,
     canBeMultiple: false,
     edgeGallery: false,
-    baseIssueNumbers: () => [],
+    baseIssuenumbers: () => [],
   },
 );
 
-const currentCountryCode = ref<string | undefined>(undefined);
-const currentPublicationCode = ref<string | undefined>(undefined);
-const currentIssueNumber = ref<string | undefined>(undefined);
-const currentIssueNumberEnd = ref<string | undefined>(undefined);
+type IssueCodeAndNumber = { issuecode: string; issuenumber: string };
+
+const currentCountrycode = ref<string | undefined>(undefined);
+const currentPublicationcode = ref<string | undefined>(undefined);
+const currentFirstIssue = ref<IssueCodeAndNumber | undefined>(undefined);
+const currentLastIssue = ref<IssueCodeAndNumber | undefined>(undefined);
 const editMode = ref<"single" | "range">("single");
 const hasMoreIssuesToLoad = ref({ before: false, after: false });
 const surroundingIssuesToLoad = ref({ before: 10, after: 10 } as Record<
@@ -121,21 +130,25 @@ const surroundingIssuesToLoad = ref({ before: 10, after: 10 } as Record<
 const countryNames = computed(
   () =>
     coaStore.countryNames &&
-    Object.entries(coaStore.countryNames).map(([countryCode, countryName]) => ({
-      text: countryName,
-      value: countryCode,
-    })),
+    Object.entries(coaStore.countryNames)
+      .map(([countrycode, countryName]) => ({
+        text: countryName,
+        value: countrycode,
+      }))
+      .sort(({ text: text1 }, { text: text2 }) =>
+        text1! < text2! ? -1 : text2! < text1! ? 1 : 0,
+      ),
 );
 const publications = computed(
   () =>
     coaStore.publicationNames &&
     Object.keys(coaStore.publicationNames)
-      .filter((publicationCode) =>
-        publicationCode.startsWith(`${currentCountryCode.value!}/`),
+      .filter((publicationcode) =>
+        publicationcode.startsWith(`${currentCountrycode.value!}/`),
       )
-      .map((publicationCode) => ({
-        text: coaStore.publicationNames[publicationCode],
-        value: publicationCode,
+      .map((publicationcode) => ({
+        text: coaStore.publicationNames[publicationcode],
+        value: publicationcode,
       }))
       .filter(({ text }) => text !== null)
       .sort(({ text: text1 }, { text: text2 }) =>
@@ -144,35 +157,40 @@ const publications = computed(
 );
 
 const publicationIssues = computed(
-  () => coaStore.issueNumbers[currentPublicationCode.value!],
+  () => coaStore.issueNumbers[currentPublicationcode.value!],
 );
 
 const issues = computed(
   () =>
     publicationIssues.value &&
-    edgeCatalogStore.publishedEdges[currentPublicationCode.value!] &&
-    coaStore.issueNumbers[currentPublicationCode.value!].map((issuenumber) => {
-      const status = edgeCatalogStore.getEdgeStatus({
-        country: currentCountryCode.value!,
-        magazine: currentPublicationCode.value!.split("/")[1],
-        issuenumber,
-      });
-      return {
-        value: issuenumber,
-        text: `${issuenumber}${status === "none" ? "" : ` (${$t(status!)})`}`,
-        disabled:
-          (props.disableOngoingOrPublished && status !== "none") ||
-          (props.disableNotOngoingNorPublished && status === "none"),
-      };
-    }),
+    edgeCatalogStore.publishedEdges[currentPublicationcode.value!] &&
+    coaStore.issueNumbers[currentPublicationcode.value!].map(
+      (issuenumber, idx) => {
+        const issuecode =
+          coaStore.issuecodes[currentPublicationcode.value!][idx];
+        const status = edgeCatalogStore.getEdgeStatus({
+          country: currentCountrycode.value!,
+          magazine: currentPublicationcode.value!.split("/")[1],
+          issuenumber,
+          issuecode,
+        });
+        return {
+          value: { issuecode, issuenumber },
+          text: `${issuenumber}${status === "none" ? "" : ` (${$t(status!)})`}`,
+          disabled:
+            (props.disableOngoingOrPublished && status !== "none") ||
+            (props.disableNotOngoingNorPublished && status === "none"),
+        };
+      },
+    ),
 );
 
 watch(
-  () => currentCountryCode.value,
+  currentCountrycode,
   async (newValue) => {
     if (newValue) {
-      currentPublicationCode.value = props.publicationCode!;
-      currentIssueNumber.value = undefined;
+      currentPublicationcode.value = props.publicationcode!;
+      currentFirstIssue.value = undefined;
 
       await coaStore.fetchPublicationNamesFromCountry(newValue);
     }
@@ -182,43 +200,37 @@ watch(
   },
 );
 
-watch(
-  () => currentPublicationCode.value,
-  async (newValue) => {
-    if (newValue) {
-      currentIssueNumber.value = undefined;
-      await coaStore.fetchIssueNumbers([newValue]);
-      await loadEdges();
-    }
-  },
-);
+watch(currentPublicationcode, async (newValue) => {
+  if (newValue) {
+    currentFirstIssue.value = undefined;
+    await coaStore.fetchIssueNumbers([newValue]);
+    await loadEdges();
+  }
+});
 
-watch(
-  () => surroundingIssuesToLoad.value,
-  async () => await loadEdges(),
-);
+watch(surroundingIssuesToLoad, async () => await loadEdges());
 
-if (props.countryCode) {
-  currentCountryCode.value = props.countryCode;
+if (props.countrycode) {
+  currentCountrycode.value = props.countrycode;
 }
 
 const loadEdges = async () => {
   let issueNumbersFilter = "";
   if (props.withEdgeGallery) {
     const minBaseIssueNumberIndex = publicationIssues.value.indexOf(
-      props.baseIssueNumbers[0],
+      props.baseIssuenumbers[0],
     );
     const maxBaseIssueNumberIndex = publicationIssues.value.indexOf(
-      props.baseIssueNumbers[props.baseIssueNumbers.length - 1],
+      props.baseIssuenumbers[props.baseIssuenumbers.length - 1],
     );
     issueNumbersFilter = `/${publicationIssues.value
       .filter(
-        (issueNumber, index) =>
+        (issuenumber, index) =>
           minBaseIssueNumberIndex - index <
             surroundingIssuesToLoad.value.before &&
           index - maxBaseIssueNumberIndex <
             surroundingIssuesToLoad.value.after &&
-          !props.baseIssueNumbers.includes(issueNumber),
+          !props.baseIssuenumbers.includes(issuenumber),
       )
       .join(",")}`;
     hasMoreIssuesToLoad.value = {
@@ -229,22 +241,18 @@ const loadEdges = async () => {
     };
   }
 
-  await edgeCatalogStore.fetchPublishedEdges(currentPublicationCode.value!);
+  await edgeCatalogStore.fetchPublishedEdges(currentPublicationcode.value!);
 };
 
-const onChange = (
-  data: { width: number; height: number } | Record<string, never>,
-) =>
+const onChange = () => {
   emit("change", {
-    width: data.width,
-    height: data.height,
     editMode: editMode.value,
-    countryCode: currentCountryCode.value!,
-    publicationCode: currentPublicationCode.value!,
-    issueNumber: currentIssueNumber.value!,
-    issueNumberEnd: currentIssueNumberEnd.value!,
+    countrycode: currentCountrycode.value!,
+    publicationcode: currentPublicationcode.value!,
+    issuecode: currentFirstIssue.value!.issuecode,
+    issuenumberEnd: currentLastIssue.value?.issuenumber,
   });
-
+};
 (async () => {
   await coaStore.fetchCountryNames();
   await edgeCatalogStore.loadCatalog();

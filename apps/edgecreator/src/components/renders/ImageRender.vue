@@ -65,7 +65,7 @@ watch(
 );
 
 watch(
-  () => image.value,
+  image,
   (value) => {
     if (value) {
       enableDragResize(value);

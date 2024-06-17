@@ -13,13 +13,12 @@
       disable-ongoing-or-published
       :disable-not-ongoing-nor-published="false"
       @change="
-        issueData = $event && $event.issueNumber !== null ? $event : null
+        issueData = $event && $event.issuenumber !== null ? $event : null
       "
     />
   </b-modal>
 </template>
 <script setup lang="ts">
-import { assert } from "@vueuse/core";
 import { onMounted } from "vue";
 
 const router = useRouter();
@@ -29,11 +28,8 @@ const showUploadModal = ref<boolean>(false);
 const issueData = ref(
   null as {
     editMode: "range" | "single";
-    publicationCode: string;
-    issueNumber: string;
-    issueNumberEnd: string;
-    width: number;
-    height: number;
+    issuecode: string;
+    issuenumberEnd: string;
   } | null,
 );
 
@@ -41,8 +37,8 @@ const issueSpecification = computed(() =>
   issueData.value === null
     ? null
     : issueData.value.editMode === "range"
-      ? `${issueData.value.issueNumber} to ${issueData.value.issueNumberEnd}`
-      : issueData.value.issueNumber,
+      ? `${issueData.value.issuecode} to ${issueData.value.issuenumberEnd}`
+      : issueData.value.issuecode,
 );
 
 const toDashboard = async () => {
@@ -50,10 +46,7 @@ const toDashboard = async () => {
 };
 
 const startEditing = async () => {
-  assert(issueSpecification.value !== null);
-  router.push(
-    `/edit/${issueData.value!.publicationCode} ${issueSpecification.value!}`,
-  );
+  router.push(`/edit/${issueSpecification.value!}`);
 };
 
 onMounted(() => {

@@ -169,68 +169,59 @@ const isOkDisabled = computed(() =>
   ),
 );
 
-watch(
-  () => progress.value,
-  (newValue) => {
-    if (newValue === 100) {
+watch(progress, (newValue) => {
+  if (newValue === 100) {
+    window.setTimeout(() => {
+      progress.value = 0;
+      result.value = "success";
       window.setTimeout(() => {
+        result.value = null;
+      }, 2000);
+    }, 1000);
+  }
+});
+watch(issueIndexToSave, (newValue) => {
+  const currentIssuenumber = mainStore.issuenumbers[newValue!];
+
+  if (currentIssuenumber === undefined) {
+    return;
+  }
+
+  ui().zoom = 1.5;
+  nextTick(() => {
+    saveEdgeSvg(
+      mainStore.country!,
+      mainStore.magazine!,
+      currentIssuenumber,
+      mainStore.contributors.filter(
+        ({ issuenumber }) => issuenumber === currentIssuenumber,
+      ),
+      props.withExport,
+      props.withSubmit,
+    ).then((response) => {
+      const isSuccess = response!.paths.svgPath;
+      if (isSuccess) {
+        progress.value += 100 / mainStore.issuenumbers.length;
+        issueIndexToSave.value!++;
+      } else {
         progress.value = 0;
-        result.value = "success";
-        window.setTimeout(() => {
-          result.value = null;
-        }, 2000);
-      }, 1000);
-    }
-  },
-);
-watch(
-  () => issueIndexToSave.value,
-  (newValue) => {
-    const currentIssueNumber = mainStore.issuenumbers[newValue!];
-
-    if (currentIssueNumber === undefined) {
-      return;
-    }
-
-    ui().zoom = 1.5;
-    nextTick(() => {
-      saveEdgeSvg(
-        mainStore.country!,
-        mainStore.magazine!,
-        currentIssueNumber,
-        mainStore.contributors.filter(
-          ({ issuenumber }) => issuenumber === currentIssueNumber,
-        ),
-        props.withExport,
-        props.withSubmit,
-      ).then((response) => {
-        const isSuccess = response!.paths.svgPath;
-        if (isSuccess) {
-          progress.value += 100 / mainStore.issuenumbers.length;
-          issueIndexToSave.value!++;
-        } else {
-          progress.value = 0;
-          result.value = "error";
-          issueIndexToSave.value = null;
-        }
-      });
+        result.value = "error";
+        issueIndexToSave.value = null;
+      }
     });
-  },
-);
+  });
+});
 
-watch(
-  () => showModal.value,
-  (newValue) => {
-    if (newValue && props.withSubmit) {
-      addContributorAllIssues(
-        userStore.allUsers!.find(
-          (thisUser) => thisUser.username === collectionStore.user!.username,
-        )!,
-        "createur",
-      );
-    }
-  },
-);
+watch(showModal, (newValue) => {
+  if (newValue && props.withSubmit) {
+    addContributorAllIssues(
+      userStore.allUsers!.find(
+        (thisUser) => thisUser.username === collectionStore.user!.username,
+      )!,
+      "createur",
+    );
+  }
+});
 
 const onUserSelect = (
   username: string,

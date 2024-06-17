@@ -8,6 +8,7 @@ import { dmSocketInjectionKey } from "~web/src/composables/useDmSocket";
 interface Edge {
   country: string;
   magazine: string;
+  issuecode: string;
   issuenumber: string;
   designers: string[];
   photographers: string[];
@@ -103,13 +104,13 @@ export const edgeCatalog = defineStore("edgeCatalog", () => {
         if (!publishedEdges.value[publicationcode]) {
           publishedEdges.value[publicationcode] = {};
         }
-        for (const issueNumber of Object.keys(publicationEdgesForPublication)) {
-          const edgeStatus = publicationEdgesForPublication[issueNumber];
-          if (!publishedEdges.value[publicationcode][issueNumber]) {
-            publishedEdges.value[publicationcode][issueNumber] = edgeStatus;
+        for (const issuenumber of Object.keys(publicationEdgesForPublication)) {
+          const edgeStatus = publicationEdgesForPublication[issuenumber];
+          if (!publishedEdges.value[publicationcode][issuenumber]) {
+            publishedEdges.value[publicationcode][issuenumber] = edgeStatus;
           } else {
-            publishedEdges.value[publicationcode][issueNumber] = {
-              ...publishedEdges.value[publicationcode][issueNumber],
+            publishedEdges.value[publicationcode][issuenumber] = {
+              ...publishedEdges.value[publicationcode][issuenumber],
             };
           }
         }
@@ -194,10 +195,12 @@ export const edgeCatalog = defineStore("edgeCatalog", () => {
       country,
       magazine,
       issuenumber,
+      issuecode,
     }: {
       country: string;
       magazine: string;
       issuenumber: string;
+      issuecode: string;
     }) => {
       let isPublished = false;
       const publicationcode = `${country}/${magazine}`;
@@ -206,7 +209,6 @@ export const edgeCatalog = defineStore("edgeCatalog", () => {
       if (publishedEdgesForPublication[issuenumber]) {
         isPublished = true;
       }
-      const issuecode = `${publicationcode} ${issuenumber}`;
 
       return (
         currentEdges.value[issuecode] || {
@@ -258,6 +260,7 @@ export const edgeCatalog = defineStore("edgeCatalog", () => {
               newCurrentEdges[issuecode] = getEdgeFromSvg({
                 country,
                 magazine,
+                issuecode,
                 issuenumber,
                 designers,
                 photographers,

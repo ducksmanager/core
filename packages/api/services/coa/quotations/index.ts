@@ -18,7 +18,7 @@ export default (socket: Socket<Events>) => {
         quotations: await prismaCoa.inducks_issuequotation.findMany({
           where: {
             issuecode: {
-              in: codes.map(([code]) => code.replaceAll(/ +/, " ")),
+              in: codes,
             },
             estimationMin: { not: { equals: null } },
           },

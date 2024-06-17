@@ -31,6 +31,7 @@ export default (socket: Socket<Events>) => {
       .findMany({
         select: {
           publicationcode: true,
+          issuecode: true,
           issuenumber: true,
         },
         where: {
@@ -41,10 +42,10 @@ export default (socket: Socket<Events>) => {
       })
       .then((issues) => {
         callback({
-          issues: issues.map(({ publicationcode, issuenumber }) => ({
-            code: "",
+          issues: issues.map(({ publicationcode, issuecode, issuenumber }) => ({
+            issuecode,
             publicationcode: publicationcode!,
-            issuenumber: issuenumber!.replace(/ +/g, " "),
+            issuenumber: issuenumber!,
           })),
         });
       }),
@@ -52,7 +53,7 @@ export default (socket: Socket<Events>) => {
 
   socket.on("getIssuesByStorycode", async (storycode, callback) =>
     prismaCoa.$queryRaw<SimpleIssue[]>`
-      SELECT issuecode as code,
+      SELECT issuecode,
               publicationcode,
               issuenumber
       FROM inducks_issue issue

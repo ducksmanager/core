@@ -158,10 +158,12 @@ import type { Dimensions, Options } from "~/stores/step";
 import { step } from "~/stores/step";
 import { ui } from "~/stores/ui";
 import { stores as webStores } from "~web";
+import { coa } from "~web/src/stores/coa";
 
 const route = useRoute();
 const uiStore = ui();
 const mainStore = main();
+const coaStore = coa();
 const stepStore = step();
 const editingStepStore = editingStep();
 const { showPreviousEdge, showNextEdge } = useSurroundingEdge();
@@ -206,30 +208,36 @@ watch(
   },
 );
 
-await webStores.users().fetchAllUsers();
-let country, magazine, issuenumberMin, issuenumberMax, issuenumberOthers;
 try {
-  const pathParts = (route.params.all as string).split(" ");
-  [country, magazine] = pathParts[0].split("/");
-  if (pathParts[2] === "to") {
-    [, issuenumberMin, , issuenumberMax] = pathParts;
-  } else {
-    [, issuenumberMin, issuenumberOthers] =
-      pathParts[1].match(/^([^,]+),?(.*)$/)!;
+  await webStores.users().fetchAllUsers();
+
+  let [firstIssuecode, lastIssuenumber] = (route.params.all as string).split(
+    " to ",
+  );
+  let otherIssuenumbers: string[] | undefined = undefined;
+  if (!lastIssuenumber) {
+    [firstIssuecode, ...otherIssuenumbers] = firstIssuecode.split(",");
   }
 
-  mainStore.country = country;
-  mainStore.magazine = magazine;
-  editingStepStore.addIssuenumber(issuenumberMin);
+  await coaStore.fetchIssueCodesDetails([firstIssuecode]);
+
+  const { publicationcode, issuenumber: firstIssuenumber } =
+    coaStore.issueCodeDetails[firstIssuecode];
+  if (!publicationcode) {
+    throw new Error(`Issue ${firstIssuecode} doesn't exist`);
+  }
+  [mainStore.country, mainStore.magazine] = publicationcode!.split("/");
 
   await mainStore.loadPublicationIssues();
 
   try {
-    mainStore.setIssuenumbers({
-      min: issuenumberMin,
-      max: issuenumberMax,
-      others: issuenumberOthers,
-    });
+    mainStore.setIssuenumbers(
+      firstIssuenumber!,
+      lastIssuenumber,
+      otherIssuenumbers,
+    );
+
+    editingStepStore.addIssuenumber(firstIssuenumber!);
 
     for (const issuenumber of mainStore.issuenumbers) {
       const idx = mainStore.issuenumbers.indexOf(issuenumber);
@@ -237,7 +245,12 @@ try {
         continue;
       }
       try {
-        await loadModel(country, magazine, issuenumber, issuenumber);
+        await loadModel(
+          mainStore.country,
+          mainStore.magazine,
+          issuenumber,
+          issuenumber,
+        );
       } catch {
         const previousIssuenumber = mainStore.issuenumbers[idx - 1];
         if (previousIssuenumber) {
@@ -255,21 +268,21 @@ try {
   } catch (e) {
     error.value = e as string;
   }
-} catch (_) {
+} catch (e) {
   error.value = "Invalid URL";
 }
 
 const overwriteModel = async ({
-  publicationCode,
-  issueNumber,
+  publicationcode,
+  issuenumber,
 }: {
-  publicationCode: string;
-  issueNumber: string;
+  publicationcode: string;
+  issuenumber: string;
 }) => {
-  const [country, magazine] = publicationCode.split("/");
+  const [country, magazine] = publicationcode.split("/");
   for (const targetIssuenumber of editingStepStore.issuenumbers) {
     try {
-      await loadModel(country, magazine, issueNumber, targetIssuenumber);
+      await loadModel(country, magazine, issuenumber, targetIssuenumber);
     } catch (e) {
       mainStore.addWarning(e as string);
     }

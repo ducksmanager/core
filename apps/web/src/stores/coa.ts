@@ -53,7 +53,8 @@ export const coa = defineStore("coa", () => {
     personNames = ref<EventReturnType<CoaServices["getAuthorList"]> | null>(
       null,
     ),
-    issueNumbers = ref<{ [issuecode: string]: string[] }>({}),
+    issueNumbers = ref<{ [publicationcode: string]: string[] }>({}),
+    issuecodes = ref<{ [publicationcode: string]: string[] }>({}),
     issuesWithTitles = ref<EventReturnType<CoaServices["getIssuesWithTitles"]>>(
       {},
     ),
@@ -87,6 +88,11 @@ export const coa = defineStore("coa", () => {
       [publicationcode: string]: string[];
     }) => {
       Object.assign(issueNumbers.value, newIssuenumbers);
+    },
+    addIssuecodes = (newIssuecodes: {
+      [publicationcode: string]: string[];
+    }) => {
+      Object.assign(issuecodes.value, newIssuecodes);
     },
     addIssueCodeDetails = (newIssueCodeDetails: {
       [issuecode: string]: inducks_issue;
@@ -232,6 +238,19 @@ export const coa = defineStore("coa", () => {
               {},
             ),
           );
+
+          addIssuecodes(
+            data.issues.reduce<typeof issuecodes.value>(
+              (acc, issue) => ({
+                ...acc,
+                [issue.publicationcode]: [
+                  ...(acc[issue.publicationcode] || []),
+                  issue.issuecode,
+                ],
+              }),
+              {},
+            ),
+          );
         }
       }
     },
@@ -244,10 +263,9 @@ export const coa = defineStore("coa", () => {
           ),
         ),
       ];
-      return (
-        newIssueCodes.length &&
-        addIssueCodeDetails(await coaServices.decompose(newIssueCodes))
-      );
+      if (newIssueCodes.length) {
+        addIssueCodeDetails(await coaServices.decompose(newIssueCodes));
+      }
     },
     fetchRecentIssues = () => coaServices.getRecentIssues(),
     fetchCoverUrls = (publicationcode: string) =>
@@ -293,6 +311,7 @@ export const coa = defineStore("coa", () => {
     issueCodeDetails,
     issueDetails,
     issueNumbers,
+    issuecodes,
     issueQuotations,
     issuesWithTitles,
     personNames,

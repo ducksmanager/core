@@ -102,18 +102,15 @@ watch(
   },
 );
 
-watch(
-  () => inputValue.value,
-  (newValue: PossibleInputValueType | undefined) => {
-    if (
-      !shouldWaitForBlurToUpdate.value &&
-      [...new Set(props.inputValues)].length <= 1 &&
-      newValue !== undefined
-    ) {
-      onChangeValue(newValue);
-    }
-  },
-);
+watch(inputValue, (newValue: PossibleInputValueType | undefined) => {
+  if (
+    !shouldWaitForBlurToUpdate.value &&
+    [...new Set(props.inputValues)].length <= 1 &&
+    newValue !== undefined
+  ) {
+    onChangeValue(newValue);
+  }
+});
 
 const onChangeValue = (optionValue: OptionValue) => {
   let intValue: number | null = null;

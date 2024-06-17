@@ -111,7 +111,6 @@ export default (socket: Socket<Events>) => {
       })
       .map((issue) => ({
         ...issue,
-        issuenumber: issue.issuenumber.replace(/ +/g, " "),
         coverId: covers[issue.issuecode].id,
         fullUrl: covers[issue.issuecode].url,
       }))
@@ -121,7 +120,7 @@ export default (socket: Socket<Events>) => {
     const shortIssueCodes = longIssueCodes.reduce(
       (acc, longIssueCode) => ({
         ...acc,
-        [longIssueCode]: longIssueCode.replace(/ +/g, " "),
+        [longIssueCode]: longIssueCode,
       }),
       {},
     );
@@ -194,7 +193,7 @@ const getIssueCoverDetails = (
         data.reduce(
           (acc, row) => ({
             ...acc,
-            [row.issuenumber.replace(/ +/g, " ")]: row,
+            [row.issuenumber]: row,
           }),
           {} as Record<string, IssueCoverDetails>,
         ),

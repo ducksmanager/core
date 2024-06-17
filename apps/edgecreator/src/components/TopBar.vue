@@ -270,9 +270,9 @@ const { hasRole } = webStores.collection();
 
 interface ModelToClone {
   editMode: string;
-  publicationCode: string;
-  issueNumber: string;
-  issueNumberEnd: string;
+  publicationcode: string;
+  issuenumber: string;
+  issuenumberEnd: string;
 }
 
 const emit = defineEmits<{

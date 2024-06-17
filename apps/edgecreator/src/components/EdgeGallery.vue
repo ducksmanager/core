@@ -157,7 +157,7 @@ const onPublicationOrEdgeChange = async () => {
   }
 };
 
-watch(() => publishedEdges.value, onPublicationOrEdgeChange, {
+watch(publishedEdges, onPublicationOrEdgeChange, {
   deep: true,
   immediate: true,
 });

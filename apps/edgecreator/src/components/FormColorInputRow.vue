@@ -165,17 +165,14 @@ watch(
   { immediate: true },
 );
 
-watch(
-  () => isTransparent.value,
-  (newValue) => {
-    stepStore.setOptionValues([
-      {
-        optionName: props.optionName,
-        optionValue: newValue ? "transparent" : originalColor.value,
-      },
-    ]);
-  },
-);
+watch(isTransparent, (newValue) => {
+  stepStore.setOptionValues([
+    {
+      optionName: props.optionName,
+      optionValue: newValue ? "transparent" : originalColor.value,
+    },
+  ]);
+});
 
 const onColorChange = (value: string) => {
   stepStore.setOptionValues({ [props.optionName]: value });

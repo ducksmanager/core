@@ -230,10 +230,10 @@ export default () => {
 
     try {
       await loadSvg(false);
-    } catch {
+    } catch (e) {
       try {
         await loadSvg(true);
-      } catch {
+      } catch (e) {
         const publicationcode = `${countrycode}/${magazinecode}`;
         const edge = (await edgeCreatorServices.getModel(
           publicationcode,
