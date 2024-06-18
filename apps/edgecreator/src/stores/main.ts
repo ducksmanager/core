@@ -2,8 +2,8 @@ import { AxiosInstance } from "axios";
 import { defineStore } from "pinia";
 
 import { api } from "~/stores/api";
-import { EdgeWithModelId } from "~dm_types/EdgeWithModelId";
-import { GET__edges__$countrycode__$magazinecode__$issuenumbers } from "~dm_types/routes";
+import { EdgeWithModelId } from "~dm-types/EdgeWithModelId";
+import { GET__edges__$countrycode__$magazinecode__$issuenumbers } from "~api-routes";
 import { userContributionType } from "~prisma-clients/client_dm";
 import { ModelContributor } from "~types/ModelContributor";
 import { GET__fs__browse__$imageType__$country__$magazine } from "~types/routes";
@@ -42,9 +42,8 @@ export const main = defineStore("main", () => {
         country.value &&
         publicationElements.value.map((elementFileName) => ({
           name: elementFileName,
-          url: `${
-            import.meta.env.VITE_EDGES_URL as string
-          }/${country.value!}/elements/${elementFileName}`,
+          url: `${import.meta.env.VITE_EDGES_URL as string
+            }/${country.value!}/elements/${elementFileName}`,
         })),
     ),
     publicationPhotosForGallery = computed(
@@ -52,9 +51,8 @@ export const main = defineStore("main", () => {
         country.value &&
         publicationPhotos.value.map((elementFileName) => ({
           name: elementFileName,
-          url: `${
-            import.meta.env.VITE_EDGES_URL as string
-          }/${country.value!}/photos/${elementFileName}`,
+          url: `${import.meta.env.VITE_EDGES_URL as string
+            }/${country.value!}/photos/${elementFileName}`,
         })),
     ),
     addContributor = ({

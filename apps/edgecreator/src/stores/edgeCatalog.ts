@@ -1,15 +1,15 @@
 import { defineStore } from "pinia";
 
 import { api } from "~/stores/api";
-import { EdgeModel } from "~dm_types/EdgeModel";
-import { ModelSteps } from "~dm_types/ModelSteps";
+import { EdgeModel } from "~dm-types/EdgeModel";
+import { ModelSteps } from "~dm-types/ModelSteps";
 import {
   GET__edgecreator__model,
   GET__edgecreator__model__$modelIds__steps,
   GET__edgecreator__model__editedbyother__all,
   GET__edgecreator__model__unassigned__all,
   GET__edges__$countrycode__$magazinecode__$issuenumbers,
-} from "~dm_types/routes";
+} from "~api-routes";
 
 import { call, getChunkedRequests } from "../../axios-helper";
 import { coa } from "./coa";

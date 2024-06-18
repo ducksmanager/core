@@ -1,7 +1,7 @@
 import { defineStore } from "pinia";
 
 import { api } from "~/stores/api";
-import { GET__global_stats__user__list } from "~dm_types/routes";
+import { GET__global_stats__user__list } from "~api-routes";
 import { SimpleUser } from "~types/SimpleUser";
 
 import { call } from "../../axios-helper";

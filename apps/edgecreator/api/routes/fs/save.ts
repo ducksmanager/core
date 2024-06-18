@@ -6,7 +6,7 @@ import { getSvgPath } from "~/_utils";
 import {
   PUT__edgecreator__publish__$country__$magazine__$issuenumber,
   PUT__edgecreator__submit,
-} from "~dm_types/routes";
+} from "~api-routes";
 import { ExpressCall } from "~routes/_express-call";
 import { ExportPaths } from "~types/ExportPaths";
 import { ModelContributor } from "~types/ModelContributor";

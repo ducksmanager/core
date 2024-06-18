@@ -2,6 +2,7 @@
 
 import { ContractWithMethodAndUrl } from "~axios-helper";
 import { AuthorsDetails } from "~dm-types/AuthorsDetails";
+import { AuthorWithUserRating } from "~dm-types/AuthorWithUserRating";
 import { BookcaseContributor } from "~dm-types/BookcaseContributor";
 import { BookcaseEdge } from "~dm-types/BookcaseEdge";
 import { CollectionUpdateMultipleIssues,CollectionUpdateSingleIssue } from "~dm-types/CollectionUpdate";
@@ -30,7 +31,7 @@ import { TransactionResults } from "~dm-types/TransactionResults";
 import { UserForAccountForm } from "~dm-types/UserForAccountForm";
 import { WantedEdge } from "~dm-types/WantedEdge";
 import { inducks_issue, inducks_issuequotation } from "~prisma-clients/client_coa";
-import { authorUser, bookstoreComment, edge, issue, purchase, requestedIssue, subscription,user, userOptionType, userPermission } from "~prisma-clients/client_dm";
+import { bookstoreComment, edge, issue, purchase, requestedIssue, subscription,user, userOptionType, userPermission } from "~prisma-clients/client_dm";
 import { edgeContributor, edgeModel,elementImage } from "~prisma-clients/client_edgecreator";
 
 export class GET__bookstores  extends ContractWithMethodAndUrl<{ resBody: SimpleBookstore[] }> {
@@ -300,7 +301,7 @@ export class DELETE__collection__authors__watched  extends ContractWithMethodAnd
             static readonly method = "delete";
             static readonly url = "/collection/authors/watched";
         }
-export class GET__collection__authors__watched  extends ContractWithMethodAndUrl<{ resBody: authorUser[] }> {
+export class GET__collection__authors__watched  extends ContractWithMethodAndUrl<{ resBody: AuthorWithUserRating[] }> {
             static readonly method = "get";
             static readonly url = "/collection/authors/watched";
         }

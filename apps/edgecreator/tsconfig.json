@@ -15,6 +15,8 @@
     "preserveWatchOutput": true,
     "paths": {
       "~/*": ["src/*"],
+      "~api-routes/*": ["../../packages/api-routes/*"],
+      "~axios-helper/*": ["../../packages/axios-helper/*"],
       "~dm-services/*": ["../../packages/api/services/*"],
       "~dm-types/*": ["../../packages/types/*"],
       "~prisma-clients/*": ["../../packages/prisma-clients/*"],

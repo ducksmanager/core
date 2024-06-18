@@ -178,7 +178,7 @@ import {
   edgeCategories,
   EdgeWithVersionAndStatus,
 } from "~/stores/edgeCatalog";
-import { GET__edges__wanted__data } from "~dm_types/routes";
+import { GET__edges__wanted__data } from "~api-routes";
 
 import { call } from "../../axios-helper";
 

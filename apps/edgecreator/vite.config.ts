@@ -24,6 +24,8 @@ export default defineConfig({
   resolve: {
     alias: {
       "~/": `${path.resolve(__dirname, "src")}/`,
+      "~api-routes": path.resolve(__dirname, "../../packages/api-routes"),
+      "~axios-helper": path.resolve(__dirname, "../../packages/axios-helper"),
       "~dm-services": path.resolve(__dirname, "../../packages/api/services"),
       "~dm-types": path.resolve(__dirname, "../../packages/types"),
       "~socket.io-services": path.resolve(

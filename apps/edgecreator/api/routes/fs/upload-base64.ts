@@ -1,6 +1,6 @@
 import { decode } from "node-base64-image";
 
-import { PUT__edgecreator__multiple_edge_photo__v2 } from "~dm_types/routes";
+import { PUT__edgecreator__multiple_edge_photo__v2 } from "~api-routes";
 import { ExpressCall } from "~routes/_express-call";
 import { getNextAvailableFile } from "~routes/_upload_utils";
 

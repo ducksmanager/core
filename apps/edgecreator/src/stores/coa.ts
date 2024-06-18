@@ -5,7 +5,7 @@ import {
   GET__coa__list__issues__by_publication_codes,
   GET__coa__list__publications__$countrycode,
   POST__coa__list__publications,
-} from "~dm_types/routes";
+} from "~api-routes";
 
 import { call, getChunkedRequests } from "../../axios-helper";
 import { api } from "./api";

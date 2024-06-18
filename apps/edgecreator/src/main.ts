@@ -3,7 +3,6 @@ import "bootstrap-vue-next/dist/bootstrap-vue-next.css";
 import "vue3-simple-typeahead/dist/vue3-simple-typeahead.css"; //Optional default CSS
 
 import { createHead } from "@unhead/vue";
-import { BCarousel, BToastPlugin } from "bootstrap-vue-next";
 import { createPinia } from "pinia";
 import { setupLayouts } from "virtual:generated-layouts";
 import generatedRoutes from "virtual:generated-pages";
@@ -24,13 +23,10 @@ const router = createRouter({
 const store = createPinia();
 
 const app = createApp(App);
-app.component("BCarousel", BCarousel);
-app.component("BCarouselSlide", BCarousel);
 
 app.use(SimpleTypeahead);
 app.use(i18n);
 app.use(store);
-app.use(BToastPlugin);
 app.use(head);
 app.use(router);
 app.mount("#app");

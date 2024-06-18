@@ -25,7 +25,7 @@
       "~types/*": [
         "../types/*"
       ],
-      "~dm_types/*": [
+      "~dm-types/*": [
         "./dm_types/*"
       ],
       "~prisma/*": [

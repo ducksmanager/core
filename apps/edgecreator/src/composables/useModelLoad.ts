@@ -13,7 +13,7 @@ import {
   GET__edgecreator__contributors__$modelId,
   GET__edgecreator__model__$countrycode__$magazinecode__$issuenumber,
   GET__edgecreator__model__$modelId__photo__main,
-} from "~dm_types/routes";
+} from "~api-routes";
 
 import { call } from "../../axios-helper";
 
@@ -178,8 +178,7 @@ export default () => {
           );
         } catch (e) {
           onError(
-            `Invalid step ${originalStepNumber} (${component}) : ${
-              e as string
+            `Invalid step ${originalStepNumber} (${component}) : ${e as string
             }, step will be ignored.`,
             originalStepNumber,
           );
