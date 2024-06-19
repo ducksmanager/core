@@ -23,10 +23,10 @@
 </template>
 
 <script setup lang="ts">
-import Placement from "bootstrap-vue-next/dist/src/types/BPopoverPlacement";
+import { PopoverPlacement } from "bootstrap-vue-next";
 
 const { placement = "top" } = defineProps<{
-  placement?: Placement;
+  placement?: PopoverPlacement;
 }>();
 
 defineEmits<(e: "@open:popper") => void>();

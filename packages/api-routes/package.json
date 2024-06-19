@@ -5,7 +5,7 @@
   },
   "scripts": {
     "dev": "pnpm build",
-    "build": "tsx generate-route-types.ts && eslint -c .eslintrc.js --fix index.ts && rm -rf dist && ./node_modules/.bin/tsc"
+    "build": "tsx generate-route-types.ts && eslint -c .eslintrc.js --fix index.ts && rm -rf dist && tsc"
   },
   "dependencies": {
     "axios": "^1.6.2",

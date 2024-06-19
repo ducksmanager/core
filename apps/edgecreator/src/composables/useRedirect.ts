@@ -8,13 +8,16 @@ export default () => {
     () => route.hash,
     (newValue) => {
       const toastError = (message: string) =>
-        toast!.show(
-          { body: message, title: "Error" },
+        toast.show!({
+          props: {
+            body: message, title: "Error"
+          },
+          component:
           {
             delay: 3000,
             autoHide: true,
           },
-        );
+        });
       switch (newValue) {
         case "#401":
           toastError("You are not logged in");

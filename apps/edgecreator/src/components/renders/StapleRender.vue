@@ -27,11 +27,9 @@
 </template>
 
 <script setup lang="ts">
-import useTextTemplate from "~/composables/useTextTemplate";
 import { step } from "~/stores/step";
 import { ui } from "~/stores/ui";
 
-const { resolveHeightTemplate } = useTextTemplate();
 const rect1 = ref(null as SVGRectElement | null);
 const rect2 = ref(null as SVGRectElement | null);
 

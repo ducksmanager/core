@@ -75,12 +75,16 @@ export const useStepOptions = (
           },
         );
     }
-    toast!.show(
+    toast.show!({
+      props:
       {
         body: text!,
         title: t("Tip").toString(),
       },
-      { pos: "top-center", noCloseButton: true, autoHide: true },
+
+      component:
+        { pos: "top-center", noCloseButton: true, autoHide: true }
+    }
     );
     shownTips.push(type);
   };
@@ -107,9 +111,9 @@ export const useStepOptions = (
       onmove?: null | ((params: OnMoveParams) => void);
       onresizemove?: null | ((params: OnResizemoveParams) => void);
     } = {
-      onmove: null,
-      onresizemove: null,
-    },
+        onmove: null,
+        onresizemove: null,
+      },
   ) =>
     interact(element)
       .draggable({

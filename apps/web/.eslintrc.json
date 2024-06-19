@@ -1,21 +1,21 @@
-module.exports = {
-  extends: [
+{
+  "extends": [
     // add more generic rulesets here, such as:
     // 'eslint:recommended',
     "plugin:vue/vue3-recommended",
     "plugin:prettier-vue/recommended",
     "prettier",
-    "plugin:@typescript-eslint/recommended",
+    "plugin:@typescript-eslint/recommended"
   ],
-  parser: "vue-eslint-parser",
-  parserOptions: { parser: "@typescript-eslint/parser" },
-  overrides: [
+  "parser": "vue-eslint-parser",
+  "parserOptions": { "parser": "@typescript-eslint/parser" },
+  "overrides": [
     {
-      files: ["*.js", "*.ts", "*.vue"],
-    },
+      "files": ["*.js", "*.ts", "*.vue"]
+    }
   ],
-  root: true,
-  rules: {
+  "root": true,
+  "rules": {
     "@typescript-eslint/no-non-null-assertion": "off",
     "arrow-body-style": ["error", "as-needed"],
     "simple-import-sort/exports": "error",
@@ -32,18 +32,18 @@ module.exports = {
       "error",
       "kebab-case",
       {
-        registeredComponentsOnly: true,
-        ignores: [],
-      },
-    ],
+        "registeredComponentsOnly": true,
+        "ignores": []
+      }
+    ]
   },
-  plugins: ["simple-import-sort", "@typescript-eslint", "unused-imports"],
-  ignorePatterns: [
+  "plugins": ["simple-import-sort", "@typescript-eslint", "unused-imports"],
+  "ignorePatterns": [
     "**/node_modules",
     "**/dist",
     "shims.d.ts",
     "vendor",
     "auto-imports.d.ts",
-    "component.d.ts",
-  ],
-};
+    "component.d.ts"
+  ]
+}

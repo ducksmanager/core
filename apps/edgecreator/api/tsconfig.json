@@ -1,8 +1,8 @@
 {
   "compilerOptions": {
     "baseUrl": ".",
-    "module": "ESNext",
-    "target": "es2020",
+    "module": "commonjs",
+    "target": "es2018",
     "lib": ["DOM", "ESNext"],
     "strict": true,
     "jsx": "preserve",
@@ -15,13 +15,14 @@
     "allowJs": true,
     "forceConsistentCasingInFileNames": true,
     "outDir": "./dist",
+    "preserveWatchOutput": true,
     "paths": {
       "~/*": ["./*"],
       "~types/*": ["../types/*"],
-      "~dm-types/*": ["./node_modules/ducksmanager/types/*"],
-      "~prisma/*": ["./node_modules/ducksmanager/types/*"],
-      "~prisma_clients/*": ["node_modules/ducksmanager/api/dist/prisma/*"],
-      "~routes/*": ["./routes/*"]
+      "~dm-types/*": ["../../../packages/types/*"],
+      "~prisma-clients/*": ["../../../packages/prisma-clients/*"],
+      "~routes/*": ["./routes/*"],
+      "~api-routes": ["../../../packages/api-routes"]
     }
   },
   "exclude": ["node_modules"],

@@ -8,7 +8,7 @@
     "prisma:pull": "ls schemas/*.prisma | while read -r schema; do pnpx prisma db pull --schema=$schema; done",
     "dev": "docker compose -f docker-compose-dev.yml up --force-recreate -d && bash wait-until-db-ready.bash",
     "generate": "ls schemas/*.prisma | while read -r schema; do pnpx prisma generate --schema=$schema; done && rm -rf dist",
-    "build": "pnpm run generate && ./node_modules/.pnpm/node_modules/.bin/tsc"
+    "build": "pnpm run generate && tsc"
   },
   "dependencies": {
     "@prisma/client": "^5.11.0",

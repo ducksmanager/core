@@ -177,18 +177,20 @@ const initialContributors = computed(
 const addCrop = () => {
   const data = cropper.value!.getData() as CropperData;
   if (data.height < data.width) {
-    useToast()!.show(
+    useToast()!.show!(
       {
-        body: i18n
-          .t(
-            `The width of your selection is bigger than its height! Make sure that the edges appear vertically on the photo.`,
-          )
-          .toString(),
-        title: i18n.t("Error").toString(),
-      },
-      {
-        delay: 5000,
-        autoHide: true,
+        props: {
+          body: i18n
+            .t(
+              `The width of your selection is bigger than its height! Make sure that the edges appear vertically on the photo.`,
+            )
+            .toString(),
+          title: i18n.t("Error").toString(),
+        },
+        component: {
+          delay: 5000,
+          autoHide: true
+        }
       },
     );
   } else {

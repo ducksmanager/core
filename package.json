@@ -1,13 +1,21 @@
 {
   "name": "ducksmanager",
+  "packageManager": "pnpm@9.1.4",
   "engines": {
     "node": ">=18.0.0 <19.0.0"
   },
   "dependencies": {
-    "husky": "^8.0.3"
+    "husky": "^9.0.11"
+  },
+  "devDependencies": {
+    "turbo": "^2.0.4"
   },
   "scripts": {
-    "build": "pnpm run -r build",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "lint": "pnpm -r --parallel -F '!~duckguessr' run lint --fix",
+    "build:web": "NODE_ENV=production turbo build -F '~web...'",
+    "build:edgecreator": "NODE_ENV=production turbo build -F '~edgecreator' -F '~edgecreator-api'",
+    "build:api": "NODE_ENV=production turbo build -F '~api...'",
+    "dev:edgecreator": "turbo dev -F '~edgecreator-api...' -F '~edgecreator' -F '~web...' -F '~edges'"
   }
 }

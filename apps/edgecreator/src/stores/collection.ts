@@ -10,7 +10,7 @@ import {
   GET__collection__user_privileges,
   GET__global_stats__user__$userIds,
 } from "~api-routes";
-import { user as userModel, userPermission } from "~prisma_clients/client_dm";
+import { user as userModel, userPermission } from "~prisma-clients/client_dm";
 
 import { call } from "../../axios-helper";
 

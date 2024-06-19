@@ -65,6 +65,15 @@ importers:
       universal-cookie:
         specifier: ^4.0.4
         version: 4.0.4
+      ~api-routes:
+        specifier: workspace:*
+        version: link:../../../packages/api-routes
+      ~dm-types:
+        specifier: workspace:*
+        version: link:../../../packages/types
+      ~prisma-clients:
+        specifier: workspace:*
+        version: link:../../../packages/prisma-clients
     devDependencies:
       '@types/body-parser':
         specifier: ^1.19.5

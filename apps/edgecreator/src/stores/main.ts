@@ -148,7 +148,7 @@ export const main = defineStore("main", () => {
     getEdgePublicationStates = async (edges: string[]) =>
       [
         ...new Set(
-          Object.values<EdgeWithModelId[]>(
+          Object.values(
             (
               await call(
                 api().dmApi,

@@ -9,6 +9,7 @@ import generatedRoutes from "virtual:generated-pages";
 import { createApp } from "vue";
 import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router";
 import SimpleTypeahead from "vue3-simple-typeahead";
+import { createBootstrap } from 'bootstrap-vue-next'
 
 import App from "./App.vue";
 import i18n from "./i18n";
@@ -26,6 +27,7 @@ const app = createApp(App);
 
 app.use(SimpleTypeahead);
 app.use(i18n);
+app.use(createBootstrap);
 app.use(store);
 app.use(head);
 app.use(router);
