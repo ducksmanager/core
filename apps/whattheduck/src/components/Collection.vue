@@ -31,7 +31,7 @@
   </ion-page>
 </template>
 
-<script setup lang="ts" generic="Item extends Required<any>">
+<script setup lang="ts">
 import OwnedIssueCopies from './OwnedIssueCopies.vue';
 
 import { app } from '~/stores/app';

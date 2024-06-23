@@ -6,6 +6,7 @@
     <div>
       {{ issue.publicationName }}
       {{ issue.issuenumber }}
+      <slot name="suffix" />
     </div>
   </ion-col>
 </template>
@@ -27,5 +28,6 @@ const showIssueConditions = computed(() => 'collectionIssues' in props.issue);
 <style scoped lang="scss">
 ion-col {
   display: flex;
+  overflow: auto;
 }
 </style>

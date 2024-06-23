@@ -23,7 +23,7 @@
           <ion-icon :ios="cameraOutline" :md="cameraSharp" />
         </ion-fab-button>
       </ion-item>
-      <ion-item disabled button class="ion-align-items-center ion-text-nowrap" router-link="/recent">
+      <ion-item button class="ion-align-items-center ion-text-nowrap" router-link="/recent">
         <ion-label>{{ t('Depuis un magazine récent') }}</ion-label>
         <ion-fab-button size="small">
           <ion-icon :ios="calendarOutline" :md="calendarSharp" />

@@ -7,6 +7,7 @@ import CoverSearchResults from '~/views/CoverSearchResults.vue';
 import Forgot from '~/views/Forgot.vue';
 import Login from '~/views/Login.vue';
 import Logout from '~/views/Logout.vue';
+import Recent from '~/views/Recent.vue';
 import Report from '~/views/Report.vue';
 import Search from '~/views/Search.vue';
 import Signup from '~/views/Signup.vue';
@@ -40,6 +41,14 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/cover-search-results',
     component: CoverSearchResults,
+    meta: {
+      onOffline: 'unavailable',
+      onNoToken: 'logout',
+    } as RouteMeta,
+  },
+  {
+    path: '/recent',
+    component: Recent,
     meta: {
       onOffline: 'unavailable',
       onNoToken: 'logout',
