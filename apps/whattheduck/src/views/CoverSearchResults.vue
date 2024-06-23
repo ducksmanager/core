@@ -43,9 +43,22 @@
                     ><ion-row
                       ><ion-col><ion-icon :ios="personOutline" :android="personSharp" /></ion-col
                       ><ion-col class="ion-text-left">1</ion-col></ion-row
-                    ><ion-row
+                    ><ion-row v-if="cover.estimationMin || cover.estimationMax"
                       ><ion-col><ion-icon :ios="pricetagOutline" :android="pricetagSharp"></ion-icon></ion-col
-                      ><ion-col class="ion-text-left">1€</ion-col></ion-row
+                      ><ion-col class="ion-text-left"
+                        ><template v-if="estimationMin && estimationMax"
+                          ><template v-if="cover.estimationMax === cover.estimationMin">{{
+                            t('Environ {estimation} €', { estimation: cover.estimationMin })
+                          }}</template>
+                          <template v-else>{{
+                            t('Entre {estimationMin} et {estimationMax} €', cover)
+                          }}</template></template
+                        ><template v-else-if="cover.estimationMin">
+                          {{ t('Plus de {estimationMin} €', cover) }} </template
+                        ><template v-else>
+                          {{ t('Plus de {estimationMax} €', cover) }}
+                        </template></ion-col
+                      ></ion-row
                     ></ion-col
                   ></ion-row
                 ></ion-card-title

@@ -5,7 +5,7 @@
         <ion-buttons slot="start">
           <ion-menu-button color="primary" />
         </ion-buttons>
-        <ion-title>Find a story</ion-title>
+        <ion-title>{{ t('Rechercher une histoire') }}</ion-title>
       </ion-toolbar>
     </ion-header>
 

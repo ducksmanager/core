@@ -5,6 +5,16 @@ import { prismaCoa } from "~prisma-clients";
 const PUBLICATION_CODE_REGEX = /[a-z]+\/[-A-Z0-9]+/g;
 const ISSUE_CODE_REGEX = /[a-z]+\/[-A-Z0-9 ]+/g;
 
+export const getQuotationsByIssueCodes = async (issueCodes: string[]) =>
+  prismaCoa.inducks_issuequotation.findMany({
+    where: {
+      issuecode: {
+        in: issueCodes,
+      },
+      estimationMin: { not: { equals: null } },
+    },
+  });
+
 import type Events from "../types";
 export default (socket: Socket<Events>) => {
   socket.on("getQuotationsByIssueCodes", async (issueCodes, callback) => {
@@ -15,14 +25,7 @@ export default (socket: Socket<Events>) => {
       callback({ error: "Too many requests" });
     } else {
       callback({
-        quotations: await prismaCoa.inducks_issuequotation.findMany({
-          where: {
-            issuecode: {
-              in: codes,
-            },
-            estimationMin: { not: { equals: null } },
-          },
-        }),
+        quotations: await getQuotationsByIssueCodes(codes),
       });
     }
   });

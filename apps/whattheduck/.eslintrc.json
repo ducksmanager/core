@@ -7,6 +7,7 @@
     "plugin:@typescript-eslint/recommended",
     "prettier",
     "plugin:prettier-vue/recommended",
+    "plugin:i18next/recommended",
     "./.eslintrc-auto-import.json"
   ],
     
@@ -28,7 +29,7 @@
     "**/ios",
     "**/node_modules"
   ],
-  "plugins": ["import", "@typescript-eslint", "simple-import-sort", "@typescript-eslint", "unused-imports"],
+  "plugins": ["import", "@typescript-eslint", "simple-import-sort", "@typescript-eslint", "unused-imports", "i18next"],
   "rules": {
     // https://eslint.org/docs/rules/
     "no-fallthrough": "off", // https://github.com/ionic-team/eslint-config/issues/7

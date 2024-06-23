@@ -73,8 +73,7 @@ export const app = defineStore('app', () => {
   watch(currentNavigationItem, async (code) => {
     if (route.name === 'Collection') {
       window.location.hash = code;
-    }
-    else {
+    } else {
       router.push({
         name: 'Collection',
         params: {
@@ -83,9 +82,7 @@ export const app = defineStore('app', () => {
         hash: `#${code}`,
       });
     }
-  })
-
-
+  });
 
   const countrycode = computed(() => navigationItemGroups.value.countrycode);
   const magazinecode = computed(() => navigationItemGroups.value.magazinecode);

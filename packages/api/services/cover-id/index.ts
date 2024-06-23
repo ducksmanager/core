@@ -4,8 +4,10 @@ import type { Namespace, Server } from "socket.io";
 
 import type { SimilarImagesResult } from "~dm-types/CoverSearchResults";
 import { prismaCoa, prismaCoverInfo } from "~prisma-clients";
+import type { inducks_issuequotation } from "~prisma-clients/client_coa";
 
 import { getCoverUrls } from "../coa/issue-details";
+import { getQuotationsByIssueCodes } from "../coa/quotations";
 import type Events from "./types";
 import { namespaceEndpoint } from "./types";
 
@@ -77,11 +79,17 @@ export default (io: Server) => {
       const issues = await getIssuesFromIssueCodes(foundIssueCodes);
       console.log(`Cover ID search: matched ${coverInfos.length} issues`);
 
+      const quotationsByIssuecode = (await getQuotationsByIssueCodes(issues.map(({ issuecode }) => issuecode))).reduce<Record<string, Pick<inducks_issuequotation, 'estimationMin' | 'estimationMax'>>>(
+        (acc, { issuecode, estimationMin, estimationMax }) => ({ ...acc, [issuecode!]: { estimationMin, estimationMax } }),
+        {},
+      );
+
+
       callback({
         covers: coverInfos.map((cover) =>
           Object.assign(
             cover,
-            issues.find(({ issuecode }) => cover.issuecode === issuecode)!,
+            { ...issues.find(({ issuecode }) => cover.issuecode === issuecode)!, ...quotationsByIssuecode[cover.issuecode] },
           ),
         ),
       });
