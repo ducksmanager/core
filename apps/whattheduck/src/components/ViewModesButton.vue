@@ -30,7 +30,7 @@ const { currentIssueViewMode } = storeToRefs(app());
 
 // eslint-disable-next-line no-undef
 const fab = ref<ComponentPublicInstance<HTMLIonFabElement> | null>(null);
-const isActivated = ref<boolean>(false);
+const isActivated = ref(false);
 </script>
 <style scoped lang="scss">
 ion-fab {
@@ -42,7 +42,7 @@ ion-fab {
 
       &.selected {
         ::part(native) {
-          background-color: darkgray;
+          border: 1px solid darkgray;
         }
       }
     }
