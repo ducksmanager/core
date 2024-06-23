@@ -1,7 +1,7 @@
 import type { Socket } from "socket.io";
 
 import { prismaDm } from "~prisma-clients";
-import { userOptionType } from "~prisma-clients/client_dm";
+import { userOptionType } from "~prisma-clients/extended/dm.extends";
 
 import type Events from "../types";
 const optionNameToEnum = (

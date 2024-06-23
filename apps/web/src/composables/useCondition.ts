@@ -1,4 +1,4 @@
-// import { issue_condition } from "~prisma-clients/client_dm";
+// import { issue_condition } from "~prisma-clients/extended/dm.extends";
 const issue_condition = {
   mauvais: "mauvais",
   moyen: "moyen",

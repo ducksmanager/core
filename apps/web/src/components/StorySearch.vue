@@ -88,7 +88,7 @@
 <script setup lang="ts">
 import { SimpleIssue } from "~dm-types/SimpleIssue";
 import { SimpleStory } from "~dm-types/SimpleStory";
-import { issueWithPublicationcode } from "~prisma-clients/extended/dm.extends";
+import { issue } from "~prisma-clients/extended/dm.extends";
 
 import { dmSocketInjectionKey } from "../composables/useDmSocket";
 
@@ -122,7 +122,7 @@ let search = $ref("" as string);
 let storyResults = $ref(
   {} as {
     results: (SimpleStory & {
-      collectionIssue: issueWithPublicationcode | null;
+      collectionIssue: issue | null;
     })[];
     hasMore: boolean;
   },

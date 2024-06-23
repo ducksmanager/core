@@ -1,5 +1,5 @@
 import type { SimpleBookstore } from "~dm-types/SimpleBookstore";
-import type { bookstoreComment } from "~prisma-clients/client_dm";
+import type { bookstoreComment } from "~prisma-clients/extended/dm.extends";
 import type { Errorable } from "~socket.io-services/types";
 
 export const namespaceEndpoint = "/bookstores";

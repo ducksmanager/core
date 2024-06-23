@@ -3,7 +3,7 @@ import { defineStore } from "pinia";
 
 import { edgecreatorSocketInjectionKey } from "~/composables/useEdgecreatorSocket";
 import type { EdgeWithModelId } from "~dm-types/EdgeWithModelId";
-import type { userContributionType } from "~prisma-clients/client_dm";
+import type { userContributionType } from "~prisma-clients/extended/dm.extends";
 import type { ModelContributor } from "~types/ModelContributor";
 import type { SimpleUser } from "~types/SimpleUser";
 import { stores as webStores } from "~web";

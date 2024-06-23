@@ -5,8 +5,8 @@ import { IssueSuggestionList } from "~dm-types/IssueSuggestionList";
 import type { StoryDetail } from "~dm-types/StoryDetail";
 import type { SuggestionList } from "~dm-types/SuggestionList";
 import { prismaCoa, prismaDm, prismaDmStats } from "~prisma-clients";
-import { userOptionType } from "~prisma-clients/client_dm";
 import { Prisma as PrismaDmStats } from "~prisma-clients/client_dm_stats";
+import { userOptionType } from "~prisma-clients/extended/dm.extends";
 
 import { getPublicationTitles } from "../coa/publications";
 
@@ -179,9 +179,9 @@ export const getSuggestions = async (
       )
       : null;
 
-  const suggestionsPerUser = {} as { [userId: number]: IssueSuggestionList };
+  const suggestionsPerUser: { [userId: number]: IssueSuggestionList } = {};
   const referencedIssues = [];
-  const referencedStories = [] as Suggestion[];
+  const referencedStories: Suggestion[] = [];
   for (const suggestedStory of suggestions) {
     const { userId } = suggestedStory;
 

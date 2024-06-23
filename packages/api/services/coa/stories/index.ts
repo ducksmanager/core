@@ -54,6 +54,7 @@ export default (socket: Socket<Events>) => {
   socket.on("searchStory", async (keywords, withIssues, callback) => {
     const limit = 10;
 
+    console.log(keywords)
     const joinedKeywords = keywords.join(" ");
     let results = await prismaCoa.$queryRaw<SimpleStory[]>`
       SELECT inducks_storyversion.storycode,

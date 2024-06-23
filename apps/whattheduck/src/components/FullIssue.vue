@@ -1,10 +1,8 @@
 <template>
-  <ion-col :class="`ion-align-items-center ion-text-nowrap ${(classes || []).join(' ')}`">
-    <condition
-      v-if="showIssueConditions"
-      v-for="collectionIssue of issue.collectionIssues"
-      :value="collectionIssue.condition"
-    /><Country :id="issue.countrycode" :label="issue.countryname" />&nbsp;
+  <ion-col :class="`ion-align-items-center ion-text-nowrap ${(classes || []).join(' ')}`"
+    ><Country :id="issue.countrycode" :label="issue.countryname" /> &nbsp;<template v-if="showIssueConditions"
+      >&nbsp;<condition v-for="collectionIssue of issue.collectionIssues" :value="collectionIssue.condition"
+    /></template>
     <div>
       {{ issue.publicationName }}
       {{ issue.issuenumber }}

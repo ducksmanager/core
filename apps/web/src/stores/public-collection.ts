@@ -1,4 +1,4 @@
-import { issueWithPublicationcode } from "~prisma-clients/extended/dm.extends";
+import { issue } from "~prisma-clients/extended/dm.extends";
 
 import useCollection from "../composables/useCollection";
 import { dmSocketInjectionKey } from "../composables/useDmSocket";
@@ -8,7 +8,7 @@ export const publicCollection = defineStore("publicCollection", () => {
     publicCollection: { services: publicCollectionServices },
   } = injectLocal(dmSocketInjectionKey)!;
 
-  const issues = ref(null as issueWithPublicationcode[] | null),
+  const issues = ref(null as issue[] | null),
     publicUsername = ref(null as string | null),
     publicationUrlRoot = computed(
       () => `/collection/user/${publicUsername.value || ""}`,
@@ -21,11 +21,6 @@ export const publicCollection = defineStore("publicCollection", () => {
       const data = await publicCollectionServices.getPublicCollection(username);
       if (data.error) {
         console.error(data.error);
-      } else {
-        issues.value = data.issues.map((issue) => ({
-          ...issue,
-          publicationcode: `${issue.country}/${issue.magazine}`,
-        }));
       }
     };
   return {

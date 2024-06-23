@@ -44,7 +44,7 @@
 
 <script setup lang="ts">
 import { toastController } from '@ionic/vue';
-import type { issueWithPublicationcode } from '~prisma-clients/extended/dm.extends';
+import type { issue } from '~prisma-clients/extended/dm.extends';
 import { stores as webStores, components as webComponents } from '~web';
 
 import { app } from '~/stores/app';
@@ -82,7 +82,7 @@ const { bookcaseOptions, bookcaseUsername } = storeToRefs(bookcase());
 const { loadBookcaseOptions, loadBookcaseOrder } = bookcase();
 
 defineSlots<{
-  rowPrefix: { item: issueWithPublicationcode };
+  rowPrefix: { item: issue };
   rowLabel: { text: string };
 }>();
 

@@ -5,7 +5,7 @@ import type useDmSocket from '~web/src/composables/useDmSocket';
 import usePersistedData from '~/composables/usePersistedData';
 
 export const NAVIGATION_ITEM_REGEX =
-  /^(?:$|(?<countrycode>[^/]+)(?:$|(?:\/(?<magazinecode>[^ ]+)(?:$|(?: (?<issuenumber>.+))))))$/;
+  /^(?:$|(?<countrycode>[^/]+)(?:$|(?:\/(?<magazinecode>[^ ]+)(?:$|(?: +(?<issuenumber>.+))))))$/;
 
 export const app = defineStore('app', () => {
   const innerTopMargin = ref(0);

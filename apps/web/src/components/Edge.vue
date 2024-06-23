@@ -47,7 +47,7 @@
 </template>
 
 <script setup lang="ts">
-import { issue_condition } from "~prisma-clients/client_dm";
+import { issue_condition } from "~prisma-clients/extended/dm.extends";
 
 const SPRITES_ROOT = "https://res.cloudinary.com/dl7hskxab/image/sprite/";
 const {

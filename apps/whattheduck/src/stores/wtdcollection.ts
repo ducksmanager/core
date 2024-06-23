@@ -1,7 +1,6 @@
 import { defineStore } from 'pinia';
 import type { SimpleIssue } from '~dm-types/SimpleIssue';
-import type { purchase } from '~prisma-clients/client_dm';
-import type { issueWithPublicationcode } from '~prisma-clients/extended/dm.extends';
+import type { purchase, issue } from '~prisma-clients/extended/dm.extends';
 import { stores as webStores, composables as webComposables } from '~web';
 
 import usePersistedData from '~/composables/usePersistedData';
@@ -103,5 +102,5 @@ export type IssueWithCollectionIssues = SimpleIssue & {
   countrycode: string;
   countryname?: string;
   publicationName: string;
-  collectionIssues?: issueWithPublicationcode[];
+  collectionIssues?: issue[];
 };

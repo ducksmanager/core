@@ -1,10 +1,10 @@
 import { QuotedIssue } from "~dm-types/QuotedIssue";
-import { issue_condition } from "~prisma-clients/client_dm";
-import { issueWithPublicationcode } from "~prisma-clients/extended/dm.extends";
+import { issue_condition } from "~prisma-clients/extended/dm.extends";
+import { issue } from "~prisma-clients/extended/dm.extends";
 
 import { coa } from "../stores/coa";
 
-export default (issues: Ref<issueWithPublicationcode[] | null>) => {
+export default (issues: Ref<issue[] | null>) => {
   const total = computed(() => issues.value?.length);
   const mostPossessedPublication = computed(
     () =>
@@ -42,12 +42,12 @@ export default (issues: Ref<issueWithPublicationcode[] | null>) => {
             [issuecode]: [...(acc[issuecode] || []), issue],
           };
         },
-        {} as { [issuecode: string]: issueWithPublicationcode[] },
+        {} as { [issuecode: string]: issue[] },
       ),
     ),
     duplicateIssues = computed(
       (): {
-        [issuecode: string]: issueWithPublicationcode[];
+        [issuecode: string]: issue[];
       } =>
         (issuesByIssueCode.value &&
           Object.keys(issuesByIssueCode.value).reduce(

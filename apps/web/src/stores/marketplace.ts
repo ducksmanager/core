@@ -1,6 +1,6 @@
 import CollectionServices from "~dm-services/collection/types";
-import type { requestedIssue } from "~prisma-clients/client_dm";
-import { issueWithPublicationcode } from "~prisma-clients/extended/dm.extends";
+import type { requestedIssue } from "~prisma-clients/extended/dm.extends";
+import { issue } from "~prisma-clients/extended/dm.extends";
 import { EventReturnType } from "~socket.io-services/types";
 
 import { dmSocketInjectionKey } from "../composables/useDmSocket";
@@ -94,10 +94,10 @@ export const marketplace = defineStore("marketplace", () => {
               ...acc2,
               [issue.id]: issue,
             }),
-            {} as Record<number, issueWithPublicationcode>,
+            {} as Record<number, issue>,
           ),
         }),
-        {} as Record<number, issueWithPublicationcode>,
+        {} as Record<number, issue>,
       ),
     ),
     requestIssues = async (issueIds: number[]) => {

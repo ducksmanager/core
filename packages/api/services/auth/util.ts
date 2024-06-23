@@ -6,7 +6,7 @@ import type { Socket } from "socket.io";
 
 import type { SessionUser } from "~dm-types/SessionUser";
 import { prismaDm } from "~prisma-clients";
-import type { user } from "~prisma-clients/client_dm";
+import type { user } from "~prisma-clients/extended/dm.extends";
 
 type SocketWithUser = Socket<
   Record<string, never>,

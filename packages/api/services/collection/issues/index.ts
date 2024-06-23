@@ -7,8 +7,8 @@ import { getPublicationTitles } from "~/services/coa/publications";
 import type { TransactionResults } from "~dm-types/TransactionResults";
 import { prismaCoa } from "~prisma-clients";
 import { prismaDm } from "~prisma-clients";
-import type { user } from "~prisma-clients/client_dm";
-import { issue_condition } from "~prisma-clients/client_dm";
+import type { user } from "~prisma-clients/extended/dm.extends";
+import { issue_condition } from "~prisma-clients/extended/dm.extends";
 
 import type Events from "../types";
 import {

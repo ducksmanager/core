@@ -12,7 +12,7 @@
 </template>
 
 <script setup lang="ts">
-import type { issue_condition } from "~prisma-clients/client_dm";
+import type { issue_condition } from "~prisma-clients/extended/dm.extends";
 const {
   issuenumber = null,
   publicationcode = null,

@@ -1,6 +1,6 @@
 import CoaServices from "~dm-services/coa/types";
 import CollectionServices from "~dm-services/collection/types";
-import { authorUser } from "~prisma-clients/client_dm";
+import { authorUser } from "~prisma-clients/extended/dm.extends";
 import { EventReturnType } from "~socket.io-services/types";
 
 import { dmSocketInjectionKey } from "../composables/useDmSocket";

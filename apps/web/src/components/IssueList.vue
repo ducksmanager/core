@@ -343,7 +343,7 @@
 </template>
 
 <script setup lang="ts">
-import { issueWithPublicationcode } from "~prisma-clients/extended/dm.extends";
+import { issue } from "~prisma-clients/extended/dm.extends";
 
 import ContextMenuOnSaleByOthers from "./ContextMenuOnSaleByOthers.vue";
 import ContextMenuOwnCollection from "./ContextMenuOwnCollection.vue";
@@ -354,7 +354,7 @@ type simpleIssue = {
   key: string;
 };
 type issueWithPublicationCodeAndCopies = simpleIssue & {
-  userCopies: (issueWithPublicationcode & { copyIndex: number })[];
+  userCopies: (issue & { copyIndex: number })[];
 };
 
 const {
@@ -372,7 +372,7 @@ const {
   duplicatesOnly?: boolean;
   readStackOnly?: boolean;
   onSaleStackOnly?: boolean;
-  customIssues?: issueWithPublicationcode[];
+  customIssues?: issue[];
   onSaleByOthers?: boolean;
   groupUserCopies?: boolean;
   contextMenuComponentName?: "context-menu-on-sale-by-others";
@@ -431,17 +431,13 @@ const contextmenuInstance = $ref(
   } | null,
 );
 let issues = $shallowRef(null as issueWithPublicationCodeAndCopies[] | null);
-let userIssuesForPublication = $shallowRef(
-  null as issueWithPublicationcode[] | null,
-);
-let userIssuesNotFoundForPublication = $shallowRef(
-  [] as issueWithPublicationcode[] | null,
-);
+let userIssuesForPublication = $shallowRef(null as issue[] | null);
+let userIssuesNotFoundForPublication = $shallowRef([] as issue[] | null);
 let selected = $shallowRef([] as string[]);
 const filteredUserCopies = $computed(() =>
   filteredIssues.reduce(
     (acc, { userCopies }) => [...acc, ...userCopies],
-    [] as issueWithPublicationcode[],
+    [] as issue[],
   ),
 );
 const copiesBySelectedIssuenumber = $computed(() =>
@@ -462,7 +458,7 @@ const copiesBySelectedIssuenumber = $computed(() =>
         ],
       };
     },
-    {} as { [issuenumber: string]: issueWithPublicationcode[] },
+    {} as { [issuenumber: string]: issue[] },
   ),
 );
 let preselected = $shallowRef([] as string[]);
@@ -567,9 +563,7 @@ const updateSelected = () => {
     preselected = [];
   }
 };
-const deletePublicationIssues = async (
-  issuesToDelete: issueWithPublicationcode[],
-) => {
+const deletePublicationIssues = async (issuesToDelete: issue[]) => {
   contextmenuInstance!.hide();
   if (!readonly) {
     await updateCollectionMultipleIssues({

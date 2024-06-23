@@ -5,8 +5,8 @@ import type {
   bookstore,
   bookstoreComment,
   user,
-} from "~prisma-clients/client_dm";
-import { userContributionType } from "~prisma-clients/client_dm";
+} from "~prisma-clients/extended/dm.extends";
+import { userContributionType } from "~prisma-clients/extended/dm.extends";
 
 import type Events from "./types";
 import { namespaceEndpoint } from "./types";
@@ -71,10 +71,10 @@ export default (io: Server) => {
         }
         const user = socket.data.user
           ? await prismaDm.user.findUnique({
-              where: {
-                id: socket.data.user.id,
-              },
-            })
+            where: {
+              id: socket.data.user.id,
+            },
+          })
           : null;
         const createdComment = await prismaDm.bookstoreComment.create({
           data: {

@@ -6,7 +6,7 @@ import type {
   edge,
   user,
   userContribution,
-} from "~prisma-clients/client_dm";
+} from "~prisma-clients/extended/dm.extends";
 
 import type Events from "../types";
 export default (socket: Socket<Events>) => {

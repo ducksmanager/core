@@ -1,4 +1,4 @@
-import CoaServices from "~dm-services/coa/types";
+import type CoaServices from "~dm-services/coa/types";
 import { InducksIssueDetails } from "~dm-types/InducksIssueDetails";
 import { InducksIssueQuotationSimple } from "~dm-types/InducksIssueQuotationSimple";
 import type { inducks_issue } from "~prisma-clients/client_coa";

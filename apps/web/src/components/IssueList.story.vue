@@ -14,14 +14,15 @@
 <script lang="ts" setup>
 import dayjs from "dayjs";
 
-import { issueWithPublicationcode } from "~prisma-clients/extended/dm.extends";
+import { issue } from "~prisma-clients/extended/dm.extends";
 
-const customIssues: issueWithPublicationcode[] = [
+const customIssues: issue[] = [
   {
     id: 167808,
     country: "fr",
     magazine: "MP",
     publicationcode: "fr/MP",
+    issuecode: "fr/MP 303",
     issuenumber: "303",
     condition: "moyen",
     purchaseId: -1,
@@ -36,6 +37,7 @@ const customIssues: issueWithPublicationcode[] = [
     country: "fr",
     magazine: "MP",
     publicationcode: "fr/MP",
+    issuecode: "fr/MP 304",
     issuenumber: "304",
     condition: "moyen",
     purchaseId: -1,
@@ -50,6 +52,7 @@ const customIssues: issueWithPublicationcode[] = [
     country: "fr",
     magazine: "MP",
     publicationcode: "fr/MP",
+    issuecode: "fr/MP 307",
     issuenumber: "307",
     condition: "mauvais",
     purchaseId: -1,
@@ -64,6 +67,7 @@ const customIssues: issueWithPublicationcode[] = [
     country: "fr",
     magazine: "MP",
     publicationcode: "fr/MP",
+    issuecode: "fr/MP 313",
     issuenumber: "313",
     condition: "mauvais",
     purchaseId: -1,
@@ -78,6 +82,7 @@ const customIssues: issueWithPublicationcode[] = [
     country: "fr",
     magazine: "MP",
     publicationcode: "fr/MP",
+    issuecode: "fr/MP 314",
     issuenumber: "314",
     condition: "mauvais",
     purchaseId: -1,
@@ -92,6 +97,7 @@ const customIssues: issueWithPublicationcode[] = [
     country: "fr",
     magazine: "MP",
     publicationcode: "fr/MP",
+    issuecode: "fr/MP 316",
     issuenumber: "316",
     condition: "moyen",
     purchaseId: -1,
@@ -106,6 +112,7 @@ const customIssues: issueWithPublicationcode[] = [
     country: "fr",
     magazine: "MP",
     publicationcode: "fr/MP",
+    issuecode: "fr/MP 317",
     issuenumber: "317",
     condition: "mauvais",
     purchaseId: -1,
@@ -120,6 +127,7 @@ const customIssues: issueWithPublicationcode[] = [
     country: "fr",
     magazine: "MP",
     publicationcode: "fr/MP",
+    issuecode: "fr/MP 386",
     issuenumber: "386",
     condition: "bon",
     purchaseId: -1,
@@ -134,6 +142,7 @@ const customIssues: issueWithPublicationcode[] = [
     country: "fr",
     magazine: "MP",
     publicationcode: "fr/MP",
+    issuecode: "fr/MP 387",
     issuenumber: "387",
     condition: "bon",
     purchaseId: -1,

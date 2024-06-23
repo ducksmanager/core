@@ -4,10 +4,11 @@ import {
   CollectionUpdateMultipleIssues,
   CollectionUpdateSingleIssue,
 } from "~dm-types/CollectionUpdate";
-import { authorUser, purchase } from "~prisma-clients/client_dm";
 import {
-  issueWithPublicationcode,
-  subscriptionWithPublicationcode,
+  authorUser,
+  issue,
+  purchase,
+  subscription,
 } from "~prisma-clients/extended/dm.extends";
 import { EventReturnType, ScopedError } from "~socket.io-services/types";
 
@@ -15,15 +16,12 @@ import useCollection from "../composables/useCollection";
 import { dmSocketInjectionKey } from "../composables/useDmSocket";
 import { bookcase } from "./bookcase";
 
-export type IssueWithPublicationcodeOptionalId = Omit<
-  issueWithPublicationcode,
-  "id"
-> & {
+export type IssueWithPublicationcodeOptionalId = Omit<issue, "id"> & {
   id: number | null;
 };
 
 export type SubscriptionTransformed = Omit<
-  subscriptionWithPublicationcode,
+  subscription,
   "country" | "magazine"
 >;
 
@@ -49,7 +47,7 @@ export const collection = defineStore("collection", () => {
 
   const { bookcaseWithPopularities } = storeToRefs(bookcase());
 
-  const issues = ref(null as issueWithPublicationcode[] | null);
+  const issues = ref(null as issue[] | null);
 
   const collectionUtils = useCollection(issues),
     watchedPublicationsWithSales = ref(null as string[] | null),
@@ -101,6 +99,15 @@ export const collection = defineStore("collection", () => {
     purchasesById = computed((): Record<string, purchase> | undefined =>
       purchases.value?.reduce(
         (acc, purchase) => ({ ...acc, [purchase.id as number]: purchase }),
+        {},
+      ),
+    ),
+    copiesPerIssuecode = computed(() =>
+      issues.value?.reduce<Record<string, issue[]>>(
+        (acc, issue) => ({
+          ...acc,
+          [issue.issuecode]: [...acc[issue.issuecode], issue],
+        }),
         {},
       ),
     ),
@@ -387,6 +394,7 @@ export const collection = defineStore("collection", () => {
     hasSuggestions,
     isLoadingUser,
     coaIssueCountsByPublicationcode,
+    copiesPerIssuecode,
     coaIssueCountsPerCountrycode,
     issueNumbersPerPublication,
     lastPublishedEdgesForCurrentUser,

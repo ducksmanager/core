@@ -27,7 +27,7 @@ meta:
 
 <script setup lang="ts">
 import { SimpleBookstore } from "~dm-types/SimpleBookstore";
-import type { bookstoreComment } from "~prisma-clients/client_dm";
+import type { bookstoreComment } from "~prisma-clients/extended/dm.extends";
 
 let bookstores = $ref(null as SimpleBookstore[] | null);
 

@@ -64,8 +64,8 @@ export const useSocket = (socketRootUrl: string) => ({
       },
     }).on("connect_error", (e) => {
       onConnectError(e, namespaceName);
-      console.error(`${namespaceName}: connect_error: ${e}`);
     });
+
     return {
       socket,
       services: new Proxy({} as EventCalls<Services>, {
@@ -87,8 +87,9 @@ export const useSocket = (socketRootUrl: string) => ({
                 args,
                 post ? `in ${Date.now() - startTime}ms` : ''
               );
+              let cacheKey
               if (cache) {
-                const cacheKey = `${event} ${JSON.stringify(args)}`;
+                cacheKey = `${event} ${JSON.stringify(args)}`;
                 const cacheData = (await cache.storage.get(cacheKey, {
                   cache: {
                     ttl:
@@ -104,12 +105,11 @@ export const useSocket = (socketRootUrl: string) => ({
                   console.debug("Using cache for socket event", event, args);
                   return cacheData;
                 }
-                debugCall()
-                data = await socket.emitWithAck(event, ...args);
+              }
+              debugCall()
+              data = await socket.emitWithAck(event, ...args);
+              if (cache && cacheKey) {
                 cache.storage.set(cacheKey, data);
-              } else {
-                debugCall()
-                data = await socket.emitWithAck(event, ...args);
               }
               debugCall(true)
               return data;

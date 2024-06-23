@@ -1,8 +1,7 @@
 import type { Socket } from "socket.io";
 
 import { prismaDm } from "~prisma-clients";
-import type { issue } from "~prisma-clients/client_dm";
-import type { issueWithPublicationcode } from "~prisma-clients/extended/dm.extends";
+import type { issue } from "~prisma-clients/extended/dm.extends";
 
 import type Events from "../types";
 import contactMethods from "./contact-methods";
@@ -137,7 +136,7 @@ export const getIssuesForSale = async (buyerId: number) =>
       }),
     )
     .then((issuesForSale) =>
-      issuesForSale.reduce<Record<string, issueWithPublicationcode[]>>(
+      issuesForSale.reduce<Record<string, issue[]>>(
         (acc, issue) => ({
           ...acc,
           [issue.publicationcode]: [

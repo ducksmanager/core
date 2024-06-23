@@ -9,7 +9,7 @@ import { BarController, BarElement, CategoryScale, Chart, Legend, LinearScale, T
 import dayjs from 'dayjs';
 import { Bar } from 'vue-chartjs';
 import { useI18n } from 'vue-i18n';
-import type { issue as dm_issue } from '~prisma-clients/client_dm';
+import type { issue as dm_issue } from '~prisma-clients/extended/dm.extends';
 import { coa } from '~web/src/stores/coa';
 
 import { wtdcollection } from '~/stores/wtdcollection';

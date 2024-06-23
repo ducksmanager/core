@@ -1,4 +1,4 @@
-import { Prisma } from "~prisma-clients/client_dm";
+import { Prisma } from "~prisma-clients/extended/dm.extends";
 const simpleUserValidator = Prisma.validator<Prisma.userDefaultArgs>()({
   select: {
     id: true,

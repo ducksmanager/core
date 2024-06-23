@@ -2,7 +2,7 @@ import { v2 as cloudinaryV2 } from "cloudinary";
 import type { Socket } from "socket.io";
 
 import { prismaDm } from "~prisma-clients";
-import type { edge } from "~prisma-clients/client_dm";
+import type { edge } from "~prisma-clients/extended/dm.extends";
 
 import type Events from "../types";
 const SPRITE_SIZES = [10, 20, 50, 100, "full"];
@@ -97,9 +97,9 @@ const getSpriteRange = (issuenumber: string, rangeWidth: number) => {
   return [
     issueNumberAsNumber - ((issueNumberAsNumber - 1) % rangeWidth),
     issueNumberAsNumber -
-      ((issueNumberAsNumber - 1) % rangeWidth) +
-      rangeWidth -
-      1,
+    ((issueNumberAsNumber - 1) % rangeWidth) +
+    rangeWidth -
+    1,
   ].join("-");
 };
 

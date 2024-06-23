@@ -8,8 +8,8 @@ import BookstoreApproved from "~/emails/bookstore-approved";
 import EdgesPublishedWithCreator from "~/emails/edges-published-with-creator";
 import EdgesPublishedWithPhotographer from "~/emails/edges-published-with-photographer";
 import type { Email } from "~/emails/email";
-import type { userContribution } from "~prisma-clients/client_dm";
-import { PrismaClient, userContributionType } from "~prisma-clients/client_dm";
+import type { userContribution } from "~prisma-clients/extended/dm.extends";
+import { PrismaClient, userContributionType } from "~prisma-clients/extended/dm.extends";
 const prismaDmClient = new PrismaClient();
 const medalLevels = {
   [userContributionType.photographe]: { 1: 50, 2: 150, 3: 600 },
@@ -73,7 +73,7 @@ const medalLevels = {
         ).reduce(
           (medalReached, [medal, medalThreshold]) =>
             initialPointsCount < medalThreshold &&
-            finalPointsCount >= medalThreshold
+              finalPointsCount >= medalThreshold
               ? parseInt(medal)
               : medalReached,
           null as number | null,

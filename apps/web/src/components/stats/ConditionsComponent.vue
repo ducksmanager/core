@@ -17,7 +17,7 @@ import {
 } from "chart.js";
 import { Pie } from "vue-chartjs";
 
-import { issue_condition } from "~prisma-clients/client_dm";
+import { issue_condition } from "~prisma-clients/extended/dm.extends";
 
 import { Condition } from "../../composables/useCondition";
 

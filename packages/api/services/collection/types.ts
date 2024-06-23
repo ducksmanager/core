@@ -15,10 +15,10 @@ import type {
   user,
   userOptionType,
   userPermission,
-} from "~prisma-clients/client_dm";
+} from "~prisma-clients/extended/dm.extends";
 import type {
-  issueWithPublicationcode,
-  subscriptionWithPublicationcode,
+  issue,
+  subscription,
 } from "~prisma-clients/extended/dm.extends";
 import type { Errorable } from "~socket.io-services/types";
 
@@ -47,7 +47,7 @@ export default abstract class {
   ) => void;
 
   abstract getIssues: (
-    callback: (data: issueWithPublicationcode[]) => void,
+    callback: (data: issue[]) => void,
   ) => void;
   abstract addOrChangeIssues: (
     data: CollectionUpdateMultipleIssues,
@@ -97,7 +97,7 @@ export default abstract class {
   ) => void;
 
   abstract getIssuesForSale: (
-    callback: (data: Record<string, issueWithPublicationcode[]>) => void,
+    callback: (data: Record<string, issue[]>) => void,
   ) => void;
 
   abstract getOption: (
@@ -129,7 +129,7 @@ export default abstract class {
 
   abstract getSubscriptions: (
     callback: (
-      data: (Omit<subscriptionWithPublicationcode, "startDate" | "endDate"> & {
+      data: (Omit<subscription, "startDate" | "endDate"> & {
         startDate: string;
         endDate: string;
       })[],

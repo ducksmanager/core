@@ -1,6 +1,7 @@
-import { PrismaClient, edge, issue, subscription } from "../client_dm";
+import { PrismaClient, edge as rawEdge, issue as rawIssue, subscription as rawSubscription } from "../client_dm";
 import { computeTimestamp } from "./dm.edge.timestamp";
 import { computePublicationcode } from "./dm.publicationcode";
+import { computeIssuecode } from "./dm.issuecode";
 
 type myReturnType<FieldValue, T> = FieldValue extends string ? never : T;
 declare global {
@@ -27,32 +28,34 @@ Array.prototype.groupBy = function (fieldName, valueFieldName?) {
 export default (prismaClient: PrismaClient) =>
   prismaClient.$extends({
     result: {
-      issue: computePublicationcode,
+      issue: { ...computePublicationcode, ...computeIssuecode },
       subscription: computePublicationcode,
       edge: computeTimestamp,
     },
   });
 
+
 type ExtendedType<
-  T,
-  FieldName extends keyof Compute,
-  Compute extends Record<FieldName, { compute: (...args: any) => any }>,
-> = T & {
-  [K in FieldName]: ReturnType<Compute[K]["compute"]>;
+  BaseType,
+  Compute extends { [key: string]: { compute: (...args: any[]) => any } },
+> = BaseType & {
+  [Key in keyof Compute]: ReturnType<Compute[Key]['compute']>;
 };
 
-export type edgeWithTimestamp = ExtendedType<
-  edge,
-  "timestamp",
+export type edge = ExtendedType<
+  rawEdge,
   typeof computeTimestamp
 >;
-export type issueWithPublicationcode = ExtendedType<
-  issue,
-  "publicationcode",
+
+const publicationcodeAndIssueCodeComputes = { ...computePublicationcode, ...computeIssuecode }
+export type issue = ExtendedType<
+  rawIssue,
+  typeof publicationcodeAndIssueCodeComputes
+>;
+
+export type subscription = ExtendedType<
+  rawSubscription,
   typeof computePublicationcode
 >;
-export type subscriptionWithPublicationcode = ExtendedType<
-  subscription,
-  "publicationcode",
-  typeof computePublicationcode
->;
+
+export * from "../client_dm";

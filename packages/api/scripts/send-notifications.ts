@@ -9,7 +9,7 @@ import dayjs from "dayjs";
 
 import { i18n } from "~/emails/email";
 import { prismaDm } from "~prisma-clients";
-import type { user } from "~prisma-clients/client_dm";
+import type { user } from "~prisma-clients/extended/dm.extends";
 import {
   COUNTRY_CODE_OPTION,
   getSuggestions,
@@ -129,16 +129,14 @@ getSuggestions(
       `${pendingNotificationsForUser.length} new issue(s) will be suggested to user ${userId}`,
     );
     console.log(
-      `${
-        Object.values(suggestionsForUser.issues).length -
-        pendingNotificationsForUser.length
+      `${Object.values(suggestionsForUser.issues).length -
+      pendingNotificationsForUser.length
       } issue(s) have already been suggested to user ${userId}`,
     );
 
     for (const suggestedIssue of pendingNotificationsForUser) {
-      const issueTitle = `${
-        publicationTitles[suggestedIssue.publicationcode]
-      } ${suggestedIssue.issuenumber}`;
+      const issueTitle = `${publicationTitles[suggestedIssue.publicationcode]
+        } ${suggestedIssue.issuenumber}`;
 
       const storyCountPerAuthor = Object.keys(suggestedIssue.stories).reduce(
         (acc, personcode) => ({
