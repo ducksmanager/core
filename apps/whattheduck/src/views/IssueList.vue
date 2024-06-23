@@ -219,6 +219,10 @@ ion-checkbox {
   height: 14px;
 }
 
+:deep(.bookcase) {
+  overflow: auto;
+}
+
 :deep(.edge) {
   display: inline-block;
 }

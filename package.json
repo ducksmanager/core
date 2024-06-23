@@ -13,7 +13,7 @@
   },
   "scripts": {
     "prepare": "husky",
-    "lint": "pnpm -r --parallel -F '!~duckguessr' run lint --fix",
+    "lint": "pnpm -r --parallel -F '!~duckguessr'  -F '!~duckguessr-api' run lint --fix",
     "build:web": "NODE_ENV=production turbo build -F '~web...'",
     "build:edgecreator": "NODE_ENV=production turbo build -F '~edgecreator' -F '~edgecreator-api'",
     "build:api": "NODE_ENV=production turbo build -F '~api...'",
