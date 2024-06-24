@@ -33,9 +33,7 @@ import { getOwnershipPercentages, getOwnershipText } from '~/composables/useOwne
 import { app } from '~/stores/app';
 import { wtdcollection } from '~/stores/wtdcollection';
 
-const emit = defineEmits<{
-  (e: 'load', hasItems: boolean): void;
-}>();
+const emit = defineEmits<(e: 'load', hasItems: boolean) => void>();
 
 const { coaIssueCountsByPublicationcode, totalPerPublication, ownedPublications } = storeToRefs(wtdcollection());
 const { fetchPublicationNamesFromCountry } = stores.coa();

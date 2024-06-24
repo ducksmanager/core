@@ -14,10 +14,10 @@ import Signup from '~/views/Signup.vue';
 import Stats from '~/views/Stats.vue';
 import Suggestions from '~/views/Suggestions.vue';
 
-export type RouteMeta = {
+export interface RouteMeta {
   onOffline?: 'readonly' | 'unavailable';
   onNoToken?: 'logout';
-};
+}
 
 const routes: RouteRecordRaw[] = [
   {

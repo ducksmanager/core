@@ -63,7 +63,11 @@ const sortByScore = ref(false);
 
 const { suggestions } = storeToRefs(wtdcollection());
 
-type FormattedSuggestion = { storycode: string; authors: string[]; title: string };
+interface FormattedSuggestion {
+  storycode: string;
+  authors: string[];
+  title: string;
+}
 
 const sortedSuggestions = computed(() => suggestions.value?.[sortByScore.value ? 'score' : 'oldestdate']);
 

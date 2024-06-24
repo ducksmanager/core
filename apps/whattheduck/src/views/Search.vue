@@ -79,13 +79,13 @@ const { currentNavigationItem } = storeToRefs(app());
 const router = useRouter();
 
 type StoryResult = StorySearchResults['results'][number];
-type AugmentedStoryResult = {
+interface AugmentedStoryResult {
   issues: Pick<NonNullable<StoryResult['issues']>[number], 'publicationcode' | 'issuenumber' | 'issuecode'> & {
     countrycode: string;
     publicationName: string;
     collectionIssues: IssueWithCollectionIssues['collectionIssues'];
   };
-};
+}
 
 const storyTitle = ref('');
 const storyResults = ref(null as { results: AugmentedStoryResult[] } | null);

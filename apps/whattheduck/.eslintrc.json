@@ -1,21 +1,23 @@
 {
+  "root": true,
   "env": {
     "browser": true
   }, "extends": [
-    "plugin:import/typescript",
+    "./.eslintrc-auto-import.json",
     "eslint:recommended",
     "plugin:@typescript-eslint/recommended",
-    "prettier",
-    "plugin:prettier-vue/recommended",
+    "plugin:@typescript-eslint/stylistic",
     "plugin:i18next/recommended",
-    "./.eslintrc-auto-import.json"
+    "plugin:import/typescript",
+    "plugin:prettier-vue/recommended",
+    "prettier"
   ],
     
   "parser": "vue-eslint-parser",
   "parserOptions": {
     "parser": "@typescript-eslint/parser",
     "extraFileExtensions": [".vue"],
-    "project": "./tsconfig.json"
+    "project": true
   },
   "overrides": [
     {

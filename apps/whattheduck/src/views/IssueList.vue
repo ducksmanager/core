@@ -56,9 +56,7 @@ const filteredIssuenumbers = ref<string[]>([]);
 
 const COVER_ROOT_URL = import.meta.env.VITE_CLOUDINARY_BASE_URL;
 
-const emit = defineEmits<{
-  (e: 'load', hasItems: boolean): void;
-}>();
+const emit = defineEmits<(e: 'load', hasItems: boolean) => void>();
 
 const colSize = computed(() => {
   switch (currentIssueViewMode.value.id) {

@@ -32,5 +32,7 @@
     "apps/edgecreator/locales"
   ],
   "eslint.format.enable": true,
-  "editor.formatOnSave": true
+  "editor.formatOnSave": true,
+  "typescript.tsserver.experimental.enableProjectDiagnostics": true
+
 }

@@ -77,9 +77,7 @@ const issue = defineModel<SingleCopyState>({
   required: true,
 });
 
-const emit = defineEmits<{
-  (event: 'delete'): void;
-}>();
+const emit = defineEmits<(event: 'delete') => void>();
 
 const { isOfflineMode } = storeToRefs(app());
 

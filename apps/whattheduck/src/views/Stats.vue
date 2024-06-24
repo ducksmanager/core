@@ -95,14 +95,11 @@ const collectionProgressionGraphTypes: { title: string; value: GraphType }[] = [
   },
 ];
 
-const wtdCollectionStore = wtdcollection();
-const coaStore = coa();
-
-const numberPerCondition = computed(() => wtdCollectionStore.numberPerCondition);
-const highestQuotedIssue = computed(() => wtdCollectionStore.highestQuotedIssue);
+const { numberPerCondition, highestQuotedIssue, ownedPublications } = storeToRefs(wtdcollection());
+const { fetchIssueQuotations } = coa();
 
 (async () => {
-  coaStore.fetchIssueQuotations(wtdCollectionStore.ownedPublications!);
+  fetchIssueQuotations(ownedPublications.value!);
 })();
 </script>
 

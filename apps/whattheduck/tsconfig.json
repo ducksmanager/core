@@ -1,6 +1,5 @@
 {
   "compilerOptions": {
-    "rootDir": "../..", 
     "baseUrl": ".",
     "module": "ESNext",
     "target": "es2020", 
@@ -17,8 +16,7 @@
     "preserveWatchOutput": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
-    "types": ["vite/client",
-    "@vue-macros/reactivity-transform/macros-global"],
+    "types": ["vite/client", "@vue-macros/reactivity-transform/macros-global"],
     "paths": {
       "~/*": ["./src/*"],
       "~translations/*": ["./translations/*"],
@@ -28,8 +26,8 @@
       "~prisma-clients/*": ["../../packages/prisma-clients/*"],
       "~socket.io-client-services/*": ["../../packages/socket.io-client-services/*"],
       "~socket.io-services/*": ["../../packages/socket.io-services/*"],
-      "~web/*": ["../web/*"],
+      "~web/*": ["../web/*"]
     }
   },
-  "exclude": ["node_modules"],
+  "exclude": ["node_modules"]
 }

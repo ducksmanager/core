@@ -76,9 +76,7 @@ const {
   coverId: { services: coverIdServices },
 } = injectLocal(dmSocketInjectionKey)!;
 
-const emit = defineEmits<{
-  (e: 'show-camera-preview'): void;
-}>();
+const emit = defineEmits<(e: 'show-camera-preview') => void>();
 
 const { pickCoverFile } = useCoverSearch(useRouter(), coverIdServices);
 const { isCoaView } = storeToRefs(app());

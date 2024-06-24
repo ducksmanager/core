@@ -5,6 +5,7 @@ services:
     restart: always
     ports:
       - 8080:80
+    working_dir: /usr/share/nginx/html
     volumes:
       - "./edges:/usr/share/nginx/html/edges"
       - "./nginx.conf:/etc/nginx/conf.d/default.conf"

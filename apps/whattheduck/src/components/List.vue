@@ -86,9 +86,7 @@ const props = defineProps<{
   filter?: { label: string; icon: { ios: string; md: string } }[];
 }>();
 
-const emit = defineEmits<{
-  (e: 'items-filtered', items: string[]): void;
-}>();
+const emit = defineEmits<(e: 'items-filtered', items: string[]) => void>();
 
 const {
   coverId: { services: coverIdServices },

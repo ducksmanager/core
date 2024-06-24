@@ -34,6 +34,4 @@ const discordUrl = import.meta.env.VITE_DISCORD_URL;
 const facebookUrl = import.meta.env.VITE_FACEBOOK_URL;
 const instagramUrl = import.meta.env.VITE_INSTAGRAM_URL;
 const youtubeUrl = import.meta.env.VITE_YOUTUBE_URL;
-
-(async () => {})();
 </script>

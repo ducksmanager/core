@@ -1,4 +1,8 @@
-export type OwnershipWithPercentage = { ownership: number; total: string; ownershipPercentage: number };
+export interface OwnershipWithPercentage {
+  ownership: number;
+  total: string;
+  ownershipPercentage: number;
+}
 
 export const getOwnershipPercentages = (
   ownerships: Record<string, number> | undefined,
@@ -23,6 +27,6 @@ const getOwnershipPercentageString = (ownershipPercentage: number) =>
 
 export const getOwnershipText = (
   { ownership, ownershipPercentage, total }: OwnershipWithPercentage,
-  withPercentage: boolean = true,
+  withPercentage = true,
 ): string =>
   `${ownership} ${withPercentage ? `(${getOwnershipPercentageString(ownershipPercentage)}%)` : `/ ${total}`}`;
