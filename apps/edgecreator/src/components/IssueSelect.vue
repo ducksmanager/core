@@ -85,13 +85,13 @@ const { t: $t } = useI18n();
 const edgeCatalogStore = edgeCatalog();
 const coaStore = webStores.coa();
 
-type Selection = {
+interface Selection {
   editMode: "single" | "range";
   countrycode: string;
   publicationcode: string;
   issuecode: string;
   issuenumberEnd?: string;
-};
+}
 
 const emit = defineEmits<(e: "change", value: Selection | null) => void>();
 
@@ -114,7 +114,10 @@ const props = withDefaults(
   },
 );
 
-type IssueCodeAndNumber = { issuecode: string; issuenumber: string };
+interface IssueCodeAndNumber {
+  issuecode: string;
+  issuenumber: string;
+}
 
 const currentCountrycode = ref<string | undefined>(undefined);
 const currentPublicationcode = ref<string | undefined>(undefined);

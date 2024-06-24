@@ -20,8 +20,9 @@ const props = defineProps<{
 
 defineEmits<(event: "load" | "error") => void>();
 
-const naturalHeight = ref<number>(0);
-const zoom = computed(() => ui().zoom);
+const naturalHeight = ref(0);
+const { zoom } = storeToRefs(ui());
+
 const getEdgeUrl = () =>
   `${import.meta.env.VITE_EDGES_URL as string}/${main()
     .country!}/gen/${main().magazine!}.${props.issuenumber}.png`;

@@ -16,7 +16,7 @@
     xmlns:xlink="http://www.w3.org/1999/xlink"
     preserveAspectRatio="none"
     @mousemove="setPosition"
-    @mouseout="uiStore.positionInCanvas = null"
+    @mouseout="positionInCanvas = null"
   >
     <metadata v-if="photoUrl" type="photo">
       {{ photoUrl }}
@@ -153,16 +153,14 @@ const canvas = ref<HTMLElement | null>(null);
 
 const hoveredStepStore = hoveredStep();
 const editingStepStore = editingStep();
-const uiStore = ui();
+const { zoom, showEdgeOverflow, positionInCanvas } = storeToRefs(ui());
 
-const zoom = computed(() => uiStore.zoom);
-const showEdgeOverflow = computed(() => uiStore.showEdgeOverflow);
 const width = computed(() => props.dimensions.width);
 const height = computed(() => props.dimensions.height);
 
 const setPosition = ({ clientX: left, clientY: top }: MouseEvent) => {
   const { left: svgLeft, top: svgTop } = canvas.value!.getBoundingClientRect();
-  uiStore.positionInCanvas = [left - svgLeft, top - svgTop].map(
+  positionInCanvas.value = [left - svgLeft, top - svgTop].map(
     (value) => value / zoom.value,
   ) as [number, number];
 };

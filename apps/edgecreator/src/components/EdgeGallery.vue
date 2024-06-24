@@ -52,10 +52,10 @@ const emit = defineEmits<{
 }>();
 
 const items = ref<GalleryItem[]>([]);
-const isPopulating = ref<boolean>(false);
+const isPopulating = ref(false);
 
-const publishedEdges = computed(() => edgeCatalog().publishedEdges);
-const publishedEdgesSteps = computed(() => edgeCatalog().publishedEdgesSteps);
+const { publishedEdges, publishedEdgesSteps } = storeToRefs(edgeCatalog());
+const { loadPublishedEdgesSteps } = edgeCatalog();
 const issueNumbers = computed(() => webStores.coa().issueNumbers);
 
 const populateItems = async (
@@ -65,7 +65,7 @@ const populateItems = async (
   const publishedIssueModels = Object.values(itemsForPublication)
     .filter(({ modelId }) => !!modelId)
     .map(({ modelId }) => modelId) as number[];
-  await edgeCatalog().loadPublishedEdgesSteps({
+  await loadPublishedEdgesSteps({
     publicationcode: props.publicationcode,
     edgeModelIds: publishedIssueModels,
   });

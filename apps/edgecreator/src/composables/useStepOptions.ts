@@ -14,11 +14,10 @@ import type { BaseProps } from "~/types/StepOptionBaseProps";
 const shownTips: string[] = [];
 
 export const useStepOptions = (props: BaseProps, attributeKeys: string[]) => {
-  const uiStore = ui();
   const stepStore = step();
   const toast = useToast();
   const { t } = useI18n();
-  const zoom = computed(() => uiStore.zoom);
+  const { zoom } = storeToRefs(ui());
   const width = computed(
     () =>
       stepStore.getFilteredDimensions({
@@ -85,18 +84,18 @@ export const useStepOptions = (props: BaseProps, attributeKeys: string[]) => {
     optionName.toLowerCase().includes("color") ||
     ["fill", "stroke"].includes(optionName);
 
-  type OnMoveParams = {
+  interface OnMoveParams {
     currentTarget: SVGElement | HTMLElement;
     dx: number;
     dy: number;
     shiftKey: boolean;
-  };
+  }
 
-  type OnResizemoveParams = {
+  interface OnResizemoveParams {
     rect: { width: number; height: number };
     shiftKey: boolean;
     edges: { right: number; bottom: number };
-  };
+  }
 
   const enableDragResize = (
     element: HTMLElement | SVGElement,
@@ -124,8 +123,8 @@ export const useStepOptions = (props: BaseProps, attributeKeys: string[]) => {
               });
             } else {
               stepStore.setOptionValues({
-                x: (props.options!.x as number) + dx / uiStore.zoom,
-                y: (props.options!.y as number) + dy / uiStore.zoom,
+                x: (props.options!.x as number) + dx / zoom.value,
+                y: (props.options!.y as number) + dy / zoom.value,
               });
             }
           }
@@ -142,8 +141,8 @@ export const useStepOptions = (props: BaseProps, attributeKeys: string[]) => {
         } else {
           const { rect, shiftKey, edges } = e;
           showMoveResizeToast("resize", { edges });
-          rect.width /= uiStore.zoom;
-          rect.height /= uiStore.zoom;
+          rect.width /= zoom.value;
+          rect.height /= zoom.value;
           if (shiftKey) {
             if (edges.bottom) {
               rect.height = height.value;

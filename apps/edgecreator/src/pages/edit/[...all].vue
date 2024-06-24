@@ -18,10 +18,7 @@
     >
       {{ warning }}
     </b-alert>
-    <top-bar
-      @overwrite-model="overwriteModel"
-      @set-dimensions="overwriteDimensions"
-    />
+    <top-bar />
     <position-helper />
     <b-row class="flex-grow-1 pt-2" align-h="end">
       <b-col class="d-flex align-items-end flex-column overflow-auto h-100">
@@ -171,7 +168,7 @@ const { loadModel } = useModelLoad();
 
 const error = ref<string | null>(null);
 
-const dimensions = computed(() => stepStore.dimensions);
+const { dimensions } = storeToRefs(stepStore);
 
 const dimensionsPerIssuenumber = computed(() =>
   mainStore.issuenumbers.reduce<Record<string, Dimensions>>(
@@ -268,23 +265,6 @@ try {
 } catch (e) {
   error.value = "Invalid URL";
 }
-
-const overwriteModel = async ({
-  publicationcode,
-  issuenumber,
-}: {
-  publicationcode: string;
-  issuenumber: string;
-}) => {
-  const [country, magazine] = publicationcode.split("/");
-  for (const targetIssuenumber of editingStepStore.issuenumbers) {
-    try {
-      await loadModel(country, magazine, issuenumber, targetIssuenumber);
-    } catch (e) {
-      mainStore.addWarning(e as string);
-    }
-  }
-};
 
 const getImageUrl = (fileType: string, fileName: string) =>
   `${import.meta.env.VITE_EDGES_URL as string}/${mainStore.country!}/${

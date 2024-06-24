@@ -113,14 +113,12 @@ const props = withDefaults(
 
 const originalColor = ref<string | null>(null);
 
-const stepStore = step();
-const mainStore = main();
+const { setOptionValues } = step();
+const { photoUrls, issuenumbers } = storeToRefs(main());
+const { colorPickerOption, showEdgePhotos } = storeToRefs(ui());
 
-const isTransparent = ref<boolean>(false);
-const photoUrls = computed(() => main().photoUrls);
+const isTransparent = ref(false);
 const hasPhotoUrl = computed(() => Object.keys(photoUrls.value).length);
-const colorPickerOption = computed(() => ui().colorPickerOption);
-const showEdgePhotos = computed(() => ui().showEdgePhotos);
 
 watch(
   () => props.inputValues,
@@ -144,7 +142,7 @@ const getOptionStringValuesByStepNumber = (options: Options) =>
 
 const otherColorsByLocationAndStepNumber = computed(() => ({
   differentIssuenumber:
-    mainStore.issuenumbers.length === 1
+    issuenumbers.value.length === 1
       ? null
       : getOptionStringValuesByStepNumber(
           props.otherColors.differentIssuenumber,
@@ -166,7 +164,7 @@ watch(
 );
 
 watch(isTransparent, (newValue) => {
-  stepStore.setOptionValues([
+  setOptionValues([
     {
       optionName: props.optionName,
       optionValue: newValue ? "transparent" : originalColor.value,
@@ -175,7 +173,7 @@ watch(isTransparent, (newValue) => {
 });
 
 const onColorChange = (value: string) => {
-  stepStore.setOptionValues({ [props.optionName]: value });
+  setOptionValues({ [props.optionName]: value });
 };
 </script>
 <style lang="scss" scoped>

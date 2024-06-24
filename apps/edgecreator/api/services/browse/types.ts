@@ -2,11 +2,11 @@ import type { Errorable } from "~socket.io-services/types";
 
 export const namespaceEndpoint = "/browse";
 
-export type EdgeModelDetails = {
+export interface EdgeModelDetails {
   filename: string;
   designers: string[];
   photographers: string[];
-};
+}
 
 export default abstract class {
   static namespaceEndpoint = namespaceEndpoint;

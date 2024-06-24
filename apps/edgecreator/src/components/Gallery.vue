@@ -108,9 +108,7 @@ const clickedImage = ref<GalleryItem | null>(null);
 const showUploadModal = ref<boolean>(false);
 const showChooseImageModal = ref<boolean>(false);
 
-const country = computed(() => main().country);
-const magazine = computed(() => main().magazine);
-const issuenumbers = computed(() => main().issuenumbers);
+const { country, magazine, issuenumbers } = storeToRefs(main());
 
 const onSelect = (item: GalleryItem) => {
   if (!item.disabled) {

@@ -15,17 +15,19 @@ import { namespaceEndpoint } from "./types";
 export default (io: Server) => {
   (io.of(namespaceEndpoint) as Namespace<Events>).on("connection", (socket) => {
     console.log("connected to save");
-    const getToken = () => Promise.resolve(socket.data.token);
+    const token = socket.handshake.auth.token;
 
     const dmSocket = useSocket(process.env.DM_SOCKET_URL!);
     const { services: edgeCreatorServices } =
       dmSocket.addNamespace<EdgeCreatorServices>(
         EdgeCreatorServices.namespaceEndpoint,
         {
-          onConnectError: () => {},
+          onConnectError: (e) => {
+            console.error(e);
+          },
           session: {
-            getToken,
-            sessionExists: () => getToken().then((token) => !!token),
+            getToken: () => token,
+            sessionExists: () => Promise.resolve(token),
             clearSession: () => {
               console.log("not allowed");
             },

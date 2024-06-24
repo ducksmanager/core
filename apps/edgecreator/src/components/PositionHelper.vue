@@ -8,5 +8,5 @@
 <script setup lang="ts">
 import { ui } from "~/stores/ui";
 
-const positionInCanvas = computed(() => ui().positionInCanvas);
+const { positionInCanvas } = storeToRefs(ui());
 </script>
