@@ -5,12 +5,11 @@ on:
     - cron: "0 1 * * *"
   workflow_dispatch:
 jobs:
-  ducksmanager-daily:
+  coa-updater:
     runs-on: ubuntu-latest
     environment: production
     steps:
-      - name: Run coa-updater
-        uses: appleboy/ssh-action@v0.1.4
+      - uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.PRODUCTION_SSH_HOST }}
           fingerprint: ${{ secrets.PRODUCTION_SSH_FINGERPRINT }}
@@ -22,20 +21,29 @@ jobs:
             docker compose pull coa-updater
             docker compose run --rm --no-deps coa-updater | ts "[%Y-%m-%d %H:%M:%S]"
 
+  stats-updater:
+    needs: ["coa-updater"]
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
       - name: Run stats-updater
-        uses: appleboy/ssh-action@v0.1.4
+        uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.PRODUCTION_SSH_HOST }}
           username: ${{ secrets.PRODUCTION_SSH_USER }}
           key: ${{ secrets.PRODUCTION_SSH_KEY }}
-          command_timeout: 90m
+          command_timeout: 45m
           script: |
             cd workspace/DucksManager2
             docker compose pull stats-updater
             docker compose run --rm --no-deps stats-updater
 
-      - name: Run cover-updater
-        uses: appleboy/ssh-action@v0.1.4
+  cover-updater:
+    needs: ["coa-updater"]
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.PRODUCTION_SSH_HOST }}
           username: ${{ secrets.PRODUCTION_SSH_USER }}
@@ -46,8 +54,12 @@ jobs:
             docker compose pull cover-updater
             docker compose run --rm --no-deps cover-updater
 
-      - name: Run duck-estimator
-        uses: appleboy/ssh-action@v0.1.4
+  duck-estimator:
+    needs: ["coa-updater"]
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.PRODUCTION_SSH_HOST }}
           username: ${{ secrets.PRODUCTION_SSH_USER }}
@@ -59,8 +71,12 @@ jobs:
             docker compose pull
             docker compose run --rm duck-estimator
 
-      - name: Run sprite-names-updater
-        uses: appleboy/ssh-action@v0.1.4
+  sprite-names-updater:
+    needs: ["cover-updater"]
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.PRODUCTION_SSH_HOST }}
           username: ${{ secrets.PRODUCTION_SSH_USER }}
@@ -70,8 +86,12 @@ jobs:
             cd workspace/DucksManager2
             docker compose run --rm --no-deps sprite-names-updater
 
-      - name: Run subscription-handler
-        uses: appleboy/ssh-action@v0.1.4
+  subscription-handler:
+    needs: ["coa-updater"]
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - uses: appleboy/ssh-action@v1.0.3
         env:
           SUBSCRIPTIONS_BASIC_AUTH: ${{ secrets.PRODUCTION_SUBSCRIPTIONS_BASIC_AUTH }}
         with:
