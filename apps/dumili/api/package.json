@@ -50,7 +50,7 @@
     "prisma": "^5.15.0",
     "tsc-alias": "^1.8.10",
     "tsx": "^4.10.5",
-    "typescript": "^5.4.5",
-    "typescript-eslint": "^7.9.0"
+    "typescript": "^5.5.2",
+    "typescript-eslint": "^7.14.0"
   }
 }

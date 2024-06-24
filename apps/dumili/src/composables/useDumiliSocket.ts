@@ -114,6 +114,6 @@ const defaultExport = (options: {
 
 export default defaultExport;
 
-export const dmSocketInjectionKey = Symbol() as InjectionKey<
+export const dumiliSocketInjectionKey = Symbol() as InjectionKey<
   ReturnType<typeof defaultExport>
 >;
