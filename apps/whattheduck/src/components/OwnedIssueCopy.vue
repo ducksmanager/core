@@ -1,7 +1,4 @@
 <template>
-  <ion-button @click="emit('delete')" color="danger" size="small" v-if="!isOfflineMode">{{
-    t('Supprimer cet exemplaire')
-  }}</ion-button>
   <ion-grid>
     <ion-row>
       <ion-col size="4" class="ion-padding">
@@ -77,8 +74,6 @@ const issue = defineModel<SingleCopyState>({
   required: true,
 });
 
-const emit = defineEmits<(event: 'delete') => void>();
-
 const { isOfflineMode } = storeToRefs(app());
 
 const { conditionsWithoutMissing } = useCondition();
@@ -135,6 +130,7 @@ ion-grid {
     ion-radio-group {
       width: 100%;
       font-size: small;
+      text-align: right;
       &.vertical {
         display: flex;
         flex-direction: column;
@@ -143,7 +139,10 @@ ion-grid {
 
       &:not(.vertical) {
         ion-radio {
-          padding: 0;
+          border: 1px solid gray;
+          border-radius: 12px;
+          height: 20px;
+          width: 20px;
         }
       }
     }

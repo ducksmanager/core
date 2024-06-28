@@ -18,8 +18,8 @@
           </div></ion-title
         >
       </ion-toolbar>
+      <Navigation />
       <template v-if="hasItems">
-        <Navigation />
         <ion-searchbar
           autocapitalize="sentences"
           v-if="componentName !== OwnedIssueCopies"

@@ -1,8 +1,10 @@
 <template>
   <ion-content class="no-padding">
-    <ion-row>
-      <ion-col v-if="!isOfflineMode" size="4"><ion-img v-if="fullUrl" :src="coverUrl" /></ion-col>
-      <ion-col :size="isOfflineMode ? '12' : '8'">
+    <ion-row v-if="!isOfflineMode">
+      <ion-col size="12"><ion-img v-if="fullUrl" :src="coverUrl" /></ion-col>
+    </ion-row>
+    <ion-row
+      ><ion-col size="12">
         <ion-segment v-model="currentCopyIndex">
           <ion-segment-button v-for="(_, idx) in 3" :id="idx" :value="idx" v-show="copies[idx]">
             <template v-if="copies[idx]">
@@ -10,8 +12,19 @@
                 ><div>
                   {{ t('Ex. {index}', { index: idx + 1 }) }}
                 </div>
-                <Condition :value="copies[idx].condition" /></ion-label
-            ></template>
+                <Condition :value="copies[idx].condition"
+              /></ion-label>
+              <ion-button
+                @click="
+                  copies.splice(currentCopyIndex!, 1);
+                  currentCopyIndex = currentCopyIndex! - 1 < 0 ? undefined : currentCopyIndex! - 1;
+                "
+                color="danger"
+                size="small"
+                v-if="!isOfflineMode"
+                >{{ t('Supprimer') }}</ion-button
+              ></template
+            >
           </ion-segment-button>
           <ion-button
             :style="{ gridColumn: 4 }"
@@ -22,14 +35,7 @@
             <ion-icon :ios="addOutline" :android="addSharp" />&nbsp;{{ t('Ajouter un exemplaire') }}
           </ion-button>
         </ion-segment>
-        <owned-issue-copy
-          v-if="currentCopyIndex !== undefined"
-          v-model="copies[currentCopyIndex]"
-          @delete="
-            copies.splice(currentCopyIndex, 1);
-            currentCopyIndex = currentCopyIndex - 1 < 0 ? undefined : currentCopyIndex - 1;
-          "
-        />
+        <owned-issue-copy v-if="currentCopyIndex !== undefined" v-model="copies[currentCopyIndex]" />
       </ion-col>
     </ion-row>
     <div id="edit-issues-buttons" v-if="!isOfflineMode">
@@ -76,9 +82,24 @@ const coverUrl = computed(() => `${import.meta.env.VITE_CLOUDINARY_BASE_URL}${fu
 
 const issuecode = computed(() => `${publicationcode.value} ${issuenumber.value}`);
 
-const copies = ref<SingleCopyState[]>(issuesByIssueCode.value?.[issuecode.value!] || []);
+const copies = ref<SingleCopyState[]>([]);
 
-const currentCopyIndex = ref<number | undefined>(copies.value.length ? 0 : undefined);
+watch(
+  issuesByIssueCode,
+  () => {
+    copies.value = issuesByIssueCode.value?.[issuecode.value!] || [];
+  },
+  { immediate: true },
+);
+
+const currentCopyIndex = ref<number | undefined>(undefined);
+watch(
+  copies,
+  () => {
+    currentCopyIndex.value = copies.value.length ? 0 : undefined;
+  },
+  { immediate: true },
+);
 
 const addCopy = () => {
   copies.value.push({
@@ -106,7 +127,10 @@ const submitIssueCopies = async () => {
 
 <style scoped lang="scss">
 ion-content > ion-row {
-  height: 100%;
+  &:first-child {
+    height: 40%;
+  }
+
   flex-wrap: nowrap;
 
   > ion-col {
@@ -119,12 +143,20 @@ ion-content > ion-row {
     &:last-child {
       flex-direction: column;
     }
+
+    ion-img {
+      max-height: 100%;
+    }
   }
 }
 ion-segment {
   ion-label,
   ion-icon {
     margin: 0 !important;
+  }
+
+  :deep(.dm-condition-background) {
+    margin-right: 0;
   }
 }
 

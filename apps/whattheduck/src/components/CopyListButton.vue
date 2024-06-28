@@ -19,10 +19,11 @@
   >
 </template>
 <script setup lang="ts">
-import { copyOutline, copySharp } from 'ionicons/icons';
 import { Clipboard } from '@capacitor/clipboard';
-import { app } from '~/stores/app';
 import { toastController } from '@ionic/vue';
+import { copyOutline, copySharp } from 'ionicons/icons';
+
+import { app } from '~/stores/app';
 
 const { countryNames, publicationNames } = storeToRefs(coa());
 const { isOfflineMode, publicationcode } = storeToRefs(app());
