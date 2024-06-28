@@ -93,6 +93,32 @@ export const app = defineStore('app', () => {
   );
   const issuenumber = computed(() => navigationItemGroups.value.issuenumber);
 
+  const copyListModes = [
+    {
+      id: 'owned',
+      label: 'Copy owned issues',
+      textPrefix: 'Owned issues -',
+      showIfOffline: true,
+      icon: { ios: '/icons/list.svg', md: '/icons/list.svg' },
+      getTextToCopy: async () => collection().issueNumbersPerPublication[publicationcode.value!].join(', '),
+    },
+    {
+      id: 'missing',
+      label: 'Copy missing issues',
+      textPrefix: 'Missing issues -',
+      showIfOffline: false,
+      icon: { ios: '/icons/edges.svg', md: '/icons/edges.svg' },
+      getTextToCopy: async () => {
+        await coa().fetchIssueNumbers([publicationcode.value!]);
+        return coa()
+          .issueNumbers[publicationcode.value!].filter(
+            (issuenumber) => !collection().issueNumbersPerPublication[publicationcode.value!].includes(issuenumber),
+          )
+          .join(', ');
+      },
+    },
+  ] as const;
+
   return {
     socket,
     filterText,
@@ -112,6 +138,7 @@ export const app = defineStore('app', () => {
     isObsoleteSync: computed(
       () => !lastSync.value || new Date().getTime() - lastSync.value.getTime() > 12 * 60 * 60 * 1000,
     ),
+    copyListModes,
     issueViewModes,
     currentIssueViewMode,
   };

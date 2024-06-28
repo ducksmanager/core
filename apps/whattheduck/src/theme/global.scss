@@ -9,6 +9,10 @@ ion-label {
   overflow-x: auto !important;
 }
 
+ion-title {
+  padding-inline-start: 50px;
+}
+
 ion-content {
   --padding-top: 20px;
   --padding-end: 20px;

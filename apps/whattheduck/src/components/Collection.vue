@@ -1,6 +1,7 @@
 <template>
   <ion-page id="main-content">
     <ion-buttons slot="end">
+      <CopyListButton v-if="componentName === IssueList" />
       <ViewModesButton v-if="componentName === IssueList" />
     </ion-buttons>
     <ion-header :translucent="true">
@@ -76,6 +77,11 @@ ion-buttons {
     position: fixed;
     top: 0.2rem;
     right: 0;
+    height: 44px;
+
+    ion-fab {
+      position: static;
+    }
   }
 }
 

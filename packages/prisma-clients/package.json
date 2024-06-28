@@ -15,11 +15,11 @@
     "lint": "prettier -w schemas"
   },
   "dependencies": {
-    "@prisma/client": "^5.15.0",
-    "prisma": "^5.15.0"
+    "@prisma/client": "^5.16.1",
+    "prisma": "^5.16.1"
   },
   "devDependencies": {
-    "prettier": "^3.2.5",
+    "prettier": "^3.3.2",
     "prettier-plugin-prisma": "^5.0.0",
     "ts-node": "^10.9.2",
     "typescript": "^5.5.2"

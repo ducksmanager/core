@@ -39,7 +39,6 @@ export default defineConfig({
         '@vueuse/core',
         'pinia',
         'vue',
-        'vue/macros',
         'vue-router',
         {
           'vue-i18n': ['useI18n', 'createI18n'],

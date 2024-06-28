@@ -33,7 +33,7 @@
             class="ion-text-center"
             :size="String(colSize)"
             ><ion-img
-              @click="showIssueToast(item)"
+              @click="currentNavigationItem = key"
               :src="`${COVER_ROOT_URL}${item.cover}`"
               :alt="item.issuenumber"
             ></ion-img></ion-col></ion-row
@@ -43,7 +43,6 @@
 </template>
 
 <script setup lang="ts">
-import { toastController } from '@ionic/vue';
 import type { issue } from '~prisma-clients/extended/dm.extends';
 import { stores as webStores, components as webComponents } from '~web';
 
@@ -150,15 +149,6 @@ const sortedItemsForBookcase = computed(() =>
     issueCondition: item.condition,
   })),
 );
-
-const showIssueToast = async (item: (typeof items)['value'][0]['item']) => {
-  const toast = await toastController.create({
-    message: item.issuenumber,
-    translucent: true,
-    duration: 1000,
-  });
-  toast.present();
-};
 
 const sortedItemsForCovers = ref<Awaited<ReturnType<typeof getSortedItemsWithCovers>>>();
 
