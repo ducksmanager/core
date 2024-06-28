@@ -14,17 +14,7 @@
                 </div>
                 <Condition :value="copies[idx].condition"
               /></ion-label>
-              <ion-button
-                @click="
-                  copies.splice(currentCopyIndex!, 1);
-                  currentCopyIndex = currentCopyIndex! - 1 < 0 ? undefined : currentCopyIndex! - 1;
-                "
-                color="danger"
-                size="small"
-                v-if="!isOfflineMode"
-                >{{ t('Supprimer') }}</ion-button
-              ></template
-            >
+            </template>
           </ion-segment-button>
           <ion-button
             :style="{ gridColumn: 4 }"
@@ -33,8 +23,17 @@
             @click="addCopy"
           >
             <ion-icon :ios="addOutline" :android="addSharp" />&nbsp;{{ t('Ajouter un exemplaire') }}
-          </ion-button>
-        </ion-segment>
+          </ion-button> </ion-segment
+        ><ion-button
+          @click="
+            copies.splice(currentCopyIndex!, 1);
+            currentCopyIndex = currentCopyIndex! - 1 < 0 ? undefined : currentCopyIndex! - 1;
+          "
+          color="danger"
+          size="small"
+          v-if="currentCopyIndex !== undefined && !isOfflineMode"
+          >{{ t('Supprimer') }}</ion-button
+        >
         <owned-issue-copy v-if="currentCopyIndex !== undefined" v-model="copies[currentCopyIndex]" />
       </ion-col>
     </ion-row>
