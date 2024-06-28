@@ -154,7 +154,7 @@ SELECT publicationcode,
        issuecode,
        issuenumber,
        title,
-       (SELECT CONCAT(IF(sitecode = 'thumbnails', IF (url REGEXP '^\d', 'webusers', ''), sitecode), '/', url) AS fullUrl
+       (SELECT CONCAT(IF(sitecode = 'thumbnails', IF (url REGEXP '^[0-9]', 'webusers', ''), sitecode), '/', url) AS fullUrl
         FROM inducks_entry
                  INNER JOIN inducks_entryurl ON inducks_entry.entrycode = inducks_entryurl.entrycode
         WHERE inducks_entry.issuecode = inducks_issue.issuecode
