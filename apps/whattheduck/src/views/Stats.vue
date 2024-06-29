@@ -8,12 +8,12 @@
         <ion-title>{{ t('Statistiques') }}</ion-title>
       </ion-toolbar>
     </ion-header>
-    <ion-content :fullscreen="true" v-if="wtdCollectionStore.issues">
+    <ion-content :fullscreen="true" v-if="issues">
       <ion-row style="height: 25vh" class="ion-text-center">
         <ion-row class="ion-text-center" style="height: 75%">
-          <ion-col size="4" class="text-big">{{ wtdCollectionStore.ownedCountries!.length }}</ion-col
-          ><ion-col size="4" class="text-big">{{ wtdCollectionStore.ownedPublications!.length }}</ion-col
-          ><ion-col size="4" class="text-big">{{ wtdCollectionStore.total }}</ion-col></ion-row
+          <ion-col size="4" class="text-big">{{ ownedCountries!.length }}</ion-col
+          ><ion-col size="4" class="text-big">{{ ownedPublications!.length }}</ion-col
+          ><ion-col size="4" class="text-big">{{ total }}</ion-col></ion-row
         >
         <ion-row class="ion-text-center" style="height: 25%">
           <ion-col size="4">{{ t('pays') }}</ion-col
@@ -22,7 +22,7 @@
             ><div>{{ t('numéros') }}</div>
             <small>{{
               t('dont {copies} double|dont {copies} doubles', {
-                copies: wtdCollectionStore.total! - wtdCollectionStore.totalUniqueIssues,
+                copies: total! - totalUniqueIssues,
               })
             }}</small>
           </ion-col></ion-row
@@ -40,12 +40,12 @@
       <ion-row style="height: 25vh">
         <ion-col size="12" class="ion-text-center ion-justify-content-around" style="flex-direction: column">
           <ion-text class="text-medium">{{ t('Valeur de la collection') }}</ion-text>
-          <ion-text class="text-big">{{ wtdCollectionStore.quotationSum }}&euro;</ion-text>
+          <ion-text class="text-big">{{ quotationSum }}&euro;</ion-text>
           <template v-if="highestQuotedIssue">
             <ion-text>{{ t('Numéro le plus côté :') }}</ion-text>
             <ion-text>
               <Condition :value="highestQuotedIssue.condition" />
-              {{ coaStore.publicationNames[highestQuotedIssue.publicationcode] }}
+              {{ publicationNames[highestQuotedIssue.publicationcode] }}
               {{ highestQuotedIssue.issuenumber }}</ion-text
             ></template
           >
@@ -95,12 +95,24 @@ const collectionProgressionGraphTypes: { title: string; value: GraphType }[] = [
   },
 ];
 
-const { numberPerCondition, highestQuotedIssue, ownedPublications } = storeToRefs(wtdcollection());
+const {
+  numberPerCondition,
+  highestQuotedIssue,
+  ownedCountries,
+  ownedPublications,
+  issues,
+  total,
+  totalUniqueIssues,
+  quotationSum,
+} = storeToRefs(wtdcollection());
 const { fetchIssueQuotations } = coa();
+const { publicationNames } = storeToRefs(coa());
 
-(async () => {
-  fetchIssueQuotations(ownedPublications.value!);
-})();
+watch(ownedPublications, () => {
+  if (ownedPublications.value) {
+    fetchIssueQuotations(ownedPublications.value);
+  }
+});
 </script>
 
 <style lang="scss" scoped>
