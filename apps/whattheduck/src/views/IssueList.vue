@@ -125,19 +125,24 @@ const sortedItems = computed(() =>
     .sort(({ indexInCoaList: indexInCoaList1 }, { indexInCoaList: indexInCoaList2 }) =>
       Math.sign(indexInCoaList1 - indexInCoaList2),
     )
-    .map(({ key, item, indexInCoaList }, idx, allItems) => {
+    .map((value) => ({
+      ...value,
+      isOwned: value.item.condition !== undefined,
+    }))
+    .map(({ key, item, isOwned, indexInCoaList }, idx, allItems) => {
       const nextItemIndexInCoaList = allItems[idx + 1]?.indexInCoaList;
       return {
         key,
         item,
-        isOwned: item.condition !== undefined,
-        nextItemType: nextItemIndexInCoaList
-          ? nextItemIndexInCoaList === indexInCoaList
-            ? ('same' as const)
-            : nextItemIndexInCoaList === indexInCoaList + 1
-              ? ('owned' as const)
-              : undefined
-          : undefined,
+        isOwned,
+        nextItemType:
+          allItems[idx + 1]?.isOwned && nextItemIndexInCoaList
+            ? nextItemIndexInCoaList === indexInCoaList
+              ? ('same' as const)
+              : nextItemIndexInCoaList === indexInCoaList + 1
+                ? ('owned' as const)
+                : undefined
+            : undefined,
       };
     }),
 );
