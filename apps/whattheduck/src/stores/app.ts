@@ -5,7 +5,7 @@ import type useDmSocket from '~web/src/composables/useDmSocket';
 import usePersistedData from '~/composables/usePersistedData';
 
 export const NAVIGATION_ITEM_REGEX =
-  /^(?:$|(?<countrycode>[^/]+)(?:$|(?:\/(?<magazinecode>[^ ]+)(?:$|(?: +(?<issuenumber>.+))))))$/;
+  /^(?:$|(?<countrycode>[^/]+)(?:$|(?:\/(?<magazinecode>[^ ]+)(?:$|(?: +(?<issuenumber>.+)(?<extra_issuenumbers>,.*))))))$/;
 
 export const app = defineStore('app', () => {
   const innerTopMargin = ref(0);
@@ -25,6 +25,8 @@ export const app = defineStore('app', () => {
   const socketCache = ref<Record<string, NotEmptyStorageValue>>({});
   const isPersistedDataLoaded = ref(false);
   const filterText = ref('');
+
+  const selectedIssuenumbers = ref<Record<string, boolean>>({});
 
   const issueViewModes = [
     { id: 'list', label: 'List', icon: { ios: '/icons/list.svg', md: '/icons/list.svg' } },
@@ -67,10 +69,12 @@ export const app = defineStore('app', () => {
         countrycode?: string;
         magazinecode?: string;
         issuenumber?: string;
+        extra_issuenumbers?: string;
       },
   );
 
   watch(currentNavigationItem, async (code) => {
+    selectedIssuenumbers.value = {};
     if (route.name === 'Collection') {
       window.location.hash = code;
     } else {
@@ -92,6 +96,7 @@ export const app = defineStore('app', () => {
       : null,
   );
   const issuenumber = computed(() => navigationItemGroups.value.issuenumber);
+  const extraIssuenumbers = computed(() => navigationItemGroups.value.extra_issuenumbers?.split(','));
 
   const copyListModes = [
     {
@@ -122,6 +127,7 @@ export const app = defineStore('app', () => {
   return {
     socket,
     filterText,
+    selectedIssuenumbers,
     isPersistedDataLoaded,
     socketCache,
     lastSync,
@@ -130,6 +136,7 @@ export const app = defineStore('app', () => {
     magazinecode,
     publicationcode,
     issuenumber,
+    extraIssuenumbers,
     navigationItemGroups,
     token,
     innerTopMargin,

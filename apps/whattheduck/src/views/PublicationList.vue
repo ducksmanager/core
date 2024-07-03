@@ -3,7 +3,6 @@
     v-if="totalPerPublication && coaIssueCountsByPublicationcode && ownershipPercentages"
     :items="sortedItems"
     :get-item-text-fn="getItemTextFn"
-    @load="emit('load', $event)"
   >
     <template #fill-bar="{ item }">
       <ion-progress-bar
@@ -32,8 +31,6 @@ import { stores } from '~web';
 import { getOwnershipPercentages, getOwnershipText } from '~/composables/useOwnership';
 import { app } from '~/stores/app';
 import { wtdcollection } from '~/stores/wtdcollection';
-
-const emit = defineEmits<(e: 'load', hasItems: boolean) => void>();
 
 const { coaIssueCountsByPublicationcode, totalPerPublication, ownedPublications } = storeToRefs(wtdcollection());
 const { fetchPublicationNamesFromCountry } = stores.coa();
@@ -78,14 +75,6 @@ const sortedItems = computed(() =>
   [...items.value].sort(({ item: { publicationname: text1 } }, { item: { publicationname: text2 } }) =>
     text1.toLowerCase().localeCompare(text2.toLowerCase()),
   ),
-);
-
-watch(
-  sortedItems,
-  () => {
-    emit('load', sortedItems.value.length > 0);
-  },
-  { immediate: true },
 );
 
 watch(

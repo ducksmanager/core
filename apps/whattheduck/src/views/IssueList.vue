@@ -4,10 +4,15 @@
     :items="sortedItems"
     :get-item-text-fn="getItemTextFn"
     @items-filtered="filteredIssuenumbers = $event"
-    @load="emit('load', $event)"
   >
     <template v-if="currentIssueViewMode.id === 'list'" #row-prefix="{ item }">
-      <ion-checkbox v-if="isCoaView">&nbsp;</ion-checkbox>
+      <ion-checkbox
+        :checked="selectedIssuenumbers[item.issuenumber]"
+        v-if="isCoaView"
+        @ionChange="selectedIssuenumbers[item.issuenumber] = $event.detail.checked"
+        @click.stop="() => {}"
+        >&nbsp;</ion-checkbox
+      >
       <Condition v-if="item.condition" :value="item.condition" />
       <span v-else class="not-owned-space" />
     </template>
@@ -55,8 +60,6 @@ const filteredIssuenumbers = ref<string[]>([]);
 
 const COVER_ROOT_URL = import.meta.env.VITE_CLOUDINARY_BASE_URL;
 
-const emit = defineEmits<(e: 'load', hasItems: boolean) => void>();
-
 const colSize = computed(() => {
   switch (currentIssueViewMode.value.id) {
     case 'covers-small':
@@ -73,7 +76,7 @@ const colSize = computed(() => {
 const { issues, user } = storeToRefs(wtdcollection());
 const coaStore = webStores.coa();
 
-const { isCoaView, currentIssueViewMode, currentNavigationItem } = storeToRefs(app());
+const { isCoaView, currentIssueViewMode, currentNavigationItem, selectedIssuenumbers } = storeToRefs(app());
 
 const { bookcaseOptions, bookcaseUsername } = storeToRefs(bookcase());
 const { loadBookcaseOptions, loadBookcaseOrder } = bookcase();
@@ -95,21 +98,33 @@ const userIssues = computed(() =>
   (issues.value || []).filter((issue) => issue.publicationcode === publicationcode.value),
 );
 
+type Item = NonNullable<(typeof issues)['value']>[number];
+
 const items = computed(() =>
   coaIssues.value
     ? isCoaView.value
-      ? coaIssues.value.map(({ issuecode, issuenumber }) => ({
-          key: issuecode,
-          item: {
-            issuenumber,
-            ...(userIssues.value.find(({ issuenumber: userIssueNumber }) => issuenumber === userIssueNumber) || {}),
-          },
-        }))
+      ? coaIssues.value.reduce<
+          {
+            key: string;
+            item: Item;
+          }[]
+        >(
+          (acc, { issuecode, issuenumber }) => [
+            ...acc,
+            ...userIssues.value
+              .filter(({ issuenumber: userIssueNumber }) => issuenumber === userIssueNumber)
+              .map((item) => ({
+                key: issuecode,
+                item,
+              })),
+          ],
+          [],
+        )
       : (issues.value || [])
           .filter((issue) => issue.publicationcode === publicationcode.value)
-          .map(({ publicationcode, issuenumber, ...issue }) => ({
-            key: `${publicationcode} ${issuenumber}`,
-            item: { ...issue, publicationcode, issuenumber }!,
+          .map((issue) => ({
+            key: `${issue.publicationcode} ${issue.issuenumber}`,
+            item: issue,
           }))
     : [],
 );
@@ -168,14 +183,6 @@ const getSortedItemsWithCovers = async () => {
     },
   }));
 };
-
-watch(
-  sortedItems,
-  () => {
-    emit('load', sortedItems.value.length > 0);
-  },
-  { immediate: true },
-);
 
 watch([sortedItems, currentIssueViewMode], async () => {
   if (sortedItems.value && ['covers-large', 'covers-medium', 'covers-small'].includes(currentIssueViewMode.value.id)) {

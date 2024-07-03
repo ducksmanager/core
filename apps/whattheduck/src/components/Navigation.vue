@@ -11,13 +11,22 @@
         <Country
           v-if="partIdx === 2 && countrycode"
           :id="countrycode"
-          :label="countryNames?.[countrycode] || countrycode" />
+          :label="countryNames?.[countrycode] || countrycode"
+        />
         <Publication
           v-if="partIdx === 3 && publicationcode"
           :publicationcode="publicationcode"
-          :title="publicationNames?.[publicationcode] || publicationcode" />
-        <Issue v-if="partIdx === 4 && issuenumber !== undefined" :issuenumber="issuenumber" /></ion-segment-button
-    ></ion-col>
+          :title="publicationNames?.[publicationcode] || publicationcode"
+        />
+        <template v-if="partIdx === 4 && issuenumber !== undefined"
+          ><div>
+            <Issue :issuenumber="issuenumber" /><template v-if="extraIssuenumbers"
+              ><ion-chip :outline="true">+&nbsp;{{ extraIssuenumbers.length - 1 }}</ion-chip></template
+            >
+          </div></template
+        >
+      </ion-segment-button></ion-col
+    >
   </ion-segment>
 </template>
 
@@ -31,15 +40,10 @@ import Publication from './Publication.vue';
 
 import { app } from '~/stores/app';
 
-const { currentNavigationItem, navigationItemGroups } = storeToRefs(app());
+const { currentNavigationItem, countrycode, publicationcode, issuenumber, extraIssuenumbers } = storeToRefs(app());
 const { countryNames, publicationNames } = storeToRefs(stores.coa());
 
 const maxParts = 4;
-
-const countrycode = computed(() => navigationItemGroups.value.countrycode);
-const magazinecode = computed(() => navigationItemGroups.value.magazinecode);
-const issuenumber = computed(() => navigationItemGroups.value.issuenumber);
-const publicationcode = computed(() => magazinecode.value && `${countrycode.value}/${magazinecode.value}`);
 
 const shownParts = computed(() => {
   const parts = [''];
@@ -47,8 +51,8 @@ const shownParts = computed(() => {
   if (countrycode.value) {
     parts.push(countrycode.value);
   }
-  if (magazinecode) {
-    parts.push(`${countrycode.value}/${magazinecode.value}`);
+  if (publicationcode.value) {
+    parts.push(`${publicationcode.value}`);
   }
   if (issuenumber.value !== undefined) {
     parts.push(currentNavigationItem.value!);

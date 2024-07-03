@@ -18,7 +18,7 @@
         v-for="{ key, item, isOwned, nextItemType } in filteredItems"
         :is-owned="isOwned"
         :next-item-type="nextItemType"
-        @click="currentNavigationItem = key"
+        @click="updateCurrentNavigationItem(key)"
       >
         <template #fill-bar v-if="item">
           <slot name="fill-bar" :item="item" />
@@ -136,7 +136,17 @@ const onScroll = (e: CustomEvent<ScrollDetail>) => {
 
 const { t } = useI18n();
 
-const { currentNavigationItem, filterText } = storeToRefs(app());
+const { currentNavigationItem, filterText, selectedIssuenumbers, publicationcode } = storeToRefs(app());
+
+const updateCurrentNavigationItem = (key: string) => {
+  const selected = Object.entries(selectedIssuenumbers.value)
+    .filter(([, value]) => value)
+    .map(([key]) => key);
+  currentNavigationItem.value = key;
+  if (selected.length) {
+    currentNavigationItem.value = `${publicationcode.value} ${selected.join(',')}`;
+  }
+};
 
 const itemInCenterOfViewport = computed(() => {
   if (!props.items.length) {

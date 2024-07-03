@@ -1,7 +1,10 @@
 <template>
   <ion-content class="no-padding">
     <ion-row v-if="!isOfflineMode">
-      <ion-col size="12"><ion-img v-if="fullUrl" :src="coverUrl" /></ion-col>
+      <ion-col size="12"
+        ><ion-img v-if="fullUrl" :src="coverUrl" />
+        <ion-chip v-if="extraIssuenumbers.length">+&nbsp;{{ extraIssuenumbers.length - 1 }}</ion-chip></ion-col
+      >
     </ion-row>
     <ion-row
       ><ion-col size="12">
@@ -62,7 +65,8 @@ import { wtdcollection } from '~/stores/wtdcollection';
 const { updateCollectionSingleIssue } = wtdcollection();
 const { issuesByIssueCode } = storeToRefs(wtdcollection());
 const { fetchCoverUrls } = coa();
-const { isOfflineMode, currentNavigationItem, isCoaView, issuenumber, publicationcode } = storeToRefs(app());
+const { isOfflineMode, currentNavigationItem, isCoaView, publicationcode, issuenumber, extraIssuenumbers } =
+  storeToRefs(app());
 
 const fullUrl = ref<string>();
 
@@ -183,5 +187,10 @@ ion-icon.delete {
     position: static;
     margin: 0 0.5rem;
   }
+}
+
+ion-chip {
+  position: absolute;
+  background: rgba(127, 127, 127, 0.8);
 }
 </style>
