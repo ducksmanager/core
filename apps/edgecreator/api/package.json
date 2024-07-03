@@ -41,7 +41,7 @@
     "@types/node": "^18.19.39",
     "concurrently": "^8.2.2",
     "tsc-alias": "^1.8.10",
-    "tsx": "^4.15.8",
-    "typescript": "^5.5.2"
+    "tsx": "^4.16.2",
+    "typescript": "^5.5.3"
   }
 }
