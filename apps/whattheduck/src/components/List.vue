@@ -19,6 +19,10 @@
         :is-owned="isOwned"
         :next-item-type="nextItemType"
         @click="updateCurrentNavigationItem(key)"
+        @ionChange="toggleCheckedIssuenumber(item)"     
+        v-on-long-press.prevent="
+        toggleCheckedIssuenumber(item)
+        "
       >
         <template #fill-bar v-if="item">
           <slot name="fill-bar" :item="item" />
@@ -84,9 +88,11 @@ const props = defineProps<{
   getItemTextFn: (item: Item) => string;
   issueViewModes?: { label: string; icon: { ios: string; md: string } }[];
   filter?: { label: string; icon: { ios: string; md: string } }[];
+  isMultipleSelection?: boolean
 }>();
 
-const emit = defineEmits<(e: 'items-filtered', items: string[]) => void>();
+const emit = defineEmits<{ (e: "items-filtered", items: string[]): void; (e: "enable-multiple-selection"): void }>();
+
 
 const {
   coverId: { services: coverIdServices },
@@ -147,6 +153,11 @@ const updateCurrentNavigationItem = (key: string) => {
     currentNavigationItem.value = `${publicationcode.value} ${selected.join(',')}`;
   }
 };
+
+const toggleCheckedIssuenumber = (item: Item ) => {
+  emit('enable-multiple-selection')
+  selectedIssuenumbers.value[item.issuenumber] = !selectedIssuenumbers.value[item.issuenumber]
+}
 
 const itemInCenterOfViewport = computed(() => {
   if (!props.items.length) {
