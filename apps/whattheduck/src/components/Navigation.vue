@@ -20,7 +20,7 @@
         />
         <template v-if="partIdx === 4 && issuenumber !== undefined"
           ><div>
-            <Issue :issuenumber="issuenumber" /><template v-if="extraIssuenumbers"
+            <Issue :issuenumber="issuenumber" /><template v-if="extraIssuenumbers.length"
               ><ion-chip :outline="true">+&nbsp;{{ extraIssuenumbers.length - 1 }}</ion-chip></template
             >
           </div></template

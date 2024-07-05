@@ -35,7 +35,7 @@
           color="danger"
           size="small"
           v-if="currentCopyIndex !== undefined && !isOfflineMode"
-          >{{ t('Supprimer') }}</ion-button
+          >{{ t('Retirer de la collection') }}</ion-button
         >
         <owned-issue-copy v-if="currentCopyIndex !== undefined" v-model="copies[currentCopyIndex]" />
       </ion-col>

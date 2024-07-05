@@ -27,7 +27,7 @@
       "~socket.io-client-services/*": ["../../packages/socket.io-client-services/*"],
       "~socket.io-services/*": ["../../packages/socket.io-services/*"],
       "~web/*": ["../web/*"]
-    }
+    },
   },
   "exclude": ["node_modules"]
 }

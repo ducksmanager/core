@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory } from '@ionic/vue-router';
-import type { RouteRecordRaw } from 'vue-router';
+import type { RouteMeta } from 'vue-router';
 
 import Collection from '~/components/Collection.vue';
 import Authors from '~/views/Authors.vue';
@@ -14,12 +14,7 @@ import Signup from '~/views/Signup.vue';
 import Stats from '~/views/Stats.vue';
 import Suggestions from '~/views/Suggestions.vue';
 
-export interface RouteMeta {
-  onOffline?: 'readonly' | 'unavailable';
-  onNoToken?: 'logout';
-}
-
-const routes: RouteRecordRaw[] = [
+const routes = [
   {
     name: 'Collection',
     path: '/:type(collection|coa)',

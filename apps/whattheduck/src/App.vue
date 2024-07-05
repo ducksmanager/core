@@ -27,8 +27,6 @@ import { buildStorage, useSocket } from '~socket.io-client-services';
 import { app } from './stores/app';
 import AppWithPersistedData from './views/AppWithPersistedData.vue';
 
-import type { RouteMeta } from '~/router';
-
 const storage = injectLocal<Storage>('storage')!;
 
 const appStore = app();
@@ -36,6 +34,11 @@ const { isOfflineMode, token, socket, socketCache, innerTopMargin } = storeToRef
 
 const route = useRoute();
 const router = useRouter();
+
+interface RouteMeta {
+  onOffline?: 'readonly' | 'unavailable';
+  onNoToken?: 'logout';
+}
 
 const routeMeta = computed(() => route.meta as RouteMeta);
 

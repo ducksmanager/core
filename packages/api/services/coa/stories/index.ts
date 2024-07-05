@@ -89,7 +89,7 @@ export default (socket: Socket<Events>) => {
 
 const listIssuesFromStoryCode = async (storycode: string) =>
   prismaCoa.$queryRaw<SimpleIssue[]>`
-      SELECT inducks_issue.publicationcode, inducks_issue.issuenumber, short_issuecode AS shortIssuecode,
+      SELECT inducks_issue.publicationcode, inducks_issue.issuenumber, inducks_issue.short_issuecode AS shortIssuecode,
       FROM inducks_issue
                INNER JOIN inducks_entry USING (short_issuecode)
                INNER JOIN inducks_storyversion USING (storyversioncode)

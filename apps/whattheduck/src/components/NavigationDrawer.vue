@@ -127,12 +127,16 @@ const appFooterPages = [
     title: t('Signaler un problème'),
     url: '/report',
   },
-  {
-    iosIcon: logOutOutline,
-    mdIcon: logOutSharp,
-    title: t('Déconnexion'),
-    url: '/login',
-  },
+  ...(token.value
+    ? [
+        {
+          iosIcon: logOutOutline,
+          mdIcon: logOutSharp,
+          title: t('Déconnexion'),
+          url: '/login',
+        },
+      ]
+    : []),
 ];
 
 const { user } = storeToRefs(collectionStore);

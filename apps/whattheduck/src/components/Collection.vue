@@ -12,8 +12,15 @@
         <ion-title
           ><div class="content">
             <div class="title">
-              <div>{{ t('Ma collection') }}</div>
-              <ion-chip outline v-if="total !== undefined">{{ total }}</ion-chip>
+              <ion-button size="small" v-if="isCoaView" @click="isCoaView = false">
+                <ion-icon :md="arrowBackSharp" :ios="arrowBackOutline"></ion-icon>&nbsp;{{
+                  t('Retour à ma collection')
+                }}
+              </ion-button>
+              <template v-else>
+                <div>{{ t('Ma collection') }}</div>
+                <ion-chip outline v-if="total !== undefined">{{ total }}</ion-chip></template
+              >
             </div>
           </div></ion-title
         >
@@ -33,6 +40,8 @@
 </template>
 
 <script setup lang="ts">
+import { arrowBackOutline, arrowBackSharp } from 'ionicons/icons';
+
 import OwnedIssueCopies from './OwnedIssueCopies.vue';
 
 import { app } from '~/stores/app';
@@ -44,7 +53,7 @@ import PublicationList from '~/views/PublicationList.vue';
 const { t } = useI18n();
 
 const { total } = storeToRefs(wtdcollection());
-const { filterText, navigationItemGroups } = storeToRefs(app());
+const { filterText, navigationItemGroups, isCoaView } = storeToRefs(app());
 
 const hasItems = ref<boolean | undefined>();
 
