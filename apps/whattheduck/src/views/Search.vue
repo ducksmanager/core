@@ -27,7 +27,6 @@
           v-for="story of storyResults?.results"
           @click="
             selectedStory = story;
-            storyTitle = '';
           "
         >
           <ion-label
@@ -38,7 +37,12 @@
         </ion-item>
       </ion-list>
       <template v-if="selectedStory">
-        <div style="margin: 1rem 0">{{ selectedStory.title }} {{ t('a été publiée dans les numéros suivants :') }}</div>
+        <div style="margin: 1rem 0"><b>{{ selectedStory.title }}</b> {{ t('a été publiée dans les numéros suivants :') }}</div>
+        <ion-button size="small"
+          @click="
+            selectedStory = null;
+          "
+          >&nbsp;<ion-icon :md="arrowBackSharp" :ios="arrowBackOutline"></ion-icon>{{ t('Retour aux résultats d\'histoire') }}</ion-button>
         <ion-list>
           <ion-item
             v-for="issue of selectedStory.issues"
@@ -64,6 +68,8 @@ import FullIssue from '~/components/FullIssue.vue';
 import { app } from '~/stores/app';
 import { wtdcollection } from '~/stores/wtdcollection';
 import type { IssueWithCollectionIssues } from '~/stores/wtdcollection';
+import { issue_condition } from '~prisma-clients/client_dm';
+import { arrowBackOutline, arrowBackSharp } from 'ionicons/icons';
 
 const {
   coa: { services: coaServices },
@@ -79,12 +85,13 @@ const { currentNavigationItem } = storeToRefs(app());
 const router = useRouter();
 
 type StoryResult = StorySearchResults['results'][number];
-interface AugmentedStoryResult {
-  issues: Pick<NonNullable<StoryResult['issues']>[number], 'publicationcode' | 'issuenumber' | 'issuecode'> & {
+type AugmentedStoryResult = StoryResult & {
+  collectionConditions: issue_condition[];
+  issues:  {
     countrycode: string;
     publicationName: string;
     collectionIssues: IssueWithCollectionIssues['collectionIssues'];
-  };
+  }[];
 }
 
 const storyTitle = ref('');
@@ -101,27 +108,27 @@ watch(storyTitle, async (newValue) => {
 
   await fetchPublicationNames(
     data
-      .map((story) => story.issues!)
+      .map((story) => story.issues)
       .flat()
       .map(({ publicationcode }) => publicationcode),
   );
 
   storyResults.value = {
     results: data.map((story) => {
-      const collectionIssues = story.issues!.map(
+      const collectionIssues = story.issues.map(
         ({ issuecode }) => issuesByIssueCode.value![issuecode.replace(/ +/g, ' ')] || [],
       );
       const collectionConditions = collectionIssues.flat().map(({ condition }) => condition);
       return {
         ...story,
         collectionConditions,
-        issues: story.issues?.map(({ publicationcode, issuenumber, issuecode }, idx) => ({
+        issues: story.issues.map(({ publicationcode, issuenumber, issuecode }, idx) => ({
           publicationcode,
           countrycode: publicationcode.split('/')[0],
           publicationName: publicationNames.value[publicationcode] || publicationcode,
           issuenumber,
           issuecode,
-          collectionIssues: collectionIssues[idx],
+          collectionIssues: collectionIssues[idx]!,
         })),
       };
     }),

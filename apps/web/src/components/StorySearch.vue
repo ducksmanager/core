@@ -192,8 +192,8 @@ const runSearch = async (value: string) => {
               publicationcode: collectionPublicationCode,
               issuenumber: collectionIssueNumber,
             }) =>
-              story
-                .issues!.map(
+              story.issues
+                .map(
                   ({ publicationcode, issuenumber }) =>
                     `${publicationcode}-${issuenumber}`,
                 )

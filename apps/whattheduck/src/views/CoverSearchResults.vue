@@ -46,7 +46,7 @@
                     ><ion-row v-if="cover.estimationMin || cover.estimationMax"
                       ><ion-col><ion-icon :ios="pricetagOutline" :android="pricetagSharp"></ion-icon></ion-col
                       ><ion-col class="ion-text-left"
-                        ><template v-if="estimationMin && estimationMax"
+                        ><template v-if="cover.estimationMin && cover.estimationMax"
                           ><template v-if="cover.estimationMax === cover.estimationMin">{{
                             t('Environ {estimation} €', { estimation: cover.estimationMin })
                           }}</template>

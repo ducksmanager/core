@@ -96,7 +96,7 @@ export const app = defineStore('app', () => {
       : null,
   );
   const issuenumber = computed(() => navigationItemGroups.value.issuenumber);
-  const extraIssuenumbers = computed(() => navigationItemGroups.value.extra_issuenumbers?.split(','));
+  const extraIssuenumbers = computed(() => navigationItemGroups.value.extra_issuenumbers?.split(',') || []);
 
   const copyListModes = [
     {

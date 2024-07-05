@@ -5,5 +5,5 @@ export interface SimpleStory {
   entirepages: number;
   title: string;
   score: number;
-  issues: SimpleIssue[] | null;
+  issues: SimpleIssue[];
 }
