@@ -28,7 +28,7 @@ const showUploadModal = ref<boolean>(false);
 const issueData = ref(
   null as {
     editMode: "range" | "single";
-    issuecode: string;
+    shortIssuecode: string;
     issuenumberEnd: string;
   } | null,
 );
@@ -37,8 +37,8 @@ const issueSpecification = computed(() =>
   issueData.value === null
     ? null
     : issueData.value.editMode === "range"
-      ? `${issueData.value.issuecode} to ${issueData.value.issuenumberEnd}`
-      : issueData.value.issuecode,
+      ? `${issueData.value.shortIssuecode} to ${issueData.value.issuenumberEnd}`
+      : issueData.value.shortIssuecode,
 );
 
 const toDashboard = async () => {

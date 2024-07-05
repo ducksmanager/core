@@ -23,12 +23,7 @@
       />
 
       <ion-list v-if="storyResults?.results && !selectedStory">
-        <ion-item
-          v-for="story of storyResults?.results"
-          @click="
-            selectedStory = story;
-          "
-        >
+        <ion-item v-for="story of storyResults?.results" @click="selectedStory = story">
           <ion-label
             ><condition v-for="condition of story.collectionConditions" :value="condition" />{{
               story.title
@@ -37,17 +32,18 @@
         </ion-item>
       </ion-list>
       <template v-if="selectedStory">
-        <div style="margin: 1rem 0"><b>{{ selectedStory.title }}</b> {{ t('a été publiée dans les numéros suivants :') }}</div>
-        <ion-button size="small"
-          @click="
-            selectedStory = null;
-          "
-          >&nbsp;<ion-icon :md="arrowBackSharp" :ios="arrowBackOutline"></ion-icon>{{ t('Retour aux résultats d\'histoire') }}</ion-button>
+        <div style="margin: 1rem 0">
+          <b>{{ selectedStory.title }}</b> {{ t('a été publiée dans les numéros suivants :') }}
+        </div>
+        <ion-button size="small" @click="selectedStory = null"
+          >&nbsp;<ion-icon :md="arrowBackSharp" :ios="arrowBackOutline"></ion-icon
+          >{{ t("Retour aux résultats d'histoire") }}</ion-button
+        >
         <ion-list>
           <ion-item
             v-for="issue of selectedStory.issues"
             @click="
-              currentNavigationItem = issue.issuecode;
+              currentNavigationItem = issue.shortIssuecode;
               router.push('/collection');
             "
           >
@@ -60,7 +56,9 @@
 </template>
 
 <script setup lang="ts">
+import { arrowBackOutline, arrowBackSharp } from 'ionicons/icons';
 import type { StorySearchResults } from '~dm-types/StorySearchResults';
+import type { issue_condition } from '~prisma-clients/client_dm';
 import { stores } from '~web';
 import { dmSocketInjectionKey } from '~web/src/composables/useDmSocket';
 
@@ -68,8 +66,6 @@ import FullIssue from '~/components/FullIssue.vue';
 import { app } from '~/stores/app';
 import { wtdcollection } from '~/stores/wtdcollection';
 import type { IssueWithCollectionIssues } from '~/stores/wtdcollection';
-import { issue_condition } from '~prisma-clients/client_dm';
-import { arrowBackOutline, arrowBackSharp } from 'ionicons/icons';
 
 const {
   coa: { services: coaServices },
@@ -77,7 +73,7 @@ const {
 
 const { t } = useI18n();
 
-const { issuesByIssueCode } = storeToRefs(wtdcollection());
+const { issuesByShortIssuecode } = storeToRefs(wtdcollection());
 const coaStore = stores.coa();
 const { fetchPublicationNames } = coaStore;
 const { publicationNames } = storeToRefs(coaStore);
@@ -87,12 +83,12 @@ const router = useRouter();
 type StoryResult = StorySearchResults['results'][number];
 type AugmentedStoryResult = StoryResult & {
   collectionConditions: issue_condition[];
-  issues:  {
+  issues: {
     countrycode: string;
     publicationName: string;
     collectionIssues: IssueWithCollectionIssues['collectionIssues'];
   }[];
-}
+};
 
 const storyTitle = ref('');
 const storyResults = ref(null as { results: AugmentedStoryResult[] } | null);
@@ -116,18 +112,18 @@ watch(storyTitle, async (newValue) => {
   storyResults.value = {
     results: data.map((story) => {
       const collectionIssues = story.issues.map(
-        ({ issuecode }) => issuesByIssueCode.value![issuecode.replace(/ +/g, ' ')] || [],
+        ({ shortIssuecode }) => issuesByShortIssuecode.value![shortIssuecode.replace(/ +/g, ' ')] || [],
       );
       const collectionConditions = collectionIssues.flat().map(({ condition }) => condition);
       return {
         ...story,
         collectionConditions,
-        issues: story.issues.map(({ publicationcode, issuenumber, issuecode }, idx) => ({
+        issues: story.issues.map(({ publicationcode, issuenumber, shortIssuecode }, idx) => ({
           publicationcode,
           countrycode: publicationcode.split('/')[0],
           publicationName: publicationNames.value[publicationcode] || publicationcode,
           issuenumber,
-          issuecode,
+          shortIssuecode,
           collectionIssues: collectionIssues[idx]!,
         })),
       };

@@ -9,10 +9,10 @@ export interface SimilarImagesResult {
 
 export interface CoverSearchResults {
   covers: ({
-    issuecode: string;
+    shortIssuecode: string;
     fullUrl: string;
     publicationcode: string;
     issuenumber: string;
-  } & Pick<inducks_issuequotation, 'estimationMin' | 'estimationMax'>)[];
+  } & Pick<inducks_issuequotation, "estimationMin" | "estimationMax">)[];
   type?: string;
 }

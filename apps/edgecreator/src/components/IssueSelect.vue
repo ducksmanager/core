@@ -89,7 +89,7 @@ interface Selection {
   editMode: "single" | "range";
   countrycode: string;
   publicationcode: string;
-  issuecode: string;
+  shortIssuecode: string;
   issuenumberEnd?: string;
 }
 
@@ -114,15 +114,15 @@ const props = withDefaults(
   },
 );
 
-interface IssueCodeAndNumber {
-  issuecode: string;
+interface ShortIssuecodeAndNumber {
+  shortIssuecode: string;
   issuenumber: string;
 }
 
 const currentCountrycode = ref<string | undefined>(undefined);
 const currentPublicationcode = ref<string | undefined>(undefined);
-const currentFirstIssue = ref<IssueCodeAndNumber | undefined>(undefined);
-const currentLastIssue = ref<IssueCodeAndNumber | undefined>(undefined);
+const currentFirstIssue = ref<ShortIssuecodeAndNumber | undefined>(undefined);
+const currentLastIssue = ref<ShortIssuecodeAndNumber | undefined>(undefined);
 const editMode = ref<"single" | "range">("single");
 const hasMoreIssuesToLoad = ref({ before: false, after: false });
 const surroundingIssuesToLoad = ref({ before: 10, after: 10 } as Record<
@@ -169,16 +169,16 @@ const issues = computed(
     edgeCatalogStore.publishedEdges[currentPublicationcode.value!] &&
     coaStore.issueNumbers[currentPublicationcode.value!].map(
       (issuenumber, idx) => {
-        const issuecode =
-          coaStore.issuecodes[currentPublicationcode.value!][idx];
+        const shortIssuecode =
+          coaStore.shortIssuecodes[currentPublicationcode.value!][idx];
         const status = edgeCatalogStore.getEdgeStatus({
           country: currentCountrycode.value!,
           magazine: currentPublicationcode.value!.split("/")[1],
           issuenumber,
-          issuecode,
+          shortIssuecode,
         });
         return {
-          value: { issuecode, issuenumber },
+          value: { shortIssuecode, issuenumber },
           text: `${issuenumber}${status === "none" ? "" : ` (${$t(status!)})`}`,
           disabled:
             (props.disableOngoingOrPublished && status !== "none") ||
@@ -252,7 +252,7 @@ const onChange = () => {
     editMode: editMode.value,
     countrycode: currentCountrycode.value!,
     publicationcode: currentPublicationcode.value!,
-    issuecode: currentFirstIssue.value!.issuecode,
+    shortIssuecode: currentFirstIssue.value!.shortIssuecode,
     issuenumberEnd: currentLastIssue.value?.issuenumber,
   });
 };

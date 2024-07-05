@@ -19,7 +19,7 @@ const suggestionsSince = dayjs().add(-7, "days");
 let notificationsSent = 0;
 
 const sendSuggestedIssueNotification = async (
-  issuecode: string,
+  shortIssuecode: string,
   issueTitle: string,
   storyCountPerAuthor: { [personcode: string]: number },
   userToNotify: user,
@@ -62,7 +62,7 @@ const sendSuggestedIssueNotification = async (
   );
   await prismaDm.userSuggestionNotification.create({
     data: {
-      issuecode,
+      shortIssuecode,
       text: issueTitle,
       userId: userToNotify.id,
       date: new Date(),
@@ -87,7 +87,7 @@ getSuggestions(
       Object.values(suggestionsPerUser).reduce<string[]>(
         (acc, suggestion) => [
           ...acc,
-          ...Object.values(suggestion.issues).map((issue) => issue.issuecode),
+          ...Object.values(suggestion.issues).map((issue) => issue.shortIssuecode),
         ],
         [],
       ),
@@ -97,7 +97,7 @@ getSuggestions(
   const alreadySentNotificationsPerUser = (
     await prismaDm.userSuggestionNotification.findMany({
       where: {
-        issuecode: {
+        shortIssuecode: {
           in: allSuggestedIssues,
         },
       },
@@ -105,7 +105,7 @@ getSuggestions(
   ).reduce<{ [userId: number]: string[] }>(
     (acc, notification) => ({
       [notification.userId]: [
-        ...new Set(...(acc[notification.userId] || []), notification.issuecode),
+        ...new Set(...(acc[notification.userId] || []), notification.shortIssuecode),
       ],
     }),
     {},
@@ -121,7 +121,7 @@ getSuggestions(
       (suggestion) =>
         !alreadySentNotificationsPerUser[userIdNumber] ||
         !alreadySentNotificationsPerUser[userIdNumber].includes(
-          suggestion.issuecode,
+          suggestion.shortIssuecode,
         ),
     );
 
@@ -147,7 +147,7 @@ getSuggestions(
       );
       try {
         await sendSuggestedIssueNotification(
-          suggestedIssue.issuecode,
+          suggestedIssue.shortIssuecode,
           issueTitle,
           storyCountPerAuthor,
           usersById[userIdNumber],

@@ -133,7 +133,6 @@ const covers = computed(() =>
   Object.keys(publicationNames.value).length
     ? searchResults.value.covers.map((cover) => ({
         ...cover,
-        code: cover.issuecode,
         countrycode: cover.publicationcode.split('/')[0],
         publicationName: publicationNames.value[cover.publicationcode],
         collectionIssues: getCollectionIssues(cover.publicationcode, cover.issuenumber),
@@ -142,7 +141,7 @@ const covers = computed(() =>
 );
 
 const onMainSlideClick = async ({ index }: { index: number }) => {
-  currentNavigationItem.value = covers.value[index]!.issuecode.replace(/[ ]{2,}/g, ' ');
+  currentNavigationItem.value = covers.value[index]!.shortIssuecode.replace(/[ ]{2,}/g, ' ');
   router.push('/collection');
 };
 </script>

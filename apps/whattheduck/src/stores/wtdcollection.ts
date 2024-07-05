@@ -77,7 +77,7 @@ export const wtdcollection = defineStore('wtdcollection', () => {
     highestQuotedIssue,
     coaIssueCountsByPublicationcode: computed(() => webCollectionStore.coaIssueCountsByPublicationcode),
     coaIssueCountsPerCountrycode: computed(() => webCollectionStore.coaIssueCountsPerCountrycode),
-    issuesByIssueCode: computed(() => webCollectionStore.issuesByIssueCode),
+    issuesByShortIssuecode: computed(() => webCollectionStore.issuesByShortIssuecode),
     loadCollection,
     loadPurchases,
     login,

@@ -59,7 +59,7 @@ export const collection = defineStore("collection", () => {
     ),
     subscriptions = ref(null as SubscriptionTransformed[] | null),
     popularIssuesInCollection = ref(
-      null as { [issuecode: string]: number } | null,
+      null as { [shortIssuecode: string]: number } | null,
     ),
     lastPublishedEdgesForCurrentUser = ref(
       null as EventReturnType<
@@ -106,7 +106,7 @@ export const collection = defineStore("collection", () => {
       issues.value?.reduce<Record<string, issue[]>>(
         (acc, issue) => ({
           ...acc,
-          [issue.issuecode]: [...acc[issue.issuecode], issue],
+          [issue.shortIssuecode]: [...acc[issue.shortIssuecode], issue],
         }),
         {},
       ),

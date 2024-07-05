@@ -5,12 +5,12 @@ import { prismaCoa } from "~prisma-clients";
 
 import type Events from "../types";
 export default (socket: Socket<Events>) => {
-  socket.on("decompose", (issueCodes, callback) =>
+  socket.on("decompose", (shortIssuecodes, callback) =>
     prismaCoa.inducks_issue
       .findMany({
         where: {
-          issuecode: {
-            in: issueCodes,
+          shortIssuecode: {
+            in: shortIssuecodes,
           },
         },
       })
@@ -18,7 +18,7 @@ export default (socket: Socket<Events>) => {
         data.reduce(
           (acc, value) => ({
             ...acc,
-            [value.issuecode]: value,
+            [value.shortIssuecode]: value,
           }),
           {},
         ),
@@ -31,8 +31,8 @@ export default (socket: Socket<Events>) => {
       .findMany({
         select: {
           publicationcode: true,
-          issuecode: true,
           issuenumber: true,
+          shortIssuecode: true
         },
         where: {
           publicationcode: {
@@ -42,8 +42,8 @@ export default (socket: Socket<Events>) => {
       })
       .then((issues) => {
         callback({
-          issues: issues.map(({ publicationcode, issuecode, issuenumber }) => ({
-            issuecode,
+          issues: issues.map(({ publicationcode, shortIssuecode, issuenumber }) => ({
+            shortIssuecode,
             publicationcode: publicationcode!,
             issuenumber: issuenumber!,
           })),
@@ -53,11 +53,9 @@ export default (socket: Socket<Events>) => {
 
   socket.on("getIssuesByStorycode", async (storycode, callback) =>
     prismaCoa.$queryRaw<SimpleIssue[]>`
-      SELECT issuecode,
-              publicationcode,
-              issuenumber
+      SELECT publicationcode, issuenumber, short_issuecode AS shortIssuecode
       FROM inducks_issue issue
-                INNER JOIN inducks_entry entry using (issuecode)
+                INNER JOIN inducks_entry entry using (short_issuecode)
                 INNER JOIN inducks_storyversion sv using (storyversioncode)
       WHERE sv.storycode = ${storycode}
       GROUP BY publicationcode, issuenumber

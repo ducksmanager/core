@@ -39,7 +39,7 @@ const getEdges = async (filters: {
         id: true,
         publicationcode: true,
         issuenumber: true,
-        issuecode: true,
+        shortIssuecode: true,
       },
       where: {
         publicationcode,
@@ -49,7 +49,7 @@ const getEdges = async (filters: {
   ).reduce(
     (acc, edge) => ({
       ...acc,
-      [edge.issuecode!]: {
+      [edge.shortIssuecode!]: {
         ...edge,
         modelId: edgeModels[edge.issuenumber]?.id,
         v3: edgeModels[edge.issuenumber] !== undefined,

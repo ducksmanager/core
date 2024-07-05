@@ -32,7 +32,7 @@ export default (io: Server) => {
       }
       const groupBy = user.showDuplicatesInBookcase
         ? "numeros.ID"
-        : "numeros.issuecode";
+        : "numeros.shortIssuecode";
       callback({
         edges: (
           (await prismaDm.$queryRaw`
@@ -54,7 +54,7 @@ export default (io: Server) => {
                 AND issue.Magazine = edgeDuplicate.Magazine
                 AND issue.Numero_nospace = edgeDuplicate.Numero
             LEFT JOIN tranches_pretes edge
-              ON issue.issuecode = edge.issuecode
+              ON issue.short_issuecode = edge.short_issuecode
             LEFT JOIN tranches_pretes_sprites edgeSprite
               ON edgeSprite.ID_Tranche = edge.ID
             LEFT JOIN tranches_pretes_sprites_urls edgeSpriteUrl

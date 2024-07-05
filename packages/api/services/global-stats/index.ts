@@ -67,9 +67,9 @@ export default (io: Server) => {
             SELECT ID_Utilisateur AS userId, round(sum(rarity)) AS averageRarity
             FROM numeros
             LEFT JOIN
-              (select issuecode, pow(${userCount} / count(*), 1.5) / 10000 as rarity
+              (select short_issuecode, pow(${userCount} / count(*), 1.5) / 10000 as rarity
               from numeros n1
-              group by issuecode) AS issues_rarity ON numeros.issuecode = issues_rarity.issuecode
+              group by short_issuecode) AS issues_rarity ON numeros.short_issuecode = issues_rarity.short_issuecode
             GROUP BY ID_Utilisateur
             ORDER BY averageRarity
         `;

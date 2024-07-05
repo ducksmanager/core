@@ -21,12 +21,12 @@ export default () => {
     }
     Promise.all(
       results.covers.map(
-        ({ issuecode, publicationcode, issuenumber /*, id: coverId*/ }) =>
+        ({ shortIssuecode, publicationcode, issuenumber /*, id: coverId*/ }) =>
           getIndexationSocket(
             indexation.value!.id,
           ).services.acceptIssueSuggestion({
             source: "ai",
-            issuecode,
+            shortIssuecode,
             publicationcode,
             issuenumber,
             // coverId,

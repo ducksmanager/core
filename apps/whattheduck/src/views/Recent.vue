@@ -41,7 +41,7 @@ const recentIssues = ref();
 
 const coaStore = stores.coa();
 const { currentNavigationItem } = storeToRefs(app());
-const { issuesByIssueCode } = storeToRefs(stores.collection());
+const { issuesByShortIssuecode } = storeToRefs(stores.collection());
 const { fetchPublicationNames, fetchRecentIssues } = coaStore;
 const { publicationNames } = storeToRefs(coaStore);
 
@@ -51,13 +51,13 @@ onMounted(async () => {
   recentIssues.value = issues
     .map((issue) => ({
       ...issue,
-      shortIssuecode: issue.issuecode.replace(/ +/g, ' '),
+      shortIssuecode: `${issue.publicationcode} ${issue.issuenumber}`,
       countrycode: issue.publicationcode!.split('/')[0],
       publicationName: publicationNames.value[issue.publicationcode!],
     }))
     .map((issue) => ({
       ...issue,
-      collectionIssues: issuesByIssueCode.value![issue.shortIssuecode] || [],
+      collectionIssues: issuesByShortIssuecode.value![issue.shortIssuecode] || [],
     }));
 });
 </script>

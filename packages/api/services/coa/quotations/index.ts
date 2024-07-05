@@ -5,11 +5,11 @@ import { prismaCoa } from "~prisma-clients";
 const PUBLICATION_CODE_REGEX = /[a-z]+\/[-A-Z0-9]+/g;
 const ISSUE_CODE_REGEX = /[a-z]+\/[-A-Z0-9 ]+/g;
 
-export const getQuotationsByIssueCodes = async (issueCodes: string[]) =>
+export const getQuotationsByIssueCodes = async (shortIssuecodes: string[]) =>
   prismaCoa.inducks_issuequotation.findMany({
     where: {
-      issuecode: {
-        in: issueCodes,
+      shortIssuecode: {
+        in: shortIssuecodes,
       },
       estimationMin: { not: { equals: null } },
     },
@@ -17,8 +17,8 @@ export const getQuotationsByIssueCodes = async (issueCodes: string[]) =>
 
 import type Events from "../types";
 export default (socket: Socket<Events>) => {
-  socket.on("getQuotationsByIssueCodes", async (issueCodes, callback) => {
-    const codes = issueCodes.filter((code) => ISSUE_CODE_REGEX.test(code));
+  socket.on("getQuotationsByIssueCodes", async (shortIssueCodes, callback) => {
+    const codes = shortIssueCodes.filter((code) => ISSUE_CODE_REGEX.test(code));
     if (!codes.length) {
       callback({ error: "Bad request" });
     } else if (codes.length > 4) {

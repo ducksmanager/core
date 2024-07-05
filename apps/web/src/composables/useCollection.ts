@@ -33,29 +33,27 @@ export default (issues: Ref<issue[] | null>) => {
           {} as { [publicationcode: string]: number },
         ) || null,
     ),
-    issuesByIssueCode = computed(() =>
-      issues.value?.reduce(
-        (acc, issue) => {
-          const issuecode = `${issue.publicationcode} ${issue.issuenumber}`;
-          return {
-            ...acc,
-            [issuecode]: [...(acc[issuecode] || []), issue],
-          };
-        },
-        {} as { [issuecode: string]: issue[] },
+    issuesByShortIssuecode = computed(() =>
+      issues.value?.reduce<{ [shortIssuecode: string]: issue[] }>(
+        (acc, issue) => ({
+          ...acc,
+          [issue.shortIssuecode]: [...(acc[issue.shortIssuecode] || []), issue],
+        }),
+        {},
       ),
     ),
     duplicateIssues = computed(
       (): {
-        [issuecode: string]: issue[];
+        [shortIssuecode: string]: issue[];
       } =>
-        (issuesByIssueCode.value &&
-          Object.keys(issuesByIssueCode.value).reduce(
-            (acc, issuecode) =>
-              issuesByIssueCode.value![issuecode].length > 1
+        (issuesByShortIssuecode.value &&
+          Object.keys(issuesByShortIssuecode.value).reduce(
+            (acc, shortIssuecode) =>
+              issuesByShortIssuecode.value![shortIssuecode].length > 1
                 ? {
                     ...acc,
-                    [issuecode]: issuesByIssueCode.value![issuecode],
+                    [shortIssuecode]:
+                      issuesByShortIssuecode.value![shortIssuecode],
                   }
                 : acc,
             {},
@@ -165,7 +163,7 @@ export default (issues: Ref<issue[] | null>) => {
     duplicateIssues,
     issuesInOnSaleStack,
     issuesInToReadStack,
-    issuesByIssueCode,
+    issuesByShortIssuecode,
     mostPossessedPublication,
     numberPerCondition,
     quotedIssues,

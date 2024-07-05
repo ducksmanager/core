@@ -54,15 +54,15 @@ export const coa = defineStore("coa", () => {
       null,
     ),
     issueNumbers = ref<{ [publicationcode: string]: string[] }>({}),
-    issuecodes = ref<{ [publicationcode: string]: string[] }>({}),
+    shortIssuecodes = ref<{ [publicationcode: string]: string[] }>({}),
     issuesWithTitles = ref<EventReturnType<CoaServices["getIssuesWithTitles"]>>(
       {},
     ),
-    issueDetails = ref<{ [issuecode: string]: InducksIssueDetails }>({}),
+    issueDetails = ref<{ [shortIssuecode: string]: InducksIssueDetails }>({}),
     isLoadingCountryNames = ref(false),
-    issueCodeDetails = ref<{ [issuecode: string]: inducks_issue }>({}),
+    issueCodeDetails = ref<{ [shortIssuecode: string]: inducks_issue }>({}),
     issueQuotations = ref<{
-      [issuecode: string]: InducksIssueQuotationSimple;
+      [shortIssuecode: string]: InducksIssueQuotationSimple;
     }>({}),
     addPublicationNames = (
       newPublicationNames: typeof publicationNames.value,
@@ -89,13 +89,13 @@ export const coa = defineStore("coa", () => {
     }) => {
       Object.assign(issueNumbers.value, newIssuenumbers);
     },
-    addIssuecodes = (newIssuecodes: {
+    addShortIssuecodes = (newIssuecodes: {
       [publicationcode: string]: string[];
     }) => {
-      Object.assign(issuecodes.value, newIssuecodes);
+      Object.assign(shortIssuecodes.value, newIssuecodes);
     },
     addIssueCodeDetails = (newIssueCodeDetails: {
-      [issuecode: string]: inducks_issue;
+      [shortIssuecode: string]: inducks_issue;
     }) => {
       Object.assign(issueCodeDetails.value, newIssueCodeDetails);
     },
@@ -154,14 +154,17 @@ export const coa = defineStore("coa", () => {
       if (data.quotations) {
         addIssueQuotations(
           data.quotations.reduce(
-            (issueAcc, issue) => ({
+            (
+              issueAcc,
+              { publicationcode, issuenumber, estimationMin, estimationMax },
+            ) => ({
               ...issueAcc,
-              [`${issue.publicationcode} ${issue.issuenumber}`]: {
-                min: issue.estimationMin,
-                max: issue.estimationMax,
+              [`${publicationcode} ${issuenumber}`]: {
+                min: estimationMin,
+                max: estimationMax,
               },
             }),
-            {} as { [issuecode: string]: InducksIssueQuotationSimple },
+            {},
           ),
         );
       } else {
@@ -239,13 +242,13 @@ export const coa = defineStore("coa", () => {
             ),
           );
 
-          addIssuecodes(
-            data.issues.reduce<typeof issuecodes.value>(
-              (acc, issue) => ({
+          addShortIssuecodes(
+            data.issues.reduce<typeof shortIssuecodes.value>(
+              (acc, { publicationcode, shortIssuecode }) => ({
                 ...acc,
-                [issue.publicationcode]: [
-                  ...(acc[issue.publicationcode] || []),
-                  issue.issuecode,
+                [publicationcode]: [
+                  ...(acc[publicationcode] || []),
+                  shortIssuecode,
                 ],
               }),
               {},
@@ -277,15 +280,15 @@ export const coa = defineStore("coa", () => {
       publicationcode: string;
       issuenumber: string;
     }) => {
-      const issueCode = `${publicationcode} ${issuenumber}`;
-      if (!issueDetails.value[issueCode]) {
+      const shortIssuecode = `${publicationcode} ${issuenumber}`;
+      if (!issueDetails.value[shortIssuecode]) {
         const newIssueDetails = await coaServices.getIssueDetails(
           publicationcode,
           issuenumber,
         );
 
         Object.assign(issueDetails.value, {
-          [issueCode]: addPartInfo(newIssueDetails),
+          [shortIssuecode]: addPartInfo(newIssueDetails),
         });
       }
     };
@@ -311,7 +314,7 @@ export const coa = defineStore("coa", () => {
     issueCodeDetails,
     issueDetails,
     issueNumbers,
-    issuecodes,
+    issuecodes: shortIssuecodes,
     issueQuotations,
     issuesWithTitles,
     personNames,

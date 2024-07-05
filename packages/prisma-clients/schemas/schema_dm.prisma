@@ -1,8 +1,8 @@
 generator client {
   provider        = "prisma-client-js"
   output          = "../client_dm"
-  binaryTargets   = ["native", "debian-openssl-1.1.x", "debian-openssl-3.0.x", "darwin-arm64", "linux-arm64-openssl-3.0.x"]
   previewFeatures = ["omitApi"]
+  binaryTargets   = ["native", "debian-openssl-1.1.x", "debian-openssl-3.0.x", "darwin-arm64", "linux-arm64-openssl-3.0.x"]
 }
 
 datasource db {
@@ -122,19 +122,18 @@ model issue {
   condition      issue_condition @default(indefini) @map("Etat")
   purchaseId     Int?            @default(-1) @map("ID_Acquisition")
   isOnSale       Boolean         @map("AV")
-  isToRead       Boolean         @default(false) @map("A_Lire") @db.TinyInt
-  isSubscription Boolean         @default(false) @map("Abonnement") @db.TinyInt
+  isToRead       Boolean         @default(false) @map("A_Lire")
+  isSubscription Boolean         @default(false) @map("Abonnement")
   userId         Int             @map("ID_Utilisateur")
   creationDate   DateTime?       @default(now()) @map("DateAjout") @db.Timestamp(0)
-  // issuecode          String?         @db.VarChar(25)
-  // @@index([issuecode, userId], map: "numeros_issuecode_ID_Utilisateur_index")
-  // @@index([issuecode], map: "numeros_issuecode_index")
+  shortIssuecode String?         @map("short_issuecode") @db.VarChar(25)
 
   @@index([country, magazine, issuenumber, userId], map: "Numero_Utilisateur")
   // @@index([country, magazine, issueNumberNoSpace, userId], map: "Numero_nospace_Utilisateur")
   @@index([country, magazine, issuenumber], map: "Pays_Magazine_Numero")
   @@index([creationDate, country, magazine, issuenumber], map: "Pays_Magazine_Numero_DateAjout")
   @@index([userId], map: "Utilisateur")
+  @@index([shortIssuecode], map: "numeros_short_issuecode_index")
   @@map("numeros")
 }
 
@@ -168,7 +167,7 @@ model edge {
   creationDate        DateTime           @default(now()) @map("dateajout") @db.Timestamp(0)
   points              Int?
   slug                String?            @db.VarChar(30)
-  issuecode           String?            @unique(map: "tranches_pretes_issuecode_uindex") @db.VarChar(23)
+  shortIssuecode      String?            @unique(map: "tranches_pretes_issuecode_uindex") @map("short_issuecode") @db.VarChar(23)
   users_contributions userContribution[]
 
   @@unique([publicationcode, issuenumber], map: "tranchespretes_unique")
@@ -243,11 +242,12 @@ model user {
   bookcaseTexture2            String             @default("bois") @map("Bibliotheque_Texture2") @db.VarChar(20)
   bookcaseSubTexture2         String             @default("KNOTTY PINE") @map("Bibliotheque_Sous_Texture2") @db.VarChar(50)
   presentationText            String?            @map("TextePresentation") @db.VarChar(100)
+  marketplaceAcceptsExchanges Boolean            @default(false) @map("MarketplaceAccepteEchanges")
   lastAccess                  DateTime?          @map("DernierAcces") @db.DateTime(0)
   previousAccess              DateTime?          @map("PrecedentAcces") @db.DateTime(0)
-  marketplaceAcceptsExchanges Boolean            @default(true) @map("MarketplaceAccepteEchanges")
   abonnements                 subscription[]
   bouquineries_commentaires   bookstoreComment[]
+  numeros_demandes            requestedIssue[]
   users_contributions         userContribution[]
   users_options               userOption[]
 
@@ -292,7 +292,7 @@ model userOption {
 model userPasswordToken {
   id     Int    @id @default(autoincrement()) @map("ID")
   userId Int    @map("ID_User")
-  token  String @map("Token") @db.VarChar(16)
+  token  String @map("Token") @db.VarChar(256)
 
   @@unique([userId, token], map: "users_password_tokens_unique")
   @@map("users_password_tokens")
@@ -316,13 +316,13 @@ model users_points {
 }
 
 model userSuggestionNotification {
-  id        Int       @id @default(autoincrement()) @map("ID")
-  userId    Int       @map("ID_User")
-  issuecode String    @db.VarChar(12)
-  text      String?   @db.Text
-  date      DateTime? @default(now()) @db.DateTime(0)
+  id             Int       @id @default(autoincrement()) @map("ID")
+  userId         Int       @map("ID_User")
+  shortIssuecode String    @map("short_issuecode") @db.VarChar(12)
+  text           String?   @db.Text
+  date           DateTime? @default(now()) @db.DateTime(0)
 
-  @@unique([userId, issuecode], map: "users_notifications__index_user_issue")
+  @@unique([userId, shortIssuecode], map: "users_notifications__index_user_issue")
   @@map("users_suggestions_notifications")
 }
 
@@ -331,9 +331,10 @@ model requestedIssue {
   issueId  Int     @map("ID_Numero")
   buyerId  Int     @map("ID_Acheteur")
   isBooked Boolean @default(false) @map("est_reserve")
+  users    user    @relation(fields: [buyerId], references: [id], onUpdate: Restrict, map: "numeros_demandes_users_null_fk")
 
-  @@unique([issueId, buyerId], map: "numeros_demandes_ID_Numero_ID_Acheteur_uindex")
-  @@index([buyerId], map: "numeros_demandes_users_ID_fk")
+  @@unique([issueId, buyerId], map: "numeros_demandes_unique")
+  @@index([buyerId], map: "numeros_demandes_users_null_fk")
   @@map("numeros_demandes")
 }
 

@@ -33,7 +33,7 @@ const storiesWithDetails =
 watch(
   acceptedStories,
   async (value) => {
-    if (!issue.value?.issuecode) {
+    if (!issue.value?.shortIssuecode) {
       return undefined;
     }
     storiesWithDetails.value = await getStoriesWithDetails(value);

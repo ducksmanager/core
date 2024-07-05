@@ -8,7 +8,7 @@ type InputData = {
 };
 type Data = InputData & {
   ecLink: string;
-  issuecode: string;
+  shortIssuecode: string;
 };
 export default class extends Email {
   data: Data;
@@ -16,11 +16,11 @@ export default class extends Email {
 
   constructor(data: InputData) {
     super();
-    const issuecode = `${data.publicationcode} ${data.issuenumber}`;
+    const shortIssuecode = `${data.publicationcode} ${data.issuenumber}`;
     this.data = {
       ...data,
-      ecLink: `${process.env.EDGECREATOR_ROOT}/edit/${issuecode}`,
-      issuecode,
+      ecLink: `${process.env.EDGECREATOR_ROOT}/edit/${shortIssuecode}`,
+      shortIssuecode,
     };
   }
 
@@ -29,8 +29,8 @@ export default class extends Email {
   getTo = () => process.env.SMTP_USERNAME!;
   getToName = () => process.env.SMTP_FRIENDLYNAME!;
   getSubject = () =>
-    i18n.__("User {{username}} submitted the model of edge {{issuecode}}", {
+    i18n.__("User {{username}} submitted the model of edge {{shortIssuecode}}", {
       username: this.data.user.username,
-      issuecode: this.data.issuecode,
+      shortIssuecode: this.data.shortIssuecode,
     });
 }

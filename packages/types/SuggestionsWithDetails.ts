@@ -5,7 +5,7 @@ export type SuggestionsWithDetails = Omit<
   SuggestionList,
   "suggestionsPerUser"
 > & {
-  issues: { [issuecode: string]: IssueSuggestion };
+  issues: { [shortIssueCode: string]: IssueSuggestion };
   minScore: number;
   maxScore: number;
 };

@@ -30,7 +30,7 @@ meta:
     <div
       v-if="
         publishedEdges &&
-        issuesByIssueCode &&
+        issuesByShortIssuecode &&
         inducksIssueNumbersNoSpace &&
         Object.keys(inducksIssueNumbersNoSpace).length
       "
@@ -83,7 +83,7 @@ meta:
               :class="{
                 available: issuenumbers?.includes(inducksIssueNumber),
                 owned:
-                  issuesByIssueCode[
+                  issuesByShortIssuecode[
                     `${publicationcode} ${inducksIssueNumber}`
                   ]!!,
               }"
@@ -147,7 +147,7 @@ const { fetchPublicationNames, fetchIssueNumbers } = coa();
 const { publicationNames, issueNumbers } = storeToRefs(coa());
 
 const { loadCollection } = collection();
-const { issuesByIssueCode } = storeToRefs(collection());
+const { issuesByShortIssuecode } = storeToRefs(collection());
 
 const getEdgeUrl = (publicationcode: string, issuenumber: string): string => {
   const [country, magazine] = publicationcode.split("/");

@@ -63,7 +63,7 @@ import { app } from '~/stores/app';
 import { wtdcollection } from '~/stores/wtdcollection';
 
 const { updateCollectionSingleIssue } = wtdcollection();
-const { issuesByIssueCode } = storeToRefs(wtdcollection());
+const { issuesByShortIssuecode } = storeToRefs(wtdcollection());
 const { fetchCoverUrls } = coa();
 const { isOfflineMode, currentNavigationItem, isCoaView, publicationcode, issuenumber, extraIssuenumbers } =
   storeToRefs(app());
@@ -83,14 +83,14 @@ const { t } = useI18n();
 
 const coverUrl = computed(() => `${import.meta.env.VITE_CLOUDINARY_BASE_URL}${fullUrl.value}`);
 
-const issuecode = computed(() => `${publicationcode.value} ${issuenumber.value}`);
+const shortIssuecode = computed(() => `${publicationcode.value} ${issuenumber.value}`);
 
 const copies = ref<SingleCopyState[]>([]);
 
 watch(
-  issuesByIssueCode,
+  issuesByShortIssuecode,
   () => {
-    copies.value = issuesByIssueCode.value?.[issuecode.value!] || [];
+    copies.value = issuesByShortIssuecode.value?.[shortIssuecode.value!] || [];
   },
   { immediate: true },
 );

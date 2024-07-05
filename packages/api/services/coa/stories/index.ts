@@ -53,8 +53,6 @@ export default (socket: Socket<Events>) => {
 
   socket.on("searchStory", async (keywords, withIssues, callback) => {
     const limit = 10;
-
-    console.log(keywords)
     const joinedKeywords = keywords.join(" ");
     let results = await prismaCoa.$queryRaw<SimpleStory[]>`
       SELECT inducks_storyversion.storycode,
@@ -91,10 +89,10 @@ export default (socket: Socket<Events>) => {
 
 const listIssuesFromStoryCode = async (storycode: string) =>
   prismaCoa.$queryRaw<SimpleIssue[]>`
-      SELECT inducks_issue.issuecode, inducks_issue.publicationcode, inducks_issue.issuenumber
+      SELECT inducks_issue.publicationcode, inducks_issue.issuenumber, short_issuecode AS shortIssuecode,
       FROM inducks_issue
-               INNER JOIN inducks_entry ON inducks_entry.issuecode = inducks_issue.issuecode
-               INNER JOIN inducks_storyversion ON inducks_storyversion.storyversioncode = inducks_entry.storyversioncode
+               INNER JOIN inducks_entry USING (short_issuecode)
+               INNER JOIN inducks_storyversion USING (storyversioncode)
       WHERE inducks_storyversion.storycode = ${storycode}
       GROUP BY inducks_issue.publicationcode, inducks_issue.issuenumber
       ORDER BY inducks_issue.publicationcode, inducks_issue.issuenumber

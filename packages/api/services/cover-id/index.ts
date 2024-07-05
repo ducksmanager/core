@@ -49,15 +49,15 @@ export default (io: Server) => {
       )
         .then(async (covers) => {
           const coversIdsAndIssueCodes = covers.reduce<Record<string, number>>(
-            (acc, { id, issuecode }) => ({ ...acc, [issuecode]: id }),
+            (acc, { id, shortIssuecode }) => ({ ...acc, [shortIssuecode]: id }),
             {},
           );
           return getCoverUrls(Object.keys(coversIdsAndIssueCodes)).then(
             (coverUrls) =>
-              coverUrls.map(({ issuecode, fullUrl }) => ({
-                issuecode,
+              coverUrls.map(({ shortIssuecode, fullUrl }) => ({
+                shortIssuecode,
                 fullUrl,
-                id: coversIdsAndIssueCodes[issuecode],
+                id: coversIdsAndIssueCodes[shortIssuecode],
               })),
           );
         })
@@ -70,7 +70,7 @@ export default (io: Server) => {
           ),
         );
       const foundIssueCodes = [
-        ...new Set(coverInfos.map(({ issuecode }) => issuecode)),
+        ...new Set(coverInfos.map(({ shortIssuecode }) => shortIssuecode)),
       ];
       console.log(
         `Cover ID search: matched issue codes ${foundIssueCodes.join(",")}`,
@@ -79,8 +79,8 @@ export default (io: Server) => {
       const issues = await getIssuesFromIssueCodes(foundIssueCodes);
       console.log(`Cover ID search: matched ${coverInfos.length} issues`);
 
-      const quotationsByIssuecode = (await getQuotationsByIssueCodes(issues.map(({ issuecode }) => issuecode))).reduce<Record<string, Pick<inducks_issuequotation, 'estimationMin' | 'estimationMax'>>>(
-        (acc, { issuecode, estimationMin, estimationMax }) => ({ ...acc, [issuecode!]: { estimationMin, estimationMax } }),
+      const quotationsByIssuecode = (await getQuotationsByIssueCodes(issues.map(({ shortIssuecode }) => shortIssuecode))).reduce<Record<string, Pick<inducks_issuequotation, 'estimationMin' | 'estimationMax'>>>(
+        (acc, { shortIssuecode, estimationMin, estimationMax }) => ({ ...acc, [shortIssuecode!]: { estimationMin, estimationMax } }),
         {},
       );
 
@@ -89,7 +89,7 @@ export default (io: Server) => {
         covers: coverInfos.map((cover) =>
           Object.assign(
             cover,
-            { ...issues.find(({ issuecode }) => cover.issuecode === issuecode)!, ...quotationsByIssuecode[cover.issuecode] },
+            { ...issues.find(({ shortIssuecode }) => cover.shortIssuecode === shortIssuecode)!, ...quotationsByIssuecode[cover.shortIssuecode] },
           ),
         ),
       });
@@ -130,10 +130,10 @@ export default (io: Server) => {
   });
 };
 
-const getIssuesFromIssueCodes = async (foundIssueCodes: string[]) =>
+const getIssuesFromIssueCodes = async (foundShortIssueCodes: string[]) =>
   prismaCoa.inducks_issue.findMany({
     select: {
-      issuecode: true,
+      shortIssuecode: true,
       publicationcode: true,
       issuenumber: true,
     },
@@ -144,12 +144,12 @@ const getIssuesFromIssueCodes = async (foundIssueCodes: string[]) =>
       issuenumber: {
         not: null,
       },
-      issuecode: {
-        in: foundIssueCodes,
+      shortIssuecode: {
+        in: foundShortIssueCodes
       },
     },
   }) as Promise<
-    { publicationcode: string; issuenumber: string; issuecode: string }[]
+    { publicationcode: string; issuenumber: string; shortIssuecode: string }[]
   >;
 
 const getIssuesCodesFromCoverIds = async (coverIds: number[]) =>

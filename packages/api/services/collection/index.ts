@@ -119,12 +119,11 @@ export default (io: Server) => {
               userId: socket.data.user!.id,
             },
             select: {
-              publicationcode: true,
-              issuenumber: true,
+                shortIssuecode: true,
             },
           })
         ).map(
-          (issue) => `${issue.publicationcode} ${issue.issuenumber}`,
+          (issue) => `${issue.shortIssuecode}`,
         ) as string[];
         callback(
           (
@@ -133,7 +132,7 @@ export default (io: Server) => {
                 creationDate: {
                   gt: threeMonthsAgo,
                 },
-                issuecode: {
+                shortIssuecode: {
                   in: userIssues,
                 },
               },

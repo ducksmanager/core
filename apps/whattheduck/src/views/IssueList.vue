@@ -109,12 +109,12 @@ const items = computed(() =>
             item: Item;
           }[]
         >(
-          (acc, { issuecode, issuenumber }) => [
+          (acc, { shortIssuecode, issuenumber }) => [
             ...acc,
             ...userIssues.value
               .filter(({ issuenumber: userIssueNumber }) => issuenumber === userIssueNumber)
               .map((item) => ({
-                key: issuecode,
+                key: shortIssuecode,
                 item,
               })),
           ],

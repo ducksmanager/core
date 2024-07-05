@@ -3,7 +3,7 @@ export interface SimpleIssueWithPublication {
   publicationcode: string;
   title: string;
   issuenumber: string;
-  issuecode: string;
+  shortIssuecode: string;
   coverId: number | null;
   fullUrl: string | null;
   popularity: number | null;

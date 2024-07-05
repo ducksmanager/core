@@ -329,11 +329,7 @@
         v-on="
           contextMenuComponentName === 'context-menu-on-sale-by-others'
             ? {
-                'launch-modal': () =>
-                  emit(
-                    'launch-modal',
-                    Object.assign({}, $event, { selectedIssueIds: issueIds }),
-                  ),
+                'launch-modal': launchModal,
               }
             : {}
         "
@@ -390,15 +386,14 @@ let clicks = $ref(0);
 let timer = $ref(null as NodeJS.Timeout | null);
 const doubleClickDelay = 500;
 
+type LaunchModalOptions = {
+  contactMethod: string;
+  sellerId: number;
+  selectedIssueIds: number[];
+};
+
 const emit = defineEmits<{
-  (
-    e: "launch-modal",
-    options: {
-      contactMethod: string;
-      sellerId: number;
-      selectedIssueIds: number[];
-    },
-  ): void;
+  (e: "launch-modal", options: LaunchModalOptions): void;
 }>();
 
 let contextMenuComponent:
@@ -682,6 +677,10 @@ const loadIssues = async () => {
     );
     loading = false;
   }
+};
+
+const launchModal = (event: LaunchModalOptions) => {
+  emit("launch-modal", { ...event, selectedIssueIds: issueIds });
 };
 
 watch($$(preselectedIndexEnd), () => {

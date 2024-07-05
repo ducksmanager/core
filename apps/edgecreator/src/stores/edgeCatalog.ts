@@ -8,7 +8,7 @@ import { dmSocketInjectionKey } from "~web/src/composables/useDmSocket";
 interface Edge {
   country: string;
   magazine: string;
-  issuecode: string;
+  shortIssuecode: string;
   issuenumber: string;
   designers: string[];
   photographers: string[];
@@ -154,7 +154,7 @@ export const edgeCatalog = defineStore("edgeCatalog", () => {
     //   { country, magazine, issuenumber, contributors, photos }: EdgeModel,
     //   status: string
     // ) => {
-    //   const issuecode = `${country}/${magazine} ${issuenumber}`;
+    //   const shortIssuecode = `${country}/${magazine} ${issuenumber}`;
     //   const getContributorsOfType = (contributionType: string) =>
     //     (contributors ?? [])
     //       .filter(({ contribution }) => contribution === contributionType)
@@ -168,7 +168,7 @@ export const edgeCatalog = defineStore("edgeCatalog", () => {
     //     country,
     //     magazine,
     //     issuenumber,
-    //     issuecode,
+    //     shortIssuecode,
     //     v3: false,
     //     designers: getContributorsOfType("createur"),
     //     photographers: getContributorsOfType("photographe"),
@@ -195,12 +195,12 @@ export const edgeCatalog = defineStore("edgeCatalog", () => {
       country,
       magazine,
       issuenumber,
-      issuecode,
+      shortIssuecode,
     }: {
       country: string;
       magazine: string;
       issuenumber: string;
-      issuecode: string;
+      shortIssuecode: string;
     }) => {
       let isPublished = false;
       const publicationcode = `${country}/${magazine}`;
@@ -211,7 +211,7 @@ export const edgeCatalog = defineStore("edgeCatalog", () => {
       }
 
       return (
-        currentEdges.value[issuecode] || {
+        currentEdges.value[shortIssuecode] || {
           status: isPublished ? "Published" : "none",
         }
       ).status;
@@ -256,11 +256,11 @@ export const edgeCatalog = defineStore("edgeCatalog", () => {
               };
             } else {
               const publicationcode = `${country}/${magazine}`;
-              const issuecode = `${publicationcode} ${issuenumber}`;
-              newCurrentEdges[issuecode] = getEdgeFromSvg({
+              const shortIssuecode = `${publicationcode} ${issuenumber}`;
+              newCurrentEdges[shortIssuecode] = getEdgeFromSvg({
                 country,
                 magazine,
-                issuecode,
+                shortIssuecode,
                 issuenumber,
                 designers,
                 photographers,

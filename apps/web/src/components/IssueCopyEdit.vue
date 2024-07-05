@@ -41,7 +41,7 @@
     <v-contextmenu-group :title="$t('Date d\'achat')">
       <template
         v-for="{ label: stateText, value: stateId } in purchaseStates"
-        :key="`copy-${copyState.copyIndex}-purchase-state-${stateId}`"
+        :key="`copy-${copyIndex}-purchase-state-${stateId}`"
       >
         <template v-if="isSingleIssueSelected && stateId === undefined" />
         <v-contextmenu-item
@@ -160,7 +160,7 @@
           tooltip,
           disabled,
         } in marketplaceStates"
-        :key="`copy-${copyState.copyIndex}-marketplace-state-${
+        :key="`copy-${copyIndex}-marketplace-state-${
           JSON.stringify(stateId) || stateId
         }`"
       >

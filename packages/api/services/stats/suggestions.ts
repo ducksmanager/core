@@ -92,9 +92,9 @@ const getStoryDetails = async (
              COALESCE(entry.title, story.title) as title,
              null as personcode
       FROM inducks_story as story
-          INNER JOIN inducks_storyversion storyversion on story.storycode = storyversion.storycode
-          INNER JOIN inducks_entry entry on storyversion.storyversioncode = entry.storyversioncode
-          INNER JOIN inducks_issue issue on entry.issuecode = issue.issuecode
+          INNER JOIN inducks_storyversion USING (storycode)
+          INNER JOIN inducks_entry entry USING (storyversioncode)
+          INNER JOIN inducks_issue issue USING (short_issuecode)
           WHERE ${storyCodes
         .map(
           (storyCode, idx) =>
@@ -196,18 +196,18 @@ export const getSuggestions = async (
         suggestionsPerUser[userId] = new IssueSuggestionList();
       }
 
-      const issuecode = [
+      const shortIssuecode = [
         suggestedStory.publicationcode,
         suggestedStory.issuenumber,
       ].join(" ");
       if (
         limit &&
-        !suggestionsPerUser[userId].issues[issuecode] &&
+        !suggestionsPerUser[userId].issues[shortIssuecode] &&
         Object.keys(suggestionsPerUser[userId].issues).length >= limit
       ) {
         continue;
       }
-      let issue = suggestionsPerUser[userId].issues[issuecode];
+      let issue = suggestionsPerUser[userId].issues[shortIssuecode];
       if (!issue) {
         issue = {
           issuenumber: suggestedStory.issuenumber,
@@ -218,7 +218,7 @@ export const getSuggestions = async (
             (typeof suggestedStory.oldestdate === "string"
               ? suggestedStory.oldestdate
               : suggestedStory.oldestdate?.toISOString().split("T")[0]) || "",
-          issuecode,
+              shortIssuecode,
           stories: {},
         } as IssueSuggestion;
       }
@@ -226,7 +226,7 @@ export const getSuggestions = async (
         issue.stories[suggestedStory.personcode] = [];
       }
       issue.stories[suggestedStory.personcode].push(suggestedStory.storycode);
-      suggestionsPerUser[userId].issues[issue.issuecode] = issue;
+      suggestionsPerUser[userId].issues[issue.shortIssuecode] = issue;
       referencedIssues.push(issue);
       referencedStories.push(suggestedStory);
     }
