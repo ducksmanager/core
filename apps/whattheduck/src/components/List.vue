@@ -179,7 +179,7 @@ const { t } = useI18n();
 const { filterText, selectedIssuenumbers, currentNavigationItem, publicationcode } = storeToRefs(app());
 
 const toggleCheckedIssuenumber = (item: Item) => {
-  selectedIssuenumbers.value = toggleElement(selectedIssuenumbers.value, item.issuenumber);
+  selectedIssuenumbers.value = toggleElement(selectedIssuenumbers.value!, item.issuenumber);
 };
 
 const updateNavigationToSelectedIssuenumbers = () => {

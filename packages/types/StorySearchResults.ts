@@ -1,6 +1,6 @@
-import { SimpleStory } from "./SimpleStory";
+import { SimpleStoryWithPartInfo } from "./SimpleStory";
 
 export interface StorySearchResults {
-  results: SimpleStory[];
+  results: SimpleStoryWithPartInfo[];
   hasMore: boolean;
 }

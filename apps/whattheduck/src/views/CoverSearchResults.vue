@@ -141,7 +141,7 @@ const covers = computed(() =>
 );
 
 const onMainSlideClick = async ({ index }: { index: number }) => {
-  currentNavigationItem.value = covers.value[index]!.shortIssuecode.replace(/[ ]{2,}/g, ' ');
+  currentNavigationItem.value = covers.value[index]!.shortIssuecode;
   router.push('/collection');
 };
 </script>

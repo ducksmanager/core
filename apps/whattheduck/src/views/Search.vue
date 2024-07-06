@@ -24,11 +24,9 @@
 
       <ion-list v-if="storyResults?.results && !selectedStory">
         <ion-item v-for="story of storyResults?.results" @click="selectedStory = story">
-          <ion-label
-            ><condition v-for="condition of story.collectionConditions" :value="condition" />{{
-              story.title
-            }}</ion-label
-          >
+          <ion-label>
+            <condition v-for="condition of story.collectionConditions" :value="condition" />{{ story.title }}
+          </ion-label>
         </ion-item>
       </ion-list>
       <template v-if="selectedStory">
@@ -57,7 +55,7 @@
 
 <script setup lang="ts">
 import { arrowBackOutline, arrowBackSharp } from 'ionicons/icons';
-import type { StorySearchResults } from '~dm-types/StorySearchResults';
+import type { SimpleStory } from '~dm-types/SimpleStory';
 import type { issue_condition } from '~prisma-clients/client_dm';
 import { stores } from '~web';
 import { dmSocketInjectionKey } from '~web/src/composables/useDmSocket';
@@ -80,8 +78,7 @@ const { publicationNames } = storeToRefs(coaStore);
 const { currentNavigationItem } = storeToRefs(app());
 const router = useRouter();
 
-type StoryResult = StorySearchResults['results'][number];
-type AugmentedStoryResult = StoryResult & {
+type AugmentedStoryResult = SimpleStory & {
   collectionConditions: issue_condition[];
   issues: {
     countrycode: string;
@@ -111,21 +108,45 @@ watch(storyTitle, async (newValue) => {
 
   storyResults.value = {
     results: data.map((story) => {
-      const collectionIssues = story.issues.map(
-        ({ shortIssuecode }) => issuesByShortIssuecode.value![shortIssuecode.replace(/ +/g, ' ')] || [],
-      );
+      const collectionIssues = story.issues.map((storyIssue) => {
+        const { part, estimatedpanels, total_estimatedpanels } = storyIssue;
+        return (issuesByShortIssuecode.value![storyIssue.shortIssuecode] || []).map((issue) => ({
+          ...issue,
+          partInfo: { part, estimatedpanels, total_estimatedpanels },
+        }));
+      });
+
       const collectionConditions = collectionIssues.flat().map(({ condition }) => condition);
       return {
         ...story,
         collectionConditions,
-        issues: story.issues.map(({ publicationcode, issuenumber, shortIssuecode }, idx) => ({
-          publicationcode,
-          countrycode: publicationcode.split('/')[0],
-          publicationName: publicationNames.value[publicationcode] || publicationcode,
-          issuenumber,
-          shortIssuecode,
-          collectionIssues: collectionIssues[idx]!,
-        })),
+        issues: story.issues.map(
+          (
+            {
+              publicationcode,
+              issuenumber,
+              shortIssuecode,
+              estimatedpanels,
+              total_estimatedpanels,
+              part,
+              storyversioncode,
+            },
+            idx,
+          ) => ({
+            publicationcode,
+            countrycode: publicationcode.split('/')[0],
+            publicationName: publicationNames.value[publicationcode] || publicationcode,
+            issuenumber,
+            shortIssuecode,
+            collectionIssues: collectionIssues[idx]!,
+            partInfo: {
+              estimatedpanels,
+              total_estimatedpanels,
+              part,
+              storyversioncode,
+            },
+          }),
+        ),
       };
     }),
   };

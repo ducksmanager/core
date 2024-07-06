@@ -1,7 +1,10 @@
 <template>
   <ion-col :class="`ion-align-items-center ion-text-nowrap ${(classes || []).join(' ')}`"
     ><Country :id="issue.countrycode" :label="issue.countryname" /> &nbsp;<template v-if="showIssueConditions"
-      >&nbsp;<condition v-for="collectionIssue of issue.collectionIssues" :value="collectionIssue.condition"
+      >&nbsp;<condition-with-part
+        v-for="collectionIssue of issue.collectionIssues"
+        :value="collectionIssue.condition"
+        :part-info="issue.partInfo"
     /></template>
     <div>
       {{ issue.publicationName }}
@@ -12,6 +15,8 @@
 </template>
 
 <script setup lang="ts">
+import type { PartInfo } from '~dm-types/SimpleIssue';
+
 import type { IssueWithCollectionIssues } from '~/stores/wtdcollection';
 
 const props = defineProps<{
@@ -19,7 +24,9 @@ const props = defineProps<{
   issue: Pick<
     IssueWithCollectionIssues,
     'countrycode' | 'countryname' | 'publicationName' | 'issuenumber' | 'collectionIssues'
-  >;
+  > & {
+    partInfo?: PartInfo;
+  };
 }>();
 
 const showIssueConditions = computed(() => 'collectionIssues' in props.issue);

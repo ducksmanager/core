@@ -1,6 +1,6 @@
 import type { Socket } from "socket.io";
 
-import type { SimpleIssue } from "~dm-types/SimpleIssue";
+import type { SimpleIssueWithPartInfo } from "~dm-types/SimpleIssue";
 import type { SimpleStory } from "~dm-types/SimpleStory";
 import { prismaCoa } from "~prisma-clients";
 
@@ -88,12 +88,19 @@ export default (socket: Socket<Events>) => {
 };
 
 const listIssuesFromStoryCode = async (storycode: string) =>
-  prismaCoa.$queryRaw<SimpleIssue[]>`
-      SELECT inducks_issue.publicationcode, inducks_issue.issuenumber, inducks_issue.short_issuecode AS shortIssuecode,
-      FROM inducks_issue
-               INNER JOIN inducks_entry USING (short_issuecode)
-               INNER JOIN inducks_storyversion USING (storyversioncode)
-      WHERE inducks_storyversion.storycode = ${storycode}
-      GROUP BY inducks_issue.publicationcode, inducks_issue.issuenumber
-      ORDER BY inducks_issue.publicationcode, inducks_issue.issuenumber
+  prismaCoa.$queryRaw<SimpleIssueWithPartInfo[]>`
+    SELECT i.publicationcode,
+           i.issuenumber,
+           i.short_issuecode AS shortIssuecode,
+           e.storyversioncode,
+           e.part,
+           sv.estimatedpanels,
+           sv_o.estimatedpanels AS total_estimatedpanels
+    FROM inducks_issue i
+      INNER JOIN inducks_entry e USING (short_issuecode)
+      INNER JOIN inducks_storyversion sv USING (storyversioncode)
+      INNER JOIN inducks_storyversion sv_o ON sv.storycode = sv_o.storyversioncode
+    WHERE sv.storycode = ${storycode}
+    GROUP BY i.publicationcode, i.issuenumber
+    ORDER BY i.publicationcode, i.issuenumber
   `;

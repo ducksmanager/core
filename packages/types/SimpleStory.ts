@@ -1,4 +1,4 @@
-import { SimpleIssue } from "./SimpleIssue";
+import { SimpleIssue, SimpleIssueWithPartInfo } from "./SimpleIssue";
 
 export interface SimpleStory {
   storycode: string;
@@ -6,4 +6,8 @@ export interface SimpleStory {
   title: string;
   score: number;
   issues: SimpleIssue[];
+}
+
+export interface SimpleStoryWithPartInfo extends SimpleStory {
+  issues: SimpleIssueWithPartInfo[];
 }
