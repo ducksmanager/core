@@ -35,6 +35,7 @@
     "@ionic/vue": "^8.2.5",
     "@ionic/vue-router": "^8.2.5",
     "@nanoandrew4/vue3-carousel-3d": "^1.0.0",
+    "@vueuse/components": "^10.11.0",
     "@vueuse/core": "^10.11.0",
     "@vueuse/integrations": "^10.11.0",
     "chart.js": "^4.4.3",

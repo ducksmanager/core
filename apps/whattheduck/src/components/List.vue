@@ -18,11 +18,27 @@
         v-for="{ key, item, isOwned, nextItemType } in filteredItems"
         :is-owned="isOwned"
         :next-item-type="nextItemType"
-        @click="updateCurrentNavigationItem(key)"
-        @ionChange="toggleCheckedIssuenumber(item)"     
-        v-on-long-press.prevent="
-        toggleCheckedIssuenumber(item)
-        "
+        v-on-long-press.prevent="[() => {
+          if (allowMultipleSelection) {
+            selectedIssuenumbers = []
+          toggleCheckedIssuenumber(item)
+          }
+          else {
+            currentNavigationItem = key
+          }
+        }, {
+          delay: 500,
+          onMouseUp: (_: number,__: number,isLongPress: boolean) => {
+            if (!isLongPress) {
+              if (allowMultipleSelection && selectedIssuenumbers !== null) {
+                toggleCheckedIssuenumber(item)
+              }
+              else {
+                currentNavigationItem = key
+              }
+            }
+          }
+        }]"
       >
         <template #fill-bar v-if="item">
           <slot name="fill-bar" :item="item" />
@@ -35,10 +51,20 @@
         </template>
         <template #suffix>
           <slot name="row-suffix" :item="item" />
-        </template> </Row
+        </template>
+      </Row>
+      <div id="edit-issues-buttons" v-if="selectedIssuenumbers">
+        <EditIssuesConfirmCancelButtons
+          :confirm-ios="pencilOutline"
+          :confirm-md="pencilSharp"
+          :cancel-ios="closeOutline"
+          :cancel-md="closeSharp"
+          @cancel="selectedIssuenumbers = null"
+          @confirm="updateNavigationToSelectedIssuenumbers"
+        /></div
     ></template>
     <slot v-else name="default" />
-    <EditIssuesButton @show-camera-preview="showCameraPreview = true" />
+    <EditIssuesButton v-if="!selectedIssuenumbers" @show-camera-preview="showCameraPreview = true" />
 
     <template v-if="showCameraPreview">
       <div :id="cameraPreviewElementId">
@@ -70,7 +96,8 @@ import type { CameraPreviewOptions } from '@capacitor-community/camera-preview';
 import { CameraPreview } from '@capacitor-community/camera-preview';
 import type { ScrollDetail } from '@ionic/vue';
 import { IonContent, isPlatform } from '@ionic/vue';
-import { apertureOutline, apertureSharp, closeOutline, closeSharp } from 'ionicons/icons';
+import { vOnLongPress } from '@vueuse/components';
+import { apertureOutline, apertureSharp, closeOutline, closeSharp, pencilOutline, pencilSharp } from 'ionicons/icons';
 
 import useCoverSearch from '~/composables/useCoverSearch';
 import { app } from '~/stores/app';
@@ -83,16 +110,20 @@ defineSlots<{
   'row-suffix'(props: { item: Item }): any;
 }>();
 
-const props = defineProps<{
-  items: { key: string; item: Item; isOwned?: boolean; nextItemType?: 'same' | 'owned' | undefined }[];
-  getItemTextFn: (item: Item) => string;
-  issueViewModes?: { label: string; icon: { ios: string; md: string } }[];
-  filter?: { label: string; icon: { ios: string; md: string } }[];
-  isMultipleSelection?: boolean
-}>();
+const props = withDefaults(
+  defineProps<{
+    items: { key: string; item: Item; isOwned?: boolean; nextItemType?: 'same' | 'owned' | undefined }[];
+    getItemTextFn: (item: Item) => string;
+    issueViewModes?: { label: string; icon: { ios: string; md: string } }[];
+    filter?: { label: string; icon: { ios: string; md: string } }[];
+    allowMultipleSelection?: boolean;
+  }>(),
+  {
+    allowMultipleSelection: false,
+  },
+);
 
-const emit = defineEmits<{ (e: "items-filtered", items: string[]): void; (e: "enable-multiple-selection"): void }>();
-
+const emit = defineEmits<(e: 'items-filtered', items: string[]) => void>();
 
 const {
   coverId: { services: coverIdServices },
@@ -106,6 +137,9 @@ const cameraY = 150 + parseInt(String(cameraHeight / 2));
 const showCameraPreview = ref(false);
 const cameraPreviewElementId = 'cameraPreview';
 const { takePhoto } = useCoverSearch(useRouter(), coverIdServices);
+
+const toggleElement = <T,>(arr: T[], element: T): T[] =>
+  arr.includes(element) ? arr.filter((el) => el !== element) : [...arr, element];
 
 watch(showCameraPreview, () => {
   if (showCameraPreview.value) {
@@ -142,22 +176,17 @@ const onScroll = (e: CustomEvent<ScrollDetail>) => {
 
 const { t } = useI18n();
 
-const { currentNavigationItem, filterText, selectedIssuenumbers, publicationcode } = storeToRefs(app());
+const { filterText, selectedIssuenumbers, currentNavigationItem, publicationcode } = storeToRefs(app());
 
-const updateCurrentNavigationItem = (key: string) => {
-  const selected = Object.entries(selectedIssuenumbers.value)
-    .filter(([, value]) => value)
-    .map(([key]) => key);
-  currentNavigationItem.value = key;
-  if (selected.length) {
-    currentNavigationItem.value = `${publicationcode.value} ${selected.join(',')}`;
-  }
+const toggleCheckedIssuenumber = (item: Item) => {
+  selectedIssuenumbers.value = toggleElement(selectedIssuenumbers.value, item.issuenumber);
 };
 
-const toggleCheckedIssuenumber = (item: Item ) => {
-  emit('enable-multiple-selection')
-  selectedIssuenumbers.value[item.issuenumber] = !selectedIssuenumbers.value[item.issuenumber]
-}
+const updateNavigationToSelectedIssuenumbers = () => {
+  if (selectedIssuenumbers.value!.length) {
+    currentNavigationItem.value = `${publicationcode.value} ${selectedIssuenumbers.value!.join(',')}`;
+  }
+};
 
 const itemInCenterOfViewport = computed(() => {
   if (!props.items.length) {
@@ -308,5 +337,10 @@ img {
   position: absolute;
   width: 50%;
   height: 50%;
+}
+
+ion-fab {
+  position: fixed;
+  bottom: 8px;
 }
 </style>

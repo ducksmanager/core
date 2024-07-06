@@ -139,7 +139,6 @@ ion-grid {
 
       &:not(.vertical) {
         ion-radio {
-          border: 1px solid gray;
           border-radius: 12px;
           height: 20px;
           width: 20px;

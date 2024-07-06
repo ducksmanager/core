@@ -40,24 +40,24 @@
         <owned-issue-copy v-if="currentCopyIndex !== undefined" v-model="copies[currentCopyIndex]" />
       </ion-col>
     </ion-row>
-    <div id="edit-issues-buttons" v-if="!isOfflineMode">
-      <ion-fab>
-        <ion-fab-button color="light" @click="currentNavigationItem = publicationcode!"
-          ><ion-icon :ios="closeOutline" :md="closeSharp" /></ion-fab-button
-      ></ion-fab>
-      <ion-fab>
-        <ion-fab-button color="success" @click="submitIssueCopies"
-          ><ion-icon :ios="checkmarkOutline" :md="checkmarkSharp" /></ion-fab-button
-      ></ion-fab>
-    </div>
+    <EditIssuesConfirmCancelButtons
+      :confirm-ios="checkmarkOutline"
+      :confirm-md="checkmarkSharp"
+      :cancel-ios="closeOutline"
+      :cancel-md="closeSharp"
+      @cancel="currentNavigationItem = publicationcode!"
+      confirm-color="success"
+      @confirm="submitIssueCopies"
+    />
   </ion-content>
 </template>
 
 <script lang="ts" setup>
-import { addOutline, addSharp, closeOutline, closeSharp, checkmarkOutline, checkmarkSharp } from 'ionicons/icons';
+import { addOutline, addSharp, checkmarkOutline, checkmarkSharp, closeOutline, closeSharp } from 'ionicons/icons';
 import type { SingleCopyState } from '~dm-types/CollectionUpdate';
 
 import Condition from './Condition.vue';
+import EditIssuesConfirmCancelButtons from './EditIssuesConfirmCancelButtons.vue';
 
 import { app } from '~/stores/app';
 import { wtdcollection } from '~/stores/wtdcollection';
@@ -172,21 +172,6 @@ ion-icon.delete {
   left: -5px;
   height: calc(100% - 10px);
   width: 28px;
-}
-
-#edit-issues-buttons {
-  position: fixed;
-  width: 100%;
-  bottom: 1rem;
-  display: flex;
-  justify-content: center;
-  z-index: 2;
-  opacity: 0.7;
-
-  ion-fab {
-    position: static;
-    margin: 0 0.5rem;
-  }
 }
 
 ion-chip {

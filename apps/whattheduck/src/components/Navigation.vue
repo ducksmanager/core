@@ -19,7 +19,7 @@
           :title="publicationNames?.[publicationcode] || publicationcode"
         />
         <template v-if="partIdx === 4 && issuenumber !== undefined"
-          ><div>
+          ><div style="display: flex; align-items: center">
             <Issue :issuenumber="issuenumber" /><template v-if="extraIssuenumbers.length"
               ><ion-chip :outline="true">+&nbsp;{{ extraIssuenumbers.length - 1 }}</ion-chip></template
             >

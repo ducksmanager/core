@@ -5,7 +5,7 @@ import type useDmSocket from '~web/src/composables/useDmSocket';
 import usePersistedData from '~/composables/usePersistedData';
 
 export const NAVIGATION_ITEM_REGEX =
-  /^(?:$|(?<countrycode>[^/]+)(?:$|(?:\/(?<magazinecode>[^ ]+)(?:$|(?: (?<issuenumber>.+)(?<extra_issuenumbers>,.*))))))$/;
+  /^(?:$|(?<countrycode>[^/]+)(?:$|(?:\/(?<magazinecode>[^ ]+)(?:$|(?: (?<issuenumber>.+)(?<extra_issuenumbers>,.*)?)))))$/;
 
 export const app = defineStore('app', () => {
   const innerTopMargin = ref(0);
@@ -26,7 +26,7 @@ export const app = defineStore('app', () => {
   const isPersistedDataLoaded = ref(false);
   const filterText = ref('');
 
-  const selectedIssuenumbers = ref<Record<string, boolean>>({});
+  const selectedIssuenumbers = ref<string[] | null>(null);
 
   const issueViewModes = [
     { id: 'list', label: 'List', icon: { ios: '/icons/list.svg', md: '/icons/list.svg' } },
@@ -74,7 +74,7 @@ export const app = defineStore('app', () => {
   );
 
   watch(currentNavigationItem, async (code) => {
-    selectedIssuenumbers.value = {};
+    selectedIssuenumbers.value = null;
     if (route.name === 'Collection') {
       window.location.hash = code;
     } else {

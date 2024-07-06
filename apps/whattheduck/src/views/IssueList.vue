@@ -3,14 +3,11 @@
     v-if="hasCoaData"
     :items="sortedItems"
     :get-item-text-fn="getItemTextFn"
-    :is-multiple-selection="isMultipleSelection"
-    @enable-multiple-selection="isMultipleSelection = true"
     @items-filtered="filteredIssuenumbers = $event"
+    allow-multiple-selection
   >
     <template v-if="currentIssueViewMode.id === 'list'" #row-prefix="{ item }">
-      <ion-checkbox
-        v-if="isMultipleSelection"
-        :checked="selectedIssuenumbers[item.issuenumber]"
+      <ion-checkbox v-if="selectedIssuenumbers" :checked="selectedIssuenumbers.includes(item.issuenumber)"
         >&nbsp;</ion-checkbox
       >
       <Condition v-if="item.condition" :value="item.condition" />
@@ -98,9 +95,8 @@ const userIssues = computed(() =>
   (issues.value || []).filter((issue) => issue.publicationcode === publicationcode.value),
 );
 
-const isMultipleSelection = ref(false)
 watch(isCoaView, () => {
-  isMultipleSelection.value = isCoaView.value;
+  selectedIssuenumbers.value = [];
 });
 
 type Item = NonNullable<(typeof issues)['value']>[number];
@@ -285,5 +281,9 @@ ion-modal {
 
 ion-range {
   padding: 0 8px;
+}
+
+ion-checkbox {
+  pointer-events: none;
 }
 </style>
