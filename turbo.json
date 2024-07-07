@@ -3,6 +3,7 @@
   "ui": "tui",
   "tasks": {
     "prisma-pull-generate": {},
+    "lint": {},
     "prisma-generate": {
       "cache": false
     },
