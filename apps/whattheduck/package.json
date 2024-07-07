@@ -87,7 +87,7 @@
     "unplugin-vue-components": "^0.27.2",
     "vite": "^5.3.3",
     "vitest": "^1.6.0",
-    "vue-tsc": "^2.0.24"
+    "vue-tsc": "^2.0.26"
   },
   "description": "What The Duck",
   "prettier": "@ionic/prettier-config",

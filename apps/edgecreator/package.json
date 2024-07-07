@@ -16,7 +16,7 @@
   },
   "dependencies": {
     "@popperjs/core": "^2.11.8",
-    "@unhead/vue": "^1.9.14",
+    "@unhead/vue": "^1.9.15",
     "@uppy/core": "^1.20.1",
     "@uppy/dashboard": "^1.21.1",
     "@uppy/drag-drop": "^1.4.31",
@@ -78,7 +78,7 @@
     "vite": "^5.3.3",
     "vite-plugin-pages": "^0.32.3",
     "vite-plugin-vue-layouts": "^0.11.0",
-    "vue-tsc": "^2.0.24"
+    "vue-tsc": "^2.0.26"
   },
   "eslintConfig": {
     "extends": "@antfu"
