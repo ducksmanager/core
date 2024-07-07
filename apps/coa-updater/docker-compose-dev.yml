@@ -1,0 +1,23 @@
+services:
+  coa-updater:
+    init: true
+    container_name: coa-updater
+    build:
+      context: .
+    command: 'run index.ts'
+    volumes:
+      - .:/home/bun/app
+      - inducks_data:/tmp/inducks
+    environment:
+      MYSQL_HOST: db
+      MYSQL_DATABASE: coa
+      MYSQL_DATABASE_NEW: coa_new
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+    networks:
+      - db-network
+
+volumes:
+  inducks_data:
+networks:
+  db-network:
+    external: true

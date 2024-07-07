@@ -1,5 +1,5 @@
 FROM debian:buster-slim
-MAINTAINER Bruno Perel
+LABEL maintainer="Bruno Perel"
 
 RUN apt-get update && \
     apt-get install -y mariadb-client wget csvtool && \
