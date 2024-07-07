@@ -10,22 +10,24 @@
     </ion-header>
     <ion-content :fullscreen="true" v-if="issues">
       <ion-row style="height: 25vh" class="ion-text-center">
-        <ion-row class="ion-text-center" style="height: 75%">
-          <ion-col size="4" class="text-big">{{ ownedCountries!.length }}</ion-col
-          ><ion-col size="4" class="text-big">{{ ownedPublications!.length }}</ion-col
-          ><ion-col size="4" class="text-big">{{ total }}</ion-col></ion-row
-        >
-        <ion-row class="ion-text-center" style="height: 25%">
-          <ion-col size="4">{{ t('pays') }}</ion-col
-          ><ion-col size="4">{{ t('publications') }}</ion-col
-          ><ion-col size="4" style="flex-direction: column"
-            ><div>{{ t('numéros') }}</div>
-            <small>{{
+        <ion-row style="max-height: 120px">
+          <ion-row class="ion-text-center" style="height: 75%">
+            <ion-col size="4" class="text-big">{{ ownedCountries!.length }}</ion-col
+            ><ion-col size="4" class="text-big">{{ ownedPublications!.length }}</ion-col
+            ><ion-col size="4" class="text-big">{{ total }}</ion-col></ion-row
+          >
+          <ion-row class="ion-text-center" style="height: 25%">
+            <ion-col size="4">{{ t('pays') }}</ion-col
+            ><ion-col size="4">{{ t('publications') }}</ion-col
+            ><ion-col size="4" style="flex-direction: column"
+              ><div>{{ t('numéros') }}</div>
+              <small>{{
               t('dont {copies} double|dont {copies} doubles', {
                 copies: total! - totalUniqueIssues,
               })
-            }}</small>
-          </ion-col></ion-row
+              }}</small>
+            </ion-col></ion-row
+          ></ion-row
         >
       </ion-row>
       <ion-row style="height: 50vh" class="ion-padding-vertical">
@@ -38,19 +40,21 @@
         /></ion-col>
       </ion-row>
       <ion-row style="height: 25vh">
-        <ion-col size="12" class="ion-text-center ion-justify-content-around" style="flex-direction: column">
-          <ion-text class="text-medium">{{ t('Valeur de la collection') }}</ion-text>
-          <ion-text class="text-big">{{ quotationSum }}&euro;</ion-text>
-          <template v-if="highestQuotedIssue">
-            <ion-text>{{ t('Numéro le plus côté :') }}</ion-text>
-            <ion-text>
-              <Condition :value="highestQuotedIssue.condition" />
-              {{ publicationNames[highestQuotedIssue.publicationcode] }}
-              {{ highestQuotedIssue.issuenumber }}</ion-text
-            ></template
-          >
-          <ion-text v-else>{{ t('Vous ne possédez pas de numéro côté.') }}</ion-text>
-        </ion-col>
+        <ion-row style="max-height: 120px">
+          <ion-col size="12" class="ion-text-center ion-justify-content-around" style="flex-direction: column">
+            <ion-text class="text-medium">{{ t('Valeur de la collection') }}</ion-text>
+            <ion-text class="text-big">{{ quotationSum }}&euro;</ion-text>
+            <template v-if="highestQuotedIssue">
+              <ion-text>{{ t('Numéro le plus côté :') }}</ion-text>
+              <ion-text>
+                <Condition :value="highestQuotedIssue.condition" />
+                {{ publicationNames[highestQuotedIssue.publicationcode] }}
+                {{ highestQuotedIssue.issuenumber }}</ion-text
+              ></template
+            >
+            <ion-text v-else>{{ t('Vous ne possédez pas de numéro côté.') }}</ion-text>
+          </ion-col></ion-row
+        >
       </ion-row>
       <ion-row style="height: calc(100vh - 50px)" class="ion-align-items-center">
         <ion-col size="12" class="ion-text-center ion-justify-content-around" style="flex-direction: column">
@@ -121,6 +125,7 @@ ion-col {
   width: 100%;
   height: 100%;
   display: flex;
+  align-items: center;
 }
 
 ion-col {

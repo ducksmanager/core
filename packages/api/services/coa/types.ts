@@ -113,10 +113,10 @@ export default abstract class {
     ) => void,
   ) => void;
 
-  abstract searchStory: (
+  abstract searchStory: <WithIssues extends boolean>(
     keywords: string[],
-    withIssues: boolean,
-    callback: (value: StorySearchResults) => void,
+    withIssues: WithIssues,
+    callback: (value: StorySearchResults<WithIssues>) => void,
   ) => void;
 
   abstract getStoryDetails: (

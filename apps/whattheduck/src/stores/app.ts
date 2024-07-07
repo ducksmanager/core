@@ -8,7 +8,7 @@ export const NAVIGATION_ITEM_REGEX =
   /^(?:$|(?<countrycode>[^/]+)(?:$|(?:\/(?<magazinecode>[^ ]+)(?:$|(?: (?<issuenumber>.+)(?<extra_issuenumbers>,.*)?)))))$/;
 
 export const app = defineStore('app', () => {
-  const innerTopMargin = ref(0);
+  const offlineBannerHeight = ref(0);
   const socket = ref<ReturnType<typeof useDmSocket> | null>(null);
 
   const isOfflineMode = ref(false);
@@ -139,7 +139,7 @@ export const app = defineStore('app', () => {
     extraIssuenumbers,
     navigationItemGroups,
     token,
-    innerTopMargin,
+    offlineBannerHeight,
     isOfflineMode,
     isCoaView: ref(route.query.coa === 'true'),
     isObsoleteSync: computed(

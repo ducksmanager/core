@@ -10,6 +10,7 @@ ion-label {
 }
 
 ion-title {
+  position: static;
   padding-inline-start: 5px;
 }
 
@@ -27,7 +28,7 @@ ion-content {
   }
 
   &::part(scroll) {
-    padding: O;
+    padding-inline-start: O;
   }
 }
 
@@ -53,22 +54,21 @@ ion-segment-button {
 .dm-condition-background {
   @each $condition, $conditionColor in $dmConditions {
     &.#{$condition} {
+
       &,
       &::part(mark) {
         background-color: var(--dm-condition-#{$condition});
         fill: var(--dm-condition-#{$condition});
 
-        @if $condition == 'missing' {
-          background-image: linear-gradient(
-            45deg,
-            red 0%,
-            transparent 0%,
-            transparent 48%,
-            red 48%,
-            red 52%,
-            transparent 52%,
-            transparent 100%
-          );
+        @if $condition =='missing' {
+          background-image: linear-gradient(45deg,
+              red 0%,
+              transparent 0%,
+              transparent 48%,
+              red 48%,
+              red 52%,
+              transparent 52%,
+              transparent 100%);
           background-size: 50px 50px;
         }
       }
@@ -79,6 +79,7 @@ ion-segment-button {
 .toast-error {
   text-align: center;
   opacity: 0.85;
+
   &::part(container) {
     background: #db663b;
     color: white;
@@ -99,5 +100,13 @@ ion-fab-list {
 }
 
 .fab-button-in-list {
---color: white;
+  --color: white;
+}
+
+.plt-ios ion-app {
+  margin-top: env(safe-area-inset-top);
+}
+
+ion-header ion-toolbar:first-of-type {
+  padding-top: 0;
 }

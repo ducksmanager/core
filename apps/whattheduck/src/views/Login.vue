@@ -2,7 +2,7 @@
   <ion-page v-show="token === null">
     <ion-header :translucent="true">
       <ion-toolbar>
-        <ion-title>{{ t('Connexion') }}</ion-title>
+        <ion-title class="ion-no-padding">{{ t('Connexion') }}</ion-title>
       </ion-toolbar>
     </ion-header>
     <ion-content>
@@ -31,12 +31,7 @@
               'ion-invalid': invalidInputs.includes('password'),
               'ion-touched': touchedInputs.includes('password'),
             }"
-            :error-text="
-              errorTexts.password ||
-              t(
-                'La connexion à DucksManager a échoué, vérifiez que votre connexion Internet est active. Vous pourrez consulter votre collection hors-ligne une fois que votre collection sera synchronisée.',
-              )
-            "
+            :error-text="errorTexts.password || t('Erreur')"
             :aria-label="t('Mot de passe')"
             :placeholder="t('Mot de passe')"
             @ionBlur="touchedInputs.push('password')"
@@ -51,20 +46,20 @@
       ></ion-row>
       <ion-row>
         <ion-col size="6">
-          <ion-button @click="submitLogin" expand="block">
+          <ion-button @click="submitLogin" expand="block" :disabled="isOfflineMode">
             {{ t('Connexion') }}
           </ion-button>
         </ion-col>
 
         <ion-col size="6">
-          <ion-button @click="signup" expand="block">
+          <ion-button @click="signup" expand="block" :disabled="isOfflineMode">
             {{ t('Inscription') }}
           </ion-button>
         </ion-col>
       </ion-row>
       <ion-row>
         <ion-col size="6" push="6" style="display: flex" class="flex ion-justify-content-end">
-          <ion-button @click="forgotPassword" size="small">
+          <ion-button @click="forgotPassword" size="small" :disabled="isOfflineMode">
             {{ t('Mot de passe oublié ?') }}
           </ion-button>
         </ion-col>
@@ -88,7 +83,7 @@ import { eyeOutline, eyeOffOutline, eyeSharp, eyeOffSharp } from 'ionicons/icons
 import useFormErrorHandling from '~/composables/useFormErrorHandling';
 import { app } from '~/stores/app';
 
-const { token, socket } = storeToRefs(app());
+const { token, socket, isOfflineMode } = storeToRefs(app());
 
 const dmUrl = import.meta.env.VITE_DM_URL as string;
 

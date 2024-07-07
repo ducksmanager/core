@@ -1,5 +1,5 @@
 <template>
-  <ion-split-pane :style="{ 'margin-top': `${innerTopMargin}px` }" content-id="main-content">
+  <ion-split-pane :style="{ 'margin-top': `${offlineBannerHeight}px` }" content-id="main-content">
     <NavigationDrawer />
     <ion-router-outlet id="main-content" />
   </ion-split-pane>
@@ -10,7 +10,7 @@ import { dmSocketInjectionKey } from '~web/src/composables/useDmSocket';
 import { app } from '~/stores/app';
 import { wtdcollection } from '~/stores/wtdcollection';
 
-const { innerTopMargin, socket } = storeToRefs(app());
+const { offlineBannerHeight, socket } = storeToRefs(app());
 
 provideLocal(dmSocketInjectionKey, socket.value as ReturnType<typeof useDmSocket>);
 

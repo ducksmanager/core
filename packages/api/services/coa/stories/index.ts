@@ -1,7 +1,6 @@
 import type { Socket } from "socket.io";
 
 import type { SimpleIssueWithPartInfo } from "~dm-types/SimpleIssue";
-import type { SimpleStory } from "~dm-types/SimpleStory";
 import { prismaCoa } from "~prisma-clients";
 
 import type Events from "../types";
@@ -54,7 +53,7 @@ export default (socket: Socket<Events>) => {
   socket.on("searchStory", async (keywords, withIssues, callback) => {
     const limit = 10;
     const joinedKeywords = keywords.join(" ");
-    let results = await prismaCoa.$queryRaw<SimpleStory[]>`
+    let results = await prismaCoa.$queryRaw<Parameters<typeof callback>[0]["results"]>`
       SELECT inducks_storyversion.storycode,
              inducks_storyversion.entirepages,
              inducks_entry.title                         AS title,

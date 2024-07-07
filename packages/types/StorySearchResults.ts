@@ -1,6 +1,6 @@
-import { SimpleStoryWithPartInfo } from "./SimpleStory";
+import { SimpleStory, SimpleStoryWithPartInfo } from "./SimpleStory";
 
-export interface StorySearchResults {
-  results: SimpleStoryWithPartInfo[];
+export interface StorySearchResults<WithIssues extends boolean> {
+  results: (WithIssues extends true ? SimpleStoryWithPartInfo : SimpleStory)[];
   hasMore: boolean;
 }

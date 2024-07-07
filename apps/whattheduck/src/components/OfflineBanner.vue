@@ -16,30 +16,29 @@
 </template>
 
 <script setup lang="ts">
+import { app } from '~/stores/app';
+
 const { t } = useI18n();
 
 defineProps<{
   onOffline: 'readonly' | 'unavailable' | undefined;
 }>();
 
-const emit = defineEmits<{
-  (e: 'destroy'): void;
-  (e: 'updated', topMargin: number): void;
-}>();
+const { offlineBannerHeight } = storeToRefs(app());
 
 onUpdated(() => {
   setTimeout(() => {
-    emit('updated', document.querySelector('.offline-banner')!.clientHeight);
+    offlineBannerHeight.value = document.querySelector('.offline-banner')!.clientHeight;
   }, 10);
 });
 
 onMounted(() => {
   setTimeout(() => {
-    emit('updated', document.querySelector('.offline-banner')!.clientHeight);
+    offlineBannerHeight.value = document.querySelector('.offline-banner')!.clientHeight;
   }, 10);
 });
 
 onBeforeUnmount(() => {
-  emit('destroy');
+  offlineBannerHeight.value = 0;
 });
 </script>

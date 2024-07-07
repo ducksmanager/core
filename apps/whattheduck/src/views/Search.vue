@@ -56,6 +56,7 @@
 <script setup lang="ts">
 import { arrowBackOutline, arrowBackSharp } from 'ionicons/icons';
 import type { SimpleStory } from '~dm-types/SimpleStory';
+import type { StorySearchResults } from '~dm-types/StorySearchResults';
 import type { issue_condition } from '~prisma-clients/client_dm';
 import { stores } from '~web';
 import { dmSocketInjectionKey } from '~web/src/composables/useDmSocket';
@@ -97,7 +98,7 @@ watch(storyTitle, async (newValue) => {
     return;
   }
   selectedStory.value = null;
-  const { results: data } = await coaServices.searchStory([newValue], true);
+  const { results: data }: StorySearchResults<true> = await coaServices.searchStory([newValue], true);
 
   await fetchPublicationNames(
     data

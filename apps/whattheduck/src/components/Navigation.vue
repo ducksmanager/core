@@ -1,7 +1,8 @@
 <template>
   <ion-segment v-model="currentNavigationItem">
     <ion-col
-      :class="{ 'non-clickable': partIdx >= shownParts.length }"
+      @click.stop="() => {}"
+      :class="{ 'non-clickable': partIdx >= shownParts.length, scrollable: partIdx === 3 }"
       :size="[1, maxParts].includes(partIdx) ? '2' : '4'"
       v-for="partIdx in maxParts"
       v-show="partIdx <= shownParts.length"
@@ -52,7 +53,7 @@ const shownParts = computed(() => {
     parts.push(countrycode.value);
   }
   if (publicationcode.value) {
-    parts.push(`${publicationcode.value}`);
+    parts.push(publicationcode.value);
   }
   if (issuenumber.value !== undefined) {
     parts.push(currentNavigationItem.value!);
@@ -70,9 +71,19 @@ ion-segment {
 
   ion-col {
     padding: 0 !important;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    &.scrollable {
+      display: block;
+      overflow: auto;
+    }
   }
 
   ion-segment-button {
+    width: 100%;
+    height: 100%;
     align-items: center;
     text-transform: none;
     white-space: normal;
@@ -93,9 +104,5 @@ ion-segment {
       max-width: 100%;
     }
   }
-}
-
-.non-clickable {
-  pointer-events: none;
 }
 </style>

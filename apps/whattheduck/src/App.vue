@@ -1,16 +1,11 @@
 <template>
   <ion-app>
-    <OfflineBanner
-      :on-offline="routeMeta.onOffline"
-      v-if="isOfflineMode"
-      @destroy="innerTopMargin = 0"
-      @updated="innerTopMargin = $event"
-    />
+    <OfflineBanner :on-offline="routeMeta.onOffline" v-if="isOfflineMode" />
     <AppWithPersistedData v-if="socket" />
 
     <ion-split-pane
       v-else-if="route.path === '/login'"
-      :style="{ 'margin-top': `${innerTopMargin}px` }"
+      :style="{ 'margin-top': `${offlineBannerHeight}px` }"
       content-id="main-content"
     >
       <ion-router-outlet id="main-content" />
@@ -24,13 +19,14 @@ import type { Storage } from '@ionic/storage';
 import Cookies from 'js-cookie';
 import { buildStorage, useSocket } from '~socket.io-client-services';
 
+import OfflineBanner from './components/OfflineBanner.vue';
 import { app } from './stores/app';
 import AppWithPersistedData from './views/AppWithPersistedData.vue';
 
 const storage = injectLocal<Storage>('storage')!;
 
 const appStore = app();
-const { isOfflineMode, token, socket, socketCache, innerTopMargin } = storeToRefs(appStore);
+const { isOfflineMode, token, socket, socketCache, offlineBannerHeight } = storeToRefs(appStore);
 
 const route = useRoute();
 const router = useRouter();
@@ -66,18 +62,15 @@ const assignSocket = () => {
         session.clearSession();
       }
     };
-  socket.value = useDmSocket(
-    useSocket(
-      Capacitor.getPlatform() === 'web'
-        ? import.meta.env.VITE_DM_SOCKET_URL
-        : import.meta.env.VITE_DM_SOCKET_URL_NATIVE,
-    ),
-    {
-      cacheStorage,
-      session,
-      onConnectError,
-    },
-  );
+  const socketUrl = ['web', 'ios'].includes(Capacitor.getPlatform())
+    ? import.meta.env.VITE_DM_SOCKET_URL
+    : import.meta.env.VITE_DM_SOCKET_URL_NATIVE;
+  console.log(`Using socket URL ${socketUrl}`);
+  socket.value = useDmSocket(useSocket(socketUrl), {
+    cacheStorage,
+    session,
+    onConnectError,
+  });
 };
 
 watch(token, async () => {

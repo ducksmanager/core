@@ -10,65 +10,46 @@
     </ion-header>
     <ion-content :fullscreen="true">
       <div v-if="!covers.length"></div>
-      <Carousel3d :loop="false" v-else :onMainSlideClick="onMainSlideClick">
+      <Carousel3d
+        v-else
+        :onMainSlideClick="onMainSlideClick"
+        @after-slide-change="(index: number) => (cover = covers[index])"
+      >
         <Slide
           v-for="(cover, index) in covers"
           :key="index"
           :index="index"
-          :style="{ width: `${slideWidths[index]}px` }"
+          :style="{ width: `min(50%, ${slideWidths[index]}px)` }"
         >
-          <ion-card>
-            <ion-img :src="getCoverUrl(cover.fullUrl)" />
-            <ion-card-header
-              :ref="
-                (el: Element | ComponentPublicInstance | null) =>
-                  addSlideElement(index, (el as ComponentPublicInstance).$el)
-              "
-            >
-              <ion-card-title class="ion-align-items-center"
-                ><ion-row class="ion-justify-content-between"
-                  ><ion-col style="display: flex" size="9"><FullIssue :issue="cover" /></ion-col
-                  ><ion-col
-                    style="display: flex; font-size: 0.8rem; flex-direction: column"
-                    size="3"
-                    class="ion-justify-content-center ion-align-items-end issue-details"
-                    ><ion-row
-                      ><ion-col><ion-icon :ios="bookOutline" :android="bookSharp" /></ion-col
-                      ><ion-col
-                        ><Condition
-                          v-if="cover.collectionIssues.length"
-                          v-for="issue of cover.collectionIssues"
-                          no-margin
-                          :value="issue.condition" /><Condition v-else no-margin /></ion-col></ion-row
-                    ><ion-row
-                      ><ion-col><ion-icon :ios="personOutline" :android="personSharp" /></ion-col
-                      ><ion-col class="ion-text-left">1</ion-col></ion-row
-                    ><ion-row v-if="cover.estimationMin || cover.estimationMax"
-                      ><ion-col><ion-icon :ios="pricetagOutline" :android="pricetagSharp"></ion-icon></ion-col
-                      ><ion-col class="ion-text-left"
-                        ><template v-if="cover.estimationMin && cover.estimationMax"
-                          ><template v-if="cover.estimationMax === cover.estimationMin">{{
-                            t('Environ {estimation} €', { estimation: cover.estimationMin })
-                          }}</template>
-                          <template v-else>{{
-                            t('Entre {estimationMin} et {estimationMax} €', cover)
-                          }}</template></template
-                        ><template v-else-if="cover.estimationMin">
-                          {{ t('Plus de {estimationMin} €', cover) }} </template
-                        ><template v-else>
-                          {{ t('Plus de {estimationMax} €', cover) }}
-                        </template></ion-col
-                      ></ion-row
-                    ></ion-col
-                  ></ion-row
-                ></ion-card-title
-              >
-            </ion-card-header>
-          </ion-card>
+          <ion-img :src="getCoverUrl(cover.fullUrl)" @ion-img-did-load="setWidth" />
         </Slide>
       </Carousel3d>
-      <ion-note
-        ><div style="white-space: pre; margin-bottom: 1rem">
+      <ion-row
+        class="ion-justify-content-between ion-align-items-center"
+        style="position: relative; flex-direction: column"
+        v-if="cover"
+      >
+        <ion-row><FullIssue :issue="cover" /></ion-row>
+        <ion-row style="font-size: 0.8rem; width: 100%"
+          ><ion-col size="2"><ion-icon :ios="personOutline" :android="personSharp" /></ion-col
+          ><ion-col class="ion-text-left">1</ion-col></ion-row
+        ><ion-row style="font-size: 0.8rem; width: 100%" v-if="cover.estimationMin || cover.estimationMax"
+          ><ion-col size="2"><ion-icon :ios="pricetagOutline" :android="pricetagSharp"></ion-icon></ion-col
+          ><ion-col class="ion-text-left"
+            ><template v-if="cover.estimationMin && cover.estimationMax"
+              ><template v-if="cover.estimationMax === cover.estimationMin">{{
+                t('Environ {estimation} €', { estimation: cover.estimationMin })
+              }}</template>
+              <template v-else>{{ t('Entre {estimationMin} et {estimationMax} €', cover) }}</template></template
+            ><template v-else-if="cover.estimationMin"> {{ t('Plus de {estimationMin} €', cover) }} </template
+            ><template v-else>
+              {{ t('Plus de {estimationMax} €', cover) }}
+            </template></ion-col
+          ></ion-row
+        ></ion-row
+      >
+      <ion-note v-if="covers.length">
+        <div style="white-space: pre; margin-bottom: 1rem">
           {{ t('Cliquez sur une couverture\npour ajouter le numéro à la collection') }}
         </div>
         <div>
@@ -77,8 +58,8 @@
           <ion-button v-else-if="origin === 'pickCoverFile'" @click="pickCoverFile">{{
             t('Sélectionnez une nouvelle photo')
           }}</ion-button>
-        </div></ion-note
-      >
+        </div>
+      </ion-note>
     </ion-content>
   </ion-page>
 </template>
@@ -86,8 +67,7 @@
 <script setup lang="ts">
 import '@nanoandrew4/vue3-carousel-3d/dist/style.css';
 import { Carousel3d, Slide } from '@nanoandrew4/vue3-carousel-3d';
-import { personOutline, personSharp, pricetagOutline, pricetagSharp, bookOutline, bookSharp } from 'ionicons/icons';
-import type { ComponentPublicInstance } from 'vue';
+import { personOutline, personSharp, pricetagOutline, pricetagSharp } from 'ionicons/icons';
 import type { EventReturnType } from '~socket.io-services/types';
 import { stores as webStores } from '~web';
 
@@ -103,14 +83,14 @@ const { t } = useI18n();
 const { publicationNames } = storeToRefs(webStores.coa());
 const { currentNavigationItem } = storeToRefs(app());
 
+const cover = ref<(typeof covers)['value'][0]>();
+
 const slideWidths = ref<number[]>([]);
 
 const getCoverUrl = (url: string) => `${import.meta.env.VITE_CLOUDINARY_BASE_URL}${url}`;
 
-const addSlideElement = (idx: number, el: HTMLElement) => {
-  new ResizeObserver(function () {
-    slideWidths.value[idx] = el.clientWidth + 32;
-  }).observe(el);
+const setWidth = (event: Event) => {
+  slideWidths.value.push((event.target as HTMLImageElement).clientWidth + 32);
 };
 
 const {
@@ -140,6 +120,10 @@ const covers = computed(() =>
     : [],
 );
 
+watch(covers, () => {
+  cover.value = covers.value[0];
+});
+
 const onMainSlideClick = async ({ index }: { index: number }) => {
   currentNavigationItem.value = covers.value[index]!.shortIssuecode;
   router.push('/collection');
@@ -151,67 +135,7 @@ ion-content::part(scroll) {
   flex-direction: column;
   justify-content: space-around;
   align-items: center;
-}
-
-ion-card {
-  $margin: 8;
-  height: calc(100% - #{$margin * 2}px);
-  border-radius: #{$margin}px;
-  margin-inline: #{$margin}px;
-  margin-top: #{$margin}px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-
-  ion-img {
-    max-height: 100%;
-    max-width: 100%;
-  }
-
-  ion-card-header {
-    position: absolute;
-    bottom: 0;
-    background: rgba(30, 30, 30, 0.75);
-    padding: 4px;
-
-    ion-card-title {
-      display: inline-flex;
-      font-size: initial;
-      white-space: nowrap;
-
-      .issue-details {
-        padding: 0;
-        width: 46px !important;
-        max-width: 46px !important;
-        font-weight: normal;
-        color: grey;
-
-        > ion-row {
-          display: flex;
-          align-items: center;
-          justify-content: end;
-          width: 100%;
-
-          ion-col {
-            display: flex;
-            padding: 1px 2px;
-            flex-grow: 0;
-            min-width: 50%;
-            max-width: 50%;
-            justify-content: center;
-
-            &:deep(.dm-condition-background) {
-              margin-right: 0;
-            }
-
-            &:first-child {
-              text-align: right;
-            }
-          }
-        }
-      }
-    }
-  }
+  padding: 0 !important;
 }
 
 ion-note {
@@ -230,6 +154,11 @@ ion-button {
   min-height: initial;
 }
 
+.carousel-3d-container {
+  display: flex;
+  align-items: center;
+}
+
 .carousel-3d.invisible {
   visibility: hidden;
 }
@@ -242,7 +171,7 @@ ion-button {
 
 .carousel-3d-slide {
   border-radius: 12px;
-  width: 100%;
   overflow-x: auto;
+  height: initial !important;
 }
 </style>

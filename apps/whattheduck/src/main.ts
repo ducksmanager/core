@@ -35,15 +35,7 @@ const store = createPinia();
 
 defineCustomElements(window);
 
-const app = createApp(App, {
-  setup: () => ({
-    t: useI18n().t,
-  }),
-})
-  .use(IonicVue)
-  .use(router)
-  .use(store)
-  .use(i18n('fr', { en, sv }).instance);
+const app = createApp(App).use(IonicVue).use(router).use(store).use(i18n('fr', { en, sv }).instance);
 
 router.isReady().then(async () => {
   const storage = new Storage({
