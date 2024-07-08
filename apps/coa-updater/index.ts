@@ -47,10 +47,10 @@ try {
     .join("\n")
     // Replace "pk0" indexes with actual primary keys
     .replace(/KEY pk0/gms, "CONSTRAINT `PRIMARY` PRIMARY KEY")
-    // Add short_issuecode column each time issuecode is declared
+    // Add short_issuecode column at the end of the table each time issuecode is declared
     .replace(
-      /(?=^([ ]*)issuecode ([^\n,]+))/gm,
-      `$1short_issuecode $2 as (regexp_replace(issuecode, '[ ]+', ' ')),\n`
+      /(^([ ]*)issuecode ([^$,]+).+?\)$)/gms,
+      `$1,\n$2short_issuecode $3 as (regexp_replace(issuecode, '[ ]+', ' '))`
     )
     // Replace ISV file paths with absolute paths
     .replace(
