@@ -62,4 +62,4 @@ jobs:
           username: ${{ secrets.PRODUCTION_SSH_USER }}
           key: ${{ secrets.PRODUCTION_SSH_KEY }}
           source: apps/coa-updater/docker-compose.yml
-          target: /home/bperel/workspace/coa-updater/docker-compose.yml
+          target: /home/bperel/workspace/DucksManager2/apps/coa-updater/docker-compose.yml

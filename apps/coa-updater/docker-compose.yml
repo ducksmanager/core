@@ -2,11 +2,12 @@ services:
   coa-updater:
     init: true
     image: ghcr.io/bperel/coa-updater
+    env_file:
+      - ../../packages/api/.env.prod.local
     environment:
       MYSQL_HOST: db
       MYSQL_DATABASE: coa
       MYSQL_DATABASE_NEW: coa_new
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
     networks:
       - dm-server_db-network
 
