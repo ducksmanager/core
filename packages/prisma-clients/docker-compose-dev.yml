@@ -2,7 +2,7 @@ services:
 
   db:
     container_name: db
-    image: "mariadb:10.11"
+    image: "mariadb:11.4"
     restart: always
     volumes:
       - db:/var/lib/mysql
@@ -13,7 +13,7 @@ services:
       - .env
     command:
       [
-        'mysqld',
+        'mariadbd',
         '--character-set-server=utf8',
         '--collation-server=utf8_unicode_ci'
       ]
