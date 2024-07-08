@@ -1,4 +1,4 @@
-FROM node:18-slim
+FROM oven/bun
 LABEL org.opencontainers.image.authors="Bruno Perel"
 
 WORKDIR /app
@@ -8,4 +8,4 @@ RUN apt-get update && apt-get install -y mariadb-client wget && apt-get clean &&
 COPY apps/coa-updater/bundle.mjs /app/
 
 EXPOSE 3000
-CMD ["node", "bundle.mjs"]
+ENTRYPOINT ["bun", "bundle.mjs"]
