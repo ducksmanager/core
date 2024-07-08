@@ -1,7 +1,7 @@
 {
   "name": "~coa-updater",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "bun build --target node --sourcemap index.ts --outfile bundle.mjs"
   },
   "keywords": [],
   "author": "",

@@ -1,0 +1,15 @@
+services:
+  coa-updater:
+    init: true
+    image: bperel/coa-updater
+    environment:
+      MYSQL_HOST: db
+      MYSQL_DATABASE: coa
+      MYSQL_DATABASE_NEW: coa_new
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+    networks:
+      - dm-server_db-network
+
+networks:
+  dm-server_db-network:
+    external: true

@@ -40,19 +40,6 @@ services:
       - dm-server_db-network
       - dm-server_cover-id-network
 
-  coa-updater:
-    container_name: coa-updater
-    image: bperel/coa-updater
-    #depends_on:
-    #  - db
-    environment:
-      MYSQL_HOST: db
-      MYSQL_DATABASE: coa
-      MYSQL_DATABASE_NEW: coa_new
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
-    networks:
-      - dm-server_db-network
-
   cover-updater:
     container_name: cover-updater
     image: bperel/duck-cover-id-updater

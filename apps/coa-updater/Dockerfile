@@ -1,9 +1,11 @@
-FROM debian:buster-slim
-LABEL maintainer="Bruno Perel"
+FROM node:18-slim
+LABEL org.opencontainers.image.authors="Bruno Perel"
 
-RUN apt-get update && \
-    apt-get install -y mariadb-client wget csvtool && \
-    apt-get clean
+WORKDIR /app
 
-COPY scripts/coa-provision.sh /home/scripts/coa-provision.sh
-CMD ["bash", "/home/scripts/coa-provision.sh"]
+RUN apt-get update && apt-get install -y mariadb-client wget && apt-get clean && rm -rf /var/lib/apt/lists/*
+
+COPY apps/coa-updater/bundle.mjs /app/
+
+EXPOSE 3000
+CMD ["node", "bundle.mjs"]

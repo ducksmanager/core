@@ -18,8 +18,8 @@ jobs:
           key: ${{ secrets.PRODUCTION_SSH_KEY }}
           command_timeout: 40m
           script: |
-            cd workspace/DucksManager2
-            docker compose pull coa-updater
+            cd workspace/coa-updater
+            docker compose pull
             docker compose run --rm --no-deps coa-updater | ts "[%Y-%m-%d %H:%M:%S]"
 
       - name: Run stats-updater

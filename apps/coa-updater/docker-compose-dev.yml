@@ -4,6 +4,7 @@ services:
     container_name: coa-updater
     build:
       context: .
+      dockerfile: Dockerfile-dev
     command: 'run index.ts'
     volumes:
       - .:/home/bun/app

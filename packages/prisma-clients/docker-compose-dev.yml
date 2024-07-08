@@ -19,18 +19,6 @@ services:
       ]
     networks:
       - db-network
-  # coa-updater:
-  #   container_name: coa-updater
-  #   image: bperel/coa-updater
-  #   depends_on:
-  #     - db
-  #   env_file:
-  #     - .env
-  #   environment:
-  #     MYSQL_HOST: db
-  #     MYSQL_DATABASE: coa
-  #   networks:
-  #     - db-network
 
 networks:
   db-network:

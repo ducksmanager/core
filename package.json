@@ -14,9 +14,10 @@
   "scripts": {
     "prepare": "husky",
     "lint": "turbo lint --log-order=stream -F '~whattheduck...' -F '~web...' -F '~edgecreator' -F '~edgecreator-api' -- --cache --fix",
-    "build:web": "NODE_ENV=production turbo build -F '~web...'",
-    "build:edgecreator": "NODE_ENV=production turbo build -F '~edgecreator' -F '~edgecreator-api'",
-    "build:api": "NODE_ENV=production turbo build -F '~api...'",
+    "build:web": "NODE_ENV=production turbo build --log-order=stream -F '~web...'",
+    "build:edgecreator": "NODE_ENV=production turbo build --log-order=stream -F '~edgecreator' -F '~edgecreator-api'",
+    "build:api": "NODE_ENV=production turbo build --log-order=stream -F '~api...'",
+    "build:coa-updater": "NODE_ENV=production turbo build --log-order=stream -F '~coa-updater'",
     "dev:edgecreator": "turbo dev -F '~edgecreator-api...' -F '~edgecreator' -F '~web' -F '~edges'",
     "dev:whattheduck": "turbo dev -F '~whattheduck' -F '~api' -F '~web'"
   }

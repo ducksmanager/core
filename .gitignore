@@ -14,7 +14,7 @@
 apps/edges/edges
 !apps/edges/edges/.gitkeep
 /vendor/
-bundle.mjs
+**/bundle.mjs
 dist
 dist-ssr
 local.properties

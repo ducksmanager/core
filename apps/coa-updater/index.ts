@@ -1,7 +1,6 @@
 #!/usr/bin/env bun
 
 import { $ } from "bun";
-import { execSync } from "child_process";
 import { parse } from "csv-parse";
 import { createReadStream, mkdirSync, readFileSync, writeFileSync } from "fs";
 import { createPool } from "mariadb";
@@ -22,12 +21,10 @@ const pool = createPool(poolParams);
 console.log("Pool created");
 
 try {
-  // mkdirSync(isvPath, { recursive: true });
-  // await $`wget -c https://inducks.org/inducks/isv.tgz -O - | tar -xz -C ${isvPath}`;
+  mkdirSync(isvPath, { recursive: true });
+  await $`wget -c https://inducks.org/inducks/isv.tgz -O - | tar -xz -C ${dataPath}`;
 
   // Ignore lines with invalid UTF-8 characters
-  // List files in the directory and iterate over them
-
   for await (let file of $`ls ${isvPath}/*.isv`.lines()) {
     if (file) {
       await $`iconv -f utf-8 -t utf-8 -c "${file}" > "${file}.clean" && mv -f "${file}.clean" "${file}"`;
@@ -50,6 +47,12 @@ try {
     .join("\n")
     // Replace "pk0" indexes with actual primary keys
     .replace(/KEY pk0/gms, "CONSTRAINT `PRIMARY` PRIMARY KEY")
+    // Add short_issuecode column each time issuecode is declared
+    .replace(
+      /(?=^([ ]*)issuecode ([^\n,]+))/gm,
+      `$1short_issuecode $2 as (regexp_replace(issuecode, '[ ]+', ' ')),\n`
+    )
+    // Replace ISV file paths with absolute paths
     .replace(
       /LOAD DATA LOCAL INFILE ".\/([^"]+)"/gms,
       `LOAD DATA LOCAL INFILE '${dataPath}/$1'`
@@ -155,9 +158,7 @@ set global max_allowed_packet=1000000000; `
   connection.release();
 
   console.log("mysqlcheck...");
-  execSync(
-    `mysqlcheck -h ${process.env.MYSQL_HOST} -uroot -p${process.env.MYSQL_ROOT_PASSWORD} -v ${process.env.MYSQL_DATABASE}`
-  );
+  await $`mysqlcheck -h ${process.env.MYSQL_HOST} -uroot -p${process.env.MYSQL_ROOT_PASSWORD} -v ${process.env.MYSQL_DATABASE}`;
   console.log(" done.");
   process.exit(0);
 } catch (error) {
