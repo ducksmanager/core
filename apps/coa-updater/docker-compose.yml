@@ -1,7 +1,7 @@
 services:
   coa-updater:
     init: true
-    image: bperel/coa-updater
+    image: ghcr.io/bperel/coa-updater
     environment:
       MYSQL_HOST: db
       MYSQL_DATABASE: coa
