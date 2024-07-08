@@ -108,7 +108,7 @@ importers:
         specifier: ^4.4.0
         version: 4.4.0(vue@3.4.31(typescript@5.5.3))
       vue-virtual-scroller:
-        specifier: 2.0.0-beta.8
+        specifier: ^2.0.0-beta.8
         version: 2.0.0-beta.8(vue@3.4.31(typescript@5.5.3))
       ~dm-types:
         specifier: workspace:*
