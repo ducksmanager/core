@@ -3,7 +3,7 @@
     {{ t('Chargement...') }}
   </ion-content>
   <ion-content v-else-if="!items.length" ref="content">
-    {{ t('Votre collection est vide.') }}
+    {{ t('Cette liste est vide.') }}
   </ion-content>
   <ion-content
     v-else
