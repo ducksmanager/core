@@ -2,13 +2,13 @@
   <ion-content class="no-padding">
     <ion-row v-if="!isOfflineMode">
       <ion-col size="12"
-        ><ion-img v-if="fullUrl" :src="coverUrl" />
-        <ion-chip v-if="extraIssuenumbers.length">+&nbsp;{{ extraIssuenumbers.length - 1 }}</ion-chip></ion-col
+        ><img v-if="fullUrl" :src="coverUrl" />
+        <ion-chip v-if="extraIssuenumbers.length">+&nbsp;{{ extraIssuenumbers.length }}</ion-chip></ion-col
       >
     </ion-row>
     <ion-row
       ><ion-col size="12">
-        <ion-segment v-model="currentCopyIndex">
+        <ion-segment v-if="!extraIssuenumbers.length" v-model="currentCopyIndex">
           <ion-segment-button v-for="(_, idx) in 3" :id="idx" :value="idx" v-show="copies[idx]">
             <template v-if="copies[idx]">
               <ion-label
@@ -35,7 +35,10 @@
           color="danger"
           size="small"
           v-if="currentCopyIndex !== undefined && !isOfflineMode"
-          >{{ t('Retirer de la collection') }}</ion-button
+          ><template v-if="extraIssuenumbers.length">{{
+            t('Retirer ces {numberOfIssues} numéros de la collection', { numberOfIssues: extraIssuenumbers.length + 1 })
+          }}</template>
+          <template v-else>{{ t('Retirer de la collection') }}</template></ion-button
         >
         <owned-issue-copy v-if="currentCopyIndex !== undefined" v-model="copies[currentCopyIndex]" />
       </ion-col>
@@ -62,19 +65,21 @@ import EditIssuesConfirmCancelButtons from './EditIssuesConfirmCancelButtons.vue
 import { app } from '~/stores/app';
 import { wtdcollection } from '~/stores/wtdcollection';
 
-const { updateCollectionSingleIssue } = wtdcollection();
+const { updateCollectionSingleIssue, updateCollectionMultipleIssues } = wtdcollection();
 const { issuesByShortIssuecode } = storeToRefs(wtdcollection());
-const { fetchCoverUrls } = coa();
+const { fetchCoverUrlsByShortIssuecodes } = coa();
 const { isOfflineMode, currentNavigationItem, isCoaView, publicationcode, issuenumber, extraIssuenumbers } =
   storeToRefs(app());
 
 const fullUrl = ref<string>();
 
+const shortIssuecode = computed(() => `${publicationcode.value} ${issuenumber.value}`);
+
 watch(
   issuenumber,
   async () => {
-    const covers = await fetchCoverUrls(publicationcode.value!);
-    fullUrl.value = covers.covers[issuenumber.value!]?.fullUrl;
+    const covers = await fetchCoverUrlsByShortIssuecodes([shortIssuecode.value]);
+    fullUrl.value = covers.covers![issuenumber.value!]?.fullUrl;
   },
   { immediate: true },
 );
@@ -82,8 +87,6 @@ watch(
 const { t } = useI18n();
 
 const coverUrl = computed(() => `${import.meta.env.VITE_CLOUDINARY_BASE_URL}${fullUrl.value}`);
-
-const shortIssuecode = computed(() => `${publicationcode.value} ${issuenumber.value}`);
 
 const copies = ref<SingleCopyState[]>([]);
 
@@ -118,11 +121,19 @@ const addCopy = () => {
 };
 
 const submitIssueCopies = async () => {
-  await updateCollectionSingleIssue({
-    publicationcode: publicationcode.value!,
-    issuenumber: issuenumber.value!,
-    copies: copies.value,
-  });
+  if (extraIssuenumbers.value.length) {
+    await updateCollectionMultipleIssues({
+      publicationcode: publicationcode.value!,
+      issuenumbers: [issuenumber.value!, ...extraIssuenumbers.value],
+      ...copies.value[0],
+    });
+  } else {
+    await updateCollectionSingleIssue({
+      publicationcode: publicationcode.value!,
+      issuenumber: issuenumber.value!,
+      copies: copies.value,
+    });
+  }
   currentNavigationItem.value = publicationcode.value!;
   isCoaView.value = false;
 };
@@ -147,7 +158,7 @@ ion-content > ion-row {
       flex-direction: column;
     }
 
-    ion-img {
+    img {
       max-height: 100%;
     }
   }

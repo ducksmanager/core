@@ -65,45 +65,54 @@ export default (socket: Socket<Events>) => {
     },
   );
 
-  socket.on("getIssueCoverDetails", async (issuecodes, callback) => {
-    if (issuecodes.length > 10) {
+  socket.on("getIssueCoverDetails", async (shortIssuecodes, callback) => {
+    if (shortIssuecodes.length > 10) {
       callback({ error: "Too many requests" });
       return;
     }
-    getIssueCoverDetails(issuecodes, callback);
+    getIssueCoverDetails(shortIssuecodes, callback);
   });
 
   socket.on(
     "getIssueCoverDetailsByPublicationcode",
     async (publicationcode, callback) => {
-      const issuecodes = (
-        await prismaCoa.inducks_issue.findMany({ select: {shortIssuecode: true}, where: { publicationcode } })
-      ).map(({shortIssuecode}) => shortIssuecode);
-      getIssueCoverDetails(issuecodes, callback);
+      const shortIssuecodes = (
+        await prismaCoa.inducks_issue.findMany({
+          select: { shortIssuecode: true },
+          where: { publicationcode },
+        })
+      ).map(({ shortIssuecode }) => shortIssuecode);
+      getIssueCoverDetails(shortIssuecodes, callback);
     },
   );
 
   socket.on("getIssuesByCode", async (shortIssuecodes, callback) => {
-    type SimpleCover = Pick<cover, 'id'|'url'> & {
+    type SimpleCover = Pick<cover, "id" | "url"> & {
       shortIssuecode: string;
-    }
+    };
     const covers: { [shortIssuecode: string]: SimpleCover } = (
-      await prismaCoverInfo.$queryRaw<Pick<SimpleCover, 'id'|'url'|'shortIssuecode'>[]>`
+      await prismaCoverInfo.$queryRaw<
+        Pick<SimpleCover, "id" | "url" | "shortIssuecode">[]
+      >`
         SELECT id, url, short_issuecode as shortIssuecode
         FROM covers
         WHERE short_issuecode IN ${PrismaCoa.join(shortIssuecodes)}
       `
-      ).groupBy('shortIssuecode')
+    ).groupBy("shortIssuecode");
 
-     const issues = (await prismaCoverInfo.$queryRaw<SimpleIssueWithPublication[]>`
+    const issues = (
+      await prismaCoverInfo.$queryRaw<SimpleIssueWithPublication[]>`
       SELECT pub.countrycode, pub.publicationcode, pub.title, issue.issuenumber, issue.short_issuecode as shortIssuecode
       FROM inducks_issue issue
       INNER JOIN coa.inducks_publication pub USING(publicationcode)
       WHERE short_issuecode IN ${PrismaCoa.join(shortIssuecodes)}
-    `)
+    `
+    )
       .filter(({ shortIssuecode }) => {
         if (!covers[shortIssuecode]) {
-          console.error(`No COA data exists for this issue : ${shortIssuecode}`);
+          console.error(
+            `No COA data exists for this issue : ${shortIssuecode}`,
+          );
           return false;
         }
         return true;
@@ -152,15 +161,15 @@ export const getCoverUrls = (shortIssuecodes: string[]) =>
 SELECT publicationcode,
        issuenumber,
        short_issuecode AS shortIssuecode,
-       title,
-       (SELECT CONCAT(IF(sitecode = 'thumbnails', IF (url REGEXP '^[0-9]', 'webusers/webusers', IF (url REGEXP '^webusers', 'webusers', '')), sitecode), '/', url) AS fullUrl
-        FROM inducks_entry
-                 INNER JOIN inducks_entryurl ON inducks_entry.entrycode = inducks_entryurl.entrycode
-        WHERE inducks_entry.short_issuecode = inducks_issue.short_issuecode
-          AND SUBSTR(inducks_entry.position, 0, 1) <> 'p'
-        LIMIT 1) AS fullUrl
+       inducks_issue.title,
+       CONCAT(IF(sitecode = 'thumbnails', IF (url REGEXP '^[0-9]', 'webusers/webusers', IF (url REGEXP '^webusers', 'webusers', '')), sitecode), '/', url) AS fullUrl
 FROM inducks_issue
-WHERE inducks_issue.short_issuecode IN(${PrismaCoa.join(shortIssuecodes)})`
+INNER JOIN inducks_entry USING (short_issuecode)
+INNER JOIN inducks_entryurl  USING (entrycode)
+WHERE inducks_issue.short_issuecode IN (${PrismaCoa.join(shortIssuecodes)})
+  AND SUBSTR(inducks_entry.position, 0, 1) <> 'p'
+
+GROUP BY short_issuecode`
     : Promise.resolve([]);
 
 const getEntries = async (publicationcode: string, issuenumber: string) =>
@@ -188,16 +197,16 @@ const getIssueCoverDetails = (
 ) =>
   shortIssuecodes.length
     ? getCoverUrls(shortIssuecodes)
-      .then((data) =>
-        data.reduce(
-          (acc, row) => ({
-            ...acc,
-            [row.issuenumber]: row,
-          }),
-          {} as Record<string, IssueCoverDetails>,
-        ),
-      )
-      .then((data) => {
-        callback({ covers: data });
-      })
+        .then((data) =>
+          data.reduce(
+            (acc, row) => ({
+              ...acc,
+              [row.issuenumber]: row,
+            }),
+            {} as Record<string, IssueCoverDetails>,
+          ),
+        )
+        .then((data) => {
+          callback({ covers: data });
+        })
     : callback({ covers: {} });

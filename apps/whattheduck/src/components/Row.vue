@@ -1,5 +1,9 @@
 <template>
-  <ion-item :button="!isOfflineMode" :class="{ [`next-item-${nextItemType}`]: !!nextItemType, 'is-owned': isOwned }">
+  <ion-item
+    :button="!isOfflineMode"
+    :class="{ [`next-item-${nextItemType}`]: !!nextItemType, 'is-owned': isOwned }"
+    v-on-long-press.prevent="[onLongPress, onLongPressOptions]"
+  >
     <slot name="fill-bar" />
     <slot name="checkbox" />
     <ion-label class="text">
@@ -13,10 +17,14 @@
 </template>
 
 <script setup lang="ts">
+import { vOnLongPress } from '@vueuse/components';
+
 import { app } from '~/stores/app';
 
-defineProps<{
+const props = defineProps<{
   isOwned?: boolean;
+  id: string;
+  keyInList: string;
   nextItemType?: 'same' | 'owned';
 }>();
 
@@ -28,7 +36,36 @@ defineSlots<{
   'suffix'(): any;
 }>();
 
-const { isOfflineMode } = app();
+const { isOfflineMode, selectedIssuenumbers, allowMultipleSelection, currentNavigationItem } = storeToRefs(app());
+
+const onLongPress = () => {
+  if (allowMultipleSelection.value) {
+    selectedIssuenumbers.value = [];
+    toggleCheckedIssuenumber(props.keyInList);
+  } else {
+    currentNavigationItem.value = props.id;
+  }
+};
+
+const onLongPressOptions = {
+  delay: 500,
+  onMouseUp: (_: number, __: number, isLongPress: boolean) => {
+    if (!isLongPress) {
+      if (allowMultipleSelection.value && selectedIssuenumbers.value !== null) {
+        toggleCheckedIssuenumber(props.keyInList);
+      } else {
+        currentNavigationItem.value = props.id;
+      }
+    }
+  },
+};
+
+const toggleElement = <T,>(arr: T[], element: T): T[] =>
+  arr.includes(element) ? arr.filter((el) => el !== element) : [...arr, element];
+
+const toggleCheckedIssuenumber = (issuenumber: string) => {
+  selectedIssuenumbers.value = toggleElement(selectedIssuenumbers.value!, issuenumber);
+};
 </script>
 
 <style lang="scss" scoped>

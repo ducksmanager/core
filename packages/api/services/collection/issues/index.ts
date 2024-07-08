@@ -259,18 +259,21 @@ const addOrChangeIssues = async (
     },
   });
 
-  const updateOperations = existingIssues.map((existingIssue) =>
-    prismaDm.issue.update({
+  const updateOperations = existingIssues.map((existingIssue) => {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { id, publicationcode, shortIssuecode, ...existingIssueWithoutId } =
+      existingIssue;
+    return prismaDm.issue.update({
       data: {
-        ...existingIssue,
+        ...existingIssueWithoutId,
         condition,
         isOnSale,
         isToRead,
         purchaseId: purchaseId === null ? -1 : purchaseId,
       },
       where: { id: existingIssue.id },
-    }),
-  );
+    });
+  });
   await prismaDm.$transaction(updateOperations);
 
   const insertOperations = issueNumbers

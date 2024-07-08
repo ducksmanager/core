@@ -3,6 +3,7 @@ import { Drivers, Storage } from '@ionic/storage';
 import { IonicVue } from '@ionic/vue';
 import CordovaSQLiteDriver from 'localforage-cordovasqlitedriver';
 import { createPinia } from 'pinia';
+import VueVirtualScroller from 'vue-virtual-scroller';
 import { i18n } from '~web';
 
 import App from './App.vue';
@@ -31,11 +32,18 @@ import '@ionic/vue/css/display.css';
 import './theme/variables.scss';
 import './theme/global.scss';
 
+import 'vue-virtual-scroller/dist/vue-virtual-scroller.css';
+
 const store = createPinia();
 
 defineCustomElements(window);
 
-const app = createApp(App).use(IonicVue).use(router).use(store).use(i18n('fr', { en, sv }).instance);
+const app = createApp(App)
+  .use(IonicVue)
+  .use(router)
+  .use(store)
+  .use(i18n('fr', { en, sv }).instance)
+  .use(VueVirtualScroller);
 
 router.isReady().then(async () => {
   const storage = new Storage({

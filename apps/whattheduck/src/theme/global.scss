@@ -110,3 +110,13 @@ ion-fab-list {
 ion-header ion-toolbar:first-of-type {
   padding-top: 0;
 }
+
+ion-checkbox {
+  &::part(label) {
+    margin-inline: 0;
+  }
+
+  &::part(container) {
+    border-radius: 5px;
+  }
+}

@@ -22,7 +22,7 @@
         <template v-if="partIdx === 4 && issuenumber !== undefined"
           ><div style="display: flex; align-items: center">
             <Issue :issuenumber="issuenumber" /><template v-if="extraIssuenumbers.length"
-              ><ion-chip :outline="true">+&nbsp;{{ extraIssuenumbers.length - 1 }}</ion-chip></template
+              ><ion-chip :outline="true">+&nbsp;{{ extraIssuenumbers.length }}</ion-chip></template
             >
           </div></template
         >

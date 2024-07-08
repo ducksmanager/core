@@ -4,7 +4,6 @@
     :items="sortedItems"
     :get-item-text-fn="getItemTextFn"
     @items-filtered="filteredIssuenumbers = $event"
-    allow-multiple-selection
   >
     <template v-if="currentIssueViewMode.id === 'list'" #row-prefix="{ item }">
       <ion-checkbox v-if="selectedIssuenumbers" :checked="selectedIssuenumbers.includes(item.issuenumber)"
@@ -107,6 +106,7 @@ const items = computed(() =>
       ? coaIssues.value.reduce<
           {
             key: string;
+            keyInList: string;
             item: Item;
           }[]
         >(
@@ -116,6 +116,7 @@ const items = computed(() =>
               .filter(({ issuenumber: userIssueNumber }) => issuenumber === userIssueNumber)
               .map((item) => ({
                 key: shortIssuecode,
+                keyInList: issuenumber,
                 item,
               })),
           ],
@@ -124,7 +125,8 @@ const items = computed(() =>
       : (issues.value || [])
           .filter((issue) => issue.publicationcode === publicationcode.value)
           .map((issue) => ({
-            key: `${issue.publicationcode} ${issue.issuenumber}`,
+            key: issue.shortIssuecode,
+            keyInList: issue.issuenumber,
             item: issue,
           }))
     : [],
@@ -132,8 +134,9 @@ const items = computed(() =>
 
 const sortedItems = computed(() =>
   items.value
-    .map(({ key, item }) => ({
+    .map(({ key, keyInList, item }) => ({
       key,
+      keyInList,
       item,
       indexInCoaList: coaIssuenumbers.value!.indexOf(item.issuenumber),
     }))
@@ -145,10 +148,11 @@ const sortedItems = computed(() =>
       ...value,
       isOwned: value.item.condition !== undefined,
     }))
-    .map(({ key, item, isOwned, indexInCoaList }, idx, allItems) => {
+    .map(({ key, keyInList, item, isOwned, indexInCoaList }, idx, allItems) => {
       const nextItemIndexInCoaList = allItems[idx + 1]?.indexInCoaList;
       return {
         key,
+        keyInList,
         item,
         isOwned,
         nextItemType:

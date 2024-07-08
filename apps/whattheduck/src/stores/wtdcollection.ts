@@ -28,6 +28,7 @@ export const wtdcollection = defineStore('wtdcollection', () => {
     login,
     signup,
     updateCollectionSingleIssue,
+    updateCollectionMultipleIssues,
   } = webCollectionStore;
 
   const ownedCountries = computed(() =>
@@ -94,6 +95,7 @@ export const wtdcollection = defineStore('wtdcollection', () => {
     totalPerPublication: computed(() => webCollectionStore.totalPerPublication),
     totalUniqueIssues: computed(() => webCollectionStore.totalUniqueIssues),
     updateCollectionSingleIssue,
+    updateCollectionMultipleIssues,
     user,
   };
 });

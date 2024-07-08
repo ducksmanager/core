@@ -5,7 +5,7 @@ import type useDmSocket from '~web/src/composables/useDmSocket';
 import usePersistedData from '~/composables/usePersistedData';
 
 export const NAVIGATION_ITEM_REGEX =
-  /^(?:$|(?<countrycode>[^/]+)(?:$|(?:\/(?<magazinecode>[^ ]+)(?:$|(?: (?<issuenumber>.+)(?<extra_issuenumbers>,.*)?)))))$/;
+  /^(?:$|(?<countrycode>[^/]+)(?:$|(?:\/(?<magazinecode>[^ ]+)(?:$|(?: (?<issuenumber>.+?)(?:,(?<extra_issuenumbers>.*))?)))))$/;
 
 export const app = defineStore('app', () => {
   const offlineBannerHeight = ref(0);
@@ -98,6 +98,8 @@ export const app = defineStore('app', () => {
   const issuenumber = computed(() => navigationItemGroups.value.issuenumber);
   const extraIssuenumbers = computed(() => navigationItemGroups.value.extra_issuenumbers?.split(',') || []);
 
+  const allowMultipleSelection = computed(() => publicationcode.value !== undefined);
+
   const copyListModes = [
     {
       id: 'owned',
@@ -128,6 +130,7 @@ export const app = defineStore('app', () => {
     socket,
     filterText,
     selectedIssuenumbers,
+    allowMultipleSelection,
     isPersistedDataLoaded,
     socketCache,
     lastSync,

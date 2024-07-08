@@ -14,45 +14,28 @@
     @ion-scroll-end="isScrolling = false"
   >
     <template v-if="$slots['row-label']">
-      <Row
-        v-for="{ key, item, isOwned, nextItemType } in filteredItems"
-        :is-owned="isOwned"
-        :next-item-type="nextItemType"
-        v-on-long-press.prevent="[() => {
-          if (allowMultipleSelection) {
-            selectedIssuenumbers = []
-          toggleCheckedIssuenumber(item)
-          }
-          else {
-            currentNavigationItem = key
-          }
-        }, {
-          delay: 500,
-          onMouseUp: (_: number,__: number,isLongPress: boolean) => {
-            if (!isLongPress) {
-              if (allowMultipleSelection && selectedIssuenumbers !== null) {
-                toggleCheckedIssuenumber(item)
-              }
-              else {
-                currentNavigationItem = key
-              }
-            }
-          }
-        }]"
+      <RecycleScroller
+        class="scroller"
+        :items="filteredItems"
+        :item-size="32"
+        key-field="key"
+        v-slot="{ item: { key, keyInList, item, isOwned, nextItemType } }"
       >
-        <template #fill-bar v-if="item">
-          <slot name="fill-bar" :item="item" />
-        </template>
-        <template #prefix v-if="item">
-          <slot name="row-prefix" :item="item" />
-        </template>
-        <template #label>
-          <slot name="row-label" :item="item" />
-        </template>
-        <template #suffix>
-          <slot name="row-suffix" :item="item" />
-        </template>
-      </Row>
+        <Row :id="key" :key-in-list="keyInList" :is-owned="isOwned" :next-item-type="nextItemType">
+          <template #fill-bar v-if="item">
+            <slot name="fill-bar" :item="item" />
+          </template>
+          <template #prefix v-if="item">
+            <slot name="row-prefix" :item="item" />
+          </template>
+          <template #label>
+            <slot name="row-label" :item="item" />
+          </template>
+          <template #suffix>
+            <slot name="row-suffix" :item="item" />
+          </template>
+        </Row>
+      </RecycleScroller>
       <div id="edit-issues-buttons" v-if="selectedIssuenumbers">
         <EditIssuesConfirmCancelButtons
           :confirm-ios="pencilOutline"
@@ -96,7 +79,6 @@ import type { CameraPreviewOptions } from '@capacitor-community/camera-preview';
 import { CameraPreview } from '@capacitor-community/camera-preview';
 import type { ScrollDetail } from '@ionic/vue';
 import { IonContent, isPlatform } from '@ionic/vue';
-import { vOnLongPress } from '@vueuse/components';
 import { apertureOutline, apertureSharp, closeOutline, closeSharp, pencilOutline, pencilSharp } from 'ionicons/icons';
 
 import useCoverSearch from '~/composables/useCoverSearch';
@@ -110,18 +92,18 @@ defineSlots<{
   'row-suffix'(props: { item: Item }): any;
 }>();
 
-const props = withDefaults(
-  defineProps<{
-    items: { key: string; item: Item; isOwned?: boolean; nextItemType?: 'same' | 'owned' | undefined }[];
-    getItemTextFn: (item: Item) => string;
-    issueViewModes?: { label: string; icon: { ios: string; md: string } }[];
-    filter?: { label: string; icon: { ios: string; md: string } }[];
-    allowMultipleSelection?: boolean;
-  }>(),
-  {
-    allowMultipleSelection: false,
-  },
-);
+const props = defineProps<{
+  items: {
+    key: string;
+    keyInList?: string;
+    item: Item;
+    isOwned?: boolean;
+    nextItemType?: 'same' | 'owned' | undefined;
+  }[];
+  getItemTextFn: (item: Item) => string;
+  issueViewModes?: { label: string; icon: { ios: string; md: string } }[];
+  filter?: { label: string; icon: { ios: string; md: string } }[];
+}>();
 
 const emit = defineEmits<(e: 'items-filtered', items: string[]) => void>();
 
@@ -137,9 +119,6 @@ const cameraY = 150 + parseInt(String(cameraHeight / 2));
 const showCameraPreview = ref(false);
 const cameraPreviewElementId = 'cameraPreview';
 const { takePhoto } = useCoverSearch(useRouter(), coverIdServices);
-
-const toggleElement = <T,>(arr: T[], element: T): T[] =>
-  arr.includes(element) ? arr.filter((el) => el !== element) : [...arr, element];
 
 watch(showCameraPreview, () => {
   if (showCameraPreview.value) {
@@ -177,10 +156,6 @@ const onScroll = (e: CustomEvent<ScrollDetail>) => {
 const { t } = useI18n();
 
 const { filterText, selectedIssuenumbers, currentNavigationItem, publicationcode } = storeToRefs(app());
-
-const toggleCheckedIssuenumber = (item: Item) => {
-  selectedIssuenumbers.value = toggleElement(selectedIssuenumbers.value!, item.issuenumber);
-};
 
 const updateNavigationToSelectedIssuenumbers = () => {
   if (selectedIssuenumbers.value!.length) {
@@ -331,6 +306,10 @@ ion-title {
   text-align: center;
   bottom: 0;
   z-index: 1;
+}
+
+.scroller {
+  height: 100%;
 }
 
 img {

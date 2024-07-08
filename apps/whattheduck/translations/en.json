@@ -132,6 +132,7 @@
   "Quelque chose ne fonctionne pas sur l'application ?\nDétaillez votre problème et nous essaierons de le résoudre dans une prochaine version :-)": "Is something not working in the app? Explain your issue and we will try to fix it in the next version :-)",
   "Rechercher une histoire": "Find a story",
   "Retirer de la collection": "Remove from collection",
+  "Retirer ces {numberOfIssues} numéros de la collection": "Remove these {numberOfIssues} issues from collection",
   "Retour à ma collection": "Back to my collection",
   "Résultat": "Result",
   "Résultats de la recherche": "Search results",
