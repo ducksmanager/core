@@ -25,8 +25,8 @@
           </div></ion-title
         >
       </ion-toolbar>
-      <Navigation />
-      <template v-if="hasItems">
+      <Navigation v-if="!isCameraPreviewShown" />
+      <template v-if="hasItems && !isCameraPreviewShown">
         <ion-searchbar
           autocapitalize="sentences"
           v-if="componentName !== OwnedIssueCopies"
@@ -53,7 +53,7 @@ import PublicationList from '~/views/PublicationList.vue';
 const { t } = useI18n();
 
 const { total } = storeToRefs(wtdcollection());
-const { filterText, navigationItemGroups, isCoaView } = storeToRefs(app());
+const { filterText, navigationItemGroups, isCoaView, isCameraPreviewShown } = storeToRefs(app());
 
 const hasItems = ref<boolean | undefined>();
 

@@ -25,6 +25,7 @@ export const app = defineStore('app', () => {
   const socketCache = ref<Record<string, NotEmptyStorageValue>>({});
   const isPersistedDataLoaded = ref(false);
   const filterText = ref('');
+  const isCameraPreviewShown = ref(false);
 
   const selectedIssuenumbers = ref<string[] | null>(null);
 
@@ -132,6 +133,7 @@ export const app = defineStore('app', () => {
     selectedIssuenumbers,
     allowMultipleSelection,
     isPersistedDataLoaded,
+    isCameraPreviewShown,
     socketCache,
     lastSync,
     currentNavigationItem,

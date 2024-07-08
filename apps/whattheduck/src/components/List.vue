@@ -15,6 +15,7 @@
   >
     <template v-if="$slots['row-label']">
       <RecycleScroller
+        :style="{ visibility: isCameraPreviewShown ? 'hidden' : 'visible' }"
         class="scroller"
         :items="filteredItems"
         :item-size="32"
@@ -47,17 +48,18 @@
         /></div
     ></template>
     <slot v-else name="default" />
-    <EditIssuesButton v-if="!selectedIssuenumbers" @show-camera-preview="showCameraPreview = true" />
+    <EditIssuesButton
+      v-if="!selectedIssuenumbers && !isCameraPreviewShown"
+      @show-camera-preview="isCameraPreviewShown = true"
+    />
 
-    <template v-if="showCameraPreview">
-      <div :id="cameraPreviewElementId">
-        <img v-if="isPlatform('desktop')" id="cover-mock" src="/covers/fr/mpp/fr_mpp_1415d_001.jpg" />
-      </div>
+    <template v-if="isCameraPreviewShown">
+      <div :id="cameraPreviewElementId"></div>
       <div class="overlay">
-        <ion-button @click="takePhoto().then(() => (showCameraPreview = false))" size="large">
+        <ion-button @click="takePhoto().then(() => (isCameraPreviewShown = false))" size="large">
           <ion-icon :ios="apertureOutline" :md="apertureSharp" />
         </ion-button>
-        <ion-button size="large" color="danger" @click="showCameraPreview = false">
+        <ion-button size="large" color="danger" @click="isCameraPreviewShown = false">
           <ion-icon :ios="closeOutline" :md="closeSharp" />
         </ion-button></div
     ></template>
@@ -78,7 +80,7 @@
 import type { CameraPreviewOptions } from '@capacitor-community/camera-preview';
 import { CameraPreview } from '@capacitor-community/camera-preview';
 import type { ScrollDetail } from '@ionic/vue';
-import { IonContent, isPlatform } from '@ionic/vue';
+import { IonContent, onIonViewWillLeave } from '@ionic/vue';
 import { apertureOutline, apertureSharp, closeOutline, closeSharp, pencilOutline, pencilSharp } from 'ionicons/icons';
 
 import useCoverSearch from '~/composables/useCoverSearch';
@@ -116,12 +118,13 @@ const cameraHeight = parseInt(String((cameraWidth * 30) / 21));
 const cameraX = parseInt(String(cameraWidth / 2));
 const cameraY = 150 + parseInt(String(cameraHeight / 2));
 
-const showCameraPreview = ref(false);
-const cameraPreviewElementId = 'cameraPreview';
+const cameraPreviewElementId = 'camera-preview';
 const { takePhoto } = useCoverSearch(useRouter(), coverIdServices);
+const { isCameraPreviewShown, filterText, selectedIssuenumbers, currentNavigationItem, publicationcode } =
+  storeToRefs(app());
 
-watch(showCameraPreview, () => {
-  if (showCameraPreview.value) {
+watch(isCameraPreviewShown, () => {
+  if (isCameraPreviewShown.value) {
     const cameraPreviewOptions: CameraPreviewOptions = {
       parent: cameraPreviewElementId,
       position: 'rear',
@@ -155,8 +158,6 @@ const onScroll = (e: CustomEvent<ScrollDetail>) => {
 
 const { t } = useI18n();
 
-const { filterText, selectedIssuenumbers, currentNavigationItem, publicationcode } = storeToRefs(app());
-
 const updateNavigationToSelectedIssuenumbers = () => {
   if (selectedIssuenumbers.value!.length) {
     currentNavigationItem.value = `${publicationcode.value} ${selectedIssuenumbers.value!.join(',')}`;
@@ -185,6 +186,10 @@ watch(
   },
   { immediate: true },
 );
+
+onIonViewWillLeave(() => {
+  isCameraPreviewShown.value = false;
+});
 </script>
 
 <style scoped>
@@ -286,26 +291,34 @@ ion-title {
   }
 }
 
-#cameraPreview {
-  position: absolute;
-  display: flex;
-  justify-content: center;
-  left: 25%;
-  top: 25%;
-  z-index: 1;
-  width: 50%;
-  height: 50%;
-}
+#camera-preview,
 .overlay {
   position: absolute;
   display: flex;
-  align-items: end;
   justify-content: center;
+  left: 0;
+  top: 0;
+  z-index: 10000;
   width: 100%;
-  height: 100%;
+}
+
+#camera-preview {
+  display: flex;
+
+  video {
+    width: 100%;
+    height: 100%;
+  }
+}
+.overlay {
+  align-items: end;
   text-align: center;
-  bottom: 0;
-  z-index: 1;
+  height: 100%;
+
+  ion-button {
+    font-size: 2rem;
+    margin-bottom: -1rem;
+  }
 }
 
 .scroller {
