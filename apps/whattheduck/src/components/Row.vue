@@ -24,7 +24,7 @@ import { app } from '~/stores/app';
 const props = defineProps<{
   isOwned?: boolean;
   id: string;
-  keyInList: string;
+  keyInList?: string;
   nextItemType?: 'same' | 'owned';
 }>();
 
@@ -41,7 +41,7 @@ const { isOfflineMode, selectedIssuenumbers, allowMultipleSelection, currentNavi
 const onLongPress = () => {
   if (allowMultipleSelection.value) {
     selectedIssuenumbers.value = [];
-    toggleCheckedIssuenumber(props.keyInList);
+    toggleCheckedIssuenumber(props.keyInList!);
   } else {
     currentNavigationItem.value = props.id;
   }
@@ -52,7 +52,7 @@ const onLongPressOptions = {
   onMouseUp: (_: number, __: number, isLongPress: boolean) => {
     if (!isLongPress) {
       if (allowMultipleSelection.value && selectedIssuenumbers.value !== null) {
-        toggleCheckedIssuenumber(props.keyInList);
+        toggleCheckedIssuenumber(props.keyInList!);
       } else {
         currentNavigationItem.value = props.id;
       }
