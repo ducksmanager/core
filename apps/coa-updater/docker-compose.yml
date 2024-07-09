@@ -12,5 +12,5 @@ services:
       - dm-server_db-network
 
 networks:
-  ducksmanager_dm-network:
+  dm-server_db-network:
     external: true
