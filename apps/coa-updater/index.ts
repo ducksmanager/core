@@ -128,7 +128,10 @@ ${cleanSql}
 ALTER TABLE inducks_entryurl ADD id INT AUTO_INCREMENT NOT NULL, ADD PRIMARY KEY (id);
 
 # Add full text index on entry titles
-ALTER TABLE inducks_entry ADD FULLTEXT INDEX entryTitleFullText(title); 
+ALTER TABLE inducks_entry ADD FULLTEXT INDEX entryTitleFullText(title);
+
+create index inducks_issue_short_issuecode_index
+    on inducks_issue (short_issuecode);
 
 set unique_checks = 1;
 set foreign_key_checks = 1;
