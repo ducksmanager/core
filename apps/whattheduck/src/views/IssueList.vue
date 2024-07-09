@@ -232,11 +232,11 @@ ion-checkbox {
   display: inline-block;
 }
 
-:deep(ion-item) {
-  &.is-owned.next-item-owned,
-  &.is-owned.next-item-same {
+:deep(.item-wrapper) {
+  &:has(> .is-owned.is-next-item-owned),
+  &:has(> .is-owned.is-next-item-same) {
     .dm-condition-background::after,
-    + ion-item .dm-condition-background::before {
+    + .item-wrapper .dm-condition-background::before {
       position: absolute;
       width: 2px;
       margin-left: 6px;
@@ -255,7 +255,7 @@ ion-checkbox {
       }
     }
 
-    + ion-item {
+    + .item-wrapper {
       .dm-condition-background {
         @each $condition, $conditionColor in $dmConditions {
           &.#{$condition}::before {
@@ -269,9 +269,9 @@ ion-checkbox {
     }
   }
 
-  &.is-owned.next-item-same {
+  &:has(> .is-owned.is-next-item-same) {
     .dm-condition-background::after,
-    + ion-item .dm-condition-background::before {
+    + .item-wrapper .dm-condition-background::before {
       width: 14px;
       margin-left: 0;
     }

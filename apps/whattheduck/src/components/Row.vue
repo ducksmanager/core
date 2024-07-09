@@ -1,9 +1,5 @@
 <template>
-  <ion-item
-    :button="!isOfflineMode"
-    :class="{ [`next-item-${nextItemType}`]: !!nextItemType, 'is-owned': isOwned }"
-    v-on-long-press.prevent="[onLongPress, onLongPressOptions]"
-  >
+  <ion-item :button="!isOfflineMode" :class="class" v-on-long-press.prevent="[onLongPress, onLongPressOptions]">
     <slot name="fill-bar" />
     <slot name="checkbox" />
     <ion-label class="text">
@@ -22,10 +18,9 @@ import { vOnLongPress } from '@vueuse/components';
 import { app } from '~/stores/app';
 
 const props = defineProps<{
-  isOwned?: boolean;
   id: string;
+  class: Record<string, boolean>;
   keyInList?: string;
-  nextItemType?: 'same' | 'owned';
 }>();
 
 defineSlots<{

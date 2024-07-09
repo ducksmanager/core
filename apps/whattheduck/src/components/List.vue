@@ -19,10 +19,15 @@
         class="scroller"
         :items="filteredItems"
         :item-size="32"
-        key-field="key"
+        key-field="uniqueKey"
+        item-class="item-wrapper"
         v-slot="{ item: { key, keyInList, item, isOwned, nextItemType } }"
       >
-        <Row :id="key" :key-in-list="keyInList" :is-owned="isOwned" :next-item-type="nextItemType">
+        <Row
+          :id="key"
+          :key-in-list="keyInList"
+          :class="{ [`is-next-item-${nextItemType}`]: !!nextItemType, 'is-owned': isOwned }"
+        >
           <template #fill-bar v-if="item">
             <slot name="fill-bar" :item="item" />
           </template>
@@ -189,7 +194,9 @@ const itemInCenterOfViewport = computed(() => {
 });
 
 const filteredItems = computed(() =>
-  props.items.filter(({ item }) => props.getItemTextFn(item).toLowerCase().includes(filterText.value.toLowerCase())),
+  props.items
+    .filter(({ item }) => props.getItemTextFn(item).toLowerCase().includes(filterText.value.toLowerCase()))
+    .map((item, idx) => ({ ...item, uniqueKey: `item-${idx}` })),
 );
 
 watch(
