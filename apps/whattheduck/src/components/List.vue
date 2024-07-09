@@ -113,25 +113,20 @@ const {
   coverId: { services: coverIdServices },
 } = injectLocal(dmSocketInjectionKey)!;
 
-const cameraWidth = parseInt(String(window.screen.width * 0.5));
-const cameraHeight = parseInt(String((cameraWidth * 30) / 21));
-const cameraX = parseInt(String(cameraWidth / 2));
-const cameraY = 150 + parseInt(String(cameraHeight / 2));
-
 const cameraPreviewElementId = 'camera-preview';
 const { takePhoto } = useCoverSearch(useRouter(), coverIdServices);
 const { isCameraPreviewShown, filterText, selectedIssuenumbers, currentNavigationItem, publicationcode } =
   storeToRefs(app());
 
-watch(isCameraPreviewShown, () => {
+watch(isCameraPreviewShown, async () => {
   if (isCameraPreviewShown.value) {
+    await nextTick();
+    const cameraPreviewElementBoundingRect = document.getElementById('camera-preview')!.getBoundingClientRect();
+
     const cameraPreviewOptions: CameraPreviewOptions = {
       parent: cameraPreviewElementId,
       position: 'rear',
-      width: cameraWidth,
-      height: cameraHeight,
-      x: cameraX,
-      y: cameraY,
+      ...cameraPreviewElementBoundingRect,
     };
     CameraPreview.start(cameraPreviewOptions);
   } else {

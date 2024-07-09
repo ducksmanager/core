@@ -21,6 +21,7 @@
             <ion-item
               router-direction="root"
               :router-link="p.url"
+              :disabled="p.disabledOnOfflineMode && isOfflineMode"
               lines="none"
               :detail="false"
               :class="{ selected: route.path === p.url }"
@@ -36,6 +37,7 @@
         <ion-menu-toggle v-for="p in appFooterPages" :key="p.url" :auto-hide="false">
           <ion-item
             router-direction="root"
+            :disabled="p.disabledOnOfflineMode && isOfflineMode"
             :router-link="p.url"
             lines="none"
             :detail="false"
@@ -73,14 +75,24 @@ import { app } from '~/stores/app';
 import { wtdcollection } from '~/stores/wtdcollection';
 
 const { t } = useI18n();
-const { token } = storeToRefs(app());
+const { token, isOfflineMode } = storeToRefs(app());
 const collectionStore = wtdcollection();
 const points = computed(() => webStores.users().points);
 
-const appPages = [
+type AppPage = {
+  title: string;
+  url: string;
+  disabledOnOfflineMode?: boolean;
+  iosIcon: string;
+  mdIcon: string;
+  chip?: number;
+};
+
+const appPages: AppPage[] = [
   {
     title: t('Rechercher une histoire'),
     url: '/search',
+    disabledOnOfflineMode: true,
     iosIcon: searchOutline,
     mdIcon: searchSharp,
   },
@@ -120,10 +132,11 @@ router.beforeEach((to) => {
   }
 });
 
-const appFooterPages = [
+const appFooterPages: AppPage[] = [
   {
     iosIcon: warningOutline,
     mdIcon: warningSharp,
+    disabledOnOfflineMode: true,
     title: t('Signaler un problème'),
     url: '/report',
   },

@@ -145,8 +145,6 @@ ion-content > ion-row {
     height: 40%;
   }
 
-  flex-wrap: nowrap;
-
   > ion-col {
     display: flex;
     align-items: center;
