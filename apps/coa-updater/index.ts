@@ -3,18 +3,19 @@
 import { $ } from "bun";
 import { parse } from "csv-parse";
 import { createReadStream, mkdirSync, readFileSync, writeFileSync } from "fs";
-import { createPool } from "mariadb";
+import { createPool, type PoolConfig } from "mariadb";
 
 const dataPath = "/tmp/inducks",
   isvPath = `${dataPath}/isv`;
 
-const poolParams = {
+const poolParams: PoolConfig = {
   host: process.env.MYSQL_HOST,
   user: "root",
   password: process.env.MYSQL_ROOT_PASSWORD,
   multipleStatements: true,
   connectionLimit: 5,
   permitLocalInfile: true,
+  maxAllowedPacket: 16777216,
 };
 const pool = createPool(poolParams);
 
@@ -116,8 +117,6 @@ set unique_checks = 1;
 set foreign_key_checks = 1;
 set sql_log_bin=1`;
 
-  const cleanSqlStatements = cleanSql.split(";");
-
   const connection = await pool.getConnection();
   await connection.query(
     `DROP DATABASE IF EXISTS ${process.env.MYSQL_DATABASE_NEW};CREATE DATABASE ${process.env.MYSQL_DATABASE_NEW} CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci; set global net_buffer_length=1000000; 
@@ -129,11 +128,7 @@ set global max_allowed_packet=1000000000; `
     database: process.env.MYSQL_DATABASE_NEW,
   });
   const newDbConnection = await newDbPool.getConnection();
-  for (const statement of cleanSqlStatements) {
-    console.log(`Executing statement: ${statement}`);
-    await newDbConnection.query(statement);
-    console.log(" done.");
-  }
+  await newDbConnection.query(cleanSql);
 
   const tables = (
     await newDbConnection.query(
