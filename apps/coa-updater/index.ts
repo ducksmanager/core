@@ -2,29 +2,46 @@
 
 import { $ } from "bun";
 import { parse } from "csv-parse";
-import { createReadStream, mkdirSync, readFileSync, writeFileSync } from "fs";
-import { createPool, type PoolConfig } from "mariadb";
+import {
+  createReadStream,
+  existsSync,
+  mkdirSync,
+  readFileSync,
+  writeFileSync,
+} from "fs";
+import { createPool } from "mariadb";
 
 const dataPath = "/tmp/inducks",
   isvPath = `${dataPath}/isv`;
 
-const poolParams: PoolConfig = {
+const poolParams = {
   host: process.env.MYSQL_HOST,
   user: "root",
   password: process.env.MYSQL_ROOT_PASSWORD,
   multipleStatements: true,
   connectionLimit: 5,
   permitLocalInfile: true,
-  maxAllowedPacket: 16777216,
 };
 const pool = createPool(poolParams);
 
 console.log("Pool created");
 
 try {
-  mkdirSync(isvPath, { recursive: true });
-  await $`wget -c https://inducks.org/inducks/isv.tgz -O - | tar -xz -C ${dataPath}`;
+  if (existsSync(isvPath)) {
+    console.log("ISV files already exist, skipping download");
+  } else {
+    mkdirSync(isvPath, { recursive: true });
+    await $`wget -c https://inducks.org/inducks/isv.tgz -O - | tar -xz -C ${dataPath}`;
 
+    // Ignore lines with invalid UTF-8 characters
+    for await (let file of $`ls ${isvPath}/*.isv`.lines()) {
+      if (file) {
+        await $`iconv -f utf-8 -t utf-8 -c "${file}" > "${file}.clean" && mv -f "${file}.clean" "${file}"`;
+      }
+    }
+
+    console.log("iconv done");
+  }
   // Ignore lines with invalid UTF-8 characters
   for await (let file of $`ls ${isvPath}/*.isv`.lines()) {
     if (file) {
@@ -46,8 +63,8 @@ try {
         )
     )
     .join("\n")
-    // Replace "pk0" indexes with actual primary keys
-    .replace(/KEY pk0/gms, "CONSTRAINT `PRIMARY` PRIMARY KEY")
+    // TODO uncomment? Replace "pk0" indexes with actual primary keys
+    // .replace(/KEY pk0/gms, "CONSTRAINT `PRIMARY` PRIMARY KEY")
     // Add short_issuecode column at the end of the table each time issuecode is declared
     .replace(
       /(^([ ]*)issuecode ([^$,]+).+?\)$)/gms,
@@ -117,6 +134,8 @@ set unique_checks = 1;
 set foreign_key_checks = 1;
 set sql_log_bin=1`;
 
+  const cleanSqlStatements = cleanSql.split(";");
+
   const connection = await pool.getConnection();
   await connection.query(
     `DROP DATABASE IF EXISTS ${process.env.MYSQL_DATABASE_NEW};CREATE DATABASE ${process.env.MYSQL_DATABASE_NEW} CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci; set global net_buffer_length=1000000; 
@@ -128,7 +147,11 @@ set global max_allowed_packet=1000000000; `
     database: process.env.MYSQL_DATABASE_NEW,
   });
   const newDbConnection = await newDbPool.getConnection();
-  await newDbConnection.query(cleanSql);
+  for (const statement of cleanSqlStatements) {
+    console.log(`Executing statement: ${statement}`);
+    await newDbConnection.query(statement);
+    console.log(" done.");
+  }
 
   const tables = (
     await newDbConnection.query(
