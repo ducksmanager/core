@@ -79,14 +79,14 @@ const { token, isOfflineMode } = storeToRefs(app());
 const collectionStore = wtdcollection();
 const points = computed(() => webStores.users().points);
 
-type AppPage = {
+interface AppPage {
   title: string;
   url: string;
   disabledOnOfflineMode?: boolean;
   iosIcon: string;
   mdIcon: string;
   chip?: number;
-};
+}
 
 const appPages: AppPage[] = [
   {

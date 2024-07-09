@@ -55,8 +55,8 @@
 
     <template v-if="isCameraPreviewShown">
       <div :id="cameraPreviewElementId"></div>
-      <div class="overlay">
-        <ion-button @click="takePhoto().then(() => (isCameraPreviewShown = false))" size="large">
+      <div class="overlay" ref="overlay">
+        <ion-button ref="takePhotoButton" @click="takePhoto().then(() => (isCameraPreviewShown = false))" size="large">
           <ion-icon :ios="apertureOutline" :md="apertureSharp" />
         </ion-button>
         <ion-button size="large" color="danger" @click="isCameraPreviewShown = false">
@@ -109,6 +109,9 @@ const props = defineProps<{
 
 const emit = defineEmits<(e: 'items-filtered', items: string[]) => void>();
 
+const overlay = ref<HTMLElement>();
+const takePhotoButton = ref<{ $el: HTMLElement }>();
+
 const {
   coverId: { services: coverIdServices },
 } = injectLocal(dmSocketInjectionKey)!;
@@ -120,15 +123,33 @@ const { isCameraPreviewShown, filterText, selectedIssuenumbers, currentNavigatio
 
 watch(isCameraPreviewShown, async () => {
   if (isCameraPreviewShown.value) {
-    await nextTick();
-    const cameraPreviewElementBoundingRect = document.getElementById('camera-preview')!.getBoundingClientRect();
+    let loopIteration = 0;
+    const interval = setInterval(() => {
+      const boundingClientRect = Object.entries(overlay.value!.getBoundingClientRect().toJSON()).reduce(
+        (acc, [key, value]) => ({
+          ...acc,
+          [key]: parseInt(
+            ((value as number) - (key === 'height' ? takePhotoButton.value!.$el.clientHeight : 0)).toFixed(),
+          ),
+        }),
+        {},
+      ) as DOMRect;
+      console.log(boundingClientRect);
 
-    const cameraPreviewOptions: CameraPreviewOptions = {
-      parent: cameraPreviewElementId,
-      position: 'rear',
-      ...cameraPreviewElementBoundingRect,
-    };
-    CameraPreview.start(cameraPreviewOptions);
+      if (boundingClientRect.height) {
+        clearInterval(interval);
+        const cameraPreviewOptions: CameraPreviewOptions = {
+          parent: cameraPreviewElementId,
+          position: 'rear',
+          ...boundingClientRect,
+        };
+        CameraPreview.start(cameraPreviewOptions);
+      } else if (loopIteration > 10) {
+        console.error('Could not get overlayElement height');
+        clearInterval(interval);
+      }
+      loopIteration++;
+    }, 50);
   } else {
     CameraPreview.stop();
   }
