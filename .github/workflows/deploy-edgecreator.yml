@@ -89,7 +89,6 @@ jobs:
           tags: |
             ghcr.io/bperel/edgecreator-app:websocket
 
-      - uses: oven-sh/setup-bun@v1
       - run: cd apps/edgecreator/api && bun build ./index.ts --outdir dist --minify --target node
 
       - name: Build and push api

@@ -5,20 +5,17 @@ import { mkdirSync } from "fs";
 import { getCacheDir } from "./cache";
 import { getAll, truncateQuotations } from "./coa";
 import { writeCsvMapping } from "./csv";
+import { scrape as bedetheque } from "./scrapes/bedetheque";
+import { scrape as comicsmania } from "./scrapes/comicsmania";
+import { scrape as gocollect } from "./scrapes/gocollect";
+import { scrape as seriesam } from "./scrapes/seriesam";
 
-const scrapes: Promise<
-  {
-    name: string;
-    scrape: () => Promise<void>;
-  }[]
-> = Promise.all(
-  ["bedetheque", "comicsmania", "seriesam", "gocollect"].map(
-    async (scrapeName) => ({
-      name: scrapeName,
-      scrape: (await import(`./scrapes/${scrapeName}`)).scrape,
-    })
-  )
-);
+const scrapes = [
+  { name: "bedetheque", scrape: bedetheque },
+  { name: "comicsmania", scrape: comicsmania },
+  { name: "seriesam", scrape: seriesam },
+  { name: "gocollect", scrape: gocollect },
+];
 
 dotenv.config({ path: ".env.local" });
 
@@ -27,7 +24,7 @@ dotenv.config({ path: ".env.local" });
   mkdirSync(getCacheDir(), { recursive: true });
 
   let hasFailed = false;
-  for (const { name, scrape } of await scrapes) {
+  for (const { name, scrape } of scrapes) {
     try {
       console.log(`Scraping ${name}, start date: ${new Date().toISOString()}`);
       await scrape();

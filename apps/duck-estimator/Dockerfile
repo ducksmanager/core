@@ -15,7 +15,7 @@ COPY apps/duck-estimator ./apps/duck-estimator
 RUN --mount=type=cache,id=pnpm-store,target=/app/.pnpm-store \
     pnpm -r i
 
-RUN pnpm -r build
+RUN cd apps/duck-estimator && pnpm build
 
 ###
 
@@ -41,7 +41,7 @@ RUN --mount=type=cache,id=pnpm-store,target=/app/.pnpm-store \
     pnpm i --production
 
 COPY --from=build /app/apps/duck-estimator/dist ./
-COPY apps/duck-estimator/.env.local .env
+COPY apps/duck-estimator/.env .env
 COPY apps/duck-estimator/scrapes ./scrapes
 
 CMD ["node", "index.js"]
