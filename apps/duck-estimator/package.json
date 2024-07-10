@@ -1,0 +1,46 @@
+{
+  "name": "~duck-estimator",
+  "version": "1.0.0",
+  "engines": {
+    "node": ">=18.0.0 <19.0.0"
+  },
+  "author": {
+    "email": "brunoperel@gmail.com",
+    "name": "Bruno Perel"
+  },
+  "repository": {
+    "url": "https://github.com/bperel/duck-estimator",
+    "type": "Git"
+  },
+  "scripts": {
+    "lint": "eslint --cache --fix .",
+    "build": "rm -rf dist/{api,types} && tsc && tsc-alias",
+    "start": "PWDEBUG=1 tsx watch index.ts"
+  },
+  "dependencies": {
+    "bedetheque-scraper": "^3.2.0",
+    "csv-parse": "^5.5.6",
+    "csv-writer": "^1.6.0",
+    "dotenv": "^16.4.5",
+    "playwright-firefox": "^1.45.1",
+    "yargs": "^17.7.2",
+    "~prisma-clients": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "^18.19.39",
+    "@types/yargs": "^17.0.32",
+    "eslint": "^8.57.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-config-standard": "^17.1.0",
+    "eslint-plugin-import": "^2.29.1",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-promise": "^6.4.0",
+    "eslint-plugin-simple-import-sort": "^12.1.1",
+    "eslint-plugin-unused-imports": "^3.2.0",
+    "prettier": "^3.3.2",
+    "tsc-alias": "^1.8.10",
+    "tsx": "^4.16.2",
+    "typescript": "^5.5.3",
+    "typescript-eslint": "^7.15.0"
+  }
+}

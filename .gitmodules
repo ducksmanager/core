@@ -1,7 +1,3 @@
-[submodule "duck-estimator"]
-path = apps/duck-estimator
-url = ../duck-estimator.git
-branch=master
 [submodule "duckguessr-old"]
 path = apps/duckguessr-old
 url = ../duckguessr.git
