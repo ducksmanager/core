@@ -13,7 +13,7 @@ const ROOT_URL = 'https://gocollect.com/app/comics/'
  * DM - CGC mapping:
  *
  * Good condition: 6+ (Fine to Mint)
- * Not-so-good condition: 3 to < 6 (Very Good to Fine-)
+ * Average condition: 3 to < 6 (Very Good to Fine-)
  * Bad condition: 0.5 to < 3 (Poor to Good+)
  */
 

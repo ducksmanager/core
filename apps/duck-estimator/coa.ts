@@ -1,52 +1,81 @@
-import 'dotenv/config'
+import "dotenv/config";
 
-import { inducks_issuequotation,PrismaClient as PrismaCoa } from "~prisma-clients/client_coa";
+import {
+  inducks_issuequotation,
+  PrismaClient as PrismaCoa,
+} from "~prisma-clients/client_coa";
 
 export const prismaCoa = new PrismaCoa();
 
-const cachedCoaIssues: Record<string, string[]> = {}
+const cachedCoaIssues: Record<string, string[]> = {};
 
-export const createQuotations = async (data: Omit<inducks_issuequotation, 'id'|'issuecode'>[]) => {
-  console.log(`Adding ${data.length} quotations`)
+export const createQuotations = async (
+  data: Omit<inducks_issuequotation, "id" | "shortIssuecode">[]
+) => {
+  console.log(`Adding ${data.length} quotations`);
   return await prismaCoa.inducks_issuequotation.createMany({
-    data
-  })
-}
+    data,
+  });
+};
 
 export const truncateQuotations = async () =>
-  await prismaCoa.$executeRawUnsafe(`TRUNCATE TABLE inducks_issuequotation`)
+  await prismaCoa.$executeRawUnsafe(`TRUNCATE TABLE inducks_issuequotation`);
 
-export const isInducksIssueExisting = async (publicationcode: string, issuenumber: string) =>
-  (await getInducksIssuesBetween(publicationcode, issuenumber, issuenumber)).length
+export const isInducksIssueExisting = async (
+  publicationcode: string,
+  issuenumber: string
+) =>
+  (await getInducksIssuesBetween(publicationcode, issuenumber, issuenumber))
+    .length;
 
-export const getInducksIssuesBetween = async (publicationcode: string, issuenumberStart: string, issuenumberEnd = issuenumberStart) => {
-  cachedCoaIssues[publicationcode] = cachedCoaIssues[publicationcode] ||
-    (await prismaCoa.inducks_issue.findMany(
-      {where: {publicationcode},
-      select: {issuenumber: true}}
-    )).map(({ issuenumber }) => issuenumber)
+export const getInducksIssuesBetween = async (
+  publicationcode: string,
+  issuenumberStart: string,
+  issuenumberEnd = issuenumberStart
+) => {
+  cachedCoaIssues[publicationcode] =
+    cachedCoaIssues[publicationcode] ||
+    (
+      await prismaCoa.inducks_issue.findMany({
+        where: { publicationcode },
+        select: { issuenumber: true },
+      })
+    ).map(({ issuenumber }) => issuenumber);
 
   if (!cachedCoaIssues[publicationcode].length) {
-    console.warn(` No issue found in COA for publication code ${publicationcode}`)
-    return []
+    console.warn(
+      ` No issue found in COA for publication code ${publicationcode}`
+    );
+    return [];
   }
 
-  const startIssueIndex = cachedCoaIssues[publicationcode].indexOf(issuenumberStart)
+  const startIssueIndex =
+    cachedCoaIssues[publicationcode].indexOf(issuenumberStart);
   if (startIssueIndex === -1) {
-    console.warn(` No issue found in COA for publication code ${publicationcode} and issue number ${issuenumberStart}`)
-    return []
+    console.warn(
+      ` No issue found in COA for publication code ${publicationcode} and issue number ${issuenumberStart}`
+    );
+    return [];
   }
-  const endIssueIndex = cachedCoaIssues[publicationcode].indexOf(issuenumberEnd)
+  const endIssueIndex =
+    cachedCoaIssues[publicationcode].indexOf(issuenumberEnd);
   if (endIssueIndex === -1) {
-    console.warn(` No issue found in COA for publication code ${publicationcode} and issue number ${issuenumberEnd}`)
-    return []
+    console.warn(
+      ` No issue found in COA for publication code ${publicationcode} and issue number ${issuenumberEnd}`
+    );
+    return [];
   }
-  return cachedCoaIssues[publicationcode].filter((_, index) => index >= startIssueIndex && index <= endIssueIndex)
-}
+  return cachedCoaIssues[publicationcode].filter(
+    (_, index) => index >= startIssueIndex && index <= endIssueIndex
+  );
+};
 
 export const getAll = async () =>
   await prismaCoa.inducks_issuequotation.findMany({
-    orderBy: [ {
-      publicationcode: 'asc'}, {issuenumber: 'asc'}]
-  })
-
+    orderBy: [
+      {
+        publicationcode: "asc",
+      },
+      { issuenumber: "asc" },
+    ],
+  });
