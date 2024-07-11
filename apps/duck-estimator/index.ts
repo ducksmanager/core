@@ -5,12 +5,14 @@ import { mkdirSync } from "fs";
 import { getCacheDir } from "./cache";
 import { getAll, truncateQuotations } from "./coa";
 import { writeCsvMapping } from "./csv";
+import { scrape as bdm } from "./scrapes/bdm";
 import { scrape as bedetheque } from "./scrapes/bedetheque";
 import { scrape as comicsmania } from "./scrapes/comicsmania";
 import { scrape as gocollect } from "./scrapes/gocollect";
 import { scrape as seriesam } from "./scrapes/seriesam";
 
 const scrapes = [
+  { name: "bdm", scrape: bdm },
   { name: "bedetheque", scrape: bedetheque },
   { name: "comicsmania", scrape: comicsmania },
   { name: "seriesam", scrape: seriesam },

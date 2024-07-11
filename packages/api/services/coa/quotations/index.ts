@@ -41,7 +41,7 @@ export default (socket: Socket<Events>) => {
         callback({
           quotations: await prismaCoa.inducks_issuequotation.findMany({
             where: {
-              publicationcode: { in: codes.map(([code]) => code) },
+              publicationcode: { in: codes },
               estimationMin: { not: { equals: null } },
             },
           }),
