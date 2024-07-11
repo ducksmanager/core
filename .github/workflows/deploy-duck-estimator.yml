@@ -5,7 +5,7 @@ on:
   push:
     paths:
       - ".github/workflows/deploy-duck-estimator.yml"
-      - "apps/duck-estimator"
+      - "apps/duck-estimator/**"
       - "pnpm-lock.yaml"
     branches:
       - "migrate-api-to-websocket"
