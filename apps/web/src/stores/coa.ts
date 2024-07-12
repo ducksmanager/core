@@ -152,21 +152,7 @@ export const coa = defineStore("coa", () => {
       );
 
       if (data.quotations) {
-        addIssueQuotations(
-          data.quotations.reduce(
-            (
-              issueAcc,
-              { publicationcode, issuenumber, estimationMin, estimationMax },
-            ) => ({
-              ...issueAcc,
-              [`${publicationcode} ${issuenumber}`]: {
-                min: estimationMin,
-                max: estimationMax,
-              },
-            }),
-            {},
-          ),
-        );
+        addIssueQuotations(data.quotations);
       } else {
         console.error(data.error);
       }

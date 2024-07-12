@@ -113,9 +113,11 @@ export default (issues: Ref<issue[] | null>) => {
           issueQuotations[`${publicationcode} ${issuenumber}`];
         return (
           (estimationData &&
-            (estimationData.max
-              ? ((estimationData.min || 0) + estimationData.max) / 2
-              : estimationData.min)) ||
+            (estimationData.estimationMax
+              ? ((estimationData.estimationMin || 0) +
+                  estimationData.estimationMax) /
+                2
+              : estimationData.estimationMin)) ||
           0
         );
       };

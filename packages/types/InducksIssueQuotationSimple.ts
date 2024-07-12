@@ -1,4 +1,4 @@
 export interface InducksIssueQuotationSimple {
-  min: number | null;
-  max: number | null;
+  estimationMin: number | null;
+  estimationMax: number | null;
 }
