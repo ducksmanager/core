@@ -73,18 +73,18 @@
             >
               <template #cell(issue)="{ item }">
                 <Issue
-                  :publicationcode="(item as QuotedIssue).publicationcode"
+                  :publicationcode="item.publicationcode"
                   :publicationname="
-                    publicationNames[(item as QuotedIssue).publicationcode]!
+                    publicationNames[(item ).publicationcode]!
                   "
-                  :issuenumber="(item as QuotedIssue).issuenumber"
+                  :issuenumber="item.issuenumber"
                 />
               </template>
               <template #cell(condition)="{ item }">
-                {{ getConditionLabel((item as QuotedIssue).condition) }}
+                {{ getConditionLabel(item.condition) }}
               </template>
               <template #cell(estimation)="{ item }">
-                {{ item.estimation }}€
+                <IssueQuotation :issue="item" />
               </template>
               <template #cell(estimationGivenCondition)="{ item }">
                 {{ item.estimationGivenCondition }}€
@@ -159,8 +159,6 @@
 </template>
 
 <script setup lang="ts">
-import { QuotedIssue } from "~dm-types/QuotedIssue";
-
 import { dmSocketInjectionKey } from "../../composables/useDmSocket";
 
 const {

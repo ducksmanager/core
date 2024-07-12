@@ -1,9 +1,15 @@
-import type { issue_condition } from "~prisma-clients/extended/dm.extends";
+import { inducks_issuequotation } from "~prisma-clients/client_coa";
+import { issue } from "~prisma-clients/client_dm";
 
-export type QuotedIssue = {
-  publicationcode: string;
-  issuenumber: string;
-  condition: issue_condition;
-  estimation: number;
-  estimationGivenCondition: number;
-};
+export type QuotedIssue = Pick<
+  inducks_issuequotation,
+  | "shortIssuecode"
+  | "publicationcode"
+  | "issuenumber"
+  | "estimationMin"
+  | "estimationMax"
+> &
+  Pick<issue, "condition"> & {
+    estimation: number;
+    estimationGivenCondition: number;
+  };

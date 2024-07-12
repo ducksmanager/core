@@ -108,17 +108,18 @@ export default (issues: Ref<issue[] | null>) => {
       if (issueQuotations === null) {
         return null;
       }
-      const getEstimation = (publicationcode: string, issuenumber: string) => {
-        const estimationData =
-          issueQuotations[`${publicationcode} ${issuenumber}`];
+      const getEstimation = (shortIssuecode: string) => {
+        const estimationData = issueQuotations[shortIssuecode];
         return (
-          (estimationData &&
-            (estimationData.estimationMax
-              ? ((estimationData.estimationMin || 0) +
-                  estimationData.estimationMax) /
-                2
-              : estimationData.estimationMin)) ||
-          0
+          estimationData && {
+            ...estimationData,
+            estimation:
+              (estimationData.estimationMax
+                ? ((estimationData.estimationMin || 0) +
+                    estimationData.estimationMax!) /
+                  2
+                : estimationData.estimationMin) || 0,
+          }
         );
       };
       const CONDITION_TO_ESTIMATION_PCT = {
@@ -130,23 +131,25 @@ export default (issues: Ref<issue[] | null>) => {
       };
       return (
         issues.value
-          ?.filter(({ publicationcode, issuenumber }) =>
-            getEstimation(publicationcode, issuenumber),
-          )
-          .map(({ publicationcode, issuenumber, condition }) => {
-            const estimation = getEstimation(publicationcode, issuenumber);
-            return {
-              publicationcode,
-              issuenumber,
-              condition,
-              estimation,
-              estimationGivenCondition: parseFloat(
-                (CONDITION_TO_ESTIMATION_PCT[condition] * estimation).toFixed(
-                  1,
+          ?.filter(({ shortIssuecode }) => getEstimation(shortIssuecode))
+          .map(
+            ({ shortIssuecode, publicationcode, issuenumber, condition }) => {
+              const estimation = getEstimation(shortIssuecode);
+              return {
+                ...estimation,
+                shortIssuecode,
+                publicationcode,
+                issuenumber,
+                condition,
+                estimationGivenCondition: parseFloat(
+                  (
+                    CONDITION_TO_ESTIMATION_PCT[condition] *
+                    estimation.estimation
+                  ).toFixed(1),
                 ),
-              ),
-            };
-          }) || null
+              };
+            },
+          ) || null
       );
     }),
     quotationSum = computed(() =>

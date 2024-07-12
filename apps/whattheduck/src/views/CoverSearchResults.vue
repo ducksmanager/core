@@ -36,15 +36,7 @@
         ><ion-row style="font-size: 0.8rem; width: 100%" v-if="cover.estimationMin || cover.estimationMax"
           ><ion-col size="2"><ion-icon :ios="pricetagOutline" :android="pricetagSharp"></ion-icon></ion-col
           ><ion-col class="ion-text-left"
-            ><template v-if="cover.estimationMin && cover.estimationMax"
-              ><template v-if="cover.estimationMax === cover.estimationMin">{{
-                t('Environ {estimation} €', { estimation: cover.estimationMin })
-              }}</template>
-              <template v-else>{{ t('Entre {estimationMin} et {estimationMax} €', cover) }}</template></template
-            ><template v-else-if="cover.estimationMin"> {{ t('Plus de {estimationMin} €', cover) }} </template
-            ><template v-else>
-              {{ t('Plus de {estimationMax} €', cover) }}
-            </template></ion-col
+            ><IssueQuotation :issue="{...cover, estimation: cover.estimationMin! }" /></ion-col
           ></ion-row
         ></ion-row
       >
@@ -69,7 +61,7 @@ import '@nanoandrew4/vue3-carousel-3d/dist/style.css';
 import { Carousel3d, Slide } from '@nanoandrew4/vue3-carousel-3d';
 import { personOutline, personSharp, pricetagOutline, pricetagSharp } from 'ionicons/icons';
 import type { EventReturnType } from '~socket.io-services/types';
-import { stores as webStores } from '~web';
+import { stores as webStores, components as webComponents } from '~web';
 
 import useCoverSearch from '../composables/useCoverSearch';
 
@@ -82,6 +74,8 @@ import type CoverIdServices from '~dm-services/cover-id/types';
 const { t } = useI18n();
 const { publicationNames } = storeToRefs(webStores.coa());
 const { currentNavigationItem } = storeToRefs(app());
+
+const {IssueQuotation} =webComponents
 
 const cover = ref<(typeof covers)['value'][0]>();
 

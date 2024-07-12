@@ -1,5 +1,6 @@
 import Bookcase from "./src/components/Bookcase.vue";
 import InducksStory from "./src/components/InducksStory.vue";
+import IssueQuotation from "./src/components/IssueQuotation.vue";
 import MedalImage from "./src/components/MedalImage.vue";
 import StarRating from "./src/components/StarRating.vue";
 import Conditions from "./src/components/stats/ConditionsComponent.vue";
@@ -25,6 +26,7 @@ export const components = {
   Bookcase,
   StarRating,
   Conditions,
+  IssueQuotation,
 };
 
 export const composables = {
