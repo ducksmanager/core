@@ -4,10 +4,9 @@ import type { Namespace, Server } from "socket.io";
 
 import type { SimilarImagesResult } from "~dm-types/CoverSearchResults";
 import { prismaCoa, prismaCoverInfo } from "~prisma-clients";
-import type { inducks_issuequotation } from "~prisma-clients/client_coa";
 
 import { getCoverUrls } from "../coa/issue-details";
-import { getQuotationsByIssueCodes } from "../coa/quotations";
+import { getQuotationsByShortIssuecodes } from "../coa/quotations";
 import type Events from "./types";
 import { namespaceEndpoint } from "./types";
 
@@ -16,10 +15,10 @@ export default (io: Server) => {
     socket.on("searchFromCover", async ({ base64, url }, callback) => {
       const buffer = url
         ? (
-          await axios.get(url, {
-            responseType: "arraybuffer",
-          })
-        ).data
+            await axios.get(url, {
+              responseType: "arraybuffer",
+            })
+          ).data
         : Buffer.from(base64!.split(";base64,").pop()!, "base64");
 
       const pastecResponse: SimilarImagesResult | null =
@@ -65,7 +64,7 @@ export default (io: Server) => {
           covers.sort((cover1, cover2) =>
             Math.sign(
               pastecResponse.image_ids.indexOf(cover1.id) -
-              pastecResponse.image_ids.indexOf(cover2.id),
+                pastecResponse.image_ids.indexOf(cover2.id),
             ),
           ),
         );
@@ -79,18 +78,18 @@ export default (io: Server) => {
       const issues = await getIssuesFromIssueCodes(foundIssueCodes);
       console.log(`Cover ID search: matched ${coverInfos.length} issues`);
 
-      const quotationsByIssuecode = (await getQuotationsByIssueCodes(issues.map(({ shortIssuecode }) => shortIssuecode))).reduce<Record<string, Pick<inducks_issuequotation, 'estimationMin' | 'estimationMax'>>>(
-        (acc, { shortIssuecode, estimationMin, estimationMax }) => ({ ...acc, [shortIssuecode!]: { estimationMin, estimationMax } }),
-        {},
+      const quotationsByShortIssuecode = await getQuotationsByShortIssuecodes(
+        issues.map(({ shortIssuecode }) => shortIssuecode),
       );
-
 
       callback({
         covers: coverInfos.map((cover) =>
-          Object.assign(
-            cover,
-            { ...issues.find(({ shortIssuecode }) => cover.shortIssuecode === shortIssuecode)!, ...quotationsByIssuecode[cover.shortIssuecode] },
-          ),
+          Object.assign(cover, {
+            ...issues.find(
+              ({ shortIssuecode }) => cover.shortIssuecode === shortIssuecode,
+            )!,
+            ...quotationsByShortIssuecode[cover.shortIssuecode],
+          }),
         ),
       });
     });
@@ -101,8 +100,9 @@ export default (io: Server) => {
           id: coverId,
         },
       });
-      const remotePath = `${cover.sitecode}/${cover.sitecode === "webusers" ? "webusers" : ""
-        }${cover.url}`;
+      const remotePath = `${cover.sitecode}/${
+        cover.sitecode === "webusers" ? "webusers" : ""
+      }${cover.url}`;
 
       const data: Uint8Array[] = [];
       const externalRequest = https.request(
@@ -145,7 +145,7 @@ const getIssuesFromIssueCodes = async (foundShortIssueCodes: string[]) =>
         not: null,
       },
       shortIssuecode: {
-        in: foundShortIssueCodes
+        in: foundShortIssueCodes,
       },
     },
   }) as Promise<
@@ -166,7 +166,8 @@ const getSimilarImages = async (
 ): Promise<SimilarImagesResult | null> =>
   axios
     .post(
-      `http://${process.env.PASTEC_HOSTS!}:${process.env.PASTEC_PORT
+      `http://${process.env.PASTEC_HOSTS!}:${
+        process.env.PASTEC_PORT
       }/index/searcher`,
       cover,
       {

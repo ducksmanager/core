@@ -8,6 +8,7 @@ import { prismaDm } from "~prisma-clients";
 import { Prisma as PrismaCoa } from "~prisma-clients/client_coa";
 import type { cover } from "~prisma-clients/client_cover_info";
 
+import { getQuotationsByShortIssuecodes } from "../quotations";
 import type Events from "../types";
 
 export default (socket: Socket<Events>) => {
@@ -86,7 +87,7 @@ export default (socket: Socket<Events>) => {
     },
   );
 
-  socket.on("getIssuesByCode", async (shortIssuecodes, callback) => {
+  socket.on("getIssuesByShortIssuecode", async (shortIssuecodes, callback) => {
     type SimpleCover = Pick<cover, "id" | "url"> & {
       shortIssuecode: string;
     };
@@ -100,7 +101,7 @@ export default (socket: Socket<Events>) => {
       `
     ).groupBy("shortIssuecode");
 
-    const issues = (
+    const issues: Parameters<typeof callback>[0] = (
       await prismaCoverInfo.$queryRaw<SimpleIssueWithPublication[]>`
       SELECT pub.countrycode, pub.publicationcode, pub.title, issue.issuenumber, issue.short_issuecode as shortIssuecode
       FROM inducks_issue issue
@@ -124,31 +125,23 @@ export default (socket: Socket<Events>) => {
       }))
       .groupBy("shortIssuecode");
 
-    const longIssueCodes = Object.keys(issues);
-    const shortIssueCodes = longIssueCodes.reduce(
-      (acc, longIssueCode) => ({
-        ...acc,
-        [longIssueCode]: longIssueCode,
-      }),
-      {},
-    );
-
-    // const quotations = await getIssueQuotations(issueCodes);
-
     const popularities = await prismaDm.$queryRaw<
       { shortIssuecode: string; userCount: number }[]
     >`
       SELECT short_issuecode AS shortIssuecode, COUNT(DISTINCT ID_Utilisateur) AS userCount
       FROM numeros
-      WHERE short_issuecode IN (${PrismaCoa.join(Object.values(shortIssueCodes))})
+      WHERE short_issuecode IN (${PrismaCoa.join(Object.values(shortIssuecodes))})
       GROUP BY short_issuecode
     `;
 
     for (const { shortIssuecode, userCount } of popularities) {
-      const longIssueCode: string = Object.entries(shortIssueCodes).find(
-        ([, thisShortIssueCode]) => shortIssuecode === thisShortIssueCode,
-      )![0];
-      issues[longIssueCode].popularity = userCount;
+      issues[shortIssuecode].popularity = userCount;
+    }
+
+    const quotations = await getQuotationsByShortIssuecodes(shortIssuecodes);
+
+    for (const shortIssuecode of Object.keys(quotations)) {
+      issues[shortIssuecode].issueQuotation = quotations[shortIssuecode];
     }
 
     callback(issues);

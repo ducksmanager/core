@@ -61,7 +61,7 @@ export default abstract class {
       >,
     ) => void,
   ) => void;
-  abstract getIssuesByCode: (
+  abstract getIssuesByShortIssuecode: (
     shortIssuecodes: string[],
     callback: (value: Record<string, SimpleIssueWithPublication>) => void,
   ) => void;
@@ -97,11 +97,13 @@ export default abstract class {
     callback: (value: Record<string, string>) => void,
   ) => void;
 
-  abstract getQuotationsByIssueCodes: (
+  abstract getQuotationsByShortIssuecodes: (
     issueCodes: string[],
     callback: (
       value: Errorable<
-        { quotations: inducks_issuequotation[] },
+        {
+          quotations: Record<string, inducks_issuequotation>;
+        },
         "Bad request" | "Too many requests"
       >,
     ) => void,
@@ -109,7 +111,10 @@ export default abstract class {
   abstract getQuotationsByPublicationCodes: (
     publicationCodes: string[],
     callback: (
-      value: Errorable<{ quotations: inducks_issuequotation[] }, "Bad request">,
+      value: Errorable<
+        { quotations: Record<string, inducks_issuequotation> },
+        "Bad request"
+      >,
     ) => void,
   ) => void;
 

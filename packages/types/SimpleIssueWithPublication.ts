@@ -1,3 +1,5 @@
+import { inducks_issuequotation } from "~prisma-clients/client_coa";
+
 export interface SimpleIssueWithPublication {
   countrycode: string;
   publicationcode: string;
@@ -7,4 +9,5 @@ export interface SimpleIssueWithPublication {
   coverId: number | null;
   fullUrl: string | null;
   popularity: number | null;
+  issueQuotation?: inducks_issuequotation;
 }

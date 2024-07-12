@@ -1,4 +1,9 @@
-import { PrismaClient, edge as rawEdge, issue as rawIssue, subscription as rawSubscription } from "../client_dm";
+import {
+  PrismaClient,
+  edge as rawEdge,
+  issue as rawIssue,
+  subscription as rawSubscription,
+} from "../client_dm";
 import { computeTimestamp } from "./dm.edge.timestamp";
 import { computePublicationcode } from "./dm.publicationcode";
 import { computeShortIssuecodeFromCountryMagazineIssuenumber } from "./shortIssuecode";
@@ -6,10 +11,10 @@ import { computeShortIssuecodeFromCountryMagazineIssuenumber } from "./shortIssu
 type myReturnType<FieldValue, T> = FieldValue extends string ? never : T;
 declare global {
   interface Array<T> {
-    groupBy<FieldValue>(
-      fieldName: string,
-      valueFieldName?: FieldValue,
-    ): { [key: string]: myReturnType<FieldValue, T> };
+    groupBy<Key extends keyof T>(
+      fieldName: Key,
+      valueFieldName?: T[Key],
+    ): { [key: string]: myReturnType<T[Key], T> };
   }
 }
 
@@ -28,26 +33,28 @@ Array.prototype.groupBy = function (fieldName, valueFieldName?) {
 export default (prismaClient: PrismaClient) =>
   prismaClient.$extends({
     result: {
-      issue: { ...computePublicationcode, ...computeShortIssuecodeFromCountryMagazineIssuenumber },
+      issue: {
+        ...computePublicationcode,
+        ...computeShortIssuecodeFromCountryMagazineIssuenumber,
+      },
       subscription: computePublicationcode,
       edge: computeTimestamp,
     },
   });
 
-
 type ExtendedType<
   BaseType,
   Compute extends { [key: string]: { compute: (...args: any[]) => any } },
 > = BaseType & {
-  [Key in keyof Compute]: ReturnType<Compute[Key]['compute']>;
+  [Key in keyof Compute]: ReturnType<Compute[Key]["compute"]>;
 };
 
-export type edge = ExtendedType<
-  rawEdge,
-  typeof computeTimestamp
->;
+export type edge = ExtendedType<rawEdge, typeof computeTimestamp>;
 
-const publicationcodeAndIssueCodeComputes = { ...computePublicationcode, ...computeShortIssuecodeFromCountryMagazineIssuenumber }
+const publicationcodeAndIssueCodeComputes = {
+  ...computePublicationcode,
+  ...computeShortIssuecodeFromCountryMagazineIssuenumber,
+};
 export type issue = ExtendedType<
   rawIssue,
   typeof publicationcodeAndIssueCodeComputes

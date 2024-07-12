@@ -283,6 +283,7 @@ model inducks_issuequotation {
   shortIssuecode  String?   @unique(map: "inducks_issuequotation__uindex_short_issuecode") @map("short_issuecode") @db.VarChar(28)
 
   @@index([publicationcode], map: "inducks_issuequotation__index_publication")
+  @@index([shortIssuecode, source], map: "inducks_issuequotation__uindex_short_issuecode_source")
 }
 
 model inducks_issuerange {
