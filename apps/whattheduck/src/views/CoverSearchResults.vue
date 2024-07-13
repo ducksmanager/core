@@ -36,10 +36,8 @@
         ><ion-row style="font-size: 0.8rem; width: 100%" v-if="cover.estimationMin || cover.estimationMax"
           ><ion-col size="2"><ion-icon :ios="pricetagOutline" :android="pricetagSharp"></ion-icon></ion-col
           ><ion-col class="ion-text-left"
-            ><IssueQuotation :issue="{...cover, estimation: cover.estimationMin! }" /></ion-col
-          ></ion-row
-        ></ion-row
-      >
+            ><IssueQuotation :issue="{...cover, estimation: cover.estimationMin! }" /></ion-col></ion-row
+      ></ion-row>
       <ion-note v-if="covers.length">
         <div style="white-space: pre; margin-bottom: 1rem">
           {{ t('Cliquez sur une couverture\npour ajouter le numéro à la collection') }}
@@ -75,7 +73,7 @@ const { t } = useI18n();
 const { publicationNames } = storeToRefs(webStores.coa());
 const { currentNavigationItem } = storeToRefs(app());
 
-const {IssueQuotation} =webComponents
+const { IssueQuotation } = webComponents;
 
 const cover = ref<(typeof covers)['value'][0]>();
 

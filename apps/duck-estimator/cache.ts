@@ -38,7 +38,7 @@ export const syncScrapeCache = async <T>(
       );
     } catch (e) {
       console.error(`Scraping of ${url} failed: ${e}`);
-      return;
+      throw e
     }
   }
   return scrapeOutput;

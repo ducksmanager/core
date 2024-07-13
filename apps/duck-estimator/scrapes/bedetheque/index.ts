@@ -27,16 +27,21 @@ export async function scrape() {
   ];
 
   for (const serieUrl of seriesUrls) {
-    const scrapeOutput = await syncScrapeCache<
-      Awaited<ReturnType<typeof Scraper.getSerie>>
-    >(
-      "bedetheque",
-      `${serieUrl}.json`,
-      ROOT_URL + serieUrl,
-      async (url) => await Scraper.getSerie(url),
-      (contents) => JSON.parse(contents.toString()),
-      (contents) => JSON.stringify(contents)
-    );
+    let scrapeOutput;
+    try {
+      scrapeOutput = await syncScrapeCache<
+        Awaited<ReturnType<typeof Scraper.getSerie>>
+      >(
+        "bedetheque",
+        `${serieUrl}.json`,
+        ROOT_URL + serieUrl,
+        async (url) => await Scraper.getSerie(url),
+        (contents) => JSON.parse(contents.toString()),
+        (contents) => JSON.stringify(contents)
+      );
+    } catch (e) {
+      continue;
+    }
     if (!scrapeOutput) {
       console.warn(`This page cannot be scraped: ${serieUrl}`);
       continue;

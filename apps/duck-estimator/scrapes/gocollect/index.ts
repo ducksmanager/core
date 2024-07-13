@@ -59,39 +59,43 @@ export async function scrape() {
         console.log(`Scraping ${issueLinkHref}`);
 
         const cacheFileName = `${issueLinkHref!.match(/(?<=\/)[^/+]+$/)![0]}.html`;
-        await syncScrapeCache(
-          "gocollect",
-          cacheFileName,
-          issueLinkHref!,
-          async (url) =>
-            issuePage.goto(url).then((response) =>
-              response!
-                .body()
-                .then((body) => body.toString())
-                .catch((e) => {
-                  console.error(`Error while fetching ${url}: ${e}`);
-                  throw e;
-                })
-            ),
-          (contentsBuffer) => {
-            const contents = contentsBuffer.toString();
-            issuePage.setContent(contents);
-            return contents;
-          },
-          async (_contents) => {
-            if (
-              issueLinkHref ===
-              "https://gocollect.com/app/comic/uncle-scrooge-116"
-            ) {
-              await issuePage.pause();
+        try {
+          await syncScrapeCache(
+            "gocollect",
+            cacheFileName,
+            issueLinkHref!,
+            async (url) =>
+              issuePage.goto(url).then((response) =>
+                response!
+                  .body()
+                  .then((body) => body.toString())
+                  .catch((e) => {
+                    console.error(`Error while fetching ${url}: ${e}`);
+                    throw e;
+                  })
+              ),
+            (contentsBuffer) => {
+              const contents = contentsBuffer.toString();
+              issuePage.setContent(contents);
+              return contents;
+            },
+            async (_contents) => {
+              if (
+                issueLinkHref ===
+                "https://gocollect.com/app/comic/uncle-scrooge-116"
+              ) {
+                await issuePage.pause();
+              }
+              await issuePage.waitForSelector(
+                '[wire\\:key="view-state-company-overview-1"]',
+                { timeout: 5000 }
+              );
+              return _contents;
             }
-            await issuePage.waitForSelector(
-              '[wire\\:key="view-state-company-overview-1"]',
-              { timeout: 5000 }
-            );
-            return _contents;
-          }
-        );
+          );
+        } catch (e) {
+          continue;
+        }
 
         const pageTitle = await issuePage.title();
         const issuenumberMatch = pageTitle.match(/(?<=#).+?(?= )/);
