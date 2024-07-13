@@ -37,6 +37,7 @@ export default abstract class {
         string,
         {
           shortIssuecode: string;
+          publicationcode: string,
           issuenumber: string;
           title: string | null;
         }[]

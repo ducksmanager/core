@@ -168,15 +168,14 @@ export const coa = defineStore("coa", () => {
       );
     },
     fetchIssueNumbersWithTitles = async (publicationcodes: string[]) => {
-      Object.assign(
-        issuesWithTitles.value,
-        await coaServices.getIssuesWithTitles(
-          publicationcodes.filter(
-            (publicationcode) =>
-              !Object.keys(issuesWithTitles.value).includes(publicationcode),
-          ),
+      const results = await coaServices.getIssuesWithTitles(
+        publicationcodes.filter(
+          (publicationcode) =>
+            !Object.keys(issuesWithTitles.value).includes(publicationcode),
         ),
       );
+      debugger;
+      Object.assign(issuesWithTitles.value, results);
     },
     fetchIssueNumbers = async function (publicationCodes: string[]) {
       const newPublicationCodes = [

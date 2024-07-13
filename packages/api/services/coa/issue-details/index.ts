@@ -34,7 +34,7 @@ export default (socket: Socket<Events>) => {
               ...acc,
               [publicationcode!]: [
                 ...(acc[publicationcode!] || []),
-                { shortIssuecode, issuenumber: issuenumber!, title },
+                { shortIssuecode, publicationcode: publicationcode!, issuenumber: issuenumber!, title },
               ],
             }),
             {},

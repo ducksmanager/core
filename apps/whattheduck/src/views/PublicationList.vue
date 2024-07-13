@@ -78,7 +78,7 @@ const sortedItems = computed(() =>
 );
 
 watch(
-  isCoaView,
+  [isCoaView, currentNavigationItem],
   async () => {
     if (isCoaView.value) {
       await fetchPublicationNamesFromCountry(currentNavigationItem.value!);

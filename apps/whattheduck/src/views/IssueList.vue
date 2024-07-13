@@ -9,7 +9,7 @@
       <ion-checkbox v-if="selectedIssuenumbers" :checked="selectedIssuenumbers.includes(item.issuenumber)"
         >&nbsp;</ion-checkbox
       >
-      <Condition v-if="item.condition" :value="item.condition" />
+      <Condition v-if="'condition' in item && item.condition" :value="item.condition" />
       <span v-else class="not-owned-space" />
     </template>
     <template v-if="currentIssueViewMode.id === 'list'" #row-label="{ item }">
@@ -98,37 +98,38 @@ watch(isCoaView, () => {
   selectedIssuenumbers.value = [];
 });
 
-type Item = NonNullable<(typeof issues)['value']>[number];
-
 const items = computed(() =>
   coaIssues.value
     ? isCoaView.value
       ? coaIssues.value.reduce<
-          {
-            key: string;
-            keyInList: string;
-            item: Item;
-          }[]
-        >(
-          (acc, { shortIssuecode, issuenumber }) => [
+          { key: string; keyInList: string; item: typeof userIssues.value[number]| typeof coaIssues.value[number]}[]
+        >((acc, item) => {
+          const userIssuesForThisIssue = userIssues.value
+            .filter(({ issuenumber: userIssueNumber }) => item.issuenumber === userIssueNumber)
+            .map((item) => ({
+              key: item.shortIssuecode,
+              keyInList: item.issuenumber,
+              item,
+            }));
+
+          return [
             ...acc,
-            ...userIssues.value
-              .filter(({ issuenumber: userIssueNumber }) => issuenumber === userIssueNumber)
-              .map((item) => ({
-                key: shortIssuecode,
-                keyInList: issuenumber,
-                item,
-              })),
-          ],
-          [],
-        )
-      : (issues.value || [])
-          .filter((issue) => issue.publicationcode === publicationcode.value)
-          .map((issue) => ({
-            key: issue.shortIssuecode,
-            keyInList: issue.issuenumber,
-            item: issue,
-          }))
+            ...(userIssuesForThisIssue.length
+              ? userIssuesForThisIssue
+              : [
+                  {
+                    key: item.shortIssuecode,
+                    keyInList: item.issuenumber,
+                    item,
+                  },
+                ]),
+          ];
+        }, [])
+      : (userIssues.value || []).map((issue) => ({
+          key: issue.shortIssuecode,
+          keyInList: issue.issuenumber,
+          item: issue,
+        }))
     : [],
 );
 
@@ -146,7 +147,7 @@ const sortedItems = computed(() =>
     )
     .map((value) => ({
       ...value,
-      isOwned: value.item.condition !== undefined,
+      isOwned: (value.item as (typeof userIssues.value)[0]).condition !== undefined,
     }))
     .map(({ key, keyInList, item, isOwned, indexInCoaList }, idx, allItems) => {
       const nextItemIndexInCoaList = allItems[idx + 1]?.indexInCoaList;
@@ -171,7 +172,7 @@ const sortedItemsForBookcase = computed(() =>
   sortedItems.value.map(({ item }) => ({
     publicationcode: item.publicationcode!,
     issuenumber: item.issuenumber,
-    issueCondition: item.condition,
+    issueCondition: (item as (typeof userIssues.value)[0]).condition,
   })),
 );
 
@@ -195,10 +196,25 @@ watch([sortedItems, currentIssueViewMode], async () => {
   }
 });
 
-onMounted(async () => {
-  await coaStore.fetchIssueNumbersWithTitles([publicationcode.value]);
-  bookcaseUsername.value = user.value!.username;
+watch(
+  [isCoaView, currentNavigationItem],
+  async () => {
+    await coaStore.fetchIssueNumbersWithTitles([publicationcode.value]);
+  },
+  { immediate: true },
+);
 
+watch(
+  user,
+  () => {
+    if (user.value) {
+      bookcaseUsername.value = user.value!.username;
+    }
+  },
+  { immediate: true },
+);
+
+onMounted(async () => {
   await loadBookcaseOptions();
   await loadBookcaseOrder();
 });
