@@ -31,7 +31,9 @@ export async function scrape() {
 
   const browser = await firefox.launch();
   const browserContext = await browser.newContext();
+  await browserContext.route(/img.gocollect.com/, route => route.abort());
   const page = await browserContext.newPage();
+  
   await page.goto("https://gocollect.com/login");
   await page.fill("#email", process.env.GOCOLLECT_USERNAME!);
   await page.fill("#password", process.env.GOCOLLECT_PASSWORD!);
