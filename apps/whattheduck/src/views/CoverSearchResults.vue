@@ -114,9 +114,13 @@ const covers = computed(() =>
     : [],
 );
 
-watch(covers, () => {
-  cover.value = covers.value[0];
-});
+watch(
+  covers,
+  () => {
+    cover.value = covers.value[0];
+  },
+  { immediate: true },
+);
 
 const onMainSlideClick = async ({ index }: { index: number }) => {
   currentNavigationItem.value = covers.value[index]!.shortIssuecode;
