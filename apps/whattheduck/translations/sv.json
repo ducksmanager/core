@@ -1,7 +1,7 @@
 {
   "%d nouvelle histoire": "%d ny berättelse",
   "%d numéro à lire": "",
-  "%d utilisateurs possèdent ce numéro": "%d användare äger denna utgåva",
+  "{numberOfUsers} utilisateurs possèdent ce numéro": "{numberOfUsers} användare äger denna utgåva",
   "-- Plus de 10 résultats, affinez votre recherche --": "-- Fler än 10 resultat, förfina din sökning --",
   "A lire": "I att läsa lista",
   "Adresse e-mail": "E-mail",

@@ -13,6 +13,7 @@ export interface CoverSearchResults {
     fullUrl: string;
     publicationcode: string;
     issuenumber: string;
+    popularity: number;
   } & Pick<inducks_issuequotation, "estimationMin" | "estimationMax">)[];
   type?: string;
 }

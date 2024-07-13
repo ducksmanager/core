@@ -4,7 +4,7 @@
   "%1d €": "%1d €",
   "%d nouvelle histoire": "%d new story",
   "%d numéro à lire": "%d issue to read",
-  "%d utilisateurs possèdent ce numéro": "%d users own this issue",
+  "{numberOfUsers} utilisateurs possèdent ce numéro": "{numberOfUsers} users own this issue",
   "-- Plus de 10 résultats, affinez votre recherche --": "-- More than 10 results, refine your search --",
   "A lire": "In to-read stack",
   "Adresse e-mail": "E-mail",

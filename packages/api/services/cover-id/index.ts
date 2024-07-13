@@ -3,7 +3,7 @@ import https from "https";
 import type { Namespace, Server } from "socket.io";
 
 import type { SimilarImagesResult } from "~dm-types/CoverSearchResults";
-import { prismaCoa, prismaCoverInfo } from "~prisma-clients";
+import { prismaCoa, prismaCoverInfo, prismaDm } from "~prisma-clients";
 
 import { getCoverUrls } from "../coa/issue-details";
 import { getQuotationsByShortIssuecodes } from "../coa/quotations";
@@ -78,9 +78,23 @@ export default (io: Server) => {
       const issues = await getIssuesFromIssueCodes(foundIssueCodes);
       console.log(`Cover ID search: matched ${coverInfos.length} issues`);
 
+      const shortIssuecodes = issues.map(({ shortIssuecode }) => shortIssuecode)
+
       const quotationsByShortIssuecode = await getQuotationsByShortIssuecodes(
-        issues.map(({ shortIssuecode }) => shortIssuecode),
+        shortIssuecodes,
       );
+
+      const popularitiesByShortIssuecode = (await prismaDm.issue.findMany({
+        distinct: ['shortIssuecode', 'userId'],
+        where: {
+          shortIssuecode: {
+            in: shortIssuecodes
+          }
+        }
+      })).reduce<Record<string, number>>((acc, {shortIssuecode}) => ({
+        ...acc,
+        [shortIssuecode]: (acc[shortIssuecode] || 0) + 1
+      }), {})
 
       callback({
         covers: coverInfos.map((cover) =>
@@ -89,6 +103,7 @@ export default (io: Server) => {
               ({ shortIssuecode }) => cover.shortIssuecode === shortIssuecode,
             )!,
             ...quotationsByShortIssuecode[cover.shortIssuecode],
+            popularity: popularitiesByShortIssuecode[cover.shortIssuecode],
           }),
         ),
       });
