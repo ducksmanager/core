@@ -22,9 +22,9 @@
             ><ion-col size="4" style="flex-direction: column"
               ><div>{{ t('numéros') }}</div>
               <small>{{
-              t('dont {copies} double|dont {copies} doubles', {
-                copies: total! - totalUniqueIssues,
-              })
+                t('dont {copies} double|dont {copies} doubles', {
+                  copies: total! - totalUniqueIssues,
+                })
               }}</small>
             </ion-col></ion-row
           ></ion-row
@@ -112,11 +112,15 @@ const {
 const { publicationNames } = storeToRefs(coa());
 const { loadUserIssueQuotations } = wtdcollection();
 
-watch(ownedPublications, () => {
-  if (ownedPublications.value) {
-    loadUserIssueQuotations();
-  }
-});
+watch(
+  ownedPublications,
+  () => {
+    if (ownedPublications.value) {
+      loadUserIssueQuotations();
+    }
+  },
+  { immediate: true },
+);
 </script>
 
 <style lang="scss" scoped>
