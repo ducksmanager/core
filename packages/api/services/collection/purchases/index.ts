@@ -43,6 +43,7 @@ export default (socket: Socket<Events>) => {
     await prismaDm.purchase.create({
       data: criteria,
     });
+    callback()
   });
 
   socket.on("deletePurchase", async (purchaseId, callback) => {

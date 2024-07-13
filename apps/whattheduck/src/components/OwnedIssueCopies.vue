@@ -1,7 +1,7 @@
 <template>
   <ion-content class="no-padding">
     <ion-row v-if="!isOfflineMode">
-      <ion-col size="12"
+      <ion-col size="12" style="height: 100%"
         ><img v-if="fullUrl" :src="coverUrl" />
         <ion-chip v-if="extraIssuenumbers.length">+&nbsp;{{ extraIssuenumbers.length }}</ion-chip></ion-col
       >

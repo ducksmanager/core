@@ -12,9 +12,16 @@
         <ion-title
           ><div class="content">
             <div class="title">
-              <ion-button size="small" v-if="isCoaView" @click="isCoaView = false; if (issuenumber !== undefined) {
-                currentNavigationItem = publicationcode
-              }">
+              <ion-button
+                size="small"
+                v-if="isCoaView"
+                @click="
+                  isCoaView = false;
+                  if (issuenumber !== undefined) {
+                    currentNavigationItem = publicationcode!;
+                  }
+                "
+              >
                 <ion-icon :md="arrowBackSharp" :ios="arrowBackOutline"></ion-icon>&nbsp;{{
                   t('Retour à ma collection')
                 }}
@@ -55,7 +62,15 @@ import PublicationList from '~/views/PublicationList.vue';
 const { t } = useI18n();
 
 const { total } = storeToRefs(wtdcollection());
-const { filterText, navigationItemGroups, isCoaView, isCameraPreviewShown, publicationcode, issuenumber, currentNavigationItem } = storeToRefs(app());
+const {
+  filterText,
+  navigationItemGroups,
+  isCoaView,
+  isCameraPreviewShown,
+  publicationcode,
+  issuenumber,
+  currentNavigationItem,
+} = storeToRefs(app());
 
 const hasItems = ref<boolean | undefined>();
 

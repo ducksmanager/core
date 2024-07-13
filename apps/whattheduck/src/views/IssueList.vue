@@ -102,7 +102,11 @@ const items = computed(() =>
   coaIssues.value
     ? isCoaView.value
       ? coaIssues.value.reduce<
-          { key: string; keyInList: string; item: typeof userIssues.value[number]| typeof coaIssues.value[number]}[]
+          {
+            key: string;
+            keyInList: string;
+            item: (typeof userIssues.value)[number] | (typeof coaIssues.value)[number];
+          }[]
         >((acc, item) => {
           const userIssuesForThisIssue = userIssues.value
             .filter(({ issuenumber: userIssueNumber }) => item.issuenumber === userIssueNumber)

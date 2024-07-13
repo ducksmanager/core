@@ -20,6 +20,7 @@ export const wtdcollection = defineStore('wtdcollection', () => {
   const isPersistedDataLoaded = ref(false);
 
   const {
+    createPurchase,
     findInCollection,
     fetchIssueCountsByPublicationcode,
     loadCollection,
@@ -72,6 +73,7 @@ export const wtdcollection = defineStore('wtdcollection', () => {
   return {
     isPersistedDataLoaded,
     issues,
+    createPurchase,
     fetchAndTrackCollection,
     fetchIssueCountsByPublicationcode,
     findInCollection,
