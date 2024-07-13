@@ -109,12 +109,12 @@ const {
   totalUniqueIssues,
   quotationSum,
 } = storeToRefs(wtdcollection());
-const { fetchIssueQuotations } = coa();
 const { publicationNames } = storeToRefs(coa());
+const { loadUserIssueQuotations } = wtdcollection();
 
 watch(ownedPublications, () => {
   if (ownedPublications.value) {
-    fetchIssueQuotations(ownedPublications.value);
+    loadUserIssueQuotations();
   }
 });
 </script>

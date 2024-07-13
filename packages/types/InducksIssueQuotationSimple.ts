@@ -1,4 +1,6 @@
-export interface InducksIssueQuotationSimple {
-  estimationMin: number | null;
-  estimationMax: number | null;
-}
+import { inducks_issuequotation } from "~prisma-clients/client_coa";
+
+export type InducksIssueQuotationSimple = Pick<
+  inducks_issuequotation,
+  "estimationMin" | "estimationMax" | "publicationcode" | "issuenumber"
+>;

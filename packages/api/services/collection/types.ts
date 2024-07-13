@@ -7,6 +7,7 @@ import type { EdgeWithStringCreationDate } from "~dm-types/EdgeWithStringCreatio
 import type { EditSubscription } from "~dm-types/EditSubscription";
 import type { TransactionResults } from "~dm-types/TransactionResults";
 import type { UserForAccountForm } from "~dm-types/UserForAccountForm";
+import type { inducks_issuequotation } from "~prisma-clients/client_coa";
 import type {
   authorUser,
   issuePopularity,
@@ -187,5 +188,14 @@ export default abstract class {
   abstract addWatchedAuthor: (
     personcode: string,
     callback: (value: Errorable<void, "Error">) => void,
+  ) => void;
+
+  abstract getCollectionQuotations: (
+    callback: (
+      value: Errorable<
+        { quotations: Record<string, inducks_issuequotation> },
+        "Bad request"
+      >,
+    ) => void,
   ) => void;
 }

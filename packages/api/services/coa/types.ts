@@ -108,15 +108,6 @@ export default abstract class {
       >,
     ) => void,
   ) => void;
-  abstract getQuotationsByPublicationCodes: (
-    publicationCodes: string[],
-    callback: (
-      value: Errorable<
-        { quotations: Record<string, inducks_issuequotation> },
-        "Bad request"
-      >,
-    ) => void,
-  ) => void;
 
   abstract searchStory: <WithIssues extends boolean>(
     keywords: string[],

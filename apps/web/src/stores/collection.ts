@@ -313,6 +313,15 @@ export const collection = defineStore("collection", () => {
         );
       }
     },
+    loadUserIssueQuotations = async () => {
+      const data = await collectionServices.getCollectionQuotations();
+
+      if (data.quotations) {
+        coa().addIssueQuotations(data.quotations);
+      } else {
+        console.error(data.error);
+      }
+    },
     loadLastPublishedEdgesForCurrentUser = async () => {
       if (!lastPublishedEdgesForCurrentUser.value) {
         lastPublishedEdgesForCurrentUser.value =
@@ -399,6 +408,7 @@ export const collection = defineStore("collection", () => {
     issueNumbersPerPublication,
     lastPublishedEdgesForCurrentUser,
     loadCollection,
+    loadUserIssueQuotations,
     loadLastPublishedEdgesForCurrentUser,
     loadMarketplaceContactMethods,
     loadPopularIssuesInCollection,

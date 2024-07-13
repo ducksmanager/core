@@ -173,11 +173,11 @@ let currentPage = $ref(1);
 const { fetchCount } = users();
 const { count: userCount } = storeToRefs(users());
 
-const { loadCollection } = collection();
+const { loadCollection, loadUserIssueQuotations } = collection();
 const { totalPerPublication, quotedIssues, quotationSum, user } =
   storeToRefs(collection());
 
-const { fetchPublicationNames, fetchIssueQuotations } = coa();
+const { fetchPublicationNames } = coa();
 const { publicationNames } = storeToRefs(coa());
 
 const quotedIssuesForCollection = $computed(() =>
@@ -205,7 +205,7 @@ watch(
   totalPerPublication,
   async (newValue) => {
     if (newValue) {
-      await fetchIssueQuotations(Object.keys(newValue));
+      await loadUserIssueQuotations();
     }
   },
   { immediate: true },

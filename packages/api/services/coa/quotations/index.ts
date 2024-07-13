@@ -6,7 +6,6 @@ import type {
   Prisma as PrismaCoa,
 } from "~prisma-clients/client_coa";
 
-const PUBLICATION_CODE_REGEX = /[a-z]+\/[-A-Z0-9]+/g;
 const ISSUE_CODE_REGEX = /[a-z]+\/[-A-Z0-9 ]+/g;
 
 export const getQuotations = async (
@@ -68,24 +67,6 @@ export default (socket: Socket<Events>) => {
       } else {
         callback({
           quotations: await getQuotationsByShortIssuecodes(codes),
-        });
-      }
-    },
-  );
-  socket.on(
-    "getQuotationsByPublicationCodes",
-    async (publicationCodes, callback) => {
-      const codes = publicationCodes.filter((code) =>
-        PUBLICATION_CODE_REGEX.test(code),
-      );
-      if (!codes.length) {
-        callback({ error: "Bad request" });
-      } else {
-        callback({
-          quotations: await getQuotations({
-            publicationcode: { in: codes },
-            estimationMin: { not: { equals: null } },
-          }),
         });
       }
     },

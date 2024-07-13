@@ -135,28 +135,6 @@ export const coa = defineStore("coa", () => {
         )
       );
     },
-    fetchIssueQuotations = async (newPublicationCodes: string[]) => {
-      const actualNewPublicationCodes = [
-        ...new Set(
-          newPublicationCodes.filter(
-            (publicationcode) =>
-              !Object.keys(issueQuotations.value || {}).includes(
-                publicationcode,
-              ),
-          ),
-        ),
-      ];
-
-      const data = await coaServices.getQuotationsByPublicationCodes(
-        actualNewPublicationCodes,
-      );
-
-      if (data.quotations) {
-        addIssueQuotations(data.quotations);
-      } else {
-        console.error(data.error);
-      }
-    },
     fetchPublicationNamesFromCountry = async (countrycode: string) =>
       publicationNamesFullCountries.value.includes(countrycode)
         ? void 0
@@ -293,7 +271,6 @@ export const coa = defineStore("coa", () => {
     fetchIssueCodesDetails,
     fetchIssueNumbers,
     fetchIssueNumbersWithTitles,
-    fetchIssueQuotations,
     fetchIssueUrls,
     fetchPersonNames,
     fetchPublicationNames,

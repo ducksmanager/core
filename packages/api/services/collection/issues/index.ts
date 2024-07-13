@@ -7,6 +7,7 @@ import { getPublicationTitles } from "~/services/coa/publications";
 import type { TransactionResults } from "~dm-types/TransactionResults";
 import { prismaCoa } from "~prisma-clients";
 import { prismaDm } from "~prisma-clients";
+import type { inducks_issuequotation } from "~prisma-clients/client_coa";
 import type { user } from "~prisma-clients/extended/dm.extends";
 import { issue_condition } from "~prisma-clients/extended/dm.extends";
 
@@ -234,6 +235,30 @@ export default (socket: Socket<Events>) => {
           ),
         );
       }),
+  );
+
+
+  socket.on(
+    "getCollectionQuotations",
+    async (callback) => {
+      callback({
+        quotations: (await prismaDm.$queryRaw<inducks_issuequotation[]>`
+          select
+            publicationcode,
+            issuenumber,
+            short_issuecode AS shortIssuecode,
+            round(min(estimationmin))                         AS estimationMin,
+            case max(ifnull(estimationmax, 0))
+                when 0 then null
+                else round(max(ifnull(estimationmax, 0))) end AS estimationMax
+          from dm.numeros
+            inner join coa.inducks_issuequotation using (short_issuecode)
+          where ID_Utilisateur = ${socket.data.user!.id}
+            and estimationmin is not null
+          group by numeros.ID;
+        `).groupBy('shortIssuecode')
+      });
+    },
   );
 };
 
