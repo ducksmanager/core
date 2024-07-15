@@ -54,22 +54,22 @@ jobs:
             docker compose pull cover-updater
             docker compose run --rm --no-deps cover-updater
 
-  duck-estimator:
-    needs: ["coa-updater"]
-    runs-on: ubuntu-latest
-    environment: production
-    steps:
-      - uses: appleboy/ssh-action@v1.0.3
-        with:
-          host: ${{ secrets.PRODUCTION_SSH_HOST }}
-          username: ${{ secrets.PRODUCTION_SSH_USER }}
-          key: ${{ secrets.PRODUCTION_SSH_KEY }}
-          command_timeout: 60m
-          script: |
-            cd workspace/DucksManager2/apps/duck-estimator
-            echo ${{ secrets.DOCKER_REGISTRY_TOKEN_DM }} | docker login ghcr.io -u bperel --password-stdin
-            docker compose pull
-            docker compose run --rm duck-estimator
+  # duck-estimator:
+  #   needs: ["coa-updater"]
+  #   runs-on: ubuntu-latest
+  #   environment: production
+  #   steps:
+  #     - uses: appleboy/ssh-action@v1.0.3
+  #       with:
+  #         host: ${{ secrets.PRODUCTION_SSH_HOST }}
+  #         username: ${{ secrets.PRODUCTION_SSH_USER }}
+  #         key: ${{ secrets.PRODUCTION_SSH_KEY }}
+  #         command_timeout: 60m
+  #         script: |
+  #           cd workspace/DucksManager2/apps/duck-estimator
+  #           echo ${{ secrets.DOCKER_REGISTRY_TOKEN_DM }} | docker login ghcr.io -u bperel --password-stdin
+  #           docker compose pull
+  #           docker compose run --rm duck-estimator
 
   sprite-names-updater:
     needs: ["cover-updater"]
