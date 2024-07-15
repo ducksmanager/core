@@ -46,18 +46,18 @@ jobs:
             docker compose pull cover-updater
             docker compose run --rm --no-deps cover-updater
 
-      - name: Run duck-estimator
-        uses: appleboy/ssh-action@v0.1.4
-        with:
-          host: ${{ secrets.PRODUCTION_SSH_HOST }}
-          username: ${{ secrets.PRODUCTION_SSH_USER }}
-          key: ${{ secrets.PRODUCTION_SSH_KEY }}
-          command_timeout: 90m
-          script: |
-            cd workspace/DucksManager2/apps/duck-estimator
-            echo ${{ secrets.DOCKER_REGISTRY_TOKEN_DM }} | docker login ghcr.io -u bperel --password-stdin
-            docker compose pull
-            docker compose run --rm duck-estimator
+      # - name: Run duck-estimator
+      #   uses: appleboy/ssh-action@v0.1.4
+      #   with:
+      #     host: ${{ secrets.PRODUCTION_SSH_HOST }}
+      #     username: ${{ secrets.PRODUCTION_SSH_USER }}
+      #     key: ${{ secrets.PRODUCTION_SSH_KEY }}
+      #     command_timeout: 90m
+      #     script: |
+      #       cd workspace/DucksManager2/apps/duck-estimator
+      #       echo ${{ secrets.DOCKER_REGISTRY_TOKEN_DM }} | docker login ghcr.io -u bperel --password-stdin
+      #       docker compose pull
+      #       docker compose run --rm duck-estimator
 
       - name: Run sprite-names-updater
         uses: appleboy/ssh-action@v0.1.4
