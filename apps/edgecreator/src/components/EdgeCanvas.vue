@@ -147,7 +147,7 @@ const toKeyValue = (arr: OptionNameAndValue[]) => {
   );
   return Object.keys(val).length ? val : undefined;
 };
-const borderWidth = ref<number>(1);
+const borderWidth = ref(1);
 
 const canvas = ref<HTMLElement | null>(null);
 

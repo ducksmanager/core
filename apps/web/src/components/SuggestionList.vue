@@ -103,7 +103,7 @@ const getImportance = (score: number) =>
       : 2;
 
 let loading = $ref(true);
-const suggestionSortCurrent = ref("score" as "score" | "oldestdate");
+const suggestionSortCurrent = ref<"score" | "oldestdate">("score");
 
 watch(
   $$(countrycode),

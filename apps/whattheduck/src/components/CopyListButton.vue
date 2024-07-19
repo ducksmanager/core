@@ -30,7 +30,7 @@ const { isOfflineMode, publicationcode } = storeToRefs(app());
 const { copyListModes } = app();
 
 // eslint-disable-next-line no-undef
-const fab = ref<ComponentPublicInstance<HTMLIonFabElement> | null>(null);
+const fab = shallowRef<ComponentPublicInstance<HTMLIonFabElement> | null>(null);
 
 const copyToClipboard = async (textPrefix: string, text: Promise<string>) => {
   await Clipboard.write({

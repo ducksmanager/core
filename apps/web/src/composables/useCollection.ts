@@ -9,20 +9,20 @@ export default (issues: Ref<issue[] | null>) => {
   const mostPossessedPublication = computed(
     () =>
       totalPerPublication.value &&
-      Object.keys(totalPerPublication.value).reduce(
+      Object.keys(totalPerPublication.value).reduce<string | null>(
         (acc, publicationcode) =>
           acc &&
           totalPerPublication.value![acc] >
             totalPerPublication.value![publicationcode]
             ? acc
             : publicationcode,
-        null as string | null,
+        null,
       ),
   );
 
   const totalPerPublication = computed(
       () =>
-        issues.value?.reduce(
+        issues.value?.reduce<{ [publicationcode: string]: number }>(
           (acc, issue) => {
             const publicationcode = `${issue.country}/${issue.magazine}`;
             return {
@@ -30,7 +30,7 @@ export default (issues: Ref<issue[] | null>) => {
               [publicationcode]: (acc[publicationcode] || 0) + 1,
             };
           },
-          {} as { [publicationcode: string]: number },
+          {},
         ) || null,
     ),
     issuesByShortIssuecode = computed(() =>
@@ -79,17 +79,17 @@ export default (issues: Ref<issue[] | null>) => {
         0,
     ),
     totalPerCountry = computed(() =>
-      issues.value?.reduce(
+      issues.value?.reduce<{ [countrycode: string]: number }>(
         (acc, issue) => ({
           ...acc,
           [issue.country]: (acc[issue.country] || 0) + 1,
         }),
-        {} as { [countrycode: string]: number },
+        {},
       ),
     ),
     numberPerCondition = computed(
       () =>
-        issues.value?.reduce<Record<issue_condition, number>>(
+        issues.value?.reduce(
           (acc, { condition }) => ({
             ...acc,
             [condition || "indefini"]: (acc[condition || "indefini"] || 0) + 1,
@@ -103,7 +103,7 @@ export default (issues: Ref<issue[] | null>) => {
           publicationcode === `${country}/${magazine}` &&
           collectionIssueNumber === issuenumber,
       ),
-    quotedIssues = computed((): QuotedIssue[] | null => {
+    quotedIssues = computed<QuotedIssue[] | null>(() => {
       const issueQuotations = coa().issueQuotations;
       if (issueQuotations === null) {
         return null;

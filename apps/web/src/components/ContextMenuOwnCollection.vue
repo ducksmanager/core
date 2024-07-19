@@ -157,13 +157,13 @@ const defaultIssueState = {
   purchaseId: undefined,
 };
 
-let initialIssues = $ref(null as CollectionUpdateMultipleIssues | null);
-let editedIssues = $ref(null as CollectionUpdateMultipleIssues | null);
+let initialIssues = $ref<CollectionUpdateMultipleIssues | null>(null);
+let editedIssues = $ref<CollectionUpdateMultipleIssues | null>(null);
 
-let initialCopies = $ref(null as CollectionUpdateSingleIssue | null);
-let editedCopies = $ref(null as CollectionUpdateSingleIssue | null);
+let initialCopies = $ref<CollectionUpdateSingleIssue | null>(null);
+let editedCopies = $ref<CollectionUpdateSingleIssue | null>(null);
 
-let currentCopyIndex = $ref(0 as number);
+let currentCopyIndex = $ref(0);
 
 const selectedIssues = $computed(() =>
   Object.keys(selectedIssueIdsByIssuenumber),

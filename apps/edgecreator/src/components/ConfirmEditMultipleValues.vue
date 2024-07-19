@@ -29,6 +29,6 @@ const props = defineProps<{
   values: OptionValue[];
 }>();
 
-const edit = ref<boolean>(false);
+const edit = ref(false);
 const isMultiple = computed(() => props.values.length > 1 && !edit.value);
 </script>

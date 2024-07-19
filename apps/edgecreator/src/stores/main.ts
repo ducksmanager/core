@@ -24,7 +24,7 @@ export const main = defineStore("main", () => {
   const country = ref<string | null>(null),
     magazine = ref<string | null>(null),
     issuenumbers = ref<string[]>([]),
-    isRange = ref<boolean>(false),
+    isRange = ref(false),
     photoUrls = ref<Record<string, string>>({}),
     contributors = ref<ModelContributor[]>([]),
     edgesBefore = ref<EdgeWithModelId[]>([]),

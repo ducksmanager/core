@@ -89,9 +89,9 @@ type AugmentedStoryResult = SimpleStory & {
 };
 
 const storyTitle = ref('');
-const storyResults = ref(null as { results: AugmentedStoryResult[] } | null);
+const storyResults = ref<{ results: AugmentedStoryResult[] } | null>(null);
 
-const selectedStory = ref(null as AugmentedStoryResult | null);
+const selectedStory = ref<AugmentedStoryResult | null>(null);
 
 watch(storyTitle, async (newValue) => {
   if (!newValue) {

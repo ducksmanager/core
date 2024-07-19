@@ -87,7 +87,7 @@ const title = $computed(() =>
   isPublic ? $t("Collection de {username}", { username }) : $t("Collection"),
 );
 
-let hasPublicationNames = $ref(false as boolean);
+let hasPublicationNames = $ref(false);
 const sortedCountries = $computed(
   () =>
     totalPerCountry.value &&

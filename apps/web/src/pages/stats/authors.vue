@@ -101,10 +101,10 @@ let watchedAuthorsStoryCount = $ref(
   null as EventReturnType<StatsServices["getWatchedAuthorsStats"]> | null,
 );
 let unitTypeCurrent = $ref("number");
-let width = $ref(null as string | null),
-  height = $ref("300px" as string),
-  chartData = $ref(null as ChartData<"bar", number[]> | null),
-  options = $ref({} as ChartOptions<"bar">);
+let width = $ref<string | null>(null),
+  height = $ref<string>("300px"),
+  chartData = $ref<ChartData<"bar", number[]> | null>(null),
+  options = $ref<ChartOptions<"bar">>({});
 
 const labels = $computed(
   () =>

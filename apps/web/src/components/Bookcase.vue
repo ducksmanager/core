@@ -123,7 +123,7 @@ const sortedBookcaseWithPopularity = computed(() =>
 
 const MAX_BATCH_SIZE = 50;
 
-let loadedImages = ref(new Set<number>() as Set<number>);
+let loadedImages = ref<Set<number>>(new Set<number>());
 
 const lastEdgeIndexContinuouslyLoaded = computed(() => {
   const allLoadedImages = Array.from(loadedImages.value).sort((a, b) =>
@@ -150,7 +150,7 @@ defineEmits<{
 }>();
 
 const { getImagePath } = images();
-let edgeIndexesToLoad = ref([] as number[]);
+let edgeIndexesToLoad = ref<number[]>([]);
 
 const getTextureBackgroundImage = (textureName: string) =>
   `url('${getImagePath(`textures/${textureName}`)}.jpg')`;

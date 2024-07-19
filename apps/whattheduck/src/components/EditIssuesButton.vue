@@ -82,7 +82,7 @@ const { pickCoverFile } = useCoverSearch(useRouter(), coverIdServices);
 const { isCoaView } = storeToRefs(app());
 
 // eslint-disable-next-line no-undef
-const fab = ref<ComponentPublicInstance<HTMLIonFabElement> | null>(null);
+const fab = shallowRef<ComponentPublicInstance<HTMLIonFabElement> | null>(null);
 
 const { t } = useI18n();
 </script>

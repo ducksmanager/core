@@ -144,32 +144,31 @@ const sortedItems = computed(() =>
       keyInList,
       item,
       indexInCoaList: coaIssuenumbers.value!.indexOf(item.issuenumber),
+      isOwned: (item as (typeof userIssues.value)[0]).condition !== undefined,
     }))
 
     .sort(({ indexInCoaList: indexInCoaList1 }, { indexInCoaList: indexInCoaList2 }) =>
       Math.sign(indexInCoaList1 - indexInCoaList2),
     )
-    .map((value) => ({
+    .map((value, idx, allItems) => ({
       ...value,
-      isOwned: (value.item as (typeof userIssues.value)[0]).condition !== undefined,
+      nextItemIndexInCoaList: allItems[idx + 1]?.indexInCoaList,
+      nextItemIndexIsOwned: allItems[idx + 1]?.isOwned,
     }))
-    .map(({ key, keyInList, item, isOwned, indexInCoaList }, idx, allItems) => {
-      const nextItemIndexInCoaList = allItems[idx + 1]?.indexInCoaList;
-      return {
-        key,
-        keyInList,
-        item,
-        isOwned,
-        nextItemType:
-          allItems[idx + 1]?.isOwned && nextItemIndexInCoaList
-            ? nextItemIndexInCoaList === indexInCoaList
-              ? ('same' as const)
-              : nextItemIndexInCoaList === indexInCoaList + 1
-                ? ('owned' as const)
-                : undefined
-            : undefined,
-      };
-    }),
+    .map(({ key, keyInList, item, isOwned, indexInCoaList, nextItemIndexIsOwned, nextItemIndexInCoaList }) => ({
+      key,
+      keyInList,
+      item,
+      isOwned,
+      nextItemType:
+        nextItemIndexIsOwned && nextItemIndexInCoaList
+          ? nextItemIndexInCoaList === indexInCoaList
+            ? ('same' as const)
+            : nextItemIndexInCoaList === indexInCoaList + 1
+              ? ('owned' as const)
+              : undefined
+          : undefined,
+    })),
 );
 
 const sortedItemsForBookcase = computed(() =>
@@ -180,7 +179,7 @@ const sortedItemsForBookcase = computed(() =>
   })),
 );
 
-const sortedItemsForCovers = ref<Awaited<ReturnType<typeof getSortedItemsWithCovers>>>();
+const sortedItemsForCovers = shallowRef<Awaited<ReturnType<typeof getSortedItemsWithCovers>>>();
 
 const getSortedItemsWithCovers = async () => {
   const coverUrls = (await coaStore.fetchCoverUrls(publicationcode.value)).covers;

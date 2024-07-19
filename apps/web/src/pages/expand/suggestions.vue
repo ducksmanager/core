@@ -66,7 +66,7 @@ alias: [/agrandir/suggestions]
 </template>
 
 <script setup lang="ts">
-const countryCode = $ref("ALL" as string);
+const countryCode = $ref<string>("ALL");
 const { t: $t } = useI18n();
 
 const { loadCollection } = collection();

@@ -183,13 +183,13 @@ const {
 const { fetchStats } = users();
 const { stats: userStats } = storeToRefs(users());
 
-let bookstores = $ref(null as SimpleBookstore[] | null);
-let existingBookstore = $ref(null as SimpleBookstore | null);
+let bookstores = $ref<SimpleBookstore[] | null>(null);
+let existingBookstore = $ref<SimpleBookstore | null>(null);
 let newBookstoreSent = $ref(false);
 let existingBookstoreSent = $ref(false);
 
 const { t: $t } = useI18n();
-let loaded = $ref(false as boolean);
+let loaded = $ref(false);
 const newBookstore = $ref({
   id: null,
   name: "",

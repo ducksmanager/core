@@ -87,7 +87,7 @@ const ConditionsComponent = components['Conditions'];
 const { t } = useI18n();
 
 type GraphType = 'pastYear' | 'allTime';
-const currentCollectionProgressionGraphType = ref('pastYear' as GraphType);
+const currentCollectionProgressionGraphType = ref<GraphType>('pastYear');
 const collectionProgressionGraphTypes: { title: string; value: GraphType }[] = [
   {
     title: t('Depuis 1 an'),

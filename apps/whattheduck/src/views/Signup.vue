@@ -98,10 +98,10 @@ const { validInputs, invalidInputs, touchedInputs, errorTexts, showError, clearE
   'passwordConfirmation',
 ]);
 
-const username = ref('' as string);
-const email = ref('' as string);
-const password = ref('' as string);
-const passwordConfirmation = ref('' as string);
+const username = ref('');
+const email = ref('');
+const password = ref('');
+const passwordConfirmation = ref('');
 
 const showPassword = ref(false);
 const showPasswordConfirmation = ref(false);

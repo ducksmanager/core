@@ -49,8 +49,8 @@ import { dmSocketInjectionKey } from "../../composables/useDmSocket";
 
 let error = $ref<string | null>(null);
 
-const email = $ref("" as string);
-let token = $ref("" as string);
+const email = $ref<string>("");
+let token = $ref<string>("");
 const { t: $t } = useI18n();
 
 const {

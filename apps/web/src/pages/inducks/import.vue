@@ -287,18 +287,18 @@ import { dmSocketInjectionKey } from "../../composables/useDmSocket";
 
 const { getImagePath } = images();
 
-let step = $ref(1 as number);
-const rawData = $ref("" as string);
-const expandedPublicationAccordion = $ref(null as string | null);
-const expandedNotImportableAccordion = $ref(null as string | null);
-let hasPublicationNames = $ref(false as boolean);
-let hasIssueNumbers = $ref(false as boolean);
-const issueDefaultCondition = $ref("bon" as issue_condition);
-let issuesToImport = $ref(null as inducks_issue[] | null);
-let issuesNotReferenced = $ref(null as inducks_issue[] | null);
-let issuesAlreadyInCollection = $ref(null as inducks_issue[] | null);
-let issuesImportable = $ref(null as inducks_issue[] | null);
-let importProgress = $ref(0 as number);
+let step = $ref(1);
+const rawData = $ref<string>("");
+const expandedPublicationAccordion = $ref<string | null>(null);
+const expandedNotImportableAccordion = $ref<string | null>(null);
+let hasPublicationNames = $ref(false);
+let hasIssueNumbers = $ref(false);
+const issueDefaultCondition = $ref<issue_condition>("bon");
+let issuesToImport = $ref<inducks_issue[] | null>(null);
+let issuesNotReferenced = $ref<inducks_issue[] | null>(null);
+let issuesAlreadyInCollection = $ref<inducks_issue[] | null>(null);
+let issuesImportable = $ref<inducks_issue[] | null>(null);
+let importProgress = $ref(0);
 
 const {
   collection: { services: collectionServices },
@@ -335,10 +335,9 @@ const processRawData = async () => {
   }
   const issues = issueCodes
     .filter((issueCode) => issueCodeDetails.value![issueCode])
-    .reduce(
-      (acc, issueCode) => [...acc, issueCodeDetails.value![issueCode]],
-      [] as inducks_issue[],
-    );
+    .reduce<
+      inducks_issue[]
+    >((acc, issueCode) => [...acc, issueCodeDetails.value![issueCode]], []);
   if (issues.length) {
     issuesToImport = issues;
     step = 2;

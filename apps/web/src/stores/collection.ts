@@ -47,54 +47,43 @@ export const collection = defineStore("collection", () => {
 
   const { bookcaseWithPopularities } = storeToRefs(bookcase());
 
-  const issues = ref(null as issue[] | null);
+  const issues = ref<issue[] | null>(null);
 
   const collectionUtils = useCollection(issues),
-    watchedPublicationsWithSales = ref(null as string[] | null),
-    purchases = ref(null as purchase[] | null),
-    watchedAuthors = ref(null as authorUser[] | null),
-    marketplaceContactMethods = ref(null as string[] | null),
-    suggestions = ref(
-      null as EventReturnType<StatsServices["getSuggestionsForCountry"]> | null,
-    ),
-    subscriptions = ref(null as SubscriptionTransformed[] | null),
-    popularIssuesInCollection = ref(
-      null as { [shortIssuecode: string]: number } | null,
-    ),
-    lastPublishedEdgesForCurrentUser = ref(
-      null as EventReturnType<
-        CollectionServices["getLastPublishedEdges"]
-      > | null,
-    ),
-    isLoadingUser = ref(false as boolean),
-    isLoadingCollection = ref(false as boolean),
-    isLoadingWatchedPublicationsWithSales = ref(false as boolean),
-    isLoadingMarketplaceContactMethods = ref(false as boolean),
-    isLoadingPurchases = ref(false as boolean),
-    isLoadingSuggestions = ref(false as boolean),
-    isLoadingSubscriptions = ref(false as boolean),
-    coaIssueCountsPerCountrycode = ref(
-      null as EventReturnType<
-        CollectionServices["getCoaCountByCountrycode"]
-      > | null,
-    ),
-    coaIssueCountsByPublicationcode = ref(
-      null as EventReturnType<
-        CollectionServices["getCoaCountByPublicationcode"]
-      > | null,
-    ),
-    user = ref(
-      undefined as
-        | EventReturnType<CollectionServices["getUser"]>
-        | undefined
-        | null,
-    ),
-    userPermissions = ref(
-      undefined as
-        | EventReturnType<CollectionServices["getUserPermissions"]>
-        | undefined,
-    ),
-    previousVisit = ref(null as Date | null),
+    watchedPublicationsWithSales = ref<string[] | null>(null),
+    purchases = ref<purchase[] | null>(null),
+    watchedAuthors = ref<authorUser[] | null>(null),
+    marketplaceContactMethods = ref<string[] | null>(null),
+    suggestions = ref<EventReturnType<
+      StatsServices["getSuggestionsForCountry"]
+    > | null>(null),
+    subscriptions = ref<SubscriptionTransformed[] | null>(null),
+    popularIssuesInCollection = ref<{
+      [shortIssuecode: string]: number;
+    } | null>(null),
+    lastPublishedEdgesForCurrentUser = ref<EventReturnType<
+      CollectionServices["getLastPublishedEdges"]
+    > | null>(null),
+    isLoadingUser = ref(false),
+    isLoadingCollection = ref(false),
+    isLoadingWatchedPublicationsWithSales = ref(false),
+    isLoadingMarketplaceContactMethods = ref(false),
+    isLoadingPurchases = ref(false),
+    isLoadingSuggestions = ref(false),
+    isLoadingSubscriptions = ref(false),
+    coaIssueCountsPerCountrycode = ref<EventReturnType<
+      CollectionServices["getCoaCountByCountrycode"]
+    > | null>(null),
+    coaIssueCountsByPublicationcode = ref<EventReturnType<
+      CollectionServices["getCoaCountByPublicationcode"]
+    > | null>(null),
+    user = ref<
+      EventReturnType<CollectionServices["getUser"]> | undefined | null
+    >(undefined),
+    userPermissions = ref<
+      EventReturnType<CollectionServices["getUserPermissions"]> | undefined
+    >(undefined),
+    previousVisit = ref<Date | null>(null),
     publicationUrlRoot = computed(() => "/collection/show"),
     purchasesById = computed((): Record<string, purchase> | undefined =>
       purchases.value?.reduce(
@@ -116,7 +105,7 @@ export const collection = defineStore("collection", () => {
     ),
     issueNumbersPerPublication = computed(
       () =>
-        issues.value?.reduce(
+        issues.value?.reduce<{ [publicationcode: string]: string[] }>(
           (acc, { country, issuenumber, magazine }) => ({
             ...acc,
             [`${country}/${magazine}`]: [
@@ -124,7 +113,7 @@ export const collection = defineStore("collection", () => {
               issuenumber,
             ],
           }),
-          {} as { [publicationcode: string]: string[] },
+          {},
         ) || {},
     ),
     totalPerPublicationUniqueIssueNumbers = computed(
@@ -177,8 +166,7 @@ export const collection = defineStore("collection", () => {
       };
     }),
     updateCollectionSingleIssue = async (data: CollectionUpdateSingleIssue) => {
-      const results = await collectionServices.addOrChangeCopies(data);
-      console.log(results);
+      await collectionServices.addOrChangeCopies(data);
       await loadCollection(true);
     },
     updateCollectionMultipleIssues = async (

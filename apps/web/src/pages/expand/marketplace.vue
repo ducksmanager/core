@@ -217,10 +217,10 @@ alias: [/agrandir/marketplace]
 <script setup lang="ts">
 const isTouchScreen = window.matchMedia("(pointer: coarse)").matches;
 
-let showModal = $ref(false as boolean);
-let modalContactId = $ref(null as number | null);
-let modalContactMethod = $ref(null as string | null);
-let modalIssueIds = $ref(null as number[] | null);
+let showModal = $ref(false);
+let modalContactId = $ref<number | null>(null);
+let modalContactMethod = $ref<string | null>(null);
+let modalIssueIds = $ref<number[] | null>(null);
 
 const { user } = storeToRefs(collection());
 
@@ -247,8 +247,8 @@ const { publicationNames } = storeToRefs(coa());
 const { fetchStats } = users();
 const { stats } = storeToRefs(users());
 
-let hasPublicationNames = $ref(false as boolean);
-let userIdFilter = $ref(undefined as number | undefined);
+let hasPublicationNames = $ref(false);
+let userIdFilter = $ref<number | undefined>(undefined);
 
 const launchModal = (e: {
   sellerId: number;

@@ -18,8 +18,8 @@ alias: [/collection/doubles]
 </template>
 
 <script setup lang="ts">
-let hasPublicationNames = $ref(false as boolean);
-let publicationCodes = $ref(null as string[] | null);
+let hasPublicationNames = $ref(false);
+let publicationCodes = $ref<string[] | null>(null);
 
 const { loadCollection } = collection();
 const { duplicateIssues } = storeToRefs(collection());

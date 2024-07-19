@@ -206,7 +206,7 @@ const userPhotographerPoints = computed(
 
 const publicationNames = computed(() => webStores.coa().publicationNames);
 
-const isUploadableEdgesCarouselReady = ref<boolean>(false);
+const isUploadableEdgesCarouselReady = ref(false);
 const mostWantedEdges = ref<BookcaseEdgeWithPopularity[] | null>(null);
 
 const hoveredEdge = ref<EdgeWithVersionAndStatus | null>(null);

@@ -9,22 +9,22 @@ import { getCurrentLocaleShortKey } from "../composables/useLocales";
 
 const addPartInfo = (issueDetails: InducksIssueDetails) => {
   const storyPartCounter = Object.entries(
-    issueDetails.entries.reduce(
+    issueDetails.entries.reduce<{ [storycode: string]: number }>(
       (acc, { storycode }) => ({
         ...acc,
         [storycode]: !storycode ? 0 : (acc[storycode] || 0) + 1,
       }),
-      {} as { [storycode: string]: number },
+      {},
     ),
   )
     .filter(([, occurrences]) => occurrences > 1)
-    .reduce(
+    .reduce<{ [storycode: string]: number }>(
       (acc, [storycode]) => ({
         ...acc,
         [storycode]: 1,
       }),
       {},
-    ) as { [storycode: string]: number };
+    );
   return {
     ...issueDetails,
     entries: issueDetails.entries.map((entry) => ({

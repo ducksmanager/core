@@ -123,15 +123,15 @@ const { fetchIssueUrls } = coa();
 const { getImagePath } = images();
 
 const toast = useToast();
-let edgeWidth = $ref(null as number | null);
-let coverHeight = $ref(null as number | null);
-const coverRatio = $ref(null as number | null);
-let opening = $ref(false as boolean);
-let opened = $ref(false as boolean);
-let closing = $ref(false as boolean);
-let book = $ref(null as PageFlip | null);
-let currentPage = $ref(0 as number);
-const currentTabIndex = $ref(0 as number);
+let edgeWidth = $ref<number | null>(null);
+let coverHeight = $ref<number | null>(null);
+const coverRatio = $ref<number | null>(null);
+let opening = $ref(false);
+let opened = $ref(false);
+let closing = $ref(false);
+let book = $ref<PageFlip | null>(null);
+let currentPage = $ref(0);
+const currentTabIndex = $ref(0);
 const { publicationNames, issueDetails } = storeToRefs(coa());
 const isSinglePageWithUrl = $computed(() => pagesWithUrl.length === 1);
 const edgeUrl = $computed(

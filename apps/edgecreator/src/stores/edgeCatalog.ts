@@ -48,7 +48,7 @@ export const edgeCatalog = defineStore("edgeCatalog", () => {
   const {
     browse: { services: browseServices },
   } = injectLocal(edgecreatorSocketInjectionKey)!;
-  const isCatalogLoaded = ref<boolean>(false),
+  const isCatalogLoaded = ref(false),
     currentEdges = ref<Record<string, EdgeWithVersionAndStatus>>({}),
     publishedEdges = ref(
       {} as Record<

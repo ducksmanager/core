@@ -131,12 +131,12 @@ const onImageError = () => {
   }
 };
 
-let edge = $ref(null as Element | null);
+let edge = $ref<Element | null>(null);
 let imageLoaded = $ref(false);
 let spriteLoaded = $ref(false);
 let ignoreSprite = $ref(false);
-let width = $ref(null as number | null);
-let height = $ref(null as number | null);
+let width = $ref<number | null>(null);
+let height = $ref<number | null>(null);
 
 watch($$(ignoreSprite), (value) => {
   if (value) {

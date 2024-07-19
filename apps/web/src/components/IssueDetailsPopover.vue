@@ -55,8 +55,8 @@ const { issuenumber, publicationcode } = defineProps<{
 }>();
 defineEmits<{ (e: "click"): void }>();
 
-let isCoverLoading = $ref(true as boolean);
-let fullUrl = $ref(null as string | null);
+let isCoverLoading = $ref(true);
+let fullUrl = $ref<string | null>(null);
 
 const { fetchIssueUrls, setCoverUrl } = coa();
 const { publicationNames, issueDetails, coverUrls } = storeToRefs(coa());

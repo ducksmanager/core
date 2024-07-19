@@ -41,11 +41,11 @@ Chart.register(
   ArcElement,
 );
 
-let height = $ref("400px" as string);
+let height = $ref<string>("400px");
 let hasCoaData = $ref(false);
-let chartData = $ref(null as ChartData<"bar", number[]> | null),
-  unitTypeCurrent = $ref("number" as string),
-  options = $ref({} as ChartOptions<"bar">);
+let chartData = $ref<ChartData<"bar", number[]> | null>(null),
+  unitTypeCurrent = $ref<string>("number"),
+  options = $ref<ChartOptions<"bar">>({});
 
 const { loadCollection, fetchIssueCountsByPublicationcode } = collection();
 const {

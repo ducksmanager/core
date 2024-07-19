@@ -383,7 +383,7 @@ const { conditions } = useCondition();
 const { t: $t } = useI18n();
 
 let clicks = $ref(0);
-let timer = $ref(null as NodeJS.Timeout | null);
+let timer = $ref<NodeJS.Timeout | null>(null);
 const doubleClickDelay = 500;
 
 type LaunchModalOptions = {
@@ -411,9 +411,9 @@ switch (contextMenuComponentName) {
 const { fetchPublicationNames, fetchIssueNumbersWithTitles } = coa();
 const { publicationNames, coverUrls, issuesWithTitles } = storeToRefs(coa());
 
-let hoveredIndex = $ref(null as number | null);
-let loading = $ref(true as boolean);
-let publicationNameLoading = $ref(true as boolean);
+let hoveredIndex = $ref<number | null>(null);
+let loading = $ref(true);
+let publicationNameLoading = $ref(true);
 const filter = $ref({
   missing: true,
   possessed: true,
@@ -457,8 +457,8 @@ const copiesBySelectedIssuenumber = $computed(() =>
   ),
 );
 let preselected = $shallowRef([] as string[]);
-let preselectedIndexStart = $ref(null as number | null);
-let preselectedIndexEnd = $ref(null as number | null);
+let preselectedIndexStart = $ref<number | null>(null);
+let preselectedIndexEnd = $ref<number | null>(null);
 let currentIssueOpened = $shallowRef(
   null as { publicationcode: string; issuenumber: string } | null,
 );
@@ -477,7 +477,7 @@ const issueIds = $computed(() =>
   ),
 );
 
-let contextMenuKey = $ref("context-menu" as string);
+let contextMenuKey = $ref<string>("context-menu");
 const userIssues = $computed(() => customIssues || collectionIssues.value);
 let purchases = $computed(() => collectionPurchases.value);
 const country = $computed(() => publicationcode.split("/")[0]);

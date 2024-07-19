@@ -119,7 +119,7 @@ const newPurchase = ref({
   description: '',
 });
 
-const dismissCreatePurchaseModal = () => modal.value.$el.dismiss();
+const dismissCreatePurchaseModal = () => modal.value!.$el.dismiss();
 
 const createPurchaseDate = async () => {
   await createPurchase(newPurchase.value.date, newPurchase.value.description);
@@ -141,7 +141,7 @@ const purchasesIncludingNone = computed(() =>
     : null,
 );
 
-const selectedPurchase = ref(null as purchase | null);
+const selectedPurchase = shallowRef<purchase | null>(null);
 
 watch(
   issue,

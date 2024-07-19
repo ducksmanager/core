@@ -4,7 +4,7 @@ import { step } from "~/stores/step";
 
 export const editingStep = defineStore("editingStep", () => {
   const issuenumbers = ref<string[]>([]),
-    stepNumber = ref<number>(0),
+    stepNumber = ref(0),
     editingOptions = computed(() =>
       step().getFilteredOptions({
         stepNumbers: [stepNumber.value],

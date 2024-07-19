@@ -162,7 +162,7 @@ watch(isCameraPreviewShown, async () => {
 
 const content = ref<InstanceType<typeof IonContent> | null>(null);
 
-const scrollPositionPct = ref<number>(0);
+const scrollPositionPct = ref(0);
 const isScrolling = ref(false);
 
 const onScroll = (e: CustomEvent<ScrollDetail>) => {

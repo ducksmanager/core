@@ -107,10 +107,10 @@ const newSubscription = $ref({
   endDate: dayjs(new Date()).add(1, "year").toDate(),
 } as SubscriptionTransformed);
 
-let currentSubscription = $ref(null as SubscriptionTransformed | null);
+let currentSubscription = $ref<SubscriptionTransformed | null>(null);
 
-let hasPublicationNames = $ref(false as boolean);
-let currentAssociatedPublications = $ref([] as AssociatedPublication[]);
+let hasPublicationNames = $ref(false);
+let currentAssociatedPublications = $ref<AssociatedPublication[]>([]);
 const associatedPublications = $ref([
   {
     referencePublicationcode: "fr/JM",

@@ -105,8 +105,8 @@ withDefaults(
 const emit = defineEmits<(e: "change", value: string) => void>();
 
 const clickedImage = ref<GalleryItem | null>(null);
-const showUploadModal = ref<boolean>(false);
-const showChooseImageModal = ref<boolean>(false);
+const showUploadModal = ref(false);
+const showChooseImageModal = ref(false);
 
 const { country, magazine, issuenumbers } = storeToRefs(main());
 

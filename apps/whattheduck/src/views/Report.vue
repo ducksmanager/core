@@ -37,11 +37,11 @@
 
 <script setup lang="ts">
 const { t } = useI18n();
-const validInputs = ref([] as string[]);
-const invalidInputs = ref([] as string[]);
-const touchedInputs = ref([] as string[]);
+const validInputs = ref<string[]>([]);
+const invalidInputs = ref<string[]>([]);
+const touchedInputs = ref<string[]>([]);
 
-const reportMessage = ref('' as string);
+const reportMessage = ref('');
 const showConfirmation = ref(false);
 
 const submitReport = async () => {

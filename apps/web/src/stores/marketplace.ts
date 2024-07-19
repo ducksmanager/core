@@ -10,21 +10,19 @@ export const marketplace = defineStore("marketplace", () => {
     collection: { services: collectionServices },
   } = injectLocal(dmSocketInjectionKey)!;
 
-  const issuesOnSaleByOthers = ref(
-      null as EventReturnType<CollectionServices["getIssuesForSale"]> | null,
-    ),
-    issueRequestsAsBuyer = ref(null as requestedIssue[] | null),
-    issueRequestsAsSeller = ref(null as requestedIssue[] | null),
-    isLoadingIssueRequestsAsBuyer = ref(false as boolean),
-    isLoadingIssueRequestsAsSeller = ref(false as boolean),
-    isLoadingIssuesOnSaleByOthers = ref(false as boolean),
-    contactMethods = ref(
-      {} as {
-        [userId: number]: EventReturnType<
-          CollectionServices["getContactMethods"]
-        >;
-      },
-    ),
+  const issuesOnSaleByOthers = ref<EventReturnType<
+      CollectionServices["getIssuesForSale"]
+    > | null>(null),
+    issueRequestsAsBuyer = ref<requestedIssue[] | null>(null),
+    issueRequestsAsSeller = ref<requestedIssue[] | null>(null),
+    isLoadingIssueRequestsAsBuyer = ref(false),
+    isLoadingIssueRequestsAsSeller = ref(false),
+    isLoadingIssuesOnSaleByOthers = ref(false),
+    contactMethods = ref<{
+      [userId: number]: EventReturnType<
+        CollectionServices["getContactMethods"]
+      >;
+    }>({}),
     sentRequestIssueIds = computed(() =>
       issueRequestsAsBuyer.value?.map(({ issueId }) => issueId),
     ),
@@ -32,9 +30,9 @@ export const marketplace = defineStore("marketplace", () => {
       () =>
         (issuesOnSaleByOthers.value && [
           ...new Set(
-            Object.values(issuesOnSaleByOthers.value).reduce(
+            Object.values(issuesOnSaleByOthers.value).reduce<number[]>(
               (acc, issues) => [...acc, ...issues.map((issue) => issue.userId)],
-              [] as number[],
+              [],
             ),
           ),
         ]) ||
@@ -49,23 +47,19 @@ export const marketplace = defineStore("marketplace", () => {
     ),
     buyerUserNamesById = computed(
       () =>
-        buyerUserIds.value?.reduce(
+        buyerUserIds.value?.reduce<{ [userId: number]: string }>(
           (acc, userId) => ({
             ...acc,
             [userId]: users().stats[userId]?.username,
           }),
-          {} as { [userId: number]: string },
+          {},
         ) || null,
     ),
     sellerUserNames = computed(() =>
       sellerUserIds.value
-        ?.reduce(
-          (acc, userId) => [
-            ...acc,
-            { value: userId, text: users().stats[userId]?.username },
-          ],
-          [] as { value: number; text: string }[],
-        )
+        ?.reduce<
+          { value: number; text: string }[]
+        >((acc, userId) => [...acc, { value: userId, text: users().stats[userId]?.username }], [])
         .sort(({ text: text1 }, { text: text2 }) => text1.localeCompare(text2)),
     ),
     requestIssueIdsBySellerId = computed(
@@ -73,7 +67,7 @@ export const marketplace = defineStore("marketplace", () => {
         (issuesOnSaleById.value &&
           issueRequestsAsBuyer.value
             ?.filter(({ issueId }) => issuesOnSaleById.value[issueId])
-            .reduce(
+            .reduce<{ [userId: number]: number[] }>(
               (acc, { issueId }) => ({
                 ...acc,
                 [issuesOnSaleById.value[issueId].userId]: [
@@ -81,23 +75,25 @@ export const marketplace = defineStore("marketplace", () => {
                   issueId,
                 ],
               }),
-              {} as { [userId: number]: number[] },
+              {},
             )) ||
         {},
     ),
     issuesOnSaleById = computed(() =>
-      Object.values(issuesOnSaleByOthers.value || {}).reduce(
+      Object.values(issuesOnSaleByOthers.value || {}).reduce<
+        Record<number, issue>
+      >(
         (acc, issues) => ({
           ...acc,
-          ...issues.reduce(
+          ...issues.reduce<Record<number, issue>>(
             (acc2, issue) => ({
               ...acc2,
               [issue.id]: issue,
             }),
-            {} as Record<number, issue>,
+            {},
           ),
         }),
-        {} as Record<number, issue>,
+        {},
       ),
     ),
     requestIssues = async (issueIds: number[]) => {

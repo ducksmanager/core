@@ -99,8 +99,8 @@ const { publicationcode = null } = defineProps<{
   publicationcode: string | null;
 }>();
 
-const suggestionsNumber = $ref(0 as number);
-let hasPublicationNames = $ref(false as boolean);
+const suggestionsNumber = $ref(0);
+let hasPublicationNames = $ref(false);
 
 const { loadCollection, loadPurchases, loadMarketplaceContactMethods } =
   collection();

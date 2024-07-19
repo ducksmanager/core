@@ -130,10 +130,10 @@ import { dmSocketInjectionKey } from "../../../composables/useDmSocket";
 
 const { getImagePath } = images();
 
-let hasData = $ref(false as boolean);
-let mostWanted = $ref(null as WantedEdge[] | null);
-let publishedEdges = $ref({} as Record<string, string[]>);
-const showEdgesForPublication = $ref([] as string[]);
+let hasData = $ref(false);
+let mostWanted = $ref<WantedEdge[] | null>(null);
+let publishedEdges = $ref<Record<string, string[]>>({});
+const showEdgesForPublication = $ref<string[]>([]);
 const bookcaseTextures = $ref({
   bookcase: "bois/HONDURAS MAHOGANY",
   bookshelf: "bois/KNOTTY PINE",

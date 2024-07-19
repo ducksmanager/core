@@ -91,8 +91,8 @@ const { t } = useI18n();
 
 const router = useRouter();
 
-const username = ref('' as string);
-const password = ref('' as string);
+const username = ref('');
+const password = ref('');
 
 const showPassword = ref(false);
 

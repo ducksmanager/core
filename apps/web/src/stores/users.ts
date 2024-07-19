@@ -13,21 +13,17 @@ export const users = defineStore("users", () => {
     events: { services: eventsServices },
     globalStats: { services: globalStatsServices },
   } = injectLocal(dmSocketInjectionKey)!;
-  const count = ref(
-      null as EventReturnType<GlobalStatsServices["getUserCount"]> | null,
-    ),
-    stats = ref(
-      {} as EventReturnType<
-        GlobalStatsServices["getUsersPointsAndStats"]
-      >["stats"],
-    ),
-    points = ref(
-      {} as EventReturnType<
-        GlobalStatsServices["getUsersPointsAndStats"]
-      >["points"],
-    ),
-    events = ref([] as AbstractEvent[]),
-    bookcaseContributors = ref(null as BookcaseContributor[] | null),
+  const count = ref<EventReturnType<
+      GlobalStatsServices["getUserCount"]
+    > | null>(null),
+    stats = ref<
+      EventReturnType<GlobalStatsServices["getUsersPointsAndStats"]>["stats"]
+    >({}),
+    points = ref<
+      EventReturnType<GlobalStatsServices["getUsersPointsAndStats"]>["points"]
+    >({}),
+    events = ref<AbstractEvent[]>([]),
+    bookcaseContributors = ref<BookcaseContributor[] | null>(null),
     allUsers = ref<SimpleUser[] | null>(null),
     fetchAllUsers = async () => {
       if (!allUsers.value) {

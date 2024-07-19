@@ -26,18 +26,18 @@ export const bookcase = defineStore("bookcase", () => {
     bookcase: { services: bookcaseServices },
   } = injectLocal(dmSocketInjectionKey)!;
 
-  const loadedSprites = ref({} as { [key: string]: string }),
-    isPrivateBookcase = ref(false as boolean),
-    isUserNotExisting = ref(false as boolean),
-    bookcaseUsername = ref(null as string | null),
-    bookcase = ref(null as BookcaseEdge[] | null),
-    bookcaseOptions = ref(
-      null as EventReturnType<BookcaseServices["getBookcaseOptions"]> | null,
-    ),
-    bookcaseOrder = ref(null as string[] | null),
-    edgeIndexToLoad = ref(0 as number),
-    isSharedBookcase = computed(
-      (): boolean => route.params.username !== undefined,
+  const loadedSprites = ref<{ [key: string]: string }>({}),
+    isPrivateBookcase = ref(false),
+    isUserNotExisting = ref(false),
+    bookcaseUsername = ref<string | null>(null),
+    bookcase = ref<BookcaseEdge[] | null>(null),
+    bookcaseOptions = ref<EventReturnType<
+      BookcaseServices["getBookcaseOptions"]
+    > | null>(null),
+    bookcaseOrder = ref<string[] | null>(null),
+    edgeIndexToLoad = ref<number>(0),
+    isSharedBookcase = computed<boolean>(
+      () => route.params.username !== undefined,
     ),
     bookcaseWithPopularities = computed(
       (): BookcaseEdgeWithPopularity[] | null =>

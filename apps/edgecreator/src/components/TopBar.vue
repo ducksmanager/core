@@ -278,10 +278,10 @@ interface ModelToClone {
   issuenumberEnd: string;
 }
 
-const showPhotoModal = ref<boolean>(false);
+const showPhotoModal = ref(false);
 const modelToBeCloned = ref<ModelToClone | null>(null);
-const collapseDimensions = ref<boolean>(false);
-const collapseClone = ref<boolean>(false);
+const collapseDimensions = ref(false);
+const collapseClone = ref(false);
 
 const hasPhotoUrl = computed(() => Object.keys(mainStore.photoUrls).length);
 const publicationName = computed(

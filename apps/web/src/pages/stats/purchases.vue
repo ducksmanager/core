@@ -117,11 +117,11 @@ const { t: $t } = useI18n(),
     else height = `${value}px`;
   };
 
-let hasPublicationNames = $ref(false as boolean),
-  options = $ref({} as ChartOptions<"bar">),
-  width = $ref(null as string | null),
-  height = $ref(null as string | null),
-  purchaseTypeCurrent = $ref("new" as string);
+let hasPublicationNames = $ref(false),
+  options = $ref<ChartOptions<"bar">>({}),
+  width = $ref<string | null>(null),
+  height = $ref<string | null>(null),
+  purchaseTypeCurrent = $ref<string>("new");
 
 const publicationCodesWithOther = $computed(
     () =>

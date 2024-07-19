@@ -197,13 +197,13 @@ const {
   isSharedBookcase,
 } = storeToRefs(bookcase());
 
-let edgesUsingSprites = $ref({} as { [edgeId: number]: string });
-const currentEdgeOpened = $ref(null as BookcaseEdgeWithPopularity | null);
-let currentEdgeHighlighted = $ref(null as number | null);
-let hasPublicationNames = $ref(false as boolean);
-let hasIssueNumbers = $ref(false as boolean);
-const showShareButtons = $ref(false as boolean);
-let userPoints = $ref(null as { [contribution: string]: number } | null);
+let edgesUsingSprites = $ref<{ [edgeId: number]: string }>({});
+const currentEdgeOpened = $ref<BookcaseEdgeWithPopularity | null>(null);
+let currentEdgeHighlighted = $ref<number | null>(null);
+let hasPublicationNames = $ref(false);
+let hasIssueNumbers = $ref(false);
+const showShareButtons = $ref(false);
+let userPoints = $ref<{ [contribution: string]: number } | null>(null);
 
 const inputBookcaseUsername = $computed(
   () => (route.params.username as string) || user.value?.username || null,

@@ -48,17 +48,12 @@ const { publicationNames } = storeToRefs(coaStore);
 onMounted(async () => {
   const issues = await fetchRecentIssues();
   await fetchPublicationNames(issues.map(({ publicationcode }) => publicationcode!));
-  recentIssues.value = issues
-    .map((issue) => ({
-      ...issue,
-      shortIssuecode: `${issue.publicationcode} ${issue.issuenumber}`,
-      countrycode: issue.publicationcode!.split('/')[0],
-      publicationName: publicationNames.value[issue.publicationcode!],
-    }))
-    .map((issue) => ({
-      ...issue,
-      collectionIssues: issuesByShortIssuecode.value![issue.shortIssuecode] || [],
-    }));
+  recentIssues.value = issues.map((issue) => ({
+    ...issue,
+    countrycode: issue.publicationcode!.split('/')[0],
+    publicationName: publicationNames.value[issue.publicationcode!],
+    collectionIssues: issuesByShortIssuecode.value![issue.shortIssuecode] || [],
+  }));
 });
 </script>
 

@@ -141,8 +141,8 @@ const props = withDefaults(
   },
 );
 
-const showModal = ref<boolean>(false);
-const progress = ref<number>(0);
+const showModal = ref(false);
+const progress = ref(0);
 const issueIndexToSave = ref<number | null>(null);
 const result = ref<string | null>(null);
 const designersTypeahead = ref();

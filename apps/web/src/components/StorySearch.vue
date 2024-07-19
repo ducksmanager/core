@@ -116,9 +116,9 @@ onClickOutside(nav, () => {
   showSearchResults = false;
 });
 
-let isSearching = $ref(false as boolean);
-let pendingSearch = $ref(null as string | null);
-let search = $ref("" as string);
+let isSearching = $ref(false);
+let pendingSearch = $ref<string | null>(null);
+let search = $ref<string>("");
 let storyResults = $ref(
   {} as {
     results: (SimpleStory & {
@@ -127,8 +127,9 @@ let storyResults = $ref(
     hasMore: boolean;
   },
 );
+
 let issueResults = $ref({} as { results: SimpleIssue[] });
-let searchContext = $ref("story" as "story" | "storycode");
+let searchContext = $ref<"story" | "storycode">("story");
 let showSearchResults = $ref(true);
 
 const { t: $t } = useI18n();

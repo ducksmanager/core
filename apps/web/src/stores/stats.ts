@@ -11,17 +11,15 @@ export const stats = defineStore("stats", () => {
     collection: { services: collectionServices },
   } = injectLocal(dmSocketInjectionKey)!;
 
-  const ratings = ref(
-    undefined as
-      | EventReturnType<CollectionServices["getWatchedAuthors"]>
-      | undefined,
-  );
-  const isSearching = ref(false as boolean);
-  const isLoadingWatchedAuthors = ref(false as boolean);
-  const authorSearchResults = ref(
-    undefined as EventReturnType<CoaServices["searchAuthor"]> | undefined,
-  );
-  const pendingSearch = ref(null as string | null);
+  const ratings = ref<
+    EventReturnType<CollectionServices["getWatchedAuthors"]> | undefined
+  >(undefined);
+  const isSearching = ref(false);
+  const isLoadingWatchedAuthors = ref(false);
+  const authorSearchResults = ref<
+    EventReturnType<CoaServices["searchAuthor"]> | undefined
+  >(undefined);
+  const pendingSearch = ref<string | null>(null);
 
   const isAuthorWatched = (personcode: string) =>
     ratings.value?.some(

@@ -227,14 +227,14 @@ const i18n = useI18n();
 
 const locale = $computed(() => getCurrentLocaleShortKey(i18n.locale.value));
 
-let hasRequestedPresentationSentenceUpdate = $ref(false as boolean);
-const oldPassword = $ref("" as string);
-const password = $ref("" as string);
-const password2 = $ref("" as string);
-let error = $ref(undefined as ScopedError | null | undefined);
+let hasRequestedPresentationSentenceUpdate = $ref(false);
+const oldPassword = $ref<string>("");
+const password = $ref<string>("");
+const password2 = $ref<string>("");
+let error = $ref<ScopedError | null | undefined>(undefined);
 
-let hasEmailContactMethod = $ref(false as boolean);
-let hasDiscordContactMethod = $ref(false as boolean);
+let hasEmailContactMethod = $ref(false);
+let hasDiscordContactMethod = $ref(false);
 
 const { t: $t } = useI18n();
 const t = $t;

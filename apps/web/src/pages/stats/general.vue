@@ -74,9 +74,7 @@
               <template #cell(issue)="{ item }">
                 <Issue
                   :publicationcode="item.publicationcode"
-                  :publicationname="
-                    publicationNames[(item ).publicationcode]!
-                  "
+                  :publicationname="publicationNames[item.publicationcode]!"
                   :issuenumber="item.issuenumber"
                 />
               </template>
@@ -198,8 +196,8 @@ const quotationFields = [
   },
 ];
 
-let rarityValue = $ref(null as number | null);
-let hasPublicationNames = $ref(false as boolean);
+let rarityValue = $ref<number | null>(null);
+let hasPublicationNames = $ref(false);
 
 watch(
   totalPerPublication,

@@ -38,7 +38,7 @@ const router = useRouter();
 const { name: routeName } = useRoute();
 const slots = useSlots();
 
-let activeTabIndex = $ref(-1 as number);
+let activeTabIndex = $ref(-1);
 
 const updateActiveTabIndex = () => {
   activeTabIndex = items.findIndex(

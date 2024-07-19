@@ -36,11 +36,11 @@ import { dmSocketInjectionKey } from "../../composables/useDmSocket";
 
 const { loadUser } = collection();
 
-let initError = $ref(null as string | null);
-let error = $ref(null as string | null);
+let initError = $ref<string | null>(null);
+let error = $ref<string | null>(null);
 const token = useRoute().params.token as string;
-const password = $ref("" as string);
-const password2 = $ref("" as string);
+const password = $ref<string>("");
+const password2 = $ref<string>("");
 
 const { t: $t } = useI18n();
 

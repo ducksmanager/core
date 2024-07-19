@@ -113,7 +113,7 @@ const sortByCount = (
       totalPerPublicationGroupSmallCounts[publicationCode2],
   );
 
-let hasPublicationNames = $ref<boolean>(false);
+let hasPublicationNames = $ref(false);
 let chartData = $ref<ChartData<"pie", DefaultDataPoint<"pie">, string> | null>(
   null,
 );

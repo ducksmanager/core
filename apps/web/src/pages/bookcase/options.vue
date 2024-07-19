@@ -196,10 +196,10 @@ const submit = async () => {
 const textureWithoutSuperType = (texture: string) =>
   texture.replace(/^[^/]+\//, "");
 
-let error = $ref(false as boolean);
-let loading = $ref(true as boolean);
-let hasPublicationNames = $ref(false as boolean);
-let inputBookcaseOrder = $ref(null as string[] | null);
+let error = $ref(false);
+let loading = $ref(true);
+let hasPublicationNames = $ref(false);
+let inputBookcaseOrder = $ref<string[] | null>(null);
 
 watch(
   user,

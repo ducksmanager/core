@@ -30,7 +30,7 @@ const { issueViewModes } = app();
 const { isOfflineMode, currentIssueViewMode } = storeToRefs(app());
 
 // eslint-disable-next-line no-undef
-const fab = ref<ComponentPublicInstance<HTMLIonFabElement> | null>(null);
+const fab = shallowRef<ComponentPublicInstance<HTMLIonFabElement> | null>(null);
 const isActivated = ref(false);
 </script>
 <style scoped lang="scss">

@@ -26,7 +26,7 @@ const { events } = storeToRefs(users());
 
 const { fetchPublicationNames } = coa();
 
-let isLoaded = $ref(false as boolean);
+let isLoaded = $ref(false);
 const eventUserIds = $computed(() =>
   events.value
     ?.reduce<

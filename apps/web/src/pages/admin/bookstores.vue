@@ -29,7 +29,7 @@ meta:
 import { SimpleBookstore } from "~dm-types/SimpleBookstore";
 import type { bookstoreComment } from "~prisma-clients/extended/dm.extends";
 
-let bookstores = $ref(null as SimpleBookstore[] | null);
+let bookstores = $ref<SimpleBookstore[] | null>(null);
 
 const {
   bookstore: { services: bookstoreServices },
