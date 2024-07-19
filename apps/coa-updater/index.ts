@@ -181,6 +181,8 @@ set global max_allowed_packet=1000000000; `
   console.log("mysqlcheck...");
   await $`mysqlcheck -h ${process.env.MYSQL_HOST} -uroot -p${process.env.MYSQL_ROOT_PASSWORD} -v ${process.env.MYSQL_DATABASE}`;
   console.log(" done.");
+  await pool.end();
+  await newDbPool.end();
   process.exit(0);
 } catch (error) {
   console.error("Error:", (error as { message: string }).message);
