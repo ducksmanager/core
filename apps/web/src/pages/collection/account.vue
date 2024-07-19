@@ -228,9 +228,9 @@ const i18n = useI18n();
 const locale = $computed(() => getCurrentLocaleShortKey(i18n.locale.value));
 
 let hasRequestedPresentationSentenceUpdate = $ref(false);
-const oldPassword = $ref<string>("");
-const password = $ref<string>("");
-const password2 = $ref<string>("");
+const oldPassword = $ref("");
+const password = $ref("");
+const password2 = $ref("");
 let error = $ref<ScopedError | null | undefined>(undefined);
 
 let hasEmailContactMethod = $ref(false);

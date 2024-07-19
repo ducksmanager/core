@@ -110,7 +110,7 @@ const { issues } = storeToRefs(collection());
 const { fetchPublicationNames, fetchCountryNames } = coa();
 const { publicationNames } = storeToRefs(coa());
 
-const nav = ref<HTMLElement | null>(null);
+const nav = shallowRef<HTMLElement | null>(null);
 
 onClickOutside(nav, () => {
   showSearchResults = false;
@@ -118,7 +118,7 @@ onClickOutside(nav, () => {
 
 let isSearching = $ref(false);
 let pendingSearch = $ref<string | null>(null);
-let search = $ref<string>("");
+let search = $ref("");
 let storyResults = $ref(
   {} as {
     results: (SimpleStory & {

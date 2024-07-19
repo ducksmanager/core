@@ -60,9 +60,9 @@ const { user } = storeToRefs(collection());
 let router = useRouter();
 let route = useRoute();
 
-let username = $ref<string>("");
+let username = $ref("");
 let error = $ref<string | null>(null);
-let password = $ref<string>("");
+let password = $ref("");
 
 const {
   collection: { socket: collectionSocket },

@@ -43,16 +43,16 @@ export const coa = defineStore("coa", () => {
 
   const locale = useI18n().locale,
     coverUrls = ref<{ [issuenumber: string]: string }>({}),
-    countryNames = ref<EventReturnType<CoaServices["getCountryList"]> | null>(
-      null,
-    ),
-    publicationNames = ref<
+    countryNames = shallowRef<EventReturnType<
+      CoaServices["getCountryList"]
+    > | null>(null),
+    publicationNames = shallowRef<
       EventReturnType<CoaServices["getPublicationListFromCountrycodes"]>
     >({}),
     publicationNamesFullCountries = ref<string[]>([]),
-    personNames = ref<EventReturnType<CoaServices["getAuthorList"]> | null>(
-      null,
-    ),
+    personNames = shallowRef<EventReturnType<
+      CoaServices["getAuthorList"]
+    > | null>(null),
     issueNumbers = ref<{ [publicationcode: string]: string[] }>({}),
     shortIssuecodes = ref<{ [publicationcode: string]: string[] }>({}),
     issuesWithTitles = ref<EventReturnType<CoaServices["getIssuesWithTitles"]>>(
@@ -78,7 +78,7 @@ export const coa = defineStore("coa", () => {
           ...acc,
           [personcode]: newPersonNames[personcode],
         }),
-        {},
+        personNames.value,
       );
     },
     setCoverUrl = (issuenumber: string, url: string) => {

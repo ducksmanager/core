@@ -72,10 +72,10 @@ const { signup: userSignup, loadUser } = collection();
 const { user } = storeToRefs(collection());
 const router = useRouter();
 
-let username = $ref<string>(""),
-  email = $ref<string>(""),
-  password = $ref<string>(""),
-  password2 = $ref<string>(""),
+let username = $ref(""),
+  email = $ref(""),
+  password = $ref(""),
+  password2 = $ref(""),
   error = $ref<ScopedError | null | undefined>(undefined);
 
 const { t: $t } = useI18n();

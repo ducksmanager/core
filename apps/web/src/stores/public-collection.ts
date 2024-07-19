@@ -8,7 +8,7 @@ export const publicCollection = defineStore("publicCollection", () => {
     publicCollection: { services: publicCollectionServices },
   } = injectLocal(dmSocketInjectionKey)!;
 
-  const issues = ref<issue[] | null>(null),
+  const issues = shallowRef<issue[] | null>(null),
     publicUsername = ref<string | null>(null),
     publicationUrlRoot = computed(
       () => `/collection/user/${publicUsername.value || ""}`,

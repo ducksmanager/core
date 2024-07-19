@@ -131,7 +131,7 @@ import { dmSocketInjectionKey } from "../../../composables/useDmSocket";
 const { getImagePath } = images();
 
 let hasData = $ref(false);
-let mostWanted = $ref<WantedEdge[] | null>(null);
+let mostWanted = $shallowRef<WantedEdge[] | null>(null);
 let publishedEdges = $ref<Record<string, string[]>>({});
 const showEdgesForPublication = $ref<string[]>([]);
 const bookcaseTextures = $ref({

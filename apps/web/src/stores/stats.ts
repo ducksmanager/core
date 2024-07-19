@@ -11,12 +11,12 @@ export const stats = defineStore("stats", () => {
     collection: { services: collectionServices },
   } = injectLocal(dmSocketInjectionKey)!;
 
-  const ratings = ref<
+  const ratings = shallowRef<
     EventReturnType<CollectionServices["getWatchedAuthors"]> | undefined
   >(undefined);
   const isSearching = ref(false);
   const isLoadingWatchedAuthors = ref(false);
-  const authorSearchResults = ref<
+  const authorSearchResults = shallowRef<
     EventReturnType<CoaServices["searchAuthor"]> | undefined
   >(undefined);
   const pendingSearch = ref<string | null>(null);
@@ -40,7 +40,6 @@ export const stats = defineStore("stats", () => {
       try {
         isSearching.value = true;
         authorSearchResults.value = await coaServices.searchAuthor(value);
-        console.log(authorSearchResults.value);
       } finally {
         isSearching.value = false;
         // The input value has changed since the beginning of the search, searching again

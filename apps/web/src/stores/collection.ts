@@ -47,21 +47,21 @@ export const collection = defineStore("collection", () => {
 
   const { bookcaseWithPopularities } = storeToRefs(bookcase());
 
-  const issues = ref<issue[] | null>(null);
+  const issues = shallowRef<issue[] | null>(null);
 
   const collectionUtils = useCollection(issues),
     watchedPublicationsWithSales = ref<string[] | null>(null),
-    purchases = ref<purchase[] | null>(null),
-    watchedAuthors = ref<authorUser[] | null>(null),
+    purchases = shallowRef<purchase[] | null>(null),
+    watchedAuthors = shallowRef<authorUser[] | null>(null),
     marketplaceContactMethods = ref<string[] | null>(null),
-    suggestions = ref<EventReturnType<
+    suggestions = shallowRef<EventReturnType<
       StatsServices["getSuggestionsForCountry"]
     > | null>(null),
-    subscriptions = ref<SubscriptionTransformed[] | null>(null),
+    subscriptions = shallowRef<SubscriptionTransformed[] | null>(null),
     popularIssuesInCollection = ref<{
       [shortIssuecode: string]: number;
     } | null>(null),
-    lastPublishedEdgesForCurrentUser = ref<EventReturnType<
+    lastPublishedEdgesForCurrentUser = shallowRef<EventReturnType<
       CollectionServices["getLastPublishedEdges"]
     > | null>(null),
     isLoadingUser = ref(false),
@@ -77,7 +77,7 @@ export const collection = defineStore("collection", () => {
     coaIssueCountsByPublicationcode = ref<EventReturnType<
       CollectionServices["getCoaCountByPublicationcode"]
     > | null>(null),
-    user = ref<
+    user = shallowRef<
       EventReturnType<CollectionServices["getUser"]> | undefined | null
     >(undefined),
     userPermissions = ref<

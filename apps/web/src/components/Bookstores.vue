@@ -183,7 +183,7 @@ const {
 const { fetchStats } = users();
 const { stats: userStats } = storeToRefs(users());
 
-let bookstores = $ref<SimpleBookstore[] | null>(null);
+let bookstores = $shallowRef<SimpleBookstore[] | null>(null);
 let existingBookstore = $ref<SimpleBookstore | null>(null);
 let newBookstoreSent = $ref(false);
 let existingBookstoreSent = $ref(false);

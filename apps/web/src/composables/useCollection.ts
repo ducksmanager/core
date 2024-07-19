@@ -1,10 +1,12 @@
+import { ShallowRef } from "vue";
+
 import { QuotedIssue } from "~dm-types/QuotedIssue";
 import { issue_condition } from "~prisma-clients/extended/dm.extends";
 import { issue } from "~prisma-clients/extended/dm.extends";
 
 import { coa } from "../stores/coa";
 
-export default (issues: Ref<issue[] | null>) => {
+export default (issues: ShallowRef<issue[] | null>) => {
   const total = computed(() => issues.value?.length);
   const mostPossessedPublication = computed(
     () =>

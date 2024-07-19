@@ -39,8 +39,8 @@ const { loadUser } = collection();
 let initError = $ref<string | null>(null);
 let error = $ref<string | null>(null);
 const token = useRoute().params.token as string;
-const password = $ref<string>("");
-const password2 = $ref<string>("");
+const password = $ref("");
+const password2 = $ref("");
 
 const { t: $t } = useI18n();
 

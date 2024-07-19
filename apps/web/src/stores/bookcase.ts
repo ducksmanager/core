@@ -21,7 +21,6 @@ export type BookcaseEdgeWithPopularity = BookcaseEdge & {
 export const bookcase = defineStore("bookcase", () => {
   const route = useRoute();
 
-  console.log("bookcase store");
   const {
     bookcase: { services: bookcaseServices },
   } = injectLocal(dmSocketInjectionKey)!;
@@ -30,15 +29,13 @@ export const bookcase = defineStore("bookcase", () => {
     isPrivateBookcase = ref(false),
     isUserNotExisting = ref(false),
     bookcaseUsername = ref<string | null>(null),
-    bookcase = ref<BookcaseEdge[] | null>(null),
-    bookcaseOptions = ref<EventReturnType<
+    bookcase = shallowRef<BookcaseEdge[] | null>(null),
+    bookcaseOptions = shallowRef<EventReturnType<
       BookcaseServices["getBookcaseOptions"]
     > | null>(null),
     bookcaseOrder = ref<string[] | null>(null),
-    edgeIndexToLoad = ref<number>(0),
-    isSharedBookcase = computed<boolean>(
-      () => route.params.username !== undefined,
-    ),
+    edgeIndexToLoad = ref(0),
+    isSharedBookcase = computed(() => route.params.username !== undefined),
     bookcaseWithPopularities = computed(
       (): BookcaseEdgeWithPopularity[] | null =>
         ((isSharedBookcase.value

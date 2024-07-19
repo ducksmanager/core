@@ -16,15 +16,15 @@ export const users = defineStore("users", () => {
   const count = ref<EventReturnType<
       GlobalStatsServices["getUserCount"]
     > | null>(null),
-    stats = ref<
+    stats = shallowRef<
       EventReturnType<GlobalStatsServices["getUsersPointsAndStats"]>["stats"]
     >({}),
-    points = ref<
+    points = shallowRef<
       EventReturnType<GlobalStatsServices["getUsersPointsAndStats"]>["points"]
     >({}),
-    events = ref<AbstractEvent[]>([]),
-    bookcaseContributors = ref<BookcaseContributor[] | null>(null),
-    allUsers = ref<SimpleUser[] | null>(null),
+    events = shallowRef<AbstractEvent[]>([]),
+    bookcaseContributors = shallowRef<BookcaseContributor[] | null>(null),
+    allUsers = shallowRef<SimpleUser[] | null>(null),
     fetchAllUsers = async () => {
       if (!allUsers.value) {
         allUsers.value = await globalStatsServices.getUserList();

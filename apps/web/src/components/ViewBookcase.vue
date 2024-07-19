@@ -198,7 +198,7 @@ const {
 } = storeToRefs(bookcase());
 
 let edgesUsingSprites = $ref<{ [edgeId: number]: string }>({});
-const currentEdgeOpened = $ref<BookcaseEdgeWithPopularity | null>(null);
+const currentEdgeOpened = $shallowRef<BookcaseEdgeWithPopularity | null>(null);
 let currentEdgeHighlighted = $ref<number | null>(null);
 let hasPublicationNames = $ref(false);
 let hasIssueNumbers = $ref(false);

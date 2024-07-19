@@ -288,16 +288,16 @@ import { dmSocketInjectionKey } from "../../composables/useDmSocket";
 const { getImagePath } = images();
 
 let step = $ref(1);
-const rawData = $ref<string>("");
+const rawData = $ref("");
 const expandedPublicationAccordion = $ref<string | null>(null);
 const expandedNotImportableAccordion = $ref<string | null>(null);
 let hasPublicationNames = $ref(false);
 let hasIssueNumbers = $ref(false);
 const issueDefaultCondition = $ref<issue_condition>("bon");
-let issuesToImport = $ref<inducks_issue[] | null>(null);
-let issuesNotReferenced = $ref<inducks_issue[] | null>(null);
-let issuesAlreadyInCollection = $ref<inducks_issue[] | null>(null);
-let issuesImportable = $ref<inducks_issue[] | null>(null);
+let issuesToImport = $shallowRef<inducks_issue[] | null>(null);
+let issuesNotReferenced = $shallowRef<inducks_issue[] | null>(null);
+let issuesAlreadyInCollection = $shallowRef<inducks_issue[] | null>(null);
+let issuesImportable = $shallowRef<inducks_issue[] | null>(null);
 let importProgress = $ref(0);
 
 const {
