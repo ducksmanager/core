@@ -134,7 +134,7 @@ ion-row.toggle {
 
     &::part(track) {
       height: 20px;
-      background: var(--track-background);
+      --track-background: white;
     }
 
     &::part(handle) {

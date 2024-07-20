@@ -18,7 +18,7 @@
     "axios": "^1.7.2",
     "cloudinary": "^1.41.3",
     "csv-parse": "^5.5.6",
-    "dayjs": "^1.11.11",
+    "dayjs": "^1.11.12",
     "dotenv": "^16.4.5",
     "ejs": "^3.1.10",
     "i18n": "^0.15.1",
@@ -33,7 +33,7 @@
     "@types/ejs": "^3.1.5",
     "@types/i18n": "^0.13.12",
     "@types/jsonwebtoken": "^9.0.6",
-    "@types/node": "^18.19.39",
+    "@types/node": "^18.19.41",
     "@types/nodemailer": "^6.4.15",
     "concurrently": "^8.2.2",
     "eslint": "^8.57.0",
@@ -41,12 +41,12 @@
     "eslint-plugin-simple-import-sort": "^12.1.1",
     "eslint-plugin-unused-imports": "^3.2.0",
     "nodemon": "^3.1.4",
-    "prettier": "^3.3.2",
+    "prettier": "^3.3.3",
     "ts-node": "^10.9.2",
     "tsc-alias": "^1.8.10",
     "tsconfig-paths": "^4.2.0",
     "typescript": "^5.5.3",
-    "typescript-eslint": "^7.15.0",
+    "typescript-eslint": "^7.16.1",
     "wait-on": "^7.2.0"
   }
 }
