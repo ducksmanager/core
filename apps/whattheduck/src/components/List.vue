@@ -286,8 +286,6 @@ ion-searchbar {
 
 :deep(ion-label) {
   z-index: 1;
-  /* display: flex !important;
-  align-items: center !important; */
   &.suffix {
     color: grey;
   }
@@ -296,6 +294,10 @@ ion-searchbar {
   position: absolute;
   height: 100%;
   border-radius: 0;
+
+  :deep(&::part(progress)) {
+    transition-duration: 0s !important;
+  }
 
   :deep(&::part(track)) {
     background-color: transparent;

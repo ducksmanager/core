@@ -42,7 +42,7 @@ const copyToClipboard = async (textPrefix: string, text: Promise<string>) => {
     translucent: true,
     duration: 2000,
   });
-  toast.present();
+  await toast.present();
 };
 
 const clipboardTextPrefix = computed(() => {

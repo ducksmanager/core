@@ -124,7 +124,7 @@ watch(
 
 const onMainSlideClick = async ({ index }: { index: number }) => {
   currentNavigationItem.value = covers.value[index]!.shortIssuecode;
-  router.push('/collection');
+  await router.push('/collection');
 };
 </script>
 <style lang="scss" scoped>

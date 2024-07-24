@@ -15,6 +15,11 @@
     <template v-if="currentIssueViewMode.id === 'list'" #row-label="{ item }">
       <Issue v-bind="item" />
     </template>
+    <template #row-suffix="{ item }">
+      <template v-if="'issueDate' in item && item.issueDate">
+        <ion-icon :ios="calendarOutline" :md="calendarSharp" />&nbsp;{{ item.issueDate }}
+      </template>
+    </template>
     <template v-if="currentIssueViewMode.id === 'edges'">
       <Bookcase
         orientation="horizontal"
@@ -44,6 +49,7 @@
 </template>
 
 <script setup lang="ts">
+import { calendarOutline, calendarSharp } from 'ionicons/icons';
 import type { issue } from '~prisma-clients/extended/dm.extends';
 import { stores as webStores, components as webComponents } from '~web';
 
@@ -69,7 +75,7 @@ const colSize = computed(() => {
   }
 });
 
-const { issues, user } = storeToRefs(wtdcollection());
+const { issues, user, purchasesById } = storeToRefs(wtdcollection());
 const coaStore = webStores.coa();
 
 const { isCoaView, currentIssueViewMode, currentNavigationItem, selectedIssuenumbers } = storeToRefs(app());
@@ -88,10 +94,20 @@ const hasCoaData = computed(() => !!coaStore.issuesWithTitles?.[publicationcode.
 
 const publicationcode = computed(() => currentNavigationItem.value!);
 
+const getIssueDate = (issue: issue) => {
+  let date = (issue.purchaseId && purchasesById.value?.[issue.purchaseId]?.date) || issue.creationDate;
+  return date?.toISOString();
+};
+
 const coaIssues = computed(() => coaStore.issuesWithTitles[publicationcode.value]);
 const coaIssuenumbers = computed(() => coaIssues.value?.map(({ issuenumber }) => issuenumber));
 const userIssues = computed(() =>
-  (issues.value || []).filter((issue) => issue.publicationcode === publicationcode.value),
+  (issues.value || [])
+    .filter((issue) => issue.publicationcode === publicationcode.value)
+    .map((issue) => ({
+      ...issue,
+      issueDate: getIssueDate(issue),
+    })),
 );
 
 watch(isCoaView, () => {

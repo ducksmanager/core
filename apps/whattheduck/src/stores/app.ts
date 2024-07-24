@@ -79,7 +79,7 @@ export const app = defineStore('app', () => {
     if (route.name === 'Collection') {
       window.location.hash = code;
     } else {
-      router.push({
+      await router.push({
         name: 'Collection',
         params: {
           type: route.params.type || 'coa',

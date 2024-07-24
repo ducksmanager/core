@@ -165,9 +165,10 @@
 </template>
 
 <script setup lang="ts">
-import { BookcaseEdgeWithPopularity } from "~/stores/bookcase";
 import { BookcaseEdgeSprite } from "~dm-types/BookcaseEdge";
 import { SimpleIssue } from "~dm-types/SimpleIssue";
+
+import { BookcaseEdgeWithPopularity } from "../stores/bookcase";
 
 const route = useRoute();
 

@@ -19,7 +19,7 @@ export default () => {
       console.error("Erreur lors de la recherche par image de la couverture");
       return;
     }
-    Promise.all(
+    await Promise.all(
       results.covers.map(
         ({ shortIssuecode, publicationcode, issuenumber /*, id: coverId*/ }) =>
           getIndexationSocket(

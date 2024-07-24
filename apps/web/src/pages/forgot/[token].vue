@@ -32,7 +32,7 @@ meta:
 <script setup lang="ts">
 import Cookies from "js-cookie";
 
-import { dmSocketInjectionKey } from "../../composables/useDmSocket";
+import { dmSocketInjectionKey } from "../composables/useDmSocket";
 
 const { loadUser } = collection();
 

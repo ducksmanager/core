@@ -15,7 +15,7 @@ export default (
     coverIdServices.searchFromCover({ base64 }).then(async (results) => {
       CameraPreview.stop();
       if (results.covers?.length) {
-        router.push({
+        await router.push({
           path: '/cover-search-results',
           query: { searchResults: JSON.stringify(results), origin },
         });

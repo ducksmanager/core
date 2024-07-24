@@ -264,7 +264,7 @@ const applyTextImageDimensions = () => {
 };
 
 (async () => {
-  refreshPreview();
+  await refreshPreview();
 })();
 </script>
 

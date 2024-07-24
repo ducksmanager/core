@@ -157,7 +157,7 @@
 </template>
 
 <script setup lang="ts">
-import { dmSocketInjectionKey } from "../../composables/useDmSocket";
+import { dmSocketInjectionKey } from "../composables/useDmSocket";
 
 const {
   globalStats: { services: globalStatsServices },

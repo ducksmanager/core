@@ -78,11 +78,12 @@
 </template>
 
 <script setup lang="ts">
+import { images } from "~/stores/images";
+
 import {
   BookcaseEdgeWithPopularity,
   SimpleBookcaseEdge,
 } from "../stores/bookcase";
-import { images } from "../stores/images";
 
 const {
   bookcaseTextures,

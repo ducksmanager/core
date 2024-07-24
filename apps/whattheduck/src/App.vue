@@ -75,7 +75,7 @@ const assignSocket = () => {
 
 watch(token, async () => {
   if (token.value === null && route.path !== '/login') {
-    router.push('/login');
+    await router.push('/login');
   } else {
     assignSocket();
   }

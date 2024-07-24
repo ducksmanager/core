@@ -92,7 +92,7 @@
               isSubscription: false,
               userId: user!.id,
               creationDate: new Date(),
-              ...defaultCopyState,
+              ...defaultCopyState
             } as IssueWithPublicationcodeOptionalId)
           "
         >

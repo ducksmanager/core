@@ -126,7 +126,7 @@ meta:
 import { BookcaseEdgeWithPopularity } from "~/stores/bookcase";
 import { WantedEdge } from "~dm-types/WantedEdge";
 
-import { dmSocketInjectionKey } from "../../../composables/useDmSocket";
+import { dmSocketInjectionKey } from "../composables/useDmSocket";
 
 const { getImagePath } = images();
 

@@ -1,4 +1,4 @@
-import { ShallowRef } from "vue";
+import type { ShallowRef } from "vue";
 
 import { QuotedIssue } from "~dm-types/QuotedIssue";
 import { issue_condition } from "~prisma-clients/extended/dm.extends";
