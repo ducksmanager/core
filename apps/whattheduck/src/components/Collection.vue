@@ -1,8 +1,9 @@
 <template>
   <ion-page id="main-content">
-    <ion-buttons slot="end">
-      <CopyListButton v-if="componentName === IssueList" />
-      <ViewModesButton v-if="componentName === IssueList" />
+    <ion-buttons slot="end" v-if="componentName === IssueList">
+      <FilterButton />
+      <CopyListButton />
+      <ViewModesButton />
     </ion-buttons>
     <ion-header :translucent="true">
       <ion-toolbar>
@@ -51,6 +52,7 @@
 <script setup lang="ts">
 import { arrowBackOutline, arrowBackSharp } from 'ionicons/icons';
 
+import FilterButton from './FilterButton.vue';
 import OwnedIssueCopies from './OwnedIssueCopies.vue';
 
 import { app } from '~/stores/app';
@@ -101,12 +103,14 @@ strong {
 ion-buttons {
   &[slot='end'] {
     position: fixed;
-    top: 0.2rem;
+    top: 0.4rem;
     right: 0;
     height: 44px;
 
     ion-fab {
-      position: static;
+      position: relative;
+      top: 0;
+      right: 0;
     }
   }
 }

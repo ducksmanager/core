@@ -283,7 +283,7 @@ meta:
 import type { inducks_issue } from "~prisma-clients/client_coa";
 import { issue_condition } from "~prisma-clients/extended/dm.extends";
 
-import { dmSocketInjectionKey } from "../composables/useDmSocket";
+import { dmSocketInjectionKey } from "../../composables/useDmSocket";
 
 const { getImagePath } = images();
 

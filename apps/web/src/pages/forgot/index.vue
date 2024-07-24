@@ -45,7 +45,7 @@ meta:
 </template>
 
 <script setup lang="ts">
-import { dmSocketInjectionKey } from "../composables/useDmSocket";
+import { dmSocketInjectionKey } from "../../composables/useDmSocket";
 
 let error = $ref<string | null>(null);
 

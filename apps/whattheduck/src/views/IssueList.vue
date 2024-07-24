@@ -95,8 +95,9 @@ const hasCoaData = computed(() => !!coaStore.issuesWithTitles?.[publicationcode.
 const publicationcode = computed(() => currentNavigationItem.value!);
 
 const getIssueDate = (issue: issue) => {
-  let date = (issue.purchaseId && purchasesById.value?.[issue.purchaseId]?.date) || issue.creationDate;
-  return date?.toISOString();
+  let date =
+    (issue.purchaseId && purchasesById.value?.[issue.purchaseId]?.date) || (issue.creationDate as Date | string);
+  return !date ? date : (typeof date === 'string' ? date : date.toISOString()).split('T')?.[0];
 };
 
 const coaIssues = computed(() => coaStore.issuesWithTitles[publicationcode.value]);
@@ -261,6 +262,7 @@ ion-checkbox {
 
 :deep(.bookcase) {
   overflow: auto;
+  padding: 0 1rem;
 }
 
 :deep(.edge) {

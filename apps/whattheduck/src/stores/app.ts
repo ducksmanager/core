@@ -1,3 +1,4 @@
+import { bookmarkOutline } from 'ionicons/icons';
 import { defineStore } from 'pinia';
 import type { NotEmptyStorageValue } from '~socket.io-client-services';
 import type useDmSocket from '~web/src/composables/useDmSocket';
@@ -50,6 +51,18 @@ export const app = defineStore('app', () => {
   ] as const;
 
   const currentIssueViewMode = ref<(typeof issueViewModes)[number]>(issueViewModes[0]);
+
+  const filters = [
+    { id: 'all', label: 'All' },
+    { id: 'unreadBooksOnly', label: 'Unread books only', icon: { ios: bookmarkOutline, md: bookmarkOutline } },
+    {
+      id: 'readBooksOnly',
+      label: 'Read books only',
+      icon: { negate: true, ios: bookmarkOutline, md: bookmarkOutline },
+    },
+  ] as const;
+
+  const currentFilter = ref<(typeof filters)[number]>(filters[0]);
 
   usePersistedData({
     token,
@@ -107,7 +120,6 @@ export const app = defineStore('app', () => {
       label: 'Copy owned issues',
       textPrefix: 'Owned issues -',
       showIfOffline: true,
-      icon: { ios: '/icons/list.svg', md: '/icons/list.svg' },
       getTextToCopy: async () => collection().issueNumbersPerPublication[publicationcode.value!].join(', '),
     },
     {
@@ -115,7 +127,6 @@ export const app = defineStore('app', () => {
       label: 'Copy missing issues',
       textPrefix: 'Missing issues -',
       showIfOffline: false,
-      icon: { ios: '/icons/edges.svg', md: '/icons/edges.svg' },
       getTextToCopy: async () => {
         await coa().fetchIssueNumbers([publicationcode.value!]);
         return coa()
@@ -153,5 +164,7 @@ export const app = defineStore('app', () => {
     copyListModes,
     issueViewModes,
     currentIssueViewMode,
+    filters,
+    currentFilter,
   };
 });

@@ -25,7 +25,7 @@
             v-if="!isOfflineMode && copies.length <= 2"
             @click="addCopy"
           >
-            <ion-icon :ios="addOutline" :android="addSharp" />&nbsp;{{ t('Ajouter un exemplaire') }}
+            <ion-icon :ios="addOutline" :md="addSharp" />&nbsp;{{ t('Ajouter un exemplaire') }}
           </ion-button> </ion-segment
         ><ion-button
           @click="

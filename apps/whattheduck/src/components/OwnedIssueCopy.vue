@@ -31,16 +31,11 @@
         ><ion-checkbox :disabled="isOfflineMode" v-model="issue.isToRead" :aria-label="t('A lire')" /></ion-col
     ></ion-row>
     <ion-row>
-      <ion-col class="ion-padding-horizontal ion-text-left">
+      <ion-col size="4" class="ion-padding ion-text-left">
         <ion-label>{{ t("Date d'achat") }}</ion-label>
       </ion-col>
-    </ion-row>
-    <ion-row>
-      <!-- TODO -->
-      <ion-col class="ion-padding-horizontal ion-text-right">
-        <ion-button id="create-purchase-date" class="ion-margin-bottom" size="small">{{
-          t("Créer une date d'achat")
-        }}</ion-button>
+      <ion-col size="8" class="ion-padding ion-text-right">
+        <ion-button id="create-purchase-date" size="small">{{ t("Créer une date d'achat") }}</ion-button>
 
         <ion-modal id="create-purchase-modal" ref="modal" trigger="create-purchase-date">
           <div class="wrapper">
@@ -188,14 +183,16 @@ ion-grid {
 
       &:not(.vertical) {
         ion-radio {
-          border: 1px solid gray;
-          border-radius: 12px;
           height: 20px;
-          width: 20px;
         }
       }
     }
   }
+}
+
+#create-purchase-date {
+  margin-top: 0;
+  margin-bottom: 1rem;
 }
 
 ion-modal#create-purchase-modal {

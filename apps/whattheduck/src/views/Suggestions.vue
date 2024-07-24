@@ -54,7 +54,6 @@
 <script setup lang="ts">
 import { toastController } from '@ionic/vue';
 import { calendarOutline, calendarSharp, flameOutline, flameSharp } from 'ionicons/icons';
-import InducksStory from '~web/src/components/InducksStory.vue';
 
 import { wtdcollection } from '~/stores/wtdcollection';
 

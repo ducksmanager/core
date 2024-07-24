@@ -31,12 +31,12 @@
       >
         <ion-row><FullIssue :issue="cover" /></ion-row>
         <ion-row style="font-size: 0.8rem; width: 100%"
-          ><ion-col size="2"><ion-icon :ios="personOutline" :android="personSharp" /></ion-col
+          ><ion-col size="2"><ion-icon :ios="personOutline" :md="personSharp" /></ion-col
           ><ion-col class="ion-text-left">{{
             t('{numberOfUsers} utilisateurs possèdent ce numéro', { numberOfUsers: cover.popularity })
           }}</ion-col></ion-row
         ><ion-row style="font-size: 0.8rem; width: 100%" v-if="cover.estimationMin || cover.estimationMax"
-          ><ion-col size="2"><ion-icon :ios="pricetagOutline" :android="pricetagSharp"></ion-icon></ion-col
+          ><ion-col size="2"><ion-icon :ios="pricetagOutline" :md="pricetagSharp"></ion-icon></ion-col
           ><ion-col class="ion-text-left"
             ><IssueQuotation :issue="{ ...cover, estimation: cover.estimationMin! }" /></ion-col></ion-row
       ></ion-row>

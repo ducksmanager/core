@@ -1,22 +1,13 @@
 <template>
-  <ion-fab ref="fab" v-if="copyListModes" vertical="top" horizontal="end" id="copy-modes" slot="fixed">
-    <ion-fab-button><ion-icon :ios="copyOutline" :android="copySharp"></ion-icon></ion-fab-button>
-    <ion-fab-list side="bottom">
-      <ion-item
-        :detail="false"
-        button
-        class="ion-align-items-center ion-text-nowrap"
-        :disabled="isOfflineMode && !listMode.showIfOffline"
-        v-for="listMode of copyListModes"
-        @click="
-          copyToClipboard(listMode.textPrefix, listMode.getTextToCopy());
-          (fab?.$el as HTMLIonFabElement).close();
-        "
-      >
-        <ion-label>{{ listMode.label }}</ion-label></ion-item
-      ></ion-fab-list
-    ></ion-fab
-  >
+  <fab-header-button
+    :icon="{ ios: copyOutline, md: copySharp }"
+    :options="[...copyListModes]"
+    v-model:fab="fab"
+    @update:value="
+      copyToClipboard($event.textPrefix, $event.getTextToCopy());
+      (fab?.$el as HTMLIonFabElement).close();
+    "
+  />
 </template>
 <script setup lang="ts">
 import { Clipboard } from '@capacitor/clipboard';
@@ -26,7 +17,7 @@ import { copyOutline, copySharp } from 'ionicons/icons';
 import { app } from '~/stores/app';
 
 const { countryNames, publicationNames } = storeToRefs(coa());
-const { isOfflineMode, publicationcode } = storeToRefs(app());
+const { publicationcode } = storeToRefs(app());
 const { copyListModes } = app();
 
 // eslint-disable-next-line no-undef
@@ -51,41 +42,3 @@ const clipboardTextPrefix = computed(() => {
   return `${publicationName} (${countryName}):`;
 });
 </script>
-<style scoped lang="scss">
-ion-fab {
-  ion-fab-list {
-    margin-top: 3rem;
-    right: -2.5rem;
-    ion-item {
-      padding-right: 2.5rem;
-
-      &.selected {
-        ::part(native) {
-          border: 1px solid darkgray;
-        }
-      }
-    }
-  }
-
-  ion-fab-button {
-    width: 1.5rem;
-    height: 1.5rem;
-    margin-right: 0.75rem;
-  }
-
-  > ion-fab-button {
-    margin-right: 1rem;
-    width: 1.8rem;
-    height: 1.8rem;
-  }
-}
-
-#copy-modes[hidden] {
-  display: block;
-}
-
-ion-icon {
-  width: 18px;
-  height: 18px;
-}
-</style>

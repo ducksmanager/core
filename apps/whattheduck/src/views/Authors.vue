@@ -32,9 +32,8 @@
               v-model:rating="author.notation"
               :max-rating="10"
               @update:rating="updateRating(author)"
-              ><template #filledStarIcon
-                ><ion-icon style="width: 10%" :ios="starOutline" :android="starSharp" /></template
-              ><template #emptyStarIcon><ion-icon style="width: 10%" :ios="star" :android="star" /></template
+              ><template #filledStarIcon><ion-icon style="width: 10%" :ios="starOutline" :md="starSharp" /></template
+              ><template #emptyStarIcon><ion-icon style="width: 10%" :ios="star" :md="star" /></template
             ></StarRating>
           </ion-col>
           <ion-col size="3">
