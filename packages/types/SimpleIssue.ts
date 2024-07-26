@@ -9,7 +9,7 @@ type AllNonNullable<T> = {
 };
 
 export type SimpleIssue = AllNonNullable<
-  Pick<inducks_issue, "shortIssuecode" | "publicationcode" | "issuenumber">
+  Pick<inducks_issue, "shortIssuecode" | "publicationcode" | "shortIssuenumber">
 >;
 
 export type PartInfo = AllNonNullable<

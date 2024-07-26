@@ -136,7 +136,7 @@ getSuggestions(
 
     for (const suggestedIssue of pendingNotificationsForUser) {
       const issueTitle = `${publicationTitles[suggestedIssue.publicationcode]
-        } ${suggestedIssue.issuenumber}`;
+        } ${suggestedIssue.shortIssuenumber}`;
 
       const storyCountPerAuthor = Object.keys(suggestedIssue.stories).reduce(
         (acc, personcode) => ({

@@ -1,9 +1,9 @@
 <template>
-  {{ issuenumber }}
+  {{ shortIssuenumber }}
 </template>
 
 <script setup lang="ts">
 defineProps<{
-  issuenumber: string;
+  shortIssuenumber: string;
 }>();
 </script>

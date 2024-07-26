@@ -10,13 +10,13 @@ import { namespaceEndpoint } from "./types";
 
 const getEdges = async (filters: {
   publicationcode?: string;
-  issuenumbers?: string[];
+  shortIssuenumbers?: string[];
   isActive?: boolean;
 }) => {
-  const { publicationcode, issuenumbers, isActive } = filters;
-  const issuenumber = issuenumbers
+  const { publicationcode, shortIssuenumbers, isActive } = filters;
+  const shortIssuenumber = shortIssuenumbers
     ? {
-        in: issuenumbers,
+        in: shortIssuenumbers,
       }
     : undefined;
   const [countrycode, magazinecode] = publicationcode
@@ -27,23 +27,23 @@ const getEdges = async (filters: {
       where: {
         country: countrycode,
         magazine: magazinecode,
-        issuenumber,
+        shortIssuenumber,
         isActive,
       },
     })
-  ).reduce((acc, model) => ({ ...acc, [model.issuenumber]: model }), {});
+  ).reduce((acc, model) => ({ ...acc, [model.shortIssuenumber]: model }), {});
 
   return (
     await prismaDm.edge.findMany({
       select: {
         id: true,
         publicationcode: true,
-        issuenumber: true,
+        shortIssuenumber: true,
         shortIssuecode: true,
       },
       where: {
         publicationcode,
-        issuenumber,
+        shortIssuenumber,
       },
     })
   ).reduce(
@@ -51,8 +51,8 @@ const getEdges = async (filters: {
       ...acc,
       [edge.shortIssuecode!]: {
         ...edge,
-        modelId: edgeModels[edge.issuenumber]?.id,
-        v3: edgeModels[edge.issuenumber] !== undefined,
+        modelId: edgeModels[edge.shortIssuenumber]?.id,
+        v3: edgeModels[edge.shortIssuenumber] !== undefined,
       },
     }),
     {},
@@ -65,15 +65,14 @@ export default (io: Server) => {
 
     socket.on("getWantedEdges", (callback) =>
       prismaDm.$queryRaw<WantedEdge[]>`
-    SELECT Count(Numero) as numberOfIssues, CONCAT(Pays, '/', Magazine) AS publicationcode, Numero AS issuenumber
+    SELECT Count(Numero) as numberOfIssues, short_issuecode AS shortIssuecode
     FROM numeros
     WHERE NOT EXISTS(
       SELECT 1
       FROM tranches_pretes
-      WHERE CONCAT(numeros.Pays, '/', numeros.Magazine) = tranches_pretes.publicationcode
-        AND numeros.Numero_nospace = tranches_pretes.issuenumber
+      WHERE numeros.short_issuecode = tranches_pretes.short_issuecode
       )
-    GROUP BY Pays, Magazine, Numero
+    GROUP BY shortIssuenumber
     ORDER BY numberOfIssues DESC, Pays, Magazine, Numero
     LIMIT 20
   `.then(callback),
@@ -82,13 +81,13 @@ export default (io: Server) => {
     socket.on("getPublishedEdges", (callback) =>
       prismaDm.edge
         .findMany({
-          select: { publicationcode: true, issuenumber: true },
+          select: { publicationcode: true, shortIssuenumber: true },
         })
         .then(callback),
     );
 
-    socket.on("getEdges", async (publicationcode, issuenumbers, callback) => {
-      callback(await getEdges({ publicationcode, issuenumbers }));
+    socket.on("getEdges", async (publicationcode, shortIssuenumbers, callback) => {
+      callback(await getEdges({ publicationcode, shortIssuenumbers }));
     });
   });
 };

@@ -214,6 +214,7 @@ model inducks_issue {
   issuerangecode      String?                     @db.VarChar(15)
   publicationcode     String?                     @db.VarChar(12)
   issuenumber         String?                     @db.VarChar(13)
+  shortIssuenumber    String?                     @db.VarChar(13)
   title               String?                     @db.VarChar(158)
   size                String?                     @db.VarChar(82)
   pages               String?                     @db.VarChar(94)
@@ -273,14 +274,15 @@ model inducks_issueprice {
 }
 
 model inducks_issuequotation {
-  id              Int       @id @default(autoincrement()) @map("ID")
-  publicationcode String    @db.VarChar(15)
-  issuenumber     String    @db.VarChar(12)
-  estimationMin   Float?    @map("estimationmin") @db.Float
-  estimationMax   Float?    @map("estimationmax") @db.Float
-  scrapeDate      DateTime? @map("scrapedate") @db.DateTime(0)
-  source          String    @db.VarChar(15)
-  shortIssuecode  String?   @unique(map: "inducks_issuequotation__uindex_short_issuecode") @map("short_issuecode") @db.VarChar(28)
+  id               Int       @id @default(autoincrement()) @map("ID")
+  publicationcode  String    @db.VarChar(15)
+  issuenumber      String    @db.VarChar(12)
+  shortIssuenumber String    @map("short_issuenumber") @db.VarChar(12)
+  estimationMin    Float?    @map("estimationmin") @db.Float
+  estimationMax    Float?    @map("estimationmax") @db.Float
+  scrapeDate       DateTime? @map("scrapedate") @db.DateTime(0)
+  source           String    @db.VarChar(15)
+  shortIssuecode   String?   @unique(map: "inducks_issuequotation__uindex_short_issuecode") @map("short_issuecode") @db.VarChar(28)
 
   @@index([publicationcode], map: "inducks_issuequotation__index_publication")
   @@index([shortIssuecode, source], map: "inducks_issuequotation__uindex_short_issuecode_source")

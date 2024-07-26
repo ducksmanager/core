@@ -51,7 +51,7 @@ export default (socket: Socket<Events>) => {
           `Uploading edge with ID ${edgeNotInCloudinary.id} and slug ${edgeNotInCloudinary.slug}...`,
         );
         await cloudinaryV2.uploader.upload(
-          `${process.env.VITE_EDGES_ROOT}${countryCode}/gen/${magazineCode}.${edgeNotInCloudinary.issuenumber}.png`,
+          `${process.env.VITE_EDGES_ROOT}${countryCode}/gen/${magazineCode}.${edgeNotInCloudinary.shortIssuenumber}.png`,
           {
             public_id: edgeNotInCloudinary.slug!,
           },
@@ -90,14 +90,14 @@ export default (socket: Socket<Events>) => {
 const getSpriteName = (publicationcode: string, suffix: string) =>
   `edges-${publicationcode.replace("/", "-")}-${suffix}`;
 
-const getSpriteRange = (issuenumber: string, rangeWidth: number) => {
-  const issueNumberAsNumber = isNaN(parseInt(issuenumber))
+const getSpriteRange = (shortIssuenumber: string, rangeWidth: number) => {
+  const shortIssueNumberAsNumber = isNaN(parseInt(shortIssuenumber))
     ? 0
-    : parseInt(issuenumber);
+    : parseInt(shortIssuenumber);
   return [
-    issueNumberAsNumber - ((issueNumberAsNumber - 1) % rangeWidth),
-    issueNumberAsNumber -
-    ((issueNumberAsNumber - 1) % rangeWidth) +
+    shortIssueNumberAsNumber - ((shortIssueNumberAsNumber - 1) % rangeWidth),
+    shortIssueNumberAsNumber -
+    ((shortIssueNumberAsNumber - 1) % rangeWidth) +
     rangeWidth -
     1,
   ].join("-");
@@ -127,7 +127,7 @@ const updateTags = async (edges: edge[]) => {
         publicationcode,
         spriteSize === "full"
           ? "full"
-          : getSpriteRange(edge.issuenumber, spriteSize as number),
+          : getSpriteRange(edge.shortIssuenumber!, spriteSize as number),
       );
 
       let actualSpriteSize;

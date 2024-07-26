@@ -19,7 +19,7 @@ export const editingStep = defineStore("editingStep", () => {
     addIssuenumber = (issuenumber: string) => {
       issuenumbers.value = issuenumbers.value.concat(issuenumber).sort();
     },
-    addIssuenumbers = (newIssuenumbers: string[]) => {
+    addShortIssuenumbers = (newIssuenumbers: string[]) => {
       issuenumbers.value = [
         ...new Set([...issuenumbers.value, ...newIssuenumbers]),
       ].sort();
@@ -45,7 +45,7 @@ export const editingStep = defineStore("editingStep", () => {
     stepNumber,
     editingOptions,
     addIssuenumber,
-    addIssuenumbers,
+    addShortIssuenumbers,
     replaceIssuenumber,
     toggleIssuenumber,
   };

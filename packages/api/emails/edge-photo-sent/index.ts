@@ -3,12 +3,10 @@ import type { user } from "~prisma-clients/extended/dm.extends";
 
 type InputData = {
   user: user;
-  publicationcode: string;
-  issuenumber: string;
+  shortIssuecode: string;
 };
 type Data = InputData & {
   ecLink: string;
-  shortIssuecode: string;
 };
 export default class extends Email {
   data: Data;
@@ -16,11 +14,9 @@ export default class extends Email {
 
   constructor(data: InputData) {
     super();
-    const shortIssuecode = `${data.publicationcode} ${data.issuenumber}`;
     this.data = {
       ...data,
-      ecLink: `${process.env.EDGECREATOR_ROOT}/edit/${shortIssuecode}`,
-      shortIssuecode,
+      ecLink: `${process.env.EDGECREATOR_ROOT}/edit/${data.shortIssuecode}`,
     };
   }
 

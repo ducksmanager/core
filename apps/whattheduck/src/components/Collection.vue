@@ -18,7 +18,7 @@
                 v-if="isCoaView"
                 @click="
                   isCoaView = false;
-                  if (issuenumber !== undefined) {
+                  if (shortIssuenumber !== undefined) {
                     currentNavigationItem = publicationcode!;
                   }
                 "
@@ -70,14 +70,14 @@ const {
   isCoaView,
   isCameraPreviewShown,
   publicationcode,
-  issuenumber,
+  shortIssuenumber,
   currentNavigationItem,
 } = storeToRefs(app());
 
 const hasItems = ref<boolean | undefined>();
 
 const componentName = computed(() =>
-  navigationItemGroups.value.issuenumber !== undefined
+  navigationItemGroups.value.shortIssuenumber !== undefined
     ? OwnedIssueCopies
     : navigationItemGroups.value.magazinecode
       ? IssueList

@@ -30,17 +30,17 @@ export const isInducksIssueExisting = async (
 
 export const getInducksIssuesBetween = async (
   publicationcode: string,
-  issuenumberStart: string,
-  issuenumberEnd = issuenumberStart
+  shortIssuenumberStart: string,
+  shortIssuenumberEnd = shortIssuenumberStart
 ) => {
   cachedCoaIssues[publicationcode] =
     cachedCoaIssues[publicationcode] ||
     (
       await prismaCoa.inducks_issue.findMany({
         where: { publicationcode },
-        select: { issuenumber: true },
+        select: { shortIssuenumber: true },
       })
-    ).map(({ issuenumber }) => issuenumber);
+    ).map(({ shortIssuenumber }) => shortIssuenumber);
 
   if (!cachedCoaIssues[publicationcode].length) {
     console.warn(
@@ -50,18 +50,18 @@ export const getInducksIssuesBetween = async (
   }
 
   const startIssueIndex =
-    cachedCoaIssues[publicationcode].indexOf(issuenumberStart);
+    cachedCoaIssues[publicationcode].indexOf(shortIssuenumberStart);
   if (startIssueIndex === -1) {
     console.warn(
-      ` No issue found in COA for publication code ${publicationcode} and issue number ${issuenumberStart}`
+      ` No issue found in COA for publication code ${publicationcode} and issue number ${shortIssuenumberStart}`
     );
     return [];
   }
   const endIssueIndex =
-    cachedCoaIssues[publicationcode].indexOf(issuenumberEnd);
+    cachedCoaIssues[publicationcode].indexOf(shortIssuenumberEnd);
   if (endIssueIndex === -1) {
     console.warn(
-      ` No issue found in COA for publication code ${publicationcode} and issue number ${issuenumberEnd}`
+      ` No issue found in COA for publication code ${publicationcode} and issue number ${shortIssuenumberEnd}`
     );
     return [];
   }

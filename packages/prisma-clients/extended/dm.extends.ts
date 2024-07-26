@@ -35,7 +35,6 @@ export default (prismaClient: PrismaClient) =>
     result: {
       issue: {
         ...computePublicationcode,
-        ...computeShortIssuecodeFromCountryMagazineIssuenumber,
       },
       subscription: computePublicationcode,
       edge: computeTimestamp,

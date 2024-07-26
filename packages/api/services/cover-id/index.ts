@@ -93,7 +93,7 @@ export default (io: Server) => {
         }
       })).reduce<Record<string, number>>((acc, {shortIssuecode}) => ({
         ...acc,
-        [shortIssuecode]: (acc[shortIssuecode] || 0) + 1
+        [shortIssuecode!]: (acc[shortIssuecode!] || 0) + 1
       }), {})
 
       callback({
@@ -150,13 +150,13 @@ const getIssuesFromIssueCodes = async (foundShortIssueCodes: string[]) =>
     select: {
       shortIssuecode: true,
       publicationcode: true,
-      issuenumber: true,
+      shortIssuenumber: true,
     },
     where: {
       publicationcode: {
         not: null,
       },
-      issuenumber: {
+      shortIssuenumber: {
         not: null,
       },
       shortIssuecode: {
@@ -164,7 +164,7 @@ const getIssuesFromIssueCodes = async (foundShortIssueCodes: string[]) =>
       },
     },
   }) as Promise<
-    { publicationcode: string; issuenumber: string; shortIssuecode: string }[]
+    { publicationcode: string; shortIssuenumber: string; shortIssuecode: string }[]
   >;
 
 const getIssuesCodesFromCoverIds = async (coverIds: number[]) =>

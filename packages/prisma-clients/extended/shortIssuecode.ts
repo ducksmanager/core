@@ -2,7 +2,7 @@ type issue = {
   country: string;
   magazine: string;
   publicationcode: string
-  issuenumber: string;
+  shortIssuenumber: string;
 };
 
 export const computeShortIssuecodeFromCountryMagazineIssuenumber = {
@@ -10,12 +10,12 @@ export const computeShortIssuecodeFromCountryMagazineIssuenumber = {
     needs: {
       country: true,
       magazine: true,
-      issuenumber: true,
+      shortIssuenumber: true,
     },
     compute: ({
       country,
       magazine,
-      issuenumber,
-    }: Pick<issue, 'country'|'magazine'|'issuenumber'>) => `${country}/${magazine} ${issuenumber}`,
+      shortIssuenumber,
+    }: Pick<issue, 'country'|'magazine'|'shortIssuenumber'>) => `${country}/${magazine} ${shortIssuenumber}`,
   },
 };

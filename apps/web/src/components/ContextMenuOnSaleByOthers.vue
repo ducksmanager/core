@@ -8,8 +8,8 @@
     }}
   </li>
   <b-alert
-    v-for="(count, issuenumber) in issuesWithMultipleCopiesSelected"
-    :key="issuenumber"
+    v-for="(count, shortIssuenumber) in issuesWithMultipleCopiesSelected"
+    :key="shortIssuenumber"
     class="two-lines pre-wrap text-center m-0"
     :model-value="true"
     variant="warning"
@@ -17,7 +17,7 @@
     {{
       $t(
         "Vous avez sélectionné {0} fois le numéro {1}.\nAssurez-vous de ne pas acheter plusieurs fois le même numéro !",
-        [count, issuenumber],
+        [count, shortIssuenumber],
       )
     }}
   </b-alert>
@@ -97,9 +97,9 @@
 <script setup lang="ts">
 import { issue } from "~prisma-clients/extended/dm.extends";
 
-const { selectedIssueIdsByIssuenumber } = defineProps<{
-  selectedIssueIdsByIssuenumber: {
-    [issuenumber: string]: issue[];
+const { selectedIssueIdsByShortIssuenumber } = defineProps<{
+  selectedIssueIdsByShortIssuenumber: {
+    [shortIssuenumber: string]: issue[];
   };
   publicationcode: string;
 }>();
@@ -120,10 +120,10 @@ const { loadContactMethods } = marketplace();
 const { contactMethods, issuesOnSaleById } = storeToRefs(marketplace());
 
 const selectedIssues = $computed(() =>
-  Object.keys(selectedIssueIdsByIssuenumber),
+  Object.keys(selectedIssueIdsByShortIssuenumber),
 );
 const issueIds = $computed(() =>
-  Object.values(selectedIssueIdsByIssuenumber).reduce(
+  Object.values(selectedIssueIdsByShortIssuenumber).reduce(
     (acc, issues) => [...acc, ...issues.map(({ id }) => id!)],
     [] as number[],
   ),
@@ -139,12 +139,12 @@ const selectedIssuesBuyerIds = $computed(() => [
 ]);
 
 const issuesWithMultipleCopiesSelected = $computed(() =>
-  Object.entries(selectedIssueIdsByIssuenumber)
+  Object.entries(selectedIssueIdsByShortIssuenumber)
     .filter(([, copies]) => copies.length > 1)
     .reduce(
-      (acc, [issuenumber, copies]) => ({
+      (acc, [shortIssuenumber, copies]) => ({
         ...acc,
-        [issuenumber]: copies.length,
+        [shortIssuenumber]: copies.length,
       }),
       {},
     ),

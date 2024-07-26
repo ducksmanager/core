@@ -11,5 +11,5 @@ export class CollectionUpdateEvent extends AbstractEvent {
   type = "collection_update";
   numberOfIssues!: number;
   publicationcode!: string;
-  issuenumber!: string;
+  shortIssuenumber!: string;
 }

@@ -137,7 +137,7 @@ export const getIssuesForSale = async (buyerId: number) =>
     )
     .then((issuesForSale) =>
       issuesForSale.reduce<Record<string, issue[]>>(
-        (acc, issue) => ({
+        (acc, {...issue}) => ({
           ...acc,
           [issue.publicationcode]: [
             ...(acc[issue.publicationcode] || []),

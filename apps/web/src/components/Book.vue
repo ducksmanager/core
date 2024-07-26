@@ -32,7 +32,7 @@
             <a :href="inducksLink" target="_blank" class="inducks-link"
               ><img
                 :src="getImagePath('coafoot.png')"
-                :title="`Voir ${publicationNames[publicationcode]} ${issuenumber} sur Inducks`"
+                :title="`Voir ${publicationNames[publicationcode]} ${shortIssuenumber} sur Inducks`"
                 alt="Inducks"
             /></a>
             <Issue
@@ -40,7 +40,7 @@
               :publicationname="
                 publicationNames[publicationcode] || publicationcode
               "
-              :issuenumber="issuenumber"
+              :short-issuenumber="shortIssuenumber"
             />
             <h6 v-if="releaseDate">{{ $t("Sortie :") }} {{ releaseDate }}</h6>
             <h3>{{ $t("Table des matières") }}</h3>
@@ -109,9 +109,9 @@
 <script setup lang="ts">
 import { useToast } from "bootstrap-vue-next";
 import { PageFlip } from "page-flip";
-const { issuenumber, publicationcode } = defineProps<{
+const { shortIssuenumber, publicationcode } = defineProps<{
   publicationcode: string;
-  issuenumber: string;
+  shortIssuenumber: string;
 }>();
 const emit = defineEmits<{ (e: "close-book"): void }>();
 
@@ -139,13 +139,13 @@ const edgeUrl = $computed(
     `${import.meta.env.VITE_EDGES_ROOT}${publicationcode.replace(
       "/",
       "/gen/",
-    )}.${issuenumber}.png`,
+    )}.${shortIssuenumber}.png`,
 );
 const coverWidth = $computed(
   () => coverRatio && (coverHeight || 0) / coverRatio,
 );
 const currentIssueDetails = $computed(
-  () => issueDetails.value?.[`${publicationcode} ${issuenumber}`],
+  () => issueDetails.value?.[`${publicationcode} ${shortIssuenumber}`],
 );
 const pages = $computed(() => currentIssueDetails?.entries);
 let pagesWithUrl = $computed(() => pages?.filter(({ url }) => !!url));
@@ -159,14 +159,14 @@ const isReadyToOpen = $computed(() => coverWidth && edgeWidth && pages && true);
 const showTableOfContents = $computed(() => currentPage > 0 || opened);
 const inducksLink = $computed(() => {
   const [country, magazine] = publicationcode.split("/");
-  return `https://inducks.org/compmag.php?country=${country}&title1=${magazine}&entrycodeh3=${issuenumber}`;
+  return `https://inducks.org/compmag.php?country=${country}&title1=${magazine}&entrycodeh3=${shortIssuenumber}`;
 });
 const { t: $t } = useI18n();
 
 const loadBookPages = async () => {
   await fetchIssueUrls({
     publicationcode,
-    issuenumber,
+    shortIssuenumber,
   });
 };
 
@@ -242,7 +242,7 @@ watch($$(currentPage), (newValue) => {
 });
 
 watch(
-  [$$(publicationcode), $$(issuenumber)],
+  [$$(publicationcode), $$(shortIssuenumber)],
   async () => {
     await loadBookPages();
   },

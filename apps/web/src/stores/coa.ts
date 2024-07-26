@@ -42,7 +42,7 @@ export const coa = defineStore("coa", () => {
   } = injectLocal(dmSocketInjectionKey)!;
 
   const locale = useI18n().locale,
-    coverUrls = ref<{ [issuenumber: string]: string }>({}),
+    coverUrls = ref<{ [shortIssuenumber: string]: string }>({}),
     countryNames = shallowRef<EventReturnType<
       CoaServices["getCountryList"]
     > | null>(null),
@@ -53,7 +53,7 @@ export const coa = defineStore("coa", () => {
     personNames = shallowRef<EventReturnType<
       CoaServices["getAuthorList"]
     > | null>(null),
-    issueNumbers = ref<{ [publicationcode: string]: string[] }>({}),
+    shortIssuenumbers = ref<{ [publicationcode: string]: string[] }>({}),
     shortIssuecodes = ref<{ [publicationcode: string]: string[] }>({}),
     issuesWithTitles = ref<EventReturnType<CoaServices["getIssuesWithTitles"]>>(
       {},
@@ -81,13 +81,13 @@ export const coa = defineStore("coa", () => {
         personNames.value,
       );
     },
-    setCoverUrl = (issuenumber: string, url: string) => {
-      coverUrls.value[issuenumber] = url;
+    setCoverUrl = (shortIssuenumber: string, url: string) => {
+      coverUrls.value[shortIssuenumber] = url;
     },
-    addIssueNumbers = (newIssuenumbers: {
+    addShortIssuenumbers = (newShortIssuenumbers: {
       [publicationcode: string]: string[];
     }) => {
-      Object.assign(issueNumbers.value, newIssuenumbers);
+      Object.assign(shortIssuenumbers.value, newShortIssuenumbers);
     },
     addShortIssuecodes = (newIssuecodes: {
       [publicationcode: string]: string[];
@@ -174,7 +174,6 @@ export const coa = defineStore("coa", () => {
             !Object.keys(issuesWithTitles.value).includes(publicationcode),
         ),
       );
-      debugger;
       Object.assign(issuesWithTitles.value, results);
     },
     fetchIssueNumbers = async function (publicationCodes: string[]) {
@@ -182,7 +181,9 @@ export const coa = defineStore("coa", () => {
         ...new Set(
           publicationCodes.filter(
             (publicationcode) =>
-              !Object.keys(issueNumbers.value || {}).includes(publicationcode),
+              !Object.keys(shortIssuenumbers.value || {}).includes(
+                publicationcode,
+              ),
           ),
         ),
       ];
@@ -192,13 +193,13 @@ export const coa = defineStore("coa", () => {
         if (data.error) {
           console.error(data);
         } else {
-          addIssueNumbers(
-            data.issues.reduce<typeof issueNumbers.value>(
+          addShortIssuenumbers(
+            data.issues.reduce<typeof shortIssuenumbers.value>(
               (acc, issue) => ({
                 ...acc,
                 [issue.publicationcode]: [
                   ...(acc[issue.publicationcode] || []),
-                  issue.issuenumber,
+                  issue.shortIssuenumber,
                 ],
               }),
               {},
@@ -240,16 +241,16 @@ export const coa = defineStore("coa", () => {
       coaServices.getIssueCoverDetails(issuecodes),
     fetchIssueUrls = async ({
       publicationcode,
-      issuenumber,
+      shortIssuenumber,
     }: {
       publicationcode: string;
-      issuenumber: string;
+      shortIssuenumber: string;
     }) => {
-      const shortIssuecode = `${publicationcode} ${issuenumber}`;
+      const shortIssuecode = `${publicationcode} ${shortIssuenumber}`;
       if (!issueDetails.value[shortIssuecode]) {
         const newIssueDetails = await coaServices.getIssueDetails(
           publicationcode,
-          issuenumber,
+          shortIssuenumber,
         );
 
         Object.assign(issueDetails.value, {
@@ -259,7 +260,7 @@ export const coa = defineStore("coa", () => {
     };
   return {
     addIssueCodeDetails,
-    addIssueNumbers,
+    addShortIssuenumbers,
     addIssueQuotations,
     addPublicationNames,
     countryNames,
@@ -278,8 +279,8 @@ export const coa = defineStore("coa", () => {
     isLoadingCountryNames,
     issueCodeDetails,
     issueDetails,
-    issueNumbers,
-    issuecodes: shortIssuecodes,
+    shortIssuenumbers,
+    shortIssuecodes,
     issueQuotations,
     issuesWithTitles,
     personNames,

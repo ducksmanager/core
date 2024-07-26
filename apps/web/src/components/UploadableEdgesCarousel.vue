@@ -13,7 +13,7 @@
             :publicationname="
               publicationNames[popularIssueWithoutEdge.publicationcode]
             "
-            :issuenumber="popularIssueWithoutEdge.issuenumber"
+            :short-issuenumber="popularIssueWithoutEdge.shortIssuenumber"
             hide-condition
           />
           <MedalProgress

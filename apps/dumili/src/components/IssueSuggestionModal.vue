@@ -24,7 +24,7 @@
       "
       ><Issue
         :publicationcode="getPublicationcodeFromIssuecode(issuecode)"
-        :issuenumber="getIssuenumberFromIssuecode(issuecode)"
+        :shortIssuenumber="getShortIssuenumberFromIssuecode(issuecode)"
     /></Gallery>
   </b-modal>
 </template>
@@ -79,8 +79,8 @@ watch(
 );
 
 const images = computed(() =>
-  issueSuggestions.value.map(({ url, issuecode }) => ({
-    text: issuecode || $t("Titre inconnu"),
+  issueSuggestions.value.map(({ url, shortIssuecode }) => ({
+    text: shortIssuecode || $t("Titre inconnu"),
     url,
   })),
 );
@@ -92,7 +92,7 @@ const coverUrlToIssuecode = (url: string): string =>
 
 const getPublicationcodeFromIssuecode = (issuecode: string) =>
   issuecode.split(" ")[0];
-const getIssuenumberFromIssuecode = (issuecode: string) =>
+const getShortIssuenumberFromIssuecode = (issuecode: string) =>
   issuecode.split(" ")[1];
 
 const acceptIssueSuggestion = async (issuecode: string) => {

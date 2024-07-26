@@ -19,10 +19,10 @@
           :publicationcode="publicationcode"
           :title="publicationNames?.[publicationcode] || publicationcode"
         />
-        <template v-if="partIdx === 4 && issuenumber !== undefined"
+        <template v-if="partIdx === 4 && shortIssuenumber !== undefined"
           ><div style="display: flex; align-items: center">
-            <Issue :issuenumber="issuenumber" /><template v-if="extraIssuenumbers.length"
-              ><ion-chip :outline="true">+&nbsp;{{ extraIssuenumbers.length }}</ion-chip></template
+            <Issue :shortIssuenumber="shortIssuenumber" /><template v-if="extraShortIssuenumbers.length"
+              ><ion-chip :outline="true">+&nbsp;{{ extraShortIssuenumbers.length }}</ion-chip></template
             >
           </div></template
         >
@@ -41,7 +41,8 @@ import Publication from './Publication.vue';
 
 import { app } from '~/stores/app';
 
-const { currentNavigationItem, countrycode, publicationcode, issuenumber, extraIssuenumbers } = storeToRefs(app());
+const { currentNavigationItem, countrycode, publicationcode, shortIssuenumber, extraShortIssuenumbers } =
+  storeToRefs(app());
 const { countryNames, publicationNames } = storeToRefs(stores.coa());
 
 const maxParts = 4;
@@ -55,7 +56,7 @@ const shownParts = computed(() => {
   if (publicationcode.value) {
     parts.push(publicationcode.value);
   }
-  if (issuenumber.value !== undefined) {
+  if (shortIssuenumber.value !== undefined) {
     parts.push(currentNavigationItem.value!);
   }
   return parts;

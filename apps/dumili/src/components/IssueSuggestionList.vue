@@ -38,21 +38,21 @@ const issue = computed(() => suggestionsStore.acceptedIssue);
 const acceptIssueSuggestion = async (
   {
     publicationcode,
-    issuenumber,
+    shortIssuenumber,
   }: {
     publicationcode: string | null;
-    issuenumber: string | null;
+    shortIssuenumber: string | null;
   },
   source: issueSuggestion["source"],
 ) => {
-  if (publicationcode && issuenumber) {
+  if (publicationcode && shortIssuenumber) {
     await getIndexationSocket(
       indexation.value!.id,
     ).services.acceptIssueSuggestion({
       source,
       indexationId: indexation.value!.id,
       publicationcode,
-      issuenumber,
+      shortIssuenumber,
     });
   }
   showIssueSelect.value = false;

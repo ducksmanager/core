@@ -7,7 +7,8 @@ export interface BookcaseEdgeSprite {
 export interface BookcaseEdge {
   id: number;
   publicationcode: string;
-  issuenumber: string;
+  shortIssuenumber: string;
+  shortIssuecode: string;
   issuenumberReference: string;
   edgeId: number;
   creationDate: Date;

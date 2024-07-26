@@ -5,11 +5,11 @@
     @open:popper="loadIssueUrls"
   >
     <i-bi-eye-fill
-      :id="`issue-details-${issuenumber}`"
+      :id="`issue-details-${shortIssuenumber}`"
       class="mx-2"
       :class="{
         [`can-show-book-${
-          !coverUrls[issuenumber] ? coverUrls[issuenumber] : true
+          !coverUrls[shortIssuenumber] ? coverUrls[shortIssuenumber] : true
         }`]: true,
       }"
       :alt="$t('Voir')"
@@ -18,7 +18,7 @@
     <template #header>
       <Issue
         :publicationcode="publicationcode"
-        :issuenumber="issuenumber"
+        :short-issuenumber="shortIssuenumber"
         :publicationname="publicationNames[publicationcode]!"
         hide-condition
         :flex="false"
@@ -31,7 +31,7 @@
       </div>
       <template v-else-if="fullUrl">
         <img
-          :alt="issuenumber"
+          :alt="shortIssuenumber"
           :src="fullUrl"
           class="cover"
           @error="fullUrl = null"
@@ -49,9 +49,9 @@
 </template>
 
 <script setup lang="ts">
-const { issuenumber, publicationcode } = defineProps<{
+const { shortIssuenumber, publicationcode } = defineProps<{
   publicationcode: string;
-  issuenumber: string;
+  shortIssuenumber: string;
 }>();
 defineEmits<{ (e: "click"): void }>();
 
@@ -63,13 +63,13 @@ const { publicationNames, issueDetails, coverUrls } = storeToRefs(coa());
 
 const cloudinaryBaseUrl =
   "https://res.cloudinary.com/dl7hskxab/image/upload/inducks-covers/";
-const issueCode = $computed(() => `${publicationcode} ${issuenumber}`);
+const issueCode = $computed(() => `${publicationcode} ${shortIssuenumber}`);
 
 const loadIssueUrls = async () => {
   isCoverLoading = true;
   await fetchIssueUrls({
     publicationcode,
-    issuenumber,
+    shortIssuenumber,
   });
   isCoverLoading = false;
 
@@ -81,7 +81,7 @@ const loadIssueUrls = async () => {
 
 watch($$(fullUrl), (value) => {
   if (value) {
-    setCoverUrl(issuenumber, value);
+    setCoverUrl(shortIssuenumber, value);
   }
 });
 </script>

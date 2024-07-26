@@ -6,7 +6,7 @@ meta:
 
 <template>
   <print-header />
-  <div v-if="ownedIssueNumbers" class="list">
+  <div v-if="ownedShortIssuenumbers" class="list">
     <div v-for="country in countryCodesSortedByName" :key="country">
       <div class="country">
         {{ countryNames![country] }}
@@ -16,7 +16,7 @@ meta:
         :key="publicationcode"
       >
         <u>{{ publicationNames[publicationcode] || publicationcode }}</u>
-        {{ ownedIssueNumbers[publicationcode] }}
+        {{ ownedShortIssuenumbers[publicationcode] }}
         <br />
       </div>
     </div>
@@ -24,12 +24,13 @@ meta:
 </template>
 
 <script setup lang="ts">
-let ownedIssueNumbers = $ref(
+let ownedShortIssuenumbers = $ref(
   null as { [publicationcode: string]: string } | null,
 );
 
 const { fetchCountryNames, fetchPublicationNames, fetchIssueNumbers } = coa();
-const { countryNames, publicationNames, issueNumbers } = storeToRefs(coa());
+const { countryNames, publicationNames, shortIssuenumbers } =
+  storeToRefs(coa());
 
 const { loadCollection } = collection();
 const { issues } = storeToRefs(collection());
@@ -74,28 +75,31 @@ watch(
 );
 
 watch(
-  () => Object.keys(issueNumbers.value).length && issues.value,
+  () => Object.keys(shortIssuenumbers.value).length && issues.value,
   (newValue) => {
     if (newValue) {
       const collectionWithPublicationcodes = issues
-        .value!.map(({ country, magazine, issuenumber }) => ({
+        .value!.map(({ country, magazine, shortIssuenumber }) => ({
           publicationcode: `${country}/${magazine}`,
-          issuenumber: issuenumber,
+          shortIssuenumber,
         }))
         .reduce(
-          (acc, { publicationcode, issuenumber }) => ({
+          (acc, { publicationcode, shortIssuenumber }) => ({
             ...acc,
-            [publicationcode]: [...(acc[publicationcode] || []), issuenumber],
+            [publicationcode]: [
+              ...(acc[publicationcode] || []),
+              shortIssuenumber!,
+            ],
           }),
           {} as { [publicationcode: string]: string[] },
         );
-      ownedIssueNumbers = Object.entries(issueNumbers.value).reduce(
-        (acc, [publicationcode, indexedIssueNumbers]) => ({
+      ownedShortIssuenumbers = Object.entries(shortIssuenumbers.value).reduce(
+        (acc, [publicationcode, indexedShortIssuenumbers]) => ({
           ...acc,
-          [publicationcode]: indexedIssueNumbers
-            .filter((indexedIssueNumber) =>
+          [publicationcode]: indexedShortIssuenumbers
+            .filter((indexedShortIssuenumber) =>
               collectionWithPublicationcodes[publicationcode].includes(
-                indexedIssueNumber,
+                indexedShortIssuenumber,
               ),
             )
             .join(", "),

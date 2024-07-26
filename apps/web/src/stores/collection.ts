@@ -103,14 +103,14 @@ export const collection = defineStore("collection", () => {
     hasSuggestions = computed(
       () => Object.keys(suggestions.value?.oldestdate.issues || {}).length,
     ),
-    issueNumbersPerPublication = computed(
+    shortIssueNumbersPerPublication = computed(
       () =>
         issues.value?.reduce<{ [publicationcode: string]: string[] }>(
-          (acc, { country, issuenumber, magazine }) => ({
+          (acc, { country, publicationcode, shortIssuenumber, magazine }) => ({
             ...acc,
             [`${country}/${magazine}`]: [
-              ...(acc[`${country}/${magazine}`] || []),
-              issuenumber,
+              ...(acc[publicationcode] || []),
+              shortIssuenumber!,
             ],
           }),
           {},
@@ -120,12 +120,14 @@ export const collection = defineStore("collection", () => {
       (): {
         [publicationcode: string]: number;
       } =>
-        issueNumbersPerPublication.value &&
-        Object.keys(issueNumbersPerPublication.value).reduce(
+        shortIssueNumbersPerPublication.value &&
+        Object.keys(shortIssueNumbersPerPublication.value).reduce(
           (acc, publicationcode) => ({
             ...acc,
             [publicationcode]: [
-              ...new Set(issueNumbersPerPublication.value[publicationcode]),
+              ...new Set(
+                shortIssueNumbersPerPublication.value[publicationcode],
+              ),
             ].length,
           }),
           {},
@@ -294,8 +296,7 @@ export const collection = defineStore("collection", () => {
         ).reduce(
           (acc, issue) => ({
             ...acc,
-            [`${issue.country}/${issue.magazine} ${issue.issuenumber}`]:
-              issue.popularity,
+            [issue.shortIssuecode!]: issue.popularity,
           }),
           {},
         );
@@ -393,7 +394,7 @@ export const collection = defineStore("collection", () => {
     coaIssueCountsByPublicationcode,
     copiesPerIssuecode,
     coaIssueCountsPerCountrycode,
-    issueNumbersPerPublication,
+    shortIssueNumbersPerPublication,
     lastPublishedEdgesForCurrentUser,
     loadCollection,
     loadUserIssueQuotations,

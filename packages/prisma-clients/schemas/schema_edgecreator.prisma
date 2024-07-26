@@ -64,20 +64,22 @@ model elementImage {
 }
 
 model edgeModel {
-  id            Int               @id @default(autoincrement()) @map("ID")
-  country       String            @map("Pays") @db.VarChar(3)
-  magazine      String            @map("Magazine") @db.VarChar(6)
-  issuenumber   String            @map("Numero") @db.VarChar(10)
-  username      String?           @db.VarChar(25)
-  mainPhotoName String?           @map("NomPhotoPrincipale") @db.VarChar(60)
-  photographs   String?           @map("photographes") @db.Text
-  creators      String?           @map("createurs") @db.Text
-  isActive      Boolean           @map("Active")
-  contributors  edgeContributor[]
-  photos        edgePhoto[]
-  values        edgeValue[]
+  id               Int               @id @default(autoincrement()) @map("ID")
+  country          String            @map("Pays") @db.VarChar(3)
+  magazine         String            @map("Magazine") @db.VarChar(6)
+  issuenumber      String            @map("Numero") @db.VarChar(10)
+  shortIssuenumber String            @map("short_issuenumber") @db.VarChar(20)
+  username         String?           @db.VarChar(25)
+  mainPhotoName    String?           @map("NomPhotoPrincipale") @db.VarChar(60)
+  photographs      String?           @map("photographes") @db.Text
+  creators         String?           @map("createurs") @db.Text
+  isActive         Boolean           @map("Active")
+  contributors     edgeContributor[]
+  photos           edgePhoto[]
+  values           edgeValue[]
 
   @@unique([country, magazine, issuenumber, username], map: "tranches_en_cours_modeles__numero")
+  @@unique([country, magazine, shortIssuenumber, username], map: "tranches_en_cours_modeles__short_issuenumber")
   @@map("tranches_en_cours_modeles")
 }
 

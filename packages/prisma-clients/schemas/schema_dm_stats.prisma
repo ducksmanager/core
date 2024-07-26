@@ -55,30 +55,36 @@ model missingStoryForUser {
 }
 
 model utilisateurs_publications_manquantes {
-  ID              Int       @id @default(autoincrement())
-  ID_User         Int
-  personcode      String    @db.VarChar(79)
-  storycode       String    @db.VarChar(19)
-  publicationcode String    @db.VarChar(12)
-  issuenumber     String    @db.VarChar(12)
-  oldestdate      DateTime? @db.Date
-  Notation        Int       @db.UnsignedTinyInt
+  ID               Int       @id @default(autoincrement())
+  ID_User          Int
+  personcode       String    @db.VarChar(79)
+  storycode        String    @db.VarChar(19)
+  publicationcode  String    @db.VarChar(12)
+  issuenumber      String    @db.VarChar(12)
+  shortIssuenumber String    @map("short_issuenumber") @db.VarChar(12)
+  oldestdate       DateTime? @db.Date
+  Notation         Int       @db.UnsignedTinyInt
 
   @@unique([ID_User, personcode, storycode, publicationcode, issuenumber], map: "unique_index")
+  @@unique([ID_User, personcode, storycode, publicationcode, shortIssuenumber], map: "unique_index2")
+  @@index([ID_User, personcode, storycode], map: "user_stories")
   @@index([ID_User, publicationcode, issuenumber], map: "missing_user_issue")
   @@index([ID_User, publicationcode, issuenumber, oldestdate], map: "suggested")
-  @@index([ID_User, personcode, storycode], map: "user_stories")
+  @@index([ID_User, publicationcode, shortIssuenumber], map: "missing_user_issue2")
+  @@index([ID_User, publicationcode, shortIssuenumber, oldestdate], map: "suggested2")
 }
 
 model suggestedIssueForUser {
-  ID              Int       @id @default(autoincrement())
-  userId          Int       @map("ID_User")
-  publicationcode String    @db.VarChar(12)
-  issuenumber     String    @db.VarChar(12)
-  oldestdate      DateTime? @db.Date
-  score           Int       @map("Score")
+  ID               Int       @id @default(autoincrement())
+  userId           Int       @map("ID_User")
+  publicationcode  String    @db.VarChar(12)
+  issuenumber      String    @db.VarChar(12)
+  shortIssuenumber String    @map("short_issuenumber") @db.VarChar(12)
+  oldestdate       DateTime? @db.Date
+  score            Int       @map("Score")
 
   @@unique([userId, publicationcode, issuenumber], map: "suggested_issue_for_user")
+  @@unique([userId, publicationcode, shortIssuenumber], map: "suggested_issue_for_user2")
   @@index([userId], map: "suggested_issue_user")
   @@map("utilisateurs_publications_suggerees")
 }

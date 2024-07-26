@@ -59,9 +59,9 @@
               <ul>
                 <li
                   v-for="issueNotFound in userIssuesNotFoundForPublication"
-                  :key="`notfound-${issueNotFound.issuenumber}`"
+                  :key="`notfound-${issueNotFound.shortIssuenumber}`"
                 >
-                  {{ $t("n°") }}{{ issueNotFound.issuenumber }}
+                  {{ $t("n°") }}{{ issueNotFound.shortIssuenumber }}
                   <b-button
                     size="sm"
                     @click="deletePublicationIssues([issueNotFound])"
@@ -98,13 +98,13 @@
           <Book
             v-if="currentIssueOpened"
             :publicationcode="currentIssueOpened.publicationcode"
-            :issuenumber="currentIssueOpened.issuenumber"
+            :short-issuenumber="currentIssueOpened.shortIssuenumber"
             @close-book="currentIssueOpened = null"
           />
           <div v-if="readonly">
             <div
               v-for="{
-                issuenumber,
+                shortIssuenumber,
                 title,
                 userCopies,
                 key,
@@ -121,12 +121,12 @@
                 <IssueDetailsPopover
                   v-if="hoveredIndex === idx"
                   :publicationcode="publicationcode"
-                  :issuenumber="issuenumber"
-                  @click="openBook(issuenumber)"
+                  :short-issuenumber="shortIssuenumber"
+                  @click="openBook(shortIssuenumber)"
                 />
 
                 <span class="issue-text">
-                  {{ issueNumberTextPrefix }}{{ issuenumber }}
+                  {{ issueNumberTextPrefix }}{{ shortIssuenumber }}
                   <span class="issue-title">{{ title }}</span>
                 </span>
               </span>
@@ -137,13 +137,13 @@
                       condition: copyCondition,
                       copyIndex,
                     } in userCopies"
-                    :key="`${issuenumber}-copy-${copyIndex}`"
+                    :key="`${shortIssuenumber}-copy-${copyIndex}`"
                     class="issue-copy"
                   >
                     <!-- <MarketplaceSellerInfo
                       v-if="onSaleByOthers"
                       :publicationcode="publicationcode"
-                      :issuenumber="issuenumber"
+                      :shortIssuenumber="shortIssuenumber"
                       :copy-index="filteredIssuesCopyIndexes[idx]"
                     />
                     <MarketplaceBuyerInfo :issue-id="id" /> -->
@@ -151,7 +151,7 @@
                     <Condition
                       v-if="copyCondition"
                       :publicationcode="publicationcode"
-                      :issuenumber="issuenumber"
+                      :short-issuenumber="shortIssuenumber"
                       :value="copyCondition"
                     />
                   </div>
@@ -162,7 +162,7 @@
           <div v-else v-contextmenu:contextmenuInstance>
             <div
               v-for="{
-                issuenumber,
+                shortIssuenumber,
                 title,
                 userCopies,
                 key,
@@ -192,12 +192,12 @@
                 <IssueDetailsPopover
                   v-if="hoveredIndex === idx"
                   :publicationcode="publicationcode"
-                  :issuenumber="issuenumber"
-                  @click="openBook(issuenumber)"
+                  :short-issuenumber="shortIssuenumber"
+                  @click="openBook(shortIssuenumber)"
                 />
 
                 <span class="issue-text">
-                  {{ issueNumberTextPrefix }}{{ issuenumber }}
+                  {{ issueNumberTextPrefix }}{{ shortIssuenumber }}
                   <span class="issue-title">{{ title }}</span>
                 </span>
               </span>
@@ -211,13 +211,13 @@
                       id,
                       copyIndex,
                     } in userCopies"
-                    :key="`${issuenumber}-copy-${copyIndex}`"
+                    :key="`${shortIssuenumber}-copy-${copyIndex}`"
                     class="issue-copy"
                   >
                     <MarketplaceSellerInfo
                       v-if="onSaleByOthers"
                       :publicationcode="publicationcode"
-                      :issuenumber="issuenumber"
+                      :short-issuenumber="shortIssuenumber"
                       :copy-index="filteredIssuesCopyIndexes[idx]"
                     />
                     <MarketplaceBuyerInfo :issue-id="id" />
@@ -252,7 +252,7 @@
                     <Condition
                       v-if="copyCondition"
                       :publicationcode="publicationcode"
-                      :issuenumber="issuenumber"
+                      :short-issuenumber="shortIssuenumber"
                       :value="copyCondition"
                     />
                   </div>
@@ -260,7 +260,7 @@
                 <Watch
                   v-if="!readonly && (!userCopies.length || onSaleByOthers)"
                   :publicationcode="publicationcode"
-                  :issuenumber="issuenumber"
+                  :short-issuenumber="shortIssuenumber"
                   :constant-width="onSaleByOthers"
                 />
                 <div v-if="!readonly" class="issue-check">
@@ -296,9 +296,9 @@
           <ul>
             <li
               v-for="issueToDelete in userIssuesForPublication"
-              :key="issueToDelete.issuenumber"
+              :key="issueToDelete.shortIssuenumber!"
             >
-              {{ issueToDelete.issuenumber }}
+              {{ issueToDelete.shortIssuenumber }}
             </li>
           </ul>
           <b-button
@@ -317,7 +317,7 @@
         ref="contextMenu"
         :key="contextMenuKey"
         :publicationcode="publicationcode"
-        :selected-issue-ids-by-issuenumber="copiesBySelectedIssuenumber"
+        :selected-issue-ids-by-issuenumber="copiesBySelectedShortIssuenumber"
         @clear-selection="
           contextmenuInstance!.hide();
           selected = [];
@@ -345,7 +345,7 @@ import ContextMenuOnSaleByOthers from "./ContextMenuOnSaleByOthers.vue";
 import ContextMenuOwnCollection from "./ContextMenuOwnCollection.vue";
 
 type simpleIssue = {
-  issuenumber: string;
+  shortIssuenumber: string;
   title?: string | null;
   key: string;
 };
@@ -435,32 +435,32 @@ const filteredUserCopies = $computed(() =>
     [] as issue[],
   ),
 );
-const copiesBySelectedIssuenumber = $computed(() =>
+const copiesBySelectedShortIssuenumber = $computed(() =>
   selected.reduce(
     (acc, issueKey) => {
-      const [issuenumber, maybeIssueId] = issueKey.split("-id-");
+      const [shortIssuenumber, maybeIssueId] = issueKey.split("-id-");
       const issueId = (maybeIssueId && parseInt(maybeIssueId)) || null;
       return {
         ...acc,
-        [issuenumber]: [
-          ...(acc[issuenumber] || []),
+        [shortIssuenumber]: [
+          ...(acc[shortIssuenumber] || []),
           ...filteredUserCopies.filter(
-            ({ id: copyId, issuenumber: copyIssueNumber }) =>
+            ({ id: copyId, shortIssuenumber: copyShortIssuenumber }) =>
               issueId !== null
                 ? issueId === copyId
-                : issuenumber === copyIssueNumber,
+                : shortIssuenumber === copyShortIssuenumber,
           ),
         ],
       };
     },
-    {} as { [issuenumber: string]: issue[] },
+    {} as { [shortIssuenumber: string]: issue[] },
   ),
 );
 let preselected = $shallowRef([] as string[]);
 let preselectedIndexStart = $ref<number | null>(null);
 let preselectedIndexEnd = $ref<number | null>(null);
 let currentIssueOpened = $shallowRef(
-  null as { publicationcode: string; issuenumber: string } | null,
+  null as { publicationcode: string; shortIssuenumber: string } | null,
 );
 const issueNumberTextPrefix = $computed(() => $t("n°"));
 const boughtOnTextPrefix = $computed(() => $t("Acheté le"));
@@ -470,7 +470,9 @@ const showFilter = $computed(
 
 const issueIds = $computed(() =>
   Object.values(
-    copiesBySelectedIssuenumber as { [issuenumber: string]: { id: number }[] },
+    copiesBySelectedShortIssuenumber as {
+      [shortIssuenumber: string]: { id: number }[];
+    },
   ).reduce(
     (acc, issues) => [...acc, ...issues.map(({ id }) => id)],
     [] as number[],
@@ -498,11 +500,11 @@ const filteredIssues = $computed(
 
 const filteredIssuesCopyIndexes = $computed(() =>
   filteredIssues?.reduce(
-    (acc, { issuenumber }, idx) => [
+    (acc, { shortIssuenumber }, idx) => [
       ...acc,
       idx === 0
         ? 0
-        : filteredIssues[idx - 1].issuenumber === issuenumber
+        : filteredIssues[idx - 1].shortIssuenumber === shortIssuenumber
           ? acc[idx - 1] + 1
           : 0,
     ],
@@ -563,7 +565,9 @@ const deletePublicationIssues = async (issuesToDelete: issue[]) => {
   if (!readonly) {
     await updateCollectionMultipleIssues({
       publicationcode,
-      issuenumbers: issuesToDelete.map(({ issuenumber }) => issuenumber),
+      shortIssuenumbers: issuesToDelete.map(
+        ({ shortIssuenumber }) => shortIssuenumber!,
+      ),
       condition:
         conditions.find(({ dbValue }) => dbValue === null)?.dbValue ||
         "indefini",
@@ -575,9 +579,9 @@ const deletePublicationIssues = async (issuesToDelete: issue[]) => {
   }
 };
 
-const openBook = (issuenumber: string) => {
-  currentIssueOpened = coverUrls.value?.[issuenumber]
-    ? { publicationcode: publicationcode, issuenumber }
+const openBook = (shortIssuenumber: string) => {
+  currentIssueOpened = coverUrls.value?.[shortIssuenumber]
+    ? { publicationcode: publicationcode, shortIssuenumber }
     : null;
 };
 
@@ -604,37 +608,40 @@ const loadIssues = async () => {
         ...issue,
         userCopies: userIssuesForPublication!
           .filter(
-            ({ issuenumber: userIssueNumber }) =>
-              userIssueNumber === issue.issuenumber,
+            ({ shortIssuenumber: userShortIssueNumber }) =>
+              userShortIssueNumber === issue.shortIssuenumber,
           )
           .map((issue, copyIndex) => ({
             ...issue,
-            publicationcode: `${issue.country}/${issue.magazine}`,
             copyIndex,
           })),
-        key: issue.issuenumber,
+        key: issue.shortIssuenumber,
       }));
     } else {
       const userIssueNumbers = [
         ...new Set(
-          userIssuesForPublication!.map(({ issuenumber }) => issuenumber),
+          userIssuesForPublication!.map(
+            ({ shortIssuenumber }) => shortIssuenumber,
+          ),
         ),
       ];
       issues = coaIssues
-        .filter(({ issuenumber }) => userIssueNumbers.includes(issuenumber))
-        .map(({ issuenumber }) => issuenumber)
+        .filter(({ shortIssuenumber }) =>
+          userIssueNumbers.includes(shortIssuenumber),
+        )
+        .map(({ shortIssuenumber }) => shortIssuenumber)
         .reduce(
-          (acc, issuenumber) => [
+          (acc, shortIssuenumber) => [
             ...acc,
             ...userIssuesForPublication!
               .filter(
-                ({ issuenumber: userIssueNumber }) =>
-                  userIssueNumber === issuenumber,
+                ({ shortIssuenumber: userShortIssuenumber }) =>
+                  userShortIssuenumber === shortIssuenumber!,
               )
               .map((issue) => ({
                 ...issue,
-                publicationcode: `${issue.country}/${issue.magazine}`,
-                key: `${issue.issuenumber}-id-${issue.id}`,
+                key: `${issue.shortIssuenumber}-id-${issue.id}`,
+                shortIssuenumber: issue.shortIssuenumber!,
                 userCopies: [{ ...issue, copyIndex: 0 }],
               })),
           ],
@@ -646,13 +653,13 @@ const loadIssues = async () => {
       const countPerIssueNumber = issues!.reduce(
         (acc, { userCopies }) => ({
           ...acc,
-          [userCopies[0].issuenumber]:
-            (acc[userCopies[0].issuenumber] || 0) + 1,
+          [userCopies[0].shortIssuenumber!]:
+            (acc[userCopies[0].shortIssuenumber!] || 0) + 1,
         }),
-        {} as { [issuenumber: string]: number },
+        {} as { [shortIssuenumber: string]: number },
       );
       issues = issues!.filter(
-        ({ issuenumber }) => countPerIssueNumber[issuenumber] > 1,
+        ({ shortIssuenumber }) => countPerIssueNumber[shortIssuenumber] > 1,
       );
     }
 
@@ -670,10 +677,10 @@ const loadIssues = async () => {
     }
 
     const coaIssueNumbers = issuesWithTitles.value[publicationcode].map(
-      ({ issuenumber }) => issuenumber,
+      ({ shortIssuenumber }) => shortIssuenumber,
     );
     userIssuesNotFoundForPublication = userIssuesForPublication!.filter(
-      ({ issuenumber }) => !coaIssueNumbers.includes(issuenumber),
+      ({ shortIssuenumber }) => !coaIssueNumbers.includes(shortIssuenumber!),
     );
     loading = false;
   }

@@ -72,7 +72,7 @@ export default (socket: Socket<Events>) => {
     async (
       {
         publicationcode,
-        issuenumbers,
+        shortIssuenumbers,
         purchaseId,
         isOnSale,
         condition,
@@ -99,8 +99,8 @@ export default (socket: Socket<Events>) => {
               userId: user.id,
               country: publicationcode.split("/")[0],
               magazine: publicationcode.split("/")[1],
-              issuenumber: {
-                in: issuenumbers,
+              shortIssuenumber: {
+                in: shortIssuenumbers,
               },
             },
           })
@@ -111,14 +111,14 @@ export default (socket: Socket<Events>) => {
       }
 
       if (condition === null) {
-        await deleteIssues(user.id, publicationcode, issuenumbers);
+        await deleteIssues(user.id, publicationcode, shortIssuenumbers);
         return callback({});
       }
       callback(
         await addOrChangeIssues(
           user.id,
           publicationcode,
-          issuenumbers,
+          shortIssuenumbers,
           condition,
           isOnSale === undefined ? undefined : isOnSale !== false,
           isToRead,
@@ -129,7 +129,7 @@ export default (socket: Socket<Events>) => {
   );
   socket.on(
     "addOrChangeCopies",
-    async ({ publicationcode, issuenumber, copies }, callback) => {
+    async ({ publicationcode, shortIssuenumber, copies }, callback) => {
       const [country, magazine] = publicationcode.split("/");
 
       const userId = socket.data.user!.id;
@@ -144,7 +144,7 @@ export default (socket: Socket<Events>) => {
       const output = await addOrChangeCopies(
         userId,
         publicationcode,
-        issuenumber,
+        shortIssuenumber,
         copies.map(({ id }) => id),
         copies.map(({ condition }) => condition),
         copies.map(({ isOnSale }) =>
@@ -162,7 +162,7 @@ export default (socket: Socket<Events>) => {
           where: {
             country,
             magazine,
-            issuenumber,
+            shortIssuenumber,
             userId: userId,
           },
         })
@@ -182,7 +182,7 @@ export default (socket: Socket<Events>) => {
     prismaCoa.inducks_issue
       .groupBy({
         _count: {
-          issuenumber: true,
+          shortIssuenumber: true,
         },
         where: {
           OR: (await getCollectionCountrycodes(socket.data.user!.id)).map(
@@ -202,7 +202,7 @@ export default (socket: Socket<Events>) => {
               const countrycode = publicationcode!.split("/")[0];
               return {
                 ...acc,
-                [countrycode!]: (acc[countrycode] || 0) + _count.issuenumber,
+                [countrycode!]: (acc[countrycode] || 0) + _count.shortIssuenumber,
               };
             },
             {},
@@ -215,7 +215,7 @@ export default (socket: Socket<Events>) => {
     prismaCoa.inducks_issue
       .groupBy({
         _count: {
-          issuenumber: true,
+          shortIssuenumber: true,
         },
         where: {
           publicationcode: {
@@ -229,7 +229,7 @@ export default (socket: Socket<Events>) => {
           data.reduce<{ [publicationcode: string]: number }>(
             (acc, { publicationcode, _count }) => ({
               ...acc,
-              [publicationcode!]: _count.issuenumber,
+              [publicationcode!]: _count.shortIssuenumber,
             }),
             {},
           ),
@@ -245,7 +245,7 @@ export default (socket: Socket<Events>) => {
         quotations: (await prismaDm.$queryRaw<inducks_issuequotation[]>`
           select
             publicationcode,
-            issuenumber,
+            short_issuenumber AS shortIssuenumber,
             short_issuecode AS shortIssuecode,
             round(min(estimationmin))                         AS estimationMin,
             case max(ifnull(estimationmax, 0))
@@ -265,7 +265,7 @@ export default (socket: Socket<Events>) => {
 const addOrChangeIssues = async (
   userId: number,
   publicationcode: string,
-  issueNumbers: string[],
+  shortIssuenumbers: string[],
   condition: issue_condition | undefined,
   isOnSale: boolean | undefined,
   isToRead: boolean | undefined,
@@ -277,8 +277,8 @@ const addOrChangeIssues = async (
     where: {
       country,
       magazine,
-      issuenumber: {
-        in: issueNumbers,
+      shortIssuenumber: {
+        in: shortIssuenumbers,
       },
       userId,
     },
@@ -301,19 +301,19 @@ const addOrChangeIssues = async (
   });
   await prismaDm.$transaction(updateOperations);
 
-  const insertOperations = issueNumbers
+  const insertOperations = shortIssuenumbers
     .filter(
-      (issuenumber) =>
+      (shortIssuenumber) =>
         !existingIssues
-          .map(({ issuenumber: existingIssueNumber }) => existingIssueNumber)
-          .includes(issuenumber),
+          .map(({ shortIssuenumber: existingShortIssueNumber }) => existingShortIssueNumber)
+          .includes(shortIssuenumber),
     )
-    .map((issuenumber) =>
+    .map((shortIssuenumber) =>
       prismaDm.issue.create({
         data: {
           country,
           magazine,
-          issuenumber,
+          issuenumber: shortIssuenumber,
           condition: condition || issue_condition.indefini,
           isOnSale: isOnSale || false,
           isToRead: isToRead || false,
@@ -334,7 +334,7 @@ const addOrChangeIssues = async (
 const addOrChangeCopies = async (
   userId: number,
   publicationcode: string,
-  issuenumber: string,
+  shortIssuenumber: string,
   issueIds: (number | null)[],
   conditions: (issue_condition | null)[],
   areOnSale: (boolean | undefined)[],
@@ -364,7 +364,7 @@ const addOrChangeCopies = async (
         ...common,
         country,
         magazine,
-        issuenumber,
+        issuenumber: shortIssuenumber,
         userId,
         creationDate: new Date(),
       },
@@ -414,7 +414,7 @@ export const resetDemo = async () => {
     publicationcode: string;
     condition: issue_condition;
     purchaseId: string;
-    issuenumber: string;
+    shortIssuenumber: string;
   }
 
   const currentDir = process.cwd();
@@ -425,14 +425,14 @@ export const resetDemo = async () => {
     { columns: true },
   );
   await prismaDm.$transaction(
-    csvIssues.map(({ publicationcode, condition, purchaseId, issuenumber }) => {
+    csvIssues.map(({ publicationcode, condition, purchaseId, shortIssuenumber }) => {
       const [country, magazine] = publicationcode.split("/");
       return prismaDm.issue.create({
         data: {
           userId: demoUser.id,
           country,
           magazine,
-          issuenumber,
+          issuenumber: shortIssuenumber,
           condition,
           purchaseId: parseInt(purchaseId),
           isOnSale: false,

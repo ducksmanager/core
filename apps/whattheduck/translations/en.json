@@ -114,7 +114,7 @@
   "Nouveautés de WhatTheDuck": "New features in the WhatTheDuck app",
   "Numéro %1s (pas de couverture)": "Issue %1s (no cover)",
   "Numéro manquant": "Missing issue",
-  "Numéro {issuenumber}": "Issue {issuenumber}",
+  "Numéro {shortIssuenumber}": "Issue {shortIssuenumber}",
   "Numéro": "Item",
   "Numéros manquants de ": "Missing issues for ",
   "Numéros possédés de ": "Possessed issues for ",

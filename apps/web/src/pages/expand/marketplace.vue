@@ -44,7 +44,7 @@ alias: [/agrandir/marketplace]
             <Issue
               hide-condition
               :publicationcode="issuesOnSaleById[issueId].publicationcode"
-              :issuenumber="issuesOnSaleById[issueId].issuenumber"
+              :short-issuenumber="issuesOnSaleById[issueId].shortIssuenumber!"
               :publicationname="
                 publicationNames[issuesOnSaleById[issueId].publicationcode]!
               "
@@ -188,7 +188,7 @@ alias: [/agrandir/marketplace]
             :publicationname="
               publicationNames[issuesOnSaleById[issueId].publicationcode]!
             "
-            :issuenumber="issuesOnSaleById[issueId].issuenumber"
+            :short-issuenumber="issuesOnSaleById[issueId].shortIssuenumber!"
           />
         </div>
         <p class="mt-4">

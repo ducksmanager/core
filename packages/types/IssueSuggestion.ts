@@ -3,6 +3,6 @@ export interface IssueSuggestion {
   score: number;
   stories: { [storycode: string]: string[] };
   publicationcode: string;
-  issuenumber: string;
+  shortIssuenumber: string;
   oldestdate: string;
 }

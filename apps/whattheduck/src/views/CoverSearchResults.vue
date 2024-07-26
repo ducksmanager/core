@@ -109,7 +109,7 @@ const covers = computed(() =>
         ...cover,
         countrycode: cover.publicationcode.split('/')[0],
         publicationName: publicationNames.value[cover.publicationcode],
-        collectionIssues: getCollectionIssues(cover.publicationcode, cover.issuenumber),
+        collectionIssues: getCollectionIssues(cover.publicationcode, cover.shortIssuenumber),
       }))
     : [],
 );

@@ -1,9 +1,7 @@
 <template>
   <ion-fab ref="fab" vertical="top" horizontal="end" id="view-modes" slot="fixed">
-    <ion-fab-button :disabled="disabled"
-      ><ion-icon :ios="icon.ios" :md="icon.md" />
-      <hr v-if="icon.negate" class="negate" /></ion-fab-button
-    ><ion-icon class="indicator" v-if="value && value.icon" :ios="value.icon!.ios" :md="value.icon!.md" />
+    <ion-fab-button :disabled="disabled"><FabHeaderButtonIcon v-bind="icon" v-if="icon" /></ion-fab-button
+    ><FabHeaderButtonIcon v-bind="value?.icon" is-indicator v-if="value?.icon" />
     <ion-fab-list side="bottom">
       <ion-item
         :detail="false"
@@ -18,23 +16,21 @@
       >
         <ion-label>{{ option.label }}</ion-label>
         <ion-fab-button size="small" v-if="option.icon">
-          <ion-icon :ios="option.icon.ios" :md="option.icon.md" />
-          <hr v-if="option.icon.negate" class="negate" /></ion-fab-button></ion-item></ion-fab-list
+          <FabHeaderButtonIcon v-bind="option.icon" /></ion-fab-button></ion-item></ion-fab-list
   ></ion-fab>
 </template>
-<script setup lang="ts" generic="Item extends {
-  id: string,
-  label:string,
-  icon?: {ios: string, md: string,
-    negate?: boolean,}
-}">
+<script setup lang="ts" generic="Item extends Option">
+import FabHeaderButtonIcon from './FabHeaderButtonIcon.vue';
+
+import type { Option } from '~/stores/app';
+
 // eslint-disable-next-line no-undef
 const fab = defineModel<ComponentPublicInstance<HTMLIonFabElement> | null>('fab');
 const value = defineModel<Item>('value');
 withDefaults(
   defineProps<{
     disabled?: boolean;
-    icon: { ios: string; md: string, negate?: boolean };
+    icon: Option['icon'];
     options: Item[];
   }>(),
   {

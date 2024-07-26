@@ -18,9 +18,9 @@
 </template>
 
 <script setup lang="ts">
-const { publicationcode, issuenumber, copyIndex } = defineProps<{
+const { publicationcode, shortIssuenumber, copyIndex } = defineProps<{
   publicationcode: string;
-  issuenumber: string;
+  shortIssuenumber: string;
   copyIndex: number;
 }>();
 
@@ -35,7 +35,8 @@ const sentRequest = $computed(() =>
 const issueOnSale = $computed(
   () =>
     (issuesOnSaleByOthers.value?.[publicationcode] || []).filter(
-      ({ issuenumber: onSaleIssuenumber }) => onSaleIssuenumber === issuenumber,
+      ({ shortIssuenumber: onSaleShortIssuenumber }) =>
+        onSaleShortIssuenumber === shortIssuenumber,
     )[copyIndex],
 );
 

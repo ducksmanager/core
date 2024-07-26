@@ -56,7 +56,7 @@ const suggestedPublications =
       userId: true,
       score: true,
       publicationcode: true,
-      issuenumber: true,
+      shortIssuenumber: true,
       oldestdate: true,
     },
   });
@@ -79,7 +79,7 @@ interface Suggestion
 const getStoryDetails = async (
   storyCodes: string[],
   associatedPublicationCodes: string[],
-  associatedIssueNumbers: string[],
+  associatedShortIssueNumbers: string[],
 ) => {
   if (!storyCodes.length) {
     return {};
@@ -98,7 +98,7 @@ const getStoryDetails = async (
           WHERE ${storyCodes
         .map(
           (storyCode, idx) =>
-            `story.storycode = '${storyCode}' AND issue.publicationcode = '${associatedPublicationCodes[idx]}' AND issue.issuenumber = '${associatedIssueNumbers[idx]}'`,
+            `story.storycode = '${storyCode}' AND issue.publicationcode = '${associatedPublicationCodes[idx]}' AND issue.short_issuenumber = '${associatedShortIssueNumbers[idx]}'`,
         )
         .join(" OR ")}
       ORDER BY story.storycode
@@ -147,13 +147,13 @@ export const getSuggestions = async (
       SELECT suggested.ID_User AS userId,
              suggested.Score   AS score,
              suggested.publicationcode,
-             suggested.issuenumber,
+             suggested.short_issuenumber AS shortIssuenumber,
              replace(suggested.oldestdate,'-00', '-01') AS oldestdate,
              missing.personcode,
              missing.storycode
       FROM utilisateurs_publications_suggerees as suggested
                INNER JOIN utilisateurs_publications_manquantes as missing
-                          USING (ID_User, publicationcode, issuenumber)
+                          USING (ID_User, publicationcode, short_issuenumber)
       WHERE suggested.oldestdate <= '${new Date().toISOString().split("T")[0]}'
         AND (${since
       ? `suggested.oldestdate > '${since.toISOString().split("T")[0]}'`
@@ -164,7 +164,7 @@ export const getSuggestions = async (
       ? `suggested.publicationcode LIKE '${singleCountry}/%'`
       : "1=1"
     })
-      ORDER BY ID_User, ${sort} DESC, publicationcode, issuenumber
+      ORDER BY ID_User, ${sort} DESC, publicationcode, short_issuenumber
       LIMIT 50
   `);
 
@@ -198,7 +198,7 @@ export const getSuggestions = async (
 
       const shortIssuecode = [
         suggestedStory.publicationcode,
-        suggestedStory.issuenumber,
+        suggestedStory.shortIssuenumber,
       ].join(" ");
       if (
         limit &&
@@ -210,7 +210,7 @@ export const getSuggestions = async (
       let issue = suggestionsPerUser[userId].issues[shortIssuecode];
       if (!issue) {
         issue = {
-          issuenumber: suggestedStory.issuenumber,
+          shortIssuenumber: suggestedStory.shortIssuenumber,
           personcode: suggestedStory.personcode,
           score: suggestedStory.score,
           publicationcode: suggestedStory.publicationcode,
@@ -260,7 +260,7 @@ export const getSuggestions = async (
     storyDetails = await getStoryDetails(
       referencedStories.map(({ storycode }) => storycode),
       referencedStories.map(({ publicationcode }) => publicationcode),
-      referencedStories.map(({ issuenumber }) => issuenumber),
+      referencedStories.map(({ shortIssuenumber }) => shortIssuenumber),
     );
 
     for (const referencedStory of referencedStories) {

@@ -3,7 +3,7 @@ import { AbstractEvent } from "./AbstractEvent";
 export interface CollectionSubscriptionAdditionEventRaw {
   type: string;
   publicationcode: string;
-  issuenumber: string;
+  shortIssuenumber: string;
   users: string;
   timestamp: number;
 }
@@ -11,5 +11,5 @@ export interface CollectionSubscriptionAdditionEventRaw {
 export class CollectionSubscriptionAdditionEvent extends AbstractEvent {
   type = "subscription_additions";
   publicationcode!: string;
-  issuenumber!: string;
+  shortIssuenumber!: string;
 }

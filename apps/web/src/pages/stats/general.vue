@@ -75,7 +75,7 @@
                 <Issue
                   :publicationcode="item.publicationcode"
                   :publicationname="publicationNames[item.publicationcode]!"
-                  :issuenumber="item.issuenumber"
+                  :short-issuenumber="item.shortIssuenumber"
                 />
               </template>
               <template #cell(condition)="{ item }">

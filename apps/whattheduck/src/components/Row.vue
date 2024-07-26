@@ -58,8 +58,8 @@ const onLongPressOptions = {
 const toggleElement = <T,>(arr: T[], element: T): T[] =>
   arr.includes(element) ? arr.filter((el) => el !== element) : [...arr, element];
 
-const toggleCheckedIssuenumber = (issuenumber: string) => {
-  selectedIssuenumbers.value = toggleElement(selectedIssuenumbers.value!, issuenumber);
+const toggleCheckedIssuenumber = (shortIssuenumber: string) => {
+  selectedIssuenumbers.value = toggleElement(selectedIssuenumbers.value!, shortIssuenumber);
 };
 </script>
 

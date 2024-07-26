@@ -31,7 +31,7 @@ export default (socket: Socket<Events>) => {
       .findMany({
         select: {
           publicationcode: true,
-          issuenumber: true,
+          shortIssuenumber: true,
           shortIssuecode: true
         },
         where: {
@@ -42,10 +42,10 @@ export default (socket: Socket<Events>) => {
       })
       .then((issues) => {
         callback({
-          issues: issues.map(({ publicationcode, shortIssuecode, issuenumber }) => ({
+          issues: issues.map(({ publicationcode, shortIssuecode, shortIssuenumber }) => ({
             shortIssuecode,
             publicationcode: publicationcode!,
-            issuenumber: issuenumber!,
+            shortIssuenumber: shortIssuenumber!,
           })),
         });
       }),
@@ -53,12 +53,12 @@ export default (socket: Socket<Events>) => {
 
   socket.on("getIssuesByStorycode", async (storycode, callback) =>
     prismaCoa.$queryRaw<SimpleIssue[]>`
-      SELECT publicationcode, issuenumber, short_issuecode AS shortIssuecode
+      SELECT publicationcode, short_issuenumber AS shortIssuenumber, short_issuecode AS shortIssuecode
       FROM inducks_issue issue
                 INNER JOIN inducks_entry entry using (short_issuecode)
                 INNER JOIN inducks_storyversion sv using (storyversioncode)
       WHERE sv.storycode = ${storycode}
-      GROUP BY publicationcode, issuenumber
+      GROUP BY publicationcode, shortIssuenumber
       ORDER BY publicationcode`.then(callback),
   );
 

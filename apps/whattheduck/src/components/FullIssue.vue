@@ -8,7 +8,7 @@
     /></template>
     <div>
       {{ issue.publicationName }}
-      {{ issue.issuenumber }}
+      {{ issue.shortIssuenumber }}
       <slot name="suffix" />
     </div>
   </ion-col>
@@ -23,7 +23,7 @@ const props = defineProps<{
   classes?: string[];
   issue: Pick<
     IssueWithCollectionIssues,
-    'countrycode' | 'countryname' | 'publicationName' | 'issuenumber' | 'collectionIssues'
+    'countrycode' | 'countryname' | 'publicationName' | 'shortIssuenumber' | 'collectionIssues'
   > & {
     partInfo?: PartInfo;
   };

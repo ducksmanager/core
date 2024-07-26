@@ -182,17 +182,17 @@ watch(issues, (newCollectionValue) => {
   const addIssueToCell = (
     acc: { [publicationcode: string]: { [mod: string | number]: string[] } },
     publicationcode: string,
-    issuenumber: string,
+    shortIssuenumber: string,
     isDoubleIssueStart = false,
     isDoubleIssueEnd = false,
   ) => {
     let mod, number;
-    if (Number.isNaN(issuenumber)) {
+    if (Number.isNaN(shortIssuenumber)) {
       mod = "non-numeric";
-      number = issuenumber;
+      number = shortIssuenumber;
     } else {
-      mod = parseInt(issuenumber) % 100;
-      number = (parseInt(issuenumber) - mod) / 100;
+      mod = parseInt(shortIssuenumber) % 100;
+      number = (parseInt(shortIssuenumber) - mod) / 100;
     }
     if (!acc[publicationcode]) {
       acc[publicationcode] = {
@@ -210,9 +210,8 @@ watch(issues, (newCollectionValue) => {
     );
   };
   issuesPerCell = newCollectionValue.reduce((acc, issue) => {
-    const publicationcode = `${issue.country}/${issue.magazine}`;
-    const issuenumber = issue.issuenumber;
-    const doubleNumberMatch = issuenumber.match(doubleNumberRegex);
+    const { publicationcode, shortIssuenumber } = issue;
+    const doubleNumberMatch = shortIssuenumber!.match(doubleNumberRegex);
     if (
       doubleNumberMatch &&
       parseInt(doubleNumberMatch[2]) === parseInt(doubleNumberMatch[1]) + 1
@@ -221,7 +220,7 @@ watch(issues, (newCollectionValue) => {
       addIssueToCell(acc, publicationcode, `${part1}${issue1}`, true);
       addIssueToCell(acc, publicationcode, `${part1}${issue2}`, false, true);
     } else {
-      addIssueToCell(acc, publicationcode, issuenumber);
+      addIssueToCell(acc, publicationcode, shortIssuenumber!);
     }
     return acc;
   }, {});

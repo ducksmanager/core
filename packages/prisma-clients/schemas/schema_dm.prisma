@@ -114,37 +114,43 @@ model magazines {
 }
 
 model issue {
-  id             Int             @id @default(autoincrement()) @map("ID")
-  country        String          @map("Pays") @db.VarChar(3)
-  magazine       String          @map("Magazine") @db.VarChar(10)
-  issuenumber    String          @map("Numero") @db.VarChar(12)
+  id               Int             @id @default(autoincrement()) @map("ID")
+  country          String          @map("Pays") @db.VarChar(3)
+  magazine         String          @map("Magazine") @db.VarChar(10)
+  issuenumber      String          @map("Numero") @db.VarChar(12)
+  shortIssuenumber String?         @map("short_issuenumber") @db.VarChar(12)
   // issueNumberNoSpace String?         @map("Numero_nospace") @db.VarChar(12) @ignored
-  condition      issue_condition @default(indefini) @map("Etat")
-  purchaseId     Int?            @default(-1) @map("ID_Acquisition")
-  isOnSale       Boolean         @map("AV")
-  isToRead       Boolean         @default(false) @map("A_Lire")
-  isSubscription Boolean         @default(false) @map("Abonnement")
-  userId         Int             @map("ID_Utilisateur")
-  creationDate   DateTime?       @default(now()) @map("DateAjout") @db.Timestamp(0)
-  shortIssuecode String?         @map("short_issuecode") @db.VarChar(25)
+  condition        issue_condition @default(indefini) @map("Etat")
+  purchaseId       Int?            @default(-1) @map("ID_Acquisition")
+  isOnSale         Boolean         @map("AV")
+  isToRead         Boolean         @default(false) @map("A_Lire")
+  isSubscription   Boolean         @default(false) @map("Abonnement")
+  userId           Int             @map("ID_Utilisateur")
+  creationDate     DateTime?       @default(now()) @map("DateAjout") @db.Timestamp(0)
+  shortIssuecode   String?         @map("short_issuecode") @db.VarChar(25)
 
   @@index([country, magazine, issuenumber, userId], map: "Numero_Utilisateur")
-  // @@index([country, magazine, issueNumberNoSpace, userId], map: "Numero_nospace_Utilisateur")
   @@index([country, magazine, issuenumber], map: "Pays_Magazine_Numero")
   @@index([creationDate, country, magazine, issuenumber], map: "Pays_Magazine_Numero_DateAjout")
+  @@index([country, magazine, shortIssuenumber, userId], map: "Numero_Utilisateur2")
+  @@index([country, magazine, shortIssuenumber], map: "Pays_Magazine_Numero2")
+  @@index([creationDate, country, magazine, shortIssuenumber], map: "Pays_Magazine_Numero_DateAjout2")
   @@index([userId], map: "Utilisateur")
   @@index([shortIssuecode], map: "numeros_short_issuecode_index")
   @@map("numeros")
 }
 
 model issuePopularity {
-  country     String @map("Pays") @db.VarChar(3)
-  magazine    String @map("Magazine") @db.VarChar(6)
-  issuenumber String @map("Numero") @db.VarChar(12)
-  popularity  Int    @map("Popularite")
-  id          Int    @id @default(autoincrement()) @map("ID")
+  country          String  @map("Pays") @db.VarChar(3)
+  magazine         String  @map("Magazine") @db.VarChar(6)
+  issuenumber      String  @map("Numero") @db.VarChar(12)
+  shortIssuenumber String? @map("short_issuenumber") @db.VarChar(12)
+  popularity       Int     @map("Popularite")
+  id               Int     @id @default(autoincrement()) @map("ID")
+  shortIssuecode   String? @map("short_issuecode") @db.VarChar(25)
 
   @@unique([country, magazine, issuenumber], map: "numeros_popularite_unique")
+  @@unique([country, magazine, shortIssuenumber], map: "numeros_popularite_unique2")
   @@map("numeros_popularite")
 }
 
@@ -168,9 +174,11 @@ model edge {
   points              Int?
   slug                String?            @db.VarChar(30)
   shortIssuecode      String?            @unique(map: "tranches_pretes_issuecode_uindex") @map("short_issuecode") @db.VarChar(23)
+  shortIssuenumber    String?            @map("short_issuenumber") @db.VarChar(12)
   users_contributions userContribution[]
 
   @@unique([publicationcode, issuenumber], map: "tranchespretes_unique")
+  @@unique([publicationcode, shortIssuenumber], map: "tranchespretes_unique2")
   @@index([creationDate], map: "tranches_pretes_dateajout_index")
   @@map("tranches_pretes")
 }
@@ -318,7 +326,7 @@ model users_points {
 model userSuggestionNotification {
   id             Int       @id @default(autoincrement()) @map("ID")
   userId         Int       @map("ID_User")
-  shortIssuecode String    @map("short_issuecode") @db.VarChar(12)
+  shortIssuecode String?   @map("short_issuecode") @db.VarChar(12)
   text           String?   @db.Text
   date           DateTime? @default(now()) @db.DateTime(0)
 

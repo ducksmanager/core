@@ -188,15 +188,15 @@ meta:
               :key="publicationcode"
             >
               <div
-                v-for="issuenumber in publicationIssueNumbers"
-                :key="`${publicationcode}-${issuenumber}`"
+                v-for="shortIssuenumber in publicationIssueNumbers"
+                :key="`${publicationcode}-${shortIssuenumber}`"
               >
                 <Issue
                   :publicationcode="publicationcode"
                   :publicationname="
                     publicationNames[publicationcode] || publicationcode
                   "
-                  :issuenumber="issuenumber"
+                  :short-issuenumber="shortIssuenumber"
                 />
               </div>
             </div>
@@ -229,11 +229,11 @@ meta:
               :key="publicationcode"
             >
               <Issue
-                v-for="issuenumber in publicationIssueNumbers"
-                :key="`${publicationcode}-${issuenumber}`"
+                v-for="shortIssuenumber in publicationIssueNumbers"
+                :key="`${publicationcode}-${shortIssuenumber}`"
                 :publicationcode="publicationcode"
                 :publicationname="publicationcode"
-                :issuenumber="issuenumber"
+                :short-issuenumber="shortIssuenumber"
               />
             </div>
           </template>
@@ -311,7 +311,8 @@ const { issues, user } = storeToRefs(collection());
 
 const { fetchPublicationNames, fetchIssueNumbers, fetchIssueCodesDetails } =
   coa();
-const { publicationNames, issueNumbers, issueCodeDetails } = storeToRefs(coa());
+const { publicationNames, shortIssuenumbers, issueCodeDetails } =
+  storeToRefs(coa());
 const conditions: Record<issue_condition, string> = {
   mauvais: $t("En mauvais état"),
   moyen: $t("En état moyen"),
@@ -347,12 +348,12 @@ const processRawData = async () => {
 type Publicationcode = string;
 const groupByPublicationCode = (issues: inducks_issue[]) =>
   issues?.reduce(
-    (acc, { publicationcode, issuenumber }) => ({
+    (acc, { publicationcode, shortIssuenumber }) => ({
       ...acc,
       [publicationcode!]: [
         ...new Set([
           ...(acc[publicationcode!] || []),
-          issuenumber!.replace(" ", ""),
+          shortIssuenumber!.replace(" ", ""),
         ]),
       ],
     }),
@@ -367,7 +368,7 @@ const importIssues = async () => {
     if (importableIssuesByPublicationCode.hasOwnProperty(publicationcode)) {
       await collectionServices.addOrChangeIssues({
         publicationcode,
-        issuenumbers: importableIssuesByPublicationCode[publicationcode],
+        shortIssuenumbers: importableIssuesByPublicationCode[publicationcode],
         condition: issueDefaultCondition,
         isOnSale: undefined,
         isToRead: undefined,
@@ -387,14 +388,14 @@ watch($$(importDataReady), (newValue) => {
     issuesAlreadyInCollection = [];
     issuesImportable = [];
     issuesToImport!.forEach((issue) => {
-      const { publicationcode, issuenumber } = issue;
+      const { publicationcode, shortIssuenumber } = issue;
       if (
-        !issueNumbers.value[publicationcode!].includes(
-          issuenumber!.replace(/[ ]+/g, " "),
+        !shortIssuenumbers.value[publicationcode!].includes(
+          shortIssuenumber!.replace(/[ ]+/g, " "),
         )
       )
         issuesNotReferenced!.push(issue);
-      else if (findInCollection(publicationcode!, issuenumber!))
+      else if (findInCollection(publicationcode!, shortIssuenumber!))
         issuesAlreadyInCollection!.push(issue);
       else issuesImportable!.push(issue);
     });

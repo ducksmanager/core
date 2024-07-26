@@ -25,13 +25,10 @@ export default (issues: ShallowRef<issue[] | null>) => {
   const totalPerPublication = computed(
       () =>
         issues.value?.reduce<{ [publicationcode: string]: number }>(
-          (acc, issue) => {
-            const publicationcode = `${issue.country}/${issue.magazine}`;
-            return {
-              ...acc,
-              [publicationcode]: (acc[publicationcode] || 0) + 1,
-            };
-          },
+          (acc, { publicationcode }) => ({
+            ...acc,
+            [publicationcode]: (acc[publicationcode] || 0) + 1,
+          }),
           {},
         ) || null,
     ),
@@ -99,11 +96,11 @@ export default (issues: ShallowRef<issue[] | null>) => {
           {} as Record<issue_condition, number>,
         ) || ({} as Record<issue_condition, number>),
     ),
-    findInCollection = (publicationcode: string, issuenumber: string) =>
+    findInCollection = (publicationcode: string, shortIssuenumber: string) =>
       issues.value?.find(
-        ({ country, magazine, issuenumber: collectionIssueNumber }) =>
+        ({ country, magazine, shortIssuenumber: collectionShortIssuenumber }) =>
           publicationcode === `${country}/${magazine}` &&
-          collectionIssueNumber === issuenumber,
+          collectionShortIssuenumber === shortIssuenumber,
       ),
     quotedIssues = computed<QuotedIssue[] | null>(() => {
       const issueQuotations = coa().issueQuotations;
@@ -135,13 +132,18 @@ export default (issues: ShallowRef<issue[] | null>) => {
         issues.value
           ?.filter(({ shortIssuecode }) => getEstimation(shortIssuecode))
           .map(
-            ({ shortIssuecode, publicationcode, issuenumber, condition }) => {
+            ({
+              shortIssuecode,
+              publicationcode,
+              shortIssuenumber,
+              condition,
+            }) => {
               const estimation = getEstimation(shortIssuecode);
               return {
                 ...estimation,
                 shortIssuecode,
                 publicationcode,
-                issuenumber,
+                shortIssuenumber: shortIssuenumber!,
                 condition,
                 estimationGivenCondition: parseFloat(
                   (

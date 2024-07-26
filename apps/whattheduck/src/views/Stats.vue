@@ -49,7 +49,7 @@
               <ion-text>
                 <Condition :value="highestQuotedIssue.condition" />
                 {{ publicationNames[highestQuotedIssue.publicationcode] }}
-                {{ highestQuotedIssue.issuenumber }}</ion-text
+                {{ highestQuotedIssue.shortIssuenumber }}</ion-text
               ></template
             >
             <ion-text v-else>{{ t('Vous ne possédez pas de numéro côté.') }}</ion-text>

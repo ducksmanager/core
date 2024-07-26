@@ -8,7 +8,7 @@ import { collection } from "./collection";
 
 export type SimpleBookcaseEdge = Pick<
   BookcaseEdge,
-  "publicationcode" | "issuenumber"
+  "publicationcode" | "shortIssuenumber"
 > & {
   issueCondition?: issue_condition;
 };
@@ -41,16 +41,14 @@ export const bookcase = defineStore("bookcase", () => {
         ((isSharedBookcase.value
           ? true
           : collection().popularIssuesInCollection) &&
-          bookcase.value?.map((issue) => {
-            const issueCode = `${issue.publicationcode} ${issue.issuenumber}`;
-            return {
-              ...issue,
-              issueCode,
-              popularity: isSharedBookcase.value
-                ? 0
-                : collection().popularIssuesInCollection?.[issueCode] || 0,
-            };
-          })) ||
+          bookcase.value?.map((issue) => ({
+            ...issue,
+            popularity: isSharedBookcase.value
+              ? 0
+              : collection().popularIssuesInCollection?.[
+                  issue.shortIssuecode
+                ] || 0,
+          }))) ||
         null,
     ),
     addLoadedSprite = ({

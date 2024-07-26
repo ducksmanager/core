@@ -8,7 +8,7 @@ export type EdgeModel = {
   id: number;
   country: string;
   magazine: string;
-  issuenumber: string;
+  shortIssuenumber: string;
   fileName?: string;
   username?: string | null;
   photos?: (edgePhoto & { elementImage: elementImage })[];

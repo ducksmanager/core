@@ -1,7 +1,7 @@
 export type ModelSteps = {
-  [issuenumber: string]: {
+  [shortIssuenumber: string]: {
     [stepNumber: string]: {
-      issuenumber: string;
+      shortIssuenumber: string;
       stepNumber: number;
       functionName: string;
       options: { [optionName: string]: string };

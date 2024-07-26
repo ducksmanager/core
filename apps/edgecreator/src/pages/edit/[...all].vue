@@ -46,7 +46,7 @@
                 @click.exact="editingStepStore.replaceIssuenumber(issuenumber)"
                 @click.shift="editingStepStore.toggleIssuenumber(issuenumber)"
                 @dblclick="
-                  editingStepStore.addIssuenumbers(mainStore.issuenumbers)
+                  editingStepStore.addShortIssuenumbers(mainStore.issuenumbers)
                 "
               >
                 <div v-if="editingStepStore.issuenumbers.includes(issuenumber)">

@@ -22,11 +22,11 @@ export type CopyStateWithUndefined = {
 
 export type CollectionUpdateSingleIssue = {
   publicationcode: string;
-  issuenumber: string;
+  shortIssuenumber: string;
   copies: SingleCopyState[];
 };
 
 export type CollectionUpdateMultipleIssues = {
   publicationcode: string;
-  issuenumbers: string[];
+  shortIssuenumbers: string[];
 } & CopyStateWithUndefined;

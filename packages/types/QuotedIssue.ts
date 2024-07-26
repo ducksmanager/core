@@ -5,7 +5,7 @@ export type QuotedIssue = Pick<
   inducks_issuequotation,
   | "shortIssuecode"
   | "publicationcode"
-  | "issuenumber"
+  | "shortIssuenumber"
   | "estimationMin"
   | "estimationMax"
 > &

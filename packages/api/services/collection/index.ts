@@ -52,7 +52,7 @@ export default (io: Server) => {
         prismaDm.$queryRaw<issuePopularity[]>`
       select issuePopularity.pays       AS country,
              issuePopularity.magazine   AS magazine,
-             issuePopularity.numero     AS issuenumber,
+             issuePopularity.short_issuenumber     AS shortIssuenumber,
              issuePopularity.popularite AS popularity
       from numeros_popularite issuePopularity
              inner join numeros issue

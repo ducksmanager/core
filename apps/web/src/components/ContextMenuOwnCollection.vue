@@ -88,7 +88,7 @@
               country: publicationcode.split('/')[0],
               magazine: publicationcode.split('/')[1],
               publicationcode,
-              issuenumber: initialCopies!.issuenumber,
+              shortIssuenumber: initialCopies!.shortIssuenumber,
               isSubscription: false,
               userId: user!.id,
               creationDate: new Date(),
@@ -134,7 +134,7 @@ const { updateCollectionMultipleIssues, updateCollectionSingleIssue } =
 const { user } = storeToRefs(collection());
 let { publicationcode, selectedIssueIdsByIssuenumber } = defineProps<{
   selectedIssueIdsByIssuenumber: {
-    [issuenumber: string]: IssueWithPublicationcodeOptionalId[];
+    [shortIssuenumber: string]: IssueWithPublicationcodeOptionalId[];
   };
   publicationcode: string;
 }>();
@@ -172,8 +172,8 @@ const selectedIssues = $computed(() =>
 let isSingleIssueSelected = $computed(() => selectedIssues.length === 1);
 const hasNoCopies = $computed(
   () =>
-    (initialCopies && initialCopies.issuenumber === null) ||
-    (initialIssues && !initialIssues.issuenumbers.length),
+    (initialCopies && initialCopies.shortIssuenumber === null) ||
+    (initialIssues && !initialIssues.shortIssuenumbers.length),
 );
 const hasMaxCopies = $computed(
   () => initialCopies && initialCopies.copies.length >= 3,
@@ -233,14 +233,14 @@ watch(
       editedIssues = initialIssues = null;
       editedCopies = initialCopies = {
         publicationcode,
-        issuenumber: newValue[0],
+        shortIssuenumber: newValue[0],
         copies: selectedIssueIdsByIssuenumber[newValue[0]],
       };
     } else {
       editedCopies = initialCopies = null;
       editedIssues = initialIssues = {
         publicationcode,
-        issuenumbers: newValue,
+        shortIssuenumbers: newValue,
         ...defaultIssueState,
       };
     }

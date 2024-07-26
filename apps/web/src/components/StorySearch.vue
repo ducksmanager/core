@@ -77,7 +77,7 @@
           :publicationcode="searchResult.publicationcode"
           :publicationname="publicationNames[searchResult.publicationcode]!"
           :is-public="isPublic"
-          :issuenumber="searchResult.issuenumber"
+          :short-issuenumber="searchResult.shortIssuenumber"
           clickable
         />
       </b-list-group-item>
@@ -133,8 +133,8 @@ let searchContext = $ref<"story" | "storycode">("story");
 let showSearchResults = $ref(true);
 
 const { t: $t } = useI18n();
-const isInCollection = ({ publicationcode, issuenumber }: SimpleIssue) =>
-  findInCollection(publicationcode, issuenumber) !== undefined;
+const isInCollection = ({ publicationcode, shortIssuenumber }: SimpleIssue) =>
+  findInCollection(publicationcode, shortIssuenumber) !== undefined;
 
 const searchContexts = {
   story: $t("titre d'histoire"),
@@ -190,16 +190,16 @@ const runSearch = async (value: string) => {
         collectionIssue:
           issues.value!.find(
             ({
-              publicationcode: collectionPublicationCode,
-              issuenumber: collectionIssueNumber,
+              publicationcode: collectionPublicationcode,
+              shortIssuenumber: collectionShortIssuenumber,
             }) =>
               story.issues
                 .map(
-                  ({ publicationcode, issuenumber }) =>
-                    `${publicationcode}-${issuenumber}`,
+                  ({ publicationcode, shortIssuenumber }) =>
+                    `${publicationcode}-${shortIssuenumber}`,
                 )
                 .includes(
-                  `${collectionPublicationCode}-${collectionIssueNumber}`,
+                  `${collectionPublicationcode}-${collectionShortIssuenumber}`,
                 ),
           ) || null,
       }));

@@ -18,7 +18,7 @@
             class="issue"
             :publicationname="publicationNames[edge.publicationcode]!"
             :publicationcode="edge.publicationcode"
-            :issuenumber="edge.issuenumber"
+            :short-issuenumber="edge.shortIssuenumber"
             hide-condition
             :flex="false"
           />
@@ -31,7 +31,7 @@
 <script setup lang="ts">
 defineProps<{
   id: string;
-  edges: { publicationcode: string; issuenumber: string }[];
+  edges: { publicationcode: string; shortIssuenumber: string }[];
 }>();
 
 const bookcaseTextures = {

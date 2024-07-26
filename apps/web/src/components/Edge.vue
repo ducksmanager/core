@@ -9,7 +9,7 @@
     :id="id"
     :src="src"
     :publicationcode="publicationcode"
-    :issuenumber="issuenumber"
+    :short-issuenumber="shortIssuenumber"
     :sprite-path="spritePath"
     :invisible="invisible"
     :highlighted="highlighted"
@@ -26,7 +26,7 @@
     <template #title>
       <Issue
         :publicationcode="publicationcode"
-        :issuenumber="issuenumber"
+        :short-issuenumber="shortIssuenumber"
         :publicationname="publicationNames[publicationcode] || publicationcode"
       />
     </template>
@@ -34,7 +34,7 @@
       :id="id"
       :src="src"
       :publicationcode="publicationcode"
-      :issuenumber="issuenumber"
+      :short-issuenumber="shortIssuenumber"
       :sprite-path="spritePath"
       :invisible="invisible"
       :highlighted="highlighted"
@@ -52,7 +52,7 @@ import { issue_condition } from "~prisma-clients/extended/dm.extends";
 const SPRITES_ROOT = "https://res.cloudinary.com/dl7hskxab/image/sprite/";
 const {
   creationDate = null,
-  issuenumber,
+  shortIssuenumber,
   issuenumberReference = null,
   publicationcode,
   issueCondition,
@@ -65,7 +65,7 @@ const {
 } = defineProps<{
   id: string;
   publicationcode: string;
-  issuenumber: string;
+  shortIssuenumber: string;
   issuenumberReference?: string;
   issueCondition?: issue_condition;
   creationDate?: string;
@@ -95,7 +95,7 @@ let countryCode = $computed(() => publicationcode.split("/")[0]),
     spritePath && !ignoreSprite
       ? `${SPRITES_ROOT}${spritePath}.png`
       : `${orientation === "vertical" ? import.meta.env.VITE_EDGES_ROOT : CLOUDINARY_ROTATED_URL}${countryCode}/gen/${magazineCode}.${(
-          issuenumberReference || issuenumber
+          issuenumberReference || shortIssuenumber
         ).replaceAll(
           " ",
           "",

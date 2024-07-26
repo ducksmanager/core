@@ -11,10 +11,10 @@
         v-if="embedded"
         :id="`edge-${edgeIndex}${embedded}`"
         v-bind="
-          (({ publicationcode, issueCondition, issuenumber }) => ({
+          (({ publicationcode, issueCondition, shortIssuenumber }) => ({
             publicationcode,
             issueCondition,
-            issuenumber,
+            shortIssuenumber,
           }))(sortedBookcase[edgeIndex] as SimpleBookcaseEdge)
         "
         :orientation="orientation"
@@ -42,13 +42,13 @@
           (({
             publicationcode,
             issueCondition,
-            issuenumber,
+            shortIssuenumber,
             issuenumberReference,
             popularity,
           }: BookcaseEdgeWithPopularity) => ({
             publicationcode,
             issueCondition,
-            issuenumber,
+            shortIssuenumber,
             issuenumberReference,
             popularity,
           }))(sortedBookcaseWithPopularity![edgeIndex])

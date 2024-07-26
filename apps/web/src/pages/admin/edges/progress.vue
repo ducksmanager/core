@@ -7,7 +7,7 @@ meta:
   <div v-if="hasData">
     <div
       v-for="mostWantedIssue in mostWanted"
-      :key="`wanted-${mostWantedIssue.publicationcode}-${mostWantedIssue.issuenumber}`"
+      :key="`wanted-${mostWantedIssue.publicationcode}-${mostWantedIssue.shortIssuenumber}`"
     >
       <div>
         <u
@@ -24,7 +24,7 @@ meta:
         "
       />
       {{ publicationNames[mostWantedIssue.publicationcode] }} n°{{
-        mostWantedIssue.issuenumber
+        mostWantedIssue.shortIssuenumber
       }}
     </div>
     <div
@@ -144,29 +144,32 @@ const {
 } = injectLocal(dmSocketInjectionKey)!;
 
 const { fetchPublicationNames, fetchIssueNumbers } = coa();
-const { publicationNames, issueNumbers } = storeToRefs(coa());
+const { publicationNames, shortIssuenumbers } = storeToRefs(coa());
 
 const { loadCollection } = collection();
 const { issuesByShortIssuecode } = storeToRefs(collection());
 
-const getEdgeUrl = (publicationcode: string, issuenumber: string): string => {
+const getEdgeUrl = (
+  publicationcode: string,
+  shortIssuenumber: string,
+): string => {
   const [country, magazine] = publicationcode.split("/");
   return `${
     import.meta.env.VITE_EDGES_ROOT
-  }/${country}/gen/${magazine}.${issuenumber}.png`;
+  }/${country}/gen/${magazine}.${shortIssuenumber}.png`;
 };
-const open = (publicationcode: string, issuenumber: string) => {
-  if (publishedEdges[publicationcode].includes(issuenumber)) {
-    window.open(getEdgeUrl(publicationcode, issuenumber), "_blank");
+const open = (publicationcode: string, shortIssuenumber: string) => {
+  if (publishedEdges[publicationcode].includes(shortIssuenumber)) {
+    window.open(getEdgeUrl(publicationcode, shortIssuenumber), "_blank");
   }
 };
 const inducksIssueNumbersNoSpace = $computed(() =>
-  Object.keys(issueNumbers).reduce<Record<string, string[]>>(
+  Object.keys(shortIssuenumbers).reduce<Record<string, string[]>>(
     (acc, publicationcode) => ({
       ...acc,
-      [publicationcode]: Object.values(issueNumbers.value[publicationcode]).map(
-        (issuenumber) => issuenumber.replace(/ /g, ""),
-      ),
+      [publicationcode]: Object.values(
+        shortIssuenumbers.value[publicationcode],
+      ).map((shortIssuenumber) => shortIssuenumber.replace(/ /g, "")),
     }),
     {},
   ),
@@ -179,20 +182,25 @@ const sortedBookcase = computed(() =>
     (acc, publicationcode) => ({
       ...acc,
       [publicationcode]:
-        inducksIssueNumbersNoSpace[publicationcode]?.map((issuenumber) => ({
-          id: 0,
-          issueCode: `${publicationcode}-${issuenumber}`,
-          edgeId: publishedEdges?.[publicationcode].includes(issuenumber)
-            ? 1
-            : 0,
-          publicationcode,
-          countryCode: publicationcode.split("/")[0],
-          magazineCode: publicationcode.split("/")[1],
-          issuenumber,
-          issuenumberReference: issuenumber,
-          creationDate: new Date(),
-          sprites: [],
-        })) || [],
+        inducksIssueNumbersNoSpace[publicationcode]?.map(
+          (shortIssuenumber) => ({
+            id: 0,
+            issueCode: `${publicationcode}-${shortIssuenumber!}`,
+            edgeId: publishedEdges?.[publicationcode].includes(
+              shortIssuenumber!,
+            )
+              ? 1
+              : 0,
+            publicationcode,
+            countryCode: publicationcode.split("/")[0],
+            magazineCode: publicationcode.split("/")[1],
+            shortIssuenumber: shortIssuenumber!,
+            issuenumberReference: shortIssuenumber!,
+            shortIssuecode: "",
+            creationDate: new Date(),
+            sprites: [],
+          }),
+        ) || [],
     }),
     {},
   ),
@@ -208,9 +216,9 @@ const sortedBookcase = computed(() =>
   );
 
   publishedEdges = (await edgesServices.getPublishedEdges()).reduce(
-    (acc, { publicationcode, issuenumber }) => ({
+    (acc, { publicationcode, shortIssuenumber }) => ({
       ...acc,
-      [publicationcode]: [...(acc[publicationcode] || []), issuenumber],
+      [publicationcode]: [...(acc[publicationcode] || []), shortIssuenumber!],
     }),
     {} as Record<string, string[]>,
   );

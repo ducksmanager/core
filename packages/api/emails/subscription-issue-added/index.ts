@@ -2,13 +2,13 @@ import { Email, i18n } from "~emails/email";
 import type { user } from "~prisma-clients/extended/dm.extends";
 
 export default class extends Email {
-  data: { user: user; publicationName: string; issuenumber: string };
+  data: { user: user; publicationName: string; shortIssuenumber: string };
   templatePath = __dirname;
 
   constructor(data: {
     user: user;
     publicationName: string;
-    issuenumber: string;
+    shortIssuenumber: string;
   }) {
     super();
     this.data = data;
@@ -20,10 +20,10 @@ export default class extends Email {
   getToName = () => this.data.user.username;
   getSubject = () =>
     i18n.__(
-      "{{publicationName}} {{issuenumber}} a été ajouté à votre collection !",
+      "{{publicationName}} {{shortIssuenumber}} a été ajouté à votre collection !",
       {
         publicationName: this.data.publicationName,
-        issuenumber: this.data.issuenumber,
+        shortIssuenumber: this.data.shortIssuenumber,
       },
     );
 }

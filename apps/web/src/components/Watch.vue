@@ -31,12 +31,12 @@
 </template>
 <script setup lang="ts">
 const {
-  issuenumber = null,
+  shortIssuenumber = null,
   publicationcode = null,
   constantWidth = false,
 } = defineProps<{
   publicationcode?: string;
-  issuenumber?: string;
+  shortIssuenumber?: string;
   constantWidth?: boolean;
 }>();
 
@@ -47,7 +47,7 @@ const { loadWatchedPublicationsWithSales, updateWatchedPublicationsWithSales } =
 const { watchedPublicationsWithSales } = storeToRefs(collection());
 
 const key = $computed(
-  () => publicationcode + (issuenumber ? ` ${issuenumber}` : ""),
+  () => publicationcode + (shortIssuenumber ? ` ${shortIssuenumber}` : ""),
 );
 
 const isWatched = $computed(() =>
@@ -62,10 +62,10 @@ const isPublicationWatchedButNotIssueNumber = $computed(
 const buttonTooltipText = $computed(() =>
   $t(
     isWatched
-      ? issuenumber === null
+      ? shortIssuenumber === null
         ? "Cliquez ici pour ne plus voir les numéros que vous ne possédez pas de ce magazine qui sont en vente"
         : "Cliquez ici pour ne plus voir les propositions de vente de ce numéro"
-      : issuenumber === null
+      : shortIssuenumber === null
         ? "Cliquez ici pour voir les numéros que vous ne possédez pas de ce magazine qui sont en vente !"
         : isPublicationWatchedButNotIssueNumber
           ? "Vous surveillez déjà tous les numéros de ce magazine. Cliquez sur 'Surveillé' en face du titre du magazine pour ne surveiller que certains numéros de ce magazine."

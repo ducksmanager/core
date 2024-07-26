@@ -18,7 +18,7 @@ export default (socket: Socket<Events>) => {
         select: {
           publicationcode: true,
           shortIssuecode: true,
-          issuenumber: true,
+          shortIssuenumber: true,
           title: true,
         },
         where: {
@@ -30,11 +30,11 @@ export default (socket: Socket<Events>) => {
       .then((data) => {
         callback(
           data.reduce<Parameters<typeof callback>[0]>(
-            (acc, { publicationcode, issuenumber, title, shortIssuecode }) => ({
+            (acc, { publicationcode, shortIssuenumber, title, shortIssuecode }) => ({
               ...acc,
               [publicationcode!]: [
                 ...(acc[publicationcode!] || []),
-                { shortIssuecode, publicationcode: publicationcode!, issuenumber: issuenumber!, title },
+                { shortIssuecode, publicationcode: publicationcode!, shortIssuenumber: shortIssuenumber!, title },
               ],
             }),
             {},
@@ -45,7 +45,7 @@ export default (socket: Socket<Events>) => {
 
   socket.on(
     "getIssueDetails",
-    async (publicationcode, issuenumber, callback) => {
+    async (publicationcode, shortIssuenumber, callback) => {
       const releaseDate = (
         await prismaCoa.$queryRaw<
           {
@@ -55,12 +55,12 @@ export default (socket: Socket<Events>) => {
           SELECT issue.oldestdate
           FROM inducks_issue issue
           WHERE issue.publicationcode = ${publicationcode}
-            AND REPLACE(issue.issuenumber, ' ', '') = ${issuenumber}`
+            AND REPLACE(issue.short_issuenumber, ' ', '') = ${shortIssuenumber}`
       )[0]?.oldestdate;
 
       const entries = await getEntries(
-        publicationcode as string,
-        issuenumber as string,
+        publicationcode,
+        shortIssuenumber,
       );
       callback({ releaseDate, entries });
     },
@@ -103,7 +103,7 @@ export default (socket: Socket<Events>) => {
 
     const issues: Parameters<typeof callback>[0] = (
       await prismaCoverInfo.$queryRaw<SimpleIssueWithPublication[]>`
-      SELECT pub.countrycode, pub.publicationcode, pub.title, issue.issuenumber, issue.short_issuecode as shortIssuecode
+      SELECT pub.countrycode, pub.publicationcode, pub.title, issue.short_issuenumber as shortIssuecode, issue.short_issuecode as shortIssuecode
       FROM inducks_issue issue
       INNER JOIN coa.inducks_publication pub USING(publicationcode)
       WHERE short_issuecode IN ${PrismaCoa.join(shortIssuecodes)}
@@ -152,7 +152,7 @@ export const getCoverUrls = (shortIssuecodes: string[]) =>
   shortIssuecodes.length
     ? prismaCoa.$queryRaw<IssueCoverDetails[]>`
 SELECT publicationcode,
-       issuenumber,
+       short_issuenumber AS shortIssuenumber,
        short_issuecode AS shortIssuecode,
        inducks_issue.title,
        CONCAT(IF(sitecode = 'thumbnails', IF (url REGEXP '^[0-9]', 'webusers/webusers', IF (url REGEXP '^webusers', 'webusers', '')), sitecode), '/', url) AS fullUrl
@@ -165,7 +165,7 @@ WHERE inducks_issue.short_issuecode IN (${PrismaCoa.join(shortIssuecodes)})
 GROUP BY short_issuecode`
     : Promise.resolve([]);
 
-const getEntries = async (publicationcode: string, issuenumber: string) =>
+const getEntries = async (publicationcode: string, shortIssuenumber: string) =>
   await prismaCoa.$queryRaw<SimpleEntry[]>`
       SELECT sv.storycode,
              sv.kind,
@@ -179,7 +179,7 @@ const getEntries = async (publicationcode: string, issuenumber: string) =>
                INNER JOIN inducks_storyversion AS sv using (storyversioncode)
                LEFT JOIN inducks_entryurl AS entryurl using (entrycode)
       WHERE inducks_issue.publicationcode = ${publicationcode}
-        AND (REPLACE(issuenumber, ' ', '') = ${issuenumber})
+        AND short_issuenumber = ${shortIssuenumber})
       GROUP BY entry.entrycode, position
       ORDER BY position
   `;
@@ -194,7 +194,7 @@ const getIssueCoverDetails = (
           data.reduce(
             (acc, row) => ({
               ...acc,
-              [row.issuenumber]: row,
+              [row.shortIssuenumber]: row,
             }),
             {} as Record<string, IssueCoverDetails>,
           ),

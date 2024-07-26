@@ -11,13 +11,13 @@ export default (socket: Socket<Events>) => {
       (
         await prismaEdgeCreator.$queryRaw<
           {
-            issuenumber: string;
+            shortIssuenumber: string;
             stepNumber: number;
             functionName: string;
             options: string;
           }[]
         >`
-          select model.numero AS issuenumber,
+          select model.short_issuenumber AS shortIssuenumber,
                   optionValue.ordre AS stepNumber,
                   optionValue.Nom_fonction AS functionName,
                   concat('{',
@@ -33,18 +33,18 @@ export default (socket: Socket<Events>) => {
       ).reduce(
         (
           acc: ModelSteps,
-          { issuenumber, stepNumber, functionName, options },
+          { shortIssuenumber, stepNumber, functionName, options },
         ) => ({
           ...acc,
-          [issuenumber]: {
-            ...(acc[issuenumber] || {}),
+          [shortIssuenumber]: {
+            ...(acc[shortIssuenumber] || {}),
             [stepNumber]: {
-              ...(acc[issuenumber]?.[stepNumber] || {
+              ...(acc[shortIssuenumber]?.[stepNumber] || {
                 functionName,
-                issuenumber,
+                shortIssuenumber,
                 stepNumber,
                 options: {
-                  ...(acc[issuenumber]?.[stepNumber]?.options || {}),
+                  ...(acc[shortIssuenumber]?.[stepNumber]?.options || {}),
                   ...JSON.parse(options),
                 },
               }),
@@ -56,20 +56,16 @@ export default (socket: Socket<Events>) => {
     );
   });
 
-  socket.on("getModel", async (publicationcode, issuenumber, callback) => {
-    const [country, magazine] = publicationcode.split("/");
+  socket.on("getModel", async (shortIssuenumber, callback) => {
     const model = await prismaEdgeCreator.edgeModel.findFirst({
       where: {
-        country,
-        magazine,
-        issuenumber,
+        shortIssuenumber,
       },
     });
     const modelIsPublished =
       (await prismaDm.edge.count({
         where: {
-          publicationcode,
-          issuenumber,
+          shortIssuenumber,
         },
       })) > 0;
     callback(model && modelIsPublished ? model : null);

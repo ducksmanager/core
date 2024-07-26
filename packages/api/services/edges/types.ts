@@ -12,7 +12,7 @@ export default abstract class {
     callback: (value: Record<string, EdgeWithModelId>) => void,
   ) => void;
   abstract getPublishedEdges: (
-    callback: (value: Pick<edge, "publicationcode" | "issuenumber">[]) => void,
+    callback: (value: Pick<edge, "publicationcode" | "shortIssuenumber">[]) => void,
   ) => void;
   abstract getWantedEdges: (callback: (value: WantedEdge[]) => void) => void;
 }

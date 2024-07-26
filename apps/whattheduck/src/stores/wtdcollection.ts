@@ -61,10 +61,10 @@ export const wtdcollection = defineStore('wtdcollection', () => {
     highestQuotedIssue = computed(
       () => quotedIssues.value?.sort((a, b) => b.estimationGivenCondition - a.estimationGivenCondition)[0],
     ),
-    getCollectionIssues = (publicationcode: string, issuenumber: string) =>
+    getCollectionIssues = (publicationcode: string, shortIssuenumber: string) =>
       issues.value!.filter(
-        ({ publicationcode: collectionPublicationCode, issuenumber: collectionIssueNumber }) =>
-          collectionPublicationCode === publicationcode && collectionIssueNumber === issuenumber,
+        ({ publicationcode: collectionPublicationCode, shortIssuenumber: collectionIssueNumber }) =>
+          collectionPublicationCode === publicationcode && collectionIssueNumber === shortIssuenumber,
       );
 
   usePersistedData({ user, issues }).then(() => {

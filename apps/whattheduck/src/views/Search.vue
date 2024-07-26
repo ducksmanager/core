@@ -125,7 +125,7 @@ watch(storyTitle, async (newValue) => {
           (
             {
               publicationcode,
-              issuenumber,
+              shortIssuenumber,
               shortIssuecode,
               estimatedpanels,
               total_estimatedpanels,
@@ -137,7 +137,7 @@ watch(storyTitle, async (newValue) => {
             publicationcode,
             countrycode: publicationcode.split('/')[0],
             publicationName: publicationNames.value[publicationcode] || publicationcode,
-            issuenumber,
+            shortIssuenumber,
             shortIssuecode,
             collectionIssues: collectionIssues[idx]!,
             partInfo: {

@@ -16,15 +16,15 @@ export const getUserPurchase = async (id: number | null, userId: number) =>
 export const deleteIssues = async (
   userId: number,
   publicationcode: string,
-  issueNumbers: string[],
+  shortIssuenumbers: string[],
 ) => {
   const [country, magazine] = publicationcode.split("/");
   await prismaDm.issue.deleteMany({
     where: {
       country,
       magazine,
-      issuenumber: {
-        in: issueNumbers,
+      shortIssuenumber: {
+        in: shortIssuenumbers,
       },
       userId,
     },

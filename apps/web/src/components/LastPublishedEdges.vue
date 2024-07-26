@@ -24,7 +24,7 @@
         <Issue
           :publicationcode="edge.publicationcode"
           :publicationname="publicationNames[edge.publicationcode]!"
-          :issuenumber="edge.issuenumber"
+          :short-issuenumber="edge.shortIssuenumber!"
           hide-condition
         >
           <Ago :timestamp="new Date(edge.creationDate).getTime()" />

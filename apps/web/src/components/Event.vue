@@ -53,7 +53,7 @@
           publicationNames[collectionUpdateEvent.publicationcode]!
         "
         :publicationcode="collectionUpdateEvent.publicationcode"
-        :issuenumber="collectionUpdateEvent.issuenumber"
+        :short-issuenumber="collectionUpdateEvent.shortIssuenumber"
         hide-condition
         :flex="false"
       />
@@ -76,7 +76,7 @@
               publicationNames[edgeEvent.edges[0].publicationcode]!
             "
             :publicationcode="edgeEvent.edges[0].publicationcode"
-            :issuenumber="edgeEvent.edges[0].issuenumber"
+            :short-issuenumber="edgeEvent.edges[0].shortIssuenumber"
             hide-condition
             :flex="false"
           />&nbsp;<OtherIssues
@@ -99,7 +99,9 @@
           publicationNames[collectionSubscriptionAdditionEvent.publicationcode]!
         "
         :publicationcode="collectionSubscriptionAdditionEvent.publicationcode"
-        :issuenumber="collectionSubscriptionAdditionEvent.issuenumber"
+        :short-issuenumber="
+          collectionSubscriptionAdditionEvent.shortIssuenumber
+        "
         hide-condition
         :flex="false"
       />

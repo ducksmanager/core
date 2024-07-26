@@ -38,7 +38,7 @@ export default abstract class {
         {
           shortIssuecode: string;
           publicationcode: string,
-          issuenumber: string;
+          shortIssuenumber: string;
           title: string | null;
         }[]
       >,
@@ -46,7 +46,7 @@ export default abstract class {
   ) => void;
   abstract getIssueDetails: (
     publicationcode: string,
-    issuenumber: string,
+    shortIssuenumber: string,
     callback: (value: { releaseDate: string; entries: SimpleEntry[] }) => void,
   ) => void;
   abstract getIssueCoverDetailsByPublicationcode: (

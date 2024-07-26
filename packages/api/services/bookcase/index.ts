@@ -40,7 +40,7 @@ export default (io: Server) => {
               issue.Pays AS countryCode,
               issue.Magazine AS magazineCode,
               CONCAT(issue.Pays, '/', issue.Magazine) AS publicationcode,
-              issue.Numero AS issuenumber,
+              issue.short_issuenumber AS shortIssuenumber,
               IFNULL(edgeDuplicate.NumeroReference, issue.Numero_nospace) AS issuenumberReference,
               edge.ID AS edgeId,
               edge.DateAjout AS creationDate,

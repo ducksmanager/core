@@ -13,7 +13,7 @@
           <Issue
             :publicationcode="edge.publicationcode"
             :publicationname="publicationNames[edge.publicationcode]!"
-            :issuenumber="edge.issuenumber"
+            :short-issuenumber="edge.shortIssuenumber!"
             hide-condition
           />
         </div>
@@ -138,7 +138,7 @@
       <Book
         v-if="currentEdgeOpened"
         :publicationcode="currentEdgeOpened.publicationcode"
-        :issuenumber="currentEdgeOpened.issuenumber"
+        :short-issuenumber="currentEdgeOpened.shortIssuenumber"
         @close-book="currentEdgeOpened = null"
       />
       <Bookcase
@@ -183,8 +183,9 @@ const {
   popularIssuesInCollectionWithoutEdge,
 } = storeToRefs(collection());
 
-const { fetchPublicationNames, addIssueNumbers, fetchIssueNumbers } = coa();
-const { publicationNames, issueNumbers } = storeToRefs(coa());
+const { fetchPublicationNames, addShortIssuenumbers, fetchIssueNumbers } =
+  coa();
+const { publicationNames, shortIssuenumbers } = storeToRefs(coa());
 
 const { loadBookcase, loadBookcaseOptions, loadBookcaseOrder } = bookcase();
 const {
@@ -202,7 +203,7 @@ let edgesUsingSprites = $ref<{ [edgeId: number]: string }>({});
 const currentEdgeOpened = $shallowRef<BookcaseEdgeWithPopularity | null>(null);
 let currentEdgeHighlighted = $ref<number | null>(null);
 let hasPublicationNames = $ref(false);
-let hasIssueNumbers = $ref(false);
+let hasIssuenumbers = $ref(false);
 const showShareButtons = $ref(false);
 let userPoints = $ref<{ [contribution: string]: number } | null>(null);
 
@@ -243,15 +244,21 @@ const sortedBookcase = $computed(
   () =>
     bookcaseWithPopularities.value &&
     bookcaseOrder.value &&
-    hasIssueNumbers &&
+    hasIssuenumbers &&
     [...bookcaseWithPopularities.value].sort(
       (
-        { publicationcode: publicationcode1, issuenumber: issueNumber1 },
-        { publicationcode: publicationcode2, issuenumber: issueNumber2 },
+        {
+          publicationcode: publicationcode1,
+          shortIssuenumber: shortIssuenumber1,
+        },
+        {
+          publicationcode: publicationcode2,
+          shortIssuenumber: shortIssuenumber2,
+        },
       ) => {
-        if (!issueNumbers.value[publicationcode1]) return -1;
+        if (!shortIssuenumbers.value[publicationcode1]) return -1;
 
-        if (!issueNumbers.value[publicationcode2]) return 1;
+        if (!shortIssuenumbers.value[publicationcode2]) return 1;
 
         const publicationOrderSign = Math.sign(
           bookcaseOrder.value!.indexOf(publicationcode1) -
@@ -260,8 +267,12 @@ const sortedBookcase = $computed(
         return (
           publicationOrderSign ||
           Math.sign(
-            issueNumbers.value[publicationcode1].indexOf(issueNumber1) -
-              issueNumbers.value[publicationcode2].indexOf(issueNumber2),
+            shortIssuenumbers.value[publicationcode1].indexOf(
+              shortIssuenumber1,
+            ) -
+              shortIssuenumbers.value[publicationcode2].indexOf(
+                shortIssuenumber2,
+              ),
           )
         );
       },
@@ -272,7 +283,7 @@ const highlightIssue = (issue: SimpleIssue) => {
     thisBookcase.value?.find(
       (issueInCollection) =>
         issue.publicationcode === issueInCollection.publicationcode &&
-        issue.issuenumber === issueInCollection.issuenumber,
+        issue.shortIssuenumber === issueInCollection.shortIssuenumber,
     )?.id || null;
 };
 
@@ -286,12 +297,12 @@ watch(
       const nonObviousPublicationIssueNumbers = newValue.filter(
         (publicationcode) =>
           thisBookcase.value?.some(
-            ({ publicationcode: issuePublicationcode, issuenumber }) =>
+            ({ publicationcode: issuePublicationcode, shortIssuenumber }) =>
               issuePublicationcode === publicationcode &&
-              !/^[0-9]+$/.test(issuenumber),
+              !/^[0-9]+$/.test(shortIssuenumber),
           ),
       );
-      addIssueNumbers(
+      addShortIssuenumbers(
         newValue
           .filter(
             (publicationcode) =>
@@ -307,9 +318,12 @@ watch(
                       ({ publicationcode: issuePublicationCode }) =>
                         issuePublicationCode === publicationcode,
                     )
-                    .map(({ issuenumber }) => issuenumber)
-                    .sort((issuenumber, issuenumber2) =>
-                      Math.sign(parseInt(issuenumber) - parseInt(issuenumber2)),
+                    .map(({ shortIssuenumber }) => shortIssuenumber)
+                    .sort((shortIssuenumber, shortIssuenumber2) =>
+                      Math.sign(
+                        parseInt(shortIssuenumber) -
+                          parseInt(shortIssuenumber2),
+                      ),
                     ) || [],
               },
             }),
@@ -317,7 +331,7 @@ watch(
           ),
       );
       await fetchIssueNumbers(nonObviousPublicationIssueNumbers);
-      hasIssueNumbers = true;
+      hasIssuenumbers = true;
     }
   },
   { immediate: true },

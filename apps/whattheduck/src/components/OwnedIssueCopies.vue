@@ -3,12 +3,12 @@
     <ion-row v-if="!isOfflineMode">
       <ion-col size="12" style="height: 100%"
         ><img v-if="fullUrl" :src="coverUrl" />
-        <ion-chip v-if="extraIssuenumbers.length">+&nbsp;{{ extraIssuenumbers.length }}</ion-chip></ion-col
+        <ion-chip v-if="extraShortIssuenumbers.length">+&nbsp;{{ extraShortIssuenumbers.length }}</ion-chip></ion-col
       >
     </ion-row>
     <ion-row
       ><ion-col size="12">
-        <ion-segment v-if="!extraIssuenumbers.length" v-model="currentCopyIndex">
+        <ion-segment v-if="!extraShortIssuenumbers.length" v-model="currentCopyIndex">
           <ion-segment-button v-for="(_, idx) in 3" :id="idx" :value="idx" v-show="copies[idx]">
             <template v-if="copies[idx]">
               <ion-label
@@ -35,8 +35,10 @@
           color="danger"
           size="small"
           v-if="currentCopyIndex !== undefined && !isOfflineMode"
-          ><template v-if="extraIssuenumbers.length">{{
-            t('Retirer ces {numberOfIssues} numéros de la collection', { numberOfIssues: extraIssuenumbers.length + 1 })
+          ><template v-if="extraShortIssuenumbers.length">{{
+            t('Retirer ces {numberOfIssues} numéros de la collection', {
+              numberOfIssues: extraShortIssuenumbers.length + 1,
+            })
           }}</template>
           <template v-else>{{ t('Retirer de la collection') }}</template></ion-button
         >
@@ -68,18 +70,18 @@ import { wtdcollection } from '~/stores/wtdcollection';
 const { updateCollectionSingleIssue, updateCollectionMultipleIssues } = wtdcollection();
 const { issuesByShortIssuecode } = storeToRefs(wtdcollection());
 const { fetchCoverUrlsByShortIssuecodes } = coa();
-const { isOfflineMode, currentNavigationItem, isCoaView, publicationcode, issuenumber, extraIssuenumbers } =
+const { isOfflineMode, currentNavigationItem, isCoaView, publicationcode, shortIssuenumber, extraShortIssuenumbers } =
   storeToRefs(app());
 
 const fullUrl = ref<string>();
 
-const shortIssuecode = computed(() => `${publicationcode.value} ${issuenumber.value}`);
+const shortIssuecode = computed(() => `${publicationcode.value} ${shortIssuenumber.value}`);
 
 watch(
-  issuenumber,
+  shortIssuenumber,
   async () => {
     const covers = await fetchCoverUrlsByShortIssuecodes([shortIssuecode.value]);
-    fullUrl.value = covers.covers![issuenumber.value!]?.fullUrl;
+    fullUrl.value = covers.covers![shortIssuenumber.value!]?.fullUrl;
   },
   { immediate: true },
 );
@@ -121,16 +123,16 @@ const addCopy = () => {
 };
 
 const submitIssueCopies = async () => {
-  if (extraIssuenumbers.value.length) {
+  if (extraShortIssuenumbers.value.length) {
     await updateCollectionMultipleIssues({
       publicationcode: publicationcode.value!,
-      issuenumbers: [issuenumber.value!, ...extraIssuenumbers.value],
+      shortIssuenumbers: [shortIssuenumber.value!, ...extraShortIssuenumbers.value],
       ...copies.value[0],
     });
   } else {
     await updateCollectionSingleIssue({
       publicationcode: publicationcode.value!,
-      issuenumber: issuenumber.value!,
+      shortIssuenumber: shortIssuenumber.value!,
       copies: copies.value,
     });
   }

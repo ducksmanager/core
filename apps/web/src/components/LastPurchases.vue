@@ -27,11 +27,11 @@
         </template>
         <template #content>
           <Issue
-            v-for="{ publicationcode, issuenumber } in issues"
-            :key="`purchase-${purchaseIndex}-issue-${publicationcode}-${issuenumber}`"
+            v-for="{ publicationcode, shortIssuenumber } in issues"
+            :key="`purchase-${purchaseIndex}-issue-${publicationcode}-${shortIssuenumber}`"
             :publicationcode="publicationcode"
             :publicationname="publicationNames[publicationcode]!"
-            :issuenumber="issuenumber"
+            :short-issuenumber="shortIssuenumber!"
             :no-wrap="false"
           />
         </template>

@@ -4,7 +4,7 @@
       :publicationcode="publicationcode"
       :publicationname="publicationName || publicationcode"
       display-class="d-inline"
-    />{{ issuenumber }}
+    />{{ shortIssuenumber }}
     <slot name="title-suffix" />
     <slot />
   </div>
@@ -16,7 +16,7 @@ import { stores as webStores } from "~web";
 
 const props = defineProps<{
   publicationcode: string | null;
-  issuenumber: string | null;
+  shortIssuenumber: string | null;
   noWrap?: boolean;
 }>();
 

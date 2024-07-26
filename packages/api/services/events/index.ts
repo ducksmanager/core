@@ -99,13 +99,13 @@ const retrieveCollectionUpdates = async (): Promise<CollectionUpdateEvent[]> =>
         HAVING COUNT(Numero) > 0
     `
   ).map((event) => {
-    const [publicationcode, issuenumber] =
+    const [publicationcode, shortIssuenumber] =
       event.exampleIssue.split(/\/(?=[^/]+$)/);
     return {
       ...mapUsers<CollectionUpdateEvent>(event),
       numberOfIssues: event.numberOfIssues,
-      publicationcode: publicationcode || "",
-      issuenumber: issuenumber || "",
+      publicationcode,
+      shortIssuenumber,
     } as CollectionUpdateEvent;
   });
 
@@ -116,7 +116,7 @@ const retrieveCollectionSubscriptionAdditions = async (): Promise<
     await prismaDm.$queryRaw<CollectionSubscriptionAdditionEventRaw[]>`
         SELECT 'subscription_additions'                    as type,
                CONCAT(numeros.Pays, '/', numeros.Magazine) AS publicationcode,
-               numeros.Numero                              AS issuenumber,
+               numeros.short_issuenumber                   AS shortIssuenumber,
                GROUP_CONCAT(numeros.ID_Utilisateur)        AS users,
                UNIX_TIMESTAMP(DateAjout)                   AS timestamp
         FROM dm.numeros
@@ -148,19 +148,19 @@ const retrieveEdgeCreations = async (): Promise<EdgeCreationEvent[]> =>
                CONCAT('[', GROUP_CONCAT(json_object(
                        'publicationcode',
                        publicationcode,
-                       'issuenumber',
-                       issuenumber
+                       'shortIssuenumber',
+                       shortIssuenumber
                    )), ']')                 AS edges,
                UNIX_TIMESTAMP(creationDate) AS timestamp,
                users
         from (SELECT tp.publicationcode,
-                     tp.issuenumber,
+                     tp.short_issuenumber AS shortIssuenumber,
                      tp.dateajout                       AS creationDate,
                      GROUP_CONCAT(DISTINCT tpc.ID_user) AS users
               FROM dm.tranches_pretes tp
                        INNER JOIN dm.users_contributions tpc ON tpc.ID_tranche = tp.ID
               WHERE tp.dateajout > DATE_ADD(NOW(), INTERVAL -1 MONTH)
-                AND NOT (tp.publicationcode = 'fr/JM' AND tp.issuenumber REGEXP '^[0-9]+$')
+                AND NOT (tp.publicationcode = 'fr/JM' AND tp.short_issuenumber REGEXP '^[0-9]+$')
                 AND NOT (tp.publicationcode = 'be/MMN')
                 AND NOT (tp.publicationcode = 'it/TL')
                 AND NOT (tp.publicationcode = 'se/WDS')

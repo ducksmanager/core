@@ -304,10 +304,10 @@ const isSaleDisabledGlobally = $computed(
   () => !userIdsWhoSentRequestsForAllSelected.length,
 );
 
-const issuenumbers = $computed(() =>
+const shortIssuenumbers = $computed(() =>
   isSingleIssueSelected
-    ? [(copyState as IssueWithPublicationcodeOptionalId).issuenumber]
-    : (copyState as CollectionUpdateMultipleIssues).issuenumbers,
+    ? [(copyState as IssueWithPublicationcodeOptionalId).shortIssuenumber]
+    : (copyState as CollectionUpdateMultipleIssues).shortIssuenumbers,
 );
 
 const collectionForCurrentPublication = $computed(() =>
@@ -412,16 +412,21 @@ const formatDate = (value: string) =>
   /\d{4}-\d{2}-\d{2}/.test(value) ? value : today;
 
 const issueIds = $computed((): (number | null)[] =>
-  issuenumbers && collectionForCurrentPublication
+  shortIssuenumbers && collectionForCurrentPublication
     ? isSingleIssueSelected
       ? [
           collectionForCurrentPublication
-            ?.filter(({ issuenumber }) => issuenumber === issuenumbers[0])
+            ?.filter(
+              ({ shortIssuenumber }) =>
+                shortIssuenumber === shortIssuenumbers[0],
+            )
             .find((_, currentCopyIndex) => copyIndex === currentCopyIndex!)
             ?.id || null,
         ]
       : collectionForCurrentPublication
-          ?.filter(({ issuenumber }) => issuenumbers.includes(issuenumber))
+          ?.filter(({ shortIssuenumber }) =>
+            shortIssuenumbers.includes(shortIssuenumber),
+          )
           .map(({ id }) => id || null)
     : [] || [],
 );

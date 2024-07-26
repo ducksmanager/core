@@ -23,12 +23,12 @@
     <div
       v-for="{
         publicationcode,
-        issuenumber,
+        shortIssuenumber,
         oldestdate,
         score,
         stories,
       } in sortedSuggestions!.issues"
-      :key="`${publicationcode} ${issuenumber}`"
+      :key="`${publicationcode} ${shortIssuenumber}`"
     >
       <div
         class="suggestions pt-2"
@@ -53,7 +53,7 @@
               :publicationname="
                 sortedSuggestions!.publicationTitles[publicationcode]!
               "
-              :issuenumber="issuenumber"
+              :short-issuenumber="shortIssuenumber"
               no-wrap
             >
               <template #title-suffix>
@@ -69,7 +69,7 @@
         </div>
       </div>
       <StoryList
-        :key="`${publicationcode} ${issuenumber}-stories`"
+        :key="`${publicationcode} ${shortIssuenumber}-stories`"
         :authors="sortedSuggestions!.authors"
         :stories="stories"
         :story-details="sortedSuggestions!.storyDetails"

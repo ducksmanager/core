@@ -11,7 +11,7 @@ export default (socket: Socket<Events>) => {
     const issuesForSale = await getIssuesForSale(socket.data.user!.id);
     if (
       !Object.values(issuesForSale).some((publicationSales) =>
-        publicationSales.some((issue) => issue.userId === sellerId),
+        publicationSales!.some((issue) => issue.userId === sellerId),
       )
     ) {
       callback({ error: "Invalid seller ID", errorDetails: String(sellerId) });

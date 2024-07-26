@@ -1,6 +1,6 @@
 export interface SimplePopularity {
   country: string;
   magazine: string;
-  issuenumber: string;
+  shortIssuenumber: string;
   popularity: number;
 }

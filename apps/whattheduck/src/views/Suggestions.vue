@@ -85,7 +85,7 @@ const formattedSuggestions = computed(
   () =>
     sortedSuggestions.value &&
     Object.values(sortedSuggestions.value!.issues).map(
-      ({ stories, publicationcode, oldestdate, score, issuenumber }) => ({
+      ({ stories, publicationcode, oldestdate, score, shortIssuenumber }) => ({
         countrycode: publicationcode.split('/')[0],
         publicationName: sortedSuggestions.value!.publicationTitles[publicationcode]!,
         releaseDate: oldestdate,
@@ -103,7 +103,7 @@ const formattedSuggestions = computed(
           },
           {} as Record<string, FormattedSuggestion>,
         ),
-        issuenumber,
+        shortIssuenumber,
         collectionIssues: [],
       }),
     ),

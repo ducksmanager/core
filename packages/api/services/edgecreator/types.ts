@@ -12,7 +12,7 @@ export const unassignedEdgeFields = {
   id: true,
   country: true,
   magazine: true,
-  issuenumber: true,
+  shortIssuenumber: true,
   photos: {
     include: {
       elementImage: true,
@@ -26,7 +26,7 @@ export default abstract class {
   static namespaceEndpoint = namespaceEndpoint;
   abstract submitEdge: (
     publicationcode: string,
-    issuenumber: string,
+    shortIssuenumber: string,
     callback: (value: { url: string }) => void,
   ) => void;
   abstract getModelContributors: (
@@ -40,22 +40,20 @@ export default abstract class {
 
   abstract publishEdge: (
     data: {
-      publicationcode: string;
-      issuenumber: string;
+      shortIssuecode: string;
       designers: string[];
       photographers: string[];
     },
     callback: (
       data: Errorable<
         {
-          publicationcode: string;
-          issuenumber: string;
+          shortIssuecode: string;
           isNew: boolean;
           edgeId: number;
           contributors: number[];
           url: string;
         },
-        "Invalid publication code"
+        "Invalid issue code"
       >,
     ) => void,
   ) => void;
@@ -78,14 +76,12 @@ export default abstract class {
     callback: (data: Pick<elementImage, "id" | "fileName">) => void,
   ) => void;
   abstract getModel: (
-    publicationcode: string,
-    issuenumber: string,
+    shortIssuecode: string,
     callback: (data: edgeModel | null) => void,
   ) => void;
 
   abstract sendNewEdgePhotoEmail: (
-    publicationcode: string,
-    issuenumber: string,
+    shortIssuecode: string,
     callback: (data: { url: string }) => void,
   ) => void;
   abstract createElementImage: (

@@ -2,20 +2,20 @@
   <div :class="`d-${noWrap ? 'inline' : 'block'}`">
     <router-link
       :class="{ clickable, flex }"
-      :to="`/collection/show/${publicationcode}#${issuenumber}`"
+      :to="`/collection/show/${publicationcode}#${shortIssuenumber}`"
     >
       <span v-if="!hideCondition" class="me-1 d-flex"
         ><Condition
           v-once
           :is-public="isPublic"
           :publicationcode="publicationcode"
-          :issuenumber="issuenumber"
+          :short-issuenumber="shortIssuenumber"
       /></span>
       <Publication
         :publicationcode="publicationcode"
         :publicationname="publicationname || publicationcode"
         display-class="d-inline"
-      />{{ issuenumber }}
+      />{{ shortIssuenumber }}
       <slot name="title-suffix" />
     </router-link>
     <slot />
@@ -32,7 +32,7 @@ const {
 } = defineProps<{
   publicationcode: string;
   publicationname: string | null;
-  issuenumber: string;
+  shortIssuenumber: string;
   clickable?: boolean;
   hideCondition?: boolean;
   noWrap?: boolean;
