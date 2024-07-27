@@ -6,7 +6,7 @@
     @items-filtered="filteredIssuenumbers = $event"
   >
     <template v-if="currentIssueViewMode.id === 'list'" #row-prefix="{ item }">
-      <ion-checkbox v-if="selectedIssuenumbers" :checked="selectedIssuenumbers.includes(item.issuenumber)"
+      <ion-checkbox v-if="selectedIssuenumbers" :checked="selectedIssuenumbers.includes(item.issuenumber!)"
         >&nbsp;</ion-checkbox
       >
       <Condition v-if="'condition' in item && item.condition" :value="item.condition" />
@@ -15,9 +15,12 @@
     <template v-if="currentIssueViewMode.id === 'list'" #row-label="{ item }">
       <Issue v-bind="item" />
     </template>
-    <template #row-suffix="{ item }">
+    <template #row-suffix="{ item }" v-if="!isCoaView">
       <template v-if="'issueDate' in item && item.issueDate">
         <ion-icon :ios="calendarOutline" :md="calendarSharp" />&nbsp;{{ item.issueDate }}
+      </template>
+      <template v-if="'isToRead' in item && item.isToRead">
+        &nbsp;<ion-icon style="color: green" :ios="bookmarkOutline" :md="bookmarkSharp" />
       </template>
     </template>
     <template v-if="currentIssueViewMode.id === 'edges'">
@@ -41,7 +44,7 @@
             ><ion-img
               @click="currentNavigationItem = key"
               :src="`${COVER_ROOT_URL}${item.cover}`"
-              :alt="item.issuenumber"
+              :alt="item.issuenumber!"
             ></ion-img></ion-col></ion-row
       ></ion-grid>
     </template>
@@ -49,7 +52,7 @@
 </template>
 
 <script setup lang="ts">
-import { calendarOutline, calendarSharp } from 'ionicons/icons';
+import { bookmarkOutline, bookmarkSharp, calendarOutline, calendarSharp } from 'ionicons/icons';
 import type { issue } from '~prisma-clients/extended/dm.extends';
 import { stores as webStores, components as webComponents } from '~web';
 
@@ -88,7 +91,7 @@ defineSlots<{
   rowLabel: { text: string };
 }>();
 
-const getItemTextFn = (item: (typeof items)['value'][0]['item']) => item.issuenumber;
+const getItemTextFn = (item: (typeof items)['value'][0]['item']) => item.issuenumber!;
 
 const hasCoaData = computed(() => !!coaStore.issuesWithTitles?.[publicationcode.value]);
 
@@ -126,10 +129,10 @@ const items = computed(() =>
           }[]
         >((acc, item) => {
           const userIssuesForThisIssue = userIssues.value
-            .filter(({ issuenumber: userIssueNumber }) => item.issuenumber === userIssueNumber)
+            .filter(({ issuenumber: userShortIssuenumber }) => item.issuenumber === userShortIssuenumber)
             .map((item) => ({
-              key: item.shortIssuecode,
-              keyInList: item.issuenumber,
+              key: item.issuecode,
+              keyInList: item.issuenumber!,
               item,
             }));
 
@@ -139,7 +142,7 @@ const items = computed(() =>
               ? userIssuesForThisIssue
               : [
                   {
-                    key: item.shortIssuecode,
+                    key: item.issuecode,
                     keyInList: item.issuenumber,
                     item,
                   },
@@ -147,7 +150,7 @@ const items = computed(() =>
           ];
         }, [])
       : (userIssues.value || []).map((issue) => ({
-          key: issue.shortIssuecode,
+          key: issue.issuecode,
           keyInList: issue.issuenumber,
           item: issue,
         }))
@@ -159,8 +162,11 @@ const sortedItems = computed(() =>
     .map(({ key, keyInList, item }) => ({
       key,
       keyInList,
-      item,
-      indexInCoaList: coaIssuenumbers.value!.indexOf(item.issuenumber),
+      item: {
+        ...item,
+        issuenumber: item.issuenumber!,
+      },
+      indexInCoaList: coaIssuenumbers.value!.indexOf(item.issuenumber!),
       isOwned: (item as (typeof userIssues.value)[0]).condition !== undefined,
     }))
 
@@ -191,7 +197,7 @@ const sortedItems = computed(() =>
 const sortedItemsForBookcase = computed(() =>
   sortedItems.value.map(({ item }) => ({
     publicationcode: item.publicationcode!,
-    issuenumber: item.issuenumber,
+    issuenumber: item.issuenumber!,
     issueCondition: (item as (typeof userIssues.value)[0]).condition,
   })),
 );
@@ -205,7 +211,7 @@ const getSortedItemsWithCovers = async () => {
     key,
     item: {
       ...item,
-      cover: coverUrls[item.issuenumber]!.fullUrl,
+      cover: coverUrls[item.issuenumber!]!.fullUrl,
     },
   }));
 };

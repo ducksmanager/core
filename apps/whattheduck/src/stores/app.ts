@@ -6,7 +6,16 @@ import type useDmSocket from '~web/src/composables/useDmSocket';
 import usePersistedData from '~/composables/usePersistedData';
 
 export const NAVIGATION_ITEM_REGEX =
-  /^(?:$|(?<countrycode>[^/]+)(?:$|(?:\/(?<magazinecode>[^ ]+)(?:$|(?: (?<issuenumber>.+?)(?:,(?<extra_issuenumbers>.*))?)))))$/;
+  /^(?:$|(?<countrycode>[^/]+)(?:$|(?:\/(?<magazinecode>[^ ]+)(?:$|(?: (?<issuenumber>.+?)(?:,(?<extraIssuenumbers>.*))?)))))$/;
+
+export interface Option {
+  id: string;
+  label: string;
+  textPrefix?: string;
+  icon?: { color?: string; negate?: boolean; ios: string; md: string };
+  showIfOffline?: boolean;
+  getTextToCopy?: () => Promise<string>;
+}
 
 export const app = defineStore('app', () => {
   const offlineBannerHeight = ref(0);
@@ -30,7 +39,7 @@ export const app = defineStore('app', () => {
 
   const selectedIssuenumbers = ref<string[] | null>(null);
 
-  const issueViewModes = [
+  const issueViewModes: Option[] = [
     { id: 'list', label: 'List', icon: { ios: '/icons/list.svg', md: '/icons/list.svg' } },
     { id: 'edges', label: 'Edges', icon: { ios: '/icons/edges.svg', md: '/icons/edges.svg' } },
     {
@@ -52,17 +61,47 @@ export const app = defineStore('app', () => {
 
   const currentIssueViewMode = ref<(typeof issueViewModes)[number]>(issueViewModes[0]);
 
-  const filters = [
+  const filters: Option[] = [
     { id: 'all', label: 'All' },
-    { id: 'unreadBooksOnly', label: 'Unread books only', icon: { ios: bookmarkOutline, md: bookmarkOutline } },
+    {
+      id: 'unreadBooksOnly',
+      label: 'Unread books only',
+      icon: { color: 'green', ios: bookmarkOutline, md: bookmarkOutline },
+    },
     {
       id: 'readBooksOnly',
       label: 'Read books only',
-      icon: { negate: true, ios: bookmarkOutline, md: bookmarkOutline },
+      icon: { color: 'green', negate: true, ios: bookmarkOutline, md: bookmarkOutline },
     },
   ] as const;
 
   const currentFilter = ref<(typeof filters)[number]>(filters[0]);
+
+  const copyListModes: Option[] = [
+    {
+      id: 'owned',
+      label: 'Copy owned issues',
+      textPrefix: 'Owned issues -',
+      showIfOffline: true,
+      // FIXME can't deconstruct collection() using storeToRefs
+      getTextToCopy: async () => collection().issueNumbersPerPublication[publicationcode.value!].join(', '),
+    },
+    {
+      id: 'missing',
+      label: 'Copy missing issues',
+      textPrefix: 'Missing issues -',
+      showIfOffline: false,
+      getTextToCopy: async () => {
+        await coa().fetchIssueNumbers([publicationcode.value!]);
+        return coa()
+          .issuenumbers[publicationcode.value!].filter(
+            // FIXME can't deconstruct collection() using storeToRefs
+            (issuenumber) => !collection().issueNumbersPerPublication[publicationcode.value!].includes(issuenumber),
+          )
+          .join(', ');
+      },
+    },
+  ] as const;
 
   usePersistedData({
     token,
@@ -83,7 +122,7 @@ export const app = defineStore('app', () => {
         countrycode?: string;
         magazinecode?: string;
         issuenumber?: string;
-        extra_issuenumbers?: string;
+        extraIssuenumbers?: string;
       },
   );
 
@@ -110,33 +149,9 @@ export const app = defineStore('app', () => {
       : null,
   );
   const issuenumber = computed(() => navigationItemGroups.value.issuenumber);
-  const extraIssuenumbers = computed(() => navigationItemGroups.value.extra_issuenumbers?.split(',') || []);
+  const extraIssuenumbers = computed(() => navigationItemGroups.value.extraIssuenumbers?.split(',') || []);
 
   const allowMultipleSelection = computed(() => publicationcode.value !== undefined);
-
-  const copyListModes = [
-    {
-      id: 'owned',
-      label: 'Copy owned issues',
-      textPrefix: 'Owned issues -',
-      showIfOffline: true,
-      getTextToCopy: async () => collection().issueNumbersPerPublication[publicationcode.value!].join(', '),
-    },
-    {
-      id: 'missing',
-      label: 'Copy missing issues',
-      textPrefix: 'Missing issues -',
-      showIfOffline: false,
-      getTextToCopy: async () => {
-        await coa().fetchIssueNumbers([publicationcode.value!]);
-        return coa()
-          .issueNumbers[publicationcode.value!].filter(
-            (issuenumber) => !collection().issueNumbersPerPublication[publicationcode.value!].includes(issuenumber),
-          )
-          .join(', ');
-      },
-    },
-  ] as const;
 
   return {
     socket,
