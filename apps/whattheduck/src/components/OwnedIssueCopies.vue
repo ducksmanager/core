@@ -8,8 +8,12 @@
     </ion-row>
     <ion-row
       ><ion-col size="12">
-        <ion-segment v-if="!extraIssuenumbers.length" v-model="currentCopyIndex">
-          <ion-segment-button v-for="(_, idx) in 3" :id="idx" :value="idx" v-show="copies[idx]">
+        <ion-segment
+          v-if="!extraIssuenumbers.length"
+          v-model="currentCopyIndex"
+          :style="copies.length ? undefined : { display: 'initial' }"
+        >
+          <ion-segment-button v-for="(_, idx) in 3" :id="`copy-${idx}`" :value="idx" v-show="copies[idx]">
             <template v-if="copies[idx]">
               <ion-label
                 ><div>
@@ -99,25 +103,18 @@ watch(
 );
 
 const currentCopyIndex = ref<number | undefined>(undefined);
-watch(
-  copies,
-  () => {
-    currentCopyIndex.value = copies.value.length ? 0 : undefined;
-  },
-  { immediate: true },
-);
 
 const addCopy = () => {
-  copies.value.push({
-    id: null,
-    condition: 'indefini',
-    purchaseId: null,
-    isToRead: false,
-    isOnSale: false,
-  });
-  nextTick().then(() => {
-    currentCopyIndex.value = copies.value.length - 1;
-  });
+  copies.value = [
+    ...copies.value,
+    {
+      id: null,
+      condition: 'indefini',
+      purchaseId: null,
+      isToRead: false,
+      isOnSale: false,
+    },
+  ];
 };
 
 const submitIssueCopies = async () => {

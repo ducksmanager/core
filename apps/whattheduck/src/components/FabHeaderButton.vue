@@ -34,7 +34,7 @@ const value = defineModel<Item>('value');
 withDefaults(
   defineProps<{
     disabled?: boolean;
-    icon: { ios: string; md: string, negate?: boolean };
+    icon: { ios: string; md: string; negate?: boolean };
     options: Item[];
   }>(),
   {
