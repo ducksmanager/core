@@ -8,8 +8,8 @@
     "client_*"
   ],
   "scripts": {
-    "prisma-pull-generate": "ls schemas/*.prisma | while read -r schema; do pnpx prisma db pull --schema=$schema; done && pnpm prisma-generate",
-    "prisma-generate": "ls schemas/*.prisma | while read -r schema; do bunx prisma generate --schema=$schema; done && rm -rf dist",
+    "prisma-pull-generate": "ls schemas/*/schema.prisma | while read -r schema; do pnpx prisma db pull --schema=$schema; done && pnpm prisma-generate",
+    "prisma-generate": "ls schemas/*/schema.prisma | while read -r schema; do bunx prisma generate --schema=$schema; done && rm -rf dist",
     "dev": "docker compose -f docker-compose-dev.yml up --force-recreate -d && bash wait-until-db-ready.bash",
     "build": "bun build --target node --minify --sourcemap index.ts --outfile dist/index.mjs",
     "lint": "prettier -w schemas"

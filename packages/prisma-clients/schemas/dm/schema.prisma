@@ -1,6 +1,6 @@
 generator client {
   provider        = "prisma-client-js"
-  output          = "../client_dm"
+  output          = "../../client_dm"
   previewFeatures = ["omitApi"]
   binaryTargets   = ["native", "debian-openssl-1.1.x", "debian-openssl-3.0.x", "darwin-arm64", "linux-arm64-openssl-1.1.x", "linux-arm64-openssl-3.0.x"]
 }
@@ -118,7 +118,6 @@ model issue {
   country        String          @map("Pays") @db.VarChar(3)
   magazine       String          @map("Magazine") @db.VarChar(10)
   issuenumber    String          @map("Numero") @db.VarChar(12)
-  // issueNumberNoSpace String?         @map("Numero_nospace") @db.VarChar(12) @ignored
   condition      issue_condition @default(indefini) @map("Etat")
   purchaseId     Int?            @default(-1) @map("ID_Acquisition")
   isOnSale       Boolean         @map("AV")
@@ -126,14 +125,13 @@ model issue {
   isSubscription Boolean         @default(false) @map("Abonnement")
   userId         Int             @map("ID_Utilisateur")
   creationDate   DateTime?       @default(now()) @map("DateAjout") @db.Timestamp(0)
-  shortIssuecode String?         @map("short_issuecode") @db.VarChar(25)
+  issuecode      String          @map("issuecode") @db.VarChar(25)
 
   @@index([country, magazine, issuenumber, userId], map: "Numero_Utilisateur")
-  // @@index([country, magazine, issueNumberNoSpace, userId], map: "Numero_nospace_Utilisateur")
   @@index([country, magazine, issuenumber], map: "Pays_Magazine_Numero")
   @@index([creationDate, country, magazine, issuenumber], map: "Pays_Magazine_Numero_DateAjout")
   @@index([userId], map: "Utilisateur")
-  @@index([shortIssuecode], map: "numeros_short_issuecode_index")
+  @@index([issuecode], map: "numeros_issuecode_index")
   @@map("numeros")
 }
 
@@ -167,7 +165,7 @@ model edge {
   creationDate        DateTime           @default(now()) @map("dateajout") @db.Timestamp(0)
   points              Int?
   slug                String?            @db.VarChar(30)
-  shortIssuecode      String?            @unique(map: "tranches_pretes_issuecode_uindex") @map("short_issuecode") @db.VarChar(23)
+  issuecode           String?            @unique(map: "tranches_pretes_issuecode_uindex") @map("issuecode") @db.VarChar(23)
   users_contributions userContribution[]
 
   @@unique([publicationcode, issuenumber], map: "tranchespretes_unique")
@@ -316,13 +314,13 @@ model users_points {
 }
 
 model userSuggestionNotification {
-  id             Int       @id @default(autoincrement()) @map("ID")
-  userId         Int       @map("ID_User")
-  shortIssuecode String    @map("short_issuecode") @db.VarChar(12)
-  text           String?   @db.Text
-  date           DateTime? @default(now()) @db.DateTime(0)
+  id        Int       @id @default(autoincrement()) @map("ID")
+  userId    Int       @map("ID_User")
+  issuecode String    @map("issuecode") @db.VarChar(12)
+  text      String?   @db.Text
+  date      DateTime? @default(now()) @db.DateTime(0)
 
-  @@unique([userId, shortIssuecode], map: "users_notifications__index_user_issue")
+  @@unique([userId, issuecode], map: "users_notifications__index_user_issue")
   @@map("users_suggestions_notifications")
 }
 

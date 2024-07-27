@@ -1,6 +1,6 @@
 generator client {
   provider      = "prisma-client-js"
-  output        = "../client_coa"
+  output        = "../../client_coa"
   binaryTargets = ["native", "debian-openssl-1.1.x", "debian-openssl-3.0.x", "linux-arm64-openssl-1.1.x", "linux-arm64-openssl-3.0.x"]
 }
 
@@ -210,7 +210,6 @@ model inducks_inputfile {
 
 model inducks_issue {
   issuecode           String                      @id @db.VarChar(19)
-  shortIssuecode      String                      @unique(map: "inducks_issue_unique_short_issuecode") @map("short_issuecode") @db.VarChar(28)
   issuerangecode      String?                     @db.VarChar(15)
   publicationcode     String?                     @db.VarChar(12)
   issuenumber         String?                     @db.VarChar(13)
@@ -280,10 +279,10 @@ model inducks_issuequotation {
   estimationMax   Float?    @map("estimationmax") @db.Float
   scrapeDate      DateTime? @map("scrapedate") @db.DateTime(0)
   source          String    @db.VarChar(15)
-  shortIssuecode  String?   @unique(map: "inducks_issuequotation__uindex_short_issuecode") @map("short_issuecode") @db.VarChar(28)
+  issuecode       String?   @unique(map: "inducks_issuequotation__uindex_issuecode") @map("issuecode") @db.VarChar(28)
 
   @@index([publicationcode], map: "inducks_issuequotation__index_publication")
-  @@index([shortIssuecode, source], map: "inducks_issuequotation__uindex_short_issuecode_source")
+  @@index([issuecode, source], map: "inducks_issuequotation__uindex_issuecode_source")
 }
 
 model inducks_issuerange {

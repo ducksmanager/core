@@ -1,6 +1,6 @@
 generator client {
   provider      = "prisma-client-js"
-  output        = "../client_cover_info"
+  output        = "../../client_cover_info"
   binaryTargets = ["native", "debian-openssl-1.1.x", "debian-openssl-3.0.x", "linux-arm64-openssl-1.1.x", "linux-arm64-openssl-3.0.x"]
 }
 
@@ -19,11 +19,11 @@ model coverImport {
 }
 
 model cover {
-  id             Int    @id @default(autoincrement()) @map("ID")
-  shortIssuecode String @map("short_issuecode") @db.VarChar(17)
-  sitecode       String @db.VarChar(11)
-  url            String @db.VarChar(98)
+  id        Int    @id @default(autoincrement()) @map("ID")
+  issuecode String @map("issuecode") @db.VarChar(17)
+  sitecode  String @db.VarChar(11)
+  url       String @db.VarChar(98)
 
-  @@unique([shortIssuecode, url], map: "uniquefieldset_covers")
+  @@unique([issuecode, url], map: "uniquefieldset_covers")
   @@map("covers")
 }
