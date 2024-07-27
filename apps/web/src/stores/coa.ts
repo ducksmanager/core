@@ -174,7 +174,6 @@ export const coa = defineStore("coa", () => {
             !Object.keys(issuesWithTitles.value).includes(publicationcode),
         ),
       );
-      debugger;
       Object.assign(issuesWithTitles.value, results);
     },
     fetchIssueNumbers = async function (publicationCodes: string[]) {
