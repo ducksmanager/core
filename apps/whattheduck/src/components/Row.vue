@@ -19,7 +19,7 @@ import { app } from '~/stores/app';
 
 const props = defineProps<{
   id: string;
-  class: Record<string, boolean>;
+  class: Record<string, boolean> | '';
   keyInList?: string;
 }>();
 
