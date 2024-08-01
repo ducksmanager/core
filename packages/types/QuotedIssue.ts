@@ -1,11 +1,9 @@
-import { inducks_issuequotation } from "~prisma-clients/client_coa";
-import { issue } from "~prisma-clients/client_dm";
+import type { inducks_issuequotation } from "~prisma-clients/schemas/coa";
+import type { issue } from "~prisma-clients/schemas/dm";
 
 export type QuotedIssue = Pick<
   inducks_issuequotation,
-  | "shortIssuecode"
-  | "publicationcode"
-  | "issuenumber"
+  | "issuecode"
   | "estimationMin"
   | "estimationMax"
 > &

@@ -5,7 +5,7 @@ import type {
   edgeModel,
   elementImage,
   Prisma,
-} from "~prisma-clients/client_edgecreator";
+} from "~prisma-clients/schemas/edgecreator";
 import type { Errorable } from "~socket.io-services/types";
 
 export const unassignedEdgeFields = {
@@ -40,22 +40,20 @@ export default abstract class {
 
   abstract publishEdge: (
     data: {
-      publicationcode: string;
-      issuenumber: string;
+      issuecode: string;
       designers: string[];
       photographers: string[];
     },
     callback: (
       data: Errorable<
         {
-          publicationcode: string;
-          issuenumber: string;
+          issuecode: string;
           isNew: boolean;
           edgeId: number;
           contributors: number[];
           url: string;
         },
-        "Invalid publication code"
+        "Invalid publication code and issue number"
       >,
     ) => void,
   ) => void;
@@ -78,8 +76,7 @@ export default abstract class {
     callback: (data: Pick<elementImage, "id" | "fileName">) => void,
   ) => void;
   abstract getModel: (
-    publicationcode: string,
-    issuenumber: string,
+    issuecode: string,
     callback: (data: edgeModel | null) => void,
   ) => void;
 

@@ -20,7 +20,7 @@ import type {
 } from "~dm-types/events/EdgeCreationEvent";
 import type { MedalEvent } from "~dm-types/events/MedalEvent";
 import type { SignupEvent } from "~dm-types/events/SignupEvent";
-import { prismaDm } from "~prisma-clients";
+import { prismaClient as prismaDm } from "~prisma-clients/schemas/dm";
 
 import type Events from "./types";
 import { namespaceEndpoint } from "./types";
@@ -69,9 +69,9 @@ const retrieveSignups = async (): Promise<SignupEvent[]> =>
   (
     await prismaDm.$queryRaw<AbstractEventRaw[]>`
         SELECT 'signup' as type, users.ID as userId, UNIX_TIMESTAMP(DateInscription) AS timestamp
-        FROM dm.users
+        FROM users
         WHERE EXISTS(
-                SELECT 1 FROM dm.numeros WHERE users.ID = numeros.ID_Utilisateur
+                SELECT 1 FROM numeros WHERE users.ID = numeros.ID_Utilisateur
             )
           AND DateInscription > date_add(now(), interval -1 month)
           AND users.username NOT LIKE 'test%'
@@ -86,11 +86,11 @@ const retrieveCollectionUpdates = async (): Promise<CollectionUpdateEvent[]> =>
                UNIX_TIMESTAMP(DateAjout) AS timestamp,
                COUNT(Numero)             AS numberOfIssues,
                (SELECT CONCAT(Pays, '/', Magazine, '/', Numero)
-                FROM dm.numeros n
+                FROM numeros n
                 WHERE n.ID = numeros.ID
                 LIMIT 1)                 AS exampleIssue
-        FROM dm.numeros
-                 INNER JOIN dm.users ON numeros.ID_Utilisateur = users.ID
+        FROM numeros
+                 INNER JOIN users ON numeros.ID_Utilisateur = users.ID
         WHERE DateAjout > DATE_ADD(NOW(), INTERVAL -1 MONTH)
           AND users.username <> 'demo'
           AND users.username NOT LIKE 'test%'
@@ -115,14 +115,13 @@ const retrieveCollectionSubscriptionAdditions = async (): Promise<
   (
     await prismaDm.$queryRaw<CollectionSubscriptionAdditionEventRaw[]>`
         SELECT 'subscription_additions'                    as type,
-               CONCAT(numeros.Pays, '/', numeros.Magazine) AS publicationcode,
-               numeros.Numero                              AS issuenumber,
-               GROUP_CONCAT(numeros.ID_Utilisateur)        AS users,
+               issue.issuecode,
+               GROUP_CONCAT(ID_Utilisateur)        AS users,
                UNIX_TIMESTAMP(DateAjout)                   AS timestamp
-        FROM dm.numeros
+        FROM numeros AS issue
         WHERE DateAjout > DATE_ADD(NOW(), INTERVAL -1 MONTH)
-          AND numeros.Abonnement = 1
-        GROUP BY DATE(DateAjout), numeros.Pays, numeros.Magazine, numeros.Numero
+          AND issue.Abonnement = 1
+        GROUP BY DATE(DateAjout), issue.issuecode
     `
   ).map(mapUsers<CollectionSubscriptionAdditionEvent>);
 
@@ -133,9 +132,9 @@ const retrieveBookstoreCreations = async (): Promise<BookstoreCommentEvent[]> =>
                uc.ID_user                                          AS userId,
                bouquineries.Nom                                    AS name,
                UNIX_TIMESTAMP(bouquineries_commentaires.DateAjout) AS timestamp
-        FROM dm.bouquineries_commentaires
-                 INNER JOIN dm.bouquineries ON bouquineries_commentaires.ID_Bouquinerie = bouquineries.ID
-                 INNER JOIN dm.users_contributions uc ON bouquineries_commentaires.ID = uc.ID_bookstore_comment
+        FROM bouquineries_commentaires
+                 INNER JOIN bouquineries ON bouquineries_commentaires.ID_Bouquinerie = bouquineries.ID
+                 INNER JOIN users_contributions uc ON bouquineries_commentaires.ID = uc.ID_bookstore_comment
         WHERE bouquineries_commentaires.Actif = 1
           AND bouquineries_commentaires.DateAjout > date_add(now(), interval -1 month)
     `
@@ -157,8 +156,8 @@ const retrieveEdgeCreations = async (): Promise<EdgeCreationEvent[]> =>
                      tp.issuenumber,
                      tp.dateajout                       AS creationDate,
                      GROUP_CONCAT(DISTINCT tpc.ID_user) AS users
-              FROM dm.tranches_pretes tp
-                       INNER JOIN dm.users_contributions tpc ON tpc.ID_tranche = tp.ID
+              FROM tranches_pretes tp
+                       INNER JOIN users_contributions tpc ON tpc.ID_tranche = tp.ID
               WHERE tp.dateajout > DATE_ADD(NOW(), INTERVAL -1 MONTH)
                 AND NOT (tp.publicationcode = 'fr/JM' AND tp.issuenumber REGEXP '^[0-9]+$')
                 AND NOT (tp.publicationcode = 'be/MMN')

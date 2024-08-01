@@ -8,8 +8,7 @@
     v-if="embedded"
     :id="id"
     :src="src"
-    :publicationcode="publicationcode"
-    :issuenumber="issuenumber"
+    :issuecode="issue.issuecode"
     :sprite-path="spritePath"
     :invisible="invisible"
     :highlighted="highlighted"
@@ -24,17 +23,12 @@
     :extra-points="popularity"
   >
     <template #title>
-      <Issue
-        :publicationcode="publicationcode"
-        :issuenumber="issuenumber"
-        :publicationname="publicationNames[publicationcode] || publicationcode"
-      />
+      <Issue :issuecode="issue.issuecode" />
     </template>
     <EdgeContents
       :id="id"
       :src="src"
-      :publicationcode="publicationcode"
-      :issuenumber="issuenumber"
+      :issuecode="issue.issuecode"
       :sprite-path="spritePath"
       :invisible="invisible"
       :highlighted="highlighted"
@@ -47,14 +41,13 @@
 </template>
 
 <script setup lang="ts">
-import { issue_condition } from "~prisma-clients/extended/dm.extends";
+import type { inducks_issue } from "~prisma-clients/schemas/coa";
+import type { issue_condition } from "~prisma-clients/schemas/dm";
 
 const SPRITES_ROOT = "https://res.cloudinary.com/dl7hskxab/image/sprite/";
 const {
   creationDate = null,
-  issuenumber,
-  issuenumberReference = null,
-  publicationcode,
+  issue,
   issueCondition,
   spritePath = null,
   popularity = null,
@@ -64,9 +57,7 @@ const {
   orientation = "vertical",
 } = defineProps<{
   id: string;
-  publicationcode: string;
-  issuenumber: string;
-  issuenumberReference?: string;
+  issue: inducks_issue;
   issueCondition?: issue_condition;
   creationDate?: string;
   popularity?: number | null;
@@ -89,14 +80,12 @@ const CLOUDINARY_ROTATED_URL =
 
 const { publicationNames } = storeToRefs(coa());
 
-let countryCode = $computed(() => publicationcode.split("/")[0]),
-  magazineCode = $computed(() => publicationcode.split("/")[1]),
+let countryCode = $computed(() => issue.publicationcode.split("/")[0]),
+  magazineCode = $computed(() => issue.publicationcode.split("/")[1]),
   src = $computed(() =>
     spritePath && !ignoreSprite
       ? `${SPRITES_ROOT}${spritePath}.png`
-      : `${orientation === "vertical" ? import.meta.env.VITE_EDGES_ROOT : CLOUDINARY_ROTATED_URL}${countryCode}/gen/${magazineCode}.${(
-          issuenumberReference || issuenumber
-        ).replaceAll(
+      : `${orientation === "vertical" ? import.meta.env.VITE_EDGES_ROOT : CLOUDINARY_ROTATED_URL}${countryCode}/gen/${magazineCode}.${issue.issuenumber.replaceAll(
           " ",
           "",
         )}.png?${creationDate ? new Date(creationDate).getTime() : "default"}`,

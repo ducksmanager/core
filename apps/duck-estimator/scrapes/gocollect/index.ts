@@ -5,6 +5,7 @@ import { firefox } from "playwright-firefox";
 import { getScrapeCacheTime, syncScrapeCache } from "~/cache";
 import { createQuotations } from "~/coa";
 import { readCsvMapping } from "~/csv";
+import {prismaClient} from '~prisma-clients/schemas/coa'
 
 const MAPPING_FILE = "scrapes/gocollect/coa-mapping.csv";
 const ROOT_URL = "https://gocollect.com/app/comics/";
@@ -106,6 +107,12 @@ export async function scrape() {
           break;
         }
         const issuenumber = issuenumberMatch[0];
+        const issue = await prismaClient.inducks_issue.findFirstOrThrow({
+          select: {issuecode: true },
+          where: {
+            publicationcode, issuenumber
+          }
+        })
 
         const issueQuotationRows = await issuePage.$$(
           '[wire\\:key="view-state-company-overview-1"] > .group'
@@ -161,8 +168,7 @@ export async function scrape() {
           estimationMax = estimationMin;
         }
         quotations.push({
-          publicationcode,
-          issuenumber,
+          issuecode: issue.issuecode,
           estimationMin: Math.round(
             estimationMin.reduce((acc, value) => acc + value, 0) /
               estimationMin.length

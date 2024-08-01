@@ -41,7 +41,7 @@
           <ion-item
             v-for="issue of selectedStory.issues"
             @click="
-              currentNavigationItem = issue.shortIssuecode;
+              currentNavigationItem = issue.issuecode;
               router.push('/collection');
             "
           >
@@ -57,7 +57,7 @@
 import { arrowBackOutline, arrowBackSharp } from 'ionicons/icons';
 import type { SimpleStory } from '~dm-types/SimpleStory';
 import type { StorySearchResults } from '~dm-types/StorySearchResults';
-import type { issue_condition } from '~prisma-clients/client_dm';
+import type { issue_condition } from '~prisma-clients/schemas/dm';
 import { stores } from '~web';
 import { dmSocketInjectionKey } from '~web/src/composables/useDmSocket';
 
@@ -72,10 +72,10 @@ const {
 
 const { t } = useI18n();
 
-const { issuesByShortIssuecode } = storeToRefs(wtdcollection());
+const { issuesByIssuecode } = storeToRefs(wtdcollection());
 const coaStore = stores.coa();
-const { fetchPublicationNames } = coaStore;
-const { publicationNames } = storeToRefs(coaStore);
+const { fetchPublicationNames, fetchIssuecodeDetails } = coaStore;
+const { publicationNames, issuecodeDetails } = storeToRefs(coaStore);
 const { currentNavigationItem } = storeToRefs(app());
 const router = useRouter();
 
@@ -100,18 +100,25 @@ watch(storyTitle, async (newValue) => {
   selectedStory.value = null;
   const { results: data }: StorySearchResults<true> = await coaServices.searchStory([newValue], true);
 
+  await fetchIssuecodeDetails(
+    data
+      .map((story) => story.issues)
+      .flat()
+      .map(({ issuecode }) => issuecode),
+  );
+
   await fetchPublicationNames(
     data
       .map((story) => story.issues)
       .flat()
-      .map(({ publicationcode }) => publicationcode),
+      .map(({ issuecode }) => issuecodeDetails.value![issuecode]?.publicationcode),
   );
 
   storyResults.value = {
     results: data.map((story) => {
       const collectionIssues = story.issues.map((storyIssue) => {
         const { part, estimatedpanels, total_estimatedpanels } = storyIssue;
-        return (issuesByShortIssuecode.value![storyIssue.shortIssuecode] || []).map((issue) => ({
+        return (issuesByIssuecode.value![storyIssue.issuecode] || []).map((issue) => ({
           ...issue,
           partInfo: { part, estimatedpanels, total_estimatedpanels },
         }));
@@ -122,31 +129,22 @@ watch(storyTitle, async (newValue) => {
         ...story,
         collectionConditions,
         issues: story.issues.map(
-          (
-            {
+          ({ issuecode, estimatedpanels, total_estimatedpanels, part, storyversioncode }, idx) => {
+            const publicationcode = issuecodeDetails.value![issuecode]!.publicationcode!;
+            return {
+              countrycode: publicationcode.split('/')[0],
               publicationcode,
-              issuenumber,
-              shortIssuecode,
-              estimatedpanels,
-              total_estimatedpanels,
-              part,
-              storyversioncode,
-            },
-            idx,
-          ) => ({
-            publicationcode,
-            countrycode: publicationcode.split('/')[0],
-            publicationName: publicationNames.value[publicationcode] || publicationcode,
-            issuenumber,
-            shortIssuecode,
-            collectionIssues: collectionIssues[idx]!,
-            partInfo: {
-              estimatedpanels,
-              total_estimatedpanels,
-              part,
-              storyversioncode,
-            },
-          }),
+              publicationName: publicationNames.value![publicationcode],
+              issuecode,
+              collectionIssues: collectionIssues[idx]!,
+              partInfo: {
+                estimatedpanels,
+                total_estimatedpanels,
+                part,
+                storyversioncode,
+              },
+            };
+          },
         ),
       };
     }),

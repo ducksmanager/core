@@ -172,7 +172,7 @@
 import MapboxGeocoder from "@mapbox/mapbox-gl-geocoder";
 import { MapboxMap, MapboxMarker, MapboxPopup } from "vue-mapbox-ts";
 
-import { SimpleBookstore } from "~dm-types/SimpleBookstore";
+import type { SimpleBookstore } from "~dm-types/SimpleBookstore";
 
 import { dmSocketInjectionKey } from "../composables/useDmSocket";
 

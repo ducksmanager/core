@@ -278,7 +278,7 @@ const emit = defineEmits<{
   (event: "duplicate-step" | "remove-step", stepNumber: number): void;
   (event: "add-step", component: string): void;
 }>();
-const issueNumbers = computed(() => mainStore.issuenumbers);
+const issuenumbers = computed(() => mainStore.issuenumbers);
 
 const inputValues = computed(
   (): Record<number, Record<string, PossibleInputValueType[]>> =>
@@ -327,12 +327,12 @@ const otherColors = computed(() =>
   stepNumbers.value.map((currentStepNumber) => ({
     sameIssuenumber: stepStore.colors.filter(
       ({ issuenumber: thisIssuenumber, stepNumber: thisStepNumber }) =>
-        issueNumbers.value.includes(thisIssuenumber) &&
+        issuenumbers.value.includes(thisIssuenumber) &&
         thisStepNumber !== currentStepNumber,
     ),
     differentIssuenumber: stepStore.colors.filter(
       ({ issuenumber: thisIssuenumber }) =>
-        !issueNumbers.value.includes(thisIssuenumber),
+        !issuenumbers.value.includes(thisIssuenumber),
     ),
   })),
 );

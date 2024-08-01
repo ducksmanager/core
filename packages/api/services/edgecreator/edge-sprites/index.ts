@@ -1,8 +1,9 @@
 import { v2 as cloudinaryV2 } from "cloudinary";
 import type { Socket } from "socket.io";
 
-import { prismaDm } from "~prisma-clients";
-import type { edge } from "~prisma-clients/extended/dm.extends";
+import { prismaClient as prismaCoa } from "~prisma-clients/schemas/coa";
+import type { edge } from "~prisma-clients/schemas/dm";
+import { prismaClient as prismaDm } from "~prisma-clients/schemas/dm";
 
 import type Events from "../types";
 const SPRITE_SIZES = [10, 20, 50, 100, "full"];
@@ -43,17 +44,27 @@ export default (socket: Socket<Events>) => {
         },
       });
 
-      for (const edgeNotInCloudinary of edgesNotInCloudinary) {
-        const [countryCode, magazineCode] =
-          edgeNotInCloudinary.publicationcode.split("/");
+      const coaEdgesNotInCloudinary = (await prismaCoa.inducks_issue.findMany({
+        where: {
+          issuecode: {
+            in: edgesNotInCloudinary.map(({ issuecode }) => issuecode),
+          }
+        },
+      })).groupBy("issuecode");
+
+      for (const {id, slug, issuecode} of edgesNotInCloudinary) {
+
+      const { publicationcode, issuenumber } = coaEdgesNotInCloudinary[issuecode]!;
+      const [countrycode, magazinecode] = publicationcode.split('/')
+
 
         console.log(
-          `Uploading edge with ID ${edgeNotInCloudinary.id} and slug ${edgeNotInCloudinary.slug}...`,
+          `Uploading edge with ID ${id} and slug ${slug}...`,
         );
         await cloudinaryV2.uploader.upload(
-          `${process.env.VITE_EDGES_ROOT}${countryCode}/gen/${magazineCode}.${edgeNotInCloudinary.issuenumber}.png`,
+          `${process.env.VITE_EDGES_ROOT}${countrycode}/gen/${magazinecode}.${issuenumber}.png`,
           {
-            public_id: edgeNotInCloudinary.slug!,
+            public_id: slug!,
           },
         );
       }
@@ -117,17 +128,30 @@ const updateTags = async (edges: edge[]) => {
     },
   });
 
+  const edgeIssues = (await prismaCoa.inducks_issue.findMany({
+    select: {
+      issuenumber: true,
+      publicationcode: true,
+      issuecode: true,
+    },
+    where: {
+      issuecode: {
+        in: edges.map(({ issuecode }) => issuecode),
+      },
+    },
+  })).groupBy("issuecode");
+
   const tagsToAdd: { [spriteName: string]: Tag } = {};
   const insertOperations = [];
 
   for (const edge of edges) {
+    const {publicationcode, issuenumber} = edgeIssues[edge.issuecode]!;
     for (const spriteSize of SPRITE_SIZES) {
-      const { publicationcode } = edge;
       const spriteName = getSpriteName(
         publicationcode,
         spriteSize === "full"
           ? "full"
-          : getSpriteRange(edge.issuenumber, spriteSize as number),
+          : getSpriteRange(issuenumber, spriteSize as number),
       );
 
       let actualSpriteSize;

@@ -467,47 +467,39 @@ create
     definer = root@`%` procedure reset_issue_popularities()
 BEGIN
 
-    UPDATE numeros n
+    UPDATE numeros issue
         INNER JOIN (
-            SELECT DISTINCT n_inner.Pays,
-                            n_inner.Magazine,
-                            n_inner.Numero
-            FROM numeros n_inner,
-                 numeros n2_inner
+            SELECT DISTINCT n_inner.issuecode
+            FROM numeros issue_inner,
+                 numeros issue2_inner
             WHERE n_inner.NUMERO NOT REGEXP '^[0-9]+$'
               AND n2_inner.NUMERO NOT REGEXP '^[0-9]+$'
-              AND LOWER(n_inner.Numero) = LOWER(n2_inner.Numero)
-              AND n_inner.Numero != n2_inner.Numero
+              AND LOWER(n_inner.issuecode) = LOWER(n2_inner.issuecode)
+              AND n_inner.issuecode != n2_inner.issuecode
         ) n2
-    SET n.Numero = LOWER(n.Numero)
-    WHERE n.Pays = n2.Pays
-      AND n.Magazine = n2.Magazine
-      AND n.Numero = n2.Numero;
+    SET n.issuecode = LOWER(n.issuecode)
+    WHERE n.issuecode = n2.issuecode;
 
 
     TRUNCATE numeros_popularite;
-    INSERT INTO numeros_popularite(Pays, Magazine, Numero, Popularite)
-    SELECT DISTINCT n.Pays,
-                    n.Magazine,
-                    n.Numero_nospace,
+    INSERT INTO numeros_popularite(issuecode, Popularite)
+    SELECT DISTINCT n.issuecode,
                     COUNT(*) AS Popularite
-    FROM numeros n
+    FROM numeros issue
     WHERE n.ID_Utilisateur NOT IN (
         SELECT u.ID
         FROM users u
         WHERE u.username LIKE 'test%'
     )
       AND n.DateAjout < DATE_SUB(NOW(), INTERVAL -1 MONTH)
-    GROUP BY n.Pays, n.Magazine, n.Numero_nospace;
+    GROUP BY n.issuecode;
 
 
     UPDATE tranches_pretes tp
     SET points = (
         SELECT GREATEST(1, Popularite)
         FROM numeros_popularite np
-        WHERE np.Pays = SUBSTRING(tp.publicationcode, 1, POSITION('/' IN tp.publicationcode) - 1)
-          AND np.Magazine = SUBSTRING(tp.publicationcode, POSITION('/' IN tp.publicationcode) + 1)
-          AND np.Numero = tp.issuenumber
+        WHERE np.issuecode = tp.issuecode
     )
     WHERE points IS NULL;
 END;

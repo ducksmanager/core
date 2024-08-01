@@ -10,12 +10,7 @@
           v-for="edge in lastPublishedEdgesForCurrentUser"
           :key="`last-published-${edge.id}`"
         >
-          <Issue
-            :publicationcode="edge.publicationcode"
-            :publicationname="publicationNames[edge.publicationcode]!"
-            :issuenumber="edge.issuenumber"
-            hide-condition
-          />
+          <Issue :issuecode="edge.issuecode" hide-condition />
         </div>
       </div>
       <b-alert variant="info" :model-value="true"
@@ -137,18 +132,19 @@
       </div>
       <Book
         v-if="currentEdgeOpened"
-        :publicationcode="currentEdgeOpened.publicationcode"
-        :issuenumber="currentEdgeOpened.issuenumber"
+        :issuecode="currentEdgeOpened.issuecode"
         @close-book="currentEdgeOpened = null"
       />
       <Bookcase
         v-if="bookcaseOptions && sortedBookcase?.length"
         :bookcase-textures="bookcaseOptions.textures"
         :with-all-copies="bookcaseOptions.showAllCopies"
-        :current-edge-highlighted="currentEdgeHighlighted"
-        :current-edge-opened="currentEdgeOpened"
-        :edges-using-sprites="edgesUsingSprites"
-        :sorted-bookcase="sortedBookcase"
+        v-bind="{
+          currentEdgeHighlighted,
+          currentEdgeOpened,
+          edgesUsingSprites,
+          sortedBookcase,
+        }"
         @open-book="
           (edge: BookcaseEdgeWithPopularity) => (currentEdgeOpened = edge)
         "
@@ -165,10 +161,10 @@
 </template>
 
 <script setup lang="ts">
-import { BookcaseEdgeSprite } from "~dm-types/BookcaseEdge";
-import { SimpleIssue } from "~dm-types/SimpleIssue";
+import type { BookcaseEdgeSprite } from "~dm-types/BookcaseEdge";
+import type { SimpleIssue } from "~dm-types/SimpleIssue";
 
-import { BookcaseEdgeWithPopularity } from "../stores/bookcase";
+import type { BookcaseEdgeWithPopularity } from "../stores/bookcase";
 
 const route = useRoute();
 
@@ -183,8 +179,8 @@ const {
   popularIssuesInCollectionWithoutEdge,
 } = storeToRefs(collection());
 
-const { fetchPublicationNames, addIssueNumbers, fetchIssueNumbers } = coa();
-const { publicationNames, issueNumbers } = storeToRefs(coa());
+const { fetchPublicationNames, fetchIssuecodesByPublicationcode } = coa();
+const { publicationNames, issuecodesByPublicationcode } = storeToRefs(coa());
 
 const { loadBookcase, loadBookcaseOptions, loadBookcaseOrder } = bookcase();
 const {
@@ -246,12 +242,12 @@ const sortedBookcase = $computed(
     hasIssueNumbers &&
     [...bookcaseWithPopularities.value].sort(
       (
-        { publicationcode: publicationcode1, issuenumber: issueNumber1 },
-        { publicationcode: publicationcode2, issuenumber: issueNumber2 },
+        { publicationcode: publicationcode1, issuecode: issuecode1 },
+        { publicationcode: publicationcode2, issuecode: issuecode2 },
       ) => {
-        if (!issueNumbers.value[publicationcode1]) return -1;
+        if (!issuecodesByPublicationcode.value[publicationcode1]) return -1;
 
-        if (!issueNumbers.value[publicationcode2]) return 1;
+        if (!issuecodesByPublicationcode.value[publicationcode2]) return 1;
 
         const publicationOrderSign = Math.sign(
           bookcaseOrder.value!.indexOf(publicationcode1) -
@@ -260,8 +256,12 @@ const sortedBookcase = $computed(
         return (
           publicationOrderSign ||
           Math.sign(
-            issueNumbers.value[publicationcode1].indexOf(issueNumber1) -
-              issueNumbers.value[publicationcode2].indexOf(issueNumber2),
+            issuecodesByPublicationcode.value[publicationcode1].indexOf(
+              issuecode1,
+            ) -
+              issuecodesByPublicationcode.value[publicationcode2].indexOf(
+                issuecode2,
+              ),
           )
         );
       },
@@ -270,9 +270,7 @@ const sortedBookcase = $computed(
 const highlightIssue = (issue: SimpleIssue) => {
   currentEdgeHighlighted =
     thisBookcase.value?.find(
-      (issueInCollection) =>
-        issue.publicationcode === issueInCollection.publicationcode &&
-        issue.issuenumber === issueInCollection.issuenumber,
+      (issueInCollection) => issue.issuecode === issueInCollection.issuecode,
     )?.id || null;
 };
 
@@ -283,40 +281,7 @@ watch(
       await fetchPublicationNames(newValue);
       hasPublicationNames = true;
 
-      const nonObviousPublicationIssueNumbers = newValue.filter(
-        (publicationcode) =>
-          thisBookcase.value?.some(
-            ({ publicationcode: issuePublicationcode, issuenumber }) =>
-              issuePublicationcode === publicationcode &&
-              !/^[0-9]+$/.test(issuenumber),
-          ),
-      );
-      addIssueNumbers(
-        newValue
-          .filter(
-            (publicationcode) =>
-              !nonObviousPublicationIssueNumbers.includes(publicationcode),
-          )
-          .reduce(
-            (acc, publicationcode) => ({
-              ...acc,
-              ...{
-                [publicationcode]:
-                  thisBookcase.value
-                    ?.filter(
-                      ({ publicationcode: issuePublicationCode }) =>
-                        issuePublicationCode === publicationcode,
-                    )
-                    .map(({ issuenumber }) => issuenumber)
-                    .sort((issuenumber, issuenumber2) =>
-                      Math.sign(parseInt(issuenumber) - parseInt(issuenumber2)),
-                    ) || [],
-              },
-            }),
-            {},
-          ),
-      );
-      await fetchIssueNumbers(nonObviousPublicationIssueNumbers);
+      await fetchIssuecodesByPublicationcode(newValue);
       hasIssueNumbers = true;
     }
   },

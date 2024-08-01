@@ -49,14 +49,14 @@ alias: [/collection/abonnements]
       </p>
     </b-alert>
     <Subscription
-      v-for="subscription in subscriptions"
-      :key="subscription.id"
-      :is-edit="currentSubscription?.id === subscription.id"
-      :subscription="subscription"
-      @start-edit="currentSubscription = subscription"
+      v-for="thisSubscription in subscriptions"
+      :key="thisSubscription.id"
+      :is-edit="currentSubscription?.id === thisSubscription.id"
+      :subscription="thisSubscription"
+      @start-edit="currentSubscription = thisSubscription"
       @cancel-edit="currentSubscription = null"
       @edit="editSubscription"
-      @delete="deleteSubscription(subscription.id)"
+      @delete="deleteSubscription(thisSubscription.id)"
     />
     <b-row v-if="currentSubscription === null" class="mt-3 align-items-center">
       <b-col>
@@ -82,10 +82,8 @@ alias: [/collection/abonnements]
 <script setup lang="ts">
 import dayjs from "dayjs";
 
-import {
-  SubscriptionTransformed,
-  SubscriptionTransformedStringDates,
-} from "~/stores/collection";
+import type { SubscriptionTransformedStringDates } from "~/stores/collection";
+import type { subscription } from "~prisma-clients/schemas/dm";
 type AssociatedPublication = {
   referencePublicationcode: string;
   publicationcode: string;
@@ -105,9 +103,9 @@ const newSubscription = $ref({
   publicationcode: "fr/SPG",
   startDate: new Date(),
   endDate: dayjs(new Date()).add(1, "year").toDate(),
-} as SubscriptionTransformed);
+} as subscription);
 
-let currentSubscription = $ref<SubscriptionTransformed | null>(null);
+let currentSubscription = $ref<subscription | null>(null);
 
 let hasPublicationNames = $ref(false);
 let currentAssociatedPublications = $ref<AssociatedPublication[]>([]);
@@ -119,14 +117,14 @@ const associatedPublications = $ref([
 ] as AssociatedPublication[]);
 
 const toSubscriptionWithStringDates = (
-  subscription: SubscriptionTransformed,
+  subscription: subscription,
 ): SubscriptionTransformedStringDates => ({
   ...subscription,
   startDate: subscription.startDate.toISOString().split("Z")[0],
   endDate: subscription.endDate.toISOString().split("Z")[0],
 });
 
-const createSubscription = async (subscription: SubscriptionTransformed) => {
+const createSubscription = async (subscription: subscription) => {
   await collectionServices.createSubscription(
     toSubscriptionWithStringDates(subscription),
   );
@@ -146,7 +144,7 @@ const createSubscriptionLike = async (
   });
 };
 
-const editSubscription = async (subscription: SubscriptionTransformed) => {
+const editSubscription = async (subscription: subscription) => {
   await collectionServices.updateSubscription(
     subscription.id,
     toSubscriptionWithStringDates(subscription),

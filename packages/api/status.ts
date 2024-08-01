@@ -1,12 +1,20 @@
 import axios from "axios";
 
 import {
-  prismaCoa,
-  prismaCoverInfo,
-  prismaDm,
-  prismaDmStats,
-  prismaEdgeCreator,
-} from "~prisma-clients";
+  prismaClient as prismaCoa,
+} from "~prisma-clients/schemas/coa";
+import {
+  prismaClient as prismaCoverInfo,
+} from "~prisma-clients/schemas/cover_info";
+import {
+  prismaClient as prismaDm,
+} from "~prisma-clients/schemas/dm";
+import {
+  prismaClient as prismaDmStats,
+} from "~prisma-clients/schemas/dm_stats";
+import {
+  prismaClient as prismaEdgeCreator,
+} from "~prisma-clients/schemas/edgecreator";
 
 export const getDbStatus = async (): Promise<
   { error: string } | { status: "ok" }

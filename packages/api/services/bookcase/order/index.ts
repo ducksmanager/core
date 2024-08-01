@@ -1,6 +1,6 @@
 import type { Socket } from "socket.io";
 
-import { prismaDm } from "~prisma-clients";
+import { prismaClient as prismaDm } from "~prisma-clients/schemas/dm";
 
 import type Events from "../types";
 import { checkValidBookcaseUser } from "../util";
@@ -24,9 +24,9 @@ export default (socket: Socket<Events>) => {
           select: {
             publicationcode: true,
           },
-          distinct: ["country", "magazine"],
+          distinct: ["publicationcode"],
           where: { userId },
-          orderBy: [{ country: "asc" }, { magazine: "asc" }],
+          orderBy: [{ publicationcode: "asc" }],
         })
       ).map(({ publicationcode }) => publicationcode);
 

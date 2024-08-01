@@ -3,10 +3,12 @@ import https from "https";
 import type { Namespace, Server } from "socket.io";
 
 import type { SimilarImagesResult } from "~dm-types/CoverSearchResults";
-import { prismaCoa, prismaCoverInfo, prismaDm } from "~prisma-clients";
+import { prismaClient as prismaCoa } from "~prisma-clients/schemas/coa";
+import { prismaClient as prismaCoverInfo } from "~prisma-clients/schemas/cover_info";
+import { prismaClient as prismaDm } from "~prisma-clients/schemas/dm";
 
 import { getCoverUrls } from "../coa/issue-details";
-import { getQuotationsByShortIssuecodes } from "../coa/quotations";
+import { getQuotationsByissuesByIssuecodes } from "../coa/quotations";
 import type Events from "./types";
 import { namespaceEndpoint } from "./types";
 
@@ -48,15 +50,15 @@ export default (io: Server) => {
       )
         .then(async (covers) => {
           const coversIdsAndIssueCodes = covers.reduce<Record<string, number>>(
-            (acc, { id, shortIssuecode }) => ({ ...acc, [shortIssuecode]: id }),
+            (acc, { id, issuecode }) => ({ ...acc, [issuecode]: id }),
             {},
           );
           return getCoverUrls(Object.keys(coversIdsAndIssueCodes)).then(
             (coverUrls) =>
-              coverUrls.map(({ shortIssuecode, fullUrl }) => ({
-                shortIssuecode,
+              coverUrls.map(({ issuecode, fullUrl }) => ({
+                issuecode,
                 fullUrl,
-                id: coversIdsAndIssueCodes[shortIssuecode],
+                id: coversIdsAndIssueCodes[issuecode],
               })),
           );
         })
@@ -69,7 +71,7 @@ export default (io: Server) => {
           ),
         );
       const foundIssueCodes = [
-        ...new Set(coverInfos.map(({ shortIssuecode }) => shortIssuecode)),
+        ...new Set(coverInfos.map(({ issuecode }) => issuecode)),
       ];
       console.log(
         `Cover ID search: matched issue codes ${foundIssueCodes.join(",")}`,
@@ -78,32 +80,32 @@ export default (io: Server) => {
       const issues = await getIssuesFromIssueCodes(foundIssueCodes);
       console.log(`Cover ID search: matched ${coverInfos.length} issues`);
 
-      const shortIssuecodes = issues.map(({ shortIssuecode }) => shortIssuecode)
+      const issuecodes = issues.map(({ issuecode }) => issuecode)
 
-      const quotationsByShortIssuecode = await getQuotationsByShortIssuecodes(
-        shortIssuecodes,
+      const quotationsByissuesByIssuecode = await getQuotationsByissuesByIssuecodes(
+        issuecodes,
       );
 
-      const popularitiesByShortIssuecode = (await prismaDm.issue.findMany({
-        distinct: ['shortIssuecode', 'userId'],
+      const popularitiesByissuesByIssuecode = (await prismaDm.issue.findMany({
+        distinct: ['issuecode', 'userId'],
         where: {
-          shortIssuecode: {
-            in: shortIssuecodes
+          issuecode: {
+            in: issuecodes
           }
         }
-      })).reduce<Record<string, number>>((acc, {shortIssuecode}) => ({
+      })).reduce<Record<string, number>>((acc, {issuecode}) => ({
         ...acc,
-        [shortIssuecode]: (acc[shortIssuecode] || 0) + 1
+        [issuecode]: (acc[issuecode] || 0) + 1
       }), {})
 
       callback({
         covers: coverInfos.map((cover) =>
           Object.assign(cover, {
             ...issues.find(
-              ({ shortIssuecode }) => cover.shortIssuecode === shortIssuecode,
+              ({ issuecode }) => cover.issuecode === issuecode,
             )!,
-            ...quotationsByShortIssuecode[cover.shortIssuecode],
-            popularity: popularitiesByShortIssuecode[cover.shortIssuecode],
+            ...quotationsByissuesByIssuecode[cover.issuecode],
+            popularity: popularitiesByissuesByIssuecode[cover.issuecode],
           }),
         ),
       });
@@ -145,10 +147,10 @@ export default (io: Server) => {
   });
 };
 
-const getIssuesFromIssueCodes = async (foundShortIssueCodes: string[]) =>
+const getIssuesFromIssueCodes = async (foundissuesByIssuecodes: string[]) =>
   prismaCoa.inducks_issue.findMany({
     select: {
-      shortIssuecode: true,
+      issuecode: true,
       publicationcode: true,
       issuenumber: true,
     },
@@ -159,12 +161,12 @@ const getIssuesFromIssueCodes = async (foundShortIssueCodes: string[]) =>
       issuenumber: {
         not: null,
       },
-      shortIssuecode: {
-        in: foundShortIssueCodes,
+      issuecode: {
+        in: foundissuesByIssuecodes,
       },
     },
   }) as Promise<
-    { publicationcode: string; issuenumber: string; shortIssuecode: string }[]
+    { publicationcode: string; issuenumber: string; issuecode: string }[]
   >;
 
 const getIssuesCodesFromCoverIds = async (coverIds: number[]) =>

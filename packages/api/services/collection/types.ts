@@ -1,3 +1,4 @@
+import type { AugmentedIssue } from "~dm-types/AugmentedIssue";
 import type { AuthorWithUserRating } from "~dm-types/AuthorWithUserRating";
 import type {
   CollectionUpdateMultipleIssues,
@@ -7,20 +8,18 @@ import type { EdgeWithStringCreationDate } from "~dm-types/EdgeWithStringCreatio
 import type { EditSubscription } from "~dm-types/EditSubscription";
 import type { TransactionResults } from "~dm-types/TransactionResults";
 import type { UserForAccountForm } from "~dm-types/UserForAccountForm";
-import type { inducks_issuequotation } from "~prisma-clients/client_coa";
+import type { inducks_issuequotation } from "~prisma-clients/schemas/coa";
 import type {
   authorUser,
+  issue,
   issuePopularity,
   purchase,
   requestedIssue,
+  subscription,
   user,
   userOptionType,
   userPermission,
-} from "~prisma-clients/extended/dm.extends";
-import type {
-  issue,
-  subscription,
-} from "~prisma-clients/extended/dm.extends";
+} from "~prisma-clients/schemas/dm";
 import type { Errorable } from "~socket.io-services/types";
 
 export const namespaceEndpoint = "/collection";
@@ -48,7 +47,7 @@ export default abstract class {
   ) => void;
 
   abstract getIssues: (
-    callback: (data: issue[]) => void,
+    callback: (data: (AugmentedIssue<issue>)[]) => void,
   ) => void;
   abstract addOrChangeIssues: (
     data: CollectionUpdateMultipleIssues,
@@ -98,7 +97,7 @@ export default abstract class {
   ) => void;
 
   abstract getIssuesForSale: (
-    callback: (data: Record<string, issue[]>) => void,
+    callback: (data:  issue[]) => void,
   ) => void;
 
   abstract getOption: (

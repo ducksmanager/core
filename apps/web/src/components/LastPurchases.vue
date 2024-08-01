@@ -27,11 +27,9 @@
         </template>
         <template #content>
           <Issue
-            v-for="{ publicationcode, issuenumber } in issues"
-            :key="`purchase-${purchaseIndex}-issue-${publicationcode}-${issuenumber}`"
-            :publicationcode="publicationcode"
-            :publicationname="publicationNames[publicationcode]!"
-            :issuenumber="issuenumber"
+            v-for="{ issuecode } in issues"
+            :key="`purchase-${purchaseIndex}-issue-${issuecode}`"
+            :issuecode="issuecode"
             :no-wrap="false"
           />
         </template>
@@ -41,7 +39,7 @@
 </template>
 
 <script setup lang="ts">
-import { issue } from "~prisma-clients/extended/dm.extends";
+import type { issue } from "~prisma-clients/schemas/dm";
 
 const { publicationNames } = storeToRefs(coa());
 const { purchasesById, issues: allIssues } = storeToRefs(collection());

@@ -339,11 +339,11 @@ create table inducks_issuequotation
     scrapedate      datetime    null,
     source          varchar(15) not null,
     issuecode       varchar(28) as (concat(`publicationcode`, ' ', `issuenumber`)),
-    short_issuecode varchar(28) as (concat(`publicationcode`, ' ', `issuenumber`)),
+    issuecode varchar(28) as (concat(`publicationcode`, ' ', `issuenumber`)),
     constraint inducks_issuequotation__uindex_issuecode
         unique (issuecode),
-    constraint inducks_issuequotation__uindex_short_issuecode
-        unique (short_issuecode)
+    constraint inducks_issuequotation__uindex_issuecode
+        unique (issuecode)
 );
 
 create index inducks_issuequotation__index_publication

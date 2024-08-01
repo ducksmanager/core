@@ -11,27 +11,36 @@ datasource db {
 }
 
 model subscription {
-  id        Int      @id @default(autoincrement()) @map("ID")
-  userId    Int      @map("ID_Utilisateur")
-  country   String   @map("Pays") @db.VarChar(3)
-  magazine  String   @map("Magazine") @db.VarChar(6)
-  startDate DateTime @map("Date_debut") @db.Date
-  endDate   DateTime @map("Date_fin") @db.Date
-  users     user     @relation(fields: [userId], references: [id], onDelete: Cascade, map: "abonnements_users_ID_fk")
+  id              Int      @id @default(autoincrement()) @map("ID")
+  userId          Int      @map("ID_Utilisateur")
+  /// @deprecated
+  country         String   @map("Pays") @ignore @db.VarChar(3)
+  /// @deprecated
+  magazine        String   @map("Magazine") @ignore @db.VarChar(6)
+  startDate       DateTime @map("Date_debut") @db.Date
+  endDate         DateTime @map("Date_fin") @db.Date
+  publicationcode String   @default(dbgenerated("(concat(convert(`Pays` using utf8mb3),'/',convert(`Magazine` using utf8mb3)))")) @db.VarChar(10)
+  users           user     @relation(fields: [userId], references: [id], onDelete: Cascade, map: "abonnements_users_ID_fk")
 
   @@unique([country, magazine, userId, startDate, endDate], map: "abonnements_unique")
+  @@unique([publicationcode, userId, startDate, endDate], map: "abonnements_issuecode_unique")
   @@index([userId], map: "abonnements_users_ID_fk")
   @@map("abonnements")
 }
 
 model abonnements_sorties {
+  /// @deprecated
   Pays            String   @db.VarChar(3)
+  /// @deprecated
   Magazine        String   @db.VarChar(6)
+  /// @deprecated
   Numero          String   @db.VarChar(8)
   Date_sortie     DateTime @db.Date
   Numeros_ajoutes Boolean  @default(false)
+  issuecode       String   @default(dbgenerated("(concat(convert(`Pays` using utf8mb3),'/',convert(`Magazine` using utf8mb3),' ',convert(`Numero` using utf8mb3)))")) @db.VarChar(25)
 
   @@id([Pays, Magazine, Numero])
+  @@index([issuecode], map: "abonnements_sorties_issuecode_unique")
 }
 
 model purchase {
@@ -103,6 +112,7 @@ model demo {
   lastReset DateTime @map("DateDernierInit") @db.DateTime(0)
 }
 
+/// @deprecated
 model magazines {
   PaysAbrege     String   @db.VarChar(4)
   NomAbrege      String   @db.VarChar(7)
@@ -114,65 +124,92 @@ model magazines {
 }
 
 model issue {
-  id             Int             @id @default(autoincrement()) @map("ID")
-  country        String          @map("Pays") @db.VarChar(3)
-  magazine       String          @map("Magazine") @db.VarChar(10)
-  issuenumber    String          @map("Numero") @db.VarChar(12)
-  condition      issue_condition @default(indefini) @map("Etat")
-  purchaseId     Int?            @default(-1) @map("ID_Acquisition")
-  isOnSale       Boolean         @map("AV")
-  isToRead       Boolean         @default(false) @map("A_Lire")
-  isSubscription Boolean         @default(false) @map("Abonnement")
-  userId         Int             @map("ID_Utilisateur")
-  creationDate   DateTime?       @default(now()) @map("DateAjout") @db.Timestamp(0)
-  issuecode      String          @map("issuecode") @db.VarChar(25)
+  id              Int             @id @default(autoincrement()) @map("ID")
+  /// @deprecated
+  country         String          @map("Pays") @ignore @db.VarChar(3)
+  /// @deprecated
+  magazine        String          @map("Magazine") @ignore @db.VarChar(10)
+  publicationcode String          @default(dbgenerated("(concat(convert(`Pays` using utf8mb3),'/',convert(`Magazine` using utf8mb3)))")) @db.VarChar(14)
+  /// @deprecated
+  issuenumber     String          @map("Numero") @ignore @db.VarChar(12)
+  /// @deprecated
+  Numero_nospace  String?         @ignore @db.VarChar(12)
+  condition       issue_condition @default(indefini) @map("Etat")
+  purchaseId      Int?            @default(-1) @map("ID_Acquisition")
+  isOnSale        Boolean         @map("AV")
+  isToRead        Boolean         @default(false) @map("A_Lire") @db.TinyInt
+  isSubscription  Boolean         @default(false) @map("Abonnement") @db.TinyInt
+  userId          Int             @map("ID_Utilisateur")
+  creationDate    DateTime?       @default(now()) @map("DateAjout") @db.Timestamp(0)
+  issuecode       String          @default(dbgenerated("(concat(convert(`Pays` using utf8mb3),'/',convert(`Magazine` using utf8mb3),' ',`Numero`))")) @map("issuecode") @db.VarChar(25)
 
   @@index([country, magazine, issuenumber, userId], map: "Numero_Utilisateur")
   @@index([country, magazine, issuenumber], map: "Pays_Magazine_Numero")
   @@index([creationDate, country, magazine, issuenumber], map: "Pays_Magazine_Numero_DateAjout")
   @@index([userId], map: "Utilisateur")
-  @@index([issuecode], map: "numeros_issuecode_index")
+  @@index([country, magazine, Numero_nospace, userId], map: "Numero_nospace_Utilisateur")
+  @@index([issuecode], map: "issuecode")
+  @@index([issuecode, creationDate], map: "issuecode_creationdate")
+  @@index([issuecode, userId], map: "issuecode_user")
+  @@index([publicationcode, userId], map: "publication_user")
   @@map("numeros")
 }
 
 model issuePopularity {
-  country     String @map("Pays") @db.VarChar(3)
-  magazine    String @map("Magazine") @db.VarChar(6)
-  issuenumber String @map("Numero") @db.VarChar(12)
+  /// @deprecated
+  country     String @map("Pays") @ignore @db.VarChar(3)
+  /// @deprecated
+  magazine    String @map("Magazine") @ignore @db.VarChar(6)
+  /// @deprecated
+  issuenumber String @map("Numero") @ignore @db.VarChar(12)
   popularity  Int    @map("Popularite")
   id          Int    @id @default(autoincrement()) @map("ID")
+  issuecode   String @default(dbgenerated("(concat(convert(`Pays` using utf8mb3),'/',convert(`Magazine` using utf8mb3),' ',`Numero`))")) @db.VarChar(25)
 
   @@unique([country, magazine, issuenumber], map: "numeros_popularite_unique")
+  @@index([issuecode], map: "numeros_popularite_issuecode_unique")
   @@map("numeros_popularite")
 }
 
 model tranches_doublons {
-  ID               Int    @id @default(autoincrement())
-  Pays             String @db.VarChar(3)
-  Magazine         String @db.VarChar(6)
-  Numero           String @db.VarChar(12)
-  NumeroReference  String @db.VarChar(12)
-  TrancheReference Int?
+  ID                 Int    @id @default(autoincrement())
+  /// @deprecated
+  Pays               String @db.VarChar(3)
+  /// @deprecated
+  Magazine           String @db.VarChar(6)
+  /// @deprecated
+  Numero             String @db.VarChar(12)
+  /// @deprecated
+  NumeroReference    String @db.VarChar(12)
+  TrancheReference   Int?
+  issuecode          String @default(dbgenerated("(concat(convert(`Pays` using utf8mb3),'/',convert(`Magazine` using utf8mb3),' ',convert(`Numero` using utf8mb3)))")) @db.VarChar(25)
+  issuecodeReference String @default(dbgenerated("(concat(convert(`Pays` using utf8mb3),'/',convert(`Magazine` using utf8mb3),' ',convert(`NumeroReference` using utf8mb3)))")) @map("issuecode_reference") @db.VarChar(25)
 
   @@unique([Pays, Magazine, Numero], map: "tranches_doublons_Pays_Magazine_Numero_uindex")
   @@index([TrancheReference], map: "tranches_doublons_tranches_pretes_ID_fk")
+  @@index([issuecode], map: "tranches_doublons_issuecode_unique")
 }
 
 model edge {
   id                  Int                @id @default(autoincrement()) @map("ID")
   publicationcode     String             @db.VarChar(12)
-  issuenumber         String             @db.VarChar(12)
+  /// @deprecated
+  issuenumber         String             @ignore @db.VarChar(12)
   creationDate        DateTime           @default(now()) @map("dateajout") @db.Timestamp(0)
   points              Int?
   slug                String?            @db.VarChar(30)
-  issuecode           String?            @unique(map: "tranches_pretes_issuecode_uindex") @map("issuecode") @db.VarChar(23)
+  /// @deprecated
+  short_issuecode     String?            @unique(map: "tranches_pretes_short_issuecode_uindex", length: 23) @ignore @db.VarChar(25)
+  issuecode           String             @default(dbgenerated("(concat(convert(`publicationcode` using utf8mb3),' ',convert(`issuenumber` using utf8mb3)))")) @db.VarChar(25)
   users_contributions userContribution[]
 
   @@unique([publicationcode, issuenumber], map: "tranchespretes_unique")
   @@index([creationDate], map: "tranches_pretes_dateajout_index")
+  @@index([issuecode], map: "tranches_pretes_issuecode_unique")
   @@map("tranches_pretes")
 }
 
+/// @deprecated
 model tranches_pretes_contributeurs {
   publicationcode String                                     @db.VarChar(15)
   issuenumber     String                                     @db.VarChar(30)
@@ -184,6 +221,7 @@ model tranches_pretes_contributeurs {
   @@index([publicationcode, issuenumber], map: "tranches_pretes_contributeurs_publicationcode_issuenumber_index")
 }
 
+/// @deprecated
 model tranches_pretes_contributions {
   ID           Int                                        @id @default(autoincrement())
   ID_tranche   Int
@@ -230,7 +268,7 @@ model user {
   allowSharing                Boolean            @default(true) @map("AccepterPartage")
   signupDate                  DateTime           @map("DateInscription") @db.Date
   email                       String             @map("EMail") @db.VarChar(50)
-  discordId                   Int?               @map("ID_Discord")
+  discordId                   String?            @map("ID_Discord") @db.VarChar(20)
   showRecommendations         Boolean            @default(true) @map("RecommandationsListeMags")
   isBetaUser                  Boolean            @default(false) @map("BetaUser")
   showPresentationVideo       Boolean            @default(true) @map("AfficherVideo")
@@ -316,7 +354,7 @@ model users_points {
 model userSuggestionNotification {
   id        Int       @id @default(autoincrement()) @map("ID")
   userId    Int       @map("ID_User")
-  issuecode String    @map("issuecode") @db.VarChar(12)
+  issuecode String    @db.VarChar(12)
   text      String?   @db.Text
   date      DateTime? @default(now()) @db.DateTime(0)
 
@@ -328,7 +366,7 @@ model requestedIssue {
   id       Int     @id @default(autoincrement()) @map("ID")
   issueId  Int     @map("ID_Numero")
   buyerId  Int     @map("ID_Acheteur")
-  isBooked Boolean @default(false) @map("est_reserve")
+  isBooked Boolean @map("est_reserve")
   users    user    @relation(fields: [buyerId], references: [id], onUpdate: Restrict, map: "numeros_demandes_users_null_fk")
 
   @@unique([issueId, buyerId], map: "numeros_demandes_unique")

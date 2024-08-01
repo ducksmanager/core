@@ -273,6 +273,7 @@ const stepStore = step();
 
 interface ModelToClone {
   editMode: string;
+  issuecode: string;
   publicationcode: string;
   issuenumber: string;
   issuenumberEnd: string;
@@ -309,11 +310,13 @@ const addPhoto = (src: string) => {
 };
 
 const overwriteModel = async () => {
-  const { publicationcode, issuenumber } = modelToBeCloned.value!;
-  const [country, magazine] = publicationcode.split("/");
+  const { publicationcode, issuenumber, issuecode } = modelToBeCloned.value!;
   for (const targetIssuenumber of mainStore.issuenumbers) {
     try {
-      await loadModel(country, magazine, issuenumber, targetIssuenumber);
+      await loadModel(
+        { publicationcode, issuenumber, issuecode },
+        targetIssuenumber,
+      );
     } catch (e) {
       mainStore.addWarning(e as string);
     }

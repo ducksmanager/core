@@ -8,8 +8,8 @@ import PushNotifications from "@pusher/push-notifications-server";
 import dayjs from "dayjs";
 
 import { i18n } from "~/emails/email";
-import { prismaDm } from "~prisma-clients";
-import type { user } from "~prisma-clients/extended/dm.extends";
+import type { user } from "~prisma-clients/schemas/dm";
+import { prismaClient as prismaDm } from "~prisma-clients/schemas/dm";
 import {
   COUNTRY_CODE_OPTION,
   getSuggestions,
@@ -19,7 +19,7 @@ const suggestionsSince = dayjs().add(-7, "days");
 let notificationsSent = 0;
 
 const sendSuggestedIssueNotification = async (
-  shortIssuecode: string,
+  issuecode: string,
   issueTitle: string,
   storyCountPerAuthor: { [personcode: string]: number },
   userToNotify: user,
@@ -62,7 +62,7 @@ const sendSuggestedIssueNotification = async (
   );
   await prismaDm.userSuggestionNotification.create({
     data: {
-      shortIssuecode,
+      issuecode,
       text: issueTitle,
       userId: userToNotify.id,
       date: new Date(),
@@ -87,7 +87,7 @@ getSuggestions(
       Object.values(suggestionsPerUser).reduce<string[]>(
         (acc, suggestion) => [
           ...acc,
-          ...Object.values(suggestion.issues).map((issue) => issue.shortIssuecode),
+          ...Object.values(suggestion.issues).map((issue) => issue.issuecode),
         ],
         [],
       ),
@@ -97,7 +97,7 @@ getSuggestions(
   const alreadySentNotificationsPerUser = (
     await prismaDm.userSuggestionNotification.findMany({
       where: {
-        shortIssuecode: {
+        issuecode: {
           in: allSuggestedIssues,
         },
       },
@@ -105,7 +105,7 @@ getSuggestions(
   ).reduce<{ [userId: number]: string[] }>(
     (acc, notification) => ({
       [notification.userId]: [
-        ...new Set(...(acc[notification.userId] || []), notification.shortIssuecode),
+        ...new Set(...(acc[notification.userId] || []), notification.issuecode),
       ],
     }),
     {},
@@ -121,7 +121,7 @@ getSuggestions(
       (suggestion) =>
         !alreadySentNotificationsPerUser[userIdNumber] ||
         !alreadySentNotificationsPerUser[userIdNumber].includes(
-          suggestion.shortIssuecode,
+          suggestion.issuecode,
         ),
     );
 
@@ -147,7 +147,7 @@ getSuggestions(
       );
       try {
         await sendSuggestedIssueNotification(
-          suggestedIssue.shortIssuecode,
+          suggestedIssue.issuecode,
           issueTitle,
           storyCountPerAuthor,
           usersById[userIdNumber],

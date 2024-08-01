@@ -17,14 +17,15 @@
 </template>
 
 <script setup lang="ts">
-import { AbstractEvent } from "~dm-types/events/AbstractEvent";
-import { CollectionUpdateEvent } from "~dm-types/events/CollectionUpdateEvent";
-import { EdgeCreationEvent } from "~dm-types/events/EdgeCreationEvent";
+import type { AbstractEvent } from "~dm-types/events/AbstractEvent";
+import type { CollectionUpdateEvent } from "~dm-types/events/CollectionUpdateEvent";
+import type { EdgeCreationEvent } from "~dm-types/events/EdgeCreationEvent";
 
 const { fetchStats, fetchEvents } = users();
 const { events } = storeToRefs(users());
 
-const { fetchPublicationNames } = coa();
+const { fetchPublicationNames, fetchIssuecodeDetails } = coa();
+const { issuecodeDetails } = storeToRefs(coa());
 
 let isLoaded = $ref(false);
 const eventUserIds = $computed(() =>
@@ -43,17 +44,40 @@ const isEdgeCreationEvent = (event: AbstractEvent) =>
 const fetchEventsAndAssociatedData = async () => {
   await fetchEvents();
 
-  await fetchPublicationNames([
+  await fetchIssuecodeDetails([
     ...events.value
       .filter((event) => isCollectionUpdateEvent(event))
-      .map((event) => (event as CollectionUpdateEvent).publicationcode || ""),
+      .map((event) => (event as CollectionUpdateEvent).issuecode || ""),
     ...events.value
       .filter((event) => isEdgeCreationEvent(event))
       .map((event) => event as EdgeCreationEvent)
       .reduce(
         (acc, { edges }) => [
           ...acc,
-          ...edges.map(({ publicationcode }) => publicationcode),
+          ...edges.map(({ issuecode }) => issuecode),
+        ],
+        [] as string[],
+      ),
+  ]);
+
+  await fetchPublicationNames([
+    ...events.value
+      .filter((event) => isCollectionUpdateEvent(event))
+      .map(
+        (event) =>
+          issuecodeDetails.value[(event as CollectionUpdateEvent).issuecode]
+            .publicationcode || "",
+      ),
+    ...events.value
+      .filter((event) => isEdgeCreationEvent(event))
+      .map((event) => event as EdgeCreationEvent)
+      .reduce(
+        (acc, { edges }) => [
+          ...acc,
+          ...edges.map(
+            ({ issuecode }) =>
+              issuecodeDetails.value[issuecode].publicationcode,
+          ),
         ],
         [] as string[],
       ),

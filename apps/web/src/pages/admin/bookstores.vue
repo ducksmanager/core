@@ -26,8 +26,8 @@ meta:
 </template>
 
 <script setup lang="ts">
-import { SimpleBookstore } from "~dm-types/SimpleBookstore";
-import type { bookstoreComment } from "~prisma-clients/extended/dm.extends";
+import type { SimpleBookstore } from "~dm-types/SimpleBookstore";
+import type { bookstoreComment } from "~prisma-clients/schemas/dm";
 
 let bookstores = $shallowRef<SimpleBookstore[] | null>(null);
 

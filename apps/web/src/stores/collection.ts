@@ -1,32 +1,30 @@
-import CollectionServices from "~dm-services/collection/types";
-import StatsServices from "~dm-services/stats/types";
-import {
+import type CollectionServices from "~dm-services/collection/types";
+import type StatsServices from "~dm-services/stats/types";
+import type {
   CollectionUpdateMultipleIssues,
   CollectionUpdateSingleIssue,
 } from "~dm-types/CollectionUpdate";
-import {
+import type {
   authorUser,
   issue,
   purchase,
   subscription,
-} from "~prisma-clients/extended/dm.extends";
-import { EventReturnType, ScopedError } from "~socket.io-services/types";
+} from "~prisma-clients/schemas/dm";
+import type { EventReturnType, ScopedError } from "~socket.io-services/types";
 
 import useCollection from "../composables/useCollection";
 import { dmSocketInjectionKey } from "../composables/useDmSocket";
 import { bookcase } from "./bookcase";
 
-export type IssueWithPublicationcodeOptionalId = Omit<issue, "id"> & {
+export type IssueWithPublicationcodeOptionalId = Omit<
+  issue,
+  "id" | "issuenumber"
+> & {
   id: number | null;
 };
 
-export type SubscriptionTransformed = Omit<
-  subscription,
-  "country" | "magazine"
->;
-
 export type SubscriptionTransformedStringDates = Omit<
-  SubscriptionTransformed,
+  subscription,
   "startDate" | "endDate"
 > & {
   startDate: string;
@@ -47,7 +45,9 @@ export const collection = defineStore("collection", () => {
 
   const { bookcaseWithPopularities } = storeToRefs(bookcase());
 
-  const issues = shallowRef<issue[] | null>(null);
+  const issues = shallowRef<EventReturnType<
+    CollectionServices["getIssues"]
+  > | null>(null);
 
   const collectionUtils = useCollection(issues),
     watchedPublicationsWithSales = ref<string[] | null>(null),
@@ -57,9 +57,9 @@ export const collection = defineStore("collection", () => {
     suggestions = shallowRef<EventReturnType<
       StatsServices["getSuggestionsForCountry"]
     > | null>(null),
-    subscriptions = shallowRef<SubscriptionTransformed[] | null>(null),
+    subscriptions = shallowRef<subscription[] | null>(null),
     popularIssuesInCollection = ref<{
-      [shortIssuecode: string]: number;
+      [issuecode: string]: number;
     } | null>(null),
     lastPublishedEdgesForCurrentUser = shallowRef<EventReturnType<
       CollectionServices["getLastPublishedEdges"]
@@ -95,7 +95,7 @@ export const collection = defineStore("collection", () => {
       issues.value?.reduce<Record<string, issue[]>>(
         (acc, issue) => ({
           ...acc,
-          [issue.shortIssuecode]: [...acc[issue.shortIssuecode], issue],
+          [issue.issuecode]: [...acc[issue.issuecode], issue],
         }),
         {},
       ),
@@ -106,12 +106,9 @@ export const collection = defineStore("collection", () => {
     issueNumbersPerPublication = computed(
       () =>
         issues.value?.reduce<{ [publicationcode: string]: string[] }>(
-          (acc, { country, issuenumber, magazine }) => ({
+          (acc, { publicationcode, issuecode }) => ({
             ...acc,
-            [`${country}/${magazine}`]: [
-              ...(acc[`${country}/${magazine}`] || []),
-              issuenumber,
-            ],
+            [publicationcode]: [...(acc[publicationcode] || []), issuecode],
           }),
           {},
         ) || {},
@@ -294,8 +291,7 @@ export const collection = defineStore("collection", () => {
         ).reduce(
           (acc, issue) => ({
             ...acc,
-            [`${issue.country}/${issue.magazine} ${issue.issuenumber}`]:
-              issue.popularity,
+            [issue.issuecode]: issue.popularity,
           }),
           {},
         );

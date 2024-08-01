@@ -1,7 +1,7 @@
 import type { Socket } from "socket.io";
 
 import PresentationSentenceRequested from "~emails/presentation-sentence-requested";
-import { prismaDm } from "~prisma-clients";
+import { prismaClient as prismaDm } from "~prisma-clients/schemas/dm";
 import { generateAccessToken, getHashedPassword } from "~services/auth/util";
 
 import type Events from "../types";
@@ -81,7 +81,7 @@ export default (socket: Socket<Events>) => {
       }
       const updatedUser = await prismaDm.user.update({
         data: {
-          discordId: input.discordId ? parseInt(input.discordId) : undefined,
+          discordId: input.discordId || undefined,
           email: input.email,
           allowSharing: input.allowSharing,
           marketplaceAcceptsExchanges: input.okForExchanges,

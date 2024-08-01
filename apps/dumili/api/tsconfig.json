@@ -15,7 +15,7 @@
     "allowJs": true,
     "forceConsistentCasingInFileNames": true,
     "outDir": "./dist",
-    "preserveWatchOutput": true,
+    "preserveWatchOutput": true, 
     "paths": {
       "~/*": ["*"],
       "~dm-types/*": ["../../../packages/types/*"],

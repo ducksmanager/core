@@ -56,7 +56,7 @@ const isPopulating = ref(false);
 
 const { publishedEdges, publishedEdgesSteps } = storeToRefs(edgeCatalog());
 const { loadPublishedEdgesSteps } = edgeCatalog();
-const issueNumbers = computed(() => webStores.coa().issueNumbers);
+const { issuenumbers } = storeToRefs(webStores.coa());
 
 const populateItems = async (
   publicationcode: string,
@@ -97,8 +97,10 @@ const populateItems = async (
 
           try {
             await loadStepsFromApi(
-              props.publicationcode,
-              issuenumber,
+              {
+                publicationcode: props.publicationcode,
+                issuenumber,
+              },
               allSteps,
               false,
               (error: string, stepNumber: number) => {
@@ -138,8 +140,8 @@ const populateItems = async (
     )
   ).sort(({ name: name1 }, { name: name2 }) =>
     Math.sign(
-      issueNumbers.value[props.publicationcode].indexOf(name1) -
-        issueNumbers.value[props.publicationcode].indexOf(name2),
+      issuenumbers.value[props.publicationcode].indexOf(name1) -
+        issuenumbers.value[props.publicationcode].indexOf(name2),
     ),
   );
 };

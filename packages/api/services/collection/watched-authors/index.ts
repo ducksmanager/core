@@ -1,6 +1,7 @@
 import type { Socket } from "socket.io";
 
-import { prismaCoa,prismaDm } from "~prisma-clients";
+import { prismaClient as prismaCoa } from "~prisma-clients/schemas/coa";
+import { prismaClient as prismaDm } from "~prisma-clients/schemas/dm";
 
 import type Events from "../types";
 const maxWatchedAuthors = 5;

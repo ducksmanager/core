@@ -4,9 +4,10 @@ import type { IssueSuggestion } from "~dm-types/IssueSuggestion";
 import { IssueSuggestionList } from "~dm-types/IssueSuggestionList";
 import type { StoryDetail } from "~dm-types/StoryDetail";
 import type { SuggestionList } from "~dm-types/SuggestionList";
-import { prismaCoa, prismaDm, prismaDmStats } from "~prisma-clients";
-import { Prisma as PrismaDmStats } from "~prisma-clients/client_dm_stats";
-import { userOptionType } from "~prisma-clients/extended/dm.extends";
+import { prismaClient as prismaCoa } from "~prisma-clients/schemas/coa";
+import { prismaClient as prismaDm,userOptionType } from "~prisma-clients/schemas/dm";
+import { prismaClient as prismaDmStats } from "~prisma-clients/schemas/dm_stats";
+import { Prisma as PrismaDmStats } from "~prisma-clients/schemas/dm_stats";
 
 import { getPublicationTitles } from "../coa/publications";
 
@@ -94,7 +95,7 @@ const getStoryDetails = async (
       FROM inducks_story as story
           INNER JOIN inducks_storyversion USING (storycode)
           INNER JOIN inducks_entry entry USING (storyversioncode)
-          INNER JOIN inducks_issue issue USING (short_issuecode)
+          INNER JOIN inducks_issue issue USING (issuecode)
           WHERE ${storyCodes
         .map(
           (storyCode, idx) =>
@@ -196,18 +197,18 @@ export const getSuggestions = async (
         suggestionsPerUser[userId] = new IssueSuggestionList();
       }
 
-      const shortIssuecode = [
+      const issuecode = [
         suggestedStory.publicationcode,
         suggestedStory.issuenumber,
       ].join(" ");
       if (
         limit &&
-        !suggestionsPerUser[userId].issues[shortIssuecode] &&
+        !suggestionsPerUser[userId].issues[issuecode] &&
         Object.keys(suggestionsPerUser[userId].issues).length >= limit
       ) {
         continue;
       }
-      let issue = suggestionsPerUser[userId].issues[shortIssuecode];
+      let issue = suggestionsPerUser[userId].issues[issuecode];
       if (!issue) {
         issue = {
           issuenumber: suggestedStory.issuenumber,
@@ -218,7 +219,7 @@ export const getSuggestions = async (
             (typeof suggestedStory.oldestdate === "string"
               ? suggestedStory.oldestdate
               : suggestedStory.oldestdate?.toISOString().split("T")[0]) || "",
-              shortIssuecode,
+              issuecode,
           stories: {},
         } as IssueSuggestion;
       }
@@ -226,7 +227,7 @@ export const getSuggestions = async (
         issue.stories[suggestedStory.personcode] = [];
       }
       issue.stories[suggestedStory.personcode].push(suggestedStory.storycode);
-      suggestionsPerUser[userId].issues[issue.shortIssuecode] = issue;
+      suggestionsPerUser[userId].issues[issue.issuecode] = issue;
       referencedIssues.push(issue);
       referencedStories.push(suggestedStory);
     }

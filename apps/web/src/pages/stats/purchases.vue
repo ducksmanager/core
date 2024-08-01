@@ -56,12 +56,12 @@ alias: [/achats]
   </div>
 </template>
 <script setup lang="ts">
+import type { ChartOptions } from "chart.js";
 import {
   BarController,
   BarElement,
   CategoryScale,
   Chart,
-  ChartOptions,
   Legend,
   LinearScale,
   Title,
@@ -70,7 +70,7 @@ import {
 import dayjs from "dayjs";
 import { Bar } from "vue-chartjs";
 
-import type { issue as dm_issue } from "~prisma-clients/extended/dm.extends";
+import type { issue as dm_issue } from "~prisma-clients/schemas/dm";
 
 Chart.register(
   Legend,
@@ -168,7 +168,7 @@ const publicationCodesWithOther = $computed(
     return collectionWithDates
       .sort(({ date: dateA }, { date: dateB }) => compareDates(dateA, dateB))
       .reduce(
-        (acc, { date, publicationcode: publicationcode }) => {
+        (acc, { date, publicationcode }) => {
           if (!publicationCodesWithOther!.includes(publicationcode)) {
             publicationcode = "Other";
           }

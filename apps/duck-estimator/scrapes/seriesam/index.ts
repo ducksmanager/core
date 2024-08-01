@@ -94,7 +94,7 @@ export async function scrape() {
         ...(issuenumber.split(" to ") as [string, string])
       );
       let hasFoundQuotation = false;
-      for (const issuenumberInRange of issuenumbers) {
+      for (const {issuenumber : issuenumberInRange, issuecode:issuecodeInRange} of issuenumbers) {
         if (
           seriesamYear === seriesamYearMapping ||
           seriesamTitle === seriesamTitleMapping
@@ -120,8 +120,7 @@ export async function scrape() {
                 const adjustedEstimation =
                   estimation * Math.pow(0.8, cellNumber - 5) * SEK_TO_EUR_RATE;
                 quotations.push({
-                  publicationcode,
-                  issuenumber: issuenumberInRange,
+                  issuecode: issuecodeInRange,
                   estimationMin: adjustedEstimation,
                   estimationMax: adjustedEstimation,
                   scrapeDate: null,

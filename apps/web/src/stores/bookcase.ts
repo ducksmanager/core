@@ -1,15 +1,12 @@
-import BookcaseServices from "~dm-services/bookcase/types";
-import { BookcaseEdge } from "~dm-types/BookcaseEdge";
-import { issue_condition } from "~prisma-clients/extended/dm.extends";
-import { EventReturnType } from "~socket.io-services/types";
+import type BookcaseServices from "~dm-services/bookcase/types";
+import type { BookcaseEdge } from "~dm-types/BookcaseEdge";
+import type { issue_condition } from "~prisma-clients/schemas/dm";
+import type { EventReturnType } from "~socket.io-services/types";
 
 import { dmSocketInjectionKey } from "../composables/useDmSocket";
 import { collection } from "./collection";
 
-export type SimpleBookcaseEdge = Pick<
-  BookcaseEdge,
-  "publicationcode" | "issuenumber"
-> & {
+export type SimpleBookcaseEdge = Pick<BookcaseEdge, "issuecode"> & {
   issueCondition?: issue_condition;
 };
 
@@ -41,16 +38,13 @@ export const bookcase = defineStore("bookcase", () => {
         ((isSharedBookcase.value
           ? true
           : collection().popularIssuesInCollection) &&
-          bookcase.value?.map((issue) => {
-            const issueCode = `${issue.publicationcode} ${issue.issuenumber}`;
-            return {
-              ...issue,
-              issueCode,
-              popularity: isSharedBookcase.value
-                ? 0
-                : collection().popularIssuesInCollection?.[issueCode] || 0,
-            };
-          })) ||
+          bookcase.value?.map(({ issuecode, ...issue }) => ({
+            ...issue,
+            ...coa().issuecodeDetails[issuecode],
+            popularity: isSharedBookcase.value
+              ? 0
+              : collection().popularIssuesInCollection?.[issuecode] || 0,
+          }))) ||
         null,
     ),
     addLoadedSprite = ({

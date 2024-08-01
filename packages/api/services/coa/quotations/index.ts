@@ -1,10 +1,11 @@
 import type { Socket } from "socket.io";
 
-import { prismaCoa } from "~prisma-clients";
 import type {
-  inducks_issuequotation,
-  Prisma as PrismaCoa,
-} from "~prisma-clients/client_coa";
+  inducks_issuequotation, Prisma as PrismaCoa
+} from "~prisma-clients/schemas/coa";
+import {
+  prismaClient as prismaCoa,
+} from "~prisma-clients/schemas/coa";
 
 const ISSUE_CODE_REGEX = /[a-z]+\/[-A-Z0-9 ]+/g;
 
@@ -16,38 +17,38 @@ export const getQuotations = async (
       .findMany({
         where: filter,
       })
-      .then((results) => results.groupBy("shortIssuecode")),
+      .then((results) => results.groupBy("issuecode")),
   ).reduce<Record<string, inducks_issuequotation>>(
-    (acc, [shortIssuecode, quotation]) => ({
+    (acc, [issuecode, quotation]) => ({
       ...acc,
-      [shortIssuecode]: {
-        ...acc[shortIssuecode],
+      [issuecode]: {
+        ...acc[issuecode],
         ...quotation,
         estimationMin:
-          acc[shortIssuecode]?.estimationMin && quotation.estimationMin
+          acc[issuecode]?.estimationMin && quotation.estimationMin
             ? Math.min(
-                acc[shortIssuecode].estimationMin,
-                quotation.estimationMin,
-              )
+              acc[issuecode].estimationMin,
+              quotation.estimationMin,
+            )
             : quotation.estimationMin,
         estimationMax:
-          acc[shortIssuecode]?.estimationMax && quotation.estimationMax
+          acc[issuecode]?.estimationMax && quotation.estimationMax
             ? Math.max(
-                acc[shortIssuecode].estimationMax,
-                quotation.estimationMax,
-              )
+              acc[issuecode].estimationMax,
+              quotation.estimationMax,
+            )
             : quotation.estimationMax,
       },
     }),
     {},
   );
 
-export const getQuotationsByShortIssuecodes = async (
-  shortIssuecodes: string[],
+export const getQuotationsByissuesByIssuecodes = async (
+  issuecodes: string[],
 ) =>
   getQuotations({
-    shortIssuecode: {
-      in: shortIssuecodes,
+    issuecode: {
+      in: issuecodes,
     },
     estimationMin: { not: { equals: null } },
   });
@@ -55,9 +56,9 @@ export const getQuotationsByShortIssuecodes = async (
 import type Events from "../types";
 export default (socket: Socket<Events>) => {
   socket.on(
-    "getQuotationsByShortIssuecodes",
-    async (shortIssueCodes, callback) => {
-      const codes = shortIssueCodes.filter((code) =>
+    "getQuotationsByissuesByIssuecodes",
+    async (issuesByIssuecodes, callback) => {
+      const codes = issuesByIssuecodes.filter((code) =>
         ISSUE_CODE_REGEX.test(code),
       );
       if (!codes.length) {
@@ -66,7 +67,7 @@ export default (socket: Socket<Events>) => {
         callback({ error: "Too many requests" });
       } else {
         callback({
-          quotations: await getQuotationsByShortIssuecodes(codes),
+          quotations: await getQuotationsByissuesByIssuecodes(codes),
         });
       }
     },

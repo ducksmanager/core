@@ -4,8 +4,7 @@ import { readCsvMapping } from "~/csv";
 const MAPPING_FILE = "scrapes/bdm/coa-mapping.csv";
 
 type CsvIssue = {
-  publicationcode: string;
-  issuenumber: string;
+  issuecode: string;
   estimation: string;
 };
 
@@ -16,9 +15,8 @@ export async function scrape() {
     mappedIssues.push(record)
   );
   await createQuotations(
-    mappedIssues.map(({ publicationcode, issuenumber, estimation }) => ({
-      publicationcode,
-      issuenumber,
+    mappedIssues.map(({ issuecode, estimation }) => ({
+      issuecode,
       estimationMin: parseFloat(estimation.replace(",", ".")),
       estimationMax: null,
       scrapeDate: null,

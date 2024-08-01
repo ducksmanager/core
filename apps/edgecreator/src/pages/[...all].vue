@@ -90,9 +90,7 @@ meta:
                 />
                 <b-link
                   class="mx-3"
-                  :to="`edit/${publicationcode} ${edges
-                    .map((edge) => edge.issuenumber)
-                    .join(',')}`"
+                  :to="`edit/${edges.map((edge) => edge.issuecode.replaceAll(' ', '_')).join(',')}`"
                   ><b-button
                     v-if="canEditEdge(status)"
                     size="sm"
@@ -115,7 +113,7 @@ meta:
               >
                 <b-card class="text-center">
                   <b-link
-                    :to="`edit/${edge.country}/${edge.magazine} ${edge.issuenumber}`"
+                    :to="`edit/${edge.issuecode.replaceAll(' ', '_')}`"
                     :disabled="!canEditEdge(status)"
                   >
                     <b-card-text>
@@ -124,13 +122,12 @@ meta:
                           (hoveredEdge === edge && edge.v3) ||
                           status === 'pending'
                         "
-                        :alt="`${edge.country}/${edge.magazine} ${edge.issuenumber}`"
+                        :alt="edge.issuecode"
                         class="edge-preview"
                         :src="
                           edge.v3
                             ? getEdgeUrl(
-                                edge.country,
-                                edge.magazine,
+                                edge.publicationcode,
                                 edge.issuenumber,
                                 'svg',
                                 false,
@@ -138,7 +135,7 @@ meta:
                             : undefined
                         "
                       /><edge-link
-                        :publicationcode="`${edge.country}/${edge.magazine}`"
+                        :publicationcode="edge.publicationcode"
                         :issuenumber="edge.issuenumber"
                         :designers="edge.designers"
                         :photographers="edge.photographers"
@@ -204,10 +201,16 @@ const userPhotographerPoints = computed(
   () => usersStore.points[user.value!.id].edge_photographer,
 );
 
-const publicationNames = computed(() => webStores.coa().publicationNames);
+const { publicationNames, issuecodeDetails } = storeToRefs(webStores.coa());
 
 const isUploadableEdgesCarouselReady = ref(false);
-const mostWantedEdges = ref<BookcaseEdgeWithPopularity[] | null>(null);
+const mostWantedEdges = ref<
+  | (BookcaseEdgeWithPopularity & {
+      publicationcode: string | null;
+      issuenumber: string | null;
+    })[]
+  | null
+>(null);
 
 const hoveredEdge = ref<EdgeWithVersionAndStatus | null>(null);
 
@@ -225,22 +228,17 @@ const loadMostWantedEdges = async () => {
     .slice(0, 10)
     .map(
       ({
-        publicationcode,
-        issuenumber,
+        issuecode,
         numberOfIssues,
       }: {
-        publicationcode: string;
-        issuenumber: string;
+        issuecode: string;
         numberOfIssues: number;
       }) => ({
+        ...issuecodeDetails.value[issuecode],
         id: 0,
         edgeId: 0,
         creationDate: new Date(),
         sprites: [],
-        issueCode: `${publicationcode} ${issuenumber}`,
-        publicationcode,
-        issuenumber,
-        issuenumberReference: "",
         popularity: numberOfIssues,
       }),
     );
@@ -259,9 +257,11 @@ watch(
     await loadCatalog();
     await coaStore.fetchPublicationNames([
       ...new Set([
-        ...mostWantedEdges.value!.map(({ publicationcode }) => publicationcode),
+        ...mostWantedEdges.value!.map(
+          ({ publicationcode }) => publicationcode!,
+        ),
         ...Object.values(currentEdges.value).map(
-          ({ country, magazine }) => `${country}/${magazine}`,
+          ({ publicationcode }) => publicationcode,
         ),
       ]),
     ]);

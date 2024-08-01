@@ -47,7 +47,7 @@
         <div class="issue-list">
           <template v-if="!readonly">
             <b-alert
-              v-if="userIssuesNotFoundForPublication?.length"
+              v-if="userIssuecodesNotFoundForPublication?.length"
               :model-value="true"
               variant="warning"
             >
@@ -58,10 +58,10 @@
               }}
               <ul>
                 <li
-                  v-for="issueNotFound in userIssuesNotFoundForPublication"
-                  :key="`notfound-${issueNotFound.issuenumber}`"
+                  v-for="issueNotFound in userIssuecodesNotFoundForPublication"
+                  :key="`notfound-${issueNotFound}`"
                 >
-                  {{ $t("n°") }}{{ issueNotFound.issuenumber }}
+                  {{ $t("n°") }}{{ issueNotFound }}
                   <b-button
                     size="sm"
                     @click="deletePublicationIssues([issueNotFound])"
@@ -96,14 +96,14 @@
             </b-alert></template
           >
           <Book
-            v-if="currentIssueOpened"
-            :publicationcode="currentIssueOpened.publicationcode"
-            :issuenumber="currentIssueOpened.issuenumber"
-            @close-book="currentIssueOpened = null"
+            v-if="currentIssuecodeOpened"
+            :issuecode="currentIssuecodeOpened"
+            @close-book="currentIssuecodeOpened = null"
           />
           <div v-if="readonly">
             <div
               v-for="{
+                issuecode,
                 issuenumber,
                 title,
                 userCopies,
@@ -120,9 +120,8 @@
               <span>
                 <IssueDetailsPopover
                   v-if="hoveredIndex === idx"
-                  :publicationcode="publicationcode"
-                  :issuenumber="issuenumber"
-                  @click="openBook(issuenumber)"
+                  :issuecode="issuecode"
+                  @click="openBook(issuecode)"
                 />
 
                 <span class="issue-text">
@@ -137,7 +136,7 @@
                       condition: copyCondition,
                       copyIndex,
                     } in userCopies"
-                    :key="`${issuenumber}-copy-${copyIndex}`"
+                    :key="`${issuecode}-copy-${copyIndex}`"
                     class="issue-copy"
                   >
                     <!-- <MarketplaceSellerInfo
@@ -150,8 +149,7 @@
 
                     <Condition
                       v-if="copyCondition"
-                      :publicationcode="publicationcode"
-                      :issuenumber="issuenumber"
+                      :issuecode="issuecode"
                       :value="copyCondition"
                     />
                   </div>
@@ -162,6 +160,7 @@
           <div v-else v-contextmenu:contextmenuInstance>
             <div
               v-for="{
+                issuecode,
                 issuenumber,
                 title,
                 userCopies,
@@ -191,9 +190,8 @@
               <span>
                 <IssueDetailsPopover
                   v-if="hoveredIndex === idx"
-                  :publicationcode="publicationcode"
-                  :issuenumber="issuenumber"
-                  @click="openBook(issuenumber)"
+                  :issuecode="issuecode"
+                  @click="openBook(issuecode)"
                 />
 
                 <span class="issue-text">
@@ -216,8 +214,7 @@
                   >
                     <MarketplaceSellerInfo
                       v-if="onSaleByOthers"
-                      :publicationcode="publicationcode"
-                      :issuenumber="issuenumber"
+                      :issuecode="issuecode"
                       :copy-index="filteredIssuesCopyIndexes[idx]"
                     />
                     <MarketplaceBuyerInfo :issue-id="id" />
@@ -296,14 +293,14 @@
           <ul>
             <li
               v-for="issueToDelete in userIssuesForPublication"
-              :key="issueToDelete.issuenumber"
+              :key="issueToDelete.issuecode"
             >
-              {{ issueToDelete.issuenumber }}
+              {{ issueToDelete.issuecode }}
             </li>
           </ul>
           <b-button
             variant="danger"
-            @click="deletePublicationIssues(userIssuesForPublication!)"
+            @click="deletePublicationIssues(userIssuesForPublication!.map(({ issuecode }) => issuecode))"
           >
             {{ $t("Supprimer") }}
           </b-button>
@@ -339,17 +336,18 @@
 </template>
 
 <script setup lang="ts">
-import { issue } from "~prisma-clients/extended/dm.extends";
+import type { issue } from "~prisma-clients/schemas/dm";
 
 import ContextMenuOnSaleByOthers from "./ContextMenuOnSaleByOthers.vue";
 import ContextMenuOwnCollection from "./ContextMenuOwnCollection.vue";
 
 type simpleIssue = {
+  issuecode: string;
   issuenumber: string;
   title?: string | null;
   key: string;
 };
-type issueWithPublicationCodeAndCopies = simpleIssue & {
+type issueWithCopies = simpleIssue & {
   userCopies: (issue & { copyIndex: number })[];
 };
 
@@ -414,54 +412,47 @@ const { publicationNames, coverUrls, issuesWithTitles } = storeToRefs(coa());
 let hoveredIndex = $ref<number | null>(null);
 let loading = $ref(true);
 let publicationNameLoading = $ref(true);
-const filter = $ref({
+const filter = $ref<{ missing: boolean; possessed: boolean }>({
   missing: true,
   possessed: true,
-} as { missing: boolean; possessed: boolean });
-const contextmenuInstance = $ref(
-  null as {
-    visible: boolean;
-    hide: (e?: MouseEvent) => void;
-    show: (e: MouseEvent) => void;
-  } | null,
-);
-let issues = $shallowRef(null as issueWithPublicationCodeAndCopies[] | null);
-let userIssuesForPublication = $shallowRef(null as issue[] | null);
-let userIssuesNotFoundForPublication = $shallowRef([] as issue[] | null);
-let selected = $shallowRef([] as string[]);
+});
+const contextmenuInstance = $ref<{
+  visible: boolean;
+  hide: (e?: MouseEvent) => void;
+  show: (e: MouseEvent) => void;
+} | null>(null);
+let issues = $shallowRef<issueWithCopies[] | null>(null);
+let userIssuesForPublication = $shallowRef<issue[] | null>(null);
+let userIssuecodesNotFoundForPublication = $shallowRef<string[] | null>([]);
+let selected = $shallowRef<string[]>([]);
 const filteredUserCopies = $computed(() =>
-  filteredIssues.reduce(
+  filteredIssues.reduce<issue[]>(
     (acc, { userCopies }) => [...acc, ...userCopies],
-    [] as issue[],
+    [],
   ),
 );
 const copiesBySelectedIssuenumber = $computed(() =>
-  selected.reduce(
-    (acc, issueKey) => {
-      const [issuenumber, maybeIssueId] = issueKey.split("-id-");
-      const issueId = (maybeIssueId && parseInt(maybeIssueId)) || null;
-      return {
-        ...acc,
-        [issuenumber]: [
-          ...(acc[issuenumber] || []),
-          ...filteredUserCopies.filter(
-            ({ id: copyId, issuenumber: copyIssueNumber }) =>
-              issueId !== null
-                ? issueId === copyId
-                : issuenumber === copyIssueNumber,
-          ),
-        ],
-      };
-    },
-    {} as { [issuenumber: string]: issue[] },
-  ),
+  selected.reduce<{ [issuenumber: string]: issue[] }>((acc, issueKey) => {
+    const [issuecode, maybeIssueId] = issueKey.split("-id-");
+    const issueId = (maybeIssueId && parseInt(maybeIssueId)) || null;
+    return {
+      ...acc,
+      [issuecode]: [
+        ...(acc[issuecode] || []),
+        ...filteredUserCopies.filter(
+          ({ id: copyId, issuecode: copyIssuecode }) =>
+            issueId !== null
+              ? issueId === copyId
+              : issuecode.replaceAll("_", " ") === copyIssuecode,
+        ),
+      ],
+    };
+  }, {}),
 );
-let preselected = $shallowRef([] as string[]);
+let preselected = $shallowRef<string[]>([]);
 let preselectedIndexStart = $ref<number | null>(null);
 let preselectedIndexEnd = $ref<number | null>(null);
-let currentIssueOpened = $shallowRef(
-  null as { publicationcode: string; issuenumber: string } | null,
-);
+let currentIssuecodeOpened = $shallowRef<string | null>(null);
 const issueNumberTextPrefix = $computed(() => $t("n°"));
 const boughtOnTextPrefix = $computed(() => $t("Acheté le"));
 const showFilter = $computed(
@@ -471,9 +462,9 @@ const showFilter = $computed(
 const issueIds = $computed(() =>
   Object.values(
     copiesBySelectedIssuenumber as { [issuenumber: string]: { id: number }[] },
-  ).reduce(
+  ).reduce<number[]>(
     (acc, issues) => [...acc, ...issues.map(({ id }) => id)],
-    [] as number[],
+    [],
   ),
 );
 
@@ -485,6 +476,7 @@ const publicationName = $computed(
   () => publicationNames.value[publicationcode],
 );
 const isTouchScreen = window.matchMedia("(pointer: coarse)").matches;
+const coaIssues = $computed(() => issuesWithTitles.value[publicationcode]);
 const filteredIssues = $computed(
   () =>
     issues
@@ -497,16 +489,16 @@ const filteredIssues = $computed(
 );
 
 const filteredIssuesCopyIndexes = $computed(() =>
-  filteredIssues?.reduce(
-    (acc, { issuenumber }, idx) => [
+  filteredIssues?.reduce<number[]>(
+    (acc, { issuecode }, idx) => [
       ...acc,
       idx === 0
         ? 0
-        : filteredIssues[idx - 1].issuenumber === issuenumber
+        : filteredIssues[idx - 1].issuecode === issuecode
           ? acc[idx - 1] + 1
           : 0,
     ],
-    [] as number[],
+    [],
   ),
 );
 
@@ -558,12 +550,11 @@ const updateSelected = () => {
     preselected = [];
   }
 };
-const deletePublicationIssues = async (issuesToDelete: issue[]) => {
+const deletePublicationIssues = async (issuecodesToDelete: string[]) => {
   contextmenuInstance!.hide();
   if (!readonly) {
     await updateCollectionMultipleIssues({
-      publicationcode,
-      issuenumbers: issuesToDelete.map(({ issuenumber }) => issuenumber),
+      issuecodes: issuecodesToDelete,
       condition:
         conditions.find(({ dbValue }) => dbValue === null)?.dbValue ||
         "indefini",
@@ -575,17 +566,16 @@ const deletePublicationIssues = async (issuesToDelete: issue[]) => {
   }
 };
 
-const openBook = (issuenumber: string) => {
-  currentIssueOpened = coverUrls.value?.[issuenumber]
-    ? { publicationcode: publicationcode, issuenumber }
-    : null;
+const openBook = (issuecode: string) => {
+  currentIssuecodeOpened = coverUrls.value?.[issuecode] ? issuecode : null;
 };
 
 const loadIssues = async () => {
   if (userIssues) {
     userIssuesForPublication = userIssues
       .filter(
-        ({ country, magazine }) => `${country}/${magazine}` === publicationcode,
+        ({ publicationcode: issuePublicationcode }) =>
+          issuePublicationcode === publicationcode,
       )
       .map((issue) => ({
         ...issue,
@@ -598,61 +588,55 @@ const loadIssues = async () => {
 
     await fetchIssueNumbersWithTitles([publicationcode]);
 
-    const coaIssues = issuesWithTitles.value[publicationcode];
     if (groupUserCopies) {
       issues = coaIssues.map((issue) => ({
         ...issue,
         userCopies: userIssuesForPublication!
           .filter(
-            ({ issuenumber: userIssueNumber }) =>
-              userIssueNumber === issue.issuenumber,
+            ({ issuecode: userIssuecode }) => userIssuecode === issue.issuecode,
           )
           .map((issue, copyIndex) => ({
             ...issue,
-            publicationcode: `${issue.country}/${issue.magazine}`,
             copyIndex,
           })),
-        key: issue.issuenumber,
+        key: issue.issuecode,
       }));
     } else {
-      const userIssueNumbers = [
-        ...new Set(
-          userIssuesForPublication!.map(({ issuenumber }) => issuenumber),
-        ),
+      const userIssuecodes = [
+        ...new Set(userIssuesForPublication!.map(({ issuecode }) => issuecode)),
       ];
       issues = coaIssues
-        .filter(({ issuenumber }) => userIssueNumbers.includes(issuenumber))
-        .map(({ issuenumber }) => issuenumber)
-        .reduce(
-          (acc, issuenumber) => [
+        .filter(({ issuecode }) => userIssuecodes.includes(issuecode))
+        .reduce<issueWithCopies[]>(
+          (acc, { issuecode, issuenumber }) => [
             ...acc,
             ...userIssuesForPublication!
               .filter(
-                ({ issuenumber: userIssueNumber }) =>
-                  userIssueNumber === issuenumber,
+                ({ issuecode: userIssuecode }) => userIssuecode === issuecode,
               )
               .map((issue) => ({
                 ...issue,
-                publicationcode: `${issue.country}/${issue.magazine}`,
-                key: `${issue.issuenumber}-id-${issue.id}`,
+                issuenumber,
+                key: `${issue.issuecode.replaceAll(" ", "_")}-id-${issue.id}`,
                 userCopies: [{ ...issue, copyIndex: 0 }],
               })),
           ],
-          [] as issueWithPublicationCodeAndCopies[],
+          [],
         );
     }
 
     if (duplicatesOnly) {
-      const countPerIssueNumber = issues!.reduce(
+      const countPerIssuecode = issues!.reduce<{
+        [issuenumber: string]: number;
+      }>(
         (acc, { userCopies }) => ({
           ...acc,
-          [userCopies[0].issuenumber]:
-            (acc[userCopies[0].issuenumber] || 0) + 1,
+          [userCopies[0].issuecode]: (acc[userCopies[0].issuecode] || 0) + 1,
         }),
-        {} as { [issuenumber: string]: number },
+        {},
       );
       issues = issues!.filter(
-        ({ issuenumber }) => countPerIssueNumber[issuenumber] > 1,
+        ({ issuecode }) => countPerIssuecode[issuecode] > 1,
       );
     }
 
@@ -669,12 +653,12 @@ const loadIssues = async () => {
       );
     }
 
-    const coaIssueNumbers = issuesWithTitles.value[publicationcode].map(
-      ({ issuenumber }) => issuenumber,
+    const coaIssuecodes = issuesWithTitles.value[publicationcode].map(
+      ({ issuecode }) => issuecode,
     );
-    userIssuesNotFoundForPublication = userIssuesForPublication!.filter(
-      ({ issuenumber }) => !coaIssueNumbers.includes(issuenumber),
-    );
+    userIssuecodesNotFoundForPublication = userIssuesForPublication!
+      .filter(({ issuecode }) => !coaIssuecodes.includes(issuecode))
+      .map(({ issuecode }) => issuecode);
     loading = false;
   }
 };

@@ -3,7 +3,7 @@ import jwt from "jsonwebtoken";
 import type { Namespace, Server } from "socket.io";
 
 import resetPassword from "~/emails/reset-password";
-import { prismaDm } from "~prisma-clients";
+import { prismaClient } from "~prisma-clients/schemas/dm";
 
 import type Events from "./types";
 import { namespaceEndpoint } from "./types";
@@ -22,7 +22,7 @@ export default (io: Server) => {
       if (!isValidEmail(email)) {
         callback({ error: "Invalid email" });
       } else {
-        const user = await prismaDm.user.findFirst({
+        const user = await prismaClient.user.findFirst({
           where: { email },
         });
         if (user) {
@@ -32,7 +32,7 @@ export default (io: Server) => {
           const token = jwt.sign(email, process.env.TOKEN_SECRET!, {
             expiresIn: "60m",
           });
-          await prismaDm.userPasswordToken.create({
+          await prismaClient.userPasswordToken.create({
             data: { userId: user.id, token },
           });
 
@@ -67,7 +67,7 @@ export default (io: Server) => {
                 .createHash("sha1")
                 .update(password)
                 .digest("hex");
-              await prismaDm.user.updateMany({
+              await prismaClient.user.updateMany({
                 data: {
                   password: hashedPassword,
                 },
@@ -75,7 +75,7 @@ export default (io: Server) => {
                   email: (data as { payload: string }).payload,
                 },
               });
-              const user = (await prismaDm.user.findFirst({
+              const user = (await prismaClient.user.findFirst({
                 where: {
                   email: (data as { payload: string }).payload,
                 },

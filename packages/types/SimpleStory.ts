@@ -1,4 +1,4 @@
-import { SimpleIssue, SimpleIssueWithPartInfo } from "./SimpleIssue";
+import type { SimpleIssue, SimpleIssueWithPartInfo } from "./SimpleIssue";
 
 export interface SimpleStory {
   storycode: string;

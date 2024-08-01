@@ -1,4 +1,4 @@
-import type { issue } from "~prisma-clients/extended/dm.extends";
+import type { issue } from "~prisma-clients/schemas/dm";
 import type { Errorable } from "~socket.io-services/types";
 
 export const namespaceEndpoint = "/public-collection";

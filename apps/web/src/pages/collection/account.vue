@@ -219,7 +219,7 @@ alias: [/collection/compte]
 </template>
 
 <script setup lang="ts">
-import { ScopedError } from "~socket.io-services/types";
+import type { ScopedError } from "~socket.io-services/types";
 
 const { getImagePath } = images();
 

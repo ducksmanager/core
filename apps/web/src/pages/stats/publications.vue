@@ -6,12 +6,10 @@
 </template>
 
 <script setup lang="ts">
+import type { ChartData, ChartOptions, DefaultDataPoint } from "chart.js";
 import {
   ArcElement,
   Chart,
-  ChartData,
-  ChartOptions,
-  DefaultDataPoint,
   Legend,
   PieController,
   Title,

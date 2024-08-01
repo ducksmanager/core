@@ -3,13 +3,13 @@
     <ion-row v-if="!isOfflineMode">
       <ion-col size="12" style="height: 100%"
         ><img v-if="fullUrl" :src="coverUrl" />
-        <ion-chip v-if="extraIssuenumbers.length">+&nbsp;{{ extraIssuenumbers.length }}</ion-chip></ion-col
+        <ion-chip v-if="extraIssuecodes.length">+&nbsp;{{ extraIssuecodes.length }}</ion-chip></ion-col
       >
     </ion-row>
     <ion-row
       ><ion-col size="12">
         <ion-segment
-          v-if="!extraIssuenumbers.length"
+          v-if="!extraIssuecodes.length"
           v-model="currentCopyIndex"
           :style="copies.length ? undefined : { display: 'initial' }"
         >
@@ -39,8 +39,8 @@
           color="danger"
           size="small"
           v-if="currentCopyIndex !== undefined && !isOfflineMode"
-          ><template v-if="extraIssuenumbers.length">{{
-            t('Retirer ces {numberOfIssues} numéros de la collection', { numberOfIssues: extraIssuenumbers.length + 1 })
+          ><template v-if="extraIssuecodes.length">{{
+            t('Retirer ces {numberOfIssues} numéros de la collection', { numberOfIssues: extraIssuecodes.length + 1 })
           }}</template>
           <template v-else>{{ t('Retirer de la collection') }}</template></ion-button
         >
@@ -70,19 +70,19 @@ import { app } from '~/stores/app';
 import { wtdcollection } from '~/stores/wtdcollection';
 
 const { updateCollectionSingleIssue, updateCollectionMultipleIssues } = wtdcollection();
-const { issuesByShortIssuecode } = storeToRefs(wtdcollection());
-const { fetchCoverUrlsByShortIssuecodes } = coa();
-const { isOfflineMode, currentNavigationItem, isCoaView, publicationcode, issuenumber, extraIssuenumbers } =
+const { issuesByIssuecode } = storeToRefs(wtdcollection());
+const { fetchCoverUrlsByissuesByIssuecodes } = coa();
+const { isOfflineMode, currentNavigationItem, isCoaView, publicationcode, issuenumber, extraIssuecodes } =
   storeToRefs(app());
 
 const fullUrl = ref<string>();
 
-const shortIssuecode = computed(() => `${publicationcode.value} ${issuenumber.value}`);
+const issuecode = computed(() => `${publicationcode.value} ${issuenumber.value}`);
 
 watch(
   issuenumber,
   async () => {
-    const covers = await fetchCoverUrlsByShortIssuecodes([shortIssuecode.value]);
+    const covers = await fetchCoverUrlsByissuesByIssuecodes([issuecode.value]);
     fullUrl.value = covers.covers![issuenumber.value!]?.fullUrl;
   },
   { immediate: true },
@@ -95,9 +95,9 @@ const coverUrl = computed(() => `${import.meta.env.VITE_CLOUDINARY_BASE_URL}${fu
 const copies = ref<SingleCopyState[]>([]);
 
 watch(
-  issuesByShortIssuecode,
+  issuesByIssuecode,
   () => {
-    copies.value = issuesByShortIssuecode.value?.[shortIssuecode.value!] || [];
+    copies.value = issuesByIssuecode.value?.[issuecode.value!] || [];
   },
   { immediate: true },
 );
@@ -118,16 +118,14 @@ const addCopy = () => {
 };
 
 const submitIssueCopies = async () => {
-  if (extraIssuenumbers.value.length) {
+  if (extraIssuecodes.value.length) {
     await updateCollectionMultipleIssues({
-      publicationcode: publicationcode.value!,
-      issuenumbers: [issuenumber.value!, ...extraIssuenumbers.value],
+      issuecodes: [issuecode.value!, ...extraIssuecodes.value],
       ...copies.value[0],
     });
   } else {
     await updateCollectionSingleIssue({
-      publicationcode: publicationcode.value!,
-      issuenumber: issuenumber.value!,
+      issuecode: issuecode.value!,
       copies: copies.value,
     });
   }

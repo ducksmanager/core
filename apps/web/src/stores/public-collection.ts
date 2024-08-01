@@ -1,4 +1,4 @@
-import { issue } from "~prisma-clients/extended/dm.extends";
+import type { issue } from "~prisma-clients/schemas/dm";
 
 import useCollection from "../composables/useCollection";
 import { dmSocketInjectionKey } from "../composables/useDmSocket";

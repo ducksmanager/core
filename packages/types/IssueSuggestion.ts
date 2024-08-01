@@ -1,5 +1,5 @@
 export interface IssueSuggestion {
-  shortIssuecode: string;
+  issuecode: string;
   score: number;
   stories: { [storycode: string]: string[] };
   publicationcode: string;

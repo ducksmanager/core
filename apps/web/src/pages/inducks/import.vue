@@ -183,21 +183,12 @@ meta:
           <template #content>
             <div
               v-for="(
-                publicationIssueNumbers, publicationcode
+                publicationIssuecodes, publicationcode
               ) in groupByPublicationCode(issuesAlreadyInCollection)"
               :key="publicationcode"
             >
-              <div
-                v-for="issuenumber in publicationIssueNumbers"
-                :key="`${publicationcode}-${issuenumber}`"
-              >
-                <Issue
-                  :publicationcode="publicationcode"
-                  :publicationname="
-                    publicationNames[publicationcode] || publicationcode
-                  "
-                  :issuenumber="issuenumber"
-                />
+              <div v-for="issuecode in publicationIssuecodes" :key="issuecode">
+                <Issue :issuecode="issuecode" />
               </div>
             </div>
           </template>
@@ -224,16 +215,14 @@ meta:
           <template #content>
             <div
               v-for="(
-                publicationIssueNumbers, publicationcode
+                publicationIssuecodes, publicationcode
               ) in groupByPublicationCode(issuesNotReferenced)"
               :key="publicationcode"
             >
               <Issue
-                v-for="issuenumber in publicationIssueNumbers"
-                :key="`${publicationcode}-${issuenumber}`"
-                :publicationcode="publicationcode"
-                :publicationname="publicationcode"
-                :issuenumber="issuenumber"
+                v-for="issuecode in publicationIssuecodes"
+                :key="issuecode"
+                :issuecode="issuecode"
               />
             </div>
           </template>
@@ -280,8 +269,8 @@ meta:
 </template>
 
 <script setup lang="ts">
-import type { inducks_issue } from "~prisma-clients/client_coa";
-import { issue_condition } from "~prisma-clients/extended/dm.extends";
+import type { inducks_issue } from "~prisma-clients/schemas/coa";
+import type { issue_condition } from "~prisma-clients/schemas/dm";
 
 import { dmSocketInjectionKey } from "../../composables/useDmSocket";
 
@@ -309,9 +298,9 @@ const { t: $t } = useI18n();
 const { findInCollection, loadCollection } = collection();
 const { issues, user } = storeToRefs(collection());
 
-const { fetchPublicationNames, fetchIssueNumbers, fetchIssueCodesDetails } =
+const { fetchPublicationNames, fetchIssueNumbers, fetchIssuecodeDetails } =
   coa();
-const { publicationNames, issueNumbers, issueCodeDetails } = storeToRefs(coa());
+const { publicationNames, issuecodes, issuecodeDetails } = storeToRefs(coa());
 const conditions: Record<issue_condition, string> = {
   mauvais: $t("En mauvais état"),
   moyen: $t("En état moyen"),
@@ -328,16 +317,16 @@ const processRawData = async () => {
     .split("\n")
     .filter((row: string) => !/^country/.test(row) && REGEX_VALID_ROW.test(row))
     .map((row: string) => row.match(REGEX_VALID_ROW)![1].replace("^", "/"));
-  await fetchIssueCodesDetails(issueCodes);
+  await fetchIssuecodeDetails(issueCodes);
 
-  if (!issueCodeDetails) {
+  if (!issuecodeDetails) {
     return;
   }
   const issues = issueCodes
-    .filter((issueCode) => issueCodeDetails.value![issueCode])
+    .filter((issueCode) => issuecodeDetails.value![issueCode])
     .reduce<
       inducks_issue[]
-    >((acc, issueCode) => [...acc, issueCodeDetails.value![issueCode]], []);
+    >((acc, issueCode) => [...acc, issuecodeDetails.value![issueCode]], []);
   if (issues.length) {
     issuesToImport = issues;
     step = 2;
@@ -366,8 +355,7 @@ const importIssues = async () => {
   for (const publicationcode in importableIssuesByPublicationCode) {
     if (importableIssuesByPublicationCode.hasOwnProperty(publicationcode)) {
       await collectionServices.addOrChangeIssues({
-        publicationcode,
-        issuenumbers: importableIssuesByPublicationCode[publicationcode],
+        issuecodes: importableIssuesByPublicationCode[publicationcode],
         condition: issueDefaultCondition,
         isOnSale: undefined,
         isToRead: undefined,
@@ -387,14 +375,10 @@ watch($$(importDataReady), (newValue) => {
     issuesAlreadyInCollection = [];
     issuesImportable = [];
     issuesToImport!.forEach((issue) => {
-      const { publicationcode, issuenumber } = issue;
-      if (
-        !issueNumbers.value[publicationcode!].includes(
-          issuenumber!.replace(/[ ]+/g, " "),
-        )
-      )
+      const { issuecode } = issue;
+      if (!issuecodes.value.includes(issuecode!.replace(/[ ]+/g, " ")))
         issuesNotReferenced!.push(issue);
-      else if (findInCollection(publicationcode!, issuenumber!))
+      else if (findInCollection(issuecode!))
         issuesAlreadyInCollection!.push(issue);
       else issuesImportable!.push(issue);
     });

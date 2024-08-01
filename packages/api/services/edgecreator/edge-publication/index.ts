@@ -1,25 +1,32 @@
 import type { Socket } from "socket.io";
 
-import { prismaDm } from "~prisma-clients";
+import { prismaClient as prismaCoa } from "~prisma-clients/schemas/coa";
 import type {
   bookstoreComment,
   edge,
   user,
   userContribution,
-} from "~prisma-clients/extended/dm.extends";
+} from "~prisma-clients/schemas/dm";
+import { prismaClient as prismaDm } from "~prisma-clients/schemas/dm";
 
 import type Events from "../types";
 export default (socket: Socket<Events>) => {
   socket.on(
     "publishEdge",
     async (
-      { publicationcode, issuenumber, designers, photographers },
+      { issuecode, designers, photographers },
       callback,
     ) => {
-      if (!isValidPublicationcode(publicationcode)) {
-        callback({ error: "Invalid publication code" });
+      const issue = await prismaCoa.inducks_issue.findFirst({
+        where: { issuecode },
+        select: { publicationcode: true, issuenumber: true },
+      });
+      if (!issue) {
+        callback({ error: "Invalid publication code and issue number" });
         return;
       }
+
+      const { publicationcode, issuenumber } = issue;
 
       const [country, magazine] = publicationcode.split("/");
 
@@ -39,13 +46,11 @@ export default (socket: Socket<Events>) => {
       ];
       const { edgeId, contributors, isNew } = await publishEdgeOnDm(
         modelContributors,
-        publicationcode,
-        issuenumber,
+        issuecode,
       );
 
       callback({
-        publicationcode,
-        issuenumber,
+        issuecode,
         edgeId,
         isNew,
         contributors,
@@ -55,8 +60,6 @@ export default (socket: Socket<Events>) => {
   );
 };
 
-const isValidPublicationcode = (publicationcode: string) =>
-  /^[a-z]+\/[-A-Z0-9]+$/.test(publicationcode);
 
 const getUserIdsByUsername = async (
   usernames: string[],
@@ -110,15 +113,12 @@ const createContribution = async (
 
 const publishEdgeOnDm = async (
   contributors: { contribution: string; userId: number }[],
-  publicationcode: string,
-  issuenumber: string,
+  issuecode: string,
 ) => {
-  const [country, magazine] = publicationcode.split("/");
   let contributions: userContribution[];
   let edgeToPublish = await prismaDm.edge.findFirst({
     where: {
-      publicationcode,
-      issuenumber,
+      issuecode,
     },
   });
   const isNew = !!edgeToPublish;
@@ -130,10 +130,14 @@ const publishEdgeOnDm = async (
     });
   } else {
     contributions = [];
+    const {publicationcode} = await prismaCoa.inducks_issue.findFirstOrThrow({
+      where: { issuecode },
+      select: { publicationcode: true },
+    });
     edgeToPublish = await prismaDm.edge.create({
       data: {
         publicationcode,
-        issuenumber,
+        issuecode,
         creationDate: new Date(),
       },
     });
@@ -143,9 +147,7 @@ const publishEdgeOnDm = async (
     (
       await prismaDm.issuePopularity.findFirst({
         where: {
-          country,
-          magazine,
-          issuenumber,
+          issuecode,
         },
       })
     )?.popularity || 0;

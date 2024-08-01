@@ -12,15 +12,13 @@
 </template>
 
 <script setup lang="ts">
-import type { issue_condition } from "~prisma-clients/extended/dm.extends";
+import type { issue_condition } from "~prisma-clients/schemas/dm";
 const {
-  issuenumber = null,
-  publicationcode = null,
+  issuecode = null,
   value = undefined,
   isPublic = false,
 } = defineProps<{
-  publicationcode?: string;
-  issuenumber?: string;
+  issuecode?: string;
   value?: issue_condition;
   isPublic?: boolean;
 }>();
@@ -36,11 +34,8 @@ const currentCondition = $computed(() => {
           (value?.toString() || null) === conditionValue,
       ) || conditions.find(({ dbValue }) => dbValue === null)!
     );
-  } else if (publicationcode && issuenumber) {
-    const issueInCollection = store.findInCollection(
-      publicationcode,
-      issuenumber,
-    );
+  } else if (issuecode) {
+    const issueInCollection = store.findInCollection(issuecode);
     return (
       (issueInCollection &&
         conditions.find(

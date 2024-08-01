@@ -16,14 +16,13 @@
 </template>
 
 <script setup lang="ts">
+import type { ChartData, ChartOptions } from "chart.js";
 import {
   ArcElement,
   BarController,
   BarElement,
   CategoryScale,
   Chart,
-  ChartData,
-  ChartOptions,
   Legend,
   LinearScale,
   Title,

@@ -1,5 +1,5 @@
-import { IssueSuggestionList } from "./IssueSuggestionList";
-import { StoryDetail } from "./StoryDetail";
+import type { IssueSuggestionList } from "./IssueSuggestionList";
+import type { StoryDetail } from "./StoryDetail";
 
 export interface SuggestionList {
   storyDetails?: { [storycode: string]: StoryDetail };

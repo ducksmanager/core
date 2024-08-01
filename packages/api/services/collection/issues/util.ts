@@ -1,5 +1,5 @@
 import type { SaleState } from "~dm-types/CollectionUpdate";
-import { prismaDm } from "~prisma-clients";
+import { prismaClient as prismaDm } from "~prisma-clients/schemas/dm";
 
 export const getUserPurchase = async (id: number | null, userId: number) =>
   id === null
@@ -15,16 +15,12 @@ export const getUserPurchase = async (id: number | null, userId: number) =>
 
 export const deleteIssues = async (
   userId: number,
-  publicationcode: string,
-  issueNumbers: string[],
+  issuecodes: string[],
 ) => {
-  const [country, magazine] = publicationcode.split("/");
   await prismaDm.issue.deleteMany({
     where: {
-      country,
-      magazine,
-      issuenumber: {
-        in: issueNumbers,
+      issuecode: {
+        in: issuecodes,
       },
       userId,
     },

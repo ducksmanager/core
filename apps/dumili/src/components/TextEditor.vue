@@ -33,16 +33,16 @@ const storiesWithDetails =
 watch(
   acceptedStories,
   async (value) => {
-    if (!issue.value?.shortIssuecode) {
+    if (!issue.value?.issuecode) {
       return undefined;
     }
     storiesWithDetails.value = await getStoriesWithDetails(value);
   },
-  { immediate: true, deep: true },
+  { immediate: true, deep: true }
 );
 
 const getStoriesWithDetails = async (
-  stories: (typeof acceptedStories)["value"],
+  stories: (typeof acceptedStories)["value"]
 ) =>
   await Promise.all(
     Object.values(stories)
@@ -55,25 +55,25 @@ const getStoriesWithDetails = async (
         ).data,
         storyjobs: (await coaServices.getStoryjobs(story!.storyversioncode))
           .data,
-      })),
+      }))
   );
 
 const textContent = computed(() => {
   if (!storiesWithDetails.value?.length) {
     return undefined;
   }
-  const shortIssuecode = issue.value!.issuecode!.split("/")[1];
+  const issuecode = issue.value!.issuecode!.split("/")[1];
   const rows = [
-    [shortIssuecode],
+    [issuecode],
     ...storiesWithDetails.value.map((story, idx) => [
-      `${shortIssuecode}${String.fromCharCode(97 + idx)}`,
+      `${issuecode}${String.fromCharCode(97 + idx)}`,
       story!.storyversion?.storycode,
       undefined,
       String(story!.storyversion?.entirepages || 1),
       ...["plot", "writer", "artist", "ink"].map(
         (job) =>
           story!.storyjobs?.find(({ plotwritartink }) => plotwritartink === job)
-            ?.personcode,
+            ?.personcode
       ),
       "", //story!.printedhero,
       story!.title,
@@ -90,9 +90,9 @@ const textContent = computed(() => {
     .map((row) =>
       row
         .map((col, colIndex) =>
-          (col || "").padEnd(colsMaxLengths[colIndex], " "),
+          (col || "").padEnd(colsMaxLengths[colIndex], " ")
         )
-        .join(" "),
+        .join(" ")
     )
     .join("\n");
 });

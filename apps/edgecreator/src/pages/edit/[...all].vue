@@ -213,10 +213,13 @@ try {
     [firstIssuecode, ...otherIssuenumbers] = firstIssuecode.split(",");
   }
 
-  await coaStore.fetchIssueCodesDetails([firstIssuecode]);
+  await coaStore.fetchIssuecodeDetails([firstIssuecode]);
 
-  const { publicationcode, issuenumber: firstIssuenumber } =
-    coaStore.issueCodeDetails[firstIssuecode];
+  const {
+    publicationcode,
+    issuecode,
+    issuenumber: firstIssuenumber,
+  } = coaStore.issuecodeDetails[firstIssuecode];
   if (!publicationcode) {
     throw new Error(`Issue ${firstIssuecode} doesn't exist`);
   }
@@ -240,9 +243,11 @@ try {
       }
       try {
         await loadModel(
-          mainStore.country,
-          mainStore.magazine,
-          issuenumber,
+          {
+            publicationcode: mainStore.publicationcode!,
+            issuenumber,
+            issuecode,
+          },
           issuenumber,
         );
       } catch {

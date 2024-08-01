@@ -1,2 +1,2 @@
-import { issue } from "~prisma-clients/extended/dm.extends";
+import type { issue } from "~prisma-clients/schemas/dm";
 export type IssueWithPublicationcode = issue & { publicationcode: string };

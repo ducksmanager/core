@@ -1,8 +1,8 @@
 import PushNotifications from "@pusher/push-notifications-server";
 import type { Namespace, Server } from "socket.io";
 
-import { prismaDm } from "~prisma-clients";
-import type { issuePopularity } from "~prisma-clients/extended/dm.extends";
+import type { issuePopularity } from "~prisma-clients/schemas/dm";
+import { prismaClient as prismaDm } from "~prisma-clients/schemas/dm";
 
 import { RequiredAuthMiddleware } from "../auth/util";
 import issues from "./issues";
@@ -50,14 +50,10 @@ export default (io: Server) => {
 
       socket.on("getCollectionPopularity", (callback) =>
         prismaDm.$queryRaw<issuePopularity[]>`
-      select issuePopularity.pays       AS country,
-             issuePopularity.magazine   AS magazine,
-             issuePopularity.numero     AS issuenumber,
+      select issuePopularity.issuecode,
              issuePopularity.popularite AS popularity
       from numeros_popularite issuePopularity
-             inner join numeros issue
-                        on issuePopularity.pays = issue.pays AND issuePopularity.magazine = issue.magazine AND
-                           issuePopularity.numero = issue.numero
+             inner join numeros issue using (issuecode)
       where ID_Utilisateur = ${socket.data.user!.id}
       order by popularity DESC`.then(callback),
       );
@@ -119,11 +115,11 @@ export default (io: Server) => {
               userId: socket.data.user!.id,
             },
             select: {
-                shortIssuecode: true,
+                issuecode: true,
             },
           })
         ).map(
-          (issue) => `${issue.shortIssuecode}`,
+          (issue) => `${issue.issuecode}`,
         ) as string[];
         callback(
           (
@@ -132,7 +128,7 @@ export default (io: Server) => {
                 creationDate: {
                   gt: threeMonthsAgo,
                 },
-                shortIssuecode: {
+                issuecode: {
                   in: userIssues,
                 },
               },

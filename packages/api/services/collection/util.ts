@@ -1,5 +1,5 @@
-import { prismaDm } from "~prisma-clients";
-import { Prisma } from "~prisma-clients/extended/dm.extends";
+import { Prisma } from "~prisma-clients/schemas/dm";
+import { prismaClient as prismaDm } from "~prisma-clients/schemas/dm";
 
 export const getMedalPoints = async (userIds: number[]) =>
   (

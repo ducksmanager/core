@@ -6,10 +6,9 @@ import { stores as webStores } from "~web";
 import { dmSocketInjectionKey } from "~web/src/composables/useDmSocket";
 
 interface Edge {
-  country: string;
-  magazine: string;
-  shortIssuecode: string;
-  issuenumber: string;
+  publicationcode: string;
+  issuecode: string;
+  url: string;
   designers: string[];
   photographers: string[];
 }
@@ -70,7 +69,7 @@ export const edgeCatalog = defineStore("edgeCatalog", () => {
       );
       return Object.values(currentEdges.value).reduce(
         (acc: typeof currentEdgesByStatus, edge) => {
-          const publicationcode = `${edge.country}/${edge.magazine}`;
+          const { publicationcode } = edge;
           if (!acc[edge.status!][publicationcode]) {
             acc[edge.status!][publicationcode] = [];
           }
@@ -81,12 +80,8 @@ export const edgeCatalog = defineStore("edgeCatalog", () => {
       );
     }),
     fetchPublishedEdges = async (publicationcode: string) => {
-      const [countrycode, magazinecode] = publicationcode.split("/");
       addPublishedEdges({
-        [publicationcode]: await edgesServices.getEdges(
-          `${countrycode}/${magazinecode}`,
-          undefined,
-        ),
+        [publicationcode]: await edgesServices.getEdges({ publicationcode }),
       });
     },
     addCurrentEdges = (edges: Record<string, EdgeWithVersionAndStatus>) => {
@@ -150,33 +145,9 @@ export const edgeCatalog = defineStore("edgeCatalog", () => {
         ),
       });
     },
-    // getEdgeFromApi = (
-    //   { country, magazine, issuenumber, contributors, photos }: EdgeModel,
-    //   status: string
-    // ) => {
-    //   const shortIssuecode = `${country}/${magazine} ${issuenumber}`;
-    //   const getContributorsOfType = (contributionType: string) =>
-    //     (contributors ?? [])
-    //       .filter(({ contribution }) => contribution === contributionType)
-    //       .map(
-    //         ({ userId }) =>
-    //           users().allUsers!.find(({ id }) => id === userId)!
-    //             .username as string
-    //       );
-    //   const photo = photos?.find(({ isMainPhoto }) => isMainPhoto);
-    //   return {
-    //     country,
-    //     magazine,
-    //     issuenumber,
-    //     shortIssuecode,
-    //     v3: false,
-    //     designers: getContributorsOfType("createur"),
-    //     photographers: getContributorsOfType("photographe"),
-    //     photo: photo?.elementImage.fileName,
-    //     status,
-    //   };
-    // },
-    getEdgeFromSvg = (edge: Edge): EdgeWithVersionAndStatus => ({
+    getEdgeFromSvg = (
+      edge: Pick<Edge, "designers" | "photographers">,
+    ): EdgeWithVersionAndStatus => ({
       ...edge,
       v3: true,
       status: edgeCategories.reduce(
@@ -195,12 +166,12 @@ export const edgeCatalog = defineStore("edgeCatalog", () => {
       country,
       magazine,
       issuenumber,
-      shortIssuecode,
+      issuecode,
     }: {
       country: string;
       magazine: string;
       issuenumber: string;
-      shortIssuecode: string;
+      issuecode: string;
     }) => {
       let isPublished = false;
       const publicationcode = `${country}/${magazine}`;
@@ -211,7 +182,7 @@ export const edgeCatalog = defineStore("edgeCatalog", () => {
       }
 
       return (
-        currentEdges.value[shortIssuecode] || {
+        currentEdges.value[issuecode] || {
           status: isPublished ? "Published" : "none",
         }
       ).status;
@@ -256,12 +227,8 @@ export const edgeCatalog = defineStore("edgeCatalog", () => {
               };
             } else {
               const publicationcode = `${country}/${magazine}`;
-              const shortIssuecode = `${publicationcode} ${issuenumber}`;
-              newCurrentEdges[shortIssuecode] = getEdgeFromSvg({
-                country,
-                magazine,
-                shortIssuecode,
-                issuenumber,
+              const issuecode = `${publicationcode} ${issuenumber}`;
+              newCurrentEdges[issuecode] = getEdgeFromSvg({
                 designers,
                 photographers,
               });
@@ -280,7 +247,7 @@ export const edgeCatalog = defineStore("edgeCatalog", () => {
           .fetchPublicationNames([
             ...new Set(
               Object.values(newCurrentEdges).map(
-                ({ country, magazine }) => `${country}/${magazine}`,
+                ({ publicationcode }) => publicationcode,
               ),
             ),
           ]);

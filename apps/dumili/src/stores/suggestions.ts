@@ -1,7 +1,7 @@
 import { dumiliSocketInjectionKey } from "~/composables/useDumiliSocket";
 import { FullIndexation } from "~dumili-services/indexations/types";
 import { storyKindSuggestion, storySuggestion } from "~prisma/client_dumili";
-import { inducks_storyversion } from "~prisma-clients/client_coa";
+import { inducks_storyversion } from "~prisma-clients/schemas/coa";
 
 export type storyWithStoryversion = storySuggestion & {
   storyversion: inducks_storyversion;

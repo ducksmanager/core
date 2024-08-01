@@ -1,7 +1,7 @@
-import { IssueSuggestion } from "./IssueSuggestion";
+import type { IssueSuggestion } from "./IssueSuggestion";
 
 export class IssueSuggestionList {
-  issues: { [shortIssueCode: string]: IssueSuggestion } = {};
+  issues: { [issuesByIssuecode: string]: IssueSuggestion } = {};
   minScore = 0;
   maxScore = 0;
 }

@@ -1,8 +1,8 @@
-import GlobalStatsServices from "~dm-services/global-stats/types";
-import { BookcaseContributor } from "~dm-types/BookcaseContributor";
-import { AbstractEvent } from "~dm-types/events/AbstractEvent";
-import { user } from "~prisma-clients/extended/dm.extends";
-import { EventReturnType } from "~socket.io-services/types";
+import type GlobalStatsServices from "~dm-services/global-stats/types";
+import type { BookcaseContributor } from "~dm-types/BookcaseContributor";
+import type { AbstractEvent } from "~dm-types/events/AbstractEvent";
+import type { user } from "~prisma-clients/schemas/dm";
+import type { EventReturnType } from "~socket.io-services/types";
 
 import { dmSocketInjectionKey } from "../composables/useDmSocket";
 

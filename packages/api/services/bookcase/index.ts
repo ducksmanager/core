@@ -1,7 +1,7 @@
 import type { Namespace, Server } from "socket.io";
 
 import type { BookcaseEdge, BookcaseEdgeSprite } from "~dm-types/BookcaseEdge";
-import { prismaDm } from "~prisma-clients";
+import { prismaClient as prismaDm } from "~prisma-clients/schemas/dm";
 
 import { RequiredAuthMiddleware } from "../auth/util";
 import options, { authenticated as authenticatedOptions } from "./options";
@@ -32,16 +32,12 @@ export default (io: Server) => {
       }
       const groupBy = user.showDuplicatesInBookcase
         ? "numeros.ID"
-        : "numeros.shortIssuecode";
+        : "numeros.issuecode";
       callback({
         edges: (
           (await prismaDm.$queryRaw`
             SELECT issue.ID AS id,
-              issue.Pays AS countryCode,
-              issue.Magazine AS magazineCode,
-              CONCAT(issue.Pays, '/', issue.Magazine) AS publicationcode,
-              issue.Numero AS issuenumber,
-              IFNULL(edgeDuplicate.NumeroReference, issue.Numero_nospace) AS issuenumberReference,
+              issue.issuecode,
               edge.ID AS edgeId,
               edge.DateAjout AS creationDate,
               IF(edge.ID IS NULL, '', GROUP_CONCAT(
@@ -49,16 +45,12 @@ export default (io: Server) => {
                   JSON_OBJECT('name', edgeSprite.Sprite_name, 'version', edgeSpriteUrl.Version, 'size', edgeSprite.Sprite_size))
                 ORDER BY edgeSprite.Sprite_size ASC)) AS sprites
             FROM numeros issue
-            LEFT JOIN tranches_doublons edgeDuplicate
-              ON issue.Pays = edgeDuplicate.Pays
-                AND issue.Magazine = edgeDuplicate.Magazine
-                AND issue.Numero_nospace = edgeDuplicate.Numero
             LEFT JOIN tranches_pretes edge
-              ON issue.short_issuecode = edge.short_issuecode
+              USING(issuecode)
             LEFT JOIN tranches_pretes_sprites edgeSprite
               ON edgeSprite.ID_Tranche = edge.ID
             LEFT JOIN tranches_pretes_sprites_urls edgeSpriteUrl
-              ON edgeSprite.Sprite_name = edgeSpriteUrl.Sprite_name
+              USING(Sprite_name)
             WHERE ID_Utilisateur = ${user.id}
             GROUP BY ${groupBy}
           `) as BookcaseEdgeRaw[]

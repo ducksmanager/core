@@ -1,0 +1,27 @@
+{
+  "extends": [
+    "plugin:@typescript-eslint/recommended",
+    "prettier"
+  ],
+  "parserOptions": {
+    "parser": "@typescript-eslint/parser",
+    "project": true
+  },
+  "overrides": [
+    {
+      "files": ["*.ts"]
+    }
+  ],
+  "root": true,
+  "rules": {
+    "@typescript-eslint/consistent-type-imports": "error"
+  },
+  "plugins": [
+    "@typescript-eslint",
+  ],
+  "ignorePatterns": [
+    "**/node_modules",
+    "**/dist",
+    "*.d.ts"
+  ]
+}

@@ -1,7 +1,8 @@
 import type { Socket } from "socket.io";
 
 import type { ModelSteps } from "~dm-types/ModelSteps";
-import { prismaDm, prismaEdgeCreator } from "~prisma-clients";
+import { prismaClient as prismaDm } from "~prisma-clients/schemas/dm";
+import { prismaClient as prismaEdgeCreator } from "~prisma-clients/schemas/edgecreator";
 
 import type Events from "../types";
 
@@ -56,20 +57,16 @@ export default (socket: Socket<Events>) => {
     );
   });
 
-  socket.on("getModel", async (publicationcode, issuenumber, callback) => {
-    const [country, magazine] = publicationcode.split("/");
+  socket.on("getModel", async (issuecode, callback) => {
     const model = await prismaEdgeCreator.edgeModel.findFirst({
       where: {
-        country,
-        magazine,
-        issuenumber,
+        issuecode,
       },
     });
     const modelIsPublished =
       (await prismaDm.edge.count({
         where: {
-          publicationcode,
-          issuenumber,
+          issuecode,
         },
       })) > 0;
     callback(model && modelIsPublished ? model : null);

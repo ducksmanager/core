@@ -2,8 +2,8 @@ import type { AxiosInstance } from "axios";
 import { defineStore } from "pinia";
 
 import { edgecreatorSocketInjectionKey } from "~/composables/useEdgecreatorSocket";
-import type { EdgeWithModelId } from "~dm-types/EdgeWithModelId";
-import type { userContributionType } from "~prisma-clients/extended/dm.extends";
+import type { EdgeWithModelIdAndInducksData } from "~dm-types/EdgeWithModelIdAndInducksData";
+import type { userContributionType } from "~prisma-clients/schemas/dm";
 import type { ModelContributor } from "~types/ModelContributor";
 import type { SimpleUser } from "~types/SimpleUser";
 import { stores as webStores } from "~web";
@@ -27,8 +27,8 @@ export const main = defineStore("main", () => {
     isRange = ref(false),
     photoUrls = ref<Record<string, string>>({}),
     contributors = ref<ModelContributor[]>([]),
-    edgesBefore = ref<EdgeWithModelId[]>([]),
-    edgesAfter = ref<EdgeWithModelId[]>([]),
+    edgesBefore = ref<EdgeWithModelIdAndInducksData[]>([]),
+    edgesAfter = ref<EdgeWithModelIdAndInducksData[]>([]),
     publicationElements = ref<string[]>([]),
     publicationPhotos = ref<string[]>([]),
     warnings = ref<string[]>([]),
@@ -39,7 +39,7 @@ export const main = defineStore("main", () => {
     publicationIssuenumbers = computed(
       () =>
         (publicationcode.value &&
-          webStores.coa().issueNumbers[publicationcode.value]) ||
+          webStores.coa().issuenumbers[publicationcode.value]) ||
         [],
     ),
     publicationIssuecodes = computed(
@@ -146,15 +146,18 @@ export const main = defineStore("main", () => {
     },
     loadPublicationIssues = async () =>
       webStores.coa().fetchIssueNumbers([publicationcode.value!]),
-    getEdgePublicationStates = async (edges: string[]) =>
+    getEdgePublicationStates = async (edgeIssuecodes: string[]) =>
       [
         ...new Set(
           Object.values(
-            await edgesServices.getEdges(publicationcode.value!, edges),
+            await edgesServices.getEdges({ issuecodes: edgeIssuecodes }),
           ),
         ),
       ].sort((a, b) =>
-        Math.sign(edges.indexOf(a.issuenumber) - edges.indexOf(b.issuenumber)),
+        Math.sign(
+          edgeIssuecodes.indexOf(a!.issuecode) -
+            edgeIssuecodes.indexOf(b!.issuecode),
+        ),
       ),
     loadSurroundingEdges = async () => {
       const firstIssueIndex = publicationIssuenumbers.value.findIndex(
@@ -163,13 +166,13 @@ export const main = defineStore("main", () => {
       const lastIssueIndex = publicationIssuenumbers.value.findIndex(
         (issue) => issue === issuenumbers.value[issuenumbers.value.length - 1],
       );
-      const issuesBefore = publicationIssuenumbers.value.filter(
+      const issuesBefore = publicationIssuecodes.value.filter(
         (_, index) =>
           firstIssueIndex !== -1 &&
           index >= firstIssueIndex - 10 &&
           index < firstIssueIndex,
       );
-      const issuesAfter = publicationIssuenumbers.value.filter(
+      const issuesAfter = publicationIssuecodes.value.filter(
         (_, index) =>
           lastIssueIndex !== -1 &&
           index > lastIssueIndex &&

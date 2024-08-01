@@ -48,8 +48,8 @@
               <ion-text>{{ t('Numéro le plus côté :') }}</ion-text>
               <ion-text>
                 <Condition :value="highestQuotedIssue.condition" />
-                {{ publicationNames[highestQuotedIssue.publicationcode] }}
-                {{ highestQuotedIssue.issuenumber }}</ion-text
+                {{ publicationNames[highestQuotedIssue.issuecode?.split(' ')[0]!] }}
+                {{ issuecodeDetails[highestQuotedIssue.issuecode].issuenumber }}</ion-text
               ></template
             >
             <ion-text v-else>{{ t('Vous ne possédez pas de numéro côté.') }}</ion-text>
@@ -109,7 +109,7 @@ const {
   totalUniqueIssues,
   quotationSum,
 } = storeToRefs(wtdcollection());
-const { publicationNames } = storeToRefs(coa());
+const { publicationNames, issuecodeDetails } = storeToRefs(coa());
 const { loadUserIssueQuotations } = wtdcollection();
 
 watch(

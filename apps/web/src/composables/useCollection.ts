@@ -1,8 +1,7 @@
 import type { ShallowRef } from "vue";
 
-import { QuotedIssue } from "~dm-types/QuotedIssue";
-import { issue_condition } from "~prisma-clients/extended/dm.extends";
-import { issue } from "~prisma-clients/extended/dm.extends";
+import type { QuotedIssue } from "~dm-types/QuotedIssue";
+import type { issue, issue_condition } from "~prisma-clients/schemas/dm";
 
 import { coa } from "../stores/coa";
 
@@ -25,37 +24,33 @@ export default (issues: ShallowRef<issue[] | null>) => {
   const totalPerPublication = computed(
       () =>
         issues.value?.reduce<{ [publicationcode: string]: number }>(
-          (acc, issue) => {
-            const publicationcode = `${issue.country}/${issue.magazine}`;
-            return {
-              ...acc,
-              [publicationcode]: (acc[publicationcode] || 0) + 1,
-            };
-          },
+          (acc, { publicationcode }) => ({
+            ...acc,
+            [publicationcode]: (acc[publicationcode] || 0) + 1,
+          }),
           {},
         ) || null,
     ),
-    issuesByShortIssuecode = computed(() =>
-      issues.value?.reduce<{ [shortIssuecode: string]: issue[] }>(
+    issuesByIssuecode = computed(() =>
+      issues.value?.reduce<{ [issuecode: string]: issue[] }>(
         (acc, issue) => ({
           ...acc,
-          [issue.shortIssuecode]: [...(acc[issue.shortIssuecode] || []), issue],
+          [issue.issuecode]: [...(acc[issue.issuecode] || []), issue],
         }),
         {},
       ),
     ),
     duplicateIssues = computed(
       (): {
-        [shortIssuecode: string]: issue[];
+        [issuecode: string]: issue[];
       } =>
-        (issuesByShortIssuecode.value &&
-          Object.keys(issuesByShortIssuecode.value).reduce(
-            (acc, shortIssuecode) =>
-              issuesByShortIssuecode.value![shortIssuecode].length > 1
+        (issuesByIssuecode.value &&
+          Object.keys(issuesByIssuecode.value).reduce(
+            (acc, issuecode) =>
+              issuesByIssuecode.value![issuecode].length > 1
                 ? {
                     ...acc,
-                    [shortIssuecode]:
-                      issuesByShortIssuecode.value![shortIssuecode],
+                    [issuecode]: issuesByIssuecode.value![issuecode],
                   }
                 : acc,
             {},
@@ -84,7 +79,8 @@ export default (issues: ShallowRef<issue[] | null>) => {
       issues.value?.reduce<{ [countrycode: string]: number }>(
         (acc, issue) => ({
           ...acc,
-          [issue.country]: (acc[issue.country] || 0) + 1,
+          [issue.publicationcode.split("/")[0]]:
+            (acc[issue.publicationcode.split("/")[0]] || 0) + 1,
         }),
         {},
       ),
@@ -99,19 +95,18 @@ export default (issues: ShallowRef<issue[] | null>) => {
           {} as Record<issue_condition, number>,
         ) || ({} as Record<issue_condition, number>),
     ),
-    findInCollection = (publicationcode: string, issuenumber: string) =>
+    findInCollection = (issuecode: string) =>
       issues.value?.find(
-        ({ country, magazine, issuenumber: collectionIssueNumber }) =>
-          publicationcode === `${country}/${magazine}` &&
-          collectionIssueNumber === issuenumber,
+        ({ issuecode: collectionIssuecode }) =>
+          collectionIssuecode === issuecode,
       ),
     quotedIssues = computed<QuotedIssue[] | null>(() => {
       const issueQuotations = coa().issueQuotations;
       if (issueQuotations === null) {
         return null;
       }
-      const getEstimation = (shortIssuecode: string) => {
-        const estimationData = issueQuotations[shortIssuecode];
+      const getEstimation = (issuecode: string) => {
+        const estimationData = issueQuotations[issuecode];
         return (
           estimationData && {
             ...estimationData,
@@ -133,25 +128,20 @@ export default (issues: ShallowRef<issue[] | null>) => {
       };
       return (
         issues.value
-          ?.filter(({ shortIssuecode }) => getEstimation(shortIssuecode))
-          .map(
-            ({ shortIssuecode, publicationcode, issuenumber, condition }) => {
-              const estimation = getEstimation(shortIssuecode);
-              return {
-                ...estimation,
-                shortIssuecode,
-                publicationcode,
-                issuenumber,
-                condition,
-                estimationGivenCondition: parseFloat(
-                  (
-                    CONDITION_TO_ESTIMATION_PCT[condition] *
-                    estimation.estimation
-                  ).toFixed(1),
-                ),
-              };
-            },
-          ) || null
+          ?.filter(({ issuecode }) => getEstimation(issuecode))
+          .map(({ issuecode, condition }) => {
+            const estimation = getEstimation(issuecode);
+            return {
+              ...estimation,
+              issuecode,
+              condition,
+              estimationGivenCondition: parseFloat(
+                (
+                  CONDITION_TO_ESTIMATION_PCT[condition] * estimation.estimation
+                ).toFixed(1),
+              ),
+            };
+          }) || null
       );
     }),
     quotationSum = computed(() =>
@@ -170,7 +160,7 @@ export default (issues: ShallowRef<issue[] | null>) => {
     duplicateIssues,
     issuesInOnSaleStack,
     issuesInToReadStack,
-    issuesByShortIssuecode,
+    issuesByIssuecode,
     mostPossessedPublication,
     numberPerCondition,
     quotedIssues,

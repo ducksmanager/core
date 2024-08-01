@@ -65,19 +65,25 @@ model elementImage {
 
 model edgeModel {
   id            Int               @id @default(autoincrement()) @map("ID")
+  /// @deprecated
   country       String            @map("Pays") @db.VarChar(3)
+  /// @deprecated
   magazine      String            @map("Magazine") @db.VarChar(6)
+  /// @deprecated
   issuenumber   String            @map("Numero") @db.VarChar(10)
   username      String?           @db.VarChar(25)
   mainPhotoName String?           @map("NomPhotoPrincipale") @db.VarChar(60)
   photographs   String?           @map("photographes") @db.Text
   creators      String?           @map("createurs") @db.Text
   isActive      Boolean           @map("Active")
+  issuecode     String            @default(dbgenerated("(concat(convert(`Pays` using utf8mb3),'/',`Magazine`,' ',`Numero`))")) @db.VarChar(21)
   contributors  edgeContributor[]
   photos        edgePhoto[]
   values        edgeValue[]
 
+  /// @deprecated
   @@unique([country, magazine, issuenumber, username], map: "tranches_en_cours_modeles__numero")
+  @@unique([issuecode, username], map: "tranches_en_cours_modeles__issuecode")
   @@map("tranches_en_cours_modeles")
 }
 

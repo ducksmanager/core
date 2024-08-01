@@ -89,7 +89,7 @@ interface Selection {
   editMode: "single" | "range";
   countrycode: string;
   publicationcode: string;
-  shortIssuecode: string;
+  issuecode: string;
   issuenumberEnd?: string;
 }
 
@@ -114,15 +114,15 @@ const props = withDefaults(
   },
 );
 
-interface ShortIssuecodeAndNumber {
-  shortIssuecode: string;
+interface IssuecodeAndNumber {
+  issuecode: string;
   issuenumber: string;
 }
 
 const currentCountrycode = ref<string | undefined>(undefined);
 const currentPublicationcode = ref<string | undefined>(undefined);
-const currentFirstIssue = ref<ShortIssuecodeAndNumber | undefined>(undefined);
-const currentLastIssue = ref<ShortIssuecodeAndNumber | undefined>(undefined);
+const currentFirstIssue = ref<IssuecodeAndNumber | undefined>(undefined);
+const currentLastIssue = ref<IssuecodeAndNumber | undefined>(undefined);
 const editMode = ref<"single" | "range">("single");
 const hasMoreIssuesToLoad = ref({ before: false, after: false });
 const surroundingIssuesToLoad = ref({ before: 10, after: 10 } as Record<
@@ -160,25 +160,25 @@ const publications = computed(
 );
 
 const publicationIssues = computed(
-  () => coaStore.issueNumbers[currentPublicationcode.value!],
+  () => coaStore.issuenumbers[currentPublicationcode.value!],
 );
 
 const issues = computed(
   () =>
     publicationIssues.value &&
     edgeCatalogStore.publishedEdges[currentPublicationcode.value!] &&
-    coaStore.issueNumbers[currentPublicationcode.value!].map(
+    coaStore.issuenumbers[currentPublicationcode.value!].map(
       (issuenumber, idx) => {
-        const shortIssuecode =
-          coaStore.shortIssuecodes[currentPublicationcode.value!][idx];
+        const issuecode =
+          coaStore.issuecodes[currentPublicationcode.value!][idx];
         const status = edgeCatalogStore.getEdgeStatus({
           country: currentCountrycode.value!,
           magazine: currentPublicationcode.value!.split("/")[1],
           issuenumber,
-          shortIssuecode,
+          issuecode,
         });
         return {
-          value: { shortIssuecode, issuenumber },
+          value: { issuecode, issuenumber },
           text: `${issuenumber}${status === "none" ? "" : ` (${$t(status!)})`}`,
           disabled:
             (props.disableOngoingOrPublished && status !== "none") ||
@@ -252,7 +252,7 @@ const onChange = () => {
     editMode: editMode.value,
     countrycode: currentCountrycode.value!,
     publicationcode: currentPublicationcode.value!,
-    shortIssuecode: currentFirstIssue.value!.shortIssuecode,
+    issuecode: currentFirstIssue.value!.issuecode,
     issuenumberEnd: currentLastIssue.value?.issuenumber,
   });
 };

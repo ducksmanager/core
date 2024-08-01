@@ -5,7 +5,7 @@
 </template>
 
 <script setup lang="ts">
-import { RouteRecordNormalized } from "vue-router";
+import type { RouteRecordNormalized } from "vue-router";
 
 const { route: currentRoute = null, icon = null } = defineProps<{
   route?: RouteRecordNormalized;

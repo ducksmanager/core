@@ -21,8 +21,8 @@
         />
         <template v-if="partIdx === 4 && issuenumber !== undefined"
           ><div style="display: flex; align-items: center">
-            <Issue :issuenumber="issuenumber" /><template v-if="extraIssuenumbers.length"
-              ><ion-chip :outline="true">+&nbsp;{{ extraIssuenumbers.length }}</ion-chip></template
+            <Issue :issuenumber="issuenumber" /><template v-if="extraIssuecodes.length"
+              ><ion-chip :outline="true">+&nbsp;{{ extraIssuecodes.length }}</ion-chip></template
             >
           </div></template
         >
@@ -41,7 +41,7 @@ import Publication from './Publication.vue';
 
 import { app } from '~/stores/app';
 
-const { currentNavigationItem, countrycode, publicationcode, issuenumber, extraIssuenumbers } = storeToRefs(app());
+const { currentNavigationItem, countrycode, publicationcode, issuenumber, extraIssuecodes } = storeToRefs(app());
 const { countryNames, publicationNames } = storeToRefs(stores.coa());
 
 const maxParts = 4;

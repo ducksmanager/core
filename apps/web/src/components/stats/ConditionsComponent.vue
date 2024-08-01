@@ -5,21 +5,20 @@
 </template>
 
 <script setup lang="ts">
+import type { ChartOptions, TooltipItem } from "chart.js";
 import {
   ArcElement,
   Chart,
-  ChartOptions,
   Legend,
   PieController,
   Title,
   Tooltip,
-  TooltipItem,
 } from "chart.js";
 import { Pie } from "vue-chartjs";
 
-import { issue_condition } from "~prisma-clients/extended/dm.extends";
+import type { issue_condition } from "~prisma-clients/schemas/dm";
 
-import { Condition } from "../../composables/useCondition";
+import type { Condition } from "../../composables/useCondition";
 
 const props = defineProps<{
   conditions: Condition<boolean>[];

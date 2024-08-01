@@ -14,16 +14,13 @@
 <script lang="ts" setup>
 import dayjs from "dayjs";
 
-import { issue } from "~prisma-clients/extended/dm.extends";
+import type { issue } from "~prisma-clients/schemas/dm";
 
 const customIssues: issue[] = [
   {
     id: 167808,
-    country: "fr",
-    magazine: "MP",
     publicationcode: "fr/MP",
-    shortIssuecode: "fr/MP 303",
-    issuenumber: "303",
+    issuecode: "fr/MP 303",
     condition: "moyen",
     purchaseId: -1,
     isOnSale: true,
@@ -34,11 +31,8 @@ const customIssues: issue[] = [
   },
   {
     id: 167809,
-    country: "fr",
-    magazine: "MP",
     publicationcode: "fr/MP",
-    shortIssuecode: "fr/MP 304",
-    issuenumber: "304",
+    issuecode: "fr/MP 304",
     condition: "moyen",
     purchaseId: -1,
     isOnSale: true,
@@ -49,11 +43,8 @@ const customIssues: issue[] = [
   },
   {
     id: 167812,
-    country: "fr",
-    magazine: "MP",
     publicationcode: "fr/MP",
-    shortIssuecode: "fr/MP 307",
-    issuenumber: "307",
+    issuecode: "fr/MP 307",
     condition: "mauvais",
     purchaseId: -1,
     isOnSale: true,
@@ -64,11 +55,8 @@ const customIssues: issue[] = [
   },
   {
     id: 167818,
-    country: "fr",
-    magazine: "MP",
     publicationcode: "fr/MP",
-    shortIssuecode: "fr/MP 313",
-    issuenumber: "313",
+    issuecode: "fr/MP 313",
     condition: "mauvais",
     purchaseId: -1,
     isOnSale: true,
@@ -79,11 +67,8 @@ const customIssues: issue[] = [
   },
   {
     id: 167819,
-    country: "fr",
-    magazine: "MP",
     publicationcode: "fr/MP",
-    shortIssuecode: "fr/MP 314",
-    issuenumber: "314",
+    issuecode: "fr/MP 314",
     condition: "mauvais",
     purchaseId: -1,
     isOnSale: true,
@@ -94,11 +79,8 @@ const customIssues: issue[] = [
   },
   {
     id: 167821,
-    country: "fr",
-    magazine: "MP",
     publicationcode: "fr/MP",
-    shortIssuecode: "fr/MP 316",
-    issuenumber: "316",
+    issuecode: "fr/MP 316",
     condition: "moyen",
     purchaseId: -1,
     isOnSale: true,
@@ -109,11 +91,8 @@ const customIssues: issue[] = [
   },
   {
     id: 167822,
-    country: "fr",
-    magazine: "MP",
     publicationcode: "fr/MP",
-    shortIssuecode: "fr/MP 317",
-    issuenumber: "317",
+    issuecode: "fr/MP 317",
     condition: "mauvais",
     purchaseId: -1,
     isOnSale: true,
@@ -124,11 +103,8 @@ const customIssues: issue[] = [
   },
   {
     id: 385707,
-    country: "fr",
-    magazine: "MP",
     publicationcode: "fr/MP",
-    shortIssuecode: "fr/MP 386",
-    issuenumber: "386",
+    issuecode: "fr/MP 386",
     condition: "bon",
     purchaseId: -1,
     isOnSale: true,
@@ -139,11 +115,8 @@ const customIssues: issue[] = [
   },
   {
     id: 385715,
-    country: "fr",
-    magazine: "MP",
     publicationcode: "fr/MP",
-    shortIssuecode: "fr/MP 387",
-    issuenumber: "387",
+    issuecode: "fr/MP 387",
     condition: "bon",
     purchaseId: -1,
     isOnSale: true,

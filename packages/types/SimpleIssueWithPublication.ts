@@ -1,11 +1,11 @@
-import { inducks_issuequotation } from "~prisma-clients/client_coa";
+import type { inducks_issuequotation } from "~prisma-clients/schemas/coa";
 
 export interface SimpleIssueWithPublication {
   countrycode: string;
   publicationcode: string;
   title: string;
   issuenumber: string;
-  shortIssuecode: string;
+  issuecode: string;
   coverId: number | null;
   fullUrl: string | null;
   popularity: number | null;

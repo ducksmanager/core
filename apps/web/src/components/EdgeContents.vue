@@ -41,16 +41,14 @@
 <script setup lang="ts">
 const {
   id,
-  issuenumber = null,
-  publicationcode,
+  issuecode,
   spritePath = null,
   invisible = false,
   highlighted = false,
   orientation = "vertical",
 } = defineProps<{
   id: string;
-  publicationcode: string;
-  issuenumber?: string;
+  issuecode: string;
   src: string;
   spritePath: string | null;
   invisible?: boolean;
@@ -68,9 +66,7 @@ const { addLoadedSprite } = bookcase();
 const { loadedSprites } = storeToRefs(bookcase());
 
 const spriteClass = $computed(() =>
-  id && spritePath
-    ? `edges-${publicationcode.replace(/\//g, "-")}-${issuenumber}`
-    : "",
+  id && spritePath ? `edges-${issuecode}` : "",
 );
 const onImageLoad = async (event: Event) => {
   if (spritePath && !ignoreSprite) {
@@ -140,9 +136,7 @@ let height = $ref<number | null>(null);
 
 watch($$(ignoreSprite), (value) => {
   if (value) {
-    console.error(
-      `Could not load sprite for edge ${publicationcode} ${issuenumber}: ${spritePath}`,
-    );
+    console.error(`Could not load sprite for edge ${issuecode}: ${spritePath}`);
     emit("ignore-sprite");
   }
 });

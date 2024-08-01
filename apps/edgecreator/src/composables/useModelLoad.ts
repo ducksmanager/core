@@ -7,6 +7,7 @@ import type { LegacyComponent } from "~/types/LegacyComponent";
 import type { OptionNameAndValue } from "~/types/OptionNameAndValue";
 import type { OptionValue } from "~/types/OptionValue";
 import type { StepOptions } from "~/types/StepOptions";
+import type { inducks_issue } from "~prisma-clients/schemas/coa";
 import { stores as webStores } from "~web";
 import { dmSocketInjectionKey } from "~web/src/composables/useDmSocket";
 
@@ -120,8 +121,10 @@ export default () => {
     stepStore.setDimensions(dimensionsToLoad, { issuenumbers: [issuenumber] });
   };
   const loadStepsFromApi = async (
-    publicationcode: string,
-    issuenumber: string,
+    {
+      publicationcode,
+      issuenumber,
+    }: Pick<inducks_issue, "publicationcode" | "issuenumber">,
     apiSteps: Record<
       string,
       {
@@ -204,17 +207,18 @@ export default () => {
   };
 
   const loadModel = async (
-    countrycode: string,
-    magazinecode: string,
-    issuenumber: string,
+    {
+      publicationcode,
+      issuenumber,
+      issuecode,
+    }: Pick<inducks_issue, "publicationcode" | "issuenumber" | "issuecode">,
     targetIssuenumber: string,
   ) => {
     const onlyLoadStepsAndDimensions = issuenumber !== targetIssuenumber;
 
     const loadSvg = async (publishedVersion: boolean) => {
       const { svgElement, svgChildNodes } = await loadSvgFromString(
-        countrycode,
-        magazinecode,
+        publicationcode,
         issuenumber,
         new Date().toISOString(),
         publishedVersion,
@@ -234,11 +238,7 @@ export default () => {
       try {
         await loadSvg(true);
       } catch (e) {
-        const publicationcode = `${countrycode}/${magazinecode}`;
-        const edge = (await edgeCreatorServices.getModel(
-          publicationcode,
-          issuenumber,
-        ))!;
+        const edge = (await edgeCreatorServices.getModel(issuecode))!;
         await edgeCatalogStore.loadPublishedEdgesSteps({
           publicationcode,
           edgeModelIds: [edge.id],
@@ -247,8 +247,7 @@ export default () => {
           edgeCatalogStore.publishedEdgesSteps[publicationcode][issuenumber];
         loadDimensionsFromApi(issuenumber, apiSteps);
         await loadStepsFromApi(
-          publicationcode,
-          issuenumber,
+          { publicationcode, issuenumber },
           apiSteps,
           true,
           (error: string) => mainStore.addWarning(error),

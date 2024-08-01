@@ -1,5 +1,7 @@
 import type { Namespace, Server } from "socket.io";
 
+import { prismaClient as prismaCoa } from "~prisma-clients/schemas/coa";
+
 import authors from "./authors";
 import countries from "./countries";
 import issueDetails from "./issue-details";
@@ -22,3 +24,23 @@ export default (io: Server) => {
     stories(socket);
   });
 };
+
+
+export const augmentIssuesWithInducksData = async <T extends {issuecode: string}>(issues: Record<string, T>) =>
+  (
+    await prismaCoa.inducks_issue.findMany({
+      select: {
+        publicationcode: true,
+        issuenumber: true,
+        issuecode: true,
+      },
+      where: {
+        issuecode: {
+          in: Object.keys(issues),
+        },
+      },
+    })
+  ).map((issue) => ({
+    ...issue,
+    ...(issues[issue.issuecode] as T),
+  }));

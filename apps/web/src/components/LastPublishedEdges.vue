@@ -21,12 +21,7 @@
         v-for="edge in publishedEdgesSincePreviousVisit"
         :key="`last-published-${edge.id}`"
       >
-        <Issue
-          :publicationcode="edge.publicationcode"
-          :publicationname="publicationNames[edge.publicationcode]!"
-          :issuenumber="edge.issuenumber"
-          hide-condition
-        >
+        <Issue :issuecode="edge.issuecode" hide-condition>
           <Ago :timestamp="new Date(edge.creationDate).getTime()" />
         </Issue>
       </div>

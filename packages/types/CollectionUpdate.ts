@@ -1,4 +1,4 @@
-import type { issue_condition } from "~prisma-clients/extended/dm.extends";
+import type { issue_condition } from "~prisma-clients/schemas/dm";
 
 export type SaleState =
   | boolean
@@ -21,12 +21,10 @@ export type CopyStateWithUndefined = {
 };
 
 export type CollectionUpdateSingleIssue = {
-  publicationcode: string;
-  issuenumber: string;
+  issuecode: string;
   copies: SingleCopyState[];
 };
 
 export type CollectionUpdateMultipleIssues = {
-  publicationcode: string;
-  issuenumbers: string[];
+  issuecodes: string[];
 } & CopyStateWithUndefined;

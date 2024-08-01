@@ -251,9 +251,9 @@
   </template>
 </template>
 <script setup lang="ts">
-import { IssueWithPublicationcodeOptionalId } from "~/stores/collection";
-import { CollectionUpdateMultipleIssues } from "~dm-types/CollectionUpdate";
-import type { issue_condition } from "~prisma-clients/extended/dm.extends";
+import type { IssueWithPublicationcodeOptionalId } from "~/stores/collection";
+import type { CollectionUpdateMultipleIssues } from "~dm-types/CollectionUpdate";
+import type { issue_condition } from "~prisma-clients/schemas/dm/extended";
 
 const { conditions } = useCondition();
 
@@ -282,6 +282,7 @@ const { issueRequestsAsSeller, buyerUserNamesById } =
 
 const { createPurchase, deletePurchase } = collection();
 const { issues, purchases } = storeToRefs(collection());
+const { issuecodeDetails } = storeToRefs(coa());
 
 const today = new Date().toISOString().slice(0, 10);
 
@@ -304,16 +305,18 @@ const isSaleDisabledGlobally = $computed(
   () => !userIdsWhoSentRequestsForAllSelected.length,
 );
 
-const issuenumbers = $computed(() =>
+const issuecodes = $computed(() =>
   isSingleIssueSelected
-    ? [(copyState as IssueWithPublicationcodeOptionalId).issuenumber]
-    : (copyState as CollectionUpdateMultipleIssues).issuenumbers,
+    ? [(copyState as IssueWithPublicationcodeOptionalId).issuecode]
+    : (copyState as CollectionUpdateMultipleIssues).issuecodes,
 );
 
 const collectionForCurrentPublication = $computed(() =>
   issues.value?.filter(
     ({ publicationcode: issuePublicationcode }) =>
-      copyState.publicationcode === issuePublicationcode,
+      issuecodeDetails.value[
+        "issuecode" in copyState ? copyState.issuecode : copyState.issuecodes[0]
+      ].publicationcode === issuePublicationcode,
   ),
 );
 
@@ -375,7 +378,7 @@ const marketplaceStates = $computed(() => [
 ]);
 
 const userIdsWhoSentRequestsForAllSelected = $computed(() =>
-  issueIds.reduce(
+  issueIds.reduce<number[]>(
     (acc, issueId, idx) =>
       idx === 0
         ? [
@@ -398,7 +401,7 @@ const userIdsWhoSentRequestsForAllSelected = $computed(() =>
                 receivedRequestBuyerId === buyerId,
             ),
           ),
-    [] as number[],
+    [],
   ),
 );
 
@@ -412,16 +415,16 @@ const formatDate = (value: string) =>
   /\d{4}-\d{2}-\d{2}/.test(value) ? value : today;
 
 const issueIds = $computed((): (number | null)[] =>
-  issuenumbers && collectionForCurrentPublication
+  issuecodes && collectionForCurrentPublication
     ? isSingleIssueSelected
       ? [
           collectionForCurrentPublication
-            ?.filter(({ issuenumber }) => issuenumber === issuenumbers[0])
+            ?.filter(({ issuecode }) => issuecode === issuecodes[0])
             .find((_, currentCopyIndex) => copyIndex === currentCopyIndex!)
             ?.id || null,
         ]
       : collectionForCurrentPublication
-          ?.filter(({ issuenumber }) => issuenumbers.includes(issuenumber))
+          ?.filter(({ issuecode }) => issuecodes.includes(issuecode))
           .map(({ id }) => id || null)
     : [] || [],
 );

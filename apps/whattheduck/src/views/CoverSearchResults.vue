@@ -109,7 +109,7 @@ const covers = computed(() =>
         ...cover,
         countrycode: cover.publicationcode.split('/')[0],
         publicationName: publicationNames.value[cover.publicationcode],
-        collectionIssues: getCollectionIssues(cover.publicationcode, cover.issuenumber),
+        collectionIssues: getCollectionIssues(cover.issuecode),
       }))
     : [],
 );
@@ -123,7 +123,7 @@ watch(
 );
 
 const onMainSlideClick = async ({ index }: { index: number }) => {
-  currentNavigationItem.value = covers.value[index]!.shortIssuecode;
+  currentNavigationItem.value = covers.value[index]!.issuecode;
   await router.push('/collection');
 };
 </script>

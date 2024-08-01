@@ -1,5 +1,5 @@
-export interface WantedEdge {
-  numberOfIssues: number;
-  publicationcode: string;
-  issuenumber: string;
-}
+import type { AugmentedIssue } from "AugmentedIssue";
+
+export type WantedEdge = AugmentedIssue<{
+  numberOfIssues: number
+}>  

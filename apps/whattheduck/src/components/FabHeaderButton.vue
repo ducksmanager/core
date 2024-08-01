@@ -20,8 +20,6 @@
   ></ion-fab>
 </template>
 <script setup lang="ts" generic="Item extends Option">
-import FabHeaderButtonIcon from './FabHeaderButtonIcon.vue';
-
 import type { Option } from '~/stores/app';
 
 // eslint-disable-next-line no-undef

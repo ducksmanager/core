@@ -1,6 +1,6 @@
 import type { Socket } from "socket.io";
 
-import { prismaDmStats } from "~prisma-clients";
+import { prismaClient as  prismaDmStats } from "~prisma-clients/schemas/dm_stats";
 
 import { getAuthorFullNames } from "../coa/authors";
 import type Events from "./types";

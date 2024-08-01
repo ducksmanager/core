@@ -2,7 +2,8 @@ import dayjs from "dayjs";
 import type { Socket } from "socket.io";
 
 import EdgePhotoSent from "~/emails/edge-photo-sent";
-import { prismaDm, prismaEdgeCreator } from "~prisma-clients";
+import { prismaClient as prismaDm } from "~prisma-clients/schemas/dm";
+import { prismaClient as prismaEdgeCreator } from "~prisma-clients/schemas/edgecreator";
 
 import type Events from "../types";
 export default (socket: Socket<Events>) => {

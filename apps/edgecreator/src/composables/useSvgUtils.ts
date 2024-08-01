@@ -12,15 +12,13 @@ export default () => {
       .map((metadataNode) => metadataNode.textContent!.trim());
 
   const loadSvgFromString = async (
-    country: string,
-    magazine: string,
+    publicationcode: string,
     issuenumber: string,
     mtime: string,
     publishedVersion = false,
   ) => {
     const edgeUrl = getEdgeUrl(
-      country,
-      magazine,
+      publicationcode,
       issuenumber,
       `svg?${mtime}`,
       publishedVersion,
@@ -33,18 +31,17 @@ export default () => {
     const svgElement = doc.getElementsByTagName("svg")[0];
     const svgChildNodes = Object.values(svgElement.childNodes) as SVGElement[];
 
-    return { svgElement, svgChildNodes, country, magazine, issuenumber };
+    return { svgElement, svgChildNodes };
   };
   const getEdgeUrl = (
-    country: string,
-    magazine: string,
+    publicationcode: string,
     issuenumber: string,
     extension: string,
     publishedVersion: boolean,
   ) =>
-    `${import.meta.env.VITE_EDGES_URL as string}/${country}/gen/${
+    `${import.meta.env.VITE_EDGES_URL as string}/${publicationcode.split("/")[0]}/gen/${
       publishedVersion ? "" : "_"
-    }${magazine}.${issuenumber}.${extension}`;
+    }${publicationcode.split("/")[1]}.${issuenumber}.${extension}`;
 
   return {
     getSvgMetadata,

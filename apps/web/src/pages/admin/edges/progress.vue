@@ -7,7 +7,7 @@ meta:
   <div v-if="hasData">
     <div
       v-for="mostWantedIssue in mostWanted"
-      :key="`wanted-${mostWantedIssue.publicationcode}-${mostWantedIssue.issuenumber}`"
+      :key="`wanted-${mostWantedIssue.issuecode.replaceAll(' ', '_')}`"
     >
       <div>
         <u
@@ -18,9 +18,7 @@ meta:
       &nbsp;
       <img
         :src="
-          getImagePath(
-            `flags/${mostWantedIssue.publicationcode.split('/')[0]}.png`,
-          )
+          getImagePath(`flags/${mostWantedIssue.issuecode.split('/')[0]}.png`)
         "
       />
       {{ publicationNames[mostWantedIssue.publicationcode] }} n°{{
@@ -30,9 +28,9 @@ meta:
     <div
       v-if="
         publishedEdges &&
-        issuesByShortIssuecode &&
-        inducksIssueNumbersNoSpace &&
-        Object.keys(inducksIssueNumbersNoSpace).length
+        issuesByIssuecode &&
+        inducksIssuenumbers &&
+        Object.keys(inducksIssuenumbers).length
       "
     >
       <div
@@ -65,16 +63,14 @@ meta:
             publicationNames[publicationcode] || publicationcode
           "
         />
-        <div v-if="inducksIssueNumbersNoSpace[publicationcode]">
+        <div v-if="inducksIssuenumbers[publicationcode]">
           <Bookcase
             v-if="showEdgesForPublication.includes(publicationcode)"
             :bookcase-textures="bookcaseTextures"
             :sorted-bookcase="sortedBookcase[publicationcode]"
           />
           <span
-            v-for="inducksIssueNumber in inducksIssueNumbersNoSpace[
-              publicationcode
-            ]"
+            v-for="inducksIssueNumber in inducksIssuenumbers[publicationcode]"
             v-else
             :key="`${publicationcode}-${inducksIssueNumber}`"
           >
@@ -83,7 +79,7 @@ meta:
               :class="{
                 available: issuenumbers?.includes(inducksIssueNumber),
                 owned:
-                  issuesByShortIssuecode[
+                  issuesByIssuecode[
                     `${publicationcode} ${inducksIssueNumber}`
                   ]!!,
               }"
@@ -123,8 +119,8 @@ meta:
 </template>
 
 <script setup lang="ts">
-import { BookcaseEdgeWithPopularity } from "~/stores/bookcase";
-import { WantedEdge } from "~dm-types/WantedEdge";
+import type { BookcaseEdgeWithPopularity } from "~/stores/bookcase";
+import type { WantedEdge } from "~dm-types/WantedEdge";
 
 import { dmSocketInjectionKey } from "../../../composables/useDmSocket";
 
@@ -143,11 +139,11 @@ const {
   edges: { services: edgesServices },
 } = injectLocal(dmSocketInjectionKey)!;
 
-const { fetchPublicationNames, fetchIssueNumbers } = coa();
-const { publicationNames, issueNumbers } = storeToRefs(coa());
+const { fetchPublicationNames, fetchIssuecodesByPublicationcode } = coa();
+const { publicationNames, issuecodesByPublicationcode } = storeToRefs(coa());
 
 const { loadCollection } = collection();
-const { issuesByShortIssuecode } = storeToRefs(collection());
+const { issuesByIssuecode } = storeToRefs(collection());
 
 const getEdgeUrl = (publicationcode: string, issuenumber: string): string => {
   const [country, magazine] = publicationcode.split("/");
@@ -160,13 +156,15 @@ const open = (publicationcode: string, issuenumber: string) => {
     window.open(getEdgeUrl(publicationcode, issuenumber), "_blank");
   }
 };
-const inducksIssueNumbersNoSpace = $computed(() =>
-  Object.keys(issueNumbers).reduce<Record<string, string[]>>(
+const inducksIssuenumbers = $computed(() =>
+  Object.keys(issuecodesByPublicationcode.value).reduce<
+    Record<string, string[]>
+  >(
     (acc, publicationcode) => ({
       ...acc,
-      [publicationcode]: Object.values(issueNumbers.value[publicationcode]).map(
-        (issuenumber) => issuenumber.replace(/ /g, ""),
-      ),
+      [publicationcode]: Object.values(
+        issuecodesByPublicationcode.value[publicationcode],
+      ).map((issuenumber) => issuenumber.replace(/ /g, "")),
     }),
     {},
   ),
@@ -179,40 +177,37 @@ const sortedBookcase = computed(() =>
     (acc, publicationcode) => ({
       ...acc,
       [publicationcode]:
-        inducksIssueNumbersNoSpace[publicationcode]?.map((issuenumber) => ({
-          id: 0,
-          issueCode: `${publicationcode}-${issuenumber}`,
-          edgeId: publishedEdges?.[publicationcode].includes(issuenumber)
-            ? 1
-            : 0,
-          publicationcode,
-          countryCode: publicationcode.split("/")[0],
-          magazineCode: publicationcode.split("/")[1],
-          issuenumber,
-          issuenumberReference: issuenumber,
-          creationDate: new Date(),
-          sprites: [],
-        })) || [],
+        issuecodesByPublicationcode.value[publicationcode]?.map(
+          (issuecode) => ({
+            id: 0,
+            edgeId: publishedEdges?.[publicationcode].includes(issuecode)
+              ? 1
+              : 0,
+            publicationcode,
+            issuecode,
+            creationDate: new Date(),
+            sprites: [],
+            points: 0,
+            slug: "",
+            timestamp: new Date().getTime(),
+          }),
+        ) || [],
     }),
     {},
   ),
 );
 
 (async () => {
-  mostWanted = (await edgesServices.getWantedEdges()).map(
-    (mostWantedIssue) => ({
-      ...mostWantedIssue,
-      country: mostWantedIssue.publicationcode.split("/")[0],
-      magazine: mostWantedIssue.publicationcode.split("/")[1],
-    }),
-  );
+  mostWanted = await edgesServices.getWantedEdges();
 
-  publishedEdges = (await edgesServices.getPublishedEdges()).reduce(
-    (acc, { publicationcode, issuenumber }) => ({
+  publishedEdges = (await edgesServices.getPublishedEdges()).reduce<
+    Record<string, string[]>
+  >(
+    (acc, { publicationcode, issuecode }) => ({
       ...acc,
-      [publicationcode]: [...(acc[publicationcode] || []), issuenumber],
+      [publicationcode]: [...(acc[publicationcode] || []), issuecode],
     }),
-    {} as Record<string, string[]>,
+    {},
   );
 
   await fetchPublicationNames([
@@ -220,7 +215,7 @@ const sortedBookcase = computed(() =>
     ...Object.keys(publishedEdges),
   ]);
 
-  await fetchIssueNumbers(Object.keys(publishedEdges));
+  await fetchIssuecodesByPublicationcode(Object.keys(publishedEdges));
   await loadCollection();
   hasData = true;
 })();

@@ -23,7 +23,7 @@ const {
   displayClass?: string;
 }>();
 const countrycode = computed(() => publicationcode.split("/")[0]);
-const getImagePath = images().getImagePath;
+const { getImagePath } = images();
 </script>
 
 <style scoped lang="scss">

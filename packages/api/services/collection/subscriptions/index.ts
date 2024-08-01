@@ -1,7 +1,7 @@
 import type { Socket } from "socket.io";
 
 import type { EditSubscription } from "~dm-types/EditSubscription";
-import { prismaDm } from "~prisma-clients";
+import { prismaClient as prismaDm } from "~prisma-clients/schemas/dm";
 
 import type Events from "../types";
 export default (socket: Socket<Events>) => {
@@ -53,7 +53,6 @@ export async function upsertSubscription(
   subscription: EditSubscription,
   userId: number,
 ) {
-  const publicationCodeParts = subscription.publicationcode!.split("/");
 
   if (
     id &&
@@ -74,8 +73,7 @@ export async function upsertSubscription(
       endDate: subscription.endDate!,
     },
     create: {
-      country: publicationCodeParts[0],
-      magazine: publicationCodeParts[1],
+      publicationcode: subscription.publicationcode!,
       users: {
         connect: { id: userId },
       },

@@ -16,15 +16,16 @@
 
 <script setup lang="ts">
 import type { PartInfo } from '~dm-types/SimpleIssue';
-
-import type { IssueWithCollectionIssues } from '~/stores/wtdcollection';
+import { issue } from '~prisma-clients/schemas/dm';
 
 const props = defineProps<{
   classes?: string[];
-  issue: Pick<
-    IssueWithCollectionIssues,
-    'countrycode' | 'countryname' | 'publicationName' | 'issuenumber' | 'collectionIssues'
-  > & {
+  issue: {
+    countrycode: string;
+    countryname: string;
+    publicationName: string;
+    issuenumber: string;
+    collectionIssues: issue[];
     partInfo?: PartInfo;
   };
 }>();

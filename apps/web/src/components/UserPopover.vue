@@ -80,7 +80,7 @@
 </template>
 
 <script setup lang="ts">
-import { QuickStatsPerUser } from "~dm-types/QuickStatsPerUser";
+import type { QuickStatsPerUser } from "~dm-types/QuickStatsPerUser";
 
 defineProps<{
   points: { [contribution: string]: number };

@@ -1,4 +1,4 @@
-import { inducks_issuequotation } from "~prisma-clients/client_coa";
+import type { inducks_issuequotation } from "~prisma-clients/schemas/coa";
 
 export interface SimilarImagesResult {
   image_ids: number[];
@@ -9,7 +9,7 @@ export interface SimilarImagesResult {
 
 export interface CoverSearchResults {
   covers: ({
-    shortIssuecode: string;
+    issuecode: string;
     fullUrl: string;
     publicationcode: string;
     issuenumber: string;

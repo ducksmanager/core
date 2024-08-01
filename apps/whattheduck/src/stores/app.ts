@@ -6,7 +6,7 @@ import type useDmSocket from '~web/src/composables/useDmSocket';
 import usePersistedData from '~/composables/usePersistedData';
 
 export const NAVIGATION_ITEM_REGEX =
-  /^(?:$|(?<countrycode>[^/]+)(?:$|(?:\/(?<magazinecode>[^ ]+)(?:$|(?: (?<issuenumber>.+?)(?:,(?<extraIssuenumbers>.*))?)))))$/;
+  /^(?:$|(?<countrycode>[^/]+)(?:$|(?:\/(?<magazinecode>[^ ]+)(?:$|(?: (?<issuenumber>.+?)(?:,(?<extraIssuecodes>.*))?)))))$/;
 
 export interface Option {
   id: string;
@@ -122,7 +122,7 @@ export const app = defineStore('app', () => {
         countrycode?: string;
         magazinecode?: string;
         issuenumber?: string;
-        extraIssuenumbers?: string;
+        extraIssuecodes?: string;
       },
   );
 
@@ -149,7 +149,7 @@ export const app = defineStore('app', () => {
       : null,
   );
   const issuenumber = computed(() => navigationItemGroups.value.issuenumber);
-  const extraIssuenumbers = computed(() => navigationItemGroups.value.extraIssuenumbers?.split(',') || []);
+  const extraIssuecodes = computed(() => navigationItemGroups.value.extraIssuecodes?.split(',') || []);
 
   const allowMultipleSelection = computed(() => publicationcode.value !== undefined);
 
@@ -167,7 +167,7 @@ export const app = defineStore('app', () => {
     magazinecode,
     publicationcode,
     issuenumber,
-    extraIssuenumbers,
+    extraIssuecodes,
     navigationItemGroups,
     token,
     offlineBannerHeight,

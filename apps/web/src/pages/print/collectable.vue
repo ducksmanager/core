@@ -120,8 +120,9 @@ const doubleNumberRegex = /^(\d{1,2})(\d{2})-(\d{2})$/;
 const lines = 2;
 const numbersPerRow = 100 / lines;
 
-const { fetchCountryNames, fetchPublicationNames } = coa();
-const { countryNames, publicationNames } = storeToRefs(coa());
+const { fetchCountryNames, fetchPublicationNames, fetchIssuecodeDetails } =
+  coa();
+const { countryNames, publicationNames, issuecodeDetails } = storeToRefs(coa());
 
 const { loadCollection, loadPurchases } = collection();
 const { issues, totalPerPublication } = storeToRefs(collection());
@@ -175,53 +176,63 @@ let issuesPerCell = $ref(
   } | null,
 );
 
-watch(issues, (newCollectionValue) => {
+const addIssueToCell = (
+  acc: { [publicationcode: string]: { [mod: string | number]: string[] } },
+  publicationcode: string,
+  issuenumber: string,
+  isDoubleIssueStart = false,
+  isDoubleIssueEnd = false,
+) => {
+  let mod, number;
+  if (Number.isNaN(issuenumber)) {
+    mod = "non-numeric";
+    number = issuenumber;
+  } else {
+    mod = parseInt(issuenumber) % 100;
+    number = (parseInt(issuenumber) - mod) / 100;
+  }
+  if (!acc[publicationcode]) {
+    acc[publicationcode] = {
+      "non-numeric": [],
+    };
+  }
+  if (!acc[publicationcode][mod]) acc[publicationcode][mod] = [];
+
+  acc[publicationcode][mod].push(
+    [
+      isDoubleIssueEnd ? "<" : "",
+      typeof number === "string" ? number : numberToLetter(number),
+      isDoubleIssueStart ? ">" : "",
+    ].join(""),
+  );
+};
+
+watch(issues, async (newCollectionValue) => {
   if (!newCollectionValue) {
     return;
   }
-  const addIssueToCell = (
-    acc: { [publicationcode: string]: { [mod: string | number]: string[] } },
-    publicationcode: string,
-    issuenumber: string,
-    isDoubleIssueStart = false,
-    isDoubleIssueEnd = false,
-  ) => {
-    let mod, number;
-    if (Number.isNaN(issuenumber)) {
-      mod = "non-numeric";
-      number = issuenumber;
-    } else {
-      mod = parseInt(issuenumber) % 100;
-      number = (parseInt(issuenumber) - mod) / 100;
-    }
-    if (!acc[publicationcode]) {
-      acc[publicationcode] = {
-        "non-numeric": [],
-      };
-    }
-    if (!acc[publicationcode][mod]) acc[publicationcode][mod] = [];
 
-    acc[publicationcode][mod].push(
-      [
-        isDoubleIssueEnd ? "<" : "",
-        typeof number === "string" ? number : numberToLetter(number),
-        isDoubleIssueStart ? ">" : "",
-      ].join(""),
-    );
-  };
+  await fetchIssuecodeDetails(
+    newCollectionValue.map(({ issuecode }) => issuecode),
+  );
   issuesPerCell = newCollectionValue.reduce((acc, issue) => {
-    const publicationcode = `${issue.country}/${issue.magazine}`;
-    const issuenumber = issue.issuenumber;
+    const issuenumber = issuecodeDetails.value[issue.issuecode].issuenumber;
     const doubleNumberMatch = issuenumber.match(doubleNumberRegex);
     if (
       doubleNumberMatch &&
       parseInt(doubleNumberMatch[2]) === parseInt(doubleNumberMatch[1]) + 1
     ) {
       const [, part1, issue1, issue2] = doubleNumberMatch;
-      addIssueToCell(acc, publicationcode, `${part1}${issue1}`, true);
-      addIssueToCell(acc, publicationcode, `${part1}${issue2}`, false, true);
+      addIssueToCell(acc, issue.publicationcode, `${part1}${issue1}`, true);
+      addIssueToCell(
+        acc,
+        issue.publicationcode,
+        `${part1}${issue2}`,
+        false,
+        true,
+      );
     } else {
-      addIssueToCell(acc, publicationcode, issuenumber);
+      addIssueToCell(acc, issue.publicationcode, issuenumber);
     }
     return acc;
   }, {});

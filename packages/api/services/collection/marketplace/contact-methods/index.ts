@@ -1,7 +1,7 @@
 import type { Socket } from "socket.io";
 
-import { prismaDm } from "~prisma-clients";
-import { userOptionType } from "~prisma-clients/extended/dm.extends";
+import { userOptionType } from "~prisma-clients/schemas/dm";
+import { prismaClient as prismaDm } from "~prisma-clients/schemas/dm";
 
 import type Events from "../../types";
 import { getIssuesForSale } from "..";
@@ -10,9 +10,7 @@ export default (socket: Socket<Events>) => {
   socket.on("getContactMethods", async (sellerId, callback) => {
     const issuesForSale = await getIssuesForSale(socket.data.user!.id);
     if (
-      !Object.values(issuesForSale).some((publicationSales) =>
-        publicationSales.some((issue) => issue.userId === sellerId),
-      )
+      !issuesForSale.some((issue) => issue.userId === sellerId)
     ) {
       callback({ error: "Invalid seller ID", errorDetails: String(sellerId) });
       return;

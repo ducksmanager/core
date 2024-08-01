@@ -11,10 +11,9 @@
         v-if="embedded"
         :id="`edge-${edgeIndex}${embedded}`"
         v-bind="
-          (({ publicationcode, issueCondition, issuenumber }) => ({
-            publicationcode,
+          (({ issue, issueCondition }) => ({
+            issue,
             issueCondition,
-            issuenumber,
           }))(sortedBookcase[edgeIndex] as SimpleBookcaseEdge)
         "
         :orientation="orientation"
@@ -40,16 +39,13 @@
         "
         v-bind="
           (({
-            publicationcode,
+            issue,
             issueCondition,
-            issuenumber,
-            issuenumberReference,
             popularity,
           }: BookcaseEdgeWithPopularity) => ({
-            publicationcode,
+            issue,
             issueCondition,
-            issuenumber,
-            issuenumberReference,
+            
             popularity,
           }))(sortedBookcaseWithPopularity![edgeIndex])
         "
@@ -80,7 +76,7 @@
 <script setup lang="ts">
 import { images } from "~/stores/images";
 
-import {
+import type {
   BookcaseEdgeWithPopularity,
   SimpleBookcaseEdge,
 } from "../stores/bookcase";

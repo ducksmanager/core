@@ -5,25 +5,18 @@
     @open:popper="loadIssueUrls"
   >
     <i-bi-eye-fill
-      :id="`issue-details-${issuenumber}`"
+      :id="`issue-details-${issuecode.replaceAll(' ', '_')}`"
       class="mx-2"
       :class="{
         [`can-show-book-${
-          !coverUrls[issuenumber] ? coverUrls[issuenumber] : true
+          !coverUrls[issuecode] ? coverUrls[issuecode] : true
         }`]: true,
       }"
       :alt="$t('Voir')"
       @click.prevent="$emit('click')"
     />
     <template #header>
-      <Issue
-        :publicationcode="publicationcode"
-        :issuenumber="issuenumber"
-        :publicationname="publicationNames[publicationcode]!"
-        hide-condition
-        :flex="false"
-        no-wrap
-      />
+      <Issue :issuecode="issuecode" hide-condition :flex="false" no-wrap />
     </template>
     <template #content>
       <div v-if="isCoverLoading" class="flex-grow-1">
@@ -49,31 +42,41 @@
 </template>
 
 <script setup lang="ts">
-const { issuenumber, publicationcode } = defineProps<{
-  publicationcode: string;
-  issuenumber: string;
+const { issuecode } = defineProps<{
+  issuecode: string;
 }>();
 defineEmits<{ (e: "click"): void }>();
 
 let isCoverLoading = $ref(true);
 let fullUrl = $ref<string | null>(null);
+let publicationcode = $ref<string>("");
+let issuenumber = $ref<string>("");
 
-const { fetchIssueUrls, setCoverUrl } = coa();
-const { publicationNames, issueDetails, coverUrls } = storeToRefs(coa());
+const { fetchIssueUrls, setCoverUrl, fetchIssuecodeDetails } = coa();
+const { publicationNames, issueDetails, issuecodeDetails, coverUrls } =
+  storeToRefs(coa());
+
+watch(
+  $$(issuecode),
+  async () => {
+    await fetchIssuecodeDetails([issuecode]);
+    publicationcode = issuecodeDetails.value[issuecode]?.publicationcode;
+    issuenumber = issuecodeDetails.value[issuecode]?.issuenumber;
+  },
+  { immediate: true },
+);
 
 const cloudinaryBaseUrl =
   "https://res.cloudinary.com/dl7hskxab/image/upload/inducks-covers/";
-const issueCode = $computed(() => `${publicationcode} ${issuenumber}`);
 
 const loadIssueUrls = async () => {
   isCoverLoading = true;
   await fetchIssueUrls({
-    publicationcode,
-    issuenumber,
+    issuecode,
   });
   isCoverLoading = false;
 
-  const possibleCoverUrl = issueDetails.value?.[issueCode]?.entries?.find(
+  const possibleCoverUrl = issueDetails.value?.[issuecode]?.entries?.find(
     ({ position }) => !/^p/.test(position),
   )?.url;
   fullUrl = possibleCoverUrl ? cloudinaryBaseUrl + possibleCoverUrl : null;
@@ -81,7 +84,7 @@ const loadIssueUrls = async () => {
 
 watch($$(fullUrl), (value) => {
   if (value) {
-    setCoverUrl(issuenumber, value);
+    setCoverUrl(issuecode, value);
   }
 });
 </script>

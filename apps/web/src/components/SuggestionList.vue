@@ -22,13 +22,12 @@
     </b-button-group>
     <div
       v-for="{
-        publicationcode,
-        issuenumber,
+        issuecode,
         oldestdate,
         score,
         stories,
       } in sortedSuggestions!.issues"
-      :key="`${publicationcode} ${issuenumber}`"
+      :key="issuecode"
     >
       <div
         class="suggestions pt-2"
@@ -48,14 +47,7 @@
             />
           </div>
           <div>
-            <Issue
-              :publicationcode="publicationcode"
-              :publicationname="
-                sortedSuggestions!.publicationTitles[publicationcode]!
-              "
-              :issuenumber="issuenumber"
-              no-wrap
-            >
+            <Issue :issuecode="issuecode" no-wrap>
               <template #title-suffix>
                 <div
                   v-if="oldestdate.split('T')?.[0]"
@@ -69,7 +61,7 @@
         </div>
       </div>
       <StoryList
-        :key="`${publicationcode} ${issuenumber}-stories`"
+        :key="`${issuecode}-stories`"
         :authors="sortedSuggestions!.authors"
         :stories="stories"
         :story-details="sortedSuggestions!.storyDetails"

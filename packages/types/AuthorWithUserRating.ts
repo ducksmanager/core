@@ -1,5 +1,5 @@
-import { inducks_person } from "~prisma-clients/client_coa";
-import { authorUser } from "~prisma-clients/extended/dm.extends";
+import type { inducks_person } from "~prisma-clients/schemas/coa";
+import type { authorUser } from "~prisma-clients/schemas/dm";
 
 export type AuthorWithUserRating = authorUser &
   Pick<inducks_person, "fullname">;

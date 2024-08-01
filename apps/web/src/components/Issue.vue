@@ -1,21 +1,21 @@
 <template>
-  <div :class="`d-${noWrap ? 'inline' : 'block'}`">
+  <div v-if="publicationname" :class="`d-${noWrap ? 'inline' : 'block'}`">
     <router-link
       :class="{ clickable, flex }"
-      :to="`/collection/show/${publicationcode}#${issuenumber}`"
+      :to="`/collection/show/${issue.publicationcode}#${issue.issuenumber}`"
     >
       <span v-if="!hideCondition" class="me-1 d-flex"
         ><Condition
           v-once
           :is-public="isPublic"
-          :publicationcode="publicationcode"
-          :issuenumber="issuenumber"
+          :publicationcode="issue.publicationcode"
+          :issuenumber="issue.issuenumber"
       /></span>
       <Publication
-        :publicationcode="publicationcode"
-        :publicationname="publicationname || publicationcode"
+        :publicationcode="issue.publicationcode"
+        :publicationname="publicationname || issue.publicationcode"
         display-class="d-inline"
-      />{{ issuenumber }}
+      />{{ issue.issuenumber }}
       <slot name="title-suffix" />
     </router-link>
     <slot />
@@ -24,21 +24,28 @@
 
 <script setup lang="ts">
 const {
+  issuecode,
   clickable = false,
   hideCondition = false,
   noWrap = true,
   flex = true,
   isPublic = false,
 } = defineProps<{
-  publicationcode: string;
-  publicationname: string | null;
-  issuenumber: string;
+  issuecode: string;
   clickable?: boolean;
   hideCondition?: boolean;
   noWrap?: boolean;
   flex?: boolean;
   isPublic?: boolean;
 }>();
+
+const store = coa();
+const issue = computed(() => store.issuecodeDetails?.[issuecode]);
+const publicationname = computed(
+  () =>
+    issue.value.publicationcode &&
+    store.publicationNames?.[issue.value.publicationcode],
+);
 </script>
 
 <style scoped lang="scss">

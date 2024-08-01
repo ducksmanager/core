@@ -73,11 +73,9 @@
           <div>{{ searchResult!.title }}</div>
         </template>
         <Issue
-          v-else-if="publicationNames[searchResult.publicationcode]"
-          :publicationcode="searchResult.publicationcode"
-          :publicationname="publicationNames[searchResult.publicationcode]!"
+          v-else
           :is-public="isPublic"
-          :issuenumber="searchResult.issuenumber"
+          :issuecode="searchResult.issuecode"
           clickable
         />
       </b-list-group-item>
@@ -86,9 +84,9 @@
 </template>
 
 <script setup lang="ts">
-import { SimpleIssue } from "~dm-types/SimpleIssue";
-import { SimpleStory } from "~dm-types/SimpleStory";
-import { issue } from "~prisma-clients/extended/dm.extends";
+import type { SimpleIssue } from "~dm-types/SimpleIssue";
+import type { SimpleStory } from "~dm-types/SimpleStory";
+import type { issue } from "~prisma-clients/schemas/dm";
 
 import { dmSocketInjectionKey } from "../composables/useDmSocket";
 
@@ -107,8 +105,9 @@ const {
 
 const { findInCollection } = isPublic ? publicCollection() : collection();
 const { issues } = storeToRefs(collection());
-const { fetchPublicationNames, fetchCountryNames } = coa();
-const { publicationNames } = storeToRefs(coa());
+const { fetchPublicationNames, fetchIssuecodeDetails, fetchCountryNames } =
+  coa();
+const { issuecodeDetails } = storeToRefs(coa());
 
 const nav = shallowRef<HTMLElement | null>(null);
 
@@ -133,8 +132,8 @@ let searchContext = $ref<"story" | "storycode">("story");
 let showSearchResults = $ref(true);
 
 const { t: $t } = useI18n();
-const isInCollection = ({ publicationcode, issuenumber }: SimpleIssue) =>
-  findInCollection(publicationcode, issuenumber) !== undefined;
+const isInCollection = ({ issuecode }: SimpleIssue) =>
+  findInCollection(issuecode) !== undefined;
 
 const searchContexts = {
   story: $t("titre d'histoire"),
@@ -180,27 +179,23 @@ const runSearch = async (value: string) => {
           ),
         ),
       };
+      await fetchIssuecodeDetails(
+        issueResults.results.map(({ issuecode }) => issuecode),
+      );
       await fetchPublicationNames(
-        issueResults.results.map(({ publicationcode }) => publicationcode),
+        issueResults.results.map(
+          ({ issuecode }) => issuecodeDetails.value[issuecode].publicationcode,
+        ),
       );
     } else {
       const data = await coaServices.searchStory(value.split(","), true);
       storyResults.results = data.results.map((story) => ({
         ...story,
         collectionIssue:
-          issues.value!.find(
-            ({
-              publicationcode: collectionPublicationCode,
-              issuenumber: collectionIssueNumber,
-            }) =>
-              story.issues
-                .map(
-                  ({ publicationcode, issuenumber }) =>
-                    `${publicationcode}-${issuenumber}`,
-                )
-                .includes(
-                  `${collectionPublicationCode}-${collectionIssueNumber}`,
-                ),
+          issues.value!.find(({ issuecode: collectionIssuecode }) =>
+            story.issues
+              .map(({ issuecode }) => issuecode)
+              .includes(collectionIssuecode),
           ) || null,
       }));
     }
