@@ -97,7 +97,7 @@ export default abstract class {
   ) => void;
 
   abstract getIssuesForSale: (
-    callback: (data:  issue[]) => void,
+    callback: (data:  (Pick<issue, 'userId'|'issuecode'|'publicationcode'| 'id'>)[]) => void,
   ) => void;
 
   abstract getOption: (

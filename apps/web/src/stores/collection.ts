@@ -87,7 +87,7 @@ export const collection = defineStore("collection", () => {
     publicationUrlRoot = computed(() => "/collection/show"),
     purchasesById = computed((): Record<string, purchase> | undefined =>
       purchases.value?.reduce(
-        (acc, purchase) => ({ ...acc, [purchase.id as number]: purchase }),
+        (acc, purchase) => ({ ...acc, [purchase.id]: purchase }),
         {},
       ),
     ),
@@ -103,7 +103,7 @@ export const collection = defineStore("collection", () => {
     hasSuggestions = computed(
       () => Object.keys(suggestions.value?.oldestdate.issues || {}).length,
     ),
-    issueNumbersPerPublication = computed(
+    issuecodesPerPublication = computed(
       () =>
         issues.value?.reduce<{ [publicationcode: string]: string[] }>(
           (acc, { publicationcode, issuecode }) => ({
@@ -113,29 +113,39 @@ export const collection = defineStore("collection", () => {
           {},
         ) || {},
     ),
-    totalPerPublicationUniqueIssueNumbers = computed(
+    issuenumbersPerPublication = computed(
+      () =>
+        issues.value?.reduce<{ [publicationcode: string]: string[] }>(
+          (acc, { publicationcode, issuenumber }) => ({
+            ...acc,
+            [publicationcode]: [...(acc[publicationcode] || []), issuenumber],
+          }),
+          {},
+        ) || {},
+    ),
+    totalPerPublicationUniqueIssuecodes = computed(
       (): {
         [publicationcode: string]: number;
       } =>
-        issueNumbersPerPublication.value &&
-        Object.keys(issueNumbersPerPublication.value).reduce(
+        issuecodesPerPublication.value &&
+        Object.keys(issuecodesPerPublication.value).reduce(
           (acc, publicationcode) => ({
             ...acc,
             [publicationcode]: [
-              ...new Set(issueNumbersPerPublication.value[publicationcode]),
+              ...new Set(issuecodesPerPublication.value[publicationcode]),
             ].length,
           }),
           {},
         ),
     ),
-    totalPerPublicationUniqueIssueNumbersSorted = computed(
+    totalPerPublicationUniqueIssuecodesSorted = computed(
       () =>
-        totalPerPublicationUniqueIssueNumbers.value &&
-        Object.entries(totalPerPublicationUniqueIssueNumbers.value).sort(
+        totalPerPublicationUniqueIssuecodes.value &&
+        Object.entries(totalPerPublicationUniqueIssuecodes.value).sort(
           ([publicationcode1], [publicationcode2]) =>
             Math.sign(
-              totalPerPublicationUniqueIssueNumbers.value[publicationcode2]! -
-                totalPerPublicationUniqueIssueNumbers.value[publicationcode1]!,
+              totalPerPublicationUniqueIssuecodes.value[publicationcode2]! -
+                totalPerPublicationUniqueIssuecodes.value[publicationcode1]!,
             ),
         ),
     ),
@@ -389,7 +399,8 @@ export const collection = defineStore("collection", () => {
     coaIssueCountsByPublicationcode,
     copiesPerIssuecode,
     coaIssueCountsPerCountrycode,
-    issueNumbersPerPublication,
+    issuecodesPerPublication,
+    issuenumbersPerPublication,
     lastPublishedEdgesForCurrentUser,
     loadCollection,
     loadUserIssueQuotations,
@@ -413,8 +424,8 @@ export const collection = defineStore("collection", () => {
     signup,
     subscriptions,
     suggestions,
-    totalPerPublicationUniqueIssueNumbers,
-    totalPerPublicationUniqueIssueNumbersSorted,
+    totalPerPublicationUniqueIssuecodes,
+    totalPerPublicationUniqueIssuecodesSorted,
     updateCollectionMultipleIssues,
     updateCollectionSingleIssue,
     updateMarketplaceContactMethods,

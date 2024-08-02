@@ -97,20 +97,17 @@ const compareDates = (a: string, b: string) =>
     let accDate = labels.value!.reduce<Record<string, number>>((acc, value) => ({ ...acc, [value]: 0 }), {});
     return collectionWithDates.value
       .sort(({ date: dateA }, { date: dateB }) => compareDates(dateA, dateB))
-      .reduce(
-        (acc, { date, publicationcode: publicationcode }) => {
-          if (!publicationCodesWithOther.value!.includes(publicationcode)) {
-            publicationcode = 'Other';
-          }
-          if (!acc[publicationcode]) {
-            acc[publicationcode] = { ...dateAssoc };
-          }
-          acc[publicationcode][date]++;
-          accDate[date]++;
-          return acc;
-        },
-        {} as Record<string, Record<string, number>>,
-      );
+      .reduce<Record<string, Record<string, number>>>((acc, { date, publicationcode: publicationcode }) => {
+        if (!publicationCodesWithOther.value!.includes(publicationcode)) {
+          publicationcode = 'Other';
+        }
+        if (!acc[publicationcode]) {
+          acc[publicationcode] = { ...dateAssoc };
+        }
+        acc[publicationcode][date]++;
+        accDate[date]++;
+        return acc;
+      }, {});
   }),
   datasets = computed(() =>
     !(ready.value && collectionWithDates.value && values.value)

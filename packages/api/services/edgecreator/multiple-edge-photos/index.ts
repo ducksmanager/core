@@ -9,14 +9,13 @@ import type Events from "../types";
 export default (socket: Socket<Events>) => {
   socket.on(
     "sendNewEdgePhotoEmail",
-    async (publicationcode, issuenumber, callback) => {
+    async (issuecode, callback) => {
       const user = await prismaDm.user.findUniqueOrThrow({
         where: { id: socket.data.user!.id },
       });
       const email = new EdgePhotoSent({
         user,
-        publicationcode,
-        issuenumber,
+        issuecode,
       });
       const edgeUrl = email.data.ecLink;
       await email.send();

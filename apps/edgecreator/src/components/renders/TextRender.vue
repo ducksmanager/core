@@ -26,6 +26,7 @@ import { edgecreatorSocketInjectionKey } from "~/composables/useEdgecreatorSocke
 import useTextTemplate from "~/composables/useTextTemplate";
 import { step } from "~/stores/step";
 import { ui } from "~/stores/ui";
+import { coa } from "~web/src/stores/coa";
 
 const {
   text: { services: textServices },
@@ -37,7 +38,7 @@ const { resolveIssueNumberTemplate, resolveIssueNumberPartTemplate } =
 const imageRef = ref<SVGImageElement | null>(null);
 
 interface Props {
-  issuenumber: string;
+  issuecode: string;
   stepNumber: number;
   options: {
     x: number;
@@ -85,10 +86,14 @@ const textImage = ref(
 );
 const textImageOptions = ref<typeof props.options | null>(null);
 
+const issuenumber = computed(
+  () => coa().issuecodeDetails[props.issuecode].issuenumber,
+);
+
 const effectiveText = computed(() =>
   resolveIssueNumberTemplate(
     props.options.text,
-    resolveIssueNumberPartTemplate(props.options.text, props.issuenumber),
+    resolveIssueNumberPartTemplate(props.options.text, issuenumber.value),
   ),
 );
 
@@ -259,7 +264,7 @@ const applyTextImageDimensions = () => {
   options.aspectRatio = options.height / options.width!;
   step().setOptionValues(options, {
     stepNumber: props.stepNumber,
-    issuenumbers: [props.issuenumber],
+    issuecodes: [props.issuecode],
   });
 };
 

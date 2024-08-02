@@ -8,7 +8,7 @@ import type { OptionValue } from "~/types/OptionValue";
 
 export interface StepOption {
   stepNumber: number;
-  issuenumber: string;
+  issuecode: string;
   optionName: string;
   optionValue: OptionValue;
 }
@@ -17,7 +17,7 @@ export type Options = StepOption[];
 export type OptionsArray = OptionNameAndValue[];
 
 export interface Dimensions {
-  issuenumber: string;
+  issuecode: string;
   width: number;
   height: number;
 }
@@ -62,43 +62,42 @@ export const step = defineStore("step", () => {
     ),
     getFilteredOptions = ({
       stepNumbers,
-      issuenumbers,
+      issuecodes,
     }: {
       stepNumbers?: number[];
-      issuenumbers?: string[];
+      issuecodes?: string[];
     }) => {
       return options.value.filter(
-        ({ stepNumber, issuenumber }) =>
+        ({ stepNumber, issuecode }) =>
           (!stepNumbers || stepNumbers.includes(stepNumber)) &&
-          (!issuenumbers || issuenumbers.includes(issuenumber)),
+          (!issuecodes || issuecodes.includes(issuecode)),
       );
     },
-    getFilteredDimensions = ({ issuenumbers }: { issuenumbers?: string[] }) =>
+    getFilteredDimensions = ({ issuecodes }: { issuecodes?: string[] }) =>
       dimensions.value.filter(
-        ({ issuenumber }) =>
-          !issuenumbers || issuenumbers.includes(issuenumber),
+        ({ issuecode }) => !issuecodes || issuecodes.includes(issuecode),
       ),
     removeOptionValues = ({
       stepNumber: defaultStepNumber,
-      issuenumbers: defaultIssuenumbers,
+      issuecodes: defaultIssuecodes,
       optionNames,
     }: {
       stepNumber?: number;
-      issuenumbers?: string[];
+      issuecodes?: string[];
       optionNames?: string[];
     }) =>
       options.value.filter(
-        ({ stepNumber, issuenumber, optionName }) =>
+        ({ stepNumber, issuecode, optionName }) =>
           defaultStepNumber !== stepNumber ||
-          !defaultIssuenumbers?.includes(issuenumber) ||
+          !defaultIssuecodes?.includes(issuecode) ||
           !optionNames?.includes(optionName),
       ),
     setOptionValues = (
       newOptions: OptionsArray | Record<string, OptionValue>,
       overrides: {
-        issuenumbers?: string[];
+        issuecodes?: string[];
         stepNumber?: number;
-      } = { issuenumbers: undefined, stepNumber: undefined },
+      } = { issuecodes: undefined, stepNumber: undefined },
     ) => {
       const optionsAsArray = newOptions.hasOwnProperty("length")
         ? (newOptions as OptionsArray)
@@ -108,20 +107,20 @@ export const step = defineStore("step", () => {
         overrides.stepNumber === undefined
           ? editingStep().stepNumber
           : overrides.stepNumber;
-      const defaultIssuenumbers =
-        overrides.issuenumbers === undefined
-          ? editingStep().issuenumbers
-          : overrides.issuenumbers;
+      const defaultIssuecodes =
+        overrides.issuecodes === undefined
+          ? editingStep().issuecodes
+          : overrides.issuecodes;
 
       const processedOptions: {
         stepNumber: number;
-        issuenumber: string;
+        issuecode: string;
         optionName: string;
       }[] = [];
-      options.value.forEach(({ stepNumber, issuenumber, optionName }, idx) => {
+      options.value.forEach(({ stepNumber, issuecode, optionName }, idx) => {
         if (
           stepNumber === defaultStepNumber &&
-          defaultIssuenumbers.includes(issuenumber)
+          defaultIssuecodes.includes(issuecode)
         ) {
           optionsAsArray.forEach(
             ({
@@ -130,25 +129,25 @@ export const step = defineStore("step", () => {
             }) => {
               if (optionName === optionNameToUpdate) {
                 options.value[idx].optionValue = optionValueToUpdate;
-                processedOptions.push({ stepNumber, issuenumber, optionName });
+                processedOptions.push({ stepNumber, issuecode, optionName });
               }
             },
           );
         }
       });
-      for (const issuenumberToProcess of defaultIssuenumbers) {
+      for (const issuecodeToProcess of defaultIssuecodes) {
         for (const optionNameToProcess of newOptionsKeys) {
           if (
             !processedOptions.some(
-              ({ stepNumber, issuenumber, optionName }) =>
+              ({ stepNumber, issuecode, optionName }) =>
                 stepNumber === defaultStepNumber &&
-                issuenumber === issuenumberToProcess &&
+                issuecode === issuecodeToProcess &&
                 optionName === optionNameToProcess,
             )
           ) {
             options.value.push({
               stepNumber: defaultStepNumber,
-              issuenumber: issuenumberToProcess,
+              issuecode: issuecodeToProcess,
               optionName: optionNameToProcess,
               optionValue: optionsAsArray.find(
                 ({ optionName }) => optionName === optionNameToProcess,
@@ -161,36 +160,33 @@ export const step = defineStore("step", () => {
     setDimensions = (
       newDimensions: { width: number; height: number },
       overrides: {
-        issuenumbers?: string[];
+        issuecodes?: string[];
       },
     ) => {
       dimensions.value = [
         ...dimensions.value.filter(
-          ({ issuenumber }) =>
-            overrides.issuenumbers &&
-            !overrides.issuenumbers.includes(issuenumber),
+          ({ issuecode }) =>
+            overrides.issuecodes && !overrides.issuecodes.includes(issuecode),
         ),
-        ...(overrides.issuenumbers ?? main().issuenumbers).map(
-          (issuenumber) => ({
-            issuenumber,
-            ...newDimensions,
-          }),
-        ),
+        ...(overrides.issuecodes ?? main().issuecodes).map((issuecode) => ({
+          issuecode,
+          ...newDimensions,
+        })),
       ];
     },
-    setSteps = (issuenumber: string, issueSteps: StepOption[]) => {
-      checkSameComponentsAsCompletedEdge(issuenumber, issueSteps);
+    setSteps = (issuecode: string, issueSteps: StepOption[]) => {
+      checkSameComponentsAsCompletedEdge(issuecode, issueSteps);
       // nextTick().then(() => {
       setOptionValues(issueSteps, {
-        issuenumbers: [issuenumber],
+        issuecodes: [issuecode],
       });
       // });
     },
     checkSameComponentsAsCompletedEdge = (
-      issuenumber: string,
+      issuecode: string,
       issueSteps: StepOption[],
     ) => {
-      let completedIssuenumber: string | null = null;
+      let completedIssuecode: string | null = null;
       for (
         let stepNumber = 0;
         stepNumber <= maxStepNumber.value;
@@ -198,17 +194,17 @@ export const step = defineStore("step", () => {
       ) {
         const stepOptions = getFilteredOptions({
           stepNumbers: [stepNumber],
-          issuenumbers: [issuenumber],
+          issuecodes: [issuecode],
         });
         if (stepOptions.length) {
-          completedIssuenumber = issuenumber;
+          completedIssuecode = issuecode;
         }
       }
-      if (completedIssuenumber === null) {
+      if (completedIssuecode === null) {
         return;
       }
       const completedIssueSteps = getFilteredOptions({
-        issuenumbers: [issuenumber],
+        issuecodes: [issuecode],
       });
 
       const getComponents = (steps: StepOption[]) =>
@@ -221,18 +217,18 @@ export const step = defineStore("step", () => {
       );
       const currentIssueComponents = getComponents(issueSteps);
       if (
-        completedIssuenumber !== issuenumber &&
+        completedIssuecode !== issuecode &&
         previousIssueComponents !== currentIssueComponents
       ) {
         throw new Error(
           useI18n()
             .t(
-              `Issue numbers {completedIssuenumber} and {issuenumber} ` +
+              `Issue codes {completedIssuecode} and {issuecode} ` +
                 `don't have the same components` +
                 `: {completedIssueSteps} vs {currentIssueComponents}`,
               {
-                completedIssuenumber,
-                issuenumber,
+                completedIssuecode,
+                issuecode,
                 previousIssueComponents,
                 currentIssueComponents,
               },
@@ -241,21 +237,18 @@ export const step = defineStore("step", () => {
         );
       }
     },
-    copyDimensionsAndSteps = (
-      issuenumber: string,
-      otherIssuenumber: string,
-    ) => {
+    copyDimensionsAndSteps = (issuecode: string, otherIssuecode: string) => {
       setDimensions(
         getFilteredDimensions({
-          issuenumbers: [otherIssuenumber],
-        }).map((dimension) => ({ ...dimension, issuenumber }))[0],
+          issuecodes: [otherIssuecode],
+        }).map((dimension) => ({ ...dimension, issuecode }))[0],
         {
-          issuenumbers: [issuenumber],
+          issuecodes: [issuecode],
         },
       );
 
       const steps = getFilteredOptions({
-        issuenumbers: [issuenumber],
+        issuecodes: [issuecode],
       });
 
       for (
@@ -269,7 +262,7 @@ export const step = defineStore("step", () => {
               ({ stepNumber: optionStepNumber }) =>
                 optionStepNumber === stepNumber,
             )
-            .map((step) => ({ ...step, issuenumber: otherIssuenumber })),
+            .map((step) => ({ ...step, issuecode: otherIssuecode })),
         );
       }
     },
@@ -282,7 +275,7 @@ export const step = defineStore("step", () => {
           },
         ],
         {
-          issuenumbers: main().issuenumbers,
+          issuecodes: main().issuecodes,
           stepNumber: maxStepNumber.value + 1,
         },
       );

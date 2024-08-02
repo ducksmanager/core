@@ -138,7 +138,7 @@ export default (socket: Socket<Events>) => {
             username,
           },
         })
-      ).groupBy("role", "privilege");
+      ).groupBy("role", 'privilege');
       const token = generateAccessToken({
         id: user.id,
         username,

@@ -84,7 +84,7 @@ export const app = defineStore('app', () => {
       textPrefix: 'Owned issues -',
       showIfOffline: true,
       // FIXME can't deconstruct collection() using storeToRefs
-      getTextToCopy: async () => collection().issueNumbersPerPublication[publicationcode.value!].join(', '),
+      getTextToCopy: async () => collection().issuenumbersPerPublication[publicationcode.value!].join(', '),
     },
     {
       id: 'missing',
@@ -92,11 +92,11 @@ export const app = defineStore('app', () => {
       textPrefix: 'Missing issues -',
       showIfOffline: false,
       getTextToCopy: async () => {
-        await coa().fetchIssueNumbers([publicationcode.value!]);
+        await coa().fetchIssuecodesByPublicationcode([publicationcode.value!]);
         return coa()
-          .issuenumbers[publicationcode.value!].filter(
+          .issuecodesByPublicationcode[publicationcode.value!].filter(
             // FIXME can't deconstruct collection() using storeToRefs
-            (issuenumber) => !collection().issueNumbersPerPublication[publicationcode.value!].includes(issuenumber),
+            (issuecode) => !collection().issuecodesPerPublication[publicationcode.value!].includes(issuecode),
           )
           .join(', ');
       },
@@ -121,7 +121,7 @@ export const app = defineStore('app', () => {
       (NAVIGATION_ITEM_REGEX.exec(currentNavigationItem.value)?.groups || {}) as {
         countrycode?: string;
         magazinecode?: string;
-        issuenumber?: string;
+        issuecode?: string;
         extraIssuecodes?: string;
       },
   );
@@ -148,7 +148,7 @@ export const app = defineStore('app', () => {
       ? `${navigationItemGroups.value.countrycode}/${navigationItemGroups.value.magazinecode}`
       : null,
   );
-  const issuenumber = computed(() => navigationItemGroups.value.issuenumber);
+  const issuecode = computed(() => navigationItemGroups.value.issuecode);
   const extraIssuecodes = computed(() => navigationItemGroups.value.extraIssuecodes?.split(',') || []);
 
   const allowMultipleSelection = computed(() => publicationcode.value !== undefined);
@@ -166,7 +166,7 @@ export const app = defineStore('app', () => {
     countrycode,
     magazinecode,
     publicationcode,
-    issuenumber,
+    issuecode,
     extraIssuecodes,
     navigationItemGroups,
     token,

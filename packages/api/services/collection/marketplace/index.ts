@@ -1,5 +1,6 @@
 import type { Socket } from "socket.io";
 
+import { augmentIssueArrayWithInducksData } from "~/services/coa";
 import type { issue } from "~prisma-clients/schemas/dm";
 import { prismaClient as prismaDm } from "~prisma-clients/schemas/dm";
 
@@ -97,12 +98,9 @@ export default (socket: Socket<Events>) => {
 };
 
 export const getIssuesForSale = async (buyerId: number) =>
-  prismaDm.$queryRaw<
-    {
-      id: issue["id"];
-    }[]
+  prismaDm.$queryRaw<Pick<issue, 'issuecode'|'id'>[]
   >`
-    SELECT issue.ID AS id
+    SELECT issue.ID as id
     FROM numeros issue
     INNER JOIN (
       SELECT seller.ID
@@ -129,8 +127,10 @@ export const getIssuesForSale = async (buyerId: number) =>
          WHERE user_collection.issuecode = issue.issuecode
            AND user_collection.ID_Utilisateur = ${buyerId}
         )`
-    .then(async (forSale) =>
-      prismaDm.issue.findMany({
-        where: { id: { in: forSale.map(({ id }) => id) } },
-      }),
-    );
+    .then( (idsForSale) => prismaDm.issue.findMany({
+      where: {
+        id: {
+          in: idsForSale.map(({ id }) => id),
+        },
+      }}
+    )).then( async (forSale) => augmentIssueArrayWithInducksData(forSale));

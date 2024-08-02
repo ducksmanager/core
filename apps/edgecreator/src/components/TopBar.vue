@@ -108,23 +108,17 @@
     </b-row>
     <b-row align="center" class="pb-1">
       <b-col v-if="publicationName" align-self="center">
-        <issue
-          :publicationcode="`${mainStore.country}/${mainStore.magazine}`"
-          :publicationname="publicationName"
-          :issuenumber="mainStore.issuenumbers[0]"
-          hide-condition
-          no-wrap
-        >
+        <issue :issuecode="issuecodes[0]" hide-condition no-wrap>
           <template v-if="isEditingMultiple" #title-suffix>
             <template v-if="mainStore.isRange"
               >{{ $t("to") }}
-              {{ mainStore.issuenumbers[mainStore.issuenumbers.length - 1] }}
+              {{ issuecodes[issuecodes.length - 1] }}
             </template>
-            <template v-else-if="mainStore.issuenumbers.length > 1"
+            <template v-else-if="issuecodes.length > 1"
               ><span
-                v-for="otherIssuenumber in mainStore.issuenumbers.slice(1)"
-                :key="`other-${otherIssuenumber}`"
-                >, {{ otherIssuenumber }}</span
+                v-for="otherIssuecode in issuecodes.slice(1)"
+                :key="`other-${otherIssuecode}`"
+                >, {{ otherIssuecode }}</span
               ></template
             ></template
           >
@@ -236,9 +230,8 @@
           <b-collapse id="collapse-clone" v-model="collapseClone" class="mt-2">
             <issue-select
               v-if="collapseClone"
-              :country-code="mainStore.country"
-              :publication-code="`${mainStore.country}/${mainStore.magazine}`"
-              :base-issue-numbers="mainStore.issuenumbers"
+              :publication-code="mainStore.publicationcode"
+              :base-issue-codes="issuecodes"
               :disable-ongoing-or-published="false"
               with-edge-gallery
               disable-not-ongoing-nor-published
@@ -270,6 +263,7 @@ const { showPreviousEdge, showNextEdge } = surroundingEdge();
 const { dimensions: editingDimensions } = storeToRefs(editingStep());
 const { hasRole } = webStores.collection();
 const stepStore = step();
+const { issuecodes, photoUrls } = storeToRefs(mainStore);
 
 interface ModelToClone {
   editMode: string;
@@ -284,12 +278,9 @@ const modelToBeCloned = ref<ModelToClone | null>(null);
 const collapseDimensions = ref(false);
 const collapseClone = ref(false);
 
-const hasPhotoUrl = computed(() => Object.keys(mainStore.photoUrls).length);
+const hasPhotoUrl = computed(() => Object.keys(photoUrls.value).length);
 const publicationName = computed(
-  () =>
-    webStores.coa().publicationNames[
-      `${mainStore.country!}/${mainStore.magazine!}`
-    ],
+  () => webStores.coa().publicationNames[mainStore.publicationcode!],
 );
 const uniqueDimensions = computed(() =>
   [
@@ -302,21 +293,18 @@ const uniqueDimensions = computed(() =>
 );
 
 const isEditingMultiple = computed(
-  () => mainStore.isRange || mainStore.issuenumbers.length > 1,
+  () => mainStore.isRange || issuecodes.value.length > 1,
 );
 
 const addPhoto = (src: string) => {
-  mainStore.photoUrls[mainStore.issuenumbers[0]] = src;
+  photoUrls.value[issuecodes.value[0]] = src;
 };
 
 const overwriteModel = async () => {
-  const { publicationcode, issuenumber, issuecode } = modelToBeCloned.value!;
-  for (const targetIssuenumber of mainStore.issuenumbers) {
+  const { issuecode } = modelToBeCloned.value!;
+  for (const targetIssuecode of issuecodes.value) {
     try {
-      await loadModel(
-        { publicationcode, issuenumber, issuecode },
-        targetIssuenumber,
-      );
+      await loadModel(issuecode, targetIssuecode);
     } catch (e) {
       mainStore.addWarning(e as string);
     }
@@ -329,15 +317,10 @@ const overwriteDimensions = ({
   width: number;
   height: number;
 }) => {
-  stepStore.setDimensions(
-    { width, height },
-    { issuenumbers: mainStore.issuenumbers },
-  );
+  stepStore.setDimensions({ width, height }, { issuecodes: issuecodes.value });
 };
 
-webStores
-  .coa()
-  .fetchPublicationNames([`${mainStore.country!}/${mainStore.magazine!}`]);
+webStores.coa().fetchPublicationNames([mainStore.publicationcode!]);
 </script>
 <style lang="scss">
 .options {

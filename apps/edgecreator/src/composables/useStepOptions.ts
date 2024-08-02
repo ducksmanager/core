@@ -21,13 +21,13 @@ export const useStepOptions = (props: BaseProps, attributeKeys: string[]) => {
   const width = computed(
     () =>
       stepStore.getFilteredDimensions({
-        issuenumbers: [props.issuenumber],
+        issuecodes: [props.issuecode],
       })[0]!.width,
   );
   const height = computed(
     () =>
       stepStore.getFilteredDimensions({
-        issuenumbers: [props.issuenumber],
+        issuecodes: [props.issuecode],
       })[0]!.height,
   );
   const attributes = computed(() =>

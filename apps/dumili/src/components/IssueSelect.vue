@@ -75,6 +75,8 @@ const currentCountryCode = ref<string | undefined>(undefined);
 const currentPublicationCode = ref<string | undefined>(undefined);
 const currentIssueNumber = ref<string | undefined>(undefined);
 
+const { issuecodesByPublicationcode} = storeToRefs(coaStore);
+
 const countryNames = computed(
   () =>
     (coaStore.countryNames &&
@@ -108,13 +110,13 @@ const publicationNamesForCurrentCountry = computed(() =>
     : []
 );
 const publicationIssues = computed(
-  () => coaStore.issuenumbers[currentPublicationCode.value!]
+  () => issuecodesByPublicationcode.value[currentPublicationCode.value!]
 );
 
 const issues = computed(
   () =>
     publicationIssues.value &&
-    coaStore.issuenumbers[currentPublicationCode.value!].map((issuenumber) => ({
+    issuecodesByPublicationcode.value[currentPublicationCode.value!].map((issuenumber) => ({
       value: issuenumber,
       text: issuenumber,
     }))
@@ -144,7 +146,7 @@ watch(
 watch(currentPublicationCode, async (newValue) => {
   if (newValue) {
     currentIssueNumber.value = undefined;
-    await coaStore.fetchIssueNumbers([newValue]);
+    await coaStore.fetchIssuecodesByPublicationcode([newValue]);
   }
 });
 if (props.countryCode) {

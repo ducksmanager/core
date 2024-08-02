@@ -170,11 +170,9 @@ const groupsInRange = (range: number) => {
   return groups;
 };
 
-let issuesPerCell = $ref(
-  null as {
-    [publicationcode: string]: { [mod: string | number]: string[] };
-  } | null,
-);
+let issuesPerCell = $ref<{
+  [publicationcode: string]: { [mod: string | number]: string[] };
+} | null>(null);
 
 const addIssueToCell = (
   acc: { [publicationcode: string]: { [mod: string | number]: string[] } },

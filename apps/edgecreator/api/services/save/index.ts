@@ -36,16 +36,9 @@ export default (io: Server) => {
       );
 
     socket.on("saveEdge", async (parameters, callback) => {
-      const {
-        runExport,
-        runSubmit,
-        country,
-        magazine,
-        issuenumber,
-        contributors,
-        content,
-      } = parameters;
-      const svgPath = getSvgPath(runExport, country, magazine, issuenumber);
+      const { runExport, runSubmit, issuecode, contributors, content } =
+        parameters;
+      const svgPath = await getSvgPath(runExport, issuecode);
 
       const publicationcode = `${country}/${magazine}`;
 
@@ -81,7 +74,7 @@ export default (io: Server) => {
           return;
         }
         try {
-          unlinkSync(getSvgPath(false, country, magazine, issuenumber));
+          unlinkSync(await getSvgPath(false, issuecode));
         } catch (errorDetails) {
           if ((errorDetails as { code?: string }).code === "ENOENT") {
             console.log("No temporary SVG file to delete was found");

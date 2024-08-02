@@ -35,11 +35,13 @@ const eventUserIds = $computed(() =>
     >((acc, event) => [...acc, ...(event.users || [])], [])
     .filter((userId) => !!userId),
 );
-const isCollectionUpdateEvent = (event: AbstractEvent) =>
-  event.hasOwnProperty("numberOfIssues");
+const isCollectionUpdateEvent = (
+  event: AbstractEvent,
+): event is CollectionUpdateEvent => event.hasOwnProperty("numberOfIssues");
 
-const isEdgeCreationEvent = (event: AbstractEvent) =>
-  event.hasOwnProperty("edges");
+const isEdgeCreationEvent = (
+  event: AbstractEvent,
+): event is EdgeCreationEvent => event.hasOwnProperty("edges");
 
 const fetchEventsAndAssociatedData = async () => {
   await fetchEvents();
@@ -47,17 +49,12 @@ const fetchEventsAndAssociatedData = async () => {
   await fetchIssuecodeDetails([
     ...events.value
       .filter((event) => isCollectionUpdateEvent(event))
-      .map((event) => (event as CollectionUpdateEvent).issuecode || ""),
+      .map((event) => event.issuecode || ""),
     ...events.value
       .filter((event) => isEdgeCreationEvent(event))
-      .map((event) => event as EdgeCreationEvent)
-      .reduce(
-        (acc, { edges }) => [
-          ...acc,
-          ...edges.map(({ issuecode }) => issuecode),
-        ],
-        [] as string[],
-      ),
+      .reduce<
+        string[]
+      >((acc, { edges }) => [...acc, ...edges.map(({ issuecode }) => issuecode)], []),
   ]);
 
   await fetchPublicationNames([
@@ -65,27 +62,16 @@ const fetchEventsAndAssociatedData = async () => {
       .filter((event) => isCollectionUpdateEvent(event))
       .map(
         (event) =>
-          issuecodeDetails.value[(event as CollectionUpdateEvent).issuecode]
-            .publicationcode || "",
+          issuecodeDetails.value[event.issuecode].publicationcode || "",
       ),
     ...events.value
       .filter((event) => isEdgeCreationEvent(event))
-      .map((event) => event as EdgeCreationEvent)
-      .reduce(
-        (acc, { edges }) => [
-          ...acc,
-          ...edges.map(
-            ({ issuecode }) =>
-              issuecodeDetails.value[issuecode].publicationcode,
-          ),
-        ],
-        [] as string[],
-      ),
+      .reduce<
+        string[]
+      >((acc, { edges }) => [...acc, ...edges.map(({ issuecode }) => issuecodeDetails.value[issuecode].publicationcode)], []),
   ]);
 
-  await fetchStats(
-    eventUserIds.filter((userId) => userId !== null) as number[],
-  );
+  await fetchStats(eventUserIds.filter((userId) => userId !== null));
 };
 
 (async () => {

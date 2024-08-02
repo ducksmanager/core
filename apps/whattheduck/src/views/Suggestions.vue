@@ -90,7 +90,7 @@ const formattedSuggestions = computed(
         publicationName: sortedSuggestions.value!.publicationTitles[publicationcode]!,
         releaseDate: oldestdate,
         score,
-        storiesByStorycode: Object.entries(stories).reduce(
+        storiesByStorycode: Object.entries(stories).reduce<Record<string, FormattedSuggestion>>(
           (acc, [personcode, storiesOfAuthor]) => {
             storiesOfAuthor.forEach((storycode) => {
               acc[storycode] = {
@@ -101,7 +101,7 @@ const formattedSuggestions = computed(
             });
             return acc;
           },
-          {} as Record<string, FormattedSuggestion>,
+          {},
         ),
         issuenumber,
         collectionIssues: [],

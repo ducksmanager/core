@@ -171,32 +171,6 @@ export const coa = defineStore("coa", () => {
       );
       Object.assign(issuesWithTitles.value, results);
     },
-    // fetchIssueNumbers = async function (publicationCodes: string[]) {
-    //   const newPublicationCodes = [
-    //     ...new Set(
-    //       publicationCodes.filter(
-    //         (publicationcode) =>
-    //           !Object.keys(issuenumbers.value || {}).includes(publicationcode),
-    //       ),
-    //     ),
-    //   ];
-    //   if (newPublicationCodes.length) {
-    //     const data = await coaServices.getIssues(
-    //       {
-    //         publicationcode: { in: newPublicationCodes },
-    //       },
-    //       { title: false, oldestdate: false },
-    //     );
-    //     if (data.error) {
-    //       console.error(data);
-    //     } else {
-    //       issuecodes.value = [
-    //         ...issuecodes.value,
-    //         ...data.issues.map(({ issuecode }) => issuecode),
-    //       ];
-    //     }
-    //   }
-    // },
     fetchIssuecodeDetails = async (issuecodes: string[]) => {
       const existingIssuecodes = new Set(
         Object.keys(issuecodeDetails.value || {}),
@@ -260,7 +234,6 @@ export const coa = defineStore("coa", () => {
       }
     };
   return {
-    // addIssueNumbers,
     addIssueQuotations,
     addPublicationNames,
     countryNames,

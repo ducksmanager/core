@@ -1,3 +1,4 @@
+import type { UserContributionTypeEn } from "~dm-types/UserContributionTypeEn";
 import { Prisma } from "~prisma-clients/schemas/dm";
 import { prismaClient as prismaDm } from "~prisma-clients/schemas/dm";
 
@@ -5,12 +6,12 @@ export const getMedalPoints = async (userIds: number[]) =>
   (
     await prismaDm.$queryRaw<
       {
-        contribution: "edge_photographer" | "edge_designer" | "duckhunter";
+        contribution: UserContributionTypeEn;
         userId: number;
         totalPoints: string;
       }[]
     >`
-        select contributionType.contribution_external_name as contribution,
+        select contributionType.contribution_external_name as userContributionTypeEn,
                userIds.userId,
                ifnull(userContributions.totalPoints, 0)    as totalPoints
         from (select 'Photographe' as contribution, 'edge_photographer' as contribution_external_name
@@ -27,7 +28,12 @@ export const getMedalPoints = async (userIds: number[]) =>
                            ON contributionType.contribution = userContributions.contribution
                                AND userIds.userId = userContributions.userId
     `
-  ).reduce(
+  ).reduce<{
+    [userId: number]: Record<
+      UserContributionTypeEn,
+      number
+    >;
+  }>(
     (acc, { contribution, totalPoints, userId }) => ({
       ...acc,
       [userId]: {
@@ -35,10 +41,5 @@ export const getMedalPoints = async (userIds: number[]) =>
         [contribution]: parseInt(totalPoints) || 0,
       },
     }),
-    {} as {
-      [userId: number]: Record<
-        "edge_photographer" | "edge_designer" | "duckhunter",
-        number
-      >;
-    },
+    {},
   );

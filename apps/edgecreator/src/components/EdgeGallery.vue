@@ -56,28 +56,26 @@ const isPopulating = ref(false);
 
 const { publishedEdges, publishedEdgesSteps } = storeToRefs(edgeCatalog());
 const { loadPublishedEdgesSteps } = edgeCatalog();
-const { issuenumbers } = storeToRefs(webStores.coa());
+const { issuecodesByPublicationcode } = storeToRefs(webStores.coa());
 
 const populateItems = async (
-  publicationcode: string,
   itemsForPublication: Record<string, { modelId?: number; v3: boolean }>,
 ) => {
   const publishedIssueModels = Object.values(itemsForPublication)
     .filter(({ modelId }) => !!modelId)
     .map(({ modelId }) => modelId) as number[];
   await loadPublishedEdgesSteps({
-    publicationcode: props.publicationcode,
     edgeModelIds: publishedIssueModels,
   });
   items.value = (
     await Promise.all(
-      Object.keys(itemsForPublication).map(async (issuenumber) => {
+      Object.keys(itemsForPublication).map(async (issuecode) => {
         const url = `${
           import.meta.env.VITE_EDGES_URL as string
-        }/${publicationcode.replace("/", "/gen/")}.${issuenumber}.png`;
-        if (itemsForPublication[issuenumber].v3) {
+        }/${props.publicationcode.replace("/", "/gen/")}.${issuecode}.png`;
+        if (itemsForPublication[issuecode].v3) {
           return {
-            name: issuenumber,
+            name: issuecode,
             quality: 1,
             disabled: false,
             tooltip: "",
@@ -86,21 +84,17 @@ const populateItems = async (
         }
         let quality;
         let tooltip;
-        const allSteps =
-          publishedEdgesSteps.value[props.publicationcode][issuenumber];
+        const allSteps = publishedEdgesSteps.value[issuecode];
         if (!allSteps) {
           quality = 0;
           tooltip = "No steps or dimensions found";
         } else {
           const issueStepWarnings: Record<number, string[]> = {};
-          loadDimensionsFromApi(issuenumber, allSteps);
+          loadDimensionsFromApi(issuecode, allSteps);
 
           try {
             await loadStepsFromApi(
-              {
-                publicationcode: props.publicationcode,
-                issuenumber,
-              },
+              issuecode,
               allSteps,
               false,
               (error: string, stepNumber: number) => {
@@ -116,7 +110,7 @@ const populateItems = async (
             issueStepWarnings[-1] = [e as string];
           }
           const issueSteps = step().getFilteredOptions({
-            issuenumbers: [issuenumber],
+            issuecodes: [issuecode],
           });
           if (!issueSteps.length) {
             issueStepWarnings[0] = ["No steps"];
@@ -130,7 +124,7 @@ const populateItems = async (
           tooltip = Object.values(issueStepWarnings).join("\n");
         }
         return {
-          name: issuenumber,
+          name: issuecode,
           quality,
           disabled: quality === 0,
           tooltip,
@@ -140,20 +134,17 @@ const populateItems = async (
     )
   ).sort(({ name: name1 }, { name: name2 }) =>
     Math.sign(
-      issuenumbers.value[props.publicationcode].indexOf(name1) -
-        issuenumbers.value[props.publicationcode].indexOf(name2),
+      issuecodesByPublicationcode.value[props.publicationcode].indexOf(name1) -
+        issuecodesByPublicationcode.value[props.publicationcode].indexOf(name2),
     ),
   );
 };
 
 const onPublicationOrEdgeChange = async () => {
-  if (publishedEdges.value[props.publicationcode]) {
+  if (publishedEdges.value) {
     if (!isPopulating.value) {
       isPopulating.value = true;
-      await populateItems(
-        props.publicationcode,
-        publishedEdges.value[props.publicationcode],
-      );
+      await populateItems(publishedEdges.value);
       isPopulating.value = false;
     }
   }

@@ -4,7 +4,7 @@ import { prismaClient as prismaDm } from "~prisma-clients/schemas/dm";
 import type { edgeModel } from "~prisma-clients/schemas/edgecreator";
 import { prismaClient as prismaEdgeCreator } from "~prisma-clients/schemas/edgecreator";
 
-import { augmentIssuesWithInducksData } from "../coa";
+import { augmentIssueArrayWithInducksData } from "../coa";
 import type Events from "./types";
 import { namespaceEndpoint } from "./types";
 
@@ -26,7 +26,7 @@ const getEdges = async (filters: {
         issuecode,
       },
     })
-  ).reduce((acc, model) => ({ ...acc, [model.issuenumber]: model }), {});
+  ).groupBy('issuecode');
 
   return (
     await prismaDm.edge.findMany({
@@ -68,8 +68,7 @@ export default (io: Server) => {
     ORDER BY numberOfIssues DESC, issuecode
     LIMIT 20
   `
-        .then((issues) => issues.groupBy("issuecode"))
-        .then((issues) => augmentIssuesWithInducksData(issues))
+        .then((issues) => augmentIssueArrayWithInducksData(issues))
         .then(callback),
     );
 
@@ -78,8 +77,7 @@ export default (io: Server) => {
         .findMany({
           select: { issuecode: true },
         })
-        .then((issues) => issues.groupBy("issuecode"))
-        .then((issues) => augmentIssuesWithInducksData(issues))
+        .then((issues) => augmentIssueArrayWithInducksData(issues))
         .then(callback),
     );
 

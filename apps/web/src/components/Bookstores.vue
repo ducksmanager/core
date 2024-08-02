@@ -190,30 +190,30 @@ let existingBookstoreSent = $ref(false);
 
 const { t: $t } = useI18n();
 let loaded = $ref(false);
-const newBookstore = $ref({
+const newBookstore = $ref<SimpleBookstore>({
   id: null,
   name: "",
   address: "",
   coordX: 0,
   coordY: 0,
-  comments: [{ comment: "" }],
-} as SimpleBookstore);
+  comments: [{ comment: "", userId: null, creationDate: null }],
+});
 const accessToken =
   "pk.eyJ1IjoiYnBlcmVsIiwiYSI6ImNqbmhubHVrdDBlZ20zcG8zYnQydmZwMnkifQ.suaRi8ln1w_DDDlTlQH0vQ";
 const mapCenter = [1.73584, 46.754917];
 
 const bookstoreCommentsUserIds = $computed(
   () =>
-    bookstores?.reduce(
+    bookstores?.reduce<number[]>(
       (acc, bookstore: SimpleBookstore) => [
         ...new Set([
           ...acc,
-          ...(bookstore.comments
+          ...bookstore.comments
             .map(({ userId }) => userId)
-            .filter((userId) => userId !== null) as number[]),
+            .filter((userId): userId is number => userId !== null),
         ]),
       ],
-      [] as number[],
+      [],
     ) || null,
 );
 

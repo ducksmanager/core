@@ -17,7 +17,7 @@ import { ui } from "~/stores/ui";
 const polygon = ref<SVGPolygonElement | null>(null);
 
 interface Props {
-  issuenumber: string;
+  issuecode: string;
   stepNumber: number;
   options: {
     points: string;

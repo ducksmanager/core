@@ -7,9 +7,7 @@ export default abstract class {
   abstract uploadFromBase64: (
     parameters: {
       data: string;
-      country: string;
-      magazine: string;
-      issuenumber: string;
+      issuecode: string;
     },
     callback: (
       value: Errorable<

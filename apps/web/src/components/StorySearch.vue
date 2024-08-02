@@ -45,7 +45,7 @@
       </div>
     </div>
     <b-list-group
-      v-if="searchResults.results && !isSearching && showSearchResults"
+      v-if="searchResults?.results && !isSearching && showSearchResults"
       class="position-absolute"
       :class="{ 'issues-list': isSearchByCode, 'story-list': !isSearchByCode }"
     >
@@ -84,7 +84,7 @@
 </template>
 
 <script setup lang="ts">
-import type { SimpleIssue } from "~dm-types/SimpleIssue";
+import type { IssueWithIssuecodeOnly } from "~dm-types/SimpleIssue";
 import type { SimpleStory } from "~dm-types/SimpleStory";
 import type { issue } from "~prisma-clients/schemas/dm";
 
@@ -95,7 +95,7 @@ const { withTitle = true, isPublic = false } = defineProps<{
   isPublic?: boolean;
 }>();
 const emit = defineEmits<{
-  (e: "issue-selected", story: SimpleIssue): void;
+  (e: "issue-selected", story: IssueWithIssuecodeOnly): void;
 }>();
 const { conditions } = useCondition();
 
@@ -118,27 +118,25 @@ onClickOutside(nav, () => {
 let isSearching = $ref(false);
 let pendingSearch = $ref<string | null>(null);
 let search = $ref("");
-let storyResults = $ref(
-  {} as {
-    results: (SimpleStory & {
-      collectionIssue: issue | null;
-    })[];
-    hasMore: boolean;
-  },
-);
-
-let issueResults = $ref({} as { results: SimpleIssue[] });
-let searchContext = $ref<"story" | "storycode">("story");
-let showSearchResults = $ref(true);
+let storyResults = $ref<{
+  results: (SimpleStory & {
+    collectionIssue: issue | null;
+  })[];
+  hasMore: boolean;
+} | null>(null);
 
 const { t: $t } = useI18n();
-const isInCollection = ({ issuecode }: SimpleIssue) =>
-  findInCollection(issuecode) !== undefined;
-
 const searchContexts = {
   story: $t("titre d'histoire"),
   storycode: $t("code histoire"),
-} as { story: string; storycode: string };
+} as const;
+
+let issueResults = $ref<{ results: IssueWithIssuecodeOnly[] } | null>(null);
+let searchContext = $ref<keyof typeof searchContexts>("story");
+let showSearchResults = $ref(true);
+
+const isInCollection = ({ issuecode }: IssueWithIssuecodeOnly) =>
+  findInCollection(issuecode) !== undefined;
 const searchContextsWithoutCurrent = $computed(
   (): { [searchContext: string]: { [key: string]: string } } =>
     Object.keys(searchContexts)
@@ -156,9 +154,11 @@ const isSearchByCode = $computed(() => searchContext === "storycode");
 const searchResults = $computed(() =>
   isSearchByCode ? issueResults : storyResults,
 );
-const selectSearchResult = (searchResult: SimpleStory | SimpleIssue) => {
+const selectSearchResult = (
+  searchResult: SimpleStory | IssueWithIssuecodeOnly,
+) => {
   if (isSearchByCode) {
-    emit("issue-selected", searchResult as SimpleIssue);
+    emit("issue-selected", searchResult as IssueWithIssuecodeOnly);
     showSearchResults = false;
   } else {
     searchContext = "storycode";
@@ -189,15 +189,18 @@ const runSearch = async (value: string) => {
       );
     } else {
       const data = await coaServices.searchStory(value.split(","), true);
-      storyResults.results = data.results.map((story) => ({
-        ...story,
-        collectionIssue:
-          issues.value!.find(({ issuecode: collectionIssuecode }) =>
-            story.issues
-              .map(({ issuecode }) => issuecode)
-              .includes(collectionIssuecode),
-          ) || null,
-      }));
+      storyResults = {
+        hasMore: data.hasMore,
+        results: data.results.map((story) => ({
+          ...story,
+          collectionIssue:
+            issues.value!.find(({ issuecode: collectionIssuecode }) =>
+              story.issues
+                .map(({ issuecode }) => issuecode)
+                .includes(collectionIssuecode),
+            ) || null,
+        })),
+      };
     }
   } finally {
     isSearching = false;

@@ -7,7 +7,6 @@ import type { LegacyComponent } from "~/types/LegacyComponent";
 import type { OptionNameAndValue } from "~/types/OptionNameAndValue";
 import type { OptionValue } from "~/types/OptionValue";
 import type { StepOptions } from "~/types/StepOptions";
-import type { inducks_issue } from "~prisma-clients/schemas/coa";
 import { stores as webStores } from "~web";
 import { dmSocketInjectionKey } from "~web/src/composables/useDmSocket";
 
@@ -25,22 +24,16 @@ export default () => {
     edgeCreator: { services: edgeCreatorServices },
   } = injectLocal(dmSocketInjectionKey)!;
 
-  const loadDimensionsFromSvg = (
-    issuenumber: string,
-    svgElement: SVGElement,
-  ) => {
+  const loadDimensionsFromSvg = (issuecode: string, svgElement: SVGElement) => {
     stepStore.setDimensions(
       {
         width: parseInt(svgElement.getAttribute("width")!) / 1.5,
         height: parseInt(svgElement.getAttribute("height")!) / 1.5,
       },
-      { issuenumbers: [issuenumber] },
+      { issuecodes: [issuecode] },
     );
   };
-  const loadStepsFromSvg = (
-    issuenumber: string,
-    svgChildNodes: SVGElement[],
-  ) => {
+  const loadStepsFromSvg = (issuecode: string, svgChildNodes: SVGElement[]) => {
     svgChildNodes
       .filter(({ nodeName }) => nodeName === "g")
       .forEach((group, stepNumber) => {
@@ -58,23 +51,23 @@ export default () => {
           ],
           {
             stepNumber,
-            issuenumbers: [issuenumber],
+            issuecodes: [issuecode],
           },
         );
       });
   };
 
   const setPhotoUrlsFromSvg = (
-    issuenumber: string,
+    issuecode: string,
     svgChildNodes: SVGElement[],
   ) => {
     for (const photoUrl of getSvgMetadata(svgChildNodes, "photo")) {
-      mainStore.photoUrls[issuenumber] = photoUrl;
+      mainStore.photoUrls[issuecode] = photoUrl;
     }
   };
 
   const setContributorsFromSvg = (
-    issuenumber: string,
+    issuecode: string,
     svgChildNodes: SVGElement[],
   ) => {
     for (const contributionType of ["photographer", "designer"]) {
@@ -83,7 +76,7 @@ export default () => {
         `contributor-${contributionType}`,
       )) {
         mainStore.addContributor({
-          issuenumber,
+          issuecode,
           contributionType:
             contributionType === "designer" ? "createur" : "photographe",
           user: userStore.allUsers!.find((user) => user.username === username)!,
@@ -93,11 +86,11 @@ export default () => {
   };
 
   const loadDimensionsFromApi = (
-    issuenumber: string,
+    issuecode: string,
     stepData: Record<
       string,
       {
-        issuenumber: string;
+        issuecode: string;
         stepNumber: number;
         functionName: string;
         options: StepOptions;
@@ -106,8 +99,8 @@ export default () => {
   ) => {
     const defaultDimensions: EdgeDimensions = { width: 15, height: 200 };
     const dimensions = Object.values(stepData).find(
-      ({ stepNumber: originalStepNumber, issuenumber: currentIssuenumber }) =>
-        issuenumber === currentIssuenumber && originalStepNumber === -1,
+      ({ stepNumber: originalStepNumber, issuecode: currentIssuecode }) =>
+        issuecode === currentIssuecode && originalStepNumber === -1,
     )?.options;
 
     const dimensionsToLoad = {
@@ -118,13 +111,10 @@ export default () => {
         ? parseInt(dimensions.Dimension_y as string)
         : defaultDimensions.height,
     };
-    stepStore.setDimensions(dimensionsToLoad, { issuenumbers: [issuenumber] });
+    stepStore.setDimensions(dimensionsToLoad, { issuecodes: [issuecode] });
   };
   const loadStepsFromApi = async (
-    {
-      publicationcode,
-      issuenumber,
-    }: Pick<inducks_issue, "publicationcode" | "issuenumber">,
+    issuecode: string,
     apiSteps: Record<
       string,
       {
@@ -137,7 +127,7 @@ export default () => {
     onError: (error: string, stepNumber: number) => void,
   ): Promise<OptionNameAndValue[][]> => {
     const dimensions = stepStore.getFilteredDimensions({
-      issuenumbers: [issuenumber],
+      issuecodes: [issuecode],
     });
     if (!dimensions.length) {
       throw new Error("No dimensions");
@@ -159,8 +149,7 @@ export default () => {
           stepStore.setOptionValues(
             optionObjectToArray(
               (await getOptionsFromDb(
-                publicationcode,
-                issuenumber,
+                issuecode,
                 stepNumber,
                 {
                   component,
@@ -171,7 +160,7 @@ export default () => {
               ))!,
             ),
             {
-              issuenumbers: [issuenumber],
+              issuecodes: [issuecode],
               stepNumber: stepNumber++,
             },
           );
@@ -192,43 +181,32 @@ export default () => {
     }
     return steps;
   };
-  const setContributorsFromApi = async (
-    issuenumber: string,
-    edgeId: number,
-  ) => {
+  const setContributorsFromApi = async (issuecode: string, edgeId: number) => {
     const contributors = await edgeCreatorServices.getModelContributors(edgeId);
     for (const { contribution, userId } of contributors) {
       mainStore.addContributor({
-        issuenumber,
+        issuecode,
         contributionType: contribution,
         user: userStore.allUsers!.find((user) => user.id === userId)!,
       });
     }
   };
 
-  const loadModel = async (
-    {
-      publicationcode,
-      issuenumber,
-      issuecode,
-    }: Pick<inducks_issue, "publicationcode" | "issuenumber" | "issuecode">,
-    targetIssuenumber: string,
-  ) => {
-    const onlyLoadStepsAndDimensions = issuenumber !== targetIssuenumber;
+  const loadModel = async (issuecode: string, targetIssuecode: string) => {
+    const onlyLoadStepsAndDimensions = issuecode !== targetIssuecode;
 
     const loadSvg = async (publishedVersion: boolean) => {
       const { svgElement, svgChildNodes } = await loadSvgFromString(
-        publicationcode,
-        issuenumber,
+        issuecode,
         new Date().toISOString(),
         publishedVersion,
       );
 
-      loadDimensionsFromSvg(issuenumber, svgElement);
-      loadStepsFromSvg(issuenumber, svgChildNodes);
+      loadDimensionsFromSvg(issuecode, svgElement);
+      loadStepsFromSvg(issuecode, svgChildNodes);
       if (!onlyLoadStepsAndDimensions) {
-        setPhotoUrlsFromSvg(issuenumber, svgChildNodes);
-        setContributorsFromSvg(issuenumber, svgChildNodes);
+        setPhotoUrlsFromSvg(issuecode, svgChildNodes);
+        setContributorsFromSvg(issuecode, svgChildNodes);
       }
     };
 
@@ -240,33 +218,28 @@ export default () => {
       } catch (e) {
         const edge = (await edgeCreatorServices.getModel(issuecode))!;
         await edgeCatalogStore.loadPublishedEdgesSteps({
-          publicationcode,
           edgeModelIds: [edge.id],
         });
-        const apiSteps =
-          edgeCatalogStore.publishedEdgesSteps[publicationcode][issuenumber];
-        loadDimensionsFromApi(issuenumber, apiSteps);
-        await loadStepsFromApi(
-          { publicationcode, issuenumber },
-          apiSteps,
-          true,
-          (error: string) => mainStore.addWarning(error),
+        const apiSteps = edgeCatalogStore.publishedEdgesSteps[issuecode];
+        loadDimensionsFromApi(issuecode, apiSteps);
+        await loadStepsFromApi(issuecode, apiSteps, true, (error: string) =>
+          mainStore.addWarning(error),
         );
 
         if (!onlyLoadStepsAndDimensions) {
-          await setPhotoUrlsFromApi(issuenumber, edge.id);
-          await setContributorsFromApi(issuenumber, edge.id);
+          await setPhotoUrlsFromApi(issuecode, edge.id);
+          await setContributorsFromApi(issuecode, edge.id);
         }
       }
     }
     if (!stepStore.options.length) {
-      throw new Error(`No model found for issue ${issuenumber}`);
+      throw new Error(`No model found for issue ${issuecode}`);
     }
   };
 
-  const setPhotoUrlsFromApi = async (issuenumber: string, edgeId: number) => {
+  const setPhotoUrlsFromApi = async (issuecode: string, edgeId: number) => {
     const photo = await edgeCreatorServices.getModelMainPhoto(edgeId);
-    mainStore.photoUrls[issuenumber] = photo.fileName;
+    mainStore.photoUrls[issuecode] = photo.fileName;
   };
 
   return {

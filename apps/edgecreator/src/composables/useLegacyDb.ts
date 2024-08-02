@@ -1,6 +1,7 @@
 import type { EdgeDimensions } from "~/types/EdgeDimensions";
 import type { LegacyComponent } from "~/types/LegacyComponent";
 import type { StepOptions } from "~/types/StepOptions";
+import { coa } from "~web/src/stores/coa";
 
 import { edgecreatorSocketInjectionKey } from "./useEdgecreatorSocket";
 
@@ -40,8 +41,7 @@ export default () => {
     }
   };
   const getOptionsFromDb = async (
-    publicationcode: string,
-    issuenumber: string,
+    issuecode: string,
     stepNumber: number,
     { component: targetComponent, options: dbOptions }: LegacyComponent,
     edgeDimensions: EdgeDimensions,
@@ -114,6 +114,8 @@ export default () => {
         };
       }
       case "Image": {
+        const { publicationcode, issuenumber } =
+          coa().issuecodeDetails[issuecode];
         const [country] = publicationcode.split("/");
         validateOptions(
           [

@@ -1,6 +1,8 @@
 import axios from "axios";
 import { DOMParser } from "xmldom";
 
+import { coa } from "~web/src/stores/coa";
+
 export default () => {
   const getSvgMetadata = (svgChildNodes: SVGElement[], metadataType: string) =>
     svgChildNodes
@@ -12,17 +14,11 @@ export default () => {
       .map((metadataNode) => metadataNode.textContent!.trim());
 
   const loadSvgFromString = async (
-    publicationcode: string,
-    issuenumber: string,
+    issuecode: string,
     mtime: string,
     publishedVersion = false,
   ) => {
-    const edgeUrl = getEdgeUrl(
-      publicationcode,
-      issuenumber,
-      `svg?${mtime}`,
-      publishedVersion,
-    );
+    const edgeUrl = getEdgeUrl(issuecode, `svg?${mtime}`, publishedVersion);
     const svgString = (await axios.get(edgeUrl)).data as string;
     if (!svgString) {
       throw new Error(`No SVG found : ${edgeUrl}`);
@@ -34,14 +30,14 @@ export default () => {
     return { svgElement, svgChildNodes };
   };
   const getEdgeUrl = (
-    publicationcode: string,
-    issuenumber: string,
+    issuecode: string,
     extension: string,
     publishedVersion: boolean,
-  ) =>
-    `${import.meta.env.VITE_EDGES_URL as string}/${publicationcode.split("/")[0]}/gen/${
-      publishedVersion ? "" : "_"
-    }${publicationcode.split("/")[1]}.${issuenumber}.${extension}`;
+  ) => {
+    const { publicationcode, issuenumber } = coa().issuecodeDetails[issuecode];
+    const [countrycode, magazinecode] = publicationcode.split("/");
+    return `${import.meta.env.VITE_EDGES_URL as string}/${countrycode}/gen/${publishedVersion ? "" : "_"}${magazinecode}.${issuenumber}.${extension}`;
+  };
 
   return {
     getSvgMetadata,

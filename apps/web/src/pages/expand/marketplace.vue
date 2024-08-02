@@ -40,7 +40,7 @@ alias: [/agrandir/marketplace]
       </template>
       <template #content>
         <ul>
-          <li v-for="issueId of issueIds as number[]" :key="issueId">
+          <li v-for="issueId of issueIds" :key="issueId">
             <Issue
               hide-condition
               :issuecode="issuesOnSaleById[issueId].issuecode"
@@ -107,7 +107,9 @@ alias: [/agrandir/marketplace]
       </b-form-select>
     </span>
     <IssueList
-      v-for="[publicationcode, issues] in Object.entries(issuesOnSaleByOthers)"
+      v-for="[publicationcode, issues] in Object.entries(
+        issuesOnSaleByOthers.groupBy('publicationcode', '[]'),
+      )"
       :key="publicationcode"
       :publicationcode="publicationcode"
       :custom-issues="

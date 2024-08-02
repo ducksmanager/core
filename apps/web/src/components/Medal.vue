@@ -16,6 +16,8 @@
 </template>
 
 <script setup lang="ts">
+import type { UserContributionTypeEn } from "~dm-types/UserContributionTypeEn";
+
 const {
   contribution,
   nextLevel = false,
@@ -27,7 +29,7 @@ const {
   xSmall?: boolean;
   nextLevel?: boolean;
   userLevelPoints: number;
-  contribution: string;
+  contribution: UserContributionTypeEn;
 }>();
 
 const {

@@ -21,31 +21,22 @@ export const main = defineStore("main", () => {
     edges: { services: edgesServices },
   } = injectLocal(dmSocketInjectionKey)!;
 
-  const country = ref<string | null>(null),
-    magazine = ref<string | null>(null),
-    issuenumbers = ref<string[]>([]),
+  const publicationcode = ref<string | null>(null),
+    issuecodes = ref<string[]>([]),
     isRange = ref(false),
     photoUrls = ref<Record<string, string>>({}),
     contributors = ref<ModelContributor[]>([]),
-    edgesBefore = ref<EdgeWithModelIdAndInducksData[]>([]),
-    edgesAfter = ref<EdgeWithModelIdAndInducksData[]>([]),
+    edgesBefore = ref<(EdgeWithModelIdAndInducksData | undefined)[]>([]),
+    edgesAfter = ref<(EdgeWithModelIdAndInducksData | undefined)[]>([]),
     publicationElements = ref<string[]>([]),
     publicationPhotos = ref<string[]>([]),
     warnings = ref<string[]>([]),
-    publicationcode = computed(
-      () =>
-        country.value && magazine.value && `${country.value}/${magazine.value}`,
-    ),
-    publicationIssuenumbers = computed(
-      () =>
-        (publicationcode.value &&
-          webStores.coa().issuenumbers[publicationcode.value]) ||
-        [],
-    ),
+    country = computed(() => publicationcode.value?.split("/")[0]),
+    magazine = computed(() => publicationcode.value?.split("/")[1]),
     publicationIssuecodes = computed(
       () =>
         (publicationcode.value &&
-          webStores.coa().issuecodes[publicationcode.value]) ||
+          webStores.coa().issuecodesByPublicationcode[publicationcode.value]) ||
         [],
     ),
     publicationElementsForGallery = computed(
@@ -69,17 +60,17 @@ export const main = defineStore("main", () => {
         })),
     ),
     addContributor = ({
-      issuenumber,
+      issuecode,
       contributionType,
       user,
     }: {
-      issuenumber: string;
+      issuecode: string;
       contributionType: userContributionType;
       user: SimpleUser;
     }) => {
       removeContributor({ contributionType, userToRemove: user });
       contributors.value.push({
-        issuenumber,
+        issuecode,
         contributionType,
         user,
       });
@@ -103,29 +94,29 @@ export const main = defineStore("main", () => {
     removeWarning = (idx: number) => {
       warnings.value.splice(idx, 1);
     },
-    setIssuenumbers = (
-      firstIssuenumber: string,
-      lastIssuenumber?: string,
-      otherIssuenumbers?: string[],
+    setIssuecodes = (
+      firstIssuecode: string,
+      lastIssuecode?: string,
+      otherIssuecodes?: string[],
     ) => {
-      const firstIssueIndex = publicationIssuenumbers.value.findIndex(
-        (issuenumber) => issuenumber === firstIssuenumber,
+      const firstIssueIndex = publicationIssuecodes.value.findIndex(
+        (issuecode) => issuecode === firstIssuecode,
       );
-      if (lastIssuenumber === undefined) {
-        issuenumbers.value = [firstIssuenumber, ...(otherIssuenumbers || [])];
+      if (lastIssuecode === undefined) {
+        issuecodes.value = [firstIssuecode, ...(otherIssuecodes || [])];
       } else {
         isRange.value = true;
-        let lastIssueIndex = publicationIssuenumbers.value.findIndex(
-          (issuenumber) => issuenumber === lastIssuenumber,
+        let lastIssueIndex = publicationIssuecodes.value.findIndex(
+          (issuenumber) => issuenumber === lastIssuecode,
         );
         if (lastIssueIndex === -1) {
-          lastIssueIndex = publicationIssuenumbers.value.length - 1;
+          lastIssueIndex = publicationIssuecodes.value.length - 1;
           console.warn(
-            `Issue ${lastIssuenumber} doesn't exist, falling back to ${publicationIssuenumbers.value[lastIssueIndex]}`,
+            `Issue ${lastIssuecode} doesn't exist, falling back to ${publicationIssuecodes.value[lastIssueIndex]}`,
           );
         }
 
-        issuenumbers.value = publicationIssuenumbers.value.filter(
+        issuecodes.value = publicationIssuecodes.value.filter(
           (_, index) => index >= firstIssueIndex && index <= lastIssueIndex,
         );
       }
@@ -145,26 +136,23 @@ export const main = defineStore("main", () => {
       }
     },
     loadPublicationIssues = async () =>
-      webStores.coa().fetchIssueNumbers([publicationcode.value!]),
-    getEdgePublicationStates = async (edgeIssuecodes: string[]) =>
+      webStores
+        .coa()
+        .fetchIssuecodesByPublicationcode([publicationcode.value!]),
+    getEdgePublicationStates = async (issuecodes: string[]) =>
       [
-        ...new Set(
-          Object.values(
-            await edgesServices.getEdges({ issuecodes: edgeIssuecodes }),
-          ),
-        ),
+        ...new Set(Object.values(await edgesServices.getEdges({ issuecodes }))),
       ].sort((a, b) =>
         Math.sign(
-          edgeIssuecodes.indexOf(a!.issuecode) -
-            edgeIssuecodes.indexOf(b!.issuecode),
+          issuecodes.indexOf(a!.issuecode) - issuecodes.indexOf(b!.issuecode),
         ),
       ),
     loadSurroundingEdges = async () => {
-      const firstIssueIndex = publicationIssuenumbers.value.findIndex(
-        (issue) => issue === issuenumbers.value[0],
+      const firstIssueIndex = publicationIssuecodes.value.findIndex(
+        (issue) => issue === issuecodes.value[0],
       );
-      const lastIssueIndex = publicationIssuenumbers.value.findIndex(
-        (issue) => issue === issuenumbers.value[issuenumbers.value.length - 1],
+      const lastIssueIndex = publicationIssuecodes.value.findIndex(
+        (issue) => issue === issuecodes.value[issuecodes.value.length - 1],
       );
       const issuesBefore = publicationIssuecodes.value.filter(
         (_, index) =>
@@ -214,9 +202,8 @@ export const main = defineStore("main", () => {
         ),
       );
   return {
-    country,
-    magazine,
-    issuenumbers,
+    publicationcode,
+    issuecodes,
     isRange,
     photoUrls,
     contributors,
@@ -225,16 +212,15 @@ export const main = defineStore("main", () => {
     publicationElements,
     publicationPhotos,
     warnings,
-    publicationcode,
     publicationIssuecodes,
-    publicationIssuenumbers,
+    publicationIssuenumbers: publicationIssuecodes,
     publicationElementsForGallery,
     publicationPhotosForGallery,
     addContributor,
     removeContributor,
     addWarning,
     removeWarning,
-    setIssuenumbers,
+    setIssuecodes,
     loadItems,
     loadPublicationIssues,
     loadSurroundingEdges,

@@ -1,13 +1,13 @@
 <!--suppress XmlUnusedNamespaceDeclaration -->
 <template>
   <svg
-    :id="`edge-canvas-${issuenumber}`"
+    :id="`edge-canvas-${issuecode}`"
     ref="canvas"
     :class="{
       'edge-canvas': true,
       'hide-overflow': !showEdgeOverflow,
       'position-relative': true,
-      editing: editingStepStore.issuenumbers.includes(issuenumber),
+      editing: editingStepStore.issuecodes.includes(issuecode),
     }"
     :viewBox="`0 0 ${width} ${height}`"
     :width="zoom * width"
@@ -43,29 +43,29 @@
         [stepComponent]: true,
         hovered:
           hoveredStepStore.stepNumber === stepNumber &&
-          editingStepStore.issuenumbers.includes(issuenumber),
+          editingStepStore.issuecodes.includes(issuecode),
       }"
       @mousedown.exact="
-        replaceEditingIssuenumberIfNotAlreadyEditing(issuenumber);
+        replaceEditingIssuecodeIfNotAlreadyEditing(issuecode);
         editingStepStore.stepNumber = stepNumber;
       "
       @mousedown.shift="
-        editingStepStore.addIssuenumber(issuenumber);
+        editingStepStore.addIssuecode(issuecode);
         editingStepStore.stepNumber = stepNumber;
       "
       @mouseover="
         hoveredStepStore.stepNumber = stepNumber;
-        hoveredStepStore.issuenumber = issuenumber;
+        hoveredStepStore.issuecode = issuecode;
       "
       @mouseout="
         hoveredStepStore.stepNumber = null;
-        hoveredStepStore.issuenumber = null;
+        hoveredStepStore.issuecode = null;
       "
     >
       <component
         :is="renderComponents[stepComponent]"
         v-show="visibleSteps[stepNumber]"
-        :issuenumber="issuenumber"
+        :issuecode="issuecode"
         :step-number="stepNumber"
         :options="toKeyValue(getStepOptions(stepNumber, false))"
       ></component>
@@ -92,11 +92,11 @@ import type { ModelContributor } from "~types/ModelContributor";
 
 const props = withDefaults(
   defineProps<{
-    issuenumber: string;
+    issuecode: string;
     dimensions: { width: number; height: number };
     steps: StepOption[];
     photoUrl?: string | null;
-    contributors: Omit<ModelContributor, "issuenumber">[];
+    contributors: Omit<ModelContributor, "issuecode">[];
   }>(),
   { photoUrl: null },
 );
@@ -164,9 +164,9 @@ const setPosition = ({ clientX: left, clientY: top }: MouseEvent) => {
     (value) => value / zoom.value,
   ) as [number, number];
 };
-const replaceEditingIssuenumberIfNotAlreadyEditing = (issuenumber: string) => {
-  if (!editingStepStore.issuenumbers.includes(issuenumber)) {
-    editingStepStore.replaceIssuenumber(issuenumber);
+const replaceEditingIssuecodeIfNotAlreadyEditing = (issuecode: string) => {
+  if (!editingStepStore.issuecodes.includes(issuecode)) {
+    editingStepStore.replaceIssuecode(issuecode);
   }
 };
 const renderComponents: Record<string, unknown> = {

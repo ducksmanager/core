@@ -109,12 +109,12 @@ let currentSubscription = $ref<subscription | null>(null);
 
 let hasPublicationNames = $ref(false);
 let currentAssociatedPublications = $ref<AssociatedPublication[]>([]);
-const associatedPublications = $ref([
+const associatedPublications = $ref<AssociatedPublication[]>([
   {
     referencePublicationcode: "fr/JM",
     publicationcode: "fr/JMS",
   },
-] as AssociatedPublication[]);
+]);
 
 const toSubscriptionWithStringDates = (
   subscription: subscription,

@@ -16,7 +16,7 @@
 
 <script setup lang="ts">
 interface Props {
-  issuenumber: string;
+  issuecode: string;
   stepNumber: number;
   options: {
     fill: string;

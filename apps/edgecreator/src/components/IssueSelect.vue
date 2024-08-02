@@ -160,26 +160,19 @@ const publications = computed(
 );
 
 const publicationIssues = computed(
-  () => coaStore.issuenumbers[currentPublicationcode.value!],
+  () => coaStore.issuecodesByPublicationcode[currentPublicationcode.value!],
 );
 
 const issues = computed(
   () =>
     publicationIssues.value &&
     edgeCatalogStore.publishedEdges[currentPublicationcode.value!] &&
-    coaStore.issuenumbers[currentPublicationcode.value!].map(
-      (issuenumber, idx) => {
-        const issuecode =
-          coaStore.issuecodes[currentPublicationcode.value!][idx];
-        const status = edgeCatalogStore.getEdgeStatus({
-          country: currentCountrycode.value!,
-          magazine: currentPublicationcode.value!.split("/")[1],
-          issuenumber,
-          issuecode,
-        });
+    coaStore.issuecodesByPublicationcode[currentPublicationcode.value!].map(
+      (issuecode) => {
+        const status = edgeCatalogStore.getEdgeStatus(issuecode);
         return {
-          value: { issuecode, issuenumber },
-          text: `${issuenumber}${status === "none" ? "" : ` (${$t(status!)})`}`,
+          value: { issuecode },
+          text: `${coaStore.issuecodeDetails[issuecode].issuenumber}${status === "none" ? "" : ` (${$t(status!)})`}`,
           disabled:
             (props.disableOngoingOrPublished && status !== "none") ||
             (props.disableNotOngoingNorPublished && status === "none"),
@@ -206,7 +199,7 @@ watch(
 watch(currentPublicationcode, async (newValue) => {
   if (newValue) {
     currentFirstIssue.value = undefined;
-    await coaStore.fetchIssueNumbers([newValue]);
+    await coaStore.fetchIssuecodesByPublicationcode([newValue]);
     await loadEdges();
   }
 });

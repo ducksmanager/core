@@ -3,7 +3,8 @@ import type { Errorable } from "~socket.io-services/types";
 export const namespaceEndpoint = "/browse";
 
 export interface EdgeModelDetails {
-  filename: string;
+  issuecode: string;
+  url: string;
   designers: string[];
   photographers: string[];
 }

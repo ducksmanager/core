@@ -23,14 +23,14 @@ declare global {
      * [{ id: 1, name: 'John', age: 25 }, { id: 2, name: 'Jane', age: 30 }, { id: 3, name: 'John', age: 28 }]
      *      .groupBy('name', 'age');
      */
-    groupBy<Key extends keyof T>(
-      fieldName: Key,
-      valueFieldName?: T[Key],
-    ): { [key: string]: typeof valueFieldName extends '[]' ? T[] : typeof valueFieldName extends string ? T[Key] : T };
+    groupBy<K extends keyof T, V extends undefined | '[]' | keyof T = undefined>(
+      fieldName: K,
+      valueFieldName?: V,
+    ): { [key: string]: V extends '[]' ? T[] : V extends keyof T ? T[V] : T };
   }
 }
 
-Array.prototype.groupBy = function (fieldName, valueFieldName?) {
+Array.prototype.groupBy = function (fieldName, valueFieldName) {
   return this.reduce(
     (acc, object) => ({
       ...acc,

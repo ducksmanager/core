@@ -304,10 +304,10 @@ const getOptionValueAllUsers = async (optionName: userOptionType) =>
         optionName,
       },
     })
-  ).reduce(
+  ).reduce<{ [userId: string]: string[] }>(
     (acc, value) => ({
       ...acc,
       [value.userId]: [...(acc[value.userId] || []), value],
     }),
-    {} as { [userId: string]: string[] },
+    {},
   );

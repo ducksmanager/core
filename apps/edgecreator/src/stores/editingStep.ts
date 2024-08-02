@@ -3,50 +3,50 @@ import { defineStore } from "pinia";
 import { step } from "~/stores/step";
 
 export const editingStep = defineStore("editingStep", () => {
-  const issuenumbers = ref<string[]>([]),
+  const issuecodes = ref<string[]>([]),
     stepNumber = ref(0),
     editingOptions = computed(() =>
       step().getFilteredOptions({
         stepNumbers: [stepNumber.value],
-        issuenumbers: issuenumbers.value,
+        issuecodes: issuecodes.value,
       }),
     ),
     dimensions = computed(() =>
       step().getFilteredDimensions({
-        issuenumbers: issuenumbers.value,
+        issuecodes: issuecodes.value,
       }),
     ),
-    addIssuenumber = (issuenumber: string) => {
-      issuenumbers.value = issuenumbers.value.concat(issuenumber).sort();
+    addIssuecode = (issuecode: string) => {
+      issuecodes.value = issuecodes.value.concat(issuecode).sort();
     },
-    addIssuenumbers = (newIssuenumbers: string[]) => {
-      issuenumbers.value = [
-        ...new Set([...issuenumbers.value, ...newIssuenumbers]),
+    addIssuecodes = (newIssuecodes: string[]) => {
+      issuecodes.value = [
+        ...new Set([...issuecodes.value, ...newIssuecodes]),
       ].sort();
     },
-    replaceIssuenumber = (issuenumber: string) => {
-      issuenumbers.value = [issuenumber];
+    replaceIssuecode = (issuecode: string) => {
+      issuecodes.value = [issuecode];
     },
-    toggleIssuenumber = (issuenumber: string) => {
-      if (issuenumbers.value.includes(issuenumber)) {
-        if (issuenumbers.value.length > 1) {
-          issuenumbers.value.splice(issuenumbers.value.indexOf(issuenumber), 1);
+    toggleIssuecode = (issuecode: string) => {
+      if (issuecodes.value.includes(issuecode)) {
+        if (issuecodes.value.length > 1) {
+          issuecodes.value.splice(issuecodes.value.indexOf(issuecode), 1);
         }
       } else {
-        issuenumbers.value = [
-          ...new Set(issuenumbers.value.concat(issuenumber)),
+        issuecodes.value = [
+          ...new Set(issuecodes.value.concat(issuecode)),
         ].sort();
       }
     };
 
   return {
     dimensions,
-    issuenumbers,
+    issuecodes,
     stepNumber,
     editingOptions,
-    addIssuenumber,
-    addIssuenumbers,
-    replaceIssuenumber,
-    toggleIssuenumber,
+    addIssuecode,
+    addIssuecodes,
+    replaceIssuecode,
+    toggleIssuecode,
   };
 });

@@ -18,8 +18,7 @@ const medalLevels = {
 
 (async () => {
   const emailPromises: Promise<Email>[] = [];
-  for (const contributionTypeStr in medalLevels) {
-    const contributionType = contributionTypeStr as userContributionType;
+  for (const contributionType of Object.keys(medalLevels) as userContributionType[]) {
     const pendingEmailContributionsForType =
       await prismaDmClient.userContribution.findMany({
         where: {
@@ -69,13 +68,13 @@ const medalLevels = {
 
         const medalReached = Object.entries(
           medalLevels[contributionType],
-        ).reduce(
+        ).reduce<number | null>(
           (medalReached, [medal, medalThreshold]) =>
             initialPointsCount < medalThreshold &&
               finalPointsCount >= medalThreshold
               ? parseInt(medal)
               : medalReached,
-          null as number | null,
+          null,
         );
 
         await prismaDmClient.$transaction(

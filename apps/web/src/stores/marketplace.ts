@@ -1,8 +1,5 @@
 import type CollectionServices from "~dm-services/collection/types";
-import type {
-  issue as dmIssue,
-  requestedIssue,
-} from "~prisma-clients/schemas/dm";
+import type { issue, requestedIssue } from "~prisma-clients/schemas/dm";
 import type { EventReturnType } from "~socket.io-services/types";
 
 import { dmSocketInjectionKey } from "../composables/useDmSocket";
@@ -12,9 +9,9 @@ export const marketplace = defineStore("marketplace", () => {
     collection: { services: collectionServices },
   } = injectLocal(dmSocketInjectionKey)!;
 
-  const issuesOnSaleByOthers = ref<EventReturnType<
-      CollectionServices["getIssuesForSale"]
-    > | null>(null),
+  const issuesOnSaleByOthers = ref<
+      Pick<issue, "publicationcode" | "issuecode" | "userId" | "id">[] | null
+    >(null),
     issueRequestsAsBuyer = shallowRef<requestedIssue[] | null>(null),
     issueRequestsAsSeller = shallowRef<requestedIssue[] | null>(null),
     isLoadingIssueRequestsAsBuyer = ref(false),
@@ -80,22 +77,8 @@ export const marketplace = defineStore("marketplace", () => {
             )) ||
         {},
     ),
-    issuesOnSaleById = computed(() =>
-      Object.values(issuesOnSaleByOthers.value || []).reduce<
-        Record<number, dmIssue>
-      >(
-        (acc, issues) => ({
-          ...acc,
-          ...issues.reduce<Record<number, dmIssue>>(
-            (acc2, issue) => ({
-              ...acc2,
-              [issue.id]: issue,
-            }),
-            {},
-          ),
-        }),
-        {},
-      ),
+    issuesOnSaleById = computed(
+      () => issuesOnSaleByOthers.value?.groupBy("id") || {},
     ),
     requestIssues = async (issueIds: number[]) => {
       await collectionServices.createRequests(issueIds);

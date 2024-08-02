@@ -167,7 +167,7 @@ const publicationCodesWithOther = $computed(
     );
     return collectionWithDates
       .sort(({ date: dateA }, { date: dateB }) => compareDates(dateA, dateB))
-      .reduce(
+      .reduce<{ [publicationcode: string]: { [date: string]: number } }>(
         (acc, { date, publicationcode }) => {
           if (!publicationCodesWithOther!.includes(publicationcode)) {
             publicationcode = "Other";
@@ -179,13 +179,13 @@ const publicationCodesWithOther = $computed(
           accDate[date]++;
           return acc;
         },
-        {} as { [publicationcode: string]: { [date: string]: number } },
+        {},
       );
   }),
   countPerDate = $computed(() =>
     !values
       ? null
-      : Object.values(values).reduce(
+      : Object.values(values).reduce<{ [key: string]: number }>(
           (acc, datesWithCounts) => {
             for (const [date, count] of Object.entries(datesWithCounts)) {
               if (!acc[date]) {
@@ -195,7 +195,7 @@ const publicationCodesWithOther = $computed(
             }
             return acc;
           },
-          {} as { [key: string]: number },
+          {},
         ),
   ),
   maxPerDate = $computed(

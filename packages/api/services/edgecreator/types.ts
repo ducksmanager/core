@@ -81,8 +81,7 @@ export default abstract class {
   ) => void;
 
   abstract sendNewEdgePhotoEmail: (
-    publicationcode: string,
-    issuenumber: string,
+    issuecode: string,
     callback: (data: { url: string }) => void,
   ) => void;
   abstract createElementImage: (

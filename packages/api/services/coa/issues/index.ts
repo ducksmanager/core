@@ -1,6 +1,6 @@
 import type { Socket } from "socket.io";
 
-import type { SimpleIssue } from "~dm-types/SimpleIssue";
+import type { IssueWithIssuecodeOnly } from "~dm-types/SimpleIssue";
 import { prismaClient as  prismaCoa } from "~prisma-clients/schemas/coa";
 
 import type Events from "../types";
@@ -46,7 +46,7 @@ export default (socket: Socket<Events>) => {
   );
 
   socket.on("getIssuesByStorycode", async (storycode, callback) =>
-    prismaCoa.$queryRaw<SimpleIssue[]>`
+    prismaCoa.$queryRaw<IssueWithIssuecodeOnly[]>`
       SELECT publicationcode, issuenumber, issuecode
       FROM inducks_issue issue
                 INNER JOIN inducks_entry entry using (issuecode)

@@ -162,7 +162,7 @@
 
 <script setup lang="ts">
 import type { BookcaseEdgeSprite } from "~dm-types/BookcaseEdge";
-import type { SimpleIssue } from "~dm-types/SimpleIssue";
+import type { IssueWithIssuecodeOnly } from "~dm-types/SimpleIssue";
 
 import type { BookcaseEdgeWithPopularity } from "../stores/bookcase";
 
@@ -267,7 +267,7 @@ const sortedBookcase = $computed(
       },
     ),
 );
-const highlightIssue = (issue: SimpleIssue) => {
+const highlightIssue = (issue: IssueWithIssuecodeOnly) => {
   currentEdgeHighlighted =
     thisBookcase.value?.find(
       (issueInCollection) => issue.issuecode === issueInCollection.issuecode,
@@ -297,20 +297,17 @@ watch(
 
       const usableSpritesBySpriteId = newValue
         .filter(({ sprites }) => sprites)
-        .reduce(
-          (acc, { edgeId, sprites }) => {
-            sprites.forEach((sprite: BookcaseEdgeSprite) => {
-              const { name: spriteId } = sprite;
-              if (!acc[spriteId]) acc[spriteId] = { edges: [], ...sprite };
+        .reduce<{
+          [spriteId: string]: BookcaseEdgeSprite & { edges: number[] };
+        }>((acc, { edgeId, sprites }) => {
+          sprites.forEach((sprite: BookcaseEdgeSprite) => {
+            const { name: spriteId } = sprite;
+            if (!acc[spriteId]) acc[spriteId] = { edges: [], ...sprite };
 
-              acc[spriteId].edges.push(edgeId);
-            });
-            return acc;
-          },
-          {} as {
-            [spriteId: string]: BookcaseEdgeSprite & { edges: number[] };
-          },
-        );
+            acc[spriteId].edges.push(edgeId);
+          });
+          return acc;
+        }, {});
 
       const usableSprites = Object.values(usableSpritesBySpriteId).map(
         (usableSprite) => ({
@@ -322,7 +319,7 @@ watch(
       edgesUsingSprites = usableSprites
         .filter(({ edges, size }) => edges.length >= (size * 80) / 100)
         .sort(({ size: aSize }, { size: bSize }) => Math.sign(aSize - bSize))
-        .reduce(
+        .reduce<{ [edgeId: number]: string }>(
           (acc, { name, version, edges, size }) => {
             edges.forEach((edgeId) => {
               acc[edgeId] = `v${version}/${name}`;
@@ -332,7 +329,7 @@ watch(
             });
             return acc;
           },
-          {} as { [edgeId: number]: string },
+          {},
         );
     }
   },

@@ -11,8 +11,8 @@
         v-if="embedded"
         :id="`edge-${edgeIndex}${embedded}`"
         v-bind="
-          (({ issue, issueCondition }) => ({
-            issue,
+          (({ issuecode, issueCondition }) => ({
+            issue: issuecodeDetails[issuecode],
             issueCondition,
           }))(sortedBookcase[edgeIndex] as SimpleBookcaseEdge)
         "
@@ -39,11 +39,11 @@
         "
         v-bind="
           (({
-            issue,
+            issuecode,
             issueCondition,
             popularity,
           }: BookcaseEdgeWithPopularity) => ({
-            issue,
+            issue: issuecodeDetails[issuecode],
             issueCondition,
             
             popularity,
@@ -113,6 +113,8 @@ defineSlots<{
     edge: Pick<BookcaseEdgeWithPopularity, "issueCondition">;
   }): never;
 }>();
+
+const { issuecodeDetails } = storeToRefs(coa());
 
 const sortedBookcaseWithPopularity = computed(() =>
   embedded ? undefined : (sortedBookcase as BookcaseEdgeWithPopularity[]),

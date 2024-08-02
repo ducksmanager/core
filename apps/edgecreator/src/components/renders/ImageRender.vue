@@ -24,7 +24,7 @@ const image = ref<SVGImageElement | null>(null);
 const { image: imageDetails, loadImage } = useBase64Legacy();
 
 interface Props {
-  issuenumber: string;
+  issuecode: string;
   stepNumber: number;
   options: {
     x: number;
@@ -45,16 +45,19 @@ const props = withDefaults(defineProps<Props>(), {
 });
 
 const effectiveSource = computed(() =>
-  resolveIssueNumberTemplate(props.options.src!, props.issuenumber),
+  resolveIssueNumberTemplate(props.options.src!, props.issuecode),
 );
+
+const countrycode = computed(() => main().publicationcode!.split("/")[0]);
 
 watch(
   () => props.options.src,
   () => {
     if (effectiveSource.value) {
       loadImage(
-        `${import.meta.env.VITE_EDGES_URL as string}/${main()
-          .country!}/elements/${effectiveSource.value}`,
+        `${import.meta.env.VITE_EDGES_URL as string}/${
+          countrycode.value
+        }/elements/${effectiveSource.value}`,
         (img) => {
           enableDragResize(img, {});
         },

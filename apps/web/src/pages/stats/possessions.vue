@@ -48,7 +48,7 @@ let chartData = $ref<ChartData<"bar", number[]> | null>(null),
 
 const { loadCollection, fetchIssueCountsByPublicationcode } = collection();
 const {
-  totalPerPublicationUniqueIssueNumbersSorted,
+  totalPerPublicationUniqueIssuecodesSorted,
   coaIssueCountsByPublicationcode,
 } = storeToRefs(collection());
 
@@ -63,24 +63,24 @@ const { t: $t } = useI18n(),
   labels = $computed(
     () =>
       hasCoaData &&
-      totalPerPublicationUniqueIssueNumbersSorted.value?.map(
+      totalPerPublicationUniqueIssuecodesSorted.value?.map(
         ([publicationcode]) => publicationNames.value[publicationcode],
       ),
   ),
   values = $computed(() => {
     if (
       !(
-        totalPerPublicationUniqueIssueNumbersSorted.value &&
+        totalPerPublicationUniqueIssuecodesSorted.value &&
         coaIssueCountsByPublicationcode &&
         hasCoaData
       )
     ) {
       return null;
     }
-    let possessedIssues = totalPerPublicationUniqueIssueNumbersSorted.value.map(
+    let possessedIssues = totalPerPublicationUniqueIssuecodesSorted.value.map(
       ([, userIssueCount]) => userIssueCount,
     );
-    let missingIssues = totalPerPublicationUniqueIssueNumbersSorted.value.map(
+    let missingIssues = totalPerPublicationUniqueIssuecodesSorted.value.map(
       ([publicationcode, userIssueCount]) =>
         coaIssueCountsByPublicationcode.value![publicationcode] -
         userIssueCount,
@@ -99,7 +99,7 @@ const { t: $t } = useI18n(),
   });
 
 watch(
-  totalPerPublicationUniqueIssueNumbersSorted,
+  totalPerPublicationUniqueIssuecodesSorted,
   async (newValue) => {
     if (!newValue?.length) {
       return;

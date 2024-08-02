@@ -114,7 +114,7 @@ const props = withDefaults(
 const originalColor = ref<string | null>(null);
 
 const { setOptionValues } = step();
-const { photoUrls, issuenumbers } = storeToRefs(main());
+const { photoUrls, issuecodes } = storeToRefs(main());
 const { colorPickerOption, showEdgePhotos } = storeToRefs(ui());
 
 const isTransparent = ref(false);
@@ -142,7 +142,7 @@ const getOptionStringValuesByStepNumber = (options: Options) =>
 
 const otherColorsByLocationAndStepNumber = computed(() => ({
   differentIssuenumber:
-    issuenumbers.value.length === 1
+    issuecodes.value.length === 1
       ? null
       : getOptionStringValuesByStepNumber(
           props.otherColors.differentIssuenumber,

@@ -36,9 +36,10 @@
 
 <script setup lang="ts">
 import medal from "~/composables/useMedal";
+import type { UserContributionTypeEn } from "~dm-types/UserContributionTypeEn";
 
 const { contribution = "edge_photographer", userLevelPoints } = defineProps<{
-  contribution?: string;
+  contribution?: UserContributionTypeEn;
   userLevelPoints: number;
   extraPoints: number;
 }>();

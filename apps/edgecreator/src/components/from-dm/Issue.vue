@@ -22,19 +22,32 @@
 </template>
 
 <script setup lang="ts">
+import { coa } from "~web/src/stores/coa";
+
 const {
   clickable = false,
   noWrap = true,
   flex = true,
+  issuecode,
 } = defineProps<{
-  publicationcode: string;
-  publicationname: string | null;
-  issuenumber: string;
+  issuecode: string;
   clickable?: boolean;
   hideCondition?: boolean;
   noWrap?: boolean;
   flex?: boolean;
 }>();
+
+const publicationname = computed(
+  () => publicationcode.value && coa().publicationNames[publicationcode.value],
+);
+const publicationcode = computed(
+  () =>
+    coa().issuecodeDetails[issuecode] &&
+    coa().issuecodeDetails[issuecode].publicationcode,
+);
+const issuenumber = computed(
+  () => coa().issuecodeDetails[issuecode].issuenumber,
+);
 </script>
 
 <style scoped lang="scss">

@@ -57,7 +57,7 @@ const {
   orientation = "vertical",
 } = defineProps<{
   id: string;
-  issue: inducks_issue;
+  issue: Pick<inducks_issue, "publicationcode" | "issuecode" | "issuenumber">;
   issueCondition?: issue_condition;
   creationDate?: string;
   popularity?: number | null;

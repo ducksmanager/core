@@ -6,7 +6,6 @@ import { stores as webStores } from "~web";
 import { dmSocketInjectionKey } from "~web/src/composables/useDmSocket";
 
 interface Edge {
-  publicationcode: string;
   issuecode: string;
   url: string;
   designers: string[];
@@ -49,105 +48,44 @@ export const edgeCatalog = defineStore("edgeCatalog", () => {
   } = injectLocal(edgecreatorSocketInjectionKey)!;
   const isCatalogLoaded = ref(false),
     currentEdges = ref<Record<string, EdgeWithVersionAndStatus>>({}),
-    publishedEdges = ref(
-      {} as Record<
-        string,
-        Record<string, { issuenumber: string; v3: boolean }>
-      >,
-    ),
-    publishedEdgesSteps = ref<Record<string, ModelSteps>>({}),
-    edgesByStatus = computed(() => {
-      const currentEdgesByStatus: Record<
-        string,
-        Record<string, EdgeWithVersionAndStatus[]>
-      > = Object.values(edgeCategories).reduce(
-        (acc, { status }) => ({
-          ...acc,
-          [status]: {},
-        }),
-        {},
-      );
-      return Object.values(currentEdges.value).reduce(
-        (acc: typeof currentEdgesByStatus, edge) => {
-          const { publicationcode } = edge;
-          if (!acc[edge.status!][publicationcode]) {
-            acc[edge.status!][publicationcode] = [];
-          }
-          acc[edge.status!][publicationcode].push(edge);
-          return acc;
-        },
-        currentEdgesByStatus,
-      );
-    }),
+    publishedEdges = ref<Record<string, { v3: boolean }>>({}),
+    publishedEdgesSteps = ref<ModelSteps>({}),
     fetchPublishedEdges = async (publicationcode: string) => {
-      addPublishedEdges({
-        [publicationcode]: await edgesServices.getEdges({ publicationcode }),
-      });
+      const edges = await edgesServices.getEdges({ publicationcode });
+      if (!("error" in edges)) {
+        addPublishedEdges(edges);
+      }
     },
     addCurrentEdges = (edges: Record<string, EdgeWithVersionAndStatus>) => {
       currentEdges.value = { ...currentEdges.value, ...edges };
     },
     addPublishedEdges = (
-      newPublishedEdges: Record<
-        string,
-        Record<string, { issuenumber: string; v3: boolean }>
-      >,
+      newPublishedEdges: Record<string, { v3: boolean }>,
     ) => {
-      for (const publicationcode of Object.keys(newPublishedEdges)) {
-        const publicationEdgesForPublication =
-          newPublishedEdges[publicationcode];
-        if (!publishedEdges.value[publicationcode]) {
-          publishedEdges.value[publicationcode] = {};
-        }
-        for (const issuenumber of Object.keys(publicationEdgesForPublication)) {
-          const edgeStatus = publicationEdgesForPublication[issuenumber];
-          if (!publishedEdges.value[publicationcode][issuenumber]) {
-            publishedEdges.value[publicationcode][issuenumber] = edgeStatus;
-          } else {
-            publishedEdges.value[publicationcode][issuenumber] = {
-              ...publishedEdges.value[publicationcode][issuenumber],
-            };
-          }
-        }
-      }
+      publishedEdges.value = { ...publishedEdges.value, ...newPublishedEdges };
     },
-    addPublishedEdgesSteps = ({
-      publicationcode,
-      newPublishedEdgesSteps,
-    }: {
-      publicationcode: string;
-      newPublishedEdgesSteps: ModelSteps;
-    }) => {
-      if (!publishedEdgesSteps.value[publicationcode]) {
-        publishedEdgesSteps.value[publicationcode] = {};
-      }
-      publishedEdgesSteps.value[publicationcode] = {
-        ...publishedEdgesSteps.value[publicationcode],
+    addPublishedEdgesSteps = (newPublishedEdgesSteps: ModelSteps) => {
+      publishedEdgesSteps.value = {
+        ...publishedEdgesSteps.value,
         ...newPublishedEdgesSteps,
       };
     },
     loadPublishedEdgesSteps = async ({
-      publicationcode,
       edgeModelIds,
     }: {
-      publicationcode: string;
       edgeModelIds: number[];
     }) => {
-      const newModelIds = edgeModelIds;
-      if (!newModelIds.length) {
+      if (!edgeModelIds.length) {
         return;
       }
 
-      addPublishedEdgesSteps({
-        publicationcode,
-        newPublishedEdgesSteps: await edgeCreatorServices.getModelsSteps(
-          newModelIds.map((modelId) => modelId),
+      addPublishedEdgesSteps(
+        await edgeCreatorServices.getModelsSteps(
+          edgeModelIds.map((modelId) => modelId),
         ),
-      });
+      );
     },
-    getEdgeFromSvg = (
-      edge: Pick<Edge, "designers" | "photographers">,
-    ): EdgeWithVersionAndStatus => ({
+    getEdgeFromSvg = (edge: Edge): EdgeWithVersionAndStatus => ({
       ...edge,
       v3: true,
       status: edgeCategories.reduce(
@@ -162,22 +100,9 @@ export const edgeCatalog = defineStore("edgeCatalog", () => {
     canEditEdge = (status: string) =>
       webStores.collection().hasRole("Admin") ||
       status !== "ongoing by another user",
-    getEdgeStatus = ({
-      country,
-      magazine,
-      issuenumber,
-      issuecode,
-    }: {
-      country: string;
-      magazine: string;
-      issuenumber: string;
-      issuecode: string;
-    }) => {
+    getEdgeStatus = (issuecode: string) => {
       let isPublished = false;
-      const publicationcode = `${country}/${magazine}`;
-      const publishedEdgesForPublication =
-        publishedEdges.value[publicationcode] || {};
-      if (publishedEdgesForPublication[issuenumber]) {
+      if (publishedEdges.value[issuecode]) {
         isPublished = true;
       }
 
@@ -205,57 +130,32 @@ export const edgeCatalog = defineStore("edgeCatalog", () => {
         return;
       }
       for (const edgeStatus in edges) {
-        for (const { filename, designers, photographers } of edges[
+        for (const { designers, photographers, issuecode, url } of edges[
           edgeStatus as keyof typeof edges
         ]) {
-          const [, country, magazine, issuenumber] = filename.match(
-            /([^/]+)\/gen\/_?([^.]+)\.(.+).svg$/,
-          )!;
-          // if ([country, magazine, issuenumber].includes(undefined)) {
-          //   console.error(`Invalid SVG file name : ${fileName}`);
-          //   continue;
-          // }
-          const publicationcode = `${country}/${magazine}`;
           try {
             if (edgeStatus === "published") {
-              if (!publishedSvgEdges[publicationcode]) {
-                publishedSvgEdges[publicationcode] = {};
-              }
-              publishedSvgEdges[publicationcode][issuenumber] = {
-                issuenumber,
+              publishedSvgEdges[issuecode] = {
                 v3: true,
               };
             } else {
-              const publicationcode = `${country}/${magazine}`;
-              const issuecode = `${publicationcode} ${issuenumber}`;
               newCurrentEdges[issuecode] = getEdgeFromSvg({
+                issuecode,
                 designers,
                 photographers,
+                url,
               });
             }
           } catch (e) {
-            console.error(
-              `No SVG found : ${country}/${magazine} ${issuenumber}`,
-            );
+            console.error(`No SVG found : ${issuecode}`);
           }
         }
       }
 
       if (Object.keys(newCurrentEdges).length) {
-        await webStores
-          .coa()
-          .fetchPublicationNames([
-            ...new Set(
-              Object.values(newCurrentEdges).map(
-                ({ publicationcode }) => publicationcode,
-              ),
-            ),
-          ]);
-
         for (const edgeIssueCode of Object.keys(newCurrentEdges)) {
-          newCurrentEdges[edgeIssueCode].published = getEdgeStatus(
-            newCurrentEdges[edgeIssueCode],
-          );
+          newCurrentEdges[edgeIssueCode].published =
+            getEdgeStatus(edgeIssueCode);
         }
 
         addCurrentEdges(newCurrentEdges);
@@ -268,7 +168,6 @@ export const edgeCatalog = defineStore("edgeCatalog", () => {
 
   return {
     getEdgeStatus,
-    edgesByStatus,
     canEditEdge,
     loadCatalog,
     isCatalogLoaded,

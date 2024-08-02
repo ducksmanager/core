@@ -181,27 +181,25 @@ watch(progress, (newValue) => {
   }
 });
 watch(issueIndexToSave, (newValue) => {
-  const currentIssuenumber = mainStore.issuenumbers[newValue!];
+  const currentIssuecode = mainStore.issuecodes[newValue!];
 
-  if (currentIssuenumber === undefined) {
+  if (currentIssuecode === undefined) {
     return;
   }
 
   ui().zoom = 1.5;
   nextTick(() => {
     saveEdgeSvg(
-      mainStore.country!,
-      mainStore.magazine!,
-      currentIssuenumber,
+      currentIssuecode,
       mainStore.contributors.filter(
-        ({ issuenumber }) => issuenumber === currentIssuenumber,
+        ({ issuecode }) => issuecode === currentIssuecode,
       ),
       props.withExport,
       props.withSubmit,
     ).then((response) => {
       const isSuccess = response!.paths.svgPath;
       if (isSuccess) {
-        progress.value += 100 / mainStore.issuenumbers.length;
+        progress.value += 100 / mainStore.issuecodes.length;
         issueIndexToSave.value!++;
       } else {
         progress.value = 0;
@@ -262,9 +260,9 @@ const addContributorAllIssues = (
   user: SimpleUser,
   contributionType: userContributionType,
 ) =>
-  mainStore.issuenumbers.forEach((issuenumber) =>
+  mainStore.issuecodes.forEach((issuecode) =>
     mainStore.addContributor({
-      issuenumber,
+      issuecode,
       contributionType,
       user,
     }),
@@ -277,9 +275,9 @@ const hasAtLeastOneUser = (contributionType: userContributionType) =>
           ({ contributionType: thisContributionType }) =>
             contributionType === thisContributionType,
         )
-        .map(({ issuenumber }) => issuenumber),
+        .map(({ issuecode }) => issuecode),
     ),
-  ].length === mainStore.issuenumbers.length;
+  ].length === mainStore.issuecodes.length;
 
 const onClick = () => {
   if (props.withExport || props.withSubmit) {

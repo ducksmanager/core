@@ -57,6 +57,7 @@ import { useI18n } from "vue-i18n";
 import { getCurrentLocaleShortKey } from "~/composables/useLocales";
 import medal from "~/composables/useMedal";
 import { images } from "~/stores/images";
+import type { UserContributionTypeEn } from "~dm-types/UserContributionTypeEn";
 
 const i18n = useI18n();
 const currentLocaleShortKey = getCurrentLocaleShortKey(i18n.locale.value);
@@ -72,7 +73,7 @@ const {
   xSmall?: boolean;
   nextLevel?: boolean;
   userLevelPoints: number;
-  contribution: string;
+  contribution: UserContributionTypeEn;
 }>();
 const { t: $t } = useI18n();
 const getImagePath = images().getImagePath;
@@ -97,7 +98,6 @@ const medalTitle = computed(() => {
     case "duckhunter":
       return $t("Duckhunter");
   }
-  return "";
 });
 const medalDescription = computed(() => {
   let textTemplate;

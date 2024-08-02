@@ -43,7 +43,7 @@
               @click.stop="
                 stepStore.setOptionValues(
                   { visible: true },
-                  { stepNumber, issuenumbers: mainStore.issuenumbers },
+                  { stepNumber, issuecodes },
                 )
               "
             />
@@ -53,7 +53,7 @@
               @click.stop="
                 stepStore.setOptionValues(
                   { visible: false },
-                  { stepNumber, issuenumbers: mainStore.issuenumbers },
+                  { stepNumber, issuecodes },
                 )
               "
             />
@@ -172,7 +172,7 @@
             @click="splitImageAcrossEdges()"
             >{{
               $t(
-                editingStepStore.issuenumbers.length === 1
+                editingStepStore.issuecodes.length === 1
                   ? "Fill the edge with this image"
                   : "Split this image to fit all selected edges",
               )
@@ -278,13 +278,13 @@ const emit = defineEmits<{
   (event: "duplicate-step" | "remove-step", stepNumber: number): void;
   (event: "add-step", component: string): void;
 }>();
-const issuenumbers = computed(() => mainStore.issuenumbers);
+const { issuecodes } = storeToRefs(mainStore);
 
 const inputValues = computed(
   (): Record<number, Record<string, PossibleInputValueType[]>> =>
     stepStore.options
-      .filter(({ issuenumber }) =>
-        editingStepStore.issuenumbers.includes(issuenumber),
+      .filter(({ issuecode }) =>
+        editingStepStore.issuecodes.includes(issuecode),
       )
       .reduce<Record<number, Record<string, PossibleInputValueType[]>>>(
         (acc, { stepNumber, optionName, optionValue }) => {
@@ -326,13 +326,13 @@ const components = computed(() =>
 const otherColors = computed(() =>
   stepNumbers.value.map((currentStepNumber) => ({
     sameIssuenumber: stepStore.colors.filter(
-      ({ issuenumber: thisIssuenumber, stepNumber: thisStepNumber }) =>
-        issuenumbers.value.includes(thisIssuenumber) &&
+      ({ issuecode: thisIssuecode, stepNumber: thisStepNumber }) =>
+        issuecodes.value.includes(thisIssuecode) &&
         thisStepNumber !== currentStepNumber,
     ),
     differentIssuenumber: stepStore.colors.filter(
-      ({ issuenumber: thisIssuenumber }) =>
-        !issuenumbers.value.includes(thisIssuenumber),
+      ({ issuecode: thisIssuecode }) =>
+        !issuecodes.value.includes(thisIssuecode),
     ),
   })),
 );
@@ -341,9 +341,9 @@ const ucFirst = (text: string) =>
   text[0].toUpperCase() + text.substring(1, text.length);
 
 const resetPositionAndSize = (stepNumber: number) => {
-  for (const issuenumber of editingStepStore.issuenumbers) {
+  for (const issuecode of editingStepStore.issuecodes) {
     const issueDimensions = stepStore.getFilteredDimensions({
-      issuenumbers: [issuenumber],
+      issuecodes: [issuecode],
     })[0]!;
     stepStore.setOptionValues(
       {
@@ -355,7 +355,7 @@ const resetPositionAndSize = (stepNumber: number) => {
           (inputValues.value[stepNumber].aspectRatio[0] as number),
       },
       {
-        issuenumbers: [issuenumber],
+        issuecodes: [issuecode],
         stepNumber,
       },
     );
@@ -364,17 +364,17 @@ const resetPositionAndSize = (stepNumber: number) => {
 
 const splitImageAcrossEdges = () => {
   let leftOffset = 0;
-  const widthSum = editingStepStore.issuenumbers.reduce(
-    (acc, issuenumber) =>
+  const widthSum = editingStepStore.issuecodes.reduce(
+    (acc, issuecode) =>
       acc +
       stepStore.getFilteredDimensions({
-        issuenumbers: [issuenumber],
+        issuecodes: [issuecode],
       })[0]!.width,
     0,
   );
-  for (const issuenumber of editingStepStore.issuenumbers) {
+  for (const issuecode of editingStepStore.issuecodes) {
     const issueDimensions = stepStore.getFilteredDimensions({
-      issuenumbers: [issuenumber],
+      issuecodes: [issuecode],
     })[0]!;
     stepStore.setOptionValues(
       {
@@ -383,7 +383,7 @@ const splitImageAcrossEdges = () => {
         width: widthSum,
         height: issueDimensions.height,
       },
-      { issuenumbers: [issuenumber] },
+      { issuecodes: [issuecode] },
     );
     leftOffset -= issueDimensions.width;
   }

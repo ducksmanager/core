@@ -35,7 +35,7 @@ const rect1 = ref<SVGRectElement | null>(null);
 const rect2 = ref<SVGRectElement | null>(null);
 
 interface Props {
-  issuenumber: string;
+  issuecode: string;
   stepNumber: number;
   options: {
     yDistanceFromCenter?: number | undefined;
@@ -52,7 +52,7 @@ const props = withDefaults(defineProps<Props>(), {
 const dimensions = computed(
   () =>
     step().getFilteredDimensions({
-      issuenumbers: [props.issuenumber],
+      issuecodes: [props.issuecode],
     })[0],
 );
 

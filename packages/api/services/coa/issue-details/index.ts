@@ -182,12 +182,12 @@ const getIssueCoverDetails = (
   issuecodes.length
     ? getCoverUrls(issuecodes)
         .then((data) =>
-          data.reduce(
+          data.reduce<Record<string, IssueCoverDetails>>(
             (acc, row) => ({
               ...acc,
               [row.issuenumber]: row,
             }),
-            {} as Record<string, IssueCoverDetails>,
+            {},
           ),
         )
         .then((data) => {

@@ -1,7 +1,7 @@
 import type { AugmentedIssue } from "~dm-types/AugmentedIssue";
 import type { IssueCoverDetails } from "~dm-types/IssueCoverDetails";
 import type { SimpleEntry } from "~dm-types/SimpleEntry";
-import type { SimpleIssue } from "~dm-types/SimpleIssue";
+import type { IssueWithIssuecodeOnly } from "~dm-types/SimpleIssue";
 import type { SimpleIssueWithPublication } from "~dm-types/SimpleIssueWithPublication";
 import type { StorySearchResults } from "~dm-types/StorySearchResults";
 import type {
@@ -12,6 +12,8 @@ import type {
   inducks_storyversion,
 } from "~prisma-clients/schemas/coa";
 import type { Errorable } from "~socket.io-services/types";
+
+
 
 export const namespaceEndpoint = "/coa";
 export default abstract class {
@@ -96,7 +98,7 @@ export default abstract class {
 
   abstract getIssuesByStorycode: (
     storycode: string,
-    callback: (value: SimpleIssue[]) => void,
+    callback: (value: IssueWithIssuecodeOnly[]) => void,
   ) => void;
   abstract getRecentIssues: (
     callback: (value: inducks_issue[]) => void,
@@ -104,7 +106,7 @@ export default abstract class {
   abstract getIssuesByPublicationCodes: (
     publicationCodes: string[],
     callback: (
-      value: Errorable<{ issues: SimpleIssue[] }, "Too many requests">,
+      value: Errorable<{ issues: IssueWithIssuecodeOnly[] }, "Too many requests">,
     ) => void,
   ) => void;
 

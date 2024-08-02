@@ -460,9 +460,7 @@ const showFilter = $computed(
 );
 
 const issueIds = $computed(() =>
-  Object.values(
-    copiesBySelectedIssuenumber as { [issuenumber: string]: { id: number }[] },
-  ).reduce<number[]>(
+  Object.values(copiesBySelectedIssuenumber).reduce<number[]>(
     (acc, issues) => [...acc, ...issues.map(({ id }) => id)],
     [],
   ),

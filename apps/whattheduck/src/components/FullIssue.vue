@@ -24,6 +24,7 @@ const props = defineProps<{
     countrycode: string;
     countryname: string;
     publicationName: string;
+    issuecode: string;
     issuenumber: string;
     collectionIssues: issue[];
     partInfo?: PartInfo;

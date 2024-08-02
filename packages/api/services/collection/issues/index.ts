@@ -3,7 +3,7 @@ import { existsSync, readFileSync } from "fs";
 import { cwd } from "process";
 import type { Socket } from "socket.io";
 
-import { augmentIssuesWithInducksData } from "~/services/coa";
+import { augmentIssueArrayWithInducksData } from "~/services/coa";
 import { getPublicationTitles } from "~/services/coa/publications";
 import type { TransactionResults } from "~dm-types/TransactionResults";
 import type { inducks_issuequotation } from "~prisma-clients/schemas/coa";
@@ -56,9 +56,8 @@ export default (socket: Socket<Events>) => {
         userId: socket.data.user!.id,
       },
     }))
-    .then((issues) => issues.groupBy("issuecode"))
-    .then((issues) => augmentIssuesWithInducksData(issues))
-    .then(callback)
+    .then((issues) => augmentIssueArrayWithInducksData(issues))
+    .then(issues => callback(issues));
   });
 
   socket.on(

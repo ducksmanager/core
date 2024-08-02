@@ -8,7 +8,7 @@ type AllNonNullable<T> = {
   [P in keyof T]: NonNullable<T[P]>;
 };
 
-export type SimpleIssue = AllNonNullable<
+export type IssueWithIssuecodeOnly = AllNonNullable<
   Pick<inducks_issue, "issuecode">
 >;
 
@@ -19,4 +19,4 @@ export type PartInfo = AllNonNullable<
     }
 >;
 
-export type SimpleIssueWithPartInfo = SimpleIssue & PartInfo;
+export type SimpleIssueWithPartInfo = IssueWithIssuecodeOnly & PartInfo;

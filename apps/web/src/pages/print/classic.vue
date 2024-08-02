@@ -24,8 +24,8 @@ meta:
 </template>
 
 <script setup lang="ts">
-let ownedIssueNumbers = $ref(
-  null as { [publicationcode: string]: string } | null,
+let ownedIssueNumbers = $ref<{ [publicationcode: string]: string } | null>(
+  null,
 );
 
 const {

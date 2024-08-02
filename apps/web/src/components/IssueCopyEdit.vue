@@ -53,10 +53,7 @@
             'v-context__sub': String(stateId) === 'link',
             [`state-${stateId}`]: true,
           }"
-          @click="
-            newCopyState.purchaseId =
-              stateId === null ? -1 : (stateId as undefined | number | null)
-          "
+          @click="newCopyState.purchaseId = stateId === null ? -1 : stateId"
         >
           <i-bi-calendar-x v-if="stateId === null" />
           {{ stateText }}

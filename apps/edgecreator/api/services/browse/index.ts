@@ -3,6 +3,8 @@ import { readdirSync, readFileSync } from "fs";
 import path from "path";
 import type { Namespace, Server } from "socket.io";
 
+import { prismaClient as prismaCoa } from "~prisma-clients/schemas/coa";
+
 import type Events from "./types";
 import type { EdgeModelDetails } from "./types";
 import { namespaceEndpoint } from "./types";
@@ -44,6 +46,19 @@ const findInDir = (dir: string) =>
       }).filter((file) => REGEX_IS_SVG_FILE.test(file.name));
       for (const file of filteredFiles) {
         const filePath = path.join(file.parentPath, file.name);
+        const filename = filePath.replace(/.+\/edges\//, "");
+        const [countrycode, magazinecodeAndIssuenumber] =
+          filename.split("/gen/");
+        const [magazinecode, issuenumberShort] =
+          magazinecodeAndIssuenumber.split(".");
+        const publicationcode = `${countrycode}/${magazinecode}`;
+        const [{ issuecode }] = await prismaCoa.$queryRaw<
+          { issuecode: string }[]
+        >`
+            SELECT issuecode
+            FROM inducks_issue
+            WHERE publicationcode = ${publicationcode}
+            AND REPLACE(issuenumber, ' ', '') = ${issuenumberShort}`;
         const edgeStatus = file.name.startsWith("_") ? "current" : "published";
 
         const doc = parser.parse(readFileSync(filePath));
@@ -56,7 +71,8 @@ const findInDir = (dir: string) =>
         );
 
         fileList[edgeStatus].push({
-          filename: filePath.replace(/.+\/edges\//, ""),
+          issuecode,
+          url: `${process.env.EDGES_URL!}/${filePath}`,
           designers,
           photographers,
         });

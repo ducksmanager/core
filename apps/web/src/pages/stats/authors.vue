@@ -96,9 +96,9 @@ const unitTypes = {
   percentage: $t("Afficher en pourcentages"),
 };
 
-let watchedAuthorsStoryCount = $ref(
-  null as EventReturnType<StatsServices["getWatchedAuthorsStats"]> | null,
-);
+let watchedAuthorsStoryCount = $ref<EventReturnType<
+  StatsServices["getWatchedAuthorsStats"]
+> | null>(null);
 let unitTypeCurrent = $ref("number");
 let width = $ref<string | null>(null),
   height = $ref<string>("300px"),

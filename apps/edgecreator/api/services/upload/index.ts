@@ -7,6 +7,7 @@ import type { Namespace, Server } from "socket.io";
 
 import { getUserCredentials } from "~/services/_auth";
 import EdgeCreatorServices from "~dm-services/edgecreator/types";
+import { prismaClient } from "~prisma-clients/schemas/coa";
 import type { EventCalls } from "~socket.io-client-services";
 import { useSocket } from "~socket.io-client-services";
 
@@ -28,9 +29,13 @@ export default (io: Server) => {
     console.log("connected to upload");
 
     socket.on("uploadFromBase64", async (parameters, callback) => {
-      const { country, issuenumber, magazine, data } = parameters;
-      const path = `${edgesPath}/${country}/photos`;
-      const tentativeFileName = `${magazine}.${issuenumber}.photo`;
+      const { issuecode, data } = parameters;
+      const issue = await prismaClient.inducks_issue.findFirstOrThrow({
+        where: { issuecode },
+      });
+      const [countrycode, magazinecode] = issue.publicationcode.split("/");
+      const path = `${edgesPath}/${countrycode}/photos`;
+      const tentativeFileName = `${magazinecode}.${issue.issuenumber}.photo`;
       const fileName = getNextAvailableFile(
         `${path}/${tentativeFileName}`,
         "jpg",
@@ -41,10 +46,7 @@ export default (io: Server) => {
         ext: "jpg",
       });
 
-      await edgeCreatorServices.sendNewEdgePhotoEmail(
-        `${country}/${magazine}`,
-        issuenumber,
-      );
+      await edgeCreatorServices.sendNewEdgePhotoEmail(issuecode);
 
       callback({ fileName });
     });

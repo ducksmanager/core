@@ -123,17 +123,17 @@ const selectedIssues = $computed(() =>
   Object.keys(selectedIssueIdsByIssuenumber),
 );
 const issueIds = $computed(() =>
-  Object.values(selectedIssueIdsByIssuenumber).reduce(
+  Object.values(selectedIssueIdsByIssuenumber).reduce<number[]>(
     (acc, issues) => [...acc, ...issues.map(({ id }) => id!)],
-    [] as number[],
+    [],
   ),
 );
 
 const selectedIssuesBuyerIds = $computed(() => [
   ...new Set(
-    issueIds.reduce(
+    issueIds.reduce<number[]>(
       (acc, issueId) => [...acc, issuesOnSaleById.value[issueId].userId],
-      [] as number[],
+      [],
     ),
   ),
 ]);
