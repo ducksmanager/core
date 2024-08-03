@@ -49,10 +49,7 @@ export default (io: Server) => {
         pastecResponse.image_ids,
       )
         .then(async (covers) => {
-          const coversIdsAndIssueCodes = covers.reduce<Record<string, number>>(
-            (acc, { id, issuecode }) => ({ ...acc, [issuecode]: id }),
-            {},
-          );
+          const coversIdsAndIssueCodes = covers.groupBy('issuecode', 'id')
           return getCoverUrls(Object.keys(coversIdsAndIssueCodes)).then(
             (coverUrls) =>
               coverUrls.map(({ issuecode, fullUrl }) => ({

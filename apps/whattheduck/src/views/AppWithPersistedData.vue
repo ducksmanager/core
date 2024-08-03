@@ -1,7 +1,7 @@
 <template>
   <ion-split-pane :style="{ 'margin-top': `${offlineBannerHeight}px` }" content-id="main-content">
     <NavigationDrawer />
-    <ion-router-outlet id="main-content" />
+    <ion-router-outlet v-if="isCollectionLoaded" id="main-content" />
   </ion-split-pane>
 </template>
 <script setup lang="ts">
@@ -18,9 +18,12 @@ const collectionStore = wtdcollection();
 const { fetchAndTrackCollection } = collectionStore;
 const { isPersistedDataLoaded } = storeToRefs(collectionStore);
 
+const isCollectionLoaded = ref(false);
+
 watch(isPersistedDataLoaded, async (isLoaded) => {
   if (isLoaded) {
     await fetchAndTrackCollection();
+    isCollectionLoaded.value = true;
   }
 });
 </script>

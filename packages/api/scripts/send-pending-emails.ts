@@ -8,7 +8,6 @@ import BookstoreApproved from "~/emails/bookstore-approved";
 import EdgesPublishedWithCreator from "~/emails/edges-published-with-creator";
 import EdgesPublishedWithPhotographer from "~/emails/edges-published-with-photographer";
 import type { Email } from "~/emails/email";
-import type { userContribution } from "~prisma-schemas/schemas/dm";
 import  { userContributionType } from "~prisma-schemas/schemas/dm";
 import { prismaClient as prismaDmClient } from "~prisma-schemas/schemas/dm/client";
 const medalLevels = {
@@ -39,18 +38,7 @@ const medalLevels = {
       console.info(`No email to send for contribution ${contributionType}`);
     } else {
       const pendingEmailContributionsByUser =
-        pendingEmailContributionsForType.reduce<
-          Record<number, userContribution[]>
-        >(
-          (acc, contribution) => ({
-            ...acc,
-            [contribution.userId]: [
-              ...(acc[contribution.userId] || []),
-              contribution,
-            ],
-          }),
-          {},
-        );
+        pendingEmailContributionsForType.groupBy('userId', '[]')
 
       for (const [userId, pendingEmailContributionsForUser] of Object.entries(
         pendingEmailContributionsByUser,

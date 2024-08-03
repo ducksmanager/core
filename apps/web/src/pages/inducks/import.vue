@@ -128,8 +128,8 @@ meta:
       </div>
       <div v-if="hasPublicationNames" role="tablist">
         <Accordion
-          v-for="(publicationIssues, publicationcode) in groupByPublicationCode(
-            issuesImportable,
+          v-for="[publicationcode, publicationIssues] in Object.entries(
+            groupByPublicationCode(issuesImportable),
           )"
           :id="String(publicationcode).replace('/', '-')"
           :key="String(publicationcode).replace('/', '-')"
@@ -147,8 +147,8 @@ meta:
             x {{ publicationIssues.length }}
           </template>
           <template #content>
-            <div v-for="issue in publicationIssues" :key="issue">
-              {{ $t("Numéro") }} {{ issue }}
+            <div v-for="{ issuecode } in publicationIssues" :key="issuecode">
+              {{ $t("Numéro") }} {{ issuecodeDetails[issuecode].issuenumber }}
             </div>
           </template>
         </Accordion>
@@ -187,7 +187,10 @@ meta:
               ) in groupByPublicationCode(issuesAlreadyInCollection)"
               :key="publicationcode"
             >
-              <div v-for="issuecode in publicationIssuecodes" :key="issuecode">
+              <div
+                v-for="{ issuecode } in publicationIssuecodes"
+                :key="issuecode"
+              >
                 <Issue :issuecode="issuecode" />
               </div>
             </div>
@@ -220,7 +223,7 @@ meta:
               :key="publicationcode"
             >
               <Issue
-                v-for="issuecode in publicationIssuecodes"
+                v-for="{ issuecode } in publicationIssuecodes"
                 :key="issuecode"
                 :issuecode="issuecode"
               />
@@ -333,20 +336,13 @@ const processRawData = async () => {
   }
 };
 
-type Publicationcode = string;
 const groupByPublicationCode = (issues: string[]) =>
-  issues?.reduce<Record<Publicationcode, string[]>>((acc, issuecode) => {
-    const { publicationcode, issuenumber } = issuecodeDetails.value![issuecode];
-    return {
-      ...acc,
-      [publicationcode!]: [
-        ...new Set([
-          ...(acc[publicationcode!] || []),
-          issuenumber!.replace(" ", ""),
-        ]),
-      ],
-    };
-  }, {});
+  issues
+    ?.map((issuecode) => ({
+      issuecode,
+      publicationcode: issuecodeDetails.value![issuecode].publicationcode,
+    }))
+    .groupBy("publicationcode", "[]");
 
 const importIssues = async () => {
   const importableIssuesByPublicationCode = groupByPublicationCode(
@@ -355,7 +351,9 @@ const importIssues = async () => {
   for (const publicationcode in importableIssuesByPublicationCode) {
     if (importableIssuesByPublicationCode.hasOwnProperty(publicationcode)) {
       await collectionServices.addOrChangeIssues({
-        issuecodes: importableIssuesByPublicationCode[publicationcode],
+        issuecodes: importableIssuesByPublicationCode[publicationcode].map(
+          ({ issuecode }) => issuecode,
+        ),
         condition: issueDefaultCondition,
         isOnSale: undefined,
         isToRead: undefined,

@@ -83,14 +83,9 @@ watch(
   () => Object.keys(issuecodesByPublicationcode.value).length && issues.value,
   (newValue) => {
     if (newValue) {
-      const collectionWithPublicationcodes = issues.value!.reduce<
-        Record<string, string[]>
-      >(
-        (acc, { publicationcode, issuecode }) => ({
-          ...acc,
-          [publicationcode]: [...(acc[publicationcode] || []), issuecode],
-        }),
-        {},
+      const collectionWithPublicationcodes = issues.value!.groupBy(
+        "publicationcode",
+        "[]",
       );
       ownedIssueNumbers = Object.entries(
         issuecodesByPublicationcode.value,
@@ -99,8 +94,8 @@ watch(
           ...acc,
           [publicationcode]: indexedIssuecodes
             .filter((indexedIssuecode) =>
-              collectionWithPublicationcodes[publicationcode].includes(
-                indexedIssuecode,
+              collectionWithPublicationcodes[publicationcode].some(
+                ({ issuecode }) => issuecode === indexedIssuecode,
               ),
             )
             .join(", "),

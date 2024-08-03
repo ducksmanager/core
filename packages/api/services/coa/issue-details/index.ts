@@ -182,15 +182,7 @@ const getIssueCoverDetails = (
 ) =>
   issuecodes.length
     ? getCoverUrls(issuecodes)
-        .then((data) =>
-          data.reduce<Record<string, IssueCoverDetails>>(
-            (acc, row) => ({
-              ...acc,
-              [row.issuenumber]: row,
-            }),
-            {},
-          ),
-        )
+        .then((data) => data.groupBy("issuenumber"))
         .then((data) => {
           callback({ covers: data });
         })

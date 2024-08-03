@@ -94,26 +94,13 @@ export const collection = defineStore("collection", () => {
       ),
     ),
     copiesPerIssuecode = computed(() =>
-      issues.value?.reduce<Record<string, issue[]>>(
-        (acc, issue) => ({
-          ...acc,
-          [issue.issuecode]: [...acc[issue.issuecode], issue],
-        }),
-        {},
-      ),
+      issues.value?.groupBy("issuecode", "[]"),
     ),
     hasSuggestions = computed(
       () => Object.keys(suggestions.value?.oldestdate.issues || {}).length,
     ),
     issuecodesPerPublication = computed(
-      () =>
-        issues.value?.reduce<{ [publicationcode: string]: string[] }>(
-          (acc, { publicationcode, issuecode }) => ({
-            ...acc,
-            [publicationcode]: [...(acc[publicationcode] || []), issuecode],
-          }),
-          {},
-        ) || {},
+      () => issues.value?.groupBy("publicationcode", "[]") || {},
     ),
     issuenumbersPerPublication = computed(
       () =>
@@ -215,19 +202,20 @@ export const collection = defineStore("collection", () => {
       if (afterUpdate || (!isLoadingCollection.value && !issues.value)) {
         isLoadingCollection.value = true;
         issues.value = await collectionServices.getIssues();
-
-        Object.assign(
-          coa().issuecodeDetails,
-          issues.value
-            .map(({ issuecode, publicationcode, issuenumber }) => ({
-              issuecode,
-              publicationcode,
-              issuenumber,
-            }))
-            .groupBy("issuecode"),
-        );
         isLoadingCollection.value = false;
       }
+
+      console.log("loadCollection");
+      Object.assign(
+        coa().issuecodeDetails,
+        issues
+          .value!.map(({ issuecode, publicationcode, issuenumber }) => ({
+            issuecode,
+            publicationcode,
+            issuenumber,
+          }))
+          .groupBy("issuecode"),
+      );
     },
     loadPurchases = async (afterUpdate = false) => {
       if (afterUpdate || (!isLoadingPurchases.value && !purchases.value)) {

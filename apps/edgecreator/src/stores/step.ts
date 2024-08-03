@@ -52,13 +52,7 @@ export const step = defineStore("step", () => {
       ),
     ),
     optionsPerStepNumber = computed(() =>
-      options.value.reduce<Record<string, Options>>(
-        (acc, { stepNumber, ...rest }) => ({
-          ...acc,
-          [stepNumber]: [...(acc[stepNumber] || []), { ...rest }],
-        }),
-        {},
-      ),
+      options.value.groupBy("stepNumber", "[]"),
     ),
     getFilteredOptions = ({
       stepNumbers,

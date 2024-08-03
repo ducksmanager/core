@@ -32,13 +32,7 @@ export default (issues: ShallowRef<issue[]>) => {
         ) || null,
     ),
     issuesByIssuecode = computed(() =>
-      issues.value?.reduce<{ [issuecode: string]: issue[] }>(
-        (acc, issue) => ({
-          ...acc,
-          [issue.issuecode]: [...(acc[issue.issuecode] || []), issue],
-        }),
-        {},
-      ),
+      issues.value?.groupBy("issuecode", "[]"),
     ),
     duplicateIssues = computed(
       (): {

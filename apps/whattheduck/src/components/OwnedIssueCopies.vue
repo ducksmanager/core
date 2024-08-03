@@ -71,7 +71,7 @@ import { wtdcollection } from '~/stores/wtdcollection';
 
 const { updateCollectionSingleIssue, updateCollectionMultipleIssues } = wtdcollection();
 const { issuesByIssuecode } = storeToRefs(wtdcollection());
-const { fetchCoverUrlsByissuesByIssuecodes } = coa();
+const { fetchCoverUrlsByIssuecodes } = coa();
 const { isOfflineMode, currentNavigationItem, isCoaView } = storeToRefs(app());
 
 const fullUrl = ref<string>();
@@ -84,7 +84,7 @@ watch(
   issuecode,
   async (newValue) => {
     if (newValue) {
-      const covers = await fetchCoverUrlsByissuesByIssuecodes([newValue]);
+      const covers = await fetchCoverUrlsByIssuecodes([newValue]);
       fullUrl.value = covers.covers![newValue]?.fullUrl;
     }
   },

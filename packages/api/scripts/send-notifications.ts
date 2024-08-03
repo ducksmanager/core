@@ -78,9 +78,7 @@ getSuggestions(
   null,
   false,
 ).then(async ({ suggestionsPerUser, authors, publicationTitles }) => {
-  const usersById = (await prismaDm.user.findMany()).reduce<{
-    [userId: number]: user;
-  }>((acc, user) => ({ ...acc, [user.id]: user }), {});
+  const usersById = (await prismaDm.user.findMany()).groupBy('id')
 
   const allSuggestedIssues = [
     ...new Set(

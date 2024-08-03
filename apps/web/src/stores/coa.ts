@@ -212,7 +212,7 @@ export const coa = defineStore("coa", () => {
     fetchRecentIssues = () => coaServices.getRecentIssues(),
     fetchCoverUrls = (publicationcode: string) =>
       coaServices.getIssueCoverDetailsByPublicationcode(publicationcode),
-    fetchCoverUrlsByissuesByIssuecodes = (issuecodes: string[]) =>
+    fetchCoverUrlsByIssuecodes = (issuecodes: string[]) =>
       coaServices.getIssueCoverDetails(issuecodes),
     fetchIssueUrls = async ({ issuecode }: { issuecode: string }) => {
       if (!issueDetails.value[issuecode]) {
@@ -230,7 +230,7 @@ export const coa = defineStore("coa", () => {
     coverUrls,
     fetchCountryNames,
     fetchCoverUrls,
-    fetchCoverUrlsByissuesByIssuecodes,
+    fetchCoverUrlsByIssuecodes,
     fetchIssuecodeDetails,
     fetchIssuecodesByPublicationcode,
     fetchIssueNumbersWithTitles,

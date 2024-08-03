@@ -305,10 +305,4 @@ const getOptionValueAllUsers = async (optionName: userOptionType) =>
         optionName,
       },
     })
-  ).reduce<{ [userId: string]: string[] }>(
-    (acc, value) => ({
-      ...acc,
-      [value.userId]: [...(acc[value.userId] || []), value],
-    }),
-    {},
-  );
+  ).map(({userId, optionValue}) => ({userId,optionValue })).groupBy('userId', 'optionValue[]');

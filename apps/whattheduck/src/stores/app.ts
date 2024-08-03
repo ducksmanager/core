@@ -81,7 +81,10 @@ export const app = defineStore('app', () => {
       textPrefix: 'Owned issues -',
       showIfOffline: true,
       // FIXME can't deconstruct collection() using storeToRefs
-      getTextToCopy: async () => collection().issuenumbersPerPublication[publicationcode.value!].join(', '),
+      getTextToCopy: async () =>
+        collection()
+          .issuecodesPerPublication[publicationcode.value!].map(({ issuenumber }) => issuenumber)
+          .join(', '),
     },
     {
       id: 'missing',
@@ -93,8 +96,12 @@ export const app = defineStore('app', () => {
         return coa()
           .issuecodesByPublicationcode[publicationcode.value!].filter(
             // FIXME can't deconstruct collection() using storeToRefs
-            (issuecode) => !collection().issuecodesPerPublication[publicationcode.value!].includes(issuecode),
+            (issuecode) =>
+              !collection()
+                .issuecodesPerPublication[publicationcode.value!].map(({ issuecode }) => issuecode)
+                .includes(issuecode),
           )
+          .map((issuecode) => coa().issuecodeDetails[issuecode].issuenumber)
           .join(', ');
       },
     },
@@ -119,14 +126,16 @@ export const app = defineStore('app', () => {
       | { countrycode: string; publicationcode?: never; issuecode?: never; extraIssuecodes?: never }
       | { countrycode: string; publicationcode: string; issuecode?: never; extraIssuecodes?: never }
       | { countrycode: string; publicationcode: string; issuecode: string; extraIssuecodes: string[] } = {};
-    if (currentNavigationItem.value) {
-      const [countrycodeOrPublicationcode] = currentNavigationItem.value.split(' ')[0];
-      if (countrycodeOrPublicationcode.includes('/')) {
+    const code = currentNavigationItem.value.replace(/_/g, ' ');
+    if (code) {
+      const countrycodeOrPublicationcode = code.split(' ')[0];
+      const [countrycode, magazinecode] = countrycodeOrPublicationcode.split('/');
+      if (magazinecode) {
         groups = {
-          countrycode: countrycodeOrPublicationcode.split('/')[0],
+          countrycode,
           publicationcode: countrycodeOrPublicationcode,
         };
-        const [publicationcodeOrIssuecode, ...extraIssuecodes] = currentNavigationItem.value.split(',');
+        const [publicationcodeOrIssuecode, ...extraIssuecodes] = code.split(',');
         if (groups.publicationcode !== publicationcodeOrIssuecode) {
           groups = { ...groups, issuecode: publicationcodeOrIssuecode, extraIssuecodes };
         }
@@ -140,15 +149,16 @@ export const app = defineStore('app', () => {
 
   watch(currentNavigationItem, async (code) => {
     selectedIssuenumbers.value = null;
+    const codeWithoutSpaces = code.replace(/ /g, '_');
     if (route.name === 'Collection') {
-      window.location.hash = code;
+      window.location.hash = codeWithoutSpaces;
     } else {
       await router.push({
         name: 'Collection',
         params: {
           type: route.params.type || 'coa',
         },
-        hash: `#${code}`,
+        hash: `#${codeWithoutSpaces}`,
       });
     }
   });
