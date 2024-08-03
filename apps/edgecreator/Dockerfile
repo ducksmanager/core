@@ -7,7 +7,7 @@ FROM pnpm AS build
 WORKDIR /app
 COPY . ./
 RUN pnpm i -r -F ~edgecreator... -r -F ~edgecreator-api...
-RUN pnpm build -r -F ~edgecreator... -r -F ~edgecreator-api...
+RUN pnpm build:edgecreator
 
 FROM nginx AS app
 LABEL org.opencontainers.image.authors="Bruno Perel"
