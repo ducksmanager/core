@@ -1,6 +1,6 @@
 import type { SessionUser } from "~dm-types/SessionUser";
 import type { user } from "~prisma-clients/schemas/dm";
-import { prismaClient as prismaDm } from "~prisma-clients/schemas/dm";
+import { prismaClient as prismaDm } from "~prisma-clients/schemas/dm/client";
 import type { Errorable } from "~socket.io-services/types";
 
 export const checkValidBookcaseUser = async (

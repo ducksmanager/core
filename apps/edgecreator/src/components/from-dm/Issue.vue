@@ -4,12 +4,6 @@
       :class="{ clickable, flex }"
       :to="`/collection/show/${publicationcode}#${issuenumber}`"
     >
-      <!--      <span v-if="!hideCondition" class="me-1 d-flex"-->
-      <!--        ><Condition-->
-      <!--          v-once-->
-      <!--          :publicationcode="publicationcode"-->
-      <!--          :issuenumber="issuenumber"-->
-      <!--      /></span>-->
       <Publication
         :publicationcode="publicationcode"
         :publicationname="publicationname || publicationcode"

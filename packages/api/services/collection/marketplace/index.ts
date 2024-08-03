@@ -2,7 +2,7 @@ import type { Socket } from "socket.io";
 
 import { augmentIssueArrayWithInducksData } from "~/services/coa";
 import type { issue } from "~prisma-clients/schemas/dm";
-import { prismaClient as prismaDm } from "~prisma-clients/schemas/dm";
+import { prismaClient as prismaDm } from "~prisma-clients/schemas/dm/client";
 
 import type Events from "../types";
 import contactMethods from "./contact-methods";
@@ -98,7 +98,7 @@ export default (socket: Socket<Events>) => {
 };
 
 export const getIssuesForSale = async (buyerId: number) =>
-  prismaDm.$queryRaw<Pick<issue, 'issuecode'|'id'>[]
+  prismaDm.$queryRaw<Pick<issue, 'id'>[]
   >`
     SELECT issue.ID as id
     FROM numeros issue

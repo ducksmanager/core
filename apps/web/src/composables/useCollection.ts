@@ -5,7 +5,7 @@ import type { issue, issue_condition } from "~prisma-clients/schemas/dm";
 
 import { coa } from "../stores/coa";
 
-export default (issues: ShallowRef<issue[] | null>) => {
+export default (issues: ShallowRef<issue[]>) => {
   const total = computed(() => issues.value?.length);
   const mostPossessedPublication = computed(
     () =>

@@ -1,3 +1,5 @@
+import type { ShallowRef } from "vue";
+
 import type { issue } from "~prisma-clients/schemas/dm";
 
 import useCollection from "../composables/useCollection";
@@ -15,7 +17,7 @@ export const publicCollection = defineStore("publicCollection", () => {
     ),
     purchases = ref([]);
 
-  const collectionUtils = useCollection(issues),
+  const collectionUtils = useCollection(issues as ShallowRef<issue[]>),
     loadPublicCollection = async (username: string) => {
       publicUsername.value = username;
       const data = await publicCollectionServices.getPublicCollection(username);

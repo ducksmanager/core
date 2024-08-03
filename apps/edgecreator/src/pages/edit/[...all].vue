@@ -36,31 +36,29 @@
               }}
             </th>
             <template
-              v-for="issuenumber in issuecodes"
-              :key="`issuenumber-${issuenumber}`"
+              v-for="issuecode in issuecodes"
+              :key="`issuecode-${issuecode}`"
             >
               <th
                 :class="{
                   clickable: true,
-                  published: isPublished(issuenumber),
-                  pending: isPending(issuenumber),
+                  published: isPublished(issuecode),
+                  pending: isPending(issuecode),
                 }"
-                @click.exact="editingStepStore.replaceIssuecode(issuenumber)"
-                @click.shift="editingStepStore.toggleIssuecode(issuenumber)"
+                @click.exact="editingStepStore.replaceIssuecode(issuecode)"
+                @click.shift="editingStepStore.toggleIssuecode(issuecode)"
                 @dblclick="editingStepStore.addIssuecodes(issuecodes)"
               >
-                <div v-if="editingStepStore.issuecodes.includes(issuenumber)">
+                <div v-if="editingStepStore.issuecodes.includes(issuecode)">
                   <i-bi-pencil />
                 </div>
                 <div>
-                  {{ issuenumber }}
+                  {{ coaStore.issuecodeDetails[issuecode].issuenumber }}
                 </div>
               </th>
               <th
-                v-if="
-                  uiStore.showEdgePhotos && mainStore.photoUrls[issuenumber]
-                "
-                :key="`photo-icon-${issuenumber}`"
+                v-if="uiStore.showEdgePhotos && mainStore.photoUrls[issuecode]"
+                :key="`photo-icon-${issuecode}`"
               >
                 <i-bi-camera />
               </th>

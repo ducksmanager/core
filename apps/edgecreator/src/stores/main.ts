@@ -107,7 +107,7 @@ export const main = defineStore("main", () => {
       } else {
         isRange.value = true;
         let lastIssueIndex = publicationIssuecodes.value.findIndex(
-          (issuenumber) => issuenumber === lastIssuecode,
+          (issuecode) => issuecode === lastIssuecode,
         );
         if (lastIssueIndex === -1) {
           lastIssueIndex = publicationIssuecodes.value.length - 1;
@@ -213,7 +213,6 @@ export const main = defineStore("main", () => {
     publicationPhotos,
     warnings,
     publicationIssuecodes,
-    publicationIssuenumbers: publicationIssuecodes,
     publicationElementsForGallery,
     publicationPhotosForGallery,
     addContributor,

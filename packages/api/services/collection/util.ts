@@ -1,12 +1,12 @@
 import type { UserContributionTypeEn } from "~dm-types/UserContributionTypeEn";
 import { Prisma } from "~prisma-clients/schemas/dm";
-import { prismaClient as prismaDm } from "~prisma-clients/schemas/dm";
+import { prismaClient as prismaDm } from "~prisma-clients/schemas/dm/client";
 
 export const getMedalPoints = async (userIds: number[]) =>
   (
     await prismaDm.$queryRaw<
       {
-        contribution: UserContributionTypeEn;
+        userContributionTypeEn: UserContributionTypeEn;
         userId: number;
         totalPoints: string;
       }[]
@@ -34,11 +34,11 @@ export const getMedalPoints = async (userIds: number[]) =>
       number
     >;
   }>(
-    (acc, { contribution, totalPoints, userId }) => ({
+    (acc, { userContributionTypeEn, totalPoints, userId }) => ({
       ...acc,
       [userId]: {
         ...(acc[userId] || {}),
-        [contribution]: parseInt(totalPoints) || 0,
+        [userContributionTypeEn]: parseInt(totalPoints) || 0,
       },
     }),
     {},

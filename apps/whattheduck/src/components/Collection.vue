@@ -55,25 +55,17 @@ import PublicationList from '~/views/PublicationList.vue';
 const { t } = useI18n();
 
 const { total, ownedCountries, ownedPublications } = storeToRefs(wtdcollection());
-const {
-  filterText,
-  navigationItemGroups,
-  isCoaView,
-  isCameraPreviewShown,
-  countrycode,
-  publicationcode,
-  issuenumber,
-  currentNavigationItem,
-} = storeToRefs(app());
+const { filterText, isCoaView, isCameraPreviewShown, countrycode, publicationcode, issuecode, currentNavigationItem } =
+  storeToRefs(app());
 
 const hasItems = ref<boolean | undefined>();
 
 const componentName = computed(() =>
-  navigationItemGroups.value.issuenumber !== undefined
+  issuecode.value !== undefined
     ? OwnedIssueCopies
-    : navigationItemGroups.value.magazinecode
+    : publicationcode.value
       ? IssueList
-      : navigationItemGroups.value.countrycode
+      : countrycode.value
         ? PublicationList
         : CountryList,
 );
@@ -84,7 +76,7 @@ watch(componentName, () => {
 
 const backToCollection = () => {
   isCoaView.value = false;
-  if (issuenumber !== undefined) {
+  if (issuecode.value !== undefined) {
     currentNavigationItem.value = ownedPublications.value?.includes(publicationcode.value!)
       ? publicationcode.value!
       : ownedCountries.value?.includes(countrycode.value!)

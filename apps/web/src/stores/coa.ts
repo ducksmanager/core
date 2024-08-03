@@ -1,6 +1,5 @@
 import { getCurrentLocaleShortKey } from "~/composables/useLocales";
 import type CoaServices from "~dm-services/coa/types";
-import type { AugmentedIssue } from "~dm-types/AugmentedIssue";
 import type { InducksIssueDetails } from "~dm-types/InducksIssueDetails";
 import type { InducksIssueQuotationSimple } from "~dm-types/InducksIssueQuotationSimple";
 import type { EventReturnType } from "~socket.io-services/types";
@@ -53,16 +52,13 @@ export const coa = defineStore("coa", () => {
     personNames = shallowRef<EventReturnType<
       CoaServices["getAuthorList"]
     > | null>(null),
-    // issuenumbers = ref<{ [publicationcode: string]: string[] }>({}),
     issuecodes = ref<string[]>([]),
     issuesWithTitles = ref<EventReturnType<CoaServices["getIssuesWithTitles"]>>(
       {},
     ),
     issueDetails = ref<{ [issuecode: string]: InducksIssueDetails }>({}),
     isLoadingCountryNames = ref(false),
-    issuecodeDetails = ref<{
-      [issuecode: string]: AugmentedIssue<object>;
-    }>({}),
+    issuecodeDetails = ref<EventReturnType<CoaServices["getIssues"]>>({}),
     issuecodesByPublicationcode = ref<{
       [publicationcode: string]: string[];
     }>({}),
@@ -181,10 +177,7 @@ export const coa = defineStore("coa", () => {
       if (newIssuecodes.length) {
         Object.assign(
           issuecodeDetails.value,
-          await coaServices.getIssues(newIssuecodes, {
-            title: false,
-            oldestdate: false,
-          }),
+          await coaServices.getIssues(newIssuecodes),
         );
       }
     },
@@ -198,10 +191,7 @@ export const coa = defineStore("coa", () => {
 
       if (newPublicationcodes.length) {
         const issuesByPublicationcode =
-          await coaServices.getIssuesByPublicationcodes(newPublicationcodes, {
-            title: false,
-            oldestdate: false,
-          });
+          await coaServices.getIssuesByPublicationcodes(newPublicationcodes);
 
         Object.assign(
           issuecodeDetails.value,

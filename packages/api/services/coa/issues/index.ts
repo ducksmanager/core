@@ -1,19 +1,17 @@
 import type { Socket } from "socket.io";
 
 import type { IssueWithIssuecodeOnly } from "~dm-types/SimpleIssue";
-import { prismaClient as  prismaCoa } from "~prisma-clients/schemas/coa";
+import { prismaClient as  prismaCoa } from "~prisma-clients/schemas/coa/client";
 
 import type Events from "../types";
 export default (socket: Socket<Events>) => {
-  socket.on("getIssues", (issuecodes, select, callback) =>
+  socket.on("getIssues", (issuecodes, callback) =>
     prismaCoa.inducks_issue
       .findMany({
         select: {
           publicationcode: true,
           issuenumber: true,
           issuecode: true,
-          title: !!select.title,
-          oldestdate: !!select.oldestdate,
         },
         where: {issuecode: {in: issuecodes}},
       })
@@ -23,15 +21,13 @@ export default (socket: Socket<Events>) => {
       .then(callback),
   );
 
-  socket.on("getIssuesByPublicationcodes", async (publicationcodes, select, callback) =>
+  socket.on("getIssuesByPublicationcodes", async (publicationcodes, callback) =>
     prismaCoa.inducks_issue
       .findMany({
         select: {
           publicationcode: true,
           issuenumber: true,
           issuecode: true,
-          title: !!select.title,
-          oldestdate: !!select.oldestdate,
         },
         where: {
           publicationcode: {
@@ -59,6 +55,11 @@ export default (socket: Socket<Events>) => {
   socket.on("getRecentIssues", (callback) =>
     prismaCoa.inducks_issue
       .findMany({
+        select: {
+          publicationcode: true,
+          issuenumber: true,
+          issuecode: true,
+        },
         where: {
           oldestdate: {
             lte: new Date().toISOString().split("T")[0],

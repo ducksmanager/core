@@ -1,3 +1,3 @@
 import type { Step } from "~/types/Step";
 
-export type StepsPerIssuenumber = Record<string, Step[]>;
+export type StepsPerIssuecode = Record<string, Step[]>;

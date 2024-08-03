@@ -2,19 +2,19 @@ import axios from "axios";
 
 import {
   prismaClient as prismaCoa,
-} from "~prisma-clients/schemas/coa";
+} from "~prisma-clients/schemas/coa/client";
 import {
   prismaClient as prismaCoverInfo,
-} from "~prisma-clients/schemas/cover_info";
+} from "~prisma-clients/schemas/cover_info/client";
 import {
   prismaClient as prismaDm,
-} from "~prisma-clients/schemas/dm";
+} from "~prisma-clients/schemas/dm/client";
 import {
   prismaClient as prismaDmStats,
-} from "~prisma-clients/schemas/dm_stats";
+} from "~prisma-clients/schemas/dm_stats/client";
 import {
   prismaClient as prismaEdgeCreator,
-} from "~prisma-clients/schemas/edgecreator";
+} from "~prisma-clients/schemas/edgecreator/client";
 
 export const getDbStatus = async (): Promise<
   { error: string } | { status: "ok" }

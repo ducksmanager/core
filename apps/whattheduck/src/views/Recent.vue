@@ -16,7 +16,7 @@
 
       <template v-if="recentIssues">
         <ion-item v-for="issue of recentIssues" @click="currentNavigationItem = issue.issuecode">
-          <FullIssue :issue="issue">
+          <FullIssue :issuecode="issue.issuecode" show-issue-conditions>
             <template #suffix
               ><div class="issue-date">
                 <ion-icon :ios="calendarOutline" :md="calendarSharp" />&nbsp;{{ issue.oldestdate }}

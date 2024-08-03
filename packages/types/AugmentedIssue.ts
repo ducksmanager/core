@@ -1,6 +1,6 @@
 import type { inducks_issue } from "~prisma-clients/schemas/coa";
 
-export type AugmentedIssue<T extends (keyof inducks_issue)[] | object> = Pick<
+export type AugmentedIssue<T extends (keyof inducks_issue)[] | object = []> = Pick<
   inducks_issue,
   "publicationcode" | "issuenumber" | "issuecode"
 > &

@@ -4,7 +4,7 @@ import type { Socket } from "socket.io";
 
 import type { SessionUser } from "~dm-types/SessionUser";
 import type { user } from "~prisma-clients/schemas/dm";
-import { prismaClient as prismaDm } from "~prisma-clients/schemas/dm";
+import { prismaClient as prismaDm } from "~prisma-clients/schemas/dm/client";
 
 type SocketWithUser = Socket<
   Record<string, never>,

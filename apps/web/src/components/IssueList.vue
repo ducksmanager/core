@@ -139,14 +139,6 @@
                     :key="`${issuecode}-copy-${copyIndex}`"
                     class="issue-copy"
                   >
-                    <!-- <MarketplaceSellerInfo
-                      v-if="onSaleByOthers"
-                      :publicationcode="publicationcode"
-                      :issuenumber="issuenumber"
-                      :copy-index="filteredIssuesCopyIndexes[idx]"
-                    />
-                    <MarketplaceBuyerInfo :issue-id="id" /> -->
-
                     <Condition
                       v-if="copyCondition"
                       :issuecode="issuecode"
@@ -248,16 +240,14 @@
 
                     <Condition
                       v-if="copyCondition"
-                      :publicationcode="publicationcode"
-                      :issuenumber="issuenumber"
+                      v-bind="{ issuecode }"
                       :value="copyCondition"
                     />
                   </div>
                 </div>
                 <Watch
                   v-if="!readonly && (!userCopies.length || onSaleByOthers)"
-                  :publicationcode="publicationcode"
-                  :issuenumber="issuenumber"
+                  v-bind="{ publicationcode, issuenumber }"
                   :constant-width="onSaleByOthers"
                 />
                 <div v-if="!readonly" class="issue-check">
@@ -314,7 +304,7 @@
         ref="contextMenu"
         :key="contextMenuKey"
         :publicationcode="publicationcode"
-        :selected-issue-ids-by-issuenumber="copiesBySelectedIssuenumber"
+        :selected-issue-ids-by-issuecode="copiesBySelectedIssuecode"
         @clear-selection="
           contextmenuInstance!.hide();
           selected = [];
@@ -431,8 +421,8 @@ const filteredUserCopies = $computed(() =>
     [],
   ),
 );
-const copiesBySelectedIssuenumber = $computed(() =>
-  selected.reduce<{ [issuenumber: string]: issue[] }>((acc, issueKey) => {
+const copiesBySelectedIssuecode = $computed(() =>
+  selected.reduce<{ [issuecode: string]: issue[] }>((acc, issueKey) => {
     const [issuecode, maybeIssueId] = issueKey.split("-id-");
     const issueId = (maybeIssueId && parseInt(maybeIssueId)) || null;
     return {
@@ -460,7 +450,7 @@ const showFilter = $computed(
 );
 
 const issueIds = $computed(() =>
-  Object.values(copiesBySelectedIssuenumber).reduce<number[]>(
+  Object.values(copiesBySelectedIssuecode).reduce<number[]>(
     (acc, issues) => [...acc, ...issues.map(({ id }) => id)],
     [],
   ),

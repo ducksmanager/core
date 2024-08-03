@@ -1,7 +1,7 @@
 import type { Namespace, Server } from "socket.io";
 
 import feedbackSent from "~/emails/feedback-sent";
-import { prismaClient as prismaDm } from "~prisma-clients/schemas/dm";
+import { prismaClient as prismaDm } from "~prisma-clients/schemas/dm/client";
 
 import type Events from "./types";
 import { namespaceEndpoint } from "./types";

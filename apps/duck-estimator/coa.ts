@@ -1,10 +1,9 @@
 import "dotenv/config";
 
-import { inducks_issue } from "~prisma-clients/schemas/coa";
-import {
-  inducks_issuequotation,
-  prismaClient as prismaCoa,
+import type { inducks_issue, inducks_issuequotation,
 } from "~prisma-clients/schemas/coa";
+import {  prismaClient as prismaCoa,
+} from "~prisma-clients/schemas/coa/client";
 
 const cachedCoaIssues: Record<string, Pick<inducks_issue, 'issuecode'|'issuenumber'>[]> = {};
 
@@ -80,8 +79,6 @@ export const getAll = async () =>
   await prismaCoa.inducks_issuequotation.findMany({
     orderBy: [
       {
-        publicationcode: "asc",
-      },
-      { issuenumber: "asc" },
+        issuecode: "asc" },
     ],
   });

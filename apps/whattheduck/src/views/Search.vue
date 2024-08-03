@@ -45,7 +45,7 @@
               router.push('/collection');
             "
           >
-            <FullIssue :issue="issue" />
+            <FullIssue :issuecode="issue.issuecode" show-issue-conditions />
           </ion-item>
         </ion-list>
       </template>

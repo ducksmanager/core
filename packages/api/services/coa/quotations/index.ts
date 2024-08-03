@@ -5,7 +5,7 @@ import type {
 } from "~prisma-clients/schemas/coa";
 import {
   prismaClient as prismaCoa,
-} from "~prisma-clients/schemas/coa";
+} from "~prisma-clients/schemas/coa/client";
 
 const ISSUE_CODE_REGEX = /[a-z]+\/[-A-Z0-9 ]+/g;
 

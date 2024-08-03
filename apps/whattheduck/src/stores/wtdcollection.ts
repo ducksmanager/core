@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia';
-import type { PartInfo, SimpleIssue } from '~dm-types/SimpleIssue';
+import type { ShallowRef } from 'vue';
+import type { IssueWithIssuecodeOnly, PartInfo } from '~dm-types/SimpleIssue';
 import type { purchase, issue } from '~prisma-clients/schemas/dm';
 import { stores as webStores, composables as webComposables } from '~web';
 
@@ -15,7 +16,7 @@ export const wtdcollection = defineStore('wtdcollection', () => {
   const { issues, purchases, user } = storeToRefs(webCollectionStore);
   const statsStore = webStores.stats();
   const usersStore = webStores.users();
-  const { quotedIssues, quotationSum } = webComposables.useCollection(issues);
+  const { quotedIssues, quotationSum } = webComposables.useCollection(issues as ShallowRef<issue[]>);
 
   const isPersistedDataLoaded = ref(false);
 
@@ -108,7 +109,7 @@ export const wtdcollection = defineStore('wtdcollection', () => {
   };
 });
 
-export type IssueWithCollectionIssues = SimpleIssue & {
+export type IssueWithCollectionIssues = IssueWithIssuecodeOnly & {
   countrycode: string;
   countryname?: string;
   publicationName: string;

@@ -268,9 +268,7 @@ const { issuecodes, photoUrls } = storeToRefs(mainStore);
 interface ModelToClone {
   editMode: string;
   issuecode: string;
-  publicationcode: string;
-  issuenumber: string;
-  issuenumberEnd: string;
+  issuecodeEnd: string;
 }
 
 const showPhotoModal = ref(false);

@@ -1,13 +1,13 @@
 <template>
   <ion-col :class="`ion-align-items-center ion-text-nowrap ${(classes || []).join(' ')}`"
-    ><Country :id="issue.countrycode" :label="issue.countryname" /> &nbsp;<template v-if="showIssueConditions"
+    ><Country :id="countrycode" :label="countryName" /> &nbsp;<template v-if="showIssueConditions"
       >&nbsp;<condition-with-part
-        v-for="collectionIssue of issue.collectionIssues"
+        v-for="collectionIssue of collectionIssues"
         :value="collectionIssue.condition"
         :part-info="issue.partInfo"
     /></template>
     <div>
-      {{ issue.publicationName }}
+      {{ publicationName }}
       {{ issue.issuenumber }}
       <slot name="suffix" />
     </div>
@@ -15,23 +15,26 @@
 </template>
 
 <script setup lang="ts">
-import type { PartInfo } from '~dm-types/SimpleIssue';
-import { issue } from '~prisma-clients/schemas/dm';
+import { stores as webStores } from '~web';
+
+import { wtdcollection } from '~/stores/wtdcollection';
 
 const props = defineProps<{
   classes?: string[];
-  issue: {
-    countrycode: string;
-    countryname: string;
-    publicationName: string;
-    issuecode: string;
-    issuenumber: string;
-    collectionIssues: issue[];
-    partInfo?: PartInfo;
-  };
+  issuecode: string;
+  showIssueConditions: boolean;
 }>();
 
-const showIssueConditions = computed(() => 'collectionIssues' in props.issue);
+const { getCollectionIssues } = wtdcollection();
+const { issuecodeDetails, countryNames, publicationNames } = storeToRefs(webStores.coa());
+
+const collectionIssues = computed(() => getCollectionIssues(props.issuecode));
+const issue = computed(() => issuecodeDetails.value[props.issuecode]);
+
+const countrycode = computed(() => issue.value?.publicationcode.split('/')[0]);
+const countryName = computed(() => countrycode.value && countryNames.value?.[countrycode.value]);
+
+const publicationName = computed(() => issue.value && publicationNames.value[issue.value.publicationcode]);
 </script>
 
 <style scoped lang="scss">

@@ -1,7 +1,7 @@
 import type { AugmentedIssue } from "~dm-types/AugmentedIssue";
 import type { IssueCoverDetails } from "~dm-types/IssueCoverDetails";
 import type { SimpleEntry } from "~dm-types/SimpleEntry";
-import type { IssueWithIssuecodeOnly } from "~dm-types/SimpleIssue";
+import type { IssueWithIssuecodeOnly, PartInfo } from "~dm-types/SimpleIssue";
 import type { SimpleIssueWithPublication } from "~dm-types/SimpleIssueWithPublication";
 import type { StorySearchResults } from "~dm-types/StorySearchResults";
 import type {
@@ -68,31 +68,17 @@ export default abstract class {
     issuecodes: string[],
     callback: (value: Record<string, SimpleIssueWithPublication>) => void,
   ) => void;
-  abstract getIssues: <
-    WithTitle extends boolean,
-    WithOldestdate extends boolean,
-  >(
+  abstract getIssues: (
     issuecodes: string[],
-    select: { title: WithTitle; oldestdate: WithOldestdate },
     callback: ( 
-      value: Record<string, AugmentedIssue<
-        [WithTitle extends true ? "title" : never,
-        WithOldestdate extends true ? "oldestdate" : never]
-      >>,
+      value: Record<string, AugmentedIssue<{partInfo?:PartInfo}>>,
     ) => void,
   ) => void;
 
-  abstract getIssuesByPublicationcodes: <
-    WithTitle extends boolean,
-    WithOldestdate extends boolean,
-  >(
+  abstract getIssuesByPublicationcodes:(
     publicationcodes: string[],
-    select: { title: WithTitle; oldestdate: WithOldestdate },
     callback: (
-      value: Record<string, AugmentedIssue<
-        [WithTitle extends true ? "title" : never,
-        WithOldestdate extends true ? "oldestdate" : never]
-      >[]>,
+      value: Record<string, AugmentedIssue[]>,
     ) => void,
   ) => void;
 
@@ -101,7 +87,7 @@ export default abstract class {
     callback: (value: IssueWithIssuecodeOnly[]) => void,
   ) => void;
   abstract getRecentIssues: (
-    callback: (value: inducks_issue[]) => void,
+    callback: (value: AugmentedIssue[]) => void,
   ) => void;
   abstract getIssuesByPublicationCodes: (
     publicationCodes: string[],

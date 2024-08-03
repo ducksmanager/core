@@ -60,8 +60,7 @@ watch(
   $$(issuecode),
   async () => {
     await fetchIssuecodeDetails([issuecode]);
-    publicationcode = issuecodeDetails.value[issuecode]?.publicationcode;
-    issuenumber = issuecodeDetails.value[issuecode]?.issuenumber;
+    ({ publicationcode, issuenumber } = issuecodeDetails.value[issuecode]);
   },
   { immediate: true },
 );

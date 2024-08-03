@@ -1,9 +1,13 @@
 {
   "compilerOptions": {
     "baseUrl": ".",
+    "declaration": true,
     "module": "commonjs",
     "target": "es2018",
-    "lib": ["DOM", "ESNext"],
+    "lib": [
+      "DOM",
+      "ESNext"
+    ],
     "strict": true,
     "jsx": "preserve",
     "esModuleInterop": true,
@@ -16,5 +20,9 @@
     "forceConsistentCasingInFileNames": true,
     "outDir": "dist"
   },
-  "exclude": ["node_modules", "client_*", ".turbo"]
+  "exclude": [
+    "node_modules",
+    "client_*",
+    ".turbo"
+  ]
 }

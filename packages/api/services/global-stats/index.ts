@@ -3,7 +3,7 @@ import type { Namespace, Server } from "socket.io";
 import type { BookcaseContributor } from "~dm-types/BookcaseContributor";
 import type { QuickStatsPerUser } from "~dm-types/QuickStatsPerUser";
 import { Prisma } from "~prisma-clients/schemas/dm";
-import { prismaClient as prismaDm } from "~prisma-clients/schemas/dm";
+import { prismaClient as prismaDm } from "~prisma-clients/schemas/dm/client";
 
 import { getMedalPoints } from "../collection/util";
 import type Events from "./types";

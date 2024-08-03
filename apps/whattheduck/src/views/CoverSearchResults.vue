@@ -29,7 +29,7 @@
         style="position: relative; flex-direction: column"
         v-if="cover"
       >
-        <ion-row><FullIssue :issue="cover" /></ion-row>
+        <ion-row><FullIssue :issuecode="cover.issuecode" show-issue-conditions /></ion-row>
         <ion-row style="font-size: 0.8rem; width: 100%"
           ><ion-col size="2"><ion-icon :ios="personOutline" :md="personSharp" /></ion-col
           ><ion-col class="ion-text-left">{{

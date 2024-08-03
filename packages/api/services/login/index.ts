@@ -1,6 +1,6 @@
 import type { Namespace, Server } from "socket.io";
 
-import { prismaClient as prismaDm } from "~prisma-clients/schemas/dm";
+import { prismaClient as prismaDm } from "~prisma-clients/schemas/dm/client";
 
 import { getHashedPassword, loginAs } from "../auth/util";
 import type Events from "./types";

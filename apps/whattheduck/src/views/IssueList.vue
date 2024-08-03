@@ -12,8 +12,8 @@
       <Condition v-if="'condition' in item && item.condition" :value="item.condition" />
       <span v-else class="not-owned-space" />
     </template>
-    <template v-if="currentIssueViewMode.id === 'list'" #row-label="{ item }">
-      <Issue v-bind="item" />
+    <template v-if="currentIssueViewMode.id === 'list'" #row-label="{ item: { issuecode } }">
+      <Issue :issuecode="issuecode" />
     </template>
     <template #row-suffix="{ item }" v-if="!isCoaView">
       <template v-if="'issueDate' in item && item.issueDate">
@@ -44,7 +44,7 @@
             ><ion-img
               @click="currentNavigationItem = key"
               :src="`${COVER_ROOT_URL}${item.cover}`"
-              :alt="item.inducksItem.issuenumber!"
+              :alt="issuecodeDetails[item.issuecode]!.issuenumber"
             ></ion-img></ion-col></ion-row
       ></ion-grid>
     </template>
@@ -53,6 +53,7 @@
 
 <script setup lang="ts">
 import { bookmarkOutline, bookmarkSharp, calendarOutline, calendarSharp } from 'ionicons/icons';
+import type { IssueWithIssuecodeOnly } from '~dm-types/SimpleIssue';
 import type { issue } from '~prisma-clients/schemas/dm';
 import { stores as webStores, components as webComponents } from '~web';
 
@@ -92,7 +93,7 @@ defineSlots<{
   rowLabel: { text: string };
 }>();
 
-const getItemTextFn = (item: (typeof items)['value'][number]['item']) => item.issuenumber!;
+const getItemTextFn = (item: Item) => issuecodeDetails.value[item.issuecode]!.issuenumber;
 
 const publicationcode = computed(() => currentNavigationItem.value!);
 
@@ -123,8 +124,8 @@ watch(isCoaView, () => {
 });
 
 type Item =
-  | undefined
-  | Pick<issue, 'issuecode' | 'condition' | 'creationDate' | 'isOnSale' | 'isToRead' | 'isSubscription'>;
+  | Pick<issue, 'issuecode' | 'condition' | 'creationDate' | 'isOnSale' | 'isToRead' | 'isSubscription'>
+  | IssueWithIssuecodeOnly;
 
 const items = computed(() =>
   coaIssues.value
@@ -137,27 +138,18 @@ const items = computed(() =>
             item: Item;
           }[]
         >((acc, item) => {
-          const userIssuesForThisIssue = userIssues.value
-            .filter(({ issuecode: userIssuecode }) => item.issuecode === userIssuecode)
-            .map((item) => ({
-              key: item.issuecode,
-              keyInList: item.issuecode!,
-              inducksItem: coaIssuecodeDetails.value[item.issuecode],
-              item,
-            }));
+          const userIssuesForThisIssue = userIssues.value.filter(
+            ({ issuecode: userIssuecode }) => item.issuecode === userIssuecode,
+          );
 
           return [
             ...acc,
-            ...(userIssuesForThisIssue.length
-              ? userIssuesForThisIssue
-              : [
-                  {
-                    key: item.issuecode,
-                    keyInList: item.issuecode,
-                    inducksItem: coaIssuecodeDetails.value[item.issuecode],
-                    item,
-                  },
-                ]),
+            ...(userIssuesForThisIssue.length ? userIssuesForThisIssue : [item]).map((itemOrUserItem) => ({
+              key: itemOrUserItem.issuecode,
+              keyInList: itemOrUserItem.issuecode!,
+              inducksItem: coaIssuecodeDetails.value[itemOrUserItem.issuecode],
+              item: itemOrUserItem,
+            })),
           ];
         }, [])
       : (userIssues.value || []).map((issue) => ({
@@ -204,9 +196,8 @@ const sortedItems = computed(() =>
 );
 
 const sortedItemsForBookcase = computed(() =>
-  sortedItems.value.map(({ item, inducksItem }) => ({
-    publicationcode: inducksItem.publicationcode!,
-    issuenumber: inducksItem.issuenumber!,
+  sortedItems.value.map(({ item }) => ({
+    ...issuecodeDetails.value[item.issuecode],
     issueCondition: (item as (typeof userIssues.value)[0]).condition,
   })),
 );
@@ -216,12 +207,11 @@ const sortedItemsForCovers = shallowRef<Awaited<ReturnType<typeof getSortedItems
 const getSortedItemsWithCovers = async () => {
   const coverUrls = (await fetchCoverUrls(publicationcode.value)).covers;
 
-  return sortedItems.value.map(({ key, item, inducksItem }) => ({
+  return sortedItems.value.map(({ key, item }) => ({
     key,
-    inducksItem,
     item: {
       ...item,
-      cover: coverUrls[inducksItem.issuenumber!]!.fullUrl,
+      cover: coverUrls[item.issuecode]!.fullUrl,
     },
   }));
 };

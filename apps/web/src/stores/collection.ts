@@ -1,3 +1,5 @@
+import type { ShallowRef } from "vue";
+
 import type CollectionServices from "~dm-services/collection/types";
 import type StatsServices from "~dm-services/stats/types";
 import type {
@@ -49,7 +51,7 @@ export const collection = defineStore("collection", () => {
     CollectionServices["getIssues"]
   > | null>(null);
 
-  const collectionUtils = useCollection(issues),
+  const collectionUtils = useCollection(issues as ShallowRef<issue[]>),
     watchedPublicationsWithSales = ref<string[] | null>(null),
     purchases = shallowRef<purchase[] | null>(null),
     watchedAuthors = shallowRef<authorUser[] | null>(null),
@@ -213,6 +215,17 @@ export const collection = defineStore("collection", () => {
       if (afterUpdate || (!isLoadingCollection.value && !issues.value)) {
         isLoadingCollection.value = true;
         issues.value = await collectionServices.getIssues();
+
+        Object.assign(
+          coa().issuecodeDetails,
+          issues.value
+            .map(({ issuecode, publicationcode, issuenumber }) => ({
+              issuecode,
+              publicationcode,
+              issuenumber,
+            }))
+            .groupBy("issuecode"),
+        );
         isLoadingCollection.value = false;
       }
     },

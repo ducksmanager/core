@@ -1,6 +1,5 @@
 import { PrismaClient, edge as rawEdge } from "../../../client_dm";
 import { computeTimestamp } from "./edge.timestamp";
-import "../../../util/groupBy";
 
 export default (prismaClient: PrismaClient) =>
   prismaClient.$extends({

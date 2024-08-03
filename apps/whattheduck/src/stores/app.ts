@@ -5,9 +5,6 @@ import type useDmSocket from '~web/src/composables/useDmSocket';
 
 import usePersistedData from '~/composables/usePersistedData';
 
-export const NAVIGATION_ITEM_REGEX =
-  /^(?:$|(?<countrycode>[^/]+)(?:$|(?:\/(?<magazinecode>[^ ]+)(?:$|(?: (?<issuenumber>.+?)(?:,(?<extraIssuecodes>.*))?)))))$/;
-
 export interface Option {
   id: string;
   label: string;
@@ -116,15 +113,30 @@ export const app = defineStore('app', () => {
 
   const currentNavigationItem = ref<string>(route.hash.replace('#', ''));
 
-  const navigationItemGroups = computed(
-    () =>
-      (NAVIGATION_ITEM_REGEX.exec(currentNavigationItem.value)?.groups || {}) as {
-        countrycode?: string;
-        magazinecode?: string;
-        issuecode?: string;
-        extraIssuecodes?: string;
-      },
-  );
+  const navigationItemGroups = computed(() => {
+    let groups:
+      | { countrycode?: never; publicationcode?: never; issuecode?: never; extraIssuecodes?: never }
+      | { countrycode: string; publicationcode?: never; issuecode?: never; extraIssuecodes?: never }
+      | { countrycode: string; publicationcode: string; issuecode?: never; extraIssuecodes?: never }
+      | { countrycode: string; publicationcode: string; issuecode: string; extraIssuecodes: string[] } = {};
+    if (currentNavigationItem.value) {
+      const [countrycodeOrPublicationcode] = currentNavigationItem.value.split(' ')[0];
+      if (countrycodeOrPublicationcode.includes('/')) {
+        groups = {
+          countrycode: countrycodeOrPublicationcode.split('/')[0],
+          publicationcode: countrycodeOrPublicationcode,
+        };
+        const [publicationcodeOrIssuecode, ...extraIssuecodes] = currentNavigationItem.value.split(',');
+        if (groups.publicationcode !== publicationcodeOrIssuecode) {
+          groups = { ...groups, issuecode: publicationcodeOrIssuecode, extraIssuecodes };
+        }
+      } else {
+        groups = { countrycode: countrycodeOrPublicationcode };
+      }
+    }
+
+    return groups;
+  });
 
   watch(currentNavigationItem, async (code) => {
     selectedIssuenumbers.value = null;
@@ -142,14 +154,9 @@ export const app = defineStore('app', () => {
   });
 
   const countrycode = computed(() => navigationItemGroups.value.countrycode);
-  const magazinecode = computed(() => navigationItemGroups.value.magazinecode);
-  const publicationcode = computed(() =>
-    navigationItemGroups.value.magazinecode
-      ? `${navigationItemGroups.value.countrycode}/${navigationItemGroups.value.magazinecode}`
-      : null,
-  );
+  const publicationcode = computed(() => navigationItemGroups.value.publicationcode);
   const issuecode = computed(() => navigationItemGroups.value.issuecode);
-  const extraIssuecodes = computed(() => navigationItemGroups.value.extraIssuecodes?.split(',') || []);
+  const extraIssuecodes = computed(() => navigationItemGroups.value.extraIssuecodes);
 
   const allowMultipleSelection = computed(() => publicationcode.value !== undefined);
 
@@ -164,7 +171,6 @@ export const app = defineStore('app', () => {
     lastSync,
     currentNavigationItem,
     countrycode,
-    magazinecode,
     publicationcode,
     issuecode,
     extraIssuecodes,

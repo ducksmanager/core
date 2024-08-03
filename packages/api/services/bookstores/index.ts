@@ -4,7 +4,9 @@ import type {
   bookstore,
   bookstoreComment,   user} from "~prisma-clients/schemas/dm";
 import {
-prismaClient as prismaDm, userContributionType } from "~prisma-clients/schemas/dm";
+ userContributionType } from "~prisma-clients/schemas/dm";
+import {
+prismaClient as prismaDm } from "~prisma-clients/schemas/dm/client";
 
 import type Events from "./types";
 import { namespaceEndpoint } from "./types";

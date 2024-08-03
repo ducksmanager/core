@@ -7,7 +7,7 @@ import type { Namespace, Server } from "socket.io";
 
 import { getUserCredentials } from "~/services/_auth";
 import EdgeCreatorServices from "~dm-services/edgecreator/types";
-import { prismaClient } from "~prisma-clients/schemas/coa";
+import { prismaClient as prismaCoa } from "~prisma-clients/schemas/coa/client";
 import type { EventCalls } from "~socket.io-client-services";
 import { useSocket } from "~socket.io-client-services";
 
@@ -30,12 +30,13 @@ export default (io: Server) => {
 
     socket.on("uploadFromBase64", async (parameters, callback) => {
       const { issuecode, data } = parameters;
-      const issue = await prismaClient.inducks_issue.findFirstOrThrow({
-        where: { issuecode },
-      });
-      const [countrycode, magazinecode] = issue.publicationcode.split("/");
+      const { publicationcode, issuenumber } =
+        await prismaClient.inducks_issue.findFirstOrThrow({
+          where: { issuecode },
+        });
+      const [countrycode, magazinecode] = publicationcode.split("/");
       const path = `${edgesPath}/${countrycode}/photos`;
-      const tentativeFileName = `${magazinecode}.${issue.issuenumber}.photo`;
+      const tentativeFileName = `${magazinecode}.${issuenumber}.photo`;
       const fileName = getNextAvailableFile(
         `${path}/${tentativeFileName}`,
         "jpg",
@@ -84,7 +85,7 @@ export const upload = async (
       ? ["image/jpg", "image/jpeg"]
       : ["image/png"];
 
-    const targetFilename = getTargetFilename(
+    const targetFilename = await getTargetFilename(
       filename,
       isMultipleEdgePhoto,
       edge,
@@ -120,14 +121,10 @@ export const upload = async (
   return res.json(targetFilesnames.map((fileName) => ({ fileName })));
 };
 
-const getTargetFilename = (
+const getTargetFilename = async (
   filename: string,
   isMultipleEdgePhoto: boolean,
-  edge: {
-    country: string;
-    magazine: string;
-    issuenumber: string;
-  },
+  issuecode: string,
   isEdgePhoto: boolean,
 ) => {
   filename = filename.normalize("NFD").replace(/[\u0300-\u036F]/g, "");
@@ -138,10 +135,14 @@ const getTargetFilename = (
       "jpg",
     );
   } else {
-    const { country, issuenumber, magazine } = edge;
+    const { publicationcode, issuenumber } =
+      await prismaCoa.inducks_issue.findFirstOrThrow({
+        where: { issuecode },
+      });
+    const [countrycode, magazinecode] = publicationcode.split("/");
     if (isEdgePhoto) {
       return getNextAvailableFile(
-        `${edgesPath}/${country}/photos/${magazine}.${issuenumber}.photo`,
+        `${edgesPath}/${countrycode}/photos/${magazinecode}.${issuenumber}.photo`,
         "jpg",
       );
     } else {
@@ -158,11 +159,7 @@ const validateUpload = async (
   allowedMimeTypes: string[],
   isEdgePhoto: boolean,
   userCredentials: Record<string, string>,
-  edge: {
-    country: string;
-    magazine: string;
-    issuenumber: string;
-  },
+  issuecode: string,
   filePath: string,
 ): Promise<{ hash: string }> => {
   if (!allowedMimeTypes.includes(mimetype)) {
@@ -192,7 +189,7 @@ const validateUpload = async (
     // await readFile(filestream);
     const otherElementUses = await getFilenameUsagesInOtherModels(
       filename,
-      edge,
+      issuecode,
     );
     if (fs.existsSync(filename) && otherElementUses.length) {
       throw new Error(
@@ -227,13 +224,10 @@ const readContentsAndCalculateHash = (
 
 const getFilenameUsagesInOtherModels = async (
   filename: string,
-  currentModel: { country: string; magazine: string; issuenumber: string },
+  currentIssuecode: string,
 ) =>
   (await edgeCreatorServices.getImagesFromFilename(filename)).filter(
-    (otherUse) =>
-      currentModel.country !== otherUse.country ||
-      currentModel.magazine !== otherUse.magazine ||
-      currentModel.issuenumber !== otherUse.issuenumberStart,
+    (otherUse) => currentIssuecode !== otherUse.issuecodeStart,
   );
 
 const saveFile = (temporaryPath: string, finalPath: string) => {

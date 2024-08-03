@@ -53,29 +53,31 @@
         {{ $t("Aucun résultat.") }}
       </b-list-group-item>
       <b-list-group-item
-        v-for="searchResult in searchResults.results as typeof issueResults.results"
-        :key="searchResult!.storycode"
+        v-for="searchResult in searchResults.results"
+        :key="JSON.stringify(searchResult)"
         class="d-flex align-items-center"
-        @click="selectSearchResult(searchResult!)"
+        @click="selectSearchResult(searchResult)"
       >
         <template v-if="!isSearchByCode">
           <div class="me-1 d-flex">
             <Condition
-              v-if="searchResult!.collectionIssue"
+              v-if="(searchResult as SimpleStoryWithOptionalCollectionIssue).collectionIssue"
               :value="
                 conditions.find(
                   ({ dbValue }) =>
-                    dbValue === searchResult!.collectionIssue.condition
+                    dbValue === (searchResult as SimpleStoryWithOptionalCollectionIssue).collectionIssue!.condition
                 )?.dbValue || undefined
               "
             />
           </div>
-          <div>{{ searchResult!.title }}</div>
+          <div>
+            {{ (searchResult as SimpleStoryWithOptionalCollectionIssue).title }}
+          </div>
         </template>
         <Issue
           v-else
           :is-public="isPublic"
-          :issuecode="searchResult.issuecode"
+          :issuecode="(searchResult as IssueWithIssuecodeOnly).issuecode"
           clickable
         />
       </b-list-group-item>
@@ -115,13 +117,15 @@ onClickOutside(nav, () => {
   showSearchResults = false;
 });
 
+type SimpleStoryWithOptionalCollectionIssue = SimpleStory & {
+  collectionIssue: issue | null;
+};
+
 let isSearching = $ref(false);
 let pendingSearch = $ref<string | null>(null);
 let search = $ref("");
 let storyResults = $ref<{
-  results: (SimpleStory & {
-    collectionIssue: issue | null;
-  })[];
+  results: SimpleStoryWithOptionalCollectionIssue[];
   hasMore: boolean;
 } | null>(null);
 
@@ -131,7 +135,7 @@ const searchContexts = {
   storycode: $t("code histoire"),
 } as const;
 
-let issueResults = $ref<{ results: IssueWithIssuecodeOnly[] } | null>(null);
+let issueResults = $ref<{ results: IssueWithIssuecodeOnly[] }>();
 let searchContext = $ref<keyof typeof searchContexts>("story");
 let showSearchResults = $ref(true);
 

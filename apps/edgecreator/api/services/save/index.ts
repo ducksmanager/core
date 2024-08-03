@@ -40,8 +40,6 @@ export default (io: Server) => {
         parameters;
       const svgPath = await getSvgPath(runExport, issuecode);
 
-      const publicationcode = `${country}/${magazine}`;
-
       mkdirSync(path.dirname(svgPath), { recursive: true });
       writeFileSync(svgPath, content);
       let paths: ExportPaths = { svgPath };
@@ -61,8 +59,7 @@ export default (io: Server) => {
           .map(({ user }) => user.username);
 
         const publicationResult = await edgeCreatorServices.publishEdge({
-          publicationcode,
-          issuenumber,
+          issuecode,
           designers,
           photographers,
         });
@@ -89,7 +86,7 @@ export default (io: Server) => {
         callback({ results: { paths, isNew: publicationResult.isNew } });
       } else {
         if (runSubmit) {
-          await edgeCreatorServices.submitEdge(publicationcode, issuenumber);
+          await edgeCreatorServices.submitEdge(issuecode);
         }
         callback({ results: { paths, isNew: false } });
       }

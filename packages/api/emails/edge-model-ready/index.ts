@@ -3,8 +3,7 @@ import type { user } from "~prisma-clients/schemas/dm";
 
 type InputData = {
   user: user;
-  publicationcode: string;
-  issuenumber: string;
+  issuecode: string;
 };
 type Data = InputData & {
   ecLink: string;
@@ -16,11 +15,9 @@ export default class extends Email {
 
   constructor(data: InputData) {
     super();
-    const issuecode = `${data.publicationcode} ${data.issuenumber}`;
     this.data = {
       ...data,
-      ecLink: `${process.env.EDGECREATOR_ROOT}/edit/${issuecode}`,
-      issuecode,
+      ecLink: `${process.env.EDGECREATOR_ROOT}/edit/${data.issuecode}`,
     };
   }
 

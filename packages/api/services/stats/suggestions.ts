@@ -4,10 +4,11 @@ import type { IssueSuggestion } from "~dm-types/IssueSuggestion";
 import { IssueSuggestionList } from "~dm-types/IssueSuggestionList";
 import type { StoryDetail } from "~dm-types/StoryDetail";
 import type { SuggestionList } from "~dm-types/SuggestionList";
-import { prismaClient as prismaCoa } from "~prisma-clients/schemas/coa";
-import { prismaClient as prismaDm,userOptionType } from "~prisma-clients/schemas/dm";
-import { prismaClient as prismaDmStats } from "~prisma-clients/schemas/dm_stats";
+import { prismaClient as prismaCoa } from "~prisma-clients/schemas/coa/client";
+import { userOptionType } from "~prisma-clients/schemas/dm";
+import { prismaClient as prismaDm } from "~prisma-clients/schemas/dm/client";
 import { Prisma as PrismaDmStats } from "~prisma-clients/schemas/dm_stats";
+import { prismaClient as prismaDmStats } from "~prisma-clients/schemas/dm_stats/client";
 
 import { getPublicationTitles } from "../coa/publications";
 
@@ -52,7 +53,7 @@ export default (socket: Socket<Events>) => {
 }
 
 const suggestedPublications =
-  PrismaDmStats.validator<PrismaDmStats.suggestedIssueForUserArgs>()({
+  PrismaDmStats.validator<PrismaDmStats.suggestedIssueForUserDefaultArgs>()({
     select: {
       userId: true,
       score: true,
@@ -63,7 +64,7 @@ const suggestedPublications =
   });
 
 const missingPublications =
-  PrismaDmStats.validator<PrismaDmStats.utilisateurs_publications_manquantesArgs>()(
+  PrismaDmStats.validator<PrismaDmStats.utilisateurs_publications_manquantesDefaultArgs>()(
     {
       select: { personcode: true, storycode: true },
     },

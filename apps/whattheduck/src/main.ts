@@ -5,6 +5,7 @@ import CordovaSQLiteDriver from 'localforage-cordovasqlitedriver';
 import { createPinia } from 'pinia';
 import VueVirtualScroller from 'vue-virtual-scroller';
 import { i18n } from '~web';
+import '~prisma-clients/util/groupBy';
 
 import App from './App.vue';
 import router from './router';

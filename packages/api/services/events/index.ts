@@ -20,7 +20,7 @@ import type {
 } from "~dm-types/events/EdgeCreationEvent";
 import type { MedalEvent } from "~dm-types/events/MedalEvent";
 import type { SignupEvent } from "~dm-types/events/SignupEvent";
-import { prismaClient as prismaDm } from "~prisma-clients/schemas/dm";
+import { prismaClient as prismaDm } from "~prisma-clients/schemas/dm/client";
 
 import type Events from "./types";
 import { namespaceEndpoint } from "./types";

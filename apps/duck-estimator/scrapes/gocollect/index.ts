@@ -5,7 +5,7 @@ import { firefox } from "playwright-firefox";
 import { getScrapeCacheTime, syncScrapeCache } from "~/cache";
 import { createQuotations } from "~/coa";
 import { readCsvMapping } from "~/csv";
-import {prismaClient} from '~prisma-clients/schemas/coa'
+import {prismaClient} from '~prisma-clients/schemas/coa/client'
 
 const MAPPING_FILE = "scrapes/gocollect/coa-mapping.csv";
 const ROOT_URL = "https://gocollect.com/app/comics/";

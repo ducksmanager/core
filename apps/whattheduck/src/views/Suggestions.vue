@@ -25,7 +25,11 @@
 
         <template v-for="issue of formattedSuggestions" style="margin-top: 1rem">
           <ion-row class="suggestion">
-            <FullIssue :issue="issue" :classes="['issue-title', 'ion-no-padding']" />
+            <FullIssue
+              :issuecode="issue.issuecode"
+              :show-issue-conditions="false"
+              :classes="['issue-title', 'ion-no-padding']"
+            />
             <ion-col
               class="ion-no-padding"
               size="3"
@@ -54,6 +58,7 @@
 <script setup lang="ts">
 import { toastController } from '@ionic/vue';
 import { calendarOutline, calendarSharp, flameOutline, flameSharp } from 'ionicons/icons';
+import { stores as webStores } from '~web';
 
 import { wtdcollection } from '~/stores/wtdcollection';
 
@@ -61,6 +66,7 @@ const { t } = useI18n();
 const sortByScore = ref(false);
 
 const { suggestions } = storeToRefs(wtdcollection());
+const { issuecodeDetails, publicationNames } = storeToRefs(webStores.coa());
 
 interface FormattedSuggestion {
   storycode: string;
@@ -84,12 +90,16 @@ const showAuthorToast = async (personcode: string) => {
 const formattedSuggestions = computed(
   () =>
     sortedSuggestions.value &&
-    Object.values(sortedSuggestions.value!.issues).map(
-      ({ stories, publicationcode, oldestdate, score, issuenumber }) => ({
-        countrycode: publicationcode.split('/')[0],
-        publicationName: sortedSuggestions.value!.publicationTitles[publicationcode]!,
+    Object.values(sortedSuggestions.value!.issues)
+      .map(({ issuecode, ...rest }) => ({ ...rest, issuecode, issue: issuecodeDetails.value[issuecode]! }))
+      .map(({ stories, issue, issuecode, oldestdate, score }) => ({
+        countrycode: issue.publicationcode.split('/')[0],
+        publicationName: publicationNames.value[issue.publicationcode]!,
+        issuecode,
         releaseDate: oldestdate,
         score,
+        issuenumber: issue.issuenumber,
+        collectionIssues: [],
         storiesByStorycode: Object.entries(stories).reduce<Record<string, FormattedSuggestion>>(
           (acc, [personcode, storiesOfAuthor]) => {
             storiesOfAuthor.forEach((storycode) => {
@@ -103,10 +113,7 @@ const formattedSuggestions = computed(
           },
           {},
         ),
-        issuenumber,
-        collectionIssues: [],
-      }),
-    ),
+      })),
 );
 </script>
 <style lang="scss" scoped>

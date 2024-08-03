@@ -5,11 +5,7 @@
       :to="`/collection/show/${issue.publicationcode}#${issue.issuenumber}`"
     >
       <span v-if="!hideCondition" class="me-1 d-flex"
-        ><Condition
-          v-once
-          :is-public="isPublic"
-          :publicationcode="issue.publicationcode"
-          :issuenumber="issue.issuenumber"
+        ><Condition v-once :is-public="isPublic" :issuecode="issue.issuecode"
       /></span>
       <Publication
         :publicationcode="issue.publicationcode"

@@ -7,10 +7,10 @@ import { augmentIssueArrayWithInducksData } from "~/services/coa";
 import { getPublicationTitles } from "~/services/coa/publications";
 import type { TransactionResults } from "~dm-types/TransactionResults";
 import type { inducks_issuequotation } from "~prisma-clients/schemas/coa";
-import { prismaClient as prismaCoa } from "~prisma-clients/schemas/coa";
+import { prismaClient as prismaCoa } from "~prisma-clients/schemas/coa/client";
 import type { user } from "~prisma-clients/schemas/dm";
-import { prismaClient as prismaDm } from "~prisma-clients/schemas/dm";
 import { issue_condition } from "~prisma-clients/schemas/dm";
+import { prismaClient as prismaDm } from "~prisma-clients/schemas/dm/client";
 
 import type Events from "../types";
 import {

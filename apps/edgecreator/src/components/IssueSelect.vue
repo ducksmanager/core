@@ -22,7 +22,7 @@
         <edge-gallery
           v-if="edgeCatalogStore.isCatalogLoaded"
           :publicationcode="currentPublicationcode"
-          :selected="currentFirstIssue"
+          :selected="currentFirstIssuecode"
           :has-more-before="hasMoreIssuesToLoad.before"
           :has-more-after="hasMoreIssuesToLoad.after"
           @load-more="
@@ -32,7 +32,7 @@
             }
           "
           @change="
-            currentFirstIssue = $event;
+            currentFirstIssuecode = $event;
             onChange();
           "
         />
@@ -43,7 +43,7 @@
       <template v-else>
         <b-form-select
           v-show="currentPublicationcode"
-          v-model="currentFirstIssue"
+          v-model="currentFirstIssuecode"
           :options="issues"
           @change="onChange()"
         >
@@ -53,7 +53,7 @@
             }}</b-form-select-option>
           </template>
         </b-form-select>
-        <template v-if="canBeMultiple && currentFirstIssue !== null">
+        <template v-if="canBeMultiple && currentFirstIssuecode !== null">
           <b-form-group class="mt-2">
             <b-form-radio v-model="editMode" name="editMode" value="single">{{
               $t("Edit a single edge")
@@ -64,14 +64,14 @@
           </b-form-group>
           <b-form-select
             v-show="editMode === 'range'"
-            v-model="currentLastIssue"
+            v-model="currentLastIssuecode"
             :options="issues"
             @change="onChange()"
           />
         </template>
       </template>
     </template>
-    <slot v-if="$slots.dimensions && currentFirstIssue !== null" />
+    <slot v-if="$slots.dimensions && currentFirstIssuecode !== null" />
   </div>
 </template>
 <script setup lang="ts">
@@ -90,7 +90,7 @@ interface Selection {
   countrycode: string;
   publicationcode: string;
   issuecode: string;
-  issuenumberEnd?: string;
+  issuecodeEnd?: string;
 }
 
 const emit = defineEmits<(e: "change", value: Selection | null) => void>();
@@ -114,15 +114,10 @@ const props = withDefaults(
   },
 );
 
-interface IssuecodeAndNumber {
-  issuecode: string;
-  issuenumber: string;
-}
-
 const currentCountrycode = ref<string | undefined>(undefined);
 const currentPublicationcode = ref<string | undefined>(undefined);
-const currentFirstIssue = ref<IssuecodeAndNumber | undefined>(undefined);
-const currentLastIssue = ref<IssuecodeAndNumber | undefined>(undefined);
+const currentFirstIssuecode = ref<string | undefined>(undefined);
+const currentLastIssuecode = ref<string | undefined>(undefined);
 const editMode = ref<"single" | "range">("single");
 const hasMoreIssuesToLoad = ref({ before: false, after: false });
 const surroundingIssuesToLoad = ref({ before: 10, after: 10 } as Record<
@@ -186,7 +181,7 @@ watch(
   async (newValue) => {
     if (newValue) {
       currentPublicationcode.value = props.publicationcode!;
-      currentFirstIssue.value = undefined;
+      currentFirstIssuecode.value = undefined;
 
       await coaStore.fetchPublicationNamesFromCountry(newValue);
     }
@@ -198,7 +193,7 @@ watch(
 
 watch(currentPublicationcode, async (newValue) => {
   if (newValue) {
-    currentFirstIssue.value = undefined;
+    currentFirstIssuecode.value = undefined;
     await coaStore.fetchIssuecodesByPublicationcode([newValue]);
     await loadEdges();
   }
@@ -245,8 +240,8 @@ const onChange = () => {
     editMode: editMode.value,
     countrycode: currentCountrycode.value!,
     publicationcode: currentPublicationcode.value!,
-    issuecode: currentFirstIssue.value!.issuecode,
-    issuenumberEnd: currentLastIssue.value?.issuenumber,
+    issuecode: currentFirstIssuecode.value!,
+    issuecodeEnd: currentLastIssuecode.value,
   });
 };
 (async () => {

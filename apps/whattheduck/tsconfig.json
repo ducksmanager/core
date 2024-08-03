@@ -2,12 +2,16 @@
   "compilerOptions": {
     "baseUrl": ".",
     "module": "ESNext",
-    "target": "es2020", 
-    "lib": ["dom", "dom.iterable", "ESNext"], 
+    "target": "es2020",
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "ESNext"
+    ],
     "strict": true,
     "esModuleInterop": true,
     "sourceMap": true,
-    "skipLibCheck": true, 
+    "skipLibCheck": true,
     "moduleResolution": "node",
     "resolveJsonModule": true,
     "noUnusedLocals": true,
@@ -16,18 +20,42 @@
     "preserveWatchOutput": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
-    "types": ["vite/client", "@vue-macros/reactivity-transform/macros-global"],
+    "types": [
+      "vite/client",
+      "@vue-macros/reactivity-transform/macros-global"
+    ],
     "paths": {
-      "~/*": ["./src/*"],
-      "~translations/*": ["./translations/*"],
-      "~types/*": ["./types/*"],
-      "~dm-types/*": ["../../packages/types/*"],
-      "~dm-services/*": ["../../packages/api/services/*"],
-      "~prisma-clients/*": ["../../packages/prisma-clients/*"],
-      "~socket.io-client-services/*": ["../../packages/socket.io-client-services/*"],
-      "~socket.io-services/*": ["../../packages/socket.io-services/*"],
-      "~web/*": ["../web/*"]
+      "~/*": [
+        "./src/*"
+      ],
+      "~translations/*": [
+        "./translations/*"
+      ],
+      "~types/*": [
+        "./types/*"
+      ],
+      "~dm-types/*": [
+        "../../packages/types/*"
+      ],
+      "~dm-services/*": [
+        "../../packages/api/services/*"
+      ],
+      "~prisma-clients/*": [
+        "../../packages/prisma-clients/*"
+      ],
+      "~socket.io-client-services/*": [
+        "../../packages/socket.io-client-services/*"
+      ],
+      "~socket.io-services/*": [
+        "../../packages/socket.io-services/*"
+      ],
+      "~web/*": [
+        "../web/*"
+      ]
     },
   },
-  "exclude": ["node_modules"]
+  "exclude": [
+    "node_modules",
+    ".turbo"
+  ]
 }

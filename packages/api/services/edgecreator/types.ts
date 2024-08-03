@@ -25,8 +25,7 @@ export const namespaceEndpoint = "/edgecreator";
 export default abstract class {
   static namespaceEndpoint = namespaceEndpoint;
   abstract submitEdge: (
-    publicationcode: string,
-    issuenumber: string,
+    issuecode: string,
     callback: (value: { url: string }) => void,
   ) => void;
   abstract getModelContributors: (
