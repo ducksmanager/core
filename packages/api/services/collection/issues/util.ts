@@ -1,5 +1,5 @@
 import type { SaleState } from "~dm-types/CollectionUpdate";
-import { prismaClient as prismaDm } from "~prisma-clients/schemas/dm/client";
+import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
 
 export const getUserPurchase = async (id: number | null, userId: number) =>
   id === null

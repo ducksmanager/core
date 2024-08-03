@@ -83,7 +83,7 @@
 </template>
 <script setup lang="ts">
 import type { SingleCopyState } from '~dm-types/CollectionUpdate';
-import { type purchase } from '~prisma-clients/schemas/dm';
+import { type purchase } from '~prisma-schemas/schemas/dm';
 
 import { app } from '~/stores/app';
 import { wtdcollection } from '~/stores/wtdcollection';

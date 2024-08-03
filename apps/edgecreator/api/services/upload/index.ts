@@ -7,7 +7,7 @@ import type { Namespace, Server } from "socket.io";
 
 import { getUserCredentials } from "~/services/_auth";
 import EdgeCreatorServices from "~dm-services/edgecreator/types";
-import { prismaClient as prismaCoa } from "~prisma-clients/schemas/coa/client";
+import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa/client";
 import type { EventCalls } from "~socket.io-client-services";
 import { useSocket } from "~socket.io-client-services";
 

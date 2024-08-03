@@ -1,5 +1,5 @@
-import type { inducks_issuequotation } from "~prisma-clients/schemas/coa";
-import type { issue } from "~prisma-clients/schemas/dm";
+import type { inducks_issuequotation } from "~prisma-schemas/schemas/coa";
+import type { issue } from "~prisma-schemas/schemas/dm";
 
 export type QuotedIssue = Pick<
   inducks_issuequotation,

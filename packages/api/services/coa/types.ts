@@ -10,7 +10,7 @@ import type {
   inducks_story,
   inducks_storyjob,
   inducks_storyversion,
-} from "~prisma-clients/schemas/coa";
+} from "~prisma-schemas/schemas/coa";
 import type { Errorable } from "~socket.io-services/types";
 
 

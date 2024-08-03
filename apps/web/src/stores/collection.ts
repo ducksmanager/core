@@ -11,7 +11,7 @@ import type {
   issue,
   purchase,
   subscription,
-} from "~prisma-clients/schemas/dm";
+} from "~prisma-schemas/schemas/dm";
 import type { EventReturnType, ScopedError } from "~socket.io-services/types";
 
 import useCollection from "../composables/useCollection";

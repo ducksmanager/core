@@ -46,7 +46,7 @@
             issue: issuecodeDetails[issuecode],
             issueCondition,
             
-            popularity,
+            popularity
           }))(sortedBookcaseWithPopularity![edgeIndex])
         "
         :creation-date="

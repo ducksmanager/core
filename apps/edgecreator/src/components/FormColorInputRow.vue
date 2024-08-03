@@ -50,7 +50,7 @@
               </h6>
               <ul>
                 <li
-                  v-for="(_, stepNumber) in otherColorsForLocation"
+                  v-for="(_, stepNumber) in Object.keys(otherColorsForLocation)"
                   :key="`${colorLocation}-${stepNumber}`"
                 >
                   <span

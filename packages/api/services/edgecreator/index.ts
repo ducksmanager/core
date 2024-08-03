@@ -1,7 +1,7 @@
 import type { Namespace, Server } from "socket.io";
 
 import edgeModelReady from "~/emails/edge-model-ready";
-import {prismaClient as prismaDm} from "~prisma-clients/schemas/dm/client";
+import {prismaClient as prismaDm} from "~prisma-schemas/schemas/dm/client";
 
 import { RequiredAuthMiddleware } from "../auth/util";
 import edgePublication from "./edge-publication";

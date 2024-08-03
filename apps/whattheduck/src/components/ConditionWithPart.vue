@@ -6,7 +6,7 @@
 </template>
 <script setup lang="ts">
 import type { PartInfo } from '~dm-types/SimpleIssue';
-import type { issue_condition } from '~prisma-clients/schemas/dm';
+import type { issue_condition } from '~prisma-schemas/schemas/dm';
 
 const { conditions } = useCondition();
 

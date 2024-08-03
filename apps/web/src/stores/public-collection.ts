@@ -1,6 +1,6 @@
 import type { ShallowRef } from "vue";
 
-import type { issue } from "~prisma-clients/schemas/dm";
+import type { issue } from "~prisma-schemas/schemas/dm";
 
 import useCollection from "../composables/useCollection";
 import { dmSocketInjectionKey } from "../composables/useDmSocket";

@@ -1,5 +1,5 @@
 import { Email, i18n } from "~emails/email";
-import type { user } from "~prisma-clients/schemas/dm";
+import type { user } from "~prisma-schemas/schemas/dm";
 
 export default class extends Email {
   data: { user: user; publicationName: string; issuenumber: string };

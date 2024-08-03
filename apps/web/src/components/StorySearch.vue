@@ -88,7 +88,7 @@
 <script setup lang="ts">
 import type { IssueWithIssuecodeOnly } from "~dm-types/SimpleIssue";
 import type { SimpleStory } from "~dm-types/SimpleStory";
-import type { issue } from "~prisma-clients/schemas/dm";
+import type { issue } from "~prisma-schemas/schemas/dm";
 
 import { dmSocketInjectionKey } from "../composables/useDmSocket";
 

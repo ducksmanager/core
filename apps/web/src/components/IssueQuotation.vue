@@ -13,7 +13,7 @@
   </template>
 </template>
 <script setup lang="ts">
-import type { inducks_issuequotation } from "~prisma-clients/schemas/coa";
+import type { inducks_issuequotation } from "~prisma-schemas/schemas/coa";
 
 defineProps<{
   issue: Pick<inducks_issuequotation, "estimationMin" | "estimationMax"> & {

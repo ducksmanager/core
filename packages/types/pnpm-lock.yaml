@@ -11,9 +11,9 @@ importers:
       ts-node:
         specifier: ^10.9.2
         version: 10.9.2(@types/node@20.12.5)(typescript@5.4.4)
-      ~prisma-clients:
+      ~prisma-schemas:
         specifier: workspace:*
-        version: link:../prisma-clients
+        version: link:../prisma-schemas
     devDependencies:
       eslint:
         specifier: ^8.57.0

@@ -1,7 +1,7 @@
 import type { Socket } from "socket.io";
 
 import PresentationSentenceRequested from "~emails/presentation-sentence-requested";
-import { prismaClient as prismaDm } from "~prisma-clients/schemas/dm/client";
+import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
 import { generateAccessToken, getHashedPassword } from "~services/auth/util";
 
 import type Events from "../types";

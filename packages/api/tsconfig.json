@@ -3,7 +3,9 @@
     "baseUrl": ".",
     "module": "commonjs",
     "target": "es2018",
-    "lib": ["ESNext"],
+    "lib": [
+      "ESNext"
+    ],
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
@@ -16,14 +18,32 @@
     "outDir": "./dist",
     "preserveWatchOutput": true,
     "paths": {
-      "~/*": ["*"],
-      "~services/*": ["services/*"],
-      "~dm-types/*": ["../dm-types/*"],
-      "~emails/*": ["emails/*"],
-      "~prisma-clients/*": ["../prisma-clients/*"],
-      "~socket.io-services/*": ["../socket.io-types/*"],
-      "~translations/*": ["translations/*"]
+      "~/*": [
+        "*"
+      ],
+      "~services/*": [
+        "services/*"
+      ],
+      "~dm-types/*": [
+        "../dm-types/*"
+      ],
+      "~emails/*": [
+        "emails/*"
+      ],
+      "~prisma-schemas/*": [
+        "../prisma-schemas/*"
+      ],
+      "~socket.io-services/*": [
+        "../socket.io-types/*"
+      ],
+      "~translations/*": [
+        "translations/*"
+      ]
     }
   },
-  "exclude": ["node_modules", "dist", ".turbo"]
+  "exclude": [
+    "node_modules",
+    "dist",
+    ".turbo"
+  ]
 }

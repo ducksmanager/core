@@ -2,10 +2,10 @@ import type { Socket } from "socket.io";
 
 import type {
   inducks_issuequotation, Prisma as PrismaCoa
-} from "~prisma-clients/schemas/coa";
+} from "~prisma-schemas/schemas/coa";
 import {
   prismaClient as prismaCoa,
-} from "~prisma-clients/schemas/coa/client";
+} from "~prisma-schemas/schemas/coa/client";
 
 const ISSUE_CODE_REGEX = /[a-z]+\/[-A-Z0-9 ]+/g;
 

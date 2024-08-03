@@ -1,7 +1,7 @@
 import type { BookcaseContributor } from "~dm-types/BookcaseContributor";
 import type { MedalPointsPerUser } from "~dm-types/MedalPointsPerUser";
 import type { QuickStatsPerUser } from "~dm-types/QuickStatsPerUser";
-import type { user } from "~prisma-clients/schemas/dm";
+import type { user } from "~prisma-schemas/schemas/dm";
 import type { Errorable } from "~socket.io-services/types";
 
 export const namespaceEndpoint = "/global-stats";

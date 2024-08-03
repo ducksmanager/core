@@ -50,9 +50,9 @@ importers:
       ~dm-types:
         specifier: workspace:*
         version: link:../types
-      ~prisma-clients:
+      ~prisma-schemas:
         specifier: workspace:*
-        version: link:../prisma-clients
+        version: link:../prisma-schemas
       ~socket.io-services:
         specifier: workspace:*
         version: link:../socket.io-services

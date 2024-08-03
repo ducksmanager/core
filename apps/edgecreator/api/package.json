@@ -27,7 +27,7 @@
     "universal-cookie": "^4.0.4",
     "~api": "workspace:*",
     "~dm-types": "workspace:*",
-    "~prisma-clients": "workspace:*",
+    "~prisma-schemas": "workspace:*",
     "~socket.io-client-services": "workspace:*",
     "~socket.io-services": "workspace:*"
   },

@@ -3,11 +3,11 @@ import type { Socket } from "socket.io";
 import type { IssueCoverDetails } from "~dm-types/IssueCoverDetails";
 import type { SimpleEntry } from "~dm-types/SimpleEntry";
 import type { SimpleIssueWithPublication } from "~dm-types/SimpleIssueWithPublication";
-import { prismaClient as prismaCoa } from "~prisma-clients/schemas/coa/client";
-import type { cover } from "~prisma-clients/schemas/cover_info";
-import { prismaClient as prismaCoverInfo } from "~prisma-clients/schemas/cover_info/client";
-import { Prisma } from "~prisma-clients/schemas/dm";
-import {  prismaClient as prismaDm } from "~prisma-clients/schemas/dm/client";
+import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa/client";
+import type { cover } from "~prisma-schemas/schemas/cover_info";
+import { prismaClient as prismaCoverInfo } from "~prisma-schemas/schemas/cover_info/client";
+import { Prisma } from "~prisma-schemas/schemas/dm";
+import {  prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
 
 import { getQuotationsByissuesByIssuecodes } from "../quotations";
 import type Events from "../types";

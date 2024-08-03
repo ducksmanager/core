@@ -8,8 +8,8 @@ import PushNotifications from "@pusher/push-notifications-server";
 import dayjs from "dayjs";
 
 import { i18n } from "~/emails/email";
-import type { user } from "~prisma-clients/schemas/dm";
-import { prismaClient as prismaDm } from "~prisma-clients/schemas/dm/client";
+import type { user } from "~prisma-schemas/schemas/dm";
+import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
 import {
   COUNTRY_CODE_OPTION,
   getSuggestions,

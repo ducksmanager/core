@@ -57,9 +57,10 @@
 import { arrowBackOutline, arrowBackSharp } from 'ionicons/icons';
 import type { SimpleStory } from '~dm-types/SimpleStory';
 import type { StorySearchResults } from '~dm-types/StorySearchResults';
-import type { issue_condition } from '~prisma-clients/schemas/dm';
 import { stores } from '~web';
 import { dmSocketInjectionKey } from '~web/src/composables/useDmSocket';
+
+import type { issue_condition } from '../../../../packages/prisma-schemas/schemas/dm';
 
 import FullIssue from '~/components/FullIssue.vue';
 import { app } from '~/stores/app';

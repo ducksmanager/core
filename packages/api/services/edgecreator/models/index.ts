@@ -1,8 +1,8 @@
 import type { Socket } from "socket.io";
 
 import type { ModelSteps } from "~dm-types/ModelSteps";
-import { prismaClient as prismaDm } from "~prisma-clients/schemas/dm/client";
-import { prismaClient as prismaEdgeCreator } from "~prisma-clients/schemas/edgecreator/client";
+import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
+import { prismaClient as prismaEdgeCreator } from "~prisma-schemas/schemas/edgecreator/client";
 
 import type Events from "../types";
 

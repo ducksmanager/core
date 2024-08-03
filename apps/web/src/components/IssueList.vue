@@ -326,8 +326,7 @@
 </template>
 
 <script setup lang="ts">
-import type { issue } from "~prisma-clients/schemas/dm";
-
+import type { issue } from "../../../../packages/prisma-schemas/schemas/dm";
 import ContextMenuOnSaleByOthers from "./ContextMenuOnSaleByOthers.vue";
 import ContextMenuOwnCollection from "./ContextMenuOwnCollection.vue";
 

@@ -250,7 +250,7 @@
 <script setup lang="ts">
 import type { IssueWithPublicationcodeOptionalId } from "~/stores/collection";
 import type { CollectionUpdateMultipleIssues } from "~dm-types/CollectionUpdate";
-import type { issue_condition } from "~prisma-clients/schemas/dm/extended";
+import type { issue_condition } from "~prisma-schemas/schemas/dm/extended";
 
 const { conditions } = useCondition();
 

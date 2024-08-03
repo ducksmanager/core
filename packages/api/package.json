@@ -6,7 +6,7 @@
   "version": "1.0.0",
   "scripts": {
     "build": "bun build --target node --sourcemap index.ts --outfile bundle.mjs",
-    "dev": "concurrently -n api,docker-compose,db \"pnpm -F ~api nodemon-watch\" \"docker compose -f docker-compose-dev.yml up pastec mailcatcher\" \"pnpm -F ~prisma-clients dev\"",
+    "dev": "concurrently -n api,docker-compose,db \"pnpm -F ~api nodemon-watch\" \"docker compose -f docker-compose-dev.yml up pastec mailcatcher\" \"pnpm -F ~prisma-schemas dev\"",
     "nodemon-watch": "concurrently -n nodemon,tsc \"bun --inspect run --hot index.ts\" \"tsc --noEmit --watch\"",
     "lint": "eslint --fix .",
     "wait": "wait-on tcp:3000"
@@ -26,7 +26,7 @@
     "nodemailer": "^6.9.14",
     "socket.io": "^4.7.5",
     "~dm-types": "workspace:*",
-    "~prisma-clients": "workspace:*",
+    "~prisma-schemas": "workspace:*",
     "~socket.io-services": "workspace:*"
   },
   "devDependencies": {

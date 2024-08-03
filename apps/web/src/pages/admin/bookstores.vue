@@ -27,7 +27,7 @@ meta:
 
 <script setup lang="ts">
 import type { SimpleBookstore } from "~dm-types/SimpleBookstore";
-import type { bookstoreComment } from "~prisma-clients/schemas/dm";
+import type { bookstoreComment } from "~prisma-schemas/schemas/dm";
 
 let bookstores = $shallowRef<SimpleBookstore[] | null>(null);
 

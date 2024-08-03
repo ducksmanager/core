@@ -24,7 +24,7 @@
     "dotenv": "^16.4.5",
     "playwright-firefox": "^1.45.2",
     "yargs": "^17.7.2",
-    "~prisma-clients": "workspace:*"
+    "~prisma-schemas": "workspace:*"
   },
   "devDependencies": {
     "@types/node": "^18.19.41",

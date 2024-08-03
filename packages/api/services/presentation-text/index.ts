@@ -2,7 +2,7 @@ import type { Namespace, Server } from "socket.io";
 
 import PresentationSentenceApproved from "~emails/presentation-sentence-approved";
 import PresentationSentenceRefused from "~emails/presentation-sentence-refused";
-import { prismaClient as prismaDm } from "~prisma-clients/schemas/dm/client";
+import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
 
 import type Events from "./types";
 import { namespaceEndpoint } from "./types";

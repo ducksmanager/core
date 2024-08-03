@@ -30,8 +30,8 @@
       "~dm-types/*": [
         "../../../packages/types/*"
       ],
-      "~prisma-clients/*": [
-        "../../../packages/prisma-clients/*"
+      "~prisma-schemas/*": [
+        "../../../packages/prisma-schemas/*"
       ],
       "~socket.io-services/*": [
         "../../../packages/socket.io-services/*"

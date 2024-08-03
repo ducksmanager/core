@@ -3,7 +3,11 @@
     "baseUrl": ".",
     "module": "ESNext",
     "target": "es2020",
-    "lib": ["dom", "dom.iterable", "ESNext"],
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "ESNext"
+    ],
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
@@ -14,14 +18,30 @@
     "forceConsistentCasingInFileNames": true,
     "preserveWatchOutput": true,
     "paths": {
-      "~/*": ["src/*"],
-      "~dm-services/*": ["../../packages/api/services/*"],
-      "~web/*": ["../web/*"],
-      "~edgecreator-services/*": ["api/services/*"],
-      "~dm-types/*": ["../../packages/types/*"],
-      "~prisma-clients/*": ["../../packages/prisma-clients/*"],
-      "~socket.io-client-services/*": ["../../packages/socket.io-client-services/*"],
-      "~socket.io-services/*": ["../../packages/socket.io-services/*"],
+      "~/*": [
+        "src/*"
+      ],
+      "~dm-services/*": [
+        "../../packages/api/services/*"
+      ],
+      "~web/*": [
+        "../web/*"
+      ],
+      "~edgecreator-services/*": [
+        "api/services/*"
+      ],
+      "~dm-types/*": [
+        "../../packages/types/*"
+      ],
+      "~prisma-schemas/*": [
+        "../../packages/prisma-schemas/*"
+      ],
+      "~socket.io-client-services/*": [
+        "../../packages/socket.io-client-services/*"
+      ],
+      "~socket.io-services/*": [
+        "../../packages/socket.io-services/*"
+      ],
       "~types/*": [
         "types/*"
       ],
@@ -41,5 +61,8 @@
     "src/**/*.vue",
     "auto-imports.d.ts"
   ],
-  "exclude": ["dist", "node_modules"]
+  "exclude": [
+    "dist",
+    "node_modules"
+  ]
 }

@@ -1,9 +1,9 @@
 import "dotenv/config";
 
 import type { inducks_issue, inducks_issuequotation,
-} from "~prisma-clients/schemas/coa";
+} from "~prisma-schemas/schemas/coa";
 import {  prismaClient as prismaCoa,
-} from "~prisma-clients/schemas/coa/client";
+} from "~prisma-schemas/schemas/coa/client";
 
 const cachedCoaIssues: Record<string, Pick<inducks_issue, 'issuecode'|'issuenumber'>[]> = {};
 

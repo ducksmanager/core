@@ -9,7 +9,7 @@ updates:
     schedule:
       interval: "daily"
   - package-ecosystem: "npm"
-    directory: "/packages/prisma-clients"
+    directory: "/packages/prisma-schemas"
     schedule:
       interval: "daily"
   - package-ecosystem: "npm"

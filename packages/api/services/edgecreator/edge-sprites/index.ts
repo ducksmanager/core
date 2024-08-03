@@ -1,9 +1,9 @@
 import { v2 as cloudinaryV2 } from "cloudinary";
 import type { Socket } from "socket.io";
 
-import { prismaClient as prismaCoa } from "~prisma-clients/schemas/coa/client";
-import type { edge } from "~prisma-clients/schemas/dm";
-import { prismaClient as prismaDm } from "~prisma-clients/schemas/dm/client";
+import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa/client";
+import type { edge } from "~prisma-schemas/schemas/dm";
+import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
 
 import type Events from "../types";
 const SPRITE_SIZES = [10, 20, 50, 100, "full"];

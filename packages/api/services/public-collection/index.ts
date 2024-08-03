@@ -1,7 +1,7 @@
 import type { Namespace, Server } from "socket.io";
 
-import type { user } from "~prisma-clients/schemas/dm";
-import { prismaClient as prismaDm } from "~prisma-clients/schemas/dm/client";
+import type { user } from "~prisma-schemas/schemas/dm";
+import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
 
 import type Events from "./types";
 import { namespaceEndpoint } from "./types";

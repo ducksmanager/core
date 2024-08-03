@@ -1,7 +1,7 @@
 import type { Socket } from "socket.io";
 
 import type { EditSubscription } from "~dm-types/EditSubscription";
-import { prismaClient as prismaDm } from "~prisma-clients/schemas/dm/client";
+import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
 
 import type Events from "../types";
 export default (socket: Socket<Events>) => {

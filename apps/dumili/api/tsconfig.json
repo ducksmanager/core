@@ -3,7 +3,9 @@
     "baseUrl": ".",
     "module": "ES6",
     "target": "esnext",
-    "lib": ["ESNext"],
+    "lib": [
+      "ESNext"
+    ],
     "strict": true,
     "jsx": "preserve",
     "esModuleInterop": true,
@@ -15,15 +17,30 @@
     "allowJs": true,
     "forceConsistentCasingInFileNames": true,
     "outDir": "./dist",
-    "preserveWatchOutput": true, 
+    "preserveWatchOutput": true,
     "paths": {
-      "~/*": ["*"],
-      "~dm-types/*": ["../../../packages/types/*"],
-      "~dumili-types/*": ["../types/*"],
-      "~dm-services/*": ["../../../packages/api/services/*"],
-      "~prisma-clients/*": ["../../../packages/prisma-clients/*"],
-      "~prisma/*": ["prisma/*"]
+      "~/*": [
+        "*"
+      ],
+      "~dm-types/*": [
+        "../../../packages/types/*"
+      ],
+      "~dumili-types/*": [
+        "../types/*"
+      ],
+      "~dm-services/*": [
+        "../../../packages/api/services/*"
+      ],
+      "~prisma-schemas/*": [
+        "../../../packages/prisma-schemas/*"
+      ],
+      "~prisma/*": [
+        "prisma/*"
+      ]
     }
   },
-  "include": ["index.ts", "services/**/*.ts"]
+  "include": [
+    "index.ts",
+    "services/**/*.ts"
+  ]
 }

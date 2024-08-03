@@ -3,9 +3,9 @@ import https from "https";
 import type { Namespace, Server } from "socket.io";
 
 import type { SimilarImagesResult } from "~dm-types/CoverSearchResults";
-import { prismaClient as prismaCoa } from "~prisma-clients/schemas/coa/client";
-import { prismaClient as prismaCoverInfo } from "~prisma-clients/schemas/cover_info/client";
-import { prismaClient as prismaDm } from "~prisma-clients/schemas/dm/client";
+import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa/client";
+import { prismaClient as prismaCoverInfo } from "~prisma-schemas/schemas/cover_info/client";
+import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
 
 import { getCoverUrls } from "../coa/issue-details";
 import { getQuotationsByissuesByIssuecodes } from "../coa/quotations";

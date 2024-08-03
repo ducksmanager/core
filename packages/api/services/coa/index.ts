@@ -1,6 +1,6 @@
 import type { Namespace, Server } from "socket.io";
 
-import { prismaClient as prismaCoa } from "~prisma-clients/schemas/coa/client";
+import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa/client";
 
 import authors from "./authors";
 import countries from "./countries";

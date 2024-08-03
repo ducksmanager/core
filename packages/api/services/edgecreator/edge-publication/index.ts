@@ -1,13 +1,13 @@
 import type { Socket } from "socket.io";
 
-import { prismaClient as prismaCoa } from "~prisma-clients/schemas/coa/client";
+import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa/client";
 import type {
   bookstoreComment,
   edge,
   user,
   userContribution,
-} from "~prisma-clients/schemas/dm";
-import { prismaClient as prismaDm } from "~prisma-clients/schemas/dm/client";
+} from "~prisma-schemas/schemas/dm";
+import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
 
 import type Events from "../types";
 export default (socket: Socket<Events>) => {

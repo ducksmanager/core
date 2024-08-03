@@ -3,7 +3,7 @@ import { readdirSync, readFileSync } from "fs";
 import path from "path";
 import type { Namespace, Server } from "socket.io";
 
-import { prismaClient as prismaCoa } from "~prisma-clients/schemas/coa/client";
+import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa/client";
 
 import type Events from "./types";
 import type { EdgeModelDetails } from "./types";

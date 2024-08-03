@@ -1,6 +1,6 @@
 import type { Socket } from "socket.io";
 
-import { prismaClient as prismaCoa } from "~prisma-clients/schemas/coa/client";
+import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa/client";
 
 import type Events from "../types";
 export default (socket: Socket<Events>) => {

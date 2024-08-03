@@ -40,8 +40,8 @@
       "~dm-services/*": [
         "../../packages/api/services/*"
       ],
-      "~prisma-clients/*": [
-        "../../packages/prisma-clients/*"
+      "~prisma-schemas/*": [
+        "../../packages/prisma-schemas/*"
       ],
       "~socket.io-client-services/*": [
         "../../packages/socket.io-client-services/*"

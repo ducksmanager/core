@@ -45,7 +45,7 @@
     "xmldom": "^0.6.0",
     "~edgecreator-api": "workspace:*",
     "~edges": "workspace:*",
-    "~prisma-clients": "workspace:*",
+    "~prisma-schemas": "workspace:*",
     "~socket.io-client-services": "workspace:*",
     "~web": "workspace:*"
   },

@@ -60,7 +60,7 @@ export default defineConfig({
       '~types': path.resolve(__dirname, 'types'),
       '~dm-types': path.resolve(__dirname, '../../packages/types'),
       '~dm-services': path.resolve(__dirname, '../../packages/api/services'),
-      '~prisma-clients': path.resolve(__dirname, '../../packages/prisma-clients'),
+      '~prisma-schemas': path.resolve(__dirname, '../../packages/prisma-schemas'),
       '~web': path.resolve(__dirname, '../web'),
       '~socket.io-services': path.resolve(__dirname, '../../packages/socket.io-services'),
       '~socket.io-client-services': path.resolve(__dirname, '../../packages/socket.io-client-services'),

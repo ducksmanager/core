@@ -9,7 +9,7 @@ RUN corepack enable
 
 WORKDIR /app
 COPY package.json pnpm-lock.yaml ./
-COPY packages/prisma-clients ./packages/prisma-clients
+COPY packages/prisma-schemas ./packages/prisma-schemas
 COPY apps/duck-estimator ./apps/duck-estimator
 
 RUN --mount=type=cache,id=pnpm-store,target=/app/.pnpm-store \
@@ -31,8 +31,8 @@ WORKDIR /app
 COPY package.json ./
 COPY pnpm-lock.yaml ./
 COPY pnpm-workspace.yaml ./
-COPY --from=build /app/packages/prisma-clients ./packages/prisma-clients
-COPY --from=build /app/packages/prisma-clients/dist/ ./packages/prisma-clients
+COPY --from=build /app/packages/prisma-schemas ./packages/prisma-schemas
+COPY --from=build /app/packages/prisma-schemas/dist/ ./packages/prisma-schemas
 
 WORKDIR /app/apps/duck-estimator
 COPY apps/duck-estimator/package.json ./

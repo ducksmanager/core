@@ -8,7 +8,7 @@ import type { EdgeWithStringCreationDate } from "~dm-types/EdgeWithStringCreatio
 import type { EditSubscription } from "~dm-types/EditSubscription";
 import type { TransactionResults } from "~dm-types/TransactionResults";
 import type { UserForAccountForm } from "~dm-types/UserForAccountForm";
-import type { inducks_issuequotation } from "~prisma-clients/schemas/coa";
+import type { inducks_issuequotation } from "~prisma-schemas/schemas/coa";
 import type {
   authorUser,
   issue,
@@ -19,7 +19,7 @@ import type {
   user,
   userOptionType,
   userPermission,
-} from "~prisma-clients/schemas/dm";
+} from "~prisma-schemas/schemas/dm";
 import type { Errorable } from "~socket.io-services/types";
 
 export const namespaceEndpoint = "/collection";

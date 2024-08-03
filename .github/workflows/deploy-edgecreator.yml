@@ -39,7 +39,7 @@ jobs:
           source: /home/bperel/workspace/EdgeCreator2/api/.env.prod.local
           target: apps/edgecreator/api/.env
 
-      - name: Download prisma-clients .env file
+      - name: Download prisma-schemas .env file
         uses: nicklasfrahm/scp-action@main
         with:
           direction: download
@@ -48,7 +48,7 @@ jobs:
           username: ${{ secrets.PRODUCTION_SSH_USER }}
           key: ${{ secrets.PRODUCTION_SSH_KEY }}
           source: /home/bperel/workspace/DucksManager2/packages/prisma-clients/.env.prod.local
-          target: packages/prisma-clients/.env
+          target: packages/prisma-schemas/.env
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3

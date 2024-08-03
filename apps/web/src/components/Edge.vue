@@ -41,8 +41,8 @@
 </template>
 
 <script setup lang="ts">
-import type { inducks_issue } from "~prisma-clients/schemas/coa";
-import type { issue_condition } from "~prisma-clients/schemas/dm";
+import type { inducks_issue } from "~prisma-schemas/schemas/coa";
+import type { issue_condition } from "~prisma-schemas/schemas/dm";
 
 const SPRITES_ROOT = "https://res.cloudinary.com/dl7hskxab/image/sprite/";
 const {

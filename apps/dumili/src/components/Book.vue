@@ -92,7 +92,7 @@
                             .map(([x, y]) =>
                               (['width', 'height'] as const)
                                 .map(
-                                  (dimension, idx) =>
+                                  (dimension) =>
                                     `${
                                       [x, y][idx] /
                                       (shownPage.aiKumikoResultPanels[0][

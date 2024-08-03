@@ -39,7 +39,7 @@
 </template>
 
 <script setup lang="ts">
-import type { issue } from "~prisma-clients/schemas/dm";
+import type { issue } from "~prisma-schemas/schemas/dm";
 
 const { publicationNames } = storeToRefs(coa());
 const { purchasesById, issues: allIssues } = storeToRefs(collection());

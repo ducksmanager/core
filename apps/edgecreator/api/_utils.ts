@@ -1,4 +1,4 @@
-import { inducks_issue } from "~prisma-clients/schemas/coa";
+import { inducks_issue } from "~prisma-schemas/schemas/coa";
 
 export const getSvgPath = async (isExport: boolean, issuecode: string) => {
   const issue = await inducks_issue.findFirstOrThrow({

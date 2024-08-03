@@ -1,8 +1,8 @@
 import type { Namespace, Server } from "socket.io";
 
-import { prismaClient as prismaDm } from "~prisma-clients/schemas/dm/client";
-import type { edgeModel } from "~prisma-clients/schemas/edgecreator";
-import { prismaClient as prismaEdgeCreator } from "~prisma-clients/schemas/edgecreator/client";
+import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
+import type { edgeModel } from "~prisma-schemas/schemas/edgecreator";
+import { prismaClient as prismaEdgeCreator } from "~prisma-schemas/schemas/edgecreator/client";
 
 import { augmentIssueArrayWithInducksData } from "../coa";
 import type Events from "./types";

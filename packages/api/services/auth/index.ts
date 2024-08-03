@@ -3,7 +3,7 @@ import jwt from "jsonwebtoken";
 import type { Namespace, Server } from "socket.io";
 
 import resetPassword from "~/emails/reset-password";
-import { prismaClient } from "~prisma-clients/schemas/dm/client";
+import { prismaClient } from "~prisma-schemas/schemas/dm/client";
 
 import type Events from "./types";
 import { namespaceEndpoint } from "./types";

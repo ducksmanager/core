@@ -1,4 +1,4 @@
-import type { issue_condition } from "~prisma-clients/schemas/dm";
+import type { issue_condition } from "~prisma-schemas/schemas/dm";
 
 export type SaleState =
   | boolean

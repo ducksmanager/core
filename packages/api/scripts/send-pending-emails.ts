@@ -8,9 +8,9 @@ import BookstoreApproved from "~/emails/bookstore-approved";
 import EdgesPublishedWithCreator from "~/emails/edges-published-with-creator";
 import EdgesPublishedWithPhotographer from "~/emails/edges-published-with-photographer";
 import type { Email } from "~/emails/email";
-import type { userContribution } from "~prisma-clients/schemas/dm";
-import  { userContributionType } from "~prisma-clients/schemas/dm";
-import { prismaClient as prismaDmClient } from "~prisma-clients/schemas/dm/client";
+import type { userContribution } from "~prisma-schemas/schemas/dm";
+import  { userContributionType } from "~prisma-schemas/schemas/dm";
+import { prismaClient as prismaDmClient } from "~prisma-schemas/schemas/dm/client";
 const medalLevels = {
   [userContributionType.photographe]: { 1: 50, 2: 150, 3: 600 },
   [userContributionType.createur]: { 1: 20, 2: 70, 3: 150 },

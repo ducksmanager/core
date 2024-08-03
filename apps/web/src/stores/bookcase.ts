@@ -1,6 +1,6 @@
 import type BookcaseServices from "~dm-services/bookcase/types";
 import type { BookcaseEdge } from "~dm-types/BookcaseEdge";
-import type { issue_condition } from "~prisma-clients/schemas/dm";
+import type { issue_condition } from "~prisma-schemas/schemas/dm";
 import type { EventReturnType } from "~socket.io-services/types";
 
 import { dmSocketInjectionKey } from "../composables/useDmSocket";

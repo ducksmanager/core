@@ -14,7 +14,7 @@
 <script lang="ts" setup>
 import dayjs from "dayjs";
 
-import type { issue } from "~prisma-clients/schemas/dm";
+import type { issue } from "~prisma-schemas/schemas/dm";
 
 const customIssues: issue[] = [
   {

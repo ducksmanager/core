@@ -26,9 +26,9 @@ importers:
       yargs:
         specifier: ^17.7.2
         version: 17.7.2
-      ~prisma-clients:
+      ~prisma-schemas:
         specifier: workspace:*
-        version: link:../../packages/prisma-clients
+        version: link:../../packages/prisma-schemas
     devDependencies:
       '@types/node':
         specifier: ^18.19.41

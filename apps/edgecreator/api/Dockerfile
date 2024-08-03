@@ -4,7 +4,7 @@ WORKDIR /app
 
 RUN apt update && apt install -y imagemagick && apt clean && rm -rf /var/lib/apt/lists/*
 
-COPY packages/prisma-clients /app/
+COPY packages/prisma-schemas /app/
 COPY apps/edgecreator/api/.env /app/
 COPY apps/edgecreator/api/bundle.mjs /app/
 

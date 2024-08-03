@@ -1,7 +1,7 @@
 import type { ShallowRef } from "vue";
 
 import type { QuotedIssue } from "~dm-types/QuotedIssue";
-import type { issue, issue_condition } from "~prisma-clients/schemas/dm";
+import type { issue, issue_condition } from "~prisma-schemas/schemas/dm";
 
 import { coa } from "../stores/coa";
 

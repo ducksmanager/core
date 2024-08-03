@@ -98,9 +98,9 @@ importers:
       ~edges:
         specifier: workspace:*
         version: link:../edges
-      ~prisma-clients:
+      ~prisma-schemas:
         specifier: workspace:*
-        version: link:../../packages/prisma-clients
+        version: link:../../packages/prisma-schemas
       ~socket.io-client-services:
         specifier: workspace:*
         version: link:../../packages/socket.io-client-services

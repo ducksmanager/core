@@ -122,7 +122,7 @@ const { getImagePath } = images();
 
 let hasData = $ref(false);
 let mostWanted = $shallowRef<WantedEdge[] | null>(null);
-let publishedEdges = $ref<AugmentedIssue<[]>[]>([]);
+let publishedEdges = $ref<AugmentedIssue[]>([]);
 const showEdgesForPublication = $ref<string[]>([]);
 const bookcaseTextures = $ref({
   bookcase: "bois/HONDURAS MAHOGANY",

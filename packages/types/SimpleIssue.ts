@@ -2,7 +2,7 @@ import type {
   inducks_entry,
   inducks_issue,
   inducks_storyversion,
-} from "~prisma-clients/schemas/coa";
+} from "~prisma-schemas/schemas/coa";
 
 type AllNonNullable<T> = {
   [P in keyof T]: NonNullable<T[P]>;

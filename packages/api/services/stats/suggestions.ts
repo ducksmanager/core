@@ -4,11 +4,11 @@ import type { IssueSuggestion } from "~dm-types/IssueSuggestion";
 import { IssueSuggestionList } from "~dm-types/IssueSuggestionList";
 import type { StoryDetail } from "~dm-types/StoryDetail";
 import type { SuggestionList } from "~dm-types/SuggestionList";
-import { prismaClient as prismaCoa } from "~prisma-clients/schemas/coa/client";
-import { userOptionType } from "~prisma-clients/schemas/dm";
-import { prismaClient as prismaDm } from "~prisma-clients/schemas/dm/client";
-import { Prisma as PrismaDmStats } from "~prisma-clients/schemas/dm_stats";
-import { prismaClient as prismaDmStats } from "~prisma-clients/schemas/dm_stats/client";
+import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa/client";
+import { userOptionType } from "~prisma-schemas/schemas/dm";
+import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
+import { Prisma as PrismaDmStats } from "~prisma-schemas/schemas/dm_stats";
+import { prismaClient as prismaDmStats } from "~prisma-schemas/schemas/dm_stats/client";
 
 import { getPublicationTitles } from "../coa/publications";
 

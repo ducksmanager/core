@@ -48,7 +48,7 @@ importers:
         specifier: ^2.0.7
         version: 2.0.7
       pinia:
-        specifier: ^2.2.0
+        specifier: ^2.1.7
         version: 2.2.0(typescript@5.5.4)(vue@3.4.35(typescript@5.5.4))
       timeago.js:
         specifier: ^4.0.2
@@ -57,7 +57,7 @@ importers:
         specifier: ^3.2.0
         version: 3.2.0(vue@3.4.35(typescript@5.5.4))
       vue:
-        specifier: ^3.4.35
+        specifier: ^3.4.33
         version: 3.4.35(typescript@5.5.4)
       vue-chartjs:
         specifier: ^5.3.1
@@ -69,7 +69,7 @@ importers:
         specifier: ^0.9.10
         version: 0.9.10(vue@3.4.35(typescript@5.5.4))
       vue-router:
-        specifier: ^4.4.2
+        specifier: ^4.4.0
         version: 4.4.2(vue@3.4.35(typescript@5.5.4))
       vue-slicksort:
         specifier: ^2.0.5
@@ -77,9 +77,9 @@ importers:
       ~api:
         specifier: workspace:*
         version: link:../../packages/api
-      ~prisma-clients:
+      ~prisma-schemas:
         specifier: workspace:*
-        version: link:../../packages/prisma-clients
+        version: link:../../packages/prisma-schemas
       ~socket.io-client-services:
         specifier: workspace:*
         version: link:../../packages/socket.io-client-services
@@ -109,10 +109,10 @@ importers:
         specifier: ^2.0.3
         version: 2.0.3
       '@vitejs/plugin-vue':
-        specifier: ^5.1.2
+        specifier: ^5.0.5
         version: 5.1.2(vite@5.3.5(@types/node@22.1.0)(sass@1.77.8))(vue@3.4.35(typescript@5.5.4))
       '@vue-macros/reactivity-transform':
-        specifier: ^0.4.8
+        specifier: ^0.4.6
         version: 0.4.8(rollup@4.20.0)(vue@3.4.35(typescript@5.5.4))
       '@vue/test-utils':
         specifier: ^2.4.6
@@ -151,22 +151,22 @@ importers:
         specifier: ^1.77.8
         version: 1.77.8
       typescript:
-        specifier: ^5.5.4
+        specifier: ^5.5.3
         version: 5.5.4
       typescript-eslint:
-        specifier: ^7.18.0
+        specifier: ^7.16.1
         version: 7.18.0(eslint@8.57.0)(typescript@5.5.4)
       unplugin-auto-import:
         specifier: ^0.18.2
         version: 0.18.2(@vueuse/core@10.11.0(vue@3.4.35(typescript@5.5.4)))(rollup@4.20.0)
       unplugin-icons:
-        specifier: ^0.19.1
+        specifier: ^0.19.0
         version: 0.19.1(@vue/compiler-sfc@3.4.35)(vue-template-compiler@2.7.16)
       unplugin-vue-components:
         specifier: ^0.27.3
         version: 0.27.3(@babel/parser@7.25.3)(rollup@4.20.0)(vue@3.4.35(typescript@5.5.4))
       vite:
-        specifier: ^5.3.5
+        specifier: ^5.3.4
         version: 5.3.5(@types/node@22.1.0)(sass@1.77.8)
       vite-plugin-pages:
         specifier: ^0.32.3
@@ -178,7 +178,7 @@ importers:
         specifier: ^1.6.0
         version: 1.6.0(@types/node@22.1.0)(jsdom@20.0.3)(sass@1.77.8)
       vue-tsc:
-        specifier: ^2.0.29
+        specifier: ^2.0.26
         version: 2.0.29(typescript@5.5.4)
       wait-on:
         specifier: ^7.2.0

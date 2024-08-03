@@ -1,7 +1,7 @@
 import type { Namespace, Server } from "socket.io";
 
 import type { BookcaseEdge, BookcaseEdgeSprite } from "~dm-types/BookcaseEdge";
-import { prismaClient as prismaDm } from "~prisma-clients/schemas/dm/client";
+import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
 
 import { RequiredAuthMiddleware } from "../auth/util";
 import options, { authenticated as authenticatedOptions } from "./options";
