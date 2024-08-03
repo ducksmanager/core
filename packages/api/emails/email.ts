@@ -49,7 +49,7 @@ export abstract class Email {
     const options: Mail.Options = {
       from: {
         name: this.getFromName(),
-        address: this.getFrom().replace(/ /g, "__"),
+        address: process.env.SMTP_USERNAME!,
       },
       to: {
         name: this.getToName(),
@@ -96,7 +96,6 @@ export abstract class Email {
   getTemplateDirName = (): string =>
     this.templatePath.match(/(?<=\/)[^/]+$/)![0];
 
-  abstract getFrom(): string;
   abstract getFromName(): string;
   abstract getTo(): string;
   abstract getToName(): string;
