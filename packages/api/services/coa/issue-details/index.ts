@@ -2,15 +2,34 @@ import type { Socket } from "socket.io";
 
 import type { IssueCoverDetails } from "~dm-types/IssueCoverDetails";
 import type { SimpleEntry } from "~dm-types/SimpleEntry";
-import type { SimpleIssueWithPublication } from "~dm-types/SimpleIssueWithPublication";
 import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa/client";
-import type { cover } from "~prisma-schemas/schemas/cover_info";
-import { prismaClient as prismaCoverInfo } from "~prisma-schemas/schemas/cover_info/client";
 import { Prisma } from "~prisma-schemas/schemas/dm";
-import {  prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
+import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
 
-import { getQuotationsByissuesByIssuecodes } from "../quotations";
+import { augmentIssueArrayWithInducksData } from "..";
+import { getQuotationsByIssuecodes } from "../quotations";
 import type Events from "../types";
+
+export const getPopularityByIssuecodes = async (issuecodes: string[]) =>
+  Object.entries(
+    await prismaDm.issue.groupBy({
+      by: ["issuecode", "userId"],
+      where: {
+        issuecode: {
+          in: issuecodes,
+        },
+      },
+      _sum: {
+        id: true,
+      },
+    }),
+  ).reduce<Record<string, { popularity: number }>>(
+    (acc, [issuecode, { _sum }]) => ({
+      ...acc,
+      [issuecode]: { popularity: _sum.id || 0 },
+    }),
+    {},
+  );
 
 export default (socket: Socket<Events>) => {
   socket.on("getIssuesWithTitles", async (publicationcodes, callback) =>
@@ -82,71 +101,37 @@ export default (socket: Socket<Events>) => {
     },
   );
 
-  socket.on("getissuesByIssuecode", async (issuecodes, callback) => {
-    type SimpleCover = Pick<cover, "id" | "url"> & {
-      issuecode: string;
-    };
-    const covers: { [issuecode: string]: SimpleCover } = (
-      await prismaCoverInfo.$queryRaw<
-        Pick<SimpleCover, "id" | "url" | "issuecode">[]
-      >`
-        SELECT id, url, issuecode
-        FROM covers
-        WHERE issuecode IN ${Prisma.join(issuecodes)}
-      `
-    ).groupBy("issuecode");
+  socket.on("getIssuesByIssuecode", async (issuecodes, callback) => {
+    const coversByIssuecode = await getCoverUrls(issuecodes)
+      .then((coverUrls) =>
+        coverUrls.map(({ issuecode, fullUrl }) => ({
+          issuecode,
+          fullUrl,
+        })),
+      )
+      .then(augmentIssueArrayWithInducksData)
+      .then((covers) => covers.groupBy("issuecode"))
 
-    const issues: Parameters<typeof callback>[0] = (
-      await prismaCoverInfo.$queryRaw<SimpleIssueWithPublication[]>`
-      SELECT pub.countrycode, pub.publicationcode, pub.title, issue.issuenumber, issue.issuecode
-      FROM inducks_issue issue
-      INNER JOIN coa.inducks_publication pub USING(publicationcode)
-      WHERE issue.issuecode IN ${Prisma.join(issuecodes)}
-    `
-    )
-      .filter(({ issuecode }) => {
-        if (!covers[issuecode]) {
-          console.error(`No COA data exists for this issue : ${issuecode}`);
-          return false;
-        }
-        return true;
-      })
-      .map((issue) => ({
-        ...issue,
-        coverId: covers[issue.issuecode].id,
-        fullUrl: covers[issue.issuecode].url,
-      }))
-      .groupBy("issuecode");
+    const popularitiesByIssuecode = await getPopularityByIssuecodes(issuecodes);
 
-    const popularities = await prismaDm.$queryRaw<
-      { issuecode: string; userCount: number }[]
-    >`
-      SELECT issuecode, COUNT(DISTINCT ID_Utilisateur) AS userCount
-      FROM numeros
-      WHERE issuecode IN (${Prisma.join(Object.values(issuecodes))})
-      GROUP BY issuecode
-    `;
+    const quotationsByIssuecode = await getQuotationsByIssuecodes(issuecodes);
 
-    for (const { issuecode, userCount } of popularities) {
-      issues[issuecode].popularity = userCount;
-    }
-
-    const quotations = await getQuotationsByissuesByIssuecodes(issuecodes);
-
-    for (const issuecode of Object.keys(quotations)) {
-      issues[issuecode].issueQuotation = quotations[issuecode];
-    }
-
-    callback(issues);
+    callback({
+      covers: Object.values(
+        Object.assign(
+          coversByIssuecode,
+          quotationsByIssuecode,
+          popularitiesByIssuecode,
+        ),
+      ),
+    });
   });
 };
 
 export const getCoverUrls = (issuecodes: string[]) =>
   issuecodes.length
     ? prismaCoa.$queryRaw<IssueCoverDetails[]>`
-SELECT publicationcode,
-       issuenumber,
-       inducks_issue.issuecode,
+SELECT inducks_issue.issuecode,
        inducks_issue.title,
        CONCAT(IF(sitecode = 'thumbnails', IF (url REGEXP '^[0-9]', 'webusers/webusers', IF (url REGEXP '^webusers', 'webusers', '')), sitecode), '/', url) AS fullUrl
 FROM inducks_issue
@@ -180,10 +165,8 @@ const getIssueCoverDetails = (
   issuecodes: string[],
   callback: ({ covers }: { covers: Record<string, IssueCoverDetails> }) => void,
 ) =>
-  issuecodes.length
-    ? getCoverUrls(issuecodes)
-        .then((data) => data.groupBy("issuenumber"))
-        .then((data) => {
-          callback({ covers: data });
-        })
-    : callback({ covers: {} });
+  getCoverUrls(issuecodes)
+    .then((data) => data.groupBy("issuecode"))
+    .then((data) => {
+      callback({ covers: data });
+    });

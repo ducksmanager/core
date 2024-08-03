@@ -1,8 +1,8 @@
 import type { AugmentedIssue } from "~dm-types/AugmentedIssue";
+import type { CoverSearchResults } from "~dm-types/CoverSearchResults";
 import type { IssueCoverDetails } from "~dm-types/IssueCoverDetails";
 import type { SimpleEntry } from "~dm-types/SimpleEntry";
 import type { IssueWithIssuecodeOnly, PartInfo } from "~dm-types/SimpleIssue";
-import type { SimpleIssueWithPublication } from "~dm-types/SimpleIssueWithPublication";
 import type { StorySearchResults } from "~dm-types/StorySearchResults";
 import type {
   inducks_issue,
@@ -64,9 +64,9 @@ export default abstract class {
       >,
     ) => void,
   ) => void;
-  abstract getissuesByIssuecode: (
+  abstract getIssuesByIssuecode: (
     issuecodes: string[],
-    callback: (value: Record<string, SimpleIssueWithPublication>) => void,
+    callback: (value: CoverSearchResults) => void,
   ) => void;
   abstract getIssues: (
     issuecodes: string[],
@@ -109,7 +109,7 @@ export default abstract class {
     callback: (value: Record<string, string>) => void,
   ) => void;
 
-  abstract getQuotationsByissuesByIssuecodes: (
+  abstract getQuotationsByIssuecodes: (
     issueCodes: string[],
     callback: (
       value: Errorable<

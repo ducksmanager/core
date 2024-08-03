@@ -97,15 +97,17 @@ const coverUrl = computed(() => `${import.meta.env.VITE_CLOUDINARY_BASE_URL}${fu
 
 const copies = ref<SingleCopyState[]>([]);
 
+const currentCopyIndex = ref<number | undefined>(undefined);
 watch(
   issuesByIssuecode,
   () => {
     copies.value = issuesByIssuecode.value?.[issuecode.value!] || [];
+    if (copies.value.length) {
+      currentCopyIndex.value = 0;
+    }
   },
   { immediate: true },
 );
-
-const currentCopyIndex = ref<number | undefined>(undefined);
 
 const addCopy = () => {
   copies.value = [

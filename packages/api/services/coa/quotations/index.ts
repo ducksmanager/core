@@ -43,7 +43,7 @@ export const getQuotations = async (
     {},
   );
 
-export const getQuotationsByissuesByIssuecodes = async (
+export const getQuotationsByIssuecodes = async (
   issuecodes: string[],
 ) =>
   getQuotations({
@@ -56,7 +56,7 @@ export const getQuotationsByissuesByIssuecodes = async (
 import type Events from "../types";
 export default (socket: Socket<Events>) => {
   socket.on(
-    "getQuotationsByissuesByIssuecodes",
+    "getQuotationsByIssuecodes",
     async (issuesByIssuecodes, callback) => {
       const codes = issuesByIssuecodes.filter((code) =>
         ISSUE_CODE_REGEX.test(code),
@@ -67,7 +67,7 @@ export default (socket: Socket<Events>) => {
         callback({ error: "Too many requests" });
       } else {
         callback({
-          quotations: await getQuotationsByissuesByIssuecodes(codes),
+          quotations: await getQuotationsByIssuecodes(codes),
         });
       }
     },

@@ -3,12 +3,11 @@ import https from "https";
 import type { Namespace, Server } from "socket.io";
 
 import type { SimilarImagesResult } from "~dm-types/CoverSearchResults";
-import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa/client";
 import { prismaClient as prismaCoverInfo } from "~prisma-schemas/schemas/cover_info/client";
-import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
 
-import { getCoverUrls } from "../coa/issue-details";
-import { getQuotationsByissuesByIssuecodes } from "../coa/quotations";
+import { augmentIssueArrayWithInducksData } from "../coa";
+import { getCoverUrls, getPopularityByIssuecodes } from "../coa/issue-details";
+import { getQuotationsByIssuecodes } from "../coa/quotations";
 import type Events from "./types";
 import { namespaceEndpoint } from "./types";
 
@@ -45,17 +44,17 @@ export default (io: Server) => {
         `Cover ID search: scores=${JSON.stringify(pastecResponse.scores)}`,
       );
 
-      const coverInfos = await getIssuesCodesFromCoverIds(
+      const coversByIssuecode = await getIssuesCodesFromCoverIds(
         pastecResponse.image_ids,
       )
         .then(async (covers) => {
-          const coversIdsAndIssueCodes = covers.groupBy('issuecode', 'id')
-          return getCoverUrls(Object.keys(coversIdsAndIssueCodes)).then(
+          const coverIdByIssuecode = covers.groupBy("issuecode", "id");
+          return getCoverUrls(Object.keys(coverIdByIssuecode)).then(
             (coverUrls) =>
               coverUrls.map(({ issuecode, fullUrl }) => ({
                 issuecode,
                 fullUrl,
-                id: coversIdsAndIssueCodes[issuecode],
+                id: coverIdByIssuecode[issuecode],
               })),
           );
         })
@@ -66,44 +65,26 @@ export default (io: Server) => {
                 pastecResponse.image_ids.indexOf(cover2.id),
             ),
           ),
-        );
-      const foundIssueCodes = [
-        ...new Set(coverInfos.map(({ issuecode }) => issuecode)),
-      ];
+        )
+        .then(augmentIssueArrayWithInducksData)
+        .then((covers) => covers.groupBy("issuecode"));
+
+      const issuecodes = Object.keys(coversByIssuecode);
       console.log(
-        `Cover ID search: matched issue codes ${foundIssueCodes.join(",")}`,
+        `Cover ID search: matched issue codes ${issuecodes.join(",")}`,
       );
 
-      const issues = await getIssuesFromIssueCodes(foundIssueCodes);
-      console.log(`Cover ID search: matched ${coverInfos.length} issues`);
+      const quotationsByIssuecode = await getQuotationsByIssuecodes(issuecodes);
 
-      const issuecodes = issues.map(({ issuecode }) => issuecode)
-
-      const quotationsByissuesByIssuecode = await getQuotationsByissuesByIssuecodes(
-        issuecodes,
-      );
-
-      const popularitiesByissuesByIssuecode = (await prismaDm.issue.findMany({
-        distinct: ['issuecode', 'userId'],
-        where: {
-          issuecode: {
-            in: issuecodes
-          }
-        }
-      })).reduce<Record<string, number>>((acc, {issuecode}) => ({
-        ...acc,
-        [issuecode]: (acc[issuecode] || 0) + 1
-      }), {})
+      const popularitiesByIssuecode = await getPopularityByIssuecodes(issuecodes);
 
       callback({
-        covers: coverInfos.map((cover) =>
-          Object.assign(cover, {
-            ...issues.find(
-              ({ issuecode }) => cover.issuecode === issuecode,
-            )!,
-            ...quotationsByissuesByIssuecode[cover.issuecode],
-            popularity: popularitiesByissuesByIssuecode[cover.issuecode],
-          }),
+        covers: Object.values(
+          Object.assign(
+            coversByIssuecode,
+            quotationsByIssuecode,
+            popularitiesByIssuecode,
+          ),
         ),
       });
     });
@@ -144,27 +125,6 @@ export default (io: Server) => {
   });
 };
 
-const getIssuesFromIssueCodes = async (foundissuesByIssuecodes: string[]) =>
-  prismaCoa.inducks_issue.findMany({
-    select: {
-      issuecode: true,
-      publicationcode: true,
-      issuenumber: true,
-    },
-    where: {
-      publicationcode: {
-        not: null,
-      },
-      issuenumber: {
-        not: null,
-      },
-      issuecode: {
-        in: foundissuesByIssuecodes,
-      },
-    },
-  }) as Promise<
-    { publicationcode: string; issuenumber: string; issuecode: string }[]
-  >;
 
 const getIssuesCodesFromCoverIds = async (coverIds: number[]) =>
   await prismaCoverInfo.cover.findMany({
