@@ -53,7 +53,7 @@
     "@types/mapbox__mapbox-gl-geocoder": "^5.0.0",
     "@types/page-flip": "^2.0.3",
     "@vitejs/plugin-vue": "^5.0.5",
-    "@vue-macros/reactivity-transform": "^0.4.6",
+    "@vue-macros/reactivity-transform": "^1.0.3",
     "@vue/test-utils": "^2.4.6",
     "concurrently": "^8.2.2",
     "ejs-lint": "^2.0.0",
@@ -74,7 +74,7 @@
     "vite": "^5.3.4",
     "vite-plugin-pages": "^0.32.3",
     "vite-plugin-vue-layouts": "^0.11.0",
-    "vitest": "^1.6.0",
+    "vitest": "^2.0.5",
     "vue-tsc": "^2.0.26",
     "wait-on": "^7.2.0"
   },
