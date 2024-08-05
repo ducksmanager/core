@@ -41,7 +41,7 @@
           <ion-item
             v-for="issue of selectedStory.issues"
             @click="
-              currentNavigationItem = issue.issuecode;
+              issuecodes = [issue.issuecode];
               router.push('/collection');
             "
           >
@@ -77,7 +77,7 @@ const { issuesByIssuecode } = storeToRefs(wtdcollection());
 const coaStore = stores.coa();
 const { fetchPublicationNames, fetchIssuecodeDetails } = coaStore;
 const { publicationNames, issuecodeDetails } = storeToRefs(coaStore);
-const { currentNavigationItem } = storeToRefs(app());
+const { issuecodes } = storeToRefs(app());
 const router = useRouter();
 
 type AugmentedStoryResult = SimpleStory & {

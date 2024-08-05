@@ -3,13 +3,13 @@
     <ion-row v-if="!isOfflineMode">
       <ion-col size="12" style="height: 100%"
         ><img v-if="fullUrl" :src="coverUrl" />
-        <ion-chip v-if="extraIssuecodes.length">+&nbsp;{{ extraIssuecodes.length }}</ion-chip></ion-col
+        <ion-chip v-if="issuecodes.length > 1">+&nbsp;{{ issuecodes.length - 1 }}</ion-chip></ion-col
       >
     </ion-row>
     <ion-row
       ><ion-col size="12">
         <ion-segment
-          v-if="!extraIssuecodes.length"
+          v-if="issuecodes.length === 1"
           v-model="currentCopyIndex"
           :style="copies.length ? undefined : { display: 'initial' }"
         >
@@ -39,8 +39,8 @@
           color="danger"
           size="small"
           v-if="currentCopyIndex !== undefined && !isOfflineMode"
-          ><template v-if="extraIssuecodes.length">{{
-            t('Retirer ces {numberOfIssues} numéros de la collection', { numberOfIssues: extraIssuecodes.length + 1 })
+          ><template v-if="issuecodes.length > 1">{{
+            t('Retirer ces {numberOfIssues} numéros de la collection', { numberOfIssues: issuecodes.length })
           }}</template>
           <template v-else>{{ t('Retirer de la collection') }}</template></ion-button
         >
@@ -52,7 +52,7 @@
       :confirm-md="checkmarkSharp"
       :cancel-ios="closeOutline"
       :cancel-md="closeSharp"
-      @cancel="currentNavigationItem = publicationcode!"
+      @cancel="publicationcode = issuecodeDetails?.[issuecodes[0]].publicationcode"
       confirm-color="success"
       @confirm="submitIssueCopies"
     />
@@ -71,21 +71,21 @@ import { wtdcollection } from '~/stores/wtdcollection';
 
 const { updateCollectionSingleIssue, updateCollectionMultipleIssues } = wtdcollection();
 const { issuesByIssuecode } = storeToRefs(wtdcollection());
+const { publicationcode } = storeToRefs(app());
 const { fetchCoverUrlsByIssuecodes } = coa();
-const { isOfflineMode, currentNavigationItem, isCoaView } = storeToRefs(app());
+const { issuecodeDetails } = storeToRefs(coa());
+const { isOfflineMode, isCoaView } = storeToRefs(app());
 
 const fullUrl = ref<string>();
 
-const publicationcode = computed(() => app().publicationcode!);
-const issuecode = computed(() => app().issuecode!);
-const extraIssuecodes = computed(() => app().extraIssuecodes!);
+const issuecodes = computed(() => app().issuecodes!);
 
 watch(
-  issuecode,
+  issuecodes,
   async (newValue) => {
     if (newValue) {
-      const covers = await fetchCoverUrlsByIssuecodes([newValue]);
-      fullUrl.value = covers.covers![newValue]?.fullUrl;
+      const covers = await fetchCoverUrlsByIssuecodes(newValue);
+      fullUrl.value = covers.covers![newValue[0]]?.fullUrl;
     }
   },
   { immediate: true },
@@ -101,7 +101,7 @@ const currentCopyIndex = ref<number | undefined>(undefined);
 watch(
   issuesByIssuecode,
   () => {
-    copies.value = issuesByIssuecode.value?.[issuecode.value!] || [];
+    copies.value = issuesByIssuecode.value?.[issuecodes.value![0]] || [];
     if (copies.value.length) {
       currentCopyIndex.value = 0;
     }
@@ -123,18 +123,18 @@ const addCopy = () => {
 };
 
 const submitIssueCopies = async () => {
-  if (extraIssuecodes.value.length) {
+  if (issuecodes.value.length > 1) {
     await updateCollectionMultipleIssues({
-      issuecodes: [issuecode.value!, ...extraIssuecodes.value],
+      issuecodes: issuecodes.value,
       ...copies.value[0],
     });
   } else {
     await updateCollectionSingleIssue({
-      issuecode: issuecode.value!,
+      issuecode: issuecodes.value[0],
       copies: copies.value,
     });
   }
-  currentNavigationItem.value = publicationcode.value!;
+  publicationcode.value = issuecodeDetails.value[issuecodes.value[0]].publicationcode;
   isCoaView.value = false;
 };
 </script>

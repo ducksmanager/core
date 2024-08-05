@@ -55,13 +55,14 @@ import PublicationList from '~/views/PublicationList.vue';
 const { t } = useI18n();
 
 const { total, ownedCountries, ownedPublications } = storeToRefs(wtdcollection());
-const { filterText, isCoaView, isCameraPreviewShown, countrycode, publicationcode, issuecode, currentNavigationItem } =
-  storeToRefs(app());
+const { filterText, isCoaView, isCameraPreviewShown, countrycode, publicationcode, issuecodes } = storeToRefs(app());
+
+const { issuecodeDetails } = storeToRefs(coa());
 
 const hasItems = ref<boolean | undefined>();
 
 const componentName = computed(() =>
-  issuecode.value !== undefined
+  issuecodes.value !== undefined
     ? OwnedIssueCopies
     : publicationcode.value
       ? IssueList
@@ -76,12 +77,19 @@ watch(componentName, () => {
 
 const backToCollection = () => {
   isCoaView.value = false;
-  if (issuecode.value !== undefined) {
-    currentNavigationItem.value = ownedPublications.value?.includes(publicationcode.value!)
-      ? publicationcode.value!
-      : ownedCountries.value?.includes(countrycode.value!)
-        ? countrycode.value!
-        : '';
+  if (issuecodes.value) {
+    const issue = issuecodeDetails.value?.[issuecodes.value[0]];
+    issuecodes.value = undefined;
+    if (ownedPublications.value?.includes(publicationcode.value!)) {
+      publicationcode.value = issue.publicationcode;
+    } else {
+      publicationcode.value = undefined;
+      if (ownedCountries.value?.includes(countrycode.value!)) {
+        countrycode.value = issue.publicationcode.split('/')[0];
+      } else {
+        countrycode.value = undefined;
+      }
+    }
   }
 };
 </script>

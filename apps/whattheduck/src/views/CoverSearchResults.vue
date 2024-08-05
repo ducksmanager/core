@@ -73,7 +73,7 @@ import type CoverIdServices from '~dm-services/cover-id/types';
 
 const { t } = useI18n();
 const { publicationNames } = storeToRefs(webStores.coa());
-const { currentNavigationItem } = storeToRefs(app());
+const { issuecodes } = storeToRefs(app());
 
 const { IssueQuotation } = webComponents;
 
@@ -123,7 +123,7 @@ watch(
 );
 
 const onMainSlideClick = async ({ index }: { index: number }) => {
-  currentNavigationItem.value = covers.value[index]!.issuecode;
+  issuecodes.value = [covers.value[index]!.issuecode];
   await router.push('/collection');
 };
 </script>

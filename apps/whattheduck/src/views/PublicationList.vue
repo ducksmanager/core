@@ -35,7 +35,7 @@ import { wtdcollection } from '~/stores/wtdcollection';
 const { coaIssueCountsByPublicationcode, totalPerPublication, ownedPublications } = storeToRefs(wtdcollection());
 const { fetchPublicationNamesFromCountry } = stores.coa();
 const { publicationNames } = storeToRefs(stores.coa());
-const { isCoaView, currentNavigationItem } = storeToRefs(app());
+const { countrycode, isCoaView, currentNavigationItem } = storeToRefs(app());
 
 const ownershipPercentages = computed(
   () =>
@@ -81,7 +81,7 @@ watch(
   [isCoaView, currentNavigationItem],
   async () => {
     if (isCoaView.value) {
-      await fetchPublicationNamesFromCountry(currentNavigationItem.value!);
+      await fetchPublicationNamesFromCountry(countrycode.value!);
     }
   },
   { immediate: true },

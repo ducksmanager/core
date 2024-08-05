@@ -42,19 +42,19 @@
           </template>
         </Row>
       </RecycleScroller>
-      <div id="edit-issues-buttons" v-if="selectedIssuenumbers">
+      <div id="edit-issues-buttons" v-if="selectedIssuecodes">
         <EditIssuesConfirmCancelButtons
           :confirm-ios="pencilOutline"
           :confirm-md="pencilSharp"
           :cancel-ios="closeOutline"
           :cancel-md="closeSharp"
-          @cancel="selectedIssuenumbers = null"
-          @confirm="updateNavigationToSelectedIssuenumbers"
+          @cancel="selectedIssuecodes = null"
+          @confirm="updateNavigationToSelectedIssuecodes"
         /></div
     ></template>
     <slot v-else name="default" />
     <EditIssuesButton
-      v-if="!selectedIssuenumbers && !isCameraPreviewShown"
+      v-if="!selectedIssuecodes && !isCameraPreviewShown"
       @show-camera-preview="isCameraPreviewShown = true"
     />
 
@@ -123,8 +123,7 @@ const {
 
 const cameraPreviewElementId = 'camera-preview';
 const { takePhoto } = useCoverSearch(useRouter(), coverIdServices);
-const { isCameraPreviewShown, filterText, selectedIssuenumbers, currentNavigationItem, publicationcode } =
-  storeToRefs(app());
+const { isCameraPreviewShown, filterText, selectedIssuecodes, issuecodes } = storeToRefs(app());
 
 watch(isCameraPreviewShown, async () => {
   if (isCameraPreviewShown.value) {
@@ -179,9 +178,9 @@ const onScroll = (e: CustomEvent<ScrollDetail>) => {
 
 const { t } = useI18n();
 
-const updateNavigationToSelectedIssuenumbers = () => {
-  if (selectedIssuenumbers.value!.length) {
-    currentNavigationItem.value = `${publicationcode.value} ${selectedIssuenumbers.value!.join(',')}`;
+const updateNavigationToSelectedIssuecodes = () => {
+  if (selectedIssuecodes.value!.length) {
+    issuecodes.value = selectedIssuecodes.value!;
   }
 };
 

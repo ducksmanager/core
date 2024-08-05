@@ -34,7 +34,30 @@ export const app = defineStore('app', () => {
   const filterText = ref('');
   const isCameraPreviewShown = ref(false);
 
-  const selectedIssuenumbers = ref<string[] | null>(null);
+  const parts = route.hash
+    ? (route.hash.replace('#', '').replaceAll('_', ' ').split('--') as [
+        'countrycode' | 'publicationcode' | 'issuecodes',
+        string,
+      ])
+    : null;
+
+  const countrycode = ref<string | undefined>(undefined);
+  const publicationcode = ref<string | undefined>(undefined);
+  const issuecodes = ref<string[] | undefined>(undefined);
+
+  switch (parts?.[0]) {
+    case 'countrycode':
+      countrycode.value = parts[1];
+      break;
+    case 'publicationcode':
+      publicationcode.value = parts[1];
+      break;
+    case 'issuecodes':
+      issuecodes.value = parts[1].split(',');
+      break;
+  }
+
+  const selectedIssuecodes = ref<string[] | null>(null);
 
   const issueViewModes: Option[] = [
     { id: 'list', label: 'List', icon: { ios: '/icons/list.svg', md: '/icons/list.svg' } },
@@ -134,7 +157,7 @@ export const app = defineStore('app', () => {
   });
 
   watch(currentNavigationItem, async (navigationItem: NavigationItem) => {
-    selectedIssuenumbers.value = null;
+    selectedIssuecodes.value = null;
     const codeWithoutSpaces = navigationItem ? `${navigationItem.type}--${navigationItem.code.replace(/ /g, '_')}` : '';
     if (route.name === 'Collection') {
       window.location.hash = codeWithoutSpaces;
@@ -149,28 +172,12 @@ export const app = defineStore('app', () => {
     }
   });
 
-  const countrycode = computed(
-    () => (currentNavigationItem.value?.type === 'countrycode' && currentNavigationItem.value.code) || null,
-  );
-  const publicationcode = computed(
-    () => (currentNavigationItem.value?.type === 'publicationcode' && currentNavigationItem.value.code) || null,
-  );
-  const issuecode = computed(
-    () =>
-      (currentNavigationItem.value?.type === 'issuecodes' && currentNavigationItem.value?.code.split('/')[0]) || null,
-  );
-  const extraIssuecodes = computed(
-    () =>
-      (currentNavigationItem.value?.type === 'issuecodes' && currentNavigationItem.value?.code.split('/').slice(1)) ||
-      null,
-  );
-
   const allowMultipleSelection = computed(() => publicationcode.value !== undefined);
 
   return {
     socket,
     filterText,
-    selectedIssuenumbers,
+    selectedIssuecodes,
     allowMultipleSelection,
     isPersistedDataLoaded,
     isCameraPreviewShown,
@@ -179,8 +186,7 @@ export const app = defineStore('app', () => {
     currentNavigationItem,
     countrycode,
     publicationcode,
-    issuecode,
-    extraIssuecodes,
+    issuecodes,
     token,
     offlineBannerHeight,
     isOfflineMode,

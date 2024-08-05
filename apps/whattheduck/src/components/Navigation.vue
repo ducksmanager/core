@@ -19,10 +19,10 @@
           :publicationcode="publicationcode"
           :title="publicationNames?.[publicationcode] || publicationcode"
         />
-        <template v-if="partIdx === 4 && issuecode !== undefined"
+        <template v-if="partIdx === 4 && issuecodes !== undefined"
           ><div style="display: flex; align-items: center">
-            <Issue :issuecode="issuecode" /><template v-if="extraIssuecodes!.length"
-              ><ion-chip :outline="true">+&nbsp;{{ extraIssuecodes!.length }}</ion-chip></template
+            <Issue :issuecode="issuecodes[0]" /><template v-if="issuecodes.length > 1"
+              ><ion-chip :outline="true">+&nbsp;{{ issuecodes.length - 1 }}</ion-chip></template
             >
           </div></template
         >
@@ -41,22 +41,22 @@ import Publication from './Publication.vue';
 
 import { app } from '~/stores/app';
 
-const { currentNavigationItem, countrycode, publicationcode, issuecode, extraIssuecodes } = storeToRefs(app());
-const { countryNames, publicationNames } = storeToRefs(stores.coa());
+const { currentNavigationItem, countrycode, publicationcode, issuecodes } = storeToRefs(app());
+const { countryNames, publicationNames, issuecodeDetails } = storeToRefs(stores.coa());
 
 const maxParts = 4;
 
 const shownParts = computed(() => {
-  const parts = [''];
+  let parts: [] | [string] | [string, string] | [string, string, string[]] = [];
 
   if (countrycode.value) {
-    parts.push(countrycode.value);
-  }
-  if (publicationcode.value) {
-    parts.push(publicationcode.value);
-  }
-  if (issuecode.value !== undefined) {
-    parts.push(currentNavigationItem.value!);
+    parts = [countrycode.value];
+  } else if (publicationcode.value) {
+    parts = [publicationcode.value.split('/')[0], publicationcode.value];
+  } else if (issuecodes.value) {
+    const { publicationcode } = issuecodeDetails.value[issuecodes.value[0]];
+    const issuenumbers = issuecodes.value.map((issuecode) => issuecodeDetails.value[issuecode].issuenumber);
+    parts = [publicationcode.split('/')[0], publicationcode, issuenumbers];
   }
   return parts;
 });

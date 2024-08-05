@@ -6,7 +6,7 @@
     @items-filtered="filteredIssuenumbers = $event"
   >
     <template v-if="currentIssueViewMode.id === 'list'" #row-prefix="{ item }">
-      <ion-checkbox v-if="selectedIssuenumbers" :checked="selectedIssuenumbers.includes(item.inducksItem.issuenumber!)"
+      <ion-checkbox v-if="selectedIssuecodes" :checked="selectedIssuecodes.includes(item.inducksItem.issuenumber!)"
         >&nbsp;</ion-checkbox
       >
       <Condition v-if="'condition' in item && item.condition" :value="item.condition" />
@@ -42,7 +42,7 @@
             class="ion-text-center"
             :size="String(colSize)"
             ><ion-img
-              @click="currentNavigationItem = key"
+              @click="issuecodes = [key]"
               :src="`${COVER_ROOT_URL}${item.cover}`"
               :alt="issuecodeDetails[item.issuecode]!.issuenumber"
             ></ion-img></ion-col></ion-row
@@ -61,7 +61,6 @@ import { app } from '~/stores/app';
 import { wtdcollection } from '~/stores/wtdcollection';
 
 const { Bookcase } = webComponents;
-
 const filteredIssuenumbers = ref<string[]>([]);
 
 const COVER_ROOT_URL = import.meta.env.VITE_CLOUDINARY_BASE_URL;
@@ -80,10 +79,11 @@ const colSize = computed(() => {
 });
 
 const { issues, user, purchasesById } = storeToRefs(wtdcollection());
+const { publicationcode, issuecodes } = storeToRefs(app());
 const { issuesWithTitles, issuecodeDetails } = storeToRefs(webStores.coa());
 const { fetchCoverUrls, fetchIssueNumbersWithTitles } = webStores.coa();
 
-const { isCoaView, currentIssueViewMode, currentNavigationItem, selectedIssuenumbers } = storeToRefs(app());
+const { isCoaView, currentIssueViewMode, currentNavigationItem, selectedIssuecodes } = storeToRefs(app());
 
 const { bookcaseOptions, bookcaseUsername } = storeToRefs(bookcase());
 const { loadBookcaseOptions, loadBookcaseOrder } = bookcase();
@@ -95,15 +95,13 @@ defineSlots<{
 
 const getItemTextFn = (item: Item) => issuecodeDetails.value[item.issuecode]!.issuenumber;
 
-const publicationcode = computed(() => currentNavigationItem.value!);
-
 const getIssueDate = (issue: issue) => {
   let date =
     (issue.purchaseId && purchasesById.value?.[issue.purchaseId]?.date) || (issue.creationDate as Date | string);
   return !date ? date : (typeof date === 'string' ? date : date.toISOString()).split('T')?.[0];
 };
 
-const coaIssues = computed(() => issuesWithTitles.value[publicationcode.value]);
+const coaIssues = computed(() => issuesWithTitles.value[publicationcode.value!]);
 const coaIssuecodes = computed(() => coaIssues.value?.map(({ issuecode }) => issuecode));
 const coaIssuecodeDetails = computed<typeof issuecodeDetails.value>(() =>
   Object.entries(issuecodeDetails.value)
@@ -120,7 +118,7 @@ const userIssues = computed(() =>
 );
 
 watch(isCoaView, () => {
-  selectedIssuenumbers.value = [];
+  selectedIssuecodes.value = [];
 });
 
 type Item =
@@ -205,7 +203,7 @@ const sortedItemsForBookcase = computed(() =>
 const sortedItemsForCovers = shallowRef<Awaited<ReturnType<typeof getSortedItemsWithCovers>>>();
 
 const getSortedItemsWithCovers = async () => {
-  const coverUrls = (await fetchCoverUrls(publicationcode.value)).covers;
+  const coverUrls = (await fetchCoverUrls(publicationcode.value!)).covers;
 
   return sortedItems.value.map(({ key, item }) => ({
     key,
@@ -225,7 +223,7 @@ watch([sortedItems, currentIssueViewMode], async () => {
 watch(
   [isCoaView, currentNavigationItem],
   async () => {
-    await fetchIssueNumbersWithTitles([publicationcode.value]);
+    await fetchIssueNumbersWithTitles([publicationcode.value!]);
   },
   { immediate: true },
 );
