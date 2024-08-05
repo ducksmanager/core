@@ -85,11 +85,6 @@ export const coa = defineStore("coa", () => {
     setCoverUrl = (issuecode: string, url: string) => {
       coverUrls.value[issuecode] = url;
     },
-    // addIssueNumbers = (newIssuenumbers: {
-    //   [publicationcode: string]: string[];
-    // }) => {
-    //   Object.assign(issuenumbers.value, newIssuenumbers);
-    // },
     addIssueQuotations = (newIssueQuotations: {
       [publicationcode: string]: InducksIssueQuotationSimple;
     }) => {

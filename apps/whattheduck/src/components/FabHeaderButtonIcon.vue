@@ -14,7 +14,7 @@ interface Icon {
   color?: NonNullable<IconOrUndefined>['color'];
   negate?: NonNullable<IconOrUndefined>['negate'];
 }
-withDefaults(defineProps<Icon & { isIndicator: boolean }>(), {
+withDefaults(defineProps<Icon & { isIndicator?: boolean }>(), {
   isIndicator: false,
 });
 </script>

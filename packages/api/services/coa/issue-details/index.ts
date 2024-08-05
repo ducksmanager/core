@@ -129,19 +129,33 @@ export default (socket: Socket<Events>) => {
 };
 
 export const getCoverUrls = (issuecodes: string[]) =>
-  issuecodes.length
-    ? prismaCoa.$queryRaw<IssueCoverDetails[]>`
-SELECT inducks_issue.issuecode,
-       inducks_issue.title,
-       CONCAT(IF(sitecode = 'thumbnails', IF (url REGEXP '^[0-9]', 'webusers/webusers', IF (url REGEXP '^webusers', 'webusers', '')), sitecode), '/', url) AS fullUrl
-FROM inducks_issue
-INNER JOIN inducks_entry USING (issuecode)
-INNER JOIN inducks_entryurl  USING (entrycode)
-WHERE inducks_issue.issuecode IN (${Prisma.join(issuecodes)})
-  AND SUBSTR(inducks_entry.position, 0, 1) <> 'p'
+  {
+    // const a = ["fi/AATT 21"]
+    console.log(`
+        SELECT inducks_issue.issuecode,
+              inducks_issue.title,
+              CONCAT(IF(sitecode = 'thumbnails', IF (url REGEXP '^[0-9]', 'webusers/webusers', IF (url REGEXP '^webusers', 'webusers', '')), sitecode), '/', url) AS fullUrl
+        FROM inducks_issue
+        INNER JOIN inducks_entry USING (issuecode)
+        INNER JOIN inducks_entryurl  USING (entrycode)
+        WHERE inducks_issue.issuecode IN (${Prisma.join(issuecodes)})
+          AND SUBSTR(inducks_entry.position, 0, 1) <> 'p'
 
-GROUP BY issuecode`
-    : Promise.resolve([]);
+        GROUP BY issuecode`)
+    return issuecodes.length
+      ? prismaCoa.$queryRaw<IssueCoverDetails[]>`
+        SELECT inducks_issue.issuecode,
+              inducks_issue.title,
+              CONCAT(IF(sitecode = 'thumbnails', IF (url REGEXP '^[0-9]', 'webusers/webusers', IF (url REGEXP '^webusers', 'webusers', '')), sitecode), '/', url) AS fullUrl
+        FROM inducks_issue
+        INNER JOIN inducks_entry USING (issuecode)
+        INNER JOIN inducks_entryurl  USING (entrycode)
+        WHERE inducks_issue.issuecode IN (${Prisma.join(issuecodes)})
+          AND SUBSTR(inducks_entry.position, 0, 1) <> 'p'
+
+        GROUP BY issuecode`
+      : Promise.resolve([]);
+  };
 
 const getEntries = async (issuecode: string) =>
   await prismaCoa.$queryRaw<SimpleEntry[]>`
@@ -165,8 +179,15 @@ const getIssueCoverDetails = (
   issuecodes: string[],
   callback: ({ covers }: { covers: Record<string, IssueCoverDetails> }) => void,
 ) =>
-  getCoverUrls(issuecodes)
-    .then((data) => data.groupBy("issuecode"))
-    .then((data) => {
-      callback({ covers: data });
-    });
+  {
+    console.log(issuecodes)
+    return getCoverUrls(issuecodes)
+      .then((data) => {
+
+    console.log(data)
+        return data.groupBy("issuecode");
+      })
+      .then((data) => {
+        callback({ covers: data });
+      });
+  };

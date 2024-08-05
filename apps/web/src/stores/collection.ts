@@ -202,6 +202,14 @@ export const collection = defineStore("collection", () => {
       if (afterUpdate || (!isLoadingCollection.value && !issues.value)) {
         isLoadingCollection.value = true;
         issues.value = await collectionServices.getIssues();
+        Object.assign(
+          coa().issuecodeDetails,
+          issues.value.map(({ issuecode, publicationcode, issuenumber }) => ({
+            issuecode,
+            publicationcode,
+            issuenumber,
+          })),
+        );
         isLoadingCollection.value = false;
       }
 

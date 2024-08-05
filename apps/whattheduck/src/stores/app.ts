@@ -118,38 +118,24 @@ export const app = defineStore('app', () => {
     isPersistedDataLoaded.value = true;
   });
 
-  const currentNavigationItem = ref<string>(route.hash.replace('#', ''));
+  type NavigationItem = null | { type: 'countrycode' | 'publicationcode' | 'issuecodes'; code: string };
 
-  const navigationItemGroups = computed(() => {
-    let groups:
-      | { countrycode?: never; publicationcode?: never; issuecode?: never; extraIssuecodes?: never }
-      | { countrycode: string; publicationcode?: never; issuecode?: never; extraIssuecodes?: never }
-      | { countrycode: string; publicationcode: string; issuecode?: never; extraIssuecodes?: never }
-      | { countrycode: string; publicationcode: string; issuecode: string; extraIssuecodes: string[] } = {};
-    const code = currentNavigationItem.value.replace(/_/g, ' ');
-    if (code) {
-      const countrycodeOrPublicationcode = code.split(' ')[0];
-      const [countrycode, magazinecode] = countrycodeOrPublicationcode.split('/');
-      if (magazinecode) {
-        groups = {
-          countrycode,
-          publicationcode: countrycodeOrPublicationcode,
-        };
-        const [publicationcodeOrIssuecode, ...extraIssuecodes] = code.split(',');
-        if (groups.publicationcode !== publicationcodeOrIssuecode) {
-          groups = { ...groups, issuecode: publicationcodeOrIssuecode, extraIssuecodes };
-        }
-      } else {
-        groups = { countrycode: countrycodeOrPublicationcode };
-      }
+  const currentNavigationItem = computed((): NavigationItem => {
+    const parts = route.hash.replace('#', '').replaceAll('_', ' ').split('--');
+    if (parts.length === 1) {
+      return null;
+    } else {
+      const [type, code] = parts;
+      return {
+        type,
+        code,
+      } as NavigationItem;
     }
-
-    return groups;
   });
 
-  watch(currentNavigationItem, async (code) => {
+  watch(currentNavigationItem, async (navigationItem: NavigationItem) => {
     selectedIssuenumbers.value = null;
-    const codeWithoutSpaces = code.replace(/ /g, '_');
+    const codeWithoutSpaces = navigationItem ? `${navigationItem.type}--${navigationItem.code.replace(/ /g, '_')}` : '';
     if (route.name === 'Collection') {
       window.location.hash = codeWithoutSpaces;
     } else {
@@ -163,10 +149,21 @@ export const app = defineStore('app', () => {
     }
   });
 
-  const countrycode = computed(() => navigationItemGroups.value.countrycode);
-  const publicationcode = computed(() => navigationItemGroups.value.publicationcode);
-  const issuecode = computed(() => navigationItemGroups.value.issuecode);
-  const extraIssuecodes = computed(() => navigationItemGroups.value.extraIssuecodes);
+  const countrycode = computed(
+    () => (currentNavigationItem.value?.type === 'countrycode' && currentNavigationItem.value.code) || null,
+  );
+  const publicationcode = computed(
+    () => (currentNavigationItem.value?.type === 'publicationcode' && currentNavigationItem.value.code) || null,
+  );
+  const issuecode = computed(
+    () =>
+      (currentNavigationItem.value?.type === 'issuecodes' && currentNavigationItem.value?.code.split('/')[0]) || null,
+  );
+  const extraIssuecodes = computed(
+    () =>
+      (currentNavigationItem.value?.type === 'issuecodes' && currentNavigationItem.value?.code.split('/').slice(1)) ||
+      null,
+  );
 
   const allowMultipleSelection = computed(() => publicationcode.value !== undefined);
 
@@ -184,7 +181,6 @@ export const app = defineStore('app', () => {
     publicationcode,
     issuecode,
     extraIssuecodes,
-    navigationItemGroups,
     token,
     offlineBannerHeight,
     isOfflineMode,
