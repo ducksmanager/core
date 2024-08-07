@@ -1,0 +1,13 @@
+{
+    "include": [
+        "apps/dumili/kumiko",
+        "apps/dumili/paddleocr",
+        "packages/duckguessr-ml",
+    ],
+    "exclude": [
+        "**/node_modules",
+        "**/__pycache__",
+        "src/experimental",
+        "src/typestubs"
+    ]
+}

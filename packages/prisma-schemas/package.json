@@ -10,18 +10,20 @@
   "scripts": {
     "prisma-pull-generate": "cd schemas && ls | while read -r schema; do (cd $schema && bunx prisma db pull); done && pnpm prisma-generate",
     "prisma-generate": "cd schemas && ls | while read -r schema; do (cd $schema && bunx prisma generate); done && rm -rf dist",
+    "prisma-resolve": "cd schemas && ls | while read -r schema; do (cd $schema && bunx prisma migrate resolve --applied 0_init); done",
+    "prisma-migrate": "cd schemas && ls | while read -r schema; do (cd $schema && bunx prisma migrate deploy); done",
     "dev": "docker compose -f docker-compose-dev.yml up --force-recreate -d && bash wait-until-db-ready.bash",
     "build": "bun build --target node --minify --sourcemap index.ts --outfile dist/index.mjs",
     "lint": "prettier -w schemas"
   },
   "dependencies": {
-    "@prisma/client": "^5.17.0",
-    "prisma": "^5.17.0"
+    "@prisma/client": "^5.18.0",
+    "prisma": "^5.18.0"
   },
   "devDependencies": {
     "prettier": "^3.3.3",
     "prettier-plugin-prisma": "^5.0.0",
     "ts-node": "^10.9.2",
-    "typescript": "^5.5.3"
+    "typescript": "^5.5.4"
   }
 }
