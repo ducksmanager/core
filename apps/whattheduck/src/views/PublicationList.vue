@@ -3,6 +3,7 @@
     v-if="totalPerPublication && coaIssueCountsByPublicationcode && ownershipPercentages"
     :items="sortedItems"
     :get-item-text-fn="getItemTextFn"
+    item-type="publicationcode"
   >
     <template #fill-bar="{ item }">
       <ion-progress-bar
@@ -35,7 +36,7 @@ import { wtdcollection } from '~/stores/wtdcollection';
 const { coaIssueCountsByPublicationcode, totalPerPublication, ownedPublications } = storeToRefs(wtdcollection());
 const { fetchPublicationNamesFromCountry } = stores.coa();
 const { publicationNames } = storeToRefs(stores.coa());
-const { countrycode, isCoaView, currentNavigationItem } = storeToRefs(app());
+const { countrycode, isCoaView } = storeToRefs(app());
 
 const ownershipPercentages = computed(
   () =>
@@ -50,7 +51,7 @@ const items = computed(() =>
   publicationNames.value
     ? isCoaView.value
       ? Object.entries(publicationNames.value)
-          .filter(([publicationcode]) => publicationcode.startsWith(`${currentNavigationItem.value}/`))
+          .filter(([publicationcode]) => publicationcode.startsWith(`${countrycode.value}/`))
           .map(([publicationcode, publicationname]) => ({
             key: publicationcode,
             item: { publicationcode, publicationname },
@@ -58,8 +59,7 @@ const items = computed(() =>
       : ownedPublications
           .value!.filter(
             (publicationcode) =>
-              publicationcode.indexOf(`${currentNavigationItem.value}/`) === 0 &&
-              publicationNames.value![publicationcode],
+              publicationcode.startsWith(`${countrycode.value}/`) && publicationNames.value![publicationcode],
           )
           .map((publicationcode) => ({
             key: publicationcode,
@@ -78,7 +78,7 @@ const sortedItems = computed(() =>
 );
 
 watch(
-  [isCoaView, currentNavigationItem],
+  [isCoaView, countrycode],
   async () => {
     if (isCoaView.value) {
       await fetchPublicationNamesFromCountry(countrycode.value!);

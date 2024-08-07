@@ -55,20 +55,21 @@ import PublicationList from '~/views/PublicationList.vue';
 const { t } = useI18n();
 
 const { total, ownedCountries, ownedPublications } = storeToRefs(wtdcollection());
-const { filterText, isCoaView, isCameraPreviewShown, countrycode, publicationcode, issuecodes } = storeToRefs(app());
+const { filterText, isCoaView, isCameraPreviewShown, countrycode, publicationcode, issuecodes, currentNavigationItem } =
+  storeToRefs(app());
 
 const { issuecodeDetails } = storeToRefs(coa());
 
 const hasItems = ref<boolean | undefined>();
 
 const componentName = computed(() =>
-  issuecodes.value !== undefined
-    ? OwnedIssueCopies
-    : publicationcode.value
-      ? IssueList
-      : countrycode.value
-        ? PublicationList
-        : CountryList,
+  !currentNavigationItem.value
+    ? CountryList
+    : currentNavigationItem.value.type === 'countrycode'
+      ? PublicationList
+      : currentNavigationItem.value.type === 'publicationcode'
+        ? IssueList
+        : OwnedIssueCopies,
 );
 
 watch(componentName, () => {
@@ -79,15 +80,13 @@ const backToCollection = () => {
   isCoaView.value = false;
   if (issuecodes.value) {
     const issue = issuecodeDetails.value?.[issuecodes.value[0]];
-    issuecodes.value = undefined;
     if (ownedPublications.value?.includes(publicationcode.value!)) {
-      publicationcode.value = issue.publicationcode;
+      currentNavigationItem.value = { type: 'publicationcode', value: issue.publicationcode };
     } else {
-      publicationcode.value = undefined;
       if (ownedCountries.value?.includes(countrycode.value!)) {
-        countrycode.value = issue.publicationcode.split('/')[0];
+        currentNavigationItem.value = { type: 'countrycode', value: countrycode.value! };
       } else {
-        countrycode.value = undefined;
+        currentNavigationItem.value = null;
       }
     }
   }

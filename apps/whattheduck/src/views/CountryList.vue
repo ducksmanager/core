@@ -1,5 +1,10 @@
 <template>
-  <List v-if="ownershipPercentages && sortedItems" :items="sortedItems" :get-item-text-fn="getItemTextFn">
+  <List
+    v-if="ownershipPercentages && sortedItems"
+    :items="sortedItems"
+    :get-item-text-fn="getItemTextFn"
+    item-type="countrycode"
+  >
     <template #fill-bar="{ item: { countrycode } }">
       <ion-progress-bar
         type="determinate"

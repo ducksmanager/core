@@ -19,8 +19,8 @@ import { app } from '~/stores/app';
 
 const props = defineProps<{
   id: string;
+  type: 'countrycode' | 'publicationcode' | 'issuecode';
   class: Record<string, boolean> | '';
-  keyInList?: string;
 }>();
 
 defineSlots<{
@@ -31,14 +31,16 @@ defineSlots<{
   'suffix'(): any;
 }>();
 
-const { isOfflineMode, selectedIssuecodes, allowMultipleSelection, issuecodes } = storeToRefs(app());
+const { isOfflineMode, selectedIssuecodes, currentNavigationItem } = storeToRefs(app());
+
+const allowMultipleSelection = computed(() => props.type === 'issuecode');
 
 const onLongPress = () => {
   if (allowMultipleSelection.value) {
     selectedIssuecodes.value = [];
-    toggleCheckedIssuecode(props.keyInList!);
+    toggleCheckedIssuecode(props.id!);
   } else {
-    issuecodes.value = [props.id];
+    goToItem();
   }
 };
 
@@ -47,12 +49,24 @@ const onLongPressOptions = {
   onMouseUp: (_: number, __: number, isLongPress: boolean) => {
     if (!isLongPress) {
       if (allowMultipleSelection.value && selectedIssuecodes.value !== null) {
-        toggleCheckedIssuecode(props.keyInList!);
+        toggleCheckedIssuecode(props.id!);
       } else {
-        issuecodes.value = [props.id];
+        goToItem();
       }
     }
   },
+};
+
+const goToItem = () => {
+  switch (props.type) {
+    case 'countrycode':
+    case 'publicationcode':
+      currentNavigationItem.value = { type: props.type, value: props.id };
+      break;
+    case 'issuecode':
+      currentNavigationItem.value = { type: 'issuecodes', value: [props.id] };
+      break;
+  }
 };
 
 const toggleElement = <T,>(arr: T[], element: T): T[] =>

@@ -3,6 +3,7 @@
     v-if="coaIssues"
     :items="sortedItems"
     :get-item-text-fn="getItemTextFn"
+    item-type="issuecode"
     @items-filtered="filteredIssuenumbers = $event"
   >
     <template v-if="currentIssueViewMode.id === 'list'" #row-prefix="{ item }">
@@ -79,11 +80,9 @@ const colSize = computed(() => {
 });
 
 const { issues, user, purchasesById } = storeToRefs(wtdcollection());
-const { publicationcode, issuecodes } = storeToRefs(app());
+const { publicationcode, issuecodes, isCoaView, currentIssueViewMode, selectedIssuecodes } = storeToRefs(app());
 const { issuesWithTitles, issuecodeDetails } = storeToRefs(webStores.coa());
 const { fetchCoverUrls, fetchIssueNumbersWithTitles } = webStores.coa();
-
-const { isCoaView, currentIssueViewMode, currentNavigationItem, selectedIssuecodes } = storeToRefs(app());
 
 const { bookcaseOptions, bookcaseUsername } = storeToRefs(bookcase());
 const { loadBookcaseOptions, loadBookcaseOrder } = bookcase();
@@ -131,7 +130,6 @@ const items = computed(() =>
       ? coaIssues.value.reduce<
           {
             key: string;
-            keyInList: string;
             inducksItem: (typeof coaIssuecodeDetails.value)[string];
             item: Item;
           }[]
@@ -144,7 +142,6 @@ const items = computed(() =>
             ...acc,
             ...(userIssuesForThisIssue.length ? userIssuesForThisIssue : [item]).map((itemOrUserItem) => ({
               key: itemOrUserItem.issuecode,
-              keyInList: itemOrUserItem.issuecode!,
               inducksItem: coaIssuecodeDetails.value[itemOrUserItem.issuecode],
               item: itemOrUserItem,
             })),
@@ -152,7 +149,6 @@ const items = computed(() =>
         }, [])
       : (userIssues.value || []).map((issue) => ({
           key: issue.issuecode,
-          keyInList: issue.issuecode,
           inducksItem: coaIssuecodeDetails.value[issue.issuecode],
           item: issue,
         }))
@@ -161,9 +157,8 @@ const items = computed(() =>
 
 const sortedItems = computed(() =>
   items.value
-    .map(({ key, keyInList, item }) => ({
+    .map(({ key, item }) => ({
       key,
-      keyInList,
       item,
       indexInCoaList: coaIssuecodes.value!.indexOf(item.issuecode),
       isOwned: (item as (typeof userIssues.value)[0]).condition !== undefined,
@@ -177,9 +172,8 @@ const sortedItems = computed(() =>
       nextItemIndexInCoaList: allItems[idx + 1]?.indexInCoaList,
       nextItemIndexIsOwned: allItems[idx + 1]?.isOwned,
     }))
-    .map(({ key, keyInList, item, isOwned, indexInCoaList, nextItemIndexIsOwned, nextItemIndexInCoaList }) => ({
+    .map(({ key, item, isOwned, indexInCoaList, nextItemIndexIsOwned, nextItemIndexInCoaList }) => ({
       key,
-      keyInList,
       item,
       isOwned,
       nextItemType:
@@ -221,7 +215,7 @@ watch([sortedItems, currentIssueViewMode], async () => {
 });
 
 watch(
-  [isCoaView, currentNavigationItem],
+  [isCoaView, publicationcode],
   async () => {
     await fetchIssueNumbersWithTitles([publicationcode.value!]);
   },

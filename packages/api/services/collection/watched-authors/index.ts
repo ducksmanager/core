@@ -11,17 +11,17 @@ export default (socket: Socket<Events>) => {
     const authorsUsers = await prismaDm.authorUser.findMany({
       where: { userId: socket.data.user!.id },
     });
-    const authorNames = await prismaCoa.inducks_person.findMany({
+    const authorNames = (await prismaCoa.inducks_person.findMany({
       where: {
         personcode: {
           in: authorsUsers.map((au) => au.personcode),
         }
       }
-    })
+    })).groupBy('personcode')
 
     callback(authorsUsers.map((au) => ({
       ...au,
-      fullname: authorNames.find((an) => an.personcode === au.personcode)!.fullname,
+      fullname: authorNames[au.personcode]!.fullname,
     })))
   });
 

@@ -21,11 +21,11 @@
         :item-size="32"
         key-field="uniqueKey"
         item-class="item-wrapper"
-        v-slot="{ item: { key, keyInList, item, isOwned, nextItemType } }"
+        v-slot="{ item: { key, item, isOwned, nextItemType } }"
       >
         <Row
           :id="key"
-          :key-in-list="keyInList"
+          :type="itemType"
           :class="{ [`is-next-item-${nextItemType}`]: !!nextItemType, 'is-owned': isOwned }"
         >
           <template #fill-bar v-if="item">
@@ -102,11 +102,11 @@ defineSlots<{
 const props = defineProps<{
   items: {
     key: string;
-    keyInList?: string;
     item: Item;
     isOwned?: boolean;
     nextItemType?: 'same' | 'owned' | undefined;
   }[];
+  itemType: 'countrycode' | 'publicationcode' | 'issuecode';
   getItemTextFn: (item: Item) => string;
   issueViewModes?: { label: string; icon: { ios: string; md: string } }[];
   filter?: { label: string; icon: { ios: string; md: string } }[];
@@ -123,7 +123,7 @@ const {
 
 const cameraPreviewElementId = 'camera-preview';
 const { takePhoto } = useCoverSearch(useRouter(), coverIdServices);
-const { isCameraPreviewShown, filterText, selectedIssuecodes, issuecodes } = storeToRefs(app());
+const { isCameraPreviewShown, filterText, selectedIssuecodes, currentNavigationItem } = storeToRefs(app());
 
 watch(isCameraPreviewShown, async () => {
   if (isCameraPreviewShown.value) {
@@ -180,7 +180,7 @@ const { t } = useI18n();
 
 const updateNavigationToSelectedIssuecodes = () => {
   if (selectedIssuecodes.value!.length) {
-    issuecodes.value = selectedIssuecodes.value!;
+    currentNavigationItem.value = { type: 'issuecodes', value: selectedIssuecodes.value! };
   }
 };
 

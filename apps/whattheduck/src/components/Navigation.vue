@@ -7,7 +7,7 @@
       v-for="partIdx in maxParts"
       v-show="partIdx <= shownParts.length"
     >
-      <ion-segment-button :value="shownParts[partIdx - 1]">
+      <ion-segment-button :value="shownParts[partIdx - 1]" @click="">
         <globe-icon v-if="partIdx === 1" />
         <Country
           v-if="partIdx === 2 && countrycode"
@@ -19,7 +19,7 @@
           :publicationcode="publicationcode"
           :title="publicationNames?.[publicationcode] || publicationcode"
         />
-        <template v-if="partIdx === 4 && issuecodes !== undefined"
+        <template v-if="partIdx === 4 && issuecodes"
           ><div style="display: flex; align-items: center">
             <Issue :issuecode="issuecodes[0]" /><template v-if="issuecodes.length > 1"
               ><ion-chip :outline="true">+&nbsp;{{ issuecodes.length - 1 }}</ion-chip></template
@@ -41,24 +41,48 @@ import Publication from './Publication.vue';
 
 import { app } from '~/stores/app';
 
-const { currentNavigationItem, countrycode, publicationcode, issuecodes } = storeToRefs(app());
+const { currentNavigationItem } = storeToRefs(app());
 const { countryNames, publicationNames, issuecodeDetails } = storeToRefs(stores.coa());
+
+const countrycode = ref<string | null>(null);
+const publicationcode = ref<string | null>(null);
+const issuecodes = ref<string[] | null>(null);
 
 const maxParts = 4;
 
 const shownParts = computed(() => {
-  let parts: [] | [string] | [string, string] | [string, string, string[]] = [];
-
-  if (countrycode.value) {
-    parts = [countrycode.value];
-  } else if (publicationcode.value) {
-    parts = [publicationcode.value.split('/')[0], publicationcode.value];
-  } else if (issuecodes.value) {
-    const { publicationcode } = issuecodeDetails.value[issuecodes.value[0]];
-    const issuenumbers = issuecodes.value.map((issuecode) => issuecodeDetails.value[issuecode].issuenumber);
-    parts = [publicationcode.split('/')[0], publicationcode, issuenumbers];
+  countrycode.value = null;
+  publicationcode.value = null;
+  issuecodes.value = null;
+  switch (currentNavigationItem.value?.type) {
+    case 'countrycode':
+      countrycode.value = currentNavigationItem.value.value;
+      break;
+    case 'publicationcode':
+      publicationcode.value = currentNavigationItem.value.value;
+      countrycode.value = publicationcode.value.split('/')[0];
+      issuecodes.value = null;
+      break;
+    case 'issuecodes': {
+      const issuecodeDetail = issuecodeDetails.value[currentNavigationItem.value.value[0]];
+      issuecodes.value = currentNavigationItem.value.value;
+      publicationcode.value = issuecodeDetail.publicationcode;
+      countrycode.value = publicationcode.value.split('/')[0];
+      break;
+    }
   }
-  return parts;
+
+  const codes = {
+    countrycode: countrycode.value,
+    publicationcode: publicationcode.value,
+    issuecodes: issuecodes.value,
+  };
+  return [
+    null,
+    ...Object.entries(codes)
+      .map(([type, value]) => (value ? { type, value } : null))
+      .filter(Boolean),
+  ] as (typeof currentNavigationItem.value)[];
 });
 </script>
 

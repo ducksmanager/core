@@ -15,7 +15,7 @@
       </div>
 
       <template v-if="recentIssues">
-        <ion-item v-for="issue of recentIssues" @click="currentNavigationItem = issue.issuecode">
+        <ion-item v-for="issue of recentIssues" @click="issuecodes = [issue.issuecode]">
           <FullIssue :issuecode="issue.issuecode" show-issue-conditions>
             <template #suffix
               ><div class="issue-date">
@@ -40,7 +40,7 @@ const { t } = useI18n();
 const recentIssues = ref();
 
 const coaStore = stores.coa();
-const { currentNavigationItem } = storeToRefs(app());
+const { issuecodes } = storeToRefs(app());
 const { issuesByIssuecode } = storeToRefs(stores.collection());
 const { fetchPublicationNames, fetchRecentIssues } = coaStore;
 const { publicationNames } = storeToRefs(coaStore);

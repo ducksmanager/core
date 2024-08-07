@@ -71,10 +71,9 @@ import { wtdcollection } from '~/stores/wtdcollection';
 
 const { updateCollectionSingleIssue, updateCollectionMultipleIssues } = wtdcollection();
 const { issuesByIssuecode } = storeToRefs(wtdcollection());
-const { publicationcode } = storeToRefs(app());
 const { fetchCoverUrlsByIssuecodes } = coa();
 const { issuecodeDetails } = storeToRefs(coa());
-const { isOfflineMode, isCoaView } = storeToRefs(app());
+const { isOfflineMode, isCoaView, currentNavigationItem, publicationcode } = storeToRefs(app());
 
 const fullUrl = ref<string>();
 
@@ -84,7 +83,7 @@ watch(
   issuecodes,
   async (newValue) => {
     if (newValue) {
-      const covers = await fetchCoverUrlsByIssuecodes(newValue);
+      const covers = await fetchCoverUrlsByIssuecodes([...newValue]);
       fullUrl.value = covers.covers![newValue[0]]?.fullUrl;
     }
   },
@@ -134,7 +133,10 @@ const submitIssueCopies = async () => {
       copies: copies.value,
     });
   }
-  publicationcode.value = issuecodeDetails.value[issuecodes.value[0]].publicationcode;
+  currentNavigationItem.value = {
+    type: 'publicationcode',
+    value: issuecodeDetails.value[issuecodes.value[0]].publicationcode,
+  };
   isCoaView.value = false;
 };
 </script>

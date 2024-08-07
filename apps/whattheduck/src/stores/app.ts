@@ -34,28 +34,43 @@ export const app = defineStore('app', () => {
   const filterText = ref('');
   const isCameraPreviewShown = ref(false);
 
-  const parts = route.hash
-    ? (route.hash.replace('#', '').replaceAll('_', ' ').split('--') as [
-        'countrycode' | 'publicationcode' | 'issuecodes',
-        string,
-      ])
-    : null;
+  const currentNavigationItem = ref<
+    null | { type: 'countrycode' | 'publicationcode'; value: string } | { type: 'issuecodes'; value: string[] }
+  >(null);
 
-  const countrycode = ref<string | undefined>(undefined);
-  const publicationcode = ref<string | undefined>(undefined);
-  const issuecodes = ref<string[] | undefined>(undefined);
+  watch(
+    () => route.hash,
+    (newValue) => {
+      const parts = newValue.replace('#', '').replaceAll('_', ' ').split('=');
+      if (parts.length === 1) {
+        currentNavigationItem.value = null;
+      } else {
+        const [type, value] = parts as ['countrycode' | 'publicationcode' | 'issuecodes', string];
+        if (type === 'issuecodes') {
+          currentNavigationItem.value = {
+            type,
+            value: value.split(','),
+          };
+        } else {
+          currentNavigationItem.value = {
+            type,
+            value,
+          };
+        }
+      }
+    },
+    { immediate: true },
+  );
 
-  switch (parts?.[0]) {
-    case 'countrycode':
-      countrycode.value = parts[1];
-      break;
-    case 'publicationcode':
-      publicationcode.value = parts[1];
-      break;
-    case 'issuecodes':
-      issuecodes.value = parts[1].split(',');
-      break;
-  }
+  const countrycode = computed(
+    () => (currentNavigationItem.value?.type === 'countrycode' && currentNavigationItem.value?.value) || null,
+  );
+  const publicationcode = computed(
+    () => (currentNavigationItem.value?.type === 'publicationcode' && currentNavigationItem.value?.value) || null,
+  );
+  const issuecodes = computed(
+    () => (currentNavigationItem.value?.type === 'issuecodes' && currentNavigationItem.value?.value) || null,
+  );
 
   const selectedIssuecodes = ref<string[] | null>(null);
 
@@ -141,44 +156,36 @@ export const app = defineStore('app', () => {
     isPersistedDataLoaded.value = true;
   });
 
-  type NavigationItem = null | { type: 'countrycode' | 'publicationcode' | 'issuecodes'; code: string };
+  watch(
+    () => route.hash,
+    (newValue) => {
+      console.log('route.hash: ', JSON.stringify({ newValue }));
+    },
+  );
 
-  const currentNavigationItem = computed((): NavigationItem => {
-    const parts = route.hash.replace('#', '').replaceAll('_', ' ').split('--');
-    if (parts.length === 1) {
-      return null;
-    } else {
-      const [type, code] = parts;
-      return {
-        type,
-        code,
-      } as NavigationItem;
-    }
-  });
-
-  watch(currentNavigationItem, async (navigationItem: NavigationItem) => {
+  watch(currentNavigationItem, async (navigationItem) => {
     selectedIssuecodes.value = null;
-    const codeWithoutSpaces = navigationItem ? `${navigationItem.type}--${navigationItem.code.replace(/ /g, '_')}` : '';
+    const value = (
+      Array.isArray(navigationItem?.value) ? navigationItem.value.join(',') : navigationItem?.value
+    )?.replace(/ /g, '_');
+    const typeAndValue = navigationItem?.type ? `#${navigationItem?.type}=${value}` : '';
     if (route.name === 'Collection') {
-      window.location.hash = codeWithoutSpaces;
+      window.location.hash = typeAndValue;
     } else {
       await router.push({
         name: 'Collection',
         params: {
           type: route.params.type || 'coa',
         },
-        hash: `#${codeWithoutSpaces}`,
+        hash: typeAndValue,
       });
     }
   });
-
-  const allowMultipleSelection = computed(() => publicationcode.value !== undefined);
 
   return {
     socket,
     filterText,
     selectedIssuecodes,
-    allowMultipleSelection,
     isPersistedDataLoaded,
     isCameraPreviewShown,
     socketCache,
