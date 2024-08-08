@@ -47,6 +47,9 @@ importers:
       '@capawesome/capacitor-file-picker':
         specifier: ^6.0.1
         version: 6.0.1(@capacitor/core@6.1.2)
+      '@capgo/capacitor-updater':
+        specifier: ^6.0.56
+        version: 6.0.56(@capacitor/core@6.1.2)
       '@ionic/pwa-elements':
         specifier: ^3.3.0
         version: 3.3.0
@@ -338,6 +341,11 @@ packages:
 
   '@capawesome/capacitor-file-picker@6.0.1':
     resolution: {integrity: sha512-JWYmqfYMRwvhJMACC4oovzBGtcP1MXnRKbENPjXhL0ni0p0nnVgddKD+07kc81SNiABBuCksQjNiFiEDqqy49A==}
+    peerDependencies:
+      '@capacitor/core': ^6.0.0
+
+  '@capgo/capacitor-updater@6.0.56':
+    resolution: {integrity: sha512-7PC2pUbS6CE26ClyWs1qksGrn5lIuyRHnujjucxgLQrMsYEbr963rCW05DuY6z2huLMUpS/9vcRWvsTiutXq0w==}
     peerDependencies:
       '@capacitor/core': ^6.0.0
 
@@ -4661,6 +4669,10 @@ snapshots:
       '@capacitor/core': 6.1.2
 
   '@capawesome/capacitor-file-picker@6.0.1(@capacitor/core@6.1.2)':
+    dependencies:
+      '@capacitor/core': 6.1.2
+
+  '@capgo/capacitor-updater@6.0.56(@capacitor/core@6.1.2)':
     dependencies:
       '@capacitor/core': 6.1.2
 
