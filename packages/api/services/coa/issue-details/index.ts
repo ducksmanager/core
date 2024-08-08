@@ -3,7 +3,6 @@ import type { Socket } from "socket.io";
 import type { IssueCoverDetails } from "~dm-types/IssueCoverDetails";
 import type { SimpleEntry } from "~dm-types/SimpleEntry";
 import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa/client";
-import { Prisma } from "~prisma-schemas/schemas/dm";
 import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
 
 import { augmentIssueArrayWithInducksData } from "..";
@@ -128,34 +127,61 @@ export default (socket: Socket<Events>) => {
   });
 };
 
-export const getCoverUrls = (issuecodes: string[]) =>
-  {
-    // const a = ["fi/AATT 21"]
-    console.log(`
-        SELECT inducks_issue.issuecode,
-              inducks_issue.title,
-              CONCAT(IF(sitecode = 'thumbnails', IF (url REGEXP '^[0-9]', 'webusers/webusers', IF (url REGEXP '^webusers', 'webusers', '')), sitecode), '/', url) AS fullUrl
-        FROM inducks_issue
-        INNER JOIN inducks_entry USING (issuecode)
-        INNER JOIN inducks_entryurl  USING (entrycode)
-        WHERE inducks_issue.issuecode IN (${Prisma.join(issuecodes)})
-          AND SUBSTR(inducks_entry.position, 0, 1) <> 'p'
+export const getCoverUrls = async (issuecodes: string[]) => {
+  const issues = (await prismaCoa.inducks_issue.findMany({
+    select: {
+      issuecode: true,
+      title: true,
+    },
+    where: {
+      issuecode: {
+        in: issuecodes,
+      },
+    },
+  })).groupBy("issuecode");
+  const entries = (await prismaCoa.inducks_entry.findMany({
+    select: {
+      entrycode: true,
+      issuecode: true,
+      position: true,
+    },
+    where: {
+      issuecode: {
+        in: issuecodes,
+      },
+      position: {
+        not: {
+          startsWith: "p",
+        },
+      },
+    },
+  })).groupBy("issuecode");
+  const entryurls = (await prismaCoa.inducks_entryurl.findMany({
+    select: {
+      entrycode: true,
+      sitecode: true,
+      url: true,
+    },
+    where: {
+      entrycode: {
+        in: Object.values(entries).map(({ entrycode }) => entrycode),
 
-        GROUP BY issuecode`)
-    return issuecodes.length
-      ? prismaCoa.$queryRaw<IssueCoverDetails[]>`
-        SELECT inducks_issue.issuecode,
-              inducks_issue.title,
-              CONCAT(IF(sitecode = 'thumbnails', IF (url REGEXP '^[0-9]', 'webusers/webusers', IF (url REGEXP '^webusers', 'webusers', '')), sitecode), '/', url) AS fullUrl
-        FROM inducks_issue
-        INNER JOIN inducks_entry USING (issuecode)
-        INNER JOIN inducks_entryurl  USING (entrycode)
-        WHERE inducks_issue.issuecode IN (${Prisma.join(issuecodes)})
-          AND SUBSTR(inducks_entry.position, 0, 1) <> 'p'
+      },
+    },
+  })).groupBy("entrycode");
 
-        GROUP BY issuecode`
-      : Promise.resolve([]);
-  };
+  return Object.entries(issues).map(([issuecode, issue]) => {
+    const coverEntry = entries[issuecode]
+    const coverEntryUrl = entryurls[coverEntry.entrycode]
+    const urlPrefix = (
+      /^\d/.test(coverEntryUrl.url!) ? 'webusers/webusers' : coverEntryUrl.url!.startsWith('webusers') ? 'webusers' : coverEntryUrl.sitecode);
+    return {
+      issuecode,
+      title: issue.title!,
+      fullUrl: `${urlPrefix}/${coverEntryUrl.url}`,
+    };
+  });
+};
 
 const getEntries = async (issuecode: string) =>
   await prismaCoa.$queryRaw<SimpleEntry[]>`
@@ -178,16 +204,15 @@ const getEntries = async (issuecode: string) =>
 const getIssueCoverDetails = (
   issuecodes: string[],
   callback: ({ covers }: { covers: Record<string, IssueCoverDetails> }) => void,
-) =>
-  {
-    console.log(issuecodes)
-    return getCoverUrls(issuecodes)
-      .then((data) => {
+) => {
+  console.log(issuecodes)
+  return getCoverUrls(issuecodes)
+    .then((data) => {
 
-    console.log(data)
-        return data.groupBy("issuecode");
-      })
-      .then((data) => {
-        callback({ covers: data });
-      });
-  };
+      console.log(data)
+      return data.groupBy("issuecode");
+    })
+    .then((data) => {
+      callback({ covers: data });
+    });
+};

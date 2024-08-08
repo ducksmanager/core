@@ -1,7 +1,6 @@
 <template>
   <ion-page id="main-content">
     <ion-buttons slot="end" v-if="componentName === IssueList">
-      <FilterButton />
       <CopyListButton />
       <ViewModesButton />
     </ion-buttons>
@@ -27,16 +26,14 @@
         >
       </ion-toolbar>
       <Navigation v-if="!isCameraPreviewShown" />
-      <template v-if="hasItems && !isCameraPreviewShown">
-        <ion-searchbar
-          autocapitalize="sentences"
-          v-if="componentName !== OwnedIssueCopies"
-          v-model="filterText"
-          placeholder="Filter"
-      /></template>
+      <template v-if="list?.hasItems && !isCameraPreviewShown">
+        <ion-searchbar inputmode="text" autocapitalize="sentences" v-model="filterText" placeholder="Filter" />
+        <FilterButton v-if="componentName === IssueList && !filterText" />
+      </template>
     </ion-header>
 
-    <component :is="componentName" @load="hasItems = $event as boolean" />
+    <component v-if="componentName === OwnedIssueCopies" :is="componentName" />
+    <component v-else :is="componentName" ref="list" />
   </ion-page>
 </template>
 
@@ -54,13 +51,13 @@ import PublicationList from '~/views/PublicationList.vue';
 
 const { t } = useI18n();
 
+const list = ref<InstanceType<typeof CountryList | typeof PublicationList | typeof IssueList> | null>(null);
+
 const { total, ownedCountries, ownedPublications } = storeToRefs(wtdcollection());
 const { filterText, isCoaView, isCameraPreviewShown, countrycode, publicationcode, issuecodes, currentNavigationItem } =
   storeToRefs(app());
 
 const { issuecodeDetails } = storeToRefs(coa());
-
-const hasItems = ref<boolean | undefined>();
 
 const componentName = computed(() =>
   !currentNavigationItem.value
@@ -136,6 +133,12 @@ ion-title {
     ion-chip {
       margin-left: 0.5rem;
     }
+  }
+}
+
+ion-searchbar {
+  ion-icon {
+    display: none !important;
   }
 }
 </style>

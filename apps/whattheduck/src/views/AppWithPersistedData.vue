@@ -1,7 +1,11 @@
 <template>
-  <ion-split-pane :style="{ 'margin-top': `${offlineBannerHeight}px` }" content-id="main-content">
+  <ion-split-pane
+    :style="{ 'margin-top': `${offlineBannerHeight}px` }"
+    content-id="main-content"
+    v-if="isCollectionLoaded"
+  >
     <NavigationDrawer />
-    <ion-router-outlet v-if="isCollectionLoaded" id="main-content" />
+    <ion-router-outlet id="main-content" />
   </ion-split-pane>
 </template>
 <script setup lang="ts">

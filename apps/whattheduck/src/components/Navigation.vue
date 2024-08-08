@@ -41,49 +41,21 @@ import Publication from './Publication.vue';
 
 import { app } from '~/stores/app';
 
-const { currentNavigationItem } = storeToRefs(app());
-const { countryNames, publicationNames, issuecodeDetails } = storeToRefs(stores.coa());
-
-const countrycode = ref<string | null>(null);
-const publicationcode = ref<string | null>(null);
-const issuecodes = ref<string[] | null>(null);
+const { currentNavigationItem, countrycode, publicationcode, issuecodes } = storeToRefs(app());
+const { countryNames, publicationNames } = storeToRefs(stores.coa());
 
 const maxParts = 4;
 
-const shownParts = computed(() => {
-  countrycode.value = null;
-  publicationcode.value = null;
-  issuecodes.value = null;
-  switch (currentNavigationItem.value?.type) {
-    case 'countrycode':
-      countrycode.value = currentNavigationItem.value.value;
-      break;
-    case 'publicationcode':
-      publicationcode.value = currentNavigationItem.value.value;
-      countrycode.value = publicationcode.value.split('/')[0];
-      issuecodes.value = null;
-      break;
-    case 'issuecodes': {
-      const issuecodeDetail = issuecodeDetails.value[currentNavigationItem.value.value[0]];
-      issuecodes.value = currentNavigationItem.value.value;
-      publicationcode.value = issuecodeDetail.publicationcode;
-      countrycode.value = publicationcode.value.split('/')[0];
-      break;
-    }
-  }
-
-  const codes = {
+const shownParts = computed(() => [
+  null,
+  ...Object.entries({
     countrycode: countrycode.value,
     publicationcode: publicationcode.value,
     issuecodes: issuecodes.value,
-  };
-  return [
-    null,
-    ...Object.entries(codes)
-      .map(([type, value]) => (value ? { type, value } : null))
-      .filter(Boolean),
-  ] as (typeof currentNavigationItem.value)[];
-});
+  })
+    .map(([type, value]) => (value ? { type, value } : null))
+    .filter(Boolean),
+]);
 </script>
 
 <style lang="scss" scoped>

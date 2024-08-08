@@ -27,7 +27,6 @@ export const app = defineStore('app', () => {
 
   const router = useRouter();
   const route = useRoute();
-  const lastSync = ref<Date>();
   const token = ref<string | null>(); // undefined === we haven't checked whether there is a token ; null === we have checked and there is no token
   const socketCache = ref<Record<string, NotEmptyStorageValue>>({});
   const isPersistedDataLoaded = ref(false);
@@ -62,15 +61,31 @@ export const app = defineStore('app', () => {
     { immediate: true },
   );
 
-  const countrycode = computed(
-    () => (currentNavigationItem.value?.type === 'countrycode' && currentNavigationItem.value?.value) || null,
-  );
-  const publicationcode = computed(
-    () => (currentNavigationItem.value?.type === 'publicationcode' && currentNavigationItem.value?.value) || null,
-  );
-  const issuecodes = computed(
-    () => (currentNavigationItem.value?.type === 'issuecodes' && currentNavigationItem.value?.value) || null,
-  );
+  const countrycode = computed(() => {
+    switch (currentNavigationItem.value?.type) {
+      case 'countrycode':
+        return currentNavigationItem.value.value;
+      case 'publicationcode':
+      case 'issuecodes':
+        return publicationcode.value!.split('/')[0];
+    }
+    return null;
+  });
+  const publicationcode = computed(() => {
+    switch (currentNavigationItem.value?.type) {
+      case 'publicationcode':
+        return currentNavigationItem.value.value;
+      case 'issuecodes': {
+        const issuecodeDetail = coa().issuecodeDetails?.[issuecodes.value![0]!];
+        return issuecodeDetail.publicationcode;
+      }
+    }
+  });
+  const issuecodes = computed(() => {
+    if (currentNavigationItem.value?.type === 'issuecodes') {
+      return currentNavigationItem.value.value;
+    }
+  });
 
   const selectedIssuecodes = ref<string[] | null>(null);
 
@@ -189,7 +204,6 @@ export const app = defineStore('app', () => {
     isPersistedDataLoaded,
     isCameraPreviewShown,
     socketCache,
-    lastSync,
     currentNavigationItem,
     countrycode,
     publicationcode,
@@ -198,9 +212,6 @@ export const app = defineStore('app', () => {
     offlineBannerHeight,
     isOfflineMode,
     isCoaView: ref(route.query.coa === 'true'),
-    isObsoleteSync: computed(
-      () => !lastSync.value || new Date().getTime() - lastSync.value.getTime() > 12 * 60 * 60 * 1000,
-    ),
     copyListModes,
     issueViewModes,
     currentIssueViewMode,

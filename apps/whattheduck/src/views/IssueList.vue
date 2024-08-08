@@ -187,6 +187,8 @@ const sortedItems = computed(() =>
     })),
 );
 
+const hasItems = computed(() => sortedItems.value.length > 0);
+
 const sortedItemsForBookcase = computed(() =>
   sortedItems.value.map(({ item }) => ({
     ...issuecodeDetails.value[item.issuecode],
@@ -236,6 +238,8 @@ onMounted(async () => {
   await loadBookcaseOptions();
   await loadBookcaseOrder();
 });
+
+defineExpose({ hasItems });
 </script>
 
 <style lang="scss" scoped>

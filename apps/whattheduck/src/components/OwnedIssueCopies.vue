@@ -52,7 +52,9 @@
       :confirm-md="checkmarkSharp"
       :cancel-ios="closeOutline"
       :cancel-md="closeSharp"
-      @cancel="publicationcode = issuecodeDetails?.[issuecodes[0]].publicationcode"
+      @cancel="
+        currentNavigationItem = { type: 'publicationcode', value: issuecodeDetails?.[issuecodes[0]].publicationcode }
+      "
       confirm-color="success"
       @confirm="submitIssueCopies"
     />
@@ -73,7 +75,7 @@ const { updateCollectionSingleIssue, updateCollectionMultipleIssues } = wtdcolle
 const { issuesByIssuecode } = storeToRefs(wtdcollection());
 const { fetchCoverUrlsByIssuecodes } = coa();
 const { issuecodeDetails } = storeToRefs(coa());
-const { isOfflineMode, isCoaView, currentNavigationItem, publicationcode } = storeToRefs(app());
+const { isOfflineMode, isCoaView, currentNavigationItem } = storeToRefs(app());
 
 const fullUrl = ref<string>();
 
@@ -83,7 +85,7 @@ watch(
   issuecodes,
   async (newValue) => {
     if (newValue) {
-      const covers = await fetchCoverUrlsByIssuecodes([...newValue]);
+      const covers = await fetchCoverUrlsByIssuecodes(newValue);
       fullUrl.value = covers.covers![newValue[0]]?.fullUrl;
     }
   },

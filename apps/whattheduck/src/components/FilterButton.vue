@@ -17,3 +17,15 @@ const { currentFilter } = storeToRefs(app());
 // eslint-disable-next-line no-undef
 const fab = shallowRef<ComponentPublicInstance<HTMLIonFabElement> | null>(null);
 </script>
+
+<style lang="scss" scoped>
+ion-fab {
+  margin-top: -35px;
+  top: initial;
+  right: 0.5rem;
+
+  :deep(ion-fab-list) {
+    margin-top: 2rem;
+  }
+}
+</style>

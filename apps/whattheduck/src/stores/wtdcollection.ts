@@ -4,8 +4,6 @@ import type { IssueWithIssuecodeOnly, PartInfo } from '~dm-types/SimpleIssue';
 import type { purchase, issue } from '~prisma-schemas/schemas/dm';
 import { stores as webStores, composables as webComposables } from '~web';
 
-import { app } from './app';
-
 import usePersistedData from '~/composables/usePersistedData';
 
 export type purchaseWithStringDate = Omit<purchase, 'date' | 'userId'> & {
@@ -14,7 +12,6 @@ export type purchaseWithStringDate = Omit<purchase, 'date' | 'userId'> & {
 
 export const wtdcollection = defineStore('wtdcollection', () => {
   const coaStore = webStores.coa();
-  const { lastSync, isObsoleteSync } = storeToRefs(app());
   const webCollectionStore = webStores.collection();
   const { issues, purchases, user } = storeToRefs(webCollectionStore);
   const statsStore = webStores.stats();
@@ -51,7 +48,6 @@ export const wtdcollection = defineStore('wtdcollection', () => {
       await loadCollection();
       await loadPurchases();
       await loadUser();
-      // TODO retrieve user points
       // TODO retrieve user notification countries
 
       // TODO get app version
@@ -61,11 +57,8 @@ export const wtdcollection = defineStore('wtdcollection', () => {
       await webCollectionStore.fetchIssueCountsByPublicationcode();
       await usersStore.fetchStats([webCollectionStore.user?.id || 0]);
 
-      if (isObsoleteSync.value) {
-        await coaStore.fetchCountryNames(true);
-        coaStore.addPublicationNames(await webCollectionStore.fetchPublicationNames());
-        lastSync.value = new Date();
-      }
+      await coaStore.fetchCountryNames(true);
+      coaStore.addPublicationNames(await webCollectionStore.fetchPublicationNames());
       // TODO register for notifications
     },
     highestQuotedIssue = computedAsync(async () => {

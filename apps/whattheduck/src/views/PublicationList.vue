@@ -86,4 +86,8 @@ watch(
   },
   { immediate: true },
 );
+
+const hasItems = computed(() => sortedItems.value.length > 0);
+
+defineExpose({ hasItems });
 </script>

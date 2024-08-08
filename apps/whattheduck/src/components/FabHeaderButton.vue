@@ -1,5 +1,5 @@
 <template>
-  <ion-fab ref="fab" vertical="top" horizontal="end" id="view-modes" slot="fixed">
+  <ion-fab ref="fab" vertical="top" horizontal="end" slot="fixed">
     <ion-fab-button :disabled="disabled"><FabHeaderButtonIcon v-bind="icon" v-if="icon" /></ion-fab-button
     ><FabHeaderButtonIcon v-bind="value?.icon" is-indicator v-if="value?.icon" />
     <ion-fab-list side="bottom">
@@ -57,8 +57,8 @@ ion-fab {
     height: 1.5rem;
     margin-right: 0.75rem;
 
-    ion-icon {
-      font-size: 20px;
+    :deep(ion-icon) {
+      font-size: 18px;
     }
   }
 
@@ -84,16 +84,8 @@ ion-icon.indicator {
   position: absolute;
   bottom: 0;
   right: 0.5rem;
-  font-size: 1rem;
+  font-size: 0.9rem;
   margin-left: 0.5rem;
-
-  //   display: flex;
-  // align-items: center;
-  // justify-content: center;
-
-  // svg {
-  //   width: 80%;
-  //   height: 80%;
-  // }
+  padding: 1px;
 }
 </style>
