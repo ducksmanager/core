@@ -7,9 +7,7 @@ import { stores as webStores } from '~web';
 
 const { coa } = webStores;
 const { issuecodeDetails } = storeToRefs(coa());
-const props = defineProps<{
+defineProps<{
   issuecode: string;
 }>();
-
-console.log(props.issuecode);
 </script>

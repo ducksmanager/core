@@ -58,9 +58,11 @@
 <script setup lang="ts">
 import { toastController } from '@ionic/vue';
 import { calendarOutline, calendarSharp, flameOutline, flameSharp } from 'ionicons/icons';
-import { stores as webStores } from '~web';
+import { stores as webStores, components as webComponents } from '~web';
 
 import { wtdcollection } from '~/stores/wtdcollection';
+
+const { InducksStory } = webComponents;
 
 const { t } = useI18n();
 const sortByScore = ref(false);

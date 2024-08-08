@@ -20,7 +20,7 @@ const fab = shallowRef<ComponentPublicInstance<HTMLIonFabElement> | null>(null);
 
 <style lang="scss" scoped>
 ion-fab {
-  margin-top: -35px;
+  margin-top: -32px;
   top: initial;
   right: 0.5rem;
 

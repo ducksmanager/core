@@ -68,24 +68,4 @@ ion-fab {
     height: 1.8rem;
   }
 }
-
-hr {
-  &.negate {
-    position: absolute;
-    width: 100%;
-    transform: rotate(-40deg);
-    border-top: 1px solid white !important;
-  }
-}
-
-ion-icon.indicator {
-  background-color: darkgray;
-  border-radius: 1rem;
-  position: absolute;
-  bottom: 0;
-  right: 0.5rem;
-  font-size: 0.9rem;
-  margin-left: 0.5rem;
-  padding: 1px;
-}
 </style>

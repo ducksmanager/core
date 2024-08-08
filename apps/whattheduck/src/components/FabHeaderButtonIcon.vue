@@ -1,5 +1,5 @@
 <template>
-  <ion-icon :class="{ indicator: isIndicator }" :ios="ios" :md="md" :style="color ? { color } : undefined" />
+  <ion-icon :class="{ indicator: isIndicator }" :ios="ios" :md="md" />
   <hr v-if="negate" class="negate" />
 </template>
 <script setup lang="ts">
@@ -11,7 +11,6 @@ type IconOrUndefined = Option['icon'];
 interface Icon {
   ios: NonNullable<IconOrUndefined>['ios'];
   md: NonNullable<IconOrUndefined>['md'];
-  color?: NonNullable<IconOrUndefined>['color'];
   negate?: NonNullable<IconOrUndefined>['negate'];
 }
 withDefaults(defineProps<Icon & { isIndicator?: boolean }>(), {
@@ -23,8 +22,8 @@ hr {
   &.negate {
     position: absolute;
     width: 100%;
-    transform: rotate(-40deg);
-    border-top: 1px solid white !important;
+    transform: rotate(-45deg);
+    border-top: 1px solid red !important;
   }
 }
 
@@ -34,7 +33,14 @@ ion-icon.indicator {
   position: absolute;
   bottom: 0;
   right: 0.5rem;
-  font-size: 1rem;
+  font-size: 0.75rem;
   margin-left: 0.5rem;
+  padding: 1px;
+
+  + hr.negate {
+    bottom: -1px;
+    right: 8px;
+    width: 14px;
+  }
 }
 </style>

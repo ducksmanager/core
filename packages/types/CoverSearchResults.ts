@@ -10,7 +10,7 @@ export interface SimilarImagesResult {
 export interface CoverSearchResults {
   covers: ({
     issuecode: string;
-    fullUrl: string;
+    fullUrl: string | null;
     publicationcode: string;
     issuenumber: string;
     popularity: number;

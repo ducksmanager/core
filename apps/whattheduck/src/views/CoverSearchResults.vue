@@ -21,7 +21,7 @@
           :index="index"
           :style="{ width: `min(50%, ${slideWidths[index]}px)` }"
         >
-          <ion-img :src="getCoverUrl(cover.fullUrl)" @ion-img-did-load="setWidth" />
+          <ion-img :src="getCoverUrl(cover.fullUrl!)" @ion-img-did-load="setWidth" />
         </Slide>
       </Carousel3d>
       <ion-row

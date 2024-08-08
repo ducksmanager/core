@@ -31,8 +31,7 @@
         :currentEdgeHighlighted="null"
         :bookcaseTextures="bookcaseOptions!.textures"
         :sortedBookcase="sortedItemsForBookcase"
-        ><template #edge-prefix="{ edge }"><br /><Condition :value="edge.issueCondition" /></template
-      ></Bookcase>
+      />
     </template>
     <template v-if="colSize">
       <ion-grid>
@@ -41,13 +40,20 @@
             v-for="{ key, item } in sortedItemsForCovers?.filter(({ key }) => filteredIssuenumbers.includes(key))"
             :key="key"
             class="ion-text-center"
+            @click="currentNavigationItem = { type: 'issuecodes', value: [key] }"
             :size="String(colSize)"
             ><ion-img
-              @click="issuecodes = [key]"
+              v-if="item.cover"
               :src="`${COVER_ROOT_URL}${item.cover}`"
               :alt="issuecodeDetails[item.issuecode]!.issuenumber"
-            ></ion-img></ion-col></ion-row
-      ></ion-grid>
+              @error="item.cover = null"
+            ></ion-img
+            ><ion-text v-else
+              >{{ issuecodeDetails[item.issuecode]!.issuenumber }}<br />({{ $t('pas de couverture') }})</ion-text
+            ></ion-col
+          ></ion-row
+        ></ion-grid
+      >
     </template>
   </List>
 </template>
@@ -80,7 +86,8 @@ const colSize = computed(() => {
 });
 
 const { issues, user, purchasesById } = storeToRefs(wtdcollection());
-const { publicationcode, issuecodes, isCoaView, currentIssueViewMode, selectedIssuecodes } = storeToRefs(app());
+const { publicationcode, currentNavigationItem, isCoaView, currentIssueViewMode, selectedIssuecodes } =
+  storeToRefs(app());
 const { issuesWithTitles, issuecodeDetails } = storeToRefs(webStores.coa());
 const { fetchCoverUrls, fetchIssueNumbersWithTitles } = webStores.coa();
 
@@ -210,11 +217,18 @@ const getSortedItemsWithCovers = async () => {
   }));
 };
 
-watch([sortedItems, currentIssueViewMode], async () => {
-  if (sortedItems.value && ['covers-large', 'covers-medium', 'covers-small'].includes(currentIssueViewMode.value.id)) {
-    sortedItemsForCovers.value = await getSortedItemsWithCovers();
-  }
-});
+watch(
+  [sortedItems, currentIssueViewMode],
+  async () => {
+    if (
+      sortedItems.value &&
+      ['covers-large', 'covers-medium', 'covers-small'].includes(currentIssueViewMode.value.id)
+    ) {
+      sortedItemsForCovers.value = await getSortedItemsWithCovers();
+    }
+  },
+  { immediate: true },
+);
 
 watch(
   [isCoaView, publicationcode],
@@ -265,10 +279,6 @@ ion-checkbox {
 :deep(.bookcase) {
   overflow: auto;
   padding: 0 1rem;
-}
-
-:deep(.edge) {
-  display: inline-block;
 }
 
 :deep(.item-wrapper) {
@@ -328,5 +338,11 @@ ion-range {
 
 ion-checkbox {
   pointer-events: none;
+}
+
+ion-col {
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 </style>

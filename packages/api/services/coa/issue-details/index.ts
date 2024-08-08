@@ -165,7 +165,6 @@ export const getCoverUrls = async (issuecodes: string[]) => {
     where: {
       entrycode: {
         in: Object.values(entries).map(({ entrycode }) => entrycode),
-
       },
     },
   })).groupBy("entrycode");
@@ -173,6 +172,14 @@ export const getCoverUrls = async (issuecodes: string[]) => {
   return Object.entries(issues).map(([issuecode, issue]) => {
     const coverEntry = entries[issuecode]
     const coverEntryUrl = entryurls[coverEntry.entrycode]
+    if (!coverEntryUrl) {
+      return {
+        issuecode,
+        title: issue.title!,
+        fullUrl: null,
+      }
+    }
+
     const urlPrefix = (
       /^\d/.test(coverEntryUrl.url!) ? 'webusers/webusers' : coverEntryUrl.url!.startsWith('webusers') ? 'webusers' : coverEntryUrl.sitecode);
     return {
@@ -204,15 +211,8 @@ const getEntries = async (issuecode: string) =>
 const getIssueCoverDetails = (
   issuecodes: string[],
   callback: ({ covers }: { covers: Record<string, IssueCoverDetails> }) => void,
-) => {
-  console.log(issuecodes)
-  return getCoverUrls(issuecodes)
-    .then((data) => {
-
-      console.log(data)
-      return data.groupBy("issuecode");
-    })
-    .then((data) => {
-      callback({ covers: data });
-    });
-};
+) => getCoverUrls(issuecodes)
+  .then((data) => data.groupBy("issuecode"))
+  .then((data) => {
+    callback({ covers: data });
+  });
