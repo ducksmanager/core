@@ -29,7 +29,7 @@ class ServerWithUser extends Server<
   Record<string, never>,
   Record<string, never>,
   { user?: SessionUser }
-> {}
+> { }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 (BigInt.prototype as any).toJSON = function () {

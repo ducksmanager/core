@@ -16,7 +16,7 @@
           )
         }}
       </div>
-      <template v-if="suggestions">
+      <template v-if="formattedSuggestions">
         <ion-row class="toggle ion-margin-top ion-align-items-center ion-justify-content-center">
           <ion-col> {{ t('Trier par date de publication') }}</ion-col
           ><ion-col><ion-toggle size="small" color="light" v-model="sortByScore" /></ion-col
@@ -68,6 +68,7 @@ const { t } = useI18n();
 const sortByScore = ref(false);
 
 const { suggestions } = storeToRefs(wtdcollection());
+const { fetchIssuecodeDetails, fetchPublicationNames } = webStores.coa();
 const { issuecodeDetails, publicationNames } = storeToRefs(webStores.coa());
 
 interface FormattedSuggestion {
@@ -75,6 +76,8 @@ interface FormattedSuggestion {
   authors: string[];
   title: string;
 }
+
+const hasIssuecodeDetails = ref(false);
 
 const sortedSuggestions = computed(() => suggestions.value?.[sortByScore.value ? 'score' : 'oldestdate']);
 
@@ -91,9 +94,11 @@ const showAuthorToast = async (personcode: string) => {
 
 const formattedSuggestions = computed(
   () =>
+    hasIssuecodeDetails.value &&
     sortedSuggestions.value &&
     Object.values(sortedSuggestions.value!.issues)
       .map(({ issuecode, ...rest }) => ({ ...rest, issuecode, issue: issuecodeDetails.value[issuecode]! }))
+      .filter(({ issue }) => issue)
       .map(({ stories, issue, issuecode, oldestdate, score }) => ({
         countrycode: issue.publicationcode.split('/')[0],
         publicationName: publicationNames.value[issue.publicationcode]!,
@@ -116,6 +121,30 @@ const formattedSuggestions = computed(
           {},
         ),
       })),
+);
+
+watch(
+  suggestions,
+  async () => {
+    if (suggestions.value) {
+      await fetchIssuecodeDetails(
+        Object.values(suggestions.value)
+          .map(({ issues }) => Object.keys(issues))
+          .flat(),
+      );
+
+      await fetchPublicationNames(
+        Object.values(suggestions.value)
+          .map(({ issues }) =>
+            Object.values(issues).map(({ issuecode }) => issuecodeDetails.value[issuecode]!.publicationcode),
+          )
+          .flat(),
+      );
+
+      hasIssuecodeDetails.value = true;
+    }
+  },
+  { immediate: true },
 );
 </script>
 <style lang="scss" scoped>

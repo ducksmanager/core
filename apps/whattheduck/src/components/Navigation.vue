@@ -1,5 +1,5 @@
 <template>
-  <ion-segment v-model="currentNavigationItem">
+  <ion-segment :model-value="currentNavigationItem?.type">
     <ion-col
       @click.stop="() => {}"
       :class="{ 'non-clickable': partIdx >= shownParts.length, scrollable: partIdx === 3 }"
@@ -7,7 +7,7 @@
       v-for="partIdx in maxParts"
       v-show="partIdx <= shownParts.length"
     >
-      <ion-segment-button :value="shownParts[partIdx - 1]" @click="">
+      <ion-segment-button :value="shownParts[partIdx - 1]?.type" @click="">
         <globe-icon v-if="partIdx === 1" />
         <Country
           v-if="partIdx === 2 && countrycode"

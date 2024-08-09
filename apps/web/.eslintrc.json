@@ -8,17 +8,34 @@
     "plugin:@typescript-eslint/recommended"
   ],
   "parser": "vue-eslint-parser",
-  "parserOptions": { "parser": "@typescript-eslint/parser" },
+  "parserOptions": {
+    "parser": "@typescript-eslint/parser"
+  },
   "overrides": [
     {
-      "files": ["*.js", "*.ts", "*.vue"]
+      "files": [
+        "*.js",
+        "*.ts",
+        "*.vue"
+      ]
     }
   ],
   "root": true,
   "rules": {
+    "@typescript-eslint/no-unused-vars": [
+      "warn", // or "error"
+      {
+        "argsIgnorePattern": "^_",
+        "varsIgnorePattern": "^_",
+        "caughtErrorsIgnorePattern": "^_"
+      }
+    ],
     "@typescript-eslint/consistent-type-imports": "error",
     "@typescript-eslint/no-non-null-assertion": "off",
-    "arrow-body-style": ["error", "as-needed"],
+    "arrow-body-style": [
+      "error",
+      "as-needed"
+    ],
     "simple-import-sort/exports": "error",
     "simple-import-sort/imports": "error",
     "unused-imports/no-unused-imports": "error",
@@ -38,7 +55,11 @@
       }
     ]
   },
-  "plugins": ["simple-import-sort", "@typescript-eslint", "unused-imports"],
+  "plugins": [
+    "simple-import-sort",
+    "@typescript-eslint",
+    "unused-imports"
+  ],
   "ignorePatterns": [
     "**/node_modules",
     "**/dist",

@@ -10,8 +10,6 @@ import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
 import { Prisma as PrismaDmStats } from "~prisma-schemas/schemas/dm_stats";
 import { prismaClient as prismaDmStats } from "~prisma-schemas/schemas/dm_stats/client";
 
-import { getPublicationTitles } from "../coa/publications";
-
 export enum COUNTRY_CODE_OPTION {
   ALL = "ALL",
   countries_to_notify = "countries_to_notify",
@@ -32,7 +30,7 @@ export default (socket: Socket<Events>) => {
       const results: Partial<Parameters<typeof callback>[0]> = {};
 
       for (const sort of ['oldestdate', 'score'] as const) {
-        const { suggestionsPerUser, authors, storyDetails, publicationTitles } =
+        const { suggestionsPerUser, authors, storyDetails } =
           await getSuggestions(since, countrycode, sort, user!.id, limit, true);
 
         const suggestionsForUser =
@@ -43,8 +41,7 @@ export default (socket: Socket<Events>) => {
           minScore: suggestionsForUser.minScore,
           maxScore: suggestionsForUser.maxScore,
           authors,
-          storyDetails,
-          publicationTitles
+          storyDetails
         };
       }
 
@@ -57,21 +54,20 @@ const suggestedPublications =
     select: {
       userId: true,
       score: true,
-      publicationcode: true,
-      issuenumber: true,
+      issuecode: true,
       oldestdate: true,
     },
   });
 
 const missingPublications =
-  PrismaDmStats.validator<PrismaDmStats.utilisateurs_publications_manquantesDefaultArgs>()(
+  PrismaDmStats.validator<PrismaDmStats.missingIssueForUserDefaultArgs>()(
     {
       select: { personcode: true, storycode: true },
     },
   );
 
 interface Suggestion
-  extends PrismaDmStats.utilisateurs_publications_manquantesGetPayload<
+  extends PrismaDmStats.missingIssueForUserGetPayload<
     typeof missingPublications
   >,
   PrismaDmStats.suggestedIssueForUserGetPayload<
@@ -80,8 +76,7 @@ interface Suggestion
 
 const getStoryDetails = async (
   storyCodes: string[],
-  associatedPublicationCodes: string[],
-  associatedIssueNumbers: string[],
+  associatedIssuecodes: string[],
 ) => {
   if (!storyCodes.length) {
     return {};
@@ -100,7 +95,7 @@ const getStoryDetails = async (
           WHERE ${storyCodes
         .map(
           (storyCode, idx) =>
-            `story.storycode = '${storyCode}' AND issue.publicationcode = '${associatedPublicationCodes[idx]}' AND issue.issuenumber = '${associatedIssueNumbers[idx]}'`,
+            `story.storycode = '${storyCode}' AND issue.issuecode = '${associatedIssuecodes[idx]}'`,
         )
         .join(" OR ")}
       ORDER BY story.storycode
@@ -134,7 +129,6 @@ export const getSuggestions = async (
   const emptySuggestionList = {
     storyDetails: {},
     suggestionsPerUser: {},
-    publicationTitles: {},
     authors: {},
   } as SuggestionList;
   if (!["score", "oldestdate"].includes(sort)) {
@@ -148,14 +142,13 @@ export const getSuggestions = async (
   const suggestions = await prismaDmStats.$queryRawUnsafe<Suggestion[]>(`
       SELECT suggested.ID_User AS userId,
              suggested.Score   AS score,
-             suggested.publicationcode,
-             suggested.issuenumber,
+             suggested.issuecode,
              replace(suggested.oldestdate,'-00', '-01') AS oldestdate,
              missing.personcode,
              missing.storycode
       FROM utilisateurs_publications_suggerees as suggested
                INNER JOIN utilisateurs_publications_manquantes as missing
-                          USING (ID_User, publicationcode, issuenumber)
+                          USING (ID_User, issuecode)
       WHERE suggested.oldestdate <= '${new Date().toISOString().split("T")[0]}'
         AND (${since
       ? `suggested.oldestdate > '${since.toISOString().split("T")[0]}'`
@@ -163,12 +156,13 @@ export const getSuggestions = async (
     })
         AND (${singleUserId ? `suggested.ID_User = ${singleUserId}` : "1=1"})
         AND (${singleCountry
-      ? `suggested.publicationcode LIKE '${singleCountry}/%'`
+      ? `suggested.issuecode LIKE '${singleCountry}/%'`
       : "1=1"
     })
-      ORDER BY ID_User, ${sort} DESC, publicationcode, issuenumber
+      ORDER BY ID_User, ${sort} DESC, issuecode
       LIMIT 50
   `);
+  debugger
 
   if (!suggestions.length) {
     return emptySuggestionList;
@@ -198,29 +192,21 @@ export const getSuggestions = async (
         suggestionsPerUser[userId] = new IssueSuggestionList();
       }
 
-      const issuecode = [
-        suggestedStory.publicationcode,
-        suggestedStory.issuenumber,
-      ].join(" ");
       if (
         limit &&
-        !suggestionsPerUser[userId].issues[issuecode] &&
+        !suggestionsPerUser[userId].issues[suggestedStory.issuecode] &&
         Object.keys(suggestionsPerUser[userId].issues).length >= limit
       ) {
         continue;
       }
-      let issue = suggestionsPerUser[userId].issues[issuecode];
+      let issue = suggestionsPerUser[userId].issues[suggestedStory.issuecode];
       if (!issue) {
         issue = {
-          issuenumber: suggestedStory.issuenumber,
-          personcode: suggestedStory.personcode,
-          score: suggestedStory.score,
-          publicationcode: suggestedStory.publicationcode,
+          ...suggestedStory,
           oldestdate:
             (typeof suggestedStory.oldestdate === "string"
               ? suggestedStory.oldestdate
               : suggestedStory.oldestdate?.toISOString().split("T")[0]) || "",
-              issuecode,
           stories: {},
         } as IssueSuggestion;
       }
@@ -261,8 +247,7 @@ export const getSuggestions = async (
   if (withStoryDetails) {
     storyDetails = await getStoryDetails(
       referencedStories.map(({ storycode }) => storycode),
-      referencedStories.map(({ publicationcode }) => publicationcode),
-      referencedStories.map(({ issuenumber }) => issuenumber),
+      referencedStories.map(({ issuecode }) => issuecode),
     );
 
     for (const referencedStory of referencedStories) {
@@ -271,17 +256,7 @@ export const getSuggestions = async (
     }
   }
 
-  const publicationTitles = await getPublicationTitles({
-    publicationcode: {
-      in: [
-        ...new Set(
-          referencedIssues.map(({ publicationcode }) => publicationcode),
-        ),
-      ],
-    },
-  });
-
-  return { suggestionsPerUser, authors, storyDetails, publicationTitles };
+  return { suggestionsPerUser, authors, storyDetails };
 };
 
 const isSuggestionInCountriesToNotify = (
@@ -295,7 +270,7 @@ const isSuggestionInCountriesToNotify = (
       ? false
       : countriesToNotify[userId].some(
         (countryToNotify) =>
-          suggestion.publicationcode.indexOf(`${countryToNotify}/`) === 0,
+          suggestion.issuecode?.startsWith(`${countryToNotify}/`),
       );
 
 const getOptionValueAllUsers = async (optionName: userOptionType) =>
@@ -305,4 +280,4 @@ const getOptionValueAllUsers = async (optionName: userOptionType) =>
         optionName,
       },
     })
-  ).map(({userId, optionValue}) => ({userId,optionValue })).groupBy('userId', 'optionValue[]');
+  ).map(({ userId, optionValue }) => ({ userId, optionValue })).groupBy('userId', 'optionValue[]');

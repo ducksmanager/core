@@ -128,6 +128,7 @@ export default (socket: Socket<Events>) => {
 };
 
 export const getCoverUrls = async (issuecodes: string[]) => {
+  debugger
   const issues = (await prismaCoa.inducks_issue.findMany({
     select: {
       issuecode: true,
@@ -139,11 +140,10 @@ export const getCoverUrls = async (issuecodes: string[]) => {
       },
     },
   })).groupBy("issuecode");
-  const entries = (await prismaCoa.inducks_entry.findMany({
+  const entrycodeByIssuecode = (await prismaCoa.inducks_entry.findMany({
     select: {
       entrycode: true,
       issuecode: true,
-      position: true,
     },
     where: {
       issuecode: {
@@ -155,7 +155,10 @@ export const getCoverUrls = async (issuecodes: string[]) => {
         },
       },
     },
-  })).groupBy("issuecode");
+    orderBy: [{
+      position: "desc",
+    }],
+  })).groupBy("issuecode", 'entrycode');
   const entryurls = (await prismaCoa.inducks_entryurl.findMany({
     select: {
       entrycode: true,
@@ -164,14 +167,13 @@ export const getCoverUrls = async (issuecodes: string[]) => {
     },
     where: {
       entrycode: {
-        in: Object.values(entries).map(({ entrycode }) => entrycode),
+        in: Object.values(entrycodeByIssuecode).map((entrycode) => entrycode),
       },
     },
   })).groupBy("entrycode");
 
   return Object.entries(issues).map(([issuecode, issue]) => {
-    const coverEntry = entries[issuecode]
-    const coverEntryUrl = entryurls[coverEntry.entrycode]
+    const coverEntryUrl = entryurls[entrycodeByIssuecode[issuecode]]
     if (!coverEntryUrl) {
       return {
         issuecode,

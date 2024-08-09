@@ -8,6 +8,8 @@ import PushNotifications from "@pusher/push-notifications-server";
 import dayjs from "dayjs";
 
 import { i18n } from "~/emails/email";
+import { augmentIssueArrayWithInducksData } from "~/services/coa";
+import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa/client";
 import type { user } from "~prisma-schemas/schemas/dm";
 import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
 import {
@@ -77,7 +79,7 @@ getSuggestions(
   null,
   null,
   false,
-).then(async ({ suggestionsPerUser, authors, publicationTitles }) => {
+).then(async ({ suggestionsPerUser, authors }) => {
   const usersById = (await prismaDm.user.findMany()).groupBy('id')
 
   const allSuggestedIssues = [
@@ -113,7 +115,7 @@ getSuggestions(
     suggestionsPerUser,
   )) {
     const userIdNumber = parseInt(userId);
-    const pendingNotificationsForUser = Object.values(
+    const pendingNotificationsForUser = await augmentIssueArrayWithInducksData(Object.values(
       suggestionsForUser.issues,
     ).filter(
       (suggestion) =>
@@ -121,7 +123,7 @@ getSuggestions(
         !alreadySentNotificationsPerUser[userIdNumber].includes(
           suggestion.issuecode,
         ),
-    );
+    ));
 
     console.log(
       `${pendingNotificationsForUser.length} new issue(s) will be suggested to user ${userId}`,
@@ -131,6 +133,17 @@ getSuggestions(
       pendingNotificationsForUser.length
       } issue(s) have already been suggested to user ${userId}`,
     );
+
+    const publicationTitles = (await prismaCoa.inducks_publication.findMany({
+      where: {
+        publicationcode: {
+          in: [...new Set(pendingNotificationsForUser.map(
+            ({ publicationcode }) => publicationcode,
+          ))],
+        },
+      },
+    })).groupBy("publicationcode");
+
 
     for (const suggestedIssue of pendingNotificationsForUser) {
       const issueTitle = `${publicationTitles[suggestedIssue.publicationcode]

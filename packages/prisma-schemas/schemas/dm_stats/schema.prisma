@@ -54,31 +54,42 @@ model missingStoryForUser {
   @@map("utilisateurs_histoires_manquantes")
 }
 
-model utilisateurs_publications_manquantes {
+model missingIssueForUser {
   ID              Int       @id @default(autoincrement())
   ID_User         Int
   personcode      String    @db.VarChar(79)
   storycode       String    @db.VarChar(19)
+  /// @deprecated
   publicationcode String    @db.VarChar(12)
+  /// @deprecated
   issuenumber     String    @db.VarChar(12)
+  issuecode       String    @db.VarChar(25)
   oldestdate      DateTime? @db.Date
   Notation        Int       @db.UnsignedTinyInt
 
   @@unique([ID_User, personcode, storycode, publicationcode, issuenumber], map: "unique_index")
+  @@unique([ID_User, personcode, storycode, issuecode], map: "unique_index_issuecode")
   @@index([ID_User, publicationcode, issuenumber], map: "missing_user_issue")
   @@index([ID_User, publicationcode, issuenumber, oldestdate], map: "suggested")
   @@index([ID_User, personcode, storycode], map: "user_stories")
+  @@index([ID_User, issuecode], map: "missing_user_issue_issuecode")
+  @@index([ID_User, issuecode, oldestdate], map: "suggested_issuecode")
+  @@map("utilisateurs_publications_manquantes")
 }
 
 model suggestedIssueForUser {
   ID              Int       @id @default(autoincrement())
   userId          Int       @map("ID_User")
+  /// @deprecated
   publicationcode String    @db.VarChar(12)
+  /// @deprecated
   issuenumber     String    @db.VarChar(12)
+  issuecode       String    @db.VarChar(25)
   oldestdate      DateTime? @db.Date
   score           Int       @map("Score")
 
   @@unique([userId, publicationcode, issuenumber], map: "suggested_issue_for_user")
+  @@unique([userId, issuecode], map: "suggested_issue_for_user_issuecode")
   @@index([userId], map: "suggested_issue_user")
   @@map("utilisateurs_publications_suggerees")
 }
