@@ -1,7 +1,7 @@
 import { Scraper } from "bedetheque-scraper";
 
 import { getScrapeCacheTime, syncScrapeCache } from "~/cache";
-import { createQuotations, isInducksIssueExisting } from "~/coa";
+import { createQuotations, isInducksIssuecodeExisting } from "~/coa";
 import { readCsvMapping } from "~/csv";
 
 const MAPPING_FILE = "scrapes/bedetheque/coa-mapping.csv";
@@ -11,8 +11,7 @@ type CsvIssue = {
   bedetheque_url: string;
   bedetheque_num: string;
   bedetheque_title: string;
-  publicationcode: string;
-  issuenumber: string;
+  issuecode: string;
 };
 const quotations: Parameters<typeof createQuotations>[0] = [];
 
@@ -52,10 +51,9 @@ export async function scrape() {
     for (const {
       bedetheque_num,
       bedetheque_title,
-      publicationcode,
-      issuenumber,
+      issuecode,
     } of mappedIssuesForSeries) {
-      if (await isInducksIssueExisting(publicationcode, issuenumber)) {
+      if (await isInducksIssuecodeExisting(issuecode)) {
         const bedethequeAlbum = scrapeOutput!.albums.find(
           ({ albumNum, albumTitle }) =>
             !(
@@ -73,8 +71,7 @@ export async function scrape() {
             estimationEuros = [];
           }
           quotations.push({
-            publicationcode,
-            issuenumber,
+            issuecode,
             estimationMin: estimationEuros[0] || null,
             estimationMax: estimationEuros[1] || null,
             scrapeDate: getScrapeCacheTime("bedetheque", `${serieUrl}.json`),

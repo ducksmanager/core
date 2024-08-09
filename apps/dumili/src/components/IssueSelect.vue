@@ -54,7 +54,7 @@ const emit =
   defineEmits<
     (
       e: "change",
-      data?: { publicationcode: string | null; issuenumber: string | null },
+      data?: { publicationcode: string | null; issuenumber: string | null }
     ) => void
   >();
 
@@ -68,12 +68,14 @@ const props = withDefaults(
     countryCode: undefined,
     publicationCode: undefined,
     issueCode: undefined,
-  },
+  }
 );
 
 const currentCountryCode = ref<string | undefined>(undefined);
 const currentPublicationCode = ref<string | undefined>(undefined);
 const currentIssueNumber = ref<string | undefined>(undefined);
+
+const { issuecodesByPublicationcode} = storeToRefs(coaStore);
 
 const countryNames = computed(
   () =>
@@ -84,46 +86,46 @@ const countryNames = computed(
           value: countrycode,
         }))
         .sort(({ text: text1 }, { text: text2 }) =>
-          (text1 || "").localeCompare(text2),
+          (text1 || "").localeCompare(text2)
         )) ||
-    undefined,
+    undefined
 );
 
 const publicationNamesForCurrentCountry = computed(() =>
   coaStore.publicationNamesFullCountries.includes(
-    currentCountryCode.value || "",
+    currentCountryCode.value || ""
   )
     ? Object.keys(coaStore.publicationNames)
         .filter(
           (publicationcode) =>
-            publicationcode.indexOf(`${currentCountryCode.value}/`) === 0,
+            publicationcode.indexOf(`${currentCountryCode.value}/`) === 0
         )
         .map((publicationcode) => ({
           text: coaStore.publicationNames[publicationcode],
           value: publicationcode,
         }))
         .sort(({ text: text1 }, { text: text2 }) =>
-          (text1 || "").localeCompare(text2 || ""),
+          (text1 || "").localeCompare(text2 || "")
         )
-    : [],
+    : []
 );
 const publicationIssues = computed(
-  () => coaStore.issueNumbers[currentPublicationCode.value!],
+  () => issuecodesByPublicationcode.value[currentPublicationCode.value!]
 );
 
 const issues = computed(
   () =>
     publicationIssues.value &&
-    coaStore.issueNumbers[currentPublicationCode.value!].map((issuenumber) => ({
+    issuecodesByPublicationcode.value[currentPublicationCode.value!].map((issuenumber) => ({
       value: issuenumber,
       text: issuenumber,
-    })),
+    }))
 );
 
 const isValid = computed(
   () =>
     !!currentIssueNumber.value &&
-    !issues.value?.some(({ value }) => value === currentIssueNumber.value),
+    !issues.value?.some(({ value }) => value === currentIssueNumber.value)
 );
 
 watch(
@@ -138,13 +140,13 @@ watch(
   },
   {
     immediate: true,
-  },
+  }
 );
 
 watch(currentPublicationCode, async (newValue) => {
   if (newValue) {
     currentIssueNumber.value = undefined;
-    await coaStore.fetchIssueNumbers([newValue]);
+    await coaStore.fetchIssuecodesByPublicationcode([newValue]);
   }
 });
 if (props.countryCode) {

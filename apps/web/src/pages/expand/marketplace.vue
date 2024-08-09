@@ -40,14 +40,10 @@ alias: [/agrandir/marketplace]
       </template>
       <template #content>
         <ul>
-          <li v-for="issueId of issueIds as number[]" :key="issueId">
+          <li v-for="issueId of issueIds" :key="issueId">
             <Issue
               hide-condition
-              :publicationcode="issuesOnSaleById[issueId].publicationcode"
-              :issuenumber="issuesOnSaleById[issueId].issuenumber"
-              :publicationname="
-                publicationNames[issuesOnSaleById[issueId].publicationcode]!
-              "
+              :issuecode="issuesOnSaleById[issueId].issuecode"
             />
             <b-badge
               v-if="isRequestBooked(issueId)"
@@ -111,7 +107,9 @@ alias: [/agrandir/marketplace]
       </b-form-select>
     </span>
     <IssueList
-      v-for="[publicationcode, issues] in Object.entries(issuesOnSaleByOthers)"
+      v-for="[publicationcode, issues] in Object.entries(
+        issuesOnSaleByOthers.groupBy('publicationcode', '[]'),
+      )"
       :key="publicationcode"
       :publicationcode="publicationcode"
       :custom-issues="
@@ -184,11 +182,7 @@ alias: [/agrandir/marketplace]
         <div v-for="issueId of modalIssueIds" :key="issueId">
           <issue
             hide-condition
-            :publicationcode="issuesOnSaleById[issueId].publicationcode"
-            :publicationname="
-              publicationNames[issuesOnSaleById[issueId].publicationcode]!
-            "
-            :issuenumber="issuesOnSaleById[issueId].issuenumber"
+            :issuecode="issuesOnSaleById[issueId].issuecode"
           />
         </div>
         <p class="mt-4">
@@ -242,7 +236,6 @@ const {
 } = storeToRefs(marketplace());
 
 const { fetchPublicationNames } = coa();
-const { publicationNames } = storeToRefs(coa());
 
 const { fetchStats } = users();
 const { stats } = storeToRefs(users());

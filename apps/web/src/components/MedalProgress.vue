@@ -35,8 +35,10 @@
 </template>
 
 <script setup lang="ts">
+import type { UserContributionTypeEn } from "~dm-types/UserContributionTypeEn";
+
 const { contribution = "edge_photographer", userLevelPoints } = defineProps<{
-  contribution?: string;
+  contribution?: UserContributionTypeEn;
   userLevelPoints: number;
   extraPoints: number;
 }>();

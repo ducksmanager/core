@@ -3,13 +3,11 @@
     <OfflineBanner :on-offline="routeMeta.onOffline" v-if="isOfflineMode" />
     <AppWithPersistedData v-if="socket" />
 
-    <ion-split-pane
+    <ion-router-outlet
       v-else-if="route.path === '/login'"
       :style="{ 'margin-top': `${offlineBannerHeight}px` }"
-      content-id="main-content"
-    >
-      <ion-router-outlet id="main-content" />
-    </ion-split-pane>
+      id="main-content"
+    />
   </ion-app>
 </template>
 

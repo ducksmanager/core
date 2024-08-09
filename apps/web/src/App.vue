@@ -5,7 +5,8 @@
 <script setup lang="ts">
 import Cookies from "js-cookie";
 
-import { buildWebStorage, useSocket } from "~socket.io-client-services";
+import type { useSocket } from "~socket.io-client-services";
+import { buildWebStorage } from "~socket.io-client-services";
 
 import { dmSocketInjectionKey } from "./composables/useDmSocket";
 

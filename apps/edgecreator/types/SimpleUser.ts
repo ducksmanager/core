@@ -1,3 +1,3 @@
-import type { user } from "~prisma-clients/extended/dm.extends";
+import type { user } from "~prisma-schemas/schemas/dm";
 
 export type SimpleUser = Pick<user, "id" | "username">;

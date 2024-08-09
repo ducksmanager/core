@@ -38,7 +38,7 @@ alias: [/bibliotheque/options]
             )}')`,
           }"
           @click="
-            bookcaseOptions!.textures[textureType as 'bookshelf' | 'bookcase'] =
+            bookcaseOptions!.textures[textureType] =
               texture
           "
         >
@@ -207,7 +207,7 @@ watch(
     if (value) {
       bookcaseUsername.value = value.username;
       await loadData();
-      inputBookcaseOrder = persistedBookcaseOrder.value as string[];
+      inputBookcaseOrder = persistedBookcaseOrder.value!;
       await fetchPublicationNames(persistedBookcaseOrder.value!);
       inputBookcaseOrder = inputBookcaseOrder.filter((publicationcode) =>
         Object.keys(publicationNames.value).includes(publicationcode),

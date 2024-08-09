@@ -27,11 +27,9 @@
         </template>
         <template #content>
           <Issue
-            v-for="{ publicationcode, issuenumber } in issues"
-            :key="`purchase-${purchaseIndex}-issue-${publicationcode}-${issuenumber}`"
-            :publicationcode="publicationcode"
-            :publicationname="publicationNames[publicationcode]!"
-            :issuenumber="issuenumber"
+            v-for="{ issuecode } in issues"
+            :key="`purchase-${purchaseIndex}-issue-${issuecode}`"
+            :issuecode="issuecode"
             :no-wrap="false"
           />
         </template>
@@ -41,7 +39,7 @@
 </template>
 
 <script setup lang="ts">
-import { issue } from "~prisma-clients/extended/dm.extends";
+import type { issue } from "~prisma-schemas/schemas/dm";
 
 const { publicationNames } = storeToRefs(coa());
 const { purchasesById, issues: allIssues } = storeToRefs(collection());
@@ -57,41 +55,35 @@ const hasPublicationNames = $computed(() => Object.keys(publicationNames)),
             purchase: { date: Date; description: string };
             issues: issue[];
           }[]
-        >(
-          (acc, issue) => {
-            const existingPurchase =
-              issue.purchaseId && purchasesById.value![issue.purchaseId];
-            const purchase = existingPurchase
-              ? {
-                  date: existingPurchase.date,
-                  description: existingPurchase.description,
-                }
-              : {
-                  date: new Date(issue.creationDate as unknown as string),
-                  description: "",
-                };
-            let purchaseIndex = acc.findIndex(
-              ({ purchase: currentPurchase }) =>
-                currentPurchase.date === purchase.date,
-            );
-            if (purchaseIndex === -1 && purchase.date) {
-              acc.push({
-                purchase: {
-                  date: purchase.date,
-                  description: purchase.description,
-                },
-                issues: [],
-              });
-              purchaseIndex = acc.length - 1;
-            }
-            acc[purchaseIndex]?.issues?.push(issue);
-            return acc;
-          },
-          [] as {
-            purchase: { date: Date; description: string };
-            issues: issue[];
-          }[],
-        )
+        >((acc, issue) => {
+          const existingPurchase =
+            issue.purchaseId && purchasesById.value![issue.purchaseId];
+          const purchase = existingPurchase
+            ? {
+                date: existingPurchase.date,
+                description: existingPurchase.description,
+              }
+            : {
+                date: new Date(issue.creationDate as unknown as string),
+                description: "",
+              };
+          let purchaseIndex = acc.findIndex(
+            ({ purchase: currentPurchase }) =>
+              currentPurchase.date === purchase.date,
+          );
+          if (purchaseIndex === -1 && purchase.date) {
+            acc.push({
+              purchase: {
+                date: purchase.date,
+                description: purchase.description,
+              },
+              issues: [],
+            });
+            purchaseIndex = acc.length - 1;
+          }
+          acc[purchaseIndex]?.issues?.push(issue);
+          return acc;
+        }, [])
         .sort(({ purchase: purchase1 }, { purchase: purchase2 }) =>
           purchase1.date < purchase2.date ? 1 : -1,
         )

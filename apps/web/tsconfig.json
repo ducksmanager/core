@@ -3,7 +3,11 @@
     "baseUrl": ".",
     "module": "ESNext",
     "target": "es2020",
-    "lib": ["dom", "dom.iterable", "ESNext"],
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "ESNext"
+    ],
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
@@ -20,13 +24,27 @@
       "@vue-macros/reactivity-transform/macros-global"
     ],
     "paths": {
-      "~/*": ["src/*"],
-      "~dm-services/*": ["../../packages/api/services/*"],
-      "~dm-types/*": ["../../packages/types/*"],
-      "~prisma-clients/*": ["../../packages/prisma-clients/*"],
-      "~socket.io-client-services/*": ["../../packages/socket.io-client-services/*"],
-      "~socket.io-services/*": ["../../packages/socket.io-services/*"],
-      "~translations/*": ["translations/*"]
+      "~/*": [
+        "src/*"
+      ],
+      "~dm-services/*": [
+        "../../packages/api/services/*"
+      ],
+      "~dm-types/*": [
+        "../../packages/types/*"
+      ],
+      "~prisma-schemas/*": [
+        "../../packages/prisma-schemas/*"
+      ],
+      "~socket.io-client-services/*": [
+        "../../packages/socket.io-client-services/*"
+      ],
+      "~socket.io-services/*": [
+        "../../packages/socket.io-services/*"
+      ],
+      "~translations/*": [
+        "translations/*"
+      ]
     }
   },
   "include": [
@@ -36,5 +54,8 @@
     "src/**/*.vue",
     "auto-imports.d.ts"
   ],
-  "exclude": ["dist", "node_modules"],
+  "exclude": [
+    "dist",
+    "node_modules"
+  ],
 }

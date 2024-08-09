@@ -54,13 +54,12 @@ alias: [/auteurs]
 </template>
 
 <script setup lang="ts">
+import type { ChartData, ChartOptions } from "chart.js";
 import {
   BarController,
   BarElement,
   CategoryScale,
   Chart,
-  ChartData,
-  ChartOptions,
   Legend,
   LinearScale,
   Title,
@@ -68,8 +67,8 @@ import {
 } from "chart.js";
 import { Bar } from "vue-chartjs";
 
-import StatsServices from "~dm-services/stats/types";
-import { EventReturnType } from "~socket.io-services/types";
+import type StatsServices from "~dm-services/stats/types";
+import type { EventReturnType } from "~socket.io-services/types";
 
 import { dmSocketInjectionKey } from "../../composables/useDmSocket";
 
@@ -97,9 +96,9 @@ const unitTypes = {
   percentage: $t("Afficher en pourcentages"),
 };
 
-let watchedAuthorsStoryCount = $ref(
-  null as EventReturnType<StatsServices["getWatchedAuthorsStats"]> | null,
-);
+let watchedAuthorsStoryCount = $ref<EventReturnType<
+  StatsServices["getWatchedAuthorsStats"]
+> | null>(null);
 let unitTypeCurrent = $ref("number");
 let width = $ref<string | null>(null),
   height = $ref<string>("300px"),

@@ -1,5 +1,7 @@
 import type { Namespace, Server } from "socket.io";
 
+import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa/client";
+
 import authors from "./authors";
 import countries from "./countries";
 import issueDetails from "./issue-details";
@@ -22,3 +24,48 @@ export default (io: Server) => {
     stories(socket);
   });
 };
+
+const getInducksIssueData = (issuecodes: string[]) =>
+  prismaCoa.inducks_issue
+    .findMany({
+      select: {
+        publicationcode: true,
+        issuenumber: true,
+        issuecode: true,
+      },
+      where: {
+        issuecode: {
+          in: issuecodes,
+        },
+      },
+    })
+    .then((inducksIssues) => inducksIssues.groupBy("issuecode"));
+
+export const augmentIssueObjectWithInducksData = <
+  Entity extends { issuecode: string },
+>(
+  issues: Record<string, Entity>,
+) =>
+  getInducksIssueData(Object.keys(issues)).then((inducksIssues) =>
+    Object.entries(issues).reduce<typeof issues>(
+      (acc, [issuecode, issue]) => ({
+        ...acc,
+        [issuecode]: { ...issue, ...inducksIssues[issuecode] },
+      }),
+      {},
+    ),
+  );
+
+export const augmentIssueArrayWithInducksData = async <
+  Entity extends { issuecode: string },
+>(
+  issues: Entity[],
+) =>
+  getInducksIssueData([
+    ...new Set(issues.map(({ issuecode }) => issuecode)),
+  ]).then((inducksIssues) =>
+    issues.map((issue) => ({
+      ...issue,
+      ...inducksIssues[issue.issuecode],
+    })),
+  );

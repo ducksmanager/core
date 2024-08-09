@@ -11,10 +11,9 @@
         v-if="embedded"
         :id="`edge-${edgeIndex}${embedded}`"
         v-bind="
-          (({ publicationcode, issueCondition, issuenumber }) => ({
-            publicationcode,
+          (({ issuecode, issueCondition }) => ({
+            issue: issuecodeDetails[issuecode],
             issueCondition,
-            issuenumber,
           }))(sortedBookcase[edgeIndex] as SimpleBookcaseEdge)
         "
         :orientation="orientation"
@@ -40,17 +39,14 @@
         "
         v-bind="
           (({
-            publicationcode,
+            issuecode,
             issueCondition,
-            issuenumber,
-            issuenumberReference,
             popularity,
           }: BookcaseEdgeWithPopularity) => ({
-            publicationcode,
+            issue: issuecodeDetails[issuecode],
             issueCondition,
-            issuenumber,
-            issuenumberReference,
-            popularity,
+            
+            popularity
           }))(sortedBookcaseWithPopularity![edgeIndex])
         "
         :creation-date="
@@ -80,7 +76,7 @@
 <script setup lang="ts">
 import { images } from "~/stores/images";
 
-import {
+import type {
   BookcaseEdgeWithPopularity,
   SimpleBookcaseEdge,
 } from "../stores/bookcase";
@@ -117,6 +113,8 @@ defineSlots<{
     edge: Pick<BookcaseEdgeWithPopularity, "issueCondition">;
   }): never;
 }>();
+
+const { issuecodeDetails } = storeToRefs(coa());
 
 const sortedBookcaseWithPopularity = computed(() =>
   embedded ? undefined : (sortedBookcase as BookcaseEdgeWithPopularity[]),

@@ -88,7 +88,7 @@
                   v-for="(fullName, personcode) in searchResults"
                   :key="personcode"
                   :class="{
-                    disabled: isAuthorWatched(personcode as string),
+                    disabled: isAuthorWatched(personcode),
                   }"
                   @click="createRating(personcode)"
                 >
@@ -104,7 +104,7 @@
 </template>
 
 <script setup lang="ts">
-import type { authorUser } from "~prisma-clients/extended/dm.extends";
+import type { authorUser } from "~prisma-schemas/schemas/dm/extended";
 
 const {
   searchAuthors,

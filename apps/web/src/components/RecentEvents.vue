@@ -17,14 +17,15 @@
 </template>
 
 <script setup lang="ts">
-import { AbstractEvent } from "~dm-types/events/AbstractEvent";
-import { CollectionUpdateEvent } from "~dm-types/events/CollectionUpdateEvent";
-import { EdgeCreationEvent } from "~dm-types/events/EdgeCreationEvent";
+import type { AbstractEvent } from "~dm-types/events/AbstractEvent";
+import type { CollectionUpdateEvent } from "~dm-types/events/CollectionUpdateEvent";
+import type { EdgeCreationEvent } from "~dm-types/events/EdgeCreationEvent";
 
 const { fetchStats, fetchEvents } = users();
 const { events } = storeToRefs(users());
 
-const { fetchPublicationNames } = coa();
+const { fetchPublicationNames, fetchIssuecodeDetails } = coa();
+const { issuecodeDetails } = storeToRefs(coa());
 
 let isLoaded = $ref(false);
 const eventUserIds = $computed(() =>
@@ -34,34 +35,43 @@ const eventUserIds = $computed(() =>
     >((acc, event) => [...acc, ...(event.users || [])], [])
     .filter((userId) => !!userId),
 );
-const isCollectionUpdateEvent = (event: AbstractEvent) =>
-  event.hasOwnProperty("numberOfIssues");
+const isCollectionUpdateEvent = (
+  event: AbstractEvent,
+): event is CollectionUpdateEvent => event.hasOwnProperty("numberOfIssues");
 
-const isEdgeCreationEvent = (event: AbstractEvent) =>
-  event.hasOwnProperty("edges");
+const isEdgeCreationEvent = (
+  event: AbstractEvent,
+): event is EdgeCreationEvent => event.hasOwnProperty("edges");
 
 const fetchEventsAndAssociatedData = async () => {
   await fetchEvents();
 
+  await fetchIssuecodeDetails([
+    ...events.value
+      .filter((event) => isCollectionUpdateEvent(event))
+      .map((event) => event.issuecode || ""),
+    ...events.value
+      .filter((event) => isEdgeCreationEvent(event))
+      .reduce<
+        string[]
+      >((acc, { edges }) => [...acc, ...edges.map(({ issuecode }) => issuecode)], []),
+  ]);
+
   await fetchPublicationNames([
     ...events.value
       .filter((event) => isCollectionUpdateEvent(event))
-      .map((event) => (event as CollectionUpdateEvent).publicationcode || ""),
+      .map(
+        (event) =>
+          issuecodeDetails.value[event.issuecode].publicationcode || "",
+      ),
     ...events.value
       .filter((event) => isEdgeCreationEvent(event))
-      .map((event) => event as EdgeCreationEvent)
-      .reduce(
-        (acc, { edges }) => [
-          ...acc,
-          ...edges.map(({ publicationcode }) => publicationcode),
-        ],
-        [] as string[],
-      ),
+      .reduce<
+        string[]
+      >((acc, { edges }) => [...acc, ...edges.map(({ issuecode }) => issuecodeDetails.value[issuecode].publicationcode)], []),
   ]);
 
-  await fetchStats(
-    eventUserIds.filter((userId) => userId !== null) as number[],
-  );
+  await fetchStats(eventUserIds.filter((userId) => userId !== null));
 };
 
 (async () => {

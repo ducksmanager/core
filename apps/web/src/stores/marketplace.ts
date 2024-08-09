@@ -1,7 +1,6 @@
-import CollectionServices from "~dm-services/collection/types";
-import type { requestedIssue } from "~prisma-clients/extended/dm.extends";
-import { issue } from "~prisma-clients/extended/dm.extends";
-import { EventReturnType } from "~socket.io-services/types";
+import type CollectionServices from "~dm-services/collection/types";
+import type { requestedIssue } from "~prisma-schemas/schemas/dm";
+import type { EventReturnType } from "~socket.io-services/types";
 
 import { dmSocketInjectionKey } from "../composables/useDmSocket";
 
@@ -29,12 +28,7 @@ export const marketplace = defineStore("marketplace", () => {
     sellerUserIds = computed(
       () =>
         (issuesOnSaleByOthers.value && [
-          ...new Set(
-            Object.values(issuesOnSaleByOthers.value).reduce<number[]>(
-              (acc, issues) => [...acc, ...issues.map((issue) => issue.userId)],
-              [],
-            ),
-          ),
+          ...new Set(issuesOnSaleByOthers.value.map((issue) => issue.userId)),
         ]) ||
         [],
     ),
@@ -79,22 +73,8 @@ export const marketplace = defineStore("marketplace", () => {
             )) ||
         {},
     ),
-    issuesOnSaleById = computed(() =>
-      Object.values(issuesOnSaleByOthers.value || {}).reduce<
-        Record<number, issue>
-      >(
-        (acc, issues) => ({
-          ...acc,
-          ...issues.reduce<Record<number, issue>>(
-            (acc2, issue) => ({
-              ...acc2,
-              [issue.id]: issue,
-            }),
-            {},
-          ),
-        }),
-        {},
-      ),
+    issuesOnSaleById = computed(
+      () => issuesOnSaleByOthers.value?.groupBy("id") || {},
     ),
     requestIssues = async (issueIds: number[]) => {
       await collectionServices.createRequests(issueIds);

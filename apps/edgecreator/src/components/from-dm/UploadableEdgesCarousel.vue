@@ -8,13 +8,9 @@
           :key="popularIssueWithoutEdge.issueCode"
           :active="currentSlide === index"
         >
-          <Issue
+          <issue
             no-wrap
-            :publicationcode="popularIssueWithoutEdge.publicationcode"
-            :publicationname="
-              publicationNames[popularIssueWithoutEdge.publicationcode]
-            "
-            :issuenumber="popularIssueWithoutEdge.issuenumber"
+            :issuecode="popularIssueWithoutEdge.issuecode"
             hide-condition
           />
           <medal-progress
@@ -31,6 +27,8 @@
 
 <script setup lang="ts">
 import type { BookcaseEdge } from "~dm-types/BookcaseEdge";
+
+import Issue from "./Issue.vue";
 interface BookcaseEdgeWithPopularity extends BookcaseEdge {
   issueCode: string;
   popularity?: number | undefined;

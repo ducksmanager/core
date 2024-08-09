@@ -36,12 +36,12 @@ watch(
     if (value) {
       publicationCodes = [
         ...new Set(
-          Object.values(value).reduce(
+          Object.values(value).reduce<string[]>(
             (acc, issues) => [
               ...acc,
               ...issues.map(({ publicationcode }) => publicationcode),
             ],
-            [] as string[],
+            [],
           ),
         ),
       ];

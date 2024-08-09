@@ -1,15 +1,15 @@
-import {
+import type {
   inducks_entry,
   inducks_issue,
   inducks_storyversion,
-} from "~prisma-clients/client_coa";
+} from "~prisma-schemas/schemas/coa";
 
 type AllNonNullable<T> = {
   [P in keyof T]: NonNullable<T[P]>;
 };
 
-export type SimpleIssue = AllNonNullable<
-  Pick<inducks_issue, "shortIssuecode" | "publicationcode" | "issuenumber">
+export type IssueWithIssuecodeOnly = AllNonNullable<
+  Pick<inducks_issue, "issuecode">
 >;
 
 export type PartInfo = AllNonNullable<
@@ -19,4 +19,4 @@ export type PartInfo = AllNonNullable<
     }
 >;
 
-export type SimpleIssueWithPartInfo = SimpleIssue & PartInfo;
+export type SimpleIssueWithPartInfo = IssueWithIssuecodeOnly & PartInfo;

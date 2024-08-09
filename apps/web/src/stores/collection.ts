@@ -1,32 +1,32 @@
-import CollectionServices from "~dm-services/collection/types";
-import StatsServices from "~dm-services/stats/types";
-import {
+import type { ShallowRef } from "vue";
+
+import type CollectionServices from "~dm-services/collection/types";
+import type StatsServices from "~dm-services/stats/types";
+import type {
   CollectionUpdateMultipleIssues,
   CollectionUpdateSingleIssue,
 } from "~dm-types/CollectionUpdate";
-import {
+import type {
   authorUser,
   issue,
   purchase,
   subscription,
-} from "~prisma-clients/extended/dm.extends";
-import { EventReturnType, ScopedError } from "~socket.io-services/types";
+} from "~prisma-schemas/schemas/dm";
+import type { EventReturnType, ScopedError } from "~socket.io-services/types";
 
 import useCollection from "../composables/useCollection";
 import { dmSocketInjectionKey } from "../composables/useDmSocket";
 import { bookcase } from "./bookcase";
 
-export type IssueWithPublicationcodeOptionalId = Omit<issue, "id"> & {
+export type IssueWithPublicationcodeOptionalId = Omit<
+  issue,
+  "id" | "issuenumber"
+> & {
   id: number | null;
 };
 
-export type SubscriptionTransformed = Omit<
-  subscription,
-  "country" | "magazine"
->;
-
 export type SubscriptionTransformedStringDates = Omit<
-  SubscriptionTransformed,
+  subscription,
   "startDate" | "endDate"
 > & {
   startDate: string;
@@ -47,9 +47,11 @@ export const collection = defineStore("collection", () => {
 
   const { bookcaseWithPopularities } = storeToRefs(bookcase());
 
-  const issues = shallowRef<issue[] | null>(null);
+  const issues = shallowRef<EventReturnType<
+    CollectionServices["getIssues"]
+  > | null>(null);
 
-  const collectionUtils = useCollection(issues),
+  const collectionUtils = useCollection(issues as ShallowRef<issue[]>),
     watchedPublicationsWithSales = ref<string[] | null>(null),
     purchases = shallowRef<purchase[] | null>(null),
     watchedAuthors = shallowRef<authorUser[] | null>(null),
@@ -57,9 +59,9 @@ export const collection = defineStore("collection", () => {
     suggestions = shallowRef<EventReturnType<
       StatsServices["getSuggestionsForCountry"]
     > | null>(null),
-    subscriptions = shallowRef<SubscriptionTransformed[] | null>(null),
+    subscriptions = shallowRef<subscription[] | null>(null),
     popularIssuesInCollection = ref<{
-      [shortIssuecode: string]: number;
+      [issuecode: string]: number;
     } | null>(null),
     lastPublishedEdgesForCurrentUser = shallowRef<EventReturnType<
       CollectionServices["getLastPublishedEdges"]
@@ -87,58 +89,52 @@ export const collection = defineStore("collection", () => {
     publicationUrlRoot = computed(() => "/collection/show"),
     purchasesById = computed((): Record<string, purchase> | undefined =>
       purchases.value?.reduce(
-        (acc, purchase) => ({ ...acc, [purchase.id as number]: purchase }),
+        (acc, purchase) => ({ ...acc, [purchase.id]: purchase }),
         {},
       ),
     ),
     copiesPerIssuecode = computed(() =>
-      issues.value?.reduce<Record<string, issue[]>>(
-        (acc, issue) => ({
-          ...acc,
-          [issue.shortIssuecode]: [...acc[issue.shortIssuecode], issue],
-        }),
-        {},
-      ),
+      issues.value?.groupBy("issuecode", "[]"),
     ),
     hasSuggestions = computed(
       () => Object.keys(suggestions.value?.oldestdate.issues || {}).length,
     ),
-    issueNumbersPerPublication = computed(
+    issuecodesPerPublication = computed(
+      () => issues.value?.groupBy("publicationcode", "[]") || {},
+    ),
+    issuenumbersPerPublication = computed(
       () =>
         issues.value?.reduce<{ [publicationcode: string]: string[] }>(
-          (acc, { country, issuenumber, magazine }) => ({
+          (acc, { publicationcode, issuenumber }) => ({
             ...acc,
-            [`${country}/${magazine}`]: [
-              ...(acc[`${country}/${magazine}`] || []),
-              issuenumber,
-            ],
+            [publicationcode]: [...(acc[publicationcode] || []), issuenumber],
           }),
           {},
         ) || {},
     ),
-    totalPerPublicationUniqueIssueNumbers = computed(
+    totalPerPublicationUniqueIssuecodes = computed(
       (): {
         [publicationcode: string]: number;
       } =>
-        issueNumbersPerPublication.value &&
-        Object.keys(issueNumbersPerPublication.value).reduce(
+        issuecodesPerPublication.value &&
+        Object.keys(issuecodesPerPublication.value).reduce(
           (acc, publicationcode) => ({
             ...acc,
             [publicationcode]: [
-              ...new Set(issueNumbersPerPublication.value[publicationcode]),
+              ...new Set(issuecodesPerPublication.value[publicationcode]),
             ].length,
           }),
           {},
         ),
     ),
-    totalPerPublicationUniqueIssueNumbersSorted = computed(
+    totalPerPublicationUniqueIssuecodesSorted = computed(
       () =>
-        totalPerPublicationUniqueIssueNumbers.value &&
-        Object.entries(totalPerPublicationUniqueIssueNumbers.value).sort(
+        totalPerPublicationUniqueIssuecodes.value &&
+        Object.entries(totalPerPublicationUniqueIssuecodes.value).sort(
           ([publicationcode1], [publicationcode2]) =>
             Math.sign(
-              totalPerPublicationUniqueIssueNumbers.value[publicationcode2]! -
-                totalPerPublicationUniqueIssueNumbers.value[publicationcode1]!,
+              totalPerPublicationUniqueIssuecodes.value[publicationcode2]! -
+                totalPerPublicationUniqueIssuecodes.value[publicationcode1]!,
             ),
         ),
     ),
@@ -206,8 +202,28 @@ export const collection = defineStore("collection", () => {
       if (afterUpdate || (!isLoadingCollection.value && !issues.value)) {
         isLoadingCollection.value = true;
         issues.value = await collectionServices.getIssues();
+        Object.assign(
+          coa().issuecodeDetails,
+          issues.value.map(({ issuecode, publicationcode, issuenumber }) => ({
+            issuecode,
+            publicationcode,
+            issuenumber,
+          })),
+        );
         isLoadingCollection.value = false;
       }
+
+      console.log("loadCollection");
+      Object.assign(
+        coa().issuecodeDetails,
+        issues
+          .value!.map(({ issuecode, publicationcode, issuenumber }) => ({
+            issuecode,
+            publicationcode,
+            issuenumber,
+          }))
+          .groupBy("issuecode"),
+      );
     },
     loadPurchases = async (afterUpdate = false) => {
       if (afterUpdate || (!isLoadingPurchases.value && !purchases.value)) {
@@ -294,8 +310,7 @@ export const collection = defineStore("collection", () => {
         ).reduce(
           (acc, issue) => ({
             ...acc,
-            [`${issue.country}/${issue.magazine} ${issue.issuenumber}`]:
-              issue.popularity,
+            [issue.issuecode]: issue.popularity,
           }),
           {},
         );
@@ -393,7 +408,8 @@ export const collection = defineStore("collection", () => {
     coaIssueCountsByPublicationcode,
     copiesPerIssuecode,
     coaIssueCountsPerCountrycode,
-    issueNumbersPerPublication,
+    issuecodesPerPublication,
+    issuenumbersPerPublication,
     lastPublishedEdgesForCurrentUser,
     loadCollection,
     loadUserIssueQuotations,
@@ -417,8 +433,8 @@ export const collection = defineStore("collection", () => {
     signup,
     subscriptions,
     suggestions,
-    totalPerPublicationUniqueIssueNumbers,
-    totalPerPublicationUniqueIssueNumbersSorted,
+    totalPerPublicationUniqueIssuecodes,
+    totalPerPublicationUniqueIssuecodesSorted,
     updateCollectionMultipleIssues,
     updateCollectionSingleIssue,
     updateMarketplaceContactMethods,

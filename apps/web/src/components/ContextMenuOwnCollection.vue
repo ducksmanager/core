@@ -85,10 +85,8 @@
           @click.prevent="
             initialCopies!.copies.push({
               id: null,
-              country: publicationcode.split('/')[0],
-              magazine: publicationcode.split('/')[1],
               publicationcode,
-              issuenumber: initialCopies!.issuenumber,
+              issuecode: initialCopies!.issuecode,
               isSubscription: false,
               userId: user!.id,
               creationDate: new Date(),
@@ -120,8 +118,8 @@
 </template>
 
 <script setup lang="ts">
-import { IssueWithPublicationcodeOptionalId } from "~/stores/collection";
-import {
+import type { IssueWithPublicationcodeOptionalId } from "~/stores/collection";
+import type {
   CollectionUpdateMultipleIssues,
   CollectionUpdateSingleIssue,
   SaleState,
@@ -132,9 +130,9 @@ const { loadIssuesOnSaleByOthers, loadIssueRequestsAsSeller } = marketplace();
 const { updateCollectionMultipleIssues, updateCollectionSingleIssue } =
   collection();
 const { user } = storeToRefs(collection());
-let { publicationcode, selectedIssueIdsByIssuenumber } = defineProps<{
-  selectedIssueIdsByIssuenumber: {
-    [issuenumber: string]: IssueWithPublicationcodeOptionalId[];
+let { publicationcode, selectedIssueIdsByIssuecodes } = defineProps<{
+  selectedIssueIdsByIssuecodes: {
+    [issuecode: string]: IssueWithPublicationcodeOptionalId[];
   };
   publicationcode: string;
 }>();
@@ -166,22 +164,22 @@ let editedCopies = $ref<CollectionUpdateSingleIssue | null>(null);
 let currentCopyIndex = $ref(0);
 
 const selectedIssues = $computed(() =>
-  Object.keys(selectedIssueIdsByIssuenumber),
+  Object.keys(selectedIssueIdsByIssuecodes),
 );
 
 let isSingleIssueSelected = $computed(() => selectedIssues.length === 1);
 const hasNoCopies = $computed(
   () =>
-    (initialCopies && initialCopies.issuenumber === null) ||
-    (initialIssues && !initialIssues.issuenumbers.length),
+    (initialCopies && initialCopies.issuecode === null) ||
+    (initialIssues && !initialIssues.issuecodes.length),
 );
 const hasMaxCopies = $computed(
   () => initialCopies && initialCopies.copies.length >= 3,
 );
 const hasMultipleCopiesAndMultipleIssues = $computed(
   () =>
-    Object.values(selectedIssueIdsByIssuenumber).length > 1 &&
-    Object.values(selectedIssueIdsByIssuenumber).some(
+    Object.values(selectedIssueIdsByIssuecodes).length > 1 &&
+    Object.values(selectedIssueIdsByIssuecodes).some(
       (issues) => issues.length > 1,
     ),
 );
@@ -232,15 +230,13 @@ watch(
     if (isSingleIssueSelected) {
       editedIssues = initialIssues = null;
       editedCopies = initialCopies = {
-        publicationcode,
-        issuenumber: newValue[0],
-        copies: selectedIssueIdsByIssuenumber[newValue[0]],
+        issuecode: newValue[0],
+        copies: selectedIssueIdsByIssuecodes[newValue[0]],
       };
     } else {
       editedCopies = initialCopies = null;
       editedIssues = initialIssues = {
-        publicationcode,
-        issuenumbers: newValue,
+        issuecodes: newValue,
         ...defaultIssueState,
       };
     }

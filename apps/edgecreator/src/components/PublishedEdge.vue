@@ -1,7 +1,7 @@
 <template>
   <b-img
     :height="(naturalHeight * zoom) / 1.5"
-    :src="getEdgeUrl()"
+    :src="getEdgeUrl(issuecode, 'png', true)"
     @load="
       naturalHeight = $event.currentTarget.naturalHeight;
       $emit('load');
@@ -11,11 +11,10 @@
 </template>
 
 <script setup lang="ts">
-import { main } from "~/stores/main";
 import { ui } from "~/stores/ui";
 
-const props = defineProps<{
-  issuenumber: string;
+defineProps<{
+  issuecode: string;
 }>();
 
 defineEmits<(event: "load" | "error") => void>();
@@ -23,7 +22,5 @@ defineEmits<(event: "load" | "error") => void>();
 const naturalHeight = ref(0);
 const { zoom } = storeToRefs(ui());
 
-const getEdgeUrl = () =>
-  `${import.meta.env.VITE_EDGES_URL as string}/${main()
-    .country!}/gen/${main().magazine!}.${props.issuenumber}.png`;
+const { getEdgeUrl } = useSvgUtils();
 </script>

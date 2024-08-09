@@ -32,16 +32,10 @@
             <a :href="inducksLink" target="_blank" class="inducks-link"
               ><img
                 :src="getImagePath('coafoot.png')"
-                :title="`Voir ${publicationNames[publicationcode]} ${issuenumber} sur Inducks`"
+                :title="`Voir ${publicationNames[issue.publicationcode]} ${issue.issuenumber} sur Inducks`"
                 alt="Inducks"
             /></a>
-            <Issue
-              :publicationcode="publicationcode"
-              :publicationname="
-                publicationNames[publicationcode] || publicationcode
-              "
-              :issuenumber="issuenumber"
-            />
+            <Issue :issuecode="issue.issuecode" />
             <h6 v-if="releaseDate">{{ $t("Sortie :") }} {{ releaseDate }}</h6>
             <h3>{{ $t("Table des matières") }}</h3>
           </template>
@@ -109,9 +103,9 @@
 <script setup lang="ts">
 import { useToast } from "bootstrap-vue-next";
 import { PageFlip } from "page-flip";
-const { issuenumber, publicationcode } = defineProps<{
-  publicationcode: string;
-  issuenumber: string;
+
+const { issuecode } = defineProps<{
+  issuecode: string;
 }>();
 const emit = defineEmits<{ (e: "close-book"): void }>();
 
@@ -132,32 +126,36 @@ let closing = $ref(false);
 let book = $ref<PageFlip | null>(null);
 let currentPage = $ref(0);
 const currentTabIndex = $ref(0);
-const { publicationNames, issueDetails } = storeToRefs(coa());
+const { publicationNames, issueDetails, issuecodeDetails } = storeToRefs(coa());
 const isSinglePageWithUrl = $computed(() => pagesWithUrl.length === 1);
 const edgeUrl = $computed(
   () =>
-    `${import.meta.env.VITE_EDGES_ROOT}${publicationcode.replace(
+    `${import.meta.env.VITE_EDGES_ROOT}${issue.publicationcode.replace(
       "/",
       "/gen/",
-    )}.${issuenumber}.png`,
+    )}.${issue.issuenumber}.png`,
 );
 const coverWidth = $computed(
   () => coverRatio && (coverHeight || 0) / coverRatio,
 );
-const currentIssueDetails = $computed(
-  () => issueDetails.value?.[`${publicationcode} ${issuenumber}`],
+const currentIssueEntryDetails = $computed(
+  () => issueDetails.value?.[issuecode],
 );
-const pages = $computed(() => currentIssueDetails?.entries);
+const issue = $computed(() => issuecodeDetails.value?.[issuecode]);
+const pages = $computed(() => currentIssueEntryDetails?.entries);
 let pagesWithUrl = $computed(() => pages?.filter(({ url }) => !!url));
 const releaseDate = $computed(() => {
-  if (!currentIssueDetails?.releaseDate) return null;
+  if (!issueDetails.value[issue.issuecode]?.releaseDate) return null;
 
-  const parsedDate = currentIssueDetails.releaseDate.match(RELEASE_DATE_REGEX);
+  const parsedDate =
+    currentIssueEntryDetails.releaseDate?.match(RELEASE_DATE_REGEX);
   return parsedDate?.[0]?.split("-").reverse().join("/");
 });
 const isReadyToOpen = $computed(() => coverWidth && edgeWidth && pages && true);
 const showTableOfContents = $computed(() => currentPage > 0 || opened);
 const inducksLink = $computed(() => {
+  const { publicationcode, issuenumber } =
+    issuecodeDetails.value[issue.issuecode];
   const [country, magazine] = publicationcode.split("/");
   return `https://inducks.org/compmag.php?country=${country}&title1=${magazine}&entrycodeh3=${issuenumber}`;
 });
@@ -165,8 +163,7 @@ const { t: $t } = useI18n();
 
 const loadBookPages = async () => {
   await fetchIssueUrls({
-    publicationcode,
-    issuenumber,
+    issuecode: issue.issuecode,
   });
 };
 
@@ -242,7 +239,7 @@ watch($$(currentPage), (newValue) => {
 });
 
 watch(
-  [$$(publicationcode), $$(issuenumber)],
+  [$$(issue)],
   async () => {
     await loadBookPages();
   },

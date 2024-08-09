@@ -16,7 +16,7 @@
 </template>
 
 <script setup lang="ts">
-import { StoryDetail } from "~dm-types/StoryDetail";
+import type { StoryDetail } from "~dm-types/StoryDetail";
 
 const { storyDetails = {} } = defineProps<{
   stories: { [storycode: string]: string[] };

@@ -21,8 +21,8 @@
 </template>
 
 <script setup lang="ts">
-import { MedalPointsPerUser } from "~dm-types/MedalPointsPerUser";
-import { QuickStatsPerUser } from "~dm-types/QuickStatsPerUser";
+import type { MedalPointsPerUser } from "~dm-types/MedalPointsPerUser";
+import type { QuickStatsPerUser } from "~dm-types/QuickStatsPerUser";
 
 const { issueId } = defineProps<{
   issueId: number;

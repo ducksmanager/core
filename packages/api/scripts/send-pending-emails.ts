@@ -8,9 +8,8 @@ import BookstoreApproved from "~/emails/bookstore-approved";
 import EdgesPublishedWithCreator from "~/emails/edges-published-with-creator";
 import EdgesPublishedWithPhotographer from "~/emails/edges-published-with-photographer";
 import type { Email } from "~/emails/email";
-import type { userContribution } from "~prisma-clients/extended/dm.extends";
-import { PrismaClient, userContributionType } from "~prisma-clients/extended/dm.extends";
-const prismaDmClient = new PrismaClient();
+import  { userContributionType } from "~prisma-schemas/schemas/dm";
+import { prismaClient as prismaDmClient } from "~prisma-schemas/schemas/dm/client";
 const medalLevels = {
   [userContributionType.photographe]: { 1: 50, 2: 150, 3: 600 },
   [userContributionType.createur]: { 1: 20, 2: 70, 3: 150 },
@@ -19,8 +18,7 @@ const medalLevels = {
 
 (async () => {
   const emailPromises: Promise<Email>[] = [];
-  for (const contributionTypeStr in medalLevels) {
-    const contributionType = contributionTypeStr as userContributionType;
+  for (const contributionType of Object.keys(medalLevels) as userContributionType[]) {
     const pendingEmailContributionsForType =
       await prismaDmClient.userContribution.findMany({
         where: {
@@ -40,18 +38,7 @@ const medalLevels = {
       console.info(`No email to send for contribution ${contributionType}`);
     } else {
       const pendingEmailContributionsByUser =
-        pendingEmailContributionsForType.reduce<
-          Record<number, userContribution[]>
-        >(
-          (acc, contribution) => ({
-            ...acc,
-            [contribution.userId]: [
-              ...(acc[contribution.userId] || []),
-              contribution,
-            ],
-          }),
-          {},
-        );
+        pendingEmailContributionsForType.groupBy('userId', '[]')
 
       for (const [userId, pendingEmailContributionsForUser] of Object.entries(
         pendingEmailContributionsByUser,
@@ -70,13 +57,13 @@ const medalLevels = {
 
         const medalReached = Object.entries(
           medalLevels[contributionType],
-        ).reduce(
+        ).reduce<number | null>(
           (medalReached, [medal, medalThreshold]) =>
             initialPointsCount < medalThreshold &&
               finalPointsCount >= medalThreshold
               ? parseInt(medal)
               : medalReached,
-          null as number | null,
+          null,
         );
 
         await prismaDmClient.$transaction(

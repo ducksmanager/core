@@ -3,7 +3,10 @@
     "baseUrl": ".",
     "module": "commonjs",
     "target": "esnext",
-    "lib": ["DOM", "ESNext"],
+    "lib": [
+      "DOM",
+      "ESNext"
+    ],
     "strict": true,
     "jsx": "preserve",
     "esModuleInterop": true,
@@ -16,9 +19,16 @@
     "forceConsistentCasingInFileNames": true,
     "outDir": "./dist",
     "paths": {
-      "~/*": ["*"],
-      "~prisma-clients/*": ["../../packages/prisma-clients/*"],
+      "~/*": [
+        "*"
+      ],
+      "~prisma-schemas/*": [
+        "../../packages/prisma-schemas/*"
+      ],
     }
   },
-  "include": ["*.ts", "scrapes/**/*.ts"]
+  "include": [
+    "*.ts",
+    "scrapes/**/*.ts"
+  ]
 }

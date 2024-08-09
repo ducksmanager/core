@@ -103,14 +103,14 @@ const publicationsPerCountry = $computed(
   () =>
     totalPerCountry.value &&
     hasPublicationNames &&
-    Object.keys(totalPerCountry.value).reduce(
+    Object.keys(totalPerCountry.value).reduce<{ [key: string]: string[] }>(
       (acc, country) => ({
         ...acc,
         [country]: Object.keys(totalPerPublication.value!).filter(
           (publicationcode) => publicationcode.split("/")[0] === country,
         ),
       }),
-      {} as { [key: string]: string[] },
+      {},
     ),
 );
 const getSortedPublications = (country: string) =>

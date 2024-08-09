@@ -14,7 +14,7 @@ import { ui } from "~/stores/ui";
 const uiStore = ui();
 
 interface Props {
-  issuenumber: string;
+  issuecode: string;
   stepNumber: number;
   options: {
     cx: number;

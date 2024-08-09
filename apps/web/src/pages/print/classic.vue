@@ -24,18 +24,26 @@ meta:
 </template>
 
 <script setup lang="ts">
-let ownedIssueNumbers = $ref(
-  null as { [publicationcode: string]: string } | null,
+let ownedIssueNumbers = $ref<{ [publicationcode: string]: string } | null>(
+  null,
 );
 
-const { fetchCountryNames, fetchPublicationNames, fetchIssueNumbers } = coa();
-const { countryNames, publicationNames, issueNumbers } = storeToRefs(coa());
+const {
+  fetchCountryNames,
+  fetchPublicationNames,
+  fetchIssuecodesByPublicationcode,
+} = coa();
+const { countryNames, publicationNames, issuecodesByPublicationcode } =
+  storeToRefs(coa());
 
 const { loadCollection } = collection();
 const { issues } = storeToRefs(collection());
 
 const countryCodes = $computed(
-  () => issues.value && [...new Set(issues.value.map((i) => i.country))],
+  () =>
+    issues.value && [
+      ...new Set(issues.value.map((i) => i.publicationcode.split("/")[0])),
+    ],
 );
 const countryCodesSortedByName = $computed(
   () =>
@@ -49,9 +57,7 @@ const countryCodesSortedByName = $computed(
 );
 const publicationCodes = $computed(
   () =>
-    issues.value && [
-      ...new Set(issues.value.map((i) => `${i.country}/${i.magazine}`)),
-    ],
+    issues.value && [...new Set(issues.value.map((i) => i.publicationcode))],
 );
 const publicationCodesOfCountry = (countrycode: string) =>
   publicationCodes
@@ -67,40 +73,34 @@ watch(
   (newValue) => {
     if (newValue) {
       fetchPublicationNames(publicationCodes!);
-      fetchIssueNumbers(publicationCodes!);
+      fetchIssuecodesByPublicationcode(publicationCodes!);
     }
   },
   { immediate: true },
 );
 
 watch(
-  () => Object.keys(issueNumbers.value).length && issues.value,
+  () => Object.keys(issuecodesByPublicationcode.value).length && issues.value,
   (newValue) => {
     if (newValue) {
-      const collectionWithPublicationcodes = issues
-        .value!.map(({ country, magazine, issuenumber }) => ({
-          publicationcode: `${country}/${magazine}`,
-          issuenumber: issuenumber,
-        }))
-        .reduce(
-          (acc, { publicationcode, issuenumber }) => ({
-            ...acc,
-            [publicationcode]: [...(acc[publicationcode] || []), issuenumber],
-          }),
-          {} as { [publicationcode: string]: string[] },
-        );
-      ownedIssueNumbers = Object.entries(issueNumbers.value).reduce(
-        (acc, [publicationcode, indexedIssueNumbers]) => ({
+      const collectionWithPublicationcodes = issues.value!.groupBy(
+        "publicationcode",
+        "[]",
+      );
+      ownedIssueNumbers = Object.entries(
+        issuecodesByPublicationcode.value,
+      ).reduce(
+        (acc, [publicationcode, indexedIssuecodes]) => ({
           ...acc,
-          [publicationcode]: indexedIssueNumbers
-            .filter((indexedIssueNumber) =>
-              collectionWithPublicationcodes[publicationcode].includes(
-                indexedIssueNumber,
+          [publicationcode]: indexedIssuecodes
+            .filter((indexedIssuecode) =>
+              collectionWithPublicationcodes[publicationcode].some(
+                ({ issuecode }) => issuecode === indexedIssuecode,
               ),
             )
             .join(", "),
         }),
-        {} as { [publicationcode: string]: string },
+        {},
       );
     }
   },

@@ -128,8 +128,8 @@ meta:
       </div>
       <div v-if="hasPublicationNames" role="tablist">
         <Accordion
-          v-for="(publicationIssues, publicationcode) in groupByPublicationCode(
-            issuesImportable,
+          v-for="[publicationcode, publicationIssues] in Object.entries(
+            groupByPublicationCode(issuesImportable),
           )"
           :id="String(publicationcode).replace('/', '-')"
           :key="String(publicationcode).replace('/', '-')"
@@ -147,8 +147,8 @@ meta:
             x {{ publicationIssues.length }}
           </template>
           <template #content>
-            <div v-for="issue in publicationIssues" :key="issue">
-              {{ $t("Numéro") }} {{ issue }}
+            <div v-for="{ issuecode } in publicationIssues" :key="issuecode">
+              {{ $t("Numéro") }} {{ issuecodeDetails[issuecode].issuenumber }}
             </div>
           </template>
         </Accordion>
@@ -183,21 +183,15 @@ meta:
           <template #content>
             <div
               v-for="(
-                publicationIssueNumbers, publicationcode
+                publicationIssuecodes, publicationcode
               ) in groupByPublicationCode(issuesAlreadyInCollection)"
               :key="publicationcode"
             >
               <div
-                v-for="issuenumber in publicationIssueNumbers"
-                :key="`${publicationcode}-${issuenumber}`"
+                v-for="{ issuecode } in publicationIssuecodes"
+                :key="issuecode"
               >
-                <Issue
-                  :publicationcode="publicationcode"
-                  :publicationname="
-                    publicationNames[publicationcode] || publicationcode
-                  "
-                  :issuenumber="issuenumber"
-                />
+                <Issue :issuecode="issuecode" />
               </div>
             </div>
           </template>
@@ -224,16 +218,14 @@ meta:
           <template #content>
             <div
               v-for="(
-                publicationIssueNumbers, publicationcode
+                publicationIssuecodes, publicationcode
               ) in groupByPublicationCode(issuesNotReferenced)"
               :key="publicationcode"
             >
               <Issue
-                v-for="issuenumber in publicationIssueNumbers"
-                :key="`${publicationcode}-${issuenumber}`"
-                :publicationcode="publicationcode"
-                :publicationname="publicationcode"
-                :issuenumber="issuenumber"
+                v-for="{ issuecode } in publicationIssuecodes"
+                :key="issuecode"
+                :issuecode="issuecode"
               />
             </div>
           </template>
@@ -245,7 +237,7 @@ meta:
         <label for="condition">{{ $t("Etat") }}</label>
         <b-form-select
           id="condition"
-          v-model="issueDefaultCondition"
+          v-model="issueDefaultCondition as string"
           class="mb-3"
         >
           <template #first>
@@ -280,8 +272,7 @@ meta:
 </template>
 
 <script setup lang="ts">
-import type { inducks_issue } from "~prisma-clients/client_coa";
-import { issue_condition } from "~prisma-clients/extended/dm.extends";
+import type { issue_condition } from "~prisma-schemas/schemas/dm";
 
 import { dmSocketInjectionKey } from "../../composables/useDmSocket";
 
@@ -294,10 +285,10 @@ const expandedNotImportableAccordion = $ref<string | null>(null);
 let hasPublicationNames = $ref(false);
 let hasIssueNumbers = $ref(false);
 const issueDefaultCondition = $ref<issue_condition>("bon");
-let issuesToImport = $shallowRef<inducks_issue[] | null>(null);
-let issuesNotReferenced = $shallowRef<inducks_issue[] | null>(null);
-let issuesAlreadyInCollection = $shallowRef<inducks_issue[] | null>(null);
-let issuesImportable = $shallowRef<inducks_issue[] | null>(null);
+let issuesToImport = $shallowRef<string[] | null>(null);
+let issuesNotReferenced = $shallowRef<string[] | null>(null);
+let issuesAlreadyInCollection = $shallowRef<string[] | null>(null);
+let issuesImportable = $shallowRef<string[] | null>(null);
 let importProgress = $ref(0);
 
 const {
@@ -309,9 +300,12 @@ const { t: $t } = useI18n();
 const { findInCollection, loadCollection } = collection();
 const { issues, user } = storeToRefs(collection());
 
-const { fetchPublicationNames, fetchIssueNumbers, fetchIssueCodesDetails } =
-  coa();
-const { publicationNames, issueNumbers, issueCodeDetails } = storeToRefs(coa());
+const {
+  fetchPublicationNames,
+  fetchIssuecodesByPublicationcode,
+  fetchIssuecodeDetails,
+} = coa();
+const { publicationNames, issuecodes, issuecodeDetails } = storeToRefs(coa());
 const conditions: Record<issue_condition, string> = {
   mauvais: $t("En mauvais état"),
   moyen: $t("En état moyen"),
@@ -328,46 +322,38 @@ const processRawData = async () => {
     .split("\n")
     .filter((row: string) => !/^country/.test(row) && REGEX_VALID_ROW.test(row))
     .map((row: string) => row.match(REGEX_VALID_ROW)![1].replace("^", "/"));
-  await fetchIssueCodesDetails(issueCodes);
+  await fetchIssuecodeDetails(issueCodes);
 
-  if (!issueCodeDetails) {
+  if (!issuecodeDetails) {
     return;
   }
-  const issues = issueCodes
-    .filter((issueCode) => issueCodeDetails.value![issueCode])
-    .reduce<
-      inducks_issue[]
-    >((acc, issueCode) => [...acc, issueCodeDetails.value![issueCode]], []);
+  const issues = issueCodes.filter(
+    (issueCode) => issuecodeDetails.value![issueCode],
+  );
   if (issues.length) {
     issuesToImport = issues;
     step = 2;
   }
 };
 
-type Publicationcode = string;
-const groupByPublicationCode = (issues: inducks_issue[]) =>
-  issues?.reduce(
-    (acc, { publicationcode, issuenumber }) => ({
-      ...acc,
-      [publicationcode!]: [
-        ...new Set([
-          ...(acc[publicationcode!] || []),
-          issuenumber!.replace(" ", ""),
-        ]),
-      ],
-    }),
-    {} as Record<Publicationcode, string[]>,
-  );
+const groupByPublicationCode = (issues: string[]) =>
+  issues
+    ?.map((issuecode) => ({
+      issuecode,
+      publicationcode: issuecodeDetails.value![issuecode].publicationcode,
+    }))
+    .groupBy("publicationcode", "[]");
 
 const importIssues = async () => {
   const importableIssuesByPublicationCode = groupByPublicationCode(
-    issuesImportable as inducks_issue[],
+    issuesImportable!,
   );
   for (const publicationcode in importableIssuesByPublicationCode) {
     if (importableIssuesByPublicationCode.hasOwnProperty(publicationcode)) {
       await collectionServices.addOrChangeIssues({
-        publicationcode,
-        issuenumbers: importableIssuesByPublicationCode[publicationcode],
+        issuecodes: importableIssuesByPublicationCode[publicationcode].map(
+          ({ issuecode }) => issuecode,
+        ),
         condition: issueDefaultCondition,
         isOnSale: undefined,
         isToRead: undefined,
@@ -386,17 +372,12 @@ watch($$(importDataReady), (newValue) => {
     issuesNotReferenced = [];
     issuesAlreadyInCollection = [];
     issuesImportable = [];
-    issuesToImport!.forEach((issue) => {
-      const { publicationcode, issuenumber } = issue;
-      if (
-        !issueNumbers.value[publicationcode!].includes(
-          issuenumber!.replace(/[ ]+/g, " "),
-        )
-      )
-        issuesNotReferenced!.push(issue);
-      else if (findInCollection(publicationcode!, issuenumber!))
-        issuesAlreadyInCollection!.push(issue);
-      else issuesImportable!.push(issue);
+    issuesToImport!.forEach((issuecode) => {
+      if (!issuecodes.value.includes(issuecode!.replace(/[ ]+/g, " ")))
+        issuesNotReferenced!.push(issuecode);
+      else if (findInCollection(issuecode!))
+        issuesAlreadyInCollection!.push(issuecode);
+      else issuesImportable!.push(issuecode);
     });
     issuesNotReferenced = [...new Set(issuesNotReferenced)];
     issuesAlreadyInCollection = [...new Set(issuesAlreadyInCollection)];
@@ -407,13 +388,12 @@ watch($$(issuesToImport), async (newValue) => {
   if (!newValue) {
     return;
   }
-  const publicationCodes = newValue.reduce(
-    (acc, { publicationcode }) => [...acc, publicationcode!],
-    [] as string[],
+  const publicationCodes = newValue.map(
+    (issuecode) => issuecodeDetails.value![issuecode].publicationcode!,
   );
   await fetchPublicationNames(publicationCodes);
   hasPublicationNames = true;
-  await fetchIssueNumbers(publicationCodes);
+  await fetchIssuecodesByPublicationcode(publicationCodes);
   hasIssueNumbers = true;
 });
 

@@ -1,5 +1,10 @@
 <template>
-  <List v-if="ownershipPercentages && sortedItems" :items="sortedItems" :get-item-text-fn="getItemTextFn">
+  <List
+    v-if="ownershipPercentages && sortedItems"
+    :items="sortedItems"
+    :get-item-text-fn="getItemTextFn"
+    item-type="countrycode"
+  >
     <template #fill-bar="{ item: { countrycode } }">
       <ion-progress-bar
         type="determinate"
@@ -22,8 +27,6 @@ import { stores } from '~web';
 import { getOwnershipText, getOwnershipPercentages } from '~/composables/useOwnership';
 import { app } from '~/stores/app';
 import { wtdcollection } from '~/stores/wtdcollection';
-
-const emit = defineEmits<(e: 'load', hasItems: boolean) => void>();
 
 const { totalPerCountry, ownedCountries, coaIssueCountsPerCountrycode } = storeToRefs(wtdcollection());
 const { countryNames } = storeToRefs(stores.coa());
@@ -54,11 +57,7 @@ const sortedItems = computed(
     ),
 );
 
-watch(
-  sortedItems,
-  () => {
-    emit('load', sortedItems.value.length > 0);
-  },
-  { immediate: true },
-);
+const hasItems = computed(() => sortedItems.value.length > 0);
+
+defineExpose({ hasItems });
 </script>

@@ -14,11 +14,8 @@
           cols="6"
         >
           <Issue
-            v-if="publicationNames[edge.publicationcode]"
             class="issue"
-            :publicationname="publicationNames[edge.publicationcode]!"
-            :publicationcode="edge.publicationcode"
-            :issuenumber="edge.issuenumber"
+            :issuecode="edge.issuecode"
             hide-condition
             :flex="false"
           />
@@ -31,15 +28,13 @@
 <script setup lang="ts">
 defineProps<{
   id: string;
-  edges: { publicationcode: string; issuenumber: string }[];
+  edges: { issuecode: string }[];
 }>();
 
 const bookcaseTextures = {
   bookcase: "bois/HONDURAS MAHOGANY",
   bookshelf: "bois/KNOTTY PINE",
 };
-
-const { publicationNames } = storeToRefs(coa());
 </script>
 
 <style lang="scss">

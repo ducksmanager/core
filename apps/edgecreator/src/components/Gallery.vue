@@ -17,9 +17,8 @@
       <upload
         :photo="imageType === 'photos'"
         :edge="{
-          country,
-          magazine,
-          issuenumber: issuenumbers[0],
+          publicationcode,
+          issuecode: issuecodes[0],
         }"
       />
     </b-modal>
@@ -108,7 +107,7 @@ const clickedImage = ref<GalleryItem | null>(null);
 const showUploadModal = ref(false);
 const showChooseImageModal = ref(false);
 
-const { country, magazine, issuenumbers } = storeToRefs(main());
+const { publicationcode, issuecodes } = storeToRefs(main());
 
 const onSelect = (item: GalleryItem) => {
   if (!item.disabled) {

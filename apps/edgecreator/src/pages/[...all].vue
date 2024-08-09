@@ -74,11 +74,13 @@ meta:
       <template v-for="{ status, l10n } in edgeCategories" :key="`${status}`">
         <h3>{{ $t(l10n) }}</h3>
 
-        <b-container v-if="Object.keys(edgesByStatus[status]).length">
+        <b-container
+          v-if="Object.keys(edgesByStatusAndPublicationcode[status]).length"
+        >
           <template
-            v-for="[publicationcode, edges] in Object.entries(
-              edgesByStatus[status],
-            )"
+            v-for="(edges, publicationcode) in edgesByStatusAndPublicationcode[
+              status
+            ]"
             :key="`${status}-${publicationcode}`"
           >
             <b-row>
@@ -90,9 +92,7 @@ meta:
                 />
                 <b-link
                   class="mx-3"
-                  :to="`edit/${publicationcode} ${edges
-                    .map((edge) => edge.issuenumber)
-                    .join(',')}`"
+                  :to="`edit/${edges.map((edge) => edge.issuecode.replaceAll(' ', '_')).join(',')}`"
                   ><b-button
                     v-if="canEditEdge(status)"
                     size="sm"
@@ -115,7 +115,7 @@ meta:
               >
                 <b-card class="text-center">
                   <b-link
-                    :to="`edit/${edge.country}/${edge.magazine} ${edge.issuenumber}`"
+                    :to="`edit/${edge.issuecode.replaceAll(' ', '_')}`"
                     :disabled="!canEditEdge(status)"
                   >
                     <b-card-text>
@@ -124,22 +124,15 @@ meta:
                           (hoveredEdge === edge && edge.v3) ||
                           status === 'pending'
                         "
-                        :alt="`${edge.country}/${edge.magazine} ${edge.issuenumber}`"
+                        :alt="edge.issuecode"
                         class="edge-preview"
                         :src="
                           edge.v3
-                            ? getEdgeUrl(
-                                edge.country,
-                                edge.magazine,
-                                edge.issuenumber,
-                                'svg',
-                                false,
-                              )
+                            ? getEdgeUrl(edge.issuecode, 'svg', false)
                             : undefined
                         "
                       /><edge-link
-                        :publicationcode="`${edge.country}/${edge.magazine}`"
-                        :issuenumber="edge.issuenumber"
+                        :issuecode="edge.issuecode"
                         :designers="edge.designers"
                         :photographers="edge.photographers"
                         :published="edge.published === 'Published'"
@@ -197,17 +190,40 @@ const { user } = storeToRefs(collectionStore);
 
 const edgeCatalogStore = edgeCatalog();
 const { loadCatalog, canEditEdge, edgeCategories } = edgeCatalogStore;
-const { edgesByStatus, currentEdges, isCatalogLoaded } =
-  storeToRefs(edgeCatalogStore);
+const { currentEdges, isCatalogLoaded } = storeToRefs(edgeCatalogStore);
 
+const edgesByStatusAndPublicationcode = computed(() => {
+  const edgesByStatus = Object.values(currentEdges.value).groupBy(
+    "status",
+    "[]",
+  );
+  return Object.fromEntries(
+    Object.entries(edgesByStatus).map(([status, edges]) => [
+      status,
+      edges
+        .map((edge) => ({
+          ...edge,
+          publicationcode:
+            issuecodeDetails.value[edge.issuecode].publicationcode,
+        }))
+        .groupBy("publicationcode", "[]"),
+    ]),
+  );
+});
 const userPhotographerPoints = computed(
   () => usersStore.points[user.value!.id].edge_photographer,
 );
 
-const publicationNames = computed(() => webStores.coa().publicationNames);
+const { publicationNames, issuecodeDetails } = storeToRefs(webStores.coa());
 
 const isUploadableEdgesCarouselReady = ref(false);
-const mostWantedEdges = ref<BookcaseEdgeWithPopularity[] | null>(null);
+const mostWantedEdges = ref<
+  | (BookcaseEdgeWithPopularity & {
+      publicationcode: string | null;
+      issuenumber: string | null;
+    })[]
+  | null
+>(null);
 
 const hoveredEdge = ref<EdgeWithVersionAndStatus | null>(null);
 
@@ -225,22 +241,20 @@ const loadMostWantedEdges = async () => {
     .slice(0, 10)
     .map(
       ({
-        publicationcode,
-        issuenumber,
+        issuecode,
         numberOfIssues,
       }: {
-        publicationcode: string;
-        issuenumber: string;
+        issuecode: string;
         numberOfIssues: number;
       }) => ({
+        ...issuecodeDetails.value[issuecode],
         id: 0,
         edgeId: 0,
         creationDate: new Date(),
+        timestamp: new Date().getTime(),
         sprites: [],
-        issueCode: `${publicationcode} ${issuenumber}`,
-        publicationcode,
-        issuenumber,
-        issuenumberReference: "",
+        slug: "",
+        points: numberOfIssues,
         popularity: numberOfIssues,
       }),
     );
@@ -257,14 +271,18 @@ watch(
     await bookcaseStore.loadBookcase();
     await loadMostWantedEdges();
     await loadCatalog();
-    await coaStore.fetchPublicationNames([
-      ...new Set([
-        ...mostWantedEdges.value!.map(({ publicationcode }) => publicationcode),
-        ...Object.values(currentEdges.value).map(
-          ({ country, magazine }) => `${country}/${magazine}`,
-        ),
-      ]),
-    ]);
+    const publicationcodes = [
+      ...mostWantedEdges.value!.map(({ issuecode }) => issuecode!),
+      ...Object.values(currentEdges.value).map(({ issuecode }) => issuecode),
+    ].reduce<string[]>(
+      (acc, issuecode) => [
+        ...acc,
+        issuecodeDetails.value[issuecode].publicationcode,
+      ],
+      [],
+    );
+
+    await coaStore.fetchPublicationNames(publicationcodes);
     isUploadableEdgesCarouselReady.value = true;
   },
   { immediate: true },

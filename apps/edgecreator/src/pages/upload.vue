@@ -77,11 +77,7 @@ meta:
             ]"
           >
             <template #header>
-              <issue
-                no-wrap
-                :publicationcode="crop.publicationcode"
-                :publicationname="publicationNames[crop.publicationcode]"
-                :issuenumber="crop.issuenumber"
+              <issue no-wrap :issuecode="crop.issuecode"
             /></template>
             <img
               class="edge-crop"
@@ -91,7 +87,7 @@ meta:
             />
             <edge-canvas
               :steps="[]"
-              :issuenumber="crop.issuenumber"
+              :issuecode="crop.issuecode"
               :dimensions="{ width: crop.width, height: crop.height }"
               :photo-url="crop.filename"
               :contributors="initialContributors"
@@ -142,7 +138,6 @@ import { edgecreatorSocketInjectionKey } from "~/composables/useEdgecreatorSocke
 import useSaveEdge from "~/composables/useSaveEdge";
 import type { Crop } from "~types/Crop";
 import type { ModelContributor } from "~types/ModelContributor";
-import { stores as webStores } from "~web";
 
 const i18n = useI18n();
 
@@ -165,10 +160,8 @@ const crops = ref<CropWithData[]>([]);
 const uploadedImageData = ref<{ url: string } | null>(null);
 const cropper = ref<Cropper | null>(null);
 
-const publicationNames = computed(() => webStores.coa().publicationNames);
-
 const initialContributors = computed(
-  (): Omit<ModelContributor, "issuenumber">[] => [
+  (): Omit<ModelContributor, "issuecode">[] => [
     {
       contributionType: "photographe",
       user: { id: 0, username: useCookies().get("dm-user") },
@@ -202,23 +195,18 @@ const addCrop = () => {
 };
 const uploadAll = async () => {
   for (const crop of crops.value.filter(({ sent }) => !sent)) {
-    const [country, magazine] = crop.publicationcode.split("/");
     crop.filename = (
       await uploadServices.uploadFromBase64({
-        country,
-        magazine,
-        issuenumber: crop.issuenumber,
+        issuecode: crop.issuecode,
         data: crop.url,
       })
     ).fileName;
     await nextTick().then(async () => {
       const response = await saveEdgeSvg(
-        country,
-        magazine,
-        crop.issuenumber,
+        crop.issuecode,
         initialContributors.value.map((contribution) => ({
           ...contribution,
-          issuenumber: crop.issuenumber,
+          issuecode: crop.issuecode,
         })),
       );
       const isSuccess = response!.paths.svgPath;

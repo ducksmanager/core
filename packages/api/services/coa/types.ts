@@ -1,7 +1,8 @@
+import type { AugmentedIssue } from "~dm-types/AugmentedIssue";
+import type { CoverSearchResults } from "~dm-types/CoverSearchResults";
 import type { IssueCoverDetails } from "~dm-types/IssueCoverDetails";
 import type { SimpleEntry } from "~dm-types/SimpleEntry";
-import type { SimpleIssue } from "~dm-types/SimpleIssue";
-import type { SimpleIssueWithPublication } from "~dm-types/SimpleIssueWithPublication";
+import type { IssueWithIssuecodeOnly, PartInfo } from "~dm-types/SimpleIssue";
 import type { StorySearchResults } from "~dm-types/StorySearchResults";
 import type {
   inducks_issue,
@@ -9,8 +10,10 @@ import type {
   inducks_story,
   inducks_storyjob,
   inducks_storyversion,
-} from "~prisma-clients/client_coa";
+} from "~prisma-schemas/schemas/coa";
 import type { Errorable } from "~socket.io-services/types";
+
+
 
 export const namespaceEndpoint = "/coa";
 export default abstract class {
@@ -36,8 +39,8 @@ export default abstract class {
       value: Record<
         string,
         {
-          shortIssuecode: string;
-          publicationcode: string,
+          issuecode: string;
+          publicationcode: string;
           issuenumber: string;
           title: string | null;
         }[]
@@ -45,16 +48,15 @@ export default abstract class {
     ) => void,
   ) => void;
   abstract getIssueDetails: (
-    publicationcode: string,
-    issuenumber: string,
-    callback: (value: { releaseDate: string; entries: SimpleEntry[] }) => void,
+    issuecode: string,
+    callback: (value: { releaseDate?: string; entries: SimpleEntry[] }) => void,
   ) => void;
   abstract getIssueCoverDetailsByPublicationcode: (
     publicationcode: string,
     callback: (value: { covers: Record<string, IssueCoverDetails> }) => void,
   ) => void;
   abstract getIssueCoverDetails: (
-    shortIssuecodes: string[],
+    issuecodes: string[],
     callback: (
       value: Errorable<
         { covers: Record<string, IssueCoverDetails> },
@@ -62,26 +64,35 @@ export default abstract class {
       >,
     ) => void,
   ) => void;
-  abstract getIssuesByShortIssuecode: (
-    shortIssuecodes: string[],
-    callback: (value: Record<string, SimpleIssueWithPublication>) => void,
+  abstract getIssuesByIssuecode: (
+    issuecodes: string[],
+    callback: (value: CoverSearchResults) => void,
+  ) => void;
+  abstract getIssues: (
+    issuecodes: string[],
+    callback: ( 
+      value: Record<string, AugmentedIssue<{partInfo?:PartInfo}>>,
+    ) => void,
   ) => void;
 
-  abstract decompose: (
-    issueCodes: string[],
-    callback: (value: Record<string, inducks_issue>) => void,
+  abstract getIssuesByPublicationcodes:(
+    publicationcodes: string[],
+    callback: (
+      value: Record<string, AugmentedIssue[]>,
+    ) => void,
   ) => void;
+
   abstract getIssuesByStorycode: (
     storycode: string,
-    callback: (value: SimpleIssue[]) => void,
+    callback: (value: IssueWithIssuecodeOnly[]) => void,
   ) => void;
   abstract getRecentIssues: (
-    callback: (value: inducks_issue[]) => void,
+    callback: (value: AugmentedIssue[]) => void,
   ) => void;
   abstract getIssuesByPublicationCodes: (
     publicationCodes: string[],
     callback: (
-      value: Errorable<{ issues: SimpleIssue[] }, "Too many requests">,
+      value: Errorable<{ issues: IssueWithIssuecodeOnly[] }, "Too many requests">,
     ) => void,
   ) => void;
 
@@ -98,7 +109,7 @@ export default abstract class {
     callback: (value: Record<string, string>) => void,
   ) => void;
 
-  abstract getQuotationsByShortIssuecodes: (
+  abstract getQuotationsByIssuecodes: (
     issueCodes: string[],
     callback: (
       value: Errorable<

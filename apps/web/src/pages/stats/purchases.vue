@@ -56,12 +56,12 @@ alias: [/achats]
   </div>
 </template>
 <script setup lang="ts">
+import type { ChartOptions } from "chart.js";
 import {
   BarController,
   BarElement,
   CategoryScale,
   Chart,
-  ChartOptions,
   Legend,
   LinearScale,
   Title,
@@ -70,7 +70,7 @@ import {
 import dayjs from "dayjs";
 import { Bar } from "vue-chartjs";
 
-import type { issue as dm_issue } from "~prisma-clients/extended/dm.extends";
+import type { issue as dm_issue } from "~prisma-schemas/schemas/dm";
 
 Chart.register(
   Legend,
@@ -167,8 +167,8 @@ const publicationCodesWithOther = $computed(
     );
     return collectionWithDates
       .sort(({ date: dateA }, { date: dateB }) => compareDates(dateA, dateB))
-      .reduce(
-        (acc, { date, publicationcode: publicationcode }) => {
+      .reduce<{ [publicationcode: string]: { [date: string]: number } }>(
+        (acc, { date, publicationcode }) => {
           if (!publicationCodesWithOther!.includes(publicationcode)) {
             publicationcode = "Other";
           }
@@ -179,13 +179,13 @@ const publicationCodesWithOther = $computed(
           accDate[date]++;
           return acc;
         },
-        {} as { [publicationcode: string]: { [date: string]: number } },
+        {},
       );
   }),
   countPerDate = $computed(() =>
     !values
       ? null
-      : Object.values(values).reduce(
+      : Object.values(values).reduce<{ [key: string]: number }>(
           (acc, datesWithCounts) => {
             for (const [date, count] of Object.entries(datesWithCounts)) {
               if (!acc[date]) {
@@ -195,7 +195,7 @@ const publicationCodesWithOther = $computed(
             }
             return acc;
           },
-          {} as { [key: string]: number },
+          {},
         ),
   ),
   maxPerDate = $computed(

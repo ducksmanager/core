@@ -1,23 +1,27 @@
 <template>
   <List
-    v-if="hasCoaData"
+    v-if="coaIssues"
     :items="sortedItems"
     :get-item-text-fn="getItemTextFn"
+    item-type="issuecode"
     @items-filtered="filteredIssuenumbers = $event"
   >
     <template v-if="currentIssueViewMode.id === 'list'" #row-prefix="{ item }">
-      <ion-checkbox v-if="selectedIssuenumbers" :checked="selectedIssuenumbers.includes(item.issuenumber)"
+      <ion-checkbox v-if="selectedIssuecodes" :checked="selectedIssuecodes.includes(item.inducksItem.issuenumber!)"
         >&nbsp;</ion-checkbox
       >
       <Condition v-if="'condition' in item && item.condition" :value="item.condition" />
       <span v-else class="not-owned-space" />
     </template>
-    <template v-if="currentIssueViewMode.id === 'list'" #row-label="{ item }">
-      <Issue v-bind="item" />
+    <template v-if="currentIssueViewMode.id === 'list'" #row-label="{ item: { issuecode } }">
+      <Issue :issuecode="issuecode" />
     </template>
-    <template #row-suffix="{ item }">
+    <template #row-suffix="{ item }" v-if="!isCoaView">
       <template v-if="'issueDate' in item && item.issueDate">
         <ion-icon :ios="calendarOutline" :md="calendarSharp" />&nbsp;{{ item.issueDate }}
+      </template>
+      <template v-if="'isToRead' in item && item.isToRead">
+        &nbsp;<ion-icon style="color: green" :ios="bookmarkOutline" :md="bookmarkSharp" />
       </template>
     </template>
     <template v-if="currentIssueViewMode.id === 'edges'">
@@ -27,8 +31,7 @@
         :currentEdgeHighlighted="null"
         :bookcaseTextures="bookcaseOptions!.textures"
         :sortedBookcase="sortedItemsForBookcase"
-        ><template #edge-prefix="{ edge }"><br /><Condition :value="edge.issueCondition" /></template
-      ></Bookcase>
+      />
     </template>
     <template v-if="colSize">
       <ion-grid>
@@ -37,27 +40,34 @@
             v-for="{ key, item } in sortedItemsForCovers?.filter(({ key }) => filteredIssuenumbers.includes(key))"
             :key="key"
             class="ion-text-center"
+            @click="currentNavigationItem = { type: 'issuecodes', value: [key] }"
             :size="String(colSize)"
             ><ion-img
-              @click="currentNavigationItem = key"
+              v-if="item.cover"
               :src="`${COVER_ROOT_URL}${item.cover}`"
-              :alt="item.issuenumber"
-            ></ion-img></ion-col></ion-row
-      ></ion-grid>
+              :alt="issuecodeDetails[item.issuecode]!.issuenumber"
+              @error="item.cover = null"
+            ></ion-img
+            ><ion-text v-else
+              >{{ issuecodeDetails[item.issuecode]!.issuenumber }}<br />({{ $t('pas de couverture') }})</ion-text
+            ></ion-col
+          ></ion-row
+        ></ion-grid
+      >
     </template>
   </List>
 </template>
 
 <script setup lang="ts">
-import { calendarOutline, calendarSharp } from 'ionicons/icons';
-import type { issue } from '~prisma-clients/extended/dm.extends';
+import { bookmarkOutline, bookmarkSharp, calendarOutline, calendarSharp } from 'ionicons/icons';
+import type { IssueWithIssuecodeOnly } from '~dm-types/SimpleIssue';
+import type { issue } from '~prisma-schemas/schemas/dm';
 import { stores as webStores, components as webComponents } from '~web';
 
 import { app } from '~/stores/app';
 import { wtdcollection } from '~/stores/wtdcollection';
 
 const { Bookcase } = webComponents;
-
 const filteredIssuenumbers = ref<string[]>([]);
 
 const COVER_ROOT_URL = import.meta.env.VITE_CLOUDINARY_BASE_URL;
@@ -76,9 +86,10 @@ const colSize = computed(() => {
 });
 
 const { issues, user, purchasesById } = storeToRefs(wtdcollection());
-const coaStore = webStores.coa();
-
-const { isCoaView, currentIssueViewMode, currentNavigationItem, selectedIssuenumbers } = storeToRefs(app());
+const { publicationcode, currentNavigationItem, isCoaView, currentIssueViewMode, selectedIssuecodes } =
+  storeToRefs(app());
+const { issuesWithTitles, issuecodeDetails } = storeToRefs(webStores.coa());
+const { fetchCoverUrls, fetchIssueNumbersWithTitles } = webStores.coa();
 
 const { bookcaseOptions, bookcaseUsername } = storeToRefs(bookcase());
 const { loadBookcaseOptions, loadBookcaseOrder } = bookcase();
@@ -88,11 +99,7 @@ defineSlots<{
   rowLabel: { text: string };
 }>();
 
-const getItemTextFn = (item: (typeof items)['value'][0]['item']) => item.issuenumber;
-
-const hasCoaData = computed(() => !!coaStore.issuesWithTitles?.[publicationcode.value]);
-
-const publicationcode = computed(() => currentNavigationItem.value!);
+const getItemTextFn = (item: Item) => issuecodeDetails.value[item.issuecode]!.issuenumber;
 
 const getIssueDate = (issue: issue) => {
   let date =
@@ -100,8 +107,13 @@ const getIssueDate = (issue: issue) => {
   return !date ? date : (typeof date === 'string' ? date : date.toISOString()).split('T')?.[0];
 };
 
-const coaIssues = computed(() => coaStore.issuesWithTitles[publicationcode.value]);
-const coaIssuenumbers = computed(() => coaIssues.value?.map(({ issuenumber }) => issuenumber));
+const coaIssues = computed(() => issuesWithTitles.value[publicationcode.value!]);
+const coaIssuecodes = computed(() => coaIssues.value?.map(({ issuecode }) => issuecode));
+const coaIssuecodeDetails = computed<typeof issuecodeDetails.value>(() =>
+  Object.entries(issuecodeDetails.value)
+    .filter(([issuecode]) => coaIssuecodes.value.includes(issuecode))
+    .reduce((acc, [issuecode, details]) => ({ ...acc, [issuecode]: details }), {}),
+);
 const userIssues = computed(() =>
   (issues.value || [])
     .filter((issue) => issue.publicationcode === publicationcode.value)
@@ -112,8 +124,12 @@ const userIssues = computed(() =>
 );
 
 watch(isCoaView, () => {
-  selectedIssuenumbers.value = [];
+  selectedIssuecodes.value = [];
 });
+
+type Item =
+  | Pick<issue, 'issuecode' | 'condition' | 'creationDate' | 'isOnSale' | 'isToRead' | 'isSubscription'>
+  | IssueWithIssuecodeOnly;
 
 const items = computed(() =>
   coaIssues.value
@@ -121,34 +137,26 @@ const items = computed(() =>
       ? coaIssues.value.reduce<
           {
             key: string;
-            keyInList: string;
-            item: (typeof userIssues.value)[number] | (typeof coaIssues.value)[number];
+            inducksItem: (typeof coaIssuecodeDetails.value)[string];
+            item: Item;
           }[]
         >((acc, item) => {
-          const userIssuesForThisIssue = userIssues.value
-            .filter(({ issuenumber: userIssueNumber }) => item.issuenumber === userIssueNumber)
-            .map((item) => ({
-              key: item.shortIssuecode,
-              keyInList: item.issuenumber,
-              item,
-            }));
+          const userIssuesForThisIssue = userIssues.value.filter(
+            ({ issuecode: userIssuecode }) => item.issuecode === userIssuecode,
+          );
 
           return [
             ...acc,
-            ...(userIssuesForThisIssue.length
-              ? userIssuesForThisIssue
-              : [
-                  {
-                    key: item.shortIssuecode,
-                    keyInList: item.issuenumber,
-                    item,
-                  },
-                ]),
+            ...(userIssuesForThisIssue.length ? userIssuesForThisIssue : [item]).map((itemOrUserItem) => ({
+              key: itemOrUserItem.issuecode,
+              inducksItem: coaIssuecodeDetails.value[itemOrUserItem.issuecode],
+              item: itemOrUserItem,
+            })),
           ];
         }, [])
       : (userIssues.value || []).map((issue) => ({
-          key: issue.shortIssuecode,
-          keyInList: issue.issuenumber,
+          key: issue.issuecode,
+          inducksItem: coaIssuecodeDetails.value[issue.issuecode],
           item: issue,
         }))
     : [],
@@ -156,11 +164,10 @@ const items = computed(() =>
 
 const sortedItems = computed(() =>
   items.value
-    .map(({ key, keyInList, item }) => ({
+    .map(({ key, item }) => ({
       key,
-      keyInList,
       item,
-      indexInCoaList: coaIssuenumbers.value!.indexOf(item.issuenumber),
+      indexInCoaList: coaIssuecodes.value!.indexOf(item.issuecode),
       isOwned: (item as (typeof userIssues.value)[0]).condition !== undefined,
     }))
 
@@ -172,9 +179,8 @@ const sortedItems = computed(() =>
       nextItemIndexInCoaList: allItems[idx + 1]?.indexInCoaList,
       nextItemIndexIsOwned: allItems[idx + 1]?.isOwned,
     }))
-    .map(({ key, keyInList, item, isOwned, indexInCoaList, nextItemIndexIsOwned, nextItemIndexInCoaList }) => ({
+    .map(({ key, item, isOwned, indexInCoaList, nextItemIndexIsOwned, nextItemIndexInCoaList }) => ({
       key,
-      keyInList,
       item,
       isOwned,
       nextItemType:
@@ -188,10 +194,11 @@ const sortedItems = computed(() =>
     })),
 );
 
+const hasItems = computed(() => sortedItems.value.length > 0);
+
 const sortedItemsForBookcase = computed(() =>
   sortedItems.value.map(({ item }) => ({
-    publicationcode: item.publicationcode!,
-    issuenumber: item.issuenumber,
+    ...issuecodeDetails.value[item.issuecode],
     issueCondition: (item as (typeof userIssues.value)[0]).condition,
   })),
 );
@@ -199,27 +206,34 @@ const sortedItemsForBookcase = computed(() =>
 const sortedItemsForCovers = shallowRef<Awaited<ReturnType<typeof getSortedItemsWithCovers>>>();
 
 const getSortedItemsWithCovers = async () => {
-  const coverUrls = (await coaStore.fetchCoverUrls(publicationcode.value)).covers;
+  const coverUrls = (await fetchCoverUrls(publicationcode.value!)).covers;
 
   return sortedItems.value.map(({ key, item }) => ({
     key,
     item: {
       ...item,
-      cover: coverUrls[item.issuenumber]!.fullUrl,
+      cover: coverUrls[item.issuecode]!.fullUrl,
     },
   }));
 };
 
-watch([sortedItems, currentIssueViewMode], async () => {
-  if (sortedItems.value && ['covers-large', 'covers-medium', 'covers-small'].includes(currentIssueViewMode.value.id)) {
-    sortedItemsForCovers.value = await getSortedItemsWithCovers();
-  }
-});
+watch(
+  [sortedItems, currentIssueViewMode],
+  async () => {
+    if (
+      sortedItems.value &&
+      ['covers-large', 'covers-medium', 'covers-small'].includes(currentIssueViewMode.value.id)
+    ) {
+      sortedItemsForCovers.value = await getSortedItemsWithCovers();
+    }
+  },
+  { immediate: true },
+);
 
 watch(
-  [isCoaView, currentNavigationItem],
+  [isCoaView, publicationcode],
   async () => {
-    await coaStore.fetchIssueNumbersWithTitles([publicationcode.value]);
+    await fetchIssueNumbersWithTitles([publicationcode.value!]);
   },
   { immediate: true },
 );
@@ -238,6 +252,8 @@ onMounted(async () => {
   await loadBookcaseOptions();
   await loadBookcaseOrder();
 });
+
+defineExpose({ hasItems });
 </script>
 
 <style lang="scss" scoped>
@@ -263,10 +279,6 @@ ion-checkbox {
 :deep(.bookcase) {
   overflow: auto;
   padding: 0 1rem;
-}
-
-:deep(.edge) {
-  display: inline-block;
 }
 
 :deep(.item-wrapper) {
@@ -326,5 +338,11 @@ ion-range {
 
 ion-checkbox {
   pointer-events: none;
+}
+
+ion-col {
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 </style>

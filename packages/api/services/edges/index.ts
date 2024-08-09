@@ -1,58 +1,50 @@
 import type { Namespace, Server } from "socket.io";
 
-import type { WantedEdge } from "~dm-types/WantedEdge";
-import { prismaDm } from "~prisma-clients";
-import { prismaEdgeCreator } from "~prisma-clients";
-import type { edgeModel } from "~prisma-clients/client_edgecreator";
+import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
+import type { edgeModel } from "~prisma-schemas/schemas/edgecreator";
+import { prismaClient as prismaEdgeCreator } from "~prisma-schemas/schemas/edgecreator/client";
 
+import { augmentIssueArrayWithInducksData } from "../coa";
 import type Events from "./types";
 import { namespaceEndpoint } from "./types";
 
 const getEdges = async (filters: {
   publicationcode?: string;
-  issuenumbers?: string[];
-  isActive?: boolean;
+  issuecodes?: string[];
 }) => {
-  const { publicationcode, issuenumbers, isActive } = filters;
-  const issuenumber = issuenumbers
+  if (!filters.publicationcode || !filters.issuecodes) {
+    throw new Error("Invalid filter");
+  }
+  const issuecode = filters.issuecodes
     ? {
-        in: issuenumbers,
+        in: filters.issuecodes,
       }
     : undefined;
-  const [countrycode, magazinecode] = publicationcode
-    ? publicationcode.split("/")
-    : [undefined, undefined];
   const edgeModels: Record<string, edgeModel> = (
     await prismaEdgeCreator.edgeModel.findMany({
       where: {
-        country: countrycode,
-        magazine: magazinecode,
-        issuenumber,
-        isActive,
+        issuecode,
       },
     })
-  ).reduce((acc, model) => ({ ...acc, [model.issuenumber]: model }), {});
+  ).groupBy('issuecode');
 
   return (
     await prismaDm.edge.findMany({
       select: {
         id: true,
-        publicationcode: true,
-        issuenumber: true,
-        shortIssuecode: true,
+        issuecode: true,
       },
       where: {
-        publicationcode,
-        issuenumber,
+        issuecode,
       },
     })
   ).reduce(
     (acc, edge) => ({
       ...acc,
-      [edge.shortIssuecode!]: {
+      [edge.issuecode!]: {
         ...edge,
-        modelId: edgeModels[edge.issuenumber]?.id,
-        v3: edgeModels[edge.issuenumber] !== undefined,
+        modelId: edgeModels[edge.issuecode]?.id,
+        v3: edgeModels[edge.issuecode] !== undefined,
       },
     }),
     {},
@@ -63,32 +55,34 @@ export default (io: Server) => {
   (io.of(namespaceEndpoint) as Namespace<Events>).on("connection", (socket) => {
     console.log("connected to edges");
 
-    socket.on("getWantedEdges", (callback) =>
-      prismaDm.$queryRaw<WantedEdge[]>`
-    SELECT Count(Numero) as numberOfIssues, CONCAT(Pays, '/', Magazine) AS publicationcode, Numero AS issuenumber
-    FROM numeros
+    socket.on("getWantedEdges", async (callback) =>
+      prismaDm.$queryRaw<{ numberOfIssues: number; issuecode: string }[]>`
+    SELECT Count(Numero) as numberOfIssues, issuecode
+    FROM numeros AS issue
     WHERE NOT EXISTS(
       SELECT 1
       FROM tranches_pretes
-      WHERE CONCAT(numeros.Pays, '/', numeros.Magazine) = tranches_pretes.publicationcode
-        AND numeros.Numero_nospace = tranches_pretes.issuenumber
+      WHERE issue.issuecode = tranches_pretes.issuecode
       )
-    GROUP BY Pays, Magazine, Numero
-    ORDER BY numberOfIssues DESC, Pays, Magazine, Numero
+    GROUP BY issuecode
+    ORDER BY numberOfIssues DESC, issuecode
     LIMIT 20
-  `.then(callback),
+  `
+        .then((issues) => augmentIssueArrayWithInducksData(issues))
+        .then(callback),
     );
 
     socket.on("getPublishedEdges", (callback) =>
       prismaDm.edge
         .findMany({
-          select: { publicationcode: true, issuenumber: true },
+          select: { issuecode: true },
         })
+        .then((issues) => augmentIssueArrayWithInducksData(issues))
         .then(callback),
     );
 
-    socket.on("getEdges", async (publicationcode, issuenumbers, callback) => {
-      callback(await getEdges({ publicationcode, issuenumbers }));
+    socket.on("getEdges", async (filters, callback) => {
+      callback(await getEdges(filters));
     });
   });
 };

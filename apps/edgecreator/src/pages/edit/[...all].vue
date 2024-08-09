@@ -25,48 +25,46 @@
         <table class="edges">
           <tr v-if="uiStore.showIssueNumbers">
             <th
-              v-if="showPreviousEdge && mainStore.edgesBefore.length"
+              v-if="
+                showPreviousEdge &&
+                mainStore.edgesBefore[mainStore.edgesBefore.length - 1]
+              "
               class="surrounding-edge"
             >
               {{
-                mainStore.edgesBefore[mainStore.edgesBefore.length - 1]
-                  .issuenumber
+                mainStore.edgesBefore[mainStore.edgesBefore.length - 1]!.issuenumber
               }}
             </th>
             <template
-              v-for="issuenumber in mainStore.issuenumbers"
-              :key="`issuenumber-${issuenumber}`"
+              v-for="issuecode in issuecodes"
+              :key="`issuecode-${issuecode}`"
             >
               <th
                 :class="{
                   clickable: true,
-                  published: isPublished(issuenumber),
-                  pending: isPending(issuenumber),
+                  published: isPublished(issuecode),
+                  pending: isPending(issuecode),
                 }"
-                @click.exact="editingStepStore.replaceIssuenumber(issuenumber)"
-                @click.shift="editingStepStore.toggleIssuenumber(issuenumber)"
-                @dblclick="
-                  editingStepStore.addIssuenumbers(mainStore.issuenumbers)
-                "
+                @click.exact="editingStepStore.replaceIssuecode(issuecode)"
+                @click.shift="editingStepStore.toggleIssuecode(issuecode)"
+                @dblclick="editingStepStore.addIssuecodes(issuecodes)"
               >
-                <div v-if="editingStepStore.issuenumbers.includes(issuenumber)">
+                <div v-if="editingStepStore.issuecodes.includes(issuecode)">
                   <i-bi-pencil />
                 </div>
                 <div>
-                  {{ issuenumber }}
+                  {{ coaStore.issuecodeDetails[issuecode].issuenumber }}
                 </div>
               </th>
               <th
-                v-if="
-                  uiStore.showEdgePhotos && mainStore.photoUrls[issuenumber]
-                "
-                :key="`photo-icon-${issuenumber}`"
+                v-if="uiStore.showEdgePhotos && mainStore.photoUrls[issuecode]"
+                :key="`photo-icon-${issuecode}`"
               >
                 <i-bi-camera />
               </th>
             </template>
             <th
-              v-if="showNextEdge && mainStore.edgesAfter.length"
+              v-if="showNextEdge && mainStore.edgesAfter[0]"
               class="surrounding-edge"
             >
               {{ mainStore.edgesAfter[0].issuenumber }}
@@ -75,46 +73,42 @@
           <tr>
             <td v-if="showPreviousEdge && mainStore.edgesBefore.length">
               <published-edge
-                :issuenumber="
-                  mainStore.edgesBefore[mainStore.edgesBefore.length - 1]
-                    .issuenumber
+                :issuecode="
+                  mainStore.edgesBefore[mainStore.edgesBefore.length - 1]!.issuecode
                 "
                 @load="showPreviousEdge = true"
                 @error="showPreviousEdge = undefined"
               />
             </td>
             <template
-              v-for="issuenumber in mainStore.issuenumbers"
-              :key="`canvas-${issuenumber}`"
+              v-for="issuecode in issuecodes"
+              :key="`canvas-${issuecode}`"
             >
               <td>
                 <edge-canvas
-                  v-if="dimensionsPerIssuenumber[issuenumber]"
-                  :steps="stepsPerIssuenumber[issuenumber]"
-                  :issuenumber="issuenumber"
-                  :dimensions="dimensionsPerIssuenumber[issuenumber]"
-                  :photo-url="mainStore.photoUrls[issuenumber]"
+                  v-if="dimensionsPerIssuecode[issuecode]"
+                  :steps="stepsPerIssuecode[issuecode]"
+                  :issuecode="issuecode"
+                  :dimensions="dimensionsPerIssuecode[issuecode]"
+                  :photo-url="mainStore.photoUrls[issuecode]"
                   :contributors="
                     mainStore.contributors.filter(
-                      ({ issuenumber: thisIssuenumber }) =>
-                        thisIssuenumber === issuenumber,
+                      ({ issuecode: thisIssuecode }) =>
+                        thisIssuecode === issuecode,
                     )
                   "
                 />
               </td>
               <td
-                v-if="
-                  uiStore.showEdgePhotos && mainStore.photoUrls[issuenumber]
-                "
+                v-if="uiStore.showEdgePhotos && mainStore.photoUrls[issuecode]"
               >
                 <img
-                  :alt="mainStore.photoUrls[issuenumber]"
-                  :src="getImageUrl('photos', mainStore.photoUrls[issuenumber])"
+                  :alt="mainStore.photoUrls[issuecode]"
+                  :src="getImageUrl('photos', mainStore.photoUrls[issuecode])"
                   :class="{ picker: !!uiStore.colorPickerOption }"
                   :style="{
                     height: `${
-                      uiStore.zoom *
-                      dimensionsPerIssuenumber[issuenumber].height
+                      uiStore.zoom * dimensionsPerIssuecode[issuecode].height
                     }px`,
                   }"
                   crossorigin=""
@@ -126,7 +120,7 @@
             </template>
             <td v-if="showNextEdge && mainStore.edgesAfter.length">
               <published-edge
-                :issuenumber="mainStore.edgesAfter[0].issuenumber"
+                :issuecode="mainStore.edgesAfter[0]!.issuecode"
                 @load="showNextEdge = true"
                 @error="showNextEdge = undefined"
               />
@@ -165,36 +159,37 @@ const editingStepStore = editingStep();
 const { showPreviousEdge, showNextEdge } = useSurroundingEdge();
 
 const { loadModel } = useModelLoad();
+const { issuecodes } = storeToRefs(mainStore);
 
 const error = ref<string | null>(null);
 
 const { dimensions } = storeToRefs(stepStore);
 
-const dimensionsPerIssuenumber = computed(() =>
-  mainStore.issuenumbers.reduce<Record<string, Dimensions>>(
-    (acc, issuenumber) => ({
+const dimensionsPerIssuecode = computed(() =>
+  issuecodes.value.reduce<Record<string, Dimensions>>(
+    (acc, issuecode) => ({
       ...acc,
-      [issuenumber]: stepStore.getFilteredDimensions({
-        issuenumbers: [issuenumber],
+      [issuecode]: stepStore.getFilteredDimensions({
+        issuecodes: [issuecode],
       })[0],
     }),
     {},
   ),
 );
 
-const stepsPerIssuenumber = computed(() =>
-  mainStore.issuenumbers.reduce<Record<string, Options>>(
-    (acc, issuenumber) => ({
+const stepsPerIssuecode = computed(() =>
+  issuecodes.value.reduce<Record<string, Options>>(
+    (acc, issuecode) => ({
       ...acc,
-      [issuenumber]: stepStore.getFilteredOptions({
-        issuenumbers: [issuenumber],
+      [issuecode]: stepStore.getFilteredOptions({
+        issuecodes: [issuecode],
       }),
     }),
     {},
   ),
 );
 watch(
-  () => editingStepStore.issuenumbers,
+  () => editingStepStore.issuecodes,
   async () => {
     await mainStore.loadItems({ itemType: "elements" });
     await mainStore.loadItems({ itemType: "photos" });
@@ -205,54 +200,42 @@ watch(
 try {
   await webStores.users().fetchAllUsers();
 
-  let [firstIssuecode, lastIssuenumber] = (route.params.all as string).split(
+  let [firstIssuecode, lastIssuecode] = (route.params.all as string).split(
     " to ",
   );
-  let otherIssuenumbers: string[] | undefined = undefined;
-  if (!lastIssuenumber) {
-    [firstIssuecode, ...otherIssuenumbers] = firstIssuecode.split(",");
+  let otherIssuecodes: string[] | undefined = undefined;
+  if (!lastIssuecode) {
+    [firstIssuecode, ...otherIssuecodes] = firstIssuecode.split(",");
   }
 
-  await coaStore.fetchIssueCodesDetails([firstIssuecode]);
+  await coaStore.fetchIssuecodeDetails([firstIssuecode]);
 
-  const { publicationcode, issuenumber: firstIssuenumber } =
-    coaStore.issueCodeDetails[firstIssuecode];
-  if (!publicationcode) {
+  if (!firstIssuecode) {
     throw new Error(`Issue ${firstIssuecode} doesn't exist`);
   }
-  [mainStore.country, mainStore.magazine] = publicationcode!.split("/");
 
   await mainStore.loadPublicationIssues();
 
   try {
-    mainStore.setIssuenumbers(
-      firstIssuenumber!,
-      lastIssuenumber,
-      otherIssuenumbers,
-    );
+    mainStore.setIssuecodes(firstIssuecode!, lastIssuecode, otherIssuecodes);
 
-    editingStepStore.addIssuenumber(firstIssuenumber!);
+    editingStepStore.addIssuecode(firstIssuecode!);
 
-    for (const issuenumber of mainStore.issuenumbers) {
-      const idx = mainStore.issuenumbers.indexOf(issuenumber);
-      if (!Object.prototype.hasOwnProperty.call(mainStore.issuenumbers, idx)) {
+    for (const issuecode of issuecodes.value) {
+      const idx = issuecodes.value.indexOf(issuecode);
+      if (!Object.prototype.hasOwnProperty.call(issuecodes, idx)) {
         continue;
       }
       try {
-        await loadModel(
-          mainStore.country,
-          mainStore.magazine,
-          issuenumber,
-          issuenumber,
-        );
+        await loadModel(firstIssuecode, issuecode);
       } catch {
-        const previousIssuenumber = mainStore.issuenumbers[idx - 1];
-        if (previousIssuenumber) {
-          stepStore.copyDimensionsAndSteps(issuenumber, previousIssuenumber);
+        const previousIssuecode = issuecodes.value[idx - 1];
+        if (previousIssuecode) {
+          stepStore.copyDimensionsAndSteps(issuecode, previousIssuecode);
         } else {
           stepStore.setDimensions(
             { width: 15, height: 200 },
-            { issuenumbers: [issuenumber] },
+            { issuecodes: [issuecode] },
           );
 
           stepStore.setOptionValues([]);
@@ -267,7 +250,7 @@ try {
 }
 
 const getImageUrl = (fileType: string, fileName: string) =>
-  `${import.meta.env.VITE_EDGES_URL as string}/${mainStore.country!}/${
+  `${import.meta.env.VITE_EDGES_URL as string}/${mainStore.publicationcode!.split("/")[0]}/${
     fileType === "elements" ? fileType : "photos"
   }/${fileName}`;
 
@@ -284,14 +267,10 @@ const setColorFromPhoto = ({ target, offsetX, offsetY }: MouseEvent) => {
   });
 };
 
-const isPending = (issuenumber: string) =>
-  !!edgeCatalog().currentEdges[
-    `${mainStore.country!}/${mainStore.magazine!} ${issuenumber}`
-  ];
-const isPublished = (issuenumber: string) =>
-  (edgeCatalog().publishedEdges[
-    `${mainStore.country!}/${mainStore.magazine!}`
-  ] || {})[issuenumber];
+const isPending = (issuecode: string) =>
+  !!edgeCatalog().currentEdges[issuecode];
+const isPublished = (issuecode: string) =>
+  edgeCatalog().publishedEdges[issuecode];
 
 const rgbToHex = (r: number, g: number, b: number) =>
   `#${((r << 16) | (g << 8) | b).toString(16)}`;

@@ -10,7 +10,7 @@
 const rect = ref<SVGRectElement | null>(null);
 
 interface Props {
-  issuenumber: string;
+  issuecode: string;
   stepNumber: number;
   options: {
     x: number;

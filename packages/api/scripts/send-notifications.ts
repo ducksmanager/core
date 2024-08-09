@@ -8,8 +8,10 @@ import PushNotifications from "@pusher/push-notifications-server";
 import dayjs from "dayjs";
 
 import { i18n } from "~/emails/email";
-import { prismaDm } from "~prisma-clients";
-import type { user } from "~prisma-clients/extended/dm.extends";
+import { augmentIssueArrayWithInducksData } from "~/services/coa";
+import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa/client";
+import type { user } from "~prisma-schemas/schemas/dm";
+import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
 import {
   COUNTRY_CODE_OPTION,
   getSuggestions,
@@ -19,7 +21,7 @@ const suggestionsSince = dayjs().add(-7, "days");
 let notificationsSent = 0;
 
 const sendSuggestedIssueNotification = async (
-  shortIssuecode: string,
+  issuecode: string,
   issueTitle: string,
   storyCountPerAuthor: { [personcode: string]: number },
   userToNotify: user,
@@ -62,7 +64,7 @@ const sendSuggestedIssueNotification = async (
   );
   await prismaDm.userSuggestionNotification.create({
     data: {
-      shortIssuecode,
+      issuecode,
       text: issueTitle,
       userId: userToNotify.id,
       date: new Date(),
@@ -77,17 +79,15 @@ getSuggestions(
   null,
   null,
   false,
-).then(async ({ suggestionsPerUser, authors, publicationTitles }) => {
-  const usersById = (await prismaDm.user.findMany()).reduce<{
-    [userId: number]: user;
-  }>((acc, user) => ({ ...acc, [user.id]: user }), {});
+).then(async ({ suggestionsPerUser, authors }) => {
+  const usersById = (await prismaDm.user.findMany()).groupBy('id')
 
   const allSuggestedIssues = [
     ...new Set(
       Object.values(suggestionsPerUser).reduce<string[]>(
         (acc, suggestion) => [
           ...acc,
-          ...Object.values(suggestion.issues).map((issue) => issue.shortIssuecode),
+          ...Object.values(suggestion.issues).map((issue) => issue.issuecode),
         ],
         [],
       ),
@@ -97,7 +97,7 @@ getSuggestions(
   const alreadySentNotificationsPerUser = (
     await prismaDm.userSuggestionNotification.findMany({
       where: {
-        shortIssuecode: {
+        issuecode: {
           in: allSuggestedIssues,
         },
       },
@@ -105,7 +105,7 @@ getSuggestions(
   ).reduce<{ [userId: number]: string[] }>(
     (acc, notification) => ({
       [notification.userId]: [
-        ...new Set(...(acc[notification.userId] || []), notification.shortIssuecode),
+        ...new Set(...(acc[notification.userId] || []), notification.issuecode),
       ],
     }),
     {},
@@ -115,15 +115,15 @@ getSuggestions(
     suggestionsPerUser,
   )) {
     const userIdNumber = parseInt(userId);
-    const pendingNotificationsForUser = Object.values(
+    const pendingNotificationsForUser = await augmentIssueArrayWithInducksData(Object.values(
       suggestionsForUser.issues,
     ).filter(
       (suggestion) =>
         !alreadySentNotificationsPerUser[userIdNumber] ||
         !alreadySentNotificationsPerUser[userIdNumber].includes(
-          suggestion.shortIssuecode,
+          suggestion.issuecode,
         ),
-    );
+    ));
 
     console.log(
       `${pendingNotificationsForUser.length} new issue(s) will be suggested to user ${userId}`,
@@ -133,6 +133,17 @@ getSuggestions(
       pendingNotificationsForUser.length
       } issue(s) have already been suggested to user ${userId}`,
     );
+
+    const publicationTitles = (await prismaCoa.inducks_publication.findMany({
+      where: {
+        publicationcode: {
+          in: [...new Set(pendingNotificationsForUser.map(
+            ({ publicationcode }) => publicationcode,
+          ))],
+        },
+      },
+    })).groupBy("publicationcode");
+
 
     for (const suggestedIssue of pendingNotificationsForUser) {
       const issueTitle = `${publicationTitles[suggestedIssue.publicationcode]
@@ -147,7 +158,7 @@ getSuggestions(
       );
       try {
         await sendSuggestedIssueNotification(
-          suggestedIssue.shortIssuecode,
+          suggestedIssue.issuecode,
           issueTitle,
           storyCountPerAuthor,
           usersById[userIdNumber],

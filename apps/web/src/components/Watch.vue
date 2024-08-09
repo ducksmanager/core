@@ -10,12 +10,12 @@
       :variant="isWatched ? 'secondary' : 'outline-secondary'"
       class="d-inline-flex xl py-0 px-1 ms-2 me-2"
       :class="{
-        'soft-disabled': isPublicationWatchedButNotIssueNumber,
+        'soft-disabled': isPublicationWatchedButNotIssuecode,
         disabled: !publicationcode,
       }"
       :title="buttonTooltipText"
       @click="
-        !isPublicationWatchedButNotIssueNumber && toggleWatchedPublication()
+        !isPublicationWatchedButNotIssuecode && toggleWatchedPublication()
       "
     >
       <i-bi-eyeglasses
@@ -31,12 +31,12 @@
 </template>
 <script setup lang="ts">
 const {
-  issuenumber = null,
+  issuecode = null,
   publicationcode = null,
   constantWidth = false,
 } = defineProps<{
   publicationcode?: string;
-  issuenumber?: string;
+  issuecode?: string;
   constantWidth?: boolean;
 }>();
 
@@ -46,14 +46,12 @@ const { loadWatchedPublicationsWithSales, updateWatchedPublicationsWithSales } =
   collection();
 const { watchedPublicationsWithSales } = storeToRefs(collection());
 
-const key = $computed(
-  () => publicationcode + (issuenumber ? ` ${issuenumber}` : ""),
-);
+const key = $computed(() => issuecode || publicationcode || "");
 
 const isWatched = $computed(() =>
   watchedPublicationsWithSales.value?.includes(key),
 );
-const isPublicationWatchedButNotIssueNumber = $computed(
+const isPublicationWatchedButNotIssuecode = $computed(
   () =>
     !isWatched &&
     publicationcode &&
@@ -62,12 +60,12 @@ const isPublicationWatchedButNotIssueNumber = $computed(
 const buttonTooltipText = $computed(() =>
   $t(
     isWatched
-      ? issuenumber === null
+      ? issuecode === null
         ? "Cliquez ici pour ne plus voir les numéros que vous ne possédez pas de ce magazine qui sont en vente"
         : "Cliquez ici pour ne plus voir les propositions de vente de ce numéro"
-      : issuenumber === null
+      : issuecode === null
         ? "Cliquez ici pour voir les numéros que vous ne possédez pas de ce magazine qui sont en vente !"
-        : isPublicationWatchedButNotIssueNumber
+        : isPublicationWatchedButNotIssuecode
           ? "Vous surveillez déjà tous les numéros de ce magazine. Cliquez sur 'Surveillé' en face du titre du magazine pour ne surveiller que certains numéros de ce magazine."
           : "Cliquez ici pour voir les propositions de vente de ce numéro !",
   ),

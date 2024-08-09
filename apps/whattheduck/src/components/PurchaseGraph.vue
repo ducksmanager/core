@@ -9,7 +9,7 @@ import { BarController, BarElement, CategoryScale, Chart, Legend, LinearScale, T
 import dayjs from 'dayjs';
 import { Bar } from 'vue-chartjs';
 import { useI18n } from 'vue-i18n';
-import type { issue as dm_issue } from '~prisma-clients/extended/dm.extends';
+import type { issue as dm_issue } from '~prisma-schemas/schemas/dm';
 import { coa } from '~web/src/stores/coa';
 
 import { wtdcollection } from '~/stores/wtdcollection';
@@ -97,20 +97,17 @@ const compareDates = (a: string, b: string) =>
     let accDate = labels.value!.reduce<Record<string, number>>((acc, value) => ({ ...acc, [value]: 0 }), {});
     return collectionWithDates.value
       .sort(({ date: dateA }, { date: dateB }) => compareDates(dateA, dateB))
-      .reduce(
-        (acc, { date, publicationcode: publicationcode }) => {
-          if (!publicationCodesWithOther.value!.includes(publicationcode)) {
-            publicationcode = 'Other';
-          }
-          if (!acc[publicationcode]) {
-            acc[publicationcode] = { ...dateAssoc };
-          }
-          acc[publicationcode][date]++;
-          accDate[date]++;
-          return acc;
-        },
-        {} as Record<string, Record<string, number>>,
-      );
+      .reduce<Record<string, Record<string, number>>>((acc, { date, publicationcode: publicationcode }) => {
+        if (!publicationCodesWithOther.value!.includes(publicationcode)) {
+          publicationcode = 'Other';
+        }
+        if (!acc[publicationcode]) {
+          acc[publicationcode] = { ...dateAssoc };
+        }
+        acc[publicationcode][date]++;
+        accDate[date]++;
+        return acc;
+      }, {});
   }),
   datasets = computed(() =>
     !(ready.value && collectionWithDates.value && values.value)

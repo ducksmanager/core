@@ -1,14 +1,19 @@
 import { computed } from "vue";
 
-const MEDAL_LEVELS: Record<string, Record<number, number>> = {
+import type { UserContributionTypeEn } from "~dm-types/UserContributionTypeEn";
+
+const MEDAL_LEVELS: Record<UserContributionTypeEn, Record<number, number>> = {
   edge_photographer: { 1: 50, 2: 150, 3: 600 },
   edge_designer: { 1: 20, 2: 70, 3: 150 },
   duckhunter: { 1: 1, 2: 3, 3: 15 },
-};
+} as const;
 
 const RADIUS = 42;
 
-export default (contribution: string, userLevelPoints: number) => {
+export default (
+  contribution: UserContributionTypeEn,
+  userLevelPoints: number,
+) => {
   const circumference = Math.PI * RADIUS * 2,
     currentLevel = computed(() => {
       const level = MEDAL_LEVELS[contribution];

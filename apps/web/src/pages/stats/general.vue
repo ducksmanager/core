@@ -72,11 +72,7 @@
               :fields="quotationFields"
             >
               <template #cell(issue)="{ item }">
-                <Issue
-                  :publicationcode="item.publicationcode"
-                  :publicationname="publicationNames[item.publicationcode]!"
-                  :issuenumber="item.issuenumber"
-                />
+                <Issue :issuecode="item.issuecode" />
               </template>
               <template #cell(condition)="{ item }">
                 {{ getConditionLabel(item.condition) }}
@@ -175,8 +171,8 @@ const { loadCollection, loadUserIssueQuotations } = collection();
 const { totalPerPublication, quotedIssues, quotationSum, user } =
   storeToRefs(collection());
 
-const { fetchPublicationNames } = coa();
-const { publicationNames } = storeToRefs(coa());
+const { fetchPublicationNames, fetchIssuecodeDetails } = coa();
+const { issuecodeDetails } = storeToRefs(coa());
 
 const quotedIssuesForCollection = $computed(() =>
   quotedIssues.value?.sort(
@@ -213,8 +209,11 @@ watch(
   quotedIssues,
   async (newValue) => {
     if (newValue) {
+      fetchIssuecodeDetails(newValue.map(({ issuecode }) => issuecode));
       await fetchPublicationNames(
-        newValue.map(({ publicationcode }) => publicationcode),
+        newValue.map(
+          ({ issuecode }) => issuecodeDetails.value[issuecode].publicationcode,
+        ),
       );
       hasPublicationNames = true;
     }

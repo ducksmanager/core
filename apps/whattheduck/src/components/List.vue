@@ -21,11 +21,11 @@
         :item-size="32"
         key-field="uniqueKey"
         item-class="item-wrapper"
-        v-slot="{ item: { key, keyInList, item, isOwned, nextItemType } }"
+        v-slot="{ item: { key, item, isOwned, nextItemType } }"
       >
         <Row
           :id="key"
-          :key-in-list="keyInList"
+          :type="itemType"
           :class="{ [`is-next-item-${nextItemType}`]: !!nextItemType, 'is-owned': isOwned }"
         >
           <template #fill-bar v-if="item">
@@ -42,19 +42,19 @@
           </template>
         </Row>
       </RecycleScroller>
-      <div id="edit-issues-buttons" v-if="selectedIssuenumbers">
+      <div id="edit-issues-buttons" v-if="selectedIssuecodes">
         <EditIssuesConfirmCancelButtons
           :confirm-ios="pencilOutline"
           :confirm-md="pencilSharp"
           :cancel-ios="closeOutline"
           :cancel-md="closeSharp"
-          @cancel="selectedIssuenumbers = null"
-          @confirm="updateNavigationToSelectedIssuenumbers"
+          @cancel="selectedIssuecodes = null"
+          @confirm="updateNavigationToSelectedIssuecodes"
         /></div
     ></template>
     <slot v-else name="default" />
     <EditIssuesButton
-      v-if="!selectedIssuenumbers && !isCameraPreviewShown"
+      v-if="!selectedIssuecodes && !isCameraPreviewShown"
       @show-camera-preview="isCameraPreviewShown = true"
     />
 
@@ -102,11 +102,11 @@ defineSlots<{
 const props = defineProps<{
   items: {
     key: string;
-    keyInList?: string;
     item: Item;
     isOwned?: boolean;
     nextItemType?: 'same' | 'owned' | undefined;
   }[];
+  itemType: 'countrycode' | 'publicationcode' | 'issuecode';
   getItemTextFn: (item: Item) => string;
   issueViewModes?: { label: string; icon: { ios: string; md: string } }[];
   filter?: { label: string; icon: { ios: string; md: string } }[];
@@ -123,8 +123,7 @@ const {
 
 const cameraPreviewElementId = 'camera-preview';
 const { takePhoto } = useCoverSearch(useRouter(), coverIdServices);
-const { isCameraPreviewShown, filterText, selectedIssuenumbers, currentNavigationItem, publicationcode } =
-  storeToRefs(app());
+const { isCameraPreviewShown, filterText, selectedIssuecodes, currentNavigationItem } = storeToRefs(app());
 
 watch(isCameraPreviewShown, async () => {
   if (isCameraPreviewShown.value) {
@@ -179,9 +178,9 @@ const onScroll = (e: CustomEvent<ScrollDetail>) => {
 
 const { t } = useI18n();
 
-const updateNavigationToSelectedIssuenumbers = () => {
-  if (selectedIssuenumbers.value!.length) {
-    currentNavigationItem.value = `${publicationcode.value} ${selectedIssuenumbers.value!.join(',')}`;
+const updateNavigationToSelectedIssuecodes = () => {
+  if (selectedIssuecodes.value!.length) {
+    currentNavigationItem.value = { type: 'issuecodes', value: selectedIssuecodes.value! };
   }
 };
 

@@ -1,12 +1,10 @@
-import "~prisma-clients/extended/dm.extends"; // For Array.groupBy
-
 import crypto from "crypto";
 import jwt from "jsonwebtoken";
 import type { Socket } from "socket.io";
 
 import type { SessionUser } from "~dm-types/SessionUser";
-import { prismaDm } from "~prisma-clients";
-import type { user } from "~prisma-clients/extended/dm.extends";
+import type { user } from "~prisma-schemas/schemas/dm";
+import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
 
 type SocketWithUser = Socket<
   Record<string, never>,
@@ -35,7 +33,7 @@ export const loginAs = async (user: user, hashedPassword: string) =>
           username: user.username,
         },
       })
-    ).groupBy("role", "privilege"),
+    ).groupBy("role", 'privilege'),
   });
 
 const AuthMiddleware = (

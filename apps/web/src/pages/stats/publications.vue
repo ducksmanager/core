@@ -6,12 +6,10 @@
 </template>
 
 <script setup lang="ts">
+import type { ChartData, ChartOptions, DefaultDataPoint } from "chart.js";
 import {
   ArcElement,
   Chart,
-  ChartData,
-  ChartOptions,
-  DefaultDataPoint,
   Legend,
   PieController,
   Title,
@@ -73,7 +71,7 @@ const labels = $computed(
     hasPublicationNames &&
     Object.entries(totalPerPublicationGroupSmallCounts)
       .sort(sortByCount)
-      .reduce(
+      .reduce<string[]>(
         (acc, [publicationcode]) => [
           ...acc,
           publicationNames.value[publicationcode] ||
@@ -81,7 +79,7 @@ const labels = $computed(
               "Publications",
             ).toLowerCase()})`,
         ],
-        [] as string[],
+        [],
       ),
 );
 const values = $computed(() =>

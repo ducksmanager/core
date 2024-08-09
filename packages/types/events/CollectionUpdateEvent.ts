@@ -10,6 +10,5 @@ export class CollectionUpdateEventRaw {
 export class CollectionUpdateEvent extends AbstractEvent {
   type = "collection_update";
   numberOfIssues!: number;
-  publicationcode!: string;
-  issuenumber!: string;
+  issuecode!: string;
 }

@@ -2,20 +2,20 @@ import dayjs from "dayjs";
 import type { Socket } from "socket.io";
 
 import EdgePhotoSent from "~/emails/edge-photo-sent";
-import { prismaDm, prismaEdgeCreator } from "~prisma-clients";
+import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
+import { prismaClient as prismaEdgeCreator } from "~prisma-schemas/schemas/edgecreator/client";
 
 import type Events from "../types";
 export default (socket: Socket<Events>) => {
   socket.on(
     "sendNewEdgePhotoEmail",
-    async (publicationcode, issuenumber, callback) => {
+    async (issuecode, callback) => {
       const user = await prismaDm.user.findUniqueOrThrow({
         where: { id: socket.data.user!.id },
       });
       const email = new EdgePhotoSent({
         user,
-        publicationcode,
-        issuenumber,
+        issuecode,
       });
       const edgeUrl = email.data.ecLink;
       await email.send();

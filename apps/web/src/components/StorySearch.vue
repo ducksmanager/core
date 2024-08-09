@@ -45,7 +45,7 @@
       </div>
     </div>
     <b-list-group
-      v-if="searchResults.results && !isSearching && showSearchResults"
+      v-if="searchResults?.results && !isSearching && showSearchResults"
       class="position-absolute"
       :class="{ 'issues-list': isSearchByCode, 'story-list': !isSearchByCode }"
     >
@@ -53,31 +53,31 @@
         {{ $t("Aucun résultat.") }}
       </b-list-group-item>
       <b-list-group-item
-        v-for="searchResult in searchResults.results as typeof issueResults.results"
-        :key="searchResult!.storycode"
+        v-for="searchResult in searchResults.results"
+        :key="JSON.stringify(searchResult)"
         class="d-flex align-items-center"
-        @click="selectSearchResult(searchResult!)"
+        @click="selectSearchResult(searchResult)"
       >
         <template v-if="!isSearchByCode">
           <div class="me-1 d-flex">
             <Condition
-              v-if="searchResult!.collectionIssue"
+              v-if="(searchResult as SimpleStoryWithOptionalCollectionIssue).collectionIssue"
               :value="
                 conditions.find(
                   ({ dbValue }) =>
-                    dbValue === searchResult!.collectionIssue.condition
+                    dbValue === (searchResult as SimpleStoryWithOptionalCollectionIssue).collectionIssue!.condition
                 )?.dbValue || undefined
               "
             />
           </div>
-          <div>{{ searchResult!.title }}</div>
+          <div>
+            {{ (searchResult as SimpleStoryWithOptionalCollectionIssue).title }}
+          </div>
         </template>
         <Issue
-          v-else-if="publicationNames[searchResult.publicationcode]"
-          :publicationcode="searchResult.publicationcode"
-          :publicationname="publicationNames[searchResult.publicationcode]!"
+          v-else
           :is-public="isPublic"
-          :issuenumber="searchResult.issuenumber"
+          :issuecode="(searchResult as IssueWithIssuecodeOnly).issuecode"
           clickable
         />
       </b-list-group-item>
@@ -86,9 +86,9 @@
 </template>
 
 <script setup lang="ts">
-import { SimpleIssue } from "~dm-types/SimpleIssue";
-import { SimpleStory } from "~dm-types/SimpleStory";
-import { issue } from "~prisma-clients/extended/dm.extends";
+import type { IssueWithIssuecodeOnly } from "~dm-types/SimpleIssue";
+import type { SimpleStory } from "~dm-types/SimpleStory";
+import type { issue } from "~prisma-schemas/schemas/dm";
 
 import { dmSocketInjectionKey } from "../composables/useDmSocket";
 
@@ -97,7 +97,7 @@ const { withTitle = true, isPublic = false } = defineProps<{
   isPublic?: boolean;
 }>();
 const emit = defineEmits<{
-  (e: "issue-selected", story: SimpleIssue): void;
+  (e: "issue-selected", story: IssueWithIssuecodeOnly): void;
 }>();
 const { conditions } = useCondition();
 
@@ -107,8 +107,9 @@ const {
 
 const { findInCollection } = isPublic ? publicCollection() : collection();
 const { issues } = storeToRefs(collection());
-const { fetchPublicationNames, fetchCountryNames } = coa();
-const { publicationNames } = storeToRefs(coa());
+const { fetchPublicationNames, fetchIssuecodeDetails, fetchCountryNames } =
+  coa();
+const { issuecodeDetails } = storeToRefs(coa());
 
 const nav = shallowRef<HTMLElement | null>(null);
 
@@ -116,30 +117,30 @@ onClickOutside(nav, () => {
   showSearchResults = false;
 });
 
+type SimpleStoryWithOptionalCollectionIssue = SimpleStory & {
+  collectionIssue: issue | null;
+};
+
 let isSearching = $ref(false);
 let pendingSearch = $ref<string | null>(null);
 let search = $ref("");
-let storyResults = $ref(
-  {} as {
-    results: (SimpleStory & {
-      collectionIssue: issue | null;
-    })[];
-    hasMore: boolean;
-  },
-);
-
-let issueResults = $ref({} as { results: SimpleIssue[] });
-let searchContext = $ref<"story" | "storycode">("story");
-let showSearchResults = $ref(true);
+let storyResults = $ref<{
+  results: SimpleStoryWithOptionalCollectionIssue[];
+  hasMore: boolean;
+} | null>(null);
 
 const { t: $t } = useI18n();
-const isInCollection = ({ publicationcode, issuenumber }: SimpleIssue) =>
-  findInCollection(publicationcode, issuenumber) !== undefined;
-
 const searchContexts = {
   story: $t("titre d'histoire"),
   storycode: $t("code histoire"),
-} as { story: string; storycode: string };
+} as const;
+
+let issueResults = $ref<{ results: IssueWithIssuecodeOnly[] }>();
+let searchContext = $ref<keyof typeof searchContexts>("story");
+let showSearchResults = $ref(true);
+
+const isInCollection = ({ issuecode }: IssueWithIssuecodeOnly) =>
+  findInCollection(issuecode) !== undefined;
 const searchContextsWithoutCurrent = $computed(
   (): { [searchContext: string]: { [key: string]: string } } =>
     Object.keys(searchContexts)
@@ -157,9 +158,11 @@ const isSearchByCode = $computed(() => searchContext === "storycode");
 const searchResults = $computed(() =>
   isSearchByCode ? issueResults : storyResults,
 );
-const selectSearchResult = (searchResult: SimpleStory | SimpleIssue) => {
+const selectSearchResult = (
+  searchResult: SimpleStory | IssueWithIssuecodeOnly,
+) => {
   if (isSearchByCode) {
-    emit("issue-selected", searchResult as SimpleIssue);
+    emit("issue-selected", searchResult as IssueWithIssuecodeOnly);
     showSearchResults = false;
   } else {
     searchContext = "storycode";
@@ -180,29 +183,28 @@ const runSearch = async (value: string) => {
           ),
         ),
       };
+      await fetchIssuecodeDetails(
+        issueResults.results.map(({ issuecode }) => issuecode),
+      );
       await fetchPublicationNames(
-        issueResults.results.map(({ publicationcode }) => publicationcode),
+        issueResults.results.map(
+          ({ issuecode }) => issuecodeDetails.value[issuecode].publicationcode,
+        ),
       );
     } else {
       const data = await coaServices.searchStory(value.split(","), true);
-      storyResults.results = data.results.map((story) => ({
-        ...story,
-        collectionIssue:
-          issues.value!.find(
-            ({
-              publicationcode: collectionPublicationCode,
-              issuenumber: collectionIssueNumber,
-            }) =>
+      storyResults = {
+        hasMore: data.hasMore,
+        results: data.results.map((story) => ({
+          ...story,
+          collectionIssue:
+            issues.value!.find(({ issuecode: collectionIssuecode }) =>
               story.issues
-                .map(
-                  ({ publicationcode, issuenumber }) =>
-                    `${publicationcode}-${issuenumber}`,
-                )
-                .includes(
-                  `${collectionPublicationCode}-${collectionIssueNumber}`,
-                ),
-          ) || null,
-      }));
+                .map(({ issuecode }) => issuecode)
+                .includes(collectionIssuecode),
+            ) || null,
+        })),
+      };
     }
   } finally {
     isSearching = false;

@@ -7,7 +7,7 @@
 </template>
 
 <script lang="ts" setup>
-import { MedalEvent } from "~dm-types/events/MedalEvent";
+import type { MedalEvent } from "~dm-types/events/MedalEvent";
 
 const medalEvent: MedalEvent = {
   type: "medal",

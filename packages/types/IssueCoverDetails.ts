@@ -1,7 +1,5 @@
 export interface IssueCoverDetails {
-  publicationcode: string;
-  issuenumber: string;
-  shortIssuecode: string;
+  issuecode: string;
   title: string;
-  fullUrl: string;
+  fullUrl: string | null;
 }

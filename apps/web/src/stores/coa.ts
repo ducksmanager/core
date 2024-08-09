@@ -1,9 +1,8 @@
 import { getCurrentLocaleShortKey } from "~/composables/useLocales";
 import type CoaServices from "~dm-services/coa/types";
-import { InducksIssueDetails } from "~dm-types/InducksIssueDetails";
-import { InducksIssueQuotationSimple } from "~dm-types/InducksIssueQuotationSimple";
-import type { inducks_issue } from "~prisma-clients/client_coa";
-import { EventReturnType } from "~socket.io-services/types";
+import type { InducksIssueDetails } from "~dm-types/InducksIssueDetails";
+import type { InducksIssueQuotationSimple } from "~dm-types/InducksIssueQuotationSimple";
+import type { EventReturnType } from "~socket.io-services/types";
 
 import { dmSocketInjectionKey } from "../composables/useDmSocket";
 
@@ -53,16 +52,18 @@ export const coa = defineStore("coa", () => {
     personNames = shallowRef<EventReturnType<
       CoaServices["getAuthorList"]
     > | null>(null),
-    issueNumbers = ref<{ [publicationcode: string]: string[] }>({}),
-    shortIssuecodes = ref<{ [publicationcode: string]: string[] }>({}),
+    issuecodes = ref<string[]>([]),
     issuesWithTitles = ref<EventReturnType<CoaServices["getIssuesWithTitles"]>>(
       {},
     ),
-    issueDetails = ref<{ [shortIssuecode: string]: InducksIssueDetails }>({}),
+    issueDetails = ref<{ [issuecode: string]: InducksIssueDetails }>({}),
     isLoadingCountryNames = ref(false),
-    issueCodeDetails = ref<{ [shortIssuecode: string]: inducks_issue }>({}),
+    issuecodeDetails = ref<EventReturnType<CoaServices["getIssues"]>>({}),
+    issuecodesByPublicationcode = ref<{
+      [publicationcode: string]: string[];
+    }>({}),
     issueQuotations = ref<{
-      [shortIssuecode: string]: InducksIssueQuotationSimple;
+      [issuecode: string]: InducksIssueQuotationSimple;
     }>({}),
     addPublicationNames = (
       newPublicationNames: typeof publicationNames.value,
@@ -81,23 +82,8 @@ export const coa = defineStore("coa", () => {
         personNames.value,
       );
     },
-    setCoverUrl = (issuenumber: string, url: string) => {
-      coverUrls.value[issuenumber] = url;
-    },
-    addIssueNumbers = (newIssuenumbers: {
-      [publicationcode: string]: string[];
-    }) => {
-      Object.assign(issueNumbers.value, newIssuenumbers);
-    },
-    addShortIssuecodes = (newIssuecodes: {
-      [publicationcode: string]: string[];
-    }) => {
-      Object.assign(shortIssuecodes.value, newIssuecodes);
-    },
-    addIssueCodeDetails = (newIssueCodeDetails: {
-      [shortIssuecode: string]: inducks_issue;
-    }) => {
-      Object.assign(issueCodeDetails.value, newIssueCodeDetails);
+    setCoverUrl = (issuecode: string, url: string) => {
+      coverUrls.value[issuecode] = url;
     },
     addIssueQuotations = (newIssueQuotations: {
       [publicationcode: string]: InducksIssueQuotationSimple;
@@ -174,101 +160,74 @@ export const coa = defineStore("coa", () => {
             !Object.keys(issuesWithTitles.value).includes(publicationcode),
         ),
       );
-      debugger;
       Object.assign(issuesWithTitles.value, results);
     },
-    fetchIssueNumbers = async function (publicationCodes: string[]) {
-      const newPublicationCodes = [
-        ...new Set(
-          publicationCodes.filter(
-            (publicationcode) =>
-              !Object.keys(issueNumbers.value || {}).includes(publicationcode),
-          ),
-        ),
-      ];
-      if (newPublicationCodes.length) {
-        const data =
-          await coaServices.getIssuesByPublicationCodes(newPublicationCodes);
-        if (data.error) {
-          console.error(data);
-        } else {
-          addIssueNumbers(
-            data.issues.reduce<typeof issueNumbers.value>(
-              (acc, issue) => ({
-                ...acc,
-                [issue.publicationcode]: [
-                  ...(acc[issue.publicationcode] || []),
-                  issue.issuenumber,
-                ],
-              }),
-              {},
-            ),
-          );
-
-          addShortIssuecodes(
-            data.issues.reduce<typeof shortIssuecodes.value>(
-              (acc, { publicationcode, shortIssuecode }) => ({
-                ...acc,
-                [publicationcode]: [
-                  ...(acc[publicationcode] || []),
-                  shortIssuecode,
-                ],
-              }),
-              {},
-            ),
-          );
-        }
+    fetchIssuecodeDetails = async (issuecodes: string[]) => {
+      const existingIssuecodes = new Set(
+        Object.keys(issuecodeDetails.value || {}),
+      );
+      const newIssuecodes = issuecodes.filter(
+        (issuecode) => !existingIssuecodes.has(issuecode),
+      );
+      if (newIssuecodes.length) {
+        Object.assign(
+          issuecodeDetails.value,
+          await coaServices.getIssues(newIssuecodes),
+        );
       }
     },
-    fetchIssueCodesDetails = async (issueCodes: string[]) => {
-      const newIssueCodes = [
-        ...new Set(
-          issueCodes.filter(
-            (issueCode) =>
-              !Object.keys(issueCodeDetails.value || {}).includes(issueCode),
+    fetchIssuecodesByPublicationcode = async (publicationcodes: string[]) => {
+      const existingPublicationcodes = new Set(
+        Object.keys(issuecodesByPublicationcode.value || {}),
+      );
+      const newPublicationcodes = publicationcodes.filter(
+        (publicationcode) => !existingPublicationcodes.has(publicationcode),
+      );
+
+      if (newPublicationcodes.length) {
+        const issuesByPublicationcode =
+          await coaServices.getIssuesByPublicationcodes(newPublicationcodes);
+
+        Object.assign(
+          issuecodeDetails.value,
+          Object.values(issuesByPublicationcode).flat().groupBy("issuecode"),
+        );
+        Object.assign(
+          issuecodesByPublicationcode.value,
+          Object.entries(issuesByPublicationcode).reduce(
+            (acc, [publicationcode, issues]) => ({
+              ...acc,
+              [publicationcode]: issues.map(({ issuecode }) => issuecode),
+            }),
+            {},
           ),
-        ),
-      ];
-      if (newIssueCodes.length) {
-        addIssueCodeDetails(await coaServices.decompose(newIssueCodes));
+        );
       }
     },
     fetchRecentIssues = () => coaServices.getRecentIssues(),
     fetchCoverUrls = (publicationcode: string) =>
       coaServices.getIssueCoverDetailsByPublicationcode(publicationcode),
-    fetchCoverUrlsByShortIssuecodes = (issuecodes: string[]) =>
+    fetchCoverUrlsByIssuecodes = (issuecodes: string[]) =>
       coaServices.getIssueCoverDetails(issuecodes),
-    fetchIssueUrls = async ({
-      publicationcode,
-      issuenumber,
-    }: {
-      publicationcode: string;
-      issuenumber: string;
-    }) => {
-      const shortIssuecode = `${publicationcode} ${issuenumber}`;
-      if (!issueDetails.value[shortIssuecode]) {
-        const newIssueDetails = await coaServices.getIssueDetails(
-          publicationcode,
-          issuenumber,
-        );
+    fetchIssueUrls = async ({ issuecode }: { issuecode: string }) => {
+      if (!issueDetails.value[issuecode]) {
+        const newIssueDetails = await coaServices.getIssueDetails(issuecode);
 
         Object.assign(issueDetails.value, {
-          [shortIssuecode]: addPartInfo(newIssueDetails),
+          [issuecode]: addPartInfo(newIssueDetails),
         });
       }
     };
   return {
-    addIssueCodeDetails,
-    addIssueNumbers,
     addIssueQuotations,
     addPublicationNames,
     countryNames,
     coverUrls,
     fetchCountryNames,
     fetchCoverUrls,
-    fetchCoverUrlsByShortIssuecodes,
-    fetchIssueCodesDetails,
-    fetchIssueNumbers,
+    fetchCoverUrlsByIssuecodes,
+    fetchIssuecodeDetails,
+    fetchIssuecodesByPublicationcode,
     fetchIssueNumbersWithTitles,
     fetchIssueUrls,
     fetchPersonNames,
@@ -276,10 +235,10 @@ export const coa = defineStore("coa", () => {
     fetchPublicationNamesFromCountry,
     fetchRecentIssues,
     isLoadingCountryNames,
-    issueCodeDetails,
+    issuecodeDetails,
+    issuecodesByPublicationcode,
     issueDetails,
-    issueNumbers,
-    issuecodes: shortIssuecodes,
+    issuecodes,
     issueQuotations,
     issuesWithTitles,
     personNames,

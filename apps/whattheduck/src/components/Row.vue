@@ -19,8 +19,8 @@ import { app } from '~/stores/app';
 
 const props = defineProps<{
   id: string;
-  class: Record<string, boolean>;
-  keyInList?: string;
+  type: 'countrycode' | 'publicationcode' | 'issuecode';
+  class: Record<string, boolean> | '';
 }>();
 
 defineSlots<{
@@ -31,14 +31,16 @@ defineSlots<{
   'suffix'(): any;
 }>();
 
-const { isOfflineMode, selectedIssuenumbers, allowMultipleSelection, currentNavigationItem } = storeToRefs(app());
+const { isOfflineMode, selectedIssuecodes, currentNavigationItem } = storeToRefs(app());
+
+const allowMultipleSelection = computed(() => props.type === 'issuecode');
 
 const onLongPress = () => {
   if (allowMultipleSelection.value) {
-    selectedIssuenumbers.value = [];
-    toggleCheckedIssuenumber(props.keyInList!);
+    selectedIssuecodes.value = [];
+    toggleCheckedIssuecode(props.id!);
   } else {
-    currentNavigationItem.value = props.id;
+    goToItem();
   }
 };
 
@@ -46,20 +48,32 @@ const onLongPressOptions = {
   delay: 500,
   onMouseUp: (_: number, __: number, isLongPress: boolean) => {
     if (!isLongPress) {
-      if (allowMultipleSelection.value && selectedIssuenumbers.value !== null) {
-        toggleCheckedIssuenumber(props.keyInList!);
+      if (allowMultipleSelection.value && selectedIssuecodes.value !== null) {
+        toggleCheckedIssuecode(props.id!);
       } else {
-        currentNavigationItem.value = props.id;
+        goToItem();
       }
     }
   },
 };
 
+const goToItem = () => {
+  switch (props.type) {
+    case 'countrycode':
+    case 'publicationcode':
+      currentNavigationItem.value = { type: props.type, value: props.id };
+      break;
+    case 'issuecode':
+      currentNavigationItem.value = { type: 'issuecodes', value: [props.id] };
+      break;
+  }
+};
+
 const toggleElement = <T,>(arr: T[], element: T): T[] =>
   arr.includes(element) ? arr.filter((el) => el !== element) : [...arr, element];
 
-const toggleCheckedIssuenumber = (issuenumber: string) => {
-  selectedIssuenumbers.value = toggleElement(selectedIssuenumbers.value!, issuenumber);
+const toggleCheckedIssuecode = (issuenumber: string) => {
+  selectedIssuecodes.value = toggleElement(selectedIssuecodes.value!, issuenumber);
 };
 </script>
 

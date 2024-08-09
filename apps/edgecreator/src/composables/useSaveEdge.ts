@@ -23,14 +23,12 @@ export default () => {
     return element;
   };
   const saveEdgeSvg = async (
-    country: string,
-    magazine: string,
-    issuenumber: string,
+    issuecode: string,
     contributors: ModelContributor[],
     withExport = false,
     withSubmit = false,
   ) => {
-    const svgElementId = `edge-canvas-${issuenumber}`;
+    const svgElementId = `edge-canvas-${issuecode}`;
     const cleanSvg = removeVueMarkup(
       document.getElementById(svgElementId)!.cloneNode(true) as HTMLElement,
     );
@@ -38,9 +36,7 @@ export default () => {
       .saveEdge({
         runExport: withExport,
         runSubmit: withSubmit,
-        country,
-        magazine,
-        issuenumber,
+        issuecode,
         contributors,
         content: cleanSvg.outerHTML,
       })

@@ -9,5 +9,5 @@ export interface EdgeCreationEventRaw {
 
 export class EdgeCreationEvent extends AbstractEvent {
   type = "edge";
-  edges: { publicationcode: string; issuenumber: string }[] = [];
+  edges: { issuecode: string }[] = [];
 }

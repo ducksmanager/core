@@ -1,6 +1,7 @@
 import type { Socket } from "socket.io";
 
-import { prismaCoa,prismaDm } from "~prisma-clients";
+import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa/client";
+import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
 
 import type Events from "../types";
 const maxWatchedAuthors = 5;
@@ -10,17 +11,17 @@ export default (socket: Socket<Events>) => {
     const authorsUsers = await prismaDm.authorUser.findMany({
       where: { userId: socket.data.user!.id },
     });
-    const authorNames = await prismaCoa.inducks_person.findMany({
+    const authorNames = (await prismaCoa.inducks_person.findMany({
       where: {
         personcode: {
           in: authorsUsers.map((au) => au.personcode),
         }
       }
-    })
+    })).groupBy('personcode')
 
     callback(authorsUsers.map((au) => ({
       ...au,
-      fullname: authorNames.find((an) => an.personcode === au.personcode)!.fullname,
+      fullname: authorNames[au.personcode]!.fullname,
     })))
   });
 

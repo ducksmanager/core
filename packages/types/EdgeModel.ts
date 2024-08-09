@@ -1,8 +1,8 @@
-import {
+import type {
   edgeContributor,
   edgePhoto,
   elementImage,
-} from "~prisma-clients/client_edgecreator";
+} from "~prisma-schemas/schemas/edgecreator";
 
 export type EdgeModel = {
   id: number;

@@ -1,3 +1,4 @@
+import { CapacitorUpdater } from '@capgo/capacitor-updater';
 import { defineCustomElements } from '@ionic/pwa-elements/loader';
 import { Drivers, Storage } from '@ionic/storage';
 import { IonicVue } from '@ionic/vue';
@@ -5,6 +6,7 @@ import CordovaSQLiteDriver from 'localforage-cordovasqlitedriver';
 import { createPinia } from 'pinia';
 import VueVirtualScroller from 'vue-virtual-scroller';
 import { i18n } from '~web';
+import '../../../packages/prisma-schemas/util/groupBy';
 
 import App from './App.vue';
 import router from './router';
@@ -33,6 +35,8 @@ import './theme/variables.scss';
 import './theme/global.scss';
 
 import 'vue-virtual-scroller/dist/vue-virtual-scroller.css';
+
+CapacitorUpdater.notifyAppReady();
 
 const store = createPinia();
 

@@ -2,14 +2,18 @@
   <ion-content class="no-padding">
     <ion-row v-if="!isOfflineMode">
       <ion-col size="12" style="height: 100%"
-        ><img v-if="fullUrl" :src="coverUrl" />
-        <ion-chip v-if="extraIssuenumbers.length">+&nbsp;{{ extraIssuenumbers.length }}</ion-chip></ion-col
+        ><img v-if="fullUrl" :src="coverUrl" /><ion-text v-else>{{ $t('pas de couverture') }}</ion-text>
+        <ion-chip v-if="issuecodes.length > 1">+&nbsp;{{ issuecodes.length - 1 }}</ion-chip></ion-col
       >
     </ion-row>
     <ion-row
       ><ion-col size="12">
-        <ion-segment v-if="!extraIssuenumbers.length" v-model="currentCopyIndex">
-          <ion-segment-button v-for="(_, idx) in 3" :id="idx" :value="idx" v-show="copies[idx]">
+        <ion-segment
+          v-if="issuecodes.length === 1"
+          v-model="currentCopyIndex"
+          :style="copies.length ? undefined : { display: 'initial' }"
+        >
+          <ion-segment-button v-for="(_, idx) in 3" :id="`copy-${idx}`" :value="idx" v-show="copies[idx]">
             <template v-if="copies[idx]">
               <ion-label
                 ><div>
@@ -35,8 +39,8 @@
           color="danger"
           size="small"
           v-if="currentCopyIndex !== undefined && !isOfflineMode"
-          ><template v-if="extraIssuenumbers.length">{{
-            t('Retirer ces {numberOfIssues} numéros de la collection', { numberOfIssues: extraIssuenumbers.length + 1 })
+          ><template v-if="issuecodes.length > 1">{{
+            t('Retirer ces {numberOfIssues} numéros de la collection', { numberOfIssues: issuecodes.length })
           }}</template>
           <template v-else>{{ t('Retirer de la collection') }}</template></ion-button
         >
@@ -48,7 +52,9 @@
       :confirm-md="checkmarkSharp"
       :cancel-ios="closeOutline"
       :cancel-md="closeSharp"
-      @cancel="currentNavigationItem = publicationcode!"
+      @cancel="
+        currentNavigationItem = { type: 'publicationcode', value: issuecodeDetails?.[issuecodes[0]].publicationcode }
+      "
       confirm-color="success"
       @confirm="submitIssueCopies"
     />
@@ -66,20 +72,22 @@ import { app } from '~/stores/app';
 import { wtdcollection } from '~/stores/wtdcollection';
 
 const { updateCollectionSingleIssue, updateCollectionMultipleIssues } = wtdcollection();
-const { issuesByShortIssuecode } = storeToRefs(wtdcollection());
-const { fetchCoverUrlsByShortIssuecodes } = coa();
-const { isOfflineMode, currentNavigationItem, isCoaView, publicationcode, issuenumber, extraIssuenumbers } =
-  storeToRefs(app());
+const { issuesByIssuecode } = storeToRefs(wtdcollection());
+const { fetchCoverUrlsByIssuecodes } = coa();
+const { issuecodeDetails } = storeToRefs(coa());
+const { isOfflineMode, isCoaView, currentNavigationItem } = storeToRefs(app());
 
-const fullUrl = ref<string>();
+const fullUrl = ref<string | null>();
 
-const shortIssuecode = computed(() => `${publicationcode.value} ${issuenumber.value}`);
+const issuecodes = computed(() => app().issuecodes!);
 
 watch(
-  issuenumber,
-  async () => {
-    const covers = await fetchCoverUrlsByShortIssuecodes([shortIssuecode.value]);
-    fullUrl.value = covers.covers![issuenumber.value!]?.fullUrl;
+  issuecodes,
+  async (newValue) => {
+    if (newValue) {
+      const covers = await fetchCoverUrlsByIssuecodes(newValue);
+      fullUrl.value = covers.covers![newValue[0]]?.fullUrl;
+    }
   },
   { immediate: true },
 );
@@ -90,51 +98,47 @@ const coverUrl = computed(() => `${import.meta.env.VITE_CLOUDINARY_BASE_URL}${fu
 
 const copies = ref<SingleCopyState[]>([]);
 
-watch(
-  issuesByShortIssuecode,
-  () => {
-    copies.value = issuesByShortIssuecode.value?.[shortIssuecode.value!] || [];
-  },
-  { immediate: true },
-);
-
 const currentCopyIndex = ref<number | undefined>(undefined);
 watch(
-  copies,
+  issuesByIssuecode,
   () => {
-    currentCopyIndex.value = copies.value.length ? 0 : undefined;
+    copies.value = issuesByIssuecode.value?.[issuecodes.value![0]] || [];
+    if (copies.value.length) {
+      currentCopyIndex.value = 0;
+    }
   },
   { immediate: true },
 );
 
 const addCopy = () => {
-  copies.value.push({
-    id: null,
-    condition: 'indefini',
-    purchaseId: null,
-    isToRead: false,
-    isOnSale: false,
-  });
-  nextTick().then(() => {
-    currentCopyIndex.value = copies.value.length - 1;
-  });
+  copies.value = [
+    ...copies.value,
+    {
+      id: null,
+      condition: 'indefini',
+      purchaseId: null,
+      isToRead: false,
+      isOnSale: false,
+    },
+  ];
 };
 
 const submitIssueCopies = async () => {
-  if (extraIssuenumbers.value.length) {
+  if (issuecodes.value.length > 1) {
     await updateCollectionMultipleIssues({
-      publicationcode: publicationcode.value!,
-      issuenumbers: [issuenumber.value!, ...extraIssuenumbers.value],
+      issuecodes: issuecodes.value,
       ...copies.value[0],
     });
   } else {
     await updateCollectionSingleIssue({
-      publicationcode: publicationcode.value!,
-      issuenumber: issuenumber.value!,
+      issuecode: issuecodes.value[0],
       copies: copies.value,
     });
   }
-  currentNavigationItem.value = publicationcode.value!;
+  currentNavigationItem.value = {
+    type: 'publicationcode',
+    value: issuecodeDetails.value[issuecodes.value[0]].publicationcode,
+  };
   isCoaView.value = false;
 };
 </script>

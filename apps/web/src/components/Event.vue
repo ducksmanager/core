@@ -48,12 +48,7 @@
     </template>
     <template v-else-if="collectionUpdateEvent"
       >&nbsp;{{ $t("a ajouté") }}&nbsp;<Issue
-        v-if="publicationNames[collectionUpdateEvent.publicationcode]"
-        :publicationname="
-          publicationNames[collectionUpdateEvent.publicationcode]!
-        "
-        :publicationcode="collectionUpdateEvent.publicationcode"
-        :issuenumber="collectionUpdateEvent.issuenumber"
+        :issuecode="collectionUpdateEvent.issuecode"
         hide-condition
         :flex="false"
       />
@@ -71,12 +66,7 @@
       >
         <span class="fw-bold" style="cursor: help">
           <Issue
-            v-if="publicationNames[edgeEvent.edges[0].publicationcode]"
-            :publicationname="
-              publicationNames[edgeEvent.edges[0].publicationcode]!
-            "
-            :publicationcode="edgeEvent.edges[0].publicationcode"
-            :issuenumber="edgeEvent.edges[0].issuenumber"
+            :issuecode="edgeEvent.edges[0].issuecode"
             hide-condition
             :flex="false"
           />&nbsp;<OtherIssues
@@ -92,14 +82,7 @@
       <template v-if="event.users.length > 1"> {{ $t("ont reçu") }} </template>
       <template v-else> {{ $t("a reçu") }} </template>
       <Issue
-        v-if="
-          publicationNames[collectionSubscriptionAdditionEvent.publicationcode]
-        "
-        :publicationname="
-          publicationNames[collectionSubscriptionAdditionEvent.publicationcode]!
-        "
-        :publicationcode="collectionSubscriptionAdditionEvent.publicationcode"
-        :issuenumber="collectionSubscriptionAdditionEvent.issuenumber"
+        :issuecode="collectionSubscriptionAdditionEvent.issuecode"
         hide-condition
         :flex="false"
       />
@@ -115,14 +98,13 @@
 </template>
 
 <script setup lang="ts">
-import { BookstoreCommentEvent } from "~dm-types/events/BookstoreCommentEvent";
-import { CollectionSubscriptionAdditionEvent } from "~dm-types/events/CollectionSubscriptionAdditionEvent";
-import { CollectionUpdateEvent } from "~dm-types/events/CollectionUpdateEvent";
-import { EdgeCreationEvent } from "~dm-types/events/EdgeCreationEvent";
-import { MedalEvent } from "~dm-types/events/MedalEvent";
-import { SignupEvent } from "~dm-types/events/SignupEvent";
+import type { BookstoreCommentEvent } from "~dm-types/events/BookstoreCommentEvent";
+import type { CollectionSubscriptionAdditionEvent } from "~dm-types/events/CollectionSubscriptionAdditionEvent";
+import type { CollectionUpdateEvent } from "~dm-types/events/CollectionUpdateEvent";
+import type { EdgeCreationEvent } from "~dm-types/events/EdgeCreationEvent";
+import type { MedalEvent } from "~dm-types/events/MedalEvent";
+import type { SignupEvent } from "~dm-types/events/SignupEvent";
 
-const { publicationNames } = storeToRefs(coa());
 const { stats, points } = storeToRefs(users());
 
 const { event } = defineProps<{

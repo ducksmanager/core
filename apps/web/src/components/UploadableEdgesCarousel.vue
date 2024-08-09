@@ -9,11 +9,7 @@
           :active="currentSlide === index"
         >
           <Issue
-            :publicationcode="popularIssueWithoutEdge.publicationcode"
-            :publicationname="
-              publicationNames[popularIssueWithoutEdge.publicationcode]
-            "
-            :issuenumber="popularIssueWithoutEdge.issuenumber"
+            :issuecode="popularIssueWithoutEdge.issuecode"
             hide-condition
           />
           <MedalProgress
@@ -29,7 +25,7 @@
 </template>
 
 <script setup lang="ts">
-import { BookcaseEdgeWithPopularity } from "~/stores/bookcase";
+import type { BookcaseEdgeWithPopularity } from "~/stores/bookcase";
 
 defineProps<{
   issues: BookcaseEdgeWithPopularity[];

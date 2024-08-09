@@ -10,9 +10,7 @@ export default abstract class {
     parameters: {
       runExport: boolean;
       runSubmit: boolean;
-      country: string;
-      magazine: string;
-      issuenumber: string;
+      issuecode: string;
       contributors: ModelContributor[];
       content: string;
     },

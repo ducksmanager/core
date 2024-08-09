@@ -16,7 +16,7 @@
           )
         }}
       </div>
-      <template v-if="suggestions">
+      <template v-if="formattedSuggestions">
         <ion-row class="toggle ion-margin-top ion-align-items-center ion-justify-content-center">
           <ion-col> {{ t('Trier par date de publication') }}</ion-col
           ><ion-col><ion-toggle size="small" color="light" v-model="sortByScore" /></ion-col
@@ -25,7 +25,11 @@
 
         <template v-for="issue of formattedSuggestions" style="margin-top: 1rem">
           <ion-row class="suggestion">
-            <FullIssue :issue="issue" :classes="['issue-title', 'ion-no-padding']" />
+            <FullIssue
+              :issuecode="issue.issuecode"
+              :show-issue-conditions="false"
+              :classes="['issue-title', 'ion-no-padding']"
+            />
             <ion-col
               class="ion-no-padding"
               size="3"
@@ -54,19 +58,26 @@
 <script setup lang="ts">
 import { toastController } from '@ionic/vue';
 import { calendarOutline, calendarSharp, flameOutline, flameSharp } from 'ionicons/icons';
+import { stores as webStores, components as webComponents } from '~web';
 
 import { wtdcollection } from '~/stores/wtdcollection';
+
+const { InducksStory } = webComponents;
 
 const { t } = useI18n();
 const sortByScore = ref(false);
 
 const { suggestions } = storeToRefs(wtdcollection());
+const { fetchIssuecodeDetails, fetchPublicationNames } = webStores.coa();
+const { issuecodeDetails, publicationNames } = storeToRefs(webStores.coa());
 
 interface FormattedSuggestion {
   storycode: string;
   authors: string[];
   title: string;
 }
+
+const hasIssuecodeDetails = ref(false);
 
 const sortedSuggestions = computed(() => suggestions.value?.[sortByScore.value ? 'score' : 'oldestdate']);
 
@@ -83,14 +94,20 @@ const showAuthorToast = async (personcode: string) => {
 
 const formattedSuggestions = computed(
   () =>
+    hasIssuecodeDetails.value &&
     sortedSuggestions.value &&
-    Object.values(sortedSuggestions.value!.issues).map(
-      ({ stories, publicationcode, oldestdate, score, issuenumber }) => ({
-        countrycode: publicationcode.split('/')[0],
-        publicationName: sortedSuggestions.value!.publicationTitles[publicationcode]!,
+    Object.values(sortedSuggestions.value!.issues)
+      .map(({ issuecode, ...rest }) => ({ ...rest, issuecode, issue: issuecodeDetails.value[issuecode]! }))
+      .filter(({ issue }) => issue)
+      .map(({ stories, issue, issuecode, oldestdate, score }) => ({
+        countrycode: issue.publicationcode.split('/')[0],
+        publicationName: publicationNames.value[issue.publicationcode]!,
+        issuecode,
         releaseDate: oldestdate,
         score,
-        storiesByStorycode: Object.entries(stories).reduce(
+        issuenumber: issue.issuenumber,
+        collectionIssues: [],
+        storiesByStorycode: Object.entries(stories).reduce<Record<string, FormattedSuggestion>>(
           (acc, [personcode, storiesOfAuthor]) => {
             storiesOfAuthor.forEach((storycode) => {
               acc[storycode] = {
@@ -101,12 +118,33 @@ const formattedSuggestions = computed(
             });
             return acc;
           },
-          {} as Record<string, FormattedSuggestion>,
+          {},
         ),
-        issuenumber,
-        collectionIssues: [],
-      }),
-    ),
+      })),
+);
+
+watch(
+  suggestions,
+  async () => {
+    if (suggestions.value) {
+      await fetchIssuecodeDetails(
+        Object.values(suggestions.value)
+          .map(({ issues }) => Object.keys(issues))
+          .flat(),
+      );
+
+      await fetchPublicationNames(
+        Object.values(suggestions.value)
+          .map(({ issues }) =>
+            Object.values(issues).map(({ issuecode }) => issuecodeDetails.value[issuecode]!.publicationcode),
+          )
+          .flat(),
+      );
+
+      hasIssuecodeDetails.value = true;
+    }
+  },
+  { immediate: true },
 );
 </script>
 <style lang="scss" scoped>

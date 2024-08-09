@@ -2,8 +2,8 @@ import type { Namespace, Server } from "socket.io";
 
 import type { BookcaseContributor } from "~dm-types/BookcaseContributor";
 import type { QuickStatsPerUser } from "~dm-types/QuickStatsPerUser";
-import { prismaDm } from "~prisma-clients";
-import { Prisma } from "~prisma-clients/extended/dm.extends";
+import { Prisma } from "~prisma-schemas/schemas/dm";
+import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
 
 import { getMedalPoints } from "../collection/util";
 import type Events from "./types";
@@ -67,9 +67,9 @@ export default (io: Server) => {
             SELECT ID_Utilisateur AS userId, round(sum(rarity)) AS averageRarity
             FROM numeros
             LEFT JOIN
-              (select short_issuecode, pow(${userCount} / count(*), 1.5) / 10000 as rarity
+              (select issuecode, pow(${userCount} / count(*), 1.5) / 10000 as rarity
               from numeros n1
-              group by short_issuecode) AS issues_rarity ON numeros.short_issuecode = issues_rarity.short_issuecode
+              group by issuecode) AS issues_rarity ON numeros.issuecode = issues_rarity.issuecode
             GROUP BY ID_Utilisateur
             ORDER BY averageRarity
         `;
@@ -135,23 +135,9 @@ const getUsersQuickStats = async (userIds: number[]) =>
     where issue.ID_Utilisateur IN (${Prisma.join(userIds)})
     group by issue.ID_Utilisateur`,
   ]).then(([users, counts, usersAndNumberOfCountriesAndPublications]) => {
-    const usersById = users.reduce<Record<string, (typeof users)[0]>>(
-      (acc, user) => ({ ...acc, [user.id]: user }),
-      {},
-    );
+    const usersById = users.groupBy('id')
     const numberOfCountriesAndPublicationsPerUser =
-      usersAndNumberOfCountriesAndPublications.reduce<
-        Record<
-          number,
-          { numberOfCountries: number; numberOfPublications: number }
-        >
-      >(
-        (acc, { userId, numberOfCountries, numberOfPublications }) => ({
-          ...acc,
-          [userId]: { numberOfCountries, numberOfPublications },
-        }),
-        {},
-      );
+      usersAndNumberOfCountriesAndPublications.groupBy('userId')
 
     return counts.reduce<QuickStatsPerUser>(
       (acc, { userId, _count }) => ({

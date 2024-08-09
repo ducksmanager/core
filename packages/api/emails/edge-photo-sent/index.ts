@@ -1,14 +1,13 @@
 import { Email, i18n } from "~emails/email";
-import type { user } from "~prisma-clients/extended/dm.extends";
+import type { user } from "~prisma-schemas/schemas/dm";
 
 type InputData = {
   user: user;
-  publicationcode: string;
-  issuenumber: string;
+  issuecode: string;
 };
 type Data = InputData & {
   ecLink: string;
-  shortIssuecode: string;
+  issuecode: string;
 };
 export default class extends Email {
   data: Data;
@@ -16,11 +15,9 @@ export default class extends Email {
 
   constructor(data: InputData) {
     super();
-    const shortIssuecode = `${data.publicationcode} ${data.issuenumber}`;
     this.data = {
       ...data,
-      ecLink: `${process.env.EDGECREATOR_ROOT}/edit/${shortIssuecode}`,
-      shortIssuecode,
+      ecLink: `${process.env.EDGECREATOR_ROOT}/edit/${data.issuecode}`,
     };
   }
 
@@ -29,8 +26,8 @@ export default class extends Email {
   getTo = () => process.env.SMTP_USERNAME!;
   getToName = () => process.env.SMTP_FRIENDLYNAME!;
   getSubject = () =>
-    i18n.__("User {{username}} sent a photo for edge {{shortIssuecode}}", {
+    i18n.__("User {{username}} sent a photo for edge {{issuecode}}", {
       username: this.data.user.username,
-      shortIssuecode: this.data.shortIssuecode,
+      issuecode: this.data.issuecode,
     });
 }

@@ -15,7 +15,7 @@ import PresentationTextServices from "~dm-services/presentation-text/types";
 import PublicCollectionServices from "~dm-services/public-collection/types";
 import StatsServices from "~dm-services/stats/types";
 import type { AxiosStorage } from "~socket.io-client-services";
-import { useSocket } from "~socket.io-client-services";
+import type { useSocket } from "~socket.io-client-services";
 
 const defaultExport = (
   socket: ReturnType<typeof useSocket>,

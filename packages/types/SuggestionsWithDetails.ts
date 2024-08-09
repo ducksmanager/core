@@ -1,11 +1,11 @@
-import { IssueSuggestion } from "./IssueSuggestion";
-import { SuggestionList } from "./SuggestionList";
+import type { IssueSuggestion } from "./IssueSuggestion";
+import type { SuggestionList } from "./SuggestionList";
 
 export type SuggestionsWithDetails = Omit<
   SuggestionList,
   "suggestionsPerUser"
 > & {
-  issues: { [shortIssueCode: string]: IssueSuggestion };
+  issues: { [issuesByIssuecode: string]: IssueSuggestion };
   minScore: number;
   maxScore: number;
 };

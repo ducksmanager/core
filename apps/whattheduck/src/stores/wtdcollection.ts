@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia';
-import type { PartInfo, SimpleIssue } from '~dm-types/SimpleIssue';
-import type { purchase, issue } from '~prisma-clients/extended/dm.extends';
+import type { ShallowRef } from 'vue';
+import type { IssueWithIssuecodeOnly, PartInfo } from '~dm-types/SimpleIssue';
+import type { purchase, issue } from '~prisma-schemas/schemas/dm';
 import { stores as webStores, composables as webComposables } from '~web';
 
 import usePersistedData from '~/composables/usePersistedData';
@@ -15,7 +16,7 @@ export const wtdcollection = defineStore('wtdcollection', () => {
   const { issues, purchases, user } = storeToRefs(webCollectionStore);
   const statsStore = webStores.stats();
   const usersStore = webStores.users();
-  const { quotedIssues, quotationSum } = webComposables.useCollection(issues);
+  const { quotedIssues, quotationSum } = webComposables.useCollection(issues as ShallowRef<issue[]>);
 
   const isPersistedDataLoaded = ref(false);
 
@@ -34,7 +35,9 @@ export const wtdcollection = defineStore('wtdcollection', () => {
   } = webCollectionStore;
 
   const ownedCountries = computed(() =>
-      issues.value ? [...new Set((issues.value || []).map(({ country }) => country))].sort() : issues.value,
+      ownedPublications.value
+        ? [...new Set((ownedPublications.value || []).map((publicationcode) => publicationcode.split('/')[0]))].sort()
+        : ownedPublications.value,
     ),
     ownedPublications = computed(() =>
       issues.value
@@ -43,10 +46,8 @@ export const wtdcollection = defineStore('wtdcollection', () => {
     ),
     fetchAndTrackCollection = async () => {
       await loadCollection();
-      await coaStore.fetchCountryNames(true);
       await loadPurchases();
       await loadUser();
-      // TODO retrieve user points
       // TODO retrieve user notification countries
 
       // TODO get app version
@@ -54,18 +55,22 @@ export const wtdcollection = defineStore('wtdcollection', () => {
       await statsStore.loadRatings();
       await webCollectionStore.fetchIssueCountsByCountrycode();
       await webCollectionStore.fetchIssueCountsByPublicationcode();
-      coaStore.addPublicationNames(await webCollectionStore.fetchPublicationNames());
       await usersStore.fetchStats([webCollectionStore.user?.id || 0]);
+
+      await coaStore.fetchCountryNames(true);
+      coaStore.addPublicationNames(await webCollectionStore.fetchPublicationNames());
       // TODO register for notifications
     },
-    highestQuotedIssue = computed(
-      () => quotedIssues.value?.sort((a, b) => b.estimationGivenCondition - a.estimationGivenCondition)[0],
-    ),
-    getCollectionIssues = (publicationcode: string, issuenumber: string) =>
-      issues.value!.filter(
-        ({ publicationcode: collectionPublicationCode, issuenumber: collectionIssueNumber }) =>
-          collectionPublicationCode === publicationcode && collectionIssueNumber === issuenumber,
-      );
+    highestQuotedIssue = computedAsync(async () => {
+      const issue = quotedIssues.value?.sort((a, b) => b.estimationGivenCondition - a.estimationGivenCondition)[0];
+      if (issue) {
+        await coa().fetchIssuecodeDetails([issue.issuecode]);
+        return { ...issue, ...coa().issuecodeDetails[issue.issuecode] };
+      }
+      return issue;
+    }),
+    getCollectionIssues = (issuecode: string) =>
+      issues.value!.filter(({ issuecode: collectionIssuecode }) => collectionIssuecode === issuecode);
 
   usePersistedData({ user, issues }).then(() => {
     isPersistedDataLoaded.value = true;
@@ -81,7 +86,7 @@ export const wtdcollection = defineStore('wtdcollection', () => {
     highestQuotedIssue,
     coaIssueCountsByPublicationcode: computed(() => webCollectionStore.coaIssueCountsByPublicationcode),
     coaIssueCountsPerCountrycode: computed(() => webCollectionStore.coaIssueCountsPerCountrycode),
-    issuesByShortIssuecode: computed(() => webCollectionStore.issuesByShortIssuecode),
+    issuesByIssuecode: computed(() => webCollectionStore.issuesByIssuecode),
     loadCollection,
     loadUserIssueQuotations,
     loadPurchases,
@@ -104,7 +109,7 @@ export const wtdcollection = defineStore('wtdcollection', () => {
   };
 });
 
-export type IssueWithCollectionIssues = SimpleIssue & {
+export type IssueWithCollectionIssues = IssueWithIssuecodeOnly & {
   countrycode: string;
   countryname?: string;
   publicationName: string;

@@ -95,11 +95,11 @@
 </template>
 
 <script setup lang="ts">
-import { issue } from "~prisma-clients/extended/dm.extends";
+import type { issue } from "~prisma-schemas/schemas/dm";
 
-const { selectedIssueIdsByIssuenumber } = defineProps<{
-  selectedIssueIdsByIssuenumber: {
-    [issuenumber: string]: issue[];
+const { selectedIssueIdsByIssuecode } = defineProps<{
+  selectedIssueIdsByIssuecode: {
+    [issuecode: string]: issue[];
   };
   publicationcode: string;
 }>();
@@ -120,31 +120,31 @@ const { loadContactMethods } = marketplace();
 const { contactMethods, issuesOnSaleById } = storeToRefs(marketplace());
 
 const selectedIssues = $computed(() =>
-  Object.keys(selectedIssueIdsByIssuenumber),
+  Object.keys(selectedIssueIdsByIssuecode),
 );
 const issueIds = $computed(() =>
-  Object.values(selectedIssueIdsByIssuenumber).reduce(
+  Object.values(selectedIssueIdsByIssuecode).reduce<number[]>(
     (acc, issues) => [...acc, ...issues.map(({ id }) => id!)],
-    [] as number[],
+    [],
   ),
 );
 
 const selectedIssuesBuyerIds = $computed(() => [
   ...new Set(
-    issueIds.reduce(
+    issueIds.reduce<number[]>(
       (acc, issueId) => [...acc, issuesOnSaleById.value[issueId].userId],
-      [] as number[],
+      [],
     ),
   ),
 ]);
 
 const issuesWithMultipleCopiesSelected = $computed(() =>
-  Object.entries(selectedIssueIdsByIssuenumber)
+  Object.entries(selectedIssueIdsByIssuecode)
     .filter(([, copies]) => copies.length > 1)
     .reduce(
-      (acc, [issuenumber, copies]) => ({
+      (acc, [issuecode, copies]) => ({
         ...acc,
-        [issuenumber]: copies.length,
+        [issuecode]: copies.length,
       }),
       {},
     ),

@@ -36,18 +36,9 @@ export default (io: Server) => {
       );
 
     socket.on("saveEdge", async (parameters, callback) => {
-      const {
-        runExport,
-        runSubmit,
-        country,
-        magazine,
-        issuenumber,
-        contributors,
-        content,
-      } = parameters;
-      const svgPath = getSvgPath(runExport, country, magazine, issuenumber);
-
-      const publicationcode = `${country}/${magazine}`;
+      const { runExport, runSubmit, issuecode, contributors, content } =
+        parameters;
+      const svgPath = await getSvgPath(runExport, issuecode);
 
       mkdirSync(path.dirname(svgPath), { recursive: true });
       writeFileSync(svgPath, content);
@@ -68,8 +59,7 @@ export default (io: Server) => {
           .map(({ user }) => user.username);
 
         const publicationResult = await edgeCreatorServices.publishEdge({
-          publicationcode,
-          issuenumber,
+          issuecode,
           designers,
           photographers,
         });
@@ -81,7 +71,7 @@ export default (io: Server) => {
           return;
         }
         try {
-          unlinkSync(getSvgPath(false, country, magazine, issuenumber));
+          unlinkSync(await getSvgPath(false, issuecode));
         } catch (errorDetails) {
           if ((errorDetails as { code?: string }).code === "ENOENT") {
             console.log("No temporary SVG file to delete was found");
@@ -96,7 +86,7 @@ export default (io: Server) => {
         callback({ results: { paths, isNew: publicationResult.isNew } });
       } else {
         if (runSubmit) {
-          await edgeCreatorServices.submitEdge(publicationcode, issuenumber);
+          await edgeCreatorServices.submitEdge(issuecode);
         }
         callback({ results: { paths, isNew: false } });
       }

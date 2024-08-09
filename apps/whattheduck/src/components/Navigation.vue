@@ -1,5 +1,5 @@
 <template>
-  <ion-segment v-model="currentNavigationItem">
+  <ion-segment :model-value="currentNavigationItem?.type">
     <ion-col
       @click.stop="() => {}"
       :class="{ 'non-clickable': partIdx >= shownParts.length, scrollable: partIdx === 3 }"
@@ -7,7 +7,7 @@
       v-for="partIdx in maxParts"
       v-show="partIdx <= shownParts.length"
     >
-      <ion-segment-button :value="shownParts[partIdx - 1]">
+      <ion-segment-button :value="shownParts[partIdx - 1]?.type" @click="">
         <globe-icon v-if="partIdx === 1" />
         <Country
           v-if="partIdx === 2 && countrycode"
@@ -19,10 +19,10 @@
           :publicationcode="publicationcode"
           :title="publicationNames?.[publicationcode] || publicationcode"
         />
-        <template v-if="partIdx === 4 && issuenumber !== undefined"
+        <template v-if="partIdx === 4 && issuecodes"
           ><div style="display: flex; align-items: center">
-            <Issue :issuenumber="issuenumber" /><template v-if="extraIssuenumbers.length"
-              ><ion-chip :outline="true">+&nbsp;{{ extraIssuenumbers.length }}</ion-chip></template
+            <Issue :issuecode="issuecodes[0]" /><template v-if="issuecodes.length > 1"
+              ><ion-chip :outline="true">+&nbsp;{{ issuecodes.length - 1 }}</ion-chip></template
             >
           </div></template
         >
@@ -41,25 +41,21 @@ import Publication from './Publication.vue';
 
 import { app } from '~/stores/app';
 
-const { currentNavigationItem, countrycode, publicationcode, issuenumber, extraIssuenumbers } = storeToRefs(app());
+const { currentNavigationItem, countrycode, publicationcode, issuecodes } = storeToRefs(app());
 const { countryNames, publicationNames } = storeToRefs(stores.coa());
 
 const maxParts = 4;
 
-const shownParts = computed(() => {
-  const parts = [''];
-
-  if (countrycode.value) {
-    parts.push(countrycode.value);
-  }
-  if (publicationcode.value) {
-    parts.push(publicationcode.value);
-  }
-  if (issuenumber.value !== undefined) {
-    parts.push(currentNavigationItem.value!);
-  }
-  return parts;
-});
+const shownParts = computed(() => [
+  null,
+  ...Object.entries({
+    countrycode: countrycode.value,
+    publicationcode: publicationcode.value,
+    issuecodes: issuecodes.value,
+  })
+    .map(([type, value]) => (value ? { type, value } : null))
+    .filter(Boolean),
+]);
 </script>
 
 <style lang="scss" scoped>

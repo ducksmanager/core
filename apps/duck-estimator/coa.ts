@@ -1,16 +1,14 @@
 import "dotenv/config";
 
-import {
-  inducks_issuequotation,
-  PrismaClient as PrismaCoa,
-} from "~prisma-clients/client_coa";
+import type { inducks_issue, inducks_issuequotation,
+} from "~prisma-schemas/schemas/coa";
+import {  prismaClient as prismaCoa,
+} from "~prisma-schemas/schemas/coa/client";
 
-export const prismaCoa = new PrismaCoa();
-
-const cachedCoaIssues: Record<string, string[]> = {};
+const cachedCoaIssues: Record<string, Pick<inducks_issue, 'issuecode'|'issuenumber'>[]> = {};
 
 export const createQuotations = async (
-  data: Omit<inducks_issuequotation, "id" | "shortIssuecode">[]
+  data: Omit<inducks_issuequotation, "id" | "shortIssuecode"|"publicationcode"|"issuenumber">[]
 ) => {
   console.log(`Adding ${data.length} quotations`);
   return prismaCoa.inducks_issuequotation.createMany({
@@ -21,12 +19,19 @@ export const createQuotations = async (
 export const truncateQuotations = async () =>
   await prismaCoa.$executeRawUnsafe(`TRUNCATE TABLE inducks_issuequotation`);
 
-export const isInducksIssueExisting = async (
+export const isInducksIssuecodeExisting = async (
+  issuecode: string
+) =>
+  await prismaCoa.inducks_issue.findFirstOrThrow({
+    where: {
+      issuecode
+    }
+  });
+export const getIssuecode = async (
   publicationcode: string,
   issuenumber: string
 ) =>
-  (await getInducksIssuesBetween(publicationcode, issuenumber, issuenumber))
-    .length;
+  (await getInducksIssuesBetween(publicationcode, issuenumber, issuenumber))[0];
 
 export const getInducksIssuesBetween = async (
   publicationcode: string,
@@ -38,7 +43,7 @@ export const getInducksIssuesBetween = async (
     (
       await prismaCoa.inducks_issue.findMany({
         where: { publicationcode },
-        select: { issuenumber: true },
+        select: { issuenumber: true, issuecode: true},
       })
     ).map(({ issuenumber }) => issuenumber);
 
@@ -50,7 +55,7 @@ export const getInducksIssuesBetween = async (
   }
 
   const startIssueIndex =
-    cachedCoaIssues[publicationcode].indexOf(issuenumberStart);
+    cachedCoaIssues[publicationcode].findIndex(({ issuenumber }) => issuenumber === issuenumberStart);
   if (startIssueIndex === -1) {
     console.warn(
       ` No issue found in COA for publication code ${publicationcode} and issue number ${issuenumberStart}`
@@ -58,7 +63,7 @@ export const getInducksIssuesBetween = async (
     return [];
   }
   const endIssueIndex =
-    cachedCoaIssues[publicationcode].indexOf(issuenumberEnd);
+  cachedCoaIssues[publicationcode].findIndex(({ issuenumber }) => issuenumber === issuenumberEnd);
   if (endIssueIndex === -1) {
     console.warn(
       ` No issue found in COA for publication code ${publicationcode} and issue number ${issuenumberEnd}`
@@ -74,8 +79,6 @@ export const getAll = async () =>
   await prismaCoa.inducks_issuequotation.findMany({
     orderBy: [
       {
-        publicationcode: "asc",
-      },
-      { issuenumber: "asc" },
+        issuecode: "asc" },
     ],
   });

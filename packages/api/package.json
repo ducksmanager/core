@@ -6,8 +6,8 @@
   "version": "1.0.0",
   "scripts": {
     "build": "bun build --target node --sourcemap index.ts --outfile bundle.mjs",
-    "dev": "concurrently -n api,docker-compose,db \"pnpm -F ~api nodemon-watch\" \"docker compose -f docker-compose-dev.yml up pastec mailcatcher\" \"pnpm -F ~prisma-clients dev\"",
-    "nodemon-watch": "concurrently -n nodemon,tsc \"bun --inspect run --hot index.ts\" \"tsc --noEmit --watch\"",
+    "dev": "concurrently -n api,docker-compose,db \"pnpm -F ~api nodemon-watch\" \"docker compose -f docker-compose-dev.yml up pastec mailcatcher\" \"pnpm -F ~prisma-schemas dev\"",
+    "nodemon-watch": "concurrently -n nodemon,tsc \"bun --inspect run --watch index.ts\" \"tsc --noEmit --watch\"",
     "lint": "eslint --fix .",
     "wait": "wait-on tcp:3000"
   },
@@ -15,7 +15,7 @@
     "@pusher/push-notifications-server": "^1.2.6",
     "@sentry/node": "^7.118.0",
     "@socket.io/admin-ui": "^0.5.1",
-    "axios": "^1.7.2",
+    "axios": "^1.7.3",
     "cloudinary": "^1.41.3",
     "csv-parse": "^5.5.6",
     "dayjs": "^1.11.12",
@@ -26,14 +26,14 @@
     "nodemailer": "^6.9.14",
     "socket.io": "^4.7.5",
     "~dm-types": "workspace:*",
-    "~prisma-clients": "workspace:*",
+    "~prisma-schemas": "workspace:*",
     "~socket.io-services": "workspace:*"
   },
   "devDependencies": {
     "@types/ejs": "^3.1.5",
     "@types/i18n": "^0.13.12",
     "@types/jsonwebtoken": "^9.0.6",
-    "@types/node": "^18.19.41",
+    "@types/node": "^18.19.43",
     "@types/nodemailer": "^6.4.15",
     "concurrently": "^8.2.2",
     "eslint": "^8.57.0",
@@ -45,8 +45,8 @@
     "ts-node": "^10.9.2",
     "tsc-alias": "^1.8.10",
     "tsconfig-paths": "^4.2.0",
-    "typescript": "^5.5.3",
-    "typescript-eslint": "^7.16.1",
+    "typescript": "^5.5.4",
+    "typescript-eslint": "^7.18.0",
     "wait-on": "^7.2.0"
   }
 }

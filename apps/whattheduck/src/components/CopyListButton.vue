@@ -4,7 +4,7 @@
     :options="[...copyListModes]"
     v-model:fab="fab"
     @update:value="
-      copyToClipboard($event.textPrefix, $event.getTextToCopy());
+      copyToClipboard($event.textPrefix!, $event.getTextToCopy!());
       (fab?.$el as HTMLIonFabElement).close();
     "
   />

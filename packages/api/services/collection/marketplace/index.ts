@@ -1,7 +1,8 @@
 import type { Socket } from "socket.io";
 
-import { prismaDm } from "~prisma-clients";
-import type { issue } from "~prisma-clients/extended/dm.extends";
+import { augmentIssueArrayWithInducksData } from "~/services/coa";
+import type { issue } from "~prisma-schemas/schemas/dm";
+import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
 
 import type Events from "../types";
 import contactMethods from "./contact-methods";
@@ -53,6 +54,7 @@ export default (socket: Socket<Events>) => {
     );
     await prismaDm.requestedIssue.createMany({
       data: newlyRequestedIssueIds.map((issueId: number) => ({
+        isBooked: false,
         buyerId: socket.data.user!.id,
         issueId,
       })),
@@ -96,12 +98,9 @@ export default (socket: Socket<Events>) => {
 };
 
 export const getIssuesForSale = async (buyerId: number) =>
-  prismaDm.$queryRaw<
-    {
-      id: issue["id"];
-    }[]
+  prismaDm.$queryRaw<Pick<issue, 'id'>[]
   >`
-    SELECT issue.ID AS id
+    SELECT issue.ID as id
     FROM numeros issue
     INNER JOIN (
       SELECT seller.ID
@@ -120,30 +119,18 @@ export const getIssuesForSale = async (buyerId: number) =>
         WHERE uo.ID_User = ${buyerId}
           AND uo.Option_nom = 'sales_notification_publications'
           AND uo.Option_valeur IN (CONCAT(issue.Pays, '/', issue.Magazine),
-                                   CONCAT(issue.Pays, '/', issue.Magazine, ' ', issue.Numero))
+                                   issue.issuecode)
       )
       AND NOT EXISTS
         (SELECT 1
          FROM numeros user_collection
-         WHERE user_collection.Pays = issue.Pays
-           AND user_collection.Magazine = issue.Magazine
-           AND user_collection.Numero = issue.Numero
+         WHERE user_collection.issuecode = issue.issuecode
            AND user_collection.ID_Utilisateur = ${buyerId}
         )`
-    .then(async (forSale) =>
-      prismaDm.issue.findMany({
-        where: { id: { in: forSale.map(({ id }) => id) } },
-      }),
-    )
-    .then((issuesForSale) =>
-      issuesForSale.reduce<Record<string, issue[]>>(
-        (acc, issue) => ({
-          ...acc,
-          [issue.publicationcode]: [
-            ...(acc[issue.publicationcode] || []),
-            issue,
-          ],
-        }),
-        {},
-      ),
-    );
+    .then( (idsForSale) => prismaDm.issue.findMany({
+      where: {
+        id: {
+          in: idsForSale.map(({ id }) => id),
+        },
+      }}
+    )).then( async (forSale) => augmentIssueArrayWithInducksData(forSale));

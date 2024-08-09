@@ -1,9 +1,7 @@
 <template>
-  <ion-fab ref="fab" vertical="top" horizontal="end" id="view-modes" slot="fixed">
-    <ion-fab-button :disabled="disabled"
-      ><ion-icon :ios="icon.ios" :md="icon.md" />
-      <hr v-if="icon.negate" class="negate" /></ion-fab-button
-    ><ion-icon class="indicator" v-if="value && value.icon" :ios="value.icon!.ios" :md="value.icon!.md" />
+  <ion-fab ref="fab" vertical="top" horizontal="end" slot="fixed">
+    <ion-fab-button :disabled="disabled"><FabHeaderButtonIcon v-bind="icon" v-if="icon" /></ion-fab-button
+    ><FabHeaderButtonIcon v-bind="value?.icon" is-indicator v-if="value?.icon" />
     <ion-fab-list side="bottom">
       <ion-item
         :detail="false"
@@ -18,23 +16,19 @@
       >
         <ion-label>{{ option.label }}</ion-label>
         <ion-fab-button size="small" v-if="option.icon">
-          <ion-icon :ios="option.icon.ios" :md="option.icon.md" />
-          <hr v-if="option.icon.negate" class="negate" /></ion-fab-button></ion-item></ion-fab-list
+          <FabHeaderButtonIcon v-bind="option.icon" /></ion-fab-button></ion-item></ion-fab-list
   ></ion-fab>
 </template>
-<script setup lang="ts" generic="Item extends {
-  id: string,
-  label:string,
-  icon?: {ios: string, md: string,
-    negate?: boolean,}
-}">
+<script setup lang="ts" generic="Item extends Option">
+import type { Option } from '~/stores/app';
+
 // eslint-disable-next-line no-undef
 const fab = defineModel<ComponentPublicInstance<HTMLIonFabElement> | null>('fab');
 const value = defineModel<Item>('value');
 withDefaults(
   defineProps<{
     disabled?: boolean;
-    icon: { ios: string; md: string, negate?: boolean };
+    icon: { ios: string; md: string; negate?: boolean };
     options: Item[];
   }>(),
   {
@@ -63,8 +57,8 @@ ion-fab {
     height: 1.5rem;
     margin-right: 0.75rem;
 
-    ion-icon {
-      font-size: 20px;
+    :deep(ion-icon) {
+      font-size: 18px;
     }
   }
 
@@ -73,33 +67,5 @@ ion-fab {
     width: 1.8rem;
     height: 1.8rem;
   }
-}
-
-hr {
-  &.negate {
-    position: absolute;
-    width: 100%;
-    transform: rotate(-40deg);
-    border-top: 1px solid white !important;
-  }
-}
-
-ion-icon.indicator {
-  background-color: darkgray;
-  border-radius: 1rem;
-  position: absolute;
-  bottom: 0;
-  right: 0.5rem;
-  font-size: 1rem;
-  margin-left: 0.5rem;
-
-  //   display: flex;
-  // align-items: center;
-  // justify-content: center;
-
-  // svg {
-  //   width: 80%;
-  //   height: 80%;
-  // }
 }
 </style>

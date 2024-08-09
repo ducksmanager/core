@@ -21,7 +21,7 @@
           :index="index"
           :style="{ width: `min(50%, ${slideWidths[index]}px)` }"
         >
-          <ion-img :src="getCoverUrl(cover.fullUrl)" @ion-img-did-load="setWidth" />
+          <ion-img :src="getCoverUrl(cover.fullUrl!)" @ion-img-did-load="setWidth" />
         </Slide>
       </Carousel3d>
       <ion-row
@@ -29,7 +29,7 @@
         style="position: relative; flex-direction: column"
         v-if="cover"
       >
-        <ion-row><FullIssue :issue="cover" /></ion-row>
+        <ion-row><FullIssue :issuecode="cover.issuecode" show-issue-conditions /></ion-row>
         <ion-row style="font-size: 0.8rem; width: 100%"
           ><ion-col size="2"><ion-icon :ios="personOutline" :md="personSharp" /></ion-col
           ><ion-col class="ion-text-left">{{
@@ -109,7 +109,7 @@ const covers = computed(() =>
         ...cover,
         countrycode: cover.publicationcode.split('/')[0],
         publicationName: publicationNames.value[cover.publicationcode],
-        collectionIssues: getCollectionIssues(cover.publicationcode, cover.issuenumber),
+        collectionIssues: getCollectionIssues(cover.issuecode),
       }))
     : [],
 );
@@ -123,7 +123,7 @@ watch(
 );
 
 const onMainSlideClick = async ({ index }: { index: number }) => {
-  currentNavigationItem.value = covers.value[index]!.shortIssuecode;
+  currentNavigationItem.value = { type: 'issuecodes', value: [covers.value[index]!.issuecode] };
   await router.push('/collection');
 };
 </script>

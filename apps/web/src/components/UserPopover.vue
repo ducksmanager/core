@@ -13,7 +13,7 @@
           <Medal
             v-for="(numberOfPoints, contribution) in points"
             :key="contribution"
-            :contribution="contribution as string"
+            :contribution="contribution"
             :user-level-points="numberOfPoints"
             small
           />
@@ -80,10 +80,11 @@
 </template>
 
 <script setup lang="ts">
-import { QuickStatsPerUser } from "~dm-types/QuickStatsPerUser";
+import type { QuickStatsPerUser } from "~dm-types/QuickStatsPerUser";
+import type { UserContributionTypeEn } from "~dm-types/UserContributionTypeEn";
 
 defineProps<{
-  points: { [contribution: string]: number };
+  points: Record<UserContributionTypeEn, number>;
   stats: QuickStatsPerUser[0];
   showOkForExchanges?: boolean;
 }>();
