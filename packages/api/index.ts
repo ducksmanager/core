@@ -6,6 +6,7 @@ import { Server } from "socket.io";
 
 import type { SessionUser } from "~dm-types/SessionUser";
 
+import { getAppUpdates } from "./services/app";
 import auth from "./services/auth";
 import { OptionalAuthMiddleware } from "./services/auth/util";
 import bookcase from "./services/bookcase";
@@ -22,7 +23,7 @@ import login from "./services/login";
 import presentationText from "./services/presentation-text";
 import publicCollection from "./services/public-collection";
 import stats from "./services/stats";
-import { getDbStatus, getPastecSearchStatus, getPastecStatus } from "./status";
+import { getDbStatus, getPastecSearchStatus, getPastecStatus } from "./services/status";
 
 class ServerWithUser extends Server<
   Record<string, never>,
@@ -48,6 +49,17 @@ Sentry.init({
 const httpServer = createServer(async (req, res) => {
   let data: { error: string } | object;
   switch (req.url) {
+    case "/app/updates":
+      const body: string[] = [];
+      req
+        .on('data', chunk => {
+          body.push(chunk);
+        })
+        .on('end', () => {
+          res.write(getAppUpdates(body.join('')));
+          res.end();
+        });
+      return
     case "/status/db":
       data = await getDbStatus();
       break;

@@ -60,7 +60,7 @@
 
 <script setup lang="ts">
 import { bookmarkOutline, bookmarkSharp, calendarOutline, calendarSharp } from 'ionicons/icons';
-import type { IssueWithIssuecodeOnly } from '~dm-types/SimpleIssue';
+import type { IssueWithIssuecodeOnly } from '~dm-types/IssueWithIssuecodeOnly';
 import type { issue } from '~prisma-schemas/schemas/dm';
 import { stores as webStores, components as webComponents } from '~web';
 

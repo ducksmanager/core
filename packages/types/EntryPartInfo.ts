@@ -1,9 +1,6 @@
 import type { inducks_entry, inducks_storyversion } from "~prisma-schemas/schemas/coa";
 
-
-export type AllNonNullable<T> = {
-    [P in keyof T]: NonNullable<T[P]>;
-};
+import type { AllNonNullable } from "./AllNonNullable";
 
 export type EntryPartInfo = AllNonNullable<
     Pick<inducks_entry, "part"> &

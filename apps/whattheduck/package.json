@@ -9,6 +9,7 @@
     "lint": "eslint --fix .",
     "dev": "concurrently -n vite,vue-tsc \"vite --port 8003 --host\" \"vue-tsc --noEmit --watch\"",
     "build": "vue-tsc --noEmit && vite build",
+    "build-capgo": "capgo bundle zip",
     "i-next": "for dep in $(jq -r '.dependencies | to_entries[] | select(.value == \"next\") | .key' package.json); do pnpm install \"${dep}@latest\"; done",
     "ionic:build": "npm run build",
     "preview": "vite preview",
@@ -61,6 +62,7 @@
   "devDependencies": {
     "@capacitor/assets": "^3.0.5",
     "@capacitor/cli": "^6.1.2",
+    "@capgo/cli": "^4.13.31",
     "@histoire/plugin-vue": "^0.17.17",
     "@ionic/prettier-config": "^4.0.0",
     "@types/js-cookie": "^3.0.6",

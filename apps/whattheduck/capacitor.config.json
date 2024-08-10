@@ -8,6 +8,9 @@
       "splashImmersive": false,
       "backgroundColor": "#1C3461",
       "androidSplashResourceName": "splash"
+    },
+    "CapacitorUpdater": {
+      "updateUrl": "https://api-websocket.ducksmanager.net/app/updates"
     }
   }
 }

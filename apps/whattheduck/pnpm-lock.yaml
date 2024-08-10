@@ -135,6 +135,9 @@ importers:
       '@capacitor/cli':
         specifier: ^6.1.2
         version: 6.1.2
+      '@capgo/cli':
+        specifier: ^4.13.31
+        version: 4.13.31
       '@histoire/plugin-vue':
         specifier: ^0.17.17
         version: 0.17.17(histoire@0.17.17(@types/node@18.19.43)(sass@1.77.8)(vite@5.4.0(@types/node@18.19.43)(sass@1.77.8)))(vite@5.4.0(@types/node@18.19.43)(sass@1.77.8))(vue@3.4.37(typescript@5.5.4))
@@ -348,6 +351,11 @@ packages:
     resolution: {integrity: sha512-7PC2pUbS6CE26ClyWs1qksGrn5lIuyRHnujjucxgLQrMsYEbr963rCW05DuY6z2huLMUpS/9vcRWvsTiutXq0w==}
     peerDependencies:
       '@capacitor/core': ^6.0.0
+
+  '@capgo/cli@4.13.31':
+    resolution: {integrity: sha512-lmJ9ZuSPMM3dRS2YhDGBAwnMLQpnJhEVR7uwrlcSayZoKyuSSg33xQfybVsAnVZOuUv8sm+Kcsw92YXD+sxbXw==}
+    engines: {node: '>=18.0.0', npm: '>=8.0.0'}
+    hasBin: true
 
   '@codemirror/commands@6.6.0':
     resolution: {integrity: sha512-qnY+b7j1UNcTS31Eenuc/5YJB6gQOzkUoNmJQc0rznwqSRpeaWWpjkWy2C/MPTcePpsKJEM26hXrOXl1+nceXg==}
@@ -4675,6 +4683,8 @@ snapshots:
   '@capgo/capacitor-updater@6.0.56(@capacitor/core@6.1.2)':
     dependencies:
       '@capacitor/core': 6.1.2
+
+  '@capgo/cli@4.13.31': {}
 
   '@codemirror/commands@6.6.0':
     dependencies:

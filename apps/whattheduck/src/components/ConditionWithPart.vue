@@ -5,7 +5,7 @@
   </svg>
 </template>
 <script setup lang="ts">
-import type { EntryPartInfo } from '~dm-types/SimpleIssue';
+import type { EntryPartInfo } from '~dm-types/EntryPartInfo';
 import type { issue_condition } from '~prisma-schemas/schemas/dm';
 
 const { conditions } = useCondition();
