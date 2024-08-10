@@ -21,7 +21,7 @@
         :item-size="32"
         key-field="uniqueKey"
         item-class="item-wrapper"
-        v-slot="{ item: { key, item, isOwned, nextItemType } }"
+        v-slot="{ item: { key, item, inducksItem, isOwned, nextItemType } }"
       >
         <Row
           :id="key"
@@ -32,7 +32,7 @@
             <slot name="fill-bar" :item="item" />
           </template>
           <template #prefix v-if="item">
-            <slot name="row-prefix" :item="item" />
+            <slot name="row-prefix" :item="item" :inducks-item="inducksItem" />
           </template>
           <template #label>
             <slot name="row-label" :item="item" />
@@ -81,7 +81,7 @@
   >
 </template>
 
-<script setup lang="ts" generic="Item extends Required<any>">
+<script setup lang="ts" generic="Item extends Required<any>, InducksItem extends Required<any>">
 import type { CameraPreviewOptions } from '@capacitor-community/camera-preview';
 import { CameraPreview } from '@capacitor-community/camera-preview';
 import type { ScrollDetail } from '@ionic/vue';
@@ -94,7 +94,7 @@ import { app } from '~/stores/app';
 defineSlots<{
   'default'(): any;
   'fill-bar'(props: { item: Item }): any;
-  'row-prefix'(props: { item: Item }): any;
+  'row-prefix'(props: { item: Item; inducksItem: InducksItem }): any;
   'row-label'(props: { item: Item }): any;
   'row-suffix'(props: { item: Item }): any;
 }>();
@@ -103,6 +103,7 @@ const props = defineProps<{
   items: {
     key: string;
     item: Item;
+    inducksItem?: InducksItem;
     isOwned?: boolean;
     nextItemType?: 'same' | 'owned' | undefined;
   }[];

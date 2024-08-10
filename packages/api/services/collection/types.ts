@@ -47,7 +47,7 @@ export default abstract class {
   ) => void;
 
   abstract getIssues: (
-    callback: (data: (AugmentedIssue<issue>)[]) => void,
+    callback: (data: (AugmentedIssue<(issue & { issuecode: string })>)[]) => void,
   ) => void;
   abstract addOrChangeIssues: (
     data: CollectionUpdateMultipleIssues,
@@ -97,7 +97,7 @@ export default abstract class {
   ) => void;
 
   abstract getIssuesForSale: (
-  callback: (data:  (AugmentedIssue<issue>)[]) => void,
+    callback: (data: (AugmentedIssue<issue & { issuecode: string }>)[]) => void,
   ) => void;
 
   abstract getOption: (

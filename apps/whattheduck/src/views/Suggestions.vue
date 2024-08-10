@@ -133,13 +133,13 @@ watch(
           .flat(),
       );
 
-      await fetchPublicationNames(
-        Object.values(suggestions.value)
-          .map(({ issues }) =>
-            Object.values(issues).map(({ issuecode }) => issuecodeDetails.value[issuecode]!.publicationcode),
-          )
-          .flat(),
-      );
+      const publicationcodes = Object.values(suggestions.value)
+        .map(({ issues }: { issues: { issuecode: string }[] }) =>
+          Object.values(issues).map(({ issuecode }) => issuecodeDetails.value[issuecode]!.publicationcode),
+        )
+        .flat() as string[];
+
+      await fetchPublicationNames(publicationcodes);
 
       hasIssuecodeDetails.value = true;
     }

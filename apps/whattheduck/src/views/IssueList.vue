@@ -6,8 +6,8 @@
     item-type="issuecode"
     @items-filtered="filteredIssuenumbers = $event"
   >
-    <template v-if="currentIssueViewMode.id === 'list'" #row-prefix="{ item }">
-      <ion-checkbox v-if="selectedIssuecodes" :checked="selectedIssuecodes.includes(item.inducksItem.issuenumber!)"
+    <template v-if="currentIssueViewMode.id === 'list'" #row-prefix="{ item, inducksItem }">
+      <ion-checkbox v-if="selectedIssuecodes" :checked="selectedIssuecodes.includes(inducksItem.issuenumber!)"
         >&nbsp;</ion-checkbox
       >
       <Condition v-if="'condition' in item && item.condition" :value="item.condition" />
@@ -128,7 +128,7 @@ watch(isCoaView, () => {
 });
 
 type Item =
-  | Pick<issue, 'issuecode' | 'condition' | 'creationDate' | 'isOnSale' | 'isToRead' | 'isSubscription'>
+  | (Pick<issue, 'condition' | 'creationDate' | 'isOnSale' | 'isToRead' | 'isSubscription'> & { issuecode: string })
   | IssueWithIssuecodeOnly;
 
 const items = computed(() =>

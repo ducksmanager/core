@@ -1,13 +1,13 @@
 <template>
   <ion-app>
     <OfflineBanner :on-offline="routeMeta.onOffline" v-if="isOfflineMode" />
-    <AppWithPersistedData v-if="socket" />
 
     <ion-router-outlet
-      v-else-if="route.path === '/login'"
+      v-if="route.path === '/login'"
       :style="{ 'margin-top': `${offlineBannerHeight}px` }"
       id="main-content"
     />
+    <AppWithPersistedData v-else-if="socket" />
   </ion-app>
 </template>
 

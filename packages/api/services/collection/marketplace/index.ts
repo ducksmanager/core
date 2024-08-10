@@ -1,11 +1,11 @@
 import type { Socket } from "socket.io";
 
-import { augmentIssueArrayWithInducksData } from "~/services/coa";
 import type { issue } from "~prisma-schemas/schemas/dm";
 import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
 
 import type Events from "../types";
 import contactMethods from "./contact-methods";
+import { augmentIssueArrayWithInducksData } from "~/services/coa";
 
 export default (socket: Socket<Events>) => {
   contactMethods(socket);
@@ -98,7 +98,7 @@ export default (socket: Socket<Events>) => {
 };
 
 export const getIssuesForSale = async (buyerId: number) =>
-  prismaDm.$queryRaw<Pick<issue, 'id'>[]
+  prismaDm.$queryRaw<(Pick<issue, 'id'>)[]
   >`
     SELECT issue.ID as id
     FROM numeros issue
@@ -113,6 +113,7 @@ export const getIssuesForSale = async (buyerId: number) =>
         ON issue.ID = requested_issue.ID_Numero
     WHERE
       AV = 1
+      AND issue.issuecode IS NOT NULL
       AND ID_Utilisateur != ${buyerId}
       AND EXISTS(
         SELECT 1 FROM users_options uo
@@ -127,10 +128,15 @@ export const getIssuesForSale = async (buyerId: number) =>
          WHERE user_collection.issuecode = issue.issuecode
            AND user_collection.ID_Utilisateur = ${buyerId}
         )`
-    .then( (idsForSale) => prismaDm.issue.findMany({
+    .then((idsForSale) => prismaDm.issue.findMany({
+      select: {
+        userId: true,
+        id: true,
+        issuecode: true,
+      },
       where: {
         id: {
           in: idsForSale.map(({ id }) => id),
         },
-      }}
-    )).then( async (forSale) => augmentIssueArrayWithInducksData(forSale));
+      }
+    }) as Promise<(issue & { issuecode: string })[]>).then(augmentIssueArrayWithInducksData)

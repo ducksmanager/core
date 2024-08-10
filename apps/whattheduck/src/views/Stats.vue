@@ -154,6 +154,6 @@ ion-button {
 }
 
 .text-big {
-  font-size: 52px;
+  font-size: 42px;
 }
 </style>

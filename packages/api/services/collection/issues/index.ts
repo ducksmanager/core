@@ -8,7 +8,7 @@ import { getPublicationTitles } from "~/services/coa/publications";
 import type { TransactionResults } from "~dm-types/TransactionResults";
 import type { inducks_issuequotation } from "~prisma-schemas/schemas/coa";
 import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa/client";
-import type { user } from "~prisma-schemas/schemas/dm";
+import type { issue, user } from "~prisma-schemas/schemas/dm";
 import { issue_condition } from "~prisma-schemas/schemas/dm";
 import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
 
@@ -51,13 +51,18 @@ export default (socket: Socket<Events>) => {
     if (socket.data.user!.username === "demo") {
       await resetDemo();
     }
-    ( prismaDm.issue.findMany({
+    (prismaDm.issue.findMany({
       where: {
         userId: socket.data.user!.id,
+        issuecode: {
+          not: {
+            equals: null
+          }
+        }
       },
     }))
-    .then((issues) => augmentIssueArrayWithInducksData(issues))
-    .then(issues => callback(issues));
+      .then((issues) => augmentIssueArrayWithInducksData(issues as (issue & { issuecode: string })[]))
+      .then(issues => callback(issues));
   });
 
   socket.on(

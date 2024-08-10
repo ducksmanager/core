@@ -10,14 +10,14 @@ export const publicCollection = defineStore("publicCollection", () => {
     publicCollection: { services: publicCollectionServices },
   } = injectLocal(dmSocketInjectionKey)!;
 
-  const issues = shallowRef<issue[] | null>(null),
+  const issues = shallowRef<(issue & { issuecode: string })[] | null>(null),
     publicUsername = ref<string | null>(null),
     publicationUrlRoot = computed(
       () => `/collection/user/${publicUsername.value || ""}`,
     ),
     purchases = ref([]);
 
-  const collectionUtils = useCollection(issues as ShallowRef<issue[]>),
+  const collectionUtils = useCollection(issues as ShallowRef<(issue & { issuecode: string })[]>),
     loadPublicCollection = async (username: string) => {
       publicUsername.value = username;
       const data = await publicCollectionServices.getPublicCollection(username);
@@ -31,6 +31,6 @@ export const publicCollection = defineStore("publicCollection", () => {
     issues,
     purchases,
     loadPublicCollection,
-    loadPurchases: () => {},
+    loadPurchases: () => { },
   };
 });

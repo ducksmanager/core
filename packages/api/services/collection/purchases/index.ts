@@ -6,8 +6,9 @@ import { getUserPurchase } from "../issues/util";
 import type Events from "../types";
 
 export default (socket: Socket<Events>) => {
-  socket.on("getPurchases", (callback) =>
-    prismaDm.purchase
+  socket.on("getPurchases", (callback) => {
+    const start = new Date();
+    return prismaDm.purchase
       .findMany({
         where: {
           userId: socket.data.user!.id,
@@ -16,14 +17,21 @@ export default (socket: Socket<Events>) => {
           date: "desc",
         },
       })
-      .then((data) =>
-        callback(
-          data.map((purchase) => ({
-            ...purchase,
-            date: purchase.date.toISOString().split("T")[0],
-          })),
-        ),
-      ),
+      .then(data => {
+        const end = new Date();
+        console.log(`getPurchases took ${end.getTime() - start.getTime()}ms`);
+        const transformed = data.map((purchase) => ({
+          ...purchase,
+          date: purchase.date.toISOString().split("T")[0],
+        }))
+        console.log(`transformed took ${new Date().getTime() - start.getTime()}ms`);
+
+        return callback(
+          transformed
+        );
+      }
+      );
+  },
   );
 
   socket.on("createPurchase", async (date, description, callback) => {

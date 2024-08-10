@@ -16,7 +16,7 @@ export const wtdcollection = defineStore('wtdcollection', () => {
   const { issues, purchases, user } = storeToRefs(webCollectionStore);
   const statsStore = webStores.stats();
   const usersStore = webStores.users();
-  const { quotedIssues, quotationSum } = webComposables.useCollection(issues as ShallowRef<issue[]>);
+  const { quotedIssues, quotationSum } = webComposables.useCollection(issues as ShallowRef<(issue & { issuecode: string })[]>);
 
   const isPersistedDataLoaded = ref(false);
 
@@ -35,10 +35,10 @@ export const wtdcollection = defineStore('wtdcollection', () => {
   } = webCollectionStore;
 
   const ownedCountries = computed(() =>
-      ownedPublications.value
-        ? [...new Set((ownedPublications.value || []).map((publicationcode) => publicationcode.split('/')[0]))].sort()
-        : ownedPublications.value,
-    ),
+    ownedPublications.value
+      ? [...new Set((ownedPublications.value || []).map((publicationcode) => publicationcode.split('/')[0]))].sort()
+      : ownedPublications.value,
+  ),
     ownedPublications = computed(() =>
       issues.value
         ? [...new Set((issues.value || []).map(({ publicationcode }) => publicationcode))].sort()

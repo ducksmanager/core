@@ -51,7 +51,7 @@ export const collection = defineStore("collection", () => {
     CollectionServices["getIssues"]
   > | null>(null);
 
-  const collectionUtils = useCollection(issues as ShallowRef<issue[]>),
+  const collectionUtils = useCollection(issues as ShallowRef<(issue & { issuecode: string })[]>),
     watchedPublicationsWithSales = ref<string[] | null>(null),
     purchases = shallowRef<purchase[] | null>(null),
     watchedAuthors = shallowRef<authorUser[] | null>(null),
@@ -134,7 +134,7 @@ export const collection = defineStore("collection", () => {
           ([publicationcode1], [publicationcode2]) =>
             Math.sign(
               totalPerPublicationUniqueIssuecodes.value[publicationcode2]! -
-                totalPerPublicationUniqueIssuecodes.value[publicationcode1]!,
+              totalPerPublicationUniqueIssuecodes.value[publicationcode1]!,
             ),
         ),
     ),

@@ -53,7 +53,7 @@ const hasPublicationNames = $computed(() => Object.keys(publicationNames)),
         ?.reduce<
           {
             purchase: { date: Date; description: string };
-            issues: issue[];
+            issues: (issue & { issuecode: string })[];
           }[]
         >((acc, issue) => {
           const existingPurchase =
@@ -69,7 +69,7 @@ const hasPublicationNames = $computed(() => Object.keys(publicationNames)),
               };
           let purchaseIndex = acc.findIndex(
             ({ purchase: currentPurchase }) =>
-              currentPurchase.date === purchase.date,
+              currentPurchase.date === purchase.date
           );
           if (purchaseIndex === -1 && purchase.date) {
             acc.push({
@@ -85,9 +85,9 @@ const hasPublicationNames = $computed(() => Object.keys(publicationNames)),
           return acc;
         }, [])
         .sort(({ purchase: purchase1 }, { purchase: purchase2 }) =>
-          purchase1.date < purchase2.date ? 1 : -1,
+          purchase1.date < purchase2.date ? 1 : -1
         )
-        .slice(0, 5),
+        .slice(0, 5)
   );
 </script>
 

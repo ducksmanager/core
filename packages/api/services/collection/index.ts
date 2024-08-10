@@ -20,6 +20,7 @@ export default (io: Server) => {
   (io.of(namespaceEndpoint) as Namespace<Events>)
     .use(RequiredAuthMiddleware)
     .on("connection", (socket) => {
+      console.log(`User ${socket.data.user!.username} connected to collection`);
       watchedAuthors(socket);
       user(socket);
       issues(socket);
@@ -115,7 +116,7 @@ export default (io: Server) => {
               userId: socket.data.user!.id,
             },
             select: {
-                issuecode: true,
+              issuecode: true,
             },
           })
         ).map(

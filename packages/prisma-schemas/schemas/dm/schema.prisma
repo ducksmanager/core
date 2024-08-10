@@ -141,7 +141,7 @@ model issue {
   isSubscription  Boolean         @default(false) @map("Abonnement") @db.TinyInt
   userId          Int             @map("ID_Utilisateur")
   creationDate    DateTime?       @default(now()) @map("DateAjout") @db.Timestamp(0)
-  issuecode       String          @default(dbgenerated("(concat(convert(`Pays` using utf8mb3),'/',convert(`Magazine` using utf8mb3),' ',`Numero`))")) @map("issuecode") @db.VarChar(25)
+  issuecode       String?          @default(dbgenerated("(concat(convert(`Pays` using utf8mb3),'/',convert(`Magazine` using utf8mb3),' ',`Numero`))")) @map("issuecode") @db.VarChar(25)
 
   @@index([country, magazine, issuenumber, userId], map: "Numero_Utilisateur")
   @@index([country, magazine, issuenumber], map: "Pays_Magazine_Numero")

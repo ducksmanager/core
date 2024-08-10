@@ -262,7 +262,7 @@ const { copy: copyState, copyIndex = null } = defineProps<{
 let newCopyState = $ref(
   copyState as
     | IssueWithPublicationcodeOptionalId
-    | CollectionUpdateMultipleIssues,
+    | CollectionUpdateMultipleIssues
 );
 
 const emit = defineEmits<{
@@ -270,7 +270,7 @@ const emit = defineEmits<{
     e: "update",
     updatedCopy:
       | IssueWithPublicationcodeOptionalId
-      | CollectionUpdateMultipleIssues,
+      | CollectionUpdateMultipleIssues
   ): void;
 }>();
 
@@ -299,22 +299,24 @@ let newPurchase = $ref(newPurchaseDefault);
 
 const { t: $t } = useI18n();
 const isSaleDisabledGlobally = $computed(
-  () => !userIdsWhoSentRequestsForAllSelected.length,
+  () => !userIdsWhoSentRequestsForAllSelected.length
 );
 
 const issuecodes = $computed(() =>
   isSingleIssueSelected
     ? [(copyState as IssueWithPublicationcodeOptionalId).issuecode]
-    : (copyState as CollectionUpdateMultipleIssues).issuecodes,
+    : (copyState as CollectionUpdateMultipleIssues).issuecodes
 );
 
 const collectionForCurrentPublication = $computed(() =>
   issues.value?.filter(
     ({ publicationcode: issuePublicationcode }) =>
       issuecodeDetails.value[
-        "issuecode" in copyState ? copyState.issuecode : copyState.issuecodes[0]
-      ].publicationcode === issuePublicationcode,
-  ),
+        "issuecode" in copyState
+          ? copyState.issuecode!
+          : copyState.issuecodes[0]
+      ].publicationcode === issuePublicationcode
+  )
 );
 
 let isSingleIssueSelected = $computed(() => "copyIndex" in copyState);
@@ -332,7 +334,7 @@ const conditionStates = $computed(
       value: dbValue,
       labelContextMenu,
     })),
-  ],
+  ]
 );
 const purchaseStates = $computed(() => [
   { value: undefined, label: $t("Conserver la date d'achat") },
@@ -354,10 +356,10 @@ const marketplaceStates = $computed(() => [
     disabled: isSaleDisabledGlobally,
     tooltip: isSaleDisabledGlobally
       ? $t(
-          "Aucun utilisateur n'a envoyé de demande pour acheter ce numéro pour le moment | Aucun utilisateur n'a envoyé de demande pour acheter ces numéros pour le moment",
+          "Aucun utilisateur n'a envoyé de demande pour acheter ce numéro pour le moment | Aucun utilisateur n'a envoyé de demande pour acheter ces numéros pour le moment"
         )
       : $t(
-          "Réservez ce numéro à un utilisateur dans le but de les lui envoyer plus tard. Les autres utilisateurs ne pourront plus vous envoyer de demandes d'achat pour ce numéros. | Réservez ces numéros à un utilisateur dans le but de les lui envoyer plus tard. Les autres utilisateurs ne pourront plus vous envoyer de demandes d'achat pour ces numéros.",
+          "Réservez ce numéro à un utilisateur dans le but de les lui envoyer plus tard. Les autres utilisateurs ne pourront plus vous envoyer de demandes d'achat pour ce numéros. | Réservez ces numéros à un utilisateur dans le but de les lui envoyer plus tard. Les autres utilisateurs ne pourront plus vous envoyer de demandes d'achat pour ces numéros."
         ),
   },
   {
@@ -366,10 +368,10 @@ const marketplaceStates = $computed(() => [
     disabled: isSaleDisabledGlobally,
     tooltip: isSaleDisabledGlobally
       ? $t(
-          "Aucun utilisateur n'a envoyé de demande pour acheter ce numéro pour le moment | Aucun utilisateur n'a envoyé de demande pour acheter ces numéros pour le moment",
+          "Aucun utilisateur n'a envoyé de demande pour acheter ce numéro pour le moment | Aucun utilisateur n'a envoyé de demande pour acheter ces numéros pour le moment"
         )
       : $t(
-          "Transférez ce numéro à un utilisateur avec qui vous avez négocié une vente ou un échange | Transférez ces numéros à un utilisateur avec qui vous avez négocié une vente ou un échange",
+          "Transférez ce numéro à un utilisateur avec qui vous avez négocié une vente ou un échange | Transférez ces numéros à un utilisateur avec qui vous avez négocié une vente ou un échange"
         ),
   },
 ]);
@@ -383,9 +385,9 @@ const userIdsWhoSentRequestsForAllSelected = $computed(() =>
               (receivedRequests || [])
                 .filter(
                   ({ issueId: receivedRequestIssueId }) =>
-                    receivedRequestIssueId === issueId,
+                    receivedRequestIssueId === issueId
                 )
-                .map(({ buyerId }) => buyerId),
+                .map(({ buyerId }) => buyerId)
             ),
           ]
         : acc.filter((buyerId) =>
@@ -395,17 +397,17 @@ const userIdsWhoSentRequestsForAllSelected = $computed(() =>
                 buyerId: receivedRequestBuyerId,
               }) =>
                 receivedRequestIssueId === issueId &&
-                receivedRequestBuyerId === buyerId,
-            ),
+                receivedRequestBuyerId === buyerId
+            )
           ),
-    [],
-  ),
+    []
+  )
 );
 
 const receivedRequests = $computed(() =>
   issueRequestsAsSeller.value?.filter(({ issueId }) =>
-    issueIds.includes(issueId),
-  ),
+    issueIds.includes(issueId)
+  )
 );
 
 const formatDate = (value: string) =>
@@ -423,7 +425,7 @@ const issueIds = $computed((): (number | null)[] =>
       : collectionForCurrentPublication
           ?.filter(({ issuecode }) => issuecodes.includes(issuecode))
           .map(({ id }) => id || null)
-    : [] || [],
+    : [] || []
 );
 
 watch(
@@ -431,14 +433,14 @@ watch(
   (copyState) => {
     newCopyState = copyState;
   },
-  { immediate: true },
+  { immediate: true }
 );
 watch(
   $$(newCopyState),
   (newCopyState) => {
     emit("update", newCopyState);
   },
-  { deep: true },
+  { deep: true }
 );
 watch(
   issueRequestsAsSeller,
@@ -446,12 +448,12 @@ watch(
     const buyerId = newValue?.find(
       ({ issueId, isBooked }) =>
         issueId === (copyState as IssueWithPublicationcodeOptionalId).id &&
-        isBooked,
+        isBooked
     )?.buyerId;
     if (buyerId) {
       newCopyState.isOnSale = { setAsideFor: buyerId };
     }
   },
-  { immediate: true },
+  { immediate: true }
 );
 </script>
