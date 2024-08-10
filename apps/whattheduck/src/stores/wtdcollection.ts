@@ -1,6 +1,5 @@
 import { defineStore } from 'pinia';
 import type { ShallowRef } from 'vue';
-import type { IssueWithIssuecodeOnly, PartInfo } from '~dm-types/SimpleIssue';
 import type { purchase, issue } from '~prisma-schemas/schemas/dm';
 import { stores as webStores, composables as webComposables } from '~web';
 
@@ -16,7 +15,9 @@ export const wtdcollection = defineStore('wtdcollection', () => {
   const { issues, purchases, user } = storeToRefs(webCollectionStore);
   const statsStore = webStores.stats();
   const usersStore = webStores.users();
-  const { quotedIssues, quotationSum } = webComposables.useCollection(issues as ShallowRef<(issue & { issuecode: string })[]>);
+  const { quotedIssues, quotationSum } = webComposables.useCollection(
+    issues as ShallowRef<(issue & { issuecode: string })[]>,
+  );
 
   const isPersistedDataLoaded = ref(false);
 
@@ -35,10 +36,10 @@ export const wtdcollection = defineStore('wtdcollection', () => {
   } = webCollectionStore;
 
   const ownedCountries = computed(() =>
-    ownedPublications.value
-      ? [...new Set((ownedPublications.value || []).map((publicationcode) => publicationcode.split('/')[0]))].sort()
-      : ownedPublications.value,
-  ),
+      ownedPublications.value
+        ? [...new Set((ownedPublications.value || []).map((publicationcode) => publicationcode.split('/')[0]))].sort()
+        : ownedPublications.value,
+    ),
     ownedPublications = computed(() =>
       issues.value
         ? [...new Set((issues.value || []).map(({ publicationcode }) => publicationcode))].sort()
@@ -114,5 +115,5 @@ export type IssueWithCollectionIssues = IssueWithIssuecodeOnly & {
   countryname?: string;
   publicationName: string;
   collectionIssues?: issue[];
-  partInfo?: PartInfo;
+  partInfo?: EntryPartInfo;
 };

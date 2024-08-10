@@ -32,7 +32,7 @@ const values = computed(() =>
 );
 const colors = props.conditions.map(({ color }) => color);
 const chartData = computed(() => ({
-  labels: props.conditions.map(({ text }) => text),
+  labels: props.conditions.map(({ getText }) => getText()),
   datasets: [
     {
       data: values.value,

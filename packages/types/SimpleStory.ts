@@ -1,4 +1,6 @@
-import type { IssueWithIssuecodeOnly, SimpleIssueWithPartInfo } from "./SimpleIssue";
+import type { IssueWithIssuecodeOnly } from "AllNonNullable";
+
+import type { SimpleIssueWithPartInfo } from "./SimpleIssue";
 
 export interface SimpleStory {
   storycode: string;

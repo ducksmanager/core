@@ -1,11 +1,11 @@
 import type { Socket } from "socket.io";
 
+import { augmentIssueArrayWithInducksData } from "~/services/coa";
 import type { issue } from "~prisma-schemas/schemas/dm";
 import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
 
 import type Events from "../types";
 import contactMethods from "./contact-methods";
-import { augmentIssueArrayWithInducksData } from "~/services/coa";
 
 export default (socket: Socket<Events>) => {
   contactMethods(socket);

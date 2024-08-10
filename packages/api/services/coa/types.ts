@@ -1,8 +1,8 @@
-import type { AugmentedIssue } from "~dm-types/AugmentedIssue";
+import type { SimpleInducksIssue } from "~dm-types/AugmentedIssue";
 import type { CoverSearchResults } from "~dm-types/CoverSearchResults";
 import type { IssueCoverDetails } from "~dm-types/IssueCoverDetails";
+import type { IssueWithIssuecodeOnly } from "~dm-types/IssueWithIssuecodeOnly";
 import type { SimpleEntry } from "~dm-types/SimpleEntry";
-import type { IssueWithIssuecodeOnly, PartInfo } from "~dm-types/SimpleIssue";
 import type { StorySearchResults } from "~dm-types/StorySearchResults";
 import type {
   inducks_issue,
@@ -70,15 +70,15 @@ export default abstract class {
   ) => void;
   abstract getIssues: (
     issuecodes: string[],
-    callback: ( 
-      value: Record<string, AugmentedIssue<{partInfo?:PartInfo}>>,
+    callback: (
+      value: Record<string, SimpleInducksIssue>,
     ) => void,
   ) => void;
 
-  abstract getIssuesByPublicationcodes:(
+  abstract getIssuesByPublicationcodes: (
     publicationcodes: string[],
     callback: (
-      value: Record<string, AugmentedIssue[]>,
+      value: Record<string, SimpleInducksIssue[]>,
     ) => void,
   ) => void;
 
@@ -87,7 +87,7 @@ export default abstract class {
     callback: (value: IssueWithIssuecodeOnly[]) => void,
   ) => void;
   abstract getRecentIssues: (
-    callback: (value: AugmentedIssue[]) => void,
+    callback: (value: SimpleInducksIssue[]) => void,
   ) => void;
   abstract getIssuesByPublicationCodes: (
     publicationCodes: string[],

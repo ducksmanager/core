@@ -25,7 +25,12 @@
       <ion-list v-if="storyResults?.results && !selectedStory">
         <ion-item v-for="story of storyResults?.results" @click="selectedStory = story">
           <ion-label>
-            <condition v-for="condition of story.collectionConditions" :value="condition" />{{ story.title }}
+            <template v-for="{ collectionIssues, partInfo } of story.issues">
+              <condition-with-part
+                v-for="{ condition } of collectionIssues"
+                :value="condition"
+                :part-info="partInfo" /></template
+            >{{ story.title }}
           </ion-label>
         </ion-item>
       </ion-list>
@@ -38,14 +43,8 @@
           >{{ t("Retour aux résultats d'histoire") }}</ion-button
         >
         <ion-list>
-          <ion-item
-            v-for="issue of selectedStory.issues"
-            @click="
-              issuecodes = [issue.issuecode];
-              router.push('/collection');
-            "
-          >
-            <FullIssue :issuecode="issue.issuecode" show-issue-conditions />
+          <ion-item v-for="{ issuecode, partInfo } of selectedStory.issues" @click="goToIssue(issuecode)">
+            <FullIssue :issuecode="issuecode" show-issue-conditions :part-info="partInfo" />
           </ion-item>
         </ion-list>
       </template>
@@ -55,17 +54,16 @@
 
 <script setup lang="ts">
 import { arrowBackOutline, arrowBackSharp } from 'ionicons/icons';
+import type { EntryPartInfo } from '~dm-types/EntryPartInfo';
 import type { SimpleStory } from '~dm-types/SimpleStory';
 import type { StorySearchResults } from '~dm-types/StorySearchResults';
+import type { issue_condition } from '~prisma-schemas/schemas/dm';
 import { stores } from '~web';
 import { dmSocketInjectionKey } from '~web/src/composables/useDmSocket';
-
-import type { issue_condition } from '../../../../packages/prisma-schemas/schemas/dm';
 
 import FullIssue from '~/components/FullIssue.vue';
 import { app } from '~/stores/app';
 import { wtdcollection } from '~/stores/wtdcollection';
-import type { IssueWithCollectionIssues } from '~/stores/wtdcollection';
 
 const {
   coa: { services: coaServices },
@@ -73,19 +71,18 @@ const {
 
 const { t } = useI18n();
 
-const { issuesByIssuecode } = storeToRefs(wtdcollection());
+const { issuesByIssuecode: collectionIssuesByIssuecode } = storeToRefs(wtdcollection());
 const coaStore = stores.coa();
 const { fetchPublicationNames, fetchIssuecodeDetails } = coaStore;
-const { publicationNames, issuecodeDetails } = storeToRefs(coaStore);
-const { issuecodes } = storeToRefs(app());
+const { issuecodeDetails } = storeToRefs(coaStore);
+const { currentNavigationItem } = storeToRefs(app());
 const router = useRouter();
 
-type AugmentedStoryResult = SimpleStory & {
-  collectionConditions: issue_condition[];
+type AugmentedStoryResult = Omit<SimpleStory, 'issues'> & {
   issues: {
-    countrycode: string;
-    publicationName: string;
-    collectionIssues: IssueWithCollectionIssues['collectionIssues'];
+    issuecode: string;
+    collectionIssues: { condition: issue_condition }[];
+    partInfo: EntryPartInfo;
   }[];
 };
 
@@ -94,63 +91,44 @@ const storyResults = ref<{ results: AugmentedStoryResult[] } | null>(null);
 
 const selectedStory = ref<AugmentedStoryResult | null>(null);
 
-watch(storyTitle, async (newValue) => {
-  if (!newValue) {
-    return;
-  }
-  selectedStory.value = null;
-  const { results: data }: StorySearchResults<true> = await coaServices.searchStory([newValue], true);
+const goToIssue = (issuecode: string) => {
+  currentNavigationItem.value = { type: 'issuecodes', value: [issuecode] };
+  router.push('/collection');
+};
 
-  await fetchIssuecodeDetails(
-    data
+watchDebounced(
+  storyTitle,
+  async (newValue) => {
+    if (!newValue) {
+      return;
+    }
+    selectedStory.value = null;
+    const { results: data }: StorySearchResults<true> = await coaServices.searchStory([newValue], true);
+
+    const issuecodes = data
       .map((story) => story.issues)
       .flat()
-      .map(({ issuecode }) => issuecode),
-  );
+      .map(({ issuecode }) => issuecode);
 
-  await fetchPublicationNames(
-    data
-      .map((story) => story.issues)
-      .flat()
-      .map(({ issuecode }) => issuecodeDetails.value![issuecode]?.publicationcode),
-  );
+    await fetchIssuecodeDetails(issuecodes);
 
-  storyResults.value = {
-    results: data.map((story) => {
-      const collectionIssues = story.issues.map((storyIssue) => {
-        const { part, estimatedpanels, total_estimatedpanels } = storyIssue;
-        return (issuesByIssuecode.value![storyIssue.issuecode] || []).map((issue) => ({
+    await fetchPublicationNames(issuecodes.map((issuecode) => issuecodeDetails.value![issuecode]?.publicationcode));
+
+    storyResults.value = {
+      results: data.map((story) => ({
+        ...story,
+        issues: story.issues.map(({ part, estimatedpanels, total_estimatedpanels, ...issue }) => ({
           ...issue,
           partInfo: { part, estimatedpanels, total_estimatedpanels },
-        }));
-      });
-
-      const collectionConditions = collectionIssues.flat().map(({ condition }) => condition);
-      return {
-        ...story,
-        collectionConditions,
-        issues: story.issues.map(
-          ({ issuecode, estimatedpanels, total_estimatedpanels, part, storyversioncode }, idx) => {
-            const publicationcode = issuecodeDetails.value![issuecode]!.publicationcode!;
-            return {
-              countrycode: publicationcode.split('/')[0],
-              publicationcode,
-              publicationName: publicationNames.value![publicationcode],
-              issuecode,
-              collectionIssues: collectionIssues[idx]!,
-              partInfo: {
-                estimatedpanels,
-                total_estimatedpanels,
-                part,
-                storyversioncode,
-              },
-            };
-          },
-        ),
-      };
-    }),
-  };
-});
+          collectionIssues: (collectionIssuesByIssuecode.value[issue.issuecode] || []).map((collectionIssue) => ({
+            condition: collectionIssue.condition,
+          })),
+        })),
+      })),
+    };
+  },
+  { debounce: 250 },
+);
 </script>
 
 <style scoped>

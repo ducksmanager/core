@@ -61,11 +61,16 @@
         <template v-if="!isSearchByCode">
           <div class="me-1 d-flex">
             <Condition
-              v-if="(searchResult as SimpleStoryWithOptionalCollectionIssue).collectionIssue"
+              v-if="
+                (searchResult as SimpleStoryWithOptionalCollectionIssue)
+                  .collectionIssue
+              "
               :value="
                 conditions.find(
                   ({ dbValue }) =>
-                    dbValue === (searchResult as SimpleStoryWithOptionalCollectionIssue).collectionIssue!.condition
+                    dbValue ===
+                    (searchResult as SimpleStoryWithOptionalCollectionIssue)
+                      .collectionIssue!.condition
                 )?.dbValue || undefined
               "
             />
@@ -86,7 +91,7 @@
 </template>
 
 <script setup lang="ts">
-import type { IssueWithIssuecodeOnly } from "~dm-types/SimpleIssue";
+import type { IssueWithIssuecodeOnly } from "~dm-types/IssueWithIssuecodeOnly";
 import type { SimpleStory } from "~dm-types/SimpleStory";
 import type { issue } from "~prisma-schemas/schemas/dm";
 

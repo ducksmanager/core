@@ -6,7 +6,7 @@
       [`issue-condition-${currentCondition!.dbValue}`]: true,
     }"
     :style="{ backgroundColor: currentCondition!.color }"
-    :title="currentCondition!.label"
+    :title="currentCondition!.getLabel()"
   />
   <span v-else class="issue-condition" />
 </template>

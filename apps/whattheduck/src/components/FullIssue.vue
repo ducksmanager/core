@@ -4,7 +4,7 @@
       >&nbsp;<condition-with-part
         v-for="collectionIssue of collectionIssues"
         :value="collectionIssue.condition"
-        :part-info="issue.partInfo"
+        :part-info="partInfo"
     /></template>
     <div>
       {{ publicationName }}
@@ -15,6 +15,7 @@
 </template>
 
 <script setup lang="ts">
+import type { EntryPartInfo } from '~dm-types/EntryPartInfo';
 import { stores as webStores } from '~web';
 
 import { wtdcollection } from '~/stores/wtdcollection';
@@ -22,18 +23,20 @@ import { wtdcollection } from '~/stores/wtdcollection';
 const props = defineProps<{
   classes?: string[];
   issuecode: string;
-  showIssueConditions: boolean;
+  showIssueConditions?: boolean;
+  partInfo?: EntryPartInfo;
 }>();
 
+const coaStore = webStores.coa();
+
 const { getCollectionIssues } = wtdcollection();
-const { issuecodeDetails, publicationNames } = storeToRefs(webStores.coa());
 
 const collectionIssues = computed(() => getCollectionIssues(props.issuecode));
-const issue = computed(() => issuecodeDetails.value[props.issuecode]);
+const issue = computed(() => coaStore.issuecodeDetails[props.issuecode]);
 
 const countrycode = computed(() => issue.value?.publicationcode.split('/')[0]);
 
-const publicationName = computed(() => issue.value && publicationNames.value[issue.value.publicationcode]);
+const publicationName = computed(() => issue.value && coaStore.publicationNames[issue.value.publicationcode]);
 </script>
 
 <style scoped lang="scss">

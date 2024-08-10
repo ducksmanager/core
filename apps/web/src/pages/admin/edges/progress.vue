@@ -79,11 +79,10 @@ meta:
             <span
               class="num bordered"
               :class="{
-                available: issuesForPublication.map(({issuecode}) => issuecode)?.includes(inducksIssuecode),
-                owned:
-                  issuesByIssuecode[
-                    inducksIssuecode
-                  ]!!,
+                available: issuesForPublication
+                  .map(({ issuecode }) => issuecode)
+                  ?.includes(inducksIssuecode),
+                owned: issuesByIssuecode[inducksIssuecode]!!,
               }"
               :title="inducksIssuecode"
               @click="open(inducksIssuecode)"
@@ -113,7 +112,7 @@ meta:
 
 <script setup lang="ts">
 import type { BookcaseEdgeWithPopularity } from "~/stores/bookcase";
-import type { AugmentedIssue } from "~dm-types/AugmentedIssue";
+import type { SimpleInducksIssue } from "~dm-types/AugmentedIssue";
 import type { WantedEdge } from "~dm-types/WantedEdge";
 
 import { dmSocketInjectionKey } from "../../../composables/useDmSocket";
@@ -122,7 +121,7 @@ const { getImagePath } = images();
 
 let hasData = $ref(false);
 let mostWanted = $shallowRef<WantedEdge[] | null>(null);
-let publishedEdges = $ref<AugmentedIssue[]>([]);
+let publishedEdges = $ref<SimpleInducksIssue[]>([]);
 const showEdgesForPublication = $ref<string[]>([]);
 const bookcaseTextures = $ref({
   bookcase: "bois/HONDURAS MAHOGANY",

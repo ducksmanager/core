@@ -17,7 +17,9 @@ export const publicCollection = defineStore("publicCollection", () => {
     ),
     purchases = ref([]);
 
-  const collectionUtils = useCollection(issues as ShallowRef<(issue & { issuecode: string })[]>),
+  const collectionUtils = useCollection(
+      issues as ShallowRef<(issue & { issuecode: string })[]>,
+    ),
     loadPublicCollection = async (username: string) => {
       publicUsername.value = username;
       const data = await publicCollectionServices.getPublicCollection(username);
@@ -31,6 +33,6 @@ export const publicCollection = defineStore("publicCollection", () => {
     issues,
     purchases,
     loadPublicCollection,
-    loadPurchases: () => { },
+    loadPurchases: () => {},
   };
 });

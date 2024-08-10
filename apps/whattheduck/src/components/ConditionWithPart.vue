@@ -5,7 +5,7 @@
   </svg>
 </template>
 <script setup lang="ts">
-import type { PartInfo } from '~dm-types/SimpleIssue';
+import type { EntryPartInfo } from '~dm-types/SimpleIssue';
 import type { issue_condition } from '~prisma-schemas/schemas/dm';
 
 const { conditions } = useCondition();
@@ -13,7 +13,7 @@ const { conditions } = useCondition();
 const props = defineProps<{
   value?: issue_condition;
   noMargin?: boolean;
-  partInfo?: PartInfo;
+  partInfo?: EntryPartInfo;
 }>();
 
 const fillClass = computed(

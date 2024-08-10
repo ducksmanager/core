@@ -18,7 +18,7 @@
             />
           </ion-radio-group>
           <ion-label>{{
-            conditionsWithoutMissing.find(({ dbValue }) => dbValue === issue.condition)?.label
+            conditionsWithoutMissing.find(({ dbValue }) => dbValue === issue.condition)?.getLabel()
           }}</ion-label></ion-row
         ></ion-col
       >

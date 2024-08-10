@@ -1,7 +1,7 @@
 import type { Socket } from "socket.io";
 
-import type { IssueWithIssuecodeOnly } from "~dm-types/SimpleIssue";
-import { prismaClient as  prismaCoa } from "~prisma-schemas/schemas/coa/client";
+import type { IssueWithIssuecodeOnly } from "~dm-types/IssueWithIssuecodeOnly";
+import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa/client";
 
 import type Events from "../types";
 export default (socket: Socket<Events>) => {
@@ -13,7 +13,7 @@ export default (socket: Socket<Events>) => {
           issuenumber: true,
           issuecode: true,
         },
-        where: {issuecode: {in: issuecodes}},
+        where: { issuecode: { in: issuecodes } },
       })
       .then((data) =>
         data.groupBy('issuecode')

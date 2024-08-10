@@ -1,22 +1,5 @@
-import type {
-  inducks_entry,
-  inducks_issue,
-  inducks_storyversion,
-} from "~prisma-schemas/schemas/coa";
+import type { IssueWithIssuecodeOnly } from "AllNonNullable";
 
-type AllNonNullable<T> = {
-  [P in keyof T]: NonNullable<T[P]>;
-};
+import type { EntryPartInfo } from "./EntryPartInfo";
 
-export type IssueWithIssuecodeOnly = AllNonNullable<
-  Pick<inducks_issue, "issuecode">
->;
-
-export type PartInfo = AllNonNullable<
-  Pick<inducks_entry, "storyversioncode" | "part"> &
-    Pick<inducks_storyversion, "estimatedpanels"> & {
-      total_estimatedpanels: inducks_storyversion["estimatedpanels"];
-    }
->;
-
-export type SimpleIssueWithPartInfo = IssueWithIssuecodeOnly & PartInfo;
+export type SimpleIssueWithPartInfo = IssueWithIssuecodeOnly & EntryPartInfo;

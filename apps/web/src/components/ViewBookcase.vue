@@ -162,7 +162,7 @@
 
 <script setup lang="ts">
 import type { BookcaseEdgeSprite } from "~dm-types/BookcaseEdge";
-import type { IssueWithIssuecodeOnly } from "~dm-types/SimpleIssue";
+import type { IssueWithIssuecodeOnly } from "~dm-types/IssueWithIssuecodeOnly";
 
 import type { BookcaseEdgeWithPopularity } from "../stores/bookcase";
 

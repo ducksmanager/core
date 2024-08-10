@@ -53,7 +53,7 @@
             >
               {{
                 $t(
-                  "Certains des numéros que vous possédez pour ce magazine n'existent plus. Cela peut se produire lorsque des numéros ont été renommés. Pour chaque numéro n'existant plus, trouvez le numéro de remplacement, puis supprimez l'ancien numéro en cliquant sur le bouton correspondant ci-dessous."
+                  "Certains des numéros que vous possédez pour ce magazine n'existent plus. Cela peut se produire lorsque des numéros ont été renommés. Pour chaque numéro n'existant plus, trouvez le numéro de remplacement, puis supprimez l'ancien numéro en cliquant sur le bouton correspondant ci-dessous.",
                 )
               }}
               <ul>
@@ -80,17 +80,17 @@
             >
               {{
                 $t(
-                  "Cliquez sur les numéros que vous souhaitez ajouter à votre collection,"
+                  "Cliquez sur les numéros que vous souhaitez ajouter à votre collection,",
                 )
               }}
               <b v-if="isTouchScreen">{{
                 $t(
-                  "puis tapotez deux fois au niveau de la liste pour indiquer leur état et validez."
+                  "puis tapotez deux fois au niveau de la liste pour indiquer leur état et validez.",
                 )
               }}</b>
               <b v-else>{{
                 $t(
-                  "puis faites un clic droit pour indiquer leur état et validez."
+                  "puis faites un clic droit pour indiquer leur état et validez.",
                 )
               }}</b>
             </b-alert></template
@@ -277,7 +277,7 @@
         <div v-if="userIssuesForPublication?.length">
           {{
             $t(
-              "Souhaitez-vous supprimer ce magazine de votre collection ? Les numéros suivants seront supprimés de votre collection dans ce cas :"
+              "Souhaitez-vous supprimer ce magazine de votre collection ? Les numéros suivants seront supprimés de votre collection dans ce cas :",
             )
           }}
           <ul>
@@ -330,7 +330,8 @@
 </template>
 
 <script setup lang="ts">
-import type { issue } from "../../../../packages/prisma-schemas/schemas/dm";
+import type { issue } from "~prisma-schemas/schemas/dm";
+
 import ContextMenuOnSaleByOthers from "./ContextMenuOnSaleByOthers.vue";
 import ContextMenuOwnCollection from "./ContextMenuOwnCollection.vue";
 
@@ -423,8 +424,8 @@ let selected = $shallowRef<string[]>([]);
 const filteredUserCopies = $computed(() =>
   filteredIssues.reduce<(issue & { issuecode: string })[]>(
     (acc, { userCopies }) => [...acc, ...userCopies],
-    []
-  )
+    [],
+  ),
 );
 const copiesBySelectedIssuecode = $computed(() =>
   selected.reduce<{ [issuecode: string]: issue[] }>((acc, issueKey) => {
@@ -438,11 +439,11 @@ const copiesBySelectedIssuecode = $computed(() =>
           ({ id: copyId, issuecode: copyIssuecode }) =>
             issueId !== null
               ? issueId === copyId
-              : issuecode.replaceAll("_", " ") === copyIssuecode
+              : issuecode.replaceAll("_", " ") === copyIssuecode,
         ),
       ],
     };
-  }, {})
+  }, {}),
 );
 let preselected = $shallowRef<string[]>([]);
 let preselectedIndexStart = $ref<number | null>(null);
@@ -451,14 +452,14 @@ let currentIssuecodeOpened = $shallowRef<string | null>(null);
 const issueNumberTextPrefix = $computed(() => $t("n°"));
 const boughtOnTextPrefix = $computed(() => $t("Acheté le"));
 const showFilter = $computed(
-  () => !duplicatesOnly && !readStackOnly && !onSaleStackOnly
+  () => !duplicatesOnly && !readStackOnly && !onSaleStackOnly,
 );
 
 const issueIds = $computed(() =>
   Object.values(copiesBySelectedIssuecode).reduce<number[]>(
     (acc, issues) => [...acc, ...issues.map(({ id }) => id)],
-    []
-  )
+    [],
+  ),
 );
 
 let contextMenuKey = $ref<string>("context-menu");
@@ -466,7 +467,7 @@ const userIssues = $computed(() => customIssues || collectionIssues.value);
 let purchases = $computed(() => collectionPurchases.value);
 const country = $computed(() => publicationcode.split("/")[0]);
 const publicationName = $computed(
-  () => publicationNames.value[publicationcode]
+  () => publicationNames.value[publicationcode],
 );
 const isTouchScreen = window.matchMedia("(pointer: coarse)").matches;
 const coaIssues = $computed(() => issuesWithTitles.value[publicationcode]);
@@ -476,9 +477,9 @@ const filteredIssues = $computed(
       ?.filter(
         ({ userCopies }) =>
           (filter.possessed && userCopies!.length) ||
-          (filter.missing && !userCopies!.length)
+          (filter.missing && !userCopies!.length),
       )
-      ?.map((issue, idx) => ({ ...issue, idx })) || []
+      ?.map((issue, idx) => ({ ...issue, idx })) || [],
 );
 
 const filteredIssuesCopyIndexes = $computed(() =>
@@ -491,16 +492,16 @@ const filteredIssuesCopyIndexes = $computed(() =>
           ? acc[idx - 1] + 1
           : 0,
     ],
-    []
-  )
+    [],
+  ),
 );
 
 const ownedIssuesCount = $computed(
   () =>
     issues?.reduce(
       (acc, { userCopies }) => acc + (userCopies.length ? 1 : 0),
-      0
-    ) || 0
+      0,
+    ) || 0,
 );
 
 const showContextMenuOnDoubleClickTouchScreen = (e: MouseEvent) => {
@@ -529,7 +530,7 @@ const getPreselected = () =>
             preselectedIndexStart !== null &&
             preselectedIndexEnd !== null &&
             index >= preselectedIndexStart &&
-            index <= preselectedIndexEnd
+            index <= preselectedIndexEnd,
         );
 const updateSelected = () => {
   if (!contextmenuInstance?.visible) {
@@ -537,7 +538,7 @@ const updateSelected = () => {
       .map(({ key }) => key || "")
       .filter(
         (itemKey) =>
-          selected.includes(itemKey) !== preselected.includes(itemKey)
+          selected.includes(itemKey) !== preselected.includes(itemKey),
       );
     preselectedIndexStart = preselectedIndexEnd = null;
     preselected = [];
@@ -568,7 +569,7 @@ const loadIssues = async () => {
     userIssuesForPublication = userIssues
       .filter(
         ({ publicationcode: issuePublicationcode }) =>
-          issuePublicationcode === publicationcode
+          issuePublicationcode === publicationcode,
       )
       .map((issue) => ({
         ...issue,
@@ -586,7 +587,7 @@ const loadIssues = async () => {
         ...issue,
         userCopies: userIssuesForPublication!
           .filter(
-            ({ issuecode: userIssuecode }) => userIssuecode === issue.issuecode
+            ({ issuecode: userIssuecode }) => userIssuecode === issue.issuecode,
           )
           .map((issue, copyIndex) => ({
             ...issue,
@@ -605,7 +606,7 @@ const loadIssues = async () => {
             ...acc,
             ...userIssuesForPublication!
               .filter(
-                ({ issuecode: userIssuecode }) => userIssuecode === issuecode
+                ({ issuecode: userIssuecode }) => userIssuecode === issuecode,
               )
               .map((issue) => ({
                 ...issue,
@@ -614,7 +615,7 @@ const loadIssues = async () => {
                 userCopies: [{ ...issue, copyIndex: 0 }],
               })),
           ],
-          []
+          [],
         );
     }
 
@@ -626,26 +627,28 @@ const loadIssues = async () => {
           ...acc,
           [userCopies[0].issuecode]: (acc[userCopies[0].issuecode] || 0) + 1,
         }),
-        {}
+        {},
       );
       issues = issues!.filter(
-        ({ issuecode }) => countPerIssuecode[issuecode] > 1
+        ({ issuecode }) => countPerIssuecode[issuecode] > 1,
       );
     }
 
     if (readStackOnly) {
       issues = issues!.filter(
-        ({ userCopies }) => userCopies.filter(({ isToRead }) => isToRead).length
+        ({ userCopies }) =>
+          userCopies.filter(({ isToRead }) => isToRead).length,
       );
     }
     if (onSaleStackOnly) {
       issues = issues!.filter(
-        ({ userCopies }) => userCopies.filter(({ isOnSale }) => isOnSale).length
+        ({ userCopies }) =>
+          userCopies.filter(({ isOnSale }) => isOnSale).length,
       );
     }
 
     const coaIssuecodes = issuesWithTitles.value[publicationcode].map(
-      ({ issuecode }) => issuecode
+      ({ issuecode }) => issuecode,
     );
     userIssuecodesNotFoundForPublication = userIssuesForPublication!
       .filter(({ issuecode }) => !coaIssuecodes.includes(issuecode))
@@ -667,7 +670,7 @@ watch(
   async () => {
     await loadIssues();
   },
-  { immediate: true }
+  { immediate: true },
 );
 
 watch(
@@ -675,7 +678,7 @@ watch(
   async () => {
     await loadIssues();
   },
-  { immediate: true }
+  { immediate: true },
 );
 
 (async () => {
