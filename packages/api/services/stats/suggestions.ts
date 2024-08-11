@@ -162,7 +162,6 @@ export const getSuggestions = async (
       ORDER BY ID_User, ${sort} DESC, issuecode
       LIMIT 50
   `);
-  debugger
 
   if (!suggestions.length) {
     return emptySuggestionList;

@@ -10,48 +10,54 @@
     </ion-header>
     <ion-content :fullscreen="true">
       <div v-if="!covers.length"></div>
-      <Carousel3d
-        v-else
-        :onMainSlideClick="onMainSlideClick"
-        @after-slide-change="(index: number) => (cover = covers[index])"
-      >
-        <Slide
-          v-for="(cover, index) in covers"
-          :key="index"
-          :index="index"
-          :style="{ width: `min(50%, ${slideWidths[index]}px)` }"
-        >
-          <ion-img :src="getCoverUrl(cover.fullUrl!)" @ion-img-did-load="setWidth" />
-        </Slide>
-      </Carousel3d>
-      <ion-row
-        class="ion-justify-content-between ion-align-items-center"
-        style="position: relative; flex-direction: column"
-        v-if="cover"
-      >
-        <ion-row><FullIssue :issuecode="cover.issuecode" show-issue-conditions /></ion-row>
-        <ion-row style="font-size: 0.8rem; width: 100%"
-          ><ion-col size="2"><ion-icon :ios="personOutline" :md="personSharp" /></ion-col
-          ><ion-col class="ion-text-left">{{
-            t('{numberOfUsers} utilisateurs possèdent ce numéro', { numberOfUsers: cover.popularity })
-          }}</ion-col></ion-row
-        ><ion-row style="font-size: 0.8rem; width: 100%" v-if="cover.estimationMin || cover.estimationMax"
-          ><ion-col size="2"><ion-icon :ios="pricetagOutline" :md="pricetagSharp"></ion-icon></ion-col
-          ><ion-col class="ion-text-left"
-            ><IssueQuotation :issue="{ ...cover, estimation: cover.estimationMin! }" /></ion-col></ion-row
-      ></ion-row>
-      <ion-note v-if="covers.length">
-        <div style="white-space: pre; margin-bottom: 1rem">
-          {{ t('Cliquez sur une couverture\npour ajouter le numéro à la collection') }}
-        </div>
+      <template v-else>
         <div>
-          <div>{{ t('ou') }}&nbsp;</div>
-          <ion-button v-if="origin === 'takePhoto'" @click="takePhoto">{{ t('Prenez une nouvelle photo') }}</ion-button>
-          <ion-button v-else-if="origin === 'pickCoverFile'" @click="pickCoverFile">{{
-            t('Sélectionnez une nouvelle photo')
-          }}</ion-button>
+          <Carousel3d
+            :onMainSlideClick="onMainSlideClick"
+            @after-slide-change="(index: number) => (cover = covers[index])"
+          >
+            <Slide
+              v-for="(cover, index) in covers"
+              :key="index"
+              :index="index"
+              :style="{ width: `min(50%, ${slideWidths[index]}px)` }"
+            >
+              <ion-img :src="getCoverUrl(cover.fullUrl!)" @ion-img-did-load="setWidth" />
+            </Slide>
+          </Carousel3d>
+          <ion-row
+            class="ion-justify-content-between ion-align-items-center"
+            style="position: relative; flex-direction: column"
+            v-if="hasCoaData && cover"
+          >
+            <ion-row><FullIssue :issuecode="cover.issuecode" show-issue-conditions /></ion-row>
+            <ion-row style="font-size: 0.8rem; width: 100%"
+              ><ion-col class="ion-text-left">{{
+                t('{numberOfUsers} utilisateurs possèdent ce numéro', {
+                  numberOfUsers: issuePopularities[cover.issuecode]!.popularity,
+                })
+              }}</ion-col></ion-row
+            ><ion-row style="font-size: 0.8rem; width: 100%" v-if="getEstimationWithAverage(cover.issuecode)"
+              ><ion-col size="2"><ion-icon :ios="pricetagOutline" :md="pricetagSharp"></ion-icon></ion-col
+              ><ion-col class="ion-text-left"
+                ><IssueQuotation :issue="getEstimationWithAverage(cover.issuecode)" /></ion-col></ion-row
+          ></ion-row>
         </div>
-      </ion-note>
+        <ion-note>
+          <div style="white-space: pre">
+            {{ t('Cliquez sur une couverture\npour ajouter le numéro à la collection') }}
+          </div>
+          <div>
+            <div style="margin: 0.5rem 0">{{ t('ou') }}&nbsp;</div>
+            <ion-button v-if="origin === 'takePhoto'" @click="takePhoto">{{
+              t('Prendre une nouvelle photo')
+            }}</ion-button>
+            <ion-button v-else-if="origin === 'pickCoverFile'" @click="pickCoverFile">{{
+              t('Sélectionnez une nouvelle photo')
+            }}</ion-button>
+          </div>
+        </ion-note></template
+      >
     </ion-content>
   </ion-page>
 </template>
@@ -59,7 +65,7 @@
 <script setup lang="ts">
 import '@nanoandrew4/vue3-carousel-3d/dist/style.css';
 import { Carousel3d, Slide } from '@nanoandrew4/vue3-carousel-3d';
-import { personOutline, personSharp, pricetagOutline, pricetagSharp } from 'ionicons/icons';
+import { pricetagOutline, pricetagSharp } from 'ionicons/icons';
 import type { EventReturnType } from '~socket.io-services/types';
 import { stores as webStores, components as webComponents } from '~web';
 
@@ -72,7 +78,15 @@ import { wtdcollection } from '~/stores/wtdcollection';
 import type CoverIdServices from '~dm-services/cover-id/types';
 
 const { t } = useI18n();
-const { publicationNames } = storeToRefs(webStores.coa());
+const hasCoaData = ref(false);
+const { issuecodeDetails, publicationNames, issuePopularities } = storeToRefs(webStores.coa());
+const {
+  fetchPublicationNames,
+  fetchIssuecodeDetails,
+  fetchIssuePopularities,
+  fetchIssueQuotations,
+  getEstimationWithAverage,
+} = webStores.coa();
 const { currentNavigationItem } = storeToRefs(app());
 
 const { IssueQuotation } = webComponents;
@@ -107,11 +121,24 @@ const covers = computed(() =>
   Object.keys(publicationNames.value).length
     ? searchResults.value.covers.map((cover) => ({
         ...cover,
-        countrycode: cover.publicationcode.split('/')[0],
-        publicationName: publicationNames.value[cover.publicationcode],
         collectionIssues: getCollectionIssues(cover.issuecode),
       }))
     : [],
+);
+
+watch(
+  searchResults,
+  async () => {
+    const issuecodes = searchResults.value.covers.map((cover) => cover.issuecode);
+    await fetchIssuePopularities(issuecodes);
+    await fetchIssueQuotations(issuecodes);
+    await fetchIssuecodeDetails(issuecodes);
+    await fetchPublicationNames(
+      searchResults.value.covers.map(({ issuecode }) => issuecodeDetails.value[issuecode].publicationcode),
+    );
+    hasCoaData.value = true;
+  },
+  { immediate: true },
 );
 
 watch(
@@ -128,6 +155,15 @@ const onMainSlideClick = async ({ index }: { index: number }) => {
 };
 </script>
 <style lang="scss" scoped>
+ion-content {
+  display: flex;
+  --offset-top: 0px !important;
+  div {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+}
 ion-content::part(scroll) {
   display: flex;
   flex-direction: column;

@@ -59,12 +59,15 @@ export const coa = defineStore("coa", () => {
     issueDetails = ref<{ [issuecode: string]: InducksIssueDetails }>({}),
     isLoadingCountryNames = ref(false),
     issuecodeDetails = ref<EventReturnType<CoaServices["getIssues"]>>({}),
+    issuePopularities = ref<
+      EventReturnType<CoaServices["getIssuePopularities"]>
+    >({}),
     issuecodesByPublicationcode = ref<{
       [publicationcode: string]: string[];
     }>({}),
-    issueQuotations = ref<{
-      [issuecode: string]: InducksIssueQuotationSimple;
-    }>({}),
+    issueQuotations = ref<
+      EventReturnType<CoaServices["getQuotationsByIssuecodes"]>["quotations"]
+    >({}),
     addPublicationNames = (
       newPublicationNames: typeof publicationNames.value,
     ) => {
@@ -84,6 +87,21 @@ export const coa = defineStore("coa", () => {
     },
     setCoverUrl = (issuecode: string, url: string) => {
       coverUrls.value[issuecode] = url;
+    },
+    fetchIssueQuotations = async (issuecodes: string[]) => {
+      const existingIssuecodes = new Set(
+        Object.keys(issueQuotations.value || {}),
+      );
+      const newIssuecodes = issuecodes.filter(
+        (issuecode) => !existingIssuecodes.has(issuecode),
+      );
+      if (newIssuecodes.length) {
+        Object.assign(
+          issueQuotations.value,
+          (await coaServices.getQuotationsByIssuecodes(newIssuecodes))
+            .quotations,
+        );
+      }
     },
     addIssueQuotations = (newIssueQuotations: {
       [publicationcode: string]: InducksIssueQuotationSimple;
@@ -176,6 +194,20 @@ export const coa = defineStore("coa", () => {
         );
       }
     },
+    fetchIssuePopularities = async (issuecodes: string[]) => {
+      const existingIssuecodes = new Set(
+        Object.keys(issuePopularities.value || {}),
+      );
+      const newIssuecodes = issuecodes.filter(
+        (issuecode) => !existingIssuecodes.has(issuecode),
+      );
+      if (newIssuecodes.length) {
+        Object.assign(
+          issuePopularities.value,
+          await coaServices.getIssuePopularities(newIssuecodes),
+        );
+      }
+    },
     fetchIssuecodesByPublicationcode = async (publicationcodes: string[]) => {
       const existingPublicationcodes = new Set(
         Object.keys(issuecodesByPublicationcode.value || {}),
@@ -217,6 +249,20 @@ export const coa = defineStore("coa", () => {
           [issuecode]: addPartInfo(newIssueDetails),
         });
       }
+    },
+    getEstimationWithAverage = (issuecode: string) => {
+      const estimationData = issueQuotations.value[issuecode];
+      return (
+        estimationData && {
+          ...estimationData,
+          estimation:
+            (estimationData.estimationMax
+              ? ((estimationData.estimationMin || 0) +
+                  estimationData.estimationMax!) /
+                2
+              : estimationData.estimationMin) || 0,
+        }
+      );
     };
   return {
     addIssueQuotations,
@@ -229,15 +275,20 @@ export const coa = defineStore("coa", () => {
     fetchIssuecodeDetails,
     fetchIssuecodesByPublicationcode,
     fetchIssueNumbersWithTitles,
+    fetchIssuePopularities,
+    fetchIssueQuotations,
     fetchIssueUrls,
     fetchPersonNames,
     fetchPublicationNames,
     fetchPublicationNamesFromCountry,
     fetchRecentIssues,
+
+    getEstimationWithAverage,
     isLoadingCountryNames,
     issuecodeDetails,
     issuecodesByPublicationcode,
     issueDetails,
+    issuePopularities: issuePopularities,
     issuecodes,
     issueQuotations,
     issuesWithTitles,

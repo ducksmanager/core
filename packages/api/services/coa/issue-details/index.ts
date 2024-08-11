@@ -5,30 +5,21 @@ import type { SimpleEntry } from "~dm-types/SimpleEntry";
 import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa/client";
 import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
 
-import { augmentIssueArrayWithInducksData } from "..";
-import { getQuotationsByIssuecodes } from "../quotations";
 import type Events from "../types";
 
-export const getPopularityByIssuecodes = async (issuecodes: string[]) =>
-  Object.entries(
-    await prismaDm.issue.groupBy({
-      by: ["issuecode", "userId"],
-      where: {
-        issuecode: {
-          in: issuecodes,
-        },
-      },
-      _sum: {
-        id: true,
-      },
-    }),
-  ).reduce<Record<string, { popularity: number }>>(
-    (acc, [issuecode, { _sum }]) => ({
-      ...acc,
-      [issuecode]: { popularity: _sum.id || 0 },
-    }),
-    {},
-  );
+export const getPopularityByIssuecodes = async (issuecodes: string[]) => prismaDm.issue.groupBy({
+  by: ["issuecode"],
+  where: {
+    issuecode: {
+      in: issuecodes,
+    },
+  },
+  _count: {
+    id: true,
+  },
+})
+  .then(data => data.map(({ issuecode, _count }) => ({ issuecode, popularity: _count.id })))
+  .then(data => data.groupBy("issuecode"))
 
 export default (socket: Socket<Events>) => {
   socket.on("getIssuesWithTitles", async (publicationcodes, callback) =>
@@ -100,35 +91,12 @@ export default (socket: Socket<Events>) => {
     },
   );
 
-  socket.on("getIssuesByIssuecode", async (issuecodes, callback) => {
-    const coversByIssuecode = await getCoverUrls(issuecodes)
-      .then((coverUrls) =>
-        coverUrls.map(({ issuecode, fullUrl }) => ({
-          issuecode,
-          fullUrl,
-        })),
-      )
-      .then(augmentIssueArrayWithInducksData)
-      .then((covers) => covers.groupBy("issuecode"))
-
-    const popularitiesByIssuecode = await getPopularityByIssuecodes(issuecodes);
-
-    const quotationsByIssuecode = await getQuotationsByIssuecodes(issuecodes);
-
-    callback({
-      covers: Object.values(
-        Object.assign(
-          coversByIssuecode,
-          quotationsByIssuecode,
-          popularitiesByIssuecode,
-        ),
-      ),
-    });
+  socket.on("getIssuePopularities", async (issuecodes, callback) => {
+    getPopularityByIssuecodes(issuecodes).then(callback);
   });
 };
 
 export const getCoverUrls = async (issuecodes: string[]) => {
-  debugger
   const issues = (await prismaCoa.inducks_issue.findMany({
     select: {
       issuecode: true,

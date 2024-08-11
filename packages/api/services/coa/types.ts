@@ -1,5 +1,4 @@
 import type { SimpleInducksIssue } from "~dm-types/AugmentedIssue";
-import type { CoverSearchResults } from "~dm-types/CoverSearchResults";
 import type { IssueCoverDetails } from "~dm-types/IssueCoverDetails";
 import type { IssueWithIssuecodeOnly } from "~dm-types/IssueWithIssuecodeOnly";
 import type { SimpleEntry } from "~dm-types/SimpleEntry";
@@ -64,9 +63,12 @@ export default abstract class {
       >,
     ) => void,
   ) => void;
-  abstract getIssuesByIssuecode: (
+  abstract getIssuePopularities: (
     issuecodes: string[],
-    callback: (value: CoverSearchResults) => void,
+    callback: (value: Record<string, {
+      popularity: number
+    }>
+    ) => void,
   ) => void;
   abstract getIssues: (
     issuecodes: string[],

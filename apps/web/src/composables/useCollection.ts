@@ -99,20 +99,6 @@ export default (issues: ShallowRef<(issue & { issuecode: string })[]>) => {
       if (issueQuotations === null) {
         return null;
       }
-      const getEstimation = (issuecode: string) => {
-        const estimationData = issueQuotations[issuecode];
-        return (
-          estimationData && {
-            ...estimationData,
-            estimation:
-              (estimationData.estimationMax
-                ? ((estimationData.estimationMin || 0) +
-                    estimationData.estimationMax!) /
-                  2
-                : estimationData.estimationMin) || 0,
-          }
-        );
-      };
       const CONDITION_TO_ESTIMATION_PCT = {
         bon: 1,
         moyen: 0.7,
@@ -122,9 +108,9 @@ export default (issues: ShallowRef<(issue & { issuecode: string })[]>) => {
       };
       return (
         issues.value
-          ?.filter(({ issuecode }) => getEstimation(issuecode))
+          ?.filter(({ issuecode }) => coa().getEstimationWithAverage(issuecode))
           .map(({ issuecode, condition }) => {
-            const estimation = getEstimation(issuecode);
+            const estimation = coa().getEstimationWithAverage(issuecode);
             return {
               ...estimation,
               issuecode,
