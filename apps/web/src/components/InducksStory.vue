@@ -1,8 +1,11 @@
 <template>
   <component :is="tagName" v-once :class="{ dark }" :href="url" target="_blank">
-    <b-badge v-if="kind" size="xl" :class="{ [`kind-${kind}`]: true }">{{
-      storyTypeText
-    }}</b-badge>
+    <b-badge
+      v-if="kind && !noBadge"
+      size="xl"
+      :class="{ [`kind-${kind}`]: true }"
+      >{{ storyTypeText }}</b-badge
+    >
     {{ title || $t("Sans titre")
     }}<template v-if="part"> - {{ $t("partie") }} {{ part }}</template>
     <small>{{ comment }}</small
@@ -16,6 +19,7 @@
 <script setup lang="ts">
 const { t: $t } = useI18n();
 const props = defineProps<{
+  noBadge: boolean;
   storycode: string;
   kind?: string;
   title?: string;

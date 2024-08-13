@@ -17,6 +17,7 @@ set NEW.issuecode = (
     );
 END IF;
 END;
+/**/
 ALTER TABLE tranches_pretes DROP COLUMN issuecode;
 ALTER TABLE tranches_pretes
 add issuecode varchar(25) collate utf8mb3_unicode_ci null;
@@ -33,6 +34,23 @@ set NEW.issuecode = (
         from coa.inducks_issue
         where inducks_issue.publicationcode = NEW.publicationcode
             and REGEXP_REPLACE(inducks_issue.issuenumber, ' +', ' ') = NEW.issuenumber
+    );
+END IF;
+END;
+/**/
+CREATE TRIGGER abonnements_sorties_issuecode_insert BEFORE
+INSERT ON abonnements_sorties FOR EACH ROW BEGIN IF NEW.issuecode IS NULL
+    AND EXISTS(
+        select 1
+        from coa.inducks_issue
+        where inducks_issue.publicationcode = CONCAT(NEW.Pays, '/', NEW.Magazine)
+            and REGEXP_REPLACE(inducks_issue.issuenumber, ' +', ' ') = NEW.Numero
+    ) THEN
+set NEW.issuecode = (
+        select inducks_issue.issuecode
+        from coa.inducks_issue
+        where inducks_issue.publicationcode = CONCAT(NEW.Pays, '/', NEW.Magazine)
+            and REGEXP_REPLACE(inducks_issue.issuenumber, ' +', ' ') = NEW.Numero
     );
 END IF;
 END;

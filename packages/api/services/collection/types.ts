@@ -6,13 +6,12 @@ import type {
 } from "~dm-types/CollectionUpdate";
 import type { EdgeWithStringCreationDate } from "~dm-types/EdgeWithStringCreationDate";
 import type { EditSubscription } from "~dm-types/EditSubscription";
+import { InducksIssueQuotationSimple } from "~dm-types/InducksIssueQuotationSimple";
 import type { TransactionResults } from "~dm-types/TransactionResults";
 import type { UserForAccountForm } from "~dm-types/UserForAccountForm";
-import type { inducks_issuequotation } from "~prisma-schemas/schemas/coa";
 import type {
   authorUser,
   issue,
-  issuePopularity,
   purchase,
   requestedIssue,
   subscription,
@@ -31,7 +30,7 @@ export default abstract class {
     callback: (data: userPermission[]) => void,
   ) => void;
   abstract getCollectionPopularity: (
-    callback: (data: issuePopularity[]) => void,
+    callback: (data: Record<string, number>) => void,
   ) => void;
   abstract getNotificationToken: (
     username: string,
@@ -192,7 +191,7 @@ export default abstract class {
   abstract getCollectionQuotations: (
     callback: (
       value: Errorable<
-        { quotations: Record<string, inducks_issuequotation> },
+        { quotations: Record<string, InducksIssueQuotationSimple> },
         "Bad request"
       >,
     ) => void,

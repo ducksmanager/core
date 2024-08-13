@@ -70,39 +70,39 @@ Array.prototype.groupBy = function (fieldName, valueFieldName) {
 };
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-const a = [
+[
   { id: 1, name: "John" },
   { id: 2, name: "Jane" },
   { id: 3, name: "John" },
 ].groupBy("name");
-//    ^ - a is inferred as Record<string, {id: number, name: string}>
-// a is now { John: { id: 3, name: 'John' }, Jane: { id: 2, name: 'Jane' } }
+// ^ inferred as Record<string, {id: number, name: string}>
+// Output:{ John: { id: 3, name: 'John' }, Jane: { id: 2, name: 'Jane' } }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-const b = [
+[
   { id: 1, name: "John" },
   { id: 2, name: "Jane" },
   { id: 3, name: "John" },
 ].groupBy("name", "[]");
-//    ^ - b is inferred as Record<string, {id: number, name: string}[]>
-// b is now { John: [{ id: 1, name: 'John' }, { id: 3, name: 'John' }], Jane: [{ id: 2, name: 'Jane' }] }
+// ^ inferred as Record<string, {id: number, name: string}[]>
+// Output: { John: [{ id: 1, name: 'John' }, { id: 3, name: 'John' }], Jane: [{ id: 2, name: 'Jane' }] }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-const c = [
+[
   { id: 1, name: "John" },
   { id: 2, name: "Jane" },
   { id: 3, name: "John" },
 ].groupBy("name", "id");
-//    ^ - c is inferred as Record<string, number>
-// c is now { John: 3, Jane: 2 }
+// ^ inferred as Record<string, number>
+// Output: { John: 3, Jane: 2 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-const d = [
+[
   { id: 1, name: "John" },
   { id: 2, name: "Jane" },
   { id: 3, name: "John" },
 ].groupBy("name", "id[]");
-//    ^ - d is inferred as Record<string, number[]>
-// d is now { John: [1, 3], Jane: [2] }
+// ^ inferred as Record<string, number[]>
+// Output: { John: [1, 3], Jane: [2] }
 
 export default {};

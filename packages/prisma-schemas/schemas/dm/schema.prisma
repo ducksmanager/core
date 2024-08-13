@@ -155,22 +155,6 @@ model issue {
   @@map("numeros")
 }
 
-model issuePopularity {
-  /// @deprecated
-  country     String @map("Pays") @ignore @db.VarChar(3)
-  /// @deprecated
-  magazine    String @map("Magazine") @ignore @db.VarChar(6)
-  /// @deprecated
-  issuenumber String @map("Numero") @ignore @db.VarChar(12)
-  popularity  Int    @map("Popularite")
-  id          Int    @id @default(autoincrement()) @map("ID")
-  issuecode   String @default(dbgenerated("(concat(convert(`Pays` using utf8mb3),'/',convert(`Magazine` using utf8mb3),' ',`Numero`))")) @db.VarChar(25)
-
-  @@unique([country, magazine, issuenumber], map: "numeros_popularite_unique")
-  @@index([issuecode], map: "numeros_popularite_issuecode_unique")
-  @@map("numeros_popularite")
-}
-
 model tranches_doublons {
   ID                 Int    @id @default(autoincrement())
   /// @deprecated

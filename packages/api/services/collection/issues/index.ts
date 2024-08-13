@@ -6,13 +6,13 @@ import type { Socket } from "socket.io";
 import { augmentIssueArrayWithInducksData } from "~/services/coa";
 import { getPublicationTitles } from "~/services/coa/publications";
 import type { TransactionResults } from "~dm-types/TransactionResults";
-import type { inducks_issuequotation } from "~prisma-schemas/schemas/coa";
 import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa/client";
 import type { issue, user } from "~prisma-schemas/schemas/dm";
 import { issue_condition } from "~prisma-schemas/schemas/dm";
 import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
 
 import type Events from "../types";
+import type { InducksIssueQuotationSimple } from "~dm-types/InducksIssueQuotationSimple";
 import {
   checkPurchaseIdsBelongToUser,
   deleteIssues,
@@ -43,9 +43,7 @@ export default (socket: Socket<Events>) => {
       publicationcode: {
         in: await getCollectionPublicationcodes(socket.data.user!.id),
       },
-    }).then((results) => {
-      callback(results);
-    }),
+    }).then(callback),
   );
   socket.on("getIssues", async (callback) => {
     if (socket.data.user!.username === "demo") {
@@ -62,7 +60,7 @@ export default (socket: Socket<Events>) => {
       },
     }))
       .then((issues) => augmentIssueArrayWithInducksData(issues as (issue & { issuecode: string })[]))
-      .then(issues => callback(issues));
+      .then(callback);
   });
 
   socket.on(
@@ -220,10 +218,8 @@ export default (socket: Socket<Events>) => {
   socket.on("getCollectionQuotations", async (callback) => {
     callback({
       quotations: (
-        await prismaDm.$queryRaw<inducks_issuequotation[]>`
+        await prismaDm.$queryRaw<InducksIssueQuotationSimple[]>`
           select
-            publicationcode,
-            issuenumber,
             issuecode,
             round(min(estimationmin))                         AS estimationMin,
             case max(ifnull(estimationmax, 0))

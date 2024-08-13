@@ -103,9 +103,9 @@ export const coa = defineStore("coa", () => {
         );
       }
     },
-    addIssueQuotations = (newIssueQuotations: {
-      [publicationcode: string]: InducksIssueQuotationSimple;
-    }) => {
+    addIssueQuotations = (
+      newIssueQuotations: Record<string, InducksIssueQuotationSimple>,
+    ) => {
       Object.assign(issueQuotations.value, newIssueQuotations);
     },
     fetchCountryNames = async (afterUpdate = false) => {

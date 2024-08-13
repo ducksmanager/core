@@ -89,12 +89,7 @@ export const collection = defineStore("collection", () => {
     >(undefined),
     previousVisit = ref<Date | null>(null),
     publicationUrlRoot = computed(() => "/collection/show"),
-    purchasesById = computed((): Record<string, purchase> | undefined =>
-      purchases.value?.reduce(
-        (acc, purchase) => ({ ...acc, [purchase.id]: purchase }),
-        {},
-      ),
-    ),
+    purchasesById = computed(() => purchases.value?.groupBy("id")),
     copiesPerIssuecode = computed(() =>
       issues.value?.groupBy("issuecode", "[]"),
     ),
@@ -104,15 +99,8 @@ export const collection = defineStore("collection", () => {
     issuecodesPerPublication = computed(
       () => issues.value?.groupBy("publicationcode", "[]") || {},
     ),
-    issuenumbersPerPublication = computed(
-      () =>
-        issues.value?.reduce<{ [publicationcode: string]: string[] }>(
-          (acc, { publicationcode, issuenumber }) => ({
-            ...acc,
-            [publicationcode]: [...(acc[publicationcode] || []), issuenumber],
-          }),
-          {},
-        ) || {},
+    issuenumbersPerPublication = computed(() =>
+      issues.value?.groupBy("publicationcode", "issuenumber[]"),
     ),
     totalPerPublicationUniqueIssuecodes = computed(
       (): {
@@ -307,15 +295,8 @@ export const collection = defineStore("collection", () => {
     },
     loadPopularIssuesInCollection = async () => {
       if (!popularIssuesInCollection.value) {
-        popularIssuesInCollection.value = (
-          await collectionServices.getCollectionPopularity()
-        ).reduce(
-          (acc, issue) => ({
-            ...acc,
-            [issue.issuecode]: issue.popularity,
-          }),
-          {},
-        );
+        popularIssuesInCollection.value =
+          await collectionServices.getCollectionPopularity();
       }
     },
     loadUserIssueQuotations = async () => {

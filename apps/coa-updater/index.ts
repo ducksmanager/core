@@ -132,6 +132,10 @@ ALTER TABLE inducks_entry ADD FULLTEXT INDEX entryTitleFullText(title);
 create index inducks_issue_short_issuecode_index
     on inducks_issue (short_issuecode);
 
+create index inducks_issue_publicationcode_issuenumber_index
+    on inducks_issue (publicationcode, issuenumber);
+
+OPTIMIZE table inducks_issue;
 set unique_checks = 1;
 set foreign_key_checks = 1;
 set sql_log_bin=1`;

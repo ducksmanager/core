@@ -5,7 +5,7 @@
     "node": ">=18.0.0 <19.0.0"
   },
   "scripts": {
-    "whattheduck-android": "concurrently -p \"[whattheduck-{name}]\" --kill-others-on-fail -n front+web,android \"pnpm whattheduck\" \"ionic cap run android --external --target Pixel_8_API_29 --livereload --public-host=192.168.1.211\"",
+    "whattheduck-android": "concurrently -p \"[whattheduck-{name}]\" --kill-others-on-fail -n front+web,android \"pnpm -r dev:whattheduck\" \"ionic cap run android --external --target Pixel_8_API_29 --livereload --public-host=192.168.1.209\"",
     "lint": "eslint .",
     "dev": "concurrently -n vite,vue-tsc \"vite --port 8003 --host\" \"vue-tsc --noEmit --watch\"",
     "build": "vue-tsc --noEmit && vite build",

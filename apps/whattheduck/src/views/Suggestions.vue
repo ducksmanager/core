@@ -12,7 +12,7 @@
       <div>
         {{
           t(
-            "WhatTheDuck vous propose une liste personalisée de magazines contenant des histoires inédites de vos auteurs favoris.\nVous pouvez changer les pays des magazines à afficher dans l'écran Paramètres, et la liste d'auteurs dans l'écran Mes auteurs favoris.\nLes suggestions sont mises à jour quotidiennement.",
+            "WhatTheDuck vous propose une liste personalisée de magazines contenant des histoires inédites de vos auteurs favoris.\nVous pouvez changer la liste d'auteurs dans l'écran Mes auteurs favoris.\nLes suggestions sont mises à jour quotidiennement.",
           )
         }}
       </div>
@@ -49,7 +49,11 @@
             }}</ion-chip
             ><ion-chip v-if="authors.length > 2" :outline="true">+{{ authors.length - 2 }}</ion-chip
             ><ion-col class="story-title"
-              ><InducksStory show-link="outer" :storycode="storycode" :title="title" /></ion-col></ion-row></template
+              ><InducksStory
+                show-link="outer"
+                :storycode="storycode"
+                :title="title"
+                no-badge /></ion-col></ion-row></template
       ></template>
     </ion-content>
   </ion-page>

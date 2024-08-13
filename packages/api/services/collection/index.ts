@@ -1,7 +1,6 @@
 import PushNotifications from "@pusher/push-notifications-server";
 import type { Namespace, Server } from "socket.io";
 
-import type { issuePopularity } from "~prisma-schemas/schemas/dm";
 import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
 
 import { RequiredAuthMiddleware } from "../auth/util";
@@ -50,13 +49,14 @@ export default (io: Server) => {
       );
 
       socket.on("getCollectionPopularity", (callback) =>
-        prismaDm.$queryRaw<issuePopularity[]>`
-      select issuePopularity.issuecode,
-             issuePopularity.popularite AS popularity
-      from numeros_popularite issuePopularity
-             inner join numeros issue using (issuecode)
-      where ID_Utilisateur = ${socket.data.user!.id}
-      order by popularity DESC`.then(callback),
+        prismaDm.$queryRaw<{ issuecode: string, popularity: number }[]>`
+          select userIssue.issuecode, COUNT(issue.ID) AS popularity
+          from numeros userIssue
+                  inner join numeros issue using (issuecode)
+          where issue.ID_Utilisateur = ${socket.data.user!.id}
+          group by issuecode
+          order by COUNT(issue.ID) DESC`
+          .then(results => results.groupBy('issuecode', 'popularity')).then(callback)
       );
 
       socket.on("getNotificationToken", async (username, callback) => {
