@@ -19,7 +19,7 @@ Related projects :
 
 ### Prerequisites
 
-- [Node.js](https://nodejs.org/en/) 16
+- [Node.js](https://nodejs.org/en/) 18
 - [Docker](https://www.docker.com/)
 - Some Unix or WSL2 environment
 
