@@ -3,7 +3,7 @@ import "dotenv/config";
 import * as Sentry from "@sentry/node";
 import { Namespace, Server } from "socket.io";
 
-import { PrismaClient as PrismaCoaClient } from "~prisma-clients/client_coa";
+import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa/client";
 
 import { player, PrismaClient } from "./prisma/client_duckguessr";
 import { createGameSocket } from "./sockets/game";
@@ -24,7 +24,6 @@ Sentry.init({
 });
 
 const prisma = new PrismaClient();
-const prismaCoa = new PrismaCoaClient();
 
 const cors = {
   origin: process.env.FRONTEND_URL,

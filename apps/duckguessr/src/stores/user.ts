@@ -27,13 +27,13 @@ export const MEDAL_LEVELS: MedalLevel[] = [
 ];
 
 export const userStore = defineStore("user", () => {
-  const loginSocket = ref(
-    null as Socket<ServerToClientEvents, ClientToServerEvents> | null,
+  const loginSocket = ref<Socket<ServerToClientEvents, ClientToServerEvents> | null>(
+    null,
   );
-  const user = ref(null as player | null);
-  const stats = ref(null as userMedalPoints[] | null);
-  const gameStats = ref(null as userGameMedalPoints[] | null);
-  const attempts = ref(0 as number);
+  const user = ref<player | null>(null);
+  const stats = ref<userMedalPoints[] | null>(null);
+  const gameStats = ref<userGameMedalPoints[] | null>(null);
+  const attempts = ref(0);
 
   const isAnonymous = computed(
     () => user.value && isAnonymousNative(user.value.username),

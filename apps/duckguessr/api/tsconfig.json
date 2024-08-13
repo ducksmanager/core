@@ -3,7 +3,10 @@
     "baseUrl": ".",
     "module": "commonjs",
     "target": "esnext",
-    "lib": ["ESNext", "DOM"],
+    "lib": [
+      "ESNext",
+      "DOM"
+    ],
     "strict": true,
     "jsx": "preserve",
     "esModuleInterop": true,
@@ -16,10 +19,19 @@
     "forceConsistentCasingInFileNames": true,
     "preserveWatchOutput": true,
     "paths": {
-      "~/*": ["./"],
-      "~duckguessr-types/*": ["./types/"],
-      "~prisma-clients/*": ["../../../packages/prisma-clients/*"],
+      "~/*": [
+        "./"
+      ],
+      "~duckguessr-types/*": [
+        "./types/"
+      ],
+      "~prisma-schemas/*": [
+        "../../../packages/prisma-schemas/*"
+      ],
     }
   },
-  "exclude": ["node_modules"]
+  "exclude": [
+    "node_modules",
+    "**/*.js"
+  ]
 }

@@ -9,42 +9,40 @@
   "main": "index.ts",
   "scripts": {
     "build": "rm -rf dist && ./node_modules/.bin/tsc && tsc-alias",
-    "dev": "concurrently -n api,docker-compose,db \"pnpm -F ~duckguessr-api nodemon-watch\" \"docker compose -f docker-compose-dev.yml up\" \"pnpm -F ~prisma-clients dev\"",
+    "dev": "concurrently -n api,docker-compose,db \"pnpm -F ~duckguessr-api nodemon-watch\" \"docker compose -f docker-compose-dev.yml up\" \"pnpm -F ~prisma-schemas dev\"",
     "nodemon-watch": "concurrently -n nodemon,tsc \"nodemon\" \"tsc --noEmit --watch\"",
-    "lint": "eslint --fix .",
+    "lint": "eslint .",
     "prisma-pull-generate": "prisma db pull && prisma generate",
     "prisma-generate": "prisma generate"
   },
   "author": "Bruno Perel",
   "license": "ISC",
   "dependencies": {
-    "@prisma/client": "^5.14.0",
-    "@sentry/node": "^7.116.0",
+    "@prisma/client": "^5.18.0",
+    "@sentry/node": "^7.118.0",
     "cookie": "^0.5.0",
     "dotenv": "^16.4.5",
     "esm": "^3.2.25",
     "jsonwebtoken": "^9.0.2",
-    "prisma": "^5.14.0",
+    "prisma": "^5.18.0",
     "sharp": "^0.33.4",
     "socket.io": "^4.7.5",
-    "typescript": "^5.4.5",
-    "~prisma-clients": "workspace:*",
+    "typescript": "^5.5.4",
+    "~prisma-schemas": "workspace:*",
     "~socket.io-services": "workspace:*"
   },
   "devDependencies": {
     "@types/jsonwebtoken": "^9.0.6",
-    "@types/node": "^18.19.33",
+    "@types/node": "^18.19.41",
     "concurrently": "^8.2.2",
     "eslint": "^8.57.0",
     "eslint-config-prettier": "^9.1.0",
-    "eslint-plugin-simple-import-sort": "^12.1.0",
-    "eslint-plugin-unused-imports": "^3.2.0",
-    "nodemon": "^3.1.0",
-    "prettier": "^3.2.5",
+    "nodemon": "^3.1.4",
+    "prettier": "^3.3.3",
     "ts-node": "^10.9.2",
     "tsc-alias": "^1.8.10",
     "tsconfig-paths": "^4.2.0",
     "typescript": "^5.3.3",
-    "typescript-eslint": "^7.9.0"
+    "typescript-eslint": "^7.16.1"
   }
 }
