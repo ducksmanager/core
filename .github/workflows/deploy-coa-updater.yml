@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
   push:
     branches:
-      - "migrate-api-to-websocket"
+      - "master"
 jobs:
   deploy-dm:
     runs-on: ubuntu-latest

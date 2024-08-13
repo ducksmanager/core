@@ -8,7 +8,7 @@ on:
       - "apps/duck-estimator/**"
       - "pnpm-lock.yaml"
     branches:
-      - "migrate-api-to-websocket"
+      - "master"
 jobs:
   deploy-duck-estimator:
     runs-on: ubuntu-latest
