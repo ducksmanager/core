@@ -1,15 +1,3 @@
-[submodule "whattheduck-ionic"]
-	path = apps/whattheduck-ionic
-	url = git@github.com:bperel/whattheduck-ionic.git
-	branch=master
-[submodule "dumili"]
-	path = apps/dumili
-	url = git@github.com:bperel/dumili.git
-	branch=master
-[submodule "duck-estimator"]
-	path = apps/duck-estimator
-	url = git@github.com:bperel/duck-estimator.git
-	branch=master
 [submodule "duckguessr-old"]
 	path = apps/duckguessr-old
 	url = git@github.com:bperel/duckguessr.git

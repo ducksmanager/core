@@ -9,7 +9,7 @@ on:
       - "packages/api/**"
       - "pnpm-lock.yaml"
     branches:
-      - "master"
+      - "legacy"
 jobs:
   deploy-dm:
     runs-on: ubuntu-latest

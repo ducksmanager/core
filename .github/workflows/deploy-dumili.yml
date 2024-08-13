@@ -8,7 +8,7 @@ on:
       - "apps/dumili"
       - "pnpm-lock.yaml"
     branches:
-      - "master"
+      - "legacy"
 jobs:
   deploy-dumili:
     runs-on: ubuntu-latest
