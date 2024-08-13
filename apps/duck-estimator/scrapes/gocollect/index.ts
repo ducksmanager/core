@@ -5,7 +5,7 @@ import { firefox } from "playwright-firefox";
 import { getScrapeCacheTime, syncScrapeCache } from "~/cache";
 import { createQuotations } from "~/coa";
 import { readCsvMapping } from "~/csv";
-import {prismaClient} from '~prisma-schemas/schemas/coa/client'
+import { prismaClient } from '~prisma-schemas/schemas/coa/client'
 
 const MAPPING_FILE = "scrapes/gocollect/coa-mapping.csv";
 const ROOT_URL = "https://gocollect.com/app/comics/";
@@ -34,7 +34,7 @@ export async function scrape() {
   const browserContext = await browser.newContext();
   await browserContext.route(/img.gocollect.com/, route => route.abort());
   const page = await browserContext.newPage();
-  
+
   await page.goto("https://gocollect.com/login");
   await page.fill("#email", process.env.GOCOLLECT_USERNAME!);
   await page.fill("#password", process.env.GOCOLLECT_PASSWORD!);
@@ -96,7 +96,7 @@ export async function scrape() {
               return _contents;
             }
           );
-        } catch (e) {
+        } catch (_e) {
           continue;
         }
 
@@ -108,7 +108,7 @@ export async function scrape() {
         }
         const issuenumber = issuenumberMatch[0];
         const issue = await prismaClient.inducks_issue.findFirstOrThrow({
-          select: {issuecode: true },
+          select: { issuecode: true },
           where: {
             publicationcode, issuenumber
           }
@@ -171,11 +171,11 @@ export async function scrape() {
           issuecode: issue.issuecode,
           estimationMin: Math.round(
             estimationMin.reduce((acc, value) => acc + value, 0) /
-              estimationMin.length
+            estimationMin.length
           ),
           estimationMax: Math.round(
             estimationMax.reduce((acc, value) => acc + value, 0) /
-              estimationMax.length
+            estimationMax.length
           ),
           scrapeDate: getScrapeCacheTime("gocollect", cacheFileName),
           source: "gocollect",
@@ -186,7 +186,7 @@ export async function scrape() {
           `[wire\\:key="paginator-page-1-page${++currentPageForPublication}"]`,
           { timeout: 200 }
         );
-      } catch (e) {
+      } catch (_e) {
         break;
       }
     }

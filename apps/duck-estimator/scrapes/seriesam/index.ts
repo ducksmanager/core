@@ -60,7 +60,7 @@ export async function scrape() {
         },
         (_contents) => _contents
       );
-    } catch (e) {
+    } catch (_e) {
       continue;
     }
 
@@ -94,7 +94,7 @@ export async function scrape() {
         ...(issuenumber.split(" to ") as [string, string])
       );
       let hasFoundQuotation = false;
-      for (const {issuenumber : issuenumberInRange, issuecode:issuecodeInRange} of issuenumbers) {
+      for (const { issuenumber: issuenumberInRange, issuecode: issuecodeInRange } of issuenumbers) {
         if (
           seriesamYear === seriesamYearMapping ||
           seriesamTitle === seriesamTitleMapping

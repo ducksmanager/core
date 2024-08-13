@@ -10,7 +10,7 @@
   "scripts": {
     "build": "vite build",
     "dev": "concurrently -n vite,vue-tsc \"vite --port 8002\" \"vue-tsc --noEmit --watch\"",
-    "lint": "eslint --fix --cache .",
+    "lint": "eslint .",
     "preview": "vite preview",
     "typecheck": "vue-tsc --noEmit"
   },
@@ -67,8 +67,6 @@
     "eslint": "^8.57.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-prettier-vue": "^5.0.0",
-    "eslint-plugin-simple-import-sort": "^12.1.1",
-    "eslint-plugin-unused-imports": "^3.2.0",
     "eslint-plugin-vue": "^9.27.0",
     "prettier": "^3.3.3",
     "typescript": "^5.5.4",

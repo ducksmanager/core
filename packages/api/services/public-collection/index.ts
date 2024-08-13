@@ -16,7 +16,7 @@ export default (io: Server) => {
         user = await prismaDm.user.findFirstOrThrow({
           where: { username },
         });
-      } catch (e) {
+      } catch (_e) {
         callback({ error: "User not found" });
         return;
       }

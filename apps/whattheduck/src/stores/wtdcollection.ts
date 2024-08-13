@@ -2,8 +2,8 @@ import { defineStore } from 'pinia';
 import type { ShallowRef } from 'vue';
 import type { EntryPartInfo } from '~dm-types/EntryPartInfo';
 import type { IssueWithIssuecodeOnly } from '~dm-types/IssueWithIssuecodeOnly';
-import type { purchase, issue } from '~prisma-schemas/schemas/dm';
-import { stores as webStores, composables as webComposables } from '~web';
+import type { issue, purchase } from '~prisma-schemas/schemas/dm';
+import { composables as webComposables, stores as webStores } from '~web';
 
 import usePersistedData from '~/composables/usePersistedData';
 

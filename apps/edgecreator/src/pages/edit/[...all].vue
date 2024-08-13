@@ -32,7 +32,8 @@
               class="surrounding-edge"
             >
               {{
-                mainStore.edgesBefore[mainStore.edgesBefore.length - 1]!.issuenumber
+                mainStore.edgesBefore[mainStore.edgesBefore.length - 1]!
+                  .issuenumber
               }}
             </th>
             <template
@@ -74,7 +75,8 @@
             <td v-if="showPreviousEdge && mainStore.edgesBefore.length">
               <published-edge
                 :issuecode="
-                  mainStore.edgesBefore[mainStore.edgesBefore.length - 1]!.issuecode
+                  mainStore.edgesBefore[mainStore.edgesBefore.length - 1]!
+                    .issuecode
                 "
                 @load="showPreviousEdge = true"
                 @error="showPreviousEdge = undefined"
@@ -245,7 +247,7 @@ try {
   } catch (e) {
     error.value = e as string;
   }
-} catch (e) {
+} catch (_e) {
   error.value = "Invalid URL";
 }
 

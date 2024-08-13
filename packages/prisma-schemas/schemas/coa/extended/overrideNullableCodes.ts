@@ -1,4 +1,4 @@
-import { inducks_issue } from "../../../client_coa";
+import type { inducks_issue } from "../../../client_coa";
 
 export const computePublicationcode = {
   publicationcode: {

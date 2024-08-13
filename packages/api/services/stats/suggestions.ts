@@ -7,7 +7,7 @@ import type { SuggestionList } from "~dm-types/SuggestionList";
 import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa/client";
 import { userOptionType } from "~prisma-schemas/schemas/dm";
 import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
-import { Prisma as PrismaDmStats } from "~prisma-schemas/schemas/dm_stats";
+import type { Prisma as PrismaDmStats } from "~prisma-schemas/schemas/dm_stats";
 import { prismaClient as prismaDmStats } from "~prisma-schemas/schemas/dm_stats/client";
 
 export enum COUNTRY_CODE_OPTION {
@@ -49,29 +49,25 @@ export default (socket: Socket<Events>) => {
     })
 }
 
-const suggestedPublications =
-  PrismaDmStats.validator<PrismaDmStats.suggestedIssueForUserDefaultArgs>()({
-    select: {
-      userId: true,
-      score: true,
-      issuecode: true,
-      oldestdate: true,
-    },
-  });
+type SuggestedPublications = {
+  select: {
+    userId: true;
+    score: true;
+    issuecode: true;
+    oldestdate: true;
+  };
+};
 
-const missingPublications =
-  PrismaDmStats.validator<PrismaDmStats.missingIssueForUserDefaultArgs>()(
-    {
-      select: { personcode: true, storycode: true },
-    },
-  );
+type MissingPublications = {
+  select: { personcode: true, storycode: true }
+}
 
 interface Suggestion
   extends PrismaDmStats.missingIssueForUserGetPayload<
-    typeof missingPublications
+    MissingPublications
   >,
   PrismaDmStats.suggestedIssueForUserGetPayload<
-    typeof suggestedPublications
+    SuggestedPublications
   > { }
 
 const getStoryDetails = async (

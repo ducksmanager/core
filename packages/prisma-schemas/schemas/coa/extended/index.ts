@@ -1,10 +1,10 @@
-import {
-  PrismaClient,
+import type {
   inducks_issue as rawInducksIssue,
+  PrismaClient,
 } from "../../../client_coa";
 import {
-  computePublicationcode,
   computeIssuenumber,
+  computePublicationcode,
 } from "./overrideNullableCodes";
 
 export default (prismaClient: PrismaClient) =>
@@ -19,6 +19,7 @@ export default (prismaClient: PrismaClient) =>
 
 type ExtendedType<
   BaseType,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   Compute extends { [key: string]: { compute: (...args: any[]) => any } },
 > = Omit<BaseType, keyof Compute> & {
   [Key in keyof Compute]: ReturnType<Compute[Key]["compute"]>;

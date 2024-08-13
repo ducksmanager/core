@@ -2,11 +2,14 @@ import type { Namespace, Server } from "socket.io";
 
 import type {
   bookstore,
-  bookstoreComment,   user} from "~prisma-schemas/schemas/dm";
+  bookstoreComment, user
+} from "~prisma-schemas/schemas/dm";
 import {
- userContributionType } from "~prisma-schemas/schemas/dm";
+  userContributionType
+} from "~prisma-schemas/schemas/dm";
 import {
-prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
+  prismaClient as prismaDm
+} from "~prisma-schemas/schemas/dm/client";
 
 import type Events from "./types";
 import { namespaceEndpoint } from "./types";
@@ -52,7 +55,7 @@ export default (io: Server) => {
             dbBookstore = await prismaDm.bookstore.findUniqueOrThrow({
               where: { id },
             });
-          } catch (e) {
+          } catch (_e) {
             callback({
               error: "No bookstore exists",
               errorDetails: `ID: ${id}`,
@@ -97,7 +100,7 @@ export default (io: Server) => {
             id: commentId,
           },
         });
-      } catch (e) {
+      } catch (_e) {
         callback({
           error: "Invalid bookstore comment ID",
           errorDetails: `ID: ${commentId}`,

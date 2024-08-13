@@ -146,7 +146,7 @@ export const edgeCatalog = defineStore("edgeCatalog", () => {
                 url,
               });
             }
-          } catch (e) {
+          } catch (_e) {
             console.error(`No SVG found : ${issuecode}`);
           }
         }

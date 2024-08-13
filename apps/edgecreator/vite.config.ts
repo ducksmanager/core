@@ -1,10 +1,10 @@
 import VueI18n from "@intlify/unplugin-vue-i18n/vite";
 import Vue from "@vitejs/plugin-vue";
+import { BootstrapVueNextResolver } from 'bootstrap-vue-next'
 import path from "path";
 import AutoImport from "unplugin-auto-import/vite";
 import IconsResolve from "unplugin-icons/resolver";
 import Icons from "unplugin-icons/vite";
-import { BootstrapVueNextResolver } from 'bootstrap-vue-next'
 import Components from "unplugin-vue-components/vite";
 import { defineConfig } from "vite";
 import Pages from "vite-plugin-pages";

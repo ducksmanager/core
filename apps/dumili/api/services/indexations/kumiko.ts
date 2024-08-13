@@ -1,6 +1,6 @@
 import axios from "axios";
 
-import { aiKumikoResultPanel } from "~/prisma/client_dumili";
+import type { aiKumikoResultPanel } from "~/prisma/client_dumili";
 
 type KumikoResult = {
   filename: string;

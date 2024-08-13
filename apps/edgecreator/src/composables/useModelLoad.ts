@@ -212,10 +212,10 @@ export default () => {
 
     try {
       await loadSvg(false);
-    } catch (e) {
+    } catch (_e) {
       try {
         await loadSvg(true);
-      } catch (e) {
+      } catch (_e) {
         const edge = (await edgeCreatorServices.getModel(issuecode))!;
         await edgeCatalogStore.loadPublishedEdgesSteps({
           edgeModelIds: [edge.id],

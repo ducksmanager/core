@@ -12,11 +12,16 @@
   "parserOptions": {
     "parser": "@typescript-eslint/parser",
     "project": true,
-    "extraFileExtensions": [".vue"]
+    "extraFileExtensions": [
+      ".vue"
+    ]
   },
   "overrides": [
     {
-      "files": ["*.ts", "*.vue"]
+      "files": [
+        "*.ts",
+        "*.vue"
+      ]
     }
   ],
   "root": true,
@@ -24,16 +29,12 @@
     "@typescript-eslint/no-empty-function": "off",
     "@typescript-eslint/no-floating-promises": "off",
     "@typescript-eslint/no-non-null-assertion": "off",
-    "simple-import-sort/exports": "error",
-    "simple-import-sort/imports": "error",
-    "unused-imports/no-unused-imports": "error",
     "vue/multi-word-component-names": "off",
     "vue/no-setup-props-destructure": "off",
     "vue/no-v-html": "off",
     "vue/no-v-text-v-html-on-component": "off",
     "vue/define-emits-declaration": "error",
     "vue/define-props-declaration": "error",
-    "@typescript-eslint/consistent-type-imports": "error",
     "vue/component-name-in-template-casing": [
       "error",
       "kebab-case",
@@ -44,10 +45,8 @@
     ]
   },
   "plugins": [
-    "simple-import-sort",
     "prettier",
-    "@typescript-eslint",
-    "unused-imports"
+    "@typescript-eslint"
   ],
   "ignorePatterns": [
     "**/node_modules",

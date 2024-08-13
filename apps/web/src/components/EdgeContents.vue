@@ -89,7 +89,7 @@ const onImageLoad = async (event: Event) => {
           css,
         });
         loadEdgeFromSprite();
-      } catch (_) {
+      } catch (_e) {
         ignoreSprite = true;
       }
     }

@@ -1,7 +1,7 @@
 import jwt from "jsonwebtoken";
-import { Socket } from "socket.io";
+import type { Socket } from "socket.io";
 
-import { SessionUser } from "~dm-types/SessionUser";
+import type { SessionUser } from "~dm-types/SessionUser";
 
 type SocketWithUser = Socket<
   Record<string, never>,

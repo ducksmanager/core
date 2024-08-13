@@ -1,6 +1,6 @@
 import axios from "axios";
 
-import { aiKumikoResultPanel } from "~/prisma/client_dumili";
+import type { aiKumikoResultPanel } from "~/prisma/client_dumili";
 
 type OcrResult = {
   box: [[number, number], [number, number], [number, number], [number, number]];

@@ -5,15 +5,16 @@ import fs from "fs";
 import { createServer } from "http";
 import path from "path";
 import { fromBuffer } from "pdf2pic";
-import { Namespace, Server } from "socket.io";
-import { EventsMap } from "socket.io/dist/typed-events";
+import type { Namespace } from "socket.io";
+import { Server } from "socket.io";
+import type { EventsMap } from "socket.io/dist/typed-events";
 
-import { SessionUser } from "~dm-types/SessionUser";
+import type { SessionUser } from "~dm-types/SessionUser";
 
 import { PrismaClient } from "./prisma/client_dumili";
 import { authenticateUser } from "./services/_auth";
 import indexations from "./services/indexations";
-import { FullIndexation } from "./services/indexations/types";
+import type { FullIndexation } from "./services/indexations/types";
 
 dotenv.config({
   path: ".env",

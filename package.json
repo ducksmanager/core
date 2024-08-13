@@ -13,7 +13,7 @@
   },
   "scripts": {
     "prepare": "husky",
-    "lint": "turbo lint --log-order=stream -F '~whattheduck...' -F '~web...' -F '~edgecreator' -F '~edgecreator-api'  -F '~duck-estimator' -- --cache --fix",
+    "lint": "turbo lint --log-order=stream -F '!~duckguessr*' -- --cache --fix",
     "build:web": "NODE_ENV=production turbo build --log-order=stream -F '~web...'",
     "build:edgecreator": "NODE_ENV=production turbo build --log-order=stream -F '~edgecreator' -F '~edgecreator-api'",
     "build:api": "NODE_ENV=production turbo build --log-order=stream -F '~api...'",

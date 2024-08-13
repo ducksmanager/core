@@ -1,33 +1,39 @@
 import type {
+  AxiosStorage,
   CacheOptions,
   NotEmptyStorageValue,
-  AxiosStorage,
 } from "axios-cache-interceptor";
 export type { AxiosStorage, NotEmptyStorageValue };
 export { buildStorage, buildWebStorage } from "axios-cache-interceptor";
-import { io, Socket } from "socket.io-client";
+import type { Socket } from "socket.io-client";
+import { io } from "socket.io-client";
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any,@typescript-eslint/no-unused-vars
 type AllButLast<T extends any[]> = T extends [...infer H, infer _L] ? H : any[];
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 type Last<T extends unknown[]> = T extends [...infer _I, infer L] ? L : never;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type LastParameter<F extends (...args: any) => unknown> = Last<
   Parameters<F>
 >;
 
 export type EventReturnTypeIncludingError<
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   T extends (...args: any[]) => unknown
 > =
-  // @ts-ignore ???
   LastParameter<LastParameter<T>>;
 
 type SocketCacheOptions<Services extends EventsMap> = Pick<
   CacheOptions,
   "storage"
 > & {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   ttl: number | ((event: StringKeyOf<Services>, args: any[]) => number);
 };
 
 interface EventsMap {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   [event: string]: any;
 }
 
@@ -79,8 +85,7 @@ export const useSocket = (socketRootUrl: string) => ({
             ): Promise<
               EventReturnTypeIncludingError<Services[EventName]> | undefined
             > => {
-              let data;
-              let startTime = Date.now();
+              const startTime = Date.now();
               const debugCall = (post: boolean = false) => console.debug(
                 `${post ? 'Called' : 'Calling'} socket event`,
                 `${namespaceName}/${event}`,
@@ -107,7 +112,7 @@ export const useSocket = (socketRootUrl: string) => ({
                 }
               }
               debugCall()
-              data = await socket.emitWithAck(event, ...args);
+              const data = await socket.emitWithAck(event, ...args);
               if (cache && cacheKey) {
                 cache.storage.set(cacheKey, data);
               }

@@ -7,7 +7,7 @@
   "scripts": {
     "web": "concurrently -p \"[dm-{name}]\" --kill-others-on-fail -n front,api \"pnpm -F ~web dev\" \"pnpm -F ~api dev\"",
     "build": "vite build",
-    "lint": "eslint --fix --cache .",
+    "lint": "eslint .",
     "dev": "concurrently -n vite,vue-tsc \"vite --port 8001\" \"vue-tsc --noEmit --watch\"",
     "start": "node index.js",
     "story:dev": "histoire dev",

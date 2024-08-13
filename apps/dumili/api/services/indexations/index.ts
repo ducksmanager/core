@@ -1,17 +1,17 @@
 import axios from "axios";
 import sharp from "sharp";
-import { Server, Socket } from "socket.io";
+import type { Server, Socket } from "socket.io";
 
-import {
+import type {
   NamespaceWithData,
-  prisma,
   SessionData,
   SessionDataWithIndexation,
 } from "~/index";
-import { FullEntry } from "~/services/indexations/types";
+import { prisma } from "~/index";
+import type { FullEntry } from "~/services/indexations/types";
 import CoaServices from "~dm-services/coa/types";
 import { storyKinds } from "~dumili-types/storyKinds";
-import {
+import type {
   entry,
   Prisma,
   storyKind,
@@ -26,9 +26,11 @@ const { services: coaServices } = socket.addNamespace<CoaServices>(
 );
 
 import { RequiredAuthMiddleware } from "../_auth";
-import { KumikoProcessedResult, runKumiko } from "./kumiko";
+import type { KumikoProcessedResult } from "./kumiko";
+import { runKumiko } from "./kumiko";
 import { extendBoundaries, runOcr } from "./ocr";
-import Events, { IndexationEvents, indexationPayloadInclude } from "./types";
+import type { IndexationEvents } from "./types";
+import Events, { indexationPayloadInclude } from "./types";
 
 const getFullIndexation = (indexationId: string) =>
   prisma.indexation.findUnique({

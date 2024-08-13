@@ -159,12 +159,6 @@ importers:
       eslint-plugin-prettier-vue:
         specifier: ^5.0.0
         version: 5.0.0
-      eslint-plugin-simple-import-sort:
-        specifier: ^12.1.1
-        version: 12.1.1(eslint@8.57.0)
-      eslint-plugin-unused-imports:
-        specifier: ^3.2.0
-        version: 3.2.0(@typescript-eslint/eslint-plugin@6.21.0(@typescript-eslint/parser@6.21.0(eslint@8.57.0)(typescript@5.5.4))(eslint@8.57.0)(typescript@5.5.4))(eslint@8.57.0)
       eslint-plugin-vue:
         specifier: ^9.27.0
         version: 9.27.0(eslint@8.57.0)
@@ -1168,30 +1162,11 @@ packages:
       eslint-config-prettier:
         optional: true
 
-  eslint-plugin-simple-import-sort@12.1.1:
-    resolution: {integrity: sha512-6nuzu4xwQtE3332Uz0to+TxDQYRLTKRESSc2hefVT48Zc8JthmN23Gx9lnYhu0FtkRSL1oxny3kJ2aveVhmOVA==}
-    peerDependencies:
-      eslint: '>=5.0.0'
-
-  eslint-plugin-unused-imports@3.2.0:
-    resolution: {integrity: sha512-6uXyn6xdINEpxE1MtDjxQsyXB37lfyO2yKGVVgtD7WEWQGORSOZjgrD6hBhvGv4/SO+TOlS+UnC6JppRqbuwGQ==}
-    engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}
-    peerDependencies:
-      '@typescript-eslint/eslint-plugin': 6 - 7
-      eslint: '8'
-    peerDependenciesMeta:
-      '@typescript-eslint/eslint-plugin':
-        optional: true
-
   eslint-plugin-vue@9.27.0:
     resolution: {integrity: sha512-5Dw3yxEyuBSXTzT5/Ge1X5kIkRTQ3nvBn/VwPwInNiZBSJOO/timWMUaflONnFBzU6NhB68lxnCda7ULV5N7LA==}
     engines: {node: ^14.17.0 || >=16.0.0}
     peerDependencies:
       eslint: ^6.2.0 || ^7.0.0 || ^8.0.0 || ^9.0.0
-
-  eslint-rule-composer@0.3.0:
-    resolution: {integrity: sha512-bt+Sh8CtDmn2OajxvNO+BX7Wn4CIWMpTRm3MaiKPCQcnnlm0CS2mhui6QaoeQugs+3Kj2ESKEEGJUdVafwhiCg==}
-    engines: {node: '>=4.0.0'}
 
   eslint-scope@5.1.1:
     resolution: {integrity: sha512-2NxwbF/hZ0KpepYN0cNbo+FN6XoK7GaHlQhgx/hIZl6Va0bF45RQOOwhLIy8lQDbuCiadSLCBnH2CFYquit5bw==}
@@ -3111,17 +3086,6 @@ snapshots:
     optionalDependencies:
       eslint-config-prettier: 8.10.0(eslint@8.57.0)
 
-  eslint-plugin-simple-import-sort@12.1.1(eslint@8.57.0):
-    dependencies:
-      eslint: 8.57.0
-
-  eslint-plugin-unused-imports@3.2.0(@typescript-eslint/eslint-plugin@6.21.0(@typescript-eslint/parser@6.21.0(eslint@8.57.0)(typescript@5.5.4))(eslint@8.57.0)(typescript@5.5.4))(eslint@8.57.0):
-    dependencies:
-      eslint: 8.57.0
-      eslint-rule-composer: 0.3.0
-    optionalDependencies:
-      '@typescript-eslint/eslint-plugin': 6.21.0(@typescript-eslint/parser@6.21.0(eslint@8.57.0)(typescript@5.5.4))(eslint@8.57.0)(typescript@5.5.4)
-
   eslint-plugin-vue@9.27.0(eslint@8.57.0):
     dependencies:
       '@eslint-community/eslint-utils': 4.4.0(eslint@8.57.0)
@@ -3135,8 +3099,6 @@ snapshots:
       xml-name-validator: 4.0.0
     transitivePeerDependencies:
       - supports-color
-
-  eslint-rule-composer@0.3.0: {}
 
   eslint-scope@5.1.1:
     dependencies:

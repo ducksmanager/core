@@ -117,7 +117,7 @@ export default (io: Server) => {
             new RegExp(`(?:^|[. ])${magazine}(?:[. ]|$)`).test(item),
           ),
         });
-      } catch (e) {
+      } catch (_e) {
         callback({ results: [] });
       }
     });

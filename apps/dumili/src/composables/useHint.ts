@@ -1,6 +1,6 @@
 import { suggestions } from "~/stores/suggestions";
-import CoverIdServices from "~dm-services/cover-id/types";
-import { EventReturnType } from "~socket.io-services/types";
+import type CoverIdServices from "~dm-services/cover-id/types";
+import type { EventReturnType } from "~socket.io-services/types";
 import { stores as webStores } from "~web";
 
 import { dumiliSocketInjectionKey } from "./useDumiliSocket";

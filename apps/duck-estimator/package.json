@@ -13,7 +13,7 @@
     "type": "Git"
   },
   "scripts": {
-    "lint": "eslint --cache --fix .",
+    "lint": "eslint  .",
     "build": "rm -rf dist/{api,types} && tsc && tsc-alias",
     "start": "PWDEBUG=1 tsx watch index.ts"
   },
@@ -35,8 +35,6 @@
     "eslint-plugin-import": "^2.29.1",
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-promise": "^6.6.0",
-    "eslint-plugin-simple-import-sort": "^12.1.1",
-    "eslint-plugin-unused-imports": "^3.2.0",
     "prettier": "^3.3.3",
     "tsc-alias": "^1.8.10",
     "tsx": "^4.17.0",

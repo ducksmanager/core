@@ -164,7 +164,7 @@ export default () => {
             width: (dbOptions.Compression_x || 1) * edgeDimensions.width,
             height: (dbOptions.Compression_y || 1) * embeddedImageHeight,
           };
-        } catch (e) {
+        } catch (_e) {
           console.error(`Image could not be retrieved : ${dbOptions.Source}`);
           return {
             x: 0,

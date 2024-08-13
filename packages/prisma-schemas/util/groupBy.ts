@@ -37,14 +37,14 @@ declare global {
       valueFieldName?: V,
     ): {
       [key: string]: V extends "[]"
-        ? T[]
-        : V extends `${infer U}[]`
-          ? U extends keyof T
-            ? T[U][]
-            : never
-          : V extends keyof T
-            ? T[V]
-            : T;
+      ? T[]
+      : V extends `${infer U}[]`
+      ? U extends keyof T
+      ? T[U][]
+      : never
+      : V extends keyof T
+      ? T[V]
+      : T;
     };
   }
 }
@@ -58,9 +58,9 @@ Array.prototype.groupBy = function (fieldName, valueFieldName) {
           ? [...(acc[object[fieldName]] || []), object]
           : valueFieldName?.endsWith("[]")
             ? [
-                ...(acc[object[fieldName]] || []),
-                object[valueFieldName.slice(0, -"[]".length)],
-              ]
+              ...(acc[object[fieldName]] || []),
+              object[valueFieldName.slice(0, -"[]".length)],
+            ]
             : valueFieldName
               ? object[valueFieldName] || undefined
               : object,
@@ -69,7 +69,7 @@ Array.prototype.groupBy = function (fieldName, valueFieldName) {
   );
 };
 
-// @ts-expect-error
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const a = [
   { id: 1, name: "John" },
   { id: 2, name: "Jane" },
@@ -78,7 +78,7 @@ const a = [
 //    ^ - a is inferred as Record<string, {id: number, name: string}>
 // a is now { John: { id: 3, name: 'John' }, Jane: { id: 2, name: 'Jane' } }
 
-// @ts-expect-error
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const b = [
   { id: 1, name: "John" },
   { id: 2, name: "Jane" },
@@ -87,7 +87,7 @@ const b = [
 //    ^ - b is inferred as Record<string, {id: number, name: string}[]>
 // b is now { John: [{ id: 1, name: 'John' }, { id: 3, name: 'John' }], Jane: [{ id: 2, name: 'Jane' }] }
 
-// @ts-expect-error
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const c = [
   { id: 1, name: "John" },
   { id: 2, name: "Jane" },
@@ -96,7 +96,7 @@ const c = [
 //    ^ - c is inferred as Record<string, number>
 // c is now { John: 3, Jane: 2 }
 
-// @ts-expect-error
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const d = [
   { id: 1, name: "John" },
   { id: 2, name: "Jane" },

@@ -6,12 +6,11 @@
   "module": "index.ts",
   "scripts": {
     "build": "rm -rf dist && ./node_modules/.pnpm/node_modules/.bin/tsc",
-    "lint": "eslint --cache --fix ."
+    "lint": "eslint ."
   },
   "devDependencies": {
     "eslint": "^8.57.0",
     "eslint-config-prettier": "^9.1.0",
-    "eslint-plugin-prettier-vue": "^5.0.0",
     "eslint-plugin-simple-import-sort": "^12.1.1",
     "eslint-plugin-unused-imports": "^3.2.0",
     "prettier": "^3.3.3",

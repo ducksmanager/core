@@ -1,11 +1,12 @@
 {
   "extends": [
-    "plugin:@typescript-eslint/recommended",
-    "prettier"
+    // add more generic rulesets here, such as:
+    // 'eslint:recommended',
+    "prettier",
+    "plugin:@typescript-eslint/recommended"
   ],
   "parserOptions": {
-    "parser": "@typescript-eslint/parser",
-    "project": true
+    "parser": "@typescript-eslint/parser"
   },
   "overrides": [
     {
@@ -20,8 +21,6 @@
   ],
   "ignorePatterns": [
     "**/node_modules",
-    "**/dist",
-    "*.d.ts",
-    "client_*"
+    "**/dist"
   ]
 }

@@ -1,6 +1,6 @@
 import type { Storage } from '@ionic/storage';
 
-export default async (entries: Record<string, Ref<any>>): Promise<void> => {
+export default async (entries: Record<string, Ref<unknown>>): Promise<void> => {
   const persistedStorage = injectLocal<Storage>('storage')!;
   console.log('keys in cache: ', JSON.stringify(Object.entries(persistedStorage.keys())));
   for (const [persistedRefKey, persistedRef] of Object.entries(entries)) {

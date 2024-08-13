@@ -33,7 +33,7 @@ try {
     await $`wget -c https://inducks.org/inducks/isv.tgz -O - | tar -xz -C ${dataPath}`;
 
     // Ignore lines with invalid UTF-8 characters
-    for await (let file of $`ls ${isvPath}/*.isv`.lines()) {
+    for await (const file of $`ls ${isvPath}/*.isv`.lines()) {
       if (file) {
         await $`iconv -f utf-8 -t utf-8 -c "${file}" > "${file}.clean" && mv -f "${file}.clean" "${file}"`;
       }
@@ -42,7 +42,7 @@ try {
     console.log("iconv done");
   }
   // Ignore lines with invalid UTF-8 characters
-  for await (let file of $`ls ${isvPath}/*.isv`.lines()) {
+  for await (const file of $`ls ${isvPath}/*.isv`.lines()) {
     if (file) {
       await $`iconv -f utf-8 -t utf-8 -c "${file}" > "${file}.clean" && mv -f "${file}.clean" "${file}"`;
     }

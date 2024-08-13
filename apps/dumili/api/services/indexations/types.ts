@@ -1,5 +1,5 @@
-import { Prisma, storySuggestion } from "~prisma/client_dumili";
-import { Errorable } from "~socket.io-services/types";
+import type { Prisma, storySuggestion } from "~prisma/client_dumili";
+import type { Errorable } from "~socket.io-services/types";
 
 export const indexationPayloadInclude = {
   pages: {

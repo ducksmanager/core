@@ -76,8 +76,7 @@ export const app = defineStore('app', () => {
       case 'publicationcode':
         return currentNavigationItem.value.value;
       case 'issuecodes': {
-        const issuecodeDetail = coa().issuecodeDetails?.[issuecodes.value![0]!];
-        return issuecodeDetail.publicationcode;
+        return coa().issuecodeDetails?.[issuecodes.value![0]]?.publicationcode;
       }
     }
   });

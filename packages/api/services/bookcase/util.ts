@@ -16,7 +16,7 @@ export const checkValidBookcaseUser = async (
     } else if (!user) {
       return { error: "Unauthorized" };
     } else return { error: "Forbidden" };
-  } catch (error) {
+  } catch (_e) {
     return { error: "Not found" };
   }
 };

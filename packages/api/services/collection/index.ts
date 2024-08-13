@@ -81,7 +81,7 @@ export default (io: Server) => {
         let user: Awaited<ReturnType<typeof getUser>>;
         try {
           user = await getUser(socket.data.user!.id);
-        } catch (e) {
+        } catch (_e) {
           callback({ error: "This user does not exist" });
           return;
         }

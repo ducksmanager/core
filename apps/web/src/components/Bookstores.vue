@@ -220,7 +220,7 @@ const bookstoreCommentsUserIds = $computed(
 const decodeText = (value: string) => {
   try {
     return decodeURIComponent(escape(value));
-  } catch (_) {
+  } catch (_e) {
     return value;
   }
 };

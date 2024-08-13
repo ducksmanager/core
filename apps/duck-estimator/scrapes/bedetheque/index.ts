@@ -38,7 +38,7 @@ export async function scrape() {
         (contents) => JSON.parse(contents.toString()),
         (contents) => JSON.stringify(contents)
       );
-    } catch (e) {
+    } catch (_e) {
       continue;
     }
     if (!scrapeOutput) {
