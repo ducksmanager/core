@@ -33,7 +33,7 @@ export const loginAs = async (user: user, hashedPassword: string) =>
           username: user.username,
         },
       })
-    ).groupBy("role", 'privilege'),
+    ).groupBy("role", "privilege"),
   });
 
 const AuthMiddleware = (

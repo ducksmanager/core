@@ -135,9 +135,9 @@ const getUsersQuickStats = async (userIds: number[]) =>
     where issue.ID_Utilisateur IN (${Prisma.join(userIds)})
     group by issue.ID_Utilisateur`,
   ]).then(([users, counts, usersAndNumberOfCountriesAndPublications]) => {
-    const usersById = users.groupBy('id')
+    const usersById = users.groupBy("id");
     const numberOfCountriesAndPublicationsPerUser =
-      usersAndNumberOfCountriesAndPublications.groupBy('userId')
+      usersAndNumberOfCountriesAndPublications.groupBy("userId");
 
     return counts.reduce<QuickStatsPerUser>(
       (acc, { userId, _count }) => ({

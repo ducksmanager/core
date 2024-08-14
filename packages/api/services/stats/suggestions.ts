@@ -24,12 +24,12 @@ export default (socket: Socket<Events>) => {
       const since =
         sincePreviousVisit === "since_previous_visit"
           ? (await prismaDm.user.findUnique({ where: { id: user!.id } }))!
-            .previousAccess
+              .previousAccess
           : null;
 
       const results: Partial<Parameters<typeof callback>[0]> = {};
 
-      for (const sort of ['oldestdate', 'score'] as const) {
+      for (const sort of ["oldestdate", "score"] as const) {
         const { suggestionsPerUser, authors, storyDetails } =
           await getSuggestions(since, countrycode, sort, user!.id, limit, true);
 
@@ -41,13 +41,14 @@ export default (socket: Socket<Events>) => {
           minScore: suggestionsForUser.minScore,
           maxScore: suggestionsForUser.maxScore,
           authors,
-          storyDetails
+          storyDetails,
         };
       }
 
-      callback(results as Parameters<typeof callback>[0])
-    })
-}
+      callback(results as Parameters<typeof callback>[0]);
+    },
+  );
+};
 
 type SuggestedPublications = {
   select: {
@@ -59,16 +60,12 @@ type SuggestedPublications = {
 };
 
 type MissingPublications = {
-  select: { personcode: true, storycode: true }
-}
+  select: { personcode: true; storycode: true };
+};
 
 interface Suggestion
-  extends PrismaDmStats.missingIssueForUserGetPayload<
-    MissingPublications
-  >,
-  PrismaDmStats.suggestedIssueForUserGetPayload<
-    SuggestedPublications
-  > { }
+  extends PrismaDmStats.missingIssueForUserGetPayload<MissingPublications>,
+    PrismaDmStats.suggestedIssueForUserGetPayload<SuggestedPublications> {}
 
 const getStoryDetails = async (
   storyCodes: string[],
@@ -89,11 +86,11 @@ const getStoryDetails = async (
           INNER JOIN inducks_entry entry USING (storyversioncode)
           INNER JOIN inducks_issue issue USING (issuecode)
           WHERE ${storyCodes
-        .map(
-          (storyCode, idx) =>
-            `story.storycode = '${storyCode}' AND issue.issuecode = '${associatedIssuecodes[idx]}'`,
-        )
-        .join(" OR ")}
+            .map(
+              (storyCode, idx) =>
+                `story.storycode = '${storyCode}' AND issue.issuecode = '${associatedIssuecodes[idx]}'`,
+            )
+            .join(" OR ")}
       ORDER BY story.storycode
   `)
   ).reduce((acc, story) => ({ ...acc, [story.storycode]: story }), {}) as {
@@ -146,15 +143,17 @@ export const getSuggestions = async (
                INNER JOIN utilisateurs_publications_manquantes as missing
                           USING (ID_User, issuecode)
       WHERE suggested.oldestdate <= '${new Date().toISOString().split("T")[0]}'
-        AND (${since
-      ? `suggested.oldestdate > '${since.toISOString().split("T")[0]}'`
-      : "1=1"
-    })
+        AND (${
+          since
+            ? `suggested.oldestdate > '${since.toISOString().split("T")[0]}'`
+            : "1=1"
+        })
         AND (${singleUserId ? `suggested.ID_User = ${singleUserId}` : "1=1"})
-        AND (${singleCountry
-      ? `suggested.issuecode LIKE '${singleCountry}/%'`
-      : "1=1"
-    })
+        AND (${
+          singleCountry
+            ? `suggested.issuecode LIKE '${singleCountry}/%'`
+            : "1=1"
+        })
       ORDER BY ID_User, ${sort} DESC, issuecode
       LIMIT 50
   `);
@@ -166,8 +165,8 @@ export const getSuggestions = async (
   const countriesToNotifyPerUser =
     countrycode === COUNTRY_CODE_OPTION.countries_to_notify
       ? await getOptionValueAllUsers(
-        userOptionType.suggestion_notification_country,
-      )
+          userOptionType.suggestion_notification_country,
+        )
       : null;
 
   const suggestionsPerUser: { [userId: number]: IssueSuggestionList } = {};
@@ -263,10 +262,9 @@ const isSuggestionInCountriesToNotify = (
     ? true
     : !countriesToNotify[userId]
       ? false
-      : countriesToNotify[userId].some(
-        (countryToNotify) =>
+      : countriesToNotify[userId].some((countryToNotify) =>
           suggestion.issuecode?.startsWith(`${countryToNotify}/`),
-      );
+        );
 
 const getOptionValueAllUsers = async (optionName: userOptionType) =>
   (
@@ -275,4 +273,6 @@ const getOptionValueAllUsers = async (optionName: userOptionType) =>
         optionName,
       },
     })
-  ).map(({ userId, optionValue }) => ({ userId, optionValue })).groupBy('userId', 'optionValue[]');
+  )
+    .map(({ userId, optionValue }) => ({ userId, optionValue }))
+    .groupBy("userId", "optionValue[]");

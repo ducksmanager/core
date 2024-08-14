@@ -46,7 +46,7 @@
     "@typescript-eslint"
   ],
   "ignorePatterns": [
-    "../**",
+    "api/**",
     "*.d.ts",
     "**/dist",
     "**/node_modules"

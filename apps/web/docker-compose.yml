@@ -59,22 +59,6 @@ services:
       - dm-server_db-network
       - dm-server_cover-id-network
 
-  stats-updater:
-    container_name: stats-updater
-    image: bperel/dm-stats-updater
-    # depends_on:
-    #   - db
-    environment:
-      MYSQL_COA_HOST: db
-      MYSQL_COA_DATABASE: coa
-      MYSQL_DM_STATS_HOST: db
-      MYSQL_DM_STATS_DATABASE: dm_stats
-      MYSQL_DM_HOST: db
-      MYSQL_DM_DATABASE: dm
-      MYSQL_PASSWORD: ${MYSQL_ROOT_PASSWORD}
-    networks:
-      - dm-server_db-network
-
   sprite-names-updater:
     container_name: sprite-names-updater
     image: mariadb:10.7

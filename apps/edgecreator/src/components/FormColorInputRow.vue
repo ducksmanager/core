@@ -11,20 +11,22 @@
     }"
     :input-values="inputValues"
     :disabled="isTransparent"
-    ><template #prefix>
+  >
+    <template #prefix>
       <b-button
         v-if="canBeTransparent"
         :variant="isTransparent ? 'secondary' : 'outline-light'"
         :pressed="isTransparent"
         class="transparent p-1"
         @click="isTransparent = !isTransparent"
-        ><img
+      >
+        <img
           :id="`${optionName}-transparent`"
           alt="transp"
           src="/transparent.png"
-        />&nbsp;Transparent</b-button
-      ></template
-    ><template v-if="!isTransparent">
+        >&nbsp;Transparent
+      </b-button>
+    </template><template v-if="!isTransparent">
       <popover container="body">
         <b-button
           :id="`${optionName}-popover-colors`"
@@ -32,7 +34,8 @@
           pill
           size="sm"
           variant="outline-primary"
-          >{{ $t("Re-use") }}
+        >
+          {{ $t("Re-use") }}
         </b-button>
         <template #content>
           <div
@@ -58,22 +61,20 @@
                       'text-secondary':
                         !otherColorsForLocation[stepNumber].length,
                     }"
-                    >{{ $t("Step") }} {{ stepNumber }}</span
-                  >
+                  >{{ $t("Step") }} {{ stepNumber }}</span>
                   <span
                     v-for="color in otherColorsForLocation[stepNumber]"
                     :key="color"
                     class="frequent-color"
                     :style="{ background: color }"
                     @click="onColorChange(color)"
-                    >&nbsp;</span
-                  >
+                  >&nbsp;</span>
                 </li>
-              </ul></template
-            >
-          </div></template
-        ></popover
-      ><b-button
+              </ul>
+            </template>
+          </div>
+        </template>
+      </popover><b-button
         class="mt-0"
         pill
         size="sm"
@@ -82,7 +83,8 @@
           colorPickerOption === optionName ? 'primary' : 'outline-primary'
         "
         @click="colorPickerOption = colorPickerOption ? null : optionName"
-        >{{ $t("From photo") }}
+      >
+        {{ $t("From photo") }}
       </b-button>
     </template>
   </form-input-row>

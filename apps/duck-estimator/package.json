@@ -8,12 +8,7 @@
     "email": "brunoperel@gmail.com",
     "name": "Bruno Perel"
   },
-  "repository": {
-    "url": "https://github.com/bperel/duck-estimator",
-    "type": "Git"
-  },
   "scripts": {
-    "lint": "eslint  .",
     "build": "rm -rf dist/{api,types} && tsc && tsc-alias",
     "start": "PWDEBUG=1 tsx watch index.ts"
   },
@@ -29,16 +24,8 @@
   "devDependencies": {
     "@types/node": "^18.19.43",
     "@types/yargs": "^17.0.33",
-    "eslint": "^8.57.0",
-    "eslint-config-prettier": "^9.1.0",
-    "eslint-config-standard": "^17.1.0",
-    "eslint-plugin-import": "^2.29.1",
-    "eslint-plugin-node": "^11.1.0",
-    "eslint-plugin-promise": "^6.6.0",
-    "prettier": "^3.3.3",
     "tsc-alias": "^1.8.10",
     "tsx": "^4.17.0",
-    "typescript": "^5.5.4",
-    "typescript-eslint": "^7.18.0"
+    "typescript": "^5.5.4"
   }
 }

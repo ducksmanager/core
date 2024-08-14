@@ -80,7 +80,7 @@ getSuggestions(
   null,
   false,
 ).then(async ({ suggestionsPerUser, authors }) => {
-  const usersById = (await prismaDm.user.findMany()).groupBy('id')
+  const usersById = (await prismaDm.user.findMany()).groupBy("id");
 
   const allSuggestedIssues = [
     ...new Set(
@@ -115,39 +115,46 @@ getSuggestions(
     suggestionsPerUser,
   )) {
     const userIdNumber = parseInt(userId);
-    const pendingNotificationsForUser = await augmentIssueArrayWithInducksData(Object.values(
-      suggestionsForUser.issues,
-    ).filter(
-      (suggestion) =>
-        !alreadySentNotificationsPerUser[userIdNumber] ||
-        !alreadySentNotificationsPerUser[userIdNumber].includes(
-          suggestion.issuecode,
-        ),
-    ));
+    const pendingNotificationsForUser = await augmentIssueArrayWithInducksData(
+      Object.values(suggestionsForUser.issues).filter(
+        (suggestion) =>
+          !alreadySentNotificationsPerUser[userIdNumber] ||
+          !alreadySentNotificationsPerUser[userIdNumber].includes(
+            suggestion.issuecode,
+          ),
+      ),
+    );
 
     console.log(
       `${pendingNotificationsForUser.length} new issue(s) will be suggested to user ${userId}`,
     );
     console.log(
-      `${Object.values(suggestionsForUser.issues).length -
-      pendingNotificationsForUser.length
+      `${
+        Object.values(suggestionsForUser.issues).length -
+        pendingNotificationsForUser.length
       } issue(s) have already been suggested to user ${userId}`,
     );
 
-    const publicationTitles = (await prismaCoa.inducks_publication.findMany({
-      where: {
-        publicationcode: {
-          in: [...new Set(pendingNotificationsForUser.map(
-            ({ publicationcode }) => publicationcode,
-          ))],
+    const publicationTitles = (
+      await prismaCoa.inducks_publication.findMany({
+        where: {
+          publicationcode: {
+            in: [
+              ...new Set(
+                pendingNotificationsForUser.map(
+                  ({ publicationcode }) => publicationcode,
+                ),
+              ),
+            ],
+          },
         },
-      },
-    })).groupBy("publicationcode");
-
+      })
+    ).groupBy("publicationcode");
 
     for (const suggestedIssue of pendingNotificationsForUser) {
-      const issueTitle = `${publicationTitles[suggestedIssue.publicationcode]
-        } ${suggestedIssue.issuenumber}`;
+      const issueTitle = `${
+        publicationTitles[suggestedIssue.publicationcode]
+      } ${suggestedIssue.issuenumber}`;
 
       const storyCountPerAuthor = Object.keys(suggestedIssue.stories).reduce(
         (acc, personcode) => ({

@@ -7,19 +7,26 @@ import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
 
 import type Events from "../types";
 
-export const getPopularityByIssuecodes = async (issuecodes: string[]) => prismaDm.issue.groupBy({
-  by: ["issuecode"],
-  where: {
-    issuecode: {
-      in: issuecodes,
-    },
-  },
-  _count: {
-    id: true,
-  },
-})
-  .then(data => data.map(({ issuecode, _count }) => ({ issuecode, popularity: _count.id })))
-  .then(data => data.groupBy("issuecode"))
+export const getPopularityByIssuecodes = async (issuecodes: string[]) =>
+  prismaDm.issue
+    .groupBy({
+      by: ["issuecode"],
+      where: {
+        issuecode: {
+          in: issuecodes,
+        },
+      },
+      _count: {
+        id: true,
+      },
+    })
+    .then((data) =>
+      data.map(({ issuecode, _count }) => ({
+        issuecode,
+        popularity: _count.id,
+      })),
+    )
+    .then((data) => data.groupBy("issuecode"));
 
 export default (socket: Socket<Events>) => {
   socket.on("getIssuesWithTitles", async (publicationcodes, callback) =>
@@ -97,61 +104,72 @@ export default (socket: Socket<Events>) => {
 };
 
 export const getCoverUrls = async (issuecodes: string[]) => {
-  const issues = (await prismaCoa.inducks_issue.findMany({
-    select: {
-      issuecode: true,
-      title: true,
-    },
-    where: {
-      issuecode: {
-        in: issuecodes,
+  const issues = (
+    await prismaCoa.inducks_issue.findMany({
+      select: {
+        issuecode: true,
+        title: true,
       },
-    },
-  })).groupBy("issuecode");
-  const entrycodeByIssuecode = (await prismaCoa.inducks_entry.findMany({
-    select: {
-      entrycode: true,
-      issuecode: true,
-    },
-    where: {
-      issuecode: {
-        in: issuecodes,
-      },
-      position: {
-        not: {
-          startsWith: "p",
+      where: {
+        issuecode: {
+          in: issuecodes,
         },
       },
-    },
-    orderBy: [{
-      position: "desc",
-    }],
-  })).groupBy("issuecode", 'entrycode');
-  const entryurls = (await prismaCoa.inducks_entryurl.findMany({
-    select: {
-      entrycode: true,
-      sitecode: true,
-      url: true,
-    },
-    where: {
-      entrycode: {
-        in: Object.values(entrycodeByIssuecode).map((entrycode) => entrycode),
+    })
+  ).groupBy("issuecode");
+  const entrycodeByIssuecode = (
+    await prismaCoa.inducks_entry.findMany({
+      select: {
+        entrycode: true,
+        issuecode: true,
       },
-    },
-  })).groupBy("entrycode");
+      where: {
+        issuecode: {
+          in: issuecodes,
+        },
+        position: {
+          not: {
+            startsWith: "p",
+          },
+        },
+      },
+      orderBy: [
+        {
+          position: "desc",
+        },
+      ],
+    })
+  ).groupBy("issuecode", "entrycode");
+  const entryurls = (
+    await prismaCoa.inducks_entryurl.findMany({
+      select: {
+        entrycode: true,
+        sitecode: true,
+        url: true,
+      },
+      where: {
+        entrycode: {
+          in: Object.values(entrycodeByIssuecode).map((entrycode) => entrycode),
+        },
+      },
+    })
+  ).groupBy("entrycode");
 
   return Object.entries(issues).map(([issuecode, issue]) => {
-    const coverEntryUrl = entryurls[entrycodeByIssuecode[issuecode]]
+    const coverEntryUrl = entryurls[entrycodeByIssuecode[issuecode]];
     if (!coverEntryUrl) {
       return {
         issuecode,
         title: issue.title!,
         fullUrl: null,
-      }
+      };
     }
 
-    const urlPrefix = (
-      /^\d/.test(coverEntryUrl.url!) ? 'webusers/webusers' : coverEntryUrl.url!.startsWith('webusers') ? 'webusers' : coverEntryUrl.sitecode);
+    const urlPrefix = /^\d/.test(coverEntryUrl.url!)
+      ? "webusers/webusers"
+      : coverEntryUrl.url!.startsWith("webusers")
+        ? "webusers"
+        : coverEntryUrl.sitecode;
     return {
       issuecode,
       title: issue.title!,
@@ -181,8 +199,9 @@ const getEntries = async (issuecode: string) =>
 const getIssueCoverDetails = (
   issuecodes: string[],
   callback: ({ covers }: { covers: Record<string, IssueCoverDetails> }) => void,
-) => getCoverUrls(issuecodes)
-  .then((data) => data.groupBy("issuecode"))
-  .then((data) => {
-    callback({ covers: data });
-  });
+) =>
+  getCoverUrls(issuecodes)
+    .then((data) => data.groupBy("issuecode"))
+    .then((data) => {
+      callback({ covers: data });
+    });

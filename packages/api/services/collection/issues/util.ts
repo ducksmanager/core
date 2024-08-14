@@ -13,10 +13,7 @@ export const getUserPurchase = async (id: number | null, userId: number) =>
         })
       )?.[0];
 
-export const deleteIssues = async (
-  userId: number,
-  issuecodes: string[],
-) => {
+export const deleteIssues = async (userId: number, issuecodes: string[]) => {
   await prismaDm.issue.deleteMany({
     where: {
       issuecode: {

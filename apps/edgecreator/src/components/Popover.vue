@@ -10,12 +10,12 @@
       onOpen();
       $emit('@open:popper');
     "
-    ><template #target>
+  >
+    <template #target>
       <span
         @mouseover="isOverPopupText = true"
         @mouseout.prevent="closePopupSoon"
-        ><slot
-      /></span>
+      ><slot /></span>
     </template>
     <slot name="header" />
     <slot name="content" />

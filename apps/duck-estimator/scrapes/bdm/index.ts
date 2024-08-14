@@ -12,7 +12,7 @@ export async function scrape() {
   const mappedIssues: CsvIssue[] = [];
 
   await readCsvMapping<CsvIssue>(MAPPING_FILE, (record) =>
-    mappedIssues.push(record)
+    mappedIssues.push(record),
   );
   await createQuotations(
     mappedIssues.map(({ issuecode, estimation }) => ({
@@ -21,6 +21,6 @@ export async function scrape() {
       estimationMax: null,
       scrapeDate: null,
       source: "bdm",
-    }))
+    })),
   );
 }

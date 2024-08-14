@@ -6,20 +6,23 @@ import { getUserPurchase } from "../issues/util";
 import type Events from "../types";
 
 export default (socket: Socket<Events>) => {
-  socket.on("getPurchases", (callback) => prismaDm.purchase
-    .findMany({
-      where: {
-        userId: socket.data.user!.id,
-      },
-      orderBy: {
-        date: "desc",
-      },
-    })
-    .then(data => data.map((purchase) => ({
-      ...purchase,
-      date: purchase.date.toISOString().split("T")[0],
-    }))
-    ).then(callback),
+  socket.on("getPurchases", (callback) =>
+    prismaDm.purchase
+      .findMany({
+        where: {
+          userId: socket.data.user!.id,
+        },
+        orderBy: {
+          date: "desc",
+        },
+      })
+      .then((data) =>
+        data.map((purchase) => ({
+          ...purchase,
+          date: purchase.date.toISOString().split("T")[0],
+        })),
+      )
+      .then(callback),
   );
 
   socket.on("createPurchase", async (date, description, callback) => {
@@ -39,7 +42,7 @@ export default (socket: Socket<Events>) => {
     await prismaDm.purchase.create({
       data: criteria,
     });
-    callback()
+    callback();
   });
 
   socket.on("deletePurchase", async (purchaseId, callback) => {

@@ -23,14 +23,18 @@ import login from "./services/login";
 import presentationText from "./services/presentation-text";
 import publicCollection from "./services/public-collection";
 import stats from "./services/stats";
-import { getDbStatus, getPastecSearchStatus, getPastecStatus } from "./services/status";
+import {
+  getDbStatus,
+  getPastecSearchStatus,
+  getPastecStatus,
+} from "./services/status";
 
 class ServerWithUser extends Server<
   Record<string, never>,
   Record<string, never>,
   Record<string, never>,
   { user?: SessionUser }
-> { }
+> {}
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 (BigInt.prototype as any).toJSON = function () {
@@ -52,14 +56,14 @@ const httpServer = createServer(async (req, res) => {
     case "/app/updates":
       const body: string[] = [];
       req
-        .on('data', chunk => {
+        .on("data", (chunk) => {
           body.push(chunk);
         })
-        .on('end', () => {
-          res.write(getAppUpdates(body.join('')));
+        .on("end", () => {
+          res.write(getAppUpdates(body.join("")));
           res.end();
         });
-      return
+      return;
     case "/status/db":
       data = await getDbStatus();
       break;

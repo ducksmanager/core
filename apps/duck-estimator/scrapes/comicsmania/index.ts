@@ -18,7 +18,7 @@ export async function scrape() {
   const mappedIssues: CsvIssue[] = [];
 
   await readCsvMapping<CsvIssue>(MAPPING_FILE, (record) =>
-    mappedIssues.push(record)
+    mappedIssues.push(record),
   );
 
   const browser = await firefox.launch();
@@ -40,7 +40,7 @@ export async function scrape() {
     const issueCellsLocator = subPage.locator("tr td:nth-child(odd), tr th");
     const issueCells = await issueCellsLocator.all();
     const tagNames = await issueCellsLocator.evaluateAll((e) =>
-      e.map((el) => el.tagName)
+      e.map((el) => el.tagName),
     );
     const cellTexts = await issueCellsLocator.allInnerTexts();
 
@@ -58,12 +58,12 @@ export async function scrape() {
           const publicationSection = mappedIssues.find(
             ({ sectionTitle }) =>
               sectionTitle.replace(/\u00a0/g, " ") ===
-              cellText.replace(/\u00a0/g, " ")
+              cellText.replace(/\u00a0/g, " "),
           );
           if (publicationSection) {
             currentPublication = publicationSection;
             console.info(
-              `Section found for ${currentPublication.publicationcode} : ${cellText}`
+              `Section found for ${currentPublication.publicationcode} : ${cellText}`,
             );
           }
           continue;
@@ -71,7 +71,7 @@ export async function scrape() {
         case "TD":
           if (!currentPublication) {
             console.error(
-              `No current publication found in page for issue number ${cellText}`
+              `No current publication found in page for issue number ${cellText}`,
             );
             continue;
           }
@@ -106,7 +106,7 @@ export async function scrape() {
         if (!priceMatch) {
           const priceCell = issueCell
             .locator(
-              'xpath=..//..//tr//td[contains(.,"τεύχος")]|following-sibling::td'
+              'xpath=..//..//tr//td[contains(.,"τεύχος")]|following-sibling::td',
             )
             .first();
           const priceText = await priceCell.innerText();
@@ -118,7 +118,7 @@ export async function scrape() {
         }
         publicationsWithIssues.push(currentPublication!);
         const { publicationcode: currentPublicationCode } = currentPublication!;
-        const issue = await getIssue(currentPublicationCode, issuenumber)
+        const issue = await getIssue(currentPublicationCode, issuenumber);
         if (issue) {
           const price = parseFloat(priceMatch[0].replace(",", "."));
           quotations.push({
@@ -132,7 +132,7 @@ export async function scrape() {
         }
       } catch (e) {
         console.error(
-          `Error for ${currentPublication!.publicationcode} ${issuenumber}: ${e}`
+          `Error for ${currentPublication!.publicationcode} ${issuenumber}: ${e}`,
         );
       }
     }
@@ -145,8 +145,8 @@ export async function scrape() {
       publicationcode !== null &&
       !publicationsWithIssues.some(
         ({ sectionTitle: foundSectionTitle }) =>
-          foundSectionTitle === sectionTitle
-      )
+          foundSectionTitle === sectionTitle,
+      ),
   );
   for (const { sectionTitle } of sectionsNotFound) {
     console.log("Section not found: " + sectionTitle);

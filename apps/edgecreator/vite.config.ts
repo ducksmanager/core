@@ -1,6 +1,6 @@
 import VueI18n from "@intlify/unplugin-vue-i18n/vite";
 import Vue from "@vitejs/plugin-vue";
-import { BootstrapVueNextResolver } from 'bootstrap-vue-next'
+import { BootstrapVueNextResolver } from "bootstrap-vue-next";
 import path from "path";
 import AutoImport from "unplugin-auto-import/vite";
 import IconsResolve from "unplugin-icons/resolver";
@@ -22,15 +22,15 @@ export default defineConfig({
       "~dm-types": path.resolve(__dirname, "../../packages/types"),
       "~socket.io-services": path.resolve(
         __dirname,
-        "../../packages/socket.io-services"
+        "../../packages/socket.io-services",
       ),
       "~socket.io-client-services": path.resolve(
         __dirname,
-        "../../packages/socket.io-client-services"
+        "../../packages/socket.io-client-services",
       ),
       "~prisma-schemas": path.resolve(
         __dirname,
-        "../../packages/prisma-schemas"
+        "../../packages/prisma-schemas",
       ),
       "~types/": `${path.resolve(__dirname, "types")}/`,
     },
@@ -56,7 +56,12 @@ export default defineConfig({
     AutoImport({
       imports: ["vue", "vue-router", "@vueuse/core", "pinia", "vue-i18n"],
       dts: true,
-      dirs: ["./src/composables", "./src/components", "./types", "../../packages/types"],
+      dirs: [
+        "./src/composables",
+        "./src/components",
+        "./types",
+        "../../packages/types",
+      ],
       vueTemplate: true,
     }),
 

@@ -1,11 +1,10 @@
 import type { Socket } from "socket.io";
 
 import type {
-  inducks_issuequotation, Prisma as PrismaCoa
+  inducks_issuequotation,
+  Prisma as PrismaCoa,
 } from "~prisma-schemas/schemas/coa";
-import {
-  prismaClient as prismaCoa,
-} from "~prisma-schemas/schemas/coa/client";
+import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa/client";
 
 const ISSUE_CODE_REGEX = /[a-z]+\/[-A-Z0-9 ]+/g;
 
@@ -26,26 +25,18 @@ export const getQuotations = async (
         ...quotation,
         estimationMin:
           acc[issuecode]?.estimationMin && quotation.estimationMin
-            ? Math.min(
-              acc[issuecode].estimationMin,
-              quotation.estimationMin,
-            )
+            ? Math.min(acc[issuecode].estimationMin, quotation.estimationMin)
             : quotation.estimationMin,
         estimationMax:
           acc[issuecode]?.estimationMax && quotation.estimationMax
-            ? Math.max(
-              acc[issuecode].estimationMax,
-              quotation.estimationMax,
-            )
+            ? Math.max(acc[issuecode].estimationMax, quotation.estimationMax)
             : quotation.estimationMax,
       },
     }),
     {},
   );
 
-export const getQuotationsByIssuecodes = async (
-  issuecodes: string[],
-) =>
+export const getQuotationsByIssuecodes = async (issuecodes: string[]) =>
   getQuotations({
     issuecode: {
       in: issuecodes,

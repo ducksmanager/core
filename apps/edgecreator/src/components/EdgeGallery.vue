@@ -6,8 +6,9 @@
       show
       variant="info"
       @click="emit('load-more', 'before')"
-      >Load more...</b-button
     >
+      Load more...
+    </b-button>
     <gallery
       v-if="items"
       image-type="edges"
@@ -23,8 +24,9 @@
       show
       variant="info"
       @click="emit('load-more', 'after')"
-      >Load more...</b-button
     >
+      Load more...
+    </b-button>
   </div>
 </template>
 

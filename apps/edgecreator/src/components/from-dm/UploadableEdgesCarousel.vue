@@ -2,7 +2,11 @@
   <div>
     <slot name="header" />
     <div>
-      <b-carousel v-model="currentSlide" controls indicators>
+      <b-carousel
+        v-model="currentSlide"
+        controls
+        indicators
+      >
         <b-carousel-slide
           v-for="(popularIssueWithoutEdge, index) in issues"
           :key="popularIssueWithoutEdge.issueCode"

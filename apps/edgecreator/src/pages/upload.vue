@@ -15,7 +15,12 @@ meta:
           {{ $t("Drag a file here or")
           }}<label class="browse">
             {{ $t("Browse") }}
-            <input id="file" class="sr-only" type="file" accept="image/jpeg" />
+            <input
+              id="file"
+              class="sr-only"
+              type="file"
+              accept="image/jpeg"
+            >
           </label>
         </div>
       </div>
@@ -59,12 +64,23 @@ meta:
               :height="currentCrop ? currentCrop.height : 200"
               @change="
                 currentCrop = $event && $event.width ? $event : null
-              " /></template
-        ></issue-select>
-        <b-button :disabled="!currentCrop" class="mt-3 mb-4" @click="addCrop">{{
-          $t("Add")
-        }}</b-button>
-        <b-card-group deck columns>
+              "
+            />
+          </template>
+        </issue-select>
+        <b-button
+          :disabled="!currentCrop"
+          class="mt-3 mb-4"
+          @click="addCrop"
+        >
+          {{
+            $t("Add")
+          }}
+        </b-button>
+        <b-card-group
+          deck
+          columns
+        >
           <b-card
             v-for="(crop, i) in crops"
             :key="`crop-${i}`"
@@ -77,14 +93,17 @@ meta:
             ]"
           >
             <template #header>
-              <issue no-wrap :issuecode="crop.issuecode"
-            /></template>
+              <issue
+                no-wrap
+                :issuecode="crop.issuecode"
+              />
+            </template>
             <img
               class="edge-crop"
               :src="crop.url"
               :width="crop.width * 1.5"
               :height="crop.height * 1.5"
-            />
+            >
             <edge-canvas
               :steps="[]"
               :issuecode="crop.issuecode"
@@ -93,13 +112,25 @@ meta:
               :contributors="initialContributors"
             />
             <div>
-              <div v-if="crop.error" class="text-center">{{ $t("Error") }}</div>
-              <div v-else-if="crop.sent" class="text-center">
+              <div
+                v-if="crop.error"
+                class="text-center"
+              >
+                {{ $t("Error") }}
+              </div>
+              <div
+                v-else-if="crop.sent"
+                class="text-center"
+              >
                 {{ $t("Sent!") }}
               </div>
               <div v-else>
-                <b-button pill variant="danger" @click="crops.splice(i, 1)"
-                  >{{ $t("Delete") }}
+                <b-button
+                  pill
+                  variant="danger"
+                  @click="crops.splice(i, 1)"
+                >
+                  {{ $t("Delete") }}
                 </b-button>
               </div>
             </div>
@@ -114,14 +145,20 @@ meta:
           style="width: 100%"
           variant="success"
           @click="uploadAll"
-          >{{ $t("Send the edge pictures") }}
+        >
+          {{ $t("Send the edge pictures") }}
         </b-button>
-        <div v-else-if="crops.length" class="my-3">
-          <b-link to="/">{{ $t("Back to home page") }}</b-link>
+        <div
+          v-else-if="crops.length"
+          class="my-3"
+        >
+          <b-link to="/">
+            {{ $t("Back to home page") }}
+          </b-link>
         </div>
       </template>
-    </div></b-container
-  >
+    </div>
+  </b-container>
 </template>
 
 <script lang="ts" setup>

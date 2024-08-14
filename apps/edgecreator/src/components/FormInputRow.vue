@@ -1,11 +1,20 @@
 <template>
   <b-row class="mb-3">
-    <b-col sm="3" class="d-flex align-items-center">
+    <b-col
+      sm="3"
+      class="d-flex align-items-center"
+    >
       <label :for="optionName">{{ label }}</label>
     </b-col>
-    <b-col sm="6" class="d-flex align-items-center">
+    <b-col
+      sm="6"
+      class="d-flex align-items-center"
+    >
       <slot name="prefix" />
-      <confirm-edit-multiple-values :values="values" @change="onChangeValue">
+      <confirm-edit-multiple-values
+        :values="values"
+        @change="onChangeValue"
+      >
         <b-form-select
           v-if="type === 'select'"
           :id="optionName"
@@ -26,7 +35,7 @@
           :disabled="disabled || false"
           :list="String(listId)"
           @blur="onBlur"
-        ></b-form-input>
+        />
       </confirm-edit-multiple-values>
     </b-col>
     <b-col

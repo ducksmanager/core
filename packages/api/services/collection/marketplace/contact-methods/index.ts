@@ -9,9 +9,7 @@ import { getIssuesForSale } from "..";
 export default (socket: Socket<Events>) => {
   socket.on("getContactMethods", async (sellerId, callback) => {
     const issuesForSale = await getIssuesForSale(socket.data.user!.id);
-    if (
-      !issuesForSale.some((issue) => issue.userId === sellerId)
-    ) {
+    if (!issuesForSale.some((issue) => issue.userId === sellerId)) {
       callback({ error: "Invalid seller ID", errorDetails: String(sellerId) });
       return;
     }

@@ -1,7 +1,7 @@
 services:
-  coa-updater:
+  stats-updater:
     init: true
-    container_name: coa-updater
+    container_name: stats-updater
     build:
       context: .
       dockerfile: Dockerfile-dev
@@ -11,8 +11,8 @@ services:
       - inducks_data:/tmp/inducks
     environment:
       MYSQL_HOST: db
-      MYSQL_DATABASE: coa
-      MYSQL_DATABASE_NEW: coa_new
+      MYSQL_DATABASE: stats
+      MYSQL_DATABASE_NEW: stats_new
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
     networks:
       - db-network

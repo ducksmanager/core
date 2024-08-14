@@ -18,7 +18,10 @@
     @mousemove="setPosition"
     @mouseout="positionInCanvas = null"
   >
-    <metadata v-if="photoUrl" type="photo">
+    <metadata
+      v-if="photoUrl"
+      type="photo"
+    >
       {{ photoUrl }}
     </metadata>
     <metadata
@@ -68,7 +71,7 @@
         :issuecode="issuecode"
         :step-number="stepNumber"
         :options="toKeyValue(getStepOptions(stepNumber, false))"
-      ></component>
+      />
     </g>
     <rect
       class="border"

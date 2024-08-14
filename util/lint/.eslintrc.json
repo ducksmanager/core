@@ -2,7 +2,7 @@
   "extends": [
     // add more generic rulesets here, such as:
     // 'eslint:recommended',
-    "prettier",
+    "plugin:prettier/recommended",
     "plugin:@typescript-eslint/recommended"
   ],
   "parserOptions": {
@@ -43,6 +43,7 @@
     "**/client_*",
     "**/dist",
     "**/duckguessr*",
-    "**/node_modules"
+    "**/node_modules",
+    "**/prisma-schemas" // Has its own linting rules
   ]
 }

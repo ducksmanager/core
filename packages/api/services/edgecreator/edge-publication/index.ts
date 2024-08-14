@@ -13,10 +13,7 @@ import type Events from "../types";
 export default (socket: Socket<Events>) => {
   socket.on(
     "publishEdge",
-    async (
-      { issuecode, designers, photographers },
-      callback,
-    ) => {
+    async ({ issuecode, designers, photographers }, callback) => {
       const issue = await prismaCoa.inducks_issue.findFirst({
         where: { issuecode },
         select: { publicationcode: true, issuenumber: true },
@@ -59,7 +56,6 @@ export default (socket: Socket<Events>) => {
     },
   );
 };
-
 
 const getUserIdsByUsername = async (
   usernames: string[],
@@ -130,7 +126,7 @@ const publishEdgeOnDm = async (
     });
   } else {
     contributions = [];
-    const {publicationcode} = await prismaCoa.inducks_issue.findFirstOrThrow({
+    const { publicationcode } = await prismaCoa.inducks_issue.findFirstOrThrow({
       where: { issuecode },
       select: { publicationcode: true },
     });

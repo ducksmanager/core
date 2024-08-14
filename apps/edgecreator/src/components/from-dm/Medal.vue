@@ -1,8 +1,14 @@
 <template>
-  <span class="wrapper" :class="{ small, 'x-small': xSmall }">
+  <span
+    class="wrapper"
+    :class="{ small, 'x-small': xSmall }"
+  >
     <div class="overlay">
       <template v-if="!small && !xSmall">
-        <div class="title" :title="medalDescription" />
+        <div
+          class="title"
+          :title="medalDescription"
+        />
         <svg
           v-if="level < 3"
           width="100"
@@ -43,10 +49,10 @@
           }.png`,
         )
       "
-    />
+    >
     <b v-if="small">
       {{ medalTitle }}
-      <br />{{ $t("niveau") }} {{ level }}
+      <br>{{ $t("niveau") }} {{ level }}
     </b>
   </span>
 </template>

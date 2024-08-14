@@ -8,8 +8,13 @@ export default abstract class {
   static namespaceEndpoint = namespaceEndpoint;
 
   abstract getEdges: (
-    filter: {publicationcode?: string,issuecodes?: string[]},
-    callback: (value: Errorable<Record<string, EdgeWithModelIdAndInducksData>, "Invalid filter">) => void,
+    filter: { publicationcode?: string; issuecodes?: string[] },
+    callback: (
+      value: Errorable<
+        Record<string, EdgeWithModelIdAndInducksData>,
+        "Invalid filter"
+      >,
+    ) => void,
   ) => void;
   abstract getPublishedEdges: (
     callback: (value: AugmentedIssue<["issuecode"]>[]) => void,

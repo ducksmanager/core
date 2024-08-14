@@ -49,14 +49,15 @@ export default (io: Server) => {
       );
 
       socket.on("getCollectionPopularity", (callback) =>
-        prismaDm.$queryRaw<{ issuecode: string, popularity: number }[]>`
+        prismaDm.$queryRaw<{ issuecode: string; popularity: number }[]>`
           select userIssue.issuecode, COUNT(issue.ID) AS popularity
           from numeros userIssue
                   inner join numeros issue using (issuecode)
           where issue.ID_Utilisateur = ${socket.data.user!.id}
           group by issuecode
           order by COUNT(issue.ID) DESC`
-          .then(results => results.groupBy('issuecode', 'popularity')).then(callback)
+          .then((results) => results.groupBy("issuecode", "popularity"))
+          .then(callback),
       );
 
       socket.on("getNotificationToken", async (username, callback) => {
@@ -119,9 +120,7 @@ export default (io: Server) => {
               issuecode: true,
             },
           })
-        ).map(
-          (issue) => `${issue.issuecode}`,
-        ) as string[];
+        ).map((issue) => `${issue.issuecode}`) as string[];
         callback(
           (
             await prismaDm.edge.findMany({

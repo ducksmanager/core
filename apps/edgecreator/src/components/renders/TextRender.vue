@@ -11,8 +11,8 @@
         !options.width
           ? undefined
           : `rotate(${options.rotation}, ${options.x + options.width / 2}, ${
-              options.y + options.height / 2
-            })`
+            options.y + options.height / 2
+          })`
       "
     >
       <metadata>{{ options }}</metadata>

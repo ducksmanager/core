@@ -18,7 +18,7 @@ export const i18n = new I18n({
         ...acc,
         [key]: value,
       }),
-      {}
+      {},
     ),
     fr,
   },
@@ -63,7 +63,7 @@ export abstract class Email {
 
     const to = options.to as Mail.Address;
     console.log(
-      `Sending email of type ${this.getTemplateDirName()} to ${to.address}`
+      `Sending email of type ${this.getTemplateDirName()} to ${to.address}`,
     );
 
     try {
@@ -75,13 +75,13 @@ export abstract class Email {
         options.subject = `[Sent to ${to.address}] ${options.subject}`;
         options.to = process.env.SMTP_USERNAME;
         console.log(
-          `Sending email of type ${this.getTemplateDirName()} to ${options.to}`
+          `Sending email of type ${this.getTemplateDirName()} to ${options.to}`,
         );
         await Email.transporter.sendMail(options);
       }
     } catch (e) {
       console.error(
-        `Can't send e-mail '${JSON.stringify(options)}': failed with ${e}`
+        `Can't send e-mail '${JSON.stringify(options)}': failed with ${e}`,
       );
       return Promise.reject(e);
     }
@@ -91,7 +91,7 @@ export abstract class Email {
     await ejs.renderFile(
       path.join(this.templatePath, "template.ejs"),
       { __: i18n.__, ...this.data },
-      {}
+      {},
     );
 
   getTemplateDirName = (): string =>

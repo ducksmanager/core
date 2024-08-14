@@ -8,7 +8,7 @@ import BookstoreApproved from "~/emails/bookstore-approved";
 import EdgesPublishedWithCreator from "~/emails/edges-published-with-creator";
 import EdgesPublishedWithPhotographer from "~/emails/edges-published-with-photographer";
 import type { Email } from "~/emails/email";
-import  { userContributionType } from "~prisma-schemas/schemas/dm";
+import { userContributionType } from "~prisma-schemas/schemas/dm";
 import { prismaClient as prismaDmClient } from "~prisma-schemas/schemas/dm/client";
 const medalLevels = {
   [userContributionType.photographe]: { 1: 50, 2: 150, 3: 600 },
@@ -18,7 +18,9 @@ const medalLevels = {
 
 (async () => {
   const emailPromises: Promise<Email>[] = [];
-  for (const contributionType of Object.keys(medalLevels) as userContributionType[]) {
+  for (const contributionType of Object.keys(
+    medalLevels,
+  ) as userContributionType[]) {
     const pendingEmailContributionsForType =
       await prismaDmClient.userContribution.findMany({
         where: {
@@ -38,7 +40,7 @@ const medalLevels = {
       console.info(`No email to send for contribution ${contributionType}`);
     } else {
       const pendingEmailContributionsByUser =
-        pendingEmailContributionsForType.groupBy('userId', '[]')
+        pendingEmailContributionsForType.groupBy("userId", "[]");
 
       for (const [userId, pendingEmailContributionsForUser] of Object.entries(
         pendingEmailContributionsByUser,
@@ -60,7 +62,7 @@ const medalLevels = {
         ).reduce<number | null>(
           (medalReached, [medal, medalThreshold]) =>
             initialPointsCount < medalThreshold &&
-              finalPointsCount >= medalThreshold
+            finalPointsCount >= medalThreshold
               ? parseInt(medal)
               : medalReached,
           null,

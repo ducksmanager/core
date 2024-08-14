@@ -1,6 +1,9 @@
 <template>
   <svg>
-    <rect ref="rect" v-bind="options">
+    <rect
+      ref="rect"
+      v-bind="options"
+    >
       <metadata>{{ options }}</metadata>
     </rect>
   </svg>

@@ -7,22 +7,19 @@ import { prismaClient as prismaEdgeCreator } from "~prisma-schemas/schemas/edgec
 
 import type Events from "../types";
 export default (socket: Socket<Events>) => {
-  socket.on(
-    "sendNewEdgePhotoEmail",
-    async (issuecode, callback) => {
-      const user = await prismaDm.user.findUniqueOrThrow({
-        where: { id: socket.data.user!.id },
-      });
-      const email = new EdgePhotoSent({
-        user,
-        issuecode,
-      });
-      const edgeUrl = email.data.ecLink;
-      await email.send();
+  socket.on("sendNewEdgePhotoEmail", async (issuecode, callback) => {
+    const user = await prismaDm.user.findUniqueOrThrow({
+      where: { id: socket.data.user!.id },
+    });
+    const email = new EdgePhotoSent({
+      user,
+      issuecode,
+    });
+    const edgeUrl = email.data.ecLink;
+    await email.send();
 
-      callback({ url: edgeUrl });
-    },
-  );
+    callback({ url: edgeUrl });
+  });
   socket.on("createElementImage", async (hash, fileName, callback) =>
     prismaEdgeCreator.elementImage
       .create({

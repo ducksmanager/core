@@ -1,30 +1,17 @@
 {
-  "name": "dm-stats",
+  "name": "~stats-updater",
   "version": "1.0.0",
   "description": "Daily stats calculation for DucksManager",
   "main": "index.ts",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "bun build --target bun --sourcemap index.ts --outfile bundle.mjs"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/bperel/DucksManager-stats.git"
-  },
-  "author": "",
-  "bugs": {
-    "url": "https://github.com/bperel/DucksManager-stats/issues"
-  },
-  "homepage": "https://github.com/bperel/DucksManager-stats#readme",
   "dependencies": {
     "dotenv": "^16.0.1",
-    "mariadb": "^3.0.0",
-    "ts-node": "^10.9.1"
+    "mariadb": "^3.0.0"
   },
   "devDependencies": {
-    "@typescript-eslint/eslint-plugin": "^5.30.7",
-    "@typescript-eslint/parser": "^5.30.7",
-    "eslint": "^8.20.0",
-    "eslint-config-standard": "^17.0.0",
-    "typescript": "^4.7.4"
+    "@types/bun": "latest",
+    "typescript": "^5.5.4"
   }
 }

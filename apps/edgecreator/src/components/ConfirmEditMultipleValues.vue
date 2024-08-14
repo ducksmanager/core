@@ -13,8 +13,9 @@
             edit = true;
             emit('change', values[0]);
           "
-          >{{ $t("Edit") }}</b-button
         >
+          {{ $t("Edit") }}
+        </b-button>
       </template>
       <slot v-else />
     </div>

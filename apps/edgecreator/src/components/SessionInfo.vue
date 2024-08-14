@@ -3,17 +3,18 @@
     <div class="text-end fw-bold">
       {{ username }}
     </div>
-    <b-button-toolbar
-      ><b-button-group>
+    <b-button-toolbar>
+      <b-button-group>
         <b-button
           v-for="{ key, name } in locales"
           :key="key"
           :disabled="locale === key"
           @click="reloadWithLocale(key)"
-          >{{ name }}
-        </b-button></b-button-group
-      ></b-button-toolbar
-    >
+        >
+          {{ name }}
+        </b-button>
+      </b-button-group>
+    </b-button-toolbar>
   </div>
 </template>
 <script setup lang="ts">

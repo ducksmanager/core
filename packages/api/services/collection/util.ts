@@ -29,10 +29,7 @@ export const getMedalPoints = async (userIds: number[]) =>
                                AND userIds.userId = userContributions.userId
     `
   ).reduce<{
-    [userId: number]: Record<
-      UserContributionTypeEn,
-      number
-    >;
+    [userId: number]: Record<UserContributionTypeEn, number>;
   }>(
     (acc, { userContributionTypeEn, totalPoints, userId }) => ({
       ...acc,

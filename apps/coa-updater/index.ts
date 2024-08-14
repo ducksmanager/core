@@ -2,12 +2,7 @@
 
 import { $ } from "bun";
 import { parse } from "csv-parse";
-import {
-  createReadStream,
-  existsSync,
-  mkdirSync,
-  readFileSync,
-} from "fs";
+import { createReadStream, existsSync, mkdirSync, readFileSync } from "fs";
 import { createPool } from "mariadb";
 
 const dataPath = "/tmp/inducks",
@@ -55,11 +50,11 @@ try {
       (line) =>
         !(
           ["USE ", "RENAME ", "DROP ", "# Step ", "#End of file"].some(
-            (prefix) => line.startsWith(prefix)
+            (prefix) => line.startsWith(prefix),
           ) ||
           /^.+priv[^;]+;$/.test(line) ||
           /^CREATE TABLE IF NOT EXISTS ([^ ]+) LIKE \1_temp/.test(line)
-        )
+        ),
     )
     .join("\n")
     // TODO uncomment? Replace "pk0" indexes with actual primary keys
@@ -67,18 +62,18 @@ try {
     // Add short_issuecode column at the end of the table each time issuecode is declared
     .replace(
       /(^([ ]*)issuecode ([^$,]+).+?\)$)/gms,
-      `$1,\n$2short_issuecode $3 as (regexp_replace(issuecode, '[ ]+', ' '))`
+      `$1,\n$2short_issuecode $3 as (regexp_replace(issuecode, '[ ]+', ' '))`,
     )
     // Replace ISV file paths with absolute paths
     .replace(
       /LOAD DATA LOCAL INFILE ".\/([^"]+)"/gms,
-      `LOAD DATA LOCAL INFILE '${dataPath}/$1'`
+      `LOAD DATA LOCAL INFILE '${dataPath}/$1'`,
     )
 
     // Prefix fulltext indexes with table name
     .replace(
       /(ALTER TABLE )(([^ ]+)_temp)( ADD FULLTEXT)(\([^()]+\));/gs,
-      "$1$2$4 fulltext_$3 $5;"
+      "$1$2$4 fulltext_$3 $5;",
     );
 
   console.log("Renaming foreign keys...");
@@ -86,9 +81,9 @@ try {
     cleanSql = cleanSql.replace(
       new RegExp(
         `(CREATE TABLE ((?:(?!_temp).)+?)_temp(?:(?!KEY fk'${fkIndex}')[^;])+?)KEY (fk)('${fkIndex}')`,
-        "gms"
+        "gms",
       ),
-      "$1KEY $3_$2$4"
+      "$1KEY $3_$2$4",
     );
   }
   console.log("done.");
@@ -103,7 +98,7 @@ try {
           delimiter: "^",
           columns: true,
           quote: null,
-        })
+        }),
       );
       let maxLength = 0;
       for await (const record of parser) {
@@ -114,7 +109,7 @@ try {
       console.log(`Max length for ${table}.${field}: ${maxLength}`);
       cleanSql = cleanSql.replace(
         new RegExp(`(?<=CREATE TABLE ${table})([^;]+ ${field} )text`),
-        `$1varchar(${maxLength})`
+        `$1varchar(${maxLength})`,
       );
     }
   }
@@ -145,7 +140,7 @@ set sql_log_bin=1`;
   const connection = await pool.getConnection();
   await connection.query(
     `DROP DATABASE IF EXISTS ${process.env.MYSQL_DATABASE_NEW};CREATE DATABASE ${process.env.MYSQL_DATABASE_NEW} CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci; set global net_buffer_length=1000000; 
-set global max_allowed_packet=1000000000; `
+set global max_allowed_packet=1000000000; `,
   );
 
   const newDbPool = createPool({
@@ -162,7 +157,7 @@ set global max_allowed_packet=1000000000; `
   const tables = (
     await newDbConnection.query(
       `SELECT table_name FROM information_schema.tables WHERE table_schema = ?`,
-      [process.env.MYSQL_DATABASE_NEW]
+      [process.env.MYSQL_DATABASE_NEW],
     )
   ).map((row: { table_name: string }) => row.table_name);
   newDbConnection.release();
@@ -173,7 +168,7 @@ set global max_allowed_packet=1000000000; `
       `set foreign_key_checks = 0;
       drop table if exists ${process.env.MYSQL_DATABASE}.${table};
       rename table ${process.env.MYSQL_DATABASE_NEW}.${table} to ${process.env.MYSQL_DATABASE}.${table};
-      set foreign_key_checks = 1;`
+      set foreign_key_checks = 1;`,
     );
     console.log(" done.");
   }

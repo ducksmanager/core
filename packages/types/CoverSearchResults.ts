@@ -6,9 +6,9 @@ export interface SimilarImagesResult {
 }
 
 export interface CoverSearchResults {
-  covers: ({
+  covers: {
     issuecode: string;
     fullUrl: string | null;
-  })[];
+  }[];
   type?: string;
 }

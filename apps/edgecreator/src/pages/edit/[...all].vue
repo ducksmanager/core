@@ -1,5 +1,10 @@
 <template>
-  <b-alert v-if="error" align="center" variant="danger" :model-value="true">
+  <b-alert
+    v-if="error"
+    align="center"
+    variant="danger"
+    :model-value="true"
+  >
     {{ error }}
   </b-alert>
   <b-container
@@ -20,14 +25,17 @@
     </b-alert>
     <top-bar />
     <position-helper />
-    <b-row class="flex-grow-1 pt-2" align-h="end">
+    <b-row
+      class="flex-grow-1 pt-2"
+      align-h="end"
+    >
       <b-col class="d-flex align-items-end flex-column overflow-auto h-100">
         <table class="edges">
           <tr v-if="uiStore.showIssueNumbers">
             <th
               v-if="
                 showPreviousEdge &&
-                mainStore.edgesBefore[mainStore.edgesBefore.length - 1]
+                  mainStore.edgesBefore[mainStore.edgesBefore.length - 1]
               "
               class="surrounding-edge"
             >
@@ -117,7 +125,7 @@
                   @click="setColorFromPhoto"
                   @load="uiStore.showEdgePhotos = true"
                   @error="uiStore.showEdgePhotos = undefined"
-                />
+                >
               </td>
             </template>
             <td v-if="showNextEdge && mainStore.edgesAfter.length">
@@ -130,7 +138,11 @@
           </tr>
         </table>
       </b-col>
-      <b-col sm="10" md="8" lg="6">
+      <b-col
+        sm="10"
+        md="8"
+        lg="6"
+      >
         <model-edit
           @add-step="stepStore.addStep"
           @remove-step="stepStore.removeStep"

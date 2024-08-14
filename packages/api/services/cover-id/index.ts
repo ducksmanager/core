@@ -14,10 +14,10 @@ export default (io: Server) => {
     socket.on("searchFromCover", async ({ base64, url }, callback) => {
       const buffer = url
         ? (
-          await axios.get(url, {
-            responseType: "arraybuffer",
-          })
-        ).data
+            await axios.get(url, {
+              responseType: "arraybuffer",
+            })
+          ).data
         : Buffer.from(base64!.split(";base64,").pop()!, "base64");
 
       const pastecResponse: SimilarImagesResult | null =
@@ -60,10 +60,10 @@ export default (io: Server) => {
           covers.sort((cover1, cover2) =>
             Math.sign(
               pastecResponse.image_ids.indexOf(cover1.id) -
-              pastecResponse.image_ids.indexOf(cover2.id),
+                pastecResponse.image_ids.indexOf(cover2.id),
             ),
           ),
-        )
+        );
 
       const issuecodes = Object.keys(coversByIssuecode);
       console.log(
@@ -74,8 +74,8 @@ export default (io: Server) => {
         covers: coversByIssuecode.map(({ issuecode, fullUrl }) => ({
           issuecode,
           fullUrl,
-        }))
-      })
+        })),
+      });
     });
 
     socket.on("downloadCover", async (coverId, callback) => {
@@ -84,8 +84,9 @@ export default (io: Server) => {
           id: coverId,
         },
       });
-      const remotePath = `${cover.sitecode}/${cover.sitecode === "webusers" ? "webusers" : ""
-        }${cover.url}`;
+      const remotePath = `${cover.sitecode}/${
+        cover.sitecode === "webusers" ? "webusers" : ""
+      }${cover.url}`;
 
       const data: Uint8Array[] = [];
       const externalRequest = https.request(
@@ -113,7 +114,6 @@ export default (io: Server) => {
   });
 };
 
-
 const getIssuesCodesFromCoverIds = async (coverIds: number[]) =>
   await prismaCoverInfo.cover.findMany({
     where: {
@@ -128,7 +128,8 @@ const getSimilarImages = async (
 ): Promise<SimilarImagesResult | null> =>
   axios
     .post(
-      `http://${process.env.PASTEC_HOSTS!}:${process.env.PASTEC_PORT
+      `http://${process.env.PASTEC_HOSTS!}:${
+        process.env.PASTEC_PORT
       }/index/searcher`,
       cover,
       {

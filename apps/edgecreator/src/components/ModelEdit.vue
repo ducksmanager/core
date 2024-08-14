@@ -1,5 +1,8 @@
 <template>
-  <b-card id="edit-card" no-body>
+  <b-card
+    id="edit-card"
+    no-body
+  >
     <b-tabs
       v-model="editingStepStore.stepNumber"
       lazy
@@ -80,11 +83,17 @@
             type="text"
             :input-values="inputValues[stepNumber].text"
           >
-            <popover triggers="hover" placement="left">
+            <popover
+              triggers="hover"
+              placement="left"
+            >
               <i-bi-info-circle-fill variant="secondary" />
-              <template #content
-                ><b-alert variant="info" :model-value="true"
-                  >{{
+              <template #content>
+                <b-alert
+                  variant="info"
+                  :model-value="true"
+                >
+                  {{
                     $t(
                       "You can use special text parts to make your text dynamic :",
                     )
@@ -109,8 +118,8 @@
                         <pre class="d-inline-block">[Numero[1]]</pre>
                       </template>
                     </i18n-t>
-                  </ul></b-alert
-                >
+                  </ul>
+                </b-alert>
               </template>
             </popover>
           </form-input-row>
@@ -119,10 +128,14 @@
             :label="$t('Font').toString()"
             type="text"
             :input-values="inputValues[stepNumber].font"
-            ><a target="_blank" :href="fontSearchUrl">{{
-              $t("Search")
-            }}</a></form-input-row
           >
+            <a
+              target="_blank"
+              :href="fontSearchUrl"
+            >{{
+              $t("Search")
+            }}</a>
+          </form-input-row>
           <form-color-input-row
             :other-colors="otherColors[stepNumber]"
             option-name="bgColor"
@@ -153,7 +166,8 @@
             variant="outline-warning"
             class="d-block mt-3"
             @click="resetPositionAndSize(stepNumber)"
-            >{{ $t("Reset position and size") }}
+          >
+            {{ $t("Reset position and size") }}
           </b-button>
         </b-card-text>
         <b-card-text v-if="components[stepNumber] === 'Fill'">
@@ -170,7 +184,8 @@
             variant="outline-warning"
             class="d-block my-3 float-end"
             @click="splitImageAcrossEdges()"
-            >{{
+          >
+            {{
               $t(
                 editingStepStore.issuecodes.length === 1
                   ? "Fill the edge with this image"
@@ -245,14 +260,19 @@
           />
         </b-card-text>
       </b-tab>
-      <b-tab key="99" :title="$t('Add step')" title-item-class="fw-bold">
+      <b-tab
+        key="99"
+        :title="$t('Add step')"
+        title-item-class="fw-bold"
+      >
         <b-card-text>
           <b-dropdown :text="$t('Select a step type')">
             <b-dropdown-item
               v-for="render in rendersStore.supportedRenders"
               :key="render.component"
               @click="emit('add-step', render.component)"
-              >{{ $t(render.description) }}
+            >
+              {{ $t(render.description) }}
             </b-dropdown-item>
           </b-dropdown>
         </b-card-text>

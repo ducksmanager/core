@@ -5,7 +5,7 @@ import { firefox } from "playwright-firefox";
 import { getScrapeCacheTime, syncScrapeCache } from "~/cache";
 import { createQuotations } from "~/coa";
 import { readCsvMapping } from "~/csv";
-import { prismaClient } from '~prisma-schemas/schemas/coa/client'
+import { prismaClient } from "~prisma-schemas/schemas/coa/client";
 
 const MAPPING_FILE = "scrapes/gocollect/coa-mapping.csv";
 const ROOT_URL = "https://gocollect.com/app/comics/";
@@ -27,12 +27,12 @@ export async function scrape() {
   const mappedPublications: CsvIssue[] = [];
 
   await readCsvMapping<CsvIssue>(MAPPING_FILE, (record) =>
-    mappedPublications.push(record)
+    mappedPublications.push(record),
   );
 
   const browser = await firefox.launch();
   const browserContext = await browser.newContext();
-  await browserContext.route(/img.gocollect.com/, route => route.abort());
+  await browserContext.route(/img.gocollect.com/, (route) => route.abort());
   const page = await browserContext.newPage();
 
   await page.goto("https://gocollect.com/login");
@@ -55,7 +55,7 @@ export async function scrape() {
       await page.waitForSelector("ul.grid a");
       const issueElementsLocator = page.locator("ul.grid a");
       const issueLinks = await issueElementsLocator.evaluateAll((e) =>
-        e.map((el) => (el as HTMLAnchorElement).href)
+        e.map((el) => (el as HTMLAnchorElement).href),
       );
 
       for (const issueLinkHref of issueLinks) {
@@ -75,7 +75,7 @@ export async function scrape() {
                   .catch((e) => {
                     console.error(`Error while fetching ${url}: ${e}`);
                     throw e;
-                  })
+                  }),
               ),
             (contentsBuffer) => {
               const contents = contentsBuffer.toString();
@@ -91,10 +91,10 @@ export async function scrape() {
               }
               await issuePage.waitForSelector(
                 '[wire\\:key="view-state-company-overview-1"]',
-                { timeout: 5000 }
+                { timeout: 5000 },
               );
               return _contents;
-            }
+            },
           );
         } catch (_e) {
           continue;
@@ -110,19 +110,20 @@ export async function scrape() {
         const issue = await prismaClient.inducks_issue.findFirstOrThrow({
           select: { issuecode: true },
           where: {
-            publicationcode, issuenumber
-          }
-        })
+            publicationcode,
+            issuenumber,
+          },
+        });
 
         const issueQuotationRows = await issuePage.$$(
-          '[wire\\:key="view-state-company-overview-1"] > .group'
+          '[wire\\:key="view-state-company-overview-1"] > .group',
         );
 
         let estimationMin = [];
         let estimationMax = [];
         for (const issueQuotationRow of issueQuotationRows) {
           const gradingText = await (await issueQuotationRow.$(
-            ":nth-child(2)"
+            ":nth-child(2)",
           ))!.innerText();
           const grading = parseFloat(gradingText);
           if (isNaN(grading)) {
@@ -130,14 +131,14 @@ export async function scrape() {
             continue;
           }
           const quotationElement = await issueQuotationRow.$(
-            "div.text-sm span:not(.md\\:hidden)"
+            "div.text-sm span:not(.md\\:hidden)",
           );
           if (!quotationElement) {
             continue;
           }
           const quotationText = (await quotationElement.innerText()).replace(
             /^\$|,/g,
-            ""
+            "",
           );
           const quotation = parseInt(quotationText);
           if (isNaN(quotation)) {
@@ -171,11 +172,11 @@ export async function scrape() {
           issuecode: issue.issuecode,
           estimationMin: Math.round(
             estimationMin.reduce((acc, value) => acc + value, 0) /
-            estimationMin.length
+              estimationMin.length,
           ),
           estimationMax: Math.round(
             estimationMax.reduce((acc, value) => acc + value, 0) /
-            estimationMax.length
+              estimationMax.length,
           ),
           scrapeDate: getScrapeCacheTime("gocollect", cacheFileName),
           source: "gocollect",
@@ -184,7 +185,7 @@ export async function scrape() {
       try {
         await page.waitForSelector(
           `[wire\\:key="paginator-page-1-page${++currentPageForPublication}"]`,
-          { timeout: 200 }
+          { timeout: 200 },
         );
       } catch (_e) {
         break;

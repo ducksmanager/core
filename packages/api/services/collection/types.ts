@@ -6,7 +6,7 @@ import type {
 } from "~dm-types/CollectionUpdate";
 import type { EdgeWithStringCreationDate } from "~dm-types/EdgeWithStringCreationDate";
 import type { EditSubscription } from "~dm-types/EditSubscription";
-import { InducksIssueQuotationSimple } from "~dm-types/InducksIssueQuotationSimple";
+import type { InducksIssueQuotationSimple } from "~dm-types/InducksIssueQuotationSimple";
 import type { TransactionResults } from "~dm-types/TransactionResults";
 import type { UserForAccountForm } from "~dm-types/UserForAccountForm";
 import type {
@@ -46,7 +46,7 @@ export default abstract class {
   ) => void;
 
   abstract getIssues: (
-    callback: (data: (AugmentedIssue<(issue & { issuecode: string })>)[]) => void,
+    callback: (data: AugmentedIssue<issue & { issuecode: string }>[]) => void,
   ) => void;
   abstract addOrChangeIssues: (
     data: CollectionUpdateMultipleIssues,
@@ -96,7 +96,7 @@ export default abstract class {
   ) => void;
 
   abstract getIssuesForSale: (
-    callback: (data: (AugmentedIssue<issue & { issuecode: string }>)[]) => void,
+    callback: (data: AugmentedIssue<issue & { issuecode: string }>[]) => void,
   ) => void;
 
   abstract getOption: (
@@ -174,7 +174,9 @@ export default abstract class {
     callback: (data: Errorable<{ token: string }, "Bad request">) => void,
   ) => void;
 
-  abstract getWatchedAuthors: (callback: (value: AuthorWithUserRating[]) => void) => void;
+  abstract getWatchedAuthors: (
+    callback: (value: AuthorWithUserRating[]) => void,
+  ) => void;
   abstract deleteWatchedAuthor: (
     personcode: string,
     callback: () => void,

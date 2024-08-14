@@ -10,8 +10,7 @@
     "build": "rm -rf dist/{api,types} && ./node_modules/.bin/tsc && tsc-alias",
     "prisma-pull-generate": "prisma db pull && prisma generate",
     "prisma-generate": "prisma generate",
-    "dev": "concurrently -n typecheck,tsx \"tsc --noEmit\" \"tsx watch index.ts\"",
-    "lint": "eslint ."
+    "dev": "concurrently -n typecheck,tsx \"tsc --noEmit\" \"tsx watch index.ts\""
   },
   "dependencies": {
     "@prisma/client": "^5.18.0",
@@ -43,12 +42,9 @@
     "@types/jsonwebtoken": "^9.0.6",
     "@types/node": "^18.19.43",
     "concurrently": "^8.2.2",
-    "eslint": "^8.57.0",
-    "eslint-config-prettier": "^9.1.0",
     "prisma": "^5.18.0",
     "tsc-alias": "^1.8.10",
     "tsx": "^4.17.0",
-    "typescript": "^5.5.4",
-    "typescript-eslint": "^7.18.0"
+    "typescript": "^5.5.4"
   }
 }

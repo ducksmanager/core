@@ -12,8 +12,6 @@ import type {
 } from "~prisma-schemas/schemas/coa";
 import type { Errorable } from "~socket.io-services/types";
 
-
-
 export const namespaceEndpoint = "/coa";
 export default abstract class {
   static namespaceEndpoint = namespaceEndpoint;
@@ -65,23 +63,23 @@ export default abstract class {
   ) => void;
   abstract getIssuePopularities: (
     issuecodes: string[],
-    callback: (value: Record<string, {
-      popularity: number
-    }>
+    callback: (
+      value: Record<
+        string,
+        {
+          popularity: number;
+        }
+      >,
     ) => void,
   ) => void;
   abstract getIssues: (
     issuecodes: string[],
-    callback: (
-      value: Record<string, SimpleInducksIssue>,
-    ) => void,
+    callback: (value: Record<string, SimpleInducksIssue>) => void,
   ) => void;
 
   abstract getIssuesByPublicationcodes: (
     publicationcodes: string[],
-    callback: (
-      value: Record<string, SimpleInducksIssue[]>,
-    ) => void,
+    callback: (value: Record<string, SimpleInducksIssue[]>) => void,
   ) => void;
 
   abstract getIssuesByStorycode: (
@@ -94,7 +92,10 @@ export default abstract class {
   abstract getIssuesByPublicationCodes: (
     publicationCodes: string[],
     callback: (
-      value: Errorable<{ issues: IssueWithIssuecodeOnly[] }, "Too many requests">,
+      value: Errorable<
+        { issues: IssueWithIssuecodeOnly[] },
+        "Too many requests"
+      >,
     ) => void,
   ) => void;
 

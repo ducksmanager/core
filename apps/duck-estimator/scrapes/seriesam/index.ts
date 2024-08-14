@@ -22,7 +22,7 @@ export async function scrape() {
   const mappedIssues: CsvIssue[] = [];
 
   await readCsvMapping<CsvIssue>(MAPPING_FILE, (record) =>
-    mappedIssues.push(record)
+    mappedIssues.push(record),
   );
   const seriesUrls = [
     ...new Set(mappedIssues.map(({ seriesamQuery }) => seriesamQuery)),
@@ -51,14 +51,14 @@ export async function scrape() {
               .catch((e) => {
                 console.error(`Error while fetching ${url}: ${e}`);
                 throw e;
-              })
+              }),
           ),
         (contentsBuffer) => {
           const contents = contentsBuffer.toString();
           page.setContent(contents);
           return contents;
         },
-        (_contents) => _contents
+        (_contents) => _contents,
       );
     } catch (_e) {
       continue;
@@ -91,10 +91,13 @@ export async function scrape() {
       }
       const issuenumbers = await getInducksIssuesBetween(
         publicationcode,
-        ...(issuenumber.split(" to ") as [string, string])
+        ...(issuenumber.split(" to ") as [string, string]),
       );
       let hasFoundQuotation = false;
-      for (const { issuenumber: issuenumberInRange, issuecode: issuecodeInRange } of issuenumbers) {
+      for (const {
+        issuenumber: issuenumberInRange,
+        issuecode: issuecodeInRange,
+      } of issuenumbers) {
         if (
           seriesamYear === seriesamYearMapping ||
           seriesamTitle === seriesamTitleMapping
@@ -106,7 +109,7 @@ export async function scrape() {
             column = await row.$(`td:nth-child(${cellNumber})`);
             if (column === null) {
               console.warn(
-                ` Inducks issue ${publicationcode} ${issuenumberInRange}: No quotation found`
+                ` Inducks issue ${publicationcode} ${issuenumberInRange}: No quotation found`,
               );
               break;
             } else {
@@ -115,7 +118,7 @@ export async function scrape() {
                 cellNumber++;
               } else {
                 console.info(
-                  ` Inducks issue ${publicationcode} ${issuenumberInRange}: A quotation was found`
+                  ` Inducks issue ${publicationcode} ${issuenumberInRange}: A quotation was found`,
                 );
                 const adjustedEstimation =
                   estimation * Math.pow(0.8, cellNumber - 5) * SEK_TO_EUR_RATE;

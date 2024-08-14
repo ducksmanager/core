@@ -7,15 +7,27 @@ meta:
     <session-info />
     <h1>{{ $t("Dashboard") }}</h1>
 
-    <b-alert v-if="!isCatalogLoaded" variant="info" :model-value="true">{{
-      $t("Loading...")
-    }}</b-alert>
+    <b-alert
+      v-if="!isCatalogLoaded"
+      variant="info"
+      :model-value="true"
+    >
+      {{
+        $t("Loading...")
+      }}
+    </b-alert>
 
     <template v-else>
       <h3>{{ $t("Edge creation") }}</h3>
 
-      <b-container v-if="isUploadableEdgesCarouselReady" align="center">
-        <b-alert variant="info" :model-value="true">
+      <b-container
+        v-if="isUploadableEdgesCarouselReady"
+        align="center"
+      >
+        <b-alert
+          variant="info"
+          :model-value="true"
+        >
           <template v-if="mostPopularIssuesInCollectionWithoutEdge?.length">
             <uploadable-edges-carousel
               :user-points="userPhotographerPoints"
@@ -32,7 +44,7 @@ meta:
               </template>
             </uploadable-edges-carousel>
             <div>
-              <hr />
+              <hr>
               <div class="position-absolute px-2 separation-text">
                 {{ $t("or") }}
               </div>
@@ -53,9 +65,14 @@ meta:
               }}
             </template>
           </uploadable-edges-carousel>
-          <b-button to="/upload" class="mt-1">{{
-            $t("Send edge photos")
-          }}</b-button>
+          <b-button
+            to="/upload"
+            class="mt-1"
+          >
+            {{
+              $t("Send edge photos")
+            }}
+          </b-button>
         </b-alert>
       </b-container>
 
@@ -64,14 +81,19 @@ meta:
         class="mt-3"
         align="center"
       >
-        <b-button to="/edit/new">{{
-          $t("Create or edit an edge model")
-        }}</b-button>
+        <b-button to="/edit/new">
+          {{
+            $t("Create or edit an edge model")
+          }}
+        </b-button>
       </b-container>
 
-      <hr />
+      <hr>
 
-      <template v-for="{ status, l10n } in edgeCategories" :key="`${status}`">
+      <template
+        v-for="{ status, l10n } in edgeCategories"
+        :key="`${status}`"
+      >
         <h3>{{ $t(l10n) }}</h3>
 
         <b-container
@@ -93,13 +115,15 @@ meta:
                 <b-link
                   class="mx-3"
                   :to="`edit/${edges.map((edge) => edge.issuecode.replaceAll(' ', '_')).join(',')}`"
-                  ><b-button
+                >
+                  <b-button
                     v-if="canEditEdge(status)"
                     size="sm"
                     variant="outline-secondary"
-                    >{{ $t("Edit all") }} ({{ edges.length }})</b-button
-                  ></b-link
-                >
+                  >
+                    {{ $t("Edit all") }} ({{ edges.length }})
+                  </b-button>
+                </b-link>
               </b-col>
             </b-row>
             <b-row>
@@ -122,7 +146,7 @@ meta:
                       <img
                         v-if="
                           (hoveredEdge === edge && edge.v3) ||
-                          status === 'pending'
+                            status === 'pending'
                         "
                         :alt="edge.issuecode"
                         class="edge-preview"
@@ -131,7 +155,7 @@ meta:
                             ? getEdgeUrl(edge.issuecode, 'svg', false)
                             : undefined
                         "
-                      /><edge-link
+                      ><edge-link
                         :issuecode="edge.issuecode"
                         :designers="edge.designers"
                         :photographers="edge.photographers"
@@ -144,25 +168,34 @@ meta:
             </b-row>
           </template>
         </b-container>
-        <div v-else align="center">
+        <div
+          v-else
+          align="center"
+        >
           {{ $t("No edge in this category") }}
         </div>
       </template>
     </template>
 
-    <b-container align="center" class="m-5">&nbsp;</b-container>
+    <b-container
+      align="center"
+      class="m-5"
+    >
+&nbsp;
+    </b-container>
 
     <b-container
       id="footer"
       class="position-fixed text-center w-100 bg-light p-2"
-      >{{
+    >
+      {{
         $t(
           "EdgeCreator is a tool allowing to create edges for the DucksManager bookcase.",
         )
-      }}<br /><a href="https://ducksmanager.net">{{
+      }}<br><a href="https://ducksmanager.net">{{
         $t("Go to DucksManager")
-      }}</a></b-container
-    >
+      }}</a>
+    </b-container>
   </div>
 </template>
 <script setup lang="ts">

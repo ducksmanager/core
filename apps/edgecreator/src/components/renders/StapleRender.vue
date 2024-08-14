@@ -5,24 +5,24 @@
       <rect
         ref="rect1"
         v-bind="{
-        ...attributes,
-        width: 0.5,
-        stroke: 'black',
-        x: dimensions.width / 2 - 0.25,
-        y:
-          dimensions.height / 2 - options.yDistanceFromCenter! - options.height,
-      }"
-      ></rect>
+          ...attributes,
+          width: 0.5,
+          stroke: 'black',
+          x: dimensions.width / 2 - 0.25,
+          y:
+            dimensions.height / 2 - options.yDistanceFromCenter! - options.height,
+        }"
+      />
       <rect
         ref="rect2"
         v-bind="{
-        ...attributes,
-        width: 0.5,
-        stroke: 'black',
-        x: dimensions.width / 2 - 0.25,
-        y: dimensions.height / 2 + options.yDistanceFromCenter!,
-      }"
-      ></rect>
+          ...attributes,
+          width: 0.5,
+          stroke: 'black',
+          x: dimensions.width / 2 - 0.25,
+          y: dimensions.height / 2 + options.yDistanceFromCenter!,
+        }"
+      />
     </g>
   </svg>
 </template>

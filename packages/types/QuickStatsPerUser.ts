@@ -4,11 +4,11 @@ export type QuickStatsPerUser = Record<
   string,
   Prisma.userGetPayload<{
     select: {
-      id: true,
-      username: true,
-      presentationText: true,
-      allowSharing: true,
-    },
+      id: true;
+      username: true;
+      presentationText: true;
+      allowSharing: true;
+    };
   }> & {
     numberOfCountries: number;
     numberOfPublications: number;

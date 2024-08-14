@@ -98,8 +98,7 @@ export default (socket: Socket<Events>) => {
 };
 
 export const getIssuesForSale = async (buyerId: number) =>
-  prismaDm.$queryRaw<(Pick<issue, 'id'>)[]
-  >`
+  prismaDm.$queryRaw<Pick<issue, "id">[]>`
     SELECT issue.ID as id
     FROM numeros issue
     INNER JOIN (
@@ -128,15 +127,19 @@ export const getIssuesForSale = async (buyerId: number) =>
          WHERE user_collection.issuecode = issue.issuecode
            AND user_collection.ID_Utilisateur = ${buyerId}
         )`
-    .then((idsForSale) => prismaDm.issue.findMany({
-      select: {
-        userId: true,
-        id: true,
-        issuecode: true,
-      },
-      where: {
-        id: {
-          in: idsForSale.map(({ id }) => id),
-        },
-      }
-    }) as Promise<(issue & { issuecode: string })[]>).then(augmentIssueArrayWithInducksData)
+    .then(
+      (idsForSale) =>
+        prismaDm.issue.findMany({
+          select: {
+            userId: true,
+            id: true,
+            issuecode: true,
+          },
+          where: {
+            id: {
+              in: idsForSale.map(({ id }) => id),
+            },
+          },
+        }) as Promise<(issue & { issuecode: string })[]>,
+    )
+    .then(augmentIssueArrayWithInducksData);

@@ -15,9 +15,7 @@ export default (socket: Socket<Events>) => {
         },
         where: { issuecode: { in: issuecodes } },
       })
-      .then((data) =>
-        data.groupBy('issuecode')
-      )
+      .then((data) => data.groupBy("issuecode"))
       .then(callback),
   );
 
@@ -35,9 +33,7 @@ export default (socket: Socket<Events>) => {
           },
         },
       })
-      .then((data) =>
-        data.groupBy('publicationcode', '[]')
-      )
+      .then((data) => data.groupBy("publicationcode", "[]"))
       .then(callback),
   );
 

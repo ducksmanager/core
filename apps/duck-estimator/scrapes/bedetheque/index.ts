@@ -19,7 +19,7 @@ export async function scrape() {
   const mappedIssues: CsvIssue[] = [];
 
   await readCsvMapping<CsvIssue>(MAPPING_FILE, (record) =>
-    mappedIssues.push(record)
+    mappedIssues.push(record),
   );
   const seriesUrls = [
     ...new Set(mappedIssues.map(({ bedetheque_url }) => bedetheque_url)),
@@ -36,7 +36,7 @@ export async function scrape() {
         ROOT_URL + serieUrl,
         async (url) => await Scraper.getSerie(url),
         (contents) => JSON.parse(contents.toString()),
-        (contents) => JSON.stringify(contents)
+        (contents) => JSON.stringify(contents),
       );
     } catch (_e) {
       continue;
@@ -46,7 +46,7 @@ export async function scrape() {
       continue;
     }
     const mappedIssuesForSeries = mappedIssues.filter(
-      ({ bedetheque_url }) => bedetheque_url === serieUrl
+      ({ bedetheque_url }) => bedetheque_url === serieUrl,
     );
     for (const {
       bedetheque_num,
@@ -59,11 +59,11 @@ export async function scrape() {
             !(
               (bedetheque_num !== "" && albumNum !== bedetheque_num) ||
               (bedetheque_title !== "" && albumTitle !== bedetheque_title)
-            )
+            ),
         );
         if (!bedethequeAlbum) {
           console.warn(
-            ` No issue found in Bedetheque series "${serieUrl}": num=${bedetheque_num}, title=${bedetheque_title}`
+            ` No issue found in Bedetheque series "${serieUrl}": num=${bedetheque_num}, title=${bedetheque_title}`,
           );
         } else {
           let { estimationEuros } = bedethequeAlbum;

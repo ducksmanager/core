@@ -18,7 +18,7 @@ export const syncScrapeCache = async <T>(
   url: string,
   fetchFn: (url: string) => Promise<T>,
   postGetFromCacheTransformFn: (buffer: Buffer) => T,
-  preSetInCacheTransformFn: (output: T) => string | Promise<string>
+  preSetInCacheTransformFn: (output: T) => string | Promise<string>,
 ) => {
   const cacheDirName = `${getCacheDir()}/${scrapeDirName}`;
   const cacheFileName = `${cacheDirName}/${fileName}`;
@@ -34,11 +34,11 @@ export const syncScrapeCache = async <T>(
       scrapeOutput = await fetchFn(url);
       writeFileSync(
         cacheFileName,
-        await preSetInCacheTransformFn(scrapeOutput)
+        await preSetInCacheTransformFn(scrapeOutput),
       );
     } catch (e) {
       console.error(`Scraping of ${url} failed: ${e}`);
-      throw e
+      throw e;
     }
   }
   return scrapeOutput;

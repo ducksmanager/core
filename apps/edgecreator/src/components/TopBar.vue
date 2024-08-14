@@ -1,13 +1,25 @@
 <template>
   <b-container fluid>
-    <b-row align="center" class="pt-2">
+    <b-row
+      align="center"
+      class="pt-2"
+    >
       <b-col class="text-start position-absolute col-12 col-md-6 options">
-        <b-navbar toggleable class="ps-0 pt-0">
-          <b-navbar-brand href="#">{{ $t("Options") }}</b-navbar-brand>
+        <b-navbar
+          toggleable
+          class="ps-0 pt-0"
+        >
+          <b-navbar-brand href="#">
+            {{ $t("Options") }}
+          </b-navbar-brand>
 
-          <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
+          <b-navbar-toggle target="nav-collapse" />
 
-          <b-collapse id="nav-collapse" is-nav class="flex-column p-2 bg-white">
+          <b-collapse
+            id="nav-collapse"
+            is-nav
+            class="flex-column p-2 bg-white"
+          >
             <b-row class="zoom-option">
               <b-col cols="3">
                 <input
@@ -17,7 +29,8 @@
                   max="8"
                   step="0.5"
                   style="width: 100%"
-              /></b-col>
+                >
+              </b-col>
               <b-col>{{ $t("Zoom") }}: {{ uiStore.zoom }}</b-col>
             </b-row>
             <b-row>
@@ -27,11 +40,11 @@
                   v-model="uiStore.showIssueNumbers"
                 />
               </b-col>
-              <b-col
-                ><label for="showIssueNumbers">{{
+              <b-col>
+                <label for="showIssueNumbers">{{
                   $t("Show issue numbers")
-                }}</label></b-col
-              >
+                }}</label>
+              </b-col>
             </b-row>
             <b-row>
               <b-col cols="3">
@@ -40,15 +53,15 @@
                   v-model="showPreviousEdge"
                   :disabled="
                     !mainStore.edgesBefore.length ||
-                    showPreviousEdge === undefined
+                      showPreviousEdge === undefined
                   "
                 />
               </b-col>
-              <b-col
-                ><label for="showPreviousEdge">{{
+              <b-col>
+                <label for="showPreviousEdge">{{
                   $t("Show previous edge")
-                }}</label></b-col
-              >
+                }}</label>
+              </b-col>
             </b-row>
             <b-row>
               <b-col cols="3">
@@ -60,11 +73,11 @@
                   "
                 />
               </b-col>
-              <b-col
-                ><label for="showNextEdge">{{
+              <b-col>
+                <label for="showNextEdge">{{
                   $t("Show next edge")
-                }}</label></b-col
-              >
+                }}</label>
+              </b-col>
             </b-row>
             <b-row>
               <b-col cols="3">
@@ -76,11 +89,11 @@
                   "
                 />
               </b-col>
-              <b-col
-                ><label for="uiStore.showEdgePhotos">{{
+              <b-col>
+                <label for="uiStore.showEdgePhotos">{{
                   $t("Show edge photos")
-                }}</label></b-col
-              >
+                }}</label>
+              </b-col>
             </b-row>
             <b-row>
               <b-col cols="3">
@@ -89,16 +102,19 @@
                   v-model="uiStore.showEdgeOverflow"
                 />
               </b-col>
-              <b-col
-                ><label for="showEdgeOverflow">{{
+              <b-col>
+                <label for="showEdgeOverflow">{{
                   $t("Show edge overflow")
-                }}</label></b-col
-              >
+                }}</label>
+              </b-col>
             </b-row>
           </b-collapse>
         </b-navbar>
       </b-col>
-      <b-col align-self="center" class="col-sm-4 offset-4">
+      <b-col
+        align-self="center"
+        class="col-sm-4 offset-4"
+      >
         <b-button to="/">
           <i-bi-house />
           {{ $t("Home") }}
@@ -106,22 +122,34 @@
       </b-col>
       <b-col />
     </b-row>
-    <b-row align="center" class="pb-1">
-      <b-col v-if="publicationName" align-self="center">
-        <issue :issuecode="issuecodes[0]" hide-condition no-wrap>
-          <template v-if="isEditingMultiple" #title-suffix>
-            <template v-if="mainStore.isRange"
-              >{{ $t("to") }}
+    <b-row
+      align="center"
+      class="pb-1"
+    >
+      <b-col
+        v-if="publicationName"
+        align-self="center"
+      >
+        <issue
+          :issuecode="issuecodes[0]"
+          hide-condition
+          no-wrap
+        >
+          <template
+            v-if="isEditingMultiple"
+            #title-suffix
+          >
+            <template v-if="mainStore.isRange">
+              {{ $t("to") }}
               {{ issuecodes[issuecodes.length - 1] }}
             </template>
-            <template v-else-if="issuecodes.length > 1"
-              ><span
+            <template v-else-if="issuecodes.length > 1">
+              <span
                 v-for="otherIssuecode in issuecodes.slice(1)"
                 :key="`other-${otherIssuecode}`"
-                >, {{ otherIssuecode }}</span
-              ></template
-            ></template
-          >
+              >, {{ otherIssuecode }}</span>
+            </template>
+          </template>
         </issue>
 
         <template v-if="isEditingMultiple">
@@ -131,11 +159,11 @@
             placement="bottom"
           >
             <i-bi-info-circle-fill variant="secondary" />
-            <template #header
-              ><b>{{ $t("Multiple-edge modification") }}</b></template
-            >
-            <template #content
-              ><ul class="py-2 text-start">
+            <template #header>
+              <b>{{ $t("Multiple-edge modification") }}</b>
+            </template>
+            <template #content>
+              <ul class="py-2 text-start">
                 <li>
                   {{
                     $t(
@@ -157,33 +185,42 @@
                     )
                   }}
                 </li>
-              </ul></template
-            >
+              </ul>
+            </template>
           </popover>
         </template>
       </b-col>
     </b-row>
-    <b-row align="center" class="p-1">
+    <b-row
+      align="center"
+      class="p-1"
+    >
       <b-col align-self="center">
         &nbsp;<b-button
-          pill
-          variant="outline-primary"
-          size="sm"
-          @click="showPhotoModal = !showPhotoModal"
-        >
-          <i-bi-camera />
-          <b-modal v-model="showPhotoModal" ok-only>
-            <gallery
-              image-type="photos"
-              :items="mainStore.publicationPhotosForGallery"
-              @change="addPhoto"
-            />
-          </b-modal> </b-button
-        >&nbsp;<save-model-button />&nbsp;<save-model-button
-          v-if="hasRole('Edition')"
-          with-submit
+                pill
+                variant="outline-primary"
+                size="sm"
+                @click="showPhotoModal = !showPhotoModal"
+              >
+                <i-bi-camera />
+                <b-modal
+                  v-model="showPhotoModal"
+                  ok-only
+                >
+                  <gallery
+                    image-type="photos"
+                    :items="mainStore.publicationPhotosForGallery"
+                    @change="addPhoto"
+                  />
+                </b-modal>
+              </b-button>&nbsp;<save-model-button />&nbsp;<save-model-button
+                v-if="hasRole('Edition')"
+                with-submit
+              />
+        <save-model-button
+          v-if="hasRole('Admin')"
+          with-export
         />
-        <save-model-button v-if="hasRole('Admin')" with-export />
       </b-col>
     </b-row>
     <b-row
@@ -202,8 +239,8 @@
               collapseDimensions = !collapseDimensions;
             "
           >
-            <i-bi-arrows-angle-expand /> </b-button
-          >&nbsp;<b-button
+            <i-bi-arrows-angle-expand />
+          </b-button>&nbsp;<b-button
             pill
             size="sm"
             variant="outline-primary"
@@ -227,7 +264,11 @@
               />
             </confirm-edit-multiple-values>
           </b-collapse>
-          <b-collapse id="collapse-clone" v-model="collapseClone" class="mt-2">
+          <b-collapse
+            id="collapse-clone"
+            v-model="collapseClone"
+            class="mt-2"
+          >
             <issue-select
               v-if="collapseClone"
               :publication-code="mainStore.publicationcode"
@@ -237,8 +278,11 @@
               disable-not-ongoing-nor-published
               @change="modelToBeCloned = $event"
             />
-            <b-button :disabled="!modelToBeCloned" @click="overwriteModel()"
-              >{{ $t("Clone") }}
+            <b-button
+              :disabled="!modelToBeCloned"
+              @click="overwriteModel()"
+            >
+              {{ $t("Clone") }}
             </b-button>
           </b-collapse>
         </multiple-target-options>

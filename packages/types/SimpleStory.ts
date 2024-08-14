@@ -1,4 +1,3 @@
-
 import type { IssueWithIssuecodeOnly } from "./IssueWithIssuecodeOnly";
 import type { SimpleIssueWithPartInfo } from "./SimpleIssue";
 

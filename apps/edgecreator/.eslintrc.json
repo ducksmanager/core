@@ -4,9 +4,7 @@
     // 'eslint:recommended',
     "plugin:@typescript-eslint/recommended",
     "plugin:@typescript-eslint/stylistic",
-    "plugin:prettier-vue/recommended",
-    "plugin:vue/vue3-recommended",
-    "prettier"
+    "plugin:vue/vue3-recommended"
   ],
   "parser": "vue-eslint-parser",
   "parserOptions": {
@@ -45,7 +43,6 @@
     ]
   },
   "plugins": [
-    "prettier",
     "@typescript-eslint"
   ],
   "ignorePatterns": [

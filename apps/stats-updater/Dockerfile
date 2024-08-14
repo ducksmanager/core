@@ -1,13 +1,9 @@
-FROM node:16
-MAINTAINER Bruno Perel
+FROM oven/bun
+LABEL org.opencontainers.image.authors="Bruno Perel"
 
-WORKDIR /home
+WORKDIR /app
 
-COPY package*.json ./
-RUN npm install
+COPY apps/stats-updater/bundle.mjs /app/
 
-COPY db.ts index.ts ./
-COPY sql ./sql
-COPY .env.prod ./.env
-
-CMD ["node_modules/.bin/ts-node", "/home/index.ts"]
+EXPOSE 3000
+ENTRYPOINT ["bun", "bundle.mjs"]

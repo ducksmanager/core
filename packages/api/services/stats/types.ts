@@ -1,5 +1,8 @@
 import type { AuthorDetails } from "~dm-types/AuthorDetails";
-import type { SuggestionSorts, SuggestionsWithDetails } from "~dm-types/SuggestionsWithDetails";
+import type {
+  SuggestionSorts,
+  SuggestionsWithDetails,
+} from "~dm-types/SuggestionsWithDetails";
 
 export const namespaceEndpoint = "/stats";
 export default abstract class {

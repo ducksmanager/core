@@ -40,13 +40,18 @@
         :ok-title="$t(withExport ? 'Export' : 'Submit')"
         @ok="issueIndexToSave = 0"
       >
-        <b-alert :model-value="true" variant="info">{{
-          $t(
-            "Once your edge is ready, indicate the photographers and the designers of the edge. " +
-              'When you click "Submit", the edge will be sent to an administrator for validation ' +
-              "before it is published on DucksManager",
-          )
-        }}</b-alert>
+        <b-alert
+          :model-value="true"
+          variant="info"
+        >
+          {{
+            $t(
+              "Once your edge is ready, indicate the photographers and the designers of the edge. " +
+                'When you click "Submit", the edge will be sent to an administrator for validation ' +
+                "before it is published on DucksManager",
+            )
+          }}
+        </b-alert>
         <div
           v-for="contributionType of ['photographes', 'createurs']"
           :key="contributionType"
@@ -57,8 +62,9 @@
               !hasAtLeastOneUser(contributionType as userContributionType)
             "
             variant="warning"
-            >{{ $t("You should select at least one user") }}</b-alert
-          ><vue3-simple-typeahead
+          >
+            {{ $t("You should select at least one user") }}
+          </b-alert><vue3-simple-typeahead
             :ref="`${userContributionEnL10n[contributionType]}Typeahead`"
             :items="
               getUsersWithoutContributors(

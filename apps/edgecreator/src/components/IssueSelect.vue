@@ -6,9 +6,14 @@
       @change="emit('change', null)"
     >
       <template #first>
-        <b-form-select-option :value="undefined" disabled>{{
-          $t("Select a country")
-        }}</b-form-select-option>
+        <b-form-select-option
+          :value="undefined"
+          disabled
+        >
+          {{
+            $t("Select a country")
+          }}
+        </b-form-select-option>
       </template>
     </b-form-select>
     <b-form-select
@@ -36,8 +41,12 @@
             onChange();
           "
         />
-        <b-alert v-else :model-value="true" variant="info"
-          >{{ $t("Loading...") }}
+        <b-alert
+          v-else
+          :model-value="true"
+          variant="info"
+        >
+          {{ $t("Loading...") }}
         </b-alert>
       </template>
       <template v-else>
@@ -48,19 +57,36 @@
           @change="onChange()"
         >
           <template #first>
-            <b-form-select-option :value="undefined" disabled>{{
-              $t("Select an issue number")
-            }}</b-form-select-option>
+            <b-form-select-option
+              :value="undefined"
+              disabled
+            >
+              {{
+                $t("Select an issue number")
+              }}
+            </b-form-select-option>
           </template>
         </b-form-select>
         <template v-if="canBeMultiple && currentFirstIssuecode !== null">
           <b-form-group class="mt-2">
-            <b-form-radio v-model="editMode" name="editMode" value="single">{{
-              $t("Edit a single edge")
-            }}</b-form-radio>
-            <b-form-radio v-model="editMode" name="editMode" value="range">{{
-              $t("Edit a range of edges (e.g. issues 1 to 3)")
-            }}</b-form-radio>
+            <b-form-radio
+              v-model="editMode"
+              name="editMode"
+              value="single"
+            >
+              {{
+                $t("Edit a single edge")
+              }}
+            </b-form-radio>
+            <b-form-radio
+              v-model="editMode"
+              name="editMode"
+              value="range"
+            >
+              {{
+                $t("Edit a range of edges (e.g. issues 1 to 3)")
+              }}
+            </b-form-radio>
           </b-form-group>
           <b-form-select
             v-show="editMode === 'range'"
