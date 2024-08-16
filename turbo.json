@@ -4,7 +4,7 @@
   "tasks": {
     "prisma-pull-generate": {},
     "lint": {},
-    "prisma-generate": {
+    "prisma-generate-all": {
       "cache": false
     },
     "wait": {
@@ -12,7 +12,7 @@
     },
     "build": {
       "dependsOn": [
-        "prisma-generate",
+        "prisma-generate-all",
         "^build"
       ],
       "outputs": [
@@ -22,7 +22,7 @@
     "dev": {
       "persistent": true,
       "dependsOn": [
-        "prisma-generate",
+        "prisma-generate-all",
         "^wait"
       ]
     }
