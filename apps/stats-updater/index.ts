@@ -11,9 +11,6 @@ import {
 import type { authorUser } from "~prisma-schemas/schemas/dm";
 import type {
   authorStory,
-  missingIssueForUser,
-  missingStoryForUser,
-  storyIssue,
 } from "~prisma-schemas/schemas/dm_stats";
 
 const tables = [
@@ -39,17 +36,11 @@ db.connect().then(async () => {
     await import("~prisma-schemas/schemas/dm_stats/client")
   ).prismaClient;
 
-  process.env.DATABASE_URL_DM = originalConnectionString.replace(
-    "dm_stats",
-    "dm"
-  );
+  process.env.DATABASE_URL_DM = process.env.DATABASE_URL_DM;
   const prismaDm = (await import("~prisma-schemas/schemas/dm/client"))
     .prismaClient;
 
-  process.env.DATABASE_URL_COA = originalConnectionString.replace(
-    "dm_stats",
-    "coa"
-  );
+  process.env.DATABASE_URL_COA = process.env.DATABASE_URL_COA;
   const prismaCoa = (await import("~prisma-schemas/schemas/coa/client"))
     .prismaClient;
 

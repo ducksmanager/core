@@ -70,7 +70,8 @@ export const getPastecStatus = async (): Promise<
   { numberOfImages: number } | { error: string }
 > => {
   try {
-    const response = (await axios.get(`${process.env.PASTEC_HOSTS}/imageIds`))
+    const response = (await axios.get(`${process.env.PASTEC_HOSTS}:${process.env.PASTEC_PORT
+      }/index/imageIds`))
       .data;
     if (response) {
       const imageIds = JSON.parse(response)?.image_ids;
@@ -93,7 +94,8 @@ export const getPastecSearchStatus = async (): Promise<
   try {
     const response = (
       await axios.post(
-        `${process.env.PASTEC_HOSTS}/searcher`,
+        `${process.env.PASTEC_HOSTS}:${process.env.PASTEC_PORT
+        }/searcher`,
         `${process.env.INDUCKS_COVERS_ROOT}/au/bp/001/au_bp_001a_001.jpg`,
       )
     ).data;

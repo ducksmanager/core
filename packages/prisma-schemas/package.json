@@ -1,6 +1,5 @@
 {
   "name": "~prisma-schemas",
-  "module": "index.ts",
   "engines": {
     "node": ">=18.0.0 <19.0.0"
   },
@@ -15,7 +14,6 @@
     "prisma-migrate": "cd schemas/$SCHEMA && bunx prisma migrate deploy",
     "prisma-migrate-all": "cd schemas && ls | while read -r schema; do SCHEMA=$schema pnpm prisma-migrate; done",
     "dev": "docker compose -f docker-compose-dev.yml up --force-recreate -d && bash wait-until-db-ready.bash",
-    "build": "bun build --target node --minify --sourcemap index.ts --outfile dist/index.mjs",
     "lint": "prettier -w schemas"
   },
   "dependencies": {
