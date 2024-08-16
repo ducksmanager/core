@@ -1,16 +1,16 @@
 import * as dotenv from "dotenv";
 import type { PoolConnection } from "mariadb";
 import { createPool } from "mariadb";
+import { readFileSync } from "fs";
+import { spawnSync } from "child_process";
 
 dotenv.config();
 
 for (const envKey of [
   "MYSQL_HOST",
   "MYSQL_PORT",
-  "MYSQL_COA_DATABASE",
-  "MYSQL_DM_DATABASE",
-  "MYSQL_DM_STATS_DATABASE",
   "MYSQL_PASSWORD",
+  "DATABASE_URL_DM_STATS",
 ]) {
   if (!process.env[envKey]) {
     console.error(`Environment variable not found, aborting: ${envKey}`);
@@ -22,7 +22,7 @@ let connection: PoolConnection;
 
 const pool = createPool({
   host: process.env.MYSQL_HOST,
-  port: parseInt(process.env.MYSQL_PORT as string),
+  port: parseInt(process.env.MYSQL_PORT!),
   user: "root",
   password: process.env.MYSQL_PASSWORD,
   multipleStatements: true,
@@ -43,8 +43,42 @@ export const disconnect = async () => {
   return pool.end();
 };
 
+export const runMigrations = async () => {
+  const { stdout, stderr } = spawnSync("pnpm", ["-F", '~prisma-schemas', 'prisma-migrate'], {
+    encoding: "utf8",
+    env: {
+      ...process.env,
+      SCHEMA: 'dm_stats',
+    }
+  });
+
+  console.log(stdout)
+  if (stderr) {
+    throw new Error(stderr)
+  }
+}
+
+export const generatePrismaClient = async (dbName: string) => {
+  const { stdout, stderr } = spawnSync("pnpm", ["-F", '~prisma-schemas', 'prisma-generate'], {
+    encoding: "utf8",
+    env: {
+      ...process.env,
+      SCHEMA: 'dm_stats',
+    }
+  });
+
+  console.log(stdout)
+  if (stderr) {
+    throw new Error(stderr)
+  }
+}
+
 export const runQuery = async (sql: string) => {
   console.log(new Date().toISOString());
   console.debug(sql);
-  await connection.query(sql);
+  return await connection.query(sql);
 };
+
+export const runQueryFile = async (sqlFile: string) => runQuery(
+  readFileSync(sqlFile).toString(),
+);

@@ -19,8 +19,7 @@ model authorStory {
   @@map("auteurs_histoires")
 }
 
-model authorUserForStats {
-  id         Int    @id @default(autoincrement()) @map("ID")
+model authorUser {
   personcode String @map("NomAuteurAbrege") @db.VarChar(79)
   userId     Int    @map("ID_user")
   notation   Int    @default(-1) @map("Notation")
@@ -30,18 +29,30 @@ model authorUserForStats {
   @@map("auteurs_pseudos")
 }
 
-model histoires_publications {
-  ID              Int       @id @default(autoincrement())
-  storycode       String    @db.VarChar(19)
-  publicationcode String    @db.VarChar(12)
-  issuenumber     String    @db.VarChar(12)
-  issuecode       String    @db.VarChar(25)
-  oldestdate      DateTime? @db.Date
+model issueSimple {
+  id        Int     @id @default(autoincrement()) @map("ID")
+  userId    Int     @map("ID_Utilisateur")
+  issuecode String? @default(dbgenerated("(concat(convert(`Pays` using utf8mb3),'/',convert(`Magazine` using utf8mb3),' ',`Numero`))")) @map("issuecode") @db.VarChar(25)
+
+  @@index([userId], map: "Utilisateur")
+  @@index([issuecode], map: "issuecode")
+  @@index([issuecode, userId], map: "issuecode_user")
+  @@map("numeros_simple")
+}
+
+model storyIssue {
+  ID              Int     @id @default(autoincrement())
+  storycode       String  @db.VarChar(19)
+  publicationcode String? @db.VarChar(12)
+  issuenumber     String? @db.VarChar(12)
+  issuecode       String  @db.VarChar(25)
+  oldestdate      String? @db.VarChar(10)
 
   @@unique([issuecode, storycode], map: "unique_index")
   @@index([issuecode], map: "index_issue")
   @@index([oldestdate], map: "index_oldestdate")
   @@index([storycode], map: "index_story")
+  @@map("histoires_publications")
 }
 
 model missingStoryForUser {
@@ -55,38 +66,38 @@ model missingStoryForUser {
 }
 
 model missingIssueForUser {
-  ID              Int       @id @default(autoincrement())
-  ID_User         Int
-  personcode      String    @db.VarChar(79)
-  storycode       String    @db.VarChar(19)
+  ID              Int     @id @default(autoincrement())
+  userId          Int     @map("ID_User")
+  personcode      String  @db.VarChar(79)
+  storycode       String  @db.VarChar(19)
   /// @deprecated
-  publicationcode String    @db.VarChar(12)
+  publicationcode String? @db.VarChar(12)
   /// @deprecated
-  issuenumber     String    @db.VarChar(12)
-  issuecode       String    @db.VarChar(25)
-  oldestdate      DateTime? @db.Date
-  Notation        Int       @db.UnsignedTinyInt
+  issuenumber     String? @db.VarChar(12)
+  issuecode       String  @db.VarChar(25)
+  oldestdate      String? @db.VarChar(10)
+  notation        Int     @map("Notation") @db.UnsignedTinyInt
 
-  @@unique([ID_User, personcode, storycode, publicationcode, issuenumber], map: "unique_index")
-  @@unique([ID_User, personcode, storycode, issuecode], map: "unique_index_issuecode")
-  @@index([ID_User, publicationcode, issuenumber], map: "missing_user_issue")
-  @@index([ID_User, publicationcode, issuenumber, oldestdate], map: "suggested")
-  @@index([ID_User, personcode, storycode], map: "user_stories")
-  @@index([ID_User, issuecode], map: "missing_user_issue_issuecode")
-  @@index([ID_User, issuecode, oldestdate], map: "suggested_issuecode")
+  @@unique([userId, personcode, storycode, publicationcode, issuenumber], map: "unique_index")
+  @@unique([userId, personcode, storycode, issuecode], map: "unique_index_issuecode")
+  @@index([userId, publicationcode, issuenumber], map: "missing_user_issue")
+  @@index([userId, publicationcode, issuenumber, oldestdate], map: "suggested")
+  @@index([userId, personcode, storycode], map: "user_stories")
+  @@index([userId, issuecode], map: "missing_user_issue_issuecode")
+  @@index([userId, issuecode, oldestdate], map: "suggested_issuecode")
   @@map("utilisateurs_publications_manquantes")
 }
 
 model suggestedIssueForUser {
-  ID              Int       @id @default(autoincrement())
-  userId          Int       @map("ID_User")
+  ID              Int     @id @default(autoincrement())
+  userId          Int     @map("ID_User")
   /// @deprecated
-  publicationcode String    @db.VarChar(12)
+  publicationcode String? @db.VarChar(12)
   /// @deprecated
-  issuenumber     String    @db.VarChar(12)
-  issuecode       String    @db.VarChar(25)
-  oldestdate      DateTime? @db.Date
-  score           Int       @map("Score")
+  issuenumber     String? @db.VarChar(12)
+  issuecode       String  @db.VarChar(25)
+  oldestdate      String? @db.VarChar(10)
+  score           Int     @map("Score")
 
   @@unique([userId, publicationcode, issuenumber], map: "suggested_issue_for_user")
   @@unique([userId, issuecode], map: "suggested_issue_for_user_issuecode")
