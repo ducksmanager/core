@@ -1,8 +1,9 @@
 import { spawnSync } from "child_process";
 import * as dotenv from "dotenv";
 import { readFileSync } from "fs";
-import type { PoolConnection } from "mariadb";
+import { PoolConnection } from "mariadb";
 import { createPool } from "mariadb";
+import * as process from "process";
 
 dotenv.config();
 
