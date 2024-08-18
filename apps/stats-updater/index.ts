@@ -36,9 +36,7 @@ db.connect().then(async () => {
   await db.runQuery(`DROP DATABASE IF EXISTS ${dbName}_new`);
   await db.runQuery(`CREATE DATABASE ${dbName}_new`);
 
-
-
-  await db.runMigrations();
+  await db.runQueryFile(`${dbName}_new`, process.env.DM_STATS_DDL_PATH);
 
   const authorUsers = await prismaDm.authorUser.findMany({
     where: {

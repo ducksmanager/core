@@ -69,5 +69,5 @@ export const runQuery = async (sql: string) => {
   return await connection.query(sql);
 };
 
-export const runQueryFile = async (sqlFile: string) =>
-  runQuery(readFileSync(sqlFile).toString());
+export const runQueryFile = async (dbName: string, sqlFile: string) =>
+  runQuery(`USE ${dbName};` + readFileSync(sqlFile).toString());
