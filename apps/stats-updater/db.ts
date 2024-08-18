@@ -9,7 +9,7 @@ dotenv.config();
 for (const envKey of [
   "MYSQL_HOST",
   "MYSQL_PORT",
-  "MYSQL_PASSWORD",
+  "MYSQL_ROOT_PASSWORD",
   "DATABASE_URL_DM_STATS",
 ]) {
   if (!process.env[envKey]) {
@@ -24,7 +24,7 @@ const pool = createPool({
   host: process.env.MYSQL_HOST,
   port: parseInt(process.env.MYSQL_PORT!),
   user: "root",
-  password: process.env.MYSQL_PASSWORD,
+  password: process.env.MYSQL_ROOT_PASSWORD,
   multipleStatements: true,
 });
 

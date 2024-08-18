@@ -13,5 +13,5 @@ Required environment variables :
 - `DATABASE_URL_DM_STATS` : The connection string to the DM stats DB
 - `MYSQL_DM_STATS_DATABASE` : The name of the DM stats DB
 - `MYSQL_HOST` : The hostname of the database
-- `MYSQL_PASSWORD` : The password to the database
+- `MYSQL_ROOT_PASSWORD` : The password to the database
 - `MYSQL_PORT` : The port to the database

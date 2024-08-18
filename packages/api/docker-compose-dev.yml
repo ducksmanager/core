@@ -24,7 +24,6 @@ services:
   #    - MYSQL_COA_HOST=db
   #    - MYSQL_COA_PORT=3306
   #    - MYSQL_COA_DATABASE=coa
-  #    - MYSQL_PASSWORD=$MYSQL_ROOT_PASSWORD
   #    - GITHUB_TOKEN=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
   #    - GITHUB_NAME=Admin
   #    - GITHUB_EMAIL=admin@ducksmanager.net

@@ -8,7 +8,6 @@ services:
       MYSQL_DM_STATS_DATABASE: dm_stats
       MYSQL_HOST: db
       MYSQL_PORT: 3306
-      MYSQL_PASSWORD: ${MYSQL_ROOT_PASSWORD}
     networks:
       - dm-server_db-network
       - ducksmanager_dm-network
