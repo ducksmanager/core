@@ -8,7 +8,9 @@ RUN wget -qO- https://get.pnpm.io/install.sh | ENV="$HOME/.bashrc" SHELL="$(whic
 
 COPY apps/stats-updater/bundle.mjs /app/
 
-COPY packages/prisma-schemas/client_dm_stats/ /
+COPY packages/prisma-schemas/client_coa/ /client_coa
+COPY packages/prisma-schemas/client_dm/ /client_dm
+COPY packages/prisma-schemas/client_dm_stats/ /client_dm_stats
 
 EXPOSE 3000
 ENTRYPOINT ["bun", "bundle.mjs"]
