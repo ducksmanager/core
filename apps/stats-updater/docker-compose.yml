@@ -5,15 +5,15 @@ services:
     env_file:
       - ../../packages/api/.env.prod.local
     environment:
-      MYSQL_COA_HOST: db
-      MYSQL_COA_DATABASE: coa
-      MYSQL_DM_STATS_HOST: db
       MYSQL_DM_STATS_DATABASE: dm_stats
-      MYSQL_DM_HOST: db
-      MYSQL_DM_DATABASE: dm
+      MYSQL_HOST: db
+      MYSQL_PORT: 3306
       MYSQL_PASSWORD: ${MYSQL_ROOT_PASSWORD}
     networks:
       - dm-server_db-network
+      - ducksmanager_dm-network
 networks:
+  ducksmanager_dm-network:
+    external: true
   dm-server_db-network:
     external: true

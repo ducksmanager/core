@@ -32,7 +32,7 @@ jobs:
           command_timeout: 90m
           script_stop: true
           script: |
-            cd workspace/DucksManager2
+            cd workspace/DucksManager2/apps/stats-updater
             docker compose pull stats-updater
             docker compose run --rm --no-deps stats-updater
 
