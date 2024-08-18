@@ -3,11 +3,7 @@ services:
     init: true
     image: ghcr.io/bperel/stats-updater
     env_file:
-      - ../../packages/api/.env.prod.local
-    environment:
-      MYSQL_DM_STATS_DATABASE: dm_stats
-      MYSQL_HOST: db
-      MYSQL_PORT: 3306
+      - ./.env.prod.local
     networks:
       - dm-server_db-network
       - ducksmanager_dm-network

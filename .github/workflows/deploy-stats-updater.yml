@@ -46,11 +46,11 @@ jobs:
           fingerprint: ${{ secrets.PRODUCTION_SSH_FINGERPRINT }}
           username: ${{ secrets.PRODUCTION_SSH_USER }}
           key: ${{ secrets.PRODUCTION_SSH_KEY }}
-          source: /home/bperel/workspace/DucksManager2/packages/api/.env.prod.local
-          target: .env
+          source: /home/bperel/workspace/DucksManager2/apps/stats-updater/.env.prod.local
+          target: apps/stats-updater/.env
 
       - name: Build stats-updater bundle
-        run: . .env && DATABASE_URL_DM_STATS=$DATABASE_URL_DM_STATS pnpm build:stats-updater
+        run: pnpm build:stats-updater
 
       - name: Build and push stats-updater
         uses: docker/build-push-action@v5

@@ -2,6 +2,16 @@
 
 import "~prisma-schemas/util/groupBy";
 
+const originalConnectionString = process.env.DATABASE_URL_DM_STATS!;
+process.env.DATABASE_URL_DM_STATS = originalConnectionString.replace(
+  "dm_stats",
+  "dm_stats_new",
+);
+
+import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client"
+import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa/client"
+import { prismaClient as prismaDmStats } from "~prisma-schemas/schemas/dm_stats/client"
+
 import {
   type inducks_issue,
   type inducks_storyjob,
@@ -26,21 +36,7 @@ db.connect().then(async () => {
   await db.runQuery(`DROP DATABASE IF EXISTS ${dbName}_new`);
   await db.runQuery(`CREATE DATABASE ${dbName}_new`);
 
-  const originalConnectionString = process.env.DATABASE_URL_DM_STATS!;
 
-  process.env.DATABASE_URL_DM_STATS = originalConnectionString.replace(
-    "dm_stats",
-    "dm_stats_new",
-  );
-  const prismaDmStatsNew = (
-    await import("~prisma-schemas/schemas/dm_stats/client")
-  ).prismaClient;
-
-  const prismaDm = (await import("~prisma-schemas/schemas/dm/client"))
-    .prismaClient;
-
-  const prismaCoa = (await import("~prisma-schemas/schemas/coa/client"))
-    .prismaClient;
 
   await db.runMigrations();
 
@@ -56,11 +52,11 @@ db.connect().then(async () => {
     (userId) => parseInt(userId),
   );
 
-  await prismaDmStatsNew.authorUser.createMany({
+  await prismaDmStats.authorUser.createMany({
     data: authorUsers.map(({ id: _id, ...rest }) => rest),
   });
 
-  await prismaDmStatsNew.issueSimple.createMany({
+  await prismaDmStats.issueSimple.createMany({
     data: await prismaDm.issue.findMany({
       distinct: ["issuecode", "userId"],
       select: {
@@ -79,7 +75,7 @@ db.connect().then(async () => {
   });
 
   console.log("Creating storyIssue entries");
-  await prismaDmStatsNew.storyIssue.createMany({
+  await prismaDmStats.storyIssue.createMany({
     data: await prismaCoa.$queryRaw<
       (Pick<inducks_storyversion, "storycode"> &
         Pick<inducks_issue, "issuecode" | "oldestdate">)[]
@@ -95,10 +91,10 @@ db.connect().then(async () => {
         and sv.storycode != ''`,
   });
 
-  await prismaDmStatsNew.$executeRaw`OPTIMIZE TABLE histoires_publications`;
+  await prismaDmStats.$executeRaw`OPTIMIZE TABLE histoires_publications`;
 
   console.log("Creating authorStory entries");
-  await prismaDmStatsNew.authorStory.createMany({
+  await prismaDmStats.authorStory.createMany({
     data: await prismaCoa.$queryRaw<
       (Pick<inducks_storyjob, "personcode"> &
         Pick<inducks_storyversion, "storycode">)[]
@@ -112,11 +108,11 @@ db.connect().then(async () => {
             and sj.personcode in (${Prisma.join(personcodes)})`,
   });
 
-  await prismaDmStatsNew.$executeRaw`OPTIMIZE TABLE auteurs_histoires`;
+  await prismaDmStats.$executeRaw`OPTIMIZE TABLE auteurs_histoires`;
 
   console.log("Creating missingStoryForUser entries");
-  await prismaDmStatsNew.missingStoryForUser.createMany({
-    data: await prismaDmStatsNew.$queryRaw<
+  await prismaDmStats.missingStoryForUser.createMany({
+    data: await prismaDmStats.$queryRaw<
       (Pick<authorUser, "userId"> &
         Pick<authorStory, "personcode" | "storycode">)[]
     >`
@@ -138,10 +134,10 @@ db.connect().then(async () => {
             a_h.storycode`,
   });
 
-  await prismaDmStatsNew.$executeRaw`OPTIMIZE TABLE utilisateurs_histoires_manquantes`;
+  await prismaDmStats.$executeRaw`OPTIMIZE TABLE utilisateurs_histoires_manquantes`;
 
   console.log("Creating missingIssueForUser entries");
-  await prismaDmStatsNew.$executeRaw`
+  await prismaDmStats.$executeRaw`
     insert into utilisateurs_publications_manquantes(ID_User, personcode, storycode, issuecode, oldestdate, Notation)
     select distinct u_h_m.ID_User AS userId,
       u_h_m.personcode,
@@ -153,16 +149,16 @@ db.connect().then(async () => {
       inner join histoires_publications h_p using (storycode)
       inner join auteurs_pseudos a_p on a_p.ID_User = u_h_m.ID_User and u_h_m.personcode = a_p.NomAuteurAbrege`;
 
-  await prismaDmStatsNew.$executeRaw`OPTIMIZE TABLE utilisateurs_publications_manquantes`;
+  await prismaDmStats.$executeRaw`OPTIMIZE TABLE utilisateurs_publications_manquantes`;
 
   console.log("Creating suggestedIssueForUser entries");
-  await prismaDmStatsNew.$executeRaw`
+  await prismaDmStats.$executeRaw`
       insert into utilisateurs_publications_suggerees(ID_User, issuecode, oldestdate, Score)
       select ID_User AS userId, issuecode, oldestdate, sum(Notation) AS score
       from utilisateurs_publications_manquantes
       group by ID_User, issuecode, oldestdate`;
 
-  await prismaDmStatsNew.$executeRaw`OPTIMIZE TABLE utilisateurs_publications_suggerees`;
+  await prismaDmStats.$executeRaw`OPTIMIZE TABLE utilisateurs_publications_suggerees`;
 
   console.log("Adding publicationcode and issuenumber for WTD < 3");
   await db.runQuery(`
