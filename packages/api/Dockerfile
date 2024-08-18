@@ -5,7 +5,7 @@ WORKDIR /app
 
 RUN apt-get update && apt-get install -y openssl && apt-get clean && rm -rf /var/lib/apt/lists/*
 
-COPY packages/prisma-schemas /app/
+COPY packages/prisma-schemas/client_* /
 COPY packages/api/.env /app/
 COPY packages/api/bundle.mjs /app/
 
