@@ -38,8 +38,19 @@ jobs:
       - name: Install dependencies
         run: pnpm -r install
 
+      - name: Download api .env file
+        uses: nicklasfrahm/scp-action@main
+        with:
+          direction: download
+          host: ${{ secrets.PRODUCTION_SSH_HOST }}
+          fingerprint: ${{ secrets.PRODUCTION_SSH_FINGERPRINT }}
+          username: ${{ secrets.PRODUCTION_SSH_USER }}
+          key: ${{ secrets.PRODUCTION_SSH_KEY }}
+          source: /home/bperel/workspace/DucksManager2/packages/api/.env.prod.local
+          target: .env
+
       - name: Build stats-updater bundle
-        run: pnpm build:stats-updater
+        run: . .env && DATABASE_URL_DM_STATS=$DATABASE_URL_DM_STATS pnpm build:stats-updater
 
       - name: Build and push stats-updater
         uses: docker/build-push-action@v5
