@@ -36,16 +36,13 @@ db.connect().then(async () => {
     await import("~prisma-schemas/schemas/dm_stats/client")
   ).prismaClient;
 
-  process.env.DATABASE_URL_DM = process.env.DATABASE_URL_DM;
   const prismaDm = (await import("~prisma-schemas/schemas/dm/client"))
     .prismaClient;
 
-  process.env.DATABASE_URL_COA = process.env.DATABASE_URL_COA;
   const prismaCoa = (await import("~prisma-schemas/schemas/coa/client"))
     .prismaClient;
 
   await db.runMigrations();
-  await db.generatePrismaClient();
 
   const authorUsers = await prismaDm.authorUser.findMany({
     where: {

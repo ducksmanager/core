@@ -63,25 +63,6 @@ export const runMigrations = async () => {
   }
 };
 
-export const generatePrismaClient = async () => {
-  const { stdout, stderr } = spawnSync(
-    "pnpm",
-    ["-F", "~prisma-schemas", "prisma-generate"],
-    {
-      encoding: "utf8",
-      env: {
-        ...process.env,
-        SCHEMA: "dm_stats",
-      },
-    },
-  );
-
-  console.log(stdout);
-  if (stderr) {
-    throw new Error(stderr);
-  }
-};
-
 export const runQuery = async (sql: string) => {
   console.log(new Date().toISOString());
   console.debug(sql);
