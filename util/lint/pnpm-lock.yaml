@@ -7,10 +7,6 @@ settings:
 importers:
 
   .:
-    dependencies:
-      husky:
-        specifier: ^9.1.4
-        version: 9.1.4
     devDependencies:
       '@eslint/js':
         specifier: ^9.9.0
@@ -394,11 +390,6 @@ packages:
   has-flag@4.0.0:
     resolution: {integrity: sha512-EykJT/Q1KjTWctppgIAgfSO0tKVuZUjhgMr17kqTumMl6Afv3EISleU7qZUzoXDFTAHTDC4NOoG/ZxU3EvlMPQ==}
     engines: {node: '>=8'}
-
-  husky@9.1.4:
-    resolution: {integrity: sha512-bho94YyReb4JV7LYWRWxZ/xr6TtOTt8cMfmQ39MQYJ7f/YE268s3GdghGwi+y4zAeqewE5zYLvuhV0M0ijsDEA==}
-    engines: {node: '>=18'}
-    hasBin: true
 
   ignore@5.3.2:
     resolution: {integrity: sha512-hsBTNUqQTDwkWtcdYI2i06Y/nUBEsNEDJKjWdigLvegy8kDuJAS8uRlpkkcQpyEXL0Z/pjDy5HBmMjRCJ2gq+g==}
@@ -1044,8 +1035,6 @@ snapshots:
   graphemer@1.4.0: {}
 
   has-flag@4.0.0: {}
-
-  husky@9.1.4: {}
 
   ignore@5.3.2: {}
 
