@@ -2,9 +2,9 @@ FROM oven/bun
 LABEL org.opencontainers.image.authors="Bruno Perel"
 
 WORKDIR /app
-RUN apt-get update && apt-get install -y curl && apt-get clean && rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get install -y wget && apt-get clean && rm -rf /var/lib/apt/lists/*
 
-RUN curl -fsSL https://get.pnpm.io/install.sh | sh -
+RUN wget -qO- https://get.pnpm.io/install.sh | ENV="$HOME/.bashrc" SHELL="$(which bash)" bash -
 
 COPY apps/stats-updater/bundle.mjs /app/
 
