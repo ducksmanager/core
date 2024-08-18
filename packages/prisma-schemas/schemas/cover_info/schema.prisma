@@ -10,11 +10,11 @@ datasource db {
 }
 
 model coverImport {
-  coverId     Int       @id @default(autoincrement()) @map("coverid")
+  id          Int       @id @default(autoincrement()) @map("coverid")
   importedAt  DateTime? @map("imported") @db.DateTime(0)
   importError String?   @map("import_error") @db.VarChar(200)
 
-  @@unique([coverId, importedAt, importError], map: "uniquefieldset_cover_imports")
+  @@unique([id, importedAt, importError], map: "uniquefieldset_cover_imports")
   @@map("cover_imports")
 }
 

@@ -1,17 +1,17 @@
 #!/usr/bin/env bun
 
-import * as db from "./db";
 import "~prisma-schemas/util/groupBy";
+
 import {
-  Prisma,
   type inducks_issue,
   type inducks_storyjob,
   type inducks_storyversion,
+  Prisma,
 } from "~prisma-schemas/schemas/coa";
 import type { authorUser } from "~prisma-schemas/schemas/dm";
-import type {
-  authorStory,
-} from "~prisma-schemas/schemas/dm_stats";
+import type { authorStory } from "~prisma-schemas/schemas/dm_stats";
+
+import * as db from "./db";
 
 const tables = [
   "auteurs_histoires",
@@ -30,7 +30,7 @@ db.connect().then(async () => {
 
   process.env.DATABASE_URL_DM_STATS = originalConnectionString.replace(
     "dm_stats",
-    "dm_stats_new"
+    "dm_stats_new",
   );
   const prismaDmStatsNew = (
     await import("~prisma-schemas/schemas/dm_stats/client")
@@ -45,22 +45,22 @@ db.connect().then(async () => {
     .prismaClient;
 
   await db.runMigrations();
-  await db.generatePrismaClient(`${dbName}_new`);
+  await db.generatePrismaClient();
 
   const authorUsers = await prismaDm.authorUser.findMany({
     where: {
       notation: {
-        gt: 0
-      }
-    }
+        gt: 0,
+      },
+    },
   });
   const personcodes = Object.keys(authorUsers.groupBy("personcode"));
   const userIdsWithPersoncodes = Object.keys(authorUsers.groupBy("userId")).map(
-    (userId) => parseInt(userId)
+    (userId) => parseInt(userId),
   );
 
   await prismaDmStatsNew.authorUser.createMany({
-    data: authorUsers.map(({ id, ...rest }) => rest),
+    data: authorUsers.map(({ id: _id, ...rest }) => rest),
   });
 
   await prismaDmStatsNew.issueSimple.createMany({
@@ -144,8 +144,7 @@ db.connect().then(async () => {
   await prismaDmStatsNew.$executeRaw`OPTIMIZE TABLE utilisateurs_histoires_manquantes`;
 
   console.log("Creating missingIssueForUser entries");
-  await prismaDmStatsNew.$executeRaw
-    `
+  await prismaDmStatsNew.$executeRaw`
     insert into utilisateurs_publications_manquantes(ID_User, personcode, storycode, issuecode, oldestdate, Notation)
     select distinct u_h_m.ID_User AS userId,
       u_h_m.personcode,
@@ -160,8 +159,7 @@ db.connect().then(async () => {
   await prismaDmStatsNew.$executeRaw`OPTIMIZE TABLE utilisateurs_publications_manquantes`;
 
   console.log("Creating suggestedIssueForUser entries");
-  await prismaDmStatsNew.$executeRaw
-    `
+  await prismaDmStatsNew.$executeRaw`
       insert into utilisateurs_publications_suggerees(ID_User, issuecode, oldestdate, Score)
       select ID_User AS userId, issuecode, oldestdate, sum(Notation) AS score
       from utilisateurs_publications_manquantes
@@ -169,7 +167,7 @@ db.connect().then(async () => {
 
   await prismaDmStatsNew.$executeRaw`OPTIMIZE TABLE utilisateurs_publications_suggerees`;
 
-  console.log('Adding publicationcode and issuenumber for WTD < 3')
+  console.log("Adding publicationcode and issuenumber for WTD < 3");
   await db.runQuery(`
     UPDATE ${dbName}_new.utilisateurs_publications_suggerees
     JOIN coa.inducks_issue i using (issuecode)

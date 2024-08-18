@@ -1,8 +1,8 @@
+import { spawnSync } from "child_process";
 import * as dotenv from "dotenv";
+import { readFileSync } from "fs";
 import type { PoolConnection } from "mariadb";
 import { createPool } from "mariadb";
-import { readFileSync } from "fs";
-import { spawnSync } from "child_process";
 
 dotenv.config();
 
@@ -44,34 +44,42 @@ export const disconnect = async () => {
 };
 
 export const runMigrations = async () => {
-  const { stdout, stderr } = spawnSync("pnpm", ["-F", '~prisma-schemas', 'prisma-migrate'], {
-    encoding: "utf8",
-    env: {
-      ...process.env,
-      SCHEMA: 'dm_stats',
-    }
-  });
+  const { stdout, stderr } = spawnSync(
+    "pnpm",
+    ["-F", "~prisma-schemas", "prisma-migrate"],
+    {
+      encoding: "utf8",
+      env: {
+        ...process.env,
+        SCHEMA: "dm_stats",
+      },
+    },
+  );
 
-  console.log(stdout)
+  console.log(stdout);
   if (stderr) {
-    throw new Error(stderr)
+    throw new Error(stderr);
   }
-}
+};
 
-export const generatePrismaClient = async (dbName: string) => {
-  const { stdout, stderr } = spawnSync("pnpm", ["-F", '~prisma-schemas', 'prisma-generate'], {
-    encoding: "utf8",
-    env: {
-      ...process.env,
-      SCHEMA: 'dm_stats',
-    }
-  });
+export const generatePrismaClient = async () => {
+  const { stdout, stderr } = spawnSync(
+    "pnpm",
+    ["-F", "~prisma-schemas", "prisma-generate"],
+    {
+      encoding: "utf8",
+      env: {
+        ...process.env,
+        SCHEMA: "dm_stats",
+      },
+    },
+  );
 
-  console.log(stdout)
+  console.log(stdout);
   if (stderr) {
-    throw new Error(stderr)
+    throw new Error(stderr);
   }
-}
+};
 
 export const runQuery = async (sql: string) => {
   console.log(new Date().toISOString());
@@ -79,6 +87,5 @@ export const runQuery = async (sql: string) => {
   return await connection.query(sql);
 };
 
-export const runQueryFile = async (sqlFile: string) => runQuery(
-  readFileSync(sqlFile).toString(),
-);
+export const runQueryFile = async (sqlFile: string) =>
+  runQuery(readFileSync(sqlFile).toString());

@@ -7,8 +7,8 @@
     "build": "bun build --target bun --sourcemap index.ts --outfile bundle.mjs"
   },
   "dependencies": {
-    "dotenv": "^16.0.1",
-    "mariadb": "^3.0.0",
+    "dotenv": "^16.4.5",
+    "mariadb": "^3.3.1",
     "~prisma-schemas": "workspace:*"
   },
   "devDependencies": {
