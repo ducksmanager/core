@@ -1,6 +1,7 @@
 #!/usr/bin/env bun
 
 import "~prisma-schemas/util/groupBy";
+import * as process from "process";
 
 const originalConnectionString = process.env.DATABASE_URL_DM_STATS!;
 process.env.DATABASE_URL_DM_STATS = originalConnectionString.replace(
