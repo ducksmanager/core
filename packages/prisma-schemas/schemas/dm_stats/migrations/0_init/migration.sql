@@ -67,3 +67,19 @@ create table utilisateurs_publications_suggerees (
     constraint suggested_issue_for_user unique (ID_User, issuecode)
 );
 create index suggested_issue_user on utilisateurs_publications_suggerees (ID_User);
+/* Legacy */
+create index missing_user_issue_old on utilisateurs_publications_manquantes (ID_User, publicationcode, issuenumber);
+create index suggested_old on utilisateurs_publications_manquantes (
+    ID_User,
+    publicationcode,
+    issuenumber,
+    oldestdate
+);
+create unique index unique_index_old on utilisateurs_publications_manquantes (
+    ID_User,
+    personcode,
+    storycode,
+    publicationcode,
+    issuenumber
+);
+create unique index suggested_issue_for_user_old on utilisateurs_publications_suggerees (ID_User, publicationcode, issuenumber);
