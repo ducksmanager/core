@@ -164,7 +164,7 @@ export const getSuggestions = async (
              missing.storycode
       FROM utilisateurs_publications_suggerees as suggested
                INNER JOIN utilisateurs_publications_manquantes as missing
-                          USING (ID_User, publicationcode, issuenumber)
+                          USING (ID_User, issuecode)
       WHERE suggested.oldestdate <= '${new Date().toISOString().split("T")[0]}'
         AND (${
           since
