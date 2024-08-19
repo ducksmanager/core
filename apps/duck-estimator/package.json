@@ -22,7 +22,7 @@
     "~prisma-schemas": "workspace:*"
   },
   "devDependencies": {
-    "@types/node": "^18.19.44",
+    "@types/node": "^18.19.45",
     "@types/yargs": "^17.0.33",
     "tsc-alias": "^1.8.10",
     "tsx": "^4.17.0",

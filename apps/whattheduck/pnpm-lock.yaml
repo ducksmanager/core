@@ -48,8 +48,8 @@ importers:
         specifier: ^6.0.1
         version: 6.0.1(@capacitor/core@6.1.2)
       '@capgo/capacitor-updater':
-        specifier: ^6.1.0
-        version: 6.1.0(@capacitor/core@6.1.2)
+        specifier: ^6.1.2
+        version: 6.1.2(@capacitor/core@6.1.2)
       '@ionic/pwa-elements':
         specifier: ^3.3.0
         version: 3.3.0
@@ -131,7 +131,7 @@ importers:
     devDependencies:
       '@capacitor/assets':
         specifier: ^3.0.5
-        version: 3.0.5(@types/node@18.19.44)(typescript@5.5.4)
+        version: 3.0.5(@types/node@18.19.45)(typescript@5.5.4)
       '@capacitor/cli':
         specifier: ^6.1.2
         version: 6.1.2
@@ -140,7 +140,7 @@ importers:
         version: 4.14.2
       '@histoire/plugin-vue':
         specifier: ^0.17.17
-        version: 0.17.17(histoire@0.17.17(@types/node@18.19.44)(sass@1.77.8)(vite@5.4.1(@types/node@18.19.44)(sass@1.77.8)))(vite@5.4.1(@types/node@18.19.44)(sass@1.77.8))(vue@3.4.38(typescript@5.5.4))
+        version: 0.17.17(histoire@0.17.17(@types/node@18.19.45)(sass@1.77.8)(vite@5.4.1(@types/node@18.19.45)(sass@1.77.8)))(vite@5.4.1(@types/node@18.19.45)(sass@1.77.8))(vue@3.4.38(typescript@5.5.4))
       '@ionic/prettier-config':
         specifier: ^4.0.0
         version: 4.0.0(prettier@3.3.3)
@@ -148,11 +148,11 @@ importers:
         specifier: ^3.0.6
         version: 3.0.6
       '@types/node':
-        specifier: ^18.19.44
-        version: 18.19.44
+        specifier: ^18.19.45
+        version: 18.19.45
       '@vitejs/plugin-vue':
         specifier: ^5.1.2
-        version: 5.1.2(vite@5.4.1(@types/node@18.19.44)(sass@1.77.8))(vue@3.4.38(typescript@5.5.4))
+        version: 5.1.2(vite@5.4.1(@types/node@18.19.45)(sass@1.77.8))(vue@3.4.38(typescript@5.5.4))
       '@vue-macros/reactivity-transform':
         specifier: ^1.0.3
         version: 1.0.3(rollup@4.21.0)(vue@3.4.38(typescript@5.5.4))
@@ -194,7 +194,7 @@ importers:
         version: 9.27.0(eslint@8.57.0)
       histoire:
         specifier: ^0.17.17
-        version: 0.17.17(@types/node@18.19.44)(sass@1.77.8)(vite@5.4.1(@types/node@18.19.44)(sass@1.77.8))
+        version: 0.17.17(@types/node@18.19.45)(sass@1.77.8)(vite@5.4.1(@types/node@18.19.45)(sass@1.77.8))
       jsdom:
         specifier: ^24.1.1
         version: 24.1.1
@@ -218,10 +218,10 @@ importers:
         version: 0.27.4(@babel/parser@7.25.3)(rollup@4.21.0)(vue@3.4.38(typescript@5.5.4))
       vite:
         specifier: ^5.4.1
-        version: 5.4.1(@types/node@18.19.44)(sass@1.77.8)
+        version: 5.4.1(@types/node@18.19.45)(sass@1.77.8)
       vitest:
         specifier: ^2.0.5
-        version: 2.0.5(@types/node@18.19.44)(jsdom@24.1.1)(sass@1.77.8)
+        version: 2.0.5(@types/node@18.19.45)(jsdom@24.1.1)(sass@1.77.8)
       vue-tsc:
         specifier: ^2.0.29
         version: 2.0.29(typescript@5.5.4)
@@ -347,8 +347,8 @@ packages:
     peerDependencies:
       '@capacitor/core': ^6.0.0
 
-  '@capgo/capacitor-updater@6.1.0':
-    resolution: {integrity: sha512-VAGhOuhQ87zothZdyQw39ENvreuS0rz/Qxb1m6pI2sjMw1AKGxs275GazBHygzJyNLt12iOeLCyGGGRBY9rIRA==}
+  '@capgo/capacitor-updater@6.1.2':
+    resolution: {integrity: sha512-WNr9scWiDH5M2K33SJX4CUKIXtUx50PW+kPCHN7FIVzRZoveeSfxnTr26l6l7thHZV0Gb04DPnwesc9oVOdIXg==}
     peerDependencies:
       '@capacitor/core': ^6.0.0
 
@@ -908,8 +908,8 @@ packages:
   '@types/minimist@1.2.5':
     resolution: {integrity: sha512-hov8bUuiLiyFPGyFPE1lwWhmzYbirOXQNNo40+y3zow8aFVTeyn3VWL0VFFfdNddA8S4Vf0Tc062rzyNr7Paag==}
 
-  '@types/node@18.19.44':
-    resolution: {integrity: sha512-ZsbGerYg72WMXUIE9fYxtvfzLEuq6q8mKERdWFnqTmOvudMxnz+CBNRoOwJ2kNpFOncrKjT1hZwxjlFgQ9qvQA==}
+  '@types/node@18.19.45':
+    resolution: {integrity: sha512-VZxPKNNhjKmaC1SUYowuXSRSMGyQGmQjvvA1xE4QZ0xce2kLtEhPDS+kqpCPBZYgqblCLQ2DAjSzmgCM5auvhA==}
 
   '@types/normalize-package-data@2.4.4':
     resolution: {integrity: sha512-37i+OaWTh9qeK4LSHPsyRC7NahnGotNuZvjLSgcPzblpHB3rrCJxAOgI5gCdKm7coonsaX1Of0ILiTcnZjbfxA==}
@@ -1015,14 +1015,14 @@ packages:
   '@vitest/utils@2.0.5':
     resolution: {integrity: sha512-d8HKbqIcya+GR67mkZbrzhS5kKhtp8dQLcmRZLGTscGVg7yImT82cIrhtn2L8+VujWcy6KZweApgNmPsTAO/UQ==}
 
-  '@volar/language-core@2.4.0-alpha.18':
-    resolution: {integrity: sha512-JAYeJvYQQROmVRtSBIczaPjP3DX4QW1fOqW1Ebs0d3Y3EwSNRglz03dSv0Dm61dzd0Yx3WgTW3hndDnTQqgmyg==}
+  '@volar/language-core@2.4.0':
+    resolution: {integrity: sha512-FTla+khE+sYK0qJP+6hwPAAUwiNHVMph4RUXpxf/FIPKUP61NFrVZorml4mjFShnueR2y9/j8/vnh09YwVdH7A==}
 
-  '@volar/source-map@2.4.0-alpha.18':
-    resolution: {integrity: sha512-MTeCV9MUwwsH0sNFiZwKtFrrVZUK6p8ioZs3xFzHc2cvDXHWlYN3bChdQtwKX+FY2HG6H3CfAu1pKijolzIQ8g==}
+  '@volar/source-map@2.4.0':
+    resolution: {integrity: sha512-2ceY8/NEZvN6F44TXw2qRP6AQsvCYhV2bxaBPWxV9HqIfkbRydSksTFObCF1DBDNBfKiZTS8G/4vqV6cvjdOIQ==}
 
-  '@volar/typescript@2.4.0-alpha.18':
-    resolution: {integrity: sha512-sXh5Y8sqGUkgxpMWUGvRXggxYHAVxg0Pa1C42lQZuPDrW6vHJPR0VCK8Sr7WJsAW530HuNQT/ZIskmXtxjybMQ==}
+  '@volar/typescript@2.4.0':
+    resolution: {integrity: sha512-9zx3lQWgHmVd+JRRAHUSRiEhe4TlzL7U7e6ulWXOxHH/WNYxzKwCvZD7WYWEZFdw4dHfTD9vUR0yPQO6GilCaQ==}
 
   '@vue-macros/common@1.12.2':
     resolution: {integrity: sha512-+NGfhrPvPNOb3Wg9PNPEXPe0HTXmVe6XJawL1gi3cIjOSGIhpOdvmMT2cRuWb265IpA/PeL5Sqo0+DQnEDxLvw==}
@@ -1300,8 +1300,8 @@ packages:
     resolution: {integrity: sha512-Izi8RQcffqCeNVgFigKli1ssklIbpHnCYc6AknXGYoB6grJqyeby7jv12JUQgmTAnIDnbck1uxksT4dzN3PWBA==}
     engines: {node: '>=12'}
 
-  ast-kit@1.0.1:
-    resolution: {integrity: sha512-XdXKlmX3YIrGKJS7d324CAbswH+C1klMCIRQ4VRy0+iPxGeP2scVOoYd09/V6uGjGAi/ZuEwBLzT7xBerSKNQg==}
+  ast-kit@1.1.0:
+    resolution: {integrity: sha512-RlNqd4u6c/rJ5R+tN/ZTtyNrH8X0NHCvyt6gD8RHa3JjzxxHWoyaU0Ujk3Zjbh7IZqrYl1Sxm6XzZifmVxXxHQ==}
     engines: {node: '>=16.14.0'}
 
   astral-regex@2.0.0:
@@ -3925,8 +3925,8 @@ packages:
   tinybench@2.9.0:
     resolution: {integrity: sha512-0+DUvqWMValLmha6lr4kD8iAMK1HzV0/aKnCtWb9v9641TnP/MFb7Pc2bxoxQjTXAErryXVgUOfv2YqNllqGeg==}
 
-  tinypool@1.0.0:
-    resolution: {integrity: sha512-KIKExllK7jp3uvrNtvRBYBWBOAXSX8ZvoaD8T+7KB/QHIuoJW3Pmr60zucywjAlMb5TeXUkcs/MWeWLu0qvuAQ==}
+  tinypool@1.0.1:
+    resolution: {integrity: sha512-URZYihUbRPcGv95En+sz6MfghfIc2OJ1sv/RmhWZLouPY0/8Vo80viwPvg3dlaS9fuq7fQMEfgRRK7BBZThBEA==}
     engines: {node: ^18.0.0 || >=20.0.0}
 
   tinyrainbow@1.2.0:
@@ -4573,12 +4573,12 @@ snapshots:
     dependencies:
       '@capacitor/core': 6.1.2
 
-  '@capacitor/assets@3.0.5(@types/node@18.19.44)(typescript@5.5.4)':
+  '@capacitor/assets@3.0.5(@types/node@18.19.45)(typescript@5.5.4)':
     dependencies:
       '@capacitor/cli': 5.7.8
       '@ionic/utils-array': 2.1.6
       '@ionic/utils-fs': 3.1.7
-      '@trapezedev/project': 7.0.10(@types/node@18.19.44)(typescript@5.5.4)
+      '@trapezedev/project': 7.0.10(@types/node@18.19.45)(typescript@5.5.4)
       commander: 8.3.0
       debug: 4.3.4
       fs-extra: 10.1.0
@@ -4676,7 +4676,7 @@ snapshots:
     dependencies:
       '@capacitor/core': 6.1.2
 
-  '@capgo/capacitor-updater@6.1.0(@capacitor/core@6.1.2)':
+  '@capgo/capacitor-updater@6.1.2(@capacitor/core@6.1.2)':
     dependencies:
       '@capacitor/core': 6.1.2
 
@@ -4851,10 +4851,10 @@ snapshots:
 
   '@eslint/js@8.57.0': {}
 
-  '@histoire/app@0.17.17(vite@5.4.1(@types/node@18.19.44)(sass@1.77.8))':
+  '@histoire/app@0.17.17(vite@5.4.1(@types/node@18.19.45)(sass@1.77.8))':
     dependencies:
-      '@histoire/controls': 0.17.17(vite@5.4.1(@types/node@18.19.44)(sass@1.77.8))
-      '@histoire/shared': 0.17.17(vite@5.4.1(@types/node@18.19.44)(sass@1.77.8))
+      '@histoire/controls': 0.17.17(vite@5.4.1(@types/node@18.19.45)(sass@1.77.8))
+      '@histoire/shared': 0.17.17(vite@5.4.1(@types/node@18.19.45)(sass@1.77.8))
       '@histoire/vendors': 0.17.17
       '@types/flexsearch': 0.7.6
       flexsearch: 0.7.21
@@ -4862,7 +4862,7 @@ snapshots:
     transitivePeerDependencies:
       - vite
 
-  '@histoire/controls@0.17.17(vite@5.4.1(@types/node@18.19.44)(sass@1.77.8))':
+  '@histoire/controls@0.17.17(vite@5.4.1(@types/node@18.19.45)(sass@1.77.8))':
     dependencies:
       '@codemirror/commands': 6.6.0
       '@codemirror/lang-json': 6.0.1
@@ -4871,26 +4871,26 @@ snapshots:
       '@codemirror/state': 6.4.1
       '@codemirror/theme-one-dark': 6.1.2
       '@codemirror/view': 6.32.0
-      '@histoire/shared': 0.17.17(vite@5.4.1(@types/node@18.19.44)(sass@1.77.8))
+      '@histoire/shared': 0.17.17(vite@5.4.1(@types/node@18.19.45)(sass@1.77.8))
       '@histoire/vendors': 0.17.17
     transitivePeerDependencies:
       - vite
 
-  '@histoire/plugin-vue@0.17.17(histoire@0.17.17(@types/node@18.19.44)(sass@1.77.8)(vite@5.4.1(@types/node@18.19.44)(sass@1.77.8)))(vite@5.4.1(@types/node@18.19.44)(sass@1.77.8))(vue@3.4.38(typescript@5.5.4))':
+  '@histoire/plugin-vue@0.17.17(histoire@0.17.17(@types/node@18.19.45)(sass@1.77.8)(vite@5.4.1(@types/node@18.19.45)(sass@1.77.8)))(vite@5.4.1(@types/node@18.19.45)(sass@1.77.8))(vue@3.4.38(typescript@5.5.4))':
     dependencies:
-      '@histoire/controls': 0.17.17(vite@5.4.1(@types/node@18.19.44)(sass@1.77.8))
-      '@histoire/shared': 0.17.17(vite@5.4.1(@types/node@18.19.44)(sass@1.77.8))
+      '@histoire/controls': 0.17.17(vite@5.4.1(@types/node@18.19.45)(sass@1.77.8))
+      '@histoire/shared': 0.17.17(vite@5.4.1(@types/node@18.19.45)(sass@1.77.8))
       '@histoire/vendors': 0.17.17
       change-case: 4.1.2
       globby: 13.2.2
-      histoire: 0.17.17(@types/node@18.19.44)(sass@1.77.8)(vite@5.4.1(@types/node@18.19.44)(sass@1.77.8))
+      histoire: 0.17.17(@types/node@18.19.45)(sass@1.77.8)(vite@5.4.1(@types/node@18.19.45)(sass@1.77.8))
       launch-editor: 2.8.1
       pathe: 1.1.2
       vue: 3.4.38(typescript@5.5.4)
     transitivePeerDependencies:
       - vite
 
-  '@histoire/shared@0.17.17(vite@5.4.1(@types/node@18.19.44)(sass@1.77.8))':
+  '@histoire/shared@0.17.17(vite@5.4.1(@types/node@18.19.45)(sass@1.77.8))':
     dependencies:
       '@histoire/vendors': 0.17.17
       '@types/fs-extra': 9.0.13
@@ -4898,7 +4898,7 @@ snapshots:
       chokidar: 3.6.0
       pathe: 1.1.2
       picocolors: 1.0.1
-      vite: 5.4.1(@types/node@18.19.44)(sass@1.77.8)
+      vite: 5.4.1(@types/node@18.19.45)(sass@1.77.8)
 
   '@histoire/vendors@0.17.17': {}
 
@@ -5265,7 +5265,7 @@ snapshots:
 
   '@trapezedev/gradle-parse@7.0.10': {}
 
-  '@trapezedev/project@7.0.10(@types/node@18.19.44)(typescript@5.5.4)':
+  '@trapezedev/project@7.0.10(@types/node@18.19.45)(typescript@5.5.4)':
     dependencies:
       '@ionic/utils-fs': 3.1.7
       '@ionic/utils-subprocess': 2.1.14
@@ -5289,7 +5289,7 @@ snapshots:
       replace: 1.2.2
       tempy: 1.0.1
       tmp: 0.2.3
-      ts-node: 10.9.2(@types/node@18.19.44)(typescript@5.5.4)
+      ts-node: 10.9.2(@types/node@18.19.45)(typescript@5.5.4)
       xcode: 3.0.1
       xml-js: 1.6.11
       xpath: 0.0.32
@@ -5318,11 +5318,11 @@ snapshots:
 
   '@types/fs-extra@8.1.5':
     dependencies:
-      '@types/node': 18.19.44
+      '@types/node': 18.19.45
 
   '@types/fs-extra@9.0.13':
     dependencies:
-      '@types/node': 18.19.44
+      '@types/node': 18.19.45
 
   '@types/js-cookie@3.0.6': {}
 
@@ -5339,7 +5339,7 @@ snapshots:
 
   '@types/minimist@1.2.5': {}
 
-  '@types/node@18.19.44':
+  '@types/node@18.19.45':
     dependencies:
       undici-types: 5.26.5
 
@@ -5355,7 +5355,7 @@ snapshots:
 
   '@types/yauzl@2.10.3':
     dependencies:
-      '@types/node': 18.19.44
+      '@types/node': 18.19.45
     optional: true
 
   '@typescript-eslint/eslint-plugin@7.18.0(@typescript-eslint/parser@7.18.0(eslint@8.57.0)(typescript@5.5.4))(eslint@8.57.0)(typescript@5.5.4)':
@@ -5441,9 +5441,9 @@ snapshots:
 
   '@ungap/structured-clone@1.2.0': {}
 
-  '@vitejs/plugin-vue@5.1.2(vite@5.4.1(@types/node@18.19.44)(sass@1.77.8))(vue@3.4.38(typescript@5.5.4))':
+  '@vitejs/plugin-vue@5.1.2(vite@5.4.1(@types/node@18.19.45)(sass@1.77.8))(vue@3.4.38(typescript@5.5.4))':
     dependencies:
-      vite: 5.4.1(@types/node@18.19.44)(sass@1.77.8)
+      vite: 5.4.1(@types/node@18.19.45)(sass@1.77.8)
       vue: 3.4.38(typescript@5.5.4)
 
   '@vitest/expect@2.0.5':
@@ -5479,15 +5479,15 @@ snapshots:
       loupe: 3.1.1
       tinyrainbow: 1.2.0
 
-  '@volar/language-core@2.4.0-alpha.18':
+  '@volar/language-core@2.4.0':
     dependencies:
-      '@volar/source-map': 2.4.0-alpha.18
+      '@volar/source-map': 2.4.0
 
-  '@volar/source-map@2.4.0-alpha.18': {}
+  '@volar/source-map@2.4.0': {}
 
-  '@volar/typescript@2.4.0-alpha.18':
+  '@volar/typescript@2.4.0':
     dependencies:
-      '@volar/language-core': 2.4.0-alpha.18
+      '@volar/language-core': 2.4.0
       path-browserify: 1.0.1
       vscode-uri: 3.0.8
 
@@ -5496,7 +5496,7 @@ snapshots:
       '@babel/types': 7.25.2
       '@rollup/pluginutils': 5.1.0(rollup@4.21.0)
       '@vue/compiler-sfc': 3.4.38
-      ast-kit: 1.0.1
+      ast-kit: 1.1.0
       local-pkg: 0.5.0
       magic-string-ast: 0.6.2
     optionalDependencies:
@@ -5567,7 +5567,7 @@ snapshots:
 
   '@vue/language-core@2.0.29(typescript@5.5.4)':
     dependencies:
-      '@volar/language-core': 2.4.0-alpha.18
+      '@volar/language-core': 2.4.0
       '@vue/compiler-dom': 3.4.38
       '@vue/compiler-vue2': 2.7.16
       '@vue/shared': 3.4.38
@@ -5804,7 +5804,7 @@ snapshots:
 
   assertion-error@2.0.1: {}
 
-  ast-kit@1.0.1:
+  ast-kit@1.1.0:
     dependencies:
       '@babel/parser': 7.25.3
       pathe: 1.1.2
@@ -7229,12 +7229,12 @@ snapshots:
 
   hexoid@1.0.0: {}
 
-  histoire@0.17.17(@types/node@18.19.44)(sass@1.77.8)(vite@5.4.1(@types/node@18.19.44)(sass@1.77.8)):
+  histoire@0.17.17(@types/node@18.19.45)(sass@1.77.8)(vite@5.4.1(@types/node@18.19.45)(sass@1.77.8)):
     dependencies:
       '@akryum/tinypool': 0.3.1
-      '@histoire/app': 0.17.17(vite@5.4.1(@types/node@18.19.44)(sass@1.77.8))
-      '@histoire/controls': 0.17.17(vite@5.4.1(@types/node@18.19.44)(sass@1.77.8))
-      '@histoire/shared': 0.17.17(vite@5.4.1(@types/node@18.19.44)(sass@1.77.8))
+      '@histoire/app': 0.17.17(vite@5.4.1(@types/node@18.19.45)(sass@1.77.8))
+      '@histoire/controls': 0.17.17(vite@5.4.1(@types/node@18.19.45)(sass@1.77.8))
+      '@histoire/shared': 0.17.17(vite@5.4.1(@types/node@18.19.45)(sass@1.77.8))
       '@histoire/vendors': 0.17.17
       '@types/flexsearch': 0.7.6
       '@types/markdown-it': 12.2.3
@@ -7261,8 +7261,8 @@ snapshots:
       sade: 1.8.1
       shiki-es: 0.2.0
       sirv: 2.0.4
-      vite: 5.4.1(@types/node@18.19.44)(sass@1.77.8)
-      vite-node: 0.34.7(@types/node@18.19.44)(sass@1.77.8)
+      vite: 5.4.1(@types/node@18.19.45)(sass@1.77.8)
+      vite-node: 0.34.7(@types/node@18.19.45)(sass@1.77.8)
     transitivePeerDependencies:
       - '@types/node'
       - bufferutil
@@ -8813,7 +8813,7 @@ snapshots:
 
   tinybench@2.9.0: {}
 
-  tinypool@1.0.0: {}
+  tinypool@1.0.1: {}
 
   tinyrainbow@1.2.0: {}
 
@@ -8856,14 +8856,14 @@ snapshots:
     dependencies:
       typescript: 5.5.4
 
-  ts-node@10.9.2(@types/node@18.19.44)(typescript@5.5.4):
+  ts-node@10.9.2(@types/node@18.19.45)(typescript@5.5.4):
     dependencies:
       '@cspotcode/source-map-support': 0.8.1
       '@tsconfig/node10': 1.0.11
       '@tsconfig/node12': 1.0.11
       '@tsconfig/node14': 1.0.3
       '@tsconfig/node16': 1.0.4
-      '@types/node': 18.19.44
+      '@types/node': 18.19.45
       acorn: 8.12.1
       acorn-walk: 8.3.3
       arg: 4.1.3
@@ -9084,14 +9084,14 @@ snapshots:
       core-util-is: 1.0.2
       extsprintf: 1.3.0
 
-  vite-node@0.34.7(@types/node@18.19.44)(sass@1.77.8):
+  vite-node@0.34.7(@types/node@18.19.45)(sass@1.77.8):
     dependencies:
       cac: 6.7.14
       debug: 4.3.6(supports-color@8.1.1)
       mlly: 1.7.1
       pathe: 1.1.2
       picocolors: 1.0.1
-      vite: 5.4.1(@types/node@18.19.44)(sass@1.77.8)
+      vite: 5.4.1(@types/node@18.19.45)(sass@1.77.8)
     transitivePeerDependencies:
       - '@types/node'
       - less
@@ -9103,13 +9103,13 @@ snapshots:
       - supports-color
       - terser
 
-  vite-node@2.0.5(@types/node@18.19.44)(sass@1.77.8):
+  vite-node@2.0.5(@types/node@18.19.45)(sass@1.77.8):
     dependencies:
       cac: 6.7.14
       debug: 4.3.6(supports-color@8.1.1)
       pathe: 1.1.2
       tinyrainbow: 1.2.0
-      vite: 5.4.1(@types/node@18.19.44)(sass@1.77.8)
+      vite: 5.4.1(@types/node@18.19.45)(sass@1.77.8)
     transitivePeerDependencies:
       - '@types/node'
       - less
@@ -9121,17 +9121,17 @@ snapshots:
       - supports-color
       - terser
 
-  vite@5.4.1(@types/node@18.19.44)(sass@1.77.8):
+  vite@5.4.1(@types/node@18.19.45)(sass@1.77.8):
     dependencies:
       esbuild: 0.21.5
       postcss: 8.4.41
       rollup: 4.21.0
     optionalDependencies:
-      '@types/node': 18.19.44
+      '@types/node': 18.19.45
       fsevents: 2.3.3
       sass: 1.77.8
 
-  vitest@2.0.5(@types/node@18.19.44)(jsdom@24.1.1)(sass@1.77.8):
+  vitest@2.0.5(@types/node@18.19.45)(jsdom@24.1.1)(sass@1.77.8):
     dependencies:
       '@ampproject/remapping': 2.3.0
       '@vitest/expect': 2.0.5
@@ -9147,13 +9147,13 @@ snapshots:
       pathe: 1.1.2
       std-env: 3.7.0
       tinybench: 2.9.0
-      tinypool: 1.0.0
+      tinypool: 1.0.1
       tinyrainbow: 1.2.0
-      vite: 5.4.1(@types/node@18.19.44)(sass@1.77.8)
-      vite-node: 2.0.5(@types/node@18.19.44)(sass@1.77.8)
+      vite: 5.4.1(@types/node@18.19.45)(sass@1.77.8)
+      vite-node: 2.0.5(@types/node@18.19.45)(sass@1.77.8)
       why-is-node-running: 2.3.0
     optionalDependencies:
-      '@types/node': 18.19.44
+      '@types/node': 18.19.45
       jsdom: 24.1.1
     transitivePeerDependencies:
       - less
@@ -9213,7 +9213,7 @@ snapshots:
 
   vue-tsc@2.0.29(typescript@5.5.4):
     dependencies:
-      '@volar/typescript': 2.4.0-alpha.18
+      '@volar/typescript': 2.4.0
       '@vue/language-core': 2.0.29(typescript@5.5.4)
       semver: 7.6.3
       typescript: 5.5.4

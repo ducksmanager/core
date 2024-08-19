@@ -32,7 +32,7 @@
     "@types/ejs": "^3.1.5",
     "@types/i18n": "^0.13.12",
     "@types/jsonwebtoken": "^9.0.6",
-    "@types/node": "^18.19.44",
+    "@types/node": "^18.19.45",
     "@types/nodemailer": "^6.4.15",
     "concurrently": "^8.2.2",
     "nodemon": "^3.1.4",
