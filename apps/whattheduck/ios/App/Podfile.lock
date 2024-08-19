@@ -25,10 +25,11 @@ PODS:
     - Capacitor
   - CapawesomeCapacitorFilePicker (6.0.1):
     - Capacitor
-  - CapgoCapacitorUpdater (6.0.56):
+  - CapgoCapacitorUpdater (6.1.0):
     - Alamofire
     - Capacitor
     - SSZipArchive
+    - SwiftyRSA
     - Version
   - SQLCipher (4.6.0):
     - SQLCipher/standard (= 4.6.0)
@@ -36,6 +37,9 @@ PODS:
   - SQLCipher/standard (4.6.0):
     - SQLCipher/common
   - SSZipArchive (2.4.3)
+  - SwiftyRSA (1.7.0):
+    - SwiftyRSA/ObjC (= 1.7.0)
+  - SwiftyRSA/ObjC (1.7.0)
   - Version (0.8.0)
   - ZIPFoundation (0.9.19)
 
@@ -52,13 +56,14 @@ DEPENDENCIES:
   - "CapacitorPreferences (from `../../node_modules/.pnpm/@capacitor+preferences@6.0.2_@capacitor+core@6.1.2/node_modules/@capacitor/preferences`)"
   - "CapacitorStatusBar (from `../../node_modules/.pnpm/@capacitor+status-bar@6.0.1_@capacitor+core@6.1.2/node_modules/@capacitor/status-bar`)"
   - "CapawesomeCapacitorFilePicker (from `../../node_modules/.pnpm/@capawesome+capacitor-file-picker@6.0.1_@capacitor+core@6.1.2/node_modules/@capawesome/capacitor-file-picker`)"
-  - "CapgoCapacitorUpdater (from `../../node_modules/.pnpm/@capgo+capacitor-updater@6.0.56_@capacitor+core@6.1.2/node_modules/@capgo/capacitor-updater`)"
+  - "CapgoCapacitorUpdater (from `../../node_modules/.pnpm/@capgo+capacitor-updater@6.1.0_@capacitor+core@6.1.2/node_modules/@capgo/capacitor-updater`)"
 
 SPEC REPOS:
   trunk:
     - Alamofire
     - SQLCipher
     - SSZipArchive
+    - SwiftyRSA
     - Version
     - ZIPFoundation
 
@@ -88,7 +93,7 @@ EXTERNAL SOURCES:
   CapawesomeCapacitorFilePicker:
     :path: "../../node_modules/.pnpm/@capawesome+capacitor-file-picker@6.0.1_@capacitor+core@6.1.2/node_modules/@capawesome/capacitor-file-picker"
   CapgoCapacitorUpdater:
-    :path: "../../node_modules/.pnpm/@capgo+capacitor-updater@6.0.56_@capacitor+core@6.1.2/node_modules/@capgo/capacitor-updater"
+    :path: "../../node_modules/.pnpm/@capgo+capacitor-updater@6.1.0_@capacitor+core@6.1.2/node_modules/@capgo/capacitor-updater"
 
 SPEC CHECKSUMS:
   Alamofire: f36a35757af4587d8e4f4bfa223ad10be2422b8c
@@ -104,12 +109,13 @@ SPEC CHECKSUMS:
   CapacitorPreferences: e8284bf740cf8c6d3f25409af3c01df87dfeb5a1
   CapacitorStatusBar: b81d4fb5d4e0064c712018071b3ab4b810b39a63
   CapawesomeCapacitorFilePicker: c80c30759ba48986ff34a2b51b23ac2babfd3774
-  CapgoCapacitorUpdater: 68b02356624ca2d34054d72e7b28ce58a1cc7c7d
+  CapgoCapacitorUpdater: dfe4b49cfc661f2cb78e93e953eda3663063f836
   SQLCipher: 30a8e81afa6128e600b17ffa77d0f92fa05ed208
   SSZipArchive: fe6a26b2a54d5a0890f2567b5cc6de5caa600aef
+  SwiftyRSA: 8c6dd1ea7db1b8dc4fb517a202f88bb1354bc2c6
   Version: de5907f2c5d0f3cf21708db7801d1d5401139486
   ZIPFoundation: b8c29ea7ae353b309bc810586181fd073cb3312c
 
-PODFILE CHECKSUM: e5e4134b4adea0799f8c8c30043d78a0876bc749
+PODFILE CHECKSUM: d70f912f9b7ab7c250a222b9e860a3b950ab97fa
 
 COCOAPODS: 1.15.2

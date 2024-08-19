@@ -22,7 +22,6 @@ for (const envKey of [
   }
 }
 
-
 process.env.DATABASE_URL_DM_STATS = process.env.DATABASE_URL_DM_STATS!.replace(
   "dm_stats",
   "dm_stats_new",
@@ -129,11 +128,9 @@ connect().then(async () => {
   await prismaDmStats.storyIssue.createMany({
     data: await prismaCoa.$queryRaw<
       (Pick<inducks_storyversion, "storycode"> &
-        Pick<inducks_issue, "issuecode" | "oldestdate">)[]
+        Pick<inducks_issue, "issuecode">)[]
     >`
-      select distinct sv.storycode,
-        i.issuecode,
-        i.oldestdate
+      select distinct sv.storycode, i.issuecode
       from inducks_storyjob sj
         inner join inducks_storyversion sv using (storyversioncode)
         inner join inducks_entry e using (storyversioncode)
@@ -189,12 +186,11 @@ connect().then(async () => {
 
   console.log("Creating missingIssueForUser entries");
   await prismaDmStats.$executeRaw`
-    insert into utilisateurs_publications_manquantes(ID_User, personcode, storycode, issuecode, oldestdate, Notation)
+    insert into utilisateurs_publications_manquantes(ID_User, personcode, storycode, issuecode, Notation)
     select distinct u_h_m.ID_User AS userId,
       u_h_m.personcode,
       u_h_m.storycode,
       h_p.issuecode,
-      h_p.oldestdate,
       a_p.Notation AS notation
     from utilisateurs_histoires_manquantes u_h_m
       inner join histoires_publications h_p using (storycode)
@@ -205,18 +201,19 @@ connect().then(async () => {
   console.log("Creating suggestedIssueForUser entries");
   await prismaDmStats.$executeRaw`
       insert into utilisateurs_publications_suggerees(ID_User, issuecode, oldestdate, Score)
-      select ID_User AS userId, issuecode, oldestdate, sum(Notation) AS score
+      select ID_User AS userId, issuecode, '0000-00-00', sum(Notation) AS score
       from utilisateurs_publications_manquantes
-      group by ID_User, issuecode, oldestdate`;
+      group by ID_User, issuecode`;
 
   await prismaDmStats.$executeRaw`OPTIMIZE TABLE utilisateurs_publications_suggerees`;
 
-  console.log("Adding publicationcode and issuenumber for WTD < 3");
+  console.log("Adding oldestdate; adding publicationcode and issuenumber for WTD < 3");
   await runQuery(`
     UPDATE ${dbName}_new.utilisateurs_publications_suggerees
     JOIN coa.inducks_issue i using (issuecode)
     SET utilisateurs_publications_suggerees.publicationcode = i.publicationcode
-      , utilisateurs_publications_suggerees.issuenumber     = i.issuenumber`);
+      , utilisateurs_publications_suggerees.issuenumber     = i.issuenumber
+      , utilisateurs_publications_suggerees.oldestdate      = i.oldestdate`);
 
 
   await runQuery(`DROP DATABASE IF EXISTS ${dbName}_old`);

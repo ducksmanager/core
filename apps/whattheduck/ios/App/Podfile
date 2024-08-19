@@ -21,7 +21,7 @@ def capacitor_pods
   pod 'CapacitorPreferences', :path => '../../node_modules/.pnpm/@capacitor+preferences@6.0.2_@capacitor+core@6.1.2/node_modules/@capacitor/preferences'
   pod 'CapacitorStatusBar', :path => '../../node_modules/.pnpm/@capacitor+status-bar@6.0.1_@capacitor+core@6.1.2/node_modules/@capacitor/status-bar'
   pod 'CapawesomeCapacitorFilePicker', :path => '../../node_modules/.pnpm/@capawesome+capacitor-file-picker@6.0.1_@capacitor+core@6.1.2/node_modules/@capawesome/capacitor-file-picker'
-  pod 'CapgoCapacitorUpdater', :path => '../../node_modules/.pnpm/@capgo+capacitor-updater@6.0.56_@capacitor+core@6.1.2/node_modules/@capgo/capacitor-updater'
+  pod 'CapgoCapacitorUpdater', :path => '../../node_modules/.pnpm/@capgo+capacitor-updater@6.1.0_@capacitor+core@6.1.2/node_modules/@capgo/capacitor-updater'
 end
 
 target 'App' do

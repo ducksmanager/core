@@ -8,7 +8,6 @@ COPY apps/stats-updater/bundle.mjs /app/
 COPY packages/prisma-schemas/client_coa/ /client_coa
 COPY packages/prisma-schemas/client_dm/ /client_dm
 COPY packages/prisma-schemas/client_dm_stats/ /client_dm_stats
-COPY packages/prisma-schemas/client_dm_stats_new/ /client_dm_stats_new
 COPY packages/prisma-schemas/schemas/dm_stats/migrations/0_init/migration.sql /dm-stats-ddl.sql
 
 EXPOSE 3000

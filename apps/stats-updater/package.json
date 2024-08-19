@@ -4,7 +4,7 @@
   "description": "Daily stats calculation for DucksManager",
   "main": "index.ts",
   "scripts": {
-    "build": "bun build --target bun --sourcemap index.ts --outfile bundle.mjs && SCHEMA='dm_stats' DATABASE_URL_DM_STATS=`sed 's/dm_stats/dm_stats_new/g' $DATABASE_URL_DM_STATS` pnpm -r -F '~prisma-clients' prisma-generate"
+    "build": "bun build --target bun --sourcemap index.ts --outfile bundle.mjs"
   },
   "dependencies": {
     "dotenv": "^16.4.5",

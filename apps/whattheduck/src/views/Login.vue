@@ -2,7 +2,7 @@
   <ion-page v-show="token === null">
     <ion-header :translucent="true">
       <ion-toolbar>
-        <ion-title class="ion-no-padding">{{ t('Connexion') }}</ion-title>
+        <ion-title class="ion-padding-start">{{ t('Connexion') }}</ion-title>
       </ion-toolbar>
     </ion-header>
     <ion-content>
