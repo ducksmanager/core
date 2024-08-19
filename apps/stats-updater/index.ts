@@ -1,10 +1,29 @@
 #!/usr/bin/env bun
 
 import "~prisma-schemas/util/groupBy";
+import * as dotenv from "dotenv";
+import { readFileSync } from "fs";
+import { PoolConnection } from "mariadb";
+import { createPool } from "mariadb";
+
 import * as process from "process";
 
-const originalConnectionString = process.env.DATABASE_URL_DM_STATS!;
-process.env.DATABASE_URL_DM_STATS = originalConnectionString.replace(
+dotenv.config();
+
+for (const envKey of [
+  "MYSQL_HOST",
+  "MYSQL_PORT",
+  "MYSQL_ROOT_PASSWORD",
+  "DATABASE_URL_DM_STATS",
+]) {
+  if (!process.env[envKey]) {
+    console.error(`Environment variable not found, aborting: ${envKey}`);
+    process.exit(1);
+  }
+}
+
+
+process.env.DATABASE_URL_DM_STATS = process.env.DATABASE_URL_DM_STATS!.replace(
   "dm_stats",
   "dm_stats_new",
 );
@@ -22,8 +41,6 @@ import {
 import type { authorUser } from "~prisma-schemas/schemas/dm";
 import type { authorStory } from "~prisma-schemas/schemas/dm_stats";
 
-import * as db from "./db";
-
 const tables = [
   "auteurs_histoires",
   "histoires_publications",
@@ -32,12 +49,47 @@ const tables = [
   "utilisateurs_publications_suggerees",
 ];
 
-db.connect().then(async () => {
-  const dbName = process.env.MYSQL_DM_STATS_DATABASE;
-  await db.runQuery(`DROP DATABASE IF EXISTS ${dbName}_new`);
-  await db.runQuery(`CREATE DATABASE ${dbName}_new`);
 
-  await db.runQueryFile(`${dbName}_new`, process.env.DM_STATS_DDL_PATH);
+let connection: PoolConnection;
+
+const pool = createPool({
+  host: process.env.MYSQL_HOST,
+  port: parseInt(process.env.MYSQL_PORT!),
+  user: "root",
+  password: process.env.MYSQL_ROOT_PASSWORD,
+  multipleStatements: true,
+});
+
+const connect = async () => {
+  try {
+    connection = await pool.getConnection();
+  } catch (err: unknown) {
+    console.error(err);
+  }
+};
+
+const disconnect = async () => {
+  if (connection) {
+    await connection.end();
+  }
+  return pool.end();
+};
+
+const runQuery = async (sql: string) => {
+  console.log(new Date().toISOString());
+  console.debug(sql);
+  return await connection.query(sql);
+};
+
+const runQueryFile = async (dbName: string, sqlFile: string) =>
+  runQuery(`USE ${dbName};` + readFileSync(sqlFile).toString());
+
+connect().then(async () => {
+  const dbName = process.env.MYSQL_DM_STATS_DATABASE;
+  await runQuery(`DROP DATABASE IF EXISTS ${dbName}_new`);
+  await runQuery(`CREATE DATABASE ${dbName}_new`);
+
+  await runQueryFile(`${dbName}_new`, process.env.DM_STATS_DDL_PATH);
 
   const authorUsers = await prismaDm.authorUser.findMany({
     where: {
@@ -160,24 +212,22 @@ db.connect().then(async () => {
   await prismaDmStats.$executeRaw`OPTIMIZE TABLE utilisateurs_publications_suggerees`;
 
   console.log("Adding publicationcode and issuenumber for WTD < 3");
-  await db.runQuery(`
+  await runQuery(`
     UPDATE ${dbName}_new.utilisateurs_publications_suggerees
     JOIN coa.inducks_issue i using (issuecode)
     SET utilisateurs_publications_suggerees.publicationcode = i.publicationcode
       , utilisateurs_publications_suggerees.issuenumber     = i.issuenumber`);
 
-  process.env.DATABASE_URL_DM_STATS = originalConnectionString;
-  await db.runMigrations();
 
-  await db.runQuery(`DROP DATABASE IF EXISTS ${dbName}_old`);
-  await db.runQuery(`CREATE DATABASE ${dbName}_old`);
+  await runQuery(`DROP DATABASE IF EXISTS ${dbName}_old`);
+  await runQuery(`CREATE DATABASE ${dbName}_old`);
 
   for (const table of tables) {
-    await db.runQuery(`RENAME TABLE
+    await runQuery(`RENAME TABLE
         ${dbName}.${table}     TO ${dbName}_old.${table},
         ${dbName}_new.${table} TO ${dbName}.${table}`);
   }
 
-  await db.disconnect();
+  await disconnect();
   process.exit(0);
 });
