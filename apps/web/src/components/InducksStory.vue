@@ -19,7 +19,7 @@
 <script setup lang="ts">
 const { t: $t } = useI18n();
 const props = defineProps<{
-  noBadge: boolean;
+  noBadge?: boolean;
   storycode: string;
   kind?: string;
   title?: string;
@@ -36,7 +36,7 @@ const tagName = computed(() => (showLink.value === "outer" ? "a" : "span"));
 const url = computed(
   () =>
     storycode.value &&
-    `https://coa.inducks.org/story.php?c=${encodeURIComponent(storycode.value)}`,
+    `https://coa.inducks.org/story.php?c=${encodeURIComponent(storycode.value)}`
 );
 
 const storyTypeText = computed(() => {

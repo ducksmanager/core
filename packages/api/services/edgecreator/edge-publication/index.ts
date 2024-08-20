@@ -10,6 +10,7 @@ import type {
 import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
 
 import type Events from "../types";
+import { getPopularityByIssuecodes } from "~/services/coa/issue-details";
 export default (socket: Socket<Events>) => {
   socket.on(
     "publishEdge",
@@ -139,14 +140,7 @@ const publishEdgeOnDm = async (
     });
   }
 
-  const issuePopularity =
-    (
-      await prismaDm.issuePopularity.findFirst({
-        where: {
-          issuecode,
-        },
-      })
-    )?.popularity || 0;
+  const issuePopularity = (await getPopularityByIssuecodes([issuecode]))[issuecode]?.popularity || 0;
 
   for (const { userId, contribution } of contributors) {
     const user = await prismaDm.user.findUnique({
