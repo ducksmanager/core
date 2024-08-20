@@ -10,11 +10,13 @@
     </ion-header>
 
     <ion-content :fullscreen="true">
-      <ion-text>{{
-        t(
-          "Entrez le titre d'une histoire. What The Duck vous indiquera les magazines qui contiennent cette histoire et précisera les histoires et magazines correspondants que vous possédez.",
-        )
-      }}</ion-text>
+      <div class="ion-padding" style="font-size: small">
+        {{
+          t(
+            "Entrez le titre d'une histoire. What The Duck vous indiquera les magazines qui contiennent cette histoire et précisera les histoires et magazines correspondants que vous possédez.",
+          )
+        }}
+      </div>
       <ion-searchbar
         style="margin: 1rem 0"
         autocapitalize="sentences"

@@ -8,15 +8,31 @@
         <ion-title>{{ t('Suggestions') }}</ion-title>
       </ion-toolbar>
     </ion-header>
-    <ion-content style="font-size: small">
-      <div>
-        {{
-          t(
-            "WhatTheDuck vous propose une liste personalisée de magazines contenant des histoires inédites de vos auteurs favoris.\nVous pouvez changer la liste d'auteurs dans l'écran Mes auteurs favoris.\nLes suggestions sont mises à jour quotidiennement.",
-          )
-        }}
+    <ion-content>
+      <div class="ion-padding" style="font-size: small">
+        <i18n-t
+          tag="span"
+          keypath="WhatTheDuck vous propose une liste personalisée de magazines contenant des histoires inédites de vos auteurs favoris.{br}Vous pouvez changer la liste d'auteurs dans l'écran {favoriteAuthorsLink}.{br}Les suggestions sont mises à jour quotidiennement."
+        >
+          <template #br>
+            <br />
+          </template>
+          <template #favoriteAuthorsLink>
+            <ion-text color="primary" router-link="/authors">{{ t('Mes auteurs favoris') }}</ion-text>
+          </template>
+        </i18n-t>
       </div>
-      <template v-if="formattedSuggestions">
+      <ion-select label="Montrer les publications de" label-placement="stacked" v-model="showSuggestionsOf">
+        <ion-select-option value="ALL">{{ t('Tous les pays') }}</ion-select-option>
+        <ion-select-option v-for="[countrycode, countryname] of sortedCountryNames" :value="countrycode">{{
+          countryname
+        }}</ion-select-option>
+      </ion-select>
+      <ion-item v-if="isLoadingSuggestions">{{ t('Chargement...') }}</ion-item>
+      <div class="ion-padding" v-else-if="formattedSuggestions && !formattedSuggestions.length">
+        {{ t('Aucune suggestion disponible.') }}
+      </div>
+      <template v-else-if="formattedSuggestions">
         <ion-row class="toggle ion-margin-top ion-align-items-center ion-justify-content-center">
           <ion-col> {{ t('Trier par date de publication') }}</ion-col
           ><ion-col><ion-toggle size="small" color="light" v-model="sortByScore" /></ion-col
@@ -71,15 +87,30 @@ const { InducksStory } = webComponents;
 const { t } = useI18n();
 const sortByScore = ref(false);
 
-const { suggestions } = storeToRefs(wtdcollection());
+const { suggestions, isLoadingSuggestions } = storeToRefs(wtdcollection());
+const { loadSuggestions } = wtdcollection();
 const { fetchIssuecodeDetails, fetchPublicationNames } = webStores.coa();
-const { issuecodeDetails, publicationNames } = storeToRefs(webStores.coa());
+const { countryNames, issuecodeDetails, publicationNames } = storeToRefs(webStores.coa());
 
 interface FormattedSuggestion {
   storycode: string;
   authors: string[];
   title: string;
 }
+
+const showSuggestionsOf = ref('ALL');
+
+watch(showSuggestionsOf, async (newValue) => {
+  await loadSuggestions({ countryCode: newValue, sinceLastVisit: false });
+});
+
+const sortedCountryNames = computed(
+  () =>
+    countryNames.value &&
+    Object.entries(countryNames.value).sort(([, countryName1], [, countryName2]) =>
+      countryName1.localeCompare(countryName2),
+    ),
+);
 
 const hasIssuecodeDetails = ref(false);
 

@@ -86,7 +86,7 @@ importers:
         version: 2.0.3
       '@vitejs/plugin-vue':
         specifier: ^5.1.2
-        version: 5.1.2(vite@5.4.1(sass@1.77.8))(vue@3.4.38(typescript@5.5.4))
+        version: 5.1.2(vite@5.4.2(sass@1.77.8))(vue@3.4.38(typescript@5.5.4))
       concurrently:
         specifier: ^8.2.2
         version: 8.2.2
@@ -127,14 +127,14 @@ importers:
         specifier: ^0.27.4
         version: 0.27.4(@babel/parser@7.25.3)(rollup@4.21.0)(vue@3.4.38(typescript@5.5.4))
       vite:
-        specifier: ^5.4.1
-        version: 5.4.1(sass@1.77.8)
+        specifier: ^5.4.2
+        version: 5.4.2(sass@1.77.8)
       vite-plugin-eslint:
         specifier: ^1.8.1
-        version: 1.8.1(eslint@8.57.0)(vite@5.4.1(sass@1.77.8))
+        version: 1.8.1(eslint@8.57.0)(vite@5.4.2(sass@1.77.8))
       vite-plugin-pages:
         specifier: ^0.32.3
-        version: 0.32.3(@vue/compiler-sfc@3.4.38)(vite@5.4.1(sass@1.77.8))(vue-router@4.4.3(vue@3.4.38(typescript@5.5.4)))
+        version: 0.32.3(@vue/compiler-sfc@3.4.38)(vite@5.4.2(sass@1.77.8))(vue-router@4.4.3(vue@3.4.38(typescript@5.5.4)))
       vue-tsc:
         specifier: ^2.0.29
         version: 2.0.29(typescript@5.5.4)
@@ -1106,8 +1106,8 @@ packages:
   confbox@0.1.7:
     resolution: {integrity: sha512-uJcB/FKZtBMCJpK8MQji6bJHgu1tixKPxRLeGkNzBoOZzpnZUJm0jm2/sBDWcuBx1dYgxV4JU+g5hmNxCyAmdA==}
 
-  core-js-compat@3.38.0:
-    resolution: {integrity: sha512-75LAicdLa4OJVwFxFbQR3NdnZjNgX6ILpVcVzcC4T2smerB5lELMrJQQQoWV6TiuC/vlaFqgU2tKQx9w5s0e0A==}
+  core-js-compat@3.38.1:
+    resolution: {integrity: sha512-JRH6gfXxGmrzF3tZ57lFx97YARxCXPaMzPo6jELZhv88pBH5VXpQ+y0znKGlFnzuaihqhLbefxSJxWJMPtfDzw==}
 
   cross-spawn@7.0.3:
     resolution: {integrity: sha512-iRDPJKUPVEND7dHPO8rkbOnPpyDygcDFtWjpeWNCgy8WP2rXcxXL8TskReQl6OrB2G7+UJrags1q15Fudc7G6w==}
@@ -1160,8 +1160,8 @@ packages:
     resolution: {integrity: sha512-yS+Q5i3hBf7GBkd4KG8a7eBNNWNGLTaEwwYWUijIYM7zrlYDM0BFXHjjPWlWZ1Rg7UaddZeIDmi9jF3HmqiQ2w==}
     engines: {node: '>=6.0.0'}
 
-  electron-to-chromium@1.5.11:
-    resolution: {integrity: sha512-R1CccCDYqndR25CaXFd6hp/u9RaaMcftMkphmvuepXr5b1vfLkRml6aWVeBhXJ7rbevHkKEMJtz8XqPf7ffmew==}
+  electron-to-chromium@1.5.12:
+    resolution: {integrity: sha512-tIhPkdlEoCL1Y+PToq3zRNehUaKp3wBX/sr7aclAWdIWjvqAe/Im/H0SiCM4c1Q8BLPHCdoJTol+ZblflydehA==}
 
   emoji-regex@8.0.0:
     resolution: {integrity: sha512-MSjYzcWNOA0ewAHpz0MxpYFvwg6yjy1NG3xteoqz644VCo/RPgnr1/GGt+ic3iJTzQ8Eu3TdM14SawnVUmGE6A==}
@@ -2119,8 +2119,8 @@ packages:
   spdx-expression-parse@4.0.0:
     resolution: {integrity: sha512-Clya5JIij/7C6bRR22+tnGXbc4VKlibKSVj2iHvVeX5iMW7s1SIQlqu699JkODJJIhh/pUu8L0/VLh8xflD+LQ==}
 
-  spdx-license-ids@3.0.18:
-    resolution: {integrity: sha512-xxRs31BqRYHwiMzudOrpSiHtZ8i/GeionCBDSilhYRj+9gIcI8wCZTlXZKu9vZIVqViP3dcp9qE5G6AlIaD+TQ==}
+  spdx-license-ids@3.0.20:
+    resolution: {integrity: sha512-jg25NiDV/1fLtSgEgyvVyDunvaNHbuwF9lfNV17gSmPFAlYzdfNBlLtLzXTevwkPj7DhGbmN9VnmJIgLnhvaBw==}
 
   stable-hash@0.0.4:
     resolution: {integrity: sha512-LjdcbuBeLcdETCrPn9i8AYAZ1eCtu4ECAWtP7UleOiZ9LzVxRzzUZEoZ8zB24nhkQnDWyET0I+3sWokSDS3E7g==}
@@ -2250,8 +2250,8 @@ packages:
   ufo@1.5.4:
     resolution: {integrity: sha512-UsUk3byDzKd04EyoZ7U4DOlxQaD14JUKQl6/P7wiX4FNvUfm3XL246n9W5AmqwW5RSFJ27NAuM0iLscAOYUiGQ==}
 
-  unimport@3.10.0:
-    resolution: {integrity: sha512-/UvKRfWx3mNDWwWQhR62HsoM3wxHwYdTq8ellZzMOHnnw4Dp8tovgthyW7DjTrbjDL+i4idOp06voz2VKlvrLw==}
+  unimport@3.10.1:
+    resolution: {integrity: sha512-gK0oqn2SyPEjmp5O0Epu13xmX1Pfn4MwpJNlntXUauV0wN8Hhod+BNjDjqQ4ZpOSCt17MCLjGqUXqUhAiJuhOw==}
 
   unist-util-stringify-position@2.0.3:
     resolution: {integrity: sha512-3faScn5I+hy9VleOq/qNbAd6pAx7iH5jYBMS9I1HgQVijz/4mv5Bvw5iw1sC/90CODiKo81G/ps8AJrISn687g==}
@@ -2344,8 +2344,8 @@ packages:
       vue-router:
         optional: true
 
-  vite@5.4.1:
-    resolution: {integrity: sha512-1oE6yuNXssjrZdblI9AfBbHCC41nnyoVoEZxQnID6yvQZAFBzxxkqoFLtHUMkYunL8hwOLEjgTuxpkRxvba3kA==}
+  vite@5.4.2:
+    resolution: {integrity: sha512-dDrQTRHp5C1fTFzcSaMxjk6vdpKvT+2/mIdE07Gw2ykehT49O0z/VHS3zZ8iV/Gh8BJJKHWOe5RjaNrW5xf/GA==}
     engines: {node: ^18.0.0 || >=20.0.0}
     hasBin: true
     peerDependencies:
@@ -3198,9 +3198,9 @@ snapshots:
       '@uppy/core': 3.13.1
       '@uppy/utils': 5.9.0
 
-  '@vitejs/plugin-vue@5.1.2(vite@5.4.1(sass@1.77.8))(vue@3.4.38(typescript@5.5.4))':
+  '@vitejs/plugin-vue@5.1.2(vite@5.4.2(sass@1.77.8))(vue@3.4.38(typescript@5.5.4))':
     dependencies:
-      vite: 5.4.1(sass@1.77.8)
+      vite: 5.4.2(sass@1.77.8)
       vue: 3.4.38(typescript@5.5.4)
 
   '@vitest/eslint-plugin@1.0.3(@typescript-eslint/utils@8.2.0(eslint@8.57.0)(typescript@5.5.4))(eslint@8.57.0)(typescript@5.5.4)':
@@ -3388,7 +3388,7 @@ snapshots:
   browserslist@4.23.3:
     dependencies:
       caniuse-lite: 1.0.30001651
-      electron-to-chromium: 1.5.11
+      electron-to-chromium: 1.5.12
       node-releases: 2.0.18
       update-browserslist-db: 1.1.0(browserslist@4.23.3)
 
@@ -3475,7 +3475,7 @@ snapshots:
 
   confbox@0.1.7: {}
 
-  core-js-compat@3.38.0:
+  core-js-compat@3.38.1:
     dependencies:
       browserslist: 4.23.3
 
@@ -3515,7 +3515,7 @@ snapshots:
     dependencies:
       esutils: 2.0.3
 
-  electron-to-chromium@1.5.11: {}
+  electron-to-chromium@1.5.12: {}
 
   emoji-regex@8.0.0: {}
 
@@ -3746,7 +3746,7 @@ snapshots:
       '@eslint-community/eslint-utils': 4.4.0(eslint@8.57.0)
       ci-info: 4.0.0
       clean-regexp: 1.0.0
-      core-js-compat: 3.38.0
+      core-js-compat: 3.38.1
       eslint: 8.57.0
       esquery: 1.6.0
       globals: 15.9.0
@@ -4516,21 +4516,21 @@ snapshots:
   spdx-correct@3.2.0:
     dependencies:
       spdx-expression-parse: 3.0.1
-      spdx-license-ids: 3.0.18
+      spdx-license-ids: 3.0.20
 
   spdx-exceptions@2.5.0: {}
 
   spdx-expression-parse@3.0.1:
     dependencies:
       spdx-exceptions: 2.5.0
-      spdx-license-ids: 3.0.18
+      spdx-license-ids: 3.0.20
 
   spdx-expression-parse@4.0.0:
     dependencies:
       spdx-exceptions: 2.5.0
-      spdx-license-ids: 3.0.18
+      spdx-license-ids: 3.0.20
 
-  spdx-license-ids@3.0.18: {}
+  spdx-license-ids@3.0.20: {}
 
   stable-hash@0.0.4: {}
 
@@ -4635,7 +4635,7 @@ snapshots:
 
   ufo@1.5.4: {}
 
-  unimport@3.10.0(rollup@4.21.0):
+  unimport@3.10.1(rollup@4.21.0):
     dependencies:
       '@rollup/pluginutils': 5.1.0(rollup@4.21.0)
       acorn: 8.12.1
@@ -4665,7 +4665,7 @@ snapshots:
       local-pkg: 0.5.0
       magic-string: 0.30.11
       minimatch: 9.0.5
-      unimport: 3.10.0(rollup@4.21.0)
+      unimport: 3.10.1(rollup@4.21.0)
       unplugin: 1.12.2
     optionalDependencies:
       '@vueuse/core': 10.11.1(vue@3.4.38(typescript@5.5.4))
@@ -4730,15 +4730,15 @@ snapshots:
       spdx-correct: 3.2.0
       spdx-expression-parse: 3.0.1
 
-  vite-plugin-eslint@1.8.1(eslint@8.57.0)(vite@5.4.1(sass@1.77.8)):
+  vite-plugin-eslint@1.8.1(eslint@8.57.0)(vite@5.4.2(sass@1.77.8)):
     dependencies:
       '@rollup/pluginutils': 4.2.1
       '@types/eslint': 8.56.11
       eslint: 8.57.0
       rollup: 2.79.1
-      vite: 5.4.1(sass@1.77.8)
+      vite: 5.4.2(sass@1.77.8)
 
-  vite-plugin-pages@0.32.3(@vue/compiler-sfc@3.4.38)(vite@5.4.1(sass@1.77.8))(vue-router@4.4.3(vue@3.4.38(typescript@5.5.4))):
+  vite-plugin-pages@0.32.3(@vue/compiler-sfc@3.4.38)(vite@5.4.2(sass@1.77.8))(vue-router@4.4.3(vue@3.4.38(typescript@5.5.4))):
     dependencies:
       '@types/debug': 4.1.12
       debug: 4.3.6
@@ -4748,7 +4748,7 @@ snapshots:
       json5: 2.2.3
       local-pkg: 0.5.0
       picocolors: 1.0.1
-      vite: 5.4.1(sass@1.77.8)
+      vite: 5.4.2(sass@1.77.8)
       yaml: 2.5.0
     optionalDependencies:
       '@vue/compiler-sfc': 3.4.38
@@ -4756,7 +4756,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  vite@5.4.1(sass@1.77.8):
+  vite@5.4.2(sass@1.77.8):
     dependencies:
       esbuild: 0.21.5
       postcss: 8.4.41

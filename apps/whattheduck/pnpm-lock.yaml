@@ -44,12 +44,15 @@ importers:
       '@capacitor/status-bar':
         specifier: ^6.0.1
         version: 6.0.1(@capacitor/core@6.1.2)
+      '@capawesome/capacitor-app-update':
+        specifier: ^6.0.0
+        version: 6.0.0(@capacitor/core@6.1.2)
       '@capawesome/capacitor-file-picker':
         specifier: ^6.0.1
         version: 6.0.1(@capacitor/core@6.1.2)
       '@capgo/capacitor-updater':
-        specifier: ^6.1.2
-        version: 6.1.2(@capacitor/core@6.1.2)
+        specifier: ^6.1.3
+        version: 6.1.3(@capacitor/core@6.1.2)
       '@ionic/pwa-elements':
         specifier: ^3.3.0
         version: 3.3.0
@@ -78,8 +81,8 @@ importers:
         specifier: ^4.4.3
         version: 4.4.3
       dayjs:
-        specifier: ^1.11.12
-        version: 1.11.12
+        specifier: ^1.11.13
+        version: 1.11.13
       ionicons:
         specifier: ^7.4.0
         version: 7.4.0
@@ -136,11 +139,11 @@ importers:
         specifier: ^6.1.2
         version: 6.1.2
       '@capgo/cli':
-        specifier: ^4.14.2
-        version: 4.14.2
+        specifier: ^4.14.4
+        version: 4.14.4
       '@histoire/plugin-vue':
         specifier: ^0.17.17
-        version: 0.17.17(histoire@0.17.17(@types/node@18.19.45)(sass@1.77.8)(vite@5.4.1(@types/node@18.19.45)(sass@1.77.8)))(vite@5.4.1(@types/node@18.19.45)(sass@1.77.8))(vue@3.4.38(typescript@5.5.4))
+        version: 0.17.17(histoire@0.17.17(@types/node@18.19.45)(sass@1.77.8)(vite@5.4.2(@types/node@18.19.45)(sass@1.77.8)))(vite@5.4.2(@types/node@18.19.45)(sass@1.77.8))(vue@3.4.38(typescript@5.5.4))
       '@ionic/prettier-config':
         specifier: ^4.0.0
         version: 4.0.0(prettier@3.3.3)
@@ -152,7 +155,7 @@ importers:
         version: 18.19.45
       '@vitejs/plugin-vue':
         specifier: ^5.1.2
-        version: 5.1.2(vite@5.4.1(@types/node@18.19.45)(sass@1.77.8))(vue@3.4.38(typescript@5.5.4))
+        version: 5.1.2(vite@5.4.2(@types/node@18.19.45)(sass@1.77.8))(vue@3.4.38(typescript@5.5.4))
       '@vue-macros/reactivity-transform':
         specifier: ^1.0.3
         version: 1.0.3(rollup@4.21.0)(vue@3.4.38(typescript@5.5.4))
@@ -194,7 +197,7 @@ importers:
         version: 9.27.0(eslint@8.57.0)
       histoire:
         specifier: ^0.17.17
-        version: 0.17.17(@types/node@18.19.45)(sass@1.77.8)(vite@5.4.1(@types/node@18.19.45)(sass@1.77.8))
+        version: 0.17.17(@types/node@18.19.45)(sass@1.77.8)(vite@5.4.2(@types/node@18.19.45)(sass@1.77.8))
       jsdom:
         specifier: ^24.1.1
         version: 24.1.1
@@ -217,8 +220,8 @@ importers:
         specifier: ^0.27.4
         version: 0.27.4(@babel/parser@7.25.3)(rollup@4.21.0)(vue@3.4.38(typescript@5.5.4))
       vite:
-        specifier: ^5.4.1
-        version: 5.4.1(@types/node@18.19.45)(sass@1.77.8)
+        specifier: ^5.4.2
+        version: 5.4.2(@types/node@18.19.45)(sass@1.77.8)
       vitest:
         specifier: ^2.0.5
         version: 2.0.5(@types/node@18.19.45)(jsdom@24.1.1)(sass@1.77.8)
@@ -342,18 +345,23 @@ packages:
     peerDependencies:
       '@capacitor/core': ^6.0.0
 
+  '@capawesome/capacitor-app-update@6.0.0':
+    resolution: {integrity: sha512-T4k0dC3XoJDgtX1QOQx0Rr5eMi3NhJn93QawQ6ZYYMmssnqCoRPpo2rg3VKVKMUZgAmIUN5Rwons9T4QkjTOzA==}
+    peerDependencies:
+      '@capacitor/core': ^6.0.0
+
   '@capawesome/capacitor-file-picker@6.0.1':
     resolution: {integrity: sha512-JWYmqfYMRwvhJMACC4oovzBGtcP1MXnRKbENPjXhL0ni0p0nnVgddKD+07kc81SNiABBuCksQjNiFiEDqqy49A==}
     peerDependencies:
       '@capacitor/core': ^6.0.0
 
-  '@capgo/capacitor-updater@6.1.2':
-    resolution: {integrity: sha512-WNr9scWiDH5M2K33SJX4CUKIXtUx50PW+kPCHN7FIVzRZoveeSfxnTr26l6l7thHZV0Gb04DPnwesc9oVOdIXg==}
+  '@capgo/capacitor-updater@6.1.3':
+    resolution: {integrity: sha512-xQboAaJ4ADJuahQxkNS10NflhBDoFytlK/AUx9N0vMMGOcun6RJ25t9SrA2SXRraOA9z5XocqT42VftQRwDOtg==}
     peerDependencies:
       '@capacitor/core': ^6.0.0
 
-  '@capgo/cli@4.14.2':
-    resolution: {integrity: sha512-kX5/Kg54yO/n4U1Zh9UpK4x6m3YlmusRCx43nPAaRuT6YuySnMO7uDtq5kFDcADn1p7lVyIo/12Y6CBmk3aQ0g==}
+  '@capgo/cli@4.14.4':
+    resolution: {integrity: sha512-l0V3fXklJ80iw0kappzJq9KPuFvRqZvklw2ixIb8PxXtnVG3Mq0Sa0TzyFQH5Rjs4+skHAlMNK7mcsRqW7gYdQ==}
     engines: {node: '>=18.0.0', npm: '>=8.0.0'}
     hasBin: true
 
@@ -1308,8 +1316,8 @@ packages:
     resolution: {integrity: sha512-Z7tMw1ytTXt5jqMcOP+OQteU1VuNK9Y02uuJtKQ1Sv69jXQKKg5cibLwGJow8yzZP+eAc18EmLGPal0bp36rvQ==}
     engines: {node: '>=8'}
 
-  async@3.2.5:
-    resolution: {integrity: sha512-baNZyqaaLhyLVKm/DlvdW051MSgO6b8eVfIezl9E5PqWxFgzLm/wQntEW4zOytVburDEr0JlALEpdOFwvErLsg==}
+  async@3.2.6:
+    resolution: {integrity: sha512-htCUDlxyyCLMgaM3xXg0C0LW2xqfuQ6p05pCEIsXuyQ+a1koYKTuBMzRNwmybfLgvJDMd0r1LTn4+E0Ti6C2AA==}
 
   asynckit@0.4.0:
     resolution: {integrity: sha512-Oei9OH4tRh0YqU3GxhX79dM/mwVgvbZJaSNaRk+bshkj0S5cfHcgYakreBjrHwatXKbz+IoIdYLxrKim2MjW0Q==}
@@ -1744,8 +1752,8 @@ packages:
   dateformat@3.0.3:
     resolution: {integrity: sha512-jyCETtSl3VMZMWeRo7iY1FL19ges1t55hMo5yaam4Jrsm5EPL89UQkoQRyiI+Yf4k8r2ZpdngkV8hr1lIdjb3Q==}
 
-  dayjs@1.11.12:
-    resolution: {integrity: sha512-Rt2g+nTbLlDWZTwwrIXjy9MeiZmSDI375FvZs72ngxx8PDC6YXOeR3q5LAuPzjZQxhiWdRKac7RKV+YyQYfYIg==}
+  dayjs@1.11.13:
+    resolution: {integrity: sha512-oaMBel6gjolK862uaPQOVTA7q3TZhuSvuMQAAglQDOWYO9A91IrAOUJEyKVlqJlHE0vq5p5UXxzdPfMH/x6xNg==}
 
   de-indent@1.0.2:
     resolution: {integrity: sha512-e/1zu3xH5MQryN2zdVaF0OrdNLUbvWxzMbi+iNA6Bky7l1RoP8a2fIbRocyHclXt/arDrrR6lL3TqFD9pMQTsg==}
@@ -3095,8 +3103,8 @@ packages:
   no-case@3.0.4:
     resolution: {integrity: sha512-fgAN3jGAh+RoxUGZHTSOLJIqUc2wmoBwGR4tbpNAKmmovFoWq0OdRkb0VkldReO2a2iBT/OEulG9XSUc10r3zg==}
 
-  node-abi@3.65.0:
-    resolution: {integrity: sha512-ThjYBfoDNr08AWx6hGaRbfPwxKV9kVzAzOzlLKbk2CuqXE2xnCh+cbAGnwM3t8Lq4v9rUB7VfondlkBckcJrVA==}
+  node-abi@3.66.0:
+    resolution: {integrity: sha512-J3ygyG8cTcn5TVzpHYEBE6zHN4uVoj6wKMS946b19VYGhVpGgR5mB3OK2oBTe0l3Bpsj5/h+TAblq0K8Ec9cRQ==}
     engines: {node: '>=10'}
 
   node-addon-api@6.1.0:
@@ -3740,8 +3748,8 @@ packages:
   spdx-expression-parse@3.0.1:
     resolution: {integrity: sha512-cbqHunsQWnJNE6KhVSMsMeH5H/L9EpymbzqTQ3uLwNCLZ1Q481oWaofqH7nO6V07xlXwY6PhQdQ2IedWx/ZK4Q==}
 
-  spdx-license-ids@3.0.18:
-    resolution: {integrity: sha512-xxRs31BqRYHwiMzudOrpSiHtZ8i/GeionCBDSilhYRj+9gIcI8wCZTlXZKu9vZIVqViP3dcp9qE5G6AlIaD+TQ==}
+  spdx-license-ids@3.0.20:
+    resolution: {integrity: sha512-jg25NiDV/1fLtSgEgyvVyDunvaNHbuwF9lfNV17gSmPFAlYzdfNBlLtLzXTevwkPj7DhGbmN9VnmJIgLnhvaBw==}
 
   split2@3.2.2:
     resolution: {integrity: sha512-9NThjpgZnifTkJpzTZ7Eue85S49QwpNhZTq6GRJwObb6jnLFNGB7Qm73V5HewTROPyxD0C29xqmaI68bQtV+hg==}
@@ -4094,8 +4102,8 @@ packages:
   undici-types@5.26.5:
     resolution: {integrity: sha512-JlCMO+ehdEIKqlFxk6IfVoAUVmgz7cU7zD/h9XZ0qzeosSHmUJVOzSQvvYSYWXkFXC+IfLKSIffhv0sVZup6pA==}
 
-  unimport@3.10.0:
-    resolution: {integrity: sha512-/UvKRfWx3mNDWwWQhR62HsoM3wxHwYdTq8ellZzMOHnnw4Dp8tovgthyW7DjTrbjDL+i4idOp06voz2VKlvrLw==}
+  unimport@3.10.1:
+    resolution: {integrity: sha512-gK0oqn2SyPEjmp5O0Epu13xmX1Pfn4MwpJNlntXUauV0wN8Hhod+BNjDjqQ4ZpOSCt17MCLjGqUXqUhAiJuhOw==}
 
   unique-string@2.0.0:
     resolution: {integrity: sha512-uNaeirEPvpZWSgzwsPGtU2zVSTrn/8L5q/IexZmH0eH6SA73CmAA5U4GwORTxQAZs95TAXLNqeLoPPNO5gZfWg==}
@@ -4196,8 +4204,8 @@ packages:
     engines: {node: ^18.0.0 || >=20.0.0}
     hasBin: true
 
-  vite@5.4.1:
-    resolution: {integrity: sha512-1oE6yuNXssjrZdblI9AfBbHCC41nnyoVoEZxQnID6yvQZAFBzxxkqoFLtHUMkYunL8hwOLEjgTuxpkRxvba3kA==}
+  vite@5.4.2:
+    resolution: {integrity: sha512-dDrQTRHp5C1fTFzcSaMxjk6vdpKvT+2/mIdE07Gw2ykehT49O0z/VHS3zZ8iV/Gh8BJJKHWOe5RjaNrW5xf/GA==}
     engines: {node: ^18.0.0 || >=20.0.0}
     hasBin: true
     peerDependencies:
@@ -4672,15 +4680,19 @@ snapshots:
     dependencies:
       '@capacitor/core': 6.1.2
 
+  '@capawesome/capacitor-app-update@6.0.0(@capacitor/core@6.1.2)':
+    dependencies:
+      '@capacitor/core': 6.1.2
+
   '@capawesome/capacitor-file-picker@6.0.1(@capacitor/core@6.1.2)':
     dependencies:
       '@capacitor/core': 6.1.2
 
-  '@capgo/capacitor-updater@6.1.2(@capacitor/core@6.1.2)':
+  '@capgo/capacitor-updater@6.1.3(@capacitor/core@6.1.2)':
     dependencies:
       '@capacitor/core': 6.1.2
 
-  '@capgo/cli@4.14.2': {}
+  '@capgo/cli@4.14.4': {}
 
   '@codemirror/commands@6.6.0':
     dependencies:
@@ -4851,10 +4863,10 @@ snapshots:
 
   '@eslint/js@8.57.0': {}
 
-  '@histoire/app@0.17.17(vite@5.4.1(@types/node@18.19.45)(sass@1.77.8))':
+  '@histoire/app@0.17.17(vite@5.4.2(@types/node@18.19.45)(sass@1.77.8))':
     dependencies:
-      '@histoire/controls': 0.17.17(vite@5.4.1(@types/node@18.19.45)(sass@1.77.8))
-      '@histoire/shared': 0.17.17(vite@5.4.1(@types/node@18.19.45)(sass@1.77.8))
+      '@histoire/controls': 0.17.17(vite@5.4.2(@types/node@18.19.45)(sass@1.77.8))
+      '@histoire/shared': 0.17.17(vite@5.4.2(@types/node@18.19.45)(sass@1.77.8))
       '@histoire/vendors': 0.17.17
       '@types/flexsearch': 0.7.6
       flexsearch: 0.7.21
@@ -4862,7 +4874,7 @@ snapshots:
     transitivePeerDependencies:
       - vite
 
-  '@histoire/controls@0.17.17(vite@5.4.1(@types/node@18.19.45)(sass@1.77.8))':
+  '@histoire/controls@0.17.17(vite@5.4.2(@types/node@18.19.45)(sass@1.77.8))':
     dependencies:
       '@codemirror/commands': 6.6.0
       '@codemirror/lang-json': 6.0.1
@@ -4871,26 +4883,26 @@ snapshots:
       '@codemirror/state': 6.4.1
       '@codemirror/theme-one-dark': 6.1.2
       '@codemirror/view': 6.32.0
-      '@histoire/shared': 0.17.17(vite@5.4.1(@types/node@18.19.45)(sass@1.77.8))
+      '@histoire/shared': 0.17.17(vite@5.4.2(@types/node@18.19.45)(sass@1.77.8))
       '@histoire/vendors': 0.17.17
     transitivePeerDependencies:
       - vite
 
-  '@histoire/plugin-vue@0.17.17(histoire@0.17.17(@types/node@18.19.45)(sass@1.77.8)(vite@5.4.1(@types/node@18.19.45)(sass@1.77.8)))(vite@5.4.1(@types/node@18.19.45)(sass@1.77.8))(vue@3.4.38(typescript@5.5.4))':
+  '@histoire/plugin-vue@0.17.17(histoire@0.17.17(@types/node@18.19.45)(sass@1.77.8)(vite@5.4.2(@types/node@18.19.45)(sass@1.77.8)))(vite@5.4.2(@types/node@18.19.45)(sass@1.77.8))(vue@3.4.38(typescript@5.5.4))':
     dependencies:
-      '@histoire/controls': 0.17.17(vite@5.4.1(@types/node@18.19.45)(sass@1.77.8))
-      '@histoire/shared': 0.17.17(vite@5.4.1(@types/node@18.19.45)(sass@1.77.8))
+      '@histoire/controls': 0.17.17(vite@5.4.2(@types/node@18.19.45)(sass@1.77.8))
+      '@histoire/shared': 0.17.17(vite@5.4.2(@types/node@18.19.45)(sass@1.77.8))
       '@histoire/vendors': 0.17.17
       change-case: 4.1.2
       globby: 13.2.2
-      histoire: 0.17.17(@types/node@18.19.45)(sass@1.77.8)(vite@5.4.1(@types/node@18.19.45)(sass@1.77.8))
+      histoire: 0.17.17(@types/node@18.19.45)(sass@1.77.8)(vite@5.4.2(@types/node@18.19.45)(sass@1.77.8))
       launch-editor: 2.8.1
       pathe: 1.1.2
       vue: 3.4.38(typescript@5.5.4)
     transitivePeerDependencies:
       - vite
 
-  '@histoire/shared@0.17.17(vite@5.4.1(@types/node@18.19.45)(sass@1.77.8))':
+  '@histoire/shared@0.17.17(vite@5.4.2(@types/node@18.19.45)(sass@1.77.8))':
     dependencies:
       '@histoire/vendors': 0.17.17
       '@types/fs-extra': 9.0.13
@@ -4898,7 +4910,7 @@ snapshots:
       chokidar: 3.6.0
       pathe: 1.1.2
       picocolors: 1.0.1
-      vite: 5.4.1(@types/node@18.19.45)(sass@1.77.8)
+      vite: 5.4.2(@types/node@18.19.45)(sass@1.77.8)
 
   '@histoire/vendors@0.17.17': {}
 
@@ -5441,9 +5453,9 @@ snapshots:
 
   '@ungap/structured-clone@1.2.0': {}
 
-  '@vitejs/plugin-vue@5.1.2(vite@5.4.1(@types/node@18.19.45)(sass@1.77.8))(vue@3.4.38(typescript@5.5.4))':
+  '@vitejs/plugin-vue@5.1.2(vite@5.4.2(@types/node@18.19.45)(sass@1.77.8))(vue@3.4.38(typescript@5.5.4))':
     dependencies:
-      vite: 5.4.1(@types/node@18.19.45)(sass@1.77.8)
+      vite: 5.4.2(@types/node@18.19.45)(sass@1.77.8)
       vue: 3.4.38(typescript@5.5.4)
 
   '@vitest/expect@2.0.5':
@@ -5811,7 +5823,7 @@ snapshots:
 
   astral-regex@2.0.0: {}
 
-  async@3.2.5: {}
+  async@3.2.6: {}
 
   asynckit@0.4.0: {}
 
@@ -6291,7 +6303,7 @@ snapshots:
       cli-table3: 0.6.5
       commander: 6.2.1
       common-tags: 1.8.2
-      dayjs: 1.11.12
+      dayjs: 1.11.13
       debug: 4.3.6(supports-color@8.1.1)
       enquirer: 2.4.1
       eventemitter2: 6.4.7
@@ -6360,7 +6372,7 @@ snapshots:
 
   dateformat@3.0.3: {}
 
-  dayjs@1.11.12: {}
+  dayjs@1.11.13: {}
 
   de-indent@1.0.2: {}
 
@@ -7075,7 +7087,7 @@ snapshots:
 
   getos@3.2.1:
     dependencies:
-      async: 3.2.5
+      async: 3.2.6
 
   getpass@0.1.7:
     dependencies:
@@ -7229,12 +7241,12 @@ snapshots:
 
   hexoid@1.0.0: {}
 
-  histoire@0.17.17(@types/node@18.19.45)(sass@1.77.8)(vite@5.4.1(@types/node@18.19.45)(sass@1.77.8)):
+  histoire@0.17.17(@types/node@18.19.45)(sass@1.77.8)(vite@5.4.2(@types/node@18.19.45)(sass@1.77.8)):
     dependencies:
       '@akryum/tinypool': 0.3.1
-      '@histoire/app': 0.17.17(vite@5.4.1(@types/node@18.19.45)(sass@1.77.8))
-      '@histoire/controls': 0.17.17(vite@5.4.1(@types/node@18.19.45)(sass@1.77.8))
-      '@histoire/shared': 0.17.17(vite@5.4.1(@types/node@18.19.45)(sass@1.77.8))
+      '@histoire/app': 0.17.17(vite@5.4.2(@types/node@18.19.45)(sass@1.77.8))
+      '@histoire/controls': 0.17.17(vite@5.4.2(@types/node@18.19.45)(sass@1.77.8))
+      '@histoire/shared': 0.17.17(vite@5.4.2(@types/node@18.19.45)(sass@1.77.8))
       '@histoire/vendors': 0.17.17
       '@types/flexsearch': 0.7.6
       '@types/markdown-it': 12.2.3
@@ -7261,7 +7273,7 @@ snapshots:
       sade: 1.8.1
       shiki-es: 0.2.0
       sirv: 2.0.4
-      vite: 5.4.1(@types/node@18.19.45)(sass@1.77.8)
+      vite: 5.4.2(@types/node@18.19.45)(sass@1.77.8)
       vite-node: 0.34.7(@types/node@18.19.45)(sass@1.77.8)
     transitivePeerDependencies:
       - '@types/node'
@@ -7937,7 +7949,7 @@ snapshots:
       lower-case: 2.0.2
       tslib: 2.6.3
 
-  node-abi@3.65.0:
+  node-abi@3.66.0:
     dependencies:
       semver: 7.6.3
 
@@ -8222,7 +8234,7 @@ snapshots:
       minimist: 1.2.8
       mkdirp-classic: 0.5.3
       napi-build-utils: 1.0.2
-      node-abi: 3.65.0
+      node-abi: 3.66.0
       pump: 3.0.0
       rc: 1.2.8
       simple-get: 4.0.1
@@ -8597,16 +8609,16 @@ snapshots:
   spdx-correct@3.2.0:
     dependencies:
       spdx-expression-parse: 3.0.1
-      spdx-license-ids: 3.0.18
+      spdx-license-ids: 3.0.20
 
   spdx-exceptions@2.5.0: {}
 
   spdx-expression-parse@3.0.1:
     dependencies:
       spdx-exceptions: 2.5.0
-      spdx-license-ids: 3.0.18
+      spdx-license-ids: 3.0.20
 
-  spdx-license-ids@3.0.18: {}
+  spdx-license-ids@3.0.20: {}
 
   split2@3.2.2:
     dependencies:
@@ -8970,7 +8982,7 @@ snapshots:
 
   undici-types@5.26.5: {}
 
-  unimport@3.10.0(rollup@4.21.0):
+  unimport@3.10.1(rollup@4.21.0):
     dependencies:
       '@rollup/pluginutils': 5.1.0(rollup@4.21.0)
       acorn: 8.12.1
@@ -9011,7 +9023,7 @@ snapshots:
       local-pkg: 0.5.0
       magic-string: 0.30.11
       minimatch: 9.0.5
-      unimport: 3.10.0(rollup@4.21.0)
+      unimport: 3.10.1(rollup@4.21.0)
       unplugin: 1.12.2
     optionalDependencies:
       '@vueuse/core': 10.11.1(vue@3.4.38(typescript@5.5.4))
@@ -9091,7 +9103,7 @@ snapshots:
       mlly: 1.7.1
       pathe: 1.1.2
       picocolors: 1.0.1
-      vite: 5.4.1(@types/node@18.19.45)(sass@1.77.8)
+      vite: 5.4.2(@types/node@18.19.45)(sass@1.77.8)
     transitivePeerDependencies:
       - '@types/node'
       - less
@@ -9109,7 +9121,7 @@ snapshots:
       debug: 4.3.6(supports-color@8.1.1)
       pathe: 1.1.2
       tinyrainbow: 1.2.0
-      vite: 5.4.1(@types/node@18.19.45)(sass@1.77.8)
+      vite: 5.4.2(@types/node@18.19.45)(sass@1.77.8)
     transitivePeerDependencies:
       - '@types/node'
       - less
@@ -9121,7 +9133,7 @@ snapshots:
       - supports-color
       - terser
 
-  vite@5.4.1(@types/node@18.19.45)(sass@1.77.8):
+  vite@5.4.2(@types/node@18.19.45)(sass@1.77.8):
     dependencies:
       esbuild: 0.21.5
       postcss: 8.4.41
@@ -9149,7 +9161,7 @@ snapshots:
       tinybench: 2.9.0
       tinypool: 1.0.1
       tinyrainbow: 1.2.0
-      vite: 5.4.1(@types/node@18.19.45)(sass@1.77.8)
+      vite: 5.4.2(@types/node@18.19.45)(sass@1.77.8)
       vite-node: 2.0.5(@types/node@18.19.45)(sass@1.77.8)
       why-is-node-running: 2.3.0
     optionalDependencies:

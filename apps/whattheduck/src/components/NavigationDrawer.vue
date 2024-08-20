@@ -68,6 +68,8 @@ import {
   warningSharp,
   logOutOutline,
   logOutSharp,
+  helpOutline,
+  helpSharp,
 } from 'ionicons/icons';
 import { stores as webStores } from '~web';
 
@@ -120,6 +122,12 @@ const appPages: AppPage[] = [
     url: '/stats',
     iosIcon: statsChartOutline,
     mdIcon: statsChartSharp,
+  },
+  {
+    title: t('A propos'),
+    url: '/about',
+    iosIcon: helpOutline,
+    mdIcon: helpSharp,
   },
 ];
 

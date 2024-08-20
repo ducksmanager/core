@@ -391,6 +391,7 @@ export const collection = defineStore("collection", () => {
     coaIssueCountsByPublicationcode,
     copiesPerIssuecode,
     coaIssueCountsPerCountrycode,
+    isLoadingSuggestions,
     issuecodesPerPublication,
     issuenumbersPerPublication,
     lastPublishedEdgesForCurrentUser,

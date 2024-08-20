@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from '@ionic/vue-router';
 import type { RouteMeta } from 'vue-router';
 
 import Collection from '~/components/Collection.vue';
+import About from '~/views/About.vue';
 import Authors from '~/views/Authors.vue';
 import CoverSearchResults from '~/views/CoverSearchResults.vue';
 import Forgot from '~/views/Forgot.vue';
@@ -98,6 +99,10 @@ const routes = [
   {
     path: '/suggestions',
     component: Suggestions,
+  },
+  {
+    path: '/about',
+    component: About,
   },
   {
     path: '/',

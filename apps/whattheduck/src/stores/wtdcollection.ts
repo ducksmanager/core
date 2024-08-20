@@ -26,9 +26,12 @@ export const wtdcollection = defineStore('wtdcollection', () => {
   const {
     createPurchase,
     findInCollection,
+    fetchIssueCountsByCountrycode,
     fetchIssueCountsByPublicationcode,
+    isLoadingSuggestions,
     loadCollection,
     loadPurchases,
+    loadSuggestions,
     loadUserIssueQuotations,
     loadUser,
     login,
@@ -58,10 +61,10 @@ export const wtdcollection = defineStore('wtdcollection', () => {
 
       // TODO get app version
       (async () => {
-        await webCollectionStore.loadSuggestions({ countryCode: 'ALL', sinceLastVisit: false });
+        await loadSuggestions({ countryCode: 'ALL', sinceLastVisit: false });
         await statsStore.loadRatings();
-        await webCollectionStore.fetchIssueCountsByCountrycode();
-        await webCollectionStore.fetchIssueCountsByPublicationcode();
+        await fetchIssueCountsByCountrycode();
+        await fetchIssueCountsByPublicationcode();
       })();
 
       // TODO register for notifications
@@ -91,8 +94,10 @@ export const wtdcollection = defineStore('wtdcollection', () => {
     highestQuotedIssue,
     coaIssueCountsByPublicationcode: computed(() => webCollectionStore.coaIssueCountsByPublicationcode),
     coaIssueCountsPerCountrycode: computed(() => webCollectionStore.coaIssueCountsPerCountrycode),
+    isLoadingSuggestions,
     issuesByIssuecode: computed(() => webCollectionStore.issuesByIssuecode),
     loadCollection,
+    loadSuggestions,
     loadUserIssueQuotations,
     loadPurchases,
     login,

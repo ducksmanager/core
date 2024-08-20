@@ -36,7 +36,7 @@ const tagName = computed(() => (showLink.value === "outer" ? "a" : "span"));
 const url = computed(
   () =>
     storycode.value &&
-    `https://coa.inducks.org/story.php?c=${encodeURIComponent(storycode.value)}`
+    `https://coa.inducks.org/story.php?c=${encodeURIComponent(storycode.value)}`,
 );
 
 const storyTypeText = computed(() => {

@@ -29,8 +29,11 @@ project(':capacitor-preferences').projectDir = new File('../node_modules/.pnpm/@
 include ':capacitor-status-bar'
 project(':capacitor-status-bar').projectDir = new File('../node_modules/.pnpm/@capacitor+status-bar@6.0.1_@capacitor+core@6.1.2/node_modules/@capacitor/status-bar/android')
 
+include ':capawesome-capacitor-app-update'
+project(':capawesome-capacitor-app-update').projectDir = new File('../node_modules/.pnpm/@capawesome+capacitor-app-update@6.0.0_@capacitor+core@6.1.2/node_modules/@capawesome/capacitor-app-update/android')
+
 include ':capawesome-capacitor-file-picker'
 project(':capawesome-capacitor-file-picker').projectDir = new File('../node_modules/.pnpm/@capawesome+capacitor-file-picker@6.0.1_@capacitor+core@6.1.2/node_modules/@capawesome/capacitor-file-picker/android')
 
 include ':capgo-capacitor-updater'
-project(':capgo-capacitor-updater').projectDir = new File('../node_modules/.pnpm/@capgo+capacitor-updater@6.1.0_@capacitor+core@6.1.2/node_modules/@capgo/capacitor-updater/android')
+project(':capgo-capacitor-updater').projectDir = new File('../node_modules/.pnpm/@capgo+capacitor-updater@6.1.3_@capacitor+core@6.1.2/node_modules/@capgo/capacitor-updater/android')
