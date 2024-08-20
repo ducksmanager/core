@@ -209,4 +209,10 @@ ion-toast.author-toast {
   --box-shadow: 3px 3px 10px 0 rgba(0, 0, 0, 0.2);
   --color: #4b4a50;
 }
+
+ion-toggle {
+  &::part(track) {
+    background: var(--track-background) !important;
+  }
+}
 </style>
