@@ -34,7 +34,7 @@ class ServerWithUser extends Server<
   Record<string, never>,
   Record<string, never>,
   { user?: SessionUser }
-> {}
+> { }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 (BigInt.prototype as any).toJSON = function () {
@@ -98,6 +98,17 @@ console.log("WebSocket open on port 3000");
 
 io.use(OptionalAuthMiddleware);
 io.use((_socket, next) => {
+
+
+  process.on('unhandledRejection', (reason: Error, promise: Promise<any>) => {
+    console.error(reason)
+    next(reason);
+  });
+
+  process.on('uncaughtException', (error: Error) => {
+    console.error(error)
+    next(error);
+  });
   next();
 
   // app.all(
