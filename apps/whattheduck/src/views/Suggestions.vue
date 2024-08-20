@@ -139,7 +139,9 @@ watch(
 
       const publicationcodes = Object.values(suggestions.value)
         .map(({ issues }: { issues: { issuecode: string }[] }) =>
-          Object.values(issues).map(({ issuecode }) => issuecodeDetails.value[issuecode]!.publicationcode),
+          Object.values(issues)
+            .filter(({ issuecode }) => issuecodeDetails.value[issuecode])
+            .map(({ issuecode }) => issuecodeDetails.value[issuecode]!.publicationcode),
         )
         .flat() as string[];
 

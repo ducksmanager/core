@@ -51,17 +51,19 @@ export const wtdcollection = defineStore('wtdcollection', () => {
       await loadCollection();
       await loadPurchases();
       await loadUser();
+      await coaStore.fetchCountryNames(true);
+      coaStore.addPublicationNames(await webCollectionStore.fetchPublicationNames());
+      await usersStore.fetchStats([webCollectionStore.user?.id || 0]);
       // TODO retrieve user notification countries
 
       // TODO get app version
-      await webCollectionStore.loadSuggestions({ countryCode: 'ALL', sinceLastVisit: false });
-      await statsStore.loadRatings();
-      await webCollectionStore.fetchIssueCountsByCountrycode();
-      await webCollectionStore.fetchIssueCountsByPublicationcode();
-      await usersStore.fetchStats([webCollectionStore.user?.id || 0]);
+      (async () => {
+        await webCollectionStore.loadSuggestions({ countryCode: 'ALL', sinceLastVisit: false });
+        await statsStore.loadRatings();
+        await webCollectionStore.fetchIssueCountsByCountrycode();
+        await webCollectionStore.fetchIssueCountsByPublicationcode();
+      })();
 
-      await coaStore.fetchCountryNames(true);
-      coaStore.addPublicationNames(await webCollectionStore.fetchPublicationNames());
       // TODO register for notifications
     },
     highestQuotedIssue = computedAsync(async () => {
