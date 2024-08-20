@@ -31,7 +31,7 @@ const findInDir = (dir: string) =>
   new Promise<{
     current: EdgeModelDetails[];
     published: EdgeModelDetails[];
-  }>((resolve, reject) => {
+  }>(async (resolve, reject) => {
     const fileList: {
       current: EdgeModelDetails[];
       published: EdgeModelDetails[];
