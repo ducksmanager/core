@@ -1,12 +1,22 @@
 #!/usr/bin/env bun
 
-import "~prisma-schemas/util/groupBy";
 import * as dotenv from "dotenv";
 import { readFileSync } from "fs";
-import { PoolConnection } from "mariadb";
+import type { PoolConnection } from "mariadb";
 import { createPool } from "mariadb";
-
 import * as process from "process";
+
+import {
+  type inducks_issue,
+  type inducks_storyjob,
+  type inducks_storyversion,
+  Prisma,
+} from "~prisma-schemas/schemas/coa";
+import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa/client";
+import type { authorUser } from "~prisma-schemas/schemas/dm";
+import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
+import type { authorStory } from "~prisma-schemas/schemas/dm_stats";
+import { prismaClient as prismaDmStats } from "~prisma-schemas/schemas/dm_stats/client";
 
 dotenv.config();
 
@@ -22,24 +32,6 @@ for (const envKey of [
   }
 }
 
-process.env.DATABASE_URL_DM_STATS = process.env.DATABASE_URL_DM_STATS!.replace(
-  "dm_stats",
-  "dm_stats_new",
-);
-
-import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client"
-import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa/client"
-import { prismaClient as prismaDmStats } from "~prisma-schemas/schemas/dm_stats/client"
-
-import {
-  type inducks_issue,
-  type inducks_storyjob,
-  type inducks_storyversion,
-  Prisma,
-} from "~prisma-schemas/schemas/coa";
-import type { authorUser } from "~prisma-schemas/schemas/dm";
-import type { authorStory } from "~prisma-schemas/schemas/dm_stats";
-
 const tables = [
   "auteurs_histoires",
   "histoires_publications",
@@ -47,7 +39,6 @@ const tables = [
   "utilisateurs_publications_manquantes",
   "utilisateurs_publications_suggerees",
 ];
-
 
 let connection: PoolConnection;
 
@@ -207,14 +198,15 @@ connect().then(async () => {
 
   await prismaDmStats.$executeRaw`OPTIMIZE TABLE utilisateurs_publications_suggerees`;
 
-  console.log("Adding oldestdate; adding publicationcode and issuenumber for WTD < 3");
+  console.log(
+    "Adding oldestdate; adding publicationcode and issuenumber for WTD < 3",
+  );
   await runQuery(`
     UPDATE ${dbName}_new.utilisateurs_publications_suggerees
     JOIN coa.inducks_issue i using (issuecode)
     SET utilisateurs_publications_suggerees.publicationcode = i.publicationcode
       , utilisateurs_publications_suggerees.issuenumber     = i.issuenumber
       , utilisateurs_publications_suggerees.oldestdate      = i.oldestdate`);
-
 
   await runQuery(`DROP DATABASE IF EXISTS ${dbName}_old`);
   await runQuery(`CREATE DATABASE ${dbName}_old`);
