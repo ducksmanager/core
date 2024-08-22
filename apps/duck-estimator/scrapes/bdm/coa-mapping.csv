@@ -1,1019 +1,1018 @@
-publicationcode,issuenumber,estimation
-fr/ADP,P1,15
-fr/ADP,P2,15
-fr/ADP,P3,15
-fr/ADP,P4,15
-fr/ADP,P5,15
-fr/ADP,P6,15
-fr/CDA,1,15
-fr/CDAB,2,15
-fr/CDC,6,15
-fr/Z,2,30
-fr/D,0,30
-fr/D,1,15
-fr/D,2,9
-fr/D,3,8
-fr/D,4,8
-fr/D,5,8
-fr/D,6,5
-fr/D,7,5
-fr/D,8,5
-fr/D,9,5
-fr/D,10,5
-fr/D,11,5
-fr/D,12,5
-fr/D,13,5
-fr/D,14,5
-fr/D,15,5
-fr/D,16,5
-fr/D,17,5
-fr/D,18,5
-fr/D,19,5
-fr/D,20,5
-fr/D,21,5
-fr/D,22,5
-fr/D,23,5
-fr/D,24,5
-fr/D,25,5
-fr/D,26,8
-fr/D,27,8
-fr/D,28,5
-fr/D,29,5
-fr/D,30,5
-fr/D,31,5
-fr/D,32,5
-fr/D,33,5
-fr/D,34,5
-fr/D,35,5
-fr/D,36,5
-fr/D,37,5
-fr/D,38,5
-fr/D,39,5
-fr/D,40,5
-fr/D,41,5
-fr/D,42,5
-fr/D,43,5
-fr/D,44,5
-fr/D,45,5
-fr/D,46,5
-fr/D,47,5
-fr/D,48,5
-fr/D,49,5
-fr/D,50,5
-fr/D,51,5
-fr/D,52,8
-fr/D,53,8
-fr/D,54,5
-fr/D,55,5
-fr/D,56,5
-fr/D,57,5
-fr/D,58,5
-fr/D,59,5
-fr/D,60,5
-fr/D,61,5
-fr/D,62,5
-fr/D,63,5
-fr/D,64,5
-fr/D,65,5
-fr/D,66,5
-fr/D,67,5
-fr/D,68,5
-fr/D,69,5
-fr/D,70,5
-fr/D,71,5
-fr/D,72,5
-fr/D,73,5
-fr/D,74,5
-fr/D,75,5
-fr/D,76,5
-fr/D,77,5
-fr/D,78,5
-fr/D,79,5
-fr/D,80,5
-fr/D,81,5
-fr/D,82,5
-fr/D,83,5
-fr/D,84,5
-fr/D,85,5
-fr/D,86,5
-fr/D,87,5
-fr/D,88,5
-fr/D,89,5
-fr/D,90,5
-fr/D,91,5
-fr/D,92,5
-fr/D,93,5
-fr/D,94,5
-fr/D,95,5
-fr/D,96,5
-fr/D,97,5
-fr/D,98,5
-fr/D,99,5
-fr/D,100,5
-fr/D,101,5
-fr/D,102,5
-fr/D,103,5
-fr/D,104,8
-fr/D,105,8
-fr/D,106,5
-fr/D,107,5
-fr/D,108,5
-fr/D,109,5
-fr/D,110,5
-fr/D,111,5
-fr/D,112,5
-fr/D,113,5
-fr/D,114,5
-fr/D,115,5
-fr/D,116,5
-fr/D,117,5
-fr/D,118,5
-fr/D,119,5
-fr/D,120,5
-fr/D,121,5
-fr/D,122,5
-fr/D,123,5
-fr/D,124,5
-fr/D,125,5
-fr/D,126,5
-fr/D,127,5
-fr/D,128,5
-fr/D,129,5
-fr/D,130,6
-fr/D,131,6
-fr/D,132,5
-fr/D,133,5
-fr/D,134,5
-fr/D,135,5
-fr/D,136,5
-fr/D,137,5
-fr/D,138,5
-fr/D,139,5
-fr/D,140,5
-fr/D,141,5
-fr/D,142,5
-fr/D,143,5
-fr/D,144,5
-fr/D,145,5
-fr/D,146,5
-fr/D,147,5
-fr/D,148,5
-fr/D,149,5
-fr/D,150,5
-fr/D,151,5
-fr/D,152,5
-fr/D,153,5
-fr/D,154,5
-fr/D,155,5
-fr/D,156,6
-fr/D,157,6
-fr/D,158,5
-fr/D,159,5
-fr/D,160,5
-fr/D,161,5
-fr/D,162,5
-fr/D,163,5
-fr/D,164,5
-fr/D,165,5
-fr/D,166,5
-fr/D,167,5
-fr/D,168,5
-fr/D,169,5
-fr/D,170,5
-fr/D,171,5
-fr/D,172,5
-fr/D,173,5
-fr/D,174,5
-fr/D,175,5
-fr/D,176,5
-fr/D,177,5
-fr/D,178,5
-fr/D,179,5
-fr/D,180,5
-fr/D,181,5
-fr/D,182,6
-fr/D,183,6
-fr/D,184,5
-fr/D,185,5
-fr/D,186,5
-fr/D,187,5
-fr/D,188,5
-fr/D,189,5
-fr/D,190,5
-fr/D,191,5
-fr/D,192,5
-fr/D,193,5
-fr/D,194,5
-fr/D,195,5
-fr/D,196,5
-fr/D,197,5
-fr/D,198,5
-fr/D,199,5
-fr/D,200,5
-fr/D,201,5
-fr/D,202,5
-fr/D,203,5
-fr/D,204,5
-fr/D,205,5
-fr/D,206,5
-fr/D,207,5
-fr/D,208,8
-fr/D,209,8
-fr/D,210,6
-fr/D,211,6
-fr/D,212,6
-fr/D,213,5
-fr/D,214,5
-fr/D,215,5
-fr/D,216,5
-fr/D,217,5
-fr/D,218,5
-fr/D,219,5
-fr/D,220,5
-fr/D,221,5
-fr/D,222,5
-fr/D,223,5
-fr/D,224,5
-fr/D,225,5
-fr/D,226,5
-fr/D,227,5
-fr/D,228,5
-fr/D,229,5
-fr/D,230,5
-fr/D,231,5
-fr/D,232,5
-fr/D,233,5
-fr/D,234,5
-fr/D,235,5
-fr/D,236,5
-fr/D,237,5
-fr/D,238,5
-fr/D,239,5
-fr/D,240,5
-fr/D,241,5
-fr/D,242,5
-fr/D,243,5
-fr/D,244,5
-fr/D,245,5
-fr/D,246,5
-fr/D,247,5
-fr/D,248,5
-fr/D,249,5
-fr/D,250,5
-fr/D,251,5
-fr/D,252,5
-fr/D,253,5
-fr/D,254,5
-fr/D,255,5
-fr/D,256,5
-fr/D,257,5
-fr/D,258,5
-fr/D,259,5
-fr/D,260,40
-fr/D,261,80
-fr/D,262,5
-fr/D,263,5
-fr/D,264,5
-fr/D,265,5
-fr/D,266,5
-fr/D,267,5
-fr/D,268,5
-fr/D,269,5
-fr/D,270,5
-fr/D,271,5
-fr/D,272,5
-fr/D,273,5
-fr/D,274,5
-fr/D,275,5
-fr/D,276,5
-fr/D,277,5
-fr/D,278,5
-fr/D,279,5
-fr/D,280,5
-fr/D,281,5
-fr/D,282,5
-fr/D,283,5
-fr/D,284,5
-fr/D,285,5
-fr/D,286,5
-fr/D,287,5
-fr/D,288,5
-fr/D,289,5
-fr/D,290,5
-fr/D,291,5
-fr/D,292,5
-fr/D,293,5
-fr/D,294,5
-fr/D,295,5
-fr/D,296,5
-fr/D,297,5
-fr/D,298,5
-fr/D,299,5
-fr/D,300,5
-fr/D,301,6
-fr/D,302,6
-fr/D,303,6
-fr/D,304,6
-fr/D,305,6
-fr/D,306,6
-fr/D,307,6
-fr/D,308,6
-fr/D,309,6
-fr/D,310,6
-fr/D,311,6
-fr/D,312,10
-fr/D,313,80
-fr/AHD,A1,500
-fr/AHD,A2,500
-fr/AHD,A3,500
-fr/AHD,A4,500
-fr/AHD,A5,500
-fr/AHD,A6,600
-fr/AHD,N1,150
-fr/AHD,N2,60
-fr/AHD,N3,80
-fr/AHD,N4,60
-fr/AHD,N5,130
-fr/AHD,S1,220
-fr/AHD,S2,150
-fr/AHD,S3,180
-fr/AHD,S4,180
-fr/AHD,S5,180
-fr/AHD,S6,180
-fr/AHD,S7,180
-fr/AHD,S8,180
-fr/AHD,S9,200
-fr/AHD,S10,180
-fr/AHD,S11,200
-fr/AHD,S12,400
-fr/GB,4,40
-fr/3ED,1,20
-fr/GB,11,50
-fr/GB,12,30
-fr/GB,7,30
-fr/DHL,1,15
-fr/DHL,2,15
-fr/DHL,3,15
-fr/DHL,4,15
-fr/SBD,2,15
-fr/AD,D1,15
-fr/AD,D2,15
-fr/AD,D3,15
-fr/AD,D4,15
-fr/AD,D5,15
-fr/CHC,2,20
-fr/CHC,4,12
-fr/Z,1,30
-fr/MMS,1,20
-fr/GDP,D1,15
-fr/GDP,D2,15
-fr/AH,1,60
-fr/AH,2,40
-fr/AH,3,60
-fr/AH,4,60
-fr/AH,5,50
-fr/AH,6,60
-fr/AH,7,70
-fr/AH,8,70
-fr/AH,9,60
-fr/AH,10,50
-fr/AH,11,70
-fr/AH,12,70
-fr/AH,13,70
-fr/AH,14,65
-fr/AH,15,60
-fr/AH,16,70
-fr/AH,17,70
-fr/AH,18,70
-fr/AH,19,75
-fr/AH,20,60
-fr/AH,21,70
-fr/AH,22,505
-fr/AH,23,50
-fr/AH,24,55
-fr/AH,25,50
-fr/AH,26,40
-fr/AH,27,55
-fr/AH,28,70
-fr/AH,29,70
-fr/AH,30,55
-fr/AHB,1,20
-fr/AHB,2,25
-fr/AHB,3,25
-fr/AHB,4,25
-fr/AHB,5,30
-fr/AHB,6,30
-fr/AHB,7,25
-fr/AHB,8,25
-fr/AO,1,30
-fr/AO,2,30
-fr/AO,3,35
-fr/AO,4,30
-fr/AO,5,30
-fr/AO,6,30
-fr/AO,7,30
-fr/AO,8,30
-fr/AOX,2,60
-fr/GB,1,50
-fr/GB,9,30
-fr/GB,10,50
-fr/IM,1,12
-fr/IM,2,12
-fr/IM,3,15
-fr/IM,4,15
-fr/IM,5,15
-fr/IM,6,15
-fr/IM,7,25
-fr/IM,8,25
-fr/AD,M1,15
-fr/AD,M2,15
-fr/AD,M3,15
-fr/AD,M4,15
-fr/AD,M5,15
-fr/CSV,100,10
-fr/MET,1,50
-fr/SBD,1,20
-fr/SBD,3,15
-fr/SBD,6,20
-fr/SBD,5,20
-fr/SBD,7,20
-it/ALMC,1,12
-fr/HBM,1,30
-fr/MTS,1,15
-fr/MTS,2,15
-fr/MTS,3,15
-fr/MTS,4,15
-fr/MTS,5,15
-fr/MTS,6,18
-fr/MTS,7,18
-fr/MTS,8,20
-fr/MTS,9,20
-fr/MTS,10,20
-fr/MTS,11,20
-fr/MTS,12,20
-fr/CDA,2,15
-fr/CDA,3,15
-fr/CDA,4,15
-be/MM,1,20
-be/MM,2,8
-be/MM,3,8
-be/MM,4,8
-be/MM,5,8
-be/MM,6,5
-be/MM,7,5
-be/MM,8,5
-be/MM,9,5
-be/MM,10,5
-be/MM,11,3
-be/MM,12,3
-be/MM,13,3
-be/MM,14,3
-be/MM,15,3
-be/MM,16,3
-be/MM,17,3
-be/MM,18,3
-be/MM,19,3
-be/MM,20,3
-be/MM,21,3
-be/MM,22,3
-be/MM,23,3
-be/MM,24,3
-be/MM,25,3
-be/MM,26,3
-be/MM,27,2
-be/MM,28,2
-be/MM,29,2
-be/MM,30,2
-be/MM,31,2
-be/MM,32,2
-be/MM,33,2
-be/MM,34,2
-be/MM,35,2
-be/MM,36,2
-be/MM,37,2
-be/MM,38,2
-be/MM,39,2
-be/MM,40,2
-be/MM,41,2
-be/MM,42,2
-be/MM,43,2
-be/MM,44,2
-be/MM,45,2
-be/MM,46,2
-be/MM,47,2
-be/MM,48,2
-be/MM,49,2
-be/MM,50,2
-be/MM,51,2
-be/MM,52,2
-be/MM,53,2
-be/MM,54,2
-be/MM,55,2
-be/MM,56,2
-be/MM,57,2
-be/MM,58,2
-be/MM,59,2
-be/MM,60,2
-be/MM,61,2
-be/MM,62,2
-be/MM,63,2
-be/MM,64,2
-be/MM,65,2
-be/MM,66,2
-be/MM,67,2
-be/MM,68,2
-be/MM,69,2
-be/MM,70,2
-be/MM,71,2
-be/MM,72,2
-be/MM,73,2
-be/MM,74,2
-be/MM,75,2
-be/MM,76,2
-be/MM,77,2
-be/MM,78,2
-be/MM,79,2
-be/MM,80,2
-be/MM,81,2
-be/MM,82,2
-be/MM,83,2
-be/MM,84,2
-be/MM,85,2
-be/MM,86,2
-be/MM,87,2
-be/MM,88,2
-be/MM,89,2
-be/MM,90,2
-be/MM,91,2
-be/MM,92,2
-be/MM,93,2
-be/MM,94,2
-be/MM,95,2
-be/MM,96,2
-be/MM,97,2
-be/MM,98,2
-be/MM,99,2
-be/MM,100,2
-be/MM,101,2
-be/MM,102,2
-be/MM,103,2
-be/MM,104,2
-be/MM,105,2
-be/MM,106,2
-be/MM,107,2
-be/MM,108,2
-be/MM,109,2
-be/MM,110,2
-be/MM,111,2
-be/MM,112,2
-be/MM,113,2
-be/MM,114,2
-be/MM,115,2
-be/MM,116,2
-be/MM,117,2
-be/MM,118,2
-be/MM,119,2
-be/MM,120,2
-be/MM,121,2
-be/MM,122,2
-be/MM,123,2
-be/MM,124,2
-be/MM,125,2
-be/MM,126,2
-be/MM,127,2
-be/MM,128,2
-be/MM,129,2
-be/MM,130,2
-be/MM,131,2
-be/MM,132,2
-be/MM,133,2
-be/MM,134,2
-be/MM,135,2
-be/MM,136,2
-be/MM,137,2
-be/MM,138,2
-be/MM,139,2
-be/MM,140,2
-be/MM,141,2
-be/MM,142,2
-be/MM,143,2
-be/MM,144,2
-be/MM,145,2
-be/MM,146,2
-be/MM,147,2
-be/MM,148,2
-be/MM,149,2
-be/MM,150,2
-be/MM,151,2
-be/MM,152,2
-be/MM,153,2
-be/MM,154,2
-be/MM,155,2
-be/MM,156,2
-be/MM,157,2
-be/MM,158,2
-be/MM,159,2
-be/MM,160,2
-be/MM,161,2
-be/MM,162,2
-be/MM,163,2
-be/MM,164,2
-be/MM,165,2
-be/MM,166,2
-be/MM,167,2
-be/MM,168,2
-be/MM,169,2
-be/MM,170,2
-be/MM,171,2
-be/MM,172,2
-be/MM,173,2
-be/MM,174,2
-be/MM,175,2
-be/MM,176,2
-be/MM,177,2
-be/MM,178,2
-be/MM,179,2
-be/MM,180,2
-be/MM,181,2
-be/MM,182,2
-be/MM,183,2
-be/MM,184,2
-be/MM,185,2
-be/MM,186,2
-be/MM,187,2
-be/MM,188,2
-be/MM,189,2
-be/MM,190,2
-be/MM,191,2
-be/MM,192,2
-be/MM,193,2
-be/MM,194,2
-be/MM,195,2
-be/MM,196,2
-be/MM,197,2
-be/MM,198,2
-be/MM,199,2
-be/MM,200,2
-be/MM,201,2
-be/MM,202,2
-be/MM,203,2
-be/MM,204,2
-be/MM,205,2
-be/MM,206,2
-be/MM,207,2
-be/MM,208,2
-be/MM,209,2
-be/MM,210,2
-be/MM,211,2
-be/MM,212,2
-be/MM,213,2
-be/MM,214,2
-be/MM,215,2
-be/MM,216,2
-be/MM,217,2
-be/MM,218,2
-be/MM,219,2
-be/MM,220,2
-be/MM,221,2
-be/MM,222,2
-be/MM,223,2
-be/MM,224,2
-be/MM,225,2
-be/MM,226,2
-be/MM,227,2
-be/MM,228,2
-be/MM,229,2
-be/MM,230,2
-be/MM,231,2
-be/MM,232,2
-be/MM,233,2
-be/MM,234,2
-be/MM,235,2
-be/MM,236,2
-be/MM,237,2
-be/MM,238,2
-be/MM,239,2
-be/MM,240,2
-be/MM,241,2
-be/MM,242,2
-be/MM,243,2
-be/MM,244,2
-be/MM,245,2
-be/MM,246,2
-be/MM,247,2
-be/MM,248,2
-be/MM,249,2
-be/MM,250,2
-be/MM,251,2
-be/MM,252,2
-be/MM,253,2
-be/MM,254,2
-be/MM,255,2
-be/MM,256,2
-be/MM,257,2
-be/MM,258,2
-be/MM,259,2
-be/MM,260,2
-be/MM,261,2
-be/MM,262,2
-be/MM,263,2
-be/MM,264,2
-be/MM,265,2
-be/MM,266,2
-be/MM,267,2
-be/MM,268,2
-be/MM,269,2
-be/MM,270,2
-be/MM,271,2
-be/MM,272,2
-be/MM,273,2
-be/MM,274,2
-be/MM,275,2
-be/MM,276,2
-be/MM,277,2
-be/MM,278,2
-be/MM,279,2
-be/MM,280,2
-be/MM,281,2
-be/MM,282,2
-be/MM,283,2
-be/MM,284,2
-be/MM,285,2
-be/MM,286,2
-be/MM,287,2
-be/MM,288,2
-be/MM,289,2
-be/MM,290,2
-be/MM,291,2
-be/MM,292,2
-be/MM,293,2
-be/MM,294,2
-be/MM,295,2
-be/MM,296,2
-be/MM,297,2
-be/MM,298,2
-be/MM,299,2
-be/MM,300,2
-be/MM,301,2
-be/MM,302,2
-be/MM,303,2
-be/MM,304,2
-be/MM,305,2
-be/MM,306,2
-be/MM,307,2
-be/MM,308,2
-be/MM,309,2
-be/MM,310,2
-be/MM,311,2
-be/MM,312,2
-be/MM,313,2
-be/MM,314,2
-be/MM,315,2
-be/MM,316,2
-be/MM,317,2
-be/MM,318,2
-be/MM,319,2
-be/MM,320,2
-be/MM,321,2
-be/MM,322,2
-be/MM,323,2
-be/MM,324,2
-be/MM,325,2
-be/MM,326,2
-be/MM,327,2
-be/MM,328,2
-be/MM,329,2
-be/MM,330,2
-be/MM,331,2
-be/MM,332,2
-be/MM,333,2
-be/MM,334,2
-be/MM,335,2
-be/MM,336,2
-be/MM,337,2
-be/MM,338,2
-be/MM,339,2
-be/MM,340,2
-be/MM,341,2
-be/MM,342,2
-be/MM,343,2
-be/MM,344,2
-be/MM,345,2
-be/MM,346,2
-be/MM,347,2
-be/MM,348,2
-be/MM,349,2
-be/MM,350,2
-be/MM,351,2
-be/MM,352,2
-be/MM,353,2
-be/MM,354,2
-be/MM,355,2
-be/MM,356,2
-be/MM,357,2
-be/MM,358,2
-be/MM,359,2
-be/MM,360,2
-be/MM,361,2
-be/MM,362,2
-be/MM,363,2
-be/MM,364,2
-be/MM,365,2
-be/MM,366,2
-be/MM,367,2
-be/MM,368,2
-be/MM,369,2
-be/MM,370,2
-be/MM,371,2
-be/MM,372,2
-be/MM,373,2
-be/MM,374,2
-be/MM,375,2
-be/MM,376,2
-be/MM,377,2
-be/MM,378,2
-be/MM,379,2
-be/MM,380,2
-be/MM,381,2
-be/MM,382,2
-be/MM,383,2
-be/MM,384,2
-be/MM,385,2
-be/MM,386,2
-be/MM,387,2
-be/MM,388,2
-be/MM,389,2
-be/MM,390,2
-be/MM,391,2
-be/MM,392,2
-be/MM,393,2
-be/MM,394,2
-be/MM,395,2
-be/MM,396,2
-be/MM,397,2
-be/MM,398,2
-be/MM,399,2
-be/MM,400,2
-be/MM,401,2
-be/MM,402,2
-be/MM,403,2
-be/MM,404,2
-be/MM,405,2
-be/MM,406,2
-be/MM,407,2
-be/MM,408,2
-be/MM,409,2
-be/MM,410,2
-be/MM,411,2
-be/MM,412,2
-be/MM,413,2
-be/MM,414,2
-be/MM,415,2
-be/MM,416,2
-be/MM,417,2
-be/MM,418,2
-be/MM,419,2
-be/MM,420,2
-be/MM,421,2
-be/MM,422,2
-be/MM,423,2
-be/MM,424,2
-be/MM,425,2
-be/MM,426,2
-be/MM,427,2
-be/MM,428,2
-be/MM,429,2
-be/MM,430,2
-be/MM,431,2
-be/MM,432,2
-be/MM,433,2
-be/MM,434,2
-be/MM,435,2
-be/MM,436,2
-be/MM,437,2
-be/MM,438,2
-be/MM,439,2
-be/MM,440,2
-be/MM,441,2
-be/MM,442,2
-be/MM,443,2
-be/MM,444,2
-be/MM,445,2
-be/MM,446,2
-be/MM,447,2
-be/MM,448,2
-be/MM,449,2
-be/MM,450,2
-be/MM,451,2
-be/MM,452,2
-be/MM,453,2
-be/MM,454,2
-be/MM,455,2
-be/MM,456,2
-be/MM,457,2
-be/MM,458,2
-be/MM,459,2
-be/MM,460,2
-be/MM,461,2
-be/MM,462,2
-be/MM,463,2
-be/MM,464,2
-be/MM,465,2
-be/MM,466,2
-be/MM,467,2
-be/MM,468,2
-be/ALMM,1,180
-be/ALMM,2,120
-be/ALMM,3,20
-be/ALMM,4,80
-be/ALMM,5,80
-be/ALMM,6,60
-be/ALMM,7,60
-be/ALMM,8,60
-be/ALMM,9,60
-be/ALMM,10,60
-be/ALMM,11,55
-be/ALMM,12,55
-be/ALMM,13,55
-be/ALMM,14,55
-be/ALMM,15,55
-be/ALMM,16,55
-be/ALMM,17,55
-be/ALMM,18,55
-fr/MPP,723,40
-fr/MPP,735,25
-fr/MPP,756,25
-fr/MPP,772,25
-fr/MPP,786,25
-fr/MPP,807,25
-fr/MPP,824,25
-fr/MPP,838,25
-fr/MPP,847,100
-fr/MPP,856,25
-fr/MPP,873,15
-fr/MPP,886,15
-fr/MPP,899,15
-fr/MPP,912,15
-fr/MPP,925,15
-fr/MPP,938,15
-fr/MPP,951,15
-fr/MPP,964,15
-fr/MPP,977,15
-fr/MPP,990,15
-fr/MPP,1003,15
-fr/MPP,1016,15
-fr/MPP,1029,15
-fr/MPP,1042,15
-fr/MPP,1055,15
-fr/MPP,1068,15
-fr/MPP,1081,15
-fr/MPP,1091,15
-fr/MPP,1101,15
-fr/MPP,1111,15
-fr/MPP,1121,15
-fr/MPP,1134,15
-fr/MPP,1144,15
-fr/MPP,1154,15
-fr/MPP,1166,15
-fr/MPP,1174,15
-fr/MPP,1182,15
-fr/MPP,1190,15
-fr/MPP,1199,15
-fr/MPP,1208,15
-fr/MPP,1217,15
-fr/MPP,1225,15
-fr/MPP,1234,10
-fr/MPP,1243,10
-fr/MPP,1251,10
-fr/MPP,1260,10
-fr/MPP,1267,10
-fr/MPP,1275,10
-fr/MPP,1284,10
-fr/MPP,1293,10
-fr/MPP,1301,10
-fr/MPP,1310,10
-fr/MPP,1319,10
-fr/MPP,1327,10
-fr/MPP,1336,10
-fr/MPP,1345,10
-fr/MPP,1355,10
-fr/MPP,1363,10
-fr/MPP,1372,10
-fr/MPP,1381,10
-fr/MPP,1389,10
-fr/MPP,1398,10
-fr/MPP,1407,10
-fr/MPP,1415,10
-fr/MPP,1424,10
-fr/MPP,1433,10
-fr/MPNT,723,10
-fr/MPNT,735,10
-fr/MPNT,756,10
-fr/MPNT,772,10
-fr/MPNT,786,10
-fr/MPNT,807,10
-fr/MPNT,824,10
-fr/MPNT,838,10
-fr/MPNT,856,10
-fr/MPNT,873,10
-fr/MPNT,886,10
+issuecode,estimation
+fr/AHDA  1,15
+fr/AHDA  2,15
+fr/AHDA  3,15
+fr/AHDA  4,15
+fr/AHDA  5,15
+fr/AHDA  6,15
+fr/CDA   1,15
+fr/CDAB  2,15
+fr/CDC   6,15
+fr/Z     2,30
+fr/D     0,30
+fr/D     1,15
+fr/D     2,9
+fr/D     3,8
+fr/D     4,8
+fr/D     5,8
+fr/D     6,5
+fr/D     7,5
+fr/D     8,5
+fr/D     9,5
+fr/D    10,5
+fr/D    11,5
+fr/D    12,5
+fr/D    13,5
+fr/D    14,5
+fr/D    15,5
+fr/D    16,5
+fr/D    17,5
+fr/D    18,5
+fr/D    19,5
+fr/D    20,5
+fr/D    21,5
+fr/D    22,5
+fr/D    23,5
+fr/D    24,5
+fr/D    25,5
+fr/D    26,8
+fr/D    27,8
+fr/D    28,5
+fr/D    29,5
+fr/D    30,5
+fr/D    31,5
+fr/D    32,5
+fr/D    33,5
+fr/D    34,5
+fr/D    35,5
+fr/D    36,5
+fr/D    37,5
+fr/D    38,5
+fr/D    39,5
+fr/D    40,5
+fr/D    41,5
+fr/D    42,5
+fr/D    43,5
+fr/D    44,5
+fr/D    45,5
+fr/D    46,5
+fr/D    47,5
+fr/D    48,5
+fr/D    49,5
+fr/D    50,5
+fr/D    51,5
+fr/D    52,8
+fr/D    53,8
+fr/D    54,5
+fr/D    55,5
+fr/D    56,5
+fr/D    57,5
+fr/D    58,5
+fr/D    59,5
+fr/D    60,5
+fr/D    61,5
+fr/D    62,5
+fr/D    63,5
+fr/D    64,5
+fr/D    65,5
+fr/D    66,5
+fr/D    67,5
+fr/D    68,5
+fr/D    69,5
+fr/D    70,5
+fr/D    71,5
+fr/D    72,5
+fr/D    73,5
+fr/D    74,5
+fr/D    75,5
+fr/D    76,5
+fr/D    77,5
+fr/D    78,5
+fr/D    79,5
+fr/D    80,5
+fr/D    81,5
+fr/D    82,5
+fr/D    83,5
+fr/D    84,5
+fr/D    85,5
+fr/D    86,5
+fr/D    87,5
+fr/D    88,5
+fr/D    89,5
+fr/D    90,5
+fr/D    91,5
+fr/D    92,5
+fr/D    93,5
+fr/D    94,5
+fr/D    95,5
+fr/D    96,5
+fr/D    97,5
+fr/D    98,5
+fr/D    99,5
+fr/D   100,5
+fr/D   101,5
+fr/D   102,5
+fr/D   103,5
+fr/D   104,8
+fr/D   105,8
+fr/D   106,5
+fr/D   107,5
+fr/D   108,5
+fr/D   109,5
+fr/D   110,5
+fr/D   111,5
+fr/D   112,5
+fr/D   113,5
+fr/D   114,5
+fr/D   115,5
+fr/D   116,5
+fr/D   117,5
+fr/D   118,5
+fr/D   119,5
+fr/D   120,5
+fr/D   121,5
+fr/D   122,5
+fr/D   123,5
+fr/D   124,5
+fr/D   125,5
+fr/D   126,5
+fr/D   127,5
+fr/D   128,5
+fr/D   129,5
+fr/D   130,6
+fr/D   131,6
+fr/D   132,5
+fr/D   133,5
+fr/D   134,5
+fr/D   135,5
+fr/D   136,5
+fr/D   137,5
+fr/D   138,5
+fr/D   139,5
+fr/D   140,5
+fr/D   141,5
+fr/D   142,5
+fr/D   143,5
+fr/D   144,5
+fr/D   145,5
+fr/D   146,5
+fr/D   147,5
+fr/D   148,5
+fr/D   149,5
+fr/D   150,5
+fr/D   151,5
+fr/D   152,5
+fr/D   153,5
+fr/D   154,5
+fr/D   155,5
+fr/D   156,6
+fr/D   157,6
+fr/D   158,5
+fr/D   159,5
+fr/D   160,5
+fr/D   161,5
+fr/D   162,5
+fr/D   163,5
+fr/D   164,5
+fr/D   165,5
+fr/D   166,5
+fr/D   167,5
+fr/D   168,5
+fr/D   169,5
+fr/D   170,5
+fr/D   171,5
+fr/D   172,5
+fr/D   173,5
+fr/D   174,5
+fr/D   175,5
+fr/D   176,5
+fr/D   177,5
+fr/D   178,5
+fr/D   179,5
+fr/D   180,5
+fr/D   181,5
+fr/D   182,6
+fr/D   183,6
+fr/D   184,5
+fr/D   185,5
+fr/D   186,5
+fr/D   187,5
+fr/D   188,5
+fr/D   189,5
+fr/D   190,5
+fr/D   191,5
+fr/D   192,5
+fr/D   193,5
+fr/D   194,5
+fr/D   195,5
+fr/D   196,5
+fr/D   197,5
+fr/D   198,5
+fr/D   199,5
+fr/D   200,5
+fr/D   201,5
+fr/D   202,5
+fr/D   203,5
+fr/D   204,5
+fr/D   205,5
+fr/D   206,5
+fr/D   207,5
+fr/D   208,8
+fr/D   209,8
+fr/D   210,6
+fr/D   211,6
+fr/D   212,6
+fr/D   213,5
+fr/D   214,5
+fr/D   215,5
+fr/D   216,5
+fr/D   217,5
+fr/D   218,5
+fr/D   219,5
+fr/D   220,5
+fr/D   221,5
+fr/D   222,5
+fr/D   223,5
+fr/D   224,5
+fr/D   225,5
+fr/D   226,5
+fr/D   227,5
+fr/D   228,5
+fr/D   229,5
+fr/D   230,5
+fr/D   231,5
+fr/D   232,5
+fr/D   233,5
+fr/D   234,5
+fr/D   235,5
+fr/D   236,5
+fr/D   237,5
+fr/D   238,5
+fr/D   239,5
+fr/D   240,5
+fr/D   241,5
+fr/D   242,5
+fr/D   243,5
+fr/D   244,5
+fr/D   245,5
+fr/D   246,5
+fr/D   247,5
+fr/D   248,5
+fr/D   249,5
+fr/D   250,5
+fr/D   251,5
+fr/D   252,5
+fr/D   253,5
+fr/D   254,5
+fr/D   255,5
+fr/D   256,5
+fr/D   257,5
+fr/D   258,5
+fr/D   259,5
+fr/D   260,40
+fr/D   261,80
+fr/D   262,5
+fr/D   263,5
+fr/D   264,5
+fr/D   265,5
+fr/D   266,5
+fr/D   267,5
+fr/D   268,5
+fr/D   269,5
+fr/D   270,5
+fr/D   271,5
+fr/D   272,5
+fr/D   273,5
+fr/D   274,5
+fr/D   275,5
+fr/D   276,5
+fr/D   277,5
+fr/D   278,5
+fr/D   279,5
+fr/D   280,5
+fr/D   281,5
+fr/D   282,5
+fr/D   283,5
+fr/D   284,5
+fr/D   285,5
+fr/D   286,5
+fr/D   287,5
+fr/D   288,5
+fr/D   289,5
+fr/D   290,5
+fr/D   291,5
+fr/D   292,5
+fr/D   293,5
+fr/D   294,5
+fr/D   295,5
+fr/D   296,5
+fr/D   297,5
+fr/D   298,5
+fr/D   299,5
+fr/D   300,5
+fr/D   301,6
+fr/D   302,6
+fr/D   303,6
+fr/D   304,6
+fr/D   305,6
+fr/D   306,6
+fr/D   307,6
+fr/D   308,6
+fr/D   309,6
+fr/D   310,6
+fr/D   311,6
+fr/D   312,10
+fr/D   313,80
+fr/AHDA  1,500
+fr/AHDA  2,500
+fr/AHDA  3,500
+fr/AHDA  4,500
+fr/AHDA  5,500
+fr/AHDA  6,600
+fr/AHDN  1,150
+fr/AHDN  2,60
+fr/AHDN  3,80
+fr/AHDN  4,60
+fr/AHDN  5,130
+fr/AHDS  1,220
+fr/AHDS  2,150
+fr/AHDS  3,180
+fr/AHDS  4,180
+fr/AHDS  5,180
+fr/AHDS  6,180
+fr/AHDS  7,180
+fr/AHDS  8,180
+fr/AHDS  9,200
+fr/AHDS 10,180
+fr/AHDS 11,200
+fr/AHDS 12,400
+fr/GB    4,40
+fr/3ED   1,20
+fr/GB   11,50
+fr/GB   12,30
+fr/GB    7,30
+fr/DHL   1,15
+fr/DHL   2,15
+fr/DHL   3,15
+fr/DHL   4,15
+fr/SBD   2,15
+fr/ADD   1,15
+fr/ADD   2,15
+fr/ADD   3,15
+fr/ADD   4,15
+fr/ADD   5,15
+fr/CHC   2,20
+fr/CHC   4,12
+fr/Z     1,30
+fr/GDPD  1,15
+fr/GDPD  2,15
+fr/AH    1,60
+fr/AH    2,40
+fr/AH    3,60
+fr/AH    4,60
+fr/AH    5,50
+fr/AH    6,60
+fr/AH    7,70
+fr/AH    8,70
+fr/AH    9,60
+fr/AH   10,50
+fr/AH   11,70
+fr/AH   12,70
+fr/AH   13,70
+fr/AH   14,65
+fr/AH   15,60
+fr/AH   16,70
+fr/AH   17,70
+fr/AH   18,70
+fr/AH   19,75
+fr/AH   20,60
+fr/AH   21,70
+fr/AH   22,505
+fr/AH   23,50
+fr/AH   24,55
+fr/AH   25,50
+fr/AH   26,40
+fr/AH   27,55
+fr/AH   28,70
+fr/AH   29,70
+fr/AH   30,55
+fr/AHB   1,20
+fr/AHB   2,25
+fr/AHB   3,25
+fr/AHB   4,25
+fr/AHB   5,30
+fr/AHB   6,30
+fr/AHB   7,25
+fr/AHB   8,25
+fr/AO    1,30
+fr/AO    2,30
+fr/AO    3,35
+fr/AO    4,30
+fr/AO    5,30
+fr/AO    6,30
+fr/AO    7,30
+fr/AO    8,30
+fr/AOX   2,60
+fr/GB    1,50
+fr/GB    9,30
+fr/GB   10,50
+fr/IM    1,12
+fr/IM    2,12
+fr/IM    3,15
+fr/IM    4,15
+fr/IM    5,15
+fr/IM    6,15
+fr/IM    7,25
+fr/IM    8,25
+fr/ADM   1,15
+fr/ADM   2,15
+fr/ADM   3,15
+fr/ADM   4,15
+fr/ADM   5,15
+fr/CSV 100,10
+fr/MET   1,50
+fr/SBD   1,20
+fr/SBD   3,15
+fr/SBD   6,20
+fr/SBD   5,20
+fr/SBD   7,20
+it/ALMC  1,12
+fr/HBM   1,30
+fr/MTS   1,15
+fr/MTS   2,15
+fr/MTS   3,15
+fr/MTS   4,15
+fr/MTS   5,15
+fr/MTS   6,18
+fr/MTS   7,18
+fr/MTS   8,20
+fr/MTS   9,20
+fr/MTS  10,20
+fr/MTS  11,20
+fr/MTS  12,20
+fr/CDA   2,15
+fr/CDA   3,15
+fr/CDA   4,15
+be/MM    1,20
+be/MM    2,8
+be/MM    3,8
+be/MM    4,8
+be/MM    5,8
+be/MM    6,5
+be/MM    7,5
+be/MM    8,5
+be/MM    9,5
+be/MM   10,5
+be/MM   11,3
+be/MM   12,3
+be/MM   13,3
+be/MM   14,3
+be/MM   15,3
+be/MM   16,3
+be/MM   17,3
+be/MM   18,3
+be/MM   19,3
+be/MM   20,3
+be/MM   21,3
+be/MM   22,3
+be/MM   23,3
+be/MM   24,3
+be/MM   25,3
+be/MM   26,3
+be/MM   27,2
+be/MM   28,2
+be/MM   29,2
+be/MM   30,2
+be/MM   31,2
+be/MM   32,2
+be/MM   33,2
+be/MM   34,2
+be/MM   35,2
+be/MM   36,2
+be/MM   37,2
+be/MM   38,2
+be/MM   39,2
+be/MM   40,2
+be/MM   41,2
+be/MM   42,2
+be/MM   43,2
+be/MM   44,2
+be/MM   45,2
+be/MM   46,2
+be/MM   47,2
+be/MM   48,2
+be/MM   49,2
+be/MM   50,2
+be/MM   51,2
+be/MM   52,2
+be/MM   53,2
+be/MM   54,2
+be/MM   55,2
+be/MM   56,2
+be/MM   57,2
+be/MM   58,2
+be/MM   59,2
+be/MM   60,2
+be/MM   61,2
+be/MM   62,2
+be/MM   63,2
+be/MM   64,2
+be/MM   65,2
+be/MM   66,2
+be/MM   67,2
+be/MM   68,2
+be/MM   69,2
+be/MM   70,2
+be/MM   71,2
+be/MM   72,2
+be/MM   73,2
+be/MM   74,2
+be/MM   75,2
+be/MM   76,2
+be/MM   77,2
+be/MM   78,2
+be/MM   79,2
+be/MM   80,2
+be/MM   81,2
+be/MM   82,2
+be/MM   83,2
+be/MM   84,2
+be/MM   85,2
+be/MM   86,2
+be/MM   87,2
+be/MM   88,2
+be/MM   89,2
+be/MM   90,2
+be/MM   91,2
+be/MM   92,2
+be/MM   93,2
+be/MM   94,2
+be/MM   95,2
+be/MM   96,2
+be/MM   97,2
+be/MM   98,2
+be/MM   99,2
+be/MM  100,2
+be/MM  101,2
+be/MM  102,2
+be/MM  103,2
+be/MM  104,2
+be/MM  105,2
+be/MM  106,2
+be/MM  107,2
+be/MM  108,2
+be/MM  109,2
+be/MM  110,2
+be/MM  111,2
+be/MM  112,2
+be/MM  113,2
+be/MM  114,2
+be/MM  115,2
+be/MM  116,2
+be/MM  117,2
+be/MM  118,2
+be/MM  119,2
+be/MM  120,2
+be/MM  121,2
+be/MM  122,2
+be/MM  123,2
+be/MM  124,2
+be/MM  125,2
+be/MM  126,2
+be/MM  127,2
+be/MM  128,2
+be/MM  129,2
+be/MM  130,2
+be/MM  131,2
+be/MM  132,2
+be/MM  133,2
+be/MM  134,2
+be/MM  135,2
+be/MM  136,2
+be/MM  137,2
+be/MM  138,2
+be/MM  139,2
+be/MM  140,2
+be/MM  141,2
+be/MM  142,2
+be/MM  143,2
+be/MM  144,2
+be/MM  145,2
+be/MM  146,2
+be/MM  147,2
+be/MM  148,2
+be/MM  149,2
+be/MM  150,2
+be/MM  151,2
+be/MM  152,2
+be/MM  153,2
+be/MM  154,2
+be/MM  155,2
+be/MM  156,2
+be/MM  157,2
+be/MM  158,2
+be/MM  159,2
+be/MM  160,2
+be/MM  161,2
+be/MM  162,2
+be/MM  163,2
+be/MM  164,2
+be/MM  165,2
+be/MM  166,2
+be/MM  167,2
+be/MM  168,2
+be/MM  169,2
+be/MM  170,2
+be/MM  171,2
+be/MM  172,2
+be/MM  173,2
+be/MM  174,2
+be/MM  175,2
+be/MM  176,2
+be/MM  177,2
+be/MM  178,2
+be/MM  179,2
+be/MM  180,2
+be/MM  181,2
+be/MM  182,2
+be/MM  183,2
+be/MM  184,2
+be/MM  185,2
+be/MM  186,2
+be/MM  187,2
+be/MM  188,2
+be/MM  189,2
+be/MM  190,2
+be/MM  191,2
+be/MM  192,2
+be/MM  193,2
+be/MM  194,2
+be/MM  195,2
+be/MM  196,2
+be/MM  197,2
+be/MM  198,2
+be/MM  199,2
+be/MM  200,2
+be/MM  201,2
+be/MM  202,2
+be/MM  203,2
+be/MM  204,2
+be/MM  205,2
+be/MM  206,2
+be/MM  207,2
+be/MM  208,2
+be/MM  209,2
+be/MM  210,2
+be/MM  211,2
+be/MM  212,2
+be/MM  213,2
+be/MM  214,2
+be/MM  215,2
+be/MM  216,2
+be/MM  217,2
+be/MM  218,2
+be/MM  219,2
+be/MM  220,2
+be/MM  221,2
+be/MM  222,2
+be/MM  223,2
+be/MM  224,2
+be/MM  225,2
+be/MM  226,2
+be/MM  227,2
+be/MM  228,2
+be/MM  229,2
+be/MM  230,2
+be/MM  231,2
+be/MM  232,2
+be/MM  233,2
+be/MM  234,2
+be/MM  235,2
+be/MM  236,2
+be/MM  237,2
+be/MM  238,2
+be/MM  239,2
+be/MM  240,2
+be/MM  241,2
+be/MM  242,2
+be/MM  243,2
+be/MM  244,2
+be/MM  245,2
+be/MM  246,2
+be/MM  247,2
+be/MM  248,2
+be/MM  249,2
+be/MM  250,2
+be/MM  251,2
+be/MM  252,2
+be/MM  253,2
+be/MM  254,2
+be/MM  255,2
+be/MM  256,2
+be/MM  257,2
+be/MM  258,2
+be/MM  259,2
+be/MM  260,2
+be/MM  261,2
+be/MM  262,2
+be/MM  263,2
+be/MM  264,2
+be/MM  265,2
+be/MM  266,2
+be/MM  267,2
+be/MM  268,2
+be/MM  269,2
+be/MM  270,2
+be/MM  271,2
+be/MM  272,2
+be/MM  273,2
+be/MM  274,2
+be/MM  275,2
+be/MM  276,2
+be/MM  277,2
+be/MM  278,2
+be/MM  279,2
+be/MM  280,2
+be/MM  281,2
+be/MM  282,2
+be/MM  283,2
+be/MM  284,2
+be/MM  285,2
+be/MM  286,2
+be/MM  287,2
+be/MM  288,2
+be/MM  289,2
+be/MM  290,2
+be/MM  291,2
+be/MM  292,2
+be/MM  293,2
+be/MM  294,2
+be/MM  295,2
+be/MM  296,2
+be/MM  297,2
+be/MM  298,2
+be/MM  299,2
+be/MM  300,2
+be/MM  301,2
+be/MM  302,2
+be/MM  303,2
+be/MM  304,2
+be/MM  305,2
+be/MM  306,2
+be/MM  307,2
+be/MM  308,2
+be/MM  309,2
+be/MM  310,2
+be/MM  311,2
+be/MM  312,2
+be/MM  313,2
+be/MM  314,2
+be/MM  315,2
+be/MM  316,2
+be/MM  317,2
+be/MM  318,2
+be/MM  319,2
+be/MM  320,2
+be/MM  321,2
+be/MM  322,2
+be/MM  323,2
+be/MM  324,2
+be/MM  325,2
+be/MM  326,2
+be/MM  327,2
+be/MM  328,2
+be/MM  329,2
+be/MM  330,2
+be/MM  331,2
+be/MM  332,2
+be/MM  333,2
+be/MM  334,2
+be/MM  335,2
+be/MM  336,2
+be/MM  337,2
+be/MM  338,2
+be/MM  339,2
+be/MM  340,2
+be/MM  341,2
+be/MM  342,2
+be/MM  343,2
+be/MM  344,2
+be/MM  345,2
+be/MM  346,2
+be/MM  347,2
+be/MM  348,2
+be/MM  349,2
+be/MM  350,2
+be/MM  351,2
+be/MM  352,2
+be/MM  353,2
+be/MM  354,2
+be/MM  355,2
+be/MM  356,2
+be/MM  357,2
+be/MM  358,2
+be/MM  359,2
+be/MM  360,2
+be/MM  361,2
+be/MM  362,2
+be/MM  363,2
+be/MM  364,2
+be/MM  365,2
+be/MM  366,2
+be/MM  367,2
+be/MM  368,2
+be/MM  369,2
+be/MM  370,2
+be/MM  371,2
+be/MM  372,2
+be/MM  373,2
+be/MM  374,2
+be/MM  375,2
+be/MM  376,2
+be/MM  377,2
+be/MM  378,2
+be/MM  379,2
+be/MM  380,2
+be/MM  381,2
+be/MM  382,2
+be/MM  383,2
+be/MM  384,2
+be/MM  385,2
+be/MM  386,2
+be/MM  387,2
+be/MM  388,2
+be/MM  389,2
+be/MM  390,2
+be/MM  391,2
+be/MM  392,2
+be/MM  393,2
+be/MM  394,2
+be/MM  395,2
+be/MM  396,2
+be/MM  397,2
+be/MM  398,2
+be/MM  399,2
+be/MM  400,2
+be/MM  401,2
+be/MM  402,2
+be/MM  403,2
+be/MM  404,2
+be/MM  405,2
+be/MM  406,2
+be/MM  407,2
+be/MM  408,2
+be/MM  409,2
+be/MM  410,2
+be/MM  411,2
+be/MM  412,2
+be/MM  413,2
+be/MM  414,2
+be/MM  415,2
+be/MM  416,2
+be/MM  417,2
+be/MM  418,2
+be/MM  419,2
+be/MM  420,2
+be/MM  421,2
+be/MM  422,2
+be/MM  423,2
+be/MM  424,2
+be/MM  425,2
+be/MM  426,2
+be/MM  427,2
+be/MM  428,2
+be/MM  429,2
+be/MM  430,2
+be/MM  431,2
+be/MM  432,2
+be/MM  433,2
+be/MM  434,2
+be/MM  435,2
+be/MM  436,2
+be/MM  437,2
+be/MM  438,2
+be/MM  439,2
+be/MM  440,2
+be/MM  441,2
+be/MM  442,2
+be/MM  443,2
+be/MM  444,2
+be/MM  445,2
+be/MM  446,2
+be/MM  447,2
+be/MM  448,2
+be/MM  449,2
+be/MM  450,2
+be/MM  451,2
+be/MM  452,2
+be/MM  453,2
+be/MM  454,2
+be/MM  455,2
+be/MM  456,2
+be/MM  457,2
+be/MM  458,2
+be/MM  459,2
+be/MM  460,2
+be/MM  461,2
+be/MM  462,2
+be/MM  463,2
+be/MM  464,2
+be/MM  465,2
+be/MM  466,2
+be/MM  467,2
+be/MM  468,2
+be/ALMM  1,180
+be/ALMM  2,120
+be/ALMM  3,20
+be/ALMM  4,80
+be/ALMM  5,80
+be/ALMM  6,60
+be/ALMM  7,60
+be/ALMM  8,60
+be/ALMM  9,60
+be/ALMM 10,60
+be/ALMM 11,55
+be/ALMM 12,55
+be/ALMM 13,55
+be/ALMM 14,55
+be/ALMM 15,55
+be/ALMM 16,55
+be/ALMM 17,55
+be/ALMM 18,55
+fr/MPP  723,40
+fr/MPP  735,25
+fr/MPP  756,25
+fr/MPP  772,25
+fr/MPP  786,25
+fr/MPP  807,25
+fr/MPP  824,25
+fr/MPP  838,25
+fr/MPP  847,100
+fr/MPP  856,25
+fr/MPP  873,15
+fr/MPP  886,15
+fr/MPP  899,15
+fr/MPP  912,15
+fr/MPP  925,15
+fr/MPP  938,15
+fr/MPP  951,15
+fr/MPP  964,15
+fr/MPP  977,15
+fr/MPP  990,15
+fr/MPP 1003,15
+fr/MPP 1016,15
+fr/MPP 1029,15
+fr/MPP 1042,15
+fr/MPP 1055,15
+fr/MPP 1068,15
+fr/MPP 1081,15
+fr/MPP 1091,15
+fr/MPP 1101,15
+fr/MPP 1111,15
+fr/MPP 1121,15
+fr/MPP 1134,15
+fr/MPP 1144,15
+fr/MPP 1154,15
+fr/MPP 1166,15
+fr/MPP 1174,15
+fr/MPP 1182,15
+fr/MPP 1190,15
+fr/MPP 1199,15
+fr/MPP 1208,15
+fr/MPP 1217,15
+fr/MPP 1225,15
+fr/MPP 1234,10
+fr/MPP 1243,10
+fr/MPP 1251,10
+fr/MPP 1260,10
+fr/MPP 1267,10
+fr/MPP 1275,10
+fr/MPP 1284,10
+fr/MPP 1293,10
+fr/MPP 1301,10
+fr/MPP 1310,10
+fr/MPP 1319,10
+fr/MPP 1327,10
+fr/MPP 1336,10
+fr/MPP 1345,10
+fr/MPP 1355,10
+fr/MPP 1363,10
+fr/MPP 1372,10
+fr/MPP 1381,10
+fr/MPP 1389,10
+fr/MPP 1398,10
+fr/MPP 1407,10
+fr/MPP 1415,10
+fr/MPP 1424,10
+fr/MPP 1433,10
+fr/MPNT 723,10
+fr/MPNT 735,10
+fr/MPNT 756,10
+fr/MPNT 772,10
+fr/MPNT 786,10
+fr/MPNT 807,10
+fr/MPNT 824,10
+fr/MPNT 838,10
+fr/MPNT 856,10
+fr/MPNT 873,10
+fr/MPNT 886,10

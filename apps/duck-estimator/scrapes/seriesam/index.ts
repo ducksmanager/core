@@ -1,7 +1,7 @@
 import { firefox } from "playwright-firefox";
 
 import { syncScrapeCache } from "~/cache";
-import { createQuotations, getInducksIssuesBetween } from "~/coa";
+import { createQuotations, getInducksIssuecodesBetween } from "~/coa";
 import { readCsvMapping } from "~/csv";
 
 const MAPPING_FILE = "scrapes/seriesam/coa-mapping.csv";
@@ -11,8 +11,7 @@ const SEK_TO_EUR_RATE = 0.098;
 const quotations: Parameters<typeof createQuotations>[0] = [];
 
 type CsvIssue = {
-  publicationcode: string;
-  issuenumber: string;
+  issuecode: string;
   seriesamQuery: string;
   seriesamTitle: string;
   seriesamYear: string;
@@ -71,8 +70,7 @@ export async function scrape() {
       const {
         seriesamYear: seriesamYearMapping,
         seriesamTitle: seriesamTitleMapping,
-        publicationcode,
-        issuenumber,
+        issuecode,
       } = mappedIssues[mappedIssueRowNumber];
       const seriesamYearCell = await row.$("td:nth-child(1)");
       const seriesamTitleCell = await row.$("td:nth-child(2)");
@@ -89,15 +87,11 @@ export async function scrape() {
       if (seriesamYearCurrent) {
         seriesamYear = seriesamYearCurrent;
       }
-      const issuenumbers = await getInducksIssuesBetween(
-        publicationcode,
-        ...(issuenumber.split(" to ") as [string, string]),
+      const issuecodes = await getInducksIssuecodesBetween(
+        ...(issuecode.split(" to ") as [string, string]),
       );
       let hasFoundQuotation = false;
-      for (const {
-        issuenumber: issuenumberInRange,
-        issuecode: issuecodeInRange,
-      } of issuenumbers) {
+      for (const issuecodeInRange of issuecodes) {
         if (
           seriesamYear === seriesamYearMapping ||
           seriesamTitle === seriesamTitleMapping
@@ -109,7 +103,7 @@ export async function scrape() {
             column = await row.$(`td:nth-child(${cellNumber})`);
             if (column === null) {
               console.warn(
-                ` Inducks issue ${publicationcode} ${issuenumberInRange}: No quotation found`,
+                ` Inducks issue ${issuecodeInRange}: No quotation found`,
               );
               break;
             } else {
@@ -118,7 +112,7 @@ export async function scrape() {
                 cellNumber++;
               } else {
                 console.info(
-                  ` Inducks issue ${publicationcode} ${issuenumberInRange}: A quotation was found`,
+                  ` Inducks issue ${issuecodeInRange}: A quotation was found`,
                 );
                 const adjustedEstimation =
                   estimation * Math.pow(0.8, cellNumber - 5) * SEK_TO_EUR_RATE;

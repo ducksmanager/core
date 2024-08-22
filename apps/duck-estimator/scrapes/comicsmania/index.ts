@@ -1,6 +1,6 @@
 import { firefox } from "playwright-firefox";
 
-import { createQuotations, getIssuecode as getIssue } from "~/coa";
+import { createQuotations, getIssuecode } from "~/coa";
 import { readCsvMapping } from "~/csv";
 
 const MAPPING_FILE = "scrapes/comicsmania/coa-mapping.csv";
@@ -118,11 +118,11 @@ export async function scrape() {
         }
         publicationsWithIssues.push(currentPublication!);
         const { publicationcode: currentPublicationCode } = currentPublication!;
-        const issue = await getIssue(currentPublicationCode, issuenumber);
-        if (issue) {
+        const issuecode = await getIssuecode(currentPublicationCode, issuenumber);
+        if (issuecode) {
           const price = parseFloat(priceMatch[0].replace(",", "."));
           quotations.push({
-            issuecode: issue.issuecode,
+            issuecode,
             estimationMin: price,
             estimationMax: null,
             scrapeDate: null,

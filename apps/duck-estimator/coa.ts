@@ -1,15 +1,10 @@
 import "dotenv/config";
 
 import type {
-  inducks_issue,
   inducks_issuequotation,
 } from "~prisma-schemas/schemas/coa";
 import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa/client";
 
-const cachedCoaIssues: Record<
-  string,
-  Pick<inducks_issue, "issuecode" | "issuenumber">[]
-> = {};
 
 export const createQuotations = async (
   data: Omit<
@@ -36,48 +31,63 @@ export const getIssuecode = async (
   publicationcode: string,
   issuenumber: string,
 ) =>
-  (await getInducksIssuesBetween(publicationcode, issuenumber, issuenumber))[0];
+  prismaCoa.inducks_issue.findFirst({
+    select: {
+      issuecode: true,
+    },
+    where: {
+      publicationcode,
+      issuenumber,
+    },
+  }).then((result) => result?.issuecode);
 
-export const getInducksIssuesBetween = async (
-  publicationcode: string,
-  issuenumberStart: string,
-  issuenumberEnd = issuenumberStart,
+export const getInducksIssuecodesBetween = async (
+  issuecodeStart: string,
+  issuecodeEnd: string,
 ) => {
-  cachedCoaIssues[publicationcode] =
-    cachedCoaIssues[publicationcode] ||
+  const publicationcode = (await prismaCoa.inducks_issue.findFirstOrThrow({
+    where: {
+      issuecode: issuecodeStart,
+    },
+    select: {
+      publicationcode: true,
+    },
+  })).publicationcode;
+
+  const coaIssues =
     (
       await prismaCoa.inducks_issue.findMany({
         where: { publicationcode },
-        select: { issuenumber: true, issuecode: true },
+        select: { issuecode: true },
       })
-    ).map(({ issuenumber }) => issuenumber);
+    ).map(({ issuecode }) => issuecode);
 
-  if (!cachedCoaIssues[publicationcode].length) {
+  if (!coaIssues.length) {
     console.warn(
       ` No issue found in COA for publication code ${publicationcode}`,
     );
     return [];
   }
 
-  const startIssueIndex = cachedCoaIssues[publicationcode].findIndex(
-    ({ issuenumber }) => issuenumber === issuenumberStart,
+  const startIssueIndex = coaIssues.findIndex(
+    (issuecode) => issuecode === issuecodeStart,
   );
   if (startIssueIndex === -1) {
     console.warn(
-      ` No issue found in COA for publication code ${publicationcode} and issue number ${issuenumberStart}`,
+      ` No issue found in COA for issue code ${issuecodeStart}`,
     );
     return [];
   }
-  const endIssueIndex = cachedCoaIssues[publicationcode].findIndex(
-    ({ issuenumber }) => issuenumber === issuenumberEnd,
+  const endIssueIndex = coaIssues.findIndex(
+    (issuecode) => issuecode === issuecodeEnd,
   );
   if (endIssueIndex === -1) {
     console.warn(
-      ` No issue found in COA for publication code ${publicationcode} and issue number ${issuenumberEnd}`,
+      ` No issue found in COA for issue code ${issuecodeEnd}`,
     );
     return [];
   }
-  return cachedCoaIssues[publicationcode].filter(
+  return coaIssues.filter(
     (_, index) => index >= startIssueIndex && index <= endIssueIndex,
   );
 };
