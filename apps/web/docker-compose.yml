@@ -68,7 +68,7 @@ services:
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
     command: mariadb -uroot -p${MYSQL_ROOT_PASSWORD} -h db dm -e "CALL generate_sprite_names"
     networks:
-      - ducksmanager_dm-network
+      - dm-server_db-network
 
   sentry-relay:
     image: getsentry/relay
