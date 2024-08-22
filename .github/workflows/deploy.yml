@@ -1,0 +1,20 @@
+name: deploy
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - "test-monorepo-build"
+jobs:
+  myjob:
+    runs-on: ubuntu-latest
+    name: My Job
+    steps:
+      - uses: actions/checkout@v4
+      - name: Derive appropriate SHAs for base and head for `nx affected` commands
+        uses: nrwl/nx-set-shas@v4
+        with:
+          main-branch-name: "master"
+
+      - run: |
+          echo "BASE: ${{ env.NX_BASE }}"
