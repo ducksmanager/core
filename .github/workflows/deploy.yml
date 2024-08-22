@@ -6,9 +6,9 @@ on:
     branches:
       - "test-monorepo-build"
 jobs:
-  myjob:
+  deploy:
     runs-on: ubuntu-latest
-    name: My Job
+    name: Deploy
     steps:
       - uses: actions/checkout@v4
       - name: Derive appropriate SHAs for base and head for `nx affected` commands
@@ -17,4 +17,21 @@ jobs:
           main-branch-name: "master"
 
       - run: |
-          echo "BASE: ${{ env.NX_BASE }}"
+          echo "BASE: ${{ env.NX_HEAD }}"
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v3
+        with:
+          version: 9
+
+      - name: Use Node.js 18
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          cache: "pnpm"
+
+      - name: Install dependencies
+        run: pnpm -r install
+
+      - name: Check apps changed since the last successful commit
+        run: pnpm -r -F '[${{ env.NX_HEAD }}]' ls --depth -1 -j | jq -r '.[].path' | grep apps
