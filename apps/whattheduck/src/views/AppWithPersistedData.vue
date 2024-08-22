@@ -16,7 +16,7 @@ import { wtdcollection } from '~/stores/wtdcollection';
 
 const { offlineBannerHeight, socket } = storeToRefs(app());
 
-provideLocal(dmSocketInjectionKey, socket.value as ReturnType<typeof useDmSocket>);
+getCurrentInstance()!.appContext.app.provide(dmSocketInjectionKey, socket.value as ReturnType<typeof useDmSocket>);
 
 const collectionStore = wtdcollection();
 const { fetchAndTrackCollection } = collectionStore;

@@ -18,8 +18,6 @@
 </template>
 
 <script lang="ts" setup>
-import { injectLocal } from "@vueuse/core";
-
 import { dumiliSocketInjectionKey } from "~/composables/useDumiliSocket";
 import { suggestions } from "~/stores/suggestions";
 
@@ -31,7 +29,7 @@ const { indexation } = storeToRefs(suggestionsStore);
 
 import { issueSuggestion } from "~prisma/client_dumili";
 
-const { getIndexationSocket } = injectLocal(dumiliSocketInjectionKey)!;
+const { getIndexationSocket } = inject(dumiliSocketInjectionKey)!;
 
 const issue = computed(() => suggestionsStore.acceptedIssue);
 

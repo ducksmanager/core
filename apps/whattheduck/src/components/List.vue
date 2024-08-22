@@ -120,7 +120,7 @@ const takePhotoButton = ref<{ $el: HTMLElement }>();
 
 const {
   coverId: { services: coverIdServices },
-} = injectLocal(dmSocketInjectionKey)!;
+} = inject(dmSocketInjectionKey)!;
 
 const cameraPreviewElementId = 'camera-preview';
 const { takePhoto } = useCoverSearch(useRouter(), coverIdServices);

@@ -198,7 +198,7 @@ let edgesUsingSprites = $ref<{ [edgeId: number]: string }>({});
 const currentEdgeOpened = $shallowRef<BookcaseEdgeWithPopularity | null>(null);
 let currentEdgeHighlighted = $ref<number | null>(null);
 let hasPublicationNames = $ref(false);
-let hasIssueNumbers = $ref(false);
+let hasIssuecodes = $ref(false);
 const showShareButtons = $ref(false);
 let userPoints = $ref<{ [contribution: string]: number } | null>(null);
 
@@ -239,7 +239,7 @@ const sortedBookcase = $computed(
   () =>
     bookcaseWithPopularities.value &&
     bookcaseOrder.value &&
-    hasIssueNumbers &&
+    hasIssuecodes &&
     [...bookcaseWithPopularities.value].sort(
       (
         { publicationcode: publicationcode1, issuecode: issuecode1 },
@@ -282,7 +282,7 @@ watch(
       hasPublicationNames = true;
 
       await fetchIssuecodesByPublicationcode(newValue);
-      hasIssueNumbers = true;
+      hasIssuecodes = true;
     }
   },
   { immediate: true },

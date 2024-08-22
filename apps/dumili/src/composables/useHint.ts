@@ -20,18 +20,15 @@ export default () => {
       return;
     }
     await Promise.all(
-      results.covers.map(
-        ({ issuecode, publicationcode, issuenumber /*, id: coverId*/ }) =>
-          getIndexationSocket(
-            indexation.value!.id,
-          ).services.acceptIssueSuggestion({
-            source: "ai",
-            issuecode,
-            publicationcode,
-            issuenumber,
-            // coverId,
-            indexationId: indexation.value!.id,
-          }),
+      results.covers.map(({ issuecode /*, id: coverId*/ }) =>
+        getIndexationSocket(
+          indexation.value!.id,
+        ).services.acceptIssueSuggestion({
+          source: "ai",
+          issuecode,
+          // coverId,
+          indexationId: indexation.value!.id,
+        }),
       ),
     );
 

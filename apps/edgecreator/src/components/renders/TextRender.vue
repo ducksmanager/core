@@ -30,7 +30,7 @@ import { coa } from "~web/src/stores/coa";
 
 const {
   text: { services: textServices },
-} = injectLocal(edgecreatorSocketInjectionKey)!;
+} = inject(edgecreatorSocketInjectionKey)!;
 
 const { resolveIssueNumberTemplate, resolveIssueNumberPartTemplate } =
   useTextTemplate();
@@ -82,19 +82,19 @@ const textImage = ref(
     width: number | null;
     height: number | null;
     url: string;
-  } | null,
+  } | null
 );
 const textImageOptions = ref<typeof props.options | null>(null);
 
 const issuenumber = computed(
-  () => coa().issuecodeDetails[props.issuecode].issuenumber,
+  () => coa().issuecodeDetails[props.issuecode].issuenumber
 );
 
 const effectiveText = computed(() =>
   resolveIssueNumberTemplate(
     props.options.text,
-    resolveIssueNumberPartTemplate(props.options.text, issuenumber.value),
-  ),
+    resolveIssueNumberPartTemplate(props.options.text, issuenumber.value)
+  )
 );
 
 const { width, attributes, enableDragResize } = useStepOptions(props, [
@@ -114,7 +114,7 @@ watch(
       });
     }
   },
-  { immediate: true },
+  { immediate: true }
 );
 
 watch(
@@ -155,44 +155,44 @@ watch(
           applyTextImageDimensions();
         },
         2000,
-        100,
+        100
       );
     }
   },
   {
     immediate: true,
-  },
+  }
 );
 
 watch(
   () => props.options.fgColor,
   async () => {
     await refreshPreview();
-  },
+  }
 );
 watch(
   () => props.options.bgColor,
   async () => {
     await refreshPreview();
-  },
+  }
 );
 watch(
   () => props.options.internalWidth,
   async () => {
     await refreshPreview();
-  },
+  }
 );
 watch(
   () => props.options.text,
   async () => {
     await refreshPreview();
-  },
+  }
 );
 watch(
   () => props.options.font,
   async () => {
     await refreshPreview();
-  },
+  }
 );
 
 const refreshPreview = async () => {
@@ -221,7 +221,7 @@ const waitUntil = (
   condition: () => SVGImageElement | null,
   okCallback: () => void,
   timeout: number,
-  loopEvery: number,
+  loopEvery: number
 ) => {
   let iterations = 0;
   const interval = setInterval(() => {

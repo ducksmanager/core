@@ -38,10 +38,10 @@ const addPartInfo = (issueDetails: InducksIssueDetails) => {
 export const coa = defineStore("coa", () => {
   const {
     coa: { services: coaServices },
-  } = injectLocal(dmSocketInjectionKey)!;
+  } = inject(dmSocketInjectionKey)!;
 
   const locale = useI18n().locale,
-    coverUrls = ref<{ [issuenumber: string]: string }>({}),
+    coverUrls = ref<{ [issuecode: string]: string }>({}),
     countryNames = shallowRef<EventReturnType<
       CoaServices["getCountryList"]
     > | null>(null),

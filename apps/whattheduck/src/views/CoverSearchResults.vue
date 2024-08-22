@@ -103,7 +103,7 @@ const setWidth = (event: Event) => {
 
 const {
   coverId: { services: coverIdServices },
-} = injectLocal(dmSocketInjectionKey)!;
+} = inject(dmSocketInjectionKey)!;
 
 const { pickCoverFile, takePhoto } = useCoverSearch(useRouter(), coverIdServices);
 

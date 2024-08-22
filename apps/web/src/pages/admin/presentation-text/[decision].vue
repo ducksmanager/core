@@ -9,7 +9,7 @@ let router = useRouter();
 
 const {
   presentationText: { services: presentationTextServices },
-} = injectLocal(dmSocketInjectionKey)!;
+} = inject(dmSocketInjectionKey)!;
 
 (async () => {
   let currentRoute = router.currentRoute.value;

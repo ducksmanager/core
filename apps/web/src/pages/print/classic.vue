@@ -6,7 +6,7 @@ meta:
 
 <template>
   <print-header />
-  <div v-if="ownedIssueNumbers" class="list">
+  <div v-if="ownedIssuecodes" class="list">
     <div v-for="country in countryCodesSortedByName" :key="country">
       <div class="country">
         {{ countryNames![country] }}
@@ -16,7 +16,7 @@ meta:
         :key="publicationcode"
       >
         <u>{{ publicationNames[publicationcode] || publicationcode }}</u>
-        {{ ownedIssueNumbers[publicationcode] }}
+        {{ ownedIssuecodes[publicationcode] }}
         <br />
       </div>
     </div>
@@ -24,17 +24,19 @@ meta:
 </template>
 
 <script setup lang="ts">
-let ownedIssueNumbers = $ref<{ [publicationcode: string]: string } | null>(
-  null,
-);
+let ownedIssuecodes = $ref<{ [publicationcode: string]: string } | null>(null);
 
 const {
   fetchCountryNames,
   fetchPublicationNames,
   fetchIssuecodesByPublicationcode,
 } = coa();
-const { countryNames, publicationNames, issuecodesByPublicationcode } =
-  storeToRefs(coa());
+const {
+  countryNames,
+  publicationNames,
+  issuecodesByPublicationcode,
+  issuecodeDetails,
+} = storeToRefs(coa());
 
 const { loadCollection } = collection();
 const { issues } = storeToRefs(collection());
@@ -87,7 +89,7 @@ watch(
         "publicationcode",
         "[]",
       );
-      ownedIssueNumbers = Object.entries(
+      ownedIssuecodes = Object.entries(
         issuecodesByPublicationcode.value,
       ).reduce(
         (acc, [publicationcode, indexedIssuecodes]) => ({
@@ -98,6 +100,7 @@ watch(
                 ({ issuecode }) => issuecode === indexedIssuecode,
               ),
             )
+            .map((issuecode) => issuecodeDetails.value[issuecode].issuenumber)
             .join(", "),
         }),
         {},

@@ -12,7 +12,7 @@ export const users = defineStore("users", () => {
   const {
     events: { services: eventsServices },
     globalStats: { services: globalStatsServices },
-  } = injectLocal(dmSocketInjectionKey)!;
+  } = inject(dmSocketInjectionKey)!;
   const count = ref<EventReturnType<
       GlobalStatsServices["getUserCount"]
     > | null>(null),

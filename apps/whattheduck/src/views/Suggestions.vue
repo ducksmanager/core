@@ -90,7 +90,7 @@ const sortByScore = ref(false);
 const { suggestions, isLoadingSuggestions } = storeToRefs(wtdcollection());
 const { loadSuggestions } = wtdcollection();
 const { fetchIssuecodeDetails, fetchPublicationNames } = webStores.coa();
-const { countryNames, issuecodeDetails, publicationNames } = storeToRefs(webStores.coa());
+const { countryNames, issuecodeDetails } = storeToRefs(webStores.coa());
 
 interface FormattedSuggestion {
   storycode: string;
@@ -132,15 +132,11 @@ const formattedSuggestions = computed(
     hasIssuecodeDetails.value &&
     sortedSuggestions.value &&
     Object.values(sortedSuggestions.value!.issues)
-      .map(({ issuecode, ...rest }) => ({ ...rest, issuecode, issue: issuecodeDetails.value[issuecode]! }))
-      .filter(({ issue }) => issue)
-      .map(({ stories, issue, issuecode, oldestdate, score }) => ({
-        countrycode: issue.publicationcode.split('/')[0],
-        publicationName: publicationNames.value[issue.publicationcode]!,
+      .map(({ issuecode, ...rest }) => ({ ...rest, issuecode }))
+      .map(({ stories, issuecode, oldestdate, score }) => ({
         issuecode,
         releaseDate: oldestdate,
         score,
-        issuenumber: issue.issuenumber,
         collectionIssues: [],
         storiesByStorycode: Object.entries(stories).reduce<Record<string, FormattedSuggestion>>(
           (acc, [personcode, storiesOfAuthor]) => {

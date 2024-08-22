@@ -69,7 +69,7 @@ import { wtdcollection } from '~/stores/wtdcollection';
 
 const {
   coa: { services: coaServices },
-} = injectLocal(dmSocketInjectionKey)!;
+} = inject(dmSocketInjectionKey)!;
 
 const { t } = useI18n();
 

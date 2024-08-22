@@ -142,8 +142,6 @@
   </b-row>
 </template>
 <script setup lang="ts">
-import { injectLocal } from "@vueuse/core";
-
 import { dumiliSocketInjectionKey } from "~/composables/useDumiliSocket";
 import { suggestions } from "~/stores/suggestions";
 import { user } from "~/stores/ui";
@@ -159,7 +157,7 @@ const props = defineProps<{
 
 const { entry, editable } = toRefs(props);
 
-const { getIndexationSocket } = injectLocal(dumiliSocketInjectionKey)!;
+const { getIndexationSocket } = inject(dumiliSocketInjectionKey)!;
 
 const { indexation, acceptedStories, acceptedStoryKinds, entriesFirstPages } =
   storeToRefs(suggestions());

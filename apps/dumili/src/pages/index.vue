@@ -52,14 +52,12 @@
 </template>
 
 <script setup lang="ts">
-import { injectLocal } from "@vueuse/core";
-
 import { dumiliSocketInjectionKey } from "~/composables/useDumiliSocket";
 import { IndexationWithFirstPage } from "~dumili-services/indexations/types";
 const router = useRouter();
 const {
   indexations: { services: indexationsServices },
-} = injectLocal(dumiliSocketInjectionKey)!;
+} = inject(dumiliSocketInjectionKey)!;
 
 const currentIndexations = ref<IndexationWithFirstPage[] | null>(null);
 const modal = ref(false);

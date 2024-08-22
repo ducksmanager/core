@@ -12,9 +12,7 @@ meta:
       variant="info"
       :model-value="true"
     >
-      {{
-        $t("Loading...")
-      }}
+      {{ $t("Loading...") }}
     </b-alert>
 
     <template v-else>
@@ -38,7 +36,7 @@ meta:
                 {{
                   $t(
                     "Send us photos of magazine edges that you own and earn up to {0} Edge photographer points per edge!",
-                    [mostPopularIssuesInCollectionWithoutEdge[0].popularity],
+                    [mostPopularIssuesInCollectionWithoutEdge[0].popularity]
                   )
                 }}
               </template>
@@ -60,7 +58,7 @@ meta:
               {{
                 $t(
                   "Send us photos of magazine edges that you find on the Internet and earn up to {0} Edge photographer points per edge!",
-                  [mostWantedEdges[0].popularity],
+                  [mostWantedEdges[0].popularity]
                 )
               }}
             </template>
@@ -69,9 +67,7 @@ meta:
             to="/upload"
             class="mt-1"
           >
-            {{
-              $t("Send edge photos")
-            }}
+            {{ $t("Send edge photos") }}
           </b-button>
         </b-alert>
       </b-container>
@@ -82,9 +78,7 @@ meta:
         align="center"
       >
         <b-button to="/edit/new">
-          {{
-            $t("Create or edit an edge model")
-          }}
+          {{ $t("Create or edit an edge model") }}
         </b-button>
       </b-container>
 
@@ -190,7 +184,7 @@ meta:
     >
       {{
         $t(
-          "EdgeCreator is a tool allowing to create edges for the DucksManager bookcase.",
+          "EdgeCreator is a tool allowing to create edges for the DucksManager bookcase."
         )
       }}<br><a href="https://ducksmanager.net">{{
         $t("Go to DucksManager")
@@ -206,7 +200,7 @@ import { edgeCatalog } from "~/stores/edgeCatalog";
 
 const {
   edges: { services: edgesServices },
-} = injectLocal(dmSocketInjectionKey)!;
+} = inject(dmSocketInjectionKey)!;
 
 import { stores as webStores } from "~web";
 import { dmSocketInjectionKey } from "~web/src/composables/useDmSocket";
@@ -228,7 +222,7 @@ const { currentEdges, isCatalogLoaded } = storeToRefs(edgeCatalogStore);
 const edgesByStatusAndPublicationcode = computed(() => {
   const edgesByStatus = Object.values(currentEdges.value).groupBy(
     "status",
-    "[]",
+    "[]"
   );
   return Object.fromEntries(
     Object.entries(edgesByStatus).map(([status, edges]) => [
@@ -240,11 +234,11 @@ const edgesByStatusAndPublicationcode = computed(() => {
             issuecodeDetails.value[edge.issuecode].publicationcode,
         }))
         .groupBy("publicationcode", "[]"),
-    ]),
+    ])
   );
 });
 const userPhotographerPoints = computed(
-  () => usersStore.points[user.value!.id].edge_photographer,
+  () => usersStore.points[user.value!.id].edge_photographer
 );
 
 const { publicationNames, issuecodeDetails } = storeToRefs(webStores.coa());
@@ -264,9 +258,9 @@ const mostPopularIssuesInCollectionWithoutEdge = computed(() =>
   collectionStore.popularIssuesInCollectionWithoutEdge
     ?.sort(
       ({ popularity: popularity1 }, { popularity: popularity2 }) =>
-        (popularity2 ?? 0) - (popularity1 ?? 0),
+        (popularity2 ?? 0) - (popularity1 ?? 0)
     )
-    .filter((_, index) => index < 10),
+    .filter((_, index) => index < 10)
 );
 
 const loadMostWantedEdges = async () => {
@@ -289,7 +283,7 @@ const loadMostWantedEdges = async () => {
         slug: "",
         points: numberOfIssues,
         popularity: numberOfIssues,
-      }),
+      })
     );
 };
 
@@ -312,13 +306,13 @@ watch(
         ...acc,
         issuecodeDetails.value[issuecode].publicationcode,
       ],
-      [],
+      []
     );
 
     await coaStore.fetchPublicationNames(publicationcodes);
     isUploadableEdgesCarouselReady.value = true;
   },
-  { immediate: true },
+  { immediate: true }
 );
 
 await collectionStore.loadUser();

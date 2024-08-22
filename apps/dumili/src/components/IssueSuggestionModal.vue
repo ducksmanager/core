@@ -40,7 +40,7 @@ import { dmSocketInjectionKey } from "~web/src/composables/useDmSocket";
 const { t: $t } = useI18n();
 const {
   coverId: { services: coverIdServices },
-} = injectLocal(dmSocketInjectionKey)!;
+} = inject(dmSocketInjectionKey)!;
 const { getIndexationSocket } = injectLocal(dumiliSocketInjectionKey)!;
 
 const { hasPendingIssueSuggestions, indexation } = storeToRefs(suggestions());

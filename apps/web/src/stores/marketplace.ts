@@ -7,7 +7,7 @@ import { dmSocketInjectionKey } from "../composables/useDmSocket";
 export const marketplace = defineStore("marketplace", () => {
   const {
     collection: { services: collectionServices },
-  } = injectLocal(dmSocketInjectionKey)!;
+  } = inject(dmSocketInjectionKey)!;
 
   const issuesOnSaleByOthers = ref<EventReturnType<
       CollectionServices["getIssuesForSale"]

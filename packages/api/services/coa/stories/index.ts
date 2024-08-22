@@ -4,6 +4,7 @@ import type { SimpleIssueWithPartInfo } from "~dm-types/SimpleIssue";
 import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa/client";
 
 import type Events from "../types";
+import { StorySearchResults } from "~dm-types/StorySearchResults";
 export default (socket: Socket<Events>) => {
   socket.on("getStoryDetails", (storycode, callback) =>
     prismaCoa.inducks_story
@@ -58,7 +59,7 @@ export default (socket: Socket<Events>) => {
     >`
       SELECT inducks_storyversion.storycode,
              inducks_storyversion.entirepages,
-             inducks_entry.title                         AS title,
+             inducks_entry.title,
              MATCH (inducks_entry.title) AGAINST (${joinedKeywords}) /
              (IF(inducks_storyversion.kind = 'n', 1, 2)) AS score
       FROM inducks_entry
@@ -74,25 +75,30 @@ export default (socket: Socket<Events>) => {
     results = results.slice(0, limit);
 
     if (withIssues) {
+      const resultsWithIssues: StorySearchResults<true>["results"] = []
       for (const idx of results.keys()) {
-        results[idx].issues = await listIssuesFromStoryCode(
+        resultsWithIssues[idx].issues = await listIssuesFromStoryCode(
           results[idx].storycode,
         );
       }
-    }
 
-    callback({
-      results,
-      hasMore,
-    });
+      callback({
+        results: resultsWithIssues,
+        hasMore,
+      });
+    }
+    else {
+      callback({
+        results,
+        hasMore,
+      });
+    }
   });
 };
 
 const listIssuesFromStoryCode = async (storycode: string) =>
   prismaCoa.$queryRaw<SimpleIssueWithPartInfo[]>`
-    SELECT i.publicationcode,
-           i.issuenumber,
-           i.issuecode,
+    SELECT i.issuecode,
            e.storyversioncode,
            e.part,
            sv.estimatedpanels,
@@ -102,6 +108,5 @@ const listIssuesFromStoryCode = async (storycode: string) =>
       INNER JOIN inducks_storyversion sv USING (storyversioncode)
       INNER JOIN inducks_storyversion sv_o ON sv.storycode = sv_o.storyversioncode
     WHERE sv.storycode = ${storycode}
-    GROUP BY i.publicationcode, i.issuenumber
-    ORDER BY i.publicationcode, i.issuenumber
+    GROUP BY i.issuecode
   `;

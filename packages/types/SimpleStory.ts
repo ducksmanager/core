@@ -1,4 +1,3 @@
-import type { IssueWithIssuecodeOnly } from "./IssueWithIssuecodeOnly";
 import type { SimpleIssueWithPartInfo } from "./SimpleIssue";
 
 export interface SimpleStory {
@@ -6,7 +5,7 @@ export interface SimpleStory {
   entirepages: number;
   title: string;
   score: number;
-  issues: IssueWithIssuecodeOnly[];
+  issuecodes: string[];
 }
 
 export interface SimpleStoryWithPartInfo extends SimpleStory {

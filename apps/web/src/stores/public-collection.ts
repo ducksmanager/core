@@ -8,7 +8,7 @@ import { dmSocketInjectionKey } from "../composables/useDmSocket";
 export const publicCollection = defineStore("publicCollection", () => {
   const {
     publicCollection: { services: publicCollectionServices },
-  } = injectLocal(dmSocketInjectionKey)!;
+  } = inject(dmSocketInjectionKey)!;
 
   const issues = shallowRef<(issue & { issuecode: string })[] | null>(null),
     publicUsername = ref<string | null>(null),

@@ -43,7 +43,7 @@ export const collection = defineStore("collection", () => {
     stats: { services: statsServices },
     login: { services: loginServices },
     options: socketOptions,
-  } = injectLocal(dmSocketInjectionKey)!;
+  } = inject(dmSocketInjectionKey)!;
 
   const { bookcaseWithPopularities } = storeToRefs(bookcase());
 
@@ -98,9 +98,6 @@ export const collection = defineStore("collection", () => {
     ),
     issuecodesPerPublication = computed(
       () => issues.value?.groupBy("publicationcode", "[]") || {},
-    ),
-    issuenumbersPerPublication = computed(() =>
-      issues.value?.groupBy("publicationcode", "issuenumber[]"),
     ),
     totalPerPublicationUniqueIssuecodes = computed(
       (): {
@@ -203,7 +200,6 @@ export const collection = defineStore("collection", () => {
         isLoadingCollection.value = false;
       }
 
-      console.log("loadCollection");
       Object.assign(
         coa().issuecodeDetails,
         issues
@@ -393,7 +389,6 @@ export const collection = defineStore("collection", () => {
     coaIssueCountsPerCountrycode,
     isLoadingSuggestions,
     issuecodesPerPublication,
-    issuenumbersPerPublication,
     lastPublishedEdgesForCurrentUser,
     loadCollection,
     loadUserIssueQuotations,

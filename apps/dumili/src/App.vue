@@ -18,7 +18,6 @@
 </template>
 
 <script setup lang="ts">
-import { provideLocal } from "@vueuse/core";
 import Cookies from "js-cookie";
 
 import { stores as webStores } from "~web";
@@ -26,10 +25,12 @@ import { stores as webStores } from "~web";
 import useDumiliSocket, {
   dumiliSocketInjectionKey,
 } from "./composables/useDumiliSocket";
+import { buildWebStorage } from "~socket.io-client-services/index";
 
-provideLocal(
+getCurrentInstance()!.appContext.app.provide(
   dumiliSocketInjectionKey,
   useDumiliSocket({
+    cacheStorage: buildWebStorage(sessionStorage),
     onConnectError: () => {
       isLoadingUser.value = false;
       user.value = null;

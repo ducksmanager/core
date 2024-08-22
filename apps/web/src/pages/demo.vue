@@ -15,7 +15,7 @@ const router = useRouter();
 
 const {
   login: { services: loginServices },
-} = injectLocal(dmSocketInjectionKey)!;
+} = inject(dmSocketInjectionKey)!;
 
 watch(
   user,

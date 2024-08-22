@@ -247,7 +247,7 @@ const { userForAccountForm, marketplaceContactMethods } =
 
 const {
   collection: { services: collectionServices },
-} = injectLocal(dmSocketInjectionKey)!;
+} = inject(dmSocketInjectionKey)!;
 
 const emptyCollection = async () => {
   if (confirm(t("Votre collection va être vidée. Continuer ?"))) {

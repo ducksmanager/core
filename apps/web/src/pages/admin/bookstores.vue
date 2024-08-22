@@ -33,7 +33,7 @@ let bookstores = $shallowRef<SimpleBookstore[] | null>(null);
 
 const {
   bookstore: { services: bookstoreServices },
-} = injectLocal(dmSocketInjectionKey)!;
+} = inject(dmSocketInjectionKey)!;
 
 const validateBookstoreComment = async ({ id }: bookstoreComment) => {
   await bookstoreServices.approveBookstoreComment(id);

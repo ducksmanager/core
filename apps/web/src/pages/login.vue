@@ -66,7 +66,7 @@ let password = $ref("");
 
 const {
   collection: { socket: collectionSocket },
-} = injectLocal(dmSocketInjectionKey)!;
+} = inject(dmSocketInjectionKey)!;
 
 const login = async () => {
   await userLogin(

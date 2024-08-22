@@ -9,7 +9,7 @@ export const stats = defineStore("stats", () => {
   const {
     coa: { services: coaServices },
     collection: { services: collectionServices },
-  } = injectLocal(dmSocketInjectionKey)!;
+  } = inject(dmSocketInjectionKey)!;
 
   const ratings = shallowRef<
     EventReturnType<CollectionServices["getWatchedAuthors"]> | undefined

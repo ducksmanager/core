@@ -43,7 +43,7 @@ meta:
           {{
             // eslint-disable-next-line max-len
             $t(
-              'For each edge present on the picture, please select the part of the picture corresponding to the edge, fill in the information related to the edge hereunder then click on "Add". Once all the edges on the picture have been indicated, click on "Send the edge pictures".',
+              'For each edge present on the picture, please select the part of the picture corresponding to the edge, fill in the information related to the edge hereunder then click on "Add". Once all the edges on the picture have been indicated, click on "Send the edge pictures".'
             )
           }}
         </b-container>
@@ -62,9 +62,7 @@ meta:
             <dimensions
               :width="currentCrop ? currentCrop.width : 15"
               :height="currentCrop ? currentCrop.height : 200"
-              @change="
-                currentCrop = $event && $event.width ? $event : null
-              "
+              @change="currentCrop = $event && $event.width ? $event : null"
             />
           </template>
         </issue-select>
@@ -73,9 +71,7 @@ meta:
           class="mt-3 mb-4"
           @click="addCrop"
         >
-          {{
-            $t("Add")
-          }}
+          {{ $t("Add") }}
         </b-button>
         <b-card-group
           deck
@@ -180,7 +176,7 @@ const i18n = useI18n();
 
 const {
   upload: { services: uploadServices },
-} = injectLocal(edgecreatorSocketInjectionKey)!;
+} = inject(edgecreatorSocketInjectionKey)!;
 
 const { saveEdgeSvg } = useSaveEdge();
 
@@ -203,7 +199,7 @@ const initialContributors = computed(
       contributionType: "photographe",
       user: { id: 0, username: useCookies().get("dm-user") },
     },
-  ],
+  ]
 );
 
 const addCrop = () => {
@@ -213,7 +209,7 @@ const addCrop = () => {
       props: {
         body: i18n
           .t(
-            `The width of your selection is bigger than its height! Make sure that the edges appear vertically on the photo.`,
+            `The width of your selection is bigger than its height! Make sure that the edges appear vertically on the photo.`
           )
           .toString(),
         title: i18n.t("Error").toString(),
@@ -224,7 +220,7 @@ const addCrop = () => {
       ...currentCrop.value!,
       data,
       url: (cropper.value!.getCroppedCanvas() as HTMLCanvasElement).toDataURL(
-        "image/jpeg",
+        "image/jpeg"
       ),
     });
     currentCrop.value = null;
@@ -244,7 +240,7 @@ const uploadAll = async () => {
         initialContributors.value.map((contribution) => ({
           ...contribution,
           issuecode: crop.issuecode,
-        })),
+        }))
       );
       const isSuccess = response!.paths.svgPath;
       crop.sent = !!isSuccess;

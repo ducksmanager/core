@@ -3,7 +3,6 @@
 </template>
 
 <script setup lang="ts">
-import { provideLocal } from "@vueuse/core";
 import Cookies from "js-cookie";
 
 import type { useSocket } from "~socket.io-client-services/index";
@@ -34,20 +33,19 @@ const onConnectError = (e: Error) => {
     location.replace(
       `${import.meta.env.VITE_DM_URL as string}/login?redirect=${
         window.location.href
-      }`,
+      }`
     );
   }
 };
-
-provideLocal(
+getCurrentInstance()!.appContext.app.provide(
   edgecreatorSocketInjectionKey,
   useEdgecreatorSocket(
     inject("edgecreatorSocket") as ReturnType<typeof useSocket>,
     {
       session,
       onConnectError,
-    },
-  ),
+    }
+  )
 );
 
 const dmSocket = useDmSocket(
@@ -56,10 +54,10 @@ const dmSocket = useDmSocket(
     cacheStorage: buildWebStorage(sessionStorage),
     session,
     onConnectError,
-  },
+  }
 );
 
-provideLocal(dmSocketInjectionKey, dmSocket);
+getCurrentInstance()!.appContext.app.provide(dmSocketInjectionKey, dmSocket);
 const route = useRoute();
 
 const user = computed(() => webStores.collection().user);
@@ -77,7 +75,7 @@ watch(
           !userPermissions.value?.some(
             ({ privilege, role }) =>
               role === "EdgeCreator" &&
-              ["Edition", "Admin"].includes(privilege as string),
+              ["Edition", "Admin"].includes(privilege as string)
           )
         ) {
           location.replace("/");
@@ -85,7 +83,7 @@ watch(
       }
     }
   },
-  { immediate: true },
+  { immediate: true }
 );
 </script>
 

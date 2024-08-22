@@ -42,7 +42,7 @@ import { dmSocketInjectionKey } from '~web/src/composables/useDmSocket';
 
 const {
   auth: { services: authServices },
-} = injectLocal(dmSocketInjectionKey)!;
+} = inject(dmSocketInjectionKey)!;
 
 const { t } = useI18n();
 

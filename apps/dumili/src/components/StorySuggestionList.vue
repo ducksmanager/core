@@ -21,8 +21,6 @@
 </template>
 
 <script lang="ts" setup>
-import { injectLocal } from "@vueuse/core";
-
 import { dumiliSocketInjectionKey } from "~/composables/useDumiliSocket";
 import { suggestions } from "~/stores/suggestions";
 import { SimpleStory } from "~dm-types/SimpleStory";
@@ -37,7 +35,7 @@ const props = defineProps<{
 
 const { entry } = toRefs(props);
 
-const { getIndexationSocket } = injectLocal(dumiliSocketInjectionKey)!;
+const { getIndexationSocket } = inject(dumiliSocketInjectionKey)!;
 
 const indexationSocket = computed(async () =>
   getIndexationSocket(entry.value.indexationId),

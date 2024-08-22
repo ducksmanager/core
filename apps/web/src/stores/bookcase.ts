@@ -20,7 +20,7 @@ export const bookcase = defineStore("bookcase", () => {
 
   const {
     bookcase: { services: bookcaseServices },
-  } = injectLocal(dmSocketInjectionKey)!;
+  } = inject(dmSocketInjectionKey)!;
 
   const loadedSprites = ref<{ [key: string]: string }>({}),
     isPrivateBookcase = ref(false),

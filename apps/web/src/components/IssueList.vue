@@ -104,7 +104,6 @@
             <div
               v-for="{
                 issuecode,
-                issuenumber,
                 title,
                 userCopies,
                 key,
@@ -125,7 +124,8 @@
                 />
 
                 <span class="issue-text">
-                  {{ issueNumberTextPrefix }}{{ issuenumber }}
+                  {{ issueNumberTextPrefix
+                  }}{{ issuecodeDetails[issuecode].issuenumber }}
                   <span class="issue-title">{{ title }}</span>
                 </span>
               </span>
@@ -153,7 +153,6 @@
             <div
               v-for="{
                 issuecode,
-                issuenumber,
                 title,
                 userCopies,
                 key,
@@ -187,7 +186,8 @@
                 />
 
                 <span class="issue-text">
-                  {{ issueNumberTextPrefix }}{{ issuenumber }}
+                  {{ issueNumberTextPrefix
+                  }}{{ issuecodeDetails[issuecode].issuenumber }}
                   <span class="issue-title">{{ title }}</span>
                 </span>
               </span>
@@ -201,7 +201,7 @@
                       id,
                       copyIndex,
                     } in userCopies"
-                    :key="`${issuenumber}-copy-${copyIndex}`"
+                    :key="`${issuecode}-copy-${copyIndex}`"
                     class="issue-copy"
                   >
                     <MarketplaceSellerInfo
@@ -247,7 +247,7 @@
                 </div>
                 <Watch
                   v-if="!readonly && (!userCopies.length || onSaleByOthers)"
-                  v-bind="{ publicationcode, issuenumber }"
+                  v-bind="{ issuecode }"
                   :constant-width="onSaleByOthers"
                 />
                 <div v-if="!readonly" class="issue-check">
@@ -337,7 +337,6 @@ import ContextMenuOwnCollection from "./ContextMenuOwnCollection.vue";
 
 type simpleIssue = {
   issuecode: string;
-  issuenumber: string;
   title?: string | null;
   key: string;
 };
@@ -401,7 +400,8 @@ switch (contextMenuComponentName) {
 }
 
 const { fetchPublicationNames, fetchIssueNumbersWithTitles } = coa();
-const { publicationNames, coverUrls, issuesWithTitles } = storeToRefs(coa());
+const { publicationNames, coverUrls, issuesWithTitles, issuecodeDetails } =
+  storeToRefs(coa());
 
 let hoveredIndex = $ref<number | null>(null);
 let loading = $ref(true);
@@ -602,7 +602,7 @@ const loadIssues = async () => {
       issues = coaIssues
         .filter(({ issuecode }) => userIssuecodes.includes(issuecode))
         .reduce<issueWithCopies[]>(
-          (acc, { issuecode, issuenumber }) => [
+          (acc, { issuecode }) => [
             ...acc,
             ...userIssuesForPublication!
               .filter(
@@ -610,7 +610,6 @@ const loadIssues = async () => {
               )
               .map((issue) => ({
                 ...issue,
-                issuenumber,
                 key: `${issue.issuecode.replaceAll(" ", "_")}-id-${issue.id}`,
                 userCopies: [{ ...issue, copyIndex: 0 }],
               })),

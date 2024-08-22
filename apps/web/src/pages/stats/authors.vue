@@ -89,7 +89,7 @@ const { ratings } = storeToRefs(stats());
 
 const {
   stats: { services: statsServices },
-} = injectLocal(dmSocketInjectionKey)!;
+} = inject(dmSocketInjectionKey)!;
 
 const unitTypes = {
   number: $t("Afficher en valeurs réelles"),

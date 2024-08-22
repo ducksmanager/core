@@ -22,7 +22,7 @@ export const edgeCatalog = defineStore("edgeCatalog", () => {
   const {
     edgeCreator: { services: edgeCreatorServices },
     edges: { services: edgesServices },
-  } = injectLocal(dmSocketInjectionKey)!;
+  } = inject(dmSocketInjectionKey)!;
 
   const edgeCategories = [
     {
@@ -45,7 +45,7 @@ export const edgeCatalog = defineStore("edgeCatalog", () => {
 
   const {
     browse: { services: browseServices },
-  } = injectLocal(edgecreatorSocketInjectionKey)!;
+  } = inject(edgecreatorSocketInjectionKey)!;
   const isCatalogLoaded = ref(false),
     currentEdges = ref<Record<string, EdgeWithVersionAndStatus>>({}),
     publishedEdges = ref<Record<string, { v3: boolean }>>({}),

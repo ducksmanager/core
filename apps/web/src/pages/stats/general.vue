@@ -157,7 +157,7 @@ import { dmSocketInjectionKey } from "../../composables/useDmSocket";
 
 const {
   globalStats: { services: globalStatsServices },
-} = injectLocal(dmSocketInjectionKey)!;
+} = inject(dmSocketInjectionKey)!;
 
 const { getConditionLabel } = useCondition();
 

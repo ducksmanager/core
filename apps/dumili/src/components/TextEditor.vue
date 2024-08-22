@@ -15,14 +15,12 @@
 <script setup lang="ts">
 const { t: $t } = useI18n();
 
-import { injectLocal } from "@vueuse/core";
-
 import { suggestions } from "~/stores/suggestions";
 import { dmSocketInjectionKey } from "~web/src/composables/useDmSocket";
 
 const {
   coa: { services: coaServices },
-} = injectLocal(dmSocketInjectionKey)!;
+} = inject(dmSocketInjectionKey)!;
 
 const textContentError = ref("");
 const { acceptedStories, acceptedIssue: issue } = storeToRefs(suggestions());

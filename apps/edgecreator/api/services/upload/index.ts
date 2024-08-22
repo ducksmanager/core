@@ -31,7 +31,7 @@ export default (io: Server) => {
     socket.on("uploadFromBase64", async (parameters, callback) => {
       const { issuecode, data } = parameters;
       const { publicationcode, issuenumber } =
-        await prismaClient.inducks_issue.findFirstOrThrow({
+        await prismaCoa.inducks_issue.findFirstOrThrow({
           where: { issuecode },
         });
       const [countrycode, magazinecode] = publicationcode.split("/");
@@ -146,9 +146,8 @@ const getTargetFilename = async (
         "jpg",
       );
     } else {
-      return `${edgesPath}/${country}/elements/${
-        filename.includes(magazine) ? filename : `${magazine}.${filename}`
-      }`;
+      return `${edgesPath}/${countrycode}/elements/${filename.includes(magazinecode) ? filename : `${magazinecode}.${filename}`
+        }`;
     }
   }
 };

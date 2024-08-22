@@ -108,7 +108,7 @@ const { conditions } = useCondition();
 
 const {
   coa: { services: coaServices },
-} = injectLocal(dmSocketInjectionKey)!;
+} = inject(dmSocketInjectionKey)!;
 
 const { findInCollection } = isPublic ? publicCollection() : collection();
 const { issues } = storeToRefs(collection());
@@ -204,9 +204,7 @@ const runSearch = async (value: string) => {
           ...story,
           collectionIssue:
             issues.value!.find(({ issuecode: collectionIssuecode }) =>
-              story.issues
-                .map(({ issuecode }) => issuecode)
-                .includes(collectionIssuecode),
+              story.issuecodes.includes(collectionIssuecode),
             ) || null,
         })),
       };

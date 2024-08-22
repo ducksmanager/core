@@ -5,7 +5,7 @@ import { edgecreatorSocketInjectionKey } from "./useEdgecreatorSocket";
 export default () => {
   const {
     save: { services: saveServices },
-  } = injectLocal(edgecreatorSocketInjectionKey)!;
+  } = inject(edgecreatorSocketInjectionKey)!;
 
   const removeVueMarkup = (element: HTMLElement) => {
     Object.values(element.attributes || [])

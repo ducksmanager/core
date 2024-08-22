@@ -283,7 +283,7 @@ const rawData = $ref("");
 const expandedPublicationAccordion = $ref<string | null>(null);
 const expandedNotImportableAccordion = $ref<string | null>(null);
 let hasPublicationNames = $ref(false);
-let hasIssueNumbers = $ref(false);
+let hasIssuecodes = $ref(false);
 const issueDefaultCondition = $ref<issue_condition>("bon");
 let issuesToImport = $shallowRef<string[] | null>(null);
 let issuesNotReferenced = $shallowRef<string[] | null>(null);
@@ -293,7 +293,7 @@ let importProgress = $ref(0);
 
 const {
   collection: { services: collectionServices },
-} = injectLocal(dmSocketInjectionKey)!;
+} = inject(dmSocketInjectionKey)!;
 
 const { t: $t } = useI18n();
 
@@ -313,7 +313,7 @@ const conditions: Record<issue_condition, string> = {
   indefini: $t("En état indéfini"),
 };
 const importDataReady = $computed(
-  () => issuesToImport && issues.value && hasIssueNumbers,
+  () => issuesToImport && issues.value && hasIssuecodes,
 );
 const router = useRouter();
 const processRawData = async () => {
@@ -394,7 +394,7 @@ watch($$(issuesToImport), async (newValue) => {
   await fetchPublicationNames(publicationCodes);
   hasPublicationNames = true;
   await fetchIssuecodesByPublicationcode(publicationCodes);
-  hasIssueNumbers = true;
+  hasIssuecodes = true;
 });
 
 loadCollection();

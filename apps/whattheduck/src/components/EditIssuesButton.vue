@@ -74,7 +74,7 @@ import { app } from '~/stores/app';
 
 const {
   coverId: { services: coverIdServices },
-} = injectLocal(dmSocketInjectionKey)!;
+} = inject(dmSocketInjectionKey)!;
 
 const emit = defineEmits<(e: 'show-camera-preview') => void>();
 

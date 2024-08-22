@@ -130,7 +130,7 @@ const bookcaseTextures = $ref({
 
 const {
   edges: { services: edgesServices },
-} = injectLocal(dmSocketInjectionKey)!;
+} = inject(dmSocketInjectionKey)!;
 
 const { fetchPublicationNames, fetchIssuecodesByPublicationcode } = coa();
 const { publicationNames, issuecodesByPublicationcode, issuecodeDetails } =

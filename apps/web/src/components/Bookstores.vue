@@ -178,7 +178,7 @@ import { dmSocketInjectionKey } from "../composables/useDmSocket";
 
 const {
   bookstore: { services: bookstoreServices },
-} = injectLocal(dmSocketInjectionKey)!;
+} = inject(dmSocketInjectionKey)!;
 
 const { fetchStats } = users();
 const { stats: userStats } = storeToRefs(users());

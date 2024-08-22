@@ -46,7 +46,7 @@ const { t: $t } = useI18n();
 
 const {
   auth: { services: authServices },
-} = injectLocal(dmSocketInjectionKey)!;
+} = inject(dmSocketInjectionKey)!;
 
 const changePassword = async () => {
   const response = await authServices.changePassword({

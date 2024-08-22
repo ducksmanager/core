@@ -10,7 +10,7 @@ import { buildWebStorage } from "~socket.io-client-services";
 
 import { dmSocketInjectionKey } from "./composables/useDmSocket";
 
-provideLocal(
+getCurrentInstance()!.appContext.app.provide(
   dmSocketInjectionKey,
   useDmSocket(inject("dmSocket") as ReturnType<typeof useSocket>, {
     cacheStorage: buildWebStorage(sessionStorage),
