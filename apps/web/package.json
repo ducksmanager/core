@@ -13,7 +13,6 @@
     "story:dev": "histoire dev",
     "test": "vitest",
     "typecheck": "vue-tsc --noEmit",
-    "up": "taze major -I",
     "wait": "wait-on tcp:8001"
   },
   "dependencies": {
