@@ -21,16 +21,29 @@ import { prismaClient as prismaDmStats } from "~prisma-schemas/schemas/dm_stats/
 dotenv.config();
 
 for (const envKey of [
-  "MYSQL_HOST",
-  "MYSQL_PORT",
-  "MYSQL_ROOT_PASSWORD",
   "DATABASE_URL_DM_STATS",
+  "DATABASE_NAME_COA",
+  "DATABASE_NAME_DM_STATS",
+  "DM_STATS_DDL_PATH",
 ]) {
   if (!process.env[envKey]) {
     console.error(`Environment variable not found, aborting: ${envKey}`);
     process.exit(1);
   }
 }
+
+const { DATABASE_URL_DM_STATS,
+  DATABASE_NAME_COA,
+  DATABASE_NAME_DM_STATS,
+  DM_STATS_DDL_PATH } = process.env as {
+    DATABASE_URL_DM_STATS: string,
+    DATABASE_NAME_COA: string,
+    DATABASE_NAME_DM: string,
+    DATABASE_NAME_DM_STATS: string,
+    DM_STATS_DDL_PATH: string,
+  }
+
+const [_protocol, _username, MYSQL_ROOT_PASSWORD, MYSQL_HOST, MYSQL_PORT, DATABASE_NAME_DM_STATS_NEW] = (DATABASE_URL_DM_STATS).split(/\W+/)
 
 const tables = [
   "auteurs_histoires",
@@ -43,10 +56,10 @@ const tables = [
 let connection: PoolConnection;
 
 const pool = createPool({
-  host: process.env.MYSQL_HOST,
-  port: parseInt(process.env.MYSQL_PORT!),
+  host: MYSQL_HOST,
+  port: parseInt(MYSQL_PORT),
   user: "root",
-  password: process.env.MYSQL_ROOT_PASSWORD,
+  password: MYSQL_ROOT_PASSWORD,
   multipleStatements: true,
 });
 
@@ -75,11 +88,10 @@ const runQueryFile = async (dbName: string, sqlFile: string) =>
   runQuery(`USE ${dbName};` + readFileSync(sqlFile).toString());
 
 connect().then(async () => {
-  const dbName = process.env.MYSQL_DM_STATS_DATABASE;
-  await runQuery(`DROP DATABASE IF EXISTS ${dbName}_new`);
-  await runQuery(`CREATE DATABASE ${dbName}_new`);
+  await runQuery(`DROP DATABASE IF EXISTS ${DATABASE_NAME_DM_STATS_NEW}`);
+  await runQuery(`CREATE DATABASE ${DATABASE_NAME_DM_STATS_NEW}`);
 
-  await runQueryFile(`${dbName}_new`, process.env.DM_STATS_DDL_PATH);
+  await runQueryFile(DATABASE_NAME_DM_STATS_NEW, DM_STATS_DDL_PATH);
 
   const authorUsers = await prismaDm.authorUser.findMany({
     where: {
@@ -202,19 +214,19 @@ connect().then(async () => {
     "Adding oldestdate; adding publicationcode and issuenumber for WTD < 3",
   );
   await runQuery(`
-    UPDATE ${dbName}_new.utilisateurs_publications_suggerees
-    JOIN coa.inducks_issue i using (issuecode)
+    UPDATE ${DATABASE_NAME_DM_STATS_NEW}.utilisateurs_publications_suggerees
+    JOIN ${DATABASE_NAME_COA}.inducks_issue i using (issuecode)
     SET utilisateurs_publications_suggerees.publicationcode = i.publicationcode
       , utilisateurs_publications_suggerees.issuenumber     = i.issuenumber
       , utilisateurs_publications_suggerees.oldestdate      = i.oldestdate`);
 
-  await runQuery(`DROP DATABASE IF EXISTS ${dbName}_old`);
-  await runQuery(`CREATE DATABASE ${dbName}_old`);
+  await runQuery(`DROP DATABASE IF EXISTS ${DATABASE_NAME_DM_STATS}_old`);
+  await runQuery(`CREATE DATABASE ${DATABASE_NAME_DM_STATS}_old`);
 
   for (const table of tables) {
     await runQuery(`RENAME TABLE
-        ${dbName}.${table}     TO ${dbName}_old.${table},
-        ${dbName}_new.${table} TO ${dbName}.${table}`);
+        ${DATABASE_NAME_DM_STATS}.${table}     TO ${DATABASE_NAME_DM_STATS}_old.${table},
+        ${DATABASE_NAME_DM_STATS_NEW}.${table} TO ${DATABASE_NAME_DM_STATS}.${table}`);
   }
 
   await disconnect();
