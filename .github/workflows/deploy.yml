@@ -36,7 +36,7 @@ jobs:
 
       - name: Check apps changed since the last successful commit
         run: |
-          #if [ "${{ env.NX_HEAD }}" == "ffffff" ]; then
+          #if [ "${{ env.NX_HEAD }}" = "ffffff" ]; then
             changedAppsCommitFilter=''
           #else
           #  changedAppsCommitFilter=" -F '[${{ env.NX_HEAD }}]'"
