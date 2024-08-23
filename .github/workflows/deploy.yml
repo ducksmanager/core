@@ -43,9 +43,9 @@ jobs:
           echo "changedAppsFilter='$changedAppsFilter'" >> $GITHUB_ENV
 
       - name: Install dependencies
-        run: pnpm -r ${{ steps.vars.outputs.changedAppsFilter }} install
+        run: pnpm -r $changedAppsFilter install
 
       - name: Build apps
         run: |
-          pnpm -r ${{ steps.vars.outputs.changedAppsFilter }} build
+          pnpm -r $changedAppsFilter build
           exit 1
