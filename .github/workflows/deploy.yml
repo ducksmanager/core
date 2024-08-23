@@ -40,7 +40,7 @@ jobs:
             | jq -r '.[] | select(.path | contains("apps/")) | .name' \
             | xargs -I {} echo -n "-F '{}' ")
           echo "Changed apps: $changedAppsFilter"
-          echo "changedAppsFilter='$changedAppsFilter'" >> $GITHUB_ENV
+          echo "changedAppsFilter=$changedAppsFilter" >> $GITHUB_ENV
 
       - name: Install dependencies
         run: pnpm -r $changedAppsFilter install
