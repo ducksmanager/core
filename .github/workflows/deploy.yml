@@ -40,12 +40,12 @@ jobs:
             | jq -r '.[] | select(.path | contains("apps/")) | .name' \
             | xargs -I {} echo -n "-F '{}' ")
           echo "Changed apps: $changedAppsFilter"
-          echo "changedAppsFilter=$changedAppsFilter" >> $GITHUB_ENV
+          echo "changedAppsFilter='$changedAppsFilter'" >> $GITHUB_ENV
 
       - name: Install dependencies
         run: pnpm -r ${{ steps.vars.outputs.changedAppsFilter }} install
 
       - name: Build apps
         run: |
-          pnpm build -r ${{ steps.vars.outputs.changedAppsFilter }}
+          pnpm -r ${{ steps.vars.outputs.changedAppsFilter }} build
           exit 1
