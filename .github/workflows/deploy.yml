@@ -38,15 +38,15 @@ jobs:
 
       - name: Check apps changed since the last successful commit
         run: |
-          changedApps=$(pnpm -r $changedAppsCommitFilter -F './apps/**' ls --depth -1 -j)
+          changedApps=$(pnpm -r $changedAppsCommitFilter ls --depth -1 -j)
           echo "Changed apps: $changedApps"
 
       - name: Install dependencies
         run: |
           set -x
-          pnpm -r $changedAppsCommitFilter -F './apps/**' install
+          pnpm -r $changedAppsCommitFilter install
 
       - name: Build apps
         run: |
-          pnpm -r $changedAppsCommitFilter -F './apps/**' build
+          pnpm -r $changedAppsCommitFilter build
           exit 1
