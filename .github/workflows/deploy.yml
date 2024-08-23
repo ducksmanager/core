@@ -48,5 +48,5 @@ jobs:
 
       - name: Build apps
         run: |
-          pnpm -r $changedAppsCommitFilter build
+          NODE_ENV=production turbo build --log-order=stream $changedAppsCommitFilter
           exit 1
