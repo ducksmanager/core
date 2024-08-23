@@ -34,6 +34,8 @@ jobs:
           node-version: 18
           cache: "pnpm"
 
+      - uses: oven-sh/setup-bun@v1
+
       - name: Check apps changed since the last successful commit
         run: |
           changedApps=$(pnpm -r $changedAppsCommitFilter -F './apps/**' ls --depth -1 -j)
