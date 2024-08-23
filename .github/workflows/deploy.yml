@@ -48,5 +48,5 @@ jobs:
 
       - name: Build apps
         run: |
-          NODE_ENV=production ./node_modules/.bin/turbo build --log-order=stream $changedAppsCommitFilter
+          NODE_ENV=production ./node_modules/.bin/turbo build --log-order=stream $changedAppsCommitFilter -F '!~dumili' -F '!~dumili-api'
           exit 1
