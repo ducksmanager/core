@@ -17,6 +17,7 @@ jobs:
         uses: nrwl/nx-set-shas@v4
         with:
           main-branch-name: "${GITHUB_REF#refs/heads/}"
+          fallback-sha: "ffffff"
 
       - run: |
           echo "HEAD: ${{ env.NX_HEAD }}"
@@ -35,17 +36,22 @@ jobs:
 
       - name: Check apps changed since the last successful commit
         run: |
-          changedApps=$(pnpm -r -F '[${{ env.NX_HEAD }}]' ls --depth -1 -j \
-          \| jq -r '.[] \
-          \| select(.path | contains("apps/")) | .name' \
-          \| xargs -I {} echo -n "-F '{}' ")
-          echo "Changed apps: $changedApps"
-          echo "changedApps=$changedApps" >> $GITHUB_ENV
+          if [ "${{ env.NX_HEAD }}" == "ffffff" ]; then
+            changedAppsCommitFilter=''
+          else
+            changedAppsCommitFilter=" -F '[${{ env.NX_HEAD }}]'"
+          fi
+          changedAppsFilter=$(pnpm -r $changedAppsCommitFilter ls --depth -1 -j \
+            \| jq -r '.[] \
+            \| select(.path | contains("apps/")) | .name' \
+            \| xargs -I {} echo -n "-F '{}' ")
+          echo "Changed apps: $changedAppsFilter"
+          echo "changedAppsFilter=$changedAppsFilter" >> $GITHUB_ENV
 
       - name: Install dependencies
-        run: pnpm -r ${{ steps.vars.outputs.changedApps }} install
+        run: pnpm -r ${{ steps.vars.outputs.changedAppsFilter }} install
 
       - name: Build apps
         run: |
-          pnpm build -r ${{ steps.vars.outputs.changedApps }}
+          pnpm build -r ${{ steps.vars.outputs.changedAppsFilter }}
           exit 1
