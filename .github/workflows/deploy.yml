@@ -44,7 +44,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          echo pnpm -r $changedAppsFilter install
+          set -x
           pnpm -r $changedAppsFilter install
 
       - name: Build apps
