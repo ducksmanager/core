@@ -37,9 +37,8 @@ jobs:
       - name: Check apps changed since the last successful commit
         run: |
           changedAppsFilter=$(pnpm -r $changedAppsCommitFilter ls --depth -1 -j \
-            \| jq -r '.[] \
-            \| select(.path | contains("apps/")) | .name' \
-            \| xargs -I {} echo -n "-F '{}' ")
+            | jq -r '.[] | select(.path | contains("apps/")) | .name' \
+            | xargs -I {} echo -n "-F '{}' ")
           echo "Changed apps: $changedAppsFilter"
           echo "changedAppsFilter=$changedAppsFilter" >> $GITHUB_ENV
 
