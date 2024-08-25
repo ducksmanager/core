@@ -9,6 +9,9 @@
     "prod:build-docker": "cd ../.. && docker buildx build . --push $@",
     "prod:transfer-files": "bun run transfer-files.ts"
   },
+  "dependencies": {
+    "ssh2-sftp-client": "^11.0.0"
+  },
   "devDependencies": {
     "@types/bun": "^1.1.8",
     "@types/ssh2-sftp-client": "^9.0.4"
