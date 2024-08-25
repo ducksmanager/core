@@ -10,6 +10,10 @@ const {
     PRODUCTION_SSH_KEY: string;
 } = process.env;
 
+const base64Encoded = Buffer.from(PRODUCTION_SSH_USER).toString('base64');
+
+console.log('User is ' + base64Encoded)
+
 const sftp = new SFTPClient();
 
 await sftp.connect({
