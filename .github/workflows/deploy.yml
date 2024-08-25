@@ -44,11 +44,10 @@ jobs:
       - name: Install dependencies
         run: |
           pnpm -r $changedAppsCommitFilter i
-          pnpm i
 
       - name: Build apps
         run: |
-          alias turbo=./node_modules/.bin/turbo
+          pnpm i -g turbo
           export NODE_ENV=production
           turbo $changedAppsCommitFilter -F '!~dumili' -F '!~dumili-api' build
 
