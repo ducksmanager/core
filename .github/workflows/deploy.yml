@@ -43,8 +43,8 @@ jobs:
 
       - name: Install dependencies
         run: |
-          set -x
-          pnpm -r $changedAppsCommitFilter install
+          pnpm -r $changedAppsCommitFilter i
+          pnpm i
 
       - name: Build apps
         run: |
