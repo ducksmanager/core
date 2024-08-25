@@ -118,7 +118,10 @@ export async function scrape() {
         }
         publicationsWithIssues.push(currentPublication!);
         const { publicationcode: currentPublicationCode } = currentPublication!;
-        const issuecode = await getIssuecode(currentPublicationCode, issuenumber);
+        const issuecode = await getIssuecode(
+          currentPublicationCode,
+          issuenumber,
+        );
         if (issuecode) {
           const price = parseFloat(priceMatch[0].replace(",", "."));
           quotations.push({

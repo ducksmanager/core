@@ -146,8 +146,11 @@ const getTargetFilename = async (
         "jpg",
       );
     } else {
-      return `${edgesPath}/${countrycode}/elements/${filename.includes(magazinecode) ? filename : `${magazinecode}.${filename}`
-        }`;
+      return `${edgesPath}/${countrycode}/elements/${
+        filename.includes(magazinecode)
+          ? filename
+          : `${magazinecode}.${filename}`
+      }`;
     }
   }
 };

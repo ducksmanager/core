@@ -19,6 +19,10 @@
         "dist/**"
       ]
     },
+    "prod:build-docker": {},
+    "prod:deploy": {},
+    "prod:transfer-files-pre": {},
+    "prod:transfer-files-post": {},
     "dev": {
       "persistent": true,
       "dependsOn": [

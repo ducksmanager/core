@@ -166,7 +166,8 @@ export default () => {
           );
         } catch (e) {
           onError(
-            `Invalid step ${originalStepNumber} (${component}) : ${e as string
+            `Invalid step ${originalStepNumber} (${component}) : ${
+              e as string
             }, step will be ignored.`,
             originalStepNumber,
           );

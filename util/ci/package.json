@@ -1,0 +1,16 @@
+{
+  "name": "~ci",
+  "engines": {
+    "node": ">=18.0.0 <19.0.0"
+  },
+  "type": "module",
+  "scripts": {
+    "prod:deploy": "cd $REMOTE_ROOT && docker compose pull && docker compose up -d --force-recreate",
+    "prod:build-docker": "cd ../.. && docker buildx build . --push $@",
+    "prod:transfer-files": "bun run transfer-files.ts"
+  },
+  "devDependencies": {
+    "@types/bun": "^1.1.8",
+    "@types/ssh2-sftp-client": "^9.0.4"
+  }
+}

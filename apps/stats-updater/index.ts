@@ -32,18 +32,27 @@ for (const envKey of [
   }
 }
 
-const { DATABASE_URL_DM_STATS,
+const {
+  DATABASE_URL_DM_STATS,
   DATABASE_NAME_COA,
   DATABASE_NAME_DM_STATS,
-  DM_STATS_DDL_PATH } = process.env as {
-    DATABASE_URL_DM_STATS: string,
-    DATABASE_NAME_COA: string,
-    DATABASE_NAME_DM: string,
-    DATABASE_NAME_DM_STATS: string,
-    DM_STATS_DDL_PATH: string,
-  }
+  DM_STATS_DDL_PATH,
+} = process.env as {
+  DATABASE_URL_DM_STATS: string;
+  DATABASE_NAME_COA: string;
+  DATABASE_NAME_DM: string;
+  DATABASE_NAME_DM_STATS: string;
+  DM_STATS_DDL_PATH: string;
+};
 
-const [_protocol, _username, MYSQL_ROOT_PASSWORD, MYSQL_HOST, MYSQL_PORT, DATABASE_NAME_DM_STATS_NEW] = (DATABASE_URL_DM_STATS).split(/\W+/)
+const [
+  _protocol,
+  _username,
+  MYSQL_ROOT_PASSWORD,
+  MYSQL_HOST,
+  MYSQL_PORT,
+  DATABASE_NAME_DM_STATS_NEW,
+] = DATABASE_URL_DM_STATS.split(/\W+/);
 
 const tables = [
   "auteurs_histoires",

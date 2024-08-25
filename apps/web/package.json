@@ -13,7 +13,11 @@
     "story:dev": "histoire dev",
     "test": "vitest",
     "typecheck": "vue-tsc --noEmit",
-    "wait": "wait-on tcp:8001"
+    "wait": "wait-on tcp:8001",
+    "prod:build-docker": "pnpm -F '~ci' prod:build-docker -f apps/web/Dockerfile -t ghcr.io/bperel/ducksmanager-web:websocket",
+    "prod:deploy": "REMOTE_ROOT=workspace/DucksManager pnpm -F '~ci' prod:deploy -- web-websocket api-websocket sentry-relay",
+    "prod:transfer-files-pre": "pnpm -F '~ci' prod:transfer-files @apps/web/.env.prod.local:apps/web/.env @packages/api/.env.prod.local:packages/api/.env @packages/prisma-clients/.env.prod.local:packages/prisma-schemas/.env",
+    "prod:transfer-files-post": "pnpm -F '~ci' prod:transfer-files apps/web/docker-compose.yml:@docker-compose.yml"
   },
   "dependencies": {
     "@bperel/vue3-popper-teleport": "^1.4.3",
@@ -51,6 +55,7 @@
     "@types/js-cookie": "^3.0.6",
     "@types/mapbox__mapbox-gl-geocoder": "^5.0.0",
     "@types/page-flip": "^2.0.3",
+    "@typescript-eslint/parser": "^7.0.0",
     "@vitejs/plugin-vue": "^5.1.2",
     "@vue-macros/reactivity-transform": "^1.0.3",
     "@vue/test-utils": "^2.4.6",

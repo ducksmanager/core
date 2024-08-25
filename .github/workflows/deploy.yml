@@ -6,7 +6,7 @@ on:
     branches:
       - "test-monorepo-build"
 jobs:
-  deploy:
+  build:
     runs-on: ubuntu-latest
     name: deploy
     steps:
@@ -48,5 +48,23 @@ jobs:
 
       - name: Build apps
         run: |
-          NODE_ENV=production ./node_modules/.bin/turbo build --log-order=stream $changedAppsCommitFilter -F '!~dumili' -F '!~dumili-api'
+          alias turbo=./node_modules/.bin/turbo
+          export NODE_ENV=production
+          turbo $changedAppsCommitFilter -F '!~dumili' -F '!~dumili-api' build
+
+      - name: Retrieve pre-build files
+        run: |
+          turbo $changedAppsCommitFilter -F '!~dumili' -F '!~dumili-api' --concurrency 1 prod:transfer-files-pre
+
+      - name: Build Docker images
+        run: |
+          turbo $changedAppsCommitFilter -F '!~dumili' -F '!~dumili-api' --concurrency 1 prod:build-docker
           exit 1
+
+      - name: Deploy
+        run: |
+          turbo $changedAppsCommitFilter -F '!~dumili' -F '!~dumili-api' --concurrency 1 prod:deploy
+
+      - name: Upload files
+        run: |
+          turbo $changedAppsCommitFilter -F '!~dumili' -F '!~dumili-api' --concurrency 1 prod:transfer-files-post

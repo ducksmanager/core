@@ -6,6 +6,7 @@ export const getSvgPath = async (isExport: boolean, issuecode: string) => {
     select: { publicationcode: true, issuenumber: true },
   });
   const [countrycode, magazinecode] = issue.publicationcode.split("/");
-  return `${process.cwd()}/../${process.env.EDGES_PATH!}/${countrycode}/gen/${isExport ? "" : "_"
-    }${magazinecode}.${issue.issuenumber}.svg`;
+  return `${process.cwd()}/../${process.env.EDGES_PATH!}/${countrycode}/gen/${
+    isExport ? "" : "_"
+  }${magazinecode}.${issue.issuenumber}.svg`;
 };
