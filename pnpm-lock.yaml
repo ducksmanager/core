@@ -1165,12 +1165,13 @@ importers:
 
   packages/types:
     dependencies:
-      ts-node:
-        specifier: ^10.9.2
-        version: 10.9.2(@types/node@20.16.1)(typescript@5.5.4)
       ~prisma-schemas:
         specifier: workspace:*
         version: link:../prisma-schemas
+    devDependencies:
+      ts-node:
+        specifier: ^10.9.2
+        version: 10.9.2(@types/node@20.16.1)(typescript@5.5.4)
 
   util/ci:
     devDependencies:

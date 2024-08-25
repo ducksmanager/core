@@ -5,10 +5,12 @@
   },
   "module": "index.ts",
   "scripts": {
-    "build": "rm -rf dist && ./node_modules/.pnpm/node_modules/.bin/tsc"
+    "build": "rm -rf dist && tsc"
   },
   "dependencies": {
-    "ts-node": "^10.9.2",
     "~prisma-schemas": "workspace:*"
+  },
+  "devDependencies": {
+    "ts-node": "^10.9.2"
   }
 }
