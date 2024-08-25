@@ -7,13 +7,13 @@
   "scripts": {
     "prod:deploy": "cd $REMOTE_ROOT && docker compose pull && docker compose up -d --force-recreate",
     "prod:build-docker": "cd ../.. && docker buildx build . --push $@",
-    "prod:transfer-files": "bun run transfer-files.ts"
+    "prod:transfer-files": "tsx transfer-files.ts"
   },
   "dependencies": {
     "ssh2-sftp-client": "^11.0.0"
   },
   "devDependencies": {
-    "@types/bun": "^1.1.8",
+    "tsx": "^4.17.0",
     "@types/ssh2-sftp-client": "^9.0.4"
   }
 }

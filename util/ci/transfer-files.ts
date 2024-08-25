@@ -1,4 +1,3 @@
-#!/usr/bin/env bun
 import SFTPClient from "ssh2-sftp-client";
 
 const {
@@ -19,18 +18,18 @@ await sftp.connect({
     privateKey: PRODUCTION_SSH_KEY,
 });
 
-const transfers: string[] = Bun.argv.splice(2);
+const transfers: string[] = process.argv.slice(2);
 
 for (const transfer of transfers) {
     let [sourceFile, targetFile] = transfer.split(":");
 
     try {
         if (targetFile.startsWith("@")) {
-            targetFile = `../../${targetFile.replace("@", "")}`;
+            sourceFile = `../../${sourceFile.replace("@", "")}`;
             console.log(`Uploading ${sourceFile} to ${targetFile}`);
             // await sftp.put(sourceFile, targetFile);
         } else {
-            sourceFile = `../../${sourceFile.replace("@", "")}`;
+            targetFile = `../../${targetFile.replace("@", "")}`;
             console.log(`Downloading ${sourceFile} to ${targetFile}`);
             // await sftp.get(sourceFile, targetFile);
         }

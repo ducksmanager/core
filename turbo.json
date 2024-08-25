@@ -21,8 +21,20 @@
     },
     "prod:build-docker": {},
     "prod:deploy": {},
-    "prod:transfer-files-pre": {},
-    "prod:transfer-files-post": {},
+    "prod:transfer-files-pre": {
+      "passThroughEnv": [
+        "PRODUCTION_SSH_HOST",
+        "PRODUCTION_SSH_USER",
+        "PRODUCTION_SSH_KEY"
+      ]
+    },
+    "prod:transfer-files-post": {
+      "passThroughEnv": [
+        "PRODUCTION_SSH_HOST",
+        "PRODUCTION_SSH_USER",
+        "PRODUCTION_SSH_KEY"
+      ]
+    },
     "dev": {
       "persistent": true,
       "dependsOn": [
