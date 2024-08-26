@@ -23,7 +23,6 @@
     "prod:deploy": {},
     "prod:transfer-files-pre": {
       "passThroughEnv": [
-        "PRODUCTION_TEST",
         "PRODUCTION_SSH_HOST",
         "PRODUCTION_SSH_USER",
         "PRODUCTION_SSH_KEY"

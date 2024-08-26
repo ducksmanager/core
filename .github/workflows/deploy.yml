@@ -54,16 +54,16 @@ jobs:
 
       - name: Retrieve pre-build files
         env:
-          PRODUCTION_TEST: test
           PRODUCTION_SSH_HOST: ${{ secrets.PRODUCTION_SSH_HOST }}
-          PRODUCTION_SSH_FINGERPRINT: ${{ secrets.PRODUCTION_SSH_FINGERPRINT }}
           PRODUCTION_SSH_USER: ${{ secrets.PRODUCTION_SSH_USER }}
           PRODUCTION_SSH_KEY: ${{ secrets.PRODUCTION_SSH_KEY_2 }}
         run: |
           echo $PRODUCTION_SSH_USER | base64
           turbo $changedAppsCommitFilter -F '!~dumili' -F '!~dumili-api' --concurrency 1 prod:transfer-files-pre
 
-      - name: Build Docker images
+      - name: Build and push Docker images
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
         run: |
           turbo $changedAppsCommitFilter -F '!~dumili' -F '!~dumili-api' --concurrency 1 prod:build-docker
           exit 1
@@ -75,7 +75,6 @@ jobs:
       - name: Send post-build files
         env:
           PRODUCTION_SSH_HOST: ${{ secrets.PRODUCTION_SSH_HOST }}
-          PRODUCTION_SSH_FINGERPRINT: ${{ secrets.PRODUCTION_SSH_FINGERPRINT }}
           PRODUCTION_SSH_USER: ${{ secrets.PRODUCTION_SSH_USER }}
           PRODUCTION_SSH_KEY: ${{ secrets.PRODUCTION_SSH_KEY }}
         run: |

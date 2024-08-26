@@ -10,8 +10,6 @@ const {
     PRODUCTION_SSH_KEY: string;
 } = process.env;
 
-console.log('Test is ' + process.env.PRODUCTION_TEST)
-
 const sftp = new SFTPClient();
 
 await sftp.connect({
