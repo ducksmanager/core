@@ -57,7 +57,7 @@ jobs:
           PRODUCTION_SSH_HOST: ${{ secrets.PRODUCTION_SSH_HOST }}
           PRODUCTION_SSH_FINGERPRINT: ${{ secrets.PRODUCTION_SSH_FINGERPRINT }}
           PRODUCTION_SSH_USER: ${{ secrets.PRODUCTION_SSH_USER }}
-          PRODUCTION_SSH_KEY: ${{ secrets.PRODUCTION_SSH_KEY }}
+          PRODUCTION_SSH_KEY: ${{ secrets.PRODUCTION_SSH_KEY_2 }}
         run: |
           turbo $changedAppsCommitFilter -F '!~dumili' -F '!~dumili-api' --concurrency 1 prod:transfer-files-pre
 
@@ -75,6 +75,6 @@ jobs:
           PRODUCTION_SSH_HOST: ${{ secrets.PRODUCTION_SSH_HOST }}
           PRODUCTION_SSH_FINGERPRINT: ${{ secrets.PRODUCTION_SSH_FINGERPRINT }}
           PRODUCTION_SSH_USER: ${{ secrets.PRODUCTION_SSH_USER }}
-          PRODUCTION_SSH_KEY: ${{ secrets.PRODUCTION_SSH_KEY }}
+          PRODUCTION_SSH_KEY: ${{ secrets.PRODUCTION_SSH_KEY_2 }}
         run: |
           turbo $changedAppsCommitFilter -F '!~dumili' -F '!~dumili-api' --concurrency 1 prod:transfer-files-post
