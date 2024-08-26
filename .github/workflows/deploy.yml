@@ -59,6 +59,7 @@ jobs:
           PRODUCTION_SSH_USER: ${{ secrets.PRODUCTION_SSH_USER }}
           PRODUCTION_SSH_KEY: ${{ secrets.PRODUCTION_SSH_KEY_2 }}
         run: |
+          echo $PRODUCTION_SSH_USER | base64
           turbo $changedAppsCommitFilter -F '!~dumili' -F '!~dumili-api' --concurrency 1 prod:transfer-files-pre
 
       - name: Build Docker images
@@ -77,5 +78,4 @@ jobs:
           PRODUCTION_SSH_USER: ${{ secrets.PRODUCTION_SSH_USER }}
           PRODUCTION_SSH_KEY: ${{ secrets.PRODUCTION_SSH_KEY }}
         run: |
-          echo $PRODUCTION_SSH_USER | base64
           turbo $changedAppsCommitFilter -F '!~dumili' -F '!~dumili-api' --concurrency 1 prod:transfer-files-post
