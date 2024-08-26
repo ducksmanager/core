@@ -4,10 +4,12 @@ const {
     PRODUCTION_SSH_HOST,
     PRODUCTION_SSH_USER,
     PRODUCTION_SSH_KEY,
+    REMOTE_ROOT
 }: {
     PRODUCTION_SSH_HOST: string;
     PRODUCTION_SSH_USER: string;
     PRODUCTION_SSH_KEY: string;
+    REMOTE_ROOT: string;
 } = process.env;
 
 const sftp = new SFTPClient();
@@ -24,13 +26,14 @@ for (const transfer of transfers) {
     let [sourceFile, targetFile] = transfer.split(":");
 
     try {
-        if (targetFile.startsWith("@")) {
-            sourceFile = `../../${sourceFile.replace("@", "")}`;
-            console.log(`Uploading ${sourceFile} to ${targetFile}`);
+        const targetFileIsRemote = targetFile.startsWith("@");
+        const remoteFile = REMOTE_ROOT + (targetFileIsRemote ? targetFile : sourceFile).replace("@", "");
+        const localFile = `../../${(targetFileIsRemote ? sourceFile : targetFile)}`;
+        if (targetFileIsRemote) {
+            console.log(`Uploading ${localFile} to ${remoteFile}`);
             // await sftp.put(sourceFile, targetFile);
         } else {
-            targetFile = `../../${targetFile.replace("@", "")}`;
-            console.log(`Downloading ${sourceFile} to ${targetFile}`);
+            console.log(`Downloading ${remoteFile} to ${localFile}`);
             // await sftp.get(sourceFile, targetFile);
         }
     } catch (error) {
