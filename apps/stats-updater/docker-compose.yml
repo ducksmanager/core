@@ -5,7 +5,7 @@ services:
     env_file:
       - .env
     environment:
-      - DATABASE_URL_DM_STATS="${DATABASE_URL_DM_STATS}_new"
+      - DATABASE_URL_DM_STATS=${DATABASE_URL_DM_STATS}_new
     networks:
       - dm-server_db-network
       - ducksmanager_dm-network
