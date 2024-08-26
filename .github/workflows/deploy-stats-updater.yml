@@ -46,7 +46,7 @@ jobs:
           fingerprint: ${{ secrets.PRODUCTION_SSH_FINGERPRINT }}
           username: ${{ secrets.PRODUCTION_SSH_USER }}
           key: ${{ secrets.PRODUCTION_SSH_KEY }}
-          source: /home/bperel/workspace/DucksManager2/apps/stats-updater/.env.prod.local
+          source: /home/bperel/workspace/DucksManager2/apps/stats-updater/.env
           target: apps/stats-updater/.env
 
       - name: Build stats-updater bundle
