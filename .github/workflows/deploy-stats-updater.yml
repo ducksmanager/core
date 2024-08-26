@@ -38,16 +38,16 @@ jobs:
       - name: Install dependencies
         run: pnpm -r install
 
-      - name: Download api .env file
-        uses: nicklasfrahm/scp-action@main
-        with:
-          direction: download
-          host: ${{ secrets.PRODUCTION_SSH_HOST }}
-          fingerprint: ${{ secrets.PRODUCTION_SSH_FINGERPRINT }}
-          username: ${{ secrets.PRODUCTION_SSH_USER }}
-          key: ${{ secrets.PRODUCTION_SSH_KEY }}
-          source: /home/bperel/workspace/DucksManager2/apps/stats-updater/.env
-          target: apps/stats-updater/.env
+      # - name: Download api .env file
+      #   uses: nicklasfrahm/scp-action@main
+      #   with:
+      #     direction: download
+      #     host: ${{ secrets.PRODUCTION_SSH_HOST }}
+      #     fingerprint: ${{ secrets.PRODUCTION_SSH_FINGERPRINT }}
+      #     username: ${{ secrets.PRODUCTION_SSH_USER }}
+      #     key: ${{ secrets.PRODUCTION_SSH_KEY }}
+      #     source: /home/bperel/workspace/DucksManager2/apps/stats-updater/.env
+      #     target: apps/stats-updater/.env
 
       - name: Build stats-updater bundle
         run: pnpm build:stats-updater
