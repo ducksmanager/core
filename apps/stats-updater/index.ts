@@ -23,6 +23,7 @@ dotenv.config();
 for (const envKey of [
   "DATABASE_URL_DM_STATS",
   "DATABASE_NAME_COA",
+  "DATABASE_NAME_DM",
   "DATABASE_NAME_DM_STATS",
   "DM_STATS_DDL_PATH",
 ]) {
@@ -34,13 +35,19 @@ for (const envKey of [
 
 const { DATABASE_URL_DM_STATS,
   DATABASE_NAME_COA,
+  DATABASE_NAME_DM,
   DATABASE_NAME_DM_STATS,
   DM_STATS_DDL_PATH } = process.env as {
     DATABASE_URL_DM_STATS: string,
     DATABASE_NAME_COA: string,
+    DATABASE_NAME_DM: string,
     DATABASE_NAME_DM_STATS: string,
     DM_STATS_DDL_PATH: string,
   }
+
+// These are required for the respective Prisma clients to work
+process.env.DATABASE_URL_COA = DATABASE_URL_DM_STATS.replace(/\/[^/]+$/, `/${DATABASE_NAME_COA}`);
+process.env.DATABASE_URL_DM = DATABASE_URL_DM_STATS.replace(/\/[^/]+$/, `/${DATABASE_NAME_DM}`);
 
 const [_protocol, _username, MYSQL_ROOT_PASSWORD, MYSQL_HOST, MYSQL_PORT, DATABASE_NAME_DM_STATS_NEW] = (DATABASE_URL_DM_STATS).split(/\W+/)
 
