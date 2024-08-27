@@ -27,7 +27,7 @@ for (const transfer of transfers) {
 
     try {
         const targetFileIsRemote = targetFile.startsWith("@");
-        const remoteFile = REMOTE_ROOT + (targetFileIsRemote ? targetFile : sourceFile).replace("@", "");
+        const remoteFile = `${REMOTE_ROOT}/${(targetFileIsRemote ? targetFile : sourceFile).replace("@", "")}`;
         const localFile = `../../${(targetFileIsRemote ? sourceFile : targetFile)}`;
         if (targetFileIsRemote) {
             console.log(`Uploading ${localFile} to ${remoteFile}`);
