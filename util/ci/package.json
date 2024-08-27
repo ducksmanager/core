@@ -5,7 +5,6 @@
   },
   "type": "module",
   "scripts": {
-    "prod:deploy": "cd $REMOTE_ROOT && docker compose pull && docker compose up -d --force-recreate",
     "prod:build-docker": "cd ../.. && docker buildx build . --push $@",
     "prod:transfer-files": "tsx transfer-files.ts"
   },
