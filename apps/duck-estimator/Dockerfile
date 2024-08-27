@@ -32,7 +32,6 @@ COPY package.json ./
 COPY pnpm-lock.yaml ./
 COPY pnpm-workspace.yaml ./
 COPY --from=build /app/packages/prisma-schemas ./packages/prisma-schemas
-COPY --from=build /app/packages/prisma-schemas/dist/ ./packages/prisma-schemas
 
 WORKDIR /app/apps/duck-estimator
 COPY apps/duck-estimator/package.json ./
