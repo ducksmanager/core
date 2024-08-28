@@ -69,6 +69,7 @@ services:
     command: mariadb -uroot -p${MYSQL_ROOT_PASSWORD} -h db dm -e "CALL generate_sprite_names"
     networks:
       - dm-server_db-network
+      - ducksmanager_dm-network
 
   sentry-relay:
     image: getsentry/relay
@@ -82,6 +83,8 @@ services:
 networks:
   dm2-network:
   public-network:
+    external: true
+  ducksmanager_dm-network:
     external: true
   dm-server_db-network:
     external: true
