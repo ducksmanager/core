@@ -31,10 +31,10 @@ for (const transfer of transfers) {
         const localFile = `../../${(targetFileIsRemote ? sourceFile : targetFile)}`;
         if (targetFileIsRemote) {
             console.log(`Uploading ${localFile} to ${remoteFile}`);
-            await sftp.put(sourceFile, remoteFile);
+            await sftp.put(localFile, remoteFile);
         } else {
             console.log(`Downloading ${remoteFile} to ${localFile}`);
-            await sftp.get(sourceFile, remoteFile);
+            await sftp.get(remoteFile, localFile);
         }
     } catch (error) {
         console.error("Error:", error.message);
