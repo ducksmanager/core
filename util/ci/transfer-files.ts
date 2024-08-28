@@ -38,6 +38,8 @@ for (const transfer of transfers) {
         }
     } catch (error) {
         console.error("Error:", error.message);
+        sftp.end();
+        process.exit(1);
     } finally {
         sftp.end();
     }
