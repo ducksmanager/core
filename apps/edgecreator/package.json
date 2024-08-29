@@ -13,7 +13,7 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "typecheck": "vue-tsc --noEmit",
-    "prod:deploy": "cd $REMOTE_ROOT/apps/edgecreator && docker compose pull && docker compose up -d --force-recreate",
+    "prod:deploy": "pnpm -F '~ci' prod:deploy apps/edgecreator",
     "prod:build-docker": "pnpm -F '~ci' prod:build-docker -f apps/edgecreator/Dockerfile -t ghcr.io/bperel/edgecreator-app:websocket && pnpm -F '~ci' prod:build-docker -f apps/edgecreator/api/Dockerfile -t ghcr.io/bperel/edgecreator-api:websocket",
     "prod:transfer-files-pre": "pnpm -F '~ci' prod:transfer-files @apps/edgecreator/.env.prod.local:apps/edgecreator/.env @apps/edgecreator/api/.env.prod.local:apps/edgecreator/api/.env @packages/prisma-clients/.env.prod.local:packages/prisma-schemas/.env",
     "prod:transfer-files-post": "pnpm -F '~ci' prod:transfer-files apps/edgecreator/docker-compose.yml:@apps/edgecreator/docker-compose.yml apps/edgecreator/config/sentry-relay/config.yml:@apps/edgecreator/config/sentry-relay/config.yml"
