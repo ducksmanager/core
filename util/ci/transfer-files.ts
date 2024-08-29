@@ -22,25 +22,23 @@ await sftp.connect({
 
 const transfers: string[] = process.argv.slice(2);
 
-for (const transfer of transfers) {
+await Promise.all(transfers.map((transfer) => {
     let [sourceFile, targetFile] = transfer.split(":");
 
-    try {
-        const targetFileIsRemote = targetFile.startsWith("@");
-        const remoteFile = `${REMOTE_ROOT}/${(targetFileIsRemote ? targetFile : sourceFile).replace("@", "")}`;
-        const localFile = `../../${(targetFileIsRemote ? sourceFile : targetFile)}`;
-        if (targetFileIsRemote) {
-            console.log(`Uploading ${localFile} to ${remoteFile}`);
-            await sftp.put(localFile, remoteFile);
-        } else {
-            console.log(`Downloading ${remoteFile} to ${localFile}`);
-            await sftp.get(remoteFile, localFile);
-        }
-    } catch (error) {
-        console.error("Error:", error.message);
-        sftp.end();
-        process.exit(1);
-    } finally {
-        sftp.end();
+    const targetFileIsRemote = targetFile.startsWith("@");
+    const remoteFile = `${REMOTE_ROOT}/${(targetFileIsRemote ? targetFile : sourceFile).replace("@", "")}`;
+    const localFile = `../../${(targetFileIsRemote ? sourceFile : targetFile)}`;
+    if (targetFileIsRemote) {
+        console.log(`Uploading ${localFile} to ${remoteFile}`);
+        return sftp.put(localFile, remoteFile);
+    } else {
+        console.log(`Downloading ${remoteFile} to ${localFile}`);
+        return sftp.get(remoteFile, localFile);
     }
-}
+})).catch((error) => {
+    console.error("Error:", error.message);
+    sftp.end();
+    process.exit(1);
+}).finally(() => {
+    sftp.end();
+})
