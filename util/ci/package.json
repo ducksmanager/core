@@ -5,7 +5,7 @@
   },
   "type": "module",
   "scripts": {
-    "prod:build-docker": "cd ../.. && docker buildx build . --cache-to=\"type=registry,ref=$REPO_NAME:buildcache,mode=max\" --cache-from=\"type=registry,ref=$REPO_NAME:buildcache\" -t $REPO_NAME --push $@",
+    "prod:build-docker": "export CACHE_REF=\"${REPO_NAME/:/-}:buildcache\"; cd ../.. && docker buildx build . --cache-to=\"type=registry,ref=${CACHE_REF},mode=max\" --cache-from=\"type=registry,ref=${CACHE_REF}\" -t $REPO_NAME --push $@",
     "prod:deploy": "echo \"$PRODUCTION_SSH_KEY\" | ssh -t $PRODUCTION_SSH_USER@$PRODUCTION_SSH_HOST \"cd $REMOTE_ROOT/$1 && docker compose up -d --force-recreate $2\"",
     "prod:transfer-files": "tsx transfer-files.ts"
   },
