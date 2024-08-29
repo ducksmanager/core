@@ -70,6 +70,8 @@ jobs:
         run: |
           turbo $changedAppsCommitFilter -F '!~ci' -F '!~dumili' -F '!~dumili-api' --concurrency 1 prod:transfer-files-pre
 
+      - uses: docker/setup-buildx-action@v3
+
       - name: Build and push Docker images
         env:
           GITHUB_TOKEN: ${{ github.token }}
