@@ -75,7 +75,6 @@ jobs:
           GITHUB_TOKEN: ${{ github.token }}
         run: |
           turbo $changedAppsCommitFilter -F '!~ci' -F '!~dumili' -F '!~dumili-api' --concurrency 1 prod:build-docker
-          exit 1
 
       - name: Deploy
         run: |
