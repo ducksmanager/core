@@ -7,7 +7,6 @@
     "build": "bun build --target bun --sourcemap index.ts --outfile bundle.mjs",
     "prod:deploy": "cd $REMOTE_ROOT/apps/stats-updater && docker compose pull && docker compose up -d --force-recreate",
     "prod:build-docker": "pnpm -F '~ci' prod:build-docker -f apps/stats-updater/Dockerfile -t ghcr.io/bperel/stats-updater",
-    "prod:transfer-files-pre": "pnpm -F '~ci' prod:transfer-files @apps/stats-updater/.env.prod.local:apps/stats-updater/.env",
     "prod:transfer-files-post": "pnpm -F '~ci' prod:transfer-files apps/stats-updater/docker-compose.yml:@apps/stats-updater/docker-compose.yml"
   },
   "dependencies": {
