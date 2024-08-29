@@ -14,8 +14,8 @@
     "preview": "vite preview",
     "typecheck": "vue-tsc --noEmit",
     "prod:deploy": "pnpm -F '~ci' prod:deploy apps/edgecreator",
-    "prod-build-docker-app": "REPO_NAME=ghcr.io/bperel/edgecreator-app pnpm -F '~ci' prod:build-docker -f apps/edgecreator/Dockerfile --target app",
-    "prod-build-docker-api": "REPO_NAME=ghcr.io/bperel/edgecreator-api pnpm -F '~ci' prod:build-docker -f apps/edgecreator/api/Dockerfile --target api",
+    "prod-build-docker-app": "REPO_NAME=ghcr.io/bperel/edgecreator-app pnpm -F '~ci' prod:build-docker -f apps/edgecreator/Dockerfile",
+    "prod-build-docker-api": "REPO_NAME=ghcr.io/bperel/edgecreator-api pnpm -F '~ci' prod:build-docker -f apps/edgecreator/api/Dockerfile",
     "prod:build-docker": "pnpm run '/^prod-build-docker-/'",
     "prod:transfer-files-pre": "pnpm -F '~ci' prod:transfer-files @apps/edgecreator/.env.prod.local:apps/edgecreator/.env @apps/edgecreator/api/.env.prod.local:apps/edgecreator/api/.env @packages/prisma-clients/.env.prod.local:packages/prisma-schemas/.env",
     "prod:transfer-files-post": "pnpm -F '~ci' prod:transfer-files apps/edgecreator/docker-compose.yml:@apps/edgecreator/docker-compose.yml apps/edgecreator/config/sentry-relay/config.yml:@apps/edgecreator/config/sentry-relay/config.yml"
