@@ -6,7 +6,7 @@
   "scripts": {
     "build": "bun build --target bun --sourcemap index.ts --outfile bundle.mjs",
     "prod:deploy": "pnpm -F '~ci' prod:deploy apps/stats-updater",
-    "prod:build-docker": "pnpm -F '~ci' prod:build-docker -f apps/stats-updater/Dockerfile -t ghcr.io/bperel/stats-updater",
+    "prod:build-docker": "REPO_NAME=ghcr.io/bperel/stats-updater -F '~ci' prod:build-docker -f apps/stats-updater/Dockerfile",
     "prod:transfer-files-post": "pnpm -F '~ci' prod:transfer-files apps/stats-updater/docker-compose.yml:@apps/stats-updater/docker-compose.yml"
   },
   "dependencies": {

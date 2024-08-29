@@ -19,7 +19,11 @@
         "dist/**"
       ]
     },
-    "prod:build-docker": {},
+    "prod:build-docker": {
+      "passThroughEnv": [
+        "REPO_NAME"
+      ]
+    },
     "prod:deploy": {
       "passThroughEnv": [
         "REMOTE_ROOT"

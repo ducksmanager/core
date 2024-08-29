@@ -11,7 +11,7 @@
   "scripts": {
     "build": "rm -rf dist/{api,types} && tsc && tsc-alias",
     "start": "PWDEBUG=1 tsx watch index.ts",
-    "prod:build-docker": "pnpm -F '~ci' prod:build-docker -f apps/duck-estimator/Dockerfile -t ghcr.io/bperel/duck-estimator",
+    "prod:build-docker": "REPO_NAME=ghcr.io/bperel/duck-estimator pnpm -F '~ci' prod:build-docker -f apps/duck-estimator/Dockerfile",
     "prod:transfer-files-pre": "pnpm -F '~ci' prod:transfer-files @apps/duck-estimator/.env.local:apps/duck-estimator/.env",
     "prod:transfer-files-post": "pnpm -F '~ci' prod:transfer-files apps/duck-estimator/docker-compose.yml:@apps/duck-estimator/docker-compose.yml"
   },

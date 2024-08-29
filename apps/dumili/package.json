@@ -13,7 +13,11 @@
     "typecheck": "vue-tsc --noEmit",
     "lint": "eslint .",
     "prod:deploy": "pnpm -F '~ci' prod:deploy apps/dumili",
-    "prod:build-docker": "pnpm -F '~ci' prod:build-docker -f apps/dumili/Dockerfile --target web -t ghcr.io/bperel/dumili-app && pnpm -F '~ci' prod:build-docker -f apps/dumili/Dockerfile --target api -t ghcr.io/bperel/dumili-api && pnpm -F '~ci' prod:build-docker -f apps/dumili/kumiko/Dockerfile -t ghcr.io/bperel/kumiko && pnpm -F '~ci' prod:build-docker -f apps/dumili/paddleocr/Dockerfile -t ghcr.io/bperel/paddleocr",
+    "prod-build-docker-web": "REPO_NAME=ghcr.io/bperel/dumili-app pnpm -F '~ci' prod:build-docker -f apps/dumili/Dockerfile --target web",
+    "prod-build-docker-api": "REMO_NAME=ghcr.io/bperel/dumili-api pnpm -F '~ci' prod:build-docker -f apps/dumili/Dockerfile --target api",
+    "prod-build-docker-kumiko": "REPO_NAME=ghcr.io/bperel/kumiko pnpm -F '~ci' prod:build-docker -f apps/dumili/kumiko/Dockerfile",
+    "prod-build-docker-paddleocr": "REPO_NAME=ghcr.io/bperel/paddleocr pnpm -F '~ci' prod:build-docker -f apps/dumili/paddleocr/Dockerfile",
+    "prod:build-docker": "pnpm run '/^prod-build-docker-/'",
     "prod:transfer-files-pre": "pnpm -F '~ci' prod:transfer-files @apps/dumili/api/.env.prod.local:apps/dumili/api/.env @apps/web/.env.prod.local:apps/web/.env.prod.local",
     "prod:transfer-files-post": "pnpm -F '~ci' prod:transfer-files apps/dumili/docker-compose.yml:@apps/dumili/docker-compose.yml"
   },
