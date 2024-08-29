@@ -1,0 +1,14 @@
+services:
+  backup:
+    init: true
+    image: ghcr.io/bperel/dm-backup
+    env_file:
+      - ./.env.prod.local
+    networks:
+      - dm-server_db-network
+      - ducksmanager_dm-network
+networks:
+  ducksmanager_dm-network:
+    external: true
+  dm-server_db-network:
+    external: true
