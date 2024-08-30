@@ -9,15 +9,13 @@
   },
   "scripts": {
     "build": "vite build",
-    "dev": "concurrently -n vite,vue-tsc \"vite --port 8002\" \"vue-tsc --noEmit --watch\"",
+    "dev": "VITE_EDGES_PATH=`realpath ../edges/edges` concurrently -n vite,vue-tsc \"vite --port 8002\" \"vue-tsc --noEmit --watch\"",
     "lint": "eslint .",
     "preview": "vite preview",
     "typecheck": "vue-tsc --noEmit",
-    "prod:deploy": "DIR=apps/edgecreator pnpm -F '~ci' prod:deploy",
-    "prod-build-docker-app": "REPO_NAME=ghcr.io/bperel/edgecreator-app pnpm -F '~ci' prod:build-docker -f apps/edgecreator/Dockerfile",
-    "prod-build-docker-api": "REPO_NAME=ghcr.io/bperel/edgecreator-api pnpm -F '~ci' prod:build-docker -f apps/edgecreator/api/Dockerfile",
-    "prod:build-docker": "pnpm run '/^prod-build-docker-/'",
-    "prod:transfer-files-pre": "pnpm -F '~ci' prod:transfer-files @apps/edgecreator/.env.prod.local:apps/edgecreator/.env @apps/edgecreator/api/.env.prod.local:apps/edgecreator/api/.env @packages/prisma-clients/.env.prod.local:packages/prisma-schemas/.env",
+    "prod:deploy": "DIR=apps/edgecreator pnpm -F '~ci' prod:docker-compose-up",
+    "prod-build-docker": "REPO_NAME=ghcr.io/bperel/edgecreator-app pnpm -F '~ci' prod:build-docker -f apps/edgecreator/Dockerfile",
+    "prod:transfer-files-pre": "pnpm -F '~ci' prod:transfer-files @apps/edgecreator/.env:apps/edgecreator/.env @packages/prisma-clients/.env.prod.local:packages/prisma-schemas/.env",
     "prod:transfer-files-post": "pnpm -F '~ci' prod:transfer-files apps/edgecreator/docker-compose.yml:@apps/edgecreator/docker-compose.yml apps/edgecreator/config/sentry-relay/config.yml:@apps/edgecreator/config/sentry-relay/config.yml"
   },
   "dependencies": {

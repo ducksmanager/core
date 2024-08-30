@@ -10,17 +10,6 @@ services:
       - public-network
       - ec2-network
 
-  api:
-    container_name: edgecreator-api
-    image: ghcr.io/bperel/edgecreator-api
-    restart: always
-    volumes:
-      - "../../../edges:/home/edges"
-    networks:
-      - public-network
-      - ec2-network
-      - dm-server_db-network
-
   app-websocket:
     container_name: edgecreator-app-websocket
     image: ghcr.io/bperel/edgecreator-app:websocket
@@ -30,17 +19,6 @@ services:
     networks:
       - public-network
       - ec2-network
-
-  api-websocket:
-    container_name: edgecreator-api-websocket
-    image: ghcr.io/bperel/edgecreator-api:websocket
-    restart: always
-    volumes:
-      - "../../../edges:/home/edges"
-    networks:
-      - public-network
-      - ec2-network
-      - dm-server_db-network
 
   sentry-relay:
     image: getsentry/relay
@@ -54,6 +32,4 @@ services:
 networks:
   ec2-network:
   public-network:
-    external: true
-  dm-server_db-network:
     external: true

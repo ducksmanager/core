@@ -6,10 +6,10 @@ services:
     container_name: edges
     restart: always
     env_file:
-      - .env.prod.local
+      - .env
     working_dir: /usr/share/nginx/html
     volumes:
-      - "../../../edges:/usr/share/nginx/html/edges"
+      - "${EDGES_PATH}:/usr/share/nginx/html/edges"
     networks:
       - public-network
 

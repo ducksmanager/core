@@ -71,7 +71,7 @@ jobs:
 
       - name: Retrieve pre-build files
         run: |
-          turbo $changedAppsCommitFilter -F '!~ci' -F '!~dumili' -F '!~dumili-api' --concurrency 1 prod:transfer-files-pre
+          turbo $changedAppsCommitFilter -F '!~ci' -F '!~dumili' -F '!~dumili-api' prod:transfer-files-pre
 
       - uses: docker/setup-buildx-action@v3
 
@@ -79,12 +79,12 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ github.token }}
         run: |
-          turbo $changedAppsCommitFilter -F '!~ci' -F '!~dumili' -F '!~dumili-api' --concurrency 1 prod:build-docker
+          turbo $changedAppsCommitFilter -F '!~ci' -F '!~dumili' -F '!~dumili-api' prod:build-docker
 
       - name: Send post-build files
         run: |
-          turbo $changedAppsCommitFilter -F '!~ci' -F '!~dumili' -F '!~dumili-api' --concurrency 1 prod:transfer-files-post
+          turbo $changedAppsCommitFilter -F '!~ci' -F '!~dumili' -F '!~dumili-api' prod:transfer-files-post
 
       - name: Deploy
         run: |
-          turbo $changedAppsCommitFilter -F '!~ci' -F '!~dumili' -F '!~dumili-api' --concurrency 1 prod:deploy
+          turbo $changedAppsCommitFilter -F '!~ci' -F '!~dumili' -F '!~dumili-api' prod:deploy
