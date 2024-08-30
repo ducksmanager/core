@@ -9,7 +9,7 @@ services:
       - .env.prod.local
     working_dir: /usr/share/nginx/html
     volumes:
-      - "../../edges:/usr/share/nginx/html/edges"
+      - "../../../edges:/usr/share/nginx/html/edges"
     networks:
       - public-network
 

@@ -1,4 +1,4 @@
-version: '2.4'
+version: "2.4"
 services:
   app:
     container_name: edgecreator-app
@@ -15,12 +15,12 @@ services:
     image: ghcr.io/bperel/edgecreator-api
     restart: always
     volumes:
-      - '../edges:/home/edges'
+      - "../../../edges:/home/edges"
     networks:
       - public-network
       - ec2-network
       - dm-server_db-network
-      
+
   app-websocket:
     container_name: edgecreator-app-websocket
     image: ghcr.io/bperel/edgecreator-app:websocket
@@ -36,7 +36,7 @@ services:
     image: ghcr.io/bperel/edgecreator-api:websocket
     restart: always
     volumes:
-      - '../edges:/home/edges'
+      - "../../../edges:/home/edges"
     networks:
       - public-network
       - ec2-network
