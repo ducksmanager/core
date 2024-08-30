@@ -12,7 +12,7 @@
     "preview": "vite preview",
     "typecheck": "vue-tsc --noEmit",
     "lint": "eslint .",
-    "prod:deploy": "pnpm -F '~ci' prod:deploy apps/dumili",
+    "prod:deploy": "DIR=apps/dumili pnpm -F '~ci' prod:deploy",
     "prod-build-docker-web": "REPO_NAME=ghcr.io/bperel/dumili-app pnpm -F '~ci' prod:build-docker -f apps/dumili/Dockerfile --target web",
     "prod-build-docker-api": "REPO_NAME=ghcr.io/bperel/dumili-api pnpm -F '~ci' prod:build-docker -f apps/dumili/Dockerfile --target api",
     "prod-build-docker-kumiko": "REPO_NAME=ghcr.io/bperel/kumiko pnpm -F '~ci' prod:build-docker -f apps/dumili/kumiko/Dockerfile",
