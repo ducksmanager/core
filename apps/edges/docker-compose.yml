@@ -2,7 +2,7 @@ version: "3.2"
 
 services:
   edges:
-    image: "bperel/dm-edges"
+    image: "ghcr.io/bperel/dm-edges"
     container_name: edges
     restart: always
     env_file:
