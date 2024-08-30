@@ -3,8 +3,6 @@ services:
   app:
     container_name: edgecreator-app
     image: ghcr.io/bperel/edgecreator-app
-    depends_on:
-      - api
     restart: always
     networks:
       - public-network
@@ -13,8 +11,6 @@ services:
   app-websocket:
     container_name: edgecreator-app-websocket
     image: ghcr.io/bperel/edgecreator-app:websocket
-    depends_on:
-      - api
     restart: always
     networks:
       - public-network
