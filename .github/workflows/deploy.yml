@@ -15,6 +15,9 @@ jobs:
     environment: production
     env:
       REMOTE_ROOT: workspace/DucksManager2
+      PRODUCTION_SSH_HOST: ${{ secrets.PRODUCTION_SSH_HOST }}
+      PRODUCTION_SSH_USER: ${{ secrets.PRODUCTION_SSH_USER }}
+      PRODUCTION_SSH_KEY: ${{ secrets.PRODUCTION_SSH_KEY }}
     name: deploy
     steps:
       - uses: actions/checkout@v4
@@ -67,10 +70,6 @@ jobs:
           turbo $changedAppsCommitFilter -F '!~dumili' -F '!~dumili-api' build
 
       - name: Retrieve pre-build files
-        env:
-          PRODUCTION_SSH_HOST: ${{ secrets.PRODUCTION_SSH_HOST }}
-          PRODUCTION_SSH_USER: ${{ secrets.PRODUCTION_SSH_USER }}
-          PRODUCTION_SSH_KEY: ${{ secrets.PRODUCTION_SSH_KEY }}
         run: |
           turbo $changedAppsCommitFilter -F '!~ci' -F '!~dumili' -F '!~dumili-api' --concurrency 1 prod:transfer-files-pre
 
@@ -87,9 +86,5 @@ jobs:
           turbo $changedAppsCommitFilter -F '!~ci' -F '!~dumili' -F '!~dumili-api' --concurrency 1 prod:deploy
 
       - name: Send post-build files
-        env:
-          PRODUCTION_SSH_HOST: ${{ secrets.PRODUCTION_SSH_HOST }}
-          PRODUCTION_SSH_USER: ${{ secrets.PRODUCTION_SSH_USER }}
-          PRODUCTION_SSH_KEY: ${{ secrets.PRODUCTION_SSH_KEY }}
         run: |
           turbo $changedAppsCommitFilter -F '!~ci' -F '!~dumili' -F '!~dumili-api' --concurrency 1 prod:transfer-files-post

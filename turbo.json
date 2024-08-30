@@ -26,7 +26,10 @@
     },
     "prod:deploy": {
       "passThroughEnv": [
-        "REMOTE_ROOT"
+        "REMOTE_ROOT",
+        "PRODUCTION_SSH_HOST",
+        "PRODUCTION_SSH_USER",
+        "PRODUCTION_SSH_KEY"
       ]
     },
     "prod:transfer-files-pre": {
