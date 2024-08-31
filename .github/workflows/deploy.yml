@@ -56,7 +56,11 @@ jobs:
 
       - name: Check apps changed since the last successful commit
         run: |
-          changedApps=$(pnpm -r $changedAppsCommitFilter ls --depth -1 -j)
+          if [ "${{ env.NX_HEAD }}" == "ffffff" ]; then
+            changedAppsCommitFilter=''
+          else
+            changedAppsCommitFilter=" -F '[${{ env.NX_HEAD }}]'"
+          fi
           echo "Changed apps: $changedApps"
 
       - name: Install dependencies
