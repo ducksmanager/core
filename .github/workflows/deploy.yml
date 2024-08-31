@@ -64,6 +64,7 @@ jobs:
       - name: Install dependencies
         run: |
           pnpm -r -F $changedAppsCommitFilter -F '~prisma-schemas' i
+          ls -la packages/api
 
       - name: Build apps
         run: |
