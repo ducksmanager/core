@@ -1,14 +1,10 @@
 name: deploy
 
-defaults:
-  run:
-    shell: bash
-
 on:
   workflow_dispatch:
   push:
     branches:
-      - "test-monorepo-build"
+      - "master"
 jobs:
   build:
     runs-on: ubuntu-latest
