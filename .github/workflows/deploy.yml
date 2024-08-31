@@ -30,7 +30,7 @@ jobs:
       - name: Derive appropriate SHAs for base and head for `nx affected` commands
         uses: nrwl/nx-set-shas@v4
         with:
-          main-branch-name: "${GITHUB_REF#refs/heads/}"
+          main-branch-name: master
         #   fallback-sha: "ffffff"
 
       - run: |
