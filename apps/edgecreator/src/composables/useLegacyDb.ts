@@ -145,7 +145,11 @@ export default () => {
             }
             image = image.results!;
           } else {
-            image = { dimensions: await getImageSize(`/edges/${elementPath}`) };
+            image = {
+              dimensions: await getImageSize(
+                `${process.env.VITE_EDGES_PATH}/${elementPath}`,
+              ),
+            };
           }
 
           const embeddedImageHeight =

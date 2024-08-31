@@ -26,10 +26,10 @@
     "@sentry/tracing": "^7.114.0",
     "@sentry/vue": "^7.119.0",
     "@unhead/vue": "^1.10.0",
-    "@vueuse/core": "^10.11.1",
+    "@vueuse/core": "^11.0.3",
     "bootstrap": "^5.3.3",
-    "bootstrap-vue-next": "^0.24.9",
-    "chart.js": "^4.4.3",
+    "bootstrap-vue-next": "^0.24.11",
+    "chart.js": "^4.4.4",
     "dayjs": "^1.11.13",
     "js-cookie": "^3.0.5",
     "page-flip": "^2.0.7",
@@ -48,15 +48,15 @@
     "~socket.io-services": "workspace:*"
   },
   "devDependencies": {
-    "@antfu/eslint-config": "^2.26.0",
+    "@antfu/eslint-config": "^2.27.3",
     "@histoire/plugin-vue": "^0.17.17",
     "@iconify-json/bi": "^1.1.24",
     "@intlify/unplugin-vue-i18n": "^4.0.0",
     "@types/js-cookie": "^3.0.6",
     "@types/mapbox__mapbox-gl-geocoder": "^5.0.0",
     "@types/page-flip": "^2.0.3",
-    "@typescript-eslint/parser": "^7.0.0",
-    "@vitejs/plugin-vue": "^5.1.2",
+    "@typescript-eslint/parser": "^7.18.0",
+    "@vitejs/plugin-vue": "^5.1.3",
     "@vue-macros/reactivity-transform": "^1.0.3",
     "@vue/test-utils": "^2.4.6",
     "concurrently": "^8.2.2",
@@ -79,8 +79,8 @@
     "vite-plugin-pages": "^0.32.3",
     "vite-plugin-vue-layouts": "^0.11.0",
     "vitest": "^2.0.5",
-    "vue-tsc": "^2.0.29",
-    "wait-on": "^7.2.0"
+    "vue-tsc": "^2.1.2",
+    "wait-on": "^8.0.0"
   },
   "peerDependencies": {
     "pinia": "^2.1.7",

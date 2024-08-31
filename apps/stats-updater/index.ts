@@ -48,10 +48,23 @@ const {
 };
 
 // These are required for the respective Prisma clients to work
-process.env.DATABASE_URL_COA = DATABASE_URL_DM_STATS.replace(/\/[^/]+$/, `/${DATABASE_NAME_COA}`);
-process.env.DATABASE_URL_DM = DATABASE_URL_DM_STATS.replace(/\/[^/]+$/, `/${DATABASE_NAME_DM}`);
+process.env.DATABASE_URL_COA = DATABASE_URL_DM_STATS.replace(
+  /\/[^/]+$/,
+  `/${DATABASE_NAME_COA}`,
+);
+process.env.DATABASE_URL_DM = DATABASE_URL_DM_STATS.replace(
+  /\/[^/]+$/,
+  `/${DATABASE_NAME_DM}`,
+);
 
-const [_protocol, _username, MYSQL_ROOT_PASSWORD, MYSQL_HOST, MYSQL_PORT, DATABASE_NAME_DM_STATS_NEW] = (DATABASE_URL_DM_STATS).split(/\W+/)
+const [
+  _protocol,
+  _username,
+  MYSQL_ROOT_PASSWORD,
+  MYSQL_HOST,
+  MYSQL_PORT,
+  DATABASE_NAME_DM_STATS_NEW,
+] = DATABASE_URL_DM_STATS.split(/\W+/);
 
 const tables = [
   "auteurs_histoires",
