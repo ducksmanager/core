@@ -16,7 +16,7 @@ import dayjs from "dayjs";
 
 import type { issue } from "~prisma-schemas/schemas/dm";
 
-const customIssues: (issue & { issuecode: string })[] = [
+const customIssues: issue[] = [
   {
     id: 167808,
     publicationcode: "fr/MP",

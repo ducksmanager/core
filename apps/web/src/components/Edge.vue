@@ -8,7 +8,7 @@
     v-if="embedded"
     :id="id"
     :src="src"
-    :issuecode="issue.issuecode"
+    :issuecode="issuecode"
     :sprite-path="spritePath"
     :invisible="invisible"
     :highlighted="highlighted"
@@ -23,12 +23,12 @@
     :extra-points="popularity"
   >
     <template #title>
-      <Issue :issuecode="issue.issuecode" />
+      <Issue :issuecode="issuecode" />
     </template>
     <EdgeContents
       :id="id"
       :src="src"
-      :issuecode="issue.issuecode"
+      :issuecode="issuecode"
       :sprite-path="spritePath"
       :invisible="invisible"
       :highlighted="highlighted"
@@ -41,13 +41,12 @@
 </template>
 
 <script setup lang="ts">
-import type { inducks_issue } from "~prisma-schemas/schemas/coa";
 import type { issue_condition } from "~prisma-schemas/schemas/dm";
 
 const SPRITES_ROOT = "https://res.cloudinary.com/dl7hskxab/image/sprite/";
 const {
   creationDate = null,
-  issue,
+  issuecode,
   issueCondition,
   spritePath = null,
   popularity = null,
@@ -57,7 +56,7 @@ const {
   orientation = "vertical",
 } = defineProps<{
   id: string;
-  issue: Pick<inducks_issue, "publicationcode" | "issuecode" | "issuenumber">;
+  issuecode: string;
   issueCondition?: issue_condition;
   creationDate?: string;
   popularity?: number | null;
@@ -78,17 +77,17 @@ defineSlots<{
 const CLOUDINARY_ROTATED_URL =
   "https://res.cloudinary.com/dl7hskxab/image/upload/a_270/edges/";
 
-const { publicationNames } = storeToRefs(coa());
+const { publicationNames, issuecodeDetails } = storeToRefs(coa());
 
-let countryCode = $computed(() => issue.publicationcode.split("/")[0]),
-  magazineCode = $computed(() => issue.publicationcode.split("/")[1]),
-  src = $computed(() =>
-    spritePath && !ignoreSprite
+let src = $computed(() => {
+    const { publicationcode, issuenumber } = issuecodeDetails.value[issuecode];
+    const [countrycode, magazineCode] = publicationcode.split("/");
+    return spritePath && !ignoreSprite
       ? `${SPRITES_ROOT}${spritePath}.png`
-      : `${orientation === "vertical" ? import.meta.env.VITE_EDGES_ROOT : CLOUDINARY_ROTATED_URL}${countryCode}/gen/${magazineCode}.${issue.issuenumber.replaceAll(
+      : `${orientation === "vertical" ? import.meta.env.VITE_EDGES_ROOT : CLOUDINARY_ROTATED_URL}${countrycode}/gen/${magazineCode}.${issuenumber.replaceAll(
           " ",
           "",
-        )}.png?${creationDate ? new Date(creationDate).getTime() : "default"}`,
-  ),
+        )}.png?${creationDate ? new Date(creationDate).getTime() : "default"}`;
+  }),
   ignoreSprite = $ref(false);
 </script>

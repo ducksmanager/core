@@ -135,32 +135,25 @@ const retrieveBookstoreCreations = async (): Promise<BookstoreCommentEvent[]> =>
 const retrieveEdgeCreations = async (): Promise<EdgeCreationEvent[]> =>
   (
     await prismaDm.$queryRaw<EdgeCreationEventRaw[]>`
-        select 'edge'                       as type,
-               CONCAT('[', GROUP_CONCAT(json_object(
-                       'publicationcode',
-                       publicationcode,
-                       'issuenumber',
-                       issuenumber
-                   )), ']')                 AS edges,
+        select 'edge'                       AS type,
+               GROUP_CONCAT(issuecode)      AS issuecodes,
                UNIX_TIMESTAMP(creationDate) AS timestamp,
                users
-        from (SELECT tp.publicationcode,
-                     tp.issuenumber,
+        from (SELECT tp.issuecode,
                      tp.dateajout                       AS creationDate,
                      GROUP_CONCAT(DISTINCT tpc.ID_user) AS users
               FROM tranches_pretes tp
                        INNER JOIN users_contributions tpc ON tpc.ID_tranche = tp.ID
               WHERE tp.dateajout > DATE_ADD(NOW(), INTERVAL -1 MONTH)
                 AND NOT (tp.publicationcode = 'fr/JM' AND tp.issuenumber REGEXP '^[0-9]+$')
-                AND NOT (tp.publicationcode = 'be/MMN')
-                AND NOT (tp.publicationcode = 'it/TL')
-                AND NOT (tp.publicationcode = 'se/WDS')
+                AND tp.publicationcode NOT IN ('be/MMN', 'it/TL', 'se/WDS')
               GROUP BY tp.ID) as edges_and_collaborators
         group by DATE_FORMAT(creationDate, '%Y-%m-%d %H:00:00'), edges_and_collaborators.users
+        having count(issuecode) > 0
     `
   ).map((event) => ({
     ...mapUsers<EdgeCreationEvent>(event),
-    edges: JSON.parse(event.edges),
+    issuecodes: event.issuecodes.split(","),
   }));
 
 const retrieveNewMedals = async () =>

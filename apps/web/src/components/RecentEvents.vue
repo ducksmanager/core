@@ -41,7 +41,7 @@ const isCollectionUpdateEvent = (
 
 const isEdgeCreationEvent = (
   event: AbstractEvent,
-): event is EdgeCreationEvent => event.hasOwnProperty("edges");
+): event is EdgeCreationEvent => event.hasOwnProperty("issuecodes");
 
 const fetchEventsAndAssociatedData = async () => {
   await fetchEvents();
@@ -52,9 +52,7 @@ const fetchEventsAndAssociatedData = async () => {
       .map(({ exampleIssuecode }) => exampleIssuecode),
     ...events.value
       .filter((event) => isEdgeCreationEvent(event))
-      .reduce<
-        string[]
-      >((acc, { edges }) => [...acc, ...edges.map(({ issuecode }) => issuecode)], []),
+      .reduce<string[]>((acc, { issuecodes }) => [...acc, ...issuecodes], []),
   ]);
 
   await fetchPublicationNames([
@@ -68,7 +66,7 @@ const fetchEventsAndAssociatedData = async () => {
       .filter((event) => isEdgeCreationEvent(event))
       .reduce<
         string[]
-      >((acc, { edges }) => [...acc, ...edges.map(({ issuecode }) => issuecodeDetails.value[issuecode].publicationcode)], []),
+      >((acc, { issuecodes }) => [...acc, ...issuecodes.map((issuecode) => issuecodeDetails.value[issuecode].publicationcode)], []),
   ]);
 
   await fetchStats(eventUserIds.filter((userId) => userId !== null));

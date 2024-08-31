@@ -62,15 +62,15 @@
       <template v-else>&nbsp;{{ $t("a créé la tranche") }} </template>
       &nbsp;<BookcasePopover
         :id="`event-edges-${event.timestamp}`"
-        :edges="edgeEvent.edges"
+        :issuecodes="edgeEvent.issuecodes"
       >
         <span class="fw-bold" style="cursor: help">
           <Issue
-            :issuecode="edgeEvent.edges[0].issuecode"
+            :issuecode="edgeEvent.issuecodes[0]"
             hide-condition
             :flex="false"
           />&nbsp;<OtherIssues
-            :number="edgeEvent.edges.length"
+            :number="edgeEvent.issuecodes.length"
             :text-single="$t('autre tranche')"
             :text-multiple="$t('autres tranches')"
           />

@@ -4,18 +4,18 @@
     <template #content>
       <Bookcase
         :bookcase-textures="bookcaseTextures"
-        :sorted-bookcase="edges"
+        :sorted-bookcase="issuecodes"
         embedded
       />
       <b-row>
         <b-col
-          v-for="(edge, edgeId) in edges"
-          :key="`bookcase-${id}-issue-${edgeId}`"
+          v-for="(issuecode, idx) in issuecodes"
+          :key="`bookcase-${id}-issue-${idx}`"
           cols="6"
         >
           <Issue
             class="issue"
-            :issuecode="edge.issuecode"
+            :issuecode="issuecode"
             hide-condition
             :flex="false"
           />
@@ -28,7 +28,7 @@
 <script setup lang="ts">
 defineProps<{
   id: string;
-  edges: { issuecode: string }[];
+  issuecodes: string[];
 }>();
 
 const bookcaseTextures = {

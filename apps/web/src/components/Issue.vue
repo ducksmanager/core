@@ -39,7 +39,7 @@ const store = coa();
 const issue = computed(() => store.issuecodeDetails?.[issuecode]);
 const publicationname = computed(
   () =>
-    issue.value.publicationcode &&
+    issue.value?.publicationcode &&
     store.publicationNames?.[issue.value.publicationcode],
 );
 </script>
