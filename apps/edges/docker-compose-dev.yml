@@ -1,7 +1,6 @@
 services:
   edges:
-    build:
-      context: .
+    image: nginx
     container_name: edges
     restart: always
     env_file:
@@ -11,3 +10,5 @@ services:
     working_dir: /usr/share/nginx/html
     volumes:
       - "./edges:/usr/share/nginx/html/edges"
+      - "./nginx-site.conf:/etc/nginx/sites-enabled/default.conf"
+      - "./template-variables.conf:/etc/nginx/templates/10-variables.conf.template"
