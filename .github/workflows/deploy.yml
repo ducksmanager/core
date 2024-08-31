@@ -61,6 +61,7 @@ jobs:
           else
             changedAppsCommitFilter="'[${{ env.NX_HEAD }}]'"
           fi
+          echo "changedAppsCommitFilter=$changedAppsCommitFilter" >> "$GITHUB_ENV"
           changedApps=`pnpm -r -F $changedAppsCommitFilter ls --depth -1`
           echo "Changed apps: $changedApps"
 
