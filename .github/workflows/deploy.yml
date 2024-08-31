@@ -59,7 +59,7 @@ jobs:
           if [ "${{ env.NX_HEAD }}" == "ffffff" ]; then
             changedAppsCommitFilter='none'
           else
-            changedAppsCommitFilter="'[${{ env.NX_HEAD }}]'"
+            changedAppsCommitFilter="[${{ env.NX_HEAD }}]"
           fi
           echo "changedAppsCommitFilter=$changedAppsCommitFilter" >> "$GITHUB_ENV"
           changedApps=`pnpm -r -F $changedAppsCommitFilter ls --depth -1`
