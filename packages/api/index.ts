@@ -83,6 +83,10 @@ const httpServer = createServer(async (req, res) => {
   res.write(JSON.stringify(data));
   res.end();
 });
+
+httpServer.listen(3000);
+console.log("WebSocket open on port 3000");
+
 const io = new ServerWithUser(httpServer, {
   cors: {
     origin: true,
@@ -92,9 +96,6 @@ const io = new ServerWithUser(httpServer, {
 instrument(io, {
   auth: false,
 });
-
-httpServer.listen(3000);
-console.log("WebSocket open on port 3000");
 
 io.use(OptionalAuthMiddleware);
 io.use((_socket, next) => {

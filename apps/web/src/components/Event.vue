@@ -48,7 +48,7 @@
     </template>
     <template v-else-if="collectionUpdateEvent"
       >&nbsp;{{ $t("a ajouté") }}&nbsp;<Issue
-        :issuecode="collectionUpdateEvent.issuecode"
+        :issuecode="collectionUpdateEvent.exampleIssuecode"
         hide-condition
         :flex="false"
       />

@@ -26,10 +26,11 @@ getCurrentInstance()!.appContext.app.provide(
     },
   }),
 );
+console.log("provided");
 const { loadUser } = collection();
 const { isLoadingUser, user } = storeToRefs(collection());
 
-loadUser();
+// loadUser();
 </script>
 
 <style lang="scss">

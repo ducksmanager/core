@@ -13,6 +13,7 @@ import { namespaceEndpoint } from "./types";
 
 export default (io: Server) => {
   (io.of(namespaceEndpoint) as Namespace<Events>).on("connection", (socket) => {
+    console.log("connected to bookstores");
     socket.on("getActiveBookstores", (callback) =>
       prismaDm.bookstore
         .findMany({

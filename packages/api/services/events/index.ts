@@ -59,6 +59,7 @@ const MEDALS_L10N_FR: Record<string, string> = {
 const mapUsers = <T extends AbstractEvent>(event: AbstractEventRaw): T =>
   ({
     ...event,
+
     users:
       event.users?.split(",")?.map((userId) => parseInt(userId)) ||
       (event.userId && [event.userId]) ||
@@ -85,10 +86,10 @@ const retrieveCollectionUpdates = async (): Promise<CollectionUpdateEvent[]> =>
                users.ID                  AS userId,
                UNIX_TIMESTAMP(DateAjout) AS timestamp,
                COUNT(Numero)             AS numberOfIssues,
-               (SELECT CONCAT(Pays, '/', Magazine, '/', Numero)
+               (SELECT issuecode
                 FROM numeros n
                 WHERE n.ID = numeros.ID
-                LIMIT 1)                 AS exampleIssue
+                LIMIT 1)                 AS exampleIssuecode
         FROM numeros
                  INNER JOIN users ON numeros.ID_Utilisateur = users.ID
         WHERE DateAjout > DATE_ADD(NOW(), INTERVAL -1 MONTH)
@@ -98,16 +99,7 @@ const retrieveCollectionUpdates = async (): Promise<CollectionUpdateEvent[]> =>
         GROUP BY users.ID, DATE(DateAjout)
         HAVING COUNT(Numero) > 0
     `
-  ).map((event) => {
-    const [publicationcode, issuenumber] =
-      event.exampleIssue.split(/\/(?=[^/]+$)/);
-    return {
-      ...mapUsers<CollectionUpdateEvent>(event),
-      numberOfIssues: event.numberOfIssues,
-      publicationcode: publicationcode || "",
-      issuenumber: issuenumber || "",
-    } as CollectionUpdateEvent;
-  });
+  ).map((event) => mapUsers(event));
 
 const retrieveCollectionSubscriptionAdditions = async (): Promise<
   CollectionSubscriptionAdditionEvent[]

@@ -43,9 +43,13 @@ const AuthMiddleware = (
 ) => {
   const token = socket.handshake.auth.token;
 
-  if (required && token == null) {
-    next(new Error("No token provided"));
-    return;
+  if (token == null) {
+    if (required) {
+      next(new Error("No token provided"));
+      return;
+    } else {
+      next();
+    }
   }
 
   jwt.verify(

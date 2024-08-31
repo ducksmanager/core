@@ -49,7 +49,7 @@ const fetchEventsAndAssociatedData = async () => {
   await fetchIssuecodeDetails([
     ...events.value
       .filter((event) => isCollectionUpdateEvent(event))
-      .map((event) => event.issuecode || ""),
+      .map(({ exampleIssuecode }) => exampleIssuecode),
     ...events.value
       .filter((event) => isEdgeCreationEvent(event))
       .reduce<
@@ -62,7 +62,7 @@ const fetchEventsAndAssociatedData = async () => {
       .filter((event) => isCollectionUpdateEvent(event))
       .map(
         (event) =>
-          issuecodeDetails.value[event.issuecode].publicationcode || "",
+          issuecodeDetails.value[event.exampleIssuecode].publicationcode || "",
       ),
     ...events.value
       .filter((event) => isEdgeCreationEvent(event))

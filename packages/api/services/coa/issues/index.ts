@@ -6,17 +6,21 @@ import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa/client";
 import type Events from "../types";
 export default (socket: Socket<Events>) => {
   socket.on("getIssues", (issuecodes, callback) =>
-    prismaCoa.inducks_issue
-      .findMany({
-        select: {
-          publicationcode: true,
-          issuenumber: true,
-          issuecode: true,
-        },
-        where: { issuecode: { in: issuecodes } },
-      })
-      .then((data) => data.groupBy("issuecode"))
-      .then(callback),
+    issuecodes.length
+      ? prismaCoa.inducks_issue
+          .findMany({
+            select: {
+              publicationcode: true,
+              issuenumber: true,
+              issuecode: true,
+            },
+            where: {
+              issuecode: { in: issuecodes.filter((issuecode) => issuecode) },
+            },
+          })
+          .then((data) => data.groupBy("issuecode"))
+          .then(callback)
+      : callback({}),
   );
 
   socket.on("getIssuesByPublicationcodes", async (publicationcodes, callback) =>
