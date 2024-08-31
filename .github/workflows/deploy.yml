@@ -52,10 +52,10 @@ jobs:
 
       - name: Check apps changed since the last successful commit
         run: |
-          if [ "${{ env.NX_HEAD }}" == "ffffff" ]; then
+          if [ "${{ env.NX_BASE }}" == "ffffff" ]; then
             changedAppsCommitFilter='none'
           else
-            changedAppsCommitFilter="[${{ env.NX_HEAD }}]"
+            changedAppsCommitFilter="[${{ env.NX_BASE }}]"
           fi
           echo "changedAppsCommitFilter=$changedAppsCommitFilter" >> "$GITHUB_ENV"
           changedApps=`pnpm -r -F $changedAppsCommitFilter ls --depth -1`
