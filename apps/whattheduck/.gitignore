@@ -40,3 +40,4 @@ npm-debug.log*
 .eslintcache
 .eslintrc-auto-import.json
 *.d.ts
+!vue-virtual-scroller.d.ts

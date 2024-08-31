@@ -1,0 +1,92 @@
+name: deploy
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - "master"
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    environment: production
+    env:
+      REMOTE_ROOT: workspace/DucksManager2
+      PRODUCTION_SSH_HOST: ${{ secrets.PRODUCTION_SSH_HOST }}
+      PRODUCTION_SSH_USER: ${{ secrets.PRODUCTION_SSH_USER }}
+      PRODUCTION_SSH_KEY: ${{ secrets.PRODUCTION_SSH_KEY }}
+    name: deploy
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Log in to the Container registry
+        uses: docker/login-action@65b78e6e13532edd9afa3aa52ac7964289d1a9c1
+        with:
+          registry: ghcr.io
+          username: bperel
+          password: ${{ secrets.DOCKER_REGISTRY_TOKEN_DM }}
+
+      - name: Derive appropriate SHAs for base and head for `nx affected` commands
+        uses: nrwl/nx-set-shas@v4
+        with:
+          main-branch-name: "${GITHUB_REF#refs/heads/}"
+        #   fallback-sha: "ffffff"
+
+      - run: |
+          echo "HEAD: ${{ env.NX_HEAD }}"
+          echo "BASE: ${{ env.NX_BASE }}"
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v3
+        with:
+          version: 9
+
+      - name: Use Node.js 18
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          cache: "pnpm"
+
+      - uses: oven-sh/setup-bun@v1
+
+      - name: Check apps changed since the last successful commit
+        run: |
+          if [ "${{ env.NX_HEAD }}" == "ffffff" ]; then
+            changedAppsCommitFilter='none'
+          else
+            changedAppsCommitFilter="[${{ env.NX_HEAD }}]"
+          fi
+          echo "changedAppsCommitFilter=$changedAppsCommitFilter" >> "$GITHUB_ENV"
+          changedApps=`pnpm -r -F $changedAppsCommitFilter ls --depth -1`
+          echo "Changed apps: $changedApps"
+
+      - name: Install dependencies
+        run: |
+          pnpm -r -F $changedAppsCommitFilter i
+
+      - name: Build apps
+        run: |
+          pnpm i -g turbo
+          export NODE_ENV=production
+          turbo -F $changedAppsCommitFilter -F '!~dumili' -F '!~dumili-api' build
+
+      - name: Retrieve pre-build files
+        run: |
+          turbo -F $changedAppsCommitFilter -F '!~ci' -F '!~dumili' -F '!~dumili-api' prod:transfer-files-pre
+
+      - uses: docker/setup-buildx-action@v3
+
+      - name: Build and push Docker images
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          turbo -F $changedAppsCommitFilter -F '!~ci' -F '!~dumili' -F '!~dumili-api' prod:build-docker
+
+      - name: Send post-build files
+        run: |
+          turbo -F $changedAppsCommitFilter -F '!~ci' -F '!~dumili' -F '!~dumili-api' prod:transfer-files-post
+
+      - name: Deploy
+        run: |
+          turbo -F $changedAppsCommitFilter -F '!~ci' -F '!~dumili' -F '!~dumili-api' prod:deploy

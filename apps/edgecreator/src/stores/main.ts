@@ -44,8 +44,9 @@ export const main = defineStore("main", () => {
         country.value &&
         publicationElements.value.map((elementFileName) => ({
           name: elementFileName,
-          url: `${import.meta.env.VITE_EDGES_URL as string
-            }/${country.value!}/elements/${elementFileName}`,
+          url: `${
+            import.meta.env.VITE_EDGES_URL as string
+          }/${country.value!}/elements/${elementFileName}`,
         })),
     ),
     publicationPhotosForGallery = computed(
@@ -53,8 +54,9 @@ export const main = defineStore("main", () => {
         country.value &&
         publicationPhotos.value.map((elementFileName) => ({
           name: elementFileName,
-          url: `${import.meta.env.VITE_EDGES_URL as string
-            }/${country.value!}/photos/${elementFileName}`,
+          url: `${
+            import.meta.env.VITE_EDGES_URL as string
+          }/${country.value!}/photos/${elementFileName}`,
         })),
     ),
     addContributor = ({

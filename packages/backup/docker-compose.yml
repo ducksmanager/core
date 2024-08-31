@@ -1,11 +1,9 @@
 services:
-  stats-updater:
+  backup:
     init: true
-    image: ghcr.io/bperel/stats-updater
+    image: ghcr.io/bperel/dm-backup
     env_file:
-      - .env
-    environment:
-      - DATABASE_URL_DM_STATS=${DATABASE_URL_DM_STATS}_new
+      - ./.env.prod.local
     networks:
       - dm-server_db-network
       - ducksmanager_dm-network

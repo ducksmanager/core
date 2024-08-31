@@ -19,6 +19,35 @@
         "dist/**"
       ]
     },
+    "prod:build-docker": {
+      "passThroughEnv": [
+        "REPO_NAME"
+      ]
+    },
+    "prod:deploy": {
+      "passThroughEnv": [
+        "REMOTE_ROOT",
+        "PRODUCTION_SSH_HOST",
+        "PRODUCTION_SSH_USER",
+        "PRODUCTION_SSH_KEY"
+      ]
+    },
+    "prod:transfer-files-pre": {
+      "passThroughEnv": [
+        "REMOTE_ROOT",
+        "PRODUCTION_SSH_HOST",
+        "PRODUCTION_SSH_USER",
+        "PRODUCTION_SSH_KEY"
+      ]
+    },
+    "prod:transfer-files-post": {
+      "passThroughEnv": [
+        "REMOTE_ROOT",
+        "PRODUCTION_SSH_HOST",
+        "PRODUCTION_SSH_USER",
+        "PRODUCTION_SSH_KEY"
+      ]
+    },
     "dev": {
       "persistent": true,
       "dependsOn": [

@@ -8,7 +8,7 @@
     "whattheduck-android": "concurrently -p \"[whattheduck-{name}]\" --kill-others-on-fail -n front+web,android \"pnpm -r dev:whattheduck\" \"ionic cap run android --external --target Pixel_8_API_29 --livereload --public-host=192.168.1.209\"",
     "lint": "eslint .",
     "dev": "concurrently -n vite,vue-tsc \"vite --port 8003 --host\" \"vue-tsc --noEmit --watch\"",
-    "build": "vue-tsc --noEmit && vite build",
+    "build": "vite build && vue-tsc --noEmit",
     "build-capgo": "capgo bundle zip",
     "i-next": "for dep in $(jq -r '.dependencies | to_entries[] | select(.value == \"next\") | .key' package.json); do pnpm install \"${dep}@latest\"; done",
     "ionic:build": "npm run build",

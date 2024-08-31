@@ -1,10 +1,10 @@
 import type { Socket } from "socket.io";
 
 import type { SimpleIssueWithPartInfo } from "~dm-types/SimpleIssue";
+import type { StorySearchResults } from "~dm-types/StorySearchResults";
 import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa/client";
 
 import type Events from "../types";
-import { StorySearchResults } from "~dm-types/StorySearchResults";
 export default (socket: Socket<Events>) => {
   socket.on("getStoryDetails", (storycode, callback) =>
     prismaCoa.inducks_story
@@ -75,7 +75,7 @@ export default (socket: Socket<Events>) => {
     results = results.slice(0, limit);
 
     if (withIssues) {
-      const resultsWithIssues: StorySearchResults<true>["results"] = []
+      const resultsWithIssues: StorySearchResults<true>["results"] = [];
       for (const idx of results.keys()) {
         resultsWithIssues[idx].issues = await listIssuesFromStoryCode(
           results[idx].storycode,
@@ -86,8 +86,7 @@ export default (socket: Socket<Events>) => {
         results: resultsWithIssues,
         hasMore,
       });
-    }
-    else {
+    } else {
       callback({
         results,
         hasMore,

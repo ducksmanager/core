@@ -12,8 +12,8 @@ RUN apt update && apt install -y --no-install-recommends libgl1-mesa-glx libgomp
 
 COPY --from=libs /home/openssl-1.1.1v/libcrypto.so.1.1 /lib/
 COPY --from=libs /home/openssl-1.1.1v/libssl.so.1.1 /lib/
-COPY requirements.txt ./
+COPY apps/dumili/paddleocr/requirements.txt ./
 RUN pip3 install -r requirements.txt
-COPY --chmod=777 server.py ./
+COPY --chmod=777 apps/dumili/paddleocr/server.py ./
 
 ENTRYPOINT ["./server.py"]

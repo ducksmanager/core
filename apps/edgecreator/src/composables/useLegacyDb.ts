@@ -158,8 +158,8 @@ export default () => {
             x: dbOptions.Decalage_x || 0,
             y: fromBottom
               ? edgeDimensions.height -
-              embeddedImageHeight -
-              (dbOptions.Decalage_y || 0)
+                embeddedImageHeight -
+                (dbOptions.Decalage_y || 0)
               : dbOptions.Decalage_y || 0,
             width: (dbOptions.Compression_x || 1) * edgeDimensions.width,
             height: (dbOptions.Compression_y || 1) * embeddedImageHeight,
