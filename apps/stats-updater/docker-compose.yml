@@ -3,9 +3,9 @@ services:
     init: true
     image: ghcr.io/bperel/stats-updater
     env_file:
-      - ./.env
+      - .env
     environment:
-      - DATABASE_URL_DM_STATS="${DATABASE_URL_DM_STATS}_new"
+      - DATABASE_URL_DM_STATS=${DATABASE_URL_DM_STATS}_new
     networks:
       - dm-server_db-network
       - ducksmanager_dm-network

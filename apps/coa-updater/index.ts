@@ -26,15 +26,6 @@ try {
   } else {
     mkdirSync(isvPath, { recursive: true });
     await $`wget -c https://inducks.org/inducks/isv.tgz -O - | tar -xz -C ${dataPath}`;
-
-    // Ignore lines with invalid UTF-8 characters
-    for await (const file of $`ls ${isvPath}/*.isv`.lines()) {
-      if (file) {
-        await $`iconv -f utf-8 -t utf-8 -c "${file}" > "${file}.clean" && mv -f "${file}.clean" "${file}"`;
-      }
-    }
-
-    console.log("iconv done");
   }
   // Ignore lines with invalid UTF-8 characters
   for await (const file of $`ls ${isvPath}/*.isv`.lines()) {
@@ -127,10 +118,9 @@ ALTER TABLE inducks_entry ADD FULLTEXT INDEX entryTitleFullText(title);
 create index inducks_issue_short_issuecode_index
     on inducks_issue (short_issuecode);
 
-create index inducks_issue_publicationcode_issuenumber_index
-    on inducks_issue (publicationcode, issuenumber);
+create index inducks_issue_publicationcode_index
+    on inducks_issue (publicationcode);
 
-OPTIMIZE table inducks_issue;
 set unique_checks = 1;
 set foreign_key_checks = 1;
 set sql_log_bin=1`;
@@ -176,8 +166,8 @@ set global max_allowed_packet=1000000000; `,
   await connection.query(`drop database ${process.env.MYSQL_DATABASE_NEW}`);
   connection.release();
 
-  console.log("mysqlcheck...");
-  await $`mysqlcheck -h ${process.env.MYSQL_HOST} -uroot -p${process.env.MYSQL_ROOT_PASSWORD} -v ${process.env.MYSQL_DATABASE}`;
+  console.log("mariadb-check...");
+  await $`mariadb-check -h ${process.env.MYSQL_HOST} -uroot -p${process.env.MYSQL_ROOT_PASSWORD} -v ${process.env.MYSQL_DATABASE}`;
   console.log(" done.");
   await pool.end();
   await newDbPool.end();
