@@ -38,9 +38,9 @@ jobs:
           echo "BASE: ${{ env.NX_BASE }}"
 
       - name: Install pnpm
-        uses: pnpm/action-setup@v3
+        uses: pnpm/action-setup@v4
         with:
-          version: 9
+          version: 9.8.*
 
       - name: Use Node.js 18
         uses: actions/setup-node@v4
