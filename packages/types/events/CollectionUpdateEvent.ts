@@ -3,7 +3,7 @@ import { AbstractEvent } from "./AbstractEvent";
 export class CollectionUpdateEventRaw {
   type = "collection_update";
   numberOfIssues!: number;
-  userId!: number
+  userId!: number;
   timestamp!: number;
   exampleIssuecode!: string;
   issuecode!: string;

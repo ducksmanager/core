@@ -56,10 +56,10 @@ export const useSocket = (socketRootUrl: string) => ({
       };
       cache?: Required<SocketCacheOptions<Services>>;
     } = {
-        onConnectError(e, namespace) {
-          console.error(`${namespace}: connect_error: ${e}`);
-        },
+      onConnectError(e, namespace) {
+        console.error(`${namespace}: connect_error: ${e}`);
       },
+    },
   ) => {
     const { session, onConnectError, cache } = namespaceOptions;
     const socket = io(socketRootUrl + namespaceName, {
@@ -67,11 +67,13 @@ export const useSocket = (socketRootUrl: string) => ({
       auth: async (cb) => {
         cb(session ? { token: await session.getToken() } : {});
       },
-    }).on("connect_error", (e) => {
-      onConnectError(e, namespaceName);
-    }).on('connect', () => {
-      console.log('connected to', namespaceName);
     })
+      .on("connect_error", (e) => {
+        onConnectError(e, namespaceName);
+      })
+      .on("connect", () => {
+        console.log("connected to", namespaceName);
+      });
 
     return {
       socket,
@@ -81,46 +83,46 @@ export const useSocket = (socketRootUrl: string) => ({
             _: never,
             event: EventName,
           ) =>
-            async (
-              ...args: AllButLast<Parameters<Services[EventName]>>
-            ): Promise<
-              EventReturnTypeIncludingError<Services[EventName]> | undefined
-            > => {
-              const startTime = Date.now();
-              const debugCall = (post: boolean = false) =>
-                console.debug(
-                  `${post ? "Called" : "Calling"} socket event`,
-                  `${namespaceName}/${event}`,
-                  args,
-                  post ? `in ${Date.now() - startTime}ms` : "",
-                );
-              let cacheKey;
-              if (cache) {
-                cacheKey = `${event} ${JSON.stringify(args)}`;
-                const cacheData = (await cache.storage.get(cacheKey, {
-                  cache: {
-                    ttl:
-                      typeof cache.ttl === "function"
-                        ? cache.ttl(event, args)
-                        : cache.ttl,
-                  },
-                })) as Awaited<ReturnType<Socket["emitWithAck"]>>;
-                const hasCacheData =
-                  cacheData !== undefined &&
-                  !(typeof cacheData === "object" && cacheData.state === "empty");
-                if (hasCacheData) {
-                  console.debug("Using cache for socket event", event, args);
-                  return cacheData;
-                }
+          async (
+            ...args: AllButLast<Parameters<Services[EventName]>>
+          ): Promise<
+            EventReturnTypeIncludingError<Services[EventName]> | undefined
+          > => {
+            const startTime = Date.now();
+            const debugCall = (post: boolean = false) =>
+              console.debug(
+                `${post ? "Called" : "Calling"} socket event`,
+                `${namespaceName}/${event}`,
+                args,
+                post ? `in ${Date.now() - startTime}ms` : "",
+              );
+            let cacheKey;
+            if (cache) {
+              cacheKey = `${event} ${JSON.stringify(args)}`;
+              const cacheData = (await cache.storage.get(cacheKey, {
+                cache: {
+                  ttl:
+                    typeof cache.ttl === "function"
+                      ? cache.ttl(event, args)
+                      : cache.ttl,
+                },
+              })) as Awaited<ReturnType<Socket["emitWithAck"]>>;
+              const hasCacheData =
+                cacheData !== undefined &&
+                !(typeof cacheData === "object" && cacheData.state === "empty");
+              if (hasCacheData) {
+                console.debug("Using cache for socket event", event, args);
+                return cacheData;
               }
-              debugCall();
-              const data = await socket.emitWithAck(event, ...args);
-              if (cache && cacheKey) {
-                cache.storage.set(cacheKey, data);
-              }
-              debugCall(true);
-              return data;
-            },
+            }
+            debugCall();
+            const data = await socket.emitWithAck(event, ...args);
+            if (cache && cacheKey) {
+              cache.storage.set(cacheKey, data);
+            }
+            debugCall(true);
+            return data;
+          },
       }),
     };
   },
