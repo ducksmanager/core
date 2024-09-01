@@ -1,27 +1,27 @@
 <template>
   <ion-page>
-    <ion-header>
-      <ion-title>{{ t('A propos') }}</ion-title>
+    <ion-header :translucent="true">
+      <ion-toolbar>
+        <ion-buttons slot="start">
+          <ion-menu-button color="primary" />
+        </ion-buttons>
+        <ion-title>{{ t('A propos') }}</ion-title>
+      </ion-toolbar>
     </ion-header>
-    <ion-content>
-      <ion-item>{{ t('What The Duck version {version}', { version: getCurrentAppVersion() }) }}</ion-item>
-      <ion-item class="flex">
-        <ion-item>
-          <a :href="discordUrl"><img src="/icons/discord.png" /></a>
-        </ion-item>
-        <ion-item>
-          <a :href="facebookUrl"><img src="/icons/facebook.png" /></a>
-        </ion-item>
-        <ion-item>
-          <a :href="instagramUrl"><img src="/icons/instagram.png" /></a>
-        </ion-item>
-        <ion-item>
-          <a :href="youtubeUrl"><img src="/icons/youtube.png" /></a>
-        </ion-item>
-      </ion-item>
-      <ion-item style="border-bottom: 1px solid white">
-        {{ t('Notez What The Duck sur le Play Store :-)') }}
-      </ion-item>
+    <ion-content v-if="currentAppVersion">
+      <div>
+        <b>{{ t('What The Duck version {version}', { version: currentAppVersion }) }}</b>
+      </div>
+      <div>
+        <a :href="discordUrl"><img src="/icons/discord.png" /></a>
+        <a :href="facebookUrl"><img src="/icons/facebook.png" /></a>
+        <a :href="dmUrl"><img src="/icons/ducksmanager.png" /></a>
+        <a :href="instagramUrl"><img src="/icons/instagram.png" /></a>
+        <a :href="youtubeUrl"><img src="/icons/youtube.png" /></a>
+      </div>
+      <ion-button id="link-to-dm" expand="full" color="white" @click.prevent="() => {}">
+        <a :href="playStoreUrl"> {{ t("Notez What The Duck sur le Play Store si vous appréciez l'utiliser :-)") }}</a>
+      </ion-button>
     </ion-content></ion-page
   >
 </template>
@@ -32,17 +32,39 @@ import { AppUpdate } from '@capawesome/capacitor-app-update';
 
 const { t } = useI18n();
 
-const getCurrentAppVersion = async () => {
-  const result = await AppUpdate.getAppUpdateInfo();
-  if (Capacitor.getPlatform() === 'android') {
-    return result.currentVersionCode;
-  } else {
-    return result.currentVersionName;
-  }
-};
+const dmUrl = 'https://ducksmanager.net';
+const playStoreUrl = 'https://play.google.com/store/apps/details?id=net.ducksmanager.whattheduck';
+
+const currentAppVersion = ref<string | null>(null);
+
+AppUpdate.getAppUpdateInfo()
+  .then((result) => {
+    if (Capacitor.getPlatform() === 'android') {
+      currentAppVersion.value = result.currentVersionCode;
+    } else {
+      currentAppVersion.value = result.currentVersionName;
+    }
+  })
+  .catch(() => {
+    currentAppVersion.value = 'web';
+  });
 
 const discordUrl = import.meta.env.VITE_DISCORD_URL;
 const facebookUrl = import.meta.env.VITE_FACEBOOK_URL;
 const instagramUrl = import.meta.env.VITE_INSTAGRAM_URL;
 const youtubeUrl = import.meta.env.VITE_YOUTUBE_URL;
 </script>
+
+<style lang="scss" scoped>
+ion-content::part(scroll) {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+}
+
+div {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;
+}
+</style>

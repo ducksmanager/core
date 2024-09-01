@@ -399,9 +399,13 @@ switch (contextMenuComponentName) {
     break;
 }
 
-const { fetchPublicationNames, fetchIssueNumbersWithTitles } = coa();
-const { publicationNames, coverUrls, issuesWithTitles, issuecodeDetails } =
-  storeToRefs(coa());
+const { fetchPublicationNames, fetchIssuecodesByPublicationcode } = coa();
+const {
+  publicationNames,
+  coverUrls,
+  issuecodesByPublicationcode,
+  issuecodeDetails,
+} = storeToRefs(coa());
 
 let hoveredIndex = $ref<number | null>(null);
 let loading = $ref(true);
@@ -470,7 +474,9 @@ const publicationName = $computed(
   () => publicationNames.value[publicationcode],
 );
 const isTouchScreen = window.matchMedia("(pointer: coarse)").matches;
-const coaIssues = $computed(() => issuesWithTitles.value[publicationcode]);
+const coaIssuecodes = $computed(
+  () => issuecodesByPublicationcode.value[publicationcode],
+);
 const filteredIssues = $computed(
   () =>
     issues
@@ -580,29 +586,27 @@ const loadIssues = async () => {
         ).dbValue,
       }));
 
-    await fetchIssueNumbersWithTitles([publicationcode]);
+    await fetchIssuecodesByPublicationcode([publicationcode]);
 
     if (groupUserCopies) {
-      issues = coaIssues.map((issue) => ({
-        ...issue,
+      issues = coaIssuecodes.map((issuecode) => ({
+        issuecode,
         userCopies: userIssuesForPublication!
-          .filter(
-            ({ issuecode: userIssuecode }) => userIssuecode === issue.issuecode,
-          )
+          .filter(({ issuecode: userIssuecode }) => userIssuecode === issuecode)
           .map((issue, copyIndex) => ({
             ...issue,
             copyIndex,
           })),
-        key: issue.issuecode,
+        key: issuecode,
       }));
     } else {
       const userIssuecodes = [
         ...new Set(userIssuesForPublication!.map(({ issuecode }) => issuecode)),
       ];
-      issues = coaIssues
-        .filter(({ issuecode }) => userIssuecodes.includes(issuecode))
+      issues = coaIssuecodes
+        .filter((issuecode) => userIssuecodes.includes(issuecode))
         .reduce<issueWithCopies[]>(
-          (acc, { issuecode }) => [
+          (acc, issuecode) => [
             ...acc,
             ...userIssuesForPublication!
               .filter(
@@ -646,9 +650,6 @@ const loadIssues = async () => {
       );
     }
 
-    const coaIssuecodes = issuesWithTitles.value[publicationcode].map(
-      ({ issuecode }) => issuecode,
-    );
     userIssuecodesNotFoundForPublication = userIssuesForPublication!
       .filter(({ issuecode }) => !coaIssuecodes.includes(issuecode))
       .map(({ issuecode }) => issuecode);

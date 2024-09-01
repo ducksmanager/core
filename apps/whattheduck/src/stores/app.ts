@@ -34,15 +34,17 @@ export const app = defineStore('app', () => {
   const isCameraPreviewShown = ref(false);
 
   const currentNavigationItem = ref<
-    null | { type: 'countrycode' | 'publicationcode'; value: string } | { type: 'issuecodes'; value: string[] }
-  >(null);
+    | { type: 'all'; value: 'all' }
+    | { type: 'countrycode' | 'publicationcode'; value: string }
+    | { type: 'issuecodes'; value: string[] }
+  >({ type: 'all', value: 'all' });
 
   watch(
     () => route.hash,
     (newValue) => {
       const parts = newValue.replace('#', '').replaceAll('_', ' ').split('=');
       if (parts.length === 1) {
-        currentNavigationItem.value = null;
+        currentNavigationItem.value = { type: 'all', value: 'all' };
       } else {
         const [type, value] = parts as ['countrycode' | 'publicationcode' | 'issuecodes', string];
         if (type === 'issuecodes') {

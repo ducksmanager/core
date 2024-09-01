@@ -77,9 +77,10 @@ export default (socket: Socket<Events>) => {
     if (withIssues) {
       const resultsWithIssues: StorySearchResults<true>["results"] = [];
       for (const idx of results.keys()) {
-        resultsWithIssues[idx].issues = await listIssuesFromStoryCode(
-          results[idx].storycode,
-        );
+        resultsWithIssues[idx] = {
+          ...results[idx],
+          issues: await listIssuesFromStoryCode(results[idx].storycode),
+        };
       }
 
       callback({

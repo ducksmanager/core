@@ -30,20 +30,6 @@ export default abstract class {
     callback: (value: Record<string, string>) => void,
   ) => void;
 
-  abstract getIssuesWithTitles: (
-    publicationcodes: string[],
-    callback: (
-      value: Record<
-        string,
-        {
-          issuecode: string;
-          publicationcode: string;
-          issuenumber: string;
-          title: string | null;
-        }[]
-      >,
-    ) => void,
-  ) => void;
   abstract getIssueDetails: (
     issuecode: string,
     callback: (value: { releaseDate?: string; entries: SimpleEntry[] }) => void,
@@ -74,6 +60,7 @@ export default abstract class {
   ) => void;
   abstract getIssues: (
     issuecodes: string[],
+    withTitles: boolean,
     callback: (value: Record<string, SimpleInducksIssue>) => void,
   ) => void;
 

@@ -29,42 +29,6 @@ export const getPopularityByIssuecodes = async (issuecodes: string[]) =>
     .then((data) => data.groupBy("issuecode"));
 
 export default (socket: Socket<Events>) => {
-  socket.on("getIssuesWithTitles", async (publicationcodes, callback) =>
-    prismaCoa.inducks_issue
-      .findMany({
-        select: {
-          publicationcode: true,
-          issuecode: true,
-          issuenumber: true,
-          title: true,
-        },
-        where: {
-          publicationcode: {
-            in: publicationcodes,
-          },
-        },
-      })
-      .then((data) => {
-        callback(
-          data.reduce<Parameters<typeof callback>[0]>(
-            (acc, { publicationcode, issuenumber, title, issuecode }) => ({
-              ...acc,
-              [publicationcode!]: [
-                ...(acc[publicationcode!] || []),
-                {
-                  issuecode,
-                  publicationcode: publicationcode!,
-                  issuenumber: issuenumber!,
-                  title,
-                },
-              ],
-            }),
-            {},
-          ),
-        );
-      }),
-  );
-
   socket.on("getIssueDetails", async (issuecode, callback) => {
     const entries = await getEntries(issuecode);
     callback({

@@ -26,7 +26,7 @@
         >
       </ion-toolbar>
       <Navigation v-if="!isCameraPreviewShown" />
-      <template v-if="list?.hasItems && !isCameraPreviewShown">
+      <template v-if="(list?.hasItems || filterText || currentFilter.id !== 'all') && !isCameraPreviewShown">
         <ion-searchbar inputmode="text" autocapitalize="sentences" v-model="filterText" placeholder="Filter" />
         <FilterButton v-if="filterText.length < 1" />
       </template>
@@ -54,13 +54,21 @@ const { t } = useI18n();
 const list = ref<InstanceType<typeof CountryList | typeof PublicationList | typeof IssueList> | null>(null);
 
 const { total, ownedCountries, ownedPublications } = storeToRefs(wtdcollection());
-const { filterText, isCoaView, isCameraPreviewShown, countrycode, publicationcode, issuecodes, currentNavigationItem } =
-  storeToRefs(app());
+const {
+  filterText,
+  isCoaView,
+  isCameraPreviewShown,
+  countrycode,
+  publicationcode,
+  issuecodes,
+  currentNavigationItem,
+  currentFilter,
+} = storeToRefs(app());
 
 const { issuecodeDetails } = storeToRefs(coa());
 
 const componentName = computed(() =>
-  !currentNavigationItem.value
+  currentNavigationItem.value.type === 'all'
     ? CountryList
     : currentNavigationItem.value.type === 'countrycode'
       ? PublicationList
@@ -83,7 +91,7 @@ const backToCollection = () => {
       if (ownedCountries.value?.includes(countrycode.value!)) {
         currentNavigationItem.value = { type: 'countrycode', value: countrycode.value! };
       } else {
-        currentNavigationItem.value = null;
+        currentNavigationItem.value = { type: 'all', value: 'all' };
       }
     }
   }

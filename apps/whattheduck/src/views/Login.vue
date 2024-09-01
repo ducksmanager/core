@@ -58,7 +58,7 @@
         </ion-col>
       </ion-row>
       <ion-row>
-        <ion-col size="6" push="6" style="display: flex" class="flex ion-justify-content-end">
+        <ion-col size="6" push="6" class="flex ion-justify-content-end">
           <ion-button @click="forgotPassword" size="small" :disabled="isOfflineMode">
             {{ t('Mot de passe oublié ?') }}
           </ion-button>

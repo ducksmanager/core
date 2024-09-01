@@ -4,7 +4,7 @@
     <template #content>
       <Bookcase
         :bookcase-textures="bookcaseTextures"
-        :sorted-bookcase="issuecodes"
+        :sorted-bookcase="issuecodes.map((issuecode) => ({ issuecode }))"
         embedded
       />
       <b-row>

@@ -47,7 +47,7 @@
               :classes="['issue-title', 'ion-no-padding']"
             />
             <ion-col
-              class="ion-no-padding"
+              class="ion-no-padding flex"
               size="3"
               style="display: flex; flex-direction: column; align-items: start; justify-content: center"
             >

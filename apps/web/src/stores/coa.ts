@@ -53,12 +53,11 @@ export const coa = defineStore("coa", () => {
       CoaServices["getAuthorList"]
     > | null>(null),
     issuecodes = ref<string[]>([]),
-    issuesWithTitles = ref<EventReturnType<CoaServices["getIssuesWithTitles"]>>(
-      {},
-    ),
     issueDetails = ref<{ [issuecode: string]: InducksIssueDetails }>({}),
     isLoadingCountryNames = ref(false),
-    issuecodeDetails = ref<EventReturnType<CoaServices["getIssues"]>>({}),
+    issuecodeDetails = ref<
+      Exclude<EventReturnType<CoaServices["getIssues"]>, "error">
+    >({}),
     issuePopularities = ref<
       EventReturnType<CoaServices["getIssuePopularities"]>
     >({}),
@@ -171,26 +170,19 @@ export const coa = defineStore("coa", () => {
         })
       );
     },
-    fetchIssueNumbersWithTitles = async (publicationcodes: string[]) => {
-      const results = await coaServices.getIssuesWithTitles(
-        publicationcodes.filter(
-          (publicationcode) =>
-            !Object.keys(issuesWithTitles.value).includes(publicationcode),
-        ),
-      );
-      Object.assign(issuesWithTitles.value, results);
-    },
-    fetchIssuecodeDetails = async (issuecodes: string[]) => {
-      const existingIssuecodes = new Set(
-        Object.keys(issuecodeDetails.value || {}),
-      );
-      const newIssuecodes = issuecodes.filter(
-        (issuecode) => !existingIssuecodes.has(issuecode),
+    fetchIssuecodeDetails = async (
+      issuecodes: string[],
+      withTitles: boolean = false,
+    ) => {
+      const newIssuecodes = issuecodes.filter((issuecode) =>
+        withTitles
+          ? !("title" in (issuecodeDetails.value[issuecode] || {}))
+          : !issuecodeDetails.value[issuecode],
       );
       if (newIssuecodes.length) {
         Object.assign(
           issuecodeDetails.value,
-          await coaServices.getIssues(newIssuecodes),
+          await coaServices.getIssues(newIssuecodes, withTitles),
         );
       }
     },
@@ -274,7 +266,6 @@ export const coa = defineStore("coa", () => {
     fetchCoverUrlsByIssuecodes,
     fetchIssuecodeDetails,
     fetchIssuecodesByPublicationcode,
-    fetchIssueNumbersWithTitles,
     fetchIssuePopularities,
     fetchIssueQuotations,
     fetchIssueUrls,
@@ -291,7 +282,6 @@ export const coa = defineStore("coa", () => {
     issuePopularities: issuePopularities,
     issuecodes,
     issueQuotations,
-    issuesWithTitles,
     personNames,
     publicationNames,
     publicationNamesFullCountries,

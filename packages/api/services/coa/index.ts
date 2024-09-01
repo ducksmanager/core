@@ -25,13 +25,14 @@ export default (io: Server) => {
   });
 };
 
-const getInducksIssueData = (issuecodes: string[]) =>
+const getInducksIssueData = (issuecodes: string[], withTitle: boolean) =>
   prismaCoa.inducks_issue
     .findMany({
       select: {
         publicationcode: true,
         issuenumber: true,
         issuecode: true,
+        title: withTitle,
       },
       where: {
         issuecode: {
@@ -45,8 +46,9 @@ export const augmentIssueObjectWithInducksData = <
   Entity extends { issuecode: string },
 >(
   issues: Record<string, Entity>,
+  withTitle: boolean = false,
 ) =>
-  getInducksIssueData(Object.keys(issues)).then((inducksIssues) =>
+  getInducksIssueData(Object.keys(issues), withTitle).then((inducksIssues) =>
     Object.entries(issues).reduce<typeof issues>(
       (acc, [issuecode, issue]) => ({
         ...acc,
@@ -60,10 +62,12 @@ export const augmentIssueArrayWithInducksData = async <
   Entity extends { issuecode: string },
 >(
   issues: Entity[],
+  withTitle: boolean = false,
 ) =>
-  getInducksIssueData([
-    ...new Set(issues.map(({ issuecode }) => issuecode)),
-  ]).then((inducksIssues) =>
+  getInducksIssueData(
+    [...new Set(issues.map(({ issuecode }) => issuecode))],
+    withTitle,
+  ).then((inducksIssues) =>
     issues.map((issue) => ({
       ...issue,
       ...inducksIssues[issue.issuecode],

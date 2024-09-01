@@ -1,6 +1,6 @@
 <template>
   <List
-    v-if="coaIssues"
+    v-if="coaIssuecodes"
     :items="sortedItems"
     :get-item-text-fn="getItemTextFn"
     item-type="issuecode"
@@ -86,10 +86,10 @@ const colSize = computed(() => {
 });
 
 const { issues, user, purchasesById } = storeToRefs(wtdcollection());
-const { publicationcode, currentNavigationItem, isCoaView, currentIssueViewMode, selectedIssuecodes } =
+const { publicationcode, currentNavigationItem, isCoaView, currentIssueViewMode, selectedIssuecodes, currentFilter } =
   storeToRefs(app());
-const { issuesWithTitles, issuecodeDetails } = storeToRefs(webStores.coa());
-const { fetchCoverUrls, fetchIssueNumbersWithTitles } = webStores.coa();
+const { issuecodeDetails, issuecodesByPublicationcode } = storeToRefs(webStores.coa());
+const { fetchCoverUrls, fetchIssuecodesByPublicationcode, fetchIssuecodeDetails } = webStores.coa();
 
 const { bookcaseOptions, bookcaseUsername } = storeToRefs(bookcase());
 const { loadBookcaseOptions, loadBookcaseOrder } = bookcase();
@@ -107,8 +107,7 @@ const getIssueDate = (issue: issue) => {
   return !date ? date : (typeof date === 'string' ? date : date.toISOString()).split('T')?.[0];
 };
 
-const coaIssues = computed(() => issuesWithTitles.value[publicationcode.value!]);
-const coaIssuecodes = computed(() => coaIssues.value?.map(({ issuecode }) => issuecode));
+const coaIssuecodes = computed(() => issuecodesByPublicationcode.value[publicationcode.value!]);
 const coaIssuecodeDetails = computed<typeof issuecodeDetails.value>(() =>
   Object.entries(issuecodeDetails.value)
     .filter(([issuecode]) => coaIssuecodes.value.includes(issuecode))
@@ -117,6 +116,11 @@ const coaIssuecodeDetails = computed<typeof issuecodeDetails.value>(() =>
 const userIssues = computed(() =>
   (issues.value || [])
     .filter((issue) => issue.publicationcode === publicationcode.value)
+    .filter(
+      currentFilter.value.id === 'all'
+        ? () => true
+        : ({ isToRead }) => isToRead === (currentFilter.value.id === 'unreadBooksOnly'),
+    )
     .map((issue) => ({
       ...issue,
       issueDate: getIssueDate(issue),
@@ -132,26 +136,28 @@ type Item =
   | IssueWithIssuecodeOnly;
 
 const items = computed(() =>
-  coaIssues.value
+  coaIssuecodes.value
     ? isCoaView.value
-      ? coaIssues.value.reduce<
+      ? coaIssuecodes.value.reduce<
           {
             key: string;
             inducksItem: (typeof coaIssuecodeDetails.value)[string];
             item: Item;
           }[]
-        >((acc, item) => {
+        >((acc, issuecode) => {
           const userIssuesForThisIssue = userIssues.value.filter(
-            ({ issuecode: userIssuecode }) => item.issuecode === userIssuecode,
+            ({ issuecode: userIssuecode }) => issuecode === userIssuecode,
           );
 
           return [
             ...acc,
-            ...(userIssuesForThisIssue.length ? userIssuesForThisIssue : [item]).map((itemOrUserItem) => ({
-              key: itemOrUserItem.issuecode,
-              inducksItem: coaIssuecodeDetails.value[itemOrUserItem.issuecode],
-              item: itemOrUserItem,
-            })),
+            ...(userIssuesForThisIssue.length ? userIssuesForThisIssue : [issuecodeDetails.value[issuecode]]).map(
+              (itemOrUserItem) => ({
+                key: issuecode,
+                inducksItem: coaIssuecodeDetails.value[issuecode],
+                item: itemOrUserItem,
+              }),
+            ),
           ];
         }, [])
       : (userIssues.value || []).map((issue) => ({
@@ -233,7 +239,8 @@ watch(
 watch(
   [isCoaView, publicationcode],
   async () => {
-    await fetchIssueNumbersWithTitles([publicationcode.value!]);
+    await fetchIssuecodesByPublicationcode([publicationcode.value!]);
+    await fetchIssuecodeDetails(coaIssuecodes.value);
   },
   { immediate: true },
 );

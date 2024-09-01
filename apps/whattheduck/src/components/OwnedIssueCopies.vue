@@ -85,8 +85,9 @@ watch(
   issuecodes,
   async (newValue) => {
     if (newValue) {
-      const covers = await fetchCoverUrlsByIssuecodes(newValue);
-      fullUrl.value = covers.covers![newValue[0]]?.fullUrl;
+      const newIssuecodes = [...newValue];
+      const covers = await fetchCoverUrlsByIssuecodes(newIssuecodes);
+      fullUrl.value = covers.covers![newIssuecodes[0]]?.fullUrl;
     }
   },
   { immediate: true },

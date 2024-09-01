@@ -4,20 +4,14 @@ import type { IssueWithIssuecodeOnly } from "~dm-types/IssueWithIssuecodeOnly";
 import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa/client";
 
 import type Events from "../types";
+import { augmentIssueArrayWithInducksData } from "..";
 export default (socket: Socket<Events>) => {
-  socket.on("getIssues", (issuecodes, callback) =>
+  socket.on("getIssues", (issuecodes, withTitles, callback) =>
     issuecodes.length
-      ? prismaCoa.inducks_issue
-          .findMany({
-            select: {
-              publicationcode: true,
-              issuenumber: true,
-              issuecode: true,
-            },
-            where: {
-              issuecode: { in: issuecodes.filter((issuecode) => issuecode) },
-            },
-          })
+      ? augmentIssueArrayWithInducksData(
+          issuecodes.map((issuecode) => ({ issuecode })),
+          withTitles,
+        )
           .then((data) => data.groupBy("issuecode"))
           .then(callback)
       : callback({}),

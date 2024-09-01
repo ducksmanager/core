@@ -1,5 +1,8 @@
 <template>
-  <ion-segment :model-value="currentNavigationItem?.type">
+  <ion-segment
+    :model-value="JSON.stringify(shownParts[shownParts.length - 1])"
+    @update:model-value="currentNavigationItem = JSON.parse($event)"
+  >
     <ion-col
       @click.stop="() => {}"
       :class="{ 'non-clickable': partIdx >= shownParts.length, scrollable: partIdx === 3 }"
@@ -7,7 +10,10 @@
       v-for="partIdx in maxParts"
       v-show="partIdx <= shownParts.length"
     >
-      <ion-segment-button :value="shownParts[partIdx - 1]?.type" @click="">
+      <ion-segment-button
+        :value="JSON.stringify(shownParts[partIdx - 1])"
+        @click="currentNavigationItem = shownParts[partIdx] as typeof currentNavigationItem"
+      >
         <globe-icon v-if="partIdx === 1" />
         <Country
           v-if="partIdx === 2 && countrycode"
@@ -47,14 +53,14 @@ const { countryNames, publicationNames } = storeToRefs(stores.coa());
 const maxParts = 4;
 
 const shownParts = computed(() => [
-  null,
-  ...Object.entries({
+  { type: 'all', value: 'all' },
+  ...(Object.entries({
     countrycode: countrycode.value,
     publicationcode: publicationcode.value,
     issuecodes: issuecodes.value,
   })
     .map(([type, value]) => (value ? { type, value } : null))
-    .filter(Boolean),
+    .filter(Boolean) as (typeof currentNavigationItem)['value'][]),
 ]);
 </script>
 
