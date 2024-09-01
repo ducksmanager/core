@@ -70,7 +70,7 @@ jobs:
       - name: Build apps
         run: |
           pnpm i -g turbo
-          export NODE_ENV=production
+          #export NODE_ENV=production
           turbo -F $changedAppsCommitFilter -F '!~dumili' -F '!~dumili-api' --concurrency 1 build
 
       - name: Retrieve pre-build files
