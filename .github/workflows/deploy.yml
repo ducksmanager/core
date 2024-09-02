@@ -68,7 +68,7 @@ jobs:
       - name: Build apps
         run: |
           pnpm i -g turbo
-          turbo -F [$lastSuccessfulCommit] -F '!~dumili' -F '!~dumili-api' --concurrency 1 build
+          turbo -F [$lastSuccessfulCommit] -F '!~dumili' -F '!~dumili-api' build
 
       - name: Retrieve pre-build files
         run: |
