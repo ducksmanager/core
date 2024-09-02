@@ -117,11 +117,15 @@ const submitLogin = async () => {
   }
 };
 
+if (!token.value) {
+  injectLocal<Storage>('storage')!.clear();
+}
+
 watch(
   token,
   () => {
     if (token.value) {
-      window.location.replace('/collection');
+      router.push('/collection#all=all');
     }
   },
   { immediate: true },

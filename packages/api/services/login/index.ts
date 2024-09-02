@@ -12,6 +12,7 @@ export default (io: Server) => {
 
     socket.on("getCsrf", (callback) => callback(""));
     socket.on("login", async ({ username, password }, callback) => {
+      console.log("login");
       const hashedPassword = getHashedPassword(password);
       const user = await prismaDm.user.findFirst({
         where: {

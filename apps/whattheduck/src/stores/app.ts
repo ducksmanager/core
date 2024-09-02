@@ -44,6 +44,9 @@ export const app = defineStore('app', () => {
   watch(
     () => route.hash,
     (newValue) => {
+      if (route.name !== 'Collection') {
+        return;
+      }
       const parts = newValue
         .replace(/^#(coa-)?/, '')
         .replaceAll('_', ' ')
@@ -195,7 +198,7 @@ export const app = defineStore('app', () => {
     } else {
       await router.push({
         name: 'Collection',
-        hash: hash,
+        hash,
       });
     }
   });
