@@ -28,7 +28,7 @@
       <Navigation v-if="!isCameraPreviewShown" />
       <template v-if="(list?.hasItems || filterText || currentFilter.id !== 'all') && !isCameraPreviewShown">
         <ion-searchbar inputmode="text" autocapitalize="sentences" v-model="filterText" placeholder="Filter" />
-        <FilterButton v-if="filterText.length < 1" />
+        <FilterButton v-if="filterText.length < 1 && !isCoaView" />
       </template>
     </ion-header>
 

@@ -100,7 +100,7 @@ const appPages: AppPage[] = [
   },
   {
     title: t('Ma collection'),
-    url: '/collection',
+    url: '/collection#',
     iosIcon: listOutline,
     mdIcon: listSharp,
     chip: collectionStore.total,

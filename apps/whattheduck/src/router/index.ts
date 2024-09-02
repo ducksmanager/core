@@ -18,7 +18,7 @@ import Suggestions from '~/views/Suggestions.vue';
 const routes = [
   {
     name: 'Collection',
-    path: '/:type(collection|coa)',
+    path: '/collection',
     component: Collection,
     props: true,
     meta: {

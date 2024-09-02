@@ -52,9 +52,7 @@
       :confirm-md="checkmarkSharp"
       :cancel-ios="closeOutline"
       :cancel-md="closeSharp"
-      @cancel="
-        currentNavigationItem = { type: 'publicationcode', value: issuecodeDetails?.[issuecodes[0]].publicationcode }
-      "
+      @cancel="router.go(-1)"
       confirm-color="success"
       @confirm="submitIssueCopies"
     />
@@ -68,12 +66,13 @@ import type { SingleCopyState } from '~dm-types/CollectionUpdate';
 import Condition from './Condition.vue';
 import EditIssuesConfirmCancelButtons from './EditIssuesConfirmCancelButtons.vue';
 
+import router from '~/router';
 import { app } from '~/stores/app';
 import { wtdcollection } from '~/stores/wtdcollection';
 
 const { updateCollectionSingleIssue, updateCollectionMultipleIssues } = wtdcollection();
 const { issuesByIssuecode } = storeToRefs(wtdcollection());
-const { fetchCoverUrlsByIssuecodes } = coa();
+const { fetchCoverUrlsByIssuecodes, fetchIssuecodeDetails } = coa();
 const { issuecodeDetails } = storeToRefs(coa());
 const { isOfflineMode, isCoaView, currentNavigationItem } = storeToRefs(app());
 
@@ -86,6 +85,7 @@ watch(
   async (newValue) => {
     if (newValue) {
       const newIssuecodes = [...newValue];
+      await fetchIssuecodeDetails(newIssuecodes);
       const covers = await fetchCoverUrlsByIssuecodes(newIssuecodes);
       fullUrl.value = covers.covers![newIssuecodes[0]]?.fullUrl;
     }

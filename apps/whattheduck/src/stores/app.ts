@@ -33,6 +33,8 @@ export const app = defineStore('app', () => {
   const filterText = ref('');
   const isCameraPreviewShown = ref(false);
 
+  const isCoaView = ref(route.hash.startsWith('#coa-'));
+
   const currentNavigationItem = ref<
     | { type: 'all'; value: 'all' }
     | { type: 'countrycode' | 'publicationcode'; value: string }
@@ -42,7 +44,10 @@ export const app = defineStore('app', () => {
   watch(
     () => route.hash,
     (newValue) => {
-      const parts = newValue.replace('#', '').replaceAll('_', ' ').split('=');
+      const parts = newValue
+        .replace(/^#(coa-)?/, '')
+        .replaceAll('_', ' ')
+        .split('=');
       if (parts.length === 1) {
         currentNavigationItem.value = { type: 'all', value: 'all' };
       } else {
@@ -69,7 +74,7 @@ export const app = defineStore('app', () => {
         return currentNavigationItem.value.value;
       case 'publicationcode':
       case 'issuecodes':
-        return publicationcode.value!.split('/')[0];
+        return publicationcode.value?.split('/')[0];
     }
     return null;
   });
@@ -184,18 +189,21 @@ export const app = defineStore('app', () => {
     const value = (
       Array.isArray(navigationItem?.value) ? navigationItem.value.join(',') : navigationItem?.value
     )?.replace(/ /g, '_');
-    const typeAndValue = navigationItem?.type ? `#${navigationItem?.type}=${value}` : '';
+    const hash = (isCoaView.value ? '#coa-' : '#') + (navigationItem?.type ? `${navigationItem?.type}=${value}` : '');
     if (route.name === 'Collection') {
-      window.location.hash = typeAndValue;
+      window.location.hash = hash;
     } else {
       await router.push({
         name: 'Collection',
-        params: {
-          type: route.params.type || 'coa',
-        },
-        hash: typeAndValue,
+        hash: hash,
       });
     }
+  });
+
+  watch(isCoaView, (newValue) => {
+    window.location.hash = newValue
+      ? window.location.hash.replace(/^#/, '#coa-')
+      : window.location.hash.replace(/^#coa-/, '#');
   });
 
   return {
@@ -212,7 +220,7 @@ export const app = defineStore('app', () => {
     token,
     offlineBannerHeight,
     isOfflineMode,
-    isCoaView: ref(route.query.coa === 'true'),
+    isCoaView,
     copyListModes,
     issueViewModes,
     currentIssueViewMode,

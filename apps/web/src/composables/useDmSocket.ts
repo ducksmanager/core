@@ -86,10 +86,10 @@ const defaultExport = (
     }),
     coa: addNamespace<CoaServices>(CoaServices.namespaceEndpoint, {
       onConnectError,
-      // cache: {
-      //   storage: cacheStorage,
-      //   ttl: until4am(),
-      // },
+      cache: {
+        storage: cacheStorage,
+        ttl: until4am(),
+      },
     }),
     globalStats: addNamespace<GlobalStatsServices>(
       GlobalStatsServices.namespaceEndpoint,

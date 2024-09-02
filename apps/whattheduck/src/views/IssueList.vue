@@ -6,8 +6,8 @@
     item-type="issuecode"
     @items-filtered="filteredIssuenumbers = $event"
   >
-    <template v-if="currentIssueViewMode.id === 'list'" #row-prefix="{ item, inducksItem }">
-      <ion-checkbox v-if="selectedIssuecodes" :checked="selectedIssuecodes.includes(inducksItem.issuenumber!)"
+    <template v-if="currentIssueViewMode.id === 'list'" #row-prefix="{ item }">
+      <ion-checkbox v-if="selectedIssuecodes" :checked="selectedIssuecodes.includes(item.issuecode)"
         >&nbsp;</ion-checkbox
       >
       <Condition v-if="'condition' in item && item.condition" :value="item.condition" />
@@ -108,11 +108,6 @@ const getIssueDate = (issue: issue) => {
 };
 
 const coaIssuecodes = computed(() => issuecodesByPublicationcode.value[publicationcode.value!]);
-const coaIssuecodeDetails = computed<typeof issuecodeDetails.value>(() =>
-  Object.entries(issuecodeDetails.value)
-    .filter(([issuecode]) => coaIssuecodes.value.includes(issuecode))
-    .reduce((acc, [issuecode, details]) => ({ ...acc, [issuecode]: details }), {}),
-);
 const userIssues = computed(() =>
   (issues.value || [])
     .filter((issue) => issue.publicationcode === publicationcode.value)
@@ -141,7 +136,6 @@ const items = computed(() =>
       ? coaIssuecodes.value.reduce<
           {
             key: string;
-            inducksItem: (typeof coaIssuecodeDetails.value)[string];
             item: Item;
           }[]
         >((acc, issuecode) => {
@@ -154,7 +148,6 @@ const items = computed(() =>
             ...(userIssuesForThisIssue.length ? userIssuesForThisIssue : [issuecodeDetails.value[issuecode]]).map(
               (itemOrUserItem) => ({
                 key: issuecode,
-                inducksItem: coaIssuecodeDetails.value[issuecode],
                 item: itemOrUserItem,
               }),
             ),
@@ -162,7 +155,6 @@ const items = computed(() =>
         }, [])
       : (userIssues.value || []).map((issue) => ({
           key: issue.issuecode,
-          inducksItem: coaIssuecodeDetails.value[issue.issuecode],
           item: issue,
         }))
     : [],

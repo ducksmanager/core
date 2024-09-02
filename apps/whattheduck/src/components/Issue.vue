@@ -1,5 +1,5 @@
 <template>
-  {{ issuecodeDetails[issuecode].issuenumber }}
+  {{ issuecodeDetails[issuecode]?.issuenumber || '' }}
 </template>
 
 <script setup lang="ts">
