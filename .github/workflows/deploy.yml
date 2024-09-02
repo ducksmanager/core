@@ -53,13 +53,13 @@ jobs:
       - name: Check apps changed since the last successful commit
         run: |
           if [ "${{ env.NX_BASE }}" == "ffffff" ]; then
-            changedAppsCommitFilter='[${{ env.NX_HEAD }}]'
+            lastSuccessfulCommit=${{ env.NX_HEAD }}
           else
-            changedAppsCommitFilter="[${{ env.NX_BASE }}]"
+            lastSuccessfulCommit=${{ env.NX_BASE }}
           fi
           echo "lastSuccessfulCommit=$lastSuccessfulCommit" >> "$GITHUB_ENV"
-          changedApps=`pnpm -r -F [$lastSuccessfulCommit] ls --depth -1`
-          echo "Changed apps: $changedApps"
+          echo "Changed apps:"
+          pnpm -r -F [$lastSuccessfulCommit] ls --depth -1
 
       - name: Install dependencies
         run: |
