@@ -3,8 +3,6 @@ services:
   web:
     container_name: ducksmanager-web
     image: ghcr.io/bperel/ducksmanager-web
-    depends_on:
-      - api
     restart: always
     networks:
       - public-network
@@ -13,8 +11,6 @@ services:
   web-websocket:
     container_name: ducksmanager-web-websocket
     image: ghcr.io/bperel/ducksmanager-web:websocket
-    depends_on:
-      - api-websocket
     restart: always
     networks:
       - public-network
