@@ -53,7 +53,7 @@ jobs:
       - name: Check apps changed since the last successful commit
         run: |
           if [ "${{ env.NX_BASE }}" == "ffffff" ]; then
-            changedAppsCommitFilter='none'
+            changedAppsCommitFilter='[${{ env.NX_HEAD }}]'
           else
             changedAppsCommitFilter="[${{ env.NX_BASE }}]"
           fi
