@@ -14,7 +14,7 @@
     "test": "vitest",
     "typecheck": "vue-tsc --noEmit",
     "wait": "wait-on tcp:8001",
-    "prod:deploy": "DIR=. SERVICES='websocket' pnpm -F '~ci' prod:docker-compose-up",
+    "prod:deploy": "DIR=. SERVICES='web-websocket' pnpm -F '~ci' prod:docker-compose-up",
     "prod:build-docker": "REPO_NAME=ghcr.io/bperel/ducksmanager-web:websocket pnpm -F '~ci' prod:build-docker -f apps/web/Dockerfile",
     "prod:transfer-files-pre": "pnpm -F '~ci' prod:transfer-files @apps/web/.env.prod.local:apps/web/.env @packages/prisma-clients/.env.prod.local:packages/prisma-schemas/.env",
     "prod:transfer-files-post": "pnpm -F '~ci' prod:transfer-files apps/web/docker-compose.yml:@docker-compose.yml"
