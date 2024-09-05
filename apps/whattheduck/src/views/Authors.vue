@@ -9,13 +9,16 @@
       </ion-toolbar>
     </ion-header>
     <ion-content :fullscreen="true">
-      <div class="ion-padding" style="font-size: small">
-        {{
-          t(
-            'Ajoutez vos auteurs préférés et indiquez les notes que vous leur attribuez.\nGrâce à ces notes, What The Duck déterminera ensuite les magazines susceptibles de vous intéresser.',
-          )
-        }}
-      </div>
+      <ion-text
+        ><i18n-t
+          tag="span"
+          keypath="Ajoutez vos auteurs préférés et indiquez les notes que vous leur attribuez.{br}Grâce à ces notes, What The Duck déterminera ensuite les magazines susceptibles de vous intéresser."
+        >
+          <template #br>
+            <br />
+          </template>
+        </i18n-t>
+      </ion-text>
       <div v-if="ratings && !ratings.length" class="ion-padding">
         <ion-text color="warning">
           {{ t('Aucun auteur noté.') }}

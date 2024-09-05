@@ -1,6 +1,6 @@
 <template>
   <ion-content v-if="!items" ref="content">
-    {{ t('Chargement...') }}
+    {{ t('Chargement…') }}
   </ion-content>
   <ion-content v-else-if="!items.length" ref="content">
     {{ t('Cette liste est vide.') }}

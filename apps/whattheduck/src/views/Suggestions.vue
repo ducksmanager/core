@@ -9,7 +9,7 @@
       </ion-toolbar>
     </ion-header>
     <ion-content>
-      <div class="ion-padding" style="font-size: small">
+      <ion-text style="font-size: small">
         <i18n-t
           tag="span"
           keypath="WhatTheDuck vous propose une liste personalisée de magazines contenant des histoires inédites de vos auteurs favoris.{br}Vous pouvez changer la liste d'auteurs dans l'écran {favoriteAuthorsLink}.{br}Les suggestions sont mises à jour quotidiennement."
@@ -21,19 +21,27 @@
             <ion-text color="primary" router-link="/authors">{{ t('Mes auteurs favoris') }}</ion-text>
           </template>
         </i18n-t>
-      </div>
-      <ion-select label="Montrer les publications de" label-placement="stacked" v-model="showSuggestionsOf">
+      </ion-text>
+      <ion-select
+        class="ion-padding-top"
+        label="Montrer les publications de"
+        label-placement="stacked"
+        v-model="showSuggestionsOf"
+      >
         <ion-select-option value="ALL">{{ t('Tous les pays') }}</ion-select-option>
         <ion-select-option v-for="[countrycode, countryname] of sortedCountryNames" :value="countrycode">{{
           countryname
         }}</ion-select-option>
       </ion-select>
-      <ion-item v-if="isLoadingSuggestions">{{ t('Chargement...') }}</ion-item>
+      <ion-item v-if="isLoadingSuggestions">{{ t('Chargement…') }}</ion-item>
       <div class="ion-padding" v-else-if="formattedSuggestions && !formattedSuggestions.length">
         {{ t('Aucune suggestion disponible.') }}
       </div>
       <template v-else-if="formattedSuggestions">
-        <ion-row class="toggle ion-margin-top ion-align-items-center ion-justify-content-center">
+        <ion-row
+          class="toggle ion-margin-top ion-align-items-center ion-justify-content-center"
+          style="font-size: small"
+        >
           <ion-col> {{ t('Trier par date de publication') }}</ion-col
           ><ion-col><ion-toggle size="small" color="light" v-model="sortByScore" /></ion-col
           ><ion-col>{{ t('Trier par score') }}</ion-col>

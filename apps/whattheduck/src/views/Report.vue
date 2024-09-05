@@ -11,7 +11,7 @@
     <ion-content :fullscreen="true">
       <ion-text>{{
         t(
-          "Quelque chose ne fonctionne pas sur l'application ?\nDétaillez votre problème et nous essaierons de le résoudre dans une prochaine version :-)",
+          "Quelque chose ne fonctionne pas sur l'application ?{br}Détaillez votre problème et nous essaierons de le résoudre dans une prochaine version :-)",
         )
       }}</ion-text>
       <ion-textarea

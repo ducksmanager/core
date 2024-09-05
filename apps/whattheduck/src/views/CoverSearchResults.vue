@@ -44,16 +44,22 @@
           ></ion-row>
         </div>
         <ion-note>
-          <div style="white-space: pre">
-            {{ t('Cliquez sur une couverture\npour ajouter le numéro à la collection') }}
-          </div>
+          <i18n-t
+            tag="div"
+            style="white-space: pre"
+            keypath="Cliquez sur une couverture{br}pour ajouter le numéro à la collection"
+          >
+            <template #br>
+              <br />
+            </template>
+          </i18n-t>
           <div>
             <div style="margin: 0.5rem 0">{{ t('ou') }}&nbsp;</div>
             <ion-button v-if="origin === 'takePhoto'" @click="takePhoto">{{
               t('Prendre une nouvelle photo')
             }}</ion-button>
             <ion-button v-else-if="origin === 'pickCoverFile'" @click="pickCoverFile">{{
-              t('Sélectionnez une nouvelle photo')
+              t('Sélectionner une nouvelle photo')
             }}</ion-button>
           </div>
         </ion-note></template
