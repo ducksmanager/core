@@ -9,7 +9,7 @@ Translations:
 <img src="https://hosted.weblate.org/widget/ducksmanager/multi-auto.svg" alt="Translation status" />
 </a>
 
-Related projects :
+Related projects:
 
 - [WhatTheDuck](apps/whattheduck) — DucksManager mobile app. Check collection content on mobile and add issues by taking pictures of comic-book covers.
 - [EdgeCreator](apps/edgecreator) — Upload pictures of edges and creates complete edge-pictures from resulting models.
@@ -28,6 +28,7 @@ Replaced with the [DucksManager API](packages/api) in WhatTheDuck v3 onwards.
 
 - [Node.js](https://nodejs.org/en/) 18
 - [Docker](https://www.docker.com/)
+
 - Some Unix or WSL 2 environment
 
 Ensure your local repository auto-pulls submodules:
