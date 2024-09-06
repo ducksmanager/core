@@ -12,10 +12,7 @@
       <div v-if="!covers.length"></div>
       <template v-else>
         <div>
-          <Carousel3d
-            :onMainSlideClick="onMainSlideClick"
-            @after-slide-change="(index: number) => (cover = covers[index])"
-          >
+          <Carousel3d @after-slide-change="(index: number) => (cover = covers[index])">
             <Slide
               v-for="(cover, index) in covers"
               :key="index"
@@ -44,21 +41,15 @@
           ></ion-row>
         </div>
         <ion-note>
-          <i18n-t
-            tag="div"
-            style="white-space: pre"
-            keypath="Cliquez sur une couverture{br}pour ajouter le numéro à la collection"
+          <ion-button @click="onCurrentCoverClick"
+            ><template v-if="cover?.collectionIssues.length">{{ t('Modifier mes exemplaires') }}</template
+            ><template v-else>{{ t('Ajouter à ma collection') }}</template></ion-button
           >
-            <template #br>
-              <br />
-            </template>
-          </i18n-t>
           <div>
-            <div style="margin: 0.5rem 0">{{ t('ou') }}&nbsp;</div>
-            <ion-button v-if="origin === 'takePhoto'" @click="takePhoto">{{
+            <ion-button color="light" v-if="origin === 'takePhoto'" @click="takePhoto">{{
               t('Prendre une nouvelle photo')
             }}</ion-button>
-            <ion-button v-else-if="origin === 'pickCoverFile'" @click="pickCoverFile">{{
+            <ion-button color="light" v-else-if="origin === 'pickCoverFile'" @click="pickCoverFile">{{
               t('Sélectionner une nouvelle photo')
             }}</ion-button>
           </div>
@@ -155,8 +146,8 @@ watch(
   { immediate: true },
 );
 
-const onMainSlideClick = async ({ index }: { index: number }) => {
-  currentNavigationItem.value = { type: 'issuecodes', value: [covers.value[index]!.issuecode] };
+const onCurrentCoverClick = async () => {
+  currentNavigationItem.value = { type: 'issuecodes', value: [cover.value!.issuecode] };
   await router.push('/collection');
 };
 </script>
