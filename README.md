@@ -2,7 +2,7 @@
 
 [Official website](https://www.ducksmanager.net)
 
-DucksManager is a graits and copylefted libre software website to manage Disney comic-book collections.
+DucksManager is a copylefted libre software (and gratis) website to manage Disney comic-book collections.
 
 Translations:
 <a href="https://hosted.weblate.org/engage/ducksmanager/">
