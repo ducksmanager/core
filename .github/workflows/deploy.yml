@@ -48,6 +48,7 @@ jobs:
         run: |
           pnpm i -g turbo
           turbo -F '~web...' -F '~api...' build
+          ls -la packages/prisma-clients/client_dm
 
       - name: Retrieve pre-build files
         run: |
