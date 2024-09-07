@@ -34,7 +34,7 @@
         }}</ion-select-option>
       </ion-select>
       <ion-item v-if="isLoadingSuggestions">{{ t('Chargement…') }}</ion-item>
-      <div class="ion-padding" v-else-if="formattedSuggestions && !formattedSuggestions.length">
+      <div class="ion-padding ion-text-center" v-else-if="formattedSuggestions && !formattedSuggestions.length">
         {{ t('Aucune suggestion disponible.') }}
       </div>
       <template v-else-if="formattedSuggestions">
@@ -54,11 +54,7 @@
               :show-issue-conditions="false"
               :classes="['issue-title', 'ion-no-padding']"
             />
-            <ion-col
-              class="ion-no-padding flex"
-              size="3"
-              style="display: flex; flex-direction: column; align-items: start; justify-content: center"
-            >
+            <ion-col class="ion-no-padding flex suggestion-details" size="3">
               <div class="ion-text-nowrap">
                 <ion-icon :ios="calendarOutline" :md="calendarSharp" />&nbsp;{{ issue.releaseDate }}
               </div>
@@ -223,6 +219,13 @@ ion-row.toggle {
 
 .suggestion {
   margin-top: 1rem;
+}
+
+.suggestion-details {
+  flex-direction: column;
+  align-items: start;
+  justify-content: center;
+  font-size: small !important;
 }
 
 .stories {

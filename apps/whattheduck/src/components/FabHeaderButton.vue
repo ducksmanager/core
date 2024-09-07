@@ -42,7 +42,7 @@ ion-fab {
     display: block;
   }
   ion-fab-list {
-    margin-top: 3rem;
+    margin-top: 2rem;
     ion-item {
       &.selected {
         ::part(native) {

@@ -1,4 +1,4 @@
-require_relative '../../node_modules/.pnpm/@capacitor+ios@6.1.2_@capacitor+core@6.1.2/node_modules/@capacitor/ios/scripts/pods_helpers'
+require_relative '../../../../node_modules/.pnpm/@capacitor+ios@6.1.2_@capacitor+core@6.1.2/node_modules/@capacitor/ios/scripts/pods_helpers'
 
 platform :ios, '13.0'
 use_frameworks!
@@ -9,20 +9,20 @@ use_frameworks!
 install! 'cocoapods', :disable_input_output_paths => true
 
 def capacitor_pods
-  pod 'Capacitor', :path => '../../node_modules/.pnpm/@capacitor+ios@6.1.2_@capacitor+core@6.1.2/node_modules/@capacitor/ios'
-  pod 'CapacitorCordova', :path => '../../node_modules/.pnpm/@capacitor+ios@6.1.2_@capacitor+core@6.1.2/node_modules/@capacitor/ios'
-  pod 'CapacitorCommunityCameraPreview', :path => '../../node_modules/.pnpm/@capacitor-community+camera-preview@6.0.0_@capacitor+core@6.1.2/node_modules/@capacitor-community/camera-preview'
-  pod 'CapacitorCommunitySqlite', :path => '../../node_modules/.pnpm/@capacitor-community+sqlite@6.0.1_@capacitor+core@6.1.2/node_modules/@capacitor-community/sqlite'
-  pod 'CapacitorApp', :path => '../../node_modules/.pnpm/@capacitor+app@6.0.1_@capacitor+core@6.1.2/node_modules/@capacitor/app'
-  pod 'CapacitorCamera', :path => '../../node_modules/.pnpm/@capacitor+camera@6.0.2_@capacitor+core@6.1.2/node_modules/@capacitor/camera'
-  pod 'CapacitorClipboard', :path => '../../node_modules/.pnpm/@capacitor+clipboard@6.0.1_@capacitor+core@6.1.2/node_modules/@capacitor/clipboard'
-  pod 'CapacitorHaptics', :path => '../../node_modules/.pnpm/@capacitor+haptics@6.0.1_@capacitor+core@6.1.2/node_modules/@capacitor/haptics'
-  pod 'CapacitorKeyboard', :path => '../../node_modules/.pnpm/@capacitor+keyboard@6.0.2_@capacitor+core@6.1.2/node_modules/@capacitor/keyboard'
-  pod 'CapacitorPreferences', :path => '../../node_modules/.pnpm/@capacitor+preferences@6.0.2_@capacitor+core@6.1.2/node_modules/@capacitor/preferences'
-  pod 'CapacitorStatusBar', :path => '../../node_modules/.pnpm/@capacitor+status-bar@6.0.1_@capacitor+core@6.1.2/node_modules/@capacitor/status-bar'
-  pod 'CapawesomeCapacitorAppUpdate', :path => '../../node_modules/.pnpm/@capawesome+capacitor-app-update@6.0.0_@capacitor+core@6.1.2/node_modules/@capawesome/capacitor-app-update'
-  pod 'CapawesomeCapacitorFilePicker', :path => '../../node_modules/.pnpm/@capawesome+capacitor-file-picker@6.0.1_@capacitor+core@6.1.2/node_modules/@capawesome/capacitor-file-picker'
-  pod 'CapgoCapacitorUpdater', :path => '../../node_modules/.pnpm/@capgo+capacitor-updater@6.1.3_@capacitor+core@6.1.2/node_modules/@capgo/capacitor-updater'
+  pod 'Capacitor', :path => '../../../../node_modules/.pnpm/@capacitor+ios@6.1.2_@capacitor+core@6.1.2/node_modules/@capacitor/ios'
+  pod 'CapacitorCordova', :path => '../../../../node_modules/.pnpm/@capacitor+ios@6.1.2_@capacitor+core@6.1.2/node_modules/@capacitor/ios'
+  pod 'CapacitorCommunityCameraPreview', :path => '../../../../node_modules/.pnpm/@capacitor-community+camera-preview@6.0.0_@capacitor+core@6.1.2/node_modules/@capacitor-community/camera-preview'
+  pod 'CapacitorCommunitySqlite', :path => '../../../../node_modules/.pnpm/@capacitor-community+sqlite@6.0.1_@capacitor+core@6.1.2/node_modules/@capacitor-community/sqlite'
+  pod 'CapacitorApp', :path => '../../../../node_modules/.pnpm/@capacitor+app@6.0.1_@capacitor+core@6.1.2/node_modules/@capacitor/app'
+  pod 'CapacitorCamera', :path => '../../../../node_modules/.pnpm/@capacitor+camera@6.0.2_@capacitor+core@6.1.2/node_modules/@capacitor/camera'
+  pod 'CapacitorClipboard', :path => '../../../../node_modules/.pnpm/@capacitor+clipboard@6.0.1_@capacitor+core@6.1.2/node_modules/@capacitor/clipboard'
+  pod 'CapacitorHaptics', :path => '../../../../node_modules/.pnpm/@capacitor+haptics@6.0.1_@capacitor+core@6.1.2/node_modules/@capacitor/haptics'
+  pod 'CapacitorKeyboard', :path => '../../../../node_modules/.pnpm/@capacitor+keyboard@6.0.2_@capacitor+core@6.1.2/node_modules/@capacitor/keyboard'
+  pod 'CapacitorPreferences', :path => '../../../../node_modules/.pnpm/@capacitor+preferences@6.0.2_@capacitor+core@6.1.2/node_modules/@capacitor/preferences'
+  pod 'CapacitorStatusBar', :path => '../../../../node_modules/.pnpm/@capacitor+status-bar@6.0.1_@capacitor+core@6.1.2/node_modules/@capacitor/status-bar'
+  pod 'CapawesomeCapacitorAppUpdate', :path => '../../../../node_modules/.pnpm/@capawesome+capacitor-app-update@6.0.0_@capacitor+core@6.1.2/node_modules/@capawesome/capacitor-app-update'
+  pod 'CapawesomeCapacitorFilePicker', :path => '../../../../node_modules/.pnpm/@capawesome+capacitor-file-picker@6.0.1_@capacitor+core@6.1.2/node_modules/@capawesome/capacitor-file-picker'
+  pod 'CapgoCapacitorUpdater', :path => '../../../../node_modules/.pnpm/@capgo+capacitor-updater@6.1.18_@capacitor+core@6.1.2/node_modules/@capgo/capacitor-updater'
 end
 
 target 'App' do

@@ -27,7 +27,7 @@ PODS:
     - Capacitor
   - CapawesomeCapacitorFilePicker (6.0.1):
     - Capacitor
-  - CapgoCapacitorUpdater (6.1.3):
+  - CapgoCapacitorUpdater (6.1.18):
     - Alamofire
     - Capacitor
     - SSZipArchive
@@ -46,20 +46,20 @@ PODS:
   - ZIPFoundation (0.9.19)
 
 DEPENDENCIES:
-  - "Capacitor (from `../../node_modules/.pnpm/@capacitor+ios@6.1.2_@capacitor+core@6.1.2/node_modules/@capacitor/ios`)"
-  - "CapacitorApp (from `../../node_modules/.pnpm/@capacitor+app@6.0.1_@capacitor+core@6.1.2/node_modules/@capacitor/app`)"
-  - "CapacitorCamera (from `../../node_modules/.pnpm/@capacitor+camera@6.0.2_@capacitor+core@6.1.2/node_modules/@capacitor/camera`)"
-  - "CapacitorClipboard (from `../../node_modules/.pnpm/@capacitor+clipboard@6.0.1_@capacitor+core@6.1.2/node_modules/@capacitor/clipboard`)"
-  - "CapacitorCommunityCameraPreview (from `../../node_modules/.pnpm/@capacitor-community+camera-preview@6.0.0_@capacitor+core@6.1.2/node_modules/@capacitor-community/camera-preview`)"
-  - "CapacitorCommunitySqlite (from `../../node_modules/.pnpm/@capacitor-community+sqlite@6.0.1_@capacitor+core@6.1.2/node_modules/@capacitor-community/sqlite`)"
-  - "CapacitorCordova (from `../../node_modules/.pnpm/@capacitor+ios@6.1.2_@capacitor+core@6.1.2/node_modules/@capacitor/ios`)"
-  - "CapacitorHaptics (from `../../node_modules/.pnpm/@capacitor+haptics@6.0.1_@capacitor+core@6.1.2/node_modules/@capacitor/haptics`)"
-  - "CapacitorKeyboard (from `../../node_modules/.pnpm/@capacitor+keyboard@6.0.2_@capacitor+core@6.1.2/node_modules/@capacitor/keyboard`)"
-  - "CapacitorPreferences (from `../../node_modules/.pnpm/@capacitor+preferences@6.0.2_@capacitor+core@6.1.2/node_modules/@capacitor/preferences`)"
-  - "CapacitorStatusBar (from `../../node_modules/.pnpm/@capacitor+status-bar@6.0.1_@capacitor+core@6.1.2/node_modules/@capacitor/status-bar`)"
-  - "CapawesomeCapacitorAppUpdate (from `../../node_modules/.pnpm/@capawesome+capacitor-app-update@6.0.0_@capacitor+core@6.1.2/node_modules/@capawesome/capacitor-app-update`)"
-  - "CapawesomeCapacitorFilePicker (from `../../node_modules/.pnpm/@capawesome+capacitor-file-picker@6.0.1_@capacitor+core@6.1.2/node_modules/@capawesome/capacitor-file-picker`)"
-  - "CapgoCapacitorUpdater (from `../../node_modules/.pnpm/@capgo+capacitor-updater@6.1.3_@capacitor+core@6.1.2/node_modules/@capgo/capacitor-updater`)"
+  - "Capacitor (from `../../../../node_modules/.pnpm/@capacitor+ios@6.1.2_@capacitor+core@6.1.2/node_modules/@capacitor/ios`)"
+  - "CapacitorApp (from `../../../../node_modules/.pnpm/@capacitor+app@6.0.1_@capacitor+core@6.1.2/node_modules/@capacitor/app`)"
+  - "CapacitorCamera (from `../../../../node_modules/.pnpm/@capacitor+camera@6.0.2_@capacitor+core@6.1.2/node_modules/@capacitor/camera`)"
+  - "CapacitorClipboard (from `../../../../node_modules/.pnpm/@capacitor+clipboard@6.0.1_@capacitor+core@6.1.2/node_modules/@capacitor/clipboard`)"
+  - "CapacitorCommunityCameraPreview (from `../../../../node_modules/.pnpm/@capacitor-community+camera-preview@6.0.0_@capacitor+core@6.1.2/node_modules/@capacitor-community/camera-preview`)"
+  - "CapacitorCommunitySqlite (from `../../../../node_modules/.pnpm/@capacitor-community+sqlite@6.0.1_@capacitor+core@6.1.2/node_modules/@capacitor-community/sqlite`)"
+  - "CapacitorCordova (from `../../../../node_modules/.pnpm/@capacitor+ios@6.1.2_@capacitor+core@6.1.2/node_modules/@capacitor/ios`)"
+  - "CapacitorHaptics (from `../../../../node_modules/.pnpm/@capacitor+haptics@6.0.1_@capacitor+core@6.1.2/node_modules/@capacitor/haptics`)"
+  - "CapacitorKeyboard (from `../../../../node_modules/.pnpm/@capacitor+keyboard@6.0.2_@capacitor+core@6.1.2/node_modules/@capacitor/keyboard`)"
+  - "CapacitorPreferences (from `../../../../node_modules/.pnpm/@capacitor+preferences@6.0.2_@capacitor+core@6.1.2/node_modules/@capacitor/preferences`)"
+  - "CapacitorStatusBar (from `../../../../node_modules/.pnpm/@capacitor+status-bar@6.0.1_@capacitor+core@6.1.2/node_modules/@capacitor/status-bar`)"
+  - "CapawesomeCapacitorAppUpdate (from `../../../../node_modules/.pnpm/@capawesome+capacitor-app-update@6.0.0_@capacitor+core@6.1.2/node_modules/@capawesome/capacitor-app-update`)"
+  - "CapawesomeCapacitorFilePicker (from `../../../../node_modules/.pnpm/@capawesome+capacitor-file-picker@6.0.1_@capacitor+core@6.1.2/node_modules/@capawesome/capacitor-file-picker`)"
+  - "CapgoCapacitorUpdater (from `../../../../node_modules/.pnpm/@capgo+capacitor-updater@6.1.18_@capacitor+core@6.1.2/node_modules/@capgo/capacitor-updater`)"
 
 SPEC REPOS:
   trunk:
@@ -72,33 +72,33 @@ SPEC REPOS:
 
 EXTERNAL SOURCES:
   Capacitor:
-    :path: "../../node_modules/.pnpm/@capacitor+ios@6.1.2_@capacitor+core@6.1.2/node_modules/@capacitor/ios"
+    :path: "../../../../node_modules/.pnpm/@capacitor+ios@6.1.2_@capacitor+core@6.1.2/node_modules/@capacitor/ios"
   CapacitorApp:
-    :path: "../../node_modules/.pnpm/@capacitor+app@6.0.1_@capacitor+core@6.1.2/node_modules/@capacitor/app"
+    :path: "../../../../node_modules/.pnpm/@capacitor+app@6.0.1_@capacitor+core@6.1.2/node_modules/@capacitor/app"
   CapacitorCamera:
-    :path: "../../node_modules/.pnpm/@capacitor+camera@6.0.2_@capacitor+core@6.1.2/node_modules/@capacitor/camera"
+    :path: "../../../../node_modules/.pnpm/@capacitor+camera@6.0.2_@capacitor+core@6.1.2/node_modules/@capacitor/camera"
   CapacitorClipboard:
-    :path: "../../node_modules/.pnpm/@capacitor+clipboard@6.0.1_@capacitor+core@6.1.2/node_modules/@capacitor/clipboard"
+    :path: "../../../../node_modules/.pnpm/@capacitor+clipboard@6.0.1_@capacitor+core@6.1.2/node_modules/@capacitor/clipboard"
   CapacitorCommunityCameraPreview:
-    :path: "../../node_modules/.pnpm/@capacitor-community+camera-preview@6.0.0_@capacitor+core@6.1.2/node_modules/@capacitor-community/camera-preview"
+    :path: "../../../../node_modules/.pnpm/@capacitor-community+camera-preview@6.0.0_@capacitor+core@6.1.2/node_modules/@capacitor-community/camera-preview"
   CapacitorCommunitySqlite:
-    :path: "../../node_modules/.pnpm/@capacitor-community+sqlite@6.0.1_@capacitor+core@6.1.2/node_modules/@capacitor-community/sqlite"
+    :path: "../../../../node_modules/.pnpm/@capacitor-community+sqlite@6.0.1_@capacitor+core@6.1.2/node_modules/@capacitor-community/sqlite"
   CapacitorCordova:
-    :path: "../../node_modules/.pnpm/@capacitor+ios@6.1.2_@capacitor+core@6.1.2/node_modules/@capacitor/ios"
+    :path: "../../../../node_modules/.pnpm/@capacitor+ios@6.1.2_@capacitor+core@6.1.2/node_modules/@capacitor/ios"
   CapacitorHaptics:
-    :path: "../../node_modules/.pnpm/@capacitor+haptics@6.0.1_@capacitor+core@6.1.2/node_modules/@capacitor/haptics"
+    :path: "../../../../node_modules/.pnpm/@capacitor+haptics@6.0.1_@capacitor+core@6.1.2/node_modules/@capacitor/haptics"
   CapacitorKeyboard:
-    :path: "../../node_modules/.pnpm/@capacitor+keyboard@6.0.2_@capacitor+core@6.1.2/node_modules/@capacitor/keyboard"
+    :path: "../../../../node_modules/.pnpm/@capacitor+keyboard@6.0.2_@capacitor+core@6.1.2/node_modules/@capacitor/keyboard"
   CapacitorPreferences:
-    :path: "../../node_modules/.pnpm/@capacitor+preferences@6.0.2_@capacitor+core@6.1.2/node_modules/@capacitor/preferences"
+    :path: "../../../../node_modules/.pnpm/@capacitor+preferences@6.0.2_@capacitor+core@6.1.2/node_modules/@capacitor/preferences"
   CapacitorStatusBar:
-    :path: "../../node_modules/.pnpm/@capacitor+status-bar@6.0.1_@capacitor+core@6.1.2/node_modules/@capacitor/status-bar"
+    :path: "../../../../node_modules/.pnpm/@capacitor+status-bar@6.0.1_@capacitor+core@6.1.2/node_modules/@capacitor/status-bar"
   CapawesomeCapacitorAppUpdate:
-    :path: "../../node_modules/.pnpm/@capawesome+capacitor-app-update@6.0.0_@capacitor+core@6.1.2/node_modules/@capawesome/capacitor-app-update"
+    :path: "../../../../node_modules/.pnpm/@capawesome+capacitor-app-update@6.0.0_@capacitor+core@6.1.2/node_modules/@capawesome/capacitor-app-update"
   CapawesomeCapacitorFilePicker:
-    :path: "../../node_modules/.pnpm/@capawesome+capacitor-file-picker@6.0.1_@capacitor+core@6.1.2/node_modules/@capawesome/capacitor-file-picker"
+    :path: "../../../../node_modules/.pnpm/@capawesome+capacitor-file-picker@6.0.1_@capacitor+core@6.1.2/node_modules/@capawesome/capacitor-file-picker"
   CapgoCapacitorUpdater:
-    :path: "../../node_modules/.pnpm/@capgo+capacitor-updater@6.1.3_@capacitor+core@6.1.2/node_modules/@capgo/capacitor-updater"
+    :path: "../../../../node_modules/.pnpm/@capgo+capacitor-updater@6.1.18_@capacitor+core@6.1.2/node_modules/@capgo/capacitor-updater"
 
 SPEC CHECKSUMS:
   Alamofire: f36a35757af4587d8e4f4bfa223ad10be2422b8c
@@ -115,13 +115,13 @@ SPEC CHECKSUMS:
   CapacitorStatusBar: b81d4fb5d4e0064c712018071b3ab4b810b39a63
   CapawesomeCapacitorAppUpdate: 3c05b5c8e42f9c6a88d666093406e9336d9bfdb1
   CapawesomeCapacitorFilePicker: c80c30759ba48986ff34a2b51b23ac2babfd3774
-  CapgoCapacitorUpdater: efe8284fa900b537b53191c50d529f16fe8cb023
+  CapgoCapacitorUpdater: ec5e7fb0c48961c92d8751a936b14f82888dea4e
   SQLCipher: 30a8e81afa6128e600b17ffa77d0f92fa05ed208
   SSZipArchive: fe6a26b2a54d5a0890f2567b5cc6de5caa600aef
   SwiftyRSA: 8c6dd1ea7db1b8dc4fb517a202f88bb1354bc2c6
   Version: de5907f2c5d0f3cf21708db7801d1d5401139486
   ZIPFoundation: b8c29ea7ae353b309bc810586181fd073cb3312c
 
-PODFILE CHECKSUM: 1a5300b141854307381783a8c74e1fd643471b9f
+PODFILE CHECKSUM: c94518719b7cc412bfcda4674ae49662d804c5b1
 
 COCOAPODS: 1.15.2

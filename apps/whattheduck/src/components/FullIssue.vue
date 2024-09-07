@@ -1,5 +1,5 @@
 <template>
-  <ion-col :class="`ion-align-items-center ion-text-nowrap ${(classes || []).join(' ')}`"
+  <ion-col v-if="issue" :class="`ion-align-items-center ion-text-nowrap ${(classes || []).join(' ')}`"
     ><Country :id="countrycode" /> &nbsp;<template v-if="showIssueConditions"
       >&nbsp;<condition-with-part
         v-for="collectionIssue of collectionIssues"

@@ -1,4 +1,4 @@
-import { bookmarkSharp } from 'ionicons/icons';
+import { bookmarkOutline, bookmarkSharp } from 'ionicons/icons';
 import { defineStore } from 'pinia';
 import type { NotEmptyStorageValue } from '~socket.io-client-services';
 import type useDmSocket from '~web/src/composables/useDmSocket';
@@ -125,12 +125,12 @@ export const app = defineStore('app', () => {
     {
       id: 'unreadBooksOnly',
       label: 'Unread books only',
-      icon: { ios: bookmarkSharp, md: bookmarkSharp },
+      icon: { ios: bookmarkOutline, md: bookmarkSharp },
     },
     {
       id: 'readBooksOnly',
       label: 'Read books only',
-      icon: { negate: true, ios: bookmarkSharp, md: bookmarkSharp },
+      icon: { negate: true, ios: bookmarkOutline, md: bookmarkSharp },
     },
   ] as const;
 

@@ -136,3 +136,9 @@ ion-checkbox {
 .flex {
   display: flex !important
 }
+
+.ios {
+  .fab-button-in-list {
+    --color: black;
+  }
+}
