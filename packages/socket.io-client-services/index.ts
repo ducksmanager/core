@@ -89,12 +89,10 @@ export class SocketClient {
             EventReturnTypeIncludingError<Services[EventName]> | undefined
           > => {
             const startTime = Date.now();
+            const eventConsoleString = `${namespaceName}/${event}(${args.join(", ")})`;
             const debugCall = (post: boolean = false) =>
               console.debug(
-                `${post ? "Called" : "Calling"} socket event`,
-                `${namespaceName}/${event}`,
-                args,
-                post ? `in ${Date.now() - startTime}ms` : ""
+                `${eventConsoleString} ${post ? `responded in ${Date.now() - startTime}ms` : "called"}`
               );
             let cacheKey;
             if (cache) {
@@ -111,7 +109,7 @@ export class SocketClient {
                 cacheData !== undefined &&
                 !(typeof cacheData === "object" && cacheData.state === "empty");
               if (hasCacheData) {
-                console.debug("Using cache for socket event", event, args);
+                console.debug(`${eventConsoleString} served from cache`);
                 return cacheData;
               }
             }
