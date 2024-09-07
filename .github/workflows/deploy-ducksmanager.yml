@@ -3,11 +3,6 @@ name: deploy-ducksmanager
 on:
   workflow_dispatch:
   push:
-    paths:
-      - ".github/workflows/deploy-ducksmanager.yml"
-      - "apps/web/**"
-      - "packages/api/**"
-      - "pnpm-lock.yaml"
     branches:
       - "legacy"
 jobs:
