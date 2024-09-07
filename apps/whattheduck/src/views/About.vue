@@ -19,8 +19,8 @@
         <a :href="instagramUrl"><img src="/icons/instagram.png" /></a>
         <a :href="youtubeUrl"><img src="/icons/youtube.png" /></a>
       </div>
-      <ion-button id="link-to-dm" expand="full" color="white" @click.prevent="() => {}">
-        <a :href="playStoreUrl"> {{ t("Notez What The Duck sur le Play Store si vous appréciez l'utiliser :-)") }}</a>
+      <ion-button id="link-to-dm" :href="playStoreUrl">
+        {{ t("Notez What The Duck sur le Play Store si vous appréciez l'utiliser :-)") }}
       </ion-button>
     </ion-content></ion-page
   >
@@ -62,9 +62,10 @@ ion-content::part(scroll) {
   justify-content: space-around;
 }
 
-div {
+ion-content > div {
   display: flex;
   flex-direction: row;
   justify-content: space-evenly;
+  line-height: 1rem;
 }
 </style>

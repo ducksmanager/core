@@ -1,6 +1,6 @@
 <template>
   <ion-fab ref="fab" slot="fixed" vertical="bottom" horizontal="end">
-    <ion-fab-button>
+    <ion-fab-button v-show="!isOfflineMode">
       <ion-icon :ios="pencilOutline" :md="pencilSharp" />
     </ion-fab-button>
     <ion-fab-list side="top">
@@ -79,7 +79,7 @@ const {
 const emit = defineEmits<(e: 'show-camera-preview') => void>();
 
 const { pickCoverFile } = useCoverSearch(useRouter(), coverIdServices);
-const { isCoaView } = storeToRefs(app());
+const { isCoaView, isOfflineMode } = storeToRefs(app());
 
 // eslint-disable-next-line no-undef
 const fab = shallowRef<ComponentPublicInstance<HTMLIonFabElement> | null>(null);

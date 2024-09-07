@@ -59,12 +59,13 @@ export const wtdcollection = defineStore('wtdcollection', () => {
       await usersStore.fetchStats([webCollectionStore.user?.id || 0]);
       // TODO retrieve user notification countries
 
+      await fetchIssueCountsByCountrycode();
+      await fetchIssueCountsByPublicationcode();
+
       // TODO get app version
       (async () => {
         await loadSuggestions({ countryCode: 'ALL', sinceLastVisit: false });
         await statsStore.loadRatings();
-        await fetchIssueCountsByCountrycode();
-        await fetchIssueCountsByPublicationcode();
       })();
 
       // TODO register for notifications
