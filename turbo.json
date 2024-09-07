@@ -1,8 +1,10 @@
 {
     "$schema": "https://turborepo.org/schema.json",
+    "ui": "tui",
     "tasks": {
         "prisma-pull-generate": {},
-        "prisma-generate": {
+        "lint": {},
+        "prisma-generate-all": {
             "cache": false
         },
         "wait": {
@@ -10,17 +12,46 @@
         },
         "build": {
             "dependsOn": [
-                "prisma-generate",
+                "prisma-generate-all",
                 "^build"
             ],
             "outputs": [
                 "dist/**"
             ]
         },
+        "prod:build-docker": {
+            "passThroughEnv": [
+                "REPO_NAME"
+            ]
+        },
+        "prod:deploy": {
+            "passThroughEnv": [
+                "REMOTE_ROOT",
+                "PRODUCTION_SSH_HOST",
+                "PRODUCTION_SSH_USER",
+                "PRODUCTION_SSH_KEY"
+            ]
+        },
+        "prod:transfer-files-pre": {
+            "passThroughEnv": [
+                "REMOTE_ROOT",
+                "PRODUCTION_SSH_HOST",
+                "PRODUCTION_SSH_USER",
+                "PRODUCTION_SSH_KEY"
+            ]
+        },
+        "prod:transfer-files-post": {
+            "passThroughEnv": [
+                "REMOTE_ROOT",
+                "PRODUCTION_SSH_HOST",
+                "PRODUCTION_SSH_USER",
+                "PRODUCTION_SSH_KEY"
+            ]
+        },
         "dev": {
             "persistent": true,
             "dependsOn": [
-                "prisma-generate",
+                "prisma-generate-all",
                 "^wait"
             ]
         }
