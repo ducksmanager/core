@@ -1,0 +1,19 @@
+{
+    "name": "~ci",
+    "engines": {
+        "node": ">=18.0.0 <19.0.0"
+    },
+    "type": "module",
+    "scripts": {
+        "prod:build-docker": "export CACHE_REF=$(echo $REPO_NAME | tr ':' '-'):buildcache && echo $CACHE_REF; cd ../.. && docker buildx build . --platform linux/amd64 --cache-to=\"type=registry,ref=${CACHE_REF},mode=max\" --cache-from=\"type=registry,ref=${CACHE_REF}\" -t $REPO_NAME --push $@",
+        "prod:docker-compose-up": "echo \"$PRODUCTION_SSH_KEY\" > /tmp/id_rsa && chmod 700 /tmp/id_rsa && ssh -o StrictHostKeyChecking=no -i /tmp/id_rsa $PRODUCTION_SSH_USER@$PRODUCTION_SSH_HOST \"cd $REMOTE_ROOT/$DIR && docker compose pull && docker compose up -d --force-recreate $SERVICES\"",
+        "prod:transfer-files": "tsx transfer-files.ts"
+    },
+    "dependencies": {
+        "ssh2-sftp-client": "^11.0.0"
+    },
+    "devDependencies": {
+        "@types/ssh2-sftp-client": "^9.0.4",
+        "tsx": "^4.19.0"
+    }
+}
