@@ -8,6 +8,7 @@ FROM pnpm AS build
 
 WORKDIR /app
 COPY . ./
+RUN curl -fsSL https://bun.sh/install | bash
 RUN --mount=type=cache,id=pnpm-store-web,target=/app/.pnpm-store \
     pnpm -r -F ~web... -F ~api... i
 
