@@ -59,7 +59,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ github.token }}
         run: |
-          turbo -F -F '~web...' -F '~api...' prod:build-docker
+          turbo -F '~web...' -F '~api...' prod:build-docker
 
       - name: Send post-build files
         run: |
