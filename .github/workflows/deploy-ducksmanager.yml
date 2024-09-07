@@ -35,7 +35,7 @@ jobs:
           fingerprint: ${{ secrets.PRODUCTION_SSH_FINGERPRINT }}
           username: ${{ secrets.PRODUCTION_SSH_USER }}
           key: ${{ secrets.PRODUCTION_SSH_KEY }}
-          source: /home/bperel/workspace/DucksManager2/packages/api/.env.prod.local
+          source: /home/bperel/workspace/DucksManager2/packages/api/.env
           target: packages/api/.env
 
       - name: Set up Docker Buildx
