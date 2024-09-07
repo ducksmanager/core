@@ -3,7 +3,7 @@ services:
     init: true
     image: ghcr.io/bperel/coa-updater
     env_file:
-      - ../../packages/api/.env.prod.local
+      - ../../packages/api/.env
     environment:
       MYSQL_HOST: db
       MYSQL_DATABASE: coa
