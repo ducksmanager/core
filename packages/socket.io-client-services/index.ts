@@ -44,32 +44,32 @@ export type EventCalls<S extends EventsMap> = {
   ) => Promise<EventReturnTypeIncludingError<S[EventName]>>;
 };
 
-export const useSocket = (socketRootUrl: string) => ({
-  addNamespace: <Services extends EventsMap>(
+export class SocketClient {
+  constructor(private socketRootUrl: string) {}
+
+  public onConnectError = (e: Error, namespace: string) => {
+    console.error(`${namespace}: connect_error: ${e}`);
+  };
+  public addNamespace<Services extends EventsMap>(
     namespaceName: string,
     namespaceOptions: {
-      onConnectError: (e: Error, namespace: string) => void;
       session?: {
         getToken: () => Promise<string | null | undefined>;
         clearSession: () => Promise<void> | void;
         sessionExists: () => Promise<boolean>;
       };
       cache?: Required<SocketCacheOptions<Services>>;
-    } = {
-      onConnectError(e, namespace) {
-        console.error(`${namespace}: connect_error: ${e}`);
-      },
-    },
-  ) => {
-    const { session, onConnectError, cache } = namespaceOptions;
-    const socket = io(socketRootUrl + namespaceName, {
+    } = {}
+  ) {
+    const { session, cache } = namespaceOptions;
+    const socket = io(this.socketRootUrl + namespaceName, {
       multiplex: false,
       auth: async (cb) => {
         cb(session ? { token: await session.getToken() } : {});
       },
     })
       .on("connect_error", (e) => {
-        onConnectError(e, namespaceName);
+        this.onConnectError(e, namespaceName);
       })
       .on("connect", () => {
         console.log("connected to", namespaceName);
@@ -81,7 +81,7 @@ export const useSocket = (socketRootUrl: string) => ({
         get:
           <EventName extends StringKeyOf<Services>>(
             _: never,
-            event: EventName,
+            event: EventName
           ) =>
           async (
             ...args: AllButLast<Parameters<Services[EventName]>>
@@ -94,7 +94,7 @@ export const useSocket = (socketRootUrl: string) => ({
                 `${post ? "Called" : "Calling"} socket event`,
                 `${namespaceName}/${event}`,
                 args,
-                post ? `in ${Date.now() - startTime}ms` : "",
+                post ? `in ${Date.now() - startTime}ms` : ""
               );
             let cacheKey;
             if (cache) {
@@ -125,5 +125,5 @@ export const useSocket = (socketRootUrl: string) => ({
           },
       }),
     };
-  },
-});
+  }
+}

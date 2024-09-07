@@ -18,7 +18,7 @@ import '~/theme/global.scss';
 import { defineSetupVue3 } from '@histoire/plugin-vue';
 import { IonicVue } from '@ionic/vue';
 import { createPinia } from 'pinia';
-import { useSocket } from '~socket.io-client-services/index';
+import { SocketClient } from '~socket.io-client-services/index';
 import { i18n } from '~web';
 
 import router from './src/router';
@@ -32,5 +32,5 @@ export const setupVue3 = defineSetupVue3(({ app }) => {
     .use(router)
     .use(createPinia())
     .use(i18n('fr', { en, sv }).instance)
-    .provide('dmSocket', useSocket(import.meta.env.VITE_DM_SOCKET_URL));
+    .provide('dmSocket', new SocketClient(import.meta.env.VITE_DM_SOCKET_URL));
 });

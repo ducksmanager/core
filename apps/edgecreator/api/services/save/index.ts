@@ -6,7 +6,7 @@ import type { Server } from "socket.io";
 
 import { getSvgPath } from "~/_utils";
 import EdgeCreatorServices from "~dm-services/edgecreator/types";
-import { useSocket } from "~socket.io-client-services";
+import { SocketClient } from "~socket.io-client-services";
 import type { ExportPaths } from "~types/ExportPaths";
 
 import type Events from "./types";
@@ -17,14 +17,12 @@ export default (io: Server) => {
     console.log("connected to save");
     const token = socket.handshake.auth.token;
 
-    const dmSocket = useSocket(process.env.DM_SOCKET_URL!);
+    const dmSocket = new SocketClient(process.env.DM_SOCKET_URL!);
+    dmSocket.onConnectError = (e) => console.error(e);
     const { services: edgeCreatorServices } =
       dmSocket.addNamespace<EdgeCreatorServices>(
         EdgeCreatorServices.namespaceEndpoint,
         {
-          onConnectError: (e) => {
-            console.error(e);
-          },
           session: {
             getToken: () => token,
             sessionExists: () => Promise.resolve(token),
@@ -32,7 +30,7 @@ export default (io: Server) => {
               console.log("not allowed");
             },
           },
-        },
+        }
       );
 
     socket.on("saveEdge", async (parameters, callback) => {

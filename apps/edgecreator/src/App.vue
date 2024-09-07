@@ -5,7 +5,7 @@
 <script setup lang="ts">
 import Cookies from "js-cookie";
 
-import type { useSocket } from "~socket.io-client-services/index";
+import { SocketClient } from "~socket.io-client-services/index";
 import { buildWebStorage } from "~socket.io-client-services/index";
 import { stores as webStores } from "~web";
 import useDmSocket, {
@@ -15,6 +15,7 @@ import useDmSocket, {
 import useEdgecreatorSocket, {
   edgecreatorSocketInjectionKey,
 } from "./composables/useEdgecreatorSocket";
+import { getCurrentInstance } from "vue";
 
 const session = {
   getToken: () => Promise.resolve(Cookies.get("token")),
@@ -39,23 +40,17 @@ const onConnectError = (e: Error) => {
 };
 getCurrentInstance()!.appContext.app.provide(
   edgecreatorSocketInjectionKey,
-  useEdgecreatorSocket(
-    inject("edgecreatorSocket") as ReturnType<typeof useSocket>,
-    {
-      session,
-      onConnectError,
-    }
-  )
-);
-
-const dmSocket = useDmSocket(
-  inject("dmSocket") as ReturnType<typeof useSocket>,
-  {
-    cacheStorage: buildWebStorage(sessionStorage),
+  useEdgecreatorSocket(inject("edgecreatorSocket") as SocketClient, {
     session,
     onConnectError,
-  }
+  })
 );
+
+const dmSocket = useDmSocket(inject("dmSocket") as SocketClient, {
+  cacheStorage: buildWebStorage(sessionStorage),
+  session,
+  onConnectError,
+});
 
 getCurrentInstance()!.appContext.app.provide(dmSocketInjectionKey, dmSocket);
 const route = useRoute();

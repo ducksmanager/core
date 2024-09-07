@@ -15,7 +15,7 @@
 import { Capacitor } from '@capacitor/core';
 import type { Storage } from '@ionic/storage';
 import Cookies from 'js-cookie';
-import { buildStorage, useSocket } from '~socket.io-client-services';
+import { buildStorage, SocketClient } from '~socket.io-client-services';
 
 import OfflineBanner from './components/OfflineBanner.vue';
 import { app } from './stores/app';
@@ -64,7 +64,7 @@ const assignSocket = () => {
     ? import.meta.env.VITE_DM_SOCKET_URL
     : import.meta.env.VITE_DM_SOCKET_URL_NATIVE;
   console.log(`Using socket URL ${socketUrl}`);
-  socket.value = useDmSocket(useSocket(socketUrl), {
+  socket.value = useDmSocket(new SocketClient(socketUrl), {
     cacheStorage,
     session,
     onConnectError,

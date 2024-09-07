@@ -16,7 +16,7 @@ import { createRouter, createWebHistory } from "vue-router";
 
 import App from "~/App.vue";
 import i18n from "~/i18n";
-import { useSocket } from "~socket.io-client-services";
+import { SocketClient } from "~socket.io-client-services";
 import en from "~translations/messages.en.json";
 
 const head = createHead();
@@ -40,7 +40,7 @@ const app = createApp(App)
   .use(contextmenu)
   .use(head)
   .use(router)
-  .provide("dmSocket", useSocket(import.meta.env.VITE_DM_SOCKET_URL));
+  .provide("dmSocket", new SocketClient(import.meta.env.VITE_DM_SOCKET_URL));
 
 app.mount("#app");
 

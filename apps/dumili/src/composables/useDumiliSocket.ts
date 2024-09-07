@@ -15,7 +15,7 @@ import PresentationTextServices from "~dm-services/presentation-text/types";
 import PublicCollectionServices from "~dm-services/public-collection/types";
 import StatsServices from "~dm-services/stats/types";
 import type { AxiosStorage } from "~socket.io-client-services";
-import type { useSocket } from "~socket.io-client-services";
+import type { SocketClient } from "~socket.io-client-services";
 
 const defaultExport = (options: {
   cacheStorage: AxiosStorage;
@@ -27,7 +27,7 @@ const defaultExport = (options: {
     sessionExists: () => Promise<boolean>;
   };
 }) => {
-  const { session, onConnectError, cacheStorage } = options;
+  const { session, cacheStorage } = options;
   const until4am = () => {
     const now = dayjs();
     let coaCacheExpiration = dayjs();
@@ -42,73 +42,66 @@ const defaultExport = (options: {
       .diff(now);
   };
 
-  const { addNamespace } = inject("dmSocket") as ReturnType<typeof useSocket>;
+  const socket = inject("dmSocket") as SocketClient;
 
   return {
     options,
-    publicCollection: addNamespace<PublicCollectionServices>(
+    publicCollection: socket.addNamespace<PublicCollectionServices>(
       PublicCollectionServices.namespaceEndpoint,
-      { onConnectError },
     ),
-    login: addNamespace<LoginServices>(LoginServices.namespaceEndpoint, {
-      onConnectError,
-    }),
+    login: socket.addNamespace<LoginServices>(
+      LoginServices.namespaceEndpoint,
+      {},
+    ),
 
-    bookcase: addNamespace<BookcaseServices>(
+    bookcase: socket.addNamespace<BookcaseServices>(
       BookcaseServices.namespaceEndpoint,
-      { onConnectError, session },
+      { session },
     ),
-    stats: addNamespace<StatsServices>(StatsServices.namespaceEndpoint, {
-      onConnectError,
+    stats: socket.addNamespace<StatsServices>(StatsServices.namespaceEndpoint, {
       session,
       cache: {
         storage: cacheStorage,
         ttl: (event) => (event === "getSuggestionsForCountry" ? until4am() : 0),
       },
     }),
-    auth: addNamespace<AuthServices>(AuthServices.namespaceEndpoint, {
-      onConnectError,
+    auth: socket.addNamespace<AuthServices>(AuthServices.namespaceEndpoint, {
       session,
     }),
-    edgeCreator: addNamespace<EdgeCreatorServices>(
+    edgeCreator: socket.addNamespace<EdgeCreatorServices>(
       EdgeCreatorServices.namespaceEndpoint,
-      { onConnectError },
     ),
-    presentationText: addNamespace<PresentationTextServices>(
+    presentationText: socket.addNamespace<PresentationTextServices>(
       PresentationTextServices.namespaceEndpoint,
-      { onConnectError },
     ),
-    edges: addNamespace<EdgesServices>(EdgesServices.namespaceEndpoint, {
-      onConnectError,
-    }),
-    coa: addNamespace<CoaServices>(CoaServices.namespaceEndpoint, {
-      onConnectError,
+    edges: socket.addNamespace<EdgesServices>(
+      EdgesServices.namespaceEndpoint,
+      {},
+    ),
+    coa: socket.addNamespace<CoaServices>(CoaServices.namespaceEndpoint, {
       cache: {
         storage: cacheStorage,
         ttl: until4am(),
       },
     }),
-    globalStats: addNamespace<GlobalStatsServices>(
+    globalStats: socket.addNamespace<GlobalStatsServices>(
       GlobalStatsServices.namespaceEndpoint,
-      { onConnectError },
-      // {
-      //   ttl: oneHour(),
-      // },
     ),
-    events: addNamespace<EventsServices>(EventsServices.namespaceEndpoint, {
-      onConnectError,
-    }),
-    bookstore: addNamespace<BookstoreServices>(
+    events: socket.addNamespace<EventsServices>(
+      EventsServices.namespaceEndpoint,
+      {},
+    ),
+    bookstore: socket.addNamespace<BookstoreServices>(
       BookstoreServices.namespaceEndpoint,
-      { onConnectError },
     ),
-    collection: addNamespace<CollectionServices>(
+    collection: socket.addNamespace<CollectionServices>(
       CollectionServices.namespaceEndpoint,
-      { onConnectError, session },
+      { session },
     ),
-    coverId: addNamespace<CoverIdServices>(CoverIdServices.namespaceEndpoint, {
-      onConnectError,
-    }),
+    coverId: socket.addNamespace<CoverIdServices>(
+      CoverIdServices.namespaceEndpoint,
+      {},
+    ),
   };
 };
 

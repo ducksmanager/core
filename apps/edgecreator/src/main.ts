@@ -12,7 +12,7 @@ import type { RouteRecordRaw } from "vue-router";
 import { createRouter, createWebHistory } from "vue-router";
 import SimpleTypeahead from "vue3-simple-typeahead";
 
-import { useSocket } from "~socket.io-client-services";
+import { SocketClient } from "~socket.io-client-services";
 
 import App from "./App.vue";
 import i18n from "./i18n";
@@ -34,9 +34,9 @@ createApp(App)
   .use(store)
   .use(head)
   .use(router)
-  .provide("dmSocket", useSocket(import.meta.env.VITE_DM_SOCKET_URL))
+  .provide("dmSocket", new SocketClient(import.meta.env.VITE_DM_SOCKET_URL))
   .provide(
     "edgecreatorSocket",
-    useSocket(import.meta.env.VITE_EDGECREATOR_SOCKET_URL),
+    new SocketClient(import.meta.env.VITE_EDGECREATOR_SOCKET_URL)
   )
   .mount("#app");
