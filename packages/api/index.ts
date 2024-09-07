@@ -3,6 +3,8 @@ import { instrument } from "@socket.io/admin-ui";
 import dotenv from "dotenv";
 import { createServer } from "http";
 import { Server } from "socket.io";
+import cluster from "cluster";
+import { cpus } from "os";
 
 import type { SessionUser } from "~dm-types/SessionUser";
 
@@ -84,63 +86,74 @@ const httpServer = createServer(async (req, res) => {
   res.end();
 });
 
-httpServer.listen(3000);
-console.log("WebSocket open on port 3000");
+if (cluster.isPrimary) {
+  for (let i = 0; i < cpus().length; i++) {
+    cluster.fork();
+  }
 
-const io = new ServerWithUser(httpServer, {
-  cors: {
-    origin: true,
-  },
-});
+  cluster.on("exit", (worker) => {
+    console.log(`Worker ${worker.process.pid} died, starting a new one`);
+    cluster.fork();
+  });
+} else {
+  httpServer.listen(3000);
+  console.log("WebSocket open on port 3000");
 
-instrument(io, {
-  auth: false,
-});
-
-io.use(OptionalAuthMiddleware);
-io.use((_socket, next) => {
-  process.on("unhandledRejection", (reason: Error) => {
-    console.error(reason);
-    next(reason);
+  const io = new ServerWithUser(httpServer, {
+    cors: {
+      origin: true,
+    },
   });
 
-  process.on("uncaughtException", (error: Error) => {
-    console.error(error);
-    next(error);
+  instrument(io, {
+    auth: false,
   });
-  next();
 
-  // app.all(
-  //   /^\/(edgecreator\/(publish|edgesprites)|notifications)|(edges\/(published))|(\/demo\/reset)|(bookstores\/(approve|refuse))|(presentation-text\/(approve|refuse))/,
-  //   [checkUserIsAdmin]
-  // );
+  io.use(OptionalAuthMiddleware);
+  io.use((_socket, next) => {
+    process.on("unhandledRejection", (reason: Error) => {
+      console.error(reason);
+      next(reason);
+    });
 
-  // app.all(/^\/edgecreator\/(.+)/, [
-  //   authenticateToken,
-  //   checkUserIsEdgeCreatorEditor,
-  // ]);
+    process.on("uncaughtException", (error: Error) => {
+      console.error(error);
+      next(error);
+    });
+    next();
 
-  // app.all(/^\/global-stats\/user\/list$/, [
-  //   authenticateToken,
-  //   checkUserIsEdgeCreatorEditor,
-  // ]);
+    // app.all(
+    //   /^\/(edgecreator\/(publish|edgesprites)|notifications)|(edges\/(published))|(\/demo\/reset)|(bookstores\/(approve|refuse))|(presentation-text\/(approve|refuse))/,
+    //   [checkUserIsAdmin]
+    // );
 
-  // app.all(/^\/collection\/(.+)/, authenticateToken);
-  // app.all("/global-stats/user/collection/rarity", authenticateToken);
-});
+    // app.all(/^\/edgecreator\/(.+)/, [
+    //   authenticateToken,
+    //   checkUserIsEdgeCreatorEditor,
+    // ]);
 
-auth(io);
-bookcase(io);
-bookstores(io);
-coa(io);
-collection(io);
-coverId(io);
-edgecreator(io);
-edges(io);
-events(io);
-feedback(io);
-globalStats(io);
-login(io);
-presentationText(io);
-publicCollection(io);
-stats(io);
+    // app.all(/^\/global-stats\/user\/list$/, [
+    //   authenticateToken,
+    //   checkUserIsEdgeCreatorEditor,
+    // ]);
+
+    // app.all(/^\/collection\/(.+)/, authenticateToken);
+    // app.all("/global-stats/user/collection/rarity", authenticateToken);
+  });
+
+  auth(io);
+  bookcase(io);
+  bookstores(io);
+  coa(io);
+  collection(io);
+  coverId(io);
+  edgecreator(io);
+  edges(io);
+  events(io);
+  feedback(io);
+  globalStats(io);
+  login(io);
+  presentationText(io);
+  publicCollection(io);
+  stats(io);
+}

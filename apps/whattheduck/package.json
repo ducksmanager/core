@@ -10,7 +10,6 @@
     "dev": "concurrently -n vite,vue-tsc \"vite --port 8003 --host\" \"vue-tsc --noEmit --watch\"",
     "build": "vite build && vue-tsc --noEmit",
     "build-capgo": "capgo bundle zip",
-    "i-next": "for dep in $(jq -r '.dependencies | to_entries[] | select(.value == \"next\") | .key' package.json); do pnpm install \"${dep}@latest\"; done",
     "ionic:build": "npm run build",
     "preview": "vite preview",
     "test:e2e": "cypress run",
