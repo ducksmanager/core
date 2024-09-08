@@ -63,7 +63,11 @@ export class SocketClient {
   ) {
     const { session, cache } = namespaceOptions;
     const socket = io(this.socketRootUrl + namespaceName, {
+      extraHeaders: {
+        "X-Namespace": namespaceName,
+      },
       multiplex: false,
+      transports: ["websocket"],
       auth: async (cb) => {
         cb(session ? { token: await session.getToken() } : {});
       },
