@@ -1,5 +1,5 @@
 FROM debian:buster
-MAINTAINER Bruno Perel
+LABEL maintainer="Bruno Perel"
 
 RUN apt-get update && \
     apt-get install -y --no-install-recommends wget curl mariadb-client ca-certificates jq && \

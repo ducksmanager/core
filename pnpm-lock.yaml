@@ -38,6 +38,8 @@ importers:
         specifier: ^5.5.4
         version: 5.5.4
 
+  apps/cover-updater: {}
+
   apps/duck-estimator:
     dependencies:
       bedetheque-scraper:

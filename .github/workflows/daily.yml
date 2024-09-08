@@ -8,6 +8,8 @@ jobs:
   ducksmanager-daily:
     runs-on: ubuntu-latest
     environment: production
+    env:
+      REMOTE_ROOT: workspace/DucksManager2
     steps:
       - name: Run coa-updater
         uses: appleboy/ssh-action@v1.0.3
@@ -19,7 +21,7 @@ jobs:
           command_timeout: 40m
           script_stop: true
           script: |
-            cd workspace/DucksManager2/apps/coa-updater
+            cd $REMOTE_ROOT/apps/coa-updater
             docker compose pull
             docker compose run --rm --no-deps coa-updater | ts "[%Y-%m-%d %H:%M:%S]"
 
@@ -32,7 +34,7 @@ jobs:
           command_timeout: 90m
           script_stop: true
           script: |
-            cd workspace/DucksManager2/apps/stats-updater
+            cd $REMOTE_ROOT/apps/stats-updater
             docker compose pull stats-updater
             docker compose run --rm --no-deps stats-updater
 
@@ -45,23 +47,23 @@ jobs:
           command_timeout: 20m
           script_stop: true
           script: |
-            cd workspace/DucksManager2
+            cd $REMOTE_ROOT/apps/cover-updater
             docker compose pull cover-updater
             docker compose run --rm --no-deps cover-updater
 
-      # - name: Run duck-estimator
-      #   uses: appleboy/ssh-action@v1.0.3
-      #   with:
-      #     host: ${{ secrets.PRODUCTION_SSH_HOST }}
-      #     username: ${{ secrets.PRODUCTION_SSH_USER }}
-      #     key: ${{ secrets.PRODUCTION_SSH_KEY }}
-      #     command_timeout: 90m
-      #     script_stop: true
-      #     script: |
-      #       cd workspace/DucksManager2/apps/duck-estimator
-      #       echo ${{ secrets.DOCKER_REGISTRY_TOKEN_DM }} | docker login ghcr.io -u bperel --password-stdin
-      #       docker compose pull
-      #       docker compose run --rm duck-estimator
+      - name: Run duck-estimator
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.PRODUCTION_SSH_HOST }}
+          username: ${{ secrets.PRODUCTION_SSH_USER }}
+          key: ${{ secrets.PRODUCTION_SSH_KEY }}
+          command_timeout: 90m
+          script_stop: true
+          script: |
+            cd $REMOTE_ROOT/apps/duck-estimator
+            echo ${{ secrets.DOCKER_REGISTRY_TOKEN_DM }} | docker login ghcr.io -u bperel --password-stdin
+            docker compose pull
+            docker compose run --rm duck-estimator
 
       - name: Run sprite-names-updater
         uses: appleboy/ssh-action@v1.0.3
@@ -72,7 +74,7 @@ jobs:
           command_timeout: 5m
           script_stop: true
           script: |
-            cd workspace/DucksManager2
+            cd $REMOTE_ROOT
             docker compose run --rm --no-deps sprite-names-updater
 
       - name: Run subscription-handler
@@ -103,5 +105,5 @@ jobs:
           command_timeout: 10m
           script_stop: true
           script: |
-            cd workspace/DucksManager2/packages/backup
+            cd $REMOTE_ROOT/packages/backup
             docker compose run --rm --no-deps backup
