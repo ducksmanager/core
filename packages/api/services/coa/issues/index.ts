@@ -3,8 +3,8 @@ import type { Socket } from "socket.io";
 import type { IssueWithIssuecodeOnly } from "~dm-types/IssueWithIssuecodeOnly";
 import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa/client";
 
-import type Events from "../types";
 import { augmentIssueArrayWithInducksData } from "..";
+import type Events from "../types";
 export default (socket: Socket<Events>) => {
   socket.on("getIssues", (issuecodes, withTitles, callback) =>
     issuecodes.length

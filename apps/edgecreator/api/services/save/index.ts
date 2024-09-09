@@ -30,7 +30,7 @@ export default (io: Server) => {
               console.log("not allowed");
             },
           },
-        }
+        },
       );
 
     socket.on("saveEdge", async (parameters, callback) => {

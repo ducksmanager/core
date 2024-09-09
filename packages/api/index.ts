@@ -1,10 +1,12 @@
 import * as Sentry from "@sentry/node";
 import { instrument } from "@socket.io/admin-ui";
+import { createAdapter, setupPrimary } from "@socket.io/cluster-adapter";
+import { setupMaster, setupWorker } from "@socket.io/sticky";
+import cluster from "cluster";
 import dotenv from "dotenv";
 import { createServer } from "http";
-import { Server } from "socket.io";
-import cluster from "cluster";
 import { cpus } from "os";
+import { Server } from "socket.io";
 
 import type { SessionUser } from "~dm-types/SessionUser";
 
@@ -87,6 +89,14 @@ const httpServer = createServer(async (req, res) => {
 });
 
 if (cluster.isPrimary) {
+  // setup sticky sessions
+  setupMaster(httpServer, {
+    loadBalancingMethod: "least-connection",
+  });
+
+  // setup connections between the workers
+  setupPrimary();
+
   for (let i = 0; i < cpus().length; i++) {
     cluster.fork();
   }
@@ -104,6 +114,10 @@ if (cluster.isPrimary) {
       origin: true,
     },
   });
+
+  io.adapter(createAdapter());
+
+  setupWorker(io);
 
   instrument(io, {
     auth: false,

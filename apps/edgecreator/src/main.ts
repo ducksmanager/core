@@ -37,6 +37,6 @@ createApp(App)
   .provide("dmSocket", new SocketClient(import.meta.env.VITE_DM_SOCKET_URL))
   .provide(
     "edgecreatorSocket",
-    new SocketClient(import.meta.env.VITE_EDGECREATOR_SOCKET_URL)
+    new SocketClient(import.meta.env.VITE_EDGECREATOR_SOCKET_URL),
   )
   .mount("#app");

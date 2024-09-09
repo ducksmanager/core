@@ -1,4 +1,5 @@
-import { InjectionKey } from "vue";
+import type { InjectionKey } from "vue";
+
 import BrowseServices from "~edgecreator-services/browse/types";
 import ImageInfoServices from "~edgecreator-services/image-info/types";
 import SaveServices from "~edgecreator-services/save/types";
@@ -16,7 +17,7 @@ const defaultExport = (
       clearSession: () => void;
       sessionExists: () => Promise<boolean>;
     };
-  }
+  },
 ) => {
   socket.onConnectError = options.onConnectError;
   const { session } = options;
@@ -25,13 +26,13 @@ const defaultExport = (
     options,
     imageInfo: socket.addNamespace<ImageInfoServices>(
       ImageInfoServices.namespaceEndpoint,
-      { session }
+      { session },
     ),
     browse: socket.addNamespace<BrowseServices>(
       BrowseServices.namespaceEndpoint,
       {
         session,
-      }
+      },
     ),
     save: socket.addNamespace<SaveServices>(SaveServices.namespaceEndpoint, {
       session,
@@ -43,7 +44,7 @@ const defaultExport = (
       UploadServices.namespaceEndpoint,
       {
         session,
-      }
+      },
     ),
   };
 };
