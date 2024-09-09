@@ -20,6 +20,7 @@ jobs:
           key: ${{ secrets.PRODUCTION_SSH_KEY }}
           command_timeout: 40m
           script_stop: true
+          envs: REMOTE_ROOT
           script: |
             cd $REMOTE_ROOT/apps/coa-updater
             docker compose pull
@@ -33,6 +34,7 @@ jobs:
           key: ${{ secrets.PRODUCTION_SSH_KEY }}
           command_timeout: 90m
           script_stop: true
+          envs: REMOTE_ROOT
           script: |
             cd $REMOTE_ROOT/apps/stats-updater
             docker compose pull stats-updater
@@ -46,6 +48,7 @@ jobs:
           key: ${{ secrets.PRODUCTION_SSH_KEY }}
           command_timeout: 20m
           script_stop: true
+          envs: REMOTE_ROOT
           script: |
             cd $REMOTE_ROOT/apps/cover-updater
             docker compose pull cover-updater
@@ -59,6 +62,7 @@ jobs:
           key: ${{ secrets.PRODUCTION_SSH_KEY }}
           command_timeout: 90m
           script_stop: true
+          envs: REMOTE_ROOT
           script: |
             cd $REMOTE_ROOT/apps/duck-estimator
             echo ${{ secrets.DOCKER_REGISTRY_TOKEN_DM }} | docker login ghcr.io -u bperel --password-stdin
@@ -73,6 +77,7 @@ jobs:
           key: ${{ secrets.PRODUCTION_SSH_KEY }}
           command_timeout: 5m
           script_stop: true
+          envs: REMOTE_ROOT
           script: |
             cd $REMOTE_ROOT
             docker compose run --rm --no-deps sprite-names-updater
@@ -104,6 +109,7 @@ jobs:
           key: ${{ secrets.PRODUCTION_SSH_KEY }}
           command_timeout: 10m
           script_stop: true
+          envs: REMOTE_ROOT
           script: |
             cd $REMOTE_ROOT/packages/backup
             docker compose run --rm --no-deps backup
