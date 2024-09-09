@@ -9,7 +9,7 @@ COPY packages/prisma-schemas/client_dm/libquery_engine-debian-openssl-3.0.x.so.n
 COPY packages/api/.env /app/
 COPY packages/api/bundle.mjs /app/
 
-RUN npm install pm2@latest -g
+RUN npm install @socket.io/pm2 -g
 
 EXPOSE 3000
 CMD ["pm2", "start", "--no-daemon", "-i", "max", "bundle.mjs"]
