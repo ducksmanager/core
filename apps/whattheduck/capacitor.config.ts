@@ -10,6 +10,9 @@ const config: CapacitorConfig = {
       keystoreAlias: 'whattheduck',
     },
   },
+  ios: {
+    scheme: 'What The Duck',
+  },
 };
 
 export default config;
