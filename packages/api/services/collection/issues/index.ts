@@ -21,7 +21,7 @@ import {
 
 export const getCollectionCountrycodes = (userId: number) =>
   getCollectionPublicationcodes(userId).then((data) => [
-    ...data.map((publicationcode) => publicationcode.split("/")[0]),
+    ...new Set(data.map((publicationcode) => publicationcode.split("/")[0])),
   ]);
 
 export const getCollectionPublicationcodes = (userId: number) =>
@@ -178,20 +178,19 @@ export default (socket: Socket<Events>) => {
         },
         by: ["publicationcode"],
       })
-      .then((data) => {
-        callback(
-          data.reduce<{ [countrycode: string]: number }>(
-            (acc, { publicationcode, _count }) => {
-              const countrycode = publicationcode!.split("/")[0];
-              return {
-                ...acc,
-                [countrycode!]: (acc[countrycode] || 0) + _count.issuenumber,
-              };
-            },
-            {},
-          ),
-        );
-      }),
+      .then((data) =>
+        data.reduce<{ [countrycode: string]: number }>(
+          (acc, { publicationcode, _count }) => {
+            const countrycode = publicationcode!.split("/")[0];
+            return {
+              ...acc,
+              [countrycode!]: (acc[countrycode] || 0) + _count.issuenumber,
+            };
+          },
+          {},
+        ),
+      )
+      .then(callback),
   );
 
   socket.on("getCoaCountByPublicationcode", async (callback) =>
