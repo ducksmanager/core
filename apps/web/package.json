@@ -55,7 +55,7 @@
     "@types/js-cookie": "^3.0.6",
     "@types/mapbox__mapbox-gl-geocoder": "^5.0.0",
     "@types/page-flip": "^2.0.3",
-    "@typescript-eslint/parser": "^7.18.0",
+    "@typescript-eslint/parser": "^8.5.0",
     "@vitejs/plugin-vue": "^5.1.3",
     "@vue-macros/reactivity-transform": "^1.0.3",
     "@vue/test-utils": "^2.4.6",
