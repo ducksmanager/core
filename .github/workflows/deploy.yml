@@ -67,11 +67,11 @@ jobs:
 
       - name: Retrieve pre-build files
         run: |
+          pnpm i -g turbo
           turbo -F [$lastSuccessfulCommit] -F '!~ci' -F '!~dumili' -F '!~dumili-api' prod:transfer-files-pre
 
       - name: Build apps
         run: |
-          pnpm i -g turbo
           turbo -F [$lastSuccessfulCommit] -F '!~dumili' -F '!~dumili-api' build
 
       - uses: docker/setup-buildx-action@v3
