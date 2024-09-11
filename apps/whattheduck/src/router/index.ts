@@ -14,6 +14,7 @@ import Search from '~/views/Search.vue';
 import Signup from '~/views/Signup.vue';
 import Stats from '~/views/Stats.vue';
 import Suggestions from '~/views/Suggestions.vue';
+import Test from '~/views/Test.vue';
 
 const routes = [
   {
@@ -103,6 +104,10 @@ const routes = [
   {
     path: '/about',
     component: About,
+  },
+  {
+    path: '/test',
+    component: Test,
   },
   {
     path: '/',

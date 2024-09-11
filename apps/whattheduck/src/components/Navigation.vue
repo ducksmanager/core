@@ -12,7 +12,7 @@
     >
       <ion-segment-button
         :value="JSON.stringify(shownParts[partIdx - 1])"
-        @click="currentNavigationItem = shownParts[partIdx] as typeof currentNavigationItem"
+        @click="currentNavigationItem = shownParts[partIdx - 1] as typeof currentNavigationItem"
       >
         <globe-icon v-if="partIdx === 1" />
         <Country

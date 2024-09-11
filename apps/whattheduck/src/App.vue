@@ -3,7 +3,7 @@
     <OfflineBanner :on-offline="routeMeta.onOffline" v-if="isOfflineMode" />
 
     <ion-router-outlet
-      v-if="route.path === '/login'"
+      v-if="route.path === '/login' || route.path === '/test'"
       :style="{ 'margin-top': `${offlineBannerHeight}px` }"
       id="main-content"
     />
