@@ -1,4 +1,3 @@
-version: '2.4'
 services:
   pastec:
     container_name: pastec
@@ -33,7 +32,6 @@ services:
   #    - duck_estimator_cache:/home/cache
   #    - node_cache:/root/.cache
   #   command: "bash -c 'git clone --depth 1 --single-branch https://github.com/bperel/duck-estimator && cd duck-estimator && npm install && node duck-estimator.js --cache-dir=/home/cache'"
-
 
 volumes:
   # duck_estimator_cache:
