@@ -88,4 +88,4 @@ jobs:
 
       - name: Deploy
         run: |
-          turbo -F [$lastSuccessfulCommit] -F '!~ci' -F '!~dumili' -F '!~dumili-api' prod:deploy
+          turbo --concurrency=1 -F [$lastSuccessfulCommit] -F '!~ci' -F '!~dumili' -F '!~dumili-api' prod:deploy
