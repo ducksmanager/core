@@ -11,6 +11,10 @@
       "cache": false
     },
     "build": {
+      "inputs": [
+        "$TURBO_DEFAULT$",
+        "!api"
+      ],
       "dependsOn": [
         "prisma-generate-all",
         "^build"
