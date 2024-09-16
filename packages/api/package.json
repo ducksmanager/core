@@ -3,9 +3,10 @@
   "engines": {
     "node": ">=18.0.0 <19.0.0"
   },
+  "type": "module",
   "version": "1.0.0",
   "scripts": {
-    "build": "bun build --target node --sourcemap index.ts --outfile bundle.mjs",
+    "build": "bun build --target node --sourcemap index.ts --outfile bundle.mjs && bun build --target node routes/**/*.ts --outdir ./dist",
     "dev": "concurrently -n api,docker-compose,db \"pnpm -F ~api nodemon-watch\" \"docker compose -f docker-compose-dev.yml up pastec mailcatcher\" \"pnpm -F ~prisma-clients dev\"",
     "nodemon-watch": "concurrently -n nodemon,tsc \"bun --inspect run --hot index.ts\" \"tsc --noEmit --watch\"",
     "prod:deploy": "DIR=packages/api SERVICES=api pnpm -F '~ci' prod:docker-compose-up",

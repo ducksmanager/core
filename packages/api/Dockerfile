@@ -9,7 +9,7 @@ COPY packages/prisma-clients/client_dm/libquery_engine-debian-openssl-3.0.x.so.n
 COPY packages/api/package.json /app/package.json
 COPY packages/api/.env /app/
 COPY packages/api/bundle.mjs /app/
-COPY packages/api-routes/bundle.mjs /app/routes/index.mjs
+COPY packages/api/dist/routes /app/routes
 
 EXPOSE 3000
 CMD ["node", "bundle.mjs"]
