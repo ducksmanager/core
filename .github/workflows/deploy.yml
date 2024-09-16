@@ -50,6 +50,7 @@ jobs:
           turbo -F '~web...' -F '~api...' prod:transfer-files-pre
 
       - name: Build apps
+        shell: bash
         run: |
           turbo -F '~web...' -F '~api...' build
           ls -la packages/prisma-clients/client_dm
