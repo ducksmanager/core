@@ -44,15 +44,15 @@ jobs:
         run: |
           pnpm -r i
 
+      - name: Retrieve pre-build files
+        run: |
+          turbo -F '~web...' -F '~api...' prod:transfer-files-pre
+
       - name: Build apps
         run: |
           pnpm i -g turbo
           turbo -F '~web...' -F '~api...' build
           ls -la packages/prisma-clients/client_dm
-
-      - name: Retrieve pre-build files
-        run: |
-          turbo -F '~web...' -F '~api...' prod:transfer-files-pre
 
       - uses: docker/setup-buildx-action@v3
 
