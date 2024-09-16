@@ -1,8 +1,6 @@
-**/dist
 **/node_modules
 **/Dockerfile*
 **/docker-compose*
 **/.turbo
 .git
 .idea
-packages/prisma-clients/client_*
