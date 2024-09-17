@@ -1,18 +1,10 @@
-import dotenv from "dotenv";
-
-dotenv.config({
-  path: "./.env",
-});
-
-import "./instrument";
-
 import * as Sentry from "@sentry/node";
-
 import { instrument } from "@socket.io/admin-ui";
-import { createServer } from "http";
-import { Server } from "socket.io";
 import cluster from "cluster";
+import dotenv from "dotenv";
+import { createServer } from "http";
 import { cpus } from "os";
+import { Server } from "socket.io";
 
 import type { SessionUser } from "~dm-types/SessionUser";
 
@@ -51,6 +43,14 @@ class ServerWithUser extends Server<
   const int = Number.parseInt(this.toString());
   return int ?? this.toString();
 };
+
+dotenv.config({
+  path: "./.env",
+});
+
+Sentry.init({
+  dsn: process.env.SENTRY_DSN,
+});
 
 const httpServer = createServer(async (req, res) => {
   let data: { error: string } | object;
@@ -111,53 +111,49 @@ if (cluster.isPrimary) {
 
   io.use(OptionalAuthMiddleware);
   io.use((_socket, next) => {
-    return Sentry.withIsolationScope(async () => {
-      process.on("unhandledRejection", (reason: Error) => {
-        console.error(reason);
-        next(reason);
-      });
-
-      process.on("uncaughtException", (error: Error) => {
-        console.error(error);
-        next(error);
-      });
-      next();
-
-      // app.all(
-      //   /^\/(edgecreator\/(publish|edgesprites)|notifications)|(edges\/(published))|(\/demo\/reset)|(bookstores\/(approve|refuse))|(presentation-text\/(approve|refuse))/,
-      //   [checkUserIsAdmin]
-      // );
-
-      // app.all(/^\/edgecreator\/(.+)/, [
-      //   authenticateToken,
-      //   checkUserIsEdgeCreatorEditor,
-      // ]);
-
-      // app.all(/^\/global-stats\/user\/list$/, [
-      //   authenticateToken,
-      //   checkUserIsEdgeCreatorEditor,
-      // ]);
-
-      // app.all(/^\/collection\/(.+)/, authenticateToken);
-      // app.all("/global-stats/user/collection/rarity", authenticateToken);
-
-      auth(io);
-      bookcase(io);
-      bookstores(io);
-      coa(io);
-      collection(io);
-      coverId(io);
-      edgecreator(io);
-      edges(io);
-      events(io);
-      feedback(io);
-      globalStats(io);
-      login(io);
-      presentationText(io);
-      publicCollection(io);
-      stats(io);
-
-      return { status: "DONE" };
+    process.on("unhandledRejection", (reason: Error) => {
+      console.error(reason);
+      next(reason);
     });
+
+    process.on("uncaughtException", (error: Error) => {
+      console.error(error);
+      next(error);
+    });
+    next();
+
+    // app.all(
+    //   /^\/(edgecreator\/(publish|edgesprites)|notifications)|(edges\/(published))|(\/demo\/reset)|(bookstores\/(approve|refuse))|(presentation-text\/(approve|refuse))/,
+    //   [checkUserIsAdmin]
+    // );
+
+    // app.all(/^\/edgecreator\/(.+)/, [
+    //   authenticateToken,
+    //   checkUserIsEdgeCreatorEditor,
+    // ]);
+
+    // app.all(/^\/global-stats\/user\/list$/, [
+    //   authenticateToken,
+    //   checkUserIsEdgeCreatorEditor,
+    // ]);
+
+    // app.all(/^\/collection\/(.+)/, authenticateToken);
+    // app.all("/global-stats/user/collection/rarity", authenticateToken);
   });
+
+  auth(io);
+  bookcase(io);
+  bookstores(io);
+  coa(io);
+  collection(io);
+  coverId(io);
+  edgecreator(io);
+  edges(io);
+  events(io);
+  feedback(io);
+  globalStats(io);
+  login(io);
+  presentationText(io);
+  publicCollection(io);
+  stats(io);
 }

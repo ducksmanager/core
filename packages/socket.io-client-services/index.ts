@@ -59,7 +59,7 @@ export class SocketClient {
         sessionExists: () => Promise<boolean>;
       };
       cache?: Required<SocketCacheOptions<Services>>;
-    } = {}
+    } = {},
   ) {
     const { session, cache } = namespaceOptions;
     const socket = io(this.socketRootUrl + namespaceName, {
@@ -85,7 +85,7 @@ export class SocketClient {
         get:
           <EventName extends StringKeyOf<Services>>(
             _: never,
-            event: EventName
+            event: EventName,
           ) =>
           async (
             ...args: AllButLast<Parameters<Services[EventName]>>
@@ -96,7 +96,7 @@ export class SocketClient {
             const eventConsoleString = `${namespaceName}/${event}(${args.join(", ")})`;
             const debugCall = (post: boolean = false) =>
               console.debug(
-                `${eventConsoleString} ${post ? `responded in ${Date.now() - startTime}ms` : "called"}`
+                `${eventConsoleString} ${post ? `responded in ${Date.now() - startTime}ms` : "called"}`,
               );
             let cacheKey;
             if (cache) {

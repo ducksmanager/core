@@ -5,8 +5,6 @@ import type { IssueWithIssuecodeOnly } from '~dm-types/IssueWithIssuecodeOnly';
 import type { issue, purchase } from '~prisma-schemas/schemas/dm';
 import { composables as webComposables, stores as webStores } from '~web';
 
-import usePersistedData from '~/composables/usePersistedData';
-
 export type purchaseWithStringDate = Omit<purchase, 'date' | 'userId'> & {
   date: string;
 };
@@ -20,8 +18,6 @@ export const wtdcollection = defineStore('wtdcollection', () => {
   const { quotedIssues, quotationSum } = webComposables.useCollection(
     issues as ShallowRef<(issue & { issuecode: string })[]>,
   );
-
-  const isPersistedDataLoaded = ref(false);
 
   const {
     createPurchase,
@@ -81,11 +77,7 @@ export const wtdcollection = defineStore('wtdcollection', () => {
     getCollectionIssues = (issuecode: string) =>
       issues.value!.filter(({ issuecode: collectionIssuecode }) => collectionIssuecode === issuecode);
 
-  usePersistedData({ user, issues }).then(() => {
-    isPersistedDataLoaded.value = true;
-  });
   return {
-    isPersistedDataLoaded,
     issues,
     createPurchase,
     fetchAndTrackCollection,

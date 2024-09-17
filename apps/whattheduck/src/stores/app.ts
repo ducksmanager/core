@@ -173,7 +173,7 @@ export const app = defineStore('app', () => {
     token,
     socketCache,
   }).then(() => {
-    console.log('token: ', JSON.stringify({ token: token.value }));
+    console.log({ token: token.value });
     if (!token.value) {
       token.value = null;
     }
