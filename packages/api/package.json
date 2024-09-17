@@ -15,6 +15,7 @@
     "wait": "wait-on tcp:3000"
   },
   "dependencies": {
+    "@opentelemetry/instrumentation-socket.io": "^0.42.0",
     "@pusher/push-notifications-server": "^1.2.6",
     "@sentry/node": "^7.119.0",
     "@socket.io/admin-ui": "^0.5.1",
