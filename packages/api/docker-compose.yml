@@ -1,4 +1,3 @@
-version: "3.8"
 services:
   api:
     container_name: ducksmanager-api
@@ -17,23 +16,6 @@ services:
     networks:
       - public-network
       - dm2-network
-      - dm-server_db-network
-      - dm-server_cover-id-network
-
-  cover-updater:
-    container_name: cover-updater
-    image: bperel/duck-cover-id-updater
-    environment:
-      MYSQL_COVER_INFO_HOST: db
-      MYSQL_COVER_INFO_PASSWORD: ${MYSQL_ROOT_PASSWORD}
-      MYSQL_COVER_INFO_DATABASE: cover_info
-      MYSQL_COA_HOST: db
-      MYSQL_COA_PASSWORD: ${MYSQL_ROOT_PASSWORD}
-      MYSQL_COA_DATABASE: coa
-      PASTEC_HOST: pastec
-      PASTEC_PORT: 4212
-      PASTEC_CONTAINER_HOME: /pastec/build
-    networks:
       - dm-server_db-network
       - dm-server_cover-id-network
 
