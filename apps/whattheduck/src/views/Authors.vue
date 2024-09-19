@@ -31,7 +31,7 @@
           </ion-col>
           <ion-col size="5">
             <StarRating
-              :readonly="isOfflineMode"
+              :readonly="isOffline"
               v-model:rating="author.notation"
               :max-rating="10"
               @update:rating="updateRating(author)"
@@ -40,7 +40,7 @@
             ></StarRating>
           </ion-col>
           <ion-col size="3">
-            <ion-button v-if="!isOfflineMode" @click="deleteAuthor(author.personcode)">
+            <ion-button v-if="!isOffline" @click="deleteAuthor(author.personcode)">
               {{ t('Supprimer') }}
             </ion-button>
           </ion-col>
@@ -48,7 +48,7 @@
       </div>
 
       <ion-searchbar
-        v-if="!isOfflineMode"
+        v-if="!isOffline"
         autocapitalize="words"
         v-model="authorName"
         :placeholder="t('Entrez le nom d\'un auteur')"
@@ -85,7 +85,7 @@ const { t } = useI18n();
 const { loadRatings, searchAuthors, isAuthorWatched, createRating, updateRating, deleteAuthor } = stats();
 const { authorSearchResults: authorResults, ratings } = storeToRefs(stats());
 const { personNames } = storeToRefs(coa());
-const { isOfflineMode } = storeToRefs(app());
+const { isOffline } = storeToRefs(app());
 
 const authorName = ref('');
 

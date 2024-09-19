@@ -1,17 +1,17 @@
 <template>
   <ion-item class="ion-text-center offline-banner">
-    <ion-label color="warning" v-if="onOffline === 'readonly'">
+    <ion-label color="danger" v-if="isOfflineMode === 'offline_no_cache' || onOffline !== 'readonly'">{{
+      t(
+        'La connexion à DucksManager a échoué, vérifiez que votre connexion Internet est active. Vous pourrez consulter votre collection hors-ligne une fois que votre collection sera synchronisée.',
+      )
+    }}</ion-label>
+    <ion-label color="warning" v-else>
       {{
         t(
           'Vous êtes en mode hors-ligne. Vous pouvez naviguer dans votre collection mais pas la modifier. Certaines fonctionnalités ne sont pas disponibles.',
         )
       }}
     </ion-label>
-    <ion-label color="danger" v-else>{{
-      t(
-        'La connexion à DucksManager a échoué, vérifiez que votre connexion Internet est active. Vous pourrez consulter votre collection hors-ligne une fois que votre collection sera synchronisée.',
-      )
-    }}</ion-label>
   </ion-item>
 </template>
 
@@ -24,7 +24,7 @@ defineProps<{
   onOffline: 'readonly' | 'unavailable' | undefined;
 }>();
 
-const { offlineBannerHeight } = storeToRefs(app());
+const { offlineBannerHeight, isOfflineMode } = storeToRefs(app());
 
 onUpdated(() => {
   setTimeout(() => {

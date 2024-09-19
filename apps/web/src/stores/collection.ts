@@ -197,7 +197,6 @@ export const collection = defineStore("collection", () => {
             issuenumber,
           })),
         );
-        isLoadingCollection.value = false;
       }
 
       Object.assign(
@@ -210,6 +209,7 @@ export const collection = defineStore("collection", () => {
           }))
           .groupBy("issuecode"),
       );
+      isLoadingCollection.value = false;
     },
     loadPurchases = async (afterUpdate = false) => {
       if (afterUpdate || (!isLoadingPurchases.value && !purchases.value)) {

@@ -23,6 +23,7 @@ const defaultExport = (
     cacheStorage: AxiosStorage;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     onConnectError: (e: any, namespace: string) => Promise<void> | void;
+    onConnected?: (namespace: string) => void;
     session: {
       getToken: () => Promise<string | null | undefined>;
       clearSession: () => void;
@@ -30,7 +31,7 @@ const defaultExport = (
     };
   },
 ) => {
-  const { session, cacheStorage } = options;
+  const { session, cacheStorage, onConnectError, onConnected } = options;
   const until4am = () => {
     const now = dayjs();
     let coaCacheExpiration = dayjs();
@@ -45,8 +46,10 @@ const defaultExport = (
       .diff(now);
   };
 
-  socket.onConnectError = options.onConnectError;
-
+  socket.onConnectError = onConnectError;
+  if (onConnected) {
+    socket.onConnected = onConnected;
+  }
   return {
     options,
     publicCollection: socket.addNamespace<PublicCollectionServices>(
@@ -87,6 +90,12 @@ const defaultExport = (
     }),
     globalStats: socket.addNamespace<GlobalStatsServices>(
       GlobalStatsServices.namespaceEndpoint,
+      {
+        cache: {
+          storage: cacheStorage,
+          ttl: 1000, // 1 second only, because we want to always get the latest data but still cache in case of offline
+        },
+      },
     ),
     events: socket.addNamespace<EventsServices>(
       EventsServices.namespaceEndpoint,
@@ -97,7 +106,13 @@ const defaultExport = (
     ),
     collection: socket.addNamespace<CollectionServices>(
       CollectionServices.namespaceEndpoint,
-      { session },
+      {
+        session,
+        cache: {
+          storage: cacheStorage,
+          ttl: 1000, // 1 second only, because we want to always get the latest data but still cache in case of offline
+        },
+      },
     ),
     coverId: socket.addNamespace<CoverIdServices>(
       CoverIdServices.namespaceEndpoint,

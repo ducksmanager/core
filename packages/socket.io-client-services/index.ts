@@ -50,34 +50,28 @@ export class SocketClient {
   public onConnectError = (e: Error, namespace: string) => {
     console.error(`${namespace}: connect_error: ${e}`);
   };
+  public onConnected = (namespace: string) => {
+    console.error(`${namespace}: connected`);
+  };
+
   public addNamespace<Services extends EventsMap>(
     namespaceName: string,
     namespaceOptions: {
+      onConnectError?: (e: Error, namespace: string) => void;
+      onConnected?: (namespace: string) => void;
+
       session?: {
         getToken: () => Promise<string | null | undefined>;
         clearSession: () => Promise<void> | void;
         sessionExists: () => Promise<boolean>;
       };
       cache?: Required<SocketCacheOptions<Services>>;
-    } = {},
+    } = {}
   ) {
     const { session, cache } = namespaceOptions;
-    const socket = io(this.socketRootUrl + namespaceName, {
-      extraHeaders: {
-        "X-Namespace": namespaceName,
-      },
-      transports: ["websocket"],
-      multiplex: false,
-      auth: async (cb) => {
-        cb(session ? { token: await session.getToken() } : {});
-      },
-    })
-      .on("connect_error", (e) => {
-        this.onConnectError(e, namespaceName);
-      })
-      .on("connect", () => {
-        console.log("connected to", namespaceName);
-      });
+    let socket: Socket | undefined;
+
+    let isOffline: boolean | undefined;
 
     return {
       socket,
@@ -85,44 +79,86 @@ export class SocketClient {
         get:
           <EventName extends StringKeyOf<Services>>(
             _: never,
-            event: EventName,
+            event: EventName
           ) =>
           async (
             ...args: AllButLast<Parameters<Services[EventName]>>
           ): Promise<
             EventReturnTypeIncludingError<Services[EventName]> | undefined
           > => {
+            let isCacheUsed = false;
+            if (!socket) {
+              console.log(
+                "connecting to",
+                namespaceName + " at " + new Date().toISOString()
+              );
+              socket = io(this.socketRootUrl + namespaceName, {
+                extraHeaders: {
+                  "X-Namespace": namespaceName,
+                },
+                timeout: 500,
+                transports: ["websocket"],
+                multiplex: false,
+                auth: async (cb) => {
+                  const token = await session?.getToken();
+                  cb(token ? { token } : {});
+                },
+              })
+                .on("connect_error", (e) => {
+                  isOffline = true;
+                  this.onConnectError(
+                    isCacheUsed
+                      ? e
+                      : {
+                          message: "offline_no_cache",
+                          name: "offline_no_cache",
+                        },
+                    namespaceName
+                  );
+                })
+                .on("connect", () => {
+                  isOffline = false;
+                  console.log(
+                    `connected to ${namespaceName} at ${new Date().toISOString()}`
+                  );
+
+                  this.onConnected(namespaceName);
+                });
+            }
             const startTime = Date.now();
             const eventConsoleString = `${namespaceName}/${event}(${args.join(", ")})`;
-            const debugCall = (post: boolean = false) =>
-              console.debug(
-                `${eventConsoleString} ${post ? `responded in ${Date.now() - startTime}ms` : "called"}`,
+            const debugCall = async (post: boolean = false) => {
+              const token = await session?.getToken();
+              return console.debug(
+                `${eventConsoleString} ${post ? `responded in ${Date.now() - startTime}ms` : `called ${token ? "with token" : "without token"}`} at ${new Date().toISOString()}`
               );
+            };
             let cacheKey;
             if (cache) {
-              cacheKey = `${event} ${JSON.stringify(args)}`;
+              cacheKey = `${namespaceName}/${event} ${JSON.stringify(args)}`;
               const cacheData = (await cache.storage.get(cacheKey, {
                 cache: {
-                  ttl:
-                    typeof cache.ttl === "function"
+                  ttl: isOffline
+                    ? undefined
+                    : typeof cache.ttl === "function"
                       ? cache.ttl(event, args)
                       : cache.ttl,
                 },
               })) as Awaited<ReturnType<Socket["emitWithAck"]>>;
-              const hasCacheData =
+              isCacheUsed =
                 cacheData !== undefined &&
                 !(typeof cacheData === "object" && cacheData.state === "empty");
-              if (hasCacheData) {
+              if (isCacheUsed) {
                 console.debug(`${eventConsoleString} served from cache`);
                 return cacheData;
               }
             }
-            debugCall();
+            await debugCall();
             const data = await socket.emitWithAck(event, ...args);
+            await debugCall(true);
             if (cache && cacheKey) {
               cache.storage.set(cacheKey, data);
             }
-            debugCall(true);
             return data;
           },
       }),

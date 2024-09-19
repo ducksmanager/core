@@ -14,7 +14,7 @@ import { dmSocketInjectionKey } from '~web/src/composables/useDmSocket';
 import { app } from '~/stores/app';
 import { wtdcollection } from '~/stores/wtdcollection';
 
-const { offlineBannerHeight, socket, isPersistedDataLoaded } = storeToRefs(app());
+const { offlineBannerHeight, socket, isPersistedDataLoaded, token } = storeToRefs(app());
 
 getCurrentInstance()!.appContext.app.provide(dmSocketInjectionKey, socket.value as ReturnType<typeof useDmSocket>);
 
@@ -24,9 +24,9 @@ const { fetchAndTrackCollection } = collectionStore;
 const isCollectionLoaded = ref(false);
 
 watch(
-  isPersistedDataLoaded,
-  async (isLoaded) => {
-    if (isLoaded) {
+  [isPersistedDataLoaded, token],
+  async ([isLoaded, tokenString]) => {
+    if (isLoaded && tokenString) {
       await fetchAndTrackCollection();
       isCollectionLoaded.value = true;
     }

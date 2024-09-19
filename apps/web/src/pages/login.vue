@@ -77,7 +77,7 @@ const login = async () => {
       Cookies.set("token", newToken, {
         domain,
       });
-      collectionSocket.connect();
+      collectionSocket!.connect();
       await loadUser();
     },
     (e) => {

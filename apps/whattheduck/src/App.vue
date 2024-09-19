@@ -21,10 +21,13 @@ import OfflineBanner from './components/OfflineBanner.vue';
 import { app } from './stores/app';
 import AppWithPersistedData from './views/AppWithPersistedData.vue';
 
+import CoaServices from '~dm-services/coa/types';
+import CollectionServices from '~dm-services/collection/types';
+
 const storage = injectLocal<Storage>('storage')!;
 
 const appStore = app();
-const { isOfflineMode, token, socket, socketCache, offlineBannerHeight } = storeToRefs(appStore);
+const { isOfflineMode, token, socket, offlineBannerHeight } = storeToRefs(appStore);
 
 const route = useRoute();
 const router = useRouter();
@@ -48,16 +51,28 @@ const assignSocket = () => {
     },
     cacheStorage = buildStorage({
       set: (key, data) => {
-        socketCache.value[key] = data;
+        sessionStorage.setItem(key, JSON.stringify(data));
       },
-      find: (key) => socketCache.value[key],
-      remove: (key) => {
-        delete socketCache.value[key];
+      find: (key) => {
+        const value = sessionStorage.getItem(key);
+        return value ? JSON.parse(value) : undefined;
       },
+      remove: (key) => sessionStorage.removeItem(key),
     }),
-    onConnectError = (e: Error) => {
-      if ([/jwt expired/, /invalid signature/].some((regex) => regex.test(e.message))) {
-        session.clearSession();
+    onConnected = (namespace: string) => {
+      if (namespace === CoaServices.namespaceEndpoint) {
+        isOfflineMode.value = false;
+      }
+    },
+    onConnectError = (e: Error, namespace: string) => {
+      if (namespace === CoaServices.namespaceEndpoint) isOfflineMode.value = true;
+      else if (namespace === CollectionServices.namespaceEndpoint) {
+        if (e.name === 'offline_no_cache') {
+          isOfflineMode.value = 'offline_no_cache';
+        }
+        if ([/jwt expired/, /invalid signature/].some((regex) => regex.test(e.message))) {
+          session.clearSession();
+        }
       }
     };
   const socketUrl = ['web', 'ios'].includes(Capacitor.getPlatform())
@@ -67,6 +82,7 @@ const assignSocket = () => {
   socket.value = useDmSocket(new SocketClient(socketUrl), {
     cacheStorage,
     session,
+    onConnected,
     onConnectError,
   });
 };

@@ -21,7 +21,7 @@
             <ion-item
               router-direction="root"
               :router-link="p.url"
-              :disabled="p.disabledOnOfflineMode && isOfflineMode"
+              :disabled="p.disabledOnOfflineMode && isOffline"
               lines="none"
               :detail="false"
               :class="{ selected: route.path === p.url }"
@@ -37,7 +37,7 @@
         <ion-menu-toggle v-for="p in appFooterPages" :key="p.url" :auto-hide="false">
           <ion-item
             router-direction="root"
-            :disabled="p.disabledOnOfflineMode && isOfflineMode"
+            :disabled="p.disabledOnOfflineMode && isOffline"
             :router-link="p.url"
             lines="none"
             :detail="false"
@@ -77,7 +77,7 @@ import { app } from '~/stores/app';
 import { wtdcollection } from '~/stores/wtdcollection';
 
 const { t } = useI18n();
-const { token, isOfflineMode } = storeToRefs(app());
+const { token, isOffline } = storeToRefs(app());
 const collectionStore = wtdcollection();
 const points = computed(() => webStores.users().points);
 

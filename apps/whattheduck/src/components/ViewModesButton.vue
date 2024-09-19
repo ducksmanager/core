@@ -1,6 +1,6 @@
 <template>
   <fab-header-button
-    :disabled="isOfflineMode"
+    :disabled="isOffline"
     :icon="{ ios: eyeOutline, md: eyeSharp }"
     :options="[...issueViewModes]"
     v-model:fab="fab"
@@ -13,7 +13,7 @@ import { eyeOutline, eyeSharp } from 'ionicons/icons';
 import { app } from '~/stores/app';
 
 const { issueViewModes } = app();
-const { isOfflineMode, currentIssueViewMode } = storeToRefs(app());
+const { isOffline, currentIssueViewMode } = storeToRefs(app());
 
 // eslint-disable-next-line no-undef
 const fab = shallowRef<ComponentPublicInstance<HTMLIonFabElement> | null>(null);

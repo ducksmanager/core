@@ -46,20 +46,20 @@
       ></ion-row>
       <ion-row>
         <ion-col size="6">
-          <ion-button @click="submitLogin" expand="block" :disabled="isOfflineMode">
+          <ion-button @click="submitLogin" expand="block" :disabled="isOffline">
             {{ t('Connexion') }}
           </ion-button>
         </ion-col>
 
         <ion-col size="6">
-          <ion-button @click="signup" expand="block" :disabled="isOfflineMode">
+          <ion-button @click="signup" expand="block" :disabled="isOffline">
             {{ t('Inscription') }}
           </ion-button>
         </ion-col>
       </ion-row>
       <ion-row>
         <ion-col size="6" push="6" class="flex ion-justify-content-end">
-          <ion-button @click="forgotPassword" size="small" :disabled="isOfflineMode">
+          <ion-button @click="forgotPassword" size="small" :disabled="isOffline">
             {{ t('Mot de passe oublié ?') }}
           </ion-button>
         </ion-col>
@@ -83,7 +83,7 @@ import { eyeOutline, eyeOffOutline, eyeSharp, eyeOffSharp } from 'ionicons/icons
 import useFormErrorHandling from '~/composables/useFormErrorHandling';
 import { app } from '~/stores/app';
 
-const { token, socket, isOfflineMode } = storeToRefs(app());
+const { token, socket, isOffline } = storeToRefs(app());
 
 const dmUrl = import.meta.env.VITE_DM_URL as string;
 

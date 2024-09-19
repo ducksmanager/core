@@ -11,7 +11,7 @@
               v-for="item of conditionsWithoutMissing"
               label-placement="start"
               justify="end"
-              :disabled="isOfflineMode"
+              :disabled="isOffline"
               :color="item.themeColor"
               :value="item.dbValue"
               class="ion-text-right ion-padding-bottom"
@@ -28,7 +28,7 @@
         <ion-label>{{ t('A lire') }}</ion-label></ion-col
       >
       <ion-col size="8" style="display: flex" class="ion-padding ion-justify-content-end"
-        ><ion-checkbox :disabled="isOfflineMode" v-model="issue.isToRead" :aria-label="t('A lire')" /></ion-col
+        ><ion-checkbox :disabled="isOffline" v-model="issue.isToRead" :aria-label="t('A lire')" /></ion-col
     ></ion-row>
     <ion-row>
       <ion-col size="4" class="ion-padding ion-text-left">
@@ -65,7 +65,7 @@
             v-for="item of purchasesIncludingNone"
             label-placement="start"
             justify="end"
-            :disabled="isOfflineMode"
+            :disabled="isOffline"
             :value="item.id"
             class="ion-text-right ion-padding-bottom"
           >
@@ -93,7 +93,7 @@ const issue = defineModel<SingleCopyState>({
   required: true,
 });
 
-const { isOfflineMode } = storeToRefs(app());
+const { isOffline } = storeToRefs(app());
 
 const { conditionsWithoutMissing } = useCondition();
 const { purchases } = storeToRefs(wtdcollection());

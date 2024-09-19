@@ -1,6 +1,5 @@
 import { bookmarkOutline, bookmarkSharp } from 'ionicons/icons';
 import { defineStore } from 'pinia';
-import type { NotEmptyStorageValue } from '~socket.io-client-services';
 import type useDmSocket from '~web/src/composables/useDmSocket';
 
 import usePersistedData from '~/composables/usePersistedData';
@@ -18,17 +17,12 @@ export const app = defineStore('app', () => {
   const offlineBannerHeight = ref(0);
   const socket = ref<ReturnType<typeof useDmSocket> | null>(null);
 
-  const isOfflineMode = ref(false);
-  setTimeout(() => {
-    setInterval(() => {
-      isOfflineMode.value = (socket.value?.coa.socket || false) && !socket.value?.coa.socket.connected;
-    }, 1000);
-  }, 1000);
+  const isOfflineMode = ref<boolean | 'offline_no_cache'>(false);
+  const isOffline = computed(() => isOfflineMode.value !== false);
 
   const router = useRouter();
   const route = useRoute();
   const token = ref<string | null>(); // undefined === we haven't checked whether there is a token ; null === we have checked and there is no token
-  const socketCache = ref<Record<string, NotEmptyStorageValue>>({});
   const isPersistedDataLoaded = ref(false);
   const filterText = ref('');
   const isCameraPreviewShown = ref(false);
@@ -171,7 +165,6 @@ export const app = defineStore('app', () => {
 
   usePersistedData({
     token,
-    socketCache,
   }).then(() => {
     console.log({ token: token.value });
     if (!token.value) {
@@ -215,13 +208,13 @@ export const app = defineStore('app', () => {
     selectedIssuecodes,
     isPersistedDataLoaded,
     isCameraPreviewShown,
-    socketCache,
     currentNavigationItem,
     countrycode,
     publicationcode,
     issuecodes,
     token,
     offlineBannerHeight,
+    isOffline,
     isOfflineMode,
     isCoaView,
     copyListModes,
