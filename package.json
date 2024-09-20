@@ -22,6 +22,7 @@
     "build:duck-estimator": "NODE_ENV=production turbo build --log-order=stream --filter-prod '~duck-estimator...'",
     "build:stats-updater": "NODE_ENV=production turbo build --log-order=stream --filter-prod '~stats-updater...'",
     "dev:edgecreator": "turbo dev -F '~edgecreator-api...' -F '~edgecreator' -F '~web' -F '~edges'",
-    "dev:whattheduck": "turbo dev -F '~whattheduck' -F '~api' -F '~web'"
+    "dev:whattheduck": "turbo dev -F '~whattheduck' -F '~api' -F '~web'",
+    "dev:whattheduck:offline": "pnpm -F '~whattheduck' dev"
   }
 }

@@ -63,7 +63,7 @@ const routes = [
     path: '/authors',
     component: Authors,
     meta: {
-      onOffline: 'readonly',
+      onOffline: 'unavailable',
       onNoToken: 'logout',
     } as RouteMeta,
   },
@@ -92,6 +92,7 @@ const routes = [
   {
     path: '/logout',
     component: Logout,
+    onOffline: 'unavailable',
   },
   {
     path: '/login',

@@ -45,7 +45,7 @@ export type EventCalls<S extends EventsMap> = {
 };
 
 export class SocketClient {
-  constructor(private socketRootUrl: string) {}
+  constructor(private socketRootUrl: string) { }
 
   public onConnectError = (e: Error, namespace: string) => {
     console.error(`${namespace}: connect_error: ${e}`);
@@ -73,94 +73,104 @@ export class SocketClient {
 
     let isOffline: boolean | undefined;
 
+    const connect = () => {
+      socket = io(this.socketRootUrl + namespaceName, {
+        extraHeaders: {
+          "X-Namespace": namespaceName,
+        },
+        timeout: 500,
+        transports: ["websocket"],
+        multiplex: false,
+        auth: async (cb) => {
+          const token = await session?.getToken();
+          cb(token ? { token } : {});
+        },
+      })
+        .on("connect_error", (e) => {
+          isOffline = true;
+          console.log('connect_error', namespaceName);
+          this.onConnectError(e, namespaceName);
+        })
+        .on("connect", () => {
+          isOffline = false;
+          console.log(
+            `connected to ${namespaceName} at ${new Date().toISOString()}`
+          );
+
+          this.onConnected(namespaceName);
+        });
+    };
+
     return {
       socket,
+      connect,
       services: new Proxy({} as EventCalls<Services>, {
         get:
           <EventName extends StringKeyOf<Services>>(
             _: never,
             event: EventName
           ) =>
-          async (
-            ...args: AllButLast<Parameters<Services[EventName]>>
-          ): Promise<
-            EventReturnTypeIncludingError<Services[EventName]> | undefined
-          > => {
-            let isCacheUsed = false;
-            if (!socket) {
-              console.log(
-                "connecting to",
-                namespaceName + " at " + new Date().toISOString()
-              );
-              socket = io(this.socketRootUrl + namespaceName, {
-                extraHeaders: {
-                  "X-Namespace": namespaceName,
-                },
-                timeout: 500,
-                transports: ["websocket"],
-                multiplex: false,
-                auth: async (cb) => {
-                  const token = await session?.getToken();
-                  cb(token ? { token } : {});
-                },
-              })
-                .on("connect_error", (e) => {
-                  isOffline = true;
-                  this.onConnectError(
-                    isCacheUsed
-                      ? e
-                      : {
-                          message: "offline_no_cache",
-                          name: "offline_no_cache",
-                        },
-                    namespaceName
-                  );
-                })
-                .on("connect", () => {
-                  isOffline = false;
-                  console.log(
-                    `connected to ${namespaceName} at ${new Date().toISOString()}`
-                  );
-
-                  this.onConnected(namespaceName);
-                });
-            }
-            const startTime = Date.now();
-            const eventConsoleString = `${namespaceName}/${event}(${args.join(", ")})`;
-            const debugCall = async (post: boolean = false) => {
-              const token = await session?.getToken();
-              return console.debug(
-                `${eventConsoleString} ${post ? `responded in ${Date.now() - startTime}ms` : `called ${token ? "with token" : "without token"}`} at ${new Date().toISOString()}`
-              );
-            };
-            let cacheKey;
-            if (cache) {
-              cacheKey = `${namespaceName}/${event} ${JSON.stringify(args)}`;
-              const cacheData = (await cache.storage.get(cacheKey, {
-                cache: {
-                  ttl: isOffline
-                    ? undefined
-                    : typeof cache.ttl === "function"
-                      ? cache.ttl(event, args)
-                      : cache.ttl,
-                },
-              })) as Awaited<ReturnType<Socket["emitWithAck"]>>;
-              isCacheUsed =
-                cacheData !== undefined &&
-                !(typeof cacheData === "object" && cacheData.state === "empty");
-              if (isCacheUsed) {
-                console.debug(`${eventConsoleString} served from cache`);
-                return cacheData;
+            async (
+              ...args: AllButLast<Parameters<Services[EventName]>>
+            ): Promise<
+              EventReturnTypeIncludingError<Services[EventName]> | undefined
+            > => {
+              let isCacheUsed = false;
+              if (!socket) {
+                console.log(
+                  `connecting to ${namespaceName} at ${new Date().toISOString()}`
+                );
+                connect();
               }
-            }
-            await debugCall();
-            const data = await socket.emitWithAck(event, ...args);
-            await debugCall(true);
-            if (cache && cacheKey) {
-              cache.storage.set(cacheKey, data);
-            }
-            return data;
-          },
+              const startTime = Date.now();
+              const eventConsoleString = `${namespaceName}/${event}(${args.join(", ")})`;
+              const debugCall = async (post: boolean = false) => {
+                const token = await session?.getToken();
+                return console.debug(
+                  `${eventConsoleString} ${post ? `responded in ${Date.now() - startTime}ms` : `called ${token ? "with token" : "without token"}`} at ${new Date().toISOString()}`
+                );
+              };
+              let cacheKey;
+              if (cache) {
+                cacheKey = `${namespaceName}/${event} ${JSON.stringify(args)}`;
+                const cacheData = (await cache.storage.get(cacheKey, {
+                  cache: {
+                    ttl: isOffline
+                      ? undefined
+                      : typeof cache.ttl === "function"
+                        ? cache.ttl(event, args)
+                        : cache.ttl,
+                  },
+                })) as Awaited<ReturnType<Socket["emitWithAck"]>>;
+                isCacheUsed =
+                  cacheData !== undefined &&
+                  !(typeof cacheData === "object" && cacheData.state === "empty");
+                if (isCacheUsed) {
+                  console.debug(`${eventConsoleString} served from cache`);
+                  return cacheData;
+                }
+              }
+
+              socket!.on("connect_error", (e) => {
+                isOffline = true;
+
+                this.onConnectError(
+                  (e.message === 'websocket error') ? {
+                    message: "offline_no_cache",
+                    name: "offline_no_cache",
+                  } : e,
+                  namespaceName
+                );
+              });
+
+              await debugCall();
+              const data = await socket!.emitWithAck(event, ...args);
+              await debugCall(true);
+              if (cache && cacheKey) {
+                cache.storage.set(cacheKey, data);
+              }
+              return data;
+            },
       }),
     };
   }

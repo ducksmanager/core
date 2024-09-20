@@ -50,14 +50,12 @@ const assignSocket = () => {
       sessionExists: async () => token.value !== undefined,
     },
     cacheStorage = buildStorage({
-      set: (key, data) => {
-        sessionStorage.setItem(key, JSON.stringify(data));
-      },
-      find: (key) => {
-        const value = sessionStorage.getItem(key);
+      set: (key, data) => storage.set(key, JSON.stringify(data)),
+      find: async (key) => {
+        const value = await storage.get(key);
         return value ? JSON.parse(value) : undefined;
       },
-      remove: (key) => sessionStorage.removeItem(key),
+      remove: (key) => storage.remove(key),
     }),
     onConnected = (namespace: string) => {
       if (namespace === CoaServices.namespaceEndpoint) {
@@ -65,14 +63,14 @@ const assignSocket = () => {
       }
     },
     onConnectError = (e: Error, namespace: string) => {
-      if (namespace === CoaServices.namespaceEndpoint) isOfflineMode.value = true;
-      else if (namespace === CollectionServices.namespaceEndpoint) {
-        if (e.name === 'offline_no_cache') {
-          isOfflineMode.value = 'offline_no_cache';
-        }
+      if (e.name === 'offline_no_cache') {
+        isOfflineMode.value = 'offline_no_cache';
+      } else if (namespace === CollectionServices.namespaceEndpoint) {
         if ([/jwt expired/, /invalid signature/].some((regex) => regex.test(e.message))) {
           session.clearSession();
         }
+      } else if (namespace === CoaServices.namespaceEndpoint && isOfflineMode.value === false) {
+        isOfflineMode.value = true;
       }
     };
   const socketUrl = ['web', 'ios'].includes(Capacitor.getPlatform())
@@ -85,6 +83,7 @@ const assignSocket = () => {
     onConnected,
     onConnectError,
   });
+  socket.value.coa.connect();
 };
 
 watch(token, async () => {

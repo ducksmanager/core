@@ -21,7 +21,7 @@
             <ion-item
               router-direction="root"
               :router-link="p.url"
-              :disabled="p.disabledOnOfflineMode && isOffline"
+              :disabled="p.isDisabled && isOffline"
               lines="none"
               :detail="false"
               :class="{ selected: route.path === p.url }"
@@ -90,46 +90,54 @@ interface AppPage {
   chip?: number;
 }
 
-const appPages: AppPage[] = [
-  {
-    title: t('Rechercher une histoire'),
-    url: '/search',
-    disabledOnOfflineMode: true,
-    iosIcon: searchOutline,
-    mdIcon: searchSharp,
-  },
-  {
-    title: t('Ma collection'),
-    url: '/collection#',
-    iosIcon: listOutline,
-    mdIcon: listSharp,
-    chip: collectionStore.total,
-  },
-  {
-    title: t('Mes auteurs favoris'),
-    url: '/authors',
-    iosIcon: starOutline,
-    mdIcon: starSharp,
-  },
-  {
-    title: t('Mes suggestions'),
-    url: '/suggestions',
-    iosIcon: flameOutline,
-    mdIcon: flameSharp,
-  },
-  {
-    title: t('Statistiques'),
-    url: '/stats',
-    iosIcon: statsChartOutline,
-    mdIcon: statsChartSharp,
-  },
-  {
-    title: t('A propos'),
-    url: '/about',
-    iosIcon: helpOutline,
-    mdIcon: helpSharp,
-  },
-];
+const mapIsDisabled = (page: AppPage) => ({
+  ...page,
+  isDisabled: routes.find(({ path }) => path === page.url)?.meta.onOffline === 'unavailable',
+});
+
+const routes = useRouter().getRoutes();
+
+const appPages = computed(() =>
+  [
+    {
+      title: t('Rechercher une histoire'),
+      url: '/search',
+      iosIcon: searchOutline,
+      mdIcon: searchSharp,
+    },
+    {
+      title: t('Ma collection'),
+      url: '/collection#',
+      iosIcon: listOutline,
+      mdIcon: listSharp,
+      chip: collectionStore.total,
+    },
+    {
+      title: t('Mes auteurs favoris'),
+      url: '/authors',
+      iosIcon: starOutline,
+      mdIcon: starSharp,
+    },
+    {
+      title: t('Mes suggestions'),
+      url: '/suggestions',
+      iosIcon: flameOutline,
+      mdIcon: flameSharp,
+    },
+    {
+      title: t('Statistiques'),
+      url: '/stats',
+      iosIcon: statsChartOutline,
+      mdIcon: statsChartSharp,
+    },
+    {
+      title: t('A propos'),
+      url: '/about',
+      iosIcon: helpOutline,
+      mdIcon: helpSharp,
+    },
+  ].map(mapIsDisabled),
+);
 
 const router = useRouter();
 const route = useRoute();
@@ -140,25 +148,26 @@ router.beforeEach((to) => {
   }
 });
 
-const appFooterPages: AppPage[] = [
-  {
-    iosIcon: warningOutline,
-    mdIcon: warningSharp,
-    disabledOnOfflineMode: true,
-    title: t('Signaler un problème'),
-    url: '/report',
-  },
-  ...(token.value
-    ? [
-        {
-          iosIcon: logOutOutline,
-          mdIcon: logOutSharp,
-          title: t('Déconnexion'),
-          url: '/login',
-        },
-      ]
-    : []),
-];
+const appFooterPages = computed(() =>
+  [
+    {
+      iosIcon: warningOutline,
+      mdIcon: warningSharp,
+      title: t('Signaler un problème'),
+      url: '/report',
+    },
+    ...(token.value
+      ? [
+          {
+            iosIcon: logOutOutline,
+            mdIcon: logOutSharp,
+            title: t('Déconnexion'),
+            url: '/login',
+          },
+        ]
+      : []),
+  ].map(mapIsDisabled),
+);
 
 const { user } = storeToRefs(collectionStore);
 </script>
