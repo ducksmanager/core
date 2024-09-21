@@ -32,7 +32,6 @@ import { AppUpdate } from '@capawesome/capacitor-app-update';
 
 const { t } = useI18n();
 
-const dmUrl = 'https://ducksmanager.net';
 const playStoreUrl = 'https://play.google.com/store/apps/details?id=net.ducksmanager.whattheduck';
 
 const currentAppVersion = ref<string | null>(null);
@@ -51,6 +50,7 @@ AppUpdate.getAppUpdateInfo()
 
 const discordUrl = import.meta.env.VITE_DISCORD_URL;
 const facebookUrl = import.meta.env.VITE_FACEBOOK_URL;
+const dmUrl = import.meta.env.VITE_DM_URL;
 const instagramUrl = import.meta.env.VITE_INSTAGRAM_URL;
 const youtubeUrl = import.meta.env.VITE_YOUTUBE_URL;
 </script>
