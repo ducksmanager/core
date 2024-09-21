@@ -6,7 +6,7 @@
       >
       <ion-col size="8" class="ion-padding">
         <ion-row style="flex-direction: column" class="ion-align-items-end">
-          <ion-radio-group v-model="issue.condition">
+          <ion-radio-group v-model="issue.condition" style="display: flex; justify-content: end">
             <ion-radio
               v-for="item of conditionsWithoutMissing"
               label-placement="start"

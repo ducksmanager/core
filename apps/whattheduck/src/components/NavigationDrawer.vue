@@ -24,7 +24,7 @@
               :disabled="p.isDisabled && isOffline"
               lines="none"
               :detail="false"
-              :class="{ selected: route.path === p.url }"
+              :class="{ selected: p.url.indexOf(route.path) === 0 }"
             >
               <ion-icon slot="start" aria-hidden="true" :ios="p.iosIcon" :md="p.mdIcon" />
               <ion-label>{{ p.title }}</ion-label>
