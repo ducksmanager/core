@@ -13,7 +13,7 @@ export default (issues: ShallowRef<(issue & { issuecode: string })[]>) => {
       Object.keys(totalPerPublication.value).reduce<string | null>(
         (acc, publicationcode) =>
           acc &&
-            totalPerPublication.value![acc] >
+          totalPerPublication.value![acc] >
             totalPerPublication.value![publicationcode]
             ? acc
             : publicationcode,
@@ -22,12 +22,13 @@ export default (issues: ShallowRef<(issue & { issuecode: string })[]>) => {
   );
 
   const totalPerPublication = computed(
-    () => Object.fromEntries(
-      Object.entries(issues.value?.groupBy("publicationcode", "[]")).map(
-        ([publicationcode, issues]) => [publicationcode, issues.length]
-      )
-    ) || null,
-  ),
+      () =>
+        Object.fromEntries(
+          Object.entries(issues.value?.groupBy("publicationcode", "[]")).map(
+            ([publicationcode, issues]) => [publicationcode, issues.length],
+          ),
+        ) || null,
+    ),
     issuesByIssuecode = computed(() =>
       issues.value?.groupBy("issuecode", "[]"),
     ),
@@ -40,9 +41,9 @@ export default (issues: ShallowRef<(issue & { issuecode: string })[]>) => {
             (acc, issuecode) =>
               issuesByIssuecode.value![issuecode].length > 1
                 ? {
-                  ...acc,
-                  [issuecode]: issuesByIssuecode.value![issuecode],
-                }
+                    ...acc,
+                    [issuecode]: issuesByIssuecode.value![issuecode],
+                  }
                 : acc,
             {},
           )) ||
@@ -60,10 +61,10 @@ export default (issues: ShallowRef<(issue & { issuecode: string })[]>) => {
           (!issues.value?.length
             ? 0
             : issues.value?.length -
-            Object.values(duplicateIssues.value).reduce(
-              (acc, duplicatedIssue) => acc + duplicatedIssue.length - 1,
-              0,
-            ))) ||
+              Object.values(duplicateIssues.value).reduce(
+                (acc, duplicatedIssue) => acc + duplicatedIssue.length - 1,
+                0,
+              ))) ||
         0,
     ),
     totalPerCountry = computed(() =>
@@ -124,12 +125,12 @@ export default (issues: ShallowRef<(issue & { issuecode: string })[]>) => {
     quotationSum = computed(() =>
       quotedIssues.value
         ? Math.round(
-          quotedIssues.value?.reduce(
-            (acc, { estimationGivenCondition }) =>
-              acc + estimationGivenCondition,
-            0,
-          ) || 0,
-        )
+            quotedIssues.value?.reduce(
+              (acc, { estimationGivenCondition }) =>
+                acc + estimationGivenCondition,
+              0,
+            ) || 0,
+          )
         : null,
     );
 

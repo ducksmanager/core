@@ -35,6 +35,7 @@
         @click="
           (fab?.$el as HTMLIonFabElement).close();
           isCoaView = true;
+          selectedIssuecodes = [];
         "
       >
         <ion-label>{{ t('Par sélection de numéro') }}</ion-label>
@@ -79,7 +80,7 @@ const {
 const emit = defineEmits<(e: 'show-camera-preview') => void>();
 
 const { pickCoverFile } = useCoverSearch(useRouter(), coverIdServices);
-const { isCoaView, isOfflineMode } = storeToRefs(app());
+const { isCoaView, isOfflineMode, selectedIssuecodes } = storeToRefs(app());
 
 // eslint-disable-next-line no-undef
 const fab = shallowRef<ComponentPublicInstance<HTMLIonFabElement> | null>(null);
@@ -111,8 +112,8 @@ ion-icon {
 ion-item {
   --inner-padding-end: 0;
 
-  &::part(native) {
-    background: transparent;
+  ::part(native) {
+    background: rgba(0, 0, 0, 0.2);
   }
 }
 </style>

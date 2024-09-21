@@ -137,8 +137,10 @@ ion-checkbox {
   display: flex !important
 }
 
-.ios {
-  .fab-button-in-list {
-    --color: black;
-  }
+.button-native {
+  background: inherit !important
+}
+
+.fab-button-in-list {
+  color: white
 }

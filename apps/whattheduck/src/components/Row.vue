@@ -1,5 +1,9 @@
 <template>
-  <ion-item :button="!isOfflineMode" :class="class" v-on-long-press.prevent="[onLongPress, onLongPressOptions]">
+  <ion-item
+    :button="!isOfflineMode"
+    :class="class"
+    @click="selectedIssuecodes ? toggleCheckedIssuecode(id) : goToItem()"
+  >
     <slot name="fill-bar" />
     <slot name="checkbox" />
     <ion-label class="text">
@@ -13,8 +17,6 @@
 </template>
 
 <script setup lang="ts">
-import { vOnLongPress } from '@vueuse/components';
-
 import { app } from '~/stores/app';
 
 const props = defineProps<{
@@ -33,30 +35,6 @@ defineSlots<{
 
 const { isOfflineMode, selectedIssuecodes, currentNavigationItem } = storeToRefs(app());
 
-const allowMultipleSelection = computed(() => props.type === 'issuecode');
-
-const onLongPress = () => {
-  if (allowMultipleSelection.value) {
-    selectedIssuecodes.value = [];
-    toggleCheckedIssuecode(props.id!);
-  } else {
-    goToItem();
-  }
-};
-
-const onLongPressOptions = {
-  delay: 500,
-  onMouseUp: (_: number, __: number, isLongPress: boolean) => {
-    if (!isLongPress) {
-      if (allowMultipleSelection.value && selectedIssuecodes.value !== null) {
-        toggleCheckedIssuecode(props.id!);
-      } else {
-        goToItem();
-      }
-    }
-  },
-};
-
 const goToItem = () => {
   switch (props.type) {
     case 'countrycode':
@@ -72,8 +50,8 @@ const goToItem = () => {
 const toggleElement = <T,>(arr: T[], element: T): T[] =>
   arr.includes(element) ? arr.filter((el) => el !== element) : [...arr, element];
 
-const toggleCheckedIssuecode = (issuenumber: string) => {
-  selectedIssuecodes.value = toggleElement(selectedIssuecodes.value!, issuenumber);
+const toggleCheckedIssuecode = (issuecode: string) => {
+  selectedIssuecodes.value = toggleElement(selectedIssuecodes.value!, issuecode);
 };
 </script>
 
