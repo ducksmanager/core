@@ -29,7 +29,7 @@ const defaultExport = (
       clearSession: () => void;
       sessionExists: () => Promise<boolean>;
     };
-  }
+  },
 ) => {
   const { session, cacheStorage, onConnectError, onConnected } = options;
   const until4am = () => {
@@ -53,13 +53,13 @@ const defaultExport = (
   return {
     options,
     publicCollection: socket.addNamespace<PublicCollectionServices>(
-      PublicCollectionServices.namespaceEndpoint
+      PublicCollectionServices.namespaceEndpoint,
     ),
     login: socket.addNamespace<LoginServices>(LoginServices.namespaceEndpoint),
 
     bookcase: socket.addNamespace<BookcaseServices>(
       BookcaseServices.namespaceEndpoint,
-      { session }
+      { session },
     ),
     stats: socket.addNamespace<StatsServices>(StatsServices.namespaceEndpoint, {
       session,
@@ -73,14 +73,14 @@ const defaultExport = (
     }),
     edgeCreator: socket.addNamespace<EdgeCreatorServices>(
       EdgeCreatorServices.namespaceEndpoint,
-      { session }
+      { session },
     ),
     presentationText: socket.addNamespace<PresentationTextServices>(
-      PresentationTextServices.namespaceEndpoint
+      PresentationTextServices.namespaceEndpoint,
     ),
     edges: socket.addNamespace<EdgesServices>(
       EdgesServices.namespaceEndpoint,
-      {}
+      {},
     ),
     coa: socket.addNamespace<CoaServices>(CoaServices.namespaceEndpoint, {
       cache: {
@@ -95,14 +95,14 @@ const defaultExport = (
           storage: cacheStorage,
           ttl: 1000, // 1 second only, because we want to always get the latest data but still cache in case of offline
         },
-      }
+      },
     ),
     events: socket.addNamespace<EventsServices>(
       EventsServices.namespaceEndpoint,
-      {}
+      {},
     ),
     bookstore: socket.addNamespace<BookstoreServices>(
-      BookstoreServices.namespaceEndpoint
+      BookstoreServices.namespaceEndpoint,
     ),
     collection: socket.addNamespace<CollectionServices>(
       CollectionServices.namespaceEndpoint,
@@ -112,11 +112,11 @@ const defaultExport = (
           storage: cacheStorage,
           ttl: 1000, // 1 second only, because we want to always get the latest data but still cache in case of offline
         },
-      }
+      },
     ),
     coverId: socket.addNamespace<CoverIdServices>(
       CoverIdServices.namespaceEndpoint,
-      {}
+      {},
     ),
   };
 };

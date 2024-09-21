@@ -56,6 +56,7 @@ const assignSocket = () => {
         return value ? JSON.parse(value) : undefined;
       },
       remove: (key) => storage.remove(key),
+      clear: () => storage.clear(),
     }),
     onConnected = (namespace: string) => {
       if (namespace === CoaServices.namespaceEndpoint) {

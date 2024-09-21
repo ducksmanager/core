@@ -6,7 +6,7 @@
   },
   "type": "module",
   "dependencies": {
-    "husky": "^9.1.5"
+    "husky": "^9.1.6"
   },
   "devDependencies": {
     "turbo": "^2.1.2"

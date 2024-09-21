@@ -33,7 +33,7 @@
       v-if="activeTab !== undefined"
       class="start-0 bottom-0 mw-100 pt-2 h-5"
       style="height: 35px"
-      ><b-tabs v-model:modelValue="activeTab" align="center"
+      ><b-tabs v-model:model-value="activeTab" align="center"
         ><b-tab
           v-for="tabName of tabNames"
           :key="tabName"
