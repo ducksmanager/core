@@ -173,13 +173,6 @@ export const app = defineStore('app', () => {
     isPersistedDataLoaded.value = true;
   });
 
-  watch(
-    () => route.hash,
-    (newValue) => {
-      console.log('route.hash: ', JSON.stringify({ newValue }));
-    },
-  );
-
   watch(currentNavigationItem, async (navigationItem) => {
     selectedIssuecodes.value = null;
     const value = (
