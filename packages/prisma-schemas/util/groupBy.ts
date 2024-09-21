@@ -50,23 +50,25 @@ declare global {
 }
 
 Array.prototype.groupBy = function (fieldName, valueFieldName) {
-  return this.reduce(
-    (acc, object) => ({
-      ...acc,
-      [object[fieldName]]:
-        valueFieldName === "[]"
-          ? [...(acc[object[fieldName]] || []), object]
-          : valueFieldName?.endsWith("[]")
-            ? [
-              ...(acc[object[fieldName]] || []),
-              object[valueFieldName.slice(0, -"[]".length)],
-            ]
-            : valueFieldName
-              ? object[valueFieldName] || undefined
-              : object,
-    }),
-    {},
-  );
+  return this.reduce((acc, object) => {
+    const key = object[fieldName];
+    if (valueFieldName === "[]") {
+      if (!acc[key]) {
+        acc[key] = [];
+      }
+      acc[key].push(object);
+    } else if (valueFieldName?.endsWith("[]")) {
+      if (!acc[key]) {
+        acc[key] = [];
+      }
+      acc[key].push(object[valueFieldName.slice(0, -"[]".length)]);
+    } else if (valueFieldName) {
+      acc[key] = object[valueFieldName] || undefined;
+    } else {
+      acc[key] = object;
+    }
+    return acc;
+  }, {});
 };
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
