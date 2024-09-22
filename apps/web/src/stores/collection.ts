@@ -54,7 +54,7 @@ export const collection = defineStore("collection", () => {
   const collectionUtils = useCollection(
       issues as ShallowRef<(issue & { issuecode: string })[]>,
     ),
-    watchedPublicationsWithSales = ref<string[] | null>(null),
+    watchedPublicationsWithSales = shallowRef<string[] | null>(null),
     purchases = shallowRef<purchase[] | null>(null),
     watchedAuthors = shallowRef<authorUser[] | null>(null),
     marketplaceContactMethods = ref<string[] | null>(null),
@@ -75,16 +75,16 @@ export const collection = defineStore("collection", () => {
     isLoadingPurchases = ref(false),
     isLoadingSuggestions = ref(false),
     isLoadingSubscriptions = ref(false),
-    coaIssueCountsPerCountrycode = ref<EventReturnType<
+    coaIssueCountsPerCountrycode = shallowRef<EventReturnType<
       CollectionServices["getCoaCountByCountrycode"]
     > | null>(null),
-    coaIssueCountsByPublicationcode = ref<EventReturnType<
+    coaIssueCountsByPublicationcode = shallowRef<EventReturnType<
       CollectionServices["getCoaCountByPublicationcode"]
     > | null>(null),
     user = shallowRef<
       EventReturnType<CollectionServices["getUser"]> | undefined | null
     >(undefined),
-    userPermissions = ref<
+    userPermissions = shallowRef<
       EventReturnType<CollectionServices["getUserPermissions"]> | undefined
     >(undefined),
     previousVisit = ref<Date | null>(null),

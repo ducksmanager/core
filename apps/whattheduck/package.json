@@ -5,7 +5,7 @@
     "node": ">=18.0.0 <19.0.0"
   },
   "scripts": {
-    "whattheduck-android": "concurrently -p \"[whattheduck-{name}]\" --kill-others-on-fail -n front+web,android \"pnpm -r dev:whattheduck\" \"ionic cap run android --external --target Pixel_8_API_29 --livereload --public-host=192.168.1.209\"",
+    "whattheduck-android": "concurrently -p \"[whattheduck-{name}]\" --kill-others-on-fail -n front+web,android \"pnpm -r dev:whattheduck\" \"ionic cap run android --external --target Pixel_8_API_29 --livereload --public-host=192.168.1.234\"",
     "lint": "eslint .",
     "dev": "concurrently -n vite,vue-tsc \"vite --port 8003 --host\" \"vue-tsc --noEmit --watch\"",
     "build": "vite build && vue-tsc --noEmit",
@@ -48,7 +48,7 @@
     "pinia": "^2.2.2",
     "sass": "^1.79.3",
     "universal-cookie": "^7.2.0",
-    "vue": "^3.5.7",
+    "vue": "^3.5.8",
     "vue-chartjs": "^5.3.1",
     "vue-i18n": "^9.14.0",
     "vue-router": "^4.4.5",

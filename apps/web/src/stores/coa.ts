@@ -41,30 +41,30 @@ export const coa = defineStore("coa", () => {
   } = inject(dmSocketInjectionKey)!;
 
   const locale = useI18n().locale,
-    coverUrls = ref<{ [issuecode: string]: string }>({}),
+    coverUrls = shallowRef<{ [issuecode: string]: string }>({}),
     countryNames = shallowRef<EventReturnType<
       CoaServices["getCountryList"]
     > | null>(null),
     publicationNames = shallowRef<
       EventReturnType<CoaServices["getPublicationListFromCountrycodes"]>
     >({}),
-    publicationNamesFullCountries = ref<string[]>([]),
+    publicationNamesFullCountries = shallowRef<string[]>([]),
     personNames = shallowRef<EventReturnType<
       CoaServices["getAuthorList"]
     > | null>(null),
     issuecodes = ref<string[]>([]),
-    issueDetails = ref<{ [issuecode: string]: InducksIssueDetails }>({}),
+    issueDetails = shallowRef<{ [issuecode: string]: InducksIssueDetails }>({}),
     isLoadingCountryNames = ref(false),
-    issuecodeDetails = ref<
+    issuecodeDetails = shallowRef<
       Exclude<EventReturnType<CoaServices["getIssues"]>, "error">
     >({}),
-    issuePopularities = ref<
+    issuePopularities = shallowRef<
       EventReturnType<CoaServices["getIssuePopularities"]>
     >({}),
     issuecodesByPublicationcode = ref<{
       [publicationcode: string]: string[];
     }>({}),
-    issueQuotations = ref<
+    issueQuotations = shallowRef<
       EventReturnType<CoaServices["getQuotationsByIssuecodes"]>["quotations"]
     >({}),
     addPublicationNames = (
@@ -201,6 +201,7 @@ export const coa = defineStore("coa", () => {
       }
     },
     fetchIssuecodesByPublicationcode = async (publicationcodes: string[]) => {
+      debugger;
       const existingPublicationcodes = new Set(
         Object.keys(issuecodesByPublicationcode.value || {}),
       );
@@ -218,13 +219,12 @@ export const coa = defineStore("coa", () => {
         );
         Object.assign(
           issuecodesByPublicationcode.value,
-          Object.entries(issuesByPublicationcode).reduce(
-            (acc, [publicationcode, issues]) => ({
-              ...acc,
-              [publicationcode]: issues.map(({ issuecode }) => issuecode),
-            }),
-            {},
-          ),
+          Object.entries(issuesByPublicationcode).reduce<
+            typeof issuecodesByPublicationcode.value
+          >((acc, [publicationcode, issues]) => {
+            acc[publicationcode] = issues.map(({ issuecode }) => issuecode);
+            return acc;
+          }, {}),
         );
       }
     },

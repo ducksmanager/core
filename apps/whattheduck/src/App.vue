@@ -50,10 +50,29 @@ const assignSocket = () => {
       sessionExists: async () => token.value !== undefined,
     },
     cacheStorage = buildStorage({
-      set: (key, data) => storage.set(key, JSON.stringify(data)),
+      set: (key, data, currentRequest) => {
+        const item = {
+          value: data,
+          ttl: currentRequest?.timeout || 0,
+          timestamp: Date.now(),
+        };
+        storage.set(key, JSON.stringify(item));
+      },
       find: async (key) => {
-        const value = await storage.get(key);
-        return value ? JSON.parse(value) : undefined;
+        const item = await storage.get(key);
+        if (!item) {
+          return undefined;
+        }
+
+        const { value, ttl, timestamp } = JSON.parse(item);
+        const now = Date.now();
+
+        if (now - timestamp > ttl) {
+          storage.remove(key);
+          return undefined;
+        }
+
+        return value;
       },
       remove: (key) => storage.remove(key),
       clear: () => storage.clear(),
