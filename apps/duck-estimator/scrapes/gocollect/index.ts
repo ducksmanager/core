@@ -47,7 +47,7 @@ export async function scrape() {
   for (const { publicationcode, publicationUrl } of mappedPublications) {
     const quotations = [];
     let currentPageForPublication = 1;
-    // eslint-disable-next-line no-constant-condition
+
     while (true) {
       const url = `${ROOT_URL}${publicationUrl}?page=${currentPageForPublication}`;
       console.info(`Scraping ${url}`);

@@ -52,7 +52,7 @@ meta:
 <script setup lang="ts">
 import Cookies from "js-cookie";
 
-import { dmSocketInjectionKey } from "../composables/useDmSocket";
+import { socketInjectionKey } from "../composables/useDmSocket";
 
 const { login: userLogin, loadUser } = collection();
 const { user } = storeToRefs(collection());
@@ -66,7 +66,7 @@ let password = $ref("");
 
 const {
   collection: { socket: collectionSocket },
-} = inject(dmSocketInjectionKey)!;
+} = inject(socketInjectionKey)!;
 
 const login = async () => {
   await userLogin(

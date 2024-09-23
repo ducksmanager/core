@@ -3,9 +3,9 @@
   <hr v-if="negate" class="negate" />
 </template>
 <script setup lang="ts">
-import type { Option } from '~/stores/app';
+import type { FabOption } from '~/stores/app';
 
-type IconOrUndefined = Option['icon'];
+type IconOrUndefined = FabOption['icon'];
 // Prevents Unresolvable type reference or unsupported built-in utility type
 // when doing type Icon = NonNullable<IconOrUndefined>
 interface Icon {

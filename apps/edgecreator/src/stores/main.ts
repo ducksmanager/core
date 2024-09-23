@@ -7,7 +7,7 @@ import type { userContributionType } from "~prisma-schemas/schemas/dm";
 import type { ModelContributor } from "~types/ModelContributor";
 import type { SimpleUser } from "~types/SimpleUser";
 import { stores as webStores } from "~web";
-import { dmSocketInjectionKey } from "~web/src/composables/useDmSocket";
+import { socketInjectionKey as dmSocketInjectionKey } from "~web/src/composables/useDmSocket";
 
 const numericSortCollator = new Intl.Collator(undefined, {
   numeric: true,

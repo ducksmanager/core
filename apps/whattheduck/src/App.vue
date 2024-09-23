@@ -13,7 +13,7 @@
 
 <script setup lang="ts">
 import { Capacitor } from '@capacitor/core';
-import type { Storage } from '@ionic/storage';
+import type { Storage as IonicStorage } from '@ionic/storage';
 import Cookies from 'js-cookie';
 import { buildStorage, SocketClient } from '~socket.io-client-services';
 
@@ -24,7 +24,7 @@ import AppWithPersistedData from './views/AppWithPersistedData.vue';
 import CoaServices from '~dm-services/coa/types';
 import CollectionServices from '~dm-services/collection/types';
 
-const storage = injectLocal<Storage>('storage')!;
+const storage = injectLocal<IonicStorage>('storage')!;
 
 const appStore = app();
 const { isOfflineMode, token, socket, offlineBannerHeight } = storeToRefs(appStore);

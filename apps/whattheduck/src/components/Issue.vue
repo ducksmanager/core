@@ -5,8 +5,8 @@
 <script setup lang="ts">
 import { stores as webStores } from '~web';
 
-const { coa } = webStores;
-const { issuecodeDetails } = storeToRefs(coa());
+const { coa: webCoa } = webStores;
+const { issuecodeDetails } = storeToRefs(webCoa());
 defineProps<{
   issuecode: string;
 }>();

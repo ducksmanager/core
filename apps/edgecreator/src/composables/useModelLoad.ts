@@ -8,7 +8,7 @@ import type { OptionNameAndValue } from "~/types/OptionNameAndValue";
 import type { OptionValue } from "~/types/OptionValue";
 import type { StepOptions } from "~/types/StepOptions";
 import { stores as webStores } from "~web";
-import { dmSocketInjectionKey } from "~web/src/composables/useDmSocket";
+import { socketInjectionKey as dmSocketInjectionKey } from "~web/src/composables/useDmSocket";
 
 export default () => {
   const { getSvgMetadata, loadSvgFromString } = useSvgUtils();

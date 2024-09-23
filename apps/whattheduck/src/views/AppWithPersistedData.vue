@@ -9,7 +9,7 @@
   </ion-split-pane>
 </template>
 <script setup lang="ts">
-import { dmSocketInjectionKey } from '~web/src/composables/useDmSocket';
+import { socketInjectionKey as dmSocketInjectionKey } from '~web/src/composables/useDmSocket';
 
 import { app } from '~/stores/app';
 import { wtdcollection } from '~/stores/wtdcollection';

@@ -3,13 +3,13 @@ import type CollectionServices from "~dm-services/collection/types";
 import type { authorUser } from "~prisma-schemas/schemas/dm";
 import type { EventReturnType } from "~socket.io-services/types";
 
-import { dmSocketInjectionKey } from "../composables/useDmSocket";
+import { socketInjectionKey } from "../composables/useDmSocket";
 
 export const stats = defineStore("stats", () => {
   const {
     coa: { services: coaServices },
     collection: { services: collectionServices },
-  } = inject(dmSocketInjectionKey)!;
+  } = inject(socketInjectionKey)!;
 
   const ratings = shallowRef<
     EventReturnType<CollectionServices["getWatchedAuthors"]> | undefined

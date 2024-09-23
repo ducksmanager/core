@@ -15,7 +15,7 @@ import type {
 import type { EventReturnType, ScopedError } from "~socket.io-services/types";
 
 import useCollection from "../composables/useCollection";
-import { dmSocketInjectionKey } from "../composables/useDmSocket";
+import { socketInjectionKey } from "../composables/useDmSocket";
 import { bookcase } from "./bookcase";
 
 export type IssueWithPublicationcodeOptionalId = Omit<
@@ -43,7 +43,7 @@ export const collection = defineStore("collection", () => {
     stats: { services: statsServices },
     login: { services: loginServices },
     options: socketOptions,
-  } = inject(dmSocketInjectionKey)!;
+  } = inject(socketInjectionKey)!;
 
   const { bookcaseWithPopularities } = storeToRefs(bookcase());
 

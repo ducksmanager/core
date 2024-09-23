@@ -10,7 +10,7 @@ meta:
 <script setup lang="ts">
 const {
   edgeCreator: { services: edgeCreatorServices },
-} = inject(dmSocketInjectionKey)!;
+} = inject(socketInjectionKey)!;
 const generateSprites = async () => {
   await edgeCreatorServices.uploadEdges();
 };

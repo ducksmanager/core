@@ -68,6 +68,7 @@ import {
   imageSharp,
   calendarSharp,
 } from 'ionicons/icons';
+import { socketInjectionKey as dmSocketInjectionKey } from '~web/src/composables/useDmSocket';
 
 import useCoverSearch from '../composables/useCoverSearch';
 

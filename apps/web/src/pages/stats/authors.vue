@@ -70,7 +70,7 @@ import { Bar } from "vue-chartjs";
 import type StatsServices from "~dm-services/stats/types";
 import type { EventReturnType } from "~socket.io-services/types";
 
-import { dmSocketInjectionKey } from "../../composables/useDmSocket";
+import { socketInjectionKey } from "../../composables/useDmSocket";
 
 Chart.register(
   Legend,
@@ -89,7 +89,7 @@ const { ratings } = storeToRefs(stats());
 
 const {
   stats: { services: statsServices },
-} = inject(dmSocketInjectionKey)!;
+} = inject(socketInjectionKey)!;
 
 const unitTypes = {
   number: $t("Afficher en valeurs réelles"),

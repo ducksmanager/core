@@ -98,7 +98,7 @@ export async function scrape() {
         ) {
           let cellNumber = 5;
           let column;
-          // eslint-disable-next-line no-constant-condition
+
           while (true) {
             column = await row.$(`td:nth-child(${cellNumber})`);
             if (column === null) {

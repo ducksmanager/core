@@ -115,7 +115,7 @@ import type { BookcaseEdgeWithPopularity } from "~/stores/bookcase";
 import type { SimpleInducksIssue } from "~dm-types/AugmentedIssue";
 import type { WantedEdge } from "~dm-types/WantedEdge";
 
-import { dmSocketInjectionKey } from "../../../composables/useDmSocket";
+import { socketInjectionKey } from "../../../composables/useDmSocket";
 
 const { getImagePath } = images();
 
@@ -130,7 +130,7 @@ const bookcaseTextures = $ref({
 
 const {
   edges: { services: edgesServices },
-} = inject(dmSocketInjectionKey)!;
+} = inject(socketInjectionKey)!;
 
 const { fetchPublicationNames, fetchIssuecodesByPublicationcode } = coa();
 const { publicationNames, issuecodesByPublicationcode, issuecodeDetails } =

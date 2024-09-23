@@ -274,7 +274,7 @@ meta:
 <script setup lang="ts">
 import type { issue_condition } from "~prisma-schemas/schemas/dm";
 
-import { dmSocketInjectionKey } from "../../composables/useDmSocket";
+import { socketInjectionKey } from "../../composables/useDmSocket";
 
 const { getImagePath } = images();
 
@@ -293,7 +293,7 @@ let importProgress = $ref(0);
 
 const {
   collection: { services: collectionServices },
-} = inject(dmSocketInjectionKey)!;
+} = inject(socketInjectionKey)!;
 
 const { t: $t } = useI18n();
 

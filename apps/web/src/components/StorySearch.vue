@@ -95,7 +95,7 @@ import type { IssueWithIssuecodeOnly } from "~dm-types/IssueWithIssuecodeOnly";
 import type { SimpleStory } from "~dm-types/SimpleStory";
 import type { issue } from "~prisma-schemas/schemas/dm";
 
-import { dmSocketInjectionKey } from "../composables/useDmSocket";
+import { socketInjectionKey } from "../composables/useDmSocket";
 
 const { withTitle = true, isPublic = false } = defineProps<{
   withTitle?: boolean;
@@ -108,7 +108,7 @@ const { conditions } = useCondition();
 
 const {
   coa: { services: coaServices },
-} = inject(dmSocketInjectionKey)!;
+} = inject(socketInjectionKey)!;
 
 const { findInCollection } = isPublic ? publicCollection() : collection();
 const { issues } = storeToRefs(collection());

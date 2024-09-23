@@ -87,6 +87,7 @@ import { CameraPreview } from '@capacitor-community/camera-preview';
 import type { ScrollDetail } from '@ionic/vue';
 import { IonContent, onIonViewWillLeave } from '@ionic/vue';
 import { apertureOutline, apertureSharp, closeOutline, closeSharp, pencilOutline, pencilSharp } from 'ionicons/icons';
+import { socketInjectionKey as dmSocketInjectionKey } from '~web/src/composables/useDmSocket';
 
 import useCoverSearch from '~/composables/useCoverSearch';
 import { app } from '~/stores/app';

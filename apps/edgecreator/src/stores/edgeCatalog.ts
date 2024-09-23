@@ -3,7 +3,7 @@ import { defineStore } from "pinia";
 import { edgecreatorSocketInjectionKey } from "~/composables/useEdgecreatorSocket";
 import type { ModelSteps } from "~dm-types/ModelSteps";
 import { stores as webStores } from "~web";
-import { dmSocketInjectionKey } from "~web/src/composables/useDmSocket";
+import { socketInjectionKey as dmSocketInjectionKey } from "~web/src/composables/useDmSocket";
 
 interface Edge {
   issuecode: string;

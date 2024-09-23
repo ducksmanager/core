@@ -35,7 +35,7 @@ import { injectLocal } from "@vueuse/core";
 import { dumiliSocketInjectionKey } from "~/composables/useDumiliSocket";
 import { suggestions } from "~/stores/suggestions";
 import { issueSuggestion } from "~prisma/client_dumili";
-import { dmSocketInjectionKey } from "~web/src/composables/useDmSocket";
+import { socketInjectionKey as dmSocketInjectionKey } from "~web/src/composables/useDmSocket";
 
 const { t: $t } = useI18n();
 const {

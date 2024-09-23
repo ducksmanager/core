@@ -8,10 +8,10 @@ import Cookies from "js-cookie";
 import type { SocketClient } from "~socket.io-client-services";
 import { buildWebStorage } from "~socket.io-client-services";
 
-import { dmSocketInjectionKey } from "./composables/useDmSocket";
+import { socketInjectionKey } from "./composables/useDmSocket";
 
 getCurrentInstance()!.appContext.app.provide(
-  dmSocketInjectionKey,
+  socketInjectionKey,
   useDmSocket(inject("dmSocket") as SocketClient, {
     cacheStorage: buildWebStorage(sessionStorage),
     onConnectError: () => {

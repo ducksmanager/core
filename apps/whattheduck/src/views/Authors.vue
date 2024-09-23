@@ -73,8 +73,8 @@
 <script setup lang="ts">
 import { starOutline, starSharp, star } from 'ionicons/icons';
 import { components } from '~web';
-import { coa } from '~web/src/stores/coa';
-import { stats } from '~web/src/stores/stats';
+import { coa as webCoa } from '~web/src/stores/coa';
+import { stats as webStats } from '~web/src/stores/stats';
 
 import { app } from '~/stores/app';
 
@@ -82,9 +82,9 @@ const StarRating = components['StarRating'];
 
 const { t } = useI18n();
 
-const { loadRatings, searchAuthors, isAuthorWatched, createRating, updateRating, deleteAuthor } = stats();
-const { authorSearchResults: authorResults, ratings } = storeToRefs(stats());
-const { personNames } = storeToRefs(coa());
+const { loadRatings, searchAuthors, isAuthorWatched, createRating, updateRating, deleteAuthor } = webStats();
+const { authorSearchResults: authorResults, ratings } = storeToRefs(webStats());
+const { personNames } = storeToRefs(webCoa());
 const { isOffline } = storeToRefs(app());
 
 const authorName = ref('');

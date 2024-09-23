@@ -61,7 +61,7 @@ import type { SimpleStory } from '~dm-types/SimpleStory';
 import type { StorySearchResults } from '~dm-types/StorySearchResults';
 import type { issue_condition } from '~prisma-schemas/schemas/dm';
 import { stores } from '~web';
-import { dmSocketInjectionKey } from '~web/src/composables/useDmSocket';
+import { socketInjectionKey as dmSocketInjectionKey } from '~web/src/composables/useDmSocket';
 
 import FullIssue from '~/components/FullIssue.vue';
 import { app } from '~/stores/app';

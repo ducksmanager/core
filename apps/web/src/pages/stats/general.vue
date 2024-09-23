@@ -153,11 +153,11 @@
 </template>
 
 <script setup lang="ts">
-import { dmSocketInjectionKey } from "../../composables/useDmSocket";
+import { socketInjectionKey } from "../../composables/useDmSocket";
 
 const {
   globalStats: { services: globalStatsServices },
-} = inject(dmSocketInjectionKey)!;
+} = inject(socketInjectionKey)!;
 
 const { getConditionLabel } = useCondition();
 

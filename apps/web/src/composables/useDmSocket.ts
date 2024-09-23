@@ -123,6 +123,6 @@ const defaultExport = (
 
 export default defaultExport;
 
-export const dmSocketInjectionKey = Symbol() as InjectionKey<
+export const socketInjectionKey = Symbol() as InjectionKey<
   ReturnType<typeof defaultExport>
 >;

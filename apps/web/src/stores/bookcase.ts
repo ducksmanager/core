@@ -3,7 +3,7 @@ import type { BookcaseEdge } from "~dm-types/BookcaseEdge";
 import type { issue_condition } from "~prisma-schemas/schemas/dm";
 import type { EventReturnType } from "~socket.io-services/types";
 
-import { dmSocketInjectionKey } from "../composables/useDmSocket";
+import { socketInjectionKey } from "../composables/useDmSocket";
 import { collection } from "./collection";
 
 export type SimpleBookcaseEdge = Pick<BookcaseEdge, "issuecode"> & {
@@ -20,7 +20,7 @@ export const bookcase = defineStore("bookcase", () => {
 
   const {
     bookcase: { services: bookcaseServices },
-  } = inject(dmSocketInjectionKey)!;
+  } = inject(socketInjectionKey)!;
 
   const loadedSprites = ref<{ [key: string]: string }>({}),
     isPrivateBookcase = ref(false),

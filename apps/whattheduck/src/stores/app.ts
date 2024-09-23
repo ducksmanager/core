@@ -4,7 +4,7 @@ import type useDmSocket from '~web/src/composables/useDmSocket';
 
 import usePersistedData from '~/composables/usePersistedData';
 
-export interface Option {
+export interface FabOption {
   id: string;
   label: string;
   textPrefix?: string;
@@ -92,7 +92,7 @@ export const app = defineStore('app', () => {
 
   const selectedIssuecodes = ref<string[] | null>(null);
 
-  const issueViewModes: Option[] = [
+  const issueViewModes: FabOption[] = [
     { id: 'list', label: 'List', icon: { ios: '/icons/list.svg', md: '/icons/list.svg' } },
     { id: 'edges', label: 'Edges', icon: { ios: '/icons/edges.svg', md: '/icons/edges.svg' } },
     {
@@ -114,7 +114,7 @@ export const app = defineStore('app', () => {
 
   const currentIssueViewMode = ref<(typeof issueViewModes)[number]>(issueViewModes[0]);
 
-  const filters: Option[] = [
+  const filters: FabOption[] = [
     { id: 'all', label: 'All' },
     {
       id: 'unreadBooksOnly',
@@ -130,7 +130,7 @@ export const app = defineStore('app', () => {
 
   const currentFilter = ref<(typeof filters)[number]>(filters[0]);
 
-  const copyListModes: Option[] = [
+  const copyListModes: FabOption[] = [
     {
       id: 'owned',
       label: 'Copy owned issues',

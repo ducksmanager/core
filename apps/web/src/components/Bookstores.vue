@@ -174,11 +174,11 @@ import { MapboxMap, MapboxMarker, MapboxPopup } from "vue-mapbox-ts";
 
 import type { SimpleBookstore } from "~dm-types/SimpleBookstore";
 
-import { dmSocketInjectionKey } from "../composables/useDmSocket";
+import { socketInjectionKey } from "../composables/useDmSocket";
 
 const {
   bookstore: { services: bookstoreServices },
-} = inject(dmSocketInjectionKey)!;
+} = inject(socketInjectionKey)!;
 
 const { fetchStats } = users();
 const { stats: userStats } = storeToRefs(users());

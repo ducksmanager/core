@@ -4,7 +4,7 @@ import type { AbstractEvent } from "~dm-types/events/AbstractEvent";
 import type { user } from "~prisma-schemas/schemas/dm";
 import type { EventReturnType } from "~socket.io-services/types";
 
-import { dmSocketInjectionKey } from "../composables/useDmSocket";
+import { socketInjectionKey } from "../composables/useDmSocket";
 
 type SimpleUser = Pick<user, "id" | "username">;
 
@@ -12,7 +12,7 @@ export const users = defineStore("users", () => {
   const {
     events: { services: eventsServices },
     globalStats: { services: globalStatsServices },
-  } = inject(dmSocketInjectionKey)!;
+  } = inject(socketInjectionKey)!;
   const count = ref<EventReturnType<
       GlobalStatsServices["getUserCount"]
     > | null>(null),

@@ -3,12 +3,12 @@ import type { ShallowRef } from "vue";
 import type { issue } from "~prisma-schemas/schemas/dm";
 
 import useCollection from "../composables/useCollection";
-import { dmSocketInjectionKey } from "../composables/useDmSocket";
+import { socketInjectionKey } from "../composables/useDmSocket";
 
 export const publicCollection = defineStore("publicCollection", () => {
   const {
     publicCollection: { services: publicCollectionServices },
-  } = inject(dmSocketInjectionKey)!;
+  } = inject(socketInjectionKey)!;
 
   const issues = shallowRef<(issue & { issuecode: string })[] | null>(null),
     publicUsername = ref<string | null>(null),

@@ -2,12 +2,12 @@ import type CollectionServices from "~dm-services/collection/types";
 import type { requestedIssue } from "~prisma-schemas/schemas/dm";
 import type { EventReturnType } from "~socket.io-services/types";
 
-import { dmSocketInjectionKey } from "../composables/useDmSocket";
+import { socketInjectionKey } from "../composables/useDmSocket";
 
 export const marketplace = defineStore("marketplace", () => {
   const {
     collection: { services: collectionServices },
-  } = inject(dmSocketInjectionKey)!;
+  } = inject(socketInjectionKey)!;
 
   const issuesOnSaleByOthers = ref<EventReturnType<
       CollectionServices["getIssuesForSale"]

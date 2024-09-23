@@ -12,7 +12,7 @@ import Dashboard from "@uppy/dashboard";
 import XHR from "@uppy/xhr-upload";
 //
 
-// import { dmSocketInjectionKey } from "~web/src/composables/useDmSocket";
+// import { socketInjectionKey as dmSocketInjectionKey } from "~web/src/composables/useDmSocket";
 
 // const {
 //   coverId: { socket: coverIdSocket },

@@ -19,8 +19,8 @@
           <FabHeaderButtonIcon v-bind="option.icon" /></ion-fab-button></ion-item></ion-fab-list
   ></ion-fab>
 </template>
-<script setup lang="ts" generic="Item extends Option">
-import type { Option } from '~/stores/app';
+<script setup lang="ts" generic="Item extends FabOption">
+import type { FabOption } from '~/stores/app';
 
 // eslint-disable-next-line no-undef
 const fab = defineModel<ComponentPublicInstance<HTMLIonFabElement> | null>('fab');

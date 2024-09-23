@@ -4,7 +4,7 @@ import type { InducksIssueDetails } from "~dm-types/InducksIssueDetails";
 import type { InducksIssueQuotationSimple } from "~dm-types/InducksIssueQuotationSimple";
 import type { EventReturnType } from "~socket.io-services/types";
 
-import { dmSocketInjectionKey } from "../composables/useDmSocket";
+import { socketInjectionKey } from "../composables/useDmSocket";
 
 const addPartInfo = (issueDetails: InducksIssueDetails) => {
   const storyPartCounter = Object.entries(
@@ -38,7 +38,7 @@ const addPartInfo = (issueDetails: InducksIssueDetails) => {
 export const coa = defineStore("coa", () => {
   const {
     coa: { services: coaServices },
-  } = inject(dmSocketInjectionKey)!;
+  } = inject(socketInjectionKey)!;
 
   const locale = useI18n().locale,
     coverUrls = shallowRef<{ [issuecode: string]: string }>({}),

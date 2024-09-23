@@ -32,7 +32,7 @@ meta:
 <script setup lang="ts">
 import Cookies from "js-cookie";
 
-import { dmSocketInjectionKey } from "../../composables/useDmSocket";
+import { socketInjectionKey } from "../../composables/useDmSocket";
 
 const { loadUser } = collection();
 
@@ -46,7 +46,7 @@ const { t: $t } = useI18n();
 
 const {
   auth: { services: authServices },
-} = inject(dmSocketInjectionKey)!;
+} = inject(socketInjectionKey)!;
 
 const changePassword = async () => {
   const response = await authServices.changePassword({

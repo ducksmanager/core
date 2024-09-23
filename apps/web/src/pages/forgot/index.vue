@@ -45,7 +45,7 @@ meta:
 </template>
 
 <script setup lang="ts">
-import { dmSocketInjectionKey } from "../../composables/useDmSocket";
+import { socketInjectionKey } from "../../composables/useDmSocket";
 
 let error = $ref<string | null>(null);
 
@@ -55,7 +55,7 @@ const { t: $t } = useI18n();
 
 const {
   auth: { services: authServices },
-} = inject(dmSocketInjectionKey)!;
+} = inject(socketInjectionKey)!;
 
 const sendPasswordToken = async () => {
   const response = await authServices.requestTokenForForgotPassword(email);

@@ -23,7 +23,7 @@
 
 <script setup lang="ts">
 import { SimpleStory } from "~dm-types/SimpleStory";
-import { dmSocketInjectionKey } from "~web/src/composables/useDmSocket";
+import { socketInjectionKey as dmSocketInjectionKey } from "~web/src/composables/useDmSocket";
 
 const {
   coa: { services: coaServices },

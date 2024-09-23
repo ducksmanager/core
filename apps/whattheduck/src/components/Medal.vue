@@ -19,8 +19,7 @@
 <script setup lang="ts">
 import { components as webComponents } from '~web';
 
-import useMedal from '~/composables/useMedal';
-import { images } from '~/stores/images';
+import { images as wtdImages } from '~/stores/images';
 
 const { MedalImage } = webComponents;
 
@@ -43,7 +42,7 @@ const { currentLevel, pointsDiffNextLevel, levelProgressPercentage, radius, circ
   userLevelPoints,
 );
 
-const getImagePath = images().getImagePath;
+const getImagePath = wtdImages().getImagePath;
 </script>
 <style lang="scss" scoped>
 .wrapper {

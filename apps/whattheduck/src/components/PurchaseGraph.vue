@@ -8,9 +8,8 @@ import type { ChartOptions } from 'chart.js';
 import { BarController, BarElement, CategoryScale, Chart, Legend, LinearScale, Title, Tooltip } from 'chart.js';
 import dayjs from 'dayjs';
 import { Bar } from 'vue-chartjs';
-import { useI18n } from 'vue-i18n';
 import type { issue as dm_issue } from '~prisma-schemas/schemas/dm';
-import { coa } from '~web/src/stores/coa';
+import { coa as webCoa } from '~web/src/stores/coa';
 
 import { wtdcollection } from '~/stores/wtdcollection';
 
@@ -36,7 +35,7 @@ const compareDates = (a: string, b: string) =>
     getIssueDate(issue).isValid() ? getIssueDate(issue).format('YYYY-MM') : '?',
   getIssueDate = (issue: dm_issue) =>
     dayjs((issue.purchaseId && purchasesById.value![issue.purchaseId]?.date) || issue.creationDate),
-  publicationNames = computed(() => coa().publicationNames),
+  publicationNames = computed(() => webCoa().publicationNames),
   publicationCodesWithOther = computed(
     () =>
       totalPerPublication.value &&

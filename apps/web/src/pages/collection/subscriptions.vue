@@ -97,7 +97,7 @@ const { subscriptions } = storeToRefs(collection());
 
 const {
   collection: { services: collectionServices },
-} = inject(dmSocketInjectionKey)!;
+} = inject(socketInjectionKey)!;
 
 const newSubscription = $ref({
   publicationcode: "fr/SPG",

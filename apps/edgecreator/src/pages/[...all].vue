@@ -203,7 +203,7 @@ const {
 } = inject(dmSocketInjectionKey)!;
 
 import { stores as webStores } from "~web";
-import { dmSocketInjectionKey } from "~web/src/composables/useDmSocket";
+import { socketInjectionKey as dmSocketInjectionKey } from "~web/src/composables/useDmSocket";
 import type { BookcaseEdgeWithPopularity } from "~web/src/stores/bookcase";
 
 const { getEdgeUrl } = useSvgUtils();

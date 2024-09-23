@@ -77,7 +77,7 @@
 
 <script setup lang="ts">
 import { components } from '~web';
-import { coa } from '~web/src/stores/coa';
+import { coa as webCoa } from '~web/src/stores/coa';
 
 import { wtdcollection } from '~/stores/wtdcollection';
 
@@ -109,7 +109,7 @@ const {
   totalUniqueIssues,
   quotationSum,
 } = storeToRefs(wtdcollection());
-const { publicationNames, issuecodeDetails } = storeToRefs(coa());
+const { publicationNames, issuecodeDetails } = storeToRefs(webCoa());
 const { loadUserIssueQuotations } = wtdcollection();
 
 watch(

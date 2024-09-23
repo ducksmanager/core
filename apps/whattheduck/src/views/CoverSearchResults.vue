@@ -46,10 +46,10 @@
             ><template v-else>{{ t('Ajouter à ma collection') }}</template></ion-button
           >
           <div>
-            <ion-button color="light" v-if="origin === 'takePhoto'" @click="takePhoto">{{
+            <ion-button color="light" v-if="coverOrigin === 'takePhoto'" @click="takePhoto">{{
               t('Prendre une nouvelle photo')
             }}</ion-button>
-            <ion-button color="light" v-else-if="origin === 'pickCoverFile'" @click="pickCoverFile">{{
+            <ion-button color="light" v-else-if="coverOrigin === 'pickCoverFile'" @click="pickCoverFile">{{
               t('Sélectionner une nouvelle photo')
             }}</ion-button>
           </div>
@@ -65,6 +65,7 @@ import { Carousel3d, Slide } from '@nanoandrew4/vue3-carousel-3d';
 import { pricetagOutline, pricetagSharp } from 'ionicons/icons';
 import type { EventReturnType } from '~socket.io-services/types';
 import { stores as webStores, components as webComponents } from '~web';
+import { socketInjectionKey as dmSocketInjectionKey } from '~web/src/composables/useDmSocket';
 
 import useCoverSearch from '../composables/useCoverSearch';
 
@@ -112,7 +113,7 @@ const searchResults = ref<EventReturnType<CoverIdServices['searchFromCover']>>(
   JSON.parse(route.query.searchResults as string),
 );
 
-const origin = computed(() => route.query.origin as 'pickCoverFile' | 'takePhoto');
+const coverOrigin = computed(() => route.query.origin as 'pickCoverFile' | 'takePhoto');
 
 const covers = computed(() =>
   Object.keys(publicationNames.value).length

@@ -16,7 +16,7 @@
 const { t: $t } = useI18n();
 
 import { suggestions } from "~/stores/suggestions";
-import { dmSocketInjectionKey } from "~web/src/composables/useDmSocket";
+import { socketInjectionKey as dmSocketInjectionKey } from "~web/src/composables/useDmSocket";
 
 const {
   coa: { services: coaServices },

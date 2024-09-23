@@ -38,7 +38,7 @@
 </template>
 
 <script setup lang="ts">
-import { dmSocketInjectionKey } from '~web/src/composables/useDmSocket';
+import { socketInjectionKey as dmSocketInjectionKey } from '~web/src/composables/useDmSocket';
 
 const {
   auth: { services: authServices },

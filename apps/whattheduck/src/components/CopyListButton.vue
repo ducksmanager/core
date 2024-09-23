@@ -10,7 +10,7 @@
   />
 </template>
 <script setup lang="ts">
-import { Clipboard } from '@capacitor/clipboard';
+import { Clipboard as CapacitorClipboard } from '@capacitor/clipboard';
 import { toastController } from '@ionic/vue';
 import { copyOutline, copySharp } from 'ionicons/icons';
 
@@ -24,7 +24,7 @@ const { copyListModes } = app();
 const fab = shallowRef<ComponentPublicInstance<HTMLIonFabElement> | null>(null);
 
 const copyToClipboard = async (textPrefix: string, text: Promise<string>) => {
-  await Clipboard.write({
+  await CapacitorClipboard.write({
     string: `${textPrefix} ${clipboardTextPrefix.value} ${await text}`,
   });
 
