@@ -52,6 +52,14 @@ export default defineConfig({
     }),
   ],
 
+  css: {
+    preprocessorOptions: {
+      scss: {
+        api: 'modern',
+      },
+    },
+  },
+
   resolve: {
     dedupe: ['pinia', 'vue', 'vue-i18n', 'vue-router', '@vueuse/core'],
     alias: {

@@ -6,7 +6,7 @@ import path from "path";
 import AutoImport from "unplugin-auto-import/vite";
 import IconsResolver from "unplugin-icons/resolver";
 import Icons from "unplugin-icons/vite";
-import { BootstrapVueNextResolver } from "unplugin-vue-components/resolvers";
+import { BootstrapVueNextResolver } from "bootstrap-vue-next";
 import Components from "unplugin-vue-components/vite";
 import { defineConfig } from "vite";
 import eslintPlugin from "vite-plugin-eslint";

@@ -9,7 +9,7 @@ import { SocketClient } from "~socket.io-client-services/index";
 import { buildWebStorage } from "~socket.io-client-services/index";
 import { stores as webStores } from "~web";
 import useDmSocket, {
-  dmSocketInjectionKey,
+  socketInjectionKey as dmSocketInjectionKey,
 } from "~web/src/composables/useDmSocket";
 
 import useEdgecreatorSocket, {

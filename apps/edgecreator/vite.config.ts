@@ -79,6 +79,14 @@ export default defineConfig({
     }),
   ],
 
+  css: {
+    preprocessorOptions: {
+      scss: {
+        api: "modern",
+      }
+    }
+  },
+
   server: {
     watch: {
       ignored: ["**/api/**", "**/.idea/**"],
