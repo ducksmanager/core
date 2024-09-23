@@ -17,8 +17,8 @@ const getEdges = async (filters: {
   }
   const issuecode = filters.issuecodes
     ? {
-        in: filters.issuecodes,
-      }
+      in: filters.issuecodes,
+    }
     : undefined;
   const edgeModels: Record<string, edgeModel> = (
     await prismaEdgeCreator.edgeModel.findMany({
@@ -38,17 +38,14 @@ const getEdges = async (filters: {
         issuecode,
       },
     })
-  ).reduce(
-    (acc, edge) => ({
-      ...acc,
-      [edge.issuecode!]: {
-        ...edge,
-        modelId: edgeModels[edge.issuecode]?.id,
-        v3: edgeModels[edge.issuecode] !== undefined,
-      },
-    }),
-    {},
-  );
+  ).reduce((acc, edge) => {
+    acc[edge.issuecode!] = {
+      ...edge,
+      modelId: edgeModels[edge.issuecode]?.id,
+      v3: edgeModels[edge.issuecode] !== undefined,
+    };
+    return acc;
+  }, {});
 };
 
 export default (io: Server) => {

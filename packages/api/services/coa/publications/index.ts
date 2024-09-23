@@ -35,8 +35,5 @@ export const getPublicationTitles = async (
       where: filter,
     })
     .then((results) =>
-      results.reduce(
-        (acc, value) => ({ ...acc, [value.publicationcode]: value.title }),
-        {},
-      ),
+      results.groupBy('publicationcode', 'title')
     );

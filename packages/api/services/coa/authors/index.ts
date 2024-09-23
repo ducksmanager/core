@@ -19,13 +19,7 @@ export default (socket: Socket<Events>) => {
     });
 
     callback(
-      authors.reduce(
-        (acc, value) => ({
-          ...acc,
-          [value.personcode]: value.fullname,
-        }),
-        {},
-      ),
+      authors.groupBy('personcode', 'fullname')
     );
   });
 };
@@ -41,10 +35,4 @@ export const getAuthorFullNames = async (
         },
       },
     })
-  ).reduce(
-    (acc, value) => ({
-      ...acc,
-      [value.personcode]: value.fullname,
-    }),
-    {},
-  );
+  ).groupBy('personcode', 'fullname')

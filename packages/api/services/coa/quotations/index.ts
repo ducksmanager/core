@@ -10,31 +10,26 @@ const ISSUE_CODE_REGEX = /[a-z]+\/[-A-Z0-9 ]+/g;
 
 export const getQuotations = async (
   filter: PrismaCoa.inducks_issuequotationWhereInput,
-) =>
-  Object.entries(
-    await prismaCoa.inducks_issuequotation
-      .findMany({
-        where: filter,
-      })
-      .then((results) => results.groupBy("issuecode")),
-  ).reduce<Record<string, inducks_issuequotation>>(
-    (acc, [issuecode, quotation]) => ({
-      ...acc,
-      [issuecode]: {
+) => {
+  const results = await prismaCoa.inducks_issuequotation.findMany({
+    where: filter,
+  });
+
+  return results.reduce<Record<string, inducks_issuequotation>>((acc, quotation) => {
+    const issuecode = quotation.issuecode;
+    if (!acc[issuecode]) {
+      acc[issuecode] = quotation;
+    } else {
+      acc[issuecode] = {
         ...acc[issuecode],
         ...quotation,
-        estimationMin:
-          acc[issuecode]?.estimationMin && quotation.estimationMin
-            ? Math.min(acc[issuecode].estimationMin, quotation.estimationMin)
-            : quotation.estimationMin,
-        estimationMax:
-          acc[issuecode]?.estimationMax && quotation.estimationMax
-            ? Math.max(acc[issuecode].estimationMax, quotation.estimationMax)
-            : quotation.estimationMax,
-      },
-    }),
-    {},
-  );
+        estimationMin: Math.min(acc[issuecode].estimationMin ?? Infinity, quotation.estimationMin ?? Infinity),
+        estimationMax: Math.max(acc[issuecode].estimationMax ?? -Infinity, quotation.estimationMax ?? -Infinity),
+      };
+    }
+    return acc;
+  }, {});
+}
 
 export const getQuotationsByIssuecodes = async (issuecodes: string[]) =>
   getQuotations({

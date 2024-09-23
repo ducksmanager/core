@@ -179,15 +179,11 @@ export default (socket: Socket<Events>) => {
         by: ["publicationcode"],
       })
       .then((data) =>
-        data.reduce<{ [countrycode: string]: number }>(
-          (acc, { publicationcode, _count }) => {
+        Object.fromEntries(
+          data.map(({ publicationcode, _count }) => {
             const countrycode = publicationcode!.split("/")[0];
-            return {
-              ...acc,
-              [countrycode!]: (acc[countrycode] || 0) + _count.issuenumber,
-            };
-          },
-          {},
+            return [countrycode, (_count.issuenumber + (acc[countrycode] || 0))];
+          })
         ),
       )
       .then(callback),
@@ -208,13 +204,9 @@ export default (socket: Socket<Events>) => {
       })
       .then((data) => {
         callback(
-          data.reduce<{ [publicationcode: string]: number }>(
-            (acc, { publicationcode, _count }) => ({
-              ...acc,
-              [publicationcode!]: _count.issuenumber,
-            }),
-            {},
-          ),
+          Object.fromEntries(
+            data.map(({ publicationcode, _count }) => [publicationcode!, _count.issuenumber])
+          )
         );
       }),
   );

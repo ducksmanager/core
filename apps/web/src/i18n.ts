@@ -9,9 +9,12 @@ export default (
   if (!instance) {
     const messages = {
       ...translations,
-      [defaultLocale]: Object.keys(
-        translations[Object.keys(translations)[0]],
-      ).reduce((acc, value) => ({ ...acc, [value]: value }), {}),
+      [defaultLocale]: Object.fromEntries(
+        Object.keys(translations[Object.keys(translations)[0]]).map((key) => [
+          key,
+          key,
+        ]),
+      ),
     };
 
     const fallbackLocale = defaultLocale;

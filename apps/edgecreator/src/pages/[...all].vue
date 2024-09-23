@@ -301,13 +301,7 @@ watch(
     const publicationcodes = [
       ...mostWantedEdges.value!.map(({ issuecode }) => issuecode!),
       ...Object.values(currentEdges.value).map(({ issuecode }) => issuecode),
-    ].reduce<string[]>(
-      (acc, issuecode) => [
-        ...acc,
-        issuecodeDetails.value[issuecode].publicationcode,
-      ],
-      []
-    );
+    ].map((issuecode) => issuecodeDetails.value[issuecode].publicationcode);
 
     await coaStore.fetchPublicationNames(publicationcodes);
     isUploadableEdgesCarouselReady.value = true;

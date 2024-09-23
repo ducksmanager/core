@@ -32,23 +32,18 @@ export default (issues: ShallowRef<(issue & { issuecode: string })[]>) => {
     issuesByIssuecode = computed(() =>
       issues.value?.groupBy("issuecode", "[]"),
     ),
-    duplicateIssues = computed(
-      (): {
-        [issuecode: string]: issue[];
-      } =>
-        (issuesByIssuecode.value &&
-          Object.keys(issuesByIssuecode.value).reduce(
-            (acc, issuecode) =>
-              issuesByIssuecode.value![issuecode].length > 1
-                ? {
-                    ...acc,
-                    [issuecode]: issuesByIssuecode.value![issuecode],
-                  }
-                : acc,
-            {},
-          )) ||
+    duplicateIssues = computed(() => {
+      const issues = issuesByIssuecode.value || {};
+      return Object.keys(issues).reduce<{ [issuecode: string]: issue[] }>(
+        (acc, issuecode) => {
+          if (issues[issuecode].length > 1) {
+            acc[issuecode] = issues[issuecode];
+          }
+          return acc;
+        },
         {},
-    ),
+      );
+    }),
     issuesInToReadStack = computed(() =>
       issues.value?.filter(({ isToRead }) => isToRead),
     ),
@@ -69,11 +64,11 @@ export default (issues: ShallowRef<(issue & { issuecode: string })[]>) => {
     ),
     totalPerCountry = computed(() =>
       issues.value?.reduce<{ [countrycode: string]: number }>(
-        (acc, issue) => ({
-          ...acc,
-          [issue.publicationcode.split("/")[0]]:
-            (acc[issue.publicationcode.split("/")[0]] || 0) + 1,
-        }),
+        (acc, { publicationcode }) => {
+          const countrycode = publicationcode.split("/")[0];
+          acc[countrycode] = (acc[countrycode] || 0) + 1;
+          return acc;
+        },
         {},
       ),
     ),

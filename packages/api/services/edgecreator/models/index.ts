@@ -31,29 +31,21 @@ export default (socket: Socket<Events>) => {
           group by model.numero, optionValue.ordre
           order by optionValue.ordre
       `
-      ).reduce(
-        (
-          acc: ModelSteps,
-          { issuenumber, stepNumber, functionName, options },
-        ) => ({
-          ...acc,
-          [issuenumber]: {
-            ...(acc[issuenumber] || {}),
-            [stepNumber]: {
-              ...(acc[issuenumber]?.[stepNumber] || {
-                functionName,
-                issuenumber,
-                stepNumber,
-                options: {
-                  ...(acc[issuenumber]?.[stepNumber]?.options || {}),
-                  ...JSON.parse(options),
-                },
-              }),
-            },
-          },
-        }),
-        {},
-      ),
+      ).reduce<ModelSteps>((acc, { issuenumber, stepNumber, functionName, options }) => {
+        if (!acc[issuenumber]) {
+          acc[issuenumber] = {};
+        }
+        if (!acc[issuenumber][stepNumber]) {
+          acc[issuenumber][stepNumber] = {
+            functionName,
+            issuenumber,
+            stepNumber,
+            options: {},
+          };
+        }
+        Object.assign(acc[issuenumber][stepNumber].options, JSON.parse(options));
+        return acc;
+      }, {}),
     );
   });
 

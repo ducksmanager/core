@@ -9,21 +9,21 @@ import { socketInjectionKey } from "../composables/useDmSocket";
 const addPartInfo = (issueDetails: InducksIssueDetails) => {
   const storyPartCounter = Object.entries(
     issueDetails.entries.reduce<{ [storycode: string]: number }>(
-      (acc, { storycode }) => ({
-        ...acc,
-        [storycode]: !storycode ? 0 : (acc[storycode] || 0) + 1,
-      }),
+      (acc, { storycode }) => {
+        if (storycode) {
+          acc[storycode] = (acc[storycode] || 0) + 1;
+        }
+        return acc;
+      },
       {},
     ),
   )
     .filter(([, occurrences]) => occurrences > 1)
-    .reduce<{ [storycode: string]: number }>(
-      (acc, [storycode]) => ({
-        ...acc,
-        [storycode]: 1,
-      }),
-      {},
-    );
+    .reduce<{ [storycode: string]: number }>((acc, [storycode]) => {
+      acc[storycode] = 1;
+      return acc;
+    }, {});
+
   return {
     ...issueDetails,
     entries: issueDetails.entries.map((entry) => ({

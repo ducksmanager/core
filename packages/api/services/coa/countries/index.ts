@@ -30,18 +30,13 @@ const getCountryNames = async (
       FROM inducks_country
                LEFT JOIN inducks_countryname on inducks_country.countrycode = inducks_countryname.countrycode
       WHERE languagecode = '${locale}'
-        AND ${
-          countryIds?.length
-            ? `inducks_country.countrycode IN (${Prisma.join(countryIds)})`
-            : `inducks_country.countrycode != 'zz'`
-        }`,
+        AND ${countryIds?.length
+        ? `inducks_country.countrycode IN (${Prisma.join(countryIds)})`
+        : `inducks_country.countrycode != 'zz'`
+      }`,
     )
     .then((results) =>
-      results.reduce(
-        (acc, value) => ({
-          ...acc,
-          [value.countrycode]: value.countryname || value.default_countryname,
-        }),
-        {},
-      ),
+      Object.fromEntries(
+        results.map((value) => [value.countrycode, value.countryname || value.default_countryname])
+      )
     );

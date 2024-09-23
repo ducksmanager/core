@@ -130,35 +130,33 @@ type Item =
   | (Pick<issue, 'condition' | 'creationDate' | 'isOnSale' | 'isToRead' | 'isSubscription'> & { issuecode: string })
   | IssueWithIssuecodeOnly;
 
-const items = computed(() =>
-  coaIssuecodes.value
-    ? isCoaView.value
-      ? coaIssuecodes.value.reduce<
-          {
-            key: string;
-            item: Item;
-          }[]
-        >((acc, issuecode) => {
-          const userIssuesForThisIssue = userIssues.value.filter(
-            ({ issuecode: userIssuecode }) => issuecode === userIssuecode,
-          );
+const items = computed(() => {
+  if (!coaIssuecodes.value) return [];
 
-          return [
-            ...acc,
-            ...(userIssuesForThisIssue.length ? userIssuesForThisIssue : [issuecodeDetails.value[issuecode]]).map(
-              (itemOrUserItem) => ({
-                key: issuecode,
-                item: itemOrUserItem,
-              }),
-            ),
-          ];
-        }, [])
-      : (userIssues.value || []).map((issue) => ({
-          key: issue.issuecode,
-          item: issue,
-        }))
-    : [],
-);
+  if (isCoaView.value) {
+    return coaIssuecodes.value.reduce<{ key: string; item: Item }[]>((acc, issuecode) => {
+      const userIssuesForThisIssue = userIssues.value.filter(
+        ({ issuecode: userIssuecode }) => issuecode === userIssuecode,
+      );
+
+      const itemsToAdd = userIssuesForThisIssue.length ? userIssuesForThisIssue : [issuecodeDetails.value[issuecode]];
+
+      for (const itemOrUserItem of itemsToAdd) {
+        acc.push({
+          key: issuecode,
+          item: itemOrUserItem,
+        });
+      }
+
+      return acc;
+    }, []);
+  } else {
+    return (userIssues.value || []).map((issue) => ({
+      key: issue.issuecode,
+      item: issue,
+    }));
+  }
+});
 
 const sortedItems = computed(() =>
   items.value

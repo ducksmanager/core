@@ -99,19 +99,18 @@ const sortedCountries = $computed(
         ) || 0,
     ),
 );
-const publicationsPerCountry = $computed(
-  () =>
-    totalPerCountry.value &&
-    hasPublicationNames &&
-    Object.keys(totalPerCountry.value).reduce<{ [key: string]: string[] }>(
-      (acc, country) => ({
-        ...acc,
-        [country]: Object.keys(totalPerPublication.value!).filter(
-          (publicationcode) => publicationcode.split("/")[0] === country,
-        ),
-      }),
-      {},
-    ),
+const publicationsPerCountry = $computed(() =>
+  !totalPerCountry.value || !hasPublicationNames
+    ? {}
+    : Object.keys(totalPerCountry.value).reduce<{ [key: string]: string[] }>(
+        (acc, country) => {
+          acc[country] = Object.keys(totalPerPublication.value!).filter(
+            (publicationcode) => publicationcode.split("/")[0] === country,
+          );
+          return acc;
+        },
+        {},
+      ),
 );
 const getSortedPublications = (country: string) =>
   publicationsPerCountry?.[country]?.sort((a, b) =>

@@ -99,20 +99,15 @@ export const collection = defineStore("collection", () => {
     issuecodesPerPublication = computed(
       () => issues.value?.groupBy("publicationcode", "[]") || {},
     ),
-    totalPerPublicationUniqueIssuecodes = computed(
-      (): {
-        [publicationcode: string]: number;
-      } =>
-        issuecodesPerPublication.value &&
-        Object.keys(issuecodesPerPublication.value).reduce(
-          (acc, publicationcode) => ({
-            ...acc,
-            [publicationcode]: [
-              ...new Set(issuecodesPerPublication.value[publicationcode]),
-            ].length,
-          }),
-          {},
+    totalPerPublicationUniqueIssuecodes = computed(() =>
+      Object.fromEntries(
+        Object.entries(issuecodesPerPublication.value || {}).map(
+          ([publicationcode, issuecodes]) => [
+            publicationcode,
+            new Set(issuecodes).size,
+          ],
         ),
+      ),
     ),
     totalPerPublicationUniqueIssuecodesSorted = computed(
       () =>

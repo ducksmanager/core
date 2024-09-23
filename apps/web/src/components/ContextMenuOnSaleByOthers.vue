@@ -123,19 +123,11 @@ const selectedIssues = $computed(() =>
   Object.keys(selectedIssueIdsByIssuecode),
 );
 const issueIds = $computed(() =>
-  Object.values(selectedIssueIdsByIssuecode).reduce<number[]>(
-    (acc, issues) => [...acc, ...issues.map(({ id }) => id!)],
-    [],
-  ),
+  Object.values(selectedIssueIdsByIssuecode).map(({ id }) => id),
 );
 
 const selectedIssuesBuyerIds = $computed(() => [
-  ...new Set(
-    issueIds.reduce<number[]>(
-      (acc, issueId) => [...acc, issuesOnSaleById.value[issueId].userId],
-      [],
-    ),
-  ),
+  ...new Set(issueIds.map((issueId) => issuesOnSaleById.value[issueId].userId)),
 ]);
 
 const issuesWithMultipleCopiesSelected = $computed(() =>

@@ -91,18 +91,18 @@ watch(
       );
       ownedIssuecodes = Object.entries(
         issuecodesByPublicationcode.value,
-      ).reduce(
-        (acc, [publicationcode, indexedIssuecodes]) => ({
-          ...acc,
-          [publicationcode]: indexedIssuecodes
+      ).reduce<Record<string, string>>(
+        (acc, [publicationcode, indexedIssuecodes]) => {
+          acc[publicationcode] = indexedIssuecodes
             .filter((indexedIssuecode) =>
               collectionWithPublicationcodes[publicationcode].some(
                 ({ issuecode }) => issuecode === indexedIssuecode,
               ),
             )
             .map((issuecode) => issuecodeDetails.value[issuecode].issuenumber)
-            .join(", "),
-        }),
+            .join(", ");
+          return acc;
+        },
         {},
       );
     }

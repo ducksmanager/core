@@ -160,46 +160,38 @@ const open = (inducksIssuecode: string) => {
 const inducksIssuenumbers = $computed(() =>
   Object.keys(issuecodesByPublicationcode.value).reduce<
     Record<string, string[]>
-  >(
-    (acc, publicationcode) => ({
-      ...acc,
-      [publicationcode]: Object.values(
-        issuecodesByPublicationcode.value[publicationcode],
-      ).map((issuecode) =>
-        issuecodeDetails.value[issuecode].issuenumber.replaceAll(" ", ""),
-      ),
-    }),
-    {},
-  ),
+  >((acc, publicationcode) => {
+    acc[publicationcode] = Object.values(
+      issuecodesByPublicationcode.value[publicationcode],
+    ).map((issuecode) =>
+      issuecodeDetails.value[issuecode].issuenumber.replaceAll(" ", ""),
+    );
+    return acc;
+  }, {}),
 );
 
 const sortedBookcase = computed(() =>
   Object.values(showEdgesForPublication).reduce<
     Record<string, BookcaseEdgeWithPopularity[]>
-  >(
-    (acc, publicationcode) => ({
-      ...acc,
-      [publicationcode]:
-        issuecodesByPublicationcode.value[publicationcode]?.map(
-          (issuecode) => ({
-            id: 0,
-            edgeId: publishedEdgesByPublicationcode?.[publicationcode]
-              .map(({ issuecode }) => issuecode)
-              .includes(issuecode)
-              ? 1
-              : 0,
-            publicationcode,
-            issuecode,
-            creationDate: new Date(),
-            sprites: [],
-            points: 0,
-            slug: "",
-            timestamp: new Date().getTime(),
-          }),
-        ) || [],
-    }),
-    {},
-  ),
+  >((acc, publicationcode) => {
+    acc[publicationcode] =
+      issuecodesByPublicationcode.value[publicationcode]?.map((issuecode) => ({
+        id: 0,
+        edgeId: publishedEdgesByPublicationcode?.[publicationcode]
+          .map(({ issuecode }) => issuecode)
+          .includes(issuecode)
+          ? 1
+          : 0,
+        publicationcode,
+        issuecode,
+        creationDate: new Date(),
+        sprites: [],
+        points: 0,
+        slug: "",
+        timestamp: new Date().getTime(),
+      })) || [];
+    return acc;
+  }, {}),
 );
 
 (async () => {

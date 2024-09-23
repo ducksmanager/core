@@ -3,10 +3,7 @@ import { createI18n } from "vue-i18n";
 import fr from "../locales/fr-FR.json";
 
 const messages = {
-  "en-US": Object.keys(fr).reduce(
-    (acc, value) => ({ ...acc, [value]: value }),
-    {},
-  ),
+  "en-US": Object.fromEntries(Object.keys(fr).map(key => [key, key])),
   fr,
 };
 

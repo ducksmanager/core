@@ -139,20 +139,13 @@ const getUsersQuickStats = async (userIds: number[]) =>
     const numberOfCountriesAndPublicationsPerUser =
       usersAndNumberOfCountriesAndPublications.groupBy("userId");
 
-    return counts.reduce<QuickStatsPerUser>(
-      (acc, { userId, _count }) => ({
-        ...acc,
-        [userId]: {
-          ...usersById[userId],
-          numberOfCountries:
-            numberOfCountriesAndPublicationsPerUser[userId]
-              ?.numberOfCountries || 0,
-          numberOfPublications:
-            numberOfCountriesAndPublicationsPerUser[userId]
-              ?.numberOfPublications || 0,
-          numberOfIssues: _count.id,
-        },
-      }),
-      {},
-    );
+    return counts.reduce<QuickStatsPerUser>((acc, { userId, _count }) => {
+      acc[userId] = {
+        ...usersById[userId],
+        numberOfCountries: numberOfCountriesAndPublicationsPerUser[userId]?.numberOfCountries || 0,
+        numberOfPublications: numberOfCountriesAndPublicationsPerUser[userId]?.numberOfPublications || 0,
+        numberOfIssues: _count.id,
+      };
+      return acc;
+    }, {});
   });

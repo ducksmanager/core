@@ -92,8 +92,8 @@ const compareDates = (a: string, b: string) =>
       }),
       {},
     );
+    let accDate = Object.fromEntries(labels.value!.map((value) => [value, 0]));
 
-    let accDate = labels.value!.reduce<Record<string, number>>((acc, value) => ({ ...acc, [value]: 0 }), {});
     return collectionWithDates.value
       .sort(({ date: dateA }, { date: dateB }) => compareDates(dateA, dateB))
       .reduce<Record<string, Record<string, number>>>((acc, { date, publicationcode: publicationcode }) => {
@@ -113,15 +113,11 @@ const compareDates = (a: string, b: string) =>
       ? null
       : Object.keys(values.value).map((publicationcode) => {
           let data = values.value![publicationcode];
-          data = labels.value!.reduce(
-            (acc, currentDate) => ({
-              ...acc,
-              [currentDate]: labels
-                .value!.filter((_, idx) => idx <= labels.value!.indexOf(currentDate))
-                .reduce((sum, date) => sum + data[date], 0),
-            }),
-            {},
-          );
+          data = labels.value!.reduce<Record<string, number>>((acc, currentDate, idx) => {
+            acc[currentDate] = (acc[labels.value![idx - 1]] || 0) + data[currentDate];
+            return acc;
+          }, {});
+
           return {
             data: Object.values(data),
             label:

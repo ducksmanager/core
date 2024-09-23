@@ -49,13 +49,12 @@ export const augmentIssueObjectWithInducksData = <
   withTitle: boolean = false,
 ) =>
   getInducksIssueData(Object.keys(issues), withTitle).then((inducksIssues) =>
-    Object.entries(issues).reduce<typeof issues>(
-      (acc, [issuecode, issue]) => ({
-        ...acc,
-        [issuecode]: { ...issue, ...inducksIssues[issuecode] },
-      }),
-      {},
-    ),
+    Object.fromEntries(
+      Object.entries(issues).map(([issuecode, issue]) => [
+        issuecode,
+        { ...issue, ...inducksIssues[issuecode] },
+      ])
+    )
   );
 
 export const augmentIssueArrayWithInducksData = async <

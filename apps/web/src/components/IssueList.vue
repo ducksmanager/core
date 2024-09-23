@@ -427,10 +427,14 @@ let userIssuecodesNotFoundForPublication = $shallowRef<string[] | null>([]);
 let selected = $shallowRef<string[]>([]);
 const filteredUserCopies = $computed(() =>
   filteredIssues.reduce<(issue & { issuecode: string })[]>(
-    (acc, { userCopies }) => [...acc, ...userCopies],
+    (acc, { userCopies }) => {
+      acc.push(...userCopies);
+      return acc;
+    },
     [],
   ),
 );
+
 const copiesBySelectedIssuecode = $computed(() =>
   selected.reduce<{ [issuecode: string]: issue[] }>((acc, issueKey) => {
     const [issuecode, maybeIssueId] = issueKey.split("-id-");
@@ -460,10 +464,7 @@ const showFilter = $computed(
 );
 
 const issueIds = $computed(() =>
-  Object.values(copiesBySelectedIssuecode).reduce<number[]>(
-    (acc, issues) => [...acc, ...issues.map(({ id }) => id)],
-    [],
-  ),
+  Object.values(copiesBySelectedIssuecode).map(({ id }) => id),
 );
 
 let contextMenuKey = $ref<string>("context-menu");
@@ -605,31 +606,27 @@ const loadIssues = async () => {
       ];
       issues = coaIssuecodes
         .filter((issuecode) => userIssuecodes.includes(issuecode))
-        .reduce<issueWithCopies[]>(
-          (acc, issuecode) => [
-            ...acc,
-            ...userIssuesForPublication!
-              .filter(
-                ({ issuecode: userIssuecode }) => userIssuecode === issuecode,
-              )
-              .map((issue) => ({
-                ...issue,
-                key: `${issue.issuecode.replaceAll(" ", "_")}-id-${issue.id}`,
-                userCopies: [{ ...issue, copyIndex: 0 }],
-              })),
-          ],
-          [],
-        );
+        .reduce<issueWithCopies[]>((acc, issuecode) => {
+          const filteredIssues = userIssuesForPublication!
+            .filter(
+              ({ issuecode: userIssuecode }) => userIssuecode === issuecode,
+            )
+            .map((issue) => ({
+              ...issue,
+              key: `${issue.issuecode.replaceAll(" ", "_")}-id-${issue.id}`,
+              userCopies: [{ ...issue, copyIndex: 0 }],
+            }));
+          acc.push(...filteredIssues);
+          return acc;
+        }, []);
     }
 
     if (duplicatesOnly) {
-      const countPerIssuecode = issues!.reduce<{
-        [issuecode: string]: number;
-      }>(
-        (acc, { userCopies }) => ({
-          ...acc,
-          [userCopies[0].issuecode]: (acc[userCopies[0].issuecode] || 0) + 1,
-        }),
+      const countPerIssuecode = issues!.reduce<{ [issuecode: string]: number }>(
+        (acc, { userCopies: [{ issuecode }] }) => {
+          acc[issuecode] = (acc[issuecode] || 0) + 1;
+          return acc;
+        },
         {},
       );
       issues = issues!.filter(

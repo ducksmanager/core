@@ -7,19 +7,13 @@ import type Mail from "nodemailer/lib/mailer";
 import path from "path";
 
 import en from "~/translations/messages.en.json";
-const fr = Object.keys(en).reduce((acc, key) => ({ ...acc, [key]: key }), {});
+const fr = Object.fromEntries(Object.keys(en).map((key) => [key, key]));
+
 export const i18n = new I18n({
   locales: ["fr", "en-US"],
-
   defaultLocale: "fr",
   staticCatalog: {
-    "en-US": Object.entries(en).reduce(
-      (acc, [key, value]) => ({
-        ...acc,
-        [key]: value,
-      }),
-      {},
-    ),
+    "en-US": Object.fromEntries(Object.entries(en)),
     fr,
   },
 });

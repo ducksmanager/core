@@ -47,13 +47,10 @@ const totalPerPublicationGroupSmallCounts: {
             (publicationcode) =>
               !smallCountPublications.includes(publicationcode),
           )
-          .reduce(
-            (acc, publicationcode) => ({
-              ...acc,
-              [publicationcode]: totalPerPublication.value![publicationcode],
-            }),
-            {},
-          ),
+          .reduce<Record<string, number>>((acc, publicationcode) => {
+            acc[publicationcode] = totalPerPublication.value![publicationcode];
+            return acc;
+          }, {}),
         ...(!smallCountPublications.length
           ? {}
           : {
@@ -66,22 +63,22 @@ const totalPerPublicationGroupSmallCounts: {
       }) ||
     {},
 );
-const labels = $computed(
-  () =>
-    hasPublicationNames &&
-    Object.entries(totalPerPublicationGroupSmallCounts)
-      .sort(sortByCount)
-      .reduce<string[]>(
-        (acc, [publicationcode]) => [
-          ...acc,
-          publicationNames.value[publicationcode] ||
-            `${$t("Autres")} (${smallCountPublications!.length} ${$t(
-              "Publications",
-            ).toLowerCase()})`,
-        ],
-        [],
-      ),
-);
+const labels = $computed(() => {
+  if (!hasPublicationNames) return false;
+
+  return Object.entries(totalPerPublicationGroupSmallCounts)
+    .sort(sortByCount)
+    .reduce<string[]>((acc, [publicationcode]) => {
+      acc.push(
+        publicationNames.value[publicationcode] ||
+          `${$t("Autres")} (${smallCountPublications!.length} ${$t(
+            "Publications",
+          ).toLowerCase()})`,
+      );
+      return acc;
+    }, []);
+});
+
 const values = $computed(() =>
   Object.values(totalPerPublicationGroupSmallCounts).sort((count1, count2) =>
     Math.sign(count1 - count2),
