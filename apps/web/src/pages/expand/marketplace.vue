@@ -192,7 +192,7 @@ alias: [/agrandir/marketplace]
       </blockquote>
 
       <b-alert
-        :model-value="stats[modalContactId].okForExchanges"
+        :model-value="stats[modalContactId].marketplaceAcceptsExchanges"
         variant="warning"
         class="mt-4"
         >{{

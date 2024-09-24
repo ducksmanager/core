@@ -225,7 +225,7 @@ export const getSuggestions = async (
         },
       },
     })
-  ).groupBy('personcode', 'fullname')
+  ).map(({ personcode, fullname }) => ({ personcode, fullname: fullname || personcode })).groupBy('personcode', 'fullname')
 
   let storyDetails: { [storycode: string]: StoryDetail } = {};
   if (withStoryDetails) {

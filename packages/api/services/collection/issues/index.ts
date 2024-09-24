@@ -179,12 +179,11 @@ export default (socket: Socket<Events>) => {
         by: ["publicationcode"],
       })
       .then((data) =>
-        Object.fromEntries(
-          data.map(({ publicationcode, _count }) => {
-            const countrycode = publicationcode!.split("/")[0];
-            return [countrycode, (_count.issuenumber + (acc[countrycode] || 0))];
-          })
-        ),
+        data.reduce<Record<string, number>>((acc, { publicationcode, _count }) => {
+          const countrycode = publicationcode!.split("/")[0];
+          acc[countrycode] = (_count.issuenumber + (acc[countrycode] || 0));
+          return acc
+        }, {})
       )
       .then(callback),
   );

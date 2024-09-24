@@ -120,7 +120,9 @@ alias: [/collection/compte]
     <h5>{{ $t("Marketplace") }}</h5>
     <b-row>
       <b-col cols="12" md="6">
-        <b-form-checkbox v-model="userForAccountForm.okForExchanges">
+        <b-form-checkbox
+          v-model="userForAccountForm.marketplaceAcceptsExchanges"
+        >
           {{
             $t(
               "Indiquer aux autres utilisateurs que je suis disposé à échanger des magazines, et pas seulement à en acheter ou en vendre.",

@@ -140,7 +140,8 @@ export const collection = defineStore("collection", () => {
           : undefined,
         presentationText: user.value.presentationText || "",
         email: user.value.email!,
-        okForExchanges: user.value.marketplaceAcceptsExchanges || false,
+        marketplaceAcceptsExchanges:
+          user.value.marketplaceAcceptsExchanges || false,
       };
     }),
     updateCollectionSingleIssue = async (data: CollectionUpdateSingleIssue) => {

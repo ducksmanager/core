@@ -64,10 +64,10 @@
         </div>
         <b-alert
           :model-value="showOkForExchanges"
-          :variant="stats.okForExchanges ? 'info' : 'warning'"
+          :variant="stats.marketplaceAcceptsExchanges ? 'info' : 'warning'"
           class="mt-4"
         >
-          <span v-if="stats.okForExchanges">{{
+          <span v-if="stats.marketplaceAcceptsExchanges">{{
             $t("Peut vendre ou échanger des numéros")
           }}</span
           ><span v-else>{{

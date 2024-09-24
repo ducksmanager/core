@@ -19,7 +19,7 @@ export default (socket: Socket<Events>) => {
     });
 
     callback(
-      authors.groupBy('personcode', 'fullname')
+      authors.map(({ personcode, fullname }) => ({ personcode, fullname: fullname || personcode })).groupBy('personcode', 'fullname')
     );
   });
 };
@@ -35,4 +35,4 @@ export const getAuthorFullNames = async (
         },
       },
     })
-  ).groupBy('personcode', 'fullname')
+  ).map(({ personcode, fullname }) => ({ personcode, fullname: fullname || personcode })).groupBy('personcode', 'fullname')

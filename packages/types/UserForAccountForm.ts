@@ -7,5 +7,5 @@ export type UserForAccountForm = {
   email: string;
   allowSharing: boolean;
   presentationText: string;
-  okForExchanges: boolean;
+  marketplaceAcceptsExchanges: boolean;
 };

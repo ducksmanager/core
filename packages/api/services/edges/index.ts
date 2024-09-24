@@ -1,17 +1,22 @@
 import type { Namespace, Server } from "socket.io";
-
 import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
 import type { edgeModel } from "~prisma-schemas/schemas/edgecreator";
 import { prismaClient as prismaEdgeCreator } from "~prisma-schemas/schemas/edgecreator/client";
-
-import { augmentIssueArrayWithInducksData } from "../coa";
+import { augmentIssueObjectWithInducksData, augmentIssueArrayWithInducksData } from "../coa";
 import type Events from "./types";
 import { namespaceEndpoint } from "./types";
+import { edge } from "~prisma-schemas/schemas/dm";
+
+type EdgeWithModelIdAndInducksData = Pick<edge, "id" | "issuecode"> & {
+  modelId?: number;
+  v3: boolean;
+  // Add other properties from inducksIssueWithNonNullablePublicationcode if needed
+};
 
 const getEdges = async (filters: {
   publicationcode?: string;
   issuecodes?: string[];
-}) => {
+}): Promise<Record<string, EdgeWithModelIdAndInducksData>> => {
   if (!filters.publicationcode || !filters.issuecodes) {
     throw new Error("Invalid filter");
   }
@@ -26,7 +31,10 @@ const getEdges = async (filters: {
         issuecode,
       },
     })
-  ).groupBy("issuecode");
+  ).reduce((acc, model) => {
+    acc[model.issuecode] = model;
+    return acc;
+  }, {} as Record<string, edgeModel>);
 
   return (
     await prismaDm.edge.findMany({
@@ -38,11 +46,11 @@ const getEdges = async (filters: {
         issuecode,
       },
     })
-  ).reduce((acc, edge) => {
+  ).reduce<Record<string, EdgeWithModelIdAndInducksData>>((acc, edge) => {
     acc[edge.issuecode!] = {
       ...edge,
       modelId: edgeModels[edge.issuecode]?.id,
-      v3: edgeModels[edge.issuecode] !== undefined,
+      v3: !!edgeModels[edge.issuecode],
     };
     return acc;
   }, {});
@@ -78,8 +86,10 @@ export default (io: Server) => {
         .then(callback),
     );
 
-    socket.on("getEdges", async (filters, callback) => {
-      callback(await getEdges(filters));
-    });
+    socket.on("getEdges", async (filters, callback) =>
+      getEdges(filters)
+        .then((edges) => augmentIssueObjectWithInducksData(edges))
+        .then(callback),
+    );
   });
 };

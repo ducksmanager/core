@@ -12,16 +12,16 @@ export default (socket: Socket<Events>) => {
       (
         await prismaEdgeCreator.$queryRaw<
           {
-            issuenumber: string;
+            issuecode: string;
             stepNumber: number;
             functionName: string;
             options: string;
           }[]
         >`
-          select model.numero AS issuenumber,
-                  optionValue.ordre AS stepNumber,
-                  optionValue.Nom_fonction AS functionName,
-                  concat('{',
+          select model.issuecode,
+                 optionValue.ordre AS stepNumber,
+                 optionValue.Nom_fonction AS functionName,
+                 concat('{',
                         group_concat(concat('"', optionValue.Option_nom, '": ', '"', optionValue.Option_valeur,
                                             '"')),
                         '}') AS options
@@ -31,19 +31,19 @@ export default (socket: Socket<Events>) => {
           group by model.numero, optionValue.ordre
           order by optionValue.ordre
       `
-      ).reduce<ModelSteps>((acc, { issuenumber, stepNumber, functionName, options }) => {
-        if (!acc[issuenumber]) {
-          acc[issuenumber] = {};
+      ).reduce<ModelSteps>((acc, { issuecode, stepNumber, functionName, options }) => {
+        if (!acc[issuecode]) {
+          acc[issuecode] = {};
         }
-        if (!acc[issuenumber][stepNumber]) {
-          acc[issuenumber][stepNumber] = {
+        if (!acc[issuecode][stepNumber]) {
+          acc[issuecode][stepNumber] = {
             functionName,
-            issuenumber,
+            issuecode,
             stepNumber,
             options: {},
           };
         }
-        Object.assign(acc[issuenumber][stepNumber].options, JSON.parse(options));
+        Object.assign(acc[issuecode][stepNumber].options, JSON.parse(options));
         return acc;
       }, {}),
     );

@@ -4,7 +4,6 @@ import type { IssueWithIssuecodeOnly } from "~dm-types/IssueWithIssuecodeOnly";
 import type { SimpleEntry } from "~dm-types/SimpleEntry";
 import type { StorySearchResults } from "~dm-types/StorySearchResults";
 import type {
-  inducks_issue,
   inducks_issuequotation,
   inducks_story,
   inducks_storyjob,
@@ -21,7 +20,7 @@ export default abstract class {
   ) => void;
   abstract searchAuthor: (
     partialAuthorName: string,
-    callback: (value: Record<string, inducks_issue>) => void,
+    callback: (value: Record<string, string>) => void,
   ) => void;
 
   abstract getCountryList: (

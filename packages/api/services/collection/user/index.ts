@@ -84,7 +84,7 @@ export default (socket: Socket<Events>) => {
           discordId: input.discordId || undefined,
           email: input.email,
           allowSharing: input.allowSharing,
-          marketplaceAcceptsExchanges: input.okForExchanges,
+          marketplaceAcceptsExchanges: input.marketplaceAcceptsExchanges,
         },
         where: { id: socket.data.user!.id },
       });

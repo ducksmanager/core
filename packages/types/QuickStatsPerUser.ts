@@ -13,6 +13,6 @@ export type QuickStatsPerUser = Record<
     numberOfCountries: number;
     numberOfPublications: number;
     numberOfIssues: number;
-    okForExchanges: boolean;
+    marketplaceAcceptsExchanges: boolean;
   }
 >;
