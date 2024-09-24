@@ -201,7 +201,6 @@ export const coa = defineStore("coa", () => {
       }
     },
     fetchIssuecodesByPublicationcode = async (publicationcodes: string[]) => {
-      debugger;
       const existingPublicationcodes = new Set(
         Object.keys(issuecodesByPublicationcode.value || {}),
       );

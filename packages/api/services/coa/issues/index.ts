@@ -9,11 +9,11 @@ export default (socket: Socket<Events>) => {
   socket.on("getIssues", (issuecodes, withTitles, callback) =>
     issuecodes.length
       ? augmentIssueArrayWithInducksData(
-          issuecodes.map((issuecode) => ({ issuecode })),
-          withTitles,
-        )
-          .then((data) => data.groupBy("issuecode"))
-          .then(callback)
+        issuecodes.map((issuecode) => ({ issuecode })),
+        withTitles,
+      )
+        .then((data) => data.groupBy("issuecode"))
+        .then(callback)
       : callback({}),
   );
 
@@ -53,6 +53,7 @@ export default (socket: Socket<Events>) => {
           publicationcode: true,
           issuenumber: true,
           issuecode: true,
+          oldestdate: true,
         },
         where: {
           oldestdate: {

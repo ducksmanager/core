@@ -41,19 +41,13 @@ const recentIssues = ref();
 
 const coaStore = stores.coa();
 const { issuecodes } = storeToRefs(app());
-const { issuesByIssuecode } = storeToRefs(stores.collection());
-const { fetchPublicationNames, fetchRecentIssues } = coaStore;
-const { publicationNames } = storeToRefs(coaStore);
+const { fetchPublicationNames, fetchRecentIssues, fetchIssuecodeDetails } = coaStore;
 
 onMounted(async () => {
   const issues = await fetchRecentIssues();
-  await fetchPublicationNames(issues.map(({ publicationcode }) => publicationcode!));
-  recentIssues.value = issues.map((issue) => ({
-    ...issue,
-    countrycode: issue.publicationcode!.split('/')[0],
-    publicationName: publicationNames.value[issue.publicationcode!],
-    collectionIssues: issuesByIssuecode.value![issue.issuecode] || [],
-  }));
+  await fetchPublicationNames(issues.map(({ publicationcode }) => publicationcode));
+  await fetchIssuecodeDetails(issues.map(({ issuecode }) => issuecode));
+  recentIssues.value = issues;
 });
 </script>
 
