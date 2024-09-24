@@ -4,9 +4,9 @@
     :src="getEdgeUrl(issuecode, 'png', true)"
     @load="
       naturalHeight = $event.currentTarget.naturalHeight;
-      $emit('load');
+      emit('load');
     "
-    @error="$emit('error')"
+    @error="emit('error')"
   />
 </template>
 
@@ -17,7 +17,7 @@ defineProps<{
   issuecode: string;
 }>();
 
-defineEmits<(event: "load" | "error") => void>();
+const emit = defineEmits<(event: "load" | "error") => void>();
 
 const naturalHeight = ref(0);
 const { zoom } = storeToRefs(ui());
