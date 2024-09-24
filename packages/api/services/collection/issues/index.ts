@@ -43,7 +43,7 @@ export default (socket: Socket<Events>) => {
       publicationcode: {
         in: await getCollectionPublicationcodes(socket.data.user!.id),
       },
-    }).then(callback),
+    }).then(({ publicationcode, title }) => ({ publicationcode, title: title || publicationcode })).then(callback),
   );
   socket.on("getIssues", async (callback) => {
     if (socket.data.user!.username === "demo") {

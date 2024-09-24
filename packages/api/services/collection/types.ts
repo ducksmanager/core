@@ -58,7 +58,7 @@ export default abstract class {
   ) => void;
 
   abstract getPublicationTitles: (
-    callback: (value: Record<string, string | null>) => void,
+    callback: (value: Record<string, string>) => void,
   ) => void;
 
   abstract getCoaCountByPublicationcode: (
