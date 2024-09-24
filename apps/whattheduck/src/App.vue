@@ -93,9 +93,10 @@ const assignSocket = () => {
         isOfflineMode.value = true;
       }
     };
+
   const socketUrl = ['web', 'ios'].includes(Capacitor.getPlatform())
     ? import.meta.env.VITE_DM_SOCKET_URL
-    : import.meta.env.VITE_DM_SOCKET_URL_NATIVE;
+    : import.meta.env.VITE_DM_SOCKET_URL_NATIVE || import.meta.env.VITE_DM_SOCKET_URL;
   console.log(`Using socket URL ${socketUrl}`);
   socket.value = useDmSocket(new SocketClient(socketUrl), {
     cacheStorage,

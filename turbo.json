@@ -52,6 +52,9 @@
         "PRODUCTION_SSH_KEY"
       ]
     },
+    "dev:android": {
+      "persistent": true
+    },
     "dev": {
       "persistent": true,
       "dependsOn": [

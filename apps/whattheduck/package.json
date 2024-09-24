@@ -5,9 +5,10 @@
     "node": ">=18.0.0 <19.0.0"
   },
   "scripts": {
-    "whattheduck-android": "concurrently -p \"[whattheduck-{name}]\" --kill-others-on-fail -n front+web,android \"pnpm -r dev:whattheduck\" \"ionic cap run android --external --target Pixel_8_API_29 --livereload --public-host=192.168.1.234\"",
+    "dev:android": "concurrently --kill-others-on-fail -n set-android-socket-url,android,dev \"pnpm set-android-socket-url\" \"ionic cap run android --external --target Pixel_8_API_29 --livereload --public-host=`ipconfig getifaddr en0`\" \"turbo dev -F '~whattheduck' -F '~api' -F '~web'\"",
     "lint": "eslint .",
-    "dev": "concurrently -n vite,vue-tsc \"vite --port 8003 --host\" \"vue-tsc --noEmit --watch\"",
+    "set-android-socket-url": "echo VITE_DM_SOCKET_URL_NATIVE=http://`ipconfig getifaddr en0`:3000 > .env.local",
+    "dev": "concurrently -n vite,vue-tsc  \"vite --port 8003 --host\" \"vue-tsc --noEmit --watch\"",
     "build": "vite build && vue-tsc --noEmit",
     "build-capgo": "capgo bundle zip",
     "ionic:build": "npm run build",
