@@ -3,7 +3,7 @@ import { user } from "~prisma-clients/client_dm";
 
 export default class extends Email {
   data: { user: user; publicationName: string; issuenumber: string };
-  templatePath = __dirname;
+  templatePath = import.meta.dir;
 
   constructor(data: {
     user: user;

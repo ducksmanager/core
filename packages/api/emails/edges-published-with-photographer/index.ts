@@ -9,7 +9,7 @@ export default class extends Email {
     extraPhotographerPoints: number;
     newMedalLevel: number | null;
   };
-  templatePath = __dirname;
+  templatePath = import.meta.dir;
 
   constructor(data: {
     user: user;
