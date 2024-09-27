@@ -11,6 +11,7 @@ COPY packages/api/.env /app/
 COPY packages/api/emails /app/emails
 COPY packages/api/bundle.mjs /app/
 COPY packages/api/dist/routes /app/routes
+COPY packages/api/routes/demo/*.csv /app/routes/demo/
 
 EXPOSE 3000
 CMD ["node", "bundle.mjs"]
