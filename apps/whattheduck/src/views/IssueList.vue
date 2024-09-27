@@ -131,7 +131,9 @@ type Item =
   | IssueWithIssuecodeOnly;
 
 const items = computed(() => {
-  if (!coaIssuecodes.value) return [];
+  if (!coaIssuecodes.value) {
+    return [];
+  }
 
   if (isCoaView.value) {
     return coaIssuecodes.value.reduce<{ key: string; item: Item }[]>((acc, issuecode) => {
@@ -190,7 +192,7 @@ const sortedItems = computed(() =>
     })),
 );
 
-const hasItems = computed(() => sortedItems.value.length > 0);
+const hasItems = computed(() => sortedItems.value.length);
 
 const sortedItemsForBookcase = computed(() =>
   sortedItems.value.map(({ item }) => ({

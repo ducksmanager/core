@@ -9,6 +9,7 @@
         class="ion-align-items-center ion-text-nowrap"
         :class="{ selected: value?.id === option.id }"
         v-for="option of options"
+        :key="option.id"
         @click="
           value = option;
           (fab?.$el as HTMLIonFabElement).close();

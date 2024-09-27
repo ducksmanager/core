@@ -57,7 +57,7 @@ const sortedItems = computed(
     ),
 );
 
-const hasItems = computed(() => sortedItems.value.length > 0);
+const hasItems = computed(() => sortedItems.value.length);
 
 defineExpose({ hasItems });
 </script>

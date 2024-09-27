@@ -9,6 +9,7 @@
           <ion-radio-group v-model="issue.condition" style="display: flex; justify-content: end">
             <ion-radio
               v-for="item of conditionsWithoutMissing"
+              :key="item.dbValue"
               label-placement="start"
               justify="end"
               :disabled="isOffline"
@@ -63,6 +64,7 @@
         <ion-radio-group v-model="issue.purchaseId" v-if="purchasesIncludingNone" class="vertical">
           <ion-radio
             v-for="item of purchasesIncludingNone"
+            :key="item.id || 'none'"
             label-placement="start"
             justify="end"
             :disabled="isOffline"
@@ -72,6 +74,7 @@
             <div
               :style="{ fontStyle: item.id === null ? 'italic' : 'normal' }"
               v-for="descriptionLine of item.dateAndDescription"
+              :key="descriptionLine"
             >
               {{ descriptionLine }}
             </div>

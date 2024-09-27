@@ -3,6 +3,7 @@
     ><Country :id="countrycode" /> &nbsp;<template v-if="showIssueConditions"
       >&nbsp;<condition-with-part
         v-for="collectionIssue of collectionIssues"
+        :key="collectionIssue.condition"
         :value="collectionIssue.condition"
         :part-info="partInfo"
     /></template>

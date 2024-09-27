@@ -13,11 +13,11 @@
         <b>{{ t('What The Duck version {version}', { version: currentAppVersion }) }}</b>
       </div>
       <div>
-        <a :href="discordUrl"><img src="/icons/discord.png" /></a>
-        <a :href="facebookUrl"><img src="/icons/facebook.png" /></a>
-        <a :href="dmUrl"><img src="/icons/ducksmanager.png" /></a>
-        <a :href="instagramUrl"><img src="/icons/instagram.png" /></a>
-        <a :href="youtubeUrl"><img src="/icons/youtube.png" /></a>
+        <router-link :to="discordUrl"><img src="/icons/discord.png" /></router-link>
+        <router-link :to="facebookUrl"><img src="/icons/facebook.png" /></router-link>
+        <router-link :to="dmUrl"><img src="/icons/ducksmanager.png" /></router-link>
+        <router-link :to="instagramUrl"><img src="/icons/instagram.png" /></router-link>
+        <router-link :to="youtubeUrl"><img src="/icons/youtube.png" /></router-link>
       </div>
       <ion-button id="link-to-dm" :href="playStoreUrl">
         {{ t("Notez What The Duck sur le Play Store si vous appréciez l'utiliser :-)") }}

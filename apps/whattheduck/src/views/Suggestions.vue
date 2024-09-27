@@ -29,9 +29,12 @@
         v-model="showSuggestionsOf"
       >
         <ion-select-option value="ALL">{{ t('Tous les pays') }}</ion-select-option>
-        <ion-select-option v-for="[countrycode, countryname] of sortedCountryNames" :value="countrycode">{{
-          countryname
-        }}</ion-select-option>
+        <ion-select-option
+          v-for="[countrycode, countryname] of sortedCountryNames"
+          :key="countrycode"
+          :value="countrycode"
+          >{{ countryname }}</ion-select-option
+        >
       </ion-select>
       <ion-item v-if="isLoadingSuggestions">{{ t('Chargement…') }}</ion-item>
       <div class="ion-padding ion-text-center" v-else-if="formattedSuggestions && !formattedSuggestions.length">

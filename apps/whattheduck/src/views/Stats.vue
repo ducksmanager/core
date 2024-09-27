@@ -60,7 +60,7 @@
         <ion-col size="12" class="ion-text-center ion-justify-content-around" style="flex-direction: column">
           <ion-text :style="{ height: '60px' }" class="text-medium">{{ t('Progression de la collection') }}</ion-text>
           <ion-row :style="{ height: '60px' }">
-            <ion-col v-for="{ title, value } of collectionProgressionGraphTypes">
+            <ion-col v-for="{ title, value } of collectionProgressionGraphTypes" :key="title">
               <ion-button
                 expand="block"
                 :fill="value === currentCollectionProgressionGraphType ? 'solid' : 'outline'"

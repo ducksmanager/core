@@ -1,6 +1,6 @@
 <template>
   <Story
-    ><Variant :title="condition" v-for="condition of ['mauvais', 'moyen', 'bon', 'indefini'] as const"
+    ><Variant :title="condition" v-for="condition of ['mauvais', 'moyen', 'bon', 'indefini'] as const" :key="condition"
       ><Condition :value="condition" /></Variant
   ></Story>
 </template>

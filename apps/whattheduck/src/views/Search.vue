@@ -25,7 +25,7 @@
       />
 
       <ion-list v-if="storyResults?.results && !selectedStory">
-        <ion-item v-for="story of storyResults?.results" @click="selectedStory = story">
+        <ion-item v-for="story of storyResults?.results" :key="story.storycode" @click="selectedStory = story">
           <ion-label>
             <template v-for="{ collectionIssues, partInfo } of story.issues">
               <condition-with-part

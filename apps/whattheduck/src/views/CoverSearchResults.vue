@@ -15,7 +15,7 @@
           <Carousel3d @after-slide-change="(index: number) => (cover = covers[index])">
             <Slide
               v-for="(cover, index) in covers"
-              :key="index"
+              :key="cover.issuecode"
               :index="index"
               :style="{ width: `min(50%, ${slideWidths[index]}px)` }"
             >

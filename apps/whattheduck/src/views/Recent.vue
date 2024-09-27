@@ -15,7 +15,7 @@
       </div>
 
       <template v-if="recentIssues">
-        <ion-item v-for="issue of recentIssues" @click="issuecodes = [issue.issuecode]">
+        <ion-item v-for="issue of recentIssues" :key="issue.issuecode" @click="issuecodes = [issue.issuecode]">
           <FullIssue :issuecode="issue.issuecode" show-issue-conditions>
             <template #suffix
               ><div class="issue-date">
