@@ -3,7 +3,7 @@ import type { user } from "~prisma-schemas/schemas/dm";
 
 export default class extends Email {
   data: { user: user; token: string };
-  templatePath = __dirname;
+  templatePath = import.meta.dir;
 
   sendCopyToAdmin = false;
 

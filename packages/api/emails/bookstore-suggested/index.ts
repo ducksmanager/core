@@ -5,7 +5,7 @@ export default class extends Email {
   data: {
     user: user | null;
   };
-  templatePath = __dirname;
+  templatePath = import.meta.dir;
 
   constructor(data: { user: user | null }) {
     super();
