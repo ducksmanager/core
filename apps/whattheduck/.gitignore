@@ -41,3 +41,5 @@ npm-debug.log*
 .eslintrc-auto-import.json
 *.d.ts
 !vue-virtual-scroller.d.ts
+
+whattheduck-bundle*.zip
