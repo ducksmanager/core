@@ -6,15 +6,25 @@ import AutoImport from 'unplugin-auto-import/vite';
 import { IonicResolver } from 'unplugin-vue-components/resolvers';
 import Components from 'unplugin-vue-components/vite';
 import { defineConfig } from 'vite';
+import { viteStaticCopy } from 'vite-plugin-static-copy';
 
 // https://vitejs.dev/config/
 export default defineConfig({
   server: {
     port: 8008,
   },
+
   plugins: [
     vue(),
     ReactivityTransform(),
+    viteStaticCopy({
+      targets: [
+        {
+          src: '../web/public/images/medals/*.png',
+          dest: 'images/medals',
+        },
+      ],
+    }),
     Components({
       resolvers: [IonicResolver()],
       dts: true,
