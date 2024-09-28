@@ -14,7 +14,6 @@ jobs:
       PRODUCTION_SSH_HOST: ${{ secrets.PRODUCTION_SSH_HOST }}
       PRODUCTION_SSH_USER: ${{ secrets.PRODUCTION_SSH_USER }}
       PRODUCTION_SSH_KEY: ${{ secrets.PRODUCTION_SSH_KEY }}
-      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     name: deploy
     steps:
       - uses: actions/checkout@v4
@@ -88,5 +87,7 @@ jobs:
           turbo -F [$lastSuccessfulCommit] -F '!~ci' -F '!~dumili' -F '!~dumili-api' prod:transfer-files-post
 
       - name: Deploy
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
         run: |
           turbo --concurrency=1 -F [$lastSuccessfulCommit] -F '!~ci' -F '!~dumili' -F '!~dumili-api' prod:deploy
