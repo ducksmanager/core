@@ -78,7 +78,7 @@ jobs:
 
       - name: Build and push Docker images
         env:
-          GH_TOKEN: ${{ github.token }}
+          GITHUB_TOKEN: ${{ github.token }}
         run: |
           turbo -F [$lastSuccessfulCommit] -F '!~ci' -F '!~dumili' -F '!~dumili-api' prod:build-docker
 
@@ -88,6 +88,6 @@ jobs:
 
       - name: Deploy
         env:
-          GITHUB_TOKEN: ${{ github.token }}
+          GH_TOKEN: ${{ github.token }}
         run: |
           turbo --concurrency=1 -F [$lastSuccessfulCommit] -F '!~ci' -F '!~dumili' -F '!~dumili-api' prod:deploy
