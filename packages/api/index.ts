@@ -8,7 +8,7 @@ import { Server } from "socket.io";
 
 import type { SessionUser } from "~dm-types/SessionUser";
 
-import { getAppUpdates } from "./services/app";
+import app, { getAppUpdates } from "./services/app";
 import auth from "./services/auth";
 import { OptionalAuthMiddleware } from "./services/auth/util";
 import bookcase from "./services/bookcase";
@@ -62,7 +62,7 @@ const httpServer = createServer(async (req, res) => {
           body.push(chunk);
         })
         .on("end", () => {
-          res.write(getAppUpdates(body.join("")));
+          res.write(JSON.stringify(getAppUpdates(body.join(""))));
           res.end();
         });
       return;
@@ -141,6 +141,7 @@ if (cluster.isPrimary) {
     // app.all("/global-stats/user/collection/rarity", authenticateToken);
   });
 
+  app(io);
   auth(io);
   bookcase(io);
   bookstores(io);

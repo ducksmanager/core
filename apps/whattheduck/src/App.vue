@@ -21,7 +21,7 @@ import OfflineBanner from './components/OfflineBanner.vue';
 import { app } from './stores/app';
 import AppWithPersistedData from './views/AppWithPersistedData.vue';
 
-import CoaServices from '~dm-services/coa/types';
+import AppServices from '~dm-services/app/types';
 import CollectionServices from '~dm-services/collection/types';
 
 const storage = injectLocal<IonicStorage>('storage')!;
@@ -78,7 +78,7 @@ const assignSocket = () => {
       clear: () => storage.clear(),
     }),
     onConnected = (namespace: string) => {
-      if (namespace === CoaServices.namespaceEndpoint) {
+      if (namespace === AppServices.namespaceEndpoint) {
         isOfflineMode.value = false;
       }
     },
@@ -89,7 +89,7 @@ const assignSocket = () => {
         if ([/jwt expired/, /invalid signature/].some((regex) => regex.test(e.message))) {
           session.clearSession();
         }
-      } else if (namespace === CoaServices.namespaceEndpoint && isOfflineMode.value === false) {
+      } else if (namespace === AppServices.namespaceEndpoint && isOfflineMode.value === false) {
         isOfflineMode.value = true;
       }
     };
@@ -104,7 +104,6 @@ const assignSocket = () => {
     onConnected,
     onConnectError,
   });
-  socket.value.coa.connect();
 };
 
 watch(token, async () => {
@@ -112,6 +111,7 @@ watch(token, async () => {
     await router.push('/login');
   } else {
     assignSocket();
+    console.log(await socket.value!.app.services.getUpdate({}));
   }
 });
 </script>

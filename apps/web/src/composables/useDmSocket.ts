@@ -1,5 +1,6 @@
 import dayjs from "dayjs";
 
+import AppServices from "~dm-services/app/types";
 import AuthServices from "~dm-services/auth/types";
 import BookcaseServices from "~dm-services/bookcase/types";
 import BookstoreServices from "~dm-services/bookstores/types";
@@ -55,6 +56,7 @@ const defaultExport = (
     publicCollection: socket.addNamespace<PublicCollectionServices>(
       PublicCollectionServices.namespaceEndpoint,
     ),
+    app: socket.addNamespace<AppServices>(AppServices.namespaceEndpoint),
     login: socket.addNamespace<LoginServices>(LoginServices.namespaceEndpoint),
 
     bookcase: socket.addNamespace<BookcaseServices>(
