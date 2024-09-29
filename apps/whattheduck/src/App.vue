@@ -13,6 +13,7 @@
 
 <script setup lang="ts">
 import { Capacitor } from '@capacitor/core';
+import { CapacitorUpdater } from '@capgo/capacitor-updater';
 import type { Storage as IonicStorage } from '@ionic/storage';
 import Cookies from 'js-cookie';
 import { buildStorage, SocketClient } from '~socket.io-client-services';
@@ -111,7 +112,14 @@ watch(token, async () => {
     await router.push('/login');
   } else {
     assignSocket();
-    console.log(await socket.value!.app.services.getUpdate({}));
+    const currentBundleVersion = (await CapacitorUpdater.current())?.bundle.version;
+    const bundle = await socket.value!.app.services.getBundleUrl({ version: currentBundleVersion });
+    if ('url' in bundle && bundle.url) {
+      const bundleInfo = await CapacitorUpdater.download(bundle);
+      await CapacitorUpdater.set(bundleInfo);
+    } else {
+      console.warn(bundle.error);
+    }
   }
 });
 </script>

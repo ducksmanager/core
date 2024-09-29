@@ -8,7 +8,7 @@ import { Server } from "socket.io";
 
 import type { SessionUser } from "~dm-types/SessionUser";
 
-import app, { getAppUpdates } from "./services/app";
+import app, { getUpdateFileUrl } from "./services/app";
 import auth from "./services/auth";
 import { OptionalAuthMiddleware } from "./services/auth/util";
 import bookcase from "./services/bookcase";
@@ -56,16 +56,7 @@ const httpServer = createServer(async (req, res) => {
   let data: { error: string } | object;
   switch (req.url) {
     case "/app/updates":
-      const body: string[] = [];
-      req
-        .on("data", (chunk) => {
-          body.push(chunk);
-        })
-        .on("end", () => {
-          res.write(JSON.stringify(getAppUpdates(body.join(""))));
-          res.end();
-        });
-      return;
+      data = getUpdateFileUrl();
     case "/status/db":
       data = await getDbStatus();
       break;

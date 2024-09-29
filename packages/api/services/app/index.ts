@@ -1,37 +1,39 @@
 import type { Namespace, Server } from "socket.io";
+import { existsSync, readFileSync } from "fs";
 
 import type Events from "./types";
-import { namespaceEndpoint, AppInfos } from "./types";
+import { AppInfos, ErrorableAppUpdate, namespaceEndpoint } from "./types";
 
-export const getAppUpdates = (requestBody: string) => {
-  const body = JSON.parse(requestBody || "{}") as AppInfos;
-  console.log("update asked!", requestBody);
+export const getUpdateFileUrl = (appInfos?: AppInfos): ErrorableAppUpdate => {
+  const fileName = import.meta.dir+"/latest-whattheduck-bundle.txt"
+  if (existsSync(fileName)) {
+    const mostRecentBundleUrl= readFileSync(fileName).toString();
 
-  // if (body.version_name === "1.0.0") {
-  //   return {
-  //     version: "1.0.1",
-  //     url: "https://apiurl.com/mybuild_101.zip",
-  //   };
-  // } else {
-  return {
-    message: "Error version not found",
-    version: "",
-    url: "",
-  };
-  // }
-};
+    const version = mostRecentBundleUrl.match(/(?<=bundle-).+(?=.zip)/)![0];
+
+    if (appInfos && appInfos.version < version) {
+
+      return {
+        version,
+        url: mostRecentBundleUrl,
+      };
+    }
+    else {
+      return {error: "Already up to date"}
+    }
+    
+  }
+  else {
+    return {error: "Not found"}
+  }
+}
 
 export default (io: Server) => {
   (io.of(namespaceEndpoint) as Namespace<Events>).on("connection", (socket) => {
     console.log("connected to app");
 
-    socket.on("getUpdate", (data, callback) => {
-      console.log("update asked!", data);
-
-      callback({
-        version: "1.0.1",
-        url: "https://apiurl.com/mybuild_101.zip",
-      });
+    socket.on("getBundleUrl", (appInfos, callback) => {
+      callback(getUpdateFileUrl(appInfos));
     });
   });
 };

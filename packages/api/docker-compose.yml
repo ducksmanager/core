@@ -13,6 +13,8 @@ services:
     container_name: ducksmanager-api-websocket
     image: ghcr.io/bperel/ducksmanager-api:websocket
     restart: always
+    volumes:
+      - ./latest-whattheduck-bundle.txt:/app/latest-whattheduck-bundle.txt
     networks:
       - public-network
       - dm2-network
