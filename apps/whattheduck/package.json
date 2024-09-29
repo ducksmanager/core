@@ -11,7 +11,7 @@
     "dev": "concurrently -n vite,vue-tsc  \"vite --port 8003 --host\" \"vue-tsc --noEmit --watch\"",
     "build": "vite build && vue-tsc --noEmit",
     "prod:deploy-get-previous-release": "gh release list --json name,tagName --jq 'map(select(.name | startswith(\"WhatTheDuck\")))[0]' | jq -r '.tagName'",
-    "prod:deploy": "echo $GH_TOKEN | base64; export DATE=$(date +'%Y-%m-%dT%H%M%S'); pnpm bundle-capgo && gh release create --title \"WhatTheDuck bundle $DATE\" --generate-notes --notes-start-tag $(pnpm -s prod:deploy-get-previous-release) whattheduck-$DATE whattheduck-bundle-$DATE.zip",
+    "prod:deploy": "export DATE=$(date +'%Y-%m-%dT%H%M%S'); pnpm bundle-capgo && gh release create --title \"WhatTheDuck bundle $DATE\" --generate-notes --notes-start-tag $(pnpm -s prod:deploy-get-previous-release) whattheduck-$DATE whattheduck-bundle-$DATE.zip",
     "bundle-capgo": "capgo bundle zip --name whattheduck-bundle-$DATE.zip",
     "ionic:build": "npm run build",
     "preview": "vite preview",
