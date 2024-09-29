@@ -87,7 +87,6 @@ jobs:
           turbo -F [$lastSuccessfulCommit] -F '!~ci' -F '!~dumili' -F '!~dumili-api' prod:transfer-files-post
 
       - name: Deploy
-        env:
-          GH_TOKEN: ${{ github.token }}
         run: |
+          export GH_TOKEN=${{ secrets.GITHUB_TOKEN }}
           turbo --concurrency=1 -F [$lastSuccessfulCommit] -F '!~ci' -F '!~dumili' -F '!~dumili-api' prod:deploy
