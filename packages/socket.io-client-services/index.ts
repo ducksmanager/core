@@ -122,12 +122,14 @@ export class SocketClient {
               connect();
             }
             const startTime = Date.now();
-            const eventConsoleString = `${namespaceName}/${event}(${args.join(", ")})`;
+            const eventConsoleString = `${namespaceName}/${event}(${JSON.stringify(args)})`;
             const debugCall = async (post: boolean = false) => {
               const token = await session?.getToken();
-              return console.debug(
+              if (event !== 'toJSON') {
+               console.debug(
                 `${eventConsoleString} ${post ? `responded in ${Date.now() - startTime}ms` : `called ${token ? "with token" : "without token"}`} at ${new Date().toISOString()}`,
               );
+            }
             };
             let cacheKey;
             if (cache) {
@@ -169,12 +171,10 @@ export class SocketClient {
             await debugCall(true);
             if (cache && cacheKey) {
               cache.storage.set(cacheKey, data, {
-                cache: {
-                  ttl:
-                    typeof cache.ttl === "function"
-                      ? cache.ttl(event, args)
-                      : cache.ttl,
-                },
+                timeout:
+                  typeof cache.ttl === "function"
+                    ? cache.ttl(event, args)
+                    : cache.ttl,
               });
             }
             return data;
