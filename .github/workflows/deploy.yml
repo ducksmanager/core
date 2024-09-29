@@ -90,5 +90,4 @@ jobs:
 
       - name: Deploy
         run: |
-          export GH_TOKEN=$GH_TOKEN
           turbo --concurrency=1 -F [$lastSuccessfulCommit] -F '!~ci' -F '!~dumili' -F '!~dumili-api' prod:deploy

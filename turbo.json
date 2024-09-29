@@ -33,7 +33,8 @@
         "REMOTE_ROOT",
         "PRODUCTION_SSH_HOST",
         "PRODUCTION_SSH_USER",
-        "PRODUCTION_SSH_KEY"
+        "PRODUCTION_SSH_KEY",
+        "GH_TOKEN"
       ]
     },
     "prod:transfer-files-pre": {
