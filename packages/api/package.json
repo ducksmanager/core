@@ -17,7 +17,7 @@
   "dependencies": {
     "@opentelemetry/instrumentation-socket.io": "^0.42.0",
     "@pusher/push-notifications-server": "^1.2.6",
-    "@sentry/node": "^8.31.0",
+    "@sentry/node": "^8.32.0",
     "@socket.io/admin-ui": "^0.5.1",
     "axios": "^1.7.7",
     "cloudinary": "^1.41.3",
@@ -37,7 +37,7 @@
     "@types/ejs": "^3.1.5",
     "@types/i18n": "^0.13.12",
     "@types/jsonwebtoken": "^9.0.7",
-    "@types/node": "^18.19.50",
+    "@types/node": "^18.19.54",
     "@types/nodemailer": "^6.4.16",
     "concurrently": "^9.0.1",
     "nodemon": "^3.1.7",
