@@ -35,13 +35,18 @@ export const users = defineStore("users", () => {
         count.value = await globalStatsServices.getUserCount();
       }
     },
-    fetchStats = async (userIds: number[] /*, clearCacheEntry = true*/) => {
-      const missingUserIds = [...new Set(userIds)].filter(
-        (userId) =>
-          !Object.keys(points.value)
-            .map((userIdHavingPoints) => parseInt(userIdHavingPoints))
-            .includes(userId),
-      );
+    fetchStats = async (userIds: number[], force = false) => {
+      let missingUserIds;
+      if (force) {
+        missingUserIds = userIds;
+      } else {
+        missingUserIds = [...new Set(userIds)].filter(
+          (userId) =>
+            !Object.keys(points.value)
+              .map((userIdHavingPoints) => parseInt(userIdHavingPoints))
+              .includes(userId),
+        );
+      }
       if (!missingUserIds.length) return;
 
       const data =

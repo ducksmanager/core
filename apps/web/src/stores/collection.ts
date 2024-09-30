@@ -162,13 +162,13 @@ export const collection = defineStore("collection", () => {
       await collectionServices.deletePurchase(id);
       await loadPurchases(true);
     },
-    fetchIssueCountsByCountrycode = async () => {
-      if (!coaIssueCountsByPublicationcode.value)
+    fetchIssueCountsByCountrycode = async (force = false) => {
+      if (!coaIssueCountsByPublicationcode.value || force)
         coaIssueCountsPerCountrycode.value =
           await collectionServices.getCoaCountByCountrycode();
     },
-    fetchIssueCountsByPublicationcode = async () => {
-      if (!coaIssueCountsByPublicationcode.value)
+    fetchIssueCountsByPublicationcode = async (force = false) => {
+      if (!coaIssueCountsByPublicationcode.value || force)
         coaIssueCountsByPublicationcode.value =
           await collectionServices.getCoaCountByPublicationcode();
     },

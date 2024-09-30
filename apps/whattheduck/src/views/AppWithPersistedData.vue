@@ -1,6 +1,9 @@
 <template>
+  <ion-progress-bar v-if="collectionLoadProgress" :value="collectionLoadProgress"></ion-progress-bar>
+
   <ion-split-pane
     :style="{ 'margin-top': `${offlineBannerHeight}px` }"
+    :class="{ 'greyed-out': isCollectionReadonly }"
     content-id="main-content"
     v-if="isCollectionLoaded"
   >
@@ -16,19 +19,43 @@ import { wtdcollection } from '~/stores/wtdcollection';
 
 const { offlineBannerHeight, socket, isPersistedDataLoaded, token } = storeToRefs(app());
 
-getCurrentInstance()!.appContext.app.provide(dmSocketInjectionKey, socket.value as ReturnType<typeof useDmSocket>);
+getCurrentInstance()!.appContext.app.provide(dmSocketInjectionKey, socket.value);
 
 const collectionStore = wtdcollection();
-const { fetchAndTrackCollection } = collectionStore;
+const { fetchCollection } = collectionStore;
 
 const isCollectionLoaded = ref(false);
+
+const dataLoader = computed(() => socket.value!.socket.cacheHydrator);
+
+const collectionLoadProgress = computed(() => {
+  if (dataLoader.value.state?.mode === 'HYDRATE') {
+    return dataLoader.value.state.hydratedCallsDoneAmount / dataLoader.value.state.cachedCallsDone.length;
+  } else {
+    return undefined;
+  }
+});
+
+const isCollectionReadonly = computed(() => {
+  return (
+    dataLoader.value.state?.mode === 'LOAD_CACHE' ||
+    (dataLoader.value.state?.mode === 'HYDRATE' &&
+      collectionLoadProgress.value !== undefined &&
+      collectionLoadProgress.value < 1)
+  );
+});
 
 watch(
   [isPersistedDataLoaded, token],
   async ([isLoaded, tokenString]) => {
     if (isLoaded && tokenString) {
-      await fetchAndTrackCollection();
-      isCollectionLoaded.value = true;
+      dataLoader.value.run(
+        () => fetchCollection(),
+        () => {
+          isCollectionLoaded.value = true;
+          fetchCollection(true);
+        },
+      );
     }
   },
   { immediate: true },

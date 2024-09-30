@@ -32,9 +32,7 @@ const generateImage = (parameters: {
         );
       }
     })
-    .catch((response: Error) => {
-      return Promise.reject(response);
-    })
+    .catch((response: Error) => Promise.reject(response))
     .then(() =>
       cloudinary.uploader.upload(
         `${process.env.FONT_IMAGE_GEN_URL!}?${new URLSearchParams({

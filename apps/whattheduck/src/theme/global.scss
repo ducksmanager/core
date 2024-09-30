@@ -144,3 +144,8 @@ ion-checkbox {
 .fab-button-in-list {
   color: white
 }
+
+.greyed-out {
+  pointer-events: none;
+  opacity: 0.5;
+}

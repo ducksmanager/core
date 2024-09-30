@@ -12,18 +12,13 @@ export type purchaseWithStringDate = Omit<purchase, 'date' | 'userId'> & {
 export const wtdcollection = defineStore('wtdcollection', () => {
   const coaStore = webStores.coa();
   const webCollectionStore = webStores.collection();
-  const { issues, purchases, user } = storeToRefs(webCollectionStore);
-  const statsStore = webStores.stats();
-  const usersStore = webStores.users();
-  const { quotedIssues, quotationSum } = webComposables.useCollection(
-    issues as ShallowRef<(issue & { issuecode: string })[]>,
-  );
 
   const {
     createPurchase,
     findInCollection,
     fetchIssueCountsByCountrycode,
     fetchIssueCountsByPublicationcode,
+    fetchPublicationNames,
     isLoadingSuggestions,
     loadCollection,
     loadPurchases,
@@ -36,6 +31,27 @@ export const wtdcollection = defineStore('wtdcollection', () => {
     updateCollectionMultipleIssues,
   } = webCollectionStore;
 
+  const {
+    coaIssueCountsByPublicationcode,
+    coaIssueCountsPerCountrycode,
+    issues,
+    issuesByIssuecode,
+    numberPerCondition,
+    purchases,
+    purchasesById,
+    suggestions,
+    total,
+    totalPerCountry,
+    totalPerPublication,
+    totalUniqueIssues,
+    user,
+  } = storeToRefs(webCollectionStore);
+  const statsStore = webStores.stats();
+  const usersStore = webStores.users();
+  const { quotedIssues, quotationSum } = webComposables.useCollection(
+    issues as ShallowRef<(issue & { issuecode: string })[]>,
+  );
+
   const ownedCountries = computed(() =>
       ownedPublications.value
         ? [...new Set((ownedPublications.value || []).map((publicationcode) => publicationcode.split('/')[0]))].sort()
@@ -46,25 +62,23 @@ export const wtdcollection = defineStore('wtdcollection', () => {
         ? [...new Set((issues.value || []).map(({ publicationcode }) => publicationcode))].sort()
         : issues.value,
     ),
-    fetchAndTrackCollection = async () => {
-      await loadCollection();
-      await loadPurchases();
-      await loadUser();
+    fetchCollection = async (force = false) => {
+      await loadCollection(force);
+      await loadPurchases(force);
+      await loadUser(force);
       await coaStore.fetchCountryNames(true);
-      coaStore.addPublicationNames(await webCollectionStore.fetchPublicationNames());
-      await usersStore.fetchStats([webCollectionStore.user?.id || 0]);
+      coaStore.addPublicationNames(await fetchPublicationNames());
+      await usersStore.fetchStats([webCollectionStore.user?.id || 0], force);
       // TODO retrieve user notification countries
 
-      await fetchIssueCountsByCountrycode();
-      await fetchIssueCountsByPublicationcode();
+      await fetchIssueCountsByCountrycode(force);
+      await fetchIssueCountsByPublicationcode(force);
 
-      // TODO get app version
       (async () => {
         await loadSuggestions({ countryCode: 'ALL', sinceLastVisit: false });
         await statsStore.loadRatings();
+        // TODO register for notifications
       })();
-
-      // TODO register for notifications
     },
     highestQuotedIssue = computedAsync(async () => {
       const issue = quotedIssues.value?.sort((a, b) => b.estimationGivenCondition - a.estimationGivenCondition)[0];
@@ -78,36 +92,36 @@ export const wtdcollection = defineStore('wtdcollection', () => {
       issues.value!.filter(({ issuecode: collectionIssuecode }) => collectionIssuecode === issuecode);
 
   return {
-    issues,
+    coaIssueCountsByPublicationcode,
+    coaIssueCountsPerCountrycode,
     createPurchase,
-    fetchAndTrackCollection,
+    fetchCollection,
     fetchIssueCountsByPublicationcode,
     findInCollection,
     getCollectionIssues,
     highestQuotedIssue,
-    coaIssueCountsByPublicationcode: computed(() => webCollectionStore.coaIssueCountsByPublicationcode),
-    coaIssueCountsPerCountrycode: computed(() => webCollectionStore.coaIssueCountsPerCountrycode),
     isLoadingSuggestions,
-    issuesByIssuecode: computed(() => webCollectionStore.issuesByIssuecode),
+    issues,
+    issuesByIssuecode,
     loadCollection,
+    loadPurchases,
     loadSuggestions,
     loadUserIssueQuotations,
-    loadPurchases,
     login,
-    numberPerCondition: computed(() => webCollectionStore.numberPerCondition),
+    numberPerCondition,
     ownedCountries,
     ownedPublications,
     purchases,
-    purchasesById: computed(() => webCollectionStore.purchasesById),
+    purchasesById,
     quotationSum,
     signup,
-    suggestions: computed(() => webCollectionStore.suggestions),
-    total: computed(() => webCollectionStore.total),
-    totalPerCountry: computed(() => webCollectionStore.totalPerCountry),
-    totalPerPublication: computed(() => webCollectionStore.totalPerPublication),
-    totalUniqueIssues: computed(() => webCollectionStore.totalUniqueIssues),
-    updateCollectionSingleIssue,
+    suggestions,
+    total,
+    totalPerCountry,
+    totalPerPublication,
+    totalUniqueIssues,
     updateCollectionMultipleIssues,
+    updateCollectionSingleIssue,
     user,
   };
 });

@@ -139,7 +139,6 @@ watch(isCameraPreviewShown, async () => {
         }),
         {},
       ) as DOMRect;
-      console.log(boundingClientRect);
 
       if (boundingClientRect.height) {
         clearInterval(interval);

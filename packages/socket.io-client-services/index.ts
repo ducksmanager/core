@@ -7,6 +7,7 @@ export type { AxiosStorage, NotEmptyStorageValue };
 export { buildStorage, buildWebStorage } from "axios-cache-interceptor";
 import type { Socket } from "socket.io-client";
 import { io } from "socket.io-client";
+import { ref } from "vue";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AllButLast<T extends any[]> = T extends [...infer H, infer _L] ? H : any[];
@@ -46,6 +47,33 @@ export type EventCalls<S extends EventsMap> = {
 export class SocketClient {
   constructor(private socketRootUrl: string) {}
 
+  public cacheHydrator = {
+    state: ref<null | {
+      mode: "LOAD_CACHE" | "HYDRATE";
+      cachedCallsDone: string[];
+      hydratedCallsDoneAmount: number;
+    }>(null),
+    run: async (
+      loadCachedDataFn: () => Promise<void>,
+      loadRealDataFn: () => void
+    ) => {
+      this.cacheHydrator.state.value = {
+        mode: "LOAD_CACHE",
+        cachedCallsDone: [],
+        hydratedCallsDoneAmount: 0,
+      };
+
+      console.log("loading cache...");
+      await loadCachedDataFn();
+
+      this.cacheHydrator.state.value.mode = "HYDRATE";
+      this.cacheHydrator.state.value.hydratedCallsDoneAmount = 0;
+
+      console.log("Hydrating...");
+      loadRealDataFn();
+    },
+  };
+
   public onConnectError = (e: Error, namespace: string) => {
     console.error(`${namespace}: connect_error: ${e}`);
   };
@@ -65,7 +93,7 @@ export class SocketClient {
         sessionExists: () => Promise<boolean>;
       };
       cache?: Required<SocketCacheOptions<Services>>;
-    } = {},
+    } = {}
   ) {
     const { session, cache } = namespaceOptions;
     let socket: Socket | undefined;
@@ -93,7 +121,7 @@ export class SocketClient {
         .on("connect", () => {
           isOffline = false;
           console.log(
-            `connected to ${namespaceName} at ${new Date().toISOString()}`,
+            `connected to ${namespaceName} at ${new Date().toISOString()}`
           );
 
           this.onConnected(namespaceName);
@@ -107,7 +135,7 @@ export class SocketClient {
         get:
           <EventName extends StringKeyOf<Services>>(
             _: never,
-            event: EventName,
+            event: EventName
           ) =>
           async (
             ...args: AllButLast<Parameters<Services[EventName]>>
@@ -117,7 +145,7 @@ export class SocketClient {
             let isCacheUsed = false;
             if (!socket) {
               console.log(
-                `connecting to ${namespaceName} at ${new Date().toISOString()}`,
+                `connecting to ${namespaceName} at ${new Date().toISOString()}`
               );
               connect();
             }
@@ -125,30 +153,55 @@ export class SocketClient {
             const eventConsoleString = `${namespaceName}/${event}(${JSON.stringify(args)})`;
             const debugCall = async (post: boolean = false) => {
               const token = await session?.getToken();
-              if (event !== 'toJSON') {
-               console.debug(
-                `${eventConsoleString} ${post ? `responded in ${Date.now() - startTime}ms` : `called ${token ? "with token" : "without token"}`} at ${new Date().toISOString()}`,
-              );
-            }
+              if (event !== "toJSON") {
+                console.debug(
+                  `${eventConsoleString} ${post ? `responded in ${Date.now() - startTime}ms` : `called ${token ? "with token" : "without token"}`} at ${new Date().toISOString()}`
+                );
+              }
             };
             let cacheKey;
             if (cache) {
               cacheKey = `${namespaceName}/${event} ${JSON.stringify(args)}`;
-              const cacheData = (await cache.storage.get(cacheKey, {
+              const cacheData = await cache.storage.get(cacheKey, {
                 cache: {
-                  ttl: isOffline
-                    ? undefined
-                    : typeof cache.ttl === "function"
-                      ? cache.ttl(event, args)
-                      : cache.ttl,
+                  ttl:
+                    isOffline ||
+                    this.cacheHydrator.state.value?.mode === "LOAD_CACHE"
+                      ? undefined
+                      : typeof cache.ttl === "function"
+                        ? cache.ttl(event, args)
+                        : cache.ttl,
                 },
-              })) as Awaited<ReturnType<Socket["emitWithAck"]>>;
+              });
               isCacheUsed =
                 cacheData !== undefined &&
                 !(typeof cacheData === "object" && cacheData.state === "empty");
               if (isCacheUsed) {
                 console.debug(`${eventConsoleString} served from cache`);
-                return cacheData;
+                if (this.cacheHydrator.state.value) {
+                  switch (this.cacheHydrator.state.value.mode) {
+                    case "LOAD_CACHE":
+                      this.cacheHydrator.state.value.cachedCallsDone.push(
+                        eventConsoleString
+                      );
+                      break;
+                    case "HYDRATE":
+                      if (
+                        this.cacheHydrator.state.value.cachedCallsDone.includes(
+                          eventConsoleString
+                        )
+                      ) {
+                        this.cacheHydrator.state.value.hydratedCallsDoneAmount++;
+                        console.log("this.cacheHydrator.state.value.hydratedCallsDoneAmount", this.cacheHydrator.state.value.hydratedCallsDoneAmount)
+                      }
+                      break;
+                  }
+                }
+                return (
+                  cacheData as unknown as {
+                    value: Awaited<ReturnType<Socket["emitWithAck"]>>;
+                  }
+                ).value;
               }
             }
 
@@ -162,7 +215,7 @@ export class SocketClient {
                       name: "offline_no_cache",
                     }
                   : e,
-                namespaceName,
+                namespaceName
               );
             });
 
@@ -176,6 +229,14 @@ export class SocketClient {
                     ? cache.ttl(event, args)
                     : cache.ttl,
               });
+            }
+            if (
+              this.cacheHydrator.state.value?.mode === "HYDRATE" &&
+              this.cacheHydrator.state.value.cachedCallsDone.includes(
+                eventConsoleString
+              )
+            ) {
+              this.cacheHydrator.state.value.hydratedCallsDoneAmount++;
             }
             return data;
           },

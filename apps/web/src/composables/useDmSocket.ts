@@ -52,6 +52,7 @@ const defaultExport = (
     socket.onConnected = onConnected;
   }
   return {
+    socket,
     options,
     publicCollection: socket.addNamespace<PublicCollectionServices>(
       PublicCollectionServices.namespaceEndpoint,
