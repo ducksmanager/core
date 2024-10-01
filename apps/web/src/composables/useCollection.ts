@@ -87,7 +87,9 @@ export default (issues: ShallowRef<(issue & { issuecode: string })[]>) => {
         ({ issuecode: collectionIssuecode }) =>
           collectionIssuecode === issuecode,
       ),
-    quotedIssues = computed<QuotedIssue[] | null>(() => {
+    quotedIssues = computed<
+      (QuotedIssue & { estimationAverage: number })[] | null
+    >(() => {
       const issueQuotations = coa().issueQuotations;
       if (issueQuotations === null) {
         return null;
@@ -101,20 +103,22 @@ export default (issues: ShallowRef<(issue & { issuecode: string })[]>) => {
       };
       return (
         issues.value
-          ?.filter(({ issuecode }) => coa().getEstimationWithAverage(issuecode))
-          .map(({ issuecode, condition }) => {
-            const estimation = coa().getEstimationWithAverage(issuecode);
-            return {
-              ...estimation,
-              issuecode,
-              condition,
-              estimationGivenCondition: parseFloat(
-                (
-                  CONDITION_TO_ESTIMATION_PCT[condition] * estimation.estimation
-                ).toFixed(1),
-              ),
-            };
-          }) || null
+          .map(({ issuecode, condition }) => ({
+            issuecode,
+            condition,
+            estimation: coa().issueQuotations[issuecode],
+          }))
+          .filter(({ estimation }) => estimation)
+          .map(({ condition, estimation }) => ({
+            condition,
+            ...estimation,
+            estimationGivenCondition: parseFloat(
+              (
+                CONDITION_TO_ESTIMATION_PCT[condition] *
+                estimation.estimationAverage
+              ).toFixed(1),
+            ),
+          })) || null
       );
     }),
     quotationSum = computed(() =>

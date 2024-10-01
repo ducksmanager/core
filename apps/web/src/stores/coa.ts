@@ -240,20 +240,6 @@ export const coa = defineStore("coa", () => {
           [issuecode]: addPartInfo(newIssueDetails),
         });
       }
-    },
-    getEstimationWithAverage = (issuecode: string) => {
-      const estimationData = issueQuotations.value[issuecode];
-      return (
-        estimationData && {
-          ...estimationData,
-          estimation:
-            (estimationData.estimationMax
-              ? ((estimationData.estimationMin || 0) +
-                  estimationData.estimationMax!) /
-                2
-              : estimationData.estimationMin) || 0,
-        }
-      );
     };
   return {
     addIssueQuotations,
@@ -273,7 +259,6 @@ export const coa = defineStore("coa", () => {
     fetchPublicationNamesFromCountry,
     fetchRecentIssues,
 
-    getEstimationWithAverage,
     isLoadingCountryNames,
     issuecodeDetails,
     issuecodesByPublicationcode,

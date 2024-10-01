@@ -15,18 +15,19 @@ export const getQuotations = async (
     where: filter,
   });
 
-  return results.reduce<Record<string, inducks_issuequotation>>((acc, quotation) => {
+  return results.reduce<Record<string, inducks_issuequotation & {estimationAverage: number}>>((acc, quotation) => {
     const issuecode = quotation.issuecode;
-    if (!acc[issuecode]) {
-      acc[issuecode] = quotation;
-    } else {
-      acc[issuecode] = {
-        ...acc[issuecode],
-        ...quotation,
-        estimationMin: Math.min(acc[issuecode].estimationMin ?? Infinity, quotation.estimationMin ?? Infinity),
-        estimationMax: Math.max(acc[issuecode].estimationMax ?? -Infinity, quotation.estimationMax ?? -Infinity),
-      };
-    }
+    acc[issuecode] = {...quotation, estimationAverage: 0};
+    acc[issuecode].estimationMin = Math.min(acc[issuecode].estimationMin ?? Infinity, quotation.estimationMin ?? Infinity);
+    acc[issuecode].estimationMax = Math.max(acc[issuecode].estimationMax ?? -Infinity, quotation.estimationMax ?? -Infinity)
+
+    acc[issuecode].estimationAverage =
+    (acc[issuecode].estimationMax
+      ? ((acc[issuecode].estimationMin || 0) +
+          acc[issuecode].estimationMax!) /
+        2
+      : acc[issuecode].estimationMin) || 0;
+    
     return acc;
   }, {});
 }

@@ -19,7 +19,8 @@ import { wtdcollection } from '~/stores/wtdcollection';
 
 const { offlineBannerHeight, socket, isPersistedDataLoaded, token } = storeToRefs(app());
 
-getCurrentInstance()!.appContext.app.provide(dmSocketInjectionKey, socket.value);
+// @ts-expect-error Unsure why the types are not compatible
+getCurrentInstance()!.appContext.app.provide(dmSocketInjectionKey, socket.value!);
 
 const collectionStore = wtdcollection();
 const { fetchCollection } = collectionStore;

@@ -17,7 +17,7 @@ import type { inducks_issuequotation } from "~prisma-schemas/schemas/coa";
 
 defineProps<{
   issue: Pick<inducks_issuequotation, "estimationMin" | "estimationMax"> & {
-    estimation: number;
+    estimationAverage: number;
   };
 }>();
 

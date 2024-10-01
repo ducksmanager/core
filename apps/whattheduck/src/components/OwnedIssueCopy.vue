@@ -169,9 +169,9 @@ ion-grid {
       align-items: end;
     }
 
-    &:first-child:not(+ ion-col) {
-      align-items: start;
-    }
+    // &:first-child:not(+ ion-col) {
+    //   align-items: start;
+    // }
 
     ion-radio-group {
       width: 100%;

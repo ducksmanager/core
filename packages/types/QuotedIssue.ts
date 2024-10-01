@@ -6,6 +6,6 @@ export type QuotedIssue = Pick<
   "issuecode" | "estimationMin" | "estimationMax"
 > &
   Pick<issue, "condition"> & {
-    estimation: number;
+    estimationAverage: number;
     estimationGivenCondition: number;
   };
