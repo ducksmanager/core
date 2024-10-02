@@ -10,7 +10,12 @@
     </ion-header>
     <ion-content v-if="currentAppVersion">
       <div>
-        <b>{{ t('What The Duck version {version}', { version: currentAppVersion }) }}</b>
+        <b>{{
+          t('What The Duck version {version} bundle {bundle}', {
+            version: currentAppVersion,
+            bundle: currentBundleVersion,
+          })
+        }}</b>
       </div>
       <div>
         <router-link :to="discordUrl"><img src="/icons/discord.png" /></router-link>
@@ -20,7 +25,7 @@
         <router-link :to="youtubeUrl"><img src="/icons/youtube.png" /></router-link>
       </div>
       <ion-button id="link-to-dm" :href="playStoreUrl">
-        {{ t("Notez What The Duck sur le Play Store si vous appréciez l'utiliser :-)") }}
+        {{ t("Notez What The Duck sur le {store} si vous l'appréciez :-)") }}
       </ion-button>
     </ion-content></ion-page
   >
@@ -29,23 +34,30 @@
 <script setup lang="ts">
 import { Capacitor } from '@capacitor/core';
 import { AppUpdate } from '@capawesome/capacitor-app-update';
+import { CapacitorUpdater } from '@capgo/capacitor-updater';
 
 const { t } = useI18n();
 
 const playStoreUrl = 'https://play.google.com/store/apps/details?id=net.ducksmanager.whattheduck';
 
 const currentAppVersion = ref<string | null>(null);
+const currentBundleVersion = ref<string | null>(null);
+const storeName = ref<string | null>(null);
 
 AppUpdate.getAppUpdateInfo()
   .then((result) => {
     if (Capacitor.getPlatform() === 'android') {
       currentAppVersion.value = result.currentVersionCode;
+      storeName.value = 'Play Store';
     } else {
       currentAppVersion.value = result.currentVersionName;
+      storeName.value = 'App Store';
     }
   })
-  .catch(() => {
+  .catch(async () => {
+    storeName.value = 'Play Store';
     currentAppVersion.value = 'web';
+    currentBundleVersion.value = (await CapacitorUpdater.current())?.bundle.version;
   });
 
 const discordUrl = import.meta.env.VITE_DISCORD_URL;
