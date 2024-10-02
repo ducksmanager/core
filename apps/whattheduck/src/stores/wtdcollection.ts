@@ -16,8 +16,6 @@ export const wtdcollection = defineStore('wtdcollection', () => {
   const {
     createPurchase,
     findInCollection,
-    fetchIssueCountsByCountrycode,
-    fetchIssueCountsByPublicationcode,
     fetchPublicationNames,
     isLoadingSuggestions,
     loadCollection,
@@ -71,9 +69,6 @@ export const wtdcollection = defineStore('wtdcollection', () => {
       await usersStore.fetchStats([webCollectionStore.user?.id || 0], force);
       // TODO retrieve user notification countries
 
-      await fetchIssueCountsByCountrycode(force);
-      await fetchIssueCountsByPublicationcode(force);
-
       (async () => {
         await loadSuggestions({ countryCode: 'ALL', sinceLastVisit: false });
         await statsStore.loadRatings();
@@ -96,7 +91,6 @@ export const wtdcollection = defineStore('wtdcollection', () => {
     coaIssueCountsPerCountrycode,
     createPurchase,
     fetchCollection,
-    fetchIssueCountsByPublicationcode,
     findInCollection,
     getCollectionIssues,
     highestQuotedIssue,

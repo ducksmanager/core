@@ -34,10 +34,10 @@
                   numberOfUsers: issuePopularities[cover.issuecode]!.popularity,
                 })
               }}</ion-col></ion-row
-            ><ion-row style="font-size: 0.8rem; width: 100%" v-if="getEstimationWithAverage(cover.issuecode)"
+            ><ion-row style="font-size: 0.8rem; width: 100%" v-if="issueQuotations[cover.issuecode]"
               ><ion-col size="2"><ion-icon :ios="pricetagOutline" :md="pricetagSharp"></ion-icon></ion-col
               ><ion-col class="ion-text-left"
-                ><IssueQuotation :issue="getEstimationWithAverage(cover.issuecode)" /></ion-col></ion-row
+                ><IssueQuotation :issue="{ ...cover, ...issueQuotations[cover.issuecode] }" /></ion-col></ion-row
           ></ion-row>
         </div>
         <ion-note>
@@ -77,14 +77,8 @@ import type CoverIdServices from '~dm-services/cover-id/types';
 
 const { t } = useI18n();
 const hasCoaData = ref(false);
-const { issuecodeDetails, publicationNames, issuePopularities } = storeToRefs(webStores.coa());
-const {
-  fetchPublicationNames,
-  fetchIssuecodeDetails,
-  fetchIssuePopularities,
-  fetchIssueQuotations,
-  getEstimationWithAverage,
-} = webStores.coa();
+const { issuecodeDetails, publicationNames, issuePopularities, issueQuotations } = storeToRefs(webStores.coa());
+const { fetchPublicationNames, fetchIssuecodeDetails, fetchIssuePopularities, fetchIssueQuotations } = webStores.coa();
 const { currentNavigationItem } = storeToRefs(app());
 
 const { IssueQuotation } = webComponents;

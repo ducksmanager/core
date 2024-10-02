@@ -46,7 +46,7 @@ export default abstract class {
   ) => void;
 
   abstract getIssues: (
-    callback: (data: AugmentedIssue<issue & { issuecode: string }>[]) => void,
+    callback: (data: {countByCountrycode: Record<string, number>, countByPublicationcode: Record<string, number>, issues: AugmentedIssue<issue & { issuecode: string }>[]}) => void,
   ) => void;
   abstract addOrChangeIssues: (
     data: CollectionUpdateMultipleIssues,
@@ -59,14 +59,6 @@ export default abstract class {
 
   abstract getPublicationTitles: (
     callback: (value: Record<string, string>) => void,
-  ) => void;
-
-  abstract getCoaCountByPublicationcode: (
-    callback: (value: Record<string, number>) => void,
-  ) => void;
-
-  abstract getCoaCountByCountrycode: (
-    callback: (value: Record<string, number>) => void,
   ) => void;
 
   abstract createRequests: (

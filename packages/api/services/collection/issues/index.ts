@@ -7,10 +7,10 @@ import { augmentIssueArrayWithInducksData } from "~/services/coa";
 import { getPublicationTitles } from "~/services/coa/publications";
 import type { InducksIssueQuotationSimple } from "~dm-types/InducksIssueQuotationSimple";
 import type { TransactionResults } from "~dm-types/TransactionResults";
-import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa/client";
 import type { issue, user } from "~prisma-schemas/schemas/dm";
 import { issue_condition } from "~prisma-schemas/schemas/dm";
 import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
+import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa/client";
 
 import type Events from "../types";
 import {
@@ -19,23 +19,65 @@ import {
   handleIsOnSale,
 } from "./util";
 
-export const getCollectionCountrycodes = (userId: number) =>
-  getCollectionPublicationcodes(userId).then((data) => [
-    ...new Set(data.map((publicationcode) => publicationcode.split("/")[0])),
-  ]);
-
-export const getCollectionPublicationcodes = (userId: number) =>
-  prismaDm.issue
-    .findMany({
-      distinct: ["publicationcode"],
-      select: {
-        publicationcode: true,
+const getCoaCountByPublicationcode = (collectionPublicationcodes: string[]) =>
+  prismaCoa.inducks_issue
+    .groupBy({
+      _count: {
+        issuenumber: true,
       },
       where: {
-        userId,
+        publicationcode: {
+          in: collectionPublicationcodes,
+        },
       },
+      by: ["publicationcode"],
     })
-    .then((data) => [...data.map(({ publicationcode }) => publicationcode!)]);
+    .then((data) =>
+      Object.fromEntries(
+        data.map(({ publicationcode, _count }) => [
+          publicationcode!,
+          _count.issuenumber,
+        ]),
+      ),
+    );
+
+const getCoaCountByCountrycode = (collectionCountrycodes: string[]) =>
+  prismaCoa.inducks_issue
+    .groupBy({
+      _count: {
+        issuenumber: true,
+      },
+      where: {
+        OR: collectionCountrycodes.map((countrycode) => ({
+          publicationcode: {
+            startsWith: `${countrycode}/`,
+          },
+        })),
+      },
+      by: ["publicationcode"],
+    })
+    .then((data) =>
+      data.reduce<Record<string, number>>(
+        (acc, { publicationcode, _count }) => {
+          const countrycode = publicationcode!.split("/")[0];
+          acc[countrycode] = _count.issuenumber + (acc[countrycode] || 0);
+          return acc;
+        },
+        {},
+      ),
+    );
+
+export const getCollectionCountrycodes = (issues: issue[]) => [
+  ...new Set(
+    getCollectionPublicationcodes(issues).map(
+      (publicationcode) => publicationcode.split("/")[0],
+    ),
+  ),
+];
+
+export const getCollectionPublicationcodes = (issues: issue[]) => [
+  ...new Set(issues.map(({ publicationcode }) => publicationcode!)),
+];
 
 export default (socket: Socket<Events>) => {
   socket.on("getPublicationTitles", async (callback) =>
@@ -65,6 +107,28 @@ export default (socket: Socket<Events>) => {
           issues as (issue & { issuecode: string })[],
         ),
       )
+      .then(async (issues) => {
+        const collectionPublicationcodes = [
+          ...new Set(issues.map(({ publicationcode }) => publicationcode!)),
+        ];
+        const collectionCountrycodes = [
+          ...new Set(
+            collectionPublicationcodes.map(
+              (publicationcode) => publicationcode.split("/")[0],
+            ),
+          ),
+        ];
+
+        return {
+          issues,
+          countByCountrycode: await getCoaCountByCountrycode(
+            collectionCountrycodes,
+          ),
+          countByPublicationcode: await getCoaCountByPublicationcode(
+            collectionPublicationcodes,
+          ),
+        };
+      })
       .then(callback);
   });
 
@@ -160,55 +224,6 @@ export default (socket: Socket<Events>) => {
     }
     callback(output);
   });
-
-  socket.on("getCoaCountByCountrycode", async (callback) =>
-    prismaCoa.inducks_issue
-      .groupBy({
-        _count: {
-          issuenumber: true,
-        },
-        where: {
-          OR: (await getCollectionCountrycodes(socket.data.user!.id)).map(
-            (countrycode) => ({
-              publicationcode: {
-                startsWith: `${countrycode}/`,
-              },
-            }),
-          ),
-        },
-        by: ["publicationcode"],
-      })
-      .then((data) =>
-        data.reduce<Record<string, number>>((acc, { publicationcode, _count }) => {
-          const countrycode = publicationcode!.split("/")[0];
-          acc[countrycode] = (_count.issuenumber + (acc[countrycode] || 0));
-          return acc
-        }, {})
-      )
-      .then(callback),
-  );
-
-  socket.on("getCoaCountByPublicationcode", async (callback) =>
-    prismaCoa.inducks_issue
-      .groupBy({
-        _count: {
-          issuenumber: true,
-        },
-        where: {
-          publicationcode: {
-            in: await getCollectionPublicationcodes(socket.data.user!.id),
-          },
-        },
-        by: ["publicationcode"],
-      })
-      .then((data) => {
-        callback(
-          Object.fromEntries(
-            data.map(({ publicationcode, _count }) => [publicationcode!, _count.issuenumber])
-          )
-        );
-      }),
-  );
 
   socket.on("getCollectionQuotations", async (callback) => {
     callback({

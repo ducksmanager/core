@@ -46,7 +46,7 @@ let chartData = $ref<ChartData<"bar", number[]> | null>(null),
   unitTypeCurrent = $ref<string>("number"),
   options = $ref<ChartOptions<"bar">>({});
 
-const { loadCollection, fetchIssueCountsByPublicationcode } = collection();
+const { loadCollection } = collection();
 const {
   totalPerPublicationUniqueIssuecodesSorted,
   coaIssueCountsByPublicationcode,
@@ -107,7 +107,6 @@ watch(
     await fetchPublicationNames(
       newValue.map(([publicationcode]) => publicationcode),
     );
-    await fetchIssueCountsByPublicationcode();
     hasCoaData = true;
   },
   { immediate: true },

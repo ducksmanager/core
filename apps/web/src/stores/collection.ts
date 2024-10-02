@@ -47,9 +47,9 @@ export const collection = defineStore("collection", () => {
 
   const { bookcaseWithPopularities } = storeToRefs(bookcase());
 
-  const issues = shallowRef<EventReturnType<
-    CollectionServices["getIssues"]
-  > | null>(null);
+  const issues = shallowRef<
+    EventReturnType<CollectionServices["getIssues"]>["issues"] | null
+  >(null);
 
   const collectionUtils = useCollection(
       issues as ShallowRef<(issue & { issuecode: string })[]>,
@@ -75,12 +75,16 @@ export const collection = defineStore("collection", () => {
     isLoadingPurchases = ref(false),
     isLoadingSuggestions = ref(false),
     isLoadingSubscriptions = ref(false),
-    coaIssueCountsPerCountrycode = shallowRef<EventReturnType<
-      CollectionServices["getCoaCountByCountrycode"]
-    > | null>(null),
-    coaIssueCountsByPublicationcode = shallowRef<EventReturnType<
-      CollectionServices["getCoaCountByPublicationcode"]
-    > | null>(null),
+    coaIssueCountsPerCountrycode = shallowRef<
+      | EventReturnType<CollectionServices["getIssues"]>["countByCountrycode"]
+      | null
+    >(null),
+    coaIssueCountsByPublicationcode = shallowRef<
+      | EventReturnType<
+          CollectionServices["getIssues"]
+        >["countByPublicationcode"]
+      | null
+    >(null),
     user = shallowRef<
       EventReturnType<CollectionServices["getUser"]> | undefined | null
     >(undefined),
@@ -162,16 +166,6 @@ export const collection = defineStore("collection", () => {
       await collectionServices.deletePurchase(id);
       await loadPurchases(true);
     },
-    fetchIssueCountsByCountrycode = async (force = false) => {
-      if (!coaIssueCountsByPublicationcode.value || force)
-        coaIssueCountsPerCountrycode.value =
-          await collectionServices.getCoaCountByCountrycode();
-    },
-    fetchIssueCountsByPublicationcode = async (force = false) => {
-      if (!coaIssueCountsByPublicationcode.value || force)
-        coaIssueCountsByPublicationcode.value =
-          await collectionServices.getCoaCountByPublicationcode();
-    },
     fetchPublicationNames = () => collectionServices.getPublicationTitles(),
     loadPreviousVisit = async () => {
       const result = await collectionServices.getLastVisit();
@@ -184,7 +178,11 @@ export const collection = defineStore("collection", () => {
     loadCollection = async (afterUpdate = false) => {
       if (afterUpdate || (!isLoadingCollection.value && !issues.value)) {
         isLoadingCollection.value = true;
-        issues.value = await collectionServices.getIssues();
+        ({
+          issues: issues.value,
+          countByCountrycode: coaIssueCountsPerCountrycode.value,
+          countByPublicationcode: coaIssueCountsByPublicationcode.value,
+        } = await collectionServices.getIssues());
         Object.assign(
           coa().issuecodeDetails,
           issues.value.map(({ issuecode, publicationcode, issuenumber }) => ({
@@ -376,8 +374,6 @@ export const collection = defineStore("collection", () => {
     publicationUrlRoot,
     createPurchase,
     deletePurchase,
-    fetchIssueCountsByCountrycode,
-    fetchIssueCountsByPublicationcode,
     fetchPublicationNames,
     hasRole,
     hasSuggestions,
