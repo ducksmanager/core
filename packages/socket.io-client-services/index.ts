@@ -74,7 +74,7 @@ export class SocketClient {
     },
   };
 
-  public onConnectError = (e: Error, namespace: string) => {
+  public onConnectError = (e: Error, namespace: string, _eventName?:string) => {
     console.error(`${namespace}: connect_error: ${e}`);
   };
   public onConnected = (namespace: string) => {
@@ -215,7 +215,8 @@ export class SocketClient {
                       name: "offline_no_cache",
                     }
                   : e,
-                namespaceName
+                namespaceName,
+                event
               );
             });
 

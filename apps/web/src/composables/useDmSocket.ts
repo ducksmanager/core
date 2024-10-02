@@ -22,8 +22,12 @@ const defaultExport = (
   socket: SocketClient,
   options: {
     cacheStorage: AxiosStorage;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    onConnectError: (e: any, namespace: string) => Promise<void> | void;
+
+    onConnectError: (
+      e: Error,
+      namespace: string,
+      eventName?: string,
+    ) => Promise<void> | void;
     onConnected?: (namespace: string) => void;
     session: {
       getToken: () => Promise<string | null | undefined>;

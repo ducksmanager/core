@@ -45,16 +45,23 @@ interface RouteMeta {
 const routeMeta = computed(() => route.meta as RouteMeta);
 
 const assignSocket = () => {
+  const socketUrl = ['web', 'ios'].includes(Capacitor.getPlatform())
+    ? import.meta.env.VITE_DM_SOCKET_URL
+    : import.meta.env.VITE_DM_SOCKET_URL_NATIVE || import.meta.env.VITE_DM_SOCKET_URL;
+  console.log(`Using socket URL ${socketUrl}`);
+
   const session = {
-      getToken: async () => token.value,
-      clearSession: () => {
-        token.value = null;
-        Cookies.remove('token');
-        storage.clear();
-      },
-      sessionExists: async () => token.value !== undefined,
+    getToken: async () => token.value,
+    clearSession: () => {
+      token.value = null;
+      Cookies.remove('token');
+      storage.clear();
     },
-    cacheStorage = buildStorage({
+    sessionExists: async () => token.value !== undefined,
+  };
+
+  socket.value = useDmSocket(new SocketClient(socketUrl), {
+    cacheStorage: buildStorage({
       set: (key, data, currentRequest) => {
         const item = {
           value: data,
@@ -74,13 +81,13 @@ const assignSocket = () => {
       remove: (key) => storage.remove(key),
       clear: () => storage.clear(),
     }),
-    onConnected = (namespace: string) => {
+    onConnected: (namespace: string) => {
       if (namespace === AppServices.namespaceEndpoint) {
         isOfflineMode.value = false;
       }
     },
-    onConnectError = (e: Error, namespace: string) => {
-      if (e.name === 'offline_no_cache') {
+    onConnectError: (e, namespace, event) => {
+      if (e.name === 'offline_no_cache' && event !== 'getBundleUrl') {
         isOfflineMode.value = 'offline_no_cache';
       } else if (namespace === CollectionServices.namespaceEndpoint) {
         if ([/jwt expired/, /invalid signature/].some((regex) => regex.test(e.message))) {
@@ -89,17 +96,8 @@ const assignSocket = () => {
       } else if (namespace === AppServices.namespaceEndpoint && isOfflineMode.value === false) {
         isOfflineMode.value = true;
       }
-    };
-
-  const socketUrl = ['web', 'ios'].includes(Capacitor.getPlatform())
-    ? import.meta.env.VITE_DM_SOCKET_URL
-    : import.meta.env.VITE_DM_SOCKET_URL_NATIVE || import.meta.env.VITE_DM_SOCKET_URL;
-  console.log(`Using socket URL ${socketUrl}`);
-  socket.value = useDmSocket(new SocketClient(socketUrl), {
-    cacheStorage,
+    },
     session,
-    onConnected,
-    onConnectError,
   });
 };
 

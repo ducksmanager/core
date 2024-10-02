@@ -94,6 +94,8 @@ const { fetchCoverUrls, fetchIssuecodesByPublicationcode, fetchIssuecodeDetails 
 const { bookcaseOptions, bookcaseUsername } = storeToRefs(bookcase());
 const { loadBookcaseOptions, loadBookcaseOrder } = bookcase();
 
+const { isOfflineMode } = storeToRefs(app());
+
 defineSlots<{
   rowPrefix: { item: issue };
   rowLabel: { text: string };
@@ -107,7 +109,11 @@ const getIssueDate = (issue: issue) => {
   return !date ? date : (typeof date === 'string' ? date : date.toISOString()).split('T')?.[0];
 };
 
-const coaIssuecodes = computed(() => issuecodesByPublicationcode.value[publicationcode.value!]);
+const coaIssuecodes = computed(() =>
+  !isOfflineMode.value
+    ? issuecodesByPublicationcode.value[publicationcode.value!]
+    : issues.value!.filter((issue) => issue.publicationcode === publicationcode.value).map((issue) => issue.issuecode),
+);
 const userIssues = computed(() =>
   (issues.value || [])
     .filter((issue) => issue.publicationcode === publicationcode.value)
@@ -116,10 +122,10 @@ const userIssues = computed(() =>
         ? () => true
         : ({ isToRead }) => isToRead === (currentFilter.value.id === 'unreadBooksOnly'),
     )
-    .map((issue) => ({
-      ...issue,
-      issueDate: getIssueDate(issue),
-    })),
+    .map((issue) => {
+      (issue as typeof issue & { issueDate: string }).issueDate = getIssueDate(issue);
+      return issue;
+    }),
 );
 
 watch(isCoaView, () => {
@@ -229,10 +235,12 @@ watch(
 );
 
 watch(
-  [isCoaView, publicationcode],
+  [isCoaView, publicationcode, isOfflineMode],
   async () => {
-    await fetchIssuecodesByPublicationcode([publicationcode.value!]);
-    await fetchIssuecodeDetails(coaIssuecodes.value);
+    if (isOfflineMode.value === false) {
+      await fetchIssuecodesByPublicationcode([publicationcode.value!]);
+      await fetchIssuecodeDetails(coaIssuecodes.value);
+    }
   },
   { immediate: true },
 );
