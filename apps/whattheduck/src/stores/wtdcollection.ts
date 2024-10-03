@@ -16,7 +16,6 @@ export const wtdcollection = defineStore('wtdcollection', () => {
   const {
     createPurchase,
     findInCollection,
-    fetchPublicationNames,
     isLoadingSuggestions,
     loadCollection,
     loadPurchases,
@@ -65,7 +64,6 @@ export const wtdcollection = defineStore('wtdcollection', () => {
       await loadPurchases(force);
       await loadUser(force);
       await coaStore.fetchCountryNames(true);
-      coaStore.addPublicationNames(await fetchPublicationNames());
       await usersStore.fetchStats([webCollectionStore.user?.id || 0], force);
       // TODO retrieve user notification countries
 

@@ -166,7 +166,6 @@ export const collection = defineStore("collection", () => {
       await collectionServices.deletePurchase(id);
       await loadPurchases(true);
     },
-    fetchPublicationNames = () => collectionServices.getPublicationTitles(),
     loadPreviousVisit = async () => {
       const result = await collectionServices.getLastVisit();
       if (typeof result === "object" && result?.error) {
@@ -178,11 +177,14 @@ export const collection = defineStore("collection", () => {
     loadCollection = async (afterUpdate = false) => {
       if (afterUpdate || (!isLoadingCollection.value && !issues.value)) {
         isLoadingCollection.value = true;
+        let publicationNames: Record<string, string> = {};
         ({
           issues: issues.value,
           countByCountrycode: coaIssueCountsPerCountrycode.value,
           countByPublicationcode: coaIssueCountsByPublicationcode.value,
+          publicationNames,
         } = await collectionServices.getIssues());
+        coa().addPublicationNames(publicationNames);
         Object.assign(
           coa().issuecodeDetails,
           issues.value.map(({ issuecode, publicationcode, issuenumber }) => ({
@@ -374,7 +376,6 @@ export const collection = defineStore("collection", () => {
     publicationUrlRoot,
     createPurchase,
     deletePurchase,
-    fetchPublicationNames,
     hasRole,
     hasSuggestions,
     isLoadingUser,

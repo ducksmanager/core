@@ -46,7 +46,12 @@ export default abstract class {
   ) => void;
 
   abstract getIssues: (
-    callback: (data: {countByCountrycode: Record<string, number>, countByPublicationcode: Record<string, number>, issues: AugmentedIssue<issue & { issuecode: string }>[]}) => void,
+    callback: (data: {
+      countByCountrycode: Record<string, number>,
+      countByPublicationcode: Record<string, number>,
+      publicationNames: Record<string, string>,
+      issues: AugmentedIssue<issue & { issuecode: string }>[]
+    }) => void,
   ) => void;
   abstract addOrChangeIssues: (
     data: CollectionUpdateMultipleIssues,
@@ -55,10 +60,6 @@ export default abstract class {
   abstract addOrChangeCopies: (
     data: CollectionUpdateSingleIssue,
     callback: (data: TransactionResults) => void,
-  ) => void;
-
-  abstract getPublicationTitles: (
-    callback: (value: Record<string, string>) => void,
   ) => void;
 
   abstract createRequests: (

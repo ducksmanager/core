@@ -67,26 +67,7 @@ const getCoaCountByCountrycode = (collectionCountrycodes: string[]) =>
       ),
     );
 
-export const getCollectionCountrycodes = (issues: issue[]) => [
-  ...new Set(
-    getCollectionPublicationcodes(issues).map(
-      (publicationcode) => publicationcode.split("/")[0],
-    ),
-  ),
-];
-
-export const getCollectionPublicationcodes = (issues: issue[]) => [
-  ...new Set(issues.map(({ publicationcode }) => publicationcode!)),
-];
-
 export default (socket: Socket<Events>) => {
-  socket.on("getPublicationTitles", async (callback) =>
-    getPublicationTitles({
-      publicationcode: {
-        in: await getCollectionPublicationcodes(socket.data.user!.id),
-      },
-    }).then(callback),
-  );
   socket.on("getIssues", async (callback) => {
     if (socket.data.user!.username === "demo") {
       await resetDemo();
@@ -127,6 +108,11 @@ export default (socket: Socket<Events>) => {
           countByPublicationcode: await getCoaCountByPublicationcode(
             collectionPublicationcodes,
           ),
+          publicationNames: await getPublicationTitles({
+            publicationcode: {
+              in: collectionPublicationcodes,
+            },
+          })
         };
       })
       .then(callback);
