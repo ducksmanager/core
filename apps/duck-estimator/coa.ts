@@ -11,7 +11,7 @@ export const createQuotations = async (
 ) => {
   console.log(`Adding ${data.length} quotations`);
   return prismaCoa.inducks_issuequotation.createMany({
-    data,
+    data: await prismaCoa.augmentIssueArrayWithInducksData(data),
   });
 };
 
