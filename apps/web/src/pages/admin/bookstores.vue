@@ -35,7 +35,7 @@ const validateBookstoreComment = async ({ id }: bookstoreComment) => {
 };
 
 (async () => {
-  bookstores = await bookstoreServices.getActiveBookstores();
+  bookstores = await bookstoreServices.getBookstores();
 })();
 </script>
 
