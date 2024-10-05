@@ -7,4 +7,4 @@ COPY packages/prisma-schemas/client_coa/libquery_engine-debian-openssl-3.0.x.so.
 COPY apps/duck-estimator/.env /app/
 COPY apps/duck-estimator/bundle.mjs /app/
 
-CMD ["node", "bundle.js"]
+CMD ["node", "bundle.mjs"]
