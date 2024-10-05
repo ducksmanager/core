@@ -45,7 +45,7 @@ const currentBundleVersion = ref<string | null>(null);
 const storeName = ref<string | null>(null);
 
 AppUpdate.getAppUpdateInfo()
-  .then((result) => {
+  .then(async (result) => {
     if (Capacitor.getPlatform() === 'android') {
       currentAppVersion.value = result.currentVersionCode;
       storeName.value = 'Play Store';
@@ -53,11 +53,11 @@ AppUpdate.getAppUpdateInfo()
       currentAppVersion.value = result.currentVersionName;
       storeName.value = 'App Store';
     }
+    currentBundleVersion.value = (await CapacitorUpdater.current())?.bundle.version;
   })
-  .catch(async () => {
+  .catch(() => {
     storeName.value = 'Play Store';
     currentAppVersion.value = 'web';
-    currentBundleVersion.value = (await CapacitorUpdater.current())?.bundle.version;
   });
 
 const discordUrl = import.meta.env.VITE_DISCORD_URL;

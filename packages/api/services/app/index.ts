@@ -11,7 +11,7 @@ export const getUpdateFileUrl = (appInfos?: AppInfos): ErrorableAppUpdate => {
 
     const version = mostRecentBundleUrl.match(/(?<=bundle-).+(?=.zip)/)![0];
 
-    if (appInfos && appInfos.version < version) {
+    if (appInfos && (appInfos.version === 'builtin' || appInfos.version < version)) {
 
       return {
         version,
