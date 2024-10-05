@@ -3,6 +3,9 @@ LABEL org.opencontainers.image.authors="Bruno Perel"
 WORKDIR /app
 
 RUN apt update && apt install -y imagemagick && apt clean && rm -rf /var/lib/apt/lists/*
+COPY packages/prisma-schemas/client_coa/libquery_engine-debian-openssl-3.0.x.so.node /tmp/prisma-engines/
+COPY packages/prisma-schemas/client_edgecreator/libquery_engine-debian-openssl-3.0.x.so.node /tmp/prisma-engines/
+COPY packages/prisma-schemas/client_dm/libquery_engine-debian-openssl-3.0.x.so.node /tmp/prisma-engines/
 
 COPY packages/prisma-schemas /app/
 COPY apps/edgecreator/api/.env /app/
