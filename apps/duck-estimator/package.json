@@ -9,8 +9,8 @@
     "name": "Bruno Perel"
   },
   "scripts": {
-    "build": "rm -rf dist/{api,types} && tsc && tsc-alias",
-    "start": "PWDEBUG=1 tsx watch index.ts",
+    "build": "bun build --target node --sourcemap index.ts --outdir dist && mv dist/index.js bundle.mjs && rm -rf dist",
+    "start": "bun --inspect run --watch index.ts",
     "prod:build-docker": "REPO_NAME=ghcr.io/bperel/duck-estimator pnpm -F '~ci' prod:build-docker -f apps/duck-estimator/Dockerfile",
     "prod:transfer-files-pre": "pnpm -F '~ci' prod:transfer-files @apps/duck-estimator/.env.local:apps/duck-estimator/.env",
     "prod:transfer-files-post": "pnpm -F '~ci' prod:transfer-files apps/duck-estimator/docker-compose.yml:@apps/duck-estimator/docker-compose.yml"
@@ -20,6 +20,7 @@
     "csv-parse": "^5.5.6",
     "csv-writer": "^1.6.0",
     "dotenv": "^16.4.5",
+    "electron": "^32.1.2",
     "playwright-firefox": "^1.47.2",
     "yargs": "^17.7.2",
     "~prisma-schemas": "workspace:*"
