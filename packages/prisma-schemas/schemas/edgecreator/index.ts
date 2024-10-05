@@ -1,2 +1,2 @@
-export * from "../../client_edgecreator";
 import "../../util/groupBy";
+export * from "../../client_edgecreator";
