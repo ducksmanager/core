@@ -1,21 +1,71 @@
-import type {
-  inducks_issue as rawInducksIssue,
-  PrismaClient,
+import {
+  type inducks_issue as rawInducksIssue,
+  type PrismaClient,
+  Prisma,
 } from "../../../client_coa";
 import {
   computeIssuenumber,
   computePublicationcode,
 } from "./overrideNullableCodes";
 
-export default (prismaClient: PrismaClient) =>
-  prismaClient.$extends({
-    result: {
-      inducks_issue: {
-        ...computePublicationcode,
-        ...computeIssuenumber,
+export default (prismaClient: PrismaClient) => {
+  return prismaClient
+    .$extends({
+      result: {
+        inducks_issue: {
+          ...computePublicationcode,
+          ...computeIssuenumber,
+        },
       },
-    },
-  });
+    })
+    .$extends({
+      client: {
+        getInducksIssueData: (issuecodes: string[], withTitle: boolean) =>
+          prismaClient.inducks_issue
+            .findMany({
+              select: {
+                publicationcode: true,
+                issuenumber: true,
+                issuecode: true,
+                title: withTitle,
+              },
+              where: {
+                issuecode: {
+                  in: issuecodes,
+                },
+              },
+            })
+            .then((inducksIssues) =>
+              (
+                inducksIssues as {
+                  publicationcode: string;
+                  issuenumber: string;
+                  issuecode: string;
+                  title?: string;
+                }[]
+              ).groupBy("issuecode"),
+            ),
+      },
+    })
+    .$extends({
+      client: {
+        augmentIssueArrayWithInducksData: async function <
+          Entity extends { issuecode: string },
+        >(issues: Entity[], withTitle: boolean = false) {
+          const inducksIssues = await Prisma.getExtensionContext(
+            this,
+          ).getInducksIssueData(
+            [...new Set(issues.map(({ issuecode }) => issuecode))],
+            withTitle,
+          );
+          return issues.map((issue) => ({
+            ...issue,
+            ...inducksIssues[issue.issuecode],
+          }));
+        },
+      },
+    });
+};
 
 type ExtendedType<
   BaseType,

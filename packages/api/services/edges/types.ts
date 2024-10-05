@@ -1,5 +1,4 @@
 import type { AugmentedIssue } from "~dm-types/AugmentedIssue";
-import type { EdgeWithModelIdAndInducksData } from "~dm-types/EdgeWithModelIdAndInducksData";
 import type { WantedEdge } from "~dm-types/WantedEdge";
 import type { Errorable } from "~socket.io-services/types";
 
@@ -11,7 +10,13 @@ export default abstract class {
     filter: { publicationcode?: string; issuecodes?: string[] },
     callback: (
       value: Errorable<
-        Record<string, EdgeWithModelIdAndInducksData>,
+        Record<string, AugmentedIssue<
+          {
+            modelId: number;
+            v3: boolean;
+            id: number;
+            issuecode: string;
+        }>>,
         "Invalid filter"
       >,
     ) => void,

@@ -2,7 +2,7 @@ import type { AxiosInstance } from "axios";
 import { defineStore } from "pinia";
 
 import { edgecreatorSocketInjectionKey } from "~/composables/useEdgecreatorSocket";
-import type { EdgeWithModelIdAndInducksData } from "~dm-types/EdgeWithModelIdAndInducksData";
+import type { EdgeWithModelIdAndIssuecode } from "~dm-types/EdgeWithModelIdAndIssuecode";
 import type { userContributionType } from "~prisma-schemas/schemas/dm";
 import type { ModelContributor } from "~types/ModelContributor";
 import type { SimpleUser } from "~types/SimpleUser";
@@ -26,8 +26,8 @@ export const main = defineStore("main", () => {
     isRange = ref(false),
     photoUrls = ref<Record<string, string>>({}),
     contributors = ref<ModelContributor[]>([]),
-    edgesBefore = ref<(EdgeWithModelIdAndInducksData | undefined)[]>([]),
-    edgesAfter = ref<(EdgeWithModelIdAndInducksData | undefined)[]>([]),
+    edgesBefore = ref<(EdgeWithModelIdAndIssuecode | undefined)[]>([]),
+    edgesAfter = ref<(EdgeWithModelIdAndIssuecode | undefined)[]>([]),
     publicationElements = ref<string[]>([]),
     publicationPhotos = ref<string[]>([]),
     warnings = ref<string[]>([]),

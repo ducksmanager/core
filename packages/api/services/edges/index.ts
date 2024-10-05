@@ -1,22 +1,15 @@
 import type { Namespace, Server } from "socket.io";
 import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
+import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa/client";
 import type { edgeModel } from "~prisma-schemas/schemas/edgecreator";
 import { prismaClient as prismaEdgeCreator } from "~prisma-schemas/schemas/edgecreator/client";
-import { augmentIssueObjectWithInducksData, augmentIssueArrayWithInducksData } from "../coa";
 import type Events from "./types";
 import { namespaceEndpoint } from "./types";
-import { edge } from "~prisma-schemas/schemas/dm";
-
-type EdgeWithModelIdAndInducksData = Pick<edge, "id" | "issuecode"> & {
-  modelId?: number;
-  v3: boolean;
-  // Add other properties from inducksIssueWithNonNullablePublicationcode if needed
-};
 
 const getEdges = async (filters: {
   publicationcode?: string;
   issuecodes?: string[];
-}): Promise<Record<string, EdgeWithModelIdAndInducksData>> => {
+}) => {
   if (!filters.publicationcode || !filters.issuecodes) {
     throw new Error("Invalid filter");
   }
@@ -46,14 +39,11 @@ const getEdges = async (filters: {
         issuecode,
       },
     })
-  ).reduce<Record<string, EdgeWithModelIdAndInducksData>>((acc, edge) => {
-    acc[edge.issuecode!] = {
+  ).map((edge) => ({
       ...edge,
       modelId: edgeModels[edge.issuecode]?.id,
       v3: !!edgeModels[edge.issuecode],
-    };
-    return acc;
-  }, {});
+    }));
 };
 
 export default (io: Server) => {
@@ -73,7 +63,7 @@ export default (io: Server) => {
     ORDER BY numberOfIssues DESC, issuecode
     LIMIT 20
   `
-        .then((issues) => augmentIssueArrayWithInducksData(issues))
+        .then((issues) => prismaCoa.augmentIssueArrayWithInducksData(issues))
         .then(callback),
     );
 
@@ -82,14 +72,14 @@ export default (io: Server) => {
         .findMany({
           select: { issuecode: true },
         })
-        .then((issues) => augmentIssueArrayWithInducksData(issues))
+        .then((issues) => prismaCoa.augmentIssueArrayWithInducksData(issues))
         .then(callback),
     );
 
     socket.on("getEdges", async (filters, callback) =>
       getEdges(filters)
-        .then((edges) => augmentIssueObjectWithInducksData(edges))
-        .then(callback),
+        .then((edges) => prismaCoa.augmentIssueArrayWithInducksData(edges))
+        .then(edges => callback(edges.groupBy('issuecode')))
     );
   });
 };

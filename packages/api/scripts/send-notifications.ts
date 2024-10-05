@@ -8,7 +8,6 @@ import PushNotifications from "@pusher/push-notifications-server";
 import dayjs from "dayjs";
 
 import { i18n } from "~/emails/email";
-import { augmentIssueArrayWithInducksData } from "~/services/coa";
 import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa/client";
 import type { user } from "~prisma-schemas/schemas/dm";
 import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
@@ -115,7 +114,7 @@ getSuggestions(
     suggestionsPerUser,
   )) {
     const userIdNumber = parseInt(userId);
-    const pendingNotificationsForUser = await augmentIssueArrayWithInducksData(
+    const pendingNotificationsForUser = await prismaCoa.augmentIssueArrayWithInducksData(
       Object.values(suggestionsForUser.issues).filter(
         (suggestion) =>
           !alreadySentNotificationsPerUser[userIdNumber] ||
