@@ -10,33 +10,46 @@ import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
 
 import type Events from "./types";
 import { namespaceEndpoint } from "./types";
+import {  UserIsAdminMiddleware } from "../auth/util";
+
+const getBookstores = async (onlyActive?:true) => 
+  prismaDm.bookstore
+    .findMany({
+      select: {
+        id: true,
+        name: true,
+        address: true,
+        coordX: true,
+        coordY: true,
+        comments: {
+          where: {
+            isActive: true,
+          },
+        },
+      },
+      where: onlyActive ? {
+        comments: {
+          some: {
+            isActive: true,
+          },
+        },
+      }: undefined,
+    })
 
 export default (io: Server) => {
+
+  (io.of(namespaceEndpoint) as Namespace<Events>)
+    .use(UserIsAdminMiddleware)
+    .on("connection", (socket) => {
+      socket.on("getBookstores", (callback) =>getBookstores()
+          .then(callback),
+      );
+    });
+
   (io.of(namespaceEndpoint) as Namespace<Events>).on("connection", (socket) => {
     console.log("connected to bookstores");
     socket.on("getActiveBookstores", (callback) =>
-      prismaDm.bookstore
-        .findMany({
-          select: {
-            id: true,
-            name: true,
-            address: true,
-            coordX: true,
-            coordY: true,
-            comments: {
-              where: {
-                isActive: true,
-              },
-            },
-          },
-          where: {
-            comments: {
-              some: {
-                isActive: true,
-              },
-            },
-          },
-        })
+      getBookstores(true)
         .then(callback),
     );
 

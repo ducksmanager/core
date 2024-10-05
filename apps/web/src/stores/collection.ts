@@ -350,7 +350,7 @@ export const collection = defineStore("collection", () => {
       if (!isLoadingUser.value && (afterUpdate || !user.value)) {
         isLoadingUser.value = true;
         const response = await collectionServices.getUser();
-        if ("error" in response) {
+        if (typeof response === "object" && "error" in response) {
           socketOptions.session.clearSession();
           user.value = null;
         } else {

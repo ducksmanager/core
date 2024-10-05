@@ -93,7 +93,7 @@ export const UserIsEdgeCreatorEditorAuthMiddleware = (
 };
 
 export const UserIsAdminMiddleware = (
-  socket: SocketWithUser,
+  socket: Socket,
   next: (error?: Error) => void,
 ) => {
   if (

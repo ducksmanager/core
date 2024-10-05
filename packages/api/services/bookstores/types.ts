@@ -5,6 +5,9 @@ import type { Errorable } from "~socket.io-services/types";
 export const namespaceEndpoint = "/bookstores";
 export default abstract class {
   static namespaceEndpoint = namespaceEndpoint;
+  abstract getBookstores: (
+    callback: (value: SimpleBookstore[]) => void,
+  ) => void;
   abstract getActiveBookstores: (
     callback: (value: SimpleBookstore[]) => void,
   ) => void;
