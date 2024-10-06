@@ -271,6 +271,22 @@ model inducks_issueprice {
   @@id([issuecode, amount])
 }
 
+model inducks_issuequotation_raw {
+  ID              Int       @id @default(autoincrement())
+  /// @deprecated
+  publicationcode String?   @db.VarChar(15)
+  /// @deprecated
+  issuenumber     String?   @db.VarChar(12)
+  estimationmin   Float?    @db.Float
+  estimationmax   Float?    @db.Float
+  scrapedate      DateTime? @db.DateTime(0)
+  source          String?   @db.VarChar(15)
+  issuecode       String?   @db.VarChar(28)
+
+  @@index([publicationcode], map: "inducks_issuequotation_raw__index_publication")
+  @@index([issuecode, source], map: "inducks_issuequotation_raw__uindex_issuecode_source")
+}
+
 model inducks_issuequotation {
   id              Int       @id @default(autoincrement()) @map("ID")
   /// @deprecated

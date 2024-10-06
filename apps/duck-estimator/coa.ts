@@ -6,17 +6,21 @@ import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa/client";
 export const createQuotations = async (
   data: Omit<
     inducks_issuequotation,
-    "id" | "shortIssuecode" | "publicationcode" | "issuenumber"
+    "id" | "publicationcode" | "issuenumber"
   >[],
 ) => {
   console.log(`Adding ${data.length} quotations`);
-  return prismaCoa.inducks_issuequotation.createMany({
+  return prismaCoa.inducks_issuequotation_raw.createMany({
     data: await prismaCoa.augmentIssueArrayWithInducksData(data),
   });
 };
 
-export const truncateQuotations = async () =>
-  await prismaCoa.$executeRawUnsafe(`TRUNCATE TABLE inducks_issuequotation`);
+export const deleteQuotations = async (source: string) =>
+  await prismaCoa.inducks_issuequotation_raw.deleteMany({
+    where: {
+      source,
+    },
+  })
 
 export const isInducksIssuecodeExisting = async (issuecode: string) =>
   await prismaCoa.inducks_issue.findFirstOrThrow({

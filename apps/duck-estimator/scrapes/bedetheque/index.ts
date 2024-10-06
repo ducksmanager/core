@@ -1,7 +1,7 @@
 import { Scraper } from "bedetheque-scraper";
 
 import { getScrapeCacheTime, syncScrapeCache } from "~/cache";
-import { createQuotations, isInducksIssuecodeExisting } from "~/coa";
+import { createQuotations, deleteQuotations, isInducksIssuecodeExisting } from "~/coa";
 import { readCsvMapping } from "~/csv";
 
 const MAPPING_FILE = "scrapes/bedetheque/coa-mapping.csv";
@@ -82,6 +82,7 @@ export async function scrape() {
     }
     console.log("Done");
   }
+  await deleteQuotations('bedetheque');
   await createQuotations(quotations);
   console.log("Done for all");
 }

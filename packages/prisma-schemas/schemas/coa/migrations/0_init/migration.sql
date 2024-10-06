@@ -170,8 +170,7 @@ create table inducks_entry
     alsoreprint             varchar(336)    null,
     part                    varchar(5)      null,
     entrycomment            varchar(2009)   null,
-    error                   enum ('Y', 'N') null,
-    short_issuecode         varchar(19) as (regexp_replace(`issuecode`, '[ ]+', ' '))
+    error                   enum ('Y', 'N') null
 );
 
 create fulltext index entryTitleFullText
@@ -251,8 +250,7 @@ create table inducks_equiv
 (
     issuecode       varchar(15) null,
     equivid         int(7)      null,
-    equivcomment    varchar(3)  null,
-    short_issuecode varchar(15) as (regexp_replace(`issuecode`, '[ ]+', ' '))
+    equivcomment    varchar(3)  null
 );
 
 create index fk0
@@ -312,8 +310,7 @@ create table inducks_issue
     locked              enum ('Y', 'N') null,
     inxforbidden        enum ('Y', 'N') null,
     inputfilecode       int(7)          null,
-    maintenanceteamcode varchar(8)      null,
-    short_issuecode     varchar(19) as (regexp_replace(`issuecode`, '[ ]+', ' '))
+    maintenanceteamcode varchar(8)      null
 );
 
 create index fk0
@@ -321,9 +318,6 @@ create index fk0
 
 create index fk1
     on inducks_issue (publicationcode);
-
-create index inducks_issue_short_issuecode_index
-    on inducks_issue (short_issuecode);
 
 create index pk0
     on inducks_issue (issuecode);
@@ -349,8 +343,7 @@ create table inducks_issue2
     locked              enum ('Y', 'N') null,
     inxforbidden        enum ('Y', 'N') null,
     inputfilecode       int(7)          null,
-    maintenanceteamcode varchar(8)      null,
-    short_issuecode     varchar(19) as (regexp_replace(`issuecode`, '[ ]+', ' '))
+    maintenanceteamcode varchar(8)      null
 );
 
 create index fk0
@@ -376,8 +369,7 @@ create table inducks_issuedate
     issuecode       varchar(19)     null,
     date            varchar(10)     null,
     kindofdate      varchar(76)     null,
-    doubt           enum ('Y', 'N') null,
-    short_issuecode varchar(19) as (regexp_replace(`issuecode`, '[ ]+', ' '))
+    doubt           enum ('Y', 'N') null
 );
 
 create index pk0
@@ -389,8 +381,7 @@ create table inducks_issuejob
     personcode      varchar(48)     null,
     inxtransletcol  varchar(1)      null,
     issuejobcomment varchar(48)     null,
-    doubt           enum ('Y', 'N') null,
-    short_issuecode varchar(19) as (regexp_replace(`issuecode`, '[ ]+', ' '))
+    doubt           enum ('Y', 'N') null
 );
 
 create index fk0
@@ -405,31 +396,47 @@ create table inducks_issueprice
     amount          varchar(86) null,
     currency        varchar(14) null,
     comment         varchar(75) null,
-    sequencenumber  int(7)      null,
-    short_issuecode varchar(17) as (regexp_replace(`issuecode`, '[ ]+', ' '))
+    sequencenumber  int(7)      null
 );
 
 create index pk0
     on inducks_issueprice (issuecode, amount);
 
-create table inducks_issuequotation
+create table coa.inducks_issuequotation_raw
 (
-    ID              int auto_increment
-        primary key,
-    publicationcode varchar(15) not null,
-    issuenumber     varchar(12) not null,
+    ID              int auto_increment primary key,
+    publicationcode varchar(15) null,
+    issuenumber     varchar(12) null,
     estimationmin   float       null,
     estimationmax   float       null,
     scrapedate      datetime    null,
-    source          varchar(15) not null,
-    issuecode       varchar(28) as (concat(`publicationcode`, ' ', `issuenumber`)),
-    short_issuecode varchar(28) as (concat(`publicationcode`, ' ', `issuenumber`)),
-    constraint inducks_issuequotation__uindex_short_issuecode_source
-        unique (short_issuecode, source)
+    source          varchar(15) null,
+    issuecode       varchar(28) null
 );
 
-create index inducks_issuequotation__index_publication
-    on inducks_issuequotation (publicationcode);
+create index inducks_issuequotation_raw__index_publication
+    on coa.inducks_issuequotation_raw (publicationcode);
+
+create index inducks_issuequotation_raw__uindex_issuecode_source
+    on coa.inducks_issuequotation_raw (issuecode, source);
+
+
+create view coa.inducks_issuequotation as
+select q.ID,
+       q.publicationcode,
+       q.issuenumber,
+       (select avg(estimationmin)
+        from inducks_issuequotation_raw q2
+        where q.issuecode = issuecode
+          and estimationmin is not null) AS estimationmin,
+       (select avg(estimationmax)
+        from coa.inducks_issuequotation_raw q2
+        where q.issuecode = issuecode
+          and estimationmax is not null) AS estimationmax,
+       q.issuecode
+from inducks_issuequotation_raw q
+group by q.issuecode;
+
 
 create table inducks_issuerange
 (
@@ -452,8 +459,7 @@ create table inducks_issueurl
 (
     issuecode       varchar(14) null,
     sitecode        varchar(12) null,
-    url             varchar(12) null,
-    short_issuecode varchar(14) as (regexp_replace(`issuecode`, '[ ]+', ' '))
+    url             varchar(12) null
 );
 
 create index fk0
@@ -739,8 +745,7 @@ create table inducks_publishingjob
 (
     publisherid          varchar(94) null,
     issuecode            varchar(17) null,
-    publishingjobcomment varchar(67) null,
-    short_issuecode      varchar(17) as (regexp_replace(`issuecode`, '[ ]+', ' '))
+    publishingjobcomment varchar(67) null
 );
 
 create index fk0
@@ -1166,8 +1171,7 @@ create index pk0
 create table induckspriv_issue
 (
     issuecode       varchar(16)   null,
-    issuecomment    varchar(1167) null,
-    short_issuecode varchar(16) as (regexp_replace(`issuecode`, '[ ]+', ' '))
+    issuecomment    varchar(1167) null
 );
 
 create index pk0

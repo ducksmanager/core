@@ -1,6 +1,6 @@
 import { firefox } from "playwright-firefox";
 
-import { createQuotations, getIssuecode } from "~/coa";
+import { createQuotations, deleteQuotations, getIssuecode } from "~/coa";
 import { readCsvMapping } from "~/csv";
 
 const MAPPING_FILE = "scrapes/comicsmania/coa-mapping.csv";
@@ -154,5 +154,6 @@ export async function scrape() {
   for (const { sectionTitle } of sectionsNotFound) {
     console.log("Section not found: " + sectionTitle);
   }
+  await deleteQuotations('comicsmania');
   await createQuotations(quotations);
 }

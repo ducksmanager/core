@@ -3,7 +3,7 @@ import dotenv from "dotenv";
 import { mkdirSync } from "fs";
 
 import { getCacheDir } from "./cache";
-import { getAll, truncateQuotations } from "./coa";
+import { getAll } from "./coa";
 import { writeCsvMapping } from "./csv";
 import { scrape as bdm } from "./scrapes/bdm";
 import { scrape as bedetheque } from "./scrapes/bedetheque";
@@ -22,7 +22,6 @@ const scrapes = [
 dotenv.config({ path: ".env.local" });
 
 (async () => {
-  await truncateQuotations();
   mkdirSync(getCacheDir(), { recursive: true });
 
   let hasFailed = false;

@@ -1,7 +1,7 @@
 import { firefox } from "playwright-firefox";
 
 import { syncScrapeCache } from "~/cache";
-import { createQuotations, getInducksIssuecodesBetween } from "~/coa";
+import { createQuotations, deleteQuotations, getInducksIssuecodesBetween } from "~/coa";
 import { readCsvMapping } from "~/csv";
 
 const MAPPING_FILE = "scrapes/seriesam/coa-mapping.csv";
@@ -136,6 +136,7 @@ export async function scrape() {
     }
     console.log("Done");
   }
+  await deleteQuotations('seriesam');
   await createQuotations(quotations);
   console.log("Done for all");
 }

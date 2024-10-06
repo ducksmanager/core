@@ -50,11 +50,7 @@ try {
     .join("\n")
     // TODO uncomment? Replace "pk0" indexes with actual primary keys
     // .replace(/KEY pk0/gms, "CONSTRAINT `PRIMARY` PRIMARY KEY")
-    // Add short_issuecode column at the end of the table each time issuecode is declared
-    .replace(
-      /(^([ ]*)issuecode ([^$,]+).+?\)$)/gms,
-      `$1,\n$2short_issuecode $3 as (regexp_replace(issuecode, '[ ]+', ' '))`,
-    )
+
     // Replace ISV file paths with absolute paths
     .replace(
       /LOAD DATA LOCAL INFILE ".\/([^"]+)"/gms,
@@ -114,9 +110,6 @@ ALTER TABLE inducks_entryurl ADD id INT AUTO_INCREMENT NOT NULL, ADD PRIMARY KEY
 
 # Add full text index on entry titles
 ALTER TABLE inducks_entry ADD FULLTEXT INDEX entryTitleFullText(title);
-
-create index inducks_issue_short_issuecode_index
-    on inducks_issue (short_issuecode);
 
 create index inducks_issue_publicationcode_index
     on inducks_issue (publicationcode);

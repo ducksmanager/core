@@ -16,7 +16,6 @@ create table covers
     issuecode       varchar(17) not null,
     sitecode        varchar(11) not null,
     url             varchar(98) not null,
-    short_issuecode varchar(19) as (regexp_replace(`issuecode`, '[ ]+', ' ')),
     constraint uniquefieldset_covers
         unique (issuecode, url)
 )

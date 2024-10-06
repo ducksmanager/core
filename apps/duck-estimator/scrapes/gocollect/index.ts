@@ -3,7 +3,7 @@ import "dotenv/config";
 import { firefox } from "playwright-firefox";
 
 import { getScrapeCacheTime, syncScrapeCache } from "~/cache";
-import { createQuotations } from "~/coa";
+import { createQuotations, deleteQuotations } from "~/coa";
 import { readCsvMapping } from "~/csv";
 import { prismaClient } from "~prisma-schemas/schemas/coa/client";
 
@@ -44,6 +44,7 @@ export async function scrape() {
 
   const issuePage = await browserContext.newPage();
 
+  await deleteQuotations('gocollect');
   for (const { publicationcode, publicationUrl } of mappedPublications) {
     const quotations = [];
     let currentPageForPublication = 1;

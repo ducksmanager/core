@@ -1,4 +1,4 @@
-import { createQuotations } from "~/coa";
+import { createQuotations, deleteQuotations } from "~/coa";
 import { readCsvMapping } from "~/csv";
 
 const MAPPING_FILE = "scrapes/bdm/coa-mapping.csv";
@@ -14,6 +14,8 @@ export async function scrape() {
   await readCsvMapping<CsvIssue>(MAPPING_FILE, (record) =>
     mappedIssues.push(record),
   );
+
+  await deleteQuotations('bdm');
   await createQuotations(
     mappedIssues.map(({ issuecode, estimation }) => ({
       issuecode,

@@ -108,9 +108,7 @@ create table numeros
     DateAjout       timestamp                                    default current_timestamp() null,
     issuecode       varchar(25) collate utf8mb3_unicode_ci as (concat(convert(`Pays` using utf8mb3), '/',
                                                                       convert(`Magazine` using utf8mb3), ' ',
-                                                                      `Numero`)),
-    short_issuecode varchar(25) collate utf8mb3_unicode_ci as (concat(convert(`Pays` using utf8mb3), '/',
-                                                                      convert(`Magazine` using utf8mb3), ' ', `Numero`))
+                                                                      `Numero`))
 )
     engine = MyISAM
     collate = latin1_german2_ci;
@@ -132,9 +130,6 @@ create index Utilisateur
 
 create index numeros_issuecode_index
     on numeros (issuecode);
-
-create index numeros_short_issuecode_index
-    on numeros (short_issuecode);
 
 create table numeros_popularite
 (
@@ -178,11 +173,8 @@ create table tranches_pretes
     points          int                                   null,
     slug            varchar(30) as (concat('edges-', replace(`publicationcode`, '/', '-'), '-', `issuenumber`)),
     issuecode       varchar(23) as (concat(`publicationcode`, ' ', `issuenumber`)),
-    short_issuecode varchar(23) as (concat(`publicationcode`, ' ', `issuenumber`)),
     constraint tranches_pretes_issuecode_uindex
         unique (issuecode),
-    constraint tranches_pretes_short_issuecode_uindex
-        unique (short_issuecode),
     constraint tranchespretes_unique
         unique (publicationcode, issuenumber)
 )
@@ -419,7 +411,6 @@ create table users_suggestions_notifications
         primary key,
     ID_User         int(10)                              not null,
     issuecode       varchar(12)                          not null,
-    short_issuecode varchar(12)                          not null,
     text            text                                 null,
     date            datetime default current_timestamp() null,
     constraint users_notifications__index_user_issue
