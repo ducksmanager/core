@@ -311,15 +311,29 @@ model inducks_issueprice {
   @@id([issuecode, amount])
 }
 
+model inducks_issuequotation_raw {
+  ID              Int       @id @default(autoincrement())
+  /// @deprecated
+  publicationcode String?   @db.VarChar(15)
+  /// @deprecated
+  issuenumber     String?   @db.VarChar(12)
+  estimationmin   Float?    @db.Float
+  estimationmax   Float?    @db.Float
+  scrapedate      DateTime? @db.DateTime(0)
+  source          String?   @db.VarChar(15)
+  issuecode       String?   @db.VarChar(28)
+
+  @@index([publicationcode], map: "inducks_issuequotation_raw__index_publication")
+  @@index([issuecode, source], map: "inducks_issuequotation_raw__uindex_issuecode_source")
+}
+
 model inducks_issuequotation {
-  id              Int       @id @default(autoincrement()) @map("ID")
-  publicationcode String    @db.VarChar(15)
-  issuenumber     String    @db.VarChar(12)
-  estimationMin   Float?    @map("estimationmin") @db.Float
-  estimationMax   Float?    @map("estimationmax") @db.Float
-  scrapeDate      DateTime? @map("scrapedate") @db.DateTime(0)
-  source          String    @db.VarChar(15)
-  issuecode       String?   @unique(map: "inducks_issuequotation__uindex_issuecode") @db.VarChar(28)
+  id              Int     @id @default(autoincrement()) @map("ID")
+  publicationcode String  @db.VarChar(15)
+  issuenumber     String  @db.VarChar(12)
+  estimationMin   Float?  @map("estimationmin") @db.Float
+  estimationMax   Float?  @map("estimationmax") @db.Float
+  issuecode       String? @unique(map: "inducks_issuequotation__uindex_issuecode") @db.VarChar(28)
 
   @@index([publicationcode], map: "inducks_issuequotation__index_publication")
 }
