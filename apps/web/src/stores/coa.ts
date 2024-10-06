@@ -64,7 +64,7 @@ export const coa = defineStore("coa", () => {
     issuecodesByPublicationcode = ref<{
       [publicationcode: string]: string[];
     }>({}),
-    issueQuotations = shallowRef<
+    issueQuotations = ref<
       EventReturnType<CoaServices["getQuotationsByIssuecodes"]>["quotations"]
     >({}),
     addPublicationNames = (
