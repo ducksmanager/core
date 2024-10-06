@@ -17,6 +17,7 @@ import {
   deleteIssues,
   handleIsOnSale,
 } from "./util";
+import { getShownQuotations } from "~/services/coa/quotations";
 
 const getCoaCountByPublicationcode = (collectionPublicationcodes: string[]) =>
   prismaCoa.inducks_issue
@@ -210,10 +211,8 @@ export default (socket: Socket<Events>) => {
     callback(output);
   });
 
-  socket.on("getCollectionQuotations", async (callback) => {
-    callback({
-      quotations: (
-        await prismaDm.$queryRaw<InducksIssueQuotationSimple[]>`
+  socket.on("getCollectionQuotations", async (callback) =>
+    prismaDm.$queryRaw<InducksIssueQuotationSimple[]>`
           select
             issuecode,
             round(min(estimationmin))                         AS estimationMin,
@@ -225,10 +224,8 @@ export default (socket: Socket<Events>) => {
           where ID_Utilisateur = ${socket.data.user!.id}
             and estimationmin is not null
           group by numeros.ID;
-        `
-      ).groupBy("issuecode"),
-    });
-  });
+        `.then(getShownQuotations).then(quotations => callback({quotations}))
+  );
 };
 
 const addOrChangeIssues = async (
