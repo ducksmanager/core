@@ -123,7 +123,10 @@ const selectedIssues = $computed(() =>
   Object.keys(selectedIssueIdsByIssuecode),
 );
 const issueIds = $computed(() =>
-  Object.values(selectedIssueIdsByIssuecode).map(({ id }) => id),
+  Object.values(selectedIssueIdsByIssuecode).reduce<number[]>((acc, issues) => {
+    acc.concat(issues.map((issue) => issue.id));
+    return acc;
+  }, []),
 );
 
 const selectedIssuesBuyerIds = $computed(() => [

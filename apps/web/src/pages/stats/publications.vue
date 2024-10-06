@@ -64,7 +64,7 @@ const totalPerPublicationGroupSmallCounts: {
     {},
 );
 const labels = $computed(() => {
-  if (!hasPublicationNames) return false;
+  if (!hasPublicationNames) return undefined;
 
   return Object.entries(totalPerPublicationGroupSmallCounts)
     .sort(sortByCount)

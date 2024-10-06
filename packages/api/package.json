@@ -1,13 +1,13 @@
 {
   "name": "~api",
   "engines": {
-    "node": ">=18.0.0 <19.0.0"
+    "node": ">=20.0.0 <21.0.0"
   },
   "version": "1.0.0",
   "scripts": {
     "build": "bun build --target node --sourcemap index.ts --outfile bundle.mjs",
     "dev": "concurrently -n api,docker-compose,db \"pnpm -F ~api nodemon-watch\" \"docker compose -f docker-compose-dev.yml up pastec mailcatcher\" \"pnpm -F ~prisma-schemas dev\"",
-    "nodemon-watch": "concurrently -n nodemon,tsc \"bun --inspect run --watch index.ts\" \"tsc --noEmit --watch\"",
+    "nodemon-watch": "concurrently -n nodemon,tsc \"bun --inspect run --watch index.ts\" \"tsc --noEmit\"",
     "prod:deploy": "DIR=packages/api pnpm -F '~ci' prod:docker-compose-up",
     "prod:build-docker": "REPO_NAME=ghcr.io/bperel/ducksmanager-api:websocket pnpm -F '~ci' prod:build-docker -f packages/api/Dockerfile",
     "prod:transfer-files-pre": "pnpm -F '~ci' prod:transfer-files @packages/api/.env:packages/api/.env @packages/prisma-clients/.env.prod.local:packages/prisma-schemas/.env",
@@ -37,7 +37,7 @@
     "@types/ejs": "^3.1.5",
     "@types/i18n": "^0.13.12",
     "@types/jsonwebtoken": "^9.0.7",
-    "@types/node": "^18.19.54",
+    "@types/node": "^20.0.0",
     "@types/nodemailer": "^6.4.16",
     "concurrently": "^9.0.1",
     "nodemon": "^3.1.7",

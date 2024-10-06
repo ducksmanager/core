@@ -464,7 +464,10 @@ const showFilter = $computed(
 );
 
 const issueIds = $computed(() =>
-  Object.values(copiesBySelectedIssuecode).map(({ id }) => id),
+  Object.values(copiesBySelectedIssuecode).reduce<number[]>((acc, issues) => {
+    acc.concat(issues.map((issue) => issue.id));
+    return acc;
+  }, []),
 );
 
 let contextMenuKey = $ref<string>("context-menu");

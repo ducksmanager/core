@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "type": "module",
   "engines": {
-    "node": ">=18.0.0 <19.0.0"
+    "node": ">=20.0.0 <21.0.0"
   },
   "scripts": {
     "dumili": "concurrently -p \"[dumili-{name}]\" --kill-others-on-fail -n front,api,dm,kumiko+paddleocr \"pnpm -F ~dumili dev\" \"pnpm -F ~dumili-api dev\" \"pnpm -F ~web web\" \"docker compose -f docker-compose-dev.yml up kumiko db\"",
