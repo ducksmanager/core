@@ -186,7 +186,7 @@ export default abstract class {
   abstract getCollectionQuotations: (
     callback: (
       value: Errorable<
-        { quotations: Record<string, InducksIssueQuotationSimple> },
+        { quotations: Record<string, InducksIssueQuotationSimple & {estimationAverage: number}> },
         "Bad request"
       >,
     ) => void,

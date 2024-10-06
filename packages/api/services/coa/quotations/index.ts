@@ -10,9 +10,15 @@ const ISSUE_CODE_REGEX = /[a-z]+\/[-A-Z0-9 ]+/g;
 export const getShownQuotations = <Quotation extends Pick<inducks_issuequotation, 'issuecode'|'estimationMin'|'estimationMax'>> (quotations: Quotation[]) =>
   quotations.reduce<Record<string, Quotation & {estimationAverage: number}>>((acc, quotation) => {
     const issuecode = quotation.issuecode;
-    acc[issuecode] = {...quotation, estimationAverage: 0};
-    acc[issuecode].estimationMin = Math.min(acc[issuecode].estimationMin ?? Infinity, quotation.estimationMin ?? Infinity);
-    acc[issuecode].estimationMax = Math.max(acc[issuecode].estimationMax ?? -Infinity, quotation.estimationMax ?? -Infinity)
+    let {estimationMin, estimationMax} = quotation;
+    estimationMin||=0
+    estimationMax||=0
+    if (!acc[issuecode]) {
+      acc[issuecode] = {...quotation, estimationAverage: 0, estimationMin: 0, estimationMax: 0};
+    }
+
+    acc[issuecode].estimationMin = Math.max(acc[issuecode].estimationMin!, estimationMin)
+    acc[issuecode].estimationMax = Math.min(acc[issuecode].estimationMax!, estimationMax)
 
     acc[issuecode].estimationAverage =
     (acc[issuecode].estimationMax
