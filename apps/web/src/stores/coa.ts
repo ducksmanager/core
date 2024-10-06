@@ -76,13 +76,10 @@ export const coa = defineStore("coa", () => {
       };
     },
     setPersonNames = (newPersonNames: { [personcode: string]: string }) => {
-      personNames.value = Object.keys(newPersonNames).reduce(
-        (acc, personcode) => ({
-          ...acc,
-          [personcode]: newPersonNames[personcode],
-        }),
-        personNames.value,
-      );
+      if (!personNames.value) {
+        personNames.value = {};
+      }
+      personNames.value = Object.assign(personNames.value, newPersonNames);
     },
     setCoverUrl = (issuecode: string, url: string) => {
       coverUrls.value[issuecode] = url;
