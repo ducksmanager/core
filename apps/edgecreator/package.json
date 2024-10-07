@@ -8,7 +8,11 @@
     "build": "vite build",
     "dev": "concurrently -n vite,vue-tsc \"vite --port 8002\" \"vue-tsc --noEmit --watch\"",
     "lint": "eslint --fix --cache .",
-    "typecheck": "vue-tsc --noEmit"
+    "typecheck": "vue-tsc --noEmit",
+    "prod:deploy": "DIR=apps/edgecreator pnpm -F '~ci' prod:docker-compose-up",
+    "prod:build-docker": "REPO_NAME=ghcr.io/bperel/edgecreator-app pnpm -F '~ci' prod:build-docker -f apps/edgecreator/Dockerfile",
+    "prod:transfer-files-pre": "pnpm -F '~ci' prod:transfer-files @apps/edgecreator/.env:apps/edgecreator/.env @packages/prisma-schemas/.env.prod.local:packages/prisma-schemas/.env",
+    "prod:transfer-files-post": "pnpm -F '~ci' prod:transfer-files apps/edgecreator/docker-compose.yml:@apps/edgecreator/docker-compose.yml apps/edgecreator/config/sentry-relay/config.yml:@apps/edgecreator/config/sentry-relay/config.yml"
   },
   "dependencies": {
     "@popperjs/core": "^2.11.8",
@@ -41,7 +45,7 @@
     "~api-routes": "workspace:*",
     "~axios-helper": "workspace:*",
     "~dm-types": "workspace:*",
-    "~prisma-clients": "workspace:*"
+    "~prisma-schemas": "workspace:*"
   },
   "devDependencies": {
     "@iconify-json/bi": "^1.1.23",

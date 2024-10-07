@@ -108,7 +108,7 @@
 </template>
 
 <script setup lang="ts">
-import type { authorUser } from "~prisma-clients/client_dm";
+import type { authorUser } from "~prisma-schemas/client_dm";
 
 const {
   searchAuthors,

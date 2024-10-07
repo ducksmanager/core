@@ -30,9 +30,9 @@ import { SuggestionsWithDetails } from "~dm-types/SuggestionsWithDetails";
 import { TransactionResults } from "~dm-types/TransactionResults";
 import { UserForAccountForm } from "~dm-types/UserForAccountForm";
 import { WantedEdge } from "~dm-types/WantedEdge";
-import { inducks_issue, inducks_issuequotation } from "~prisma-clients/client_coa";
-import { bookstoreComment, edge, issue, purchase, requestedIssue, subscription,user, userOptionType, userPermission } from "~prisma-clients/client_dm";
-import { edgeContributor, edgeModel,elementImage } from "~prisma-clients/client_edgecreator";
+import { inducks_issue, inducks_issuequotation } from "../prisma-schemas/client_coa";
+import { bookstoreComment, edge, issue, purchase, requestedIssue, subscription,user, userOptionType, userPermission } from "../prisma-schemas/client_dm";
+import { edgeContributor, edgeModel,elementImage } from "../prisma-schemas/client_edgecreator";
 
 export class POST__demo  extends ContractWithMethodAndUrl<{ resBody: { token: string } }> {
             static readonly method = "post";

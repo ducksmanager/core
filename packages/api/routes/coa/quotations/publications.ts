@@ -1,5 +1,5 @@
 import { prismaCoa } from '~/prisma';
-import { inducks_issuequotation } from '~prisma-clients/client_coa';
+import { inducks_issuequotation } from '~prisma-schemas/client_coa';
 import { ExpressCall } from '~routes/_express-call';
 
 const PUBLICATION_CODE_REGEX = /[a-z]+\/[-A-Z0-9]+/g;

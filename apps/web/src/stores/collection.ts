@@ -13,7 +13,7 @@ import {
   CollectionUpdateSingleIssue,
 } from "~dm-types/CollectionUpdate";
 import { IssueWithPublicationcode } from "~dm-types/IssueWithPublicationcode";
-import { authorUser, purchase, subscription } from "~prisma-clients/client_dm";
+import { authorUser, purchase, subscription } from "~prisma-schemas/client_dm";
 
 import useCollection from "../composables/useCollection";
 import { bookcase } from "./bookcase";

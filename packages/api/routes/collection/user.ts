@@ -6,7 +6,7 @@ import { exclude } from "~dm-types/exclude";
 import { ScopedError } from "~dm-types/ScopedError";
 import { UserForAccountForm } from "~dm-types/UserForAccountForm";
 import PresentationSentenceRequested from "~emails/presentation-sentence-requested";
-import { user } from "~prisma-clients/client_dm";
+import { user } from "~prisma-schemas/client_dm";
 import { getHashedPassword } from "~routes/_auth";
 import { ExpressCall } from "~routes/_express-call";
 import { generateAccessToken, isValidEmail } from "~routes/auth/util";

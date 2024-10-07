@@ -1,7 +1,7 @@
 import { prismaDm } from "~/prisma";
 import { MedalPoints } from "~dm-types/MedalPoints";
 import { SimpleUserWithQuickStats } from "~dm-types/SimpleUserWithQuickStats";
-import { Prisma } from "~prisma-clients/client_dm";
+import { Prisma } from "~prisma-schemas/client_dm";
 import { ExpressCall } from "~routes/_express-call";
 import { getMedalPoints } from "~routes/collection/points";
 

@@ -345,7 +345,7 @@
 <script setup lang="ts">
 import condition from "~/composables/useCondition";
 import { IssueWithPublicationcode } from "~dm-types/IssueWithPublicationcode";
-import type { issue as dm_issue } from "~prisma-clients/client_dm";
+import type { issue as dm_issue } from "~prisma-schemas/client_dm";
 
 import ContextMenuOnSaleByOthers from "./ContextMenuOnSaleByOthers.vue";
 import ContextMenuOwnCollection from "./ContextMenuOwnCollection.vue";

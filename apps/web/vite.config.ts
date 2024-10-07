@@ -21,9 +21,9 @@ export default defineConfig({
       "~dm-types": path.resolve(__dirname, "../../packages/types"),
       "~axios-helper": path.resolve(__dirname, "../../packages/axios-helper"),
       "~api-routes": path.resolve(__dirname, "../../packages/api-routes"),
-      "~prisma-clients": path.resolve(
+      "~prisma-schemas": path.resolve(
         __dirname,
-        "../../packages/prisma-clients",
+        "../../packages/prisma-schemas",
       ),
       "~translations": path.resolve(__dirname, "translations"),
     },

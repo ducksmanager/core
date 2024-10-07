@@ -3,7 +3,10 @@
     "baseUrl": ".",
     "module": "commonjs",
     "target": "es2018",
-    "lib": ["DOM", "ESNext"],
+    "lib": [
+      "DOM",
+      "ESNext"
+    ],
     "strict": true,
     "jsx": "preserve",
     "esModuleInterop": true,
@@ -17,13 +20,26 @@
     "outDir": "./dist",
     "preserveWatchOutput": true,
     "paths": {
-      "~/*": ["./*"],
-      "~types/*": ["../types/*"],
-      "~dm-types/*": ["../../../packages/types/*"],
-      "~prisma-clients/*": ["../../../packages/prisma-clients/*"],
-      "~routes/*": ["./routes/*"],
-      "~api-routes": ["../../../packages/api-routes"]
+      "~/*": [
+        "./*"
+      ],
+      "~types/*": [
+        "../types/*"
+      ],
+      "~dm-types/*": [
+        ../../../packages/prisma-schemas/*],
+      "~prisma-schemas/*": [
+        "../../../packages/prisma-schemas/*"
+      ],
+      "~routes/*": [
+        "./routes/*"
+      ],
+      "~api-routes": [
+        "../../../packages/api-routes"
+      ]
     }
   },
-  "exclude": ["node_modules"],
+  "exclude": [
+    "node_modules"
+  ],
 }

@@ -1,5 +1,5 @@
 import { prismaEdgeCreator } from "~/prisma";
-import { elementImage } from "~prisma-clients/client_edgecreator";
+import { elementImage } from "~prisma-schemas/client_edgecreator";
 import { ExpressCall } from "~routes/_express-call";
 
 export const get = async (

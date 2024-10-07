@@ -3,7 +3,11 @@
     "baseUrl": ".",
     "module": "ESNext",
     "target": "es2020",
-    "lib": ["dom", "dom.iterable", "ESNext"],
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "ESNext"
+    ],
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
@@ -14,14 +18,28 @@
     "forceConsistentCasingInFileNames": true,
     "preserveWatchOutput": true,
     "paths": {
-      "~/*": ["src/*"],
-      "~api-routes/*": ["../../packages/api-routes/*"],
-      "~axios-helper/*": ["../../packages/axios-helper/*"],
-      "~dm-services/*": ["../../packages/api/services/*"],
-      "~dm-types/*": ["../../packages/types/*"],
-      "~prisma-clients/*": ["../../packages/prisma-clients/*"],
-      "~socket.io-client-services/*": ["../../packages/socket.io-client-services/*"],
-      "~socket.io-services/*": ["../../packages/socket.io-services/*"],
+      "~/*": [
+        "src/*"
+      ],
+      "~api-routes/*": [
+        "../../packages/api-routes/*"
+      ],
+      "~axios-helper/*": [
+        "../../packages/axios-helper/*"
+      ],
+      "~dm-services/*": [
+        "../../packages/api/services/*"../../packages/prisma-schemas /*[
+        "../../packages/types/*"
+      ],
+      "~prisma-schemas/*": [
+        "../../packages/prisma-schemas/*"
+      ],
+      "~socket.io-client-services/*": [
+        "../../packages/socket.io-client-services/*"
+      ],
+      "~socket.io-services/*": [
+        "../../packages/socket.io-services/*"
+      ],
       "~types/*": [
         "types/*"
       ],
@@ -35,11 +53,13 @@
   },
   "include": [
     "types/*.ts",
-    "src/**/*.ts",
-    "src/**/*.d.ts",
-    "src/**/*.tsx",
-    "src/**/*.vue",
-    "auto-imports.d.ts"
-  ],
-  "exclude": ["dist", "node_modules"]
-}
+    "src/**/*.ts","src/**/*.d.ts",
+        "src/**/*.tsx",
+        "src/**/*.vue",
+        "auto-imports.d.ts"
+      ],
+      "exclude": [
+        "dist",
+        "node_modules"
+      ]
+    }

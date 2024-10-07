@@ -1,4 +1,4 @@
-import { edge } from "~prisma-clients/client_dm";
+import { edge } from "~prisma-schemas/client_dm";
 
 export type EdgeWithStringCreationDate = Omit<edge, "creationDate"> & {
   creationDate: string;

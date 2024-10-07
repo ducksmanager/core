@@ -2,7 +2,7 @@ import { parse } from "csv-parse/sync";
 import * as fs from "fs";
 
 import { prismaDm } from "~/prisma";
-import { user } from "~prisma-clients/client_dm";
+import { user } from "~prisma-schemas/client_dm";
 
 import { conditionToEnum } from "../collection/issues/_common";
 

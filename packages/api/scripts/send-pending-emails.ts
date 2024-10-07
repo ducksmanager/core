@@ -12,7 +12,7 @@ import {
   PrismaClient,
   userContribution,
   userContributionType,
-} from "~prisma-clients/client_dm";
+} from "~prisma-schemas/client_dm";
 const prismaDmClient = new PrismaClient();
 const medalLevels = {
   [userContributionType.photographe]: { 1: 50, 2: 150, 3: 600 },

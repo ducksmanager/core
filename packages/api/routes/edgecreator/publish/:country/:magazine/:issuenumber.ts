@@ -6,7 +6,7 @@ import {
   edge,
   user,
   userContribution,
-} from "~prisma-clients/client_dm";
+} from "~prisma-schemas/client_dm";
 import { ExpressCall } from "~routes/_express-call";
 
 const parseForm = bodyParser.json();

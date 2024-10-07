@@ -5,7 +5,7 @@ import {
   GET__collection__on_sale_by_others__contact_methods__$sellerId,
 } from "~api-routes/index";
 import { call } from "~axios-helper";
-import type { issue, requestedIssue } from "~prisma-clients/client_dm";
+import type { issue, requestedIssue } from "~prisma-schemas/client_dm";
 
 export const marketplace = defineStore("marketplace", () => {
   const issuesOnSaleByOthers = ref(

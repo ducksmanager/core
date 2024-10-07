@@ -2,7 +2,7 @@ import {
   edgeContributor,
   edgePhoto,
   elementImage,
-} from "~prisma-clients/client_edgecreator";
+} from "~prisma-schemas/client_edgecreator";
 
 export type EdgeModel = {
   id: number;

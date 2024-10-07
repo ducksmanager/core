@@ -19,14 +19,26 @@
     "outDir": "./dist",
     "preserveWatchOutput": true,
     "paths": {
-      "~/*": ["*"],
-      "~emails/*": ["emails/*"],
-      "~prisma-clients/*": ["../prisma-clients/*"],
-      "~routes/*": ["routes/*"],
-      "~translations/*": ["translations/*"]
+      "~/*": [
+        "*"
+      ],
+      "~emails/*": [
+        "emails/*"
+      ],
+      "~prisma-schemas/*": [
+        "../prisma-schemas/*"
+      ],
+      "~routes/*": [
+        "routes/*"
+      ],
+      "~translations/*": [
+        "translations/*"
+      ]
     }
   },
-  "exclude": ["node_modules"],
+  "exclude": [
+    "node_modules"
+  ],
   "ts-node": {
     "swc": true
   }

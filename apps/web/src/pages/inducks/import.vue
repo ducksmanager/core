@@ -284,7 +284,7 @@ import axios from "axios";
 import { watch } from "vue";
 
 import { call } from "~axios-helper";
-import type { inducks_issue } from "~prisma-clients/client_coa";
+import type { inducks_issue } from "~prisma-schemas/client_coa";
 const { getImagePath } = images();
 
 let step = $ref(1 as number);

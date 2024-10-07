@@ -34,7 +34,7 @@ const app = express();
   const imports: string[] = [
     "// noinspection ES6PreferShortImport",
     "",
-    'import { Prisma } from "~prisma-clients/client_dm";',
+    'import { Prisma } from "~prisma-schemas/client_dm";',
     'import { ContractWithMethodAndUrl } from "~axios-helper";',
   ];
   imports.push(
@@ -51,15 +51,15 @@ const app = express();
       .join("\n")
   );
   imports.push(
-    readdirSync("../prisma-clients/schemas")
+    readdirSync("../prisma-schemas/schemas")
       .filter((file) => /\.prisma$/.test(file))
       .map(
         (file) =>
           `import { ${[
-            ...readFileSync(`../prisma-clients/schemas/${file}`)
+            ...readFileSync(`../prisma-schemas/schemas/${file}`)
               .toString()
               .matchAll(/(?:(?<=model )|(?<=enum ))[^ ]+/g)!,
-          ].join(", ")} } from "~prisma-clients/client_${file.replaceAll(
+          ].join(", ")} } from "~prisma-schemas/client_${file.replaceAll(
             /(\.prisma)|(schema_)/g,
             ""
           )}";`

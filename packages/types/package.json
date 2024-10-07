@@ -20,6 +20,6 @@
   },
   "dependencies": {
     "ts-node": "^10.9.1",
-    "~prisma-clients": "workspace:*"
+    "~prisma-schemas": "workspace:*"
   }
 }

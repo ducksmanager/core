@@ -6,8 +6,8 @@ import { IssueSuggestionList } from "~dm-types/IssueSuggestionList";
 import { StoryDetail } from "~dm-types/StoryDetail";
 import { SuggestionList } from "~dm-types/SuggestionList";
 import { SuggestionsWithDetails } from "~dm-types/SuggestionsWithDetails";
-import { userOptionType } from "~prisma-clients/client_dm";
-import { Prisma as PrismaDmStats } from "~prisma-clients/client_dm_stats";
+import { userOptionType } from "~prisma-schemas/client_dm";
+import { Prisma as PrismaDmStats } from "~prisma-schemas/client_dm_stats";
 import { ExpressCall } from "~routes/_express-call";
 import { getPublicationTitlesFromCodes } from "~routes/coa/list/publications";
 

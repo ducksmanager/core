@@ -1,5 +1,5 @@
 import { IssueWithPublicationcode } from "~dm-types/IssueWithPublicationcode";
-import { issue_condition } from "~prisma-clients/client_dm";
+import { issue_condition } from "~prisma-schemas/client_dm";
 
 export type QuotedIssue = {
   publicationcode: string;

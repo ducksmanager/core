@@ -70,7 +70,7 @@ import {
 import dayjs from "dayjs";
 import { Bar } from "vue-chartjs";
 
-import type { issue as dm_issue } from "~prisma-clients/client_dm";
+import type { issue as dm_issue } from "~prisma-schemas/client_dm";
 
 Chart.register(
   Legend,

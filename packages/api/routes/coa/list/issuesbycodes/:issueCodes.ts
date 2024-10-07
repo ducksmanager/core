@@ -1,8 +1,8 @@
 import { prismaCoa, prismaCoverInfo, prismaDm } from "~/prisma";
 import { SimpleIssueWithPublication } from "~dm-types/SimpleIssueWithPublication";
-import { Prisma as PrismaCoa } from "~prisma-clients/client_coa";
-import { cover } from "~prisma-clients/client_cover_info";
-import { Prisma } from "~prisma-clients/client_dm";
+import { Prisma as PrismaCoa } from "~prisma-schemas/client_coa";
+import { cover } from "~prisma-schemas/client_cover_info";
+import { Prisma } from "~prisma-schemas/client_dm";
 import { ExpressCall } from "~routes/_express-call";
 
 type ReturnType<FieldValue, T> = FieldValue extends string ? never : T;

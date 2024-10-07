@@ -12,7 +12,7 @@ import {
 import { call, getChunkedRequests } from "~axios-helper";
 import { InducksIssueDetails } from "~dm-types/InducksIssueDetails";
 import { InducksIssueQuotationSimple } from "~dm-types/InducksIssueQuotationSimple";
-import type { inducks_issue } from "~prisma-clients/client_coa";
+import type { inducks_issue } from "~prisma-schemas/client_coa";
 
 const addPartInfo = (issueDetails: InducksIssueDetails) => {
   const storyPartCounter = Object.entries(

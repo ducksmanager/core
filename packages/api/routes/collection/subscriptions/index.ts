@@ -1,8 +1,8 @@
 import bodyParser from "body-parser";
 
 import { EditSubscription } from "~dm-types/EditSubscription";
-import { subscription } from "~prisma-clients/client_dm";
-import prismaDm from "~prisma-clients/extended/dm.extends";
+import { subscription } from "~prisma-schemas/client_dm";
+import prismaDm from "~prisma-schemas/extended/dm.extends";
 import { ExpressCall } from "~routes/_express-call";
 
 const parseForm = bodyParser.json();

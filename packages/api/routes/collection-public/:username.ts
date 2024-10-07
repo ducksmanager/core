@@ -1,5 +1,5 @@
 import { prismaDm } from "~/prisma";
-import { issue, user } from "~prisma-clients/client_dm";
+import { issue, user } from "~prisma-schemas/client_dm";
 import { ExpressCall } from "~routes/_express-call";
 
 export const get = async (...[req, res]: ExpressCall<{ params: { username: string }, resBody: issue[] }>) => {

@@ -4,7 +4,11 @@
     "module": "ESNext",
     "declaration": true,
     "target": "es2020",
-    "lib": ["dom", "dom.iterable", "ESNext"],
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "ESNext"
+    ],
     "strict": true,
     "jsx": "preserve",
     "esModuleInterop": true,
@@ -24,20 +28,35 @@
       "@vue-macros/reactivity-transform/macros-global"
     ],
     "paths": {
-      "~/*": ["src/*"],
-      "~dm-types/*": ["../../packages/types/*"],
-      "~axios-helper/*": ["../../packages/axios-helper/*"],
-      "~api-routes/*": ["../../packages/api-routes/*"],
-      "~prisma-clients/*": ["../../packages/prisma-clients/*"],
-      "~translations/*": ["translations/*"]
-    }
-  },
-  "include": [
-    "components.d.ts",
-    "histoire.d.ts",
-    "src/**/*.ts",
-    "src/**/*.vue",
-    "auto-imports.d.ts"
-  ],
-  "exclude": ["dist", "node_modules", "vendor"],
+      "~/*": [
+        "src/*"
+      ],
+      "~dm-types/*": [
+        "../../packages/types/*"
+      ],
+      "~axios-helper/*": [
+        "../../packages/axios-helper/*"
+      ],
+      "~api-r../../packages/prisma-schemas/*ages/api-routes/*"
+    ],
+    "~prisma-schemas/*": [
+      "../../packages/prisma-schemas/*"
+    ],
+    "~translations/*": [
+      "translations/*"
+    ]
+  }
+},
+"include": [
+  "components.d.ts",
+  "histoire.d.ts",
+  "src/**/*.ts",
+  "src/**/*.vue",
+  "auto-imports.d.ts"
+],
+"exclude": [
+  "dist",
+  "node_modules",
+  "vendor"
+],
 }

@@ -1,4 +1,4 @@
-import { userContributionType } from "~prisma-clients/client_dm";
+import { userContributionType } from "~prisma-schemas/client_dm";
 import { SimpleUser } from "~types/SimpleUser";
 
 export interface ModelContributor {

@@ -1,0 +1,33 @@
+services:
+  api:
+    container_name: edgecreator-api
+    image: ghcr.io/bperel/edgecreator-api
+    restart: always
+    env_file:
+      - .env
+    volumes:
+      - "${EDGES_PATH}:/home/edges"
+    networks:
+      - public-network
+      - ec2-network
+      - dm-server_db-network
+
+  api-websocket:
+    container_name: edgecreator-api-websocket
+    image: ghcr.io/bperel/edgecreator-api:websocket
+    restart: always
+    env_file:
+      - .env
+    volumes:
+      - "${EDGES_PATH}:/home/edges"
+    networks:
+      - public-network
+      - ec2-network
+      - dm-server_db-network
+
+networks:
+  ec2-network:
+  public-network:
+    external: true
+  dm-server_db-network:
+    external: true

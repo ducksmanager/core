@@ -30,7 +30,7 @@ import axios from "axios";
 
 import { call } from "~axios-helper";
 import { SimpleBookstore } from "~dm-types/SimpleBookstore";
-import type { bookstoreComment } from "~prisma-clients/client_dm";
+import type { bookstoreComment } from "~prisma-schemas/client_dm";
 
 let bookstores = $ref(null as SimpleBookstore[] | null);
 

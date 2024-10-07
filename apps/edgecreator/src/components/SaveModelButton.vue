@@ -116,7 +116,7 @@ import { collection } from "~/stores/collection";
 import { main } from "~/stores/main";
 import { ui } from "~/stores/ui";
 import { users } from "~/stores/users";
-import { userContributionType } from "~prisma-clients/client_dm";
+import { userContributionType } from "~prisma-schemas/client_dm";
 import { SimpleUser } from "~types/SimpleUser";
 
 const userContributionEnL10n: Record<string, string> = {

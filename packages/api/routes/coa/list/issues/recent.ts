@@ -1,5 +1,5 @@
 import { prismaCoa } from "~/prisma";
-import { inducks_issue } from "~prisma-clients/client_coa";
+import { inducks_issue } from "~prisma-schemas/client_coa";
 import { ExpressCall } from "~routes/_express-call";
 
 export const get = async (

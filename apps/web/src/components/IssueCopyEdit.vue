@@ -254,7 +254,7 @@
 import cond from "~/composables/useCondition";
 import { IssueWithPublicationcodeOptionalId } from "~/stores/collection";
 import { CollectionUpdateMultipleIssues } from "~dm-types/CollectionUpdate";
-import type { issue_condition } from "~prisma-clients/client_dm";
+import type { issue_condition } from "~prisma-schemas/client_dm";
 
 const { conditions } = cond();
 

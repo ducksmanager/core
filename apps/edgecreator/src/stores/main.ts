@@ -4,7 +4,7 @@ import { defineStore } from "pinia";
 import { api } from "~/stores/api";
 import { EdgeWithModelId } from "~dm-types/EdgeWithModelId";
 import { GET__edges__$countrycode__$magazinecode__$issuenumbers } from "~api-routes";
-import { userContributionType } from "~prisma-clients/client_dm";
+import { userContributionType } from "~prisma-schemas/client_dm";
 import { ModelContributor } from "~types/ModelContributor";
 import { GET__fs__browse__$imageType__$country__$magazine } from "~types/routes";
 import { SimpleUser } from "~types/SimpleUser";

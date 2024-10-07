@@ -78,7 +78,7 @@
 
 <script setup lang="ts">
 import { SubscriptionTransformed } from "~/stores/collection";
-import { subscription } from "~prisma-clients/client_dm";
+import { subscription } from "~prisma-schemas/client_dm";
 
 const { isEdit, subscription } = defineProps<{
   isEdit?: boolean;
