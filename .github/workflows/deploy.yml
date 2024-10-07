@@ -14,6 +14,7 @@ jobs:
       PRODUCTION_SSH_HOST: ${{ secrets.PRODUCTION_SSH_HOST }}
       PRODUCTION_SSH_USER: ${{ secrets.PRODUCTION_SSH_USER }}
       PRODUCTION_SSH_KEY: ${{ secrets.PRODUCTION_SSH_KEY }}
+      GH_TOKEN: ${{ github.token }}
     name: deploy
     steps:
       - uses: actions/checkout@v4
@@ -26,6 +27,16 @@ jobs:
           registry: ghcr.io
           username: bperel
           password: ${{ secrets.DOCKER_REGISTRY_TOKEN_DM }}
+
+      - name: Derive appropriate SHAs for base and head for `nx affected` commands
+        uses: nrwl/nx-set-shas@v4
+        with:
+          main-branch-name: legacy
+        #   fallback-sha: "ffffff"
+
+      - run: |
+          echo "HEAD: ${{ env.NX_HEAD }}"
+          echo "BASE: ${{ env.NX_BASE }}"
 
       - name: Install pnpm
         uses: pnpm/action-setup@v4
@@ -40,6 +51,17 @@ jobs:
 
       - uses: oven-sh/setup-bun@v1
 
+      - name: Check apps changed since the last successful commit
+        run: |
+          if [ "${{ env.NX_BASE }}" == "ffffff" ]; then
+            lastSuccessfulCommit=${{ env.NX_HEAD }}
+          else
+            lastSuccessfulCommit=${{ env.NX_BASE }}
+          fi
+          echo "lastSuccessfulCommit=$lastSuccessfulCommit" >> "$GITHUB_ENV"
+          echo "Changed apps:"
+          pnpm -r -F "...[$lastSuccessfulCommit]" ls --depth -1
+
       - name: Install dependencies
         run: |
           pnpm -r i
@@ -47,24 +69,22 @@ jobs:
       - name: Retrieve pre-build files
         run: |
           pnpm i -g turbo
-          turbo -F '~web...' -F '~api...' prod:transfer-files-pre
+          turbo -F "...[$lastSuccessfulCommit]" prod:transfer-files-pre
 
       - name: Build apps
         run: |
-          turbo -F '~web...' -F '~api...' build
+          turbo -F "...[$lastSuccessfulCommit]" build
 
       - uses: docker/setup-buildx-action@v3
 
       - name: Build and push Docker images
-        env:
-          GITHUB_TOKEN: ${{ github.token }}
         run: |
-          turbo -F '~web...' -F '~api...' prod:build-docker
+          turbo -F "...[$lastSuccessfulCommit]" -F '!~ci' prod:build-docker
 
       - name: Send post-build files
         run: |
-          turbo -F '~web...' -F '~api...' prod:transfer-files-post
+          turbo -F "...[$lastSuccessfulCommit]" prod:transfer-files-post
 
       - name: Deploy
         run: |
-          turbo -F '~web...' -F '~api...' prod:deploy
+          turbo --concurrency=1 -F "...[$lastSuccessfulCommit]" prod:deploy
