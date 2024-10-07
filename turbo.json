@@ -29,7 +29,7 @@
         },
         "prod:deploy": {
             "dependsOn": [
-                "^prod:prod:deploy"
+                "^prod:deploy"
             ],
             "passThroughEnv": [
                 "REMOTE_ROOT",
