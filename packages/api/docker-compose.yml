@@ -1,3 +1,4 @@
+name: ducksmanager-api
 services:
   api:
     container_name: ducksmanager-api
