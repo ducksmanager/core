@@ -28,7 +28,9 @@
         "../../packages/axios-helper/*"
       ],
       "~dm-services/*": [
-        "../../packages/api/services/*"../../packages/prisma-schemas /*[
+        "../../packages/api/services/*"
+      ],
+      "~dm-types/*": [
         "../../packages/types/*"
       ],
       "~prisma-schemas/*": [
@@ -53,13 +55,14 @@
   },
   "include": [
     "types/*.ts",
-    "src/**/*.ts","src/**/*.d.ts",
-        "src/**/*.tsx",
-        "src/**/*.vue",
-        "auto-imports.d.ts"
-      ],
-      "exclude": [
-        "dist",
-        "node_modules"
-      ]
-    }
+    "src/**/*.ts",
+    "src/**/*.d.ts",
+    "src/**/*.tsx",
+    "src/**/*.vue",
+    "auto-imports.d.ts"
+  ],
+  "exclude": [
+    "dist",
+    "node_modules"
+  ]
+}
