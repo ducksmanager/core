@@ -862,8 +862,8 @@ importers:
         specifier: ^6.0.0
         version: 6.0.0(@capacitor/core@6.1.2)
       '@capawesome/capacitor-file-picker':
-        specifier: ^6.0.1
-        version: 6.0.1(@capacitor/core@6.1.2)
+        specifier: ^6.1.0
+        version: 6.1.0(@capacitor/core@6.1.2)
       '@capgo/capacitor-updater':
         specifier: ^6.2.5
         version: 6.2.5(@capacitor/core@6.1.2)
@@ -1441,8 +1441,8 @@ packages:
     peerDependencies:
       '@capacitor/core': ^6.0.0
 
-  '@capawesome/capacitor-file-picker@6.0.1':
-    resolution: {integrity: sha512-JWYmqfYMRwvhJMACC4oovzBGtcP1MXnRKbENPjXhL0ni0p0nnVgddKD+07kc81SNiABBuCksQjNiFiEDqqy49A==}
+  '@capawesome/capacitor-file-picker@6.1.0':
+    resolution: {integrity: sha512-5KhOwRY7a4YKPhRLtypjKxNVhegxYPzKfRTwLr5ejtPF2U3D/70fuCPt+b2zOT68W3ctOp+o2iCCef7/4oGcZw==}
     peerDependencies:
       '@capacitor/core': ^6.0.0
 
@@ -8285,7 +8285,7 @@ snapshots:
     dependencies:
       '@capacitor/core': 6.1.2
 
-  '@capawesome/capacitor-file-picker@6.0.1(@capacitor/core@6.1.2)':
+  '@capawesome/capacitor-file-picker@6.1.0(@capacitor/core@6.1.2)':
     dependencies:
       '@capacitor/core': 6.1.2
 
