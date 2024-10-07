@@ -20,11 +20,17 @@
             ]
         },
         "prod:build-docker": {
+            "dependsOn": [
+                "^prod:build-docker"
+            ],
             "passThroughEnv": [
                 "REPO_NAME"
             ]
         },
         "prod:deploy": {
+            "dependsOn": [
+                "^prod:prod:deploy"
+            ],
             "passThroughEnv": [
                 "REMOTE_ROOT",
                 "PRODUCTION_SSH_HOST",
@@ -34,6 +40,9 @@
             ]
         },
         "prod:transfer-files-pre": {
+            "dependsOn": [
+                "^prod:transfer-files-pre"
+            ],
             "passThroughEnv": [
                 "REMOTE_ROOT",
                 "PRODUCTION_SSH_HOST",
@@ -42,6 +51,9 @@
             ]
         },
         "prod:transfer-files-post": {
+            "dependsOn": [
+                "^prod:transfer-files-post"
+            ],
             "passThroughEnv": [
                 "REMOTE_ROOT",
                 "PRODUCTION_SSH_HOST",
