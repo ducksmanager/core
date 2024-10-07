@@ -2,7 +2,7 @@ import { parse } from "csv-parse";
 import { createObjectCsvWriter as createCsvWriter } from "csv-writer";
 import { createReadStream } from "fs";
 
-import type { inducks_issuequotation } from "~prisma-schemas/schemas/coa";
+import type { inducks_issuequotation_raw } from "~prisma-schemas/schemas/coa";
 
 export const readCsvMapping = async <CsvIssue>(
   mappingFile: string,
@@ -17,7 +17,7 @@ export const readCsvMapping = async <CsvIssue>(
     recordCallback(record);
   }
 };
-export const writeCsvMapping = async (data: inducks_issuequotation[]) => {
+export const writeCsvMapping = async (data: inducks_issuequotation_raw[]) => {
   const csvWriter = createCsvWriter({
     path: "dump.csv",
     header: [

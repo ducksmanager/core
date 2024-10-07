@@ -1,11 +1,11 @@
 import "dotenv/config";
 
-import type { inducks_issuequotation } from "~prisma-schemas/schemas/coa";
+import type { inducks_issuequotation_raw } from "~prisma-schemas/schemas/coa";
 import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa/client";
 
 export const createQuotations = async (
   data: Omit<
-    inducks_issuequotation,
+    inducks_issuequotation_raw,
     "id" | "publicationcode" | "issuenumber"
   >[],
 ) => {
@@ -93,7 +93,7 @@ export const getInducksIssuecodesBetween = async (
 };
 
 export const getAll = async () =>
-  await prismaCoa.inducks_issuequotation.findMany({
+  await prismaCoa.inducks_issuequotation_raw.findMany({
     orderBy: [
       {
         issuecode: "asc",
