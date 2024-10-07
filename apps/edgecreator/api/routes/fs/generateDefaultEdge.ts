@@ -1,5 +1,6 @@
-import fs from "fs";
-import sharp from "sharp";
+import { exec } from "child_process";
+import { readFileSync } from "fs";
+import { pipeline } from "stream";
 
 import { ExpressCall } from "~routes/_express-call";
 // eslint-disable-next-line max-len
@@ -37,21 +38,27 @@ export const get = (
   } else {
     text = input;
   }
+  const convert = exec("convert svg:- png:-", {
+    encoding: "buffer",
+  });
 
-  const content = Buffer.from(
-    fs
-      .readFileSync("assets/default.svg")
-      .toString()
-      .replace("My text", decodeURIComponent(text)),
-    "utf8",
+  convert.stdin!.write(
+    Buffer.from(
+      readFileSync("assets/default.svg")
+        .toString()
+        .replace("My text", decodeURIComponent(text)),
+      "utf8",
+    ),
   );
-  sharp(content).toBuffer((error, buffer) => {
-    if (error) {
+  convert.stdin!.end();
+
+  res.setHeader("Content-Type", "image/png");
+
+  pipeline(convert.stdout!, res, (err) => {
+    if (err) {
+      console.error("Pipeline failed", err);
       res.writeHead(500, corsHeaders);
-      return res.end(`Error : ${JSON.stringify({ error })}`);
     }
-    res.writeHead(200, { ...corsHeaders, "Content-Type": "image/png" });
-    return res.end(buffer);
   });
 };
 

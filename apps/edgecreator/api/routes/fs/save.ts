@@ -1,6 +1,6 @@
+import { exec } from "child_process";
 import fs from "fs";
 import path from "path";
-import sharp from "sharp";
 
 import { getSvgPath } from "~/_utils";
 import {
@@ -49,7 +49,7 @@ export const post = async (
   if (runExport) {
     const pngPath = svgPath.replace(".svg", ".png");
     try {
-      await sharp(svgPath).png().toFile(pngPath);
+      exec(`convert ${svgPath} ${pngPath}`);
     } catch (error: unknown) {
       res.writeHead(500);
       return res.end({ error });
