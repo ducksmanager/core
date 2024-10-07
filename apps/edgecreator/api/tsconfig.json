@@ -27,7 +27,8 @@
         "../types/*"
       ],
       "~dm-types/*": [
-        ../../../packages/prisma-schemas/*],
+        "../../../packages/types/*"
+      ],
       "~prisma-schemas/*": [
         "../../../packages/prisma-schemas/*"
       ],
