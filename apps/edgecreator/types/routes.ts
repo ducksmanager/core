@@ -2,56 +2,12 @@
 
 import { ContractWithMethodAndUrl } from "./Call";
 import { Call, CallWithoutResBody } from "./Call";
+import { SimpleUser } from "./SimpleUser";
+import { ModelContributor } from "./ModelContributor";
 import { Crop } from "./Crop";
 import { ExportPaths } from "./ExportPaths";
-import { ModelContributor } from "./ModelContributor";
 import { User } from "./SessionUser";
-import { SimpleUser } from "./SimpleUser";
 
-export class GET__fs__base64  extends ContractWithMethodAndUrl<{
-    resBody: {
-      dimensions: { width: number; height: number };
-      base64: string;
-      url: string;
-    };
-    query: { targetUrl: string };
-  }> {
-            static readonly method = "get";
-            static readonly url = "/fs/base64";
-        }
-export class GET__fs__browseEdges  extends ContractWithMethodAndUrl<{
-    resBody: {
-      current: { filename: string; mtime: string }[];
-      published: { filename: string; mtime: string }[];
-    };
-  }> {
-            static readonly method = "get";
-            static readonly url = "/fs/browseEdges";
-        }
-export class GET__fs__generateDefaultEdge  extends ContractWithMethodAndUrl<{
-    resBody: {
-      current: string[];
-      published: string[];
-    };
-  }> {
-            static readonly method = "get";
-            static readonly url = "/fs/generateDefaultEdge";
-        }
-export class POST__fs__save  extends ContractWithMethodAndUrl<{
-    resBody: { paths: ExportPaths; isNew: boolean };
-    reqBody: {
-      runExport: boolean;
-      runSubmit: boolean;
-      country: string;
-      magazine: string;
-      issuenumber: string;
-      contributors: ModelContributor[];
-      content: string;
-    };
-  }> {
-            static readonly method = "post";
-            static readonly url = "/fs/save";
-        }
 export class GET__fs__text  extends ContractWithMethodAndUrl<{
     resBody:
       | {
@@ -70,6 +26,15 @@ export class GET__fs__text  extends ContractWithMethodAndUrl<{
   }> {
             static readonly method = "get";
             static readonly url = "/fs/text";
+        }
+export class GET__fs__browseEdges  extends ContractWithMethodAndUrl<{
+    resBody: {
+      current: { filename: string; mtime: string }[];
+      published: { filename: string; mtime: string }[];
+    };
+  }> {
+            static readonly method = "get";
+            static readonly url = "/fs/browseEdges";
         }
 export class POST__fs__upload_base64  extends ContractWithMethodAndUrl<{
     resBody: { fileName: string };
@@ -97,6 +62,41 @@ export class POST__fs__upload  extends ContractWithMethodAndUrl<{
     }> {
             static readonly method = "post";
             static readonly url = "/fs/upload";
+        }
+export class GET__fs__generateDefaultEdge  extends ContractWithMethodAndUrl<{
+    resBody: {
+      current: string[];
+      published: string[];
+    };
+  }> {
+            static readonly method = "get";
+            static readonly url = "/fs/generateDefaultEdge";
+        }
+export class GET__fs__base64  extends ContractWithMethodAndUrl<{
+    resBody: {
+      dimensions: { width: number; height: number };
+      base64: string;
+      url: string;
+    };
+    query: { targetUrl: string };
+  }> {
+            static readonly method = "get";
+            static readonly url = "/fs/base64";
+        }
+export class POST__fs__save  extends ContractWithMethodAndUrl<{
+    resBody: { paths: ExportPaths; isNew: boolean };
+    reqBody: {
+      runExport: boolean;
+      runSubmit: boolean;
+      country: string;
+      magazine: string;
+      issuenumber: string;
+      contributors: ModelContributor[];
+      content: string;
+    };
+  }> {
+            static readonly method = "post";
+            static readonly url = "/fs/save";
         }
 export class GET__fs__browse__$imageType__$country__$magazine  extends ContractWithMethodAndUrl<{
     params: {
