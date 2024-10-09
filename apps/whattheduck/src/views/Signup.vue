@@ -1,7 +1,9 @@
 <template>
   <ion-page>
     <ion-header>
-      <ion-title class="ion-no-padding">{{ t('Inscription') }}</ion-title>
+      <ion-toolbar>
+        <ion-title class="ion-padding-start">{{ t('Inscription') }}</ion-title>
+      </ion-toolbar>
     </ion-header>
     <ion-content>
       <ion-input
@@ -11,6 +13,7 @@
           'ion-invalid': invalidInputs.includes('username'),
           'ion-touched': touchedInputs.includes('username'),
         }"
+        :error-text="errorTexts.username"
         :aria-label="t('Nom d\'utilisateur DucksManager')"
         :placeholder="t('Nom d\'utilisateur DucksManager')"
         @ion-blur="touchedInputs.push('username')"
@@ -22,6 +25,7 @@
           'ion-invalid': invalidInputs.includes('email'),
           'ion-touched': touchedInputs.includes('email'),
         }"
+        :error-text="errorTexts.email"
         :aria-label="t('Adresse e-mail')"
         :placeholder="t('Adresse e-mail')"
         @ion-blur="touchedInputs.push('email')"
@@ -34,7 +38,7 @@
           'ion-invalid': invalidInputs.includes('password'),
           'ion-touched': touchedInputs.includes('password'),
         }"
-        :error-text="t('Erreur')"
+        :error-text="errorTexts.password"
         :aria-label="t('Mot de passe')"
         :placeholder="t('Mot de passe')"
         @ion-blur="touchedInputs.push('password')"
@@ -63,15 +67,16 @@
           style="float: right"
           :ios="showPasswordConfirmation ? eyeOffOutline : eyeOutline"
           :md="showPasswordConfirmation ? eyeOffSharp : eyeSharp"
-          @click="showPasswordConfirmation = !showPassword"
+          @click="showPasswordConfirmation = !showPasswordConfirmation"
         />
       </ion-input>
+      <ion-row class="ion-padding-top">
       <ion-button @click="submitSignup">
-        {{ t("Terminer l'inscription") }}
+        {{ t("OK") }}
       </ion-button>
-      <ion-button @click="cancelSignup">
+      <ion-button color="light" @click="cancelSignup">
         {{ t('Annuler') }}
-      </ion-button>
+      </ion-button></ion-row>
     </ion-content></ion-page
   >
 </template>
@@ -81,17 +86,14 @@ import { eyeOutline, eyeOffOutline, eyeSharp, eyeOffSharp } from 'ionicons/icons
 
 import useFormErrorHandling from '~/composables/useFormErrorHandling';
 import { app } from '~/stores/app';
-import { wtdcollection } from '~/stores/wtdcollection';
 
-const { token } = storeToRefs(app());
-
-const collectionStore = wtdcollection();
+const { token, socket } = storeToRefs(app());
 
 const { t } = useI18n();
 
 const router = useRouter();
 
-const { validInputs, invalidInputs, touchedInputs, errorTexts, showError, clearErrors } = useFormErrorHandling([
+const { validInputs, invalidInputs, touchedInputs, errorTexts, clearErrors } = useFormErrorHandling([
   'username',
   'email',
   'password',
@@ -116,21 +118,37 @@ const submitSignup = async () => {
     return;
   }
   clearErrors();
-  await collectionStore.signup(
-    username.value,
-    password.value,
-    password.value,
-    email.value,
-    (newToken: string) => {
-      token.value = newToken;
-    },
-    (e) => {
-      showError(e);
-    },
-  );
+   const response = await socket.value?.auth.services.signup({
+    username: username.value,
+    password: password.value,
+    email: email.value,
+   });
+
+   if (typeof response !== 'string' && response && 'error' in response) {
+    errorTexts.value[response.selector!.replace('#', '')] = response.message!;
+  } else {
+    token.value = response;
+  }
 };
+
+
+watch(
+  token,
+  () => {
+    if (token.value) {
+      router.push('/collection#all=all');
+    }
+  },
+  { immediate: true },
+);
 </script>
 <style lang="scss" scoped>
+ion-row {
+  justify-content: space-between;
+  ion-button {
+    width: 40%
+  }
+}
 ion-input {
   ion-icon {
     margin-top: 1rem;

@@ -158,14 +158,6 @@ export default abstract class {
       >,
     ) => void,
   ) => void;
-  abstract createUser: (
-    data: {
-      username: string;
-      password: string;
-      email: string;
-    } & Record<string, unknown>,
-    callback: (data: Errorable<{ token: string }, "Bad request">) => void,
-  ) => void;
 
   abstract getWatchedAuthors: (
     callback: (value: AuthorWithUserRating[]) => void,
@@ -186,7 +178,7 @@ export default abstract class {
   abstract getCollectionQuotations: (
     callback: (
       value: Errorable<
-        { quotations: Record<string, InducksIssueQuotationSimple & {estimationAverage: number}> },
+        { quotations: Record<string, InducksIssueQuotationSimple & { estimationAverage: number }> },
         "Bad request"
       >,
     ) => void,

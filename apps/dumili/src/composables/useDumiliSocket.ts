@@ -10,7 +10,6 @@ import EdgeCreatorServices from "~dm-services/edgecreator/types";
 import EdgesServices from "~dm-services/edges/types";
 import EventsServices from "~dm-services/events/types";
 import GlobalStatsServices from "~dm-services/global-stats/types";
-import LoginServices from "~dm-services/login/types";
 import PresentationTextServices from "~dm-services/presentation-text/types";
 import PublicCollectionServices from "~dm-services/public-collection/types";
 import StatsServices from "~dm-services/stats/types";
@@ -48,10 +47,6 @@ const defaultExport = (options: {
     options,
     publicCollection: socket.addNamespace<PublicCollectionServices>(
       PublicCollectionServices.namespaceEndpoint,
-    ),
-    login: socket.addNamespace<LoginServices>(
-      LoginServices.namespaceEndpoint,
-      {},
     ),
 
     bookcase: socket.addNamespace<BookcaseServices>(

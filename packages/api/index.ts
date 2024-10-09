@@ -21,7 +21,6 @@ import edges from "./services/edges";
 import events from "./services/events";
 import feedback from "./services/feedback";
 import globalStats from "./services/global-stats";
-import login from "./services/login";
 import presentationText from "./services/presentation-text";
 import publicCollection from "./services/public-collection";
 import stats from "./services/stats";
@@ -36,7 +35,7 @@ class ServerWithUser extends Server<
   Record<string, never>,
   Record<string, never>,
   { user?: SessionUser }
-> {}
+> { }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 (BigInt.prototype as any).toJSON = function () {
@@ -144,7 +143,6 @@ if (cluster.isPrimary) {
   events(io);
   feedback(io);
   globalStats(io);
-  login(io);
   presentationText(io);
   publicCollection(io);
   stats(io);

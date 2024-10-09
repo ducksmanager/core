@@ -106,7 +106,7 @@ const signup = () => {
 };
 
 const submitLogin = async () => {
-  const response = await socket.value?.login.services.login({
+  const response = await socket.value?.auth.services.login({
     username: username.value,
     password: password.value,
   });

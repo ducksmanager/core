@@ -23,7 +23,6 @@ export const wtdcollection = defineStore('wtdcollection', () => {
     loadUserIssueQuotations,
     loadUser,
     login,
-    signup,
     updateCollectionSingleIssue,
     updateCollectionMultipleIssues,
   } = webCollectionStore;
@@ -50,10 +49,10 @@ export const wtdcollection = defineStore('wtdcollection', () => {
   );
 
   const ownedCountries = computed(() =>
-      ownedPublications.value
-        ? [...new Set((ownedPublications.value || []).map((publicationcode) => publicationcode.split('/')[0]))].sort()
-        : ownedPublications.value,
-    ),
+    ownedPublications.value
+      ? [...new Set((ownedPublications.value || []).map((publicationcode) => publicationcode.split('/')[0]))].sort()
+      : ownedPublications.value,
+  ),
     ownedPublications = computed(() =>
       issues.value
         ? [...new Set((issues.value || []).map(({ publicationcode }) => publicationcode))].sort()
@@ -106,7 +105,6 @@ export const wtdcollection = defineStore('wtdcollection', () => {
     purchases,
     purchasesById,
     quotationSum,
-    signup,
     suggestions,
     total,
     totalPerCountry,

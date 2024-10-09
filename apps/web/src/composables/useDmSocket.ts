@@ -11,7 +11,6 @@ import EdgeCreatorServices from "~dm-services/edgecreator/types";
 import EdgesServices from "~dm-services/edges/types";
 import EventsServices from "~dm-services/events/types";
 import GlobalStatsServices from "~dm-services/global-stats/types";
-import LoginServices from "~dm-services/login/types";
 import PresentationTextServices from "~dm-services/presentation-text/types";
 import PublicCollectionServices from "~dm-services/public-collection/types";
 import StatsServices from "~dm-services/stats/types";
@@ -62,7 +61,6 @@ const defaultExport = (
       PublicCollectionServices.namespaceEndpoint,
     ),
     app: socket.addNamespace<AppServices>(AppServices.namespaceEndpoint),
-    login: socket.addNamespace<LoginServices>(LoginServices.namespaceEndpoint),
 
     bookcase: socket.addNamespace<BookcaseServices>(
       BookcaseServices.namespaceEndpoint,
@@ -115,10 +113,11 @@ const defaultExport = (
       CollectionServices.namespaceEndpoint,
       {
         session,
-        cache: {
-          storage: cacheStorage,
-          ttl: 1000, // 1 second only, because we want to always get the latest data but still cache in case of offline
-        },
+        // TODO cache is wrongly done on all endpoints if uncommented, it should be done only on retrieval endpoints
+        // cache: {
+        //   storage: cacheStorage,
+        //   ttl: 1000, // 1 second only, because we want to always get the latest data but still cache in case of offline
+        // },
       },
     ),
     coverId: socket.addNamespace<CoverIdServices>(

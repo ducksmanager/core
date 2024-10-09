@@ -224,7 +224,7 @@ export default (socket: Socket<Events>) => {
           where ID_Utilisateur = ${socket.data.user!.id}
             and estimationmin is not null
           group by numeros.ID;
-        `.then(getShownQuotations).then(quotations => callback({quotations}))
+        `.then(getShownQuotations).then(quotations => callback({ quotations }))
   );
 };
 
@@ -272,6 +272,9 @@ const addOrChangeIssues = async (
     .map((issuecode) =>
       prismaDm.issue.create({
         data: {
+          country: '',
+          magazine: '',
+          issuenumber: '',
           issuecode,
           condition: condition || issue_condition.indefini,
           isOnSale: isOnSale || false,
@@ -318,6 +321,9 @@ const addOrChangeCopies = async (
     return prismaDm.issue.upsert({
       create: {
         ...common,
+        country: '',
+        magazine: '',
+        issuenumber: '',
         issuecode,
         userId,
         creationDate: new Date(),
@@ -382,6 +388,9 @@ export const resetDemo = async () => {
       return prismaDm.issue.create({
         data: {
           userId: demoUser.id,
+          country: '',
+          magazine: '',
+          issuenumber: '',
           issuecode,
           condition,
           purchaseId: parseInt(purchaseId),

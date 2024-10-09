@@ -2,83 +2,90 @@
   <ion-content v-if="!items" ref="content">
     {{ t('Chargement…') }}
   </ion-content>
-  <ion-content v-else-if="!items.length" ref="content">
-    {{ t('Cette liste est vide.') }}
-  </ion-content>
-  <ion-content
-    v-else
-    ref="content"
-    class="no-padding"
-    scroll-events
-    @ion-scroll="onScroll"
-    @ion-scroll-end="isScrolling = false"
-  >
-    <template v-if="$slots['row-label']">
-      <RecycleScroller
-        :style="{ visibility: isCameraPreviewShown ? 'hidden' : 'visible' }"
-        class="scroller"
-        :items="filteredItems"
-        :item-size="32"
-        key-field="uniqueKey"
-        item-class="item-wrapper"
-        v-slot="{ item: { key, item, isOwned, nextItemType } }"
-      >
-        <Row
-          :id="key"
-          :type="itemType"
-          :class="{ [`is-next-item-${nextItemType}`]: !!nextItemType, 'is-owned': isOwned }"
-        >
-          <template #fill-bar v-if="item">
-            <slot name="fill-bar" :item="item" />
-          </template>
-          <template #prefix v-if="item">
-            <slot name="row-prefix" :item="item" />
-          </template>
-          <template #label>
-            <slot name="row-label" :item="item" />
-          </template>
-          <template #suffix>
-            <slot name="row-suffix" :item="item" />
-          </template>
-        </Row>
-      </RecycleScroller>
-      <div id="edit-issues-buttons" v-if="selectedIssuecodes">
-        <EditIssuesConfirmCancelButtons
-          :confirm-ios="pencilOutline"
-          :confirm-md="pencilSharp"
-          :cancel-ios="closeOutline"
-          :cancel-md="closeSharp"
-          @cancel="selectedIssuecodes = null"
-          @confirm="updateNavigationToSelectedIssuecodes"
-        /></div
-    ></template>
-    <slot v-else name="default" />
-    <EditIssuesButton
-      v-if="!selectedIssuecodes && !isCameraPreviewShown"
-      @show-camera-preview="isCameraPreviewShown = true"
-    />
-
-    <template v-if="isCameraPreviewShown">
-      <div :id="cameraPreviewElementId"></div>
-      <div class="overlay" ref="overlay">
-        <ion-button ref="takePhotoButton" @click="takePhoto().then(() => (isCameraPreviewShown = false))" size="large">
-          <ion-icon :ios="apertureOutline" :md="apertureSharp" />
-        </ion-button>
-        <ion-button size="large" color="danger" @click="isCameraPreviewShown = false">
-          <ion-icon :ios="closeOutline" :md="closeSharp" />
-        </ion-button></div
-    ></template>
-
-    <div
-      v-show="isScrolling"
-      v-if="itemInCenterOfViewport"
-      id="scroll-text"
-      slot="fixed"
-      :style="{ top: `${scrollPositionPct}%` }"
+  <template v-else>
+    <ion-content v-if="!items.length" ref="content">
+      <slot v-if="$slots.empty" name="empty" />
+      <template v-else>{{ t('Cette liste est vide.') }}</template>
+    </ion-content>
+    <ion-content
+      v-else
+      ref="content"
+      class="no-padding"
+      scroll-events
+      @ion-scroll="onScroll"
+      @ion-scroll-end="isScrolling = false"
     >
-      {{ getItemTextFn(itemInCenterOfViewport) }}
-    </div></ion-content
-  >
+      <template v-if="$slots['row-label']">
+        <RecycleScroller
+          :style="{ visibility: isCameraPreviewShown ? 'hidden' : 'visible' }"
+          class="scroller"
+          :items="filteredItems"
+          :item-size="32"
+          key-field="uniqueKey"
+          item-class="item-wrapper"
+          v-slot="{ item: { key, item, isOwned, nextItemType } }"
+        >
+          <Row
+            :id="key"
+            :type="itemType"
+            :class="{ [`is-next-item-${nextItemType}`]: !!nextItemType, 'is-owned': isOwned }"
+          >
+            <template #fill-bar v-if="item">
+              <slot name="fill-bar" :item="item" />
+            </template>
+            <template #prefix v-if="item">
+              <slot name="row-prefix" :item="item" />
+            </template>
+            <template #label>
+              <slot name="row-label" :item="item" />
+            </template>
+            <template #suffix>
+              <slot name="row-suffix" :item="item" />
+            </template>
+          </Row>
+        </RecycleScroller>
+        <div id="edit-issues-buttons" v-if="selectedIssuecodes">
+          <EditIssuesConfirmCancelButtons
+            :confirm-ios="pencilOutline"
+            :confirm-md="pencilSharp"
+            :cancel-ios="closeOutline"
+            :cancel-md="closeSharp"
+            @cancel="selectedIssuecodes = null"
+            @confirm="updateNavigationToSelectedIssuecodes"
+          /></div
+      ></template>
+      <slot v-else name="default" />
+      </ion-content>
+      <EditIssuesButton
+        v-if="!selectedIssuecodes && !isCameraPreviewShown"
+        @show-camera-preview="isCameraPreviewShown = true"
+      />
+
+      <template v-if="isCameraPreviewShown">
+        <div :id="cameraPreviewElementId"></div>
+        <div class="overlay" ref="overlay">
+          <ion-button
+            ref="takePhotoButton"
+            @click="takePhoto().then(() => (isCameraPreviewShown = false))"
+            size="large"
+          >
+            <ion-icon :ios="apertureOutline" :md="apertureSharp" />
+          </ion-button>
+          <ion-button size="large" color="danger" @click="isCameraPreviewShown = false">
+            <ion-icon :ios="closeOutline" :md="closeSharp" />
+          </ion-button></div
+      ></template>
+
+      <div
+        v-show="isScrolling"
+        v-if="itemInCenterOfViewport"
+        id="scroll-text"
+        slot="fixed"
+        :style="{ top: `${scrollPositionPct}%` }"
+      >
+        {{ getItemTextFn(itemInCenterOfViewport) }}
+      </div>
+  </template>
 </template>
 
 <script setup lang="ts" generic="Item extends Required<any>">
@@ -94,6 +101,7 @@ import { app } from '~/stores/app';
 
 defineSlots<{
   'default'(): any;
+  'empty'(): any;
   'fill-bar'(props: { item: Item }): any;
   'row-prefix'(props: { item: Item }): any;
   'row-label'(props: { item: Item }): any;

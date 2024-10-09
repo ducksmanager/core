@@ -2,22 +2,19 @@ import type { Socket } from "socket.io";
 
 import PresentationSentenceRequested from "~emails/presentation-sentence-requested";
 import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
-import { generateAccessToken, getHashedPassword } from "~services/auth/util";
+import { getHashedPassword } from "~services/auth/util";
 
 import type Events from "../types";
 import type { Validation } from "./util";
 import {
   DiscordIdValidation,
-  EmailCreationValidation,
   EmailUpdateValidation,
   EmailValidation,
   getUser,
   OldPasswordValidation,
-  PasswordsValidation,
+  PasswordValidation,
   PasswordUpdateValidation,
   PresentationTextValidation,
-  UsernameCreationValidation,
-  UsernameValidation,
   validate,
 } from "./util";
 
@@ -60,7 +57,7 @@ export default (socket: Socket<Events>) => {
     if (input.password) {
       validators = [
         ...validators,
-        new PasswordsValidation(),
+        new PasswordValidation(),
         new PasswordUpdateValidation(),
         new OldPasswordValidation(),
       ];
@@ -107,46 +104,6 @@ export default (socket: Socket<Events>) => {
       callback({
         hasRequestedPresentationSentenceUpdate,
       });
-    }
-  });
-
-  socket.on("createUser", async (input, callback) => {
-    const scopedError = await validate(input, [
-      new UsernameValidation(),
-      new UsernameCreationValidation(),
-      new EmailValidation(),
-      new EmailCreationValidation(),
-      new PasswordsValidation(),
-    ]);
-    if (scopedError) {
-      callback({ error: "Bad request", ...scopedError });
-    } else {
-      const { username, password, email } = input;
-      const hashedPassword = getHashedPassword(password);
-      const user = await prismaDm.user.create({
-        data: {
-          username,
-          password: hashedPassword,
-          email,
-          signupDate: new Date(),
-        },
-      });
-
-      const privileges = (
-        await prismaDm.userPermission.findMany({
-          where: {
-            username,
-          },
-        })
-      ).groupBy("role", "privilege");
-      const token = generateAccessToken({
-        id: user.id,
-        username,
-        hashedPassword,
-        privileges,
-      });
-
-      callback({ token });
     }
   });
 };

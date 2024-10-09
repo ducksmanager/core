@@ -126,12 +126,12 @@ model magazines {
 model issue {
   id              Int             @id @default(autoincrement()) @map("ID")
   /// @deprecated
-  country         String          @map("Pays") @ignore @db.VarChar(3)
+  country         String          @map("Pays") @db.VarChar(3)
   /// @deprecated
-  magazine        String          @map("Magazine") @ignore @db.VarChar(10)
+  magazine        String          @map("Magazine") @db.VarChar(10)
   publicationcode String          @default(dbgenerated("(concat(convert(`Pays` using utf8mb3),'/',convert(`Magazine` using utf8mb3)))")) @db.VarChar(14)
   /// @deprecated
-  issuenumber     String          @map("Numero") @ignore @db.VarChar(12)
+  issuenumber     String          @map("Numero") @db.VarChar(12)
   /// @deprecated
   Numero_nospace  String?         @ignore @db.VarChar(12)
   condition       issue_condition @default(indefini) @map("Etat")

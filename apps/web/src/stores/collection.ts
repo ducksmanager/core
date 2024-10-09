@@ -12,7 +12,7 @@ import type {
   purchase,
   subscription,
 } from "~prisma-schemas/schemas/dm";
-import type { EventReturnType, ScopedError } from "~socket.io-services/types";
+import type { EventReturnType } from "~socket.io-services/types";
 
 import useCollection from "../composables/useCollection";
 import { socketInjectionKey } from "../composables/useDmSocket";
@@ -41,7 +41,7 @@ export const collection = defineStore("collection", () => {
   const {
     collection: { services: collectionServices },
     stats: { services: statsServices },
-    login: { services: loginServices },
+    auth: { services: authServices },
     options: socketOptions,
   } = inject(socketInjectionKey)!;
 
@@ -52,8 +52,8 @@ export const collection = defineStore("collection", () => {
   >(null);
 
   const collectionUtils = useCollection(
-      issues as ShallowRef<(issue & { issuecode: string })[]>,
-    ),
+    issues as ShallowRef<(issue & { issuecode: string })[]>,
+  ),
     watchedPublicationsWithSales = shallowRef<string[] | null>(null),
     purchases = shallowRef<purchase[] | null>(null),
     watchedAuthors = shallowRef<authorUser[] | null>(null),
@@ -81,8 +81,8 @@ export const collection = defineStore("collection", () => {
     >(null),
     coaIssueCountsByPublicationcode = shallowRef<
       | EventReturnType<
-          CollectionServices["getIssues"]
-        >["countByPublicationcode"]
+        CollectionServices["getIssues"]
+      >["countByPublicationcode"]
       | null
     >(null),
     user = shallowRef<
@@ -120,7 +120,7 @@ export const collection = defineStore("collection", () => {
           ([publicationcode1], [publicationcode2]) =>
             Math.sign(
               totalPerPublicationUniqueIssuecodes.value[publicationcode2]! -
-                totalPerPublicationUniqueIssuecodes.value[publicationcode1]!,
+              totalPerPublicationUniqueIssuecodes.value[publicationcode1]!,
             ),
         ),
     ),
@@ -312,7 +312,7 @@ export const collection = defineStore("collection", () => {
       onSuccess: (token: string) => void,
       onError: (e: string) => void,
     ) => {
-      const response = await loginServices.login({
+      const response = await authServices.login({
         username,
         password,
       });
@@ -320,30 +320,6 @@ export const collection = defineStore("collection", () => {
         onError(response.error!);
       } else {
         onSuccess(response as string);
-      }
-    },
-    signup = async (
-      username: string,
-      password: string,
-      password2: string,
-      email: string,
-      onSuccess: (token: string) => void,
-      onError: (e: ScopedError) => void,
-    ) => {
-      const response = await collectionServices.createUser({
-        username,
-        password,
-        password2,
-        email,
-      });
-      if (response.error) {
-        if (response.selector) {
-          onError(response);
-        } else {
-          console.error(response.error, response.errorDetails);
-        }
-      } else {
-        onSuccess(response.token);
       }
     },
     loadUser = async (afterUpdate = false) => {
@@ -371,7 +347,7 @@ export const collection = defineStore("collection", () => {
   console.log(issues.value);
   return {
     ...collectionUtils,
-    loginServices,
+    authServices,
     issues,
     publicationUrlRoot,
     createPurchase,
@@ -404,7 +380,6 @@ export const collection = defineStore("collection", () => {
     previousVisit,
     purchases,
     purchasesById,
-    signup,
     subscriptions,
     suggestions,
     totalPerPublicationUniqueIssuecodes,

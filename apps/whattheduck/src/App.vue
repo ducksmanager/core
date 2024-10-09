@@ -4,7 +4,7 @@
     <OfflineBanner :on-offline="routeMeta.onOffline" v-if="isOfflineMode" />
 
     <ion-router-outlet
-      v-if="route.path === '/login' || route.path === '/test'"
+      v-if="['/login', '/signup', '/test'].includes(route.path)"
       :style="{ 'margin-top': `${offlineBannerHeight}px` }"
       id="main-content"
       :class="{ 'greyed-out': bundleDownloadProgress !== undefined }"

@@ -68,7 +68,7 @@ import Cookies from "js-cookie";
 
 import type { ScopedError } from "~socket.io-services/types";
 
-const { signup: userSignup, loadUser } = collection();
+const { loadUser } = collection();
 const { user } = storeToRefs(collection());
 const router = useRouter();
 
