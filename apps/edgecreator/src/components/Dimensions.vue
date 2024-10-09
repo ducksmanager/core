@@ -7,20 +7,12 @@
       <b-col cols="5">
         <b-form-input
           :id="dimension"
-          v-model="values[dimension as 'width'|'height']"
+          v-model.number="model[dimension as 'width'|'height']"
           size="sm"
           autocomplete="off"
           type="number"
           :min="dimension === 'width' ? 5 : 100"
           :max="dimension === 'width' ? 50 : 350"
-          @input="
-            $emit(
-              'change',
-              dimension === 'width'
-                ? { width: parseInt($event)!, height: height! }
-                : { width: width!, height: parseInt($event)! }
-            )
-          "
         />
       </b-col>
       <b-col cols="2" class="text-start">
@@ -31,33 +23,10 @@
 </template>
 
 <script setup lang="ts">
-const props = withDefaults(
-  defineProps<{
-    width?: number;
-    height?: number;
-  }>(),
-  {
-    width: 15,
-    height: 200,
-  },
-);
-
-const values = ref(
-  props as {
-    width?: number;
-    height?: number;
-  },
-);
-
-const emit =
-  defineEmits<
-    (e: "change", value: { width: number; height: number }) => void
-  >();
-
-emit("change", {
-  width: props.width,
-  height: props.height,
-});
+const model = defineModel<{
+  width: string;
+  height: string;
+}>({required: true})
 
 const ucFirst = (text: string) =>
   text[0].toUpperCase() + text.substring(1, text.length);

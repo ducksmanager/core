@@ -21,7 +21,6 @@
     <top-bar
       :dimensions="editingDimensions"
       @overwrite-model="overwriteModel"
-      @set-dimensions="overwriteDimensions"
     />
     <position-helper />
     <b-row class="flex-grow-1 pt-2" align-h="end">
@@ -275,18 +274,6 @@ const overwriteModel = async ({
       mainStore.addWarning(e as string);
     }
   }
-};
-const overwriteDimensions = ({
-  width,
-  height,
-}: {
-  width: number;
-  height: number;
-}) => {
-  stepStore.setDimensions(
-    { width, height },
-    { issuenumbers: editingStepStore.issuenumbers },
-  );
 };
 
 const getImageUrl = (fileType: string, fileName: string) =>

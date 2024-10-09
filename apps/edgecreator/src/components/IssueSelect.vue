@@ -71,7 +71,7 @@
         </template>
       </template>
     </template>
-    <slot v-if="$slots.dimensions && currentIssueNumber !== null" />
+    <slot v-if="$slots.dimensions && currentIssueNumber !== undefined" name="dimensions" />
   </div>
 </template>
 <script setup lang="ts">
@@ -161,7 +161,7 @@ const issues = computed(
 );
 
 watch(
-  () => currentCountryCode.value,
+  currentCountryCode,
   async (newValue) => {
     if (newValue) {
       currentPublicationCode.value = props.publicationCode!;
@@ -176,11 +176,13 @@ watch(
 );
 
 watch(
-  () => currentPublicationCode.value,
+  currentPublicationCode,
   async (newValue) => {
     if (newValue) {
-      currentIssueNumber.value = undefined;
       await coaStore.fetchIssueNumbers([newValue]);
+      currentIssueNumber.value = coaStore.issueNumbers[newValue][0];
+      currentIssueNumberEnd.value = coaStore.issueNumbers[newValue][0];
+      onChange({});
       await loadEdges();
     }
   },
@@ -229,14 +231,14 @@ const onChange = (
   data: { width: number; height: number } | Record<string, never>,
 ) =>
   emit("change", {
-    width: data.width,
-    height: data.height,
-    editMode: editMode.value,
-    countryCode: currentCountryCode.value!,
-    publicationCode: currentPublicationCode.value!,
-    issueNumber: currentIssueNumber.value!,
-    issueNumberEnd: currentIssueNumberEnd.value!,
-  });
+  width: data.width,
+  height: data.height,
+  editMode: editMode.value,
+  countryCode: currentCountryCode.value!,
+  publicationCode: currentPublicationCode.value!,
+  issueNumber: currentIssueNumber.value!,
+  issueNumberEnd: currentIssueNumberEnd.value!,
+});
 
 (async () => {
   await coaStore.fetchCountryNames(locale.value);

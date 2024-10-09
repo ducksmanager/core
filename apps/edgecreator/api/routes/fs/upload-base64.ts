@@ -19,39 +19,46 @@ export const post = async (
     };
   }>
 ) => {
-  const { country, issuenumber, magazine, data } = req.body;
-  const path = `${edgesPath}/${country}/photos`;
-  const tentativeFileName = `${magazine}.${issuenumber}.photo`;
-  const fileName = getNextAvailableFile(
-    `${path}/${tentativeFileName}`,
-    "jpg",
-  ).match(/\/([^/]+)$/)![1];
+  let body = '';
+  req.on('data', (chunk) => {
+    body += chunk;
+  });
+  req.on('end', async () => {
+    const { country, issuenumber, magazine, data } = JSON.parse(body) as typeof req.body;
+    const path = `${edgesPath}/${country}/photos`;
+    const tentativeFileName = `${magazine}.${issuenumber}.photo`;
+    const fileName = getNextAvailableFile(
+      `${path}/${tentativeFileName}`,
+      "jpg",
+    ).match(/\/([^/]+)$/)![1];
 
-  await decode(data, {
-    fname: `${path}/${fileName.replace(/.jpg$/, "")}`,
-    ext: "jpg",
+    await decode(data, {
+      fname: `${path}/${fileName.replace(/.jpg$/, "")}`,
+      ext: "jpg",
+    });
+
+    try {
+      const publicationcode = `${country}/${magazine}`;
+
+      await call(
+        dmApi,
+        new PUT__edgecreator__multiple_edge_photo__v2({
+          reqBody: {
+            publicationcode,
+            issuenumber,
+          },
+        }),
+      );
+    } catch (e) {
+      res.writeHead(500);
+      return res.end(JSON.stringify(e));
+    }
+
+    res.writeHead(200, {
+      Connection: "close",
+      "Content-Type": "application/text",
+    });
+    return res.json({ fileName });
   });
 
-  try {
-    const publicationcode = `${country}/${magazine}`;
-
-    await call(
-      dmApi,
-      new PUT__edgecreator__multiple_edge_photo__v2({
-        reqBody: {
-          publicationcode,
-          issuenumber,
-        },
-      }),
-    );
-  } catch (e) {
-    res.writeHead(500);
-    return res.end(e);
-  }
-
-  res.writeHead(200, {
-    Connection: "close",
-    "Content-Type": "application/text",
-  });
-  return res.json({ fileName });
 };

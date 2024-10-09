@@ -227,9 +227,7 @@
           >
             <confirm-edit-multiple-values :values="uniqueDimensions">
               <dimensions
-                :width="uniqueDimensions[0].width"
-                :height="uniqueDimensions[0].height"
-                @change="$emit('set-dimensions', $event)"
+              v-model="uniqueDimensions[0]"
               />
             </confirm-edit-multiple-values>
           </b-collapse>
@@ -260,7 +258,9 @@
 import surroundingEdge from "~/composables/useSurroundingEdge";
 import { coa } from "~/stores/coa";
 import { collection } from "~/stores/collection";
+import { editingStep } from "~/stores/editingStep";
 import { main } from "~/stores/main";
+import { step } from "~/stores/step";
 import { ui } from "~/stores/ui";
 
 const uiStore = ui();
@@ -268,6 +268,8 @@ const mainStore = main();
 
 const { showPreviousEdge, showNextEdge } = surroundingEdge();
 const { hasRole } = collection();
+const stepStore = step();
+const editingStepStore = editingStep();
 
 interface ModelToClone {
   editMode: string;
@@ -279,7 +281,6 @@ interface ModelToClone {
 
 const emit = defineEmits<{
   (e: "overwrite-model", value: ModelToClone | null): void;
-  (e: "set-dimensions", value: { width: number; height: number }): void;
 }>();
 
 const props = defineProps<{
@@ -305,6 +306,13 @@ const uniqueDimensions = computed(() =>
     ),
   ].map((item) => JSON.parse(item) as { width: number; height: number }),
 );
+
+watch(uniqueDimensions, (value) => {
+  stepStore.setDimensions(
+    value[0],
+    { issuenumbers: editingStepStore.issuenumbers },
+  );
+})
 
 const isEditingMultiple = computed(
   () => mainStore.isRange || mainStore.issuenumbers.length > 1,

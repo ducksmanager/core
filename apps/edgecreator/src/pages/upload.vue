@@ -44,22 +44,15 @@ meta:
         </b-container>
         <issue-select
           :key="crops.length"
-          :dimensions="
-            currentCrop
-              ? { width: currentCrop.width, height: currentCrop.height }
-              : { width: 15, height: 200 }
-          "
           disable-ongoing-or-published
           :disable-not-ongoing-nor-published="false"
-          @change="currentCrop = $event && $event.width ? $event : null"
+          @change="currentCrop = $event && $event.issueNumber ? {...$event, width: String(currentCrop?.width || 15), height: String(currentCrop?.height || 200)} : null"
         >
           <template #dimensions>
             <dimensions
-              :width="currentCrop ? currentCrop.width : 15"
-              :height="currentCrop ? currentCrop.height : 200"
-              @change="
-                currentCrop = $event && $event.width ? $event : null
-              " /></template
+              :modelValue="currentCrop"
+              @update:modelValue="currentCrop = {...currentCrop, ...$event}"
+              /></template
         ></issue-select>
         <b-button :disabled="!currentCrop" class="mt-3 mb-4" @click="addCrop">{{
           $t("Add")
@@ -131,6 +124,7 @@ meta:
 </template>
 
 <script lang="ts" setup>
+import VueCropper from 'vue-cropperjs';
 import "cropperjs/dist/cropper.css";
 
 import { useCookies } from "@vueuse/integrations/useCookies";
@@ -158,6 +152,7 @@ type CropWithData = Crop & {
   filename?: string;
   url: string;
   sent: boolean;
+  error?: string;
 };
 
 const currentCrop = ref(null as CropWithData | null);
