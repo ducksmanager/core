@@ -161,7 +161,6 @@ export class SocketClient {
               };
               let cacheKey;
               if (cache) {
-                debugger
                 cacheKey = `${namespaceName}/${event} ${JSON.stringify(args)}`;
                 const cacheData = await cache.storage.get(cacheKey, {
                   cache: {

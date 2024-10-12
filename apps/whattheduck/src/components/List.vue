@@ -55,36 +55,32 @@
           /></div
       ></template>
       <slot v-else name="default" />
-      </ion-content>
-      <EditIssuesButton
-        v-if="!selectedIssuecodes && !isCameraPreviewShown"
-        @show-camera-preview="isCameraPreviewShown = true"
-      />
+    </ion-content>
+    <EditIssuesButton
+      v-if="!selectedIssuecodes && !isCameraPreviewShown"
+      @show-camera-preview="isCameraPreviewShown = true"
+    />
 
-      <template v-if="isCameraPreviewShown">
-        <div :id="cameraPreviewElementId"></div>
-        <div class="overlay" ref="overlay">
-          <ion-button
-            ref="takePhotoButton"
-            @click="takePhoto().then(() => (isCameraPreviewShown = false))"
-            size="large"
-          >
-            <ion-icon :ios="apertureOutline" :md="apertureSharp" />
-          </ion-button>
-          <ion-button size="large" color="danger" @click="isCameraPreviewShown = false">
-            <ion-icon :ios="closeOutline" :md="closeSharp" />
-          </ion-button></div
-      ></template>
+    <template v-if="isCameraPreviewShown">
+      <div :id="cameraPreviewElementId"></div>
+      <div class="overlay" ref="overlay">
+        <ion-button ref="takePhotoButton" @click="takePhoto().then(() => (isCameraPreviewShown = false))" size="large">
+          <ion-icon :ios="apertureOutline" :md="apertureSharp" />
+        </ion-button>
+        <ion-button size="large" color="danger" @click="isCameraPreviewShown = false">
+          <ion-icon :ios="closeOutline" :md="closeSharp" />
+        </ion-button></div
+    ></template>
 
-      <div
-        v-show="isScrolling"
-        v-if="itemInCenterOfViewport"
-        id="scroll-text"
-        slot="fixed"
-        :style="{ top: `${scrollPositionPct}%` }"
-      >
-        {{ getItemTextFn(itemInCenterOfViewport) }}
-      </div>
+    <div
+      v-show="isScrolling"
+      v-if="itemInCenterOfViewport"
+      id="scroll-text"
+      slot="fixed"
+      :style="{ top: `${scrollPositionPct}%` }"
+    >
+      {{ getItemTextFn(itemInCenterOfViewport) }}
+    </div>
   </template>
 </template>
 

@@ -39,7 +39,7 @@ export abstract class Validation {
 
 export class UsernameValidation extends Validation {
   run = async ({ username }: Pick<user, "username">) => {
-    if (!/^[-_A-Za-z0-9]{3,15}$/.test(username)) {
+    if (!/^[-_A-Za-z0-9]{3,25}$/.test(username)) {
       return {
         message: "Nom d'utilisateur invalide",
         selector: "#username",

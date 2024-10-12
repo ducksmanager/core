@@ -8,29 +8,30 @@
     </ion-row>
     <ion-row
       ><ion-col size="12">
-        <ion-segment
-          v-if="issuecodes.length === 1"
-          v-model="currentCopyIndex"
-          :style="copies.length ? undefined : { display: 'initial' }"
-        >
-          <ion-segment-button v-for="(_, idx) in 3" :id="`copy-${idx}`" :value="idx" v-show="copies[idx]">
-            <template v-if="copies[idx]">
-              <ion-label
-                ><div>
-                  {{ t('Ex. {index}', { index: idx + 1 }) }}
-                </div>
-                <Condition :value="copies[idx].condition"
-              /></ion-label>
-            </template>
-          </ion-segment-button>
-          <ion-button
-            :style="{ gridColumn: 4 }"
-            size="small"
-            v-if="!isOfflineMode && copies.length <= 2"
-            @click="addCopy"
-          >
+        <template v-if="issuecodes.length === 1">
+          <ion-button v-if="!copies.length && !isOfflineMode" size="small" @click="addCopy">
             <ion-icon :ios="addOutline" :md="addSharp" />&nbsp;{{ t('Ajouter un exemplaire') }}
-          </ion-button> </ion-segment
+          </ion-button>
+          <ion-segment v-else v-model="currentCopyIndex">
+            <ion-segment-button v-for="(_, idx) in 3" :id="`copy-${idx}`" :value="idx" v-show="copies[idx]">
+              <template v-if="copies[idx]">
+                <ion-label
+                  ><div>
+                    {{ t('Ex. {index}', { index: idx + 1 }) }}
+                  </div>
+                  <Condition :value="copies[idx].condition"
+                /></ion-label>
+              </template>
+            </ion-segment-button>
+            <ion-button
+              :style="{ gridColumn: 4 }"
+              size="small"
+              v-if="!isOfflineMode && copies.length <= 2"
+              @click="addCopy"
+            >
+              <ion-icon :ios="addOutline" :md="addSharp" />&nbsp;{{ t('Ajouter un exemplaire') }}
+            </ion-button>
+          </ion-segment></template
         ><ion-button
           @click="
             copies.splice(currentCopyIndex!, 1);

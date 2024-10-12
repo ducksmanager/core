@@ -2,7 +2,6 @@ import { createRouter, createWebHistory } from '@ionic/vue-router';
 import type { RouteMeta } from 'vue-router';
 
 import Collection from '~/components/Collection.vue';
-import About from '~/views/About.vue';
 import Authors from '~/views/Authors.vue';
 import CoverSearchResults from '~/views/CoverSearchResults.vue';
 import Forgot from '~/views/Forgot.vue';
@@ -11,6 +10,7 @@ import Logout from '~/views/Logout.vue';
 import Recent from '~/views/Recent.vue';
 import Report from '~/views/Report.vue';
 import Search from '~/views/Search.vue';
+import Settings from '~/views/Settings.vue';
 import Signup from '~/views/Signup.vue';
 import Stats from '~/views/Stats.vue';
 import Suggestions from '~/views/Suggestions.vue';
@@ -103,8 +103,8 @@ const routes = [
     component: Suggestions,
   },
   {
-    path: '/about',
-    component: About,
+    path: '/settings',
+    component: Settings,
   },
   {
     path: '/test',

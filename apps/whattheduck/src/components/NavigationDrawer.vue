@@ -68,8 +68,8 @@ import {
   warningSharp,
   logOutOutline,
   logOutSharp,
-  helpOutline,
-  helpSharp,
+  settingsOutline,
+  settingsSharp,
 } from 'ionicons/icons';
 import { stores as webStores } from '~web';
 
@@ -131,10 +131,10 @@ const appPages = computed(() =>
       mdIcon: statsChartSharp,
     },
     {
-      title: t('A propos'),
-      url: '/about',
-      iosIcon: helpOutline,
-      mdIcon: helpSharp,
+      title: t('Paramètres'),
+      url: '/settings',
+      iosIcon: settingsOutline,
+      mdIcon: settingsSharp,
     },
   ].map(mapIsDisabled),
 );
