@@ -17,6 +17,7 @@ import './theme/variables.scss';
 import './theme/global.scss';
 import 'vue-virtual-scroller/dist/vue-virtual-scroller.css';
 
+import { Capacitor } from '@capacitor/core';
 import { CapacitorUpdater } from '@capgo/capacitor-updater';
 import { defineCustomElements } from '@ionic/pwa-elements/loader';
 import { Drivers, Storage } from '@ionic/storage';
@@ -24,6 +25,7 @@ import { IonicVue } from '@ionic/vue';
 import CordovaSQLiteDriver from 'localforage-cordovasqlitedriver';
 import { createPinia } from 'pinia';
 import VueVirtualScroller from 'vue-virtual-scroller';
+import { SocketClient } from '~socket.io-client-services/index';
 import { i18n } from '~web';
 
 import App from './App.vue';
@@ -34,6 +36,11 @@ import sv from '~translations/sv.json';
 
 CapacitorUpdater.notifyAppReady();
 
+const socketUrl = ['web', 'ios'].includes(Capacitor.getPlatform())
+  ? import.meta.env.VITE_DM_SOCKET_URL
+  : import.meta.env.VITE_DM_SOCKET_URL_NATIVE || import.meta.env.VITE_DM_SOCKET_URL;
+console.log(`Using socket URL ${socketUrl}`);
+
 const store = createPinia();
 
 defineCustomElements(window);
@@ -43,7 +50,8 @@ const app = createApp(App)
   .use(router)
   .use(store)
   .use(i18n('fr', { en, sv }).instance)
-  .use(VueVirtualScroller);
+  .use(VueVirtualScroller)
+  .provide('dmSocket', new SocketClient(socketUrl));
 
 router.isReady().then(async () => {
   const storage = new Storage({

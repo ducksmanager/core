@@ -1,0 +1,30 @@
+services:
+  kumiko:
+    container_name: kumiko
+    image: ghcr.io/bperel/kumiko
+    restart: always
+    networks:
+      - dumili-network
+
+  paddleocr:
+    container_name: paddleocr
+    image: ghcr.io/bperel/paddleocr
+    restart: always
+    networks:
+      - dumili-network
+
+  api:
+    container_name: dumili-api
+    image: ghcr.io/bperel/dumili-api
+    restart: always
+    networks:
+      - public-network
+      - dumili-network
+      - ducksmanager2_dm2-network
+
+networks:
+  dumili-network:
+  ducksmanager2_dm2-network:
+    external: true
+  public-network:
+    external: true

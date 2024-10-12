@@ -37,7 +37,11 @@ export default defineConfig({
     AutoImport({
       dts: true,
       imports: ["vue", "vue-router", "vue-i18n", "pinia"],
+
       vueTemplate: true,
+      eslintrc: {
+        enabled: true,
+      },
       dirs: [
         "../web/src/composables",
         "../web/src/stores",

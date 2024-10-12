@@ -18,7 +18,7 @@ import { Capacitor } from '@capacitor/core';
 import { CapacitorUpdater } from '@capgo/capacitor-updater';
 import type { Storage as IonicStorage } from '@ionic/storage';
 import Cookies from 'js-cookie';
-import { buildStorage, SocketClient } from '~socket.io-client-services';
+import { buildStorage } from '~socket.io-client-services';
 
 import OfflineBanner from './components/OfflineBanner.vue';
 import { app } from './stores/app';
@@ -45,11 +45,6 @@ interface RouteMeta {
 const routeMeta = computed(() => route.meta as RouteMeta);
 
 const assignSocket = () => {
-  const socketUrl = ['web', 'ios'].includes(Capacitor.getPlatform())
-    ? import.meta.env.VITE_DM_SOCKET_URL
-    : import.meta.env.VITE_DM_SOCKET_URL_NATIVE || import.meta.env.VITE_DM_SOCKET_URL;
-  console.log(`Using socket URL ${socketUrl}`);
-
   const session = {
     getToken: async () => token.value,
     clearSession: () => {
@@ -60,7 +55,7 @@ const assignSocket = () => {
     sessionExists: async () => token.value !== undefined,
   };
 
-  socket.value = useDmSocket(new SocketClient(socketUrl), {
+  socket.value = useDmSocket({
     cacheStorage: buildStorage({
       set: (key, data, currentRequest) => {
         const item = {

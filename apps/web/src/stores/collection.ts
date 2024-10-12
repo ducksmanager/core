@@ -39,7 +39,7 @@ export type purchaseWithStringDate = Omit<purchase, "date"> & {
 
 export const collection = defineStore("collection", () => {
   const {
-    collection: { services: collectionServices },
+    collection: { services: collectionServices, socket: collectionSocket },
     stats: { services: statsServices },
     auth: { services: authServices },
     options: socketOptions,
@@ -323,6 +323,10 @@ export const collection = defineStore("collection", () => {
       }
     },
     loadUser = async (afterUpdate = false) => {
+      if (!socketOptions.session.getToken()) {
+        user.value = null;
+        return;
+      }
       if (!isLoadingUser.value && (afterUpdate || !user.value)) {
         isLoadingUser.value = true;
         const response = await collectionServices.getUser();
@@ -353,6 +357,7 @@ export const collection = defineStore("collection", () => {
     createPurchase,
     deletePurchase,
     hasRole,
+    collectionSocket,
     hasSuggestions,
     isLoadingUser,
     coaIssueCountsByPublicationcode,

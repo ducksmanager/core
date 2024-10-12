@@ -11,11 +11,14 @@ const defaultExport = (options: {
     sessionExists: () => Promise<boolean>;
   };
 }) => {
-  const socket = inject("dmSocket") as SocketClient;
+  const socket = inject("dumiliSocket") as SocketClient;
+
+  const { session } = options;
 
   const getIndexationSocketFromId = (id: string) =>
     socket.addNamespace<IndexationServices>(
       IndexationServices.namespaceEndpoint.replace("{id}", id),
+      { session },
     );
 
   const indexationSocket = ref<
@@ -26,6 +29,7 @@ const defaultExport = (options: {
     options,
     indexations: socket.addNamespace<IndexationsServices>(
       IndexationsServices.namespaceEndpoint,
+      { session },
     ),
     indexationSocket,
     setIndexationSocketFromId: (id: string) => {

@@ -40,13 +40,13 @@ const onConnectError = (e: Error) => {
 };
 getCurrentInstance()!.appContext.app.provide(
   edgecreatorSocketInjectionKey,
-  useEdgecreatorSocket(inject("edgecreatorSocket") as SocketClient, {
+  useEdgecreatorSocket({
     session,
     onConnectError,
   })
 );
 
-const dmSocket = useDmSocket(inject("dmSocket") as SocketClient, {
+const dmSocket = useDmSocket({
   cacheStorage: buildWebStorage(sessionStorage),
   session,
   onConnectError,

@@ -4,8 +4,8 @@ services:
     ports:
       - "8005:8080"
     build:
-      context: kumiko
-      dockerfile: Dockerfile
+      context: ../../..
+      dockerfile: apps/dumili/api/kumiko/Dockerfile
   paddleocr:
     restart: always
     ports:
@@ -13,13 +13,13 @@ services:
     volumes:
       - /root/.paddleocr
     build:
-      context: paddleocr
-      dockerfile: Dockerfile
+      context: ../../..
+      dockerfile: apps/dumili/api/paddleocr/Dockerfile
   db:
     restart: always
     image: mariadb:11.4
     env_file:
-      - ./api/.env
+      - .env
     ports:
       - "64097:3306"
     volumes:

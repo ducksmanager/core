@@ -1,4 +1,4 @@
-import type { InjectionKey } from "vue";
+import { inject, type InjectionKey } from "vue";
 
 import BrowseServices from "~edgecreator-services/browse/types";
 import ImageInfoServices from "~edgecreator-services/image-info/types";
@@ -8,7 +8,6 @@ import UploadServices from "~edgecreator-services/upload/types";
 import type { SocketClient } from "~socket.io-client-services";
 
 const defaultExport = (
-  socket: SocketClient,
   options: {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     onConnectError: (e: any, namespace: string) => Promise<void> | void;
@@ -19,6 +18,7 @@ const defaultExport = (
     };
   },
 ) => {
+  const socket = inject("edgecreatorSocket") as SocketClient;
   socket.onConnectError = options.onConnectError;
   const { session } = options;
 

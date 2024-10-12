@@ -17,24 +17,22 @@ import StatsServices from "~dm-services/stats/types";
 import type { AxiosStorage } from "~socket.io-client-services";
 import type { SocketClient } from "~socket.io-client-services";
 
-const defaultExport = (
-  socket: SocketClient,
-  options: {
-    cacheStorage: AxiosStorage;
+const defaultExport = (options: {
+  cacheStorage: AxiosStorage;
 
-    onConnectError: (
-      e: Error,
-      namespace: string,
-      eventName?: string,
-    ) => Promise<void> | void;
-    onConnected?: (namespace: string) => void;
-    session: {
-      getToken: () => Promise<string | null | undefined>;
-      clearSession: () => void;
-      sessionExists: () => Promise<boolean>;
-    };
-  },
-) => {
+  onConnectError: (
+    e: Error,
+    namespace: string,
+    eventName?: string,
+  ) => Promise<void> | void;
+  onConnected?: (namespace: string) => void;
+  session: {
+    getToken: () => Promise<string | null | undefined>;
+    clearSession: () => void;
+    sessionExists: () => Promise<boolean>;
+  };
+}) => {
+  const socket = inject("dmSocket") as SocketClient;
   const { session, cacheStorage, onConnectError, onConnected } = options;
   const until4am = () => {
     const now = dayjs();

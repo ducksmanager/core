@@ -37,8 +37,6 @@ npm-debug.log*
 /www
 
 *.local
-.eslintcache
-.eslintrc-auto-import.json
 *.d.ts
 !vue-virtual-scroller.d.ts
 

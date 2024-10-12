@@ -3,13 +3,16 @@
   "ui": "tui",
   "tasks": {
     "prisma-pull-generate": {},
-    "lint": {},
     "prisma-generate": {
       "cache": false
     },
-    "wait": {
+    "prisma-migrate": {
       "cache": false
     },
+    "dev:wait": {
+      "cache": false
+    },
+    "lint": {},
     "build": {
       "inputs": [
         "$TURBO_DEFAULT$",
@@ -59,8 +62,9 @@
     "dev": {
       "persistent": true,
       "dependsOn": [
+        "^dev:wait",
         "prisma-generate",
-        "^wait"
+        "prisma-migrate"
       ]
     }
   }

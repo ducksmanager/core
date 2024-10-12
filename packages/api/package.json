@@ -12,7 +12,7 @@
     "prod:build-docker": "REPO_NAME=ghcr.io/bperel/ducksmanager-api:websocket pnpm -F '~ci' prod:build-docker -f packages/api/Dockerfile",
     "prod:transfer-files-pre": "pnpm -F '~ci' prod:transfer-files @packages/api/.env:packages/api/.env @packages/prisma-clients/.env.prod.local:packages/prisma-schemas/.env",
     "prod:transfer-files-post": "pnpm -F '~ci' prod:transfer-files packages/api/docker-compose.yml:@packages/api/docker-compose.yml",
-    "wait": "wait-on tcp:3000"
+    "dev:wait": "wait-on tcp:3000"
   },
   "dependencies": {
     "@opentelemetry/instrumentation-socket.io": "^0.42.0",

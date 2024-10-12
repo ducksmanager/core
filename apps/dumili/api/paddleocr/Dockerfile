@@ -1,5 +1,5 @@
 FROM python:3.9-slim AS libs
-RUN apt update && apt install -y --no-install-recommends wget make gcc perl build-essential && apt clean
+RUN apt update && apt install -y --no-install-recommends wget make gcc perl build-essential patch && apt clean
 WORKDIR /home
 
 RUN wget https://www.openssl.org/source/openssl-1.1.1v.tar.gz
@@ -12,8 +12,9 @@ RUN apt update && apt install -y --no-install-recommends libgl1-mesa-glx libgomp
 
 COPY --from=libs /home/openssl-1.1.1v/libcrypto.so.1.1 /lib/
 COPY --from=libs /home/openssl-1.1.1v/libssl.so.1.1 /lib/
-COPY apps/dumili/paddleocr/requirements.txt ./
+COPY apps/dumili/api/paddleocr/requirements.txt ./
+
 RUN pip3 install -r requirements.txt
-COPY --chmod=777 apps/dumili/paddleocr/server.py ./
+COPY --chmod=777 apps/dumili/api/paddleocr/server.py ./
 
 ENTRYPOINT ["./server.py"]

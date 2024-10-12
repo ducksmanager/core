@@ -21,19 +21,17 @@
 import Cookies from "js-cookie";
 
 import { stores as webStores } from "~web";
+import useDmSocket, {
+  socketInjectionKey as dmSocketInjectionKey,
+} from "~web/src/composables/useDmSocket";
 
 import useDumiliSocket, {
   dumiliSocketInjectionKey,
 } from "./composables/useDumiliSocket";
 
+import { buildWebStorage } from "~socket.io-client-services/index";
+
 const { t: $t } = useI18n();
-
-const loginUrl = computed(
-  () => `${import.meta.env.VITE_DM_URL}/login?redirect=${document.URL}`,
-);
-
-const { loadUser } = webStores.collection();
-const { user, isLoadingUser } = storeToRefs(webStores.collection());
 
 const session = {
   getToken: () => Promise.resolve(Cookies.get("token")),
@@ -62,6 +60,22 @@ getCurrentInstance()!.appContext.app.provide(
     onConnectError,
   }),
 );
+
+getCurrentInstance()!.appContext.app.provide(
+  dmSocketInjectionKey,
+  useDmSocket({
+    cacheStorage: buildWebStorage(sessionStorage),
+    session,
+    onConnectError,
+  }),
+);
+
+const loginUrl = computed(
+  () => `${import.meta.env.VITE_DM_URL}/login?redirect=${document.URL}`,
+);
+
+const { loadUser } = webStores.collection();
+const { user, isLoadingUser } = storeToRefs(webStores.collection());
 
 onBeforeMount(() => {
   loadUser();

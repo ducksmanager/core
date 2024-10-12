@@ -33,7 +33,11 @@ const app = createApp(App)
   .use(store)
   .use(head)
   .use(router)
-  .provide("dmSocket", new SocketClient(import.meta.env.VITE_DM_SOCKET_URL));
+  .provide("dmSocket", new SocketClient(import.meta.env.VITE_DM_SOCKET_URL))
+  .provide(
+    "dumiliSocket",
+    new SocketClient(import.meta.env.VITE_DUMILI_SOCKET_URL),
+  );
 
 app.mount("#app");
 

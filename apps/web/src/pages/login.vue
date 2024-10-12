@@ -54,7 +54,7 @@ import Cookies from "js-cookie";
 
 import { socketInjectionKey } from "../composables/useDmSocket";
 
-const { login: userLogin, loadUser } = collection();
+const { login: userLogin, loadUser, collectionSocket } = collection();
 const { user } = storeToRefs(collection());
 
 let router = useRouter();
@@ -63,10 +63,6 @@ let route = useRoute();
 let username = $ref("");
 let error = $ref<string | null>(null);
 let password = $ref("");
-
-const {
-  collection: { socket: collectionSocket },
-} = inject(socketInjectionKey)!;
 
 const login = async () => {
   await userLogin(
@@ -77,7 +73,11 @@ const login = async () => {
       Cookies.set("token", newToken, {
         domain,
       });
+
       collectionSocket!.connect();
+
+      // const tmp = inject(socketInjectionKey)!;
+      // collectionSocket!.connect();
       await loadUser();
     },
     (e) => {
