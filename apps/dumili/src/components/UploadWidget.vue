@@ -10,6 +10,7 @@ import "@uppy/dashboard/dist/style.css";
 import Uppy from "@uppy/core";
 import Dashboard from "@uppy/dashboard";
 import XHR from "@uppy/xhr-upload";
+import Cookies from "js-cookie";
 //
 
 // import { socketInjectionKey as dmSocketInjectionKey } from "~web/src/composables/useDmSocket";
@@ -84,7 +85,7 @@ onMounted(async () => {
       endpoint: `${import.meta.env.VITE_DUMILI_SOCKET_URL}/upload`,
       headers: {
         "x-dumili-indexation-id": props.folderName,
-        "x-token": (await session.value!.getToken())!,
+        "x-token": Cookies.get("token")!,
       },
       getResponseError: (responseText) =>
         new Error(JSON.parse(responseText).error),

@@ -53,7 +53,7 @@
 
 <script setup lang="ts">
 import { dumiliSocketInjectionKey } from "~/composables/useDumiliSocket";
-import { IndexationWithFirstPage } from "~dumili-services/indexations/types";
+import type { IndexationWithFirstPage } from "~dumili-services/indexation/types";
 const router = useRouter();
 const {
   indexations: { services: indexationsServices },

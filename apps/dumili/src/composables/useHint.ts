@@ -8,9 +8,10 @@ import { dumiliSocketInjectionKey } from "./useDumiliSocket";
 export default () => {
   const { loadIndexation } = suggestions();
   const { indexation } = storeToRefs(suggestions());
-  const coaStore = webStores.coa();
+  const { fetchIssuecodeDetails, fetchPublicationNames } = webStores.coa();
+  const { issuecodeDetails } = storeToRefs(webStores.coa());
 
-  const { getIndexationSocket } = inject(dumiliSocketInjectionKey)!;
+  const { indexationSocket } = inject(dumiliSocketInjectionKey)!;
 
   const applyHintsFromCoverSearch = async (
     results: EventReturnType<CoverIdServices["searchFromCover"]>,
@@ -21,9 +22,7 @@ export default () => {
     }
     await Promise.all(
       results.covers.map(({ issuecode /*, id: coverId*/ }) =>
-        getIndexationSocket(
-          indexation.value!.id,
-        ).services.acceptIssueSuggestion({
+        indexationSocket.value!.services.acceptIssueSuggestion({
           source: "ai",
           issuecode,
           // coverId,
@@ -34,8 +33,14 @@ export default () => {
 
     await loadIndexation(indexation.value!.id);
 
-    await coaStore.fetchPublicationNames(
-      results.covers.map(({ publicationcode }) => publicationcode!),
+    await fetchIssuecodeDetails(
+      results.covers.map(({ issuecode }) => issuecode!),
+    );
+
+    await fetchPublicationNames(
+      results.covers.map(
+        ({ issuecode }) => issuecodeDetails.value[issuecode]!.publicationcode,
+      ),
     );
   };
 

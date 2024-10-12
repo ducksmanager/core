@@ -78,21 +78,17 @@ export default (io: Server) => {
       });
     });
 
+    socket.on("getCoverUrl", async (coverId, callback) => 
+      getCoverUrl(coverId).then((url) => callback(`${process.env.INDUCKS_COVERS_ROOT}/${url}`)))
+
     socket.on("downloadCover", async (coverId, callback) => {
-      const cover = await prismaCoverInfo.cover.findUniqueOrThrow({
-        where: {
-          id: coverId,
-        },
-      });
-      const remotePath = `${cover.sitecode}/${
-        cover.sitecode === "webusers" ? "webusers" : ""
-      }${cover.url}`;
+      const coverUrl = await getCoverUrl(coverId);
 
       const data: Uint8Array[] = [];
       const externalRequest = https.request(
         {
           hostname: process.env.INDUCKS_COVERS_ROOT,
-          path: remotePath,
+          path: coverUrl,
         },
         (res) => {
           res
@@ -122,6 +118,15 @@ const getIssuesCodesFromCoverIds = async (coverIds: number[]) =>
       },
     },
   });
+
+  const getCoverUrl = async (coverId: number) =>
+  prismaCoverInfo.cover.findUniqueOrThrow({
+    where: {
+      id: coverId,
+    },
+  }).then((cover) => `${cover.sitecode}/${
+    cover.sitecode === "webusers" ? "webusers" : ""
+  }${cover.url}`);
 
 const getSimilarImages = async (
   cover: Buffer,

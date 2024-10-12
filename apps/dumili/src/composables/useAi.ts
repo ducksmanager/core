@@ -2,21 +2,24 @@ import { suggestions } from "~/stores/suggestions";
 import { storyKinds } from "~dumili-types/storyKinds";
 
 import { dumiliSocketInjectionKey } from "./useDumiliSocket";
+import { socketInjectionKey as dmSocketInjectionKey } from "~web/src/composables/useDmSocket";
+
 import useHint from "./useHint";
 
 const coverStoryKindCode = storyKinds.find(
   ({ label }) => label === "Cover",
 )!.code;
 
-export default (indexationId: string) => {
+export default () => {
   const status = ref<"idle" | "loading" | "loaded">("idle");
 
   const {
-    getIndexationSocket,
     coverId: { services: coverIdServices },
-  } = inject(dumiliSocketInjectionKey)!;
+  } = inject(dmSocketInjectionKey)!;
 
-  const indexationServices = getIndexationSocket(indexationId).services;
+  const { indexationSocket } = inject(dumiliSocketInjectionKey)!;
+
+  const indexationServices = indexationSocket.value!.services;
   const { indexation, entriesFirstPages } = storeToRefs(suggestions());
 
   const hint = useHint();

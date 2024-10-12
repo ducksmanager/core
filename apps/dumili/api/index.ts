@@ -11,10 +11,11 @@ import type { EventsMap } from "socket.io/dist/typed-events";
 
 import type { SessionUser } from "~dm-types/SessionUser";
 
-import { PrismaClient } from "./prisma/client_dumili";
+import { PrismaClient } from "~prisma/client_dumili";
 import { authenticateUser } from "./services/_auth";
 import indexations from "./services/indexations";
-import type { FullIndexation } from "./services/indexations/types";
+import indexation from "./services/indexation";
+import type { FullIndexation } from "./services/indexation/types";
 
 dotenv.config({
   path: ".env",
@@ -43,7 +44,7 @@ export class ServerWithData<Data extends object> extends Server<
   Record<string, never>,
   Record<string, never>,
   Data
-> {}
+> { }
 
 export type NamespaceWithData<
   Services extends EventsMap,
@@ -185,6 +186,7 @@ const io = new Server(httpServer, {
 });
 
 indexations(io);
+indexation(io);
 
 httpServer.listen(3002);
 console.log("Dumuli API open on port 3002");

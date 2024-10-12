@@ -145,7 +145,7 @@
 import { dumiliSocketInjectionKey } from "~/composables/useDumiliSocket";
 import { suggestions } from "~/stores/suggestions";
 import { user } from "~/stores/ui";
-import { FullEntry } from "~dumili-services/indexations/types";
+import { FullEntry } from "~dumili-services/indexation/types";
 import { storyKinds } from "~dumili-types/storyKinds";
 import type { entry, storyKind } from "~prisma/client_dumili";
 
@@ -157,7 +157,7 @@ const props = defineProps<{
 
 const { entry, editable } = toRefs(props);
 
-const { getIndexationSocket } = inject(dumiliSocketInjectionKey)!;
+const { indexationSocket } = inject(dumiliSocketInjectionKey)!;
 
 const { indexation, acceptedStories, acceptedStoryKinds, entriesFirstPages } =
   storeToRefs(suggestions());
@@ -202,9 +202,7 @@ const getStoryKind = (storyKind: storyKind) =>
   storyKinds.find(({ code }) => code === storyKind)?.label;
 
 const acceptStoryKindSuggestion = (kind: storyKind) => {
-  getIndexationSocket(
-    entry.value.indexationId,
-  ).services.acceptStoryKindSuggestion({
+  indexationSocket.value!.services.acceptStoryKindSuggestion({
     entryId: entry.value.id,
     kind,
   });

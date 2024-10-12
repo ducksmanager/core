@@ -41,13 +41,9 @@ const { t: $t } = useI18n();
 const {
   coverId: { services: coverIdServices },
 } = inject(dmSocketInjectionKey)!;
-const { getIndexationSocket } = injectLocal(dumiliSocketInjectionKey)!;
+const { indexationSocket } = injectLocal(dumiliSocketInjectionKey)!;
 
 const { hasPendingIssueSuggestions, indexation } = storeToRefs(suggestions());
-
-const indexationSocket = computed(() =>
-  getIndexationSocket(indexation.value!.id),
-);
 
 const issueSuggestions = ref<
   (issueSuggestion & { url: string; coverId: number })[]
@@ -66,12 +62,12 @@ watch(
       issueSuggestions.value = (
         await Promise.all(
           newValue.map((issueSuggestion) =>
-            coverIdServices.downloadCover(issueSuggestion.coverId),
+            coverIdServices.getCoverUrl(issueSuggestion.coverId),
           ),
         )
       ).map((url, i) => ({
         ...newValue[i],
-        url: url as string,
+        url,
       }));
     }
   },
@@ -96,7 +92,7 @@ const getIssuenumberFromIssuecode = (issuecode: string) =>
   issuecode.split(" ")[1];
 
 const acceptIssueSuggestion = async (issuecode: string) => {
-  await indexationSocket.value.services.acceptIssueSuggestion({
+  await indexationSocket.value!.services.acceptIssueSuggestion({
     source: "ai",
     indexationId: indexation.value!.id,
     issuecode,

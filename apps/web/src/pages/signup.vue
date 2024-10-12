@@ -68,7 +68,7 @@ import Cookies from "js-cookie";
 
 import type { ScopedError } from "~socket.io-services/types";
 
-const { loadUser } = collection();
+const { loadUser, authServices } = collection();
 const { user } = storeToRefs(collection());
 const router = useRouter();
 
@@ -81,25 +81,27 @@ let username = $ref(""),
 const { t: $t } = useI18n();
 
 const signup = async () => {
-  await userSignup(
+  const response = await authServices.signup({
     username,
     password,
-    password2,
     email,
-    async (newToken) => {
-      Cookies.set("token", newToken, {
-        domain: import.meta.env.VITE_COOKIE_DOMAIN,
-      });
-      await loadUser();
-    },
-    (e) => {
-      if (e.selector) {
-        error = e;
-      } else {
-        console.error(e);
-      }
-    },
-  );
+  });
+  if (typeof response === "string") {
+    Cookies.set("token", response, {
+      domain: import.meta.env.VITE_COOKIE_DOMAIN,
+    });
+    await loadUser();
+  } else {
+    if ("selector" in response) {
+      error = {
+        selector: response.selector!,
+        error: response.error,
+        message: response.message!,
+      };
+    } else {
+      console.error(response.error);
+    }
+  }
 };
 
 watch(

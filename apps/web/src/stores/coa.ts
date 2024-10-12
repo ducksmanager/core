@@ -1,5 +1,5 @@
 import { getCurrentLocaleShortKey } from "~/composables/useLocales";
-import type CoaServices from "~dm-services/coa/types";
+import type services from "~dm-services/coa/types";
 import type { InducksIssueDetails } from "~dm-types/InducksIssueDetails";
 import type { InducksIssueQuotationSimple } from "~dm-types/InducksIssueQuotationSimple";
 import type { EventReturnType } from "~socket.io-services/types";
@@ -37,35 +37,35 @@ const addPartInfo = (issueDetails: InducksIssueDetails) => {
 
 export const coa = defineStore("coa", () => {
   const {
-    coa: { services: coaServices },
+    coa: { services },
   } = inject(socketInjectionKey)!;
 
   const locale = useI18n().locale,
     coverUrls = shallowRef<{ [issuecode: string]: string }>({}),
     countryNames = shallowRef<EventReturnType<
-      CoaServices["getCountryList"]
+      services["getCountryList"]
     > | null>(null),
     publicationNames = shallowRef<
-      EventReturnType<CoaServices["getPublicationListFromCountrycodes"]>
+      EventReturnType<services["getPublicationListFromCountrycodes"]>
     >({}),
     publicationNamesFullCountries = shallowRef<string[]>([]),
-    personNames = shallowRef<EventReturnType<
-      CoaServices["getAuthorList"]
-    > | null>(null),
+    personNames = shallowRef<EventReturnType<services["getAuthorList"]> | null>(
+      null,
+    ),
     issuecodes = ref<string[]>([]),
     issueDetails = shallowRef<{ [issuecode: string]: InducksIssueDetails }>({}),
     isLoadingCountryNames = ref(false),
     issuecodeDetails = shallowRef<
-      Exclude<EventReturnType<CoaServices["getIssues"]>, "error">
+      Exclude<EventReturnType<services["getIssues"]>, "error">
     >({}),
     issuePopularities = shallowRef<
-      EventReturnType<CoaServices["getIssuePopularities"]>
+      EventReturnType<services["getIssuePopularities"]>
     >({}),
     issuecodesByPublicationcode = ref<{
       [publicationcode: string]: string[];
     }>({}),
     issueQuotations = ref<
-      EventReturnType<CoaServices["getQuotationsByIssuecodes"]>["quotations"]
+      EventReturnType<services["getQuotationsByIssuecodes"]>["quotations"]
     >({}),
     addPublicationNames = (
       newPublicationNames: typeof publicationNames.value,
@@ -94,8 +94,7 @@ export const coa = defineStore("coa", () => {
       if (newIssuecodes.length) {
         Object.assign(
           issueQuotations.value,
-          (await coaServices.getQuotationsByIssuecodes(newIssuecodes))
-            .quotations,
+          (await services.getQuotationsByIssuecodes(newIssuecodes)).quotations,
         );
       }
     },
@@ -110,7 +109,7 @@ export const coa = defineStore("coa", () => {
         afterUpdate
       ) {
         isLoadingCountryNames.value = true;
-        countryNames.value = await coaServices.getCountryList(
+        countryNames.value = await services.getCountryList(
           getCurrentLocaleShortKey(locale.value),
           [],
         );
@@ -129,7 +128,7 @@ export const coa = defineStore("coa", () => {
       return (
         actualNewPublicationCodes.length &&
         addPublicationNames(
-          await coaServices.getPublicationListFromPublicationcodeList(
+          await services.getPublicationListFromPublicationcodeList(
             actualNewPublicationCodes,
           ),
         )
@@ -138,7 +137,7 @@ export const coa = defineStore("coa", () => {
     fetchPublicationNamesFromCountry = async (countrycode: string) =>
       publicationNamesFullCountries.value.includes(countrycode)
         ? void 0
-        : coaServices
+        : services
             .getPublicationListFromCountrycodes([countrycode])
             .then((data) => {
               addPublicationNames({
@@ -163,7 +162,7 @@ export const coa = defineStore("coa", () => {
         actualNewPersonCodes.length &&
         setPersonNames({
           ...(personNames.value || {}),
-          ...(await coaServices.getAuthorList(actualNewPersonCodes)),
+          ...(await services.getAuthorList(actualNewPersonCodes)),
         })
       );
     },
@@ -179,7 +178,7 @@ export const coa = defineStore("coa", () => {
       if (newIssuecodes.length) {
         Object.assign(
           issuecodeDetails.value,
-          await coaServices.getIssues(newIssuecodes, withTitles),
+          await services.getIssues(newIssuecodes, withTitles),
         );
       }
     },
@@ -193,7 +192,7 @@ export const coa = defineStore("coa", () => {
       if (newIssuecodes.length) {
         Object.assign(
           issuePopularities.value,
-          await coaServices.getIssuePopularities(newIssuecodes),
+          await services.getIssuePopularities(newIssuecodes),
         );
       }
     },
@@ -207,7 +206,7 @@ export const coa = defineStore("coa", () => {
 
       if (newPublicationcodes.length) {
         const issuesByPublicationcode =
-          await coaServices.getIssuesByPublicationcodes(newPublicationcodes);
+          await services.getIssuesByPublicationcodes(newPublicationcodes);
 
         Object.assign(
           issuecodeDetails.value,
@@ -224,14 +223,14 @@ export const coa = defineStore("coa", () => {
         );
       }
     },
-    fetchRecentIssues = () => coaServices.getRecentIssues(),
+    fetchRecentIssues = () => services.getRecentIssues(),
     fetchCoverUrls = (publicationcode: string) =>
-      coaServices.getIssueCoverDetailsByPublicationcode(publicationcode),
+      services.getIssueCoverDetailsByPublicationcode(publicationcode),
     fetchCoverUrlsByIssuecodes = (issuecodes: string[]) =>
-      coaServices.getIssueCoverDetails(issuecodes),
+      services.getIssueCoverDetails(issuecodes),
     fetchIssueUrls = async ({ issuecode }: { issuecode: string }) => {
       if (!issueDetails.value[issuecode]) {
-        const newIssueDetails = await coaServices.getIssueDetails(issuecode);
+        const newIssueDetails = await services.getIssueDetails(issuecode);
 
         Object.assign(issueDetails.value, {
           [issuecode]: addPartInfo(newIssueDetails),
@@ -266,6 +265,7 @@ export const coa = defineStore("coa", () => {
     personNames,
     publicationNames,
     publicationNamesFullCountries,
+    services,
     setCoverUrl,
     setPersonNames,
   };

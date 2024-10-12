@@ -24,7 +24,7 @@
 import { dumiliSocketInjectionKey } from "~/composables/useDumiliSocket";
 import { suggestions } from "~/stores/suggestions";
 import { SimpleStory } from "~dm-types/SimpleStory";
-import { FullIndexation } from "~dumili-services/indexations/types";
+import { FullIndexation } from "~dumili-services/indexation/types";
 import type { entry, storySuggestion } from "~prisma/client_dumili";
 
 const { t: $t } = useI18n();
@@ -35,11 +35,7 @@ const props = defineProps<{
 
 const { entry } = toRefs(props);
 
-const { getIndexationSocket } = inject(dumiliSocketInjectionKey)!;
-
-const indexationSocket = computed(async () =>
-  getIndexationSocket(entry.value.indexationId),
-);
+const { indexationSocket } = inject(dumiliSocketInjectionKey)!;
 
 const showEntrySelect = ref(false);
 const { acceptedStories } = storeToRefs(suggestions());
@@ -49,9 +45,7 @@ const acceptedEntry = computed(() => acceptedStories.value[entry.value.id]);
 const addAndAcceptStoryversionToStorySuggestions = async (
   searchResult: SimpleStory,
 ) => {
-  await (
-    await indexationSocket.value
-  ).services.createStorySuggestion({
+  await indexationSocket.value!.services.createStorySuggestion({
     entryId: entry.value.id,
     storyversioncode: searchResult.storycode,
     acceptedOnEntries: {
@@ -61,9 +55,7 @@ const addAndAcceptStoryversionToStorySuggestions = async (
 };
 
 const acceptStorySuggestion = async (suggestion: storySuggestion) => {
-  await (
-    await indexationSocket.value
-  ).services.acceptStorySuggestion(suggestion);
+  await indexationSocket.value!.services.acceptStorySuggestion(suggestion);
   showEntrySelect.value = false;
 };
 </script>

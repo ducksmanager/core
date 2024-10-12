@@ -17,6 +17,11 @@ export const namespaceEndpoint = "/cover-id";
 export default abstract class extends InterServerEvents {
   static namespaceEndpoint = namespaceEndpoint;
 
+  abstract getCoverUrl: (
+    coverId: number,
+    callback: (value: string) => void,
+  ) => void;
+
   abstract downloadCover: (
     coverId: number,
     callback: (value: Errorable<{ buffer: Buffer }, "Error">) => void,

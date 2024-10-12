@@ -3,6 +3,7 @@
     class="my-2"
     :toggle-class="[
       'text-wrap',
+      // @ts-ignore
       ...(itemClass && current ? itemClass(current as S) : []),
     ]"
     ><b-dropdown-item

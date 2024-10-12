@@ -53,7 +53,7 @@
       <b-col :cols="1" class="position-relative p-0">
         <template
           v-for="({ entry, pageIds }, idx) in entryPages"
-          :key="entry.url"
+          :key="entry.id"
         >
           <div style="height: 1px" class="bg-black"></div>
           <vue-draggable-resizable
@@ -121,20 +121,20 @@
 import useAi from "~/composables/useAi";
 import { dumiliSocketInjectionKey } from "~/composables/useDumiliSocket";
 import { suggestions } from "~/stores/suggestions";
-import { FullEntry, FullIndexation } from "~dumili-services/indexations/types";
+import { FullEntry, FullIndexation } from "~dumili-services/indexation/types";
 import { entry as entryModel } from "~prisma/client_dumili";
 
 defineProps<{
   shownPages: number[];
 }>();
 
-const { getIndexationSocket } = inject(dumiliSocketInjectionKey)!;
+const { indexationSocket } = inject(dumiliSocketInjectionKey)!;
 
 const { acceptedStoryKinds } = storeToRefs(suggestions());
 const indexation = storeToRefs(suggestions()).indexation as Ref<FullIndexation>;
 const currentPage = defineModel<number>();
 
-const { status: aiStatus, runKumiko } = useAi(indexation.value.id);
+const { status: aiStatus, runKumiko } = useAi();
 
 const tocPageHeight = 50;
 
@@ -173,9 +173,7 @@ const createEntry = async (idx: number) => {
   entries.splice(idx + 1, 0, {
     pageIds: [lastPageOfPreviousEntry],
   });
-  await getIndexationSocket(indexation.value.id).services.upsertEntries(
-    entries,
-  );
+  await indexationSocket.value!.services.upsertEntries(entries);
 };
 
 const firstPageOfEntry = (pageIds: number[]) =>

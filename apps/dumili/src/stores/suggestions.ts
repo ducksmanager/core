@@ -1,20 +1,21 @@
 import { dumiliSocketInjectionKey } from "~/composables/useDumiliSocket";
-import type { FullIndexation } from "~dumili-services/indexations/types";
+import type { FullIndexation } from "~dumili-services/indexation/types";
 import type {
   storyKindSuggestion,
   storySuggestion,
 } from "~prisma/client_dumili";
 import type { inducks_storyversion } from "~prisma-schemas/schemas/coa";
+import { stores as webStores } from "~web";
 
 export type storyWithStoryversion = storySuggestion & {
   storyversion: inducks_storyversion;
 };
 
 export const suggestions = defineStore("suggestions", () => {
-  const {
-    getIndexationSocket,
-    coa: { services: coaServices },
-  } = inject(dumiliSocketInjectionKey)!;
+  const { indexationSocket, setIndexationSocketFromId } = inject(
+    dumiliSocketInjectionKey,
+  )!;
+  const { services: coaServices } = webStores.coa();
   const indexation = ref<FullIndexation>(),
     acceptedStories = ref<Record<number, storyWithStoryversion | undefined>>(
       {},
@@ -45,8 +46,8 @@ export const suggestions = defineStore("suggestions", () => {
   });
 
   const loadIndexation = async (indexationId: string) => {
-    const data =
-      await getIndexationSocket(indexationId).services.loadIndexation();
+    setIndexationSocketFromId(indexationId);
+    const data = await indexationSocket.value!.services.loadIndexation();
     if ("error" in data) {
       console.error(data.error);
       return;
@@ -93,16 +94,12 @@ export const suggestions = defineStore("suggestions", () => {
     ),
     acceptedIssue: computed(() => indexation.value!.acceptedIssueSuggestion),
     acceptedStories,
-    acceptedStoryKinds: computed(() =>
-      indexation.value!.entries.reduce<
-        Record<string, storyKindSuggestion | undefined>
-      >(
-        (acc, { id, acceptedSuggestedStoryKind }) => ({
-          ...acc,
-          [id]: acceptedSuggestedStoryKind,
-        }),
-        {},
-      ),
+    acceptedStoryKinds: computed(
+      () =>
+        indexation.value!.entries.groupBy(
+          "id",
+          "acceptedSuggestedStoryKind",
+        ) as Record<number, storyKindSuggestion>,
     ),
   };
 });

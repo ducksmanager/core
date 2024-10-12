@@ -7,12 +7,9 @@
     "index.*"
   ],
   "scripts": {
-    "prisma-pull-generate": "cd schemas/$SCHEMA && bunx prisma db pull",
-    "prisma-pull-generate-all": "cd schemas && ls | while read -r schema; do SCHEMA=$schema pnpm prisma-pull-generate; done && pnpm prisma-generate-all",
-    "prisma-generate": "cd schemas/$SCHEMA && bunx prisma generate",
-    "prisma-generate-all": "cd schemas && ls | while read -r schema; do SCHEMA=$schema pnpm prisma-generate; done && rm -rf dist",
-    "prisma-migrate": "cd schemas/$SCHEMA && bunx prisma migrate deploy",
-    "prisma-migrate-all": "cd schemas && ls | while read -r schema; do SCHEMA=$schema pnpm prisma-migrate; done",
+    "prisma-pull-generate": "cd schemas && ls | while read -r schema; do (cd $schema && bunx prisma db pull); done && pnpm prisma-generate",
+    "prisma-generate": "cd schemas && ls | while read -r schema; do (cd $schema && bunx prisma generate); done && rm -rf dist",
+    "prisma-migrate": "cd schemas && ls | while read -r schema; do (cd $schema && bunx prisma migrate deploy); done",
     "dev": "docker compose -f docker-compose-dev.yml up --force-recreate -d && bash wait-until-db-ready.bash",
     "lint": "prettier -w schemas"
   },

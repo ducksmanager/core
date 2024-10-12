@@ -29,7 +29,7 @@ const { indexation } = storeToRefs(suggestionsStore);
 
 import { issueSuggestion } from "~prisma/client_dumili";
 
-const { getIndexationSocket } = inject(dumiliSocketInjectionKey)!;
+const { indexationSocket } = inject(dumiliSocketInjectionKey)!;
 
 const issue = computed(() => suggestionsStore.acceptedIssue);
 
@@ -44,9 +44,7 @@ const acceptIssueSuggestion = async (
   source: issueSuggestion["source"],
 ) => {
   if (publicationcode && issuenumber) {
-    await getIndexationSocket(
-      indexation.value!.id,
-    ).services.acceptIssueSuggestion({
+    await indexationSocket.value!.services.acceptIssueSuggestion({
       source,
       indexationId: indexation.value!.id,
       publicationcode,
