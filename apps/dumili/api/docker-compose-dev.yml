@@ -16,6 +16,7 @@ services:
       context: ../../..
       dockerfile: apps/dumili/api/paddleocr/Dockerfile
   db:
+    container_name: dumili-db
     restart: always
     image: mariadb:11.4
     env_file:

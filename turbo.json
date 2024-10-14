@@ -2,16 +2,6 @@
   "$schema": "https://turborepo.org/schema.json",
   "ui": "tui",
   "tasks": {
-    "prisma-pull-generate": {},
-    "prisma-generate": {
-      "cache": false
-    },
-    "prisma-migrate": {
-      "cache": false
-    },
-    "dev:wait": {
-      "cache": false
-    },
     "lint": {},
     "build": {
       "inputs": [
@@ -59,12 +49,17 @@
     "dev:android": {
       "persistent": true
     },
+    "dev:setup": {},
+    "dev:blocking": {
+      "dependsOn": ["dev:setup"]
+    },
+    "dev:blocking-up": {
+      "dependsOn": ["dev:setup"]
+    },
     "dev": {
       "persistent": true,
       "dependsOn": [
-        "^dev:wait",
-        "prisma-generate",
-        "prisma-migrate"
+        "^dev:blocking-up"
       ]
     }
   }
