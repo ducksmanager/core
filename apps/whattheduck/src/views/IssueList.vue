@@ -49,7 +49,7 @@
               @error="item.cover = null"
             ></ion-img
             ><ion-text v-else
-              >{{ issuecodeDetails[item.issuecode]!.issuenumber }}<br />({{ $t('pas de couverture') }})</ion-text
+              >{{ issuecodeDetails[item.issuecode]!.issuenumber }}<br />{{ $t('(pas de couverture)') }}</ion-text
             ></ion-col
           ></ion-row
         ></ion-grid

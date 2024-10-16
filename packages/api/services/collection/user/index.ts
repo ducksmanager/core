@@ -12,8 +12,8 @@ import {
   EmailValidation,
   getUser,
   OldPasswordValidation,
-  PasswordValidation,
   PasswordUpdateValidation,
+  PasswordValidation,
   PresentationTextValidation,
   validate,
 } from "./util";

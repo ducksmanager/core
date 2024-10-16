@@ -154,6 +154,6 @@ export async function scrape() {
   for (const { sectionTitle } of sectionsNotFound) {
     console.log("Section not found: " + sectionTitle);
   }
-  await deleteQuotations('comicsmania');
+  await deleteQuotations("comicsmania");
   await createQuotations(quotations);
 }

@@ -4,12 +4,13 @@ import { cwd } from "process";
 import type { Socket } from "socket.io";
 
 import { getPublicationTitles } from "~/services/coa/publications";
+import { getShownQuotations } from "~/services/coa/quotations";
 import type { InducksIssueQuotationSimple } from "~dm-types/InducksIssueQuotationSimple";
 import type { TransactionResults } from "~dm-types/TransactionResults";
+import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa/client";
 import type { issue, user } from "~prisma-schemas/schemas/dm";
 import { issue_condition } from "~prisma-schemas/schemas/dm";
 import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
-import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa/client";
 
 import type Events from "../types";
 import {
@@ -17,7 +18,6 @@ import {
   deleteIssues,
   handleIsOnSale,
 } from "./util";
-import { getShownQuotations } from "~/services/coa/quotations";
 
 const getCoaCountByPublicationcode = (collectionPublicationcodes: string[]) =>
   prismaCoa.inducks_issue
@@ -112,7 +112,7 @@ export default (socket: Socket<Events>) => {
             publicationcode: {
               in: collectionPublicationcodes,
             },
-          })
+          }),
         };
       })
       .then(callback);
@@ -224,7 +224,9 @@ export default (socket: Socket<Events>) => {
           where ID_Utilisateur = ${socket.data.user!.id}
             and estimationmin is not null
           group by numeros.ID;
-        `.then(getShownQuotations).then(quotations => callback({ quotations }))
+        `
+      .then(getShownQuotations)
+      .then((quotations) => callback({ quotations })),
   );
 };
 
@@ -272,9 +274,9 @@ const addOrChangeIssues = async (
     .map((issuecode) =>
       prismaDm.issue.create({
         data: {
-          country: '',
-          magazine: '',
-          issuenumber: '',
+          country: "",
+          magazine: "",
+          issuenumber: "",
           issuecode,
           condition: condition || issue_condition.indefini,
           isOnSale: isOnSale || false,
@@ -321,9 +323,9 @@ const addOrChangeCopies = async (
     return prismaDm.issue.upsert({
       create: {
         ...common,
-        country: '',
-        magazine: '',
-        issuenumber: '',
+        country: "",
+        magazine: "",
+        issuenumber: "",
         issuecode,
         userId,
         creationDate: new Date(),
@@ -388,9 +390,9 @@ export const resetDemo = async () => {
       return prismaDm.issue.create({
         data: {
           userId: demoUser.id,
-          country: '',
-          magazine: '',
-          issuenumber: '',
+          country: "",
+          magazine: "",
+          issuenumber: "",
           issuecode,
           condition,
           purchaseId: parseInt(purchaseId),

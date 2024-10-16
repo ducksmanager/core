@@ -70,7 +70,8 @@
             <ion-chip @click="showAuthorToast(author)" v-for="author in authors.slice(0, 2)" :outline="true">{{
               author
             }}</ion-chip
-            ><ion-chip v-if="authors.length > 2" :outline="true">+{{ authors.length - 2 }}</ion-chip
+            ><ion-chip v-if="authors.length > 2" :outline="true"
+              ><template v-html="'&nbsp;+'" />{{ authors.length - 2 }}</ion-chip
             ><ion-col class="story-title"
               ><InducksStory
                 show-link="outer"

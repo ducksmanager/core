@@ -15,7 +15,7 @@ export async function scrape() {
     mappedIssues.push(record),
   );
 
-  await deleteQuotations('bdm');
+  await deleteQuotations("bdm");
   await createQuotations(
     mappedIssues.map(({ issuecode, estimation }) => ({
       issuecode,

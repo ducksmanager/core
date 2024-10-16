@@ -6,11 +6,11 @@ import { Server } from "socket.io";
 import type { EventsMap } from "socket.io/dist/typed-events";
 
 import type { SessionUser } from "~dm-types/SessionUser";
-
 import { PrismaClient } from "~prisma/client_dumili";
-import indexations from "./services/indexations";
+
 import indexation from "./services/indexation";
 import type { FullIndexation } from "./services/indexation/types";
+import indexations from "./services/indexations";
 
 dotenv.config({
   path: ".env",
@@ -52,7 +52,6 @@ export type NamespaceWithData<
 > = Namespace<Services, Record<string, never>, Record<string, never>, Data>;
 
 export const prisma = new PrismaClient();
-
 
 const httpServer = createServer();
 const io = new Server(httpServer, {

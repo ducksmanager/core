@@ -114,15 +114,16 @@ getSuggestions(
     suggestionsPerUser,
   )) {
     const userIdNumber = parseInt(userId);
-    const pendingNotificationsForUser = await prismaCoa.augmentIssueArrayWithInducksData(
-      Object.values(suggestionsForUser.issues).filter(
-        (suggestion) =>
-          !alreadySentNotificationsPerUser[userIdNumber] ||
-          !alreadySentNotificationsPerUser[userIdNumber].includes(
-            suggestion.issuecode,
-          ),
-      ),
-    );
+    const pendingNotificationsForUser =
+      await prismaCoa.augmentIssueArrayWithInducksData(
+        Object.values(suggestionsForUser.issues).filter(
+          (suggestion) =>
+            !alreadySentNotificationsPerUser[userIdNumber] ||
+            !alreadySentNotificationsPerUser[userIdNumber].includes(
+              suggestion.issuecode,
+            ),
+        ),
+      );
 
     console.log(
       `${pendingNotificationsForUser.length} new issue(s) will be suggested to user ${userId}`,

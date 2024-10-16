@@ -3,7 +3,9 @@
     <ion-row v-if="!isOfflineMode">
       <ion-col size="12" style="height: 100%"
         ><img v-if="fullUrl" :src="coverUrl" /><ion-text v-else>{{ $t('pas de couverture') }}</ion-text>
-        <ion-chip v-if="issuecodes.length > 1">+&nbsp;{{ issuecodes.length - 1 }}</ion-chip></ion-col
+        <ion-chip v-if="issuecodes.length > 1"
+          ><template v-html="'+&nbsp;'" />{{ issuecodes.length - 1 }}</ion-chip
+        ></ion-col
       >
     </ion-row>
     <ion-row

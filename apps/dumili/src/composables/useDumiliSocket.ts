@@ -1,6 +1,6 @@
 import IndexationServices from "~dumili-services/indexation/types";
 import IndexationsServices from "~dumili-services/indexations/types";
-import { SocketClient } from "~socket.io-client-services";
+import type { SocketClient } from "~socket.io-client-services";
 
 const defaultExport = (options: {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

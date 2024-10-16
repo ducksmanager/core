@@ -1,7 +1,15 @@
 import type { ScopedError } from '~socket.io-services/types';
 
-// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-export default (fields: string[]) => {
+export default (
+  fields: string[],
+): {
+  validInputs: ComputedRef<string[]>;
+  invalidInputs: ComputedRef<string[]>;
+  touchedInputs: Ref<string[]>;
+  errorTexts: Ref<Record<string, string>>;
+  showError: (scopedError: ScopedError) => void;
+  clearErrors: () => void;
+} => {
   const errorTexts = ref<Record<string, string>>({});
   const validInputs = computed(() => fields.filter((field) => !invalidInputs.value.includes(field)));
   const invalidInputs = computed(() => Object.keys(errorTexts.value));

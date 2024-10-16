@@ -71,12 +71,13 @@
         />
       </ion-input>
       <ion-row class="ion-padding-top">
-      <ion-button @click="submitSignup">
-        {{ t("OK") }}
-      </ion-button>
-      <ion-button color="light" @click="cancelSignup">
-        {{ t('Annuler') }}
-      </ion-button></ion-row>
+        <ion-button @click="submitSignup">
+          {{ t('OK') }}
+        </ion-button>
+        <ion-button color="light" @click="cancelSignup">
+          {{ t('Annuler') }}
+        </ion-button></ion-row
+      >
     </ion-content></ion-page
   >
 </template>
@@ -118,19 +119,18 @@ const submitSignup = async () => {
     return;
   }
   clearErrors();
-   const response = await socket.value?.auth.services.signup({
+  const response = await socket.value?.auth.services.signup({
     username: username.value,
     password: password.value,
     email: email.value,
-   });
+  });
 
-   if (typeof response !== 'string' && response && 'error' in response) {
+  if (typeof response !== 'string' && response && 'error' in response) {
     errorTexts.value[response.selector!.replace('#', '')] = response.message!;
   } else {
     token.value = response;
   }
 };
-
 
 watch(
   token,
@@ -146,7 +146,7 @@ watch(
 ion-row {
   justify-content: space-between;
   ion-button {
-    width: 40%
+    width: 40%;
   }
 }
 ion-input {

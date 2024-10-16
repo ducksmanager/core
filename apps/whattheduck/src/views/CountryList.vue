@@ -5,7 +5,9 @@
     :get-item-text-fn="getItemTextFn"
     item-type="countrycode"
   >
-  <template #empty>{{ $t('Votre collection est vide. Ajoutez des numéros en utilisant le bouton en bas à droite :-)') }}</template>
+    <template #empty>{{
+      $t('Votre collection est vide. Ajoutez des numéros en utilisant le bouton en bas à droite :-)')
+    }}</template>
     <template #fill-bar="{ item: { countrycode } }">
       <ion-progress-bar
         type="determinate"

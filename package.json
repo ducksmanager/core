@@ -13,7 +13,7 @@
   },
   "scripts": {
     "prepare": "husky",
-    "lint": "turbo lint --log-order=stream -F '!~duckguessr*' -- --cache --fix",
+    "lint": "turbo lint --log-order=stream -F '!~duckguessr*' -F '!~edgecreator' -- --cache --fix",
     "lint-no-cache": "turbo lint --log-order=stream -F '!~duckguessr*' -- --fix",
     "dev:dumili": "turbo dev -F '~dumili-api...' -F '~dumili' -F '~web'",
     "dev:edgecreator": "turbo dev -F '~edgecreator-api...' -F '~edgecreator' -F '~web' -F '~edges'",

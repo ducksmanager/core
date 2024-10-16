@@ -44,7 +44,7 @@ export async function scrape() {
 
   const issuePage = await browserContext.newPage();
 
-  await deleteQuotations('gocollect');
+  await deleteQuotations("gocollect");
   for (const { publicationcode, publicationUrl } of mappedPublications) {
     const quotations = [];
     let currentPageForPublication = 1;

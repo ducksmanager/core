@@ -51,7 +51,8 @@ export default abstract class {
   static namespaceEndpoint: string = "/indexation/{id}";
 
   abstract addPage: (
-    pageNumber: number, url: string,
+    pageNumber: number,
+    url: string,
     callback: () => void,
   ) => void;
 

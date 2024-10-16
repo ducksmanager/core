@@ -4,7 +4,10 @@ export type AppInfos = {
   version: string;
 };
 
-export type ErrorableAppUpdate = Errorable<AppUpdate, 'Not found'|'Already up to date'>;
+export type ErrorableAppUpdate = Errorable<
+  AppUpdate,
+  "Not found" | "Already up to date"
+>;
 
 export type AppUpdate = {
   version: string;

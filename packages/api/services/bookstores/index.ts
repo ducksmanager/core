@@ -8,49 +8,46 @@ import type {
 import { userContributionType } from "~prisma-schemas/schemas/dm";
 import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
 
+import { UserIsAdminMiddleware } from "../auth/util";
 import type Events from "./types";
 import { namespaceEndpoint } from "./types";
-import {  UserIsAdminMiddleware } from "../auth/util";
 
-const getBookstores = async (onlyActive?:true) => 
-  prismaDm.bookstore
-    .findMany({
-      select: {
-        id: true,
-        name: true,
-        address: true,
-        coordX: true,
-        coordY: true,
-        comments: {
-          where: {
-            isActive: true,
-          },
+const getBookstores = async (onlyActive?: true) =>
+  prismaDm.bookstore.findMany({
+    select: {
+      id: true,
+      name: true,
+      address: true,
+      coordX: true,
+      coordY: true,
+      comments: {
+        where: {
+          isActive: true,
         },
       },
-      where: onlyActive ? {
-        comments: {
-          some: {
-            isActive: true,
+    },
+    where: onlyActive
+      ? {
+          comments: {
+            some: {
+              isActive: true,
+            },
           },
-        },
-      }: undefined,
-    })
+        }
+      : undefined,
+  });
 
 export default (io: Server) => {
-
   (io.of(namespaceEndpoint) as Namespace<Events>)
     .use(UserIsAdminMiddleware)
     .on("connection", (socket) => {
-      socket.on("getBookstores", (callback) =>getBookstores()
-          .then(callback),
-      );
+      socket.on("getBookstores", (callback) => getBookstores().then(callback));
     });
 
   (io.of(namespaceEndpoint) as Namespace<Events>).on("connection", (socket) => {
     console.log("connected to bookstores");
     socket.on("getActiveBookstores", (callback) =>
-      getBookstores(true)
-        .then(callback),
+      getBookstores(true).then(callback),
     );
 
     socket.on(

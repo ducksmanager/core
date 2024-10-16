@@ -7,17 +7,15 @@ import TextServices from "~edgecreator-services/text/types";
 import UploadServices from "~edgecreator-services/upload/types";
 import type { SocketClient } from "~socket.io-client-services";
 
-const defaultExport = (
-  options: {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    onConnectError: (e: any, namespace: string) => Promise<void> | void;
-    session: {
-      getToken: () => Promise<string | null | undefined>;
-      clearSession: () => void;
-      sessionExists: () => Promise<boolean>;
-    };
-  },
-) => {
+const defaultExport = (options: {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  onConnectError: (e: any, namespace: string) => Promise<void> | void;
+  session: {
+    getToken: () => Promise<string | null | undefined>;
+    clearSession: () => void;
+    sessionExists: () => Promise<boolean>;
+  };
+}) => {
   const socket = inject("edgecreatorSocket") as SocketClient;
   socket.onConnectError = options.onConnectError;
   const { session } = options;

@@ -93,10 +93,10 @@ export class EmailUpdateValidation extends Validation {
         currentEmail === email
           ? true
           : (await prismaDm.user.count({
-            where: {
-              email,
-            },
-          })) === 0,
+              where: {
+                email,
+              },
+            })) === 0,
       )
       .then(() => undefined)
       .catch(
@@ -120,16 +120,12 @@ export class EmailValidation extends Validation {
 }
 
 export class PasswordValidation extends Validation {
-  run = async ({
-    password,
-  }: {
-    password: user["password"];
-  }) =>
+  run = async ({ password }: { password: user["password"] }) =>
     password.length < 6
       ? ({
-        message: "Le mot de passe doit comporter au moins 6 caractères",
-        selector: "#password",
-      } as const)
+          message: "Le mot de passe doit comporter au moins 6 caractères",
+          selector: "#password",
+        } as const)
       : undefined;
 }
 
@@ -143,10 +139,10 @@ export class PasswordUpdateValidation extends Validation {
   }) =>
     !oldPassword || !password
       ? ({
-        selector: "#password",
-        message:
-          "L'ancien et le nouveau mot de passe doivent être remplis si vous souhaitez changer de mot de passe. Si vous ne souhaitez pas changer de mot de passe, laissez les champs correspondant à l'ancien et au nouveau mots de passe vides.",
-      } as const)
+          selector: "#password",
+          message:
+            "L'ancien et le nouveau mot de passe doivent être remplis si vous souhaitez changer de mot de passe. Si vous ne souhaitez pas changer de mot de passe, laissez les champs correspondant à l'ancien et au nouveau mots de passe vides.",
+        } as const)
       : undefined;
 }
 
@@ -179,10 +175,10 @@ export class PresentationTextValidation extends Validation {
   run = async ({ presentationText }: Pick<user, "presentationText">) =>
     String(presentationText).length > 100
       ? ({
-        message:
-          "Le texte de présentation doit comporter entre 1 et 100 caractères",
-        selector: "#presentationText",
-      } as const)
+          message:
+            "Le texte de présentation doit comporter entre 1 et 100 caractères",
+          selector: "#presentationText",
+        } as const)
       : undefined;
 }
 
@@ -190,9 +186,9 @@ export class DiscordIdValidation extends Validation {
   run = async ({ discordId }: Pick<user, "discordId">) =>
     discordId && !/^\d+$/.test(String(discordId))
       ? ({
-        message:
-          "L'identifiant Discord doit être un nombre. Cliquez sur \"Comment trouver mon identifiant de profil Discord ?\" pour plus d'informations.",
-        selector: "#discordId",
-      } as const)
+          message:
+            "L'identifiant Discord doit être un nombre. Cliquez sur \"Comment trouver mon identifiant de profil Discord ?\" pour plus d'informations.",
+          selector: "#discordId",
+        } as const)
       : undefined;
 }

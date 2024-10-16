@@ -7,12 +7,13 @@ import type Events from "../types";
 export default (socket: Socket<Events>) => {
   socket.on("getIssues", (issuecodes, withTitles, callback) =>
     issuecodes.length
-      ? prismaCoa.augmentIssueArrayWithInducksData(
-        issuecodes.map((issuecode) => ({ issuecode })),
-        withTitles,
-      )
-        .then((data) => data.groupBy("issuecode"))
-        .then(callback)
+      ? prismaCoa
+          .augmentIssueArrayWithInducksData(
+            issuecodes.map((issuecode) => ({ issuecode })),
+            withTitles,
+          )
+          .then((data) => data.groupBy("issuecode"))
+          .then(callback)
       : callback({}),
   );
 

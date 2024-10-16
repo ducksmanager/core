@@ -10,13 +10,15 @@ export default abstract class {
     filter: { publicationcode?: string; issuecodes?: string[] },
     callback: (
       value: Errorable<
-        Record<string, AugmentedIssue<
-          {
+        Record<
+          string,
+          AugmentedIssue<{
             modelId: number;
             v3: boolean;
             id: number;
             issuecode: string;
-        }>>,
+          }>
+        >,
         "Invalid filter"
       >,
     ) => void,

@@ -1,9 +1,8 @@
 import { suggestions } from "~/stores/suggestions";
 import { storyKinds } from "~dumili-types/storyKinds";
-
-import { dumiliSocketInjectionKey } from "./useDumiliSocket";
 import { socketInjectionKey as dmSocketInjectionKey } from "~web/src/composables/useDmSocket";
 
+import { dumiliSocketInjectionKey } from "./useDumiliSocket";
 import useHint from "./useHint";
 
 const coverStoryKindCode = storyKinds.find(

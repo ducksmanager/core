@@ -7,4 +7,4 @@ export type SimpleInducksIssue = Pick<
 
 export type AugmentedIssue<T extends (keyof inducks_issue)[] | object = []> =
   SimpleInducksIssue &
-  (T extends (keyof inducks_issue)[] ? Pick<inducks_issue, T[number]> : T);
+    (T extends (keyof inducks_issue)[] ? Pick<inducks_issue, T[number]> : T);

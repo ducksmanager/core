@@ -75,6 +75,13 @@ export default [
       '@typescript-eslint/consistent-type-assertions': 'error',
       '@typescript-eslint/prefer-for-of': 'error',
       '@typescript-eslint/prefer-optional-chain': 'error',
+
+      'i18next/no-literal-string': [
+        'error',
+        {
+          words: { exclude: ['Discord', 'Facebook', 'Instagram', 'YouTube', '+&nbsp;'] },
+        },
+      ],
       'import/first': 'error',
 
       'import/order': [

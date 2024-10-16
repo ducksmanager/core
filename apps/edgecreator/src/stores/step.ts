@@ -218,8 +218,8 @@ export const step = defineStore("step", () => {
           useI18n()
             .t(
               `Issue codes {completedIssuecode} and {issuecode} ` +
-              `don't have the same components` +
-              `: {completedIssueSteps} vs {currentIssueComponents}`,
+                `don't have the same components` +
+                `: {completedIssueSteps} vs {currentIssueComponents}`,
               {
                 completedIssuecode,
                 issuecode,
@@ -279,7 +279,6 @@ export const step = defineStore("step", () => {
         ({ stepNumber }) => stepNumberToRemove !== stepNumber,
       );
 
-      // eslint-disable-next-line @typescript-eslint/prefer-for-of
       for (
         let optionIndex = 0;
         optionIndex < options.value.length;
@@ -303,7 +302,6 @@ export const step = defineStore("step", () => {
       );
     },
     swapSteps = (stepNumbers: [number, number]) => {
-      // eslint-disable-next-line @typescript-eslint/prefer-for-of
       for (
         let optionIndex = 0;
         optionIndex < options.value.length;

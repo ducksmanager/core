@@ -20,7 +20,7 @@ export const deleteQuotations = async (source: string) =>
     where: {
       source,
     },
-  })
+  });
 
 export const isInducksIssuecodeExisting = async (issuecode: string) =>
   await prismaCoa.inducks_issue.findFirstOrThrow({

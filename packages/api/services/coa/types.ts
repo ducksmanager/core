@@ -103,7 +103,10 @@ export default abstract class {
     callback: (
       value: Errorable<
         {
-          quotations: Record<string, inducks_issuequotation & {estimationAverage: number}>;
+          quotations: Record<
+            string,
+            inducks_issuequotation & { estimationAverage: number }
+          >;
         },
         "Bad request" | "Too many requests"
       >,

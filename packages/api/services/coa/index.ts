@@ -1,6 +1,5 @@
 import type { Namespace, Server } from "socket.io";
 
-
 import authors from "./authors";
 import countries from "./countries";
 import issueDetails from "./issue-details";

@@ -71,7 +71,7 @@ const getUserIdsByUsername = async (
         username: { in: usernames },
       },
     })
-  ).groupBy('username', 'id');
+  ).groupBy("username", "id");
 
 const createContribution = async (
   user: user,

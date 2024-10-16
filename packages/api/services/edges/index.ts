@@ -1,8 +1,10 @@
 import type { Namespace, Server } from "socket.io";
-import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
+
 import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa/client";
+import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
 import type { edgeModel } from "~prisma-schemas/schemas/edgecreator";
 import { prismaClient as prismaEdgeCreator } from "~prisma-schemas/schemas/edgecreator/client";
+
 import type Events from "./types";
 import { namespaceEndpoint } from "./types";
 
@@ -15,8 +17,8 @@ const getEdges = async (filters: {
   }
   const issuecode = filters.issuecodes
     ? {
-      in: filters.issuecodes,
-    }
+        in: filters.issuecodes,
+      }
     : undefined;
   const edgeModels: Record<string, edgeModel> = (
     await prismaEdgeCreator.edgeModel.findMany({
@@ -24,10 +26,13 @@ const getEdges = async (filters: {
         issuecode,
       },
     })
-  ).reduce((acc, model) => {
-    acc[model.issuecode] = model;
-    return acc;
-  }, {} as Record<string, edgeModel>);
+  ).reduce(
+    (acc, model) => {
+      acc[model.issuecode] = model;
+      return acc;
+    },
+    {} as Record<string, edgeModel>,
+  );
 
   return (
     await prismaDm.edge.findMany({
@@ -40,10 +45,10 @@ const getEdges = async (filters: {
       },
     })
   ).map((edge) => ({
-      ...edge,
-      modelId: edgeModels[edge.issuecode]?.id,
-      v3: !!edgeModels[edge.issuecode],
-    }));
+    ...edge,
+    modelId: edgeModels[edge.issuecode]?.id,
+    v3: !!edgeModels[edge.issuecode],
+  }));
 };
 
 export default (io: Server) => {
@@ -79,7 +84,7 @@ export default (io: Server) => {
     socket.on("getEdges", async (filters, callback) =>
       getEdges(filters)
         .then((edges) => prismaCoa.augmentIssueArrayWithInducksData(edges))
-        .then(edges => callback(edges.groupBy('issuecode')))
+        .then((edges) => callback(edges.groupBy("issuecode"))),
     );
   });
 };

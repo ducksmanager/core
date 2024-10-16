@@ -51,7 +51,7 @@ export default [
     },
 
     rules: {
-    "eslint-comments/no-unused-disable": "off",
+      "eslint-comments/no-unused-disable": "off",
 
       "@typescript-eslint/no-empty-function": "off",
       "@typescript-eslint/no-floating-promises": "off",

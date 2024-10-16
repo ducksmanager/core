@@ -4,14 +4,24 @@ import type { Namespace, Server } from "socket.io";
 
 import resetPassword from "~/emails/reset-password";
 import { prismaClient } from "~prisma-schemas/schemas/dm/client";
+import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
 
+import {
+  EmailCreationValidation,
+  EmailValidation,
+  PasswordValidation,
+  UsernameCreationValidation,
+  UsernameValidation,
+  validate,
+} from "../collection/user/util";
 import type Events from "./types";
 import { namespaceEndpoint } from "./types";
-import { generateAccessToken, getHashedPassword, isValidEmail, loginAs } from "./util";
-
-import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
-import { validate, UsernameValidation, UsernameCreationValidation, EmailValidation, EmailCreationValidation, PasswordValidation } from "../collection/user/util";
-
+import {
+  generateAccessToken,
+  getHashedPassword,
+  isValidEmail,
+  loginAs,
+} from "./util";
 
 export default (io: Server) => {
   (io.of(namespaceEndpoint) as Namespace<Events>).on("connection", (socket) => {
@@ -94,8 +104,6 @@ export default (io: Server) => {
     );
 
     socket.on("getCsrf", (callback) => callback(""));
-
-
 
     socket.on("signup", async (input, callback) => {
       const scopedError = await validate(input, [

@@ -37,12 +37,13 @@ const collectionLoadProgress = computed(() => {
   }
 });
 
-const isCollectionReadonly = computed(() => (
-  dataLoader.value.state?.mode === 'LOAD_CACHE' ||
-  (dataLoader.value.state?.mode === 'HYDRATE' &&
-    collectionLoadProgress.value !== undefined &&
-    collectionLoadProgress.value < 1)
-));
+const isCollectionReadonly = computed(
+  () =>
+    dataLoader.value.state?.mode === 'LOAD_CACHE' ||
+    (dataLoader.value.state?.mode === 'HYDRATE' &&
+      collectionLoadProgress.value !== undefined &&
+      collectionLoadProgress.value < 1),
+);
 
 watch(
   [isPersistedDataLoaded, token],

@@ -26,7 +26,6 @@ export default abstract class {
     ) => void,
   ) => void;
 
-
   abstract login: (
     data: { username: string; password: string },
     callback: (data: Errorable<string, "Invalid username or password">) => void,
@@ -38,7 +37,6 @@ export default abstract class {
       data: Errorable<{ token: string }, "No demo user found">,
     ) => void,
   ) => void;
-
 
   abstract signup: (
     data: {
