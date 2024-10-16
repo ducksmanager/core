@@ -14,16 +14,25 @@
 <script setup lang="ts">
 import { stores as webStores } from "~web";
 
-const props = defineProps<{
-  publicationcode: string | null;
-  issuenumber: string | null;
+const { issuecodeDetails, publicationNames } = storeToRefs(webStores.coa());
+
+const { issuecode } = defineProps<{
+  issuecode: string;
   noWrap?: boolean;
 }>();
 
-const publicationName = computed(() =>
-  props.publicationcode
-    ? webStores.coa().publicationNames[props.publicationcode]
-    : null,
+const publicationcode = computed(
+  () => issuecodeDetails.value[issuecode]?.publicationcode,
+);
+
+const publicationName = computed(
+  () =>
+    publicationcode.value &&
+    (publicationNames.value[publicationcode.value] || publicationcode.value),
+);
+
+const issuenumber = computed(
+  () => issuecodeDetails.value[issuecode]?.issuenumber,
 );
 </script>
 

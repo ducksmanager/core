@@ -75,11 +75,18 @@ const loginUrl = computed(
 );
 
 const { loadUser } = webStores.collection();
+// const { fetchCountryNames } = webStores.coa();
 const { user, isLoadingUser } = storeToRefs(webStores.collection());
 
 onBeforeMount(() => {
   loadUser();
 });
+
+// watch(user, (newValue) => {
+//   if (newValue) {
+//     getCurrentInstance()!.appContext.app.inject(dumiliSocketInjectionKey).
+//   }
+// });
 </script>
 <style lang="scss">
 @import "./style.scss";

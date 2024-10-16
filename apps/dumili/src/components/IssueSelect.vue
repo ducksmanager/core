@@ -1,7 +1,7 @@
 <template>
   <div v-if="countryNames">
     <b-form-select
-      v-model="currentCountryCode"
+      v-model="currentCountrycode"
       :options="countryNames"
       @change="emit('change')"
     >
@@ -12,36 +12,37 @@
       </template>
     </b-form-select>
     <b-form-select
-      v-show="currentCountryCode"
-      v-model="currentPublicationCode"
+      v-show="currentCountrycode"
+      v-model="currentPublicationcode"
       :options="publicationNamesForCurrentCountry"
       @change="emit('change')"
     />
-    <template v-if="currentCountryCode && currentPublicationCode">
+    <template v-if="currentCountrycode && currentPublicationcode">
       <b-form-input
-        v-model="currentIssueNumber"
+        v-model="currentIssuenumber"
         placeholder="Entrez le numéro"
         :state="isValid"
       />
       <div class="invalid-feedback">
-        <template v-if="currentIssueNumber === ''"
+        <template v-if="['', undefined].includes(currentIssuenumber)"
           >Veuillez entrer le numéro</template
         ><template v-else> Ce numéro est déjà référencé !</template>
       </div>
     </template>
     <b-button
-      v-if="currentIssueNumber !== undefined"
+      v-if="currentIssuenumber !== undefined"
       variant="success"
       :disabled="!isValid"
       @click="
         emit('change', {
-          publicationcode: currentPublicationCode!,
-          issuenumber: currentIssueNumber,
+          publicationcode: currentPublicationcode!,
+          issuenumber: currentIssuenumber,
+          issuecode: `${currentPublicationcode}/${currentIssuenumber}`,
         })
       "
       >OK</b-button
     >
-    <slot v-if="$slots.dimensions && currentIssueNumber !== null" />
+    <slot v-if="$slots.dimensions && currentIssuenumber !== null" />
   </div>
 </template>
 <script setup lang="ts">
@@ -50,32 +51,35 @@ const { t: $t } = useI18n();
 
 const coaStore = webStores.coa();
 
-const emit =
-  defineEmits<
-    (
-      e: "change",
-      data?: { publicationcode: string | null; issuenumber: string | null },
-    ) => void
-  >();
+const emit = defineEmits<
+  (
+    e: "change",
+    data?: {
+      publicationcode: string;
+      issuenumber: string;
+      issuecode: string;
+    },
+  ) => void
+>();
 
 const props = withDefaults(
   defineProps<{
-    countryCode?: string | null;
-    publicationCode?: string | null;
-    issueCode?: string | null;
+    countrycode?: string | null;
+    publicationcode?: string | null;
+    issuecode?: string | null;
   }>(),
   {
-    countryCode: undefined,
-    publicationCode: undefined,
-    issueCode: undefined,
+    countrycode: undefined,
+    publicationcode: undefined,
+    issuecode: undefined,
   },
 );
 
-const currentCountryCode = ref<string | undefined>(undefined);
-const currentPublicationCode = ref<string | undefined>(undefined);
-const currentIssueNumber = ref<string | undefined>(undefined);
+const currentCountrycode = ref<string | undefined>(undefined);
+const currentPublicationcode = ref<string | undefined>(undefined);
+const currentIssuenumber = ref<string | undefined>(undefined);
 
-const { issuecodesByPublicationcode } = storeToRefs(coaStore);
+const { issuecodeDetails, issuecodesByPublicationcode } = storeToRefs(coaStore);
 
 const countryNames = computed(
   () =>
@@ -93,12 +97,12 @@ const countryNames = computed(
 
 const publicationNamesForCurrentCountry = computed(() =>
   coaStore.publicationNamesFullCountries.includes(
-    currentCountryCode.value || "",
+    currentCountrycode.value || "",
   )
     ? Object.keys(coaStore.publicationNames)
         .filter(
           (publicationcode) =>
-            publicationcode.indexOf(`${currentCountryCode.value}/`) === 0,
+            publicationcode.indexOf(`${currentCountrycode.value}/`) === 0,
         )
         .map((publicationcode) => ({
           text: coaStore.publicationNames[publicationcode],
@@ -110,32 +114,32 @@ const publicationNamesForCurrentCountry = computed(() =>
     : [],
 );
 const publicationIssues = computed(
-  () => issuecodesByPublicationcode.value[currentPublicationCode.value!],
+  () => issuecodesByPublicationcode.value[currentPublicationcode.value!],
 );
 
 const issues = computed(
   () =>
     publicationIssues.value &&
-    issuecodesByPublicationcode.value[currentPublicationCode.value!].map(
-      (issuenumber) => ({
-        value: issuenumber,
-        text: issuenumber,
+    issuecodesByPublicationcode.value[currentPublicationcode.value!].map(
+      (issuecode) => ({
+        value: issuecode,
+        text: issuecodeDetails.value[issuecode]!.issuenumber,
       }),
     ),
 );
 
 const isValid = computed(
   () =>
-    !!currentIssueNumber.value &&
-    !issues.value?.some(({ value }) => value === currentIssueNumber.value),
+    !!currentIssuenumber.value &&
+    !issues.value?.some(({ value }) => value === currentIssuenumber.value),
 );
 
 watch(
-  currentCountryCode,
+  currentCountrycode,
   async (newValue) => {
     if (newValue) {
-      currentPublicationCode.value = props.publicationCode!;
-      currentIssueNumber.value = undefined;
+      currentPublicationcode.value = props.publicationcode!;
+      currentIssuenumber.value = undefined;
 
       await coaStore.fetchPublicationNamesFromCountry(newValue);
     }
@@ -145,14 +149,14 @@ watch(
   },
 );
 
-watch(currentPublicationCode, async (newValue) => {
+watch(currentPublicationcode, async (newValue) => {
   if (newValue) {
-    currentIssueNumber.value = undefined;
+    currentIssuenumber.value = undefined;
     await coaStore.fetchIssuecodesByPublicationcode([newValue]);
   }
 });
-if (props.countryCode) {
-  currentCountryCode.value = props.countryCode;
+if (props.countrycode) {
+  currentCountrycode.value = props.countrycode;
 }
 
 (async () => {

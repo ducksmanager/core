@@ -91,9 +91,9 @@ model issueSuggestion {
   id                Int                   @id @default(autoincrement())
   indexationId      String                @map("indexation_id") @db.VarChar(20)
   source            issueSuggestionSource
-  publicationcode   String?               @db.VarChar(12)
-  issuenumber       String?               @db.VarChar(13)
-  issuecode         String?               @db.VarChar(25)
+  publicationcode   String                @db.VarChar(12)
+  issuenumber       String                @db.VarChar(13)
+  issuecode         String                @db.VarChar(25)
   acceptedOnEntries indexation[]          @relation("indexation_accepted_issue_suggestion_idToissue_suggestion")
   indexation        indexation            @relation(fields: [indexationId], references: [id], onUpdate: Restrict, map: "issue_suggestion_indexation_id_fk")
 

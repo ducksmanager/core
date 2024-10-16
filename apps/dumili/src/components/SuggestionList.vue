@@ -16,7 +16,7 @@
         ...((itemClass && itemClass(suggestion)) || []),
       ]"
       @click="
-        emit('select', suggestion);
+        emit('select', suggestion.id);
         emit('toggle-customize-form', false);
       "
     >
@@ -89,7 +89,7 @@ const allowCustomizeForm = computed(
 );
 
 const emit = defineEmits<{
-  (e: "select", suggestion?: S): void;
+  (e: "select", suggestionId?: number): void;
   (e: "toggle-customize-form", toggle: boolean): void;
 }>();
 </script>

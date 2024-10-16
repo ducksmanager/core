@@ -22,9 +22,7 @@
         (url: string) =>
           (selectedExistingCoverIssuecode = coverUrlToIssuecode(url))
       "
-      ><Issue
-        :publicationcode="getPublicationcodeFromIssuecode(issuecode)"
-        :issuenumber="getIssuenumberFromIssuecode(issuecode)"
+      ><Issue :issuecode="issuecode"
     /></Gallery>
   </b-modal>
 </template>
@@ -34,6 +32,7 @@ import { injectLocal } from "@vueuse/core";
 
 import { dumiliSocketInjectionKey } from "~/composables/useDumiliSocket";
 import { suggestions } from "~/stores/suggestions";
+import { stores as webStores } from "~web";
 import { issueSuggestion } from "~prisma/client_dumili";
 import { socketInjectionKey as dmSocketInjectionKey } from "~web/src/composables/useDmSocket";
 
@@ -43,7 +42,10 @@ const {
 } = inject(dmSocketInjectionKey)!;
 const { indexationSocket } = injectLocal(dumiliSocketInjectionKey)!;
 
-const { hasPendingIssueSuggestions, indexation } = storeToRefs(suggestions());
+const { hasPendingIssueSuggestions } = storeToRefs(suggestions());
+const { createIssueSuggestion } = suggestions();
+
+const { issuecodeDetails } = storeToRefs(webStores.coa());
 
 const issueSuggestions = ref<
   (issueSuggestion & { url: string; coverId: number })[]
@@ -86,17 +88,15 @@ const coverUrlToIssuecode = (url: string): string =>
     ({ url: issueSuggestionUrl }) => issueSuggestionUrl === url,
   )?.issuecode || "";
 
-const getPublicationcodeFromIssuecode = (issuecode: string) =>
-  issuecode.split(" ")[0];
-const getIssuenumberFromIssuecode = (issuecode: string) =>
-  issuecode.split(" ")[1];
-
 const acceptIssueSuggestion = async (issuecode: string) => {
-  await indexationSocket.value!.services.acceptIssueSuggestion({
-    source: "ai",
-    indexationId: indexation.value!.id,
+  const { publicationcode, issuenumber } = issuecodeDetails.value[issuecode];
+  const { suggestionId } = await createIssueSuggestion({
     issuecode,
+    publicationcode,
+    issuenumber,
+    source: "ai",
   });
+  await indexationSocket.value!.services.acceptIssueSuggestion(suggestionId);
   selectedExistingCoverIssuecode.value = null;
 };
 

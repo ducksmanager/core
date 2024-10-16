@@ -19,7 +19,7 @@ import type { FullEntry } from "./types";
 
 const socket = new SocketClient(process.env.DM_SOCKET_URL!);
 const { services: coaServices } = socket.addNamespace<CoaServices>(
-  CoaServices.namespaceEndpoint,
+  CoaServices.namespaceEndpoint
 );
 
 import { RequiredAuthMiddleware } from "../_auth";
@@ -36,7 +36,7 @@ const getFullIndexation = (indexationId: string) =>
 
 const getIndexationMiddleware = async (
   socket: Socket,
-  next: (error?: Error) => void,
+  next: (error?: Error) => void
 ) => {
   const indexationId = socket.nsp.name.split("/").pop()!;
   socket.data.indexation = await getFullIndexation(indexationId);
@@ -50,8 +50,8 @@ export default (io: Server) => {
   (
     io.of(
       new RegExp(
-        `^${Events.namespaceEndpoint.replace("{id}", "[0-9]{8}T[0-9]{9}")}$`,
-      ),
+        `^${Events.namespaceEndpoint.replace("{id}", "[0-9]{8}T[0-9]{9}")}$`
+      )
     ) as NamespaceWithData<Events, SessionDataWithIndexation>
   )
     .use(RequiredAuthMiddleware)
@@ -81,55 +81,51 @@ export default (io: Server) => {
 
       indexationSocket.on(
         "acceptIssueSuggestion",
-        async (suggestion, callback) => {
-          if (indexationSocket.data.indexation.id !== suggestion.indexationId) {
-            callback({ error: "You are not allowed to update this resource" });
-            return;
-          }
-
-          const createdIssueSuggestion = await prisma.issueSuggestion.create({
-            data: suggestion,
-          });
-
-          prisma.indexation.update({
+        async (suggestionId, callback) => {
+          await prisma.indexation.update({
             data: {
               acceptedIssueSuggestion: {
                 connect: {
-                  id: createdIssueSuggestion.id,
+                  id: suggestionId,
+                  indexationId: indexationSocket.data.indexation.id,
                 },
               },
             },
             where: {
-              id: suggestion.indexationId,
+              id: indexationSocket.data.indexation.id,
             },
           });
           callback({ status: "OK" });
-        },
+        }
       );
 
       indexationSocket.on(
         "createStorySuggestion",
         async (suggestion, callback) => {
-          if (
-            !indexationSocket.data.indexation.entries.some(
-              ({ id }) => id === suggestion.entryId,
-            )
-          ) {
-            callback({ error: "You are not allowed to update this resource" });
-            return;
-          }
-
           const { id } = await prisma.storySuggestion.create({
             data: suggestion,
           });
           callback({ suggestionId: id });
-        },
+        }
+      );
+
+      indexationSocket.on(
+        "createIssueSuggestion",
+        async (suggestion, callback) => {
+          const { id } = await prisma.issueSuggestion.create({
+            data: {
+              ...suggestion,
+              indexationId: indexationSocket.data.indexation.id,
+            },
+          });
+          callback({ suggestionId: id });
+        }
       );
 
       indexationSocket.on("createOcrDetails", async (ocrDetails, callback) => {
         if (
           !indexationSocket.data.indexation.pages.some(
-            ({ id }) => id === ocrDetails.page.connect!.id,
+            ({ id }) => id === ocrDetails.page.connect!.id
           )
         ) {
           callback({ error: "You are not allowed to update this resource" });
@@ -146,7 +142,7 @@ export default (io: Server) => {
         "acceptStorySuggestion",
         async (suggestion, callback) => {
           const entry = indexationSocket.data.indexation.entries.find(
-            ({ id }) => id === suggestion.entryId,
+            ({ id }) => id === suggestion.entryId
           );
           if (!entry) {
             callback({ error: "You are not allowed to update this resource" });
@@ -155,14 +151,14 @@ export default (io: Server) => {
 
           await acceptStorySuggestion(suggestion);
           callback({ status: "OK" });
-        },
+        }
       );
 
       indexationSocket.on(
         "acceptStoryKindSuggestion",
         async (suggestion, callback) => {
           const entry = indexationSocket.data.indexation.entries.find(
-            ({ id }) => id === suggestion.entryId,
+            ({ id }) => id === suggestion.entryId
           );
           if (!entry) {
             callback({ error: "You are not allowed to update this resource" });
@@ -171,14 +167,14 @@ export default (io: Server) => {
 
           await acceptStoryKindSuggestion(suggestion);
           callback({ status: "OK" });
-        },
+        }
       );
 
       indexationSocket.on("runKumiko", async (callback) =>
         runKumiko(indexationSocket.data.indexation.pages.map(({ url }) => url))
           .then(async (panelsPerPage) => {
             const storyStoryKind = storyKinds.find(
-              ({ label }) => label === "Story",
+              ({ label }) => label === "Story"
             )!;
             const indexationId = indexationSocket.data.indexation.id;
             const entriesToCreate: (Pick<entry, "position"> &
@@ -192,7 +188,7 @@ export default (io: Server) => {
               const pageNumber = idx + 1;
               const inferredKind = inferStoryKindFromAiResults(
                 panelsOfPage,
-                pageNumber,
+                pageNumber
               );
 
               const page = {
@@ -212,7 +208,7 @@ export default (io: Server) => {
                   (
                     [...entriesToCreate].pop()?.position ||
                     String.fromCharCode("a".charCodeAt(0) - 1)
-                  ).charCodeAt(0) + 1,
+                  ).charCodeAt(0) + 1
                 );
                 entriesToCreate.push({
                   position,
@@ -221,7 +217,7 @@ export default (io: Server) => {
                 });
               } else {
                 entriesToCreate[entriesToCreate.length - 1].entryPages.push(
-                  page,
+                  page
                 );
               }
             });
@@ -242,8 +238,8 @@ export default (io: Server) => {
                       },
                     },
                   },
-                }),
-              ),
+                })
+              )
             );
 
             await prisma.entryPage.deleteMany({
@@ -281,8 +277,8 @@ export default (io: Server) => {
               entriesToCreate.map(
                 ({ position, kind }) => prisma.$queryRaw`
             UPDATE entry
-            SET accepted_story_kind_suggested_id = (SELECT id FROM story_kind_suggestion WHERE entry_id = (SELECT id FROM entry WHERE indexation_id = ${indexationId} AND position = ${position}) AND kind = ${kind})`,
-              ),
+            SET accepted_story_kind_suggested_id = (SELECT id FROM story_kind_suggestion WHERE entry_id = (SELECT id FROM entry WHERE indexation_id = ${indexationId} AND position = ${position}) AND kind = ${kind})`
+              )
             );
 
             callback({ status: "OK" });
@@ -292,12 +288,12 @@ export default (io: Server) => {
             callback({
               error: "Kumiko output could not be parsed",
             });
-          }),
+          })
       );
 
       indexationSocket.on("runOcr", async (pageUrl, callback) => {
         const page = indexationSocket.data.indexation.pages.find(
-          ({ url }) => url === pageUrl,
+          ({ url }) => url === pageUrl
         );
         if (!page) {
           callback({ error: "Invalid page URL" });
@@ -321,7 +317,7 @@ export default (io: Server) => {
               .then(async ({ data: imageData }) =>
                 sharp(imageData)
                   .extract(extendBoundaries(firstPanel, 20))
-                  .toBuffer(),
+                  .toBuffer()
               )
               .then((buffer) => runOcr(buffer.toString("base64")))
               .then(async (ocrResults) =>
@@ -344,14 +340,14 @@ export default (io: Server) => {
                         x4,
                         y3,
                         y4,
-                      }),
+                      })
                     ),
                   })
                   .then(() =>
                     coaServices.searchStory(
                       ocrResults.map(({ text }) => text),
-                      false,
-                    ),
+                      false
+                    )
                   )
                   .then(({ results }) =>
                     prisma.aiOcrPossibleStory
@@ -366,9 +362,9 @@ export default (io: Server) => {
                       .catch((err) => {
                         console.error(err);
                         callback({ error: "OCR error", errorDetails: err });
-                      }),
-                  ),
-              ),
+                      })
+                  )
+              )
           );
       });
 
@@ -390,7 +386,7 @@ export default (io: Server) => {
             entryPages: pageIds.map((pageId) => ({ pageId })),
             position: String.fromCharCode("a".charCodeAt(0) + idx),
           })),
-          indexationSocket.data.indexation.id,
+          indexationSocket.data.indexation.id
         );
 
         const newEntries = await prisma.entry.findMany({
@@ -421,9 +417,9 @@ export default (io: Server) => {
             position,
             kind: inferStoryKindFromAiResults(
               entryPages[0].page.aiKumikoResultPanels,
-              entryPages[0].page.pageNumber,
+              entryPages[0].page.pageNumber
             ),
-          })),
+          }))
         );
 
         callback();
@@ -433,7 +429,7 @@ export default (io: Server) => {
 
 const inferStoryKindFromAiResults = (
   panelsOfPage: KumikoProcessedResult[],
-  pageNumber: number,
+  pageNumber: number
 ) =>
   storyKinds.find(
     ({ label }) =>
@@ -442,7 +438,7 @@ const inferStoryKindFromAiResults = (
         ? pageNumber === 1
           ? "Cover"
           : "Illustration"
-        : "Story"),
+        : "Story")
   )!.code;
 
 const acceptStorySuggestion = (suggestion: storySuggestion) =>
@@ -460,7 +456,7 @@ const acceptStorySuggestion = (suggestion: storySuggestion) =>
   });
 
 const acceptStoryKindSuggestion = (
-  suggestion: Prisma.storyKindSuggestionUncheckedCreateInput,
+  suggestion: Prisma.storyKindSuggestionUncheckedCreateInput
 ) =>
   prisma.entry.update({
     data: {
@@ -484,7 +480,7 @@ const createStoryKindSuggestions = (
     entryPages: { pageId: number }[];
     position: string;
     kind: storyKind;
-  }[],
+  }[]
 ) =>
   Promise.all([
     prisma.$transaction(
@@ -504,8 +500,8 @@ const createStoryKindSuggestions = (
           ({ position, kind, aiSourcePageId }) =>
             prisma.$queryRaw`
   INSERT INTO story_kind_suggestion (kind, ai_source_page_id, entry_id)
-  VALUES (${kind}, ${aiSourcePageId}, (SELECT id FROM entry WHERE indexation_id = ${indexationId} AND position = ${position}))`,
-        ),
+  VALUES (${kind}, ${aiSourcePageId}, (SELECT id FROM entry WHERE indexation_id = ${indexationId} AND position = ${position}))`
+        )
     ),
 
     prisma.$transaction(
@@ -513,8 +509,8 @@ const createStoryKindSuggestions = (
         ({ position, kind }) =>
           prisma.$queryRaw`
       UPDATE entry
-      SET accepted_story_kind_suggested_id = (SELECT id FROM story_kind_suggestion WHERE entry_id = (SELECT id FROM entry WHERE indexation_id = ${indexationId} AND position = ${position}) AND kind = ${kind})`,
-      ),
+      SET accepted_story_kind_suggested_id = (SELECT id FROM story_kind_suggestion WHERE entry_id = (SELECT id FROM entry WHERE indexation_id = ${indexationId} AND position = ${position}) AND kind = ${kind})`
+      )
     ),
   ]);
 
@@ -523,7 +519,7 @@ const upsertEntries = async (
     id?: number;
     entryPages: { pageId: number }[];
   })[],
-  indexationId: string,
+  indexationId: string
 ) =>
   await Promise.all(
     entries.map(({ id, position, entryPages }) =>
@@ -554,6 +550,6 @@ const upsertEntries = async (
             },
           },
         },
-      }),
-    ),
+      })
+    )
   );

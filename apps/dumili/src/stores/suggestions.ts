@@ -1,6 +1,7 @@
 import { dumiliSocketInjectionKey } from "~/composables/useDumiliSocket";
 import type { FullIndexation } from "~dumili-services/indexation/types";
 import type {
+  issueSuggestion,
   storyKindSuggestion,
   storySuggestion,
 } from "~prisma/client_dumili";
@@ -55,6 +56,13 @@ export const suggestions = defineStore("suggestions", () => {
     indexation.value = data.indexation;
   };
 
+  const createIssueSuggestion = async (
+    suggestion: Pick<
+      issueSuggestion,
+      "publicationcode" | "issuenumber" | "issuecode" | "source"
+    >,
+  ) => indexationSocket.value!.services.createIssueSuggestion(suggestion);
+
   watch(
     () => indexation.value?.entries,
     async (entries) => {
@@ -88,6 +96,7 @@ export const suggestions = defineStore("suggestions", () => {
   return {
     indexation,
     loadIndexation,
+    createIssueSuggestion,
     entriesFirstPages,
     hasPendingIssueSuggestions: computed(
       () => false, //pendingIssueSuggestions.value.length > 0

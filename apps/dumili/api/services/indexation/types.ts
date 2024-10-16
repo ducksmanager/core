@@ -92,13 +92,18 @@ export default abstract class {
     ) => void,
   ) => void;
 
-  abstract acceptIssueSuggestion: (
-    suggestion: Prisma.issueSuggestionUncheckedCreateInput,
+
+  abstract createIssueSuggestion: (
+    suggestion: Omit<Prisma.issueSuggestionUncheckedCreateInput, 'indexationId'>,
     callback: (
-      data: Errorable<
-        { status: "OK" },
-        "You are not allowed to update this resource"
-      >,
+      data: { suggestionId: storySuggestion["id"] }
+    ) => void,
+  ) => void;
+
+  abstract acceptIssueSuggestion: (
+    suggestionId: number,
+    callback: (
+      data: { status: "OK" }
     ) => void,
   ) => void;
 

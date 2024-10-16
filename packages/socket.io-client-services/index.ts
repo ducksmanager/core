@@ -207,10 +207,7 @@ export class SocketClient {
                   }
                 }
                 return (
-                  cacheData as unknown as {
-                    value: Awaited<ReturnType<Socket["emitWithAck"]>>;
-                  }
-                ).value;
+                  cacheData as Awaited<ReturnType<Socket["emitWithAck"]>>);
               }
             }
 

@@ -71,7 +71,7 @@ const assignSocket = () => {
           return undefined;
         }
 
-        return JSON.parse(item);
+        return JSON.parse(item.value);
       },
       remove: (key) => storage.remove(key),
       clear: () => storage.clear(),

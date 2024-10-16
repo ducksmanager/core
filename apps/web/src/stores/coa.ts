@@ -208,10 +208,7 @@ export const coa = defineStore("coa", () => {
         const issuesByPublicationcode =
           await services.getIssuesByPublicationcodes(newPublicationcodes);
 
-        Object.assign(
-          issuecodeDetails.value,
-          Object.values(issuesByPublicationcode).flat().groupBy("issuecode"),
-        );
+        Object.assign(issuecodeDetails.value, issuesByPublicationcode);
         Object.assign(
           issuecodesByPublicationcode.value,
           Object.entries(issuesByPublicationcode).reduce<

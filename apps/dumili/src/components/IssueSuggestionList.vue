@@ -5,14 +5,14 @@
     :current="issue!"
     :show-customize-form="showIssueSelect"
     @toggle-customize-form="showIssueSelect = $event"
-    @select="$event && acceptIssueSuggestion($event, $event.source)"
+    @select="$event && acceptIssueSuggestion($event)"
   >
     <template #item="suggestion: issueSuggestion">
       <Issue v-bind="suggestion" /></template
     ><template #unknown-text>{{ $t("Numéro inconnu") }}</template>
     <template #customize-form>
       <IssueSelect
-        @change="$event && acceptIssueSuggestion($event, 'user')" /></template
+        @change="$event && createAndAcceptIssueSuggestion" /></template
     ><template #customize-text> {{ $t("Sélectionner...") }}</template>
   </suggestion-list>
 </template>
@@ -25,32 +25,27 @@ const { t: $t } = useI18n();
 
 const showIssueSelect = ref(false);
 const suggestionsStore = suggestions();
-const { indexation } = storeToRefs(suggestionsStore);
+const { createIssueSuggestion } = suggestionsStore;
+const { indexation, acceptedIssue: issue } = storeToRefs(suggestionsStore);
 
 import { issueSuggestion } from "~prisma/client_dumili";
 
 const { indexationSocket } = inject(dumiliSocketInjectionKey)!;
 
-const issue = computed(() => suggestionsStore.acceptedIssue);
-
-const acceptIssueSuggestion = async (
-  {
-    publicationcode,
-    issuenumber,
-  }: {
-    publicationcode: string | null;
-    issuenumber: string | null;
-  },
-  source: issueSuggestion["source"],
-) => {
-  if (publicationcode && issuenumber) {
-    await indexationSocket.value!.services.acceptIssueSuggestion({
-      source,
-      indexationId: indexation.value!.id,
-      publicationcode,
-      issuenumber,
-    });
-  }
+const acceptIssueSuggestion = async (suggestionId: number) => {
+  await indexationSocket.value!.services.acceptIssueSuggestion(suggestionId);
   showIssueSelect.value = false;
+};
+
+const createAndAcceptIssueSuggestion = async (data: {
+  publicationcode: string;
+  issuenumber: string;
+  issuecode: string;
+}) => {
+  const { suggestionId } = await createIssueSuggestion({
+    ...data,
+    source: "user",
+  });
+  await acceptIssueSuggestion(suggestionId);
 };
 </script>
