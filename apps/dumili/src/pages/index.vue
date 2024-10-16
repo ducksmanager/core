@@ -14,7 +14,7 @@
             :to="`/indexation/${id}`"
             class="d-flex flex-column align-items-center border"
           >
-            <b-img :src="pages[0].url" fluid thumbnail />
+            <b-img :src="pages[0]?.url" fluid thumbnail />
             Numéro inconnu
           </router-link>
         </b-col>
@@ -46,7 +46,7 @@
     <upload-widget
       v-if="showUploadWidget && cloudinaryFolderName"
       :folder-name="cloudinaryFolderName"
-      @done="router.push(`/indexation/${cloudinaryFolderName}`)"
+      @done="onUploadDone"
       @abort="showUploadWidget = !showUploadWidget"
   /></b-container>
 </template>
@@ -62,7 +62,7 @@ const {
 const currentIndexations = ref<IndexationWithFirstPage[] | null>(null);
 const modal = ref(false);
 const cloudinaryFolderName = ref<string | null>(null);
-const stepNumber = ref(0);
+const stepNumber = ref<0 | 1>(0);
 const uploadType = ref<"all" | "some" | null>(null);
 const showUploadWidget = ref(false);
 
@@ -75,6 +75,10 @@ watch(uploadType, (newUploadType) => {
       .replace(/[-:.Z]/g, "");
   }
 });
+
+const onUploadDone = async () => {
+  router.push(`/indexation/${cloudinaryFolderName.value}`);
+};
 
 (async () => {
   const { error, indexations } = await indexationsServices.getIndexations();

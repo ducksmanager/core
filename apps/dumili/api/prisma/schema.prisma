@@ -65,8 +65,8 @@ model storyKindSuggestion {
   aiSourcePageId    Int?      @map("ai_source_page_id")
   entryId           Int       @map("entry_id")
   acceptedOnEntries entry[]   @relation("entry_accepted_story_kind_suggested_idTostory_kind_suggestion")
-  aiSourcePage      page?     @relation(fields: [aiSourcePageId], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "story_kind_suggestion_page_id_fk")
   entry             entry     @relation("story_kind_suggestion_entry_idToentry", fields: [entryId], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "story_kind_suggestion_entry_id_fk")
+  aiSourcePage      page?     @relation(fields: [aiSourcePageId], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "story_kind_suggestion_page_id_fk")
 
   @@index([entryId], map: "story_kind_suggestion_entry_id_fk")
   @@index([aiSourcePageId], map: "story_kind_suggestion_ai_source_page_id_fk")

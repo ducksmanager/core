@@ -32,6 +32,18 @@ export default (io: Server) => {
   (io.of(Events.namespaceEndpoint) as NamespaceWithData<Events, SessionData>)
     .use(RequiredAuthMiddleware)
     .on("connection", async (socket) => {
+      socket.on("createIfNotExists", async (id, callback) => {
+        prisma.indexation.upsert({
+          create: {
+            id,
+            dmUserId: socket.data.user.id
+          },
+          update: {},
+          where: {
+            id
+          }
+        }).then(callback);
+      });
       socket.on("getIndexations", async (callback) => {
         callback({
           indexations: await getIndexationsWithFirstPage(socket.data.user.id),

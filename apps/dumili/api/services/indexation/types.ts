@@ -50,6 +50,11 @@ export type IndexationWithFirstPage = Prisma.indexationGetPayload<{
 export default abstract class {
   static namespaceEndpoint: string = "/indexation/{id}";
 
+  abstract addPage: (
+    pageNumber: number, url: string,
+    callback: () => void,
+  ) => void;
+
   abstract loadIndexation: (
     callback: (
       data: Errorable<{ indexation: FullIndexation }, "Error">,

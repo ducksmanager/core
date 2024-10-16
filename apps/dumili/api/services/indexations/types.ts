@@ -15,6 +15,8 @@ export type IndexationWithFirstPage = Prisma.indexationGetPayload<{
 export default abstract class {
   static namespaceEndpoint: string = "/indexations";
 
+  abstract createIfNotExists: (indexationId: string, callback: () => void) => void;
+
   abstract getIndexations: (
     callback: (
       data: Errorable<{ indexations: IndexationWithFirstPage[] }, "Error">,

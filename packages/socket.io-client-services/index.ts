@@ -78,7 +78,7 @@ export class SocketClient {
     console.error(`${namespace}: connect_error: ${e}`);
   };
   public onConnected = (namespace: string) => {
-    console.error(`${namespace}: connected`);
+    console.info(`${namespace}: connected`);
   };
 
   public addNamespace<Services extends EventsMap>(
