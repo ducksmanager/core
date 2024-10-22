@@ -72,7 +72,7 @@
     "@histoire/plugin-vue": "^0.17.17",
     "@ionic/prettier-config": "^4.0.0",
     "@types/js-cookie": "^3.0.6",
-    "@types/node": "^20.0.0",
+    "@types/node": "^22.7.8",
     "@vitejs/plugin-vue": "^5.1.4",
     "@vue-macros/reactivity-transform": "^1.1.1",
     "@vue/eslint-config-typescript": "^14.0.0",
