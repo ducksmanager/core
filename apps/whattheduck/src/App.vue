@@ -71,7 +71,7 @@ const assignSocket = () => {
           return undefined;
         }
 
-        return JSON.parse(item.value);
+        return JSON.parse(item).value;
       },
       remove: (key) => storage.remove(key),
       clear: () => storage.clear(),
@@ -96,28 +96,36 @@ const assignSocket = () => {
   });
 };
 
-watch(token, async () => {
-  if (token.value === null && route.path !== '/login') {
-    await router.push('/login');
+const updateBundle = async () => {
+  const currentBundleVersion = (await CapacitorUpdater.current())?.bundle.version;
+  const bundle = await socket.value!.app.services.getBundleUrl({ version: currentBundleVersion });
+  if (Capacitor.isNativePlatform() && 'url' in bundle && bundle.url) {
+    CapacitorUpdater.addListener('download', ({ percent }) => {
+      bundleDownloadProgress.value = percent / 100;
+    });
+    const bundleInfo = await CapacitorUpdater.download(bundle);
+    await CapacitorUpdater.set(bundleInfo);
   } else {
-    assignSocket();
-    const currentBundleVersion = (await CapacitorUpdater.current())?.bundle.version;
-    const bundle = await socket.value!.app.services.getBundleUrl({ version: currentBundleVersion });
-    if (Capacitor.isNativePlatform() && 'url' in bundle && bundle.url) {
-      CapacitorUpdater.addListener('download', ({ percent }) => {
-        bundleDownloadProgress.value = percent / 100;
-      });
-      const bundleInfo = await CapacitorUpdater.download(bundle);
-      await CapacitorUpdater.set(bundleInfo);
-    } else {
-      switch (bundle.error) {
-        case 'Already up to date':
-          console.log('Bundle is already up to date');
-          break;
-        default:
-          console.warn(bundle.error);
-      }
+    switch (bundle.error) {
+      case 'Already up to date':
+        console.log('Bundle is already up to date');
+        break;
+      default:
+        console.warn(bundle.error);
     }
   }
+};
+
+assignSocket();
+updateBundle().then(() => {
+  watch(
+    token,
+    async () => {
+      if (token.value === null && route.path !== '/login') {
+        await router.push('/login');
+      }
+    },
+    { immediate: true },
+  );
 });
 </script>
