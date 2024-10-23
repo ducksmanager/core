@@ -7,7 +7,7 @@
 </template>
 
 <script setup lang="ts">
-const { classes = {}, small = false } = defineProps<{
+const { classes = () => ({}), small = false } = defineProps<{
   classes?: { [key: string]: boolean };
   small?: boolean;
 }>();

@@ -25,9 +25,9 @@ PODS:
     - Capacitor
   - CapawesomeCapacitorAppUpdate (6.0.0):
     - Capacitor
-  - CapawesomeCapacitorFilePicker (6.0.1):
+  - CapawesomeCapacitorFilePicker (6.1.0):
     - Capacitor
-  - CapgoCapacitorUpdater (6.2.5):
+  - CapgoCapacitorUpdater (6.3.10):
     - Alamofire
     - Capacitor
     - SSZipArchive
@@ -54,8 +54,8 @@ DEPENDENCIES:
   - "CapacitorPreferences (from `../../../../node_modules/.pnpm/@capacitor+preferences@6.0.2_@capacitor+core@6.1.2/node_modules/@capacitor/preferences`)"
   - "CapacitorStatusBar (from `../../../../node_modules/.pnpm/@capacitor+status-bar@6.0.1_@capacitor+core@6.1.2/node_modules/@capacitor/status-bar`)"
   - "CapawesomeCapacitorAppUpdate (from `../../../../node_modules/.pnpm/@capawesome+capacitor-app-update@6.0.0_@capacitor+core@6.1.2/node_modules/@capawesome/capacitor-app-update`)"
-  - "CapawesomeCapacitorFilePicker (from `../../../../node_modules/.pnpm/@capawesome+capacitor-file-picker@6.0.1_@capacitor+core@6.1.2/node_modules/@capawesome/capacitor-file-picker`)"
-  - "CapgoCapacitorUpdater (from `../../../../node_modules/.pnpm/@capgo+capacitor-updater@6.2.5_@capacitor+core@6.1.2/node_modules/@capgo/capacitor-updater`)"
+  - "CapawesomeCapacitorFilePicker (from `../../../../node_modules/.pnpm/@capawesome+capacitor-file-picker@6.1.0_@capacitor+core@6.1.2/node_modules/@capawesome/capacitor-file-picker`)"
+  - "CapgoCapacitorUpdater (from `../../../../node_modules/.pnpm/@capgo+capacitor-updater@6.3.10_@capacitor+core@6.1.2/node_modules/@capgo/capacitor-updater`)"
 
 SPEC REPOS:
   trunk:
@@ -91,9 +91,9 @@ EXTERNAL SOURCES:
   CapawesomeCapacitorAppUpdate:
     :path: "../../../../node_modules/.pnpm/@capawesome+capacitor-app-update@6.0.0_@capacitor+core@6.1.2/node_modules/@capawesome/capacitor-app-update"
   CapawesomeCapacitorFilePicker:
-    :path: "../../../../node_modules/.pnpm/@capawesome+capacitor-file-picker@6.0.1_@capacitor+core@6.1.2/node_modules/@capawesome/capacitor-file-picker"
+    :path: "../../../../node_modules/.pnpm/@capawesome+capacitor-file-picker@6.1.0_@capacitor+core@6.1.2/node_modules/@capawesome/capacitor-file-picker"
   CapgoCapacitorUpdater:
-    :path: "../../../../node_modules/.pnpm/@capgo+capacitor-updater@6.2.5_@capacitor+core@6.1.2/node_modules/@capgo/capacitor-updater"
+    :path: "../../../../node_modules/.pnpm/@capgo+capacitor-updater@6.3.10_@capacitor+core@6.1.2/node_modules/@capgo/capacitor-updater"
 
 SPEC CHECKSUMS:
   Alamofire: f36a35757af4587d8e4f4bfa223ad10be2422b8c
@@ -109,13 +109,13 @@ SPEC CHECKSUMS:
   CapacitorPreferences: e8284bf740cf8c6d3f25409af3c01df87dfeb5a1
   CapacitorStatusBar: b81d4fb5d4e0064c712018071b3ab4b810b39a63
   CapawesomeCapacitorAppUpdate: 3c05b5c8e42f9c6a88d666093406e9336d9bfdb1
-  CapawesomeCapacitorFilePicker: c80c30759ba48986ff34a2b51b23ac2babfd3774
-  CapgoCapacitorUpdater: 5cf2afb1f57842d2075a7f114e9de447e132298f
+  CapawesomeCapacitorFilePicker: abd66735806935246403855cbe62fee8e299cdc5
+  CapgoCapacitorUpdater: 3742dc0db7b6f1b5d9b495c99e528607ff19358f
   SQLCipher: 30a8e81afa6128e600b17ffa77d0f92fa05ed208
   SSZipArchive: fe6a26b2a54d5a0890f2567b5cc6de5caa600aef
   Version: de5907f2c5d0f3cf21708db7801d1d5401139486
   ZIPFoundation: b8c29ea7ae353b309bc810586181fd073cb3312c
 
-PODFILE CHECKSUM: b9fa90a1accb2442067420f77c64ce80a75e2ce6
+PODFILE CHECKSUM: 2a6feebb0f192ee28688046c067fcf07f6ee574b
 
 COCOAPODS: 1.15.2

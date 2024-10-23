@@ -92,19 +92,17 @@ export default abstract class {
     ) => void,
   ) => void;
 
-
   abstract createIssueSuggestion: (
-    suggestion: Omit<Prisma.issueSuggestionUncheckedCreateInput, 'indexationId'>,
-    callback: (
-      data: { suggestionId: storySuggestion["id"] }
-    ) => void,
+    suggestion: Omit<
+      Prisma.issueSuggestionUncheckedCreateInput,
+      "indexationId"
+    >,
+    callback: (data: { suggestionId: storySuggestion["id"] }) => void,
   ) => void;
 
   abstract acceptIssueSuggestion: (
     suggestionId: number,
-    callback: (
-      data: { status: "OK" }
-    ) => void,
+    callback: (data: { status: "OK" }) => void,
   ) => void;
 
   abstract acceptStoryKindSuggestion: (

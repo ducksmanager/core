@@ -206,8 +206,7 @@ export class SocketClient {
                       break;
                   }
                 }
-                return (
-                  cacheData as Awaited<ReturnType<Socket["emitWithAck"]>>);
+                return cacheData as Awaited<ReturnType<Socket["emitWithAck"]>>;
               }
             }
 
