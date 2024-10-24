@@ -58,8 +58,8 @@ importers:
         specifier: ^32.2.2
         version: 32.2.2
       playwright-firefox:
-        specifier: ^1.48.1
-        version: 1.48.1
+        specifier: ~1.47.0
+        version: 1.47.2
       yargs:
         specifier: ^17.7.2
         version: 17.7.2
@@ -6461,13 +6461,13 @@ packages:
   pkg-types@1.2.1:
     resolution: {integrity: sha512-sQoqa8alT3nHjGuTjuKgOnvjo4cljkufdtLMnO2LBP/wRwuDlo1tkaEdMxCRhyGRPacv/ztlZgDPm2b7FAmEvw==}
 
-  playwright-core@1.48.1:
-    resolution: {integrity: sha512-Yw/t4VAFX/bBr1OzwCuOMZkY1Cnb4z/doAFSwf4huqAGWmf9eMNjmK7NiOljCdLmxeRYcGPPmcDgU0zOlzP0YA==}
+  playwright-core@1.47.2:
+    resolution: {integrity: sha512-3JvMfF+9LJfe16l7AbSmU555PaTl2tPyQsVInqm3id16pdDfvZ8TTZ/pyzmkbDrZTQefyzU7AIHlZqQnxpqHVQ==}
     engines: {node: '>=18'}
     hasBin: true
 
-  playwright-firefox@1.48.1:
-    resolution: {integrity: sha512-d6BZWfnV22Z3Tn/sIelJIUjJOLWdc0VUzWdS8v/UlT+oD51oZTveiQmwA0d9dgYlhx1Wl+RSH5UPsN24DHvmpQ==}
+  playwright-firefox@1.47.2:
+    resolution: {integrity: sha512-/MlOUVoeIIGIOZTJ3PRwzpt8BjKqgR0OGsZmttt79xawNfAmrgZpbGhAXY43VuI0Ydso2zKzC++kGGxLgntEUw==}
     engines: {node: '>=18'}
     hasBin: true
 
@@ -14429,11 +14429,11 @@ snapshots:
       mlly: 1.7.2
       pathe: 1.1.2
 
-  playwright-core@1.48.1: {}
+  playwright-core@1.47.2: {}
 
-  playwright-firefox@1.48.1:
+  playwright-firefox@1.47.2:
     dependencies:
-      playwright-core: 1.48.1
+      playwright-core: 1.47.2
 
   plimit-lit@1.6.1:
     dependencies:

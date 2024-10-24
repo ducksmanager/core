@@ -21,7 +21,7 @@
     "csv-writer": "^1.6.0",
     "dotenv": "^16.4.5",
     "electron": "^32.2.2",
-    "playwright-firefox": "^1.48.1",
+    "playwright-firefox": "~1.47.0",
     "yargs": "^17.7.2",
     "~prisma-schemas": "workspace:*"
   },
