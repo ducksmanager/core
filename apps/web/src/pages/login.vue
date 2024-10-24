@@ -52,8 +52,6 @@ meta:
 <script setup lang="ts">
 import Cookies from "js-cookie";
 
-import { socketInjectionKey } from "../composables/useDmSocket";
-
 const { login: userLogin, loadUser, collectionSocket } = collection();
 const { user } = storeToRefs(collection());
 

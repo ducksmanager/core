@@ -18,7 +18,7 @@
 <script setup lang="ts">
 import type { StoryDetail } from "~dm-types/StoryDetail";
 
-const { storyDetails = () => {} } = defineProps<{
+const { storyDetails } = defineProps<{
   stories: { [storycode: string]: string[] };
   authors: { [personcode: string]: string };
   storyDetails?: { [storycode: string]: StoryDetail };
