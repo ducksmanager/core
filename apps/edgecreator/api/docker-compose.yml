@@ -8,9 +8,10 @@ services:
     volumes:
       - "${EDGES_PATH}:/home/edges"
     networks:
-      - public-network
-      - ec2-network
-      - dm-server_db-network
+      public-network:
+        aliases:
+          - edgecreator-api
+      dm-server_db-network:
 
   api-websocket:
     container_name: edgecreator-api-websocket
@@ -21,12 +22,12 @@ services:
     volumes:
       - "${EDGES_PATH}:/home/edges"
     networks:
-      - public-network
-      - ec2-network
-      - dm-server_db-network
+      public-network:
+        aliases:
+          - edgecreator-api-websocket
+      dm-server_db-network:
 
 networks:
-  ec2-network:
   public-network:
     external: true
   dm-server_db-network:
