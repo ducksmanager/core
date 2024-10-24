@@ -1,4 +1,9 @@
 import * as Sentry from "@sentry/node";
+
+Sentry.init({
+  dsn: process.env.SENTRY_DSN,
+});
+
 import { instrument } from "@socket.io/admin-ui";
 import dotenv from "dotenv";
 import express from "express";
@@ -20,10 +25,6 @@ dotenv.config({
 });
 
 const port = 3001;
-
-Sentry.init({
-  dsn: process.env.SENTRY_DSN,
-});
 
 class ServerWithUser extends Server<
   Record<string, never>,

@@ -4,7 +4,6 @@ import "v-contextmenu/dist/themes/default.css";
 import "bootstrap/dist/css/bootstrap.css";
 import "bootstrap-vue-next/dist/bootstrap-vue-next.css";
 
-import { Integrations } from "@sentry/tracing";
 import * as Sentry from "@sentry/vue";
 import { createHead } from "@unhead/vue";
 import Cookies from "js-cookie";
@@ -50,7 +49,7 @@ if (process.env.NODE_ENV === "production") {
     app,
     dsn: "https://a225a6550b8c4c07914327618685a61c@sentry.ducksmanager.net/1385898",
     logErrors: true,
-    integrations: [new Integrations.BrowserTracing()],
+    integrations: [Sentry.browserTracingIntegration()],
     tracesSampleRate: 1.0,
     tracingOptions: {
       trackComponents: true,
