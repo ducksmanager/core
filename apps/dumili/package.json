@@ -25,7 +25,7 @@
     "@vueuse/core": "^11.1.0",
     "@vueuse/integrations": "^11.1.0",
     "bootstrap": "^5.3.3",
-    "bootstrap-vue-next": "^0.24.23",
+    "bootstrap-vue-next": "^0.25.8",
     "dayjs": "^1.11.13",
     "js-cookie": "^3.0.5",
     "page-flip": "^2.0.7",

@@ -42,6 +42,16 @@
     >
       De quelles pages du numéro que vous souhaitez indexer possédez vous des
       scans ?
+      <b-alert variant="info" model-value :dismissible="false" class="mt-3"
+        >Si vous posséedez les pages du magazine avec le format PDF,
+        assurez-vous que celui-ci ait une taille de fichier de 10 MB au maximum.
+        Si ce n'est pas le cas, vous pouvez utiliser un outil tel que
+        <a href="https://bigpdf.11zon.com/en/compress-pdf/compress-pdf-to-10mb"
+          >11zon.com</a
+        >
+        pour compresser votre fichier de telle sorte qu'il fasse moins de 10
+        MB.</b-alert
+      >
     </b-modal>
     <upload-widget
       v-if="showUploadWidget && cloudinaryFolderName"

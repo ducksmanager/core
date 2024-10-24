@@ -65,6 +65,15 @@ export default defineConfig({
       include: [path.resolve(__dirname, "..", "translations/**")],
     }),
   ],
+
+  css: {
+    preprocessorOptions: {
+      scss: {
+        api: "modern",
+      },
+    },
+  },
+
   resolve: {
     alias: {
       "~": path.resolve(__dirname, "src"),

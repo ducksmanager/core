@@ -215,6 +215,8 @@ const acceptStoryKindSuggestion = (
 </script>
 
 <style scoped lang="scss">
+@use "sass:color";
+
 .col {
   text-align: left;
 }
@@ -230,9 +232,9 @@ const acceptStoryKindSuggestion = (
 
 @mixin storyKindBackground($bg) {
   background-color: $bg !important;
-  color: invert($bg);
+  color: color.invert($bg);
   &.btn:hover {
-    background-color: lighten($bg, 10%) !important;
+    background-color: color.adjust($bg, $lightness: 10%) !important;
   }
 }
 

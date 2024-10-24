@@ -104,8 +104,8 @@ importers:
         specifier: ^5.3.3
         version: 5.3.3(@popperjs/core@2.11.8)
       bootstrap-vue-next:
-        specifier: ^0.24.23
-        version: 0.24.23(vue@3.5.12(typescript@5.6.3))
+        specifier: ^0.25.8
+        version: 0.25.8(vue@3.5.12(typescript@5.6.3))
       dayjs:
         specifier: ^1.11.13
         version: 1.11.13
@@ -3685,6 +3685,11 @@ packages:
 
   bootstrap-vue-next@0.24.23:
     resolution: {integrity: sha512-oUxe4nfQjgcznsQKVCiRzYmvi8dEBq6FZSvnNDAqRvL/O8G8FcW0Lnzg2fAItKX4/kZzgiffO+el2qDfVKmXDg==}
+    peerDependencies:
+      vue: ^3.5.3
+
+  bootstrap-vue-next@0.25.8:
+    resolution: {integrity: sha512-DDn87fyekJORpMjOnApIfnWekwYKr+DvcGWXl9IoQ2ahxajzQOhjcxRzOj5B6JjePP4F3Bb4P2oAmSEfku3eEg==}
     peerDependencies:
       vue: ^3.5.3
 
@@ -10973,6 +10978,10 @@ snapshots:
   boolean@3.2.0: {}
 
   bootstrap-vue-next@0.24.23(vue@3.5.12(typescript@5.6.3)):
+    dependencies:
+      vue: 3.5.12(typescript@5.6.3)
+
+  bootstrap-vue-next@0.25.8(vue@3.5.12(typescript@5.6.3)):
     dependencies:
       vue: 3.5.12(typescript@5.6.3)
 

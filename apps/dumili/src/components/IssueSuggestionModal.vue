@@ -1,30 +1,31 @@
 <template>
-  <b-modal
-    :model-value="hasPendingIssueSuggestions"
-    title="Dumili a de nouvelles suggestions !"
-    align="center"
-    centered
-    :ok-disabled="selectedExistingCoverIssuecode === null"
-    cancel-title="Annuler"
-    @ok.prevent="acceptIssueSuggestion(selectedExistingCoverIssuecode!)"
-    @cancel.prevent="rejectAllIssueSuggestions"
-  >
-    <div class="m-3">
-      Dumili a trouvé des couvertures existantes ressemblant à la vôtre.
-      Sélectionnez la couverture qui ressemble le plus à la vôtre.<br />Si
-      aucune ne ressemble,cliquez sur "Annuler".
-    </div>
-    <Gallery
-      v-slot="{ issuecode }"
-      :images="images"
-      selectable
-      @selected="
+  <template v-if="hasPendingIssueSuggestions">
+    <b-modal
+      :model-value="hasPendingIssueSuggestions"
+      title="Dumili a de nouvelles suggestions !"
+      align="center"
+      centered
+      :ok-disabled="selectedExistingCoverIssuecode === null"
+      cancel-title="Annuler"
+      @ok.prevent="acceptIssueSuggestion(selectedExistingCoverIssuecode!)"
+      @cancel.prevent="rejectAllIssueSuggestions"
+    >
+      <div class="m-3">
+        Dumili a trouvé des couvertures existantes ressemblant à la vôtre.
+        Sélectionnez la couverture qui ressemble le plus à la vôtre.<br />Si
+        aucune ne ressemble,cliquez sur "Annuler".
+      </div>
+      <Gallery
+        v-slot="{ issuecode }"
+        :images="images"
+        selectable
+        @selected="
         (url: string) =>
           (selectedExistingCoverIssuecode = coverUrlToIssuecode(url))
       "
-      ><Issue :issuecode="issuecode"
-    /></Gallery>
-  </b-modal>
+        ><Issue :issuecode="issuecode"
+      /></Gallery> </b-modal
+  ></template>
 </template>
 
 <script lang="ts" setup>

@@ -12,6 +12,7 @@ import { createRouter, createWebHistory } from "vue-router";
 import App from "~/App.vue";
 import i18n from "~/i18n";
 import { SocketClient } from "~socket.io-client-services";
+import VueDraggableResizable from "vue-draggable-resizable";
 
 const head = createHead();
 
@@ -29,6 +30,7 @@ router.beforeResolve(async (to) => {
 const store = createPinia();
 
 const app = createApp(App)
+  .component("vue-draggable-resizable", VueDraggableResizable)
   .use(i18n)
   .use(store)
   .use(head)

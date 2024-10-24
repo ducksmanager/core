@@ -38,9 +38,11 @@ const uploadWidget = cloudinary.createUploadWidget(
     cloudName: import.meta.env.VITE_CLOUDINARY_CLOUDNAME,
     uploadPreset: "p1urov1k",
     folder: `dumili/${user.value!.username}/${props.folderName}`,
+    showPoweredBy: false,
     sources: ["local", "url"],
     multiple: true,
-    maxImageFileSize: 5000000,
+    maxFileSize: 10_000_000,
+    maxImageFileSize: 5_000_000,
     context: {
       indexation: props.folderName,
       project: "dumili",
@@ -54,12 +56,25 @@ const uploadWidget = cloudinary.createUploadWidget(
       debugger;
       switch (result?.event) {
         case "success":
-          console.log("Done! Here is the image info: ", result.info);
+          const info = result.info as CloudinaryUploadWidgetInfo;
+          console.log("Done! Here is the image info: ", info);
 
-          await indexationSocket.value!.services.addPage(
-            currentPageNumber.value++,
-            (result.info as CloudinaryUploadWidgetInfo).secure_url,
-          );
+          if (info.pages) {
+            for (let page = 1; page <= info.pages; page++) {
+              await indexationSocket.value!.services.addPage(
+                currentPageNumber.value++,
+                info.secure_url
+                  .replace("/upload/", `/upload/pg_${page}/`)
+                  .replace(/.pdf$/g, ".png"),
+              );
+            }
+          } else {
+            await indexationSocket.value!.services.addPage(
+              currentPageNumber.value++,
+              info.secure_url,
+            );
+          }
+          uploadWidget.close();
           emit("done");
           break;
         case "abort":
@@ -69,8 +84,6 @@ const uploadWidget = cloudinary.createUploadWidget(
     }
   },
 );
-
-uploadWidget.open();
 
 onMounted(async () => {
   await dumiliSocket.indexations.services.createIfNotExists(props.folderName);
