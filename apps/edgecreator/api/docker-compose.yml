@@ -1,3 +1,4 @@
+name: edgecreator-api
 services:
   api:
     container_name: edgecreator-api
