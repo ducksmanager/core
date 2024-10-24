@@ -7,7 +7,6 @@ COPY packages/prisma-schemas/client_coa/libquery_engine-debian-openssl-3.0.x.so.
 COPY packages/prisma-schemas/client_edgecreator/libquery_engine-debian-openssl-3.0.x.so.node /tmp/prisma-engines/
 COPY packages/prisma-schemas/client_dm/libquery_engine-debian-openssl-3.0.x.so.node /tmp/prisma-engines/
 
-COPY packages/prisma-schemas /app/
 COPY apps/edgecreator/api/.env /app/
 COPY apps/edgecreator/api/bundle.mjs /app/
 

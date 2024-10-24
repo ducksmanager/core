@@ -6,7 +6,7 @@
     "build": "bun build --target node --sourcemap index.ts --outfile bundle.mjs",
     "dev": "concurrently -n bun,tsc \"bun --inspect run --hot index.ts\" \"tsc --noEmit --watch\"",
     "prod:deploy": "DIR=apps/edgecreator/api pnpm -F '~ci' prod:docker-compose-up",
-    "prod:build-docker": "REPO_NAME=ghcr.io/bperel/edgecreator-api pnpm -F '~ci' prod:build-docker -f apps/edgecreator/api/Dockerfile",
+    "prod:build-docker": "REPO_NAME=ghcr.io/bperel/edgecreator-api:websocket pnpm -F '~ci' prod:build-docker -f apps/edgecreator/api/Dockerfile",
     "prod:transfer-files-pre": "pnpm -F '~ci' prod:transfer-files @apps/edgecreator/api/.env:apps/edgecreator/api/.env @packages/prisma-clients/.env.prod.local:packages/prisma-schemas/.env",
     "prod:transfer-files-post": "pnpm -F '~ci' prod:transfer-files apps/edgecreator/api/docker-compose.yml:@apps/edgecreator/api/docker-compose.yml"
   },
