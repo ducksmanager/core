@@ -7,7 +7,7 @@
           :is-ai-source="(suggestion) => suggestion.aiSourcePageId !== null"
           :current="acceptedStoryKind"
           :item-class="(suggestion) => [`kind-${suggestion.kind}`]"
-          @select="acceptStoryKindSuggestion($event!.kind)"
+          @select="acceptStoryKindSuggestion"
         >
           <template #item="suggestion">
             {{ getStoryKind(suggestion.kind) }}
@@ -147,7 +147,11 @@ import { suggestions } from "~/stores/suggestions";
 import { user } from "~/stores/ui";
 import { FullEntry } from "~dumili-services/indexation/types";
 import { storyKinds } from "~dumili-types/storyKinds";
-import type { entry, storyKind } from "~prisma/client_dumili";
+import type {
+  entry,
+  storyKind,
+  storyKindSuggestion,
+} from "~prisma/client_dumili";
 
 const { t: $t } = useI18n();
 const props = defineProps<{
@@ -201,11 +205,12 @@ const urlEncodedStorycode = computed(
 const getStoryKind = (storyKind: storyKind) =>
   storyKinds.find(({ code }) => code === storyKind)?.label;
 
-const acceptStoryKindSuggestion = (kind: storyKind) => {
-  indexationSocket.value!.services.acceptStoryKindSuggestion({
-    entryId: entry.value.id,
-    kind,
-  });
+const acceptStoryKindSuggestion = (
+  storyKindSuggestionId: storyKindSuggestion["id"] | undefined,
+) => {
+  indexationSocket.value!.services.acceptStoryKindSuggestion(
+    storyKindSuggestionId,
+  );
 };
 </script>
 

@@ -5,7 +5,7 @@
     :current="acceptedEntry"
     :show-customize-form="showEntrySelect"
     @toggle-customize-form="showEntrySelect = $event"
-    @select="acceptStorySuggestion($event!)"
+    @select="acceptStorySuggestion"
   >
     <template #item="suggestion">
       <Story :suggestion="suggestion" />
@@ -54,8 +54,10 @@ const addAndAcceptStoryversionToStorySuggestions = async (
   });
 };
 
-const acceptStorySuggestion = async (suggestion: storySuggestion) => {
-  await indexationSocket.value!.services.acceptStorySuggestion(suggestion);
+const acceptStorySuggestion = async (
+  suggestionId: storySuggestion["id"] | undefined,
+) => {
+  await indexationSocket.value!.services.acceptStorySuggestion(suggestionId);
   showEntrySelect.value = false;
 };
 </script>

@@ -8,7 +8,6 @@ import CoaServices from "~dm-services/coa/types";
 import { storyKinds } from "~dumili-types/storyKinds";
 import type {
   entry,
-  Prisma,
   storyKind,
   storyKindSuggestion,
   storySuggestion,
@@ -140,32 +139,32 @@ export default (io: Server) => {
 
       indexationSocket.on(
         "acceptStorySuggestion",
-        async (suggestion, callback) => {
+        async (storySuggestionId, callback) => {
           const entry = indexationSocket.data.indexation.entries.find(
-            ({ id }) => id === suggestion.entryId,
+            ({ storySuggestions }) => storySuggestions.some(({ id }) => id === storySuggestionId),
           );
           if (!entry) {
-            callback({ error: "You are not allowed to update this resource" });
+            callback({ error: `This indexation does not have any entry with this suggestion`, errorDetails: JSON.stringify({ storySuggestionId }) });
             return;
           }
 
-          await acceptStorySuggestion(suggestion);
-          callback({ status: "OK" });
+          await acceptStorySuggestion(storySuggestionId, entry.id);
+            callback({ status: "OK" });
         },
       );
 
       indexationSocket.on(
         "acceptStoryKindSuggestion",
-        async (suggestion, callback) => {
+        async (storyKindSuggestionId, callback) => {
           const entry = indexationSocket.data.indexation.entries.find(
-            ({ id }) => id === suggestion.entryId,
+            ({ storyKindSuggestions }) => storyKindSuggestions.some(({ id }) => id === storyKindSuggestionId),
           );
           if (!entry) {
-            callback({ error: "You are not allowed to update this resource" });
+            callback({ error: `This indexation does not have any entry with this story kind suggestion`, errorDetails: JSON.stringify({ storyKindSuggestionId }) });
             return;
           }
 
-          await acceptStoryKindSuggestion(suggestion);
+          await acceptStoryKindSuggestion(storyKindSuggestionId, entry.id);
           callback({ status: "OK" });
         },
       );
@@ -441,36 +440,33 @@ const inferStoryKindFromAiResults = (
         : "Story"),
   )!.code;
 
-const acceptStorySuggestion = (suggestion: storySuggestion) =>
+const acceptStorySuggestion = async (suggestionId: storySuggestion['id']|undefined, entryId: entry['id']) =>
   prisma.entry.update({
     data: {
       acceptedSuggestedStoryKind: {
         connect: {
-          id: suggestion.id,
+          id: suggestionId,
         },
       },
     },
     where: {
-      id: suggestion.entryId,
-    },
-  });
+      id: entryId,
+    }})
 
 const acceptStoryKindSuggestion = (
-  suggestion: Prisma.storyKindSuggestionUncheckedCreateInput,
+  suggestionId: storyKindSuggestion['id']|undefined,
+  entryId: entry['id'],
 ) =>
   prisma.entry.update({
     data: {
       acceptedSuggestedStoryKind: {
-        connectOrCreate: {
-          create: suggestion,
-          where: {
-            id: suggestion.id,
-          },
+        connect: {
+            id: suggestionId,
         },
       },
     },
     where: {
-      id: suggestion.entryId,
+      id: entryId,
     },
   });
 

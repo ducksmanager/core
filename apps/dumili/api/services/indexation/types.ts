@@ -1,4 +1,4 @@
-import type { Prisma, storySuggestion } from "~prisma/client_dumili";
+import type { issueSuggestion, Prisma, storyKindSuggestion, storySuggestion } from "~prisma/client_dumili";
 import type { Errorable } from "~socket.io-services/types";
 
 export const indexationPayloadInclude = {
@@ -83,11 +83,11 @@ export default abstract class {
   ) => void;
 
   abstract acceptStorySuggestion: (
-    suggestion: storySuggestion,
+    storySuggestionId: storySuggestion['id']|undefined,
     callback: (
       data: Errorable<
         { status: "OK" },
-        "You are not allowed to update this resource"
+        "This indexation does not have any entry with this suggestion"
       >,
     ) => void,
   ) => void;
@@ -101,16 +101,16 @@ export default abstract class {
   ) => void;
 
   abstract acceptIssueSuggestion: (
-    suggestionId: number,
+    suggestionId: issueSuggestion['id'],
     callback: (data: { status: "OK" }) => void,
   ) => void;
 
   abstract acceptStoryKindSuggestion: (
-    suggestion: Prisma.storyKindSuggestionUncheckedCreateInput,
+    storyKindSuggestionId: storyKindSuggestion['id']|undefined,
     callback: (
       data: Errorable<
         { status: "OK" },
-        "You are not allowed to update this resource"
+        "This indexation does not have any entry with this story kind suggestion"
       >,
     ) => void,
   ) => void;
