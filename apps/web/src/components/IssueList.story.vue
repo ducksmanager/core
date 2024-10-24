@@ -19,6 +19,9 @@ import type { issue } from "~prisma-schemas/schemas/dm";
 const customIssues: (issue & { issuecode: string })[] = [
   {
     id: 167808,
+    country: "fr",
+    magazine: "MP",
+    issuenumber: "303",
     publicationcode: "fr/MP",
     issuecode: "fr/MP 303",
     condition: "moyen",
@@ -31,6 +34,9 @@ const customIssues: (issue & { issuecode: string })[] = [
   },
   {
     id: 167809,
+    country: "fr",
+    magazine: "MP",
+    issuenumber: "304",
     publicationcode: "fr/MP",
     issuecode: "fr/MP 304",
     condition: "moyen",
@@ -43,6 +49,9 @@ const customIssues: (issue & { issuecode: string })[] = [
   },
   {
     id: 167812,
+    country: "fr",
+    magazine: "MP",
+    issuenumber: "307",
     publicationcode: "fr/MP",
     issuecode: "fr/MP 307",
     condition: "mauvais",
@@ -55,6 +64,9 @@ const customIssues: (issue & { issuecode: string })[] = [
   },
   {
     id: 167818,
+    country: "fr",
+    magazine: "MP",
+    issuenumber: "313",
     publicationcode: "fr/MP",
     issuecode: "fr/MP 313",
     condition: "mauvais",
@@ -67,6 +79,9 @@ const customIssues: (issue & { issuecode: string })[] = [
   },
   {
     id: 167819,
+    country: "fr",
+    magazine: "MP",
+    issuenumber: "314",
     publicationcode: "fr/MP",
     issuecode: "fr/MP 314",
     condition: "mauvais",
@@ -79,6 +94,9 @@ const customIssues: (issue & { issuecode: string })[] = [
   },
   {
     id: 167821,
+    country: "fr",
+    magazine: "MP",
+    issuenumber: "316",
     publicationcode: "fr/MP",
     issuecode: "fr/MP 316",
     condition: "moyen",
@@ -91,6 +109,9 @@ const customIssues: (issue & { issuecode: string })[] = [
   },
   {
     id: 167822,
+    country: "fr",
+    magazine: "MP",
+    issuenumber: "317",
     publicationcode: "fr/MP",
     issuecode: "fr/MP 317",
     condition: "mauvais",
@@ -103,6 +124,9 @@ const customIssues: (issue & { issuecode: string })[] = [
   },
   {
     id: 385707,
+    country: "fr",
+    magazine: "MP",
+    issuenumber: "386",
     publicationcode: "fr/MP",
     issuecode: "fr/MP 386",
     condition: "bon",
@@ -115,6 +139,9 @@ const customIssues: (issue & { issuecode: string })[] = [
   },
   {
     id: 385715,
+    country: "fr",
+    magazine: "MP",
+    issuenumber: "302",
     publicationcode: "fr/MP",
     issuecode: "fr/MP 387",
     condition: "bon",
