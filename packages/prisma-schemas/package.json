@@ -7,8 +7,9 @@
     "index.*"
   ],
   "scripts": {
+    "build": "pnpm prisma-generate",
     "prisma-pull-generate": "cd schemas && ls | while read -r schema; do (cd $schema && bunx prisma db pull); done && pnpm prisma-generate",
-    "build": "cd schemas && ls | while read -r schema; do (cd $schema && bunx prisma generate); done && rm -rf dist",
+    "prisma-generate": "cd schemas && ls | while read -r schema; do (cd $schema && bunx prisma generate); done && rm -rf dist",
     "prisma-migrate": "cd schemas && ls | while read -r schema; do (cd $schema && bunx prisma migrate deploy); done",
     "dev:setup": "docker compose -f docker-compose-dev.yml up --force-recreate -d",
     "dev:blocking": "bash wait-until-db-ready.bash",
