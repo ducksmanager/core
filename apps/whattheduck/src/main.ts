@@ -1,4 +1,4 @@
-import '~prisma-schemas/util/groupBy';
+import '~group-by';
 /* Core CSS required for Ionic components to work properly */
 import '@ionic/vue/css/core.css';
 /* Basic CSS for apps built with Ionic */

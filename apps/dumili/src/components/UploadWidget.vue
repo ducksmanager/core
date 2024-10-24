@@ -53,7 +53,6 @@ const uploadWidget = cloudinary.createUploadWidget(
     if (error) {
       console.error(error);
     } else {
-      debugger;
       switch (result?.event) {
         case "success":
           const info = result.info as CloudinaryUploadWidgetInfo;
@@ -86,7 +85,7 @@ const uploadWidget = cloudinary.createUploadWidget(
 );
 
 onMounted(async () => {
-  await dumiliSocket.indexations.services.createIfNotExists(props.folderName);
+  await dumiliSocket.indexations.services.create(props.folderName);
   dumiliSocket.setIndexationSocketFromId(props.folderName);
   indexationSocket.value = dumiliSocket.indexationSocket.value!;
   uploadWidget.open();

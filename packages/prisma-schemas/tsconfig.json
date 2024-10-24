@@ -18,7 +18,12 @@
     "strictNullChecks": true,
     "allowJs": true,
     "forceConsistentCasingInFileNames": true,
-    "outDir": "dist"
+    "outDir": "dist",
+    "paths": {
+      "~group-by": [
+        "../../util/group-by"
+      ]
+    },
   },
   "exclude": [
     "node_modules",

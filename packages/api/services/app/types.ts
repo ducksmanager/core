@@ -1,4 +1,4 @@
-import type { Errorable } from "~socket.io-services/types";
+import type { Errorable } from "~socket.io-services";
 
 export type AppInfos = {
   version: string;

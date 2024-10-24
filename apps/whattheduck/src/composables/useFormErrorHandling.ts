@@ -1,4 +1,4 @@
-import type { ScopedError } from '~socket.io-services/types';
+import type { ScopedError } from '~socket.io-services';
 
 export default (
   fields: string[],

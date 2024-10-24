@@ -1,7 +1,7 @@
 <template>
   <b-tooltip :target="target" hover>
     <table>
-      <thead>
+      <thead v-if="data.length">
         <th
           v-for="header in Object.keys(data[0])"
           :key="header"

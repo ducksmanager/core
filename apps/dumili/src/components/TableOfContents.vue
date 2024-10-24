@@ -77,15 +77,26 @@
                 currentPage = firstPageOfEntry(pageIds);
             "
           ></vue-draggable-resizable>
-          <button
+          <b-button
             v-if="showCreateEntryButtonAfter?.id === entry.id"
-            class="create-entry fw-bold position-absolute w-25 start-100 d-flex justify-content-center align-items-center"
+            class="create-entry fw-bold position-absolute w-100 mt-n1 d-flex justify-content-center align-items-center"
             title="Create an entry here"
+            variant="info"
             @click="createEntry(idx)"
           >
-            &plus;
-          </button>
+            Add entry
+          </b-button>
         </template>
+
+        <b-button
+          v-if="!entryPages.length"
+          class="create-entry fw-bold position-absolute w-100 d-flex justify-content-center align-items-center"
+          title="Create an entry here"
+          variant="info"
+          @click="createEntry(0)"
+        >
+          Add entry
+        </b-button>
       </b-col>
       <b-col :cols="10" class="d-flex flex-column" style="padding: 0">
         <b-row
@@ -245,7 +256,6 @@ watch(
   }
 
   button.create-entry {
-    margin-top: -12.5px;
     height: 25px;
   }
 }

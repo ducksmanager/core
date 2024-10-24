@@ -1,4 +1,4 @@
-import "../../../util/groupBy";
+import "~group-by";
 import {
   type inducks_issue as rawInducksIssue,
   type PrismaClient,

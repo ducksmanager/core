@@ -1,0 +1,10 @@
+{
+  "name": "~group-by",
+  "type": "module",
+  "engines": {
+    "node": ">=20.0.0 <21.0.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.6.3"
+  }
+}

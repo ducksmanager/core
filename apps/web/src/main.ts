@@ -1,4 +1,4 @@
-import "~prisma-schemas/util/groupBy";
+import "~group-by";
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import "v-contextmenu/dist/themes/default.css";
 import "bootstrap/dist/css/bootstrap.css";

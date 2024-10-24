@@ -40,6 +40,9 @@
       "~dm-services/*": [
         "../../packages/api/services/*"
       ],
+      "~group-by": [
+        "../../util/group-by"
+      ],
       "~prisma-schemas/*": [
         "../../packages/prisma-schemas/*"
       ],

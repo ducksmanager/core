@@ -1,6 +1,6 @@
 import type { AugmentedIssue } from "~dm-types/AugmentedIssue";
 import type { WantedEdge } from "~dm-types/WantedEdge";
-import type { Errorable } from "~socket.io-services/types";
+import type { Errorable } from "~socket.io-services";
 
 export const namespaceEndpoint = "/edges";
 export default abstract class {

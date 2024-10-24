@@ -9,7 +9,7 @@ import type {
   inducks_storyjob,
   inducks_storyversion,
 } from "~prisma-schemas/schemas/coa";
-import type { Errorable } from "~socket.io-services/types";
+import type { Errorable } from "~socket.io-services";
 
 export const namespaceEndpoint = "/coa";
 export default abstract class {

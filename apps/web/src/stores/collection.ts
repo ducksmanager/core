@@ -12,7 +12,7 @@ import type {
   purchase,
   subscription,
 } from "~prisma-schemas/schemas/dm";
-import type { EventReturnType } from "~socket.io-services/types";
+import type { EventReturnType } from "~socket.io-services";
 
 import useCollection from "../composables/useCollection";
 import { socketInjectionKey } from "../composables/useDmSocket";

@@ -63,7 +63,7 @@
 import '@nanoandrew4/vue3-carousel-3d/dist/style.css';
 import { Carousel3d, Slide } from '@nanoandrew4/vue3-carousel-3d';
 import { pricetagOutline, pricetagSharp } from 'ionicons/icons';
-import type { EventReturnType } from '~socket.io-services/types';
+import type { EventReturnType } from '~socket.io-services';
 import { stores as webStores, components as webComponents } from '~web';
 import { socketInjectionKey as dmSocketInjectionKey } from '~web/src/composables/useDmSocket';
 

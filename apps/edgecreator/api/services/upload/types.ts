@@ -1,4 +1,4 @@
-import type { Errorable } from "~socket.io-services/types";
+import type { Errorable } from "~socket.io-services";
 
 export const namespaceEndpoint = "/upload";
 export default abstract class {

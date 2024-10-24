@@ -35,6 +35,7 @@
     "vue-i18n": "^9.14.1",
     "vue-router": "^4.4.5",
     "vue-slicksort": "^2.0.5",
+    "~group-by": "workspace:*",
     "~socket.io-client-services": "workspace:*",
     "~socket.io-services": "workspace:*",
     "~web": "workspace:*"

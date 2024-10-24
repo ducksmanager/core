@@ -1,6 +1,6 @@
 import type CollectionServices from "~dm-services/collection/types";
 import type { requestedIssue } from "~prisma-schemas/schemas/dm";
-import type { EventReturnType } from "~socket.io-services/types";
+import type { EventReturnType } from "~socket.io-services";
 
 import { socketInjectionKey } from "../composables/useDmSocket";
 

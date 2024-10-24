@@ -57,6 +57,8 @@ export default (io: Server) => {
     .use(getIndexationMiddleware)
     .on("connection", (indexationSocket) => {
       indexationSocket.on("addPage", async (pageNumber, url, callback) => {
+        const { id: indexationId } = indexationSocket.data.indexation;
+        const isFirstPage = pageNumber === 1;
         prisma.indexation
           .update({
             data: {
@@ -64,12 +66,39 @@ export default (io: Server) => {
                 create: {
                   pageNumber,
                   url,
+                  pageEntries: isFirstPage ? {
+                    create: {
+                      entry: {
+                        create: {
+                          position: "a",
+                          indexationId
+                        }
+                      }
+                    },
+                  } : undefined,
                 },
               },
             },
             where: {
-              id: indexationSocket.data.indexation.id,
+              id: indexationId,
             },
+          })
+          .then(async () => {
+            if (isFirstPage) {
+              await createStoryKindSuggestions(indexationId, [{
+                position: "a",
+                kind: storyKinds.find(({ label }) => label === "Cover")!.code,
+                entryPages: [{ pageId: (await prisma.page.findFirstOrThrow({
+                  where: {
+                    indexationId,
+                    pageNumber,
+                  },
+                  select: {
+                    id: true,
+                  },
+                 }))!.id }],
+              }])
+            }
           })
           .then(callback);
       });

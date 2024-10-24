@@ -19,7 +19,7 @@ import type {
   userOptionType,
   userPermission,
 } from "~prisma-schemas/schemas/dm";
-import type { Errorable } from "~socket.io-services/types";
+import type { Errorable } from "~socket.io-services";
 
 export const namespaceEndpoint = "/collection";
 export default abstract class {

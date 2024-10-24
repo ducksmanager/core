@@ -1,2 +1,2 @@
-import "../../util/groupBy";
+import "~group-by";
 export * from "./extended";

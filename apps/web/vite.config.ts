@@ -20,6 +20,7 @@ export default defineConfig({
       "~/": `${path.resolve(__dirname, "src")}/`,
       "~dm-services": path.resolve(__dirname, "../../packages/api/services"),
       "~dm-types": path.resolve(__dirname, "../../packages/types"),
+      "~group-by": path.resolve(__dirname, "../../util/group-by"),
       "~socket.io-services": path.resolve(
         __dirname,
         "../../packages/socket.io-services",

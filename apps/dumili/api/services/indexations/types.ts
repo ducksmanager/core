@@ -1,5 +1,5 @@
 import type { Prisma } from "~prisma/client_dumili";
-import type { Errorable } from "~socket.io-services/types";
+import type { Errorable } from "~socket.io-services";
 
 export type IndexationWithFirstPage = Prisma.indexationGetPayload<{
   include: {
@@ -15,7 +15,7 @@ export type IndexationWithFirstPage = Prisma.indexationGetPayload<{
 export default abstract class {
   static namespaceEndpoint: string = "/indexations";
 
-  abstract createIfNotExists: (
+  abstract create: (
     indexationId: string,
     callback: () => void,
   ) => void;

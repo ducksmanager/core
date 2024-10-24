@@ -2,7 +2,7 @@ import type { BookcaseContributor } from "~dm-types/BookcaseContributor";
 import type { MedalPointsPerUser } from "~dm-types/MedalPointsPerUser";
 import type { QuickStatsPerUser } from "~dm-types/QuickStatsPerUser";
 import type { user } from "~prisma-schemas/schemas/dm";
-import type { Errorable } from "~socket.io-services/types";
+import type { Errorable } from "~socket.io-services";
 
 export const namespaceEndpoint = "/global-stats";
 export default abstract class {

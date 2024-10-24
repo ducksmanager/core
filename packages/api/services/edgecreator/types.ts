@@ -6,7 +6,7 @@ import type {
   elementImage,
   Prisma,
 } from "~prisma-schemas/schemas/edgecreator";
-import type { Errorable } from "~socket.io-services/types";
+import type { Errorable } from "~socket.io-services";
 
 export const unassignedEdgeFields = {
   id: true,

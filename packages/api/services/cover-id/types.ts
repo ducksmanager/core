@@ -1,5 +1,5 @@
 import type { CoverSearchResults } from "~dm-types/CoverSearchResults";
-import type { EitherOr, Errorable } from "~socket.io-services/types";
+import type { EitherOr, Errorable } from "~socket.io-services";
 
 export abstract class InterServerEvents {
   abstract searchFromCover: (

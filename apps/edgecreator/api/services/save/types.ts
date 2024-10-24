@@ -1,4 +1,4 @@
-import type { Errorable } from "~socket.io-services/types";
+import type { Errorable } from "~socket.io-services";
 import type { ExportPaths } from "~types/ExportPaths";
 import type { ModelContributor } from "~types/ModelContributor";
 

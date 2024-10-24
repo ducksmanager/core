@@ -27,17 +27,12 @@ export default (io: Server) => {
   (io.of(Events.namespaceEndpoint) as NamespaceWithData<Events, SessionData>)
     .use(RequiredAuthMiddleware)
     .on("connection", async (socket) => {
-      socket.on("createIfNotExists", async (id, callback) => {
+      socket.on("create", async (id, callback) => {
         prisma.indexation
-          .upsert({
-            create: {
+          .create({data: {
               id,
               dmUserId: socket.data.user.id,
-            },
-            update: {},
-            where: {
-              id,
-            },
+          }
           })
           .then(callback);
       });

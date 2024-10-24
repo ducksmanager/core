@@ -1,6 +1,6 @@
 import type { SimpleBookstore } from "~dm-types/SimpleBookstore";
 import type { bookstoreComment } from "~prisma-schemas/schemas/dm";
-import type { Errorable } from "~socket.io-services/types";
+import type { Errorable } from "~socket.io-services";
 
 export const namespaceEndpoint = "/bookstores";
 export default abstract class {

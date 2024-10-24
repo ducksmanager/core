@@ -8,6 +8,7 @@ import Cookies from "js-cookie";
 import { setupLayouts } from "virtual:generated-layouts";
 import generatedRoutes from "virtual:generated-pages";
 import { createRouter, createWebHistory } from "vue-router";
+import "~group-by";
 
 import App from "~/App.vue";
 import i18n from "~/i18n";
