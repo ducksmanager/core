@@ -106,43 +106,46 @@ export default (io: Server) => {
     socket.on("getCsrf", (callback) => callback(""));
 
     socket.on("signup", async (input, callback) => {
-      const scopedError = await validate(input, [
-        new UsernameValidation(),
-        new UsernameCreationValidation(),
-        new EmailValidation(),
-        new EmailCreationValidation(),
-        new PasswordValidation(),
-      ]);
-      if (scopedError) {
-        callback({ error: "Bad request", ...scopedError });
-      } else {
-        const { username, password, email } = input;
-        const hashedPassword = getHashedPassword(password);
-        const user = await prismaDm.user.create({
-          data: {
-            username,
-            password: hashedPassword,
-            email,
-            signupDate: new Date(),
-          },
-        });
-
-        const privileges = (
-          await prismaDm.userPermission.findMany({
-            where: {
+      console.log(`signup with user ${input.username}`);
+      await prismaDm.$transaction(async (transaction) => {
+        const scopedError = await validate(transaction, input, [
+          new UsernameValidation(),
+          new UsernameCreationValidation(),
+          new EmailValidation(),
+          new EmailCreationValidation(),
+          new PasswordValidation(),
+        ]);
+        if (scopedError) {
+          callback({ error: "Bad request", ...scopedError });
+        } else {
+          const { username, password, email } = input;
+          const hashedPassword = getHashedPassword(password);
+          const user = await transaction.user.create({
+            data: {
               username,
+              password: hashedPassword,
+              email,
+              signupDate: new Date(),
             },
-          })
-        ).groupBy("role", "privilege");
-        const token = generateAccessToken({
-          id: user.id,
-          username,
-          hashedPassword,
-          privileges,
-        });
+          });
 
-        callback(token);
-      }
+          const privileges = (
+            await transaction.userPermission.findMany({
+              where: {
+                username,
+              },
+            })
+          ).groupBy("role", "privilege");
+          const token = generateAccessToken({
+            id: user.id,
+            username,
+            hashedPassword,
+            privileges,
+          });
+
+          callback(token);
+        }
+      });
     });
 
     socket.on("login", async ({ username, password }, callback) => {

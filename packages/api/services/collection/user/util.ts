@@ -2,6 +2,8 @@ import type { user } from "~prisma-schemas/schemas/dm";
 import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
 import { getHashedPassword, isValidEmail } from "~services/auth/util";
 
+type PrismaDmTransaction = Parameters<Parameters<typeof prismaDm.$transaction>[0]>[0]
+
 interface ScopedError<ErrorKey extends string = string> {
   error: ErrorKey;
   message: string;
@@ -13,18 +15,19 @@ export type ScopedErrorDetails = {
   selector: ScopedError["selector"];
 };
 
-export const getUser = async (id: number) =>
-  await prismaDm.user.findUniqueOrThrow({
+export const getUser = async (id: number, transaction = prismaDm) =>
+  await transaction.user.findUniqueOrThrow({
     omit: { password: true },
     where: { id },
   });
 
 export const validate = async (
+  transaction: PrismaDmTransaction,
   input: Record<string, unknown>,
   validators: Validation[],
 ): Promise<ScopedErrorDetails | undefined> => {
   for (const validator of validators) {
-    const result = await validator.run(input);
+    const result = await validator.run(input, transaction);
     if (result?.message) {
       return result;
     }
@@ -34,6 +37,7 @@ export const validate = async (
 export abstract class Validation {
   abstract run(
     data: Record<string, unknown>,
+    transaction: PrismaDmTransaction,
   ): Promise<ScopedErrorDetails | undefined>;
 }
 
@@ -49,8 +53,8 @@ export class UsernameValidation extends Validation {
 }
 
 export class UsernameCreationValidation extends Validation {
-  run = async ({ username }: Pick<user, "username">) =>
-    prismaDm.user
+  run = async ({ username }: Pick<user, "username">, transaction: PrismaDmTransaction) =>
+    transaction.user
       .findFirstOrThrow({
         where: { username },
       })
@@ -65,8 +69,8 @@ export class UsernameCreationValidation extends Validation {
 }
 
 export class EmailCreationValidation extends Validation {
-  run = async ({ email }: Pick<user, "email">) =>
-    prismaDm.user
+  run = async ({ email }: Pick<user, "email">, transaction: PrismaDmTransaction) =>
+    transaction.user
       .findFirstOrThrow({
         where: { email },
       })
@@ -81,8 +85,8 @@ export class EmailCreationValidation extends Validation {
 }
 
 export class EmailUpdateValidation extends Validation {
-  run = async ({ id, email }: Pick<user, "email" | "id">) =>
-    prismaDm.user
+  run = async ({ id, email }: Pick<user, "email" | "id">, transaction: PrismaDmTransaction) =>
+    transaction.user
       .findUniqueOrThrow({
         select: {
           email: true,
@@ -92,7 +96,7 @@ export class EmailUpdateValidation extends Validation {
       .then(async ({ email: currentEmail }) =>
         currentEmail === email
           ? true
-          : (await prismaDm.user.count({
+          : (await transaction.user.count({
               where: {
                 email,
               },
@@ -153,8 +157,8 @@ export class OldPasswordValidation extends Validation {
   }: {
     userId: user["id"];
     oldPassword: user["password"];
-  }) =>
-    prismaDm.user
+  }, transaction: PrismaDmTransaction) =>
+    transaction.user
       .findFirstOrThrow({
         where: {
           id: userId,
