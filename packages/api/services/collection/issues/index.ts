@@ -354,8 +354,8 @@ export const resetDemo = async () => {
     return;
   }
 
-  const csvPath = existsSync("/app/services/demo_issues.csv")
-    ? "/app/services/"
+  const csvPath = existsSync("/app/demo_issues.csv")
+    ? "/app/"
     : cwd() + "/services/";
 
   demo.lastReset = new Date();

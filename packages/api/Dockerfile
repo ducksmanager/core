@@ -8,6 +8,9 @@ COPY packages/prisma-schemas/client_dm/libquery_engine-debian-openssl-3.0.x.so.n
 
 COPY packages/api/.env /app/
 
+COPY packages/api/services/auth/demo_issues.csv /app/demo_issues.csv
+COPY packages/api/services/auth/demo_purchases.csv /app/demo_purchases.csv
+
 # Debug
 RUN grep GITHUB_NAME /app/.env
 
