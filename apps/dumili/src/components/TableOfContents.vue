@@ -3,7 +3,7 @@
     no-body
     class="table-of-contents d-flex w-50 h-100 m-0 overflow-auto"
     body-class="flex-grow-1 w-100 h-100"
-    @mouseleave="showCreateEntryButtonAfter = null"
+    @mouseleave="hoveredEntry = null"
   >
     <template #header>
       <IssueSuggestionModal />
@@ -57,7 +57,7 @@
         >
           <div style="height: 1px" class="bg-black"></div>
           <vue-draggable-resizable
-            :active="showCreateEntryButtonAfter === entry"
+            :active="hoveredEntry === entry"
             prevent-deactivation
             w="auto"
             :h="tocPageHeight * pageIds.length - 1"
@@ -67,18 +67,19 @@
             :grid="[1, tocPageHeight]"
             :max-height="tocPageHeight * pageIds.length"
             :min-height="tocPageHeight - 1"
-            :class-name="`entry-pages col w-100 kind-${
+            :class-name="`entry col w-100 kind-${
               acceptedStoryKinds[entry.id]?.kind
             }`"
             :title="`${entry.title || 'Inconnu'} (${pageIds.length} pages)`"
-            @mouseover="showCreateEntryButtonAfter = entry"
+            @mouseover="hoveredEntry = entry"
+            @mouseout="hoveredEntry = null"
             @click="
               if (entry !== currentEntry)
                 currentPage = firstPageOfEntry(pageIds);
             "
           ></vue-draggable-resizable>
           <b-button
-            v-if="showCreateEntryButtonAfter?.id === entry.id"
+            v-if="hoveredEntry?.id === entry.id"
             class="create-entry fw-bold position-absolute w-100 mt-n1 d-flex justify-content-center align-items-center"
             title="Create an entry here"
             variant="info"
@@ -132,6 +133,7 @@
 import useAi from "~/composables/useAi";
 import { dumiliSocketInjectionKey } from "~/composables/useDumiliSocket";
 import { suggestions } from "~/stores/suggestions";
+import { ui } from "~/stores/ui";
 import { FullEntry, FullIndexation } from "~dumili-services/indexation/types";
 import { entry as entryModel } from "~prisma/client_dumili";
 
@@ -142,14 +144,13 @@ defineProps<{
 const { indexationSocket } = inject(dumiliSocketInjectionKey)!;
 
 const { acceptedStoryKinds } = storeToRefs(suggestions());
+const { hoveredEntry } = storeToRefs(ui());
 const indexation = storeToRefs(suggestions()).indexation as Ref<FullIndexation>;
 const currentPage = defineModel<number>();
 
 const { status: aiStatus, runKumiko } = useAi();
 
 const tocPageHeight = 50;
-
-const showCreateEntryButtonAfter = ref<entryModel | null>(null);
 
 const entryPages = ref<{ entry: entryModel; pageIds: number[] }[]>([]);
 

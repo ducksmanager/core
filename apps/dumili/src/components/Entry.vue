@@ -1,7 +1,7 @@
 <template>
   <b-row class="d-flex w-100 align-items-center">
     <template v-if="editable">
-      <b-col cols="3">
+      <b-col col cols="3">
         <suggestion-list
           :suggestions="entry.storyKindSuggestions"
           :is-ai-source="(suggestion) => suggestion.aiSourcePageId !== null"
@@ -14,14 +14,14 @@
           </template>
           <template #unknown-text>{{ $t("Type inconnu") }}</template>
         </suggestion-list> </b-col
-      ><b-col cols="3"><StorySuggestionList :entry="entry" /></b-col>
-      <b-col cols="3">
+      ><b-col col cols="3"><StorySuggestionList :entry="entry" /></b-col>
+      <b-col col cols="3">
         <b-form-input
           placeholder="Titre de l'histoire"
           type="text"
           class="w-100"
           :value="entry.title || ''" /></b-col
-      ><b-col cols="3">
+      ><b-col col cols="3">
         <b-button
           class="d-flex w-100 justify-content-between"
           :disabled="!(storyAiSuggestions.length || storyKindAiSuggestion)"
@@ -35,7 +35,7 @@
         </b-button>
       </b-col>
       <template v-if="showAiDetectionsOn">
-        <b-col cols="3" class="text-start white-space-normal">
+        <b-col col cols="3" class="text-start white-space-normal">
           <div>
             {{
               $t("{numberOfPanels} cases trouvées", {
@@ -53,7 +53,7 @@
             {{ getStoryKind(storyKindAiSuggestion.kind) }}
           </div>
         </b-col>
-        <b-col cols="3" class="text-start white-space-normal">
+        <b-col col cols="3" class="text-start white-space-normal">
           <div v-if="pages[0].aiOcrResults.length">
             {{
               $t("{textNumber} textes trouvés", {
@@ -108,7 +108,7 @@
       ></template
     >
     <template v-else>
-      <b-col cols="3">
+      <b-col col cols="3">
         <b-badge
           size="xl"
           :class="{ [`kind-${acceptedStoryKind?.kind}`]: true }"
@@ -125,7 +125,7 @@
         }}</template
         ><template v-else>{{ $t("Contenu inconnu") }}</template>
       </b-col>
-      <b-col cols="6"
+      <b-col col cols="6"
         >{{ title || $t("Sans titre") }}
         <template v-if="part"> - {{ $t("partie") }} {{ part }}</template>
         <br />
@@ -144,7 +144,7 @@
 <script setup lang="ts">
 import { dumiliSocketInjectionKey } from "~/composables/useDumiliSocket";
 import { suggestions } from "~/stores/suggestions";
-import { user } from "~/stores/ui";
+import { ui } from "~/stores/ui";
 import { FullEntry } from "~dumili-services/indexation/types";
 import { storyKinds } from "~dumili-types/storyKinds";
 import type {
@@ -175,7 +175,7 @@ const pages = computed(() => {
   );
 });
 
-const { showAiDetectionsOn } = storeToRefs(user());
+const { showAiDetectionsOn } = storeToRefs(ui());
 
 const acceptedStory = computed(() => acceptedStories.value[props.entry.id]);
 
@@ -218,7 +218,8 @@ const acceptStoryKindSuggestion = (
 @use "sass:color";
 
 .col {
-  text-align: left;
+  display: flex;
+  justify-content: center;
 }
 
 :deep(.dropdown-menu) {

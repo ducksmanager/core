@@ -41,8 +41,8 @@ const uploadWidget = cloudinary.createUploadWidget(
     showPoweredBy: false,
     sources: ["local", "url"],
     multiple: true,
-    maxFileSize: 10_000_000,
-    maxImageFileSize: 5_000_000,
+    maxFileSize: 10 * 1024 * 1024,
+    maxImageFileSize: 5 * 1024 * 1024,
     context: {
       indexation: props.folderName,
       project: "dumili",

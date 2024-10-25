@@ -30,6 +30,10 @@
                   marginLeft: 0,
                 }"
               >
+                <div
+                  v-if="hoveredEntry"
+                  :class="`position-absolute start-0 w-100 h-100 striped kind-${acceptedStoryKinds[hoveredEntry.id]?.kind}`"
+                ></div>
                 <template v-if="displayRatioCropped && naturalToDisplayRatio">
                   <div
                     v-for="(shownPage, idx) in shownPages.map(
@@ -138,6 +142,7 @@
 import { PageFlip } from "page-flip";
 
 import { suggestions } from "~/stores/suggestions";
+import { ui } from "~/stores/ui";
 
 let book = ref<PageFlip | null>(null);
 const coverWidth = ref<number | null>(null);
@@ -146,7 +151,8 @@ const currentPage = ref(0);
 
 defineProps<{ indexationId: string }>();
 
-const { indexation } = storeToRefs(suggestions());
+const { indexation, acceptedStoryKinds } = storeToRefs(suggestions());
+const { hoveredEntry } = storeToRefs(ui());
 
 const isSinglePage = computed(() => indexation.value?.pages.length === 1);
 const displayedWidth = computed(() => book.value?.getSettings().width);
