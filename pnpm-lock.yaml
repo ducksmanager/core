@@ -486,7 +486,7 @@ importers:
         version: 0.5.1(socket.io@4.8.0)
       '@vueuse/integrations':
         specifier: ^11.1.0
-        version: 11.1.0(axios@1.7.7)(universal-cookie@4.0.4)(vue@3.5.12(typescript@5.6.3))
+        version: 11.1.0(axios@1.7.7)(universal-cookie@7.2.1)(vue@3.5.12(typescript@5.6.3))
       axios:
         specifier: ^1.7.7
         version: 1.7.7
@@ -527,8 +527,8 @@ importers:
         specifier: ^4.8.0
         version: 4.8.0
       universal-cookie:
-        specifier: ^4.0.4
-        version: 4.0.4
+        specifier: ^7.2.1
+        version: 7.2.1
       ~api:
         specifier: workspace:*
         version: link:../../../packages/api
@@ -2841,9 +2841,6 @@ packages:
   '@types/connect@3.4.38':
     resolution: {integrity: sha512-K6uROf1LD88uDQqJCktA4yzL1YYAK6NgfsI0v/mTgyPKWsX1CnJ0XPSDhViejru1GcRkLWb8RlzFYJRqGUbaug==}
 
-  '@types/cookie@0.3.3':
-    resolution: {integrity: sha512-LKVP3cgXBT9RYj+t+9FDKwS5tdI+rPBXaNSkma7hvqy35lc7mAokC2zsqWJH0LaqIt3B962nuYI77hsJoT1gow==}
-
   '@types/cookie@0.4.1':
     resolution: {integrity: sha512-XW/Aa8APYr6jSVVA1y/DEIZX0/GMKLEVekNG727R8cs56ahETkRAy/3DR7+fJyh7oUgGwNQaRfXCun0+KbWY7Q==}
 
@@ -4046,10 +4043,6 @@ packages:
 
   cookie-signature@1.0.6:
     resolution: {integrity: sha512-QADzlaHc8icV8I7vbaJXJwod9HWYp8uCqf1xa4OfNu1T7JVxQIrUgOWtHdNDtPiywmFbiS12VjotIXLrKM3orQ==}
-
-  cookie@0.4.2:
-    resolution: {integrity: sha512-aSWTXFzaKWkvHO1Ny/s+ePFpvKsPnjc551iI41v3ny/ow6tBG5Vd+FuqGNhh1LxOmVzOlGUriIlOaokOvhaStA==}
-    engines: {node: '>= 0.6'}
 
   cookie@0.7.1:
     resolution: {integrity: sha512-6DnInpx7SJ2AK3+CTUE/ZM0vWTUboZCegxhC2xiIydHR9jNuTAASBrfEpHhiGOZw/nX51bHt6YQl8jsGo4y/0w==}
@@ -7525,9 +7518,6 @@ packages:
   unist-util-visit@5.0.0:
     resolution: {integrity: sha512-MR04uvD+07cwl/yhVuVWAtw+3GOR/knlL55Nd/wAdblk27GCVt3lqpTivy/tkJcZoNPzTwS1Y+KMojlLDhoTzg==}
 
-  universal-cookie@4.0.4:
-    resolution: {integrity: sha512-lbRVHoOMtItjWbM7TwDLdl8wug7izB0tq3/YVKhT/ahB4VDvWMyvnADfnJI8y6fSvsjh51Ix7lTGC6Tn4rMPhw==}
-
   universal-cookie@7.2.1:
     resolution: {integrity: sha512-GEKneQ0sz8qbobkYM5s9elAx6l7GQDNVl3Siqmc7bt/YccyyXWDPn+fht3J1qMcaLwPrzkty3i+dNfPGP2/9hA==}
 
@@ -9941,8 +9931,6 @@ snapshots:
     dependencies:
       '@types/node': 20.17.0
 
-  '@types/cookie@0.3.3': {}
-
   '@types/cookie@0.4.1': {}
 
   '@types/cookie@0.6.0': {}
@@ -10634,18 +10622,6 @@ snapshots:
       '@vueuse/metadata': 11.1.0
       '@vueuse/shared': 11.1.0(vue@3.5.12(typescript@5.6.3))
       vue-demi: 0.14.10(vue@3.5.12(typescript@5.6.3))
-    transitivePeerDependencies:
-      - '@vue/composition-api'
-      - vue
-
-  '@vueuse/integrations@11.1.0(axios@1.7.7)(universal-cookie@4.0.4)(vue@3.5.12(typescript@5.6.3))':
-    dependencies:
-      '@vueuse/core': 11.1.0(vue@3.5.12(typescript@5.6.3))
-      '@vueuse/shared': 11.1.0(vue@3.5.12(typescript@5.6.3))
-      vue-demi: 0.14.10(vue@3.5.12(typescript@5.6.3))
-    optionalDependencies:
-      axios: 1.7.7
-      universal-cookie: 4.0.4
     transitivePeerDependencies:
       - '@vue/composition-api'
       - vue
@@ -11432,8 +11408,6 @@ snapshots:
       through2: 4.0.2
 
   cookie-signature@1.0.6: {}
-
-  cookie@0.4.2: {}
 
   cookie@0.7.1: {}
 
@@ -15634,11 +15608,6 @@ snapshots:
       '@types/unist': 3.0.3
       unist-util-is: 6.0.0
       unist-util-visit-parents: 6.0.1
-
-  universal-cookie@4.0.4:
-    dependencies:
-      '@types/cookie': 0.3.3
-      cookie: 0.4.2
 
   universal-cookie@7.2.1:
     dependencies:
