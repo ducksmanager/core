@@ -3,18 +3,17 @@
     <template v-if="editable">
       <b-col col cols="3">
         <suggestion-list
+          v-model="entry.acceptedSuggestedStoryKind"
           :suggestions="entry.storyKindSuggestions"
           :is-ai-source="(suggestion) => suggestion.aiSourcePageId !== null"
-          :current="acceptedStoryKind"
           :item-class="(suggestion) => [`kind-${suggestion.kind}`]"
-          @select="acceptStoryKindSuggestion"
         >
           <template #item="suggestion">
             {{ getStoryKind(suggestion.kind) }}
           </template>
           <template #unknown-text>{{ $t("Type inconnu") }}</template>
         </suggestion-list> </b-col
-      ><b-col col cols="3"><StorySuggestionList :entry="entry" /></b-col>
+      ><b-col col cols="3"><StorySuggestionList v-model="entry" /></b-col>
       <b-col col cols="3">
         <b-form-input
           placeholder="Titre de l'histoire"
@@ -86,7 +85,7 @@
                 "
               >
                 <i-bi-arrow-right />&nbsp;<AiSuggestionIcon status="success" />
-                <Story :suggestion="possibleStory.storySuggestions[0]" />
+                <Story :story="possibleStory.storySuggestions[0]" />
               </div>
             </div>
             <div v-else>
@@ -111,7 +110,7 @@
       <b-col col cols="3">
         <b-badge
           size="xl"
-          :class="{ [`kind-${acceptedStoryKind?.kind}`]: true }"
+          :class="{ [`kind-${entry.acceptedSuggestedStoryKind?.kind}`]: true }"
           >{{
             (entry.acceptedSuggestedStoryKind &&
               getStoryKind(entry.acceptedSuggestedStoryKind.kind)) ||
@@ -127,9 +126,11 @@
       </b-col>
       <b-col col cols="6"
         >{{ title || $t("Sans titre") }}
-        <template v-if="part"> - {{ $t("partie") }} {{ part }}</template>
+        <template v-if="entry.part">
+          - {{ $t("partie") }} {{ entry.part }}</template
+        >
         <br />
-        <small>{{ comment }}</small>
+        <small>{{ entry.entrycomment }}</small>
         &nbsp;<a
           v-if="urlEncodedStorycode"
           target="_blank"
@@ -147,24 +148,31 @@ import { suggestions } from "~/stores/suggestions";
 import { ui } from "~/stores/ui";
 import { FullEntry } from "~dumili-services/indexation/types";
 import { storyKinds } from "~dumili-types/storyKinds";
-import type {
-  entry,
-  storyKind,
-  storyKindSuggestion,
-} from "~prisma/client_dumili";
+import type { storyKind } from "~prisma/client_dumili";
 
 const { t: $t } = useI18n();
 const props = defineProps<{
-  entry: FullEntry;
   editable: boolean;
 }>();
 
-const { entry, editable } = toRefs(props);
-
 const { indexationSocket } = inject(dumiliSocketInjectionKey)!;
 
-const { indexation, acceptedStories, acceptedStoryKinds, entriesFirstPages } =
+const entry = defineModel<FullEntry>({ required: true });
+
+watch(
+  () => entry.value.acceptedSuggestedStoryKind,
+  (storyKind) => {
+    indexationSocket.value!.services.acceptStoryKindSuggestion(
+      storyKind?.id || null,
+    );
+  },
+);
+
+const { editable } = toRefs(props);
+
+const { indexation, acceptedStories, entriesFirstPages } =
   storeToRefs(suggestions());
+const { showAiDetectionsOn } = storeToRefs(ui());
 
 const pages = computed(() => {
   const { startsAtPage, endsAtPage } = entriesFirstPages.value.find(
@@ -175,9 +183,7 @@ const pages = computed(() => {
   );
 });
 
-const { showAiDetectionsOn } = storeToRefs(ui());
-
-const acceptedStory = computed(() => acceptedStories.value[props.entry.id]);
+const acceptedStory = computed(() => acceptedStories.value[entry.value.id]);
 
 const storyKindAiSuggestion = computed(() =>
   entry.value.storyKindSuggestions.find(
@@ -189,14 +195,8 @@ const storyAiSuggestions = computed(() =>
   entry.value.storySuggestions.filter(({ ocrDetailsId }) => ocrDetailsId),
 );
 
-const acceptedStoryKind = computed(
-  () => acceptedStoryKinds.value[props.entry.id],
-);
-
 const storycode = computed(() => acceptedStory.value?.storyversion.storycode);
-const part = computed(() => entry.value.part);
 const title = computed(() => entry.value.title || $t("Sans titre"));
-const comment = computed(() => entry.value.entrycomment);
 
 const urlEncodedStorycode = computed(
   () => storycode.value && encodeURIComponent(storycode.value),
@@ -204,14 +204,6 @@ const urlEncodedStorycode = computed(
 
 const getStoryKind = (storyKind: storyKind) =>
   storyKinds.find(({ code }) => code === storyKind)?.label;
-
-const acceptStoryKindSuggestion = (
-  storyKindSuggestionId: storyKindSuggestion["id"] | undefined,
-) => {
-  indexationSocket.value!.services.acceptStoryKindSuggestion(
-    storyKindSuggestionId,
-  );
-};
 </script>
 
 <style scoped lang="scss">

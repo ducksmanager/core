@@ -75,7 +75,7 @@ model storyKindSuggestion {
 
 model storySuggestion {
   id                Int                 @id @default(autoincrement())
-  storyversioncode  String              @db.VarChar(9)
+  storyversioncode  String              @db.VarChar(37)
   entryId           Int                 @map("entry_id")
   ocrDetailsId      Int?                @map("ocr_details_id")
   acceptedOnEntries entry[]             @relation("entry_accepted_story_suggested_idTostory_suggestion")

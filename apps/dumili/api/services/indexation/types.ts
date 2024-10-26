@@ -83,7 +83,7 @@ export default abstract class {
   ) => void;
 
   abstract acceptStorySuggestion: (
-    storySuggestionId: storySuggestion['id']|undefined,
+    storySuggestionId: storySuggestion['id']|null,
     callback: (
       data: Errorable<
         { status: "OK" },
@@ -101,12 +101,12 @@ export default abstract class {
   ) => void;
 
   abstract acceptIssueSuggestion: (
-    suggestionId: issueSuggestion['id'],
+    suggestionId: issueSuggestion['id']|null,
     callback: (data: { status: "OK" }) => void,
   ) => void;
 
   abstract acceptStoryKindSuggestion: (
-    storyKindSuggestionId: storyKindSuggestion['id']|undefined,
+    storyKindSuggestionId: storyKindSuggestion['id']|null,
     callback: (
       data: Errorable<
         { status: "OK" },

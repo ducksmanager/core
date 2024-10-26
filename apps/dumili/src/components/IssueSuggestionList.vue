@@ -1,14 +1,12 @@
 <template>
   <suggestion-list
+    v-model="issue"
     :suggestions="indexation!.issueSuggestions"
     :is-ai-source="(suggestion) => suggestion.source === 'ai'"
-    :current="issue!"
     :show-customize-form="showIssueSelect"
     @toggle-customize-form="showIssueSelect = $event"
-    @select="$event && acceptIssueSuggestion($event)"
   >
-    <template #item="suggestion: issueSuggestion">
-      <Issue v-bind="suggestion" /></template
+    <template #item="suggestion"> <Issue v-bind="suggestion" /></template
     ><template #unknown-text>{{ $t("Numéro inconnu") }}</template>
     <template #customize-form>
       <IssueSelect
@@ -27,8 +25,6 @@ const showIssueSelect = ref(false);
 const suggestionsStore = suggestions();
 const { createIssueSuggestion } = suggestionsStore;
 const { indexation, acceptedIssue: issue } = storeToRefs(suggestionsStore);
-
-import { issueSuggestion } from "~prisma/client_dumili";
 
 const { indexationSocket } = inject(dumiliSocketInjectionKey)!;
 

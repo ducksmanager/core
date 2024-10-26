@@ -88,15 +88,17 @@ export default (io: Server) => {
               await createStoryKindSuggestions(indexationId, [{
                 position: "a",
                 kind: storyKinds.find(({ label }) => label === "Cover")!.code,
-                entryPages: [{ pageId: (await prisma.page.findFirstOrThrow({
-                  where: {
-                    indexationId,
-                    pageNumber,
-                  },
-                  select: {
-                    id: true,
-                  },
-                 }))!.id }],
+                entryPages: [{
+                  pageId: (await prisma.page.findFirstOrThrow({
+                    where: {
+                      indexationId,
+                      pageNumber,
+                    },
+                    select: {
+                      id: true,
+                    },
+                  }))!.id
+                }],
               }])
             }
           })
@@ -109,10 +111,10 @@ export default (io: Server) => {
 
       indexationSocket.on(
         "acceptIssueSuggestion",
-        async (suggestionId, callback) => {
-          await prisma.indexation.update({
+        (suggestionId, callback) =>
+          prisma.indexation.update({
             data: {
-              acceptedIssueSuggestion: {
+              acceptedIssueSuggestion: suggestionId === null ? { disconnect: true } : {
                 connect: {
                   id: suggestionId,
                   indexationId: indexationSocket.data.indexation.id,
@@ -122,32 +124,24 @@ export default (io: Server) => {
             where: {
               id: indexationSocket.data.indexation.id,
             },
-          });
-          callback({ status: "OK" });
-        },
+          }).then(() => callback({ status: "OK" }))
       );
 
       indexationSocket.on(
         "createStorySuggestion",
-        async (suggestion, callback) => {
-          const { id } = await prisma.storySuggestion.create({
-            data: suggestion,
-          });
-          callback({ suggestionId: id });
-        },
+        (suggestion, callback) => prisma.storySuggestion.create({
+          data: suggestion,
+        }).then(({ id }) => callback({ suggestionId: id }))
       );
 
       indexationSocket.on(
         "createIssueSuggestion",
-        async (suggestion, callback) => {
-          const { id } = await prisma.issueSuggestion.create({
-            data: {
-              ...suggestion,
-              indexationId: indexationSocket.data.indexation.id,
-            },
-          });
-          callback({ suggestionId: id });
-        },
+        (suggestion, callback) => prisma.issueSuggestion.create({
+          data: {
+            ...suggestion,
+            indexationId: indexationSocket.data.indexation.id,
+          },
+        }).then(({ id }) => callback({ suggestionId: id }))
       );
 
       indexationSocket.on("createOcrDetails", async (ocrDetails, callback) => {
@@ -178,7 +172,7 @@ export default (io: Server) => {
           }
 
           await acceptStorySuggestion(storySuggestionId, entry.id);
-            callback({ status: "OK" });
+          callback({ status: "OK" });
         },
       );
 
@@ -229,7 +223,7 @@ export default (io: Server) => {
                 !(
                   storyStoryKind.code === inferredKind &&
                   storyStoryKind.code ===
-                    entriesToCreate[entriesToCreate.length - 1]?.kind
+                  entriesToCreate[entriesToCreate.length - 1]?.kind
                 )
               ) {
                 const position = String.fromCharCode(
@@ -469,10 +463,10 @@ const inferStoryKindFromAiResults = (
         : "Story"),
   )!.code;
 
-const acceptStorySuggestion = async (suggestionId: storySuggestion['id']|undefined, entryId: entry['id']) =>
+const acceptStorySuggestion = async (suggestionId: storySuggestion['id'] | null, entryId: entry['id']) =>
   prisma.entry.update({
     data: {
-      acceptedSuggestedStoryKind: {
+      acceptedSuggestedStoryKind: suggestionId === null ? { disconnect: true } : {
         connect: {
           id: suggestionId,
         },
@@ -480,17 +474,18 @@ const acceptStorySuggestion = async (suggestionId: storySuggestion['id']|undefin
     },
     where: {
       id: entryId,
-    }})
+    }
+  })
 
 const acceptStoryKindSuggestion = (
-  suggestionId: storyKindSuggestion['id']|undefined,
+  suggestionId: storyKindSuggestion['id'] | null,
   entryId: entry['id'],
 ) =>
   prisma.entry.update({
     data: {
-      acceptedSuggestedStoryKind: {
+      acceptedSuggestedStoryKind: suggestionId === null ? { disconnect: true } : {
         connect: {
-            id: suggestionId,
+          id: suggestionId,
         },
       },
     },

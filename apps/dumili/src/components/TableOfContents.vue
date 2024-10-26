@@ -69,7 +69,7 @@
             :min-height="tocPageHeight - 1"
             :class-name="`entry col w-100 kind-${
               acceptedStoryKinds[entry.id]?.kind
-            }`"
+            } ${hoveredEntry === entry ? 'striped' : ''}`"
             :title="`${entry.title || 'Inconnu'} (${pageIds.length} pages)`"
             @mouseover="hoveredEntry = entry"
             @mouseout="hoveredEntry = null"
@@ -79,7 +79,7 @@
             "
           ></vue-draggable-resizable>
           <b-button
-            v-if="hoveredEntry?.id === entry.id"
+            v-if="lastHoveredEntry?.id === entry.id"
             class="create-entry fw-bold position-absolute w-100 mt-n1 d-flex justify-content-center align-items-center"
             title="Create an entry here"
             variant="info"
@@ -101,7 +101,7 @@
       </b-col>
       <b-col :cols="10" class="d-flex flex-column" style="padding: 0">
         <b-row
-          v-for="entry in indexation.entries"
+          v-for="(entry, idx) in indexation.entries"
           :key="entry.id"
           :style="currentEntry === entry ? {} : { height: '50px' }"
           class="flex-grow-1 g-0 px-0 py-0 align-items-top border bg-light"
@@ -114,14 +114,8 @@
                 );
             "
             ><Entry
-              :entry="entry"
-              :editable="
-                entry.entryPages.some(({ pageId }) =>
-                  shownPages
-                    .map((shownPage) => indexation.pages[shownPage].id)
-                    .includes(pageId),
-                )
-              "
+              v-model="indexation.entries[idx]"
+              :editable="currentEntry === entry"
           /></b-col>
         </b-row>
       </b-col>
@@ -148,6 +142,8 @@ const { hoveredEntry } = storeToRefs(ui());
 const indexation = storeToRefs(suggestions()).indexation as Ref<FullIndexation>;
 const currentPage = defineModel<number>();
 
+const lastHoveredEntry = ref<entryModel | null>(null);
+
 const { status: aiStatus, runKumiko } = useAi();
 
 const tocPageHeight = 50;
@@ -170,6 +166,12 @@ watch(
   },
   { immediate: true },
 );
+
+watch(hoveredEntry, (entry) => {
+  if (entry) {
+    lastHoveredEntry.value = entry;
+  }
+});
 
 const createEntry = async (idx: number) => {
   const lastPageOfPreviousEntry = [
@@ -230,7 +232,10 @@ watch(
     }
   }
 
-  .card-header {
+  :deep(.card-header) {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     text-align: center;
 
     :deep(a),

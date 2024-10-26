@@ -1,14 +1,13 @@
 <template>
   <suggestion-list
+    v-model="acceptedStory"
     :suggestions="entry.storySuggestions"
     :is-ai-source="(suggestion) => suggestion.ocrDetailsId !== null"
-    :current="acceptedEntry"
     :show-customize-form="showEntrySelect"
     @toggle-customize-form="showEntrySelect = $event"
-    @select="acceptStorySuggestion"
   >
     <template #item="suggestion">
-      <Story :suggestion="suggestion" />
+      <Story :story="suggestion" />
     </template>
     <template #unknown-text>{{ $t("Contenu inconnu") }}</template>
     <template #customize-text>{{ $t("Rechercher...") }}</template>
@@ -25,22 +24,19 @@ import { dumiliSocketInjectionKey } from "~/composables/useDumiliSocket";
 import { suggestions } from "~/stores/suggestions";
 import { SimpleStory } from "~dm-types/SimpleStory";
 import { FullIndexation } from "~dumili-services/indexation/types";
-import type { entry, storySuggestion } from "~prisma/client_dumili";
 
 const { t: $t } = useI18n();
 
-const props = defineProps<{
-  entry: FullIndexation["entries"][number];
-}>();
-
-const { entry } = toRefs(props);
+const entry = defineModel<FullIndexation["entries"][number]>({
+  required: true,
+});
 
 const { indexationSocket } = inject(dumiliSocketInjectionKey)!;
 
 const showEntrySelect = ref(false);
 const { acceptedStories } = storeToRefs(suggestions());
 
-const acceptedEntry = computed(() => acceptedStories.value[entry.value.id]);
+const acceptedStory = computed(() => acceptedStories.value[entry.value.id]);
 
 const addAndAcceptStoryversionToStorySuggestions = async (
   searchResult: SimpleStory,
@@ -54,10 +50,12 @@ const addAndAcceptStoryversionToStorySuggestions = async (
   });
 };
 
-const acceptStorySuggestion = async (
-  suggestionId: storySuggestion["id"] | undefined,
-) => {
-  await indexationSocket.value!.services.acceptStorySuggestion(suggestionId);
-  showEntrySelect.value = false;
-};
+watch(
+  () => entry.value.acceptedSuggestedStory,
+  (storySuggestion) => {
+    indexationSocket.value!.services.acceptStorySuggestion(
+      storySuggestion?.id || null,
+    );
+  },
+);
 </script>

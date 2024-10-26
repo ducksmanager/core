@@ -1,11 +1,10 @@
 <template>
-  <b>{{ suggestion?.storyversioncode }}</b
-  >&nbsp;{{ suggestion }}
+  <b>{{ story.storyversioncode }}</b>
 </template>
 <script setup lang="ts">
-import { storySuggestion } from "~prisma/client_dumili";
-
 defineProps<{
-  suggestion: storySuggestion;
+  story: {
+    storyversioncode: string;
+  };
 }>();
 </script>

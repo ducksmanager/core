@@ -4,7 +4,7 @@
     :toggle-class="[
       'text-wrap',
       // @ts-ignore
-      ...(itemClass && current ? itemClass(current as S) : []),
+      ...(itemClass && current ? itemClass(current) : []),
     ]"
     ><b-dropdown-item
       v-for="(suggestion, idx) of suggestions"
@@ -16,7 +16,7 @@
         ...((itemClass && itemClass(suggestion)) || []),
       ]"
       @click="
-        emit('select', suggestion.id);
+        current = suggestion;
         emit('toggle-customize-form', false);
       "
     >
@@ -28,7 +28,7 @@
     <b-dropdown-divider v-if="suggestions.length" />
     <b-dropdown-item
       @click="
-        emit('select', undefined);
+        current = undefined;
         emit('toggle-customize-form', false);
       "
       ><slot name="unknown-text"
@@ -42,24 +42,18 @@
       <slot v-if="showCustomizeForm" name="customize-text" />
       <div v-else class="d-flex justify-content-between align-items-center">
         <div>
-          <slot v-if="current" name="item" v-bind="current as S" />
+          <slot v-if="current" name="item" v-bind="current" />
           <slot v-else name="unknown-text" />
         </div>
         <AiSuggestionIcon
-          v-if="current && isAiSource(current as S)"
+          v-if="current && isAiSource(current)"
           status="success"
         /></div
     ></template>
   </b-dropdown>
   <slot v-if="showCustomizeForm" name="customize-form" />
 </template>
-<script setup lang="ts" generic="S extends Partial<issueSuggestion|storyKindSuggestion|storySuggestion>">
-import {
-  issueSuggestion,
-  storyKindSuggestion,
-  storySuggestion,
-} from "~prisma/client_dumili";
-
+<script setup lang="ts" generic="S extends {id: number}">
 const $slots = useSlots();
 
 defineSlots<{
@@ -70,10 +64,11 @@ defineSlots<{
   "unknown-text"(): never;
 }>();
 
+const current = defineModel<S | null>();
+
 withDefaults(
   defineProps<{
     suggestions: S[];
-    current: S | undefined;
     isAiSource: (suggestion: S) => boolean;
     itemClass?: (suggestion: S) => string[];
     showCustomizeForm?: boolean;
@@ -89,7 +84,6 @@ const allowCustomizeForm = computed(
 );
 
 const emit = defineEmits<{
-  (e: "select", suggestionId?: number): void;
   (e: "toggle-customize-form", toggle: boolean): void;
 }>();
 </script>

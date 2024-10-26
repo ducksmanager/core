@@ -1,10 +1,6 @@
 import { dumiliSocketInjectionKey } from "~/composables/useDumiliSocket";
 import type { FullIndexation } from "~dumili-services/indexation/types";
-import type {
-  issueSuggestion,
-  storyKindSuggestion,
-  storySuggestion,
-} from "~prisma/client_dumili";
+import type { issueSuggestion, storySuggestion } from "~prisma/client_dumili";
 import type { inducks_storyversion } from "~prisma-schemas/schemas/coa";
 import { stores as webStores } from "~web";
 
@@ -93,6 +89,17 @@ export const suggestions = defineStore("suggestions", () => {
     },
   );
 
+  const acceptedIssue = computed({
+    get: () => indexation.value?.acceptedIssueSuggestion,
+    set: (value) => (indexation.value!.acceptedIssueSuggestion = value!),
+  });
+
+  watch(acceptedIssue, async (acceptedIssue) => {
+    indexationSocket.value!.services.acceptIssueSuggestion(
+      acceptedIssue?.id || null,
+    );
+  });
+
   return {
     indexation,
     loadIndexation,
@@ -101,14 +108,10 @@ export const suggestions = defineStore("suggestions", () => {
     hasPendingIssueSuggestions: computed(
       () => false, //pendingIssueSuggestions.value.length > 0
     ),
-    acceptedIssue: computed(() => indexation.value!.acceptedIssueSuggestion),
+    acceptedIssue,
     acceptedStories,
-    acceptedStoryKinds: computed(
-      () =>
-        indexation.value!.entries.groupBy(
-          "id",
-          "acceptedSuggestedStoryKind",
-        ) as Record<number, storyKindSuggestion>,
+    acceptedStoryKinds: computed(() =>
+      indexation.value!.entries.groupBy("id", "acceptedSuggestedStoryKind"),
     ),
   };
 });
