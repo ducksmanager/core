@@ -1,6 +1,6 @@
 <template>
   <suggestion-list
-    v-model="acceptedStory"
+    v-model="entry.acceptedStory"
     :suggestions="entry.storySuggestions"
     :is-ai-source="(suggestion) => suggestion.ocrDetailsId !== null"
     :show-customize-form="showEntrySelect"
@@ -34,10 +34,8 @@
 
 <script lang="ts" setup>
 import { dumiliSocketInjectionKey } from "~/composables/useDumiliSocket";
-import { suggestions } from "~/stores/suggestions";
 import { SimpleStory } from "~dm-types/SimpleStory";
 import { FullIndexation } from "~dumili-services/indexation/types";
-import { stores as webStores } from "~web";
 
 const { t: $t } = useI18n();
 
@@ -48,10 +46,7 @@ const entry = defineModel<FullIndexation["entries"][number]>({
 const { indexationSocket } = inject(dumiliSocketInjectionKey)!;
 
 const showEntrySelect = ref(false);
-const { acceptedStories } = storeToRefs(suggestions());
-const { storyversionDetails } = storeToRefs(webStores.coa());
-
-const acceptedStory = computed(() => acceptedStories.value[entry.value.id]);
+const { storyversionDetails } = storeToRefs(coa());
 
 const createAndAcceptStorySuggestion = async (searchResult: SimpleStory) => {
   indexationSocket

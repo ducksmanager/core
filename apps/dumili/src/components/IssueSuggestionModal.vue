@@ -33,7 +33,6 @@ import { injectLocal } from "@vueuse/core";
 
 import { dumiliSocketInjectionKey } from "~/composables/useDumiliSocket";
 import { suggestions } from "~/stores/suggestions";
-import { stores as webStores } from "~web";
 import { issueSuggestion } from "~prisma/client_dumili";
 import { socketInjectionKey as dmSocketInjectionKey } from "~web/src/composables/useDmSocket";
 
@@ -46,7 +45,7 @@ const { indexationSocket } = injectLocal(dumiliSocketInjectionKey)!;
 const { hasPendingIssueSuggestions } = storeToRefs(suggestions());
 const { createIssueSuggestion } = suggestions();
 
-const { issuecodeDetails } = storeToRefs(webStores.coa());
+const { issuecodeDetails } = storeToRefs(coa());
 
 const issueSuggestions = ref<
   (issueSuggestion & { url: string; coverId: number })[]

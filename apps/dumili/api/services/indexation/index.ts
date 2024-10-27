@@ -159,7 +159,7 @@ export default (io: Server) => {
 
       indexationSocket.on(
         "acceptStoryKindSuggestion",
-        async (storyKindSuggestionId, callback) => {
+        async (entryId, storyKindSuggestionId, callback) => {
           const entry = indexationSocket.data.indexation.entries.find(
             ({ storyKindSuggestions }) => storyKindSuggestions.some(({ id }) => id === storyKindSuggestionId),
           );
@@ -167,8 +167,33 @@ export default (io: Server) => {
             callback({ error: `This indexation does not have any entry with this story kind suggestion`, errorDetails: JSON.stringify({ storyKindSuggestionId }) });
             return;
           }
+          if (entry.id !== entryId) {
+            callback({ error: `This indexation does not have any entry with this ID`, errorDetails: JSON.stringify({ entryId }) });
+            return;
+          }
 
           await acceptStoryKindSuggestion(storyKindSuggestionId, entry.id);
+          callback({ status: "OK" });
+        },
+      );
+
+      indexationSocket.on(
+        "updateEntryLength",
+        async (entryId, data, callback) => {
+          const entry = indexationSocket.data.indexation.entries.find(
+            ({ id }) => id === entryId
+          );
+          if (!entry) {
+            callback({ error: `This indexation does not have any entry with this ID`, errorDetails: JSON.stringify({ entryId }) });
+            return;
+          }
+
+          await prisma.entry.update({
+            data,
+            where: {
+              id: entryId,
+            },
+          });
           callback({ status: "OK" });
         },
       );
@@ -178,10 +203,10 @@ export default (io: Server) => {
           .then(async (panelsPerPage) => {
             const transactions: Prisma.PrismaPromise<any>[] = []
             // TODO create story kind suggestions on entries covering each page
-            const entries = indexationSocket.data.indexation.entries;
+            // const entries = indexationSocket.data.indexation.entries;
             panelsPerPage.forEach((panelsOfPage, idx) => {
               const pageNumber = idx + 1;
-              const inferredKind = inferStoryKindFromAiResults(
+              /*const inferredKind = */inferStoryKindFromAiResults(
                 panelsOfPage,
                 pageNumber,
               );

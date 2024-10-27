@@ -20,7 +20,6 @@
 <script setup lang="ts">
 import Cookies from "js-cookie";
 
-import { stores as webStores } from "~web";
 import useDmSocket, {
   socketInjectionKey as dmSocketInjectionKey,
 } from "~web/src/composables/useDmSocket";
@@ -74,9 +73,9 @@ const loginUrl = computed(
   () => `${import.meta.env.VITE_DM_URL}/login?redirect=${document.URL}`,
 );
 
-const { loadUser } = webStores.collection();
-// const { fetchCountryNames } = webStores.coa();
-const { user, isLoadingUser } = storeToRefs(webStores.collection());
+const { loadUser } = collection();
+// const { fetchCountryNames } = coa();
+const { user, isLoadingUser } = storeToRefs(collection());
 
 onBeforeMount(() => {
   loadUser();

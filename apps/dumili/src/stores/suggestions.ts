@@ -2,7 +2,6 @@ import { dumiliSocketInjectionKey } from "~/composables/useDumiliSocket";
 import type { FullIndexation } from "~dumili-services/indexation/types";
 import type { issueSuggestion, storySuggestion } from "~prisma/client_dumili";
 import type { inducks_storyversion } from "~prisma-schemas/schemas/coa";
-import { stores as webStores } from "~web";
 
 export type storyWithStoryversion = storySuggestion & {
   storyversion: inducks_storyversion;
@@ -12,7 +11,7 @@ export const suggestions = defineStore("suggestions", () => {
   const { indexationSocket, setIndexationSocketFromId } = inject(
     dumiliSocketInjectionKey,
   )!;
-  const { storyversionDetails } = storeToRefs(webStores.coa());
+  const { storyversionDetails } = storeToRefs(coa());
   const indexation = ref<FullIndexation>(),
     acceptedStories = ref<Record<number, storyWithStoryversion | undefined>>(
       {},

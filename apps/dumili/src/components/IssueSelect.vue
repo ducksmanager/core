@@ -46,10 +46,7 @@
   </div>
 </template>
 <script setup lang="ts">
-import { stores as webStores } from "~web";
 const { t: $t } = useI18n();
-
-const coaStore = webStores.coa();
 
 const emit = defineEmits<
   (
@@ -79,12 +76,22 @@ const currentCountrycode = ref<string | undefined>(undefined);
 const currentPublicationcode = ref<string | undefined>(undefined);
 const currentIssuenumber = ref<string | undefined>(undefined);
 
-const { issuecodeDetails, issuecodesByPublicationcode } = storeToRefs(coaStore);
+const {
+  countryNames: coaCountryNames,
+  publicationNames,
+  issuecodeDetails,
+  issuecodesByPublicationcode,
+} = storeToRefs(coa());
+const {
+  fetchPublicationNamesFromCountry,
+  fetchIssuecodesByPublicationcode,
+  fetchCountryNames,
+} = coa();
 
 const countryNames = computed(
   () =>
-    (coaStore.countryNames &&
-      Object.entries(coaStore.countryNames)
+    (coaCountryNames.value &&
+      Object.entries(coaCountryNames.value)
         .map(([countrycode, countryName]) => ({
           text: countryName,
           value: countrycode,
@@ -96,16 +103,14 @@ const countryNames = computed(
 );
 
 const publicationNamesForCurrentCountry = computed(() =>
-  coaStore.publicationNamesFullCountries.includes(
-    currentCountrycode.value || "",
-  )
-    ? Object.keys(coaStore.publicationNames)
+  coa().publicationNamesFullCountries.includes(currentCountrycode.value || "")
+    ? Object.keys(publicationNames.value)
         .filter(
           (publicationcode) =>
             publicationcode.indexOf(`${currentCountrycode.value}/`) === 0,
         )
         .map((publicationcode) => ({
-          text: coaStore.publicationNames[publicationcode],
+          text: publicationNames.value[publicationcode],
           value: publicationcode,
         }))
         .sort(({ text: text1 }, { text: text2 }) =>
@@ -141,7 +146,7 @@ watch(
       currentPublicationcode.value = props.publicationcode!;
       currentIssuenumber.value = undefined;
 
-      await coaStore.fetchPublicationNamesFromCountry(newValue);
+      await fetchPublicationNamesFromCountry(newValue);
     }
   },
   {
@@ -152,7 +157,7 @@ watch(
 watch(currentPublicationcode, async (newValue) => {
   if (newValue) {
     currentIssuenumber.value = undefined;
-    await coaStore.fetchIssuecodesByPublicationcode([newValue]);
+    await fetchIssuecodesByPublicationcode([newValue]);
   }
 });
 if (props.countrycode) {
@@ -160,7 +165,7 @@ if (props.countrycode) {
 }
 
 (async () => {
-  await coaStore.fetchCountryNames();
+  await fetchCountryNames();
 })();
 </script>
 <style scoped lang="scss">

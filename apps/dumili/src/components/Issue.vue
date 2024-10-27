@@ -12,9 +12,7 @@
 </template>
 
 <script setup lang="ts">
-import { stores as webStores } from "~web";
-
-const { publicationNames, issuecodeDetails } = storeToRefs(webStores.coa());
+const { publicationNames, issuecodeDetails } = storeToRefs(coa());
 
 const props = defineProps<
   (

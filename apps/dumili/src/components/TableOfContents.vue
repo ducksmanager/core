@@ -70,6 +70,10 @@
             )})`"
             @mouseover="hoveredEntry = entry"
             @mouseout="hoveredEntry = null"
+            @resize-stop="(_left: number,
+  _top: number,
+  _width: number,
+  height: number) => onEntryResizeStop(idx, height)"
             @click="
               if (entry !== currentEntry)
                 currentPage = getFirstPageOfEntry(idx);
@@ -147,6 +151,13 @@ watch(hoveredEntry, (entry) => {
   }
 });
 
+const onEntryResizeStop = (entryIdx: number, height: number) => {
+  indexation.value!.entries[entryIdx].entirepages = Math.max(
+    0,
+    Math.round(height / tocPageHeight),
+  );
+};
+
 const getUserFriendlyPageCount = (entry: FullEntry) => {
   const fraction = entry.brokenpagenumerator
     ? `${entry.brokenpagenumerator}/${entry.brokenpagedenominator}`
@@ -158,7 +169,7 @@ const getUserFriendlyPageCount = (entry: FullEntry) => {
       return "0 page";
     }
   }
-  return `${entry.entirepages} ${fraction ? `+ ${fraction}` : ""} pages`;
+  return `${entry.entirepages}${fraction ? `+ ${fraction}` : ""} pages`;
 };
 
 const createEntry = () => indexationSocket.value!.services.createEntry();

@@ -1,15 +1,14 @@
 import { suggestions } from "~/stores/suggestions";
 import type CoverIdServices from "~dm-services/cover-id/types";
 import type { EventReturnType } from "~socket.io-services";
-import { stores as webStores } from "~web";
 
 import { dumiliSocketInjectionKey } from "./useDumiliSocket";
 
 export default () => {
   const { loadIndexation } = suggestions();
   const { indexation } = storeToRefs(suggestions());
-  const { fetchIssuecodeDetails, fetchPublicationNames } = webStores.coa();
-  const { issuecodeDetails } = storeToRefs(webStores.coa());
+  const { fetchIssuecodeDetails, fetchPublicationNames } = coa();
+  const { issuecodeDetails } = storeToRefs(coa());
 
   const { indexationSocket } = inject(dumiliSocketInjectionKey)!;
 

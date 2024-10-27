@@ -54,23 +54,25 @@
   <slot v-if="showCustomizeForm" name="customize-form" />
 </template>
 <script setup lang="ts" generic="S extends {id: number}">
+import { Reactive } from "vue";
+
 const $slots = useSlots();
 
 defineSlots<{
-  default(suggestion: S): never;
-  item(suggestion: S): never;
+  default(suggestion: Reactive<S>): never;
+  item(suggestion: Reactive<S>): never;
   "customize-form"(): never;
   "customize-text"(): never;
   "unknown-text"(): never;
 }>();
 
-const current = defineModel<S | null>();
+const current = defineModel<Reactive<S> | null>();
 
 withDefaults(
   defineProps<{
     suggestions: S[];
-    isAiSource: (suggestion: S) => boolean;
-    itemClass?: (suggestion: S) => string[];
+    isAiSource: (suggestion: Reactive<S>) => boolean;
+    itemClass?: (suggestion: Reactive<S>) => string[];
     showCustomizeForm?: boolean;
   }>(),
   {
@@ -89,6 +91,6 @@ const emit = defineEmits<{
 </script>
 <style lang="scss">
 .dropdown-divider {
-  border-color: grey;
+  border-color: white;
 }
 </style>

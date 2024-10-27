@@ -44,7 +44,6 @@
 <script setup lang="ts">
 import { suggestions } from "~/stores/suggestions";
 import { tabs } from "~/stores/tabs";
-import { stores as webStores } from "~web";
 
 const showUploadWidget = ref(false);
 const route = useRoute();
@@ -55,8 +54,8 @@ const { activeTab } = storeToRefs(tabs());
 const { tabNames } = tabs();
 
 const { fetchPublicationNames, fetchStoryDetails, fetchStoryversionDetails } =
-  webStores.coa();
-const { storyversionDetails } = storeToRefs(webStores.coa());
+  coa();
+const { storyversionDetails } = storeToRefs(coa());
 
 const indexationId = ref<string | null>(null);
 

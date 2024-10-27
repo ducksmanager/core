@@ -13,13 +13,12 @@
   ></b-container>
 </template>
 <script setup lang="ts">
-import { stores as webStores } from "~web";
 const { t: $t } = useI18n();
 
 import { suggestions } from "~/stores/suggestions";
 import { socketInjectionKey as dmSocketInjectionKey } from "~web/src/composables/useDmSocket";
 
-const { storyDetails, storyversionDetails } = storeToRefs(webStores.coa());
+const { storyDetails, storyversionDetails } = storeToRefs(coa());
 
 const {
   coa: { services: coaServices },

@@ -119,8 +119,8 @@
         ></b-col
       >
       <b-col cols="3">
-        <template v-if="acceptedStory?.storyversion?.storycode">{{
-          acceptedStory?.storyversion?.storycode
+        <template v-if="entry.acceptedStory">{{
+          storyversionDetails[entry.acceptedStory.storyversioncode].storycode
         }}</template
         ><template v-else>{{ $t("Contenu inconnu") }}</template>
       </b-col>
@@ -163,14 +163,31 @@ watch(
   () => entry.value.acceptedStoryKind,
   (storyKind) => {
     indexationSocket.value!.services.acceptStoryKindSuggestion(
+      entry.value.id,
       storyKind?.id || null,
     );
+  },
+);
+
+watch(
+  () => [
+    entry.value.entirepages,
+    entry.value.brokenpagenumerator,
+    entry.value.brokenpagedenominator,
+  ],
+  ([entirepages, brokenpagenumerator, brokenpagedenominator]) => {
+    indexationSocket.value!.services.updateEntryLength(entry.value.id, {
+      entirepages,
+      brokenpagenumerator,
+      brokenpagedenominator,
+    });
   },
 );
 
 const { editable } = toRefs(props);
 
 const { acceptedStories } = storeToRefs(suggestions());
+const { storyversionDetails } = storeToRefs(coa());
 const { showAiDetectionsOn } = storeToRefs(ui());
 
 const pages: FullIndexation["pages"] = []; // TODO
@@ -216,10 +233,10 @@ const getStoryKind = (storyKind: storyKind) =>
 }
 
 @mixin storyKindBackground($bg) {
-  background-color: $bg !important;
+  background-color: $bg;
   color: color.invert($bg);
   &.btn:hover {
-    background-color: color.adjust($bg, $lightness: 10%) !important;
+    background-color: color.adjust($bg, $lightness: 10%);
   }
 }
 
