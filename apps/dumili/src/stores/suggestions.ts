@@ -17,30 +17,6 @@ export const suggestions = defineStore("suggestions", () => {
     acceptedStories = ref<Record<number, storyWithStoryversion | undefined>>(
       {},
     );
-  const entriesFirstPages = computed(() => {
-    const firstPages: {
-      entryId: number;
-      startsAtPage: number;
-      endsAtPage: number;
-    }[] = [];
-    let pageCounter = 0;
-    for (const { id, entryPages } of indexation.value?.entries || []) {
-      if (firstPages.length) {
-        firstPages[firstPages.length - 1].endsAtPage = pageCounter - 1;
-      }
-      firstPages.push({
-        entryId: id,
-        startsAtPage: pageCounter,
-        endsAtPage: pageCounter,
-      });
-
-      pageCounter += entryPages.length;
-    }
-    if (firstPages.length) {
-      firstPages[firstPages.length - 1].endsAtPage = pageCounter - 1;
-    }
-    return firstPages;
-  });
 
   const loadIndexation = async (indexationId: string) => {
     setIndexationSocketFromId(indexationId);
@@ -66,10 +42,10 @@ export const suggestions = defineStore("suggestions", () => {
       for (const {
         id,
         storySuggestions,
-        acceptedStorySuggestedId,
+        acceptedStorySuggestionId,
       } of entries || []) {
         const acceptedStory = storySuggestions.find(
-          (suggestion) => suggestion.id === acceptedStorySuggestedId,
+          (suggestion) => suggestion.id === acceptedStorySuggestionId,
         );
 
         if (acceptedStory) {
@@ -98,7 +74,6 @@ export const suggestions = defineStore("suggestions", () => {
     indexation,
     loadIndexation,
     createIssueSuggestion,
-    entriesFirstPages,
     hasPendingIssueSuggestions: computed(
       () => false, //pendingIssueSuggestions.value.length > 0
     ),

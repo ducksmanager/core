@@ -4,6 +4,8 @@ import { socketInjectionKey as dmSocketInjectionKey } from "~web/src/composables
 
 import { dumiliSocketInjectionKey } from "./useDumiliSocket";
 import useHint from "./useHint";
+import useEntryPage from "./useEntryPage";
+import { FullIndexation } from "~dumili-services/indexation/types";
 
 const coverStoryKindCode = storyKinds.find(
   ({ label }) => label === "Cover",
@@ -19,7 +21,8 @@ export default () => {
   const { indexationSocket } = inject(dumiliSocketInjectionKey)!;
 
   const indexationServices = indexationSocket.value!.services;
-  const { indexation, entriesFirstPages } = storeToRefs(suggestions());
+  const indexation = storeToRefs(suggestions())
+    .indexation as Ref<FullIndexation>;
 
   const hint = useHint();
 
@@ -62,22 +65,18 @@ export default () => {
   };
 
   const runStorycodeOcr = async () => {
+    const { getFirstPageOfEntry } = useEntryPage(indexation);
     const storyStoryKindCode = storyKinds.find(
       ({ label }) => label === "Story",
     )!.code;
-    const storiesFirstPages = entriesFirstPages.value.filter(
-      ({ entryId }) =>
-        indexation.value?.entries[entryId].acceptedStoryKind?.kind ===
-        storyStoryKindCode,
-    );
-    for (const { startsAtPage } of storiesFirstPages.filter(
-      ({ entryId }) =>
-        indexation.value?.entries[entryId].acceptedStoryKind?.kind ===
-        storyStoryKindCode,
-    )) {
-      const url = indexation.value!.pages.find(
-        ({ pageNumber }) => pageNumber === startsAtPage,
-      )!.url;
+    const storyFirstPageUrls = indexation
+      .value!.entries.filter(
+        ({ acceptedStoryKind }) =>
+          acceptedStoryKind?.kind === storyStoryKindCode,
+      )
+      .map(({ id }) => getFirstPageOfEntry(id))
+      .map((pageIdx) => indexation.value!.pages[pageIdx].url);
+    for (const url of storyFirstPageUrls) {
       const ocrResults = await indexationServices.runOcr(url);
 
       if ("error" in ocrResults) {

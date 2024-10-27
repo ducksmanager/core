@@ -17,14 +17,9 @@ export const indexationPayloadInclude = {
   issueSuggestions: true,
   entries: {
     include: {
-      entryPages: true,
       acceptedStory: true,
       acceptedStoryKind: true,
-      storyKindSuggestions: {
-        include: {
-          acceptedOnEntries: true,
-        },
-      },
+      storyKindSuggestions: true,
       storySuggestions: true,
     },
   },
@@ -76,14 +71,14 @@ export default abstract class {
     suggestion: Prisma.storySuggestionUncheckedCreateInput,
     callback: (
       data: Errorable<
-        {createdStorySuggestion: storySuggestion},
+        { createdStorySuggestion: storySuggestion },
         "You are not allowed to update this resource"
       >,
     ) => void,
   ) => void;
 
   abstract acceptStorySuggestion: (
-    storySuggestionId: storySuggestion['id']|null,
+    storySuggestionId: storySuggestion['id'] | null,
     callback: (
       data: Errorable<
         { status: "OK" },
@@ -101,12 +96,12 @@ export default abstract class {
   ) => void;
 
   abstract acceptIssueSuggestion: (
-    suggestionId: issueSuggestion['id']|null,
+    suggestionId: issueSuggestion['id'] | null,
     callback: (data: { status: "OK" }) => void,
   ) => void;
 
   abstract acceptStoryKindSuggestion: (
-    storyKindSuggestionId: storyKindSuggestion['id']|null,
+    storyKindSuggestionId: storyKindSuggestion['id'] | null,
     callback: (
       data: Errorable<
         { status: "OK" },
@@ -128,10 +123,7 @@ export default abstract class {
     ) => void,
   ) => void;
 
-  abstract upsertEntries: (
-    entries: { id?: number; pageIds: number[] }[],
-    callback: (
-      data: Errorable<void, "You are not allowed to update this resource">,
-    ) => void,
+  abstract createEntry: (
+    callback: () => void,
   ) => void;
 }

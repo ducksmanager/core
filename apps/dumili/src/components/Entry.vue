@@ -146,7 +146,7 @@
 import { dumiliSocketInjectionKey } from "~/composables/useDumiliSocket";
 import { suggestions } from "~/stores/suggestions";
 import { ui } from "~/stores/ui";
-import { FullEntry } from "~dumili-services/indexation/types";
+import { FullEntry, FullIndexation } from "~dumili-services/indexation/types";
 import { storyKinds } from "~dumili-types/storyKinds";
 import type { storyKind } from "~prisma/client_dumili";
 
@@ -170,18 +170,10 @@ watch(
 
 const { editable } = toRefs(props);
 
-const { indexation, acceptedStories, entriesFirstPages } =
-  storeToRefs(suggestions());
+const { acceptedStories } = storeToRefs(suggestions());
 const { showAiDetectionsOn } = storeToRefs(ui());
 
-const pages = computed(() => {
-  const { startsAtPage, endsAtPage } = entriesFirstPages.value.find(
-    ({ entryId }) => entry.value.id === entryId,
-  )!;
-  return indexation.value!.pages.filter(
-    ({ pageNumber }) => pageNumber >= startsAtPage && pageNumber <= endsAtPage,
-  );
-});
+const pages: FullIndexation["pages"] = []; // TODO
 
 const acceptedStory = computed(() => acceptedStories.value[entry.value.id]);
 

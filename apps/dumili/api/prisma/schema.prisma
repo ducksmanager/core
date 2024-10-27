@@ -10,24 +10,24 @@ datasource db {
 }
 
 model entry {
-  id                           Int                   @id @default(autoincrement())
-  acceptedStorySuggestedId     Int?                  @map("accepted_story_suggested_id")
-  acceptedStoryKindSuggestedId Int?                  @map("accepted_story_kind_suggested_id")
-  indexationId                 String                @map("indexation_id") @db.VarChar(20)
-  entrycomment                 String?               @db.VarChar(2009)
-  part                         String?               @db.VarChar(5)
-  title                        String?               @db.VarChar(100)
-  position                     String                @db.VarChar(9)
-  indexation                   indexation            @relation(fields: [indexationId], references: [id], onUpdate: Restrict, map: "entry_indexation_id_fk")
-  acceptedStoryKind   storyKindSuggestion?  @relation("entry_accepted_story_kind_suggested_idTostory_kind_suggestion", fields: [acceptedStoryKindSuggestedId], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "entry_story_kind_suggestion_id_fk")
-  acceptedStory       storySuggestion?      @relation("entry_accepted_story_suggested_idTostory_suggestion", fields: [acceptedStorySuggestedId], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "entry_story_suggestion_id_fk")
-  entryPages                   entryPage[]
-  storyKindSuggestions         storyKindSuggestion[] @relation("story_kind_suggestion_entry_idToentry")
-  storySuggestions             storySuggestion[]
+  id                            Int                   @id @default(autoincrement())
+  acceptedStorySuggestionId     Int?                  @map("accepted_story_suggested_id")
+  acceptedStoryKindSuggestionId Int?                  @map("accepted_story_kind_suggested_id")
+  indexationId                  String                @map("indexation_id") @db.VarChar(20)
+  entrycomment                  String?               @db.VarChar(2009)
+  part                          String?               @db.VarChar(5)
+  title                         String?               @db.VarChar(100)
+  entirepages                   Int
+  brokenpagenumerator           Int                   @default(0) @db.SmallInt
+  brokenpagedenominator         Int                   @default(1) @db.SmallInt
+  indexation                    indexation            @relation(fields: [indexationId], references: [id], onUpdate: Restrict, map: "entry_indexation_id_fk")
+  acceptedStoryKind             storyKindSuggestion?  @relation("entry_accepted_story_kind_suggested_idTostory_kind_suggestion", fields: [acceptedStoryKindSuggestionId], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "entry_story_kind_suggestion_id_fk")
+  acceptedStory                 storySuggestion?      @relation("entry_accepted_story_suggested_idTostory_suggestion", fields: [acceptedStorySuggestionId], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "entry_story_suggestion_id_fk")
+  storyKindSuggestions          storyKindSuggestion[] @relation("story_kind_suggestion_entry_idToentry")
+  storySuggestions              storySuggestion[]
 
-  @@unique([indexationId, position], map: "entry_indexation_position_unique")
-  @@index([acceptedStoryKindSuggestedId], map: "entry_story_kind_suggestion_id_fk")
-  @@index([acceptedStorySuggestedId], map: "entry_story_suggestion_id_fk")
+  @@index([acceptedStoryKindSuggestionId], map: "entry_story_kind_suggestion_id_fk")
+  @@index([acceptedStorySuggestionId], map: "entry_story_suggestion_id_fk")
 }
 
 model page {
@@ -38,7 +38,6 @@ model page {
   aiKumikoResultPanels aiKumikoResultPanel[]
   aiOcrPossibleStories aiOcrPossibleStory[]
   aiOcrResults         aiOcrResult[]
-  pageEntries          entryPage[]
   indexation           indexation            @relation(fields: [indexationId], references: [id], onUpdate: Restrict, map: "page_indexation_id_fk")
   storyKindSuggestion  storyKindSuggestion[]
 
@@ -146,18 +145,6 @@ model aiKumikoResultPanel {
 
   @@index([pageId], map: "ai_kumiko_result_panel_page_id_fk")
   @@map("ai_kumiko_result_panel")
-}
-
-model entryPage {
-  id      Int   @id @default(autoincrement())
-  entryId Int   @map("entry_id")
-  pageId  Int   @map("page_id")
-  entry   entry @relation(fields: [entryId], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "entry_page_entry_id_fk")
-  page    page  @relation(fields: [pageId], references: [id], onUpdate: Restrict, map: "entry_page_page_id_fk")
-
-  @@unique([pageId, entryId], map: "entry_page_unique")
-  @@index([entryId], map: "entry_page_entry_id_fk")
-  @@map("entry_page")
 }
 
 enum issueSuggestionSource {
