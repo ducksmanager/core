@@ -40,7 +40,7 @@ export default () => {
 
   const runCoverSearch = async () => {
     const firstEntry = indexation.value!.entries[0];
-    if (firstEntry?.acceptedSuggestedStoryKind?.kind === coverStoryKindCode) {
+    if (firstEntry?.acceptedStoryKind?.kind === coverStoryKindCode) {
       console.info(
         "La première page est une couverture, on va chercher si on la détecte parmi les résultats de la recherche par image...",
       );
@@ -67,12 +67,12 @@ export default () => {
     )!.code;
     const storiesFirstPages = entriesFirstPages.value.filter(
       ({ entryId }) =>
-        indexation.value?.entries[entryId].acceptedSuggestedStoryKind?.kind ===
+        indexation.value?.entries[entryId].acceptedStoryKind?.kind ===
         storyStoryKindCode,
     );
     for (const { startsAtPage } of storiesFirstPages.filter(
       ({ entryId }) =>
-        indexation.value?.entries[entryId].acceptedSuggestedStoryKind?.kind ===
+        indexation.value?.entries[entryId].acceptedStoryKind?.kind ===
         storyStoryKindCode,
     )) {
       const url = indexation.value!.pages.find(

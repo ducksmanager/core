@@ -105,7 +105,7 @@ export const suggestions = defineStore("suggestions", () => {
     acceptedIssue,
     acceptedStories,
     acceptedStoryKinds: computed(() =>
-      indexation.value!.entries.groupBy("id", "acceptedSuggestedStoryKind"),
+      indexation.value!.entries.groupBy("id", "acceptedStoryKind"),
     ),
   };
 });

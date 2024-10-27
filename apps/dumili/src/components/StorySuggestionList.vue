@@ -14,9 +14,9 @@
           >
             <i-bi-exclamation-triangle-fill
               v-if="
-                entry.acceptedSuggestedStoryKind &&
+                entry.acceptedStoryKind &&
                 storyversionDetails[suggestion.storyversioncode] &&
-                entry.acceptedSuggestedStoryKind?.kind !=
+                entry.acceptedStoryKind?.kind !=
                   storyversionDetails[suggestion.storyversioncode].kind
               "
               :id="`warning-story-kind-${suggestion.id}`"

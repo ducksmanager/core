@@ -464,7 +464,7 @@ const inferStoryKindFromAiResults = (
 const acceptStorySuggestion = async (suggestionId: storySuggestion['id'] | null, entryId: entry['id']) =>
   prisma.entry.update({
     data: {
-      acceptedSuggestedStoryKind: suggestionId === null ? { disconnect: true } : {
+      acceptedStoryKind: suggestionId === null ? { disconnect: true } : {
         connect: {
           id: suggestionId,
         },
@@ -481,7 +481,7 @@ const acceptStoryKindSuggestion = (
 ) =>
   prisma.entry.update({
     data: {
-      acceptedSuggestedStoryKind: suggestionId === null ? { disconnect: true } : {
+      acceptedStoryKind: suggestionId === null ? { disconnect: true } : {
         connect: {
           id: suggestionId,
         },

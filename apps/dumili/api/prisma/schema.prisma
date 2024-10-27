@@ -19,8 +19,8 @@ model entry {
   title                        String?               @db.VarChar(100)
   position                     String                @db.VarChar(9)
   indexation                   indexation            @relation(fields: [indexationId], references: [id], onUpdate: Restrict, map: "entry_indexation_id_fk")
-  acceptedSuggestedStoryKind   storyKindSuggestion?  @relation("entry_accepted_story_kind_suggested_idTostory_kind_suggestion", fields: [acceptedStoryKindSuggestedId], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "entry_story_kind_suggestion_id_fk")
-  acceptedSuggestedStory       storySuggestion?      @relation("entry_accepted_story_suggested_idTostory_suggestion", fields: [acceptedStorySuggestedId], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "entry_story_suggestion_id_fk")
+  acceptedStoryKind   storyKindSuggestion?  @relation("entry_accepted_story_kind_suggested_idTostory_kind_suggestion", fields: [acceptedStoryKindSuggestedId], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "entry_story_kind_suggestion_id_fk")
+  acceptedStory       storySuggestion?      @relation("entry_accepted_story_suggested_idTostory_suggestion", fields: [acceptedStorySuggestedId], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "entry_story_suggestion_id_fk")
   entryPages                   entryPage[]
   storyKindSuggestions         storyKindSuggestion[] @relation("story_kind_suggestion_entry_idToentry")
   storySuggestions             storySuggestion[]

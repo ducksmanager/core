@@ -18,8 +18,8 @@ export const indexationPayloadInclude = {
   entries: {
     include: {
       entryPages: true,
-      acceptedSuggestedStory: true,
-      acceptedSuggestedStoryKind: true,
+      acceptedStory: true,
+      acceptedStoryKind: true,
       storyKindSuggestions: {
         include: {
           acceptedOnEntries: true,

@@ -3,7 +3,7 @@
     <template v-if="editable">
       <b-col col cols="3">
         <suggestion-list
-          v-model="entry.acceptedSuggestedStoryKind"
+          v-model="entry.acceptedStoryKind"
           :suggestions="entry.storyKindSuggestions"
           :is-ai-source="(suggestion) => suggestion.aiSourcePageId !== null"
           :item-class="(suggestion) => [`kind-${suggestion.kind}`]"
@@ -110,10 +110,10 @@
       <b-col col cols="3">
         <b-badge
           size="xl"
-          :class="{ [`kind-${entry.acceptedSuggestedStoryKind?.kind}`]: true }"
+          :class="{ [`kind-${entry.acceptedStoryKind?.kind}`]: true }"
           >{{
-            (entry.acceptedSuggestedStoryKind &&
-              getStoryKind(entry.acceptedSuggestedStoryKind.kind)) ||
+            (entry.acceptedStoryKind &&
+              getStoryKind(entry.acceptedStoryKind.kind)) ||
             $t("Type inconnu")
           }}</b-badge
         ></b-col
@@ -160,7 +160,7 @@ const { indexationSocket } = inject(dumiliSocketInjectionKey)!;
 const entry = defineModel<FullEntry>({ required: true });
 
 watch(
-  () => entry.value.acceptedSuggestedStoryKind,
+  () => entry.value.acceptedStoryKind,
   (storyKind) => {
     indexationSocket.value!.services.acceptStoryKindSuggestion(
       storyKind?.id || null,
