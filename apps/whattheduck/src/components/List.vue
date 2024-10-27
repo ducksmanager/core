@@ -148,6 +148,7 @@ watch(isCameraPreviewShown, async () => {
         clearInterval(interval);
         const cameraPreviewOptions: CameraPreviewOptions = {
           parent: cameraPreviewElementId,
+          disableAudio: true,
           position: 'rear',
           ...boundingClientRect,
         };
