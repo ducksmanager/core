@@ -13,10 +13,13 @@
   ></b-container>
 </template>
 <script setup lang="ts">
+import { stores as webStores } from "~web";
 const { t: $t } = useI18n();
 
 import { suggestions } from "~/stores/suggestions";
 import { socketInjectionKey as dmSocketInjectionKey } from "~web/src/composables/useDmSocket";
+
+const { storyDetails, storyversionDetails } = storeToRefs(webStores.coa());
 
 const {
   coa: { services: coaServices },
@@ -47,10 +50,8 @@ const getStoriesWithDetails = async (
       .filter((story) => story !== undefined)
       .map(async (story) => ({
         ...story,
-        ...(await coaServices.getStoryDetails(story!.storyversioncode)).data,
-        storyversion: (
-          await coaServices.getStoryversionDetails(story!.storyversioncode)
-        ).data,
+        ...storyDetails.value[story!.storyversioncode],
+        storyversion: storyversionDetails.value[story!.storyversioncode],
         storyjobs: (await coaServices.getStoryjobs(story!.storyversioncode))
           .data,
       })),

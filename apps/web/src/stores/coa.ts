@@ -5,6 +5,10 @@ import type { InducksIssueQuotationSimple } from "~dm-types/InducksIssueQuotatio
 import type { EventReturnType } from "~socket.io-services";
 
 import { socketInjectionKey } from "../composables/useDmSocket";
+import {
+  inducks_story,
+  inducks_storyversion,
+} from "~prisma-schemas/client_coa";
 
 const addPartInfo = (issueDetails: InducksIssueDetails) => {
   const storyPartCounter = Object.entries(
@@ -67,6 +71,8 @@ export const coa = defineStore("coa", () => {
     issueQuotations = ref<
       EventReturnType<services["getQuotationsByIssuecodes"]>["quotations"]
     >({}),
+    storyDetails = ref<Record<string, inducks_story>>({}),
+    storyversionDetails = ref<Record<string, inducks_storyversion>>({}),
     addPublicationNames = (
       newPublicationNames: typeof publicationNames.value,
     ) => {
@@ -196,6 +202,33 @@ export const coa = defineStore("coa", () => {
         );
       }
     },
+    fetchStoryDetails = async (storycodes: string[]) => {
+      const existingStorycodes = new Set(Object.keys(storyDetails.value || {}));
+      const newStorycodes = storycodes.filter(
+        (storycode) => !existingStorycodes.has(storycode),
+      );
+      if (newStorycodes.length) {
+        Object.assign(
+          storyDetails.value,
+          (await services.getStoryDetails(newStorycodes)).stories,
+        );
+      }
+    },
+    fetchStoryversionDetails = async (storyversioncodes: string[]) => {
+      const existingStoryversioncodes = new Set(
+        Object.keys(storyversionDetails.value || {}),
+      );
+      const newStoryversioncodes = storyversioncodes.filter(
+        (storyversion) => !existingStoryversioncodes.has(storyversion),
+      );
+      if (newStoryversioncodes.length) {
+        Object.assign(
+          storyversionDetails.value,
+          (await services.getStoryversionsDetails(newStoryversioncodes))
+            .storyversions,
+        );
+      }
+    },
     fetchIssuecodesByPublicationcode = async (publicationcodes: string[]) => {
       const existingPublicationcodes = new Set(
         Object.keys(issuecodesByPublicationcode.value || {}),
@@ -251,6 +284,8 @@ export const coa = defineStore("coa", () => {
     fetchPublicationNames,
     fetchPublicationNamesFromCountry,
     fetchRecentIssues,
+    fetchStoryDetails,
+    fetchStoryversionDetails,
 
     isLoadingCountryNames,
     issuecodeDetails,
@@ -265,5 +300,7 @@ export const coa = defineStore("coa", () => {
     services,
     setCoverUrl,
     setPersonNames,
+    storyDetails,
+    storyversionDetails,
   };
 });

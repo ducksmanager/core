@@ -76,7 +76,7 @@ export default abstract class {
     suggestion: Prisma.storySuggestionUncheckedCreateInput,
     callback: (
       data: Errorable<
-        { suggestionId: storySuggestion["id"] },
+        {createdStorySuggestion: storySuggestion},
         "You are not allowed to update this resource"
       >,
     ) => void,

@@ -129,9 +129,7 @@ export default (io: Server) => {
 
       indexationSocket.on(
         "createStorySuggestion",
-        (suggestion, callback) => prisma.storySuggestion.create({
-          data: suggestion,
-        }).then(({ id }) => callback({ suggestionId: id }))
+        (suggestion, callback) => prisma.storySuggestion.create({ data: suggestion }).then((createdStorySuggestion) => callback({createdStorySuggestion}))
       );
 
       indexationSocket.on(

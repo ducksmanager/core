@@ -44,6 +44,7 @@
 <script setup lang="ts">
 import { suggestions } from "~/stores/suggestions";
 import { tabs } from "~/stores/tabs";
+import { stores as webStores } from "~web";
 
 const showUploadWidget = ref(false);
 const route = useRoute();
@@ -52,6 +53,10 @@ const { t: $t } = useI18n();
 
 const { activeTab } = storeToRefs(tabs());
 const { tabNames } = tabs();
+
+const { fetchPublicationNames, fetchStoryDetails, fetchStoryversionDetails } =
+  webStores.coa();
+const { storyversionDetails } = storeToRefs(webStores.coa());
 
 const indexationId = ref<string | null>(null);
 
@@ -67,9 +72,31 @@ const images = computed(() =>
 
 watch(
   () => route.params.id,
-  (id) => {
+  async (id) => {
     indexationId.value = id as string;
-    loadIndexation(indexationId.value);
+    await loadIndexation(indexationId.value);
+    await fetchPublicationNames(
+      indexation.value!.issueSuggestions.map(
+        ({ publicationcode }) => publicationcode,
+      ),
+    );
+    await fetchStoryversionDetails(
+      indexation
+        .value!.entries.map(({ storySuggestions }) =>
+          storySuggestions.map(({ storyversioncode }) => storyversioncode),
+        )
+        .flat(),
+    );
+    await fetchStoryDetails(
+      indexation
+        .value!.entries.map(({ storySuggestions }) =>
+          storySuggestions.map(
+            ({ storyversioncode }) =>
+              storyversionDetails.value[storyversioncode].storycode!,
+          ),
+        )
+        .flat(),
+    );
   },
   { immediate: true },
 );

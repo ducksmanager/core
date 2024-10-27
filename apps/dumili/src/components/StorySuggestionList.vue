@@ -7,14 +7,27 @@
     @toggle-customize-form="showEntrySelect = $event"
   >
     <template #item="suggestion">
-      <Story :story="suggestion" />
+      <Story :story="suggestion">
+        <template #suffix>
+          <span
+            title="Le type de l'histoire sélectionnée ne correspond pas au type de l'entrée"
+          >
+            <i-bi-exclamation-triangle-fill
+              v-if="
+                entry.acceptedSuggestedStoryKind &&
+                storyversionDetails[suggestion.storyversioncode] &&
+                entry.acceptedSuggestedStoryKind?.kind !=
+                  storyversionDetails[suggestion.storyversioncode].kind
+              "
+              :id="`warning-story-kind-${suggestion.id}`"
+          /></span>
+        </template>
+      </Story>
     </template>
     <template #unknown-text>{{ $t("Contenu inconnu") }}</template>
     <template #customize-text>{{ $t("Rechercher...") }}</template>
     <template #customize-form>
-      <StorySearch
-        @story-selected="addAndAcceptStoryversionToStorySuggestions"
-      />
+      <StorySearch @story-selected="createAndAcceptStorySuggestion" />
     </template>
   </suggestion-list>
 </template>
@@ -24,6 +37,7 @@ import { dumiliSocketInjectionKey } from "~/composables/useDumiliSocket";
 import { suggestions } from "~/stores/suggestions";
 import { SimpleStory } from "~dm-types/SimpleStory";
 import { FullIndexation } from "~dumili-services/indexation/types";
+import { stores as webStores } from "~web";
 
 const { t: $t } = useI18n();
 
@@ -35,27 +49,23 @@ const { indexationSocket } = inject(dumiliSocketInjectionKey)!;
 
 const showEntrySelect = ref(false);
 const { acceptedStories } = storeToRefs(suggestions());
+const { storyversionDetails } = storeToRefs(webStores.coa());
 
 const acceptedStory = computed(() => acceptedStories.value[entry.value.id]);
 
-const addAndAcceptStoryversionToStorySuggestions = async (
-  searchResult: SimpleStory,
-) => {
-  await indexationSocket.value!.services.createStorySuggestion({
-    entryId: entry.value.id,
-    storyversioncode: searchResult.storycode,
-    acceptedOnEntries: {
-      connect: { id: entry.value.id },
-    },
-  });
+const createAndAcceptStorySuggestion = async (searchResult: SimpleStory) => {
+  indexationSocket
+    .value!.services.createStorySuggestion({
+      entryId: entry.value.id,
+      storyversioncode: searchResult.storycode,
+    })
+    .then((result) => {
+      if ("createdStorySuggestion" in result) {
+        entry.value.storySuggestions.push(result.createdStorySuggestion!);
+        indexationSocket.value!.services.acceptStorySuggestion(
+          result.createdStorySuggestion!.id || null,
+        );
+      }
+    });
 };
-
-watch(
-  () => entry.value.acceptedSuggestedStory,
-  (storySuggestion) => {
-    indexationSocket.value!.services.acceptStorySuggestion(
-      storySuggestion?.id || null,
-    );
-  },
-);
 </script>

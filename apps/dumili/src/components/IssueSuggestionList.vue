@@ -1,6 +1,6 @@
 <template>
   <suggestion-list
-    v-model="issue"
+    v-model="indexation!.acceptedIssueSuggestion"
     :suggestions="indexation!.issueSuggestions"
     :is-ai-source="(suggestion) => suggestion.source === 'ai'"
     :show-customize-form="showIssueSelect"
@@ -10,7 +10,7 @@
     ><template #unknown-text>{{ $t("Numéro inconnu") }}</template>
     <template #customize-form>
       <IssueSelect
-        @change="$event && createAndAcceptIssueSuggestion" /></template
+        @change="$event && createAndAcceptIssueSuggestion($event)" /></template
     ><template #customize-text> {{ $t("Sélectionner...") }}</template>
   </suggestion-list>
 </template>
@@ -24,24 +24,41 @@ const { t: $t } = useI18n();
 const showIssueSelect = ref(false);
 const suggestionsStore = suggestions();
 const { createIssueSuggestion } = suggestionsStore;
-const { indexation, acceptedIssue: issue } = storeToRefs(suggestionsStore);
+const { indexation } = storeToRefs(suggestionsStore);
 
 const { indexationSocket } = inject(dumiliSocketInjectionKey)!;
-
-const acceptIssueSuggestion = async (suggestionId: number) => {
-  await indexationSocket.value!.services.acceptIssueSuggestion(suggestionId);
-  showIssueSelect.value = false;
-};
 
 const createAndAcceptIssueSuggestion = async (data: {
   publicationcode: string;
   issuenumber: string;
   issuecode: string;
 }) => {
-  const { suggestionId } = await createIssueSuggestion({
-    ...data,
-    source: "user",
+  if (
+    !indexation.value?.issueSuggestions.some(
+      ({ issuecode }) => issuecode === data.issuecode,
+    )
+  ) {
+    await createIssueSuggestion({
+      ...data,
+      source: "user",
+    });
+  }
+
+  nextTick(() => {
+    indexation.value!.acceptedIssueSuggestion =
+      indexation.value!.issueSuggestions.find(
+        ({ issuecode }) => issuecode === data.issuecode,
+      )!;
+    showIssueSelect.value = false;
   });
-  await acceptIssueSuggestion(suggestionId);
 };
+
+watch(
+  () => indexation.value!.acceptedIssueSuggestion,
+  (suggestion) => {
+    indexationSocket.value!.services.acceptIssueSuggestion(
+      suggestion?.id || null,
+    );
+  },
+);
 </script>

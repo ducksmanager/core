@@ -14,7 +14,7 @@
     <div
       class="start-0 top-0 h-100 d-flex flex-row align-items-center justify-content-space-around"
     >
-      <b-container class="book-container d-flex w-50 h-100 m-0">
+      <b-container v-if="false" class="book-container d-flex w-50 h-100 m-0">
         <div id="book" class="flip-book">
           <div
             v-for="(page, index) in indexation.pages"
@@ -149,8 +149,6 @@ const coverWidth = ref<number | null>(null);
 const coverHeight = ref<number | null>(null);
 const currentPage = ref(0);
 
-defineProps<{ indexationId: string }>();
-
 const { indexation, acceptedStoryKinds } = storeToRefs(suggestions());
 const { hoveredEntry } = storeToRefs(ui());
 
@@ -245,7 +243,7 @@ nextTick(() => {
   watch(
     () => coverWidth.value && coverHeight.value,
     (hasCoverDimensions) => {
-      if (hasCoverDimensions) {
+      if (hasCoverDimensions && false) {
         const bookContainer = document.querySelector(".book-container")!;
         book.value = new PageFlip(
           document.getElementById("book") as HTMLElement,

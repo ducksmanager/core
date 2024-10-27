@@ -12,7 +12,7 @@ export const suggestions = defineStore("suggestions", () => {
   const { indexationSocket, setIndexationSocketFromId } = inject(
     dumiliSocketInjectionKey,
   )!;
-  const { services: coaServices } = webStores.coa();
+  const { storyversionDetails } = storeToRefs(webStores.coa());
   const indexation = ref<FullIndexation>(),
     acceptedStories = ref<Record<number, storyWithStoryversion | undefined>>(
       {},
@@ -73,17 +73,11 @@ export const suggestions = defineStore("suggestions", () => {
         );
 
         if (acceptedStory) {
-          const storyversion = await coaServices.getStoryversionDetails(
-            acceptedStory!.storyversioncode,
-          );
-          if ("error" in storyversion) {
-            console.error(storyversion.errorDetails);
-          } else {
-            acceptedStories.value[id] = {
-              ...acceptedStory,
-              storyversion: storyversion.data,
-            };
-          }
+          acceptedStories.value[id] = {
+            ...acceptedStory,
+            storyversion:
+              storyversionDetails.value[acceptedStory!.storyversioncode],
+          };
         }
       }
     },

@@ -19,6 +19,7 @@
     "prod:transfer-files-post": "pnpm -F '~ci' prod:transfer-files apps/dumili/docker-compose.yml:@apps/dumili/docker-compose.yml"
   },
   "dependencies": {
+    "@iconify-json/bi": "^1.2.1",
     "@sentry/browser": "^8.35.0",
     "@sentry/vue": "^8.35.0",
     "@unhead/vue": "^1.11.10",
@@ -44,7 +45,6 @@
     "@antfu/eslint-config": "^3.8.0",
     "@eslint/eslintrc": "^3.1.0",
     "@eslint/js": "^9.13.0",
-    "@iconify-json/bi": "^1.2.1",
     "@intlify/unplugin-vue-i18n": "^5.2.0",
     "@types/js-cookie": "^3.0.6",
     "@types/page-flip": "^2.0.3",

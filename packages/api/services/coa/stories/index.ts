@@ -6,30 +6,31 @@ import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa/client";
 
 import type Events from "../types";
 export default (socket: Socket<Events>) => {
-  socket.on("getStoryDetails", (storycode, callback) =>
+  socket.on("getStoryDetails", (storycodes, callback) =>
     prismaCoa.inducks_story
-      .findUniqueOrThrow({
+      .findMany({
         where: {
-          storycode,
+          storycode: {in: storycodes},
         },
       })
-      .then((results) => {
-        callback({ data: results });
+      .then((data) => {
+        callback({stories: data.groupBy("storycode")});
       })
       .catch((e) => {
         callback({ error: "Error", errorDetails: e });
       }),
   );
 
-  socket.on("getStoryversionDetails", (storyversioncode, callback) =>
+  socket.on("getStoryversionsDetails", (storyversioncodes, callback) =>
     prismaCoa.inducks_storyversion
-      .findUniqueOrThrow({
+      .findMany
+      ({
         where: {
-          storyversioncode,
+          storyversioncode: {in: storyversioncodes},
         },
       })
-      .then((results) => {
-        callback({ data: results });
+      .then((data) => {
+        callback({ storyversions: data.groupBy("storyversioncode") });
       })
       .catch((e) => {
         callback({ error: "Error", errorDetails: e });
@@ -43,8 +44,8 @@ export default (socket: Socket<Events>) => {
           storyversioncode,
         },
       })
-      .then((results) => {
-        callback({ data: results });
+      .then((data) => {
+        callback({ data });
       })
       .catch((e) => {
         callback({ error: "Error", errorDetails: e });

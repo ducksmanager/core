@@ -120,13 +120,13 @@ export default abstract class {
   ) => void;
 
   abstract getStoryDetails: (
-    storycode: string,
-    callback: (value: Errorable<{ data: inducks_story }, "Error">) => void,
+    storycodes: string[],
+    callback: (value: Errorable<{stories: Record<string, inducks_story>}, "Error">) => void,
   ) => void;
-  abstract getStoryversionDetails: (
-    storyversioncode: string,
+  abstract getStoryversionsDetails: (
+    storyversioncodes: string[],
     callback: (
-      value: Errorable<{ data: inducks_storyversion }, "Error">,
+      value: Errorable<{ storyversions: Record<string, inducks_storyversion> }, "Error">,
     ) => void,
   ) => void;
   abstract getStoryjobs: (

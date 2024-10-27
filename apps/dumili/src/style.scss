@@ -107,7 +107,7 @@ button:focus-visible {
 
   &.striped {
     background-color: transparent !important;
-    background: repeating-linear-gradient(-45deg, #ffcc33, #ffcc33 1px, transparent 1px, transparent 10px)
+    background: repeating-linear-gradient(-45deg, $bg, $bg 1px, transparent 1px, transparent 10px)
   }
   &.btn:hover {
     background-color: color.adjust($bg, $lightness: 10%) !important;

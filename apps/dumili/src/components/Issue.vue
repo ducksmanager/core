@@ -1,10 +1,10 @@
 <template>
-  <div v-if="publicationcode" :class="`d-${noWrap ? 'inline' : 'block'}`">
+  <div v-if="actualPublicationcode" :class="`d-${noWrap ? 'inline' : 'block'}`">
     <Publication
-      :publicationcode="publicationcode"
-      :publicationname="publicationName || publicationcode"
+      :publicationcode="actualPublicationcode"
+      :publicationname="publicationName || actualPublicationcode"
       display-class="d-inline"
-    />{{ issuenumber }}
+    />{{ actualIssuenumber }}
     <slot name="title-suffix" />
     <slot />
   </div>
@@ -14,25 +14,36 @@
 <script setup lang="ts">
 import { stores as webStores } from "~web";
 
-const { issuecodeDetails, publicationNames } = storeToRefs(webStores.coa());
+const { publicationNames, issuecodeDetails } = storeToRefs(webStores.coa());
 
-const { issuecode } = defineProps<{
-  issuecode: string;
-  noWrap?: boolean;
-}>();
+const props = defineProps<
+  (
+    | {
+        publicationcode: string;
+        issuenumber: string;
+      }
+    | { issuecode: string }
+  ) & {
+    noWrap?: boolean;
+  }
+>();
 
-const publicationcode = computed(
-  () => issuecodeDetails.value[issuecode]?.publicationcode,
+const actualPublicationcode = computed(() =>
+  "publicationcode" in props
+    ? props.publicationcode
+    : issuecodeDetails.value[props.issuecode]?.publicationcode,
+);
+
+const actualIssuenumber = computed(() =>
+  "issuenumber" in props
+    ? props.issuenumber
+    : issuecodeDetails.value[props.issuecode]?.issuenumber,
 );
 
 const publicationName = computed(
   () =>
-    publicationcode.value &&
-    (publicationNames.value[publicationcode.value] || publicationcode.value),
-);
-
-const issuenumber = computed(
-  () => issuecodeDetails.value[issuecode]?.issuenumber,
+    publicationNames.value[actualPublicationcode.value] ||
+    actualPublicationcode.value,
 );
 </script>
 

@@ -603,7 +603,6 @@ model inducks_statpersonstory {
 model inducks_story {
   storycode                String                @id @db.VarChar(19)
   originalstoryversioncode String?               @db.VarChar(19)
-  creationdate             String?               @db.VarChar(11)
   firstpublicationdate     String?               @db.VarChar(10)
   endpublicationdate       String?               @db.VarChar(10)
   title                    String?               @db.Text
