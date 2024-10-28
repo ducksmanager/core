@@ -29,10 +29,11 @@ export default (io: Server) => {
     .on("connection", async (socket) => {
       socket.on("create", async (id, callback) => {
         prisma.indexation
-          .create({data: {
+          .create({
+            data: {
               id,
               dmUserId: socket.data.user.id,
-          }
+            },
           })
           .then(callback);
       });

@@ -1,5 +1,6 @@
 import "bootstrap/dist/css/bootstrap.css";
 import "bootstrap-vue-next/dist/bootstrap-vue-next.css";
+import "~group-by";
 
 import { browserTracingIntegration } from "@sentry/browser";
 import * as Sentry from "@sentry/vue";
@@ -7,13 +8,12 @@ import { createHead } from "@unhead/vue";
 import Cookies from "js-cookie";
 import { setupLayouts } from "virtual:generated-layouts";
 import generatedRoutes from "virtual:generated-pages";
+import VueDraggableResizable from "vue-draggable-resizable";
 import { createRouter, createWebHistory } from "vue-router";
-import "~group-by";
 
 import App from "~/App.vue";
 import i18n from "~/i18n";
 import { SocketClient } from "~socket.io-client-services";
-import VueDraggableResizable from "vue-draggable-resizable";
 
 const head = createHead();
 

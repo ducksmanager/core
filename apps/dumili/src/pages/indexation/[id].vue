@@ -23,9 +23,7 @@
         {{ $t("Upload page files") }}
       </b-button>
     </template>
-    <Book
-      v-else-if="tabNames[activeTab] === 'Book'"
-      :indexation-id="indexationId" />
+    <Book v-else-if="tabNames[activeTab] === 'Book'" />
     <TextEditor v-else-if="tabNames[activeTab] === 'Text editor'"
   /></b-container>
   <b-container>

@@ -2,7 +2,9 @@ import type { user } from "~prisma-schemas/schemas/dm";
 import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
 import { getHashedPassword, isValidEmail } from "~services/auth/util";
 
-type PrismaDmTransaction = Parameters<Parameters<typeof prismaDm.$transaction>[0]>[0]
+type PrismaDmTransaction = Parameters<
+  Parameters<typeof prismaDm.$transaction>[0]
+>[0];
 
 interface ScopedError<ErrorKey extends string = string> {
   error: ErrorKey;
@@ -53,7 +55,10 @@ export class UsernameValidation extends Validation {
 }
 
 export class UsernameCreationValidation extends Validation {
-  run = async ({ username }: Pick<user, "username">, transaction: PrismaDmTransaction) =>
+  run = async (
+    { username }: Pick<user, "username">,
+    transaction: PrismaDmTransaction,
+  ) =>
     transaction.user
       .findFirstOrThrow({
         where: { username },
@@ -69,7 +74,10 @@ export class UsernameCreationValidation extends Validation {
 }
 
 export class EmailCreationValidation extends Validation {
-  run = async ({ email }: Pick<user, "email">, transaction: PrismaDmTransaction) =>
+  run = async (
+    { email }: Pick<user, "email">,
+    transaction: PrismaDmTransaction,
+  ) =>
     transaction.user
       .findFirstOrThrow({
         where: { email },
@@ -85,7 +93,10 @@ export class EmailCreationValidation extends Validation {
 }
 
 export class EmailUpdateValidation extends Validation {
-  run = async ({ id, email }: Pick<user, "email" | "id">, transaction: PrismaDmTransaction) =>
+  run = async (
+    { id, email }: Pick<user, "email" | "id">,
+    transaction: PrismaDmTransaction,
+  ) =>
     transaction.user
       .findUniqueOrThrow({
         select: {
@@ -151,13 +162,16 @@ export class PasswordUpdateValidation extends Validation {
 }
 
 export class OldPasswordValidation extends Validation {
-  run = async ({
-    userId,
-    oldPassword,
-  }: {
-    userId: user["id"];
-    oldPassword: user["password"];
-  }, transaction: PrismaDmTransaction) =>
+  run = async (
+    {
+      userId,
+      oldPassword,
+    }: {
+      userId: user["id"];
+      oldPassword: user["password"];
+    },
+    transaction: PrismaDmTransaction,
+  ) =>
     transaction.user
       .findFirstOrThrow({
         where: {

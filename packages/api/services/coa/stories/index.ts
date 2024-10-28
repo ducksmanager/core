@@ -10,11 +10,11 @@ export default (socket: Socket<Events>) => {
     prismaCoa.inducks_story
       .findMany({
         where: {
-          storycode: {in: storycodes},
+          storycode: { in: storycodes },
         },
       })
       .then((data) => {
-        callback({stories: data.groupBy("storycode")});
+        callback({ stories: data.groupBy("storycode") });
       })
       .catch((e) => {
         callback({ error: "Error", errorDetails: e });
@@ -23,10 +23,9 @@ export default (socket: Socket<Events>) => {
 
   socket.on("getStoryversionsDetails", (storyversioncodes, callback) =>
     prismaCoa.inducks_storyversion
-      .findMany
-      ({
+      .findMany({
         where: {
-          storyversioncode: {in: storyversioncodes},
+          storyversioncode: { in: storyversioncodes },
         },
       })
       .then((data) => {

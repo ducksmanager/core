@@ -118,7 +118,7 @@
 <script setup lang="ts">
 import useAi from "~/composables/useAi";
 import { dumiliSocketInjectionKey } from "~/composables/useDumiliSocket";
-import { getFirstPageOfEntry } from "~dumili-utils/getFirstPageOfEntry";
+import { getFirstPageOfEntry } from "~dumili-utils/entryPages";
 import { suggestions } from "~/stores/suggestions";
 import { ui } from "~/stores/ui";
 import { FullEntry, FullIndexation } from "~dumili-services/indexation/types";

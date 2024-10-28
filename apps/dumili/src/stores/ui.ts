@@ -1,4 +1,4 @@
-import { entry } from "~prisma/client_dumili";
+import type { entry } from "~prisma/client_dumili";
 
 export const ui = defineStore("user", () => ({
   showAiDetectionsOn: ref<number | undefined>(undefined),

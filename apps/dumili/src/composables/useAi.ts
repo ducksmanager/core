@@ -1,11 +1,11 @@
 import { suggestions } from "~/stores/suggestions";
+import type { FullIndexation } from "~dumili-services/indexation/types";
 import { storyKinds } from "~dumili-types/storyKinds";
 import { socketInjectionKey as dmSocketInjectionKey } from "~web/src/composables/useDmSocket";
 
+import { getFirstPageOfEntry } from "../../utils/entryPages";
 import { dumiliSocketInjectionKey } from "./useDumiliSocket";
 import useHint from "./useHint";
-import { getFirstPageOfEntry } from "../../utils/getFirstPageOfEntry";
-import { FullIndexation } from "~dumili-services/indexation/types";
 
 const coverStoryKindCode = storyKinds.find(
   ({ label }) => label === "Cover",

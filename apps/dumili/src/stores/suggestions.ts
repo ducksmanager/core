@@ -1,21 +1,13 @@
 import { dumiliSocketInjectionKey } from "~/composables/useDumiliSocket";
 import type { FullIndexation } from "~dumili-services/indexation/types";
 import type { issueSuggestion, storySuggestion } from "~prisma/client_dumili";
-import type { inducks_storyversion } from "~prisma-schemas/schemas/coa";
-
-export type storyWithStoryversion = storySuggestion & {
-  storyversion: inducks_storyversion;
-};
 
 export const suggestions = defineStore("suggestions", () => {
   const { indexationSocket, setIndexationSocketFromId } = inject(
     dumiliSocketInjectionKey,
   )!;
-  const { storyversionDetails } = storeToRefs(coa());
   const indexation = ref<FullIndexation>(),
-    acceptedStories = ref<Record<number, storyWithStoryversion | undefined>>(
-      {},
-    );
+    acceptedStories = ref<Record<number, storySuggestion | undefined>>({});
 
   const loadIndexation = async (indexationId: string) => {
     setIndexationSocketFromId(indexationId);
@@ -48,11 +40,7 @@ export const suggestions = defineStore("suggestions", () => {
         );
 
         if (acceptedStory) {
-          acceptedStories.value[id] = {
-            ...acceptedStory,
-            storyversion:
-              storyversionDetails.value[acceptedStory!.storyversioncode],
-          };
+          acceptedStories.value[id] = acceptedStory;
         }
       }
     },

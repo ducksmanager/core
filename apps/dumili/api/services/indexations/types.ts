@@ -15,10 +15,7 @@ export type IndexationWithFirstPage = Prisma.indexationGetPayload<{
 export default abstract class {
   static namespaceEndpoint: string = "/indexations";
 
-  abstract create: (
-    indexationId: string,
-    callback: () => void,
-  ) => void;
+  abstract create: (indexationId: string, callback: () => void) => void;
 
   abstract getIndexations: (
     callback: (

@@ -2,13 +2,13 @@ import { getCurrentLocaleShortKey } from "~/composables/useLocales";
 import type services from "~dm-services/coa/types";
 import type { InducksIssueDetails } from "~dm-types/InducksIssueDetails";
 import type { InducksIssueQuotationSimple } from "~dm-types/InducksIssueQuotationSimple";
-import type { EventReturnType } from "~socket.io-services";
-
-import { socketInjectionKey } from "../composables/useDmSocket";
-import {
+import type {
   inducks_story,
   inducks_storyversion,
 } from "~prisma-schemas/client_coa";
+import type { EventReturnType } from "~socket.io-services";
+
+import { socketInjectionKey } from "../composables/useDmSocket";
 
 const addPartInfo = (issueDetails: InducksIssueDetails) => {
   const storyPartCounter = Object.entries(

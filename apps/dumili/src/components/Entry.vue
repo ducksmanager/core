@@ -146,8 +146,9 @@
 import { dumiliSocketInjectionKey } from "~/composables/useDumiliSocket";
 import { suggestions } from "~/stores/suggestions";
 import { ui } from "~/stores/ui";
-import { FullEntry, FullIndexation } from "~dumili-services/indexation/types";
+import { FullEntry } from "~dumili-services/indexation/types";
 import { storyKinds } from "~dumili-types/storyKinds";
+import { getEntryPages } from "~dumili-utils/entryPages";
 import type { storyKind } from "~prisma/client_dumili";
 
 const { t: $t } = useI18n();
@@ -156,6 +157,7 @@ const props = defineProps<{
 }>();
 
 const { indexationSocket } = inject(dumiliSocketInjectionKey)!;
+const { indexation } = storeToRefs(suggestions());
 
 const entry = defineModel<FullEntry>({ required: true });
 
@@ -190,7 +192,7 @@ const { acceptedStories } = storeToRefs(suggestions());
 const { storyversionDetails } = storeToRefs(coa());
 const { showAiDetectionsOn } = storeToRefs(ui());
 
-const pages: FullIndexation["pages"] = []; // TODO
+const pages = computed(() => getEntryPages(indexation.value!, entry.value.id));
 
 const acceptedStory = computed(() => acceptedStories.value[entry.value.id]);
 
@@ -202,7 +204,11 @@ const storyAiSuggestions = computed(() =>
   entry.value.storySuggestions.filter(({ ocrDetailsId }) => ocrDetailsId),
 );
 
-const storycode = computed(() => acceptedStory.value?.storyversion.storycode);
+const storycode = computed(
+  () =>
+    acceptedStory.value &&
+    storyversionDetails.value[acceptedStory.value.storyversioncode].storycode,
+);
 const title = computed(() => entry.value.title || $t("Sans titre"));
 
 const urlEncodedStorycode = computed(

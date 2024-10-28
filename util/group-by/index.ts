@@ -31,20 +31,24 @@ declare global {
      */
     groupBy<
       K extends keyof T & string,
-      V extends undefined | "[]" | (keyof T & string) | `${keyof T & string}[]` = undefined,
+      V extends
+        | undefined
+        | "[]"
+        | (keyof T & string)
+        | `${keyof T & string}[]` = undefined,
     >(
       fieldName: K,
       valueFieldName?: V,
     ): {
       [key: string]: V extends "[]"
-      ? T[]
-      : V extends `${infer U}[]`
-      ? U extends keyof T
-      ? T[U][]
-      : never
-      : V extends keyof T
-      ? T[V]
-      : T;
+        ? T[]
+        : V extends `${infer U}[]`
+          ? U extends keyof T
+            ? T[U][]
+            : never
+          : V extends keyof T
+            ? T[V]
+            : T;
     };
   }
 }
@@ -71,7 +75,6 @@ Array.prototype.groupBy = function (fieldName, valueFieldName) {
   }, {});
 };
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 [
   { id: 1, name: "John" },
   { id: 2, name: "Jane" },
@@ -80,7 +83,6 @@ Array.prototype.groupBy = function (fieldName, valueFieldName) {
 // ^ inferred as Record<string, {id: number, name: string}>
 // Output:{ John: { id: 3, name: 'John' }, Jane: { id: 2, name: 'Jane' } }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 [
   { id: 1, name: "John" },
   { id: 2, name: "Jane" },
@@ -89,7 +91,6 @@ Array.prototype.groupBy = function (fieldName, valueFieldName) {
 // ^ inferred as Record<string, {id: number, name: string}[]>
 // Output: { John: [{ id: 1, name: 'John' }, { id: 3, name: 'John' }], Jane: [{ id: 2, name: 'Jane' }] }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 [
   { id: 1, name: "John" },
   { id: 2, name: "Jane" },
@@ -98,7 +99,6 @@ Array.prototype.groupBy = function (fieldName, valueFieldName) {
 // ^ inferred as Record<string, number>
 // Output: { John: 3, Jane: 2 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 [
   { id: 1, name: "John" },
   { id: 2, name: "Jane" },

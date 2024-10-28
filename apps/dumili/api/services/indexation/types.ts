@@ -1,4 +1,10 @@
-import type { entry, issueSuggestion, Prisma, storyKindSuggestion, storySuggestion } from "~prisma/client_dumili";
+import type {
+  entry,
+  issueSuggestion,
+  Prisma,
+  storyKindSuggestion,
+  storySuggestion,
+} from "~prisma/client_dumili";
 import type { Errorable } from "~socket.io-services";
 
 export const indexationPayloadInclude = {
@@ -78,7 +84,7 @@ export default abstract class {
   ) => void;
 
   abstract acceptStorySuggestion: (
-    storySuggestionId: storySuggestion['id'] | null,
+    storySuggestionId: storySuggestion["id"] | null,
     callback: (
       data: Errorable<
         { status: "OK" },
@@ -96,24 +102,28 @@ export default abstract class {
   ) => void;
 
   abstract acceptIssueSuggestion: (
-    suggestionId: issueSuggestion['id'] | null,
+    suggestionId: issueSuggestion["id"] | null,
     callback: (data: { status: "OK" }) => void,
   ) => void;
 
   abstract acceptStoryKindSuggestion: (
-    entryId: entry['id'],
-    storyKindSuggestionId: storyKindSuggestion['id'] | null,
+    entryId: entry["id"],
+    storyKindSuggestionId: storyKindSuggestion["id"] | null,
     callback: (
       data: Errorable<
         { status: "OK" },
-        "This indexation does not have any entry with this story kind suggestion"|"This indexation does not have any entry with this ID"
+        | "This indexation does not have any entry with this story kind suggestion"
+        | "This indexation does not have any entry with this ID"
       >,
     ) => void,
   ) => void;
 
   abstract updateEntryLength: (
-    entryId: entry['id'],
-    values: Pick<entry, 'entirepages'|'brokenpagenumerator'|'brokenpagedenominator'>,
+    entryId: entry["id"],
+    values: Pick<
+      entry,
+      "entirepages" | "brokenpagenumerator" | "brokenpagedenominator"
+    >,
     callback: (
       data: Errorable<
         { status: "OK" },
@@ -123,7 +133,7 @@ export default abstract class {
   ) => void;
 
   abstract runKumiko: (
-    entryId: entry['id'],
+    entryId: entry["id"],
     callback: (
       data: Errorable<{ status: "OK" }, "Kumiko output could not be parsed">,
     ) => void,
@@ -136,7 +146,5 @@ export default abstract class {
     ) => void,
   ) => void;
 
-  abstract createEntry: (
-    callback: () => void,
-  ) => void;
+  abstract createEntry: (callback: () => void) => void;
 }
