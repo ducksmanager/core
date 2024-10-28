@@ -1,5 +1,5 @@
 <template>
-  <b-tooltip :target="target" hover>
+  <b-tooltip :target="target" click>
     <table>
       <thead v-if="data.length">
         <th

@@ -43,10 +43,9 @@
             <table-tooltip
               :target="`ai-results-page-${pageNumber}`"
               :data="aiKumikoResultPanels" />
-            <i-bi-info-circle-fill
+            <AiSuggestionIcon
               :id="`ai-results-page-${pageNumber}`"
-              style="cursor: help"
-              @click.stop="() => {}"
+              status="info"
           /></b-col>
         </b-row>
       </b-col>
@@ -71,9 +70,9 @@
             @mouseover="hoveredEntry = entry"
             @mouseout="hoveredEntry = null"
             @resize-stop="(_left: number,
-  _top: number,
-  _width: number,
-  height: number) => onEntryResizeStop(idx, height)"
+              _top: number,
+              _width: number,
+              height: number) => onEntryResizeStop(idx, height)"
             @click="
               if (entry !== currentEntry)
                 currentPage = getFirstPageOfEntry(indexation, idx);

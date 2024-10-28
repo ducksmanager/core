@@ -14,98 +14,100 @@
           <template #unknown-text>{{ $t("Type inconnu") }}</template>
         </suggestion-list> </b-col
       ><b-col col cols="3"><StorySuggestionList v-model="entry" /></b-col>
-      <b-col col cols="3">
+      <b-col col cols="5">
         <b-form-input
           placeholder="Titre de l'histoire"
           type="text"
           class="w-100"
           :value="entry.title || ''" /></b-col
-      ><b-col col cols="3">
-        <b-button
-          class="d-flex w-100 justify-content-between"
-          :disabled="!(storyAiSuggestions.length || storyKindAiSuggestion)"
-          @click="
-            showAiDetectionsOn =
-              showAiDetectionsOn === undefined ? entry.id : undefined
-          "
-        >
-          <div>{{ $t("Détections AI") }}</div>
-          <i-bi-chevron-down />
-        </b-button>
-      </b-col>
-      <template v-if="showAiDetectionsOn">
-        <b-col col cols="3" class="text-start white-space-normal">
-          <div>
-            {{
-              $t("{numberOfPanels} cases trouvées", {
-                numberOfPanels: pages[0].aiKumikoResultPanels.length,
-              })
-            }}
-            <table-tooltip
-              target="panels"
-              :data="pages[0].aiKumikoResultPanels"
-            />
-            <i-bi-info-circle-fill id="panels" />
-          </div>
-          <div v-if="storyKindAiSuggestion">
-            <i-bi-arrow-right />&nbsp;<AiSuggestionIcon status="success" />
-            {{ getStoryKind(storyKindAiSuggestion.kind) }}
-          </div>
-        </b-col>
-        <b-col col cols="3" class="text-start white-space-normal">
-          <div v-if="pages[0].aiOcrResults.length">
-            {{
-              $t("{textNumber} textes trouvés", {
-                textNumber: pages[0].aiOcrResults.length,
-              })
-            }}
-            <table-tooltip target="texts" :data="pages[0].aiOcrResults" />
-            <i-bi-info-circle-fill id="texts" />
-            <div v-if="pages[0].aiOcrPossibleStories.length">
+      ><b-col col cols="1">
+        <AiSuggestionIcon
+          :id="`ai-results-entry-${entry.id}`"
+          :disabled="!storyAiSuggestions.length && !storyKindAiSuggestion"
+          status="info"
+          @click="showAiDetectionsOn = entry.id"
+        />
+        <b-tooltip :target="`ai-results-entry-${entry.id}`" click>
+          <b-row>
+            <b-col col cols="3" class="text-start white-space-normal">
               <div>
                 {{
-                  $t(
-                    "{numberOfStories} histoires trouvées avec ces mots-clés",
-                    {
-                      numberOfStories: pages[0].aiOcrPossibleStories.length,
-                    },
-                  )
+                  $t("{numberOfPanels} cases trouvées", {
+                    numberOfPanels: pages[0].aiKumikoResultPanels.length,
+                  })
                 }}
                 <table-tooltip
-                  target="stories"
-                  :data="pages[0].aiOcrPossibleStories"
+                  target="panels"
+                  :data="pages[0].aiKumikoResultPanels"
                 />
-                <i-bi-info-circle-fill id="stories" />
+                <i-bi-info-circle-fill id="panels" />
               </div>
-              <div
-                v-for="possibleStory in pages[0].aiOcrPossibleStories"
-                :key="
-                  possibleStory.storySuggestions[0].storyversioncode ||
-                  'unknown'
-                "
-              >
+              <div v-if="storyKindAiSuggestion">
                 <i-bi-arrow-right />&nbsp;<AiSuggestionIcon status="success" />
-                <Story :story="possibleStory.storySuggestions[0]" />
+                {{ getStoryKind(storyKindAiSuggestion.kind) }}
               </div>
-            </div>
-            <div v-else>
-              {{
-                $t("{numberOfStories} histoires trouvées avec ces mots-clés", {
-                  numberOfStories: 0,
-                })
-              }}
-            </div>
-          </div>
-          <div v-else>
-            {{
-              $t("{textNumber} textes trouvés", {
-                textNumber: 0,
-              })
-            }}
-          </div></b-col
-        ></template
-      ></template
-    >
+            </b-col>
+            <b-col col cols="3" class="text-start white-space-normal">
+              <div v-if="pages[0].aiOcrResults.length">
+                {{
+                  $t("{textNumber} textes trouvés", {
+                    textNumber: pages[0].aiOcrResults.length,
+                  })
+                }}
+                <table-tooltip target="texts" :data="pages[0].aiOcrResults" />
+                <i-bi-info-circle-fill id="texts" />
+                <div v-if="pages[0].aiOcrPossibleStories.length">
+                  <div>
+                    {{
+                      $t(
+                        "{numberOfStories} histoires trouvées avec ces mots-clés",
+                        {
+                          numberOfStories: pages[0].aiOcrPossibleStories.length,
+                        },
+                      )
+                    }}
+                    <table-tooltip
+                      target="stories"
+                      :data="pages[0].aiOcrPossibleStories"
+                    />
+                    <i-bi-info-circle-fill id="stories" />
+                  </div>
+                  <div
+                    v-for="possibleStory in pages[0].aiOcrPossibleStories"
+                    :key="
+                      possibleStory.storySuggestions[0].storyversioncode ||
+                      'unknown'
+                    "
+                  >
+                    <i-bi-arrow-right />&nbsp;<AiSuggestionIcon
+                      status="success"
+                    />
+                    <Story :story="possibleStory.storySuggestions[0]" />
+                  </div>
+                </div>
+                <div v-else>
+                  {{
+                    $t(
+                      "{numberOfStories} histoires trouvées avec ces mots-clés",
+                      {
+                        numberOfStories: 0,
+                      },
+                    )
+                  }}
+                </div>
+              </div>
+              <div v-else>
+                {{
+                  $t("{textNumber} textes trouvés", {
+                    textNumber: 0,
+                  })
+                }}
+              </div></b-col
+            ></b-row
+          ></b-tooltip
+        >
+      </b-col>
+    </template>
     <template v-else>
       <b-col col cols="3">
         <b-badge
