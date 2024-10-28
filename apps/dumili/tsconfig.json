@@ -45,6 +45,9 @@
       "~dumili-types/*": [
         "types/*"
       ],
+      "~dumili-utils/*": [
+        "utils/*"
+      ],
       "~web/*": [
         "../web/*"
       ],
@@ -72,7 +75,8 @@
     "src/**/*.ts",
     "types/**/*.ts",
     "src/**/*.d.ts",
-    "src/**/*.vue"
+    "src/**/*.vue",
+    "utils/*.ts"
   ],
   "references": [
     {

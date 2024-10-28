@@ -123,6 +123,7 @@ export default abstract class {
   ) => void;
 
   abstract runKumiko: (
+    entryId: entry['id'],
     callback: (
       data: Errorable<{ status: "OK" }, "Kumiko output could not be parsed">,
     ) => void,

@@ -6,9 +6,9 @@ import type { NamespaceWithData, SessionDataWithIndexation } from "~/index";
 import { prisma } from "~/index";
 import CoaServices from "~dm-services/coa/types";
 import { storyKinds } from "~dumili-types/storyKinds";
+import { getFirstPageOfEntry } from "~dumili-utils/getFirstPageOfEntry";
 import {
   entry,
-  Prisma,
   storyKindSuggestion,
   storySuggestion,
 } from "~prisma/client_dumili";
@@ -198,19 +198,19 @@ export default (io: Server) => {
         },
       );
 
-      indexationSocket.on("runKumiko", async (callback) =>
-        runKumiko(indexationSocket.data.indexation.pages.map(({ url }) => url))
-          .then(async (panelsPerPage) => {
-            const transactions: Prisma.PrismaPromise<any>[] = []
-            // TODO create story kind suggestions on entries covering each page
-            // const entries = indexationSocket.data.indexation.entries;
-            panelsPerPage.forEach((panelsOfPage, idx) => {
-              const pageNumber = idx + 1;
-              /*const inferredKind = */inferStoryKindFromAiResults(
-                panelsOfPage,
-                pageNumber,
-              );
+      indexationSocket.on("runKumiko", async (entryId, callback) => {
+        const { indexation } = indexationSocket.data;
+        const entry = indexation.entries.find(({ id }) => id === entryId)!;
+        const firstPageOfEntry = getFirstPageOfEntry(
+          indexation,
+          indexation.entries.findIndex(({ id }) => id === entryId)
+        );
+        const pages = indexation.pages.slice(firstPageOfEntry - 1, firstPageOfEntry + entry.entirepages - 1);
 
+        runKumiko(pages.map(({ url }) => url))
+          .then(async (panelsPerPage) => {
+            const transactions = [];
+            const pagesInferredKinds = panelsPerPage.map(( panelsOfPage, idx) => {
               const page = indexationSocket.data.indexation.pages[idx];
               transactions.push(prisma.page.update({
                 data: {
@@ -223,10 +223,41 @@ export default (io: Server) => {
                 where: {
                   id: page.id,
                 }
-              }))
-            });
+              }));
 
-            await prisma.$transaction(transactions)
+              return inferStoryKindFromAiResults(
+                panelsOfPage,
+                idx + 1
+              );
+            }, []);
+
+              // Store most inferred story kind in array
+              const mostInferredStoryKind = pagesInferredKinds.reduce((acc, kind) =>
+                pagesInferredKinds.filter((k) => k === kind).length
+                  > pagesInferredKinds.filter((k) => k === acc).length
+                  ? kind
+                  : acc,
+                pagesInferredKinds[0]);
+
+            transactions.push(prisma.entry.update({
+              where: {
+                id: indexationSocket.data.indexation.entries[0].id,
+              },
+              data: {
+                storyKindSuggestions: {
+                  updateMany: {
+                    data: {
+                      isChosenByAi: true,
+                    },
+                    where: {
+                      kind: mostInferredStoryKind,
+                    },
+                  }
+                }
+              }
+            }));
+
+            await prisma.$transaction(transactions);
 
             callback({ status: "OK" });
           })
@@ -235,7 +266,8 @@ export default (io: Server) => {
             callback({
               error: "Kumiko output could not be parsed",
             });
-          }),
+          });
+      },
       );
 
       indexationSocket.on("runOcr", async (pageUrl, callback) => {

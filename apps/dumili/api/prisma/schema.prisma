@@ -39,7 +39,6 @@ model page {
   aiOcrPossibleStories aiOcrPossibleStory[]
   aiOcrResults         aiOcrResult[]
   indexation           indexation            @relation(fields: [indexationId], references: [id], onUpdate: Restrict, map: "page_indexation_id_fk")
-  storyKindSuggestion  storyKindSuggestion[]
 
   @@unique([indexationId, pageNumber], map: "page_indexation_id_page_number_uindex")
   @@index([indexationId], map: "page_indexation_id_fk")
@@ -61,14 +60,12 @@ model indexation {
 model storyKindSuggestion {
   id                Int       @id @default(autoincrement())
   kind              storyKind
-  aiSourcePageId    Int?      @map("ai_source_page_id")
   entryId           Int       @map("entry_id")
   acceptedOnEntries entry[]   @relation("entry_accepted_story_kind_suggested_idTostory_kind_suggestion")
   entry             entry     @relation("story_kind_suggestion_entry_idToentry", fields: [entryId], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "story_kind_suggestion_entry_id_fk")
-  aiSourcePage      page?     @relation(fields: [aiSourcePageId], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "story_kind_suggestion_page_id_fk")
+  isChosenByAi      Boolean   @default(false) @map("is_chosen_by_ai")
 
   @@index([entryId], map: "story_kind_suggestion_entry_id_fk")
-  @@index([aiSourcePageId], map: "story_kind_suggestion_ai_source_page_id_fk")
   @@map("story_kind_suggestion")
 }
 

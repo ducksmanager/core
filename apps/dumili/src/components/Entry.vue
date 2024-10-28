@@ -5,7 +5,7 @@
         <suggestion-list
           v-model="entry.acceptedStoryKind"
           :suggestions="entry.storyKindSuggestions"
-          :is-ai-source="(suggestion) => suggestion.aiSourcePageId !== null"
+          :is-ai-source="(suggestion) => suggestion.isChosenByAi"
           :item-class="(suggestion) => [`kind-${suggestion.kind}`]"
         >
           <template #item="suggestion">
@@ -195,9 +195,7 @@ const pages: FullIndexation["pages"] = []; // TODO
 const acceptedStory = computed(() => acceptedStories.value[entry.value.id]);
 
 const storyKindAiSuggestion = computed(() =>
-  entry.value.storyKindSuggestions.find(
-    ({ aiSourcePageId }) => aiSourcePageId !== null,
-  ),
+  entry.value.storyKindSuggestions.find(({ isChosenByAi }) => isChosenByAi),
 );
 
 const storyAiSuggestions = computed(() =>

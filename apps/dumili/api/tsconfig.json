@@ -25,8 +25,14 @@
       "~dm-types/*": [
         "../../../packages/types/*"
       ],
+      "~dumili-services/*": [
+        "./services/*"
+      ],
       "~dumili-types/*": [
         "../types/*"
+      ],
+      "~dumili-utils/*": [
+        "../utils/*"
       ],
       "~dm-services/*": [
         "../../../packages/api/services/*"

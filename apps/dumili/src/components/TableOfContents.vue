@@ -76,7 +76,7 @@
   height: number) => onEntryResizeStop(idx, height)"
             @click="
               if (entry !== currentEntry)
-                currentPage = getFirstPageOfEntry(idx);
+                currentPage = getFirstPageOfEntry(indexation, idx);
             "
           ></vue-draggable-resizable>
           <b-button
@@ -103,7 +103,7 @@
           <b-col
             @click="
               if (entry !== currentEntry)
-                currentPage = getFirstPageOfEntry(idx);
+                currentPage = getFirstPageOfEntry(indexation, idx);
             "
             ><Entry
               v-model="indexation.entries[idx]"
@@ -118,7 +118,7 @@
 <script setup lang="ts">
 import useAi from "~/composables/useAi";
 import { dumiliSocketInjectionKey } from "~/composables/useDumiliSocket";
-import useEntryPage from "~/composables/useEntryPage";
+import { getFirstPageOfEntry } from "~dumili-utils/getFirstPageOfEntry";
 import { suggestions } from "~/stores/suggestions";
 import { ui } from "~/stores/ui";
 import { FullEntry, FullIndexation } from "~dumili-services/indexation/types";
@@ -138,8 +138,6 @@ const currentPage = defineModel<number>();
 const lastHoveredEntry = ref<entryModel | null>(null);
 
 const { status: aiStatus, runKumiko } = useAi();
-
-const { getFirstPageOfEntry } = useEntryPage(indexation);
 
 const tocPageHeight = 50;
 
