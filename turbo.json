@@ -4,6 +4,7 @@
   "tasks": {
     "lint": {},
     "build": {
+      "passThroughEnv": ["SENTRY_AUTH_TOKEN"],
       "inputs": [
         "$TURBO_DEFAULT$",
         "!api"
