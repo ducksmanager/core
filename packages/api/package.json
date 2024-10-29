@@ -5,7 +5,7 @@
   },
   "version": "1.0.0",
   "scripts": {
-    "build": "bun build --target node index.ts --sourcemap=linked --outfile dist/index.mjs && pnpm sentry:sourcemaps",
+    "build": "bun build --target node index.ts --sourcemap=linked --outdir dist && pnpm sentry:sourcemaps",
     "dev:blocking-up": "wait-on tcp:3000",
     "dev": "concurrently -n api,docker-compose \"pnpm -F ~api nodemon-watch\" \"docker compose -f docker-compose-dev.yml up pastec mailcatcher\"",
     "nodemon-watch": "bun --inspect run --watch index.ts",
