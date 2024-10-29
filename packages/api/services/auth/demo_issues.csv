@@ -1,37 +1,37 @@
-publicationcode,condition,purchaseId,issuenumber
-fr/CB,bon,-2,P 88
-fr/DDD,bon,1003,1
-fr/DDD,bon,1003,2
-fr/DDD,bon,1003,3
-fr/MCO,bon,1000,1
-fr/MCO,bon,1000,2
-fr/MCO,bon,1000,3
-fr/MCO,bon,1000,4
-fr/MP,bon,-2,190
-fr/MP,bon,-2,191
-fr/MP,bon,-2,192
-fr/MP,bon,-2,193
-fr/MP,bon,-2,213
-fr/MP,bon,-2,214
-fr/MP,bon,-2,215
-fr/MP,bon,-2,216
-fr/MP,bon,-2,217
-fr/MP,bon,-2,313
-fr/MP,bon,-2,314
-fr/MP,bon,-2,317
-fr/MP,bon,-2,318
-fr/MP,bon,-2,319
-fr/MP,bon,-2,320
-fr/MP,bon,-2,321
-fr/MP,moyen,-2,323
-fr/MP,moyen,-2,324
-fr/PM,bon,1001,381
-fr/PM,bon,1001,382
-fr/PM,bon,1001,383
-fr/PM,bon,1001,384
-fr/PM,bon,1001,386
-fr/PM,bon,1001,387
-fr/MP,bon,-2,322
-fr/MP,moyen,-2,322
-us/WDC,bon,1001,375
-es/BCB,bon,1002,1
+issuecode,condition,purchaseId
+fr/CB P  88,bon,-2
+fr/DDD   1,bon,1003
+fr/DDD   2,bon,1003
+fr/DDD   3,bon,1003
+fr/MCO   1,bon,1000
+fr/MCO   2,bon,1000
+fr/MCO   3,bon,1000
+fr/MCO   4,bon,1000
+fr/MP  190,bon,-2
+fr/MP  191,bon,-2
+fr/MP  192,bon,-2
+fr/MP  193,bon,-2
+fr/MP  213,bon,-2
+fr/MP  214,bon,-2
+fr/MP  215,bon,-2
+fr/MP  216,bon,-2
+fr/MP  217,bon,-2
+fr/MP  313,bon,-2
+fr/MP  314,bon,-2
+fr/MP  317,bon,-2
+fr/MP  318,bon,-2
+fr/MP  319,bon,-2
+fr/MP  320,bon,-2
+fr/MP  321,bon,-2
+fr/MP  323,moyen,-2
+fr/MP  324,moyen,-2
+fr/PM  381,bon,1001,
+fr/PM  382,bon,1001
+fr/PM  383,bon,1001
+fr/PM  384,bon,1001
+fr/PM  386,bon,1001
+fr/PM  387,bon,1001
+fr/MP  322,bon,-2
+fr/MP  322,moyen,-2
+us/WDC 375,bon,1001
+es/BCB  1,bon,1002

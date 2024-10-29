@@ -385,22 +385,18 @@ export const resetDemo = async () => {
     readFileSync(`${csvPath}demo_issues.csv`),
     { columns: true },
   );
-  await prismaDm.$transaction(
-    csvIssues.map(({ issuecode, condition, purchaseId }) => {
-      return prismaDm.issue.create({
-        data: {
-          userId: demoUser.id,
-          country: "",
-          magazine: "",
-          issuenumber: "",
-          issuecode,
-          condition,
-          purchaseId: parseInt(purchaseId),
-          isOnSale: false,
-        },
-      });
-    }),
-  );
+  await prismaDm.issue.createMany({
+    data: csvIssues.map(({ issuecode, condition, purchaseId }) => ({
+      userId: demoUser.id,
+      country: "",
+      magazine: "",
+      issuenumber: "",
+      issuecode,
+      condition,
+      purchaseId: parseInt(purchaseId),
+      isOnSale: false,
+    })),
+  });
 
   interface CsvPurchase {
     date: string;
@@ -411,17 +407,13 @@ export const resetDemo = async () => {
     readFileSync(`${csvPath}demo_purchases.csv`),
     { columns: true },
   );
-  await prismaDm.$transaction(
-    csvPurchases.map(({ date, description }) =>
-      prismaDm.purchase.create({
-        data: {
-          userId: demoUser.id,
-          date: new Date(date),
-          description,
-        },
-      }),
-    ),
-  );
+  await prismaDm.purchase.createMany({
+    data: csvPurchases.map(({ date, description }) => ({
+      userId: demoUser.id,
+      date: new Date(date),
+      description,
+    })),
+  });
 };
 
 const deleteUserData = async (
