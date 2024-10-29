@@ -5,7 +5,7 @@
   },
   "version": "1.0.0",
   "scripts": {
-    "build": "bun build --target node index.ts --sourcemap=linked && pnpm sentry:sourcemaps",
+    "build": "bun build --target node index.ts --sourcemap=linked --outfile dist/index.mjs && pnpm sentry:sourcemaps",
     "dev:blocking-up": "wait-on tcp:3000",
     "dev": "concurrently -n api,docker-compose \"pnpm -F ~api nodemon-watch\" \"docker compose -f docker-compose-dev.yml up pastec mailcatcher\"",
     "nodemon-watch": "bun --inspect run --watch index.ts",
@@ -13,7 +13,7 @@
     "prod:build-docker": "REPO_NAME=ghcr.io/bperel/ducksmanager-api:websocket pnpm -F '~ci' prod:build-docker -f packages/api/Dockerfile",
     "prod:transfer-files-pre": "pnpm -F '~ci' prod:transfer-files @packages/api/.env:packages/api/.env @packages/prisma-clients/.env.prod.local:packages/prisma-schemas/.env",
     "prod:transfer-files-post": "pnpm -F '~ci' prod:transfer-files packages/api/docker-compose.yml:@packages/api/docker-compose.yml",
-    "sentry:sourcemaps": "sentry-cli sourcemaps inject --org bruno-perel --project dm-api ./ && sentry-cli sourcemaps upload --org bruno-perel --project dm-api ./"
+    "sentry:sourcemaps": "sentry-cli sourcemaps inject --org bruno-perel --project dm-api ./dist && sentry-cli sourcemaps upload --org bruno-perel --project dm-api ./dist"
   },
   "dependencies": {
     "@opentelemetry/instrumentation-socket.io": "^0.42.0",

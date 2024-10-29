@@ -16,7 +16,7 @@ COPY packages/api/services/auth/demo_purchases.csv /app/demo_purchases.csv
 RUN grep GITHUB_NAME /app/.env
 
 COPY packages/api/emails /app/emails
-COPY packages/api/index.mjs /app/
+COPY packages/api/index.js /app/index.mjs
 
 EXPOSE 3000
 CMD ["pm2", "start", "--no-daemon", "-i", "max", "index.mjs"]
