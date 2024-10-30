@@ -22,6 +22,7 @@ import { CapacitorUpdater } from '@capgo/capacitor-updater';
 import { defineCustomElements } from '@ionic/pwa-elements/loader';
 import { Drivers, Storage } from '@ionic/storage';
 import { IonicVue } from '@ionic/vue';
+import { init as sentryInit } from '@sentry/capacitor';
 import CordovaSQLiteDriver from 'localforage-cordovasqlitedriver';
 import { createPinia } from 'pinia';
 import VueVirtualScroller from 'vue-virtual-scroller';
@@ -54,6 +55,14 @@ const app = createApp(App)
   .provide('dmSocket', new SocketClient(socketUrl));
 
 router.isReady().then(async () => {
+  if (Capacitor.isNativePlatform()) {
+    const currentBundleVersion = (await CapacitorUpdater.current())?.bundle.version;
+    sentryInit({
+      dsn: import.meta.env.SENTRY_DSN,
+      release: `whattheduck@${(await CapacitorUpdater.current())?.bundle.version}`,
+      dist: currentBundleVersion,
+    });
+  }
   const storage = new Storage({
     driverOrder: [CordovaSQLiteDriver._driver, Drivers.IndexedDB, Drivers.LocalStorage],
     name: 'whattheduck',

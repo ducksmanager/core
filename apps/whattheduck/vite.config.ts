@@ -14,6 +14,10 @@ export default defineConfig({
     port: 8008,
   },
 
+  build: {
+    sourcemap: true,
+  },
+
   plugins: [
     vue(),
     ReactivityTransform(),

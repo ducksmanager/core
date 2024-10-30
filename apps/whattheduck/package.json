@@ -9,7 +9,7 @@
     "lint": "eslint .",
     "set-android-socket-url": "echo VITE_DM_SOCKET_URL_NATIVE=http://`ipconfig getifaddr en0`:3000 > .env.local",
     "dev": "concurrently -n vite,vue-tsc  \"vite --port 8003 --host\" \"vue-tsc --noEmit --watch\"",
-    "build": "vite build && vue-tsc --noEmit",
+    "build": "vite build && vue-tsc --noEmit && pnpm sentry:sourcemaps",
     "prod:deploy-get-previous-release": "gh release list --json name,tagName --jq 'map(select(.name | startswith(\"WhatTheDuck\")))[0]' | jq -r '.tagName'",
     "prod:deploy": "export DATE=$(date +'%Y-%m-%dT%H%M%S'); export BUNDLE_FILE=whattheduck-bundle-$DATE.zip; pnpm bundle-capgo && pnpm prod:deploy-create-release && pnpm prod-deploy-update-latest-bundle",
     "prod-deploy-update-latest-bundle": "echo https://github.com/ducksmanager/core/releases/download/whattheduck-$DATE/$BUNDLE_FILE > latest-whattheduck-bundle.txt && pnpm -F '~ci' prod:transfer-files apps/whattheduck/latest-whattheduck-bundle.txt:@packages/api/latest-whattheduck-bundle.txt",
@@ -17,7 +17,8 @@
     "bundle-capgo": "capgo bundle zip --name $BUNDLE_FILE",
     "ionic:build": "pnpm build",
     "preview": "vite preview",
-    "story:dev": "histoire dev"
+    "story:dev": "histoire dev",
+    "sentry:sourcemaps": "sentry-cli sourcemaps inject --org bruno-perel --project whattheduck ./dist && sentry-cli sourcemaps upload --org bruno-perel --project whattheduck ./dist"
   },
   "dependencies": {
     "@capacitor-community/camera-preview": "^6.0.0",
@@ -40,6 +41,8 @@
     "@ionic/vue": "^8.3.3",
     "@ionic/vue-router": "^8.3.3",
     "@nanoandrew4/vue3-carousel-3d": "^1.0.0",
+    "@sentry/capacitor": "^1.0.1",
+    "@sentry/vue": "^8.35.0",
     "@vueuse/components": "^11.1.0",
     "@vueuse/core": "^11.1.0",
     "@vueuse/integrations": "^11.1.0",
@@ -72,6 +75,7 @@
     "@eslint/js": "^9.13.0",
     "@histoire/plugin-vue": "^0.17.17",
     "@ionic/prettier-config": "^4.0.0",
+    "@sentry/cli": "^2.38.0",
     "@types/js-cookie": "^3.0.6",
     "@types/node": "^20.17.0",
     "@vitejs/plugin-vue": "^5.1.4",
