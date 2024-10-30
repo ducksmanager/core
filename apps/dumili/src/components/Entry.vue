@@ -21,13 +21,11 @@
           class="w-100"
           :value="entry.title || ''" /></b-col
       ><b-col col cols="1">
-        <AiSuggestionIcon
+        <ai-tooltip
           :id="`ai-results-entry-${entry.id}`"
           :disabled="!storyAiSuggestions.length && !storyKindAiSuggestion"
-          status="info"
           @click="showAiDetectionsOn = entry.id"
-        />
-        <b-tooltip :target="`ai-results-entry-${entry.id}`" click>
+        >
           <b-row>
             <b-col col cols="3" class="text-start white-space-normal">
               <div>
@@ -54,7 +52,9 @@
                     textNumber: pages[0].aiOcrResults.length,
                   })
                 }}
-                <table-tooltip target="texts" :data="pages[0].aiOcrResults" />
+                <b-tooltip target="texts" click
+                  ><table-results :data="pages[0].aiOcrResults"
+                /></b-tooltip>
                 <i-bi-info-circle-fill id="texts" />
                 <div v-if="pages[0].aiOcrPossibleStories.length">
                   <div>
@@ -104,7 +104,7 @@
                 }}
               </div></b-col
             ></b-row
-          ></b-tooltip
+          ></ai-tooltip
         >
       </b-col>
     </template>

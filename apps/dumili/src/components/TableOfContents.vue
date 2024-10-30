@@ -24,7 +24,12 @@
     <b-row>
       <b-col :cols="1" style="padding: 0">
         <b-row
-          v-for="{ id, pageNumber, aiKumikoResultPanels } in indexation.pages"
+          v-for="{
+            id,
+            pageNumber,
+            aiKumikoResultPanels,
+            aiKumikoInferredStoryKind,
+          } in indexation.pages"
           :key="id"
           style="height: 50px"
           :variant="currentPage === pageNumber ? 'secondary' : 'light'"
@@ -40,13 +45,20 @@
               ><i-bi-scissors
             /></b-button
             >-->
-            <table-tooltip
-              :target="`ai-results-page-${pageNumber}`"
-              :data="aiKumikoResultPanels" />
-            <AiSuggestionIcon
+            <ai-tooltip
+              v-if="aiKumikoResultPanels"
               :id="`ai-results-page-${pageNumber}`"
-              status="info"
-          /></b-col>
+            >
+              Detected panels:
+              <table-results :data="aiKumikoResultPanels" />
+              Inferred story kind:
+              {{
+                storyKinds.find(
+                  ({ code }) => code === aiKumikoInferredStoryKind,
+                )?.label
+              }}
+            </ai-tooltip>
+          </b-col>
         </b-row>
       </b-col>
       <b-col :cols="1" class="position-relative p-0">
@@ -69,10 +81,10 @@
             )})`"
             @mouseover="hoveredEntry = entry"
             @mouseout="hoveredEntry = null"
-            @resize-stop="(_left: number,
-              _top: number,
-              _width: number,
-              height: number) => onEntryResizeStop(idx, height)"
+            @resize-stop="
+              (_left: number, _top: number, _width: number, height: number) =>
+                onEntryResizeStop(idx, height)
+            "
             @click="
               if (entry !== currentEntry)
                 currentPage = getFirstPageOfEntry(indexation, idx);
@@ -122,6 +134,7 @@ import { suggestions } from "~/stores/suggestions";
 import { ui } from "~/stores/ui";
 import { FullEntry, FullIndexation } from "~dumili-services/indexation/types";
 import { entry as entryModel } from "~prisma/client_dumili";
+import { storyKinds } from "~dumili-types/storyKinds";
 
 defineProps<{
   shownPages: number[];

@@ -106,11 +106,11 @@ export default (io: Server) => {
                 suggestionId === null
                   ? { disconnect: true }
                   : {
-                      connect: {
-                        id: suggestionId,
-                        indexationId: indexationSocket.data.indexation.id,
-                      },
+                    connect: {
+                      id: suggestionId,
+                      indexationId: indexationSocket.data.indexation.id,
                     },
+                  },
             },
             where: {
               id: indexationSocket.data.indexation.id,
@@ -240,9 +240,16 @@ export default (io: Server) => {
                 console.log(
                   `Kumiko: page ${page.pageNumber}: detected ${panelsOfPage.length} panels`,
                 );
+
+                const inferredStoryKind = inferStoryKindFromAiResults(
+                  panelsOfPage,
+                  idx + 1,
+                );
+
                 transactions.push(
                   prisma.page.update({
                     data: {
+                      aiKumikoInferredStoryKind: inferredStoryKind,
                       aiKumikoResultPanels: {
                         createMany: {
                           data: panelsOfPage,
@@ -253,11 +260,6 @@ export default (io: Server) => {
                       id: page.id,
                     },
                   }),
-                );
-
-                const inferredStoryKind = inferStoryKindFromAiResults(
-                  panelsOfPage,
-                  idx + 1,
                 );
 
                 console.log(
@@ -272,7 +274,7 @@ export default (io: Server) => {
             const mostInferredStoryKind = pagesInferredKinds.reduce(
               (acc, kind) =>
                 pagesInferredKinds.filter((k) => k === kind).length >
-                pagesInferredKinds.filter((k) => k === acc).length
+                  pagesInferredKinds.filter((k) => k === acc).length
                   ? kind
                   : acc,
               pagesInferredKinds[0],
@@ -424,10 +426,10 @@ const acceptStorySuggestion = async (
         suggestionId === null
           ? { disconnect: true }
           : {
-              connect: {
-                id: suggestionId,
-              },
+            connect: {
+              id: suggestionId,
             },
+          },
     },
     where: {
       id: entryId,
@@ -444,10 +446,10 @@ const acceptStoryKindSuggestion = (
         suggestionId === null
           ? { disconnect: true }
           : {
-              connect: {
-                id: suggestionId,
-              },
+            connect: {
+              id: suggestionId,
             },
+          },
     },
     where: {
       id: entryId,
