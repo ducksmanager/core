@@ -21,13 +21,14 @@ export default (issues: ShallowRef<(issue & { issuecode: string })[]>) => {
       ),
   );
 
-  const totalPerPublication = computed(
-      () =>
-        Object.fromEntries(
-          Object.entries(issues.value?.groupBy("publicationcode", "[]")).map(
-            ([publicationcode, issues]) => [publicationcode, issues.length],
-          ),
-        ) || null,
+  const totalPerPublication = computed(() =>
+      issues.value
+        ? Object.fromEntries(
+            Object.entries(issues.value?.groupBy("publicationcode", "[]")).map(
+              ([publicationcode, issues]) => [publicationcode, issues.length],
+            ),
+          )
+        : null,
     ),
     issuesByIssuecode = computed(() =>
       issues.value?.groupBy("issuecode", "[]"),
@@ -103,7 +104,7 @@ export default (issues: ShallowRef<(issue & { issuecode: string })[]>) => {
       };
       return (
         issues.value
-          .map(({ issuecode, condition }) => ({
+          ?.map(({ issuecode, condition }) => ({
             issuecode,
             condition,
             estimation: coa().issueQuotations[issuecode],
