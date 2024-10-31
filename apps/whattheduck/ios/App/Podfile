@@ -14,7 +14,7 @@ def capacitor_pods
   pod 'CapacitorCommunityCameraPreview', :path => '../../../../node_modules/.pnpm/@capacitor-community+camera-preview@6.0.0_@capacitor+core@6.1.2/node_modules/@capacitor-community/camera-preview'
   pod 'CapacitorCommunitySqlite', :path => '../../../../node_modules/.pnpm/@capacitor-community+sqlite@6.0.2_@capacitor+core@6.1.2/node_modules/@capacitor-community/sqlite'
   pod 'CapacitorApp', :path => '../../../../node_modules/.pnpm/@capacitor+app@6.0.1_@capacitor+core@6.1.2/node_modules/@capacitor/app'
-  pod 'CapacitorCamera', :path => '../../../../node_modules/.pnpm/@capacitor+camera@6.0.2_@capacitor+core@6.1.2/node_modules/@capacitor/camera'
+  pod 'CapacitorCamera', :path => '../../../../node_modules/.pnpm/@capacitor+camera@6.1.0_@capacitor+core@6.1.2/node_modules/@capacitor/camera'
   pod 'CapacitorClipboard', :path => '../../../../node_modules/.pnpm/@capacitor+clipboard@6.0.1_@capacitor+core@6.1.2/node_modules/@capacitor/clipboard'
   pod 'CapacitorHaptics', :path => '../../../../node_modules/.pnpm/@capacitor+haptics@6.0.1_@capacitor+core@6.1.2/node_modules/@capacitor/haptics'
   pod 'CapacitorKeyboard', :path => '../../../../node_modules/.pnpm/@capacitor+keyboard@6.0.2_@capacitor+core@6.1.2/node_modules/@capacitor/keyboard'
@@ -23,6 +23,7 @@ def capacitor_pods
   pod 'CapawesomeCapacitorAppUpdate', :path => '../../../../node_modules/.pnpm/@capawesome+capacitor-app-update@6.0.0_@capacitor+core@6.1.2/node_modules/@capawesome/capacitor-app-update'
   pod 'CapawesomeCapacitorFilePicker', :path => '../../../../node_modules/.pnpm/@capawesome+capacitor-file-picker@6.1.0_@capacitor+core@6.1.2/node_modules/@capawesome/capacitor-file-picker'
   pod 'CapgoCapacitorUpdater', :path => '../../../../node_modules/.pnpm/@capgo+capacitor-updater@6.3.10_@capacitor+core@6.1.2/node_modules/@capgo/capacitor-updater'
+  pod 'SentryCapacitor', :path => '../../../../node_modules/.pnpm/@sentry+capacitor@1.0.1_@capacitor+core@6.1.2_@sentry+vue@8.36.0_pinia@2.2.5_typescript@5.6.3_ah4uiixu64il2xoqbziw5vapje/node_modules/@sentry/capacitor'
 end
 
 target 'What The Duck' do

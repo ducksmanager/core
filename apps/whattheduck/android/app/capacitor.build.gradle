@@ -21,6 +21,7 @@ dependencies {
     implementation project(':capawesome-capacitor-app-update')
     implementation project(':capawesome-capacitor-file-picker')
     implementation project(':capgo-capacitor-updater')
+    implementation project(':sentry-capacitor')
 
 }
 

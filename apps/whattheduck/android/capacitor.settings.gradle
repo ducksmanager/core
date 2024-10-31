@@ -12,7 +12,7 @@ include ':capacitor-app'
 project(':capacitor-app').projectDir = new File('../../../node_modules/.pnpm/@capacitor+app@6.0.1_@capacitor+core@6.1.2/node_modules/@capacitor/app/android')
 
 include ':capacitor-camera'
-project(':capacitor-camera').projectDir = new File('../../../node_modules/.pnpm/@capacitor+camera@6.0.2_@capacitor+core@6.1.2/node_modules/@capacitor/camera/android')
+project(':capacitor-camera').projectDir = new File('../../../node_modules/.pnpm/@capacitor+camera@6.1.0_@capacitor+core@6.1.2/node_modules/@capacitor/camera/android')
 
 include ':capacitor-clipboard'
 project(':capacitor-clipboard').projectDir = new File('../../../node_modules/.pnpm/@capacitor+clipboard@6.0.1_@capacitor+core@6.1.2/node_modules/@capacitor/clipboard/android')
@@ -37,3 +37,6 @@ project(':capawesome-capacitor-file-picker').projectDir = new File('../../../nod
 
 include ':capgo-capacitor-updater'
 project(':capgo-capacitor-updater').projectDir = new File('../../../node_modules/.pnpm/@capgo+capacitor-updater@6.3.10_@capacitor+core@6.1.2/node_modules/@capgo/capacitor-updater/android')
+
+include ':sentry-capacitor'
+project(':sentry-capacitor').projectDir = new File('../../../node_modules/.pnpm/@sentry+capacitor@1.0.1_@capacitor+core@6.1.2_@sentry+vue@8.36.0_pinia@2.2.5_typescript@5.6.3_ah4uiixu64il2xoqbziw5vapje/node_modules/@sentry/capacitor/android')
