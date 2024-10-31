@@ -11,102 +11,39 @@
           <template #item="suggestion">
             {{ getStoryKind(suggestion.kind) }}
           </template>
-          <template #unknown-text>{{ $t("Type inconnu") }}</template>
-        </suggestion-list> </b-col
-      ><b-col col cols="3"><StorySuggestionList v-model="entry" /></b-col>
-      <b-col col cols="5">
+          <template #unknown-text>{{
+            $t("Type inconnu")
+          }}</template></suggestion-list
+        ><ai-tooltip
+          :id="`ai-results-entry-${entry.id}`"
+          :disabled="!storyKindAiSuggestion"
+          @click="showAiDetectionsOn = entry.id"
+        >
+          <table-results :data="pagesWithInferredKinds" />
+          Inferred entry story kind:
+          {{
+            storyKinds.find(({ code }) => code === storyKindAiSuggestion?.kind)
+              ?.label
+          }}</ai-tooltip
+        ></b-col
+      ><b-col col cols="3"
+        ><StorySuggestionList v-model="entry" />
+        <ai-tooltip
+          :id="`ai-results-entry-${entry.id}`"
+          @click="showAiDetectionsOn = entry.id"
+        >
+          OCR results:
+          <table-results :data="pages[0].aiOcrResults" />
+          Potential stories:
+          <table-results :data="storyAiSuggestions" /></ai-tooltip
+      ></b-col>
+      <b-col col cols="6">
         <b-form-input
           placeholder="Titre de l'histoire"
           type="text"
           class="w-100"
-          :value="entry.title || ''" /></b-col
-      ><b-col col cols="1">
-        <ai-tooltip
-          :id="`ai-results-entry-${entry.id}`"
-          :disabled="!storyAiSuggestions.length && !storyKindAiSuggestion"
-          @click="showAiDetectionsOn = entry.id"
-        >
-          <b-row>
-            <b-col col cols="3" class="text-start white-space-normal">
-              <div>
-                {{
-                  $t("{numberOfPanels} cases trouvées", {
-                    numberOfPanels: pages[0].aiKumikoResultPanels.length,
-                  })
-                }}
-                <table-tooltip
-                  target="panels"
-                  :data="pages[0].aiKumikoResultPanels"
-                />
-                <i-bi-info-circle-fill id="panels" />
-              </div>
-              <div v-if="storyKindAiSuggestion">
-                <i-bi-arrow-right />&nbsp;<AiSuggestionIcon status="success" />
-                {{ getStoryKind(storyKindAiSuggestion.kind) }}
-              </div>
-            </b-col>
-            <b-col col cols="3" class="text-start white-space-normal">
-              <div v-if="pages[0].aiOcrResults.length">
-                {{
-                  $t("{textNumber} textes trouvés", {
-                    textNumber: pages[0].aiOcrResults.length,
-                  })
-                }}
-                <b-tooltip target="texts" click
-                  ><table-results :data="pages[0].aiOcrResults"
-                /></b-tooltip>
-                <i-bi-info-circle-fill id="texts" />
-                <div v-if="pages[0].aiOcrPossibleStories.length">
-                  <div>
-                    {{
-                      $t(
-                        "{numberOfStories} histoires trouvées avec ces mots-clés",
-                        {
-                          numberOfStories: pages[0].aiOcrPossibleStories.length,
-                        },
-                      )
-                    }}
-                    <table-tooltip
-                      target="stories"
-                      :data="pages[0].aiOcrPossibleStories"
-                    />
-                    <i-bi-info-circle-fill id="stories" />
-                  </div>
-                  <div
-                    v-for="possibleStory in pages[0].aiOcrPossibleStories"
-                    :key="
-                      possibleStory.storySuggestions[0].storyversioncode ||
-                      'unknown'
-                    "
-                  >
-                    <i-bi-arrow-right />&nbsp;<AiSuggestionIcon
-                      status="success"
-                    />
-                    <Story :story="possibleStory.storySuggestions[0]" />
-                  </div>
-                </div>
-                <div v-else>
-                  {{
-                    $t(
-                      "{numberOfStories} histoires trouvées avec ces mots-clés",
-                      {
-                        numberOfStories: 0,
-                      },
-                    )
-                  }}
-                </div>
-              </div>
-              <div v-else>
-                {{
-                  $t("{textNumber} textes trouvés", {
-                    textNumber: 0,
-                  })
-                }}
-              </div></b-col
-            ></b-row
-          ></ai-tooltip
-        >
-      </b-col>
+          :value="entry.title || ''"
+      /></b-col>
     </template>
     <template v-else>
       <b-col col cols="3">
@@ -154,7 +91,7 @@ import { getEntryPages } from "~dumili-utils/entryPages";
 import type { storyKind } from "~prisma/client_dumili";
 
 const { t: $t } = useI18n();
-const props = defineProps<{
+defineProps<{
   editable: boolean;
 }>();
 
@@ -162,6 +99,15 @@ const { indexationSocket } = inject(dumiliSocketInjectionKey)!;
 const { indexation } = storeToRefs(suggestions());
 
 const entry = defineModel<FullEntry>({ required: true });
+
+const pagesWithInferredKinds = computed(() =>
+  getEntryPages(indexation.value!, entry.value.id).map((page) => ({
+    page,
+    "inferred page story kind": storyKinds.find(
+      ({ code }) => code === page.aiKumikoInferredStoryKind,
+    )?.label,
+  })),
+);
 
 watch(
   () => entry.value.acceptedStoryKind,
@@ -187,8 +133,6 @@ watch(
     });
   },
 );
-
-const { editable } = toRefs(props);
 
 const { acceptedStories } = storeToRefs(suggestions());
 const { storyversionDetails } = storeToRefs(coa());

@@ -15,7 +15,7 @@ const dumiliSocket = inject(dumiliSocketInjectionKey)!;
 
 const { user } = storeToRefs(webStores.collection());
 
-const props = defineProps<{
+const { folderName } = defineProps<{
   folderName: string;
 }>();
 
@@ -37,14 +37,14 @@ const uploadWidget = cloudinary.createUploadWidget(
   {
     cloudName: import.meta.env.VITE_CLOUDINARY_CLOUDNAME,
     uploadPreset: "p1urov1k",
-    folder: `dumili/${user.value!.username}/${props.folderName}`,
+    folder: `dumili/${user.value!.username}/${folderName}`,
     showPoweredBy: false,
     sources: ["local", "url"],
     multiple: true,
     maxFileSize: 10 * 1024 * 1024,
     maxImageFileSize: 5 * 1024 * 1024,
     context: {
-      indexation: props.folderName,
+      indexation: folderName,
       project: "dumili",
       user: user.value!.username,
     },
@@ -85,8 +85,8 @@ const uploadWidget = cloudinary.createUploadWidget(
 );
 
 onMounted(async () => {
-  await dumiliSocket.indexations.services.create(props.folderName);
-  dumiliSocket.setIndexationSocketFromId(props.folderName);
+  await dumiliSocket.indexations.services.create(folderName);
+  dumiliSocket.setIndexationSocketFromId(folderName);
   indexationSocket.value = dumiliSocket.indexationSocket.value!;
   uploadWidget.open();
 });

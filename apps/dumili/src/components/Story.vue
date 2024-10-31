@@ -4,7 +4,7 @@
   <slot name="suffix" />
 </template>
 <script setup lang="ts">
-const { story } = defineProps<{
+defineProps<{
   story: {
     storyversioncode: string;
   };

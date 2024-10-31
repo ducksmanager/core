@@ -51,7 +51,7 @@
             >
               Detected panels:
               <table-results :data="aiKumikoResultPanels" />
-              Inferred story kind:
+              Inferred page story kind:
               {{
                 storyKinds.find(
                   ({ code }) => code === aiKumikoInferredStoryKind,
