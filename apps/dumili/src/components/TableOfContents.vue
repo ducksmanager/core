@@ -21,7 +21,7 @@
         /></b-button></div
     ></template>
 
-    <b-row>
+    <b-row style="outline: 1px solid black">
       <b-col :cols="1" style="padding: 0">
         <b-row
           v-for="{
@@ -33,7 +33,7 @@
           :key="id"
           style="height: 50px"
           :variant="currentPage === pageNumber ? 'secondary' : 'light'"
-          class="g-0 px-0 py-0 align-items-center border"
+          class="g-0 px-0 py-0 align-items-center page"
         >
           <b-col
             role="button"
@@ -73,7 +73,6 @@
       </b-col>
       <b-col :cols="1" class="position-relative p-0">
         <template v-for="(entry, idx) in indexation.entries" :key="entry.id">
-          <div style="height: 1px" class="bg-black"></div>
           <vue-draggable-resizable
             :active="hoveredEntry === entry"
             :parent="true"
@@ -120,7 +119,7 @@
           v-for="(entry, idx) in indexation.entries"
           :key="entry.id"
           :style="currentEntry === entry ? {} : { height: '50px' }"
-          class="flex-grow-1 g-0 px-0 py-0 align-items-top border bg-light"
+          class="flex-grow-1 g-0 px-0 py-0 align-items-top bg-light"
         >
           <b-col
             @click="
@@ -275,6 +274,11 @@ watch(
   button.create-entry {
     height: 25px;
   }
+}
+
+.page,
+:deep(.resizable) {
+  box-shadow: 1px 1px #000;
 }
 
 :deep(.resizable .handle) {
