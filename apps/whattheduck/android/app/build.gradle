@@ -1,14 +1,14 @@
 apply plugin: 'com.android.application'
 
 android {
-    namespace "net.ducksmanager.whattheduck3"
+    namespace "net.ducksmanager.whattheduck"
     compileSdk rootProject.ext.compileSdkVersion
     defaultConfig {
-        applicationId "net.ducksmanager.whattheduck3"
+        applicationId "net.ducksmanager.whattheduck"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 125
-        versionName "3.0.16"
+        versionCode 127
+        versionName "3.0.18"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         aaptOptions {
              // Files and dirs to omit from the packaged assets dir, modified to accommodate modern web apps.
@@ -18,6 +18,9 @@ android {
     }
     buildTypes {
         release {
+            ndk {
+                debugSymbolLevel 'FULL'
+            }
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
