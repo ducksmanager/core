@@ -15,12 +15,21 @@
             $t("Type inconnu")
           }}</template></suggestion-list
         ><ai-tooltip
-          :id="`ai-results-entry-${entry.id}`"
+          :id="`ai-results-entry-story-kind-${entry.id}`"
           :disabled="!storyKindAiSuggestion"
           @click="showAiDetectionsOn = entry.id"
+          @re-run="runKumiko(entry.id)"
         >
-          <table-results :data="pagesWithInferredKinds" />
-          Inferred entry story kind:
+          <b>Inferred page story kinds</b>
+          <table-results
+            :data="
+              pagesWithInferredKinds.map(({ page, ...inferredData }) => ({
+                page: page.pageNumber,
+                ...inferredData,
+              }))
+            "
+          /><br />
+          <b>Inferred entry story kind</b>
           {{
             storyKinds.find(({ code }) => code === storyKindAiSuggestion?.kind)
               ?.label
@@ -29,14 +38,25 @@
       ><b-col col cols="3"
         ><StorySuggestionList v-model="entry" />
         <ai-tooltip
-          :id="`ai-results-entry-${entry.id}`"
+          :id="`ai-results-entry-story-${entry.id}`"
+          :disabled="!storyAiSuggestions.length"
           @click="showAiDetectionsOn = entry.id"
+          @re-run="runStorycodeOcr(entry.id)"
         >
-          OCR results:
-          <table-results :data="pages[0].aiOcrResults" />
-          Potential stories:
-          <table-results :data="storyAiSuggestions" /></ai-tooltip
-      ></b-col>
+          <template v-if="storyAiSuggestions.length">
+            OCR results:
+            <table-results :data="pages[0].aiOcrResults" />
+            Potential stories:
+            <table-results
+              :data="
+                storyAiSuggestions.map(({ storycode }) => ({
+                  storycode,
+                  title: storyDetails[storycode].title,
+                }))
+              " /></template
+          ><template v-else>No OCR results</template></ai-tooltip
+        ></b-col
+      >
       <b-col col cols="6">
         <b-form-input
           placeholder="Titre de l'histoire"
@@ -59,7 +79,7 @@
       >
       <b-col cols="3">
         <template v-if="entry.acceptedStory">{{
-          storyversionDetails[entry.acceptedStory.storyversioncode].storycode
+          entry.acceptedStory.storycode
         }}</template
         ><template v-else>{{ $t("Contenu inconnu") }}</template>
       </b-col>
@@ -82,6 +102,7 @@
   </b-row>
 </template>
 <script setup lang="ts">
+import useAi from "~/composables/useAi";
 import { dumiliSocketInjectionKey } from "~/composables/useDumiliSocket";
 import { suggestions } from "~/stores/suggestions";
 import { ui } from "~/stores/ui";
@@ -97,6 +118,7 @@ defineProps<{
 
 const { indexationSocket } = inject(dumiliSocketInjectionKey)!;
 const { indexation } = storeToRefs(suggestions());
+const { runStorycodeOcr, runKumiko } = useAi();
 
 const entry = defineModel<FullEntry>({ required: true });
 
@@ -135,7 +157,7 @@ watch(
 );
 
 const { acceptedStories } = storeToRefs(suggestions());
-const { storyversionDetails } = storeToRefs(coa());
+const { storyDetails } = storeToRefs(coa());
 const { showAiDetectionsOn } = storeToRefs(ui());
 
 const pages = computed(() => getEntryPages(indexation.value!, entry.value.id));
@@ -150,11 +172,7 @@ const storyAiSuggestions = computed(() =>
   entry.value.storySuggestions.filter(({ ocrDetailsId }) => ocrDetailsId),
 );
 
-const storycode = computed(
-  () =>
-    acceptedStory.value &&
-    storyversionDetails.value[acceptedStory.value.storyversioncode].storycode,
-);
+const storycode = computed(() => acceptedStory.value?.storycode);
 const title = computed(() => entry.value.title || $t("Sans titre"));
 
 const urlEncodedStorycode = computed(
@@ -171,6 +189,7 @@ const getStoryKind = (storyKind: storyKind) =>
 .col {
   display: flex;
   justify-content: center;
+  align-items: center;
 }
 
 :deep(.dropdown-menu) {

@@ -72,7 +72,7 @@ model storyKindSuggestion {
 
 model storySuggestion {
   id                Int                 @id @default(autoincrement())
-  storyversioncode  String              @db.VarChar(37)
+  storycode         String              @db.VarChar(19)
   entryId           Int                 @map("entry_id")
   ocrDetailsId      Int?                @map("ocr_details_id")
   acceptedOnEntries entry[]             @relation("entry_accepted_story_suggested_idTostory_suggestion")
@@ -102,7 +102,7 @@ model aiOcrPossibleStory {
   id               Int               @id @default(autoincrement())
   pageId           Int               @map("page_id")
   ocrResultId      Int?              @map("ocr_result_id")
-  confidenceScore  Int               @map("confidence_score") @db.SmallInt
+  confidence       Int               @db.SmallInt
   ocrResult        aiOcrResult?      @relation(fields: [ocrResultId], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "ai_ocr_possible_story_ai_ocr_result_id_fk")
   page             page              @relation(fields: [pageId], references: [id], onUpdate: Restrict, map: "ai_ocr_possible_story_page_id_fk")
   storySuggestions storySuggestion[]
@@ -113,20 +113,20 @@ model aiOcrPossibleStory {
 }
 
 model aiOcrResult {
-  id               Int                  @id @default(autoincrement())
-  pageId           Int                  @map("page_id")
-  x1               Int
-  x2               Int
-  x3               Int
-  x4               Int
-  y1               Int
-  y2               Int
-  y3               Int
-  y4               Int
-  text             String               @db.Text
-  confidence       Float                @db.Float
-  ocrPossibleStory aiOcrPossibleStory[]
-  page             page                 @relation(fields: [pageId], references: [id], onUpdate: Restrict, map: "ai_ocr_result_page_id_fk")
+  id                 Int                  @id @default(autoincrement())
+  pageId             Int                  @map("page_id")
+  x1                 Int
+  x2                 Int
+  x3                 Int
+  x4                 Int
+  y1                 Int
+  y2                 Int
+  y3                 Int
+  y4                 Int
+  text               String               @db.Text
+  confidence         Float                @db.Float
+  page               page                 @relation(fields: [pageId], references: [id], onUpdate: Restrict, map: "ai_ocr_result_page_id_fk")
+  aiOcrPossibleStory aiOcrPossibleStory[]
 
   @@index([pageId], map: "ai_ocr_result_page_id_fk")
   @@map("ai_ocr_result")

@@ -16,9 +16,12 @@
 const { t: $t } = useI18n();
 
 import { suggestions } from "~/stores/suggestions";
+import { getEntryPages } from "~dumili-utils/entryPages";
 import { socketInjectionKey as dmSocketInjectionKey } from "~web/src/composables/useDmSocket";
 
-const { storyDetails, storyversionDetails } = storeToRefs(coa());
+const { storyDetails } = storeToRefs(coa());
+
+const { indexation } = storeToRefs(suggestions());
 
 const {
   coa: { services: coaServices },
@@ -30,17 +33,6 @@ const { acceptedStories, acceptedIssue: issue } = storeToRefs(suggestions());
 const storiesWithDetails =
   ref<Awaited<ReturnType<typeof getStoriesWithDetails>>>();
 
-watch(
-  acceptedStories,
-  async (value) => {
-    if (!issue.value?.issuecode) {
-      return undefined;
-    }
-    storiesWithDetails.value = await getStoriesWithDetails(value);
-  },
-  { immediate: true, deep: true },
-);
-
 const getStoriesWithDetails = async (
   stories: (typeof acceptedStories)["value"],
 ) =>
@@ -49,10 +41,8 @@ const getStoriesWithDetails = async (
       .filter((story) => story !== undefined)
       .map(async (story) => ({
         ...story,
-        ...storyDetails.value[story!.storyversioncode],
-        storyversion: storyversionDetails.value[story!.storyversioncode],
-        storyjobs: (await coaServices.getStoryjobs(story!.storyversioncode))
-          .data,
+        ...storyDetails.value[story!.storycode],
+        storyjobs: (await coaServices.getStoryjobs(story!.storycode)).data,
       })),
   );
 
@@ -63,26 +53,29 @@ const textContent = computed(() => {
   const issuecode = issue.value!.issuecode!.split("/")[1];
   const rows = [
     [issuecode],
-    ...storiesWithDetails.value.map((story, idx) => [
-      `${issuecode}${String.fromCharCode(97 + idx)}`,
-      story!.storyversion?.storycode,
-      undefined,
-      String(story!.storyversion?.entirepages || 1),
-      ...["plot", "writer", "artist", "ink"].map(
-        (job) =>
-          story!.storyjobs?.find(({ plotwritartink }) => plotwritartink === job)
-            ?.personcode,
-      ),
-      "", //story!.printedhero,
-      story!.title,
-    ]),
+    ...indexation.value!.entries.map((entry, idx) => {
+      const storyWithDetails = storiesWithDetails.value!.find(
+        ({ storycode }) => storycode === entry.acceptedStory?.storycode,
+      );
+      return [
+        `${issuecode}${String.fromCharCode(97 + idx)}`,
+        entry.acceptedStory?.storycode,
+        undefined,
+        String(getEntryPages(indexation.value!, entry.id).length),
+        ...["plot", "writer", "artist", "ink"].map(
+          (job) =>
+            storyWithDetails?.storyjobs?.find(
+              ({ plotwritartink }) => plotwritartink === job,
+            )?.personcode,
+        ),
+        "", //story!.printedhero,
+        entry.title,
+      ];
+    }),
   ];
-  const colsMaxLengths = rows.reduce<number[]>((acc, row) => {
-    row.forEach((col, i) => {
-      acc[i] = Math.max(acc[i], col?.length || 0);
-    });
-    return acc;
-  }, []);
+  const colsMaxLengths = rows[0].map((_, colIndex) =>
+    Math.max(...rows.map((row) => row[colIndex]?.length || 0)),
+  );
 
   return rows
     .map((row) =>
@@ -94,6 +87,17 @@ const textContent = computed(() => {
     )
     .join("\n");
 });
+
+watch(
+  acceptedStories,
+  async (value) => {
+    if (!issue.value?.issuecode) {
+      return undefined;
+    }
+    storiesWithDetails.value = await getStoriesWithDetails(value);
+  },
+  { immediate: true, deep: true },
+);
 </script>
 <style scoped lang="scss">
 textarea {

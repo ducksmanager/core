@@ -48,14 +48,24 @@
             <ai-tooltip
               v-if="aiKumikoResultPanels"
               :id="`ai-results-page-${pageNumber}`"
+              @re-run="runKumikoOnPage(id)"
             >
-              Detected panels:
-              <table-results :data="aiKumikoResultPanels" />
-              Inferred page story kind:
+              <b>Detected panels</b>
+              <table-results
+                :data="
+                  aiKumikoResultPanels.map(({ x, y, width, height }) => ({
+                    x,
+                    y,
+                    width,
+                    height,
+                  }))
+                "
+              />
+              <b>Inferred page story kind</b>
               {{
                 storyKinds.find(
                   ({ code }) => code === aiKumikoInferredStoryKind,
-                )?.label
+                )?.label || "?"
               }}
             </ai-tooltip>
           </b-col>
@@ -72,9 +82,10 @@
             :draggable="false"
             :handles="['bm']"
             :grid="[1, tocPageHeight]"
+            :h="entry.entirepages * tocPageHeight"
             :min-height="tocPageHeight - 1"
             :class-name="`entry col w-100 kind-${
-              acceptedStoryKinds[entry.id]?.kind
+              acceptedStoryKinds?.[entry.id]?.kind
             } ${hoveredEntry === entry ? 'striped' : ''}`"
             :title="`${entry.title || 'Inconnu'} (${getUserFriendlyPageCount(
               entry,
@@ -87,7 +98,7 @@
             "
             @click="
               if (entry !== currentEntry)
-                currentPage = getFirstPageOfEntry(indexation, idx);
+                currentPage = getFirstPageOfEntry(indexation.entries, idx);
             "
           ></vue-draggable-resizable>
           <b-button
@@ -114,7 +125,7 @@
           <b-col
             @click="
               if (entry !== currentEntry)
-                currentPage = getFirstPageOfEntry(indexation, idx);
+                currentPage = getFirstPageOfEntry(indexation.entries, idx);
             "
             ><Entry
               v-model="indexation.entries[idx]"
@@ -142,10 +153,13 @@ defineProps<{
 
 const { indexationSocket } = inject(dumiliSocketInjectionKey)!;
 
+const { loadIndexation } = suggestions();
 const { acceptedStoryKinds } = storeToRefs(suggestions());
 const { hoveredEntry } = storeToRefs(ui());
 const indexation = storeToRefs(suggestions()).indexation as Ref<FullIndexation>;
 const currentPage = defineModel<number>();
+
+const { runKumikoOnPage } = useAi();
 
 const lastHoveredEntry = ref<entryModel | null>(null);
 
@@ -182,7 +196,10 @@ const getUserFriendlyPageCount = (entry: FullEntry) => {
   return `${entry.entirepages}${fraction ? `+ ${fraction}` : ""} pages`;
 };
 
-const createEntry = () => indexationSocket.value!.services.createEntry();
+const createEntry = async () => {
+  await indexationSocket.value!.services.createEntry();
+  return loadIndexation();
+};
 
 watch(
   currentPage,

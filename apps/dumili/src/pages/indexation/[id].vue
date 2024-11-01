@@ -1,6 +1,6 @@
 <template>
   <b-container
-    v-if="indexationId"
+    v-if="indexationId && hasData"
     fluid
     style="max-height: calc(100% - 35px); flex-grow: 1"
     class="d-flex flex-column"
@@ -53,12 +53,14 @@ const { tabNames } = tabs();
 
 const { fetchPublicationNames, fetchStoryDetails, fetchStoryversionDetails } =
   coa();
-const { storyversionDetails } = storeToRefs(coa());
+const { storyDetails } = storeToRefs(coa());
 
 const indexationId = ref<string | null>(null);
 
 const { loadIndexation } = suggestions();
 const { indexation } = storeToRefs(suggestions());
+
+const hasData = ref(false);
 
 const images = computed(() =>
   indexation.value?.pages.map(({ url }) => ({
@@ -77,23 +79,24 @@ watch(
         ({ publicationcode }) => publicationcode,
       ),
     );
-    await fetchStoryversionDetails(
-      indexation
-        .value!.entries.map(({ storySuggestions }) =>
-          storySuggestions.map(({ storyversioncode }) => storyversioncode),
-        )
-        .flat(),
-    );
     await fetchStoryDetails(
       indexation
         .value!.entries.map(({ storySuggestions }) =>
+          storySuggestions.map(({ storycode }) => storycode),
+        )
+        .flat(),
+    );
+    await fetchStoryversionDetails(
+      indexation
+        .value!.entries.map(({ storySuggestions }) =>
           storySuggestions.map(
-            ({ storyversioncode }) =>
-              storyversionDetails.value[storyversioncode].storycode!,
+            ({ storycode }) =>
+              storyDetails.value[storycode]!.originalstoryversioncode!,
           ),
         )
         .flat(),
     );
+    hasData.value = true;
   },
   { immediate: true },
 );

@@ -15,9 +15,9 @@
             <i-bi-exclamation-triangle-fill
               v-if="
                 entry.acceptedStoryKind &&
-                storyversionDetails[suggestion.storyversioncode] &&
+                storyDetails[suggestion.storycode] &&
                 entry.acceptedStoryKind?.kind !=
-                  storyversionDetails[suggestion.storyversioncode].kind
+                storyversionDetails[storyDetails[suggestion.storycode].originalstoryversioncode!].kind
               "
               :id="`warning-story-kind-${suggestion.id}`"
           /></span>
@@ -36,6 +36,7 @@
 import { dumiliSocketInjectionKey } from "~/composables/useDumiliSocket";
 import { SimpleStory } from "~dm-types/SimpleStory";
 import { FullIndexation } from "~dumili-services/indexation/types";
+import { suggestions } from "../stores/suggestions";
 
 const { t: $t } = useI18n();
 
@@ -44,23 +45,23 @@ const entry = defineModel<FullIndexation["entries"][number]>({
 });
 
 const { indexationSocket } = inject(dumiliSocketInjectionKey)!;
+const { loadIndexation } = suggestions();
+const { indexation } = storeToRefs(suggestions());
 
 const showEntrySelect = ref(false);
-const { storyversionDetails } = storeToRefs(coa());
+const { storyDetails, storyversionDetails } = storeToRefs(coa());
 
 const createAndAcceptStorySuggestion = async (searchResult: SimpleStory) => {
-  indexationSocket
-    .value!.services.createStorySuggestion({
-      entryId: entry.value.id,
-      storyversioncode: searchResult.storycode,
-    })
-    .then((result) => {
-      if ("createdStorySuggestion" in result) {
-        entry.value.storySuggestions.push(result.createdStorySuggestion!);
-        indexationSocket.value!.services.acceptStorySuggestion(
-          result.createdStorySuggestion!.id || null,
-        );
-      }
-    });
+  const result = await indexationSocket.value!.services.createStorySuggestion({
+    entryId: entry.value.id,
+    storycode: searchResult.storycode,
+  });
+
+  if (!("error" in result)) {
+    await indexationSocket.value!.services.acceptStorySuggestion(
+      result.createdStorySuggestion!.id || null,
+    );
+    await loadIndexation(indexation.value!.id);
+  }
 };
 </script>

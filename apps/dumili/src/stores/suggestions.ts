@@ -9,8 +9,8 @@ export const suggestions = defineStore("suggestions", () => {
   const indexation = ref<FullIndexation>(),
     acceptedStories = ref<Record<number, storySuggestion | undefined>>({});
 
-  const loadIndexation = async (indexationId: string) => {
-    setIndexationSocketFromId(indexationId);
+  const loadIndexation = async (indexationId?: string) => {
+    setIndexationSocketFromId(indexationId || indexation.value!.id);
     const data = await indexationSocket.value!.services.loadIndexation();
     if ("error" in data) {
       console.error(data.error);
@@ -67,7 +67,7 @@ export const suggestions = defineStore("suggestions", () => {
     acceptedIssue,
     acceptedStories,
     acceptedStoryKinds: computed(() =>
-      indexation.value!.entries.groupBy("id", "acceptedStoryKind"),
+      indexation.value?.entries.groupBy("id", "acceptedStoryKind"),
     ),
   };
 });

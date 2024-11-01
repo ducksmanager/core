@@ -1,6 +1,7 @@
 import type {
   entry,
   issueSuggestion,
+  page,
   Prisma,
   storyKindSuggestion,
   storySuggestion,
@@ -139,10 +140,20 @@ export default abstract class {
     ) => void,
   ) => void;
 
-  abstract runOcr: (
-    pageUrl: string,
+  abstract runKumikoOnPage: (
+    page: page["id"],
     callback: (
-      data: Errorable<{ status: "OK" }, "Invalid page URL" | "OCR error">,
+      data: Errorable<{ status: "OK" }, "Kumiko output could not be parsed">,
+    ) => void,
+  ) => void;
+
+  abstract runOcr: (
+    entryId: entry["id"],
+    callback: (
+      data: Errorable<
+        { status: "OK" },
+        "OCR error" | "This entry is not a story"
+      >,
     ) => void,
   ) => void;
 

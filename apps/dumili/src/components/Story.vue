@@ -1,12 +1,12 @@
 <template>
-  <b>{{ story.storyversioncode }}</b
-  >&nbsp;{{ storyDetails?.[story.storyversioncode]?.title }}
+  <b>{{ story.storycode }}</b
+  ><br />{{ storyDetails?.[story.storycode]?.title }}
   <slot name="suffix" />
 </template>
 <script setup lang="ts">
 defineProps<{
   story: {
-    storyversioncode: string;
+    storycode: string;
   };
 }>();
 

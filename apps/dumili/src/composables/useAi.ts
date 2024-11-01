@@ -3,7 +3,6 @@ import type { FullIndexation } from "~dumili-services/indexation/types";
 import { storyKinds } from "~dumili-types/storyKinds";
 import { socketInjectionKey as dmSocketInjectionKey } from "~web/src/composables/useDmSocket";
 
-import { getFirstPageOfEntry } from "../../utils/entryPages";
 import { dumiliSocketInjectionKey } from "./useDumiliSocket";
 import useHint from "./useHint";
 
@@ -21,29 +20,36 @@ export default () => {
   const { indexationSocket } = inject(dumiliSocketInjectionKey)!;
 
   const indexationServices = indexationSocket.value!.services;
+  const { loadIndexation } = suggestions();
   const indexation = storeToRefs(suggestions())
     .indexation as Ref<FullIndexation>;
 
   const hint = useHint();
 
-  const runKumiko = async () => {
+  const runKumiko = async (entryId?: number) => {
     status.value = "loading";
-    nextTick(async () => {
-      console.log("Kumiko...");
-      const result = await Promise.all(
-        indexation.value.entries.map((entry) =>
-          indexationServices.runKumiko(entry.id),
-        ),
-      );
-      const resultsWithErrors = result.filter((result) => "error" in result);
-      if (resultsWithErrors.length) {
-        console.error(resultsWithErrors);
-      } else {
-        console.log("Kumiko OK");
-        await indexationServices.loadIndexation();
-      }
-      status.value = "idle";
-    });
+    console.log("Kumiko...");
+    const result = await Promise.all(
+      indexation.value.entries
+        .filter(({ id }) => entryId === undefined || id === entryId)
+        .map((entry) => indexationServices.runKumiko(entry.id)),
+    );
+    const resultsWithErrors = result.filter((result) => "error" in result);
+    if (resultsWithErrors.length) {
+      console.error(resultsWithErrors);
+    } else {
+      console.log("Kumiko OK");
+    }
+    await loadIndexation();
+    status.value = "idle";
+  };
+
+  const runKumikoOnPage = async (pageId: number) => {
+    status.value = "loading";
+    console.log("Kumiko...");
+    await indexationServices.runKumikoOnPage(pageId);
+    await loadIndexation();
+    status.value = "idle";
   };
 
   const runCoverSearch = async () => {
@@ -69,32 +75,31 @@ export default () => {
     }
   };
 
-  const runStorycodeOcr = async () => {
-    const storyStoryKindCode = storyKinds.find(
-      ({ label }) => label === "Story",
-    )!.code;
-    const storyFirstPageUrls = indexation
-      .value!.entries.filter(
-        ({ acceptedStoryKind }) =>
-          acceptedStoryKind?.kind === storyStoryKindCode,
-      )
-      .map(({ id }) => getFirstPageOfEntry(indexation.value, id))
-      .map((pageIdx) => indexation.value!.pages[pageIdx].url);
-    for (const url of storyFirstPageUrls) {
-      const ocrResults = await indexationServices.runOcr(url);
-
-      if ("error" in ocrResults) {
-        console.error(ocrResults.error);
-        return;
-      }
-      console.log(`${url} : Recherche par OCR terminée`);
+  const runStorycodeOcr = async (entryId?: number) => {
+    status.value = "loading";
+    console.log("OCR...");
+    const result = await Promise.all(
+      indexation.value.entries
+        .filter(({ id }) => entryId === undefined || id === entryId)
+        .map((entry) => indexationServices.runOcr(entry.id)),
+    );
+    const resultsWithErrors = result.filter(
+      (result) => "error" in result && result.error === "OCR error",
+    );
+    if (resultsWithErrors.length) {
+      console.error(resultsWithErrors);
+    } else {
+      console.log("OCR OK");
     }
+    await loadIndexation();
+    status.value = "idle";
   };
 
   return {
     status,
     runCoverSearch,
     runKumiko,
+    runKumikoOnPage,
     runStorycodeOcr,
   };
 };
