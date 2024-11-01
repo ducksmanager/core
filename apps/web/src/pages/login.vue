@@ -5,7 +5,7 @@ meta:
 </route>
 
 <template>
-  <form v-if="user === null" method="post" @submit.prevent="login">
+  <form v-if="!user" method="post" @submit.prevent="login">
     <b-row>
       <b-col lg="6">
         <h1 class="h3 mb-3 fw-normal">
@@ -52,8 +52,8 @@ meta:
 <script setup lang="ts">
 import Cookies from "js-cookie";
 
-const { login: userLogin, loadUser, collectionSocket } = collection();
-const { user } = storeToRefs(collection());
+const { login: userLogin, loadUser } = collection();
+const { user, collectionSocket } = storeToRefs(collection());
 
 let router = useRouter();
 let route = useRoute();
@@ -72,7 +72,7 @@ const login = async () => {
         domain,
       });
 
-      collectionSocket!.connect();
+      collectionSocket.value!.connect();
 
       // const tmp = inject(socketInjectionKey)!;
       // collectionSocket!.connect();

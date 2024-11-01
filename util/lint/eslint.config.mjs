@@ -20,6 +20,7 @@ export default [
   {
     ignores: [
       "**/*.d.ts",
+      "**/*.js",
       "**/assets",
       "**/build",
       "**/bundle.mjs",
