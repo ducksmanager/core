@@ -1,5 +1,5 @@
 <template>
-  <div class="container" @click.self="closeBook()">
+  <div ref="container" class="container flex-grow-1" @click.self="closeBook()">
     <div id="book" class="flip-book" @click.self="closeBook()">
       <slot name="table-of-contents" />
 
@@ -32,7 +32,7 @@ import { PageFlip } from "page-flip";
 const { urls, edgeWidth, coverRatio, coverHeight } = defineProps<{
   urls: string[];
   edgeWidth?: number;
-  coverRatio?: number;
+  coverRatio: number;
   coverHeight?: number;
 }>();
 const emit = defineEmits<{ (e: "close-book"): void }>();
@@ -40,6 +40,8 @@ const slots = defineSlots<{
   edge(): unknown;
   "table-of-contents"(): unknown;
 }>();
+
+const container = ref<HTMLElement>();
 
 const book = defineModel<PageFlip | undefined>("book");
 const opened = defineModel<boolean>("opened", { default: false });
@@ -73,12 +75,11 @@ onMounted(() => {
   watch(
     isReadyToOpen,
     (newValue) => {
-      if (newValue && coverRatio && coverHeight) {
-        const bookElement: HTMLElement = document.getElementById("book")!;
-        const height = coverHeight || bookElement.clientHeight;
-        const width = height / coverRatio / 2;
-        book.value = new PageFlip(bookElement, {
-          width,
+      if (newValue && coverRatio) {
+        const height = coverHeight || container.value!.clientHeight;
+        debugger;
+        book.value = new PageFlip(document.getElementById("book")!, {
+          width: height / coverRatio,
           height,
 
           maxShadowOpacity: 0.5,

@@ -1,6 +1,6 @@
 <template>
   <b-row v-if="indexationId && hasData" class="d-flex h-100">
-    <b-col :cols="6">
+    <b-col :cols="6" class="d-flex flex-column h-100">
       <template v-if="tabNames[activeTab] === 'Page gallery'"
         ><Gallery :images="images" />
         <upload-widget
@@ -24,7 +24,6 @@
         ref="bookComponent"
         v-model:book="book"
         v-model:current-page="bookCurrentPage"
-        :cover-height="coverHeight"
         :cover-ratio="coverRatio"
         :urls="indexation!.pages.map(({ url }) => url)"
         :with-table-of-contents="false" />
@@ -58,11 +57,7 @@ const { Book } = webComponents;
 
 const book = ref<PageFlip | undefined>(undefined);
 const bookCurrentPage = ref(0);
-const coverWidth = ref(1000);
 const coverRatio = ref<number | undefined>(undefined);
-const coverHeight = computed(
-  () => coverRatio.value && coverWidth.value * coverRatio.value,
-);
 
 const showUploadWidget = ref(false);
 const route = useRoute();
@@ -135,7 +130,6 @@ watch(
           "https://res.cloudinary.com/dl7hskxab/image/upload/pg_1/fl_getinfo/v1729876637/dumili/brunoperel/20241025T171702824/Picsou_magazine_529_11zon_krzady.png",
         )
       ).json();
-    debugger;
     coverRatio.value =
       firstPageDimensions.output.height / firstPageDimensions.output.width;
     hasData.value = true;
