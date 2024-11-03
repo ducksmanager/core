@@ -95,7 +95,7 @@ onMounted(() => {
 
 watch(book, (newValue, oldValue) => {
   if (newValue && !oldValue) {
-    newValue.loadFromHTML(document.querySelectorAll(".page"));
+    newValue.loadFromHTML(container.value!.querySelectorAll(".page"));
 
     newValue.on("flip", ({ data }) => {
       currentPage.value = parseInt(data.toString());

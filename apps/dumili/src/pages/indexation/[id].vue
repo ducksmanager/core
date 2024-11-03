@@ -39,7 +39,7 @@
             :title="$t(tabName)" /></b-tabs></b-container
     ></b-col>
 
-    <b-col :cols="6">
+    <b-col :cols="6" class="h-100 overflow-auto">
       <table-of-contents
         v-model="bookCurrentPage"
         :indexation="indexation"

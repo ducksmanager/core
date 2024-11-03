@@ -35,29 +35,29 @@
               ?.label
           }}</ai-tooltip
         ></b-col
-      ><b-col col cols="3"
-        ><StorySuggestionList v-model="entry" />
-        <ai-tooltip
-          :id="`ai-results-entry-story-${entry.id}`"
-          :disabled="!storyAiSuggestions.length"
-          @click="showAiDetectionsOn = entry.id"
-          @re-run="runStorycodeOcr(entry.id)"
-        >
-          <template v-if="storyAiSuggestions.length">
-            OCR results:
-            <table-results :data="pages[0].aiOcrResults" />
-            Potential stories:
-            <table-results
-              :data="
-                storyAiSuggestions.map(({ storycode }) => ({
-                  storycode,
-                  title: storyDetails[storycode].title,
-                }))
-              " /></template
-          ><template v-else>No OCR results</template></ai-tooltip
-        ></b-col
-      >
-      <b-col col cols="6">
+      ><b-col col cols="9" class="flex-column"
+        ><div class="d-flex flex-row align-items-center">
+          <StorySuggestionList v-model="entry" />
+          <ai-tooltip
+            :id="`ai-results-entry-story-${entry.id}`"
+            :disabled="!storyAiSuggestions.length"
+            @click="showAiDetectionsOn = entry.id"
+            @re-run="runStorycodeOcr(entry.id)"
+          >
+            <template v-if="storyAiSuggestions.length">
+              OCR results:
+              <table-results :data="pages[0].aiOcrResults" />
+              Potential stories:
+              <table-results
+                :data="
+                  storyAiSuggestions.map(({ storycode }) => ({
+                    storycode,
+                    title: storyDetails[storycode].title,
+                  }))
+                " /></template
+            ><template v-else>No OCR results</template></ai-tooltip
+          >
+        </div>
         <b-form-input
           placeholder="Titre de l'histoire"
           type="text"

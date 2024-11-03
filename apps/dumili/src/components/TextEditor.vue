@@ -1,5 +1,5 @@
 <template>
-  <b-container fluid>
+  <b-container fluid class="d-flex flex-grow-1 h-100">
     <b-alert v-if="!issue" variant="danger" :model-value="true">
       {{ $t("You need to specify an issue in the Book tab") }}</b-alert
     >
@@ -102,5 +102,7 @@ watch(
 <style scoped lang="scss">
 textarea {
   font-family: monospace;
+  margin: 2rem 0;
+  flex-grow: 1;
 }
 </style>
