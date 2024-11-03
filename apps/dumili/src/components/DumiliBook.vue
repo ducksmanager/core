@@ -17,7 +17,7 @@
       <b-container v-if="false" class="book-container d-flex w-50 h-100 m-0">
         <div id="book" class="flip-book">
           <div
-            v-for="(page, index) in indexation.pages"
+            v-for="(page, index) in indexation!.pages"
             :key="`page-${index}`"
             class="page"
             :class="{ single: isSinglePage }"
@@ -32,7 +32,7 @@
               >
                 <div
                   v-if="hoveredEntry"
-                  :class="`position-absolute start-0 w-100 h-100 striped kind-${acceptedStoryKinds[hoveredEntry.id]?.kind}`"
+                  :class="`position-absolute start-0 w-100 h-100 striped kind-${acceptedStoryKinds?.[hoveredEntry!.id]?.kind}`"
                 ></div>
                 <template v-if="displayRatioCropped && naturalToDisplayRatio">
                   <div
@@ -129,11 +129,6 @@
           </div>
         </div>
       </b-container>
-      <table-of-contents
-        v-model="currentPage"
-        :indexation="indexation"
-        :shown-pages="shownPages"
-      />
     </div>
   </template>
 </template>
@@ -177,18 +172,6 @@ const displayedWidthNoBackground = computed(() =>
       ? displayedWidth.value
       : displayedWidth.value! * naturalAspectRatio.value
     : null,
-);
-
-const shownPages = computed(() =>
-  book.value
-    ? [
-        ...new Set([
-          book.value.getCurrentPageIndex(),
-          (book.value as unknown as { pages: { currentSpreadIndex: number } })!
-            .pages.currentSpreadIndex * 2,
-        ]),
-      ]
-    : [],
 );
 
 const displayRatioCropped = computed(
@@ -243,7 +226,7 @@ nextTick(() => {
   watch(
     () => coverWidth.value && coverHeight.value,
     (hasCoverDimensions) => {
-      if (hasCoverDimensions && false) {
+      if (hasCoverDimensions) {
         const bookContainer = document.querySelector(".book-container")!;
         book.value = new PageFlip(
           document.getElementById("book") as HTMLElement,

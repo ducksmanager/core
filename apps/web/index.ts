@@ -1,3 +1,4 @@
+import Book from "./src/components/Book.vue";
 import Bookcase from "./src/components/Bookcase.vue";
 import InducksStory from "./src/components/InducksStory.vue";
 import IssueQuotation from "./src/components/IssueQuotation.vue";
@@ -12,6 +13,7 @@ import { coa } from "./src/stores/coa";
 import { collection } from "./src/stores/collection";
 import { stats } from "./src/stores/stats";
 import { users } from "./src/stores/users";
+import type { PageFlip } from "page-flip";
 export const stores = {
   coa,
   collection,
@@ -23,6 +25,7 @@ export const stores = {
 export const components = {
   InducksStory,
   MedalImage,
+  Book,
   Bookcase,
   StarRating,
   Conditions,
@@ -34,5 +37,7 @@ export const composables = {
   useMedal,
   useDmSocket,
 };
+
+export { PageFlip };
 
 export { default as i18n } from "./src/i18n";

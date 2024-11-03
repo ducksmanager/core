@@ -1,7 +1,7 @@
 <template>
   <b-card
     no-body
-    class="table-of-contents d-flex w-50 h-100 m-0 overflow-auto"
+    class="table-of-contents d-flex w-100 h-100 m-0 overflow-auto"
     body-class="flex-grow-1 w-100 h-100"
     @mouseleave="hoveredEntry = null"
   >

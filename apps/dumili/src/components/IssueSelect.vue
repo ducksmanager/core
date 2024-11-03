@@ -37,7 +37,7 @@
         emit('change', {
           publicationcode: currentPublicationcode!,
           issuenumber: currentIssuenumber,
-          issuecode: `${currentPublicationcode}/${currentIssuenumber}`,
+          issuecode: `${currentPublicationcode} ${currentIssuenumber}`,
         })
       "
       >OK</b-button
