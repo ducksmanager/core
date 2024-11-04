@@ -1,7 +1,7 @@
 <template>
   <b-row v-if="indexationId && hasData" class="d-flex h-100">
     <b-col :cols="6" class="d-flex flex-column h-100">
-      <template v-if="tabNames[activeTab] === 'Page gallery'"
+      <template v-if="activeTab === 'pageGallery'"
         ><Gallery :images="images" />
         <upload-widget
           v-if="showUploadWidget"
@@ -20,19 +20,19 @@
         </b-button>
       </template>
       <Book
-        v-else-if="tabNames[activeTab] === 'Book' && coverRatio"
+        v-else-if="activeTab === 'book' && coverRatio"
         ref="bookComponent"
         v-model:book="book"
         v-model:current-page="bookCurrentPage"
         :cover-ratio="coverRatio"
         :urls="indexation!.pages.map(({ url }) => url)"
         :with-table-of-contents="false" />
-      <TextEditor v-else-if="tabNames[activeTab] === 'Text editor'" />
+      <TextEditor v-else-if="activeTab === 'textEditor'" />
       <b-container
         v-if="activeTab !== undefined"
         class="start-0 bottom-0 mw-100 pt-2 h-5"
         style="height: 35px"
-        ><b-tabs v-model:model-value="activeTab" align="center"
+        ><b-tabs v-model:model-value="activeTabIndex" align="center"
           ><b-tab
             v-for="tabName of tabNames"
             :key="tabName"
@@ -65,6 +65,18 @@ const route = useRoute();
 const { t: $t } = useI18n();
 
 const { activeTab } = storeToRefs(tabs());
+const activeTabIndex = computed({
+  get() {
+    return Object.keys(tabs().tabNames).indexOf(activeTab.value);
+  },
+
+  set(value) {
+    tabs().activeTab = Object.keys(tabs().tabNames)[
+      value
+    ] as typeof activeTab.value;
+  },
+});
+
 const { tabNames } = tabs();
 
 const { fetchPublicationNames, fetchStoryDetails, fetchStoryversionDetails } =
@@ -79,7 +91,7 @@ const { indexation } = storeToRefs(suggestions());
 const hasData = ref(false);
 
 const shownPages = computed(() =>
-  book.value
+  book.value?.getPageCollection()
     ? [
         ...new Set([
           bookCurrentPage.value,

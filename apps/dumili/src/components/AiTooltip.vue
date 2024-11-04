@@ -6,32 +6,27 @@
   >
     <b-tooltip :target="id" click><slot /></b-tooltip>
     <AiSuggestionIcon
-      :id="id"
-      status="info"
+      :id="disabled ? `${id}-disabled` : id"
+      button
+      :status="status"
       class="me-5"
-      :disabled="disabled"
       @click.stop="() => {}" />
     <i-bi-arrow-repeat
       v-show="showRepeat"
       class="position-absolute right-0"
-      @click="emit('re-run')"
+      @click="onClickRerun"
   /></span>
 </template>
 <script setup lang="ts">
-withDefaults(
-  defineProps<{
-    id: string;
-    disabled?: boolean;
-  }>(),
-  {
-    disabled: false,
-  },
-);
+const { value } = defineProps<{
+  id: string;
+  value: string[] | string | null | undefined;
+  onClickRerun: (...args: unknown[]) => void | Promise<void>;
+}>();
 defineSlots();
 
-const emit = defineEmits<{
-  (e: "re-run"): void;
-}>();
+const disabled = ref(false); // TODO handle failed suggestions
+const status = computed(() => (value ? "success" : "idle"));
 
 const showRepeat = ref(false);
 </script>

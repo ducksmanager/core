@@ -16,9 +16,10 @@
           }}</template></suggestion-list
         ><ai-tooltip
           :id="`ai-results-entry-story-kind-${entry.id}`"
+          :value="storyKindAiSuggestion?.kind"
           :disabled="!storyKindAiSuggestion"
+          :on-click-rerun="() => runKumiko(entry.id)"
           @click="showAiDetectionsOn = entry.id"
-          @re-run="runKumiko(entry.id)"
         >
           <b>Inferred page story kinds</b>
           <table-results
@@ -40,9 +41,10 @@
           <StorySuggestionList v-model="entry" />
           <ai-tooltip
             :id="`ai-results-entry-story-${entry.id}`"
+            :value="storyAiSuggestions.map(({ storycode }) => storycode)"
             :disabled="!storyAiSuggestions.length"
+            :on-click-rerun="() => runStorycodeOcr(entry.id)"
             @click="showAiDetectionsOn = entry.id"
-            @re-run="runStorycodeOcr(entry.id)"
           >
             <template v-if="storyAiSuggestions.length">
               OCR results:

@@ -85,14 +85,14 @@ model storySuggestion {
 }
 
 model issueSuggestion {
-  id                Int                   @id @default(autoincrement())
-  indexationId      String                @map("indexation_id") @db.VarChar(20)
-  source            issueSuggestionSource
-  publicationcode   String                @db.VarChar(12)
-  issuenumber       String                @db.VarChar(13)
-  issuecode         String                @db.VarChar(25)
-  acceptedOnEntries indexation[]          @relation("indexation_accepted_issue_suggestion_idToissue_suggestion")
-  indexation        indexation            @relation(fields: [indexationId], references: [id], onUpdate: Restrict, map: "issue_suggestion_indexation_id_fk")
+  id                Int          @id @default(autoincrement())
+  indexationId      String       @map("indexation_id") @db.VarChar(20)
+  isChosenByAi      Boolean      @default(false) @map("is_chosen_by_ai")
+  publicationcode   String       @db.VarChar(12)
+  issuenumber       String       @db.VarChar(13)
+  issuecode         String       @db.VarChar(25)
+  acceptedOnEntries indexation[] @relation("indexation_accepted_issue_suggestion_idToissue_suggestion")
+  indexation        indexation   @relation(fields: [indexationId], references: [id], onUpdate: Restrict, map: "issue_suggestion_indexation_id_fk")
 
   @@index([indexationId], map: "issue_suggestion_indexation_id_fk")
   @@map("issue_suggestion")
@@ -143,11 +143,6 @@ model aiKumikoResultPanel {
 
   @@index([pageId], map: "ai_kumiko_result_panel_page_id_fk")
   @@map("ai_kumiko_result_panel")
-}
-
-enum issueSuggestionSource {
-  ai
-  user
 }
 
 enum storyKind {

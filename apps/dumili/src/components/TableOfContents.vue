@@ -9,16 +9,12 @@
       <IssueSuggestionModal />
       <IssueSuggestionList />
       <div>
-        <b-button
-          variant="success"
-          pill
-          class="ms-2 hint"
-          :class="aiStatus"
-          :disabled="aiStatus === 'loading'"
-          @click="runKumiko()"
-        >
-          <i-bi-lightbulb-fill
-        /></b-button></div
+        <ai-tooltip
+          id="ai-issue-suggestion"
+          :value="issueAiSuggestion?.issuecode"
+          :status="aiStatus"
+          :on-click-rerun="() => runKumiko()"
+        /></div
     ></template>
 
     <b-row style="outline: 1px solid black">
@@ -31,8 +27,7 @@
             aiKumikoInferredStoryKind,
           } in indexation.pages"
           :key="id"
-          style="height: 50px"
-          :variant="currentPage === pageNumber ? 'secondary' : 'light'"
+          :style="{ height: `${pageHeight}px` }"
           class="g-0 px-0 py-0 align-items-center page"
         >
           <b-col
@@ -41,14 +36,16 @@
               'fw-bold': shownPages.includes(pageNumber - 1),
             }"
             @click="currentPage = pageNumber - 1"
-            >Page {{ pageNumber }}<br /><!--<b-button disabled variant="light"
+            >Page {{ pageNumber
+            }}<!--<b-button disabled variant="light"
               ><i-bi-scissors
             /></b-button
             >-->
             <ai-tooltip
               v-if="aiKumikoResultPanels"
               :id="`ai-results-page-${pageNumber}`"
-              @re-run="runKumikoOnPage(id)"
+              :value="aiKumikoInferredStoryKind"
+              :on-click-rerun="() => runKumikoOnPage(id)"
             >
               <b>Detected panels</b>
               <table-results
@@ -80,12 +77,10 @@
             :resizable="true"
             :draggable="false"
             :handles="['bm']"
-            :grid="[1, tocPageHeight]"
-            :h="entry.entirepages * tocPageHeight"
-            :min-height="tocPageHeight - 1"
-            :class-name="`entry col w-100 kind-${
-              acceptedStoryKinds?.[entry.id]?.kind
-            } ${hoveredEntry === entry ? 'striped' : ''}`"
+            :grid="[1, pageHeight]"
+            :h="entry.entirepages * pageHeight"
+            :min-height="pageHeight - 1"
+            :class-name="`entry col w-100 kind-${acceptedStoryKinds?.[entry.id]?.kind} ${hoveredEntry === entry && 'striped'} ${currentEntry?.id === entry.id && 'current'}`"
             :title="`${entry.title || 'Inconnu'} (${getUserFriendlyPageCount(
               entry,
             )})`"
@@ -95,9 +90,7 @@
               (_left: number, _top: number, _width: number, height: number) =>
                 onEntryResizeStop(idx, height)
             "
-            @click="
-              currentPage = getFirstPageOfEntry(indexation.entries, entry.id)
-            "
+            @click="currentEntry = entry"
           ></vue-draggable-resizable>
           <b-button
             v-if="
@@ -117,14 +110,13 @@
         <b-row
           v-for="(entry, idx) in indexation.entries"
           :key="entry.id"
-          :style="currentEntry === entry ? {} : { height: '50px' }"
-          class="flex-grow-1 g-0 px-0 py-0 align-items-top bg-light"
+          class="entry-details"
+          :class="{ current: currentEntry === entry }"
+          :style="{
+            height: `${getEntryPages(indexation, entry.id).length * pageHeight}px`,
+          }"
         >
-          <b-col
-            @click="
-              if (entry !== currentEntry)
-                currentPage = getFirstPageOfEntry(indexation.entries, idx);
-            "
+          <b-col class="d-flex" @click="currentEntry = entry"
             ><Entry
               v-model="indexation.entries[idx]"
               :editable="currentEntry === entry"
@@ -140,6 +132,7 @@ import useAi from "~/composables/useAi";
 import { dumiliSocketInjectionKey } from "~/composables/useDumiliSocket";
 import {
   getEntryFromPage,
+  getEntryPages,
   getFirstPageOfEntry,
 } from "~dumili-utils/entryPages";
 import { suggestions } from "~/stores/suggestions";
@@ -160,15 +153,19 @@ const { hoveredEntry } = storeToRefs(ui());
 const indexation = storeToRefs(suggestions()).indexation as Ref<FullIndexation>;
 const currentPage = defineModel<number>();
 
-const { runKumikoOnPage } = useAi();
+const { runKumikoOnPage, runKumiko } = useAi();
 
 const lastHoveredEntry = ref<entryModel | null>(null);
 
-const { status: aiStatus, runKumiko } = useAi();
+const { status: aiStatus } = useAi();
 
-const tocPageHeight = 50;
+const pageHeight = 50;
 
-const currentEntry = ref<FullEntry | null>(null);
+const currentEntry = ref<FullEntry>(getEntryFromPage(indexation.value!, 0)!);
+
+const issueAiSuggestion = computed(() =>
+  indexation.value.issueSuggestions.find(({ isChosenByAi }) => isChosenByAi),
+);
 
 watch(hoveredEntry, (entry) => {
   if (entry) {
@@ -179,7 +176,7 @@ watch(hoveredEntry, (entry) => {
 const onEntryResizeStop = (entryIdx: number, height: number) => {
   indexation.value!.entries[entryIdx].entirepages = Math.max(
     0,
-    Math.round(height / tocPageHeight),
+    Math.round(height / pageHeight),
   );
 };
 
@@ -202,13 +199,22 @@ const createEntry = async () => {
   return loadIndexation();
 };
 
+watch(currentEntry, (entry) => {
+  if (entry) {
+    currentPage.value = getFirstPageOfEntry(
+      indexation.value!.entries,
+      entry.id,
+    );
+  }
+});
+
 watch(
   currentPage,
   (value) => {
-    if (value !== undefined) {
+    if (indexation.value && value !== undefined) {
       currentEntry.value = getEntryFromPage(
-        indexation.value!,
-        indexation.value!.pages.find(
+        indexation.value,
+        indexation.value.pages.find(
           ({ pageNumber }) => pageNumber === value + 1,
         )!.id,
       )!;
@@ -223,23 +229,6 @@ watch(
   background-color: #eee;
   color: black;
   white-space: nowrap;
-
-  .hint {
-    svg {
-      color: #999;
-    }
-    &:hover,
-    &.loaded {
-      svg {
-        color: yellow;
-      }
-    }
-    &.loading {
-      svg {
-        animation: pulse-yellow 2s infinite;
-      }
-    }
-  }
 
   :deep(.card-header) {
     display: flex;
@@ -280,8 +269,26 @@ watch(
   margin-top: 1px;
   cursor: pointer;
 
+  &.current {
+    outline-width: 2px;
+  }
+
   &:first-child {
     margin-top: 0;
+  }
+}
+
+.entry-details {
+  &.current {
+    width: 100%;
+    position: relative;
+    .col {
+      align-items: start;
+      position: absolute;
+      box-shadow: 0px 35px 5px -4px;
+      color: rgba(238, 238, 238, 0.85);
+      left: 9px;
+    }
   }
 }
 

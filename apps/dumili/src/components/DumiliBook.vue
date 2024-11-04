@@ -256,18 +256,6 @@ nextTick(() => {
   cursor: grab;
 }
 
-@keyframes pulse-yellow {
-  0% {
-    color: #999;
-  }
-  50% {
-    color: yellow;
-  }
-  100% {
-    color: #999;
-  }
-}
-
 .flip-book {
   max-width: 100% !important;
   margin: auto;
