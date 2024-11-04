@@ -82,9 +82,8 @@ const shownPages = computed(() =>
   book.value
     ? [
         ...new Set([
-          book.value.getCurrentPageIndex(),
-          (book.value as unknown as { pages: { currentSpreadIndex: number } })!
-            .pages.currentSpreadIndex * 2,
+          bookCurrentPage.value,
+          book.value!.getPageCollection().getCurrentSpreadIndex() * 2,
         ]),
       ]
     : [],

@@ -9,7 +9,7 @@ export const getFirstPageOfEntry = (entries: entry[], entryId: number) =>
         (acc, { entirepages, brokenpagenumerator, brokenpagedenominator }) =>
           acc + entirepages + brokenpagenumerator / brokenpagedenominator,
         0,
-      ) + 1,
+      ),
   );
 
 export const getEntryPages = (
@@ -18,10 +18,7 @@ export const getEntryPages = (
 ) => {
   const firstPageOfEntry = getFirstPageOfEntry(entries, entryId);
   const entry = entries.find(({ id }) => id === entryId)!;
-  return pages.slice(
-    firstPageOfEntry - 1,
-    firstPageOfEntry + entry.entirepages - 1,
-  );
+  return pages.slice(firstPageOfEntry, firstPageOfEntry + entry.entirepages);
 };
 
 export const getEntryFromPage = (
