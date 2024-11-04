@@ -17,7 +17,6 @@
         ><ai-tooltip
           :id="`ai-results-entry-story-kind-${entry.id}`"
           :value="storyKindAiSuggestion?.kind"
-          :disabled="!storyKindAiSuggestion"
           :on-click-rerun="() => runKumiko(entry.id)"
           @click="showAiDetectionsOn = entry.id"
         >
@@ -36,13 +35,12 @@
               ?.label
           }}</ai-tooltip
         ></b-col
-      ><b-col col cols="9" class="flex-column"
+      ><b-col col cols="4" class="flex-column"
         ><div class="d-flex flex-row align-items-center">
           <StorySuggestionList v-model="entry" />
           <ai-tooltip
             :id="`ai-results-entry-story-${entry.id}`"
             :value="storyAiSuggestions.map(({ storycode }) => storycode)"
-            :disabled="!storyAiSuggestions.length"
             :on-click-rerun="() => runStorycodeOcr(entry.id)"
             @click="showAiDetectionsOn = entry.id"
           >
@@ -60,6 +58,8 @@
             ><template v-else>No OCR results</template></ai-tooltip
           >
         </div>
+      </b-col>
+      <b-col col cols="5" class="flex-column">
         <b-form-input
           placeholder="Titre de l'histoire"
           type="text"
@@ -79,26 +79,21 @@
           }}</b-badge
         ></b-col
       >
-      <b-col cols="3">
-        <template v-if="entry.acceptedStory">{{
-          entry.acceptedStory.storycode
-        }}</template
+      <b-col cols="4">
+        <a
+          v-if="urlEncodedStorycode"
+          target="_blank"
+          :href="`https://inducks.org/story.php?c=${urlEncodedStorycode}`"
+          >{{ entry.acceptedStory!.storycode }}</a
         ><template v-else>{{ $t("Contenu inconnu") }}</template>
       </b-col>
-      <b-col col cols="6"
+      <b-col col cols="5"
         >{{ title || $t("Sans titre") }}
         <template v-if="entry.part">
           - {{ $t("partie") }} {{ entry.part }}</template
         >
         <br />
         <small>{{ entry.entrycomment }}</small>
-        &nbsp;<a
-          v-if="urlEncodedStorycode"
-          target="_blank"
-          :href="`https://inducks.org/story.php?c=${urlEncodedStorycode}`"
-        >
-          {{ $t("Détails de l'histoire") }}
-        </a>
       </b-col></template
     >
   </b-row>

@@ -16,18 +16,16 @@
 import IBiExtraLightbulbBrokenFill from "~icons/extra-icons/brokenLightbulb";
 import IBiLightbulbFill from "~icons/bi/lightbulb-fill";
 
-const { class: className, status } = withDefaults(
-  defineProps<{
-    button?: boolean;
-    status: "success" | "failure" | "idle" | "loading";
-    id?: string;
-    class?: string;
-  }>(),
-  {
-    class: "",
-    id: undefined,
-  },
-);
+const {
+  class: className = "",
+  status,
+  id = undefined,
+} = defineProps<{
+  button?: boolean;
+  status: "success" | "failure" | "idle" | "loading";
+  id?: string;
+  class?: string;
+}>();
 
 const component = computed(() =>
   status === "failure" ? IBiExtraLightbulbBrokenFill : IBiLightbulbFill,
@@ -70,7 +68,7 @@ svg {
   }
 
   &.loading {
-    animation: pulse-yellow 2s infinite;
+    animation: pulse-yellow 1.5s infinite;
     pointer-events: none;
     cursor: not-allowed;
   }

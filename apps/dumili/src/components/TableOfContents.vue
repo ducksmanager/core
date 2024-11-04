@@ -36,12 +36,7 @@
               'fw-bold': shownPages.includes(pageNumber - 1),
             }"
             @click="currentPage = pageNumber - 1"
-            >Page {{ pageNumber
-            }}<!--<b-button disabled variant="light"
-              ><i-bi-scissors
-            /></b-button
-            >-->
-            <ai-tooltip
+            >Page {{ pageNumber }}<br /><ai-tooltip
               v-if="aiKumikoResultPanels"
               :id="`ai-results-page-${pageNumber}`"
               :value="aiKumikoInferredStoryKind"
@@ -283,10 +278,12 @@ watch(
     width: 100%;
     position: relative;
     .col {
+      $background: rgba(238, 238, 238, 0.85);
       align-items: start;
       position: absolute;
       box-shadow: 0px 35px 5px -4px;
-      color: rgba(238, 238, 238, 0.85);
+      background: #{$background};
+      color: #{$background};
       left: 9px;
     }
   }

@@ -77,7 +77,6 @@ onMounted(() => {
     (newValue) => {
       if (newValue && coverRatio) {
         const height = coverHeight || container.value!.clientHeight;
-        debugger;
         book.value = new PageFlip(document.getElementById("book")!, {
           width: height / coverRatio,
           height,

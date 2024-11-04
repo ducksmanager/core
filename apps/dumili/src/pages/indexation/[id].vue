@@ -24,6 +24,7 @@
         ref="bookComponent"
         v-model:book="book"
         v-model:current-page="bookCurrentPage"
+        v-model:opened="isBookOpened"
         :cover-ratio="coverRatio"
         :urls="indexation!.pages.map(({ url }) => url)"
         :with-table-of-contents="false" />
@@ -57,6 +58,7 @@ const { Book } = webComponents;
 
 const book = ref<PageFlip | undefined>(undefined);
 const bookCurrentPage = ref(0);
+const isBookOpened = ref(true);
 const coverRatio = ref<number | undefined>(undefined);
 
 const showUploadWidget = ref(false);
