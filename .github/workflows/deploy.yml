@@ -73,7 +73,7 @@ jobs:
       - name: Retrieve pre-build files
         run: |
           pnpm i -g turbo
-          turbo -F "...[$lastSuccessfulCommit]" -F '!~ci' -F '!~dumili' -F '!~dumili-api' prod:transfer-files-pre
+          turbo -F "...[$lastSuccessfulCommit]" -F '!~dumili' -F '!~dumili-api' prod:transfer-files-pre
 
       - name: Build apps
         run: |
