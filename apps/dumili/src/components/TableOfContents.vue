@@ -96,8 +96,7 @@
                 onEntryResizeStop(idx, height)
             "
             @click="
-              if (entry !== currentEntry)
-                currentPage = getFirstPageOfEntry(indexation.entries, idx);
+              currentPage = getFirstPageOfEntry(indexation.entries, entry.id)
             "
           ></vue-draggable-resizable>
           <b-button
@@ -139,7 +138,10 @@
 <script setup lang="ts">
 import useAi from "~/composables/useAi";
 import { dumiliSocketInjectionKey } from "~/composables/useDumiliSocket";
-import { getFirstPageOfEntry } from "~dumili-utils/entryPages";
+import {
+  getEntryFromPage,
+  getFirstPageOfEntry,
+} from "~dumili-utils/entryPages";
 import { suggestions } from "~/stores/suggestions";
 import { ui } from "~/stores/ui";
 import { FullEntry, FullIndexation } from "~dumili-services/indexation/types";
@@ -204,15 +206,12 @@ watch(
   currentPage,
   (value) => {
     if (value !== undefined) {
-      let pagesSoFar = 0;
-      currentEntry.value = indexation.value.entries.find((entry) => {
-        if (pagesSoFar >= value) {
-          return true;
-        }
-        pagesSoFar +=
-          entry.entirepages +
-          entry.brokenpagenumerator / entry.brokenpagedenominator;
-      })!;
+      currentEntry.value = getEntryFromPage(
+        indexation.value!,
+        indexation.value!.pages.find(
+          ({ pageNumber }) => pageNumber === value + 1,
+        )!.id,
+      )!;
     }
   },
   { immediate: true },
@@ -276,9 +275,14 @@ watch(
   }
 }
 
-.page,
-:deep(.resizable) {
-  box-shadow: 1px 1px #000;
+:deep(.entry) {
+  outline: 1px solid black;
+  margin-top: 1px;
+  cursor: pointer;
+
+  &:first-child {
+    margin-top: 0;
+  }
 }
 
 :deep(.resizable .handle) {

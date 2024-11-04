@@ -5,7 +5,7 @@ import type { NamespaceWithData, SessionDataWithIndexation } from "~/index";
 import { prisma } from "~/index";
 import CoaServices from "~dm-services/coa/types";
 import { storyKinds } from "~dumili-types/storyKinds";
-import { getEntryPages } from "~dumili-utils/entryPages";
+import { getEntryFromPage, getEntryPages } from "~dumili-utils/entryPages";
 import type {
   entry,
   page,
@@ -89,12 +89,6 @@ export default (io: Server) => {
     .use(RequiredAuthMiddleware)
     .use(getIndexationMiddleware)
     .on("connection", (indexationSocket) => {
-      const getEntryFromPage = async (pageId: page["id"]) =>
-        indexationSocket.data.indexation.entries.find(({ id }) =>
-          getEntryPages(indexationSocket.data.indexation, id).some(
-            ({ id }) => id === pageId,
-          ),
-        );
 
       const setInferredEntryStoryKind = async (entryId: entry["id"]) => {
         const indexation = indexationSocket.data.indexation;
@@ -192,11 +186,11 @@ export default (io: Server) => {
                 suggestionId === null
                   ? { disconnect: true }
                   : {
-                      connect: {
-                        id: suggestionId,
-                        indexationId: indexationSocket.data.indexation.id,
-                      },
+                    connect: {
+                      id: suggestionId,
+                      indexationId: indexationSocket.data.indexation.id,
                     },
+                  },
             },
             where: {
               id: indexationSocket.data.indexation.id,
@@ -318,7 +312,7 @@ export default (io: Server) => {
         const page = indexation.pages.find(({ id }) => id === pageId)!;
 
         await setKumikoInferredPageStoryKinds([page]);
-        const entry = (await getEntryFromPage(pageId))!;
+        const entry = (getEntryFromPage(indexation, pageId))!;
         await setInferredEntryStoryKind(entry.id);
 
         callback({ status: "OK" });
@@ -461,10 +455,10 @@ const acceptStorySuggestion = async (
         suggestionId === null
           ? { disconnect: true }
           : {
-              connect: {
-                id: suggestionId,
-              },
+            connect: {
+              id: suggestionId,
             },
+          },
     },
     where: {
       id: entryId,
@@ -481,10 +475,10 @@ const acceptStoryKindSuggestion = (
         suggestionId === null
           ? { disconnect: true }
           : {
-              connect: {
-                id: suggestionId,
-              },
+            connect: {
+              id: suggestionId,
             },
+          },
     },
     where: {
       id: entryId,

@@ -1,5 +1,5 @@
 import type { FullIndexation } from "~dumili-services/indexation/types";
-import type { entry } from "~prisma/client_dumili";
+import type { entry, page } from "~prisma/client_dumili";
 
 export const getFirstPageOfEntry = (entries: entry[], entryId: number) =>
   Math.floor(
@@ -23,3 +23,11 @@ export const getEntryPages = (
     firstPageOfEntry + entry.entirepages - 1,
   );
 };
+
+export const getEntryFromPage = (
+  { entries, pages }: Pick<FullIndexation, "entries" | "pages">,
+  pageId: page["id"],
+) =>
+  entries.find(({ id }) =>
+    getEntryPages({ entries, pages }, id).some(({ id }) => id === pageId),
+  );
