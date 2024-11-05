@@ -71,6 +71,15 @@ export default [
 
       "@intlify/vue-i18n/no-deprecated-i18n-component": "off",
     },
+
+    settings: {
+      "vue-i18n": {
+        localeDir: {
+          pattern: "./translations/*.json",
+          localeKey: "file",
+        },
+      },
+    },
   },
   {
     files: ["**/*.ts", "**/*.vue"],

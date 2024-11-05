@@ -7,8 +7,6 @@
       [className]: true,
       [status]: true,
       broken: status === 'failure',
-      'ms-2': true,
-      'me-4': true,
     }"
   />
 </template>

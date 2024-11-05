@@ -1,7 +1,9 @@
 <template>
   <b-container fluid class="d-flex flex-grow-1 h-100">
     <b-alert v-if="!issue" variant="danger" :model-value="true">
-      {{ $t("You need to specify an issue in the Book tab") }}</b-alert
+      {{
+        $t("Vous devez spécifier une publication et un numéro pour continuer")
+      }}</b-alert
     >
     <b-form-textarea
       v-model="textContent"

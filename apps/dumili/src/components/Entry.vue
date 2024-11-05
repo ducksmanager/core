@@ -1,7 +1,11 @@
 <template>
   <b-row class="d-flex w-100 align-items-center">
     <template v-if="editable">
-      <b-col col cols="3">
+      <b-col
+        col
+        cols="3"
+        class="d-flex flex-column justify-content-center align-items-center"
+      >
         <suggestion-list
           v-model="entry.acceptedStoryKind"
           :suggestions="entry.storyKindSuggestions"
@@ -20,7 +24,7 @@
           :on-click-rerun="() => runKumiko(entry.id)"
           @click="showAiDetectionsOn = entry.id"
         >
-          <b>Inferred page story kinds</b>
+          <b>{{ $t("Types d'histoire déduits") }}</b>
           <table-results
             :data="
               pagesWithInferredKinds.map(({ page, ...inferredData }) => ({
@@ -29,39 +33,39 @@
               }))
             "
           /><br />
-          <b>Inferred entry story kind</b>
+          <b>{{ $t("Type d'histoire déduit") }}</b>
           {{
             storyKinds.find(({ code }) => code === storyKindAiSuggestion?.kind)
               ?.label
           }}</ai-tooltip
         ></b-col
-      ><b-col col cols="4" class="flex-column"
-        ><div class="d-flex flex-row align-items-center">
-          <StorySuggestionList v-model="entry" />
-          <ai-tooltip
-            :id="`ai-results-entry-story-${entry.id}`"
-            :value="storyAiSuggestions.map(({ storycode }) => storycode)"
-            :on-click-rerun="() => runStorycodeOcr(entry.id)"
-            @click="showAiDetectionsOn = entry.id"
-          >
-            <template v-if="storyAiSuggestions.length">
-              OCR results:
-              <table-results :data="pages[0].aiOcrResults" />
-              Potential stories:
-              <table-results
-                :data="
-                  storyAiSuggestions.map(({ storycode }) => ({
-                    storycode,
-                    title: storyDetails[storycode].title,
-                  }))
-                " /></template
-            ><template v-else>No OCR results</template></ai-tooltip
-          >
-        </div>
+      ><b-col col cols="4" class="d-flex flex-column align-items-center">
+        <StorySuggestionList v-model="entry" />
+        <ai-tooltip
+          :id="`ai-results-entry-story-${entry.id}`"
+          :value="storyAiSuggestions.map(({ storycode }) => storycode)"
+          :on-click-rerun="() => runStorycodeOcr(entry.id)"
+          @click="showAiDetectionsOn = entry.id"
+        >
+          <template v-if="storyAiSuggestions.length">
+            ${{ $t("Résultats OCR:") }}
+            <table-results :data="pages[0].aiOcrResults" />
+            {{ $t("Histoires potentielles:") }}
+            <table-results
+              :data="
+                storyAiSuggestions.map(({ storycode }) => ({
+                  storycode,
+                  title: storyDetails[storycode].title,
+                }))
+              " /></template
+          ><template v-else
+            >${{ $t("Pas de résultats OCR") }}</template
+          ></ai-tooltip
+        >
       </b-col>
       <b-col col cols="5" class="flex-column">
         <b-form-input
-          placeholder="Titre de l'histoire"
+          :placeholder="$t('Titre de l\'histoire')"
           type="text"
           class="w-100"
           :value="entry.title || ''"
@@ -183,12 +187,6 @@ const getStoryKind = (storyKind: storyKind) =>
 <style scoped lang="scss">
 @use "sass:color";
 
-.col {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
 :deep(.dropdown-menu) {
   background: lightgrey;
   overflow-x: visible !important;
@@ -209,7 +207,7 @@ const getStoryKind = (storyKind: storyKind) =>
 .badge,
 :deep(.btn-group .btn),
 :deep(.dropdown-item) {
-  @include storyKindBackground(lightgrey);
+  @include storyKindBackground(grey);
   &.kind-c {
     @include storyKindBackground(#ffcc33);
   }

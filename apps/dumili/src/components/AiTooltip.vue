@@ -1,6 +1,5 @@
 <template>
   <span
-    class="position-relative"
     @mouseout="() => (showRepeat = false)"
     @mouseover="() => (showRepeat = true)"
   >
@@ -9,12 +8,8 @@
       :id="disabled ? `${id}-disabled` : id"
       button
       :status="status"
-      class="me-5"
       @click.stop="() => {}" />
-    <i-bi-arrow-repeat
-      v-show="showRepeat"
-      class="position-absolute right-0"
-      @click="onClickRerun"
+    <i-bi-arrow-repeat v-show="showRepeat" class="ms-2" @click="onClickRerun"
   /></span>
 </template>
 <script setup lang="ts">
@@ -37,9 +32,5 @@ span > svg {
   height: 20px;
   color: black;
   cursor: pointer;
-}
-
-.right-0 {
-  right: 0;
 }
 </style>

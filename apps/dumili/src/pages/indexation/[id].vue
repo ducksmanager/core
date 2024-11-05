@@ -26,8 +26,18 @@
         v-model:current-page="bookCurrentPage"
         v-model:opened="isBookOpened"
         :cover-ratio="coverRatio"
-        :urls="indexation!.pages.map(({ url }) => url)"
-        :with-table-of-contents="false" />
+        :urls="indexation.pages.map(({ url }) => url)"
+      >
+        <template #page-overlay="{ index }"
+          ><div
+            :class="`overlay ${
+              hoveredEntryPageNumbers?.includes(index + 1)
+                ? `kind-${hoveredEntry!.acceptedStoryKind?.kind} striped`
+                : ''
+            }`"
+          ></div
+        ></template>
+      </Book>
       <TextEditor v-else-if="activeTab === 'textEditor'" />
       <b-container
         v-if="activeTab !== undefined"
@@ -53,6 +63,8 @@
 import { components as webComponents, type PageFlip } from "~web";
 import { suggestions } from "~/stores/suggestions";
 import { tabs } from "~/stores/tabs";
+import { ui } from "~/stores/ui";
+import { FullIndexation } from "~dumili-services/indexation/types";
 
 const { Book } = webComponents;
 
@@ -66,6 +78,7 @@ const route = useRoute();
 
 const { t: $t } = useI18n();
 
+const { hoveredEntry, hoveredEntryPageNumbers } = storeToRefs(ui());
 const { activeTab } = storeToRefs(tabs());
 const activeTabIndex = computed({
   get() {
@@ -88,7 +101,9 @@ const { storyDetails } = storeToRefs(coa());
 const indexationId = ref<string | null>(null);
 
 const { loadIndexation } = suggestions();
-const { indexation } = storeToRefs(suggestions());
+const { indexation } = storeToRefs(suggestions()) as {
+  indexation: Ref<FullIndexation>;
+};
 
 const hasData = ref(false);
 
@@ -116,7 +131,7 @@ watch(
     indexationId.value = id as string;
     await loadIndexation(indexationId.value);
     await fetchPublicationNames(
-      indexation.value!.issueSuggestions.map(
+      indexation.value.issueSuggestions.map(
         ({ publicationcode }) => publicationcode,
       ),
     );
@@ -163,5 +178,13 @@ watch(
 
 .form-control::placeholder {
   color: red !important;
+}
+
+.overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
 }
 </style>

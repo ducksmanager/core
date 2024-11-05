@@ -36,13 +36,13 @@
               'fw-bold': shownPages.includes(pageNumber - 1),
             }"
             @click="currentPage = pageNumber - 1"
-            >Page {{ pageNumber }}<br /><ai-tooltip
+            >{{ $t("Page") }} {{ pageNumber }}<br /><ai-tooltip
               v-if="aiKumikoResultPanels"
               :id="`ai-results-page-${pageNumber}`"
               :value="aiKumikoInferredStoryKind"
               :on-click-rerun="() => runKumikoOnPage(id)"
             >
-              <b>Detected panels</b>
+              <b>{{ $t("Cases détectées") }}</b>
               <table-results
                 :data="
                   aiKumikoResultPanels.map(({ x, y, width, height }) => ({
@@ -96,9 +96,8 @@
             title="Create an entry here"
             variant="info"
             @click="createEntry()"
+            >{{ $t("Ajouter une entrée") }}</b-button
           >
-            Add entry
-          </b-button>
         </template>
       </b-col>
       <b-col :cols="10" class="d-flex flex-column" style="padding: 0">
@@ -278,13 +277,19 @@ watch(
     width: 100%;
     position: relative;
     .col {
-      $background: rgba(238, 238, 238, 0.85);
       align-items: start;
       position: absolute;
+      backdrop-filter: blur(5px);
+      left: 10px;
+      width: calc(100% - 2px);
+      padding-bottom: 1rem;
+
+      $background: rgba(238, 238, 238, 0.85);
       box-shadow: 0px 35px 5px -4px;
-      background: #{$background};
       color: #{$background};
-      left: 9px;
+
+      border-top: 1px solid lightgray;
+      border-bottom: 1px solid lightgray;
     }
   }
 }

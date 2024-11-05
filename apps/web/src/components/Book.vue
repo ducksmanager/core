@@ -20,6 +20,7 @@
             }"
             @transitionend="onEndOpenCloseTransition()"
           />
+          <slot name="page-overlay" :index="index" />
         </div>
       </div>
     </div>
@@ -39,6 +40,7 @@ const emit = defineEmits<{ (e: "close-book"): void }>();
 const slots = defineSlots<{
   edge(): unknown;
   "table-of-contents"(): unknown;
+  "page-overlay"(props: { index: number }): unknown;
 }>();
 
 const container = ref<HTMLElement>();

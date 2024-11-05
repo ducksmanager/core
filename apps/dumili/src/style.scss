@@ -120,6 +120,11 @@ $storyKinds: (
   'n_g': #ff99ff
 );
 
+
+*[class^='kind-'], *[class*=' kind-'] {
+  @include storyKindBackground(#cccccc);
+}
+
 @each $storyKind,
 $storyversionColor in $storyKinds {
   .kind-#{$storyKind} {
