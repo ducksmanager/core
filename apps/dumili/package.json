@@ -45,6 +45,7 @@
     "@eslint/eslintrc": "^3.1.0",
     "@eslint/js": "^9.14.0",
     "@intlify/unplugin-vue-i18n": "^5.2.0",
+    "@intlify/eslint-plugin-vue-i18n": "^3.0.0",
     "@types/js-cookie": "^3.0.6",
     "@vitejs/plugin-vue": "^5.1.4",
     "concurrently": "^9.0.1",

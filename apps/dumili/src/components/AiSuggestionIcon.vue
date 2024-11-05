@@ -50,13 +50,16 @@ svg {
   min-width: 20px;
 
   cursor: help;
-  color: grey;
 
   &.button {
     background: black;
     border-radius: 10px;
     padding: 4px;
     height: 20px;
+  }
+
+  &.idle {
+    color: grey;
   }
 
   &.success {

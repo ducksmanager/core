@@ -1,21 +1,13 @@
 <template>
   <table>
     <thead v-if="data.length">
-      <th
-        v-for="header in Object.keys(data[0])"
-        :key="header"
-        style="border: 1px solid black"
-      >
+      <th v-for="header in Object.keys(data[0])" :key="header" class="border">
         {{ header }}
       </th>
     </thead>
     <tbody>
       <tr v-for="(row, rowIdx) in data" :key="rowIdx">
-        <td
-          v-for="value in Object.values(row)"
-          :key="value"
-          style="border: 1px solid black"
-        >
+        <td v-for="value in Object.values(row)" :key="value" class="border">
           {{ value }}
         </td>
       </tr>

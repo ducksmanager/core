@@ -1,5 +1,6 @@
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import vueI18n from "@intlify/eslint-plugin-vue-i18n";
 
 import { FlatCompat } from "@eslint/eslintrc";
 import js from "@eslint/js";
@@ -16,14 +17,23 @@ const compat = new FlatCompat({
 
 export default [
   {
-    ignores: ["api/**/*", "**/*.d.ts", "**/dist", "**/node_modules"],
+    ignores: [
+      "api/**/*",
+      "**/*.d.ts",
+      "**/dist",
+      "**/node_modules",
+      "**/*.json",
+      "**/*.yml",
+    ],
   },
+  ...vueI18n.configs["flat/recommended"],
   ...compat.extends(
     "plugin:vue/vue3-recommended",
     "plugin:prettier-vue/recommended",
     "prettier",
     "plugin:@typescript-eslint/recommended",
   ),
+
   {
     plugins: {
       "@typescript-eslint": typescriptEslint,
@@ -58,6 +68,8 @@ export default [
           ignores: [],
         },
       ],
+
+      "@intlify/vue-i18n/no-deprecated-i18n-component": "off",
     },
   },
   {

@@ -4,11 +4,7 @@
     "target": "ES2020",
     "useDefineForClassFields": true,
     "module": "ESNext",
-    "lib": [
-      "ES2020",
-      "DOM",
-      "DOM.Iterable"
-    ],
+    "lib": ["ES2020", "DOM", "DOM.Iterable"],
     "skipLibCheck": true,
     "allowJs": true,
     /* Bundler mode */
@@ -30,42 +26,20 @@
       "unplugin-icons/types/vue"
     ],
     "paths": {
-      "~/*": [
-        "src/*"
-      ],
-      "~dm-services/*": [
-        "../../packages/api/services/*"
-      ],
-      "~dm-types/*": [
-        "../../packages/types/*"
-      ],
-      "~dumili-services/*": [
-        "api/services/*"
-      ],
-      "~dumili-types/*": [
-        "types/*"
-      ],
-      "~dumili-utils/*": [
-        "utils/*"
-      ],
-      "~web/*": [
-        "../web/*"
-      ],
-      "~translations/*": [
-        "translations/*"
-      ],
-      "~prisma/*": [
-        "api/prisma/*"
-      ],
-      "~prisma-schemas/*": [
-        "../../packages/prisma-schemas/*"
-      ],
+      "~/*": ["src/*"],
+      "~dm-services/*": ["../../packages/api/services/*"],
+      "~dm-types/*": ["../../packages/types/*"],
+      "~dumili-services/*": ["api/services/*"],
+      "~dumili-types/*": ["types/*"],
+      "~dumili-utils/*": ["utils/*"],
+      "~web/*": ["../web/*"],
+      "~translations/*": ["translations/*"],
+      "~prisma/*": ["api/prisma/*"],
+      "~prisma-schemas/*": ["../../packages/prisma-schemas/*"],
       "~socket.io-client-services/*": [
         "../../packages/socket.io-client-services/*"
       ],
-      "~socket.io-services/*": [
-        "../../packages/socket.io-services/*"
-      ]
+      "~socket.io-services/*": ["../../packages/socket.io-services/*"]
     }
   },
   "include": [

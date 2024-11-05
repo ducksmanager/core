@@ -91,10 +91,9 @@ const textContent = computed(() => {
 watch(
   acceptedStories,
   async (value) => {
-    if (!issue.value?.issuecode) {
-      return undefined;
+    if (issue.value?.issuecode) {
+      storiesWithDetails.value = await getStoriesWithDetails(value);
     }
-    storiesWithDetails.value = await getStoriesWithDetails(value);
   },
   { immediate: true, deep: true },
 );

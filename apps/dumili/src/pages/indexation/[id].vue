@@ -16,7 +16,7 @@
           v-show="!showUploadWidget"
           @click="showUploadWidget = !showUploadWidget"
         >
-          {{ $t("Upload page files") }}
+          {{ $t("Envoyer des images de pages") }}
         </b-button>
       </template>
       <Book

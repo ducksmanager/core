@@ -32,7 +32,7 @@ const showRepeat = ref(false);
 </script>
 
 <style lang="scss" scoped>
-> svg {
+span > svg {
   width: 20px;
   height: 20px;
   color: black;

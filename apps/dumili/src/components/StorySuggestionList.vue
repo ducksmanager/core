@@ -27,14 +27,13 @@
     <template #unknown-text>{{ $t("Contenu inconnu") }}</template>
     <template #customize-text>{{ $t("Rechercher...") }}</template>
     <template #customize-form>
-      <StorySearch @story-selected="createAndAcceptStorySuggestion" />
+      <StorySearch @story-selected="acceptStory($event.storycode)" />
     </template>
   </suggestion-list>
 </template>
 
 <script lang="ts" setup>
 import { dumiliSocketInjectionKey } from "~/composables/useDumiliSocket";
-import { SimpleStory } from "~dm-types/SimpleStory";
 import { FullIndexation } from "~dumili-services/indexation/types";
 import { suggestions } from "../stores/suggestions";
 
@@ -51,17 +50,34 @@ const { indexation } = storeToRefs(suggestions());
 const showEntrySelect = ref(false);
 const { storyDetails, storyversionDetails } = storeToRefs(coa());
 
-const createAndAcceptStorySuggestion = async (searchResult: SimpleStory) => {
-  const result = await indexationSocket.value!.services.createStorySuggestion({
-    entryId: entry.value.id,
-    storycode: searchResult.storycode,
-  });
-
-  if (!("error" in result)) {
+const acceptStory = async (storycode: string) => {
+  let storySuggestionId = entry.value.storySuggestions.find(
+    (s) => s.storycode === storycode,
+  )?.id;
+  if (!storySuggestionId) {
+    const result = await indexationSocket.value!.services.createStorySuggestion(
+      {
+        entryId: entry.value.id,
+        storycode,
+      },
+    );
+    if ("error" in result) {
+      console.error(result.error);
+      return;
+    }
+  }
+  if (entry.value.acceptedStory?.storycode !== storycode) {
     await indexationSocket.value!.services.acceptStorySuggestion(
-      result.createdStorySuggestion!.id || null,
+      storySuggestionId || null,
     );
     await loadIndexation(indexation.value!.id);
   }
 };
+
+watch(
+  () => entry.value.acceptedStory,
+  async (story) => {
+    acceptStory(story?.storycode || "");
+  },
+);
 </script>

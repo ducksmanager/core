@@ -53,6 +53,7 @@ const setKumikoInferredPageStoryKinds = async (pages: page[]) => {
       data: {
         aiKumikoInferredStoryKind: inferredStoryKind,
         aiKumikoResultPanels: {
+          deleteMany: {},
           createMany: {
             data: panelsOfPage,
           },

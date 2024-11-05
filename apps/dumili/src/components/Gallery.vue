@@ -20,7 +20,7 @@
         </div>
       </b-col>
     </b-row>
-    <b-container v-else>Loading...</b-container>
+    <b-container v-else>{{ $t("Loading...") }}</b-container>
   </b-container>
 </template>
 <script lang="ts" setup>
@@ -36,6 +36,8 @@ defineSlots<{
 const emit = defineEmits<{
   (e: "selected", url: string): void;
 }>();
+
+const { t: $t } = useI18n();
 
 const selectedUrl = ref<string | undefined>(undefined);
 
