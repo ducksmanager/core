@@ -1,9 +1,9 @@
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import vueI18n from "@intlify/eslint-plugin-vue-i18n";
 
 import { FlatCompat } from "@eslint/eslintrc";
 import js from "@eslint/js";
+import vueI18n from "@intlify/eslint-plugin-vue-i18n";
 import typescriptEslint from "@typescript-eslint/eslint-plugin";
 import parser from "vue-eslint-parser";
 

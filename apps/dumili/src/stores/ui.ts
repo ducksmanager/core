@@ -1,5 +1,6 @@
-import { FullIndexation } from "~dumili-services/indexation/types";
+import type { FullIndexation } from "~dumili-services/indexation/types";
 import { getEntryPages } from "~dumili-utils/entryPages";
+
 import { suggestions } from "./suggestions";
 
 export const ui = defineStore("ui", () => {

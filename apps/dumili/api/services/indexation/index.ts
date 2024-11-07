@@ -90,7 +90,6 @@ export default (io: Server) => {
     .use(RequiredAuthMiddleware)
     .use(getIndexationMiddleware)
     .on("connection", (indexationSocket) => {
-
       const setInferredEntryStoryKind = async (entryId: entry["id"]) => {
         const indexation = indexationSocket.data.indexation;
         const mostInferredStoryKind = (
@@ -187,11 +186,11 @@ export default (io: Server) => {
                 suggestionId === null
                   ? { disconnect: true }
                   : {
-                    connect: {
-                      id: suggestionId,
-                      indexationId: indexationSocket.data.indexation.id,
+                      connect: {
+                        id: suggestionId,
+                        indexationId: indexationSocket.data.indexation.id,
+                      },
                     },
-                  },
             },
             where: {
               id: indexationSocket.data.indexation.id,
@@ -313,7 +312,7 @@ export default (io: Server) => {
         const page = indexation.pages.find(({ id }) => id === pageId)!;
 
         await setKumikoInferredPageStoryKinds([page]);
-        const entry = (getEntryFromPage(indexation, pageId))!;
+        const entry = getEntryFromPage(indexation, pageId)!;
         await setInferredEntryStoryKind(entry.id);
 
         callback({ status: "OK" });
@@ -456,10 +455,10 @@ const acceptStorySuggestion = async (
         suggestionId === null
           ? { disconnect: true }
           : {
-            connect: {
-              id: suggestionId,
+              connect: {
+                id: suggestionId,
+              },
             },
-          },
     },
     where: {
       id: entryId,
@@ -476,10 +475,10 @@ const acceptStoryKindSuggestion = (
         suggestionId === null
           ? { disconnect: true }
           : {
-            connect: {
-              id: suggestionId,
+              connect: {
+                id: suggestionId,
+              },
             },
-          },
     },
     where: {
       id: entryId,

@@ -1,3 +1,5 @@
+import type { PageFlip } from "page-flip";
+
 import Book from "./src/components/Book.vue";
 import Bookcase from "./src/components/Bookcase.vue";
 import InducksStory from "./src/components/InducksStory.vue";
@@ -13,7 +15,6 @@ import { coa } from "./src/stores/coa";
 import { collection } from "./src/stores/collection";
 import { stats } from "./src/stores/stats";
 import { users } from "./src/stores/users";
-import type { PageFlip } from "page-flip";
 export const stores = {
   coa,
   collection,
