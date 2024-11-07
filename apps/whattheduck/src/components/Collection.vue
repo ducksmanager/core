@@ -2,7 +2,7 @@
   <ion-page id="main-content">
     <ion-buttons slot="end" v-if="componentName === IssueList">
       <CopyListButton />
-      <ViewModesButton />
+      <ViewModesButton v-if="!isIOS" />
     </ion-buttons>
     <ion-header :translucent="true">
       <ion-toolbar>
@@ -63,6 +63,7 @@ const {
   issuecodes,
   currentNavigationItem,
   currentFilter,
+  isIOS
 } = storeToRefs(app());
 
 const { issuecodeDetails } = storeToRefs(coa());

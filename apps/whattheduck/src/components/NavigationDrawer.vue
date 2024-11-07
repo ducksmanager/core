@@ -9,7 +9,7 @@
           <ion-row class="ion-justify-content-center ion-padding"
             ><ion-note class="ion-no-padding">{{ user.username }}</ion-note>
           </ion-row>
-          <ion-row class="ion-padding-vertical">
+          <ion-row class="ion-padding-vertical" v-if="!isIOS">
             <Medal
               v-for="(numberOfPoints, contribution) in points[user.id] || {}"
               :key="contribution"
@@ -77,7 +77,7 @@ import { app } from '~/stores/app';
 import { wtdcollection } from '~/stores/wtdcollection';
 
 const { t } = useI18n();
-const { token, isOffline } = storeToRefs(app());
+const { token, isOffline, isIOS } = storeToRefs(app());
 const collectionStore = wtdcollection();
 const points = computed(() => webStores.users().points);
 

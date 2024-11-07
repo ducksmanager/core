@@ -1,3 +1,4 @@
+import { Capacitor } from '@capacitor/core';
 import { bookmarkOutline, bookmarkSharp } from 'ionicons/icons';
 import { defineStore } from 'pinia';
 
@@ -19,6 +20,7 @@ export const app = defineStore('app', () => {
 
   const isOfflineMode = ref<boolean | 'offline_no_cache'>(false);
   const isOffline = computed(() => isOfflineMode.value !== false);
+  const isIOS = computed(() => Capacitor.getPlatform() === 'ios');
 
   const router = useRouter();
   const route = useRoute();
@@ -196,24 +198,25 @@ export const app = defineStore('app', () => {
   });
 
   return {
-    socket,
-    filterText,
-    selectedIssuecodes,
-    isPersistedDataLoaded,
-    isCameraPreviewShown,
-    currentNavigationItem,
+    copyListModes,
     countrycode,
-    publicationcode,
-    issuecodes,
-    token,
-    offlineBannerHeight,
+    currentFilter,
+    currentIssueViewMode,
+    currentNavigationItem,
+    filters,
+    filterText,
+    isCameraPreviewShown,
+    isCoaView,
+    isIOS,
     isOffline,
     isOfflineMode,
-    isCoaView,
-    copyListModes,
+    isPersistedDataLoaded,
+    issuecodes,
     issueViewModes,
-    currentIssueViewMode,
-    filters,
-    currentFilter,
+    offlineBannerHeight,
+    publicationcode,
+    selectedIssuecodes,
+    socket,
+    token,
   };
 });
