@@ -16,10 +16,10 @@ alias: [/achats]
       tag="div"
       keypath="A quel moment votre collection a-t-elle accueilli son {_10th} numéro ? Son {_50th} ?"
     >
-      <template #10th
+      <template #_10th
         >10<sup>{{ $t("ème") }}</sup></template
       >
-      <template #50th
+      <template #_50th
         >50<sup>{{ $t("ème") }}</sup></template
       >
     </i18n-t>
