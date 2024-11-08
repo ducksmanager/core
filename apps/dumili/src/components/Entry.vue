@@ -24,7 +24,7 @@
           :on-click-rerun="() => runKumiko(entry.id)"
           @click="showAiDetectionsOn = entry.id"
         >
-          <b>{{ $t("Types d'histoire déduits") }}</b>
+          <b>{{ $t("Types d'entrées déduits pour les pages") }}</b>
           <table-results
             :data="
               pagesWithInferredKinds.map(({ page, ...inferredData }) => ({
@@ -33,7 +33,7 @@
               }))
             "
           /><br />
-          <b>{{ $t("Type d'histoire déduit") }}</b>
+          <b>{{ $t("Type d'entrée déduit") }}</b>
           {{
             storyKinds.find(({ code }) => code === storyKindAiSuggestion?.kind)
               ?.label
@@ -48,7 +48,7 @@
           @click="showAiDetectionsOn = entry.id"
         >
           <template v-if="storyAiSuggestions.length">
-            ${{ $t("Résultats OCR:") }}
+            {{ $t("Résultats OCR:") }}
             <table-results :data="pages[0].aiOcrResults" />
             {{ $t("Histoires potentielles:") }}
             <table-results
@@ -58,9 +58,9 @@
                   title: storyDetails[storycode].title,
                 }))
               " /></template
-          ><template v-else
-            >${{ $t("Pas de résultats OCR") }}</template
-          ></ai-tooltip
+          ><template v-else>{{
+            $t("Pas de résultats OCR")
+          }}</template></ai-tooltip
         >
       </b-col>
       <b-col col cols="5" class="flex-column">
@@ -126,7 +126,7 @@ const entry = defineModel<FullEntry>({ required: true });
 const pagesWithInferredKinds = computed(() =>
   getEntryPages(indexation.value!, entry.value.id).map((page) => ({
     page,
-    "inferred page story kind": storyKinds.find(
+    [$t("Type d'entrée déduit pour la page")]: storyKinds.find(
       ({ code }) => code === page.aiKumikoInferredStoryKind,
     )?.label,
   })),

@@ -54,7 +54,7 @@
                   }))
                 "
               />
-              <b>{{ $t("Inferred page story kind") }}</b>
+              <b>{{ $t("Type d'entrée déduit pour la page") }}</b>
               {{
                 storyKinds.find(
                   ({ code }) => code === aiKumikoInferredStoryKind,

@@ -20,7 +20,7 @@
         </div>
       </b-col>
     </b-row>
-    <b-container v-else>{{ $t("Loading...") }}</b-container>
+    <b-container v-else>{{ $t("Chargement...") }}</b-container>
   </b-container>
 </template>
 <script lang="ts" setup>

@@ -11,9 +11,11 @@
       @cancel.prevent="rejectAllIssueSuggestions"
     >
       <div class="m-3">
-        Dumili a trouvé des couvertures existantes ressemblant à la vôtre.
-        Sélectionnez la couverture qui ressemble le plus à la vôtre.<br />Si
-        aucune ne ressemble,cliquez sur "Annuler".
+        {{
+          $t(
+            "Dumili a trouvé des couvertures existantes ressemblant à la vôtre. Sélectionnez la couverture qui ressemble le plus à la vôtre.",
+          )
+        }}<br />{{ $t('Si aucune ne ressemble,cliquez sur "Annuler".') }}
       </div>
       <Gallery
         v-slot="{ issuecode }"
@@ -94,7 +96,7 @@ const acceptIssueSuggestion = async (issuecode: string) => {
     issuecode,
     publicationcode,
     issuenumber,
-    source: "ai",
+    isChosenByAi: true,
   });
   await indexationSocket.value!.services.acceptIssueSuggestion(suggestionId);
   selectedExistingCoverIssuecode.value = null;

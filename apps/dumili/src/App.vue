@@ -1,7 +1,7 @@
 <template>
   <b-container fluid class="p-2 border-bottom">
     <h2>DuMILi</h2>
-    <h3>DucksManager Inducks Little helper</h3>
+    <h3>{{ $t("DucksManager Inducks Little helper") }}</h3>
   </b-container>
 
   <b-container

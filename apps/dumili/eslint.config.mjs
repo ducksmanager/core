@@ -70,12 +70,18 @@ export default [
       ],
 
       "@intlify/vue-i18n/no-deprecated-i18n-component": "off",
+      "@intlify/vue-i18n/no-raw-text": [
+        "warn",
+        {
+          ignoreText: ["DuMILi", "DucksManager", "OK", "11zon.com"],
+        },
+      ],
     },
 
     settings: {
       "vue-i18n": {
         localeDir: {
-          pattern: "./translations/*.json",
+          pattern: ["./translations/*.json", "../web/translations/*.json"],
           localeKey: "file",
         },
       },

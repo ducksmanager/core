@@ -20,13 +20,14 @@
     <template v-if="currentCountrycode && currentPublicationcode">
       <b-form-input
         v-model="currentIssuenumber"
-        placeholder="Entrez le numéro"
+        :placeholder="$t('Entrez le numéro')"
         :state="isValid"
       />
       <div class="invalid-feedback">
-        <template v-if="['', undefined].includes(currentIssuenumber)"
-          >Veuillez entrer le numéro</template
-        ><template v-else> Ce numéro est déjà référencé !</template>
+        <template v-if="['', undefined].includes(currentIssuenumber)">{{
+          $t("Veuillez entrer le numéro")
+        }}</template
+        ><template v-else>{{ $t("Ce numéro est déjà référencé !") }}</template>
       </div>
     </template>
     <b-button

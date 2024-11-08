@@ -1,6 +1,6 @@
 <template>
   <b-container>
-    <h4 class="sticky-top">Indexations en cours</h4>
+    <h4 class="sticky-top">{{ $t("Indexations en cours") }}</h4>
     <template v-if="currentIndexations">
       <b-row align-h="center">
         <b-col
@@ -15,19 +15,21 @@
             class="d-flex flex-column align-items-center border"
           >
             <b-img :src="pages[0]?.url" fluid thumbnail />
-            Numéro inconnu
+            {{ $t("Numéro inconnu") }}
           </router-link>
         </b-col>
       </b-row>
       <h4 v-if="!currentIndexations.length" fluid>
-        Aucune indexation en cours
+        {{ $t("Aucune indexation en cours") }}
       </h4></template
     >
-    <template v-else>Loading...</template></b-container
+    <template v-else>{{ $t("Chargement...") }}</template></b-container
   >
   <b-container fluid class="position-absolute bottom-0 start-0">
     <div>
-      <b-button @click="modal = !modal">Nouvelle indexation</b-button>
+      <b-button @click="modal = !modal">{{
+        $t("Nouvelle indexation")
+      }}</b-button>
     </div>
     <b-modal
       v-if="stepNumber === 0"
@@ -40,17 +42,24 @@
       @ok.prevent="uploadType = 'all'"
       @cancel.prevent="uploadType = 'some'"
     >
-      De quelles pages du numéro que vous souhaitez indexer possédez vous des
-      scans ?
+      {{
+        $t(
+          "De quelles pages du numéro que vous souhaitez indexer possédez vous des scans ?",
+        )
+      }}
       <b-alert variant="info" model-value :dismissible="false" class="mt-3"
-        >Si vous posséedez les pages du magazine avec le format PDF,
+        ><i18n-t
+          keypath="Si vous possédez les pages du magazine avec le format PDF,
         assurez-vous que celui-ci ait une taille de fichier de 10 MB au maximum.
-        Si ce n'est pas le cas, vous pouvez utiliser un outil tel que
-        <a href="https://bigpdf.11zon.com/en/compress-pdf/compress-pdf-to-10mb"
-          >11zon.com</a
+        Si ce n'est pas le cas, vous pouvez utiliser un outil tel que {link} pour compresser votre fichier de telle sorte qu'il fasse moins de 10 MB."
         >
-        pour compresser votre fichier de telle sorte qu'il fasse moins de 10
-        MB.</b-alert
+          <template #link
+            ><a
+              href="https://bigpdf.11zon.com/en/compress-pdf/compress-pdf-to-10mb"
+              >11zon.com</a
+            ></template
+          >
+        </i18n-t></b-alert
       >
     </b-modal>
     <upload-widget

@@ -8,7 +8,7 @@
     <slot name="title-suffix" />
     <slot />
   </div>
-  <div v-else>Numéro inconnu</div>
+  <div v-else>{{ $t("Numéro inconnu") }}</div>
 </template>
 
 <script setup lang="ts">

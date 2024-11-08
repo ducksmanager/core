@@ -22,7 +22,7 @@ export default () => {
     await Promise.all(
       results.covers.map(({ issuecode }) =>
         indexationSocket.value!.services.createIssueSuggestion({
-          source: "ai",
+          isChosenByAi: true,
           ...issuecodeDetails.value[issuecode]!,
         }),
       ),
