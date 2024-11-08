@@ -8,7 +8,7 @@
       :id="disabled ? `${id}-disabled` : id"
       button
       :status="status"
-      @click.stop="() => {}" />
+      @click.stop="emit('click')" />
     <i-bi-arrow-repeat v-show="showRepeat" class="ms-2" @click="onClickRerun"
   /></span>
 </template>
@@ -19,6 +19,10 @@ const { value } = defineProps<{
   onClickRerun: (...args: unknown[]) => void | Promise<void>;
 }>();
 defineSlots();
+
+const emit = defineEmits<{
+  (e: "click"): void;
+}>();
 
 const disabled = ref(false); // TODO handle failed suggestions
 const status = computed(() => (value ? "success" : "idle"));

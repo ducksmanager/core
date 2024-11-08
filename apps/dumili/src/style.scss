@@ -101,6 +101,11 @@ button:focus-visible {
   }
 }
 
+.translucent {
+  border: 2px solid rgba(0,0,0,0.2);
+  box-shadow: inset 0px 0px 10px 10px white;
+}
+
 @mixin storyKindBackground($bg) {
   background-color: $bg !important;
   color: color.invert($bg);

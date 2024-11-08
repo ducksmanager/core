@@ -8,6 +8,7 @@ export const ui = defineStore("ui", () => {
   return {
     showAiDetectionsOn: ref<number | undefined>(undefined),
     hoveredEntry,
+    selectedPageNumber: ref<number | undefined>(undefined),
     hoveredEntryPageNumbers: computed(
       () =>
         suggestions().indexation &&

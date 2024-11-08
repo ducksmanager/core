@@ -1,8 +1,8 @@
 <template>
   <b-row v-if="indexationId && hasData" class="d-flex h-100">
     <b-col :cols="6" class="d-flex flex-column h-100">
-      <template v-if="activeTab === 'pageGallery'"
-        ><Gallery :images="images" />
+      <template v-if="activeTab === 'pageGallery'">
+        <Gallery :images="images" />
         <upload-widget
           v-if="showUploadWidget"
           :folder-name="indexationId"
@@ -28,15 +28,21 @@
         :cover-ratio="coverRatio"
         :urls="indexation.pages.map(({ url }) => url)"
       >
-        <template #page-overlay="{ index }"
-          ><div
-            :class="`overlay ${
-              hoveredEntryPageNumbers?.includes(index + 1)
-                ? `kind-${hoveredEntry!.acceptedStoryKind?.kind} striped`
-                : ''
-            }`"
-          ></div
-        ></template>
+        <template #page-overlay="{ index }">
+          <template v-if="hoveredEntryPageNumbers?.includes(index + 1)">
+            <div
+              :class="`overlay kind-${hoveredEntry!.acceptedStoryKind?.kind} striped`"
+            ></div>
+          </template>
+          <template v-if="selectedPageNumber === index + 1">
+            <div
+              v-for="panel in indexation.pages[index].aiKumikoResultPanels"
+              :key="`kumiko-match-${panel.id}`"
+              class="overlay translucent"
+              :style="getPanelCss(panel)"
+            ></div>
+          </template>
+        </template>
       </Book>
       <TextEditor v-else-if="activeTab === 'textEditor'" />
       <b-container
@@ -47,8 +53,9 @@
           ><b-tab
             v-for="tabName of tabNames"
             :key="tabName"
-            :title="$t(tabName)" /></b-tabs></b-container
-    ></b-col>
+            :title="$t(tabName)" /></b-tabs
+      ></b-container>
+    </b-col>
 
     <b-col :cols="6" class="h-100 overflow-auto">
       <table-of-contents
@@ -65,20 +72,21 @@ import { suggestions } from "~/stores/suggestions";
 import { tabs } from "~/stores/tabs";
 import { ui } from "~/stores/ui";
 import { FullIndexation } from "~dumili-services/indexation/types";
+import { aiKumikoResultPanel } from "~prisma/client_dumili";
 
 const { Book } = webComponents;
 
 const book = ref<PageFlip | undefined>(undefined);
 const bookCurrentPage = ref(0);
 const isBookOpened = ref(true);
-const coverRatio = ref<number | undefined>(undefined);
 
 const showUploadWidget = ref(false);
 const route = useRoute();
 
 const { t: $t } = useI18n();
 
-const { hoveredEntry, hoveredEntryPageNumbers } = storeToRefs(ui());
+const { hoveredEntry, hoveredEntryPageNumbers, selectedPageNumber } =
+  storeToRefs(ui());
 const { activeTab } = storeToRefs(tabs());
 const activeTabIndex = computed({
   get() {
@@ -107,6 +115,14 @@ const { indexation } = storeToRefs(suggestions()) as {
 
 const hasData = ref(false);
 
+const firstPageDimensions = ref<{ width: number; height: number } | null>(null);
+
+const coverRatio = computed(() =>
+  firstPageDimensions.value
+    ? firstPageDimensions.value.height / firstPageDimensions.value.width
+    : null,
+);
+
 const shownPages = computed(() =>
   book.value?.getPageCollection()
     ? [
@@ -124,6 +140,17 @@ const images = computed(() =>
     text: url,
   })),
 );
+
+const getPanelCss = (panel: aiKumikoResultPanel) => {
+  const { width: pageWidth, height: pageHeight } = firstPageDimensions.value!;
+  const { x, y, width, height } = panel;
+  return {
+    left: `${(x * 100) / pageWidth}%`,
+    top: `${(y * 100) / pageHeight}%`,
+    width: `${(width * 100) / pageWidth}%`,
+    height: `${(height * 100) / pageHeight}%`,
+  };
+};
 
 watch(
   () => route.params.id,
@@ -152,14 +179,12 @@ watch(
         )
         .flat(),
     );
-    const firstPageDimensions: { output: { height: number; width: number } } =
-      await (
-        await fetch(
-          "https://res.cloudinary.com/dl7hskxab/image/upload/pg_1/fl_getinfo/v1729876637/dumili/brunoperel/20241025T171702824/Picsou_magazine_529_11zon_krzady.png",
-        )
-      ).json();
-    coverRatio.value =
-      firstPageDimensions.output.height / firstPageDimensions.output.width;
+    const { output }: { output: { height: number; width: number } } = await (
+      await fetch(
+        indexation.value.pages[0].url.replace("pg_1/", "pg_1/fl_getinfo/"),
+      )
+    ).json();
+    firstPageDimensions.value = output;
     hasData.value = true;
   },
   { immediate: true },
@@ -170,6 +195,7 @@ watch(
 #main {
   max-height: calc(100vh - 108px);
 }
+
 .col {
   display: flex;
   align-items: center;

@@ -41,6 +41,7 @@
               :id="`ai-results-page-${pageNumber}`"
               :value="aiKumikoInferredStoryKind"
               :on-click-rerun="() => runKumikoOnPage(id)"
+              @click="selectedPageNumber = pageNumber"
             >
               <b>{{ $t("Cases détectées") }}</b>
               <table-results
@@ -53,7 +54,7 @@
                   }))
                 "
               />
-              <b>Inferred page story kind</b>
+              <b>{{ $t("Inferred page story kind") }}</b>
               {{
                 storyKinds.find(
                   ({ code }) => code === aiKumikoInferredStoryKind,
@@ -143,7 +144,7 @@ const { indexationSocket } = inject(dumiliSocketInjectionKey)!;
 
 const { loadIndexation } = suggestions();
 const { acceptedStoryKinds } = storeToRefs(suggestions());
-const { hoveredEntry } = storeToRefs(ui());
+const { hoveredEntry, selectedPageNumber } = storeToRefs(ui());
 const indexation = storeToRefs(suggestions()).indexation as Ref<FullIndexation>;
 const currentPage = defineModel<number>();
 
