@@ -162,22 +162,21 @@ watch(
         ({ publicationcode }) => publicationcode,
       ),
     );
-    await fetchStoryDetails(
-      indexation
-        .value!.entries.map(({ storySuggestions }) =>
-          storySuggestions.map(({ storycode }) => storycode),
-        )
-        .flat(),
-    );
+    const storycodes = indexation
+      .value!.entries.map(({ storySuggestions }) =>
+        storySuggestions
+          .map(({ storycode }) => storycode)
+          .filter((v): v is string => !!v),
+      )
+      .flat();
+    await fetchStoryDetails(storycodes);
     await fetchStoryversionDetails(
-      indexation
-        .value!.entries.map(({ storySuggestions }) =>
-          storySuggestions.map(
-            ({ storycode }) =>
-              storyDetails.value[storycode]!.originalstoryversioncode!,
-          ),
+      storycodes
+        .map(
+          (storycode) =>
+            storyDetails.value[storycode]?.originalstoryversioncode,
         )
-        .flat(),
+        .filter((v): v is string => !!v),
     );
     const { output }: { output: { height: number; width: number } } = await (
       await fetch(

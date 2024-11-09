@@ -7,7 +7,7 @@
     @toggle-customize-form="showEntrySelect = $event"
   >
     <template #item="suggestion">
-      <Story :story="suggestion">
+      <Story v-if="suggestion.storycode" :storycode="suggestion.storycode">
         <template #suffix>
           <span
             title="Le type de l'histoire sélectionnée ne correspond pas au type de l'entrée"
@@ -36,6 +36,7 @@
 import { dumiliSocketInjectionKey } from "~/composables/useDumiliSocket";
 import { FullIndexation } from "~dumili-services/indexation/types";
 import { suggestions } from "../stores/suggestions";
+import { storySuggestion } from "~prisma/client_dumili";
 
 const { t: $t } = useI18n();
 
@@ -50,15 +51,16 @@ const { indexation } = storeToRefs(suggestions());
 const showEntrySelect = ref(false);
 const { storyDetails, storyversionDetails } = storeToRefs(coa());
 
-const acceptStory = async (storycode: string) => {
+const acceptStory = async (storycode: storySuggestion["storycode"]) => {
   let storySuggestionId = entry.value.storySuggestions.find(
     (s) => s.storycode === storycode,
   )?.id;
+  debugger;
   if (!storySuggestionId) {
     const result = await indexationSocket.value!.services.createStorySuggestion(
       {
         entryId: entry.value.id,
-        storycode,
+        storycode: storycode!,
       },
     );
     if ("error" in result) {
@@ -77,7 +79,7 @@ const acceptStory = async (storycode: string) => {
 watch(
   () => entry.value.acceptedStory,
   async (story) => {
-    acceptStory(story?.storycode || "");
+    acceptStory(story!.storycode);
   },
 );
 </script>

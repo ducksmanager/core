@@ -73,7 +73,7 @@ export default [
       "@intlify/vue-i18n/no-raw-text": [
         "warn",
         {
-          ignoreText: ["DuMILi", "DucksManager", "OK", "11zon.com"],
+          ignoreText: ["DuMILi", "DucksManager", "OK", "11zon.com", " - "],
         },
       ],
     },

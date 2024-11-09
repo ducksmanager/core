@@ -43,7 +43,7 @@
         <StorySuggestionList v-model="entry" />
         <ai-tooltip
           :id="`ai-results-entry-story-${entry.id}`"
-          :value="storyAiSuggestions.map(({ storycode }) => storycode)"
+          :value="storyAiSuggestions.map(({ storycode }) => storycode!)"
           :on-click-rerun="() => runStorycodeOcr(entry.id)"
           @click="showAiDetectionsOn = entry.id"
         >
@@ -55,7 +55,7 @@
               :data="
                 storyAiSuggestions.map(({ storycode }) => ({
                   storycode,
-                  title: storyDetails[storycode].title,
+                  title: storyDetails[storycode!].title,
                 }))
               " /></template
           ><template v-else>{{
@@ -93,8 +93,8 @@
       </b-col>
       <b-col col cols="5"
         >{{ title || $t("Sans titre") }}
-        <template v-if="entry.part">
-          - {{ $t("partie") }} {{ entry.part }}</template
+        <template v-if="entry.part"
+          >{{ " - " }}{{ $t("partie") }} {{ entry.part }}</template
         >
         <br />
         <small>{{ entry.entrycomment }}</small>
@@ -133,22 +133,26 @@ const pagesWithInferredKinds = computed(() =>
 );
 
 watch(
-  () => entry.value.acceptedStoryKind,
-  (storyKind) => {
+  () => entry.value.acceptedStoryKind?.id,
+  (storyKindId) => {
     indexationSocket.value!.services.acceptStoryKindSuggestion(
       entry.value.id,
-      storyKind?.id || null,
+      storyKindId || null,
     );
   },
 );
 
 watch(
-  () => [
-    entry.value.entirepages,
-    entry.value.brokenpagenumerator,
-    entry.value.brokenpagedenominator,
-  ],
-  ([entirepages, brokenpagenumerator, brokenpagedenominator]) => {
+  () =>
+    JSON.stringify([
+      entry.value.entirepages,
+      entry.value.brokenpagenumerator,
+      entry.value.brokenpagedenominator,
+    ]),
+  () => {
+    debugger;
+    const { entirepages, brokenpagenumerator, brokenpagedenominator } =
+      entry.value;
     indexationSocket.value!.services.updateEntryLength(entry.value.id, {
       entirepages,
       brokenpagenumerator,
@@ -207,7 +211,7 @@ const getStoryKind = (storyKind: storyKind) =>
 .badge,
 :deep(.btn-group .btn),
 :deep(.dropdown-item) {
-  @include storyKindBackground(grey);
+  color: black;
   &.kind-c {
     @include storyKindBackground(#ffcc33);
   }
