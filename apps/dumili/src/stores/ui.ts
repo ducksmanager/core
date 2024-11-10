@@ -1,19 +1,31 @@
-import type { FullIndexation } from "~dumili-services/indexation/types";
-import { getEntryPages } from "~dumili-utils/entryPages";
+import type { FullEntry } from "~dumili-services/indexation/types";
+import { getEntryFromPage, getEntryPages } from "~dumili-utils/entryPages";
 
 import { suggestions } from "./suggestions";
 
 export const ui = defineStore("ui", () => {
-  const hoveredEntry = ref<FullIndexation["entries"][number] | null>(null);
+  const { indexation } = storeToRefs(suggestions());
+  const hoveredEntry = ref<FullEntry | null>(null);
+  const currentEntry = ref<FullEntry>();
+
+  watch(
+    indexation,
+    () => {
+      currentEntry.value = getEntryFromPage(indexation.value!, 0)!;
+    },
+    { once: true },
+  );
+
   return {
     showAiDetectionsOn: ref<number | undefined>(undefined),
-    hoveredEntry,
     selectedPageNumber: ref<number | undefined>(undefined),
+    currentEntry,
+    hoveredEntry,
     hoveredEntryPageNumbers: computed(
       () =>
-        suggestions().indexation &&
+        indexation.value &&
         hoveredEntry.value &&
-        getEntryPages(suggestions().indexation!, hoveredEntry.value.id).map(
+        getEntryPages(indexation.value, hoveredEntry.value.id).map(
           ({ pageNumber }) => pageNumber,
         ),
     ),

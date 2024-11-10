@@ -32,7 +32,7 @@
               >
                 <div
                   v-if="hoveredEntry"
-                  :class="`position-absolute start-0 w-100 h-100 striped kind-${acceptedStoryKinds?.[hoveredEntry!.id]?.kind}`"
+                  :class="`position-absolute start-0 w-100 h-100 striped kind-${hoveredEntry?.acceptedStoryKind?.kind}`"
                 ></div>
                 <template v-if="displayRatioCropped && naturalToDisplayRatio">
                   <div
@@ -144,7 +144,7 @@ const coverWidth = ref<number | null>(null);
 const coverHeight = ref<number | null>(null);
 const currentPage = ref(0);
 
-const { indexation, acceptedStoryKinds } = storeToRefs(suggestions());
+const { indexation } = storeToRefs(suggestions());
 const { hoveredEntry } = storeToRefs(ui());
 
 const isSinglePage = computed(() => indexation.value?.pages.length === 1);

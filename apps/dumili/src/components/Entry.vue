@@ -150,7 +150,6 @@ watch(
       entry.value.brokenpagedenominator,
     ]),
   () => {
-    debugger;
     const { entirepages, brokenpagenumerator, brokenpagedenominator } =
       entry.value;
     indexationSocket.value!.services.updateEntryLength(entry.value.id, {
@@ -161,13 +160,10 @@ watch(
   },
 );
 
-const { acceptedStories } = storeToRefs(suggestions());
 const { storyDetails } = storeToRefs(coa());
 const { showAiDetectionsOn } = storeToRefs(ui());
 
 const pages = computed(() => getEntryPages(indexation.value!, entry.value.id));
-
-const acceptedStory = computed(() => acceptedStories.value[entry.value.id]);
 
 const storyKindAiSuggestion = computed(() =>
   entry.value.storyKindSuggestions.find(({ isChosenByAi }) => isChosenByAi),
@@ -177,7 +173,7 @@ const storyAiSuggestions = computed(() =>
   entry.value.storySuggestions.filter(({ ocrDetailsId }) => ocrDetailsId),
 );
 
-const storycode = computed(() => acceptedStory.value?.storycode);
+const storycode = computed(() => entry.value.acceptedStory?.storycode);
 const title = computed(() => entry.value.title || $t("Sans titre"));
 
 const urlEncodedStorycode = computed(

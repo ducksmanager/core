@@ -186,11 +186,11 @@ export default (io: Server) => {
                 suggestionId === null
                   ? { disconnect: true }
                   : {
-                      connect: {
-                        id: suggestionId,
-                        indexationId: indexationSocket.data.indexation.id,
-                      },
+                    connect: {
+                      id: suggestionId,
+                      indexationId: indexationSocket.data.indexation.id,
                     },
+                  },
             },
             where: {
               id: indexationSocket.data.indexation.id,
@@ -236,10 +236,10 @@ export default (io: Server) => {
 
       indexationSocket.on(
         "acceptStorySuggestion",
-        async (storySuggestionId, callback) => {
+        async (entryId, storySuggestionId, callback) => {
           const entry = indexationSocket.data.indexation.entries.find(
-            ({ storySuggestions }) =>
-              storySuggestions.some(({ id }) => id === storySuggestionId),
+            ({ id, storySuggestions }) =>
+              entryId === id && storySuggestionId === null || storySuggestions.some(({ id }) => id === storySuggestionId),
           );
           if (!entry) {
             callback({
@@ -451,14 +451,7 @@ const acceptStorySuggestion = async (
 ) =>
   prisma.entry.update({
     data: {
-      acceptedStoryKind:
-        suggestionId === null
-          ? { disconnect: true }
-          : {
-              connect: {
-                id: suggestionId,
-              },
-            },
+      acceptedStorySuggestionId: suggestionId
     },
     where: {
       id: entryId,
@@ -471,14 +464,7 @@ const acceptStoryKindSuggestion = (
 ) =>
   prisma.entry.update({
     data: {
-      acceptedStoryKind:
-        suggestionId === null
-          ? { disconnect: true }
-          : {
-              connect: {
-                id: suggestionId,
-              },
-            },
+      acceptedStoryKindSuggestionId: suggestionId,
     },
     where: {
       id: entryId,

@@ -6,6 +6,7 @@
       }}</b-alert
     >
     <b-form-textarea
+      v-if="acceptedStories"
       v-model="textContent"
       :rows="Object.keys(acceptedStories).length + 1"
       readonly
@@ -19,6 +20,7 @@ const { t: $t } = useI18n();
 
 import { suggestions } from "~/stores/suggestions";
 import { getEntryPages } from "~dumili-utils/entryPages";
+import { storySuggestion } from "~prisma/client_dumili";
 import { socketInjectionKey as dmSocketInjectionKey } from "~web/src/composables/useDmSocket";
 
 const { storyDetails } = storeToRefs(coa());
@@ -30,17 +32,24 @@ const {
 } = inject(dmSocketInjectionKey)!;
 
 const textContentError = ref("");
-const { acceptedStories, acceptedIssue: issue } = storeToRefs(suggestions());
+const { acceptedIssue: issue } = storeToRefs(suggestions());
+
+const acceptedStories = computed(() =>
+  indexation.value?.entries
+    .map((entry) => entry.acceptedStory)
+    .filter((story): story is storySuggestion => story !== null),
+);
 
 const storiesWithDetails =
   ref<Awaited<ReturnType<typeof getStoriesWithDetails>>>();
 
-const getStoriesWithDetails = async (
-  stories: (typeof acceptedStories)["value"],
-) =>
+const getStoriesWithDetails = async (stories: storySuggestion[]) =>
   await Promise.all(
     Object.values(stories)
-      .filter((story) => story !== undefined)
+      .filter(
+        (story): story is storySuggestion & { storycode: string } =>
+          story !== undefined && story.storycode !== null,
+      )
       .map(async (story) => ({
         ...story,
         ...storyDetails.value[story!.storycode],
@@ -93,7 +102,7 @@ const textContent = computed(() => {
 watch(
   acceptedStories,
   async (value) => {
-    if (issue.value?.issuecode) {
+    if (value && issue.value?.issuecode) {
       storiesWithDetails.value = await getStoriesWithDetails(value);
     }
   },

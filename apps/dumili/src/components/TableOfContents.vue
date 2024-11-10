@@ -76,7 +76,7 @@
             :grid="[1, pageHeight]"
             :h="entry.entirepages * pageHeight"
             :min-height="pageHeight - 1"
-            :class-name="`entry col w-100 kind-${acceptedStoryKinds?.[entry.id]?.kind} ${hoveredEntry === entry && 'striped'} ${currentEntry?.id === entry.id && 'current'}`"
+            :class-name="`entry col w-100 kind-${entry.acceptedStoryKind?.kind} ${hoveredEntry === entry && 'striped'} ${currentEntry?.id === entry.id && 'current'}`"
             :title="`${entry.title || 'Inconnu'} (${getUserFriendlyPageCount(
               entry,
             )})`"
@@ -143,8 +143,7 @@ defineProps<{
 const { indexationSocket } = inject(dumiliSocketInjectionKey)!;
 
 const { loadIndexation } = suggestions();
-const { acceptedStoryKinds } = storeToRefs(suggestions());
-const { hoveredEntry, selectedPageNumber } = storeToRefs(ui());
+const { hoveredEntry, currentEntry, selectedPageNumber } = storeToRefs(ui());
 const indexation = storeToRefs(suggestions()).indexation as Ref<FullIndexation>;
 const currentPage = defineModel<number>();
 
@@ -155,8 +154,6 @@ const lastHoveredEntry = ref<entryModel | null>(null);
 const { status: aiStatus } = useAi();
 
 const pageHeight = 50;
-
-const currentEntry = ref<FullEntry>(getEntryFromPage(indexation.value!, 0)!);
 
 const issueAiSuggestion = computed(() =>
   indexation.value.issueSuggestions.find(({ isChosenByAi }) => isChosenByAi),

@@ -54,10 +54,10 @@ const createAndAcceptIssueSuggestion = async (data: {
 };
 
 watch(
-  () => indexation.value!.acceptedIssueSuggestion,
-  (suggestion) => {
+  () => indexation.value?.acceptedIssueSuggestion?.id,
+  (suggestionId) => {
     indexationSocket.value!.services.acceptIssueSuggestion(
-      suggestion?.id || null,
+      suggestionId || null,
     );
   },
 );

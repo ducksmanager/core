@@ -7,7 +7,7 @@
     @toggle-customize-form="showEntrySelect = $event"
   >
     <template #item="suggestion">
-      <Story v-if="suggestion.storycode" :storycode="suggestion.storycode">
+      <Story :storycode="suggestion.storycode">
         <template #suffix>
           <span
             title="Le type de l'histoire sélectionnée ne correspond pas au type de l'entrée"
@@ -51,35 +51,44 @@ const { indexation } = storeToRefs(suggestions());
 const showEntrySelect = ref(false);
 const { storyDetails, storyversionDetails } = storeToRefs(coa());
 
-const acceptStory = async (storycode: storySuggestion["storycode"]) => {
-  let storySuggestionId = entry.value.storySuggestions.find(
+const acceptStory = async (storycode: storySuggestion["storycode"] | null) => {
+  let storySuggestion = entry.value.storySuggestions.find(
     (s) => s.storycode === storycode,
-  )?.id;
-  debugger;
-  if (!storySuggestionId) {
+  );
+  if (!storySuggestion && storycode) {
     const result = await indexationSocket.value!.services.createStorySuggestion(
       {
         entryId: entry.value.id,
-        storycode: storycode!,
+        storycode,
       },
     );
-    if ("error" in result) {
-      console.error(result.error);
-      return;
-    }
+    storySuggestion = result.createdStorySuggestion;
   }
-  if (entry.value.acceptedStory?.storycode !== storycode) {
-    await indexationSocket.value!.services.acceptStorySuggestion(
-      storySuggestionId || null,
+  await indexationSocket.value!.services.acceptStorySuggestion(
+    entry.value.id,
+    storySuggestion?.id || null,
+  );
+  if (storySuggestion?.id) {
+    const correspondingStoryKindId = entry.value.storyKindSuggestions.find(
+      ({ kind }) =>
+        kind ===
+        storyversionDetails.value[
+          storyDetails.value[storySuggestion.storycode]
+            .originalstoryversioncode!
+        ].kind,
+    )!.id;
+    indexationSocket.value!.services.acceptStoryKindSuggestion(
+      entry.value.id,
+      correspondingStoryKindId,
     );
-    await loadIndexation(indexation.value!.id);
   }
+  await loadIndexation(indexation.value!.id);
 };
 
 watch(
-  () => entry.value.acceptedStory,
-  async (story) => {
-    acceptStory(story!.storycode);
+  () => entry.value.acceptedStory?.storycode || null,
+  async (storycode) => {
+    acceptStory(storycode);
   },
 );
 </script>

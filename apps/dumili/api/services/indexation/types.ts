@@ -85,6 +85,7 @@ export default abstract class {
   ) => void;
 
   abstract acceptStorySuggestion: (
+    entryId: entry["id"],
     storySuggestionId: storySuggestion["id"] | null,
     callback: (
       data: Errorable<
