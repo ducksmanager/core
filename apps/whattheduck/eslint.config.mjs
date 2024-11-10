@@ -20,7 +20,7 @@ const compat = new FlatCompat({
 
 export default [
   {
-    ignores: ['**/.vscode', '**/android', '**/dist', '**/DerivedData', '**/ios', '**/node_modules'],
+    ignores: ['**/.vscode', '**/android', '**/dist', '**/DerivedData', '**/ios', '**/node_modules', 'auto-imports.d.ts', 'components.d.ts'],
   },
   ...fixupConfigRules(
     compat.extends(

@@ -63,7 +63,7 @@ const {
   issuecodes,
   currentNavigationItem,
   currentFilter,
-  isIOS
+  isIOS,
 } = storeToRefs(app());
 
 const { issuecodeDetails } = storeToRefs(coa());
