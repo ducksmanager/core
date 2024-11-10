@@ -117,7 +117,7 @@ export default (io: Server) => {
 
         await prisma.entry.update({
           where: {
-            id: indexationSocket.data.indexation.entries[0].id,
+            id: entryId,
           },
           data: {
             storyKindSuggestions: {
@@ -159,8 +159,7 @@ export default (io: Server) => {
                   await prisma.storyKindSuggestion.findFirstOrThrow({
                     where: {
                       entryId: newEntry.id,
-                      kind: storyKinds.find(({ label }) => label === "Cover")!
-                        .code,
+                      kind: 'c',
                     },
                     select: {
                       id: true,
@@ -344,7 +343,7 @@ export default (io: Server) => {
                 axios<Buffer>({
                   url: pageUrl.replace(
                     "/pg_",
-                    `/c_crop,h_${panel.height + 20},w_${panel.width + 20},x_${panel.x},y_${panel.y}/pg_`,
+                    `/c_crop,h_${panel.height},w_${panel.width},x_${panel.x},y_${panel.y},pg_`
                   ),
                   responseType: "arraybuffer",
                 }).then(({ data }) =>
@@ -435,15 +434,12 @@ const inferStoryKindFromAiResults = (
   panelsOfPage: KumikoProcessedResult[],
   pageNumber: number,
 ) =>
-  storyKinds.find(
-    ({ label }) =>
-      label ===
-      (panelsOfPage.length === 1
-        ? pageNumber === 1
-          ? "Cover"
-          : "Illustration"
-        : "Story"),
-  )!.code;
+(panelsOfPage.length === 1
+  ? pageNumber === 1
+    ? "c" // cover
+    : "i" // illustration
+  : "n" // story
+)
 
 const acceptStorySuggestion = async (
   suggestionId: storySuggestion["id"] | null,
@@ -482,7 +478,7 @@ const createEntry = async (indexationId: string) =>
       },
       storyKindSuggestions: {
         createMany: {
-          data: storyKinds.map(({ code }) => ({
+          data: (Object.keys(storyKinds) as (keyof typeof storyKinds)[]).map((code) => ({
             kind: code,
           })),
         },

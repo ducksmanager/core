@@ -35,8 +35,9 @@
           /><br />
           <b>{{ $t("Type d'entrée déduit") }}</b>
           {{
-            storyKinds.find(({ code }) => code === storyKindAiSuggestion?.kind)
-              ?.label
+            storyKindAiSuggestion
+              ? storyKinds[storyKindAiSuggestion?.kind]
+              : $t("Non calculé")
           }}</ai-tooltip
         ></b-col
       ><b-col col cols="4" class="d-flex flex-column align-items-center">
@@ -126,9 +127,9 @@ const entry = defineModel<FullEntry>({ required: true });
 const pagesWithInferredKinds = computed(() =>
   getEntryPages(indexation.value!, entry.value.id).map((page) => ({
     page,
-    [$t("Type d'entrée déduit pour la page")]: storyKinds.find(
-      ({ code }) => code === page.aiKumikoInferredStoryKind,
-    )?.label,
+    [$t("Type d'entrée déduit pour la page")]: page.aiKumikoInferredStoryKind
+      ? storyKinds[page.aiKumikoInferredStoryKind]
+      : $t("Non calculé"),
   })),
 );
 
@@ -180,8 +181,7 @@ const urlEncodedStorycode = computed(
   () => storycode.value && encodeURIComponent(storycode.value),
 );
 
-const getStoryKind = (storyKind: storyKind) =>
-  storyKinds.find(({ code }) => code === storyKind)?.label;
+const getStoryKind = (storyKind: storyKind) => storyKinds[storyKind];
 </script>
 
 <style scoped lang="scss">

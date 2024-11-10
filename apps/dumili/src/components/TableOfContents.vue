@@ -56,9 +56,9 @@
               />
               <b>{{ $t("Type d'entrée déduit pour la page") }}</b>
               {{
-                storyKinds.find(
-                  ({ code }) => code === aiKumikoInferredStoryKind,
-                )?.label || "?"
+                aiKumikoInferredStoryKind
+                  ? storyKinds[aiKumikoInferredStoryKind] || $t("Non calculé")
+                  : $t("Non calculé")
               }}
             </ai-tooltip>
           </b-col>
