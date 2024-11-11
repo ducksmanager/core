@@ -12,7 +12,6 @@ def capacitor_pods
   pod 'Capacitor', :path => '../../../../node_modules/.pnpm/@capacitor+ios@6.1.2_@capacitor+core@6.1.2/node_modules/@capacitor/ios'
   pod 'CapacitorCordova', :path => '../../../../node_modules/.pnpm/@capacitor+ios@6.1.2_@capacitor+core@6.1.2/node_modules/@capacitor/ios'
   pod 'CapacitorCommunityCameraPreview', :path => '../../../../node_modules/.pnpm/@capacitor-community+camera-preview@6.0.0_@capacitor+core@6.1.2/node_modules/@capacitor-community/camera-preview'
-  pod 'CapacitorCommunitySqlite', :path => '../../../../node_modules/.pnpm/@capacitor-community+sqlite@6.0.2_@capacitor+core@6.1.2/node_modules/@capacitor-community/sqlite'
   pod 'CapacitorApp', :path => '../../../../node_modules/.pnpm/@capacitor+app@6.0.1_@capacitor+core@6.1.2/node_modules/@capacitor/app'
   pod 'CapacitorCamera', :path => '../../../../node_modules/.pnpm/@capacitor+camera@6.1.0_@capacitor+core@6.1.2/node_modules/@capacitor/camera'
   pod 'CapacitorClipboard', :path => '../../../../node_modules/.pnpm/@capacitor+clipboard@6.0.1_@capacitor+core@6.1.2/node_modules/@capacitor/clipboard'

@@ -23,17 +23,16 @@ import { defineCustomElements } from '@ionic/pwa-elements/loader';
 import { Drivers, Storage } from '@ionic/storage';
 import { IonicVue } from '@ionic/vue';
 import { init as sentryInit } from '@sentry/capacitor';
-import CordovaSQLiteDriver from 'localforage-cordovasqlitedriver';
 import { createPinia } from 'pinia';
 import VueVirtualScroller from 'vue-virtual-scroller';
-
 import { SocketClient } from '~socket.io-client-services/index';
-import en from '~translations/en.json';
-import sv from '~translations/sv.json';
 import { i18n } from '~web';
 
 import App from './App.vue';
 import router from './router';
+
+import en from '~translations/en.json';
+import sv from '~translations/sv.json';
 
 CapacitorUpdater.notifyAppReady();
 
@@ -64,10 +63,9 @@ router.isReady().then(async () => {
     });
   }
   const storage = new Storage({
-    driverOrder: [CordovaSQLiteDriver._driver, Drivers.IndexedDB, Drivers.LocalStorage],
+    driverOrder: [Drivers.IndexedDB, Drivers.LocalStorage],
     name: 'whattheduck',
   });
-  await storage.defineDriver(CordovaSQLiteDriver);
   await storage.create();
   app.provide('storage', storage);
   app.mount('#app');

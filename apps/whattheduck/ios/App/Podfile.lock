@@ -10,10 +10,6 @@ PODS:
     - Capacitor
   - CapacitorCommunityCameraPreview (6.0.0):
     - Capacitor
-  - CapacitorCommunitySqlite (6.0.2):
-    - Capacitor
-    - SQLCipher
-    - ZIPFoundation
   - CapacitorCordova (6.1.2)
   - CapacitorHaptics (6.0.1):
     - Capacitor
@@ -36,14 +32,8 @@ PODS:
   - SentryCapacitor (1.0.1):
     - Capacitor
     - Sentry/HybridSDK (= 8.36.0)
-  - SQLCipher (4.6.0):
-    - SQLCipher/standard (= 4.6.0)
-  - SQLCipher/common (4.6.0)
-  - SQLCipher/standard (4.6.0):
-    - SQLCipher/common
   - SSZipArchive (2.4.3)
   - Version (0.8.0)
-  - ZIPFoundation (0.9.19)
 
 DEPENDENCIES:
   - "Capacitor (from `../../../../node_modules/.pnpm/@capacitor+ios@6.1.2_@capacitor+core@6.1.2/node_modules/@capacitor/ios`)"
@@ -51,7 +41,6 @@ DEPENDENCIES:
   - "CapacitorCamera (from `../../../../node_modules/.pnpm/@capacitor+camera@6.1.0_@capacitor+core@6.1.2/node_modules/@capacitor/camera`)"
   - "CapacitorClipboard (from `../../../../node_modules/.pnpm/@capacitor+clipboard@6.0.1_@capacitor+core@6.1.2/node_modules/@capacitor/clipboard`)"
   - "CapacitorCommunityCameraPreview (from `../../../../node_modules/.pnpm/@capacitor-community+camera-preview@6.0.0_@capacitor+core@6.1.2/node_modules/@capacitor-community/camera-preview`)"
-  - "CapacitorCommunitySqlite (from `../../../../node_modules/.pnpm/@capacitor-community+sqlite@6.0.2_@capacitor+core@6.1.2/node_modules/@capacitor-community/sqlite`)"
   - "CapacitorCordova (from `../../../../node_modules/.pnpm/@capacitor+ios@6.1.2_@capacitor+core@6.1.2/node_modules/@capacitor/ios`)"
   - "CapacitorHaptics (from `../../../../node_modules/.pnpm/@capacitor+haptics@6.0.1_@capacitor+core@6.1.2/node_modules/@capacitor/haptics`)"
   - "CapacitorKeyboard (from `../../../../node_modules/.pnpm/@capacitor+keyboard@6.0.2_@capacitor+core@6.1.2/node_modules/@capacitor/keyboard`)"
@@ -66,10 +55,8 @@ SPEC REPOS:
   trunk:
     - Alamofire
     - Sentry
-    - SQLCipher
     - SSZipArchive
     - Version
-    - ZIPFoundation
 
 EXTERNAL SOURCES:
   Capacitor:
@@ -82,8 +69,6 @@ EXTERNAL SOURCES:
     :path: "../../../../node_modules/.pnpm/@capacitor+clipboard@6.0.1_@capacitor+core@6.1.2/node_modules/@capacitor/clipboard"
   CapacitorCommunityCameraPreview:
     :path: "../../../../node_modules/.pnpm/@capacitor-community+camera-preview@6.0.0_@capacitor+core@6.1.2/node_modules/@capacitor-community/camera-preview"
-  CapacitorCommunitySqlite:
-    :path: "../../../../node_modules/.pnpm/@capacitor-community+sqlite@6.0.2_@capacitor+core@6.1.2/node_modules/@capacitor-community/sqlite"
   CapacitorCordova:
     :path: "../../../../node_modules/.pnpm/@capacitor+ios@6.1.2_@capacitor+core@6.1.2/node_modules/@capacitor/ios"
   CapacitorHaptics:
@@ -110,7 +95,6 @@ SPEC CHECKSUMS:
   CapacitorCamera: 81ce64062cd82b82cc75a79616fda4bd09d7f643
   CapacitorClipboard: 756cd7e83e8d5d19b0c74f40b57517c287bd5fe2
   CapacitorCommunityCameraPreview: 9319cde1da660b7643833dac20aaa85135bd1441
-  CapacitorCommunitySqlite: 47dab3a2d9a9581a0fe7642cf9cffd34c5d5b358
   CapacitorCordova: f48c89f96c319101cd2f0ce8a2b7449b5fb8b3dd
   CapacitorHaptics: fe689ade56ef20ec9b041a753c6da70c5d8ec9a9
   CapacitorKeyboard: 2700f9b18687be021e28b5a09b59eb151a46d5e0
@@ -121,11 +105,9 @@ SPEC CHECKSUMS:
   CapgoCapacitorUpdater: 3414431eb976d68edafd28f2abfee6175aa1b76c
   Sentry: f8374b5415bc38dfb5645941b3ae31230fbeae57
   SentryCapacitor: 2137257959f06553337c81be4ed0c10acefef58b
-  SQLCipher: 30a8e81afa6128e600b17ffa77d0f92fa05ed208
   SSZipArchive: fe6a26b2a54d5a0890f2567b5cc6de5caa600aef
   Version: de5907f2c5d0f3cf21708db7801d1d5401139486
-  ZIPFoundation: b8c29ea7ae353b309bc810586181fd073cb3312c
 
-PODFILE CHECKSUM: 05167ac1ae5094bdf5d1e598ae80868da5e8a3be
+PODFILE CHECKSUM: 9fce238e711e75f665ec4326075dbdb099c2bcf6
 
 COCOAPODS: 1.15.2

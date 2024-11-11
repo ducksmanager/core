@@ -98,26 +98,30 @@ const assignSocket = () => {
 
 const updateBundle = async () => {
   const currentBundleVersion = (await CapacitorUpdater.current())?.bundle.version;
-  const bundle = await socket.value!.app.services.getBundleUrl({ version: currentBundleVersion });
-  if (Capacitor.isNativePlatform() && 'url' in bundle && bundle.url) {
-    CapacitorUpdater.addListener('download', ({ percent }) => {
-      bundleDownloadProgress.value = percent / 100;
-    });
-    const bundleInfo = await CapacitorUpdater.download(bundle);
-    await CapacitorUpdater.set(bundleInfo);
-  } else {
-    switch (bundle.error) {
+  try {
+    const bundle = await socket.value!.app.services.getBundleUrl({ version: currentBundleVersion });
+    console.log('Latest bundle', bundle);
+    if (Capacitor.isNativePlatform() && 'url' in bundle && bundle.url) {
+      CapacitorUpdater.addListener('download', ({ percent }) => {
+        bundleDownloadProgress.value = percent / 100;
+      });
+      const bundleInfo = await CapacitorUpdater.download(bundle);
+      await CapacitorUpdater.set(bundleInfo);
+    }
+  } catch (e) {
+    const { error, errorDetails } = e as unknown as { error: string; errorDetails: string };
+    switch (error) {
       case 'Already up to date':
         console.log('Bundle is already up to date');
         break;
       default:
-        console.warn(bundle.error, bundle.errorDetails);
+        console.warn(error, errorDetails);
     }
   }
 };
 
 assignSocket();
-updateBundle().then(() => {
+updateBundle().finally(() => {
   watch(
     token,
     async () => {

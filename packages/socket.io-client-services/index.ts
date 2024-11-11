@@ -228,9 +228,8 @@ export class SocketClient {
               await debugCall();
               const data = await socket!.emitWithAck(event, ...args);
 
-              if ("error" in data) {
-                console.error(data.error, data.errorDetails);
-                throw new Error(JSON.stringify(data));
+              if (typeof data === 'object' && "error" in data) {
+                throw data;
               }
               await debugCall(true);
               if (cache && cacheKey) {
