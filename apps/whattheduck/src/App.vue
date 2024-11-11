@@ -111,7 +111,7 @@ const updateBundle = async () => {
         console.log('Bundle is already up to date');
         break;
       default:
-        console.warn(bundle.error);
+        console.warn(bundle.error, bundle.errorDetails);
     }
   }
 };

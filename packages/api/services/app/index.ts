@@ -24,7 +24,7 @@ export const getUpdateFileUrl = (appInfos?: AppInfos): ErrorableAppUpdate => {
       return { error: "Already up to date" };
     }
   } else {
-    return { error: "Not found" };
+    return { error: "Not found", errorDetails: fileName };
   }
 };
 
