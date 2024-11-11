@@ -9,7 +9,7 @@ export default class extends Email {
     extraCreatorPoints: number;
     newMedalLevel: number | null;
   };
-  templatePath = import.meta.dir;
+  templatePath = import.meta.dirname;
 
   constructor(data: {
     user: user;
@@ -29,9 +29,9 @@ export default class extends Email {
   getSubject = () =>
     this.data.extraEdges > 1
       ? i18n.__(
-          "Les tranches que vous avez aidé à créer ont été publiées sur DucksManager !",
-        )
+        "Les tranches que vous avez aidé à créer ont été publiées sur DucksManager !",
+      )
       : i18n.__(
-          "La tranche que vous avez aidé à créer a été publiée sur DucksManager !",
-        );
+        "La tranche que vous avez aidé à créer a été publiée sur DucksManager !",
+      );
 }
