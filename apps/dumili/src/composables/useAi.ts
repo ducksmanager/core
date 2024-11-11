@@ -4,8 +4,7 @@ import { socketInjectionKey as dmSocketInjectionKey } from "~web/src/composables
 
 import { dumiliSocketInjectionKey } from "./useDumiliSocket";
 import useHint from "./useHint";
-
-const coverStoryKindCode = "c";
+import { COVER } from "~dumili-types/storyKinds";
 
 export default () => {
   const status = ref<"idle" | "loading" | "loaded">("idle");
@@ -51,7 +50,7 @@ export default () => {
 
   const runCoverSearch = async () => {
     const firstEntry = indexation.value!.entries[0];
-    if (firstEntry?.acceptedStoryKind?.kind === coverStoryKindCode) {
+    if (firstEntry?.acceptedStoryKind?.kind === COVER) {
       console.info(
         "La première page est une couverture, on va chercher si on la détecte parmi les résultats de la recherche par image...",
       );

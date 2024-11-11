@@ -6,35 +6,44 @@
       // @ts-ignore
       ...(itemClass && current ? itemClass(current) : []),
     ]"
-    ><b-dropdown-item
-      v-for="(suggestion, idx) of suggestions"
-      :key="`suggestion-${idx}`"
-      :link-class="[
-        'd-flex',
-        'justify-content-between',
-        'align-items-center',
-        ...((itemClass && itemClass(suggestion)) || []),
-      ]"
-      @click="
-        current = suggestion;
-        emit('toggle-customize-form', false);
+    ><b-dropdown-group
+      v-for="(group, index) in [userSuggestions, aiSuggestions]"
+      :key="index"
+      :header="
+        index === 1
+          ? `${$t('Suggestions AI')} ${aiSuggestions.length ? '' : $t('(Aucune)')}`
+          : undefined
       "
     >
-      <div>
-        <slot name="item" v-bind="suggestion" />
-      </div>
-      <AiSuggestionIcon v-if="isAiSource(suggestion)" status="success"
-    /></b-dropdown-item>
-    <b-dropdown-divider v-if="suggestions.length" />
-    <b-dropdown-item
-      @click="
-        current = undefined;
-        emit('toggle-customize-form', false);
-      "
-      ><slot name="unknown-text"
-    /></b-dropdown-item>
+      <b-dropdown-item
+        v-for="(suggestion, idx) of group"
+        :key="`suggestion-${idx}`"
+        :link-class="[
+          'd-flex',
+          'justify-content-between',
+          'align-items-center',
+          ...((itemClass && itemClass(suggestion)) || []),
+        ]"
+        @click="
+          current = suggestion;
+          emit('toggle-customize-form', false);
+        "
+      >
+        <div>
+          <slot v-bind="{ suggestion, isDropdownItem: true }" />
+        </div>
+        <AiSuggestionIcon v-if="isAiSource(suggestion)" status="success"
+      /></b-dropdown-item>
+    </b-dropdown-group>
+    <b-dropdown-group>
+      <b-dropdown-item
+        @click="
+          current = undefined;
+          emit('toggle-customize-form', false);
+        "
+        ><slot name="unknown-text" /></b-dropdown-item
+    ></b-dropdown-group>
     <template v-if="allowCustomizeForm">
-      <b-dropdown-divider />
       <b-dropdown-item @click="emit('toggle-customize-form', true)"
         ><slot name="customize-text" /></b-dropdown-item
     ></template>
@@ -42,7 +51,7 @@
       <slot v-if="showCustomizeForm" name="customize-text" />
       <div v-else class="d-flex justify-content-between align-items-center">
         <div>
-          <slot v-if="current" name="item" v-bind="current" />
+          <slot v-if="current" v-bind="{ suggestion: current }" />
           <slot v-else name="unknown-text" />
         </div>
         <AiSuggestionIcon
@@ -54,25 +63,22 @@
   <slot v-if="showCustomizeForm" name="customize-form" />
 </template>
 <script setup lang="ts" generic="S extends {id: number}">
-import { Reactive } from "vue";
-
 const $slots = useSlots();
 
 defineSlots<{
-  default(suggestion: Reactive<S>): never;
-  item(suggestion: Reactive<S>): never;
+  default(data: { suggestion: S; isDropdownItem?: boolean }): never;
   "customize-form"(): never;
   "customize-text"(): never;
   "unknown-text"(): never;
 }>();
 
-const current = defineModel<Reactive<S> | null>();
+const current = defineModel<S | null>();
 
-withDefaults(
+const { suggestions, isAiSource } = withDefaults(
   defineProps<{
     suggestions: S[];
-    isAiSource: (suggestion: Reactive<S>) => boolean;
-    itemClass?: (suggestion: Reactive<S>) => string[];
+    isAiSource: (suggestion: S) => boolean;
+    itemClass?: (suggestion: S) => string[];
     showCustomizeForm?: boolean;
   }>(),
   {
@@ -81,13 +87,21 @@ withDefaults(
   },
 );
 
+const emit = defineEmits<{
+  (e: "toggle-customize-form", toggle: boolean): void;
+}>();
+
 const allowCustomizeForm = computed(
   () => $slots["customize-form"] !== undefined,
 );
 
-const emit = defineEmits<{
-  (e: "toggle-customize-form", toggle: boolean): void;
-}>();
+const aiSuggestions = computed(() =>
+  suggestions.filter((suggestion) => isAiSource(suggestion)),
+);
+
+const userSuggestions = computed(() =>
+  suggestions.filter((suggestion) => !isAiSource(suggestion)),
+);
 </script>
 <style lang="scss">
 .dropdown-divider {

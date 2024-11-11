@@ -12,6 +12,7 @@ services:
       - "8006:8081"
     volumes:
       - /root/.paddleocr
+      - ./paddleocr/server.py:/server.py
     build:
       context: ../../..
       dockerfile: apps/dumili/api/paddleocr/Dockerfile

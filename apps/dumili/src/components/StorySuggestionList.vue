@@ -2,24 +2,27 @@
   <suggestion-list
     v-model="entry.acceptedStory"
     :suggestions="entry.storySuggestions"
-    :is-ai-source="(suggestion) => suggestion.ocrDetailsId !== null"
+    :is-ai-source="(suggestion) => suggestion.ocrDetails !== null"
     :show-customize-form="showEntrySelect"
     @toggle-customize-form="showEntrySelect = $event"
   >
-    <template #item="suggestion">
+    <template #default="{ suggestion }">
       <Story :storycode="suggestion.storycode">
         <template #suffix>
           <span
-            title="Le type de l'histoire sélectionnée ne correspond pas au type de l'entrée"
-          >
-            <i-bi-exclamation-triangle-fill
-              v-if="
+            v-if="
                 entry.acceptedStoryKind &&
                 storyDetails[suggestion.storycode] &&
                 entry.acceptedStoryKind?.kind !=
                 storyversionDetails[storyDetails[suggestion.storycode].originalstoryversioncode!].kind
               "
-              :id="`warning-story-kind-${suggestion.id}`"
+            :title="
+              $t(
+                'Le type de l\'histoire sélectionnée ne correspond pas au type de l\'entrée',
+              )
+            "
+          >
+            <i-bi-exclamation-triangle-fill
           /></span>
         </template>
       </Story>
@@ -34,13 +37,13 @@
 
 <script lang="ts" setup>
 import { dumiliSocketInjectionKey } from "~/composables/useDumiliSocket";
-import { FullIndexation } from "~dumili-services/indexation/types";
+import { FullEntry } from "~dumili-services/indexation/types";
 import { suggestions } from "../stores/suggestions";
 import { storySuggestion } from "~prisma/client_dumili";
 
 const { t: $t } = useI18n();
 
-const entry = defineModel<FullIndexation["entries"][number]>({
+const entry = defineModel<FullEntry>({
   required: true,
 });
 
@@ -52,9 +55,8 @@ const showEntrySelect = ref(false);
 const { storyDetails, storyversionDetails } = storeToRefs(coa());
 
 const acceptStory = async (storycode: storySuggestion["storycode"] | null) => {
-  let storySuggestion = entry.value.storySuggestions.find(
-    (s) => s.storycode === storycode,
-  );
+  let storySuggestion: Pick<storySuggestion, "id" | "storycode"> | undefined =
+    entry.value.storySuggestions.find((s) => s.storycode === storycode);
   if (!storySuggestion && storycode) {
     const result = await indexationSocket.value!.services.createStorySuggestion(
       {

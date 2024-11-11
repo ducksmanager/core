@@ -19,5 +19,7 @@ export const extendBoundaries = (
   height: height + extendBy,
 });
 
-export const runOcr = async (base64: string): Promise<OcrResult[]> =>
-  axios.post(process.env.OCR_HOST!, base64).then(({ data }) => data);
+export const runOcr = async (url: string): Promise<OcrResult[]> => {
+  console.log("Running OCR on", url);
+  return axios.post(process.env.OCR_HOST!, { url, language: 'french' }).then(({ data }) => data);
+};

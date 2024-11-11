@@ -75,8 +75,9 @@ model storySuggestion {
   storycode         String              @db.VarChar(19)
   entryId           Int                 @map("entry_id")
   ocrDetailsId      Int?                @map("ocr_details_id")
+  ocrDetails        aiOcrPossibleStory?
+  isChosenByAi      Boolean             @default(false) @map("is_chosen_by_ai")
   acceptedOnEntries entry[]             @relation("entry_accepted_story_suggested_idTostory_suggestion")
-  ocrDetails        aiOcrPossibleStory? @relation(fields: [ocrDetailsId], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "story_suggestion_ai_ocr_possible_story_id_fk")
   entry             entry               @relation(fields: [entryId], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "story_suggestion_entry_id_fk")
 
   @@index([entryId], map: "story_suggestion_entry_id_fk")
@@ -99,34 +100,31 @@ model issueSuggestion {
 }
 
 model aiOcrPossibleStory {
-  id               Int               @id @default(autoincrement())
-  pageId           Int               @map("page_id")
-  ocrResultId      Int?              @map("ocr_result_id")
-  confidence       Int               @db.SmallInt
-  ocrResult        aiOcrResult?      @relation(fields: [ocrResultId], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "ai_ocr_possible_story_ai_ocr_result_id_fk")
-  page             page              @relation(fields: [pageId], references: [id], onUpdate: Restrict, map: "ai_ocr_possible_story_page_id_fk")
-  storySuggestions storySuggestion[]
+  id                Int             @id @default(autoincrement())
+  pageId            Int             @map("page_id")
+  page              page            @relation(fields: [pageId], references: [id], onUpdate: Restrict, map: "ai_ocr_possible_story_page_id_fk")
+  score             Int             @db.SmallInt
+  storySuggestionId Int             @unique @map("story_suggestion_id")
+  storySuggestion   storySuggestion @relation(fields: [storySuggestionId], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "ai_ocr_possible_story_story_suggestion_id_fk")
 
   @@index([pageId], map: "ai_ocr_possible_story_page_id_fk")
-  @@index([ocrResultId], map: "ai_ocr_possible_story_ai_ocr_result_id_fk")
   @@map("ai_ocr_possible_story")
 }
 
 model aiOcrResult {
-  id                 Int                  @id @default(autoincrement())
-  pageId             Int                  @map("page_id")
-  x1                 Int
-  x2                 Int
-  x3                 Int
-  x4                 Int
-  y1                 Int
-  y2                 Int
-  y3                 Int
-  y4                 Int
-  text               String               @db.Text
-  confidence         Float                @db.Float
-  page               page                 @relation(fields: [pageId], references: [id], onUpdate: Restrict, map: "ai_ocr_result_page_id_fk")
-  aiOcrPossibleStory aiOcrPossibleStory[]
+  id         Int    @id @default(autoincrement())
+  pageId     Int    @map("page_id")
+  x1         Int
+  x2         Int
+  x3         Int
+  x4         Int
+  y1         Int
+  y2         Int
+  y3         Int
+  y4         Int
+  text       String @db.Text
+  confidence Float  @db.Float
+  page       page   @relation(fields: [pageId], references: [id], onUpdate: Restrict, map: "ai_ocr_result_page_id_fk")
 
   @@index([pageId], map: "ai_ocr_result_page_id_fk")
   @@map("ai_ocr_result")

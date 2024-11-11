@@ -14,7 +14,7 @@ export const indexationPayloadInclude = {
       aiKumikoResultPanels: true,
       aiOcrPossibleStories: {
         include: {
-          storySuggestions: true,
+          storySuggestion: true,
         },
       },
       aiOcrResults: true,
@@ -24,10 +24,18 @@ export const indexationPayloadInclude = {
   issueSuggestions: true,
   entries: {
     include: {
-      acceptedStory: true,
+      acceptedStory: {
+        include: {
+          ocrDetails: true,
+        },
+      },
       acceptedStoryKind: true,
       storyKindSuggestions: true,
-      storySuggestions: true,
+      storySuggestions: {
+        include: {
+          ocrDetails: true,
+        }
+      },
     },
   },
 } as const;
@@ -78,7 +86,7 @@ export default abstract class {
     suggestion: Prisma.storySuggestionUncheckedCreateInput,
     callback: (
       data: Errorable<
-        { createdStorySuggestion: storySuggestion },
+        { createdStorySuggestion: Pick<storySuggestion, 'id' | 'storycode'> },
         "You are not allowed to update this resource"
       >,
     ) => void,

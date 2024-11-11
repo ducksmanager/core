@@ -12,8 +12,19 @@
           :is-ai-source="(suggestion) => suggestion.isChosenByAi"
           :item-class="(suggestion) => [`kind-${suggestion.kind}`]"
         >
-          <template #item="suggestion">
+          <template #default="{ suggestion, isDropdownItem }">
             {{ getStoryKind(suggestion.kind) }}
+            <span
+              v-if="!isDropdownItem &&
+            getEntryPages(indexation!, entry.id)[0].pageNumber === 1 && 
+            entry.acceptedStoryKind?.kind !== COVER
+              "
+              :title="
+                $t('La première page est généralement une page de couverture')
+              "
+            >
+              <i-bi-exclamation-triangle-fill
+            /></span>
           </template>
           <template #unknown-text>{{
             $t("Type inconnu")
@@ -43,6 +54,7 @@
       ><b-col col cols="4" class="d-flex flex-column align-items-center">
         <StorySuggestionList v-model="entry" />
         <ai-tooltip
+          v-if="entry.acceptedStoryKind?.kind === STORY"
           :id="`ai-results-entry-story-${entry.id}`"
           :value="storyAiSuggestions.map(({ storycode }) => storycode!)"
           :on-click-rerun="() => runStorycodeOcr(entry.id)"
@@ -109,7 +121,7 @@ import { dumiliSocketInjectionKey } from "~/composables/useDumiliSocket";
 import { suggestions } from "~/stores/suggestions";
 import { ui } from "~/stores/ui";
 import { FullEntry } from "~dumili-services/indexation/types";
-import { storyKinds } from "~dumili-types/storyKinds";
+import { COVER, STORY, storyKinds } from "~dumili-types/storyKinds";
 import { getEntryPages } from "~dumili-utils/entryPages";
 import type { storyKind } from "~prisma/client_dumili";
 
@@ -190,6 +202,12 @@ const getStoryKind = (storyKind: storyKind) => storyKinds[storyKind];
 :deep(.dropdown-menu) {
   background: lightgrey;
   overflow-x: visible !important;
+
+  [role="group"] {
+    color: black;
+    font-weight: bold;
+    font-style: italic;
+  }
 }
 .badge,
 :deep(.dropdown-item) {

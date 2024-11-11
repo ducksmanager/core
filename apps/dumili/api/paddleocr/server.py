@@ -4,10 +4,7 @@ from paddle import utils
 utils.run_check()
 from paddleocr import PaddleOCR
 from http.server import BaseHTTPRequestHandler, HTTPServer
-import random
 import json
-import os
-import base64
 
 # select countrycode, GROUP_CONCAT(languagecode ORDER BY entries_with_language DESC) AS languages
 # from (select countrycode, coalesce(inducks_entry.languagecode, ip.languagecode) as languagecode, count(*) as entries_with_language
@@ -332,42 +329,27 @@ ocr_languages = {
 
 class PaddleOCRRequestHandler(BaseHTTPRequestHandler):
     def do_POST(self):
-        content_length = int(self.headers['Content-Length']) 
-        base64Text = self.rfile.read(content_length)
-
-        file_name = ''.join((random.choice('abcdefghi') for i in range(5))) + '.png'
-        try:
-            file_content = base64.b64decode(base64Text)
-            with open(file_name,"wb") as f:
-                f.write(file_content)
-        except Exception as e:
-            print(str(e))
-
-        result = None
-        # result = ocr_languages['french'].ocr(file_name, cls=True)
-        # result = result[0]
-        if result is None:
-            os.remove(file_name)
-            self.send_response(200)
-            self.send_header('Content-type', 'application/json')
-            self.end_headers()
-            self.wfile.write(json.dumps([]).encode())
-            return
-
-        boxes = [line[0] for line in result]
-        texts = [line[1][0] for line in result]
-        scores = [line[1][1] for line in result]
+        content_length = int(self.headers['Content-Length'])
+        post_data = json.loads(self.rfile.read(content_length))
+        url = post_data['url']
+        language = post_data['language']
+        result = ocr_languages[language].ocr(url, cls=True)
+        result = result[0]
 
         converted_data = []
-        for i in range(len(boxes)):
-            converted_item = {
-                "box": boxes[i],
-                "text": texts[i],
-                "confidence": scores[i]
-            }
-            converted_data.append(converted_item)
+        if result is not None:
+          boxes = [line[0] for line in result]
+          texts = [line[1][0] for line in result]
+          scores = [line[1][1] for line in result]
 
-        os.remove(file_name)
+          for i in range(len(boxes)):
+              converted_item = {
+                  "box": boxes[i],
+                  "text": texts[i],
+                  "confidence": scores[i]
+              }
+              converted_data.append(converted_item)
+
         self.send_response(200)
         self.send_header('Content-type', 'application/json')
         self.end_headers()

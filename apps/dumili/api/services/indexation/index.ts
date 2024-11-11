@@ -1,10 +1,9 @@
-import axios from "axios";
 import type { Server, Socket } from "socket.io";
 
 import type { NamespaceWithData, SessionDataWithIndexation } from "~/index";
 import { prisma } from "~/index";
 import CoaServices from "~dm-services/coa/types";
-import { storyKinds } from "~dumili-types/storyKinds";
+import { COVER, ILLUSTRATION, STORY, storyKinds } from "~dumili-types/storyKinds";
 import { getEntryFromPage, getEntryPages } from "~dumili-utils/entryPages";
 import type {
   entry,
@@ -159,7 +158,7 @@ export default (io: Server) => {
                   await prisma.storyKindSuggestion.findFirstOrThrow({
                     where: {
                       entryId: newEntry.id,
-                      kind: 'c',
+                      kind: COVER,
                     },
                     select: {
                       id: true,
@@ -331,89 +330,69 @@ export default (io: Server) => {
         const { indexation } = indexationSocket.data;
 
         const entry = indexation.entries.find(({ id }) => id === entryId);
-        if (entry?.acceptedStoryKind?.kind === "n") {
-          const entryPages = getEntryPages(indexation, entryId);
-          const results = await Promise.all(
-            entryPages
-              .map(({ aiKumikoResultPanels, url }) => ({
-                pageUrl: url,
-                panel: aiKumikoResultPanels[0],
-              }))
-              .map(({ panel, pageUrl }, idx) =>
-                axios<Buffer>({
-                  url: pageUrl.replace(
-                    "/pg_",
-                    `/c_crop,h_${panel.height},w_${panel.width},x_${panel.x},y_${panel.y},pg_`
-                  ),
-                  responseType: "arraybuffer",
-                }).then(({ data }) =>
-                  runOcr(data.toString("base64")).then((ocrResults) => ({
-                    pageId: entryPages[idx].id,
-                    ocrResults,
-                  })),
-                ),
-              ),
+        if (entry?.acceptedStoryKind?.kind === STORY) {
+          const { url, aiKumikoResultPanels, id: pageId } = getEntryPages(indexation, entryId)[0]!;
+          const firstPanel = aiKumikoResultPanels[0];
+          const firstPanelUrl = url.replace(
+            "/pg_",
+            `/c_crop,h_${firstPanel.height},w_${firstPanel.width},x_${firstPanel.x},y_${firstPanel.y},pg_`
           );
 
-          prisma.aiOcrResult.createMany({
-            data: results
-              .map(({ pageId, ocrResults }) =>
-                ocrResults.map(
-                  ({
-                    confidence,
-                    text,
-                    box: [[x1, y1], [x2, y2], [x3, y3], [x4, y4]],
-                  }) => ({
-                    pageId,
+          const ocrResults = await runOcr(firstPanelUrl);
+
+          const { results: searchResults } = await coaServices.searchStory(
+            ocrResults.map(({ text }) => text),
+            false,
+          );
+
+          const { stories: storyDetails } = await coaServices.getStoryDetails(
+            searchResults.map(({ storycode }) => storycode),
+          );
+
+          const { storyversions: storyversionDetails } = await coaServices.getStoryversionsDetails(
+            searchResults.map(({ storycode }) => storyDetails![storycode].originalstoryversioncode!),
+          );
+
+          const storyResults = searchResults.filter(({ storycode }) =>
+            storyversionDetails![storyDetails![storycode].originalstoryversioncode!].kind === STORY
+          );
+
+          await
+            prisma.page.update({
+              where: {
+                id: pageId,
+              },
+              data: {
+                aiOcrResults: {
+                  deleteMany: {},
+                  create: ocrResults.map(({ confidence, text, box: [[x1, y1], [x2, y2], [x3, y3], [x4, y4]] }) => ({
                     confidence,
                     text,
                     x1,
-                    x2,
                     y1,
+                    x2,
                     y2,
                     x3,
-                    x4,
                     y3,
-                    y4,
-                  }),
-                ),
-              )
-              .flat(),
-          });
-
-          await prisma.$transaction(
-            (
-              await Promise.all(
-                results.map(({ ocrResults }) =>
-                  coaServices.searchStory(
-                    ocrResults.map(({ text }) => text),
-                    false,
-                  ),
-                ),
-              )
-            )
-              .map(({ results: searchResults }, idx) => [
-                prisma.storySuggestion.deleteMany({
-                  where: {
-                    entryId,
-                  },
-                }),
-                prisma.storySuggestion.createMany({
-                  data: searchResults.map(({ storycode }) => ({
-                    entryId,
-                    storycode,
-                  })),
-                }),
-                prisma.aiOcrPossibleStory.createMany({
-                  data: searchResults.map(({ storycode, score }) => ({
-                    pageId: entryPages[idx]!.id,
-                    storycode,
-                    confidence: score,
-                  })),
-                }),
-              ])
-              .flat(),
-          );
+                    x4,
+                    y4
+                  }))
+                },
+                aiOcrPossibleStories: {
+                  deleteMany: {},
+                  create: storyResults.map(({ storycode, score }) => ({
+                    score,
+                    storySuggestion: {
+                      create: {
+                        storycode,
+                        entryId,
+                        isChosenByAi: true
+                      }
+                    }
+                  }))
+                }
+              }
+            });
 
           callback({ status: "OK" });
         } else {
@@ -436,9 +415,9 @@ const inferStoryKindFromAiResults = (
 ) =>
 (panelsOfPage.length === 1
   ? pageNumber === 1
-    ? "c" // cover
-    : "i" // illustration
-  : "n" // story
+    ? COVER
+    : ILLUSTRATION
+  : STORY
 )
 
 const acceptStorySuggestion = async (
