@@ -105,6 +105,12 @@ const updateBundle = async () => {
       CapacitorUpdater.addListener('download', ({ percent }) => {
         bundleDownloadProgress.value = percent / 100;
       });
+      CapacitorUpdater.addListener('downloadFailed', () => {
+        bundleDownloadProgress.value = undefined;
+      });
+      CapacitorUpdater.addListener('updateFailed', () => {
+        bundleDownloadProgress.value = undefined;
+      });
       const bundleInfo = await CapacitorUpdater.download(bundle);
       await CapacitorUpdater.set(bundleInfo);
     }

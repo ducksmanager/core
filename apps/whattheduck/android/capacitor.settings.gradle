@@ -33,7 +33,7 @@ include ':capawesome-capacitor-file-picker'
 project(':capawesome-capacitor-file-picker').projectDir = new File('../../../node_modules/.pnpm/@capawesome+capacitor-file-picker@6.1.0_@capacitor+core@6.1.2/node_modules/@capawesome/capacitor-file-picker/android')
 
 include ':capgo-capacitor-updater'
-project(':capgo-capacitor-updater').projectDir = new File('../../../node_modules/.pnpm/@capgo+capacitor-updater@6.3.16_@capacitor+core@6.1.2/node_modules/@capgo/capacitor-updater/android')
+project(':capgo-capacitor-updater').projectDir = new File('../../../node_modules/.pnpm/@capgo+capacitor-updater@6.3.17_@capacitor+core@6.1.2/node_modules/@capgo/capacitor-updater/android')
 
 include ':sentry-capacitor'
-project(':sentry-capacitor').projectDir = new File('../../../node_modules/.pnpm/@sentry+capacitor@1.0.1_@capacitor+core@6.1.2_@sentry+vue@8.37.1_pinia@2.2.6_typescript@5.6.3_f6xahmlfcx5uwsnjvx6ykp42sq/node_modules/@sentry/capacitor/android')
+project(':sentry-capacitor').projectDir = new File('../../../node_modules/.pnpm/@sentry+capacitor@1.0.1_@capacitor+core@6.1.2_@sentry+vue@8.38.0_pinia@2.2.6_typescript@5.6.3_h4b6tovwhkrnitia3otrugifbe/node_modules/@sentry/capacitor/android')

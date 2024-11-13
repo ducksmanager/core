@@ -8,7 +8,7 @@ import { namespaceEndpoint } from "./types";
 export const getUpdateFileUrl = (appInfos?: AppInfos): ErrorableAppUpdate => {
   const fileName = import.meta.dirname + "/latest-whattheduck-bundle.txt";
   if (existsSync(fileName)) {
-    const mostRecentBundleUrl = readFileSync(fileName).toString();
+    const mostRecentBundleUrl = readFileSync(fileName).toString().trim();
 
     const version = mostRecentBundleUrl.match(/(?<=bundle-).+(?=.zip)/)![0];
 
