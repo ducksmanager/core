@@ -3,7 +3,12 @@ import type { Server, Socket } from "socket.io";
 import type { NamespaceWithData, SessionDataWithIndexation } from "~/index";
 import { prisma } from "~/index";
 import CoaServices from "~dm-services/coa/types";
-import { COVER, ILLUSTRATION, STORY, storyKinds } from "~dumili-types/storyKinds";
+import {
+  COVER,
+  ILLUSTRATION,
+  STORY,
+  storyKinds,
+} from "~dumili-types/storyKinds";
 import { getEntryFromPage, getEntryPages } from "~dumili-utils/entryPages";
 import type {
   entry,
@@ -184,11 +189,11 @@ export default (io: Server) => {
                 suggestionId === null
                   ? { disconnect: true }
                   : {
-                    connect: {
-                      id: suggestionId,
-                      indexationId: indexationSocket.data.indexation.id,
+                      connect: {
+                        id: suggestionId,
+                        indexationId: indexationSocket.data.indexation.id,
+                      },
                     },
-                  },
             },
             where: {
               id: indexationSocket.data.indexation.id,
@@ -237,7 +242,8 @@ export default (io: Server) => {
         async (entryId, storySuggestionId, callback) => {
           const entry = indexationSocket.data.indexation.entries.find(
             ({ id, storySuggestions }) =>
-              entryId === id && storySuggestionId === null || storySuggestions.some(({ id }) => id === storySuggestionId),
+              (entryId === id && storySuggestionId === null) ||
+              storySuggestions.some(({ id }) => id === storySuggestionId),
           );
           if (!entry) {
             callback({
@@ -331,11 +337,15 @@ export default (io: Server) => {
 
         const entry = indexation.entries.find(({ id }) => id === entryId);
         if (entry?.acceptedStoryKind?.kind === STORY) {
-          const { url, aiKumikoResultPanels, id: pageId } = getEntryPages(indexation, entryId)[0]!;
+          const {
+            url,
+            aiKumikoResultPanels,
+            id: pageId,
+          } = getEntryPages(indexation, entryId)[0]!;
           const firstPanel = aiKumikoResultPanels[0];
           const firstPanelUrl = url.replace(
             "/pg_",
-            `/c_crop,h_${firstPanel.height},w_${firstPanel.width},x_${firstPanel.x},y_${firstPanel.y},pg_`
+            `/c_crop,h_${firstPanel.height},w_${firstPanel.width},x_${firstPanel.x},y_${firstPanel.y},pg_`,
           );
 
           const ocrResults = await runOcr(firstPanelUrl);
@@ -349,23 +359,34 @@ export default (io: Server) => {
             searchResults.map(({ storycode }) => storycode),
           );
 
-          const { storyversions: storyversionDetails } = await coaServices.getStoryversionsDetails(
-            searchResults.map(({ storycode }) => storyDetails![storycode].originalstoryversioncode!),
+          const { storyversions: storyversionDetails } =
+            await coaServices.getStoryversionsDetails(
+              searchResults.map(
+                ({ storycode }) =>
+                  storyDetails![storycode].originalstoryversioncode!,
+              ),
+            );
+
+          const storyResults = searchResults.filter(
+            ({ storycode }) =>
+              storyversionDetails![
+                storyDetails![storycode].originalstoryversioncode!
+              ].kind === STORY,
           );
 
-          const storyResults = searchResults.filter(({ storycode }) =>
-            storyversionDetails![storyDetails![storycode].originalstoryversioncode!].kind === STORY
-          );
-
-          await
-            prisma.page.update({
-              where: {
-                id: pageId,
-              },
-              data: {
-                aiOcrResults: {
-                  deleteMany: {},
-                  create: ocrResults.map(({ confidence, text, box: [[x1, y1], [x2, y2], [x3, y3], [x4, y4]] }) => ({
+          await prisma.page.update({
+            where: {
+              id: pageId,
+            },
+            data: {
+              aiOcrResults: {
+                deleteMany: {},
+                create: ocrResults.map(
+                  ({
+                    confidence,
+                    text,
+                    box: [[x1, y1], [x2, y2], [x3, y3], [x4, y4]],
+                  }) => ({
                     confidence,
                     text,
                     x1,
@@ -375,24 +396,25 @@ export default (io: Server) => {
                     x3,
                     y3,
                     x4,
-                    y4
-                  }))
-                },
-                aiOcrPossibleStories: {
-                  deleteMany: {},
-                  create: storyResults.map(({ storycode, score }) => ({
-                    score,
-                    storySuggestion: {
-                      create: {
-                        storycode,
-                        entryId,
-                        isChosenByAi: true
-                      }
-                    }
-                  }))
-                }
-              }
-            });
+                    y4,
+                  }),
+                ),
+              },
+              aiOcrPossibleStories: {
+                deleteMany: {},
+                create: storyResults.map(({ storycode, score }) => ({
+                  score,
+                  storySuggestion: {
+                    create: {
+                      storycode,
+                      entryId,
+                      isChosenByAi: true,
+                    },
+                  },
+                })),
+              },
+            },
+          });
 
           callback({ status: "OK" });
         } else {
@@ -413,12 +435,7 @@ const inferStoryKindFromAiResults = (
   panelsOfPage: KumikoProcessedResult[],
   pageNumber: number,
 ) =>
-(panelsOfPage.length === 1
-  ? pageNumber === 1
-    ? COVER
-    : ILLUSTRATION
-  : STORY
-)
+  panelsOfPage.length === 1 ? (pageNumber === 1 ? COVER : ILLUSTRATION) : STORY;
 
 const acceptStorySuggestion = async (
   suggestionId: storySuggestion["id"] | null,
@@ -426,7 +443,7 @@ const acceptStorySuggestion = async (
 ) =>
   prisma.entry.update({
     data: {
-      acceptedStorySuggestionId: suggestionId
+      acceptedStorySuggestionId: suggestionId,
     },
     where: {
       id: entryId,
@@ -457,9 +474,11 @@ const createEntry = async (indexationId: string) =>
       },
       storyKindSuggestions: {
         createMany: {
-          data: (Object.keys(storyKinds) as (keyof typeof storyKinds)[]).map((code) => ({
-            kind: code,
-          })),
+          data: (Object.keys(storyKinds) as (keyof typeof storyKinds)[]).map(
+            (code) => ({
+              kind: code,
+            }),
+          ),
         },
       },
     },

@@ -21,5 +21,7 @@ export const extendBoundaries = (
 
 export const runOcr = async (url: string): Promise<OcrResult[]> => {
   console.log("Running OCR on", url);
-  return axios.post(process.env.OCR_HOST!, { url, language: 'french' }).then(({ data }) => data);
+  return axios
+    .post(process.env.OCR_HOST!, { url, language: "french" })
+    .then(({ data }) => data);
 };

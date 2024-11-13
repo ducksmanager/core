@@ -1,6 +1,3 @@
-import path from 'node:path';
-import { fileURLToPath } from 'node:url';
-
 import { fixupConfigRules, fixupPluginRules } from '@eslint/compat';
 import { FlatCompat } from '@eslint/eslintrc';
 import js from '@eslint/js';
@@ -8,6 +5,8 @@ import typescriptEslint from '@typescript-eslint/eslint-plugin';
 import i18Next from 'eslint-plugin-i18next';
 import _import from 'eslint-plugin-import';
 import globals from 'globals';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import parser from 'vue-eslint-parser';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -20,7 +19,16 @@ const compat = new FlatCompat({
 
 export default [
   {
-    ignores: ['**/.vscode', '**/android', '**/dist', '**/DerivedData', '**/ios', '**/node_modules', 'auto-imports.d.ts', 'components.d.ts'],
+    ignores: [
+      '**/.vscode',
+      '**/android',
+      '**/dist',
+      '**/DerivedData',
+      '**/ios',
+      '**/node_modules',
+      'auto-imports.d.ts',
+      'components.d.ts',
+    ],
   },
   ...fixupConfigRules(
     compat.extends(

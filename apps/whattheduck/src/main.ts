@@ -25,14 +25,14 @@ import { IonicVue } from '@ionic/vue';
 import { init as sentryInit } from '@sentry/capacitor';
 import { createPinia } from 'pinia';
 import VueVirtualScroller from 'vue-virtual-scroller';
+
 import { SocketClient } from '~socket.io-client-services/index';
+import en from '~translations/en.json';
+import sv from '~translations/sv.json';
 import { i18n } from '~web';
 
 import App from './App.vue';
 import router from './router';
-
-import en from '~translations/en.json';
-import sv from '~translations/sv.json';
 
 CapacitorUpdater.notifyAppReady();
 

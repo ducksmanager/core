@@ -34,7 +34,7 @@ export const indexationPayloadInclude = {
       storySuggestions: {
         include: {
           ocrDetails: true,
-        }
+        },
       },
     },
   },
@@ -86,7 +86,7 @@ export default abstract class {
     suggestion: Prisma.storySuggestionUncheckedCreateInput,
     callback: (
       data: Errorable<
-        { createdStorySuggestion: Pick<storySuggestion, 'id' | 'storycode'> },
+        { createdStorySuggestion: Pick<storySuggestion, "id" | "storycode"> },
         "You are not allowed to update this resource"
       >,
     ) => void,

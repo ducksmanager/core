@@ -1,9 +1,9 @@
 import { Capacitor } from '@capacitor/core';
 import { bookmarkOutline, bookmarkSharp } from 'ionicons/icons';
 import { defineStore } from 'pinia';
-import type useDmSocket from '~web/src/composables/useDmSocket';
 
 import usePersistedData from '~/composables/usePersistedData';
+import type useDmSocket from '~web/src/composables/useDmSocket';
 
 export interface FabOption {
   id: string;
