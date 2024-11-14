@@ -89,11 +89,10 @@ const router = useRouter();
 
 AppUpdate.getAppUpdateInfo()
   .then(async (result) => {
+    currentAppVersion.value = result.currentVersionName;
     if (Capacitor.getPlatform() === 'android') {
-      currentAppVersion.value = result.currentVersionCode;
       storeName.value = 'Play Store';
     } else {
-      currentAppVersion.value = result.currentVersionName;
       storeName.value = 'App Store';
     }
     currentBundleVersion.value = (await CapacitorUpdater.current())?.bundle.version;
