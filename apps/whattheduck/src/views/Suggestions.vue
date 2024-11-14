@@ -2,9 +2,11 @@
   <ion-page>
     <ion-header :translucent="true">
       <ion-toolbar>
-        <ion-buttons slot="start">
-          <ion-menu-button color="primary" />
-        </ion-buttons>
+        <template #start>
+          <ion-buttons>
+            <ion-menu-button color="primary" />
+          </ion-buttons>
+        </template>
         <ion-title>{{ t('Suggestions') }}</ion-title>
       </ion-toolbar>
     </ion-header>
@@ -23,10 +25,10 @@
         </i18n-t>
       </ion-text>
       <ion-select
+        v-model="showSuggestionsOf"
         class="ion-padding-top"
         label="Montrer les publications de"
         label-placement="stacked"
-        v-model="showSuggestionsOf"
       >
         <ion-select-option value="ALL">{{ t('Tous les pays') }}</ion-select-option>
         <ion-select-option
@@ -37,7 +39,7 @@
         >
       </ion-select>
       <ion-item v-if="isLoadingSuggestions">{{ t('Chargement…') }}</ion-item>
-      <div class="ion-padding ion-text-center" v-else-if="formattedSuggestions && !formattedSuggestions.length">
+      <div v-else-if="formattedSuggestions && !formattedSuggestions.length" class="ion-padding ion-text-center">
         {{ t('Aucune suggestion disponible.') }}
       </div>
       <template v-else-if="formattedSuggestions">
@@ -46,11 +48,11 @@
           style="font-size: small"
         >
           <ion-col> {{ t('Trier par date de publication') }}</ion-col
-          ><ion-col><ion-toggle size="small" color="light" v-model="sortByScore" /></ion-col
+          ><ion-col><ion-toggle v-model="sortByScore" size="small" color="light" /></ion-col
           ><ion-col>{{ t('Trier par score') }}</ion-col>
         </ion-row>
 
-        <template v-for="issue of formattedSuggestions" style="margin-top: 1rem">
+        <template v-for="issue of formattedSuggestions" :key="issue.issuecode">
           <ion-row class="suggestion">
             <FullIssue
               :issuecode="issue.issuecode"
@@ -66,12 +68,14 @@
               </div>
             </ion-col>
           </ion-row>
-          <ion-row class="stories" v-for="({ authors, title }, storycode) in issue.storiesByStorycode">
-            <ion-chip @click="showAuthorToast(author)" v-for="author in authors.slice(0, 2)" :outline="true">{{
-              author
-            }}</ion-chip
-            ><ion-chip v-if="authors.length > 2" :outline="true"
-              ><template v-html="'&nbsp;+'" />{{ authors.length - 2 }}</ion-chip
+          <ion-row v-for="({ authors, title }, storycode) in issue.storiesByStorycode" :key="storycode" class="stories">
+            <ion-chip
+              v-for="author in authors.slice(0, 2)"
+              :key="author"
+              :outline="true"
+              @click="showAuthorToast(author)"
+              >{{ author }}</ion-chip
+            ><ion-chip v-if="authors.length > 2" :outline="true">&nbsp;+{{ authors.length - 2 }}</ion-chip
             ><ion-col class="story-title"
               ><InducksStory
                 show-link="outer"

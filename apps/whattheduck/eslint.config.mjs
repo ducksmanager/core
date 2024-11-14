@@ -1,12 +1,10 @@
-import { fixupConfigRules, fixupPluginRules } from '@eslint/compat';
-import { FlatCompat } from '@eslint/eslintrc';
-import js from '@eslint/js';
-import typescriptEslint from '@typescript-eslint/eslint-plugin';
-import i18Next from 'eslint-plugin-i18next';
-import _import from 'eslint-plugin-import';
-import globals from 'globals';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+
+import { FlatCompat } from '@eslint/eslintrc';
+import js from '@eslint/js';
+import vueI18n from '@intlify/eslint-plugin-vue-i18n';
+import typescriptEslint from '@typescript-eslint/eslint-plugin';
 import parser from 'vue-eslint-parser';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -30,88 +28,68 @@ export default [
       'components.d.ts',
     ],
   },
-  ...fixupConfigRules(
-    compat.extends(
-      './.eslintrc-auto-import.json',
-      'eslint:recommended',
-      'plugin:@typescript-eslint/recommended',
-      'plugin:@typescript-eslint/stylistic',
-      'plugin:i18next/recommended',
-      'plugin:import/typescript',
-      'plugin:prettier-vue/recommended',
-      'prettier',
-    ),
+  ...vueI18n.configs['flat/recommended'],
+  ...compat.extends(
+    'plugin:vue/vue3-recommended',
+    'plugin:prettier-vue/recommended',
+    'prettier',
+    'plugin:@typescript-eslint/recommended',
   ),
+
   {
     plugins: {
-      import: fixupPluginRules(_import),
-      '@typescript-eslint': fixupPluginRules(typescriptEslint),
-      i18next: fixupPluginRules(i18Next),
+      '@typescript-eslint': typescriptEslint,
     },
 
     languageOptions: {
-      globals: {
-        ...globals.browser,
-      },
-
       parser: parser,
       ecmaVersion: 5,
       sourceType: 'script',
 
       parserOptions: {
         parser: '@typescript-eslint/parser',
-        extraFileExtensions: ['.vue'],
-        project: true,
       },
     },
 
     rules: {
-      'no-fallthrough': 'off',
-      'no-constant-condition': 'off',
+      '@typescript-eslint/no-non-null-assertion': 'off',
+      'arrow-body-style': ['error', 'as-needed'],
       'vue/multi-word-component-names': 'off',
-      'vue/no-deprecated-slot-attribute': 'off',
-      '@typescript-eslint/no-this-alias': 'off',
-      '@typescript-eslint/no-explicit-any': 'off',
+      'vue/no-dupe-keys': 'off',
+      'vue/no-setup-props-destructure': 'off',
+      'vue/no-v-html': 'off',
+      'vue/no-v-text-v-html-on-component': 'off',
+      'vue/define-emits-declaration': 'error',
+      'vue/define-props-declaration': 'error',
 
-      '@typescript-eslint/explicit-module-boundary-types': [
+      'vue/component-name-in-template-casing': [
         'error',
+        'kebab-case',
         {
-          allowArgumentsExplicitlyTypedAsAny: true,
+          registeredComponentsOnly: true,
+          ignores: [],
         },
       ],
 
-      '@typescript-eslint/array-type': 'error',
-      '@typescript-eslint/consistent-type-assertions': 'error',
-      '@typescript-eslint/prefer-for-of': 'error',
-      '@typescript-eslint/prefer-optional-chain': 'error',
-
-      'i18next/no-literal-string': [
-        'error',
+      '@intlify/vue-i18n/no-deprecated-i18n-component': 'off',
+      '@intlify/vue-i18n/no-raw-text': [
+        'warn',
         {
-          words: { exclude: ['Discord', 'Facebook', 'Instagram', 'YouTube', '+&nbsp;'] },
+          ignoreText: ['YouTube', 'Discord', 'Facebook', 'Instagram', 'DucksManager', '+ ', ' +', '€'],
         },
       ],
-      'import/first': 'error',
+    },
 
-      'import/order': [
-        'error',
-        {
-          alphabetize: {
-            order: 'asc',
-            caseInsensitive: false,
-          },
-
-          groups: [['builtin', 'external'], 'parent', ['sibling', 'index']],
-          'newlines-between': 'always',
+    settings: {
+      'vue-i18n': {
+        localeDir: {
+          pattern: ['./translations/*.json'],
+          localeKey: 'file',
         },
-      ],
-
-      'import/newline-after-import': 'error',
-      'import/no-duplicates': 'error',
-      'import/no-mutable-exports': 'error',
+      },
     },
   },
   {
-    files: ['**/*.js', '**/*.ts', '**/*.vue'],
+    files: ['**/*.ts', '**/*.vue'],
   },
 ];

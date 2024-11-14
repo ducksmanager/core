@@ -1,8 +1,8 @@
 <template>
   <fab-header-button
+    v-model:fab="fab"
     :icon="{ ios: copyOutline, md: copySharp }"
     :options="[...copyListModes]"
-    v-model:fab="fab"
     @update:value="
       copyToClipboard($event.textPrefix!, $event.getTextToCopy!());
       (fab?.$el as HTMLIonFabElement).close();
@@ -20,7 +20,6 @@ const { countryNames, publicationNames } = storeToRefs(coa());
 const { publicationcode } = storeToRefs(app());
 const { copyListModes } = app();
 
-// eslint-disable-next-line no-undef
 const fab = shallowRef<ComponentPublicInstance<HTMLIonFabElement> | null>(null);
 
 const copyToClipboard = async (textPrefix: string, text: Promise<string>) => {

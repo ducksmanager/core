@@ -29,7 +29,7 @@
         <ion-label>{{ t('A lire') }}</ion-label></ion-col
       >
       <ion-col size="8" style="display: flex" class="ion-padding ion-justify-content-end"
-        ><ion-checkbox :disabled="isOffline" v-model="issue.isToRead" :aria-label="t('A lire')" /></ion-col
+        ><ion-checkbox v-model="issue.isToRead" :disabled="isOffline" :aria-label="t('A lire')" /></ion-col
     ></ion-row>
     <ion-row>
       <ion-col size="4" class="ion-padding ion-text-left">
@@ -61,7 +61,7 @@
           </div>
         </ion-modal>
 
-        <ion-radio-group v-model="issue.purchaseId" v-if="purchasesIncludingNone" class="vertical">
+        <ion-radio-group v-if="purchasesIncludingNone" v-model="issue.purchaseId" class="vertical">
           <ion-radio
             v-for="item of purchasesIncludingNone"
             :key="item.id || 'none'"
@@ -72,9 +72,9 @@
             class="ion-text-right ion-padding-bottom"
           >
             <div
-              :style="{ fontStyle: item.id === null ? 'italic' : 'normal' }"
               v-for="descriptionLine of item.dateAndDescription"
               :key="descriptionLine"
+              :style="{ fontStyle: item.id === null ? 'italic' : 'normal' }"
             >
               {{ descriptionLine }}
             </div>

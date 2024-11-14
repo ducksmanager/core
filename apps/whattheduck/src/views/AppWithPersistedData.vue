@@ -2,10 +2,10 @@
   <ion-progress-bar v-if="collectionLoadProgress" :value="collectionLoadProgress"></ion-progress-bar>
 
   <ion-split-pane
+    v-if="isCollectionLoaded"
     :style="{ 'margin-top': `${offlineBannerHeight}px` }"
     :class="{ 'greyed-out': isCollectionReadonly }"
     content-id="main-content"
-    v-if="isCollectionLoaded"
   >
     <NavigationDrawer />
     <ion-router-outlet id="main-content" />

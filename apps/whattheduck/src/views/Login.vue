@@ -17,7 +17,7 @@
             }"
             :aria-label="t('Nom d\'utilisateur DucksManager')"
             :placeholder="t('Nom d\'utilisateur DucksManager')"
-            @ionBlur="touchedInputs.push('username')"
+            @ion-blur="touchedInputs.push('username')"
           />
         </ion-col>
       </ion-row>
@@ -34,7 +34,7 @@
             :error-text="errorTexts.password || t('Erreur')"
             :aria-label="t('Mot de passe')"
             :placeholder="t('Mot de passe')"
-            @ionBlur="touchedInputs.push('password')"
+            @ion-blur="touchedInputs.push('password')"
           />
         </ion-col>
         <ion-col size="1">
@@ -46,20 +46,20 @@
       ></ion-row>
       <ion-row>
         <ion-col size="6">
-          <ion-button @click="submitLogin" expand="block" :disabled="isOffline">
+          <ion-button expand="block" :disabled="isOffline" @click="submitLogin">
             {{ t('Connexion') }}
           </ion-button>
         </ion-col>
 
         <ion-col size="6">
-          <ion-button @click="signup" expand="block" :disabled="isOffline">
+          <ion-button expand="block" :disabled="isOffline" @click="signup">
             {{ t('Inscription') }}
           </ion-button>
         </ion-col>
       </ion-row>
       <ion-row>
         <ion-col size="6" push="6" class="flex ion-justify-content-end">
-          <ion-button @click="forgotPassword" size="small" :disabled="isOffline">
+          <ion-button size="small" :disabled="isOffline" @click="forgotPassword">
             {{ t('Mot de passe oublié ?') }}
           </ion-button>
         </ion-col>

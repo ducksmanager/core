@@ -17,23 +17,23 @@
     >
       <template v-if="$slots['row-label']">
         <RecycleScroller
+          v-slot="{ item: { key, item, isOwned, nextItemType } }"
           :style="{ visibility: isCameraPreviewShown ? 'hidden' : 'visible' }"
           class="scroller"
           :items="filteredItems"
           :item-size="32"
           key-field="uniqueKey"
           item-class="item-wrapper"
-          v-slot="{ item: { key, item, isOwned, nextItemType } }"
         >
           <Row
             :id="key"
             :type="itemType"
             :class="{ [`is-next-item-${nextItemType}`]: !!nextItemType, 'is-owned': isOwned }"
           >
-            <template #fill-bar v-if="item">
+            <template v-if="item" #fill-bar>
               <slot name="fill-bar" :item="item" />
             </template>
-            <template #prefix v-if="item">
+            <template v-if="item" #prefix>
               <slot name="row-prefix" :item="item" />
             </template>
             <template #label>
@@ -44,7 +44,7 @@
             </template>
           </Row>
         </RecycleScroller>
-        <div id="edit-issues-buttons" v-if="selectedIssuecodes">
+        <div v-if="selectedIssuecodes" id="edit-issues-buttons">
           <EditIssuesConfirmCancelButtons
             :confirm-ios="pencilOutline"
             :confirm-md="pencilSharp"
@@ -63,8 +63,8 @@
 
     <template v-if="isCameraPreviewShown">
       <div :id="cameraPreviewElementId"></div>
-      <div class="overlay" ref="overlay">
-        <ion-button ref="takePhotoButton" @click="takePhoto().then(() => (isCameraPreviewShown = false))" size="large">
+      <div ref="overlay" class="overlay">
+        <ion-button ref="takePhotoButton" size="large" @click="takePhoto().then(() => (isCameraPreviewShown = false))">
           <ion-icon :ios="apertureOutline" :md="apertureSharp" />
         </ion-button>
         <ion-button size="large" color="danger" @click="isCameraPreviewShown = false">
@@ -96,12 +96,12 @@ import useCoverSearch from '~/composables/useCoverSearch';
 import { app } from '~/stores/app';
 
 defineSlots<{
-  'default'(): any;
-  'empty'(): any;
-  'fill-bar'(props: { item: Item }): any;
-  'row-prefix'(props: { item: Item }): any;
-  'row-label'(props: { item: Item }): any;
-  'row-suffix'(props: { item: Item }): any;
+  'default'(): unknown;
+  'empty'(): unknown;
+  'fill-bar'(props: { item: Item }): unknown;
+  'row-prefix'(props: { item: Item }): unknown;
+  'row-label'(props: { item: Item }): unknown;
+  'row-suffix'(props: { item: Item }): unknown;
 }>();
 
 const props = defineProps<{

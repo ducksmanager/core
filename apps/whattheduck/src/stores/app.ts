@@ -22,6 +22,8 @@ export const app = defineStore('app', () => {
   const isOffline = computed(() => isOfflineMode.value !== false);
   const isIOS = computed(() => Capacitor.getPlatform() === 'ios');
 
+  const { t: $t } = useI18n();
+
   const router = useRouter();
   const route = useRoute();
   const token = ref<string | null>(); // undefined === we haven't checked whether there is a token ; null === we have checked and there is no token
@@ -120,12 +122,12 @@ export const app = defineStore('app', () => {
     { id: 'all', label: 'All' },
     {
       id: 'unreadBooksOnly',
-      label: 'Unread books only',
+      label: $t('Livres non-lus seulement'),
       icon: { ios: bookmarkOutline, md: bookmarkSharp },
     },
     {
       id: 'readBooksOnly',
-      label: 'Read books only',
+      label: $t('Livres lus seulement'),
       icon: { negate: true, ios: bookmarkOutline, md: bookmarkSharp },
     },
   ] as const;

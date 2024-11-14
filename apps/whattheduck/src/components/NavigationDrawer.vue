@@ -9,7 +9,7 @@
           <ion-row class="ion-justify-content-center ion-padding"
             ><ion-note class="ion-no-padding">{{ user.username }}</ion-note>
           </ion-row>
-          <ion-row class="ion-padding-vertical" v-if="!isIOS">
+          <ion-row v-if="!isIOS" class="ion-padding-vertical">
             <Medal
               v-for="(numberOfPoints, contribution) in points[user.id] || {}"
               :key="contribution"
@@ -26,9 +26,13 @@
               :detail="false"
               :class="{ selected: p.url.indexOf(route.path) === 0 }"
             >
-              <ion-icon slot="start" aria-hidden="true" :ios="p.iosIcon" :md="p.mdIcon" />
+              <template #start>
+                <ion-icon aria-hidden="true" :ios="p.iosIcon" :md="p.mdIcon" />
+              </template>
               <ion-label>{{ p.title }}</ion-label>
-              <ion-chip slot="end" v-if="p.chip" outline>{{ p.chip }}</ion-chip>
+              <template #end>
+                <ion-chip v-if="p.chip" outline>{{ p.chip }}</ion-chip>
+              </template>
             </ion-item>
           </ion-menu-toggle>
         </template>
@@ -44,7 +48,9 @@
             :class="{ selected: route.path === p.url }"
             @click="router.push(p.url)"
           >
-            <ion-icon slot="start" aria-hidden="true" :ios="p.iosIcon" :md="p.mdIcon" />
+            <template #start>
+              <ion-icon aria-hidden="true" :ios="p.iosIcon" :md="p.mdIcon" />
+            </template>
             <ion-label>{{ p.title }}</ion-label>
           </ion-item>
         </ion-menu-toggle>

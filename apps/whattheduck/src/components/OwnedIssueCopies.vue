@@ -3,9 +3,7 @@
     <ion-row v-if="!isOfflineMode && !isIOS">
       <ion-col size="12" style="height: 100%"
         ><img v-if="fullUrl" :src="coverUrl" /><ion-text v-else>{{ $t('pas de couverture') }}</ion-text>
-        <ion-chip v-if="issuecodes.length > 1"
-          ><template v-html="'+&nbsp;'" />{{ issuecodes.length - 1 }}</ion-chip
-        ></ion-col
+        <ion-chip v-if="issuecodes.length > 1">+&nbsp;{{ issuecodes.length - 1 }}</ion-chip></ion-col
       >
     </ion-row>
     <ion-row
@@ -15,7 +13,7 @@
             <ion-icon :ios="addOutline" :md="addSharp" />&nbsp;{{ t('Ajouter un exemplaire') }}
           </ion-button>
           <ion-segment v-else v-model="currentCopyIndex">
-            <ion-segment-button v-for="(_, idx) in 3" :id="`copy-${idx}`" :value="idx" v-show="copies[idx]">
+            <ion-segment-button v-for="(_, idx) in 3" v-show="copies[idx]" :id="`copy-${idx}`" :key="idx" :value="idx">
               <template v-if="copies[idx]">
                 <ion-label
                   ><div>
@@ -26,22 +24,22 @@
               </template>
             </ion-segment-button>
             <ion-button
+              v-if="!isOfflineMode && copies.length <= 2"
               :style="{ gridColumn: 4 }"
               size="small"
-              v-if="!isOfflineMode && copies.length <= 2"
               @click="addCopy"
             >
               <ion-icon :ios="addOutline" :md="addSharp" />&nbsp;{{ t('Ajouter un exemplaire') }}
             </ion-button>
           </ion-segment></template
         ><ion-button
+          v-if="currentCopyIndex !== undefined && !isOfflineMode"
+          color="danger"
+          size="small"
           @click="
             copies.splice(currentCopyIndex!, 1);
             currentCopyIndex = currentCopyIndex! - 1 < 0 ? undefined : currentCopyIndex! - 1;
           "
-          color="danger"
-          size="small"
-          v-if="currentCopyIndex !== undefined && !isOfflineMode"
           ><template v-if="issuecodes.length > 1">{{
             t('Retirer ces {numberOfIssues} numéros de la collection', { numberOfIssues: issuecodes.length })
           }}</template>
@@ -55,8 +53,8 @@
       :confirm-md="checkmarkSharp"
       :cancel-ios="closeOutline"
       :cancel-md="closeSharp"
-      @cancel="router.go(-1)"
       confirm-color="success"
+      @cancel="router.go(-1)"
       @confirm="submitIssueCopies"
     />
   </ion-content>

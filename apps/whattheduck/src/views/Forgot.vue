@@ -10,8 +10,8 @@
         {{ t('Indiquez votre addresse e-mail pour réinitialiser votre mot de passe') }}
       </ion-text>
       <ion-input
-        class="ion-margin-top"
         v-model="email"
+        class="ion-margin-top"
         :class="{
           disabled: showConfirmation,
           'ion-valid': validInputs.includes('email'),
@@ -21,7 +21,7 @@
         type="email"
         :aria-label="t('Adresse e-mail')"
         :placeholder="t('Adresse e-mail')"
-        @ionBlur="touchedInputs.push('email')"
+        @ion-blur="touchedInputs.push('email')"
       />
       <ion-button :disabled="showConfirmation" @click="submitForgot">
         {{ t('Envoyer') }}

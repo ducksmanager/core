@@ -2,9 +2,11 @@
   <ion-page>
     <ion-header :translucent="true">
       <ion-toolbar>
-        <ion-buttons slot="start">
-          <ion-menu-button color="primary" />
-        </ion-buttons>
+        <template #start>
+          <ion-buttons>
+            <ion-menu-button color="primary" />
+          </ion-buttons>
+        </template>
         <ion-title>{{ t('Signaler un problème') }}</ion-title>
       </ion-toolbar>
     </ion-header>
@@ -23,7 +25,7 @@
           'ion-touched': touchedInputs.includes('reportMessage'),
         }"
         :placeholder="t('Qu\'est-ce qui ne va pas ?')"
-        @ionBlur="touchedInputs.push('reportMessage')"
+        @ion-blur="touchedInputs.push('reportMessage')"
       />
       <ion-button :disabled="showConfirmation" @click="submitReport">
         {{ t('Envoyer') }}

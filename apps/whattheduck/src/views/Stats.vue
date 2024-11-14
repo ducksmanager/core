@@ -2,13 +2,15 @@
   <ion-page>
     <ion-header :translucent="true">
       <ion-toolbar>
-        <ion-buttons slot="start">
-          <ion-menu-button color="primary" />
-        </ion-buttons>
+        <template #start>
+          <ion-buttons>
+            <ion-menu-button color="primary" />
+          </ion-buttons>
+        </template>
         <ion-title>{{ t('Statistiques') }}</ion-title>
       </ion-toolbar>
     </ion-header>
-    <ion-content :fullscreen="true" v-if="issues">
+    <ion-content v-if="issues" :fullscreen="true">
       <ion-row style="height: 25vh" class="ion-text-center">
         <ion-row style="max-height: 120px">
           <ion-row class="ion-text-center" style="height: 75%">
@@ -43,7 +45,7 @@
         <ion-row style="max-height: 120px">
           <ion-col size="12" class="ion-text-center ion-justify-content-around" style="flex-direction: column">
             <ion-text class="text-medium">{{ t('Valeur de la collection') }}</ion-text>
-            <ion-text class="text-big">{{ quotationSum }}<template v-html="'&euro;'" /></ion-text>
+            <ion-text class="text-big">{{ quotationSum }}&euro;</ion-text>
             <template v-if="highestQuotedIssue">
               <ion-text>{{ t('Numéro le plus côté :') }}</ion-text>
               <ion-text>

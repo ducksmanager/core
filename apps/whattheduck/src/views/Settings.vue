@@ -2,9 +2,11 @@
   <ion-page>
     <ion-header>
       <ion-toolbar>
-        <ion-buttons slot="start">
-          <ion-menu-button color="primary" />
-        </ion-buttons>
+        <template #start>
+          <ion-buttons>
+            <ion-menu-button color="primary" />
+          </ion-buttons>
+        </template>
         <ion-title>{{ t('Paramètres') }}</ion-title>
       </ion-toolbar>
     </ion-header>
@@ -25,7 +27,7 @@
             }}</ion-text
           ></ion-item
         >
-        <router-link class="ion-padding" id="link-to-dm" :to="storeUrl">
+        <router-link id="link-to-dm" class="ion-padding" :to="storeUrl">
           <template v-if="storeName === 'Play Store'">{{
             t("Notez What The Duck sur le Play Store si vous l'appréciez :-)")
           }}</template>
@@ -54,7 +56,7 @@
           <ion-label>{{ t('Compte') }}</ion-label>
         </ion-item-divider>
       </ion-item-group>
-      <ion-button fill="outline" @click="deleteAccount" color="danger" style="display: flex">
+      <ion-button fill="outline" color="danger" style="display: flex" @click="deleteAccount">
         {{ t('Supprimer mon compte') }}
       </ion-button>
     </ion-content>

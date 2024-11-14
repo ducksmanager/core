@@ -1,7 +1,7 @@
 <template>
   <ion-item
     :button="!isOfflineMode"
-    :class="class"
+    :class="classNames"
     @click="selectedIssuecodes ? toggleCheckedIssuecode(id) : goToItem()"
   >
     <slot name="fill-bar" />
@@ -10,39 +10,45 @@
       <slot name="prefix" />
       <slot name="label" />
     </ion-label>
-    <ion-label slot="end" class="suffix">
-      <slot name="suffix" />
-    </ion-label>
+    <template #end>
+      <ion-label class="suffix">
+        <slot name="suffix" />
+      </ion-label>
+    </template>
   </ion-item>
 </template>
 
 <script setup lang="ts">
 import { app } from '~/stores/app';
 
-const props = defineProps<{
+const {
+  id,
+  type,
+  class: classNames,
+} = defineProps<{
   id: string;
   type: 'countrycode' | 'publicationcode' | 'issuecode';
   class: Record<string, boolean> | '';
 }>();
 
 defineSlots<{
-  'fill-bar'(): any;
-  'checkbox'(): any;
-  'prefix'(): any;
-  'label'(): any;
-  'suffix'(): any;
+  'fill-bar'(): unknown;
+  'checkbox'(): unknown;
+  'prefix'(): unknown;
+  'label'(): unknown;
+  'suffix'(): unknown;
 }>();
 
 const { isOfflineMode, selectedIssuecodes, currentNavigationItem } = storeToRefs(app());
 
 const goToItem = () => {
-  switch (props.type) {
+  switch (type) {
     case 'countrycode':
     case 'publicationcode':
-      currentNavigationItem.value = { type: props.type, value: props.id };
+      currentNavigationItem.value = { type, value: id };
       break;
     case 'issuecode':
-      currentNavigationItem.value = { type: 'issuecodes', value: [props.id] };
+      currentNavigationItem.value = { type: 'issuecodes', value: [id] };
       break;
   }
 };

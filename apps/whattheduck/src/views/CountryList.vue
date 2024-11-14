@@ -10,8 +10,8 @@
     }}</template>
     <template #fill-bar="{ item: { countrycode } }">
       <ion-progress-bar
-        type="determinate"
         v-if="ownershipPercentages[countrycode]"
+        type="determinate"
         :value="ownershipPercentages[countrycode].ownershipPercentage || 0"
       />
     </template>

@@ -2,9 +2,11 @@
   <ion-page>
     <ion-header :translucent="true">
       <ion-toolbar>
-        <ion-buttons slot="start">
-          <ion-menu-button color="primary" />
-        </ion-buttons>
+        <template #start>
+          <ion-buttons>
+            <ion-menu-button color="primary" />
+          </ion-buttons>
+        </template>
         <ion-title>{{ t('Résultats de la recherche') }}</ion-title>
       </ion-toolbar>
     </ion-header>
@@ -14,18 +16,18 @@
         <div>
           <Carousel3d @after-slide-change="(index: number) => (cover = covers[index])">
             <Slide
-              v-for="(cover, index) in covers"
-              :key="cover.issuecode"
+              v-for="({ issuecode, fullUrl }, index) in covers"
+              :key="issuecode"
               :index="index"
               :style="{ width: `min(50%, ${slideWidths[index]}px)` }"
             >
-              <ion-img :src="getCoverUrl(cover.fullUrl!)" @ion-img-did-load="setWidth" />
+              <ion-img :src="getCoverUrl(fullUrl!)" @ion-img-did-load="setWidth" />
             </Slide>
           </Carousel3d>
           <ion-row
+            v-if="hasCoaData && cover"
             class="ion-justify-content-between ion-align-items-center"
             style="position: relative; flex-direction: column"
-            v-if="hasCoaData && cover"
           >
             <ion-row><FullIssue :issuecode="cover.issuecode" show-issue-conditions /></ion-row>
             <ion-row style="font-size: 0.8rem; width: 100%"
@@ -34,7 +36,7 @@
                   numberOfUsers: issuePopularities[cover.issuecode]!.popularity,
                 })
               }}</ion-col></ion-row
-            ><ion-row style="font-size: 0.8rem; width: 100%" v-if="issueQuotations[cover.issuecode]"
+            ><ion-row v-if="issueQuotations[cover.issuecode]" style="font-size: 0.8rem; width: 100%"
               ><ion-col size="2"><ion-icon :ios="pricetagOutline" :md="pricetagSharp"></ion-icon></ion-col
               ><ion-col class="ion-text-left"
                 ><IssueQuotation :issue="{ ...cover, ...issueQuotations[cover.issuecode] }" /></ion-col></ion-row
@@ -46,10 +48,10 @@
             ><template v-else>{{ t('Ajouter à ma collection') }}</template></ion-button
           >
           <div>
-            <ion-button color="light" v-if="coverOrigin === 'takePhoto'" @click="takePhoto">{{
+            <ion-button v-if="coverOrigin === 'takePhoto'" color="light" @click="takePhoto">{{
               t('Prendre une nouvelle photo')
             }}</ion-button>
-            <ion-button color="light" v-else-if="coverOrigin === 'pickCoverFile'" @click="pickCoverFile">{{
+            <ion-button v-else-if="coverOrigin === 'pickCoverFile'" color="light" @click="pickCoverFile">{{
               t('Sélectionner une nouvelle photo')
             }}</ion-button>
           </div>

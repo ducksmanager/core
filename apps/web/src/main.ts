@@ -35,7 +35,7 @@ router.beforeResolve(async (to) => {
 const store = createPinia();
 
 const app = createApp(App)
-  .use(i18n("fr", { en }).instance)
+  .use(i18n("fr", localStorage.getItem("locale") || "fr", { en }).instance)
   .use(store)
   .use(contextmenu)
   .use(head)

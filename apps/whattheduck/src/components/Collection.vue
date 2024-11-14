@@ -1,25 +1,29 @@
 <template>
   <ion-page id="main-content">
-    <ion-buttons slot="end" v-if="componentName === IssueList">
-      <CopyListButton />
-      <ViewModesButton v-if="!isIOS" />
-    </ion-buttons>
+    <template #end>
+      <ion-buttons v-if="componentName === IssueList">
+        <CopyListButton />
+        <ViewModesButton v-if="!isIOS" />
+      </ion-buttons>
+    </template>
     <ion-header :translucent="true">
       <ion-toolbar>
-        <ion-buttons slot="start">
-          <ion-menu-button color="primary" />
-        </ion-buttons>
+        <template #start>
+          <ion-buttons>
+            <ion-menu-button color="primary" />
+          </ion-buttons>
+        </template>
         <ion-title
           ><div class="content">
             <div class="title">
-              <ion-button size="small" v-if="isCoaView" @click="backToCollection()">
+              <ion-button v-if="isCoaView" size="small" @click="backToCollection()">
                 <ion-icon :md="arrowBackSharp" :ios="arrowBackOutline"></ion-icon>&nbsp;{{
                   t('Retour à ma collection')
                 }}
               </ion-button>
               <template v-else>
                 <div>{{ t('Ma collection') }}</div>
-                <ion-chip outline v-if="total !== undefined">{{ total }}</ion-chip></template
+                <ion-chip v-if="total !== undefined" outline>{{ total }}</ion-chip></template
               >
             </div>
           </div></ion-title
@@ -27,13 +31,13 @@
       </ion-toolbar>
       <Navigation v-if="!isCameraPreviewShown" />
       <template v-if="(list?.hasItems || filterText || currentFilter.id !== 'all') && !isCameraPreviewShown">
-        <ion-searchbar inputmode="text" autocapitalize="sentences" v-model="filterText" placeholder="Filter" />
+        <ion-searchbar v-model="filterText" inputmode="text" autocapitalize="sentences" placeholder="Filter" />
         <FilterButton v-if="filterText.length < 1 && !isCoaView && componentName === IssueList" />
       </template>
     </ion-header>
 
-    <component v-if="componentName === OwnedIssueCopies" :is="componentName" />
-    <component v-else :is="componentName" ref="list" />
+    <component :is="componentName" v-if="componentName === OwnedIssueCopies" />
+    <component :is="componentName" v-else ref="list" />
   </ion-page>
 </template>
 

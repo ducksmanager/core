@@ -4,11 +4,12 @@
     @update:model-value="currentNavigationItem = JSON.parse($event)"
   >
     <ion-col
-      @click.stop="() => {}"
-      :class="{ 'non-clickable': partIdx >= shownParts.length, scrollable: partIdx === 3 }"
-      :size="[1, maxParts].includes(partIdx) ? '2' : '4'"
       v-for="partIdx in maxParts"
       v-show="partIdx <= shownParts.length"
+      :key="partIdx"
+      :class="{ 'non-clickable': partIdx >= shownParts.length, scrollable: partIdx === 3 }"
+      :size="[1, maxParts].includes(partIdx) ? '2' : '4'"
+      @click.stop="() => {}"
     >
       <ion-segment-button
         :value="JSON.stringify(shownParts[partIdx - 1])"

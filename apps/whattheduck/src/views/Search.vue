@@ -2,9 +2,11 @@
   <ion-page>
     <ion-header :translucent="true">
       <ion-toolbar>
-        <ion-buttons slot="start">
-          <ion-menu-button color="primary" />
-        </ion-buttons>
+        <template #start>
+          <ion-buttons>
+            <ion-menu-button color="primary" />
+          </ion-buttons>
+        </template>
         <ion-title>{{ t('Rechercher une histoire') }}</ion-title>
       </ion-toolbar>
     </ion-header>
@@ -18,9 +20,9 @@
         }}
       </ion-text>
       <ion-searchbar
+        v-model="storyTitle"
         style="margin: 1rem 0"
         autocapitalize="sentences"
-        v-model="storyTitle"
         :placeholder="t('Entrez le titre d\'une histoire')"
       />
 
@@ -30,6 +32,7 @@
             <template v-for="{ collectionIssues, partInfo } of story.issues">
               <condition-with-part
                 v-for="{ condition } of collectionIssues"
+                :key="condition"
                 :value="condition"
                 :part-info="partInfo" /></template
             >{{ story.title }}
@@ -45,7 +48,11 @@
           >{{ t("Retour aux résultats d'histoire") }}</ion-button
         >
         <ion-list>
-          <ion-item v-for="{ issuecode, partInfo } of selectedStory.issues" @click="goToIssue(issuecode)">
+          <ion-item
+            v-for="{ issuecode, partInfo } of selectedStory.issues"
+            :key="issuecode"
+            @click="goToIssue(issuecode)"
+          >
             <FullIssue :issuecode="issuecode" show-issue-conditions :part-info="partInfo" />
           </ion-item>
         </ion-list>

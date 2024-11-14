@@ -1,5 +1,5 @@
 <template>
-  <div class="edit-issues-buttons" v-if="!isOfflineMode">
+  <div v-if="!isOfflineMode" class="edit-issues-buttons">
     <ion-fab>
       <ion-fab-button color="light" @click="emit('cancel')"><ion-icon :ios="cancelIos" :md="cancelMd" /></ion-fab-button
     ></ion-fab>

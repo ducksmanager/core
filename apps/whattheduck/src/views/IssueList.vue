@@ -16,7 +16,7 @@
     <template v-if="currentIssueViewMode.id === 'list'" #row-label="{ item: { issuecode } }">
       <Issue :issuecode="issuecode" />
     </template>
-    <template #row-suffix="{ item }" v-if="!isCoaView">
+    <template v-if="!isCoaView" #row-suffix="{ item }">
       <template v-if="'issueDate' in item && item.issueDate">
         <ion-icon :ios="calendarOutline" :md="calendarSharp" />&nbsp;{{ item.issueDate }}
       </template>
@@ -28,9 +28,9 @@
       <Bookcase
         orientation="horizontal"
         :embedded="true"
-        :currentEdgeHighlighted="null"
-        :bookcaseTextures="bookcaseOptions!.textures"
-        :sortedBookcase="sortedItemsForBookcase"
+        :current-edge-highlighted="null"
+        :bookcase-textures="bookcaseOptions!.textures"
+        :sorted-bookcase="sortedItemsForBookcase"
       />
     </template>
     <template v-if="colSize">
@@ -40,8 +40,8 @@
             v-for="{ key, item } in sortedItemsForCovers?.filter(({ key }) => filteredIssuenumbers.includes(key))"
             :key="key"
             class="ion-text-center"
-            @click="currentNavigationItem = { type: 'issuecodes', value: [key] }"
             :size="String(colSize)"
+            @click="currentNavigationItem = { type: 'issuecodes', value: [key] }"
             ><ion-img
               v-if="item.cover"
               :src="`${COVER_ROOT_URL}${item.cover}`"

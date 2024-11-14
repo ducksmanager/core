@@ -83,7 +83,6 @@ const emit = defineEmits<(e: 'show-camera-preview') => void>();
 const { pickCoverFile } = useCoverSearch(useRouter(), coverIdServices);
 const { isCoaView, isOfflineMode, selectedIssuecodes } = storeToRefs(app());
 
-// eslint-disable-next-line no-undef
 const fab = shallowRef<ComponentPublicInstance<HTMLIonFabElement> | null>(null);
 
 const { t } = useI18n();

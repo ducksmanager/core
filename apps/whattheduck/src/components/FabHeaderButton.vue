@@ -1,29 +1,28 @@
 <template>
-  <ion-fab ref="fab" vertical="top" horizontal="end" slot="fixed">
-    <ion-fab-button :disabled="disabled"><FabHeaderButtonIcon v-bind="icon" v-if="icon" /></ion-fab-button
-    ><FabHeaderButtonIcon v-bind="value?.icon" is-indicator v-if="value?.icon" />
+  <ion-fab ref="fab" slot="fixed" vertical="top" horizontal="end">
+    <ion-fab-button :disabled="disabled"><FabHeaderButtonIcon v-if="icon" v-bind="icon" /></ion-fab-button
+    ><FabHeaderButtonIcon v-if="value?.icon" v-bind="value?.icon" is-indicator />
     <ion-fab-list side="bottom">
       <ion-item
+        v-for="option of options"
+        :key="option.id"
         :detail="false"
         button
         class="ion-align-items-center ion-text-nowrap"
         :class="{ selected: value?.id === option.id }"
-        v-for="option of options"
-        :key="option.id"
         @click="
           value = option;
           (fab?.$el as HTMLIonFabElement).close();
         "
       >
         <ion-label>{{ option.label }}</ion-label>
-        <ion-fab-button size="small" v-if="option.icon">
+        <ion-fab-button v-if="option.icon" size="small">
           <FabHeaderButtonIcon v-bind="option.icon" /></ion-fab-button></ion-item></ion-fab-list
   ></ion-fab>
 </template>
 <script setup lang="ts" generic="Item extends FabOption">
 import type { FabOption } from '~/stores/app';
 
-// eslint-disable-next-line no-undef
 const fab = defineModel<ComponentPublicInstance<HTMLIonFabElement> | null>('fab');
 const value = defineModel<Item>('value');
 withDefaults(

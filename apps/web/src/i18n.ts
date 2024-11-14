@@ -3,6 +3,7 @@ import { createI18n } from "vue-i18n";
 let instance: ReturnType<typeof createI18n>;
 
 export default (
+  locale: string,
   defaultLocale: string,
   translations: Record<string, Record<string, string>>,
 ) => {
@@ -18,10 +19,8 @@ export default (
     };
 
     const fallbackLocale = defaultLocale;
-    let locale = localStorage.getItem("locale");
     if (!locale || !Object.keys(messages).includes(locale)) {
       locale = fallbackLocale;
-      localStorage.setItem("locale", fallbackLocale);
     }
     instance = createI18n({
       legacy: false,
@@ -32,6 +31,7 @@ export default (
       messages,
       globalInjection: true,
     });
+    console.log(messages);
   }
   return { instance, i18n: instance.global };
 };

@@ -2,9 +2,11 @@
   <ion-page>
     <ion-header :translucent="true">
       <ion-toolbar>
-        <ion-buttons slot="start">
-          <ion-menu-button color="primary" />
-        </ion-buttons>
+        <template #start>
+          <ion-buttons>
+            <ion-menu-button color="primary" />
+          </ion-buttons>
+        </template>
         <ion-title>{{ t('Mes auteurs favoris') }}</ion-title>
       </ion-toolbar>
     </ion-header>
@@ -31,8 +33,8 @@
           </ion-col>
           <ion-col size="5">
             <StarRating
-              :readonly="isOffline"
               v-model:rating="author.notation"
+              :readonly="isOffline"
               :max-rating="10"
               @update:rating="updateRating(author)"
               ><template #filledStarIcon><ion-icon style="width: 10%" :ios="starOutline" :md="starSharp" /></template
@@ -49,8 +51,8 @@
 
       <ion-searchbar
         v-if="!isOffline"
-        autocapitalize="words"
         v-model="authorName"
+        autocapitalize="words"
         :placeholder="t('Entrez le nom d\'un auteur')"
       />
 

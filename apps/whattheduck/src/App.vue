@@ -1,12 +1,12 @@
 <template>
   <ion-app>
     <ion-progress-bar v-if="bundleDownloadProgress" :value="bundleDownloadProgress"></ion-progress-bar>
-    <OfflineBanner :on-offline="routeMeta.onOffline" v-if="isOfflineMode" />
+    <OfflineBanner v-if="isOfflineMode" :on-offline="routeMeta.onOffline" />
 
     <ion-router-outlet
       v-if="['/login', '/signup', '/test'].includes(route.path)"
-      :style="{ 'margin-top': `${offlineBannerHeight}px` }"
       id="main-content"
+      :style="{ 'margin-top': `${offlineBannerHeight}px` }"
       :class="{ 'greyed-out': bundleDownloadProgress !== undefined }"
     />
     <AppWithPersistedData v-else-if="socket" />
