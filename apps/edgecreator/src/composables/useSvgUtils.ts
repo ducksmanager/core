@@ -1,5 +1,4 @@
 import axios from "axios";
-import { DOMParser } from "xmldom";
 
 import { coa } from "~web/src/stores/coa";
 
