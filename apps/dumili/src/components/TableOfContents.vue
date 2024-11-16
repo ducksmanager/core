@@ -41,7 +41,7 @@
               :id="`ai-results-page-${pageNumber}`"
               :value="aiKumikoInferredStoryKind"
               :on-click-rerun="() => runKumikoOnPage(id)"
-              @click="selectedPageNumber = pageNumber"
+              @click="showAiDetectionsOn = { type: 'page', id }"
             >
               <b>{{ $t("Cases détectées") }}</b>
               <table-results
@@ -93,7 +93,7 @@
               indexation.entries.length - 1 === idx &&
               lastHoveredEntry?.id === entry.id
             "
-            class="create-entry fw-bold position-absolute w-100 mt-n1 d-flex justify-content-center align-items-center"
+            class="create-entry fw-bold position-absolute mt-n1 d-flex justify-content-center align-items-center"
             title="Create an entry here"
             variant="info"
             @click="createEntry()"
@@ -143,7 +143,7 @@ defineProps<{
 const { indexationSocket } = inject(dumiliSocketInjectionKey)!;
 
 const { loadIndexation } = suggestions();
-const { hoveredEntry, currentEntry, selectedPageNumber } = storeToRefs(ui());
+const { hoveredEntry, currentEntry, showAiDetectionsOn } = storeToRefs(ui());
 const indexation = storeToRefs(suggestions()).indexation as Ref<FullIndexation>;
 const currentPage = defineModel<number>();
 
@@ -253,6 +253,7 @@ watch(
 
   button.create-entry {
     height: 25px;
+    z-index: 10;
   }
 }
 

@@ -17,8 +17,9 @@ export const ui = defineStore("ui", () => {
   );
 
   return {
-    showAiDetectionsOn: ref<number | undefined>(undefined),
-    selectedPageNumber: ref<number | undefined>(undefined),
+    showAiDetectionsOn: ref<{ type: "page" | "entry"; id: number } | undefined>(
+      undefined,
+    ),
     currentEntry,
     hoveredEntry,
     hoveredEntryPageNumbers: computed(

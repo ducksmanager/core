@@ -33,7 +33,7 @@
           :id="`ai-results-entry-story-kind-${entry.id}`"
           :value="storyKindAiSuggestion?.kind"
           :on-click-rerun="() => runKumiko(entry.id)"
-          @click="showAiDetectionsOn = entry.id"
+          @click="showAiDetectionsOn = { type: 'entry', id: entry.id }"
         >
           <b>{{ $t("Types d'entrées déduits pour les pages") }}</b>
           <table-results
@@ -58,7 +58,7 @@
           :id="`ai-results-entry-story-${entry.id}`"
           :value="storyAiSuggestions.map(({ storycode }) => storycode!)"
           :on-click-rerun="() => runStorycodeOcr(entry.id)"
-          @click="showAiDetectionsOn = entry.id"
+          @click="showAiDetectionsOn = { type: 'entry', id: entry.id }"
         >
           <template v-if="storyAiSuggestions.length">
             {{ $t("Résultats OCR:") }}
@@ -183,7 +183,7 @@ const storyKindAiSuggestion = computed(() =>
 );
 
 const storyAiSuggestions = computed(() =>
-  entry.value.storySuggestions.filter(({ ocrDetailsId }) => ocrDetailsId),
+  entry.value.storySuggestions.filter(({ ocrDetails }) => ocrDetails),
 );
 
 const storycode = computed(() => entry.value.acceptedStory?.storycode);

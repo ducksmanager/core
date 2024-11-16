@@ -4,7 +4,7 @@
       <slot name="table-of-contents" />
 
       <div
-        v-for="(url, index) in urls"
+        v-for="(page, index) in pages"
         :key="`page-${index}`"
         class="page"
         :class="{ single: isSinglePageWithUrl }"
@@ -15,23 +15,23 @@
             class="page-image"
             :class="{ opened: opening || opened }"
             :style="{
-              backgroundImage: `url(${url})`,
+              backgroundImage: `url(${page.url})`,
               marginLeft: opening || opened ? '0' : `${edgeWidth}px`,
             }"
             @transitionend="onEndOpenCloseTransition()"
           />
-          <slot name="page-overlay" :index="index" />
+          <slot name="page-overlay" :index="index" :page="page" />
         </div>
       </div>
     </div>
   </div>
 </template>
 
-<script setup lang="ts">
+<script setup lang="ts" generic="Page extends { url: string }">
 import { PageFlip } from "page-flip";
 
-const { urls, edgeWidth, coverRatio, coverHeight } = defineProps<{
-  urls: string[];
+const { pages, edgeWidth, coverRatio, coverHeight } = defineProps<{
+  pages: (Page & object)[];
   edgeWidth?: number;
   coverRatio: number;
   coverHeight?: number;
@@ -40,7 +40,7 @@ const emit = defineEmits<{ (e: "close-book"): void }>();
 const slots = defineSlots<{
   edge(): unknown;
   "table-of-contents"(): unknown;
-  "page-overlay"(props: { index: number }): unknown;
+  "page-overlay"(props: { index: number; page: Page }): unknown;
 }>();
 
 const container = ref<HTMLElement>();
@@ -51,9 +51,9 @@ const opening = defineModel<boolean>("opening", { default: false });
 const closing = defineModel<boolean>("closing", { default: false });
 const currentPage = defineModel<number>("currentPage", { required: true });
 
-const isSinglePageWithUrl = computed(() => urls.length === 1);
+const isSinglePageWithUrl = computed(() => pages.length === 1);
 const isReadyToOpen = computed(
-  () => coverRatio && !(isClosable.value && !edgeWidth) && urls.length,
+  () => coverRatio && !(isClosable.value && !edgeWidth) && pages.length,
 );
 const isClosable = computed(() => "edge" in slots);
 

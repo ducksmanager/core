@@ -26,21 +26,82 @@
         v-model:current-page="bookCurrentPage"
         v-model:opened="isBookOpened"
         :cover-ratio="coverRatio"
-        :urls="indexation.pages.map(({ url }) => url)"
+        :pages="indexation.pages"
       >
-        <template #page-overlay="{ index }">
+        <template #page-overlay="{ index, page }">
           <template v-if="hoveredEntryPageNumbers?.includes(index + 1)">
             <div
               :class="`overlay kind-${hoveredEntry!.acceptedStoryKind?.kind} striped`"
             ></div>
           </template>
-          <template v-if="selectedPageNumber === index + 1">
+          <template
+            v-if="
+              showAiDetectionsOn?.type === 'page' &&
+              showAiDetectionsOn.id === page.id
+            "
+          >
             <div
-              v-for="panel in indexation.pages[index].aiKumikoResultPanels"
+              v-for="panel in page.aiKumikoResultPanels"
               :key="`kumiko-match-${panel.id}`"
               class="overlay translucent"
               :style="getPanelCss(panel)"
             ></div>
+          </template>
+          <template
+            v-if="
+              showAiDetectionsOn?.type === 'entry' &&
+              getEntryPages(indexation, showAiDetectionsOn.id).includes(page)
+            "
+          >
+            <div
+              v-for="{
+                id,
+                x1,
+                x2,
+                x3,
+                x4,
+                y1,
+                y2,
+                y3,
+                y4,
+              } in page.aiOcrResults || []"
+              :key="`ocr-match-${id}`"
+              class="position-absolute ocr-match text"
+              :style="{
+                          clipPath: `polygon(${[
+                            [x1, y1],
+                            [x2, y2],
+                            [x3, y3],
+                            [x4, y4],
+                          ]
+                            .map(([x, y]) =>
+                              (['width', 'height'] as const)
+                                .map(
+                                  (dimension) =>
+                                    `${
+                                      [x, y][0] /
+                                      (page.aiKumikoResultPanels[0][
+                                        dimension
+                                      ] /
+                                        100)
+                                    }%`
+                                )
+                                .join(' ')
+                            )
+                            .join(',')})`,
+                        }"
+            >
+              {{
+                `polygon(${[
+                  [x1, y1],
+                  [x2, y2],
+                  [x3, y3],
+                  [x4, y4],
+                ]
+                  .map(([x, y]) => `${x}% ${y}%`)
+                  .join(",")})`
+              }}
+            </div>
           </template>
         </template>
       </Book>
@@ -73,6 +134,7 @@ import { tabs } from "~/stores/tabs";
 import { ui } from "~/stores/ui";
 import { FullIndexation } from "~dumili-services/indexation/types";
 import { aiKumikoResultPanel } from "~prisma/client_dumili";
+import { getEntryPages } from "~dumili-utils/entryPages";
 
 const { Book } = webComponents;
 
@@ -85,7 +147,7 @@ const route = useRoute();
 
 const { t: $t } = useI18n();
 
-const { hoveredEntry, hoveredEntryPageNumbers, selectedPageNumber } =
+const { hoveredEntry, hoveredEntryPageNumbers, showAiDetectionsOn } =
   storeToRefs(ui());
 const { activeTab } = storeToRefs(tabs());
 const activeTabIndex = computed({

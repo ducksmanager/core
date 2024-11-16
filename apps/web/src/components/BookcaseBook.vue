@@ -29,7 +29,12 @@
       v-model:current-page="currentPage"
       :cover-height="coverHeight"
       :cover-ratio="coverRatio"
-      :urls="pagesWithUrl.map(({ url }) => cloudinaryBaseUrl + url)"
+      :urls="
+        pagesWithUrl.map((page) => ({
+          ...page,
+          url: cloudinaryBaseUrl + page.url,
+        }))
+      "
       @close-book="closeBook()"
     >
       <template #table-of-contents>

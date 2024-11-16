@@ -19,6 +19,7 @@
 const { t: $t } = useI18n();
 
 import { suggestions } from "~/stores/suggestions";
+import { FullEntry } from "~dumili-services/indexation/types";
 import { getEntryPages } from "~dumili-utils/entryPages";
 import { storySuggestion } from "~prisma/client_dumili";
 import { socketInjectionKey as dmSocketInjectionKey } from "~web/src/composables/useDmSocket";
@@ -37,7 +38,7 @@ const { acceptedIssue: issue } = storeToRefs(suggestions());
 const acceptedStories = computed(() =>
   indexation.value?.entries
     .map((entry) => entry.acceptedStory)
-    .filter((story): story is storySuggestion => story !== null),
+    .filter((story): story is FullEntry["acceptedStory"] => story !== null),
 );
 
 const storiesWithDetails =
@@ -103,7 +104,11 @@ watch(
   acceptedStories,
   async (value) => {
     if (value && issue.value?.issuecode) {
-      storiesWithDetails.value = await getStoriesWithDetails(value);
+      storiesWithDetails.value = await getStoriesWithDetails(
+        value.filter(
+          (story): story is NonNullable<typeof story> => story !== null,
+        ),
+      );
     }
   },
   { immediate: true, deep: true },
