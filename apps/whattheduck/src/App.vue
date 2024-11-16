@@ -22,6 +22,7 @@ import { buildStorage } from '~socket.io-client-services';
 
 import OfflineBanner from './components/OfflineBanner.vue';
 import { app } from './stores/app';
+import { collection } from '~web/src/stores/collection';
 import AppWithPersistedData from './views/AppWithPersistedData.vue';
 
 import AppServices from '~dm-services/app/types';
@@ -81,8 +82,8 @@ const assignSocket = () => {
         isOfflineMode.value = false;
       }
     },
-    onConnectError: (e, namespace, event) => {
-      if (e.name === 'offline_no_cache' && event !== 'getBundleUrl') {
+    onConnectError: (e, namespace) => {
+      if (!collection().issues) {
         isOfflineMode.value = 'offline_no_cache';
       } else if (namespace === CollectionServices.namespaceEndpoint) {
         if ([/jwt expired/, /invalid signature/].some((regex) => regex.test(e.message))) {
