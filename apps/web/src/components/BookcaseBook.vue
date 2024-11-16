@@ -22,6 +22,7 @@
     />
 
     <Book
+      v-if="coverRatio"
       v-model:book="book as PageFlip | undefined"
       v-model:opening="opening"
       v-model:opened="opened"

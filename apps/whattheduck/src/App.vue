@@ -77,19 +77,18 @@ const assignSocket = () => {
       remove: (key) => storage.remove(key),
       clear: () => storage.clear(),
     }),
-    onConnected: (namespace: string) => {
-      if (namespace === AppServices.namespaceEndpoint) {
-        isOfflineMode.value = false;
-      }
+    onConnected: () => {
+      isOfflineMode.value = false;
     },
     onConnectError: (e, namespace) => {
-      if (!collection().issues) {
+      if (
+        namespace === CollectionServices.namespaceEndpoint &&
+        [/jwt expired/, /invalid signature/].some((regex) => regex.test(e.message))
+      ) {
+        session.clearSession();
+      } else if (!collection().issues) {
         isOfflineMode.value = 'offline_no_cache';
-      } else if (namespace === CollectionServices.namespaceEndpoint) {
-        if ([/jwt expired/, /invalid signature/].some((regex) => regex.test(e.message))) {
-          session.clearSession();
-        }
-      } else if (namespace === AppServices.namespaceEndpoint && isOfflineMode.value === false) {
+      } else {
         isOfflineMode.value = true;
       }
     },

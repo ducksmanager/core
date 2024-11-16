@@ -17,7 +17,7 @@ export const setupVue3 = defineSetupVue3(({ app }) => {
   const head = createHead();
 
   const store = createPinia();
-  app.use(i18n("fr", { en }).instance);
+  app.use(i18n("fr", "fr", { en }).instance);
   app.use(store);
   app.use(contextmenu);
   app.use(head);
