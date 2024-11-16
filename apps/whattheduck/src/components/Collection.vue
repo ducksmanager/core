@@ -1,18 +1,14 @@
 <template>
-  <ion-page id="main-content">
-    <template #end>
-      <ion-buttons v-if="componentName === IssueList">
-        <CopyListButton />
-        <ViewModesButton v-if="!isIOS" />
-      </ion-buttons>
-    </template>
+  <ion-page>
+    <ion-buttons v-if="componentName === IssueList" slot="end">
+      <CopyListButton />
+      <ViewModesButton v-if="!isIOS" />
+    </ion-buttons>
     <ion-header :translucent="true">
       <ion-toolbar>
-        <template #start>
-          <ion-buttons>
-            <ion-menu-button color="primary" />
-          </ion-buttons>
-        </template>
+        <ion-buttons slot="start">
+          <ion-menu-button color="primary" />
+        </ion-buttons>
         <ion-title
           ><div class="content">
             <div class="title">

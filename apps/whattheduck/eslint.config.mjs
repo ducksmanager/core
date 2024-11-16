@@ -55,6 +55,7 @@ export default [
       '@typescript-eslint/no-non-null-assertion': 'off',
       'arrow-body-style': ['error', 'as-needed'],
       'vue/multi-word-component-names': 'off',
+      'vue/no-deprecated-slot-attribute': 'off',
       'vue/no-dupe-keys': 'off',
       'vue/no-setup-props-destructure': 'off',
       'vue/no-v-html': 'off',
