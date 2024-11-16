@@ -25,7 +25,7 @@
       <ion-select
         v-model="showSuggestionsOf"
         class="ion-padding-top"
-        label="Montrer les publications de"
+        :label="t('Montrer les publications de')"
         label-placement="stacked"
       >
         <ion-select-option value="ALL">{{ t('Tous les pays') }}</ion-select-option>
