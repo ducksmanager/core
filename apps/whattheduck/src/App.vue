@@ -25,7 +25,6 @@ import { app } from './stores/app';
 import { collection } from '~web/src/stores/collection';
 import AppWithPersistedData from './views/AppWithPersistedData.vue';
 
-import AppServices from '~dm-services/app/types';
 import CollectionServices from '~dm-services/collection/types';
 
 const storage = injectLocal<IonicStorage>('storage')!;
