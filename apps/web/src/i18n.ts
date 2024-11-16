@@ -31,7 +31,6 @@ export default (
       messages,
       globalInjection: true,
     });
-    console.log(messages);
   }
   return { instance, i18n: instance.global };
 };

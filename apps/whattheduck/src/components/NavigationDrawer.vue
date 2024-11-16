@@ -26,13 +26,9 @@
               :detail="false"
               :class="{ selected: p.url.indexOf(route.path) === 0 }"
             >
-              <template #start>
-                <ion-icon aria-hidden="true" :ios="p.iosIcon" :md="p.mdIcon" />
-              </template>
+              <ion-icon slot="start" aria-hidden="true" :ios="p.iosIcon" :md="p.mdIcon" />
               <ion-label>{{ p.title }}</ion-label>
-              <template #end>
-                <ion-chip v-if="p.chip" outline>{{ p.chip }}</ion-chip>
-              </template>
+              <ion-chip v-if="p.chip" slot="end" outline>{{ p.chip }}</ion-chip>
             </ion-item>
           </ion-menu-toggle>
         </template>
@@ -48,9 +44,7 @@
             :class="{ selected: route.path === p.url }"
             @click="router.push(p.url)"
           >
-            <template #start>
-              <ion-icon aria-hidden="true" :ios="p.iosIcon" :md="p.mdIcon" />
-            </template>
+            <ion-icon slot="end" aria-hidden="true" :ios="p.iosIcon" :md="p.mdIcon" />
             <ion-label>{{ p.title }}</ion-label>
           </ion-item>
         </ion-menu-toggle>

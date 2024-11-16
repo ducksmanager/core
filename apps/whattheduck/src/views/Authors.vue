@@ -2,11 +2,9 @@
   <ion-page>
     <ion-header :translucent="true">
       <ion-toolbar>
-        <template #start>
-          <ion-buttons>
-            <ion-menu-button color="primary" />
-          </ion-buttons>
-        </template>
+        <ion-buttons slot="start">
+          <ion-menu-button color="primary" />
+        </ion-buttons>
         <ion-title>{{ t('Mes auteurs favoris') }}</ion-title>
       </ion-toolbar>
     </ion-header>
@@ -59,6 +57,7 @@
       <ion-list v-if="authorResults">
         <ion-item
           v-for="(author, personcode) of authorResults"
+          :key="personcode"
           :class="{ disabled: isAuthorWatched(personcode) }"
           @click="
             createRating(personcode);

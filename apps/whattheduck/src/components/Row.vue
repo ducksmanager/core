@@ -10,11 +10,9 @@
       <slot name="prefix" />
       <slot name="label" />
     </ion-label>
-    <template #end>
-      <ion-label class="suffix">
-        <slot name="suffix" />
-      </ion-label>
-    </template>
+    <ion-label slot="end" class="suffix">
+      <slot name="suffix" />
+    </ion-label>
   </ion-item>
 </template>
 

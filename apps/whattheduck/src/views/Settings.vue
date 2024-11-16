@@ -2,11 +2,9 @@
   <ion-page>
     <ion-header>
       <ion-toolbar>
-        <template #start>
-          <ion-buttons>
-            <ion-menu-button color="primary" />
-          </ion-buttons>
-        </template>
+        <ion-buttons slot="start">
+          <ion-menu-button color="primary" />
+        </ion-buttons>
         <ion-title>{{ t('Paramètres') }}</ion-title>
       </ion-toolbar>
     </ion-header>
