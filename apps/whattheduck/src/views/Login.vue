@@ -67,11 +67,11 @@
     </ion-content>
     <ion-footer>
       <ion-button id="link-to-dm" expand="full" color="medium" @click.prevent="() => {}">
-        <router-link :to="dmUrl">{{
+        <a :href="dmUrl">{{
           t(
             "What The Duck est l'application mobile de DucksManager. Cliquez ici pour accéder au site Web de DucksManager.",
           )
-        }}</router-link>
+        }}</a>
       </ion-button>
     </ion-footer></ion-page
   >
