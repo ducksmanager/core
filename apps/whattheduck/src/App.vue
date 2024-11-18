@@ -17,7 +17,6 @@
 import { Capacitor } from '@capacitor/core';
 import { CapacitorUpdater } from '@capgo/capacitor-updater';
 import type { Storage as IonicStorage } from '@ionic/storage';
-import Cookies from 'js-cookie';
 import { buildStorage } from '~socket.io-client-services';
 
 import OfflineBanner from './components/OfflineBanner.vue';
@@ -49,7 +48,6 @@ const assignSocket = () => {
     getToken: async () => token.value,
     clearSession: () => {
       token.value = null;
-      Cookies.remove('token');
       storage.clear();
     },
     sessionExists: async () => token.value !== undefined,

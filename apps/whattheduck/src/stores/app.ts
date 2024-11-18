@@ -4,6 +4,7 @@ import { defineStore } from 'pinia';
 import type useDmSocket from '~web/src/composables/useDmSocket';
 
 import usePersistedData from '~/composables/usePersistedData';
+import Cookies from 'js-cookie';
 
 export interface FabOption {
   id: string;
@@ -27,6 +28,13 @@ export const app = defineStore('app', () => {
   const router = useRouter();
   const route = useRoute();
   const token = ref<string | null>(); // undefined === we haven't checked whether there is a token ; null === we have checked and there is no token
+
+  watch(token, (newValue, oldValue) => {
+    if (!newValue && oldValue) {
+      Cookies.remove('token');
+    }
+  });
+
   const isPersistedDataLoaded = ref(false);
   const filterText = ref('');
   const isCameraPreviewShown = ref(false);
