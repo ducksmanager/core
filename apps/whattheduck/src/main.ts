@@ -22,7 +22,8 @@ import { CapacitorUpdater } from '@capgo/capacitor-updater';
 import { defineCustomElements } from '@ionic/pwa-elements/loader';
 import { Drivers, Storage } from '@ionic/storage';
 import { IonicVue } from '@ionic/vue';
-import { init as sentryInit } from '@sentry/capacitor';
+import * as Sentry from '@sentry/capacitor';
+import * as SentryVue from '@sentry/vue';
 import { createPinia } from 'pinia';
 import VueVirtualScroller from 'vue-virtual-scroller';
 import { SocketClient } from '~socket.io-client-services/index';
@@ -55,11 +56,18 @@ const app = createApp(App)
 router.isReady().then(async () => {
   if (Capacitor.isNativePlatform()) {
     const currentBundleVersion = (await CapacitorUpdater.current())?.bundle.version;
-    sentryInit({
-      dsn: import.meta.env.SENTRY_DSN,
-      release: `whattheduck@${currentBundleVersion}`,
-      dist: currentBundleVersion,
-    });
+    Sentry.init(
+      {
+        dsn: import.meta.env.SENTRY_DSN,
+        release: `whattheduck@${currentBundleVersion}`,
+        dist: currentBundleVersion,
+        integrations: [Sentry.browserTracingIntegration(), Sentry.replayIntegration()],
+        tracesSampleRate: 1.0,
+        replaysSessionSampleRate: 0.1,
+        replaysOnErrorSampleRate: 1.0,
+      },
+      SentryVue.init,
+    );
   }
 
   const locale = (await Device.getLanguageCode()).value;
