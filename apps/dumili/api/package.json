@@ -40,7 +40,7 @@
     "@types/busboy": "^1.5.4",
     "@types/i18n": "^0.13.12",
     "@types/jsonwebtoken": "^9.0.7",
-    "@types/node": "^20.17.6",
+    "@types/node": "^22.9.0",
     "concurrently": "^9.1.0",
     "prisma": "^5.22.0",
     "typescript": "^5.6.3"
