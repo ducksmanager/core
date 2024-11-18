@@ -1,6 +1,6 @@
 <template>
   <List
-    v-if="coaIssuecodes"
+    v-if="sortedItems"
     :items="sortedItems"
     :get-item-text-fn="getItemTextFn"
     item-type="issuecode"
@@ -24,7 +24,7 @@
         &nbsp;<ion-icon style="color: green" :ios="bookmarkOutline" :md="bookmarkSharp" />
       </template>
     </template>
-    <template v-if="currentIssueViewMode.id === 'edges'">
+    <template v-if="currentIssueViewMode.id === 'edges' && sortedItemsForBookcase">
       <Bookcase
         orientation="horizontal"
         :embedded="true"
@@ -101,6 +101,8 @@ defineSlots<{
   rowLabel: { text: string };
 }>();
 
+const hasData = ref(false);
+
 const getItemTextFn = (item: Item) => issuecodeDetails.value[item.issuecode]!.issuenumber;
 
 const getIssueDate = (issue: issue) => {
@@ -137,8 +139,8 @@ type Item =
   | IssueWithIssuecodeOnly;
 
 const items = computed(() => {
-  if (!coaIssuecodes.value) {
-    return [];
+  if (!hasData.value) {
+    return undefined;
   }
 
   if (isCoaView.value) {
@@ -166,42 +168,44 @@ const items = computed(() => {
   }
 });
 
-const sortedItems = computed(() =>
-  items.value
-    .map(({ key, item }) => ({
-      key,
-      item,
-      indexInCoaList: coaIssuecodes.value!.indexOf(item.issuecode),
-      isOwned: (item as (typeof userIssues.value)[0]).condition !== undefined,
-    }))
+const sortedItems = computed(
+  () =>
+    coaIssuecodes.value &&
+    items.value
+      ?.map(({ key, item }) => ({
+        key,
+        item,
+        indexInCoaList: coaIssuecodes.value.indexOf(item.issuecode),
+        isOwned: (item as (typeof userIssues.value)[0]).condition !== undefined,
+      }))
 
-    .sort(({ indexInCoaList: indexInCoaList1 }, { indexInCoaList: indexInCoaList2 }) =>
-      Math.sign(indexInCoaList1 - indexInCoaList2),
-    )
-    .map((value, idx, allItems) => ({
-      ...value,
-      nextItemIndexInCoaList: allItems[idx + 1]?.indexInCoaList,
-      nextItemIndexIsOwned: allItems[idx + 1]?.isOwned,
-    }))
-    .map(({ key, item, isOwned, indexInCoaList, nextItemIndexIsOwned, nextItemIndexInCoaList }) => ({
-      key,
-      item,
-      isOwned,
-      nextItemType:
-        nextItemIndexIsOwned && nextItemIndexInCoaList
-          ? nextItemIndexInCoaList === indexInCoaList
-            ? ('same' as const)
-            : nextItemIndexInCoaList === indexInCoaList + 1
-              ? ('owned' as const)
-              : undefined
-          : undefined,
-    })),
+      .sort(({ indexInCoaList: indexInCoaList1 }, { indexInCoaList: indexInCoaList2 }) =>
+        Math.sign(indexInCoaList1 - indexInCoaList2),
+      )
+      .map((value, idx, allItems) => ({
+        ...value,
+        nextItemIndexInCoaList: allItems[idx + 1]?.indexInCoaList,
+        nextItemIndexIsOwned: allItems[idx + 1]?.isOwned,
+      }))
+      .map(({ key, item, isOwned, indexInCoaList, nextItemIndexIsOwned, nextItemIndexInCoaList }) => ({
+        key,
+        item,
+        isOwned,
+        nextItemType:
+          nextItemIndexIsOwned && nextItemIndexInCoaList
+            ? nextItemIndexInCoaList === indexInCoaList
+              ? ('same' as const)
+              : nextItemIndexInCoaList === indexInCoaList + 1
+                ? ('owned' as const)
+                : undefined
+            : undefined,
+      })),
 );
 
-const hasItems = computed(() => sortedItems.value.length);
+const hasItems = computed(() => sortedItems.value?.length);
 
 const sortedItemsForBookcase = computed(() =>
-  sortedItems.value.map(({ item }) => ({
+  sortedItems.value?.map(({ item }) => ({
     ...issuecodeDetails.value[item.issuecode],
     issueCondition: (item as (typeof userIssues.value)[0]).condition,
   })),
@@ -212,7 +216,7 @@ const sortedItemsForCovers = shallowRef<Awaited<ReturnType<typeof getSortedItems
 const getSortedItemsWithCovers = async () => {
   const coverUrls = (await fetchCoverUrls(publicationcode.value!)).covers;
 
-  return sortedItems.value.map(({ key, item }) => ({
+  return sortedItems.value?.map(({ key, item }) => ({
     key,
     item: {
       ...item,
@@ -240,6 +244,9 @@ watch(
     if (isOfflineMode.value === false) {
       await fetchIssuecodesByPublicationcode([publicationcode.value!]);
       await fetchIssuecodeDetails(coaIssuecodes.value);
+      hasData.value = true;
+    } else {
+      hasData.value = true;
     }
   },
   { immediate: true },
