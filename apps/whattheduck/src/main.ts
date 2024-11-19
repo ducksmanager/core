@@ -16,6 +16,7 @@ import '@ionic/vue/css/display.css';
 import './theme/variables.scss';
 import './theme/global.scss';
 import 'vue-virtual-scroller/dist/vue-virtual-scroller.css';
+
 import { Capacitor } from '@capacitor/core';
 import { Device } from '@capacitor/device';
 import { CapacitorUpdater } from '@capgo/capacitor-updater';
@@ -26,14 +27,14 @@ import * as Sentry from '@sentry/capacitor';
 import * as SentryVue from '@sentry/vue';
 import { createPinia } from 'pinia';
 import VueVirtualScroller from 'vue-virtual-scroller';
+
 import { SocketClient } from '~socket.io-client-services/index';
+import en from '~translations/en.json';
+import sv from '~translations/sv.json';
 import { i18n } from '~web';
 
 import App from './App.vue';
 import router from './router';
-
-import en from '~translations/en.json';
-import sv from '~translations/sv.json';
 
 CapacitorUpdater.notifyAppReady();
 

@@ -1,10 +1,10 @@
 import { Capacitor } from '@capacitor/core';
 import { bookmarkOutline, bookmarkSharp } from 'ionicons/icons';
+import Cookies from 'js-cookie';
 import { defineStore } from 'pinia';
-import type useDmSocket from '~web/src/composables/useDmSocket';
 
 import usePersistedData from '~/composables/usePersistedData';
-import Cookies from 'js-cookie';
+import type useDmSocket from '~web/src/composables/useDmSocket';
 
 export interface FabOption {
   id: string;

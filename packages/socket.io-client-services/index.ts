@@ -45,7 +45,7 @@ export type EventCalls<S extends EventsMap> = {
 };
 
 export class SocketClient {
-  constructor(private socketRootUrl: string) { }
+  constructor(private socketRootUrl: string) {}
 
   public cacheHydrator = {
     state: ref<null | {
@@ -97,7 +97,7 @@ export class SocketClient {
         sessionExists: () => Promise<boolean>;
       };
       cache?: Required<SocketCacheOptions<Services>> & {
-        disableCache?: (eventName: StringKeyOf<Services>) => boolean
+        disableCache?: (eventName: StringKeyOf<Services>) => boolean;
       };
     } = {},
   ) {
@@ -143,115 +143,115 @@ export class SocketClient {
             _: never,
             event: EventName,
           ) =>
-            async (
-              ...args: AllButLast<Parameters<Services[EventName]>>
-            ): Promise<
-              EventReturnTypeIncludingError<Services[EventName]> | undefined
-            > => {
-              let isCacheUsed = false;
-              if (!socket) {
-                console.log(
-                  `connecting to ${namespaceName} at ${new Date().toISOString()}`,
+          async (
+            ...args: AllButLast<Parameters<Services[EventName]>>
+          ): Promise<
+            EventReturnTypeIncludingError<Services[EventName]> | undefined
+          > => {
+            let isCacheUsed = false;
+            if (!socket) {
+              console.log(
+                `connecting to ${namespaceName} at ${new Date().toISOString()}`,
+              );
+              connect();
+            }
+            const startTime = Date.now();
+            const eventConsoleString = `${namespaceName}/${event}(${JSON.stringify(args)})`;
+            const debugCall = async (post: boolean = false) => {
+              const token = await session?.getToken();
+              if (event !== "toJSON") {
+                console.debug(
+                  `${eventConsoleString} ${post ? `responded in ${Date.now() - startTime}ms` : `called ${token ? "with token" : "without token"}`} at ${new Date().toISOString()}`,
                 );
-                connect();
               }
-              const startTime = Date.now();
-              const eventConsoleString = `${namespaceName}/${event}(${JSON.stringify(args)})`;
-              const debugCall = async (post: boolean = false) => {
-                const token = await session?.getToken();
-                if (event !== "toJSON") {
-                  console.debug(
-                    `${eventConsoleString} ${post ? `responded in ${Date.now() - startTime}ms` : `called ${token ? "with token" : "without token"}`} at ${new Date().toISOString()}`,
-                  );
-                }
-              };
-              let cacheKey;
-              if (cache) {
-                cacheKey = `${namespaceName}/${event} ${JSON.stringify(args)}`;
-                const cacheData = await cache.storage.get(cacheKey, {
-                  cache: {
-                    ttl:
-                      isOffline ||
-                        this.cacheHydrator.state.value?.mode === "LOAD_CACHE"
-                        ? undefined
-                        : typeof cache.ttl === "function"
-                          ? cache.ttl(event, args)
-                          : cache.ttl,
-                  },
-                });
-                isCacheUsed =
-                  cacheData !== undefined &&
-                  !(typeof cacheData === "object" && cacheData.state === "empty");
-                if (isCacheUsed) {
-                  console.debug(`${eventConsoleString} served from cache`);
-                  if (this.cacheHydrator.state.value) {
-                    switch (this.cacheHydrator.state.value.mode) {
-                      case "LOAD_CACHE":
-                        this.cacheHydrator.state.value.cachedCallsDone.push(
+            };
+            let cacheKey;
+            if (cache) {
+              cacheKey = `${namespaceName}/${event} ${JSON.stringify(args)}`;
+              const cacheData = await cache.storage.get(cacheKey, {
+                cache: {
+                  ttl:
+                    isOffline ||
+                    this.cacheHydrator.state.value?.mode === "LOAD_CACHE"
+                      ? undefined
+                      : typeof cache.ttl === "function"
+                        ? cache.ttl(event, args)
+                        : cache.ttl,
+                },
+              });
+              isCacheUsed =
+                cacheData !== undefined &&
+                !(typeof cacheData === "object" && cacheData.state === "empty");
+              if (isCacheUsed) {
+                console.debug(`${eventConsoleString} served from cache`);
+                if (this.cacheHydrator.state.value) {
+                  switch (this.cacheHydrator.state.value.mode) {
+                    case "LOAD_CACHE":
+                      this.cacheHydrator.state.value.cachedCallsDone.push(
+                        eventConsoleString,
+                      );
+                      break;
+                    case "HYDRATE":
+                      if (
+                        this.cacheHydrator.state.value.cachedCallsDone.includes(
                           eventConsoleString,
-                        );
-                        break;
-                      case "HYDRATE":
-                        if (
-                          this.cacheHydrator.state.value.cachedCallsDone.includes(
-                            eventConsoleString,
-                          )
-                        ) {
+                        )
+                      ) {
+                        this.cacheHydrator.state.value
+                          .hydratedCallsDoneAmount++;
+                        console.log(
+                          "this.cacheHydrator.state.value.hydratedCallsDoneAmount",
                           this.cacheHydrator.state.value
-                            .hydratedCallsDoneAmount++;
-                          console.log(
-                            "this.cacheHydrator.state.value.hydratedCallsDoneAmount",
-                            this.cacheHydrator.state.value
-                              .hydratedCallsDoneAmount,
-                          );
-                        }
-                        break;
-                    }
+                            .hydratedCallsDoneAmount,
+                        );
+                      }
+                      break;
                   }
-                  return cacheData as Awaited<ReturnType<Socket["emitWithAck"]>>;
                 }
+                return cacheData as Awaited<ReturnType<Socket["emitWithAck"]>>;
               }
+            }
 
-              socket!.on("connect_error", (e) => {
-                isOffline = true;
+            socket!.on("connect_error", (e) => {
+              isOffline = true;
 
-                this.onConnectError(
-                  e.message === "websocket error"
-                    ? {
+              this.onConnectError(
+                e.message === "websocket error"
+                  ? {
                       message: "offline_no_cache",
                       name: "offline_no_cache",
                     }
-                    : e,
-                  namespaceName,
-                  event,
-                );
+                  : e,
+                namespaceName,
+                event,
+              );
+            });
+
+            await debugCall();
+            const data = await socket!.emitWithAck(event, ...args);
+
+            if (typeof data === "object" && "error" in data) {
+              throw data;
+            }
+            await debugCall(true);
+            if (cache && cacheKey) {
+              cache.storage.set(cacheKey, data, {
+                timeout:
+                  typeof cache.ttl === "function"
+                    ? cache.ttl(event, args)
+                    : cache.ttl,
               });
-
-              await debugCall();
-              const data = await socket!.emitWithAck(event, ...args);
-
-              if (typeof data === "object" && "error" in data) {
-                throw data;
-              }
-              await debugCall(true);
-              if (cache && cacheKey) {
-                cache.storage.set(cacheKey, data, {
-                  timeout:
-                    typeof cache.ttl === "function"
-                      ? cache.ttl(event, args)
-                      : cache.ttl,
-                });
-              }
-              if (
-                this.cacheHydrator.state.value?.mode === "HYDRATE" &&
-                this.cacheHydrator.state.value.cachedCallsDone.includes(
-                  eventConsoleString,
-                )
-              ) {
-                this.cacheHydrator.state.value.hydratedCallsDoneAmount++;
-              }
-              return data;
-            },
+            }
+            if (
+              this.cacheHydrator.state.value?.mode === "HYDRATE" &&
+              this.cacheHydrator.state.value.cachedCallsDone.includes(
+                eventConsoleString,
+              )
+            ) {
+              this.cacheHydrator.state.value.hydratedCallsDoneAmount++;
+            }
+            return data;
+          },
       }),
     };
   }
