@@ -17,6 +17,7 @@
             }"
             :aria-label="t('Nom d\'utilisateur DucksManager')"
             :placeholder="t('Nom d\'utilisateur DucksManager')"
+            :error-text="errorTexts.username"
             @ion-blur="touchedInputs.push('username')"
           />
         </ion-col>
@@ -96,7 +97,7 @@ const password = ref('');
 
 const showPassword = ref(false);
 
-const { validInputs, invalidInputs, touchedInputs, errorTexts } = useFormErrorHandling(['username', 'password']);
+const { validInputs, invalidInputs, touchedInputs, errorTexts, call } = useFormErrorHandling(['username', 'password']);
 
 const forgotPassword = () => {
   router.push('/forgot');
@@ -106,15 +107,16 @@ const signup = () => {
 };
 
 const submitLogin = async () => {
-  const response = await socket.value?.auth.services.login({
-    username: username.value,
-    password: password.value,
-  });
-  if (typeof response !== 'string' && response && 'error' in response) {
-    errorTexts.value['password'] = response.error;
-  } else {
-    token.value = response;
-  }
+  await call(
+    () =>
+      socket.value!.auth.services.login({
+        username: username.value,
+        password: password.value,
+      }),
+    (response) => {
+      token.value = response;
+    },
+  );
 };
 
 if (!token.value) {
