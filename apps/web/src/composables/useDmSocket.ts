@@ -111,11 +111,11 @@ const defaultExport = (options: {
       CollectionServices.namespaceEndpoint,
       {
         session,
-        cache: {
-          storage: cacheStorage,
-          disableCache: (eventName) => eventName.indexOf("get") !== 0,
-          ttl: 1000, // 1 second only, because we want to always get the latest data but still cache in case of offline
-        },
+        // cache: {
+        //   storage: cacheStorage,
+        //   disableCache: (eventName) => eventName.indexOf("get") !== 0,
+        //   ttl: 1000, // 1 second only, because we want to always get the latest data but still cache in case of offline
+        // },
       },
     ),
     coverId: socket.addNamespace<CoverIdServices>(
