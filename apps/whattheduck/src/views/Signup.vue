@@ -6,70 +6,25 @@
       </ion-toolbar>
     </ion-header>
     <ion-content>
-      <ion-input
-        v-model="username"
-        :class="{
-          'ion-valid': validInputs.includes('username'),
-          'ion-invalid': invalidInputs.includes('username'),
-          'ion-touched': touchedInputs.includes('username'),
-        }"
-        :error-text="errorTexts.username"
-        :aria-label="t('Nom d\'utilisateur DucksManager')"
-        :placeholder="t('Nom d\'utilisateur DucksManager')"
-        @ion-blur="touchedInputs.push('username')"
-      />
-      <ion-input
-        v-model="email"
-        :class="{
-          'ion-valid': validInputs.includes('email'),
-          'ion-invalid': invalidInputs.includes('email'),
-          'ion-touched': touchedInputs.includes('email'),
-        }"
-        :error-text="errorTexts.email"
-        :aria-label="t('Adresse e-mail')"
-        :placeholder="t('Adresse e-mail')"
-        @ion-blur="touchedInputs.push('email')"
-      />
-      <ion-input
-        v-model="password"
-        :type="showPassword ? 'text' : 'password'"
-        :class="{
-          'ion-valid': validInputs.includes('password'),
-          'ion-invalid': invalidInputs.includes('password'),
-          'ion-touched': touchedInputs.includes('password'),
-        }"
-        :error-text="errorTexts.password"
-        :aria-label="t('Mot de passe')"
-        :placeholder="t('Mot de passe')"
-        @ion-blur="touchedInputs.push('password')"
+      <errorable-input
+        v-for="(field, name) of fields"
+        :key="fields[name].label"
+        v-model="fields[name]"
+        :type="
+          (name === 'password' && !showPassword) || (name === 'passwordConfirmation' && !showPasswordConfirmation)
+            ? 'password'
+            : 'text'
+        "
+        :label="field.label"
       >
         <ion-icon
+          v-if="name === 'password' || name === 'passwordConfirmation'"
           style="float: right"
           :ios="showPassword ? eyeOffOutline : eyeOutline"
           :md="showPassword ? eyeOffSharp : eyeSharp"
           @click="showPassword = !showPassword"
         />
-      </ion-input>
-      <ion-input
-        v-model="passwordConfirmation"
-        :type="showPasswordConfirmation ? 'text' : 'password'"
-        :class="{
-          'ion-valid': validInputs.includes('passwordConfirmation'),
-          'ion-invalid': invalidInputs.includes('passwordConfirmation'),
-          'ion-touched': touchedInputs.includes('passwordConfirmation'),
-        }"
-        :error-text="errorTexts.passwordConfirmation"
-        :aria-label="t('Confirmation mot de passe')"
-        :placeholder="t('Confirmation mot de passe')"
-        @ion-blur="touchedInputs.push('passwordConfirmation')"
-      >
-        <ion-icon
-          style="float: right"
-          :ios="showPasswordConfirmation ? eyeOffOutline : eyeOutline"
-          :md="showPasswordConfirmation ? eyeOffSharp : eyeSharp"
-          @click="showPasswordConfirmation = !showPasswordConfirmation"
-        />
-      </ion-input>
+      </errorable-input>
       <ion-row class="ion-padding-top">
         <ion-button @click="submitSignup">
           {{ t('OK') }}
@@ -94,17 +49,12 @@ const { t } = useI18n();
 
 const router = useRouter();
 
-const { validInputs, invalidInputs, touchedInputs, errorTexts, clearErrors } = useFormErrorHandling([
-  'username',
-  'email',
-  'password',
-  'passwordConfirmation',
-]);
-
-const username = ref('');
-const email = ref('');
-const password = ref('');
-const passwordConfirmation = ref('');
+const fields = useFormErrorHandling({
+  username: t("Nom d'utilisateur DucksManager"),
+  password: t('Mot de passe'),
+  passwordConfirmation: t('Confirmation mot de passe'),
+  email: t('Adresse e-mail'),
+});
 
 const showPassword = ref(false);
 const showPasswordConfirmation = ref(false);
@@ -114,19 +64,15 @@ const cancelSignup = () => {
 };
 
 const submitSignup = async () => {
-  if (password.value !== passwordConfirmation.value) {
-    errorTexts.value.passwordConfirmation = t('Les deux mots de passe doivent être identiques');
-    return;
-  }
-  clearErrors();
   const response = await socket.value?.auth.services.signup({
-    username: username.value,
-    password: password.value,
-    email: email.value,
+    username: fields.username.value,
+    password: fields.password.value,
+    passwordConfirmation: fields.passwordConfirmation.value,
+    email: fields.email.value,
   });
 
   if (typeof response !== 'string' && response && 'error' in response) {
-    errorTexts.value[response.selector!.replace('#', '')] = response.message!;
+    fields[response.error.name].errorText = response.error.message;
   } else {
     token.value = response;
   }

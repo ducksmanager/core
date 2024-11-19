@@ -113,10 +113,10 @@ export default (io: Server) => {
           new UsernameCreationValidation(),
           new EmailValidation(),
           new EmailCreationValidation(),
-          new PasswordValidation(),
+          // new PasswordValidation(),
         ]);
         if (scopedError) {
-          callback({ error: "Bad request", ...scopedError });
+          callback({ error: scopedError });
         } else {
           const { username, password, email } = input;
           const hashedPassword = getHashedPassword(password);

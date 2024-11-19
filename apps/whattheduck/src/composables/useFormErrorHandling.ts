@@ -1,25 +1,18 @@
-import type { ScopedError } from '~socket.io-services';
+const getModel = (label: string) =>
+  extendRef(ref(''), {
+    label,
+    isValid: false,
+    isInvalid: false,
+    isTouched: false,
+    errorText: '',
+  });
 
-export default (
-  fields: string[],
-): {
-  validInputs: ComputedRef<string[]>;
-  invalidInputs: ComputedRef<string[]>;
-  touchedInputs: Ref<string[]>;
-  errorTexts: Ref<Record<string, string>>;
-  showError: (scopedError: ScopedError) => void;
-  clearErrors: () => void;
-} => {
-  const errorTexts = ref<Record<string, string>>({});
-  const validInputs = computed(() => fields.filter((field) => !invalidInputs.value.includes(field)));
-  const invalidInputs = computed(() => Object.keys(errorTexts.value));
-  const touchedInputs = ref<string[]>([]);
+import { extendRef } from '@vueuse/core';
+const createFieldsWithModel = <T extends string>(fields: Record<T, string>): Record<T, ReturnType<typeof getModel>> =>
+  Object.fromEntries(Object.entries(fields).map(([name, label]) => [name, getModel(label as T)])) as Record<
+    T,
+    ReturnType<typeof getModel>
+  >;
 
-  const clearErrors = () => (errorTexts.value = {});
-
-  const showError = (scopedError: ScopedError) => {
-    errorTexts.value[scopedError.selector] = scopedError.message;
-  };
-
-  return { validInputs, invalidInputs, touchedInputs, errorTexts, showError, clearErrors };
-};
+export default <T extends string>(fields: Record<T, string>): Record<T, ReturnType<typeof getModel>> =>
+  createFieldsWithModel(fields);

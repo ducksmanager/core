@@ -1,4 +1,12 @@
-import type { Errorable } from "~socket.io-services";
+import type { Errorable, ErrorableWithScope } from "~socket.io-services";
+
+
+type SignupParams = {
+  username: string;
+  password: string;
+  passwordConfirmation: string;
+  email: string;
+};
 
 export const namespaceEndpoint = "/auth";
 export default abstract class {
@@ -39,11 +47,12 @@ export default abstract class {
   ) => void;
 
   abstract signup: (
-    data: {
-      username: string;
-      password: string;
-      email: string;
-    },
-    callback: (data: Errorable<string, "Bad request">) => void,
+    data: SignupParams,
+    callback: (data: ErrorableWithScope<string,
+      { name: 'username', message: "Nom d'utilisateur invalide" }
+      | { name: 'username', message: "Ce nom d'utilisateur est déjà pris" }
+      | { name: 'email', message: "Adresse e-mail invalide" }
+      | { name: 'email', message: "Cet e-mail est déjà utilisé par un autre compte" }
+    >) => void,
   ) => void;
 }

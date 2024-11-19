@@ -1,9 +1,3 @@
-export interface ScopedError<ErrorKey extends string = string> {
-  error: ErrorKey;
-  message: string;
-  selector: string;
-}
-
 type Last<T extends unknown[]> = T extends [...infer _I, infer L] ? L : never;
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type LastParameter<F extends (...args: any) => unknown> = Last<
@@ -21,11 +15,23 @@ export type EventReturnType<T extends (...args: any[]) => unknown> =
 
 export type EitherOr<A, B> = A | B extends object
   ?
-      | (A & Partial<Record<Exclude<keyof B, keyof A>, never>>)
-      | (B & Partial<Record<Exclude<keyof A, keyof B>, never>>)
+  | (A & Partial<Record<Exclude<keyof B, keyof A>, never>>)
+  | (B & Partial<Record<Exclude<keyof A, keyof B>, never>>)
   : A | B;
+
+export type ScopedError<Name extends string, Message extends string> = {
+  error: {
+    name: Name;
+    message: Message;
+  }
+}
 
 export type Errorable<T, ErrorKey extends string> = EitherOr<
   T,
-  EitherOr<{ error: ErrorKey; errorDetails?: string }, ScopedError<ErrorKey>>
+  { error: ErrorKey; errorDetails?: string }
+>;
+
+export type ErrorableWithScope<T, Error extends { name: string, message: string }> = EitherOr<
+  T,
+  { error: Error }
 >;

@@ -6,16 +6,10 @@ type PrismaDmTransaction = Parameters<
   Parameters<typeof prismaDm.$transaction>[0]
 >[0];
 
-interface ScopedError<ErrorKey extends string = string> {
-  error: ErrorKey;
+export type ScopedError<ErrorKey extends string = string> = {
+  name: ErrorKey;
   message: string;
-  selector: string;
 }
-
-export type ScopedErrorDetails = {
-  message: ScopedError["message"];
-  selector: ScopedError["selector"];
-};
 
 export const getUser = async (id: number, transaction = prismaDm) =>
   await transaction.user.findUniqueOrThrow({
@@ -23,11 +17,11 @@ export const getUser = async (id: number, transaction = prismaDm) =>
     where: { id },
   });
 
-export const validate = async (
+export const validate = async<T extends string>(
   transaction: PrismaDmTransaction,
-  input: Record<string, unknown>,
-  validators: Validation[],
-): Promise<ScopedErrorDetails | undefined> => {
+  input: Record<T, unknown>,
+  validators: Validation<T[]>[],
+): Promise<ScopedError<T> | undefined> => {
   for (const validator of validators) {
     const result = await validator.run(input, transaction);
     if (result?.message) {
@@ -36,27 +30,27 @@ export const validate = async (
   }
 };
 
-export abstract class Validation {
+export abstract class Validation<T extends string[]> {
   abstract run(
-    data: Record<string, unknown>,
+    data: Record<T[number], unknown>,
     transaction: PrismaDmTransaction,
-  ): Promise<ScopedErrorDetails | undefined>;
+  ): Promise<ScopedError<T[number]> | undefined>;
 }
 
-export class UsernameValidation extends Validation {
-  run = async ({ username }: Pick<user, "username">) => {
+export class UsernameValidation extends Validation<['username']> {
+  run = async ({ username }: user) => {
     if (!/^[-_A-Za-z0-9]{3,25}$/.test(username)) {
       return {
         message: "Nom d'utilisateur invalide",
-        selector: "#username",
+        name: "username",
       } as const;
     }
   };
 }
 
-export class UsernameCreationValidation extends Validation {
+export class UsernameCreationValidation extends Validation<['username']> {
   run = async (
-    { username }: Pick<user, "username">,
+    { username }: user,
     transaction: PrismaDmTransaction,
   ) =>
     transaction.user
@@ -67,15 +61,15 @@ export class UsernameCreationValidation extends Validation {
         () =>
           ({
             message: "Ce nom d'utilisateur est déjà pris",
-            selector: "#username",
+            name: "username",
           }) as const,
       )
       .catch(() => undefined);
 }
 
-export class EmailCreationValidation extends Validation {
+export class EmailCreationValidation extends Validation<['email']> {
   run = async (
-    { email }: Pick<user, "email">,
+    { email }: user,
     transaction: PrismaDmTransaction,
   ) =>
     transaction.user
@@ -86,15 +80,15 @@ export class EmailCreationValidation extends Validation {
         () =>
           ({
             message: "Cet e-mail est déjà utilisé par un autre compte",
-            selector: "#email",
+            name: "email",
           }) as const,
       )
       .catch(() => undefined);
 }
 
-export class EmailUpdateValidation extends Validation {
+export class EmailUpdateValidation extends Validation<['email']> {
   run = async (
-    { id, email }: Pick<user, "email" | "id">,
+    { id, email }: user,
     transaction: PrismaDmTransaction,
   ) =>
     transaction.user
@@ -108,43 +102,47 @@ export class EmailUpdateValidation extends Validation {
         currentEmail === email
           ? true
           : (await transaction.user.count({
-              where: {
-                email,
-              },
-            })) === 0,
+            where: {
+              email,
+            },
+          })) === 0,
       )
       .then(() => undefined)
       .catch(
         () =>
           ({
             message: "Cet e-mail est déjà utilisé par un autre compte",
-            selector: "#email",
+            name: "email",
           }) as const,
       );
 }
 
-export class EmailValidation extends Validation {
-  run = async ({ email }: Pick<user, "email">) => {
+export class EmailValidation extends Validation<['email']> {
+  run = async ({ email }: user) => {
     if (!isValidEmail(email)) {
       return {
         message: "Adresse e-mail invalide",
-        selector: "#email",
+        name: "email",
       } as const;
     }
   };
 }
 
-export class PasswordValidation extends Validation {
-  run = async ({ password }: { password: user["password"] }) =>
+export class PasswordValidation extends Validation<['password', 'passwordConfirmation']> {
+  run = async ({ password, passwordConfirmation }: { password: user["password"], passwordConfirmation: user["password"] }) =>
     password.length < 6
       ? ({
-          message: "Le mot de passe doit comporter au moins 6 caractères",
-          selector: "#password",
-        } as const)
-      : undefined;
+        message: "Le mot de passe doit comporter au moins 6 caractères",
+        name: "password",
+      } as const)
+      : password !== passwordConfirmation ? ({
+        message: "Les mots de passe ne correspondent pas",
+        name: "password",
+      } as const)
+        : undefined
 }
 
-export class PasswordUpdateValidation extends Validation {
+export class PasswordUpdateValidation extends Validation<['oldPassword', 'password']> {
   run = async ({
     oldPassword,
     password,
@@ -154,14 +152,14 @@ export class PasswordUpdateValidation extends Validation {
   }) =>
     !oldPassword || !password
       ? ({
-          selector: "#password",
-          message:
-            "L'ancien et le nouveau mot de passe doivent être remplis si vous souhaitez changer de mot de passe. Si vous ne souhaitez pas changer de mot de passe, laissez les champs correspondant à l'ancien et au nouveau mots de passe vides.",
-        } as const)
+        name: "password",
+        message:
+          "L'ancien et le nouveau mot de passe doivent être remplis si vous souhaitez changer de mot de passe. Si vous ne souhaitez pas changer de mot de passe, laissez les champs correspondant à l'ancien et au nouveau mots de passe vides.",
+      } as const)
       : undefined;
 }
 
-export class OldPasswordValidation extends Validation {
+export class OldPasswordValidation extends Validation<['userId', 'oldPassword']> {
   run = async (
     {
       userId,
@@ -184,29 +182,29 @@ export class OldPasswordValidation extends Validation {
         () =>
           ({
             message: "L'ancien mot de passe est invalide.",
-            selector: "#oldPassword",
+            name: "oldPassword",
           }) as const,
       );
 }
 
-export class PresentationTextValidation extends Validation {
-  run = async ({ presentationText }: Pick<user, "presentationText">) =>
+export class PresentationTextValidation extends Validation<['presentationText']> {
+  run = async ({ presentationText }: user) =>
     String(presentationText).length > 100
       ? ({
-          message:
-            "Le texte de présentation doit comporter entre 1 et 100 caractères",
-          selector: "#presentationText",
-        } as const)
+        message:
+          "Le texte de présentation doit comporter entre 1 et 100 caractères",
+        name: "presentationText",
+      } as const)
       : undefined;
 }
 
-export class DiscordIdValidation extends Validation {
-  run = async ({ discordId }: Pick<user, "discordId">) =>
+export class DiscordIdValidation extends Validation<['discordId']> {
+  run = async ({ discordId }: user) =>
     discordId && !/^\d+$/.test(String(discordId))
       ? ({
-          message:
-            "L'identifiant Discord doit être un nombre. Cliquez sur \"Comment trouver mon identifiant de profil Discord ?\" pour plus d'informations.",
-          selector: "#discordId",
-        } as const)
+        message:
+          "L'identifiant Discord doit être un nombre. Cliquez sur \"Comment trouver mon identifiant de profil Discord ?\" pour plus d'informations.",
+        name: "discordId",
+      } as const)
       : undefined;
 }
