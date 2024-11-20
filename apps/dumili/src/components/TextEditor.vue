@@ -64,7 +64,11 @@ const textContent = computed(() => {
   }
   const issuecode = issue.value!.issuecode!.split("/")[1];
   const rows = [
-    [issuecode],
+    [
+      [issuecode],
+      issue.value!.price ? [`[price:${issue.value!.price}]`] : [],
+      [`[pages:${indexation.value!.pages.length}]`],
+    ].flat(),
     ...indexation.value!.entries.map((entry, idx) => {
       const storyWithDetails = storiesWithDetails.value!.find(
         ({ storycode }) => storycode === entry.acceptedStory?.storycode,

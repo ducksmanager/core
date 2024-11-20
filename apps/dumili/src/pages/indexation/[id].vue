@@ -78,7 +78,7 @@
       ></b-container>
     </b-col>
 
-    <b-col :cols="6" class="h-100 overflow-auto">
+    <b-col :cols="6" class="h-100">
       <table-of-contents
         v-model="bookCurrentPage"
         :indexation="indexation"

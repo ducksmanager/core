@@ -24,6 +24,24 @@
           >
             <i-bi-exclamation-triangle-fill
           /></span>
+          <span
+            v-if="
+                storyDetails[suggestion.storycode] &&
+                getEntryPages(indexation!, suggestion.entryId).length !=
+                storyversionDetails[storyDetails[suggestion.storycode].originalstoryversioncode!].entirepages
+              "
+            :title="
+              $t(
+                'Cette histoire fait généralement {originalPagesCount} pages mais l\'entrée en contient {entryPagesCount}',
+                {
+                  originalPagesCount: storyversionDetails[storyDetails[suggestion.storycode].originalstoryversioncode!].entirepages,
+                  entryPagesCount: getEntryPages(indexation!, suggestion.entryId).length,
+                },
+              )
+            "
+          >
+            <i-bi-exclamation-triangle-fill
+          /></span>
         </template>
       </Story>
     </template>
@@ -40,6 +58,7 @@ import { dumiliSocketInjectionKey } from "~/composables/useDumiliSocket";
 import { FullEntry } from "~dumili-services/indexation/types";
 import { suggestions } from "../stores/suggestions";
 import { storySuggestion } from "~prisma/client_dumili";
+import { getEntryPages } from "~dumili-utils/entryPages";
 
 const { t: $t } = useI18n();
 

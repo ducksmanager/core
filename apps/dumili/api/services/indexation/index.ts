@@ -221,6 +221,21 @@ export default (io: Server) => {
           .then(({ id }) => callback({ suggestionId: id })),
       );
 
+      indexationSocket.on("updateIssueSuggestion", (suggestion, callback) =>
+        prisma.indexation
+          .update({
+            data: {
+              acceptedIssueSuggestion: {
+                update: suggestion,
+              },
+            },
+            where: {
+              id: indexationSocket.data.indexation.id,
+            }
+          })
+          .then(() => callback({ status: "OK" })),
+      );
+
       indexationSocket.on("createOcrDetails", async (ocrDetails, callback) => {
         if (
           !indexationSocket.data.indexation.pages.some(

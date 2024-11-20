@@ -111,6 +111,16 @@ export default abstract class {
     callback: (data: { suggestionId: storySuggestion["id"] }) => void,
   ) => void;
 
+  abstract updateIssueSuggestion: (
+    values: Pick<
+      issueSuggestion,
+      "price"
+    >,
+    callback: (
+      data: { status: "OK" }
+    ) => void,
+  ) => void;
+
   abstract acceptIssueSuggestion: (
     suggestionId: issueSuggestion["id"] | null,
     callback: (data: { status: "OK" }) => void,

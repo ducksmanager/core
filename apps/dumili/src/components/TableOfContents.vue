@@ -1,13 +1,27 @@
 <template>
   <b-card
     no-body
-    class="table-of-contents d-flex w-100 h-100 m-0 overflow-auto"
+    class="table-of-contents d-flex w-100 h-100 m-0 p-1 py-2"
     body-class="flex-grow-1 w-100 h-100"
     @mouseleave="hoveredEntry = null"
   >
     <template #header>
       <IssueSuggestionModal />
       <IssueSuggestionList />
+      <b-dropdown
+        v-if="indexation.acceptedIssueSuggestion"
+        variant="light"
+        class="position-absolute m-4 top-0 end-0"
+      >
+        <template #button-content>{{ $t("Méta-données") }}</template>
+        <b-dropdown-item
+          >{{ $t("Prix") }}
+          <input
+            v-model="indexation.acceptedIssueSuggestion.price"
+            type="text"
+            @click.stop="() => {}"
+        /></b-dropdown-item>
+      </b-dropdown>
       <div>
         <ai-tooltip
           id="ai-issue-suggestion"
@@ -17,7 +31,10 @@
         /></div
     ></template>
 
-    <b-row style="outline: 1px solid black">
+    <b-row
+      style="outline: 1px solid black"
+      class="overflow-y-auto overflow-x-hidden w-100 m-0"
+    >
       <b-col :cols="1" style="padding: 0">
         <b-row
           v-for="{
@@ -135,6 +152,7 @@ import { ui } from "~/stores/ui";
 import { FullEntry, FullIndexation } from "~dumili-services/indexation/types";
 import { entry as entryModel } from "~prisma/client_dumili";
 import { storyKinds } from "~dumili-types/storyKinds";
+import { watchDebounced } from "@vueuse/core";
 
 defineProps<{
   shownPages: number[];
@@ -190,6 +208,19 @@ const createEntry = async () => {
   await indexationSocket.value!.services.createEntry();
   return loadIndexation();
 };
+
+watchDebounced(
+  () => JSON.stringify([indexation.value.acceptedIssueSuggestion?.price]),
+  () => {
+    if (indexation.value.acceptedIssueSuggestion) {
+      const { price } = indexation.value.acceptedIssueSuggestion;
+      indexationSocket.value!.services.updateIssueSuggestion({
+        price,
+      });
+    }
+  },
+  { debounce: 500, maxWait: 1000 },
+);
 
 watch(currentEntry, (entry) => {
   if (entry) {
