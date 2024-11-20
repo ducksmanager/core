@@ -27,6 +27,7 @@
         v-model:opened="isBookOpened"
         :cover-ratio="coverRatio"
         :pages="indexation.pages"
+        :re-render="reRenderNumber"
       >
         <template #page-overlay="{ index, page }">
           <template v-if="hoveredEntryPageNumbers?.includes(index + 1)">
@@ -54,53 +55,12 @@
             "
           >
             <div
-              v-for="{
-                id,
-                x1,
-                x2,
-                x3,
-                x4,
-                y1,
-                y2,
-                y3,
-                y4,
-              } in page.aiOcrResults || []"
-              :key="`ocr-match-${id}`"
-              class="position-absolute ocr-match text"
-              :style="{
-                          clipPath: `polygon(${[
-                            [x1, y1],
-                            [x2, y2],
-                            [x3, y3],
-                            [x4, y4],
-                          ]
-                            .map(([x, y]) =>
-                              (['width', 'height'] as const)
-                                .map(
-                                  (dimension) =>
-                                    `${
-                                      [x, y][0] /
-                                      (page.aiKumikoResultPanels[0][
-                                        dimension
-                                      ] /
-                                        100)
-                                    }%`
-                                )
-                                .join(' ')
-                            )
-                            .join(',')})`,
-                        }"
+              v-for="ocrDetection of page.aiOcrResults || []"
+              :key="`ocr-match-${ocrDetection.id}`"
+              class="position-absolute ocr-match text w-100 h-100"
+              :style="getOcrDetectionCss(ocrDetection, index + 1)"
             >
-              {{
-                `polygon(${[
-                  [x1, y1],
-                  [x2, y2],
-                  [x3, y3],
-                  [x4, y4],
-                ]
-                  .map(([x, y]) => `${x}% ${y}%`)
-                  .join(",")})`
-              }}
+              {{ ocrDetection.text }}
             </div>
           </template>
         </template>
@@ -133,7 +93,7 @@ import { suggestions } from "~/stores/suggestions";
 import { tabs } from "~/stores/tabs";
 import { ui } from "~/stores/ui";
 import { FullIndexation } from "~dumili-services/indexation/types";
-import { aiKumikoResultPanel } from "~prisma/client_dumili";
+import { aiKumikoResultPanel, aiOcrResult } from "~prisma/client_dumili";
 import { getEntryPages } from "~dumili-utils/entryPages";
 
 const { Book } = webComponents;
@@ -141,6 +101,7 @@ const { Book } = webComponents;
 const book = ref<PageFlip | undefined>(undefined);
 const bookCurrentPage = ref(0);
 const isBookOpened = ref(true);
+const reRenderNumber = ref();
 
 const showUploadWidget = ref(false);
 const route = useRoute();
@@ -161,6 +122,16 @@ const activeTabIndex = computed({
     ] as typeof activeTab.value;
   },
 });
+
+watch(
+  activeTab,
+  () => {
+    if (activeTab.value === "book") {
+      book.value = undefined;
+    }
+  },
+  { immediate: true },
+);
 
 const { tabNames } = tabs();
 
@@ -211,6 +182,31 @@ const getPanelCss = (panel: aiKumikoResultPanel) => {
     top: `${(y * 100) / pageHeight}%`,
     width: `${(width * 100) / pageWidth}%`,
     height: `${(height * 100) / pageHeight}%`,
+  };
+};
+
+const getOcrDetectionCss = (
+  { x1, x2, x3, x4, y1, y2, y3, y4 }: aiOcrResult,
+  bookPageIndex: number,
+) => {
+  const pageElement = (
+    book.value!.getPage(bookPageIndex) as unknown as { element: HTMLDivElement }
+  ).element;
+  const naturalToRenderedRatio =
+    pageElement.clientWidth / firstPageDimensions.value!.width;
+  return {
+    clipPath: `polygon(${[
+      [x1, y1],
+      [x2, y2],
+      [x3, y3],
+      [x4, y4],
+    ]
+      .map(([x, y]) =>
+        (["width", "height"] as const)
+          .map((_, idx) => `${[x, y][idx] * naturalToRenderedRatio}px`)
+          .join(" "),
+      )
+      .join(",")})`,
   };
 };
 

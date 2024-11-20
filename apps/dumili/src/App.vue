@@ -12,7 +12,7 @@
 
     <h4 v-else>
       {{ $t("Vous devez être connecté pour accéder à cette page.") }}
-      <a :href="loginUrl">{{ $t("Se connecter") }}</a>
+      <a :href="loginUrl">{{ $t("Connexion") }}</a>
     </h4>
   </b-container>
 </template>

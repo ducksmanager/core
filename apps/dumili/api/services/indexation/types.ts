@@ -128,11 +128,11 @@ export default abstract class {
     ) => void,
   ) => void;
 
-  abstract updateEntryLength: (
+  abstract updateEntry: (
     entryId: entry["id"],
     values: Pick<
       entry,
-      "entirepages" | "brokenpagenumerator" | "brokenpagedenominator"
+      "entirepages" | "brokenpagenumerator" | "brokenpagedenominator" | "title"
     >,
     callback: (
       data: Errorable<

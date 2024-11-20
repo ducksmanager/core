@@ -3,12 +3,13 @@
     @mouseout="() => (showRepeat = false)"
     @mouseover="() => (showRepeat = true)"
   >
-    <b-tooltip :target="id" click><slot /></b-tooltip>
+    <b-tooltip :target="id" click @show="emit('click')" @hide="emit('blur')"
+      ><slot
+    /></b-tooltip>
     <AiSuggestionIcon
       :id="disabled ? `${id}-disabled` : id"
       button
-      :status="status"
-      @click.stop="emit('click')" />
+      :status="status" />
     <i-bi-arrow-repeat v-show="showRepeat" class="ms-2" @click="onClickRerun"
   /></span>
 </template>
@@ -22,6 +23,7 @@ defineSlots();
 
 const emit = defineEmits<{
   (e: "click"): void;
+  (e: "blur"): void;
 }>();
 
 const disabled = ref(false); // TODO handle failed suggestions

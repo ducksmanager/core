@@ -34,6 +34,7 @@
           :value="storyKindAiSuggestion?.kind"
           :on-click-rerun="() => runKumiko(entry.id)"
           @click="showAiDetectionsOn = { type: 'entry', id: entry.id }"
+          @blur="showAiDetectionsOn = undefined"
         >
           <b>{{ $t("Types d'entrées déduits pour les pages") }}</b>
           <table-results
@@ -59,9 +60,10 @@
           :value="storyAiSuggestions.map(({ storycode }) => storycode!)"
           :on-click-rerun="() => runStorycodeOcr(entry.id)"
           @click="showAiDetectionsOn = { type: 'entry', id: entry.id }"
+          @blur="showAiDetectionsOn = undefined"
         >
           <template v-if="storyAiSuggestions.length">
-            {{ $t("Résultats OCR:") }}
+            {{ $t("Résultats OCR pour la première case:") }}
             <table-results :data="pages[0].aiOcrResults" />
             {{ $t("Histoires potentielles:") }}
             <table-results
@@ -78,10 +80,10 @@
       </b-col>
       <b-col col cols="5" class="flex-column">
         <b-form-input
+          v-model="entry.title"
           :placeholder="$t('Titre de l\'histoire')"
           type="text"
           class="w-100"
-          :value="entry.title || ''"
       /></b-col>
     </template>
     <template v-else>
@@ -116,6 +118,7 @@
   </b-row>
 </template>
 <script setup lang="ts">
+import { watchDebounced } from "@vueuse/core";
 import useAi from "~/composables/useAi";
 import { dumiliSocketInjectionKey } from "~/composables/useDumiliSocket";
 import { suggestions } from "~/stores/suggestions";
@@ -155,22 +158,25 @@ watch(
   },
 );
 
-watch(
+watchDebounced(
   () =>
     JSON.stringify([
       entry.value.entirepages,
       entry.value.brokenpagenumerator,
       entry.value.brokenpagedenominator,
+      entry.value.title,
     ]),
   () => {
-    const { entirepages, brokenpagenumerator, brokenpagedenominator } =
+    const { entirepages, brokenpagenumerator, brokenpagedenominator, title } =
       entry.value;
-    indexationSocket.value!.services.updateEntryLength(entry.value.id, {
+    indexationSocket.value!.services.updateEntry(entry.value.id, {
       entirepages,
       brokenpagenumerator,
       brokenpagedenominator,
+      title,
     });
   },
+  { debounce: 500, maxWait: 1000 },
 );
 
 const { storyDetails } = storeToRefs(coa());

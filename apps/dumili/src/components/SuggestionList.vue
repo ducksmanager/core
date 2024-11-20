@@ -11,7 +11,7 @@
       :key="index"
       :header="
         index === 1
-          ? `${$t('Suggestions AI')} ${aiSuggestions.length ? '' : $t('(Aucune)')}`
+          ? `${$t('Suggestions IA')} ${aiSuggestions.length ? '' : $t('(Aucune)')}`
           : undefined
       "
     >

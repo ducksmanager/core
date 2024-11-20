@@ -189,11 +189,11 @@ export default (io: Server) => {
                 suggestionId === null
                   ? { disconnect: true }
                   : {
-                      connect: {
-                        id: suggestionId,
-                        indexationId: indexationSocket.data.indexation.id,
-                      },
+                    connect: {
+                      id: suggestionId,
+                      indexationId: indexationSocket.data.indexation.id,
                     },
+                  },
             },
             where: {
               id: indexationSocket.data.indexation.id,
@@ -288,7 +288,7 @@ export default (io: Server) => {
       );
 
       indexationSocket.on(
-        "updateEntryLength",
+        "updateEntry",
         async (entryId, data, callback) => {
           const entry = indexationSocket.data.indexation.entries.find(
             ({ id }) => id === entryId,
