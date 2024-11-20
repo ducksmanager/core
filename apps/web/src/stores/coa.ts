@@ -7,6 +7,7 @@ import type {
   inducks_storyversion,
 } from "~prisma-schemas/client_coa";
 import type { EventReturnType } from "~socket.io-services";
+import "~group-by";
 
 import { socketInjectionKey } from "../composables/useDmSocket";
 
@@ -241,7 +242,10 @@ export const coa = defineStore("coa", () => {
         const issuesByPublicationcode =
           await services.getIssuesByPublicationcodes(newPublicationcodes);
 
-        Object.assign(issuecodeDetails.value, issuesByPublicationcode);
+        Object.assign(
+          issuecodeDetails.value,
+          Object.values(issuesByPublicationcode).flat().groupBy("issuecode"),
+        );
         Object.assign(
           issuecodesByPublicationcode.value,
           Object.entries(issuesByPublicationcode).reduce<

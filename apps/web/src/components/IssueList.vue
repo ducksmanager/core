@@ -125,7 +125,7 @@
 
                 <span class="issue-text">
                   {{ issueNumberTextPrefix
-                  }}{{ issuecodeDetails[issuecode].issuenumber }}
+                  }}{{ issuecodeDetails[issuecode]?.issuenumber }}
                   <span class="issue-title">{{ title }}</span>
                 </span>
               </span>
@@ -187,7 +187,7 @@
 
                 <span class="issue-text">
                   {{ issueNumberTextPrefix
-                  }}{{ issuecodeDetails[issuecode].issuenumber }}
+                  }}{{ issuecodeDetails[issuecode]?.issuenumber }}
                   <span class="issue-title">{{ title }}</span>
                 </span>
               </span>
@@ -464,10 +464,9 @@ const showFilter = $computed(
 );
 
 const issueIds = $computed(() =>
-  Object.values(copiesBySelectedIssuecode).reduce<number[]>((acc, issues) => {
-    acc.concat(issues.map((issue) => issue.id));
-    return acc;
-  }, []),
+  Object.values(copiesBySelectedIssuecode)
+    .map((issues) => issues.map(({ id }) => id))
+    .flat(),
 );
 
 let contextMenuKey = $ref<string>("context-menu");

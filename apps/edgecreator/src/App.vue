@@ -5,7 +5,6 @@
 <script setup lang="ts">
 import Cookies from "js-cookie";
 
-import { SocketClient } from "~socket.io-client-services/index";
 import { buildWebStorage } from "~socket.io-client-services/index";
 import { stores as webStores } from "~web";
 import useDmSocket, {
