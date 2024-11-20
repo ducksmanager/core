@@ -7,7 +7,6 @@ import type {
   inducks_storyversion,
 } from "~prisma-schemas/client_coa";
 import type { EventReturnType } from "~socket.io-services";
-import "~group-by";
 
 import { socketInjectionKey } from "../composables/useDmSocket";
 
