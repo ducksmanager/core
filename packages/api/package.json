@@ -18,11 +18,11 @@
   "dependencies": {
     "@opentelemetry/instrumentation-socket.io": "^0.44.0",
     "@pusher/push-notifications-server": "^1.2.6",
-    "@sentry/node": "^8.39.0",
+    "@sentry/node": "^8.40.0",
     "@socket.io/admin-ui": "^0.5.1",
     "axios": "^1.7.7",
     "cloudinary": "^1.41.3",
-    "csv-parse": "^5.5.6",
+    "csv-parse": "^5.6.0",
     "dayjs": "^1.11.13",
     "dotenv": "^16.4.5",
     "ejs": "^3.1.10",

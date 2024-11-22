@@ -94,7 +94,7 @@ const { t } = useI18n();
 
 const router = useRouter();
 
-const { validInputs, invalidInputs, touchedInputs, errorTexts, clearErrors, call } = useFormErrorHandling([
+const { validInputs, invalidInputs, touchedInputs, errorTexts, clearErrors, submit } = useFormErrorHandling([
   'username',
   'email',
   'password',
@@ -120,7 +120,7 @@ const submitSignup = async () => {
   }
   clearErrors();
 
-  await call(
+  await submit(
     () =>
       socket.value!.auth.services.signup({
         username: username.value,

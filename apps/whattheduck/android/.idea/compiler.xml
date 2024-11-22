@@ -3,6 +3,8 @@
   <component name="CompilerConfiguration">
     <bytecodeTargetLevel target="17">
       <module name="android.capacitor-camera" target="21" />
+      <module name="capacitor-updater.android.capgo-capacitor-updater" target="21" />
+      <module name="capacitor.android.sentry-capacitor" target="21" />
     </bytecodeTargetLevel>
   </component>
 </project>

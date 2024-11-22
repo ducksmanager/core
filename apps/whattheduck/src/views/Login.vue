@@ -97,7 +97,10 @@ const password = ref('');
 
 const showPassword = ref(false);
 
-const { validInputs, invalidInputs, touchedInputs, errorTexts, call } = useFormErrorHandling(['username', 'password']);
+const { validInputs, invalidInputs, touchedInputs, errorTexts, submit } = useFormErrorHandling([
+  'username',
+  'password',
+]);
 
 const forgotPassword = () => {
   router.push('/forgot');
@@ -107,7 +110,7 @@ const signup = () => {
 };
 
 const submitLogin = async () => {
-  await call(
+  await submit(
     () =>
       socket.value!.auth.services.login({
         username: username.value,

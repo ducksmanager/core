@@ -111,7 +111,7 @@ export class SocketClient {
         extraHeaders: {
           "X-Namespace": namespaceName,
         },
-        timeout: 500,
+        timeout: 1000,
         transports: ["websocket"],
         multiplex: false,
         auth: async (cb) => {
@@ -121,7 +121,7 @@ export class SocketClient {
       })
         .on("connect_error", (e) => {
           isOffline = true;
-          console.log("connect_error", namespaceName);
+          console.log("connect_error", namespaceName, e);
           this.onConnectError(e, namespaceName);
         })
         .on("connect", () => {
@@ -131,6 +131,10 @@ export class SocketClient {
           );
 
           this.onConnected(namespaceName);
+        });
+
+        window.addEventListener('beforeunload', () => {
+          socket && socket.close();
         });
     };
 

@@ -30,6 +30,7 @@ const storage = injectLocal<IonicStorage>('storage')!;
 
 const appStore = app();
 const { isOfflineMode, token, socket, offlineBannerHeight } = storeToRefs(appStore);
+console.log('token after storeToRefs', token.value);
 
 const route = useRoute();
 const router = useRouter();
@@ -43,6 +44,27 @@ interface RouteMeta {
 
 const routeMeta = computed(() => route.meta as RouteMeta);
 
+const cacheStorage = buildStorage({
+  set: (key, data, currentRequest) => {
+    const item = {
+      value: data,
+      ttl: currentRequest?.timeout || 0,
+      timestamp: Date.now(),
+    };
+    storage.set(key, JSON.stringify(item));
+  },
+  find: async (key) => {
+    const item = await storage.get(key);
+    if (!item) {
+      return undefined;
+    }
+
+    return JSON.parse(item).value;
+  },
+  remove: (key) => storage.remove(key),
+  clear: () => storage.clear(),
+});
+
 const assignSocket = () => {
   const session = {
     getToken: async () => token.value,
@@ -54,26 +76,7 @@ const assignSocket = () => {
   };
 
   socket.value = useDmSocket({
-    cacheStorage: buildStorage({
-      set: (key, data, currentRequest) => {
-        const item = {
-          value: data,
-          ttl: currentRequest?.timeout || 0,
-          timestamp: Date.now(),
-        };
-        storage.set(key, JSON.stringify(item));
-      },
-      find: async (key) => {
-        const item = await storage.get(key);
-        if (!item) {
-          return undefined;
-        }
-
-        return JSON.parse(item).value;
-      },
-      remove: (key) => storage.remove(key),
-      clear: () => storage.clear(),
-    }),
+    cacheStorage,
     onConnected: () => {
       isOfflineMode.value = false;
     },

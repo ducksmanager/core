@@ -1,6 +1,5 @@
 import { Capacitor } from '@capacitor/core';
 import { bookmarkOutline, bookmarkSharp } from 'ionicons/icons';
-import Cookies from 'js-cookie';
 import { defineStore } from 'pinia';
 
 import usePersistedData from '~/composables/usePersistedData';
@@ -28,12 +27,6 @@ export const app = defineStore('app', () => {
   const router = useRouter();
   const route = useRoute();
   const token = ref<string | null>(); // undefined === we haven't checked whether there is a token ; null === we have checked and there is no token
-
-  watch(token, (newValue, oldValue) => {
-    if (!newValue && oldValue) {
-      Cookies.remove('token');
-    }
-  });
 
   const isPersistedDataLoaded = ref(false);
   const filterText = ref('');
@@ -175,6 +168,7 @@ export const app = defineStore('app', () => {
     },
   ] as const;
 
+  console.log('token before usePersistedData', token.value);
   usePersistedData({
     token,
   }).then(() => {

@@ -27,7 +27,7 @@ export default (fields: string[]) => {
     }
   };
 
-  const call = async (fn: () => Promise<Errorable<string, string>>, onSuccess: (response: string) => void) =>
+  const submit = async (fn: () => Promise<Errorable<string, string>>, onSuccess: (response: string) => void) =>
     fn()
       .then((response) => {
         if (!handleErrorIfExists(response)) {
@@ -38,5 +38,5 @@ export default (fields: string[]) => {
         handleErrorIfExists(e);
       });
 
-  return { validInputs, invalidInputs, touchedInputs, errorTexts, showError, clearErrors, call };
+  return { validInputs, invalidInputs, touchedInputs, errorTexts, showError, clearErrors, submit };
 };

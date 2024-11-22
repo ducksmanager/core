@@ -59,7 +59,7 @@ router.isReady().then(async () => {
     const currentBundleVersion = (await CapacitorUpdater.current())?.bundle.version;
     Sentry.init(
       {
-        dsn: import.meta.env.SENTRY_DSN,
+        dsn: import.meta.env.VITE_SENTRY_DSN,
         release: `whattheduck@${currentBundleVersion}`,
         dist: currentBundleVersion,
         integrations: [Sentry.browserTracingIntegration(), Sentry.replayIntegration()],
@@ -79,6 +79,7 @@ router.isReady().then(async () => {
     name: 'whattheduck',
   });
   await storage.create();
+  console.log({ 'storage driver': storage.driver });
   app.provide('storage', storage);
   app.mount('#app');
 });
