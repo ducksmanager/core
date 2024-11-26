@@ -1,24 +1,25 @@
 <template>
-  <b-container>
-    <h4 class="sticky-top">{{ $t("Indexations en cours") }}</h4>
+  <b-container class="h-100">
+    <h4 class="sticky-top bg-light rounded-bottom text-black">
+      {{ $t("Indexations en cours") }}
+    </h4>
     <template v-if="currentIndexations">
       <b-row align-h="center">
         <b-col
           v-for="{ id, pages } of currentIndexations"
           :key="id"
-          class="col"
           cols="12"
+          class="d-flex p-5"
           md="4"
         >
           <router-link
             :to="`/indexation/${id}`"
-            class="d-flex flex-column align-items-center border"
+            class="d-flex flex-grow-1 flex-column justify-content-center align-items-center"
           >
             <b-img
               :blank-color="pages[0]?.url ? undefined : 'lightgrey'"
               :src="pages[0]?.url || undefined"
               fluid
-              thumbnail
             />
             {{ $t("Numéro inconnu") }}
           </router-link>

@@ -1,7 +1,10 @@
 <template>
-  <b-container fluid class="p-2 border-bottom">
-    <h2>DuMILi</h2>
-    <h3>{{ $t("DucksManager Inducks Little helper") }}</h3>
+  <b-container
+    fluid
+    class="d-flex flex-column align-items-center justify-content-center p-2 border-bottom"
+  >
+    <router-link class="display-6" to="/">DuMILi</router-link>
+    {{ $t("DucksManager Inducks Little helper") }}
   </b-container>
 
   <b-container

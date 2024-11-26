@@ -18,7 +18,7 @@
         md="4"
         @click="selectedId = id"
       >
-        <b-img v-if="url" :src="url" fluid thumbnail />
+        <b-img v-if="url" :src="url" fluid />
         <div class="position-absolute bottom-0 text-center">
           {{ id }}
         </div>

@@ -232,7 +232,7 @@ watch(
     );
     const { output }: { output: { height: number; width: number } } = await (
       await fetch(
-        indexation.value.pages[0].url!.replace(/pg_(\d+)/, "pg_$1/fl_getinfo/"),
+        indexation.value.pages[0].url!.replace(/(?=\/v\d+)/, "/fl_getinfo"),
       )
     ).json();
     firstPageDimensions.value = output;
