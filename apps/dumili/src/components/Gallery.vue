@@ -10,7 +10,8 @@
       class="overflow-y-auto"
     >
       <b-col
-        v-for="{ url, id } of images"
+        v-for="({ url, id }, idx) of images"
+        :id="`page-image-${idx}`"
         :key="id"
         class="position-relative d-flex justify-content-center align-items-center p-3 pb-5 border"
         :class="{ selectable, selected: selectedId === id }"
@@ -34,6 +35,7 @@ import {
 } from "@vueuse/integrations/useSortable";
 
 import { dumiliSocketInjectionKey } from "~/composables/useDumiliSocket";
+import { ui } from "~/stores/ui";
 
 const { indexationSocket } = inject(dumiliSocketInjectionKey)!;
 
@@ -74,6 +76,13 @@ watch(selectedId, (id) => {
     emit("selected", id);
   }
 });
+
+watch(
+  () => ui().currentPage,
+  (currentPage) => {
+    document.getElementById(`page-image-${currentPage}`)?.scrollIntoView();
+  },
+);
 </script>
 <style scoped lang="scss">
 .col {

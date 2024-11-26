@@ -232,6 +232,11 @@ const getStoryKind = (storyKind: storyKind) => storyKinds[storyKind];
 :deep(.btn-group .btn),
 :deep(.dropdown-item) {
   color: black;
+
+  &:hover {
+    background: #ddd;
+  }
+
   &.kind-c {
     @include storyKindBackground(#ffcc33);
   }

@@ -23,7 +23,7 @@
         v-else-if="activeTab === 'book' && coverRatio"
         ref="bookComponent"
         v-model:book="book"
-        v-model:current-page="bookCurrentPage"
+        v-model:current-page="currentPage"
         v-model:opened="isBookOpened"
         :cover-ratio="coverRatio"
         :pages="indexation.pages.filter(({ url }) => url)"
@@ -79,11 +79,7 @@
     </b-col>
 
     <b-col :cols="6" class="h-100">
-      <table-of-contents
-        v-model="bookCurrentPage"
-        :indexation="indexation"
-        :shown-pages="shownPages"
-      />
+      <table-of-contents :indexation="indexation" :shown-pages="shownPages" />
     </b-col>
   </b-row>
 </template>
@@ -93,14 +89,13 @@ import { components as webComponents, type PageFlip } from "~web";
 import { suggestions } from "~/stores/suggestions";
 import { tabs } from "~/stores/tabs";
 import { ui } from "~/stores/ui";
-import { FullIndexation } from "~dumili-services/indexation/types";
-import { aiKumikoResultPanel, aiOcrResult } from "~prisma/client_dumili";
+import type { FullIndexation } from "~dumili-services/indexation/types";
+import type { aiKumikoResultPanel, aiOcrResult } from "~prisma/client_dumili";
 import { getEntryPages } from "~dumili-utils/entryPages";
 
 const { Book } = webComponents;
 
 const book = ref<PageFlip | undefined>(undefined);
-const bookCurrentPage = ref(0);
 const isBookOpened = ref(true);
 const reRenderNumber = ref();
 
@@ -109,8 +104,12 @@ const route = useRoute();
 
 const { t: $t } = useI18n();
 
-const { hoveredEntry, hoveredEntryPageNumbers, showAiDetectionsOn } =
-  storeToRefs(ui());
+const {
+  hoveredEntry,
+  hoveredEntryPageNumbers,
+  currentPage,
+  showAiDetectionsOn,
+} = storeToRefs(ui());
 const { activeTab } = storeToRefs(tabs());
 const activeTabIndex = computed({
   get() {
@@ -161,7 +160,7 @@ const shownPages = computed(() =>
   book.value?.getPageCollection()
     ? [
         ...new Set([
-          bookCurrentPage.value,
+          currentPage.value,
           book.value!.getPageCollection().getCurrentSpreadIndex() * 2,
         ]),
       ]

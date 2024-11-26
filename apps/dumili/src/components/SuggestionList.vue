@@ -23,6 +23,10 @@
           'justify-content-between',
           'align-items-center',
           ...((itemClass && itemClass(suggestion)) || []),
+          ...((current?.id === suggestion.id &&
+            selectedItemClass &&
+            selectedItemClass(suggestion)) ||
+            []),
         ]"
         @click="
           current = suggestion;
@@ -79,10 +83,12 @@ const { suggestions, isAiSource } = withDefaults(
     suggestions: S[];
     isAiSource: (suggestion: S) => boolean;
     itemClass?: (suggestion: S) => string[];
+    selectedItemClass?: (suggestion: S) => string[];
     showCustomizeForm?: boolean;
   }>(),
   {
-    itemClass: undefined,
+    itemClass: () => [],
+    selectedItemClass: () => ["selected"],
     showCustomizeForm: false,
   },
 );
@@ -106,5 +112,11 @@ const userSuggestions = computed(() =>
 <style lang="scss">
 .dropdown-divider {
   border-color: white;
+}
+
+.dropdown-item {
+  &.selected {
+    background: #eee;
+  }
 }
 </style>

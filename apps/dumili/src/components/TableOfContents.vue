@@ -11,7 +11,7 @@
       <b-dropdown
         v-if="indexation.acceptedIssueSuggestion"
         variant="light"
-        class="position-absolute m-4 top-0 end-0"
+        class="position-absolute m-4 top-0 end-0 z-2"
       >
         <template #button-content>{{ $t("Méta-données") }}</template>
         <b-dropdown-item
@@ -93,7 +93,7 @@
             :grid="[1, pageHeight]"
             :h="entry.entirepages * pageHeight"
             :min-height="pageHeight - 1"
-            :class-name="`entry col w-100 kind-${entry.acceptedStoryKind?.kind} ${hoveredEntry === entry && 'striped'} ${currentEntry?.id === entry.id && 'current'}`"
+            :class-name="`entry col w-100 border kind-${entry.acceptedStoryKind?.kind} ${(hoveredEntry === entry && 'striped') || ''} ${(currentEntry?.id === entry.id && 'border-2') || 'border-1'}`"
             :title="`${entry.title || 'Inconnu'} (${getUserFriendlyPageCount(
               entry,
             )})`"
@@ -163,7 +163,7 @@ const { indexationSocket } = inject(dumiliSocketInjectionKey)!;
 const { loadIndexation } = suggestions();
 const { hoveredEntry, currentEntry, showAiDetectionsOn } = storeToRefs(ui());
 const indexation = storeToRefs(suggestions()).indexation as Ref<FullIndexation>;
-const currentPage = defineModel<number>();
+const { currentPage } = storeToRefs(ui());
 
 const { runKumikoOnPage, runKumiko } = useAi();
 
@@ -289,13 +289,8 @@ watch(
 }
 
 :deep(.entry) {
-  outline: 1px solid black;
   margin-top: 1px;
   cursor: pointer;
-
-  &.current {
-    outline-width: 2px;
-  }
 
   &:first-child {
     margin-top: 0;

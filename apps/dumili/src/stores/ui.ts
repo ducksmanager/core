@@ -7,6 +7,7 @@ export const ui = defineStore("ui", () => {
   const { indexation } = storeToRefs(suggestions());
   const hoveredEntry = ref<FullEntry | null>(null);
   const currentEntry = ref<FullEntry>();
+  const currentPage = ref(0);
 
   watch(
     indexation,
@@ -20,6 +21,7 @@ export const ui = defineStore("ui", () => {
     showAiDetectionsOn: ref<{ type: "page" | "entry"; id: number } | undefined>(
       undefined,
     ),
+    currentPage,
     currentEntry,
     hoveredEntry,
     hoveredEntryPageNumbers: computed(
