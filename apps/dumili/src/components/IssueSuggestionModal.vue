@@ -22,9 +22,9 @@
         :images="images"
         selectable
         @selected="
-        (url: string) =>
-          (selectedExistingCoverIssuecode = coverUrlToIssuecode(url))
-      "
+          (id) =>
+            (selectedExistingCoverIssuecode = issueSuggestionToIssuecode(id))
+        "
         ><Issue :issuecode="issuecode"
       /></Gallery> </b-modal
   ></template>
@@ -79,15 +79,16 @@ watch(
 );
 
 const images = computed(() =>
-  issueSuggestions.value.map(({ url, issuecode }) => ({
+  issueSuggestions.value.map(({ url, id, issuecode }) => ({
+    id,
     text: issuecode || $t("Titre inconnu"),
     url,
   })),
 );
 
-const coverUrlToIssuecode = (url: string): string =>
+const issueSuggestionToIssuecode = (id: number): string =>
   issueSuggestions.value.find(
-    ({ url: issueSuggestionUrl }) => issueSuggestionUrl === url,
+    ({ id: issueSuggestionId }) => issueSuggestionId === id,
   )?.issuecode || "";
 
 const acceptIssueSuggestion = async (issuecode: string) => {

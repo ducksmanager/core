@@ -15,7 +15,8 @@
             class="page-image"
             :class="{ opened: opening || opened }"
             :style="{
-              backgroundImage: `url(${page.url})`,
+              backgroundColor: page.url ? undefined : 'lightgrey',
+              backgroundImage: page.url ? `url(${page.url})` : undefined,
               marginLeft: opening || opened ? '0' : `${edgeWidth}px`,
             }"
             @transitionend="onEndOpenCloseTransition()"
@@ -27,7 +28,7 @@
   </div>
 </template>
 
-<script setup lang="ts" generic="Page extends { url: string }">
+<script setup lang="ts" generic="Page extends { url: string|null }">
 import { PageFlip } from "page-flip";
 
 const { pages, edgeWidth, coverRatio, coverHeight } = defineProps<{

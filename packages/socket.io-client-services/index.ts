@@ -132,10 +132,6 @@ export class SocketClient {
 
           this.onConnected(namespaceName);
         });
-
-        window.addEventListener('beforeunload', () => {
-          socket && socket.close();
-        });
     };
 
     return {

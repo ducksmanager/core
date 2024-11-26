@@ -102,7 +102,7 @@ importers:
         version: 11.3.0(vue@3.5.13(typescript@5.6.3))
       '@vueuse/integrations':
         specifier: ^11.3.0
-        version: 11.3.0(axios@1.7.7)(universal-cookie@7.2.2)(vue@3.5.13(typescript@5.6.3))
+        version: 11.3.0(axios@1.7.7)(sortablejs@1.15.4)(universal-cookie@7.2.2)(vue@3.5.13(typescript@5.6.3))
       bootstrap:
         specifier: ^5.3.3
         version: 5.3.3(@popperjs/core@2.11.8)
@@ -115,6 +115,9 @@ importers:
       pinia:
         specifier: ^2.2.6
         version: 2.2.6(typescript@5.6.3)(vue@3.5.13(typescript@5.6.3))
+      sortablejs:
+        specifier: ^1
+        version: 1.15.4
       vue:
         specifier: ^3.5.13
         version: 3.5.13(typescript@5.6.3)
@@ -320,7 +323,7 @@ importers:
         version: 11.3.0(vue@3.5.13(typescript@5.6.3))
       '@vueuse/integrations':
         specifier: ^11.3.0
-        version: 11.3.0(axios@1.7.7)(universal-cookie@7.2.2)(vue@3.5.13(typescript@5.6.3))
+        version: 11.3.0(axios@1.7.7)(sortablejs@1.15.4)(universal-cookie@7.2.2)(vue@3.5.13(typescript@5.6.3))
       axios:
         specifier: ^1.7.7
         version: 1.7.7
@@ -471,7 +474,7 @@ importers:
         version: 0.5.1(socket.io@4.8.1)
       '@vueuse/integrations':
         specifier: ^11.3.0
-        version: 11.3.0(axios@1.7.7)(universal-cookie@4.0.4)(vue@3.5.13(typescript@5.6.3))
+        version: 11.3.0(axios@1.7.7)(sortablejs@1.15.4)(universal-cookie@4.0.4)(vue@3.5.13(typescript@5.6.3))
       axios:
         specifier: ^1.7.7
         version: 1.7.7
@@ -848,7 +851,7 @@ importers:
         version: 11.3.0(vue@3.5.13(typescript@5.6.3))
       '@vueuse/integrations':
         specifier: ^11.3.0
-        version: 11.3.0(axios@1.7.7)(universal-cookie@7.2.2)(vue@3.5.13(typescript@5.6.3))
+        version: 11.3.0(axios@1.7.7)(sortablejs@1.15.4)(universal-cookie@7.2.2)(vue@3.5.13(typescript@5.6.3))
       chart.js:
         specifier: ^4.4.6
         version: 4.4.6
@@ -7391,6 +7394,9 @@ packages:
     resolution: {integrity: sha512-l5x7VUUWbjVFbafGLxPWkYsHIhEvmF85tbIeFZWc8ZPtoMyybuEhL7Jye/ooC4/d48FgOjSJXgsF/AJPYCW8Zw==}
     engines: {node: '>= 10.0.0', npm: '>= 3.0.0'}
 
+  sortablejs@1.15.4:
+    resolution: {integrity: sha512-wr7G5Id/WNllca5yF9I2vsz/2wDKJebX5FJBtfUFBGGpaaIVjW4kziAnNMEcigaTZAaPLB92NYBGqWenGDH++g==}
+
   source-map-js@1.2.1:
     resolution: {integrity: sha512-UXWMKhLOwVKb728IUtQPXxfYU+usdybtUrK/8uGE8CQMvrhOpwvzDBwj0QhSL7MQc7vIsISBG8VQ8+IDQxpfQA==}
     engines: {node: '>=0.10.0'}
@@ -11263,25 +11269,27 @@ snapshots:
       - '@vue/composition-api'
       - vue
 
-  '@vueuse/integrations@11.3.0(axios@1.7.7)(universal-cookie@4.0.4)(vue@3.5.13(typescript@5.6.3))':
+  '@vueuse/integrations@11.3.0(axios@1.7.7)(sortablejs@1.15.4)(universal-cookie@4.0.4)(vue@3.5.13(typescript@5.6.3))':
     dependencies:
       '@vueuse/core': 11.3.0(vue@3.5.13(typescript@5.6.3))
       '@vueuse/shared': 11.3.0(vue@3.5.13(typescript@5.6.3))
       vue-demi: 0.14.10(vue@3.5.13(typescript@5.6.3))
     optionalDependencies:
       axios: 1.7.7
+      sortablejs: 1.15.4
       universal-cookie: 4.0.4
     transitivePeerDependencies:
       - '@vue/composition-api'
       - vue
 
-  '@vueuse/integrations@11.3.0(axios@1.7.7)(universal-cookie@7.2.2)(vue@3.5.13(typescript@5.6.3))':
+  '@vueuse/integrations@11.3.0(axios@1.7.7)(sortablejs@1.15.4)(universal-cookie@7.2.2)(vue@3.5.13(typescript@5.6.3))':
     dependencies:
       '@vueuse/core': 11.3.0(vue@3.5.13(typescript@5.6.3))
       '@vueuse/shared': 11.3.0(vue@3.5.13(typescript@5.6.3))
       vue-demi: 0.14.10(vue@3.5.13(typescript@5.6.3))
     optionalDependencies:
       axios: 1.7.7
+      sortablejs: 1.15.4
       universal-cookie: 7.2.2
     transitivePeerDependencies:
       - '@vue/composition-api'
@@ -15897,6 +15905,8 @@ snapshots:
     dependencies:
       ip-address: 9.0.5
       smart-buffer: 4.2.0
+
+  sortablejs@1.15.4: {}
 
   source-map-js@1.2.1: {}
 

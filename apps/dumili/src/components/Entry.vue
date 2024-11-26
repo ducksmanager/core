@@ -1,5 +1,5 @@
 <template>
-  <b-row class="d-flex w-100 align-items-center">
+  <b-row class="d-flex w-100 align-items-center position-sticky top-0">
     <template v-if="editable">
       <b-col
         col

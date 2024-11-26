@@ -56,6 +56,10 @@ export default () => {
       );
 
       const url = indexation.value!.pages[0].url;
+      if (!url) {
+        alert("La première page n'a pas d'URL");
+        return;
+      }
       nextTick(async () => {
         coverIdServices.searchFromCover({ url }).then((results) => {
           if ("error" in results) {

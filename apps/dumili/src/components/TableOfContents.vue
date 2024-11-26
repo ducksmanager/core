@@ -128,7 +128,9 @@
             height: `${getEntryPages(indexation, entry.id).length * pageHeight}px`,
           }"
         >
-          <b-col class="d-flex" @click="currentEntry = entry"
+          <b-col
+            class="d-flex position-sticky top-0"
+            @click="currentEntry = entry"
             ><Entry
               v-model="indexation.entries[idx]"
               :editable="currentEntry === entry"

@@ -16,10 +16,10 @@ export type KumikoProcessedResult = Pick<
 >;
 
 export const runKumiko = async (
-  urls: string[],
+  urls: (string|null)[],
 ): Promise<KumikoProcessedResult[][]> =>
   axios
-    .get(`${process.env.KUMIKO_HOST}?i=${urls.join(",")}`)
+    .get(`${process.env.KUMIKO_HOST}?i=${urls.filter(url => !!url).join(",")}`)
     .then((result) => {
       return result.data as KumikoResult[];
     })

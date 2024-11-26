@@ -32,7 +32,14 @@ import Events, { indexationPayloadInclude } from "./types";
 const getFullIndexation = (indexationId: string) =>
   prisma.indexation.findUnique({
     where: { id: indexationId },
-    include: indexationPayloadInclude,
+    include: indexationPayloadInclude
+  }).then((indexation) => {
+    if (indexation) {
+    indexation.pages = indexation.pages.sort(
+      (a, b) => a.pageNumber - b.pageNumber,
+    );
+  }
+    return indexation;
   });
 
 const setKumikoInferredPageStoryKinds = async (pages: page[]) => {
@@ -179,6 +186,44 @@ export default (io: Server) => {
 
       indexationSocket.on("loadIndexation", async (callback) => {
         callback({ indexation: indexationSocket.data.indexation });
+      });
+      indexationSocket.on("updatePageUrls", async (pages, callback) => {
+        // In 2 steps so that we don't have to deal with unique constraints
+        prisma.indexation.update({
+          data: {
+            pages: {
+              updateMany: pages.map(({ id, url }, idx) => ({
+                data: {
+                  pageNumber: -(idx+1),
+                  url,
+                },
+                where: {
+                  id,
+                },
+              })),
+            },
+          },
+          where: {
+            id: indexationSocket.data.indexation.id,
+          },
+        }).then(() => prisma.indexation.update({
+          data: {
+            pages: {
+              updateMany: pages.map(({ id, url }, idx) => ({
+                data: {
+                  pageNumber: idx+1,
+                  url,
+                },
+                where: {
+                  id,
+                },
+              })),
+            },
+          },
+          where: {
+            id: indexationSocket.data.indexation.id,
+          },
+        })).then(() => callback({ status: "OK" }));
       });
 
       indexationSocket.on("acceptIssueSuggestion", (suggestionId, callback) =>
@@ -357,6 +402,13 @@ export default (io: Server) => {
             aiKumikoResultPanels,
             id: pageId,
           } = getEntryPages(indexation, entryId)[0]!;
+          if (!url) {
+            callback({
+              error: "This entry does not have a page URL associated",
+              errorDetails: `Entry ID: ${entryId}`,
+            });
+            return
+          }
           const firstPanel = aiKumikoResultPanels[0];
           const firstPanelUrl = url.replace(
             "/pg_",

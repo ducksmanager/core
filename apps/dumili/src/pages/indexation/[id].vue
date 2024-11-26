@@ -2,7 +2,7 @@
   <b-row v-if="indexationId && hasData" class="d-flex h-100">
     <b-col :cols="6" class="d-flex flex-column h-100">
       <template v-if="activeTab === 'pageGallery'">
-        <Gallery :images="images" />
+        <Gallery :images="indexation.pages" />
         <upload-widget
           v-if="showUploadWidget"
           :folder-name="indexationId"
@@ -26,7 +26,7 @@
         v-model:current-page="bookCurrentPage"
         v-model:opened="isBookOpened"
         :cover-ratio="coverRatio"
-        :pages="indexation.pages"
+        :pages="indexation.pages.filter(({ url }) => url)"
         :re-render="reRenderNumber"
       >
         <template #page-overlay="{ index, page }">
@@ -83,7 +83,8 @@
         v-model="bookCurrentPage"
         :indexation="indexation"
         :shown-pages="shownPages"
-    /></b-col>
+      />
+    </b-col>
   </b-row>
 </template>
 
@@ -167,13 +168,6 @@ const shownPages = computed(() =>
     : [],
 );
 
-const images = computed(() =>
-  indexation.value?.pages.map(({ url }) => ({
-    url,
-    text: url,
-  })),
-);
-
 const getPanelCss = (panel: aiKumikoResultPanel) => {
   const { width: pageWidth, height: pageHeight } = firstPageDimensions.value!;
   const { x, y, width, height } = panel;
@@ -238,7 +232,7 @@ watch(
     );
     const { output }: { output: { height: number; width: number } } = await (
       await fetch(
-        indexation.value.pages[0].url.replace("pg_1/", "pg_1/fl_getinfo/"),
+        indexation.value.pages[0].url!.replace(/pg_(\d+)/, "pg_$1/fl_getinfo/"),
       )
     ).json();
     firstPageDimensions.value = output;

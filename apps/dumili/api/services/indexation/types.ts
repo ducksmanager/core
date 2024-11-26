@@ -166,12 +166,22 @@ export default abstract class {
     ) => void,
   ) => void;
 
+  abstract updatePageUrls: (
+    pages: {
+      id: number;
+      url: string | null;
+  }[],
+    callback: (
+      data: { status: "OK" },
+    ) => void,
+  ) => void;
+
   abstract runOcr: (
     entryId: entry["id"],
     callback: (
       data: Errorable<
         { status: "OK" },
-        "OCR error" | "This entry is not a story"
+        "OCR error" | "This entry is not a story" | "This entry does not have a page URL associated"
       >,
     ) => void,
   ) => void;

@@ -33,7 +33,7 @@ model entry {
 model page {
   id                        Int                   @id @default(autoincrement())
   pageNumber                Int                   @map("page_number") @db.SmallInt
-  url                       String                @unique(map: "page_url_uindex") @db.VarChar(255)
+  url                       String?               @unique(map: "page_url_uindex") @db.VarChar(255)
   indexationId              String                @map("indexation_id") @db.VarChar(20)
   aiKumikoResultPanels      aiKumikoResultPanel[]
   aiKumikoInferredStoryKind storyKind?            @map("ai_kumiko_inferred_story_kind")

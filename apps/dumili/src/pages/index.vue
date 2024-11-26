@@ -14,7 +14,12 @@
             :to="`/indexation/${id}`"
             class="d-flex flex-column align-items-center border"
           >
-            <b-img :src="pages[0]?.url" fluid thumbnail />
+            <b-img
+              :blank-color="pages[0]?.url ? undefined : 'lightgrey'"
+              :src="pages[0]?.url || undefined"
+              fluid
+              thumbnail
+            />
             {{ $t("Numéro inconnu") }}
           </router-link>
         </b-col>
