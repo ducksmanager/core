@@ -26,6 +26,7 @@ export default [
       '**/node_modules',
       'auto-imports.d.ts',
       'components.d.ts',
+      '**/*.json',
     ],
   },
   ...vueI18n.configs['flat/recommended'],

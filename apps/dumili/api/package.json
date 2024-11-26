@@ -23,7 +23,7 @@
   "dependencies": {
     "@prisma/client": "^5.22.0",
     "@sentry/node": "^8.40.0",
-    "axios": "^1.7.7",
+    "axios": "^1.7.8",
     "busboy": "^1.6.0",
     "cloudinary": "^1.41.3",
     "dotenv": "^16.4.5",
@@ -40,9 +40,9 @@
     "@types/busboy": "^1.5.4",
     "@types/i18n": "^0.13.12",
     "@types/jsonwebtoken": "^9.0.7",
-    "@types/node": "^20.17.6",
+    "@types/node": "^20.17.8",
     "concurrently": "^9.1.0",
     "prisma": "^5.22.0",
-    "typescript": "^5.6.3"
+    "typescript": "^5.7.2"
   }
 }

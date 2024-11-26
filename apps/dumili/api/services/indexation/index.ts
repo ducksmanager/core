@@ -30,17 +30,19 @@ import { runOcr } from "./ocr";
 import Events, { indexationPayloadInclude } from "./types";
 
 const getFullIndexation = (indexationId: string) =>
-  prisma.indexation.findUnique({
-    where: { id: indexationId },
-    include: indexationPayloadInclude
-  }).then((indexation) => {
-    if (indexation) {
-    indexation.pages = indexation.pages.sort(
-      (a, b) => a.pageNumber - b.pageNumber,
-    );
-  }
-    return indexation;
-  });
+  prisma.indexation
+    .findUnique({
+      where: { id: indexationId },
+      include: indexationPayloadInclude,
+    })
+    .then((indexation) => {
+      if (indexation) {
+        indexation.pages = indexation.pages.sort(
+          (a, b) => a.pageNumber - b.pageNumber,
+        );
+      }
+      return indexation;
+    });
 
 const setKumikoInferredPageStoryKinds = async (pages: page[]) => {
   const panelsPerPage = await runKumiko(pages.map(({ url }) => url));
@@ -189,41 +191,46 @@ export default (io: Server) => {
       });
       indexationSocket.on("updatePageUrls", async (pages, callback) => {
         // In 2 steps so that we don't have to deal with unique constraints
-        prisma.indexation.update({
-          data: {
-            pages: {
-              updateMany: pages.map(({ id, url }, idx) => ({
-                data: {
-                  pageNumber: -(idx+1),
-                  url,
-                },
-                where: {
-                  id,
-                },
-              })),
+        prisma.indexation
+          .update({
+            data: {
+              pages: {
+                updateMany: pages.map(({ id, url }, idx) => ({
+                  data: {
+                    pageNumber: -(idx + 1),
+                    url,
+                  },
+                  where: {
+                    id,
+                  },
+                })),
+              },
             },
-          },
-          where: {
-            id: indexationSocket.data.indexation.id,
-          },
-        }).then(() => prisma.indexation.update({
-          data: {
-            pages: {
-              updateMany: pages.map(({ id, url }, idx) => ({
-                data: {
-                  pageNumber: idx+1,
-                  url,
-                },
-                where: {
-                  id,
-                },
-              })),
+            where: {
+              id: indexationSocket.data.indexation.id,
             },
-          },
-          where: {
-            id: indexationSocket.data.indexation.id,
-          },
-        })).then(() => callback({ status: "OK" }));
+          })
+          .then(() =>
+            prisma.indexation.update({
+              data: {
+                pages: {
+                  updateMany: pages.map(({ id, url }, idx) => ({
+                    data: {
+                      pageNumber: idx + 1,
+                      url,
+                    },
+                    where: {
+                      id,
+                    },
+                  })),
+                },
+              },
+              where: {
+                id: indexationSocket.data.indexation.id,
+              },
+            }),
+          )
+          .then(() => callback({ status: "OK" }));
       });
 
       indexationSocket.on("acceptIssueSuggestion", (suggestionId, callback) =>
@@ -234,11 +241,11 @@ export default (io: Server) => {
                 suggestionId === null
                   ? { disconnect: true }
                   : {
-                    connect: {
-                      id: suggestionId,
-                      indexationId: indexationSocket.data.indexation.id,
+                      connect: {
+                        id: suggestionId,
+                        indexationId: indexationSocket.data.indexation.id,
+                      },
                     },
-                  },
             },
             where: {
               id: indexationSocket.data.indexation.id,
@@ -276,7 +283,7 @@ export default (io: Server) => {
             },
             where: {
               id: indexationSocket.data.indexation.id,
-            }
+            },
           })
           .then(() => callback({ status: "OK" })),
       );
@@ -347,29 +354,26 @@ export default (io: Server) => {
         },
       );
 
-      indexationSocket.on(
-        "updateEntry",
-        async (entryId, data, callback) => {
-          const entry = indexationSocket.data.indexation.entries.find(
-            ({ id }) => id === entryId,
-          );
-          if (!entry) {
-            callback({
-              error: `This indexation does not have any entry with this ID`,
-              errorDetails: JSON.stringify({ entryId }),
-            });
-            return;
-          }
-
-          await prisma.entry.update({
-            data,
-            where: {
-              id: entryId,
-            },
+      indexationSocket.on("updateEntry", async (entryId, data, callback) => {
+        const entry = indexationSocket.data.indexation.entries.find(
+          ({ id }) => id === entryId,
+        );
+        if (!entry) {
+          callback({
+            error: `This indexation does not have any entry with this ID`,
+            errorDetails: JSON.stringify({ entryId }),
           });
-          callback({ status: "OK" });
-        },
-      );
+          return;
+        }
+
+        await prisma.entry.update({
+          data,
+          where: {
+            id: entryId,
+          },
+        });
+        callback({ status: "OK" });
+      });
 
       indexationSocket.on("runKumikoOnPage", async (pageId, callback) => {
         const { indexation } = indexationSocket.data;
@@ -407,7 +411,7 @@ export default (io: Server) => {
               error: "This entry does not have a page URL associated",
               errorDetails: `Entry ID: ${entryId}`,
             });
-            return
+            return;
           }
           const firstPanel = aiKumikoResultPanels[0];
           const firstPanelUrl = url.replace(

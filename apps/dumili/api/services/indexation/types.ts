@@ -112,13 +112,8 @@ export default abstract class {
   ) => void;
 
   abstract updateIssueSuggestion: (
-    values: Pick<
-      issueSuggestion,
-      "price"
-    >,
-    callback: (
-      data: { status: "OK" }
-    ) => void,
+    values: Pick<issueSuggestion, "price">,
+    callback: (data: { status: "OK" }) => void,
   ) => void;
 
   abstract acceptIssueSuggestion: (
@@ -170,10 +165,8 @@ export default abstract class {
     pages: {
       id: number;
       url: string | null;
-  }[],
-    callback: (
-      data: { status: "OK" },
-    ) => void,
+    }[],
+    callback: (data: { status: "OK" }) => void,
   ) => void;
 
   abstract runOcr: (
@@ -181,7 +174,9 @@ export default abstract class {
     callback: (
       data: Errorable<
         { status: "OK" },
-        "OCR error" | "This entry is not a story" | "This entry does not have a page URL associated"
+        | "OCR error"
+        | "This entry is not a story"
+        | "This entry does not have a page URL associated"
       >,
     ) => void,
   ) => void;

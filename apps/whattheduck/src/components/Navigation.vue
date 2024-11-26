@@ -29,7 +29,7 @@
         <template v-if="partIdx === 4 && issuecodes"
           ><div style="display: flex; align-items: center">
             <Issue :issuecode="issuecodes[0]" /><template v-if="issuecodes.length > 1"
-              ><ion-chip :outline="true"><template v-html="'+&nbsp;'" />{{ issuecodes.length - 1 }}</ion-chip></template
+              ><ion-chip :outline="true">+&nbsp;{{ issuecodes.length - 1 }}</ion-chip></template
             >
           </div></template
         >
