@@ -50,7 +50,7 @@
           <b-col
             role="button"
             :class="{
-              'fw-bold': shownPages.includes(pageNumber - 1),
+              'fw-bold': visiblePages?.has(id),
             }"
             @click="currentPage = pageNumber - 1"
             >{{ $t("Page") }} {{ pageNumber }}<br /><ai-tooltip
@@ -154,16 +154,12 @@ import { entry as entryModel } from "~prisma/client_dumili";
 import { storyKinds } from "~dumili-types/storyKinds";
 import { watchDebounced } from "@vueuse/core";
 
-defineProps<{
-  shownPages: number[];
-}>();
-
 const { indexationSocket } = inject(dumiliSocketInjectionKey)!;
 
 const { loadIndexation } = suggestions();
 const { hoveredEntry, currentEntry, showAiDetectionsOn } = storeToRefs(ui());
 const indexation = storeToRefs(suggestions()).indexation as Ref<FullIndexation>;
-const { currentPage } = storeToRefs(ui());
+const { currentPage, visiblePages } = storeToRefs(ui());
 
 const { runKumikoOnPage, runKumiko } = useAi();
 

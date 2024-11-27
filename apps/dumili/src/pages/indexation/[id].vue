@@ -19,56 +19,14 @@
           {{ $t("Envoyer des images de pages") }}
         </b-button>
       </template>
-      <Book
-        v-else-if="activeTab === 'book' && coverRatio"
-        ref="bookComponent"
-        v-model:book="book"
-        v-model:current-page="currentPage"
-        v-model:opened="isBookOpened"
-        :cover-ratio="coverRatio"
-        :pages="indexation.pages.filter(({ url }) => url)"
-        :re-render="reRenderNumber"
-      >
-        <template #page-overlay="{ index, page }">
-          <template v-if="hoveredEntryPageNumbers?.includes(index + 1)">
-            <div
-              :class="`overlay kind-${hoveredEntry!.acceptedStoryKind?.kind} striped`"
-            ></div>
-          </template>
-          <template
-            v-if="
-              showAiDetectionsOn?.type === 'page' &&
-              showAiDetectionsOn.id === page.id
-            "
-          >
-            <div
-              v-for="panel in page.aiKumikoResultPanels"
-              :key="`kumiko-match-${panel.id}`"
-              class="overlay translucent"
-              :style="getPanelCss(panel)"
-            ></div>
-          </template>
-          <template
-            v-if="
-              showAiDetectionsOn?.type === 'entry' &&
-              getEntryPages(indexation, showAiDetectionsOn.id).includes(page)
-            "
-          >
-            <div
-              v-for="ocrDetection of page.aiOcrResults || []"
-              :key="`ocr-match-${ocrDetection.id}`"
-              class="position-absolute ocr-match text w-100 h-100"
-              :style="getOcrDetectionCss(ocrDetection, index + 1)"
-            >
-              {{ ocrDetection.text }}
-            </div>
-          </template>
-        </template>
-      </Book>
+      <DumiliBook
+        v-else-if="activeTab === 'book' && firstPageDimensions"
+        v-bind="{ firstPageDimensions, indexation }"
+      />
       <TextEditor v-else-if="activeTab === 'textEditor'" />
       <b-container
         v-if="activeTab !== undefined"
-        class="start-0 bottom-0 mw-100 pt-2 h-5"
+        class="start-0 bottom-0 mw-100 pt-2"
         style="height: 35px"
         ><b-tabs v-model:model-value="activeTabIndex" align="center"
           ><b-tab
@@ -79,37 +37,24 @@
     </b-col>
 
     <b-col :cols="6" class="h-100">
-      <table-of-contents :indexation="indexation" :shown-pages="shownPages" />
+      <table-of-contents :indexation="indexation" />
     </b-col>
   </b-row>
 </template>
 
 <script setup lang="ts">
-import { components as webComponents, type PageFlip } from "~web";
+import { type PageFlip } from "~web";
 import { suggestions } from "~/stores/suggestions";
 import { tabs } from "~/stores/tabs";
-import { ui } from "~/stores/ui";
 import type { FullIndexation } from "~dumili-services/indexation/types";
-import type { aiKumikoResultPanel, aiOcrResult } from "~prisma/client_dumili";
-import { getEntryPages } from "~dumili-utils/entryPages";
-
-const { Book } = webComponents;
 
 const book = ref<PageFlip | undefined>(undefined);
-const isBookOpened = ref(true);
-const reRenderNumber = ref();
 
 const showUploadWidget = ref(false);
 const route = useRoute();
 
 const { t: $t } = useI18n();
 
-const {
-  hoveredEntry,
-  hoveredEntryPageNumbers,
-  currentPage,
-  showAiDetectionsOn,
-} = storeToRefs(ui());
 const { activeTab } = storeToRefs(tabs());
 const activeTabIndex = computed({
   get() {
@@ -149,59 +94,6 @@ const { indexation } = storeToRefs(suggestions()) as {
 const hasData = ref(false);
 
 const firstPageDimensions = ref<{ width: number; height: number } | null>(null);
-
-const coverRatio = computed(() =>
-  firstPageDimensions.value
-    ? firstPageDimensions.value.height / firstPageDimensions.value.width
-    : null,
-);
-
-const shownPages = computed(() =>
-  book.value?.getPageCollection()
-    ? [
-        ...new Set([
-          currentPage.value,
-          book.value!.getPageCollection().getCurrentSpreadIndex() * 2,
-        ]),
-      ]
-    : [],
-);
-
-const getPanelCss = (panel: aiKumikoResultPanel) => {
-  const { width: pageWidth, height: pageHeight } = firstPageDimensions.value!;
-  const { x, y, width, height } = panel;
-  return {
-    left: `${(x * 100) / pageWidth}%`,
-    top: `${(y * 100) / pageHeight}%`,
-    width: `${(width * 100) / pageWidth}%`,
-    height: `${(height * 100) / pageHeight}%`,
-  };
-};
-
-const getOcrDetectionCss = (
-  { x1, x2, x3, x4, y1, y2, y3, y4 }: aiOcrResult,
-  bookPageIndex: number,
-) => {
-  const pageElement = (
-    book.value!.getPage(bookPageIndex) as unknown as { element: HTMLDivElement }
-  ).element;
-  const naturalToRenderedRatio =
-    pageElement.clientWidth / firstPageDimensions.value!.width;
-  return {
-    clipPath: `polygon(${[
-      [x1, y1],
-      [x2, y2],
-      [x3, y3],
-      [x4, y4],
-    ]
-      .map(([x, y]) =>
-        (["width", "height"] as const)
-          .map((_, idx) => `${[x, y][idx] * naturalToRenderedRatio}px`)
-          .join(" "),
-      )
-      .join(",")})`,
-  };
-};
 
 watch(
   () => route.params.id,

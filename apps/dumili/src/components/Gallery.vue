@@ -19,7 +19,22 @@
         md="4"
         @click="selectedId = id"
       >
-        <b-img v-if="url" :src="url" fluid />
+        <b-img
+          v-if="url"
+          v-element-visibility="[
+            (visible) => {
+              if (visible) {
+                imagesInViewport.add(id);
+              } else {
+                imagesInViewport.delete(id);
+              }
+            },
+            { threshold: 1 },
+          ]"
+          lazy
+          :src="url"
+          fluid
+        />
         <div class="position-absolute bottom-0 text-center">
           {{ id }}
         </div>
@@ -33,11 +48,14 @@ import {
   moveArrayElement,
   useSortable,
 } from "@vueuse/integrations/useSortable";
+import { vElementVisibility } from "@vueuse/components";
 
 import { dumiliSocketInjectionKey } from "~/composables/useDumiliSocket";
 import { ui } from "~/stores/ui";
 
 const { indexationSocket } = inject(dumiliSocketInjectionKey)!;
+
+const imagesInViewport = ref(new Set<number>());
 
 const { images } = defineProps<{
   images: { url: string | null; id: number }[];
@@ -53,6 +71,8 @@ const emit = defineEmits<{
 }>();
 
 const { t: $t } = useI18n();
+
+const { visiblePages, currentPage } = storeToRefs(ui());
 
 const imagesRef = ref<HTMLElement | null>(null);
 useSortable(imagesRef, images, {
@@ -77,11 +97,16 @@ watch(selectedId, (id) => {
   }
 });
 
+watch(currentPage, (value) => {
+  document.getElementById(`page-image-${value}`)?.scrollIntoView();
+});
+
 watch(
-  () => ui().currentPage,
-  (currentPage) => {
-    document.getElementById(`page-image-${currentPage}`)?.scrollIntoView();
+  imagesInViewport,
+  (value) => {
+    visiblePages.value = value;
   },
+  { immediate: true },
 );
 </script>
 <style scoped lang="scss">

@@ -22,7 +22,7 @@
   },
   "dependencies": {
     "@prisma/client": "^5.22.0",
-    "@sentry/node": "^8.40.0",
+    "@sentry/node": "^8.41.0",
     "axios": "^1.7.8",
     "busboy": "^1.6.0",
     "cloudinary": "^1.41.3",

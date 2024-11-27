@@ -8,6 +8,7 @@ export const ui = defineStore("ui", () => {
   const hoveredEntry = ref<FullEntry | null>(null);
   const currentEntry = ref<FullEntry>();
   const currentPage = ref(0);
+  const visiblePages = ref<Set<number> | undefined>();
 
   watch(
     indexation,
@@ -22,6 +23,7 @@ export const ui = defineStore("ui", () => {
       undefined,
     ),
     currentPage,
+    visiblePages,
     currentEntry,
     hoveredEntry,
     hoveredEntryPageNumbers: computed(
