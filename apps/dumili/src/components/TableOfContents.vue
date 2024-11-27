@@ -103,7 +103,9 @@
               (_left: number, _top: number, _width: number, height: number) =>
                 onEntryResizeStop(idx, height)
             "
-            @click="currentEntry = entry"
+            @click="
+              currentPage = getFirstPageOfEntry(indexation.entries, entry.id)
+            "
           ></vue-draggable-resizable>
           <b-button
             v-if="
@@ -217,15 +219,6 @@ watchDebounced(
   },
   { debounce: 500, maxWait: 1000 },
 );
-
-watch(currentEntry, (entry) => {
-  if (entry) {
-    currentPage.value = getFirstPageOfEntry(
-      indexation.value!.entries,
-      entry.id,
-    );
-  }
-});
 
 watch(
   currentPage,

@@ -38,42 +38,48 @@
       }}</b-button>
     </div>
     <b-modal
-      v-if="stepNumber === 0"
+      id="new-indexation-modal"
       v-model="modal"
-      title="Indexation"
+      :title="$t('Nouvelle indexation')"
+      :cancel-title="$t('Annuler')"
       align="center"
       centered
-      ok-title="Toutes les pages"
-      cancel-title="Seulement certaines pages"
-      @ok.prevent="uploadType = 'all'"
-      @cancel.prevent="uploadType = 'some'"
+      :no-footer="stepNumber === 1"
+      @ok.prevent="$refs.form!.$el.reportValidity() && (stepNumber = 1)"
     >
-      {{
-        $t(
-          "De quelles pages du numéro que vous souhaitez indexer possédez vous des scans ?",
-        )
-      }}
-      <b-alert variant="info" model-value :dismissible="false" class="mt-3"
-        ><i18n-t
-          keypath="Si vous possédez les pages du magazine avec le format PDF,
-        assurez-vous que celui-ci ait une taille de fichier de 10 MB au maximum.
-        Si ce n'est pas le cas, vous pouvez utiliser un outil tel que {link} pour compresser votre fichier de telle sorte qu'il fasse moins de 10 MB."
-        >
-          <template #link
-            ><a
-              href="https://bigpdf.11zon.com/en/compress-pdf/compress-pdf-to-10mb"
-              >11zon.com</a
-            ></template
-          >
-        </i18n-t></b-alert
+      <b-form
+        v-if="stepNumber === 0"
+        ref="form"
+        @submit.prevent.stop="stepNumber = 1"
       >
-    </b-modal>
-    <upload-widget
-      v-if="showUploadWidget && cloudinaryFolderName"
-      :folder-name="cloudinaryFolderName"
-      @done="onUploadDone"
-      @abort="showUploadWidget = !showUploadWidget"
-  /></b-container>
+        {{
+          $t(
+            "Combien de pages le magazine contient-il ? (y compris les pages que vous ne souhaitez pas indexer)",
+          )
+        }}
+        <b-form-input v-model="totalPages" type="number" />
+      </b-form>
+      <div v-else>
+        <b-alert variant="info" model-value :dismissible="false" class="mt-3"
+          ><i18n-t
+            keypath="Si vous possédez les pages du magazine avec le format PDF, assurez-vous que celui-ci ait une taille de fichier de 10 MB au maximum. Si ce n'est pas le cas, vous pouvez utiliser un outil tel que {link} pour compresser votre fichier de telle sorte qu'il fasse moins de 10 MB."
+          >
+            <template #link
+              ><a
+                href="https://bigpdf.11zon.com/en/compress-pdf/compress-pdf-to-10mb"
+                >11zon.com</a
+              ></template
+            >
+          </i18n-t></b-alert
+        >
+        <upload-widget
+          v-if="showUploadWidget && cloudinaryFolderName"
+          parent-selector="#new-indexation-modal .modal-body"
+          :folder-name="cloudinaryFolderName"
+          @done="onUploadDone"
+          @abort="showUploadWidget = !showUploadWidget"
+        /></div></b-modal
+  ></b-container>
 </template>
 
 <script setup lang="ts">
@@ -84,16 +90,16 @@ const {
   indexations: { services: indexationsServices },
 } = inject(dumiliSocketInjectionKey)!;
 
+const form = ref<HTMLFormElement | null>(null);
 const currentIndexations = ref<IndexationWithFirstPage[] | null>(null);
 const modal = ref(false);
+const totalPages = ref(16);
 const cloudinaryFolderName = ref<string | null>(null);
 const stepNumber = ref<0 | 1>(0);
-const uploadType = ref<"all" | "some" | null>(null);
 const showUploadWidget = ref(false);
 
-watch(uploadType, (newUploadType) => {
-  if (newUploadType !== null) {
-    stepNumber.value = 1;
+watch(stepNumber, (newStepNumber) => {
+  if (newStepNumber > 0) {
     showUploadWidget.value = true;
     cloudinaryFolderName.value = new Date()
       .toISOString()
@@ -114,3 +120,13 @@ const onUploadDone = async () => {
   }
 })();
 </script>
+
+<style lang="scss">
+.modal {
+  @media (min-width: 576px) {
+    .modal-dialog {
+      max-width: 800px;
+    }
+  }
+}
+</style>

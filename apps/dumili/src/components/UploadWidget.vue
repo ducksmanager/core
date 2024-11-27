@@ -15,7 +15,8 @@ const dumiliSocket = inject(dumiliSocketInjectionKey)!;
 
 const { user } = storeToRefs(webStores.collection());
 
-const { folderName } = defineProps<{
+const { folderName, parentSelector } = defineProps<{
+  parentSelector: string;
   folderName: string;
 }>();
 
@@ -38,8 +39,9 @@ const uploadWidget = cloudinary.createUploadWidget(
     cloudName: import.meta.env.VITE_CLOUDINARY_CLOUDNAME,
     uploadPreset: "p1urov1k",
     folder: `dumili/${user.value!.username}/${folderName}`,
+    inlineContainer: parentSelector,
     showPoweredBy: false,
-    sources: ["local", "url"],
+    sources: ["local", "url", "camera"],
     multiple: true,
     maxFileSize: 10 * 1024 * 1024,
     maxImageFileSize: 5 * 1024 * 1024,
