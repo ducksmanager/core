@@ -2,7 +2,7 @@
   "name": "~whattheduck",
   "type": "module",
   "engines": {
-    "node": ">=20.0.0 <21.0.0"
+    "node": ">=22.0.0 <23.0.0"
   },
   "scripts": {
     "dev:android": "concurrently --kill-others-on-fail -n set-android-socket-url,android,dev \"pnpm set-android-socket-url\" \"ionic cap run android --external --target Pixel_8_API_29 --livereload --public-host=`ipconfig getifaddr en0`\" \"turbo dev -F '~whattheduck' -F '~api' -F '~web'\"",
@@ -79,7 +79,7 @@
     "@ionic/prettier-config": "^4.0.0",
     "@sentry/cli": "^2.39.1",
     "@types/js-cookie": "^3.0.6",
-    "@types/node": "^20.17.8",
+    "@types/node": "^22.10.1",
     "@vitejs/plugin-vue": "^5.2.1",
     "@vue-macros/reactivity-transform": "^1.1.3",
     "@vue/eslint-config-typescript": "^14.1.4",

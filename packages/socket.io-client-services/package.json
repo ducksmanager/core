@@ -2,7 +2,7 @@
   "name": "~socket.io-client-services",
   "type": "module",
   "engines": {
-    "node": ">=20.0.0 <21.0.0"
+    "node": ">=22.0.0 <23.0.0"
   },
   "dependencies": {
     "axios-cache-interceptor": "^1.6.2",

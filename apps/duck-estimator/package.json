@@ -2,7 +2,7 @@
   "name": "~duck-estimator",
   "version": "1.0.0",
   "engines": {
-    "node": ">=20.0.0 <21.0.0"
+    "node": ">=22.0.0 <23.0.0"
   },
   "author": {
     "email": "brunoperel@gmail.com",
@@ -26,7 +26,7 @@
     "~prisma-schemas": "workspace:*"
   },
   "devDependencies": {
-    "@types/node": "^20.17.8",
+    "@types/node": "^22.10.1",
     "@types/yargs": "^17.0.33",
     "tsc-alias": "^1.8.10",
     "tsx": "^4.19.2",

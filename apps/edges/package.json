@@ -1,7 +1,7 @@
 {
   "name": "~edges",
   "engines": {
-    "node": ">=20.0.0 <21.0.0"
+    "node": ">=22.0.0 <23.0.0"
   },
   "scripts": {
     "dev": "docker compose -f docker-compose-dev.yml up --force-recreate",

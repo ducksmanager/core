@@ -47,10 +47,10 @@ jobs:
         with:
           version: 9.8.0
 
-      - name: Use Node.js 20
+      - name: Use Node.js 22
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
           cache: "pnpm"
 
       - uses: oven-sh/setup-bun@v1
@@ -75,11 +75,11 @@ jobs:
           pnpm i -g turbo
           turbo -F "...[$lastSuccessfulCommit]" -F '!~dumili' -F '!~dumili-api' prod:transfer-files-pre
 
+      - uses: docker/setup-buildx-action@v3
+
       - name: Build apps
         run: |
-          turbo -F "...[$lastSuccessfulCommit]" -F '!~dumili' -F '!~dumili-api' build
-
-      - uses: docker/setup-buildx-action@v3
+          turbo -F "...[$lastSuccessfulCommit]" -F '!~ci' -F '!~dumili' -F '!~dumili-api' build
 
       - name: Build and push Docker images
         run: |

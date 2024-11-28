@@ -10,7 +10,8 @@
         "!api"
       ],
       "dependsOn": [
-        "^build"
+        "^build",
+        "prod:build-docker"
       ],
       "outputs": [
         "dist/**"
