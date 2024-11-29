@@ -2,16 +2,23 @@
 
 [Official website](https://www.ducksmanager.net)
 
-DucksManager is a free and open-source website enabling comic book collectors to manage their Disney collection.
+DucksManager is a copylefted libre software (and gratis) website to manage Disney comic-book collections.
 
-Related projects :
+Translations:
+<a href="https://hosted.weblate.org/engage/ducksmanager/">
+<img src="https://hosted.weblate.org/widget/ducksmanager/multi-auto.svg" alt="Translation status" />
+</a>
 
-- [WhatTheDuck](apps/whattheduck) is the mobile app of DucksManager, allowing users to check the contents of their collection on a mobile and add issues to the collection by photographing comic book covers.
-- [EdgeCreator](apps/edgecreator) is a project allowing users to upload photos of edges and create models out of them in order to generate edge pictures.
-- [Duck cover ID](apps/cover-updater) is a collection of shell scripts launched by a daily cronjob, allowing to retrieve comic book covers from the Inducks website and add the features of these pictures to a Pastec index. This index is searched whn taking a picture of a cover in the WhatTheDuck app.
-- [COA updater](apps/coa-updater) is a shell script launched by a daily cronjob, allowing to retrieve the structure and the contents of the Inducks database and to create a copy of this database locally.
-- [DucksManager-stats](apps/stats-updater) contains a list of scripts launched by a daily cronjob, allowing to calculate statistics about issues that are recommended to users on DucksManager, depending on the authors that they prefer.
-- [dm-server](https://github.com/bperel/dm-server) (to be discontinued) is the back-end project that What The Duck version 2 and below used to read and write data from/to. This is replaced with the [DucksManager API](packages/api) in What The Duck version 3 and above.
+Related projects:
+
+- [WhatTheDuck](apps/whattheduck) — DucksManager mobile app. Check collection content on mobile and add issues by taking pictures of comic-book covers.
+- [EdgeCreator](apps/edgecreator) — Upload pictures of edges and creates complete edge-pictures from resulting models.
+- [Duck cover ID](https://github.com/bperel/duck-cover-id) — Collection of shell scripts launched by a daily `cron` job, allowing retrival of [I.N.D.U.C.K.S](https://inducks.org/) comic-book covers. \
+Adds picture features to a [Pastec](https://github.com/magwyz/pastec) index to be searched when taking a picture of a cover in the WhatTheDuck app.
+- [COA updater](apps/coa-updater) — Retrieves the structure and the contents of the [I.N.D.U.C.K.S](https://inducks.org/) database to create a copy of this database locally as a daily `cron` job. 
+- [DucksManager-stats](https://github.com/bperel/DucksManager-stats) — Calculate stats about issues recommended to users on DucksManager, depending on the authors that they prefer as a list of daily `cron`-job scripts.
+- [dm-server](https://github.com/bperel/dm-server) (to be discontinued) — The back-end project WhatTheDuck v2 earlier used to read and write data from/to. \
+Replaced with the [DucksManager API](packages/api) in WhatTheDuck v3 onwards.
 
 ![DucksManager architecture](https://raw.githubusercontent.com/bperel/DucksManager-next/master/server_architecture.png)
 
@@ -21,4 +28,11 @@ Related projects :
 
 - [Node.js](https://nodejs.org/en/) 22
 - [Docker](https://www.docker.com/)
-- Some Unix or WSL2 environment
+
+- Some Unix or WSL 2 environment
+
+Ensure your local repository auto-pulls submodules:
+
+```bash
+git config --global submodule.recurse true
+```
