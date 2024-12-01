@@ -85,6 +85,10 @@ const getIndexationMiddleware = async (
   next: (error?: Error) => void,
 ) => {
   const indexationId = socket.nsp.name.split("/").pop()!;
+  if (!indexationId) {
+    next(new Error("No indexation ID provided"));
+    return;
+  }
   socket.data.indexation = await getFullIndexation(indexationId);
 
   next();
@@ -147,43 +151,24 @@ export default (io: Server) => {
         });
       };
 
-      indexationSocket.on("addPage", async (pageNumber, url, callback) => {
+      indexationSocket.on("setPageUrl", async (id, url, callback) => {
         const { id: indexationId } = indexationSocket.data.indexation;
-        const isFirstPage = pageNumber === 1;
-        prisma.indexation
-          .update({
-            data: {
-              pages: {
-                create: {
-                  pageNumber,
-                  url,
-                },
-              },
-            },
-            where: {
-              id: indexationId,
-            },
-          })
-          .then(async () => {
-            if (isFirstPage) {
-              const newEntry = await createEntry(indexationId);
-              await acceptStoryKindSuggestion(
-                (
-                  await prisma.storyKindSuggestion.findFirstOrThrow({
-                    where: {
-                      entryId: newEntry.id,
-                      kind: COVER,
-                    },
-                    select: {
-                      id: true,
-                    },
-                  })
-                ).id,
-                newEntry.id,
-              );
-            }
+        prisma.page
+          .update({data: { url }, where: {
+            id,
+            indexationId}
           })
           .then(callback);
+      });
+
+      indexationSocket.on('deleteIndexation', async (callback) => {
+        const { id: indexationId } = indexationSocket.data.indexation;
+        await prisma.indexation.delete({
+          where: {
+            id: indexationId,
+          },
+        });
+        callback();
       });
 
       indexationSocket.on("loadIndexation", async (callback) => {
@@ -287,23 +272,6 @@ export default (io: Server) => {
           })
           .then(() => callback({ status: "OK" })),
       );
-
-      indexationSocket.on("createOcrDetails", async (ocrDetails, callback) => {
-        if (
-          !indexationSocket.data.indexation.pages.some(
-            ({ id }) => id === ocrDetails.page.connect!.id,
-          )
-        ) {
-          callback({ error: "You are not allowed to update this resource" });
-          return;
-        }
-
-        await prisma.aiOcrPossibleStory.create({
-          data: ocrDetails,
-        });
-        callback({ status: "OK" });
-      });
-
       indexationSocket.on(
         "acceptStorySuggestion",
         async (entryId, storySuggestionId, callback) => {
@@ -521,7 +489,7 @@ const acceptStorySuggestion = async (
     },
   });
 
-const acceptStoryKindSuggestion = (
+export const acceptStoryKindSuggestion = (
   suggestionId: storyKindSuggestion["id"] | null,
   entryId: entry["id"],
 ) =>
@@ -534,8 +502,11 @@ const acceptStoryKindSuggestion = (
     },
   });
 
-const createEntry = async (indexationId: string) =>
+export const createEntry = async (indexationId: string) =>
   prisma.entry.create({
+    include: {
+      storyKindSuggestions: true,
+    },
     data: {
       entirepages: 1,
       indexation: {

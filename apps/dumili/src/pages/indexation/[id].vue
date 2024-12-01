@@ -3,15 +3,6 @@
     <b-col :cols="6" class="d-flex flex-column h-100">
       <template v-if="activeTab === 'pageGallery'">
         <Gallery :images="indexation.pages" />
-        <upload-widget
-          v-if="showUploadWidget"
-          :folder-name="indexationId"
-          @done="
-            showUploadWidget = !showUploadWidget;
-            loadIndexation(indexationId);
-          "
-          @abort="showUploadWidget = !showUploadWidget"
-        />
         <b-button
           v-show="!showUploadWidget"
           @click="showUploadWidget = !showUploadWidget"

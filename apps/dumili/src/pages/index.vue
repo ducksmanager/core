@@ -6,22 +6,32 @@
     <template v-if="currentIndexations">
       <b-row align-h="center">
         <b-col
-          v-for="{ id, pages } of currentIndexations"
+          v-for="{ id, acceptedIssueSuggestion, pages } of currentIndexations"
           :key="id"
           cols="12"
           class="d-flex p-5"
-          md="4"
+          md="3"
         >
           <router-link
             :to="`/indexation/${id}`"
-            class="d-flex flex-grow-1 flex-column justify-content-center align-items-center"
+            class="d-flex position-relative flex-grow-1 flex-column justify-content-center align-items-center bg-light p-5"
           >
+            <b-button
+              class="position-absolute top-0 end-0 text-danger bg-light p-0 border-0"
+              @click.stop.prevent="deleteIndexation(id)"
+            >
+              <i-bi-x
+                v-b-tooltip="{ title: $t('Supprimer') }"
+                class="display-6"
+            /></b-button>
             <b-img
               :blank-color="pages[0]?.url ? undefined : 'lightgrey'"
               :src="pages[0]?.url || undefined"
               fluid
             />
-            {{ $t("Numéro inconnu") }}
+            <div class="position-absolute bottom-0 pb-3">
+              <Issue v-bind="acceptedIssueSuggestion" />
+            </div>
           </router-link>
         </b-col>
       </b-row>
@@ -44,80 +54,63 @@
       :cancel-title="$t('Annuler')"
       align="center"
       centered
-      :no-footer="stepNumber === 1"
-      @ok.prevent="$refs.form!.$el.reportValidity() && (stepNumber = 1)"
+      @ok.prevent="$refs.form!.$el.reportValidity() && (createIndexation())"
     >
-      <b-form
-        v-if="stepNumber === 0"
-        ref="form"
-        @submit.prevent.stop="stepNumber = 1"
-      >
+      <b-form ref="form" @submit.prevent.stop="createIndexation">
         {{
           $t(
             "Combien de pages le magazine contient-il ? (y compris les pages que vous ne souhaitez pas indexer)",
           )
         }}
-        <b-form-input v-model="totalPages" type="number" />
-      </b-form>
-      <div v-else>
-        <b-alert variant="info" model-value :dismissible="false" class="mt-3"
-          ><i18n-t
-            keypath="Si vous possédez les pages du magazine avec le format PDF, assurez-vous que celui-ci ait une taille de fichier de 10 MB au maximum. Si ce n'est pas le cas, vous pouvez utiliser un outil tel que {link} pour compresser votre fichier de telle sorte qu'il fasse moins de 10 MB."
-          >
-            <template #link
-              ><a
-                href="https://bigpdf.11zon.com/en/compress-pdf/compress-pdf-to-10mb"
-                >11zon.com</a
-              ></template
-            >
-          </i18n-t></b-alert
-        >
-        <upload-widget
-          v-if="showUploadWidget && cloudinaryFolderName"
-          parent-selector="#new-indexation-modal .modal-body"
-          :folder-name="cloudinaryFolderName"
-          @done="onUploadDone"
-          @abort="showUploadWidget = !showUploadWidget"
-        /></div></b-modal
+        <b-form-input v-model="totalPages" type="number" /></b-form></b-modal
   ></b-container>
 </template>
 
 <script setup lang="ts">
 import { dumiliSocketInjectionKey } from "~/composables/useDumiliSocket";
-import type { IndexationWithFirstPage } from "~dumili-services/indexation/types";
+import type { IndexationWithFirstPageAndAcceptedIssueSuggestion } from "~dumili-services/indexations/types";
+
 const router = useRouter();
 const {
   indexations: { services: indexationsServices },
+  getIndexationSocketFromId,
 } = inject(dumiliSocketInjectionKey)!;
 
+const { fetchPublicationNames } = coa();
+
 const form = ref<HTMLFormElement | null>(null);
-const currentIndexations = ref<IndexationWithFirstPage[] | null>(null);
+const currentIndexations =
+  ref<IndexationWithFirstPageAndAcceptedIssueSuggestion[]>();
 const modal = ref(false);
 const totalPages = ref(16);
-const cloudinaryFolderName = ref<string | null>(null);
-const stepNumber = ref<0 | 1>(0);
-const showUploadWidget = ref(false);
 
-watch(stepNumber, (newStepNumber) => {
-  if (newStepNumber > 0) {
-    showUploadWidget.value = true;
-    cloudinaryFolderName.value = new Date()
-      .toISOString()
-      .replace(/[-:.Z]/g, "");
-  }
-});
+const createIndexation = async () => {
+  const cloudinaryFolderName = new Date().toISOString().replace(/[-:.Z]/g, "");
 
-const onUploadDone = async () => {
-  router.push(`/indexation/${cloudinaryFolderName.value}`);
+  await indexationsServices.create(cloudinaryFolderName, totalPages.value);
+  router.push(`/indexation/${cloudinaryFolderName}`);
 };
 
+const deleteIndexation = async (id: string) => {
+  const indexationSocket = getIndexationSocketFromId(id);
+
+  await indexationSocket.services.deleteIndexation();
+  window.location.reload();
+};
+
+watch(currentIndexations, (indexations) => {
+  fetchPublicationNames(
+    indexations!
+      .map(
+        ({ acceptedIssueSuggestion }) =>
+          acceptedIssueSuggestion?.publicationcode,
+      )
+      .filter(Boolean) as string[],
+  );
+});
+
 (async () => {
-  const { error, indexations } = await indexationsServices.getIndexations();
-  if (error) {
-    console.error(error);
-  } else {
-    currentIndexations.value = indexations;
-  }
+  currentIndexations.value = await indexationsServices.getIndexations();
 })();
 </script>
 

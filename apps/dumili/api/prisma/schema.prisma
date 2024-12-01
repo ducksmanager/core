@@ -39,7 +39,7 @@ model page {
   aiKumikoInferredStoryKind storyKind?            @map("ai_kumiko_inferred_story_kind")
   aiOcrPossibleStories      aiOcrPossibleStory[]
   aiOcrResults              aiOcrResult[]
-  indexation                indexation            @relation(fields: [indexationId], references: [id], onUpdate: Restrict, map: "page_indexation_id_fk")
+  indexation                indexation            @relation(fields: [indexationId], references: [id], onUpdate: Restrict, onDelete: Cascade, map: "page_indexation_id_fk")
 
   @@unique([indexationId, pageNumber], map: "page_indexation_id_page_number_uindex")
   @@index([indexationId], map: "page_indexation_id_fk")
@@ -47,7 +47,6 @@ model page {
 
 model indexation {
   id                        String            @id @db.VarChar(20)
-  issuecode                 String?           @db.VarChar(9)
   acceptedIssueSuggestionId Int?              @map("accepted_issue_suggestion_id")
   dmUserId                  Int               @map("dm_user_id")
   entries                   entry[]

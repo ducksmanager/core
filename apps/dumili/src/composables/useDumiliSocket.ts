@@ -32,6 +32,7 @@ const defaultExport = (options: {
       { session },
     ),
     indexationSocket,
+    getIndexationSocketFromId,
     setIndexationSocketFromId: (id: string) => {
       indexationSocket.value = getIndexationSocketFromId(id);
     },

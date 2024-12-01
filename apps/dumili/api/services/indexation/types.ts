@@ -46,39 +46,20 @@ export type FullIndexation = Prisma.indexationGetPayload<{
 
 export type FullEntry = FullIndexation["entries"][number];
 
-export type IndexationWithFirstPage = Prisma.indexationGetPayload<{
-  include: {
-    pages: {
-      take: 1;
-      orderBy: {
-        pageNumber: "asc";
-      };
-    };
-  };
-}>;
-
 export default abstract class {
   static namespaceEndpoint: string = "/indexation/{id}";
 
-  abstract addPage: (
-    pageNumber: number,
+  abstract setPageUrl: (
+    id: number,
     url: string,
     callback: () => void,
   ) => void;
 
+  abstract deleteIndexation: (callback: () => void) => void;
+
   abstract loadIndexation: (
     callback: (
       data: Errorable<{ indexation: FullIndexation }, "Error">,
-    ) => void,
-  ) => void;
-
-  abstract createOcrDetails: (
-    suggestion: Prisma.aiOcrPossibleStoryCreateInput,
-    callback: (
-      data: Errorable<
-        { status: "OK" },
-        "You are not allowed to update this resource"
-      >,
     ) => void,
   ) => void;
 
@@ -155,7 +136,7 @@ export default abstract class {
   ) => void;
 
   abstract runKumikoOnPage: (
-    page: page["id"],
+    pageId: page["id"],
     callback: (
       data: Errorable<{ status: "OK" }, "Kumiko output could not be parsed">,
     ) => void,

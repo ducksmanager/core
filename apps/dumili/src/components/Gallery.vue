@@ -10,7 +10,7 @@
       class="overflow-y-auto"
     >
       <b-col
-        v-for="({ url, id }, idx) of images"
+        v-for="({ url, id, pageNumber }, idx) of images"
         :id="`page-image-${idx}`"
         :key="id"
         class="position-relative d-flex justify-content-center align-items-center p-3 pb-5 border"
@@ -35,12 +35,31 @@
           :src="url"
           fluid
         />
+        <b-button
+          v-else
+          variant="success"
+          @click="uploadPageNumber = pageNumber"
+          >{{ $t("Ajouter") }}</b-button
+        >
         <div class="position-absolute bottom-0 text-center">
-          {{ id }}
+          Page {{ pageNumber }} ({{ id }})
         </div>
       </b-col>
     </b-row>
     <b-container v-else>{{ $t("Chargement...") }}</b-container>
+    <upload-modal
+      v-if="uploadPageNumber !== undefined"
+      :pages="
+        images.filter(
+          ({ pageNumber }) =>
+            pageNumber >= uploadPageNumber! &&
+            pageNumber <
+              uploadPageNumber! +
+                maxUploadableImagesFromPageNumber(uploadPageNumber!),
+        )
+      "
+      folder-name="20241025T171702824"
+    />
   </b-container>
 </template>
 <script lang="ts" setup>
@@ -52,13 +71,15 @@ import { vElementVisibility } from "@vueuse/components";
 
 import { dumiliSocketInjectionKey } from "~/composables/useDumiliSocket";
 import { ui } from "~/stores/ui";
+import { suggestions } from "~/stores/suggestions";
 
 const { indexationSocket } = inject(dumiliSocketInjectionKey)!;
+const { loadIndexation } = suggestions();
 
 const imagesInViewport = ref(new Set<number>());
 
 const { images } = defineProps<{
-  images: { url: string | null; id: number }[];
+  images: { url: string | null; id: number; pageNumber: number }[];
   selectable?: boolean;
 }>();
 
@@ -72,9 +93,15 @@ const emit = defineEmits<{
 
 const { t: $t } = useI18n();
 
+const uploadPageNumber = ref<number>();
+const maxUploadableImagesFromPageNumber = (pageNumber: number) =>
+  (images.find(({ pageNumber: pn, url }) => pn > pageNumber && url)
+    ?.pageNumber || images.length) - pageNumber;
+
 const { visiblePages, currentPage } = storeToRefs(ui());
 
 const imagesRef = ref<HTMLElement | null>(null);
+
 useSortable(imagesRef, images, {
   multiDrag: true,
   selectedClass: "selected",
@@ -83,8 +110,9 @@ useSortable(imagesRef, images, {
 
   onUpdate: async (e) => {
     moveArrayElement(images, e.oldIndex, e.newIndex, e);
-    nextTick(() => {
-      indexationSocket.value?.services.updatePageUrls(images);
+    nextTick(async () => {
+      await indexationSocket.value?.services.updatePageUrls(images);
+      await loadIndexation();
     });
   },
 });

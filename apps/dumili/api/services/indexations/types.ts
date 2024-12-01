@@ -1,25 +1,28 @@
-import type { Prisma } from "~prisma/client_dumili";
-import type { Errorable } from "~socket.io-services";
+import { Prisma } from "~/prisma/client_dumili";
 
-export type IndexationWithFirstPage = Prisma.indexationGetPayload<{
-  include: {
-    pages: {
-      take: 1;
-      orderBy: {
-        pageNumber: "asc";
-      };
-    };
-  };
+export const indexationWithFirstPageAndAcceptedIssueSuggestion = {
+  pages: {
+    take: 1,
+    orderBy: {
+      pageNumber: "asc",
+    },
+  },
+  acceptedIssueSuggestion: true,
+} as const;
+
+
+export type IndexationWithFirstPageAndAcceptedIssueSuggestion = Prisma.indexationGetPayload<{
+  include: typeof indexationWithFirstPageAndAcceptedIssueSuggestion
 }>;
 
 export default abstract class {
   static namespaceEndpoint: string = "/indexations";
 
-  abstract create: (indexationId: string, callback: () => void) => void;
+  abstract create: (indexationId: string, numberofPages: number, callback: () => void) => void;
 
   abstract getIndexations: (
     callback: (
-      data: Errorable<{ indexations: IndexationWithFirstPage[] }, "Error">,
+      data: IndexationWithFirstPageAndAcceptedIssueSuggestion[],
     ) => void,
   ) => void;
 }
