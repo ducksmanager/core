@@ -343,6 +343,44 @@ export default (io: Server) => {
         callback({ status: "OK" });
       });
 
+      indexationSocket.on("updateNumberOfPages", async (numberOfPages, callback) => {
+        if (numberOfPages < 4 || numberOfPages > 996) {
+          callback({
+            error: `Invalid number of pages`,
+            errorDetails: JSON.stringify({ numberOfPages }),
+          });
+          return;
+        }
+        const currentMaxPageNumber = Math.max(
+          ...indexationSocket.data.indexation.pages.map(({ pageNumber }) =>
+            pageNumber,
+          ),
+        );
+        await prisma.indexation.update({
+          data: {
+            pages: {
+              deleteMany: {
+                pageNumber: {
+                  gt: numberOfPages,
+                },
+              },
+              createMany: {
+                data: Array.from({ length: numberOfPages - currentMaxPageNumber }).map(
+                  (_, idx) => ({
+                    pageNumber: currentMaxPageNumber + idx + 1,
+                  }),
+                ),
+              },
+            }
+          },
+          where: {
+            id: indexationSocket.data.indexation.id,
+          },
+        });
+
+        callback({ status: "OK" });
+      });
+
       indexationSocket.on("runKumikoOnPage", async (pageId, callback) => {
         const { indexation } = indexationSocket.data;
         const page = indexation.pages.find(({ id }) => id === pageId)!;

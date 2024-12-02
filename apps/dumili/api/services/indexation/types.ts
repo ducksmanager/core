@@ -150,6 +150,11 @@ export default abstract class {
     callback: (data: { status: "OK" }) => void,
   ) => void;
 
+  abstract updateNumberOfPages: (
+    numberOfPages: number,
+    callback: (data: Errorable<{ status: "OK" }, 'Invalid number of pages'>) => void,
+  ) => void;
+
   abstract runOcr: (
     entryId: entry["id"],
     callback: (

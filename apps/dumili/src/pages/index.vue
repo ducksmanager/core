@@ -62,7 +62,11 @@
             "Combien de pages le magazine contient-il ? (y compris les pages que vous ne souhaitez pas indexer)",
           )
         }}
-        <b-form-input v-model="totalPages" type="number" /></b-form></b-modal
+        <b-form-input
+          v-model.number="totalPages"
+          type="number"
+          min="4"
+          max="996" /></b-form></b-modal
   ></b-container>
 </template>
 

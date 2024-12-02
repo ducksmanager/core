@@ -11,7 +11,8 @@
       <b-dropdown
         v-if="indexation.acceptedIssueSuggestion"
         variant="light"
-        class="position-absolute m-4 top-0 end-0 z-2"
+        class="position-absolute m-4 top-0 end-0"
+        style="z-index: 1030"
       >
         <template #button-content>{{ $t("Méta-données") }}</template>
         <b-dropdown-item
@@ -20,6 +21,16 @@
             v-model="indexation.acceptedIssueSuggestion.price"
             type="text"
             @click.stop="() => {}"
+        /></b-dropdown-item>
+        <b-dropdown-item
+          >{{ $t("Nombre de pages") }}
+          <input
+            :value="numberOfPages"
+            type="number"
+            min="4"
+            max="996"
+            @click.stop="updateNumberOfPages"
+            @blur.stop="updateNumberOfPages"
         /></b-dropdown-item>
       </b-dropdown>
       <div>
@@ -168,8 +179,28 @@ const { runKumikoOnPage, runKumiko } = useAi();
 const lastHoveredEntry = ref<entryModel | null>(null);
 
 const { status: aiStatus } = useAi();
+const { t: $t } = useI18n();
 
 const pageHeight = 50;
+
+const numberOfPages = computed({
+  get: () => indexation.value.pages.length,
+  set: async (value) => {
+    if (value < numberOfPages.value) {
+      if (
+        !confirm(
+          $t(
+            "Vous êtes sur le point de supprimer les {numberOfPagesToDelete} dernières pages de l'indexation. Êtes-vous sûr(e) ?",
+          ),
+        )
+      ) {
+        return;
+      }
+    }
+    indexationSocket.value!.services.updateNumberOfPages(value);
+    await loadIndexation();
+  },
+});
 
 const issueAiSuggestion = computed(() =>
   indexation.value.issueSuggestions.find(({ isChosenByAi }) => isChosenByAi),
@@ -180,6 +211,10 @@ watch(hoveredEntry, (entry) => {
     lastHoveredEntry.value = entry;
   }
 });
+
+const updateNumberOfPages = (event: Event) => {
+  numberOfPages.value = parseInt((event.target as HTMLInputElement).value);
+};
 
 const onEntryResizeStop = (entryIdx: number, height: number) => {
   indexation.value!.entries[entryIdx].entirepages = Math.max(
