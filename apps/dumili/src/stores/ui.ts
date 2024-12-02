@@ -9,6 +9,7 @@ export const ui = defineStore("ui", () => {
   const currentEntry = ref<FullEntry>();
   const currentPage = ref(0);
   const visiblePages = ref<Set<number> | undefined>();
+  const pageHeight = ref(50);
 
   watch(
     indexation,
@@ -22,6 +23,7 @@ export const ui = defineStore("ui", () => {
     showAiDetectionsOn: ref<{ type: "page" | "entry"; id: number } | undefined>(
       undefined,
     ),
+    pageHeight,
     currentPage,
     visiblePages,
     currentEntry,

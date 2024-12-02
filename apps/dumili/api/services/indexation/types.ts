@@ -51,7 +51,7 @@ export default abstract class {
 
   abstract setPageUrl: (
     id: number,
-    url: string,
+    url: string|null,
     callback: () => void,
   ) => void;
 
@@ -138,7 +138,7 @@ export default abstract class {
   abstract runKumikoOnPage: (
     pageId: page["id"],
     callback: (
-      data: Errorable<{ status: "OK" }, "Kumiko output could not be parsed">,
+      data: Errorable<{ status: "OK" }, "This indexation does not have any page with this ID"|"Kumiko output could not be parsed">,
     ) => void,
   ) => void;
 

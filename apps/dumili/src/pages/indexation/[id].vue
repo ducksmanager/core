@@ -1,15 +1,7 @@
 <template>
   <b-row v-if="indexationId && hasData" class="d-flex h-100">
     <b-col :cols="6" class="d-flex flex-column h-100">
-      <template v-if="activeTab === 'pageGallery'">
-        <Gallery :images="indexation.pages" />
-        <b-button
-          v-show="!showUploadWidget"
-          @click="showUploadWidget = !showUploadWidget"
-        >
-          {{ $t("Envoyer des images de pages") }}
-        </b-button>
-      </template>
+      <Gallery v-if="activeTab === 'pageGallery'" :images="indexation.pages" />
       <DumiliBook
         v-else-if="activeTab === 'book' && firstPageDimensions"
         v-bind="{ firstPageDimensions, indexation }"
@@ -41,7 +33,6 @@ import type { FullIndexation } from "~dumili-services/indexation/types";
 
 const book = ref<PageFlip | undefined>(undefined);
 
-const showUploadWidget = ref(false);
 const route = useRoute();
 
 const { t: $t } = useI18n();

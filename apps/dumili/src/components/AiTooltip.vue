@@ -3,9 +3,11 @@
     @mouseout="() => (showRepeat = false)"
     @mouseover="() => (showRepeat = true)"
   >
-    <b-tooltip :target="id" click @show="emit('click')" @hide="emit('blur')"
-      ><slot
-    /></b-tooltip>
+    <Teleport to="body">
+      <b-tooltip :target="id" click @show="emit('click')" @hide="emit('blur')"
+        ><slot
+      /></b-tooltip>
+    </Teleport>
     <AiSuggestionIcon
       :id="disabled ? `${id}-disabled` : id"
       button

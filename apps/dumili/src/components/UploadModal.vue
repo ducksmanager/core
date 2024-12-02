@@ -3,11 +3,10 @@
     id="upload-modal"
     v-model="modal"
     :title="$t('Envoi d\'images de pages')"
-    :cancel-title="$t('Annuler')"
     align="center"
-    hide-footer
+    no-footer
     centered
-    :class="{ 'pe-none': isProcessing }"
+    :class="{ 'pe-none': isUploading || processLog }"
     content-class="h-100 "
     dialog-class="h-100"
     body-class="d-flex flex-column align-items-start overflow-auto"
@@ -53,7 +52,7 @@
         </i18n-t></b-alert
       >
     </div>
-    <div id="widget-container" class="w-100"></div>
+    <div v-show="showWidget" id="widget-container" class="w-100"></div>
   </b-modal>
 </template>
 
@@ -63,25 +62,25 @@ import type {
   CloudinaryUploadWidgetInfo,
 } from "cloudinary-widget";
 import { dumiliSocketInjectionKey } from "~/composables/useDumiliSocket";
+import { suggestions } from "~/stores/suggestions";
 
 import { stores as webStores } from "~web";
 
 const { indexationSocket } = inject(dumiliSocketInjectionKey)!;
+const { indexation } = storeToRefs(suggestions());
 
 const { user } = storeToRefs(webStores.collection());
 
 const modal = ref(true);
 const uploadFileType = ref<"PDF" | "Images">("PDF");
 
-const { folderName, pages } = defineProps<{
+const { pages } = defineProps<{
   pages: { id: number; pageNumber: number }[];
-  folderName: string;
 }>();
 
-console.log("folderName", folderName);
-
 const currentPageIndex = ref(0);
-const isProcessing = ref(false);
+const showWidget = ref(true);
+const isUploading = ref(false);
 const processLog = ref("");
 
 const emit = defineEmits<{
@@ -101,6 +100,7 @@ const processPage = async (pageIndex: number, url: string) => {
 };
 
 onMounted(() => {
+  const folderName = indexation.value!.id;
   const uploadWidget = cloudinary.createUploadWidget(
     {
       cloudName: import.meta.env.VITE_CLOUDINARY_CLOUDNAME,
@@ -123,9 +123,10 @@ onMounted(() => {
       } else {
         switch (result?.event) {
           case "queues-start":
-            isProcessing.value = true;
+            isUploading.value = true;
             break;
           case "success":
+            showWidget.value = false;
             const info = result.info as CloudinaryUploadWidgetInfo;
             console.log("Done! Here is the image info: ", info);
 
@@ -146,9 +147,7 @@ onMounted(() => {
               await processPage(currentPageIndex.value++, info.secure_url);
             }
             currentPageIndex.value = 0;
-            processLog.value = ``;
-            isProcessing.value = false;
-            uploadWidget.close();
+            modal.value = false;
             emit("done");
             break;
           case "abort":
@@ -158,6 +157,12 @@ onMounted(() => {
       }
     },
   );
+
+  watch(showWidget, (value) => {
+    if (!value) {
+      uploadWidget.close();
+    }
+  });
 });
 </script>
 

@@ -48,87 +48,21 @@
     >
       <b-col :cols="1" style="padding: 0">
         <b-row
-          v-for="{
-            id,
-            pageNumber,
-            aiKumikoResultPanels,
-            aiKumikoInferredStoryKind,
-          } in indexation.pages"
-          :key="id"
+          v-for="page in indexation.pages"
+          :key="page.id"
           :style="{ height: `${pageHeight}px` }"
           class="g-0 px-0 py-0 align-items-center page"
         >
-          <b-col
-            role="button"
-            :class="{
-              'fw-bold': visiblePages?.has(id),
-            }"
-            @click="currentPage = pageNumber - 1"
-            >{{ $t("Page") }} {{ pageNumber }}<br /><ai-tooltip
-              v-if="aiKumikoResultPanels"
-              :id="`ai-results-page-${pageNumber}`"
-              :value="aiKumikoInferredStoryKind"
-              :on-click-rerun="() => runKumikoOnPage(id)"
-              @click="showAiDetectionsOn = { type: 'page', id }"
-            >
-              <b>{{ $t("Cases détectées") }}</b>
-              <table-results
-                :data="
-                  aiKumikoResultPanels.map(({ x, y, width, height }) => ({
-                    x,
-                    y,
-                    width,
-                    height,
-                  }))
-                "
-              />
-              <b>{{ $t("Type d'entrée déduit pour la page") }}</b>
-              {{
-                aiKumikoInferredStoryKind
-                  ? storyKinds[aiKumikoInferredStoryKind] || $t("Non calculé")
-                  : $t("Non calculé")
-              }}
-            </ai-tooltip>
-          </b-col>
+          <TableOfContentsPage :page="page" />
         </b-row>
       </b-col>
       <b-col :cols="1" class="position-relative p-0">
         <template v-for="(entry, idx) in indexation.entries" :key="entry.id">
-          <vue-draggable-resizable
-            :active="hoveredEntry === entry"
-            :parent="true"
-            prevent-deactivation
-            :resizable="true"
-            :draggable="false"
-            :handles="['bm']"
-            :grid="[1, pageHeight]"
-            :h="entry.entirepages * pageHeight"
-            :min-height="pageHeight - 1"
-            :class-name="`entry col w-100 border kind-${entry.acceptedStoryKind?.kind} ${(hoveredEntry === entry && 'striped') || ''} ${(currentEntry?.id === entry.id && 'border-2') || 'border-1'}`"
-            :title="`${entry.title || 'Inconnu'} (${getUserFriendlyPageCount(
-              entry,
-            )})`"
-            @mouseover="hoveredEntry = entry"
-            @mouseout="hoveredEntry = null"
-            @resize-stop="
-              (_left: number, _top: number, _width: number, height: number) =>
-                onEntryResizeStop(idx, height)
-            "
-            @click="
-              currentPage = getFirstPageOfEntry(indexation.entries, entry.id)
-            "
-          ></vue-draggable-resizable>
-          <b-button
-            v-if="
-              indexation.entries.length - 1 === idx &&
-              lastHoveredEntry?.id === entry.id
-            "
-            class="create-entry fw-bold position-absolute mt-n1 d-flex justify-content-center align-items-center"
-            title="Create an entry here"
-            variant="info"
-            @click="createEntry()"
-            >{{ $t("Ajouter une entrée") }}</b-button
-          >
+          <TableOfContentsEntry
+            :entry="entry"
+            @on-entry-resize-stop="onEntryResizeStop(idx, $event)"
+            @create-entry-after="createEntry"
+          />
         </template>
       </b-col>
       <b-col :cols="10" class="d-flex flex-column" style="padding: 0">
@@ -155,33 +89,24 @@
 <script setup lang="ts">
 import useAi from "~/composables/useAi";
 import { dumiliSocketInjectionKey } from "~/composables/useDumiliSocket";
-import {
-  getEntryFromPage,
-  getEntryPages,
-  getFirstPageOfEntry,
-} from "~dumili-utils/entryPages";
+import { getEntryFromPage, getEntryPages } from "~dumili-utils/entryPages";
 import { suggestions } from "~/stores/suggestions";
 import { ui } from "~/stores/ui";
-import { FullEntry, FullIndexation } from "~dumili-services/indexation/types";
-import { entry as entryModel } from "~prisma/client_dumili";
-import { storyKinds } from "~dumili-types/storyKinds";
+import { FullIndexation } from "~dumili-services/indexation/types";
 import { watchDebounced } from "@vueuse/core";
+import TableOfContentsEntry from "./TableOfContentsEntry.vue";
 
 const { indexationSocket } = inject(dumiliSocketInjectionKey)!;
 
 const { loadIndexation } = suggestions();
-const { hoveredEntry, currentEntry, showAiDetectionsOn } = storeToRefs(ui());
+const { hoveredEntry, currentEntry } = storeToRefs(ui());
 const indexation = storeToRefs(suggestions()).indexation as Ref<FullIndexation>;
-const { currentPage, visiblePages } = storeToRefs(ui());
+const { currentPage, pageHeight } = storeToRefs(ui());
 
-const { runKumikoOnPage, runKumiko } = useAi();
-
-const lastHoveredEntry = ref<entryModel | null>(null);
+const { runKumiko } = useAi();
 
 const { status: aiStatus } = useAi();
 const { t: $t } = useI18n();
-
-const pageHeight = 50;
 
 const numberOfPages = computed({
   get: () => indexation.value.pages.length,
@@ -206,12 +131,6 @@ const issueAiSuggestion = computed(() =>
   indexation.value.issueSuggestions.find(({ isChosenByAi }) => isChosenByAi),
 );
 
-watch(hoveredEntry, (entry) => {
-  if (entry) {
-    lastHoveredEntry.value = entry;
-  }
-});
-
 const updateNumberOfPages = (event: Event) => {
   numberOfPages.value = parseInt((event.target as HTMLInputElement).value);
 };
@@ -219,22 +138,8 @@ const updateNumberOfPages = (event: Event) => {
 const onEntryResizeStop = (entryIdx: number, height: number) => {
   indexation.value!.entries[entryIdx].entirepages = Math.max(
     0,
-    Math.round(height / pageHeight),
+    Math.round(height / pageHeight.value),
   );
-};
-
-const getUserFriendlyPageCount = (entry: FullEntry) => {
-  const fraction = entry.brokenpagenumerator
-    ? `${entry.brokenpagenumerator}/${entry.brokenpagedenominator}`
-    : "";
-  if (entry.entirepages === 0) {
-    if (fraction) {
-      return `${fraction} page`;
-    } else {
-      return "0 page";
-    }
-  }
-  return `${entry.entirepages}${fraction ? `+ ${fraction}` : ""} pages`;
 };
 
 const createEntry = async () => {
@@ -309,15 +214,6 @@ watch(
   button.create-entry {
     height: 25px;
     z-index: 10;
-  }
-}
-
-:deep(.entry) {
-  margin-top: 1px;
-  cursor: pointer;
-
-  &:first-child {
-    margin-top: 0;
   }
 }
 

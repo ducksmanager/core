@@ -383,7 +383,20 @@ export default (io: Server) => {
 
       indexationSocket.on("runKumikoOnPage", async (pageId, callback) => {
         const { indexation } = indexationSocket.data;
-        const page = indexation.pages.find(({ id }) => id === pageId)!;
+        const page = await prisma.page.findUnique({
+          where: {
+            id: pageId,
+            indexationId: indexation.id,
+          },
+        });
+
+        if (!page) {
+          callback({
+            error: `This indexation does not have any page with this ID`,
+            errorDetails: JSON.stringify({ pageId }),
+          });
+          return;
+        }
 
         await setKumikoInferredPageStoryKinds([page]);
         const entry = getEntryFromPage(indexation, pageId)!;

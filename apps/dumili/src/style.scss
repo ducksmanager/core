@@ -1,5 +1,9 @@
 @use "sass:color";
 
+.opacity-100-hover:hover{
+  opacity: 1 !important;
+}
+
 :root {
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;

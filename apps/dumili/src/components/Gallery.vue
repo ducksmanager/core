@@ -19,6 +19,13 @@
         md="4"
         @click="selectedId = id"
       >
+        <b-button
+          variant="danger"
+          class="position-absolute top-0 mt-2 text-center opacity-50 opacity-100-hover"
+          @click="disconnectPageUrl(id)"
+        >
+          {{ $t("Désassocier l'image") }}
+        </b-button>
         <b-img
           v-if="url"
           v-element-visibility="[
@@ -42,7 +49,7 @@
           >{{ $t("Ajouter") }}</b-button
         >
         <div class="position-absolute bottom-0 text-center">
-          Page {{ pageNumber }} ({{ id }})
+          {{ $t("Page {pageNumber} (ID: {id})", { pageNumber, id }) }}
         </div>
       </b-col>
     </b-row>
@@ -58,7 +65,7 @@
                 maxUploadableImagesFromPageNumber(uploadPageNumber!),
         )
       "
-      folder-name="20241025T171702824"
+      @done="loadIndexation"
     />
   </b-container>
 </template>
@@ -118,6 +125,11 @@ useSortable(imagesRef, images, {
 });
 
 const selectedId = ref<number | undefined>(undefined);
+
+const disconnectPageUrl = async (id: number) => {
+  await indexationSocket.value!.services.setPageUrl(id, null);
+  await loadIndexation();
+};
 
 watch(selectedId, (id) => {
   if (id) {

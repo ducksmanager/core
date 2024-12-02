@@ -6,7 +6,6 @@ import { dumiliSocketInjectionKey } from "./useDumiliSocket";
 
 export default () => {
   const { loadIndexation } = suggestions();
-  const { indexation } = storeToRefs(suggestions());
   const { fetchIssuecodeDetails, fetchPublicationNames } = coa();
   const { issuecodeDetails } = storeToRefs(coa());
 
@@ -28,7 +27,7 @@ export default () => {
       ),
     );
 
-    await loadIndexation(indexation.value!.id);
+    await loadIndexation();
 
     await fetchIssuecodeDetails(
       results.covers.map(({ issuecode }) => issuecode!),
