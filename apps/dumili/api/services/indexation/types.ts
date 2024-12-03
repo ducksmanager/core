@@ -1,5 +1,6 @@
 import type {
   entry,
+  indexation,
   issueSuggestion,
   page,
   Prisma,
@@ -11,13 +12,17 @@ import type { Errorable } from "~socket.io-services";
 export const indexationPayloadInclude = {
   pages: {
     include: {
-      aiKumikoResultPanels: true,
-      aiOcrPossibleStories: {
+      image: {
         include: {
-          storySuggestion: true,
-        },
-      },
-      aiOcrResults: true,
+          aiKumikoResultPanels: true,
+          aiOcrPossibleStories: {
+            include: {
+              storySuggestion: true,
+            },
+          },
+          aiOcrResults: true,
+        }
+      }
     },
   },
   acceptedIssueSuggestion: true,
@@ -92,8 +97,8 @@ export default abstract class {
     callback: (data: { suggestionId: storySuggestion["id"] }) => void,
   ) => void;
 
-  abstract updateIssueSuggestion: (
-    values: Pick<issueSuggestion, "price">,
+  abstract updateIndexation: (
+    values: Pick<indexation, "price">,
     callback: (data: { status: "OK" }) => void,
   ) => void;
 
@@ -143,10 +148,7 @@ export default abstract class {
   ) => void;
 
   abstract updatePageUrls: (
-    pages: {
-      id: number;
-      url: string | null;
-    }[],
+    pageIds: number[],
     callback: (data: { status: "OK" }) => void,
   ) => void;
 

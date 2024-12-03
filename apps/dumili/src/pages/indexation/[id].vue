@@ -1,7 +1,7 @@
 <template>
   <b-row v-if="indexationId && hasData" class="d-flex h-100">
     <b-col :cols="6" class="d-flex flex-column h-100">
-      <Gallery v-if="activeTab === 'pageGallery'" :images="indexation.pages" />
+      <Gallery v-if="activeTab === 'pageGallery'" :pages="indexation.pages" />
       <DumiliBook
         v-else-if="activeTab === 'book' && firstPageDimensions"
         v-bind="{ firstPageDimensions, indexation }"
@@ -87,6 +87,7 @@ watch(
         ({ publicationcode }) => publicationcode,
       ),
     );
+
     const storycodes = indexation
       .value!.entries.map(({ storySuggestions }) =>
         storySuggestions
@@ -103,12 +104,16 @@ watch(
         )
         .filter((v): v is string => !!v),
     );
-    const { output }: { output: { height: number; width: number } } = await (
-      await fetch(
-        indexation.value.pages[0].url!.replace(/(?=\/v\d+)/, "/fl_getinfo"),
-      )
-    ).json();
-    firstPageDimensions.value = output;
+    if (indexation.value.pages.some(({ image }) => image)) {
+      const { output }: { output: { height: number; width: number } } = await (
+        await fetch(
+          indexation.value.pages
+            .find(({ image }) => image)!
+            .image!.url.replace(/(?=\/v\d+)/, "/fl_getinfo"),
+        )
+      ).json();
+      firstPageDimensions.value = output;
+    }
     hasData.value = true;
   },
   { immediate: true },
@@ -128,13 +133,5 @@ watch(
 
 .form-control::placeholder {
   color: red !important;
-}
-
-.overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
 }
 </style>

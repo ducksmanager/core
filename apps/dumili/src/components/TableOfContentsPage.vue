@@ -6,16 +6,16 @@
     }"
     @click="currentPage = pageNumber - 1"
     >{{ $t("Page") }} {{ pageNumber }}<br /><ai-tooltip
-      v-if="aiKumikoResultPanels"
+      v-if="image?.aiKumikoResultPanels"
       :id="`ai-results-page-${pageNumber}`"
-      :value="aiKumikoInferredStoryKind"
+      :value="image.aiKumikoInferredStoryKind"
       :on-click-rerun="() => runKumikoOnPage(id)"
       @click="showAiDetectionsOn = { type: 'page', id }"
     >
       <b>{{ $t("Cases détectées") }}</b>
       <table-results
         :data="
-          aiKumikoResultPanels.map(({ x, y, width, height }) => ({
+          image.aiKumikoResultPanels.map(({ x, y, width, height }) => ({
             x,
             y,
             width,
@@ -25,8 +25,8 @@
       />
       <b>{{ $t("Type d'entrée déduit pour la page") }}</b>
       {{
-        aiKumikoInferredStoryKind
-          ? storyKinds[aiKumikoInferredStoryKind] || $t("Non calculé")
+        image.aiKumikoInferredStoryKind
+          ? storyKinds[image.aiKumikoInferredStoryKind] || $t("Non calculé")
           : $t("Non calculé")
       }}
     </ai-tooltip>
@@ -42,8 +42,7 @@ const { page } = defineProps<{
   page: FullIndexation["pages"][number];
 }>();
 
-const { id, aiKumikoResultPanels, aiKumikoInferredStoryKind, pageNumber } =
-  page;
+const { id, image, pageNumber } = page;
 
 const { showAiDetectionsOn } = storeToRefs(ui());
 

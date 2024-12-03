@@ -25,8 +25,8 @@
                 class="display-6"
             /></b-button>
             <b-img
-              :blank-color="pages[0]?.url ? undefined : 'lightgrey'"
-              :src="pages[0]?.url || undefined"
+              :blank-color="pages[0]?.image?.url ? undefined : 'lightgrey'"
+              :src="pages[0]?.image?.url || undefined"
               fluid
             />
             <div class="position-absolute bottom-0 pb-3">

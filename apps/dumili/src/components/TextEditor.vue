@@ -66,7 +66,7 @@ const textContent = computed(() => {
   const rows = [
     [
       [issuecode],
-      issue.value!.price ? [`[price:${issue.value!.price}]`] : [],
+      indexation.value!.price ? [`[price:${indexation.value!.price}]`] : [],
       [`[pages:${indexation.value!.pages.length}]`],
     ].flat(),
     ...indexation.value!.entries.map((entry, idx) => {

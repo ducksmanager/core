@@ -18,9 +18,9 @@ model entry {
   part                          String?               @db.VarChar(5)
   title                         String?               @db.VarChar(100)
   entirepages                   Int
-  brokenpagenumerator           Int                   @default(0) @db.SmallInt
-  brokenpagedenominator         Int                   @default(1) @db.SmallInt
-  indexation                    indexation            @relation(fields: [indexationId], references: [id], onUpdate: Restrict, map: "entry_indexation_id_fk")
+  brokenpagenumerator           Int                   @default(0)
+  brokenpagedenominator         Int                   @default(1)
+  indexation                    indexation            @relation(fields: [indexationId], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "entry_indexation_id_fk")
   acceptedStoryKind             storyKindSuggestion?  @relation("entry_accepted_story_kind_suggested_idTostory_kind_suggestion", fields: [acceptedStoryKindSuggestionId], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "entry_story_kind_suggestion_id_fk")
   acceptedStory                 storySuggestion?      @relation("entry_accepted_story_suggested_idTostory_suggestion", fields: [acceptedStorySuggestionId], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "entry_story_suggestion_id_fk")
   storyKindSuggestions          storyKindSuggestion[] @relation("story_kind_suggestion_entry_idToentry")
@@ -28,27 +28,40 @@ model entry {
 
   @@index([acceptedStoryKindSuggestionId], map: "entry_story_kind_suggestion_id_fk")
   @@index([acceptedStorySuggestionId], map: "entry_story_suggestion_id_fk")
+  @@index([indexationId], map: "entry_indexation_id_fk")
+}
+
+model image {
+  id                        Int                                 @id @default(autoincrement())
+  url                       String                              @unique(map: "page_image_url_uindex") @db.VarChar(255)
+  aiKumikoInferredStoryKind pageImageAiKumikoInferredStoryKind? @map("ai_kumiko_inferred_story_kind")
+  aiKumikoResultPanels      aiKumikoResultPanel[]
+  aiOcrPossibleStories      aiOcrPossibleStory[]
+  aiOcrResults              aiOcrResult[]
+  page                      page[]
+
+  @@map("page_image")
 }
 
 model page {
-  id                        Int                   @id @default(autoincrement())
-  pageNumber                Int                   @map("page_number") @db.SmallInt
-  url                       String?               @unique(map: "page_url_uindex") @db.VarChar(255)
-  indexationId              String                @map("indexation_id") @db.VarChar(20)
-  aiKumikoResultPanels      aiKumikoResultPanel[]
-  aiKumikoInferredStoryKind storyKind?            @map("ai_kumiko_inferred_story_kind")
-  aiOcrPossibleStories      aiOcrPossibleStory[]
-  aiOcrResults              aiOcrResult[]
-  indexation                indexation            @relation(fields: [indexationId], references: [id], onUpdate: Restrict, onDelete: Cascade, map: "page_indexation_id_fk")
+  id           Int        @id @default(autoincrement())
+  pageNumber   Int        @map("page_number") @db.SmallInt
+  indexationId String     @map("indexation_id") @db.VarChar(20)
+  imageId      Int?       @map("image_id")
+  image        image?     @relation(fields: [imageId], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "page_image_id_fk")
+  indexation   indexation @relation(fields: [indexationId], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "page_indexation_id_fk")
 
   @@unique([indexationId, pageNumber], map: "page_indexation_id_page_number_uindex")
   @@index([indexationId], map: "page_indexation_id_fk")
+  @@index([imageId], map: "page_image_id_fk")
 }
 
 model indexation {
   id                        String            @id @db.VarChar(20)
+  issuecode                 String?           @db.VarChar(9)
   acceptedIssueSuggestionId Int?              @map("accepted_issue_suggestion_id")
   dmUserId                  Int               @map("dm_user_id")
+  price                     String?           @db.VarChar(150)
   entries                   entry[]
   acceptedIssueSuggestion   issueSuggestion?  @relation("indexation_accepted_issue_suggestion_idToissue_suggestion", fields: [acceptedIssueSuggestionId], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "indexation_issue_suggestion_id_fk")
   issueSuggestions          issueSuggestion[]
@@ -60,24 +73,26 @@ model indexation {
 model storyKindSuggestion {
   id                Int       @id @default(autoincrement())
   kind              storyKind
+  isChosenByAi      Boolean   @default(false) @map("is_chosen_by_ai")
   entryId           Int       @map("entry_id")
   acceptedOnEntries entry[]   @relation("entry_accepted_story_kind_suggested_idTostory_kind_suggestion")
   entry             entry     @relation("story_kind_suggestion_entry_idToentry", fields: [entryId], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "story_kind_suggestion_entry_id_fk")
-  isChosenByAi      Boolean   @default(false) @map("is_chosen_by_ai")
 
   @@index([entryId], map: "story_kind_suggestion_entry_id_fk")
+  @@index([isChosenByAi], map: "story_kind_suggestion_ai_source_page_id_fk")
   @@map("story_kind_suggestion")
 }
 
 model storySuggestion {
-  id                Int                 @id @default(autoincrement())
-  storycode         String              @db.VarChar(19)
-  entryId           Int                 @map("entry_id")
-  ocrDetailsId      Int?                @map("ocr_details_id")
-  ocrDetails        aiOcrPossibleStory?
-  isChosenByAi      Boolean             @default(false) @map("is_chosen_by_ai")
-  acceptedOnEntries entry[]             @relation("entry_accepted_story_suggested_idTostory_suggestion")
-  entry             entry               @relation(fields: [entryId], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "story_suggestion_entry_id_fk")
+  id                                                                           Int                  @id @default(autoincrement())
+  storycode                                                                    String               @db.VarChar(19)
+  entryId                                                                      Int                  @map("entry_id")
+  ocrDetailsId                                                                 Int?                 @map("ocr_details_id")
+  isChosenByAi                                                                 Boolean              @map("is_chosen_by_ai")
+  ocrDetails                                                                   aiOcrPossibleStory[]
+  acceptedOnEntries                                                            entry[]              @relation("entry_accepted_story_suggested_idTostory_suggestion")
+  ai_ocr_possible_story_story_suggestion_ocr_details_idToai_ocr_possible_story aiOcrPossibleStory?  @relation("story_suggestion_ocr_details_idToai_ocr_possible_story", fields: [ocrDetailsId], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "story_suggestion_ai_ocr_possible_story_id_fk")
+  entry                                                                        entry                @relation(fields: [entryId], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "story_suggestion_entry_id_fk")
 
   @@index([entryId], map: "story_suggestion_entry_id_fk")
   @@index([ocrDetailsId], map: "story_suggestion_ai_ocr_possible_story_id_fk")
@@ -87,33 +102,34 @@ model storySuggestion {
 model issueSuggestion {
   id                Int          @id @default(autoincrement())
   indexationId      String       @map("indexation_id") @db.VarChar(20)
-  isChosenByAi      Boolean      @default(false) @map("is_chosen_by_ai")
+  isChosenByAi      Boolean      @map("is_chosen_by_ai")
   publicationcode   String       @db.VarChar(12)
   issuenumber       String       @db.VarChar(13)
   issuecode         String       @db.VarChar(25)
-  price             String?      @db.VarChar(160)
   acceptedOnEntries indexation[] @relation("indexation_accepted_issue_suggestion_idToissue_suggestion")
-  indexation        indexation   @relation(fields: [indexationId], references: [id], onUpdate: Restrict, map: "issue_suggestion_indexation_id_fk")
+  indexation        indexation   @relation(fields: [indexationId], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "issue_suggestion_indexation_id_fk")
 
   @@index([indexationId], map: "issue_suggestion_indexation_id_fk")
   @@map("issue_suggestion")
 }
 
 model aiOcrPossibleStory {
-  id                Int             @id @default(autoincrement())
-  pageId            Int             @map("page_id")
-  page              page            @relation(fields: [pageId], references: [id], onUpdate: Restrict, map: "ai_ocr_possible_story_page_id_fk")
-  score             Int             @db.SmallInt
-  storySuggestionId Int             @unique @map("story_suggestion_id")
-  storySuggestion   storySuggestion @relation(fields: [storySuggestionId], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "ai_ocr_possible_story_story_suggestion_id_fk")
+  id                                                                      Int               @id @default(autoincrement())
+  imageId                                                                 Int               @map("image_id")
+  score                                                                   Int               @db.SmallInt
+  storySuggestionId                                                       Int               @map("story_suggestion_id")
+  image                                                                   image             @relation(fields: [imageId], references: [id], onUpdate: Restrict, map: "ai_ocr_possible_story_page_image_id_fk")
+  storySuggestion                                                         storySuggestion   @relation(fields: [storySuggestionId], references: [id], onDelete: Cascade, map: "ai_ocr_possible_story_story_suggestion_id_fk")
+  story_suggestion_story_suggestion_ocr_details_idToai_ocr_possible_story storySuggestion[] @relation("story_suggestion_ocr_details_idToai_ocr_possible_story")
 
-  @@index([pageId], map: "ai_ocr_possible_story_page_id_fk")
+  @@index([storySuggestionId], map: "ai_ocr_possible_story_story_suggestion_id_fk")
+  @@index([imageId], map: "ai_ocr_possible_story_page_image_id_fk")
   @@map("ai_ocr_possible_story")
 }
 
 model aiOcrResult {
   id         Int    @id @default(autoincrement())
-  pageId     Int    @map("page_id")
+  imageId    Int    @map("image_id")
   x1         Int
   x2         Int
   x3         Int
@@ -124,26 +140,39 @@ model aiOcrResult {
   y4         Int
   text       String @db.Text
   confidence Float  @db.Float
-  page       page   @relation(fields: [pageId], references: [id], onUpdate: Restrict, map: "ai_ocr_result_page_id_fk")
+  image      image  @relation(fields: [imageId], references: [id], onUpdate: Restrict, map: "ai_ocr_result_page_image_id_fk")
 
-  @@index([pageId], map: "ai_ocr_result_page_id_fk")
+  @@index([imageId], map: "ai_ocr_result_image_id_index")
   @@map("ai_ocr_result")
 }
 
 model aiKumikoResultPanel {
-  id     Int  @id @default(autoincrement())
-  pageId Int  @map("page_id")
-  x      Int  @db.SmallInt
-  y      Int  @db.SmallInt
-  width  Int  @db.SmallInt
-  height Int  @db.SmallInt
-  page   page @relation(fields: [pageId], references: [id], onUpdate: Restrict, map: "ai_kumiko_result_panel_page_id_fk")
+  id      Int   @id @default(autoincrement())
+  imageId Int   @map("image_id")
+  x       Int   @db.SmallInt
+  y       Int   @db.SmallInt
+  width   Int   @db.SmallInt
+  height  Int   @db.SmallInt
+  image   image @relation(fields: [imageId], references: [id], onUpdate: Restrict, map: "ai_kumiko_result_panel_page_image_id_fk")
 
-  @@index([pageId], map: "ai_kumiko_result_panel_page_id_fk")
+  @@index([imageId], map: "ai_kumiko_result_panel_page_image_id_fk")
   @@map("ai_kumiko_result_panel")
 }
 
 enum storyKind {
+  a
+  c
+  f
+  g
+  i
+  k
+  n
+  t
+  L
+  P
+}
+
+enum pageImageAiKumikoInferredStoryKind {
   a
   c
   f

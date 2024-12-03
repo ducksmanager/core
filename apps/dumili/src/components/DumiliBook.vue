@@ -13,33 +13,35 @@
           :class="`overlay kind-${hoveredEntry!.acceptedStoryKind?.kind} striped`"
         ></div>
       </template>
-      <template
-        v-if="
-          showAiDetectionsOn?.type === 'page' &&
-          showAiDetectionsOn.id === page.id
-        "
-      >
-        <div
-          v-for="panel in page.aiKumikoResultPanels"
-          :key="`kumiko-match-${panel.id}`"
-          class="overlay translucent"
-          :style="getPanelCss(panel)"
-        ></div>
-      </template>
-      <template
-        v-if="
-          showAiDetectionsOn?.type === 'entry' &&
-          getEntryPages(indexation, showAiDetectionsOn.id).includes(page)
-        "
-      >
-        <div
-          v-for="ocrDetection of page.aiOcrResults || []"
-          :key="`ocr-match-${ocrDetection.id}`"
-          class="position-absolute ocr-match text w-100 h-100"
-          :style="getOcrDetectionCss(ocrDetection, index + 1)"
+      <template v-if="page.image">
+        <template
+          v-if="
+            showAiDetectionsOn?.type === 'page' &&
+            showAiDetectionsOn.id === page.id
+          "
         >
-          {{ ocrDetection.text }}
-        </div>
+          <div
+            v-for="panel in page.image.aiKumikoResultPanels"
+            :key="`kumiko-match-${panel.id}`"
+            class="overlay translucent"
+            :style="getPanelCss(panel, page.image.url)"
+          ></div>
+        </template>
+        <template
+          v-if="
+            showAiDetectionsOn?.type === 'entry' &&
+            getEntryPages(indexation, showAiDetectionsOn.id).includes(page)
+          "
+        >
+          <div
+            v-for="ocrDetection of page.image.aiOcrResults || []"
+            :key="`ocr-match-${ocrDetection.id}`"
+            class="position-absolute ocr-match text w-100 h-100"
+            :style="getOcrDetectionCss(ocrDetection, index)"
+          >
+            {{ ocrDetection.text }}
+          </div></template
+        >
       </template>
     </template>
   </Book>
@@ -70,6 +72,9 @@ const {
 
 const book = ref<PageFlip>();
 const isBookOpened = ref(true);
+const pageDimensions = ref<Record<string, { width: number; height: number }>>(
+  {},
+);
 
 defineEmits<{
   "update:book": [value: PageFlip | undefined];
@@ -90,12 +95,28 @@ watch(
   },
 );
 
+watch(visiblePages, () => {
+  for (const pageId of visiblePages.value || []) {
+    const img = new Image();
+    const pageIndex = indexation.pages.findIndex(({ id }) => id === pageId);
+    img.src = indexation.pages[pageIndex].image!.url;
+
+    img.onload = () => {
+      pageDimensions.value[indexation.pages[pageIndex].image!.url] = {
+        width: img.naturalWidth,
+        height: img.naturalHeight,
+      };
+    };
+  }
+});
+
 const coverRatio = computed(
   () => firstPageDimensions.height / firstPageDimensions.width,
 );
 
-const getPanelCss = (panel: aiKumikoResultPanel) => {
-  const { width: pageWidth, height: pageHeight } = firstPageDimensions!;
+const getPanelCss = (panel: aiKumikoResultPanel, pageUrl: string) => {
+  const { width: pageWidth, height: pageHeight } =
+    pageDimensions.value[pageUrl]!;
   const { x, y, width, height } = panel;
   return {
     left: `${(x * 100) / pageWidth}%`,
@@ -112,8 +133,10 @@ const getOcrDetectionCss = (
   const pageElement = (
     book.value!.getPage(bookPageIndex) as unknown as { element: HTMLDivElement }
   ).element;
-  const naturalToRenderedRatio =
-    pageElement.clientWidth / firstPageDimensions!.width;
+
+  const naturalImageWidth =
+    pageDimensions.value[indexation.pages[bookPageIndex].image!.url]!.width;
+  const naturalToRenderedRatio = pageElement.clientWidth / naturalImageWidth;
   return {
     clipPath: `polygon(${[
       [x1, y1],
@@ -130,3 +153,12 @@ const getOcrDetectionCss = (
   };
 };
 </script>
+<style lang="scss" scoped>
+.overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+</style>

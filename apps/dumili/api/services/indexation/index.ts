@@ -12,7 +12,8 @@ import {
 import { getEntryFromPage, getEntryPages } from "~dumili-utils/entryPages";
 import type {
   entry,
-  page,
+  image,
+  Prisma,
   storyKindSuggestion,
   storySuggestion,
 } from "~prisma/client_dumili";
@@ -44,8 +45,8 @@ const getFullIndexation = (indexationId: string) =>
       return indexation;
     });
 
-const setKumikoInferredPageStoryKinds = async (pages: page[]) => {
-  const panelsPerPage = await runKumiko(pages.map(({ url }) => url));
+const setKumikoInferredPageStoryKinds = async (pages: Prisma.pageGetPayload<{include: {image: true}}>[]) => {
+  const panelsPerPage = await runKumiko(pages.filter(({image}) => !!image).map(({ image }) => (image as image).url));
 
   const transactions = panelsPerPage.map((panelsOfPage, idx) => {
     const page = pages[idx];
@@ -62,7 +63,7 @@ const setKumikoInferredPageStoryKinds = async (pages: page[]) => {
       `Kumiko: page ${page.pageNumber}: inferred story kind is ${inferredStoryKind}`,
     );
 
-    return prisma.page.update({
+    return prisma.image.update({
       data: {
         aiKumikoInferredStoryKind: inferredStoryKind,
         aiKumikoResultPanels: {
@@ -73,7 +74,7 @@ const setKumikoInferredPageStoryKinds = async (pages: page[]) => {
         },
       },
       where: {
-        id: page.id,
+        id: page.imageId!,
       },
     });
   });
@@ -110,7 +111,7 @@ export default (io: Server) => {
       const setInferredEntryStoryKind = async (entryId: entry["id"]) => {
         const indexation = indexationSocket.data.indexation;
         const mostInferredStoryKind = (
-          await prisma.page.groupBy({
+          await prisma.image.groupBy({
             by: ["aiKumikoInferredStoryKind"],
             orderBy: {
               _count: {
@@ -119,7 +120,7 @@ export default (io: Server) => {
             },
             where: {
               id: {
-                in: getEntryPages(indexation, entryId).map(({ id }) => id),
+                in: getEntryPages(indexation, entryId).filter(({imageId}) => !!imageId).map(({ imageId }) => imageId!),
               },
             },
           })
@@ -154,7 +155,12 @@ export default (io: Server) => {
       indexationSocket.on("setPageUrl", async (id, url, callback) => {
         const { id: indexationId } = indexationSocket.data.indexation;
         prisma.page
-          .update({data: { url }, where: {
+          .update({data: { 
+            image: url ? {
+              connect: {
+                url
+              }
+            }: {disconnect: true}}, where: {
             id,
             indexationId}
           })
@@ -174,16 +180,15 @@ export default (io: Server) => {
       indexationSocket.on("loadIndexation", async (callback) => {
         callback({ indexation: indexationSocket.data.indexation });
       });
-      indexationSocket.on("updatePageUrls", async (pages, callback) => {
+      indexationSocket.on("updatePageUrls", async (pageIds, callback) => {
         // In 2 steps so that we don't have to deal with unique constraints
         prisma.indexation
           .update({
             data: {
               pages: {
-                updateMany: pages.map(({ id, url }, idx) => ({
+                updateMany: pageIds.map((id, idx) => ({
                   data: {
                     pageNumber: -(idx + 1),
-                    url,
                   },
                   where: {
                     id,
@@ -199,10 +204,9 @@ export default (io: Server) => {
             prisma.indexation.update({
               data: {
                 pages: {
-                  updateMany: pages.map(({ id, url }, idx) => ({
+                  updateMany: pageIds.map((id, idx) => ({
                     data: {
                       pageNumber: idx + 1,
-                      url,
                     },
                     where: {
                       id,
@@ -258,14 +262,10 @@ export default (io: Server) => {
           .then(({ id }) => callback({ suggestionId: id })),
       );
 
-      indexationSocket.on("updateIssueSuggestion", (suggestion, callback) =>
+      indexationSocket.on("updateIndexation", (suggestion, callback) =>
         prisma.indexation
           .update({
-            data: {
-              acceptedIssueSuggestion: {
-                update: suggestion,
-              },
-            },
+            data: suggestion,
             where: {
               id: indexationSocket.data.indexation.id,
             },
@@ -384,6 +384,9 @@ export default (io: Server) => {
       indexationSocket.on("runKumikoOnPage", async (pageId, callback) => {
         const { indexation } = indexationSocket.data;
         const page = await prisma.page.findUnique({
+          include: {
+            image: true,
+          },
           where: {
             id: pageId,
             indexationId: indexation.id,
@@ -423,8 +426,8 @@ export default (io: Server) => {
           const {
             url,
             aiKumikoResultPanels,
-            id: pageId,
-          } = getEntryPages(indexation, entryId)[0]!;
+            id: imageId,
+          } = getEntryPages(indexation, entryId)[0]!.image!;
           if (!url) {
             callback({
               error: "This entry does not have a page URL associated",
@@ -464,9 +467,9 @@ export default (io: Server) => {
               ].kind === STORY,
           );
 
-          await prisma.page.update({
+          await prisma.image.update({
             where: {
-              id: pageId,
+              id: imageId,
             },
             data: {
               aiOcrResults: {

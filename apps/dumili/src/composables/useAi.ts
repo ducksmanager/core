@@ -55,7 +55,7 @@ export default () => {
         "La première page est une couverture, on va chercher si on la détecte parmi les résultats de la recherche par image...",
       );
 
-      const url = indexation.value!.pages[0].url;
+      const url = indexation.value!.pages[0].image?.url;
       if (!url) {
         alert("La première page n'a pas d'URL");
         return;

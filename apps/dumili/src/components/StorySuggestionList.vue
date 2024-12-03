@@ -32,7 +32,7 @@
               "
             :title="
               $t(
-                'Cette histoire fait généralement {originalPagesCount} pages mais l\'entrée en contient {entryPagesCount}',
+                'Cette histoire fait généralement {originalPagesCount} pages mais l\'entrée de votre indexation en contient {entryPagesCount}',
                 {
                   originalPagesCount: storyversionDetails[storyDetails[suggestion.storycode].originalstoryversioncode!].entirepages,
                   entryPagesCount: getEntryPages(indexation!, suggestion.entryId).length,
@@ -81,6 +81,7 @@ const acceptStory = async (storycode: storySuggestion["storycode"] | null) => {
       {
         entryId: entry.value.id,
         storycode,
+        isChosenByAi: false,
       },
     );
     storySuggestion = result.createdStorySuggestion;

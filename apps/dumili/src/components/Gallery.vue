@@ -4,13 +4,13 @@
     class="d-flex flex-column align-items-center justify-content-center flex-grow-1 overflow-y-auto"
   >
     <b-row
-      v-if="images"
+      v-if="pages"
       ref="imagesRef"
       align-h="center"
       class="overflow-y-auto"
     >
       <b-col
-        v-for="({ url, id, pageNumber }, idx) of images"
+        v-for="({ image, id, pageNumber }, idx) of pages"
         :id="`page-image-${idx}`"
         :key="id"
         class="position-relative d-flex justify-content-center align-items-center p-3 pb-5 border"
@@ -27,7 +27,7 @@
           {{ $t("Désassocier l'image") }}
         </b-button>
         <b-img
-          v-if="url"
+          v-if="image"
           v-element-visibility="[
             (visible) => {
               if (visible) {
@@ -39,7 +39,7 @@
             { threshold: 1 },
           ]"
           lazy
-          :src="url"
+          :src="image.url"
           fluid
         />
         <b-button
@@ -57,7 +57,7 @@
     <upload-modal
       v-if="uploadPageNumber !== undefined"
       :pages="
-        images.filter(
+        pages.filter(
           ({ pageNumber }) =>
             pageNumber >= uploadPageNumber! &&
             pageNumber <
@@ -85,8 +85,8 @@ const { loadIndexation } = suggestions();
 
 const imagesInViewport = ref(new Set<number>());
 
-const { images } = defineProps<{
-  images: { url: string | null; id: number; pageNumber: number }[];
+const { pages } = defineProps<{
+  pages: { image: { url: string } | null; id: number; pageNumber: number }[];
   selectable?: boolean;
 }>();
 
@@ -102,23 +102,26 @@ const { t: $t } = useI18n();
 
 const uploadPageNumber = ref<number>();
 const maxUploadableImagesFromPageNumber = (pageNumber: number) =>
-  (images.find(({ pageNumber: pn, url }) => pn > pageNumber && url)
-    ?.pageNumber || images.length) - pageNumber;
+  (pages.find(({ pageNumber: pn, image }) => pn > pageNumber && image)
+    ?.pageNumber || pages.length) - pageNumber;
 
 const { visiblePages, currentPage } = storeToRefs(ui());
 
 const imagesRef = ref<HTMLElement | null>(null);
 
-useSortable(imagesRef, images, {
+useSortable(imagesRef, pages, {
   multiDrag: true,
   selectedClass: "selected",
   fallbackTolerance: 3,
   animation: 150,
 
-  onUpdate: async (e) => {
-    moveArrayElement(images, e.oldIndex, e.newIndex, e);
+  onUpdate: async (e: Event) => {
+    const event = e as unknown as { oldIndex: number; newIndex: number };
+    moveArrayElement(pages, event.oldIndex, event.newIndex, e);
     nextTick(async () => {
-      await indexationSocket.value?.services.updatePageUrls(images);
+      await indexationSocket.value?.services.updatePageUrls(
+        pages.map(({ id }) => id),
+      );
       await loadIndexation();
     });
   },

@@ -2,6 +2,9 @@ import { Prisma } from "~/prisma/client_dumili";
 
 export const indexationWithFirstPageAndAcceptedIssueSuggestion = {
   pages: {
+    include: {
+      image: true,
+    },
     take: 1,
     orderBy: {
       pageNumber: "asc",

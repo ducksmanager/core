@@ -17,10 +17,7 @@
         <template #button-content>{{ $t("Méta-données") }}</template>
         <b-dropdown-item
           >{{ $t("Prix") }}
-          <input
-            v-model="indexation.acceptedIssueSuggestion.price"
-            type="text"
-            @click.stop="() => {}"
+          <input v-model="indexation.price" type="text" @click.stop="() => {}"
         /></b-dropdown-item>
         <b-dropdown-item
           >{{ $t("Nombre de pages") }}
@@ -148,11 +145,11 @@ const createEntry = async () => {
 };
 
 watchDebounced(
-  () => JSON.stringify([indexation.value.acceptedIssueSuggestion?.price]),
+  () => JSON.stringify([indexation.value.price]),
   () => {
-    if (indexation.value.acceptedIssueSuggestion) {
-      const { price } = indexation.value.acceptedIssueSuggestion;
-      indexationSocket.value!.services.updateIssueSuggestion({
+    if (indexation.value.price) {
+      const { price } = indexation.value;
+      indexationSocket.value!.services.updateIndexation({
         price,
       });
     }

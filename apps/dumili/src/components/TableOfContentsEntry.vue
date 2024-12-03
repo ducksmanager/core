@@ -45,9 +45,9 @@
           : $t("Non calculé")
       }}
       <template v-if="entry.acceptedStoryKind?.kind === STORY">
-        <template v-if="storyAiSuggestions.length">
+        <template v-if="pages[0].image && storyAiSuggestions.length">
           {{ $t("Résultats OCR pour la première case:") }}
-          <table-results :data="pages[0].aiOcrResults" />
+          <table-results :data="pages[0].image.aiOcrResults" />
           {{ $t("Histoires potentielles:") }}
           <table-results
             :data="
@@ -118,12 +118,15 @@ const storyKindAiSuggestion = computed(() =>
 );
 
 const pagesWithInferredKinds = computed(() =>
-  getEntryPages(indexation.value!, entry.id).map((page) => ({
-    page,
-    [$t("Type d'entrée déduit pour la page")]: page.aiKumikoInferredStoryKind
-      ? storyKinds[page.aiKumikoInferredStoryKind]
-      : $t("Non calculé"),
-  })),
+  getEntryPages(indexation.value!, entry.id)
+    .filter(({ image }) => image)
+    .map((page) => ({
+      page,
+      [$t("Type d'entrée déduit pour la page")]: page.image!
+        .aiKumikoInferredStoryKind
+        ? storyKinds[page.image!.aiKumikoInferredStoryKind]
+        : $t("Non calculé"),
+    })),
 );
 
 const getUserFriendlyPageCount = (entry: FullEntry) => {
