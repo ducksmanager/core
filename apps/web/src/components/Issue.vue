@@ -1,5 +1,5 @@
 <template>
-  <div v-if="publicationname" :class="`d-${noWrap ? 'inline' : 'block'}`">
+  <div :class="`d-${noWrap ? 'inline' : 'block'}`">
     <router-link
       :class="{ clickable, flex }"
       :to="`/collection/show/${issue.publicationcode}#${issue.issuenumber}`"

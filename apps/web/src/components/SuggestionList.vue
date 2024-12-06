@@ -76,6 +76,7 @@ const { countrycode = null, sinceLastVisit = false } = defineProps<{
   sinceLastVisit?: boolean;
 }>();
 const { t: $t } = useI18n();
+const { fetchIssuecodeDetails } = coa();
 const { loadSuggestions } = collection();
 const { suggestions, hasSuggestions } = storeToRefs(collection());
 const suggestionSorts = () => ({
@@ -108,6 +109,7 @@ watch(
       countryCode: newValue,
       sinceLastVisit,
     });
+    await fetchIssuecodeDetails(Object.keys(sortedSuggestions.value.issues));
     loading = false;
   },
   { immediate: true },
