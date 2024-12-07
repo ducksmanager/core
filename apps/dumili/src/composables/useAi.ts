@@ -7,8 +7,6 @@ import { dumiliSocketInjectionKey } from "./useDumiliSocket";
 import useHint from "./useHint";
 
 export default () => {
-  const status = ref<"idle" | "loading" | "loaded">("idle");
-
   const {
     coverId: { services: coverIdServices },
   } = inject(dmSocketInjectionKey)!;
@@ -23,7 +21,6 @@ export default () => {
   const hint = useHint();
 
   const runKumiko = async (entryId?: number) => {
-    status.value = "loading";
     console.log("Kumiko...");
     const result = await Promise.all(
       indexation.value.entries
@@ -37,15 +34,12 @@ export default () => {
       console.log("Kumiko OK");
     }
     await loadIndexation();
-    status.value = "idle";
   };
 
   const runKumikoOnPage = async (pageId: number) => {
-    status.value = "loading";
     console.log("Kumiko...");
     await indexationServices.runKumikoOnPage(pageId);
     await loadIndexation();
-    status.value = "idle";
   };
 
   const runCoverSearch = async () => {
@@ -76,7 +70,6 @@ export default () => {
   };
 
   const runStorycodeOcr = async (entryId?: number) => {
-    status.value = "loading";
     console.log("OCR...");
     const result = await Promise.all(
       indexation.value.entries
@@ -92,11 +85,9 @@ export default () => {
       console.log("OCR OK");
     }
     await loadIndexation();
-    status.value = "idle";
   };
 
   return {
-    status,
     runCoverSearch,
     runKumiko,
     runKumikoOnPage,

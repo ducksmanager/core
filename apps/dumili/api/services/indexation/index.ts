@@ -45,8 +45,8 @@ const getFullIndexation = (indexationId: string) =>
       return indexation;
     });
 
-const setKumikoInferredPageStoryKinds = async (pages: Prisma.pageGetPayload<{include: {image: true}}>[]) => {
-  const panelsPerPage = await runKumiko(pages.filter(({image}) => !!image).map(({ image }) => (image as image).url));
+const setKumikoInferredPageStoryKinds = async (pages: Prisma.pageGetPayload<{ include: { image: true } }>[]) => {
+  const panelsPerPage = await runKumiko(pages.filter(({ image }) => !!image).map(({ image }) => (image as image).url));
 
   const transactions = panelsPerPage.map((panelsOfPage, idx) => {
     const page = pages[idx];
@@ -120,7 +120,7 @@ export default (io: Server) => {
             },
             where: {
               id: {
-                in: getEntryPages(indexation, entryId).filter(({imageId}) => !!imageId).map(({ imageId }) => imageId!),
+                in: getEntryPages(indexation, entryId).filter(({ imageId }) => !!imageId).map(({ imageId }) => imageId!),
               },
             },
           })
@@ -155,14 +155,17 @@ export default (io: Server) => {
       indexationSocket.on("setPageUrl", async (id, url, callback) => {
         const { id: indexationId } = indexationSocket.data.indexation;
         prisma.page
-          .update({data: { 
-            image: url ? {
-              connect: {
-                url
-              }
-            }: {disconnect: true}}, where: {
-            id,
-            indexationId}
+          .update({
+            data: {
+              image: url ? {
+                connect: {
+                  url
+                }
+              } : { disconnect: true }
+            }, where: {
+              id,
+              indexationId
+            }
           })
           .then(callback);
       });
@@ -230,11 +233,11 @@ export default (io: Server) => {
                 suggestionId === null
                   ? { disconnect: true }
                   : {
-                      connect: {
-                        id: suggestionId,
-                        indexationId: indexationSocket.data.indexation.id,
-                      },
+                    connect: {
+                      id: suggestionId,
+                      indexationId: indexationSocket.data.indexation.id,
                     },
+                  },
             },
             where: {
               id: indexationSocket.data.indexation.id,

@@ -4,28 +4,31 @@
     :class="{
       'fw-bold': visiblePages?.has(id),
     }"
+    @mouseover="() => (isHovered = true)"
+    @mouseleave="() => (isHovered = false)"
     @click="currentPage = pageNumber - 1"
-    >{{ $t("Page") }} {{ pageNumber }}<br /><ai-tooltip
-      v-if="image?.aiKumikoResultPanels"
+    ><div>{{ $t("Page") }} {{ pageNumber }}</div>
+    <ai-tooltip
       :id="`ai-results-page-${pageNumber}`"
-      :value="image.aiKumikoInferredStoryKind"
+      :show="isHovered && image?.aiKumikoResultPanels?.length! > 0"
+      :status="image?.aiKumikoInferredStoryKind ? 'success' : 'idle'"
       :on-click-rerun="() => runKumikoOnPage(id)"
       @click="showAiDetectionsOn = { type: 'page', id }"
     >
       <b>{{ $t("Cases détectées") }}</b>
       <table-results
         :data="
-          image.aiKumikoResultPanels.map(({ x, y, width, height }) => ({
+          image?.aiKumikoResultPanels.map(({ x, y, width, height }) => ({
             x,
             y,
             width,
             height,
-          }))
+          })) || []
         "
       />
       <b>{{ $t("Type d'entrée déduit pour la page") }}</b>
       {{
-        image.aiKumikoInferredStoryKind
+        image?.aiKumikoInferredStoryKind
           ? storyKinds[image.aiKumikoInferredStoryKind] || $t("Non calculé")
           : $t("Non calculé")
       }}
@@ -44,9 +47,9 @@ const { page } = defineProps<{
 
 const { id, image, pageNumber } = page;
 
-const { showAiDetectionsOn } = storeToRefs(ui());
-
-const { currentPage, visiblePages } = storeToRefs(ui());
+const { showAiDetectionsOn, currentPage, visiblePages } = storeToRefs(ui());
 
 const { runKumikoOnPage } = useAi();
+
+const isHovered = ref(false);
 </script>

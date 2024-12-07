@@ -2,7 +2,7 @@
   <div v-if="actualPublicationcode" :class="`d-${noWrap ? 'inline' : 'block'}`">
     <Publication
       :publicationcode="actualPublicationcode"
-      :publicationname="publicationName || actualPublicationcode"
+      :publicationname="publicationName"
       display-class="d-inline"
     />{{ actualIssuenumber }}
     <slot name="title-suffix" />

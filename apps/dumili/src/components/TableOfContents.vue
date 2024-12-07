@@ -33,9 +33,8 @@
       <div>
         <ai-tooltip
           id="ai-issue-suggestion"
-          :value="issueAiSuggestion?.issuecode"
-          :status="aiStatus"
-          :on-click-rerun="() => runKumiko()"
+          :status="issueAiSuggestion?.issuecode ? 'success' : 'idle'"
+          :on-click-rerun="() => runKumikoOnPage(1)"
         /></div
     ></template>
 
@@ -48,7 +47,7 @@
           v-for="page in indexation.pages"
           :key="page.id"
           :style="{ height: `${pageHeight}px` }"
-          class="g-0 px-0 py-0 align-items-center page"
+          class="g-0 px-0 py-0 align-items-center page outline"
         >
           <TableOfContentsPage :page="page" />
         </b-row>
@@ -100,9 +99,8 @@ const { hoveredEntry, currentEntry } = storeToRefs(ui());
 const indexation = storeToRefs(suggestions()).indexation as Ref<FullIndexation>;
 const { currentPage, pageHeight } = storeToRefs(ui());
 
-const { runKumiko } = useAi();
+const { runKumikoOnPage } = useAi();
 
-const { status: aiStatus } = useAi();
 const { t: $t } = useI18n();
 
 const numberOfPages = computed({

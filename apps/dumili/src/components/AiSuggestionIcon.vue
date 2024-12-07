@@ -4,7 +4,6 @@
     :id="id"
     :class="{
       button,
-      [className]: true,
       [status]: true,
       broken: status === 'failure',
     }"
@@ -14,15 +13,10 @@
 import IBiExtraLightbulbBrokenFill from "~icons/extra-icons/brokenLightbulb";
 import IBiLightbulbFill from "~icons/bi/lightbulb-fill";
 
-const {
-  class: className = "",
-  status,
-  id = undefined,
-} = defineProps<{
+const { status, id = undefined } = defineProps<{
   button?: boolean;
   status: "success" | "failure" | "idle" | "loading";
   id?: string;
-  class?: string;
 }>();
 
 const component = computed(() =>

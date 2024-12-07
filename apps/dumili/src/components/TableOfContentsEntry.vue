@@ -1,6 +1,6 @@
 <template>
   <vue-draggable-resizable
-    :active="hoveredEntry === entry"
+    :active="hoveredEntry?.id === entry.id"
     :parent="true"
     prevent-deactivation
     :resizable="true"
@@ -11,18 +11,19 @@
     :min-height="pageHeight - 1"
     role="button"
     :class-name="`d-flex align-items-center justify-content-center cursor-pointer col w-100 border kind-${entry.acceptedStoryKind?.kind} ${(hoveredEntry === entry && 'striped') || ''} ${(currentEntry?.id === entry.id && 'border-2') || 'border-1'}`"
-    :title="`${entry.title || 'Inconnu'} (${getUserFriendlyPageCount(entry)})`"
     @mouseover="hoveredEntry = entry"
-    @mouseout="hoveredEntry = null"
+    @mouseleave="hoveredEntry = null"
     @resize-stop="
 	              (_left: number, _top: number, _width: number, height: number) =>
-	                emit('onEntryResizeStop', height)
+	                {emit('onEntryResizeStop', height)}
 	            "
     @click="currentPage = getFirstPageOfEntry(indexation!.entries, entry.id)"
   >
     <ai-tooltip
       :id="`ai-results-entry-${entry.id}`"
-      :value="storyKindAiSuggestion?.kind"
+      :rerun-on-event-name-part="`updateEntry(${entry.id}`"
+      :show="hoveredEntry?.id === entry.id"
+      :status="storyKindAiSuggestion?.kind ? 'success' : 'idle'"
       :on-click-rerun="
         () => runKumiko(entry.id).then(() => runStorycodeOcr(entry.id))
       "
@@ -77,6 +78,7 @@ import { ui } from "~/stores/ui";
 import { FullEntry } from "~dumili-services/indexation/types";
 import { getEntryPages, getFirstPageOfEntry } from "~dumili-utils/entryPages";
 import { STORY, storyKinds } from "~dumili-types/storyKinds";
+import AiTooltip from "./AiTooltip.vue";
 
 const emit = defineEmits<{
   (e: "createEntryAfter"): void;
@@ -86,6 +88,8 @@ const emit = defineEmits<{
 const { entry } = defineProps<{
   entry: FullEntry;
 }>();
+
+const aiTooltip = ref<InstanceType<typeof AiTooltip> | null>(null);
 
 const { indexation } = storeToRefs(suggestions());
 const {
@@ -129,23 +133,14 @@ const pagesWithInferredKinds = computed(() =>
     })),
 );
 
-const getUserFriendlyPageCount = (entry: FullEntry) => {
-  const fraction = entry.brokenpagenumerator
-    ? `${entry.brokenpagenumerator}/${entry.brokenpagedenominator}`
-    : "";
-  if (entry.entirepages === 0) {
-    if (fraction) {
-      return `${fraction} page`;
-    } else {
-      return "0 page";
-    }
-  }
-  return `${entry.entirepages}${fraction ? `+ ${fraction}` : ""} pages`;
-};
-
 watch(hoveredEntry, (entry) => {
   if (entry) {
     lastHoveredEntry.value = entry;
   }
 });
 </script>
+<style lang="scss" scoped>
+.striped {
+  opacity: 1;
+}
+</style>

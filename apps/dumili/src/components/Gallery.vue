@@ -13,12 +13,27 @@
         v-for="({ image, id, pageNumber }, idx) of pages"
         :id="`page-image-${idx}`"
         :key="id"
+        v-element-visibility="[
+          (visible) => {
+            if (visible) {
+              imagesInViewport.add(id);
+            } else {
+              imagesInViewport.delete(id);
+            }
+          },
+          { threshold: 1 },
+        ]"
         class="position-relative d-flex justify-content-center align-items-center p-3 pb-5 border"
         :class="{ selectable, selected: selectedId === id }"
         cols="12"
         md="4"
         @click="selectedId = id"
       >
+        <template v-if="hoveredEntryPageNumbers?.includes(pageNumber)">
+          <div
+            :class="`overlay kind-${hoveredEntry!.acceptedStoryKind?.kind} striped`"
+          ></div>
+        </template>
         <b-button
           variant="danger"
           class="position-absolute top-0 mt-2 text-center opacity-50 opacity-100-hover"
@@ -26,22 +41,7 @@
         >
           {{ $t("Désassocier l'image") }}
         </b-button>
-        <b-img
-          v-if="image"
-          v-element-visibility="[
-            (visible) => {
-              if (visible) {
-                imagesInViewport.add(id);
-              } else {
-                imagesInViewport.delete(id);
-              }
-            },
-            { threshold: 1 },
-          ]"
-          lazy
-          :src="image.url"
-          fluid
-        />
+        <b-img v-if="image" class="cursor-move" lazy :src="image.url" fluid />
         <b-button
           v-else
           variant="success"
@@ -105,7 +105,8 @@ const maxUploadableImagesFromPageNumber = (pageNumber: number) =>
   (pages.find(({ pageNumber: pn, image }) => pn > pageNumber && image)
     ?.pageNumber || pages.length) - pageNumber;
 
-const { visiblePages, currentPage } = storeToRefs(ui());
+const { visiblePages, currentPage, hoveredEntry, hoveredEntryPageNumbers } =
+  storeToRefs(ui());
 
 const imagesRef = ref<HTMLElement | null>(null);
 

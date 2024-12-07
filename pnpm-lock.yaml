@@ -110,8 +110,8 @@ importers:
         specifier: ^5.3.3
         version: 5.3.3(@popperjs/core@2.11.8)
       bootstrap-vue-next:
-        specifier: ^0.26.7
-        version: 0.26.7(vue@3.5.13(typescript@5.6.2))
+        specifier: ^0.26.8
+        version: 0.26.8(vue@3.5.13(typescript@5.6.2))
       js-cookie:
         specifier: ^3.0.5
         version: 3.0.5
@@ -4034,8 +4034,8 @@ packages:
     peerDependencies:
       vue: ^3.5.3
 
-  bootstrap-vue-next@0.26.7:
-    resolution: {integrity: sha512-ZO+MZCHQpcs+mTj+mYeN7ixM3thSY1e9W4socFvilIAaXhjXxhOhuLuGBc0+OqcAbgrCIQ7C0RNWmIIuGvrH6w==}
+  bootstrap-vue-next@0.26.8:
+    resolution: {integrity: sha512-2WolMPi4XB0J/736PPglDCIjUz2pwvOhu3SLjQYP0Rh5IncspMZMkUCa/H28Vh45xQadFtrYeBPyPF3JrpbadA==}
     peerDependencies:
       vue: ^3.5.13
 
@@ -11877,7 +11877,7 @@ snapshots:
     dependencies:
       vue: 3.5.13(typescript@5.6.2)
 
-  bootstrap-vue-next@0.26.7(vue@3.5.13(typescript@5.6.2)):
+  bootstrap-vue-next@0.26.8(vue@3.5.13(typescript@5.6.2)):
     dependencies:
       vue: 3.5.13(typescript@5.6.2)
 

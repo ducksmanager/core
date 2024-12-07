@@ -4,6 +4,22 @@
   opacity: 1 !important;
 }
 
+.cursor-move {
+  cursor: move;
+}
+
+.overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+
+.outline {
+  outline: 1px solid black;
+}
+
 :root {
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
@@ -121,7 +137,7 @@ button:focus-visible {
 
   &.striped {
     background-color: transparent !important;
-    background: repeating-linear-gradient(-45deg, $bg, $bg 1px, transparent 1px, transparent 10px)
+    background: repeating-linear-gradient(-45deg, rgba($bg, 0.4), rgba($bg, 0.4) 1px, transparent 1px, transparent 10px)
   }
   &.btn:hover {
     background-color: color.adjust($bg, $lightness: 5%) !important;
