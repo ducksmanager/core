@@ -68,7 +68,7 @@ import Cookies from "js-cookie";
 
 import type { ScopedError } from "~socket.io-services";
 
-const { loadUser, authServices } = collection();
+const { loadUser } = collection();
 const { user } = storeToRefs(collection());
 const router = useRouter();
 
@@ -79,6 +79,10 @@ let username = $ref(""),
   error = $ref<ScopedError | null | undefined>(undefined);
 
 const { t: $t } = useI18n();
+
+const {
+  auth: { services: authServices },
+} = inject(socketInjectionKey)!;
 
 const signup = async () => {
   const response = await authServices.signup({
