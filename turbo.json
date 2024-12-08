@@ -4,14 +4,15 @@
   "tasks": {
     "lint": {},
     "build": {
-      "passThroughEnv": ["SENTRY_AUTH_TOKEN"],
+      "passThroughEnv": [
+        "SENTRY_AUTH_TOKEN"
+      ],
       "inputs": [
         "$TURBO_DEFAULT$",
         "!api"
       ],
       "dependsOn": [
-        "^build",
-        "prod:build-docker"
+        "^build"
       ],
       "outputs": [
         "dist/**"
@@ -20,6 +21,9 @@
     "prod:build-docker": {
       "passThroughEnv": [
         "REPO_NAME"
+      ],
+      "dependsOn": [
+        "build"
       ]
     },
     "prod:deploy": {
@@ -58,10 +62,14 @@
     },
     "dev:setup": {},
     "dev:blocking": {
-      "dependsOn": ["dev:setup"]
+      "dependsOn": [
+        "dev:setup"
+      ]
     },
     "dev:blocking-up": {
-      "dependsOn": ["dev:setup"]
+      "dependsOn": [
+        "dev:setup"
+      ]
     },
     "dev": {
       "persistent": true,
