@@ -1,5 +1,5 @@
 import type { ShallowRef } from "vue";
-import { reactiveComputed } from "@vueuse/core";
+
 import type CollectionServices from "~dm-services/collection/types";
 import type StatsServices from "~dm-services/stats/types";
 import type {
@@ -38,16 +38,12 @@ export type purchaseWithStringDate = Omit<purchase, "date"> & {
 };
 
 export const collection = defineStore("collection", () => {
-  const socket = computed(() => inject(socketInjectionKey)!);
-  const collectionServices = reactiveComputed(
-    () => socket.value.collection.services,
-  );
-  const collectionSocket = reactiveComputed(
-    () => socket.value.collection.socket!,
-  );
-  const statsServices = reactiveComputed(() => socket.value.stats.services);
-  const authServices = reactiveComputed(() => socket.value.auth.services);
-  const socketOptions = reactiveComputed(() => socket.value.options);
+  const {
+    collection: { services: collectionServices, socket: collectionSocket },
+    stats: { services: statsServices },
+    auth: { services: authServices },
+    options: socketOptions,
+  } = inject(socketInjectionKey)!;
 
   const { bookcaseWithPopularities } = storeToRefs(bookcase());
 
