@@ -35,7 +35,7 @@
     "@capacitor/status-bar": "^6.0.2",
     "@capawesome/capacitor-app-update": "^6.1.0",
     "@capawesome/capacitor-file-picker": "^6.2.0",
-    "@capgo/capacitor-updater": "^6.4.1",
+    "@capgo/capacitor-updater": "^6.6.5",
     "@ionic/pwa-elements": "^3.3.0",
     "@ionic/storage": "^4.0.0",
     "@ionic/vue": "^8.4.1",
@@ -68,7 +68,7 @@
   "devDependencies": {
     "@capacitor/assets": "^3.0.5",
     "@capacitor/cli": "^6.2.0",
-    "@capgo/cli": "^4.26.4",
+    "@capgo/cli": "^4.26.9",
     "@eslint/compat": "^1.2.3",
     "@eslint/eslintrc": "^3.2.0",
     "@eslint/js": "^9.15.0",

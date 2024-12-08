@@ -823,8 +823,8 @@ importers:
         specifier: ^6.2.0
         version: 6.2.0(@capacitor/core@6.2.0)
       '@capgo/capacitor-updater':
-        specifier: ^6.4.1
-        version: 6.4.1(@capacitor/core@6.2.0)
+        specifier: ^6.6.5
+        version: 6.6.5(@capacitor/core@6.2.0)
       '@ionic/pwa-elements':
         specifier: ^3.3.0
         version: 3.3.0
@@ -917,8 +917,8 @@ importers:
         specifier: ^6.2.0
         version: 6.2.0
       '@capgo/cli':
-        specifier: ^4.26.4
-        version: 4.26.4
+        specifier: ^4.26.9
+        version: 4.26.9
       '@eslint/compat':
         specifier: ^1.2.3
         version: 1.2.3(eslint@9.15.0(jiti@1.21.6))
@@ -1436,13 +1436,13 @@ packages:
     peerDependencies:
       '@capacitor/core': ^6.0.0
 
-  '@capgo/capacitor-updater@6.4.1':
-    resolution: {integrity: sha512-/HIVVlz4WAYS39qfyLJ/i+6azIfQppoTNwj3Ddre7p8bROae5NCo1a7zn47PecOQL5Y9VQ6/oWSWfCtwLSmEmw==}
+  '@capgo/capacitor-updater@6.6.5':
+    resolution: {integrity: sha512-BcPnlpI9TObV8oCJBKkjPdJqdAl1zX2yiIp9uQwWl+o8ZNAT9HRBQyrj/6xoFpSekxSRLd+KmiOG0TkEFPcQnw==}
     peerDependencies:
       '@capacitor/core': ^6.0.0
 
-  '@capgo/cli@4.26.4':
-    resolution: {integrity: sha512-mbTzzBHdn2T1tX6rhu7PkJi5NL445r0/lsfN5WuqwWCKp2A2jhujxlSzZYYlCZbI+a2CkOGrJ+939GUH2ux2eQ==}
+  '@capgo/cli@4.26.9':
+    resolution: {integrity: sha512-jHF9pXwvqHAi9SvZAVIqoyw5IdqCUx8Wo/FHTBUsy5aCeNlKOIkKnWXG59GUObvBUfnOY/3p9FfDwJmGGHnRmw==}
     engines: {node: '>=20.0.0', npm: '>=8.0.0'}
     hasBin: true
 
@@ -8923,11 +8923,11 @@ snapshots:
     dependencies:
       '@capacitor/core': 6.2.0
 
-  '@capgo/capacitor-updater@6.4.1(@capacitor/core@6.2.0)':
+  '@capgo/capacitor-updater@6.6.5(@capacitor/core@6.2.0)':
     dependencies:
       '@capacitor/core': 6.2.0
 
-  '@capgo/cli@4.26.4': {}
+  '@capgo/cli@4.26.9': {}
 
   '@clack/core@0.3.5':
     dependencies:

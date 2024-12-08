@@ -60,6 +60,7 @@ router.isReady().then(async () => {
     Sentry.init(
       {
         dsn: import.meta.env.VITE_SENTRY_DSN,
+        app,
         release: `whattheduck@${currentBundleVersion}`,
         dist: currentBundleVersion,
         integrations: [Sentry.browserTracingIntegration(), Sentry.replayIntegration()],

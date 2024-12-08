@@ -50,7 +50,7 @@ watch(
   async ([isLoaded, tokenString]) => {
     if (isLoaded && tokenString) {
       dataLoader.value.run(
-        () => fetchCollection(),
+        () => fetchCollection(true),
         () => {
           isCollectionLoaded.value = true;
           fetchCollection(true);
