@@ -7,7 +7,7 @@ export type { AxiosStorage, NotEmptyStorageValue };
 export { buildStorage, buildWebStorage } from "axios-cache-interceptor";
 import type { Socket } from "socket.io-client";
 import { io } from "socket.io-client";
-import { ref, watch } from "vue";
+import { ref } from "vue";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AllButLast<T extends any[]> = T extends [...infer H, infer _L] ? H : any[];
@@ -107,10 +107,6 @@ export class SocketClient {
     let isOffline: boolean | undefined;
 
     const ongoingCalls = ref<string[]>([]);
-
-    watch(ongoingCalls, () => {
-      console.log("ongoingCalls", ongoingCalls.value);
-    });
 
     const connect = () => {
       socket = io(this.socketRootUrl + namespaceName, {
