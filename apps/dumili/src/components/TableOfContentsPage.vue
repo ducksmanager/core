@@ -13,6 +13,11 @@
       :show="isHovered && image?.aiKumikoResultPanels?.length! > 0"
       :status="image?.aiKumikoInferredStoryKind ? 'success' : 'idle'"
       :on-click-rerun="() => runKumikoOnPage(id)"
+      :loading-event="{
+        startEventName: 'setKumikoInferredPageStoryKinds',
+        endEventName: 'setKumikoInferredPageStoryKindsEnd',
+        checkMatch: (id) => id === page.id,
+      }"
       @click="showAiDetectionsOn = { type: 'page', id }"
     >
       <b>{{ $t("Cases détectées") }}</b>

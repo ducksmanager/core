@@ -44,6 +44,8 @@ export type EventCalls<S extends EventsMap> = {
   ) => Promise<EventReturnTypeIncludingError<S[EventName]>>;
 };
 
+export type ServerSideEventCalls<S extends EventsMap> = S
+
 export class SocketClient {
   constructor(private socketRootUrl: string) { }
 
@@ -85,7 +87,7 @@ export class SocketClient {
     console.info(`${namespace}: connected`);
   };
 
-  public addNamespace<Services extends EventsMap>(
+  public addNamespace<Services extends EventsMap, ServerSentEvents extends EventsMap = {}>(
     namespaceName: string,
     namespaceOptions: {
       onConnectError?: (e: Error, namespace: string) => void;
@@ -140,6 +142,9 @@ export class SocketClient {
       socket,
       connect,
       ongoingCalls,
+      on: <E extends string & keyof ServerSentEvents>(event: E, callback: (...args: Parameters<ServerSentEvents[E]>) => void) => {
+        socket?.on(event, callback as any);
+      },
       services: new Proxy({} as EventCalls<Services>, {
         get:
           <EventName extends StringKeyOf<Services>>(

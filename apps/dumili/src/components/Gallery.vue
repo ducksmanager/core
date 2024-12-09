@@ -55,16 +55,9 @@
     </b-row>
     <b-container v-else>{{ $t("Chargement...") }}</b-container>
     <upload-modal
-      v-if="uploadPageNumber !== undefined"
-      :pages="
-        pages.filter(
-          ({ pageNumber }) =>
-            pageNumber >= uploadPageNumber! &&
-            pageNumber <
-              uploadPageNumber! +
-                maxUploadableImagesFromPageNumber(uploadPageNumber!),
-        )
-      "
+      v-if="uploadablePages.length"
+      :upload-page-number="uploadPageNumber"
+      :pages="uploadablePages"
       @done="loadIndexation"
     />
   </b-container>
@@ -89,6 +82,16 @@ const { pages } = defineProps<{
   pages: { image: { url: string } | null; id: number; pageNumber: number }[];
   selectable?: boolean;
 }>();
+
+const uploadablePages = computed(() =>
+  pages.filter(
+    ({ pageNumber }) =>
+      pageNumber >= uploadPageNumber.value! &&
+      pageNumber <
+        uploadPageNumber.value! +
+          maxUploadableImagesFromPageNumber(uploadPageNumber.value!),
+  ),
+);
 
 defineSlots<{
   default(props: { issuecode: string }): never;
@@ -120,8 +123,9 @@ useSortable(imagesRef, pages, {
     const event = e as unknown as { oldIndex: number; newIndex: number };
     moveArrayElement(pages, event.oldIndex, event.newIndex, e);
     nextTick(async () => {
-      await indexationSocket.value?.services.updatePageUrls(
-        pages.map(({ id }) => id),
+      await indexationSocket.value?.services.swapPageUrls(
+        pages[event.oldIndex].pageNumber,
+        pages[event.newIndex].pageNumber,
       );
       await loadIndexation();
     });

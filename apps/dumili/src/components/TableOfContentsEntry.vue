@@ -21,12 +21,14 @@
   >
     <ai-tooltip
       :id="`ai-results-entry-${entry.id}`"
-      :rerun-on-event-name-part="`updateEntry(${entry.id}`"
+      :loading-event="{
+        startEventName: 'setInferredEntryStoryKind',
+        endEventName: 'setInferredEntryStoryKindEnd',
+        checkMatch: (id) => id === entry.id,
+      }"
       :show="hoveredEntry?.id === entry.id"
       :status="storyKindAiSuggestion?.kind ? 'success' : 'idle'"
-      :on-click-rerun="
-        () => runKumiko(entry.id).then(() => runStorycodeOcr(entry.id))
-      "
+      :on-click-rerun="() => runStorycodeOcr(entry.id)"
       @click="showAiDetectionsOn = { type: 'entry', id: entry.id }"
       @blur="showAiDetectionsOn = undefined"
     >
@@ -78,7 +80,6 @@ import { ui } from "~/stores/ui";
 import { FullEntry } from "~dumili-services/indexation/types";
 import { getEntryPages, getFirstPageOfEntry } from "~dumili-utils/entryPages";
 import { STORY, storyKinds } from "~dumili-types/storyKinds";
-import AiTooltip from "./AiTooltip.vue";
 
 const emit = defineEmits<{
   (e: "createEntryAfter"): void;
@@ -88,8 +89,6 @@ const emit = defineEmits<{
 const { entry } = defineProps<{
   entry: FullEntry;
 }>();
-
-const aiTooltip = ref<InstanceType<typeof AiTooltip> | null>(null);
 
 const { indexation } = storeToRefs(suggestions());
 const {
@@ -102,15 +101,22 @@ const {
 
 const { storyDetails } = storeToRefs(coa());
 
-const pages = computed(() => getEntryPages(indexation.value!, entry.id));
+const pages = computed(() =>
+  getEntryPages(indexation.value!, entry.id).map(
+    ({ id: pageId }) =>
+      indexation.value!.pages.find(({ id }) => id === pageId)!,
+  ),
+);
 
 const storyAiSuggestions = computed(() =>
   entry.storySuggestions.filter(({ ocrDetails }) => ocrDetails),
 );
 
 const { t: $t } = useI18n();
-const { runStorycodeOcr, runKumiko } = useAi();
+const { runStorycodeOcr } = useAi();
+
 const lastHoveredEntry = ref<typeof hoveredEntry.value | null>(null);
+
 const isLastEntry = computed(
   () =>
     entry.id ===
@@ -122,7 +128,7 @@ const storyKindAiSuggestion = computed(() =>
 );
 
 const pagesWithInferredKinds = computed(() =>
-  getEntryPages(indexation.value!, entry.id)
+  pages.value
     .filter(({ image }) => image)
     .map((page) => ({
       page,

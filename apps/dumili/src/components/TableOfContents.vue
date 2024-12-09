@@ -159,12 +159,16 @@ watch(
   currentPage,
   (value) => {
     if (indexation.value && value !== undefined) {
-      currentEntry.value = getEntryFromPage(
-        indexation.value,
-        indexation.value.pages.find(
-          ({ pageNumber }) => pageNumber === value + 1,
-        )!.id,
-      )!;
+      currentEntry.value = indexation.value.entries.find(
+        ({ id }) =>
+          id ===
+          getEntryFromPage(
+            indexation.value,
+            indexation.value.pages.find(
+              ({ pageNumber }) => pageNumber === value + 1,
+            )!.id,
+          )!.id,
+      );
     }
   },
   { immediate: true },
@@ -213,8 +217,10 @@ watch(
 }
 
 .entry-details {
+  z-index: 1;
   &.current {
     width: 100%;
+    z-index: 2;
     position: relative;
     .col {
       align-items: start;

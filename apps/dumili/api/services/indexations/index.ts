@@ -19,7 +19,7 @@ const getIndexationsWithFirstPage = (userId: number) =>
 export default (io: Server) => {
   io.use(RequiredAuthMiddleware);
 
-  (io.of(Events.namespaceEndpoint) as NamespaceWithData<Events, SessionData>)
+  (io.of(Events.namespaceEndpoint) as NamespaceWithData<Events, {}, SessionData>)
     .use(RequiredAuthMiddleware)
     .on("connection", async (socket) => {
       socket.on("create", async (id, numberOfPages, callback) => {

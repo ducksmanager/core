@@ -39,17 +39,12 @@ export type SessionDataWithIndexationId = {
   indexationId: string;
 };
 export type SessionData = { user: SessionUser };
-export class ServerWithData<Data extends object> extends Server<
-  Record<string, never>,
-  Record<string, never>,
-  Record<string, never>,
-  Data
-> {}
 
 export type NamespaceWithData<
   Services extends EventsMap,
+  ServerSentEvents extends EventsMap = {},
   Data extends object = object,
-> = Namespace<Services, Record<string, never>, Record<string, never>, Data>;
+> = Namespace<Services, ServerSentEvents, Record<string, never>, Data>;
 
 export const prisma = new PrismaClient();
 

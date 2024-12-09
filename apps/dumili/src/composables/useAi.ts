@@ -20,22 +20,6 @@ export default () => {
 
   const hint = useHint();
 
-  const runKumiko = async (entryId?: number) => {
-    console.log("Kumiko...");
-    const result = await Promise.all(
-      indexation.value.entries
-        .filter(({ id }) => entryId === undefined || id === entryId)
-        .map((entry) => indexationServices.runKumiko(entry.id)),
-    );
-    const resultsWithErrors = result.filter((result) => "error" in result);
-    if (resultsWithErrors.length) {
-      console.error(resultsWithErrors);
-    } else {
-      console.log("Kumiko OK");
-    }
-    await loadIndexation();
-  };
-
   const runKumikoOnPage = async (pageId: number) => {
     console.log("Kumiko...");
     await indexationServices.runKumikoOnPage(pageId);
@@ -74,7 +58,7 @@ export default () => {
     const result = await Promise.all(
       indexation.value.entries
         .filter(({ id }) => entryId === undefined || id === entryId)
-        .map((entry) => indexationServices.runOcr(entry.id)),
+        .map((entry) => indexationServices.createStorySuggestions(entry.id)),
     );
     const resultsWithErrors = result.filter(
       (result) => "error" in result && result.error === "OCR error",
@@ -89,7 +73,6 @@ export default () => {
 
   return {
     runCoverSearch,
-    runKumiko,
     runKumikoOnPage,
     runStorycodeOcr,
   };

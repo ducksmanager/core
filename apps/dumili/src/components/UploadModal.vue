@@ -67,19 +67,33 @@ import { suggestions } from "~/stores/suggestions";
 import { stores as webStores } from "~web";
 
 const { indexationSocket } = inject(dumiliSocketInjectionKey)!;
+
+const { pages, uploadPageNumber } = defineProps<{
+  uploadPageNumber?: number;
+  pages: { id: number; pageNumber: number }[];
+}>();
+
 const { indexation } = storeToRefs(suggestions());
 
 const { user } = storeToRefs(webStores.collection());
 
-const modal = ref(true);
+const modal = ref(false);
+const showWidget = ref(true);
+
+watch(
+  () => uploadPageNumber,
+  (value) => {
+    if (value !== undefined) {
+      modal.value = true;
+      showWidget.value = true;
+    }
+  },
+  { immediate: true },
+);
+
 const uploadFileType = ref<"PDF" | "Images">("PDF");
 
-const { pages } = defineProps<{
-  pages: { id: number; pageNumber: number }[];
-}>();
-
 const currentPageIndex = ref(0);
-const showWidget = ref(true);
 const isUploading = ref(false);
 const processLog = ref("");
 
@@ -96,7 +110,6 @@ const processPage = async (pageIndex: number, url: string) => {
   const page = pages[pageIndex];
   processLog.value = `Processing page ${page.pageNumber}...`;
   await indexationSocket.value!.services.setPageUrl(page.id, url);
-  await indexationSocket.value!.services.runKumikoOnPage(page.id);
 };
 
 onMounted(() => {
@@ -160,7 +173,7 @@ onMounted(() => {
 
   watch(showWidget, (value) => {
     if (!value) {
-      uploadWidget.close();
+      uploadWidget?.close();
     }
   });
 });

@@ -36,7 +36,6 @@ model image {
   url                       String                              @unique(map: "page_image_url_uindex") @db.VarChar(255)
   aiKumikoInferredStoryKind pageImageAiKumikoInferredStoryKind? @map("ai_kumiko_inferred_story_kind")
   aiKumikoResultPanels      aiKumikoResultPanel[]
-  aiOcrPossibleStories      aiOcrPossibleStory[]
   aiOcrResults              aiOcrResult[]
   page                      page[]
 
@@ -84,15 +83,14 @@ model storyKindSuggestion {
 }
 
 model storySuggestion {
-  id                                                                           Int                  @id @default(autoincrement())
-  storycode                                                                    String               @db.VarChar(19)
-  entryId                                                                      Int                  @map("entry_id")
-  ocrDetailsId                                                                 Int?                 @map("ocr_details_id")
-  isChosenByAi                                                                 Boolean              @map("is_chosen_by_ai")
-  ocrDetails                                                                   aiOcrPossibleStory[]
-  acceptedOnEntries                                                            entry[]              @relation("entry_accepted_story_suggested_idTostory_suggestion")
-  ai_ocr_possible_story_story_suggestion_ocr_details_idToai_ocr_possible_story aiOcrPossibleStory?  @relation("story_suggestion_ocr_details_idToai_ocr_possible_story", fields: [ocrDetailsId], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "story_suggestion_ai_ocr_possible_story_id_fk")
-  entry                                                                        entry                @relation(fields: [entryId], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "story_suggestion_entry_id_fk")
+  id                Int                  @id @default(autoincrement())
+  storycode         String               @db.VarChar(19)
+  entryId           Int                  @map("entry_id")
+  ocrDetailsId      Int?                 @map("ocr_details_id")
+  isChosenByAi      Boolean              @map("is_chosen_by_ai")
+  ocrDetails        aiOcrPossibleStory[]
+  acceptedOnEntries entry[]              @relation("entry_accepted_story_suggested_idTostory_suggestion")
+  entry             entry                @relation(fields: [entryId], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "story_suggestion_entry_id_fk")
 
   @@index([entryId], map: "story_suggestion_entry_id_fk")
   @@index([ocrDetailsId], map: "story_suggestion_ai_ocr_possible_story_id_fk")
@@ -114,16 +112,12 @@ model issueSuggestion {
 }
 
 model aiOcrPossibleStory {
-  id                                                                      Int               @id @default(autoincrement())
-  imageId                                                                 Int               @map("image_id")
-  score                                                                   Int               @db.SmallInt
-  storySuggestionId                                                       Int               @map("story_suggestion_id")
-  image                                                                   image             @relation(fields: [imageId], references: [id], onUpdate: Restrict, map: "ai_ocr_possible_story_page_image_id_fk")
-  storySuggestion                                                         storySuggestion   @relation(fields: [storySuggestionId], references: [id], onDelete: Cascade, map: "ai_ocr_possible_story_story_suggestion_id_fk")
-  story_suggestion_story_suggestion_ocr_details_idToai_ocr_possible_story storySuggestion[] @relation("story_suggestion_ocr_details_idToai_ocr_possible_story")
+  id                Int             @id @default(autoincrement())
+  score             Int             @db.SmallInt
+  storySuggestionId Int             @map("story_suggestion_id")
+  storySuggestion   storySuggestion @relation(fields: [storySuggestionId], references: [id], onDelete: Cascade, map: "ai_ocr_possible_story_story_suggestion_id_fk")
 
   @@index([storySuggestionId], map: "ai_ocr_possible_story_story_suggestion_id_fk")
-  @@index([imageId], map: "ai_ocr_possible_story_page_image_id_fk")
   @@map("ai_ocr_possible_story")
 }
 

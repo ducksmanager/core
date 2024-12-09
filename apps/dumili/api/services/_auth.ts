@@ -3,13 +3,6 @@ import type { Socket } from "socket.io";
 
 import type { SessionUser } from "~dm-types/SessionUser";
 
-type SocketWithUser = Socket<
-  Record<string, never>,
-  Record<string, never>,
-  Record<string, never>,
-  { user: SessionUser }
->;
-
 export const authenticateUser = async (
   token?: string | null,
 ): Promise<SessionUser> => {
@@ -37,7 +30,7 @@ export const authenticateUser = async (
 };
 
 export const RequiredAuthMiddleware = (
-  socket: SocketWithUser,
+  socket: Socket,
   next: (error?: Error) => void,
 ) => {
   authenticateUser(socket.handshake.auth.token)

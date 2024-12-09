@@ -1,6 +1,6 @@
 <template>
   <span
-    v-if="actualShow"
+    v-if="show || isLoading"
     @mouseout="() => (showRepeat = false)"
     @mouseover="() => (showRepeat = true)"
   >
@@ -12,72 +12,64 @@
     <AiSuggestionIcon
       :id="disabled ? `${id}-disabled` : id"
       button
-      :status="actualStatus" />
+      :is-loading="isLoading"
+      :status="status" />
     <i-bi-arrow-repeat
-      v-show="actualStatus !== 'loading' && showRepeat"
+      v-show="!isLoading && showRepeat"
       class="ms-2"
-      @click="rerun"
+      @click="onClickRerun"
   /></span>
 </template>
-<script setup lang="ts">
+<script setup lang="ts" generic="LoadingEventStart extends keyof ServerSentEvents, LoadingEventEnd extends keyof ServerSentEvents">
 import { dumiliSocketInjectionKey } from "~/composables/useDumiliSocket";
+import type { ServerSentEvents } from "~dumili-services/indexation/types";
 
 const {
   status,
   show = true,
-  rerunOnEventNamePart,
+  loadingEvent,
   onClickRerun,
 } = defineProps<{
   id: string;
-  status: "success" | "failure" | "idle" | "loading";
+  status: "success" | "failure" | "idle";
   show?: boolean;
-  rerunOnEventNamePart?: string;
+  loadingEvent?: {
+    startEventName: LoadingEventStart;
+    endEventName: LoadingEventEnd;
+    checkMatch: (
+      id: Parameters<ServerSentEvents[LoadingEventStart]>[0],
+    ) => boolean;
+  };
   onClickRerun: () => Promise<void>;
+}>();
+
+defineSlots();
+
+defineEmits<{
+  (e: "click"): void;
+  (e: "blur"): void;
 }>();
 
 const { indexationSocket } = inject(dumiliSocketInjectionKey)!;
 
-defineSlots();
-
-// const emit = defineEmits<{
-//   (e: "click"): void;
-//   (e: "blur"): void;
-// }>();
-
-const actualStatus = ref(status);
-const actualShow = computed(() =>
-  actualStatus.value === "loading" ? true : show,
-);
-
+const isLoading = ref(false);
 const disabled = ref(false); // TODO handle failed suggestions
-
 const showRepeat = ref(false);
 
-const rerun = () => {
-  actualStatus.value = "loading";
-  onClickRerun().then(() => (actualStatus.value = status));
-};
+if (loadingEvent) {
+  indexationSocket.value?.on(loadingEvent.startEventName, (entryId) => {
+    if (loadingEvent.checkMatch(entryId)) {
+      isLoading.value = true;
+    }
+  });
 
-defineExpose({
-  rerun,
-});
-
-if (rerunOnEventNamePart) {
-  watch(
-    () =>
-      indexationSocket.value?.ongoingCalls.some(
-        (call) => call.indexOf(rerunOnEventNamePart) === 0,
-      ),
-    (hasOngoingCall) => {
-      if (hasOngoingCall) {
-        actualStatus.value = "loading";
-      } else {
-        setTimeout(() => {
-          actualStatus.value = status;
-        }, 1000);
-      }
-    },
-  );
+  indexationSocket.value?.on(loadingEvent.endEventName, (entryId) => {
+    if (loadingEvent.checkMatch(entryId)) {
+      setTimeout(() => {
+        isLoading.value = false;
+      }, 1500);
+    }
+  });
 }
 </script>
 

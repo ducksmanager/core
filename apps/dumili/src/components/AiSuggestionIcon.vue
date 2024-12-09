@@ -5,6 +5,7 @@
     :class="{
       button,
       [status]: true,
+      loading: isLoading,
       broken: status === 'failure',
     }"
   />
@@ -15,7 +16,8 @@ import IBiLightbulbFill from "~icons/bi/lightbulb-fill";
 
 const { status, id = undefined } = defineProps<{
   button?: boolean;
-  status: "success" | "failure" | "idle" | "loading";
+  status: "success" | "failure" | "idle";
+  isLoading?: boolean;
   id?: string;
 }>();
 

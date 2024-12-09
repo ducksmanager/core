@@ -15,11 +15,6 @@ export const indexationPayloadInclude = {
       image: {
         include: {
           aiKumikoResultPanels: true,
-          aiOcrPossibleStories: {
-            include: {
-              storySuggestion: true,
-            },
-          },
           aiOcrResults: true,
         }
       }
@@ -56,8 +51,8 @@ export default abstract class {
 
   abstract setPageUrl: (
     id: number,
-    url: string|null,
-    callback: () => void,
+    url: string | null,
+    callback: (data: Errorable<'OK', "This indexation does not have any page with this ID">) => void,
   ) => void;
 
   abstract deleteIndexation: (callback: () => void) => void;
@@ -104,7 +99,7 @@ export default abstract class {
 
   abstract acceptIssueSuggestion: (
     suggestionId: issueSuggestion["id"] | null,
-    callback: (data: { status: "OK" }) => void,
+    callback: (data: Errorable<{ status: "OK" }, "This issue suggestion does not exist in this indexation">) => void,
   ) => void;
 
   abstract acceptStoryKindSuggestion: (
@@ -133,22 +128,16 @@ export default abstract class {
     ) => void,
   ) => void;
 
-  abstract runKumiko: (
-    entryId: entry["id"],
-    callback: (
-      data: Errorable<{ status: "OK" }, "Kumiko output could not be parsed">,
-    ) => void,
-  ) => void;
-
   abstract runKumikoOnPage: (
     pageId: page["id"],
     callback: (
-      data: Errorable<{ status: "OK" }, "This indexation does not have any page with this ID"|"Kumiko output could not be parsed">,
+      data: Errorable<{ status: "OK" }, "This indexation does not have any page with this ID" | "Kumiko output could not be parsed">,
     ) => void,
   ) => void;
 
-  abstract updatePageUrls: (
-    pageIds: number[],
+  abstract swapPageUrls: (
+    pageNumber1: number,
+    pageNumber2: number,
     callback: (data: { status: "OK" }) => void,
   ) => void;
 
@@ -157,7 +146,7 @@ export default abstract class {
     callback: (data: Errorable<{ status: "OK" }, 'Invalid number of pages'>) => void,
   ) => void;
 
-  abstract runOcr: (
+  abstract createStorySuggestions: (
     entryId: entry["id"],
     callback: (
       data: Errorable<
@@ -170,4 +159,12 @@ export default abstract class {
   ) => void;
 
   abstract createEntry: (callback: () => void) => void;
+}
+
+export interface ServerSentEvents {
+  setInferredEntryStoryKind: (entryId: number) => void;
+  setInferredEntryStoryKindEnd: (entryId: number) => void;
+
+  setKumikoInferredPageStoryKinds: (pageId: number) => void;
+  setKumikoInferredPageStoryKindsEnd: (pageId: number) => void;
 }
