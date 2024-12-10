@@ -1,6 +1,5 @@
-import IndexationServices, {
-  ServerSentEvents,
-} from "~dumili-services/indexation/types";
+import type { ServerSentEvents } from "~dumili-services/indexation/types";
+import IndexationServices from "~dumili-services/indexation/types";
 import IndexationsServices from "~dumili-services/indexations/types";
 import type { SocketClient } from "~socket.io-client-services";
 

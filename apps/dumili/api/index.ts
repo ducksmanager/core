@@ -42,7 +42,7 @@ export type SessionData = { user: SessionUser };
 
 export type NamespaceWithData<
   Services extends EventsMap,
-  ServerSentEvents extends EventsMap = {},
+  ServerSentEvents extends EventsMap = object,
   Data extends object = object,
 > = Namespace<Services, ServerSentEvents, Record<string, never>, Data>;
 

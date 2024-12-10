@@ -10,7 +10,7 @@
   "scripts": {
     "build": "vite build",
     "dev": "VITE_EDGES_PATH=`realpath ../edges/edges` concurrently -n vite,vue-tsc \"vite --port 8002\" \"vue-tsc --noEmit --watch\"",
-    "lint": "eslint .",
+    "lint": "eslint --fix .",
     "preview": "vite preview",
     "typecheck": "vue-tsc --noEmit",
     "prod:deploy": "DIR=apps/edgecreator pnpm -F '~ci' prod:docker-compose-up",

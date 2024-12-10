@@ -78,20 +78,19 @@ defineSlots<{
 
 const current = defineModel<S | null>();
 
-const { suggestions, isAiSource } = withDefaults(
-  defineProps<{
-    suggestions: S[];
-    isAiSource: (suggestion: S) => boolean;
-    itemClass?: (suggestion: S) => string[];
-    selectedItemClass?: (suggestion: S) => string[];
-    showCustomizeForm?: boolean;
-  }>(),
-  {
-    itemClass: () => [],
-    selectedItemClass: () => ["selected"],
-    showCustomizeForm: false,
-  },
-);
+const {
+  suggestions,
+  isAiSource,
+  itemClass = () => [],
+  selectedItemClass = () => ["selected"],
+  showCustomizeForm = false,
+} = defineProps<{
+  suggestions: S[];
+  isAiSource: (suggestion: S) => boolean;
+  itemClass?: (suggestion: S) => string[];
+  selectedItemClass?: (suggestion: S) => string[];
+  showCustomizeForm?: boolean;
+}>();
 
 const emit = defineEmits<{
   (e: "toggle-customize-form", toggle: boolean): void;

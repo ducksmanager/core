@@ -19,6 +19,6 @@
     "typescript-eslint": "^8.16.0"
   },
   "scripts": {
-    "lint": "cd ../.. && ./util/lint/node_modules/.bin/eslint --config ./util/lint/eslint.config.mjs"
+    "lint": "cd ../.. && ./util/lint/node_modules/.bin/eslint --fix --config ./util/lint/eslint.config.mjs"
   }
 }

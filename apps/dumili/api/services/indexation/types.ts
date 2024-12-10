@@ -16,8 +16,8 @@ export const indexationPayloadInclude = {
         include: {
           aiKumikoResultPanels: true,
           aiOcrResults: true,
-        }
-      }
+        },
+      },
     },
   },
   acceptedIssueSuggestion: true,
@@ -52,7 +52,12 @@ export default abstract class {
   abstract setPageUrl: (
     id: number,
     url: string | null,
-    callback: (data: Errorable<'OK', "This indexation does not have any page with this ID">) => void,
+    callback: (
+      data: Errorable<
+        "OK",
+        "This indexation does not have any page with this ID"
+      >,
+    ) => void,
   ) => void;
 
   abstract deleteIndexation: (callback: () => void) => void;
@@ -99,7 +104,12 @@ export default abstract class {
 
   abstract acceptIssueSuggestion: (
     suggestionId: issueSuggestion["id"] | null,
-    callback: (data: Errorable<{ status: "OK" }, "This issue suggestion does not exist in this indexation">) => void,
+    callback: (
+      data: Errorable<
+        { status: "OK" },
+        "This issue suggestion does not exist in this indexation"
+      >,
+    ) => void,
   ) => void;
 
   abstract acceptStoryKindSuggestion: (
@@ -131,7 +141,11 @@ export default abstract class {
   abstract runKumikoOnPage: (
     pageId: page["id"],
     callback: (
-      data: Errorable<{ status: "OK" }, "This indexation does not have any page with this ID" | "Kumiko output could not be parsed">,
+      data: Errorable<
+        { status: "OK" },
+        | "This indexation does not have any page with this ID"
+        | "Kumiko output could not be parsed"
+      >,
     ) => void,
   ) => void;
 
@@ -143,7 +157,9 @@ export default abstract class {
 
   abstract updateNumberOfPages: (
     numberOfPages: number,
-    callback: (data: Errorable<{ status: "OK" }, 'Invalid number of pages'>) => void,
+    callback: (
+      data: Errorable<{ status: "OK" }, "Invalid number of pages">,
+    ) => void,
   ) => void;
 
   abstract createStorySuggestions: (
