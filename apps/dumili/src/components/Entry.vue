@@ -88,6 +88,7 @@ defineProps<{
 
 const { indexationSocket } = inject(dumiliSocketInjectionKey)!;
 const { indexation } = storeToRefs(suggestions());
+const { loadIndexation } = suggestions();
 
 const entry = defineModel<FullEntry>({ required: true });
 
@@ -109,15 +110,16 @@ watchDebounced(
       entry.value.brokenpagedenominator,
       entry.value.title,
     ]),
-  () => {
+  async () => {
     const { entirepages, brokenpagenumerator, brokenpagedenominator, title } =
       entry.value;
-    indexationSocket.value!.services.updateEntry(entry.value.id, {
+    await indexationSocket.value!.services.updateEntry(entry.value.id, {
       entirepages,
       brokenpagenumerator,
       brokenpagedenominator,
       title,
     });
+    await loadIndexation();
   },
   { debounce: 500, maxWait: 1000 },
 );

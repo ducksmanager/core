@@ -173,24 +173,30 @@ export default (io: Server) => {
         if (entry?.acceptedStoryKind?.kind === STORY) {
           const firstPageNumberOfEntry = getEntryPages(indexation, entryId)[0]
             .pageNumber;
-          const ocrResults = (await prisma.page.findUnique({
-            include: {
-              image: {
-                include: {
-                  aiOcrResults: true,
+          const ocrResults = (
+            await prisma.page.findUnique({
+              include: {
+                image: {
+                  include: {
+                    aiOcrResults: true,
+                  },
                 },
               },
-            },
-            where: {
-              imageId: {
-                not: null,
+              where: {
+                imageId: {
+                  not: null,
+                },
+                indexationId_pageNumber: {
+                  indexationId: indexation.id,
+                  pageNumber: firstPageNumberOfEntry,
+                },
               },
-              indexationId_pageNumber: {
-                indexationId: indexation.id,
-                pageNumber: firstPageNumberOfEntry,
-              },
-            },
-          }))!.image!.aiOcrResults;
+            })
+          )?.image?.aiOcrResults;
+
+          if (!ocrResults) {
+            throw new Error(`No OCR results found for this entry`);
+          }
 
           const { results: searchResults } = await coaServices.searchStory(
             ocrResults.map(({ text }) => text),
@@ -295,6 +301,9 @@ export default (io: Server) => {
           },
           data: {
             storyKindSuggestions: {
+              deleteMany: {
+                isChosenByAi: true,
+              },
               updateMany: {
                 data: {
                   isChosenByAi: true,
@@ -595,7 +604,11 @@ export default (io: Server) => {
         await setInferredEntryStoryKind(entryId);
 
         if (entry?.acceptedStoryKind?.kind === STORY) {
-          await createStorySuggestions(entryId);
+          try {
+            await createStorySuggestions(entryId);
+          } catch (error) {
+            console.log((error as { message: string }).message);
+          }
         }
         callback({ status: "OK" });
       });
@@ -676,6 +689,7 @@ export default (io: Server) => {
           } catch (error) {
             callback({
               error: error as
+                | "No OCR results found for this entry"
                 | "This entry does not have a page URL associated"
                 | "This entry is not a story",
               errorDetails: `Entry ID: ${entryId}`,

@@ -97,16 +97,18 @@ watch(
 
 watch(visiblePages, () => {
   for (const pageId of visiblePages.value || []) {
-    const img = new Image();
     const pageIndex = indexation.pages.findIndex(({ id }) => id === pageId);
-    img.src = indexation.pages[pageIndex].image!.url;
+    if (indexation.pages[pageIndex].image) {
+      const img = new Image();
+      img.src = indexation.pages[pageIndex].image!.url;
 
-    img.onload = () => {
-      pageDimensions.value[indexation.pages[pageIndex].image!.url] = {
-        width: img.naturalWidth,
-        height: img.naturalHeight,
+      img.onload = () => {
+        pageDimensions.value[indexation.pages[pageIndex].image!.url] = {
+          width: img.naturalWidth,
+          height: img.naturalHeight,
+        };
       };
-    };
+    }
   }
 });
 

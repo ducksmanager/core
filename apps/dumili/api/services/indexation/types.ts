@@ -168,6 +168,7 @@ export default abstract class {
       data: Errorable<
         { status: "OK" },
         | "OCR error"
+        | "No OCR results found for this entry"
         | "This entry is not a story"
         | "This entry does not have a page URL associated"
       >,
