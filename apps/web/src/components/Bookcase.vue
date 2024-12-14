@@ -34,7 +34,6 @@
             currentEdgeHighlighted ===
             sortedBookcaseWithPopularity![edgeIndex].id
           "
-          :edge="sortedBookcaseWithPopularity![edgeIndex]"
           :issuecode="sortedBookcaseWithPopularity![edgeIndex].issuecode"
           :creation-date="
             sortedBookcaseWithPopularity![edgeIndex].creationDate?.toString()

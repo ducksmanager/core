@@ -17,7 +17,7 @@
     "lint-no-cache": "turbo lint --log-order=stream -F '!~duckguessr*' -- --fix",
     "dev:dumili": "turbo dev -F '~dumili-api...' -F '~dumili' -F '~web'",
     "dev:edgecreator": "turbo dev -F '~edgecreator-api...' -F '~edgecreator' -F '~web' -F '~edges'",
-    "dev:web": "turbo dev -F '~web' -F '~api'",
+    "dev:web": "turbo dev -F '~web' -F '~edges' -F '~api'",
     "dev:whattheduck": "turbo dev -F '~whattheduck' -F '~api' -F '~web'",
     "dev:whattheduck:android": "turbo dev:android -F '~whattheduck'",
     "dev:whattheduck:offline": "pnpm -F '~whattheduck' dev"

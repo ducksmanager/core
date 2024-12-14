@@ -1,6 +1,6 @@
 import type { Namespace, Server } from "socket.io";
 
-import type { BookcaseEdge, BookcaseEdgeSprite } from "~dm-types/BookcaseEdge";
+import type { BookcaseEdge } from "~dm-types/BookcaseEdge";
 import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
 
 import { RequiredAuthMiddleware } from "../auth/util";
@@ -11,7 +11,9 @@ import { namespaceEndpoint } from "./types";
 import { checkValidBookcaseUser } from "./util";
 
 type BookcaseEdgeRaw = Omit<BookcaseEdge, "sprites"> & {
-  sprites?: string;
+  spriteName: string;
+  spriteVersion: string;
+  spriteSize: number;
 };
 
 export default (io: Server) => {
@@ -30,20 +32,15 @@ export default (io: Server) => {
         callback({ error: user.error });
         return;
       }
-      const groupBy = user.showDuplicatesInBookcase
-        ? "numeros.ID"
-        : "numeros.issuecode";
-      callback({
-        edges: (
-          (await prismaDm.$queryRaw`
+
+      prismaDm.$queryRaw<BookcaseEdgeRaw[]>`
             SELECT issue.ID AS id,
               issue.issuecode,
               edge.ID AS edgeId,
               edge.DateAjout AS creationDate,
-              IF(edge.ID IS NULL, '', GROUP_CONCAT(
-                IF(edgeSprite.Sprite_name IS NULL, '',
-                  JSON_OBJECT('name', edgeSprite.Sprite_name, 'version', edgeSpriteUrl.Version, 'size', edgeSprite.Sprite_size))
-                ORDER BY edgeSprite.Sprite_size ASC)) AS sprites
+              edgeSprite.Sprite_name AS spriteName,
+              edgeSpriteUrl.Version AS spriteVersion,
+              edgeSprite.Sprite_size AS spriteSize
             FROM numeros issue
             LEFT JOIN tranches_pretes edge
               USING(issuecode)
@@ -52,18 +49,34 @@ export default (io: Server) => {
             LEFT JOIN tranches_pretes_sprites_urls edgeSpriteUrl
               USING(Sprite_name)
             WHERE ID_Utilisateur = ${user.id}
-            GROUP BY ${groupBy}
-          `) as BookcaseEdgeRaw[]
-        ).map(mapEdges),
-      });
+          `
+        .then((edges) =>
+          edges.groupBy(
+            user.showDuplicatesInBookcase ? "id" : "issuecode",
+            "[]",
+          ),
+        )
+        .then(Object.entries)
+        .then(
+          (
+            arr: [number | string, BookcaseEdgeRaw[]][],
+          ): [number | string, BookcaseEdge][] =>
+            arr.map(([key, edges]) => [
+              key,
+              {
+                ...edges[0],
+                sprites: edges
+                  .map(({ spriteName, spriteSize, spriteVersion }) => ({
+                    name: spriteName,
+                    size: spriteSize,
+                    version: spriteVersion,
+                  }))
+                  .filter(({ size }) => !!size),
+              },
+            ]),
+        )
+        .then(Object.values)
+        .then((edges) => callback({ edges }));
     });
   });
 };
-
-const mapEdges = (bookcaseEdge: BookcaseEdgeRaw): BookcaseEdge => ({
-  ...bookcaseEdge,
-  sprites:
-    (bookcaseEdge.sprites?.indexOf("{") === 0 &&
-      (JSON.parse(`[${bookcaseEdge.sprites}]`) as BookcaseEdgeSprite[])) ||
-    [],
-});

@@ -356,7 +356,7 @@ export const resetDemo = async () => {
 
   const csvPath = existsSync("/app/demo_issues.csv")
     ? "/app/"
-    : cwd() + "/services/";
+    : cwd() + "/services/auth/";
 
   demo.lastReset = new Date();
   await prismaDm.demo.update({

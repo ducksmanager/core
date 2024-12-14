@@ -227,8 +227,8 @@ model edgeSprite {
 }
 
 model edgeSpriteSize {
-  id         Int     @id @default(autoincrement()) @map("ID")
-  spriteName String? @map("sprite_name") @db.VarChar(25)
+  id         Int    @id @default(autoincrement()) @map("ID")
+  spriteName String @map("sprite_name") @db.VarChar(25)
   size       Int?
 
   @@map("tranches_pretes_sprites_size")

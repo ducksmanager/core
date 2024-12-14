@@ -75,15 +75,6 @@ export default abstract class {
   abstract getRecentIssues: (
     callback: (value: SimpleInducksIssue[]) => void,
   ) => void;
-  abstract getIssuesByPublicationCodes: (
-    publicationCodes: string[],
-    callback: (
-      value: Errorable<
-        { issues: IssueWithIssuecodeOnly[] },
-        "Too many requests"
-      >,
-    ) => void,
-  ) => void;
 
   abstract getFullPublicationList: (
     callback: (value: Record<string, string>) => void,
