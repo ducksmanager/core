@@ -39,7 +39,7 @@ export type purchaseWithStringDate = Omit<purchase, "date"> & {
 
 export const collection = defineStore("collection", () => {
   const {
-    collection: { services: collectionServices, socket: collectionSocket },
+    collection: { services: collectionServices },
     stats: { services: statsServices },
     auth: { services: authServices },
     options: socketOptions,
@@ -356,7 +356,6 @@ export const collection = defineStore("collection", () => {
     createPurchase,
     deletePurchase,
     hasRole,
-    collectionSocket,
     hasSuggestions,
     isLoadingUser,
     coaIssueCountsByPublicationcode,

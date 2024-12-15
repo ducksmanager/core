@@ -53,7 +53,10 @@ meta:
 import Cookies from "js-cookie";
 
 const { login: userLogin, loadUser } = collection();
-const { user, collectionSocket } = storeToRefs(collection());
+const { user } = storeToRefs(collection());
+const {
+  collection: { socket: collectionSocket },
+} = inject(socketInjectionKey)!;
 
 let router = useRouter();
 let route = useRoute();
@@ -72,7 +75,7 @@ const login = async () => {
         domain,
       });
 
-      collectionSocket.value!.connect();
+      collectionSocket!.connect();
 
       // const tmp = inject(socketInjectionKey)!;
       // collectionSocket!.connect();
