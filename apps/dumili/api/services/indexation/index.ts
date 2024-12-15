@@ -433,7 +433,7 @@ export default (io: Server) => {
                       },
                       {
                         data: {
-                          pageNumber: pageNumber2,
+                          pageNumber: pageNumber1,
                         },
                         where: {
                           pageNumber: -pageNumber2,
