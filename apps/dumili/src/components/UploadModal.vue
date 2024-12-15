@@ -11,8 +11,24 @@
     dialog-class="h-100"
     body-class="d-flex flex-column align-items-start overflow-auto"
   >
-    <b-form-radio v-model="uploadFileType" name="file-type" value="PDF"
+    <b-form-radio
+      disabled
+      :model-value="['PDF_ignore', 'PDF_replace'].includes(uploadFileType)"
       >{{ $t("PDF") }}
+    </b-form-radio>
+    <b-form-radio
+      v-model="uploadFileType"
+      class="ms-2"
+      name="file-type"
+      value="PDF_ignore"
+      >{{ $t("Ignorer les pages existantes") }}
+    </b-form-radio>
+    <b-form-radio
+      v-model="uploadFileType"
+      class="ms-2"
+      name="file-type"
+      value="PDF_replace"
+      >{{ $t("Remplacer les pages existantes") }}
     </b-form-radio>
     <b-form-radio v-model="uploadFileType" name="file-type" value="Images"
       >{{ $t("Images") }}
@@ -20,24 +36,26 @@
     <div class="status">{{ processLog }}</div>
     <div class="d-flex flex-column align-items-center">
       <b-alert
-        variant="info"
-        :model-value="uploadFileType === 'PDF'"
+        :variant="uploadFileType === 'PDF_ignore' ? 'info' : 'warning'"
+        :model-value="['PDF_ignore', 'PDF_replace'].includes(uploadFileType)"
         :dismissible="false"
         class="w-100 mt-3"
         >{{
           $t(
-            "Les images envoyées seront associées aux pages {firstPage} à {lastPage}. Si votre PDF fait plus de {maxPages} page(s), les pages suivantes seront ignorées.",
+            uploadFileType === "PDF_ignore"
+              ? "Les images envoyées seront associées aux pages {firstPage} à {lastPage}. Si votre PDF fait plus de {maxPages} page(s), les pages suivantes seront ignorées."
+              : "Les images envoyées seront associées aux pages {firstPage} à {lastPage}. Si votre PDF fait plus de {maxPages} page(s), les pages suivantes seront remplacées.",
             {
-              firstPage: pages[0].pageNumber,
+              firstPage: pagesWithoutOverwrite[0].pageNumber,
               lastPage: pages[pages.length - 1].pageNumber,
-              maxPages: pages.length,
+              maxPages: pagesWithoutOverwrite.length,
             },
           )
         }}
       </b-alert>
       <b-alert
         variant="info"
-        :model-value="uploadFileType === 'PDF'"
+        :model-value="['PDF_ignore', 'PDF_replace'].includes(uploadFileType)"
         :dismissible="false"
         class="w-100"
         ><i18n-t
@@ -68,10 +86,14 @@ import { stores as webStores } from "~web";
 
 const { indexationSocket } = inject(dumiliSocketInjectionKey)!;
 
-const { pages, uploadPageNumber } = defineProps<{
-  uploadPageNumber?: number;
-  pages: { id: number; pageNumber: number }[];
-}>();
+const { pagesWithoutOverwrite, pagesAllowOverwrite, uploadPageNumber } =
+  defineProps<{
+    uploadPageNumber?: number;
+    pagesWithoutOverwrite: { id: number; pageNumber: number }[];
+    pagesAllowOverwrite: { id: number; pageNumber: number }[];
+  }>();
+
+const { t: $t } = useI18n();
 
 const { indexation } = storeToRefs(suggestions());
 
@@ -91,7 +113,9 @@ watch(
   { immediate: true },
 );
 
-const uploadFileType = ref<"PDF" | "Images">("PDF");
+const uploadFileType = ref<"PDF_ignore" | "PDF_replace" | "Images">(
+  "PDF_ignore",
+);
 
 const currentPageIndex = ref(0);
 const isUploading = ref(false);
@@ -106,8 +130,14 @@ declare var cloudinary: {
   createUploadWidget: CloudinaryCreateUploadWidget;
 };
 
+const pages = computed(() =>
+  uploadFileType.value === "PDF_ignore"
+    ? pagesWithoutOverwrite
+    : pagesAllowOverwrite,
+);
+
 const processPage = async (pageIndex: number, url: string) => {
-  const page = pages[pageIndex];
+  const page = pages.value[pageIndex];
   processLog.value = `Processing page ${page.pageNumber}...`;
   await indexationSocket.value!.services.setPageUrl(page.id, url);
 };
@@ -146,7 +176,7 @@ onMounted(() => {
             if (info.pages) {
               for (
                 let page = 1;
-                page <= Math.min(info.pages, pages.length);
+                page <= Math.min(info.pages, pages.value.length);
                 page++
               ) {
                 await processPage(

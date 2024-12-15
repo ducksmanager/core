@@ -15,6 +15,7 @@
           ><b-tab
             v-for="tabName of tabNames"
             :key="tabName"
+            :button-id="tabName"
             :title="$t(tabName)" /></b-tabs
       ></b-container>
     </b-col>

@@ -21,12 +21,12 @@
     "prod:transfer-files-post": "pnpm -F '~ci' prod:transfer-files apps/dumili/api/docker-compose.yml:@apps/dumili/api/docker-compose.yml"
   },
   "dependencies": {
-    "@prisma/client": "^5.22.0",
-    "@sentry/node": "^8.41.0",
-    "axios": "^1.7.8",
+    "@prisma/client": "^6.0.1",
+    "@sentry/node": "^8.45.0",
+    "axios": "^1.7.9",
     "busboy": "^1.6.0",
     "cloudinary": "^1.41.3",
-    "dotenv": "^16.4.5",
+    "dotenv": "^16.4.7",
     "jsonwebtoken": "^9.0.2",
     "sharp": "^0.33.5",
     "socket.io": "^4.8.1",
@@ -40,9 +40,9 @@
     "@types/busboy": "^1.5.4",
     "@types/i18n": "^0.13.12",
     "@types/jsonwebtoken": "^9.0.7",
-    "@types/node": "^22.10.1",
+    "@types/node": "^22.10.2",
     "concurrently": "^9.1.0",
-    "prisma": "^5.22.0",
-    "typescript": "^5.6.2"
+    "prisma": "^6.0.1",
+    "typescript": "^5.7.2"
   }
 }

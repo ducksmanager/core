@@ -35,15 +35,25 @@
           ></div>
         </template>
         <b-button
+          v-if="image"
           variant="danger"
           class="position-absolute top-0 mt-2 text-center opacity-50 opacity-100-hover"
           @click="disconnectPageUrl(id)"
         >
           {{ $t("Désassocier l'image") }}
         </b-button>
-        <b-img v-if="image" class="cursor-move" lazy :src="image.url" fluid />
+        <b-img
+          class="cursor-move"
+          :class="{ 'w-100': !image, 'h-100': !image }"
+          lazy
+          blank-color="lightgrey"
+          :blank="image === null"
+          :src="image?.url"
+          fluid
+        />
         <b-button
-          v-else
+          v-if="!image"
+          class="position-absolute center"
           variant="success"
           @click="uploadPageNumber = pageNumber"
           >{{ $t("Ajouter") }}</b-button
@@ -55,9 +65,10 @@
     </b-row>
     <b-container v-else>{{ $t("Chargement...") }}</b-container>
     <upload-modal
-      v-if="uploadablePages.length"
+      v-if="uploadablePagesWithoutOverwrite.length"
       :upload-page-number="uploadPageNumber"
-      :pages="uploadablePages"
+      :pages-without-overwrite="uploadablePagesWithoutOverwrite"
+      :pages-allow-overwrite="uploadablePagesAllowOverwrite"
       @done="loadIndexation"
     />
   </b-container>
@@ -83,14 +94,25 @@ const { pages } = defineProps<{
   selectable?: boolean;
 }>();
 
-const uploadablePages = computed(() =>
+const getUploadablePages = (onlyIncludeEmptyPages: boolean) =>
   pages.filter(
     ({ pageNumber }) =>
       pageNumber >= uploadPageNumber.value! &&
       pageNumber <
         uploadPageNumber.value! +
-          maxUploadableImagesFromPageNumber(uploadPageNumber.value!),
-  ),
+          maxUploadableImagesFromPageNumber(
+            uploadPageNumber.value!,
+            onlyIncludeEmptyPages,
+          ),
+  );
+
+const uploadablePagesAllowOverwrite = computed(() => {
+  debugger;
+  return getUploadablePages(false);
+});
+
+const uploadablePagesWithoutOverwrite = computed(() =>
+  getUploadablePages(true),
 );
 
 defineSlots<{
@@ -104,9 +126,25 @@ const emit = defineEmits<{
 const { t: $t } = useI18n();
 
 const uploadPageNumber = ref<number>();
-const maxUploadableImagesFromPageNumber = (pageNumber: number) =>
-  (pages.find(({ pageNumber: pn, image }) => pn > pageNumber && image)
-    ?.pageNumber || pages.length) - pageNumber;
+const maxUploadableImagesFromPageNumber = (
+  pageNumber: number,
+  onlyIncludeEmptyPages: boolean,
+) => {
+  const subsequentPages = pages
+    .filter((page) => page.pageNumber > pageNumber)
+    .sort((a, b) => a.pageNumber - b.pageNumber);
+
+  if (onlyIncludeEmptyPages) {
+    debugger;
+  }
+  const firstBreakIndex = subsequentPages.findIndex((page) =>
+    onlyIncludeEmptyPages ? page.image : false,
+  );
+
+  return firstBreakIndex === -1
+    ? subsequentPages.length + 1
+    : firstBreakIndex + 1;
+};
 
 const { visiblePages, currentPage, hoveredEntry, hoveredEntryPageNumbers } =
   storeToRefs(ui());

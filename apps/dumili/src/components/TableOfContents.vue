@@ -111,9 +111,11 @@ const numberOfPages = computed({
         !confirm(
           $t(
             "Vous êtes sur le point de supprimer les {numberOfPagesToDelete} dernières pages de l'indexation. Êtes-vous sûr(e) ?",
+            { numberOfPagesToDelete: numberOfPages.value - value },
           ),
         )
       ) {
+        numberOfPages.value = indexation.value.pages.length;
         return;
       }
     }

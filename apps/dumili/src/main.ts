@@ -5,6 +5,7 @@ import "~group-by";
 import { browserTracingIntegration } from "@sentry/browser";
 import * as Sentry from "@sentry/vue";
 import { createHead } from "@unhead/vue";
+import { createBootstrap } from "bootstrap-vue-next";
 import Cookies from "js-cookie";
 import { setupLayouts } from "virtual:generated-layouts";
 import generatedRoutes from "virtual:generated-pages";
@@ -32,6 +33,7 @@ const store = createPinia();
 
 const app = createApp(App)
   .component("vue-draggable-resizable", VueDraggableResizable)
+  .use(createBootstrap())
   .use(i18n)
   .use(store)
   .use(head)
