@@ -19,17 +19,17 @@
     "bedetheque-scraper": "^3.2.0",
     "csv-parse": "^5.6.0",
     "csv-writer": "^1.6.0",
-    "dotenv": "^16.4.5",
-    "electron": "^32.2.5",
+    "dotenv": "^16.4.7",
+    "electron": "^32.2.7",
     "playwright-firefox": "~1.47.2",
     "yargs": "^17.7.2",
     "~prisma-schemas": "workspace:*"
   },
   "devDependencies": {
-    "@types/node": "^22.10.1",
+    "@types/node": "^22.10.2",
     "@types/yargs": "^17.0.33",
     "tsc-alias": "^1.8.10",
     "tsx": "^4.19.2",
-    "typescript": "^5.6.2"
+    "typescript": "^5.7.2"
   }
 }
