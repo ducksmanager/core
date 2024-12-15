@@ -60,9 +60,7 @@ export default () => {
         .filter(({ id }) => entryId === undefined || id === entryId)
         .map((entry) => indexationServices.createStorySuggestions(entry.id)),
     );
-    const resultsWithErrors = result.filter(
-      (result) => "error" in result && result.error === "OCR error",
-    );
+    const resultsWithErrors = result.filter((result) => "error" in result);
     if (resultsWithErrors.length) {
       console.error(resultsWithErrors);
     } else {

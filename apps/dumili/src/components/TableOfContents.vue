@@ -212,7 +212,7 @@ watch(
     display: none;
   }
 
-  button.create-entry {
+  :deep(button.create-entry) {
     height: 25px;
     z-index: 10;
   }
@@ -230,7 +230,6 @@ watch(
       backdrop-filter: blur(5px);
       left: 10px;
       width: calc(100% - 2px);
-      padding-bottom: 1rem;
 
       $background: rgba(238, 238, 238, 0.85);
       box-shadow: 0px 35px 5px -4px;

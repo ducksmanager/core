@@ -11,8 +11,8 @@ export const getFirstPageOfEntry = (entries: entry[], entryId: number) =>
       ),
   );
 
-export const getEntryPages = (
-  { entries, pages }: { entries: entry[]; pages: page[] },
+export const getEntryPages = <P extends page>(
+  { entries, pages }: { entries: entry[]; pages: P[] },
   entryId: number,
 ) => {
   const firstPageOfEntry = getFirstPageOfEntry(entries, entryId);

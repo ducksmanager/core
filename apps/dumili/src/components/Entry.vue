@@ -15,13 +15,26 @@
           <template #default="{ suggestion, isDropdownItem }">
             {{ getStoryKind(suggestion.kind) }}
             <span
-              v-if="!isDropdownItem &&
-            getEntryPages(indexation!, entry.id)[0].pageNumber === 1 && 
-            entry.acceptedStoryKind?.kind !== COVER
+              v-if="
+                !isDropdownItem &&
+                getEntryPages(indexation!, entry.id)[0].pageNumber === 1 && 
+                entry.acceptedStoryKind?.kind !== COVER
               "
+              class="d-flex ms-1"
               :title="
                 $t('La première page est généralement une page de couverture')
               "
+            >
+              <i-bi-exclamation-triangle-fill
+            /></span>
+            <span
+              v-if="
+                !isDropdownItem &&
+                getEntryPages(indexation!, entry.id).length > 1 && 
+                entry.acceptedStoryKind?.kind === COVER
+              "
+              class="d-flex ms-1"
+              :title="$t('La couverture ne devrait faire qu\'une page')"
             >
               <i-bi-exclamation-triangle-fill
             /></span>
@@ -177,7 +190,8 @@ const getStoryKind = (storyKind: storyKind) => storyKinds[storyKind];
     @include storyKindBackground(#cbdced);
   }
 
-  &.kind-n_g {
+  &.kind-n_g,
+  &.kind-k {
     @include storyKindBackground(#ff99ff);
   }
 }

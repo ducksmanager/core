@@ -20,6 +20,7 @@
   "Ignorer les pages existantes": "Ignore existing pages",
   "Images": "Images",
   "Indexations en cours": "Ongoing indexations",
+  "La couverture ne devrait faire qu'une page": "The cover should be only one page",
   "La première page est généralement une page de couverture": "The first page is usually a cover page",
   "Le type de l'histoire sélectionnée ne correspond pas au type de l'entrée": "The type of the selected story doesn't correspond to the entry type",
   "Les images envoyées seront associées aux pages {firstPage} à {lastPage}. Si votre PDF fait plus de {maxPages} page(s), les pages suivantes seront ignorées.": "The uploaded images will be associated with pages {firstPage} to {lastPage}. If your PDF has more than {maxPages} page(s), the next pages will be ignored.",

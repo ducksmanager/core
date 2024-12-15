@@ -4,11 +4,11 @@
     @mouseout="() => (showRepeat = false)"
     @mouseover="() => (showRepeat = true)"
   >
-    <!-- <Teleport to="body">
+    <Teleport to="body">
       <b-tooltip :target="id" click @show="emit('click')" @hide="emit('blur')"
         ><slot
       /></b-tooltip>
-    </Teleport> -->
+    </Teleport>
     <AiSuggestionIcon
       :id="disabled ? `${id}-disabled` : id"
       button
@@ -45,7 +45,7 @@ const {
 
 defineSlots();
 
-defineEmits<{
+const emit = defineEmits<{
   (e: "click"): void;
   (e: "blur"): void;
 }>();

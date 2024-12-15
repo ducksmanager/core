@@ -1,6 +1,6 @@
 @use "sass:color";
 
-.opacity-100-hover:hover{
+.opacity-100-hover:hover {
   opacity: 1 !important;
 }
 
@@ -40,7 +40,10 @@ html,
 body {
   margin: 0;
   height: 100%;
-  font: 11px verdana, arial, sans-serif;
+  font:
+    11px verdana,
+    arial,
+    sans-serif;
   line-height: 15px;
 }
 
@@ -122,13 +125,13 @@ button:focus-visible {
 }
 
 .translucent {
-  border: 2px solid rgba(0,0,0,0.2);
+  border: 2px solid rgba(0, 0, 0, 0.2);
   box-shadow: inset 0px 0px 10px 10px white;
 }
 
 .ocr-match {
   background-color: rgba(255, 255, 255, 0.5);
-  color: black
+  color: black;
 }
 
 @mixin storyKindBackground($bg) {
@@ -137,7 +140,13 @@ button:focus-visible {
 
   &.striped {
     background-color: transparent !important;
-    background: repeating-linear-gradient(-45deg, rgba($bg, 0.4), rgba($bg, 0.4) 1px, transparent 1px, transparent 10px)
+    background: repeating-linear-gradient(
+      -45deg,
+      rgba($bg, 0.4),
+      rgba($bg, 0.4) 1px,
+      transparent 1px,
+      transparent 10px
+    );
   }
   &.btn:hover {
     background-color: color.adjust($bg, $lightness: 5%) !important;
@@ -146,18 +155,18 @@ button:focus-visible {
 }
 
 $storyKinds: (
-  'c': #ffcc33,
-  'n': #cbdced,
-  'n_g': #ff99ff
+  "c": #ffcc33,
+  "n": #cbdced,
+  "n_g": #ff99ff,
+  "k": #ff99ff,
 );
 
-
-*[class^='kind-'], *[class*=' kind-'] {
+*[class^="kind-"],
+*[class*=" kind-"] {
   @include storyKindBackground(#cccccc);
 }
 
-@each $storyKind,
-$storyversionColor in $storyKinds {
+@each $storyKind, $storyversionColor in $storyKinds {
   .kind-#{$storyKind} {
     @include storyKindBackground($storyversionColor);
   }

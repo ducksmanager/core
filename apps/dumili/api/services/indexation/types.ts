@@ -175,7 +175,7 @@ export default abstract class {
     ) => void,
   ) => void;
 
-  abstract createEntry: (callback: () => void) => void;
+  abstract createEntry: (callback: (data: { status: "OK" }) => void) => void;
 }
 
 export interface ServerSentEvents {

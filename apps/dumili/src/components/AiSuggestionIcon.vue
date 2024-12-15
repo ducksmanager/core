@@ -43,9 +43,8 @@ svg {
   width: 20px;
   min-width: 20px;
 
-  cursor: help;
-
   &.button {
+    cursor: help;
     background: black;
     border-radius: 10px;
     padding: 4px;

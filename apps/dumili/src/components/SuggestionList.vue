@@ -33,9 +33,7 @@
           emit('toggle-customize-form', false);
         "
       >
-        <div>
-          <slot v-bind="{ suggestion, isDropdownItem: true }" />
-        </div>
+        <slot v-bind="{ suggestion, isDropdownItem: true }" />
         <AiSuggestionIcon v-if="isAiSource(suggestion)" status="success"
       /></b-dropdown-item>
     </b-dropdown-group>
@@ -54,10 +52,8 @@
     <template #button-content>
       <slot v-if="showCustomizeForm" name="customize-text" />
       <div v-else class="d-flex justify-content-between align-items-center">
-        <div>
-          <slot v-if="current" v-bind="{ suggestion: current }" />
-          <slot v-else name="unknown-text" />
-        </div>
+        <slot v-if="current" v-bind="{ suggestion: current }" />
+        <slot v-else name="unknown-text" />
         <AiSuggestionIcon
           v-if="current && isAiSource(current)"
           status="success"
@@ -95,6 +91,8 @@ const {
 const emit = defineEmits<{
   (e: "toggle-customize-form", toggle: boolean): void;
 }>();
+
+const { t: $t } = useI18n();
 
 const allowCustomizeForm = computed(
   () => $slots["customize-form"] !== undefined,
