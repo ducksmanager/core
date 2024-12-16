@@ -1,4 +1,4 @@
-import { useToast } from "bootstrap-vue-next";
+import { useToastController } from "bootstrap-vue-next";
 import interact from "interactjs";
 import { useI18n } from "vue-i18n";
 
@@ -15,7 +15,7 @@ const shownTips: string[] = [];
 
 export const useStepOptions = (props: BaseProps, attributeKeys: string[]) => {
   const stepStore = step();
-  const toast = useToast();
+  const toast = useToastController();
   const { t } = useI18n();
   const { zoom } = storeToRefs(ui());
   const width = computed(

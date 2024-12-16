@@ -161,7 +161,7 @@ meta:
 import "cropperjs/dist/cropper.css";
 
 import { useCookies } from "@vueuse/integrations/useCookies";
-import { useToast } from "bootstrap-vue-next";
+import { useToastController } from "bootstrap-vue-next";
 import type Cropper from "cropperjs";
 import { nextTick } from "vue";
 import type { CropperData } from "vue-cropperjs";
@@ -205,7 +205,7 @@ const initialContributors = computed(
 const addCrop = () => {
   const data = cropper.value!.getData() as CropperData;
   if (data.height < data.width) {
-    useToast().show!({
+    useToastController().show!({
       props: {
         body: i18n
           .t(

@@ -1,4 +1,4 @@
-import { useToast } from "bootstrap-vue-next";
+import { useToastController } from "bootstrap-vue-next";
 import { watch } from "vue";
 import { useRoute } from "vue-router";
 
@@ -9,7 +9,7 @@ export default () =>
     () => route.hash,
     (newValue) => {
       const toastError = (message: string) =>
-        useToast().show!({
+        useToastController().show!({
           props: {
             body: message,
             title: "Error",

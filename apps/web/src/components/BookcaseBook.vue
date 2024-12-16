@@ -96,7 +96,7 @@
 </template>
 
 <script setup lang="ts">
-import { useToast } from "bootstrap-vue-next";
+import { useToastController } from "bootstrap-vue-next";
 import type { PageFlip } from "page-flip";
 
 const { issuecode } = defineProps<{
@@ -111,7 +111,7 @@ const cloudinaryBaseUrl =
 const { fetchIssueUrls } = coa();
 const { getImagePath } = images();
 
-const toast = useToast();
+const toast = useToastController();
 const edgeWidth = ref<number | null>(null);
 const coverHeight = ref<number | undefined>(undefined);
 const coverRatio = ref<number | undefined>(undefined);
