@@ -31,12 +31,10 @@
           })) || []
         "
       />
-      <b>{{ $t("Type d'entrée déduit pour la page") }}</b>
-      {{
-        image?.aiKumikoInferredStoryKind
-          ? storyKinds[image.aiKumikoInferredStoryKind] || $t("Non calculé")
-          : $t("Non calculé")
-      }}
+      <div>
+        <b>{{ $t("Type d'entrée déduit pour la page") }}</b>
+      </div>
+      <story-kind-badge :story-kind="image?.aiKumikoInferredStoryKind" />
     </ai-tooltip>
   </b-col>
 </template>
@@ -44,7 +42,6 @@
 import useAi from "~/composables/useAi";
 import { ui } from "~/stores/ui";
 import { FullIndexation } from "~dumili-services/indexation/types";
-import { storyKinds } from "~dumili-types/storyKinds";
 
 const { page } = defineProps<{
   page: FullIndexation["pages"][number];

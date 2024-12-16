@@ -1,35 +1,28 @@
 <template>
   <span
-    v-if="show || isLoading"
-    @mouseout="() => (showRepeat = false)"
-    @mouseover="() => (showRepeat = true)"
+    @mouseout="() => (isInteractive = false)"
+    @mouseover="() => (isInteractive = true)"
   >
     <Teleport to="body">
       <b-tooltip :target="id" click @show="emit('click')" @hide="emit('blur')"
-        ><slot
+        ><i-bi-arrow-repeat
+          class="position-absolute start-0 ms-2 cursor-pointer"
+          @click="onClickRerun" /><slot
       /></b-tooltip>
     </Teleport>
     <AiSuggestionIcon
       :id="disabled ? `${id}-disabled` : id"
       button
       :is-loading="isLoading"
-      :status="status" />
-    <i-bi-arrow-repeat
-      v-show="!isLoading && showRepeat"
-      class="ms-2"
-      @click="onClickRerun"
-  /></span>
+      :status="status"
+    />
+  </span>
 </template>
 <script setup lang="ts" generic="LoadingEventStart extends keyof ServerSentEvents, LoadingEventEnd extends keyof ServerSentEvents">
 import { dumiliSocketInjectionKey } from "~/composables/useDumiliSocket";
 import type { ServerSentEvents } from "~dumili-services/indexation/types";
 
-const {
-  status,
-  show = true,
-  loadingEvent,
-  onClickRerun,
-} = defineProps<{
+const { status, loadingEvent, onClickRerun } = defineProps<{
   id: string;
   status: "success" | "failure" | "idle";
   show?: boolean;
@@ -54,7 +47,7 @@ const { indexationSocket } = inject(dumiliSocketInjectionKey)!;
 
 const isLoading = ref(false);
 const disabled = ref(false); // TODO handle failed suggestions
-const showRepeat = ref(false);
+const isInteractive = ref(false);
 
 if (loadingEvent) {
   indexationSocket.value?.on(loadingEvent.startEventName, (entryId) => {
@@ -65,6 +58,7 @@ if (loadingEvent) {
 
   indexationSocket.value?.on(loadingEvent.endEventName, (entryId) => {
     if (loadingEvent.checkMatch(entryId)) {
+      console.log("match end");
       setTimeout(() => {
         isLoading.value = false;
       }, 1500);

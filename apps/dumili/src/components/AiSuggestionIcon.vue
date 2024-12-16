@@ -41,14 +41,15 @@ const component = computed(() =>
 
 svg {
   width: 20px;
+  height: 20px;
   min-width: 20px;
+  padding: 4px;
 
   &.button {
-    cursor: help;
-    background: black;
+    background: lightgrey;
     border-radius: 10px;
-    padding: 4px;
-    height: 20px;
+    opacity: 0.5;
+    cursor: help;
   }
 
   &.idle {

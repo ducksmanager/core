@@ -125,7 +125,7 @@ const numberOfPages = computed({
 });
 
 const issueAiSuggestion = computed(() =>
-  indexation.value.issueSuggestions.find(({ isChosenByAi }) => isChosenByAi),
+  indexation.value.issueSuggestions.find(({ ai }) => !!ai),
 );
 
 const updateNumberOfPages = (event: Event) => {

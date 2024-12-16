@@ -19,7 +19,9 @@
       </div>
       <Gallery
         v-slot="{ issuecode }"
-        :images="images"
+        :pages="
+          images.map(({ url, id }) => ({ image: { url }, id, pageNumber: 0 }))
+        "
         selectable
         @selected="
           (id) =>
@@ -97,7 +99,7 @@ const acceptIssueSuggestion = async (issuecode: string) => {
     issuecode,
     publicationcode,
     issuenumber,
-    isChosenByAi: true,
+    ai: true,
   });
   await indexationSocket.value!.services.acceptIssueSuggestion(suggestionId);
   selectedExistingCoverIssuecode.value = null;

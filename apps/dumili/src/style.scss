@@ -8,6 +8,10 @@
   cursor: move;
 }
 
+.cursor-pointer {
+  cursor: pointer;
+}
+
 .overlay {
   position: absolute;
   top: 0;
@@ -155,10 +159,16 @@ button:focus-visible {
 }
 
 $storyKinds: (
-  "c": #ffcc33,
-  "n": #cbdced,
-  "n_g": #ff99ff,
-  "k": #ff99ff,
+  /* STORY */ "n": #cbdced,
+  /* NEWSPAPER_STRIP */ "k": #ff99ff,
+  /* COVER */ "c": #ffcc33,
+  /* ILLUSTRATION */ "i": #ffcc33,
+  /* GAME_OR_PUZZLE */ "g": #ffcc33,
+  /* TEXT_STORY */ "t": #ffcc33,
+  /* ARTICLE */ "a": #cccc99,
+  /* PAINTING_PORTRAIT */ "P": #ffcc33,
+  /* PAINTING_LANDSCAPE */ "L": #ffcc33,
+  /* CENTERFOLD */ "f": #ffcc33
 );
 
 *[class^="kind-"],

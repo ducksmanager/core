@@ -20,8 +20,16 @@ export const indexationPayloadInclude = {
       },
     },
   },
-  acceptedIssueSuggestion: true,
-  issueSuggestions: true,
+  acceptedIssueSuggestion: {
+    include: {
+      ai: true,
+    },
+  },
+  issueSuggestions: {
+    include: {
+      ai: true,
+    },
+  },
   entries: {
     include: {
       acceptedStory: {
@@ -29,10 +37,11 @@ export const indexationPayloadInclude = {
           ocrDetails: true,
         },
       },
-      acceptedStoryKind: true,
-      storyKindSuggestions: true,
+      acceptedStoryKind: {include: {ai: true}},
+      storyKindSuggestions: {include: {ai: true}},
       storySuggestions: {
         include: {
+          ai: true,
           ocrDetails: true,
         },
       },
@@ -69,7 +78,7 @@ export default abstract class {
   ) => void;
 
   abstract createStorySuggestion: (
-    suggestion: Prisma.storySuggestionUncheckedCreateInput,
+    suggestion: Prisma.storySuggestionUncheckedCreateInput & {ai: boolean},
     callback: (
       data: Errorable<
         { createdStorySuggestion: Pick<storySuggestion, "id" | "storycode"> },
@@ -93,7 +102,7 @@ export default abstract class {
     suggestion: Omit<
       Prisma.issueSuggestionUncheckedCreateInput,
       "indexationId"
-    >,
+    > & {ai: boolean},
     callback: (data: { suggestionId: storySuggestion["id"] }) => void,
   ) => void;
 
@@ -134,6 +143,16 @@ export default abstract class {
       data: Errorable<
         { status: "OK" },
         "This indexation does not have any entry with this ID"
+      >,
+    ) => void,
+  ) => void;
+
+  abstract inferEntryStoryKind: (
+    entryId: entry["id"],
+    callback: (
+      data: Errorable<
+        { status: "OK" },
+        | "This indexation does not have any entry with this ID"
       >,
     ) => void,
   ) => void;

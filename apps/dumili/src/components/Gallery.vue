@@ -106,10 +106,7 @@ const getUploadablePages = (onlyIncludeEmptyPages: boolean) =>
           ),
   );
 
-const uploadablePagesAllowOverwrite = computed(() => {
-  debugger;
-  return getUploadablePages(false);
-});
+const uploadablePagesAllowOverwrite = computed(() => getUploadablePages(false));
 
 const uploadablePagesWithoutOverwrite = computed(() =>
   getUploadablePages(true),
@@ -134,9 +131,6 @@ const maxUploadableImagesFromPageNumber = (
     .filter((page) => page.pageNumber > pageNumber)
     .sort((a, b) => a.pageNumber - b.pageNumber);
 
-  if (onlyIncludeEmptyPages) {
-    debugger;
-  }
   const firstBreakIndex = subsequentPages.findIndex((page) =>
     onlyIncludeEmptyPages ? page.image : false,
   );

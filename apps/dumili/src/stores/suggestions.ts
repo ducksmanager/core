@@ -29,8 +29,8 @@ export const suggestions = defineStore("suggestions", () => {
   const createIssueSuggestion = async (
     suggestion: Pick<
       issueSuggestion,
-      "publicationcode" | "issuenumber" | "issuecode" | "isChosenByAi"
-    >,
+      "publicationcode" | "issuenumber" | "issuecode"
+    > & { ai: boolean },
   ) => indexationSocket.value!.services.createIssueSuggestion(suggestion);
 
   const acceptedIssue = computed({

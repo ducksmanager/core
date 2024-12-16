@@ -1,5 +1,12 @@
 <template>
-  <b-row class="d-flex w-100 align-items-center sticky-top">
+  <b-row
+    class="d-flex w-100 align-items-center sticky-top"
+    :style="
+      entry.entirepages > 0
+        ? { height: `${entry.entirepages * 50}px` }
+        : undefined
+    "
+  >
     <template v-if="editable">
       <b-col
         col
@@ -9,7 +16,7 @@
         <suggestion-list
           v-model="entry.acceptedStoryKind"
           :suggestions="entry.storyKindSuggestions"
-          :is-ai-source="(suggestion) => suggestion.isChosenByAi"
+          :is-ai-source="(suggestion) => suggestion.ai !== null"
           :item-class="(suggestion) => [`kind-${suggestion.kind}`]"
         >
           <template #default="{ suggestion, isDropdownItem }">
@@ -56,16 +63,8 @@
     </template>
     <template v-else>
       <b-col col cols="3">
-        <b-badge
-          size="xl"
-          :class="{ [`kind-${entry.acceptedStoryKind?.kind}`]: true }"
-          >{{
-            (entry.acceptedStoryKind &&
-              getStoryKind(entry.acceptedStoryKind.kind)) ||
-            $t("Type inconnu")
-          }}</b-badge
-        ></b-col
-      >
+        <story-kind-badge :story-kind="entry.acceptedStoryKind?.kind"
+      /></b-col>
       <b-col cols="4">
         <a
           v-if="urlEncodedStorycode"
@@ -180,19 +179,6 @@ const getStoryKind = (storyKind: storyKind) => storyKinds[storyKind];
 
   &:hover {
     background: #ddd;
-  }
-
-  &.kind-c {
-    @include storyKindBackground(#ffcc33);
-  }
-
-  &.kind-n {
-    @include storyKindBackground(#cbdced);
-  }
-
-  &.kind-n_g,
-  &.kind-k {
-    @include storyKindBackground(#ff99ff);
   }
 }
 

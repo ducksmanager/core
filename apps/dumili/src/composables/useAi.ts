@@ -53,6 +53,17 @@ export default () => {
     }
   };
 
+  const inferEntryStoryKind = async (entryId: number) => {
+    console.log("Inference...");
+    const result = await indexationServices.inferEntryStoryKind(entryId);
+    if ("error" in result) {
+      console.error(result.error);
+    } else {
+      console.log("Inference OK");
+    }
+    await loadIndexation();
+  };
+
   const runStorycodeOcr = async (entryId?: number) => {
     console.log("OCR...");
     const result = await Promise.all(
@@ -73,5 +84,6 @@ export default () => {
     runCoverSearch,
     runKumikoOnPage,
     runStorycodeOcr,
+    inferEntryStoryKind,
   };
 };

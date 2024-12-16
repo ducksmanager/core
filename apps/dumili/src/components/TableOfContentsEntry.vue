@@ -28,7 +28,10 @@
       }"
       :show="hoveredEntry?.id === entry.id"
       :status="storyKindAiSuggestion?.kind ? 'success' : 'idle'"
-      :on-click-rerun="() => runStorycodeOcr(entry.id)"
+      :on-click-rerun="
+        () =>
+          inferEntryStoryKind(entry.id).then(() => runStorycodeOcr(entry.id))
+      "
       @click="showAiDetectionsOn = { type: 'entry', id: entry.id }"
       @blur="showAiDetectionsOn = undefined"
     >
@@ -41,12 +44,10 @@
           }))
         "
       /><br />
-      <b>{{ $t("Type d'entrée déduit") }}</b>
-      {{
-        storyKindAiSuggestion
-          ? storyKinds[storyKindAiSuggestion?.kind]
-          : $t("Non calculé")
-      }}
+      <div>
+        <b>{{ $t("Type d'entrée déduit") }}</b>
+      </div>
+      <story-kind-badge :story-kind="storyKindAiSuggestion?.kind" />
       <template v-if="entry.acceptedStoryKind?.kind === STORY">
         <template v-if="pages[0].image && storyAiSuggestions.length">
           {{ $t("Résultats OCR pour la première case:") }}
@@ -113,7 +114,7 @@ const storyAiSuggestions = computed(() =>
 );
 
 const { t: $t } = useI18n();
-const { runStorycodeOcr } = useAi();
+const { runStorycodeOcr, inferEntryStoryKind } = useAi();
 
 const lastHoveredEntry = ref<typeof hoveredEntry.value | null>(null);
 
@@ -124,7 +125,7 @@ const isLastEntry = computed(
 );
 
 const storyKindAiSuggestion = computed(() =>
-  entry.storyKindSuggestions.find(({ isChosenByAi }) => isChosenByAi),
+  entry.storyKindSuggestions.find(({ ai }) => !!ai),
 );
 
 const pagesWithInferredKinds = computed(() =>

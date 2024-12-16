@@ -81,7 +81,7 @@ const acceptStory = async (storycode: storySuggestion["storycode"] | null) => {
       {
         entryId: entry.value.id,
         storycode,
-        isChosenByAi: false,
+        ai: false,
       },
     );
     storySuggestion = result.createdStorySuggestion;

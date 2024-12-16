@@ -2,7 +2,7 @@
   <suggestion-list
     v-model="indexation!.acceptedIssueSuggestion"
     :suggestions="indexation!.issueSuggestions"
-    :is-ai-source="(suggestion) => suggestion.isChosenByAi"
+    :is-ai-source="(suggestion) => suggestion.ai !== null"
     :show-customize-form="showIssueSelect"
     @toggle-customize-form="showIssueSelect = $event"
   >
@@ -40,7 +40,7 @@ const createAndAcceptIssueSuggestion = async (data: {
   ) {
     await createIssueSuggestion({
       ...data,
-      isChosenByAi: false,
+      ai: false,
     });
   }
 
