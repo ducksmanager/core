@@ -55,7 +55,7 @@
     "@eslint/eslintrc": "^3.2.0",
     "@eslint/js": "^9.17.0",
     "@histoire/plugin-vue": "^0.17.17",
-    "@iconify-json/bi": "^1.2.1",
+    "@iconify-json/bi": "^1.2.2",
     "@intlify/unplugin-vue-i18n": "^5.3.1",
     "@types/js-cookie": "^3.0.6",
     "@types/mapbox__mapbox-gl-geocoder": "^5.0.0",
