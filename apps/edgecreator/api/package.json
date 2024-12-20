@@ -11,9 +11,9 @@
     "prod:transfer-files-post": "pnpm -F '~ci' prod:transfer-files apps/edgecreator/api/docker-compose.yml:@apps/edgecreator/api/docker-compose.yml"
   },
   "dependencies": {
-    "@sentry/node": "^8.45.0",
+    "@sentry/node": "^8.47.0",
     "@socket.io/admin-ui": "^0.5.1",
-    "@vueuse/integrations": "^11.3.0",
+    "@vueuse/integrations": "^12.0.0",
     "axios": "^1.7.9",
     "cloudinary": "^1.41.3",
     "dotenv": "^16.4.7",
