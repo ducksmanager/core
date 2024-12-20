@@ -514,9 +514,6 @@ importers:
       socket.io:
         specifier: ^4.8.1
         version: 4.8.1
-      socket.io-client:
-        specifier: ^4.8.1
-        version: 4.8.1
       universal-cookie:
         specifier: ^4.0.4
         version: 4.0.4
@@ -1189,6 +1186,9 @@ importers:
       vue:
         specifier: ^3.4.15
         version: 3.5.13(typescript@5.7.2)
+      ~socket.io-services:
+        specifier: workspace:*
+        version: link:../socket.io-services
 
   packages/socket.io-services:
     devDependencies:
