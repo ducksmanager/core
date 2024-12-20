@@ -74,10 +74,7 @@
   </b-container>
 </template>
 <script lang="ts" setup>
-import {
-  moveArrayElement,
-  useSortable,
-} from "@vueuse/integrations/useSortable";
+import { moveArrayElement, useSortable } from "@vueuse/integrations";
 import { vElementVisibility } from "@vueuse/components";
 
 import { dumiliSocketInjectionKey } from "~/composables/useDumiliSocket";
@@ -193,6 +190,7 @@ watch(
 .col {
   flex-grow: 1;
   pointer-events: none;
+
   &.selectable {
     cursor: pointer;
     pointer-events: all;
