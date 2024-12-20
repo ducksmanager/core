@@ -11,11 +11,10 @@ type LastParameter<F extends (...args: unknown[]) => unknown> = Last<
 >;
 
 export type EventReturnTypeIncludingError<
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   T extends (...args: any[]) => unknown,
 > = LastParameter<LastParameter<T>>;
 
-export type EventReturnType<T extends (...args: unknown[]) => unknown> =
+export type EventReturnType<T extends (...args: any[]) => unknown> =
   EventReturnTypeIncludingError<T> & { error?: never };
 
 export type EitherOr<A, B> = A | B extends object

@@ -1,13 +1,20 @@
 import type { CacheOptions } from "axios-cache-interceptor";
 import type { EventReturnTypeIncludingError } from "~socket.io-services"
-import type { DisconnectDescription } from "socket.io-client/build/esm/socket";
 import { io, type Socket } from "socket.io-client";
 import { ref } from "vue";
 
+// Copied from socket.io-client
+type DisconnectDescription = Error | {
+  description: string;
+  context?: unknown;
+};
+
+// Copied from socket.io-component-emitter
 type FallbackToUntypedListener<T> = [T] extends [never]
   ? (...args: unknown[]) => void | Promise<void>
   : T;
 
+// Copied from socket.io-client
 type SocketReservedEvents = {
   connect: () => void;
   connect_error: (err: Error) => void;
@@ -26,10 +33,7 @@ type SocketCacheOptions<Services extends EventsMap> = Pick<
   ttl: number | ((event: StringKeyOf<Services>, args: unknown[]) => number);
 };
 
-interface EventsMap {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  [event: string]: any;
-}
+type EventsMap = Record<string, any>
 
 type StringKeyOf<T> = keyof T & string;
 
@@ -279,7 +283,5 @@ export class SocketClient {
   }
 }
 
-export {
-  buildStorage, buildWebStorage,
-  AxiosStorage,
-} from "axios-cache-interceptor";
+export { buildStorage, buildWebStorage } from "axios-cache-interceptor";
+export type { AxiosStorage } from "axios-cache-interceptor";
