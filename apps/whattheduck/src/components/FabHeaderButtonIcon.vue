@@ -13,9 +13,7 @@ interface Icon {
   md: NonNullable<IconOrUndefined>['md'];
   negate?: NonNullable<IconOrUndefined>['negate'];
 }
-withDefaults(defineProps<Icon & { isIndicator?: boolean }>(), {
-  isIndicator: false,
-});
+const { isIndicator = false } = defineProps<Icon & { isIndicator?: boolean }>();
 </script>
 <style scoped lang="scss">
 hr {

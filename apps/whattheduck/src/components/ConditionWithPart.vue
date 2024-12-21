@@ -10,7 +10,7 @@ import type { issue_condition } from '~prisma-schemas/schemas/dm';
 
 const { conditions } = useCondition();
 
-const props = defineProps<{
+const { value, noMargin, partInfo } = defineProps<{
   value?: issue_condition;
   noMargin?: boolean;
   partInfo?: EntryPartInfo;
@@ -18,19 +18,19 @@ const props = defineProps<{
 
 const fillClass = computed(
   () =>
-    `dm-condition-background ${conditions.find((condition) => condition.dbValue === props.value)?.dbEnValue} ${props.noMargin ? 'ion-no-margin' : ''}`,
+    `dm-condition-background ${conditions.find((condition) => condition.dbValue === value)?.dbEnValue} ${noMargin ? 'ion-no-margin' : ''}`,
 );
 
 const arcPath = computed(() => {
-  if (!props.partInfo || props.partInfo.estimatedpanels >= props.partInfo.total_estimatedpanels) {
+  if (!partInfo || partInfo.estimatedpanels >= partInfo.total_estimatedpanels) {
     return null;
   }
-  // const partAngle = 360 / props.partInfo.totalParts;
+  // const partAngle = 360 / partInfo.totalParts;
   const partAngle = 0;
-  const ratio = props.partInfo.estimatedpanels / props.partInfo.total_estimatedpanels;
+  const ratio = partInfo.estimatedpanels / partInfo.total_estimatedpanels;
   const fillAngle = 360 * ratio;
 
-  const startAngle = (parseInt(props.partInfo.part) - 1) * partAngle;
+  const startAngle = (parseInt(partInfo.part) - 1) * partAngle;
   const endAngle = startAngle + fillAngle;
 
   const largeArcFlag = fillAngle > 180 ? 1 : 0;

@@ -10,7 +10,6 @@
     ><div>{{ $t("Page") }} {{ pageNumber }}</div>
     <ai-tooltip
       :id="`ai-results-page-${pageNumber}`"
-      :show="isHovered && image?.aiKumikoResultPanels?.length! > 0"
       :status="image?.aiKumikoInferredStoryKind ? 'success' : 'idle'"
       :on-click-rerun="() => runKumikoOnPage(id)"
       :loading-event="{

@@ -3,5 +3,5 @@
 </template>
 
 <script setup lang="ts">
-defineProps<{ publicationcode: string; title: string }>();
+defineProps<{ title: string }>();
 </script>

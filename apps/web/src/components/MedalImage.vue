@@ -55,7 +55,13 @@
 const i18n = useI18n();
 const currentLocaleShortKey = getCurrentLocaleShortKey(i18n.locale.value);
 
-const props = defineProps<{
+const {
+  contribution,
+  nextLevel,
+  userLevelPoints,
+  currentLevel,
+  pointsDiffNextLevel,
+} = defineProps<{
   small?: boolean;
   xSmall?: boolean;
   nextLevel?: boolean;
@@ -70,28 +76,14 @@ const props = defineProps<{
   getImagePath: (name: string) => string;
 }>();
 
-const {
-  contribution,
-  nextLevel,
-  userLevelPoints,
-  small = false,
-  xSmall = false,
-  currentLevel,
-  pointsDiffNextLevel,
-  levelProgressPercentage,
-  radius,
-  circumference,
-} = toRefs(props);
 const { t } = useI18n();
 
 const medalColors = ["bronze", "argent", "or"];
 const level = computed(() =>
-  nextLevel.value && currentLevel.value !== null
-    ? currentLevel.value + 1
-    : currentLevel.value,
+  nextLevel && currentLevel !== null ? currentLevel + 1 : currentLevel,
 );
 const medalTitle = computed(() => {
-  switch (contribution.value) {
+  switch (contribution) {
     case "edge_photographer":
       return t("Concepteur de tranches");
     case "edge_designer":
@@ -103,8 +95,8 @@ const medalTitle = computed(() => {
 });
 const medalDescription = computed(() => {
   let textTemplate;
-  if (currentLevel.value === 3) {
-    switch (contribution.value) {
+  if (currentLevel === 3) {
+    switch (contribution) {
       case "edge_photographer":
         textTemplate = "Vous avez {0} points Concepteur de tranches";
         break;
@@ -119,7 +111,7 @@ const medalDescription = computed(() => {
     }
     return t(textTemplate, [userLevelPoints]);
   } else {
-    switch (contribution.value) {
+    switch (contribution) {
       case "edge_photographer":
         textTemplate =
           "Vous avez {0} points Photographe de tranches, envoyez-nous des photos de tranches depuis votre bibliothèque et obtenez {1} points de plus pour recevoir le badge {2} !";
@@ -136,9 +128,9 @@ const medalDescription = computed(() => {
         return "";
     }
     return t(textTemplate, [
-      userLevelPoints.value,
-      pointsDiffNextLevel.value,
-      t(medalColors[currentLevel.value]),
+      userLevelPoints,
+      pointsDiffNextLevel,
+      t(medalColors[currentLevel]),
     ]);
   }
 });

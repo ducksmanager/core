@@ -30,9 +30,6 @@ import type { BookcaseEdgeWithPopularity } from "~/stores/bookcase";
 defineProps<{
   issues: BookcaseEdgeWithPopularity[];
   userPoints: number;
-  publicationNames: {
-    [publicationcode: string]: string;
-  };
 }>();
 
 const currentSlide = $ref(0);

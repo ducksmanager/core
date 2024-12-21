@@ -60,19 +60,6 @@ const emit = defineEmits<
   ) => void
 >();
 
-const props = withDefaults(
-  defineProps<{
-    countrycode?: string | null;
-    publicationcode?: string | null;
-    issuecode?: string | null;
-  }>(),
-  {
-    countrycode: undefined,
-    publicationcode: undefined,
-    issuecode: undefined,
-  },
-);
-
 const currentCountrycode = ref<string | undefined>(undefined);
 const currentPublicationcode = ref<string | undefined>(undefined);
 const currentIssuenumber = ref<string | undefined>(undefined);
@@ -144,7 +131,7 @@ watch(
   currentCountrycode,
   async (newValue) => {
     if (newValue) {
-      currentPublicationcode.value = props.publicationcode!;
+      currentPublicationcode.value = undefined;
       currentIssuenumber.value = undefined;
 
       await fetchPublicationNamesFromCountry(newValue);
@@ -161,9 +148,6 @@ watch(currentPublicationcode, async (newValue) => {
     await fetchIssuecodesByPublicationcode([newValue]);
   }
 });
-if (props.countrycode) {
-  currentCountrycode.value = props.countrycode;
-}
 
 (async () => {
   await fetchCountryNames();

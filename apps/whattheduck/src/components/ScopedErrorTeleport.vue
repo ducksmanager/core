@@ -10,11 +10,9 @@
 import type { ScopedError } from '~socket.io-services';
 
 const { t } = useI18n();
-const props = defineProps<{
+const { error } = defineProps<{
   error: ScopedError;
 }>();
 
-const parentElement = computed(
-  () => props.error.selector && document.querySelector(props.error.selector)?.parentElement,
-);
+const parentElement = computed(() => error.selector && document.querySelector(error.selector)?.parentElement);
 </script>

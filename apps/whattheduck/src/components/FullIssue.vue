@@ -21,7 +21,7 @@ import { stores as webStores } from '~web';
 
 import { wtdcollection } from '~/stores/wtdcollection';
 
-const props = defineProps<{
+const { issuecode } = defineProps<{
   classes?: string[];
   issuecode: string;
   showIssueConditions?: boolean;
@@ -32,8 +32,8 @@ const coaStore = webStores.coa();
 
 const { getCollectionIssues } = wtdcollection();
 
-const collectionIssues = computed(() => getCollectionIssues(props.issuecode));
-const issue = computed(() => coaStore.issuecodeDetails[props.issuecode]);
+const collectionIssues = computed(() => getCollectionIssues(issuecode));
+const issue = computed(() => coaStore.issuecodeDetails[issuecode]);
 
 const countrycode = computed(() => issue.value?.publicationcode.split('/')[0]);
 

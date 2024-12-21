@@ -20,7 +20,7 @@ import type { issue_condition } from "~prisma-schemas/schemas/dm";
 
 import type { Condition } from "../../composables/useCondition";
 
-const props = defineProps<{
+const { conditions, numberPerCondition } = defineProps<{
   conditions: Condition<boolean>[];
   numberPerCondition: Record<issue_condition, number>;
   style?: Record<string, string>;
@@ -28,11 +28,11 @@ const props = defineProps<{
 
 Chart.register(Legend, PieController, Tooltip, Title, ArcElement);
 const values = computed(() =>
-  props.conditions.map(({ dbValue }) => props.numberPerCondition[dbValue!]),
+  conditions.map(({ dbValue }) => numberPerCondition[dbValue!]),
 );
-const colors = props.conditions.map(({ color }) => color);
+const colors = conditions.map(({ color }) => color);
 const chartData = computed(() => ({
-  labels: props.conditions.map(({ getText }) => getText()),
+  labels: conditions.map(({ getText }) => getText()),
   datasets: [
     {
       data: values.value,

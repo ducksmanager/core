@@ -4,7 +4,7 @@
     @mouseover="() => (isInteractive = true)"
   >
     <Teleport to="body">
-      <b-tooltip :target="id" click @show="emit('click')" @hide="emit('blur')"
+      <b-tooltip :target="id"
         ><i-bi-arrow-repeat
           class="position-absolute start-0 ms-2 cursor-pointer"
           @click="onClickRerun" /><slot
@@ -25,7 +25,6 @@ import type { ServerSentEvents } from "~dumili-services/indexation/types";
 const { status, loadingEvent, onClickRerun } = defineProps<{
   id: string;
   status: "success" | "failure" | "idle";
-  show?: boolean;
   loadingEvent?: {
     startEventName: LoadingEventStart;
     endEventName: LoadingEventEnd;
@@ -38,7 +37,7 @@ const { status, loadingEvent, onClickRerun } = defineProps<{
 
 defineSlots();
 
-const emit = defineEmits<{
+defineEmits<{
   (e: "click"): void;
   (e: "blur"): void;
 }>();

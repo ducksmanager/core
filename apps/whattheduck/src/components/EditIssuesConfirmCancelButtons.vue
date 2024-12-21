@@ -14,18 +14,13 @@ import { app } from '~/stores/app';
 
 const { isOfflineMode } = storeToRefs(app());
 
-withDefaults(
-  defineProps<{
-    cancelIos: string;
-    cancelMd: string;
-    confirmIos: string;
-    confirmMd: string;
-    confirmColor?: string;
-  }>(),
-  {
-    confirmColor: undefined,
-  },
-);
+const { confirmColor = undefined } = defineProps<{
+  cancelIos: string;
+  cancelMd: string;
+  confirmIos: string;
+  confirmMd: string;
+  confirmColor?: string;
+}>();
 
 const emit = defineEmits<{ (e: 'cancel'): void; (e: 'confirm'): void }>();
 </script>

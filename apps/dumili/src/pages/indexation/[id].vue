@@ -21,18 +21,15 @@
     </b-col>
 
     <b-col :cols="6" class="h-100">
-      <table-of-contents :indexation="indexation" />
+      <table-of-contents />
     </b-col>
   </b-row>
 </template>
 
 <script setup lang="ts">
-import { type PageFlip } from "~web";
 import { suggestions } from "~/stores/suggestions";
 import { tabs } from "~/stores/tabs";
 import type { FullIndexation } from "~dumili-services/indexation/types";
-
-const book = ref<PageFlip | undefined>(undefined);
 
 const route = useRoute();
 
@@ -40,9 +37,7 @@ const { t: $t } = useI18n();
 
 const { activeTab } = storeToRefs(tabs());
 const activeTabIndex = computed({
-  get() {
-    return Object.keys(tabs().tabNames).indexOf(activeTab.value);
-  },
+  get: () => Object.keys(tabs().tabNames).indexOf(activeTab.value),
 
   set(value) {
     tabs().activeTab = Object.keys(tabs().tabNames)[
@@ -50,16 +45,6 @@ const activeTabIndex = computed({
     ] as typeof activeTab.value;
   },
 });
-
-watch(
-  activeTab,
-  () => {
-    if (activeTab.value === "book") {
-      book.value = undefined;
-    }
-  },
-  { immediate: true },
-);
 
 const { tabNames } = tabs();
 

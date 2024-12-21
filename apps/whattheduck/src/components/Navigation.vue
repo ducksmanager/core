@@ -23,7 +23,6 @@
         />
         <Publication
           v-if="partIdx === 3 && publicationcode"
-          :publicationcode="publicationcode"
           :title="publicationNames?.[publicationcode] || publicationcode"
         />
         <template v-if="partIdx === 4 && issuecodes"

@@ -13,7 +13,7 @@ import { coa as webCoa } from '~web/src/stores/coa';
 
 import { wtdcollection } from '~/stores/wtdcollection';
 
-const props = defineProps<{
+const { since } = defineProps<{
   since: 'pastYear' | 'allTime';
   style: Record<string, string>;
 }>();
@@ -131,10 +131,10 @@ const compareDates = (a: string, b: string) =>
       ? null
       : {
           datasets:
-            props.since === 'allTime'
+            since === 'allTime'
               ? datasets.value
               : datasets.value!.map((value) => ({ ...value, data: value.data.slice(value.data.length - 11) })),
-          labels: props.since === 'allTime' ? labels.value : labels.value.slice(labels.value.length - 11),
+          labels: since === 'allTime' ? labels.value : labels.value.slice(labels.value.length - 11),
         },
   );
 

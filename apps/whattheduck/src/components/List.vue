@@ -104,7 +104,7 @@ defineSlots<{
   'row-suffix'(props: { item: Item }): unknown;
 }>();
 
-const props = defineProps<{
+const { items, getItemTextFn } = defineProps<{
   items: {
     key: string;
     item: Item;
@@ -113,8 +113,6 @@ const props = defineProps<{
   }[];
   itemType: 'countrycode' | 'publicationcode' | 'issuecode';
   getItemTextFn: (item: Item) => string;
-  issueViewModes?: { label: string; icon: { ios: string; md: string } }[];
-  filter?: { label: string; icon: { ios: string; md: string } }[];
 }>();
 
 const emit = defineEmits<(e: 'items-filtered', items: string[]) => void>();
@@ -190,16 +188,16 @@ const updateNavigationToSelectedIssuecodes = () => {
 };
 
 const itemInCenterOfViewport = computed(() => {
-  if (!props.items.length) {
+  if (!items.length) {
     return undefined;
   }
-  const itemIndex = Math.floor((scrollPositionPct.value * props.items.length) / 100);
-  return props.items[itemIndex].item;
+  const itemIndex = Math.floor((scrollPositionPct.value * items.length) / 100);
+  return items[itemIndex].item;
 });
 
 const filteredItems = computed(() =>
-  props.items
-    .filter(({ item }) => props.getItemTextFn(item).toLowerCase().includes(filterText.value.toLowerCase()))
+  items
+    .filter(({ item }) => getItemTextFn(item).toLowerCase().includes(filterText.value.toLowerCase()))
     .map((item, idx) => ({ ...item, uniqueKey: `item-${idx}` })),
 );
 

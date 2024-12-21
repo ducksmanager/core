@@ -74,7 +74,10 @@
   </b-container>
 </template>
 <script lang="ts" setup>
-import { moveArrayElement, useSortable } from "@vueuse/integrations";
+import {
+  moveArrayElement,
+  useSortable,
+} from "@vueuse/integrations/useSortable";
 import { vElementVisibility } from "@vueuse/components";
 
 import { dumiliSocketInjectionKey } from "~/composables/useDumiliSocket";

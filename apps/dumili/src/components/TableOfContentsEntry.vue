@@ -26,7 +26,6 @@
         endEventName: 'setInferredEntryStoryKindEnd',
         checkMatch: (id) => id === entry.id,
       }"
-      :show="hoveredEntry?.id === entry.id"
       :status="storyKindAiSuggestion?.kind ? 'success' : 'idle'"
       :on-click-rerun="
         () =>

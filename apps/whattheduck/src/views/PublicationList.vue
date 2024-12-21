@@ -12,7 +12,7 @@
       />
     </template>
     <template #row-label="{ item }">
-      <Publication :publicationcode="item.publicationcode" :title="item.publicationname" />
+      <Publication :title="item.publicationname" />
     </template>
     <template #row-suffix="{ item }">
       <template v-if="ownershipPercentages[item.publicationcode]">

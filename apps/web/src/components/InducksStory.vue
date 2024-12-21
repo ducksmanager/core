@@ -18,7 +18,7 @@
 </template>
 <script setup lang="ts">
 const { t: $t } = useI18n();
-const props = defineProps<{
+const { kind, storycode, showLink } = defineProps<{
   noBadge?: boolean;
   storycode: string;
   kind?: string;
@@ -29,18 +29,16 @@ const props = defineProps<{
   dark?: boolean;
 }>();
 
-const { storycode, kind, title, part, comment, showLink } = toRefs(props);
-
-const tagName = computed(() => (showLink.value === "outer" ? "a" : "span"));
+const tagName = computed(() => (showLink === "outer" ? "a" : "span"));
 
 const url = computed(
   () =>
-    storycode.value &&
-    `https://inducks.org/story.php?c=${encodeURIComponent(storycode.value)}`,
+    storycode &&
+    `https://inducks.org/story.php?c=${encodeURIComponent(storycode)}`,
 );
 
 const storyTypeText = computed(() => {
-  switch (kind.value?.toUpperCase()) {
+  switch (kind?.toUpperCase()) {
     case "A":
       return $t("article");
     case "C":

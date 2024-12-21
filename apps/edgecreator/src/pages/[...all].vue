@@ -30,7 +30,6 @@ meta:
             <uploadable-edges-carousel
               :user-points="userPhotographerPoints"
               :issues="mostPopularIssuesInCollectionWithoutEdge"
-              :publication-names="publicationNames"
             >
               <template #header>
                 {{
@@ -52,7 +51,6 @@ meta:
             v-if="mostWantedEdges"
             :user-points="userPhotographerPoints"
             :issues="mostWantedEdges"
-            :publication-names="publicationNames"
           >
             <template #header>
               {{

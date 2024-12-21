@@ -9,7 +9,7 @@
     <template #default="{ suggestion }"> <Issue v-bind="suggestion" /></template
     ><template #unknown-text>{{ $t("Numéro inconnu") }}</template>
     <template #customize-form>
-      <IssueSelect
+      <issue-select
         @change="$event && createAndAcceptIssueSuggestion($event)" /></template
     ><template #customize-text> {{ $t("Sélectionner...") }}</template>
   </suggestion-list>

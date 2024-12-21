@@ -25,16 +25,11 @@ import type { FabOption } from '~/stores/app';
 
 const fab = defineModel<ComponentPublicInstance<HTMLIonFabElement> | null>('fab');
 const value = defineModel<Item>('value');
-withDefaults(
-  defineProps<{
-    disabled?: boolean;
-    icon: { ios: string; md: string; negate?: boolean };
-    options: Item[];
-  }>(),
-  {
-    disabled: false,
-  },
-);
+const { disabled = false } = defineProps<{
+  disabled?: boolean;
+  icon: { ios: string; md: string; negate?: boolean };
+  options: Item[];
+}>();
 </script>
 <style scoped lang="scss">
 ion-fab {
