@@ -10,14 +10,14 @@
       ><ion-col size="12">
         <template v-if="issuecodes.length === 1">
           <ion-button v-if="!copies.length && !isOfflineMode" size="small" @click="addCopy">
-            <ion-icon :ios="addOutline" :md="addSharp" />&nbsp;{{ t('Ajouter un exemplaire') }}
+            <ion-icon :ios="addOutline" :md="addSharp" />&nbsp;{{ $t('Ajouter un exemplaire') }}
           </ion-button>
           <ion-segment v-else v-model="currentCopyIndex">
             <ion-segment-button v-for="(_, idx) in 3" v-show="copies[idx]" :id="`copy-${idx}`" :key="idx" :value="idx">
               <template v-if="copies[idx]">
                 <ion-label
                   ><div>
-                    {{ t('Ex. {index}', { index: idx + 1 }) }}
+                    {{ $t('Ex. {index}', { index: idx + 1 }) }}
                   </div>
                   <Condition :value="copies[idx].condition"
                 /></ion-label>
@@ -29,7 +29,7 @@
               size="small"
               @click="addCopy"
             >
-              <ion-icon :ios="addOutline" :md="addSharp" />&nbsp;{{ t('Ajouter un exemplaire') }}
+              <ion-icon :ios="addOutline" :md="addSharp" />&nbsp;{{ $t('Ajouter un exemplaire') }}
             </ion-button>
           </ion-segment></template
         ><ion-button
@@ -41,9 +41,9 @@
             currentCopyIndex = currentCopyIndex! - 1 < 0 ? undefined : currentCopyIndex! - 1;
           "
           ><template v-if="issuecodes.length > 1">{{
-            t('Retirer ces {numberOfIssues} numéros de la collection', { numberOfIssues: issuecodes.length })
+            $t('Retirer ces {numberOfIssues} numéros de la collection', { numberOfIssues: issuecodes.length })
           }}</template>
-          <template v-else>{{ t('Retirer de la collection') }}</template></ion-button
+          <template v-else>{{ $t('Retirer de la collection') }}</template></ion-button
         >
         <owned-issue-copy v-if="currentCopyIndex !== undefined" v-model="copies[currentCopyIndex]" />
       </ion-col>
@@ -93,8 +93,6 @@ watch(
   },
   { immediate: true },
 );
-
-const { t } = useI18n();
 
 const coverUrl = computed(() => `${import.meta.env.VITE_CLOUDINARY_BASE_URL}${fullUrl.value}`);
 

@@ -2,7 +2,7 @@
   <ion-grid>
     <ion-row>
       <ion-col size="4" class="ion-padding">
-        <ion-label>{{ t('Etat') }}</ion-label></ion-col
+        <ion-label>{{ $t('Etat') }}</ion-label></ion-col
       >
       <ion-col size="8" class="ion-padding">
         <ion-row style="flex-direction: column" class="ion-align-items-end">
@@ -26,21 +26,21 @@
     </ion-row>
     <ion-row>
       <ion-col size="4" class="ion-padding">
-        <ion-label>{{ t('A lire') }}</ion-label></ion-col
+        <ion-label>{{ $t('A lire') }}</ion-label></ion-col
       >
       <ion-col size="8" style="display: flex" class="ion-padding ion-justify-content-end"
-        ><ion-checkbox v-model="issue.isToRead" :disabled="isOffline" :aria-label="t('A lire')" /></ion-col
+        ><ion-checkbox v-model="issue.isToRead" :disabled="isOffline" :aria-label="$t('A lire')" /></ion-col
     ></ion-row>
     <ion-row>
       <ion-col size="4" class="ion-padding ion-text-left">
-        <ion-label>{{ t("Date d'achat") }}</ion-label>
+        <ion-label>{{ $t("Date d'achat") }}</ion-label>
       </ion-col>
       <ion-col size="8" class="ion-padding ion-text-right">
-        <ion-button id="create-purchase-date" size="small">{{ t("Créer une date d'achat") }}</ion-button>
+        <ion-button id="create-purchase-date" size="small">{{ $t("Créer une date d'achat") }}</ion-button>
 
         <ion-modal id="create-purchase-modal" ref="modal" trigger="create-purchase-date">
           <div class="wrapper">
-            <h1>{{ t("Créer une date d'achat") }}</h1>
+            <h1>{{ $t("Créer une date d'achat") }}</h1>
             <ion-row>
               <ion-col size="6"> <ion-input v-model="newPurchase.date" type="date" /> </ion-col
               ><ion-col size="6">
@@ -48,13 +48,13 @@
                   v-model="newPurchase.description"
                   type="text"
                   :maxlength="50"
-                  :placeholder="t('Description')"
+                  :placeholder="$t('Description')"
                 /> </ion-col
             ></ion-row>
             <ion-row>
               <ion-col size="12">
                 <ion-button @click="createPurchaseDate">
-                  {{ t('Créer') }}
+                  {{ $t('Créer') }}
                 </ion-button>
               </ion-col>
             </ion-row>

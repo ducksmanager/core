@@ -5,14 +5,14 @@
         <ion-buttons slot="start">
           <ion-menu-button color="primary" />
         </ion-buttons>
-        <ion-title>{{ t('Rechercher une histoire') }}</ion-title>
+        <ion-title>{{ $t('Rechercher une histoire') }}</ion-title>
       </ion-toolbar>
     </ion-header>
 
     <ion-content :fullscreen="true">
       <ion-text>
         {{
-          t(
+          $t(
             "Entrez le titre d'une histoire. What The Duck vous indiquera les magazines qui contiennent cette histoire et précisera les histoires et magazines correspondants que vous possédez.",
           )
         }}
@@ -21,7 +21,7 @@
         v-model="storyTitle"
         style="margin: 1rem 0"
         autocapitalize="sentences"
-        :placeholder="t('Entrez le titre d\'une histoire')"
+        :placeholder="$t('Entrez le titre d\'une histoire')"
       />
 
       <ion-list v-if="storyResults?.results && !selectedStory">
@@ -39,11 +39,11 @@
       </ion-list>
       <template v-if="selectedStory">
         <div style="margin: 1rem 0">
-          <b>{{ selectedStory.title }}</b> {{ t('a été publiée dans les numéros suivants :') }}
+          <b>{{ selectedStory.title }}</b> {{ $t('a été publiée dans les numéros suivants :') }}
         </div>
         <ion-button size="small" @click="selectedStory = null"
           >&nbsp;<ion-icon :md="arrowBackSharp" :ios="arrowBackOutline"></ion-icon
-          >{{ t("Retour aux résultats d'histoire") }}</ion-button
+          >{{ $t("Retour aux résultats d'histoire") }}</ion-button
         >
         <ion-list>
           <ion-item
@@ -75,8 +75,6 @@ import { wtdcollection } from '~/stores/wtdcollection';
 const {
   coa: { services: coaServices },
 } = inject(dmSocketInjectionKey)!;
-
-const { t } = useI18n();
 
 const { issuesByIssuecode: collectionIssuesByIssuecode } = storeToRefs(wtdcollection());
 const coaStore = stores.coa();

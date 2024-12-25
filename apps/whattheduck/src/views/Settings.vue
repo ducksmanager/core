@@ -5,20 +5,20 @@
         <ion-buttons slot="start">
           <ion-menu-button color="primary" />
         </ion-buttons>
-        <ion-title>{{ t('Paramètres') }}</ion-title>
+        <ion-title>{{ $t('Paramètres') }}</ion-title>
       </ion-toolbar>
     </ion-header>
     <ion-content>
       <ion-list>
         <ion-item-group>
           <ion-item-divider>
-            <ion-label>{{ t('Version') }}</ion-label>
+            <ion-label>{{ $t('Version') }}</ion-label>
           </ion-item-divider>
         </ion-item-group>
         <ion-item>
           <ion-text v-if="currentAppVersion">
             {{
-              t('What The Duck version {version} bundle {bundle}', {
+              $t('What The Duck version {version} bundle {bundle}', {
                 version: currentAppVersion,
                 bundle: currentBundleVersion,
               })
@@ -27,13 +27,13 @@
         >
         <router-link id="link-to-dm" class="ion-padding" :to="storeUrl">
           <template v-if="storeName === 'Play Store'">{{
-            t("Notez What The Duck sur le Play Store si vous l'appréciez :-)")
+            $t("Notez What The Duck sur le Play Store si vous l'appréciez :-)")
           }}</template>
-          <template v-else>{{ t("Notez What The Duck sur l'App Store si vous l'appréciez :-)") }}</template>
+          <template v-else>{{ $t("Notez What The Duck sur l'App Store si vous l'appréciez :-)") }}</template>
         </router-link>
         <ion-item-group style="padding-top: 1rem">
           <ion-item-divider>
-            <ion-label>{{ t('Réseaux sociaux') }}</ion-label>
+            <ion-label>{{ $t('Réseaux sociaux') }}</ion-label>
           </ion-item-divider>
         </ion-item-group>
         <ion-item :detail="false" :href="discordUrl">
@@ -51,11 +51,11 @@
       </ion-list>
       <ion-item-group style="padding-top: 1rem">
         <ion-item-divider>
-          <ion-label>{{ t('Compte') }}</ion-label>
+          <ion-label>{{ $t('Compte') }}</ion-label>
         </ion-item-divider>
       </ion-item-group>
       <ion-button fill="outline" color="danger" style="display: flex" @click="deleteAccount">
-        {{ t('Supprimer mon compte') }}
+        {{ $t('Supprimer mon compte') }}
       </ion-button>
     </ion-content>
   </ion-page>
@@ -69,14 +69,13 @@ import { IonPage, IonHeader, IonToolbar, IonTitle, IonContent } from '@ionic/vue
 
 import { app } from '~/stores/app';
 
+const { t } = useI18n();
 const playStoreUrl = 'https://play.google.com/store/apps/details?id=net.ducksmanager.whattheduck';
 const appStoreUrl = 'https://www.apple.com/app-store/';
 const discordUrl = import.meta.env.VITE_DISCORD_URL;
 const facebookUrl = import.meta.env.VITE_FACEBOOK_URL;
 const instagramUrl = import.meta.env.VITE_INSTAGRAM_URL;
 const youtubeUrl = import.meta.env.VITE_YOUTUBE_URL;
-
-const { t } = useI18n();
 
 const currentAppVersion = ref<string | null>(null);
 const currentBundleVersion = ref<string | null>(null);

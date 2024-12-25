@@ -5,7 +5,7 @@
         <ion-buttons slot="start">
           <ion-menu-button color="primary" />
         </ion-buttons>
-        <ion-title>{{ t('Suggestions') }}</ion-title>
+        <ion-title>{{ $t('Suggestions') }}</ion-title>
       </ion-toolbar>
     </ion-header>
     <ion-content>
@@ -18,17 +18,17 @@
             <br />
           </template>
           <template #favoriteAuthorsLink>
-            <ion-text color="primary" router-link="/authors">{{ t('Mes auteurs favoris') }}</ion-text>
+            <ion-text color="primary" router-link="/authors">{{ $t('Mes auteurs favoris') }}</ion-text>
           </template>
         </i18n-t>
       </ion-text>
       <ion-select
         v-model="showSuggestionsOf"
         class="ion-padding-top"
-        :label="t('Montrer les publications de')"
+        :label="$t('Montrer les publications de')"
         label-placement="stacked"
       >
-        <ion-select-option value="ALL">{{ t('Tous les pays') }}</ion-select-option>
+        <ion-select-option value="ALL">{{ $t('Tous les pays') }}</ion-select-option>
         <ion-select-option
           v-for="[countrycode, countryname] of sortedCountryNames"
           :key="countrycode"
@@ -36,18 +36,18 @@
           >{{ countryname }}</ion-select-option
         >
       </ion-select>
-      <ion-item v-if="isLoadingSuggestions">{{ t('Chargement…') }}</ion-item>
+      <ion-item v-if="isLoadingSuggestions">{{ $t('Chargement…') }}</ion-item>
       <div v-else-if="formattedSuggestions && !formattedSuggestions.length" class="ion-padding ion-text-center">
-        {{ t('Aucune suggestion disponible.') }}
+        {{ $t('Aucune suggestion disponible.') }}
       </div>
       <template v-else-if="formattedSuggestions">
         <ion-row
           class="toggle ion-margin-top ion-align-items-center ion-justify-content-center"
           style="font-size: small"
         >
-          <ion-col> {{ t('Trier par date de publication') }}</ion-col
+          <ion-col> {{ $t('Trier par date de publication') }}</ion-col
           ><ion-col><ion-toggle v-model="sortByScore" size="small" color="light" /></ion-col
-          ><ion-col>{{ t('Trier par score') }}</ion-col>
+          ><ion-col>{{ $t('Trier par score') }}</ion-col>
         </ion-row>
 
         <template v-for="issue of formattedSuggestions" :key="issue.issuecode">
@@ -94,7 +94,6 @@ import { wtdcollection } from '~/stores/wtdcollection';
 
 const { InducksStory } = webComponents;
 
-const { t } = useI18n();
 const sortByScore = ref(false);
 
 const { suggestions, isLoadingSuggestions } = storeToRefs(wtdcollection());

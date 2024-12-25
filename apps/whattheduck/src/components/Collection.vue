@@ -14,11 +14,11 @@
             <div class="title">
               <ion-button v-if="isCoaView" size="small" @click="backToCollection()">
                 <ion-icon :md="arrowBackSharp" :ios="arrowBackOutline"></ion-icon>&nbsp;{{
-                  t('Retour à ma collection')
+                  $t('Retour à ma collection')
                 }}
               </ion-button>
               <template v-else>
-                <div>{{ t('Ma collection') }}</div>
+                <div>{{ $t('Ma collection') }}</div>
                 <ion-chip v-if="total !== undefined" outline>{{ total }}</ion-chip></template
               >
             </div>
@@ -48,8 +48,6 @@ import { wtdcollection } from '~/stores/wtdcollection';
 import CountryList from '~/views/CountryList.vue';
 import IssueList from '~/views/IssueList.vue';
 import PublicationList from '~/views/PublicationList.vue';
-
-const { t } = useI18n();
 
 const list = ref<InstanceType<typeof CountryList | typeof PublicationList | typeof IssueList> | null>(null);
 

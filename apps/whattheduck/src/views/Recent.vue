@@ -5,13 +5,13 @@
         <ion-buttons slot="start">
           <ion-menu-button color="primary" />
         </ion-buttons>
-        <ion-title>{{ t('Magazines récents') }}</ion-title>
+        <ion-title>{{ $t('Magazines récents') }}</ion-title>
       </ion-toolbar>
     </ion-header>
 
     <ion-content :fullscreen="true">
       <div style="margin-bottom: 1rem">
-        <ion-text>{{ t("Tapotez sur un magazine récent pour l'ajouter à votre collection.") }}</ion-text>
+        <ion-text>{{ $t("Tapotez sur un magazine récent pour l'ajouter à votre collection.") }}</ion-text>
       </div>
 
       <template v-if="recentIssues">
@@ -40,7 +40,6 @@ import { stores } from '~web/index';
 import FullIssue from '~/components/FullIssue.vue';
 import { app } from '~/stores/app';
 
-const { t } = useI18n();
 const recentIssues = ref();
 
 const coaStore = stores.coa();

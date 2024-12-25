@@ -5,7 +5,7 @@
         <ion-buttons slot="start">
           <ion-menu-button color="primary" />
         </ion-buttons>
-        <ion-title>{{ t('Résultats de la recherche') }}</ion-title>
+        <ion-title>{{ $t('Résultats de la recherche') }}</ion-title>
       </ion-toolbar>
     </ion-header>
     <ion-content :fullscreen="true">
@@ -30,7 +30,7 @@
             <ion-row><FullIssue :issuecode="cover.issuecode" show-issue-conditions /></ion-row>
             <ion-row style="font-size: 0.8rem; width: 100%"
               ><ion-col class="ion-text-left">{{
-                t('{numberOfUsers} utilisateurs possèdent ce numéro', {
+                $t('{numberOfUsers} utilisateurs possèdent ce numéro', {
                   numberOfUsers: issuePopularities[cover.issuecode]!.popularity,
                 })
               }}</ion-col></ion-row
@@ -42,15 +42,15 @@
         </div>
         <ion-note>
           <ion-button @click="onCurrentCoverClick"
-            ><template v-if="cover?.collectionIssues.length">{{ t('Modifier mes exemplaires') }}</template
-            ><template v-else>{{ t('Ajouter à ma collection') }}</template></ion-button
+            ><template v-if="cover?.collectionIssues.length">{{ $t('Modifier mes exemplaires') }}</template
+            ><template v-else>{{ $t('Ajouter à ma collection') }}</template></ion-button
           >
           <div>
             <ion-button v-if="coverOrigin === 'takePhoto'" color="light" @click="takePhoto">{{
-              t('Prendre une nouvelle photo')
+              $t('Prendre une nouvelle photo')
             }}</ion-button>
             <ion-button v-else-if="coverOrigin === 'pickCoverFile'" color="light" @click="pickCoverFile">{{
-              t('Sélectionner une nouvelle photo')
+              $t('Sélectionner une nouvelle photo')
             }}</ion-button>
           </div>
         </ion-note></template
@@ -75,7 +75,6 @@ import { app } from '~/stores/app';
 import { wtdcollection } from '~/stores/wtdcollection';
 import type CoverIdServices from '~dm-services/cover-id/types';
 
-const { t } = useI18n();
 const hasCoaData = ref(false);
 const { issuecodeDetails, publicationNames, issuePopularities, issueQuotations } = storeToRefs(webStores.coa());
 const { fetchPublicationNames, fetchIssuecodeDetails, fetchIssuePopularities, fetchIssueQuotations } = webStores.coa();

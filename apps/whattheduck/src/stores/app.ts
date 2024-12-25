@@ -22,7 +22,7 @@ export const app = defineStore('app', () => {
   const isOffline = computed(() => isOfflineMode.value !== false);
   const isIOS = computed(() => Capacitor.getPlatform() === 'ios');
 
-  const { t: $t } = useI18n();
+  const { t } = useI18n();
 
   const router = useRouter();
   const route = useRoute();
@@ -123,12 +123,12 @@ export const app = defineStore('app', () => {
     { id: 'all', label: 'All' },
     {
       id: 'unreadBooksOnly',
-      label: $t('Livres non-lus seulement'),
+      label: t('Livres non-lus seulement'),
       icon: { ios: bookmarkOutline, md: bookmarkSharp },
     },
     {
       id: 'readBooksOnly',
-      label: $t('Livres lus seulement'),
+      label: t('Livres lus seulement'),
       icon: { negate: true, ios: bookmarkOutline, md: bookmarkSharp },
     },
   ] as const;

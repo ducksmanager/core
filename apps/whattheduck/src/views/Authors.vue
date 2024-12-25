@@ -5,7 +5,7 @@
         <ion-buttons slot="start">
           <ion-menu-button color="primary" />
         </ion-buttons>
-        <ion-title>{{ t('Mes auteurs favoris') }}</ion-title>
+        <ion-title>{{ $t('Mes auteurs favoris') }}</ion-title>
       </ion-toolbar>
     </ion-header>
     <ion-content :fullscreen="true">
@@ -21,7 +21,7 @@
       </ion-text>
       <div v-if="ratings && !ratings.length" class="ion-padding">
         <ion-text color="warning">
-          {{ t('Aucun auteur noté.') }}
+          {{ $t('Aucun auteur noté.') }}
         </ion-text>
       </div>
       <div v-if="personNames">
@@ -41,7 +41,7 @@
           </ion-col>
           <ion-col size="3">
             <ion-button v-if="!isOffline" @click="deleteAuthor(author.personcode)">
-              {{ t('Supprimer') }}
+              {{ $t('Supprimer') }}
             </ion-button>
           </ion-col>
         </ion-row>
@@ -51,7 +51,7 @@
         v-if="!isOffline"
         v-model="authorName"
         autocapitalize="words"
-        :placeholder="t('Entrez le nom d\'un auteur')"
+        :placeholder="$t('Entrez le nom d\'un auteur')"
       />
 
       <ion-list v-if="authorResults">
@@ -80,8 +80,6 @@ import { stats as webStats } from '~web/src/stores/stats';
 import { app } from '~/stores/app';
 
 const StarRating = components['StarRating'];
-
-const { t } = useI18n();
 
 const { loadRatings, searchAuthors, isAuthorWatched, createRating, updateRating, deleteAuthor } = webStats();
 const { authorSearchResults: authorResults, ratings } = storeToRefs(webStats());

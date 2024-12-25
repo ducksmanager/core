@@ -2,7 +2,7 @@
   <ion-page>
     <ion-header>
       <ion-toolbar>
-        <ion-title class="ion-padding-start">{{ t('Inscription') }}</ion-title>
+        <ion-title class="ion-padding-start">{{ $t('Inscription') }}</ion-title>
       </ion-toolbar>
     </ion-header>
     <ion-content>
@@ -14,8 +14,8 @@
           'ion-touched': touchedInputs.includes('username'),
         }"
         :error-text="errorTexts.username"
-        :aria-label="t('Nom d\'utilisateur DucksManager')"
-        :placeholder="t('Nom d\'utilisateur DucksManager')"
+        :aria-label="$t('Nom d\'utilisateur DucksManager')"
+        :placeholder="$t('Nom d\'utilisateur DucksManager')"
         @ion-blur="touchedInputs.push('username')"
       />
       <ion-input
@@ -26,8 +26,8 @@
           'ion-touched': touchedInputs.includes('email'),
         }"
         :error-text="errorTexts.email"
-        :aria-label="t('Adresse e-mail')"
-        :placeholder="t('Adresse e-mail')"
+        :aria-label="$t('Adresse e-mail')"
+        :placeholder="$t('Adresse e-mail')"
         @ion-blur="touchedInputs.push('email')"
       />
       <ion-input
@@ -39,8 +39,8 @@
           'ion-touched': touchedInputs.includes('password'),
         }"
         :error-text="errorTexts.password"
-        :aria-label="t('Mot de passe')"
-        :placeholder="t('Mot de passe')"
+        :aria-label="$t('Mot de passe')"
+        :placeholder="$t('Mot de passe')"
         @ion-blur="touchedInputs.push('password')"
       >
         <ion-icon
@@ -59,8 +59,8 @@
           'ion-touched': touchedInputs.includes('passwordConfirmation'),
         }"
         :error-text="errorTexts.passwordConfirmation"
-        :aria-label="t('Confirmation mot de passe')"
-        :placeholder="t('Confirmation mot de passe')"
+        :aria-label="$t('Confirmation mot de passe')"
+        :placeholder="$t('Confirmation mot de passe')"
         @ion-blur="touchedInputs.push('passwordConfirmation')"
       >
         <ion-icon
@@ -72,10 +72,10 @@
       </ion-input>
       <ion-row class="ion-padding-top">
         <ion-button @click="submitSignup">
-          {{ t('OK') }}
+          {{ $t('OK') }}
         </ion-button>
         <ion-button color="light" @click="cancelSignup">
-          {{ t('Annuler') }}
+          {{ $t('Annuler') }}
         </ion-button></ion-row
       >
     </ion-content></ion-page
@@ -91,7 +91,6 @@ import { app } from '~/stores/app';
 const { token, socket } = storeToRefs(app());
 
 const { t } = useI18n();
-
 const router = useRouter();
 
 const { validInputs, invalidInputs, touchedInputs, errorTexts, clearErrors, submit } = useFormErrorHandling([

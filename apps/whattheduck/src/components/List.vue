@@ -1,11 +1,11 @@
 <template>
   <ion-content v-if="!items" ref="content">
-    {{ t('Chargement…') }}
+    {{ $t('Chargement…') }}
   </ion-content>
   <template v-else>
     <ion-content v-if="!items.length" ref="content">
       <slot v-if="$slots.empty" name="empty" />
-      <template v-else>{{ t('Cette liste est vide.') }}</template>
+      <template v-else>{{ $t('Cette liste est vide.') }}</template>
     </ion-content>
     <ion-content
       v-else
@@ -178,8 +178,6 @@ const onScroll = (e: CustomEvent<ScrollDetail>) => {
 
   scrollPositionPct.value = (middleOfViewport / scrollHeight) * 100;
 };
-
-const { t } = useI18n();
 
 const updateNavigationToSelectedIssuecodes = () => {
   if (selectedIssuecodes.value!.length) {

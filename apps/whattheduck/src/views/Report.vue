@@ -5,12 +5,12 @@
         <ion-buttons slot="start">
           <ion-menu-button color="primary" />
         </ion-buttons>
-        <ion-title>{{ t('Signaler un problème') }}</ion-title>
+        <ion-title>{{ $t('Signaler un problème') }}</ion-title>
       </ion-toolbar>
     </ion-header>
     <ion-content :fullscreen="true">
       <ion-text>{{
-        t(
+        $t(
           "Quelque chose ne fonctionne pas sur l'application ?{br}Détaillez votre problème et nous essaierons de le résoudre dans une prochaine version :-)",
         )
       }}</ion-text>
@@ -22,21 +22,20 @@
           'ion-invalid': invalidInputs.includes('reportMessage'),
           'ion-touched': touchedInputs.includes('reportMessage'),
         }"
-        :placeholder="t('Qu\'est-ce qui ne va pas ?')"
+        :placeholder="$t('Qu\'est-ce qui ne va pas ?')"
         @ion-blur="touchedInputs.push('reportMessage')"
       />
       <ion-button :disabled="showConfirmation" @click="submitReport">
-        {{ t('Envoyer') }}
+        {{ $t('Envoyer') }}
       </ion-button>
       <ion-item v-if="showConfirmation">
-        {{ t('Merci pour votre retour !') }}
+        {{ $t('Merci pour votre retour !') }}
       </ion-item>
     </ion-content>
   </ion-page>
 </template>
 
 <script setup lang="ts">
-const { t } = useI18n();
 const validInputs = ref<string[]>([]);
 const invalidInputs = ref<string[]>([]);
 const touchedInputs = ref<string[]>([]);

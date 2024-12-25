@@ -5,7 +5,7 @@
     </ion-fab-button>
     <ion-fab-list side="top">
       <ion-item button class="ion-align-items-center ion-text-nowrap" @click="pickCoverFile">
-        <ion-label>{{ t('Depuis un fichier de couverture') }}</ion-label>
+        <ion-label>{{ $t('Depuis un fichier de couverture') }}</ion-label>
         <ion-fab-button size="small">
           <ion-icon :ios="imageOutline" :md="imageSharp" />
         </ion-fab-button>
@@ -18,13 +18,13 @@
           emit('show-camera-preview');
         "
       >
-        <ion-label>{{ t('Depuis une photo de couverture') }}</ion-label>
+        <ion-label>{{ $t('Depuis une photo de couverture') }}</ion-label>
         <ion-fab-button size="small">
           <ion-icon :ios="cameraOutline" :md="cameraSharp" />
         </ion-fab-button>
       </ion-item>
       <ion-item button class="ion-align-items-center ion-text-nowrap" router-link="/recent">
-        <ion-label>{{ t('Depuis un magazine récent') }}</ion-label>
+        <ion-label>{{ $t('Depuis un magazine récent') }}</ion-label>
         <ion-fab-button size="small">
           <ion-icon :ios="calendarOutline" :md="calendarSharp" />
         </ion-fab-button>
@@ -38,13 +38,13 @@
           selectedIssuecodes = [];
         "
       >
-        <ion-label>{{ t('Par sélection de numéro') }}</ion-label>
+        <ion-label>{{ $t('Par sélection de numéro') }}</ion-label>
         <ion-fab-button size="small">
           <ion-icon :ios="listOutline" :md="listSharp" />
         </ion-fab-button>
       </ion-item>
       <ion-item button class="ion-align-items-center ion-text-nowrap" router-link="/search">
-        <ion-label>{{ t("Par titre d'histoire") }}</ion-label>
+        <ion-label>{{ $t("Par titre d'histoire") }}</ion-label>
         <ion-fab-button size="small">
           <ion-icon :ios="searchOutline" :md="searchSharp" />
         </ion-fab-button>
@@ -84,8 +84,6 @@ const { pickCoverFile } = useCoverSearch(useRouter(), coverIdServices);
 const { isCoaView, isOfflineMode, selectedIssuecodes } = storeToRefs(app());
 
 const fab = shallowRef<ComponentPublicInstance<HTMLIonFabElement> | null>(null);
-
-const { t } = useI18n();
 </script>
 
 <style lang="scss" scoped>
