@@ -5,9 +5,10 @@
 import { format as timeAgoFormat } from "timeago.js";
 
 const { timestamp } = defineProps<{
-    timestamp: number;
-  }>(),
-  timeAgo = $computed(() => timeAgoFormat(timestamp * 1000));
+  timestamp: number;
+}>();
+
+const timeAgo = $computed(() => timeAgoFormat(timestamp * 1000));
 </script>
 <style scoped lang="scss">
 .ago {
