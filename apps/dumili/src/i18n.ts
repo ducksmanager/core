@@ -19,6 +19,7 @@ if (!locale || !Object.keys(messages).includes(locale)) {
 }
 const instance = createI18n({
   locale,
+  legacy: false,
   fallbackLocale,
   formatFallbackMessages: true,
   silentTranslationWarn: true,

@@ -11,12 +11,13 @@
       <b-col
         col
         cols="3"
-        class="d-flex flex-column justify-content-center align-items-center"
+        class="position-relative d-flex flex-column justify-content-center align-items-center h-100"
       >
+        <EntryStoryKindTooltip :entry="entry" />
         <suggestion-list
           v-model="entry.acceptedStoryKind"
           :suggestions="entry.storyKindSuggestions"
-          :is-ai-source="(suggestion) => suggestion.ai !== null"
+          :is-ai-source="({ ai }) => ai !== null"
           :item-class="(suggestion) => [`kind-${suggestion.kind}`]"
         >
           <template #default="{ suggestion, isDropdownItem }">
@@ -50,22 +51,41 @@
             $t("Type inconnu")
           }}</template></suggestion-list
         ></b-col
-      ><b-col col cols="4" class="d-flex flex-column align-items-center">
+      ><b-col
+        col
+        cols="4"
+        class="position-relative d-flex flex-column align-items-center justify-content-center h-100"
+      >
         <StorySuggestionList v-model="entry" />
+        <StorySuggestionsTooltip :entry="entry" />
       </b-col>
-      <b-col col cols="5" class="flex-column">
-        <b-form-input
-          v-model="entry.title"
+      <b-col
+        col
+        cols="4"
+        class="position-relative offset-1 d-flex flex-column align-items-center justify-content-center h-100"
+      >
+        <b-form-textarea
+          :model-value="entry.title"
           :placeholder="$t('Titre de l\'histoire')"
           type="text"
-          class="w-100"
+          class="w-100 text-center"
+          @update:model-value="entry.title = ($event as string).replace(/[\r\n]+/g, '')"
       /></b-col>
     </template>
     <template v-else>
-      <b-col col cols="3">
+      <b-col
+        col
+        cols="3"
+        class="d-flex flex-column justify-content-center align-items-center h-100"
+      >
         <story-kind-badge :story-kind="entry.acceptedStoryKind?.kind"
       /></b-col>
-      <b-col cols="4">
+      <b-col
+        col
+        cols="4"
+        class="position-relative d-flex flex-column justify-content-center align-items-center h-100"
+      >
+        <StorySuggestionsTooltip :entry="entry" />
         <a
           v-if="urlEncodedStorycode"
           target="_blank"
@@ -73,7 +93,7 @@
           >{{ entry.acceptedStory!.storycode }}</a
         ><template v-else>{{ $t("Contenu inconnu") }}</template>
       </b-col>
-      <b-col col cols="5"
+      <b-col col cols="4" class="offset-1"
         >{{ title || $t("Sans titre") }}
         <template v-if="entry.part"
           >{{ " - " }}{{ $t("partie") }} {{ entry.part }}</template
@@ -88,7 +108,7 @@
 import { watchDebounced } from "@vueuse/core";
 import { dumiliSocketInjectionKey } from "~/composables/useDumiliSocket";
 import { suggestions } from "~/stores/suggestions";
-import { FullEntry } from "~dumili-services/indexation/types";
+import type { FullEntry } from "~dumili-services/indexation/types";
 import { COVER, storyKinds } from "~dumili-types/storyKinds";
 import { getEntryPages } from "~dumili-utils/entryPages";
 import type { storyKind } from "~prisma/client_dumili";
@@ -148,6 +168,13 @@ const getStoryKind = (storyKind: storyKind) => storyKinds[storyKind];
 
 <style scoped lang="scss">
 @use "sass:color";
+
+.row .col {
+  border-right: 1px solid rgba(0, 0, 0, 0.1);
+  &:last-child {
+    border-right: none;
+  }
+}
 
 :deep(.dropdown-menu) {
   background: lightgrey;

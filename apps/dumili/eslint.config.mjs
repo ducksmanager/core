@@ -50,6 +50,7 @@ export default [
     },
 
     rules: {
+      "@typescript-eslint/consistent-type-imports": "error",
       "@typescript-eslint/no-non-null-assertion": "off",
       "arrow-body-style": ["error", "as-needed"],
       "vue/multi-word-component-names": "off",

@@ -2,7 +2,6 @@ import type {
   entry,
   indexation,
   issueSuggestion,
-  page,
   Prisma,
   storyKindSuggestion,
   storySuggestion,
@@ -11,11 +10,22 @@ import type { Errorable } from "~socket.io-services";
 
 export const indexationPayloadInclude = {
   pages: {
+    orderBy: {
+      pageNumber: "asc",
+    },
     include: {
       image: {
         include: {
-          aiKumikoResultPanels: true,
-          aiOcrResults: true,
+          aiKumikoResult: {
+            include: {
+              detectedPanels: true,
+            },
+          },
+          aiOcrResult: {
+            include: {
+              matches: true,
+            },
+          },
         },
       },
     },
@@ -37,8 +47,8 @@ export const indexationPayloadInclude = {
           ocrDetails: true,
         },
       },
-      acceptedStoryKind: {include: {ai: true}},
-      storyKindSuggestions: {include: {ai: true}},
+      acceptedStoryKind: { include: { ai: true } },
+      storyKindSuggestions: { include: { ai: true } },
       storySuggestions: {
         include: {
           ai: true,
@@ -78,7 +88,7 @@ export default abstract class {
   ) => void;
 
   abstract createStorySuggestion: (
-    suggestion: Prisma.storySuggestionUncheckedCreateInput & {ai: boolean},
+    suggestion: Prisma.storySuggestionUncheckedCreateInput & { ai: boolean },
     callback: (
       data: Errorable<
         { createdStorySuggestion: Pick<storySuggestion, "id" | "storycode"> },
@@ -102,13 +112,15 @@ export default abstract class {
     suggestion: Omit<
       Prisma.issueSuggestionUncheckedCreateInput,
       "indexationId"
-    > & {ai: boolean},
+    > & { ai: boolean },
     callback: (data: { suggestionId: storySuggestion["id"] }) => void,
   ) => void;
 
   abstract updateIndexation: (
-    values: Pick<indexation, "price">,
-    callback: (data: { status: "OK" }) => void,
+    values: Pick<indexation, "price"> & { numberOfPages: number },
+    callback: (
+      data: Errorable<{ status: "OK" }, "Invalid number of pages">,
+    ) => void,
   ) => void;
 
   abstract acceptIssueSuggestion: (
@@ -147,60 +159,24 @@ export default abstract class {
     ) => void,
   ) => void;
 
-  abstract inferEntryStoryKind: (
-    entryId: entry["id"],
-    callback: (
-      data: Errorable<
-        { status: "OK" },
-        | "This indexation does not have any entry with this ID"
-      >,
-    ) => void,
-  ) => void;
-
-  abstract runKumikoOnPage: (
-    pageId: page["id"],
-    callback: (
-      data: Errorable<
-        { status: "OK" },
-        | "This indexation does not have any page with this ID"
-        | "Kumiko output could not be parsed"
-      >,
-    ) => void,
-  ) => void;
-
   abstract swapPageUrls: (
     pageNumber1: number,
     pageNumber2: number,
     callback: (data: { status: "OK" }) => void,
   ) => void;
 
-  abstract updateNumberOfPages: (
-    numberOfPages: number,
-    callback: (
-      data: Errorable<{ status: "OK" }, "Invalid number of pages">,
-    ) => void,
-  ) => void;
-
-  abstract createStorySuggestions: (
-    entryId: entry["id"],
-    callback: (
-      data: Errorable<
-        { status: "OK" },
-        | "OCR error"
-        | "No OCR results found for this entry"
-        | "This entry is not a story"
-        | "This entry does not have a page URL associated"
-      >,
-    ) => void,
-  ) => void;
-
   abstract createEntry: (callback: (data: { status: "OK" }) => void) => void;
 }
 
-export interface ServerSentEvents {
-  setInferredEntryStoryKind: (entryId: number) => void;
-  setInferredEntryStoryKindEnd: (entryId: number) => void;
-
+export type ServerSentStartEvents = {
   setKumikoInferredPageStoryKinds: (pageId: number) => void;
-  setKumikoInferredPageStoryKindsEnd: (pageId: number) => void;
-}
+  setInferredEntryStoryKind: (entryId: number) => void;
+  createAiStorySuggestions: (entryId: number) => void;
+  runOcrOnImage: (imageId: number) => void;
+};
+
+export type ServerSentEndEvents = {
+  [K in keyof ServerSentStartEvents as `${K}End`]: ServerSentStartEvents[K];
+};
+
+export type ServerSentEvents = ServerSentStartEvents & ServerSentEndEvents;

@@ -22,7 +22,7 @@
 </template>
 
 <script setup lang="ts">
-import { SimpleStory } from "~dm-types/SimpleStory";
+import type { SimpleStory } from "~dm-types/SimpleStory";
 import { socketInjectionKey as dmSocketInjectionKey } from "~web/src/composables/useDmSocket";
 
 const {

@@ -1,13 +1,15 @@
 <template>
-  <span
-    @mouseout="() => (isInteractive = false)"
-    @mouseover="() => (isInteractive = true)"
+  <div
+    class="position-absolute"
+    :class="`${topCenter ? 'top-0 mt-1' : 'end-0 me-1'}`"
   >
     <Teleport to="body">
-      <b-tooltip :target="id"
-        ><i-bi-arrow-repeat
-          class="position-absolute start-0 ms-2 cursor-pointer"
-          @click="onClickRerun" /><slot
+      <b-tooltip
+        :target="id"
+        interactive
+        @shown="emit('toggled', true)"
+        @hidden="emit('toggled', false)"
+        ><slot
       /></b-tooltip>
     </Teleport>
     <AiSuggestionIcon
@@ -16,48 +18,46 @@
       :is-loading="isLoading"
       :status="status"
     />
-  </span>
+  </div>
 </template>
-<script setup lang="ts" generic="LoadingEventStart extends keyof ServerSentEvents, LoadingEventEnd extends keyof ServerSentEvents">
+<script setup lang="ts" generic="LoadingEventStart extends keyof ServerSentStartEvents">
 import { dumiliSocketInjectionKey } from "~/composables/useDumiliSocket";
-import type { ServerSentEvents } from "~dumili-services/indexation/types";
+import type { ServerSentStartEvents } from "~dumili-services/indexation/types";
 
-const { status, loadingEvent, onClickRerun } = defineProps<{
+const { status, loadingEvents = [] } = defineProps<{
   id: string;
   status: "success" | "failure" | "idle";
-  loadingEvent?: {
-    startEventName: LoadingEventStart;
-    endEventName: LoadingEventEnd;
+  topCenter?: boolean;
+  loadingEvents?: {
+    eventName: LoadingEventStart;
     checkMatch: (
-      id: Parameters<ServerSentEvents[LoadingEventStart]>[0],
+      ...args: Parameters<ServerSentStartEvents[LoadingEventStart]>
     ) => boolean;
-  };
-  onClickRerun: () => Promise<void>;
+  }[];
 }>();
 
 defineSlots();
 
-defineEmits<{
-  (e: "click"): void;
-  (e: "blur"): void;
+const emit = defineEmits<{
+  (e: "toggled", toggle: boolean): void;
 }>();
 
 const { indexationSocket } = inject(dumiliSocketInjectionKey)!;
 
 const isLoading = ref(false);
 const disabled = ref(false); // TODO handle failed suggestions
-const isInteractive = ref(false);
 
-if (loadingEvent) {
-  indexationSocket.value?.on(loadingEvent.startEventName, (entryId) => {
-    if (loadingEvent.checkMatch(entryId)) {
+for (const loadingEvent of loadingEvents) {
+  indexationSocket.value?.on(loadingEvent.eventName, (...args) => {
+    if (loadingEvent.checkMatch(...args)) {
       isLoading.value = true;
     }
   });
 
-  indexationSocket.value?.on(loadingEvent.endEventName, (entryId) => {
-    if (loadingEvent.checkMatch(entryId)) {
-      console.log("match end");
+  const endEvent: `${LoadingEventStart}End` = `${loadingEvent.eventName}End`;
+
+  indexationSocket.value?.on(endEvent, (...args) => {
+    if (loadingEvent.checkMatch(...args)) {
       setTimeout(() => {
         isLoading.value = false;
       }, 1500);

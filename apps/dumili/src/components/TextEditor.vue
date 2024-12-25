@@ -19,9 +19,9 @@
 const { t: $t } = useI18n();
 
 import { suggestions } from "~/stores/suggestions";
-import { FullEntry } from "~dumili-services/indexation/types";
+import type { FullEntry } from "~dumili-services/indexation/types";
 import { getEntryPages } from "~dumili-utils/entryPages";
-import { storySuggestion } from "~prisma/client_dumili";
+import type { storySuggestion } from "~prisma/client_dumili";
 import { socketInjectionKey as dmSocketInjectionKey } from "~web/src/composables/useDmSocket";
 
 const { storyDetails } = storeToRefs(coa());

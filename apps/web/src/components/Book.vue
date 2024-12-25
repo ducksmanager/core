@@ -1,5 +1,9 @@
 <template>
-  <div ref="container" class="container flex-grow-1" @click.self="closeBook()">
+  <div
+    ref="container"
+    class="container d-flex flex-grow-1"
+    @click.self="closeBook()"
+  >
     <div id="book" class="flip-book" @click.self="closeBook()">
       <slot name="table-of-contents" />
 
@@ -129,14 +133,16 @@ defineExpose({
   display: none;
   margin: auto;
   background-size: cover;
-  min-width: initial !important;
-  min-height: initial !important;
+  min-width: 100% !important;
+  min-height: 100% !important;
 }
 
 .page {
   color: #785e3a;
-
   overflow: hidden;
+  height: inherit !important;
+  top: inherit !important;
+  width: 50% !important;
 
   .page-content {
     width: 100%;
@@ -158,7 +164,7 @@ defineExpose({
       background: transparent;
 
       .page-image {
-        background-size: cover;
+        // background-size: cover;
         transform: rotate3d(0, 1, 0, -90deg);
         transform-origin: left;
         transition: all 1s linear;
@@ -172,6 +178,7 @@ defineExpose({
 
   &.--left {
     // for left page (property will be added automatically)
+    left: 0 !important;
     border-right: 0;
 
     .page-image {

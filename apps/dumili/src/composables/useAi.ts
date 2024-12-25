@@ -3,7 +3,6 @@ import type { FullIndexation } from "~dumili-services/indexation/types";
 import { COVER } from "~dumili-types/storyKinds";
 import { socketInjectionKey as dmSocketInjectionKey } from "~web/src/composables/useDmSocket";
 
-import { dumiliSocketInjectionKey } from "./useDumiliSocket";
 import useHint from "./useHint";
 
 export default () => {
@@ -11,20 +10,10 @@ export default () => {
     coverId: { services: coverIdServices },
   } = inject(dmSocketInjectionKey)!;
 
-  const { indexationSocket } = inject(dumiliSocketInjectionKey)!;
-
-  const indexationServices = indexationSocket.value!.services;
-  const { loadIndexation } = suggestions();
   const indexation = storeToRefs(suggestions())
     .indexation as Ref<FullIndexation>;
 
   const hint = useHint();
-
-  const runKumikoOnPage = async (pageId: number) => {
-    console.log("Kumiko...");
-    await indexationServices.runKumikoOnPage(pageId);
-    await loadIndexation();
-  };
 
   const runCoverSearch = async () => {
     const firstEntry = indexation.value!.entries[0];
@@ -53,37 +42,7 @@ export default () => {
     }
   };
 
-  const inferEntryStoryKind = async (entryId: number) => {
-    console.log("Inference...");
-    const result = await indexationServices.inferEntryStoryKind(entryId);
-    if ("error" in result) {
-      console.error(result.error);
-    } else {
-      console.log("Inference OK");
-    }
-    await loadIndexation();
-  };
-
-  const runStorycodeOcr = async (entryId?: number) => {
-    console.log("OCR...");
-    const result = await Promise.all(
-      indexation.value.entries
-        .filter(({ id }) => entryId === undefined || id === entryId)
-        .map((entry) => indexationServices.createStorySuggestions(entry.id)),
-    );
-    const resultsWithErrors = result.filter((result) => "error" in result);
-    if (resultsWithErrors.length) {
-      console.error(resultsWithErrors);
-    } else {
-      console.log("OCR OK");
-    }
-    await loadIndexation();
-  };
-
   return {
     runCoverSearch,
-    runKumikoOnPage,
-    runStorycodeOcr,
-    inferEntryStoryKind,
   };
 };

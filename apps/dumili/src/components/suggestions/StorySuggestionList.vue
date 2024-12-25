@@ -55,9 +55,9 @@
 
 <script lang="ts" setup>
 import { dumiliSocketInjectionKey } from "~/composables/useDumiliSocket";
-import { FullEntry } from "~dumili-services/indexation/types";
-import { suggestions } from "../stores/suggestions";
-import { storySuggestion } from "~prisma/client_dumili";
+import type { FullEntry } from "~dumili-services/indexation/types";
+import { suggestions } from "~/stores/suggestions";
+import type { storySuggestion } from "~prisma/client_dumili";
 import { getEntryPages } from "~dumili-utils/entryPages";
 
 const { t: $t } = useI18n();

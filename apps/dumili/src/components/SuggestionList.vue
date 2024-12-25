@@ -28,7 +28,7 @@
             selectedItemClass(suggestion)) ||
             []),
         ]"
-        @click="
+        @click.stop="
           current = suggestion;
           emit('toggle-customize-form', false);
         "

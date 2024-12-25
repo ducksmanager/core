@@ -1,6 +1,6 @@
 <template>
   <b-badge size="xl" :class="{ [`kind-${storyKind}`]: true }">{{
-    storyKind ? storyKinds[storyKind] || $t("Type inconnu") : $t("Non calculé")
+    (storyKind && storyKinds[storyKind]) || $t("Type inconnu")
   }}</b-badge>
 </template>
 <script setup lang="ts">

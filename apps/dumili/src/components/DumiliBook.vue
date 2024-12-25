@@ -21,7 +21,7 @@
           "
         >
           <div
-            v-for="panel in page.image.aiKumikoResultPanels"
+            v-for="panel in page.image.aiKumikoResult?.detectedPanels || []"
             :key="`kumiko-match-${panel.id}`"
             class="overlay translucent"
             :style="getPanelCss(panel, page.image.url)"
@@ -34,7 +34,7 @@
           "
         >
           <div
-            v-for="ocrDetection of page.image.aiOcrResults || []"
+            v-for="ocrDetection of page.image.aiOcrResult?.matches || []"
             :key="`ocr-match-${ocrDetection.id}`"
             class="position-absolute ocr-match text w-100 h-100"
             :style="getOcrDetectionCss(ocrDetection, index)"
@@ -51,7 +51,10 @@
 import { components as webComponents, type PageFlip } from "~web";
 import { getEntryPages } from "~dumili-utils/entryPages";
 import type { FullIndexation } from "~dumili-services/indexation/types";
-import type { aiKumikoResultPanel, aiOcrResult } from "~prisma/client_dumili";
+import type {
+  aiKumikoResultPanel,
+  aiOcrResultMatch,
+} from "~prisma/client_dumili";
 import { ref } from "vue";
 import { ui } from "~/stores/ui";
 
@@ -81,19 +84,6 @@ defineEmits<{
   "update:currentPage": [value: number];
   "update:opened": [value: boolean];
 }>();
-
-watch(
-  [() => book.value?.getPageCollection(), currentPage],
-  ([pageCollection, currentPage]) => {
-    if (pageCollection) {
-      visiblePages.value = new Set(
-        [currentPage, pageCollection.getCurrentSpreadIndex() * 2].map(
-          (pageIndex) => indexation.pages[pageIndex].id,
-        ),
-      );
-    }
-  },
-);
 
 watch(visiblePages, () => {
   for (const pageId of visiblePages.value || []) {
@@ -129,7 +119,7 @@ const getPanelCss = (panel: aiKumikoResultPanel, pageUrl: string) => {
 };
 
 const getOcrDetectionCss = (
-  { x1, x2, x3, x4, y1, y2, y3, y4 }: aiOcrResult,
+  { x1, x2, x3, x4, y1, y2, y3, y4 }: aiOcrResultMatch,
   bookPageIndex: number,
 ) => {
   const pageElement = (

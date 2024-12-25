@@ -32,13 +32,16 @@ model entry {
 }
 
 model image {
-  id                        Int                                 @id @default(autoincrement())
-  url                       String                              @unique(map: "image_url_uindex") @db.VarChar(255)
-  aiKumikoInferredStoryKind pageImageAiKumikoInferredStoryKind? @map("ai_kumiko_inferred_story_kind")
-  aiKumikoResultPanels      aiKumikoResultPanel[]
-  aiOcrResults              aiOcrResult[]
-  page                      page[]
+  id               Int             @id @default(autoincrement())
+  url              String          @unique(map: "image_url_uindex") @db.VarChar(255)
+  aiOcrResultId    Int?            @map("ai_ocr_result_id")
+  aiOcrResult      aiOcrResult?    @relation(fields: [aiOcrResultId], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "image_ai_ocr_result_id_fk")
+  aiKumikoResultId Int?            @map("ai_kumiko_result_id")
+  aiKumikoResult   aiKumikoResult? @relation(fields: [aiKumikoResultId], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "image_ai_kumiko_result_id_fk")
+  page             page[]
 
+  @@index([aiKumikoResultId], map: "image_ai_kumiko_result_id_fk")
+  @@index([aiOcrResultId], map: "image_ai_ocr_result_id_fk")
   @@map("image")
 }
 
@@ -121,34 +124,23 @@ model aiOcrPossibleStory {
 }
 
 model aiOcrResult {
-  id         Int    @id @default(autoincrement())
-  imageId    Int    @map("image_id")
-  x1         Int
-  x2         Int
-  x3         Int
-  x4         Int
-  y1         Int
-  y2         Int
-  y3         Int
-  y4         Int
-  text       String @db.Text
-  confidence Float  @db.Float
-  image      image  @relation(fields: [imageId], references: [id], onUpdate: Restrict, map: "ai_ocr_result_image_id_fk")
+  id      Int                @id @default(autoincrement())
+  matches aiOcrResultMatch[]
+  image   image[]
 
-  @@index([imageId], map: "ai_ocr_result_image_id_index")
   @@map("ai_ocr_result")
 }
 
 model aiKumikoResultPanel {
-  id      Int   @id @default(autoincrement())
-  imageId Int   @map("image_id")
-  x       Int   @db.SmallInt
-  y       Int   @db.SmallInt
-  width   Int   @db.SmallInt
-  height  Int   @db.SmallInt
-  image   image @relation(fields: [imageId], references: [id], onUpdate: Restrict, map: "ai_kumiko_result_panel_page_image_id_fk")
+  id             Int            @id @default(autoincrement())
+  resultId       Int            @map("result_id")
+  x              Int            @db.SmallInt
+  y              Int            @db.SmallInt
+  width          Int            @db.SmallInt
+  height         Int            @db.SmallInt
+  aiKumikoResult aiKumikoResult @relation(fields: [resultId], references: [id], onUpdate: Restrict, map: "ai_kumiko_result_panel_result_id_fk")
 
-  @@index([imageId], map: "ai_kumiko_result_panel_page_image_id_fk")
+  @@index([resultId], map: "ai_kumiko_result_panel_result_id_fk")
   @@map("ai_kumiko_result_panel")
 }
 
@@ -176,20 +168,35 @@ model storySuggestionAi {
   @@map("story_suggestion_ai")
 }
 
-enum storyKind {
-  a
-  c
-  f
-  g
-  i
-  k
-  n
-  t
-  L
-  P
+model aiKumikoResult {
+  id                Int                   @id @default(autoincrement())
+  inferredStoryKind storyKind?            @map("ai_kumiko_inferred_story_kind")
+  detectedPanels    aiKumikoResultPanel[]
+  image             image[]
+
+  @@map("ai_kumiko_result")
 }
 
-enum pageImageAiKumikoInferredStoryKind {
+model aiOcrResultMatch {
+  id          Int         @id @default(autoincrement())
+  resultId    Int         @map("result_id")
+  x1          Int
+  x2          Int
+  x3          Int
+  x4          Int
+  y1          Int
+  y2          Int
+  y3          Int
+  y4          Int
+  text        String      @db.Text
+  confidence  Float       @db.Float
+  aiOcrResult aiOcrResult @relation(fields: [resultId], references: [id], onUpdate: Restrict, map: "ai_ocr_result_id_fk")
+
+  @@index([resultId], map: "ai_ocr_result_id_index")
+  @@map("ai_ocr_result_match")
+}
+
+enum storyKind {
   a
   c
   f

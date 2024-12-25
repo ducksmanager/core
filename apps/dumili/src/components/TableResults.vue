@@ -1,6 +1,9 @@
 <template>
-  <table>
-    <thead v-if="data.length">
+  <template v-if="!data.length">
+    <slot name="no-data" />
+  </template>
+  <table v-else>
+    <thead>
       <th v-for="header in Object.keys(data[0])" :key="header" class="border">
         {{ header }}
       </th>
@@ -18,5 +21,9 @@
 <script setup lang="ts" generic="T extends object">
 defineProps<{
   data: T[];
+}>();
+
+defineSlots<{
+  "no-data"(): never;
 }>();
 </script>

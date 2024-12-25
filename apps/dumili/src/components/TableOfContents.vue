@@ -1,8 +1,9 @@
 <template>
   <b-card
     no-body
-    class="table-of-contents d-flex w-100 h-100 m-0 p-1 py-2"
+    class="table-of-contents d-flex w-100 h-100 m-0 p-0"
     body-class="flex-grow-1 w-100 h-100"
+    header-class="position-relative p-0"
     @mouseleave="hoveredEntry = null"
   >
     <template #header>
@@ -11,36 +12,46 @@
       <b-dropdown
         v-if="indexation.acceptedIssueSuggestion"
         variant="light"
-        class="position-absolute m-4 top-0 end-0"
+        class="position-absolute h-100 end-0 d-flex"
         style="z-index: 1030"
       >
         <template #button-content>{{ $t("Méta-données") }}</template>
-        <b-dropdown-item
-          >{{ $t("Prix") }}
-          <input v-model="indexation.price" type="text" @click.stop="() => {}"
-        /></b-dropdown-item>
-        <b-dropdown-item
-          >{{ $t("Nombre de pages") }}
-          <input
-            :value="numberOfPages"
-            type="number"
-            min="4"
-            max="996"
-            @click.stop="updateNumberOfPages"
-            @blur.stop="updateNumberOfPages"
-        /></b-dropdown-item>
+        <b-form @submit.prevent="updateIndexation">
+          <b-dropdown-item
+            >{{ $t("Prix") }}
+            <input
+              v-model="indexation.price"
+              type="text"
+              @click.stop="() => {}"
+          /></b-dropdown-item>
+          <b-dropdown-item
+            >{{ $t("Nombre de pages") }}
+            <input
+              :value="numberOfPages"
+              type="number"
+              min="4"
+              max="996"
+              step="2"
+              @click.stop="updateNumberOfPages"
+              @blur.stop="updateNumberOfPages"
+          /></b-dropdown-item>
+          <b-dropdown-item>
+            <b-button type="submit" variant="primary">{{ $t("OK") }}</b-button>
+          </b-dropdown-item>
+        </b-form>
       </b-dropdown>
-      <div>
+      <!-- <div>
         <ai-tooltip
           id="ai-issue-suggestion"
           :status="issueAiSuggestion?.issuecode ? 'success' : 'idle'"
           :on-click-rerun="() => runKumikoOnPage(1)"
         /></div
-    ></template>
+    > -->
+    </template>
 
     <b-row
       style="outline: 1px solid black"
-      class="overflow-y-auto overflow-x-hidden w-100 m-0"
+      class="overflow-y-auto overflow-x-hidden w-100 m-1"
     >
       <b-col :cols="1" style="padding: 0">
         <b-row
@@ -52,44 +63,34 @@
           <TableOfContentsPage :page="page" />
         </b-row>
       </b-col>
-      <b-col :cols="1" class="position-relative p-0">
-        <template v-for="(entry, idx) in indexation.entries" :key="entry.id">
+      <b-col :cols="11" class="position-relative p-0">
+        <template
+          v-for="(_, idx) in indexation.entries"
+          :key="indexation.entries[idx].id"
+        >
           <TableOfContentsEntry
-            :entry="entry"
-            @on-entry-resize-stop="onEntryResizeStop(idx, $event)"
-            @create-entry-after="createEntry"
+            v-model="indexation.entries[idx]"
+            @on-entry-resize-stop="($event) => onEntryResizeStop(idx, $event)"
           />
         </template>
-      </b-col>
-      <b-col :cols="10" class="d-flex flex-column" style="padding: 0">
-        <b-row
-          v-for="(entry, idx) in indexation.entries"
-          :key="entry.id"
-          class="entry-details"
-          :class="{ current: currentEntry === entry }"
-          :style="{
-            height: `${getEntryPages(indexation, entry.id).length * pageHeight}px`,
-          }"
+
+        <b-button
+          class="create-entry fw-bold position-absolute mt-n1 d-flex justify-content-center align-items-center"
+          variant="info"
+          @click="createEntry"
+          >{{ $t("Ajouter une entrée") }}</b-button
         >
-          <b-col class="d-flex sticky-top" @click="currentEntry = entry"
-            ><Entry
-              v-model="indexation.entries[idx]"
-              :editable="currentEntry === entry"
-          /></b-col>
-        </b-row>
       </b-col>
     </b-row>
   </b-card>
 </template>
 
 <script setup lang="ts">
-import useAi from "~/composables/useAi";
 import { dumiliSocketInjectionKey } from "~/composables/useDumiliSocket";
-import { getEntryFromPage, getEntryPages } from "~dumili-utils/entryPages";
+import { getEntryFromPage } from "~dumili-utils/entryPages";
 import { suggestions } from "~/stores/suggestions";
 import { ui } from "~/stores/ui";
-import { FullIndexation } from "~dumili-services/indexation/types";
-import { watchDebounced } from "@vueuse/core";
+import type { FullIndexation } from "~dumili-services/indexation/types";
 import TableOfContentsEntry from "./TableOfContentsEntry.vue";
 
 const { indexationSocket } = inject(dumiliSocketInjectionKey)!;
@@ -98,8 +99,6 @@ const { loadIndexation } = suggestions();
 const { hoveredEntry, currentEntry } = storeToRefs(ui());
 const indexation = storeToRefs(suggestions()).indexation as Ref<FullIndexation>;
 const { currentPage, pageHeight } = storeToRefs(ui());
-
-const { runKumikoOnPage } = useAi();
 
 const { t: $t } = useI18n();
 
@@ -119,14 +118,8 @@ const numberOfPages = computed({
         return;
       }
     }
-    indexationSocket.value!.services.updateNumberOfPages(value);
-    await loadIndexation();
   },
 });
-
-const issueAiSuggestion = computed(() =>
-  indexation.value.issueSuggestions.find(({ ai }) => !!ai),
-);
 
 const updateNumberOfPages = (event: Event) => {
   numberOfPages.value = parseInt((event.target as HTMLInputElement).value);
@@ -144,18 +137,13 @@ const createEntry = async () => {
   return loadIndexation();
 };
 
-watchDebounced(
-  () => JSON.stringify([indexation.value.price]),
-  () => {
-    if (indexation.value.price) {
-      const { price } = indexation.value;
-      indexationSocket.value!.services.updateIndexation({
-        price,
-      });
-    }
-  },
-  { debounce: 500, maxWait: 1000 },
-);
+const updateIndexation = () => {
+  const { price } = indexation.value;
+  indexationSocket.value!.services.updateIndexation({
+    price,
+    numberOfPages: numberOfPages.value,
+  });
+};
 
 watch(
   currentPage,
@@ -243,5 +231,6 @@ watch(
 
 :deep(.resizable .handle) {
   bottom: 0;
+  z-index: 9999;
 }
 </style>

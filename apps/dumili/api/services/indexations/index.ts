@@ -5,7 +5,7 @@ import { prisma } from "~/index";
 import { COVER } from "~dumili-types/storyKinds";
 
 import { RequiredAuthMiddleware } from "../_auth";
-import { acceptStoryKindSuggestion, createEntry } from "../indexation";
+import { createEntry } from "../indexation";
 import Events, {
   indexationWithFirstPageAndAcceptedIssueSuggestion,
 } from "./types";
@@ -47,10 +47,16 @@ export default (io: Server) => {
           })
           .then((indexation) => createEntry(indexation.id))
           .then((entry) =>
-            acceptStoryKindSuggestion(
-              entry.storyKindSuggestions.find((s) => s.kind === COVER)!.id,
-              entry.id,
-            ),
+            prisma.entry.update({
+              data: {
+                acceptedStoryKindSuggestionId: entry.storyKindSuggestions.find(
+                  (s) => s.kind === COVER,
+                )!.id,
+              },
+              where: {
+                id: entry.id,
+              },
+            }),
           )
           .then(callback);
       });
