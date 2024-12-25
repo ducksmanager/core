@@ -22,10 +22,10 @@ const fillClass = computed(
 );
 
 const arcPath = computed(() => {
-  if (!partInfo || partInfo.estimatedpanels >= partInfo.total_estimatedpanels) {
+  if (!partInfo?.part || partInfo.estimatedpanels >= partInfo.total_estimatedpanels) {
     return null;
   }
-  // const partAngle = 360 / partInfo.totalParts;
+
   const partAngle = 0;
   const ratio = partInfo.estimatedpanels / partInfo.total_estimatedpanels;
   const fillAngle = 360 * ratio;
