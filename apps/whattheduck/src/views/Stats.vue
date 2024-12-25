@@ -17,14 +17,14 @@
             ><ion-col size="4" class="text-big">{{ total }}</ion-col></ion-row
           >
           <ion-row class="ion-text-center" style="height: 25%">
-            <ion-col size="4">{{ t('pays') }}</ion-col
-            ><ion-col size="4">{{ t('publications') }}</ion-col
+            <ion-col size="4">{{ t('pays|pays', ownedCountries!.length) }}</ion-col
+            ><ion-col size="4">{{ t('publication|publications', ownedPublications!.length) }}</ion-col
             ><ion-col size="4" style="flex-direction: column"
               ><div>{{ t('numéros') }}</div>
               <small>{{
-                t('dont {copies} double|dont {copies} doubles', {
+                t('aucun double|dont {copies} double|dont {copies} doubles', {
                   copies: total! - totalUniqueIssues,
-                })
+                }, total! - totalUniqueIssues)
               }}</small>
             </ion-col></ion-row
           ></ion-row

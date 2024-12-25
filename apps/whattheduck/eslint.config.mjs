@@ -63,6 +63,7 @@ export default [
       'vue/no-v-text-v-html-on-component': 'off',
       'vue/define-emits-declaration': 'error',
       'vue/define-props-declaration': 'error',
+      'vue/no-unused-properties': 'error',
 
       'vue/component-name-in-template-casing': [
         'error',

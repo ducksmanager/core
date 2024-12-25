@@ -168,7 +168,7 @@
   "Taille de la collection pour le mois": "Collection size for month",
   "Tapotez sur un magazine récent pour l'ajouter à votre collection.": "Tap on a recent issue to add it to your collection.",
   "Tous les pays": "All countries",
-  "Toutes publications": "All publicationd",
+  "Toutes publications": "All publications",
   "Toute la collection": "Whole collection",
   "Trier par date de publication": "Sort by publication date",
   "Trier par score": "Sort by score",
@@ -201,14 +201,15 @@
   "a été publiée dans les numéros suivants :": "was published in the following issues:",
   "argent": "silver",
   "bronze": "bronze",
-  "dont {copies} double|dont {copies} doubles": "incl. {copies} copy|incl. {copies} copies",
+  "aucun double|dont {copies} double|dont {copies} doubles": "no copies|incl. {copies} copy|incl. {copies} copies",
   "et gagnez %1$d points Photographe !": "and earn %1$d photographer points!",
   "ou": "or",
   "pas de couverture": "no cover",
   "publication": "publication",
+  "publication|publications": "publication|publications",
   "publications": "publications",
   "numéro": "issue",
   "numéros": "issues",
   "or": "gold",
-  "pays": "country"
+  "pays|pays": "country|countries"
 }

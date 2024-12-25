@@ -71,6 +71,7 @@ const assignSocket = () => {
     clearSession: () => {
       token.value = null;
       storage.clear();
+      router.push('/logout');
     },
     sessionExists: async () => token.value !== undefined,
   };
