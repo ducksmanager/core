@@ -168,11 +168,11 @@ export const app = defineStore('app', () => {
     },
   ] as const;
 
-  console.log('token before usePersistedData', token.value);
+  console.info('token before usePersistedData', token.value);
   usePersistedData({
     token,
   }).then(() => {
-    console.log({ token: token.value });
+    console.info({ token: token.value });
     if (!token.value) {
       token.value = null;
     }

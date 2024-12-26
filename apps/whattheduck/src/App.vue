@@ -101,7 +101,7 @@ const updateBundle = async () => {
   const currentBundleVersion = (await CapacitorUpdater.current())?.bundle.version;
   try {
     const bundle = await socket.value!.app.services.getBundleUrl({ version: currentBundleVersion });
-    console.log('Latest bundle', bundle);
+    console.info('Latest bundle', bundle);
     if (Capacitor.isNativePlatform() && 'url' in bundle && bundle.url) {
       CapacitorUpdater.addListener('download', ({ percent }) => {
         bundleDownloadProgress.value = percent / 100;
@@ -116,11 +116,11 @@ const updateBundle = async () => {
       await CapacitorUpdater.set(bundleInfo);
     }
   } catch (e) {
-    console.log('getBundleUrl failed', e);
+    console.info('getBundleUrl failed', e);
     const { error, errorDetails } = e as unknown as { error: string; errorDetails: string };
     switch (error) {
       case 'Already up to date':
-        console.log('Bundle is already up to date');
+        console.info('Bundle is already up to date');
         break;
       default:
         console.warn(error, errorDetails);

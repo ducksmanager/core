@@ -80,7 +80,7 @@ router.isReady().then(async () => {
     name: 'whattheduck',
   });
   await storage.create();
-  console.log({ 'storage driver': storage.driver });
+  console.info({ 'storage driver': storage.driver });
   app.provide('storage', storage);
   app.mount('#app');
 });
