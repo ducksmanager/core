@@ -116,6 +116,7 @@ const updateBundle = async () => {
       await CapacitorUpdater.set(bundleInfo);
     }
   } catch (e) {
+    console.log('getBundleUrl failed', e);
     const { error, errorDetails } = e as unknown as { error: string; errorDetails: string };
     switch (error) {
       case 'Already up to date':

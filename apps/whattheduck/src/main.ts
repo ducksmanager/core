@@ -65,7 +65,7 @@ router.isReady().then(async () => {
         dist: currentBundleVersion,
         integrations: [Sentry.browserTracingIntegration(), Sentry.replayIntegration()],
         tracesSampleRate: 1.0,
-        replaysSessionSampleRate: 0.1,
+        replaysSessionSampleRate: 1.0,
         replaysOnErrorSampleRate: 1.0,
       },
       SentryVue.init,
