@@ -88,15 +88,17 @@ onMounted(() => {
     (newValue) => {
       if (newValue && coverRatio) {
         const height = coverHeight || container.value!.clientHeight;
-        book.value = new PageFlip(document.getElementById("book")!, {
-          width: height / coverRatio,
-          height,
+        if (height) {
+          book.value = new PageFlip(document.getElementById("book")!, {
+            width: height / coverRatio,
+            height,
 
-          maxShadowOpacity: 0.5,
-          showCover: true,
-          usePortrait: false,
-          mobileScrollSupport: false,
-        });
+            maxShadowOpacity: 0.5,
+            showCover: true,
+            usePortrait: false,
+            mobileScrollSupport: false,
+          });
+        }
       }
     },
     { immediate: true },

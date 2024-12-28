@@ -78,6 +78,19 @@ export default abstract class {
       >,
     ) => void,
   ) => void;
+  
+  abstract deleteEntry: (
+    entryId: entry["id"],
+    entryIdToExtend: "previous" | "next",
+    callback: (
+      data: Errorable<
+        { status: "OK" },
+        "This indexation does not have any entry with this ID"|
+        "This entry does not have any previous entry"|
+        "This entry does not have any next entry"
+      >,
+    ) => void,
+  ) => void;
 
   abstract deleteIndexation: (callback: () => void) => void;
 

@@ -60,13 +60,10 @@ export const step = defineStore("step", () => {
     }: {
       stepNumbers?: number[];
       issuecodes?: string[];
-    }) => {
-      return options.value.filter(
-        ({ stepNumber, issuecode }) =>
-          (!stepNumbers || stepNumbers.includes(stepNumber)) &&
-          (!issuecodes || issuecodes.includes(issuecode)),
-      );
-    },
+    }) => options.value.filter(
+      ({ stepNumber, issuecode }) => (!stepNumbers || stepNumbers.includes(stepNumber)) &&
+        (!issuecodes || issuecodes.includes(issuecode))
+    ),
     getFilteredDimensions = ({ issuecodes }: { issuecodes?: string[] }) =>
       dimensions.value.filter(
         ({ issuecode }) => !issuecodes || issuecodes.includes(issuecode),

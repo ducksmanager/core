@@ -13,16 +13,20 @@
     "
   >
     <b>{{ $t("Types d'entrées déduits pour les pages") }}</b>
-    <table-results
-      :data="
+    <b-table
+      :fields="[
+        { key: 'page' },
+        { key: 'kind', label: $t('Type d\'entrée déduit pour la page') },
+      ]"
+      :items="
         pagesWithInferredKinds.map(({ page, ...inferredData }) => ({
           page: page.pageNumber,
           ...inferredData,
-        }))
+        })) || []
       "
-      ><template #no-data>{{
-        $t("Aucune case détectée")
-      }}</template></table-results
+      ><template #empty>{{ $t("Aucune case détectée") }}</template>
+      <template #cell(kind)="row">
+        <story-kind-badge :story-kind="row.item.kind" /></template></b-table
     ><br />
     <div>
       <b>{{ $t("Type d'entrée déduit") }}</b>
@@ -38,14 +42,11 @@ import type {
   FullEntry,
   FullIndexation,
 } from "~dumili-services/indexation/types";
-import { storyKinds } from "~dumili-types/storyKinds";
 import { getEntryPages } from "~dumili-utils/entryPages";
 
 const { entry } = defineProps<{
   entry: FullEntry;
 }>();
-
-const { t } = useI18n();
 
 const indexation = storeToRefs(suggestions()).indexation as Ref<FullIndexation>;
 const { showAiDetectionsOn } = storeToRefs(ui());
@@ -66,11 +67,7 @@ const pagesWithInferredKinds = computed(() =>
     .filter(({ image }) => image)
     .map((page) => ({
       page,
-      [t("Type d'entrée déduit pour la page")]: page.image!.aiKumikoResult
-        ? page.image!.aiKumikoResult.inferredStoryKind
-          ? storyKinds[page.image!.aiKumikoResult.inferredStoryKind]
-          : t("Type inconnu")
-        : t("Non calculé"),
+      kind: page.image?.aiKumikoResult?.inferredStoryKind,
     })),
 );
 </script>

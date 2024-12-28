@@ -1,7 +1,10 @@
 <template>
-  <b-badge size="xl" :class="{ [`kind-${storyKind}`]: true }">{{
-    (storyKind && storyKinds[storyKind]) || $t("Type inconnu")
-  }}</b-badge>
+  <b-badge
+    size="xl"
+    :class="{ [`kind-${storyKind}`]: true }"
+    class="text-black fw-normal"
+    >{{ (storyKind && storyKinds[storyKind]) || $t("Type inconnu") }}</b-badge
+  >
 </template>
 <script setup lang="ts">
 import { storyKinds } from "~dumili-types/storyKinds";

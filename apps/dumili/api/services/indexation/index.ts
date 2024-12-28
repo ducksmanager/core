@@ -1,4 +1,5 @@
 import type { Server, Socket } from "socket.io";
+import "~group-by";
 
 import type { NamespaceWithData, SessionDataWithIndexation } from "~/index";
 import { prisma } from "~/index";
@@ -26,6 +27,7 @@ type IndexationSocket = Socket<
   SessionDataWithIndexation
 >;
 
+let isAiRunning = false
 const getFullIndexation = (socket: IndexationSocket, indexationId: string) =>
   prisma.indexation
     .findUnique({
@@ -33,18 +35,21 @@ const getFullIndexation = (socket: IndexationSocket, indexationId: string) =>
       include: indexationPayloadInclude,
     })
     .then((indexation) => {
-      if (indexation && 1>2) {
+      if (indexation && !isAiRunning) {
         runKumikoOnPages(socket, indexation)
           .then(() =>
             runOcrOnImages(
               socket,
               indexation.pages
                 .filter(({ image }) => !!image)
-                .map(({ image }) => image!),
+                .map(({ pageNumber, image }) => ({pageNumber, image: image!})),
             ),
           )
           .then(() => setInferredEntriesStoryKinds(socket, indexation.entries))
-          .then(() => createAiStorySuggestions(socket, indexation));
+          .then(() => createAiStorySuggestions(socket, indexation))
+          .finally(() => {
+            isAiRunning = false
+          });
       }
       return indexation;
     });
@@ -55,15 +60,16 @@ const createAiStorySuggestions = async (
 ) => {
   for (const entry of indexation.entries) {
     if (entry?.acceptedStoryKind?.kind === STORY) {
-      socket.emit("createAiStorySuggestions", entry.id);
 
       const firstPageOfEntry = getEntryPages(indexation, entry.id)[0];
       const ocrResults = firstPageOfEntry.image?.aiOcrResult?.matches;
 
       if (!ocrResults) {
-        console.log(`No OCR results found for this entry`);
+        console.log(`Entry ${entry.id}: No OCR results found on the first page`);
         continue;
       }
+
+      socket.emit("createAiStorySuggestions", entry.id);
 
       const { results: searchResults } = await coaServices.searchStory(
         ocrResults.map(({ text }) => text),
@@ -149,7 +155,7 @@ const setInferredEntriesStoryKinds = async (
   force?: boolean,
 ) => {
   for (const entry of entries) {
-    if (!entry.storyKindSuggestions.some(({ ai }) => ai) && !force) {
+    if (entry.storyKindSuggestions.some(({ ai }) => ai) && !force) {
       console.log(`Entry ${entry.id} already has an inferred story kind`);
       continue;
     }
@@ -261,15 +267,15 @@ export default (io: Server) => {
             data: {
               image: url
                 ? {
-                    connectOrCreate: {
-                      create: {
-                        url,
-                      },
-                      where: {
-                        url,
-                      },
+                  connectOrCreate: {
+                    create: {
+                      url,
                     },
-                  }
+                    where: {
+                      url,
+                    },
+                  },
+                }
                 : { disconnect: true },
             },
             where: {
@@ -290,7 +296,51 @@ export default (io: Server) => {
       });
 
       indexationSocket.on("loadIndexation", async (callback) => {
+        indexationSocket.emit('setKumikoInferredPageStoryKinds', 1)
         callback({ indexation: indexationSocket.data.indexation });
+      });
+
+      indexationSocket.on("deleteEntry", async (entryId, entryIdToExtend, callback) => {
+        const { indexation } = indexationSocket.data;
+        const entry = indexation.entries.find(
+          ({ id }) => id === entryId,
+        );
+        if (!entry) {
+          callback({ error: "This indexation does not have any entry with this ID" });
+          return;
+        }
+        const entryIdx = indexation.entries.findIndex(
+          ({ id }) => id === entryId,
+        );
+        const entryToExtend = indexation.entries[entryToExtendIdx][entryIdToExtend === "previous" ? entryIdx - 1 : entryIdx + 1];
+        if (!entryToExtend) {
+          if (entryIdToExtend === "previous") {
+            callback({ error: "This entry does not have any previous entry" });
+          }
+          else {
+            callback({ error: "This entry does not have any next entry" });
+          }
+          return;
+        }
+
+        await prisma.entry.delete({
+          include: {
+            storySuggestions: true,
+            storyKindSuggestions: true,
+          },
+          where: {
+            id: entryId,
+          },
+        });
+
+        await prisma.entry.update({
+          data: {
+            entirepages: entryToExtend.entirepages + entry.entirepages,
+          },
+          where: {
+            id: entryToExtend.id,
+          },
+        });
       });
 
       indexationSocket.on(
@@ -380,11 +430,11 @@ export default (io: Server) => {
                 suggestionId === null
                   ? { disconnect: true }
                   : {
-                      connect: {
-                        id: suggestionId,
-                        indexationId: indexationSocket.data.indexation.id,
-                      },
+                    connect: {
+                      id: suggestionId,
+                      indexationId: indexationSocket.data.indexation.id,
                     },
+                  },
             },
             where: {
               id: indexationSocket.data.indexation.id,

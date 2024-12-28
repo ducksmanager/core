@@ -3,9 +3,9 @@ import type { Socket } from "socket.io";
 
 import type { SessionDataWithIndexation } from "~/index";
 import { prisma } from "~/index";
-import type { aiKumikoResultPanel, Prisma } from "~/prisma/client_dumili";
+import type { aiKumikoResultPanel } from "~/prisma/client_dumili";
 
-import type { ServerSentEvents } from "./types";
+import type { FullIndexation, ServerSentEvents } from "./types";
 import type Events from "./types";
 
 type OcrResult = {
@@ -21,25 +21,25 @@ export const runOcrOnImages = async (
     Record<string, never>,
     SessionDataWithIndexation
   >,
-  images: Prisma.imageGetPayload<{
-    include: {
-      aiKumikoResult: {
-        include: { detectedPanels: true };
-      };
-    };
-  }>[],
+  pages: Exclude<Pick<FullIndexation["pages"][number], 'pageNumber'|'image'>, {image: null}>[],
 ) => {
-  for (const image of images) {
-    const firstPanel = image.aiKumikoResult?.detectedPanels[0];
+  for (const {image, pageNumber} of pages) {
+    const firstPanel = image!.aiKumikoResult?.detectedPanels[0];
     if (!firstPanel) {
       console.log("This page does not have any panels");
       continue;
     }
-    socket.emit("runOcrOnImage", image.id);
-    const firstPanelUrl = image.url.replace(
+    if (image!.aiOcrResultId) {
+      console.log("This page already has OCR results");
+      continue;
+    }
+    socket.emit("runOcrOnImage", image!.id);
+    const firstPanelUrl = image!.url.replace(
       "/pg_",
       `/c_crop,h_${firstPanel.height},w_${firstPanel.width},x_${firstPanel.x},y_${firstPanel.y},pg_`,
     );
+
+    console.log(`Running OCR on page ${pageNumber}`);
 
     const ocrResults = await runOcr(firstPanelUrl);
     const matches = ocrResults.map(
@@ -63,25 +63,29 @@ export const runOcrOnImages = async (
 
     await prisma.image.update({
       where: {
-        id: image.id,
+        id: image!.id,
       },
       data: {
         aiOcrResult: {
-          update: {
-            data: {
+          upsert: {
+            create: {
+              matches: {
+                createMany: { data: matches },
+              }
+            },
+            update: {
               matches: {
                 deleteMany: {},
                 createMany: { data: matches },
               },
-            },
+            }
           },
         },
-      },
+      }
     });
-    socket.emit("runOcrOnImageEnd", image.id);
+    socket.emit("runOcrOnImageEnd", image!.id);
   }
 };
-
 /* Adding a bit of extra in case the storycode is just outside the panel */
 export const extendBoundaries = (
   { x, y, width, height }: aiKumikoResultPanel,
@@ -93,9 +97,6 @@ export const extendBoundaries = (
   height: height + extendBy,
 });
 
-export const runOcr = async (url: string): Promise<OcrResult[]> => {
-  console.log("Running OCR on", url);
-  return axios
-    .post(process.env.OCR_HOST!, { url, language: "french" })
-    .then(({ data }) => data);
-};
+export const runOcr = async (url: string): Promise<OcrResult[]> => axios
+  .post(process.env.OCR_HOST!, { url, language: "french" })
+  .then(({ data }) => data);

@@ -43,7 +43,6 @@
       "
       >OK</b-button
     >
-    <slot v-if="$slots.dimensions && currentIssuenumber !== null" />
   </div>
 </template>
 <script setup lang="ts">

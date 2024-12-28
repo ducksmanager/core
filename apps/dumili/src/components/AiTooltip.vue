@@ -4,13 +4,14 @@
     :class="`${topCenter ? 'top-0 mt-1' : 'end-0 me-1'}`"
   >
     <Teleport to="body">
-      <b-tooltip
+      <b-popover
+        lazy
         :target="id"
         interactive
         @shown="emit('toggled', true)"
         @hidden="emit('toggled', false)"
         ><slot
-      /></b-tooltip>
+      /></b-popover>
     </Teleport>
     <AiSuggestionIcon
       :id="disabled ? `${id}-disabled` : id"
@@ -47,23 +48,31 @@ const { indexationSocket } = inject(dumiliSocketInjectionKey)!;
 const isLoading = ref(false);
 const disabled = ref(false); // TODO handle failed suggestions
 
-for (const loadingEvent of loadingEvents) {
-  indexationSocket.value?.on(loadingEvent.eventName, (...args) => {
-    if (loadingEvent.checkMatch(...args)) {
-      isLoading.value = true;
-    }
-  });
+watch(
+  indexationSocket,
+  (socket) => {
+    if (socket) {
+      for (const loadingEvent of loadingEvents) {
+        indexationSocket.value!.on(loadingEvent.eventName, (...args) => {
+          if (loadingEvent.checkMatch(...args)) {
+            isLoading.value = true;
+          }
+        });
 
-  const endEvent: `${LoadingEventStart}End` = `${loadingEvent.eventName}End`;
+        const endEvent: `${LoadingEventStart}End` = `${loadingEvent.eventName}End`;
 
-  indexationSocket.value?.on(endEvent, (...args) => {
-    if (loadingEvent.checkMatch(...args)) {
-      setTimeout(() => {
-        isLoading.value = false;
-      }, 1500);
+        indexationSocket.value!.on(endEvent, (...args) => {
+          if (loadingEvent.checkMatch(...args)) {
+            setTimeout(() => {
+              isLoading.value = false;
+            }, 1500);
+          }
+        });
+      }
     }
-  });
-}
+  },
+  { immediate: true },
+);
 </script>
 
 <style lang="scss" scoped>

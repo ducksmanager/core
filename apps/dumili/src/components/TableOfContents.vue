@@ -74,12 +74,16 @@
           />
         </template>
 
-        <b-button
-          class="create-entry fw-bold position-absolute mt-n1 d-flex justify-content-center align-items-center"
-          variant="info"
-          @click="createEntry"
-          >{{ $t("Ajouter une entrée") }}</b-button
+        <div
+          class="position-absolute w-100 h-100 d-flex justify-content-center"
         >
+          <b-button
+            class="create-entry fw-bold position-absolute mt-n1 d-flex justify-content-center align-items-center"
+            variant="info"
+            @click="createEntry"
+            >{{ $t("Ajouter une entrée") }}</b-button
+          >
+        </div>
       </b-col>
     </b-row>
   </b-card>
@@ -198,11 +202,6 @@ watch(
 
   :deep(.tab-content) {
     display: none;
-  }
-
-  :deep(button.create-entry) {
-    height: 25px;
-    z-index: 10;
   }
 }
 

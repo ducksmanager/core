@@ -5,29 +5,27 @@ import type { SessionUser } from "~dm-types/SessionUser";
 
 export const authenticateUser = async (
   token?: string | null,
-): Promise<SessionUser> => {
-  return new Promise((resolve, reject) => {
-    if (!token) {
-      reject("No token provided");
-      return;
-    }
+): Promise<SessionUser> => new Promise((resolve, reject) => {
+  if (!token) {
+    reject("No token provided");
+    return;
+  }
 
-    jwt.verify(
-      token,
-      process.env.TOKEN_SECRET as string,
-      (err: unknown, user: unknown) => {
-        if (err) {
-          reject(`Invalid token: ${err}`);
-        } else {
-          if (user) {
-            resolve(user as SessionUser);
-          }
-          reject(`Invalid user: ${user}`);
+  jwt.verify(
+    token,
+    process.env.TOKEN_SECRET as string,
+    (err: unknown, user: unknown) => {
+      if (err) {
+        reject(`Invalid token: ${err}`);
+      } else {
+        if (user) {
+          resolve(user as SessionUser);
         }
-      },
-    );
-  });
-};
+        reject(`Invalid user: ${user}`);
+      }
+    }
+  );
+});
 
 export const RequiredAuthMiddleware = (
   socket: Socket,

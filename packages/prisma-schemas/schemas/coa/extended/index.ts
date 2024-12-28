@@ -9,8 +9,8 @@ import {
   computePublicationcode,
 } from "./overrideNullableCodes";
 
-export default (prismaClient: PrismaClient) => {
-  return prismaClient
+export default (prismaClient: PrismaClient) =>
+  prismaClient
     .$extends({
       result: {
         inducks_issue: {
@@ -66,7 +66,6 @@ export default (prismaClient: PrismaClient) => {
         },
       },
     });
-};
 
 type ExtendedType<
   BaseType,

@@ -11,7 +11,7 @@
     "prisma-pull-generate": "prisma db pull && prisma generate",
     "prisma-generate": "prisma generate",
     "prisma-migrate": "prisma migrate deploy",
-    "dev": "docker compose -f docker-compose-dev.yml up --force-recreate -d && bash ../../../packages/prisma-schemas/wait-until-db-ready.bash && prisma migrate deploy && prisma generate && concurrently --kill-others-on-fail -n docker-compose,typecheck,bun \"docker compose -f docker-compose-dev.yml logs -f\" \"tsc --noEmit\" \"bun --inspect run --hot index.ts\"",
+    "dev": "docker compose -f docker-compose-dev.yml up --force-recreate -d && bash ../../../packages/prisma-schemas/wait-until-db-ready.bash && prisma migrate deploy && prisma generate && concurrently --kill-others-on-fail -n docker-compose,typecheck \"docker compose -f docker-compose-dev.yml logs -f\" \"tsc --noEmit\"",
     "prod:deploy": "DIR=apps/dumili/api pnpm -F '~ci' prod:docker-compose-up",
     "prod-build-docker-api": "REPO_NAME=ghcr.io/bperel/dumili-api pnpm -F '~ci' prod:build-docker -f apps/dumili/api/Dockerfile",
     "prod-build-docker-kumiko": "REPO_NAME=ghcr.io/bperel/kumiko pnpm -F '~ci' prod:build-docker -f apps/dumili/api/kumiko/Dockerfile",

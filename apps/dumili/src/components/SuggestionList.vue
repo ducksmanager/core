@@ -1,6 +1,7 @@
 <template>
   <b-dropdown
     class="my-2"
+    menu-class="border-white"
     :toggle-class="[
       'text-wrap',
       // @ts-ignore
@@ -9,6 +10,7 @@
     ><b-dropdown-group
       v-for="(group, index) in [userSuggestions, aiSuggestions]"
       :key="index"
+      header-class="d-none"
       :header="
         index === 1
           ? `${$t('Suggestions IA')} ${aiSuggestions.length ? '' : $t('(Aucune)')}`

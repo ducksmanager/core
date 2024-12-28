@@ -65,7 +65,7 @@ const runKumikoOnPage = async (
       `Kumiko: page ${page.pageNumber}: inferred story kind is ${inferredStoryKind}`,
     );
 
-    prisma.image.update({
+    await prisma.image.update({
       include: {
         aiKumikoResult: {
           include: {
@@ -75,14 +75,24 @@ const runKumikoOnPage = async (
       },
       data: {
         aiKumikoResult: {
-          update: {
-            inferredStoryKind: inferredStoryKind,
-            detectedPanels: {
-              deleteMany: {},
-              createMany: {
-                data: panelsOfPage,
-              },
+          upsert: {
+            create: {
+              inferredStoryKind: inferredStoryKind,
+              detectedPanels: {
+                createMany: {
+                  data: panelsOfPage,
+                },
+              }
             },
+            update: {
+              inferredStoryKind: inferredStoryKind,
+              detectedPanels: {
+                deleteMany: {},
+                createMany: {
+                  data: panelsOfPage,
+                },
+              }
+            }
           },
         },
       },
@@ -102,14 +112,21 @@ export const runKumikoOnPages = async (
   indexation: FullIndexation,
   force = false,
 ) => {
-  const updatedImageIds = indexation.pages.filter(async (page) =>
-    runKumikoOnPage(socket, page, force),
-  );
+  let updatedImageIds = []
+  for (const page of indexation.pages) {
+    if (await runKumikoOnPage(socket, page, force)) {
+      updatedImageIds.push(page.id);
+    }
+  }
 
-  const outdatedEntryIds = updatedImageIds
-    .map(({ id }) => getEntryFromPage(indexation, id)?.id)
+  const outdatedEntryIds = new Set(updatedImageIds
+    .map((id ) => getEntryFromPage(indexation, id)?.id)
     .filter((id) => !!id)
-    .map((id) => id!);
+    .map((id) => id!))
+
+    if (!outdatedEntryIds.size) {
+      return
+    }
 
   // Invalidate story kind suggestions for entries whose pages have been updated
   await prisma.storyKindSuggestionAi.deleteMany({
@@ -117,7 +134,7 @@ export const runKumikoOnPages = async (
       storyKindSuggestion: {
         entry: {
           id: {
-            in: outdatedEntryIds,
+            in: outdatedEntryIds.values().toArray(),
           },
         },
       },
@@ -130,7 +147,7 @@ export const runKumikoOnPages = async (
       storySuggestion: {
         entry: {
           id: {
-            in: outdatedEntryIds,
+            in: outdatedEntryIds.values().toArray(),
           },
         },
       },
