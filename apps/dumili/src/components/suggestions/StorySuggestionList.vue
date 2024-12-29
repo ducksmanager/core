@@ -99,7 +99,7 @@ const acceptStory = async (storycode: storySuggestion["storycode"] | null) => {
             .originalstoryversioncode!
         ].kind,
     )!.id;
-    indexationSocket.value!.services.acceptStoryKindSuggestion(
+    await indexationSocket.value!.services.acceptStoryKindSuggestion(
       entry.value.id,
       correspondingStoryKindId,
     );

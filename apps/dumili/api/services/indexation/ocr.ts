@@ -26,11 +26,11 @@ export const runOcrOnImages = async (
   for (const {image, pageNumber} of pages) {
     const firstPanel = image!.aiKumikoResult?.detectedPanels[0];
     if (!firstPanel) {
-      console.log("This page does not have any panels");
+      console.log(`Page ${pageNumber}: This page does not have any panels`);
       continue;
     }
     if (image!.aiOcrResultId) {
-      console.log("This page already has OCR results");
+      console.log(`Page ${pageNumber}: This page already has OCR results`);
       continue;
     }
     socket.emit("runOcrOnImage", image!.id);
@@ -39,7 +39,7 @@ export const runOcrOnImages = async (
       `/c_crop,h_${firstPanel.height},w_${firstPanel.width},x_${firstPanel.x},y_${firstPanel.y},pg_`,
     );
 
-    console.log(`Running OCR on page ${pageNumber}`);
+    console.log(`Page ${pageNumber}: Running OCR on ${firstPanelUrl}`);
 
     const ocrResults = await runOcr(firstPanelUrl);
     const matches = ocrResults.map(

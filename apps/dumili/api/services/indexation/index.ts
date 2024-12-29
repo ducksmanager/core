@@ -36,13 +36,14 @@ const getFullIndexation = (socket: IndexationSocket, indexationId: string) =>
     })
     .then((indexation) => {
       if (indexation && !isAiRunning) {
+        isAiRunning = true
         runKumikoOnPages(socket, indexation)
           .then(() =>
             runOcrOnImages(
               socket,
               indexation.pages
                 .filter(({ image }) => !!image)
-                .map(({ pageNumber, image }) => ({pageNumber, image: image!})),
+                .map(({ pageNumber, image }) => ({ pageNumber, image: image! })),
             ),
           )
           .then(() => setInferredEntriesStoryKinds(socket, indexation.entries))
@@ -97,6 +98,18 @@ const createAiStorySuggestions = async (
 
       const currentlyAcceptedStorycode = entry.acceptedStory?.storycode;
 
+      await prisma.storySuggestionAi.deleteMany({
+        where: {
+          storySuggestion: {
+            entryId: entry.id
+          }
+        },
+      });
+      await prisma.storySuggestion.deleteMany({
+        where: {
+            entryId: entry.id
+        },
+      });
       const newEntry = await prisma.entry.update({
         include: {
           storySuggestions: true,
@@ -121,7 +134,7 @@ const createAiStorySuggestions = async (
                   },
                 },
               }),
-            ),
+            )
           },
         },
       });
@@ -312,7 +325,7 @@ export default (io: Server) => {
         const entryIdx = indexation.entries.findIndex(
           ({ id }) => id === entryId,
         );
-        const entryToExtend = indexation.entries[entryToExtendIdx][entryIdToExtend === "previous" ? entryIdx - 1 : entryIdx + 1];
+        const entryToExtend = indexation.entries[entryIdToExtend === "previous" ? entryIdx - 1 : entryIdx + 1];
         if (!entryToExtend) {
           if (entryIdToExtend === "previous") {
             callback({ error: "This entry does not have any previous entry" });
@@ -341,6 +354,8 @@ export default (io: Server) => {
             id: entryToExtend.id,
           },
         });
+
+        callback({status: 'OK'})
       });
 
       indexationSocket.on(

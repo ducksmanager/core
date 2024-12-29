@@ -2,7 +2,7 @@
   <b-badge
     size="xl"
     :class="{ [`kind-${storyKind}`]: true }"
-    class="text-black fw-normal"
+    class="text-black fw-normal fs-6"
     >{{ (storyKind && storyKinds[storyKind]) || $t("Type inconnu") }}</b-badge
   >
 </template>

@@ -35,9 +35,9 @@ model image {
   id               Int             @id @default(autoincrement())
   url              String          @unique(map: "image_url_uindex") @db.VarChar(255)
   aiOcrResultId    Int?            @map("ai_ocr_result_id")
-  aiOcrResult      aiOcrResult?    @relation(fields: [aiOcrResultId], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "image_ai_ocr_result_id_fk")
   aiKumikoResultId Int?            @map("ai_kumiko_result_id")
   aiKumikoResult   aiKumikoResult? @relation(fields: [aiKumikoResultId], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "image_ai_kumiko_result_id_fk")
+  aiOcrResult      aiOcrResult?    @relation(fields: [aiOcrResultId], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "image_ai_ocr_result_id_fk")
   page             page[]
 
   @@index([aiKumikoResultId], map: "image_ai_kumiko_result_id_fk")
@@ -94,6 +94,7 @@ model storySuggestion {
   entry             entry                @relation(fields: [entryId], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "story_suggestion_entry_id_fk")
   ai                storySuggestionAi?
 
+  @@unique([entryId, storycode], map: "story_suggestion_entry_id_storycode_uindex")
   @@index([entryId], map: "story_suggestion_entry_id_fk")
   @@index([ocrDetailsId], map: "story_suggestion_ai_ocr_possible_story_id_fk")
   @@map("story_suggestion")
@@ -147,7 +148,7 @@ model aiKumikoResultPanel {
 model issueSuggestionAi {
   id              Int             @id @default(autoincrement())
   suggestionId    Int             @unique(map: "issue_suggestion_ai_issue_suggestion_id_unique_fk") @map("suggestion_id")
-  issueSuggestion issueSuggestion @relation(fields: [suggestionId], references: [id], onUpdate: Restrict, map: "issue_suggestion_ai_issue_suggestion_id_unique_fk")
+  issueSuggestion issueSuggestion @relation(fields: [suggestionId], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "issue_suggestion_ai_issue_suggestion_id_unique_fk")
 
   @@map("issue_suggestion_ai")
 }
@@ -155,7 +156,7 @@ model issueSuggestionAi {
 model storyKindSuggestionAi {
   id                  Int                 @id @default(autoincrement())
   suggestionId        Int                 @unique(map: "story_kind_suggestion_ai_story_kind_suggestion_id_unique_fk") @map("suggestion_id")
-  storyKindSuggestion storyKindSuggestion @relation(fields: [suggestionId], references: [id], onUpdate: Restrict, map: "story_kind_suggestion_ai_story_kind_suggestion_id_unique_fk")
+  storyKindSuggestion storyKindSuggestion @relation(fields: [suggestionId], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "story_kind_suggestion_ai_story_kind_suggestion_id_unique_fk")
 
   @@map("story_kind_suggestion_ai")
 }
@@ -163,7 +164,7 @@ model storyKindSuggestionAi {
 model storySuggestionAi {
   id              Int             @id @default(autoincrement())
   suggestionId    Int             @unique(map: "story_suggestion_ai_story_suggestion_id_unique_fk") @map("suggestion_id")
-  storySuggestion storySuggestion @relation(fields: [suggestionId], references: [id], onUpdate: Restrict, map: "story_suggestion_ai_story_suggestion_id_fk")
+  storySuggestion storySuggestion @relation(fields: [suggestionId], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "story_suggestion_ai_story_suggestion_id_fk")
 
   @@map("story_suggestion_ai")
 }

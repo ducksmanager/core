@@ -13,25 +13,28 @@
       showAiDetectionsOn = $event ? { type: 'page', id: page.id } : undefined
     "
   >
-    <b>{{ $t("Cases détectées") }}</b>
-    <table-results
-      :data="
-        page.image?.aiKumikoResult?.detectedPanels.map(
-          ({ x, y, width, height }) => ({
-            x,
-            y,
-            width,
-            height,
-          }),
-        ) || []
-      "
-    />
-    <div>
-      <b>{{ $t("Type d'entrée déduit pour la page") }}</b>
+    <div v-if="!page.image">
+      {{ $t("Aucune image") }}
     </div>
-    <story-kind-badge
-      :story-kind="page.image?.aiKumikoResult?.inferredStoryKind"
-    />
+    <template v-else>
+      <b>{{ $t("Cases détectées") }}</b>
+      <table-results
+        :data="
+          page.image?.aiKumikoResult?.detectedPanels.map(
+            ({ x, y, width, height }) => ({
+              x,
+              y,
+              width,
+              height,
+            }),
+          ) || []
+        " />
+      <div>
+        <b>{{ $t("Type d'entrée déduit pour la page") }}</b>
+      </div>
+      <story-kind-badge
+        :story-kind="page.image?.aiKumikoResult?.inferredStoryKind"
+    /></template>
   </ai-tooltip>
 </template>
 

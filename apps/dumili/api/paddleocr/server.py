@@ -5,6 +5,7 @@ utils.run_check()
 from paddleocr import PaddleOCR
 from http.server import BaseHTTPRequestHandler, HTTPServer
 import json
+import os
 
 # select countrycode, GROUP_CONCAT(languagecode ORDER BY entries_with_language DESC) AS languages
 # from (select countrycode, coalesce(inducks_entry.languagecode, ip.languagecode) as languagecode, count(*) as entries_with_language
@@ -333,6 +334,8 @@ class PaddleOCRRequestHandler(BaseHTTPRequestHandler):
         post_data = json.loads(self.rfile.read(content_length))
         url = post_data['url']
         language = post_data['language']
+
+        os.remove("tmp.jpg") if os.path.exists("tmp.jpg") else None
         result = ocr_languages[language].ocr(url, cls=True)
         result = result[0]
 

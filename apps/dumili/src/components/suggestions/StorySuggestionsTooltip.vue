@@ -15,17 +15,46 @@
     <template v-if="entry.acceptedStoryKind?.kind === STORY">
       <template v-if="firstPageOcrResult">
         <template v-if="entry.storySuggestions.length">
-          {{ $t("Résultats OCR pour la première case:") }}
-          <table-results :data="firstPageOcrResult.matches" />
-          {{ $t("Histoires potentielles:") }}
-          <table-results
-            :data="
+          <h4>{{ $t("Résultats OCR pour la première case") }}</h4>
+          <b-table
+            :fields="[
+              { key: 'text', label: $t('Texte') },
+              { key: 'x1' },
+              { key: 'x2' },
+              { key: 'y1' },
+              { key: 'y2' },
+              { key: 'confidence', label: $t('Confiance') },
+            ]"
+            :items="firstPageOcrResult.matches"
+            ><template #empty>{{ $t("Aucun texte détecté") }}</template>
+          </b-table>
+          <h4>{{ $t("Histoires potentielles") }}</h4>
+          <b-table
+            :fields="[
+              { key: 'storycode', label: $t('Code histoire') },
+              { key: 'title', label: $t('Titre') },
+            ]"
+            :items="
                 entry.storySuggestions.filter(({ai}) => ai).map(({ storycode }) => ({
                   storycode,
                   title: storyDetails[storycode!].title,
                 }))
-              " /></template
-      ></template>
+              "
+          >
+            <template #cell(storycode)="row">
+              <a
+                class="text-nowrap"
+                :href="`https://inducks.org/story.php?c=${encodeURIComponent(row.item.storycode)}`"
+                target="_blank"
+                >{{ row.item.storycode }}</a
+              ></template
+            ></b-table
+          ></template
+        ></template
+      >
+      <template v-else-if="!firstPage.image">{{
+        $t("Non calculé car la première page de l'entrée n'a pas d'image")
+      }}</template>
       <template v-else>{{ $t("Non calculé") }}</template></template
     ><template v-else>{{
       $t("Aucune suggestion car cette entrée n'est pas une histoire.")
@@ -48,7 +77,7 @@ const { storyDetails } = storeToRefs(coa());
 
 const { showAiDetectionsOn } = storeToRefs(ui());
 
-const firstPageOcrResult = computed(
-  () => getEntryPages(indexation.value!, entry.id)[0].image?.aiOcrResult,
-);
+const firstPage = computed(() => getEntryPages(indexation.value!, entry.id)[0]);
+
+const firstPageOcrResult = computed(() => firstPage.value.image?.aiOcrResult);
 </script>

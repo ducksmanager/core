@@ -21,7 +21,10 @@ export default (prismaClient: PrismaClient) =>
     })
     .$extends({
       client: {
-        getInducksIssueData: (issuecodes: string[], withTitle: boolean) =>
+        getInducksIssueData: <WithTitle extends boolean>(
+          issuecodes: string[],
+          withTitle: WithTitle,
+        ) =>
           prismaClient.inducks_issue
             .findMany({
               select: {
@@ -38,12 +41,15 @@ export default (prismaClient: PrismaClient) =>
             })
             .then((inducksIssues) =>
               (
-                inducksIssues as {
+                inducksIssues as ({
                   publicationcode: string;
                   issuenumber: string;
                   issuecode: string;
-                  title?: string;
-                }[]
+                } & (WithTitle extends boolean
+                  ? {
+                      title?: string;
+                    }
+                  : object))[]
               ).groupBy("issuecode"),
             ),
       },

@@ -1,5 +1,9 @@
 @use "sass:color";
 
+textarea::placeholder {
+  color: black !important;
+}
+
 .opacity-100-hover:hover {
   opacity: 1 !important;
 }

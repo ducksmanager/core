@@ -80,7 +80,7 @@
         :model-value="entry.title"
         :placeholder="$t('Titre de l\'histoire')"
         type="text"
-        class="w-100 text-center"
+        class="w-100 text-center bg-transparent text-black"
         @update:model-value="entry.title = ($event as string).replace(/[\r\n]+/g, '')"
       /><template v-else>
         {{ title || $t("Sans titre") }}
