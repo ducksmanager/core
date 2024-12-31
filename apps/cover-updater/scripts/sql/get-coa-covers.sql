@@ -11,7 +11,7 @@
     (
       SELECT MIN(position)
       FROM inducks_entry e
-      WHERE entry.issuecode = e.issuecode AND position NOT LIKE 'p%'
+      WHERE entry.issuecode = e.issuecode
       GROUP BY e.issuecode
     )
   AND issuecode != '';
