@@ -66,7 +66,7 @@ alias: [/collection/abonnements]
       </b-col>
     </b-row>
     <Subscription
-      v-if="currentSubscription && currentSubscription.id === null"
+      v-if="currentSubscription && !currentSubscription.id"
       :subscription="currentSubscription"
       is-edit
       @start-edit="currentSubscription = newSubscription"

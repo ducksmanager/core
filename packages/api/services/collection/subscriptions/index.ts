@@ -66,21 +66,22 @@ export async function upsertSubscription(
   ) {
     return null;
   }
+
+  const dates = {
+    startDate: new Date(subscription.startDate),
+    endDate: new Date(subscription.endDate),
+  };
   await prismaDm.subscription.upsert({
-    update: {
-      startDate: subscription.startDate!,
-      endDate: subscription.endDate!,
-    },
+    update: dates,
     create: {
       publicationcode: subscription.publicationcode!,
       users: {
         connect: { id: userId },
       },
-      startDate: subscription.startDate!,
-      endDate: subscription.endDate!,
+      ...dates
     },
     where: {
-      id: id!,
+      id: id || 0,
     },
   });
 }
