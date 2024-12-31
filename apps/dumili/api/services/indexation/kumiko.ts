@@ -5,8 +5,7 @@ import type { aiKumikoResultPanel, Prisma } from "~/prisma/client_dumili";
 import { COVER, ILLUSTRATION, STORY } from "~dumili-types/storyKinds";
 import { getEntryFromPage } from "~dumili-utils/entryPages";
 
-import type { FullIndexation } from "./types";
-import { IndexationSocket } from ".";
+import { IndexationSocket, type FullIndexation } from ".";
 
 type KumikoResult = {
   filename: string;

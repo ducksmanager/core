@@ -1,8 +1,4 @@
-import type {
-  IndexationServerSentStartEndEvents,
-  Events as IndexationEvents,
-} from "~dumili-services/indexation";
-import { namespaceEndpoint as indexationEndpoint } from "~dumili-services/indexation/types";
+import { client as indexationServices } from "~dumili-services/indexation";
 import { client as indexationsServices } from "~dumili-services/indexations";
 import type { SocketClient } from "~socket.io-client-services";
 
@@ -20,10 +16,10 @@ const defaultExport = (options: {
   const { session } = options;
 
   const getIndexationSocketFromId = (id: string) =>
-    socket.addNamespace<IndexationEvents, IndexationServerSentStartEndEvents>(
-      indexationEndpoint.replace("{id}", id),
-      { session },
-    );
+    socket.addNamespace<
+      (typeof indexationServices)["emitEvents"],
+      (typeof indexationServices)["listenEventsInterfaces"]
+    >(indexationServices.namespaceEndpoint.replace("{id}", id), { session });
 
   const indexationSocket = ref<
     ReturnType<typeof getIndexationSocketFromId> | undefined

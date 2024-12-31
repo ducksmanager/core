@@ -18,7 +18,7 @@ export type Errorable<T, ErrorKey extends string> = EitherOr<
   EitherOr<{ error: ErrorKey; errorDetails?: string }, ScopedError<ErrorKey>>
 >;
 
-export type ServerSentEndEvents<Events extends { [event: string]: any }> = {
+type ServerSentEndEvents<Events extends { [event: string]: any }> = {
   [K in keyof Events & string as `${K}End`]: Events[K];
 };
 
@@ -26,21 +26,18 @@ export type ServerSentStartEndEvents<Events extends { [event: string]: any }> =
   Events & ServerSentEndEvents<Events>;
 
 export const useSocketServices = <
-  EmitEvents extends object = object,
-  ServerSideEvents extends object = object,
-  SocketData extends any = object,
+  SocketListenEvents extends (
+    socket: Socket<ReturnType<SocketListenEvents>, EmitEvents, ServerSideEvents, SocketData>
+  ) => EventsMap,
+  EmitEvents extends EventsMap,
+  ServerSideEvents extends EventsMap,
+  SocketData extends object,
 >(
-  namespaceEndpoint: string, //Parameters<Server["of"]>[0],
+  namespaceEndpoint: string,
   options: {
-    listenEvents: <Events extends EventsMap>(
-      socket: Socket<Events, EmitEvents, ServerSideEvents, SocketData>
-    ) => {
-      [EventName in keyof Events]: (
-        ...args: Parameters<Events[EventName]>
-      ) => ReturnType<Events[EventName]>;
-    };
+    listenEvents: SocketListenEvents;
     middlewares: Parameters<
-      Namespace<ReturnType<typeof options.listenEvents>["E"], EmitEvents, ServerSideEvents, SocketData>["use"]
+      Namespace<ReturnType<SocketListenEvents>, EmitEvents, ServerSideEvents, SocketData>["use"]
     >[0][];
   }
 ) => ({
@@ -56,8 +53,13 @@ export const useSocketServices = <
         for (const eventName in socketEventImplementations) {
           socket.on(
             eventName,
-            // @ts-expect-error ?
-            (...args: Parameters<Events[typeof eventName]>, callback) => {
+            (
+              // @ts-expect-error
+              ...args: Parameters<
+                EmitEvents[Extract<keyof ReturnType<SocketListenEvents>, string>]
+              >,
+              callback
+            ) => {
               const output = socketEventImplementations[eventName](...args);
               callback(output);
             }
@@ -68,6 +70,7 @@ export const useSocketServices = <
   },
   client: {
     namespaceEndpoint,
-    emitEvents: options.listenEvents,
+    emitEvents: {} as unknown as ReturnType<SocketListenEvents>,
+    listenEventsInterfaces: {} as unknown as EmitEvents,
   },
 });

@@ -26,10 +26,7 @@
 <script setup lang="ts">
 import { suggestions } from "~/stores/suggestions";
 import { ui } from "~/stores/ui";
-import type {
-  FullEntry,
-  FullIndexation,
-} from "~dumili-services/indexation/types";
+import type { FullEntry, FullIndexation } from "~dumili-services/indexation";
 import { getFirstPageOfEntry } from "~dumili-utils/entryPages";
 
 const emit = defineEmits<{

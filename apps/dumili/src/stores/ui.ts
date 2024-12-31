@@ -1,4 +1,4 @@
-import type { FullEntry } from "~dumili-services/indexation/types";
+import type { FullEntry } from "~dumili-services/indexation";
 import { getEntryFromPage, getEntryPages } from "~dumili-utils/entryPages";
 
 import { suggestions } from "./suggestions";

@@ -19,7 +19,7 @@
 const { t: $t } = useI18n();
 
 import { suggestions } from "~/stores/suggestions";
-import type { FullEntry } from "~dumili-services/indexation/types";
+import type { FullEntry } from "~dumili-services/indexation";
 import { getEntryPages } from "~dumili-utils/entryPages";
 import type { storySuggestion } from "~prisma/client_dumili";
 import { socketInjectionKey as dmSocketInjectionKey } from "~web/src/composables/useDmSocket";

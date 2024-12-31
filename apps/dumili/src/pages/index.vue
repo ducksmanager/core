@@ -63,7 +63,7 @@
           )
         }}
         <b-form-input
-          v-model.number="totalPages"
+          v-model="totalPages"
           type="number"
           min="4"
           max="996" /></b-form></b-modal
@@ -72,7 +72,6 @@
 
 <script setup lang="ts">
 import { dumiliSocketInjectionKey } from "~/composables/useDumiliSocket";
-import type { IndexationWithFirstPageAndAcceptedIssueSuggestion } from "~dumili-services/indexations/types";
 
 const router = useRouter();
 const {
@@ -84,7 +83,7 @@ const { fetchPublicationNames } = coa();
 
 const form = ref<HTMLFormElement | null>(null);
 const currentIndexations =
-  ref<IndexationWithFirstPageAndAcceptedIssueSuggestion[]>();
+  ref<ReturnType<typeof indexationsServices.getIndexations>>();
 const modal = ref(false);
 const totalPages = ref(16);
 

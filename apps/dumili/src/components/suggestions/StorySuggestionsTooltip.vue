@@ -64,7 +64,7 @@
 <script setup lang="ts">
 import { suggestions } from "~/stores/suggestions";
 import { ui } from "~/stores/ui";
-import type { FullEntry } from "~dumili-services/indexation/types";
+import type { FullEntry } from "~dumili-services/indexation";
 import { STORY } from "~dumili-types/storyKinds";
 import { getEntryPages } from "~dumili-utils/entryPages";
 
