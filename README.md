@@ -22,9 +22,3 @@ Related projects :
 - [Node.js](https://nodejs.org/en/) 16
 - [Docker](https://www.docker.com/)
 - Some Unix or WSL2 environment
-
-Make sure that your local repository automatically pulls submodules:
-
-```bash
-git config --global submodule.recurse true
-```
