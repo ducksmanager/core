@@ -9,8 +9,8 @@
     "dev:blocking-up": "wait-on tcp:3000",
     "dev": "concurrently -n api,docker-compose \"pnpm -F ~api nodemon-watch\" \"docker compose -f docker-compose-dev.yml up pastec mailcatcher\"",
     "nodemon-watch": "bun --inspect run --watch index.ts",
-    "prod:deploy": "DIR=packages/api pnpm -F '~ci' prod:docker-compose-up",
-    "prod:build-docker": "REPO_NAME=ghcr.io/bperel/ducksmanager-api:websocket SERVICES=api-websocket pnpm -F '~ci' prod:build-docker -f packages/api/Dockerfile",
+    "prod:deploy": "DIR=packages/api SERVICES=api-websocket pnpm -F '~ci' prod:docker-compose-up",
+    "prod:build-docker": "REPO_NAME=ghcr.io/bperel/ducksmanager-api:websocket pnpm -F '~ci' prod:build-docker -f packages/api/Dockerfile",
     "prod:transfer-files-pre": "pnpm -F '~ci' prod:transfer-files @packages/api/.env:packages/api/.env @packages/prisma-clients/.env.prod.local:packages/prisma-schemas/.env",
     "prod:transfer-files-post": "pnpm -F '~ci' prod:transfer-files packages/api/docker-compose.yml:@packages/api/docker-compose.yml",
     "sentry:sourcemaps": "sentry-cli sourcemaps inject --org bruno-perel --project dm-api ./dist && sentry-cli sourcemaps upload --org bruno-perel --project dm-api ./dist"
