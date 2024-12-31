@@ -1186,11 +1186,12 @@ importers:
       vue:
         specifier: ^3.4.15
         version: 3.5.13(typescript@5.7.2)
-      ~socket.io-services:
-        specifier: workspace:*
-        version: link:../socket.io-services
 
   packages/socket.io-services:
+    dependencies:
+      socket.io:
+        specifier: ^4.8.1
+        version: 4.8.1
     devDependencies:
       typescript:
         specifier: ^5.7.2
@@ -8852,7 +8853,7 @@ snapshots:
       '@ionic/utils-subprocess': 2.1.14
       '@ionic/utils-terminal': 2.3.5
       commander: 9.5.0
-      debug: 4.3.4
+      debug: 4.4.0(supports-color@5.5.0)
       env-paths: 2.2.1
       kleur: 4.1.5
       native-run: 2.0.1
@@ -9652,7 +9653,7 @@ snapshots:
 
   '@ionic/utils-array@2.1.6':
     dependencies:
-      debug: 4.3.4
+      debug: 4.4.0(supports-color@5.5.0)
       tslib: 2.6.2
     transitivePeerDependencies:
       - supports-color
@@ -9669,7 +9670,7 @@ snapshots:
   '@ionic/utils-fs@3.1.7':
     dependencies:
       '@types/fs-extra': 8.1.5
-      debug: 4.3.4
+      debug: 4.4.0(supports-color@5.5.0)
       fs-extra: 9.1.0
       tslib: 2.6.2
     transitivePeerDependencies:
@@ -9711,7 +9712,7 @@ snapshots:
     dependencies:
       '@ionic/utils-object': 2.1.6
       '@ionic/utils-terminal': 2.3.4
-      debug: 4.3.4
+      debug: 4.4.0(supports-color@5.5.0)
       signal-exit: 3.0.7
       tree-kill: 1.2.2
       tslib: 2.6.2
@@ -9738,7 +9739,7 @@ snapshots:
 
   '@ionic/utils-stream@3.1.6':
     dependencies:
-      debug: 4.3.4
+      debug: 4.4.0(supports-color@5.5.0)
       tslib: 2.6.2
     transitivePeerDependencies:
       - supports-color
@@ -9771,7 +9772,7 @@ snapshots:
       '@ionic/utils-stream': 3.1.6
       '@ionic/utils-terminal': 2.3.4
       cross-spawn: 7.0.6
-      debug: 4.3.4
+      debug: 4.4.0(supports-color@5.5.0)
       tslib: 2.6.2
     transitivePeerDependencies:
       - supports-color
@@ -9806,7 +9807,7 @@ snapshots:
   '@ionic/utils-terminal@2.3.4':
     dependencies:
       '@types/slice-ansi': 4.0.0
-      debug: 4.3.4
+      debug: 4.4.0(supports-color@5.5.0)
       signal-exit: 3.0.7
       slice-ansi: 4.0.0
       string-width: 4.2.3

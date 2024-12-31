@@ -1,9 +1,7 @@
 import { v2 as cloudinary } from "cloudinary";
 import dotenv from "dotenv";
 import { createServer } from "http";
-import type { Namespace } from "socket.io";
 import { Server } from "socket.io";
-import type { EventsMap } from "socket.io/dist/typed-events";
 
 import type { SessionUser } from "~dm-types/SessionUser";
 import { PrismaClient } from "~prisma/client_dumili";
@@ -39,12 +37,6 @@ export type SessionDataWithIndexationId = {
   indexationId: string;
 };
 export type SessionData = { user: SessionUser };
-
-export type NamespaceWithData<
-  Services extends EventsMap,
-  ServerSentEvents extends EventsMap = object,
-  Data extends object = object,
-> = Namespace<Services, ServerSentEvents, Record<string, never>, Data>;
 
 export const prisma = new PrismaClient();
 

@@ -94,7 +94,7 @@ import { dumiliSocketInjectionKey } from "~/composables/useDumiliSocket";
 import { getEntryFromPage } from "~dumili-utils/entryPages";
 import { suggestions } from "~/stores/suggestions";
 import { ui } from "~/stores/ui";
-import type { FullIndexation } from "~dumili-services/indexation/types";
+import type { FullIndexation } from "~dumili-services/indexation";
 import TableOfContentsEntry from "./TableOfContentsEntry.vue";
 
 const { indexationSocket } = inject(dumiliSocketInjectionKey)!;

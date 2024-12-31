@@ -1,49 +1,35 @@
 import type { Errorable } from "~socket.io-services";
 
-export const namespaceEndpoint = "/auth";
-export default abstract class {
-  static namespaceEndpoint = namespaceEndpoint;
-
-  abstract forgot: (
-    token: string,
-    callback: (data: { error?: string }) => void,
-  ) => void;
-  abstract requestTokenForForgotPassword: (
+export default { namespaceEndpoint: "/auth" }
+;export type Events = {
+  forgot: (token: string) => { error?: string };
+  requestTokenForForgotPassword: (
     email: string,
-    callback: (data: Errorable<{ token: string }, "Invalid email">) => void,
-  ) => void;
+  ) => Errorable<{ token: string }, "Invalid email">;
 
-  abstract changePassword: (
-    data: { password: string; password2: string; token: string },
-    callback: (
-      value: Errorable<
-        { token: string },
-        | "Invalid token"
-        | "Your password should be at least 6 characters long"
-        | "The two passwords should be identical"
-        | "Something went wrong"
-      >,
-    ) => void,
-  ) => void;
+  changePassword: (data: {
+    password: string;
+    password2: string;
+    token: string;
+  }) => Errorable<
+    { token: string },
+    | "Invalid token"
+    | "Your password should be at least 6 characters long"
+    | "The two passwords should be identical"
+    | "Something went wrong"
+  >;
 
-  abstract login: (
-    data: { username: string; password: string },
-    callback: (data: Errorable<string, "Invalid username or password">) => void,
-  ) => void;
-  abstract getCsrf: (callback: (value: string) => void) => void;
+  login: (data: {
+    username: string;
+    password: string;
+  }) => Errorable<string, "Invalid username or password">;
+  getCsrf: () => string;
 
-  abstract loginAsDemo: (
-    callback: (
-      data: Errorable<{ token: string }, "No demo user found">,
-    ) => void,
-  ) => void;
+  loginAsDemo: () => Errorable<{ token: string }, "No demo user found">;
 
-  abstract signup: (
-    data: {
-      username: string;
-      password: string;
-      email: string;
-    },
-    callback: (data: Errorable<string, "Bad request">) => void,
-  ) => void;
-}
+  signup: (data: {
+    username: string;
+    password: string;
+    email: string;
+  }) => Errorable<string, "Bad request">;
+};

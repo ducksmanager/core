@@ -1,13 +1,10 @@
 export type Decision = "approve" | "refuse";
 
-export const namespaceEndpoint = "/presentation-text";
-export default abstract class Services {
-  static namespaceEndpoint = namespaceEndpoint;
-
-  abstract approveOrDenyPresentationText: (
+export default { namespaceEndpoint: "/presentation-text" }
+;export type Events = {
+  approveOrDenyPresentationText: (
     sentence: string,
     userId: number,
     decision: Decision,
-    callback: () => void,
   ) => void;
 }

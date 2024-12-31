@@ -4,17 +4,14 @@ import type {
   SuggestionsWithDetails,
 } from "~dm-types/SuggestionsWithDetails";
 
-export const namespaceEndpoint = "/stats";
-export default abstract class {
-  static namespaceEndpoint = namespaceEndpoint;
+export default { namespaceEndpoint: "/stats" }
+;export type Events =  {
 
-  abstract getSuggestionsForCountry: (
+
+  getSuggestionsForCountry: (
     countrycode: string,
     sincePreviousVisit: "since_previous_visit" | "_",
-    limit: number,
-    callback: (value: Record<SuggestionSorts, SuggestionsWithDetails>) => void,
-  ) => void;
-  abstract getWatchedAuthorsStats: (
-    callback: (value: AuthorDetails[]) => void,
-  ) => void;
+    limit: number) => Record<SuggestionSorts, SuggestionsWithDetails>
+  getWatchedAuthorsStats: (
+    ) => AuthorDetails[]
 }

@@ -4,7 +4,7 @@ import type { ModelContributor } from "~types/ModelContributor";
 
 export const namespaceEndpoint = "/save";
 export default abstract class {
-  static namespaceEndpoint = namespaceEndpoint;
+
 
   abstract saveEdge: (
     parameters: {

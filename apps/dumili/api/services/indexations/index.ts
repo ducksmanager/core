@@ -1,36 +1,38 @@
-import type { Server } from "socket.io";
-
-import type { NamespaceWithData, SessionData } from "~/index";
-import { prisma } from "~/index";
+import { prisma, SessionData } from "~/index";
 import { COVER } from "~dumili-types/storyKinds";
 
 import { RequiredAuthMiddleware } from "../_auth";
 import { createEntry } from "../indexation";
-import Events, {
-  indexationWithFirstPageAndAcceptedIssueSuggestion,
-} from "./types";
+import { useSocketServices } from "~socket.io-services";
 
 const getIndexationsWithFirstPage = (userId: number) =>
   prisma.indexation.findMany({
     where: {
       dmUserId: userId,
     },
-    include: indexationWithFirstPageAndAcceptedIssueSuggestion,
+    include: {
+      pages: {
+        include: {
+          image: true,
+        },
+        take: 1,
+        orderBy: {
+          pageNumber: "asc",
+        },
+      },
+      acceptedIssueSuggestion: true,
+    },
   });
 
-export default (io: Server) => {
-  io.use(RequiredAuthMiddleware);
+export const { client, server } = useSocketServices<object, object, SessionData>(
+  "/indexations",
+  {
+    listenEvents: (socket) => ({
+      getUser: () => ({
+        username: socket.data.user.username,
+      }),
 
-  (
-    io.of(Events.namespaceEndpoint) as NamespaceWithData<
-      Events,
-      object,
-      SessionData
-    >
-  )
-    .use(RequiredAuthMiddleware)
-    .on("connection", async (socket) => {
-      socket.on("create", async (id, numberOfPages, callback) => {
+      create: (id: string, numberOfPages: number) =>
         prisma.indexation
           .create({
             data: {
@@ -50,18 +52,18 @@ export default (io: Server) => {
             prisma.entry.update({
               data: {
                 acceptedStoryKindSuggestionId: entry.storyKindSuggestions.find(
-                  (s) => s.kind === COVER,
+                  (s) => s.kind === COVER
                 )!.id,
               },
               where: {
                 id: entry.id,
               },
-            }),
-          )
-          .then(callback);
-      });
-      socket.on("getIndexations", async (callback) =>
-        getIndexationsWithFirstPage(socket.data.user.id).then(callback),
-      );
-    });
-};
+            })
+          ),
+
+      getIndexations: () => getIndexationsWithFirstPage(socket.data.user.id),
+    }),
+    
+    middlewares: [RequiredAuthMiddleware],
+  }
+);

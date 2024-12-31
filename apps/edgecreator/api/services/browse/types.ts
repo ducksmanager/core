@@ -10,7 +10,7 @@ export interface EdgeModelDetails {
 }
 
 export default abstract class {
-  static namespaceEndpoint = namespaceEndpoint;
+
 
   abstract listEdgeModels: (
     callback: (

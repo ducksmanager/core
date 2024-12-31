@@ -1,38 +1,28 @@
 import type { BookcaseEdge } from "~dm-types/BookcaseEdge";
 import type { Errorable } from "~socket.io-services";
 
-export const namespaceEndpoint = "/bookcase";
-export default abstract class {
-  static namespaceEndpoint = namespaceEndpoint;
-  abstract getBookcase: (
-    username: string,
-    callback: (
-      value: Errorable<
+export default { namespaceEndpoint: "/bookcase" }
+;export type Events =  {
+
+  getBookcase: (
+    username: string) => Errorable<
         { edges: BookcaseEdge[] },
         "Unauthorized" | "Forbidden" | "Not found"
       >,
-    ) => void,
-  ) => void;
+    
 
-  abstract getBookcaseOrder: (
-    username: string,
-    callback: (
-      value: Errorable<
+  getBookcaseOrder: (
+    username: string) => Errorable<
         { publicationCodes: string[] },
         "Unauthorized" | "Forbidden" | "Not found"
       >,
-    ) => void,
-  ) => void;
+    
 
-  abstract setBookcaseOrder: (
-    publicationCodes: string[],
-    callback: (max: number | undefined) => void,
-  ) => void;
+  setBookcaseOrder: (
+    publicationCodes: string[]) => number | undefined
 
-  abstract getBookcaseOptions: (
-    username: string,
-    callback: (
-      value: Errorable<
+  getBookcaseOptions: (
+    username: string) => Errorable<
         {
           textures: {
             bookcase: string;
@@ -42,14 +32,11 @@ export default abstract class {
         },
         "Unauthorized" | "Forbidden" | "Not found"
       >,
-    ) => void,
-  ) => void;
+    
 
-  abstract setBookcaseOptions: (
+  setBookcaseOptions: (
     data: {
       textures: { bookcase: string; bookshelf: string };
       showAllCopies: boolean;
-    },
-    callback: (value: string) => void,
-  ) => void;
+    }) => string
 }

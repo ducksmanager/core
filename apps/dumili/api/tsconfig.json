@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "noErrorTruncation": true,
     "baseUrl": ".",
     "module": "ES6",
     "target": "esnext",

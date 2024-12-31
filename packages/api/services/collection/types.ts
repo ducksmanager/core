@@ -21,163 +21,101 @@ import type {
 } from "~prisma-schemas/schemas/dm";
 import type { Errorable } from "~socket.io-services";
 
-export const namespaceEndpoint = "/collection";
-export default abstract class {
-  static namespaceEndpoint = namespaceEndpoint;
+export default { namespaceEndpoint: "/collection" }
+;export type Events =  {
 
-  abstract emptyCollection: (callback: () => void) => void;
-  abstract getUserPermissions: (
-    callback: (data: userPermission[]) => void,
-  ) => void;
-  abstract getCollectionPopularity: (
-    callback: (data: Record<string, number>) => void,
-  ) => void;
-  abstract getNotificationToken: (
-    username: string,
-    callback: (token: Errorable<string, "Unauthorized" | "Error">) => void,
-  ) => void;
-  abstract getLastVisit: (
-    callback: (
-      value: Errorable<string | null, "This user does not exist">,
-    ) => void,
-  ) => void;
-  abstract getLastPublishedEdges: (
-    callback: (value: EdgeWithStringCreationDate[]) => void,
-  ) => void;
 
-  abstract getIssues: (
-    callback: (data: {
+  emptyCollection: () => userPermission[]
+  getCollectionPopularity: () => Record<string, number>
+  getNotificationToken: (
+    username: string) => Errorable<string, "Unauthorized" | "Error">
+  getLastVisit: (
+    ) => Errorable<string | null, "This user does not exist">,
+    
+  getLastPublishedEdges: (
+    ) => EdgeWithStringCreationDate[]
+
+  getIssues: (
+    ) => {
       countByCountrycode: Record<string, number>;
       countByPublicationcode: Record<string, number>;
       publicationNames: Record<string, string>;
       issues: AugmentedIssue<issue & { issuecode: string }>[];
-    }) => void,
-  ) => void;
-  abstract addOrChangeIssues: (
-    data: CollectionUpdateMultipleIssues,
-    callback: (data: TransactionResults) => void,
-  ) => void;
-  abstract addOrChangeCopies: (
-    data: CollectionUpdateSingleIssue,
-    callback: (data: TransactionResults) => void,
-  ) => void;
+    }
+  addOrChangeIssues: (
+    data: CollectionUpdateMultipleIssues) => TransactionResults
+  addOrChangeCopies: (
+    data: CollectionUpdateSingleIssue) => TransactionResults
 
-  abstract createRequests: (
-    issueIds: number[],
-    callback: (
-      value: Errorable<
+  createRequests: (
+    issueIds: number[]) => Errorable<
         void,
         | "The provided issue IDs were not all found"
         | "Invalid issue ID list, NaN"
       >,
-    ) => void,
-  ) => void;
-  abstract deleteRequests: (issueId: number, callback: () => void) => void;
-  abstract getRequests: (
-    as: "buyer" | "seller",
-    callback: (data: requestedIssue[]) => void,
-  ) => void;
+    
+  deleteRequests: (issueId: number) => void;
+  getRequests: (
+    as: "buyer" | "seller") => requestedIssue[]
 
-  abstract getContactMethods: (
-    sellerId: number,
-    callback: (
-      data: Errorable<
+  getContactMethods: (
+    sellerId: number) => Errorable<
         { discordId?: string; email?: string },
         "Invalid seller ID"
       >,
-    ) => void,
-  ) => void;
+    
 
-  abstract getIssuesForSale: (
-    callback: (data: AugmentedIssue<issue & { issuecode: string }>[]) => void,
-  ) => void;
+  getIssuesForSale: (
+    ) => AugmentedIssue<issue & { issuecode: string }>[]
 
-  abstract getOption: (
-    optionName: Required<userOptionType>,
-    callback: (value: string[]) => void,
-  ) => void;
-  abstract setOption: (
+  getOption: (
+    optionName: Required<userOptionType>) => string[]
+  setOption: (
     optionName: userOptionType,
     optionValues: string[],
-    callback: () => void,
   ) => void;
 
-  abstract deletePurchase: (
-    purchaseId: number,
-    callback: (data: Errorable<void, "Purchase not found">) => void,
-  ) => void;
-  abstract getPurchases: (
-    callback: (
-      data: (Omit<purchase, "date"> & {
+  deletePurchase: (
+    purchaseId: number) => Errorable<void, "Purchase not found">
+  getPurchases: (Omit<purchase, "date"> & {
         date: string;
       })[],
-    ) => void,
-  ) => void;
-  abstract createPurchase: (
+  createPurchase: (
     date: string,
-    description: string,
-    callback: (data: Errorable<void, "Purchase already exists">) => void,
-  ) => void;
+    description: string) => Errorable<void, "Purchase already exists">
 
-  abstract getSubscriptions: (
-    callback: (
-      data: (Omit<subscription, "startDate" | "endDate"> & {
+  getSubscriptions: () => Omit<subscription, "startDate" | "endDate"> & {
         startDate: string;
         endDate: string;
-      })[],
-    ) => void,
-  ) => void;
+      }[]
 
-  abstract createSubscription: (
-    data: EditSubscription,
-    callback: () => void,
-  ) => void;
+  createSubscription: (
+    data: EditSubscription) => (
+    id: number) => void
 
-  abstract updateSubscription: (
-    id: number,
-    data: EditSubscription,
-    callback: () => void,
-  ) => void;
-
-  abstract deleteSubscription: (id: number, callback: () => void) => void;
-
-  abstract getUser: (
-    callback: (
-      data: Errorable<Omit<user, "password">, "User not found">,
-    ) => void,
-  ) => void;
-  abstract deleteUser: (callback: () => void) => void;
-  abstract updateUser: (
-    data: UserForAccountForm,
-    callback: (
-      data: Errorable<
+  getUser: (
+    ) => Errorable<Omit<user, "password">, "User not found">,
+    
+  deleteUser: () => void;
+  updateUser: (
+    data: UserForAccountForm) => Errorable<
         {
           hasRequestedPresentationSentenceUpdate: boolean;
         },
         "Bad request"
       >,
-    ) => void,
-  ) => void;
+    
 
-  abstract getWatchedAuthors: (
-    callback: (value: AuthorWithUserRating[]) => void,
-  ) => void;
-  abstract deleteWatchedAuthor: (
-    personcode: string,
-    callback: () => void,
-  ) => void;
-  abstract updateWatchedAuthor: (
-    data: authorUser,
-    callback: (value: Errorable<void, "Error">) => void,
-  ) => void;
-  abstract addWatchedAuthor: (
-    personcode: string,
-    callback: (value: Errorable<void, "Error">) => void,
-  ) => void;
+  getWatchedAuthors: (
+    ) => AuthorWithUserRating[]
+  deleteWatchedAuthor: (
+    personcode: string) => (
+    data: authorUser) => Errorable<void, "Error">
+  addWatchedAuthor: (
+    personcode: string) => Errorable<void, "Error">
 
-  abstract getCollectionQuotations: (
-    callback: (
-      value: Errorable<
+  getCollectionQuotations: (
+    ) => Errorable<
         {
           quotations: Record<
             string,
@@ -186,6 +124,5 @@ export default abstract class {
         },
         "Bad request"
       >,
-    ) => void,
-  ) => void;
+    
 }

@@ -21,30 +21,22 @@ export const unassignedEdgeFields = {
   contributors: true,
 };
 
-export const namespaceEndpoint = "/edgecreator";
-export default abstract class {
-  static namespaceEndpoint = namespaceEndpoint;
-  abstract submitEdge: (
-    issuecode: string,
-    callback: (value: { url: string }) => void,
-  ) => void;
-  abstract getModelContributors: (
-    modelId: number,
-    callback: (value: edgeContributor[]) => void,
-  ) => void;
-  abstract getImagesFromFilename: (
-    filename: string,
-    callback: (value: ImageElement[]) => void,
-  ) => void;
+export default { namespaceEndpoint: "/edgecreator" }
+;export type Events =  {
 
-  abstract publishEdge: (
+  submitEdge: (
+    issuecode: string) => { url: string }
+  getModelContributors: (
+    modelId: number) => edgeContributor[]
+  getImagesFromFilename: (
+    filename: string) => ImageElement[]
+
+  publishEdge: (
     data: {
       issuecode: string;
       designers: string[];
       photographers: string[];
-    },
-    callback: (
-      data: Errorable<
+    }) => Errorable<
         {
           issuecode: string;
           isNew: boolean;
@@ -54,45 +46,26 @@ export default abstract class {
         },
         "Invalid publication code and issue number"
       >,
-    ) => void,
-  ) => void;
+    
 
-  abstract uploadEdges: (callback: () => void) => void;
-
-  abstract getUnassignedEdges: (
-    callback: (
-      data: Prisma.edgeModelGetPayload<{
+  uploadEdges: () => () => Prisma.edgeModelGetPayload<{
         select: typeof unassignedEdgeFields;
       }>[],
-    ) => void,
-  ) => void;
-  abstract getModelsSteps: (
-    modelIds: number[],
-    callback: (data: ModelSteps) => void,
-  ) => void;
-  abstract getModelMainPhoto: (
-    modelId: number,
-    callback: (data: Pick<elementImage, "id" | "fileName">) => void,
-  ) => void;
-  abstract getModel: (
-    issuecode: string,
-    callback: (data: edgeModel | null) => void,
-  ) => void;
+    
+  getModelsSteps: (
+    modelIds: number[]) => ModelSteps,
+  getModelMainPhoto: (
+    modelId: number) => Pick<elementImage, "id" | "fileName">
+  getModel: (
+    issuecode: string) => edgeModel | null
 
-  abstract sendNewEdgePhotoEmail: (
-    issuecode: string,
-    callback: (data: { url: string }) => void,
-  ) => void;
-  abstract createElementImage: (
+  sendNewEdgePhotoEmail: (
+    issuecode: string) => { url: string }
+  createElementImage: (
     hash: string,
-    fileName: string,
-    callback: (data: { photoId: number }) => void,
-  ) => void;
-  abstract checkTodayLimit: (
-    callback: (data: { uploadedFilesToday: string[] }) => void,
-  ) => void;
-  abstract getImageByHash: (
-    hash: string,
-    callback: (data: elementImage | null) => void,
-  ) => void;
+    fileName: string) => { photoId: number }
+  checkTodayLimit: (
+    ) => { uploadedFilesToday: string[] }
+  getImageByHash: (
+    hash: string) => elementImage | null
 }

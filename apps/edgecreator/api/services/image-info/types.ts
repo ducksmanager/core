@@ -2,7 +2,7 @@ import type { Errorable } from "~socket.io-services";
 
 export const namespaceEndpoint = "/image-info";
 export default abstract class {
-  static namespaceEndpoint = namespaceEndpoint;
+
 
   abstract getImageInfo: (
     targetUrl: string,

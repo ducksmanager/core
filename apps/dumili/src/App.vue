@@ -4,7 +4,7 @@
     class="d-flex flex-column align-items-center justify-content-center p-2 border-bottom"
   >
     <router-link class="display-6" to="/">DuMILi</router-link>
-    {{ $t("DucksManager Inducks Little helper") }}
+    {{ $t("DUcksManager Inducks LIttle helper") }}
   </b-container>
 
   <b-container
@@ -35,6 +35,8 @@ import { buildWebStorage } from "~socket.io-client-services/index";
 
 const { t: $t } = useI18n();
 
+const user = ref<{ username: string } | null>(null);
+
 const session = {
   getToken: () => Promise.resolve(Cookies.get("token")),
   clearSession: () => {}, // Promise.resolve(Cookies.remove("token")),
@@ -55,12 +57,14 @@ const onConnectError = (e: Error) => {
   }
 };
 
+const dumiliSocket = useDumiliSocket({
+  session,
+  onConnectError,
+});
+
 getCurrentInstance()!.appContext.app.provide(
   dumiliSocketInjectionKey,
-  useDumiliSocket({
-    session,
-    onConnectError,
-  }),
+  dumiliSocket,
 );
 
 getCurrentInstance()!.appContext.app.provide(
@@ -76,12 +80,11 @@ const loginUrl = computed(
   () => `${import.meta.env.VITE_DM_URL}/login?redirect=${document.URL}`,
 );
 
-const { loadUser } = collection();
 // const { fetchCountryNames } = coa();
-const { user, isLoadingUser } = storeToRefs(collection());
+const { isLoadingUser } = storeToRefs(collection());
 
 onBeforeMount(() => {
-  loadUser();
+  user.value = dumiliSocket.indexations.services.getUser();
 });
 
 // watch(user, (newValue) => {

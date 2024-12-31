@@ -1,29 +1,22 @@
 import type { CoverSearchResults } from "~dm-types/CoverSearchResults";
 import type { EitherOr, Errorable } from "~socket.io-services";
 
-export abstract class InterServerEvents {
-  abstract searchFromCover: (
-    input: EitherOr<{ base64?: string }, { url?: string }>,
-    callback: (
-      value: Errorable<
+export class InterServerEvents {
+  searchFromCover: (
+    input: EitherOr<{ base64?: string }, { url?: string }>) => Errorable<
         CoverSearchResults,
         "Pastec returned NULL" | "Pastec returned en error"
       >,
-    ) => void,
-  ) => void;
+    
 }
 
-export const namespaceEndpoint = "/cover-id";
-export default abstract class extends InterServerEvents {
-  static namespaceEndpoint = namespaceEndpoint;
+export default { namespaceEndpoint: "/cover-id" }
+;export type Events =  extends InterServerEvents {
 
-  abstract getCoverUrl: (
-    coverId: number,
-    callback: (value: string) => void,
-  ) => void;
 
-  abstract downloadCover: (
-    coverId: number,
-    callback: (value: Errorable<{ buffer: Buffer }, "Error">) => void,
-  ) => void;
+  getCoverUrl: (
+    coverId: number) => string
+
+  downloadCover: (
+    coverId: number) => Errorable<{ buffer: Buffer }, "Error">
 }

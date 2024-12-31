@@ -58,7 +58,9 @@ const defaultExport = (options: {
     publicCollection: socket.addNamespace<PublicCollectionServices>(
       PublicCollectionServices.namespaceEndpoint,
     ),
-    app: socket.addNamespace<AppServices>(AppServices.namespaceEndpoint),
+    app: socket.addNamespace<typeof AppServices.eventsForType>(
+      AppServices.namespaceEndpoint,
+    ),
 
     bookcase: socket.addNamespace<BookcaseServices>(
       BookcaseServices.namespaceEndpoint,

@@ -1,12 +1,10 @@
 import axios from "axios";
-import type { Socket } from "socket.io";
 
-import type { SessionDataWithIndexation } from "~/index";
 import { prisma } from "~/index";
 import type { aiKumikoResultPanel } from "~/prisma/client_dumili";
 
-import type { FullIndexation, ServerSentEvents } from "./types";
-import type Events from "./types";
+import type { FullIndexation } from "./types";
+import { IndexationSocket } from ".";
 
 type OcrResult = {
   box: [[number, number], [number, number], [number, number], [number, number]];
@@ -15,12 +13,7 @@ type OcrResult = {
 };
 
 export const runOcrOnImages = async (
-  socket: Socket<
-    Events,
-    ServerSentEvents,
-    Record<string, never>,
-    SessionDataWithIndexation
-  >,
+  socket: IndexationSocket,
   pages: Exclude<Pick<FullIndexation["pages"][number], 'pageNumber'|'image'>, {image: null}>[],
 ) => {
   for (const {image, pageNumber} of pages) {

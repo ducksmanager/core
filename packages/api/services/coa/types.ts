@@ -11,88 +11,58 @@ import type {
 } from "~prisma-schemas/schemas/coa";
 import type { Errorable } from "~socket.io-services";
 
-export const namespaceEndpoint = "/coa";
-export default abstract class {
-  static namespaceEndpoint = namespaceEndpoint;
-  abstract getAuthorList: (
-    personcodes: string[],
-    callback: (value: { [_personcode: string]: string }) => void,
-  ) => void;
-  abstract searchAuthor: (
-    partialAuthorName: string,
-    callback: (value: Record<string, string>) => void,
-  ) => void;
+export default { namespaceEndpoint: "/coa" }
+;export type Events =  {
 
-  abstract getCountryList: (
+  getAuthorList: (
+    personcodes: string[]) => { [_personcode: string]: string }
+  searchAuthor: (
+    partialAuthorName: string) => Record<string, string>
+
+  getCountryList: (
     locale: string,
-    countryCodes: string[],
-    callback: (value: Record<string, string>) => void,
-  ) => void;
+    countryCodes: string[]) => Record<string, string>
 
-  abstract getIssueDetails: (
-    issuecode: string,
-    callback: (value: { releaseDate?: string; entries: SimpleEntry[] }) => void,
-  ) => void;
-  abstract getIssueCoverDetailsByPublicationcode: (
-    publicationcode: string,
-    callback: (value: { covers: Record<string, IssueCoverDetails> }) => void,
-  ) => void;
-  abstract getIssueCoverDetails: (
-    issuecodes: string[],
-    callback: (
-      value: Errorable<
+  getIssueDetails: (
+    issuecode: string) => { releaseDate?: string; entries: SimpleEntry[] }
+  getIssueCoverDetailsByPublicationcode: (
+    publicationcode: string) => { covers: Record<string, IssueCoverDetails> }
+  getIssueCoverDetails: (
+    issuecodes: string[]) => Errorable<
         { covers: Record<string, IssueCoverDetails> },
         "Too many requests"
       >,
-    ) => void,
-  ) => void;
-  abstract getIssuePopularities: (
-    issuecodes: string[],
-    callback: (
-      value: Record<
+    
+  getIssuePopularities: (
+    issuecodes: string[]) => Record<
         string,
         {
           popularity: number;
         }
       >,
-    ) => void,
-  ) => void;
-  abstract getIssues: (
+    
+  getIssues: (
     issuecodes: string[],
-    withTitles: boolean,
-    callback: (value: Record<string, SimpleInducksIssue>) => void,
-  ) => void;
+    withTitles: boolean) => Record<string, SimpleInducksIssue>
 
-  abstract getIssuesByPublicationcodes: (
-    publicationcodes: string[],
-    callback: (value: Record<string, SimpleInducksIssue[]>) => void,
-  ) => void;
+  getIssuesByPublicationcodes: (
+    publicationcodes: string[]) => Record<string, SimpleInducksIssue[]>
 
-  abstract getIssuesByStorycode: (
-    storycode: string,
-    callback: (value: IssueWithIssuecodeOnly[]) => void,
-  ) => void;
-  abstract getRecentIssues: (
-    callback: (value: SimpleInducksIssue[]) => void,
-  ) => void;
+  getIssuesByStorycode: (
+    storycode: string) => IssueWithIssuecodeOnly[]
+  getRecentIssues: (
+    ) => SimpleInducksIssue[]
 
-  abstract getFullPublicationList: (
-    callback: (value: Record<string, string>) => void,
-  ) => void;
+  getFullPublicationList: (
+    ) => Record<string, string>
 
-  abstract getPublicationListFromCountrycodes: (
-    countrycodes: string[],
-    callback: (value: Record<string, string>) => void,
-  ) => void;
-  abstract getPublicationListFromPublicationcodeList: (
-    publicationCodes: string[],
-    callback: (value: Record<string, string>) => void,
-  ) => void;
+  getPublicationListFromCountrycodes: (
+    countrycodes: string[]) => Record<string, string>
+  getPublicationListFromPublicationcodeList: (
+    publicationCodes: string[]) => Record<string, string>
 
-  abstract getQuotationsByIssuecodes: (
-    issueCodes: string[],
-    callback: (
-      value: Errorable<
+  getQuotationsByIssuecodes: (
+    issueCodes: string[]) => Errorable<
         {
           quotations: Record<
             string,
@@ -101,32 +71,21 @@ export default abstract class {
         },
         "Bad request" | "Too many requests"
       >,
-    ) => void,
-  ) => void;
+    
 
-  abstract searchStory: <WithIssues extends boolean>(
+  searchStory: <WithIssues extends boolean>(
     keywords: string[],
-    withIssues: WithIssues,
-    callback: (value: StorySearchResults<WithIssues>) => void,
-  ) => void;
+    withIssues: WithIssues) => StorySearchResults<WithIssues>
 
-  abstract getStoryDetails: (
-    storycodes: string[],
-    callback: (
-      value: Errorable<{ stories: Record<string, inducks_story> }, "Error">,
-    ) => void,
-  ) => void;
-  abstract getStoryversionsDetails: (
-    storyversioncodes: string[],
-    callback: (
-      value: Errorable<
+  getStoryDetails: (
+    storycodes: string[]) => Errorable<{ stories: Record<string, inducks_story> }, "Error">,
+    
+  getStoryversionsDetails: (
+    storyversioncodes: string[]) => Errorable<
         { storyversions: Record<string, inducks_storyversion> },
         "Error"
       >,
-    ) => void,
-  ) => void;
-  abstract getStoryjobs: (
-    storyversioncode: string,
-    callback: (value: Errorable<{ data: inducks_storyjob[] }, "Error">) => void,
-  ) => void;
+    
+  getStoryjobs: (
+    storyversioncode: string) => Errorable<{ data: inducks_storyjob[] }, "Error">
 }

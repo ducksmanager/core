@@ -65,131 +65,82 @@ export type FullIndexation = Prisma.indexationGetPayload<{
 
 export type FullEntry = FullIndexation["entries"][number];
 
-export default abstract class {
-  static namespaceEndpoint: string = "/indexation/{id}";
+export const namespaceEndpoint = "/indexation/{id}";
 
-  abstract setPageUrl: (
+export type Events = {
+  setPageUrl: (
     id: number,
-    url: string | null,
-    callback: (
-      data: Errorable<
-        "OK",
-        "This indexation does not have any page with this ID"
-      >,
-    ) => void,
-  ) => void;
-  
-  abstract deleteEntry: (
+    url: string | null
+  ) => Promise<Errorable<"OK", "This indexation does not have any page with this ID">>;
+
+  deleteEntry: (
     entryId: entry["id"],
-    entryIdToExtend: "previous" | "next",
-    callback: (
-      data: Errorable<
-        { status: "OK" },
-        "This indexation does not have any entry with this ID"|
-        "This entry does not have any previous entry"|
-        "This entry does not have any next entry"
-      >,
-    ) => void,
-  ) => void;
+    entryIdToExtend: "previous" | "next"
+  ) => Promise<Errorable<
+    { status: "OK" },
+    | "This indexation does not have any entry with this ID"
+    | "This entry does not have any previous entry"
+    | "This entry does not have any next entry"
+  >>;
 
-  abstract deleteIndexation: (callback: () => void) => void;
+  deleteIndexation: () => Promise<void>;
 
-  abstract loadIndexation: (
-    callback: (
-      data: Errorable<{ indexation: FullIndexation }, "Error">,
-    ) => void,
-  ) => void;
+  loadIndexation: () => Promise<Errorable<{ indexation: FullIndexation }, "Error">>;
 
-  abstract createStorySuggestion: (
-    suggestion: Prisma.storySuggestionUncheckedCreateInput & { ai: boolean },
-    callback: (
-      data: Errorable<
-        { createdStorySuggestion: Pick<storySuggestion, "id" | "storycode"> },
-        "You are not allowed to update this resource"
-      >,
-    ) => void,
-  ) => void;
+  createStorySuggestion: (
+    suggestion: Prisma.storySuggestionUncheckedCreateInput & { ai: boolean }
+  ) => Promise<Errorable<
+    { createdStorySuggestion: Pick<storySuggestion, "id" | "storycode"> },
+    "You are not allowed to update this resource"
+  >>;
 
-  abstract acceptStorySuggestion: (
+  acceptStorySuggestion: (
     entryId: entry["id"],
-    storySuggestionId: storySuggestion["id"] | null,
-    callback: (
-      data: Errorable<
-        { status: "OK" },
-        "This indexation does not have any entry with this suggestion"
-      >,
-    ) => void,
-  ) => void;
+    storySuggestionId: storySuggestion["id"] | null
+  ) => Promise<Errorable<
+    { status: "OK" },
+    "This indexation does not have any entry with this suggestion"
+  >>;
 
-  abstract createIssueSuggestion: (
+  createIssueSuggestion: (
     suggestion: Omit<
       Prisma.issueSuggestionUncheckedCreateInput,
       "indexationId"
-    > & { ai: boolean },
-    callback: (data: { suggestionId: storySuggestion["id"] }) => void,
-  ) => void;
+    > & { ai: boolean }
+  ) => Promise<{ suggestionId: storySuggestion["id"] }>;
 
-  abstract updateIndexation: (
-    values: Pick<indexation, "price"> & { numberOfPages: number },
-    callback: (
-      data: Errorable<{ status: "OK" }, "Invalid number of pages">,
-    ) => void,
-  ) => void;
+  updateIndexation: (
+    values: Pick<indexation, "price"> & { numberOfPages: number }
+  ) => Promise<Errorable<{ status: "OK" }, "Invalid number of pages">>;
 
-  abstract acceptIssueSuggestion: (
-    suggestionId: issueSuggestion["id"] | null,
-    callback: (
-      data: Errorable<
-        { status: "OK" },
-        "This issue suggestion does not exist in this indexation"
-      >,
-    ) => void,
-  ) => void;
+  acceptIssueSuggestion: (
+    suggestionId: issueSuggestion["id"] | null
+  ) => Promise<Errorable<
+    { status: "OK" },
+    "This issue suggestion does not exist in this indexation"
+  >>;
 
-  abstract acceptStoryKindSuggestion: (
+  acceptStoryKindSuggestion: (
     entryId: entry["id"],
-    storyKindSuggestionId: storyKindSuggestion["id"] | null,
-    callback: (
-      data: Errorable<
-        { status: "OK" },
-        | "This indexation does not have any entry with this story kind suggestion"
-        | "This indexation does not have any entry with this ID"
-      >,
-    ) => void,
-  ) => void;
+    storyKindSuggestionId: storyKindSuggestion["id"] | null
+  ) => Promise<Errorable<
+    { status: "OK" },
+    | "This indexation does not have any entry with this story kind suggestion"
+    | "This indexation does not have any entry with this ID"
+  >>;
 
-  abstract updateEntry: (
+  updateEntry: (
     entryId: entry["id"],
     values: Pick<
       entry,
       "entirepages" | "brokenpagenumerator" | "brokenpagedenominator" | "title"
-    >,
-    callback: (
-      data: Errorable<
-        { status: "OK" },
-        "This indexation does not have any entry with this ID"
-      >,
-    ) => void,
-  ) => void;
+    >
+  ) => Promise<Errorable<
+    { status: "OK" },
+    "This indexation does not have any entry with this ID"
+  >>;
 
-  abstract swapPageUrls: (
-    pageNumber1: number,
-    pageNumber2: number,
-    callback: (data: { status: "OK" }) => void,
-  ) => void;
+  swapPageUrls: (pageNumber1: number, pageNumber2: number) => Promise<Errorable<{ status: "OK" }, 'Error'>>;
 
-  abstract createEntry: (callback: (data: { status: "OK" }) => void) => void;
-}
-
-export type ServerSentStartEvents = {
-  setKumikoInferredPageStoryKinds: (pageId: number) => void;
-  setInferredEntryStoryKind: (entryId: number) => void;
-  createAiStorySuggestions: (entryId: number) => void;
-  runOcrOnImage: (imageId: number) => void;
+  createEntry: () => Promise<{ status: "OK" }>;
 };
-
-export type ServerSentEndEvents = {
-  [K in keyof ServerSentStartEvents as `${K}End`]: ServerSentStartEvents[K];
-};
-
-export type ServerSentEvents = ServerSentStartEvents & ServerSentEndEvents;

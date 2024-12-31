@@ -2,8 +2,6 @@ import type { CacheOptions } from "axios-cache-interceptor";
 import { io, type Socket } from "socket.io-client";
 import { ref } from "vue";
 
-import type { EventReturnTypeIncludingError } from "~socket.io-services";
-
 // Copied from socket.io-client
 type DisconnectDescription =
   | Error
@@ -27,10 +25,6 @@ type SocketReservedEvents = {
   ) => void;
 };
 
-type AllButLast<T extends unknown[]> = T extends [...infer H, infer _L]
-  ? H
-  : unknown[];
-
 type SocketCacheOptions<Services extends EventsMap> = Pick<
   CacheOptions,
   "storage"
@@ -42,12 +36,6 @@ type SocketCacheOptions<Services extends EventsMap> = Pick<
 type EventsMap = Record<string, any>;
 
 type StringKeyOf<T> = keyof T & string;
-
-export type EventCalls<S extends EventsMap> = {
-  [EventName in StringKeyOf<S>]: (
-    ...args: AllButLast<Parameters<S[EventName]>>
-  ) => Promise<EventReturnTypeIncludingError<S[EventName]>>;
-};
 
 export type ServerSideEventCalls<S extends EventsMap> = S;
 
@@ -173,16 +161,16 @@ export class SocketClient {
           >
         );
       },
-      services: new Proxy({} as EventCalls<Services>, {
+      services: new Proxy({} as Services, {
         get:
           <EventName extends StringKeyOf<Services>>(
             _: never,
             event: EventName
           ) =>
           async (
-            ...args: AllButLast<Parameters<Services[EventName]>>
-          ): Promise<
-            EventReturnTypeIncludingError<Services[EventName]> | undefined
+            ...args: Parameters<Services[EventName]>
+          ): Promise<Awaited<
+            ReturnType<Services[EventName]> | undefined>
           > => {
             let isCacheUsed = false;
             if (!socket) {

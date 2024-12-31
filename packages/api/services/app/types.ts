@@ -14,12 +14,11 @@ export type AppUpdate = {
   url: string;
 };
 
-export const namespaceEndpoint = "/app";
-export default abstract class {
-  static namespaceEndpoint = namespaceEndpoint;
-
-  abstract getBundleUrl: (
-    data: AppInfos,
-    callback: (value: ErrorableAppUpdate) => void,
-  ) => void;
+export type Events = {
+  getBundleUrl: (
+    data: AppInfos) => Promise<ErrorableAppUpdate>;
 }
+
+const eventsForType: Events|undefined = undefined
+
+export default { namespaceEndpoint: "/app", eventsForType }

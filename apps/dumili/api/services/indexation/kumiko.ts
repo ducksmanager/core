@@ -1,15 +1,12 @@
 import axios from "axios";
-import type { Socket } from "socket.io";
 
-import type { SessionDataWithIndexation } from "~/index";
 import { prisma } from "~/index";
 import type { aiKumikoResultPanel, Prisma } from "~/prisma/client_dumili";
 import { COVER, ILLUSTRATION, STORY } from "~dumili-types/storyKinds";
 import { getEntryFromPage } from "~dumili-utils/entryPages";
 
-import type { ServerSentEvents } from "./types";
 import type { FullIndexation } from "./types";
-import type Events from "./types";
+import { IndexationSocket } from ".";
 
 type KumikoResult = {
   filename: string;
@@ -22,13 +19,6 @@ type KumikoResult = {
 type KumikoProcessedResult = Pick<
   aiKumikoResultPanel,
   "x" | "y" | "width" | "height"
->;
-
-type IndexationSocket = Socket<
-  Events,
-  ServerSentEvents,
-  Record<string, never>,
-  SessionDataWithIndexation
 >;
 
 const inferStoryKindFromAiResults = (

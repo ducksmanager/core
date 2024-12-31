@@ -2,7 +2,7 @@ import type { Errorable } from "~socket.io-services";
 
 export const namespaceEndpoint = "/upload";
 export default abstract class {
-  static namespaceEndpoint = namespaceEndpoint;
+
 
   abstract uploadFromBase64: (
     parameters: {

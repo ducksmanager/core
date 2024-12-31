@@ -2,14 +2,12 @@ import type { AugmentedIssue } from "~dm-types/AugmentedIssue";
 import type { WantedEdge } from "~dm-types/WantedEdge";
 import type { Errorable } from "~socket.io-services";
 
-export const namespaceEndpoint = "/edges";
-export default abstract class {
-  static namespaceEndpoint = namespaceEndpoint;
+export default { namespaceEndpoint: "/edges" }
+;export type Events =  {
 
-  abstract getEdges: (
-    filter: { publicationcode?: string; issuecodes?: string[] },
-    callback: (
-      value: Errorable<
+
+  getEdges: (
+    filter: { publicationcode?: string; issuecodes?: string[] }) => Errorable<
         Record<
           string,
           AugmentedIssue<{
@@ -21,10 +19,8 @@ export default abstract class {
         >,
         "Invalid filter"
       >,
-    ) => void,
-  ) => void;
-  abstract getPublishedEdges: (
-    callback: (value: AugmentedIssue<["issuecode"]>[]) => void,
-  ) => void;
-  abstract getWantedEdges: (callback: (value: WantedEdge[]) => void) => void;
+    
+  getPublishedEdges: (
+    ) => AugmentedIssue<["issuecode"]>[]
+  getWantedEdges: () => WantedEdge[]
 }
