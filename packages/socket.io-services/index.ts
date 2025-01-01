@@ -18,6 +18,19 @@ export type Errorable<T, ErrorKey extends string> = EitherOr<
   EitherOr<{ error: ErrorKey; errorDetails?: string }, ScopedError<ErrorKey>>
 >;
 
+export type WithoutError<T extends Errorable<any, string>> = T extends Errorable<infer U, string> ? U : never;
+
+export type EventOutput<
+  ClientEvents extends ReturnType<typeof useSocketServices>['client']['emitEvents'],
+  EventName extends keyof ClientEvents
+> = Awaited<ReturnType<ClientEvents[EventName]>>
+
+export type SuccessfulEventOutput<
+  ClientEvents extends ReturnType<typeof useSocketServices>['client']['emitEvents'],
+  EventName extends keyof ClientEvents>
+  = WithoutError<EventOutput<ClientEvents, EventName>>;
+
+
 type ServerSentEndEvents<Events extends { [event: string]: any }> = {
   [K in keyof Events & string as `${K}End`]: Events[K];
 };
@@ -27,22 +40,33 @@ export type ServerSentStartEndEvents<Events extends { [event: string]: any }> =
 
 export const useSocketServices = <
   SocketListenEvents extends (
-    socket: Socket<ReturnType<SocketListenEvents>, EmitEvents, ServerSideEvents, SocketData>
+    socket: Socket<
+      ReturnType<SocketListenEvents>,
+      EmitEvents,
+      ServerSideEvents,
+      SocketData
+    >
   ) => EventsMap,
-  EmitEvents extends EventsMap,
-  ServerSideEvents extends EventsMap,
-  SocketData extends object,
+  EmitEvents extends EventsMap = object,
+  ServerSideEvents extends EventsMap = object,
+  SocketData extends object = object,
 >(
-  namespaceEndpoint: string,
+  endpoint: string,
   options: {
     listenEvents: SocketListenEvents;
     middlewares: Parameters<
-      Namespace<ReturnType<SocketListenEvents>, EmitEvents, ServerSideEvents, SocketData>["use"]
+      Namespace<
+        ReturnType<SocketListenEvents>,
+        EmitEvents,
+        ServerSideEvents,
+        SocketData
+      >["use"]
     >[0][];
   }
 ) => ({
+  endpoint,
   server: (io: Server) => {
-    const namespace = io.of(namespaceEndpoint);
+    const namespace = io.of(endpoint);
     for (const middleware of options?.middlewares ?? []) {
       namespace.use(middleware);
     }
@@ -56,7 +80,10 @@ export const useSocketServices = <
             (
               // @ts-expect-error
               ...args: Parameters<
-                EmitEvents[Extract<keyof ReturnType<SocketListenEvents>, string>]
+                EmitEvents[Extract<
+                  keyof ReturnType<SocketListenEvents>,
+                  string
+                >]
               >,
               callback
             ) => {
@@ -69,7 +96,6 @@ export const useSocketServices = <
     });
   },
   client: {
-    namespaceEndpoint,
     emitEvents: {} as unknown as ReturnType<SocketListenEvents>,
     listenEventsInterfaces: {} as unknown as EmitEvents,
   },

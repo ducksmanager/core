@@ -5,25 +5,7 @@ import { RequiredAuthMiddleware } from "../_auth";
 import { createEntry } from "../indexation";
 import { useSocketServices } from "~socket.io-services";
 import { Socket } from "socket.io";
-
-const getIndexationsWithFirstPage = (userId: number) =>
-  prisma.indexation.findMany({
-    where: {
-      dmUserId: userId,
-    },
-    include: {
-      pages: {
-        include: {
-          image: true,
-        },
-        take: 1,
-        orderBy: {
-          pageNumber: "asc",
-        },
-      },
-      acceptedIssueSuggestion: true,
-    },
-  });
+import { Prisma } from "~/prisma/client_dumili";
 
 export type IndexationsSocket = Socket<object, object, object, SessionData>;
 
@@ -61,10 +43,37 @@ const listenEvents = (socket: IndexationsSocket) => ({
         })
       ),
 
-  getIndexations: () => getIndexationsWithFirstPage(socket.data.user.id),
+  getIndexations: (): Promise<
+    Prisma.indexationGetPayload<{
+      include: {
+        pages: {
+          include: {
+            image: true;
+          };
+        };
+      };
+    }>[]
+  > =>
+    prisma.indexation.findMany({
+      where: {
+        dmUserId: socket.data.user.id,
+      },
+      include: {
+        pages: {
+          include: {
+            image: true,
+          },
+          take: 1,
+          orderBy: {
+            pageNumber: "asc",
+          },
+        },
+        acceptedIssueSuggestion: true,
+      },
+    }),
 });
 
-export const { client, server } = useSocketServices<
+const { endpoint, client, server } = useSocketServices<
   typeof listenEvents,
   object,
   object,
@@ -73,3 +82,6 @@ export const { client, server } = useSocketServices<
   listenEvents,
   middlewares: [RequiredAuthMiddleware],
 });
+
+export { server, endpoint };
+export type ClientEmitEvents = (typeof client)["emitEvents"];

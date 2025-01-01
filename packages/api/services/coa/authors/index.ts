@@ -1,24 +1,39 @@
-import type { Socket } from "socket.io";
-
 import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa/client";
 
-import type Events from "../types";
-export default (socket: Socket<Events>) => {
-  socket.on("getAuthorList", async (personcodes, callback) =>
-    getAuthorFullNames([...new Set(personcodes)]).then(callback),
-  );
+export default {
+  getAuthorList: async (personcodes: string[]) =>
+    getAuthorFullNames([...new Set(personcodes)]),
 
-  socket.on("searchAuthor", async (partialAuthorName, callback) => {
-    const authors = await prismaCoa.inducks_person.findMany({
+  searchAuthor: async (partialAuthorName: string) =>
+    prismaCoa.inducks_person
+      .findMany({
+        where: {
+          fullname: {
+            startsWith: partialAuthorName,
+          },
+        },
+        take: 10,
+      })
+      .then((authors) =>
+        authors
+          .map(({ personcode, fullname }) => ({
+            personcode,
+            fullname: fullname || personcode,
+          }))
+          .groupBy("personcode", "fullname"),
+      ),
+};
+
+export const getAuthorFullNames = (authorPersoncodes: string[]) =>
+  prismaCoa.inducks_person
+    .findMany({
       where: {
-        fullname: {
-          startsWith: partialAuthorName,
+        personcode: {
+          in: authorPersoncodes,
         },
       },
-      take: 10,
-    });
-
-    callback(
+    })
+    .then((authors) =>
       authors
         .map(({ personcode, fullname }) => ({
           personcode,
@@ -26,23 +41,3 @@ export default (socket: Socket<Events>) => {
         }))
         .groupBy("personcode", "fullname"),
     );
-  });
-};
-
-export const getAuthorFullNames = async (
-  authorPersoncodes: string[],
-): Promise<{ [personcode: string]: string }> =>
-  (
-    await prismaCoa.inducks_person.findMany({
-      where: {
-        personcode: {
-          in: authorPersoncodes,
-        },
-      },
-    })
-  )
-    .map(({ personcode, fullname }) => ({
-      personcode,
-      fullname: fullname || personcode,
-    }))
-    .groupBy("personcode", "fullname");

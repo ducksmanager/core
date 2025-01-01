@@ -1,5 +1,3 @@
-import type { Namespace, Server } from "socket.io";
-
 import authors from "./authors";
 import countries from "./countries";
 import issueDetails from "./issue-details";
@@ -7,18 +5,23 @@ import issues from "./issues";
 import publications from "./publications";
 import quotations from "./quotations";
 import stories from "./stories";
-import type Events from "./types";
-import { namespaceEndpoint } from "./types";
-export default (io: Server) => {
-  (io.of(namespaceEndpoint) as Namespace<Events>).on("connection", (socket) => {
-    console.log("connected to coa");
+import { useSocketServices } from "~socket.io-services";
 
-    countries(socket);
-    publications(socket);
-    issues(socket);
-    issueDetails(socket);
-    authors(socket);
-    quotations(socket);
-    stories(socket);
-  });
-};
+const listenEvents = () => ({
+  ...countries,
+  ...publications,
+  ...issues,
+  ...issueDetails,
+  ...authors,
+  ...quotations,
+  ...stories,
+});
+
+export const { endpoint, client, server } = useSocketServices<
+  typeof listenEvents
+>("/coa", {
+  listenEvents,
+  middlewares: [],
+});
+
+export type ClientEvents = (typeof client)["emitEvents"];

@@ -83,7 +83,7 @@ const assignSocket = () => {
     },
     onConnectError: (e, namespace) => {
       if (
-        namespace === CollectionServices.namespaceEndpoint &&
+        namespace === CollectionServices.endpoint &&
         [/jwt expired/, /invalid signature/].some((regex) => regex.test(e.message))
       ) {
         session.clearSession();

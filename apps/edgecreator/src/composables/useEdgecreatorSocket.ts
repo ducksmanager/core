@@ -23,23 +23,23 @@ const defaultExport = (options: {
   return {
     options,
     imageInfo: socket.addNamespace<ImageInfoServices>(
-      ImageInfoServices.namespaceEndpoint,
+      ImageInfoServices.endpoint,
       { session },
     ),
     browse: socket.addNamespace<BrowseServices>(
-      BrowseServices.namespaceEndpoint,
+      BrowseServices.endpoint,
       {
         session,
       },
     ),
-    save: socket.addNamespace<SaveServices>(SaveServices.namespaceEndpoint, {
+    save: socket.addNamespace<SaveServices>(SaveServices.endpoint, {
       session,
     }),
-    text: socket.addNamespace<TextServices>(TextServices.namespaceEndpoint, {
+    text: socket.addNamespace<TextServices>(TextServices.endpoint, {
       session,
     }),
     upload: socket.addNamespace<UploadServices>(
-      UploadServices.namespaceEndpoint,
+      UploadServices.endpoint,
       {
         session,
       },

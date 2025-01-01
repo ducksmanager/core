@@ -1,12 +1,9 @@
-import type { Socket } from "socket.io";
-
 import type { SimpleIssueWithPartInfo } from "~dm-types/SimpleIssue";
 import type { StorySearchResults } from "~dm-types/StorySearchResults";
 import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa/client";
 
-import type Events from "../types";
-export default (socket: Socket<Events>) => {
-  socket.on("getStoryDetails", (storycodes, callback) =>
+export default {
+  getStoryDetails: async (storycodes: string[]) =>
     prismaCoa.inducks_story
       .findMany({
         where: {
@@ -14,48 +11,37 @@ export default (socket: Socket<Events>) => {
         },
       })
       .then((data) => {
-        callback({ stories: data.groupBy("storycode") });
+        return { stories: data.groupBy("storycode") };
       })
       .catch((e) => {
-        callback({ error: "Error", errorDetails: e });
+        return { error: "Error", errorDetails: e };
       }),
-  );
 
-  socket.on("getStoryversionsDetails", (storyversioncodes, callback) =>
+  getStoryversionsDetails: (storyversioncodes: string[]) =>
     prismaCoa.inducks_storyversion
       .findMany({
         where: {
           storyversioncode: { in: storyversioncodes },
         },
       })
-      .then((data) => {
-        callback({ storyversions: data.groupBy("storyversioncode") });
-      })
-      .catch((e) => {
-        callback({ error: "Error", errorDetails: e });
-      }),
-  );
+      .then((data) => ({ storyversions: data.groupBy("storyversioncode") }))
+      .catch((e) => ({ error: "Error", errorDetails: e })),
 
-  socket.on("getStoryjobs", (storyversioncode, callback) =>
+
+  getStoryjobs: (storyversioncode: string) =>
     prismaCoa.inducks_storyjob
       .findMany({
         where: {
           storyversioncode,
         },
       })
-      .then((data) => {
-        callback({ data });
-      })
-      .catch((e) => {
-        callback({ error: "Error", errorDetails: e });
-      }),
-  );
+      .then((data) => ({ data }))
+      .catch((e) => ({ error: "Error", errorDetails: e })),
 
-  socket.on("searchStory", async (keywords, withIssues, callback) => {
+  searchStory: async <WithIssues extends boolean>(keywords: string[], withIssues: WithIssues) => {
     const limit = 10;
     const joinedKeywords = keywords.join(" ");
-    let results = await prismaCoa.$queryRaw<
-      Parameters<typeof callback>[0]["results"]
+    let results = await prismaCoa.$queryRaw<StorySearchResults<WithIssues>["results"]
     >`
       SELECT inducks_storyversion.storycode,
              inducks_storyversion.entirepages,
@@ -83,17 +69,17 @@ export default (socket: Socket<Events>) => {
         };
       }
 
-      callback({
+      return {
         results: resultsWithIssues,
         hasMore,
-      });
+      };
     } else {
-      callback({
+      return {
         results,
         hasMore,
-      });
+      };
     }
-  });
+  }
 };
 
 const listIssuesFromStoryCode = async (storycode: string) =>

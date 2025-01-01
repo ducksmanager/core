@@ -21,7 +21,7 @@ export default (io: Server) => {
     dmSocket.onConnectError = (e) => console.error(e);
     const { services: edgeCreatorServices } =
       dmSocket.addNamespace<EdgeCreatorServices>(
-        EdgeCreatorServices.namespaceEndpoint,
+        EdgeCreatorServices.endpoint,
         {
           session: {
             getToken: () => token,

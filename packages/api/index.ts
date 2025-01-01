@@ -13,7 +13,7 @@ import auth from "./services/auth";
 import { OptionalAuthMiddleware } from "./services/auth/util";
 import bookcase from "./services/bookcase";
 import bookstores from "./services/bookstores";
-import coa from "./services/coa";
+import {server as coa} from "./services/coa";
 import collection from "./services/collection";
 import coverId from "./services/cover-id";
 import edgecreator from "./services/edgecreator";
@@ -23,7 +23,7 @@ import feedback from "./services/feedback";
 import globalStats from "./services/global-stats";
 import presentationText from "./services/presentation-text";
 import publicCollection from "./services/public-collection";
-import stats from "./services/stats";
+import {server as stats} from "./services/stats";
 import {
   getDbStatus,
   getPastecSearchStatus,

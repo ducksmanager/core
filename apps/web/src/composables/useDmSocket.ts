@@ -1,21 +1,62 @@
 import dayjs from "dayjs";
 
-import AppServices from "~dm-services/app/types";
-import AuthServices from "~dm-services/auth/types";
-import BookcaseServices from "~dm-services/bookcase/types";
-import BookstoreServices from "~dm-services/bookstores/types";
-import CoaServices from "~dm-services/coa/types";
-import CollectionServices from "~dm-services/collection/types";
-import CoverIdServices from "~dm-services/cover-id/types";
-import EdgeCreatorServices from "~dm-services/edgecreator/types";
-import EdgesServices from "~dm-services/edges/types";
-import EventsServices from "~dm-services/events/types";
-import GlobalStatsServices from "~dm-services/global-stats/types";
-import PresentationTextServices from "~dm-services/presentation-text/types";
-import PublicCollectionServices from "~dm-services/public-collection/types";
-import StatsServices from "~dm-services/stats/types";
-import type { AxiosStorage } from "~socket.io-client-services";
-import type { SocketClient } from "~socket.io-client-services";
+import {
+  endpoint as appEndpoint,
+  type ClientEvents as AppEvents,
+} from "~dm-services/app";
+import {
+  endpoint as authEndpoint,
+  type ClientEvents as AuthEvents,
+} from "~dm-services/auth";
+import {
+  endpoint as bookcaseEndpoint,
+  type ClientEvents as BookcaseEvents,
+} from "~dm-services/bookcase";
+import {
+  endpoint as bookstoresEndpoint,
+  type ClientEvents as BookstoreEvents,
+} from "~dm-services/bookstores";
+import {
+  endpoint as coaEndpoint,
+  type ClientEvents as CoaEvents,
+} from "~dm-services/coa";
+import {
+  endpoint as collectionEndpoint,
+  type ClientEvents as CollectionEvents,
+} from "~dm-services/collection";
+import {
+  endpoint as coverIdEndpoint,
+  type ClientEvents as CoverIdEvents,
+} from "~dm-services/cover-id";
+import {
+  endpoint as edgecreatorEndpoint,
+  type ClientEvents as EdgeCreatorEvents,
+} from "~dm-services/edgecreator";
+import {
+  endpoint as edgesEndpoint,
+  type ClientEvents as EdgesEvents,
+} from "~dm-services/edges";
+import {
+  endpoint as eventsEndpoint,
+  type ClientEvents as EventsEvents,
+} from "~dm-services/events";
+import {
+  endpoint as globalStatsEndpoint,
+  type ClientEvents as GlobalStatsEvents,
+} from "~dm-services/global-stats";
+import {
+  endpoint as presentationTextEndpoint,
+  type ClientEvents as PresentationTextEvents,
+} from "~dm-services/presentation-text";
+import {
+  endpoint as publicCollectionEndpoint,
+  type ClientEvents as PublicCollectionEvents,
+} from "~dm-services/public-collection";
+import {
+  endpoint as statsEndpoint,
+  type ClientEvents as StatsEvents,
+} from "~dm-services/stats";
+import type { AxiosStorage, SocketClient } from "~socket.io-client-services";
 
 const defaultExport = (options: {
   cacheStorage: AxiosStorage;
@@ -55,75 +96,54 @@ const defaultExport = (options: {
   return {
     socket,
     options,
-    publicCollection: socket.addNamespace<PublicCollectionServices>(
-      PublicCollectionServices.namespaceEndpoint,
+    publicCollection: socket.addNamespace<PublicCollectionEvents>(
+      publicCollectionEndpoint,
     ),
-    app: socket.addNamespace<typeof AppServices.eventsForType>(
-      AppServices.namespaceEndpoint,
-    ),
+    app: socket.addNamespace<typeof AppEvents.eventsForType>(appEndpoint),
 
-    bookcase: socket.addNamespace<BookcaseServices>(
-      BookcaseServices.namespaceEndpoint,
-      { session },
-    ),
-    stats: socket.addNamespace<StatsServices>(StatsServices.namespaceEndpoint, {
+    bookcase: socket.addNamespace<BookcaseEvents>(bookcaseEndpoint, {
+      session,
+    }),
+    stats: socket.addNamespace<StatsEvents>(statsEndpoint, {
       session,
       cache: {
         storage: cacheStorage,
         ttl: (event) => (event === "getSuggestionsForCountry" ? until4am() : 0),
       },
     }),
-    auth: socket.addNamespace<AuthServices>(AuthServices.namespaceEndpoint, {
+    auth: socket.addNamespace<AuthEvents>(authEndpoint, {
       session,
     }),
-    edgeCreator: socket.addNamespace<EdgeCreatorServices>(
-      EdgeCreatorServices.namespaceEndpoint,
-      { session },
+    edgeCreator: socket.addNamespace<EdgeCreatorEvents>(edgecreatorEndpoint, {
+      session,
+    }),
+    presentationText: socket.addNamespace<PresentationTextEvents>(
+      presentationTextEndpoint,
     ),
-    presentationText: socket.addNamespace<PresentationTextServices>(
-      PresentationTextServices.namespaceEndpoint,
-    ),
-    edges: socket.addNamespace<EdgesServices>(
-      EdgesServices.namespaceEndpoint,
-      {},
-    ),
-    coa: socket.addNamespace<CoaServices>(CoaServices.namespaceEndpoint, {
+    edges: socket.addNamespace<EdgesEvents>(edgesEndpoint, {}),
+    coa: socket.addNamespace<CoaEvents>(coaEndpoint, {
       cache: {
         storage: cacheStorage,
         ttl: until4am(),
       },
     }),
-    globalStats: socket.addNamespace<GlobalStatsServices>(
-      GlobalStatsServices.namespaceEndpoint,
-      {
-        cache: {
-          storage: cacheStorage,
-          ttl: 1000, // 1 second only, because we want to always get the latest data but still cache in case of offline
-        },
+    globalStats: socket.addNamespace<GlobalStatsEvents>(globalStatsEndpoint, {
+      cache: {
+        storage: cacheStorage,
+        ttl: 1000, // 1 second only, because we want to always get the latest data but still cache in case of offline
       },
-    ),
-    events: socket.addNamespace<EventsServices>(
-      EventsServices.namespaceEndpoint,
-      {},
-    ),
-    bookstore: socket.addNamespace<BookstoreServices>(
-      BookstoreServices.namespaceEndpoint,
-    ),
-    collection: socket.addNamespace<CollectionServices>(
-      CollectionServices.namespaceEndpoint,
-      {
-        session,
-        // cache: {
-        //   storage: cacheStorage,
-        //   disableCache: (eventName) => eventName.indexOf("get") !== 0,
-        //   ttl: 1000, // 1 second only, because we want to always get the latest data but still cache in case of offline
-        // },
-      },
-    ),
-    coverId: socket.addNamespace<CoverIdServices>(
-      CoverIdServices.namespaceEndpoint,
-      {},
-    ),
+    }),
+    events: socket.addNamespace<EventsEvents>(eventsEndpoint, {}),
+    bookstore: socket.addNamespace<BookstoreEvents>(bookstoresEndpoint),
+    collection: socket.addNamespace<CollectionEvents>(collectionEndpoint, {
+      session,
+      // cache: {
+      //   storage: cacheStorage,
+      //   disableCache: (eventName) => eventName.indexOf("get") !== 0,
+      //   ttl: 1000, // 1 second only, because we want to always get the latest data but still cache in case of offline
+      // },
+    }),
+    coverId: socket.addNamespace<CoverIdEvents>(coverIdEndpoint, {}),
   };
 };
 

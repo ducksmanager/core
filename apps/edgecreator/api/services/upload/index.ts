@@ -24,7 +24,7 @@ export default (io: Server) => {
     const dmSocket = new SocketClient(process.env.DM_SOCKET_URL!);
     ({ services: edgeCreatorServices } =
       dmSocket.addNamespace<EdgeCreatorServices>(
-        EdgeCreatorServices.namespaceEndpoint,
+        EdgeCreatorServices.endpoint,
       ));
     console.log("connected to upload");
 

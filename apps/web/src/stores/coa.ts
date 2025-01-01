@@ -1,14 +1,14 @@
 import { getCurrentLocaleShortKey } from "~/composables/useLocales";
-import type services from "~dm-services/coa/types";
+import type { ClientEvents as CoaClientEvents } from "~dm-services/coa";
 import type { InducksIssueDetails } from "~dm-types/InducksIssueDetails";
 import type { InducksIssueQuotationSimple } from "~dm-types/InducksIssueQuotationSimple";
 import type {
   inducks_story,
   inducks_storyversion,
 } from "~prisma-schemas/client_coa";
-import type { EventReturnType } from "~socket.io-services";
 
 import { socketInjectionKey } from "../composables/useDmSocket";
+import { EventOutput, SuccessfulEventOutput } from "~socket.io-services/index";
 
 const addPartInfo = (issueDetails: InducksIssueDetails) => {
   const storyPartCounter = Object.entries(
@@ -46,30 +46,32 @@ export const coa = defineStore("coa", () => {
 
   const locale = useI18n().locale,
     coverUrls = shallowRef<{ [issuecode: string]: string }>({}),
-    countryNames = shallowRef<EventReturnType<
-      services["getCountryList"]
-    > | null>(null),
+    countryNames = shallowRef<EventOutput<CoaClientEvents, "getCountryList">>(),
     publicationNames = shallowRef<
-      EventReturnType<services["getPublicationListFromCountrycodes"]>
+      EventOutput<CoaClientEvents, "getPublicationListFromCountrycodes">
     >({}),
     publicationNamesFullCountries = shallowRef<string[]>([]),
-    personNames = shallowRef<EventReturnType<services["getAuthorList"]> | null>(
-      null,
-    ),
+    personNames = shallowRef<EventOutput<
+      CoaClientEvents,
+      "getAuthorList"
+    > | null>(null),
     issuecodes = ref<string[]>([]),
     issueDetails = shallowRef<{ [issuecode: string]: InducksIssueDetails }>({}),
     isLoadingCountryNames = ref(false),
-    issuecodeDetails = shallowRef<
-      Exclude<EventReturnType<services["getIssues"]>, "error">
-    >({}),
+    issuecodeDetails = shallowRef<EventOutput<CoaClientEvents, "getIssues">>(
+      {},
+    ),
     issuePopularities = shallowRef<
-      EventReturnType<services["getIssuePopularities"]>
+      EventOutput<CoaClientEvents, "getIssuePopularities">
     >({}),
     issuecodesByPublicationcode = ref<{
       [publicationcode: string]: string[];
     }>({}),
     issueQuotations = ref<
-      EventReturnType<services["getQuotationsByIssuecodes"]>["quotations"]
+      SuccessfulEventOutput<
+        CoaClientEvents,
+        "getQuotationsByIssuecodes"
+      >["quotations"]
     >({}),
     storyDetails = ref<Record<string, inducks_story>>({}),
     storyversionDetails = ref<Record<string, inducks_storyversion>>({}),
@@ -98,10 +100,11 @@ export const coa = defineStore("coa", () => {
         (issuecode) => !existingIssuecodes.has(issuecode),
       );
       if (newIssuecodes.length) {
-        Object.assign(
-          issueQuotations.value,
-          (await services.getQuotationsByIssuecodes(newIssuecodes)).quotations,
-        );
+        const newIssueQuotations =
+          await services.getQuotationsByIssuecodes(newIssuecodes);
+        if (!("error" in newIssueQuotations)) {
+          addIssueQuotations(newIssueQuotations.quotations);
+        }
       }
     },
     addIssueQuotations = (
@@ -208,10 +211,10 @@ export const coa = defineStore("coa", () => {
         (storycode) => !existingStorycodes.has(storycode),
       );
       if (newStorycodes.length) {
-        Object.assign(
-          storyDetails.value,
-          (await services.getStoryDetails(newStorycodes)).stories,
-        );
+        const newStoryDetails = await services.getStoryDetails(newStorycodes);
+        if (!("error" in newStoryDetails)) {
+          Object.assign(storyDetails.value, newStoryDetails.stories);
+        }
       }
     },
     fetchStoryversionDetails = async (storyversioncodes: string[]) => {
@@ -222,11 +225,14 @@ export const coa = defineStore("coa", () => {
         (storyversion) => !existingStoryversioncodes.has(storyversion),
       );
       if (newStoryversioncodes.length) {
-        Object.assign(
-          storyversionDetails.value,
-          (await services.getStoryversionsDetails(newStoryversioncodes))
-            .storyversions,
-        );
+        const newStoryversionDetails =
+          await services.getStoryversionsDetails(newStoryversioncodes);
+        if (!("error" in newStoryversionDetails)) {
+          Object.assign(
+            storyDetails.value,
+            newStoryversionDetails.storyversions,
+          );
+        }
       }
     },
     fetchIssuecodesByPublicationcode = async (publicationcodes: string[]) => {
@@ -270,6 +276,7 @@ export const coa = defineStore("coa", () => {
         });
       }
     };
+
   return {
     addIssueQuotations,
     addPublicationNames,

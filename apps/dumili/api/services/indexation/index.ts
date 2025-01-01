@@ -2,7 +2,10 @@ import "~group-by";
 
 import type { SessionDataWithIndexation } from "~/index";
 import { prisma } from "~/index";
-import CoaServices from "~dm-services/coa/types";
+import {
+  endpoint as coaEndpoint,
+  type ClientEvents as CoaEvents,
+} from "~dm-services/coa";
 import { STORY, storyKinds } from "~dumili-types/storyKinds";
 import { getEntryPages } from "~dumili-utils/entryPages";
 import type {
@@ -14,17 +17,17 @@ import type {
   storySuggestion,
 } from "~prisma/client_dumili";
 import { SocketClient } from "~socket.io-client-services";
-
-const socket = new SocketClient(process.env.DM_SOCKET_URL!);
-const { services: coaServices } = socket.addNamespace<CoaServices>(
-  CoaServices.namespaceEndpoint
-);
-
 import { runKumikoOnPages } from "./kumiko";
 import { runOcrOnImages } from "./ocr";
-import { ServerSentStartEndEvents, useSocketServices } from "~socket.io-services";
+import {
+  type ServerSentStartEndEvents,
+  useSocketServices,
+} from "~socket.io-services";
 import { RequiredAuthMiddleware } from "../_auth";
 import { Socket } from "socket.io";
+
+const socket = new SocketClient(process.env.DM_SOCKET_URL!);
+const { services: coaServices } = socket.addNamespace<CoaEvents>(coaEndpoint);
 
 const indexationPayloadInclude = {
   pages: {
@@ -90,7 +93,8 @@ export type IndexationServerSentStartEvents = {
   runOcrOnImage: (imageId: number) => void;
 };
 
-export type IndexationServerSentStartEndEvents = ServerSentStartEndEvents<IndexationServerSentStartEvents>;
+export type IndexationServerSentStartEndEvents =
+  ServerSentStartEndEvents<IndexationServerSentStartEvents>;
 
 export type IndexationSocket = Socket<
   object,
@@ -150,17 +154,32 @@ const createAiStorySuggestions = async (
         false
       );
 
-      const { stories: storyDetails } = await coaServices.getStoryDetails(
+      const storyDetailsOutput = await coaServices.getStoryDetails(
         searchResults.map(({ storycode }) => storycode)
       );
 
-      const { storyversions: storyversionDetails } =
+      if (!("stories" in storyDetailsOutput)) {
+        return {
+          error: `Error when calling getStoryDetails`,
+        };
+      }
+      const storyDetails = storyDetailsOutput.stories;
+
+      const storyversionDetailsOutput =
         await coaServices.getStoryversionsDetails(
           searchResults.map(
             ({ storycode }) =>
               storyDetails![storycode].originalstoryversioncode!
           )
         );
+
+      if (!("storyversions" in storyversionDetailsOutput)) {
+        return {
+          error: `Error when calling getStoryversionsDetails`,
+        };
+      }
+
+      const storyversionDetails = storyversionDetailsOutput.storyversions;
 
       const storyResults = searchResults.filter(
         ({ storycode }) =>
@@ -315,13 +334,16 @@ const setInferredEntriesStoryKinds = async (
   }
 };
 
-export type IndexationsSocket = Socket<object, IndexationServerSentStartEndEvents, object, SessionDataWithIndexation>;
+export type IndexationsSocket = Socket<
+  object,
+  IndexationServerSentStartEndEvents,
+  object,
+  SessionDataWithIndexation
+>;
 
 const listenEvents = (socket: IndexationsSocket) => ({
   setPageUrl: async (id: number, url: string | null) => {
-    if (
-      !socket.data.indexation.pages.some(({ id: pageId }) => pageId === id)
-    ) {
+    if (!socket.data.indexation.pages.some(({ id: pageId }) => pageId === id)) {
       return {
         error: "This indexation does not have any page with this ID",
       };
@@ -474,9 +496,7 @@ const listenEvents = (socket: IndexationsSocket) => ({
       )
       .then(() => ({ status: "OK" as const })),
 
-  acceptIssueSuggestion: async (
-    suggestionId: issueSuggestion["id"] | null
-  ) => {
+  acceptIssueSuggestion: async (suggestionId: issueSuggestion["id"] | null) => {
     if (
       !socket.data.indexation.issueSuggestions.some(
         ({ id }) => id === suggestionId
@@ -641,10 +661,7 @@ const listenEvents = (socket: IndexationsSocket) => ({
     entryId: entry["id"],
     data: Pick<
       entry,
-      | "entirepages"
-      | "brokenpagenumerator"
-      | "brokenpagedenominator"
-      | "title"
+      "entirepages" | "brokenpagenumerator" | "brokenpagedenominator" | "title"
     >
   ) => {
     const entry = socket.data.indexation.entries.find(
@@ -669,32 +686,40 @@ const listenEvents = (socket: IndexationsSocket) => ({
 
   createEntry: async () =>
     createEntry(socket.data.indexation.id).then(() => ({ status: "OK" })),
-})
+});
 
-export const { client, server } = useSocketServices<
+export const { endpoint, client, server } = useSocketServices<
   typeof listenEvents,
   IndexationServerSentStartEndEvents,
   object,
   SessionDataWithIndexation
->('!'
+>(
+  "!",
   // new RegExp(`^${namespaceEndpoint.replace("{id}", "[0-9]{8}T[0-9]{9}")}$`)
-, {
-  listenEvents,
+  {
+    listenEvents,
 
-  middlewares: [
-    RequiredAuthMiddleware,
-    async (socket, next) => {
-      const indexationId = socket.nsp.name.split("/").pop()!;
-      if (!indexationId) {
-        next(new Error("No indexation ID provided"));
-        return;
-      }
-      socket.data.indexation = (await getFullIndexation(socket, indexationId))!;
+    middlewares: [
+      RequiredAuthMiddleware,
+      async (socket, next) => {
+        const indexationId = socket.nsp.name.split("/").pop()!;
+        if (!indexationId) {
+          next(new Error("No indexation ID provided"));
+          return;
+        }
+        socket.data.indexation = (await getFullIndexation(
+          socket,
+          indexationId
+        ))!;
 
-      next();
-    },
-  ],
-});
+        next();
+      },
+    ],
+  }
+);
+
+export type ClientEmitEvents = typeof client['emitEvents']
+export type ClientListenEvents = typeof client['listenEventsInterfaces']
 
 export const createEntry = async (indexationId: string) =>
   prisma.entry.create({

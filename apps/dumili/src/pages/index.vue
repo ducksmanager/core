@@ -72,6 +72,8 @@
 
 <script setup lang="ts">
 import { dumiliSocketInjectionKey } from "~/composables/useDumiliSocket";
+import type { EventOutput } from "~socket.io-services/index";
+import type { ClientEmitEvents as IndexationsEvents } from "~dumili-services/indexations";
 
 const router = useRouter();
 const {
@@ -83,7 +85,7 @@ const { fetchPublicationNames } = coa();
 
 const form = ref<HTMLFormElement | null>(null);
 const currentIndexations =
-  ref<ReturnType<typeof indexationsServices.getIndexations>>();
+  shallowRef<EventOutput<IndexationsEvents, "getIndexations">>();
 const modal = ref(false);
 const totalPages = ref(16);
 

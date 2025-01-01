@@ -1,11 +1,6 @@
-import type { Socket } from "socket.io";
-
-import type { IssueCoverDetails } from "~dm-types/IssueCoverDetails";
 import type { SimpleEntry } from "~dm-types/SimpleEntry";
 import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa/client";
 import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
-
-import type Events from "../types";
 
 export const getPopularityByIssuecodes = async (issuecodes: string[]) =>
   prismaDm.issue
@@ -28,43 +23,36 @@ export const getPopularityByIssuecodes = async (issuecodes: string[]) =>
     )
     .then((data) => data.groupBy("issuecode"));
 
-export default (socket: Socket<Events>) => {
-  socket.on("getIssueDetails", async (issuecode, callback) => {
+export default {
+  getIssueDetails: async (issuecode: string) => {
     const entries = await getEntries(issuecode);
-    callback({
+    return {
       releaseDate: (
         await prismaCoa.inducks_issue.findFirstOrThrow({
           where: { issuecode },
         })
       ).oldestdate!,
       entries,
-    });
-  });
+    };
+  },
 
-  socket.on("getIssueCoverDetails", async (issuecodes, callback) => {
-    if (issuecodes.length > 10) {
-      callback({ error: "Too many requests" });
-      return;
-    }
-    getIssueCoverDetails(issuecodes, callback);
-  });
+  getIssueCoverDetails: async (issuecodes: string[]) =>
+    issuecodes.length > 10
+      ? { error: "Too many requests" }
+      : getIssueCoverDetails(issuecodes),
 
-  socket.on(
-    "getIssueCoverDetailsByPublicationcode",
-    async (publicationcode, callback) => {
-      const issuecodes = (
-        await prismaCoa.inducks_issue.findMany({
-          select: { issuecode: true },
-          where: { publicationcode },
-        })
-      ).map(({ issuecode }) => issuecode);
-      getIssueCoverDetails(issuecodes, callback);
-    },
-  );
+  getIssueCoverDetailsByPublicationcode: async (publicationcode: string) => {
+    const issuecodes = (
+      await prismaCoa.inducks_issue.findMany({
+        select: { issuecode: true },
+        where: { publicationcode },
+      })
+    ).map(({ issuecode }) => issuecode);
+    return getIssueCoverDetails(issuecodes);
+  },
 
-  socket.on("getIssuePopularities", async (issuecodes, callback) => {
-    getPopularityByIssuecodes(issuecodes).then(callback);
-  });
+  getIssuePopularities: (issuecodes: string[]) =>
+    getPopularityByIssuecodes(issuecodes),
 };
 
 export const getCoverUrls = async (issuecodes: string[]) => {
@@ -160,12 +148,7 @@ const getEntries = async (issuecode: string) =>
       ORDER BY position
   `;
 
-const getIssueCoverDetails = (
-  issuecodes: string[],
-  callback: ({ covers }: { covers: Record<string, IssueCoverDetails> }) => void,
-) =>
+const getIssueCoverDetails = (issuecodes: string[]) =>
   getCoverUrls(issuecodes)
     .then((data) => data.groupBy("issuecode"))
-    .then((data) => {
-      callback({ covers: data });
-    });
+    .then((data) => ({ covers: data }));
