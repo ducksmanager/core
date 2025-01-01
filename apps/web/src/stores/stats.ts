@@ -1,9 +1,7 @@
-import type CoaServices from "~dm-services/coa/types";
-import type CollectionServices from "~dm-services/collection/types";
+import type { ClientEvents as CoaServices } from "~dm-services/coa";
 import type { authorUser } from "~prisma-schemas/schemas/dm";
-import type { EventReturnType } from "~socket.io-services";
-
 import { socketInjectionKey } from "../composables/useDmSocket";
+import { EventOutput } from "~socket.io-services/index";
 
 export const stats = defineStore("stats", () => {
   const {
@@ -11,15 +9,13 @@ export const stats = defineStore("stats", () => {
     collection: { services: collectionServices },
   } = inject(socketInjectionKey)!;
 
-  const ratings = shallowRef<
-    EventReturnType<CollectionServices["getWatchedAuthors"]> | undefined
-  >(undefined);
+  const ratings =
+    shallowRef<EventOutput<CollectionServices, "getWatchedAuthors">>();
   const isSearching = ref(false);
   const isLoadingWatchedAuthors = ref(false);
-  const authorSearchResults = shallowRef<
-    EventReturnType<CoaServices["searchAuthor"]> | undefined
-  >(undefined);
-  const pendingSearch = ref<string | null>(null);
+  const authorSearchResults =
+    shallowRef<EventOutput<CoaServices, "searchAuthor">>();
+  const pendingSearch = ref<string>();
 
   const isAuthorWatched = (personcode: string) =>
     ratings.value?.some(

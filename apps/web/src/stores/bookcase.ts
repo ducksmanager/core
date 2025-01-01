@@ -1,7 +1,7 @@
-import type BookcaseServices from "~dm-services/bookcase/types";
+import type { ClientEvents as BookcaseEvents } from "~dm-services/bookcase";
 import type { BookcaseEdge } from "~dm-types/BookcaseEdge";
 import type { issue_condition } from "~prisma-schemas/schemas/dm";
-import type { EventReturnType } from "~socket.io-services";
+import type { SuccessfulEventOutput } from "~socket.io-services";
 
 import { socketInjectionKey } from "../composables/useDmSocket";
 import { collection } from "./collection";
@@ -20,17 +20,17 @@ export const bookcase = defineStore("bookcase", () => {
 
   const {
     bookcase: { services: bookcaseServices },
+    userBookcase: { services: userBookcaseServices },
   } = inject(socketInjectionKey)!;
 
   const loadedSprites = ref<{ [key: string]: string }>({}),
     isPrivateBookcase = ref(false),
     isUserNotExisting = ref(false),
-    bookcaseUsername = ref<string | null>(null),
-    bookcase = shallowRef<BookcaseEdge[] | null>(null),
-    bookcaseOptions = shallowRef<EventReturnType<
-      BookcaseServices["getBookcaseOptions"]
-    > | null>(null),
-    bookcaseOrder = ref<string[] | null>(null),
+    bookcaseUsername = ref<string>(),
+    bookcase = shallowRef<BookcaseEdge[]>(),
+    bookcaseOptions =
+      shallowRef<SuccessfulEventOutput<BookcaseEvents, "getBookcaseOptions">>(),
+    bookcaseOrder = ref<string[]>(),
     edgeIndexToLoad = ref(0),
     isSharedBookcase = computed(() => route.params.username !== undefined),
     bookcaseWithPopularities = computed(
@@ -64,15 +64,17 @@ export const bookcase = defineStore("bookcase", () => {
         const response = await bookcaseServices.getBookcase(
           collection().user!.username,
         );
-        switch (response.error) {
-          case "Forbidden":
-            isPrivateBookcase.value = true;
-            return;
-          case "Not found":
-            isUserNotExisting.value = true;
-            return;
-          case undefined:
-            bookcase.value = response.edges;
+        if ("error" in response) {
+          switch (response.error) {
+            case "Forbidden":
+              isPrivateBookcase.value = true;
+              return;
+            case "Not found":
+              isUserNotExisting.value = true;
+              return;
+          }
+        } else {
+          bookcase.value = response.edges;
         }
       }
     },
@@ -89,7 +91,7 @@ export const bookcase = defineStore("bookcase", () => {
       }
     },
     updateBookcaseOptions = async () => {
-      await bookcaseServices.setBookcaseOptions(bookcaseOptions.value!);
+      await userBookcaseServices.setBookcaseOptions(bookcaseOptions.value!);
     },
     loadBookcaseOrder = async () => {
       if (!bookcaseOrder.value) {
@@ -104,7 +106,8 @@ export const bookcase = defineStore("bookcase", () => {
       }
     },
     updateBookcaseOrder = async () => {
-      await bookcaseServices.setBookcaseOrder(bookcaseOrder.value!);
+      // TODO implement
+      // await userBookcaseServices.setBookcaseOrder(bookcaseOrder.value!);
     };
 
   return {

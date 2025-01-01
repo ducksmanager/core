@@ -1,3 +1,4 @@
+import { UserSocket } from "~/index";
 import type { IssueSuggestion } from "~dm-types/IssueSuggestion";
 import { IssueSuggestionList } from "~dm-types/IssueSuggestionList";
 import type { StoryDetail } from "~dm-types/StoryDetail";
@@ -7,7 +8,6 @@ import { userOptionType } from "~prisma-schemas/schemas/dm";
 import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
 import type { Prisma as PrismaDmStats } from "~prisma-schemas/schemas/dm_stats";
 import { prismaClient as prismaDmStats } from "~prisma-schemas/schemas/dm_stats/client";
-import { UserSocket } from ".";
 
 export enum COUNTRY_CODE_OPTION {
   ALL = "ALL",
@@ -27,23 +27,25 @@ export default (socket: UserSocket) => ({
             .previousAccess
         : null;
 
-    return Promise.all((["oldestdate", "score"] as const).map((sort) =>
-      getSuggestions(since, countrycode, sort, user!.id, limit, true).then(
-        (results) => {
-          const { suggestionsPerUser, authors, storyDetails } = results;
-          const suggestionsForUser =
-            suggestionsPerUser[user!.id] || new IssueSuggestionList();
-          return {
-            sort,
-            issues: suggestionsForUser.issues,
-            minScore: suggestionsForUser.minScore,
-            maxScore: suggestionsForUser.maxScore,
-            authors,
-            storyDetails,
-          };
-        },
-      )),
-    ).then((results) => results.groupBy('sort', '[]'));
+    return Promise.all(
+      (["oldestdate", "score"] as const).map((sort) =>
+        getSuggestions(since, countrycode, sort, user!.id, limit, true).then(
+          (results) => {
+            const { suggestionsPerUser, authors, storyDetails } = results;
+            const suggestionsForUser =
+              suggestionsPerUser[user!.id] || new IssueSuggestionList();
+            return {
+              sort,
+              issues: suggestionsForUser.issues,
+              minScore: suggestionsForUser.minScore,
+              maxScore: suggestionsForUser.maxScore,
+              authors,
+              storyDetails,
+            };
+          },
+        ),
+      ),
+    ).then((results) => results.groupBy("sort", "[]"));
   },
 });
 

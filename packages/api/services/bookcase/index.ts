@@ -1,14 +1,13 @@
-
 import type { BookcaseEdge } from "~dm-types/BookcaseEdge";
 import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
 
 import { RequiredAuthMiddleware } from "../auth/util";
-import { checkValidBookcaseUser } from "./util";
-import { useSocketServices } from "~socket.io-services";
+import { Errorable, useSocketServices } from "~socket.io-services";
 import options from "./options";
 import order from "./order";
-import { Socket } from "socket.io";
+import { UserSocket } from "~/index";
 import { SessionUser } from "~dm-types/SessionUser";
+import { user } from "~prisma-schemas/client_dm";
 
 type BookcaseEdgeRaw = Omit<BookcaseEdge, "sprites"> & {
   spriteName: string;
@@ -17,15 +16,33 @@ type BookcaseEdgeRaw = Omit<BookcaseEdge, "sprites"> & {
 };
 
 
+ const checkValidBookcaseUser = async (
+  user?: SessionUser | null,
+  username?: string,
+): Promise<Errorable<user, "Unauthorized" | "Forbidden" | "Not found">> => {
+  try {
+    const dbUser = await prismaDm.user.findFirstOrThrow({
+      where: { username },
+    });
+    if (user?.id === dbUser.id || dbUser.allowSharing) {
+      return dbUser;
+    } else if (!user) {
+      return { error: "Unauthorized" };
+    } else return { error: "Forbidden" };
+  } catch (_e) {
+    return { error: "Not found" };
+  }
+};
+
 const getLastPublicationPosition = async (userId: number) =>
-  (
-    await prismaDm.bookcasePublicationOrder.aggregate({
+  prismaDm.bookcasePublicationOrder
+    .aggregate({
       _max: { order: true },
       where: { userId },
     })
-  )._max.order || -1;
+    .then((results) => results._max.order || -1);
 
-const listenEvents = (socket: Socket<object, object, object, { user?: SessionUser }>) => ({
+const listenEvents = (socket: UserSocket<true>) => ({
   getBookcaseOrder: async (username: string) => {
     const user = await checkValidBookcaseUser(socket.data.user, username);
     if (user.error) {
@@ -95,7 +112,7 @@ const listenEvents = (socket: Socket<object, object, object, { user?: SessionUse
       return { error: user.error };
     }
 
-    prismaDm.$queryRaw<BookcaseEdgeRaw[]>`
+    return prismaDm.$queryRaw<BookcaseEdgeRaw[]>`
           SELECT issue.ID AS id,
             issue.issuecode,
             edge.ID AS edgeId,
@@ -134,13 +151,29 @@ const listenEvents = (socket: Socket<object, object, object, { user?: SessionUse
             },
           ]),
       )
-      .then(Object.values)
+      .then<BookcaseEdge[]>(Object.values)
       .then((edges) => ({ edges }));
+  },
+
+  getBookcaseOptions: async (username: string) => {
+    const user = await checkValidBookcaseUser(null, username);
+    return user.error
+      ? { error: user.error }
+      : {
+          textures: {
+            bookcase: `${user.bookcaseTexture1}/${user.bookcaseSubTexture1}`,
+            bookshelf: `${user.bookcaseTexture2}/${user.bookcaseSubTexture2}`,
+          },
+          showAllCopies: user.showDuplicatesInBookcase,
+        };
   },
 });
 
 export const { endpoint, client, server } = useSocketServices<
-  typeof listenEvents
+  typeof listenEvents,
+  object,
+  object,
+  { user?: SessionUser }
 >("/bookcase", {
   listenEvents,
   middlewares: [],
@@ -148,16 +181,23 @@ export const { endpoint, client, server } = useSocketServices<
 
 export type ClientEvents = (typeof client)["emitEvents"];
 
-const authedListenEvents = () => ({
-  ...options,
-  ...order
-})
+const authedListenEvents = (socket: UserSocket) => ({
+  ...options(socket),
+  ...order(socket),
+});
 
 export const {
   endpoint: authedEndpoint,
   client: authedClient,
   server: authedServer,
-} = useSocketServices<typeof authedListenEvents>("/user-bookcase", {
+} = useSocketServices<
+  typeof authedListenEvents,
+  object,
+  object,
+  { user: SessionUser }
+>("/user-bookcase", {
   listenEvents: authedListenEvents,
   middlewares: [RequiredAuthMiddleware],
 });
+
+export type AuthedClientEvents = (typeof authedClient)["emitEvents"];

@@ -11,10 +11,14 @@ import {
 import {
   endpoint as bookcaseEndpoint,
   type ClientEvents as BookcaseEvents,
+  authedEndpoint as userBookcaseEndpoint,
+  type AuthedClientEvents as UserBookcaseEvents,
 } from "~dm-services/bookcase";
 import {
   endpoint as bookstoresEndpoint,
   type ClientEvents as BookstoreEvents,
+  adminEndpoint as adminBookstoresEndpoint,
+  type AdminClientEvents as AdminBookstoreEvents,
 } from "~dm-services/bookstores";
 import {
   endpoint as coaEndpoint,
@@ -99,11 +103,17 @@ const defaultExport = (options: {
     publicCollection: socket.addNamespace<PublicCollectionEvents>(
       publicCollectionEndpoint,
     ),
-    app: socket.addNamespace<typeof AppEvents.eventsForType>(appEndpoint),
+    app: socket.addNamespace<AppEvents>(appEndpoint),
 
     bookcase: socket.addNamespace<BookcaseEvents>(bookcaseEndpoint, {
       session,
     }),
+    userBookcase: socket.addNamespace<UserBookcaseEvents>(
+      userBookcaseEndpoint,
+      {
+        session,
+      },
+    ),
     stats: socket.addNamespace<StatsEvents>(statsEndpoint, {
       session,
       cache: {
@@ -135,6 +145,9 @@ const defaultExport = (options: {
     }),
     events: socket.addNamespace<EventsEvents>(eventsEndpoint, {}),
     bookstore: socket.addNamespace<BookstoreEvents>(bookstoresEndpoint),
+    adminBookstore: socket.addNamespace<AdminBookstoreEvents>(
+      adminBookstoresEndpoint,
+    ),
     collection: socket.addNamespace<CollectionEvents>(collectionEndpoint, {
       session,
       // cache: {

@@ -4,16 +4,16 @@ import cluster from "cluster";
 import dotenv from "dotenv";
 import { createServer } from "http";
 import { cpus } from "os";
-import { Server } from "socket.io";
+import { Server, Socket } from "socket.io";
 
 import type { SessionUser } from "~dm-types/SessionUser";
 
 import app, { getUpdateFileUrl } from "./services/app";
-import auth from "./services/auth";
+import { server as auth } from "./services/auth";
 import { OptionalAuthMiddleware } from "./services/auth/util";
-import bookcase from "./services/bookcase";
+import { server as bookcase } from "./services/bookcase";
 import bookstores from "./services/bookstores";
-import {server as coa} from "./services/coa";
+import { server as coa } from "./services/coa";
 import collection from "./services/collection";
 import coverId from "./services/cover-id";
 import edgecreator from "./services/edgecreator";
@@ -23,12 +23,19 @@ import feedback from "./services/feedback";
 import globalStats from "./services/global-stats";
 import presentationText from "./services/presentation-text";
 import publicCollection from "./services/public-collection";
-import {server as stats} from "./services/stats";
+import { server as stats } from "./services/stats";
 import {
   getDbStatus,
   getPastecSearchStatus,
   getPastecStatus,
 } from "./services/status";
+
+export type UserSocket<OptionalUser = false> = Socket<
+  object,
+  object,
+  object,
+  OptionalUser extends false ? { user: SessionUser } : { user?: SessionUser }
+>;
 
 class ServerWithUser extends Server<
   Record<string, never>,
