@@ -8,21 +8,21 @@ import { Server, Socket } from "socket.io";
 
 import type { SessionUser } from "~dm-types/SessionUser";
 
-import app, { getUpdateFileUrl } from "./services/app";
+import { server as app, getUpdateFileUrl } from "./services/app";
 import { server as auth } from "./services/auth";
 import { OptionalAuthMiddleware } from "./services/auth/util";
 import { server as bookcase } from "./services/bookcase";
-import bookstores from "./services/bookstores";
+import { server as bookstores } from "./services/bookstores";
 import { server as coa } from "./services/coa";
-import collection from "./services/collection";
-import coverId from "./services/cover-id";
+import { server as collection } from "./services/collection";
+import { server as coverId } from "./services/cover-id";
 import edgecreator from "./services/edgecreator";
-import edges from "./services/edges";
-import events from "./services/events";
-import feedback from "./services/feedback";
-import globalStats from "./services/global-stats";
-import presentationText from "./services/presentation-text";
-import publicCollection from "./services/public-collection";
+import {server as edges} from "./services/edges";
+import { server as events } from "./services/events";
+import { server as feedback } from "./services/feedback";
+import { server as globalStats } from "./services/global-stats";
+import { server as presentationText } from "./services/presentation-text";
+import { server as publicCollection } from "./services/public-collection";
 import { server as stats } from "./services/stats";
 import {
   getDbStatus,

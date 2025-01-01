@@ -1,16 +1,17 @@
-import type CollectionServices from "~dm-services/collection/types";
+import type { ClientEvents as CollectionServices } from "~dm-services/collection";
 import type { requestedIssue } from "~prisma-schemas/schemas/dm";
-import type { EventReturnType } from "~socket.io-services";
 
 import { socketInjectionKey } from "../composables/useDmSocket";
+import { EventOutput } from "~socket.io-services/index";
 
 export const marketplace = defineStore("marketplace", () => {
   const {
     collection: { services: collectionServices },
   } = inject(socketInjectionKey)!;
 
-  const issuesOnSaleByOthers = ref<EventReturnType<
-      CollectionServices["getIssuesForSale"]
+  const issuesOnSaleByOthers = ref<EventOutput<
+      CollectionServices,
+      "getIssuesForSale"
     > | null>(null),
     issueRequestsAsBuyer = shallowRef<requestedIssue[] | null>(null),
     issueRequestsAsSeller = shallowRef<requestedIssue[] | null>(null),
@@ -18,9 +19,7 @@ export const marketplace = defineStore("marketplace", () => {
     isLoadingIssueRequestsAsSeller = ref(false),
     isLoadingIssuesOnSaleByOthers = ref(false),
     contactMethods = ref<{
-      [userId: number]: EventReturnType<
-        CollectionServices["getContactMethods"]
-      >;
+      [userId: number]: EventOutput<CollectionServices, "getContactMethods">;
     }>({}),
     sentRequestIssueIds = computed(() =>
       issueRequestsAsBuyer.value?.map(({ issueId }) => issueId),

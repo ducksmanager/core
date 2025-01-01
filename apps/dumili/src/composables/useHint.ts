@@ -1,8 +1,8 @@
 import { suggestions } from "~/stores/suggestions";
-import type CoverIdServices from "~dm-services/cover-id/types";
-import type { EventReturnType } from "~socket.io-services";
+import type { ClientEvents as CoverIdServices } from "~dm-services/cover-id";
 
 import { dumiliSocketInjectionKey } from "./useDumiliSocket";
+import type { EventOutput } from "~socket.io-services/index";
 
 export default () => {
   const { loadIndexation } = suggestions();
@@ -12,7 +12,7 @@ export default () => {
   const { indexationSocket } = inject(dumiliSocketInjectionKey)!;
 
   const applyHintsFromCoverSearch = async (
-    results: EventReturnType<CoverIdServices["searchFromCover"]>,
+    results: EventOutput<CoverIdServices, "searchFromCover">,
   ) => {
     if (!results.covers?.length) {
       console.error("Erreur lors de la recherche par image de la couverture");

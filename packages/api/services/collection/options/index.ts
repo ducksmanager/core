@@ -1,9 +1,8 @@
-import type { Socket } from "socket.io";
+import { UserSocket } from "~/index";
 
 import { userOptionType } from "~prisma-schemas/schemas/dm";
 import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
 
-import type Events from "../types";
 const optionNameToEnum = (
   optionName:
     | "suggestion_notification_country"
@@ -11,8 +10,8 @@ const optionNameToEnum = (
     | "marketplace_contact_methods",
 ) => userOptionType[optionName];
 
-export default (socket: Socket<Events>) => {
-  socket.on("getOption", async (optionName, callback) =>
+export default (socket: UserSocket) => ({
+  getOption: async (optionName: Parameters<typeof optionNameToEnum>[0]) =>
     prismaDm.userOption
       .findMany({
         where: {
@@ -20,10 +19,9 @@ export default (socket: Socket<Events>) => {
           optionName: optionNameToEnum(optionName),
         },
       })
-      .then((data) => callback(data.map(({ optionValue }) => optionValue))),
-  );
+      .then((data) => data.map(({ optionValue }) => optionValue)),
 
-  socket.on("setOption", async (optionName, optionValues, callback) => {
+  setOption: async (optionName: userOptionType, optionValues: string[]) => {
     {
       const userId = socket.data.user!.id;
       await prismaDm.userOption.deleteMany({
@@ -44,8 +42,6 @@ export default (socket: Socket<Events>) => {
           }),
         ),
       );
-
-      callback();
     }
-  });
-};
+  },
+});

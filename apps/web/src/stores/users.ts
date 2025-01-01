@@ -1,10 +1,10 @@
-import type GlobalStatsServices from "~dm-services/global-stats/types";
+import type { ClientEvents as GlobalStatsServices } from "~dm-services/global-stats";
 import type { BookcaseContributor } from "~dm-types/BookcaseContributor";
 import type { AbstractEvent } from "~dm-types/events/AbstractEvent";
 import type { user } from "~prisma-schemas/schemas/dm";
-import type { EventReturnType } from "~socket.io-services";
 
 import { socketInjectionKey } from "../composables/useDmSocket";
+import { EventOutput } from "~socket.io-services/index";
 
 type SimpleUser = Pick<user, "id" | "username">;
 
@@ -13,14 +13,14 @@ export const users = defineStore("users", () => {
     events: { services: eventsServices },
     globalStats: { services: globalStatsServices },
   } = inject(socketInjectionKey)!;
-  const count = ref<EventReturnType<
-      GlobalStatsServices["getUserCount"]
-    > | null>(null),
+  const count = ref<EventOutput<GlobalStatsServices, "getUserCount"> | null>(
+      null,
+    ),
     stats = shallowRef<
-      EventReturnType<GlobalStatsServices["getUsersPointsAndStats"]>["stats"]
+      EventOutput<GlobalStatsServices, "getUsersPointsAndStats">["stats"]
     >({}),
     points = shallowRef<
-      EventReturnType<GlobalStatsServices["getUsersPointsAndStats"]>["points"]
+      EventOutput<GlobalStatsServices, "getUsersPointsAndStats">["points"]
     >({}),
     events = shallowRef<AbstractEvent[]>([]),
     bookcaseContributors = shallowRef<BookcaseContributor[] | null>(null),

@@ -1,29 +1,25 @@
-import type { Socket } from "socket.io";
-
 import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa/client";
 import type { issue } from "~prisma-schemas/schemas/dm";
 import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
 
-import type Events from "../types";
 import contactMethods from "./contact-methods";
+import { UserSocket } from "~/index";
 
-export default (socket: Socket<Events>) => {
-  contactMethods(socket);
+export default (socket: UserSocket) => ({
+  ...contactMethods(socket),
 
-  socket.on("deleteRequests", async (issueId, callback) => {
+  deleteRequests: async (issueId: number) => {
     await prismaDm.requestedIssue.deleteMany({
       where: {
         buyerId: socket.data.user!.id,
         issueId,
       },
     });
-    callback();
-  });
+  },
 
-  socket.on("createRequests", async (issueIds, callback) => {
+  createRequests: async (issueIds: number[]) => {
     if (issueIds.find((issueId) => isNaN(issueId))) {
-      callback({ error: `Invalid issue ID list, NaN` });
-      return;
+      return { error: `Invalid issue ID list, NaN` };
     }
     const issues = await prismaDm.issue.findMany({
       where: {
@@ -32,11 +28,10 @@ export default (socket: Socket<Events>) => {
       },
     });
     if (issues.length !== issueIds.length) {
-      callback({
+      return {
         error: `The provided issue IDs were not all found`,
         errorDetails: `The provided issue IDs (${issueIds.length} provided)were not all found (${issues.length} found)`,
-      });
-      return;
+      };
     }
     const alreadyRequestedIssueIds = (
       await prismaDm.requestedIssue.findMany({
@@ -59,10 +54,9 @@ export default (socket: Socket<Events>) => {
         issueId,
       })),
     });
-    callback();
-  });
+  },
 
-  socket.on("getRequests", async (as, callback) => {
+  getRequests: async (as: "buyer" | "seller") => {
     switch (as) {
       case "seller":
         const requestedIssuesOnSaleIds = await prismaDm.$queryRaw<
@@ -73,29 +67,22 @@ export default (socket: Socket<Events>) => {
             INNER JOIN numeros issue ON requestedIssue.ID_Numero = issue.ID
             WHERE issue.ID_Utilisateur = ${socket.data.user!.id}
         `;
-        callback(
-          await prismaDm.requestedIssue.findMany({
-            where: {
-              id: { in: requestedIssuesOnSaleIds.map(({ id }) => id) },
-            },
-          }),
-        );
-        break;
+        return await prismaDm.requestedIssue.findMany({
+          where: {
+            id: { in: requestedIssuesOnSaleIds.map(({ id }) => id) },
+          },
+        });
       case "buyer":
-        callback(
-          await prismaDm.requestedIssue.findMany({
-            where: {
-              buyerId: socket.data.user!.id,
-            },
-          }),
-        );
+        return await prismaDm.requestedIssue.findMany({
+          where: {
+            buyerId: socket.data.user!.id,
+          },
+        });
     }
-  });
+  },
 
-  socket.on("getIssuesForSale", (callback) =>
-    getIssuesForSale(socket.data.user!.id).then(callback),
-  );
-};
+  getIssuesForSale: () => getIssuesForSale(socket.data.user!.id),
+});
 
 export const getIssuesForSale = async (buyerId: number) =>
   prismaDm.$queryRaw<Pick<issue, "id">[]>`

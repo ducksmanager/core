@@ -82,7 +82,7 @@ alias: [/collection/abonnements]
 <script setup lang="ts">
 import dayjs from "dayjs";
 
-import type { SubscriptionTransformedStringDates } from "~/stores/collection";
+import { SubscriptionTransformedStringDates } from "~dm-services/collection/subscriptions";
 import type { subscription } from "~prisma-schemas/schemas/dm";
 type AssociatedPublication = {
   referencePublicationcode: string;

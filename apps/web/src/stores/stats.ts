@@ -1,4 +1,5 @@
 import type { ClientEvents as CoaServices } from "~dm-services/coa";
+import type { ClientEvents as CollectionServices } from "~dm-services/collection";
 import type { authorUser } from "~prisma-schemas/schemas/dm";
 import { socketInjectionKey } from "../composables/useDmSocket";
 import { EventOutput } from "~socket.io-services/index";

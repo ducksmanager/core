@@ -1,11 +1,19 @@
-import type { Socket } from "socket.io";
+import { UserSocket } from "~/index";
 
 import type { EditSubscription } from "~dm-types/EditSubscription";
+import { subscription } from "~prisma-schemas/client_dm";
 import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
 
-import type Events from "../types";
-export default (socket: Socket<Events>) => {
-  socket.on("getSubscriptions", (callback) =>
+export type SubscriptionTransformedStringDates = Omit<
+  subscription,
+  "startDate" | "endDate"
+> & {
+  startDate: string;
+  endDate: string;
+};
+
+export default (socket: UserSocket) => ({
+  getSubscriptions: () =>
     prismaDm.subscription
       .findMany({
         where: {
@@ -15,27 +23,22 @@ export default (socket: Socket<Events>) => {
         },
       })
       .then((data) =>
-        callback(
-          data.map((subscription) => ({
-            ...subscription,
-            startDate: subscription.startDate.toISOString(),
-            endDate: subscription.endDate.toISOString(),
-          })),
-        ),
+        data.map((subscription) => ({
+          ...subscription,
+          startDate: subscription.startDate.toISOString(),
+          endDate: subscription.endDate.toISOString(),
+        })),
       ),
-  );
 
-  socket.on("createSubscription", async (subscription, callback) => {
+  createSubscription: async (subscription: EditSubscription) => {
     await upsertSubscription(null, subscription, socket.data.user!.id);
-    callback();
-  });
+  },
 
-  socket.on("updateSubscription", async (id, subscription, callback) => {
+  updateSubscription: async (id: number, subscription: SubscriptionTransformedStringDates) => {
     await upsertSubscription(id, subscription, socket.data.user!.id);
-    callback();
-  });
+  },
 
-  socket.on("deleteSubscription", async (id, callback) => {
+  deleteSubscription: async (id: number) => {
     await prismaDm.subscription.deleteMany({
       where: {
         id,
@@ -44,9 +47,8 @@ export default (socket: Socket<Events>) => {
         },
       },
     });
-    callback();
-  });
-};
+  },
+});
 
 export async function upsertSubscription(
   id: number | null,
@@ -78,7 +80,7 @@ export async function upsertSubscription(
       users: {
         connect: { id: userId },
       },
-      ...dates
+      ...dates,
     },
     where: {
       id: id || 0,

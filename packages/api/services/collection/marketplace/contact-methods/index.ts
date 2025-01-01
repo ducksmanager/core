@@ -1,17 +1,14 @@
-import type { Socket } from "socket.io";
-
 import { userOptionType } from "~prisma-schemas/schemas/dm";
 import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
 
-import type Events from "../../types";
 import { getIssuesForSale } from "..";
+import { UserSocket } from "~/index";
 
-export default (socket: Socket<Events>) => {
-  socket.on("getContactMethods", async (sellerId, callback) => {
+export default (socket: UserSocket) => ({
+  getContactMethods: async (sellerId: number) => {
     const issuesForSale = await getIssuesForSale(socket.data.user!.id);
     if (!issuesForSale.some((issue) => issue.userId === sellerId)) {
-      callback({ error: "Invalid seller ID", errorDetails: String(sellerId) });
-      return;
+      return { error: "Invalid seller ID", errorDetails: String(sellerId) };
     }
     const seller = await prismaDm.user.findUniqueOrThrow({
       select: { email: true, discordId: true },
@@ -23,15 +20,13 @@ export default (socket: Socket<Events>) => {
         optionName: userOptionType.marketplace_contact_methods,
       },
     });
-    callback(
-      sellerContactMethods.reduce(
-        (acc, { optionValue: contactMethod }) => ({
-          ...acc,
-          [contactMethod]:
-            contactMethod === "email" ? seller.email : seller.discordId,
-        }),
-        {},
-      ),
+    return sellerContactMethods.reduce(
+      (acc, { optionValue: contactMethod }) => ({
+        ...acc,
+        [contactMethod]:
+          contactMethod === "email" ? seller.email : seller.discordId,
+      }),
+      {},
     );
-  });
-};
+  },
+});
