@@ -1,9 +1,17 @@
 import { existsSync, readFileSync } from "fs";
-import type { Namespace, Server } from "socket.io";
+import { Errorable, useSocketServices } from "~socket.io-services";
 
-import type Events from "./types";
-import type { AppInfos, ErrorableAppUpdate } from "./types";
-import { namespaceEndpoint } from "./types";
+type AppInfos = {
+  version: string;
+};
+
+type ErrorableAppUpdate = Errorable<
+{
+  version: string;
+  url: string;
+},
+  "Not found" | "Already up to date"
+>;
 
 export const getUpdateFileUrl = (appInfos?: AppInfos): ErrorableAppUpdate => {
   const fileName = import.meta.dirname + "/latest-whattheduck-bundle.txt";
@@ -28,12 +36,15 @@ export const getUpdateFileUrl = (appInfos?: AppInfos): ErrorableAppUpdate => {
   }
 };
 
-export default (io: Server) => {
-  (io.of(namespaceEndpoint) as Namespace<Events>).on("connection", (socket) => {
-    console.log("connected to app");
+const listenEvents = () => ({
+  getBundleUrl: (appInfos: AppInfos) => getUpdateFileUrl(appInfos),
+});
 
-    socket.on("getBundleUrl", (appInfos, callback) => {
-      callback(getUpdateFileUrl(appInfos));
-    });
-  });
-};
+export const { endpoint, client, server } = useSocketServices<
+  typeof listenEvents
+>("/app", {
+  listenEvents,
+  middlewares: [],
+});
+
+export type ClientEvents = (typeof client)["emitEvents"];

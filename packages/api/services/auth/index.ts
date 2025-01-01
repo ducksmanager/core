@@ -1,6 +1,5 @@
 import crypto from "crypto";
 import jwt from "jsonwebtoken";
-import type { Namespace, Server } from "socket.io";
 
 import resetPassword from "~/emails/reset-password";
 import { prismaClient } from "~prisma-schemas/schemas/dm/client";
@@ -14,98 +13,102 @@ import {
   UsernameValidation,
   validate,
 } from "../collection/user/util";
-import type Events from "./types";
-import { namespaceEndpoint } from "./types";
 import {
   generateAccessToken,
   getHashedPassword,
   isValidEmail,
   loginAs,
 } from "./util";
+import { useSocketServices } from "~socket.io-services";
 
-export default (io: Server) => {
-  (io.of(namespaceEndpoint) as Namespace<Events>).on("connection", (socket) => {
-    console.log("connected to auth");
-    socket.on("forgot", async (token, callback) => {
+const listenEvents = () => ({
+  forgot: async (token: string) =>
+    new Promise((resolve) => {
       jwt.verify(token, process.env.TOKEN_SECRET as string, (err) => {
-        callback({ error: err!.message || "" });
+        resolve({ error: err!.message || "" });
       });
-    });
-
-    socket.on("requestTokenForForgotPassword", async (email, callback) => {
-      if (!isValidEmail(email)) {
-        callback({ error: "Invalid email" });
-      } else {
-        const user = await prismaClient.user.findFirst({
-          where: { email },
-        });
-        if (user) {
-          console.log(
-            `A visitor requested to reset a password for a valid e-mail: ${email}`,
-          );
-          const token = jwt.sign(email, process.env.TOKEN_SECRET!, {
-            expiresIn: "60m",
-          });
-          await prismaClient.userPasswordToken.create({
-            data: { userId: user.id, token },
-          });
-
-          await new resetPassword({ user, token }).send();
-          callback({ token });
-        } else {
-          console.log(
-            `A visitor requested to reset a password for an invalid e-mail: ${email}`,
-          );
-          callback({ error: "Invalid email" });
-        }
-      }
-    });
-
-    socket.on(
-      "changePassword",
-      async ({ password, password2, token }, callback) => {
-        jwt.verify(
-          token,
-          process.env.TOKEN_SECRET as string,
-          async (err: unknown, data: unknown) => {
-            if (err) {
-              callback({ error: "Invalid token" });
-            } else if (password.length < 6) {
-              callback({
-                error: "Your password should be at least 6 characters long",
-              });
-            } else if (password !== password2) {
-              callback({ error: "The two passwords should be identical" });
-            } else {
-              const hashedPassword = crypto
-                .createHash("sha1")
-                .update(password)
-                .digest("hex");
-              await prismaClient.user.updateMany({
-                data: {
-                  password: hashedPassword,
-                },
-                where: {
-                  email: (data as { payload: string }).payload,
-                },
-              });
-              const user = (await prismaClient.user.findFirst({
-                where: {
-                  email: (data as { payload: string }).payload,
-                },
-              }))!;
-
-              callback({ token: await loginAs(user, hashedPassword) });
-            }
-          },
+    }),
+  requestTokenForForgotPassword: async (email: string) => {
+    if (!isValidEmail(email)) {
+      return { error: "Invalid email" };
+    } else {
+      const user = await prismaClient.user.findFirst({
+        where: { email },
+      });
+      if (user) {
+        console.log(
+          `A visitor requested to reset a password for a valid e-mail: ${email}`,
         );
-        callback({ error: "Something went wrong" });
-      },
-    );
+        const token = jwt.sign(email, process.env.TOKEN_SECRET!, {
+          expiresIn: "60m",
+        });
+        await prismaClient.userPasswordToken.create({
+          data: { userId: user.id, token },
+        });
 
-    socket.on("getCsrf", (callback) => callback(""));
+        await new resetPassword({ user, token }).send();
+        return { token };
+      } else {
+        console.log(
+          `A visitor requested to reset a password for an invalid e-mail: ${email}`,
+        );
+        return { error: "Invalid email" };
+      }
+    }
+  },
 
-    socket.on("signup", async (input, callback) => {
+  changePassword: async ({
+    password,
+    password2,
+    token,
+  }: {
+    password: string;
+    password2: string;
+    token: string;
+  }) =>
+    new Promise((resolve) => {
+      jwt.verify(
+        token,
+        process.env.TOKEN_SECRET as string,
+        async (err: unknown, data: unknown) => {
+          if (err) {
+            resolve({ error: "Invalid token" });
+          } else if (password.length < 6) {
+            resolve({
+              error: "Your password should be at least 6 characters long",
+            });
+          } else if (password !== password2) {
+            resolve({ error: "The two passwords should be identical" });
+          } else {
+            const hashedPassword = crypto
+              .createHash("sha1")
+              .update(password)
+              .digest("hex");
+            await prismaClient.user.updateMany({
+              data: {
+                password: hashedPassword,
+              },
+              where: {
+                email: (data as { payload: string }).payload,
+              },
+            });
+            const user = (await prismaClient.user.findFirst({
+              where: {
+                email: (data as { payload: string }).payload,
+              },
+            }))!;
+
+            resolve({ token: await loginAs(user, hashedPassword) });
+          }
+        },
+      );
+      resolve({ error: "Something went wrong" });
+    }),
+
+  getCsrf: () => "",
+
+  signup: (input: { username: string; password: string; email: string }) =>
+    new Promise(async (resolve) => {
       console.log(`signup with user ${input.username}`);
       await prismaDm.$transaction(async (transaction) => {
         const scopedError = await validate(transaction, input, [
@@ -116,7 +119,7 @@ export default (io: Server) => {
           new PasswordValidation(),
         ]);
         if (scopedError) {
-          callback({ error: "Bad request", ...scopedError });
+          resolve({ error: "Bad request", ...scopedError });
         } else {
           const { username, password, email } = input;
           const hashedPassword = getHashedPassword(password);
@@ -143,43 +146,53 @@ export default (io: Server) => {
             privileges,
           });
 
-          callback(token);
+          resolve(token);
         }
       });
+    }),
+
+  login: async ({username, password}: { username: string, password: string }) => {
+    console.log("login");
+    const hashedPassword = getHashedPassword(password);
+    const user = await prismaDm.user.findFirst({
+      where: {
+        username,
+        password: hashedPassword,
+      },
     });
+    if (user) {
+      const token = await loginAs(user, hashedPassword);
 
-    socket.on("login", async ({ username, password }, callback) => {
-      console.log("login");
-      const hashedPassword = getHashedPassword(password);
-      const user = await prismaDm.user.findFirst({
-        where: {
-          username,
-          password: hashedPassword,
-        },
-      });
-      if (user) {
-        const token = await loginAs(user, hashedPassword);
+      return token;
+    } else {
+      return { error: "Invalid username or password" };
+    }
+  },
 
-        callback(token);
-      } else {
-        callback({ error: "Invalid username or password" });
-      }
+  loginAsDemo: async () => {
+    const demoUser = await prismaDm.user.findFirst({
+      where: { username: "demo" },
     });
+    if (!demoUser) {
+      return { error: "No demo user found" };
+    } else {
+      const token = await loginAs(
+        demoUser,
+        getHashedPassword(demoUser!.password),
+      );
 
-    socket.on("loginAsDemo", async (callback) => {
-      const demoUser = await prismaDm.user.findFirst({
-        where: { username: "demo" },
-      });
-      if (!demoUser) {
-        callback({ error: "No demo user found" });
-      } else {
-        const token = await loginAs(
-          demoUser,
-          getHashedPassword(demoUser!.password),
-        );
+      return { token };
+    }
+  },
+});
 
-        callback({ token });
-      }
-    });
-  });
-};
+
+export const { endpoint, client, server } = useSocketServices<
+  typeof listenEvents
+>("/auth", {
+  listenEvents,
+  middlewares: [],
+});
+
+export type ClientEvents = (typeof client)["emitEvents"];
+

@@ -2,24 +2,23 @@ import type { Socket } from "socket.io";
 
 import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
 
-import type Events from "../types";
 import { checkValidBookcaseUser } from "../util";
-export default (socket: Socket<Events>) => {
-  socket.on("getBookcaseOptions", async (username, callback) => {
+export default {
+  getBookcaseOptions: async (username: string) => {
     const user = await checkValidBookcaseUser(null, username);
     if (user.error) {
-      callback({ error: user.error });
+      return { error: user.error };
     } else {
-      callback({
+      return {
         textures: {
           bookcase: `${user.bookcaseTexture1}/${user.bookcaseSubTexture1}`,
           bookshelf: `${user.bookcaseTexture2}/${user.bookcaseSubTexture2}`,
         },
         showAllCopies: user.showDuplicatesInBookcase,
-      });
+      }
     }
-  });
-};
+  }
+}
 
 export const authenticated = (socket: Socket) => {
   socket.on(
