@@ -16,7 +16,7 @@ export interface FabOption {
 
 export const app = defineStore('app', () => {
   const offlineBannerHeight = ref(0);
-  const socket = ref<ReturnType<typeof useDmSocket> | null>(null);
+  const socket = ref<ReturnType<typeof useDmSocket>>();
 
   const isOfflineMode = ref<boolean | 'offline_no_cache'>(false);
   const isOffline = computed(() => isOfflineMode.value !== false);
@@ -95,7 +95,7 @@ export const app = defineStore('app', () => {
     }
   });
 
-  const selectedIssuecodes = ref<string[] | null>(null);
+  const selectedIssuecodes = ref<string[]>();
 
   const issueViewModes: FabOption[] = [
     { id: 'list', label: 'List', icon: { ios: '/icons/list.svg', md: '/icons/list.svg' } },

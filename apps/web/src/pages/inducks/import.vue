@@ -280,15 +280,15 @@ const { getImagePath } = images();
 
 let step = $ref(1);
 const rawData = $ref("");
-const expandedPublicationAccordion = $ref<string | null>(null);
-const expandedNotImportableAccordion = $ref<string | null>(null);
+const expandedPublicationAccordion = $ref<string>();
+const expandedNotImportableAccordion = $ref<string>();
 let hasPublicationNames = $ref(false);
 let hasIssuecodes = $ref(false);
 const issueDefaultCondition = $ref<issue_condition>("bon");
-let issuesToImport = $shallowRef<string[] | null>(null);
-let issuesNotReferenced = $shallowRef<string[] | null>(null);
-let issuesAlreadyInCollection = $shallowRef<string[] | null>(null);
-let issuesImportable = $shallowRef<string[] | null>(null);
+let issuesToImport = $shallowRef<string[]>();
+let issuesNotReferenced = $shallowRef<string[]>();
+let issuesAlreadyInCollection = $shallowRef<string[]>();
+let issuesImportable = $shallowRef<string[]>();
 let importProgress = $ref(0);
 
 const {

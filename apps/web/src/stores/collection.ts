@@ -46,22 +46,18 @@ export const collection = defineStore("collection", () => {
   const collectionUtils = useCollection(
       issues as ShallowRef<(issue & { issuecode: string })[]>,
     ),
-    watchedPublicationsWithSales = shallowRef<string[] | null>(null),
-    purchases = shallowRef<purchase[] | null>(null),
-    watchedAuthors = shallowRef<authorUser[] | null>(null),
-    marketplaceContactMethods = ref<string[] | null>(null),
-    suggestions = shallowRef<EventOutput<
-      StatsServices,
-      "getSuggestionsForCountry"
-    > | null>(null),
-    subscriptions = shallowRef<subscription[] | null>(null),
+    watchedPublicationsWithSales = shallowRef<string[]>(),
+    purchases = shallowRef<purchase[]>(),
+    watchedAuthors = shallowRef<authorUser[]>(),
+    marketplaceContactMethods = ref<string[]>(),
+    suggestions =
+      shallowRef<EventOutput<StatsServices, "getSuggestionsForCountry">>(),
+    subscriptions = shallowRef<subscription[]>(),
     popularIssuesInCollection = ref<{
       [issuecode: string]: number;
-    } | null>(null),
-    lastPublishedEdgesForCurrentUser = shallowRef<EventOutput<
-      CollectionServices,
-      "getLastPublishedEdges"
-    > | null>(null),
+    }>(),
+    lastPublishedEdgesForCurrentUser =
+      shallowRef<EventOutput<CollectionServices, "getLastPublishedEdges">>(),
     isLoadingUser = ref(false),
     isLoadingCollection = ref(false),
     isLoadingWatchedPublicationsWithSales = ref(false),
@@ -69,20 +65,20 @@ export const collection = defineStore("collection", () => {
     isLoadingPurchases = ref(false),
     isLoadingSuggestions = ref(false),
     isLoadingSubscriptions = ref(false),
-    coaIssueCountsPerCountrycode = shallowRef<
-      EventOutput<CollectionServices, "getIssues">["countByCountrycode"] | null
-    >(null),
-    coaIssueCountsByPublicationcode = shallowRef<
-      | EventOutput<CollectionServices, "getIssues">["countByPublicationcode"]
-      | null
-    >(null),
+    coaIssueCountsPerCountrycode =
+      shallowRef<
+        EventOutput<CollectionServices, "getIssues">["countByCountrycode"]
+      >(),
+    coaIssueCountsByPublicationcode =
+      shallowRef<
+        EventOutput<CollectionServices, "getIssues">["countByPublicationcode"]
+      >(),
     user = shallowRef<
       SuccessfulEventOutput<CollectionServices, "getUser"> | undefined | null
-    >(undefined),
-    userPermissions = shallowRef<
-      EventOutput<CollectionServices, "getUserPermissions"> | undefined
-    >(undefined),
-    previousVisit = ref<Date | null>(null),
+    >(),
+    userPermissions =
+      shallowRef<EventOutput<CollectionServices, "getUserPermissions">>(),
+    previousVisit = ref<Date>(),
     publicationUrlRoot = computed(() => "/collection/show"),
     purchasesById = computed(() => purchases.value?.groupBy("id")),
     copiesPerIssuecode = computed(() =>

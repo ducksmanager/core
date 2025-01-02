@@ -82,7 +82,7 @@
         :variant="
           colorPickerOption === optionName ? 'primary' : 'outline-primary'
         "
-        @click="colorPickerOption = colorPickerOption ? null : optionName"
+        @click="colorPickerOption = colorPickerOption ? undefined : optionName"
       >
         {{ $t("From photo") }}
       </b-button>
@@ -113,7 +113,7 @@ const props = withDefaults(
   },
 );
 
-const originalColor = ref<string | null>(null);
+const originalColor = ref<string>();
 
 const { setOptionValues } = step();
 const { photoUrls, issuecodes } = storeToRefs(main());

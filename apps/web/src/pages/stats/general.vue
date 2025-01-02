@@ -192,7 +192,7 @@ const quotationFields = [
   },
 ];
 
-let rarityValue = $ref<number | null>(null);
+let rarityValue = $ref<number>();
 let hasPublicationNames = $ref(false);
 
 watch(

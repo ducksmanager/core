@@ -43,11 +43,11 @@ export class SocketClient {
   constructor(private socketRootUrl: string) {}
 
   public cacheHydrator = {
-    state: ref<null | {
+    state: ref<{
       mode: "LOAD_CACHE" | "HYDRATE";
       cachedCallsDone: string[];
       hydratedCallsDoneAmount: number;
-    }>(null),
+    }>(),
     run: async (
       loadCachedDataFn: () => Promise<void>,
       loadRealDataFn: () => void

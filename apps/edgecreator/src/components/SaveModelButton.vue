@@ -149,8 +149,8 @@ const props = withDefaults(
 
 const showModal = ref(false);
 const progress = ref(0);
-const issueIndexToSave = ref<number | null>(null);
-const result = ref<string | null>(null);
+const issueIndexToSave = ref<number>();
+const result = ref<string>();
 const designersTypeahead = ref();
 const photographersTypeahead = ref();
 
@@ -181,7 +181,7 @@ watch(progress, (newValue) => {
       progress.value = 0;
       result.value = "success";
       window.setTimeout(() => {
-        result.value = null;
+        result.value = undefined;
       }, 2000);
     }, 1000);
   }
@@ -210,7 +210,7 @@ watch(issueIndexToSave, (newValue) => {
       } else {
         progress.value = 0;
         result.value = "error";
-        issueIndexToSave.value = null;
+        issueIndexToSave.value = undefined;
       }
     });
   });

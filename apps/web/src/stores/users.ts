@@ -29,8 +29,8 @@ export const users = defineStore("users", () => {
       >["points"]
     >({}),
     events = shallowRef<AbstractEvent[]>([]),
-    bookcaseContributors = shallowRef<BookcaseContributor[] | null>(null),
-    allUsers = shallowRef<SimpleUser[] | null>(null),
+    bookcaseContributors = shallowRef<BookcaseContributor[]>(),
+    allUsers = shallowRef<SimpleUser[]>(),
     fetchAllUsers = async () => {
       if (!allUsers.value) {
         allUsers.value = await globalStatsServices.getUserList();

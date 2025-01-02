@@ -127,7 +127,7 @@ meta:
                 md="6"
                 lg="3"
                 @mouseover="hoveredEdge = edge"
-                @mouseout="hoveredEdge = null"
+                @mouseout="hoveredEdge = undefined"
               >
                 <b-card class="text-center">
                   <b-link
@@ -247,10 +247,9 @@ const mostWantedEdges = ref<
       publicationcode: string | null;
       issuenumber: string | null;
     })[]
-  | null
->(null);
+>();
 
-const hoveredEdge = ref<EdgeWithVersionAndStatus | null>(null);
+const hoveredEdge = ref<EdgeWithVersionAndStatus>();
 
 const mostPopularIssuesInCollectionWithoutEdge = computed(() =>
   collectionStore.popularIssuesInCollectionWithoutEdge

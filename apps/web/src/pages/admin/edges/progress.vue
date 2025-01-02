@@ -120,7 +120,7 @@ import { socketInjectionKey } from "../../../composables/useDmSocket";
 const { getImagePath } = images();
 
 let hasData = $ref(false);
-let mostWanted = $shallowRef<WantedEdge[] | null>(null);
+let mostWanted = $shallowRef<WantedEdge[]>();
 let publishedEdges = $ref<SimpleInducksIssue[]>([]);
 const showEdgesForPublication = $ref<string[]>([]);
 const bookcaseTextures = $ref({

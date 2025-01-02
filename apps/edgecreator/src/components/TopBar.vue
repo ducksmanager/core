@@ -316,7 +316,7 @@ interface ModelToClone {
 }
 
 const showPhotoModal = ref(false);
-const modelToBeCloned = ref<ModelToClone | null>(null);
+const modelToBeCloned = ref<ModelToClone>();
 const collapseDimensions = ref(false);
 const collapseClone = ref(false);
 

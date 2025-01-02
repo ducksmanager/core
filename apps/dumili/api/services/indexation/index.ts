@@ -1,7 +1,7 @@
 import "~group-by";
 
-import type { SessionDataWithIndexation } from "~/index";
-import { prisma } from "~/index";
+import type { SessionDataWithIndexation } from "../../index";
+import { prisma } from "../../index";
 import {
   endpoint as coaEndpoint,
   type ClientEvents as CoaEvents,

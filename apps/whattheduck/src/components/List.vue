@@ -50,7 +50,7 @@
             :confirm-md="pencilSharp"
             :cancel-ios="closeOutline"
             :cancel-md="closeSharp"
-            @cancel="selectedIssuecodes = null"
+            @cancel="selectedIssuecodes = undefined"
             @confirm="updateNavigationToSelectedIssuecodes"
           /></div
       ></template>
@@ -162,7 +162,7 @@ watch(isCameraPreviewShown, async () => {
   }
 });
 
-const content = ref<InstanceType<typeof IonContent> | null>(null);
+const content = ref<InstanceType<typeof IonContent>>();
 
 const scrollPositionPct = ref(0);
 const isScrolling = ref(false);

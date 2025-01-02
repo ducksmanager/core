@@ -67,7 +67,7 @@
             </b-form-select-option>
           </template>
         </b-form-select>
-        <template v-if="canBeMultiple && currentFirstIssuecode !== null">
+        <template v-if="canBeMultiple && !!currentFirstIssuecode">
           <b-form-group class="mt-2">
             <b-form-radio
               v-model="editMode"
@@ -97,7 +97,7 @@
         </template>
       </template>
     </template>
-    <slot v-if="$slots.dimensions && currentFirstIssuecode !== null" />
+    <slot v-if="$slots.dimensions && !!currentFirstIssuecode" />
   </div>
 </template>
 <script setup lang="ts">
@@ -140,10 +140,10 @@ const props = withDefaults(
   },
 );
 
-const currentCountrycode = ref<string | undefined>(undefined);
-const currentPublicationcode = ref<string | undefined>(undefined);
-const currentFirstIssuecode = ref<string | undefined>(undefined);
-const currentLastIssuecode = ref<string | undefined>(undefined);
+const currentCountrycode = ref<string>();
+const currentPublicationcode = ref<string>();
+const currentFirstIssuecode = ref<string>();
+const currentLastIssuecode = ref<string>();
 const editMode = ref<"single" | "range">("single");
 const hasMoreIssuesToLoad = ref({ before: false, after: false });
 const surroundingIssuesToLoad = ref({ before: 10, after: 10 } as Record<

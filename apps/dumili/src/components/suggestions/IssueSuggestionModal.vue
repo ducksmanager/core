@@ -5,7 +5,7 @@
       title="Dumili a de nouvelles suggestions !"
       align="center"
       centered
-      :ok-disabled="selectedExistingCoverIssuecode === null"
+      :ok-disabled="!selectedExistingCoverIssuecode"
       cancel-title="Annuler"
       @ok.prevent="acceptIssueSuggestion(selectedExistingCoverIssuecode!)"
       @cancel.prevent="rejectAllIssueSuggestions"
@@ -55,7 +55,7 @@ const issueSuggestions = ref<
   (issueSuggestion & { url: string; coverId: number })[]
 >([]);
 
-const selectedExistingCoverIssuecode = ref<string | null>(null);
+const selectedExistingCoverIssuecode = ref<string>();
 
 const validIssueSuggestions = computed(() =>
   issueSuggestions.value.filter(({ coverId }) => coverId),
@@ -102,7 +102,7 @@ const acceptIssueSuggestion = async (issuecode: string) => {
     ai: true,
   });
   await indexationSocket.value!.services.acceptIssueSuggestion(suggestionId);
-  selectedExistingCoverIssuecode.value = null;
+  selectedExistingCoverIssuecode.value = undefined;
 };
 
 const rejectAllIssueSuggestions = () => {

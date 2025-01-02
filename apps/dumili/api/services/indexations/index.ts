@@ -1,11 +1,11 @@
-import { prisma, SessionData } from "~/index";
+import { prisma, SessionData } from "../../index";
 import { COVER } from "~dumili-types/storyKinds";
 
 import { RequiredAuthMiddleware } from "../_auth";
 import { createEntry } from "../indexation";
 import { useSocketServices } from "~socket.io-services";
 import { Socket } from "socket.io";
-import { Prisma } from "~/prisma/client_dumili";
+import { Prisma } from "~prisma/client_dumili";
 
 export type IndexationsSocket = Socket<object, object, object, SessionData>;
 

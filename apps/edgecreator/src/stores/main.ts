@@ -21,7 +21,7 @@ export const main = defineStore("main", () => {
     edges: { services: edgesServices },
   } = inject(dmSocketInjectionKey)!;
 
-  const publicationcode = ref<string | null>(null),
+  const publicationcode = ref<string>(),
     issuecodes = ref<string[]>([]),
     isRange = ref(false),
     photoUrls = ref<Record<string, string>>({}),

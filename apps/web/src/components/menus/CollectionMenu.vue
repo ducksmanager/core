@@ -41,22 +41,20 @@ const items = $computed(() => [
   },
   {
     path: "/to-read",
-    text:
-      issuesInToReadStack.value == null
-        ? $t("Mes numéros à lire")
-        : $t("Mes numéros à lire ({0})", [issuesInToReadStack.value.length]),
+    text: !issuesInToReadStack.value
+      ? $t("Mes numéros à lire")
+      : $t("Mes numéros à lire ({0})", [issuesInToReadStack.value.length]),
   },
   {
     path: "/on-sale",
-    text:
-      issuesInOnSaleStack.value == null
-        ? $t("Mes numéros à vendre")
-        : $t("Mes numéros à vendre ({0})", [issuesInOnSaleStack.value.length]),
+    text: !issuesInOnSaleStack.value
+      ? $t("Mes numéros à vendre")
+      : $t("Mes numéros à vendre ({0})", [issuesInOnSaleStack.value.length]),
   },
   {
     path: "/subscriptions",
     text:
-      subscriptions.value == null
+      subscriptions.value == undefined
         ? $t("Mes abonnements")
         : $t("Mes abonnements ({0})", [subscriptions.value.length]),
   },

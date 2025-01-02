@@ -10,7 +10,7 @@
 </template>
 
 <script setup lang="ts">
-const rect = ref<SVGRectElement | null>(null);
+const rect = ref<SVGRectElement>();
 
 interface Props {
   issuecode: string;

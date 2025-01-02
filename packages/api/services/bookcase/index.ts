@@ -4,7 +4,6 @@ import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
 import { RequiredAuthMiddleware } from "../auth/util";
 import { Errorable, useSocketServices } from "~socket.io-services";
 import options from "./options";
-import order from "./order";
 import { UserSocket } from "../../index";
 import { SessionUser } from "~dm-types/SessionUser";
 import { user } from "~prisma-schemas/client_dm";
@@ -15,8 +14,7 @@ type BookcaseEdgeRaw = Omit<BookcaseEdge, "sprites"> & {
   spriteSize: number;
 };
 
-
- const checkValidBookcaseUser = async (
+const checkValidBookcaseUser = async (
   user?: SessionUser | null,
   username?: string,
 ): Promise<Errorable<user, "Unauthorized" | "Forbidden" | "Not found">> => {
@@ -183,7 +181,6 @@ export type ClientEvents = (typeof client)["emitEvents"];
 
 const authedListenEvents = (socket: UserSocket) => ({
   ...options(socket),
-  ...order(socket),
 });
 
 export const {

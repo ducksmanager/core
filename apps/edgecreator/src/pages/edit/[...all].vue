@@ -175,7 +175,7 @@ const { showPreviousEdge, showNextEdge } = useSurroundingEdge();
 const { loadModel } = useModelLoad();
 const { issuecodes } = storeToRefs(mainStore);
 
-const error = ref<string | null>(null);
+const error = ref<string>();
 
 const { dimensions } = storeToRefs(stepStore);
 

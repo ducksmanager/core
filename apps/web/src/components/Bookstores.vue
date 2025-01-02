@@ -89,7 +89,7 @@
                     <b-button type="submit">
                       {{ $t("Ajouter un commentaire") }}
                     </b-button>
-                    <b-button @click="existingBookstore = null">
+                    <b-button @click="existingBookstore = undefined">
                       {{ $t("Annuler") }}
                     </b-button>
                   </form>
@@ -183,8 +183,8 @@ const {
 const { fetchStats } = users();
 const { stats: userStats } = storeToRefs(users());
 
-let bookstores = $shallowRef<SimpleBookstore[] | null>(null);
-let existingBookstore = $ref<SimpleBookstore | null>(null);
+let bookstores = $shallowRef<SimpleBookstore[]>();
+let existingBookstore = $ref<SimpleBookstore>();
 let newBookstoreSent = $ref(false);
 let existingBookstoreSent = $ref(false);
 
@@ -248,7 +248,7 @@ const suggestComment = async (bookstore: SimpleBookstore) => {
   await bookstoreServices.createBookstoreComment(bookstore);
   if (bookstore.id) {
     existingBookstoreSent = true;
-    existingBookstore = null;
+    existingBookstore = undefined;
   } else {
     newBookstoreSent = true;
   }

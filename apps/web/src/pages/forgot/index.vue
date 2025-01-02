@@ -47,7 +47,7 @@ meta:
 <script setup lang="ts">
 import { socketInjectionKey } from "../../composables/useDmSocket";
 
-let error = $ref<string | null>(null);
+let error = $ref<string>();
 
 const email = $ref("");
 let token = $ref("");

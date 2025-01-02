@@ -28,9 +28,7 @@ const defaultExport = (options: {
       { session },
     );
 
-  const indexationSocket = ref<
-    ReturnType<typeof getIndexationSocketFromId> | undefined
-  >(undefined);
+  const indexationSocket = ref<ReturnType<typeof getIndexationSocketFromId>>();
 
   return {
     options,

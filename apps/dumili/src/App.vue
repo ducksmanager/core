@@ -35,7 +35,7 @@ import { buildWebStorage } from "~socket.io-client-services/index";
 
 const { t: $t } = useI18n();
 
-const user = ref<{ username: string } | null>(null);
+const user = ref<{ username: string }>();
 
 const session = {
   getToken: () => Promise.resolve(Cookies.get("token")),
@@ -53,7 +53,7 @@ const onConnectError = (e: Error) => {
   ) {
     session.clearSession();
     isLoadingUser.value = false;
-    user.value = null;
+    user.value = undefined;
   }
 };
 

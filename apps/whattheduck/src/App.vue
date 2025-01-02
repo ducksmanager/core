@@ -24,7 +24,7 @@ import { app } from './stores/app';
 import { collection } from '~web/src/stores/collection';
 import AppWithPersistedData from './views/AppWithPersistedData.vue';
 
-import CollectionServices from '~dm-services/collection/types';
+import { endpoint as collectionEndpoint } from '~dm-services/collection';
 
 const storage = injectLocal<IonicStorage>('storage')!;
 
@@ -35,7 +35,7 @@ console.log('token after storeToRefs', token.value);
 const route = useRoute();
 const router = useRouter();
 
-const bundleDownloadProgress = ref<number | undefined>(undefined);
+const bundleDownloadProgress = ref<number>();
 
 interface RouteMeta {
   onOffline?: 'readonly' | 'unavailable';
@@ -83,7 +83,7 @@ const assignSocket = () => {
     },
     onConnectError: (e, namespace) => {
       if (
-        namespace === CollectionServices.endpoint &&
+        namespace === collectionEndpoint &&
         [/jwt expired/, /invalid signature/].some((regex) => regex.test(e.message))
       ) {
         session.clearSession();

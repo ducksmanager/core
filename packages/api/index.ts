@@ -63,6 +63,7 @@ const httpServer = createServer(async (req, res) => {
   switch (req.url) {
     case "/app/updates":
       data = getUpdateFileUrl();
+      break;
     case "/status/db":
       data = await getDbStatus();
       break;

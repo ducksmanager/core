@@ -76,7 +76,7 @@ let username = $ref(""),
   email = $ref(""),
   password = $ref(""),
   password2 = $ref(""),
-  error = $ref<ScopedError | null | undefined>(undefined);
+  error = $ref<ScopedError | null>();
 
 const { t: $t } = useI18n();
 

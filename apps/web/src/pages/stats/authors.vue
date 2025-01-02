@@ -95,14 +95,12 @@ const unitTypes = {
   percentage: $t("Afficher en pourcentages"),
 };
 
-let watchedAuthorsStoryCount = $ref<EventOutput<
-  StatsServices,
-  "getWatchedAuthorsStats"
-> | null>(null);
+let watchedAuthorsStoryCount =
+  $ref<EventOutput<StatsServices, "getWatchedAuthorsStats">>();
 let unitTypeCurrent = $ref("number");
-let width = $ref<string | null>(null),
+let width = $ref<string>(),
   height = $ref<string>("300px"),
-  chartData = $ref<ChartData<"bar", number[]> | null>(null),
+  chartData = $ref<ChartData<"bar", number[]>>(),
   options = $ref<ChartOptions<"bar">>({});
 
 const labels = $computed(

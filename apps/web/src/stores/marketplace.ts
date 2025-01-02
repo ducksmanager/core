@@ -9,12 +9,10 @@ export const marketplace = defineStore("marketplace", () => {
     collection: { services: collectionServices },
   } = inject(socketInjectionKey)!;
 
-  const issuesOnSaleByOthers = ref<EventOutput<
-      CollectionServices,
-      "getIssuesForSale"
-    > | null>(null),
-    issueRequestsAsBuyer = shallowRef<requestedIssue[] | null>(null),
-    issueRequestsAsSeller = shallowRef<requestedIssue[] | null>(null),
+  const issuesOnSaleByOthers =
+      ref<EventOutput<CollectionServices, "getIssuesForSale">>(),
+    issueRequestsAsBuyer = shallowRef<requestedIssue[]>(),
+    issueRequestsAsSeller = shallowRef<requestedIssue[]>(),
     isLoadingIssueRequestsAsBuyer = ref(false),
     isLoadingIssueRequestsAsSeller = ref(false),
     isLoadingIssuesOnSaleByOthers = ref(false),

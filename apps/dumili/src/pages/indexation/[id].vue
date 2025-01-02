@@ -52,7 +52,7 @@ const { fetchPublicationNames, fetchStoryDetails, fetchStoryversionDetails } =
   coa();
 const { storyDetails } = storeToRefs(coa());
 
-const indexationId = ref<string | null>(null);
+const indexationId = ref<string>();
 
 const { loadIndexation } = suggestions();
 const { indexation } = storeToRefs(suggestions()) as {
@@ -61,7 +61,7 @@ const { indexation } = storeToRefs(suggestions()) as {
 
 const hasData = ref(false);
 
-const firstPageDimensions = ref<{ width: number; height: number } | null>(null);
+const firstPageDimensions = ref<{ width: number; height: number }>();
 
 watch(
   () => route.params.id,

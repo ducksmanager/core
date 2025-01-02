@@ -119,8 +119,8 @@ const { t: $t } = useI18n(),
 
 let hasPublicationNames = $ref(false),
   options = $ref<ChartOptions<"bar">>({}),
-  width = $ref<string | null>(null),
-  height = $ref<string | null>(null),
+  width = $ref<string>(),
+  height = $ref<string>(),
   purchaseTypeCurrent = $ref<string>("new");
 
 const publicationCodesWithOther = $computed(

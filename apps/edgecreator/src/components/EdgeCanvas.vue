@@ -16,7 +16,7 @@
     xmlns:xlink="http://www.w3.org/1999/xlink"
     preserveAspectRatio="none"
     @mousemove="setPosition"
-    @mouseout="positionInCanvas = null"
+    @mouseout="positionInCanvas = undefined"
   >
     <metadata
       v-if="photoUrl"
@@ -152,7 +152,7 @@ const toKeyValue = (arr: OptionNameAndValue[]) => {
 };
 const borderWidth = ref(1);
 
-const canvas = ref<HTMLElement | null>(null);
+const canvas = ref<HTMLElement>();
 
 const hoveredStepStore = hoveredStep();
 const editingStepStore = editingStep();
@@ -163,9 +163,9 @@ const height = computed(() => props.dimensions.height);
 
 const setPosition = ({ clientX: left, clientY: top }: MouseEvent) => {
   const { left: svgLeft, top: svgTop } = canvas.value!.getBoundingClientRect();
-  positionInCanvas.value = [left - svgLeft, top - svgTop].map(
+  positionInCanvas.value = ([left - svgLeft, top - svgTop] as const).map(
     (value) => value / zoom.value,
-  ) as [number, number];
+  );
 };
 const replaceEditingIssuecodeIfNotAlreadyEditing = (issuecode: string) => {
   if (!editingStepStore.issuecodes.includes(issuecode)) {

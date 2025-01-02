@@ -41,7 +41,7 @@
         <div style="margin: 1rem 0">
           <b>{{ selectedStory.title }}</b> {{ $t('a été publiée dans les numéros suivants :') }}
         </div>
-        <ion-button size="small" @click="selectedStory = null"
+        <ion-button size="small" @click="selectedStory = undefined"
           >&nbsp;<ion-icon :md="arrowBackSharp" :ios="arrowBackOutline"></ion-icon
           >{{ $t("Retour aux résultats d'histoire") }}</ion-button
         >
@@ -92,9 +92,9 @@ type AugmentedStoryResult = Omit<SimpleStory, 'issues'> & {
 };
 
 const storyTitle = ref('');
-const storyResults = ref<{ results: AugmentedStoryResult[] } | null>(null);
+const storyResults = ref<{ results: AugmentedStoryResult[] }>();
 
-const selectedStory = ref<AugmentedStoryResult | null>(null);
+const selectedStory = ref<AugmentedStoryResult>();
 
 const goToIssue = (issuecode: string) => {
   currentNavigationItem.value = { type: 'issuecodes', value: [issuecode] };
@@ -107,7 +107,7 @@ watchDebounced(
     if (!newValue) {
       return;
     }
-    selectedStory.value = null;
+    selectedStory.value = undefined;
     const { results: data }: StorySearchResults<true> = await coaServices.searchStory([newValue], true);
 
     const issuecodes = data

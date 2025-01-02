@@ -133,7 +133,7 @@
       <Book
         v-if="currentEdgeOpened"
         :issuecode="currentEdgeOpened.issuecode"
-        @close-book="currentEdgeOpened = null"
+        @close-book="currentEdgeOpened = undefined"
       />
       <Bookcase
         v-if="bookcaseOptions && sortedBookcase?.length"
@@ -195,12 +195,12 @@ const {
 } = storeToRefs(bookcase());
 
 let edgesUsingSprites = $ref<{ [edgeId: number]: string }>({});
-const currentEdgeOpened = $shallowRef<BookcaseEdgeWithPopularity | null>(null);
-let currentEdgeHighlighted = $ref<number | null>(null);
+const currentEdgeOpened = $shallowRef<BookcaseEdgeWithPopularity>();
+let currentEdgeHighlighted = $ref<number>();
 let hasPublicationNames = $ref(false);
 let hasIssuecodes = $ref(false);
 const showShareButtons = $ref(false);
-let userPoints = $ref<{ [contribution: string]: number } | null>(null);
+let userPoints = $ref<{ [contribution: string]: number }>();
 
 const inputBookcaseUsername = $computed(
   () => (route.params.username as string) || user.value?.username || null,
@@ -268,10 +268,9 @@ const sortedBookcase = $computed(
     ),
 );
 const highlightIssue = (issue: IssueWithIssuecodeOnly) => {
-  currentEdgeHighlighted =
-    thisBookcase.value?.find(
-      (issueInCollection) => issue.issuecode === issueInCollection.issuecode,
-    )?.id || null;
+  currentEdgeHighlighted = thisBookcase.value?.find(
+    (issueInCollection) => issue.issuecode === issueInCollection.issuecode,
+  )?.id;
 };
 
 watch(

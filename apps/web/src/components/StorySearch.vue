@@ -116,7 +116,7 @@ const { fetchPublicationNames, fetchIssuecodeDetails, fetchCountryNames } =
   coa();
 const { issuecodeDetails } = storeToRefs(coa());
 
-const nav = shallowRef<HTMLElement | null>(null);
+const nav = shallowRef<HTMLElement>();
 
 onClickOutside(nav, () => {
   showSearchResults = false;
@@ -127,12 +127,12 @@ type SimpleStoryWithOptionalCollectionIssue = SimpleStory & {
 };
 
 let isSearching = $ref(false);
-let pendingSearch = $ref<string | null>(null);
+let pendingSearch = $ref<string>();
 let search = $ref("");
 let storyResults = $ref<{
   results: SimpleStoryWithOptionalCollectionIssue[];
   hasMore: boolean;
-} | null>(null);
+}>();
 
 const { t: $t } = useI18n();
 const searchContexts = {

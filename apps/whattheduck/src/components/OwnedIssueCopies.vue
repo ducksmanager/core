@@ -88,7 +88,9 @@ watch(
       const newIssuecodes = [...newValue];
       await fetchIssuecodeDetails(newIssuecodes);
       const covers = await fetchCoverUrlsByIssuecodes(newIssuecodes);
-      fullUrl.value = covers.covers![newIssuecodes[0]]?.fullUrl;
+      if (!('error' in covers)) {
+        fullUrl.value = covers.covers![newIssuecodes[0]]?.fullUrl;
+      }
     }
   },
   { immediate: true },
@@ -98,7 +100,7 @@ const coverUrl = computed(() => `${import.meta.env.VITE_CLOUDINARY_BASE_URL}${fu
 
 const copies = ref<SingleCopyState[]>([]);
 
-const currentCopyIndex = ref<number | undefined>(undefined);
+const currentCopyIndex = ref<number>();
 watch(
   issuesByIssuecode,
   () => {

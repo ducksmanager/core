@@ -25,7 +25,7 @@
               'hovered-step': hoveredStepStore.stepNumber === stepNumber,
             }"
             @mouseover="hoveredStepStore.stepNumber = stepNumber"
-            @mouseout="hoveredStepStore.stepNumber = null"
+            @mouseout="hoveredStepStore.stepNumber = undefined"
           >
             {{
               $t(

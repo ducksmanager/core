@@ -40,7 +40,7 @@ const props = withDefaults(defineProps<Props>(), {
   }),
 });
 
-const ellipse = ref<HTMLElement | null>(null);
+const ellipse = ref<HTMLElement>();
 
 const { attributes, enableDragResize } = useStepOptions(props, [
   "cx",

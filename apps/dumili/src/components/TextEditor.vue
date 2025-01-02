@@ -51,11 +51,18 @@ const getStoriesWithDetails = async (stories: storySuggestion[]) =>
         (story): story is storySuggestion & { storycode: string } =>
           story !== undefined && story.storycode !== null,
       )
-      .map(async (story) => ({
-        ...story,
-        ...storyDetails.value[story!.storycode],
-        storyjobs: (await coaServices.getStoryjobs(story!.storycode)).data,
-      })),
+      .map(async (story) => {
+        const storyjobsResult = await coaServices.getStoryjobs(
+          story!.storycode,
+        );
+        const storyjobs =
+          "error" in storyjobsResult ? [] : storyjobsResult.data;
+        return {
+          ...story,
+          ...storyDetails.value[story!.storycode],
+          storyjobs,
+        };
+      }),
   );
 
 const textContent = computed(() => {

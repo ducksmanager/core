@@ -155,11 +155,11 @@ const defaultIssueState = {
   purchaseId: undefined,
 };
 
-let initialIssues = $ref<CollectionUpdateMultipleIssues | null>(null);
-let editedIssues = $ref<CollectionUpdateMultipleIssues | null>(null);
+let initialIssues = $ref<CollectionUpdateMultipleIssues>();
+let editedIssues = $ref<CollectionUpdateMultipleIssues>();
 
-let initialCopies = $ref<CollectionUpdateSingleIssue | null>(null);
-let editedCopies = $ref<CollectionUpdateSingleIssue | null>(null);
+let initialCopies = $ref<CollectionUpdateSingleIssue>();
+let editedCopies = $ref<CollectionUpdateSingleIssue>();
 
 let currentCopyIndex = $ref(0);
 
@@ -218,7 +218,7 @@ const updateIssues = async () => {
 watch(
   () => initialCopies && initialCopies.copies.length,
   (newValue) => {
-    if (newValue !== null) {
+    if (newValue !== undefined) {
       currentCopyIndex = newValue - 1;
     }
   },
@@ -228,13 +228,13 @@ watch(
   $$(selectedIssues),
   (newValue) => {
     if (isSingleIssueSelected) {
-      editedIssues = initialIssues = null;
+      editedIssues = initialIssues = undefined;
       editedCopies = initialCopies = {
         issuecode: newValue[0],
         copies: selectedIssueIdsByIssuecodes[newValue[0]],
       };
     } else {
-      editedCopies = initialCopies = null;
+      editedCopies = initialCopies = undefined;
       editedIssues = initialIssues = {
         issuecodes: newValue,
         ...defaultIssueState,

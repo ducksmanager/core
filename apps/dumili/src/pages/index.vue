@@ -83,7 +83,7 @@ const {
 
 const { fetchPublicationNames } = coa();
 
-const form = ref<HTMLFormElement | null>(null);
+const form = ref<HTMLFormElement>();
 const currentIndexations =
   shallowRef<EventOutput<IndexationsEvents, "getIndexations">>();
 const modal = ref(false);

@@ -12,7 +12,7 @@
     role="button"
     :class-name="`position-relative d-flex z-3 align-items-center justify-content-center cursor-pointer col w-100 border kind-${entry.acceptedStoryKind?.kind} ${(hoveredEntry === entry && 'striped') || ''} ${(currentEntry?.id === entry.id && 'z-4 border-2') || 'border-1'}`"
     @mouseover="hoveredEntry = entry"
-    @mouseleave="hoveredEntry = null"
+    @mouseleave="hoveredEntry = undefined"
     @resize-stop="
 	              (_left: number, _top: number, _width: number, height: number) =>
 	                {emit('onEntryResizeStop', height)}
@@ -38,7 +38,7 @@ const entry = defineModel<FullEntry>({ required: true });
 const { hoveredEntry, currentEntry, pageHeight, currentPage } =
   storeToRefs(ui());
 
-const lastHoveredEntry = ref<typeof hoveredEntry.value | null>(null);
+const lastHoveredEntry = ref<typeof hoveredEntry.value>();
 
 const indexation = storeToRefs(suggestions()).indexation as Ref<FullIndexation>;
 

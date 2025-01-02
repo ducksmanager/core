@@ -4,7 +4,7 @@
     class="table-of-contents d-flex w-100 h-100 m-0 p-0"
     body-class="flex-grow-1 w-100 h-100"
     header-class="position-relative p-0"
-    @mouseleave="hoveredEntry = null"
+    @mouseleave="hoveredEntry = undefined"
   >
     <template #header>
       <IssueSuggestionModal />

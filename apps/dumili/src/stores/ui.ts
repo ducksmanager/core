@@ -5,7 +5,7 @@ import { suggestions } from "./suggestions";
 
 export const ui = defineStore("ui", () => {
   const { indexation } = storeToRefs(suggestions());
-  const hoveredEntry = ref<FullEntry | null>(null);
+  const hoveredEntry = ref<FullEntry>();
   const currentEntry = ref<FullEntry>();
   const currentPage = ref(0);
   const pageHeight = ref(50);

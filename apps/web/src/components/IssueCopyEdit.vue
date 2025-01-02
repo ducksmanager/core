@@ -425,7 +425,7 @@ const issueIds = $computed((): (number | null)[] =>
       : collectionForCurrentPublication
           ?.filter(({ issuecode }) => issuecodes.includes(issuecode))
           .map(({ id }) => id || null)
-    : [] || [],
+    : [],
 );
 
 watch(

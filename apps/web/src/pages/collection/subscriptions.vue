@@ -54,11 +54,14 @@ alias: [/collection/abonnements]
       :is-edit="currentSubscription?.id === thisSubscription.id"
       :subscription="thisSubscription"
       @start-edit="currentSubscription = thisSubscription"
-      @cancel-edit="currentSubscription = null"
+      @cancel-edit="currentSubscription = undefined"
       @edit="editSubscription"
       @delete="deleteSubscription(thisSubscription.id)"
     />
-    <b-row v-if="currentSubscription === null" class="mt-3 align-items-center">
+    <b-row
+      v-if="currentSubscription === undefined"
+      class="mt-3 align-items-center"
+    >
       <b-col>
         <b-button class="mt-4" @click="currentSubscription = newSubscription">
           {{ $t("Ajouter un abonnement") }}
@@ -70,7 +73,7 @@ alias: [/collection/abonnements]
       :subscription="currentSubscription"
       is-edit
       @start-edit="currentSubscription = newSubscription"
-      @cancel-edit="currentSubscription = null"
+      @cancel-edit="currentSubscription = undefined"
       @edit="createSubscription"
     />
   </div>
@@ -105,7 +108,7 @@ const newSubscription = $ref({
   endDate: dayjs(new Date()).add(1, "year").toDate(),
 } as subscription);
 
-let currentSubscription = $ref<subscription | null>(null);
+let currentSubscription = $ref<subscription>();
 
 let hasPublicationNames = $ref(false);
 let currentAssociatedPublications = $ref<AssociatedPublication[]>([]);
@@ -129,7 +132,7 @@ const createSubscription = async (subscription: subscription) => {
     toSubscriptionWithStringDates(subscription),
   );
   await loadSubscriptions(true);
-  currentSubscription = null;
+  currentSubscription = undefined;
 };
 
 const createSubscriptionLike = async (
@@ -150,12 +153,12 @@ const editSubscription = async (subscription: subscription) => {
     toSubscriptionWithStringDates(subscription),
   );
   await loadSubscriptions(true);
-  currentSubscription = null;
+  currentSubscription = undefined;
 };
 const deleteSubscription = async (id: number) => {
   await collectionServices.deleteSubscription(id);
   await loadSubscriptions(true);
-  currentSubscription = null;
+  currentSubscription = undefined;
 };
 
 watch(
