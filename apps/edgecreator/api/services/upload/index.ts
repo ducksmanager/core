@@ -3,56 +3,63 @@ import type { Request, Response } from "express";
 import fs from "fs";
 import { decode } from "node-base64-image";
 import { dirname } from "path";
-import type { Namespace, Server } from "socket.io";
 
 import { getUserCredentials } from "~/services/_auth";
-import EdgeCreatorServices from "~dm-services/edgecreator/types";
+import {
+  ClientEvents as EdgeCreatorServices,
+  endpoint as edgeCreatorServicesEndpoint,
+} from "~dm-services/edgecreator";
 import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa/client";
-import type { EventCalls } from "~socket.io-client-services";
 import { SocketClient } from "~socket.io-client-services";
 
 import { getNextAvailableFile } from "../_upload_utils";
-import type Events from "./types";
-import { namespaceEndpoint } from "./types";
 
 const edgesPath: string = process.env.EDGES_PATH!;
 
-let edgeCreatorServices: EventCalls<EdgeCreatorServices>;
+const getEdgeCreatorServices = () =>
+  new SocketClient(
+    process.env.DM_SOCKET_URL!
+  ).addNamespace<EdgeCreatorServices>(edgeCreatorServicesEndpoint).services;
 
-export default (io: Server) => {
-  (io.of(namespaceEndpoint) as Namespace<Events>).on("connection", (socket) => {
-    const dmSocket = new SocketClient(process.env.DM_SOCKET_URL!);
-    ({ services: edgeCreatorServices } =
-      dmSocket.addNamespace<EdgeCreatorServices>(
-        EdgeCreatorServices.endpoint,
-      ));
-    console.log("connected to upload");
+export default () => ({
+  // (io.of(namespaceEndpoint) as Namespace<Events>).on("connection", (socket) => {
+  //   const dmSocket = new SocketClient(process.env.DM_SOCKET_URL!);
+  //   ({ services: edgeCreatorServices } =
+  //     dmSocket.addNamespace<EdgeCreatorServices>(
+  //       EdgeCreatorServices.endpoint,
+  //     ));
+  //   console.log("connected to upload");
 
-    socket.on("uploadFromBase64", async (parameters, callback) => {
-      const { issuecode, data } = parameters;
-      const { publicationcode, issuenumber } =
-        await prismaCoa.inducks_issue.findFirstOrThrow({
-          where: { issuecode },
-        });
-      const [countrycode, magazinecode] = publicationcode.split("/");
-      const path = `${edgesPath}/${countrycode}/photos`;
-      const tentativeFileName = `${magazinecode}.${issuenumber}.photo`;
-      const fileName = getNextAvailableFile(
-        `${path}/${tentativeFileName}`,
-        "jpg",
-      ).match(/\/([^/]+)$/)![1];
+  uploadFromBase64: async (parameters: { data: string; issuecode: string }) => {
+    //   const dmSocket = new SocketClient(process.env.DM_SOCKET_URL!);
+    //   ({ services: edgeCreatorServices } =
+    //     dmSocket.addNamespace<EdgeCreatorServices>(
+    //       EdgeCreatorServices.endpoint,
+    //     ));
 
-      await decode(data, {
-        fname: `${path}/${fileName.replace(/.jpg$/, "")}`,
-        ext: "jpg",
+    const { issuecode, data } = parameters;
+    const { publicationcode, issuenumber } =
+      await prismaCoa.inducks_issue.findFirstOrThrow({
+        where: { issuecode },
       });
+    const [countrycode, magazinecode] = publicationcode.split("/");
+    const path = `${edgesPath}/${countrycode}/photos`;
+    const tentativeFileName = `${magazinecode}.${issuenumber}.photo`;
+    const fileName = getNextAvailableFile(
+      `${path}/${tentativeFileName}`,
+      "jpg"
+    ).match(/\/([^/]+)$/)![1];
 
-      await edgeCreatorServices.sendNewEdgePhotoEmail(issuecode);
-
-      callback({ fileName });
+    await decode(data, {
+      fname: `${path}/${fileName.replace(/.jpg$/, "")}`,
+      ext: "jpg",
     });
-  });
-};
+
+    await getEdgeCreatorServices().sendNewEdgePhotoEmail(issuecode);
+
+    return { fileName };
+  },
+});
 
 export const upload = async (
   req: Request<
@@ -67,7 +74,7 @@ export const upload = async (
       };
     }
   >,
-  res: Response,
+  res: Response
 ) => {
   const userCredentials = getUserCredentials(req.user!);
 
@@ -89,7 +96,7 @@ export const upload = async (
       filename,
       isMultipleEdgePhoto,
       edge,
-      isEdgePhoto,
+      isEdgePhoto
     );
     try {
       const { hash } = await validateUpload(
@@ -99,15 +106,15 @@ export const upload = async (
         isEdgePhoto,
         userCredentials,
         edge,
-        temporaryPath,
+        temporaryPath
       );
       saveFile(temporaryPath, targetFilename);
       await storePhotoHash(targetFilename, hash);
       targetFilesnames.push(
         targetFilename.replace(
           process.env.EDGES_PATH!,
-          process.env.VITE_EDGES_URL!,
-        ),
+          process.env.VITE_EDGES_URL!
+        )
       );
     } catch (e: unknown) {
       res.writeHead(400, {
@@ -125,14 +132,14 @@ const getTargetFilename = async (
   filename: string,
   isMultipleEdgePhoto: boolean,
   issuecode: string,
-  isEdgePhoto: boolean,
+  isEdgePhoto: boolean
 ) => {
   filename = filename.normalize("NFD").replace(/[\u0300-\u036F]/g, "");
 
   if (isMultipleEdgePhoto) {
     return getNextAvailableFile(
       `${edgesPath}/tranches_multiples/photo.multiple`,
-      "jpg",
+      "jpg"
     );
   } else {
     const { publicationcode, issuenumber } =
@@ -143,7 +150,7 @@ const getTargetFilename = async (
     if (isEdgePhoto) {
       return getNextAvailableFile(
         `${edgesPath}/${countrycode}/photos/${magazinecode}.${issuenumber}.photo`,
-        "jpg",
+        "jpg"
       );
     } else {
       return `${edgesPath}/${countrycode}/elements/${
@@ -162,7 +169,7 @@ const validateUpload = async (
   isEdgePhoto: boolean,
   userCredentials: Record<string, string>,
   issuecode: string,
-  filePath: string,
+  filePath: string
 ): Promise<{ hash: string }> => {
   if (!allowedMimeTypes.includes(mimetype)) {
     throw new Error(
@@ -170,7 +177,7 @@ const validateUpload = async (
         error:
           "Invalid file type: {mimetype}, the following types are allowed: {allowedMimeTypes}",
         placeholders: { mimetype, allowedMimeTypes },
-      }),
+      })
     );
   }
   const { hash } = readContentsAndCalculateHash(filePath);
@@ -179,19 +186,19 @@ const validateUpload = async (
       throw new Error(
         JSON.stringify({
           error: "You have reached your daily upload limit",
-        }),
+        })
       );
     }
     if (await hasAlreadySentPhoto(hash)) {
       throw new Error(
-        JSON.stringify({ error: "You have already sent this photo" }),
+        JSON.stringify({ error: "You have already sent this photo" })
       );
     }
   } else {
     // await readFile(filestream);
     const otherElementUses = await getFilenameUsagesInOtherModels(
       filename,
-      issuecode,
+      issuecode
     );
     if (fs.existsSync(filename) && otherElementUses.length) {
       throw new Error(
@@ -201,7 +208,7 @@ const validateUpload = async (
           placeholders: {
             otherElementUses: JSON.stringify(otherElementUses),
           },
-        }),
+        })
       );
     }
   }
@@ -209,13 +216,13 @@ const validateUpload = async (
 };
 
 const hasReachedDailyUploadLimit = async () =>
-  (await edgeCreatorServices.checkTodayLimit()).uploadedFilesToday.length > 10;
+  (await getEdgeCreatorServices().checkTodayLimit()).uploadedFilesToday.length > 10;
 
 const hasAlreadySentPhoto = async (hash: string) =>
-  (await edgeCreatorServices.getImageByHash(hash)) === null;
+  (await getEdgeCreatorServices().getImageByHash(hash)) === null;
 
 const readContentsAndCalculateHash = (
-  fileName: string,
+  fileName: string
 ): { contents: Buffer; hash: string } => {
   const fileBuffer = fs.readFileSync(fileName);
   const hashSum = crypto.createHash("sha256");
@@ -226,10 +233,10 @@ const readContentsAndCalculateHash = (
 
 const getFilenameUsagesInOtherModels = async (
   filename: string,
-  currentIssuecode: string,
+  currentIssuecode: string
 ) =>
-  (await edgeCreatorServices.getImagesFromFilename(filename)).filter(
-    (otherUse) => currentIssuecode !== otherUse.issuecodeStart,
+  (await getEdgeCreatorServices().getImagesFromFilename(filename)).filter(
+    (otherUse) => currentIssuecode !== otherUse.issuenumberStart
   );
 
 const saveFile = (temporaryPath: string, finalPath: string) => {
@@ -238,5 +245,5 @@ const saveFile = (temporaryPath: string, finalPath: string) => {
 };
 
 const storePhotoHash = async (filename: string, hash: string) => {
-  await edgeCreatorServices.createElementImage(hash, filename);
+  await getEdgeCreatorServices().createElementImage(hash, filename);
 };

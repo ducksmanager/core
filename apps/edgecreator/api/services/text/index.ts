@@ -1,9 +1,5 @@
 import axios from "axios";
 import { v2 as cloudinary } from "cloudinary";
-import type { Namespace, Server } from "socket.io";
-
-import type Events from "./types";
-import { namespaceEndpoint } from "./types";
 
 const sessionHashes: Record<string, string> = {};
 
@@ -18,7 +14,7 @@ const generateImage = (parameters: {
     .get(
       parameters.font.includes("/")
         ? process.env.FONT_BASE_URL!
-        : `${process.env.FONT_PRODUCT_BASE_URL!}${parameters.font}`,
+        : `${process.env.FONT_PRODUCT_BASE_URL!}${parameters.font}`
     )
     .then(({ data }: { data: string }) => {
       const sessionHashMatch = data.match(/(?<=font_rend.php\?id=)[a-z\d]+/);
@@ -28,7 +24,7 @@ const generateImage = (parameters: {
         throw new Error(
           `No session ID found in URL ${process.env.FONT_BASE_URL!}${
             parameters.font
-          }`,
+          }`
         );
       }
     })
@@ -54,15 +50,19 @@ const generateImage = (parameters: {
           }
           const { width, height, secure_url: url } = result!;
           Promise.resolve({ width, height, url });
-        },
-      ),
+        }
+      )
     );
 
-export default (io: Server) => {
-  (io.of(namespaceEndpoint) as Namespace<Events>).on("connection", (socket) => {
-    console.log("connected to text");
-
-    socket.on("getText", async (parameters, callback) => {
+export default () => ({
+  getText: (parameters: {
+    color: string;
+    colorBackground: string;
+    width: number;
+    font: string;
+    text: string;
+  }) =>
+    new Promise(async (resolve) => {
       const { color, colorBackground, width, font, text } = parameters;
       const context: Record<string, number | string> = {
         color,
@@ -78,9 +78,9 @@ export default (io: Server) => {
                 ...acc,
                 `context.${key}="${String(context[key])}"`,
               ],
-              [],
+              []
             )
-            .join(" AND ")}`,
+            .join(" AND ")}`
         )
         .execute()
         .then(
@@ -96,26 +96,25 @@ export default (io: Server) => {
             if (resources.length) {
               console.log(`Found an existing text`);
               const { width, height, secure_url: url } = resources[0];
-              callback({ results: { width, height, url } });
+              resolve({ results: { width, height, url } });
             } else {
               console.log(`Found no existing text, generating text image...`);
               generateImage(parameters)
                 .then(({ width, height, secure_url: url }) => {
                   console.log(`Text image generated: url=${url}`);
-                  callback({ results: { width, height, url } });
+                  resolve({ results: { width, height, url } });
                 })
                 .catch((response: Error) => {
-                  callback({
+                  resolve({
                     error: "Image generation error",
                     errorDetails: response.message,
                   });
                 });
             }
-          },
+          }
         )
         .catch((e) => {
           console.error(e);
         });
-    });
-  });
-};
+    }),
+});

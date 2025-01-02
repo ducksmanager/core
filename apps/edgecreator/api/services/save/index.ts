@@ -1,93 +1,100 @@
 import { exec } from "child_process";
 import { mkdirSync, unlinkSync, writeFileSync } from "fs";
 import path from "path";
-import type { Namespace } from "socket.io";
-import type { Server } from "socket.io";
+import type { Socket } from "socket.io";
 
 import { getSvgPath } from "~/_utils";
-import EdgeCreatorServices from "~dm-services/edgecreator/types";
+import {
+  type ClientEvents as EdgeCreatorServices,
+  endpoint as edgeCreatorServicesEndpoint,
+} from "~dm-services/edgecreator";
 import { SocketClient } from "~socket.io-client-services";
 import type { ExportPaths } from "~types/ExportPaths";
 
-import type Events from "./types";
-import { namespaceEndpoint } from "./types";
+import { ModelContributor } from "~types/ModelContributor";
 
-export default (io: Server) => {
-  (io.of(namespaceEndpoint) as Namespace<Events>).on("connection", (socket) => {
-    console.log("connected to save");
-    const token = socket.handshake.auth.token;
+type TokenSocket = Socket<object, object, object, { token: string }>;
 
-    const dmSocket = new SocketClient(process.env.DM_SOCKET_URL!);
-    dmSocket.onConnectError = (e) => console.error(e);
-    const { services: edgeCreatorServices } =
-      dmSocket.addNamespace<EdgeCreatorServices>(
-        EdgeCreatorServices.endpoint,
-        {
-          session: {
-            getToken: () => token,
-            sessionExists: () => Promise.resolve(token),
-            clearSession: () => {
-              console.log("not allowed");
-            },
-          },
+const getEdgeCreatorServices = (token: string) => {
+  const dmSocket = new SocketClient(process.env.DM_SOCKET_URL!);
+  dmSocket.onConnectError = (e) => console.error(e);
+  return dmSocket.addNamespace<EdgeCreatorServices>(
+    edgeCreatorServicesEndpoint,
+    {
+      session: {
+        getToken: async () => token,
+        sessionExists: () => Promise.resolve(!!token),
+        clearSession: () => {
+          console.log("not allowed");
         },
-      );
+      },
+    }
+  ).services;
+};
 
-    socket.on("saveEdge", async (parameters, callback) => {
-      const { runExport, runSubmit, issuecode, contributors, content } =
-        parameters;
-      const svgPath = await getSvgPath(runExport, issuecode);
+export default (socket: TokenSocket) => ({
+  saveEdge: async (parameters: {
+    runExport: boolean;
+    runSubmit: boolean;
+    issuecode: string;
+    contributors: ModelContributor[];
+    content: string;
+  }) => {
+    const { token } = socket.handshake.auth;
+    const { runExport, runSubmit, issuecode, contributors, content } =
+      parameters;
+    const svgPath = await getSvgPath(runExport, issuecode);
 
-      mkdirSync(path.dirname(svgPath), { recursive: true });
-      writeFileSync(svgPath, content);
-      let paths: ExportPaths = { svgPath };
-      if (runExport) {
-        const pngPath = svgPath.replace(".svg", ".png");
+    mkdirSync(path.dirname(svgPath), { recursive: true });
+    writeFileSync(svgPath, content);
+    let paths: ExportPaths = { svgPath };
+    if (runExport) {
+      const pngPath = svgPath.replace(".svg", ".png");
 
-        exec(`convert ${svgPath} ${pngPath}`);
+      exec(`convert ${svgPath} ${pngPath}`);
 
-        paths = { ...paths, pngPath };
+      paths = { ...paths, pngPath };
 
-        const designers = contributors
-          .filter(({ contributionType }) => contributionType === "createur")
-          .map(({ user }) => user.username);
+      const designers = contributors
+        .filter(({ contributionType }) => contributionType === "createur")
+        .map(({ user }) => user.username);
 
-        const photographers = contributors
-          .filter(({ contributionType }) => contributionType === "photographe")
-          .map(({ user }) => user.username);
+      const photographers = contributors
+        .filter(({ contributionType }) => contributionType === "photographe")
+        .map(({ user }) => user.username);
 
-        const publicationResult = await edgeCreatorServices.publishEdge({
+      const publicationResult = await getEdgeCreatorServices(token).publishEdge(
+        {
           issuecode,
           designers,
           photographers,
-        });
-        if (publicationResult.error) {
-          callback({
-            error: "Generic error",
-            errorDetails: publicationResult.errorDetails as string,
-          });
-          return;
         }
-        try {
-          unlinkSync(await getSvgPath(false, issuecode));
-        } catch (errorDetails) {
-          if ((errorDetails as { code?: string }).code === "ENOENT") {
-            console.log("No temporary SVG file to delete was found");
-          } else {
-            callback({
-              error: "Generic error",
-              errorDetails: errorDetails as string,
-            });
-          }
-        }
-
-        callback({ results: { paths, isNew: publicationResult.isNew } });
-      } else {
-        if (runSubmit) {
-          await edgeCreatorServices.submitEdge(issuecode);
-        }
-        callback({ results: { paths, isNew: false } });
+      );
+      if ("error" in publicationResult) {
+        return {
+          error: "Generic error",
+          errorDetails: publicationResult.error,
+        };
       }
-    });
-  });
-};
+      try {
+        unlinkSync(await getSvgPath(false, issuecode));
+      } catch (errorDetails) {
+        if ((errorDetails as { code?: string }).code === "ENOENT") {
+          console.log("No temporary SVG file to delete was found");
+        } else {
+          return {
+            error: "Generic error",
+            errorDetails: errorDetails as string,
+          };
+        }
+      }
+
+      return { results: { paths, isNew: publicationResult.isNew } };
+    } else {
+      if (runSubmit) {
+        await getEdgeCreatorServices(token).submitEdge(issuecode);
+      }
+      return { results: { paths, isNew: false } };
+    }
+  },
+});
