@@ -1,7 +1,7 @@
 import crypto from "crypto";
 import jwt from "jsonwebtoken";
 
-import resetPassword from "~/emails/reset-password";
+import resetPassword from "../../emails/reset-password";
 import { prismaClient } from "~prisma-schemas/schemas/dm/client";
 import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
 

@@ -1,6 +1,6 @@
-import PresentationSentenceRequested from "~emails/presentation-sentence-requested";
+import PresentationSentenceRequested from "../../../emails/presentation-sentence-requested";
 import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
-import { getHashedPassword } from "~services/auth/util";
+import { getHashedPassword } from "../../auth/util";
 
 import type { Validation } from "./util";
 import {

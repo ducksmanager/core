@@ -1,4 +1,4 @@
-import { getPopularityByIssuecodes } from "~/services/coa/issue-details";
+import { getPopularityByIssuecodes } from "../../coa/issue-details";
 import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa/client";
 import type {
   bookstoreComment,

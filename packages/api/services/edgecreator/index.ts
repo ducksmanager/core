@@ -1,4 +1,4 @@
-import edgeModelReady from "~/emails/edge-model-ready";
+import edgeModelReady from "../../emails/edge-model-ready";
 import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
 
 import { RequiredAuthMiddleware } from "../auth/util";

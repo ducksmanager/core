@@ -1,6 +1,6 @@
 import dayjs from "dayjs";
 
-import EdgePhotoSent from "~/emails/edge-photo-sent";
+import EdgePhotoSent from "../../../emails/edge-photo-sent";
 import { UserSocket } from "../../../index";
 import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
 import { prismaClient as prismaEdgeCreator } from "~prisma-schemas/schemas/edgecreator/client";

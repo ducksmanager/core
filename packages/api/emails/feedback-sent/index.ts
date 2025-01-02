@@ -1,4 +1,4 @@
-import { Email, i18n } from "~emails/email";
+import { Email, i18n } from "../email";
 import type { user } from "~prisma-schemas/schemas/dm";
 
 type InputData = {

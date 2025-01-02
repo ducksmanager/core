@@ -2,8 +2,8 @@ import { parse } from "csv-parse/sync";
 import { existsSync, readFileSync } from "fs";
 import { cwd } from "process";
 
-import { getPublicationTitles } from "~/services/coa/publications";
-import { getShownQuotations } from "~/services/coa/quotations";
+import { getPublicationTitles } from "../../coa/publications";
+import { getShownQuotations } from "../../coa/quotations";
 import type { InducksIssueQuotationSimple } from "~dm-types/InducksIssueQuotationSimple";
 import type { TransactionResults } from "~dm-types/TransactionResults";
 import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa/client";

@@ -1,4 +1,4 @@
-import feedbackSent from "~/emails/feedback-sent";
+import feedbackSent from "../../emails/feedback-sent";
 import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
 
 import { useSocketServices } from "~socket.io-services";

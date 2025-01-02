@@ -1,6 +1,6 @@
 import type { user } from "~prisma-schemas/schemas/dm";
 import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
-import { getHashedPassword, isValidEmail } from "~services/auth/util";
+import { getHashedPassword, isValidEmail } from "../../auth/util";
 
 type PrismaDmTransaction = Parameters<
   Parameters<typeof prismaDm.$transaction>[0]
