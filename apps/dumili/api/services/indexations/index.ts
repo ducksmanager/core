@@ -46,6 +46,7 @@ const listenEvents = (socket: IndexationsSocket) => ({
   getIndexations: (): Promise<
     Prisma.indexationGetPayload<{
       include: {
+        acceptedIssueSuggestion: true,
         pages: {
           include: {
             image: true;
@@ -59,6 +60,7 @@ const listenEvents = (socket: IndexationsSocket) => ({
         dmUserId: socket.data.user.id,
       },
       include: {
+        acceptedIssueSuggestion: true,
         pages: {
           include: {
             image: true,
@@ -68,7 +70,6 @@ const listenEvents = (socket: IndexationsSocket) => ({
             pageNumber: "asc",
           },
         },
-        acceptedIssueSuggestion: true,
       },
     }),
 });

@@ -81,9 +81,9 @@ watch(
 );
 
 const images = computed(() =>
-  issueSuggestions.value.map(({ url, id, issuecode }) => ({
+  issueSuggestions.value.map(({ url, id, publicationcode, issuenumber }) => ({
     id,
-    text: issuecode || $t("Titre inconnu"),
+    text: `${publicationcode} ${issuenumber}` || $t("Titre inconnu"),
     url,
   })),
 );
