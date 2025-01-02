@@ -1,6 +1,4 @@
 
-import PresentationSentenceApproved from "~emails/presentation-sentence-approved";
-import PresentationSentenceRefused from "~emails/presentation-sentence-refused";
 import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
 
 import { useSocketServices } from "~socket.io-services";
@@ -25,9 +23,11 @@ const listenEvents = () => ({
             id: userId,
           },
         });
+        const { default: PresentationSentenceApproved } = await import("~emails/presentation-sentence-approved");
         await new PresentationSentenceApproved({ user }).send();
         break;
       case "refuse":
+        const { default: PresentationSentenceRefused } = await import("~emails/presentation-sentence-refused");
         await new PresentationSentenceRefused({
           user: await prismaDm.user.findUniqueOrThrow({
             where: { id: userId },

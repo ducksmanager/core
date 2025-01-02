@@ -5,7 +5,7 @@ import { RequiredAuthMiddleware } from "../auth/util";
 import { Errorable, useSocketServices } from "~socket.io-services";
 import options from "./options";
 import order from "./order";
-import { UserSocket } from "~/index";
+import { UserSocket } from "../../index";
 import { SessionUser } from "~dm-types/SessionUser";
 import { user } from "~prisma-schemas/client_dm";
 

@@ -1,7 +1,8 @@
 import axios from "axios";
 import sizeOf from "image-size";
+import { useSocketServices } from "~socket.io-services/index";
 
-export default () => ({
+const listenEvents = () => ({
   getImageInfo: async (targetUrl: string) => {
     const url = targetUrl.startsWith("https://res.cloudinary.com")
       ? targetUrl
@@ -28,3 +29,12 @@ export default () => ({
     }
   },
 });
+
+export const { endpoint, client, server } = useSocketServices<
+  typeof listenEvents
+>("/image-info", {
+  listenEvents,
+  middlewares: [],
+});
+
+export type ClientEvents = (typeof client)["emitEvents"];

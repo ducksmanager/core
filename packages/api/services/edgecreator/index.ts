@@ -8,7 +8,7 @@ import models from "./models";
 import multipleEdgePhotos from "./multiple-edge-photos";
 import { SessionUser } from "~dm-types/SessionUser";
 import { useSocketServices } from "~socket.io-services";
-import { UserSocket } from "~/index";
+import { UserSocket } from "../../index";
 
 type ImageElement = {
   country: string;

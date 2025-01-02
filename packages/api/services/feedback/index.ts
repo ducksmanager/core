@@ -2,7 +2,7 @@ import feedbackSent from "~/emails/feedback-sent";
 import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
 
 import { useSocketServices } from "~socket.io-services";
-import { UserSocket } from "~/index";
+import { UserSocket } from "../../index";
 import { SessionUser } from "~dm-types/SessionUser";
 
 const listenEvents = (socket: UserSocket) => ({

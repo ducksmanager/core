@@ -1,10 +1,25 @@
 import { inject, type InjectionKey } from "vue";
 
-import BrowseServices from "~edgecreator-services/browse/types";
-import ImageInfoServices from "~edgecreator-services/image-info/types";
-import SaveServices from "~edgecreator-services/save/types";
-import TextServices from "~edgecreator-services/text/types";
-import UploadServices from "~edgecreator-services/upload/types";
+import {
+  ClientEvents as BrowseServices,
+  endpoint as browseEndpoint,
+} from "~edgecreator-services/browse";
+import {
+  ClientEvents as ImageInfoServices,
+  endpoint as imageInfoEndpoint,
+} from "~edgecreator-services/image-info";
+import {
+  ClientEvents as SaveServices,
+  endpoint as saveEndpoint,
+} from "~edgecreator-services/save";
+import {
+  ClientEvents as TextServices,
+  endpoint as textEndpoint,
+} from "~edgecreator-services/text";
+import {
+  ClientEvents as UploadServices,
+  endpoint as uploadEndpoint,
+} from "~edgecreator-services/upload";
 import type { SocketClient } from "~socket.io-client-services";
 
 const defaultExport = (options: {
@@ -22,28 +37,21 @@ const defaultExport = (options: {
 
   return {
     options,
-    imageInfo: socket.addNamespace<ImageInfoServices>(
-      ImageInfoServices.endpoint,
-      { session },
-    ),
-    browse: socket.addNamespace<BrowseServices>(
-      BrowseServices.endpoint,
-      {
-        session,
-      },
-    ),
-    save: socket.addNamespace<SaveServices>(SaveServices.endpoint, {
+    imageInfo: socket.addNamespace<ImageInfoServices>(imageInfoEndpoint, {
       session,
     }),
-    text: socket.addNamespace<TextServices>(TextServices.endpoint, {
+    browse: socket.addNamespace<BrowseServices>(browseEndpoint, {
       session,
     }),
-    upload: socket.addNamespace<UploadServices>(
-      UploadServices.endpoint,
-      {
-        session,
-      },
-    ),
+    save: socket.addNamespace<SaveServices>(saveEndpoint, {
+      session,
+    }),
+    text: socket.addNamespace<TextServices>(textEndpoint, {
+      session,
+    }),
+    upload: socket.addNamespace<UploadServices>(uploadEndpoint, {
+      session,
+    }),
   };
 };
 

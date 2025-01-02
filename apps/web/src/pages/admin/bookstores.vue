@@ -24,18 +24,18 @@ meta:
 import type { SimpleBookstore } from "~dm-types/SimpleBookstore";
 import type { bookstoreComment } from "~prisma-schemas/schemas/dm";
 
-let bookstores = $shallowRef<SimpleBookstore[] | null>(null);
+let bookstores = $shallowRef<SimpleBookstore[]>();
 
 const {
-  bookstore: { services: bookstoreServices },
+  adminBookstore: { services: adminBookstoreServices },
 } = inject(socketInjectionKey)!;
 
 const validateBookstoreComment = async ({ id }: bookstoreComment) => {
-  await bookstoreServices.approveBookstoreComment(id);
+  await adminBookstoreServices.approveBookstoreComment(id);
 };
 
 (async () => {
-  bookstores = await bookstoreServices.getBookstores();
+  bookstores = await adminBookstoreServices.getBookstores();
 })();
 </script>
 

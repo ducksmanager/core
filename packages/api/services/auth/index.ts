@@ -19,7 +19,7 @@ import {
   isValidEmail,
   loginAs,
 } from "./util";
-import { useSocketServices } from "~socket.io-services";
+import { Errorable, useSocketServices } from "~socket.io-services";
 
 const listenEvents = () => ({
   forgot: async (token: string) =>
@@ -65,7 +65,7 @@ const listenEvents = () => ({
     password: string;
     password2: string;
     token: string;
-  }) =>
+  }): Promise<Errorable<{token: string}, string>> =>
     new Promise((resolve) => {
       jwt.verify(
         token,
@@ -107,7 +107,7 @@ const listenEvents = () => ({
 
   getCsrf: () => "",
 
-  signup: (input: { username: string; password: string; email: string }) =>
+  signup: (input: { username: string; password: string; email: string }): Promise<Errorable<string, 'Bad request'>> =>
     new Promise(async (resolve) => {
       console.log(`signup with user ${input.username}`);
       await prismaDm.$transaction(async (transaction) => {

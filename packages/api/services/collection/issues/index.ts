@@ -16,7 +16,7 @@ import {
   deleteIssues,
   handleIsOnSale,
 } from "./util";
-import { UserSocket } from "~/index";
+import { UserSocket } from "../../../index";
 import {
   CollectionUpdateMultipleIssues,
   CollectionUpdateSingleIssue,

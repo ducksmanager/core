@@ -5,7 +5,7 @@ import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
 
 import { getMedalPoints } from "../collection/util";
 import { useSocketServices } from "~socket.io-services";
-import { UserSocket } from "~/index";
+import { UserSocket } from "../../index";
 import { RequiredAuthMiddleware } from "../auth/util";
 import { SessionUser } from "~dm-types/SessionUser";
 
@@ -162,3 +162,5 @@ const getUsersQuickStats = async (userIds: number[]) =>
       return acc;
     }, {});
   });
+
+  export type UserClientEvents = (typeof userClient)["emitEvents"];

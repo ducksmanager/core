@@ -9,7 +9,7 @@ import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
 import { UserIsAdminMiddleware } from "../auth/util";
 import { useSocketServices } from "~socket.io-services";
 import { SessionUser } from "~dm-types/SessionUser";
-import { UserSocket } from "~/index";
+import { UserSocket } from "../../index";
 import { SimpleBookstore } from "~dm-types/SimpleBookstore";
 
 

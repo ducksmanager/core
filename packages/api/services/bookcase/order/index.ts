@@ -1,3 +1,3 @@
-import { UserSocket } from "~/index";
+import { UserSocket } from "../../../index";
 
 export default (socket: UserSocket) => ({});

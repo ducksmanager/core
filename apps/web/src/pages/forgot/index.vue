@@ -59,8 +59,8 @@ const {
 
 const sendPasswordToken = async () => {
   const response = await authServices.requestTokenForForgotPassword(email);
-  if (response.error) {
-    error = response.error;
+  if ("error" in response) {
+    error = response.error!;
   } else {
     token = response.token;
   }

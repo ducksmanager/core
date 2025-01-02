@@ -1,4 +1,4 @@
-import { UserSocket } from "~/index";
+import { UserSocket } from "../../../index";
 
 import type { EditSubscription } from "~dm-types/EditSubscription";
 import { subscription } from "~prisma-schemas/client_dm";

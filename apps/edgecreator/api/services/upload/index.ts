@@ -13,6 +13,7 @@ import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa/client";
 import { SocketClient } from "~socket.io-client-services";
 
 import { getNextAvailableFile } from "../_upload_utils";
+import { useSocketServices } from "~socket.io-services/index";
 
 const edgesPath: string = process.env.EDGES_PATH!;
 
@@ -21,22 +22,8 @@ const getEdgeCreatorServices = () =>
     process.env.DM_SOCKET_URL!
   ).addNamespace<EdgeCreatorServices>(edgeCreatorServicesEndpoint).services;
 
-export default () => ({
-  // (io.of(namespaceEndpoint) as Namespace<Events>).on("connection", (socket) => {
-  //   const dmSocket = new SocketClient(process.env.DM_SOCKET_URL!);
-  //   ({ services: edgeCreatorServices } =
-  //     dmSocket.addNamespace<EdgeCreatorServices>(
-  //       EdgeCreatorServices.endpoint,
-  //     ));
-  //   console.log("connected to upload");
-
+const listenEvents = () => ({
   uploadFromBase64: async (parameters: { data: string; issuecode: string }) => {
-    //   const dmSocket = new SocketClient(process.env.DM_SOCKET_URL!);
-    //   ({ services: edgeCreatorServices } =
-    //     dmSocket.addNamespace<EdgeCreatorServices>(
-    //       EdgeCreatorServices.endpoint,
-    //     ));
-
     const { issuecode, data } = parameters;
     const { publicationcode, issuenumber } =
       await prismaCoa.inducks_issue.findFirstOrThrow({
@@ -60,6 +47,20 @@ export default () => ({
     return { fileName };
   },
 });
+
+
+
+export const { endpoint, client, server } = useSocketServices<
+  typeof listenEvents,
+  object,
+  object,
+  { token: string }
+>("/save", {
+  listenEvents,
+  middlewares: [],
+});
+
+export type ClientEvents = (typeof client)["emitEvents"];
 
 export const upload = async (
   req: Request<

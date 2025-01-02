@@ -1,4 +1,4 @@
-import { UserSocket } from "~/index";
+import { UserSocket } from "../../index";
 import type { IssueSuggestion } from "~dm-types/IssueSuggestion";
 import { IssueSuggestionList } from "~dm-types/IssueSuggestionList";
 import type { StoryDetail } from "~dm-types/StoryDetail";

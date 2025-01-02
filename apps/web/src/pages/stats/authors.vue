@@ -67,10 +67,9 @@ import {
 } from "chart.js";
 import { Bar } from "vue-chartjs";
 
-import type StatsServices from "~dm-services/stats/types";
-import type { EventReturnType } from "~socket.io-services";
-
+import type { ClientEvents as StatsServices } from "~dm-services/stats";
 import { socketInjectionKey } from "../../composables/useDmSocket";
+import { EventOutput } from "~socket.io-services/index";
 
 Chart.register(
   Legend,
@@ -96,8 +95,9 @@ const unitTypes = {
   percentage: $t("Afficher en pourcentages"),
 };
 
-let watchedAuthorsStoryCount = $ref<EventReturnType<
-  StatsServices["getWatchedAuthorsStats"]
+let watchedAuthorsStoryCount = $ref<EventOutput<
+  StatsServices,
+  "getWatchedAuthorsStats"
 > | null>(null);
 let unitTypeCurrent = $ref("number");
 let width = $ref<string | null>(null),

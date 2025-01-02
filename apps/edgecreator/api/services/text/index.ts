@@ -1,5 +1,6 @@
 import axios from "axios";
 import { v2 as cloudinary } from "cloudinary";
+import { useSocketServices } from "~socket.io-services/index";
 
 const sessionHashes: Record<string, string> = {};
 
@@ -54,7 +55,7 @@ const generateImage = (parameters: {
       )
     );
 
-export default () => ({
+const listenEvents = () => ({
   getText: (parameters: {
     color: string;
     colorBackground: string;
@@ -118,3 +119,15 @@ export default () => ({
         });
     }),
 });
+
+export const { endpoint, client, server } = useSocketServices<
+  typeof listenEvents,
+  object,
+  object,
+  { token: string }
+>("/save", {
+  listenEvents,
+  middlewares: [],
+});
+
+export type ClientEvents = (typeof client)["emitEvents"];

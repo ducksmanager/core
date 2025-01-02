@@ -156,7 +156,7 @@
 import { socketInjectionKey } from "../../composables/useDmSocket";
 
 const {
-  globalStats: { services: globalStatsServices },
+  userGlobalStats: { services: userGlobalStatsServices },
 } = inject(socketInjectionKey)!;
 
 const { getConditionLabel } = useCondition();
@@ -224,7 +224,8 @@ watch(
 (async () => {
   await loadCollection();
   await fetchCount();
-  const { userScores } = await globalStatsServices.getUsersCollectionRarity();
+  const { userScores } =
+    await userGlobalStatsServices.getUsersCollectionRarity();
   rarityValue =
     userScores.length -
     userScores.findIndex(({ userId }) => userId === user.value?.id);

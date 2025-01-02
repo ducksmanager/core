@@ -14,8 +14,9 @@ import {
   PresentationTextValidation,
   validate,
 } from "./util";
-import { UserSocket } from "~/index";
+import { UserSocket } from "../../../index";
 import { UserForAccountForm } from "~dm-types/UserForAccountForm";
+import { Errorable } from "~socket.io-services";
 
 export default (socket: UserSocket) => ({
   getUser: async () =>
@@ -40,7 +41,7 @@ export default (socket: UserSocket) => ({
     });
   },
 
-  updateUser: async (input: UserForAccountForm) => {
+  updateUser: async (input: UserForAccountForm): Promise<Errorable<{hasRequestedPresentationSentenceUpdate: boolean}, 'Bad request'>> => {
     let hasRequestedPresentationSentenceUpdate = false;
     let validators: Validation[] = [
       new DiscordIdValidation(),

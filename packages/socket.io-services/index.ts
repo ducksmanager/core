@@ -1,5 +1,8 @@
 import type { Namespace, Server, Socket } from "socket.io";
-import { EventsMap } from "socket.io/dist/typed-events";
+
+type EventsMap ={
+  [event: string]: any;
+}
 
 export type ScopedError<ErrorKey extends string = string> = {
   error: ErrorKey;
@@ -81,15 +84,9 @@ export const useSocketServices = <
           socket.on(
             eventName,
             (
-              // @ts-expect-error
-              ...args: Parameters<
-                EmitEvents[Extract<
-                  keyof ReturnType<SocketListenEvents>,
-                  string
-                >]
-              >,
-              callback
+              ...args: unknown[]
             ) => {
+              const callback = args.pop() as Function;
               const output = socketEventImplementations[eventName](...args);
               callback(output);
             }

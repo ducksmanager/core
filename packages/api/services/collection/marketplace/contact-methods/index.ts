@@ -2,7 +2,7 @@ import { userOptionType } from "~prisma-schemas/schemas/dm";
 import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
 
 import { getIssuesForSale } from "..";
-import { UserSocket } from "~/index";
+import { UserSocket } from "../../../../index";
 
 export default (socket: UserSocket) => ({
   getContactMethods: async (sellerId: number) => {

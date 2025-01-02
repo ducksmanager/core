@@ -1,4 +1,4 @@
-import { UserSocket } from "~/index";
+import { UserSocket } from "../../../index";
 import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
 
 export default (socket: UserSocket) => ({

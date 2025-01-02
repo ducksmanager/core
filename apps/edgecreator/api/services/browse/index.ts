@@ -2,6 +2,7 @@ import { XMLParser } from "fast-xml-parser";
 import { readdirSync, readFileSync } from "fs";
 import path from "path";
 import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa/client";
+import { useSocketServices } from "~socket.io-services";
 
 type EdgeModelDetails = {
   issuecode: string;
@@ -84,7 +85,7 @@ const findInDir = (dir: string) =>
     }
   });
 
-export default () => ({
+const listenEvents = () => ({
   listEdgeModels: async () =>
     new Promise((resolve) => {
       findInDir(edgesPath)
@@ -125,3 +126,12 @@ export default () => ({
     }
   },
 });
+
+export const { endpoint, client, server } = useSocketServices<
+  typeof listenEvents
+>("/browse", {
+  listenEvents,
+  middlewares: [],
+});
+
+export type ClientEvents = (typeof client)["emitEvents"];

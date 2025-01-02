@@ -9,7 +9,7 @@ import subscriptions from "./subscriptions";
 import user from "./user";
 import { getUser } from "./user/util";
 import watchedAuthors from "./watched-authors";
-import { UserSocket } from "~/index";
+import { UserSocket } from "../../index";
 import { useSocketServices } from "~socket.io-services";
 import { SessionUser } from "~dm-types/SessionUser";
 import { RequiredAuthMiddleware } from "../auth/util";

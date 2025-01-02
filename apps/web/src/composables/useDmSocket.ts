@@ -47,6 +47,8 @@ import {
 import {
   endpoint as globalStatsEndpoint,
   type ClientEvents as GlobalStatsEvents,
+  type UserClientEvents as UserGlobalStatsEvents,
+  userEndpoint as userGlobalStatsEndpoint,
 } from "~dm-services/global-stats";
 import {
   endpoint as presentationTextEndpoint,
@@ -143,6 +145,15 @@ const defaultExport = (options: {
         ttl: 1000, // 1 second only, because we want to always get the latest data but still cache in case of offline
       },
     }),
+    userGlobalStats: socket.addNamespace<UserGlobalStatsEvents>(
+      userGlobalStatsEndpoint,
+      {
+        cache: {
+          storage: cacheStorage,
+          ttl: 1000, // 1 second only, because we want to always get the latest data but still cache in case of offline
+        },
+      },
+    ),
     events: socket.addNamespace<EventsEvents>(eventsEndpoint, {}),
     bookstore: socket.addNamespace<BookstoreEvents>(bookstoresEndpoint),
     adminBookstore: socket.addNamespace<AdminBookstoreEvents>(

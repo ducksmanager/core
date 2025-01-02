@@ -9,6 +9,7 @@ import {
   endpoint as edgeCreatorServicesEndpoint,
 } from "~dm-services/edgecreator";
 import { SocketClient } from "~socket.io-client-services";
+import { useSocketServices } from "~socket.io-services/index";
 import type { ExportPaths } from "~types/ExportPaths";
 
 import { ModelContributor } from "~types/ModelContributor";
@@ -32,7 +33,7 @@ const getEdgeCreatorServices = (token: string) => {
   ).services;
 };
 
-export default (socket: TokenSocket) => ({
+const listenEvents = (socket: TokenSocket) => ({
   saveEdge: async (parameters: {
     runExport: boolean;
     runSubmit: boolean;
@@ -98,3 +99,15 @@ export default (socket: TokenSocket) => ({
     }
   },
 });
+
+export const { endpoint, client, server } = useSocketServices<
+  typeof listenEvents,
+  object,
+  object,
+  { token: string }
+>("/save", {
+  listenEvents,
+  middlewares: [],
+});
+
+export type ClientEvents = (typeof client)["emitEvents"];

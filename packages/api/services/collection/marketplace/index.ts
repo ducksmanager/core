@@ -3,7 +3,7 @@ import type { issue } from "~prisma-schemas/schemas/dm";
 import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
 
 import contactMethods from "./contact-methods";
-import { UserSocket } from "~/index";
+import { UserSocket } from "../../../index";
 
 export default (socket: UserSocket) => ({
   ...contactMethods(socket),

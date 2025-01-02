@@ -17,6 +17,7 @@ import useCollection from "../composables/useCollection";
 import { socketInjectionKey } from "../composables/useDmSocket";
 import { bookcase } from "./bookcase";
 import { EventOutput, SuccessfulEventOutput } from "~socket.io-services/index";
+import { SubscriptionTransformedStringDates } from "~dm-services/collection/subscriptions";
 
 export type IssueWithPublicationcodeOptionalId = Omit<
   issue,

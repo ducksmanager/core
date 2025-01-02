@@ -1,4 +1,4 @@
-import { UserSocket } from "~/index";
+import { UserSocket } from "../../../index";
 import { authorUser } from "~prisma-schemas/client_dm";
 
 import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa/client";
