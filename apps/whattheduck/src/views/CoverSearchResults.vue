@@ -63,7 +63,6 @@
 import '@nanoandrew4/vue3-carousel-3d/dist/style.css';
 import { Carousel3d, Slide } from '@nanoandrew4/vue3-carousel-3d';
 import { pricetagOutline, pricetagSharp } from 'ionicons/icons';
-import type { EventReturnType } from '~socket.io-services';
 import { stores as webStores, components as webComponents } from '~web';
 import { socketInjectionKey as dmSocketInjectionKey } from '~web/src/composables/useDmSocket';
 
@@ -73,7 +72,8 @@ import FullIssue from '~/components/FullIssue.vue';
 import router from '~/router';
 import { app } from '~/stores/app';
 import { wtdcollection } from '~/stores/wtdcollection';
-import type CoverIdServices from '~dm-services/cover-id/types';
+import type { ClientEvents as CoverIdServices } from '~dm-services/cover-id';
+import { SuccessfulEventOutput } from '~socket.io-services/index';
 
 const hasCoaData = ref(false);
 const { issuecodeDetails, publicationNames, issuePopularities, issueQuotations } = storeToRefs(webStores.coa());
@@ -102,7 +102,7 @@ const route = useRoute();
 
 const { getCollectionIssues } = wtdcollection();
 
-const searchResults = ref<EventReturnType<CoverIdServices['searchFromCover']>>(
+const searchResults = ref<SuccessfulEventOutput<CoverIdServices, 'searchFromCover'>>(
   JSON.parse(route.query.searchResults as string),
 );
 
