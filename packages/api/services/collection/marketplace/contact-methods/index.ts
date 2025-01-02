@@ -20,7 +20,7 @@ export default (socket: UserSocket) => ({
         optionName: userOptionType.marketplace_contact_methods,
       },
     });
-    return sellerContactMethods.reduce(
+    return sellerContactMethods.reduce<Record<string, string|number|null>>(
       (acc, { optionValue: contactMethod }) => ({
         ...acc,
         [contactMethod]:

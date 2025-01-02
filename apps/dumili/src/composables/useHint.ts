@@ -14,7 +14,7 @@ export default () => {
   const applyHintsFromCoverSearch = async (
     results: EventOutput<CoverIdServices, "searchFromCover">,
   ) => {
-    if (!results.covers?.length) {
+    if ("error" in results || !results.covers?.length) {
       console.error("Erreur lors de la recherche par image de la couverture");
       return;
     }

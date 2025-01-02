@@ -45,7 +45,7 @@ export default (socket: UserSocket) => ({
           },
         ),
       ),
-    ).then((results) => results.groupBy("sort", "[]"));
+    ).then((results) => results.groupBy("sort"));
   },
 });
 

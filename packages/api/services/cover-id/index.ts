@@ -24,7 +24,6 @@ const listenEvents = () => ({
 
     if (!pastecResponse) {
       return { error: "Pastec returned NULL" };
-      return;
     }
     if (!pastecResponse?.image_ids) {
       return {

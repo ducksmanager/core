@@ -18,7 +18,11 @@ export type Errorable<T, ErrorKey extends string> = EitherOr<
   EitherOr<{ error: ErrorKey; errorDetails?: string }, ScopedError<ErrorKey>>
 >;
 
-export type WithoutError<T extends Errorable<any, string>> = T extends Errorable<infer U, string> ? U : never;
+export type WithoutError<T> = T extends { error: any; errorDetails?: any }
+  ? never
+  : T extends { error: any }
+  ? never
+  : T;
 
 export type EventOutput<
   ClientEvents extends ReturnType<typeof useSocketServices>['client']['emitEvents'],
@@ -29,7 +33,6 @@ export type SuccessfulEventOutput<
   ClientEvents extends ReturnType<typeof useSocketServices>['client']['emitEvents'],
   EventName extends keyof ClientEvents>
   = WithoutError<EventOutput<ClientEvents, EventName>>;
-
 
 type ServerSentEndEvents<Events extends { [event: string]: any }> = {
   [K in keyof Events & string as `${K}End`]: Events[K];

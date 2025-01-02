@@ -75,7 +75,7 @@ export default (socket: UserSocket) => ({
     if (socket.data.user!.username === "demo") {
       await resetDemo();
     }
-    prismaDm.issue
+    return prismaDm.issue
       .findMany({
         where: {
           userId: socket.data.user!.id,
@@ -214,7 +214,7 @@ export default (socket: UserSocket) => ({
     return output;
   },
 
-  getCollectionQuotations: async () =>
+  getCollectionQuotations: (): Promise<Record<string, InducksIssueQuotationSimple>> =>
     prismaDm.$queryRaw<InducksIssueQuotationSimple[]>`
           select
             issuecode,
@@ -229,7 +229,6 @@ export default (socket: UserSocket) => ({
           group by numeros.ID;
         `
       .then(getShownQuotations)
-      .then((quotations) => ({ quotations })),
 });
 
 const addOrChangeIssues = async (

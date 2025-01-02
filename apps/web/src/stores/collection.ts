@@ -16,7 +16,7 @@ import type {
 import useCollection from "../composables/useCollection";
 import { socketInjectionKey } from "../composables/useDmSocket";
 import { bookcase } from "./bookcase";
-import { EventOutput } from "~socket.io-services/index";
+import { EventOutput, SuccessfulEventOutput } from "~socket.io-services/index";
 
 export type IssueWithPublicationcodeOptionalId = Omit<
   issue,
@@ -76,7 +76,7 @@ export const collection = defineStore("collection", () => {
       | null
     >(null),
     user = shallowRef<
-      EventOutput<CollectionServices, "getUser"> | undefined | null
+      SuccessfulEventOutput<CollectionServices, "getUser"> | undefined | null
     >(undefined),
     userPermissions = shallowRef<
       EventOutput<CollectionServices, "getUserPermissions"> | undefined
@@ -88,7 +88,7 @@ export const collection = defineStore("collection", () => {
       issues.value?.groupBy("issuecode", "[]"),
     ),
     hasSuggestions = computed(
-      () => Object.keys(suggestions.value?.oldestdate.issues || {}).length,
+      () => Object.keys(suggestions.value?.oldestdate || {}).length,
     ),
     issuecodesPerPublication = computed(
       () => issues.value?.groupBy("publicationcode", "[]") || {},
@@ -282,13 +282,9 @@ export const collection = defineStore("collection", () => {
       }
     },
     loadUserIssueQuotations = async () => {
-      const data = await collectionServices.getCollectionQuotations();
-
-      if (data.quotations) {
-        coa().addIssueQuotations(data.quotations);
-      } else {
-        console.error(data.error);
-      }
+      coa().addIssueQuotations(
+        await collectionServices.getCollectionQuotations(),
+      );
     },
     loadLastPublishedEdgesForCurrentUser = async () => {
       if (!lastPublishedEdgesForCurrentUser.value) {

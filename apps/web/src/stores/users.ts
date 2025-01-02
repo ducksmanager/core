@@ -4,7 +4,7 @@ import type { AbstractEvent } from "~dm-types/events/AbstractEvent";
 import type { user } from "~prisma-schemas/schemas/dm";
 
 import { socketInjectionKey } from "../composables/useDmSocket";
-import { EventOutput } from "~socket.io-services/index";
+import { EventOutput, SuccessfulEventOutput } from "~socket.io-services/index";
 
 type SimpleUser = Pick<user, "id" | "username">;
 
@@ -17,10 +17,16 @@ export const users = defineStore("users", () => {
       null,
     ),
     stats = shallowRef<
-      EventOutput<GlobalStatsServices, "getUsersPointsAndStats">["stats"]
+      SuccessfulEventOutput<
+        GlobalStatsServices,
+        "getUsersPointsAndStats"
+      >["stats"]
     >({}),
     points = shallowRef<
-      EventOutput<GlobalStatsServices, "getUsersPointsAndStats">["points"]
+      SuccessfulEventOutput<
+        GlobalStatsServices,
+        "getUsersPointsAndStats"
+      >["points"]
     >({}),
     events = shallowRef<AbstractEvent[]>([]),
     bookcaseContributors = shallowRef<BookcaseContributor[] | null>(null),
@@ -51,14 +57,16 @@ export const users = defineStore("users", () => {
 
       const data =
         await globalStatsServices.getUsersPointsAndStats(missingUserIds);
-      points.value = {
-        ...points.value,
-        ...data.points,
-      };
-      stats.value = {
-        ...stats.value,
-        ...data.stats,
-      };
+      if (!("error" in data)) {
+        points.value = {
+          ...points.value,
+          ...data.points,
+        };
+        stats.value = {
+          ...stats.value,
+          ...data.stats,
+        };
+      }
     },
     fetchBookcaseContributors = async () => {
       if (!bookcaseContributors.value) {
