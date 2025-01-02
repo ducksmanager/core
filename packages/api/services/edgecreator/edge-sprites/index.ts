@@ -1,16 +1,14 @@
 import { v2 as cloudinaryV2 } from "cloudinary";
-import type { Socket } from "socket.io";
 
 import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa/client";
 import type { edge } from "~prisma-schemas/schemas/dm";
 import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
 
-import type Events from "../types";
 const SPRITE_SIZES = [10, 20, 50, 100, "full"];
 const MAX_SPRITE_SIZE = 100;
 
-export default (socket: Socket<Events>) => {
-  socket.on("uploadEdges", async (callback) => {
+export default () => ({
+  uploadEdges: async () => {
     try {
       let nextCursor = undefined;
       let allCloudinarySlugs: string[] = [];
@@ -67,7 +65,7 @@ export default (socket: Socket<Events>) => {
           },
         );
       }
-      callback();
+      return;
     } catch (e) {
       console.error(e);
     }
@@ -94,8 +92,8 @@ export default (socket: Socket<Events>) => {
 
     await updateTags(edgesWithoutSprites);
     await generateSprites();
-  });
-};
+  },
+});
 
 const getSpriteName = (publicationcode: string, suffix: string) =>
   `edges-${publicationcode.replace("/", "-")}-${suffix}`;

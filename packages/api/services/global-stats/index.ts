@@ -55,6 +55,8 @@ export const { endpoint, client, server } = useSocketServices<
   middlewares: [],
 });
 
+export type ClientEvents = (typeof client)["emitEvents"];
+
 const userListenEvents = (socket: UserSocket) => ({
   getUsersCollectionRarity: async () => {
     {

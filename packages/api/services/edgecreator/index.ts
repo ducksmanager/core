@@ -1,5 +1,3 @@
-import type { Namespace, Server } from "socket.io";
-
 import edgeModelReady from "~/emails/edge-model-ready";
 import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
 
@@ -8,34 +6,41 @@ import edgePublication from "./edge-publication";
 import edgeSprites from "./edge-sprites";
 import models from "./models";
 import multipleEdgePhotos from "./multiple-edge-photos";
-import type Events from "./types";
-import { namespaceEndpoint } from "./types";
-export default (io: Server) => {
-  (io.of(namespaceEndpoint) as Namespace<Events>)
-    .use(RequiredAuthMiddleware)
-    // .use(UserIsAdminMiddleware)
-    .on("connection", (socket) => {
-      console.log("connected to edgecreator as editor");
+import { SessionUser } from "~dm-types/SessionUser";
+import { useSocketServices } from "~socket.io-services";
+import { UserSocket } from "~/index";
 
-      socket.on("submitEdge", async (issuecode, callback) => {
-        const user = await prismaDm.user.findUniqueOrThrow({
-          where: {
-            id: socket.data.user!.id,
-          },
-        });
+const listenEvents = (socket: UserSocket) => ({
+  ...models(),
+  ...edgeSprites(),
+  ...edgePublication(),
+  ...multipleEdgePhotos(socket),
 
-        const email = new edgeModelReady({
-          user,
-          issuecode,
-        });
-        await email.send();
-
-        callback({ url: email.data.ecLink });
-      });
-
-      models(socket);
-      edgeSprites(socket);
-      edgePublication(socket);
-      multipleEdgePhotos(socket);
+  submitEdge: async (issuecode: string) => {
+    const user = await prismaDm.user.findUniqueOrThrow({
+      where: {
+        id: socket.data.user!.id,
+      },
     });
-};
+
+    const email = new edgeModelReady({
+      user,
+      issuecode,
+    });
+    await email.send();
+
+    return { url: email.data.ecLink };
+  },
+});
+
+export const { endpoint, client, server } = useSocketServices<
+  typeof listenEvents,
+  object,
+  object,
+  { user: SessionUser }
+>("/coa", {
+  listenEvents,
+  middlewares: [RequiredAuthMiddleware],
+});
+
+export type ClientEvents = (typeof client)["emitEvents"];

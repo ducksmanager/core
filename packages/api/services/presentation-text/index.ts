@@ -46,3 +46,5 @@ export const { endpoint, client, server } = useSocketServices<
   listenEvents,
   middlewares: [RequiredAuthMiddleware],
 });
+
+export type ClientEvents = (typeof client)["emitEvents"];

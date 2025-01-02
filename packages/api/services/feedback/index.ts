@@ -3,6 +3,7 @@ import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
 
 import { useSocketServices } from "~socket.io-services";
 import { UserSocket } from "~/index";
+import { SessionUser } from "~dm-types/SessionUser";
 
 const listenEvents = (socket: UserSocket) => ({
   sendFeedback: async (feedbackMessage: string) => {
@@ -18,7 +19,10 @@ const listenEvents = (socket: UserSocket) => ({
 });
 
 export const { endpoint, client, server } = useSocketServices<
-  typeof listenEvents
+  typeof listenEvents,
+  object,
+  object,
+  { user: SessionUser }
 >("/feedback", {
   listenEvents,
   middlewares: [],

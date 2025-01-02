@@ -41,6 +41,8 @@ export const { endpoint, client, server } = useSocketServices<
   middlewares: [],
 });
 
+export type ClientEvents = (typeof client)["emitEvents"];
+
 const MEDAL_LEVELS = {
   edge_photographer: { 1: 50, 2: 150, 3: 600 },
   edge_designer: { 1: 20, 2: 70, 3: 150 },

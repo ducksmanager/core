@@ -11,6 +11,8 @@ import { getUser } from "./user/util";
 import watchedAuthors from "./watched-authors";
 import { UserSocket } from "~/index";
 import { useSocketServices } from "~socket.io-services";
+import { SessionUser } from "~dm-types/SessionUser";
+import { RequiredAuthMiddleware } from "../auth/util";
 
 const listenEvents = (socket: UserSocket) => ({
   ...watchedAuthors(socket),
@@ -26,16 +28,14 @@ const listenEvents = (socket: UserSocket) => ({
       .deleteMany({
         where: { userId: socket.data.user!.id },
       })
-      .finally(() => {
-      }),
+      .finally(() => {}),
 
   getUserPermissions: () =>
-    prismaDm.userPermission
-      .findMany({
-        where: {
-          username: socket.data.user!.username,
-        },
-      }),
+    prismaDm.userPermission.findMany({
+      where: {
+        username: socket.data.user!.username,
+      },
+    }),
 
   getCollectionPopularity: () =>
     prismaDm.$queryRaw<{ issuecode: string; popularity: number }[]>`
@@ -44,8 +44,9 @@ const listenEvents = (socket: UserSocket) => ({
               inner join numeros issue using (issuecode)
       where issue.ID_Utilisateur = ${socket.data.user!.id}
       group by issuecode
-      order by COUNT(issue.ID) DESC`
-      .then((results) => results.groupBy("issuecode", "popularity")),
+      order by COUNT(issue.ID) DESC`.then((results) =>
+      results.groupBy("issuecode", "popularity"),
+    ),
 
   getNotificationToken: async (username: string) => {
     if (username !== socket.data.user!.username) {
@@ -53,12 +54,12 @@ const listenEvents = (socket: UserSocket) => ({
     } else {
       try {
         return new PushNotifications({
-            instanceId: process.env.PUSHER_INSTANCE_ID || "",
-            secretKey: process.env.PUSHER_SECRET_KEY || "",
-          }).generateToken(socket.data.user!.username).token;
+          instanceId: process.env.PUSHER_INSTANCE_ID || "",
+          secretKey: process.env.PUSHER_SECRET_KEY || "",
+        }).generateToken(socket.data.user!.username).token;
       } catch (e) {
         console.error(e);
-        return { error: "Error", errorDetails: (e as Error).message }
+        return { error: "Error", errorDetails: (e as Error).message };
       }
     }
   },
@@ -68,12 +69,10 @@ const listenEvents = (socket: UserSocket) => ({
     try {
       user = await getUser(socket.data.user!.id);
     } catch (_e) {
-      return { error: "This user does not exist" }
+      return { error: "This user does not exist" };
     }
     if (!user.lastAccess) {
-      console.log(
-        `Initializing last access for user ${socket.data.user!.id}`,
-      );
+      console.log(`Initializing last access for user ${socket.data.user!.id}`);
       user.previousAccess = null;
       user.lastAccess = new Date();
     } else {
@@ -88,7 +87,7 @@ const listenEvents = (socket: UserSocket) => ({
       },
     });
 
-    return user.previousAccess?.toISOString() || null
+    return user.previousAccess?.toISOString() || null;
   },
 
   getLastPublishedEdges: async () => {
@@ -105,29 +104,33 @@ const listenEvents = (socket: UserSocket) => ({
         },
       })
     ).map((issue) => `${issue.issuecode}`) as string[];
-    return (await prismaDm.edge.findMany({
-          where: {
-            creationDate: {
-              gt: threeMonthsAgo,
-            },
-            issuecode: {
-              in: userIssues,
-            },
+    return (
+      await prismaDm.edge.findMany({
+        where: {
+          creationDate: {
+            gt: threeMonthsAgo,
           },
-          take: 5,
-        })
-      ).map((edge) => ({
-        ...edge,
-        creationDate: edge.creationDate.toISOString(),
-      }))
-  }
+          issuecode: {
+            in: userIssues,
+          },
+        },
+        take: 5,
+      })
+    ).map((edge) => ({
+      ...edge,
+      creationDate: edge.creationDate.toISOString(),
+    }));
+  },
 });
 
 export const { endpoint, client, server } = useSocketServices<
-  typeof listenEvents
+  typeof listenEvents,
+  object,
+  object,
+  { user: SessionUser }
 >("/collection", {
   listenEvents,
-  middlewares: [],
+  middlewares: [RequiredAuthMiddleware],
 });
 
 export type ClientEvents = (typeof client)["emitEvents"];

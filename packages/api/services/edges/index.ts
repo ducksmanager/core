@@ -22,13 +22,7 @@ const getEdges = async (filters: {
         issuecode,
       },
     })
-  ).reduce(
-    (acc, model) => {
-      acc[model.issuecode] = model;
-      return acc;
-    },
-    {} as Record<string, edgeModel>,
-  );
+  ).groupBy('issuecode');
 
   return (
     await prismaDm.edge.findMany({
@@ -48,7 +42,7 @@ const getEdges = async (filters: {
 };
 
 const listenEvents = () => ({
-  getWantedEdges: async () =>
+  getWantedEdges: () =>
     prismaDm.$queryRaw<{ numberOfIssues: number; issuecode: string }[]>`
     SELECT Count(Numero) as numberOfIssues, issuecode
     FROM numeros AS issue
@@ -69,7 +63,7 @@ const listenEvents = () => ({
       })
       .then((issues) => prismaCoa.augmentIssueArrayWithInducksData(issues)),
 
-  getEdges: async (filters: { publicationcode?: string; issuecodes?: string[] }) =>
+  getEdges: (filters: { publicationcode?: string; issuecodes?: string[] }) =>
     getEdges(filters)
       .then((edges) => prismaCoa.augmentIssueArrayWithInducksData(edges))
       .then((edges) => edges.groupBy("issuecode")),
@@ -81,3 +75,5 @@ export const { endpoint, client, server } = useSocketServices<
   listenEvents,
   middlewares: [],
 });
+
+export type ClientEvents = (typeof client)["emitEvents"];

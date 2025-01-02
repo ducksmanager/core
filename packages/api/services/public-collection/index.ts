@@ -34,3 +34,5 @@ export const { endpoint, client, server } = useSocketServices<
   listenEvents,
   middlewares: [],
 });
+
+export type ClientEvents = (typeof client)["emitEvents"];
