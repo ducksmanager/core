@@ -180,7 +180,7 @@ export const app = defineStore('app', () => {
   });
 
   watch(currentNavigationItem, async (navigationItem) => {
-    selectedIssuecodes.value = null;
+    selectedIssuecodes.value = undefined;
     const value = (
       Array.isArray(navigationItem?.value) ? navigationItem.value.join(',') : navigationItem?.value
     )?.replace(/ /g, '_');
