@@ -1,25 +1,15 @@
 <template>
   <b-container fluid>
-    <b-row
-      align="center"
-      class="pt-2"
-    >
+    <b-row align="center" class="pt-2">
       <b-col class="text-start position-absolute col-12 col-md-6 options">
-        <b-navbar
-          toggleable
-          class="ps-0 pt-0"
-        >
+        <b-navbar toggleable class="ps-0 pt-0">
           <b-navbar-brand href="#">
             {{ $t("Options") }}
           </b-navbar-brand>
 
           <b-navbar-toggle target="nav-collapse" />
 
-          <b-collapse
-            id="nav-collapse"
-            is-nav
-            class="flex-column p-2 bg-white"
-          >
+          <b-collapse id="nav-collapse" is-nav class="flex-column p-2 bg-white">
             <b-row class="zoom-option">
               <b-col cols="3">
                 <input
@@ -29,7 +19,7 @@
                   max="8"
                   step="0.5"
                   style="width: 100%"
-                >
+                />
               </b-col>
               <b-col>{{ $t("Zoom") }}: {{ uiStore.zoom }}</b-col>
             </b-row>
@@ -52,8 +42,8 @@
                   id="showPreviousEdge"
                   v-model="showPreviousEdge"
                   :disabled="
-                    !mainStore.edgesBefore.length ||
-                      showPreviousEdge === undefined
+                    !mainStore.edgeIdsBefore.length ||
+                    showPreviousEdge === undefined
                   "
                 />
               </b-col>
@@ -69,14 +59,12 @@
                   id="showNextEdge"
                   v-model="showNextEdge"
                   :disabled="
-                    !mainStore.edgesAfter.length || showNextEdge === undefined
+                    !mainStore.edgeIdsAfter.length || showNextEdge === undefined
                   "
                 />
               </b-col>
               <b-col>
-                <label for="showNextEdge">{{
-                  $t("Show next edge")
-                }}</label>
+                <label for="showNextEdge">{{ $t("Show next edge") }}</label>
               </b-col>
             </b-row>
             <b-row>
@@ -111,10 +99,7 @@
           </b-collapse>
         </b-navbar>
       </b-col>
-      <b-col
-        align-self="center"
-        class="col-sm-4 offset-4"
-      >
+      <b-col align-self="center" class="col-sm-4 offset-4">
         <b-button to="/">
           <i-bi-house />
           {{ $t("Home") }}
@@ -122,23 +107,10 @@
       </b-col>
       <b-col />
     </b-row>
-    <b-row
-      align="center"
-      class="pb-1"
-    >
-      <b-col
-        v-if="publicationName"
-        align-self="center"
-      >
-        <issue
-          :issuecode="issuecodes[0]"
-          hide-condition
-          no-wrap
-        >
-          <template
-            v-if="isEditingMultiple"
-            #title-suffix
-          >
+    <b-row align="center" class="pb-1">
+      <b-col v-if="publicationName" align-self="center">
+        <issue :issuecode="issuecodes[0]" hide-condition no-wrap>
+          <template v-if="isEditingMultiple" #title-suffix>
             <template v-if="mainStore.isRange">
               {{ $t("to") }}
               {{ issuecodes[issuecodes.length - 1] }}
@@ -147,7 +119,8 @@
               <span
                 v-for="otherIssuecode in issuecodes.slice(1)"
                 :key="`other-${otherIssuecode}`"
-              >, {{ otherIssuecode }}</span>
+                >, {{ otherIssuecode }}</span
+              >
             </template>
           </template>
         </issue>
@@ -191,36 +164,27 @@
         </template>
       </b-col>
     </b-row>
-    <b-row
-      align="center"
-      class="p-1"
-    >
+    <b-row align="center" class="p-1">
       <b-col align-self="center">
         &nbsp;<b-button
-                pill
-                variant="outline-primary"
-                size="sm"
-                @click="showPhotoModal = !showPhotoModal"
-              >
-                <i-bi-camera />
-                <b-modal
-                  v-model="showPhotoModal"
-                  ok-only
-                >
-                  <gallery
-                    image-type="photos"
-                    :items="mainStore.publicationPhotosForGallery"
-                    @change="addPhoto"
-                  />
-                </b-modal>
-              </b-button>&nbsp;<save-model-button />&nbsp;<save-model-button
-                v-if="hasRole('Edition')"
-                with-submit
-              />
-        <save-model-button
-          v-if="hasRole('Admin')"
-          with-export
+          pill
+          variant="outline-primary"
+          size="sm"
+          @click="showPhotoModal = !showPhotoModal"
+        >
+          <i-bi-camera />
+          <b-modal v-model="showPhotoModal" ok-only>
+            <gallery
+              image-type="photos"
+              :items="mainStore.publicationPhotosForGallery"
+              @change="addPhoto"
+            />
+          </b-modal> </b-button
+        >&nbsp;<save-model-button />&nbsp;<save-model-button
+          v-if="hasRole('Edition')"
+          with-submit
         />
+        <save-model-button v-if="hasRole('Admin')" with-export />
       </b-col>
     </b-row>
     <b-row
@@ -239,8 +203,8 @@
               collapseDimensions = !collapseDimensions;
             "
           >
-            <i-bi-arrows-angle-expand />
-          </b-button>&nbsp;<b-button
+            <i-bi-arrows-angle-expand /> </b-button
+          >&nbsp;<b-button
             pill
             size="sm"
             variant="outline-primary"
@@ -264,11 +228,7 @@
               />
             </confirm-edit-multiple-values>
           </b-collapse>
-          <b-collapse
-            id="collapse-clone"
-            v-model="collapseClone"
-            class="mt-2"
-          >
+          <b-collapse id="collapse-clone" v-model="collapseClone" class="mt-2">
             <issue-select
               v-if="collapseClone"
               :publication-code="mainStore.publicationcode"
@@ -278,10 +238,7 @@
               disable-not-ongoing-nor-published
               @change="modelToBeCloned = $event"
             />
-            <b-button
-              :disabled="!modelToBeCloned"
-              @click="overwriteModel()"
-            >
+            <b-button :disabled="!modelToBeCloned" @click="overwriteModel()">
               {{ $t("Clone") }}
             </b-button>
           </b-collapse>

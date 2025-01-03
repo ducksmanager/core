@@ -26,10 +26,10 @@ const router = useRouter();
 const showUploadModal = ref(false);
 
 const issueData = ref<{
-    editMode: "range" | "single";
-    issuecode: string;
-    issuenumberEnd: string;
-  }>()
+  editMode: "range" | "single";
+  issuecode: string;
+  issuenumberEnd: string;
+}>();
 
 const issueSpecification = computed(() =>
   !issueData.value

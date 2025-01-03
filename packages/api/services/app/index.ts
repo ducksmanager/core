@@ -1,15 +1,17 @@
 import { existsSync, readFileSync } from "fs";
-import { Errorable, useSocketServices } from "~socket.io-services";
+
+import type { Errorable } from "~socket.io-services";
+import { useSocketServices } from "~socket.io-services";
 
 type AppInfos = {
   version: string;
 };
 
 type ErrorableAppUpdate = Errorable<
-{
-  version: string;
-  url: string;
-},
+  {
+    version: string;
+    url: string;
+  },
   "Not found" | "Already up to date"
 >;
 

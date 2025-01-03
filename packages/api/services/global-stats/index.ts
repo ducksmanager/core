@@ -1,13 +1,13 @@
 import type { BookcaseContributor } from "~dm-types/BookcaseContributor";
 import type { QuickStatsPerUser } from "~dm-types/QuickStatsPerUser";
+import type { SessionUser } from "~dm-types/SessionUser";
 import { Prisma } from "~prisma-schemas/schemas/dm";
 import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
-
-import { getMedalPoints } from "../collection/util";
 import { useSocketServices } from "~socket.io-services";
-import { UserSocket } from "../../index";
+
+import type { UserSocket } from "../../index";
 import { RequiredAuthMiddleware } from "../auth/util";
-import { SessionUser } from "~dm-types/SessionUser";
+import { getMedalPoints } from "../collection/util";
 
 const listenEvents = () => ({
   getBookcaseContributors: () =>
@@ -83,10 +83,14 @@ const userListenEvents = (socket: UserSocket) => ({
         myScore,
       };
     }
-  }
+  },
 });
 
-export const { endpoint: userEndpoint, client: userClient, server: userServer } = useSocketServices<
+export const {
+  endpoint: userEndpoint,
+  client: userClient,
+  server: userServer,
+} = useSocketServices<
   typeof userListenEvents,
   object,
   object,
@@ -163,4 +167,4 @@ const getUsersQuickStats = async (userIds: number[]) =>
     }, {});
   });
 
-  export type UserClientEvents = (typeof userClient)["emitEvents"];
+export type UserClientEvents = (typeof userClient)["emitEvents"];

@@ -22,7 +22,7 @@ const getEdges = async (filters: {
         issuecode,
       },
     })
-  ).groupBy('issuecode');
+  ).groupBy("issuecode");
 
   return (
     await prismaDm.edge.findMany({

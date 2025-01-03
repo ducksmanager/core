@@ -19,11 +19,7 @@
           />
         </linearGradient>
       </defs>
-      <rect
-        ref="rect"
-        v-bind="attributes"
-        :fill="`url(#${gradientId})`"
-      >
+      <rect ref="rect" v-bind="attributes" :fill="`url(#${gradientId})`">
         <metadata>{{ options }}</metadata>
       </rect>
     </g>

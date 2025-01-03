@@ -1,10 +1,7 @@
 <!--suppress RequiredAttributes -->
 <template>
   <svg>
-    <ellipse
-      ref="ellipse"
-      v-bind="attributes"
-    >
+    <ellipse ref="ellipse" v-bind="attributes">
       <metadata>{{ options }}</metadata>
     </ellipse>
   </svg>

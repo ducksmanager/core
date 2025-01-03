@@ -1,9 +1,9 @@
-import feedbackSent from "../../emails/feedback-sent";
+import type { SessionUser } from "~dm-types/SessionUser";
 import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
-
 import { useSocketServices } from "~socket.io-services";
-import { UserSocket } from "../../index";
-import { SessionUser } from "~dm-types/SessionUser";
+
+import feedbackSent from "../../emails/feedback-sent";
+import type { UserSocket } from "../../index";
 
 const listenEvents = (socket: UserSocket) => ({
   sendFeedback: async (feedbackMessage: string) => {
@@ -15,7 +15,7 @@ const listenEvents = (socket: UserSocket) => ({
       feedbackMessage,
     });
     await email.send();
-  }
+  },
 });
 
 export const { endpoint, client, server } = useSocketServices<

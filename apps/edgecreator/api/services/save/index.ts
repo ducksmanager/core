@@ -3,7 +3,6 @@ import { mkdirSync, unlinkSync, writeFileSync } from "fs";
 import path from "path";
 import type { Socket } from "socket.io";
 
-import { getSvgPath } from "../../_utils";
 import {
   type ClientEvents as EdgeCreatorServices,
   endpoint as edgeCreatorServicesEndpoint,
@@ -11,8 +10,9 @@ import {
 import { SocketClient } from "~socket.io-client-services";
 import { useSocketServices } from "~socket.io-services/index";
 import type { ExportPaths } from "~types/ExportPaths";
+import type { ModelContributor } from "~types/ModelContributor";
 
-import { ModelContributor } from "~types/ModelContributor";
+import { getSvgPath } from "../../_utils";
 
 type TokenSocket = Socket<object, object, object, { token: string }>;
 
@@ -29,7 +29,7 @@ const getEdgeCreatorServices = (token: string) => {
           console.log("not allowed");
         },
       },
-    }
+    },
   ).services;
 };
 
@@ -69,7 +69,7 @@ const listenEvents = (socket: TokenSocket) => ({
           issuecode,
           designers,
           photographers,
-        }
+        },
       );
       if ("error" in publicationResult) {
         return {

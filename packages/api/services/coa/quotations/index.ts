@@ -39,7 +39,7 @@ export default {
       ISSUE_CODE_REGEX.test(code),
     );
     if (!codes.length) {
-      return Promise.resolve({ error: "Bad request" })
+      return Promise.resolve({ error: "Bad request" });
     } else if (codes.length > 4) {
       return Promise.resolve({ error: "Too many requests" });
     } else {

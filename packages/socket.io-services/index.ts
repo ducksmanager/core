@@ -1,8 +1,8 @@
 import type { Namespace, Server, Socket } from "socket.io";
 
-type EventsMap ={
+type EventsMap = {
   [event: string]: any;
-}
+};
 
 export type ScopedError<ErrorKey extends string = string> = {
   error: ErrorKey;
@@ -24,18 +24,22 @@ export type Errorable<T, ErrorKey extends string> = EitherOr<
 export type WithoutError<T> = T extends { error: any; errorDetails?: any }
   ? never
   : T extends { error: any }
-  ? never
-  : T;
+    ? never
+    : T;
 
 export type EventOutput<
-  ClientEvents extends ReturnType<typeof useSocketServices>['client']['emitEvents'],
-  EventName extends keyof ClientEvents
-> = Awaited<ReturnType<ClientEvents[EventName]>>
+  ClientEvents extends ReturnType<
+    typeof useSocketServices
+  >["client"]["emitEvents"],
+  EventName extends keyof ClientEvents,
+> = Awaited<ReturnType<ClientEvents[EventName]>>;
 
 export type SuccessfulEventOutput<
-  ClientEvents extends ReturnType<typeof useSocketServices>['client']['emitEvents'],
-  EventName extends keyof ClientEvents>
-  = WithoutError<EventOutput<ClientEvents, EventName>>;
+  ClientEvents extends ReturnType<
+    typeof useSocketServices
+  >["client"]["emitEvents"],
+  EventName extends keyof ClientEvents,
+> = WithoutError<EventOutput<ClientEvents, EventName>>;
 
 type ServerSentEndEvents<Events extends { [event: string]: any }> = {
   [K in keyof Events & string as `${K}End`]: Events[K];
@@ -51,7 +55,7 @@ export const useSocketServices = <
       EmitEvents,
       ServerSideEvents,
       SocketData
-    >
+    >,
   ) => EventsMap,
   EmitEvents extends EventsMap = object,
   ServerSideEvents extends EventsMap = object,
@@ -68,7 +72,7 @@ export const useSocketServices = <
         SocketData
       >["use"]
     >[0][];
-  }
+  },
 ) => ({
   endpoint,
   server: (io: Server) => {
@@ -81,16 +85,11 @@ export const useSocketServices = <
       if (options.listenEvents) {
         const socketEventImplementations = options.listenEvents(socket);
         for (const eventName in socketEventImplementations) {
-          socket.on(
-            eventName,
-            (
-              ...args: unknown[]
-            ) => {
-              const callback = args.pop() as Function;
-              const output = socketEventImplementations[eventName](...args);
-              callback(output);
-            }
-          );
+          socket.on(eventName, (...args: unknown[]) => {
+            const callback = args.pop() as Function;
+            const output = socketEventImplementations[eventName](...args);
+            callback(output);
+          });
         }
       }
     });

@@ -24,9 +24,9 @@
           :id="`${optionName}-transparent`"
           alt="transp"
           src="/transparent.png"
-        >&nbsp;Transparent
-      </b-button>
-    </template><template v-if="!isTransparent">
+        />&nbsp;Transparent
+      </b-button> </template
+    ><template v-if="!isTransparent">
       <popover container="body">
         <b-button
           :id="`${optionName}-popover-colors`"
@@ -61,20 +61,22 @@
                       'text-secondary':
                         !otherColorsForLocation[stepNumber].length,
                     }"
-                  >{{ $t("Step") }} {{ stepNumber }}</span>
+                    >{{ $t("Step") }} {{ stepNumber }}</span
+                  >
                   <span
                     v-for="color in otherColorsForLocation[stepNumber]"
                     :key="color"
                     class="frequent-color"
                     :style="{ background: color }"
                     @click="onColorChange(color)"
-                  >&nbsp;</span>
+                    >&nbsp;</span
+                  >
                 </li>
               </ul>
             </template>
           </div>
-        </template>
-      </popover><b-button
+        </template> </popover
+      ><b-button
         class="mt-0"
         pill
         size="sm"

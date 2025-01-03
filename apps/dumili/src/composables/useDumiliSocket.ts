@@ -1,11 +1,11 @@
 import {
-  endpoint as indexationEndpoint,
   type ClientEmitEvents as IndexationEmitEvents,
   type ClientListenEvents as IndexationListenEvents,
+  endpoint as indexationEndpoint,
 } from "~dumili-services/indexation";
 import {
-  endpoint as indexationsEndpoint,
   type ClientEmitEvents as IndexationsEmitEvents,
+  endpoint as indexationsEndpoint,
 } from "~dumili-services/indexations";
 import type { SocketClient } from "~socket.io-client-services";
 

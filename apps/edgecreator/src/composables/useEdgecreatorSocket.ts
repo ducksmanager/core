@@ -1,25 +1,15 @@
 import { inject, type InjectionKey } from "vue";
 
-import {
-  ClientEvents as BrowseServices,
-  endpoint as browseEndpoint,
-} from "~edgecreator-services/browse";
-import {
-  ClientEvents as ImageInfoServices,
-  endpoint as imageInfoEndpoint,
-} from "~edgecreator-services/image-info";
-import {
-  ClientEvents as SaveServices,
-  endpoint as saveEndpoint,
-} from "~edgecreator-services/save";
-import {
-  ClientEvents as TextServices,
-  endpoint as textEndpoint,
-} from "~edgecreator-services/text";
-import {
-  ClientEvents as UploadServices,
-  endpoint as uploadEndpoint,
-} from "~edgecreator-services/upload";
+import type { ClientEvents as BrowseServices } from "~edgecreator-services/browse";
+import { endpoint as browseEndpoint } from "~edgecreator-services/browse";
+import type { ClientEvents as ImageInfoServices } from "~edgecreator-services/image-info";
+import { endpoint as imageInfoEndpoint } from "~edgecreator-services/image-info";
+import type { ClientEvents as SaveServices } from "~edgecreator-services/save";
+import { endpoint as saveEndpoint } from "~edgecreator-services/save";
+import type { ClientEvents as TextServices } from "~edgecreator-services/text";
+import { endpoint as textEndpoint } from "~edgecreator-services/text";
+import type { ClientEvents as UploadServices } from "~edgecreator-services/upload";
+import { endpoint as uploadEndpoint } from "~edgecreator-services/upload";
 import type { SocketClient } from "~socket.io-client-services";
 
 const defaultExport = (options: {

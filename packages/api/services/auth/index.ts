@@ -1,10 +1,12 @@
 import crypto from "crypto";
 import jwt from "jsonwebtoken";
 
-import resetPassword from "../../emails/reset-password";
 import { prismaClient } from "~prisma-schemas/schemas/dm/client";
 import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
+import type { Errorable } from "~socket.io-services";
+import { useSocketServices } from "~socket.io-services";
 
+import resetPassword from "../../emails/reset-password";
 import {
   EmailCreationValidation,
   EmailValidation,
@@ -19,7 +21,6 @@ import {
   isValidEmail,
   loginAs,
 } from "./util";
-import { Errorable, useSocketServices } from "~socket.io-services";
 
 const listenEvents = () => ({
   forgot: async (token: string) =>
@@ -65,7 +66,7 @@ const listenEvents = () => ({
     password: string;
     password2: string;
     token: string;
-  }): Promise<Errorable<{token: string}, string>> =>
+  }): Promise<Errorable<{ token: string }, string>> =>
     new Promise((resolve) => {
       jwt.verify(
         token,
@@ -107,7 +108,11 @@ const listenEvents = () => ({
 
   getCsrf: () => "",
 
-  signup: (input: { username: string; password: string; email: string }): Promise<Errorable<string, 'Bad request'>> =>
+  signup: (input: {
+    username: string;
+    password: string;
+    email: string;
+  }): Promise<Errorable<string, "Bad request">> =>
     new Promise(async (resolve) => {
       console.log(`signup with user ${input.username}`);
       await prismaDm.$transaction(async (transaction) => {
@@ -151,7 +156,13 @@ const listenEvents = () => ({
       });
     }),
 
-  login: async ({username, password}: { username: string, password: string }) => {
+  login: async ({
+    username,
+    password,
+  }: {
+    username: string;
+    password: string;
+  }) => {
     console.log("login");
     const hashedPassword = getHashedPassword(password);
     const user = await prismaDm.user.findFirst({
@@ -186,7 +197,6 @@ const listenEvents = () => ({
   },
 });
 
-
 export const { endpoint, client, server } = useSocketServices<
   typeof listenEvents
 >("/auth", {
@@ -195,4 +205,3 @@ export const { endpoint, client, server } = useSocketServices<
 });
 
 export type ClientEvents = (typeof client)["emitEvents"];
-

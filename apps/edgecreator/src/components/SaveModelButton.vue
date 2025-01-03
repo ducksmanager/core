@@ -40,10 +40,7 @@
         :ok-title="$t(withExport ? 'Export' : 'Submit')"
         @ok="issueIndexToSave = 0"
       >
-        <b-alert
-          :model-value="true"
-          variant="info"
-        >
+        <b-alert :model-value="true" variant="info">
           {{
             $t(
               "Once your edge is ready, indicate the photographers and the designers of the edge. " +
@@ -63,8 +60,8 @@
             "
             variant="warning"
           >
-            {{ $t("You should select at least one user") }}
-          </b-alert><vue3-simple-typeahead
+            {{ $t("You should select at least one user") }} </b-alert
+          ><vue3-simple-typeahead
             :ref="`${userContributionEnL10n[contributionType]}Typeahead`"
             :items="
               getUsersWithoutContributors(

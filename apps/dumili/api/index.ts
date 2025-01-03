@@ -6,9 +6,9 @@ import { Server } from "socket.io";
 import type { SessionUser } from "~dm-types/SessionUser";
 import { PrismaClient } from "~prisma/client_dumili";
 
-import {server as indexation} from "./services/indexation";
 import type { FullIndexation } from "./services/indexation";
-import {server as indexations} from "./services/indexations";
+import { server as indexation } from "./services/indexation";
+import { server as indexations } from "./services/indexations";
 
 dotenv.config({
   path: ".env",

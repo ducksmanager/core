@@ -1,5 +1,6 @@
 import axios from "axios";
 import { v2 as cloudinary } from "cloudinary";
+
 import { useSocketServices } from "~socket.io-services/index";
 
 const sessionHashes: Record<string, string> = {};
@@ -15,7 +16,7 @@ const generateImage = (parameters: {
     .get(
       parameters.font.includes("/")
         ? process.env.FONT_BASE_URL!
-        : `${process.env.FONT_PRODUCT_BASE_URL!}${parameters.font}`
+        : `${process.env.FONT_PRODUCT_BASE_URL!}${parameters.font}`,
     )
     .then(({ data }: { data: string }) => {
       const sessionHashMatch = data.match(/(?<=font_rend.php\?id=)[a-z\d]+/);
@@ -25,7 +26,7 @@ const generateImage = (parameters: {
         throw new Error(
           `No session ID found in URL ${process.env.FONT_BASE_URL!}${
             parameters.font
-          }`
+          }`,
         );
       }
     })
@@ -51,8 +52,8 @@ const generateImage = (parameters: {
           }
           const { width, height, secure_url: url } = result!;
           Promise.resolve({ width, height, url });
-        }
-      )
+        },
+      ),
     );
 
 const listenEvents = () => ({
@@ -62,10 +63,13 @@ const listenEvents = () => ({
     width: number;
     font: string;
     text: string;
-  }): Promise<{
-    error: "Image generation error",
-    errorDetails: string,
-  }|{results: { width: number, height: number, url: string }}> =>
+  }): Promise<
+    | {
+        error: "Image generation error";
+        errorDetails: string;
+      }
+    | { results: { width: number; height: number; url: string } }
+  > =>
     new Promise(async (resolve) => {
       const { color, colorBackground, width, font, text } = parameters;
       const context: Record<string, number | string> = {
@@ -82,9 +86,9 @@ const listenEvents = () => ({
                 ...acc,
                 `context.${key}="${String(context[key])}"`,
               ],
-              []
+              [],
             )
-            .join(" AND ")}`
+            .join(" AND ")}`,
         )
         .execute()
         .then(
@@ -115,7 +119,7 @@ const listenEvents = () => ({
                   });
                 });
             }
-          }
+          },
         )
         .catch((e) => {
           console.error(e);

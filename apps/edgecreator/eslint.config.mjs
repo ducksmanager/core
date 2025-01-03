@@ -32,6 +32,8 @@ export default [
       "plugin:@typescript-eslint/recommended",
       "plugin:@typescript-eslint/stylistic",
       "plugin:vue/vue3-recommended",
+      "plugin:prettier-vue/recommended",
+      "prettier",
     ),
   ),
   {
@@ -53,6 +55,11 @@ export default [
     rules: {
       "eslint-comments/no-unused-disable": "off",
 
+      // Disable this lint rule because it crashes eslint when linting an enum:
+      // TypeError: Cannot read properties of undefined (reading 'members')
+      "@typescript-eslint/no-duplicate-enum-values": "off",
+
+      "@typescript-eslint/consistent-type-imports": "error",
       "@typescript-eslint/no-empty-function": "off",
       "@typescript-eslint/no-floating-promises": "off",
       "@typescript-eslint/no-non-null-assertion": "off",

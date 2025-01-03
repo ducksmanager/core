@@ -1,8 +1,9 @@
+import type { SessionUser } from "~dm-types/SessionUser";
+import { useSocketServices } from "~socket.io-services";
+
+import type { UserSocket } from "../../index";
 import suggestions from "./suggestions";
 import watchedAuthors from "./watchedAuthors";
-import { useSocketServices } from "~socket.io-services";
-import type { SessionUser } from "~dm-types/SessionUser";
-import { UserSocket } from "../../index";
 
 const listenEvents = (socket: UserSocket) => ({
   ...suggestions(socket),

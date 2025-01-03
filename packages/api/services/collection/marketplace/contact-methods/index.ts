@@ -1,8 +1,8 @@
 import { userOptionType } from "~prisma-schemas/schemas/dm";
 import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
 
+import type { UserSocket } from "../../../../index";
 import { getIssuesForSale } from "..";
-import { UserSocket } from "../../../../index";
 
 export default (socket: UserSocket) => ({
   getContactMethods: async (sellerId: number) => {
@@ -20,7 +20,7 @@ export default (socket: UserSocket) => ({
         optionName: userOptionType.marketplace_contact_methods,
       },
     });
-    return sellerContactMethods.reduce<Record<string, string|number|null>>(
+    return sellerContactMethods.reduce<Record<string, string | number | null>>(
       (acc, { optionValue: contactMethod }) => ({
         ...acc,
         [contactMethod]:

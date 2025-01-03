@@ -6,9 +6,12 @@ import type {
   inducks_story,
   inducks_storyversion,
 } from "~prisma-schemas/client_coa";
+import type {
+  EventOutput,
+  SuccessfulEventOutput,
+} from "~socket.io-services/index";
 
 import { socketInjectionKey } from "../composables/useDmSocket";
-import { EventOutput, SuccessfulEventOutput } from "~socket.io-services/index";
 
 const addPartInfo = (issueDetails: InducksIssueDetails) => {
   const storyPartCounter = Object.entries(

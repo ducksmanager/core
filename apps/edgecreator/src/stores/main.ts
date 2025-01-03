@@ -2,7 +2,6 @@ import type { AxiosInstance } from "axios";
 import { defineStore } from "pinia";
 
 import { edgecreatorSocketInjectionKey } from "~/composables/useEdgecreatorSocket";
-import type { EdgeWithModelIdAndIssuecode } from "~dm-types/EdgeWithModelIdAndIssuecode";
 import type { userContributionType } from "~prisma-schemas/schemas/dm";
 import type { ModelContributor } from "~types/ModelContributor";
 import type { SimpleUser } from "~types/SimpleUser";
@@ -26,8 +25,8 @@ export const main = defineStore("main", () => {
     isRange = ref(false),
     photoUrls = ref<Record<string, string>>({}),
     contributors = ref<ModelContributor[]>([]),
-    edgesBefore = ref<(EdgeWithModelIdAndIssuecode | undefined)[]>([]),
-    edgesAfter = ref<(EdgeWithModelIdAndIssuecode | undefined)[]>([]),
+    edgeIdsBefore = ref<string[]>([]),
+    edgeIdsAfter = ref<string[]>([]),
     publicationElements = ref<string[]>([]),
     publicationPhotos = ref<string[]>([]),
     warnings = ref<string[]>([]),
@@ -140,13 +139,13 @@ export const main = defineStore("main", () => {
         .coa()
         .fetchIssuecodesByPublicationcode([publicationcode.value!]),
     getEdgePublicationStates = async (issuecodes: string[]) =>
-      [
-        ...new Set(Object.values(await edgesServices.getEdges({ issuecodes }))),
-      ].sort((a, b) =>
-        Math.sign(
-          issuecodes.indexOf(a!.issuecode) - issuecodes.indexOf(b!.issuecode),
-        ),
-      ),
+      [...new Set(Object.values(await edgesServices.getEdges({ issuecodes })))]
+        .sort((a, b) =>
+          Math.sign(
+            issuecodes.indexOf(a!.issuecode) - issuecodes.indexOf(b!.issuecode),
+          ),
+        )
+        .map(({ issuecode }) => issuecode),
     loadSurroundingEdges = async () => {
       const firstIssueIndex = publicationIssuecodes.value.findIndex(
         (issue) => issue === issuecodes.value[0],
@@ -168,11 +167,11 @@ export const main = defineStore("main", () => {
       );
 
       if (issuesBefore.length) {
-        edgesBefore.value = await getEdgePublicationStates(issuesBefore);
+        edgeIdsBefore.value = await getEdgePublicationStates(issuesBefore);
       }
 
       if (issuesAfter.length) {
-        edgesAfter.value = await getEdgePublicationStates(issuesAfter);
+        edgeIdsAfter.value = await getEdgePublicationStates(issuesAfter);
       }
     },
     getChunkedRequests = async ({
@@ -207,8 +206,8 @@ export const main = defineStore("main", () => {
     isRange,
     photoUrls,
     contributors,
-    edgesBefore,
-    edgesAfter,
+    edgeIdsBefore,
+    edgeIdsAfter,
     publicationElements,
     publicationPhotos,
     warnings,

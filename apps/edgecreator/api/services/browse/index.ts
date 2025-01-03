@@ -1,10 +1,11 @@
 import { XMLParser } from "fast-xml-parser";
 import { readdirSync, readFileSync } from "fs";
 import path from "path";
+
 import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa/client";
 import { useSocketServices } from "~socket.io-services";
 
-type EdgeModelDetails = {
+interface EdgeModelDetails {
   issuecode: string;
   url: string;
   designers: string[];
@@ -23,7 +24,7 @@ const REGEX_IS_SVG_FILE = /^_?.+\.svg$/;
 
 const getSvgMetadata = (
   metadataNodes: { "#text": string; type?: string }[],
-  metadataType: string
+  metadataType: string,
 ) =>
   metadataNodes
     .filter(({ type }) => type === metadataType)
@@ -69,7 +70,7 @@ const findInDir = (dir: string) =>
         const designers = getSvgMetadata(metadataNodes, "contributor-designer");
         const photographers = getSvgMetadata(
           metadataNodes,
-          "contributor-photographer"
+          "contributor-photographer",
         );
 
         fileList[edgeStatus].push({
@@ -86,10 +87,13 @@ const findInDir = (dir: string) =>
   });
 
 const listenEvents = () => ({
-  listEdgeModels: async (): Promise<{
-    error: "Generic error",
-    errorDetails: string,
-  }|{results: Awaited<ReturnType<typeof findInDir>>}> =>
+  listEdgeModels: async (): Promise<
+    | {
+        error: "Generic error";
+        errorDetails: string;
+      }
+    | { results: Awaited<ReturnType<typeof findInDir>> }
+  > =>
     new Promise((resolve) => {
       findInDir(edgesPath)
         .then((results) => {
@@ -99,7 +103,7 @@ const listenEvents = () => ({
           resolve({
             error: "Generic error",
             errorDetails: errorDetails as string,
-          })
+          }),
         );
     }),
 
@@ -119,9 +123,9 @@ const listenEvents = () => ({
     try {
       return {
         results: readdirSync(
-          `${process.env.EDGES_PATH!}/${country}/${imageType}`
+          `${process.env.EDGES_PATH!}/${country}/${imageType}`,
         ).filter((item) =>
-          new RegExp(`(?:^|[. ])${magazine}(?:[. ]|$)`).test(item)
+          new RegExp(`(?:^|[. ])${magazine}(?:[. ]|$)`).test(item),
         ),
       };
     } catch (_e) {

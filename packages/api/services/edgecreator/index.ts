@@ -1,14 +1,14 @@
-import edgeModelReady from "../../emails/edge-model-ready";
+import type { SessionUser } from "~dm-types/SessionUser";
 import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
+import { useSocketServices } from "~socket.io-services";
 
+import edgeModelReady from "../../emails/edge-model-ready";
+import type { UserSocket } from "../../index";
 import { RequiredAuthMiddleware } from "../auth/util";
 import edgePublication from "./edge-publication";
 import edgeSprites from "./edge-sprites";
 import models from "./models";
 import multipleEdgePhotos from "./multiple-edge-photos";
-import { SessionUser } from "~dm-types/SessionUser";
-import { useSocketServices } from "~socket.io-services";
-import { UserSocket } from "../../index";
 
 type ImageElement = {
   country: string;
@@ -25,8 +25,8 @@ const listenEvents = (socket: UserSocket) => ({
   ...multipleEdgePhotos(socket),
 
   getImagesFromFilename: async (fileName: string) =>
+    // TODO prismmaClient.edgeModel.findMany ?
     (
-      // TODO prismmaClient.edgeModel.findMany ?
       (await prismaDm.$queryRaw`
     SELECT Pays AS country, Magazine AS magazine, Option_valeur AS optionValue, Numero_debut AS issuenumberStart, Numero_fin AS issuenumberEnd
     FROM edgecreator_valeurs valeurs

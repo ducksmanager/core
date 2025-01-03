@@ -15,12 +15,7 @@ meta:
           {{ $t("Drag a file here or")
           }}<label class="browse">
             {{ $t("Browse") }}
-            <input
-              id="file"
-              class="sr-only"
-              type="file"
-              accept="image/jpeg"
-            >
+            <input id="file" class="sr-only" type="file" accept="image/jpeg" />
           </label>
         </div>
       </div>
@@ -43,7 +38,7 @@ meta:
           {{
             // eslint-disable-next-line max-len
             $t(
-              'For each edge present on the picture, please select the part of the picture corresponding to the edge, fill in the information related to the edge hereunder then click on "Add". Once all the edges on the picture have been indicated, click on "Send the edge pictures".'
+              'For each edge present on the picture, please select the part of the picture corresponding to the edge, fill in the information related to the edge hereunder then click on "Add". Once all the edges on the picture have been indicated, click on "Send the edge pictures".',
             )
           }}
         </b-container>
@@ -62,21 +57,16 @@ meta:
             <dimensions
               :width="currentCrop ? currentCrop.width : 15"
               :height="currentCrop ? currentCrop.height : 200"
-              @change="currentCrop = $event && $event.width ? $event : undefined"
+              @change="
+                currentCrop = $event && $event.width ? $event : undefined
+              "
             />
           </template>
         </issue-select>
-        <b-button
-          :disabled="!currentCrop"
-          class="mt-3 mb-4"
-          @click="addCrop"
-        >
+        <b-button :disabled="!currentCrop" class="mt-3 mb-4" @click="addCrop">
           {{ $t("Add") }}
         </b-button>
-        <b-card-group
-          deck
-          columns
-        >
+        <b-card-group deck columns>
           <b-card
             v-for="(crop, i) in crops"
             :key="`crop-${i}`"
@@ -89,17 +79,14 @@ meta:
             ]"
           >
             <template #header>
-              <issue
-                no-wrap
-                :issuecode="crop.issuecode"
-              />
+              <issue no-wrap :issuecode="crop.issuecode" />
             </template>
             <img
               class="edge-crop"
               :src="crop.url"
               :width="crop.width * 1.5"
               :height="crop.height * 1.5"
-            >
+            />
             <edge-canvas
               :steps="[]"
               :issuecode="crop.issuecode"
@@ -108,24 +95,14 @@ meta:
               :contributors="initialContributors"
             />
             <div>
-              <div
-                v-if="crop.error"
-                class="text-center"
-              >
+              <div v-if="crop.error" class="text-center">
                 {{ $t("Error") }}
               </div>
-              <div
-                v-else-if="crop.sent"
-                class="text-center"
-              >
+              <div v-else-if="crop.sent" class="text-center">
                 {{ $t("Sent!") }}
               </div>
               <div v-else>
-                <b-button
-                  pill
-                  variant="danger"
-                  @click="crops.splice(i, 1)"
-                >
+                <b-button pill variant="danger" @click="crops.splice(i, 1)">
                   {{ $t("Delete") }}
                 </b-button>
               </div>
@@ -144,10 +121,7 @@ meta:
         >
           {{ $t("Send the edge pictures") }}
         </b-button>
-        <div
-          v-else-if="crops.length"
-          class="my-3"
-        >
+        <div v-else-if="crops.length" class="my-3">
           <b-link to="/">
             {{ $t("Back to home page") }}
           </b-link>
@@ -199,7 +173,7 @@ const initialContributors = computed(
       contributionType: "photographe",
       user: { id: 0, username: useCookies().get("dm-user") },
     },
-  ]
+  ],
 );
 
 const addCrop = () => {
@@ -209,7 +183,7 @@ const addCrop = () => {
       props: {
         body: i18n
           .t(
-            `The width of your selection is bigger than its height! Make sure that the edges appear vertically on the photo.`
+            `The width of your selection is bigger than its height! Make sure that the edges appear vertically on the photo.`,
           )
           .toString(),
         title: i18n.t("Error").toString(),
@@ -220,7 +194,7 @@ const addCrop = () => {
       ...currentCrop.value!,
       data,
       url: (cropper.value!.getCroppedCanvas() as HTMLCanvasElement).toDataURL(
-        "image/jpeg"
+        "image/jpeg",
       ),
     });
     currentCrop.value = undefined;
@@ -240,7 +214,7 @@ const uploadAll = async () => {
         initialContributors.value.map((contribution) => ({
           ...contribution,
           issuecode: crop.issuecode,
-        }))
+        })),
       );
       const isSuccess = response!.paths.svgPath;
       crop.sent = !!isSuccess;

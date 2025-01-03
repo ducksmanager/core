@@ -18,10 +18,7 @@
     @mousemove="setPosition"
     @mouseout="positionInCanvas = undefined"
   >
-    <metadata
-      v-if="photoUrl"
-      type="photo"
-    >
+    <metadata v-if="photoUrl" type="photo">
       {{ photoUrl }}
     </metadata>
     <metadata
@@ -163,7 +160,7 @@ const height = computed(() => props.dimensions.height);
 
 const setPosition = ({ clientX: left, clientY: top }: MouseEvent) => {
   const { left: svgLeft, top: svgTop } = canvas.value!.getBoundingClientRect();
-  positionInCanvas.value = ([left - svgLeft, top - svgTop]).map(
+  positionInCanvas.value = [left - svgLeft, top - svgTop].map(
     (value) => value / zoom.value,
   ) as [number, number];
 };

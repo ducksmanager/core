@@ -1,6 +1,7 @@
 import type { ShallowRef } from "vue";
 
 import type { ClientEvents as CollectionServices } from "~dm-services/collection";
+import type { SubscriptionTransformedStringDates } from "~dm-services/collection/subscriptions";
 import type { ClientEvents as StatsServices } from "~dm-services/stats";
 import type {
   CollectionUpdateMultipleIssues,
@@ -12,12 +13,14 @@ import type {
   purchase,
   subscription,
 } from "~prisma-schemas/schemas/dm";
+import type {
+  EventOutput,
+  SuccessfulEventOutput,
+} from "~socket.io-services/index";
 
 import useCollection from "../composables/useCollection";
 import { socketInjectionKey } from "../composables/useDmSocket";
 import { bookcase } from "./bookcase";
-import { EventOutput, SuccessfulEventOutput } from "~socket.io-services/index";
-import { SubscriptionTransformedStringDates } from "~dm-services/collection/subscriptions";
 
 export type IssueWithPublicationcodeOptionalId = Omit<
   issue,

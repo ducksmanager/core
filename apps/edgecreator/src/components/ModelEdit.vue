@@ -1,8 +1,5 @@
 <template>
-  <b-card
-    id="edit-card"
-    no-body
-  >
+  <b-card id="edit-card" no-body>
     <b-tabs
       v-model="editingStepStore.stepNumber"
       lazy
@@ -83,16 +80,10 @@
             type="text"
             :input-values="inputValues[stepNumber].text"
           >
-            <popover
-              triggers="hover"
-              placement="left"
-            >
+            <popover triggers="hover" placement="left">
               <i-bi-info-circle-fill variant="secondary" />
               <template #content>
-                <b-alert
-                  variant="info"
-                  :model-value="true"
-                >
+                <b-alert variant="info" :model-value="true">
                   {{
                     $t(
                       "You can use special text parts to make your text dynamic :",
@@ -129,12 +120,7 @@
             type="text"
             :input-values="inputValues[stepNumber].font"
           >
-            <a
-              target="_blank"
-              :href="fontSearchUrl"
-            >{{
-              $t("Search")
-            }}</a>
+            <a target="_blank" :href="fontSearchUrl">{{ $t("Search") }}</a>
           </form-input-row>
           <form-color-input-row
             :other-colors="otherColors[stepNumber]"
@@ -260,11 +246,7 @@
           />
         </b-card-text>
       </b-tab>
-      <b-tab
-        key="99"
-        :title="$t('Add step')"
-        title-item-class="fw-bold"
-      >
+      <b-tab key="99" :title="$t('Add step')" title-item-class="fw-bold">
         <b-card-text>
           <b-dropdown :text="$t('Select a step type')">
             <b-dropdown-item

@@ -7,25 +7,15 @@ meta:
     <session-info />
     <h1>{{ $t("Dashboard") }}</h1>
 
-    <b-alert
-      v-if="!isCatalogLoaded"
-      variant="info"
-      :model-value="true"
-    >
+    <b-alert v-if="!isCatalogLoaded" variant="info" :model-value="true">
       {{ $t("Loading...") }}
     </b-alert>
 
     <template v-else>
       <h3>{{ $t("Edge creation") }}</h3>
 
-      <b-container
-        v-if="isUploadableEdgesCarouselReady"
-        align="center"
-      >
-        <b-alert
-          variant="info"
-          :model-value="true"
-        >
+      <b-container v-if="isUploadableEdgesCarouselReady" align="center">
+        <b-alert variant="info" :model-value="true">
           <template v-if="mostPopularIssuesInCollectionWithoutEdge?.length">
             <uploadable-edges-carousel
               :user-points="userPhotographerPoints"
@@ -35,13 +25,13 @@ meta:
                 {{
                   $t(
                     "Send us photos of magazine edges that you own and earn up to {0} Edge photographer points per edge!",
-                    [mostPopularIssuesInCollectionWithoutEdge[0].popularity]
+                    [mostPopularIssuesInCollectionWithoutEdge[0].popularity],
                   )
                 }}
               </template>
             </uploadable-edges-carousel>
             <div>
-              <hr>
+              <hr />
               <div class="position-absolute px-2 separation-text">
                 {{ $t("or") }}
               </div>
@@ -56,15 +46,12 @@ meta:
               {{
                 $t(
                   "Send us photos of magazine edges that you find on the Internet and earn up to {0} Edge photographer points per edge!",
-                  [mostWantedEdges[0].popularity]
+                  [mostWantedEdges[0].popularity],
                 )
               }}
             </template>
           </uploadable-edges-carousel>
-          <b-button
-            to="/upload"
-            class="mt-1"
-          >
+          <b-button to="/upload" class="mt-1">
             {{ $t("Send edge photos") }}
           </b-button>
         </b-alert>
@@ -80,12 +67,9 @@ meta:
         </b-button>
       </b-container>
 
-      <hr>
+      <hr />
 
-      <template
-        v-for="{ status, l10n } in edgeCategories"
-        :key="`${status}`"
-      >
+      <template v-for="{ status, l10n } in edgeCategories" :key="`${status}`">
         <h3>{{ $t(l10n) }}</h3>
 
         <b-container
@@ -138,7 +122,7 @@ meta:
                       <img
                         v-if="
                           (hoveredEdge === edge && edge.v3) ||
-                            status === 'pending'
+                          status === 'pending'
                         "
                         :alt="edge.issuecode"
                         class="edge-preview"
@@ -147,7 +131,7 @@ meta:
                             ? getEdgeUrl(edge.issuecode, 'svg', false)
                             : undefined
                         "
-                      ><edge-link
+                      /><edge-link
                         :issuecode="edge.issuecode"
                         :designers="edge.designers"
                         :photographers="edge.photographers"
@@ -160,21 +144,13 @@ meta:
             </b-row>
           </template>
         </b-container>
-        <div
-          v-else
-          align="center"
-        >
+        <div v-else align="center">
           {{ $t("No edge in this category") }}
         </div>
       </template>
     </template>
 
-    <b-container
-      align="center"
-      class="m-5"
-    >
-&nbsp;
-    </b-container>
+    <b-container align="center" class="m-5"> &nbsp; </b-container>
 
     <b-container
       id="footer"
@@ -182,9 +158,9 @@ meta:
     >
       {{
         $t(
-          "EdgeCreator is a tool allowing to create edges for the DucksManager bookcase."
+          "EdgeCreator is a tool allowing to create edges for the DucksManager bookcase.",
         )
-      }}<br><a href="https://ducksmanager.net">{{
+      }}<br /><a href="https://ducksmanager.net">{{
         $t("Go to DucksManager")
       }}</a>
     </b-container>
@@ -220,7 +196,7 @@ const { currentEdges, isCatalogLoaded } = storeToRefs(edgeCatalogStore);
 const edgesByStatusAndPublicationcode = computed(() => {
   const edgesByStatus = Object.values(currentEdges.value).groupBy(
     "status",
-    "[]"
+    "[]",
   );
   return Object.fromEntries(
     Object.entries(edgesByStatus).map(([status, edges]) => [
@@ -232,21 +208,21 @@ const edgesByStatusAndPublicationcode = computed(() => {
             issuecodeDetails.value[edge.issuecode].publicationcode,
         }))
         .groupBy("publicationcode", "[]"),
-    ])
+    ]),
   );
 });
 const userPhotographerPoints = computed(
-  () => usersStore.points[user.value!.id].edge_photographer
+  () => usersStore.points[user.value!.id].edge_photographer,
 );
 
 const { publicationNames, issuecodeDetails } = storeToRefs(webStores.coa());
 
 const isUploadableEdgesCarouselReady = ref(false);
 const mostWantedEdges = ref<
-  | (BookcaseEdgeWithPopularity & {
-      publicationcode: string | null;
-      issuenumber: string | null;
-    })[]
+  (BookcaseEdgeWithPopularity & {
+    publicationcode: string | null;
+    issuenumber: string | null;
+  })[]
 >();
 
 const hoveredEdge = ref<EdgeWithVersionAndStatus>();
@@ -255,9 +231,9 @@ const mostPopularIssuesInCollectionWithoutEdge = computed(() =>
   collectionStore.popularIssuesInCollectionWithoutEdge
     ?.sort(
       ({ popularity: popularity1 }, { popularity: popularity2 }) =>
-        (popularity2 ?? 0) - (popularity1 ?? 0)
+        (popularity2 ?? 0) - (popularity1 ?? 0),
     )
-    .filter((_, index) => index < 10)
+    .filter((_, index) => index < 10),
 );
 
 const loadMostWantedEdges = async () => {
@@ -280,7 +256,7 @@ const loadMostWantedEdges = async () => {
         slug: "",
         points: numberOfIssues,
         popularity: numberOfIssues,
-      })
+      }),
     );
 };
 
@@ -303,7 +279,7 @@ watch(
     await coaStore.fetchPublicationNames(publicationcodes);
     isUploadableEdgesCarouselReady.value = true;
   },
-  { immediate: true }
+  { immediate: true },
 );
 
 await collectionStore.loadUser();

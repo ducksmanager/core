@@ -1,9 +1,5 @@
 <template>
-  <b-alert
-    v-if="loading"
-    :model-value="true"
-    variant="info"
-  >
+  <b-alert v-if="loading" :model-value="true" variant="info">
     {{ $t("Loading...") }}
   </b-alert>
   <div v-else-if="items">
@@ -15,15 +11,9 @@
       :ok-title="$t('Choose')"
       @ok="clickedImage && emit('change', clickedImage.name)"
     >
-      <img
-        :alt="clickedImage.name"
-        :src="clickedImage.url"
-      >
+      <img :alt="clickedImage.name" :src="clickedImage.url" />
     </b-modal>
-    <b-modal
-      v-model="showUploadModal"
-      ok-only
-    >
+    <b-modal v-model="showUploadModal" ok-only>
       <upload
         :photo="imageType === 'photos'"
         :edge="{
@@ -32,28 +22,23 @@
         }"
       />
     </b-modal>
-    <b-alert
-      v-if="!items.length"
-      :model-value="true"
-      variant="warning"
-    >
+    <b-alert v-if="!items.length" :model-value="true" variant="warning">
       {{ $t("No item in this section.") }}
       <a
         v-if="allowUpload"
         href="javascript:void(0)"
         @click="showUploadModal = !showUploadModal"
-      >{{ $t("Upload new") }}</a>
+        >{{ $t("Upload new") }}</a
+      >
     </b-alert>
     <template v-else>
       <a
         v-if="allowUpload"
         href="javascript:void(0)"
         @click="showUploadModal = !showUploadModal"
-      >{{ $t("Upload new") }}</a>
-      <b-row
-        ref="gallery"
-        class="gallery mt-1"
+        >{{ $t("Upload new") }}</a
       >
+      <b-row ref="gallery" class="gallery mt-1">
         <b-col
           v-for="item in items"
           :key="item.name"
@@ -66,10 +51,7 @@
           }"
           @click="onSelect(item)"
         >
-          <a
-            v-if="imageType === 'edges'"
-            class="position-relative"
-          >
+          <a v-if="imageType === 'edges'" class="position-relative">
             <i-bi-emoji-smile-fill
               v-if="item.quality === 1"
               class="variant-success"

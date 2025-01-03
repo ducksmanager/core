@@ -1,10 +1,5 @@
 <template>
-  <b-alert
-    v-if="error"
-    align="center"
-    variant="danger"
-    :model-value="true"
-  >
+  <b-alert v-if="error" align="center" variant="danger" :model-value="true">
     {{ error }}
   </b-alert>
   <b-container
@@ -25,23 +20,17 @@
     </b-alert>
     <top-bar />
     <position-helper />
-    <b-row
-      class="flex-grow-1 pt-2"
-      align-h="end"
-    >
+    <b-row class="flex-grow-1 pt-2" align-h="end">
       <b-col class="d-flex align-items-end flex-column overflow-auto h-100">
         <table class="edges">
           <tr v-if="uiStore.showIssueNumbers">
             <th
-              v-if="
-                showPreviousEdge &&
-                  mainStore.edgesBefore[mainStore.edgesBefore.length - 1]
-              "
+              v-if="showPreviousEdge && edgeIdsBefore.length"
               class="surrounding-edge"
             >
               {{
-                issuecodeDetails[mainStore.edgesBefore[mainStore.edgesBefore.length - 1]!
-                  .issuecode].issuenumber
+                issuecodeDetails[[...edgeIdsBefore].pop()!
+                ].issuenumber
               }}
             </th>
             <template
@@ -72,19 +61,15 @@
                 <i-bi-camera />
               </th>
             </template>
-            <th
-              v-if="showNextEdge && mainStore.edgesAfter[0]"
-              class="surrounding-edge"
-            >
-              {{ issuecodeDetails[mainStore.edgesAfter[0].issuecode].issuenumber }}
+            <th v-if="showNextEdge && edgeIdsAfter[0]" class="surrounding-edge">
+              {{ issuecodeDetails[edgeIdsAfter[0]].issuenumber }}
             </th>
           </tr>
           <tr>
-            <td v-if="showPreviousEdge && mainStore.edgesBefore.length">
+            <td v-if="showPreviousEdge && edgeIdsBefore.length">
               <published-edge
                 :issuecode="
-                  mainStore.edgesBefore[mainStore.edgesBefore.length - 1]!
-                    .issuecode
+                  edgeIdsBefore[edgeIdsBefore.length - 1]!
                 "
                 @load="showPreviousEdge = true"
                 @error="showPreviousEdge = undefined"
@@ -125,12 +110,12 @@
                   @click="setColorFromPhoto"
                   @load="uiStore.showEdgePhotos = true"
                   @error="uiStore.showEdgePhotos = undefined"
-                >
+                />
               </td>
             </template>
-            <td v-if="showNextEdge && mainStore.edgesAfter.length">
+            <td v-if="showNextEdge && edgeIdsAfter.length">
               <published-edge
-                :issuecode="mainStore.edgesAfter[0]!.issuecode"
+                :issuecode="edgeIdsAfter[0]!"
                 @load="showNextEdge = true"
                 @error="showNextEdge = undefined"
               />
@@ -138,11 +123,7 @@
           </tr>
         </table>
       </b-col>
-      <b-col
-        sm="10"
-        md="8"
-        lg="6"
-      >
+      <b-col sm="10" md="8" lg="6">
         <model-edit
           @add-step="stepStore.addStep"
           @remove-step="stepStore.removeStep"
@@ -173,7 +154,7 @@ const editingStepStore = editingStep();
 const { showPreviousEdge, showNextEdge } = useSurroundingEdge();
 
 const { loadModel } = useModelLoad();
-const { issuecodes } = storeToRefs(mainStore);
+const { issuecodes, edgeIdsBefore, edgeIdsAfter } = storeToRefs(mainStore);
 const { issuecodeDetails } = storeToRefs(coaStore);
 
 const error = ref<string>();

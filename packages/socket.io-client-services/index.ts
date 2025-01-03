@@ -21,7 +21,7 @@ type SocketReservedEvents = {
   connect_error: (err: Error) => void;
   disconnect: (
     reason: Socket.DisconnectReason,
-    description?: DisconnectDescription
+    description?: DisconnectDescription,
   ) => void;
 };
 
@@ -50,7 +50,7 @@ export class SocketClient {
     }>(),
     run: async (
       loadCachedDataFn: () => Promise<void>,
-      loadRealDataFn: () => void
+      loadRealDataFn: () => void,
     ) => {
       this.cacheHydrator.state.value = {
         mode: "LOAD_CACHE",
@@ -72,7 +72,7 @@ export class SocketClient {
   public onConnectError = (
     e: Error,
     namespace: string,
-    _eventName?: string
+    _eventName?: string,
   ) => {
     console.error(`${namespace}: connect_error: ${e}`);
   };
@@ -97,7 +97,7 @@ export class SocketClient {
       cache?: Required<SocketCacheOptions<Services>> & {
         disableCache?: (eventName: StringKeyOf<Services>) => boolean;
       };
-    } = {}
+    } = {},
   ) {
     const { session, cache } = namespaceOptions;
     let socket: Socket | undefined;
@@ -120,11 +120,8 @@ export class SocketClient {
         },
       })
         .onAny((event, ...args) => {
-          if (!['connect', 'connect_error'].includes(event)) {
-            console.debug(
-              `${namespaceName}/${event} received`,
-              args
-            );
+          if (!["connect", "connect_error"].includes(event)) {
+            console.debug(`${namespaceName}/${event} received`, args);
           }
         })
         .on("connect_error", (e) => {
@@ -135,7 +132,7 @@ export class SocketClient {
         .on("connect", () => {
           isOffline = false;
           console.log(
-            `connected to ${namespaceName} at ${new Date().toISOString()}`
+            `connected to ${namespaceName} at ${new Date().toISOString()}`,
           );
 
           this.onConnected(namespaceName);
@@ -148,7 +145,7 @@ export class SocketClient {
       ongoingCalls,
       on: <E extends StringKeyOf<ServerSentEvents>>(
         event: E,
-        callback: (...data: Parameters<ServerSentEvents[E]>) => void
+        callback: (...data: Parameters<ServerSentEvents[E]>) => void,
       ): void => {
         socket?.on(
           event,
@@ -158,24 +155,22 @@ export class SocketClient {
               : E extends string
                 ? (...args: unknown[]) => void
                 : never
-          >
+          >,
         );
       },
       services: new Proxy({} as Services, {
         get:
           <EventName extends StringKeyOf<Services>>(
             _: never,
-            event: EventName
+            event: EventName,
           ) =>
           async (
             ...args: Parameters<Services[EventName]>
-          ): Promise<Awaited<
-            ReturnType<Services[EventName]> | undefined>
-          > => {
+          ): Promise<Awaited<ReturnType<Services[EventName]> | undefined>> => {
             let isCacheUsed = false;
             if (!socket) {
               console.log(
-                `connecting to ${namespaceName} at ${new Date().toISOString()}`
+                `connecting to ${namespaceName} at ${new Date().toISOString()}`,
               );
               connect();
             }
@@ -190,16 +185,16 @@ export class SocketClient {
                   console.debug(`${eventConsoleString} served from cache`);
                 } else {
                   console.debug(
-                    `${eventConsoleString} ${post ? `responded in ${Date.now() - startTime}ms` : `called ${token ? "with token" : "without token"}`} at ${new Date().toISOString()}`
+                    `${eventConsoleString} ${post ? `responded in ${Date.now() - startTime}ms` : `called ${token ? "with token" : "without token"}`} at ${new Date().toISOString()}`,
                   );
 
                   if (post) {
                     ongoingCalls.value = ongoingCalls.value.filter(
-                      (call) => call !== shortEventConsoleString
+                      (call) => call !== shortEventConsoleString,
                     );
                   } else {
                     ongoingCalls.value = ongoingCalls.value.concat(
-                      shortEventConsoleString
+                      shortEventConsoleString,
                     );
                   }
                 }
@@ -228,13 +223,13 @@ export class SocketClient {
                   switch (this.cacheHydrator.state.value.mode) {
                     case "LOAD_CACHE":
                       this.cacheHydrator.state.value.cachedCallsDone.push(
-                        eventConsoleString
+                        eventConsoleString,
                       );
                       break;
                     case "HYDRATE":
                       if (
                         this.cacheHydrator.state.value.cachedCallsDone.includes(
-                          eventConsoleString
+                          eventConsoleString,
                         )
                       ) {
                         this.cacheHydrator.state.value
@@ -258,7 +253,7 @@ export class SocketClient {
                     }
                   : e,
                 namespaceName,
-                event
+                event,
               );
             });
 
@@ -280,7 +275,7 @@ export class SocketClient {
             if (
               this.cacheHydrator.state.value?.mode === "HYDRATE" &&
               this.cacheHydrator.state.value.cachedCallsDone.includes(
-                eventConsoleString
+                eventConsoleString,
               )
             ) {
               this.cacheHydrator.state.value.hydratedCallsDoneAmount++;

@@ -1,4 +1,3 @@
-import { UserSocket } from "../../index";
 import type { IssueSuggestion } from "~dm-types/IssueSuggestion";
 import { IssueSuggestionList } from "~dm-types/IssueSuggestionList";
 import type { StoryDetail } from "~dm-types/StoryDetail";
@@ -8,6 +7,8 @@ import { userOptionType } from "~prisma-schemas/schemas/dm";
 import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
 import type { Prisma as PrismaDmStats } from "~prisma-schemas/schemas/dm_stats";
 import { prismaClient as prismaDmStats } from "~prisma-schemas/schemas/dm_stats/client";
+
+import type { UserSocket } from "../../index";
 
 export enum COUNTRY_CODE_OPTION {
   ALL = "ALL",

@@ -1,6 +1,7 @@
 import { prismaClient as prismaDmStats } from "~prisma-schemas/schemas/dm_stats/client";
+
+import type { UserSocket } from "../../index";
 import { getAuthorFullNames } from "../coa/authors";
-import { UserSocket } from "../../index";
 
 export interface AuthorDetails {
   personcode: string;

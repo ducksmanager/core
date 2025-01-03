@@ -4,11 +4,12 @@ import cluster from "cluster";
 import dotenv from "dotenv";
 import { createServer } from "http";
 import { cpus } from "os";
-import { Server, Socket } from "socket.io";
+import type { Socket } from "socket.io";
+import { Server } from "socket.io";
 
 import type { SessionUser } from "~dm-types/SessionUser";
 
-import { server as app, getUpdateFileUrl } from "./services/app";
+import { getUpdateFileUrl, server as app } from "./services/app";
 import { server as auth } from "./services/auth";
 import { OptionalAuthMiddleware } from "./services/auth/util";
 import { server as bookcase } from "./services/bookcase";

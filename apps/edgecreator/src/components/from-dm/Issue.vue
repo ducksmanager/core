@@ -32,13 +32,13 @@ const {
 }>();
 
 const publicationname = computed(
-  () => publicationcode.value && coa().publicationNames[publicationcode.value]
+  () => publicationcode.value && coa().publicationNames[publicationcode.value],
 );
 const publicationcode = computed(
-  () => coa().issuecodeDetails[issuecode]?.publicationcode
+  () => coa().issuecodeDetails[issuecode]?.publicationcode,
 );
 const issuenumber = computed(
-  () => coa().issuecodeDetails[issuecode].issuenumber
+  () => coa().issuecodeDetails[issuecode].issuenumber,
 );
 </script>
 

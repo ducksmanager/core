@@ -6,13 +6,8 @@
       @change="emit('change', null)"
     >
       <template #first>
-        <b-form-select-option
-          :value="undefined"
-          disabled
-        >
-          {{
-            $t("Select a country")
-          }}
+        <b-form-select-option :value="undefined" disabled>
+          {{ $t("Select a country") }}
         </b-form-select-option>
       </template>
     </b-form-select>
@@ -41,11 +36,7 @@
             onChange();
           "
         />
-        <b-alert
-          v-else
-          :model-value="true"
-          variant="info"
-        >
+        <b-alert v-else :model-value="true" variant="info">
           {{ $t("Loading...") }}
         </b-alert>
       </template>
@@ -57,35 +48,18 @@
           @change="onChange()"
         >
           <template #first>
-            <b-form-select-option
-              :value="undefined"
-              disabled
-            >
-              {{
-                $t("Select an issue number")
-              }}
+            <b-form-select-option :value="undefined" disabled>
+              {{ $t("Select an issue number") }}
             </b-form-select-option>
           </template>
         </b-form-select>
         <template v-if="canBeMultiple && !!currentFirstIssuecode">
           <b-form-group class="mt-2">
-            <b-form-radio
-              v-model="editMode"
-              name="editMode"
-              value="single"
-            >
-              {{
-                $t("Edit a single edge")
-              }}
+            <b-form-radio v-model="editMode" name="editMode" value="single">
+              {{ $t("Edit a single edge") }}
             </b-form-radio>
-            <b-form-radio
-              v-model="editMode"
-              name="editMode"
-              value="range"
-            >
-              {{
-                $t("Edit a range of edges (e.g. issues 1 to 3)")
-              }}
+            <b-form-radio v-model="editMode" name="editMode" value="range">
+              {{ $t("Edit a range of edges (e.g. issues 1 to 3)") }}
             </b-form-radio>
           </b-form-group>
           <b-form-select
@@ -97,7 +71,10 @@
         </template>
       </template>
     </template>
-    <slot v-if="$slots.dimensions && !!currentFirstIssuecode" />
+    <slot
+      v-if="$slots.dimensions && !!currentFirstIssuecode"
+      name="dimensions"
+    />
   </div>
 </template>
 <script setup lang="ts">
@@ -105,6 +82,10 @@ import { useI18n } from "vue-i18n";
 
 import { edgeCatalog } from "~/stores/edgeCatalog";
 import { stores as webStores } from "~web";
+
+defineSlots<{
+  dimensions?(): never;
+}>();
 
 const { t: $t } = useI18n();
 

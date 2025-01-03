@@ -1,11 +1,13 @@
-import { prisma, SessionData } from "../../index";
-import { COVER } from "~dumili-types/storyKinds";
+import type { Socket } from "socket.io";
 
+import { COVER } from "~dumili-types/storyKinds";
+import type { Prisma } from "~prisma/client_dumili";
+import { useSocketServices } from "~socket.io-services";
+
+import type { SessionData } from "../../index";
+import { prisma } from "../../index";
 import { RequiredAuthMiddleware } from "../_auth";
 import { createEntry } from "../indexation";
-import { useSocketServices } from "~socket.io-services";
-import { Socket } from "socket.io";
-import { Prisma } from "~prisma/client_dumili";
 
 export type IndexationsSocket = Socket<object, object, object, SessionData>;
 
@@ -34,19 +36,19 @@ const listenEvents = (socket: IndexationsSocket) => ({
         prisma.entry.update({
           data: {
             acceptedStoryKindSuggestionId: entry.storyKindSuggestions.find(
-              (s) => s.kind === COVER
+              (s) => s.kind === COVER,
             )!.id,
           },
           where: {
             id: entry.id,
           },
-        })
+        }),
       ),
 
   getIndexations: (): Promise<
     Prisma.indexationGetPayload<{
       include: {
-        acceptedIssueSuggestion: true,
+        acceptedIssueSuggestion: true;
         pages: {
           include: {
             image: true;
@@ -84,5 +86,5 @@ const { endpoint, client, server } = useSocketServices<
   middlewares: [RequiredAuthMiddleware],
 });
 
-export { server, endpoint };
+export { endpoint, server };
 export type ClientEmitEvents = (typeof client)["emitEvents"];

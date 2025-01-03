@@ -1,3 +1,5 @@
+import { useSocketServices } from "~socket.io-services";
+
 import authors from "./authors";
 import countries from "./countries";
 import issueDetails from "./issue-details";
@@ -5,7 +7,6 @@ import issues from "./issues";
 import publications from "./publications";
 import quotations from "./quotations";
 import stories from "./stories";
-import { useSocketServices } from "~socket.io-services";
 
 const listenEvents = () => ({
   ...countries,

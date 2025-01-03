@@ -1,7 +1,7 @@
 import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
 
+import type { UserSocket } from "../../../index";
 import { getUserPurchase } from "../issues/util";
-import { UserSocket } from "../../../index";
 
 export default (socket: UserSocket) => ({
   getPurchases: () =>

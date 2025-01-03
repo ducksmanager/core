@@ -1,12 +1,13 @@
 import type { BookcaseEdge } from "~dm-types/BookcaseEdge";
+import type { SessionUser } from "~dm-types/SessionUser";
+import type { user } from "~prisma-schemas/client_dm";
 import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
+import type { Errorable } from "~socket.io-services";
+import { useSocketServices } from "~socket.io-services";
 
+import type { UserSocket } from "../../index";
 import { RequiredAuthMiddleware } from "../auth/util";
-import { Errorable, useSocketServices } from "~socket.io-services";
 import options from "./options";
-import { UserSocket } from "../../index";
-import { SessionUser } from "~dm-types/SessionUser";
-import { user } from "~prisma-schemas/client_dm";
 
 type BookcaseEdgeRaw = Omit<BookcaseEdge, "sprites"> & {
   spriteName: string;

@@ -1,3 +1,5 @@
+import type { SessionUser } from "~dm-types/SessionUser";
+import type { SimpleBookstore } from "~dm-types/SimpleBookstore";
 import type {
   bookstore,
   bookstoreComment,
@@ -5,14 +7,10 @@ import type {
 } from "~prisma-schemas/schemas/dm";
 import { userContributionType } from "~prisma-schemas/schemas/dm";
 import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
-
-import { UserIsAdminMiddleware } from "../auth/util";
 import { useSocketServices } from "~socket.io-services";
-import { SessionUser } from "~dm-types/SessionUser";
-import { UserSocket } from "../../index";
-import { SimpleBookstore } from "~dm-types/SimpleBookstore";
 
-
+import type { UserSocket } from "../../index";
+import { UserIsAdminMiddleware } from "../auth/util";
 
 const persistContribution = async (
   user: user,
@@ -116,7 +114,6 @@ export const {
   listenEvents: adminListenEvents,
   middlewares: [UserIsAdminMiddleware],
 });
-
 
 const listenEvents = (socket: UserSocket) => ({
   getActiveBookstores: () => getBookstores(true),

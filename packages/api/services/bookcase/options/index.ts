@@ -1,5 +1,6 @@
-import { UserSocket } from "../../../index";
 import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
+
+import type { UserSocket } from "../../../index";
 
 export default (socket: UserSocket) => ({
   setBookcaseOptions: async ({

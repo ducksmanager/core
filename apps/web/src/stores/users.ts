@@ -2,9 +2,12 @@ import type { ClientEvents as GlobalStatsServices } from "~dm-services/global-st
 import type { BookcaseContributor } from "~dm-types/BookcaseContributor";
 import type { AbstractEvent } from "~dm-types/events/AbstractEvent";
 import type { user } from "~prisma-schemas/schemas/dm";
+import type {
+  EventOutput,
+  SuccessfulEventOutput,
+} from "~socket.io-services/index";
 
 import { socketInjectionKey } from "../composables/useDmSocket";
-import { EventOutput, SuccessfulEventOutput } from "~socket.io-services/index";
 
 type SimpleUser = Pick<user, "id" | "username">;
 

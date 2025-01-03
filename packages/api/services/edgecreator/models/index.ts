@@ -61,4 +61,27 @@ export default () => ({
       })) > 0;
     return model && modelIsPublished ? model : null;
   },
+
+  getModelMainPhoto: (modelId: number) =>
+    prismaEdgeCreator.elementImage.findFirstOrThrow({
+      select: {
+        id: true,
+        fileName: true,
+      },
+      where: {
+        tranches_en_cours_modeles_images: {
+          every: {
+            modelId,
+            isMainPhoto: true,
+          },
+        },
+      },
+    }),
+
+  getModelContributors: (modelId: number) =>
+    prismaEdgeCreator.edgeContributor.findMany({
+      where: {
+        modelId,
+      },
+    }),
 });

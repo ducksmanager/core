@@ -1,6 +1,11 @@
 import PushNotifications from "@pusher/push-notifications-server";
-import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
 
+import type { SessionUser } from "~dm-types/SessionUser";
+import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
+import { useSocketServices } from "~socket.io-services";
+
+import type { UserSocket } from "../../index";
+import { RequiredAuthMiddleware } from "../auth/util";
 import issues from "./issues";
 import marketplace from "./marketplace";
 import options from "./options";
@@ -9,10 +14,6 @@ import subscriptions from "./subscriptions";
 import user from "./user";
 import { getUser } from "./user/util";
 import watchedAuthors from "./watched-authors";
-import { UserSocket } from "../../index";
-import { useSocketServices } from "~socket.io-services";
-import { SessionUser } from "~dm-types/SessionUser";
-import { RequiredAuthMiddleware } from "../auth/util";
 
 const listenEvents = (socket: UserSocket) => ({
   ...watchedAuthors(socket),

@@ -1,10 +1,7 @@
 <template>
   <div>
     <div class="DashboardContainer" />
-    <div
-      v-if="withProgress"
-      class="UppyDragDrop-Progress"
-    />
+    <div v-if="withProgress" class="UppyDragDrop-Progress" />
   </div>
 </template>
 

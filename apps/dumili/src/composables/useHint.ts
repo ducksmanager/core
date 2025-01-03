@@ -1,8 +1,8 @@
 import { suggestions } from "~/stores/suggestions";
 import type { ClientEvents as CoverIdServices } from "~dm-services/cover-id";
+import type { EventOutput } from "~socket.io-services/index";
 
 import { dumiliSocketInjectionKey } from "./useDumiliSocket";
-import type { EventOutput } from "~socket.io-services/index";
 
 export default () => {
   const { loadIndexation } = suggestions();

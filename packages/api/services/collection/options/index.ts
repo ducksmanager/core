@@ -1,7 +1,7 @@
-import { UserSocket } from "../../../index";
-
 import { userOptionType } from "~prisma-schemas/schemas/dm";
 import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
+
+import type { UserSocket } from "../../../index";
 
 const optionNameToEnum = (
   optionName:

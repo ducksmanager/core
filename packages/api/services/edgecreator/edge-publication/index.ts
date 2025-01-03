@@ -1,4 +1,3 @@
-import { getPopularityByIssuecodes } from "../../coa/issue-details";
 import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa/client";
 import type {
   bookstoreComment,
@@ -7,6 +6,8 @@ import type {
   userContribution,
 } from "~prisma-schemas/schemas/dm";
 import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
+
+import { getPopularityByIssuecodes } from "../../coa/issue-details";
 
 export default () => ({
   publishEdge: async ({

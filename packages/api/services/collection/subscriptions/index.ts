@@ -1,8 +1,8 @@
-import { UserSocket } from "../../../index";
-
 import type { EditSubscription } from "~dm-types/EditSubscription";
-import { subscription } from "~prisma-schemas/client_dm";
+import type { subscription } from "~prisma-schemas/client_dm";
 import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
+
+import type { UserSocket } from "../../../index";
 
 export type SubscriptionTransformedStringDates = Omit<
   subscription,
@@ -34,7 +34,10 @@ export default (socket: UserSocket) => ({
     await upsertSubscription(null, subscription, socket.data.user!.id);
   },
 
-  updateSubscription: async (id: number, subscription: SubscriptionTransformedStringDates) => {
+  updateSubscription: async (
+    id: number,
+    subscription: SubscriptionTransformedStringDates,
+  ) => {
     await upsertSubscription(id, subscription, socket.data.user!.id);
   },
 

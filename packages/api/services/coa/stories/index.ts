@@ -27,7 +27,6 @@ export default {
       .then((data) => ({ storyversions: data.groupBy("storyversioncode") }))
       .catch((e) => ({ error: "Error", errorDetails: e })),
 
-
   getStoryjobs: (storyversioncode: string) =>
     prismaCoa.inducks_storyjob
       .findMany({
@@ -38,10 +37,14 @@ export default {
       .then((data) => ({ data }))
       .catch((e) => ({ error: "Error", errorDetails: e })),
 
-  searchStory: async <WithIssues extends boolean>(keywords: string[], withIssues: WithIssues) => {
+  searchStory: async <WithIssues extends boolean>(
+    keywords: string[],
+    withIssues: WithIssues,
+  ) => {
     const limit = 10;
     const joinedKeywords = keywords.join(" ");
-    let results = await prismaCoa.$queryRaw<StorySearchResults<WithIssues>["results"]
+    let results = await prismaCoa.$queryRaw<
+      StorySearchResults<WithIssues>["results"]
     >`
       SELECT inducks_storyversion.storycode,
              inducks_storyversion.entirepages,
@@ -79,7 +82,7 @@ export default {
         hasMore,
       };
     }
-  }
+  },
 };
 
 const listIssuesFromStoryCode = async (storycode: string) =>

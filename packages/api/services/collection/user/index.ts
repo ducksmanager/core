@@ -1,7 +1,10 @@
-import PresentationSentenceRequested from "../../../emails/presentation-sentence-requested";
+import type { UserForAccountForm } from "~dm-types/UserForAccountForm";
 import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
-import { getHashedPassword } from "../../auth/util";
+import type { Errorable } from "~socket.io-services";
 
+import PresentationSentenceRequested from "../../../emails/presentation-sentence-requested";
+import type { UserSocket } from "../../../index";
+import { getHashedPassword } from "../../auth/util";
 import type { Validation } from "./util";
 import {
   DiscordIdValidation,
@@ -14,9 +17,6 @@ import {
   PresentationTextValidation,
   validate,
 } from "./util";
-import { UserSocket } from "../../../index";
-import { UserForAccountForm } from "~dm-types/UserForAccountForm";
-import { Errorable } from "~socket.io-services";
 
 export default (socket: UserSocket) => ({
   getUser: async () =>
@@ -41,7 +41,14 @@ export default (socket: UserSocket) => ({
     });
   },
 
-  updateUser: async (input: UserForAccountForm): Promise<Errorable<{hasRequestedPresentationSentenceUpdate: boolean}, 'Bad request'>> => {
+  updateUser: async (
+    input: UserForAccountForm,
+  ): Promise<
+    Errorable<
+      { hasRequestedPresentationSentenceUpdate: boolean },
+      "Bad request"
+    >
+  > => {
     let hasRequestedPresentationSentenceUpdate = false;
     let validators: Validation[] = [
       new DiscordIdValidation(),
