@@ -7,6 +7,7 @@ import { useSocketServices } from "~socket.io-services";
 
 import type { UserSocket } from "../../index";
 import { RequiredAuthMiddleware } from "../auth/util";
+import namespaces from "../namespaces";
 import options from "./options";
 
 type BookcaseEdgeRaw = Omit<BookcaseEdge, "sprites"> & {
@@ -173,7 +174,7 @@ export const { endpoint, client, server } = useSocketServices<
   object,
   object,
   { user?: SessionUser }
->("/bookcase", {
+>(namespaces.BOOKCASE, {
   listenEvents,
   middlewares: [],
 });
@@ -193,7 +194,7 @@ export const {
   object,
   object,
   { user: SessionUser }
->("/user-bookcase", {
+>(namespaces.BOOKCASE_USER, {
   listenEvents: authedListenEvents,
   middlewares: [RequiredAuthMiddleware],
 });

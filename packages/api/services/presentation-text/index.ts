@@ -5,6 +5,7 @@ import { useSocketServices } from "~socket.io-services";
 import PresentationSentenceApproved from "../../emails/presentation-sentence-approved";
 import PresentationSentenceRefused from "../../emails/presentation-sentence-refused";
 import { RequiredAuthMiddleware } from "../auth/util";
+import namespaces from "../namespaces";
 
 export type Decision = "approve" | "refuse";
 
@@ -41,7 +42,7 @@ export const { endpoint, client, server } = useSocketServices<
   object,
   object,
   { user: SessionUser }
->("/presentation-text", {
+>(namespaces.PRESENTATION_TEXT, {
   listenEvents,
   middlewares: [RequiredAuthMiddleware],
 });

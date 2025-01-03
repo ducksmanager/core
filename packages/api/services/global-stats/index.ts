@@ -8,6 +8,7 @@ import { useSocketServices } from "~socket.io-services";
 import type { UserSocket } from "../../index";
 import { RequiredAuthMiddleware } from "../auth/util";
 import { getMedalPoints } from "../collection/util";
+import namespaces from "../namespaces";
 
 const listenEvents = () => ({
   getBookcaseContributors: () =>
@@ -50,7 +51,7 @@ const listenEvents = () => ({
 
 export const { endpoint, client, server } = useSocketServices<
   typeof listenEvents
->("/feedback", {
+>("/global-stats", {
   listenEvents,
   middlewares: [],
 });
@@ -95,7 +96,7 @@ export const {
   object,
   object,
   { user: SessionUser }
->("/feedback", {
+>(namespaces.GLOBAL_STATS_ADMIN, {
   listenEvents: userListenEvents,
   middlewares: [RequiredAuthMiddleware],
 });

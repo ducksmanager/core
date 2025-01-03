@@ -15,6 +15,7 @@ import {
   UsernameValidation,
   validate,
 } from "../collection/user/util";
+import namespaces from "../namespaces";
 import {
   generateAccessToken,
   getHashedPassword,
@@ -199,7 +200,7 @@ const listenEvents = () => ({
 
 export const { endpoint, client, server } = useSocketServices<
   typeof listenEvents
->("/auth", {
+>(namespaces.AUTH, {
   listenEvents,
   middlewares: [],
 });

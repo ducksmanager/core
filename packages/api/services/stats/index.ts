@@ -2,6 +2,7 @@ import type { SessionUser } from "~dm-types/SessionUser";
 import { useSocketServices } from "~socket.io-services";
 
 import type { UserSocket } from "../../index";
+import namespaces from "../namespaces";
 import suggestions from "./suggestions";
 import watchedAuthors from "./watchedAuthors";
 
@@ -15,7 +16,7 @@ export const { endpoint, client, server } = useSocketServices<
   object,
   object,
   { user: SessionUser }
->("/coa", {
+>(namespaces.STATS, {
   listenEvents,
   middlewares: [],
 });

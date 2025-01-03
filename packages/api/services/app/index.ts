@@ -3,6 +3,8 @@ import { existsSync, readFileSync } from "fs";
 import type { Errorable } from "~socket.io-services";
 import { useSocketServices } from "~socket.io-services";
 
+import namespaces from "../namespaces";
+
 type AppInfos = {
   version: string;
 };
@@ -44,7 +46,7 @@ const listenEvents = () => ({
 
 export const { endpoint, client, server } = useSocketServices<
   typeof listenEvents
->("/app", {
+>(namespaces.APP, {
   listenEvents,
   middlewares: [],
 });

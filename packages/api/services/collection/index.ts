@@ -6,6 +6,7 @@ import { useSocketServices } from "~socket.io-services";
 
 import type { UserSocket } from "../../index";
 import { RequiredAuthMiddleware } from "../auth/util";
+import namespaces from "../namespaces";
 import issues from "./issues";
 import marketplace from "./marketplace";
 import options from "./options";
@@ -129,7 +130,7 @@ export const { endpoint, client, server } = useSocketServices<
   object,
   object,
   { user: SessionUser }
->("/collection", {
+>(namespaces.COLLECTION, {
   listenEvents,
   middlewares: [RequiredAuthMiddleware],
 });

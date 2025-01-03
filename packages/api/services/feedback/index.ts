@@ -4,6 +4,7 @@ import { useSocketServices } from "~socket.io-services";
 
 import feedbackSent from "../../emails/feedback-sent";
 import type { UserSocket } from "../../index";
+import namespaces from "../namespaces";
 
 const listenEvents = (socket: UserSocket) => ({
   sendFeedback: async (feedbackMessage: string) => {
@@ -23,7 +24,7 @@ export const { endpoint, client, server } = useSocketServices<
   object,
   object,
   { user: SessionUser }
->("/feedback", {
+>(namespaces.FEEDBACK, {
   listenEvents,
   middlewares: [],
 });

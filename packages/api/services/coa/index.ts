@@ -1,5 +1,6 @@
 import { useSocketServices } from "~socket.io-services";
 
+import namespaces from "../namespaces";
 import authors from "./authors";
 import countries from "./countries";
 import issueDetails from "./issue-details";
@@ -20,7 +21,7 @@ const listenEvents = () => ({
 
 export const { endpoint, client, server } = useSocketServices<
   typeof listenEvents
->("/coa", {
+>(namespaces.COA, {
   listenEvents,
   middlewares: [],
 });

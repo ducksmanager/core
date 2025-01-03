@@ -309,6 +309,7 @@ export const collection = defineStore("collection", () => {
       }
     },
     loadUser = async (afterUpdate = false) => {
+      debugger;
       if (!socketOptions.session.getToken()) {
         user.value = null;
         return;

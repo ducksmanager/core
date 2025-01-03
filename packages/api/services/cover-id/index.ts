@@ -7,6 +7,7 @@ import type { EitherOr } from "~socket.io-services";
 import { useSocketServices } from "~socket.io-services";
 
 import { getCoverUrls } from "../coa/issue-details";
+import namespaces from "../namespaces";
 
 const listenEvents = () => ({
   searchFromCover: async ({
@@ -110,7 +111,7 @@ const listenEvents = () => ({
 
 export const { endpoint, client, server } = useSocketServices<
   typeof listenEvents
->("/cover-id", {
+>(namespaces.COVER_ID, {
   listenEvents,
   middlewares: [],
 });

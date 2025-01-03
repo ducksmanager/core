@@ -85,7 +85,6 @@ const images = computed(() =>
 const acceptIssueSuggestion = async (issuecode: string) => {
   const { publicationcode, issuenumber } = issuecodeDetails.value[issuecode];
   const { suggestionId } = await createIssueSuggestion({
-    issuecode,
     publicationcode,
     issuenumber,
     ai: true,

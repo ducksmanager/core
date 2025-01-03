@@ -4,6 +4,8 @@ import type { edgeModel } from "~prisma-schemas/schemas/edgecreator";
 import { prismaClient as prismaEdgeCreator } from "~prisma-schemas/schemas/edgecreator/client";
 import { useSocketServices } from "~socket.io-services";
 
+import namespaces from "../namespaces";
+
 const getEdges = async (filters: {
   publicationcode?: string;
   issuecodes?: string[];
@@ -71,7 +73,7 @@ const listenEvents = () => ({
 
 export const { endpoint, client, server } = useSocketServices<
   typeof listenEvents
->("/events", {
+>(namespaces.EDGES, {
   listenEvents,
   middlewares: [],
 });

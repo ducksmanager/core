@@ -58,6 +58,7 @@ export const users = defineStore("users", () => {
       }
       if (!missingUserIds.length) return;
 
+      debugger;
       const data =
         await globalStatsServices.getUsersPointsAndStats(missingUserIds);
       if (!("error" in data)) {

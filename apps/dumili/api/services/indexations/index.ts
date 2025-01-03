@@ -8,6 +8,7 @@ import type { SessionData } from "../../index";
 import { prisma } from "../../index";
 import { RequiredAuthMiddleware } from "../_auth";
 import { createEntry } from "../indexation";
+import namespaces from "../namespaces";
 
 export type IndexationsSocket = Socket<object, object, object, SessionData>;
 
@@ -81,7 +82,7 @@ const { endpoint, client, server } = useSocketServices<
   object,
   object,
   SessionData
->("/indexations", {
+>(namespaces.INDEXATIONS, {
   listenEvents,
   middlewares: [RequiredAuthMiddleware],
 });

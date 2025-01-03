@@ -22,6 +22,8 @@ import type { SignupEvent } from "~dm-types/events/SignupEvent";
 import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
 import { useSocketServices } from "~socket.io-services";
 
+import namespaces from "../namespaces";
+
 const listenEvents = () => ({
   getEvents: () =>
     Promise.all([
@@ -36,7 +38,7 @@ const listenEvents = () => ({
 
 export const { endpoint, client, server } = useSocketServices<
   typeof listenEvents
->("/events", {
+>(namespaces.EVENTS, {
   listenEvents,
   middlewares: [],
 });

@@ -27,6 +27,7 @@ import { prisma } from "../../index";
 import { RequiredAuthMiddleware } from "../_auth";
 import { runKumikoOnPages } from "./kumiko";
 import { runOcrOnImages } from "./ocr";
+import namespaces from "../namespaces";
 
 const socket = new SocketClient(process.env.DM_SOCKET_URL!);
 const { services: coaServices } = socket.addNamespace<CoaEvents>(coaEndpoint);
@@ -699,7 +700,7 @@ export const { endpoint, client, server } = useSocketServices<
   object,
   SessionDataWithIndexation
 >(
-  "!",
+  namespaces.INDEXATION,
   // new RegExp(`^${namespaceEndpoint.replace("{id}", "[0-9]{8}T[0-9]{9}")}$`)
   {
     listenEvents,

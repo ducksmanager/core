@@ -18,8 +18,8 @@ export type ScopedErrorDetails = {
   selector: ScopedError["selector"];
 };
 
-export const getUser = async (id: number, transaction = prismaDm) =>
-  await transaction.user.findUniqueOrThrow({
+export const getUser = (id: number, transaction = prismaDm) =>
+  transaction.user.findUniqueOrThrow({
     omit: { password: true },
     where: { id },
   });

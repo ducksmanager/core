@@ -5,6 +5,7 @@ import { useSocketServices } from "~socket.io-services";
 import edgeModelReady from "../../emails/edge-model-ready";
 import type { UserSocket } from "../../index";
 import { RequiredAuthMiddleware } from "../auth/util";
+import namespaces from "../namespaces";
 import edgePublication from "./edge-publication";
 import edgeSprites from "./edge-sprites";
 import models from "./models";
@@ -68,7 +69,7 @@ export const { endpoint, client, server } = useSocketServices<
   object,
   object,
   { user: SessionUser }
->("/coa", {
+>(namespaces.EDGECREATOR, {
   listenEvents,
   middlewares: [RequiredAuthMiddleware],
 });

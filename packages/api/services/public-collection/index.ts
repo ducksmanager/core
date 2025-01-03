@@ -2,6 +2,8 @@ import type { user } from "~prisma-schemas/schemas/dm";
 import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
 import { useSocketServices } from "~socket.io-services";
 
+import namespaces from "../namespaces";
+
 const listenEvents = () => ({
   getPublicCollection: async (username: string) => {
     let user: user;
@@ -27,7 +29,7 @@ const listenEvents = () => ({
 
 export const { endpoint, client, server } = useSocketServices<
   typeof listenEvents
->("/public-collection", {
+>(namespaces.PUBLIC_COLLECTION, {
   listenEvents,
   middlewares: [],
 });

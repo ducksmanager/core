@@ -11,6 +11,7 @@ import { useSocketServices } from "~socket.io-services";
 
 import type { UserSocket } from "../../index";
 import { UserIsAdminMiddleware } from "../auth/util";
+import namespaces from "../namespaces";
 
 const persistContribution = async (
   user: user,
@@ -110,7 +111,7 @@ export const {
   object,
   object,
   { user: SessionUser }
->("/bookcase", {
+>(namespaces.BOOKSTORES_ADMIN, {
   listenEvents: adminListenEvents,
   middlewares: [UserIsAdminMiddleware],
 });
@@ -178,7 +179,7 @@ export const { endpoint, client, server } = useSocketServices<
   object,
   object,
   { user: SessionUser }
->("/bookcase", {
+>(namespaces.BOOKSTORES, {
   listenEvents,
   middlewares: [UserIsAdminMiddleware],
 });

@@ -30,7 +30,10 @@
               fluid
             />
             <div class="position-absolute bottom-0 pb-3">
-              <Issue v-bind="acceptedIssueSuggestion" />
+              <Issue
+                v-if="acceptedIssueSuggestion"
+                v-bind="acceptedIssueSuggestion"
+              />
             </div>
           </router-link>
         </b-col>
