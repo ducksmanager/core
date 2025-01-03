@@ -30,7 +30,10 @@
               fluid
             />
             <div class="position-absolute bottom-0 pb-3">
-              <Issue v-bind="acceptedIssueSuggestion" />
+              <Issue
+                v-if="acceptedIssueSuggestion"
+                v-bind="acceptedIssueSuggestion"
+              />
             </div>
           </router-link>
         </b-col>
@@ -63,7 +66,7 @@
           )
         }}
         <b-form-input
-          v-model.number="totalPages"
+          v-model="totalPages"
           type="number"
           min="4"
           max="996" /></b-form></b-modal
@@ -72,7 +75,8 @@
 
 <script setup lang="ts">
 import { dumiliSocketInjectionKey } from "~/composables/useDumiliSocket";
-import type { IndexationWithFirstPageAndAcceptedIssueSuggestion } from "~dumili-services/indexations/types";
+import type { EventOutput } from "~socket.io-services/index";
+import type { ClientEmitEvents as IndexationsEvents } from "~dumili-services/indexations";
 
 const router = useRouter();
 const {
@@ -82,9 +86,9 @@ const {
 
 const { fetchPublicationNames } = coa();
 
-const form = ref<HTMLFormElement | null>(null);
+const form = ref<HTMLFormElement>();
 const currentIndexations =
-  ref<IndexationWithFirstPageAndAcceptedIssueSuggestion[]>();
+  shallowRef<EventOutput<IndexationsEvents, "getIndexations">>();
 const modal = ref(false);
 const totalPages = ref(16);
 

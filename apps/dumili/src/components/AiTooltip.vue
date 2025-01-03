@@ -21,9 +21,9 @@
     />
   </div>
 </template>
-<script setup lang="ts" generic="LoadingEventStart extends keyof ServerSentStartEvents">
+<script setup lang="ts" generic="LoadingEventStart extends keyof IndexationServerSentStartEvents">
 import { dumiliSocketInjectionKey } from "~/composables/useDumiliSocket";
-import type { ServerSentStartEvents } from "~dumili-services/indexation/types";
+import type { IndexationServerSentStartEvents } from "~dumili-services/indexation";
 
 const { status, loadingEvents = [] } = defineProps<{
   id: string;
@@ -32,7 +32,7 @@ const { status, loadingEvents = [] } = defineProps<{
   loadingEvents?: {
     eventName: LoadingEventStart;
     checkMatch: (
-      ...args: Parameters<ServerSentStartEvents[LoadingEventStart]>
+      ...args: Parameters<IndexationServerSentStartEvents[LoadingEventStart]>
     ) => boolean;
   }[];
 }>();

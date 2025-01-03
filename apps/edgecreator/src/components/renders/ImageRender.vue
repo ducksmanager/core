@@ -20,7 +20,7 @@ import { main } from "~/stores/main";
 
 const { resolveIssueNumberTemplate } = useTextTemplate();
 
-const image = ref<SVGImageElement | null>(null);
+const image = ref<SVGImageElement>();
 const { image: imageDetails, loadImage } = useBase64Legacy();
 
 interface Props {

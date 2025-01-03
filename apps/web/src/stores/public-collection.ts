@@ -10,8 +10,8 @@ export const publicCollection = defineStore("publicCollection", () => {
     publicCollection: { services: publicCollectionServices },
   } = inject(socketInjectionKey)!;
 
-  const issues = shallowRef<(issue & { issuecode: string })[] | null>(null),
-    publicUsername = ref<string | null>(null),
+  const issues = shallowRef<(issue & { issuecode: string })[]>(),
+    publicUsername = ref<string>(),
     publicationUrlRoot = computed(
       () => `/collection/user/${publicUsername.value || ""}`,
     ),

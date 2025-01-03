@@ -1,26 +1,30 @@
-import type { Namespace, Server } from "socket.io";
-
-import feedbackSent from "~/emails/feedback-sent";
+import type { SessionUser } from "~dm-types/SessionUser";
 import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
+import { useSocketServices } from "~socket.io-services";
 
-import type Events from "./types";
-import { namespaceEndpoint } from "./types";
+import feedbackSent from "../../emails/feedback-sent";
+import type { UserSocket } from "../../index";
+import namespaces from "../namespaces";
 
-export default (io: Server) => {
-  (io.of(namespaceEndpoint) as Namespace<Events>).on(
-    "connection",
-    async (socket) => {
-      socket.on("sendFeedback", async (feedbackMessage, callback) => {
-        const user = await prismaDm.user.findUniqueOrThrow({
-          where: { id: socket.data.user!.id },
-        });
-        const email = new feedbackSent({
-          user,
-          feedbackMessage,
-        });
-        await email.send();
-        callback();
-      });
-    },
-  );
-};
+const listenEvents = (socket: UserSocket) => ({
+  sendFeedback: async (feedbackMessage: string) => {
+    const user = await prismaDm.user.findUniqueOrThrow({
+      where: { id: socket.data.user!.id },
+    });
+    const email = new feedbackSent({
+      user,
+      feedbackMessage,
+    });
+    await email.send();
+  },
+});
+
+export const { endpoint, client, server } = useSocketServices<
+  typeof listenEvents,
+  object,
+  object,
+  { user: SessionUser }
+>(namespaces.FEEDBACK, {
+  listenEvents,
+  middlewares: [],
+});

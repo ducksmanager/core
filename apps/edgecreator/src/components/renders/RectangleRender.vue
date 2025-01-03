@@ -1,16 +1,13 @@
 <template>
   <svg>
-    <rect
-      ref="rect"
-      v-bind="options"
-    >
+    <rect ref="rect" v-bind="options">
       <metadata>{{ options }}</metadata>
     </rect>
   </svg>
 </template>
 
 <script setup lang="ts">
-const rect = ref<SVGRectElement | null>(null);
+const rect = ref<SVGRectElement>();
 
 interface Props {
   issuecode: string;

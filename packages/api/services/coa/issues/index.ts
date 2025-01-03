@@ -1,23 +1,31 @@
-import type { Socket } from "socket.io";
-
 import type { IssueWithIssuecodeOnly } from "~dm-types/IssueWithIssuecodeOnly";
 import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa/client";
 
-import type Events from "../types";
-export default (socket: Socket<Events>) => {
-  socket.on("getIssues", (issuecodes, withTitles, callback) =>
-    issuecodes.length
-      ? prismaCoa
+export default {
+  getIssues: (
+    issuecodes: string[],
+    withTitles: boolean,
+  ): Promise<
+    Record<
+      string,
+      {
+        issuecode: string;
+        publicationcode: string;
+        issuenumber: string;
+        title?: string;
+      }
+    >
+  > =>
+    !issuecodes.length
+      ? Promise.resolve({})
+      : prismaCoa
           .augmentIssueArrayWithInducksData(
             issuecodes.map((issuecode) => ({ issuecode })),
             withTitles,
           )
-          .then((data) => data.groupBy("issuecode"))
-          .then(callback)
-      : callback({}),
-  );
+          .then((data) => data.groupBy("issuecode")),
 
-  socket.on("getIssuesByPublicationcodes", async (publicationcodes, callback) =>
+  getIssuesByPublicationcodes: async (publicationcodes: string[]) =>
     prismaCoa.inducks_issue
       .findMany({
         select: {
@@ -31,11 +39,9 @@ export default (socket: Socket<Events>) => {
           },
         },
       })
-      .then((data) => data.groupBy("publicationcode", "[]"))
-      .then(callback),
-  );
+      .then((data) => data.groupBy("publicationcode", "[]")),
 
-  socket.on("getIssuesByStorycode", async (storycode, callback) =>
+  getIssuesByStorycode: async (storycode: string) =>
     prismaCoa.$queryRaw<IssueWithIssuecodeOnly[]>`
       SELECT publicationcode, issuenumber, issuecode
       FROM inducks_issue issue
@@ -43,26 +49,22 @@ export default (socket: Socket<Events>) => {
                 INNER JOIN inducks_storyversion sv using (storyversioncode)
       WHERE sv.storycode = ${storycode}
       GROUP BY publicationcode, issuenumber
-      ORDER BY publicationcode`.then(callback),
-  );
+      ORDER BY publicationcode`,
 
-  socket.on("getRecentIssues", (callback) =>
-    prismaCoa.inducks_issue
-      .findMany({
-        select: {
-          publicationcode: true,
-          issuenumber: true,
-          issuecode: true,
-          oldestdate: true,
+  getRecentIssues: () =>
+    prismaCoa.inducks_issue.findMany({
+      select: {
+        publicationcode: true,
+        issuenumber: true,
+        issuecode: true,
+        oldestdate: true,
+      },
+      where: {
+        oldestdate: {
+          lte: new Date().toISOString().split("T")[0],
         },
-        where: {
-          oldestdate: {
-            lte: new Date().toISOString().split("T")[0],
-          },
-        },
-        orderBy: [{ oldestdate: "desc" }],
-        take: 50,
-      })
-      .then(callback),
-  );
+      },
+      orderBy: [{ oldestdate: "desc" }],
+      take: 50,
+    }),
 };

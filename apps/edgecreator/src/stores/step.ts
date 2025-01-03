@@ -60,10 +60,12 @@ export const step = defineStore("step", () => {
     }: {
       stepNumbers?: number[];
       issuecodes?: string[];
-    }) => options.value.filter(
-      ({ stepNumber, issuecode }) => (!stepNumbers || stepNumbers.includes(stepNumber)) &&
-        (!issuecodes || issuecodes.includes(issuecode))
-    ),
+    }) =>
+      options.value.filter(
+        ({ stepNumber, issuecode }) =>
+          (!stepNumbers || stepNumbers.includes(stepNumber)) &&
+          (!issuecodes || issuecodes.includes(issuecode)),
+      ),
     getFilteredDimensions = ({ issuecodes }: { issuecodes?: string[] }) =>
       dimensions.value.filter(
         ({ issuecode }) => !issuecodes || issuecodes.includes(issuecode),
@@ -276,13 +278,9 @@ export const step = defineStore("step", () => {
         ({ stepNumber }) => stepNumberToRemove !== stepNumber,
       );
 
-      for (
-        let optionIndex = 0;
-        optionIndex < options.value.length;
-        optionIndex++
-      ) {
-        if (options.value[optionIndex].stepNumber > stepNumberToRemove) {
-          options.value[optionIndex].stepNumber--;
+      for (const option of options.value) {
+        if (option.stepNumber > stepNumberToRemove) {
+          option.stepNumber--;
         }
       }
     },
@@ -299,15 +297,10 @@ export const step = defineStore("step", () => {
       );
     },
     swapSteps = (stepNumbers: [number, number]) => {
-      for (
-        let optionIndex = 0;
-        optionIndex < options.value.length;
-        optionIndex++
-      ) {
-        const stepNumber = options.value[optionIndex].stepNumber;
+      for (const option of options.value) {
+        const stepNumber = option.stepNumber;
         if (stepNumbers.includes(stepNumber)) {
-          options.value[optionIndex].stepNumber =
-            stepNumbers[1 - stepNumbers.indexOf(stepNumber)];
+          option.stepNumber = stepNumbers[1 - stepNumbers.indexOf(stepNumber)];
         }
       }
       options.value.sort(

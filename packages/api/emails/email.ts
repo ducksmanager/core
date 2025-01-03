@@ -6,7 +6,7 @@ import type { Address } from "nodemailer/lib/mailer";
 import type Mail from "nodemailer/lib/mailer";
 import path from "path";
 
-import en from "~/translations/messages.en.json";
+import en from "../translations/messages.en.json";
 const fr = Object.fromEntries(Object.keys(en).map((key) => [key, key]));
 
 export const i18n = new I18n({

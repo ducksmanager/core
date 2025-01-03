@@ -1,23 +1,14 @@
+import type { Namespace, Server, Socket } from "socket.io";
+
+type EventsMap = {
+  [event: string]: any;
+};
+
 export type ScopedError<ErrorKey extends string = string> = {
   error: ErrorKey;
   message: string;
   selector: string;
 };
-
-type Last<T extends unknown[]> = T extends [...infer _I, infer L] ? L : never;
-
-type LastParameter<F extends (...args: unknown[]) => unknown> = Last<
-  Parameters<F>
->;
-
-export type EventReturnTypeIncludingError<
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  T extends (...args: any[]) => unknown,
-> = LastParameter<LastParameter<T>>;
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type EventReturnType<T extends (...args: any[]) => unknown> =
-  EventReturnTypeIncludingError<T> & { error?: never };
 
 export type EitherOr<A, B> = A | B extends object
   ?
@@ -29,3 +20,82 @@ export type Errorable<T, ErrorKey extends string> = EitherOr<
   T,
   EitherOr<{ error: ErrorKey; errorDetails?: string }, ScopedError<ErrorKey>>
 >;
+
+export type WithoutError<T> = T extends { error: any; errorDetails?: any }
+  ? never
+  : T extends { error: any }
+    ? never
+    : T;
+
+export type EventOutput<
+  ClientEvents extends ReturnType<
+    typeof useSocketServices
+  >["client"]["emitEvents"],
+  EventName extends keyof ClientEvents,
+> = Awaited<ReturnType<ClientEvents[EventName]>>;
+
+export type SuccessfulEventOutput<
+  ClientEvents extends ReturnType<
+    typeof useSocketServices
+  >["client"]["emitEvents"],
+  EventName extends keyof ClientEvents,
+> = WithoutError<EventOutput<ClientEvents, EventName>>;
+
+type ServerSentEndEvents<Events extends { [event: string]: any }> = {
+  [K in keyof Events & string as `${K}End`]: Events[K];
+};
+
+export type ServerSentStartEndEvents<Events extends { [event: string]: any }> =
+  Events & ServerSentEndEvents<Events>;
+
+export const useSocketServices = <
+  SocketListenEvents extends (
+    socket: Socket<
+      ReturnType<SocketListenEvents>,
+      EmitEvents,
+      ServerSideEvents,
+      SocketData
+    >,
+  ) => EventsMap,
+  EmitEvents extends EventsMap = object,
+  ServerSideEvents extends EventsMap = object,
+  SocketData extends object = object,
+>(
+  endpoint: string,
+  options: {
+    listenEvents: SocketListenEvents;
+    middlewares: Parameters<
+      Namespace<
+        ReturnType<SocketListenEvents>,
+        EmitEvents,
+        ServerSideEvents,
+        SocketData
+      >["use"]
+    >[0][];
+  },
+) => ({
+  endpoint,
+  server: (io: Server) => {
+    const namespace = io.of(endpoint);
+    for (const middleware of options?.middlewares ?? []) {
+      namespace.use(middleware);
+    }
+
+    namespace.on("connection", (socket) => {
+      if (options.listenEvents) {
+        const socketEventImplementations = options.listenEvents(socket);
+        for (const eventName in socketEventImplementations) {
+          socket.on(eventName, (...args: unknown[]) => {
+            const callback = args.pop() as Function;
+            const output = socketEventImplementations[eventName](...args);
+            callback(output);
+          });
+        }
+      }
+    });
+  },
+  client: {
+    emitEvents: {} as unknown as ReturnType<SocketListenEvents>,
+    listenEventsInterfaces: {} as unknown as EmitEvents,
+  },
+});

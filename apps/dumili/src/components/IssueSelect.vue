@@ -59,9 +59,9 @@ const emit = defineEmits<
   ) => void
 >();
 
-const currentCountrycode = ref<string | undefined>(undefined);
-const currentPublicationcode = ref<string | undefined>(undefined);
-const currentIssuenumber = ref<string | undefined>(undefined);
+const currentCountrycode = ref<string>();
+const currentPublicationcode = ref<string>();
+const currentIssuenumber = ref<string>();
 
 const {
   countryNames: coaCountryNames,

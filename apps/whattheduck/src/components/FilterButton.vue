@@ -14,7 +14,7 @@ import { app } from '~/stores/app';
 const { filters } = app();
 const { currentFilter } = storeToRefs(app());
 
-const fab = shallowRef<ComponentPublicInstance<HTMLIonFabElement> | null>(null);
+const fab = shallowRef<ComponentPublicInstance<HTMLIonFabElement>>();
 </script>
 
 <style lang="scss" scoped>

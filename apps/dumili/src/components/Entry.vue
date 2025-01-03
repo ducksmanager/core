@@ -126,10 +126,7 @@
 import { watchDebounced } from "@vueuse/core";
 import { dumiliSocketInjectionKey } from "~/composables/useDumiliSocket";
 import { suggestions } from "~/stores/suggestions";
-import type {
-  FullEntry,
-  FullIndexation,
-} from "~dumili-services/indexation/types";
+import type { FullEntry, FullIndexation } from "~dumili-services/indexation";
 import { COVER, storyKinds } from "~dumili-types/storyKinds";
 import { getEntryPages } from "~dumili-utils/entryPages";
 

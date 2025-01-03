@@ -1,5 +1,4 @@
 import dayjs from "dayjs";
-import type { Namespace, Server } from "socket.io";
 
 import type {
   AbstractEvent,
@@ -21,28 +20,30 @@ import type {
 import type { MedalEvent } from "~dm-types/events/MedalEvent";
 import type { SignupEvent } from "~dm-types/events/SignupEvent";
 import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
+import { useSocketServices } from "~socket.io-services";
 
-import type Events from "./types";
-import { namespaceEndpoint } from "./types";
+import namespaces from "../namespaces";
 
-export default (io: Server) => {
-  (io.of(namespaceEndpoint) as Namespace<Events>).on("connection", (socket) => {
-    console.log("connected to events");
+const listenEvents = () => ({
+  getEvents: () =>
+    Promise.all([
+      retrieveSignups(),
+      retrieveCollectionUpdates(),
+      retrieveCollectionSubscriptionAdditions(),
+      retrieveBookstoreCreations(),
+      retrieveEdgeCreations(),
+      retrieveNewMedals(),
+    ]).then((data) => data.flat()),
+});
 
-    socket.on("getEvents", (callback) =>
-      Promise.all([
-        retrieveSignups(),
-        retrieveCollectionUpdates(),
-        retrieveCollectionSubscriptionAdditions(),
-        retrieveBookstoreCreations(),
-        retrieveEdgeCreations(),
-        retrieveNewMedals(),
-      ])
-        .then((data) => data.flat())
-        .then(callback),
-    );
-  });
-};
+export const { endpoint, client, server } = useSocketServices<
+  typeof listenEvents
+>(namespaces.EVENTS, {
+  listenEvents,
+  middlewares: [],
+});
+
+export type ClientEvents = (typeof client)["emitEvents"];
 
 const MEDAL_LEVELS = {
   edge_photographer: { 1: 50, 2: 150, 3: 600 },

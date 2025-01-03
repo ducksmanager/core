@@ -1,5 +1,5 @@
 import { dumiliSocketInjectionKey } from "~/composables/useDumiliSocket";
-import type { FullIndexation } from "~dumili-services/indexation/types";
+import type { FullIndexation } from "~dumili-services/indexation";
 import type { issueSuggestion } from "~prisma/client_dumili";
 
 import { ui } from "./ui";
@@ -27,10 +27,9 @@ export const suggestions = defineStore("suggestions", () => {
   };
 
   const createIssueSuggestion = async (
-    suggestion: Pick<
-      issueSuggestion,
-      "publicationcode" | "issuenumber" | "issuecode"
-    > & { ai: boolean },
+    suggestion: Pick<issueSuggestion, "publicationcode" | "issuenumber"> & {
+      ai: boolean;
+    },
   ) => indexationSocket.value!.services.createIssueSuggestion(suggestion);
 
   const acceptedIssue = computed({

@@ -98,7 +98,7 @@
           <Book
             v-if="currentIssuecodeOpened"
             :issuecode="currentIssuecodeOpened"
-            @close-book="currentIssuecodeOpened = null"
+            @close-book="currentIssuecodeOpened = undefined"
           />
           <div v-if="readonly">
             <div
@@ -174,7 +174,7 @@
               @mouseup.self.left="updateSelected"
               @mouseover="
                 preselectedIndexEnd =
-                  preselectedIndexStart === null ? null : idx;
+                  preselectedIndexStart === undefined ? undefined : idx;
                 hoveredIndex = idx;
               "
             >
@@ -374,7 +374,7 @@ const { conditions } = useCondition();
 const { t: $t } = useI18n();
 
 let clicks = $ref(0);
-let timer = $ref<NodeJS.Timeout | null>(null);
+let timer = $ref<NodeJS.Timeout>();
 const doubleClickDelay = 500;
 
 type LaunchModalOptions = {
@@ -407,7 +407,7 @@ const {
   issuecodeDetails,
 } = storeToRefs(coa());
 
-let hoveredIndex = $ref<number | null>(null);
+let hoveredIndex = $ref<number>();
 let loading = $ref(true);
 let publicationNameLoading = $ref(true);
 const filter = $ref<{ missing: boolean; possessed: boolean }>({
@@ -418,11 +418,9 @@ const contextmenuInstance = $ref<{
   visible: boolean;
   hide: (e?: MouseEvent) => void;
   show: (e: MouseEvent) => void;
-} | null>(null);
-let issues = $shallowRef<issueWithCopies[] | null>(null);
-let userIssuesForPublication = $shallowRef<
-  (issue & { issuecode: string })[] | null
->(null);
+}>();
+let issues = $shallowRef<issueWithCopies[]>();
+let userIssuesForPublication = $shallowRef<(issue & { issuecode: string })[]>();
 let userIssuecodesNotFoundForPublication = $shallowRef<string[] | null>([]);
 let selected = $shallowRef<string[]>([]);
 const filteredUserCopies = $computed(() =>
@@ -454,9 +452,9 @@ const copiesBySelectedIssuecode = $computed(() =>
   }, {}),
 );
 let preselected = $shallowRef<string[]>([]);
-let preselectedIndexStart = $ref<number | null>(null);
-let preselectedIndexEnd = $ref<number | null>(null);
-let currentIssuecodeOpened = $shallowRef<string | null>(null);
+let preselectedIndexStart = $ref<number>();
+let preselectedIndexEnd = $ref<number>();
+let currentIssuecodeOpened = $shallowRef<string>();
 const issueNumberTextPrefix = $computed(() => $t("n°"));
 const boughtOnTextPrefix = $computed(() => $t("Acheté le"));
 const showFilter = $computed(
@@ -530,14 +528,14 @@ const showContextMenuOnDoubleClickTouchScreen = (e: MouseEvent) => {
 };
 
 const getPreselected = () =>
-  [preselectedIndexStart, preselectedIndexEnd].includes(null)
+  [preselectedIndexStart, preselectedIndexEnd].includes(undefined)
     ? preselected
     : filteredIssues
         .map(({ key }) => key || "")
         .filter(
           (_, index) =>
-            preselectedIndexStart !== null &&
-            preselectedIndexEnd !== null &&
+            preselectedIndexStart !== undefined &&
+            preselectedIndexEnd !== undefined &&
             index >= preselectedIndexStart &&
             index <= preselectedIndexEnd,
         );
@@ -549,7 +547,7 @@ const updateSelected = () => {
         (itemKey) =>
           selected.includes(itemKey) !== preselected.includes(itemKey),
       );
-    preselectedIndexStart = preselectedIndexEnd = null;
+    preselectedIndexStart = preselectedIndexEnd = undefined;
     preselected = [];
   }
 };
@@ -570,7 +568,7 @@ const deletePublicationIssues = async (issuecodesToDelete: string[]) => {
 };
 
 const openBook = (issuecode: string) => {
-  currentIssuecodeOpened = coverUrls.value?.[issuecode] ? issuecode : null;
+  currentIssuecodeOpened = coverUrls.value?.[issuecode] ? issuecode : undefined;
 };
 
 const loadIssues = async () => {

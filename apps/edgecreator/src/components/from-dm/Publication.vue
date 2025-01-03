@@ -3,10 +3,7 @@
     :class="{ [size]: true, [displayClass]: true }"
     class="align-items-center"
   >
-    <img
-      :alt="countrycode"
-      :src="getImagePath(`flags/${countrycode}.png`)"
-    >
+    <img :alt="countrycode" :src="getImagePath(`flags/${countrycode}.png`)" />
     <span class="mx-1">{{ publicationname }}</span>
     <slot />
   </span>

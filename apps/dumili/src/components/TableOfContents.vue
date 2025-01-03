@@ -4,7 +4,7 @@
     class="table-of-contents d-flex w-100 h-100 m-0 p-0"
     body-class="flex-grow-1 w-100 h-100"
     header-class="position-relative p-0"
-    @mouseleave="hoveredEntry = null"
+    @mouseleave="hoveredEntry = undefined"
   >
     <template #header>
       <IssueSuggestionModal />
@@ -94,7 +94,7 @@ import { dumiliSocketInjectionKey } from "~/composables/useDumiliSocket";
 import { getEntryFromPage } from "~dumili-utils/entryPages";
 import { suggestions } from "~/stores/suggestions";
 import { ui } from "~/stores/ui";
-import type { FullIndexation } from "~dumili-services/indexation/types";
+import type { FullIndexation } from "~dumili-services/indexation";
 import TableOfContentsEntry from "./TableOfContentsEntry.vue";
 
 const { indexationSocket } = inject(dumiliSocketInjectionKey)!;

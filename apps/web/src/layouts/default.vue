@@ -36,7 +36,10 @@ const firstPathPart = $computed(
     ).path.match(/\/([^/]+)/)?.[1],
 );
 
-const slots = useSlots();
+const slots = defineSlots<{
+  title?(): never;
+}>();
+
 useHead({
   title: slots.title?.toString() || "DucksManager",
 });

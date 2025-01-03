@@ -1,7 +1,8 @@
 import type { ShallowRef } from "vue";
 
-import type CollectionServices from "~dm-services/collection/types";
-import type StatsServices from "~dm-services/stats/types";
+import type { ClientEvents as CollectionServices } from "~dm-services/collection";
+import type { SubscriptionTransformedStringDates } from "~dm-services/collection/subscriptions";
+import type { ClientEvents as StatsServices } from "~dm-services/stats";
 import type {
   CollectionUpdateMultipleIssues,
   CollectionUpdateSingleIssue,
@@ -12,7 +13,10 @@ import type {
   purchase,
   subscription,
 } from "~prisma-schemas/schemas/dm";
-import type { EventReturnType } from "~socket.io-services";
+import type {
+  EventOutput,
+  SuccessfulEventOutput,
+} from "~socket.io-services/index";
 
 import useCollection from "../composables/useCollection";
 import { socketInjectionKey } from "../composables/useDmSocket";
@@ -23,14 +27,6 @@ export type IssueWithPublicationcodeOptionalId = Omit<
   "id" | "issuenumber"
 > & {
   id: number | null;
-};
-
-export type SubscriptionTransformedStringDates = Omit<
-  subscription,
-  "startDate" | "endDate"
-> & {
-  startDate: string;
-  endDate: string;
 };
 
 export type purchaseWithStringDate = Omit<purchase, "date"> & {
@@ -47,27 +43,24 @@ export const collection = defineStore("collection", () => {
 
   const { bookcaseWithPopularities } = storeToRefs(bookcase());
 
-  const issues = shallowRef<
-    EventReturnType<CollectionServices["getIssues"]>["issues"] | null
-  >(null);
+  const issues =
+    shallowRef<EventOutput<CollectionServices, "getIssues">["issues"]>();
 
   const collectionUtils = useCollection(
       issues as ShallowRef<(issue & { issuecode: string })[]>,
     ),
-    watchedPublicationsWithSales = shallowRef<string[] | null>(null),
-    purchases = shallowRef<purchase[] | null>(null),
-    watchedAuthors = shallowRef<authorUser[] | null>(null),
-    marketplaceContactMethods = ref<string[] | null>(null),
-    suggestions = shallowRef<EventReturnType<
-      StatsServices["getSuggestionsForCountry"]
-    > | null>(null),
-    subscriptions = shallowRef<subscription[] | null>(null),
+    watchedPublicationsWithSales = shallowRef<string[]>(),
+    purchases = shallowRef<purchase[]>(),
+    watchedAuthors = shallowRef<authorUser[]>(),
+    marketplaceContactMethods = ref<string[]>(),
+    suggestions =
+      shallowRef<EventOutput<StatsServices, "getSuggestionsForCountry">>(),
+    subscriptions = shallowRef<subscription[]>(),
     popularIssuesInCollection = ref<{
       [issuecode: string]: number;
-    } | null>(null),
-    lastPublishedEdgesForCurrentUser = shallowRef<EventReturnType<
-      CollectionServices["getLastPublishedEdges"]
-    > | null>(null),
+    }>(),
+    lastPublishedEdgesForCurrentUser =
+      shallowRef<EventOutput<CollectionServices, "getLastPublishedEdges">>(),
     isLoadingUser = ref(false),
     isLoadingCollection = ref(false),
     isLoadingWatchedPublicationsWithSales = ref(false),
@@ -75,30 +68,27 @@ export const collection = defineStore("collection", () => {
     isLoadingPurchases = ref(false),
     isLoadingSuggestions = ref(false),
     isLoadingSubscriptions = ref(false),
-    coaIssueCountsPerCountrycode = shallowRef<
-      | EventReturnType<CollectionServices["getIssues"]>["countByCountrycode"]
-      | null
-    >(null),
-    coaIssueCountsByPublicationcode = shallowRef<
-      | EventReturnType<
-          CollectionServices["getIssues"]
-        >["countByPublicationcode"]
-      | null
-    >(null),
+    coaIssueCountsPerCountrycode =
+      shallowRef<
+        EventOutput<CollectionServices, "getIssues">["countByCountrycode"]
+      >(),
+    coaIssueCountsByPublicationcode =
+      shallowRef<
+        EventOutput<CollectionServices, "getIssues">["countByPublicationcode"]
+      >(),
     user = shallowRef<
-      EventReturnType<CollectionServices["getUser"]> | undefined | null
-    >(undefined),
-    userPermissions = shallowRef<
-      EventReturnType<CollectionServices["getUserPermissions"]> | undefined
-    >(undefined),
-    previousVisit = ref<Date | null>(null),
+      SuccessfulEventOutput<CollectionServices, "getUser"> | undefined | null
+    >(),
+    userPermissions =
+      shallowRef<EventOutput<CollectionServices, "getUserPermissions">>(),
+    previousVisit = ref<Date>(),
     publicationUrlRoot = computed(() => "/collection/show"),
     purchasesById = computed(() => purchases.value?.groupBy("id")),
     copiesPerIssuecode = computed(() =>
       issues.value?.groupBy("issuecode", "[]"),
     ),
     hasSuggestions = computed(
-      () => Object.keys(suggestions.value?.oldestdate.issues || {}).length,
+      () => Object.keys(suggestions.value?.oldestdate || {}).length,
     ),
     issuecodesPerPublication = computed(
       () => issues.value?.groupBy("publicationcode", "[]") || {},
@@ -292,13 +282,9 @@ export const collection = defineStore("collection", () => {
       }
     },
     loadUserIssueQuotations = async () => {
-      const data = await collectionServices.getCollectionQuotations();
-
-      if (data.quotations) {
-        coa().addIssueQuotations(data.quotations);
-      } else {
-        console.error(data.error);
-      }
+      coa().addIssueQuotations(
+        await collectionServices.getCollectionQuotations(),
+      );
     },
     loadLastPublishedEdgesForCurrentUser = async () => {
       if (!lastPublishedEdgesForCurrentUser.value) {
@@ -323,6 +309,7 @@ export const collection = defineStore("collection", () => {
       }
     },
     loadUser = async (afterUpdate = false) => {
+      debugger;
       if (!socketOptions.session.getToken()) {
         user.value = null;
         return;

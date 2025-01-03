@@ -1,9 +1,7 @@
 import axios from "axios";
 import { v2 as cloudinary } from "cloudinary";
-import type { Namespace, Server } from "socket.io";
 
-import type Events from "./types";
-import { namespaceEndpoint } from "./types";
+import { useSocketServices } from "~socket.io-services/index";
 
 const sessionHashes: Record<string, string> = {};
 
@@ -58,11 +56,21 @@ const generateImage = (parameters: {
       ),
     );
 
-export default (io: Server) => {
-  (io.of(namespaceEndpoint) as Namespace<Events>).on("connection", (socket) => {
-    console.log("connected to text");
-
-    socket.on("getText", async (parameters, callback) => {
+const listenEvents = () => ({
+  getText: (parameters: {
+    color: string;
+    colorBackground: string;
+    width: number;
+    font: string;
+    text: string;
+  }): Promise<
+    | {
+        error: "Image generation error";
+        errorDetails: string;
+      }
+    | { results: { width: number; height: number; url: string } }
+  > =>
+    new Promise(async (resolve) => {
       const { color, colorBackground, width, font, text } = parameters;
       const context: Record<string, number | string> = {
         color,
@@ -96,16 +104,16 @@ export default (io: Server) => {
             if (resources.length) {
               console.log(`Found an existing text`);
               const { width, height, secure_url: url } = resources[0];
-              callback({ results: { width, height, url } });
+              resolve({ results: { width, height, url } });
             } else {
               console.log(`Found no existing text, generating text image...`);
               generateImage(parameters)
                 .then(({ width, height, secure_url: url }) => {
                   console.log(`Text image generated: url=${url}`);
-                  callback({ results: { width, height, url } });
+                  resolve({ results: { width, height, url } });
                 })
                 .catch((response: Error) => {
-                  callback({
+                  resolve({
                     error: "Image generation error",
                     errorDetails: response.message,
                   });
@@ -116,6 +124,17 @@ export default (io: Server) => {
         .catch((e) => {
           console.error(e);
         });
-    });
-  });
-};
+    }),
+});
+
+export const { endpoint, client, server } = useSocketServices<
+  typeof listenEvents,
+  object,
+  object,
+  { token: string }
+>("/save", {
+  listenEvents,
+  middlewares: [],
+});
+
+export type ClientEvents = (typeof client)["emitEvents"];

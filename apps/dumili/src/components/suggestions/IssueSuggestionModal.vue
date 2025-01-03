@@ -5,7 +5,7 @@
       title="Dumili a de nouvelles suggestions !"
       align="center"
       centered
-      :ok-disabled="selectedExistingCoverIssuecode === null"
+      :ok-disabled="!selectedExistingCoverIssuecode"
       cancel-title="Annuler"
       @ok.prevent="acceptIssueSuggestion(selectedExistingCoverIssuecode!)"
       @cancel.prevent="rejectAllIssueSuggestions"
@@ -18,17 +18,11 @@
         }}<br />{{ $t('Si aucune ne ressemble,cliquez sur "Annuler".') }}
       </div>
       <Gallery
-        v-slot="{ issuecode }"
         :pages="
           images.map(({ url, id }) => ({ image: { url }, id, pageNumber: 0 }))
         "
         selectable
-        @selected="
-          (id) =>
-            (selectedExistingCoverIssuecode = issueSuggestionToIssuecode(id))
-        "
-        ><Issue :issuecode="issuecode"
-      /></Gallery> </b-modal
+      ></Gallery> </b-modal
   ></template>
 </template>
 
@@ -55,7 +49,7 @@ const issueSuggestions = ref<
   (issueSuggestion & { url: string; coverId: number })[]
 >([]);
 
-const selectedExistingCoverIssuecode = ref<string | null>(null);
+const selectedExistingCoverIssuecode = ref<string>();
 
 const validIssueSuggestions = computed(() =>
   issueSuggestions.value.filter(({ coverId }) => coverId),
@@ -81,28 +75,22 @@ watch(
 );
 
 const images = computed(() =>
-  issueSuggestions.value.map(({ url, id, issuecode }) => ({
+  issueSuggestions.value.map(({ url, id, publicationcode, issuenumber }) => ({
     id,
-    text: issuecode || $t("Titre inconnu"),
+    text: `${publicationcode} ${issuenumber}` || $t("Titre inconnu"),
     url,
   })),
 );
 
-const issueSuggestionToIssuecode = (id: number): string =>
-  issueSuggestions.value.find(
-    ({ id: issueSuggestionId }) => issueSuggestionId === id,
-  )?.issuecode || "";
-
 const acceptIssueSuggestion = async (issuecode: string) => {
   const { publicationcode, issuenumber } = issuecodeDetails.value[issuecode];
   const { suggestionId } = await createIssueSuggestion({
-    issuecode,
     publicationcode,
     issuenumber,
     ai: true,
   });
   await indexationSocket.value!.services.acceptIssueSuggestion(suggestionId);
-  selectedExistingCoverIssuecode.value = null;
+  selectedExistingCoverIssuecode.value = undefined;
 };
 
 const rejectAllIssueSuggestions = () => {

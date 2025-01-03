@@ -55,7 +55,7 @@
 
 <script lang="ts" setup>
 import { dumiliSocketInjectionKey } from "~/composables/useDumiliSocket";
-import type { FullEntry } from "~dumili-services/indexation/types";
+import type { FullEntry } from "~dumili-services/indexation";
 import { suggestions } from "~/stores/suggestions";
 import type { storySuggestion } from "~prisma/client_dumili";
 import { getEntryPages } from "~dumili-utils/entryPages";

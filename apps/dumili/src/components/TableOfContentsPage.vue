@@ -12,7 +12,7 @@
 </template>
 <script setup lang="ts">
 import { ui } from "~/stores/ui";
-import type { FullIndexation } from "~dumili-services/indexation/types";
+import type { FullIndexation } from "~dumili-services/indexation";
 
 const { page } = defineProps<{
   page: FullIndexation["pages"][number];

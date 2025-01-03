@@ -38,15 +38,17 @@ import { stores as webStores } from "~web";
 
 const { loadDimensionsFromApi, loadStepsFromApi } = useModelLoad();
 
-const props = withDefaults(
-  defineProps<{
-    publicationcode: string;
-    selected?: string | null;
-    hasMoreBefore?: boolean;
-    hasMoreAfter?: boolean;
-  }>(),
-  { selected: null, hasMoreBefore: false, hasMoreAfter: false },
-);
+const {
+  selected = null,
+  hasMoreBefore = false,
+  hasMoreAfter = false,
+  publicationcode,
+} = defineProps<{
+  publicationcode: string;
+  selected?: string | null;
+  hasMoreBefore?: boolean;
+  hasMoreAfter?: boolean;
+}>();
 
 const emit = defineEmits<{
   (e: "load-more", where: "before" | "after"): void;
@@ -74,7 +76,7 @@ const populateItems = async (
       Object.keys(itemsForPublication).map(async (issuecode) => {
         const url = `${
           import.meta.env.VITE_EDGES_URL as string
-        }/${props.publicationcode.replace("/", "/gen/")}.${issuecode}.png`;
+        }/${publicationcode.replace("/", "/gen/")}.${issuecode}.png`;
         if (itemsForPublication[issuecode].v3) {
           return {
             name: issuecode,
@@ -136,8 +138,8 @@ const populateItems = async (
     )
   ).sort(({ name: name1 }, { name: name2 }) =>
     Math.sign(
-      issuecodesByPublicationcode.value[props.publicationcode].indexOf(name1) -
-        issuecodesByPublicationcode.value[props.publicationcode].indexOf(name2),
+      issuecodesByPublicationcode.value[publicationcode].indexOf(name1) -
+        issuecodesByPublicationcode.value[publicationcode].indexOf(name2),
     ),
   );
 };
@@ -156,7 +158,7 @@ watch(publishedEdges, onPublicationOrEdgeChange, {
   deep: true,
   immediate: true,
 });
-watch(() => props.publicationcode, onPublicationOrEdgeChange, {
+watch(() => publicationcode, onPublicationOrEdgeChange, {
   immediate: true,
 });
 </script>

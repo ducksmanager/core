@@ -233,7 +233,7 @@ let hasRequestedPresentationSentenceUpdate = $ref(false);
 const oldPassword = $ref("");
 const password = $ref("");
 const password2 = $ref("");
-let error = $ref<ScopedError | null | undefined>(undefined);
+let error = $ref<ScopedError | null>();
 
 let hasEmailContactMethod = $ref(false);
 let hasDiscordContactMethod = $ref(false);

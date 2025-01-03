@@ -50,7 +50,7 @@
   <script setup lang="ts">
 import { components as webComponents, type PageFlip } from "~web";
 import { getEntryPages } from "~dumili-utils/entryPages";
-import type { FullIndexation } from "~dumili-services/indexation/types";
+import type { FullIndexation } from "~dumili-services/indexation";
 import type {
   aiKumikoResultPanel,
   aiOcrResultMatch,

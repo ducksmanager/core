@@ -1,12 +1,10 @@
 import axios from "axios";
-import type { Socket } from "socket.io";
 
-import type { SessionDataWithIndexation } from "~/index";
-import { prisma } from "~/index";
-import type { aiKumikoResultPanel } from "~/prisma/client_dumili";
+import type { aiKumikoResultPanel } from "~prisma/client_dumili";
 
-import type { FullIndexation, ServerSentEvents } from "./types";
-import type Events from "./types";
+import { prisma } from "../../index";
+import type { IndexationSocket } from ".";
+import { type FullIndexation } from ".";
 
 type OcrResult = {
   box: [[number, number], [number, number], [number, number], [number, number]];
@@ -15,15 +13,13 @@ type OcrResult = {
 };
 
 export const runOcrOnImages = async (
-  socket: Socket<
-    Events,
-    ServerSentEvents,
-    Record<string, never>,
-    SessionDataWithIndexation
-  >,
-  pages: Exclude<Pick<FullIndexation["pages"][number], 'pageNumber'|'image'>, {image: null}>[],
+  socket: IndexationSocket,
+  pages: Exclude<
+    Pick<FullIndexation["pages"][number], "pageNumber" | "image">,
+    { image: null }
+  >[],
 ) => {
-  for (const {image, pageNumber} of pages) {
+  for (const { image, pageNumber } of pages) {
     const firstPanel = image!.aiKumikoResult?.detectedPanels[0];
     if (!firstPanel) {
       console.log(`Page ${pageNumber}: This page does not have any panels`);
@@ -71,17 +67,17 @@ export const runOcrOnImages = async (
             create: {
               matches: {
                 createMany: { data: matches },
-              }
+              },
             },
             update: {
               matches: {
                 deleteMany: {},
                 createMany: { data: matches },
               },
-            }
+            },
           },
         },
-      }
+      },
     });
     socket.emit("runOcrOnImageEnd", image!.id);
   }
@@ -97,6 +93,7 @@ export const extendBoundaries = (
   height: height + extendBy,
 });
 
-export const runOcr = async (url: string): Promise<OcrResult[]> => axios
-  .post(process.env.OCR_HOST!, { url, language: "french" })
-  .then(({ data }) => data);
+export const runOcr = async (url: string): Promise<OcrResult[]> =>
+  axios
+    .post(process.env.OCR_HOST!, { url, language: "french" })
+    .then(({ data }) => data);

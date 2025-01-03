@@ -83,7 +83,7 @@ const emit = defineEmits<(e: 'show-camera-preview') => void>();
 const { pickCoverFile } = useCoverSearch(useRouter(), coverIdServices);
 const { isCoaView, isOfflineMode, selectedIssuecodes } = storeToRefs(app());
 
-const fab = shallowRef<ComponentPublicInstance<HTMLIonFabElement> | null>(null);
+const fab = shallowRef<ComponentPublicInstance<HTMLIonFabElement>>();
 </script>
 
 <style lang="scss" scoped>

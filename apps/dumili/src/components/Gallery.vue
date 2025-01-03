@@ -143,7 +143,7 @@ const maxUploadableImagesFromPageNumber = (
 const { visiblePages, currentPage, hoveredEntry, hoveredEntryPageNumbers } =
   storeToRefs(ui());
 
-const imagesRef = ref<HTMLElement | null>(null);
+const imagesRef = ref<HTMLElement>();
 
 useSortable(imagesRef, pages, {
   multiDrag: true,
@@ -164,7 +164,7 @@ useSortable(imagesRef, pages, {
   },
 });
 
-const selectedId = ref<number | undefined>(undefined);
+const selectedId = ref<number>();
 
 const disconnectPageUrl = async (id: number) => {
   await indexationSocket.value!.services.setPageUrl(id, null);

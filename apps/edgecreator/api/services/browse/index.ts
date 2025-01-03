@@ -1,13 +1,16 @@
 import { XMLParser } from "fast-xml-parser";
 import { readdirSync, readFileSync } from "fs";
 import path from "path";
-import type { Namespace, Server } from "socket.io";
 
 import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa/client";
+import { useSocketServices } from "~socket.io-services";
 
-import type Events from "./types";
-import type { EdgeModelDetails } from "./types";
-import { namespaceEndpoint } from "./types";
+interface EdgeModelDetails {
+  issuecode: string;
+  url: string;
+  designers: string[];
+  photographers: string[];
+}
 
 const parser = new XMLParser({
   ignoreAttributes: false,
@@ -83,43 +86,59 @@ const findInDir = (dir: string) =>
     }
   });
 
-export default (io: Server) => {
-  (io.of(namespaceEndpoint) as Namespace<Events>).on("connection", (socket) => {
-    console.log("connected to browse");
-
-    socket.on("listEdgeModels", async (callback) => {
+const listenEvents = () => ({
+  listEdgeModels: async (): Promise<
+    | {
+        error: "Generic error";
+        errorDetails: string;
+      }
+    | { results: Awaited<ReturnType<typeof findInDir>> }
+  > =>
+    new Promise((resolve) => {
       findInDir(edgesPath)
         .then((results) => {
-          callback({ results });
+          resolve({ results });
         })
         .catch((errorDetails) =>
-          callback({
+          resolve({
             error: "Generic error",
             errorDetails: errorDetails as string,
           }),
         );
-    });
+    }),
 
-    socket.on("listEdgeParts", async (parameters, callback) => {
-      const { country, imageType, magazine } = parameters;
-      if (
-        !/^(elements)|(photos)$/.test(imageType) ||
-        !/^[a-z]+$/.test(country) ||
-        !/^[-A-Z0-9]+$/.test(magazine)
-      ) {
-        callback({ error: "Invalid parameters" });
-      }
-      try {
-        callback({
-          results: readdirSync(
-            `${process.env.EDGES_PATH!}/${country}/${imageType}`,
-          ).filter((item) =>
-            new RegExp(`(?:^|[. ])${magazine}(?:[. ]|$)`).test(item),
-          ),
-        });
-      } catch (_e) {
-        callback({ results: [] });
-      }
-    });
-  });
-};
+  listEdgeParts: async (parameters: {
+    imageType: "elements" | "photos";
+    country: string;
+    magazine: string;
+  }) => {
+    const { country, imageType, magazine } = parameters;
+    if (
+      !/^(elements)|(photos)$/.test(imageType) ||
+      !/^[a-z]+$/.test(country) ||
+      !/^[-A-Z0-9]+$/.test(magazine)
+    ) {
+      return { error: "Invalid parameters" };
+    }
+    try {
+      return {
+        results: readdirSync(
+          `${process.env.EDGES_PATH!}/${country}/${imageType}`,
+        ).filter((item) =>
+          new RegExp(`(?:^|[. ])${magazine}(?:[. ]|$)`).test(item),
+        ),
+      };
+    } catch (_e) {
+      return { results: [] };
+    }
+  },
+});
+
+export const { endpoint, client, server } = useSocketServices<
+  typeof listenEvents
+>("/browse", {
+  listenEvents,
+  middlewares: [],
+});
+
+export type ClientEvents = (typeof client)["emitEvents"];

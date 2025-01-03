@@ -19,7 +19,7 @@
 const { t: $t } = useI18n();
 
 import { suggestions } from "~/stores/suggestions";
-import type { FullEntry } from "~dumili-services/indexation/types";
+import type { FullEntry } from "~dumili-services/indexation";
 import { getEntryPages } from "~dumili-utils/entryPages";
 import type { storySuggestion } from "~prisma/client_dumili";
 import { socketInjectionKey as dmSocketInjectionKey } from "~web/src/composables/useDmSocket";
@@ -51,18 +51,25 @@ const getStoriesWithDetails = async (stories: storySuggestion[]) =>
         (story): story is storySuggestion & { storycode: string } =>
           story !== undefined && story.storycode !== null,
       )
-      .map(async (story) => ({
-        ...story,
-        ...storyDetails.value[story!.storycode],
-        storyjobs: (await coaServices.getStoryjobs(story!.storycode)).data,
-      })),
+      .map(async (story) => {
+        const storyjobsResult = await coaServices.getStoryjobs(
+          story!.storycode,
+        );
+        const storyjobs =
+          "error" in storyjobsResult ? [] : storyjobsResult.data;
+        return {
+          ...story,
+          ...storyDetails.value[story!.storycode],
+          storyjobs,
+        };
+      }),
   );
 
 const textContent = computed(() => {
   if (!storiesWithDetails.value?.length) {
     return undefined;
   }
-  const issuecode = issue.value!.issuecode!.split("/")[1];
+  const issuecode = `${issue.value!.publicationcode} ${issue.value!.issuenumber}`;
   const rows = [
     [
       [issuecode],
@@ -107,7 +114,7 @@ const textContent = computed(() => {
 watch(
   acceptedStories,
   async (value) => {
-    if (value && issue.value?.issuecode) {
+    if (value) {
       storiesWithDetails.value = await getStoriesWithDetails(
         value.filter(
           (story): story is NonNullable<typeof story> => story !== null,

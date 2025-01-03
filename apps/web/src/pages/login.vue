@@ -62,7 +62,7 @@ let router = useRouter();
 let route = useRoute();
 
 let username = $ref("");
-let error = $ref<string | null>(null);
+let error = $ref<string>();
 let password = $ref("");
 
 const login = async () => {

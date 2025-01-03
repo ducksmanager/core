@@ -1,15 +1,12 @@
 import axios from "axios";
-import type { Socket } from "socket.io";
 
-import type { SessionDataWithIndexation } from "~/index";
-import { prisma } from "~/index";
-import type { aiKumikoResultPanel, Prisma } from "~/prisma/client_dumili";
 import { COVER, ILLUSTRATION, STORY } from "~dumili-types/storyKinds";
 import { getEntryFromPage } from "~dumili-utils/entryPages";
+import type { aiKumikoResultPanel, Prisma } from "~prisma/client_dumili";
 
-import type { ServerSentEvents } from "./types";
-import type { FullIndexation } from "./types";
-import type Events from "./types";
+import { prisma } from "../../index";
+import type { IndexationSocket } from ".";
+import { type FullIndexation } from ".";
 
 type KumikoResult = {
   filename: string;
@@ -22,13 +19,6 @@ type KumikoResult = {
 type KumikoProcessedResult = Pick<
   aiKumikoResultPanel,
   "x" | "y" | "width" | "height"
->;
-
-type IndexationSocket = Socket<
-  Events,
-  ServerSentEvents,
-  Record<string, never>,
-  SessionDataWithIndexation
 >;
 
 const inferStoryKindFromAiResults = (
@@ -82,7 +72,7 @@ const runKumikoOnPage = async (
                 createMany: {
                   data: panelsOfPage,
                 },
-              }
+              },
             },
             update: {
               inferredStoryKind: inferredStoryKind,
@@ -91,8 +81,8 @@ const runKumikoOnPage = async (
                 createMany: {
                   data: panelsOfPage,
                 },
-              }
-            }
+              },
+            },
           },
         },
       },
@@ -112,21 +102,23 @@ export const runKumikoOnPages = async (
   indexation: FullIndexation,
   force = false,
 ) => {
-  let updatedImageIds = []
+  const updatedImageIds = [];
   for (const page of indexation.pages) {
     if (await runKumikoOnPage(socket, page, force)) {
       updatedImageIds.push(page.id);
     }
   }
 
-  const outdatedEntryIds = new Set(updatedImageIds
-    .map((id ) => getEntryFromPage(indexation, id)?.id)
-    .filter((id) => !!id)
-    .map((id) => id!))
+  const outdatedEntryIds = new Set(
+    updatedImageIds
+      .map((id) => getEntryFromPage(indexation, id)?.id)
+      .filter((id) => !!id)
+      .map((id) => id!),
+  );
 
-    if (!outdatedEntryIds.size) {
-      return
-    }
+  if (!outdatedEntryIds.size) {
+    return;
+  }
 
   // Invalidate story kind suggestions for entries whose pages have been updated
   await prisma.storyKindSuggestionAi.deleteMany({

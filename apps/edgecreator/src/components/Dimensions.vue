@@ -1,12 +1,6 @@
 <template>
-  <b-card
-    class="mb-2"
-    style="max-width: 16rem"
-  >
-    <b-row
-      v-for="dimension in ['width', 'height']"
-      :key="dimension"
-    >
+  <b-card class="mb-2" style="max-width: 16rem">
+    <b-row v-for="dimension in ['width', 'height']" :key="dimension">
       <b-col cols="4">
         <label :for="dimension">{{ $t(ucFirst(dimension)) }}:</label>
       </b-col>
@@ -29,10 +23,7 @@
           "
         />
       </b-col>
-      <b-col
-        cols="2"
-        class="text-start"
-      >
+      <b-col cols="2" class="text-start">
         <label :for="dimension">mm</label>
       </b-col>
     </b-row>

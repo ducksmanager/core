@@ -27,7 +27,7 @@
           :alt="issuenumber"
           :src="fullUrl"
           class="cover"
-          @error="fullUrl = null"
+          @error="fullUrl = undefined"
           @click="$emit('click')"
         />
         <div>
@@ -48,7 +48,7 @@ const { issuecode } = defineProps<{
 defineEmits<{ (e: "click"): void }>();
 
 let isCoverLoading = $ref(true);
-let fullUrl = $ref<string | null>(null);
+let fullUrl = $ref<string>();
 let publicationcode = $ref<string>("");
 let issuenumber = $ref<string>("");
 
@@ -78,7 +78,7 @@ const loadIssueUrls = async () => {
   const possibleCoverUrl = issueDetails.value?.[issuecode]?.entries?.find(
     ({ position }) => !/^p/.test(position),
   )?.url;
-  fullUrl = possibleCoverUrl ? cloudinaryBaseUrl + possibleCoverUrl : null;
+  fullUrl = possibleCoverUrl ? cloudinaryBaseUrl + possibleCoverUrl : undefined;
 };
 
 watch($$(fullUrl), (value) => {

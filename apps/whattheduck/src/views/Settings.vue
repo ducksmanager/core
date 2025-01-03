@@ -77,9 +77,9 @@ const facebookUrl = import.meta.env.VITE_FACEBOOK_URL;
 const instagramUrl = import.meta.env.VITE_INSTAGRAM_URL;
 const youtubeUrl = import.meta.env.VITE_YOUTUBE_URL;
 
-const currentAppVersion = ref<string | null>(null);
-const currentBundleVersion = ref<string | null>(null);
-const storeName = ref<'App Store' | 'Play Store' | null>(null);
+const currentAppVersion = ref<string>();
+const currentBundleVersion = ref<string>();
+const storeName = ref<'App Store' | 'Play Store'>();
 
 const storeUrl = computed(() => (storeName.value === 'Play Store' ? playStoreUrl : appStoreUrl));
 

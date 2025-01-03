@@ -47,7 +47,7 @@ meta:
 <script setup lang="ts">
 import { socketInjectionKey } from "../../composables/useDmSocket";
 
-let error = $ref<string | null>(null);
+let error = $ref<string>();
 
 const email = $ref("");
 let token = $ref("");
@@ -59,8 +59,8 @@ const {
 
 const sendPasswordToken = async () => {
   const response = await authServices.requestTokenForForgotPassword(email);
-  if (response.error) {
-    error = response.error;
+  if ("error" in response) {
+    error = response.error!;
   } else {
     token = response.token;
   }

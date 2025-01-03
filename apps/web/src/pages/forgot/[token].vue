@@ -36,8 +36,8 @@ import { socketInjectionKey } from "../../composables/useDmSocket";
 
 const { loadUser } = collection();
 
-let initError = $ref<string | null>(null);
-let error = $ref<string | null>(null);
+let initError = $ref<string>();
+let error = $ref<string>();
 const token = useRoute().params.token as string;
 const password = $ref("");
 const password2 = $ref("");

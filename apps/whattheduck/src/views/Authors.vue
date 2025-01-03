@@ -58,9 +58,9 @@
         <ion-item
           v-for="(author, personcode) of authorResults"
           :key="personcode"
-          :class="{ disabled: isAuthorWatched(personcode) }"
+          :class="{ disabled: isAuthorWatched(personcode as string) }"
           @click="
-            createRating(personcode);
+            createRating(personcode as string);
             authorName = '';
           "
         >

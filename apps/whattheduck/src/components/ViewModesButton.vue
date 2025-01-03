@@ -15,5 +15,5 @@ import { app } from '~/stores/app';
 const { issueViewModes } = app();
 const { isOffline, currentIssueViewMode } = storeToRefs(app());
 
-const fab = shallowRef<ComponentPublicInstance<HTMLIonFabElement> | null>(null);
+const fab = shallowRef<ComponentPublicInstance<HTMLIonFabElement>>();
 </script>

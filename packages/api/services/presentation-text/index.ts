@@ -1,41 +1,50 @@
-import type { Namespace, Server } from "socket.io";
-
-import PresentationSentenceApproved from "~emails/presentation-sentence-approved";
-import PresentationSentenceRefused from "~emails/presentation-sentence-refused";
+import type { SessionUser } from "~dm-types/SessionUser";
 import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
+import { useSocketServices } from "~socket.io-services";
 
-import type Events from "./types";
-import { namespaceEndpoint } from "./types";
+import PresentationSentenceApproved from "../../emails/presentation-sentence-approved";
+import PresentationSentenceRefused from "../../emails/presentation-sentence-refused";
+import { RequiredAuthMiddleware } from "../auth/util";
+import namespaces from "../namespaces";
 
-export default (io: Server) => {
-  (io.of(namespaceEndpoint) as Namespace<Events>).on("connection", (socket) => {
-    console.log("connected to presentation-text");
+export type Decision = "approve" | "refuse";
 
-    socket.on(
-      "approveOrDenyPresentationText",
-      async (sentence, userId, decision, callback) => {
-        switch (decision) {
-          case "approve":
-            const user = await prismaDm.user.update({
-              data: {
-                presentationText: sentence,
-              },
-              where: {
-                id: userId,
-              },
-            });
-            await new PresentationSentenceApproved({ user }).send();
-            break;
-          case "refuse":
-            await new PresentationSentenceRefused({
-              user: await prismaDm.user.findUniqueOrThrow({
-                where: { id: userId },
-              }),
-            }).send();
-        }
+const listenEvents = () => ({
+  approveOrDenyPresentationText: async (
+    sentence: string,
+    userId: number,
+    decision: Decision,
+  ) => {
+    switch (decision) {
+      case "approve":
+        const user = await prismaDm.user.update({
+          data: {
+            presentationText: sentence,
+          },
+          where: {
+            id: userId,
+          },
+        });
+        await new PresentationSentenceApproved({ user }).send();
+        break;
+      case "refuse":
+        await new PresentationSentenceRefused({
+          user: await prismaDm.user.findUniqueOrThrow({
+            where: { id: userId },
+          }),
+        }).send();
+    }
+  },
+});
 
-        callback();
-      },
-    );
-  });
-};
+export const { endpoint, client, server } = useSocketServices<
+  typeof listenEvents,
+  object,
+  object,
+  { user: SessionUser }
+>(namespaces.PRESENTATION_TEXT, {
+  listenEvents,
+  middlewares: [RequiredAuthMiddleware],
+});
+
+export type ClientEvents = (typeof client)["emitEvents"];

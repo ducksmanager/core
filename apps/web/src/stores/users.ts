@@ -1,8 +1,11 @@
-import type GlobalStatsServices from "~dm-services/global-stats/types";
+import type { ClientEvents as GlobalStatsServices } from "~dm-services/global-stats";
 import type { BookcaseContributor } from "~dm-types/BookcaseContributor";
 import type { AbstractEvent } from "~dm-types/events/AbstractEvent";
 import type { user } from "~prisma-schemas/schemas/dm";
-import type { EventReturnType } from "~socket.io-services";
+import type {
+  EventOutput,
+  SuccessfulEventOutput,
+} from "~socket.io-services/index";
 
 import { socketInjectionKey } from "../composables/useDmSocket";
 
@@ -13,18 +16,24 @@ export const users = defineStore("users", () => {
     events: { services: eventsServices },
     globalStats: { services: globalStatsServices },
   } = inject(socketInjectionKey)!;
-  const count = ref<EventReturnType<
-      GlobalStatsServices["getUserCount"]
-    > | null>(null),
+  const count = ref<EventOutput<GlobalStatsServices, "getUserCount"> | null>(
+      null,
+    ),
     stats = shallowRef<
-      EventReturnType<GlobalStatsServices["getUsersPointsAndStats"]>["stats"]
+      SuccessfulEventOutput<
+        GlobalStatsServices,
+        "getUsersPointsAndStats"
+      >["stats"]
     >({}),
     points = shallowRef<
-      EventReturnType<GlobalStatsServices["getUsersPointsAndStats"]>["points"]
+      SuccessfulEventOutput<
+        GlobalStatsServices,
+        "getUsersPointsAndStats"
+      >["points"]
     >({}),
     events = shallowRef<AbstractEvent[]>([]),
-    bookcaseContributors = shallowRef<BookcaseContributor[] | null>(null),
-    allUsers = shallowRef<SimpleUser[] | null>(null),
+    bookcaseContributors = shallowRef<BookcaseContributor[]>(),
+    allUsers = shallowRef<SimpleUser[]>(),
     fetchAllUsers = async () => {
       if (!allUsers.value) {
         allUsers.value = await globalStatsServices.getUserList();
@@ -49,16 +58,19 @@ export const users = defineStore("users", () => {
       }
       if (!missingUserIds.length) return;
 
+      debugger;
       const data =
         await globalStatsServices.getUsersPointsAndStats(missingUserIds);
-      points.value = {
-        ...points.value,
-        ...data.points,
-      };
-      stats.value = {
-        ...stats.value,
-        ...data.stats,
-      };
+      if (!("error" in data)) {
+        points.value = {
+          ...points.value,
+          ...data.points,
+        };
+        stats.value = {
+          ...stats.value,
+          ...data.stats,
+        };
+      }
     },
     fetchBookcaseContributors = async () => {
       if (!bookcaseContributors.value) {

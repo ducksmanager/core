@@ -20,7 +20,7 @@ const { countryNames, publicationNames } = storeToRefs(coa());
 const { publicationcode } = storeToRefs(app());
 const { copyListModes } = app();
 
-const fab = shallowRef<ComponentPublicInstance<HTMLIonFabElement> | null>(null);
+const fab = shallowRef<ComponentPublicInstance<HTMLIonFabElement>>();
 
 const copyToClipboard = async (textPrefix: string, text: Promise<string>) => {
   await CapacitorClipboard.write({

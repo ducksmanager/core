@@ -13,7 +13,7 @@
       disable-ongoing-or-published
       :disable-not-ongoing-nor-published="false"
       @change="
-        issueData = $event && $event.issuenumber !== null ? $event : null
+        issueData = $event && $event.issuenumber !== null ? $event : undefined
       "
     />
   </b-modal>
@@ -25,17 +25,15 @@ const router = useRouter();
 
 const showUploadModal = ref(false);
 
-const issueData = ref(
-  null as {
-    editMode: "range" | "single";
-    issuecode: string;
-    issuenumberEnd: string;
-  } | null,
-);
+const issueData = ref<{
+  editMode: "range" | "single";
+  issuecode: string;
+  issuenumberEnd: string;
+}>();
 
 const issueSpecification = computed(() =>
-  issueData.value === null
-    ? null
+  !issueData.value
+    ? undefined
     : issueData.value.editMode === "range"
       ? `${issueData.value.issuecode} to ${issueData.value.issuenumberEnd}`
       : issueData.value.issuecode,

@@ -7,6 +7,6 @@ export const ui = defineStore("ui", () => ({
   showPreviousEdge: ref<boolean | undefined>(true),
   showNextEdge: ref<boolean | undefined>(true),
   showEdgePhotos: ref<boolean | undefined>(true),
-  colorPickerOption: ref<string | null>(null),
-  positionInCanvas: ref<[number, number] | null>(null),
+  colorPickerOption: ref<string>(),
+  positionInCanvas: ref<[number, number]>(),
 }));

@@ -35,7 +35,9 @@ const createAndAcceptIssueSuggestion = async (data: {
 }) => {
   if (
     !indexation.value?.issueSuggestions.some(
-      ({ issuecode }) => issuecode === data.issuecode,
+      ({ publicationcode, issuenumber }) =>
+        publicationcode === data.publicationcode &&
+        issuenumber === data.issuenumber,
     )
   ) {
     await createIssueSuggestion({
@@ -47,7 +49,9 @@ const createAndAcceptIssueSuggestion = async (data: {
   nextTick(() => {
     indexation.value!.acceptedIssueSuggestion =
       indexation.value!.issueSuggestions.find(
-        ({ issuecode }) => issuecode === data.issuecode,
+        ({ publicationcode, issuenumber }) =>
+          publicationcode === data.publicationcode &&
+          issuenumber === data.issuenumber,
       )!;
     showIssueSelect.value = false;
   });

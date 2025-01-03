@@ -34,15 +34,12 @@ const emit = defineEmits<{
 }>();
 
 let isSearching = ref(false);
-let pendingSearch = ref<string | null>(null);
+let pendingSearch = ref<string>();
 let search = ref("");
-let storyResults = ref<
-  | {
-      results: SimpleStory[];
-      hasMore: boolean;
-    }
-  | undefined
->(undefined);
+let storyResults = ref<{
+  results: SimpleStory[];
+  hasMore: boolean;
+}>();
 
 const { t: $t } = useI18n();
 const selectSearchResult = (searchResult: SimpleStory) => {

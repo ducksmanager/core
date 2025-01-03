@@ -1,6 +1,3 @@
-import type { Socket } from "socket.io";
-
-import { getPopularityByIssuecodes } from "~/services/coa/issue-details";
 import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa/client";
 import type {
   bookstoreComment,
@@ -10,53 +7,56 @@ import type {
 } from "~prisma-schemas/schemas/dm";
 import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
 
-import type Events from "../types";
-export default (socket: Socket<Events>) => {
-  socket.on(
-    "publishEdge",
-    async ({ issuecode, designers, photographers }, callback) => {
-      const issue = await prismaCoa.inducks_issue.findFirst({
-        where: { issuecode },
-        select: { publicationcode: true, issuenumber: true },
-      });
-      if (!issue) {
-        callback({ error: "Invalid publication code and issue number" });
-        return;
-      }
+import { getPopularityByIssuecodes } from "../../coa/issue-details";
 
-      const { publicationcode, issuenumber } = issue;
+export default () => ({
+  publishEdge: async ({
+    issuecode,
+    designers,
+    photographers,
+  }: {
+    issuecode: string;
+    designers: string[];
+    photographers: string[];
+  }) => {
+    const issue = await prismaCoa.inducks_issue.findFirst({
+      where: { issuecode },
+      select: { publicationcode: true, issuenumber: true },
+    });
+    if (!issue) {
+      return { error: "Invalid publication code and issue number" };
+    }
 
-      const [country, magazine] = publicationcode.split("/");
+    const { publicationcode, issuenumber } = issue;
 
-      const modelContributors = [
-        ...Object.values(await getUserIdsByUsername(designers)).map(
-          (userId) => ({
-            userId,
-            contribution: "createur",
-          }),
-        ),
-        ...Object.values(await getUserIdsByUsername(photographers)).map(
-          (userId) => ({
-            userId,
-            contribution: "photographe",
-          }),
-        ),
-      ];
-      const { edgeId, contributors, isNew } = await publishEdgeOnDm(
-        modelContributors,
-        issuecode,
-      );
+    const [country, magazine] = publicationcode.split("/");
 
-      callback({
-        issuecode,
-        edgeId,
-        isNew,
-        contributors,
-        url: `${process.env.VITE_EDGES_ROOT}/${country}/gen/${magazine}.${issuenumber}.png`,
-      });
-    },
-  );
-};
+    const modelContributors = [
+      ...Object.values(await getUserIdsByUsername(designers)).map((userId) => ({
+        userId,
+        contribution: "createur",
+      })),
+      ...Object.values(await getUserIdsByUsername(photographers)).map(
+        (userId) => ({
+          userId,
+          contribution: "photographe",
+        }),
+      ),
+    ];
+    const { edgeId, contributors, isNew } = await publishEdgeOnDm(
+      modelContributors,
+      issuecode,
+    );
+
+    return {
+      issuecode,
+      edgeId,
+      isNew,
+      contributors,
+      url: `${process.env.VITE_EDGES_ROOT}/${country}/gen/${magazine}.${issuenumber}.png`,
+    };
+  },
+});
 
 const getUserIdsByUsername = async (
   usernames: string[],
