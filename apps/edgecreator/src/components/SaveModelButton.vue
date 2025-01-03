@@ -133,16 +133,10 @@ const userStore = webStores.users();
 const collectionStore = webStores.collection();
 const mainStore = main();
 
-const props = withDefaults(
-  defineProps<{
-    withSubmit?: boolean;
-    withExport?: boolean;
-  }>(),
-  {
-    withSubmit: false,
-    withExport: false,
-  },
-);
+const { withSubmit = false, withExport = false } = defineProps<{
+  withSubmit?: boolean;
+  withExport?: boolean;
+}>();
 
 const showModal = ref(false);
 const progress = ref(0);
@@ -154,11 +148,11 @@ const photographersTypeahead = ref();
 // const progressLeft = computed(() => 100 - progress.value);
 
 const label = computed(() =>
-  $t(props.withExport ? "Export" : props.withSubmit ? "Submit" : "Save"),
+  $t(withExport ? "Export" : withSubmit ? "Submit" : "Save"),
 );
 
 const variant = computed((): "success" | "primary" =>
-  props.withExport || props.withSubmit ? "success" : "primary",
+  withExport || withSubmit ? "success" : "primary",
 );
 
 const outlineVariant = computed(
@@ -197,8 +191,8 @@ watch(issueIndexToSave, (newValue) => {
       mainStore.contributors.filter(
         ({ issuecode }) => issuecode === currentIssuecode,
       ),
-      props.withExport,
-      props.withSubmit,
+      withExport,
+      withSubmit,
     ).then((response) => {
       const isSuccess = response!.paths.svgPath;
       if (isSuccess) {
@@ -214,7 +208,7 @@ watch(issueIndexToSave, (newValue) => {
 });
 
 watch(showModal, (newValue) => {
-  if (newValue && props.withSubmit) {
+  if (newValue && withSubmit) {
     addContributorAllIssues(
       userStore.allUsers!.find(
         (thisUser) => thisUser.username === collectionStore.user!.username,
@@ -283,7 +277,7 @@ const hasAtLeastOneUser = (contributionType: userContributionType) =>
   ].length === mainStore.issuecodes.length;
 
 const onClick = () => {
-  if (props.withExport || props.withSubmit) {
+  if (withExport || withSubmit) {
     showModal.value = !showModal.value;
   } else {
     issueIndexToSave.value = 0;

@@ -15,20 +15,17 @@ import { useI18n } from "vue-i18n";
 // import enTranslation from "@uppy/locales/lib/en_US";
 import { main } from "~/stores/main";
 
-const props = withDefaults(
-  defineProps<{
-    withProgress?: boolean;
-    photo: boolean;
-    multiple?: boolean;
-    edge: { issuenumber: string } | null;
-  }>(),
-  {
-    withProgress: true,
-    photo: false,
-    multiple: false,
-    edge: null,
-  },
-);
+const {
+  withProgress = true,
+  photo = false,
+  multiple = false,
+  edge = null,
+} = defineProps<{
+  withProgress?: boolean;
+  photo: boolean;
+  multiple?: boolean;
+  edge: { issuenumber: string } | null;
+}>();
 
 const mainStore = main();
 const { locale, t: $t } = useI18n();
@@ -45,16 +42,16 @@ const uppy = Uppy({
   // locale: uppyTranslations[i18n.locale.value],
   allowMultipleUploads: false,
   meta: {
-    photo: props.photo,
-    multiple: props.multiple,
-    edge: JSON.stringify(props.edge),
+    photo: photo,
+    multiple: multiple,
+    edge: JSON.stringify(edge),
     locale: locale.value === "fr" ? "fr-FR" : "en-US",
   },
   restrictions: {
     maxFileSize: 3 * 1024 * 1024,
     minNumberOfFiles: 1,
-    maxNumberOfFiles: props.photo ? 1 : 10,
-    allowedFileTypes: props.photo ? ["image/jpg", "image/jpeg"] : ["image/png"],
+    maxNumberOfFiles: photo ? 1 : 10,
+    allowedFileTypes: photo ? ["image/jpg", "image/jpeg"] : ["image/png"],
   },
 });
 
@@ -83,11 +80,11 @@ onMounted(() => {
     bytesUploaded.value = data.bytesUploaded;
   });
   uppy.on("upload-success", (_, payload: { body: { fileName: string } }) => {
-    if (props.photo && !props.multiple) {
-      mainStore.photoUrls[props.edge!.issuenumber] = payload.body.fileName;
+    if (photo && !multiple) {
+      mainStore.photoUrls[edge!.issuenumber] = payload.body.fileName;
     } else {
       mainStore.loadItems({
-        itemType: props.photo ? "photos" : "elements",
+        itemType: photo ? "photos" : "elements",
       });
     }
   });

@@ -86,20 +86,17 @@
 import { main } from "~/stores/main";
 import type { GalleryItem } from "~/types/GalleryItem";
 
-withDefaults(
-  defineProps<{
-    loading?: boolean;
-    imageType: string;
-    selected?: string[];
-    allowUpload?: boolean;
-    items: GalleryItem[];
-  }>(),
-  {
-    loading: false,
-    selected: () => [],
-    allowUpload: true,
-  },
-);
+const {
+  loading = false,
+  selected = [],
+  allowUpload = true,
+} = defineProps<{
+  loading?: boolean;
+  imageType: string;
+  selected?: string[];
+  allowUpload?: boolean;
+  items: GalleryItem[];
+}>();
 
 const emit = defineEmits<(e: "change", value: string) => void>();
 

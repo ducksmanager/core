@@ -11,7 +11,7 @@
 import { step } from "~/stores/step";
 import { ui } from "~/stores/ui";
 
-const uiStore = ui();
+const { zoom } = storeToRefs(ui());
 
 interface Props {
   issuecode: string;
@@ -52,14 +52,14 @@ onMounted(() => {
   enableDragResize(ellipse.value!, {
     onmove: ({ dx, dy }) => {
       step().setOptionValues({
-        cx: props.options.cx + dx / uiStore.zoom,
-        cy: props.options.cy + dy / uiStore.zoom,
+        cx: props.options.cx + dx / zoom.value,
+        cy: props.options.cy + dy / zoom.value,
       });
     },
     onresizemove: ({ rect }) => {
       step().setOptionValues({
-        rx: rect.width / 2 / uiStore.zoom,
-        ry: rect.height / 2 / uiStore.zoom,
+        rx: rect.width / 2 / zoom.value,
+        ry: rect.height / 2 / zoom.value,
       });
     },
   });
