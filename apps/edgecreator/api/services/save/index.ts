@@ -3,7 +3,7 @@ import { mkdirSync, unlinkSync, writeFileSync } from "fs";
 import path from "path";
 import type { Socket } from "socket.io";
 
-import { getSvgPath } from "~/_utils";
+import { getSvgPath } from "../../_utils";
 import {
   type ClientEvents as EdgeCreatorServices,
   endpoint as edgeCreatorServicesEndpoint,

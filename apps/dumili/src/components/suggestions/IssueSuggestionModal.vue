@@ -18,17 +18,11 @@
         }}<br />{{ $t('Si aucune ne ressemble,cliquez sur "Annuler".') }}
       </div>
       <Gallery
-        v-slot="{ issuecode }"
         :pages="
           images.map(({ url, id }) => ({ image: { url }, id, pageNumber: 0 }))
         "
         selectable
-        @selected="
-          (id) =>
-            (selectedExistingCoverIssuecode = issueSuggestionToIssuecode(id))
-        "
-        ><Issue :issuecode="issuecode"
-      /></Gallery> </b-modal
+      ></Gallery> </b-modal
   ></template>
 </template>
 
@@ -87,11 +81,6 @@ const images = computed(() =>
     url,
   })),
 );
-
-const issueSuggestionToIssuecode = (id: number): string =>
-  issueSuggestions.value.find(
-    ({ id: issueSuggestionId }) => issueSuggestionId === id,
-  )?.issuecode || "";
 
 const acceptIssueSuggestion = async (issuecode: string) => {
   const { publicationcode, issuenumber } = issuecodeDetails.value[issuecode];

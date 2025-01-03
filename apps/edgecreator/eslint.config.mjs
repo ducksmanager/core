@@ -63,6 +63,15 @@ export default [
       "vue/define-emits-declaration": "error",
       "vue/define-props-declaration": "error",
 
+      "@typescript-eslint/no-unused-vars": [
+        "warn",
+        {
+          argsIgnorePattern: "^_",
+          varsIgnorePattern: "^_",
+          caughtErrorsIgnorePattern: "^_",
+        },
+      ],
+
       "vue/component-name-in-template-casing": [
         "error",
         "kebab-case",

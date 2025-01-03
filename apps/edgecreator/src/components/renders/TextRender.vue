@@ -211,7 +211,7 @@ const refreshPreview = async () => {
     font,
     text: effectiveText.value,
   });
-  if (textData.results) {
+  if ('results' in textData) {
     textImage.value = textData.results;
   } else {
     window.alert(textData.error);

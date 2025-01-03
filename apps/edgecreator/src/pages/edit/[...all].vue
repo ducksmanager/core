@@ -40,8 +40,8 @@
               class="surrounding-edge"
             >
               {{
-                mainStore.edgesBefore[mainStore.edgesBefore.length - 1]!
-                  .issuenumber
+                issuecodeDetails[mainStore.edgesBefore[mainStore.edgesBefore.length - 1]!
+                  .issuecode].issuenumber
               }}
             </th>
             <template
@@ -76,7 +76,7 @@
               v-if="showNextEdge && mainStore.edgesAfter[0]"
               class="surrounding-edge"
             >
-              {{ mainStore.edgesAfter[0].issuenumber }}
+              {{ issuecodeDetails[mainStore.edgesAfter[0].issuecode].issuenumber }}
             </th>
           </tr>
           <tr>
@@ -174,6 +174,7 @@ const { showPreviousEdge, showNextEdge } = useSurroundingEdge();
 
 const { loadModel } = useModelLoad();
 const { issuecodes } = storeToRefs(mainStore);
+const { issuecodeDetails } = storeToRefs(coaStore);
 
 const error = ref<string>();
 

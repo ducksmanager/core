@@ -4,7 +4,7 @@ import fs from "fs";
 import { decode } from "node-base64-image";
 import { dirname } from "path";
 
-import { getUserCredentials } from "~/services/_auth";
+import { getUserCredentials } from "../_auth";
 import {
   ClientEvents as EdgeCreatorServices,
   endpoint as edgeCreatorServicesEndpoint,

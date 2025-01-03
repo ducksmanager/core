@@ -27,6 +27,10 @@ const listenEvents = () => ({
         };
       }
     }
+    return {
+      error: "Cloudinary error",
+      errorDetails: `${targetUrl} : HTTP ${response.status}`,
+    };
   },
 });
 

@@ -69,7 +69,7 @@ const textContent = computed(() => {
   if (!storiesWithDetails.value?.length) {
     return undefined;
   }
-  const issuecode = issue.value!.issuecode!.split("/")[1];
+  const issuecode = `${issue.value!.publicationcode} ${issue.value!.issuenumber}`;
   const rows = [
     [
       [issuecode],
@@ -114,7 +114,7 @@ const textContent = computed(() => {
 watch(
   acceptedStories,
   async (value) => {
-    if (value && issue.value?.issuecode) {
+    if (value) {
       storiesWithDetails.value = await getStoriesWithDetails(
         value.filter(
           (story): story is NonNullable<typeof story> => story !== null,

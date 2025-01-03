@@ -15,11 +15,11 @@ import { OptionalAuthMiddleware } from "~dm-services/auth/util";
 import type { SessionUser } from "~dm-types/SessionUser";
 
 import * as generateDefaultEdge from "./generateDefaultEdge";
-import browse from "./services/browse";
-import imageInfo from "./services/image-info";
-import save from "./services/save";
-import text from "./services/text";
-import uploadServices, { upload } from "./services/upload";
+import { server as browse } from "./services/browse";
+import { server as imageInfo } from "./services/image-info";
+import { server as save } from "./services/save";
+import { server as text } from "./services/text";
+import { server as uploadServices, upload } from "./services/upload";
 dotenv.config({
   path: "../.env",
 });
@@ -74,7 +74,7 @@ app.get(
     } else {
       res.writeHead(405);
     }
-  },
+  }
 );
 const httpServer = createServer(app);
 const io = new ServerWithUser(httpServer, {

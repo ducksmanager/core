@@ -62,7 +62,10 @@ const listenEvents = () => ({
     width: number;
     font: string;
     text: string;
-  }) =>
+  }): Promise<{
+    error: "Image generation error",
+    errorDetails: string,
+  }|{results: { width: number, height: number, url: string }}> =>
     new Promise(async (resolve) => {
       const { color, colorBackground, width, font, text } = parameters;
       const context: Record<string, number | string> = {

@@ -86,7 +86,10 @@ const findInDir = (dir: string) =>
   });
 
 const listenEvents = () => ({
-  listEdgeModels: async () =>
+  listEdgeModels: async (): Promise<{
+    error: "Generic error",
+    errorDetails: string,
+  }|{results: Awaited<ReturnType<typeof findInDir>>}> =>
     new Promise((resolve) => {
       findInDir(edgesPath)
         .then((results) => {

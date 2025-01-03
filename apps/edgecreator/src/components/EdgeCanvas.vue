@@ -61,8 +61,8 @@
         hoveredStepStore.issuecode = issuecode;
       "
       @mouseout="
-        hoveredStepStore.stepNumber = null;
-        hoveredStepStore.issuecode = null;
+        hoveredStepStore.stepNumber = undefined;
+        hoveredStepStore.issuecode = undefined;
       "
     >
       <component
@@ -163,9 +163,9 @@ const height = computed(() => props.dimensions.height);
 
 const setPosition = ({ clientX: left, clientY: top }: MouseEvent) => {
   const { left: svgLeft, top: svgTop } = canvas.value!.getBoundingClientRect();
-  positionInCanvas.value = ([left - svgLeft, top - svgTop] as const).map(
+  positionInCanvas.value = ([left - svgLeft, top - svgTop]).map(
     (value) => value / zoom.value,
-  );
+  ) as [number, number];
 };
 const replaceEditingIssuecodeIfNotAlreadyEditing = (issuecode: string) => {
   if (!editingStepStore.issuecodes.includes(issuecode)) {

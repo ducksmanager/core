@@ -120,15 +120,12 @@ export const edgeCatalog = defineStore("edgeCatalog", () => {
       const newCurrentEdges: typeof currentEdges.value = {};
       const publishedSvgEdges: typeof publishedEdges.value = {};
 
-      const {
-        results: edges,
-        error,
-        errorDetails,
-      } = await browseServices.listEdgeModels();
-      if (error) {
-        console.error("Error while loading edge catalog", error, errorDetails);
+      const models = await browseServices.listEdgeModels();
+      if ('error' in models) {
+        console.error("Error while loading edge catalog", models.error, models.errorDetails);
         return;
       }
+      const { results: edges } = models
       for (const edgeStatus in edges) {
         for (const { designers, photographers, issuecode, url } of edges[
           edgeStatus as keyof typeof edges
