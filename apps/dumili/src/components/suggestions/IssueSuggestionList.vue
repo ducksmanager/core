@@ -6,7 +6,7 @@
     :show-customize-form="showIssueSelect"
     @toggle-customize-form="showIssueSelect = $event"
   >
-    <template #default="{ suggestion }"> <Issue v-bind="suggestion" /></template
+    <template #default="{ suggestion }"> <Issue :issue="suggestion" /></template
     ><template #unknown-text>{{ $t("Numéro inconnu") }}</template>
     <template #customize-form>
       <issue-select

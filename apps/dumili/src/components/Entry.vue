@@ -1,8 +1,9 @@
 <template>
   <b-row
-    class="d-flex w-100 align-items-center sticky-top"
+    class="d-flex w-100 align-items-start pt-1 sticky-top"
+    :class="{ 'opacity-50': !editable }"
     :style="
-      entry.entirepages > 0
+      entry.entirepages > 0 && !editable
         ? { height: `${entry.entirepages * 50}px` }
         : undefined
     "

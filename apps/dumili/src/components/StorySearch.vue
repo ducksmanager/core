@@ -69,10 +69,9 @@ watch(search, async (newValue) => {
 <style scoped lang="scss">
 datalist {
   display: block;
-  position: absolute;
+  position: relative;
   background: #eee;
   min-width: 275px;
-  top: 36px;
   padding-left: 0;
 
   option {
