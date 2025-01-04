@@ -37,8 +37,6 @@ const { status, loadingEvents = [] } = defineProps<{
   }[];
 }>();
 
-defineSlots();
-
 const emit = defineEmits<{
   (e: "toggled", toggle: boolean): void;
 }>();

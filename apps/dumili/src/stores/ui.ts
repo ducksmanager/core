@@ -9,6 +9,14 @@ export const ui = defineStore("ui", () => {
   const currentEntry = ref<FullEntry>();
   const currentPage = ref(0);
   const pageHeight = ref(50);
+  const overlay = ref<
+    | { type: "story kind"; entryId: number }
+    | { type: "panels"; pageId: number }
+    | {
+        type: "ocr" | "panels";
+        entryId: number;
+      }
+  >();
 
   const visiblePages = ref<Set<number>>(new Set());
 
@@ -35,10 +43,19 @@ export const ui = defineStore("ui", () => {
     { once: true },
   );
 
+  watch(hoveredEntry, (entry) => {
+    if (entry) {
+      overlay.value = {
+        type: "story kind",
+        entryId: entry!.id,
+      };
+    } else {
+      overlay.value = undefined;
+    }
+  });
+
   return {
-    showAiDetectionsOn: ref<{ type: "page" | "entry"; id: number } | undefined>(
-      undefined,
-    ),
+    overlay,
     pageHeight,
     currentPage,
     visiblePages,

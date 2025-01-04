@@ -169,7 +169,7 @@ const listenEvents = (socket: UserSocket<true>) => ({
   },
 });
 
-export const { endpoint, client, server } = useSocketServices<
+export const { client, server } = useSocketServices<
   typeof listenEvents,
   Record<string, never>,
   Record<string, never>,
@@ -185,11 +185,7 @@ const authedListenEvents = (socket: UserSocket) => ({
   ...options(socket),
 });
 
-export const {
-  endpoint: authedEndpoint,
-  client: authedClient,
-  server: authedServer,
-} = useSocketServices<
+export const { client: authedClient, server: authedServer } = useSocketServices<
   typeof authedListenEvents,
   Record<string, never>,
   Record<string, never>,

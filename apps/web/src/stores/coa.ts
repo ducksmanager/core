@@ -229,7 +229,7 @@ export const coa = defineStore("coa", () => {
           await services.getStoryversionsDetails(newStoryversioncodes);
         if (!("error" in newStoryversionDetails)) {
           Object.assign(
-            storyDetails.value,
+            storyversionDetails.value,
             newStoryversionDetails.storyversions,
           );
         }

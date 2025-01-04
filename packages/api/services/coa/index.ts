@@ -19,11 +19,12 @@ const listenEvents = () => ({
   ...stories,
 });
 
-export const { endpoint, client, server } = useSocketServices<
-  typeof listenEvents
->(namespaces.COA, {
-  listenEvents,
-  middlewares: [],
-});
+export const { client, server } = useSocketServices<typeof listenEvents>(
+  namespaces.COA,
+  {
+    listenEvents,
+    middlewares: [],
+  },
+);
 
 export type ClientEvents = (typeof client)["emitEvents"];

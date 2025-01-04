@@ -16,6 +16,10 @@ textarea::placeholder {
   cursor: pointer;
 }
 
+.col > .dropdown {
+  max-width: calc(100% - 40px);
+}
+
 .z-4 {
   z-index: 4 !important;
 }

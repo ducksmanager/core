@@ -49,12 +49,13 @@ const listenEvents = () => ({
   },
 });
 
-export const { endpoint, client, server } = useSocketServices<
-  typeof listenEvents
->("/global-stats", {
-  listenEvents,
-  middlewares: [],
-});
+export const { client, server } = useSocketServices<typeof listenEvents>(
+  "/global-stats",
+  {
+    listenEvents,
+    middlewares: [],
+  },
+);
 
 export type ClientEvents = (typeof client)["emitEvents"];
 
@@ -87,11 +88,7 @@ const userListenEvents = (socket: UserSocket) => ({
   },
 });
 
-export const {
-  endpoint: userEndpoint,
-  client: userClient,
-  server: userServer,
-} = useSocketServices<
+export const { client: userClient, server: userServer } = useSocketServices<
   typeof userListenEvents,
   Record<string, never>,
   Record<string, never>,

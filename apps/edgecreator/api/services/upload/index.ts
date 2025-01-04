@@ -5,7 +5,7 @@ import { decode } from "node-base64-image";
 import { dirname } from "path";
 
 import type { ClientEvents as EdgeCreatorServices } from "~dm-services/edgecreator";
-import { endpoint as edgeCreatorServicesEndpoint } from "~dm-services/edgecreator";
+import namespaces from "~dm-services/namespaces";
 import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa/client";
 import { SocketClient } from "~socket.io-client-services";
 import { useSocketServices } from "~socket.io-services/index";
@@ -18,7 +18,7 @@ const edgesPath: string = process.env.EDGES_PATH!;
 const getEdgeCreatorServices = () =>
   new SocketClient(
     process.env.DM_SOCKET_URL!,
-  ).addNamespace<EdgeCreatorServices>(edgeCreatorServicesEndpoint).services;
+  ).addNamespace<EdgeCreatorServices>(namespaces.EDGECREATOR).services;
 
 const listenEvents = () => ({
   uploadFromBase64: async (parameters: { data: string; issuecode: string }) => {
@@ -46,7 +46,7 @@ const listenEvents = () => ({
   },
 });
 
-export const { endpoint, client, server } = useSocketServices<
+export const { client, server } = useSocketServices<
   typeof listenEvents,
   Record<string, never>,
   Record<string, never>,

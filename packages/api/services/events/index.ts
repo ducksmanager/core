@@ -36,12 +36,13 @@ const listenEvents = () => ({
     ]).then((data) => data.flat()),
 });
 
-export const { endpoint, client, server } = useSocketServices<
-  typeof listenEvents
->(namespaces.EVENTS, {
-  listenEvents,
-  middlewares: [],
-});
+export const { client, server } = useSocketServices<typeof listenEvents>(
+  namespaces.EVENTS,
+  {
+    listenEvents,
+    middlewares: [],
+  },
+);
 
 export type ClientEvents = (typeof client)["emitEvents"];
 

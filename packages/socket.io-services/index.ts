@@ -64,7 +64,7 @@ export const useSocketServices = <
   ServerSideEvents extends EventsMap = EventsMap,
   SocketData extends object = object,
 >(
-  endpoint: string,
+  endpoint: Parameters<Server["of"]>[0],
   options: {
     listenEvents: ListenEvents;
     middlewares: Parameters<
@@ -77,7 +77,6 @@ export const useSocketServices = <
     >[0][];
   },
 ) => ({
-  endpoint,
   server: (io: Server) => {
     const namespace = io.of(endpoint);
     for (const middleware of options?.middlewares ?? []) {

@@ -102,11 +102,7 @@ const adminListenEvents = (socket: UserSocket) => ({
   },
 });
 
-export const {
-  endpoint: adminEndpoint,
-  client: adminClient,
-  server: adminServer,
-} = useSocketServices<
+export const { client: adminClient, server: adminServer } = useSocketServices<
   typeof adminListenEvents,
   Record<string, never>,
   Record<string, never>,
@@ -174,7 +170,7 @@ const listenEvents = (socket: UserSocket) => ({
 
 export type AdminClientEvents = (typeof adminClient)["emitEvents"];
 
-export const { endpoint, client, server } = useSocketServices<
+export const { client, server } = useSocketServices<
   typeof listenEvents,
   Record<string, never>,
   Record<string, never>,

@@ -59,7 +59,7 @@
           >{{ $t("Ajouter") }}</b-button
         >
         <div class="position-absolute bottom-0 text-center">
-          {{ $t("Page {pageNumber} (ID: {id})", { pageNumber, id }) }}
+          {{ $t("Page {pageNumber}", { pageNumber }) }}
         </div>
       </b-col>
     </b-row>

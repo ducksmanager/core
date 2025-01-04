@@ -10,7 +10,7 @@
       },
     ]"
     @toggled="
-      showAiDetectionsOn = $event ? { type: 'page', id: page.id } : undefined
+      overlay = $event ? { type: 'panels', pageId: page.id } : undefined
     "
   >
     <div v-if="!page.image">
@@ -46,5 +46,5 @@ const { page } = defineProps<{
   page: FullIndexation["pages"][number];
 }>();
 
-const { showAiDetectionsOn } = storeToRefs(ui());
+const { overlay } = storeToRefs(ui());
 </script>

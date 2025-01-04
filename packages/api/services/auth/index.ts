@@ -198,11 +198,12 @@ const listenEvents = () => ({
   },
 });
 
-export const { endpoint, client, server } = useSocketServices<
-  typeof listenEvents
->(namespaces.AUTH, {
-  listenEvents,
-  middlewares: [],
-});
+export const { client, server } = useSocketServices<typeof listenEvents>(
+  namespaces.AUTH,
+  {
+    listenEvents,
+    middlewares: [],
+  },
+);
 
 export type ClientEvents = (typeof client)["emitEvents"];

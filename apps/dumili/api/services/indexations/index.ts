@@ -77,7 +77,7 @@ const listenEvents = (socket: IndexationsSocket) => ({
     }),
 });
 
-const { endpoint, client, server } = useSocketServices<
+const { client, server } = useSocketServices<
   typeof listenEvents,
   Record<string, never>,
   Record<string, never>,
@@ -87,5 +87,5 @@ const { endpoint, client, server } = useSocketServices<
   middlewares: [RequiredAuthMiddleware],
 });
 
-export { endpoint, server };
+export { client, server };
 export type ClientEmitEvents = (typeof client)["emitEvents"];

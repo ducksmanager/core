@@ -19,7 +19,7 @@ const listenEvents = (socket: UserSocket) => ({
   },
 });
 
-export const { endpoint, client, server } = useSocketServices<
+export const { client, server } = useSocketServices<
   typeof listenEvents,
   Record<string, never>,
   Record<string, never>,

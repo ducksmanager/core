@@ -35,11 +35,12 @@ const listenEvents = () => ({
   },
 });
 
-export const { endpoint, client, server } = useSocketServices<
-  typeof listenEvents
->("/image-info", {
-  listenEvents,
-  middlewares: [],
-});
+export const { client, server } = useSocketServices<typeof listenEvents>(
+  "/image-info",
+  {
+    listenEvents,
+    middlewares: [],
+  },
+);
 
 export type ClientEvents = (typeof client)["emitEvents"];

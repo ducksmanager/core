@@ -2,10 +2,8 @@ import "~group-by";
 
 import type { Socket } from "socket.io";
 
-import {
-  type ClientEvents as CoaEvents,
-  endpoint as coaEndpoint,
-} from "~dm-services/coa";
+import { type ClientEvents as CoaEvents } from "~dm-services/coa";
+import dmNamespaces from "~dm-services/namespaces";
 import { STORY, storyKinds } from "~dumili-types/storyKinds";
 import { getEntryPages } from "~dumili-utils/entryPages";
 import type {
@@ -30,7 +28,9 @@ import { runKumikoOnPages } from "./kumiko";
 import { runOcrOnImages } from "./ocr";
 
 const socket = new SocketClient(process.env.DM_SOCKET_URL!);
-const { services: coaServices } = socket.addNamespace<CoaEvents>(coaEndpoint);
+const { services: coaServices } = socket.addNamespace<CoaEvents>(
+  dmNamespaces.COA,
+);
 
 const indexationPayloadInclude = {
   pages: {
@@ -694,17 +694,15 @@ const listenEvents = (socket: IndexationsSocket) => ({
     createEntry(socket.data.indexation.id).then(() => ({ status: "OK" })),
 });
 
-export const { endpoint, client, server } = useSocketServices<
+export const { client, server } = useSocketServices<
   typeof listenEvents,
   IndexationServerSentStartEndEvents,
   Record<string, never>,
   SessionDataWithIndexation
 >(
-  namespaces.INDEXATION,
-  // new RegExp(`^${namespaceEndpoint.replace("{id}", "[0-9]{8}T[0-9]{9}")}$`)
+  new RegExp(`^${namespaces.INDEXATION.replace("{id}", "[0-9]{8}T[0-9]{9}")}$`),
   {
     listenEvents,
-
     middlewares: [
       RequiredAuthMiddleware,
       async (socket, next) => {

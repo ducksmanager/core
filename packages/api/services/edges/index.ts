@@ -71,11 +71,12 @@ const listenEvents = () => ({
       .then((edges) => edges.groupBy("issuecode")),
 });
 
-export const { endpoint, client, server } = useSocketServices<
-  typeof listenEvents
->(namespaces.EDGES, {
-  listenEvents,
-  middlewares: [],
-});
+export const { client, server } = useSocketServices<typeof listenEvents>(
+  namespaces.EDGES,
+  {
+    listenEvents,
+    middlewares: [],
+  },
+);
 
 export type ClientEvents = (typeof client)["emitEvents"];

@@ -3,10 +3,8 @@ import { mkdirSync, unlinkSync, writeFileSync } from "fs";
 import path from "path";
 import type { Socket } from "socket.io";
 
-import {
-  type ClientEvents as EdgeCreatorServices,
-  endpoint as edgeCreatorServicesEndpoint,
-} from "~dm-services/edgecreator";
+import { type ClientEvents as EdgeCreatorServices } from "~dm-services/edgecreator";
+import namespaces from "~dm-services/namespaces";
 import { SocketClient } from "~socket.io-client-services";
 import { useSocketServices } from "~socket.io-services/index";
 import type { ExportPaths } from "~types/ExportPaths";
@@ -19,18 +17,15 @@ type TokenSocket = Socket<object, object, object, { token: string }>;
 const getEdgeCreatorServices = (token: string) => {
   const dmSocket = new SocketClient(process.env.DM_SOCKET_URL!);
   dmSocket.onConnectError = (e) => console.error(e);
-  return dmSocket.addNamespace<EdgeCreatorServices>(
-    edgeCreatorServicesEndpoint,
-    {
-      session: {
-        getToken: async () => token,
-        sessionExists: () => Promise.resolve(!!token),
-        clearSession: () => {
-          console.log("not allowed");
-        },
+  return dmSocket.addNamespace<EdgeCreatorServices>(namespaces.EDGECREATOR, {
+    session: {
+      getToken: async () => token,
+      sessionExists: () => Promise.resolve(!!token),
+      clearSession: () => {
+        console.log("not allowed");
       },
     },
-  ).services;
+  }).services;
 };
 
 const listenEvents = (socket: TokenSocket) => ({
@@ -100,7 +95,7 @@ const listenEvents = (socket: TokenSocket) => ({
   },
 });
 
-export const { endpoint, client, server } = useSocketServices<
+export const { client, server } = useSocketServices<
   typeof listenEvents,
   Record<string, never>,
   Record<string, never>,

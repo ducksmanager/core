@@ -46,11 +46,12 @@ const listenEvents = () => ({
   getBundleUrl: (appInfos: AppInfos) => getUpdateFileUrl(appInfos),
 });
 
-export const { endpoint, client, server } = useSocketServices<
-  typeof listenEvents
->(namespaces.APP, {
-  listenEvents,
-  middlewares: [],
-});
+export const { client, server } = useSocketServices<typeof listenEvents>(
+  namespaces.APP,
+  {
+    listenEvents,
+    middlewares: [],
+  },
+);
 
 export type ClientEvents = (typeof client)["emitEvents"];

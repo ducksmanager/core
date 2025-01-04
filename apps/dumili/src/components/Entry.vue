@@ -65,7 +65,7 @@
           v-if="urlEncodedStorycode"
           target="_blank"
           :href="`https://inducks.org/story.php?c=${urlEncodedStorycode}`"
-          >{{ entry.acceptedStory!.storycode }}</a
+          >{{ storyDetails[entry.acceptedStory!.storycode].title }}</a
         ><template v-else>{{ $t("Contenu inconnu") }}</template>
       </template>
       <StorySuggestionsTooltip :entry="entry" />
@@ -138,6 +138,8 @@ defineProps<{
 const { indexationSocket } = inject(dumiliSocketInjectionKey)!;
 const indexation = storeToRefs(suggestions()).indexation as Ref<FullIndexation>;
 const { loadIndexation } = suggestions();
+
+const { storyDetails } = storeToRefs(coa());
 
 const entry = defineModel<FullEntry>({ required: true });
 

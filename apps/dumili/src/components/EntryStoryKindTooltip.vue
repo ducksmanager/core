@@ -9,7 +9,7 @@
     ]"
     :status="storyKindAiSuggestion?.kind ? 'success' : 'idle'"
     @toggled="
-      showAiDetectionsOn = $event ? { type: 'entry', id: entry.id } : undefined
+      overlay = $event ? { type: 'panels', entryId: entry.id } : undefined
     "
   >
     <b>{{ $t("Types d'entrées déduits pour les pages") }}</b>
@@ -46,7 +46,7 @@ const { entry } = defineProps<{
 }>();
 
 const indexation = storeToRefs(suggestions()).indexation as Ref<FullIndexation>;
-const { showAiDetectionsOn } = storeToRefs(ui());
+const { overlay } = storeToRefs(ui());
 
 const pages = computed(() =>
   getEntryPages(indexation.value!, entry.id).map(

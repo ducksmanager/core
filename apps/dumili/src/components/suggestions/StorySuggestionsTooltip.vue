@@ -8,9 +8,7 @@
       },
     ]"
     :status="entry.storySuggestions.length ? 'success' : 'idle'"
-    @toggled="
-      showAiDetectionsOn = $event ? { type: 'entry', id: entry.id } : undefined
-    "
+    @toggled="overlay = $event ? { type: 'ocr', entryId: entry.id } : undefined"
   >
     <template v-if="entry.acceptedStoryKind?.kind === STORY">
       <template v-if="firstPageOcrResult">
@@ -75,7 +73,7 @@ const { entry } = defineProps<{
 const { indexation } = storeToRefs(suggestions());
 const { storyDetails } = storeToRefs(coa());
 
-const { showAiDetectionsOn } = storeToRefs(ui());
+const { overlay } = storeToRefs(ui());
 
 const firstPage = computed(() => getEntryPages(indexation.value!, entry.id)[0]);
 
