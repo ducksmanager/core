@@ -17,7 +17,9 @@ type ErrorableAppUpdate = Errorable<
   "Not found" | "Already up to date"
 >;
 
-export const getUpdateFileUrl = (appInfos?: AppInfos): ErrorableAppUpdate => {
+export const getUpdateFileUrl = async (
+  appInfos?: AppInfos,
+): Promise<ErrorableAppUpdate> => {
   const fileName = import.meta.dirname + "/latest-whattheduck-bundle.txt";
   if (existsSync(fileName)) {
     const mostRecentBundleUrl = readFileSync(fileName).toString().trim();

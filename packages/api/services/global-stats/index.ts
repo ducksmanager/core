@@ -93,8 +93,8 @@ export const {
   server: userServer,
 } = useSocketServices<
   typeof userListenEvents,
-  object,
-  object,
+  Record<string, never>,
+  Record<string, never>,
   { user: SessionUser }
 >(namespaces.GLOBAL_STATS_ADMIN, {
   listenEvents: userListenEvents,

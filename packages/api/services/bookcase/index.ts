@@ -171,8 +171,8 @@ const listenEvents = (socket: UserSocket<true>) => ({
 
 export const { endpoint, client, server } = useSocketServices<
   typeof listenEvents,
-  object,
-  object,
+  Record<string, never>,
+  Record<string, never>,
   { user?: SessionUser }
 >(namespaces.BOOKCASE, {
   listenEvents,
@@ -191,8 +191,8 @@ export const {
   server: authedServer,
 } = useSocketServices<
   typeof authedListenEvents,
-  object,
-  object,
+  Record<string, never>,
+  Record<string, never>,
   { user: SessionUser }
 >(namespaces.BOOKCASE_USER, {
   listenEvents: authedListenEvents,

@@ -17,7 +17,6 @@ export default (fields: string[]) => {
       if ('selector' in response && response.selector) {
         errorTexts.value[response.selector!.replace('#', '')] = response.message;
       } else {
-        debugger;
         errorTexts.value[fields[0]] = response.errorDetails || response.error;
         console.error(response);
       }

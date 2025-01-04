@@ -31,9 +31,12 @@
             />
             <div class="position-absolute bottom-0 pb-3">
               <Issue
-                v-if="acceptedIssueSuggestion"
-                v-bind="acceptedIssueSuggestion"
+                v-if="
+                  acceptedIssueSuggestion &&
+                  publicationNames[acceptedIssueSuggestion?.publicationcode]
+                "
               />
+              <Issue v-else />
             </div>
           </router-link>
         </b-col>
@@ -85,6 +88,7 @@ const {
 } = inject(dumiliSocketInjectionKey)!;
 
 const { fetchPublicationNames } = coa();
+const { publicationNames } = storeToRefs(coa());
 
 const form = ref<HTMLFormElement>();
 const currentIndexations =

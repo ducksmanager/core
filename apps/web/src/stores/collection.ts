@@ -309,7 +309,6 @@ export const collection = defineStore("collection", () => {
       }
     },
     loadUser = async (afterUpdate = false) => {
-      debugger;
       if (!socketOptions.session.getToken()) {
         user.value = null;
         return;
@@ -335,7 +334,6 @@ export const collection = defineStore("collection", () => {
           role === "EdgeCreator" && privilege === thisPrivilege,
       ) || false;
 
-  console.log(issues.value);
   return {
     ...collectionUtils,
     issues,

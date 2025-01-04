@@ -1,4 +1,4 @@
 export default {
-    INDEXATION: '/indexation',
-    INDEXATIONS: '/indexations',
-}
+  INDEXATION: "/indexation",
+  INDEXATIONS: "/indexations",
+};

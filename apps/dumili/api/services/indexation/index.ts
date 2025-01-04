@@ -25,9 +25,9 @@ import {
 import type { SessionDataWithIndexation } from "../../index";
 import { prisma } from "../../index";
 import { RequiredAuthMiddleware } from "../_auth";
+import namespaces from "../namespaces";
 import { runKumikoOnPages } from "./kumiko";
 import { runOcrOnImages } from "./ocr";
-import namespaces from "../namespaces";
 
 const socket = new SocketClient(process.env.DM_SOCKET_URL!);
 const { services: coaServices } = socket.addNamespace<CoaEvents>(coaEndpoint);
@@ -697,7 +697,7 @@ const listenEvents = (socket: IndexationsSocket) => ({
 export const { endpoint, client, server } = useSocketServices<
   typeof listenEvents,
   IndexationServerSentStartEndEvents,
-  object,
+  Record<string, never>,
   SessionDataWithIndexation
 >(
   namespaces.INDEXATION,

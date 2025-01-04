@@ -13,11 +13,11 @@ import namespaces from "../namespaces";
 export type IndexationsSocket = Socket<object, object, object, SessionData>;
 
 const listenEvents = (socket: IndexationsSocket) => ({
-  getUser: () => ({
+  getUser: async () => ({
     username: socket.data.user.username,
   }),
 
-  create: (id: string, numberOfPages: number) =>
+  create: async (id: string, numberOfPages: number) =>
     prisma.indexation
       .create({
         data: {
@@ -79,8 +79,8 @@ const listenEvents = (socket: IndexationsSocket) => ({
 
 const { endpoint, client, server } = useSocketServices<
   typeof listenEvents,
-  object,
-  object,
+  Record<string, never>,
+  Record<string, never>,
   SessionData
 >(namespaces.INDEXATIONS, {
   listenEvents,

@@ -39,8 +39,8 @@ const listenEvents = () => ({
 
 export const { endpoint, client, server } = useSocketServices<
   typeof listenEvents,
-  object,
-  object,
+  Record<string, never>,
+  Record<string, never>,
   { user: SessionUser }
 >(namespaces.PRESENTATION_TEXT, {
   listenEvents,

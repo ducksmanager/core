@@ -83,8 +83,8 @@ const loginUrl = computed(
 // const { fetchCountryNames } = coa();
 const { isLoadingUser } = storeToRefs(collection());
 
-onBeforeMount(() => {
-  user.value = dumiliSocket.indexations.services.getUser();
+onBeforeMount(async () => {
+  user.value = await dumiliSocket.indexations.services.getUser();
 });
 
 // watch(user, (newValue) => {

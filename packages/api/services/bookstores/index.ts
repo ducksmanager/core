@@ -108,8 +108,8 @@ export const {
   server: adminServer,
 } = useSocketServices<
   typeof adminListenEvents,
-  object,
-  object,
+  Record<string, never>,
+  Record<string, never>,
   { user: SessionUser }
 >(namespaces.BOOKSTORES_ADMIN, {
   listenEvents: adminListenEvents,
@@ -176,8 +176,8 @@ export type AdminClientEvents = (typeof adminClient)["emitEvents"];
 
 export const { endpoint, client, server } = useSocketServices<
   typeof listenEvents,
-  object,
-  object,
+  Record<string, never>,
+  Record<string, never>,
   { user: SessionUser }
 >(namespaces.BOOKSTORES, {
   listenEvents,

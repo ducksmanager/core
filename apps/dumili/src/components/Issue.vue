@@ -1,10 +1,10 @@
 <template>
-  <div v-if="publicationcode" :class="`d-${noWrap ? 'inline' : 'block'}`">
+  <div v-if="issue" :class="`d-${noWrap ? 'inline' : 'block'}`">
     <Publication
-      :publicationcode="publicationcode"
-      :publicationname="publicationName"
+      :publicationcode="issue.publicationcode"
+      :publicationname="publicationName!"
       display-class="d-inline"
-    />{{ issuenumber }}
+    />{{ issue.issuenumber }}
     <slot name="title-suffix" />
     <slot />
   </div>
@@ -14,13 +14,17 @@
 <script setup lang="ts">
 const { publicationNames } = storeToRefs(coa());
 
-const { publicationcode, issuenumber } = defineProps<{
-  publicationcode: string;
-  issuenumber: string;
+const { issue } = defineProps<{
+  issue?: {
+    publicationcode: string;
+    issuenumber: string;
+  };
   noWrap?: boolean;
 }>();
 
-const publicationName = computed(() => publicationNames.value[publicationcode]);
+const publicationName = computed(
+  () => issue && publicationNames.value[issue.publicationcode],
+);
 </script>
 
 <style scoped lang="scss">

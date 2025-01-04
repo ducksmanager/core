@@ -13,8 +13,8 @@ const listenEvents = (socket: UserSocket) => ({
 
 export const { endpoint, client, server } = useSocketServices<
   typeof listenEvents,
-  object,
-  object,
+  Record<string, never>,
+  Record<string, never>,
   { user: SessionUser }
 >(namespaces.STATS, {
   listenEvents,

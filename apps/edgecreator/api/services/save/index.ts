@@ -102,8 +102,8 @@ const listenEvents = (socket: TokenSocket) => ({
 
 export const { endpoint, client, server } = useSocketServices<
   typeof listenEvents,
-  object,
-  object,
+  Record<string, never>,
+  Record<string, never>,
   { token: string }
 >("/save", {
   listenEvents,

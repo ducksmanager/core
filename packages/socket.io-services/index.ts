@@ -1,7 +1,10 @@
 import type { Namespace, Server, Socket } from "socket.io";
 
+type AsyncEventsMap = {
+  [event: string]: (...args: any[]) => Promise<any>;
+};
 type EventsMap = {
-  [event: string]: any;
+  [event: string]: (...args: any[]) => any;
 };
 
 export type ScopedError<ErrorKey extends string = string> = {
@@ -49,24 +52,24 @@ export type ServerSentStartEndEvents<Events extends { [event: string]: any }> =
   Events & ServerSentEndEvents<Events>;
 
 export const useSocketServices = <
-  SocketListenEvents extends (
+  ListenEvents extends (
     socket: Socket<
-      ReturnType<SocketListenEvents>,
+      ReturnType<ListenEvents>,
       EmitEvents,
       ServerSideEvents,
       SocketData
     >,
-  ) => EventsMap,
-  EmitEvents extends EventsMap = object,
-  ServerSideEvents extends EventsMap = object,
+  ) => AsyncEventsMap,
+  EmitEvents extends EventsMap = EventsMap,
+  ServerSideEvents extends EventsMap = EventsMap,
   SocketData extends object = object,
 >(
   endpoint: string,
   options: {
-    listenEvents: SocketListenEvents;
+    listenEvents: ListenEvents;
     middlewares: Parameters<
       Namespace<
-        ReturnType<SocketListenEvents>,
+        ReturnType<ListenEvents>,
         EmitEvents,
         ServerSideEvents,
         SocketData
@@ -85,9 +88,9 @@ export const useSocketServices = <
       if (options.listenEvents) {
         const socketEventImplementations = options.listenEvents(socket);
         for (const eventName in socketEventImplementations) {
-          socket.on(eventName, (...args: unknown[]) => {
+          socket.on(eventName, async (...args: unknown[]) => {
             const callback = args.pop() as Function;
-            const output = socketEventImplementations[eventName](...args);
+            const output = await socketEventImplementations[eventName](...args);
             callback(output);
           });
         }
@@ -95,7 +98,7 @@ export const useSocketServices = <
     });
   },
   client: {
-    emitEvents: {} as unknown as ReturnType<SocketListenEvents>,
+    emitEvents: {} as unknown as ReturnType<ListenEvents>,
     listenEventsInterfaces: {} as unknown as EmitEvents,
   },
 });

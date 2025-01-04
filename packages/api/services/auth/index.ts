@@ -107,7 +107,7 @@ const listenEvents = () => ({
       resolve({ error: "Something went wrong" });
     }),
 
-  getCsrf: () => "",
+  getCsrf: async () => "",
 
   signup: (input: {
     username: string;

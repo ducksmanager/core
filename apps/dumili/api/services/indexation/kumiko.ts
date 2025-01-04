@@ -126,7 +126,7 @@ export const runKumikoOnPages = async (
       storyKindSuggestion: {
         entry: {
           id: {
-            in: outdatedEntryIds.values().toArray(),
+            in: [...outdatedEntryIds.values()],
           },
         },
       },
@@ -139,7 +139,7 @@ export const runKumikoOnPages = async (
       storySuggestion: {
         entry: {
           id: {
-            in: outdatedEntryIds.values().toArray(),
+            in: [...outdatedEntryIds.values()],
           },
         },
       },
