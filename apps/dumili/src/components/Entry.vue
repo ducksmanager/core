@@ -3,7 +3,7 @@
     class="d-flex w-100 align-items-start pt-1 sticky-top"
     :class="{ 'opacity-50': !editable }"
     :style="
-      entry.entirepages > 0 && !editable
+      entry.entirepages > 0
         ? { height: `${entry.entirepages * 50}px` }
         : undefined
     "
@@ -17,6 +17,7 @@
       <template v-if="editable">
         <suggestion-list
           v-model="entry.acceptedStoryKind"
+          class="position-absolute"
           :suggestions="entry.storyKindSuggestions"
           :is-ai-source="({ ai }) => ai !== null"
           :item-class="(suggestion) => [`kind-${suggestion.kind}`]"
@@ -138,7 +139,6 @@ defineProps<{
 
 const { indexationSocket } = inject(dumiliSocketInjectionKey)!;
 const indexation = storeToRefs(suggestions()).indexation as Ref<FullIndexation>;
-const { loadIndexation } = suggestions();
 
 const { storyDetails } = storeToRefs(coa());
 
@@ -159,7 +159,6 @@ const deleteEntry = async (entryIdToExtend: "previous" | "next") => {
     entry.value.id,
     entryIdToExtend,
   );
-  await loadIndexation();
 };
 
 watch(
@@ -189,7 +188,6 @@ watchDebounced(
       brokenpagedenominator,
       title,
     });
-    await loadIndexation();
   },
   { debounce: 500, maxWait: 1000 },
 );

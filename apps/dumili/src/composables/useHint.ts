@@ -1,11 +1,9 @@
-import { suggestions } from "~/stores/suggestions";
 import type { ClientEvents as CoverIdServices } from "~dm-services/cover-id";
 import type { EventOutput } from "~socket.io-services/index";
 
 import { dumiliSocketInjectionKey } from "./useDumiliSocket";
 
 export default () => {
-  const { loadIndexation } = suggestions();
   const { fetchIssuecodeDetails, fetchPublicationNames } = coa();
   const { issuecodeDetails } = storeToRefs(coa());
 
@@ -26,8 +24,6 @@ export default () => {
         }),
       ),
     );
-
-    await loadIndexation();
 
     await fetchIssuecodeDetails(
       results.covers.map(({ issuecode }) => issuecode!),

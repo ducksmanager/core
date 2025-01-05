@@ -19,7 +19,7 @@
 	            "
     @click="currentPage = getFirstPageOfEntry(indexation!.entries, entry.id)"
   >
-    <Entry v-model="entry" :editable="currentEntry === entry" />
+    <Entry v-model="entry" :editable="currentEntry?.id === entry.id" />
   </vue-draggable-resizable>
 </template>
 

@@ -1,6 +1,7 @@
 <template>
   <suggestion-list
     v-model="entry.acceptedStory"
+    class="position-absolute top-0 d-flex flex-column align-items-center w-100"
     :suggestions="entry.storySuggestions"
     :is-ai-source="(suggestion) => suggestion.ocrDetails !== null"
     :show-customize-form="showEntrySelect"
@@ -67,7 +68,6 @@ const entry = defineModel<FullEntry>({
 });
 
 const { indexationSocket } = inject(dumiliSocketInjectionKey)!;
-const { loadIndexation } = suggestions();
 const { indexation } = storeToRefs(suggestions());
 
 const showEntrySelect = ref(false);
@@ -104,7 +104,6 @@ const acceptStory = async (storycode: storySuggestion["storycode"] | null) => {
       correspondingStoryKindId,
     );
   }
-  await loadIndexation(indexation.value!.id);
 };
 
 watch(

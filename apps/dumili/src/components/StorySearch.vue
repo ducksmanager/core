@@ -1,11 +1,11 @@
 <template>
-  <ul class="navbar-nav">
+  <ul class="navbar-nav mw-100 z-4">
     <b-form-input
       v-model="search"
       list="search"
       :placeholder="$t('Rechercher une histoire')"
     />
-    <datalist v-if="storyResults?.results && !isSearching">
+    <datalist v-if="storyResults?.results && !isSearching" class="mw-100">
       <option v-if="!storyResults.results.length">
         {{ $t("Aucun résultat.") }}
       </option>

@@ -79,7 +79,7 @@
         >
           <b-button
             class="create-entry fw-bold position-absolute mt-n1 d-flex justify-content-center align-items-center"
-            variant="info"
+            variant="success"
             @click="createEntry"
             >{{ $t("Ajouter une entrée") }}</b-button
           >
@@ -99,7 +99,6 @@ import TableOfContentsEntry from "./TableOfContentsEntry.vue";
 
 const { indexationSocket } = inject(dumiliSocketInjectionKey)!;
 
-const { loadIndexation } = suggestions();
 const { hoveredEntry, currentEntry } = storeToRefs(ui());
 const indexation = storeToRefs(suggestions()).indexation as Ref<FullIndexation>;
 const { currentPage, pageHeight } = storeToRefs(ui());
@@ -138,7 +137,6 @@ const onEntryResizeStop = (entryIdx: number, height: number) => {
 
 const createEntry = async () => {
   await indexationSocket.value!.services.createEntry();
-  return loadIndexation();
 };
 
 const updateIndexation = () => {
@@ -153,15 +151,11 @@ watch(
   currentPage,
   (value) => {
     if (indexation.value && value !== undefined) {
-      currentEntry.value = indexation.value.entries.find(
-        ({ id }) =>
-          id ===
-          getEntryFromPage(
-            indexation.value,
-            indexation.value.pages.find(
-              ({ pageNumber }) => pageNumber === value + 1,
-            )!.id,
-          )!.id,
+      currentEntry.value = getEntryFromPage(
+        indexation.value,
+        indexation.value.pages.find(
+          ({ pageNumber }) => pageNumber === value + 1,
+        )!.id,
       );
     }
   },

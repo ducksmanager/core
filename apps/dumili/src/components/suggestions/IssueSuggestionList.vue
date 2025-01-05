@@ -1,6 +1,7 @@
 <template>
   <suggestion-list
     v-model="indexation!.acceptedIssueSuggestion"
+    class="position-static"
     :suggestions="indexation!.issueSuggestions"
     :is-ai-source="(suggestion) => suggestion.ai !== null"
     :show-customize-form="showIssueSelect"

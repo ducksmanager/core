@@ -13,6 +13,10 @@
   >
     <router-view v-if="user" />
 
+    <h4 v-else-if="!dumiliSocket.indexationSocket.value">
+      {{ $t("Dumili n'est pas actif actuellement :-(") }}
+    </h4>
+
     <h4 v-else>
       {{ $t("Vous devez être connecté pour accéder à cette page.") }}
       <a :href="loginUrl">{{ $t("Connexion") }}</a>

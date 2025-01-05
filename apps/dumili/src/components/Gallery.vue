@@ -159,7 +159,6 @@ useSortable(imagesRef, pages, {
         pages[event.oldIndex].pageNumber,
         pages[event.newIndex].pageNumber,
       );
-      await loadIndexation();
     });
   },
 });
@@ -168,7 +167,6 @@ const selectedId = ref<number>();
 
 const disconnectPageUrl = async (id: number) => {
   await indexationSocket.value!.services.setPageUrl(id, null);
-  await loadIndexation();
 };
 
 watch(selectedId, (id) => {

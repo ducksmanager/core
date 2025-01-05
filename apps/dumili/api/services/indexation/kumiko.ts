@@ -6,7 +6,7 @@ import type { aiKumikoResultPanel, Prisma } from "~prisma/client_dumili";
 
 import { prisma } from "../../index";
 import type { IndexationSocket } from ".";
-import { type FullIndexation } from ".";
+import { refreshIndexation, type FullIndexation } from ".";
 
 type KumikoResult = {
   filename: string;
@@ -90,6 +90,9 @@ const runKumikoOnPage = async (
         id: page.image.id,
       },
     });
+
+    
+    await refreshIndexation(indexationSocket);
 
     indexationSocket.emit("setKumikoInferredPageStoryKindsEnd", page.id);
     return true;
