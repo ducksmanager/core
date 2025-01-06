@@ -3,7 +3,12 @@
     fluid
     class="d-flex flex-column align-items-center justify-content-center p-2 border-bottom"
   >
-    <router-link class="display-6" to="/">DuMILi</router-link>
+    <div class="d-flex flex-row align-items-center">
+      <router-link class="display-6" to="/">DuMILi</router-link>
+      <div v-if="!isSocketConnected" class="ms-2 text-danger">
+        {{ $t("(hors-ligne)") }}
+      </div>
+    </div>
     {{ $t("DUcksManager Inducks LIttle helper") }}
   </b-container>
 
@@ -65,6 +70,8 @@ const dumiliSocket = useDumiliSocket({
   session,
   onConnectError,
 });
+
+const isSocketConnected = computed(() => !!dumiliSocket.indexationSocket.value);
 
 getCurrentInstance()!.appContext.app.provide(
   dumiliSocketInjectionKey,

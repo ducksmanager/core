@@ -24,6 +24,11 @@
       <table-of-contents />
     </b-col>
   </b-row>
+  <h4 v-else-if="indexation === null">
+    {{
+      $t("Cette indexation n'existe pas ou appartient à un autre utilisateur.")
+    }}
+  </h4>
 </template>
 
 <script setup lang="ts">

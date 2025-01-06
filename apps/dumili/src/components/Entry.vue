@@ -22,11 +22,11 @@
           :is-ai-source="({ ai }) => ai !== null"
           :item-class="(suggestion) => [`kind-${suggestion.kind}`]"
         >
-          <template #default="{ suggestion, isDropdownItem }">
+          <template #default="{ suggestion, location }">
             {{ storyKinds[suggestion.kind] }}
             <span
               v-if="
-                !isDropdownItem &&
+                location === 'button' &&
                 getEntryPages(indexation, entry.id)[0].pageNumber === 1 &&
                 entry.acceptedStoryKind?.kind !== COVER
               "
@@ -39,7 +39,7 @@
             /></span>
             <span
               v-if="
-                !isDropdownItem &&
+                location === 'button' &&
                 getEntryPages(indexation, entry.id).length > 1 &&
                 entry.acceptedStoryKind?.kind === COVER
               "

@@ -31,7 +31,7 @@
             emit('toggle-customize-form', false);
           "
         >
-          <slot v-bind="{ suggestion, isDropdownItem: true }" />
+          <slot v-bind="{ suggestion, location: 'dropdown' }" />
           <AiSuggestionIcon v-if="isAiSource(suggestion)" status="success"
         /></b-dropdown-item>
       </b-dropdown-group>
@@ -50,7 +50,10 @@
       <template #button-content>
         <slot v-if="showCustomizeForm" name="customize-text" />
         <div v-else class="d-flex justify-content-between align-items-center">
-          <slot v-if="current" v-bind="{ suggestion: current }" />
+          <slot
+            v-if="current"
+            v-bind="{ suggestion: current, location: 'button' }"
+          />
           <slot v-else name="unknown-text" />
           <AiSuggestionIcon
             v-if="current && isAiSource(current)"
@@ -65,7 +68,7 @@
 const $slots = useSlots();
 
 defineSlots<{
-  default(data: { suggestion: S; isDropdownItem?: boolean }): never;
+  default(data: { suggestion: S; location: "button" | "dropdown" }): never;
   "customize-form"(): never;
   "customize-text"(): never;
   "unknown-text"(): never;

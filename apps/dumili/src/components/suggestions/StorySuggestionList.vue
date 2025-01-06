@@ -7,7 +7,7 @@
     :show-customize-form="showEntrySelect"
     @toggle-customize-form="showEntrySelect = $event"
   >
-    <template #default="{ suggestion }">
+    <template #default="{ suggestion, location }">
       <Story :storycode="suggestion.storycode">
         <template #suffix>
           <span
@@ -25,24 +25,58 @@
           >
             <i-bi-exclamation-triangle-fill
           /></span>
-          <span
+          <template
             v-if="
-                storyDetails[suggestion.storycode] &&
-                getEntryPages(indexation!, suggestion.entryId).length !=
-                storyversionDetails[storyDetails[suggestion.storycode].originalstoryversioncode!].entirepages
-              "
-            :title="
-              $t(
-                'Cette histoire fait généralement {originalPagesCount} pages mais l\'entrée de votre indexation en contient {entryPagesCount}',
-                {
-                  originalPagesCount: storyversionDetails[storyDetails[suggestion.storycode].originalstoryversioncode!].entirepages,
-                  entryPagesCount: getEntryPages(indexation!, suggestion.entryId).length,
-                },
-              )
+              storyDetails[suggestion.storycode] &&
+              getStorycodePageCount(suggestion.storycode) &&
+              getEntryPages(indexation, suggestion.entryId).length !==
+                getStorycodePageCount(suggestion.storycode)
             "
           >
+            <Teleport to="body">
+              <b-popover
+                lazy
+                :target="`page-mismatch-${suggestion.storycode}-${location}`"
+                interactive
+                ><div>
+                  {{
+                    $t(
+                      "Cette histoire fait généralement {originalPagesCount} pages mais l'entrée de votre indexation en contient {entryPagesCount}.",
+                      {
+                        originalPagesCount: getStorycodePageCount(
+                          suggestion.storycode,
+                        ),
+                        entryPagesCount: getEntryPages(
+                          indexation,
+                          suggestion.entryId,
+                        ).length,
+                      },
+                    )
+                  }}
+                </div>
+                <b-button
+                  v-if="location === 'button'"
+                  class="mt-2"
+                  variant="success"
+                  size="sm"
+                  @click="
+                    indexation.entries[entryIdx].entirepages =
+                      getStorycodePageCount(suggestion.storycode)
+                  "
+                  >{{
+                    $t("Étendre cette entrée à {originalPagesCount} pages", {
+                      originalPagesCount: getStorycodePageCount(
+                        suggestion.storycode,
+                      ),
+                    })
+                  }}</b-button
+                ></b-popover
+              >
+            </Teleport>
             <i-bi-exclamation-triangle-fill
-          /></span>
+              :id="`page-mismatch-${suggestion.storycode}-${location}`"
+              class="mx-1"
+          /></template>
         </template>
       </Story>
     </template>
@@ -56,7 +90,7 @@
 
 <script lang="ts" setup>
 import { dumiliSocketInjectionKey } from "~/composables/useDumiliSocket";
-import type { FullEntry } from "~dumili-services/indexation";
+import type { FullEntry, FullIndexation } from "~dumili-services/indexation";
 import { suggestions } from "~/stores/suggestions";
 import type { storySuggestion } from "~prisma/client_dumili";
 import { getEntryPages } from "~dumili-utils/entryPages";
@@ -68,10 +102,19 @@ const entry = defineModel<FullEntry>({
 });
 
 const { indexationSocket } = inject(dumiliSocketInjectionKey)!;
-const { indexation } = storeToRefs(suggestions());
+const indexation = storeToRefs(suggestions()).indexation as Ref<FullIndexation>;
 
 const showEntrySelect = ref(false);
 const { storyDetails, storyversionDetails } = storeToRefs(coa());
+
+const entryIdx = computed(() =>
+  indexation.value.entries.findIndex((e) => e.id === entry.value.id),
+);
+
+const getStorycodePageCount = (storycode: string) =>
+  storyversionDetails.value[
+    storyDetails.value[storycode].originalstoryversioncode!
+  ].entirepages!;
 
 const acceptStory = async (storycode: storySuggestion["storycode"] | null) => {
   let storySuggestion: Pick<storySuggestion, "id" | "storycode"> | undefined =

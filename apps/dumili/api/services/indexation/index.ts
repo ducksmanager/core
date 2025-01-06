@@ -99,7 +99,7 @@ export type IndexationServerSentStartEvents = {
 export type IndexationServerSentStartEndEvents =
   ServerSentStartEndEvents<IndexationServerSentStartEvents> & {
     indexationUpdated: (indexation: FullIndexation) => void;
-  }
+  };
 
 export type IndexationSocket = Socket<
   object,
@@ -109,10 +109,13 @@ export type IndexationSocket = Socket<
 >;
 
 let isAiRunning = false;
-export const getFullIndexation = (socket: IndexationSocket, indexationId: string) =>
+export const getFullIndexation = (
+  socket: IndexationSocket,
+  indexationId: string
+) =>
   prisma.indexation
     .findUnique({
-      where: { id: indexationId },
+      where: { id: indexationId, dmUserId: socket.data.user.id },
       include: indexationPayloadInclude,
     })
     .then((indexation) => {
@@ -139,17 +142,20 @@ export const getFullIndexation = (socket: IndexationSocket, indexationId: string
       return indexation;
     });
 
-export const refreshIndexation = async (socket: IndexationSocket, id = socket.data.indexation.id) => {
+export const refreshIndexation = async (
+  socket: IndexationSocket,
+  id = socket.data.indexation.id
+) => {
   socket.data.indexation = (await getFullIndexation(socket, id))!;
   socket.emit("indexationUpdated", socket.data.indexation);
-}
+};
 
 const createAiStorySuggestions = async (
   socket: IndexationSocket,
   indexation: FullIndexation
 ) => {
   for (const entry of indexation.entries) {
-    if (entry?.acceptedStoryKind?.kind === STORY) {
+    if (entry.acceptedStoryKind?.kind === STORY && !entry.storySuggestions.length) {
       const firstPageOfEntry = getEntryPages(indexation, entry.id)[0];
       const ocrResults = firstPageOfEntry.image?.aiOcrResult?.matches;
 
@@ -208,12 +214,6 @@ const createAiStorySuggestions = async (
           storySuggestion: {
             entryId: entry.id,
           },
-        },
-      });
-      await prisma.storySuggestion.deleteMany({
-        where: {
-          entryId: entry.id,
-          ai: {isNot: null},
         },
       });
       const newEntry = await prisma.entry.update({
@@ -386,9 +386,9 @@ const listenEvents = (socket: IndexationsSocket) => ({
         },
       })
       .then(async () => {
-      await refreshIndexation(socket);
-      return "OK" as const;
-    });
+        await refreshIndexation(socket);
+        return "OK" as const;
+      });
   },
 
   deleteIndexation: async () => {
@@ -517,11 +517,11 @@ const listenEvents = (socket: IndexationsSocket) => ({
         })
       )
       .then(async () => {
-      await refreshIndexation(socket);
-      return ({
-        status: "OK" as const
-      });
-    }),
+        await refreshIndexation(socket);
+        return {
+          status: "OK" as const,
+        };
+      }),
 
   acceptIssueSuggestion: async (suggestionId: issueSuggestion["id"] | null) => {
     if (
@@ -551,11 +551,11 @@ const listenEvents = (socket: IndexationsSocket) => ({
         },
       })
       .then(async () => {
-      await refreshIndexation(socket);
-      return ({
-        status: "OK"
+        await refreshIndexation(socket);
+        return {
+          status: "OK",
+        };
       });
-    });
   },
 
   createStorySuggestion: async (
@@ -593,11 +593,11 @@ const listenEvents = (socket: IndexationsSocket) => ({
         },
       })
       .then(async ({ id }) => {
-      await refreshIndexation(socket);
-      return ({
-        suggestionId: id
-      });
-    }),
+        await refreshIndexation(socket);
+        return {
+          suggestionId: id,
+        };
+      }),
 
   updateIndexation: async (
     indexation: Pick<indexation, "price"> & { numberOfPages: number }
@@ -646,11 +646,11 @@ const listenEvents = (socket: IndexationsSocket) => ({
         },
       })
       .then(async () => {
-      await refreshIndexation(socket);
-      return ({
-        status: "OK"
+        await refreshIndexation(socket);
+        return {
+          status: "OK",
+        };
       });
-    });
   },
 
   acceptStorySuggestion: async (
@@ -712,7 +712,6 @@ const listenEvents = (socket: IndexationsSocket) => ({
       },
     });
 
-    
     await refreshIndexation(socket);
 
     return { status: "OK" };
@@ -741,7 +740,7 @@ const listenEvents = (socket: IndexationsSocket) => ({
         id: entryId,
       },
     });
-    
+
     await refreshIndexation(socket);
 
     return { status: "OK" };
@@ -750,7 +749,7 @@ const listenEvents = (socket: IndexationsSocket) => ({
   createEntry: async () =>
     createEntry(socket.data.indexation.id).then(async () => {
       await refreshIndexation(socket);
-      return ({ status: "OK" });
+      return { status: "OK" };
     }),
 });
 
@@ -771,7 +770,7 @@ export const { client, server } = useSocketServices<
           next(new Error("No indexation ID provided"));
           return;
         }
-        
+
         await refreshIndexation(socket, indexationId);
         next();
       },
