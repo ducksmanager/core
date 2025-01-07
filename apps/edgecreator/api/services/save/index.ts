@@ -5,8 +5,8 @@ import type { Socket } from "socket.io";
 
 import { type ClientEvents as EdgeCreatorServices } from "~dm-services/edgecreator";
 import namespaces from "~dm-services/namespaces";
-import { SocketClient } from "~socket.io-client-services";
-import { useSocketServices } from "~socket.io-services/index";
+import { SocketClient } from "socket-call-client";
+import { useSocketServices } from "socket-call-client";
 import type { ExportPaths } from "~types/ExportPaths";
 import type { ModelContributor } from "~types/ModelContributor";
 

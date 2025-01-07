@@ -32,8 +32,8 @@
     "socket.io": "^4.8.1",
     "~api": "workspace:*",
     "~prisma-schemas": "workspace:*",
-    "~socket.io-client-services": "workspace:*",
-    "~socket.io-services": "workspace:*"
+    "socket-call-client": "^0.1.0",
+    "socket-call-server": "^0.1.0"
   },
   "devDependencies": {
     "@socket.io/admin-ui": "^0.5.1",

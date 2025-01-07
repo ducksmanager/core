@@ -13,10 +13,7 @@ import type {
   purchase,
   subscription,
 } from "~prisma-schemas/schemas/dm";
-import type {
-  EventOutput,
-  SuccessfulEventOutput,
-} from "~socket.io-services/index";
+import type { EventOutput, SuccessfulEventOutput } from "socket-call-server";
 
 import useCollection from "../composables/useCollection";
 import { socketInjectionKey } from "../composables/useDmSocket";

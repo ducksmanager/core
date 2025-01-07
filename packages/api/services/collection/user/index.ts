@@ -1,6 +1,6 @@
 import type { UserForAccountForm } from "~dm-types/UserForAccountForm";
 import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
-import type { Errorable } from "~socket.io-services";
+import type { Errorable } from "socket-call-server";
 
 import PresentationSentenceRequested from "../../../emails/presentation-sentence-requested";
 import type { UserSocket } from "../../../index";

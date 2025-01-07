@@ -1,4 +1,4 @@
-import { useSocketServices } from "~socket.io-services";
+import { useSocketServices } from "socket-call-server";
 
 import namespaces from "../namespaces";
 import authors from "./authors";

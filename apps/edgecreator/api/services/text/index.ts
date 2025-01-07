@@ -1,7 +1,7 @@
 import axios from "axios";
 import { v2 as cloudinary } from "cloudinary";
 
-import { useSocketServices } from "~socket.io-services/index";
+import { useSocketServices } from "socket-call-client";
 
 const sessionHashes: Record<string, string> = {};
 

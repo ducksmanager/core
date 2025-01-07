@@ -7,8 +7,8 @@ import { dirname } from "path";
 import type { ClientEvents as EdgeCreatorServices } from "~dm-services/edgecreator";
 import namespaces from "~dm-services/namespaces";
 import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa/client";
-import { SocketClient } from "~socket.io-client-services";
-import { useSocketServices } from "~socket.io-services/index";
+import { SocketClient } from "socket-call-client";
+import { useSocketServices } from "socket-call-client";
 
 import { getUserCredentials } from "../_auth";
 import { getNextAvailableFile } from "../_upload_utils";

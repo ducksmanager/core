@@ -33,9 +33,6 @@
       "~prisma-schemas/*": [
         "../prisma-schemas/*"
       ],
-      "~socket.io-services/*": [
-        "../socket.io-types/*"
-      ],
       "~translations/*": [
         "translations/*"
       ]

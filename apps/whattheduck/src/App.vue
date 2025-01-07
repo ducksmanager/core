@@ -17,14 +17,14 @@
 import { Capacitor } from '@capacitor/core';
 import { CapacitorUpdater } from '@capgo/capacitor-updater';
 import type { Storage as IonicStorage } from '@ionic/storage';
-import { buildStorage } from '~socket.io-client-services';
+import { buildStorage } from 'socket-call-client';
 
 import OfflineBanner from './components/OfflineBanner.vue';
 import { app } from './stores/app';
 import { collection } from '~web/src/stores/collection';
 import AppWithPersistedData from './views/AppWithPersistedData.vue';
 
-import { endpoint as collectionEndpoint } from '~dm-services/collection';
+import namespaces from '~dm-services/namespaces';
 
 const storage = injectLocal<IonicStorage>('storage')!;
 
@@ -83,7 +83,7 @@ const assignSocket = () => {
     },
     onConnectError: (e, namespace) => {
       if (
-        namespace === collectionEndpoint &&
+        namespace === namespaces.COLLECTION &&
         [/jwt expired/, /invalid signature/].some((regex) => regex.test(e.message))
       ) {
         session.clearSession();

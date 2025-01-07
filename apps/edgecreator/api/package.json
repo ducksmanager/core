@@ -30,8 +30,8 @@
     "~api": "workspace:*",
     "~dm-types": "workspace:*",
     "~prisma-schemas": "workspace:*",
-    "~socket.io-client-services": "workspace:*",
-    "~socket.io-services": "workspace:*"
+    "socket-call-client": "^0.1.0",
+    "socket-call-server": "^0.1.0"
   },
   "devDependencies": {
     "@types/express": "^4.17.21",

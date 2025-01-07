@@ -85,8 +85,6 @@ export default defineConfig({
       '~group-by': path.resolve(__dirname, '../../util/group-by'),
       '~prisma-schemas': path.resolve(__dirname, '../../packages/prisma-schemas'),
       '~web': path.resolve(__dirname, '../web'),
-      '~socket.io-services': path.resolve(__dirname, '../../packages/socket.io-services'),
-      '~socket.io-client-services': path.resolve(__dirname, '../../packages/socket.io-client-services'),
     },
   },
 });

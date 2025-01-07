@@ -2,7 +2,7 @@
   <div v-if="issue" :class="`d-${noWrap ? 'inline' : 'block'}`">
     <Publication
       :publicationcode="issue.publicationcode"
-      :publicationname="publicationName!"
+      :publicationname="publicationNames[issue.publicationcode]"
       display-class="d-inline"
     />{{ issue.issuenumber }}
     <slot name="title-suffix" />
@@ -21,10 +21,6 @@ const { issue } = defineProps<{
   };
   noWrap?: boolean;
 }>();
-
-const publicationName = computed(
-  () => issue && publicationNames.value[issue.publicationcode],
-);
 </script>
 
 <style scoped lang="scss">

@@ -14,11 +14,11 @@ import type {
   storyKindSuggestion,
   storySuggestion,
 } from "~prisma/client_dumili";
-import { SocketClient } from "~socket.io-client-services";
+import { SocketClient } from "socket-call-client";
 import {
   type ServerSentStartEndEvents,
   useSocketServices,
-} from "~socket.io-services";
+} from "socket-call-server";
 
 import type { SessionDataWithIndexation } from "../../index";
 import { prisma } from "../../index";

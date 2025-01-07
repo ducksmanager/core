@@ -1,7 +1,7 @@
 import { existsSync, readFileSync } from "fs";
 
-import type { Errorable } from "~socket.io-services";
-import { useSocketServices } from "~socket.io-services";
+import type { Errorable } from "socket-call-server";
+import { useSocketServices } from "socket-call-server";
 
 import namespaces from "../namespaces";
 

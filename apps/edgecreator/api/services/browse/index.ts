@@ -3,7 +3,7 @@ import { readdirSync, readFileSync } from "fs";
 import path from "path";
 
 import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa/client";
-import { useSocketServices } from "~socket.io-services";
+import { useSocketServices } from "socket-call-server";
 
 interface EdgeModelDetails {
   issuecode: string;

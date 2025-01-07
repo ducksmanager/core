@@ -4,7 +4,7 @@ import {
 } from "~dumili-services/indexation";
 import { type ClientEmitEvents as IndexationsEmitEvents } from "~dumili-services/indexations";
 import namespaces from "~dumili-services/namespaces";
-import type { SocketClient } from "~socket.io-client-services";
+import type { SocketClient } from "socket-call-client";
 
 const defaultExport = (options: {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -25,16 +25,16 @@ const defaultExport = (options: {
       { session },
     );
 
+  const indexationsSocket = ref(
+    socket.addNamespace<IndexationsEmitEvents>(namespaces.INDEXATIONS, {
+      session,
+    }),
+  );
   const indexationSocket = ref<ReturnType<typeof getIndexationSocketFromId>>();
 
   return {
     options,
-    indexations: socket.addNamespace<IndexationsEmitEvents>(
-      namespaces.INDEXATIONS,
-      {
-        session,
-      },
-    ),
+    indexationsSocket,
     indexationSocket,
     getIndexationSocketFromId,
     setIndexationSocketFromId: (id: string) => {

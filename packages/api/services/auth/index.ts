@@ -3,8 +3,8 @@ import jwt from "jsonwebtoken";
 
 import { prismaClient } from "~prisma-schemas/schemas/dm/client";
 import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
-import type { Errorable } from "~socket.io-services";
-import { useSocketServices } from "~socket.io-services";
+import type { Errorable } from "socket-call-server";
+import { useSocketServices } from "socket-call-server";
 
 import resetPassword from "../../emails/reset-password";
 import {

@@ -3,8 +3,8 @@ import https from "https";
 
 import type { SimilarImagesResult } from "~dm-types/CoverSearchResults";
 import { prismaClient as prismaCoverInfo } from "~prisma-schemas/schemas/cover_info/client";
-import type { EitherOr } from "~socket.io-services";
-import { useSocketServices } from "~socket.io-services";
+import type { EitherOr } from "socket-call-server";
+import { useSocketServices } from "socket-call-server";
 
 import { getCoverUrls } from "../coa/issue-details";
 import namespaces from "../namespaces";

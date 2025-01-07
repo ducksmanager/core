@@ -35,6 +35,7 @@
                   acceptedIssueSuggestion &&
                   publicationNames[acceptedIssueSuggestion?.publicationcode]
                 "
+                :issue="acceptedIssueSuggestion"
               />
               <Issue v-else />
             </div>
@@ -78,14 +79,13 @@
 
 <script setup lang="ts">
 import { dumiliSocketInjectionKey } from "~/composables/useDumiliSocket";
-import type { EventOutput } from "~socket.io-services/index";
+import type { EventOutput } from "socket-call-server";
 import type { ClientEmitEvents as IndexationsEvents } from "~dumili-services/indexations";
 
 const router = useRouter();
-const {
-  indexations: { services: indexationsServices },
-  getIndexationSocketFromId,
-} = inject(dumiliSocketInjectionKey)!;
+const { indexationsSocket, getIndexationSocketFromId } = inject(
+  dumiliSocketInjectionKey,
+)!;
 
 const { fetchPublicationNames } = coa();
 const { publicationNames } = storeToRefs(coa());
@@ -99,7 +99,10 @@ const totalPages = ref(16);
 const createIndexation = async () => {
   const cloudinaryFolderName = new Date().toISOString().replace(/[-:.Z]/g, "");
 
-  await indexationsServices.create(cloudinaryFolderName, totalPages.value);
+  await indexationsSocket.value.services.create(
+    cloudinaryFolderName,
+    totalPages.value,
+  );
   router.push(`/indexation/${cloudinaryFolderName}`);
 };
 
@@ -122,7 +125,8 @@ watch(currentIndexations, (indexations) => {
 });
 
 (async () => {
-  currentIndexations.value = await indexationsServices.getIndexations();
+  currentIndexations.value =
+    await indexationsSocket.value.services.getIndexations();
 })();
 </script>
 

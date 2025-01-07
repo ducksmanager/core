@@ -7,7 +7,7 @@ import type {
 } from "~prisma-schemas/schemas/dm";
 import { userContributionType } from "~prisma-schemas/schemas/dm";
 import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
-import { useSocketServices } from "~socket.io-services";
+import { useSocketServices } from "socket-call-server";
 
 import type { UserSocket } from "../../index";
 import { UserIsAdminMiddleware } from "../auth/util";

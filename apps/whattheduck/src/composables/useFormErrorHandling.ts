@@ -1,4 +1,4 @@
-import type { Errorable, ScopedError } from '~socket.io-services';
+import type { Errorable, ScopedError } from 'socket-call-server';
 
 export default (fields: string[]) => {
   const errorTexts = ref<Record<string, string>>({});

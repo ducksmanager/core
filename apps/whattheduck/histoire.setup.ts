@@ -19,7 +19,7 @@ import { defineSetupVue3 } from '@histoire/plugin-vue';
 import { IonicVue } from '@ionic/vue';
 import { createPinia } from 'pinia';
 
-import { SocketClient } from '~socket.io-client-services/index';
+import { SocketClient } from 'socket-call-client';
 import en from '~translations/en.json';
 import sv from '~translations/sv.json';
 import { i18n } from '~web';

@@ -36,12 +36,6 @@
       "~prisma-schemas/*": [
         "../../packages/prisma-schemas/*"
       ],
-      "~socket.io-client-services/*": [
-        "../../packages/socket.io-client-services/*"
-      ],
-      "~socket.io-services/*": [
-        "../../packages/socket.io-services/*"
-      ],
       "~types/*": [
         "types/*"
       ],

@@ -49,7 +49,7 @@
     "~edgecreator-api": "workspace:*",
     "~edges": "workspace:*",
     "~prisma-schemas": "workspace:*",
-    "~socket.io-client-services": "workspace:*",
+    "socket-call-client": "^0.1.0",
     "~web": "workspace:*"
   },
   "devDependencies": {

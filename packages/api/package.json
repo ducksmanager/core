@@ -32,7 +32,7 @@
     "socket.io": "^4.8.1",
     "~dm-types": "workspace:*",
     "~prisma-schemas": "workspace:*",
-    "~socket.io-services": "workspace:*"
+    "socket-call-server": "^0.1.0"
   },
   "devDependencies": {
     "@sentry/cli": "^2.39.1",

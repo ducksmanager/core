@@ -1,6 +1,6 @@
 import type { SessionUser } from "~dm-types/SessionUser";
 import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
-import { useSocketServices } from "~socket.io-services";
+import { useSocketServices } from "socket-call-server";
 
 import feedbackSent from "../../emails/feedback-sent";
 import type { UserSocket } from "../../index";

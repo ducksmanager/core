@@ -8,6 +8,14 @@
     @toggle-customize-form="showEntrySelect = $event"
   >
     <template #default="{ suggestion, location }">
+      <b-img
+        v-if="storyUrls[suggestion.storycode]"
+        style="height: 100px"
+        :src="
+          inducksCoverRoot.replace('f_auto', 'c_crop,h_0.5,x_0,w_1') +
+          storyUrls[suggestion.storycode]
+        "
+      />
       <Story :storycode="suggestion.storycode">
         <template #suffix>
           <span
@@ -103,9 +111,12 @@ const entry = defineModel<FullEntry>({
 
 const { indexationSocket } = inject(dumiliSocketInjectionKey)!;
 const indexation = storeToRefs(suggestions()).indexation as Ref<FullIndexation>;
+const { storyUrls } = storeToRefs(coa());
 
 const showEntrySelect = ref(false);
 const { storyDetails, storyversionDetails } = storeToRefs(coa());
+
+const inducksCoverRoot = import.meta.env.VITE_CLOUDINARY_COVERS_ROOT!;
 
 const entryIdx = computed(() =>
   indexation.value.entries.findIndex((e) => e.id === entry.value.id),

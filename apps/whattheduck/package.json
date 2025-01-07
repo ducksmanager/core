@@ -61,8 +61,8 @@
     "~dm-types": "workspace:*",
     "~group-by": "workspace:*",
     "~prisma-schemas": "workspace:*",
-    "~socket.io-client-services": "workspace:*",
-    "~socket.io-services": "workspace:*",
+    "socket-call-client": "^0.1.0",
+    "socket-call-server": "^0.1.0",
     "~web": "workspace:*"
   },
   "devDependencies": {

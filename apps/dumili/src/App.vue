@@ -18,7 +18,7 @@
   >
     <router-view v-if="user" />
 
-    <h4 v-else-if="!dumiliSocket.indexationSocket.value">
+    <h4 v-else-if="!isSocketConnected">
       {{ $t("Dumili n'est pas actif actuellement :-(") }}
     </h4>
 
@@ -40,7 +40,7 @@ import useDumiliSocket, {
   dumiliSocketInjectionKey,
 } from "./composables/useDumiliSocket";
 
-import { buildWebStorage } from "~socket.io-client-services/index";
+import { buildWebStorage } from "socket-call-client";
 
 const { t: $t } = useI18n();
 
@@ -71,7 +71,9 @@ const dumiliSocket = useDumiliSocket({
   onConnectError,
 });
 
-const isSocketConnected = computed(() => !!dumiliSocket.indexationSocket.value);
+const isSocketConnected = computed(
+  () => !!dumiliSocket.indexationsSocket.value,
+);
 
 getCurrentInstance()!.appContext.app.provide(
   dumiliSocketInjectionKey,
@@ -91,18 +93,11 @@ const loginUrl = computed(
   () => `${import.meta.env.VITE_DM_URL}/login?redirect=${document.URL}`,
 );
 
-// const { fetchCountryNames } = coa();
 const { isLoadingUser } = storeToRefs(collection());
 
 onBeforeMount(async () => {
-  user.value = await dumiliSocket.indexations.services.getUser();
+  user.value = await dumiliSocket.indexationsSocket.value.services.getUser();
 });
-
-// watch(user, (newValue) => {
-//   if (newValue) {
-//     getCurrentInstance()!.appContext.app.inject(dumiliSocketInjectionKey).
-//   }
-// });
 </script>
 <style lang="scss">
 @import "./style.scss";

@@ -5,7 +5,7 @@
 <script setup lang="ts">
 import Cookies from "js-cookie";
 
-import { buildWebStorage } from "~socket.io-client-services";
+import { buildWebStorage } from "socket-call-client";
 
 import { socketInjectionKey } from "./composables/useDmSocket";
 let isReady = $ref(false);

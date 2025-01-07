@@ -85,11 +85,11 @@ export default defineConfig({
       "~group-by": path.resolve(__dirname, "../../util/group-by"),
       "~prisma": path.resolve(__dirname, "api/prisma"),
       "~web": path.resolve(__dirname, "../web"),
-      "~socket.io-client-services": path.resolve(
+      "socket-call-client": path.resolve(
         __dirname,
         "../../packages/socket.io-client-services",
       ),
-      "~socket.io-services": path.resolve(
+      "socket-call-server": path.resolve(
         __dirname,
         "../../packages/socket.io-services",
       ),

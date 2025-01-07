@@ -24,7 +24,7 @@ import namespaces from "~dm-services/namespaces";
 import { type ClientEvents as PresentationTextEvents } from "~dm-services/presentation-text";
 import { type ClientEvents as PublicCollectionEvents } from "~dm-services/public-collection";
 import { type ClientEvents as StatsEvents } from "~dm-services/stats";
-import type { AxiosStorage, SocketClient } from "~socket.io-client-services";
+import type { AxiosStorage, SocketClient } from "socket-call-client";
 
 const defaultExport = (options: {
   cacheStorage: AxiosStorage;

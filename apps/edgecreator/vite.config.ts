@@ -20,11 +20,11 @@ export default defineConfig({
       "~dm-services": path.resolve(__dirname, "../../packages/api/services"),
       "~edgecreator-services": path.resolve(__dirname, "api/services"),
       "~dm-types": path.resolve(__dirname, "../../packages/types"),
-      "~socket.io-services": path.resolve(
+      "socket-call-server": path.resolve(
         __dirname,
         "../../packages/socket.io-services",
       ),
-      "~socket.io-client-services": path.resolve(
+      "socket-call-client": path.resolve(
         __dirname,
         "../../packages/socket.io-client-services",
       ),

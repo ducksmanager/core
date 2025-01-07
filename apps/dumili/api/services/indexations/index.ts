@@ -2,7 +2,7 @@ import type { Socket } from "socket.io";
 
 import { COVER } from "~dumili-types/storyKinds";
 import type { Prisma } from "~prisma/client_dumili";
-import { useSocketServices } from "~socket.io-services";
+import { useSocketServices } from "socket-call-server";
 
 import type { SessionData } from "../../index";
 import { prisma } from "../../index";
@@ -10,7 +10,7 @@ import { RequiredAuthMiddleware } from "../_auth";
 import { createEntry } from "../indexation";
 import namespaces from "../namespaces";
 
-export type IndexationsSocket = Socket<object, object, object, SessionData>;
+type IndexationsSocket = Socket<object, object, object, SessionData>;
 
 const listenEvents = (socket: IndexationsSocket) => ({
   getUser: async () => ({

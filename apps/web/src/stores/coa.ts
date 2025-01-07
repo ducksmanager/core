@@ -6,10 +6,7 @@ import type {
   inducks_story,
   inducks_storyversion,
 } from "~prisma-schemas/client_coa";
-import type {
-  EventOutput,
-  SuccessfulEventOutput,
-} from "~socket.io-services/index";
+import type { EventOutput, SuccessfulEventOutput } from "socket-call-server";
 
 import { socketInjectionKey } from "../composables/useDmSocket";
 
@@ -74,6 +71,9 @@ export const coa = defineStore("coa", () => {
       >["quotations"]
     >({}),
     storyDetails = ref<Record<string, inducks_story>>({}),
+    storyUrls = ref<
+      SuccessfulEventOutput<CoaClientEvents, "getStoryDetails">["storyUrls"]
+    >({}),
     storyversionDetails = ref<Record<string, inducks_storyversion>>({}),
     addPublicationNames = (
       newPublicationNames: typeof publicationNames.value,
@@ -214,6 +214,7 @@ export const coa = defineStore("coa", () => {
         const newStoryDetails = await services.getStoryDetails(newStorycodes);
         if (!("error" in newStoryDetails)) {
           Object.assign(storyDetails.value, newStoryDetails.stories);
+          Object.assign(storyUrls.value, newStoryDetails.storyUrls);
         }
       }
     },
@@ -311,6 +312,7 @@ export const coa = defineStore("coa", () => {
     setCoverUrl,
     setPersonNames,
     storyDetails,
+    storyUrls,
     storyversionDetails,
   };
 });

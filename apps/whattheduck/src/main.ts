@@ -28,7 +28,7 @@ import * as SentryVue from '@sentry/vue';
 import { createPinia } from 'pinia';
 import VueVirtualScroller from 'vue-virtual-scroller';
 
-import { SocketClient } from '~socket.io-client-services/index';
+import { SocketClient } from 'socket-call-client';
 import en from '~translations/en.json';
 import sv from '~translations/sv.json';
 import { i18n } from '~web';

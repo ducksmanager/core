@@ -1,5 +1,5 @@
 import type { SessionUser } from "~dm-types/SessionUser";
-import { useSocketServices } from "~socket.io-services";
+import { useSocketServices } from "socket-call-server";
 
 import type { UserSocket } from "../../index";
 import namespaces from "../namespaces";
