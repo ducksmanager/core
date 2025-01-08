@@ -18,7 +18,7 @@ export default () => {
     }
     await Promise.all(
       results.covers.map(({ issuecode }) =>
-        indexationSocket.value!.services.createIssueSuggestion({
+        indexationSocket.value!.events.createIssueSuggestion({
           ai: true,
           ...issuecodeDetails.value[issuecode]!,
         }),

@@ -7,7 +7,7 @@ import useHint from "./useHint";
 
 export default () => {
   const {
-    coverId: { services: coverIdServices },
+    coverId: { events: coverIdEvents },
   } = inject(dmSocketInjectionKey)!;
 
   const indexation = storeToRefs(suggestions())
@@ -28,7 +28,7 @@ export default () => {
         return;
       }
       nextTick(async () => {
-        coverIdServices.searchFromCover({ url }).then((results) => {
+        coverIdEvents.searchFromCover({ url }).then((results) => {
           if ("error" in results) {
             console.error(results.error);
           } else {

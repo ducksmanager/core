@@ -149,7 +149,7 @@ import type { ModelContributor } from "~types/ModelContributor";
 const i18n = useI18n();
 
 const {
-  upload: { services: uploadServices },
+  upload: { events: uploadEvents },
 } = inject(edgecreatorSocketInjectionKey)!;
 
 const { saveEdgeSvg } = useSaveEdge();
@@ -203,7 +203,7 @@ const addCrop = () => {
 const uploadAll = async () => {
   for (const crop of crops.value.filter(({ sent }) => !sent)) {
     crop.filename = (
-      await uploadServices.uploadFromBase64({
+      await uploadEvents.uploadFromBase64({
         issuecode: crop.issuecode,
         data: crop.url,
       })

@@ -32,9 +32,9 @@ export type purchaseWithStringDate = Omit<purchase, "date"> & {
 
 export const collection = defineStore("collection", () => {
   const {
-    collection: { services: collectionServices },
-    stats: { services: statsServices },
-    auth: { services: authServices },
+    collection: { events: collectionEvents },
+    stats: { events: statsEvents },
+    auth: { events: authEvents },
     options: socketOptions,
   } = inject(socketInjectionKey)!;
 
@@ -136,25 +136,25 @@ export const collection = defineStore("collection", () => {
       };
     }),
     updateCollectionSingleIssue = async (data: CollectionUpdateSingleIssue) => {
-      await collectionServices.addOrChangeCopies(data);
+      await collectionEvents.addOrChangeCopies(data);
       await loadCollection(true);
     },
     updateCollectionMultipleIssues = async (
       data: CollectionUpdateMultipleIssues,
     ) => {
-      await collectionServices.addOrChangeIssues(data);
+      await collectionEvents.addOrChangeIssues(data);
       await loadCollection(true);
     },
     createPurchase = async (date: string, description: string) => {
-      await collectionServices.createPurchase(date, description);
+      await collectionEvents.createPurchase(date, description);
       await loadPurchases(true);
     },
     deletePurchase = async (id: number) => {
-      await collectionServices.deletePurchase(id);
+      await collectionEvents.deletePurchase(id);
       await loadPurchases(true);
     },
     loadPreviousVisit = async () => {
-      const result = await collectionServices.getLastVisit();
+      const result = await collectionEvents.getLastVisit();
       if (typeof result === "object" && result?.error) {
         console.error(result.error);
       } else if (result) {
@@ -170,7 +170,7 @@ export const collection = defineStore("collection", () => {
           countByCountrycode: coaIssueCountsPerCountrycode.value,
           countByPublicationcode: coaIssueCountsByPublicationcode.value,
           publicationNames,
-        } = await collectionServices.getIssues());
+        } = await collectionEvents.getIssues());
         coa().addPublicationNames(publicationNames);
         Object.assign(
           coa().issuecodeDetails,
@@ -197,7 +197,7 @@ export const collection = defineStore("collection", () => {
     loadPurchases = async (afterUpdate = false) => {
       if (afterUpdate || (!isLoadingPurchases.value && !purchases.value)) {
         isLoadingPurchases.value = true;
-        purchases.value = (await collectionServices.getPurchases()).map(
+        purchases.value = (await collectionEvents.getPurchases()).map(
           (purchase) => ({
             ...purchase,
             date: new Date(purchase.date),
@@ -213,7 +213,7 @@ export const collection = defineStore("collection", () => {
           !watchedPublicationsWithSales.value)
       ) {
         isLoadingWatchedPublicationsWithSales.value = true;
-        watchedPublicationsWithSales.value = await collectionServices.getOption(
+        watchedPublicationsWithSales.value = await collectionEvents.getOption(
           "sales_notification_publications",
         );
         isLoadingWatchedPublicationsWithSales.value = false;
@@ -226,16 +226,16 @@ export const collection = defineStore("collection", () => {
           !marketplaceContactMethods.value)
       ) {
         isLoadingMarketplaceContactMethods.value = true;
-        marketplaceContactMethods.value = await collectionServices.getOption(
+        marketplaceContactMethods.value = await collectionEvents.getOption(
           "marketplace_contact_methods",
         );
         isLoadingMarketplaceContactMethods.value = false;
       }
     },
     updateMarketplaceContactMethods = async () =>
-      await collectionServices.getOption("marketplace_contact_methods"),
+      await collectionEvents.getOption("marketplace_contact_methods"),
     updateWatchedPublicationsWithSales = async () =>
-      await collectionServices.setOption(
+      await collectionEvents.setOption(
         "sales_notification_publications",
         watchedPublicationsWithSales.value!,
       ),
@@ -248,7 +248,7 @@ export const collection = defineStore("collection", () => {
     }) => {
       if (!isLoadingSuggestions.value) {
         isLoadingSuggestions.value = true;
-        suggestions.value = await statsServices.getSuggestionsForCountry(
+        suggestions.value = await statsEvents.getSuggestionsForCountry(
           countryCode || "ALL",
           sinceLastVisit ? "since_previous_visit" : "_",
           sinceLastVisit ? 100 : 20,
@@ -262,7 +262,7 @@ export const collection = defineStore("collection", () => {
         (!isLoadingSubscriptions.value && !subscriptions.value)
       ) {
         isLoadingSubscriptions.value = true;
-        subscriptions.value = (await collectionServices.getSubscriptions()).map(
+        subscriptions.value = (await collectionEvents.getSubscriptions()).map(
           (subscription: SubscriptionTransformedStringDates) => ({
             ...subscription,
             startDate: new Date(Date.parse(subscription.startDate)),
@@ -275,18 +275,18 @@ export const collection = defineStore("collection", () => {
     loadPopularIssuesInCollection = async () => {
       if (!popularIssuesInCollection.value) {
         popularIssuesInCollection.value =
-          await collectionServices.getCollectionPopularity();
+          await collectionEvents.getCollectionPopularity();
       }
     },
     loadUserIssueQuotations = async () => {
       coa().addIssueQuotations(
-        await collectionServices.getCollectionQuotations(),
+        await collectionEvents.getCollectionQuotations(),
       );
     },
     loadLastPublishedEdgesForCurrentUser = async () => {
       if (!lastPublishedEdgesForCurrentUser.value) {
         lastPublishedEdgesForCurrentUser.value =
-          await collectionServices.getLastPublishedEdges();
+          await collectionEvents.getLastPublishedEdges();
       }
     },
     login = async (
@@ -295,7 +295,7 @@ export const collection = defineStore("collection", () => {
       onSuccess: (token: string) => void,
       onError: (e: string) => void,
     ) => {
-      const response = await authServices.login({
+      const response = await authEvents.login({
         username,
         password,
       });
@@ -312,7 +312,7 @@ export const collection = defineStore("collection", () => {
       }
       if (!isLoadingUser.value && (afterUpdate || !user.value)) {
         isLoadingUser.value = true;
-        const response = await collectionServices.getUser();
+        const response = await collectionEvents.getUser();
         if (typeof response === "object" && "error" in response) {
           socketOptions.session.clearSession();
           user.value = null;
@@ -323,7 +323,7 @@ export const collection = defineStore("collection", () => {
       }
     },
     loadUserPermissions = async () => {
-      userPermissions.value = await collectionServices.getUserPermissions();
+      userPermissions.value = await collectionEvents.getUserPermissions();
     },
     hasRole = (thisPrivilege: string) =>
       userPermissions.value?.some(

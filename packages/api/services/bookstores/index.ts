@@ -7,7 +7,7 @@ import type {
 } from "~prisma-schemas/schemas/dm";
 import { userContributionType } from "~prisma-schemas/schemas/dm";
 import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
-import { useSocketServices } from "socket-call-server";
+import { useSocketEvents } from "socket-call-server";
 
 import type { UserSocket } from "../../index";
 import { UserIsAdminMiddleware } from "../auth/util";
@@ -102,7 +102,7 @@ const adminListenEvents = (socket: UserSocket) => ({
   },
 });
 
-export const { client: adminClient, server: adminServer } = useSocketServices<
+export const { client: adminClient, server: adminServer } = useSocketEvents<
   typeof adminListenEvents,
   Record<string, never>,
   Record<string, never>,
@@ -170,7 +170,7 @@ const listenEvents = (socket: UserSocket) => ({
 
 export type AdminClientEvents = (typeof adminClient)["emitEvents"];
 
-export const { client, server } = useSocketServices<
+export const { client, server } = useSocketEvents<
   typeof listenEvents,
   Record<string, never>,
   Record<string, never>,

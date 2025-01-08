@@ -27,15 +27,15 @@ import type { bookstoreComment } from "~prisma-schemas/schemas/dm";
 let bookstores = $shallowRef<SimpleBookstore[]>();
 
 const {
-  adminBookstore: { services: adminBookstoreServices },
+  adminBookstore: { events: adminBookstoreEvents },
 } = inject(socketInjectionKey)!;
 
 const validateBookstoreComment = async ({ id }: bookstoreComment) => {
-  await adminBookstoreServices.approveBookstoreComment(id);
+  await adminBookstoreEvents.approveBookstoreComment(id);
 };
 
 (async () => {
-  bookstores = await adminBookstoreServices.getBookstores();
+  bookstores = await adminBookstoreEvents.getBookstores();
 })();
 </script>
 

@@ -9,9 +9,9 @@ meta:
 
 <script setup lang="ts">
 const {
-  edgeCreator: { services: edgeCreatorServices },
+  edgeCreator: { events: edgeCreatorEvents },
 } = inject(socketInjectionKey)!;
 const generateSprites = async () => {
-  await edgeCreatorServices.uploadEdges();
+  await edgeCreatorEvents.uploadEdges();
 };
 </script>

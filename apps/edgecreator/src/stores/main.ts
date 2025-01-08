@@ -14,10 +14,10 @@ const numericSortCollator = new Intl.Collator(undefined, {
 });
 export const main = defineStore("main", () => {
   const {
-    browse: { services: browseServices },
+    browse: { events: browseEvents },
   } = inject(edgecreatorSocketInjectionKey)!;
   const {
-    edges: { services: edgesServices },
+    edges: { events: edgesEvents },
   } = inject(dmSocketInjectionKey)!;
 
   const publicationcode = ref<string>(),
@@ -122,7 +122,7 @@ export const main = defineStore("main", () => {
     },
     loadItems = async ({ itemType }: { itemType: "elements" | "photos" }) => {
       const items = (
-        await browseServices.listEdgeParts({
+        await browseEvents.listEdgeParts({
           imageType: itemType,
           country: country.value!,
           magazine: magazine.value!,
@@ -139,7 +139,7 @@ export const main = defineStore("main", () => {
         .coa()
         .fetchIssuecodesByPublicationcode([publicationcode.value!]),
     getEdgePublicationStates = async (issuecodes: string[]) =>
-      [...new Set(Object.values(await edgesServices.getEdges({ issuecodes })))]
+      [...new Set(Object.values(await edgesEvents.getEdges({ issuecodes })))]
         .sort((a, b) =>
           Math.sign(
             issuecodes.indexOf(a!.issuecode) - issuecodes.indexOf(b!.issuecode),

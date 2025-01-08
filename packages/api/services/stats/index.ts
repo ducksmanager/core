@@ -1,5 +1,5 @@
 import type { SessionUser } from "~dm-types/SessionUser";
-import { useSocketServices } from "socket-call-server";
+import { useSocketEvents } from "socket-call-server";
 
 import type { UserSocket } from "../../index";
 import namespaces from "../namespaces";
@@ -11,7 +11,7 @@ const listenEvents = (socket: UserSocket) => ({
   ...watchedAuthors(socket),
 });
 
-export const { client, server } = useSocketServices<
+export const { client, server } = useSocketEvents<
   typeof listenEvents,
   Record<string, never>,
   Record<string, never>,

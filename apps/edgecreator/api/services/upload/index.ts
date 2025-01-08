@@ -8,7 +8,7 @@ import type { ClientEvents as EdgeCreatorServices } from "~dm-services/edgecreat
 import namespaces from "~dm-services/namespaces";
 import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa/client";
 import { SocketClient } from "socket-call-client";
-import { useSocketServices } from "socket-call-client";
+import { useSocketEvents } from "socket-call-server";
 
 import { getUserCredentials } from "../_auth";
 import { getNextAvailableFile } from "../_upload_utils";
@@ -46,7 +46,7 @@ const listenEvents = () => ({
   },
 });
 
-export const { client, server } = useSocketServices<
+export const { client, server } = useSocketEvents<
   typeof listenEvents,
   Record<string, never>,
   Record<string, never>,

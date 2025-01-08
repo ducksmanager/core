@@ -36,7 +36,7 @@ import { socketInjectionKey as dmSocketInjectionKey } from "~web/src/composables
 
 const { t: $t } = useI18n();
 const {
-  coverId: { services: coverIdServices },
+  coverId: { events: coverIdEvents },
 } = inject(dmSocketInjectionKey)!;
 const { indexationSocket } = injectLocal(dumiliSocketInjectionKey)!;
 
@@ -62,7 +62,7 @@ watch(
       issueSuggestions.value = (
         await Promise.all(
           newValue.map((issueSuggestion) =>
-            coverIdServices.getCoverUrl(issueSuggestion.coverId),
+            coverIdEvents.getCoverUrl(issueSuggestion.coverId),
           ),
         )
       ).map((url, i) => ({
@@ -89,7 +89,7 @@ const acceptIssueSuggestion = async (issuecode: string) => {
     issuenumber,
     ai: true,
   });
-  await indexationSocket.value!.services.acceptIssueSuggestion(suggestionId);
+  await indexationSocket.value!.events.acceptIssueSuggestion(suggestionId);
   selectedExistingCoverIssuecode.value = undefined;
 };
 

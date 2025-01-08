@@ -173,7 +173,7 @@ import type { EdgeWithVersionAndStatus } from "~/stores/edgeCatalog";
 import { edgeCatalog } from "~/stores/edgeCatalog";
 
 const {
-  edges: { services: edgesServices },
+  edges: { events: edgesEvents },
 } = inject(dmSocketInjectionKey)!;
 
 import { stores as webStores } from "~web";
@@ -237,7 +237,7 @@ const mostPopularIssuesInCollectionWithoutEdge = computed(() =>
 );
 
 const loadMostWantedEdges = async () => {
-  mostWantedEdges.value = (await edgesServices.getWantedEdges())
+  mostWantedEdges.value = (await edgesEvents.getWantedEdges())
     .slice(0, 10)
     .map(
       ({

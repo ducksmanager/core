@@ -29,7 +29,7 @@ const { storyDetails } = storeToRefs(coa());
 const { indexation } = storeToRefs(suggestions());
 
 const {
-  coa: { services: coaServices },
+  coa: { events: coaEvents },
 } = inject(dmSocketInjectionKey)!;
 
 const textContentError = ref("");
@@ -52,9 +52,7 @@ const getStoriesWithDetails = async (stories: storySuggestion[]) =>
           story !== undefined && story.storycode !== null,
       )
       .map(async (story) => {
-        const storyjobsResult = await coaServices.getStoryjobs(
-          story!.storycode,
-        );
+        const storyjobsResult = await coaEvents.getStoryjobs(story!.storycode);
         const storyjobs =
           "error" in storyjobsResult ? [] : storyjobsResult.data;
         return {

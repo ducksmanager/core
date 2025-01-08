@@ -2,7 +2,7 @@ import type { Socket } from "socket.io";
 
 import { COVER } from "~dumili-types/storyKinds";
 import type { Prisma } from "~prisma/client_dumili";
-import { useSocketServices } from "socket-call-server";
+import { useSocketEvents } from "socket-call-server";
 
 import type { SessionData } from "../../index";
 import { prisma } from "../../index";
@@ -79,7 +79,7 @@ const listenEvents = (socket: IndexationsSocket) => ({
     }),
 });
 
-const { client, server } = useSocketServices<
+const { client, server } = useSocketEvents<
   typeof listenEvents,
   Record<string, never>,
   Record<string, never>,

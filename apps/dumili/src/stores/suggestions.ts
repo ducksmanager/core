@@ -11,16 +11,16 @@ export const suggestions = defineStore("suggestions", () => {
   const loadIndexation = async (indexationId?: string) => {
     setIndexationSocketFromId(indexationId || indexation.value!.id);
     indexationSocket.value!.connect();
-    indexationSocket.value!.on("indexationUpdated", (newIndexation) => {
+    indexationSocket.value!.on.indexationUpdated = (newIndexation) => {
       indexation.value = newIndexation;
-    });
+    };
   };
 
   const createIssueSuggestion = async (
     suggestion: Pick<issueSuggestion, "publicationcode" | "issuenumber"> & {
       ai: boolean;
     },
-  ) => indexationSocket.value!.services.createIssueSuggestion(suggestion);
+  ) => indexationSocket.value!.events.createIssueSuggestion(suggestion);
 
   const acceptedIssue = computed({
     get: () => indexation.value?.acceptedIssueSuggestion,

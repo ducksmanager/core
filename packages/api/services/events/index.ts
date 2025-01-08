@@ -20,7 +20,7 @@ import type {
 import type { MedalEvent } from "~dm-types/events/MedalEvent";
 import type { SignupEvent } from "~dm-types/events/SignupEvent";
 import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
-import { useSocketServices } from "socket-call-server";
+import { useSocketEvents } from "socket-call-server";
 
 import namespaces from "../namespaces";
 
@@ -36,7 +36,7 @@ const listenEvents = () => ({
     ]).then((data) => data.flat()),
 });
 
-export const { client, server } = useSocketServices<typeof listenEvents>(
+export const { client, server } = useSocketEvents<typeof listenEvents>(
   namespaces.EVENTS,
   {
     listenEvents,

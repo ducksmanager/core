@@ -2,7 +2,7 @@ import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa/client";
 import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
 import type { edgeModel } from "~prisma-schemas/schemas/edgecreator";
 import { prismaClient as prismaEdgeCreator } from "~prisma-schemas/schemas/edgecreator/client";
-import { useSocketServices } from "socket-call-server";
+import { useSocketEvents } from "socket-call-server";
 
 import namespaces from "../namespaces";
 
@@ -71,7 +71,7 @@ const listenEvents = () => ({
       .then((edges) => edges.groupBy("issuecode")),
 });
 
-export const { client, server } = useSocketServices<typeof listenEvents>(
+export const { client, server } = useSocketEvents<typeof listenEvents>(
   namespaces.EDGES,
   {
     listenEvents,

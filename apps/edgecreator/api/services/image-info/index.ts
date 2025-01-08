@@ -1,7 +1,7 @@
 import axios from "axios";
 import sizeOf from "image-size";
 
-import { useSocketServices } from "socket-call-client";
+import { useSocketEvents } from "socket-call-server";
 
 const listenEvents = () => ({
   getImageInfo: async (targetUrl: string) => {
@@ -35,7 +35,7 @@ const listenEvents = () => ({
   },
 });
 
-export const { client, server } = useSocketServices<typeof listenEvents>(
+export const { client, server } = useSocketEvents<typeof listenEvents>(
   "/image-info",
   {
     listenEvents,

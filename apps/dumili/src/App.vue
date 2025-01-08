@@ -96,7 +96,7 @@ const loginUrl = computed(
 const { isLoadingUser } = storeToRefs(collection());
 
 onBeforeMount(async () => {
-  user.value = await dumiliSocket.indexationsSocket.value.services.getUser();
+  user.value = await dumiliSocket.indexationsSocket.value.events.getUser();
 });
 </script>
 <style lang="scss">

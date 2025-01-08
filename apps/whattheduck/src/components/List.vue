@@ -121,11 +121,11 @@ const overlay = ref<HTMLElement>();
 const takePhotoButton = ref<{ $el: HTMLElement }>();
 
 const {
-  coverId: { services: coverIdServices },
+  coverId: { events: coverIdEvents },
 } = inject(dmSocketInjectionKey)!;
 
 const cameraPreviewElementId = 'camera-preview';
-const { takePhoto } = useCoverSearch(useRouter(), coverIdServices);
+const { takePhoto } = useCoverSearch(useRouter(), coverIdEvents);
 const { isCameraPreviewShown, filterText, selectedIssuecodes, currentNavigationItem } = storeToRefs(app());
 
 watch(isCameraPreviewShown, async () => {

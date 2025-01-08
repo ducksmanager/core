@@ -110,7 +110,7 @@ const signup = () => {
 const submitLogin = async () => {
   await submit(
     () =>
-      socket.value!.auth.services.login({
+      socket.value!.auth.events.login({
         username: username.value,
         password: password.value,
       }),

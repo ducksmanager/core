@@ -29,7 +29,7 @@ import { ui } from "~/stores/ui";
 import { coa } from "~web/src/stores/coa";
 
 const {
-  text: { services: textServices },
+  text: { events: textEvents },
 } = inject(edgecreatorSocketInjectionKey)!;
 
 const { resolveIssueNumberTemplate, resolveIssueNumberPartTemplate } =
@@ -204,7 +204,7 @@ const refreshPreview = async () => {
   textImageOptions.value = { ...props.options };
   const { fgColor, bgColor, internalWidth, font } = props.options;
 
-  const textData = await textServices.getText({
+  const textData = await textEvents.getText({
     color: fgColor.replace("#", ""),
     colorBackground: bgColor.replace("#", ""),
     width: Math.round(internalWidth * 100) / 100,

@@ -10,8 +10,8 @@ type SimpleUser = Pick<user, "id" | "username">;
 
 export const users = defineStore("users", () => {
   const {
-    events: { services: eventsServices },
-    globalStats: { services: globalStatsServices },
+    events: { events: eventsEvents },
+    globalStats: { events: globalStatsEvents },
   } = inject(socketInjectionKey)!;
   const count = ref<EventOutput<GlobalStatsServices, "getUserCount"> | null>(
       null,
@@ -33,12 +33,12 @@ export const users = defineStore("users", () => {
     allUsers = shallowRef<SimpleUser[]>(),
     fetchAllUsers = async () => {
       if (!allUsers.value) {
-        allUsers.value = await globalStatsServices.getUserList();
+        allUsers.value = await globalStatsEvents.getUserList();
       }
     },
     fetchCount = async () => {
       if (count.value === null) {
-        count.value = await globalStatsServices.getUserCount();
+        count.value = await globalStatsEvents.getUserCount();
       }
     },
     fetchStats = async (userIds: number[], force = false) => {
@@ -56,7 +56,7 @@ export const users = defineStore("users", () => {
       if (!missingUserIds.length) return;
 
       const data =
-        await globalStatsServices.getUsersPointsAndStats(missingUserIds);
+        await globalStatsEvents.getUsersPointsAndStats(missingUserIds);
       if (!("error" in data)) {
         points.value = {
           ...points.value,
@@ -71,11 +71,11 @@ export const users = defineStore("users", () => {
     fetchBookcaseContributors = async () => {
       if (!bookcaseContributors.value) {
         bookcaseContributors.value =
-          await globalStatsServices.getBookcaseContributors();
+          await globalStatsEvents.getBookcaseContributors();
       }
     },
     fetchEvents = async () => {
-      events.value = (await eventsServices.getEvents())
+      events.value = (await eventsEvents.getEvents())
         .sort(({ timestamp: timestamp1 }, { timestamp: timestamp2 }) =>
           Math.sign(timestamp2 - timestamp1),
         )

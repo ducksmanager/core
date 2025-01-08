@@ -155,7 +155,7 @@ useSortable(imagesRef, pages, {
     const event = e as unknown as { oldIndex: number; newIndex: number };
     moveArrayElement(pages, event.oldIndex, event.newIndex, e);
     nextTick(async () => {
-      await indexationSocket.value?.services.swapPageUrls(
+      await indexationSocket.value?.events.swapPageUrls(
         pages[event.oldIndex].pageNumber,
         pages[event.newIndex].pageNumber,
       );
@@ -166,7 +166,7 @@ useSortable(imagesRef, pages, {
 const selectedId = ref<number>();
 
 const disconnectPageUrl = async (id: number) => {
-  await indexationSocket.value!.services.setPageUrl(id, null);
+  await indexationSocket.value!.events.setPageUrl(id, null);
 };
 
 watch(selectedId, (id) => {

@@ -26,7 +26,7 @@ import type { SimpleStory } from "~dm-types/SimpleStory";
 import { socketInjectionKey as dmSocketInjectionKey } from "~web/src/composables/useDmSocket";
 
 const {
-  coa: { services: coaServices },
+  coa: { events: coaEvents },
 } = inject(dmSocketInjectionKey)!;
 
 const emit = defineEmits<{
@@ -48,7 +48,7 @@ const selectSearchResult = (searchResult: SimpleStory) => {
 const runSearch = async (value: string) => {
   isSearching.value = true;
   try {
-    storyResults.value = await coaServices.searchStory(value.split(" "), false);
+    storyResults.value = await coaEvents.searchStory(value.split(" "), false);
   } finally {
     isSearching.value = false;
     // The input value has changed since the beginning of the search, searching again

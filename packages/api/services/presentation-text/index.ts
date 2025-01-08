@@ -1,6 +1,6 @@
 import type { SessionUser } from "~dm-types/SessionUser";
 import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
-import { useSocketServices } from "socket-call-server";
+import { useSocketEvents } from "socket-call-server";
 
 import PresentationSentenceApproved from "../../emails/presentation-sentence-approved";
 import PresentationSentenceRefused from "../../emails/presentation-sentence-refused";
@@ -37,7 +37,7 @@ const listenEvents = () => ({
   },
 });
 
-export const { client, server } = useSocketServices<
+export const { client, server } = useSocketEvents<
   typeof listenEvents,
   Record<string, never>,
   Record<string, never>,

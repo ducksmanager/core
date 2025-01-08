@@ -7,7 +7,7 @@ import { socketInjectionKey } from "../composables/useDmSocket";
 
 export const publicCollection = defineStore("publicCollection", () => {
   const {
-    publicCollection: { services: publicCollectionServices },
+    publicCollection: { events: publicCollectionEvents },
   } = inject(socketInjectionKey)!;
 
   const issues = shallowRef<(issue & { issuecode: string })[]>(),
@@ -22,7 +22,7 @@ export const publicCollection = defineStore("publicCollection", () => {
     ),
     loadPublicCollection = async (username: string) => {
       publicUsername.value = username;
-      const data = await publicCollectionServices.getPublicCollection(username);
+      const data = await publicCollectionEvents.getPublicCollection(username);
       if (data.error) {
         console.error(data.error);
       }

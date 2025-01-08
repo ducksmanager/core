@@ -1,7 +1,7 @@
 import { existsSync, readFileSync } from "fs";
 
 import type { Errorable } from "socket-call-server";
-import { useSocketServices } from "socket-call-server";
+import { useSocketEvents } from "socket-call-server";
 
 import namespaces from "../namespaces";
 
@@ -46,7 +46,7 @@ const listenEvents = () => ({
   getBundleUrl: (appInfos: AppInfos) => getUpdateFileUrl(appInfos),
 });
 
-export const { client, server } = useSocketServices<typeof listenEvents>(
+export const { client, server } = useSocketEvents<typeof listenEvents>(
   namespaces.APP,
   {
     listenEvents,

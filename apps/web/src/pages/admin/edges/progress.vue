@@ -129,7 +129,7 @@ const bookcaseTextures = $ref({
 });
 
 const {
-  edges: { services: edgesServices },
+  edges: { events: edgesEvents },
 } = inject(socketInjectionKey)!;
 
 const { fetchPublicationNames, fetchIssuecodesByPublicationcode } = coa();
@@ -195,9 +195,9 @@ const sortedBookcase = computed(() =>
 );
 
 (async () => {
-  mostWanted = await edgesServices.getWantedEdges();
+  mostWanted = await edgesEvents.getWantedEdges();
 
-  publishedEdges = await edgesServices.getPublishedEdges();
+  publishedEdges = await edgesEvents.getPublishedEdges();
 
   await fetchPublicationNames([
     ...mostWanted.map((mostWantedIssue) => mostWantedIssue.publicationcode),

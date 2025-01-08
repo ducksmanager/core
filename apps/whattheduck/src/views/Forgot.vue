@@ -41,7 +41,7 @@
 import { socketInjectionKey as dmSocketInjectionKey } from '~web/src/composables/useDmSocket';
 
 const {
-  auth: { services: authServices },
+  auth: { events: authEvents },
 } = inject(dmSocketInjectionKey)!;
 
 const validInputs = ref<string[]>([]);
@@ -52,7 +52,7 @@ const email = ref('');
 const showConfirmation = ref(false);
 
 const submitForgot = async () => {
-  await authServices.requestTokenForForgotPassword(email.value);
+  await authEvents.requestTokenForForgotPassword(email.value);
   showConfirmation.value = true;
 };
 </script>

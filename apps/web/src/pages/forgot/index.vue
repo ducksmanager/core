@@ -54,11 +54,11 @@ let token = $ref("");
 const { t: $t } = useI18n();
 
 const {
-  auth: { services: authServices },
+  auth: { events: authEvents },
 } = inject(socketInjectionKey)!;
 
 const sendPasswordToken = async () => {
-  const response = await authServices.requestTokenForForgotPassword(email);
+  const response = await authEvents.requestTokenForForgotPassword(email);
   if ("error" in response) {
     error = response.error!;
   } else {

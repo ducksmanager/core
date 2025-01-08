@@ -3,7 +3,7 @@ import { readdirSync, readFileSync } from "fs";
 import path from "path";
 
 import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa/client";
-import { useSocketServices } from "socket-call-server";
+import { useSocketEvents } from "socket-call-server";
 
 interface EdgeModelDetails {
   issuecode: string;
@@ -134,7 +134,7 @@ const listenEvents = () => ({
   },
 });
 
-export const { client, server } = useSocketServices<typeof listenEvents>(
+export const { client, server } = useSocketEvents<typeof listenEvents>(
   "/browse",
   {
     listenEvents,

@@ -87,7 +87,7 @@ const { loadRatings } = stats();
 const { ratings } = storeToRefs(stats());
 
 const {
-  stats: { services: statsServices },
+  stats: { events: statsEvents },
 } = inject(socketInjectionKey)!;
 
 const unitTypes = {
@@ -103,10 +103,8 @@ let width = $ref<string>(),
   chartData = $ref<ChartData<"bar", number[]>>(),
   options = $ref<ChartOptions<"bar">>({});
 
-const labels = $computed(
-  () =>
-    watchedAuthorsStoryCount &&
-    watchedAuthorsStoryCount.map(({ fullname: fullName }) => fullName),
+const labels = $computed(() =>
+  watchedAuthorsStoryCount?.map(({ fullname: fullName }) => fullName),
 );
 
 const changeWidth = (value: number) => {
@@ -189,7 +187,7 @@ watch(
 
 (async () => {
   await loadRatings();
-  watchedAuthorsStoryCount = await statsServices.getWatchedAuthorsStats();
+  watchedAuthorsStoryCount = await statsEvents.getWatchedAuthorsStats();
 })();
 </script>
 

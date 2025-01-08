@@ -31,9 +31,7 @@ const { status, loadingEvents = [] } = defineProps<{
   topCenter?: boolean;
   loadingEvents?: {
     eventName: LoadingEventStart;
-    checkMatch: (
-      ...args: Parameters<IndexationServerSentStartEvents[LoadingEventStart]>
-    ) => boolean;
+    checkMatch: (id: number) => boolean;
   }[];
 }>();
 
@@ -51,21 +49,21 @@ watch(
   (socket) => {
     if (socket) {
       for (const loadingEvent of loadingEvents) {
-        indexationSocket.value!.on(loadingEvent.eventName, (...args) => {
-          if (loadingEvent.checkMatch(...args)) {
+        indexationSocket.value!.on[loadingEvent.eventName] = (id) => {
+          if (loadingEvent.checkMatch(id)) {
             isLoading.value = true;
           }
-        });
+        };
 
         const endEvent: `${LoadingEventStart}End` = `${loadingEvent.eventName}End`;
 
-        indexationSocket.value!.on(endEvent, (...args) => {
-          if (loadingEvent.checkMatch(...args)) {
+        indexationSocket.value!.on[endEvent] = (id) => {
+          if (loadingEvent.checkMatch(id)) {
             setTimeout(() => {
               isLoading.value = false;
             }, 1500);
           }
-        });
+        };
       }
     }
   },

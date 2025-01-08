@@ -29,11 +29,11 @@
     "dotenv": "^16.4.7",
     "jsonwebtoken": "^9.0.2",
     "sharp": "^0.33.5",
+    "socket-call-client": "^0.2.2",
+    "socket-call-server": "^0.2.2",
     "socket.io": "^4.8.1",
     "~api": "workspace:*",
-    "~prisma-schemas": "workspace:*",
-    "socket-call-client": "^0.1.0",
-    "socket-call-server": "^0.1.0"
+    "~prisma-schemas": "workspace:*"
   },
   "devDependencies": {
     "@socket.io/admin-ui": "^0.5.1",

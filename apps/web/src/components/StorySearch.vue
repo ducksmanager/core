@@ -107,7 +107,7 @@ const emit = defineEmits<{
 const { conditions } = useCondition();
 
 const {
-  coa: { services: coaServices },
+  coa: { events: coaEvents },
 } = inject(socketInjectionKey)!;
 
 const { findInCollection } = isPublic ? publicCollection() : collection();
@@ -178,7 +178,7 @@ const runSearch = async (value: string) => {
   isSearching = true;
   try {
     if (isSearchByCode) {
-      const data = await coaServices.getIssuesByStorycode(
+      const data = await coaEvents.getIssuesByStorycode(
         value.replace(/^code=/, ""),
       );
       issueResults = {
@@ -197,7 +197,7 @@ const runSearch = async (value: string) => {
         ),
       );
     } else {
-      const data = await coaServices.searchStory(value.split(","), true);
+      const data = await coaEvents.searchStory(value.split(","), true);
       storyResults = {
         hasMore: data.hasMore,
         results: data.results.map((story) => ({

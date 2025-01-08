@@ -4,7 +4,7 @@ import https from "https";
 import type { SimilarImagesResult } from "~dm-types/CoverSearchResults";
 import { prismaClient as prismaCoverInfo } from "~prisma-schemas/schemas/cover_info/client";
 import type { EitherOr } from "socket-call-server";
-import { useSocketServices } from "socket-call-server";
+import { useSocketEvents } from "socket-call-server";
 
 import { getCoverUrls } from "../coa/issue-details";
 import namespaces from "../namespaces";
@@ -109,7 +109,7 @@ const listenEvents = () => ({
     }),
 });
 
-export const { client, server } = useSocketServices<typeof listenEvents>(
+export const { client, server } = useSocketEvents<typeof listenEvents>(
   namespaces.COVER_ID,
   {
     listenEvents,

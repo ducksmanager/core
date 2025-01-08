@@ -4,7 +4,7 @@ import { edgecreatorSocketInjectionKey } from "./useEdgecreatorSocket";
 
 export default () => {
   const {
-    save: { services: saveServices },
+    save: { events: saveEvents },
   } = inject(edgecreatorSocketInjectionKey)!;
 
   const removeVueMarkup = (element: HTMLElement) => {

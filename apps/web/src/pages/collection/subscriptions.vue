@@ -99,7 +99,7 @@ const { loadSubscriptions } = collection();
 const { subscriptions } = storeToRefs(collection());
 
 const {
-  collection: { services: collectionServices },
+  collection: { events: collectionEvents },
 } = inject(socketInjectionKey)!;
 
 const newSubscription = $ref({
@@ -128,7 +128,7 @@ const toSubscriptionWithStringDates = (
 });
 
 const createSubscription = async (subscription: subscription) => {
-  await collectionServices.createSubscription(
+  await collectionEvents.createSubscription(
     toSubscriptionWithStringDates(subscription),
   );
   await loadSubscriptions(true);
@@ -148,7 +148,7 @@ const createSubscriptionLike = async (
 };
 
 const editSubscription = async (subscription: subscription) => {
-  await collectionServices.updateSubscription(
+  await collectionEvents.updateSubscription(
     subscription.id,
     toSubscriptionWithStringDates(subscription),
   );
@@ -156,7 +156,7 @@ const editSubscription = async (subscription: subscription) => {
   currentSubscription = undefined;
 };
 const deleteSubscription = async (id: number) => {
-  await collectionServices.deleteSubscription(id);
+  await collectionEvents.deleteSubscription(id);
   await loadSubscriptions(true);
   currentSubscription = undefined;
 };

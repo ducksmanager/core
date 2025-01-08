@@ -1,7 +1,7 @@
 import axios from "axios";
 import { v2 as cloudinary } from "cloudinary";
 
-import { useSocketServices } from "socket-call-client";
+import { useSocketEvents } from "socket-call-server";
 
 const sessionHashes: Record<string, string> = {};
 
@@ -127,7 +127,7 @@ const listenEvents = () => ({
     }),
 });
 
-export const { client, server } = useSocketServices<
+export const { client, server } = useSocketEvents<
   typeof listenEvents,
   Record<string, never>,
   Record<string, never>,

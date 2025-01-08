@@ -7,8 +7,8 @@ import { socketInjectionKey } from "../composables/useDmSocket";
 
 export const stats = defineStore("stats", () => {
   const {
-    coa: { services: coaServices },
-    collection: { services: collectionServices },
+    coa: { events: coaEvents },
+    collection: { events: collectionEvents },
   } = inject(socketInjectionKey)!;
 
   const ratings =
@@ -27,7 +27,7 @@ export const stats = defineStore("stats", () => {
   const loadRatings = async (afterUpdate = false) => {
     if (afterUpdate || (!isLoadingWatchedAuthors.value && !ratings.value)) {
       isLoadingWatchedAuthors.value = true;
-      ratings.value = await collectionServices.getWatchedAuthors();
+      ratings.value = await collectionEvents.getWatchedAuthors();
       isLoadingWatchedAuthors.value = false;
     }
   };
@@ -37,7 +37,7 @@ export const stats = defineStore("stats", () => {
     if (!isSearching.value) {
       try {
         isSearching.value = true;
-        authorSearchResults.value = await coaServices.searchAuthor(value);
+        authorSearchResults.value = await coaEvents.searchAuthor(value);
       } finally {
         isSearching.value = false;
         // The input value has changed since the beginning of the search, searching again
@@ -48,14 +48,14 @@ export const stats = defineStore("stats", () => {
   };
 
   const createRating = async (personcode: string) => {
-    await collectionServices.addWatchedAuthor(personcode);
+    await collectionEvents.addWatchedAuthor(personcode);
     await loadRatings(true);
   };
   const updateRating = async (data: authorUser) => {
-    await collectionServices.updateWatchedAuthor(data);
+    await collectionEvents.updateWatchedAuthor(data);
   };
   const deleteAuthor = async (personcode: string) => {
-    await collectionServices.deleteWatchedAuthor(personcode);
+    await collectionEvents.deleteWatchedAuthor(personcode);
     await loadRatings(true);
   };
 

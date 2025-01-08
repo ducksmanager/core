@@ -20,8 +20,8 @@ export type EdgeWithVersionAndStatus = Edge & {
 
 export const edgeCatalog = defineStore("edgeCatalog", () => {
   const {
-    edgeCreator: { services: edgeCreatorServices },
-    edges: { services: edgesServices },
+    edgeCreator: { events: edgeCreatorEvents },
+    edges: { events: edgesEvents },
   } = inject(dmSocketInjectionKey)!;
 
   const edgeCategories = [
@@ -44,14 +44,14 @@ export const edgeCatalog = defineStore("edgeCatalog", () => {
   ];
 
   const {
-    browse: { services: browseServices },
+    browse: { events: browseEvents },
   } = inject(edgecreatorSocketInjectionKey)!;
   const isCatalogLoaded = ref(false),
     currentEdges = ref<Record<string, EdgeWithVersionAndStatus>>({}),
     publishedEdges = ref<Record<string, { v3: boolean }>>({}),
     publishedEdgesSteps = ref<ModelSteps>({}),
     fetchPublishedEdges = async (publicationcode: string) => {
-      const edges = await edgesServices.getEdges({ publicationcode });
+      const edges = await edgesEvents.getEdges({ publicationcode });
       if (!("error" in edges)) {
         addPublishedEdges(edges);
       }
@@ -80,7 +80,7 @@ export const edgeCatalog = defineStore("edgeCatalog", () => {
       }
 
       addPublishedEdgesSteps(
-        await edgeCreatorServices.getModelsSteps(
+        await edgeCreatorEvents.getModelsSteps(
           edgeModelIds.map((modelId) => modelId),
         ),
       );
@@ -120,7 +120,7 @@ export const edgeCatalog = defineStore("edgeCatalog", () => {
       const newCurrentEdges: typeof currentEdges.value = {};
       const publishedSvgEdges: typeof publishedEdges.value = {};
 
-      const models = await browseServices.listEdgeModels();
+      const models = await browseEvents.listEdgeModels();
       if ("error" in models) {
         console.error(
           "Error while loading edge catalog",

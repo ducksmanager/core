@@ -177,7 +177,7 @@ import type { SimpleBookstore } from "~dm-types/SimpleBookstore";
 import { socketInjectionKey } from "../composables/useDmSocket";
 
 const {
-  bookstore: { services: bookstoreServices },
+  bookstore: { events: bookstoreEvents },
 } = inject(socketInjectionKey)!;
 
 const { fetchStats } = users();
@@ -225,7 +225,7 @@ const decodeText = (value: string) => {
   }
 };
 const fetchBookstores = async () => {
-  bookstores = (await bookstoreServices.getActiveBookstores())
+  bookstores = (await bookstoreEvents.getActiveBookstores())
     .map((bookstore) => {
       bookstore.name = decodeText(bookstore.name);
       bookstore.address = decodeText(bookstore.address);
@@ -245,7 +245,7 @@ const suggestComment = async (bookstore: SimpleBookstore) => {
     );
     return false;
   }
-  await bookstoreServices.createBookstoreComment(bookstore);
+  await bookstoreEvents.createBookstoreComment(bookstore);
   if (bookstore.id) {
     existingBookstoreSent = true;
     existingBookstore = undefined;

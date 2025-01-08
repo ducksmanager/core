@@ -8,7 +8,7 @@ import type { Decision } from "~dm-services/presentation-text";
 let router = useRouter();
 
 const {
-  presentationText: { services: presentationTextServices },
+  presentationText: { events: presentationTextEvents },
 } = inject(socketInjectionKey)!;
 
 (async () => {
@@ -17,7 +17,7 @@ const {
     sentence: string;
     userId: string;
   };
-  await presentationTextServices.approveOrDenyPresentationText(
+  await presentationTextEvents.approveOrDenyPresentationText(
     sentence,
     parseInt(userId),
     currentRoute.params.decision as Decision,

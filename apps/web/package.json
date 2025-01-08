@@ -34,6 +34,8 @@
     "js-cookie": "^3.0.5",
     "page-flip": "^2.0.7",
     "pinia": "^2.3.0",
+    "socket-call-client": "^0.2.2",
+    "socket-call-server": "^0.2.2",
     "timeago.js": "^4.0.2",
     "v-contextmenu": "^3.2.0",
     "vue": "^3.5.13",
@@ -45,9 +47,7 @@
     "~api": "workspace:*",
     "~edges": "workspace:*",
     "~group-by": "workspace:*",
-    "~prisma-schemas": "workspace:*",
-    "socket-call-client": "^0.1.0",
-    "socket-call-server": "^0.1.0"
+    "~prisma-schemas": "workspace:*"
   },
   "devDependencies": {
     "@antfu/eslint-config": "^3.12.1",

@@ -19,8 +19,8 @@ export const bookcase = defineStore("bookcase", () => {
   const route = useRoute();
 
   const {
-    bookcase: { services: bookcaseServices },
-    userBookcase: { services: userBookcaseServices },
+    bookcase: { events: bookcaseEvents },
+    userBookcase: { events: userBookcaseEvents },
   } = inject(socketInjectionKey)!;
 
   const loadedSprites = ref<{ [key: string]: string }>({}),
@@ -61,7 +61,7 @@ export const bookcase = defineStore("bookcase", () => {
     },
     loadBookcase = async () => {
       if (!bookcase.value) {
-        const response = await bookcaseServices.getBookcase(
+        const response = await bookcaseEvents.getBookcase(
           collection().user!.username,
         );
         if ("error" in response) {
@@ -80,7 +80,7 @@ export const bookcase = defineStore("bookcase", () => {
     },
     loadBookcaseOptions = async () => {
       if (!bookcaseOptions.value) {
-        const response = await bookcaseServices.getBookcaseOptions(
+        const response = await bookcaseEvents.getBookcaseOptions(
           bookcaseUsername.value!,
         );
         if ("error" in response) {
@@ -91,11 +91,11 @@ export const bookcase = defineStore("bookcase", () => {
       }
     },
     updateBookcaseOptions = async () => {
-      await userBookcaseServices.setBookcaseOptions(bookcaseOptions.value!);
+      await userBookcaseEvents.setBookcaseOptions(bookcaseOptions.value!);
     },
     loadBookcaseOrder = async () => {
       if (!bookcaseOrder.value) {
-        const response = await bookcaseServices.getBookcaseOrder(
+        const response = await bookcaseEvents.getBookcaseOrder(
           bookcaseUsername.value!,
         );
         if ("error" in response) {
@@ -107,7 +107,7 @@ export const bookcase = defineStore("bookcase", () => {
     },
     updateBookcaseOrder = async () => {
       // TODO implement
-      // await userBookcaseServices.setBookcaseOrder(bookcaseOrder.value!);
+      // await userBookcaseEvents.setBookcaseOrder(bookcaseOrder.value!);
     };
 
   return {

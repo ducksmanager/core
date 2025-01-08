@@ -292,7 +292,7 @@ let issuesImportable = $shallowRef<string[]>();
 let importProgress = $ref(0);
 
 const {
-  collection: { services: collectionServices },
+  collection: { events: collectionEvents },
 } = inject(socketInjectionKey)!;
 
 const { t: $t } = useI18n();
@@ -350,7 +350,7 @@ const importIssues = async () => {
   );
   for (const publicationcode in importableIssuesByPublicationCode) {
     if (importableIssuesByPublicationCode.hasOwnProperty(publicationcode)) {
-      await collectionServices.addOrChangeIssues({
+      await collectionEvents.addOrChangeIssues({
         issuecodes: importableIssuesByPublicationCode[publicationcode].map(
           ({ issuecode }) => issuecode,
         ),

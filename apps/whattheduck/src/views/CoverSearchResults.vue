@@ -93,10 +93,10 @@ const setWidth = (event: Event) => {
 };
 
 const {
-  coverId: { services: coverIdServices },
+  coverId: { events: coverIdEvents },
 } = inject(dmSocketInjectionKey)!;
 
-const { pickCoverFile, takePhoto } = useCoverSearch(useRouter(), coverIdServices);
+const { pickCoverFile, takePhoto } = useCoverSearch(useRouter(), coverIdEvents);
 
 const route = useRoute();
 

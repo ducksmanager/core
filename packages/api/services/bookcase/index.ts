@@ -3,7 +3,7 @@ import type { SessionUser } from "~dm-types/SessionUser";
 import type { user } from "~prisma-schemas/client_dm";
 import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
 import type { Errorable } from "socket-call-server";
-import { useSocketServices } from "socket-call-server";
+import { useSocketEvents } from "socket-call-server";
 
 import type { UserSocket } from "../../index";
 import { RequiredAuthMiddleware } from "../auth/util";
@@ -169,7 +169,7 @@ const listenEvents = (socket: UserSocket<true>) => ({
   },
 });
 
-export const { client, server } = useSocketServices<
+export const { client, server } = useSocketEvents<
   typeof listenEvents,
   Record<string, never>,
   Record<string, never>,
@@ -185,7 +185,7 @@ const authedListenEvents = (socket: UserSocket) => ({
   ...options(socket),
 });
 
-export const { client: authedClient, server: authedServer } = useSocketServices<
+export const { client: authedClient, server: authedServer } = useSocketEvents<
   typeof authedListenEvents,
   Record<string, never>,
   Record<string, never>,

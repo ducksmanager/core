@@ -73,7 +73,7 @@ import { app } from '~/stores/app';
 import { wtdcollection } from '~/stores/wtdcollection';
 
 const {
-  coa: { services: coaServices },
+  coa: { events: coaEvents },
 } = inject(dmSocketInjectionKey)!;
 
 const { issuesByIssuecode: collectionIssuesByIssuecode } = storeToRefs(wtdcollection());
@@ -108,7 +108,7 @@ watchDebounced(
       return;
     }
     selectedStory.value = undefined;
-    const { results: data }: StorySearchResults<true> = await coaServices.searchStory([newValue], true);
+    const { results: data }: StorySearchResults<true> = await coaEvents.searchStory([newValue], true);
 
     const issuecodes = data
       .map((story) => story.issues)

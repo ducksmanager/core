@@ -3,10 +3,10 @@ import { mkdirSync, unlinkSync, writeFileSync } from "fs";
 import path from "path";
 import type { Socket } from "socket.io";
 
-import { type ClientEvents as EdgeCreatorServices } from "~dm-services/edgecreator";
+import { type ClientEvents as EdgeCreatorEvents } from "~dm-services/edgecreator";
 import namespaces from "~dm-services/namespaces";
 import { SocketClient } from "socket-call-client";
-import { useSocketServices } from "socket-call-client";
+import { useSocketEvents } from "socket-call-server";
 import type { ExportPaths } from "~types/ExportPaths";
 import type { ModelContributor } from "~types/ModelContributor";
 
@@ -17,7 +17,7 @@ type TokenSocket = Socket<object, object, object, { token: string }>;
 const getEdgeCreatorServices = (token: string) => {
   const dmSocket = new SocketClient(process.env.DM_SOCKET_URL!);
   dmSocket.onConnectError = (e) => console.error(e);
-  return dmSocket.addNamespace<EdgeCreatorServices>(namespaces.EDGECREATOR, {
+  return dmSocket.addNamespace<EdgeCreatorEvents>(namespaces.EDGECREATOR, {
     session: {
       getToken: async () => token,
       sessionExists: () => Promise.resolve(!!token),
@@ -25,7 +25,7 @@ const getEdgeCreatorServices = (token: string) => {
         console.log("not allowed");
       },
     },
-  }).services;
+  }).events;
 };
 
 const listenEvents = (socket: TokenSocket) => ({
@@ -95,7 +95,7 @@ const listenEvents = (socket: TokenSocket) => ({
   },
 });
 
-export const { client, server } = useSocketServices<
+export const { client, server } = useSocketEvents<
   typeof listenEvents,
   Record<string, never>,
   Record<string, never>,

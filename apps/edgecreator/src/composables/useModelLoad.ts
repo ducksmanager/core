@@ -21,7 +21,7 @@ export default () => {
   const userStore = webStores.users();
   const edgeCatalogStore = edgeCatalog();
   const {
-    edgeCreator: { services: edgeCreatorServices },
+    edgeCreator: { events: edgeCreatorEvents },
   } = inject(dmSocketInjectionKey)!;
 
   const loadDimensionsFromSvg = (issuecode: string, svgElement: SVGElement) => {
@@ -182,7 +182,7 @@ export default () => {
     return steps;
   };
   const setContributorsFromApi = async (issuecode: string, edgeId: number) => {
-    const contributors = await edgeCreatorServices.getModelContributors(edgeId);
+    const contributors = await edgeCreatorEvents.getModelContributors(edgeId);
     for (const { contribution, userId } of contributors) {
       mainStore.addContributor({
         issuecode,
@@ -216,7 +216,7 @@ export default () => {
       try {
         await loadSvg(true);
       } catch (_e) {
-        const edge = (await edgeCreatorServices.getModel(issuecode))!;
+        const edge = (await edgeCreatorEvents.getModel(issuecode))!;
         await edgeCatalogStore.loadPublishedEdgesSteps({
           edgeModelIds: [edge.id],
         });
@@ -238,7 +238,7 @@ export default () => {
   };
 
   const setPhotoUrlsFromApi = async (issuecode: string, edgeId: number) => {
-    const photo = await edgeCreatorServices.getModelMainPhoto(edgeId);
+    const photo = await edgeCreatorEvents.getModelMainPhoto(edgeId);
     mainStore.photoUrls[issuecode] = photo.fileName;
   };
 

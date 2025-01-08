@@ -21,7 +21,7 @@ const rgbToHex = (color: string) => {
 
 export default () => {
   const {
-    imageInfo: { services: imageInfoServices },
+    imageInfo: { events: imageInfoEvents },
   } = inject(edgecreatorSocketInjectionKey)!;
 
   const getImageSize = (url: string): Promise<EdgeDimensions> =>
@@ -136,7 +136,7 @@ export default () => {
 
           let image;
           if (calculateBase64) {
-            image = await imageInfoServices.getImageInfo(elementPath);
+            image = await imageInfoEvents.getImageInfo(elementPath);
             if ("errorDetails" in image) {
               console.error(
                 `Image could not be retrieved : ${image.errorDetails}`,

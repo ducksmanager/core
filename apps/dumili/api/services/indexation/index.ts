@@ -17,7 +17,7 @@ import type {
 import { SocketClient } from "socket-call-client";
 import {
   type ServerSentStartEndEvents,
-  useSocketServices,
+  useSocketEvents,
 } from "socket-call-server";
 
 import type { SessionDataWithIndexation } from "../../index";
@@ -28,7 +28,7 @@ import { runKumikoOnPages } from "./kumiko";
 import { runOcrOnImages } from "./ocr";
 
 const socket = new SocketClient(process.env.DM_SOCKET_URL!);
-const { services: coaServices } = socket.addNamespace<CoaEvents>(
+const { events: coaEvents } = socket.addNamespace<CoaEvents>(
   dmNamespaces.COA
 );
 
@@ -168,12 +168,12 @@ const createAiStorySuggestions = async (
 
       socket.emit("createAiStorySuggestions", entry.id);
 
-      const { results: searchResults } = await coaServices.searchStory(
+      const { results: searchResults } = await coaEvents.searchStory(
         ocrResults.map(({ text }) => text),
         false
       );
 
-      const storyDetailsOutput = await coaServices.getStoryDetails(
+      const storyDetailsOutput = await coaEvents.getStoryDetails(
         searchResults.map(({ storycode }) => storycode)
       );
 
@@ -185,7 +185,7 @@ const createAiStorySuggestions = async (
       const storyDetails = storyDetailsOutput.stories;
 
       const storyversionDetailsOutput =
-        await coaServices.getStoryversionsDetails(
+        await coaEvents.getStoryversionsDetails(
           searchResults.map(
             ({ storycode }) =>
               storyDetails![storycode].originalstoryversioncode!
@@ -352,7 +352,7 @@ const setInferredEntriesStoryKinds = async (
 };
 
 export type IndexationsSocket = Socket<
-  object,
+  typeof listenEvents,
   IndexationServerSentStartEndEvents,
   object,
   SessionDataWithIndexation
@@ -753,7 +753,7 @@ const listenEvents = (socket: IndexationsSocket) => ({
     }),
 });
 
-export const { client, server } = useSocketServices<
+export const { client, server } = useSocketEvents<
   typeof listenEvents,
   IndexationServerSentStartEndEvents,
   Record<string, never>,

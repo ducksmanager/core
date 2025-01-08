@@ -6,7 +6,7 @@ import { socketInjectionKey } from "../composables/useDmSocket";
 
 export const marketplace = defineStore("marketplace", () => {
   const {
-    collection: { services: collectionServices },
+    collection: { events: collectionEvents },
   } = inject(socketInjectionKey)!;
 
   const issuesOnSaleByOthers =
@@ -74,11 +74,11 @@ export const marketplace = defineStore("marketplace", () => {
       () => issuesOnSaleByOthers.value?.groupBy("id") || {},
     ),
     requestIssues = async (issueIds: number[]) => {
-      await collectionServices.createRequests(issueIds);
+      await collectionEvents.createRequests(issueIds);
       await loadIssueRequestsAsBuyer();
     },
     loadContactMethods = async (userId: number) => {
-      const result = await collectionServices.getContactMethods(userId);
+      const result = await collectionEvents.getContactMethods(userId);
       switch (result.error) {
         case undefined:
           contactMethods.value[userId] = result;
@@ -95,8 +95,7 @@ export const marketplace = defineStore("marketplace", () => {
         return;
       }
       isLoadingIssueRequestsAsBuyer.value = true;
-      issueRequestsAsBuyer.value =
-        await collectionServices.getRequests("buyer");
+      issueRequestsAsBuyer.value = await collectionEvents.getRequests("buyer");
       isLoadingIssueRequestsAsBuyer.value = false;
     },
     loadIssueRequestsAsSeller = async (afterUpdate = false) => {
@@ -108,7 +107,7 @@ export const marketplace = defineStore("marketplace", () => {
       }
       isLoadingIssueRequestsAsSeller.value = true;
       issueRequestsAsSeller.value =
-        await collectionServices.getRequests("seller");
+        await collectionEvents.getRequests("seller");
       isLoadingIssueRequestsAsSeller.value = false;
     },
     loadIssuesOnSaleByOthers = async (afterUpdate = false) => {
@@ -119,11 +118,11 @@ export const marketplace = defineStore("marketplace", () => {
         return;
       }
       isLoadingIssuesOnSaleByOthers.value = true;
-      issuesOnSaleByOthers.value = await collectionServices.getIssuesForSale();
+      issuesOnSaleByOthers.value = await collectionEvents.getIssuesForSale();
       isLoadingIssuesOnSaleByOthers.value = false;
     },
     deleteRequestToSeller = async (issueId: number) => {
-      await collectionServices.deleteRequests(issueId);
+      await collectionEvents.deleteRequests(issueId);
     };
 
   return {

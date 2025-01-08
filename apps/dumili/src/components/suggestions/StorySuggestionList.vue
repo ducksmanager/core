@@ -131,16 +131,14 @@ const acceptStory = async (storycode: storySuggestion["storycode"] | null) => {
   let storySuggestion: Pick<storySuggestion, "id" | "storycode"> | undefined =
     entry.value.storySuggestions.find((s) => s.storycode === storycode);
   if (!storySuggestion && storycode) {
-    const result = await indexationSocket.value!.services.createStorySuggestion(
-      {
-        entryId: entry.value.id,
-        storycode,
-        ai: false,
-      },
-    );
+    const result = await indexationSocket.value!.events.createStorySuggestion({
+      entryId: entry.value.id,
+      storycode,
+      ai: false,
+    });
     storySuggestion = result.createdStorySuggestion;
   }
-  await indexationSocket.value!.services.acceptStorySuggestion(
+  await indexationSocket.value!.events.acceptStorySuggestion(
     entry.value.id,
     storySuggestion?.id || null,
   );
@@ -153,7 +151,7 @@ const acceptStory = async (storycode: storySuggestion["storycode"] | null) => {
             .originalstoryversioncode!
         ].kind,
     )!.id;
-    await indexationSocket.value!.services.acceptStoryKindSuggestion(
+    await indexationSocket.value!.events.acceptStoryKindSuggestion(
       entry.value.id,
       correspondingStoryKindId,
     );

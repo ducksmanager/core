@@ -3,7 +3,7 @@ import type { QuickStatsPerUser } from "~dm-types/QuickStatsPerUser";
 import type { SessionUser } from "~dm-types/SessionUser";
 import { Prisma } from "~prisma-schemas/schemas/dm";
 import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
-import { useSocketServices } from "socket-call-server";
+import { useSocketEvents } from "socket-call-server";
 
 import type { UserSocket } from "../../index";
 import { RequiredAuthMiddleware } from "../auth/util";
@@ -49,7 +49,7 @@ const listenEvents = () => ({
   },
 });
 
-export const { client, server } = useSocketServices<typeof listenEvents>(
+export const { client, server } = useSocketEvents<typeof listenEvents>(
   "/global-stats",
   {
     listenEvents,
@@ -88,7 +88,7 @@ const userListenEvents = (socket: UserSocket) => ({
   },
 });
 
-export const { client: userClient, server: userServer } = useSocketServices<
+export const { client: userClient, server: userServer } = useSocketEvents<
   typeof userListenEvents,
   Record<string, never>,
   Record<string, never>,

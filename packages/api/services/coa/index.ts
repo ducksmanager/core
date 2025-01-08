@@ -1,4 +1,4 @@
-import { useSocketServices } from "socket-call-server";
+import { useSocketEvents } from "socket-call-server";
 
 import namespaces from "../namespaces";
 import authors from "./authors";
@@ -19,7 +19,7 @@ const listenEvents = () => ({
   ...stories,
 });
 
-export const { client, server } = useSocketServices<typeof listenEvents>(
+export const { client, server } = useSocketEvents<typeof listenEvents>(
   namespaces.COA,
   {
     listenEvents,
