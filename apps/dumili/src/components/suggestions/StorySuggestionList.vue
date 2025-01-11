@@ -72,11 +72,18 @@
                       getStorycodePageCount(suggestion.storycode)
                   "
                   >{{
-                    $t("Étendre cette entrée à {originalPagesCount} pages", {
-                      originalPagesCount: getStorycodePageCount(
-                        suggestion.storycode,
-                      ),
-                    })
+                    $t(
+                      getStorycodePageCount(suggestion.storycode) >
+                        indexation.entries[entryIdx].entirepages
+                        ? "Étendre cette entrée à {originalPagesCount} page|Étendre cette entrée à {originalPagesCount} pages"
+                        : "Réduire cette entrée à {originalPagesCount} page|Réduire cette entrée à {originalPagesCount} pages",
+                      {
+                        originalPagesCount: getStorycodePageCount(
+                          suggestion.storycode,
+                        ),
+                      },
+                      getStorycodePageCount(suggestion.storycode),
+                    )
                   }}</b-button
                 ></b-popover
               >
