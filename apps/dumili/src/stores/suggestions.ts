@@ -1,6 +1,8 @@
 import { dumiliSocketInjectionKey } from "~/composables/useDumiliSocket";
 import type { FullIndexation } from "~dumili-services/indexation";
 import type { issueSuggestion } from "~prisma/client_dumili";
+import { ui } from "./ui";
+import { getEntryFromPage } from "~dumili-utils/entryPages";
 
 export const suggestions = defineStore("suggestions", () => {
   const { indexationSocket, setIndexationSocketFromId } = inject(
@@ -9,10 +11,18 @@ export const suggestions = defineStore("suggestions", () => {
   const indexation = ref<FullIndexation>();
 
   const loadIndexation = async (indexationId?: string) => {
+    const uiStore = ui();
     setIndexationSocketFromId(indexationId || indexation.value!.id);
     indexationSocket.value!.connect();
     indexationSocket.value!.on.indexationUpdated = (newIndexation) => {
       indexation.value = newIndexation;
+      if (uiStore.currentEntry) {
+        uiStore.currentEntry = newIndexation.entries.find(
+          (entry) => entry.id === uiStore.currentEntry!.id,
+        );
+      } else {
+        uiStore.currentEntry = getEntryFromPage(indexation.value!, 0)!;
+      }
     };
   };
 

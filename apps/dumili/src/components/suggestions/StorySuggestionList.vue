@@ -44,7 +44,7 @@
             <Teleport to="body">
               <b-popover
                 lazy
-                :target="`page-mismatch-${suggestion.storycode}-${location}`"
+                :target="`page-mismatch-${suggestion.storycode.replace(/[ \t]/g, '-')}-${location}`"
                 interactive
                 ><div>
                   {{
@@ -82,7 +82,7 @@
               >
             </Teleport>
             <i-bi-exclamation-triangle-fill
-              :id="`page-mismatch-${suggestion.storycode}-${location}`"
+              :id="`page-mismatch-${suggestion.storycode.replace(/[ \t]/g, '-')}-${location}`"
               class="mx-1"
           /></template>
         </template>

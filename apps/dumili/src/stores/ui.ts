@@ -1,5 +1,5 @@
 import type { FullEntry } from "~dumili-services/indexation";
-import { getEntryFromPage, getEntryPages } from "~dumili-utils/entryPages";
+import { getEntryPages } from "~dumili-utils/entryPages";
 
 import { suggestions } from "./suggestions";
 
@@ -34,14 +34,6 @@ export const ui = defineStore("ui", () => {
       ).map((idx) => indexation.value!.pages[idx].id),
     );
   });
-
-  watch(
-    indexation,
-    () => {
-      currentEntry.value = getEntryFromPage(indexation.value!, 0)!;
-    },
-    { once: true },
-  );
 
   watch(hoveredEntry, (entry) => {
     if (entry) {
