@@ -7,6 +7,7 @@ import "bootstrap-vue-next/dist/bootstrap-vue-next.css";
 import * as Sentry from "@sentry/vue";
 import { createHead } from "@unhead/vue";
 import Cookies from "js-cookie";
+import { SocketClient } from "socket-call-client";
 // @ts-ignore
 import contextmenu from "v-contextmenu";
 // @ts-ignore
@@ -16,7 +17,6 @@ import { createRouter, createWebHistory } from "vue-router";
 
 import App from "~/App.vue";
 import i18n from "~/i18n";
-import { SocketClient } from "socket-call-client";
 import en from "~translations/messages.en.json";
 
 const head = createHead();

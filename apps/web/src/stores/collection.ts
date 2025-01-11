@@ -1,3 +1,4 @@
+import type { EventOutput, SuccessfulEventOutput } from "socket-call-server";
 import type { ShallowRef } from "vue";
 
 import type { ClientEvents as CollectionServices } from "~dm-services/collection";
@@ -13,7 +14,6 @@ import type {
   purchase,
   subscription,
 } from "~prisma-schemas/schemas/dm";
-import type { EventOutput, SuccessfulEventOutput } from "socket-call-server";
 
 import useCollection from "../composables/useCollection";
 import { socketInjectionKey } from "../composables/useDmSocket";

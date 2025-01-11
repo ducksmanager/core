@@ -1,4 +1,5 @@
 import dayjs from "dayjs";
+import { useSocketEvents } from "socket-call-server";
 
 import type {
   AbstractEvent,
@@ -20,7 +21,6 @@ import type {
 import type { MedalEvent } from "~dm-types/events/MedalEvent";
 import type { SignupEvent } from "~dm-types/events/SignupEvent";
 import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
-import { useSocketEvents } from "socket-call-server";
 
 import namespaces from "../namespaces";
 

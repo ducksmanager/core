@@ -1,6 +1,7 @@
+import type { EventOutput } from "socket-call-server";
+
 import type { ClientEvents as CollectionServices } from "~dm-services/collection";
 import type { requestedIssue } from "~prisma-schemas/schemas/dm";
-import type { EventOutput } from "socket-call-server";
 
 import { socketInjectionKey } from "../composables/useDmSocket";
 

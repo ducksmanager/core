@@ -7,6 +7,7 @@ import * as Sentry from "@sentry/vue";
 import { createHead } from "@unhead/vue";
 import { createBootstrap } from "bootstrap-vue-next";
 import Cookies from "js-cookie";
+import { SocketClient } from "socket-call-client";
 import { setupLayouts } from "virtual:generated-layouts";
 import generatedRoutes from "virtual:generated-pages";
 import VueDraggableResizable from "vue-draggable-resizable";
@@ -14,7 +15,6 @@ import { createRouter, createWebHistory } from "vue-router";
 
 import App from "~/App.vue";
 import i18n from "~/i18n";
-import { SocketClient } from "socket-call-client";
 
 const head = createHead();
 

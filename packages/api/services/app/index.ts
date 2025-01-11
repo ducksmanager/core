@@ -1,5 +1,4 @@
 import { existsSync, readFileSync } from "fs";
-
 import type { Errorable } from "socket-call-server";
 import { useSocketEvents } from "socket-call-server";
 

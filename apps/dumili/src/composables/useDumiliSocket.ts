@@ -1,10 +1,11 @@
+import type { SocketClient } from "socket-call-client";
+
 import {
   type ClientEmitEvents as IndexationEmitEvents,
   type ClientListenEvents as IndexationListenEvents,
 } from "~dumili-services/indexation";
 import { type ClientEmitEvents as IndexationsEmitEvents } from "~dumili-services/indexations";
 import namespaces from "~dumili-services/namespaces";
-import type { SocketClient } from "socket-call-client";
 
 const defaultExport = (options: {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

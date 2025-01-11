@@ -1,8 +1,8 @@
 import type { Socket } from "socket.io";
+import { useSocketEvents } from "socket-call-server";
 
 import { COVER } from "~dumili-types/storyKinds";
 import type { Prisma } from "~prisma/client_dumili";
-import { useSocketEvents } from "socket-call-server";
 
 import type { SessionData } from "../../index";
 import { prisma } from "../../index";
@@ -33,20 +33,18 @@ const listenEvents = (socket: IndexationsSocket) => ({
         },
       })
       .then((indexation) => createEntry(indexation.id))
-      .then((entry) =>
-        {
-          return prisma.entry.update({
-            data: {
-              acceptedStoryKindSuggestionId: entry.storyKindSuggestions.find(
-                (s) => s.kind === COVER
-              )!.id,
-            },
-            where: {
-              id: entry.id,
-            },
-          });
-        },
-      ),
+      .then((entry) => {
+        return prisma.entry.update({
+          data: {
+            acceptedStoryKindSuggestionId: entry.storyKindSuggestions.find(
+              (s) => s.kind === COVER,
+            )!.id,
+          },
+          where: {
+            id: entry.id,
+          },
+        });
+      }),
 
   getIndexations: (): Promise<
     Prisma.indexationGetPayload<{

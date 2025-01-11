@@ -1,5 +1,6 @@
-import type { ClientEvents as CoverIdServices } from "~dm-services/cover-id";
 import type { EventOutput } from "socket-call-server";
+
+import type { ClientEvents as CoverIdServices } from "~dm-services/cover-id";
 
 import { dumiliSocketInjectionKey } from "./useDumiliSocket";
 

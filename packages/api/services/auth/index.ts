@@ -1,10 +1,10 @@
 import crypto from "crypto";
 import jwt from "jsonwebtoken";
+import type { Errorable } from "socket-call-server";
+import { useSocketEvents } from "socket-call-server";
 
 import { prismaClient } from "~prisma-schemas/schemas/dm/client";
 import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
-import type { Errorable } from "socket-call-server";
-import { useSocketEvents } from "socket-call-server";
 
 import resetPassword from "../../emails/reset-password";
 import {

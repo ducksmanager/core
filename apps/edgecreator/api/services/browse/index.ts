@@ -1,9 +1,9 @@
 import { XMLParser } from "fast-xml-parser";
 import { readdirSync, readFileSync } from "fs";
 import path from "path";
+import { useSocketEvents } from "socket-call-server";
 
 import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa/client";
-import { useSocketEvents } from "socket-call-server";
 
 interface EdgeModelDetails {
   issuecode: string;

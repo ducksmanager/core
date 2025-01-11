@@ -1,3 +1,5 @@
+import type { EventOutput, SuccessfulEventOutput } from "socket-call-server";
+
 import { getCurrentLocaleShortKey } from "~/composables/useLocales";
 import type { ClientEvents as CoaClientEvents } from "~dm-services/coa";
 import type { InducksIssueDetails } from "~dm-types/InducksIssueDetails";
@@ -6,7 +8,6 @@ import type {
   inducks_story,
   inducks_storyversion,
 } from "~prisma-schemas/client_coa";
-import type { EventOutput, SuccessfulEventOutput } from "socket-call-server";
 
 import { socketInjectionKey } from "../composables/useDmSocket";
 

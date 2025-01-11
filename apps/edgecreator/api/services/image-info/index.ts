@@ -1,6 +1,5 @@
 import axios from "axios";
 import sizeOf from "image-size";
-
 import { useSocketEvents } from "socket-call-server";
 
 const listenEvents = () => ({

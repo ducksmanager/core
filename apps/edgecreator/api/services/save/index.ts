@@ -2,11 +2,11 @@ import { exec } from "child_process";
 import { mkdirSync, unlinkSync, writeFileSync } from "fs";
 import path from "path";
 import type { Socket } from "socket.io";
+import { SocketClient } from "socket-call-client";
+import { useSocketEvents } from "socket-call-server";
 
 import { type ClientEvents as EdgeCreatorEvents } from "~dm-services/edgecreator";
 import namespaces from "~dm-services/namespaces";
-import { SocketClient } from "socket-call-client";
-import { useSocketEvents } from "socket-call-server";
 import type { ExportPaths } from "~types/ExportPaths";
 import type { ModelContributor } from "~types/ModelContributor";
 

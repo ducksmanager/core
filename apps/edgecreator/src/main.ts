@@ -5,14 +5,13 @@ import "vue3-simple-typeahead/dist/vue3-simple-typeahead.css"; //Optional defaul
 import { createHead } from "@unhead/vue";
 import { BCarousel, BCarouselSlide } from "bootstrap-vue-next";
 import { createPinia } from "pinia";
+import { SocketClient } from "socket-call-client";
 import { setupLayouts } from "virtual:generated-layouts";
 import generatedRoutes from "virtual:generated-pages";
 import { createApp } from "vue";
 import type { RouteRecordRaw } from "vue-router";
 import { createRouter, createWebHistory } from "vue-router";
 import SimpleTypeahead from "vue3-simple-typeahead";
-
-import { SocketClient } from "socket-call-client";
 
 import App from "./App.vue";
 import i18n from "./i18n";

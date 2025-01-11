@@ -11,9 +11,7 @@ export default {
           storycode: { in: storycodes },
         },
       }),
-      prismaCoa.$queryRaw<
-        { storycode: string; url: string }[]
-      >`
+      prismaCoa.$queryRaw<{ storycode: string; url: string }[]>`
       select s.storycode, CONCAT('webusers/webusers/', url) AS url
       from inducks_story s
               inner join coa.inducks_storyversion sv on s.originalstoryversioncode = sv.storyversioncode

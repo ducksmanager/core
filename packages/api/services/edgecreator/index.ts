@@ -1,6 +1,7 @@
+import { useSocketEvents } from "socket-call-server";
+
 import type { SessionUser } from "~dm-types/SessionUser";
 import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
-import { useSocketEvents } from "socket-call-server";
 
 import edgeModelReady from "../../emails/edge-model-ready";
 import type { UserSocket } from "../../index";

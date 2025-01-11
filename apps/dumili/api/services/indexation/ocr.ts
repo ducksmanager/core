@@ -4,7 +4,7 @@ import type { aiKumikoResultPanel } from "~prisma/client_dumili";
 
 import { prisma } from "../../index";
 import type { IndexationSocket } from ".";
-import { refreshIndexation, type FullIndexation } from ".";
+import { type FullIndexation, refreshIndexation } from ".";
 
 type OcrResult = {
   box: [[number, number], [number, number], [number, number], [number, number]];
@@ -79,7 +79,7 @@ export const runOcrOnImages = async (
         },
       },
     });
-    
+
     await refreshIndexation(socket);
 
     socket.emit("runOcrOnImageEnd", image!.id);

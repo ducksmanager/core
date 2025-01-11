@@ -1,8 +1,9 @@
+import { useSocketEvents } from "socket-call-server";
+
 import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa/client";
 import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
 import type { edgeModel } from "~prisma-schemas/schemas/edgecreator";
 import { prismaClient as prismaEdgeCreator } from "~prisma-schemas/schemas/edgecreator/client";
-import { useSocketEvents } from "socket-call-server";
 
 import namespaces from "../namespaces";
 

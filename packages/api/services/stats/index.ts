@@ -1,5 +1,6 @@
-import type { SessionUser } from "~dm-types/SessionUser";
 import { useSocketEvents } from "socket-call-server";
+
+import type { SessionUser } from "~dm-types/SessionUser";
 
 import type { UserSocket } from "../../index";
 import namespaces from "../namespaces";
