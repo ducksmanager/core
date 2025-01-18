@@ -74,9 +74,7 @@
           />
         </template>
 
-        <div
-          class="position-absolute w-100 h-100 d-flex justify-content-center"
-        >
+        <div class="position-absolute w-100 d-flex justify-content-center">
           <b-button
             class="create-entry fw-bold position-absolute mt-n1 d-flex justify-content-center align-items-center"
             variant="success"
@@ -224,6 +222,6 @@ watch(
 
 :deep(.resizable .handle) {
   bottom: 0;
-  z-index: 9999;
+  z-index: 1021 !important;
 }
 </style>

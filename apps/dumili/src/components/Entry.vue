@@ -59,7 +59,7 @@
     ><b-col
       col
       cols="4"
-      class="position-relative d-flex flex-column align-items-center justify-content-center h-100"
+      class="d-flex flex-column align-items-center justify-content-center position-relative h-100 text-normal"
     >
       <StorySuggestionList v-if="editable" v-model="entry" />
       <template v-else>

@@ -24,6 +24,14 @@ textarea::placeholder {
   z-index: 4 !important;
 }
 
+.w-150 {
+  width: 150% !important;
+}
+
+.start-m50 {
+  left: -50% !important;
+}
+
 .overlay {
   position: absolute;
   top: 0;

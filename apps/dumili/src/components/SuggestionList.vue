@@ -1,8 +1,8 @@
 <template>
   <div :class="classes">
     <b-dropdown
-      class="my-2"
-      menu-class="border-white"
+      class="my-2 position-static z-1"
+      :menu-class="['border-white', ...extraMenuClass]"
       :toggle-class="['text-wrap', ...(current ? itemClass(current) : [])]"
       ><b-dropdown-group
         v-for="(group, index) in [userSuggestions, aiSuggestions]"
@@ -83,6 +83,7 @@ const {
   itemClass = () => [],
   selectedItemClass = () => ["selected"],
   showCustomizeForm = false,
+  extraMenuClass = [],
 } = defineProps<{
   class: string;
   suggestions: S[];
@@ -90,6 +91,7 @@ const {
   itemClass?: (suggestion: S) => string[];
   selectedItemClass?: (suggestion: S) => string[];
   showCustomizeForm?: boolean;
+  extraMenuClass?: string[];
 }>();
 
 const emit = defineEmits<{
