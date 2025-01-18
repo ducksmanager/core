@@ -56,7 +56,7 @@
   </Book>
 </template>
 
-  <script setup lang="ts">
+<script setup lang="ts">
 import { components as webComponents, type PageFlip } from "~web";
 import { getEntryFromPage, getEntryPages } from "~dumili-utils/entryPages";
 import type { FullIndexation } from "~dumili-services/indexation";

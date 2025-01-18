@@ -209,17 +209,6 @@ const urlEncodedStorycode = computed(
     border-right: none;
   }
 }
-
-:deep(.dropdown-menu) {
-  background: lightgrey;
-  overflow-x: visible !important;
-
-  [role="group"] {
-    color: black;
-    font-weight: bold;
-    font-style: italic;
-  }
-}
 .badge,
 :deep(.dropdown-item) {
   width: max(100%, max-content);
@@ -230,16 +219,6 @@ const urlEncodedStorycode = computed(
   color: color.invert($bg);
   &.btn:hover {
     background-color: color.adjust($bg, $lightness: 10%);
-  }
-}
-
-.badge,
-:deep(.btn-group .btn),
-:deep(.dropdown-item) {
-  color: black;
-
-  &:hover {
-    background: #ddd;
   }
 }
 

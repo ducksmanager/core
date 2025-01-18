@@ -115,9 +115,27 @@ const userSuggestions = computed(() =>
   border-color: white;
 }
 
+.dropdown-menu {
+  background: lightgrey;
+  overflow-x: visible !important;
+
+  [role="group"] {
+    color: black;
+    font-weight: bold;
+    font-style: italic;
+  }
+}
+
+.badge,
+.btn-group .btn,
 .dropdown-item {
+  color: black !important;
   &.selected {
-    background: #eee;
+    background: #eee !important;
+  }
+
+  &:hover {
+    background: #ddd;
   }
 }
 </style>

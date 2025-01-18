@@ -54,9 +54,6 @@ import Cookies from "js-cookie";
 
 const { login: userLogin, loadUser } = collection();
 const { user } = storeToRefs(collection());
-const {
-  collection: { socket: collectionSocket },
-} = inject(socketInjectionKey)!;
 
 let router = useRouter();
 let route = useRoute();
@@ -74,6 +71,9 @@ const login = async () => {
       Cookies.set("token", newToken, {
         domain,
       });
+      const {
+        collection: { socket: collectionSocket },
+      } = inject(socketInjectionKey)!;
 
       collectionSocket!.connect();
 
