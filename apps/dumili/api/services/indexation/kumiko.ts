@@ -156,7 +156,7 @@ export const runKumiko = async (
     .get(
       `${process.env.KUMIKO_HOST}?i=${urls.filter((url) => !!url).join(",")}`,
     )
-    .then<KumikoResult[]>((result) => result.data)
+    .then<KumikoResult[]>((result) => result.data || [])
     .then((data) =>
       data.map(({ panels }) =>
         panels.map(([x, y, width, height]) => ({
