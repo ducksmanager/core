@@ -12,7 +12,6 @@
       overlay = $event ? { type: 'panels', entryId: entry.id } : undefined
     "
   >
-    <b>{{ $t("Types d'entrées déduits pour les pages") }}</b>
     <b-table
       :fields="[
         { key: 'page' },

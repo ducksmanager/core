@@ -62,14 +62,11 @@
       class="d-flex flex-column align-items-center justify-content-center position-relative h-100 text-normal"
     >
       <StorySuggestionList v-if="editable" v-model="entry" />
-      <template v-else>
-        <a
-          v-if="urlEncodedStorycode"
-          target="_blank"
-          :href="`https://inducks.org/story.php?c=${urlEncodedStorycode}`"
-          >{{ storyDetails[entry.acceptedStory!.storycode].title }}</a
-        ><template v-else>{{ $t("Contenu inconnu") }}</template>
-      </template>
+      <template v-else-if="urlEncodedStorycode">
+        {{ storyDetails[entry.acceptedStory!.storycode].title }}
+        &nbsp;<inducks-link
+          :url-encoded-storycode="urlEncodedStorycode" /></template
+      ><template v-else>{{ $t("Contenu inconnu") }}</template>
       <StorySuggestionsTooltip :entry="entry" />
     </b-col>
     <b-col
