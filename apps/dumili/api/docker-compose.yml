@@ -10,6 +10,8 @@ services:
     container_name: paddleocr
     image: ghcr.io/bperel/paddleocr
     restart: always
+    volumes:
+      - /root/.paddleocr
     networks:
       - dumili-network
 
