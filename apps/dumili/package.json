@@ -8,14 +8,13 @@
   "scripts": {
     "dumili": "concurrently -p \"[dumili-{name}]\" --kill-others-on-fail -n front,api,dm,kumiko+paddleocr \"pnpm -F ~dumili dev\" \"pnpm -F ~dumili-api dev\" \"pnpm -F ~web web\" \"docker compose -f docker-compose-dev.yml up kumiko db\"",
     "dev": "concurrently -n vite,vue-tsc \"vite --port 8004\" \"vue-tsc --noEmit --watch\"",
-    "build": "vite build",
+    "build": "mv .env.prod .env && vite build",
     "preview": "vite preview",
     "typecheck": "vue-tsc --noEmit",
     "lint": "eslint --fix .",
     "prod:deploy": "DIR=apps/dumili pnpm -F '~ci' prod:docker-compose-up",
     "prod-build-docker-web": "REPO_NAME=ghcr.io/bperel/dumili-app pnpm -F '~ci' prod:build-docker -f apps/dumili/Dockerfile",
     "prod:build-docker": "pnpm run '/^prod-build-docker-/'",
-    "prod:transfer-files-pre": "pnpm -F '~ci' prod:transfer-files @apps/web/.env.prod.local:apps/web/.env.prod.local",
     "prod:transfer-files-post": "pnpm -F '~ci' prod:transfer-files apps/dumili/docker-compose.yml:@apps/dumili/docker-compose.yml"
   },
   "dependencies": {
