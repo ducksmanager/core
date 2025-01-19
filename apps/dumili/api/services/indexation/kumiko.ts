@@ -41,7 +41,7 @@ const runKumikoOnPage = async (
   } else {
     indexationSocket.emit("setKumikoInferredPageStoryKinds", page.id);
     const panelsPerPage = await runKumiko([page.image.url]);
-    const panelsOfPage = panelsPerPage[0];
+    const panelsOfPage = panelsPerPage[0] || [];
     console.info(
       `Kumiko: page ${page.pageNumber}: detected ${panelsOfPage.length} panels`,
     );
