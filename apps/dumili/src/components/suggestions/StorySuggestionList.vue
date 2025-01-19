@@ -132,7 +132,7 @@ const { storyUrls } = storeToRefs(coa());
 const showEntrySelect = ref(false);
 const { storyDetails, storyversionDetails } = storeToRefs(coa());
 
-const inducksCoverRoot = import.meta.env.VITE_CLOUDINARY_COVERS_ROOT!;
+const inducksCoverRoot = `https://res.cloudinary.com/${import.meta.env.VITE_CLOUDINARY_CLOUDNAME}/image/upload/f_auto/inducks-covers/`;
 
 const entryIdx = computed(() =>
   indexation.value.entries.findIndex((e) => e.id === entry.value.id),

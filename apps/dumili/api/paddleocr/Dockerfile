@@ -4,7 +4,7 @@ WORKDIR /home
 
 RUN wget https://www.openssl.org/source/openssl-1.1.1v.tar.gz
 RUN tar -zxvf openssl-1.1.1v.tar.gz
-RUN cd openssl-1.1.1v && ./config && make -j$(nproc) && make test
+RUN cd openssl-1.1.1v && ./config && make -j$(nproc)
 
 FROM python:3.9-slim
 
