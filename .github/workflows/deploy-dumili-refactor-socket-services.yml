@@ -83,8 +83,8 @@ jobs:
 
       - name: Send post-build files
         run: |
-          turbo -F "...[$lastSuccessfulCommit]" -F '!~ci' -F '~dumili' -F '~dumili-api' prod:transfer-files-post
+          turbo -F '~dumili' -F '~dumili-api' prod:transfer-files-post
 
       - name: Deploy
         run: |
-          turbo --concurrency=1 -F "...[$lastSuccessfulCommit]" -F '!~ci' -F '~dumili' -F '~dumili-api' prod:deploy
+          turbo --concurrency=1 -F '~dumili' -F '~dumili-api' prod:deploy
