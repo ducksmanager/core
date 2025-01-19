@@ -1,8 +1,7 @@
 generator client {
-  provider        = "prisma-client-js"
-  output          = "../../client_dm"
-  previewFeatures = ["omitApi"]
-  binaryTargets   = ["native", "debian-openssl-1.1.x", "debian-openssl-3.0.x", "darwin-arm64", "linux-arm64-openssl-1.1.x", "linux-arm64-openssl-3.0.x"]
+  provider      = "prisma-client-js"
+  output        = "../../client_dm"
+  binaryTargets = ["native", "debian-openssl-1.1.x", "debian-openssl-3.0.x", "darwin-arm64", "linux-arm64-openssl-1.1.x", "linux-arm64-openssl-3.0.x"]
 }
 
 datasource db {
