@@ -86,12 +86,30 @@ import { stores as webStores } from "~web";
 
 const { indexationSocket } = inject(dumiliSocketInjectionKey)!;
 
-const { pagesWithoutOverwrite, pagesAllowOverwrite, uploadPageNumber } =
-  defineProps<{
-    uploadPageNumber?: number;
-    pagesWithoutOverwrite: { id: number; pageNumber: number }[];
-    pagesAllowOverwrite: { id: number; pageNumber: number }[];
-  }>();
+const {
+  pagesWithoutOverwrite: pagesWithoutOverwriteInitial,
+  pagesAllowOverwrite: pagesAllowOverwriteInitial,
+  uploadPageNumber,
+} = defineProps<{
+  uploadPageNumber?: number;
+  pagesWithoutOverwrite: { id: number; pageNumber: number }[];
+  pagesAllowOverwrite: { id: number; pageNumber: number }[];
+}>();
+
+const modal = ref(false);
+
+const pagesWithoutOverwrite = ref(pagesWithoutOverwriteInitial);
+const pagesAllowOverwrite = ref(pagesAllowOverwriteInitial);
+
+watch(
+  () => modal,
+  (value) => {
+    if (value) {
+      pagesWithoutOverwrite.value = pagesWithoutOverwriteInitial;
+      pagesAllowOverwrite.value = pagesAllowOverwriteInitial;
+    }
+  },
+);
 
 const { t: $t } = useI18n();
 
@@ -99,7 +117,6 @@ const { indexation } = storeToRefs(suggestions());
 
 const { user } = storeToRefs(webStores.collection());
 
-const modal = ref(false);
 const showWidget = ref(true);
 
 watch(
@@ -132,8 +149,8 @@ declare var cloudinary: {
 
 const pages = computed(() =>
   uploadFileType.value === "PDF_ignore"
-    ? pagesWithoutOverwrite
-    : pagesAllowOverwrite,
+    ? pagesWithoutOverwrite.value
+    : pagesAllowOverwrite.value,
 );
 
 const processPage = async (pageIndex: number, url: string) => {

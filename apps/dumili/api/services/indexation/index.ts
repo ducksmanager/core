@@ -261,7 +261,6 @@ const createAiStorySuggestions = async (
         });
       }
 
-      await refreshIndexation(socket);
       socket.emit("createAiStorySuggestionsEnd", entry.id);
     } else {
       console.log(`Entry ${entry.id}: This entry is not a story`);
@@ -343,7 +342,6 @@ const setInferredEntriesStoryKinds = async (
           )!.id,
         },
       });
-      await refreshIndexation(socket);
     }
 
     socket.emit("setInferredEntryStoryKindEnd", entry.id);
