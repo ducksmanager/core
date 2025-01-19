@@ -44,8 +44,6 @@ import { buildWebStorage } from "socket-call-client";
 
 const { t: $t } = useI18n();
 
-const user = ref<{ username: string }>();
-
 const session = {
   getToken: () => Promise.resolve(Cookies.get("token")),
   clearSession: () => {}, // Promise.resolve(Cookies.remove("token")),
@@ -93,11 +91,18 @@ const loginUrl = computed(
   () => `${import.meta.env.VITE_DM_URL}/login?redirect=${document.URL}`,
 );
 
-const { isLoadingUser } = storeToRefs(collection());
+const { isLoadingUser, user } = storeToRefs(collection());
+const { loadUser } = collection();
 
-onBeforeMount(async () => {
-  user.value = await dumiliSocket.indexationsSocket.value.events.getUser();
-});
+watch(
+  isSocketConnected,
+  (value) => {
+    if (value) {
+      loadUser();
+    }
+  },
+  { immediate: true },
+);
 </script>
 <style lang="scss">
 @import "./style.scss";
