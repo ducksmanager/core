@@ -18,9 +18,11 @@ services:
     image: ghcr.io/bperel/dumili-api
     restart: always
     networks:
-      - public-network
-      - dumili-network
-      - ducksmanager2_dm2-network
+      public-network:
+        aliases:
+          - dumili-api
+      dumili-network:
+      ducksmanager2_dm2-network:
   db:
     container_name: dumili-db
     restart: always
