@@ -1,16 +1,16 @@
 export const tabs = defineStore("tabs", () => {
   const { t: $t } = useI18n();
 
-  const tabNames = {
-    book: $t("Livre"),
-    pageGallery: $t("Galerie des pages"),
-    textEditor: $t("Editeur de texte"),
-  } as const;
+  const tabNames = [
+    { id: "pageGallery", label: $t("Galerie des pages") },
+    { id: "book", label: $t("Livre") },
+    { id: "textEditor", label: $t("Editeur de texte") },
+  ] as const;
 
-  const activeTab = ref<keyof typeof tabNames>("book");
+  const activeTabIndex = ref(0);
 
   return {
     tabNames,
-    activeTab,
+    activeTabIndex,
   };
 });

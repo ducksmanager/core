@@ -1,22 +1,19 @@
 <template>
   <b-row v-if="hasData" class="d-flex h-100">
     <b-col :cols="6" class="d-flex flex-column h-100">
-      <Gallery v-if="activeTab === 'pageGallery'" :pages="indexation.pages" />
+      <Gallery v-if="activeTabIndex === 0" :pages="indexation.pages" />
       <DumiliBook
-        v-else-if="activeTab === 'book' && firstPageDimensions"
+        v-else-if="activeTabIndex === 1 && firstPageDimensions"
         v-bind="{ firstPageDimensions, indexation }"
       />
-      <TextEditor v-else-if="activeTab === 'textEditor'" />
-      <b-container
-        v-if="activeTab !== undefined"
-        class="start-0 bottom-0 mw-100 pt-2"
-        style="height: 35px"
+      <TextEditor v-else-if="activeTabIndex === 2" />
+      <b-container class="start-0 bottom-0 mw-100 pt-2" style="height: 35px"
         ><b-tabs v-model:model-value="activeTabIndex" align="center"
           ><b-tab
-            v-for="tabName of tabNames"
-            :key="tabName"
-            :button-id="tabName"
-            :title="$t(tabName)" /></b-tabs
+            v-for="{ id, label } of tabNames"
+            :key="id"
+            :button-id="id"
+            :title="label" /></b-tabs
       ></b-container>
     </b-col>
 
@@ -40,17 +37,7 @@ const route = useRoute();
 
 const { t: $t } = useI18n();
 
-const { activeTab } = storeToRefs(tabs());
-const activeTabIndex = computed({
-  get: () => Object.keys(tabs().tabNames).indexOf(activeTab.value),
-
-  set(value) {
-    tabs().activeTab = Object.keys(tabs().tabNames)[
-      value
-    ] as typeof activeTab.value;
-  },
-});
-
+const { activeTabIndex } = storeToRefs(tabs());
 const { tabNames } = tabs();
 
 const { fetchPublicationNames, fetchStoryDetails, fetchStoryversionDetails } =
