@@ -5,7 +5,7 @@
   },
   "scripts": {
     "dev": "pnpm build",
-    "build": "bun generate-route-types.ts && eslint -c .eslintrc.js --fix index.ts && rm -rf dist && bun build --target node --sourcemap index.ts --outfile bundle.mjs"
+    "build": "bun generate-route-types.ts && eslint -c .eslintrc.js --fix index.ts && rm -rf dist"
   },
   "dependencies": {
     "axios": "^1.6.2",

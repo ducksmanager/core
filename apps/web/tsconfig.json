@@ -23,7 +23,6 @@
     "types": [
       "vite/client",
       "vite-plugin-pages/client",
-      "vue/ref-macros",
       "unplugin-icons/types/vue",
       "@vue-macros/reactivity-transform/macros-global"
     ],
