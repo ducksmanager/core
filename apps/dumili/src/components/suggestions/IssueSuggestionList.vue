@@ -61,7 +61,7 @@ const createAndAcceptIssueSuggestion = async (data: {
 watch(
   () => indexation.value?.acceptedIssueSuggestion?.id,
   (suggestionId) => {
-    indexationSocket.value!.events.acceptIssueSuggestion(suggestionId || null);
+    indexationSocket.value!.acceptIssueSuggestion(suggestionId || null);
   },
 );
 </script>

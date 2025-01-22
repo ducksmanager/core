@@ -155,9 +155,7 @@
 <script setup lang="ts">
 import { socketInjectionKey } from "../../composables/useDmSocket";
 
-const {
-  userGlobalStats: { events: userGlobalStatsEvents },
-} = inject(socketInjectionKey)!;
+const { userGlobalStats: userGlobalStatsEvents } = inject(socketInjectionKey)!;
 
 const { getConditionLabel } = useCondition();
 

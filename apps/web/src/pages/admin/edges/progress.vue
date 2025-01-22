@@ -128,9 +128,7 @@ const bookcaseTextures = $ref({
   bookshelf: "bois/KNOTTY PINE",
 });
 
-const {
-  edges: { events: edgesEvents },
-} = inject(socketInjectionKey)!;
+const { edges: edgesEvents } = inject(socketInjectionKey)!;
 
 const { fetchPublicationNames, fetchIssuecodesByPublicationcode } = coa();
 const { publicationNames, issuecodesByPublicationcode, issuecodeDetails } =

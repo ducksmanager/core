@@ -29,12 +29,12 @@ export const authenticateUser = async (
   });
 
 export const RequiredAuthMiddleware = (
-  socket: Socket,
+  {_socket}: {_socket: Socket},
   next: (error?: Error) => void,
 ) => {
-  authenticateUser(socket.handshake.auth.token)
+  authenticateUser(_socket.handshake.auth.token)
     .then((user) => {
-      socket.data.user = user;
+      _socket.data.user = user;
       next();
     })
     .catch((e) => {

@@ -5,7 +5,7 @@ import { getEntryFromPage } from "~dumili-utils/entryPages";
 import type { aiKumikoResultPanel, Prisma } from "~prisma/client_dumili";
 
 import { prisma } from "../../index";
-import type { IndexationSocket } from ".";
+import type { IndexationServices } from ".";
 import { type FullIndexation, refreshIndexation } from ".";
 
 type KumikoResult = {
@@ -28,7 +28,7 @@ const inferStoryKindFromAiResults = (
   pageNumber === 1 ? COVER : panelsOfPage.length === 1 ? ILLUSTRATION : STORY;
 
 const runKumikoOnPage = async (
-  indexationSocket: IndexationSocket,
+  indexationServices: IndexationServices,
   page: Prisma.pageGetPayload<{
     include: { image: { include: { aiKumikoResult: true } } };
   }>,
@@ -39,7 +39,7 @@ const runKumikoOnPage = async (
   } else if (page.image.aiKumikoResult && !force) {
     console.info(`Kumiko: page ${page.pageNumber}: already inferred`);
   } else {
-    indexationSocket.emit("setKumikoInferredPageStoryKinds", page.id);
+    indexationServices.setKumikoInferredPageStoryKinds(page.id);
     const panelsPerPage = await runKumiko([page.image.url]);
     const panelsOfPage = panelsPerPage[0] || [];
     console.info(
@@ -91,22 +91,22 @@ const runKumikoOnPage = async (
       },
     });
 
-    await refreshIndexation(indexationSocket);
+    await refreshIndexation(indexationServices);
 
-    indexationSocket.emit("setKumikoInferredPageStoryKindsEnd", page.id);
+    indexationServices.setKumikoInferredPageStoryKindsEnd(page.id);
     return true;
   }
   return false;
 };
 
 export const runKumikoOnPages = async (
-  socket: IndexationSocket,
+  services: IndexationServices,
   indexation: FullIndexation,
   force = false,
 ) => {
   const updatedImageIds = [];
   for (const page of indexation.pages) {
-    if (await runKumikoOnPage(socket, page, force)) {
+    if (await runKumikoOnPage(services, page, force)) {
       updatedImageIds.push(page.id);
     }
   }

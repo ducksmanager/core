@@ -20,9 +20,7 @@ export default () => {
   const rendersStore = renders();
   const userStore = webStores.users();
   const edgeCatalogStore = edgeCatalog();
-  const {
-    edgeCreator: { events: edgeCreatorEvents },
-  } = inject(dmSocketInjectionKey)!;
+  const { edgeCreator: edgeCreatorEvents } = inject(dmSocketInjectionKey)!;
 
   const loadDimensionsFromSvg = (issuecode: string, svgElement: SVGElement) => {
     stepStore.setDimensions(

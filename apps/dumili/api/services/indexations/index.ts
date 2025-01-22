@@ -1,5 +1,5 @@
 import type { Socket } from "socket.io";
-import { useSocketEvents } from "socket-call-server";
+import { NamespaceProxyTarget, useSocketEvents } from "socket-call-server";
 
 import { COVER } from "~dumili-types/storyKinds";
 import type { Prisma } from "~prisma/client_dumili";
@@ -10,11 +10,12 @@ import { RequiredAuthMiddleware } from "../_auth";
 import { createEntry } from "../indexation";
 import namespaces from "../namespaces";
 
-type IndexationsSocket = Socket<object, object, object, SessionData>;
+export type IndexationsServices = NamespaceProxyTarget<
+  Socket<typeof listenEvents, object, object, SessionData>, Record<string, never>>;
 
-const listenEvents = (socket: IndexationsSocket) => ({
+const listenEvents = ({_socket}: IndexationsServices) => ({
   getUser: async () => ({
-    username: socket.data.user.username,
+    username: _socket.data.user.username,
   }),
 
   create: async (id: string, numberOfPages: number) =>
@@ -22,7 +23,7 @@ const listenEvents = (socket: IndexationsSocket) => ({
       .create({
         data: {
           id,
-          dmUserId: socket.data.user.id,
+          dmUserId: _socket.data.user.id,
           pages: {
             createMany: {
               data: Array.from({ length: numberOfPages }).map((_, idx) => ({
@@ -60,7 +61,7 @@ const listenEvents = (socket: IndexationsSocket) => ({
   > =>
     prisma.indexation.findMany({
       where: {
-        dmUserId: socket.data.user.id,
+        dmUserId: _socket.data.user.id,
       },
       include: {
         acceptedIssueSuggestion: true,

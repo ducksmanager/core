@@ -2,7 +2,7 @@ import type { EditSubscription } from "~dm-types/EditSubscription";
 import type { subscription } from "~prisma-schemas/client_dm";
 import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
 
-import type { UserSocket } from "../../../index";
+import type { UserServices } from "../../../index";
 
 export type SubscriptionTransformedStringDates = Omit<
   subscription,
@@ -12,13 +12,13 @@ export type SubscriptionTransformedStringDates = Omit<
   endDate: string;
 };
 
-export default (socket: UserSocket) => ({
+export default ({_socket}: UserServices) => ({
   getSubscriptions: () =>
     prismaDm.subscription
       .findMany({
         where: {
           users: {
-            id: socket.data.user!.id,
+            id: _socket.data.user!.id,
           },
         },
       })
@@ -31,14 +31,14 @@ export default (socket: UserSocket) => ({
       ),
 
   createSubscription: async (subscription: EditSubscription) => {
-    await upsertSubscription(null, subscription, socket.data.user!.id);
+    await upsertSubscription(null, subscription, _socket.data.user!.id);
   },
 
   updateSubscription: async (
     id: number,
     subscription: SubscriptionTransformedStringDates,
   ) => {
-    await upsertSubscription(id, subscription, socket.data.user!.id);
+    await upsertSubscription(id, subscription, _socket.data.user!.id);
   },
 
   deleteSubscription: async (id: number) => {
@@ -46,7 +46,7 @@ export default (socket: UserSocket) => ({
       where: {
         id,
         users: {
-          id: socket.data.user!.id,
+          id: _socket.data.user!.id,
         },
       },
     });

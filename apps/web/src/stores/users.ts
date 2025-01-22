@@ -10,10 +10,8 @@ import { socketInjectionKey } from "../composables/useDmSocket";
 type SimpleUser = Pick<user, "id" | "username">;
 
 export const users = defineStore("users", () => {
-  const {
-    events: { events: eventsEvents },
-    globalStats: { events: globalStatsEvents },
-  } = inject(socketInjectionKey)!;
+  const { events: eventsEvents, globalStats: globalStatsEvents } =
+    inject(socketInjectionKey)!;
   const count = ref<EventOutput<GlobalStatsServices, "getUserCount"> | null>(
       null,
     ),

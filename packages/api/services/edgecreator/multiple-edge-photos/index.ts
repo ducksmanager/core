@@ -4,12 +4,12 @@ import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
 import { prismaClient as prismaEdgeCreator } from "~prisma-schemas/schemas/edgecreator/client";
 
 import EdgePhotoSent from "../../../emails/edge-photo-sent";
-import type { UserSocket } from "../../../index";
+import type { UserServices } from "../../../index";
 
-export default (socket: UserSocket) => ({
+export default ({_socket}: UserServices) => ({
   sendNewEdgePhotoEmail: async (issuecode: string) => {
     const user = await prismaDm.user.findUniqueOrThrow({
-      where: { id: socket.data.user!.id },
+      where: { id: _socket.data.user!.id },
     });
     const email = new EdgePhotoSent({
       user,
@@ -33,7 +33,7 @@ export default (socket: UserSocket) => ({
       .findMany({
         select: { fileName: true },
         where: {
-          userId: socket.data.user!.id,
+          userId: _socket.data.user!.id,
           createdAt: {
             gt: dayjs().hour(0).minute(0).toDate(),
             lt: dayjs().add(1, "day").hour(0).minute(0).toDate(),
@@ -48,7 +48,7 @@ export default (socket: UserSocket) => ({
     prismaEdgeCreator.elementImage
       .findFirstOrThrow({
         where: {
-          userId: socket.data.user!.id,
+          userId: _socket.data.user!.id,
           hash,
         },
       })

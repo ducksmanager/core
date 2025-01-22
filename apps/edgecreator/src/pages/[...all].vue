@@ -172,9 +172,7 @@ import { storeToRefs } from "pinia";
 import type { EdgeWithVersionAndStatus } from "~/stores/edgeCatalog";
 import { edgeCatalog } from "~/stores/edgeCatalog";
 
-const {
-  edges: { events: edgesEvents },
-} = inject(dmSocketInjectionKey)!;
+const { edges: edgesEvents } = inject(dmSocketInjectionKey)!;
 
 import { stores as webStores } from "~web";
 import { socketInjectionKey as dmSocketInjectionKey } from "~web/src/composables/useDmSocket";

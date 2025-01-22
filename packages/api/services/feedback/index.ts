@@ -4,13 +4,13 @@ import type { SessionUser } from "~dm-types/SessionUser";
 import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
 
 import feedbackSent from "../../emails/feedback-sent";
-import type { UserSocket } from "../../index";
+import type { UserServices } from "../../index";
 import namespaces from "../namespaces";
 
-const listenEvents = (socket: UserSocket) => ({
+const listenEvents = ({_socket}: UserServices) => ({
   sendFeedback: async (feedbackMessage: string) => {
     const user = await prismaDm.user.findUniqueOrThrow({
-      where: { id: socket.data.user!.id },
+      where: { id: _socket.data.user!.id },
     });
     const email = new feedbackSent({
       user,

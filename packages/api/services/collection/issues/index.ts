@@ -13,7 +13,7 @@ import type { issue, user } from "~prisma-schemas/schemas/dm";
 import { issue_condition } from "~prisma-schemas/schemas/dm";
 import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
 
-import type { UserSocket } from "../../../index";
+import type { UserServices } from "../../../index";
 import { getPublicationTitles } from "../../coa/publications";
 import { getShownQuotations } from "../../coa/quotations";
 import {
@@ -70,15 +70,15 @@ const getCoaCountByCountrycode = (collectionCountrycodes: string[]) =>
       ),
     );
 
-export default (socket: UserSocket) => ({
+export default ({_socket}: UserServices) => ({
   getIssues: async () => {
-    if (socket.data.user!.username === "demo") {
+    if (_socket.data.user!.username === "demo") {
       await resetDemo();
     }
     return prismaDm.issue
       .findMany({
         where: {
-          userId: socket.data.user!.id,
+          userId: _socket.data.user!.id,
           issuecode: {
             not: {
               equals: null,
@@ -127,7 +127,7 @@ export default (socket: UserSocket) => ({
     condition,
     isToRead,
   }: CollectionUpdateMultipleIssues) => {
-    const user = socket.data.user!;
+    const user = _socket.data.user!;
 
     let checkedPurchaseId: number | null = null;
     if (typeof purchaseId === "number") {
@@ -172,7 +172,7 @@ export default (socket: UserSocket) => ({
     issuecode,
     copies,
   }: CollectionUpdateSingleIssue) => {
-    const userId = socket.data.user!.id;
+    const userId = _socket.data.user!.id;
 
     const checkedPurchaseIds = await checkPurchaseIdsBelongToUser(
       copies
@@ -226,7 +226,7 @@ export default (socket: UserSocket) => ({
                 else round(max(ifnull(estimationmax, 0))) end AS estimationMax
           from dm.numeros
             inner join coa.inducks_issuequotation using (issuecode)
-          where ID_Utilisateur = ${socket.data.user!.id}
+          where ID_Utilisateur = ${_socket.data.user!.id}
             and estimationmin is not null
           group by numeros.ID;
         `.then(getShownQuotations),

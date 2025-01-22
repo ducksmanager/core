@@ -3,8 +3,7 @@ import axios from "axios";
 import type { aiKumikoResultPanel } from "~prisma/client_dumili";
 
 import { prisma } from "../../index";
-import type { IndexationSocket } from ".";
-import { type FullIndexation, refreshIndexation } from ".";
+import { type IndexationServices, type FullIndexation, refreshIndexation } from ".";
 
 type OcrResult = {
   box: [[number, number], [number, number], [number, number], [number, number]];
@@ -13,7 +12,7 @@ type OcrResult = {
 };
 
 export const runOcrOnImages = async (
-  socket: IndexationSocket,
+  services: IndexationServices,
   pages: Exclude<
     Pick<FullIndexation["pages"][number], "pageNumber" | "image">,
     { image: null }
@@ -29,7 +28,7 @@ export const runOcrOnImages = async (
       console.log(`Page ${pageNumber}: This page already has OCR results`);
       continue;
     }
-    socket.emit("runOcrOnImage", image!.id);
+    services.runOcrOnImage(image!.id);
     const firstPanelUrl = image!.url.replace(
       "/pg_",
       `/c_crop,h_${firstPanel.height},w_${firstPanel.width},x_${firstPanel.x},y_${firstPanel.y},pg_`,
@@ -80,9 +79,9 @@ export const runOcrOnImages = async (
       },
     });
 
-    await refreshIndexation(socket);
+    await refreshIndexation(services);
 
-    socket.emit("runOcrOnImageEnd", image!.id);
+    services.runOcrOnImageEnd(image!.id);
   }
 };
 /* Adding a bit of extra in case the storycode is just outside the panel */

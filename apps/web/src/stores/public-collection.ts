@@ -6,9 +6,8 @@ import useCollection from "../composables/useCollection";
 import { socketInjectionKey } from "../composables/useDmSocket";
 
 export const publicCollection = defineStore("publicCollection", () => {
-  const {
-    publicCollection: { events: publicCollectionEvents },
-  } = inject(socketInjectionKey)!;
+  const { publicCollection: publicCollectionEvents } =
+    inject(socketInjectionKey)!;
 
   const issues = shallowRef<(issue & { issuecode: string })[]>(),
     publicUsername = ref<string>(),

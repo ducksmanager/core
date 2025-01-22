@@ -156,7 +156,7 @@ const pages = computed(() =>
 const processPage = async (pageIndex: number, url: string) => {
   const page = pages.value[pageIndex];
   processLog.value = `Processing page ${page.pageNumber}...`;
-  await indexationSocket.value!.events.setPageUrl(page.id, url);
+  await indexationSocket.value!.setPageUrl(page.id, url);
 };
 
 onMounted(() => {

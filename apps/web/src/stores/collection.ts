@@ -32,9 +32,9 @@ export type purchaseWithStringDate = Omit<purchase, "date"> & {
 
 export const collection = defineStore("collection", () => {
   const {
-    collection: { events: collectionEvents },
-    stats: { events: statsEvents },
-    auth: { events: authEvents },
+    collection: collectionEvents,
+    stats: statsEvents,
+    auth: authEvents,
     options: socketOptions,
   } = inject(socketInjectionKey)!;
 

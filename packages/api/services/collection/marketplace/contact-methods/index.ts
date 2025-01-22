@@ -1,12 +1,12 @@
 import { userOptionType } from "~prisma-schemas/schemas/dm";
 import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
 
-import type { UserSocket } from "../../../../index";
+import type { UserServices } from "../../../../index";
 import { getIssuesForSale } from "..";
 
-export default (socket: UserSocket) => ({
+export default ({_socket}: UserServices) => ({
   getContactMethods: async (sellerId: number) => {
-    const issuesForSale = await getIssuesForSale(socket.data.user!.id);
+    const issuesForSale = await getIssuesForSale(_socket.data.user.id);
     if (!issuesForSale.some((issue) => issue.userId === sellerId)) {
       return { error: "Invalid seller ID", errorDetails: String(sellerId) };
     }

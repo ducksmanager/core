@@ -10,7 +10,7 @@ import type {
 import { userContributionType } from "~prisma-schemas/schemas/dm";
 import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
 
-import type { UserSocket } from "../../index";
+import type { UserServices } from "../../index";
 import { UserIsAdminMiddleware } from "../auth/util";
 import namespaces from "../namespaces";
 
@@ -69,7 +69,7 @@ const getBookstores = async (onlyActive?: true) =>
       : undefined,
   });
 
-const adminListenEvents = (socket: UserSocket) => ({
+const adminListenEvents = ({_socket}: UserServices) => ({
   getBookstores: () => getBookstores(),
   approveBookstoreComment: async (commentId: number) => {
     let bookstoreComment: bookstoreComment;
@@ -96,7 +96,7 @@ const adminListenEvents = (socket: UserSocket) => ({
     });
     const user = await prismaDm.user.findUniqueOrThrow({
       where: {
-        id: socket.data.user!.id,
+        id: _socket.data.user!.id,
       },
     });
     await persistContribution(user, 1, bookstoreComment);
@@ -113,7 +113,7 @@ export const { client: adminClient, server: adminServer } = useSocketEvents<
   middlewares: [UserIsAdminMiddleware],
 });
 
-const listenEvents = (socket: UserSocket) => ({
+const listenEvents = ({_socket}: UserServices) => ({
   getActiveBookstores: () => getBookstores(true),
 
   createBookstoreComment: async ({
@@ -149,10 +149,10 @@ const listenEvents = (socket: UserSocket) => ({
         },
       });
     }
-    const user = socket.data.user
+    const user = _socket.data.user
       ? await prismaDm.user.findUnique({
           where: {
-            id: socket.data.user.id,
+            id: _socket.data.user.id,
           },
         })
       : null;

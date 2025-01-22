@@ -291,9 +291,7 @@ let issuesAlreadyInCollection = $shallowRef<string[]>();
 let issuesImportable = $shallowRef<string[]>();
 let importProgress = $ref(0);
 
-const {
-  collection: { events: collectionEvents },
-} = inject(socketInjectionKey)!;
+const { collection: collectionEvents } = inject(socketInjectionKey)!;
 
 const { t: $t } = useI18n();
 

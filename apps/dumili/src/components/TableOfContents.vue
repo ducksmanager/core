@@ -134,12 +134,12 @@ const onEntryResizeStop = (entryIdx: number, height: number) => {
 };
 
 const createEntry = async () => {
-  await indexationSocket.value!.events.createEntry();
+  await indexationSocket.value!.createEntry();
 };
 
 const updateIndexation = () => {
   const { price } = indexation.value;
-  indexationSocket.value!.events.updateIndexation({
+  indexationSocket.value!.updateIndexation({
     price,
     numberOfPages: numberOfPages.value,
   });

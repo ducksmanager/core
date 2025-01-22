@@ -1,6 +1,6 @@
 import { prismaClient as prismaDmStats } from "~prisma-schemas/schemas/dm_stats/client";
 
-import type { UserSocket } from "../../index";
+import type { UserServices } from "../../index";
 import { getAuthorFullNames } from "../coa/authors";
 
 export interface AuthorDetails {
@@ -50,10 +50,10 @@ const getMissingStoryCountPerAuthor = async (
     {},
   );
 
-export default (socket: UserSocket) => ({
+export default ({_socket}: UserServices) => ({
   getWatchedAuthorsStats: async () => {
     const missingStoryCountPerAuthor = await getMissingStoryCountPerAuthor(
-      socket.data.user!.id,
+      _socket.data.user!.id,
     );
     const personcodes = Object.keys(missingStoryCountPerAuthor);
 

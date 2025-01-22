@@ -1,14 +1,14 @@
 import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
 
-import type { UserSocket } from "../../../index";
+import type { UserServices } from "../../../index";
 import { getUserPurchase } from "../issues/util";
 
-export default (socket: UserSocket) => ({
+export default ({_socket}: UserServices) => ({
   getPurchases: () =>
     prismaDm.purchase
       .findMany({
         where: {
-          userId: socket.data.user!.id,
+          userId: _socket.data.user!.id,
         },
         orderBy: {
           date: "desc",
@@ -23,7 +23,7 @@ export default (socket: UserSocket) => ({
 
   createPurchase: async (date: string, description: string) => {
     const criteria = {
-      userId: socket.data.user!.id,
+      userId: _socket.data.user!.id,
       date: new Date(date),
       description,
     };
@@ -42,7 +42,7 @@ export default (socket: UserSocket) => ({
 
   deletePurchase: async (purchaseId: number) => {
     const criteria = {
-      userId: socket.data.user!.id,
+      userId: _socket.data.user!.id,
       id: purchaseId,
     };
     const purchase = await getUserPurchase(criteria.userId, criteria.id);

@@ -6,9 +6,7 @@ import { socketInjectionKey as dmSocketInjectionKey } from "~web/src/composables
 import useHint from "./useHint";
 
 export default () => {
-  const {
-    coverId: { events: coverIdEvents },
-  } = inject(dmSocketInjectionKey)!;
+  const { coverId: coverIdEvents } = inject(dmSocketInjectionKey)!;
 
   const indexation = storeToRefs(suggestions())
     .indexation as Ref<FullIndexation>;

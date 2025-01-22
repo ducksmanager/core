@@ -7,9 +7,8 @@ import type { Decision } from "~dm-services/presentation-text";
 
 let router = useRouter();
 
-const {
-  presentationText: { events: presentationTextEvents },
-} = inject(socketInjectionKey)!;
+const { presentationText: presentationTextEvents } =
+  inject(socketInjectionKey)!;
 
 (async () => {
   let currentRoute = router.currentRoute.value;

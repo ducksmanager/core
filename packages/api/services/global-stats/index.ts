@@ -6,7 +6,7 @@ import type { SessionUser } from "~dm-types/SessionUser";
 import { Prisma } from "~prisma-schemas/schemas/dm";
 import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
 
-import type { UserSocket } from "../../index";
+import type { UserServices } from "../../index";
 import { RequiredAuthMiddleware } from "../auth/util";
 import { getMedalPoints } from "../collection/util";
 import namespaces from "../namespaces";
@@ -60,7 +60,7 @@ export const { client, server } = useSocketEvents<typeof listenEvents>(
 
 export type ClientEvents = (typeof client)["emitEvents"];
 
-const userListenEvents = (socket: UserSocket) => ({
+const userListenEvents = ({_socket}: UserServices) => ({
   getUsersCollectionRarity: async () => {
     {
       const userCount = await prismaDm.user.count();
@@ -78,7 +78,7 @@ const userListenEvents = (socket: UserSocket) => ({
       `;
 
       const myScore =
-        userScores.find(({ userId }) => userId === socket.data.user?.id)
+        userScores.find(({ userId }) => userId === _socket.data.user?.id)
           ?.averageRarity || 0;
 
       return {

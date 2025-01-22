@@ -6,7 +6,7 @@ import type { SessionUser } from "~dm-types/SessionUser";
 import type { user } from "~prisma-schemas/client_dm";
 import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
 
-import type { UserSocket } from "../../index";
+import type { UserServices } from "../../index";
 import { RequiredAuthMiddleware } from "../auth/util";
 import namespaces from "../namespaces";
 import options from "./options";
@@ -43,9 +43,9 @@ const getLastPublicationPosition = async (userId: number) =>
     })
     .then((results) => results._max.order || -1);
 
-const listenEvents = (socket: UserSocket<true>) => ({
+const listenEvents = ({_socket}: UserServices<true>) => ({
   getBookcaseOrder: async (username: string) => {
-    const user = await checkValidBookcaseUser(socket.data.user, username);
+    const user = await checkValidBookcaseUser(_socket.data.user, username);
     if (user.error) {
       return { error: user.error };
     } else {
@@ -182,8 +182,8 @@ export const { client, server } = useSocketEvents<
 
 export type ClientEvents = (typeof client)["emitEvents"];
 
-const authedListenEvents = (socket: UserSocket) => ({
-  ...options(socket),
+const authedListenEvents = (services: UserServices) => ({
+  ...options(services),
 });
 
 export const { client: authedClient, server: authedServer } = useSocketEvents<

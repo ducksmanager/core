@@ -3,9 +3,7 @@ import type { ModelContributor } from "~types/ModelContributor";
 import { edgecreatorSocketInjectionKey } from "./useEdgecreatorSocket";
 
 export default () => {
-  const {
-    save: { events: saveEvents },
-  } = inject(edgecreatorSocketInjectionKey)!;
+  const { save: saveEvents } = inject(edgecreatorSocketInjectionKey)!;
 
   const removeVueMarkup = (element: HTMLElement) => {
     Object.values(element.attributes || [])
@@ -32,7 +30,7 @@ export default () => {
     const cleanSvg = removeVueMarkup(
       document.getElementById(svgElementId)!.cloneNode(true) as HTMLElement,
     );
-    return saveServices
+    return saveEvents
       .saveEdge({
         runExport: withExport,
         runSubmit: withSubmit,

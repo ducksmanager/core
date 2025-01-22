@@ -26,9 +26,7 @@ import type { bookstoreComment } from "~prisma-schemas/schemas/dm";
 
 let bookstores = $shallowRef<SimpleBookstore[]>();
 
-const {
-  adminBookstore: { events: adminBookstoreEvents },
-} = inject(socketInjectionKey)!;
+const { adminBookstore: adminBookstoreEvents } = inject(socketInjectionKey)!;
 
 const validateBookstoreComment = async ({ id }: bookstoreComment) => {
   await adminBookstoreEvents.approveBookstoreComment(id);

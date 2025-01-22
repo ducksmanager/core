@@ -69,9 +69,9 @@ const AuthMiddleware = (
 };
 
 export const RequiredAuthMiddleware = (
-  socket: Socket,
+  {_socket}: {_socket: Socket},
   next: (error?: Error) => void,
-) => AuthMiddleware(socket, next, true);
+) => AuthMiddleware(_socket, next, true);
 
 export const OptionalAuthMiddleware = (
   socket: Socket,
@@ -93,12 +93,12 @@ export const UserIsEdgeCreatorEditorAuthMiddleware = (
 };
 
 export const UserIsAdminMiddleware = (
-  socket: Socket,
+  {_socket}: {_socket: Socket},
   next: (error?: Error) => void,
 ) => {
   if (
-    !socket.data.user ||
-    !["Admin"].includes(socket.data.user.privileges?.["DucksManager"])
+    !_socket.data.user ||
+    !["Admin"].includes(_socket.data.user.privileges?.["DucksManager"])
   ) {
     next(new Error("Unauthorized"));
     return;

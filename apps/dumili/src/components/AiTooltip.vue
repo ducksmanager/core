@@ -49,7 +49,7 @@ watch(
   (socket) => {
     if (socket) {
       for (const loadingEvent of loadingEvents) {
-        indexationSocket.value!.on[loadingEvent.eventName] = (id) => {
+        indexationSocket.value![loadingEvent.eventName] = (id) => {
           if (loadingEvent.checkMatch(id)) {
             isLoading.value = true;
           }
@@ -57,7 +57,7 @@ watch(
 
         const endEvent: `${LoadingEventStart}End` = `${loadingEvent.eventName}End`;
 
-        indexationSocket.value!.on[endEvent] = (id) => {
+        indexationSocket.value![endEvent] = (id) => {
           if (loadingEvent.checkMatch(id)) {
             setTimeout(() => {
               isLoading.value = false;

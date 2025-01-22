@@ -152,16 +152,13 @@ const isLast = computed(
 );
 
 const deleteEntry = async (entryIdToExtend: "previous" | "next") => {
-  await indexationSocket.value!.events.deleteEntry(
-    entry.value.id,
-    entryIdToExtend,
-  );
+  await indexationSocket.value!.deleteEntry(entry.value.id, entryIdToExtend);
 };
 
 watch(
   () => entry.value.acceptedStoryKind?.id,
   (storyKindId) => {
-    indexationSocket.value!.events.acceptStoryKindSuggestion(
+    indexationSocket.value!.acceptStoryKindSuggestion(
       entry.value.id,
       storyKindId || null,
     );
@@ -179,7 +176,7 @@ watchDebounced(
   async () => {
     const { entirepages, brokenpagenumerator, brokenpagedenominator, title } =
       entry.value;
-    await indexationSocket.value!.events.updateEntry(entry.value.id, {
+    await indexationSocket.value!.updateEntry(entry.value.id, {
       entirepages,
       brokenpagenumerator,
       brokenpagedenominator,

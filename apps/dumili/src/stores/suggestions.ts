@@ -14,8 +14,8 @@ export const suggestions = defineStore("suggestions", () => {
   const loadIndexation = async (indexationId?: string) => {
     const uiStore = ui();
     setIndexationSocketFromId(indexationId || indexation.value!.id);
-    indexationSocket.value!.connect();
-    indexationSocket.value!.on.indexationUpdated = (newIndexation) => {
+    indexationSocket.value!._connect();
+    indexationSocket.value!.indexationUpdated = (newIndexation) => {
       indexation.value = newIndexation;
       if (uiStore.currentEntry) {
         uiStore.currentEntry = newIndexation.entries.find(
@@ -31,7 +31,7 @@ export const suggestions = defineStore("suggestions", () => {
     suggestion: Pick<issueSuggestion, "publicationcode" | "issuenumber"> & {
       ai: boolean;
     },
-  ) => indexationSocket.value!.events.createIssueSuggestion(suggestion);
+  ) => indexationSocket.value!.createIssueSuggestion(suggestion);
 
   const acceptedIssue = computed({
     get: () => indexation.value?.acceptedIssueSuggestion,

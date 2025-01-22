@@ -7,10 +7,8 @@ import type { authorUser } from "~prisma-schemas/schemas/dm";
 import { socketInjectionKey } from "../composables/useDmSocket";
 
 export const stats = defineStore("stats", () => {
-  const {
-    coa: { events: coaEvents },
-    collection: { events: collectionEvents },
-  } = inject(socketInjectionKey)!;
+  const { coa: coaEvents, collection: collectionEvents } =
+    inject(socketInjectionKey)!;
 
   const ratings =
     shallowRef<EventOutput<CollectionServices, "getWatchedAuthors">>();

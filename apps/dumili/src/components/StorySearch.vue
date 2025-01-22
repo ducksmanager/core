@@ -25,9 +25,7 @@
 import type { SimpleStory } from "~dm-types/SimpleStory";
 import { socketInjectionKey as dmSocketInjectionKey } from "~web/src/composables/useDmSocket";
 
-const {
-  coa: { events: coaEvents },
-} = inject(dmSocketInjectionKey)!;
+const { coa: coaEvents } = inject(dmSocketInjectionKey)!;
 
 const emit = defineEmits<{
   (e: "story-selected", searchResult: SimpleStory): void;

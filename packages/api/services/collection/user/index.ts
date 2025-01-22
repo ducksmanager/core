@@ -4,7 +4,7 @@ import type { UserForAccountForm } from "~dm-types/UserForAccountForm";
 import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
 
 import PresentationSentenceRequested from "../../../emails/presentation-sentence-requested";
-import type { UserSocket } from "../../../index";
+import type { UserServices } from "../../../index";
 import { getHashedPassword } from "../../auth/util";
 import type { Validation } from "./util";
 import {
@@ -19,12 +19,12 @@ import {
   validate,
 } from "./util";
 
-export default (socket: UserSocket) => ({
+export default ({_socket}: UserServices) => ({
   getUser: async () =>
-    getUser(socket.data.user!.id).catch(() => ({ error: "User not found" })),
+    getUser(_socket.data.user!.id).catch(() => ({ error: "User not found" })),
 
   deleteUser: async () => {
-    const userId = socket.data.user!.id;
+    const userId = _socket.data.user!.id;
     await prismaDm.issue.deleteMany({
       where: { userId },
     });
@@ -57,7 +57,7 @@ export default (socket: UserSocket) => ({
       new EmailUpdateValidation(),
       new PresentationTextValidation(),
     ];
-    input.userId = socket.data.user!.id;
+    input.userId = _socket.data.user!.id;
     if (input.password) {
       validators = [
         ...validators,
@@ -83,7 +83,7 @@ export default (socket: UserSocket) => ({
               password: getHashedPassword(input.password),
             },
             where: {
-              id: socket.data.user!.id,
+              id: _socket.data.user!.id,
             },
           });
         }
@@ -94,7 +94,7 @@ export default (socket: UserSocket) => ({
             allowSharing: input.allowSharing,
             marketplaceAcceptsExchanges: input.marketplaceAcceptsExchanges,
           },
-          where: { id: socket.data.user!.id },
+          where: { id: _socket.data.user!.id },
         });
         if (updatedUser.presentationText !== input.presentationText) {
           if (!input.presentationText) {
@@ -102,7 +102,7 @@ export default (socket: UserSocket) => ({
               data: {
                 presentationText: null,
               },
-              where: { id: socket.data.user!.id },
+              where: { id: _socket.data.user!.id },
             });
           } else {
             hasRequestedPresentationSentenceUpdate = true;

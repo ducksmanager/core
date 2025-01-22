@@ -5,7 +5,7 @@ import type { Router } from 'vue-router';
 
 export default (
   router: Router,
-  coverIdEvents: ReturnType<typeof useDmSocket>['coverId']['events'],
+  coverIdEvents: ReturnType<typeof useDmSocket>['coverId'],
 ): {
   pickCoverFile: () => Promise<void>;
   takePhoto: () => Promise<void>;

@@ -1,8 +1,8 @@
 import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
 
-import type { UserSocket } from "../../../index";
+import type { UserServices } from "../../../index";
 
-export default (socket: UserSocket) => ({
+export default ({_socket}: UserServices) => ({
   setBookcaseOptions: async ({
     textures,
     showAllCopies: showDuplicatesInBookcase,
@@ -14,7 +14,7 @@ export default (socket: UserSocket) => ({
     const [, bookcaseSubTexture2] = textures.bookshelf.split("/");
     const user = await prismaDm.user.findUnique({
       where: {
-        id: socket.data.user!.id,
+        id: _socket.data.user!.id,
       },
     });
 

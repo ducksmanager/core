@@ -20,9 +20,7 @@ const rgbToHex = (color: string) => {
 };
 
 export default () => {
-  const {
-    imageInfo: { events: imageInfoEvents },
-  } = inject(edgecreatorSocketInjectionKey)!;
+  const { imageInfo: imageInfoEvents } = inject(edgecreatorSocketInjectionKey)!;
 
   const getImageSize = (url: string): Promise<EdgeDimensions> =>
     new Promise((resolve, reject) => {

@@ -8,20 +8,20 @@ import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
 import type { Prisma as PrismaDmStats } from "~prisma-schemas/schemas/dm_stats";
 import { prismaClient as prismaDmStats } from "~prisma-schemas/schemas/dm_stats/client";
 
-import type { UserSocket } from "../../index";
+import type { UserServices } from "../../index";
 
 export enum COUNTRY_CODE_OPTION {
   ALL = "ALL",
   countries_to_notify = "countries_to_notify",
 }
 
-export default (socket: UserSocket) => ({
+export default ({_socket}: UserServices) => ({
   getSuggestionsForCountry: async (
     countrycode: string,
     sincePreviousVisit: "since_previous_visit" | "_",
     limit: number,
   ) => {
-    const user = socket.data.user;
+    const user = _socket.data.user;
     const since =
       sincePreviousVisit === "since_previous_visit"
         ? (await prismaDm.user.findUnique({ where: { id: user!.id } }))!

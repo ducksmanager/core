@@ -13,12 +13,8 @@ const numericSortCollator = new Intl.Collator(undefined, {
   sensitivity: "base",
 });
 export const main = defineStore("main", () => {
-  const {
-    browse: { events: browseEvents },
-  } = inject(edgecreatorSocketInjectionKey)!;
-  const {
-    edges: { events: edgesEvents },
-  } = inject(dmSocketInjectionKey)!;
+  const { browse: browseEvents } = inject(edgecreatorSocketInjectionKey)!;
+  const { edges: edgesEvents } = inject(dmSocketInjectionKey)!;
 
   const publicationcode = ref<string>(),
     issuecodes = ref<string[]>([]),

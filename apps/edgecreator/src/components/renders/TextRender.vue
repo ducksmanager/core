@@ -28,9 +28,7 @@ import { step } from "~/stores/step";
 import { ui } from "~/stores/ui";
 import { coa } from "~web/src/stores/coa";
 
-const {
-  text: { events: textEvents },
-} = inject(edgecreatorSocketInjectionKey)!;
+const { text: textEvents } = inject(edgecreatorSocketInjectionKey)!;
 
 const { resolveIssueNumberTemplate, resolveIssueNumberPartTemplate } =
   useTextTemplate();

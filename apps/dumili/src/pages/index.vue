@@ -99,17 +99,14 @@ const totalPages = ref(16);
 const createIndexation = async () => {
   const cloudinaryFolderName = new Date().toISOString().replace(/[-:.Z]/g, "");
 
-  await indexationsSocket.value.events.create(
-    cloudinaryFolderName,
-    totalPages.value,
-  );
+  await indexationsSocket.value.create(cloudinaryFolderName, totalPages.value);
   router.push(`/indexation/${cloudinaryFolderName}`);
 };
 
 const deleteIndexation = async (id: string) => {
   const indexationSocket = getIndexationSocketFromId(id);
 
-  await indexationSocket.events.deleteIndexation();
+  await indexationSocket.deleteIndexation();
   window.location.reload();
 };
 
@@ -125,8 +122,7 @@ watch(currentIndexations, (indexations) => {
 });
 
 (async () => {
-  currentIndexations.value =
-    await indexationsSocket.value.events.getIndexations();
+  currentIndexations.value = await indexationsSocket.value.getIndexations();
 })();
 </script>
 

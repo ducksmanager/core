@@ -19,10 +19,8 @@ export type BookcaseEdgeWithPopularity = BookcaseEdge & {
 export const bookcase = defineStore("bookcase", () => {
   const route = useRoute();
 
-  const {
-    bookcase: { events: bookcaseEvents },
-    userBookcase: { events: userBookcaseEvents },
-  } = inject(socketInjectionKey)!;
+  const { bookcase: bookcaseEvents, userBookcase: userBookcaseEvents } =
+    inject(socketInjectionKey)!;
 
   const loadedSprites = ref<{ [key: string]: string }>({}),
     isPrivateBookcase = ref(false),

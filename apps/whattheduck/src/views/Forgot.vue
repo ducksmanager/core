@@ -40,9 +40,7 @@
 <script setup lang="ts">
 import { socketInjectionKey as dmSocketInjectionKey } from '~web/src/composables/useDmSocket';
 
-const {
-  auth: { events: authEvents },
-} = inject(dmSocketInjectionKey)!;
+const { auth: authEvents } = inject(dmSocketInjectionKey)!;
 
 const validInputs = ref<string[]>([]);
 const invalidInputs = ref<string[]>([]);

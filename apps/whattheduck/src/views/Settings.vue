@@ -103,7 +103,7 @@ AppUpdate.getAppUpdateInfo()
 
 const deleteAccount = async () => {
   if (confirm(t('Êtes-vous sûr(e) de vouloir supprimer votre compte ?'))) {
-    await socket.value!.collection.events.deleteUser();
+    await socket.value!.collection.deleteUser();
     token.value = null;
     await router.replace('/');
   }

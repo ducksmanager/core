@@ -2,14 +2,14 @@ import type { authorUser } from "~prisma-schemas/client_dm";
 import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa/client";
 import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
 
-import type { UserSocket } from "../../../index";
+import type { UserServices } from "../../../index";
 
 const maxWatchedAuthors = 5;
 
-export default (socket: UserSocket) => ({
+export default ({_socket}: UserServices) => ({
   getWatchedAuthors: async () => {
     const authorsUsers = await prismaDm.authorUser.findMany({
-      where: { userId: socket.data.user!.id },
+      where: { userId: _socket.data.user!.id },
     });
     const authorNames = (
       await prismaCoa.inducks_person.findMany({
@@ -29,7 +29,7 @@ export default (socket: UserSocket) => ({
 
   addWatchedAuthor: async (personcode: string) => {
     try {
-      await upsertAuthorUser(personcode, socket.data.user!.id);
+      await upsertAuthorUser(personcode, _socket.data.user!.id);
     } catch (e) {
       console.log(e);
       return { error: "Error", errorDetails: (e as Error).message };
@@ -39,7 +39,7 @@ export default (socket: UserSocket) => ({
   updateWatchedAuthor: async (data: authorUser) => {
     try {
       const { personcode, notation } = data;
-      await upsertAuthorUser(personcode, socket.data.user!.id, notation);
+      await upsertAuthorUser(personcode, _socket.data.user!.id, notation);
     } catch (e) {
       console.error(e);
       return { error: "Error", errorDetails: (e as Error).message };
@@ -50,7 +50,7 @@ export default (socket: UserSocket) => ({
     await prismaDm.authorUser.deleteMany({
       where: {
         personcode,
-        userId: socket.data.user!.id,
+        userId: _socket.data.user!.id,
       },
     });
   },

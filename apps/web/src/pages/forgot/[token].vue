@@ -44,9 +44,7 @@ const password2 = $ref("");
 
 const { t: $t } = useI18n();
 
-const {
-  auth: { events: authEvents },
-} = inject(socketInjectionKey)!;
+const { auth: authEvents } = inject(socketInjectionKey)!;
 
 const changePassword = async () => {
   const response = await authEvents.changePassword({

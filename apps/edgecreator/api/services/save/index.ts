@@ -3,7 +3,7 @@ import { mkdirSync, unlinkSync, writeFileSync } from "fs";
 import path from "path";
 import type { Socket } from "socket.io";
 import { SocketClient } from "socket-call-client";
-import { useSocketEvents } from "socket-call-server";
+import { NamespaceProxyTarget, useSocketEvents } from "socket-call-server";
 
 import { type ClientEvents as EdgeCreatorEvents } from "~dm-services/edgecreator";
 import namespaces from "~dm-services/namespaces";
@@ -12,7 +12,8 @@ import type { ModelContributor } from "~types/ModelContributor";
 
 import { getSvgPath } from "../../_utils";
 
-type TokenSocket = Socket<object, object, object, { token: string }>;
+export type SaveServices = NamespaceProxyTarget<
+  Socket<typeof listenEvents, object, object, { token: string }>, Record<string, never>>;
 
 const getEdgeCreatorServices = (token: string) => {
   const dmSocket = new SocketClient(process.env.DM_SOCKET_URL!);
@@ -25,10 +26,10 @@ const getEdgeCreatorServices = (token: string) => {
         console.log("not allowed");
       },
     },
-  }).events;
+  });
 };
 
-const listenEvents = (socket: TokenSocket) => ({
+const listenEvents = (services: SaveServices) => ({
   saveEdge: async (parameters: {
     runExport: boolean;
     runSubmit: boolean;
@@ -36,7 +37,7 @@ const listenEvents = (socket: TokenSocket) => ({
     contributors: ModelContributor[];
     content: string;
   }) => {
-    const { token } = socket.handshake.auth;
+    const { token } = services._socket.handshake.auth;
     const { runExport, runSubmit, issuecode, contributors, content } =
       parameters;
     const svgPath = await getSvgPath(runExport, issuecode);

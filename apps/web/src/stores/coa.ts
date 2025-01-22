@@ -41,9 +41,7 @@ const addPartInfo = (issueDetails: InducksIssueDetails) => {
 };
 
 export const coa = defineStore("coa", () => {
-  const {
-    coa: { events },
-  } = inject(socketInjectionKey)!;
+  const { coa: events } = inject(socketInjectionKey)!;
 
   const locale = useI18n().locale,
     coverUrls = shallowRef<{ [issuecode: string]: string }>({}),

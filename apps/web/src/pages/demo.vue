@@ -13,9 +13,7 @@ const { user } = storeToRefs(collection());
 
 const router = useRouter();
 
-const {
-  auth: { events: authEvents },
-} = inject(socketInjectionKey)!;
+const { auth: authEvents } = inject(socketInjectionKey)!;
 
 watch(
   user,

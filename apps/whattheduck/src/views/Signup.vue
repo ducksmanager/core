@@ -121,7 +121,7 @@ const submitSignup = async () => {
 
   await submit(
     () =>
-      socket.value!.auth.events.signup({
+      socket.value!.auth.signup({
         username: username.value,
         password: password.value,
         email: email.value,

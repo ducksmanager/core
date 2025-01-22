@@ -6,9 +6,7 @@ import type { requestedIssue } from "~prisma-schemas/schemas/dm";
 import { socketInjectionKey } from "../composables/useDmSocket";
 
 export const marketplace = defineStore("marketplace", () => {
-  const {
-    collection: { events: collectionEvents },
-  } = inject(socketInjectionKey)!;
+  const { collection: collectionEvents } = inject(socketInjectionKey)!;
 
   const issuesOnSaleByOthers =
       ref<EventOutput<CollectionServices, "getIssuesForSale">>(),
