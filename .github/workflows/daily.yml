@@ -27,6 +27,7 @@ jobs:
             docker compose run --rm --no-deps coa-updater | ts "[%Y-%m-%d %H:%M:%S]"
 
       - name: Run stats-updater
+        continue-on-error: true
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.PRODUCTION_SSH_HOST }}
@@ -41,6 +42,7 @@ jobs:
             docker compose run --rm --no-deps stats-updater
 
       - name: Run cover-updater
+        continue-on-error: true
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.PRODUCTION_SSH_HOST }}
@@ -55,6 +57,7 @@ jobs:
             docker compose run --rm --no-deps cover-updater
 
       - name: Run duck-estimator
+        continue-on-error: true
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.PRODUCTION_SSH_HOST }}
