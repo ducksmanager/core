@@ -4,6 +4,9 @@
     "node": ">=18.0.0 <19.0.0"
   },
   "scripts": {
-    "dev": "docker compose -f docker-compose-dev.yml up --force-recreate"
+    "dev": "docker compose -f docker-compose-dev.yml up --force-recreate",
+    "prod:build-docker": "REPO_NAME=ghcr.io/bperel/dm-edges pnpm -F '~ci' prod:build-docker -f apps/edges/Dockerfile",
+    "prod:deploy": "DIR=apps/edges pnpm -F '~ci' prod:docker-compose-up",
+    "prod:transfer-files-post": "pnpm -F '~ci' prod:transfer-files apps/edges/docker-compose.yml:@apps/edges/docker-compose.yml apps/edges/.env.prod:@apps/edges/.env.prod"
   }
 }
