@@ -75,12 +75,12 @@ jobs:
 
       - name: Build apps
         run: |
-          turbo -F "...~edgecreator-api" -F '!~ci' build prod:build-docker
+          turbo -F "...~edges" -F '!~ci' build prod:build-docker
 
       - name: Send post-build files
         run: |
-          turbo -F "...~edgecreator-api"  -F '!~ci' prod:transfer-files-post
+          turbo -F "...~edges"  -F '!~ci' prod:transfer-files-post
 
       - name: Deploy
         run: |
-          turbo --concurrency=1 -F "...~edgecreator-api" -F '!~ci' prod:deploy
+          turbo --concurrency=1 -F "...~edges" -F '!~ci' prod:deploy
