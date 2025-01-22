@@ -71,21 +71,16 @@ jobs:
           pnpm i -g turbo
           turbo -F "...[$lastSuccessfulCommit]" prod:transfer-files-pre
 
-      - name: Build apps
-        run: |
-          turbo -F "...[$lastSuccessfulCommit]" build
-          ls -la apps/edgecreator/api
-
       - uses: docker/setup-buildx-action@v3
 
-      - name: Build and push Docker images
+      - name: Build apps
         run: |
-          turbo -F "...[$lastSuccessfulCommit]" -F '!~ci' prod:build-docker
+          turbo -F "...edgecreator-api" -F '!~ci' build prod:build-docker
 
       - name: Send post-build files
         run: |
-          turbo -F "...[$lastSuccessfulCommit]" prod:transfer-files-post
+          turbo -F "...edgecreator-api"  -F '!~ci' prod:transfer-files-post
 
       - name: Deploy
         run: |
-          turbo --concurrency=1 -F "...[$lastSuccessfulCommit]" prod:deploy
+          turbo --concurrency=1 -F "...edgecreator-api" -F '!~ci' prod:deploy
