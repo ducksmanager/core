@@ -21,7 +21,7 @@
         },
         "prod:build-docker": {
             "dependsOn": [
-                "^prod:build-docker"
+                "build"
             ],
             "passThroughEnv": [
                 "REPO_NAME"
