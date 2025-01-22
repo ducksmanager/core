@@ -74,6 +74,7 @@ jobs:
       - name: Build apps
         run: |
           turbo -F "...[$lastSuccessfulCommit]" build
+          ls -la apps/edgecreator/api
 
       - uses: docker/setup-buildx-action@v3
 
