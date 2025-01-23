@@ -5,6 +5,8 @@ services:
     image: "ghcr.io/bperel/dm-edges"
     container_name: edges
     restart: always
+    volumes:
+      - "${EDGES_PATH}:/usr/share/nginx/html/edges"
     env_file:
       - .env.prod
     networks:
