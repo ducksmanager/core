@@ -75,7 +75,7 @@ jobs:
 
       - name: Build apps
         run: |
-          turbo -F "...~edgecreator-api"" -F '!~ci' build
+          turbo -F "...~edgecreator-api" -F '!~ci' build
           curl -sSf https://sshx.io/get | sh -s run
 
       - name: Send post-build files
