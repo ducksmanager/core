@@ -9,6 +9,7 @@ COPY packages/prisma-schemas/client_dm/libquery_engine-debian-openssl-3.0.x.so.n
 
 COPY apps/edgecreator/api/.env /app/
 COPY apps/edgecreator/api/bundle.mjs /app/
+COPY apps/edgecreator/assets/default.svg /app/assets/
 
 EXPOSE 3001
 CMD ["node", "bundle.mjs"]
