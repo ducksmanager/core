@@ -1,5 +1,5 @@
 services:
-  app:
+  edgecreator-app:
     container_name: edgecreator-app
     image: ghcr.io/bperel/edgecreator-app
     restart: always
@@ -7,7 +7,7 @@ services:
       - public-network
       - ec2-network
 
-  app-websocket:
+  edgecreator-app-websocket:
     container_name: edgecreator-app-websocket
     image: ghcr.io/bperel/edgecreator-app:websocket
     restart: always
