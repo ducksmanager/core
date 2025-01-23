@@ -7,7 +7,7 @@ import { getNextAvailableFile } from "~routes/_upload_utils";
 import { call, createAxios } from "../../axios-helper";
 const edgesPath: string = process.env.EDGES_PATH!;
 
-const dmApi = createAxios(process.env.VITE_DM_API_URL!);
+const dmApi = createAxios(process.env.DM_API_URL!);
 export const post = async (
   ...[req, res]: ExpressCall<{
     resBody: { fileName: string };

@@ -8,7 +8,7 @@ import { ExpressCall } from "~routes/_express-call";
 import { getNextAvailableFile } from "~routes/_upload_utils";
 
 import { call, createAxios } from "../../axios-helper";
-const dmApi = createAxios(process.env.VITE_DM_API_URL!);
+const dmApi = createAxios(process.env.DM_API_URL!);
 import {
   GET__edgecreator__elements__images__$filename,
   GET__edgecreator__multiple_edge_photo__check_today_limit,

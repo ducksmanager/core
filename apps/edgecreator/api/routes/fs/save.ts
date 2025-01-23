@@ -13,7 +13,7 @@ import { ModelContributor } from "~types/ModelContributor";
 
 import { call, createAxios } from "../../axios-helper";
 
-const dmApi = createAxios(process.env.VITE_DM_API_URL!);
+const dmApi = createAxios(process.env.DM_API_URL!);
 // const edgesPath = `${process.env.PWD}/../${process.env.EDGES_PATH!}`;
 
 export const post = async (
