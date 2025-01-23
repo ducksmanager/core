@@ -82,7 +82,7 @@ jobs:
           script_stop: true
           envs: REMOTE_ROOT
           script: |
-            cd $REMOTE_ROOT
+            cd $REMOTE_ROOT/packages/api
             docker compose run --rm --no-deps sprite-names-updater
 
       - name: Run subscription-handler
