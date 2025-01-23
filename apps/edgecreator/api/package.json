@@ -3,7 +3,7 @@
   "type": "module",
   "version": "1.0.0",
   "scripts": {
-    "build": "rm -rf dist && find routes -name '*.ts' -type f | while read routeFile; do echo $routeFile; bun build --target node $routeFile --outfile ./dist/$(echo $routeFile | sed 's/\\.ts/.js/g'); done; bun build --target node --sourcemap index.ts --outfile bundle.mjs",
+    "build": "rm -rf dist && find routes -name '*.ts' -type f | while read routeFile; do echo $routeFile; bun build --target node $routeFile --outfile ./dist/$(echo $routeFile | sed 's/\\.ts/.js/g'); done; bun build --target node --outfile bundle.mjs",
     "dev": "pnpm generate-route-types:clean && concurrently -n bun,tsc \"bun --inspect run --hot index.ts\" \"tsc --noEmit --watch\"",
     "generate-route-types:clean": "bun generate-route-types.ts",
     "prod:deploy": "DIR=apps/edgecreator/api pnpm -F '~ci' prod:docker-compose-up",
