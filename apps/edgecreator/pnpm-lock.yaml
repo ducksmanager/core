@@ -98,6 +98,9 @@ importers:
       ~dm-types:
         specifier: workspace:*
         version: link:../../packages/types
+      ~edgecreator-api:
+        specifier: workspace:*
+        version: link:api
       ~prisma-schemas:
         specifier: workspace:*
         version: link:../../packages/prisma-schemas
