@@ -34,3 +34,5 @@ networks:
     external: true
   dm-server_db-network:
     external: true
+  ducksmanager_dm-network:
+    external: true
