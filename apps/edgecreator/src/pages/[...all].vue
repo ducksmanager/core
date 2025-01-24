@@ -250,7 +250,7 @@ const loadMostWantedEdges = async () => {
         ({ countryCode, magazineCode }) => `${countryCode}/${magazineCode}`,
       ),
       ...mostWantedEdges.value!.map(({ publicationcode }) => publicationcode),
-      ...Object.values(currentEdges).map(
+      ...Object.values(currentEdges.value).map(
         ({ country, magazine }: EdgeWithVersionAndStatus) =>
           `${country}/${magazine}`,
       ),
