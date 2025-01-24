@@ -13,7 +13,7 @@ export default class extends Email {
     this.data = data;
   }
 
-  getFrom = () => this.data.user.email!;
+  getFrom = () => process.env.SMTP_USERNAME!;
   getFromName = () => this.data.user.username!;
   getTo = () => process.env.SMTP_USERNAME!;
   getToName = () => process.env.SMTP_FRIENDLYNAME!;
