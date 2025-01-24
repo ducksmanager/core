@@ -11,7 +11,7 @@ type Data = InputData & {
 };
 export default class extends Email {
   data: Data;
-  templatePath = import.meta.dirname;
+  templatePath = `${import.meta.dirname}/emails/edge-photo-sent`;
 
   constructor(data: InputData) {
     super();
