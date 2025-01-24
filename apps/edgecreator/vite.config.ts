@@ -22,15 +22,15 @@ export default defineConfig({
       "~dm-types": path.resolve(__dirname, "../../packages/types"),
       "~socket.io-services": path.resolve(
         __dirname,
-        "../../packages/socket.io-services",
+        "../../packages/socket.io-services"
       ),
       "~socket.io-client-services": path.resolve(
         __dirname,
-        "../../packages/socket.io-client-services",
+        "../../packages/socket.io-client-services"
       ),
       "~prisma-schemas": path.resolve(
         __dirname,
-        "../../packages/prisma-schemas",
+        "../../packages/prisma-schemas"
       ),
       "~types/": `${path.resolve(__dirname, "types")}/`,
     },
@@ -54,13 +54,21 @@ export default defineConfig({
 
     // https://github.com/antfu/unplugin-auto-import
     AutoImport({
-      imports: ["vue", "vue-router", "@vueuse/core", "pinia", "vue-i18n"],
+      imports: [
+        "vue",
+        "vue/macros",
+        "vue-router",
+        "@vueuse/core",
+        "pinia",
+        "vue-i18n",
+      ],
       dts: true,
       dirs: [
         "./src/composables",
         "./src/components",
         "./types",
         "../../packages/types",
+        "../web/src/stores"
       ],
       vueTemplate: true,
     }),

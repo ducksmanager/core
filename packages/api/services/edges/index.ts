@@ -59,7 +59,7 @@ export default (io: Server) => {
       prismaDm.$queryRaw<{ numberOfIssues: number; issuecode: string }[]>`
     SELECT Count(Numero) as numberOfIssues, issuecode
     FROM numeros AS issue
-    WHERE NOT EXISTS(
+    WHERE issuecode IS NOT NULL AND NOT EXISTS(
       SELECT 1
       FROM tranches_pretes
       WHERE issue.issuecode = tranches_pretes.issuecode

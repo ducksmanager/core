@@ -41,7 +41,7 @@
             >
               {{
                 mainStore.edgesBefore[mainStore.edgesBefore.length - 1]!
-                  .issuenumber
+                  .issuecode
               }}
             </th>
             <template
@@ -76,7 +76,7 @@
               v-if="showNextEdge && mainStore.edgesAfter[0]"
               class="surrounding-edge"
             >
-              {{ mainStore.edgesAfter[0].issuenumber }}
+              {{ mainStore.edgesAfter[0].issuecode }}
             </th>
           </tr>
           <tr>
@@ -154,6 +154,7 @@
   </b-container>
 </template>
 <script setup lang="ts">
+import useModelLoad from "~/composables/useModelLoad";
 import useSurroundingEdge from "~/composables/useSurroundingEdge";
 import { edgeCatalog } from "~/stores/edgeCatalog";
 import { editingStep } from "~/stores/editingStep";

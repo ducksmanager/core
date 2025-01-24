@@ -228,9 +228,14 @@ const getFilenameUsagesInOtherModels = async (
   filename: string,
   currentIssuecode: string,
 ) =>
-  (await edgeCreatorServices.getImagesFromFilename(filename)).filter(
-    (otherUse) => currentIssuecode !== otherUse.issuecodeStart,
-  );
+  {
+    const issue = await prismaCoa.inducks_issue.findFirstOrThrow({
+      where: { issuecode: currentIssuecode },
+    });
+    return (await edgeCreatorServices.getImagesFromFilename(filename)).filter(
+      (otherUse) => issue.issuenumber !== otherUse.issuenumberStart
+    );
+  };
 
 const saveFile = (temporaryPath: string, finalPath: string) => {
   fs.mkdirSync(dirname(finalPath), { recursive: true });

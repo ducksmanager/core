@@ -24,7 +24,7 @@ export default (prismaClient: PrismaClient) =>
         getInducksIssueData: <WithTitle extends boolean>(
           issuecodes: string[],
           withTitle: WithTitle,
-        ) =>
+        ) => !issuecodes.length ? {} as Record<string, never>:
           prismaClient.inducks_issue
             .findMany({
               select: {
