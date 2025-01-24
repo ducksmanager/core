@@ -37,7 +37,7 @@
             }
           "
           @change="
-            currentFirstIssuecode = $event;
+            currentFirstIssuecode = $event.issuecode;
             onChange();
           "
         />
@@ -67,7 +67,7 @@
             </b-form-select-option>
           </template>
         </b-form-select>
-        <template v-if="canBeMultiple && currentFirstIssuecode !== null">
+        <template v-if="canBeMultiple && currentFirstIssuecode !== undefined">
           <b-form-group class="mt-2">
             <b-form-radio
               v-model="editMode"
@@ -97,7 +97,7 @@
         </template>
       </template>
     </template>
-    <slot v-if="$slots.dimensions && currentFirstIssuecode !== null" />
+    <slot v-if="slots.dimensions && currentFirstIssuecode !== undefined" name="dimensions" />
   </div>
 </template>
 <script setup lang="ts">
@@ -110,6 +110,11 @@ const { t: $t } = useI18n();
 
 const edgeCatalogStore = edgeCatalog();
 const coaStore = webStores.coa();
+
+const slots = defineSlots<{
+  default(): never;
+  dimensions?(): never;
+}>();
 
 interface Selection {
   editMode: "single" | "range";
@@ -187,7 +192,6 @@ const publicationIssues = computed(
 const issues = computed(
   () =>
     publicationIssues.value &&
-    edgeCatalogStore.publishedEdges[currentPublicationcode.value!] &&
     coaStore.issuecodesByPublicationcode[currentPublicationcode.value!].map(
       (issuecode) => {
         const status = edgeCatalogStore.getEdgeStatus(issuecode);

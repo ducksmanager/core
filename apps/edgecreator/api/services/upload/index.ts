@@ -25,6 +25,13 @@ export default (io: Server) => {
     ({ services: edgeCreatorServices } =
       dmSocket.addNamespace<EdgeCreatorServices>(
         EdgeCreatorServices.namespaceEndpoint,
+        {
+          session: {
+            getToken: () => socket.handshake.auth.token,
+            clearSession: () => {},
+            sessionExists: () => Promise.resolve(true),
+          }
+        }
       ));
     console.log("connected to upload");
 
@@ -36,6 +43,9 @@ export default (io: Server) => {
         });
       const [countrycode, magazinecode] = publicationcode.split("/");
       const path = `${edgesPath}/${countrycode}/photos`;
+      if (!fs.existsSync(path)) {
+        fs.mkdirSync(path, { recursive: true });
+      }
       const tentativeFileName = `${magazinecode}.${issuenumber}.photo`;
       const fileName = getNextAvailableFile(
         `${path}/${tentativeFileName}`,

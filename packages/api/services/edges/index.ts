@@ -12,7 +12,7 @@ const getEdges = async (filters: {
   publicationcode?: string;
   issuecodes?: string[];
 }) => {
-  if (!filters.publicationcode || !filters.issuecodes) {
+  if (!(filters.publicationcode || filters.issuecodes)) {
     throw new Error("Invalid filter");
   }
   const issuecode = filters.issuecodes
@@ -26,13 +26,7 @@ const getEdges = async (filters: {
         issuecode,
       },
     })
-  ).reduce(
-    (acc, model) => {
-      acc[model.issuecode] = model;
-      return acc;
-    },
-    {} as Record<string, edgeModel>,
-  );
+  ).groupBy('issuecode');
 
   return (
     await prismaDm.edge.findMany({
@@ -41,6 +35,7 @@ const getEdges = async (filters: {
         issuecode: true,
       },
       where: {
+        publicationcode: filters.publicationcode,
         issuecode,
       },
     })
