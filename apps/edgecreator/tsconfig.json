@@ -33,6 +33,9 @@
       "~dm-types/*": [
         "../../packages/types/*"
       ],
+      "~group-by": [
+        "../../util/group-by"
+      ],
       "~prisma-schemas/*": [
         "../../packages/prisma-schemas/*"
       ],

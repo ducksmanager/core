@@ -47,6 +47,7 @@
     "vue3-simple-typeahead": "^1.0.11",
     "~edgecreator-api": "workspace:*",
     "~edges": "workspace:*",
+    "~group-by": "workspace:*",
     "~prisma-schemas": "workspace:*",
     "~socket.io-client-services": "workspace:*",
     "~web": "workspace:*"
