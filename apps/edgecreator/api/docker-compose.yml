@@ -27,6 +27,7 @@ services:
         aliases:
           - edgecreator-api-websocket
       dm-server_db-network:
+      ducksmanager_dm-network:
 
 networks:
   public-network:
