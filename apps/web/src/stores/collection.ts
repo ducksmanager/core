@@ -348,7 +348,6 @@ export const collection = defineStore("collection", () => {
           role === "EdgeCreator" && privilege === thisPrivilege,
       ) || false;
 
-  console.log(issues.value);
   return {
     ...collectionUtils,
     issues,

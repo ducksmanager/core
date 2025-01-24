@@ -1,10 +1,5 @@
 <template>
-  <b-alert
-    v-if="error"
-    align="center"
-    variant="danger"
-    :model-value="true"
-  >
+  <b-alert v-if="error" align="center" variant="danger" :model-value="true">
     {{ error }}
   </b-alert>
   <b-container
@@ -25,17 +20,14 @@
     </b-alert>
     <top-bar />
     <position-helper />
-    <b-row
-      class="flex-grow-1 pt-2"
-      align-h="end"
-    >
+    <b-row class="flex-grow-1 pt-2" align-h="end">
       <b-col class="d-flex align-items-end flex-column overflow-auto h-100">
         <table class="edges">
           <tr v-if="uiStore.showIssueNumbers">
             <th
               v-if="
                 showPreviousEdge &&
-                  mainStore.edgesBefore[mainStore.edgesBefore.length - 1]
+                mainStore.edgesBefore[mainStore.edgesBefore.length - 1]
               "
               class="surrounding-edge"
             >
@@ -62,7 +54,7 @@
                   <i-bi-pencil />
                 </div>
                 <div>
-                  {{ coaStore.issuecodeDetails[issuecode].issuenumber }}
+                  {{ issuecodeDetails[issuecode].issuenumber }}
                 </div>
               </th>
               <th
@@ -104,7 +96,7 @@
                   :contributors="
                     mainStore.contributors.filter(
                       ({ issuecode: thisIssuecode }) =>
-                        thisIssuecode === issuecode,
+                        thisIssuecode === issuecode
                     )
                   "
                 />
@@ -125,7 +117,7 @@
                   @click="setColorFromPhoto"
                   @load="uiStore.showEdgePhotos = true"
                   @error="uiStore.showEdgePhotos = undefined"
-                >
+                />
               </td>
             </template>
             <td v-if="showNextEdge && mainStore.edgesAfter.length">
@@ -138,11 +130,7 @@
           </tr>
         </table>
       </b-col>
-      <b-col
-        sm="10"
-        md="8"
-        lg="6"
-      >
+      <b-col sm="10" md="8" lg="6">
         <model-edit
           @add-step="stepStore.addStep"
           @remove-step="stepStore.removeStep"
@@ -168,13 +156,13 @@ import { coa } from "~web/src/stores/coa";
 const route = useRoute();
 const uiStore = ui();
 const mainStore = main();
-const coaStore = coa();
+const {issuecodeDetails} = storeToRefs(coa());
 const stepStore = step();
 const editingStepStore = editingStep();
 const { showPreviousEdge, showNextEdge } = useSurroundingEdge();
 
 const { loadModel } = useModelLoad();
-const { issuecodes } = storeToRefs(mainStore);
+const { publicationcode, issuecodes } = storeToRefs(mainStore);
 
 const error = ref<string | null>(null);
 
@@ -191,6 +179,18 @@ const dimensionsPerIssuecode = computed(() =>
     {},
   ),
 );
+
+const getActualIssuecode = (issuecode: string) => {
+  const actualIssuecode = Object.values(issuecodeDetails.value).find(
+      ({ publicationcode: thisPublicationcode, issuenumber }) => thisPublicationcode === publicationcode.value && issuenumber === issuecode.split(/[ ]+/)[1],
+    )?.issuecode;
+
+  if (actualIssuecode === undefined) {
+    throw new Error(`Issue ${issuecode} doesn't exist`);
+  }
+
+  return actualIssuecode
+}
 
 const stepsPerIssuecode = computed(() =>
   issuecodes.value.reduce<Record<string, Options>>(
@@ -223,24 +223,26 @@ try {
     [firstIssuecode, ...otherIssuecodes] = firstIssuecode.split(",");
   }
 
-  await coaStore.fetchIssuecodeDetails([firstIssuecode]);
+  const issuecodeParts = firstIssuecode.split(/[ ]+/);
 
-  if (!firstIssuecode) {
-    throw new Error(`Issue ${firstIssuecode} doesn't exist`);
-  }
+  publicationcode.value = issuecodeParts[0];
 
   await mainStore.loadPublicationIssues();
+  debugger
+
+  firstIssuecode = getActualIssuecode(firstIssuecode);
+  if (lastIssuecode) {
+  lastIssuecode = getActualIssuecode(lastIssuecode);
+  }
+  otherIssuecodes = otherIssuecodes?.map(issuecode => getActualIssuecode(issuecode));
 
   try {
-    mainStore.setIssuecodes(firstIssuecode!, lastIssuecode, otherIssuecodes);
+    mainStore.setIssuecodes(firstIssuecode, lastIssuecode, otherIssuecodes);
 
     editingStepStore.addIssuecode(firstIssuecode!);
 
     for (const issuecode of issuecodes.value) {
       const idx = issuecodes.value.indexOf(issuecode);
-      if (!Object.prototype.hasOwnProperty.call(issuecodes, idx)) {
-        continue;
-      }
       try {
         await loadModel(firstIssuecode, issuecode);
       } catch {
@@ -260,8 +262,8 @@ try {
   } catch (e) {
     error.value = e as string;
   }
-} catch (_e) {
-  error.value = "Invalid URL";
+} catch (e) {
+  error.value = e as string;
 }
 
 const getImageUrl = (fileType: string, fileName: string) =>
