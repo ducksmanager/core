@@ -52,7 +52,7 @@ export default (io: Server) => {
         "jpg",
       ).match(/\/([^/]+)$/)![1];
 
-      await decode(data, {
+      await decode(data.split(',')[1], {
         fname: `${path}/${fileName.replace(/.jpg$/, "")}`,
         ext: "jpg",
       });
