@@ -28,7 +28,7 @@
               <span
                 v-if="
                 entry.acceptedStoryKind &&
-                storyDetails[suggestion.storycode] &&
+                storyDetails[suggestion.storycode]?.originalstoryversioncode &&
                 entry.acceptedStoryKind?.kind !=
                 storyversionDetails[storyDetails[suggestion.storycode].originalstoryversioncode!].kind
               "
@@ -107,7 +107,12 @@
     <template #unknown-text>{{ $t("Contenu inconnu") }}</template>
     <template #customize-text>{{ $t("Rechercher...") }}</template>
     <template #customize-form>
-      <StorySearch @story-selected="acceptStory($event.storycode)" />
+      <StorySearch
+        @story-selected="
+          acceptStory($event.storycode);
+          showEntrySelect = false;
+        "
+      />
     </template>
   </suggestion-list>
 </template>
@@ -176,7 +181,7 @@ const acceptStory = async (storycode: storySuggestion["storycode"] | null) => {
 
 watch(
   () => entry.value.acceptedStory?.storycode || null,
-  async (storycode) => {
+  (storycode) => {
     acceptStory(storycode);
   },
 );
