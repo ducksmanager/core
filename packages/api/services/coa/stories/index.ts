@@ -5,17 +5,29 @@ import type { StorySearchResults } from "~dm-types/StorySearchResults";
 import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa/client";
 
 import type Events from "../types";
+import { Prisma } from "~prisma-schemas/client_coa";
 export default (socket: Socket<Events>) => {
   socket.on("getStoryDetails", (storycodes, callback) =>
-    prismaCoa.inducks_story
-      .findMany({
+    Promise.all([
+      prismaCoa.inducks_story.findMany({
         where: {
           storycode: { in: storycodes },
         },
-      })
-      .then((data) => {
-        callback({ stories: data.groupBy("storycode") });
-      })
+      }),
+      prismaCoa.$queryRaw<{ storycode: string; url: string }[]>`
+      select s.storycode, CONCAT('webusers/webusers/', url) AS url
+      from inducks_story s
+              inner join coa.inducks_storyversion sv on s.originalstoryversioncode = sv.storyversioncode
+              inner join coa.inducks_entry e using (storyversioncode)
+              inner join coa.inducks_entryurl eu using (entrycode)
+      where s.storycode IN (${Prisma.join(storycodes)})
+        and eu.sitecode = 'webusers'
+      group by s.storycode`,
+    ])
+      .then(([stories, storyUrls]) => ({
+        stories: stories.groupBy("storycode"),
+        storyUrls: storyUrls.groupBy("storycode", "url"),
+      }))
       .catch((e) => {
         callback({ error: "Error", errorDetails: e });
       }),

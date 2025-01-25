@@ -113,7 +113,7 @@ export default abstract class {
   abstract getStoryDetails: (
     storycodes: string[],
     callback: (
-      value: Errorable<{ stories: Record<string, inducks_story> }, "Error">,
+      value: Errorable<{ stories: Record<string, inducks_story>, storyUrls: Record<string, string> }, "Error">,
     ) => void,
   ) => void;
   abstract getStoryversionsDetails: (
