@@ -24,10 +24,12 @@ export default (socket: Socket<Events>) => {
         and eu.sitecode = 'webusers'
       group by s.storycode`,
     ])
-      .then(([stories, storyUrls]) => ({
-        stories: stories.groupBy("storycode"),
-        storyUrls: storyUrls.groupBy("storycode", "url"),
-      }))
+      .then(([stories, storyUrls]) => {
+        callback({
+          stories: stories.groupBy("storycode"),
+          storyUrls: storyUrls.groupBy("storycode", "url"),
+        });
+      })
       .catch((e) => {
         callback({ error: "Error", errorDetails: e });
       }),
