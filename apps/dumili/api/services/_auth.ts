@@ -29,7 +29,7 @@ export const authenticateUser = async (
   });
 
 export const RequiredAuthMiddleware = (
-  {_socket}: {_socket: Socket},
+  { _socket }: { _socket: Socket },
   next: (error?: Error) => void,
 ) => {
   authenticateUser(_socket.handshake.auth.token)

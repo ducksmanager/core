@@ -15,7 +15,7 @@ export enum COUNTRY_CODE_OPTION {
   countries_to_notify = "countries_to_notify",
 }
 
-export default ({_socket}: UserServices) => ({
+export default ({ _socket }: UserServices) => ({
   getSuggestionsForCountry: async (
     countrycode: string,
     sincePreviousVisit: "since_previous_visit" | "_",

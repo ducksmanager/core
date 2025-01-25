@@ -4,7 +4,7 @@ import { Email, i18n } from "../email";
 
 export default class extends Email {
   data: { user: user; token: string };
-  templatePath = import.meta.dirname;
+  templatePath = `${import.meta.dirname}/emails/reset-password`;
 
   sendCopyToAdmin = false;
 

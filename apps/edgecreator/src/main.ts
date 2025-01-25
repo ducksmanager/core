@@ -1,6 +1,7 @@
 import "bootstrap/dist/css/bootstrap.css";
 import "bootstrap-vue-next/dist/bootstrap-vue-next.css";
 import "vue3-simple-typeahead/dist/vue3-simple-typeahead.css"; //Optional default CSS
+import "~group-by";
 
 import { createHead } from "@unhead/vue";
 import { BCarousel, BCarouselSlide } from "bootstrap-vue-next";

@@ -69,7 +69,7 @@ const AuthMiddleware = (
 };
 
 export const RequiredAuthMiddleware = (
-  {_socket}: {_socket: Socket},
+  { _socket }: { _socket: Socket },
   next: (error?: Error) => void,
 ) => AuthMiddleware(_socket, next, true);
 
@@ -93,7 +93,7 @@ export const UserIsEdgeCreatorEditorAuthMiddleware = (
 };
 
 export const UserIsAdminMiddleware = (
-  {_socket}: {_socket: Socket},
+  { _socket }: { _socket: Socket },
   next: (error?: Error) => void,
 ) => {
   if (

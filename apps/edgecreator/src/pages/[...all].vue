@@ -192,10 +192,9 @@ const { loadCatalog, canEditEdge, edgeCategories } = edgeCatalogStore;
 const { currentEdges, isCatalogLoaded } = storeToRefs(edgeCatalogStore);
 
 const edgesByStatusAndPublicationcode = computed(() => {
-  const edgesByStatus = Object.values(currentEdges.value).groupBy(
-    "status",
-    "[]",
-  );
+  const edgesByStatus = currentEdges.value?.length
+    ? Object.values(currentEdges.value).groupBy("status", "[]")
+    : { ongoing: [], "ongoing by another user": [], pending: [] };
   return Object.fromEntries(
     Object.entries(edgesByStatus).map(([status, edges]) => [
       status,
@@ -235,7 +234,11 @@ const mostPopularIssuesInCollectionWithoutEdge = computed(() =>
 );
 
 const loadMostWantedEdges = async () => {
-  mostWantedEdges.value = (await edgesEvents.getWantedEdges())
+  const wantedEdges = (await edgesEvents.getWantedEdges())
+  await coaStore.fetchIssuecodeDetails(
+    wantedEdges.map(({ issuecode }) => issuecode)
+  );
+  mostWantedEdges.value = wantedEdges
     .slice(0, 10)
     .map(
       ({
@@ -269,10 +272,13 @@ watch(
     await bookcaseStore.loadBookcase();
     await loadMostWantedEdges();
     await loadCatalog();
+    await coaStore.fetchIssuecodeDetails(
+      Object.keys(currentEdges.value).map((issuecode) => issuecode)
+    );
     const publicationcodes = [
       ...mostWantedEdges.value!.map(({ issuecode }) => issuecode!),
       ...Object.values(currentEdges.value).map(({ issuecode }) => issuecode),
-    ].map((issuecode) => issuecodeDetails.value[issuecode].publicationcode);
+    ].map((issuecode) => issuecodeDetails.value[issuecode]?.publicationcode || 'fr/JM');
 
     await coaStore.fetchPublicationNames(publicationcodes);
     isUploadableEdgesCarouselReady.value = true;

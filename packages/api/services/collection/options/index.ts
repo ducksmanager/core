@@ -10,7 +10,7 @@ const optionNameToEnum = (
     | "marketplace_contact_methods",
 ) => userOptionType[optionName];
 
-export default ({_socket}: UserServices) => ({
+export default ({ _socket }: UserServices) => ({
   getOption: async (optionName: Parameters<typeof optionNameToEnum>[0]) =>
     prismaDm.userOption
       .findMany({

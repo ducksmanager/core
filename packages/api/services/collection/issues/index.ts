@@ -70,7 +70,7 @@ const getCoaCountByCountrycode = (collectionCountrycodes: string[]) =>
       ),
     );
 
-export default ({_socket}: UserServices) => ({
+export default ({ _socket }: UserServices) => ({
   getIssues: async () => {
     if (_socket.data.user!.username === "demo") {
       await resetDemo();

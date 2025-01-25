@@ -3,7 +3,7 @@ import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
 import type { UserServices } from "../../../index";
 import { getUserPurchase } from "../issues/util";
 
-export default ({_socket}: UserServices) => ({
+export default ({ _socket }: UserServices) => ({
   getPurchases: () =>
     prismaDm.purchase
       .findMany({

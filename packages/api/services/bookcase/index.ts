@@ -43,7 +43,7 @@ const getLastPublicationPosition = async (userId: number) =>
     })
     .then((results) => results._max.order || -1);
 
-const listenEvents = ({_socket}: UserServices<true>) => ({
+const listenEvents = ({ _socket }: UserServices<true>) => ({
   getBookcaseOrder: async (username: string) => {
     const user = await checkValidBookcaseUser(_socket.data.user, username);
     if (user.error) {

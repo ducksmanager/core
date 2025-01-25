@@ -7,7 +7,7 @@
   },
   "scripts": {
     "clean": "rm -rf dist",
-    "build": "prisma generate && bun build --target node --sourcemap index.ts --outfile bundle.mjs",
+    "build": "prisma generate && bun build --target node index.ts --outfile bundle.mjs",
     "prisma-pull-generate": "prisma db pull && prisma generate",
     "prisma-generate": "prisma generate",
     "prisma-migrate": "prisma migrate deploy",

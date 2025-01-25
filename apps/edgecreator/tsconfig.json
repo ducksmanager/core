@@ -33,6 +33,9 @@
       "~dm-types/*": [
         "../../packages/types/*"
       ],
+      "~group-by": [
+        "../../util/group-by"
+      ],
       "~prisma-schemas/*": [
         "../../packages/prisma-schemas/*"
       ],
@@ -44,7 +47,8 @@
       "vite/client",
       "vite-plugin-pages/client",
       "unplugin-icons/types/vue",
-      "vite-plugin-vue-layouts/client"
+      "vite-plugin-vue-layouts/client",
+      "@vue-macros/reactivity-transform/macros-global"
     ]
   },
   "include": [

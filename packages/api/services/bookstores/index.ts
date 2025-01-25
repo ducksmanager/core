@@ -69,7 +69,7 @@ const getBookstores = async (onlyActive?: true) =>
       : undefined,
   });
 
-const adminListenEvents = ({_socket}: UserServices) => ({
+const adminListenEvents = ({ _socket }: UserServices) => ({
   getBookstores: () => getBookstores(),
   approveBookstoreComment: async (commentId: number) => {
     let bookstoreComment: bookstoreComment;
@@ -113,7 +113,7 @@ export const { client: adminClient, server: adminServer } = useSocketEvents<
   middlewares: [UserIsAdminMiddleware],
 });
 
-const listenEvents = ({_socket}: UserServices) => ({
+const listenEvents = ({ _socket }: UserServices) => ({
   getActiveBookstores: () => getBookstores(true),
 
   createBookstoreComment: async ({

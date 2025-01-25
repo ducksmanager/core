@@ -11,7 +11,7 @@ const getEdges = async (filters: {
   publicationcode?: string;
   issuecodes?: string[];
 }) => {
-  if (!filters.publicationcode || !filters.issuecodes) {
+  if (!(filters.publicationcode || filters.issuecodes)) {
     throw new Error("Invalid filter");
   }
   const issuecode = filters.issuecodes
@@ -34,6 +34,7 @@ const getEdges = async (filters: {
         issuecode: true,
       },
       where: {
+        publicationcode: filters.publicationcode,
         issuecode,
       },
     })
@@ -49,7 +50,7 @@ const listenEvents = () => ({
     prismaDm.$queryRaw<{ numberOfIssues: number; issuecode: string }[]>`
     SELECT Count(Numero) as numberOfIssues, issuecode
     FROM numeros AS issue
-    WHERE NOT EXISTS(
+    WHERE issuecode IS NOT NULL AND NOT EXISTS(
       SELECT 1
       FROM tranches_pretes
       WHERE issue.issuecode = tranches_pretes.issuecode

@@ -6,7 +6,7 @@ import type { UserServices } from "../../../index";
 
 const maxWatchedAuthors = 5;
 
-export default ({_socket}: UserServices) => ({
+export default ({ _socket }: UserServices) => ({
   getWatchedAuthors: async () => {
     const authorsUsers = await prismaDm.authorUser.findMany({
       where: { userId: _socket.data.user!.id },

@@ -12,7 +12,7 @@ export type SubscriptionTransformedStringDates = Omit<
   endDate: string;
 };
 
-export default ({_socket}: UserServices) => ({
+export default ({ _socket }: UserServices) => ({
   getSubscriptions: () =>
     prismaDm.subscription
       .findMany({

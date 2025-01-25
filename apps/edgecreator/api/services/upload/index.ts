@@ -15,10 +15,16 @@ import { getNextAvailableFile } from "../_upload_utils";
 
 const edgesPath: string = process.env.EDGES_PATH!;
 
-const getEdgeCreatorServices = () =>
+const getEdgeCreatorServices = (token: string) =>
   new SocketClient(
     process.env.DM_SOCKET_URL!,
-  ).addNamespace<EdgeCreatorServices>(namespaces.EDGECREATOR).services;
+  ).addNamespace<EdgeCreatorServices>(namespaces.EDGECREATOR, {
+    session: {
+      getToken: () => token,
+      clearSession: () => {},
+      sessionExists: () => Promise.resolve(true),
+    },
+  }).services;
 
 const listenEvents = () => ({
   uploadFromBase64: async (parameters: { data: string; issuecode: string }) => {
@@ -29,13 +35,16 @@ const listenEvents = () => ({
       });
     const [countrycode, magazinecode] = publicationcode.split("/");
     const path = `${edgesPath}/${countrycode}/photos`;
+    if (!fs.existsSync(path)) {
+      fs.mkdirSync(path, { recursive: true });
+    }
     const tentativeFileName = `${magazinecode}.${issuenumber}.photo`;
     const fileName = getNextAvailableFile(
       `${path}/${tentativeFileName}`,
       "jpg",
     ).match(/\/([^/]+)$/)![1];
 
-    await decode(data, {
+    await decode(data.split(",")[1], {
       fname: `${path}/${fileName.replace(/.jpg$/, "")}`,
       ext: "jpg",
     });
@@ -232,10 +241,14 @@ const readContentsAndCalculateHash = (
 const getFilenameUsagesInOtherModels = async (
   filename: string,
   currentIssuecode: string,
-) =>
-  (await getEdgeCreatorServices().getImagesFromFilename(filename)).filter(
-    (otherUse) => currentIssuecode !== otherUse.issuenumberStart,
-  );
+) => {
+  const issue = await prismaCoa.inducks_issue.findFirstOrThrow({
+    where: { issuecode: currentIssuecode },
+  });
+  return (
+    await getEdgeCreatorServices().getImagesFromFilename(filename)
+  ).filter((otherUse) => issue.issuenumber !== otherUse.issuenumberStart);
+};
 
 const saveFile = (temporaryPath: string, finalPath: string) => {
   fs.mkdirSync(dirname(finalPath), { recursive: true });

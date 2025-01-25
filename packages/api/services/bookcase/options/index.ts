@@ -2,7 +2,7 @@ import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
 
 import type { UserServices } from "../../../index";
 
-export default ({_socket}: UserServices) => ({
+export default ({ _socket }: UserServices) => ({
   setBookcaseOptions: async ({
     textures,
     showAllCopies: showDuplicatesInBookcase,

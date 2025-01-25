@@ -1,5 +1,6 @@
 import type { Socket } from "socket.io";
-import { NamespaceProxyTarget, useSocketEvents } from "socket-call-server";
+import type { NamespaceProxyTarget } from "socket-call-server";
+import { useSocketEvents } from "socket-call-server";
 
 import { COVER } from "~dumili-types/storyKinds";
 import type { Prisma } from "~prisma/client_dumili";
@@ -11,9 +12,11 @@ import { createEntry } from "../indexation";
 import namespaces from "../namespaces";
 
 export type IndexationsServices = NamespaceProxyTarget<
-  Socket<typeof listenEvents, object, object, SessionData>, Record<string, never>>;
+  Socket<typeof listenEvents, object, object, SessionData>,
+  Record<string, never>
+>;
 
-const listenEvents = ({_socket}: IndexationsServices) => ({
+const listenEvents = ({ _socket }: IndexationsServices) => ({
   getUser: async () => ({
     username: _socket.data.user.username,
   }),

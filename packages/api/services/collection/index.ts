@@ -17,8 +17,8 @@ import { getUser } from "./user/util";
 import watchedAuthors from "./watched-authors";
 
 const listenEvents = (services: UserServices) => {
-  const {_socket} = services;
-  return ({
+  const { _socket } = services;
+  return {
     ...watchedAuthors(services),
     ...user(services),
     ...issues(services),
@@ -27,26 +27,30 @@ const listenEvents = (services: UserServices) => {
     ...purchases(services),
     ...subscriptions(services),
 
-    emptyCollection: () => prismaDm.issue
-      .deleteMany({
-        where: { userId: _socket.data.user!.id },
-      })
-      .finally(() => { }),
+    emptyCollection: () =>
+      prismaDm.issue
+        .deleteMany({
+          where: { userId: _socket.data.user!.id },
+        })
+        .finally(() => {}),
 
-    getUserPermissions: () => prismaDm.userPermission.findMany({
-      where: {
-        username: _socket.data.user!.username,
-      },
-    }),
+    getUserPermissions: () =>
+      prismaDm.userPermission.findMany({
+        where: {
+          username: _socket.data.user!.username,
+        },
+      }),
 
-    getCollectionPopularity: () => prismaDm.$queryRaw<{ issuecode: string; popularity: number; }[]> `
+    getCollectionPopularity: () =>
+      prismaDm.$queryRaw<{ issuecode: string; popularity: number }[]>`
       select userIssue.issuecode, COUNT(issue.ID) AS popularity
       from numeros userIssue
               inner join numeros issue using (issuecode)
       where issue.ID_Utilisateur = ${_socket.data.user!.id}
       group by issuecode
-      order by COUNT(issue.ID) DESC`.then((results) => results.groupBy("issuecode", "popularity")
-    ),
+      order by COUNT(issue.ID) DESC`.then((results) =>
+        results.groupBy("issuecode", "popularity"),
+      ),
 
     getNotificationToken: async (username: string) => {
       if (username !== _socket.data.user!.username) {
@@ -72,7 +76,9 @@ const listenEvents = (services: UserServices) => {
         return { error: "This user does not exist" };
       }
       if (!user.lastAccess) {
-        console.log(`Initializing last access for user ${_socket.data.user!.id}`);
+        console.log(
+          `Initializing last access for user ${_socket.data.user!.id}`,
+        );
         user.previousAccess = null;
         user.lastAccess = new Date();
       } else {
@@ -121,7 +127,7 @@ const listenEvents = (services: UserServices) => {
         creationDate: edge.creationDate.toISOString(),
       }));
     },
-  });
+  };
 };
 
 export const { client, server } = useSocketEvents<

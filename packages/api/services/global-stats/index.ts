@@ -60,7 +60,7 @@ export const { client, server } = useSocketEvents<typeof listenEvents>(
 
 export type ClientEvents = (typeof client)["emitEvents"];
 
-const userListenEvents = ({_socket}: UserServices) => ({
+const userListenEvents = ({ _socket }: UserServices) => ({
   getUsersCollectionRarity: async () => {
     {
       const userCount = await prismaDm.user.count();

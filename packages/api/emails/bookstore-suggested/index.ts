@@ -5,7 +5,7 @@ export default class extends Email {
   data: {
     user: user | null;
   };
-  templatePath = import.meta.dirname;
+  templatePath = `${import.meta.dirname}/emails/bookstore-suggested`;
 
   constructor(data: { user: user | null }) {
     super();
@@ -14,7 +14,7 @@ export default class extends Email {
 
   getTo = () => process.env.SMTP_USERNAME!;
   getToName = () => process.env.SMTP_FRIENDLYNAME!;
-  getFrom = () => this.data.user?.email || "anonymous@duckmanager.net";
+  getFrom = () => process.env.SMTP_USERNAME!;
   getFromName = () => this.data.user?.username || "Anonymous";
   getSubject = () => "Bookstore suggestion";
 }

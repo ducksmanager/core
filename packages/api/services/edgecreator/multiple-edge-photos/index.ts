@@ -6,7 +6,7 @@ import { prismaClient as prismaEdgeCreator } from "~prisma-schemas/schemas/edgec
 import EdgePhotoSent from "../../../emails/edge-photo-sent";
 import type { UserServices } from "../../../index";
 
-export default ({_socket}: UserServices) => ({
+export default ({ _socket }: UserServices) => ({
   sendNewEdgePhotoEmail: async (issuecode: string) => {
     const user = await prismaDm.user.findUniqueOrThrow({
       where: { id: _socket.data.user!.id },

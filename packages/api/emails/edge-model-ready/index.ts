@@ -12,7 +12,7 @@ type Data = InputData & {
 };
 export default class extends Email {
   data: Data;
-  templatePath = import.meta.dirname;
+  templatePath = `${import.meta.dirname}/emails/edge-model-ready`;
 
   constructor(data: InputData) {
     super();
@@ -22,7 +22,7 @@ export default class extends Email {
     };
   }
 
-  getFrom = () => this.data.user.email!;
+  getFrom = () => process.env.SMTP_USERNAME!;
   getFromName = () => this.data.user.username;
   getTo = () => process.env.SMTP_USERNAME!;
   getToName = () => process.env.SMTP_FRIENDLYNAME!;

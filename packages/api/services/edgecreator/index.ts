@@ -21,8 +21,8 @@ type ImageElement = {
 };
 
 const listenEvents = (services: UserServices) => {
-  const {_socket} = services;
-  return ({
+  const { _socket } = services;
+  return {
     ...models(),
     ...edgeSprites(),
     ...edgePublication(),
@@ -64,8 +64,8 @@ const listenEvents = (services: UserServices) => {
       await email.send();
 
       return { url: email.data.ecLink };
-    }
-  });
+    },
+  };
 };
 
 export const { client, server } = useSocketEvents<

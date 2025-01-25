@@ -3,7 +3,8 @@ import { mkdirSync, unlinkSync, writeFileSync } from "fs";
 import path from "path";
 import type { Socket } from "socket.io";
 import { SocketClient } from "socket-call-client";
-import { NamespaceProxyTarget, useSocketEvents } from "socket-call-server";
+import type { NamespaceProxyTarget } from "socket-call-server";
+import { useSocketEvents } from "socket-call-server";
 
 import { type ClientEvents as EdgeCreatorEvents } from "~dm-services/edgecreator";
 import namespaces from "~dm-services/namespaces";
@@ -13,7 +14,9 @@ import type { ModelContributor } from "~types/ModelContributor";
 import { getSvgPath } from "../../_utils";
 
 export type SaveServices = NamespaceProxyTarget<
-  Socket<typeof listenEvents, object, object, { token: string }>, Record<string, never>>;
+  Socket<typeof listenEvents, object, object, { token: string }>,
+  Record<string, never>
+>;
 
 const getEdgeCreatorServices = (token: string) => {
   const dmSocket = new SocketClient(process.env.DM_SOCKET_URL!);

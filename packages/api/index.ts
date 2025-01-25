@@ -6,6 +6,7 @@ import { createServer } from "http";
 import { cpus } from "os";
 import type { Socket } from "socket.io";
 import { Server } from "socket.io";
+import type { NamespaceProxyTarget } from "socket-call-server";
 
 import type { SessionUser } from "~dm-types/SessionUser";
 
@@ -30,10 +31,16 @@ import {
   getPastecSearchStatus,
   getPastecStatus,
 } from "./services/status";
-import { NamespaceProxyTarget } from "socket-call-server";
 
 export type UserServices<OptionalUser = false> = NamespaceProxyTarget<
-  Socket<object, object, object, OptionalUser extends false ? { user: SessionUser } : { user?: SessionUser }>, Record<string, never>>;
+  Socket<
+    object,
+    object,
+    object,
+    OptionalUser extends false ? { user: SessionUser } : { user?: SessionUser }
+  >,
+  Record<string, never>
+>;
 
 class ServerWithUser extends Server<
   Record<string, never>,

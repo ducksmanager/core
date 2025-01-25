@@ -9,7 +9,7 @@ import watchedAuthors from "./watchedAuthors";
 
 const listenEvents = (services: UserServices) => ({
   ...suggestions(services),
-  ...watchedAuthors(services)
+  ...watchedAuthors(services),
 });
 
 export const { client, server } = useSocketEvents<

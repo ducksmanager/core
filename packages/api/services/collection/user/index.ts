@@ -19,7 +19,7 @@ import {
   validate,
 } from "./util";
 
-export default ({_socket}: UserServices) => ({
+export default ({ _socket }: UserServices) => ({
   getUser: async () =>
     getUser(_socket.data.user!.id).catch(() => ({ error: "User not found" })),
 

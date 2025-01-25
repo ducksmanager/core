@@ -10,7 +10,7 @@ type Data = InputData & {
 };
 export default class extends Email {
   data: Data;
-  templatePath = import.meta.dirname;
+  templatePath = `${import.meta.dirname}/emails/feedback-sent`;
 
   constructor(data: Data) {
     super();
@@ -19,7 +19,7 @@ export default class extends Email {
 
   getTo = () => process.env.SMTP_USERNAME!;
   getToName = () => process.env.SMTP_FRIENDLYNAME!;
-  getFrom = () => this.data.user?.email || "anonymous@duckmanager.net";
+  getFrom = () => process.env.SMTP_USERNAME!;
   getFromName = () => this.data.user?.username || "Anonymous";
   getSubject = () =>
     i18n.__("User {{username}} sent a feedback", {

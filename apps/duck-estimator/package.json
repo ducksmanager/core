@@ -9,7 +9,7 @@
     "name": "Bruno Perel"
   },
   "scripts": {
-    "build": "bun build --target node --sourcemap index.ts --outdir dist && mv dist/index.js bundle.mjs && rm -rf dist",
+    "build": "bun build --target node index.ts --outdir dist && mv dist/index.js bundle.mjs && rm -rf dist",
     "start": "bun --inspect run --watch index.ts",
     "prod:build-docker": "REPO_NAME=ghcr.io/bperel/duck-estimator pnpm -F '~ci' prod:build-docker -f apps/duck-estimator/Dockerfile",
     "prod:transfer-files-pre": "pnpm -F '~ci' prod:transfer-files @apps/duck-estimator/.env.local:apps/duck-estimator/.env",

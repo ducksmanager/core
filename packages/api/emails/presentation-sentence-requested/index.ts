@@ -7,14 +7,14 @@ export default class extends Email {
     user: user;
     presentationText: string;
   };
-  templatePath = import.meta.dirname;
+  templatePath = `${import.meta.dirname}/emails/presentation-sentence-requested`;
 
   constructor(data: { user: user; presentationText: string }) {
     super();
     this.data = data;
   }
 
-  getFrom = () => this.data.user.email!;
+  getFrom = () => process.env.SMTP_USERNAME!;
   getFromName = () => this.data.user.username!;
   getTo = () => process.env.SMTP_USERNAME!;
   getToName = () => process.env.SMTP_FRIENDLYNAME!;

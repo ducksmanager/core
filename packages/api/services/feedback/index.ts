@@ -7,7 +7,7 @@ import feedbackSent from "../../emails/feedback-sent";
 import type { UserServices } from "../../index";
 import namespaces from "../namespaces";
 
-const listenEvents = ({_socket}: UserServices) => ({
+const listenEvents = ({ _socket }: UserServices) => ({
   sendFeedback: async (feedbackMessage: string) => {
     const user = await prismaDm.user.findUniqueOrThrow({
       where: { id: _socket.data.user!.id },

@@ -1,7 +1,7 @@
 {
   "name": "~coa-updater",
   "scripts": {
-    "build": "bun build --target bun --sourcemap index.ts --outfile bundle.mjs",
+    "build": "bun build --target bun index.ts --outfile bundle.mjs",
     "prod:transfer-files-post": "pnpm -F '~ci' prod:transfer-files apps/coa-updater/docker-compose.yml:@apps/coa-updater/docker-compose.yml"
   },
   "keywords": [],

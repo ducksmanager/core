@@ -7,7 +7,7 @@ import contactMethods from "./contact-methods";
 
 export default (services: UserServices) => {
   const { _socket } = services;
-  return ({
+  return {
     ...contactMethods(services),
 
     deleteRequests: async (issueId: number) => {
@@ -47,7 +47,7 @@ export default (services: UserServices) => {
         })
       ).map(({ issueId }) => issueId);
       const newlyRequestedIssueIds = issueIds.filter(
-        (issueId: number) => !alreadyRequestedIssueIds.includes(issueId)
+        (issueId: number) => !alreadyRequestedIssueIds.includes(issueId),
       );
       await prismaDm.requestedIssue.createMany({
         data: newlyRequestedIssueIds.map((issueId: number) => ({
@@ -62,8 +62,8 @@ export default (services: UserServices) => {
       switch (as) {
         case "seller":
           const requestedIssuesOnSaleIds = await prismaDm.$queryRaw<
-            { id: number; }[]
-          > `
+            { id: number }[]
+          >`
             SELECT requestedIssue.ID AS id
             FROM numeros_demandes requestedIssue
             INNER JOIN numeros issue ON requestedIssue.ID_Numero = issue.ID
@@ -84,7 +84,7 @@ export default (services: UserServices) => {
     },
 
     getIssuesForSale: () => getIssuesForSale(_socket.data.user!.id),
-  });
+  };
 };
 
 export const getIssuesForSale = async (buyerId: number) =>

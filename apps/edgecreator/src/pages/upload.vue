@@ -51,15 +51,13 @@ meta:
           "
           disable-ongoing-or-published
           :disable-not-ongoing-nor-published="false"
-          @change="currentCrop = $event && $event.width ? $event : undefined"
+          @change="currentCrop = $event?.issuecode ? (currentCrop ? { ...currentCrop, ...$event.issuecode } : $event.issuecode): undefined"
         >
           <template #dimensions>
             <dimensions
               :width="currentCrop ? currentCrop.width : 15"
               :height="currentCrop ? currentCrop.height : 200"
-              @change="
-                currentCrop = $event && $event.width ? $event : undefined
-              "
+              @change="currentCrop = currentCrop ? { ...currentCrop, ...$event } : $event"
             />
           </template>
         </issue-select>
@@ -138,6 +136,7 @@ import { useCookies } from "@vueuse/integrations/useCookies";
 import { useToastController } from "bootstrap-vue-next";
 import type Cropper from "cropperjs";
 import { nextTick } from "vue";
+import VueCropper from 'vue-cropperjs';
 import type { CropperData } from "vue-cropperjs";
 import { useI18n } from "vue-i18n";
 
