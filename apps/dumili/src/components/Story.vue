@@ -1,7 +1,9 @@
 <template>
   <b>{{ storycode }}</b>
   <div>
-    {{ storyDetails?.[storycode]?.title }}&nbsp;<inducks-link
+    {{
+      storyDetails?.[storycode]?.title || $t("Sans titre")
+    }}&nbsp;<inducks-link
       :url-encoded-storycode="encodeURIComponent(storycode)"
     />
   </div>

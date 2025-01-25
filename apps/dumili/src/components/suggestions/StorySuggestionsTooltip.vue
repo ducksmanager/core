@@ -6,27 +6,31 @@
         eventName: 'createAiStorySuggestions',
         checkMatch: (id) => id === entry.id,
       },
+      {
+        eventName: 'runOcrOnImage',
+        checkMatch: (imageId) => imageId === getEntryPages(indexation!, entry.id)[0].image?.id,
+      },
     ]"
     :status="entry.storySuggestions.length ? 'success' : 'idle'"
     @toggled="overlay = $event ? { type: 'ocr', entryId: entry.id } : undefined"
   >
     <template v-if="entry.acceptedStoryKind?.kind === STORY">
       <template v-if="firstPageOcrResult">
+        <h4>{{ $t("Résultats OCR pour la première case") }}</h4>
+        <b-table
+          :fields="[
+            { key: 'text', label: $t('Texte') },
+            { key: 'x1' },
+            { key: 'x2' },
+            { key: 'y1' },
+            { key: 'y2' },
+            { key: 'confidence', label: $t('Confiance') },
+          ]"
+          :items="firstPageOcrResult.matches"
+          ><template #empty>{{ $t("Aucun texte détecté") }}</template>
+        </b-table>
+        <h4>{{ $t("Histoires potentielles") }}</h4>
         <template v-if="entry.storySuggestions.length">
-          <h4>{{ $t("Résultats OCR pour la première case") }}</h4>
-          <b-table
-            :fields="[
-              { key: 'text', label: $t('Texte') },
-              { key: 'x1' },
-              { key: 'x2' },
-              { key: 'y1' },
-              { key: 'y2' },
-              { key: 'confidence', label: $t('Confiance') },
-            ]"
-            :items="firstPageOcrResult.matches"
-            ><template #empty>{{ $t("Aucun texte détecté") }}</template>
-          </b-table>
-          <h4>{{ $t("Histoires potentielles") }}</h4>
           <b-table
             :fields="[
               { key: 'storycode', label: $t('Code histoire') },
@@ -48,7 +52,7 @@
               ></template
             ></b-table
           ></template
-        ></template
+        ><template v-else>{{ $t("Non calculé") }}</template></template
       >
       <template v-else-if="!firstPage.image">{{
         $t("Non calculé car la première page de l'entrée n'a pas d'image")

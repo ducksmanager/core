@@ -11,7 +11,7 @@ import {
 import { type ClientEvents as CoaEvents } from "~dm-services/coa";
 import dmNamespaces from "~dm-services/namespaces";
 import { STORY, storyKinds } from "~dumili-types/storyKinds";
-import { getEntryPages } from "~dumili-utils/entryPages";
+import { getEntryFromPage, getEntryPages } from "~dumili-utils/entryPages";
 import type {
   entry,
   indexation,
@@ -111,6 +111,7 @@ let isAiRunning = false;
 export const getFullIndexation = (
   services: IndexationServices,
   indexationId: string,
+  runAi: boolean = true
 ) =>
   prisma.indexation
     .findUnique({
@@ -118,14 +119,14 @@ export const getFullIndexation = (
       include: indexationPayloadInclude,
     })
     .then((indexation) => {
-      if (indexation && !isAiRunning) {
+      if (indexation && runAi && !isAiRunning) {
         isAiRunning = true;
         runKumikoOnPages(services, indexation)
           .then(() =>
             runOcrOnImages(
               services,
               indexation.pages
-                .filter(({ image }) => !!image)
+                .filter(({ image, id }) => !!image && getEntryFromPage(indexation, id)?.acceptedStoryKind?.kind === STORY)
                 .map(({ pageNumber, image }) => ({
                   pageNumber,
                   image: image!,
@@ -135,9 +136,12 @@ export const getFullIndexation = (
           .then(() =>
             setInferredEntriesStoryKinds(services, indexation.entries),
           )
-          .then(() => createAiStorySuggestions(services, indexation))
+          .then(() => 
+            createAiStorySuggestions(services, indexation)
+          )
           .finally(() => {
             isAiRunning = false;
+            refreshIndexation(services, false, indexationId);
           });
       }
       return indexation;
@@ -145,9 +149,10 @@ export const getFullIndexation = (
 
 export const refreshIndexation = async (
   services: IndexationServices,
+  runAi: boolean = true,
   id = services._socket.data.indexation.id,
 ) => {
-  services._socket.data.indexation = (await getFullIndexation(services, id))!;
+  services._socket.data.indexation = (await getFullIndexation(services, id, runAi))!;
   services.indexationUpdated(services._socket.data.indexation);
 };
 
@@ -414,7 +419,7 @@ const listenEvents = (services: IndexationServices) => {
 
     deleteEntry: async (
       entryId: entry["id"],
-      entryIdToExtend: "previous" | "next",
+      entryIdToExtend?: "previous" | "next",
     ) => {
       const { indexation } = _socket.data;
       const entry = indexation.entries.find(({ id }) => id === entryId);
@@ -424,7 +429,11 @@ const listenEvents = (services: IndexationServices) => {
         };
       }
       const entryIdx = indexation.entries.findIndex(({ id }) => id === entryId);
-      const entryToExtend =
+      const isLastEntry = entryIdx === indexation.entries.length - 1;
+
+      let entryToExtend: entry | undefined;
+      if (!isLastEntry) {
+      entryToExtend =
         indexation.entries[
           entryIdToExtend === "previous" ? entryIdx - 1 : entryIdx + 1
         ];
@@ -435,6 +444,7 @@ const listenEvents = (services: IndexationServices) => {
           return { error: "This entry does not have any next entry" };
         }
       }
+    }
 
       await prisma.entry.delete({
         include: {
@@ -446,6 +456,7 @@ const listenEvents = (services: IndexationServices) => {
         },
       });
 
+      if (entryToExtend) {
       await prisma.entry.update({
         data: {
           entirepages: entryToExtend.entirepages + entry.entirepages,
@@ -454,6 +465,7 @@ const listenEvents = (services: IndexationServices) => {
           id: entryToExtend.id,
         },
       });
+    }
 
       await refreshIndexation(services);
 
@@ -784,7 +796,7 @@ export const { client, server } = useSocketEvents<
           return;
         }
 
-        await refreshIndexation(services, indexationId);
+        await refreshIndexation(services, true, indexationId);
         next();
       },
     ],

@@ -101,12 +101,16 @@
       >
         {{ $t("Voulez-vous vraiment supprimer cette entrée ?") }}
         <template #footer
-          ><b-button v-if="!isFirst" @click="deleteEntry('previous')">{{
-            $t("Oui, étendre l'entrée précédente à ces pages")
-          }}</b-button
-          ><b-button v-if="!isLast" @click="deleteEntry('next')">{{
-            $t("Oui, étendre l'entrée suivante à ces pages")
-          }}</b-button
+          ><b-button v-if="isLast" @click="deleteEntry()">{{
+            $t("Oui, supprimer l'entrée")
+          }}</b-button>
+          <template v-else
+            ><b-button v-if="!isFirst" @click="deleteEntry('previous')">{{
+              $t("Oui, étendre l'entrée précédente à ces pages")
+            }}</b-button
+            ><b-button @click="deleteEntry('next')">{{
+              $t("Oui, étendre l'entrée suivante à ces pages")
+            }}</b-button></template
           ><b-button @click="showDeleteEntryModal = false">{{
             $t("Non, annuler la suppression")
           }}</b-button></template
@@ -151,7 +155,7 @@ const isLast = computed(
   () => entry.value.id === [...indexation.value.entries].pop()!.id,
 );
 
-const deleteEntry = async (entryIdToExtend: "previous" | "next") => {
+const deleteEntry = async (entryIdToExtend?: "previous" | "next") => {
   await indexationSocket.value!.deleteEntry(entry.value.id, entryIdToExtend);
 };
 
