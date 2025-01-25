@@ -1,19 +1,21 @@
 import VueI18n from "@intlify/unplugin-vue-i18n/vite";
 import Vue from "@vitejs/plugin-vue";
 import { BootstrapVueNextResolver } from "bootstrap-vue-next";
+import ReactivityTransform from "@vue-macros/reactivity-transform/vite";
+import {DynamicPublicDirectory} from "vite-multiple-assets";
 import path from "path";
 import AutoImport from "unplugin-auto-import/vite";
 import IconsResolve from "unplugin-icons/resolver";
 import Icons from "unplugin-icons/vite";
 import Components from "unplugin-vue-components/vite";
-import { defineConfig } from "vite";
+import { defineConfig, PluginOption } from "vite";
 import Pages from "vite-plugin-pages";
 import Layouts from "vite-plugin-vue-layouts";
 
 // https://vitejs.dev/config/
 export default defineConfig({
   resolve: {
-    dedupe: ["pinia", "vue", "vue-i18n", "vue-router", "@vueuse/core"],
+    dedupe: ["pinia", "vue", "vue-i18n", "vue-router", "@vueuse/core", "bootstrap-vue-next"],
     alias: {
       "~": `${path.resolve(__dirname, "src")}/`,
       "~web": path.resolve(__dirname, "../web"),
@@ -37,7 +39,12 @@ export default defineConfig({
     },
   },
 
+  publicDir: false,
+
   plugins: [
+    DynamicPublicDirectory(['public/**', '../web/public/**']) as PluginOption,
+    ReactivityTransform(),
+
     Vue(),
 
     // https://github.com/hannoeru/vite-plugin-pages
@@ -82,7 +89,7 @@ export default defineConfig({
     // https://github.com/antfu/vite-plugin-components
     Components({
       resolvers: [BootstrapVueNextResolver(), IconsResolve()],
-      dirs: ["src/components", "src/layouts"],
+      dirs: ["src/components", "src/layouts", "../web/src/components", "../web/src/stores", "../../packages/types"],
       dts: true,
       deep: true,
     }),

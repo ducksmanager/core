@@ -30,7 +30,7 @@ importers:
     devDependencies:
       '@types/bun':
         specifier: latest
-        version: 1.1.14
+        version: 1.2.0
       '@types/node':
         specifier: ^22.10.2
         version: 22.10.2
@@ -321,6 +321,9 @@ importers:
       '@uppy/xhr-upload':
         specifier: ^1.7.5
         version: 1.7.5(@uppy/core@1.20.1)
+      '@vue-macros/reactivity-transform':
+        specifier: ^1.1.4
+        version: 1.1.4(rollup@4.29.1)(vue@3.5.13(typescript@5.7.2))
       '@vueuse/core':
         specifier: ^12.2.0
         version: 12.2.0(typescript@5.7.2)
@@ -357,6 +360,9 @@ importers:
       universal-cookie:
         specifier: ^7.2.2
         version: 7.2.2
+      vite-multiple-assets:
+        specifier: ^2.2.5
+        version: 2.2.5(mime-types@2.1.35)(vite@6.0.6(@types/node@22.10.2)(jiti@1.21.7)(sass@1.83.0)(tsx@4.19.2)(yaml@2.6.1))
       vue:
         specifier: ^3.5.13
         version: 3.5.13(typescript@5.7.2)
@@ -583,7 +589,7 @@ importers:
     devDependencies:
       '@types/bun':
         specifier: latest
-        version: 1.1.14
+        version: 1.2.0
       typescript:
         specifier: ^5.7.2
         version: 5.7.2
@@ -1133,7 +1139,7 @@ importers:
     devDependencies:
       '@types/bun':
         specifier: latest
-        version: 1.1.14
+        version: 1.2.0
       typescript:
         specifier: ^5.7.2
         version: 5.7.2
@@ -3168,8 +3174,8 @@ packages:
   '@types/body-parser@1.19.5':
     resolution: {integrity: sha512-fB3Zu92ucau0iQ0JMCFQE7b/dv8Ot07NI3KaZIkIUNXq82k4eBAqUaneXfleGY9JWskeS9y+u0nXMyspcuQrCg==}
 
-  '@types/bun@1.1.14':
-    resolution: {integrity: sha512-opVYiFGtO2af0dnWBdZWlioLBoxSdDO5qokaazLhq8XQtGZbY4pY3/JxY8Zdf/hEwGubbp7ErZXoN1+h2yesxA==}
+  '@types/bun@1.2.0':
+    resolution: {integrity: sha512-5N1JqdahfpBlAv4wy6svEYcd/YfO2GNrbL95JOmFx8nkE6dbK4R0oSE5SpBA4vBRqgrOUAXF8Dpiz+gi7r80SA==}
 
   '@types/busboy@1.5.4':
     resolution: {integrity: sha512-kG7WrUuAKK0NoyxfQHsVE6j1m01s6kMma64E+OZenQABMQyTJop1DumUWcLwAQ2JzpefU7PDYoRDKl8uZosFjw==}
@@ -3314,9 +3320,6 @@ packages:
 
   '@types/node@18.19.68':
     resolution: {integrity: sha512-QGtpFH1vB99ZmTa63K4/FU8twThj4fuVSBkGddTp7uIL/cuoLWIUSL2RcOaigBhfR+hg5pgGkBnkoOxrTVBMKw==}
-
-  '@types/node@20.12.14':
-    resolution: {integrity: sha512-scnD59RpYD91xngrQQLGkE+6UrHUPzeKZWhhjBSa3HSkwjbQc38+q3RoIVEwxQGRw3M+j5hpNAM+lgV3cVormg==}
 
   '@types/node@20.17.10':
     resolution: {integrity: sha512-/jrvh5h6NXhEauFFexRin69nA0uHJ5gwk4iDivp/DeoEua3uwCUto6PC86IpRITBOs4+6i2I56K5x5b6WYGXHA==}
@@ -4080,8 +4083,8 @@ packages:
     resolution: {integrity: sha512-zhaCDicdLuWN5UbN5IMnFqNMhNfo919sH85y2/ea+5Yg9TsTkeZxpL+JLbp6cgYFS4sRLp3YV4S6yDuqVWHYOw==}
     engines: {node: '>=6'}
 
-  bun-types@1.1.37:
-    resolution: {integrity: sha512-C65lv6eBr3LPJWFZ2gswyrGZ82ljnH8flVE03xeXxKhi2ZGtFiO4isRKTKnitbSqtRAcaqYSR6djt1whI66AbA==}
+  bun-types@1.2.0:
+    resolution: {integrity: sha512-KEaJxyZfbV/c4eyG0vyehDpYmBGreNiQbZIqvVHJwZ4BmeuWlNZ7EAzMN2Zcd7ailmS/tGVW0BgYbGf+lGEpWw==}
 
   busboy@1.6.0:
     resolution: {integrity: sha512-8SFQbg/0hQ9xy3UNTB0YEnsNBbWfhf7RtnzpL7TkBiTBRfrQ9Fxcnz7VJsleJpyp6rVLvXiuORqjlHi5q+PYuA==}
@@ -5482,6 +5485,9 @@ packages:
   glob-parent@6.0.2:
     resolution: {integrity: sha512-XxwI8EOhVQgWp6iDL+3b0r86f4d6AX6zSU55HfB4ydCEuXLXc5FcYeOu+nnGftS4TEju/11rt4KJPTMgbfmv4A==}
     engines: {node: '>=10.13.0'}
+
+  glob-to-regexp@0.4.1:
+    resolution: {integrity: sha512-lkX1HJXwyMcprw/5YUZc2s7DrpAiHB21/V+E1rHUrVNokkvB6bqMzT0VfV6/86ZNabt1k14YOIaT7nDvOX3Iiw==}
 
   glob@10.4.5:
     resolution: {integrity: sha512-7Bv8RF0k6xjo7d4A/PxYLbUCfb6c+Vpd2/mB2yRDlew7Jb5hEXiCD9ibfO7wpk8i4sevK6DFny9h7EYbM3/sHg==}
@@ -8226,6 +8232,12 @@ packages:
     resolution: {integrity: sha512-BNGbWLfd0eUPabhkXUVm0j8uuvREyTh5ovRa/dyow/BqAbZJyC+5fU+IzQOzmAKzYqYRAISoRhdQr3eIZ/PXqg==}
     engines: {node: '>= 0.8'}
 
+  vite-multiple-assets@2.2.5:
+    resolution: {integrity: sha512-z8nEKZ0UPGnxNgP1+j/YNuu3bjEC+hKdm12h+6o8q34PAOOjQS++yrVVvgyc7PPvcZ2iJa4ijklM/7YLNYmrIQ==}
+    peerDependencies:
+      mime-types: ^2.1.35
+      vite: '>=2.9.6'
+
   vite-node@0.34.7:
     resolution: {integrity: sha512-0Yzb96QzHmqIKIs/x2q/sqG750V/EF6yDkS2p1WjJc1W2bgRSuQjf5vB9HY8h2nVb5j4pO5paS5Npcv3s69YUg==}
     engines: {node: '>=v14.18.0'}
@@ -8486,6 +8498,10 @@ packages:
     resolution: {integrity: sha512-1wWQOyR2LVVtaqrcIL2+OM+x7bkpmzVROa0Nf6FryXkS+er5Sa1kzFGjzZRqLnHa3n1rACFLeTwUqE1ETL9Mig==}
     engines: {node: '>=12.0.0'}
     hasBin: true
+
+  watchpack@2.4.2:
+    resolution: {integrity: sha512-TnbFSbcOCcDgjZ4piURLCbJ3nJhznVh9kw6F6iokjiFPl8ONxe9A6nMDVXDiNbrSfLILs6vB07F7wLBrwPYzJw==}
+    engines: {node: '>=10.13.0'}
 
   webidl-conversions@3.0.1:
     resolution: {integrity: sha512-2JAn3z8AR6rjK8Sm8orRC0h/bcl/DqL7tRPdGZ4I1CjdF+EaMLmYxBHyXuKL849eucPFhvBoxMsflfOb8kxaeQ==}
@@ -10781,9 +10797,9 @@ snapshots:
       '@types/connect': 3.4.38
       '@types/node': 22.10.2
 
-  '@types/bun@1.1.14':
+  '@types/bun@1.2.0':
     dependencies:
-      bun-types: 1.1.37
+      bun-types: 1.2.0
 
   '@types/busboy@1.5.4':
     dependencies:
@@ -10952,10 +10968,6 @@ snapshots:
       '@types/node': 22.10.2
 
   '@types/node@18.19.68':
-    dependencies:
-      undici-types: 5.26.5
-
-  '@types/node@20.12.14':
     dependencies:
       undici-types: 5.26.5
 
@@ -11891,9 +11903,9 @@ snapshots:
 
   builtin-modules@3.3.0: {}
 
-  bun-types@1.1.37:
+  bun-types@1.2.0:
     dependencies:
-      '@types/node': 20.12.14
+      '@types/node': 22.10.2
       '@types/ws': 8.5.13
 
   busboy@1.6.0:
@@ -13651,6 +13663,8 @@ snapshots:
   glob-parent@6.0.2:
     dependencies:
       is-glob: 4.0.3
+
+  glob-to-regexp@0.4.1: {}
 
   glob@10.4.5:
     dependencies:
@@ -16845,6 +16859,15 @@ snapshots:
 
   vary@1.1.2: {}
 
+  vite-multiple-assets@2.2.5(mime-types@2.1.35)(vite@6.0.6(@types/node@22.10.2)(jiti@1.21.7)(sass@1.83.0)(tsx@4.19.2)(yaml@2.6.1)):
+    dependencies:
+      fast-glob: 3.3.2
+      micromatch: 4.0.8
+      mime-types: 2.1.35
+      rollup: 4.29.1
+      vite: 6.0.6(@types/node@22.10.2)(jiti@1.21.7)(sass@1.83.0)(tsx@4.19.2)(yaml@2.6.1)
+      watchpack: 2.4.2
+
   vite-node@0.34.7(@types/node@22.10.2)(sass@1.83.0):
     dependencies:
       cac: 6.7.14
@@ -17113,6 +17136,11 @@ snapshots:
       rxjs: 7.8.1
     transitivePeerDependencies:
       - debug
+
+  watchpack@2.4.2:
+    dependencies:
+      glob-to-regexp: 0.4.1
+      graceful-fs: 4.2.11
 
   webidl-conversions@3.0.1: {}
 

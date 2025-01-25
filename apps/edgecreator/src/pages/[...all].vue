@@ -7,25 +7,15 @@ meta:
     <session-info />
     <h1>{{ $t("Dashboard") }}</h1>
 
-    <b-alert
-      v-if="!isCatalogLoaded"
-      variant="info"
-      :model-value="true"
-    >
+    <b-alert v-if="!isCatalogLoaded" variant="info" :model-value="true">
       {{ $t("Loading...") }}
     </b-alert>
 
     <template v-else>
       <h3>{{ $t("Edge creation") }}</h3>
 
-      <b-container
-        v-if="isUploadableEdgesCarouselReady"
-        align="center"
-      >
-        <b-alert
-          variant="info"
-          :model-value="true"
-        >
+      <b-container v-if="isUploadableEdgesCarouselReady" align="center">
+        <b-alert variant="info" :model-value="true">
           <template v-if="mostPopularIssuesInCollectionWithoutEdge?.length">
             <uploadable-edges-carousel
               :user-points="userPhotographerPoints"
@@ -41,7 +31,7 @@ meta:
               </template>
             </uploadable-edges-carousel>
             <div>
-              <hr>
+              <hr />
               <div class="position-absolute px-2 separation-text">
                 {{ $t("or") }}
               </div>
@@ -61,10 +51,7 @@ meta:
               }}
             </template>
           </uploadable-edges-carousel>
-          <b-button
-            to="/upload"
-            class="mt-1"
-          >
+          <b-button to="/upload" class="mt-1">
             {{ $t("Send edge photos") }}
           </b-button>
         </b-alert>
@@ -80,12 +67,9 @@ meta:
         </b-button>
       </b-container>
 
-      <hr>
+      <hr />
 
-      <template
-        v-for="{ status, l10n } in edgeCategories"
-        :key="`${status}`"
-      >
+      <template v-for="{ status, l10n } in edgeCategories" :key="`${status}`">
         <h3>{{ $t(l10n) }}</h3>
 
         <b-container
@@ -138,7 +122,7 @@ meta:
                       <img
                         v-if="
                           (hoveredEdge === edge && edge.v3) ||
-                            status === 'pending'
+                          status === 'pending'
                         "
                         :alt="edge.issuecode"
                         class="edge-preview"
@@ -147,7 +131,7 @@ meta:
                             ? getEdgeUrl(edge.issuecode, 'svg', false)
                             : undefined
                         "
-                      ><edge-link
+                      /><edge-link
                         :issuecode="edge.issuecode"
                         :designers="edge.designers"
                         :photographers="edge.photographers"
@@ -160,21 +144,13 @@ meta:
             </b-row>
           </template>
         </b-container>
-        <div
-          v-else
-          align="center"
-        >
+        <div v-else align="center">
           {{ $t("No edge in this category") }}
         </div>
       </template>
     </template>
 
-    <b-container
-      align="center"
-      class="m-5"
-    >
-&nbsp;
-    </b-container>
+    <b-container align="center" class="m-5"> &nbsp; </b-container>
 
     <b-container
       id="footer"
@@ -184,7 +160,7 @@ meta:
         $t(
           "EdgeCreator is a tool allowing to create edges for the DucksManager bookcase."
         )
-      }}<br><a href="https://ducksmanager.net">{{
+      }}<br /><a href="https://ducksmanager.net">{{
         $t("Go to DucksManager")
       }}</a>
     </b-container>
@@ -218,10 +194,9 @@ const { loadCatalog, canEditEdge, edgeCategories } = edgeCatalogStore;
 const { currentEdges, isCatalogLoaded } = storeToRefs(edgeCatalogStore);
 
 const edgesByStatusAndPublicationcode = computed(() => {
-  const edgesByStatus = Object.values(currentEdges.value).groupBy(
-    "status",
-    "[]"
-  );
+  const edgesByStatus = currentEdges.value?.length
+    ? Object.values(currentEdges.value).groupBy("status", "[]")
+    : { ongoing: [], "ongoing by another user": [], pending: [] };
   return Object.fromEntries(
     Object.entries(edgesByStatus).map(([status, edges]) => [
       status,
@@ -262,6 +237,10 @@ const mostPopularIssuesInCollectionWithoutEdge = computed(() =>
 );
 
 const loadMostWantedEdges = async () => {
+  const wantedEdges = (await edgesServices.getWantedEdges())
+  await coaStore.fetchIssuecodeDetails(
+    wantedEdges.map(({ issuecode }) => issuecode)
+  );
   mostWantedEdges.value = (await edgesServices.getWantedEdges())
     .slice(0, 10)
     .map(
@@ -296,10 +275,13 @@ watch(
     await bookcaseStore.loadBookcase();
     await loadMostWantedEdges();
     await loadCatalog();
+    await coaStore.fetchIssuecodeDetails(
+      Object.keys(currentEdges.value).map((issuecode) => issuecode)
+    );
     const publicationcodes = [
       ...mostWantedEdges.value!.map(({ issuecode }) => issuecode!),
       ...Object.values(currentEdges.value).map(({ issuecode }) => issuecode),
-    ].map((issuecode) => issuecodeDetails.value[issuecode].publicationcode);
+    ].map((issuecode) => issuecodeDetails.value[issuecode]?.publicationcode || 'fr/JM');
 
     await coaStore.fetchPublicationNames(publicationcodes);
     isUploadableEdgesCarouselReady.value = true;
