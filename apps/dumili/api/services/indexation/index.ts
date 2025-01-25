@@ -604,7 +604,7 @@ const listenEvents = (services: IndexationServices) => {
       suggestion: Omit<
         Prisma.issueSuggestionUncheckedCreateInput,
         "indexationId"
-      > & { ai: boolean },
+      >,
     ) =>
       prisma.issueSuggestion
         .create({

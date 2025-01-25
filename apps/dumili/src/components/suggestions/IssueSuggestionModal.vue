@@ -85,7 +85,6 @@ const acceptIssueSuggestion = async (issuecode: string) => {
   const { suggestionId } = await createIssueSuggestion({
     publicationcode,
     issuenumber,
-    ai: true,
   });
   await indexationSocket.value!.acceptIssueSuggestion(suggestionId);
   selectedExistingCoverIssuecode.value = undefined;

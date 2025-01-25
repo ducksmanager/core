@@ -11,7 +11,13 @@
     ><template #unknown-text>{{ $t("Numéro inconnu") }}</template>
     <template #customize-form>
       <issue-select
-        @change="$event && createAndAcceptIssueSuggestion($event)" /></template
+        @change="
+          $event &&
+          createAndAcceptIssueSuggestion({
+            publicationcode: $event.publicationcode,
+            issuenumber: $event.issuenumber,
+          })
+        " /></template
     ><template #customize-text> {{ $t("Sélectionner...") }}</template>
   </suggestion-list>
 </template>
@@ -32,7 +38,6 @@ const { indexationSocket } = inject(dumiliSocketInjectionKey)!;
 const createAndAcceptIssueSuggestion = async (data: {
   publicationcode: string;
   issuenumber: string;
-  issuecode: string;
 }) => {
   if (
     !indexation.value?.issueSuggestions.some(
@@ -41,10 +46,7 @@ const createAndAcceptIssueSuggestion = async (data: {
         issuenumber === data.issuenumber,
     )
   ) {
-    await createIssueSuggestion({
-      ...data,
-      ai: false,
-    });
+    await createIssueSuggestion(data);
   }
 
   nextTick(() => {
