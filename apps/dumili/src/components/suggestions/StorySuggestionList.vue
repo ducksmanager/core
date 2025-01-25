@@ -30,7 +30,7 @@
                 entry.acceptedStoryKind &&
                 storyDetails[suggestion.storycode]?.originalstoryversioncode &&
                 entry.acceptedStoryKind?.kind !=
-                storyversionDetails[storyDetails[suggestion.storycode].originalstoryversioncode!].kind
+                storyversionDetails[storyDetails[suggestion.storycode].originalstoryversioncode!]?.kind
               "
                 :title="
                   $t(
