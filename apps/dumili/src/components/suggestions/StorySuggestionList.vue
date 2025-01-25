@@ -76,11 +76,11 @@
                       size="sm"
                       @click="
                         indexation.entries[entryIdx].entirepages =
-                          getStorycodePageCount(suggestion.storycode)
+                          getStorycodePageCount(suggestion.storycode)!
                       "
                       >{{
                         $t(
-                          getStorycodePageCount(suggestion.storycode) >
+                          getStorycodePageCount(suggestion.storycode)! >
                             indexation.entries[entryIdx].entirepages
                             ? "Étendre cette entrée à {originalPagesCount} page|Étendre cette entrée à {originalPagesCount} pages"
                             : "Réduire cette entrée à {originalPagesCount} page|Réduire cette entrée à {originalPagesCount} pages",
@@ -89,7 +89,7 @@
                               suggestion.storycode,
                             ),
                           },
-                          getStorycodePageCount(suggestion.storycode),
+                          getStorycodePageCount(suggestion.storycode)!,
                         )
                       }}</b-button
                     ></b-popover
@@ -144,9 +144,11 @@ const entryIdx = computed(() =>
 );
 
 const getStorycodePageCount = (storycode: string) =>
-  storyversionDetails.value[
-    storyDetails.value[storycode].originalstoryversioncode!
-  ].entirepages!;
+  (storyDetails.value[storycode].originalstoryversioncode &&
+    storyversionDetails.value[
+      storyDetails.value[storycode].originalstoryversioncode
+    ]?.entirepages) ||
+  null;
 
 const acceptStory = async (storycode: storySuggestion["storycode"] | null) => {
   let storySuggestion: Pick<storySuggestion, "id" | "storycode"> | undefined =
