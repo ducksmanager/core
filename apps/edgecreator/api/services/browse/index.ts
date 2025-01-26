@@ -19,7 +19,7 @@ const REGEX_IS_SVG_FILE = /^_?.+\.svg$/;
 
 const getSvgMetadata = (
   metadataNodes: { "#text": string; type?: string }[],
-  metadataType: string,
+  metadataType: string
 ) =>
   metadataNodes
     .filter(({ type }) => type === metadataType)
@@ -37,44 +37,45 @@ const findInDir = (dir: string) =>
       current: [],
       published: [],
     };
-      const filteredFiles = readdirSync(dir, {
-        recursive: true,
-        withFileTypes: true,
-      }).filter((file) => REGEX_IS_SVG_FILE.test(file.name));
-      for (const file of filteredFiles) {
-        const filePath = path.join(file.parentPath, file.name);
-        const filename = filePath.replace(/.+\/edges\//, "");
-        const [countrycode, magazinecodeAndIssuenumber] =
-          filename.split("/gen/");
-        const [magazinecode, issuenumberShort] =
-          magazinecodeAndIssuenumber.split(".");
-        const publicationcode = `${countrycode}/${magazinecode}`;
-        const [{ issuecode }] = await prismaCoa.$queryRaw<
-          { issuecode: string }[]
-        >`
+    const filteredFiles = readdirSync(dir, {
+      recursive: true,
+      withFileTypes: true,
+    }).filter((file) => REGEX_IS_SVG_FILE.test(file.name));
+    for (const file of filteredFiles) {
+      const filePath = path.join(file.parentPath, file.name);
+      const filename = filePath.replace(/.+\/edges\//, "");
+      const [countrycode, magazinecodeAndIssuenumber] = filename.split("/gen/");
+      const [magazinecode, issuenumberShort] =
+        magazinecodeAndIssuenumber.split(".");
+      const publicationcode = `${countrycode}/${magazinecode}`;
+      const [issue] = await prismaCoa.$queryRaw<{ issuecode: string }[]>`
             SELECT issuecode
             FROM inducks_issue
             WHERE publicationcode = ${publicationcode}
             AND REPLACE(issuenumber, ' ', '') = ${issuenumberShort}`;
-        const edgeStatus = file.name.startsWith("_") ? "current" : "published";
-
-        const doc = parser.parse(readFileSync(filePath));
-        const metadataNodes = doc.svg.metadata;
-
-        const designers = getSvgMetadata(metadataNodes, "contributor-designer");
-        const photographers = getSvgMetadata(
-          metadataNodes,
-          "contributor-photographer",
-        );
-
-        fileList[edgeStatus].push({
-          issuecode,
-          url: `${process.env.EDGES_URL!}/${filePath}`,
-          designers,
-          photographers,
-        });
+      if (!issue) {
+        console.log(`${publicationcode}/${issuenumberShort} not found`);
+        continue;
       }
-      resolve(fileList);
+      const edgeStatus = file.name.startsWith("_") ? "current" : "published";
+
+      const doc = parser.parse(readFileSync(filePath));
+      const metadataNodes = doc.svg.metadata;
+
+      const designers = getSvgMetadata(metadataNodes, "contributor-designer");
+      const photographers = getSvgMetadata(
+        metadataNodes,
+        "contributor-photographer"
+      );
+
+      fileList[edgeStatus].push({
+        issuecode: issue.issuecode,
+        url: `${process.env.EDGES_URL!}/${filePath}`,
+        designers,
+        photographers,
+      });
+    }
+    resolve(fileList);
   });
 
 export default (io: Server) => {
@@ -90,7 +91,7 @@ export default (io: Server) => {
           callback({
             error: "Generic error",
             errorDetails: errorDetails as string,
-          }),
+          })
         );
     });
 
@@ -106,9 +107,9 @@ export default (io: Server) => {
       try {
         callback({
           results: readdirSync(
-            `${getEdgesPath()}/${country}/${imageType}`,
+            `${getEdgesPath()}/${country}/${imageType}`
           ).filter((item) =>
-            new RegExp(`(?:^|[. ])${magazine}(?:[. ]|$)`).test(item),
+            new RegExp(`(?:^|[. ])${magazine}(?:[. ]|$)`).test(item)
           ),
         });
       } catch (_e) {
