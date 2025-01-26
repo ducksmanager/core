@@ -182,7 +182,7 @@ model edge {
   creationDate        DateTime           @default(now()) @map("dateajout") @db.Timestamp(0)
   points              Int?
   slug                String?            @db.VarChar(30)
-  issuecode           String             @default(dbgenerated("(concat(convert(`publicationcode` using utf8mb3),' ',convert(`issuenumber` using utf8mb3)))")) @db.VarChar(25)
+  issuecode           String?            @default(dbgenerated("(concat(convert(`publicationcode` using utf8mb3),' ',convert(`issuenumber` using utf8mb3)))")) @db.VarChar(25)
   users_contributions userContribution[]
 
   @@unique([publicationcode, issuenumber], map: "tranchespretes_unique")
