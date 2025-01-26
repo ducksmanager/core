@@ -20,6 +20,10 @@
 import { useHead } from "@unhead/vue";
 import Cookies from "js-cookie";
 
+const slots = defineSlots<{
+  title?: string;
+}>();
+
 const { user } = storeToRefs(collection());
 
 const route = useRoute();
@@ -36,7 +40,6 @@ const firstPathPart = $computed(
     ).path.match(/\/([^/]+)/)?.[1],
 );
 
-const slots = useSlots();
 useHead({
   title: slots.title?.toString() || "DucksManager",
 });
