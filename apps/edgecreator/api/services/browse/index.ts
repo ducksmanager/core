@@ -74,8 +74,8 @@ const findInDir = (dir: string) =>
           designers,
           photographers,
         });
-        resolve(fileList);
       }
+      resolve(fileList);
     } catch (e) {
       return reject(e);
     }
