@@ -11,7 +11,7 @@ type Data = InputData & {
 };
 export default class extends Email {
   data: Data;
-  templatePath = `${import.meta.dirname}/emails/edge-model-ready`;
+  templatePath = import.meta.dirname.includes('emails') ? import.meta.dirname:`${import.meta.dirname}/emails/edge-model-ready`;
 
   constructor(data: InputData) {
     super();

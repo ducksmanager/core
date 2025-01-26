@@ -14,9 +14,6 @@ const parser = new XMLParser({
   attributeNamePrefix: "",
 });
 
-const edgesPath = process.env.EDGES_PATH!.startsWith("/")
-  ? process.env.EDGES_PATH!
-  : `${process.env.PWD!}/../${process.env.EDGES_PATH!}`;
 const REGEX_IS_SVG_FILE = /^_?.+\.svg$/;
 
 const getSvgMetadata = (
@@ -84,6 +81,9 @@ const findInDir = (dir: string) =>
   });
 
 export default (io: Server) => {
+  const edgesPath = process.env.EDGES_PATH!.startsWith("/")
+    ? process.env.EDGES_PATH!
+    : `${process.env.PWD!}/../${process.env.EDGES_PATH!}`;
   (io.of(namespaceEndpoint) as Namespace<Events>).on("connection", (socket) => {
     console.log("connected to browse");
 

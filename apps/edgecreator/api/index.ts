@@ -5,7 +5,7 @@ Sentry.init({
 });
 
 import { instrument } from "@socket.io/admin-ui";
-import dotenv from "dotenv";
+
 import express from "express";
 import { createServer } from "http";
 import multer from "multer";
@@ -20,9 +20,6 @@ import imageInfo from "./services/image-info";
 import save from "./services/save";
 import text from "./services/text";
 import uploadServices, { upload } from "./services/upload";
-dotenv.config({
-  path: "../.env",
-});
 
 const port = 3001;
 
@@ -38,10 +35,6 @@ class ServerWithUser extends Server<
   const int = Number.parseInt(this.toString());
   return int ?? this.toString();
 };
-
-dotenv.config({
-  path: "./.env",
-});
 
 Sentry.init({
   dsn: process.env.SENTRY_DSN,

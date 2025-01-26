@@ -81,8 +81,8 @@ export abstract class Email {
     }
   };
 
-  getHtmlBody = async () =>
-    await ejs.renderFile(
+  getHtmlBody = () =>
+   ejs.renderFile(
       path.join(this.templatePath, "template.ejs"),
       { __: i18n.__, ...this.data },
       {},

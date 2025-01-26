@@ -24,34 +24,36 @@ export default (prismaClient: PrismaClient) =>
         getInducksIssueData: <WithTitle extends boolean>(
           issuecodes: string[],
           withTitle: WithTitle,
-        ) => !issuecodes.length ? {} as Record<string, never>:
-          prismaClient.inducks_issue
-            .findMany({
-              select: {
-                publicationcode: true,
-                issuenumber: true,
-                issuecode: true,
-                title: withTitle,
-              },
-              where: {
-                issuecode: {
-                  in: issuecodes,
-                },
-              },
-            })
-            .then((inducksIssues) =>
-              (
-                inducksIssues as ({
-                  publicationcode: string;
-                  issuenumber: string;
-                  issuecode: string;
-                } & (WithTitle extends boolean
-                  ? {
-                      title?: string;
-                    }
-                  : object))[]
-              ).groupBy("issuecode"),
-            ),
+        ) =>
+          !issuecodes.length
+            ? ({} as Record<string, never>)
+            : prismaClient.inducks_issue
+                .findMany({
+                  select: {
+                    publicationcode: true,
+                    issuenumber: true,
+                    issuecode: true,
+                    title: withTitle,
+                  },
+                  where: {
+                    issuecode: {
+                      in: issuecodes,
+                    },
+                  },
+                })
+                .then((inducksIssues) =>
+                  (
+                    inducksIssues as ({
+                      publicationcode: string;
+                      issuenumber: string;
+                      issuecode: string;
+                    } & (WithTitle extends boolean
+                      ? {
+                          title?: string;
+                        }
+                      : object))[]
+                  ).groupBy("issuecode"),
+                ),
       },
     })
     .$extends({

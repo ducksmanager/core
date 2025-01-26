@@ -228,7 +228,6 @@ try {
   publicationcode.value = issuecodeParts[0];
 
   await mainStore.loadPublicationIssues();
-  debugger
 
   firstIssuecode = getActualIssuecode(firstIssuecode);
   if (lastIssuecode) {
