@@ -59,6 +59,7 @@ const isPopulating = ref(false);
 const { publishedEdges, publishedEdgesSteps } = storeToRefs(edgeCatalog());
 const { loadPublishedEdgesSteps } = edgeCatalog();
 const { issuecodesByPublicationcode } = storeToRefs(webStores.coa());
+const { fetchIssuecodesByPublicationcode } = (webStores.coa());
 
 const populateItems = async (
   itemsForPublication: Record<string, { modelId?: number; v3: boolean }>,
@@ -156,7 +157,9 @@ watch(publishedEdges, onPublicationOrEdgeChange, {
   deep: true,
   immediate: true,
 });
-watch(() => props.publicationcode, onPublicationOrEdgeChange, {
+watch(() => props.publicationcode, async () => {
+  await fetchIssuecodesByPublicationcode([props.publicationcode]);
+  onPublicationOrEdgeChange()}, {
   immediate: true,
 });
 </script>
