@@ -160,7 +160,6 @@ meta:
 <script lang="ts" setup>
 import "cropperjs/dist/cropper.css";
 
-import { useCookies } from "@vueuse/integrations/useCookies";
 import { useToastController } from "bootstrap-vue-next";
 import type Cropper from "cropperjs";
 import { nextTick } from "vue";
