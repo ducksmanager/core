@@ -50,6 +50,12 @@ export const post = [
             },
           }))!;
 
+          await prismaDm.userPasswordToken.deleteMany({
+            where: {
+              userId: user.id,
+            },
+          });
+
           return res.json({ token: await loginAs(user, hashedPassword) });
         }
       }
