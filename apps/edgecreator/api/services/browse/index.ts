@@ -37,7 +37,6 @@ const findInDir = (dir: string) =>
       current: [],
       published: [],
     };
-    try {
       const filteredFiles = readdirSync(dir, {
         recursive: true,
         withFileTypes: true,
@@ -76,9 +75,6 @@ const findInDir = (dir: string) =>
         });
       }
       resolve(fileList);
-    } catch (e) {
-      return reject(e);
-    }
   });
 
 export default (io: Server) => {
