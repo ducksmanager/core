@@ -13,8 +13,7 @@ import { SocketClient } from "~socket.io-client-services";
 import { getNextAvailableFile } from "../_upload_utils";
 import type Events from "./types";
 import { namespaceEndpoint } from "./types";
-
-const getEdgesPath = () => process.env.EDGES_PATH!;
+import { getEdgesPath } from "~/index";
 
 let edgeCreatorServices: EventCalls<EdgeCreatorServices>;
 
@@ -111,7 +110,7 @@ export const upload = async (
       await storePhotoHash(targetFilename, hash);
       targetFilesnames.push(
         targetFilename.replace(
-          process.env.EDGES_PATH!,
+          getEdgesPath(),
           process.env.VITE_EDGES_URL!,
         ),
       );

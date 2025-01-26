@@ -23,6 +23,10 @@ import uploadServices, { upload } from "./services/upload";
 
 const port = 3001;
 
+export const getEdgesPath = () => process.env.EDGES_PATH!.startsWith("/")
+  ? process.env.EDGES_PATH!
+  : `${import.meta.dirname}/../../${process.env.EDGES_PATH!}`; 
+
 class ServerWithUser extends Server<
   Record<string, never>,
   Record<string, never>,

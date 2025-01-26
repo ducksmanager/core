@@ -195,10 +195,10 @@ const uploadedImageData = ref<{ url: string } | null>(null);
 const cropper = ref<Cropper | null>(null);
 
 const initialContributors = computed(
-  (): Omit<ModelContributor, "issuecode">[] => [
+  (): Omit<ModelContributor, "issuecode">[] => !collection().user ? []:[
     {
       contributionType: "photographe",
-      user: { id: 0, username: useCookies().get("dm-user") },
+      user: { id: collection().user!.id, username: collection().user!.username },
     },
   ]
 );

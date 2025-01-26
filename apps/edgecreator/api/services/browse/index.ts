@@ -8,6 +8,7 @@ import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa/client";
 import type Events from "./types";
 import type { EdgeModelDetails } from "./types";
 import { namespaceEndpoint } from "./types";
+import { getEdgesPath } from "~/index";
 
 const parser = new XMLParser({
   ignoreAttributes: false,
@@ -81,14 +82,11 @@ const findInDir = (dir: string) =>
   });
 
 export default (io: Server) => {
-  const edgesPath = process.env.EDGES_PATH!.startsWith("/")
-    ? process.env.EDGES_PATH!
-    : `${process.env.PWD!}/../${process.env.EDGES_PATH!}`;
   (io.of(namespaceEndpoint) as Namespace<Events>).on("connection", (socket) => {
     console.log("connected to browse");
 
     socket.on("listEdgeModels", async (callback) => {
-      findInDir(edgesPath)
+      findInDir(getEdgesPath())
         .then((results) => {
           callback({ results });
         })
@@ -112,7 +110,7 @@ export default (io: Server) => {
       try {
         callback({
           results: readdirSync(
-            `${process.env.EDGES_PATH!}/${country}/${imageType}`,
+            `${getEdgesPath()}/${country}/${imageType}`,
           ).filter((item) =>
             new RegExp(`(?:^|[. ])${magazine}(?:[. ]|$)`).test(item),
           ),
