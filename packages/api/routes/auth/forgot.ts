@@ -51,7 +51,7 @@ export const post = [
         console.log(
           `A visitor requested to reset a password for a valid e-mail: ${email}`
         );
-        const token = generateToken(email + Math.random());
+        const token = generateToken(email + ',' + Math.random());
         await prismaDm.userPasswordToken.create({
           data: { userId: user.id, token },
         });

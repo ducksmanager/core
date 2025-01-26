@@ -32,6 +32,7 @@ export const post = [
           res.writeHead(400, { "Content-Type": "application/text" });
           res.end("The two passwords should be identical");
         } else {
+          const email = (data as { payload: string }).payload.split(',')[0];
           const hashedPassword = crypto
             .createHash("sha1")
             .update(password)
@@ -41,12 +42,12 @@ export const post = [
               password: hashedPassword,
             },
             where: {
-              email: (data as { payload: string }).payload,
+              email,
             },
           });
           const user = (await prismaDm.user.findFirst({
             where: {
-              email: (data as { payload: string }).payload,
+              email,
             },
           }))!;
 
