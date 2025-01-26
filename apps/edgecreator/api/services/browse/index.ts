@@ -22,7 +22,7 @@ const getSvgMetadata = (
   metadataType: string
 ) =>
   metadataNodes
-    .filter(({ type }) => type === metadataType)
+    .filter(({ type, "#text": text }) => type === metadataType && text)
     .map(({ "#text": text }) => text.trim());
 
 const findInDir = (dir: string) =>
