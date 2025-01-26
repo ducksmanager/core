@@ -75,12 +75,12 @@ jobs:
 
       - name: Build apps
         run: |
-          turbo -F "...[$lastSuccessfulCommit]" -F '!~ci' prod:build-docker
+          turbo -F "...[$lastSuccessfulCommit]" -F '!~edgecreator' -F '!~edgecreator-api' -F '!~ci' prod:build-docker
 
       - name: Send post-build files
         run: |
-          turbo -F "...[$lastSuccessfulCommit]"  -F '!~ci' prod:transfer-files-post
+          turbo -F "...[$lastSuccessfulCommit]" -F '!~edgecreator' -F '!~edgecreator-api' -F '!~ci' prod:transfer-files-post
 
       - name: Deploy
         run: |
-          turbo --concurrency=1 -F "...[$lastSuccessfulCommit]" -F '!~ci' prod:deploy
+          turbo --concurrency=1 -F "...[$lastSuccessfulCommit]" -F '!~edgecreator' -F '!~edgecreator-api' -F '!~ci' prod:deploy
