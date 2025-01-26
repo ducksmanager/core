@@ -9,7 +9,7 @@ export default class extends Email {
     extraPhotographerPoints: number;
     newMedalLevel: number | null;
   };
-  templatePath = `${import.meta.dirname}/emails/edges-published-with-photographer`;
+  templatePath = `/app/emails/edges-published-with-photographer`;
 
   constructor(data: {
     user: user;

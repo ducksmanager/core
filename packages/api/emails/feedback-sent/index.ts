@@ -9,7 +9,7 @@ type Data = InputData & {
 };
 export default class extends Email {
   data: Data;
-  templatePath = `${import.meta.dirname}/emails/feedback-sent`;;
+  templatePath = `/app/emails/feedback-sent`;;
 
   constructor(data: Data) {
     super();
