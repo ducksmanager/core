@@ -12,7 +12,6 @@ import type { SessionUser } from "~dm-types/SessionUser";
 
 import { getUpdateFileUrl, server as app } from "./services/app";
 import { server as auth } from "./services/auth";
-import { OptionalAuthMiddleware } from "./services/auth/util";
 import { server as bookcase } from "./services/bookcase";
 import { server as bookstores } from "./services/bookstores";
 import { server as coa } from "./services/coa";
@@ -112,7 +111,6 @@ if (cluster.isPrimary) {
     auth: false,
   });
 
-  io.use(OptionalAuthMiddleware);
   io.use((_socket, next) => {
     process.on("unhandledRejection", (reason: Error) => {
       console.error(reason);

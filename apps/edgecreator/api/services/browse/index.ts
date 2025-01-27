@@ -4,7 +4,7 @@ import path from "path";
 import { NamespaceProxyTarget, useSocketEvents } from "socket-call-server";
 import { Socket } from "socket.io";
 import { getEdgesPath, SessionData } from "~/index";
-import { authenticateUser } from "~dm-services/auth/util";
+import {  OptionalAuthMiddleware } from "~dm-services/auth/util";
 
 import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa/client";
 import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
@@ -32,7 +32,7 @@ const getSvgMetadata = (
     )
     .map(({ "#text": text }) => text.trim());
 
-const findInDir = async (dir: string, currentUsername: string) => {
+const findInDir = async (dir: string, currentUsername?: string) => {
   const existingEdges = (
     await prismaDm.edge.findMany({
       select: {
@@ -97,7 +97,7 @@ const findInDir = async (dir: string, currentUsername: string) => {
             designers,
             photographers,
             status: (file.name.startsWith("_")
-              ? designers.includes(currentUsername)
+              ? currentUsername && designers.includes(currentUsername)
                 ? "ongoing"
                 : "ongoing by another user"
               : "published") as
@@ -160,7 +160,7 @@ const listenEvents = (services: BrowseServices) => ({
     | { results: Awaited<ReturnType<typeof findInDir>> }
   > =>
     new Promise((resolve) => {
-      findInDir(getEdgesPath(), services._socket.data.user!.username)
+      findInDir(getEdgesPath(), services._socket.data.user?.username)
         .then((results) => {
           resolve({ results });
         })
@@ -199,19 +199,6 @@ const listenEvents = (services: BrowseServices) => ({
   },
 });
 
-const RequiredAuthMiddleware = (
-  { _socket }: { _socket: Socket },
-  next: (error?: Error) => void
-) => {
-  authenticateUser(_socket.handshake.auth.token)
-    .then((user) => {
-      _socket.data.user = user;
-      next();
-    })
-    .catch((e) => {
-      next(e);
-    });
-};
 
 export const { client, server } = useSocketEvents<
   typeof listenEvents,
@@ -220,7 +207,7 @@ export const { client, server } = useSocketEvents<
   SessionData
 >("/browse", {
   listenEvents,
-  middlewares: [RequiredAuthMiddleware],
+  middlewares: [OptionalAuthMiddleware],
 });
 
 export type ClientEvents = (typeof client)["emitEvents"];

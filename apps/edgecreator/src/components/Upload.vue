@@ -81,18 +81,19 @@ onMounted(() => {
       const results = await uploadServices.uploadFromBase64({
         issuecode: mainStore.issuecodes[0],
         data: arrayBufferToBase64(fileArrayBuffer),
+        isMultiple: false,
+        fileName: file.name,
       });
       if ("error" in results) {
         window.alert(results.errorDetails);
-        return;
       } else {
         if (photo && !multiple) {
           mainStore.photoUrls[edge!.issuenumber] = results.fileName;
-        } else {
-          mainStore.loadItems({
-            itemType: photo ? "photos" : "elements",
-          });
         }
+
+        mainStore.loadItems({
+          itemType: photo ? "photos" : "elements",
+        });
       }
     });
 });

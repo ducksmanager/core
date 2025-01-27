@@ -51,13 +51,23 @@ meta:
           "
           disable-ongoing-or-published
           :disable-not-ongoing-nor-published="false"
-          @change="currentCrop = $event?.issuecode ? (currentCrop ? { ...currentCrop, ...$event.issuecode } : $event.issuecode): undefined"
+          @change="
+            currentCrop = $event?.issuecode
+              ? currentCrop
+                ? { ...currentCrop, ...$event.issuecode }
+                : $event.issuecode
+              : undefined
+          "
         >
           <template #dimensions>
             <dimensions
               :width="currentCrop ? currentCrop.width : 15"
               :height="currentCrop ? currentCrop.height : 200"
-              @change="currentCrop = currentCrop ? { ...currentCrop, ...$event } : $event"
+              @change="
+                currentCrop = currentCrop
+                  ? { ...currentCrop, ...$event }
+                  : $event
+              "
             />
           </template>
         </issue-select>
@@ -135,7 +145,7 @@ import "cropperjs/dist/cropper.css";
 import { useToastController } from "bootstrap-vue-next";
 import type Cropper from "cropperjs";
 import { nextTick } from "vue";
-import VueCropper from 'vue-cropperjs';
+import VueCropper from "vue-cropperjs";
 import type { CropperData } from "vue-cropperjs";
 import { useI18n } from "vue-i18n";
 
@@ -164,12 +174,18 @@ const uploadedImageData = ref<{ url: string }>();
 const cropper = ref<Cropper>();
 
 const initialContributors = computed(
-  (): Omit<ModelContributor, "issuecode">[] => !collection().user ? []:[
-    {
-      contributionType: "photographe",
-      user: { id: collection().user!.id, username: collection().user!.username },
-    },
-  ],
+  (): Omit<ModelContributor, "issuecode">[] =>
+    !collection().user
+      ? []
+      : [
+          {
+            contributionType: "photographe",
+            user: {
+              id: collection().user!.id,
+              username: collection().user!.username,
+            },
+          },
+        ],
 );
 
 const addCrop = () => {
@@ -198,12 +214,18 @@ const addCrop = () => {
 };
 const uploadAll = async () => {
   for (const crop of crops.value.filter(({ sent }) => !sent)) {
-    crop.filename = (
-      await uploadEvents.uploadFromBase64({
-        issuecode: crop.issuecode,
-        data: crop.url,
-      })
-    ).fileName;
+    const uploadResults = await uploadEvents.uploadFromBase64({
+      issuecode: crop.issuecode,
+      data: crop.url,
+      isMultiple: false,
+      fileName: crop.filename!,
+    });
+    if ("error" in uploadResults) {
+      window.alert(uploadResults.errorDetails);
+    } else {
+      crop.filename = uploadResults.fileName;
+    }
+
     await nextTick().then(async () => {
       const response = await saveEdgeSvg(
         crop.issuecode,

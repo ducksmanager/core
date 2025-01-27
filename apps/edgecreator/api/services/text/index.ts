@@ -131,7 +131,7 @@ export const { client, server } = useSocketEvents<
   Record<string, never>,
   Record<string, never>,
   { token: string }
->("/save", {
+>("/text", {
   listenEvents,
   middlewares: [],
 });

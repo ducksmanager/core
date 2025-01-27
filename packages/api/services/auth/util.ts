@@ -18,7 +18,7 @@ const EMAIL_REGEX =
 
 export const isValidEmail = (email: string) => EMAIL_REGEX.test(email);
 
-export const generateAccessToken = (payload: SessionUser) =>
+export const generateAccessToken = (payload: Omit<SessionUser, 'token'>) =>
   jwt.sign(payload, process.env.TOKEN_SECRET!, {
     expiresIn: `${60 * 24 * 14}m`,
   });
@@ -60,7 +60,7 @@ const AuthMiddleware = (
         next(new Error(`Invalid token: ${err}`));
       } else {
         if (user) {
-          socket.data.user = user as SessionUser;
+          socket.data.user = {...user, token} as SessionUser;
         }
         next();
       }
@@ -99,9 +99,9 @@ export const RequiredAuthMiddleware = (
 ) => AuthMiddleware(_socket, next, true);
 
 export const OptionalAuthMiddleware = (
-  socket: Socket,
+  { _socket }: { _socket: Socket },
   next: (error?: Error) => void,
-) => AuthMiddleware(socket, next, false);
+) => AuthMiddleware(_socket, next, false);
 
 export const UserIsEdgeCreatorEditorAuthMiddleware = (
   socket: SocketWithUser,
