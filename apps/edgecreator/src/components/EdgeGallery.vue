@@ -62,7 +62,7 @@ const { issuecodesByPublicationcode } = storeToRefs(webStores.coa());
 const { fetchIssuecodesByPublicationcode } = (webStores.coa());
 
 const populateItems = async (
-  itemsForPublication: Record<string, { modelId?: number; v3: boolean }>,
+  itemsForPublication: Record<string, { modelId?: number }>,
 ) => {
   const publishedIssueModels = Object.values(itemsForPublication)
     .filter(({ modelId }) => !!modelId)
@@ -76,15 +76,6 @@ const populateItems = async (
         const url = `${
           import.meta.env.VITE_EDGES_URL as string
         }/${props.publicationcode.replace("/", "/gen/")}.${issuecode}.png`;
-        if (itemsForPublication[issuecode].v3) {
-          return {
-            name: issuecode,
-            quality: 1,
-            disabled: false,
-            tooltip: "",
-            url,
-          };
-        }
         let quality;
         let tooltip;
         const allSteps = publishedEdgesSteps.value[issuecode];
@@ -147,7 +138,7 @@ const onPublicationOrEdgeChange = async () => {
   if (publishedEdges.value) {
     if (!isPopulating.value) {
       isPopulating.value = true;
-      await populateItems(publishedEdges.value);
+      await populateItems(publishedEdges.value[props.publicationcode]);
       isPopulating.value = false;
     }
   }
@@ -159,7 +150,8 @@ watch(publishedEdges, onPublicationOrEdgeChange, {
 });
 watch(() => props.publicationcode, async () => {
   await fetchIssuecodesByPublicationcode([props.publicationcode]);
-  onPublicationOrEdgeChange()}, {
+  onPublicationOrEdgeChange()
+}, {
   immediate: true,
 });
 </script>

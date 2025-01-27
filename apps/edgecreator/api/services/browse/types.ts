@@ -2,9 +2,11 @@ import type { Errorable } from "~socket.io-services";
 
 export const namespaceEndpoint = "/browse";
 
-export interface EdgeModelDetails {
+export type EdgeModelDetails = {
   issuecode: string;
   url: string;
+  svgUrl?: string;
+  status: "published"| "ongoing" | "ongoing by another user"
   designers: string[];
   photographers: string[];
 }
@@ -16,10 +18,7 @@ export default abstract class {
     callback: (
       value: Errorable<
         {
-          results: {
-            current: EdgeModelDetails[];
-            published: EdgeModelDetails[];
-          };
+          results: EdgeModelDetails[];
         },
         "Generic error"
       >,

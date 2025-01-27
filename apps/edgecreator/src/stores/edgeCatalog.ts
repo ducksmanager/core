@@ -2,39 +2,32 @@ import { defineStore } from "pinia";
 
 import { edgecreatorSocketInjectionKey } from "~/composables/useEdgecreatorSocket";
 import type { ModelSteps } from "~dm-types/ModelSteps";
+import { EdgeModelDetails } from "~edgecreator-services/browse/types";
 import { stores as webStores } from "~web";
 import { socketInjectionKey as dmSocketInjectionKey } from "~web/src/composables/useDmSocket";
 
-interface Edge {
-  issuecode: string;
-  url: string;
-  designers: string[];
-  photographers: string[];
-}
 
-export type EdgeWithVersionAndStatus = Edge & {
+export type EdgeWithVersionAndStatus = EdgeModelDetails & {
   status: string | null;
-  v3: boolean;
   published?: string | null;
 };
 
 export const edgeCatalog = defineStore("edgeCatalog", () => {
   const {
     edgeCreator: { services: edgeCreatorServices },
-    edges: { services: edgesServices },
   } = inject(dmSocketInjectionKey)!;
 
   const edgeCategories = [
     {
       status: "ongoing",
       l10n: "Ongoing edges",
-      svgCheckFn: (edge: Edge, currentUser: string) =>
+      svgCheckFn: (edge: EdgeModelDetails, currentUser: string) =>
         edge.designers.includes(currentUser),
     },
     {
       status: "ongoing by another user",
       l10n: "Ongoing edges handled by other users",
-      svgCheckFn: (edge: Edge) => edge.designers.length,
+      svgCheckFn: (edge: EdgeModelDetails) => edge.designers.length,
     },
     {
       status: "pending",
@@ -48,22 +41,8 @@ export const edgeCatalog = defineStore("edgeCatalog", () => {
   } = inject(edgecreatorSocketInjectionKey)!;
   const isCatalogLoaded = ref(false),
     currentEdges = ref<Record<string, EdgeWithVersionAndStatus>>({}),
-    publishedEdges = ref<Record<string, { v3: boolean }>>({}),
+    publishedEdges = ref<Record<string, EdgeModelDetails>>({}),
     publishedEdgesSteps = ref<ModelSteps>({}),
-    fetchPublishedEdges = async (publicationcode: string) => {
-      const edges = await edgesServices.getEdges({ publicationcode });
-      if (!("error" in edges)) {
-        addPublishedEdges(edges);
-      }
-    },
-    addCurrentEdges = (edges: Record<string, EdgeWithVersionAndStatus>) => {
-      currentEdges.value = { ...currentEdges.value, ...edges };
-    },
-    addPublishedEdges = (
-      newPublishedEdges: Record<string, { v3: boolean }>,
-    ) => {
-      publishedEdges.value = { ...publishedEdges.value, ...newPublishedEdges };
-    },
     addPublishedEdgesSteps = (newPublishedEdgesSteps: ModelSteps) => {
       publishedEdgesSteps.value = {
         ...publishedEdgesSteps.value,
@@ -85,9 +64,8 @@ export const edgeCatalog = defineStore("edgeCatalog", () => {
         ),
       );
     },
-    getEdgeFromSvg = (edge: Edge): EdgeWithVersionAndStatus => ({
+    getEdgeWithStatus = (edge: EdgeModelDetails): EdgeModelDetails<true> => ({
       ...edge,
-      v3: true,
       status: edgeCategories.reduce(
         (acc: string | null, { status, svgCheckFn }) =>
           acc ??
@@ -117,9 +95,6 @@ export const edgeCatalog = defineStore("edgeCatalog", () => {
         return;
       }
 
-      const newCurrentEdges: typeof currentEdges.value = {};
-      const publishedSvgEdges: typeof publishedEdges.value = {};
-
       const {
         results: edges,
         error,
@@ -129,39 +104,10 @@ export const edgeCatalog = defineStore("edgeCatalog", () => {
         console.error("Error while loading edge catalog", error, errorDetails);
         return;
       }
-      for (const edgeStatus in edges) {
-        for (const { designers, photographers, issuecode, url } of edges[
-          edgeStatus as keyof typeof edges
-        ]) {
-          try {
-            if (edgeStatus === "published") {
-              publishedSvgEdges[issuecode] = {
-                v3: true,
-              };
-            } else {
-              newCurrentEdges[issuecode] = getEdgeFromSvg({
-                issuecode,
-                designers,
-                photographers,
-                url,
-              });
-            }
-          } catch (_e) {
-            console.error(`No SVG found : ${issuecode}`);
-          }
-        }
-      }
+      const edgesWithStatus = edges.map(getEdgeWithStatus).groupBy('status', '[]');
 
-      if (Object.keys(newCurrentEdges).length) {
-        for (const edgeIssueCode of Object.keys(newCurrentEdges)) {
-          newCurrentEdges[edgeIssueCode].published =
-            getEdgeStatus(edgeIssueCode);
-        }
-
-        addCurrentEdges(newCurrentEdges);
-      }
-
-      addPublishedEdges(publishedSvgEdges);
+      currentEdges.value = { ...currentEdges.value, ...edgesWithStatus.ongoing };
+      publishedEdges.value = {...publishedEdges.value, ...edgesWithStatus.published};
 
       isCatalogLoaded.value = true;
     };
@@ -175,9 +121,6 @@ export const edgeCatalog = defineStore("edgeCatalog", () => {
     currentEdges,
     publishedEdges,
     publishedEdgesSteps,
-    fetchPublishedEdges,
-    addCurrentEdges,
-    addPublishedEdges,
     addPublishedEdgesSteps,
     loadPublishedEdgesSteps,
   };

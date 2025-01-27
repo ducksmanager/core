@@ -7,15 +7,25 @@ meta:
     <session-info />
     <h1>{{ $t("Dashboard") }}</h1>
 
-    <b-alert v-if="!isCatalogLoaded" variant="info" :model-value="true">
+    <b-alert
+      v-if="!isCatalogLoaded"
+      variant="info"
+      :model-value="true"
+    >
       {{ $t("Loading...") }}
     </b-alert>
 
     <template v-else>
       <h3>{{ $t("Edge creation") }}</h3>
 
-      <b-container v-if="isUploadableEdgesCarouselReady" align="center">
-        <b-alert variant="info" :model-value="true">
+      <b-container
+        v-if="isUploadableEdgesCarouselReady"
+        align="center"
+      >
+        <b-alert
+          variant="info"
+          :model-value="true"
+        >
           <template v-if="mostPopularIssuesInCollectionWithoutEdge?.length">
             <uploadable-edges-carousel
               :user-points="userPhotographerPoints"
@@ -31,7 +41,7 @@ meta:
               </template>
             </uploadable-edges-carousel>
             <div>
-              <hr />
+              <hr>
               <div class="position-absolute px-2 separation-text">
                 {{ $t("or") }}
               </div>
@@ -51,7 +61,10 @@ meta:
               }}
             </template>
           </uploadable-edges-carousel>
-          <b-button to="/upload" class="mt-1">
+          <b-button
+            to="/upload"
+            class="mt-1"
+          >
             {{ $t("Send edge photos") }}
           </b-button>
         </b-alert>
@@ -67,9 +80,12 @@ meta:
         </b-button>
       </b-container>
 
-      <hr />
+      <hr>
 
-      <template v-for="{ status, l10n } in edgeCategories" :key="`${status}`">
+      <template
+        v-for="{ status, l10n } in edgeCategories"
+        :key="`${status}`"
+      >
         <h3>{{ $t(l10n) }}</h3>
 
         <b-container
@@ -110,8 +126,8 @@ meta:
                 cols="12"
                 md="6"
                 lg="3"
-                @mouseover="hoveredEdge = edge"
-                @mouseout="hoveredEdge = null"
+                @mouseover="hoveredEdge = edge!"
+                @mouseout="hoveredEdge = undefined"
               >
                 <b-card class="text-center">
                   <b-link
@@ -121,21 +137,19 @@ meta:
                     <b-card-text>
                       <img
                         v-if="
-                          (hoveredEdge === edge && edge.v3) ||
-                          status === 'pending'
-                        "
+                          (hoveredEdge === edge && edge.svgUrl) ||
+                            status === 'pending'
+                        " 
                         :alt="edge.issuecode"
                         class="edge-preview"
                         :src="
-                          edge.v3
-                            ? getEdgeUrl(edge.issuecode, 'svg', false)
-                            : undefined
+                          edge.svgUrl || undefined
                         "
-                      /><edge-link
+                      ><edge-link
                         :issuecode="edge.issuecode"
                         :designers="edge.designers"
                         :photographers="edge.photographers"
-                        :published="edge.published === 'Published'"
+                        :published="edge.status === 'published'"
                       />
                     </b-card-text>
                   </b-link>
@@ -144,13 +158,21 @@ meta:
             </b-row>
           </template>
         </b-container>
-        <div v-else align="center">
+        <div
+          v-else
+          align="center"
+        >
           {{ $t("No edge in this category") }}
         </div>
       </template>
     </template>
 
-    <b-container align="center" class="m-5"> &nbsp; </b-container>
+    <b-container
+      align="center"
+      class="m-5"
+    >
+&nbsp;
+    </b-container>
 
     <b-container
       id="footer"
@@ -160,7 +182,7 @@ meta:
         $t(
           "EdgeCreator is a tool allowing to create edges for the DucksManager bookcase."
         )
-      }}<br /><a href="https://ducksmanager.net">{{
+      }}<br><a href="https://ducksmanager.net">{{
         $t("Go to DucksManager")
       }}</a>
     </b-container>
@@ -179,8 +201,6 @@ const {
 import { stores as webStores } from "~web";
 import { socketInjectionKey as dmSocketInjectionKey } from "~web/src/composables/useDmSocket";
 import type { BookcaseEdgeWithPopularity } from "~web/src/stores/bookcase";
-
-const { getEdgeUrl } = useSvgUtils();
 
 const collectionStore = webStores.collection();
 const bookcaseStore = webStores.bookcase();
@@ -225,7 +245,7 @@ const mostWantedEdges = ref<
   | null
 >(null);
 
-const hoveredEdge = ref<EdgeWithVersionAndStatus | null>(null);
+const hoveredEdge = ref<EdgeWithVersionAndStatus >();
 
 const mostPopularIssuesInCollectionWithoutEdge = computed(() =>
   collectionStore.popularIssuesInCollectionWithoutEdge

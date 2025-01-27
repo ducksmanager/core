@@ -95,9 +95,12 @@
             @change="onChange()"
           />
         </template>
-      </template>
+      </template> 
     </template>
-    <slot v-if="slots.dimensions && currentFirstIssuecode !== undefined" name="dimensions" />
+    <slot
+      v-if="slots.dimensions && currentFirstIssuecode !== undefined"
+      name="dimensions"
+    />
   </div>
 </template>
 <script setup lang="ts">
@@ -261,8 +264,6 @@ const loadEdges = async () => {
         publicationIssues.value[publicationIssues.value.length],
     };
   }
-
-  await edgeCatalogStore.fetchPublishedEdges(currentPublicationcode.value!);
 };
 
 const onChange = () => {
