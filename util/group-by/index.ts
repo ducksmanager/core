@@ -39,8 +39,7 @@ declare global {
     >(
       fieldName: K,
       valueFieldName?: V,
-    ): {
-      [key: string]: V extends "[]"
+    ): Record<T[K] & (string|number), V extends "[]"
         ? T[]
         : V extends `${infer U}[]`
           ? U extends keyof T
@@ -48,8 +47,8 @@ declare global {
             : never
           : V extends keyof T
             ? T[V]
-            : T;
-    };
+            : T
+    >;
   }
 }
 
