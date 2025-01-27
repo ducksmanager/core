@@ -132,7 +132,6 @@ meta:
 <script lang="ts" setup>
 import "cropperjs/dist/cropper.css";
 
-import { useCookies } from "@vueuse/integrations/useCookies";
 import { useToastController } from "bootstrap-vue-next";
 import type Cropper from "cropperjs";
 import { nextTick } from "vue";
@@ -165,10 +164,10 @@ const uploadedImageData = ref<{ url: string }>();
 const cropper = ref<Cropper>();
 
 const initialContributors = computed(
-  (): Omit<ModelContributor, "issuecode">[] => [
+  (): Omit<ModelContributor, "issuecode">[] => !collection().user ? []:[
     {
       contributionType: "photographe",
-      user: { id: 0, username: useCookies().get("dm-user") },
+      user: { id: collection().user!.id, username: collection().user!.username },
     },
   ],
 );

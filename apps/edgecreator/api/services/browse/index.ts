@@ -1,92 +1,157 @@
 import { XMLParser } from "fast-xml-parser";
-import { readdirSync, readFileSync } from "fs";
+import { existsSync, readdirSync, readFileSync } from "fs";
 import path from "path";
-import { useSocketEvents } from "socket-call-server";
+import { NamespaceProxyTarget, useSocketEvents } from "socket-call-server";
+import { Socket } from "socket.io";
+import { getEdgesPath, SessionData } from "~/index";
+import { authenticateUser } from "~dm-services/auth/util";
 
 import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa/client";
+import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
 
-interface EdgeModelDetails {
-  issuecode: string;
-  url: string;
-  designers: string[];
-  photographers: string[];
-}
+export type BrowseServices = NamespaceProxyTarget<
+  Socket<typeof listenEvents, object, object, SessionData>,
+  Record<string, never>
+>;
 
 const parser = new XMLParser({
   ignoreAttributes: false,
   attributeNamePrefix: "",
 });
 
-const edgesPath = process.env.EDGES_PATH!.startsWith("/")
-  ? process.env.EDGES_PATH!
-  : `${process.env.PWD!}/../${process.env.EDGES_PATH!}`;
-const REGEX_IS_SVG_FILE = /^_?.+\.svg$/;
+const REGEX_IS_PNG_FILE = /^_?.+\.png$/;
 
 const getSvgMetadata = (
   metadataNodes: { "#text": string; type?: string }[],
-  metadataType: string,
+  metadataType: string
 ) =>
   metadataNodes
-    .filter(({ type }) => type === metadataType)
+    .filter(
+      ({ type, "#text": text }) =>
+        type === metadataType && typeof text === "string"
+    )
     .map(({ "#text": text }) => text.trim());
 
-const findInDir = (dir: string) =>
-  new Promise<{
-    current: EdgeModelDetails[];
-    published: EdgeModelDetails[];
-  }>(async (resolve, reject) => {
-    const fileList: {
-      current: EdgeModelDetails[];
-      published: EdgeModelDetails[];
-    } = {
-      current: [],
-      published: [],
-    };
-    try {
-      const filteredFiles = readdirSync(dir, {
+const findInDir = async (dir: string, currentUsername: string) => {
+  const existingEdges = (
+    await prismaDm.edge.findMany({
+      select: {
+        id: true,
+        publicationcode: true,
+        issuecode: true,
+      },
+    })
+  ).groupBy("publicationcode", "[]");
+
+  const publicationcodes = Object.keys(existingEdges);
+
+  const filteredFiles = [
+    ...publicationcodes.map((publicationcode) => publicationcode.split("/")[0]),
+  ]
+    .map((countrycode) =>
+      readdirSync(`${dir}/${countrycode}/gen`, {
         recursive: true,
         withFileTypes: true,
-      }).filter((file) => REGEX_IS_SVG_FILE.test(file.name));
-      for (const file of filteredFiles) {
-        const filePath = path.join(file.parentPath, file.name);
-        const filename = filePath.replace(/.+\/edges\//, "");
-        const [countrycode, magazinecodeAndIssuenumber] =
-          filename.split("/gen/");
-        const [magazinecode, issuenumberShort] =
-          magazinecodeAndIssuenumber.split(".");
-        const publicationcode = `${countrycode}/${magazinecode}`;
-        const [{ issuecode }] = await prismaCoa.$queryRaw<
-          { issuecode: string }[]
-        >`
-            SELECT issuecode
-            FROM inducks_issue
-            WHERE publicationcode = ${publicationcode}
-            AND REPLACE(issuenumber, ' ', '') = ${issuenumberShort}`;
-        const edgeStatus = file.name.startsWith("_") ? "current" : "published";
+      })
+        .filter((file) => REGEX_IS_PNG_FILE.test(file.name))
+        .flatMap((file) => {
+          const filePath = path.join(file.parentPath, file.name);
+          const magazinecodeAndIssuenumber = file.name;
+          const [magazinecode, issuenumberShort] =
+            magazinecodeAndIssuenumber.split(".");
+          const publicationcode = `${countrycode}/${magazinecode}`;
 
-        const doc = parser.parse(readFileSync(filePath));
-        const metadataNodes = doc.svg.metadata;
+          const doc = parser.parse(readFileSync(filePath));
+          const metadataNodes = doc.svg.metadata;
 
-        const designers = getSvgMetadata(metadataNodes, "contributor-designer");
-        const photographers = getSvgMetadata(
-          metadataNodes,
-          "contributor-photographer",
-        );
+          const designers = getSvgMetadata(
+            metadataNodes,
+            "contributor-designer"
+          );
+          const photographers = getSvgMetadata(
+            metadataNodes,
+            "contributor-photographer"
+          );
 
-        fileList[edgeStatus].push({
-          issuecode,
-          url: `${process.env.EDGES_URL!}/${filePath}`,
-          designers,
-          photographers,
-        });
-        resolve(fileList);
-      }
-    } catch (e) {
-      return reject(e);
+          const svgUrl = filePath.replace(".png", ".svg");
+
+          const issue = existingEdges[publicationcode]?.find(
+            ({ issuecode }) =>
+              issuecode.replaceAll(" ", "") ===
+              `${publicationcode}${issuenumberShort}`
+          );
+
+          if (!issue) {
+            console.warn(
+              `Issue ${publicationcode}${issuenumberShort} not found in database`
+            );
+            return [];
+          }
+
+          return {
+            id: issue.id,
+            publicationcode,
+            issuenumberShort,
+            url: `${process.env.EDGES_URL!}/${filePath}`,
+            svgUrl: existsSync(svgUrl) ? svgUrl : undefined,
+            designers,
+            photographers,
+            status: (file.name.startsWith("_")
+              ? designers.includes(currentUsername)
+                ? "ongoing"
+                : "ongoing by another user"
+              : "published") as
+              | "ongoing"
+              | "ongoing by another user"
+              | "published",
+          };
+        })
+    )
+    .filter((edge) => !!edge)
+    .flat();
+
+  const existingIssuecodes = (
+    await prismaCoa.inducks_issue.findMany({
+      select: {
+        publicationcode: true,
+        issuecode: true,
+        issuenumber: true,
+      },
+      where: {
+        publicationcode: {
+          in: publicationcodes,
+        },
+      },
+    })
+  )
+    .map(({ publicationcode, issuecode, issuenumber }) => ({
+      publicationcode,
+      issuecode,
+      issuenumber,
+    }))
+    .groupBy("publicationcode", "[]");
+
+  const filesWithInducksIssuecode = filteredFiles.flatMap((edge) => {
+    const issuecode = existingIssuecodes[edge!.publicationcode].find(
+      ({ issuenumber }) =>
+        issuenumber.replaceAll(" ", "") === edge!.issuenumberShort
+    )?.issuecode;
+    if (!issuecode) {
+      console.warn(
+        `No issuecode found for ${edge!.publicationcode} ${edge!.issuenumberShort}`
+      );
+      return [];
     }
+    return {
+      ...edge,
+      issuecode,
+    };
   });
 
-const listenEvents = () => ({
+  return filesWithInducksIssuecode;
+};
+
+const listenEvents = (services: BrowseServices) => ({
   listEdgeModels: async (): Promise<
     | {
         error: "Generic error";
@@ -95,7 +160,7 @@ const listenEvents = () => ({
     | { results: Awaited<ReturnType<typeof findInDir>> }
   > =>
     new Promise((resolve) => {
-      findInDir(edgesPath)
+      findInDir(getEdgesPath(), services._socket.data.user!.username)
         .then((results) => {
           resolve({ results });
         })
@@ -103,7 +168,7 @@ const listenEvents = () => ({
           resolve({
             error: "Generic error",
             errorDetails: errorDetails as string,
-          }),
+          })
         );
     }),
 
@@ -123,9 +188,9 @@ const listenEvents = () => ({
     try {
       return {
         results: readdirSync(
-          `${process.env.EDGES_PATH!}/${country}/${imageType}`,
+          `${process.env.EDGES_PATH!}/${country}/${imageType}`
         ).filter((item) =>
-          new RegExp(`(?:^|[. ])${magazine}(?:[. ]|$)`).test(item),
+          new RegExp(`(?:^|[. ])${magazine}(?:[. ]|$)`).test(item)
         ),
       };
     } catch (_e) {
@@ -134,12 +199,28 @@ const listenEvents = () => ({
   },
 });
 
-export const { client, server } = useSocketEvents<typeof listenEvents>(
-  "/browse",
-  {
-    listenEvents,
-    middlewares: [],
-  },
-);
+const RequiredAuthMiddleware = (
+  { _socket }: { _socket: Socket },
+  next: (error?: Error) => void
+) => {
+  authenticateUser(_socket.handshake.auth.token)
+    .then((user) => {
+      _socket.data.user = user;
+      next();
+    })
+    .catch((e) => {
+      next(e);
+    });
+};
+
+export const { client, server } = useSocketEvents<
+  typeof listenEvents,
+  Record<string, never>,
+  Record<string, never>,
+  SessionData
+>("/browse", {
+  listenEvents,
+  middlewares: [RequiredAuthMiddleware],
+});
 
 export type ClientEvents = (typeof client)["emitEvents"];

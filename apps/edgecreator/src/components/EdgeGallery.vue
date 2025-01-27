@@ -61,13 +61,12 @@ const isPopulating = ref(false);
 const { publishedEdges, publishedEdgesSteps } = storeToRefs(edgeCatalog());
 const { loadPublishedEdgesSteps } = edgeCatalog();
 const { issuecodesByPublicationcode } = storeToRefs(webStores.coa());
+const { fetchIssuecodesByPublicationcode } = webStores.coa();
 
-const populateItems = async (
-  itemsForPublication: Record<string, { modelId?: number; v3: boolean }>,
-) => {
-  const publishedIssueModels = Object.values(itemsForPublication)
-    .filter(({ modelId }) => !!modelId)
-    .map(({ modelId }) => modelId) as number[];
+const populateItems = async (itemsForPublication: { id: number }[]) => {
+  const publishedIssueModels = Object.values(itemsForPublication).map(
+    ({ id }) => id,
+  );
   await loadPublishedEdgesSteps({
     edgeModelIds: publishedIssueModels,
   });
@@ -77,15 +76,6 @@ const populateItems = async (
         const url = `${
           import.meta.env.VITE_EDGES_URL as string
         }/${publicationcode.replace("/", "/gen/")}.${issuecode}.png`;
-        if (itemsForPublication[issuecode].v3) {
-          return {
-            name: issuecode,
-            quality: 1,
-            disabled: false,
-            tooltip: "",
-            url,
-          };
-        }
         let quality;
         let tooltip;
         const allSteps = publishedEdgesSteps.value[issuecode];
@@ -148,7 +138,12 @@ const onPublicationOrEdgeChange = async () => {
   if (publishedEdges.value) {
     if (!isPopulating.value) {
       isPopulating.value = true;
-      await populateItems(publishedEdges.value);
+      await populateItems(
+        Object.values(publishedEdges.value).filter(
+          ({ publicationcode: publishedEdgePublicationcode }) =>
+            publishedEdgePublicationcode === publicationcode,
+        ),
+      );
       isPopulating.value = false;
     }
   }
@@ -158,9 +153,16 @@ watch(publishedEdges, onPublicationOrEdgeChange, {
   deep: true,
   immediate: true,
 });
-watch(() => publicationcode, onPublicationOrEdgeChange, {
-  immediate: true,
-});
+watch(
+  () => publicationcode,
+  async () => {
+    await fetchIssuecodesByPublicationcode([publicationcode]);
+    onPublicationOrEdgeChange();
+  },
+  {
+    immediate: true,
+  },
+);
 </script>
 
 <style scoped>

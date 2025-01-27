@@ -69,8 +69,11 @@ meta:
 
       <hr />
 
-      <template v-for="{ status, l10n } in edgeCategories" :key="`${status}`">
-        <h3>{{ $t(l10n) }}</h3>
+      <template
+        v-for="status in ['ongoing', 'ongoing by another user', 'published']"
+        :key="`${status}`"
+      >
+        <h3>{{ $t(status) }}</h3>
 
         <b-container
           v-if="Object.keys(edgesByStatusAndPublicationcode[status]).length"
@@ -110,7 +113,7 @@ meta:
                 cols="12"
                 md="6"
                 lg="3"
-                @mouseover="hoveredEdge = edge"
+                @mouseover="hoveredEdge = edge!"
                 @mouseout="hoveredEdge = undefined"
               >
                 <b-card class="text-center">
@@ -121,21 +124,17 @@ meta:
                     <b-card-text>
                       <img
                         v-if="
-                          (hoveredEdge === edge && edge.v3) ||
+                          (hoveredEdge === edge && edge.svgUrl) ||
                           status === 'pending'
                         "
                         :alt="edge.issuecode"
                         class="edge-preview"
-                        :src="
-                          edge.v3
-                            ? getEdgeUrl(edge.issuecode, 'svg', false)
-                            : undefined
-                        "
+                        :src="edge.svgUrl || undefined"
                       /><edge-link
                         :issuecode="edge.issuecode"
                         :designers="edge.designers"
                         :photographers="edge.photographers"
-                        :published="edge.published === 'Published'"
+                        :published="edge.status === 'published'"
                       />
                     </b-card-text>
                   </b-link>
@@ -169,7 +168,6 @@ meta:
 <script setup lang="ts">
 import { storeToRefs } from "pinia";
 
-import type { EdgeWithVersionAndStatus } from "~/stores/edgeCatalog";
 import { edgeCatalog } from "~/stores/edgeCatalog";
 
 const { edges: edgesEvents } = inject(dmSocketInjectionKey)!;
@@ -177,8 +175,6 @@ const { edges: edgesEvents } = inject(dmSocketInjectionKey)!;
 import { stores as webStores } from "~web";
 import { socketInjectionKey as dmSocketInjectionKey } from "~web/src/composables/useDmSocket";
 import type { BookcaseEdgeWithPopularity } from "~web/src/stores/bookcase";
-
-const { getEdgeUrl } = useSvgUtils();
 
 const collectionStore = webStores.collection();
 const bookcaseStore = webStores.bookcase();
@@ -188,12 +184,12 @@ const { hasRole } = collectionStore;
 const { user } = storeToRefs(collectionStore);
 
 const edgeCatalogStore = edgeCatalog();
-const { loadCatalog, canEditEdge, edgeCategories } = edgeCatalogStore;
-const { currentEdges, isCatalogLoaded } = storeToRefs(edgeCatalogStore);
+const { loadCatalog, canEditEdge } = edgeCatalogStore;
+const { ongoingEdges, isCatalogLoaded } = storeToRefs(edgeCatalogStore);
 
 const edgesByStatusAndPublicationcode = computed(() => {
-  const edgesByStatus = currentEdges.value?.length
-    ? Object.values(currentEdges.value).groupBy("status", "[]")
+  const edgesByStatus = ongoingEdges.value?.length
+    ? Object.values(ongoingEdges.value).groupBy("status", "[]")
     : { ongoing: [], "ongoing by another user": [], pending: [] };
   return Object.fromEntries(
     Object.entries(edgesByStatus).map(([status, edges]) => [
@@ -222,7 +218,7 @@ const mostWantedEdges = ref<
   })[]
 >();
 
-const hoveredEdge = ref<EdgeWithVersionAndStatus>();
+const hoveredEdge = ref();
 
 const mostPopularIssuesInCollectionWithoutEdge = computed(() =>
   collectionStore.popularIssuesInCollectionWithoutEdge
@@ -234,9 +230,9 @@ const mostPopularIssuesInCollectionWithoutEdge = computed(() =>
 );
 
 const loadMostWantedEdges = async () => {
-  const wantedEdges = (await edgesEvents.getWantedEdges())
+  const wantedEdges = await edgesEvents.getWantedEdges();
   await coaStore.fetchIssuecodeDetails(
-    wantedEdges.map(({ issuecode }) => issuecode)
+    wantedEdges.map(({ issuecode }) => issuecode),
   );
   mostWantedEdges.value = wantedEdges
     .slice(0, 10)
@@ -273,12 +269,15 @@ watch(
     await loadMostWantedEdges();
     await loadCatalog();
     await coaStore.fetchIssuecodeDetails(
-      Object.keys(currentEdges.value).map((issuecode) => issuecode)
+      Object.keys(ongoingEdges.value).map((issuecode) => issuecode),
     );
     const publicationcodes = [
       ...mostWantedEdges.value!.map(({ issuecode }) => issuecode!),
-      ...Object.values(currentEdges.value).map(({ issuecode }) => issuecode),
-    ].map((issuecode) => issuecodeDetails.value[issuecode]?.publicationcode || 'fr/JM');
+      ...Object.values(ongoingEdges.value).map(({ issuecode }) => issuecode),
+    ].map(
+      (issuecode) =>
+        issuecodeDetails.value[issuecode]?.publicationcode || "fr/JM",
+    );
 
     await coaStore.fetchPublicationNames(publicationcodes);
     isUploadableEdgesCarouselReady.value = true;

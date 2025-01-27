@@ -1,4 +1,5 @@
 import type { ModelSteps } from "~dm-types/ModelSteps";
+import { Prisma } from "~prisma-schemas/client_dm";
 import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
 import { prismaClient as prismaEdgeCreator } from "~prisma-schemas/schemas/edgecreator/client";
 
@@ -21,7 +22,7 @@ export default () => ({
                         '}') AS options
           from tranches_en_cours_valeurs optionValue
                     inner join tranches_en_cours_modeles model on optionValue.ID_Modele = model.ID
-          where model.ID IN (${modelIds})
+          where model.ID IN (${Prisma.join(modelIds)})
           group by model.numero, optionValue.ordre
           order by optionValue.ordre
       `.then((steps) =>

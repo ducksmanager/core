@@ -71,7 +71,10 @@
         </template>
       </template>
     </template>
-    <slot v-if="slots.dimensions && currentFirstIssuecode !== undefined" name="dimensions" />
+    <slot
+      v-if="slots.dimensions && currentFirstIssuecode !== undefined"
+      name="dimensions"
+    />
   </div>
 </template>
 <script setup lang="ts">
@@ -83,7 +86,7 @@ import { stores as webStores } from "~web";
 const { t: $t } = useI18n();
 
 const edgeCatalogStore = edgeCatalog();
-const { isCatalogLoaded, publishedEdges } = storeToRefs(edgeCatalogStore);
+const { isCatalogLoaded } = storeToRefs(edgeCatalogStore);
 
 const coaStore = webStores.coa();
 const {
@@ -175,7 +178,12 @@ const issues = computed(
     publicationIssues.value &&
     coaStore.issuecodesByPublicationcode[currentPublicationcode.value!].map(
       (issuecode) => {
-        const status = edgeCatalogStore.getEdgeStatus(issuecode);
+        const status =
+          issuecode in edgeCatalogStore.publishedEdges
+            ? "published"
+            : issuecode in edgeCatalogStore.ongoingEdges
+              ? "ongoing"
+              : "none";
         return {
           value: { issuecode },
           text: `${issuecodeDetails.value[issuecode].issuenumber}${status === "none" ? "" : ` (${$t(status!)})`}`,
@@ -242,8 +250,6 @@ const loadEdges = async () => {
         publicationIssues.value[publicationIssues.value.length],
     };
   }
-
-  await edgeCatalogStore.fetchPublishedEdges(currentPublicationcode.value!);
 };
 
 const onChange = () => {

@@ -95,7 +95,7 @@
                   :contributors="
                     mainStore.contributors.filter(
                       ({ issuecode: thisIssuecode }) =>
-                        thisIssuecode === issuecode
+                        thisIssuecode === issuecode,
                     )
                   "
                 />
@@ -155,7 +155,7 @@ import { coa } from "~web/src/stores/coa";
 const route = useRoute();
 const uiStore = ui();
 const mainStore = main();
-const {issuecodeDetails} = storeToRefs(coa());
+const { issuecodeDetails } = storeToRefs(coa());
 const stepStore = step();
 const editingStepStore = editingStep();
 const { showPreviousEdge, showNextEdge } = useSurroundingEdge();
@@ -181,15 +181,17 @@ const dimensionsPerIssuecode = computed(() =>
 
 const getActualIssuecode = (issuecode: string) => {
   const actualIssuecode = Object.values(issuecodeDetails.value).find(
-      ({ publicationcode: thisPublicationcode, issuenumber }) => thisPublicationcode === publicationcode.value && issuenumber === issuecode.split(/[ ]+/)[1],
-    )?.issuecode;
+    ({ publicationcode: thisPublicationcode, issuenumber }) =>
+      thisPublicationcode === publicationcode.value &&
+      issuenumber === issuecode.split(/[ ]+/)[1],
+  )?.issuecode;
 
   if (actualIssuecode === undefined) {
     throw new Error(`Issue ${issuecode} doesn't exist`);
   }
 
-  return actualIssuecode
-}
+  return actualIssuecode;
+};
 
 const stepsPerIssuecode = computed(() =>
   issuecodes.value.reduce<Record<string, Options>>(
@@ -227,13 +229,14 @@ try {
   publicationcode.value = issuecodeParts[0];
 
   await mainStore.loadPublicationIssues();
-  debugger
 
   firstIssuecode = getActualIssuecode(firstIssuecode);
   if (lastIssuecode) {
-  lastIssuecode = getActualIssuecode(lastIssuecode);
+    lastIssuecode = getActualIssuecode(lastIssuecode);
   }
-  otherIssuecodes = otherIssuecodes?.map(issuecode => getActualIssuecode(issuecode));
+  otherIssuecodes = otherIssuecodes?.map((issuecode) =>
+    getActualIssuecode(issuecode),
+  );
 
   try {
     mainStore.setIssuecodes(firstIssuecode, lastIssuecode, otherIssuecodes);
@@ -284,7 +287,7 @@ const setColorFromPhoto = ({ target, offsetX, offsetY }: MouseEvent) => {
 };
 
 const isPending = (issuecode: string) =>
-  !!edgeCatalog().currentEdges[issuecode];
+  !!edgeCatalog().ongoingEdges[issuecode];
 const isPublished = (issuecode: string) =>
   edgeCatalog().publishedEdges[issuecode];
 

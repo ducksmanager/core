@@ -360,6 +360,9 @@ importers:
       socket-call-client:
         specifier: ^0.3.1
         version: 0.3.1(axios-cache-interceptor@1.6.2(axios@1.7.9))(typescript@5.7.3)(vue@3.5.13(typescript@5.7.3))
+      socket-call-server:
+        specifier: ^0.3.1
+        version: 0.3.1
       universal-cookie:
         specifier: ^7.2.2
         version: 7.2.2

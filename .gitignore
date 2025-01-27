@@ -1,3 +1,4 @@
+!.gitkeep
 .DS_Store
 .eslintcache
 .eslintrc-auto-import.json
@@ -11,18 +12,17 @@
 **/.eslintcache
 **/.turbo/
 **/.venv
+**/*.js.map
 **/auto-imports.d.ts
+**/bundle.mjs
 **/components.d.ts
+**/index.js
+/vendor/
 apps/edges/edges
 !apps/edges/edges/.gitkeep
-/vendor/
-**/bundle.mjs
-**/index.js
-**/*.js.map
 dist
 dist-ssr
 local.properties
 node_modules
 output-metadata.json
 packages/api/pastec-*.dat
-!.gitkeep

@@ -4,7 +4,7 @@ import "vue3-simple-typeahead/dist/vue3-simple-typeahead.css"; //Optional defaul
 import "~group-by";
 
 import { createHead } from "@unhead/vue";
-import { BCarousel, BCarouselSlide } from "bootstrap-vue-next";
+import { createBootstrap } from "bootstrap-vue-next";
 import { createPinia } from "pinia";
 import { SocketClient } from "socket-call-client";
 import { setupLayouts } from "virtual:generated-layouts";
@@ -27,9 +27,8 @@ const router = createRouter({
 const store = createPinia();
 
 createApp(App)
-  .component("BCarousel", BCarousel)
-  .component("BCarouselSlide", BCarouselSlide)
   .use(SimpleTypeahead)
+  .use(createBootstrap())
   .use(i18n)
   .use(store)
   .use(head)

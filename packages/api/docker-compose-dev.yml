@@ -10,7 +10,7 @@ services:
 
   mailcatcher:
     container_name: mailcatcher
-    image: yappabe/mailcatcher
+    image: stpaquet/alpinemailcatcher
     ports:
       - "1025:1025"
       - "1080:1080"

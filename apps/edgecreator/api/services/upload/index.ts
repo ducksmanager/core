@@ -4,7 +4,7 @@ import fs from "fs";
 import { decode } from "node-base64-image";
 import { dirname } from "path";
 import { SocketClient } from "socket-call-client";
-import { useSocketEvents } from "socket-call-server";
+import { NamespaceProxyTarget, useSocketEvents } from "socket-call-server";
 
 import type { ClientEvents as EdgeCreatorServices } from "~dm-services/edgecreator";
 import namespaces from "~dm-services/namespaces";
@@ -12,44 +12,51 @@ import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa/client";
 
 import { getUserCredentials } from "../_auth";
 import { getNextAvailableFile } from "../_upload_utils";
+import type Events from "./types";
+import { namespaceEndpoint } from "./types";
+import { getEdgesPath, SessionData } from "~/index";
+import { Socket } from "socket.io";
 
-const edgesPath: string = process.env.EDGES_PATH!;
+export type UploadServices = NamespaceProxyTarget<
+  Socket<typeof listenEvents, object, object, SessionData>,
+  Record<string, never>
+>;
 
 const getEdgeCreatorServices = (token: string) =>
   new SocketClient(
     process.env.DM_SOCKET_URL!,
   ).addNamespace<EdgeCreatorServices>(namespaces.EDGECREATOR, {
     session: {
-      getToken: () => token,
+      getToken: () => Promise.resolve(token),
       clearSession: () => {},
       sessionExists: () => Promise.resolve(true),
     },
-  }).services;
+  });
 
-const listenEvents = () => ({
+const listenEvents = ({_socket: socket}: UploadServices) => ({
   uploadFromBase64: async (parameters: { data: string; issuecode: string }) => {
-    const { issuecode, data } = parameters;
-    const { publicationcode, issuenumber } =
-      await prismaCoa.inducks_issue.findFirstOrThrow({
-        where: { issuecode },
+      const { issuecode, data } = parameters;
+      const { publicationcode, issuenumber } =
+          await prismaCoa.inducks_issue.findFirstOrThrow({
+              where: { issuecode },
+          });
+      const [countrycode, magazinecode] = publicationcode.split("/");
+      const path = `${getEdgesPath()}/${countrycode}/photos`;
+      if (!fs.existsSync(path)) {
+          fs.mkdirSync(path, { recursive: true });
+      }
+      const tentativeFileName = `${magazinecode}.${issuenumber}.photo`;
+      const fileName = getNextAvailableFile(
+          `${path}/${tentativeFileName}`,
+          "jpg",
+      ).match(/\/([^/]+)$/)![1];
+
+      await decode(data.includes(',') ? data.split(',')[1]: data, {
+          fname: `${path}/${fileName.replace(/.jpg$/, "")}`,
+          ext: "jpg",
       });
-    const [countrycode, magazinecode] = publicationcode.split("/");
-    const path = `${edgesPath}/${countrycode}/photos`;
-    if (!fs.existsSync(path)) {
-      fs.mkdirSync(path, { recursive: true });
-    }
-    const tentativeFileName = `${magazinecode}.${issuenumber}.photo`;
-    const fileName = getNextAvailableFile(
-      `${path}/${tentativeFileName}`,
-      "jpg",
-    ).match(/\/([^/]+)$/)![1];
 
-    await decode(data.split(",")[1], {
-      fname: `${path}/${fileName.replace(/.jpg$/, "")}`,
-      ext: "jpg",
-    });
-
-    await getEdgeCreatorServices().sendNewEdgePhotoEmail(issuecode);
+    await getEdgeCreatorServices(socket.data.token).sendNewEdgePhotoEmail(issuecode);
 
     return { fileName };
   },
@@ -82,8 +89,6 @@ export const upload = async (
   >,
   res: Response,
 ) => {
-  const userCredentials = getUserCredentials(req.user!);
-
   let allowedMimeTypes: string[];
 
   const { photo: isEdgePhoto, multiple: isMultipleEdgePhoto, edge } = req.body;
@@ -110,15 +115,14 @@ export const upload = async (
         targetFilename,
         allowedMimeTypes,
         isEdgePhoto,
-        userCredentials,
         edge,
-        temporaryPath,
+        temporaryPath
       );
       saveFile(temporaryPath, targetFilename);
       await storePhotoHash(targetFilename, hash);
       targetFilesnames.push(
         targetFilename.replace(
-          process.env.EDGES_PATH!,
+          getEdgesPath(),
           process.env.VITE_EDGES_URL!,
         ),
       );
@@ -144,7 +148,7 @@ const getTargetFilename = async (
 
   if (isMultipleEdgePhoto) {
     return getNextAvailableFile(
-      `${edgesPath}/tranches_multiples/photo.multiple`,
+      `${getEdgesPath()}/tranches_multiples/photo.multiple`,
       "jpg",
     );
   } else {
@@ -155,11 +159,11 @@ const getTargetFilename = async (
     const [countrycode, magazinecode] = publicationcode.split("/");
     if (isEdgePhoto) {
       return getNextAvailableFile(
-        `${edgesPath}/${countrycode}/photos/${magazinecode}.${issuenumber}.photo`,
+        `${getEdgesPath()}/${countrycode}/photos/${magazinecode}.${issuenumber}.photo`,
         "jpg",
       );
     } else {
-      return `${edgesPath}/${countrycode}/elements/${
+      return `${getEdgesPath()}/${countrycode}/elements/${
         filename.includes(magazinecode)
           ? filename
           : `${magazinecode}.${filename}`
@@ -173,9 +177,8 @@ const validateUpload = async (
   filename: string,
   allowedMimeTypes: string[],
   isEdgePhoto: boolean,
-  userCredentials: Record<string, string>,
   issuecode: string,
-  filePath: string,
+  filePath: string
 ): Promise<{ hash: string }> => {
   if (!allowedMimeTypes.includes(mimetype)) {
     throw new Error(

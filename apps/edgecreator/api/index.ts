@@ -5,7 +5,7 @@ Sentry.init({
 });
 
 import { instrument } from "@socket.io/admin-ui";
-import dotenv from "dotenv";
+
 import express from "express";
 import { createServer } from "http";
 import multer from "multer";
@@ -20,17 +20,20 @@ import { server as imageInfo } from "./services/image-info";
 import { server as save } from "./services/save";
 import { server as text } from "./services/text";
 import { server as uploadServices, upload } from "./services/upload";
-dotenv.config({
-  path: "../.env",
-});
 
 const port = 3001;
+
+export const getEdgesPath = () => process.env.EDGES_PATH!.startsWith("/")
+  ? process.env.EDGES_PATH!
+  : `${import.meta.dirname}/../../${process.env.EDGES_PATH!}`;
+
+export type SessionData = { user?: SessionUser };
 
 class ServerWithUser extends Server<
   Record<string, never>,
   Record<string, never>,
   Record<string, never>,
-  { user?: SessionUser }
+  SessionData
 > {}
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -38,10 +41,6 @@ class ServerWithUser extends Server<
   const int = Number.parseInt(this.toString());
   return int ?? this.toString();
 };
-
-dotenv.config({
-  path: "./.env",
-});
 
 Sentry.init({
   dsn: process.env.SENTRY_DSN,

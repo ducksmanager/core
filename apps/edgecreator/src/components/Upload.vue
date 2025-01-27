@@ -8,7 +8,6 @@
 <script setup lang="ts">
 import Uppy from "@uppy/core";
 import Dashboard from "@uppy/dashboard";
-import XhrUpload from "@uppy/xhr-upload";
 import { useI18n } from "vue-i18n";
 
 // import frTranslation from "@uppy/locales/lib/fr_FR";
@@ -27,10 +26,20 @@ const {
   edge: { issuenumber: string } | null;
 }>();
 
+const { upload: uploadServices } = inject(edgecreatorSocketInjectionKey)!;
+
 const mainStore = main();
 const { locale, t: $t } = useI18n();
 
-const bytesUploaded = ref(0);
+const arrayBufferToBase64 = (buffer: ArrayBuffer) => {
+  let binary = "";
+  const bytes = new Uint8Array(buffer);
+  const len = bytes.byteLength;
+  for (let i = 0; i < len; i++) {
+    binary += String.fromCharCode(bytes[i]);
+  }
+  return window.btoa(binary);
+};
 
 // const uppyTranslations = {
 // "fr-FR": frTranslation,
@@ -38,6 +47,7 @@ const bytesUploaded = ref(0);
 // };
 
 const uppy = Uppy({
+  autoProceed: true,
   debug: true,
   // locale: uppyTranslations[i18n.locale.value],
   allowMultipleUploads: false,
@@ -66,28 +76,25 @@ onMounted(() => {
       browserBackButtonClose: true,
       proudlyDisplayPoweredByUppy: false,
     })
-    .use(XhrUpload, {
-      endpoint: "/fs/upload",
-      getResponseError: (responseText: string) => {
-        const { error, placeholders } = JSON.parse(responseText) as {
-          error: string;
-          placeholders: Record<string, string>;
-        };
-        return new Error($t(error, placeholders).toString());
-      },
-    });
-  uppy.on("upload-progress", (data: { bytesUploaded: number }) => {
-    bytesUploaded.value = data.bytesUploaded;
-  });
-  uppy.on("upload-success", (_, payload: { body: { fileName: string } }) => {
-    if (photo && !multiple) {
-      mainStore.photoUrls[edge!.issuenumber] = payload.body.fileName;
-    } else {
-      mainStore.loadItems({
-        itemType: photo ? "photos" : "elements",
+    .on("file-added", async (file) => {
+      const fileArrayBuffer = await file.data.arrayBuffer();
+      const results = await uploadServices.uploadFromBase64({
+        issuecode: mainStore.issuecodes[0],
+        data: arrayBufferToBase64(fileArrayBuffer),
       });
-    }
-  });
+      if ("error" in results) {
+        window.alert(results.errorDetails);
+        return;
+      } else {
+        if (photo && !multiple) {
+          mainStore.photoUrls[edge!.issuenumber] = results.fileName;
+        } else {
+          mainStore.loadItems({
+            itemType: photo ? "photos" : "elements",
+          });
+        }
+      }
+    });
 });
 </script>
 

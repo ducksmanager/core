@@ -6,7 +6,7 @@ export default class extends Email {
   data: {
     user: user;
   };
-  templatePath = `${import.meta.dirname}/emails/presentation-sentence-refused`;
+  templatePath = import.meta.dirname.includes('emails') ? import.meta.dirname:`${import.meta.dirname}/emails/presentation-sentence-refused`;
 
   constructor(data: { user: user }) {
     super();

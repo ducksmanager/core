@@ -7,7 +7,7 @@
   "scripts": {
     "build": "bun build --target node index.ts --sourcemap=linked --outdir dist && pnpm sentry:sourcemaps",
     "dev:blocking-up": "wait-on tcp:3000",
-    "dev": "concurrently -n api,docker-compose \"pnpm -F ~api nodemon-watch\" \"docker compose -f docker-compose-dev.yml up pastec mailcatcher\"",
+    "dev": "concurrently -n api,docker-compose \"pnpm -F ~api nodemon-watch\" \"docker compose -f docker-compose-dev.yml up\"",
     "nodemon-watch": "bun --inspect run --watch index.ts",
     "prod:deploy": "DIR=packages/api SERVICES=api-websocket pnpm -F '~ci' prod:docker-compose-up",
     "prod:build-docker": "REPO_NAME=ghcr.io/bperel/ducksmanager-api:websocket pnpm -F '~ci' prod:build-docker -f packages/api/Dockerfile",
