@@ -42,7 +42,7 @@
                   id="showPreviousEdge"
                   v-model="showPreviousEdge"
                   :disabled="
-                    !mainStore.edgeIdsBefore.length ||
+                    !edgeIssuecodesBefore.length ||
                     showPreviousEdge === undefined
                   "
                 />
@@ -59,7 +59,7 @@
                   id="showNextEdge"
                   v-model="showNextEdge"
                   :disabled="
-                    !mainStore.edgeIdsAfter.length || showNextEdge === undefined
+                    !edgeIssuecodesAfter.length || showNextEdge === undefined
                   "
                 />
               </b-col>
@@ -264,7 +264,8 @@ const { showPreviousEdge, showNextEdge } = surroundingEdge();
 const { dimensions: editingDimensions } = storeToRefs(editingStep());
 const { hasRole } = webStores.collection();
 const stepStore = step();
-const { issuecodes, photoUrls } = storeToRefs(mainStore);
+const { issuecodes, photoUrls, edgeIssuecodesAfter, edgeIssuecodesBefore } =
+  storeToRefs(mainStore);
 
 interface ModelToClone {
   editMode: string;

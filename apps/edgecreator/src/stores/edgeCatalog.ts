@@ -37,9 +37,9 @@ export const edgeCatalog = defineStore("edgeCatalog", () => {
         ),
       );
     },
-    canEditEdge = (status: string) =>
+    canEditEdge = (status: (typeof edges.value)[number]["status"]) =>
       webStores.collection().hasRole("Admin") ||
-      status !== "ongoing by another user",
+      status !== "Ongoing by another user",
     loadCatalog = async () => {
       if (isCatalogLoaded.value) {
         return;
@@ -55,20 +55,21 @@ export const edgeCatalog = defineStore("edgeCatalog", () => {
         return;
       }
 
-      edges.value = {
-        ...publishedEdges.value,
-        ...models.results,
-      };
+      edges.value = [...edges.value, ...models.results];
 
       isCatalogLoaded.value = true;
     };
 
   const publishedEdges = computed(() =>
-    edges.value.filter(({ status }) => status === "published"),
+    edges.value
+      .filter(({ status }) => status === "Published")
+      .groupBy("issuecode"),
   );
 
   const ongoingEdges = computed(() =>
-    edges.value.filter(({ status }) => status !== "published"),
+    edges.value
+      .filter(({ status }) => status !== "Published")
+      .groupBy("issuecode"),
   );
 
   return {

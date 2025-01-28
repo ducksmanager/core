@@ -10,7 +10,7 @@ import namespaces from "~dm-services/namespaces";
 import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa/client";
 
 import { getNextAvailableFile } from "../_upload_utils";
-import { getEdgesPath, SessionData } from "~/index";
+import { getEdgesPath, SessionData } from "../../index";
 import { Socket } from "socket.io";
 import { RequiredAuthMiddleware } from "~dm-services/auth/util";
 

@@ -180,9 +180,9 @@ const issues = computed(
       (issuecode) => {
         const status =
           issuecode in edgeCatalogStore.publishedEdges
-            ? "published"
+            ? "Published"
             : issuecode in edgeCatalogStore.ongoingEdges
-              ? "ongoing"
+              ? "Ongoing"
               : "none";
         return {
           value: { issuecode },

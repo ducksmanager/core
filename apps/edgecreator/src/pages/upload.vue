@@ -223,7 +223,7 @@ const uploadAll = async () => {
     if ("error" in uploadResults) {
       window.alert(uploadResults.errorDetails);
     } else {
-      crop.filename = uploadResults.fileName;
+      crop.filename = (uploadResults as { fileName: string }).fileName;
     }
 
     await nextTick().then(async () => {

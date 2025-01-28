@@ -3,8 +3,8 @@ import { existsSync, readdirSync, readFileSync } from "fs";
 import path from "path";
 import { NamespaceProxyTarget, useSocketEvents } from "socket-call-server";
 import { Socket } from "socket.io";
-import { getEdgesPath, SessionData } from "~/index";
-import {  OptionalAuthMiddleware } from "~dm-services/auth/util";
+import { getEdgesPath, SessionData } from "../../index";
+import { OptionalAuthMiddleware } from "~dm-services/auth/util";
 
 import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa/client";
 import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
@@ -46,66 +46,71 @@ const findInDir = async (dir: string, currentUsername?: string) => {
   const publicationcodes = Object.keys(existingEdges);
 
   const filteredFiles = [
-    ...publicationcodes.map((publicationcode) => publicationcode.split("/")[0]),
+    ...new Set(
+      publicationcodes.map((publicationcode) => publicationcode.split("/")[0])
+    ),
   ]
     .map((countrycode) =>
-      readdirSync(`${dir}/${countrycode}/gen`, {
-        recursive: true,
-        withFileTypes: true,
-      })
-        .filter((file) => REGEX_IS_PNG_FILE.test(file.name))
-        .flatMap((file) => {
-          const filePath = path.join(file.parentPath, file.name);
-          const magazinecodeAndIssuenumber = file.name;
-          const [magazinecode, issuenumberShort] =
-            magazinecodeAndIssuenumber.split(".");
-          const publicationcode = `${countrycode}/${magazinecode}`;
+      !existsSync(`${dir}/${countrycode}/gen`)
+        ? []
+        : readdirSync(`${dir}/${countrycode}/gen`, {
+            recursive: true,
+            withFileTypes: true,
+          })
+            .filter((file) => REGEX_IS_PNG_FILE.test(file.name))
+            .flatMap((file) => {
+              const filePath = path.join(file.parentPath, file.name);
+              const magazinecodeAndIssuenumber = file.name;
+              const [magazinecode, issuenumberShort] =
+                magazinecodeAndIssuenumber.split(".");
+              const publicationcode = `${countrycode}/${magazinecode}`;
 
-          const doc = parser.parse(readFileSync(filePath));
-          const metadataNodes = doc.svg.metadata;
+              const doc = parser.parse(readFileSync(filePath));
+              const metadataNodes = doc.svg.metadata;
 
-          const designers = getSvgMetadata(
-            metadataNodes,
-            "contributor-designer"
-          );
-          const photographers = getSvgMetadata(
-            metadataNodes,
-            "contributor-photographer"
-          );
+              const designers = getSvgMetadata(
+                metadataNodes,
+                "contributor-designer"
+              );
+              const photographers = getSvgMetadata(
+                metadataNodes,
+                "contributor-photographer"
+              );
 
-          const svgUrl = filePath.replace(".png", ".svg");
+              const svgUrl = filePath.replace(".png", ".svg");
 
-          const issue = existingEdges[publicationcode]?.find(
-            ({ issuecode }) =>
-              issuecode.replaceAll(" ", "") ===
-              `${publicationcode}${issuenumberShort}`
-          );
+              const issue = existingEdges[publicationcode]?.find(
+                ({ issuecode }) =>
+                  issuecode.replaceAll(" ", "") ===
+                  `${publicationcode}${issuenumberShort}`
+              );
 
-          if (!issue) {
-            console.warn(
-              `Issue ${publicationcode}${issuenumberShort} not found in database`
-            );
-            return [];
-          }
+              if (!issue) {
+                console.warn(
+                  `Issue ${publicationcode}${issuenumberShort} not found in database`
+                );
+                return [];
+              }
 
-          return {
-            id: issue.id,
-            publicationcode,
-            issuenumberShort,
-            url: `${process.env.EDGES_URL!}/${filePath}`,
-            svgUrl: existsSync(svgUrl) ? svgUrl : undefined,
-            designers,
-            photographers,
-            status: (file.name.startsWith("_")
-              ? currentUsername && designers.includes(currentUsername)
-                ? "ongoing"
-                : "ongoing by another user"
-              : "published") as
-              | "ongoing"
-              | "ongoing by another user"
-              | "published",
-          };
-        })
+              return {
+                id: issue.id,
+                publicationcode,
+                issuenumberShort,
+                url: `${process.env.EDGES_URL!}/${filePath}`,
+                svgUrl: existsSync(svgUrl) ? svgUrl : undefined,
+                designers,
+                photographers,
+                ...({
+                  status: file.name.startsWith("_")
+                    ? currentUsername && designers.includes(currentUsername)
+                      ? "Ongoing"
+                      : designers.length
+                        ? "Ongoing by another user"
+                        : "Pending"
+                    : "Published",
+                } as const),
+              };
+            })
     )
     .filter((edge) => !!edge)
     .flat();
@@ -198,7 +203,6 @@ const listenEvents = (services: BrowseServices) => ({
     }
   },
 });
-
 
 export const { client, server } = useSocketEvents<
   typeof listenEvents,

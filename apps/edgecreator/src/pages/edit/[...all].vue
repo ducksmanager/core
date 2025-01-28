@@ -27,14 +27,11 @@
             <th
               v-if="
                 showPreviousEdge &&
-                mainStore.edgesBefore[mainStore.edgesBefore.length - 1]
+                edgeIssuecodesBefore[edgeIssuecodesBefore.length - 1]
               "
               class="surrounding-edge"
             >
-              {{
-                mainStore.edgesBefore[mainStore.edgesBefore.length - 1]!
-                  .issuecode
-              }}
+              {{ edgeIssuecodesBefore[edgeIssuecodesBefore.length - 1] }}
             </th>
             <template
               v-for="issuecode in issuecodes"
@@ -65,17 +62,17 @@
               </th>
             </template>
             <th
-              v-if="showNextEdge && mainStore.edgesAfter[0]"
+              v-if="showNextEdge && edgeIssuecodesAfter[0]"
               class="surrounding-edge"
             >
-              {{ mainStore.edgesAfter[0].issuecode }}
+              {{ edgeIssuecodesAfter[0] }}
             </th>
           </tr>
           <tr>
-            <td v-if="showPreviousEdge && edgeIdsBefore.length">
+            <td v-if="showPreviousEdge && edgeIssuecodesBefore.length">
               <published-edge
                 :issuecode="
-                  edgeIdsBefore[edgeIdsBefore.length - 1]!
+                  edgeIssuecodesBefore[edgeIssuecodesBefore.length - 1]!
                 "
                 @load="showPreviousEdge = true"
                 @error="showPreviousEdge = undefined"
@@ -119,9 +116,9 @@
                 />
               </td>
             </template>
-            <td v-if="showNextEdge && edgeIdsAfter.length">
+            <td v-if="showNextEdge && edgeIssuecodesAfter.length">
               <published-edge
-                :issuecode="edgeIdsAfter[0]!"
+                :issuecode="edgeIssuecodesAfter[0]!"
                 @load="showNextEdge = true"
                 @error="showNextEdge = undefined"
               />
@@ -161,7 +158,12 @@ const editingStepStore = editingStep();
 const { showPreviousEdge, showNextEdge } = useSurroundingEdge();
 
 const { loadModel } = useModelLoad();
-const { publicationcode, issuecodes } = storeToRefs(mainStore);
+const {
+  publicationcode,
+  issuecodes,
+  edgeIssuecodesAfter,
+  edgeIssuecodesBefore,
+} = storeToRefs(mainStore);
 
 const error = ref<string>();
 
@@ -209,7 +211,6 @@ watch(
   async () => {
     await mainStore.loadItems({ itemType: "elements" });
     await mainStore.loadItems({ itemType: "photos" });
-    await mainStore.loadSurroundingEdges();
   },
 );
 

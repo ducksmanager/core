@@ -1,4 +1,3 @@
-import type { AxiosInstance } from "axios";
 import { defineStore } from "pinia";
 
 import { edgecreatorSocketInjectionKey } from "~/composables/useEdgecreatorSocket";
@@ -6,7 +5,7 @@ import type { userContributionType } from "~prisma-schemas/schemas/dm";
 import type { ModelContributor } from "~types/ModelContributor";
 import type { SimpleUser } from "~types/SimpleUser";
 import { stores as webStores } from "~web";
-import { socketInjectionKey as dmSocketInjectionKey } from "~web/src/composables/useDmSocket";
+import { edgeCatalog } from "./edgeCatalog";
 
 const numericSortCollator = new Intl.Collator(undefined, {
   numeric: true,
@@ -14,15 +13,12 @@ const numericSortCollator = new Intl.Collator(undefined, {
 });
 export const main = defineStore("main", () => {
   const { browse: browseEvents } = inject(edgecreatorSocketInjectionKey)!;
-  const { edges: edgesEvents } = inject(dmSocketInjectionKey)!;
 
   const publicationcode = ref<string>(),
     issuecodes = ref<string[]>([]),
     isRange = ref(false),
     photoUrls = ref<Record<string, string>>({}),
     contributors = ref<ModelContributor[]>([]),
-    edgeIdsBefore = ref<string[]>([]),
-    edgeIdsAfter = ref<string[]>([]),
     publicationElements = ref<string[]>([]),
     publicationPhotos = ref<string[]>([]),
     warnings = ref<string[]>([]),
@@ -134,76 +130,61 @@ export const main = defineStore("main", () => {
       webStores
         .coa()
         .fetchIssuecodesByPublicationcode([publicationcode.value!]),
-    getEdgePublicationStates = async (issuecodes: string[]) =>
-      [...new Set(Object.values(await edgesEvents.getEdges({ issuecodes })))]
-        .sort((a, b) =>
+    getEdgePublicationStates = (issuecodes: string[]) =>
+      Object.keys(edgeCatalog().publishedEdges)
+        .filter((issuecode) => issuecodes.includes(issuecode))
+        .sort((issuecode1, issuecode2) =>
           Math.sign(
-            issuecodes.indexOf(a!.issuecode) - issuecodes.indexOf(b!.issuecode),
+            issuecodes.indexOf(issuecode1) - issuecodes.indexOf(issuecode2),
           ),
-        )
-        .map(({ issuecode }) => issuecode),
-    loadSurroundingEdges = async () => {
-      const firstIssueIndex = publicationIssuecodes.value.findIndex(
-        (issue) => issue === issuecodes.value[0],
-      );
-      const lastIssueIndex = publicationIssuecodes.value.findIndex(
-        (issue) => issue === issuecodes.value[issuecodes.value.length - 1],
-      );
-      const issuesBefore = publicationIssuecodes.value.filter(
-        (_, index) =>
-          firstIssueIndex !== -1 &&
-          index >= firstIssueIndex - 10 &&
-          index < firstIssueIndex,
-      );
-      const issuesAfter = publicationIssuecodes.value.filter(
-        (_, index) =>
-          lastIssueIndex !== -1 &&
-          index > lastIssueIndex &&
-          index <= lastIssueIndex + 10,
-      );
+        );
 
-      if (issuesBefore.length) {
-        edgeIdsBefore.value = await getEdgePublicationStates(issuesBefore);
-      }
+  const firstIssueIndex = computed(() =>
+    publicationIssuecodes.value.findIndex(
+      (issue) => issue === issuecodes.value[0],
+    ),
+  );
+  const lastIssueIndex = computed(() =>
+    publicationIssuecodes.value.findIndex(
+      (issue) => issue === issuecodes.value[issuecodes.value.length - 1],
+    ),
+  );
 
-      if (issuesAfter.length) {
-        edgeIdsAfter.value = await getEdgePublicationStates(issuesAfter);
-      }
-    },
-    getChunkedRequests = async ({
-      api,
-      url,
-      parametersToChunk,
-      chunkSize,
-      suffix = "",
-    }: {
-      api: AxiosInstance;
-      url: string;
-      parametersToChunk: (string | number)[];
-      chunkSize: number;
-      suffix?: string;
-    }) =>
-      await Promise.all(
-        await Array.from(
-          { length: Math.ceil(parametersToChunk.length / chunkSize) },
-          (_, i) =>
-            parametersToChunk.slice(i * chunkSize, i * chunkSize + chunkSize),
-        ).reduce(
-          async (acc, codeChunk) =>
-            (await acc).concat(
-              await api.get(`${url}${codeChunk.join(",")}${suffix}`),
-            ),
-          Promise.resolve([]),
-        ),
-      );
+  const edgeIssuecodesBefore = computed(() => {
+    if (!edgeCatalog().isCatalogLoaded) {
+      return [];
+    }
+    const issuesBefore = publicationIssuecodes.value.filter(
+      (_, index) =>
+        firstIssueIndex.value !== -1 &&
+        index >= firstIssueIndex.value - 10 &&
+        index < firstIssueIndex.value,
+    );
+
+    return getEdgePublicationStates(issuesBefore);
+  });
+
+  const edgeIssuecodesAfter = computed(() => {
+    if (!edgeCatalog().isCatalogLoaded) {
+      return [];
+    }
+    const issuesAfter = publicationIssuecodes.value.filter(
+      (_, index) =>
+        lastIssueIndex.value !== -1 &&
+        index > lastIssueIndex.value &&
+        index <= lastIssueIndex.value + 10,
+    );
+
+    return getEdgePublicationStates(issuesAfter);
+  });
   return {
     publicationcode,
     issuecodes,
     isRange,
     photoUrls,
     contributors,
-    edgeIdsBefore,
-    edgeIdsAfter,
+    edgeIssuecodesBefore,
+    edgeIssuecodesAfter,
     publicationElements,
     publicationPhotos,
     warnings,
@@ -217,7 +198,5 @@ export const main = defineStore("main", () => {
     setIssuecodes,
     loadItems,
     loadPublicationIssues,
-    loadSurroundingEdges,
-    getChunkedRequests,
   };
 });

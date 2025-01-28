@@ -88,7 +88,9 @@ onMounted(() => {
         window.alert(results.errorDetails);
       } else {
         if (photo && !multiple) {
-          mainStore.photoUrls[edge!.issuenumber] = results.fileName;
+          mainStore.photoUrls[edge!.issuenumber] = (
+            results as { fileName: string }
+          ).fileName;
         }
 
         mainStore.loadItems({

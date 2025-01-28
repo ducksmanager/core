@@ -70,7 +70,7 @@ meta:
       <hr />
 
       <template
-        v-for="status in ['ongoing', 'ongoing by another user', 'published']"
+        v-for="status in ['Ongoing', 'Ongoing by another user', 'Pending'] as const"
         :key="`${status}`"
       >
         <h3>{{ $t(status) }}</h3>
@@ -125,7 +125,7 @@ meta:
                       <img
                         v-if="
                           (hoveredEdge === edge && edge.svgUrl) ||
-                          status === 'pending'
+                          status === 'Pending'
                         "
                         :alt="edge.issuecode"
                         class="edge-preview"
@@ -134,7 +134,7 @@ meta:
                         :issuecode="edge.issuecode"
                         :designers="edge.designers"
                         :photographers="edge.photographers"
-                        :published="edge.status === 'published'"
+                        :published="edge.status === 'Published'"
                       />
                     </b-card-text>
                   </b-link>
@@ -188,9 +188,10 @@ const { loadCatalog, canEditEdge } = edgeCatalogStore;
 const { ongoingEdges, isCatalogLoaded } = storeToRefs(edgeCatalogStore);
 
 const edgesByStatusAndPublicationcode = computed(() => {
-  const edgesByStatus = ongoingEdges.value?.length
-    ? Object.values(ongoingEdges.value).groupBy("status", "[]")
-    : { ongoing: [], "ongoing by another user": [], pending: [] };
+  const edgesByStatus = Object.values(ongoingEdges.value || []).groupBy(
+    "status",
+    "[]",
+  );
   return Object.fromEntries(
     Object.entries(edgesByStatus).map(([status, edges]) => [
       status,
