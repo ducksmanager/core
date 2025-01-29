@@ -66,7 +66,7 @@ meta:
 <script setup lang="ts">
 import Cookies from "js-cookie";
 
-import type { ScopedError } from "socket-call-server";
+import type { ScopedError } from "socket-call-client";
 
 const { loadUser } = collection();
 const { user } = storeToRefs(collection());

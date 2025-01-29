@@ -79,7 +79,7 @@
 
 <script setup lang="ts">
 import { dumiliSocketInjectionKey } from "~/composables/useDumiliSocket";
-import type { EventOutput } from "socket-call-server";
+import type { EventOutput } from "socket-call-client";
 import type { ClientEmitEvents as IndexationsEvents } from "~dumili-services/indexations";
 
 const router = useRouter();

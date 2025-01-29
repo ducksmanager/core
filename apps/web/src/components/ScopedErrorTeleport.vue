@@ -7,7 +7,7 @@
 </template>
 
 <script lang="ts" setup>
-import type { ScopedError } from "socket-call-server";
+import type { ScopedError } from "socket-call-client";
 
 const { error } = defineProps<{
   error: ScopedError;

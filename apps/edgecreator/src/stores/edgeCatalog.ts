@@ -1,6 +1,6 @@
 import { defineStore } from "pinia";
 import type { ClientEvents as BrowseClientEvents } from "~edgecreator-services/browse";
-import type { SuccessfulEventOutput } from "socket-call-server";
+import type { SuccessfulEventOutput } from "socket-call-client";
 
 import { edgecreatorSocketInjectionKey } from "~/composables/useEdgecreatorSocket";
 import type { ModelSteps } from "~dm-types/ModelSteps";

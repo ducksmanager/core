@@ -1,4 +1,4 @@
-import type { EventOutput } from "socket-call-server";
+import type { EventOutput } from "socket-call-client";
 
 import type { ClientEvents as CoverIdServices } from "~dm-services/cover-id";
 

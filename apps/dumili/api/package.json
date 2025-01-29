@@ -29,8 +29,8 @@
     "dotenv": "^16.4.7",
     "jsonwebtoken": "^9.0.2",
     "sharp": "^0.33.5",
-    "socket-call-client": "^0.3.1",
-    "socket-call-server": "^0.3.1",
+    "socket-call-client": "^0.5.0",
+    "socket-call-server": "^0.5.0",
     "socket.io": "^4.8.1",
     "~api": "workspace:*",
     "~prisma-schemas": "workspace:*"

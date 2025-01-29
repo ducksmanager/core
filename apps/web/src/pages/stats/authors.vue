@@ -69,7 +69,7 @@ import { Bar } from "vue-chartjs";
 
 import type { ClientEvents as StatsServices } from "~dm-services/stats";
 import { socketInjectionKey } from "../../composables/useDmSocket";
-import { EventOutput } from "socket-call-server";
+import { EventOutput } from "socket-call-client";
 
 Chart.register(
   Legend,

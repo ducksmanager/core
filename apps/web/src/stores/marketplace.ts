@@ -1,4 +1,4 @@
-import type { EventOutput } from "socket-call-server";
+import type { EventOutput } from "socket-call-client";
 
 import type { ClientEvents as CollectionServices } from "~dm-services/collection";
 import type { requestedIssue } from "~prisma-schemas/schemas/dm";

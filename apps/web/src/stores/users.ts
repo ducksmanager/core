@@ -1,4 +1,4 @@
-import type { EventOutput, SuccessfulEventOutput } from "socket-call-server";
+import type { EventOutput, SuccessfulEventOutput } from "socket-call-client";
 
 import type { ClientEvents as GlobalStatsServices } from "~dm-services/global-stats";
 import type { BookcaseContributor } from "~dm-types/BookcaseContributor";

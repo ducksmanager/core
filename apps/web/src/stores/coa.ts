@@ -1,4 +1,4 @@
-import type { EventOutput, SuccessfulEventOutput } from "socket-call-server";
+import type { EventOutput, SuccessfulEventOutput } from "socket-call-client";
 
 import { getCurrentLocaleShortKey } from "~/composables/useLocales";
 import type { ClientEvents as CoaClientEvents } from "~dm-services/coa";

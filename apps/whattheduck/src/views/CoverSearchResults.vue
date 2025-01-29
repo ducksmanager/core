@@ -73,7 +73,7 @@ import router from '~/router';
 import { app } from '~/stores/app';
 import { wtdcollection } from '~/stores/wtdcollection';
 import type { ClientEvents as CoverIdServices } from '~dm-services/cover-id';
-import { SuccessfulEventOutput } from 'socket-call-server';
+import { SuccessfulEventOutput } from 'socket-call-client';
 
 const hasCoaData = ref(false);
 const { issuecodeDetails, publicationNames, issuePopularities, issueQuotations } = storeToRefs(webStores.coa());
