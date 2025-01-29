@@ -29,7 +29,7 @@
     "i18n": "^0.15.1",
     "jsonwebtoken": "^9.0.2",
     "nodemailer": "^6.9.16",
-    "socket-call-server": "^0.5.0",
+    "socket-call-server": "^0.5.1",
     "socket.io": "^4.8.1",
     "~dm-types": "workspace:*",
     "~prisma-schemas": "workspace:*"

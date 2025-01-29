@@ -170,9 +170,7 @@ const listenEvents = ({ _socket }: UserServices<true>) => ({
 
 export const { client, server } = useSocketEvents<
   typeof listenEvents,
-  Record<string, never>,
-  Record<string, never>,
-  { user?: SessionUser }
+  Record<string, never>
 >(namespaces.BOOKCASE, {
   listenEvents,
   middlewares: [],
@@ -186,9 +184,7 @@ const authedListenEvents = (services: UserServices) => ({
 
 export const { client: authedClient, server: authedServer } = useSocketEvents<
   typeof authedListenEvents,
-  Record<string, never>,
-  Record<string, never>,
-  { user: SessionUser }
+  Record<string, never>
 >(namespaces.BOOKCASE_USER, {
   listenEvents: authedListenEvents,
   middlewares: [RequiredAuthMiddleware],

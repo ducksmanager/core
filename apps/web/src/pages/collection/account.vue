@@ -264,8 +264,8 @@ const updateAccount = async () => {
     password,
     password2,
   });
-  if (response.error) {
-    if (response.selector) {
+  if ("error" in response) {
+    if ("selector" in response) {
       error = response;
     } else {
       console.error(response.error);

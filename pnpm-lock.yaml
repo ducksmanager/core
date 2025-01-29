@@ -119,8 +119,8 @@ importers:
         specifier: ^2.3.0
         version: 2.3.0(typescript@5.7.3)(vue@3.5.13(typescript@5.7.3))
       socket-call-client:
-        specifier: ^0.5.0
-        version: 0.5.0(axios-cache-interceptor@1.6.2(axios@1.7.9))(typescript@5.7.3)(vue@3.5.13(typescript@5.7.3))
+        specifier: ^0.5.1
+        version: 0.5.1(axios-cache-interceptor@1.6.2(axios@1.7.9))(typescript@5.7.3)(vue@3.5.13(typescript@5.7.3))
       sortablejs:
         specifier: ^1.15.6
         version: 1.15.6
@@ -246,11 +246,11 @@ importers:
         specifier: ^0.33.5
         version: 0.33.5
       socket-call-client:
-        specifier: ^0.5.0
-        version: 0.5.0(axios-cache-interceptor@1.6.2(axios@1.7.9))(typescript@5.7.3)(vue@3.5.13(typescript@5.7.3))
+        specifier: ^0.5.1
+        version: 0.5.1(axios-cache-interceptor@1.6.2(axios@1.7.9))(typescript@5.7.3)(vue@3.5.13(typescript@5.7.3))
       socket-call-server:
-        specifier: ^0.5.0
-        version: 0.5.0
+        specifier: ^0.5.1
+        version: 0.5.1
       socket.io:
         specifier: ^4.8.1
         version: 4.8.1
@@ -355,8 +355,8 @@ importers:
         specifier: ^1.83.4
         version: 1.83.4
       socket-call-client:
-        specifier: ^0.5.0
-        version: 0.5.0(axios-cache-interceptor@1.6.2(axios@1.7.9))(typescript@5.7.3)(vue@3.5.13(typescript@5.7.3))
+        specifier: ^0.5.1
+        version: 0.5.1(axios-cache-interceptor@1.6.2(axios@1.7.9))(typescript@5.7.3)(vue@3.5.13(typescript@5.7.3))
       universal-cookie:
         specifier: ^7.2.2
         version: 7.2.2
@@ -515,11 +515,11 @@ importers:
         specifier: ^2.0.7
         version: 2.0.7
       socket-call-client:
-        specifier: ^0.5.0
-        version: 0.5.0(axios-cache-interceptor@1.6.2(axios@1.7.9))(typescript@5.7.3)(vue@3.5.13(typescript@5.7.3))
+        specifier: ^0.5.1
+        version: 0.5.1(axios-cache-interceptor@1.6.2(axios@1.7.9))(typescript@5.7.3)(vue@3.5.13(typescript@5.7.3))
       socket-call-server:
-        specifier: ^0.5.0
-        version: 0.5.0
+        specifier: ^0.5.1
+        version: 0.5.1
       socket.io:
         specifier: ^4.8.1
         version: 4.8.1
@@ -630,8 +630,8 @@ importers:
         specifier: ^2.3.0
         version: 2.3.0(typescript@5.7.3)(vue@3.5.13(typescript@5.7.3))
       socket-call-client:
-        specifier: ^0.5.0
-        version: 0.5.0(axios-cache-interceptor@1.6.2(axios@1.7.9))(typescript@5.7.3)(vue@3.5.13(typescript@5.7.3))
+        specifier: ^0.5.1
+        version: 0.5.1(axios-cache-interceptor@1.6.2(axios@1.7.9))(typescript@5.7.3)(vue@3.5.13(typescript@5.7.3))
       timeago.js:
         specifier: ^4.0.2
         version: 4.0.2
@@ -871,8 +871,8 @@ importers:
         specifier: ^1.83.4
         version: 1.83.4
       socket-call-client:
-        specifier: ^0.5.0
-        version: 0.5.0(axios-cache-interceptor@1.6.2(axios@1.7.9))(typescript@5.7.3)(vue@3.5.13(typescript@5.7.3))
+        specifier: ^0.5.1
+        version: 0.5.1(axios-cache-interceptor@1.6.2(axios@1.7.9))(typescript@5.7.3)(vue@3.5.13(typescript@5.7.3))
       universal-cookie:
         specifier: ^7.2.2
         version: 7.2.2
@@ -1061,8 +1061,8 @@ importers:
         specifier: ^6.9.16
         version: 6.9.16
       socket-call-server:
-        specifier: ^0.5.0
-        version: 0.5.0
+        specifier: ^0.5.1
+        version: 0.5.1
       socket.io:
         specifier: ^4.8.1
         version: 4.8.1
@@ -7620,8 +7620,8 @@ packages:
   snake-case@3.0.4:
     resolution: {integrity: sha512-LAOh4z89bGQvl9pFfNF8V146i7o7/CqFPbqzYgP+yYzDIDeS9HaNFtXABamRW+AQzEVODcvE79ljJ+8a9YSdMg==}
 
-  socket-call-client@0.5.0:
-    resolution: {integrity: sha512-A/tfJmHP7H9+eR8wiHkOk+IfivJHecx7XF8xXMVWVY+XWn6FW9veMMROk10L30XQdyCxeahgjtZqi8dLWii/Ng==}
+  socket-call-client@0.5.1:
+    resolution: {integrity: sha512-9OGiQ1HeixmhTJ9/G/yNelgOjA5s0g2MuzEJMY6ggFqkiUBrYvOvf0UzkmVkJOPQ1Mvc9s/GAIpw6vsaWfLqkg==}
     engines: {node: '>=22.0.0 <23.0.0'}
     peerDependencies:
       axios-cache-interceptor: ^1.6.2
@@ -7631,8 +7631,8 @@ packages:
       axios-cache-interceptor:
         optional: true
 
-  socket-call-server@0.5.0:
-    resolution: {integrity: sha512-CyUzz7O1xj6b/tf+uA4EorAHk/fXF113Dzp6Artp3SHKEg5bvK0qI7IDWql0a6O5Q9PgZpTvj1+VpQF3eCA35A==}
+  socket-call-server@0.5.1:
+    resolution: {integrity: sha512-iD9BkKVwEf+NKQNL/x3DrKmvfcI0GkBNYmlBnm2Cs/23CsHtSXeGHbssl39QpMfTSfgx7FniAnIWkt6hF5r1yw==}
     engines: {node: '>=22.0.0 <23.0.0'}
 
   socket.io-adapter@2.5.5:
@@ -16302,7 +16302,7 @@ snapshots:
       dot-case: 3.0.4
       tslib: 2.8.1
 
-  socket-call-client@0.5.0(axios-cache-interceptor@1.6.2(axios@1.7.9))(typescript@5.7.3)(vue@3.5.13(typescript@5.7.3)):
+  socket-call-client@0.5.1(axios-cache-interceptor@1.6.2(axios@1.7.9))(typescript@5.7.3)(vue@3.5.13(typescript@5.7.3)):
     dependencies:
       socket.io-client: 4.8.1
       typescript: 5.7.3
@@ -16314,7 +16314,7 @@ snapshots:
       - supports-color
       - utf-8-validate
 
-  socket-call-server@0.5.0:
+  socket-call-server@0.5.1:
     dependencies:
       socket.io: 4.8.1
     transitivePeerDependencies:
