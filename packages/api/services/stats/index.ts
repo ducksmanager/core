@@ -1,7 +1,5 @@
 import { useSocketEvents } from "socket-call-server";
 
-import type { SessionUser } from "~dm-types/SessionUser";
-
 import type { UserServices } from "../../index";
 import namespaces from "../namespaces";
 import suggestions from "./suggestions";
