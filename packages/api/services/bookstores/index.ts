@@ -1,6 +1,5 @@
 import { useSocketEvents } from "socket-call-server";
 
-import type { SessionUser } from "~dm-types/SessionUser";
 import type { SimpleBookstore } from "~dm-types/SimpleBookstore";
 import type {
   bookstore,

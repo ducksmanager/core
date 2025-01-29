@@ -1,7 +1,6 @@
 import PushNotifications from "@pusher/push-notifications-server";
 import { useSocketEvents } from "socket-call-server";
 
-import type { SessionUser } from "~dm-types/SessionUser";
 import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
 
 import type { UserServices } from "../../index";
