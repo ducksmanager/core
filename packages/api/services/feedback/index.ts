@@ -22,9 +22,7 @@ const listenEvents = ({ _socket }: UserServices) => ({
 
 export const { client, server } = useSocketEvents<
   typeof listenEvents,
-  Record<string, never>,
-  Record<string, never>,
-  { user: SessionUser }
+  Record<string, never>
 >(namespaces.FEEDBACK, {
   listenEvents,
   middlewares: [],

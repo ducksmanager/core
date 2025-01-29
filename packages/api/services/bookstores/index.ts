@@ -105,9 +105,7 @@ const adminListenEvents = ({ _socket }: UserServices) => ({
 
 export const { client: adminClient, server: adminServer } = useSocketEvents<
   typeof adminListenEvents,
-  Record<string, never>,
-  Record<string, never>,
-  { user: SessionUser }
+  Record<string, never>
 >(namespaces.BOOKSTORES_ADMIN, {
   listenEvents: adminListenEvents,
   middlewares: [UserIsAdminMiddleware],
@@ -173,9 +171,7 @@ export type AdminClientEvents = (typeof adminClient)["emitEvents"];
 
 export const { client, server } = useSocketEvents<
   typeof listenEvents,
-  Record<string, never>,
-  Record<string, never>,
-  { user: SessionUser }
+  Record<string, never>
 >(namespaces.BOOKSTORES, {
   listenEvents,
   middlewares: [UserIsAdminMiddleware],

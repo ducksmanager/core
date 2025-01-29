@@ -206,9 +206,7 @@ const listenEvents = (services: BrowseServices) => ({
 
 export const { client, server } = useSocketEvents<
   typeof listenEvents,
-  Record<string, never>,
-  Record<string, never>,
-  SessionData
+  Record<string, never>
 >("/browse", {
   listenEvents,
   middlewares: [OptionalAuthMiddleware],

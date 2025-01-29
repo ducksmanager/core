@@ -83,9 +83,7 @@ const listenEvents = ({ _socket }: IndexationsServices) => ({
 
 const { client, server } = useSocketEvents<
   typeof listenEvents,
-  Record<string, never>,
-  Record<string, never>,
-  SessionData
+  Record<string, never>
 >(namespaces.INDEXATIONS, {
   listenEvents,
   middlewares: [RequiredAuthMiddleware],

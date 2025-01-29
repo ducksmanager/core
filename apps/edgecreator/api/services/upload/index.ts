@@ -187,9 +187,7 @@ const listenEvents = ({ _socket: socket }: UploadServices) => ({
 
 export const { client, server } = useSocketEvents<
   typeof listenEvents,
-  Record<string, never>,
-  Record<string, never>,
-  SessionData
+  Record<string, never>
 >("/upload", {
   listenEvents,
   middlewares: [RequiredAuthMiddleware],

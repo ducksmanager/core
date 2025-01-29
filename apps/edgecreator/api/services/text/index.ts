@@ -128,9 +128,7 @@ const listenEvents = () => ({
 
 export const { client, server } = useSocketEvents<
   typeof listenEvents,
-  Record<string, never>,
-  Record<string, never>,
-  { token: string }
+  Record<string, never>
 >("/text", {
   listenEvents,
   middlewares: [],

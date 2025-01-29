@@ -780,9 +780,7 @@ const listenEvents = (services: IndexationServices) => {
 
 export const { client, server } = useSocketEvents<
   typeof listenEvents,
-  IndexationServerSentStartEndEvents,
-  Record<string, never>,
-  SessionDataWithIndexation
+  IndexationServerSentStartEndEvents
 >(
   new RegExp(`^${namespaces.INDEXATION.replace("{id}", "[0-9]{8}T[0-9]{9}")}$`),
   {

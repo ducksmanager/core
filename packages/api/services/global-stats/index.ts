@@ -91,9 +91,7 @@ const userListenEvents = ({ _socket }: UserServices) => ({
 
 export const { client: userClient, server: userServer } = useSocketEvents<
   typeof userListenEvents,
-  Record<string, never>,
-  Record<string, never>,
-  { user: SessionUser }
+  Record<string, never>
 >(namespaces.GLOBAL_STATS_ADMIN, {
   listenEvents: userListenEvents,
   middlewares: [RequiredAuthMiddleware],
