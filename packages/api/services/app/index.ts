@@ -1,5 +1,4 @@
 import { existsSync, readFileSync } from "fs";
-import type { Errorable } from "socket-call-server";
 import { useSocketEvents } from "socket-call-server";
 
 import namespaces from "../namespaces";
@@ -8,17 +7,9 @@ type AppInfos = {
   version: string;
 };
 
-type ErrorableAppUpdate = Errorable<
-  {
-    version: string;
-    url: string;
-  },
-  "Not found" | "Already up to date"
->;
-
 export const getUpdateFileUrl = async (
   appInfos?: AppInfos,
-): Promise<ErrorableAppUpdate> => {
+) => {
   const fileName = import.meta.dirname + "/latest-whattheduck-bundle.txt";
   if (existsSync(fileName)) {
     const mostRecentBundleUrl = readFileSync(fileName).toString().trim();
@@ -34,10 +25,10 @@ export const getUpdateFileUrl = async (
         url: mostRecentBundleUrl,
       };
     } else {
-      return { error: "Already up to date" };
+      return { error: "Already up to date" } as const;
     }
   } else {
-    return { error: "Not found", errorDetails: fileName };
+    return { error: "Not found", errorDetails: fileName } as const;
   }
 };
 

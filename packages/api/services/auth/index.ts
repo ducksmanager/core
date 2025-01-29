@@ -1,6 +1,5 @@
 import crypto from "crypto";
 import jwt from "jsonwebtoken";
-import type { Errorable } from "socket-call-server";
 import { useSocketEvents } from "socket-call-server";
 
 import { prismaClient } from "~prisma-schemas/schemas/dm/client";
@@ -67,20 +66,20 @@ const listenEvents = () => ({
     password: string;
     password2: string;
     token: string;
-  }): Promise<Errorable<{ token: string }, string>> =>
+  }) =>
     new Promise((resolve) => {
       jwt.verify(
         token,
         process.env.TOKEN_SECRET as string,
         async (err: unknown, data: unknown) => {
           if (err) {
-            resolve({ error: "Invalid token" });
+            resolve({ error: "Invalid token" } as const);
           } else if (password.length < 6) {
             resolve({
               error: "Your password should be at least 6 characters long",
-            });
+            } as const);
           } else if (password !== password2) {
-            resolve({ error: "The two passwords should be identical" });
+            resolve({ error: "The two passwords should be identical" } as const);
           } else {
             const hashedPassword = crypto
               .createHash("sha1")
@@ -100,11 +99,11 @@ const listenEvents = () => ({
               },
             }))!;
 
-            resolve({ token: await loginAs(user, hashedPassword) });
+            resolve({ token: await loginAs(user, hashedPassword) } as const);
           }
         },
       );
-      resolve({ error: "Something went wrong" });
+      resolve({ error: "Something went wrong" } as const);
     }),
 
   getCsrf: async () => "",
@@ -113,7 +112,7 @@ const listenEvents = () => ({
     username: string;
     password: string;
     email: string;
-  }): Promise<Errorable<string, "Bad request">> =>
+  }) =>
     new Promise(async (resolve) => {
       console.log(`signup with user ${input.username}`);
       await prismaDm.$transaction(async (transaction) => {
@@ -125,7 +124,7 @@ const listenEvents = () => ({
           new PasswordValidation(),
         ]);
         if (scopedError) {
-          resolve({ error: "Bad request", ...scopedError });
+          resolve({ error: "Bad request", ...scopedError } as const);
         } else {
           const { username, password, email } = input;
           const hashedPassword = getHashedPassword(password);

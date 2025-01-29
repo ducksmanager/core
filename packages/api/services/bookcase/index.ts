@@ -1,9 +1,7 @@
-import type { Errorable } from "socket-call-server";
 import { useSocketEvents } from "socket-call-server";
 
 import type { BookcaseEdge } from "~dm-types/BookcaseEdge";
 import type { SessionUser } from "~dm-types/SessionUser";
-import type { user } from "~prisma-schemas/client_dm";
 import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
 
 import type { UserServices } from "../../index";
@@ -20,7 +18,7 @@ type BookcaseEdgeRaw = Omit<BookcaseEdge, "sprites"> & {
 const checkValidBookcaseUser = async (
   user?: SessionUser | null,
   username?: string,
-): Promise<Errorable<user, "Unauthorized" | "Forbidden" | "Not found">> => {
+) => {
   try {
     const dbUser = await prismaDm.user.findFirstOrThrow({
       where: { username },
@@ -28,10 +26,10 @@ const checkValidBookcaseUser = async (
     if (user?.id === dbUser.id || dbUser.allowSharing) {
       return dbUser;
     } else if (!user) {
-      return { error: "Unauthorized" };
-    } else return { error: "Forbidden" };
+      return { error: "Unauthorized" } as const;
+    } else return { error: "Forbidden" } as const;
   } catch (_e) {
-    return { error: "Not found" };
+    return { error: "Not found" } as const;
   }
 };
 
@@ -46,7 +44,7 @@ const getLastPublicationPosition = async (userId: number) =>
 const listenEvents = ({ _socket }: UserServices<true>) => ({
   getBookcaseOrder: async (username: string) => {
     const user = await checkValidBookcaseUser(_socket.data.user, username);
-    if (user.error) {
+    if ('error' in user) {
       return { error: user.error };
     } else {
       const userId = user.id;
@@ -109,7 +107,7 @@ const listenEvents = ({ _socket }: UserServices<true>) => ({
   },
   getBookcase: async (username: string) => {
     const user = await checkValidBookcaseUser(null, username);
-    if (user.error) {
+    if ('error' in user) {
       return { error: user.error };
     }
 
@@ -158,7 +156,7 @@ const listenEvents = ({ _socket }: UserServices<true>) => ({
 
   getBookcaseOptions: async (username: string) => {
     const user = await checkValidBookcaseUser(null, username);
-    return user.error
+    return 'error' in user
       ? { error: user.error }
       : {
           textures: {
