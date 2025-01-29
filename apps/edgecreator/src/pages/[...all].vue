@@ -76,7 +76,9 @@ meta:
         <h3>{{ $t(status) }}</h3>
 
         <b-container
-          v-if="Object.keys(edgesByStatusAndPublicationcode[status]).length"
+          v-if="
+            Object.keys(edgesByStatusAndPublicationcode[status] || []).length
+          "
         >
           <template
             v-for="(edges, publicationcode) in edgesByStatusAndPublicationcode[
@@ -211,7 +213,13 @@ const userPhotographerPoints = computed(
 
 const { publicationNames, issuecodeDetails } = storeToRefs(webStores.coa());
 
-const isUploadableEdgesCarouselReady = ref(false);
+const isUserBookcaseReady = ref(false);
+const isCatalogReady = ref(false);
+
+const isUploadableEdgesCarouselReady = computed(
+  () => isUserBookcaseReady.value && isCatalogReady.value,
+);
+
 const mostWantedEdges = ref<
   (BookcaseEdgeWithPopularity & {
     publicationcode: string | null;
@@ -267,26 +275,28 @@ watch(
     await usersStore.fetchStats([user.value!.id]);
     await collectionStore.loadPopularIssuesInCollection();
     await bookcaseStore.loadBookcase();
-    await loadMostWantedEdges();
-    await loadCatalog();
-    await coaStore.fetchIssuecodeDetails(
-      Object.keys(ongoingEdges.value).map((issuecode) => issuecode),
-    );
-    const publicationcodes = [
-      ...mostWantedEdges.value!.map(({ issuecode }) => issuecode!),
-      ...Object.values(ongoingEdges.value).map(({ issuecode }) => issuecode),
-    ].map(
-      (issuecode) =>
-        issuecodeDetails.value[issuecode]?.publicationcode || "fr/JM",
-    );
-
-    await coaStore.fetchPublicationNames(publicationcodes);
-    isUploadableEdgesCarouselReady.value = true;
+    isUserBookcaseReady.value = true;
   },
   { immediate: true },
 );
 
-await collectionStore.loadUser();
+(async () => {
+  await loadMostWantedEdges();
+  await loadCatalog();
+  await coaStore.fetchIssuecodeDetails(
+    Object.keys(ongoingEdges.value).map((issuecode) => issuecode),
+  );
+  const publicationcodes = [
+    ...mostWantedEdges.value!.map(({ issuecode }) => issuecode!),
+    ...Object.values(ongoingEdges.value).map(({ issuecode }) => issuecode),
+  ].map(
+    (issuecode) =>
+      issuecodeDetails.value[issuecode]?.publicationcode || "fr/JM",
+  );
+
+  await coaStore.fetchPublicationNames(publicationcodes);
+  isCatalogReady.value = true;
+})();
 </script>
 <style scoped lang="scss">
 :deep(.carousel) {

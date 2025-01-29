@@ -54,10 +54,15 @@ const dmSocket = useDmSocket({
 getCurrentInstance()!.appContext.app.provide(dmSocketInjectionKey, dmSocket);
 const route = useRoute();
 
-const user = computed(() => webStores.collection().user);
-const userPermissions = computed(() => webStores.collection().userPermissions);
+const collectionStore = webStores.collection();
+const { user, userPermissions } = storeToRefs(collectionStore);
 
-webStores.collection().loadUser();
+try {
+  collectionStore.loadUser();
+  collectionStore.loadUserPermissions();
+} catch (e) {
+  console.error(e);
+}
 
 watch(
   user,

@@ -60,9 +60,7 @@ export const coa = defineStore("coa", () => {
     issuePopularities = shallowRef<
       EventOutput<CoaClientEvents, "getIssuePopularities">
     >({}),
-    issuecodesByPublicationcode = ref<{
-      [publicationcode: string]: string[];
-    }>({}),
+    issuecodesByPublicationcode = ref<Record<string, string[]>>({}),
     issueQuotations = ref<
       SuccessfulEventOutput<
         CoaClientEvents,
@@ -253,12 +251,7 @@ export const coa = defineStore("coa", () => {
         );
         Object.assign(
           issuecodesByPublicationcode.value,
-          Object.entries(issuesByPublicationcode).reduce<
-            typeof issuecodesByPublicationcode.value
-          >((acc, [publicationcode, issues]) => {
-            acc[publicationcode] = issues.map(({ issuecode }) => issuecode);
-            return acc;
-          }, {}),
+          issuesByPublicationcode,
         );
       }
     },
