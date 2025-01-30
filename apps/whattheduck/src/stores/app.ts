@@ -155,7 +155,8 @@ export const app = defineStore('app', () => {
       getTextToCopy: async () => {
         await coa().fetchIssuecodesByPublicationcode([publicationcode.value!]);
         return coa()
-          .issuecodesByPublicationcode[publicationcode.value!].filter(
+          .issuecodesByPublicationcode[publicationcode.value!].map(({ issuecode }) => issuecode)
+          .filter(
             // FIXME can't deconstruct collection() using storeToRefs
             (issuecode) =>
               !collection()

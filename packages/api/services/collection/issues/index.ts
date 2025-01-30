@@ -380,8 +380,6 @@ export const resetDemo = async () => {
     purchaseId: string;
   }
 
-  const currentDir = process.cwd();
-
   const csvIssues: CsvIssue[] = parse(
     readFileSync(`${csvPath}demo_issues.csv`),
     { columns: true },
