@@ -17,7 +17,6 @@ export default {
       .findMany({
         select: {
           publicationcode: true,
-          issuenumber: true,
           issuecode: true,
         },
         where: {
@@ -26,7 +25,7 @@ export default {
           },
         },
       })
-      .then((data) => data.groupBy("publicationcode", "[]")),
+      .then((data) => data.groupBy("publicationcode", "issuecode[]")),
 
   getIssuesByStorycode: async (storycode: string) =>
     prismaCoa.$queryRaw<IssueWithIssuecodeOnly[]>`
