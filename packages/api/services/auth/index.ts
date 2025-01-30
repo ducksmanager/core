@@ -1,6 +1,6 @@
 import crypto from "crypto";
 import jwt from "jsonwebtoken";
-import { useSocketEvents } from "socket-call-server";
+import { Errorable, useSocketEvents } from "socket-call-server";
 
 import { prismaClient } from "~prisma-schemas/schemas/dm/client";
 import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
@@ -113,7 +113,7 @@ const listenEvents = () => ({
     password: string;
     email: string;
   }) =>
-    new Promise(async (resolve) => {
+    new Promise<Errorable<string, 'Bad request'>>(async (resolve) => {
       console.log(`signup with user ${input.username}`);
       await prismaDm.$transaction(async (transaction) => {
         const scopedError = await validate(transaction, input, [
