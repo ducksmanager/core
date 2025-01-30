@@ -41,7 +41,7 @@ export const stats = defineStore("stats", () => {
         isSearching.value = false;
         // The input value has changed since the beginning of the search, searching again
         if (value !== pendingSearch.value)
-          await searchAuthors(pendingSearch.value!);
+          await searchAuthors(pendingSearch.value);
       }
     }
   };

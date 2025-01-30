@@ -236,8 +236,8 @@ const publicationCodesWithOther = $computed(
     !(datasets && labels)
       ? null
       : {
-          datasets: datasets!,
-          labels: labels!,
+          datasets: datasets,
+          labels: labels,
         },
   );
 
@@ -252,7 +252,7 @@ watch($$(maxPerDate), (newValue) => {
 
 watch($$(labels), (newValue) => {
   if (newValue) {
-    changeDimension("width", 250 + 30 * newValue!.length);
+    changeDimension("width", 250 + 30 * newValue.length);
   }
 });
 

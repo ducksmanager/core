@@ -483,8 +483,8 @@ const filteredIssues = $computed(
     issues
       ?.filter(
         ({ userCopies }) =>
-          (filter.possessed && userCopies!.length) ||
-          (filter.missing && !userCopies!.length),
+          (filter.possessed && userCopies.length) ||
+          (filter.missing && !userCopies.length),
       )
       ?.map((issue, idx) => ({ ...issue, idx })) || [],
 );
@@ -520,7 +520,7 @@ const showContextMenuOnDoubleClickTouchScreen = (e: MouseEvent) => {
         contextmenuInstance!.hide(e);
       }, doubleClickDelay);
     } else if (clicks === 2) {
-      clearTimeout(timer!);
+      clearTimeout(timer);
       clicks = 0;
       contextmenuInstance!.show(e);
     }
@@ -602,7 +602,7 @@ const loadIssues = async () => {
       }));
     } else {
       const userIssuecodes = [
-        ...new Set(userIssuesForPublication!.map(({ issuecode }) => issuecode)),
+        ...new Set(userIssuesForPublication.map(({ issuecode }) => issuecode)),
       ];
       issues = coaIssuecodes
         .filter((issuecode) => userIssuecodes.includes(issuecode))
@@ -622,32 +622,32 @@ const loadIssues = async () => {
     }
 
     if (duplicatesOnly) {
-      const countPerIssuecode = issues!.reduce<{ [issuecode: string]: number }>(
+      const countPerIssuecode = issues.reduce<{ [issuecode: string]: number }>(
         (acc, { userCopies: [{ issuecode }] }) => {
           acc[issuecode] = (acc[issuecode] || 0) + 1;
           return acc;
         },
         {},
       );
-      issues = issues!.filter(
+      issues = issues.filter(
         ({ issuecode }) => countPerIssuecode[issuecode] > 1,
       );
     }
 
     if (readStackOnly) {
-      issues = issues!.filter(
+      issues = issues.filter(
         ({ userCopies }) =>
           userCopies.filter(({ isToRead }) => isToRead).length,
       );
     }
     if (onSaleStackOnly) {
-      issues = issues!.filter(
+      issues = issues.filter(
         ({ userCopies }) =>
           userCopies.filter(({ isOnSale }) => isOnSale).length,
       );
     }
 
-    userIssuecodesNotFoundForPublication = userIssuesForPublication!
+    userIssuecodesNotFoundForPublication = userIssuesForPublication
       .filter(({ issuecode }) => !coaIssuecodes.includes(issuecode))
       .map(({ issuecode }) => issuecode);
     loading = false;

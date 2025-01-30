@@ -260,8 +260,8 @@ const formatDate = (date: Date | null) =>
 
 const initCommentOnExistingBookstore = (bookstore: SimpleBookstore) => {
   existingBookstore = bookstore;
-  if (!existingBookstore!.comments.some(({ comment }) => !comment)) {
-    existingBookstore!.comments.push({
+  if (!existingBookstore.comments.some(({ comment }) => !comment)) {
+    existingBookstore.comments.push({
       comment: "",
       creationDate: null,
       userId: null,

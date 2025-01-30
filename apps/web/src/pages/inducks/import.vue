@@ -326,7 +326,7 @@ const processRawData = async () => {
     return;
   }
   const issues = issueCodes.filter(
-    (issueCode) => issuecodeDetails.value![issueCode],
+    (issueCode) => issuecodeDetails.value[issueCode],
   );
   if (issues.length) {
     issuesToImport = issues;
@@ -338,7 +338,7 @@ const groupByPublicationCode = (issues: string[]) =>
   issues
     ?.map((issuecode) => ({
       issuecode,
-      publicationcode: issuecodeDetails.value![issuecode].publicationcode,
+      publicationcode: issuecodeDetails.value[issuecode].publicationcode,
     }))
     .groupBy("publicationcode", "[]");
 
@@ -371,9 +371,9 @@ watch($$(importDataReady), (newValue) => {
     issuesAlreadyInCollection = [];
     issuesImportable = [];
     issuesToImport!.forEach((issuecode) => {
-      if (!issuecodes.value.includes(issuecode!.replace(/[ ]+/g, " ")))
+      if (!issuecodes.value.includes(issuecode.replace(/[ ]+/g, " ")))
         issuesNotReferenced!.push(issuecode);
-      else if (findInCollection(issuecode!))
+      else if (findInCollection(issuecode))
         issuesAlreadyInCollection!.push(issuecode);
       else issuesImportable!.push(issuecode);
     });
@@ -387,7 +387,7 @@ watch($$(issuesToImport), async (newValue) => {
     return;
   }
   const publicationCodes = newValue.map(
-    (issuecode) => issuecodeDetails.value![issuecode].publicationcode!,
+    (issuecode) => issuecodeDetails.value[issuecode].publicationcode,
   );
   await fetchPublicationNames(publicationCodes);
   hasPublicationNames = true;

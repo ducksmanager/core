@@ -106,8 +106,8 @@ export const collection = defineStore("collection", () => {
         Object.entries(totalPerPublicationUniqueIssuecodes.value).sort(
           ([publicationcode1], [publicationcode2]) =>
             Math.sign(
-              totalPerPublicationUniqueIssuecodes.value[publicationcode2]! -
-                totalPerPublicationUniqueIssuecodes.value[publicationcode1]!,
+              totalPerPublicationUniqueIssuecodes.value[publicationcode2] -
+                totalPerPublicationUniqueIssuecodes.value[publicationcode1],
             ),
         ),
     ),
@@ -130,7 +130,7 @@ export const collection = defineStore("collection", () => {
           ? String(user.value.discordId)
           : undefined,
         presentationText: user.value.presentationText || "",
-        email: user.value.email!,
+        email: user.value.email,
         marketplaceAcceptsExchanges:
           user.value.marketplaceAcceptsExchanges || false,
       };
@@ -300,9 +300,9 @@ export const collection = defineStore("collection", () => {
         password,
       });
       if (typeof response !== "string" && "error" in response) {
-        onError(response.error!);
+        onError(response.error);
       } else {
-        onSuccess(response as string);
+        onSuccess(response);
       }
     },
     loadUser = async (afterUpdate = false) => {
