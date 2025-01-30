@@ -108,7 +108,7 @@ export default ({ _socket }: UserServices) => ({
         }
         resolve({
           hasRequestedPresentationSentenceUpdate,
-        });
+        } as const);
       }
     });
   },

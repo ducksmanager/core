@@ -266,7 +266,7 @@ const updateAccount = async () => {
   });
   if ("error" in response) {
     if ("selector" in response) {
-      error = response;
+      error = response as ScopedError;
     } else {
       console.error(response.error);
     }
