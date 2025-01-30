@@ -3,7 +3,7 @@ import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa/client";
 
 export default {
   getCountryList: async (locale: string, countryCodes?: string[]) => {
-    console.log('getCountryList');
+    console.log("getCountryList");
     return getCountryNames(locale, countryCodes);
   },
 };

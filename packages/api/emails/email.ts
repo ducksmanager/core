@@ -82,7 +82,7 @@ export abstract class Email {
   };
 
   getHtmlBody = () =>
-   ejs.renderFile(
+    ejs.renderFile(
       path.join(this.templatePath, "template.ejs"),
       { __: i18n.__, ...this.data },
       {},

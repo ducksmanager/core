@@ -2,19 +2,19 @@ import crypto from "crypto";
 import fs, { mkdirSync } from "fs";
 import { decode } from "node-base64-image";
 import { dirname } from "path";
+import type { Socket } from "socket.io";
 import { SocketClient } from "socket-call-client";
 import type { NamespaceProxyTarget } from "socket-call-server";
 import { useSocketEvents } from "socket-call-server";
 
+import { RequiredAuthMiddleware } from "~dm-services/auth/util";
 import type { ClientEvents as EdgeCreatorServices } from "~dm-services/edgecreator";
 import namespaces from "~dm-services/namespaces";
 import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa/client";
 
-import { getNextAvailableFile } from "../_upload_utils";
 import type { SessionData } from "../../index";
 import { getEdgesPath } from "../../index";
-import type { Socket } from "socket.io";
-import { RequiredAuthMiddleware } from "~dm-services/auth/util";
+import { getNextAvailableFile } from "../_upload_utils";
 
 const getEdgeCreatorServices = (token: string) =>
   new SocketClient(

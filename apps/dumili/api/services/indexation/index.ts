@@ -111,7 +111,7 @@ let isAiRunning = false;
 export const getFullIndexation = (
   services: IndexationServices,
   indexationId: string,
-  runAi: boolean = true
+  runAi: boolean = true,
 ) =>
   prisma.indexation
     .findUnique({
@@ -126,7 +126,12 @@ export const getFullIndexation = (
             runOcrOnImages(
               services,
               indexation.pages
-                .filter(({ image, id }) => !!image && getEntryFromPage(indexation, id)?.acceptedStoryKind?.kind === STORY)
+                .filter(
+                  ({ image, id }) =>
+                    !!image &&
+                    getEntryFromPage(indexation, id)?.acceptedStoryKind
+                      ?.kind === STORY,
+                )
                 .map(({ pageNumber, image }) => ({
                   pageNumber,
                   image: image!,
@@ -136,9 +141,7 @@ export const getFullIndexation = (
           .then(() =>
             setInferredEntriesStoryKinds(services, indexation.entries),
           )
-          .then(() => 
-            createAiStorySuggestions(services, indexation)
-          )
+          .then(() => createAiStorySuggestions(services, indexation))
           .finally(() => {
             isAiRunning = false;
             refreshIndexation(services, false, indexationId);
@@ -152,7 +155,11 @@ export const refreshIndexation = async (
   runAi: boolean = true,
   id = services._socket.data.indexation.id,
 ) => {
-  services._socket.data.indexation = (await getFullIndexation(services, id, runAi))!;
+  services._socket.data.indexation = (await getFullIndexation(
+    services,
+    id,
+    runAi,
+  ))!;
   services.indexationUpdated(services._socket.data.indexation);
 };
 
@@ -433,18 +440,18 @@ const listenEvents = (services: IndexationServices) => {
 
       let entryToExtend: entry | undefined;
       if (!isLastEntry) {
-      entryToExtend =
-        indexation.entries[
-          entryIdToExtend === "previous" ? entryIdx - 1 : entryIdx + 1
-        ];
-      if (!entryToExtend) {
-        if (entryIdToExtend === "previous") {
-          return { error: "This entry does not have any previous entry" };
-        } else {
-          return { error: "This entry does not have any next entry" };
+        entryToExtend =
+          indexation.entries[
+            entryIdToExtend === "previous" ? entryIdx - 1 : entryIdx + 1
+          ];
+        if (!entryToExtend) {
+          if (entryIdToExtend === "previous") {
+            return { error: "This entry does not have any previous entry" };
+          } else {
+            return { error: "This entry does not have any next entry" };
+          }
         }
       }
-    }
 
       await prisma.entry.delete({
         include: {
@@ -457,15 +464,15 @@ const listenEvents = (services: IndexationServices) => {
       });
 
       if (entryToExtend) {
-      await prisma.entry.update({
-        data: {
-          entirepages: entryToExtend.entirepages + entry.entirepages,
-        },
-        where: {
-          id: entryToExtend.id,
-        },
-      });
-    }
+        await prisma.entry.update({
+          data: {
+            entirepages: entryToExtend.entirepages + entry.entirepages,
+          },
+          where: {
+            id: entryToExtend.id,
+          },
+        });
+      }
 
       await refreshIndexation(services);
 
