@@ -381,7 +381,6 @@ export const resetDemo = async () => {
   }
 
   const currentDir = process.cwd();
-  console.log(currentDir);
 
   const csvIssues: CsvIssue[] = parse(
     readFileSync(`${csvPath}demo_issues.csv`),

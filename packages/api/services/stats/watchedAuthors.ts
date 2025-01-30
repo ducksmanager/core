@@ -53,7 +53,7 @@ const getMissingStoryCountPerAuthor = async (
 export default ({ _socket }: UserServices) => ({
   getWatchedAuthorsStats: async () => {
     const missingStoryCountPerAuthor = await getMissingStoryCountPerAuthor(
-      _socket.data.user!.id,
+      _socket.data.user.id,
     );
     const personcodes = Object.keys(missingStoryCountPerAuthor);
 

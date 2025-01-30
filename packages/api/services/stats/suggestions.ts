@@ -24,17 +24,17 @@ export default ({ _socket }: UserServices) => ({
     const user = _socket.data.user;
     const since =
       sincePreviousVisit === "since_previous_visit"
-        ? (await prismaDm.user.findUnique({ where: { id: user!.id } }))!
+        ? (await prismaDm.user.findUnique({ where: { id: user.id } }))!
             .previousAccess
         : null;
 
     return Promise.all(
       (["oldestdate", "score"] as const).map((sort) =>
-        getSuggestions(since, countrycode, sort, user!.id, limit, true).then(
+        getSuggestions(since, countrycode, sort, user.id, limit, true).then(
           (results) => {
             const { suggestionsPerUser, authors, storyDetails } = results;
             const suggestionsForUser =
-              suggestionsPerUser[user!.id] || new IssueSuggestionList();
+              suggestionsPerUser[user.id] || new IssueSuggestionList();
             return {
               sort,
               issues: suggestionsForUser.issues,

@@ -2,28 +2,15 @@ import type { IssueWithIssuecodeOnly } from "~dm-types/IssueWithIssuecodeOnly";
 import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa/client";
 
 export default {
-  getIssues: (
-    issuecodes: string[],
-    withTitles: boolean,
-  ): Promise<
-    Record<
-      string,
-      {
-        issuecode: string;
-        publicationcode: string;
-        issuenumber: string;
-        title?: string;
-      }
-    >
-  > =>
-    !issuecodes.length
-      ? Promise.resolve({})
-      : prismaCoa
-          .augmentIssueArrayWithInducksData(
-            issuecodes.map((issuecode) => ({ issuecode })),
-            withTitles,
-          )
-          .then((data) => data.groupBy("issuecode")),
+  getIssues: (issuecodes: string[], withTitles: boolean) => {
+    console.log('getIssues');
+    return prismaCoa
+      .augmentIssueArrayWithInducksData(
+        issuecodes.map((issuecode) => ({ issuecode })),
+        withTitles,
+      )
+      .then((data) => data.groupBy("issuecode"));
+  },
 
   getIssuesByPublicationcodes: async (publicationcodes: string[]) =>
     prismaCoa.inducks_issue

@@ -21,7 +21,7 @@ import { useHead } from "@unhead/vue";
 import Cookies from "js-cookie";
 
 const slots = defineSlots<{
-  title?: never;
+  title?: string;
 }>();
 
 const { user } = storeToRefs(collection());

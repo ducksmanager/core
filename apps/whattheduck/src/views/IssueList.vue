@@ -113,7 +113,7 @@ const getIssueDate = (issue: issue) => {
 
 const coaIssuecodes = computed(() =>
   !isOfflineMode.value
-    ? issuecodesByPublicationcode.value[publicationcode.value!]
+    ? issuecodesByPublicationcode.value[publicationcode.value!]?.map(({ issuecode }) => issuecode)
     : issues.value!.filter((issue) => issue.publicationcode === publicationcode.value).map((issue) => issue.issuecode),
 );
 const userIssues = computed(() =>

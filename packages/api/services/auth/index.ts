@@ -67,7 +67,7 @@ const listenEvents = () => ({
     password2: string;
     token: string;
   }) =>
-    new Promise((resolve) => {
+    new Promise<Errorable<{token: string}, string>>((resolve) => {
       jwt.verify(
         token,
         process.env.TOKEN_SECRET as string,

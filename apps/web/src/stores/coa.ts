@@ -60,7 +60,9 @@ export const coa = defineStore("coa", () => {
     issuePopularities = shallowRef<
       EventOutput<CoaClientEvents, "getIssuePopularities">
     >({}),
-    issuecodesByPublicationcode = ref<Record<string, string[]>>({}),
+    issuecodesByPublicationcode = ref<
+      EventOutput<CoaClientEvents, "getIssuesByPublicationcodes">
+    >({}),
     issueQuotations = ref<
       SuccessfulEventOutput<
         CoaClientEvents,

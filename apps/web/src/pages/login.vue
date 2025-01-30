@@ -71,11 +71,9 @@ const login = async () => {
       Cookies.set("token", newToken, {
         domain,
       });
-      const {
-        collection: { socket: collectionSocket },
-      } = inject(socketInjectionKey)!;
+      const { collection: collectionSocket } = inject(socketInjectionKey)!;
 
-      collectionSocket!.connect();
+      collectionSocket._connect();
 
       // const tmp = inject(socketInjectionKey)!;
       // collectionSocket!.connect();
