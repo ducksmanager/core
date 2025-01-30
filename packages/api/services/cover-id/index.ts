@@ -1,6 +1,6 @@
 import axios from "axios";
 import https from "https";
-import { useSocketEvents, type EitherOr } from "socket-call-server";
+import { type EitherOr, useSocketEvents } from "socket-call-server";
 
 import type { SimilarImagesResult } from "~dm-types/CoverSearchResults";
 import { prismaClient as prismaCoverInfo } from "~prisma-schemas/schemas/cover_info/client";

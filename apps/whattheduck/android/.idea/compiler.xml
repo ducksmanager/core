@@ -2,16 +2,17 @@
 <project version="4">
   <component name="CompilerConfiguration">
     <bytecodeTargetLevel target="17">
-      <module name="android.capacitor-android" target="21" />
-      <module name="android.capacitor-app" target="21" />
-      <module name="android.capacitor-camera" target="21" />
-      <module name="android.capacitor-clipboard" target="21" />
-      <module name="android.capacitor-community-camera-preview" target="21" />
-      <module name="android.capacitor-device" target="21" />
-      <module name="android.capacitor-haptics" target="21" />
-      <module name="android.capacitor-keyboard" target="21" />
-      <module name="android.capacitor-preferences" target="21" />
-      <module name="android.capacitor-status-bar" target="21" />
+      <module name="@capacitor.android.capacitor-android" target="21" />
+      <module name="@capacitor.app.android.capacitor-app" target="21" />
+      <module name="@capacitor.camera.android.capacitor-camera" target="21" />
+      <module name="@capacitor.preferences.android.capacitor-preferences" target="21" />
+      <module name="android.capawesome-capacitor-app-update" target="21" />
+      <module name="android.capawesome-capacitor-file-picker" target="21" />
+      <module name="clipboard.android.capacitor-clipboard" target="21" />
+      <module name="device.android.capacitor-device" target="21" />
+      <module name="haptics.android.capacitor-haptics" target="21" />
+      <module name="keyboard.android.capacitor-keyboard" target="21" />
+      <module name="status-bar.android.capacitor-status-bar" target="21" />
     </bytecodeTargetLevel>
   </component>
 </project>

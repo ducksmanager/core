@@ -1,15 +1,16 @@
 import { XMLParser } from "fast-xml-parser";
 import { existsSync, readdirSync, readFileSync } from "fs";
 import path from "path";
+import type { Socket } from "socket.io";
 import type { NamespaceProxyTarget } from "socket-call-server";
 import { useSocketEvents } from "socket-call-server";
-import type { Socket } from "socket.io";
-import type { SessionData } from "../../index";
-import { getEdgesPath } from "../../index";
-import { OptionalAuthMiddleware } from "~dm-services/auth/util";
 
+import { OptionalAuthMiddleware } from "~dm-services/auth/util";
 import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa/client";
 import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
+
+import type { SessionData } from "../../index";
+import { getEdgesPath } from "../../index";
 
 export type BrowseServices = NamespaceProxyTarget<
   Socket<typeof listenEvents, object, object, SessionData>,

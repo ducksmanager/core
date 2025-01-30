@@ -7,9 +7,7 @@ type AppInfos = {
   version: string;
 };
 
-export const getUpdateFileUrl = async (
-  appInfos?: AppInfos,
-) => {
+export const getUpdateFileUrl = async (appInfos?: AppInfos) => {
   const fileName = import.meta.dirname + "/latest-whattheduck-bundle.txt";
   if (existsSync(fileName)) {
     const mostRecentBundleUrl = readFileSync(fileName).toString().trim();

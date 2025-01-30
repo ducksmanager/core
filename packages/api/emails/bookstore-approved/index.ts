@@ -7,7 +7,9 @@ export default class extends Email {
     locale: string;
     newMedalLevel: number | null;
   };
-  templatePath = import.meta.dirname.includes('emails') ? import.meta.dirname: `${import.meta.dirname}/emails/bookstore-approved`;
+  templatePath = import.meta.dirname.includes("emails")
+    ? import.meta.dirname
+    : `${import.meta.dirname}/emails/bookstore-approved`;
 
   constructor(data: {
     user: user;

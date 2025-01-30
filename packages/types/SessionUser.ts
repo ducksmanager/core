@@ -3,5 +3,5 @@ export interface SessionUser {
   username: string;
   hashedPassword: string;
   privileges: { [privilegeScope: string]: string };
-  token: string
+  token: string;
 }

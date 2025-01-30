@@ -18,7 +18,7 @@ const EMAIL_REGEX =
 
 export const isValidEmail = (email: string) => EMAIL_REGEX.test(email);
 
-export const generateAccessToken = (payload: Omit<SessionUser, 'token'>) =>
+export const generateAccessToken = (payload: Omit<SessionUser, "token">) =>
   jwt.sign(payload, process.env.TOKEN_SECRET!, {
     expiresIn: `${60 * 24 * 14}m`,
   });
@@ -60,7 +60,7 @@ const AuthMiddleware = (
         next(new Error(`Invalid token: ${err}`));
       } else {
         if (user) {
-          socket.data.user = {...user, token} as SessionUser;
+          socket.data.user = { ...user, token } as SessionUser;
         }
         next();
       }

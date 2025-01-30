@@ -44,7 +44,7 @@ const getLastPublicationPosition = async (userId: number) =>
 const listenEvents = ({ _socket }: UserServices<true>) => ({
   getBookcaseOrder: async (username: string) => {
     const user = await checkValidBookcaseUser(_socket.data.user, username);
-    if ('error' in user) {
+    if ("error" in user) {
       return { error: user.error };
     } else {
       const userId = user.id;
@@ -107,7 +107,7 @@ const listenEvents = ({ _socket }: UserServices<true>) => ({
   },
   getBookcase: async (username: string) => {
     const user = await checkValidBookcaseUser(null, username);
-    if ('error' in user) {
+    if ("error" in user) {
       return { error: user.error };
     }
 
@@ -156,7 +156,7 @@ const listenEvents = ({ _socket }: UserServices<true>) => ({
 
   getBookcaseOptions: async (username: string) => {
     const user = await checkValidBookcaseUser(null, username);
-    return 'error' in user
+    return "error" in user
       ? { error: user.error }
       : {
           textures: {

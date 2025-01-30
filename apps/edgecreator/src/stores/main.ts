@@ -5,6 +5,7 @@ import type { userContributionType } from "~prisma-schemas/schemas/dm";
 import type { ModelContributor } from "~types/ModelContributor";
 import type { SimpleUser } from "~types/SimpleUser";
 import { stores as webStores } from "~web";
+
 import { edgeCatalog } from "./edgeCatalog";
 
 const numericSortCollator = new Intl.Collator(undefined, {

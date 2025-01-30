@@ -1,6 +1,7 @@
+import type { Errorable } from "socket-call-server";
+
 import type { UserForAccountForm } from "~dm-types/UserForAccountForm";
 import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
-import type { Errorable } from "socket-call-server";
 
 import PresentationSentenceRequested from "../../../emails/presentation-sentence-requested";
 import type { UserServices } from "../../../index";
@@ -41,9 +42,7 @@ export default ({ _socket }: UserServices) => ({
     });
   },
 
-  updateUser: async (
-    input: UserForAccountForm,
-  ) => {
+  updateUser: async (input: UserForAccountForm) => {
     let hasRequestedPresentationSentenceUpdate = false;
     let validators: Validation[] = [
       new DiscordIdValidation(),
@@ -60,7 +59,12 @@ export default ({ _socket }: UserServices) => ({
         new OldPasswordValidation(),
       ];
     }
-    return new Promise<Errorable<{hasRequestedPresentationSentenceUpdate: boolean}, 'Bad request'>>(async (resolve) => {
+    return new Promise<
+      Errorable<
+        { hasRequestedPresentationSentenceUpdate: boolean },
+        "Bad request"
+      >
+    >(async (resolve) => {
       let hasResolved = false;
       await prismaDm.$transaction(async (transaction) => {
         const scopedError = await validate(transaction, input, validators);

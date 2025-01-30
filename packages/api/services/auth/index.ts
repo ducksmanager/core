@@ -1,6 +1,7 @@
 import crypto from "crypto";
 import jwt from "jsonwebtoken";
-import { Errorable, useSocketEvents } from "socket-call-server";
+import type { Errorable } from "socket-call-server";
+import { useSocketEvents } from "socket-call-server";
 
 import { prismaClient } from "~prisma-schemas/schemas/dm/client";
 import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
@@ -67,7 +68,7 @@ const listenEvents = () => ({
     password2: string;
     token: string;
   }) =>
-    new Promise<Errorable<{token: string}, string>>((resolve) => {
+    new Promise<Errorable<{ token: string }, string>>((resolve) => {
       jwt.verify(
         token,
         process.env.TOKEN_SECRET as string,
@@ -79,7 +80,9 @@ const listenEvents = () => ({
               error: "Your password should be at least 6 characters long",
             } as const);
           } else if (password !== password2) {
-            resolve({ error: "The two passwords should be identical" } as const);
+            resolve({
+              error: "The two passwords should be identical",
+            } as const);
           } else {
             const hashedPassword = crypto
               .createHash("sha1")
@@ -108,12 +111,8 @@ const listenEvents = () => ({
 
   getCsrf: async () => "",
 
-  signup: (input: {
-    username: string;
-    password: string;
-    email: string;
-  }) =>
-    new Promise<Errorable<string, 'Bad request'>>(async (resolve) => {
+  signup: (input: { username: string; password: string; email: string }) =>
+    new Promise<Errorable<string, "Bad request">>(async (resolve) => {
       console.log(`signup with user ${input.username}`);
       await prismaDm.$transaction(async (transaction) => {
         const scopedError = await validate(transaction, input, [
