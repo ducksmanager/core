@@ -287,7 +287,7 @@ watch(
     Object.keys(ongoingEdges.value).map((issuecode) => issuecode),
   );
   const publicationcodes = [
-    ...mostWantedEdges.value!.map(({ issuecode }) => issuecode!),
+    ...mostWantedEdges.value!.map(({ issuecode }) => issuecode),
     ...Object.values(ongoingEdges.value).map(({ issuecode }) => issuecode),
   ].map(
     (issuecode) =>

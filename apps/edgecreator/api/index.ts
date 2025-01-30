@@ -21,11 +21,15 @@ import { server as upload } from "./services/upload";
 
 const port = 3001;
 
-export const getEdgesPath = () => process.env.EDGES_PATH!.startsWith("/")
-  ? process.env.EDGES_PATH!
-  : `${import.meta.dirname}/../../${process.env.EDGES_PATH!}`;
+export const getEdgesPath = () =>
+  process.env.EDGES_PATH!.startsWith("/")
+    ? process.env.EDGES_PATH!
+    : `${import.meta.dirname}/../../${process.env.EDGES_PATH!}`;
 
-export type SessionData = { user?: SessionUser, token: string };
+export interface SessionData {
+  user?: SessionUser;
+  token: string;
+}
 
 class ServerWithUser extends Server<
   Record<string, never>,

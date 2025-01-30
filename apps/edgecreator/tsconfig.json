@@ -52,12 +52,13 @@
     ]
   },
   "include": [
-    "types/*.ts",
-    "src/**/*.ts",
+    "auto-imports.d.ts",
+    "eslint.config.mjs",
     "src/**/*.d.ts",
+    "src/**/*.ts",
     "src/**/*.tsx",
     "src/**/*.vue",
-    "auto-imports.d.ts"
+    "types/*.ts",
   ],
   "exclude": [
     "dist",

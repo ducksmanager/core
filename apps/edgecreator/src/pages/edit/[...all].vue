@@ -242,7 +242,7 @@ try {
   try {
     mainStore.setIssuecodes(firstIssuecode, lastIssuecode, otherIssuecodes);
 
-    editingStepStore.addIssuecode(firstIssuecode!);
+    editingStepStore.addIssuecode(firstIssuecode);
 
     for (const issuecode of issuecodes.value) {
       const idx = issuecodes.value.indexOf(issuecode);

@@ -149,7 +149,7 @@ const countries = computed(
         value: countrycode,
       }))
       .sort(({ text: text1 }, { text: text2 }) =>
-        text1! < text2! ? -1 : text2! < text1! ? 1 : 0,
+        text1 < text2 ? -1 : text2 < text1 ? 1 : 0,
       ),
 );
 const publications = computed(
@@ -165,7 +165,7 @@ const publications = computed(
       }))
       .filter(({ text }) => text !== null)
       .sort(({ text: text1 }, { text: text2 }) =>
-        text1! < text2! ? -1 : text2! < text1! ? 1 : 0,
+        text1 < text2 ? -1 : text2 < text1 ? 1 : 0,
       ),
 );
 
@@ -186,7 +186,7 @@ const issues = computed(
               : "none";
         return {
           value: { issuecode },
-          text: `${issuecodeDetails.value[issuecode].issuenumber}${status === "none" ? "" : ` (${$t(status!)})`}`,
+          text: `${issuecodeDetails.value[issuecode].issuenumber}${status === "none" ? "" : ` (${$t(status)})`}`,
           disabled:
             (disableOngoingOrPublished && status !== "none") ||
             (disableNotOngoingNorPublished && status === "none"),

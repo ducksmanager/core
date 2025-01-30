@@ -205,9 +205,7 @@ const addCrop = () => {
     crops.value.push({
       ...currentCrop.value!,
       data,
-      url: (cropper.value!.getCroppedCanvas() as HTMLCanvasElement).toDataURL(
-        "image/jpeg",
-      ),
+      url: cropper.value!.getCroppedCanvas().toDataURL("image/jpeg"),
     });
     currentCrop.value = undefined;
   }

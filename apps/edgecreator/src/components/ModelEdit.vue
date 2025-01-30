@@ -346,7 +346,7 @@ const resetPositionAndSize = (stepNumber: number) => {
   for (const issuecode of editingStepStore.issuecodes) {
     const issueDimensions = stepStore.getFilteredDimensions({
       issuecodes: [issuecode],
-    })[0]!;
+    })[0];
     stepStore.setOptionValues(
       {
         x: 0,
@@ -371,13 +371,13 @@ const splitImageAcrossEdges = () => {
       acc +
       stepStore.getFilteredDimensions({
         issuecodes: [issuecode],
-      })[0]!.width,
+      })[0].width,
     0,
   );
   for (const issuecode of editingStepStore.issuecodes) {
     const issueDimensions = stepStore.getFilteredDimensions({
       issuecodes: [issuecode],
-    })[0]!;
+    })[0];
     stepStore.setOptionValues(
       {
         x: leftOffset,

@@ -10,7 +10,6 @@ import { SocketClient } from "socket-call-client";
 import { setupLayouts } from "virtual:generated-layouts";
 import generatedRoutes from "virtual:generated-pages";
 import { createApp } from "vue";
-import type { RouteRecordRaw } from "vue-router";
 import { createRouter, createWebHistory } from "vue-router";
 import SimpleTypeahead from "vue3-simple-typeahead";
 
@@ -18,7 +17,7 @@ import App from "./App.vue";
 import i18n from "./i18n";
 const head = createHead();
 
-const routes = setupLayouts(generatedRoutes) as RouteRecordRaw[];
+const routes = setupLayouts(generatedRoutes);
 const router = createRouter({
   history: createWebHistory(),
   routes,

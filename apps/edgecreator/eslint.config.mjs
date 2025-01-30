@@ -49,6 +49,8 @@ export default [
 
       parserOptions: {
         parser: "@typescript-eslint/parser",
+        project: "./tsconfig.json",
+        extraFileExtensions: [".vue"],
       },
     },
 
@@ -58,6 +60,8 @@ export default [
       // Disable this lint rule because it crashes eslint when linting an enum:
       // TypeError: Cannot read properties of undefined (reading 'members')
       "@typescript-eslint/no-duplicate-enum-values": "off",
+
+      "@typescript-eslint/no-unnecessary-type-assertion": "error",
 
       "@typescript-eslint/consistent-type-imports": "error",
       "@typescript-eslint/no-empty-function": "off",

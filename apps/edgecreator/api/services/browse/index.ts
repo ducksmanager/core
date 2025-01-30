@@ -1,9 +1,11 @@
 import { XMLParser } from "fast-xml-parser";
 import { existsSync, readdirSync, readFileSync } from "fs";
 import path from "path";
-import { NamespaceProxyTarget, useSocketEvents } from "socket-call-server";
-import { Socket } from "socket.io";
-import { getEdgesPath, SessionData } from "../../index";
+import type { NamespaceProxyTarget } from "socket-call-server";
+import { useSocketEvents } from "socket-call-server";
+import type { Socket } from "socket.io";
+import type { SessionData } from "../../index";
+import { getEdgesPath } from "../../index";
 import { OptionalAuthMiddleware } from "~dm-services/auth/util";
 
 import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa/client";
@@ -23,12 +25,12 @@ const REGEX_IS_PNG_FILE = /^_?.+\.png$/;
 
 const getSvgMetadata = (
   metadataNodes: { "#text": string; type?: string }[],
-  metadataType: string
+  metadataType: string,
 ) =>
   metadataNodes
     .filter(
       ({ type, "#text": text }) =>
-        type === metadataType && typeof text === "string"
+        type === metadataType && typeof text === "string",
     )
     .map(({ "#text": text }) => text.trim());
 
@@ -47,7 +49,7 @@ const findInDir = async (dir: string, currentUsername?: string) => {
 
   const filteredFiles = [
     ...new Set(
-      publicationcodes.map((publicationcode) => publicationcode.split("/")[0])
+      publicationcodes.map((publicationcode) => publicationcode.split("/")[0]),
     ),
   ]
     .map((countrycode) =>
@@ -70,11 +72,11 @@ const findInDir = async (dir: string, currentUsername?: string) => {
 
               const designers = getSvgMetadata(
                 metadataNodes,
-                "contributor-designer"
+                "contributor-designer",
               );
               const photographers = getSvgMetadata(
                 metadataNodes,
-                "contributor-photographer"
+                "contributor-photographer",
               );
 
               const svgUrl = filePath.replace(".png", ".svg");
@@ -82,12 +84,12 @@ const findInDir = async (dir: string, currentUsername?: string) => {
               const issue = existingEdges[publicationcode]?.find(
                 ({ issuecode }) =>
                   issuecode.replaceAll(" ", "") ===
-                  `${publicationcode}${issuenumberShort}`
+                  `${publicationcode}${issuenumberShort}`,
               );
 
               if (!issue) {
                 console.warn(
-                  `Issue ${publicationcode}${issuenumberShort} not found in database`
+                  `Issue ${publicationcode}${issuenumberShort} not found in database`,
                 );
                 return [];
               }
@@ -110,7 +112,7 @@ const findInDir = async (dir: string, currentUsername?: string) => {
                     : "Published",
                 } as const),
               };
-            })
+            }),
     )
     .filter((edge) => !!edge)
     .flat();
@@ -137,13 +139,13 @@ const findInDir = async (dir: string, currentUsername?: string) => {
     .groupBy("publicationcode", "[]");
 
   const filesWithInducksIssuecode = filteredFiles.flatMap((edge) => {
-    const issuecode = existingIssuecodes[edge!.publicationcode].find(
+    const issuecode = existingIssuecodes[edge.publicationcode].find(
       ({ issuenumber }) =>
-        issuenumber.replaceAll(" ", "") === edge!.issuenumberShort
+        issuenumber.replaceAll(" ", "") === edge.issuenumberShort,
     )?.issuecode;
     if (!issuecode) {
       console.warn(
-        `No issuecode found for ${edge!.publicationcode} ${edge!.issuenumberShort}`
+        `No issuecode found for ${edge.publicationcode} ${edge.issuenumberShort}`,
       );
       return [];
     }
@@ -173,7 +175,7 @@ const listenEvents = (services: BrowseServices) => ({
           resolve({
             error: "Generic error",
             errorDetails: errorDetails as string,
-          })
+          }),
         );
     }),
 
@@ -193,9 +195,9 @@ const listenEvents = (services: BrowseServices) => ({
     try {
       return {
         results: readdirSync(
-          `${process.env.EDGES_PATH!}/${country}/${imageType}`
+          `${process.env.EDGES_PATH!}/${country}/${imageType}`,
         ).filter((item) =>
-          new RegExp(`(?:^|[. ])${magazine}(?:[. ]|$)`).test(item)
+          new RegExp(`(?:^|[. ])${magazine}(?:[. ]|$)`).test(item),
         ),
       };
     } catch (_e) {
