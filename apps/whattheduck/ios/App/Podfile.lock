@@ -1,5 +1,5 @@
 PODS:
-  - Alamofire (5.10.1)
+  - Alamofire (5.10.2)
   - Capacitor (6.2.0):
     - CapacitorCordova
   - CapacitorApp (6.0.2):
@@ -94,7 +94,7 @@ EXTERNAL SOURCES:
     :path: "../../../../node_modules/.pnpm/@sentry+capacitor@1.1.0_@capacitor+core@6.2.0_@sentry+vue@8.52.1_pinia@2.3.1_typescript@5.7.3_yzmsb7chcwyrcsim6l4wwcnf6u/node_modules/@sentry/capacitor"
 
 SPEC CHECKSUMS:
-  Alamofire: 840d2a1ad82355b536ec6ba5f97e5bfa54600ca3
+  Alamofire: 7193b3b92c74a07f85569e1a6c4f4237291e7496
   Capacitor: 1f3c7b9802d958cd8c4eb63895fff85dff2e1eea
   CapacitorApp: 2a8c3a0b0814322e5e6e15fe595f02c3808f0f8b
   CapacitorCamera: 9052bd3f464f135ba983feccd8ac1266272f0549
@@ -116,4 +116,4 @@ SPEC CHECKSUMS:
 
 PODFILE CHECKSUM: 73fb539cf35d9f64ee1af92539ee6a0171b73a34
 
-COCOAPODS: 1.15.2
+COCOAPODS: 1.16.2
