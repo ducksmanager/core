@@ -29,7 +29,7 @@ const isCollectionLoaded = ref(false);
 const dataLoader = computed(() => socket.value!.socket.cacheHydrator);
 
 const collectionLoadProgress = computed(() => {
-  if (dataLoader.value.state.value?.mode === 'HYDRATE') {
+  if (dataLoader.value.state?.value?.mode === 'HYDRATE') {
     return dataLoader.value.state.value.hydratedCallsDoneAmount / dataLoader.value.state.value.cachedCallsDone.length;
   } else {
     return undefined;
@@ -38,8 +38,8 @@ const collectionLoadProgress = computed(() => {
 
 const isCollectionReadonly = computed(
   () =>
-    dataLoader.value.state.value?.mode === 'LOAD_CACHE' ||
-    (dataLoader.value.state.value?.mode === 'HYDRATE' &&
+    dataLoader.value.state?.value?.mode === 'LOAD_CACHE' ||
+    (dataLoader.value.state?.value?.mode === 'HYDRATE' &&
       collectionLoadProgress.value !== undefined &&
       collectionLoadProgress.value < 1),
 );
