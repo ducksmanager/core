@@ -79,12 +79,12 @@ jobs:
 
       - name: Build apps
         run: |
-          turbo -F "...[$lastSuccessfulCommit]" -F '~dumili' -F '~dumili-api' -F '~whattheduck' build prod:build-docker
+          turbo -F "...[$lastSuccessfulCommit]" -F '!~ci' build prod:build-docker
 
       - name: Send post-build files
         run: |
-          turbo -F "...[$lastSuccessfulCommit]" -F '~dumili' -F '~dumili-api' -F '~whattheduck' prod:transfer-files-post
+          turbo -F "...[$lastSuccessfulCommit]" -F '!~ci' prod:transfer-files-post
 
       - name: Deploy
         run: |
-          turbo --concurrency=1 -F "...[$lastSuccessfulCommit]" -F '~dumili' -F '~dumili-api' -F '~whattheduck' prod:deploy
+          turbo --concurrency=1 -F "...[$lastSuccessfulCommit]" -F '!~ci' prod:deploy
