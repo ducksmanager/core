@@ -53,10 +53,11 @@ const AuthMiddleware = (
   jwt.verify(
     token,
     process.env.TOKEN_SECRET as string,
-    (err: unknown, user: unknown) => {
+    (err: unknown, payload: unknown) => {
       if (required && err) {
         next(new Error(`Invalid token: ${err}`));
       } else {
+        const user = (payload as {data?: Omit<SessionUser, 'token'>}).data
         if (user) {
           socket.data.user = { ...user, token } as SessionUser;
         }
