@@ -19,7 +19,7 @@ const EMAIL_REGEX =
 export const isValidEmail = (email: string) => EMAIL_REGEX.test(email);
 
 export const generateAccessToken = (payload: Omit<SessionUser, "token">) =>
-  jwt.sign({exp: 60 * 60 * 24 * 14, data: payload}, process.env.TOKEN_SECRET!);
+  jwt.sign({exp: Math.floor(Date.now() / 1000) + 60 * 60 * 24 * 14, data: payload}, process.env.TOKEN_SECRET!);
 export const loginAs = async (user: user, hashedPassword: string) =>
   generateAccessToken({
     id: user.id,
