@@ -41,9 +41,10 @@ const listenEvents = () => ({
         console.log(
           `A visitor requested to reset a password for a valid e-mail: ${email}`,
         );
-        const token = jwt.sign(email, process.env.TOKEN_SECRET!, {
-          expiresIn: "60m",
-        });
+        const token = jwt.sign(
+          { exp: 60 * 60, data: email },
+          process.env.TOKEN_SECRET!,
+        );
         await prismaClient.userPasswordToken.create({
           data: { userId: user.id, token },
         });
