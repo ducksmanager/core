@@ -16,12 +16,14 @@ const authenticateUser = async (
       process.env.TOKEN_SECRET as string,
       (err: unknown, payload: unknown) => {
         if (err) {
+          console.error(err);
           reject(`Invalid token: ${err}`);
         } else {
           const user = (payload as {data?: Omit<SessionUser, 'token'>}).data
           if (user) {
             resolve(user as SessionUser);
           }
+          console.error(`Invalid user: ${user}`);
           reject(`Invalid user: ${user}`);
         }
       },
