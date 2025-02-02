@@ -20,23 +20,40 @@
 
 <script setup lang="ts">
 const {
-  issuecode,
+  issuecode = undefined,
+  issue: propIssue = undefined,
   clickable = false,
   hideCondition = false,
   noWrap = true,
   flex = true,
   isPublic = false,
-} = defineProps<{
-  issuecode: string;
-  clickable?: boolean;
-  hideCondition?: boolean;
-  noWrap?: boolean;
-  flex?: boolean;
-  isPublic?: boolean;
-}>();
+} = defineProps<
+  (
+    | {
+        issuecode: string;
+        issue: undefined;
+      }
+    | {
+        issue: {
+          issuecode: string;
+          publicationcode: string;
+          issuenumber: string;
+        };
+        issuecode: undefined;
+      }
+  ) & {
+    clickable?: boolean;
+    hideCondition?: boolean;
+    noWrap?: boolean;
+    flex?: boolean;
+    isPublic?: boolean;
+  }
+>();
 
 const store = coa();
-const issue = computed(() => store.issuecodeDetails?.[issuecode]);
+const issue = computed(() =>
+  issuecode ? store.issuecodeDetails?.[issuecode] : propIssue!,
+);
 const publicationname = computed(
   () =>
     issue.value?.publicationcode &&

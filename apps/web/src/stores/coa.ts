@@ -61,7 +61,10 @@ export const coa = defineStore("coa", () => {
       EventOutput<CoaClientEvents, "getIssuePopularities">
     >({}),
     issuecodesByPublicationcode = ref<
-      EventOutput<CoaClientEvents, "getIssuesByPublicationcodes">
+      EventOutput<CoaClientEvents, "getIssuecodesByPublicationcodes">
+    >({}),
+    issuesByPublicationcode = ref<
+      Record<string, EventOutput<CoaClientEvents, "getIssuesByPublicationcode">>
     >({}),
     issueQuotations = ref<
       SuccessfulEventOutput<
@@ -244,13 +247,16 @@ export const coa = defineStore("coa", () => {
       );
 
       if (newPublicationcodes.length) {
-        const issuesByPublicationcode =
-          await events.getIssuesByPublicationcodes(newPublicationcodes);
-
         Object.assign(
           issuecodesByPublicationcode.value,
-          issuesByPublicationcode,
+          await events.getIssuecodesByPublicationcodes(newPublicationcodes),
         );
+      }
+    },
+    fetchIssuesByPublicationcode = async (publicationcode: string) => {
+      if (!(publicationcode in issuesByPublicationcode.value)) {
+        issuesByPublicationcode.value[publicationcode] =
+          await events.getIssuesByPublicationcode(publicationcode);
       }
     },
     fetchRecentIssues = () => events.getRecentIssues(),
@@ -279,6 +285,7 @@ export const coa = defineStore("coa", () => {
     fetchCoverUrlsByIssuecodes,
     fetchIssuecodeDetails,
     fetchIssuecodesByPublicationcode,
+    fetchIssuesByPublicationcode,
     fetchIssuePopularities,
     fetchIssueQuotations,
     fetchIssueUrls,
@@ -296,6 +303,7 @@ export const coa = defineStore("coa", () => {
     issuePopularities: issuePopularities,
     issuecodes,
     issueQuotations,
+    issuesByPublicationcode,
     personNames,
     publicationNames,
     publicationNamesFullCountries,

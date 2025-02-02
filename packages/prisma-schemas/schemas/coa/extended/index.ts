@@ -67,6 +67,7 @@ export default (prismaClient: PrismaClient) =>
             [...new Set(issues.map(({ issuecode }) => issuecode))],
             withTitle,
           );
+          console.log("inducksIssues", inducksIssues);
           return issues.map((issue) => ({
             ...issue,
             ...inducksIssues[issue.issuecode],

@@ -48,7 +48,7 @@ export const getDbStatus = async (): Promise<
         `(SELECT '${coaTable}' AS tableName, (SELECT COUNT(*) FROM ${coaTable} AS tableCount))`,
     )
     .join(" UNION ");
-  const coaTablesWithCount = (await prismaCoa.$queryRawUnsafe(query));
+  const coaTablesWithCount = (await prismaCoa.$queryRawUnsafe<{tableName: string, tableCount: number}[]>(query));
   const emptyCoaTables = coaTablesWithCount.filter(
     ({ tableCount }) => tableCount === 0,
   );

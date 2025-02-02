@@ -46,4 +46,5 @@ export default tseslint.config(
   },
   {
     files: ["**/*.ts"]
-  });
+  }
+);

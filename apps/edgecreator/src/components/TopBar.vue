@@ -109,17 +109,30 @@
     </b-row>
     <b-row align="center" class="pb-1">
       <b-col v-if="publicationName" align-self="center">
-        <issue :issuecode="issuecodes[0]" hide-condition no-wrap>
+        <issue
+          :issue="
+            publicationIssues!.find(
+              ({ issuecode }) => issuecode === issuecodes[0],
+            )
+          "
+          hide-condition
+          no-wrap
+        >
           <template v-if="isEditingMultiple" #title-suffix>
             <template v-if="mainStore.isRange">
               {{ $t("to") }}
-              {{ issuecodes[issuecodes.length - 1] }}
+              {{ publicationIssues!.find(
+              ({ issuecode }) => issuecode === issuecodes[issuecodes.length - 1],
+            )!.issuenumber }}
             </template>
             <template v-else-if="issuecodes.length > 1">
               <span
                 v-for="otherIssuecode in issuecodes.slice(1)"
                 :key="`other-${otherIssuecode}`"
-                >, {{ otherIssuecode }}</span
+                >,
+                {{ publicationIssues!.find(
+              ({ issuecode }) => issuecode === issuecodes[issuecodes.length - 1],
+            )!.issuenumber }}</span
               >
             </template>
           </template>
@@ -264,8 +277,13 @@ const { showPreviousEdge, showNextEdge } = surroundingEdge();
 const { dimensions: editingDimensions } = storeToRefs(editingStep());
 const { hasRole } = webStores.collection();
 const stepStore = step();
-const { issuecodes, photoUrls, edgeIssuecodesAfter, edgeIssuecodesBefore } =
-  storeToRefs(mainStore);
+const {
+  issuecodes,
+  publicationIssues,
+  photoUrls,
+  edgeIssuecodesAfter,
+  edgeIssuecodesBefore,
+} = storeToRefs(mainStore);
 
 interface ModelToClone {
   editMode: string;

@@ -12,12 +12,12 @@ export default {
       .then((data) => data.groupBy("issuecode"));
   },
 
-  getIssuesByPublicationcodes: async (publicationcodes: string[]) =>
+  getIssuecodesByPublicationcodes: async (publicationcodes: string[]) =>
     prismaCoa.inducks_issue
       .findMany({
         select: {
           publicationcode: true,
-          issuecode: true,
+          issuecode: true
         },
         where: {
           publicationcode: {
@@ -26,6 +26,19 @@ export default {
         },
       })
       .then((data) => data.groupBy("publicationcode", "issuecode[]")),
+
+  getIssuesByPublicationcode: async (publicationcode: string) =>
+    prismaCoa.inducks_issue
+      .findMany({
+        select: {
+          publicationcode: true,
+          issuecode: true,
+          issuenumber: true,
+        },
+        where: {
+          publicationcode
+        },
+      }),
 
   getIssuesByStorycode: async (storycode: string) =>
     prismaCoa.$queryRaw<IssueWithIssuecodeOnly[]>`

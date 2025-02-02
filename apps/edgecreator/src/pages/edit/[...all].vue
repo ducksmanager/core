@@ -51,7 +51,11 @@
                   <i-bi-pencil />
                 </div>
                 <div>
-                  {{ issuecodeDetails[issuecode].issuenumber }}
+                  {{
+                    publicationIssues!.find(
+                      (issue) => issue.issuecode === issuecode,
+                    )!.issuenumber
+                  }}
                 </div>
               </th>
               <th
@@ -147,12 +151,13 @@ import type { Dimensions, Options } from "~/stores/step";
 import { step } from "~/stores/step";
 import { ui } from "~/stores/ui";
 import { stores as webStores } from "~web";
-import { coa } from "~web/src/stores/coa";
 
 const route = useRoute();
 const uiStore = ui();
+
 const mainStore = main();
-const { issuecodeDetails } = storeToRefs(coa());
+const { publicationIssues } = storeToRefs(mainStore);
+
 const stepStore = step();
 const editingStepStore = editingStep();
 const { showPreviousEdge, showNextEdge } = useSurroundingEdge();
@@ -182,10 +187,8 @@ const dimensionsPerIssuecode = computed(() =>
 );
 
 const getActualIssuecode = (issuecode: string) => {
-  const actualIssuecode = Object.values(issuecodeDetails.value).find(
-    ({ publicationcode: thisPublicationcode, issuenumber }) =>
-      thisPublicationcode === publicationcode.value &&
-      issuenumber === issuecode.split(/[ ]+/)[1],
+  const actualIssuecode = publicationIssues.value!.find(
+    ({ issuenumber }) => issuenumber === issuecode.split(/[ ]+/)[1],
   )?.issuecode;
 
   if (actualIssuecode === undefined) {
@@ -230,7 +233,6 @@ try {
   publicationcode.value = issuecodeParts[0];
 
   await mainStore.loadPublicationIssues();
-
   firstIssuecode = getActualIssuecode(firstIssuecode);
   if (lastIssuecode) {
     lastIssuecode = getActualIssuecode(lastIssuecode);

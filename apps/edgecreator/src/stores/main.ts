@@ -25,11 +25,12 @@ export const main = defineStore("main", () => {
     warnings = ref<string[]>([]),
     country = computed(() => publicationcode.value?.split("/")[0]),
     magazine = computed(() => publicationcode.value?.split("/")[1]),
-    publicationIssuecodes = computed(
+    publicationIssues = computed(
       () =>
         (publicationcode.value &&
-          webStores.coa().issuecodesByPublicationcode[publicationcode.value]) ||
-        [],
+          publicationcode.value in webStores.coa().issuesByPublicationcode &&
+          webStores.coa().issuesByPublicationcode[publicationcode.value]) ||
+        undefined,
     ),
     publicationElementsForGallery = computed(
       () =>
@@ -91,26 +92,32 @@ export const main = defineStore("main", () => {
       lastIssuecode?: string,
       otherIssuecodes?: string[],
     ) => {
-      const firstIssueIndex = publicationIssuecodes.value.findIndex(
-        (issuecode) => issuecode === firstIssuecode,
+      if (!publicationIssues.value) {
+        console.error("Publication issues not loaded");
+        return;
+      }
+      const firstIssueIndex = publicationIssues.value.findIndex(
+        ({ issuecode }) => issuecode === firstIssuecode,
       );
       if (lastIssuecode === undefined) {
         issuecodes.value = [firstIssuecode, ...(otherIssuecodes || [])];
       } else {
         isRange.value = true;
-        let lastIssueIndex = publicationIssuecodes.value.findIndex(
-          (issuecode) => issuecode === lastIssuecode,
+        let lastIssueIndex = publicationIssues.value.findIndex(
+          ({ issuecode }) => issuecode === lastIssuecode,
         );
         if (lastIssueIndex === -1) {
-          lastIssueIndex = publicationIssuecodes.value.length - 1;
+          lastIssueIndex = publicationIssues.value.length - 1;
           console.warn(
-            `Issue ${lastIssuecode} doesn't exist, falling back to ${publicationIssuecodes.value[lastIssueIndex]}`,
+            `Issue ${lastIssuecode} doesn't exist, falling back to ${publicationIssues.value[lastIssueIndex]}`,
           );
         }
 
-        issuecodes.value = publicationIssuecodes.value.filter(
-          (_, index) => index >= firstIssueIndex && index <= lastIssueIndex,
-        );
+        issuecodes.value = publicationIssues.value
+          .filter(
+            (_, index) => index >= firstIssueIndex && index <= lastIssueIndex,
+          )
+          .map(({ issuecode }) => issuecode);
       }
     },
     loadItems = async ({ itemType }: { itemType: "elements" | "photos" }) => {
@@ -128,9 +135,7 @@ export const main = defineStore("main", () => {
       }
     },
     loadPublicationIssues = async () =>
-      webStores
-        .coa()
-        .fetchIssuecodesByPublicationcode([publicationcode.value!]),
+      webStores.coa().fetchIssuesByPublicationcode(publicationcode.value!),
     getEdgePublicationStates = (issuecodes: string[]) =>
       Object.keys(edgeCatalog().publishedEdges)
         .filter((issuecode) => issuecodes.includes(issuecode))
@@ -141,42 +146,47 @@ export const main = defineStore("main", () => {
         );
 
   const firstIssueIndex = computed(() =>
-    publicationIssuecodes.value.findIndex(
-      (issue) => issue === issuecodes.value[0],
+    publicationIssues.value?.findIndex(
+      ({ issuecode }) => issuecode === issuecodes.value[0],
     ),
   );
   const lastIssueIndex = computed(() =>
-    publicationIssuecodes.value.findIndex(
-      (issue) => issue === issuecodes.value[issuecodes.value.length - 1],
+    publicationIssues.value?.findIndex(
+      ({ issuecode }) =>
+        issuecode === issuecodes.value[issuecodes.value.length - 1],
     ),
   );
 
   const edgeIssuecodesBefore = computed(() => {
-    if (!edgeCatalog().isCatalogLoaded) {
+    if (!edgeCatalog().isCatalogLoaded || !publicationIssues.value) {
       return [];
     }
-    const issuesBefore = publicationIssuecodes.value.filter(
+    const issuesBefore = publicationIssues.value.filter(
       (_, index) =>
         firstIssueIndex.value !== -1 &&
-        index >= firstIssueIndex.value - 10 &&
-        index < firstIssueIndex.value,
+        index >= firstIssueIndex.value! - 10 &&
+        index < firstIssueIndex.value!,
     );
 
-    return getEdgePublicationStates(issuesBefore);
+    return getEdgePublicationStates(
+      issuesBefore.map(({ issuecode }) => issuecode),
+    );
   });
 
   const edgeIssuecodesAfter = computed(() => {
-    if (!edgeCatalog().isCatalogLoaded) {
+    if (!edgeCatalog().isCatalogLoaded || !publicationIssues.value) {
       return [];
     }
-    const issuesAfter = publicationIssuecodes.value.filter(
+    const issuesAfter = publicationIssues.value.filter(
       (_, index) =>
         lastIssueIndex.value !== -1 &&
-        index > lastIssueIndex.value &&
-        index <= lastIssueIndex.value + 10,
+        index > lastIssueIndex.value! &&
+        index <= lastIssueIndex.value! + 10,
     );
 
-    return getEdgePublicationStates(issuesAfter);
+    return getEdgePublicationStates(
+      issuesAfter.map(({ issuecode }) => issuecode),
+    );
   });
   return {
     publicationcode,
@@ -189,7 +199,7 @@ export const main = defineStore("main", () => {
     publicationElements,
     publicationPhotos,
     warnings,
-    publicationIssuecodes,
+    publicationIssues,
     publicationElementsForGallery,
     publicationPhotosForGallery,
     addContributor,
