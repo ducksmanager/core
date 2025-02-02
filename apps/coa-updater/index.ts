@@ -61,7 +61,7 @@ try {
     .replace(
       /(ALTER TABLE )(([^ ]+)_temp)( ADD FULLTEXT)(\([^()]+\));/gs,
       "$1$2$4 fulltext_$3 $5;",
-    );
+    ) + "ALTER TABLE inducks_story_temp ADD FULLTEXT(storycode);";
 
   console.log("Renaming foreign keys...");
   for (let fkIndex = 0; fkIndex <= 5; fkIndex++) {

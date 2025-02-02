@@ -105,7 +105,9 @@
       </b-row>
     </template>
     <template #unknown-text>{{ $t("Contenu inconnu") }}</template>
-    <template #customize-text>{{ $t("Rechercher...") }}</template>
+    <template #customize-text
+      ><span>{{ $t("Rechercher...") }}</span></template
+    >
     <template #customize-form>
       <StorySearch
         @story-selected="

@@ -95,6 +95,30 @@ export default {
       };
     }
   },
+
+  searchStoryByStorycode: async(
+    partialStorycode: string,
+  ) => {
+    const limit = 10;
+    let results = await prismaCoa.$queryRaw<
+      StorySearchResults<false>["results"]
+    >`
+      SELECT storycode, title,
+      MATCH (storycode) AGAINST (${partialStorycode}) as score
+      FROM inducks_story
+      WHERE storycode <> ''
+        AND MATCH (storycode) AGAINST (${partialStorycode})
+      ORDER BY score desc
+      LIMIT ${limit + 1}
+  `;
+
+    const hasMore = results.length > limit;
+    results = results.slice(0, limit);
+      return {
+        results,
+        hasMore,
+      };
+  }
 };
 
 const listIssuesFromStoryCode = async (storycode: string) =>
