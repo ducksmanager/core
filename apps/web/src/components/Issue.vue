@@ -31,7 +31,7 @@ const {
   (
     | {
         issuecode: string;
-        issue: undefined;
+        issue?: never;
       }
     | {
         issue: {
@@ -39,7 +39,7 @@ const {
           publicationcode: string;
           issuenumber: string;
         };
-        issuecode: undefined;
+        issuecode?: never;
       }
   ) & {
     clickable?: boolean;
