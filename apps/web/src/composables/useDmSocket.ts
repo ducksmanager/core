@@ -98,7 +98,12 @@ const defaultExport = (options: {
       namespaces.PRESENTATION_TEXT,
     ),
     edges: socket.addNamespace<EdgesEvents>(namespaces.EDGES, {}),
-    coa: socket.addNamespace<CoaEvents>(namespaces.COA),
+    coa: socket.addNamespace<CoaEvents>(namespaces.COA, {
+      cache: {
+        storage: cacheStorage,
+        ttl: until4am(),
+      },
+    }),
     globalStats: socket.addNamespace<GlobalStatsEvents>(
       namespaces.GLOBAL_STATS,
       {
