@@ -173,10 +173,13 @@ const listenEvents = (services: BrowseServices) => ({
           resolve({ results });
         })
         .catch((errorDetails) =>
-          resolve({
-            error: "Generic error",
-            errorDetails: errorDetails as string,
-          }),
+          {
+            console.error(errorDetails);
+            return resolve({
+              error: "Generic error",
+              errorDetails: errorDetails as string,
+            });
+          },
         );
     }),
 
