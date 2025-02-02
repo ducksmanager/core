@@ -14,7 +14,7 @@ export default ({ _socket }: UserServices) => ({
     const [, bookcaseSubTexture2] = textures.bookshelf.split("/");
     const user = await prismaDm.user.findUnique({
       where: {
-        id: _socket.data.user!.id,
+        id: _socket.data.user.id,
       },
     });
 

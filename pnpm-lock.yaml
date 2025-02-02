@@ -30,7 +30,7 @@ importers:
     devDependencies:
       '@types/bun':
         specifier: latest
-        version: 1.2.1
+        version: 1.2.2
       '@types/node':
         specifier: ^22.12.0
         version: 22.12.0
@@ -580,7 +580,7 @@ importers:
     devDependencies:
       '@types/bun':
         specifier: latest
-        version: 1.2.1
+        version: 1.2.2
       typescript:
         specifier: ^5.7.3
         version: 5.7.3
@@ -1070,6 +1070,12 @@ importers:
         specifier: workspace:*
         version: link:../prisma-schemas
     devDependencies:
+      '@eslint/eslintrc':
+        specifier: ^3.2.0
+        version: 3.2.0
+      '@eslint/js':
+        specifier: ^9.19.0
+        version: 9.19.0
       '@sentry/cli':
         specifier: ^2.41.1
         version: 2.41.1
@@ -1088,9 +1094,18 @@ importers:
       '@types/nodemailer':
         specifier: ^6.4.17
         version: 6.4.17
+      '@typescript-eslint/eslint-plugin':
+        specifier: ^8.22.0
+        version: 8.22.0(@typescript-eslint/parser@8.22.0(eslint@9.19.0(jiti@1.21.7))(typescript@5.7.3))(eslint@9.19.0(jiti@1.21.7))(typescript@5.7.3)
       concurrently:
         specifier: ^9.1.2
         version: 9.1.2
+      eslint:
+        specifier: ^9.19.0
+        version: 9.19.0(jiti@1.21.7)
+      eslint-config-prettier:
+        specifier: ^10.0.1
+        version: 10.0.1(eslint@9.19.0(jiti@1.21.7))
       nodemon:
         specifier: ^3.1.9
         version: 3.1.9
@@ -1121,7 +1136,7 @@ importers:
     devDependencies:
       '@types/bun':
         specifier: latest
-        version: 1.2.1
+        version: 1.2.2
       typescript:
         specifier: ^5.7.3
         version: 5.7.3
@@ -2183,8 +2198,8 @@ packages:
     resolution: {integrity: sha512-8tR1xe7ZEbkabTuE/tNhzpolygUn9OaYp9yuYAF4MgDNZg06C3Qny80bes2/e9/Wm3aVkPUlCw6WgU7mQd0yEg==}
     engines: {node: '>= 16'}
 
-  '@intlify/shared@11.0.1':
-    resolution: {integrity: sha512-lH164+aDDptHZ3dBDbIhRa1dOPQUp+83iugpc+1upTOWCnwyC1PVis6rSWNMMJ8VQxvtHQB9JMib48K55y0PvQ==}
+  '@intlify/shared@11.1.0':
+    resolution: {integrity: sha512-DvpNSxiMrFqYMaGSRDDnQgO/L0MqNH4KWw9CUx8LRHHIdWp08En9DpmSRNpauUOxKpHAhyJJxx92BHZk9J84EQ==}
     engines: {node: '>= 16'}
 
   '@intlify/shared@9.14.2':
@@ -3173,8 +3188,8 @@ packages:
   '@types/body-parser@1.19.5':
     resolution: {integrity: sha512-fB3Zu92ucau0iQ0JMCFQE7b/dv8Ot07NI3KaZIkIUNXq82k4eBAqUaneXfleGY9JWskeS9y+u0nXMyspcuQrCg==}
 
-  '@types/bun@1.2.1':
-    resolution: {integrity: sha512-iiCeMAKMkft8EPQJxSbpVRD0DKqrh91w40zunNajce3nMNNFd/LnAquVisSZC+UpTMjDwtcdyzbWct08IvEqRA==}
+  '@types/bun@1.2.2':
+    resolution: {integrity: sha512-tr74gdku+AEDN5ergNiBnplr7hpDp3V1h7fqI2GcR/rsUaM39jpSeKH0TFibRvU0KwniRx5POgaYnaXbk0hU+w==}
 
   '@types/busboy@1.5.4':
     resolution: {integrity: sha512-kG7WrUuAKK0NoyxfQHsVE6j1m01s6kMma64E+OZenQABMQyTJop1DumUWcLwAQ2JzpefU7PDYoRDKl8uZosFjw==}
@@ -4075,8 +4090,8 @@ packages:
     resolution: {integrity: sha512-zhaCDicdLuWN5UbN5IMnFqNMhNfo919sH85y2/ea+5Yg9TsTkeZxpL+JLbp6cgYFS4sRLp3YV4S6yDuqVWHYOw==}
     engines: {node: '>=6'}
 
-  bun-types@1.2.1:
-    resolution: {integrity: sha512-p7bmXUWmrPWxhcbFVk7oUXM5jAGt94URaoa3qf4mz43MEhNAo/ot1urzBqctgvuq7y9YxkuN51u+/qm4BiIsHw==}
+  bun-types@1.2.2:
+    resolution: {integrity: sha512-RCbMH5elr9gjgDGDhkTTugA21XtJAy/9jkKe/G3WR2q17VPGhcquf9Sir6uay9iW+7P/BV0CAHA1XlHXMAVKHg==}
 
   busboy@1.6.0:
     resolution: {integrity: sha512-8SFQbg/0hQ9xy3UNTB0YEnsNBbWfhf7RtnzpL7TkBiTBRfrQ9Fxcnz7VJsleJpyp6rVLvXiuORqjlHi5q+PYuA==}
@@ -9606,7 +9621,7 @@ snapshots:
 
   '@intlify/shared@11.0.0-rc.1': {}
 
-  '@intlify/shared@11.0.1': {}
+  '@intlify/shared@11.1.0': {}
 
   '@intlify/shared@9.14.2': {}
 
@@ -9614,8 +9629,8 @@ snapshots:
     dependencies:
       '@eslint-community/eslint-utils': 4.4.1(eslint@9.19.0(jiti@1.21.7))
       '@intlify/bundle-utils': 10.0.0(vue-i18n@9.14.2(vue@3.5.13(typescript@5.7.3)))
-      '@intlify/shared': 11.0.1
-      '@intlify/vue-i18n-extensions': 8.0.0(@intlify/shared@11.0.1)(@vue/compiler-dom@3.5.13)(vue-i18n@9.14.2(vue@3.5.13(typescript@5.7.3)))(vue@3.5.13(typescript@5.7.3))
+      '@intlify/shared': 11.1.0
+      '@intlify/vue-i18n-extensions': 8.0.0(@intlify/shared@11.1.0)(@vue/compiler-dom@3.5.13)(vue-i18n@9.14.2(vue@3.5.13(typescript@5.7.3)))(vue@3.5.13(typescript@5.7.3))
       '@rollup/pluginutils': 5.1.4(rollup@4.32.1)
       '@typescript-eslint/scope-manager': 8.22.0
       '@typescript-eslint/typescript-estree': 8.22.0(typescript@5.7.3)
@@ -9637,11 +9652,11 @@ snapshots:
       - supports-color
       - typescript
 
-  '@intlify/vue-i18n-extensions@8.0.0(@intlify/shared@11.0.1)(@vue/compiler-dom@3.5.13)(vue-i18n@9.14.2(vue@3.5.13(typescript@5.7.3)))(vue@3.5.13(typescript@5.7.3))':
+  '@intlify/vue-i18n-extensions@8.0.0(@intlify/shared@11.1.0)(@vue/compiler-dom@3.5.13)(vue-i18n@9.14.2(vue@3.5.13(typescript@5.7.3)))(vue@3.5.13(typescript@5.7.3))':
     dependencies:
       '@babel/parser': 7.26.7
     optionalDependencies:
-      '@intlify/shared': 11.0.1
+      '@intlify/shared': 11.1.0
       '@vue/compiler-dom': 3.5.13
       vue: 3.5.13(typescript@5.7.3)
       vue-i18n: 9.14.2(vue@3.5.13(typescript@5.7.3))
@@ -10855,9 +10870,9 @@ snapshots:
       '@types/connect': 3.4.38
       '@types/node': 22.12.0
 
-  '@types/bun@1.2.1':
+  '@types/bun@1.2.2':
     dependencies:
-      bun-types: 1.2.1
+      bun-types: 1.2.2
 
   '@types/busboy@1.5.4':
     dependencies:
@@ -11937,7 +11952,7 @@ snapshots:
 
   builtin-modules@3.3.0: {}
 
-  bun-types@1.2.1:
+  bun-types@1.2.2:
     dependencies:
       '@types/node': 22.12.0
       '@types/ws': 8.5.14

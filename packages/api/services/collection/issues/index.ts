@@ -38,7 +38,7 @@ const getCoaCountByPublicationcode = (collectionPublicationcodes: string[]) =>
     .then((data) =>
       Object.fromEntries(
         data.map(({ publicationcode, _count }) => [
-          publicationcode!,
+          publicationcode,
           _count.issuenumber,
         ]),
       ),
@@ -62,7 +62,7 @@ const getCoaCountByCountrycode = (collectionCountrycodes: string[]) =>
     .then((data) =>
       data.reduce<Record<string, number>>(
         (acc, { publicationcode, _count }) => {
-          const countrycode = publicationcode!.split("/")[0];
+          const countrycode = publicationcode.split("/")[0];
           acc[countrycode] = _count.issuenumber + (acc[countrycode] || 0);
           return acc;
         },
@@ -72,13 +72,13 @@ const getCoaCountByCountrycode = (collectionCountrycodes: string[]) =>
 
 export default ({ _socket }: UserServices) => ({
   getIssues: async () => {
-    if (_socket.data.user!.username === "demo") {
+    if (_socket.data.user.username === "demo") {
       await resetDemo();
     }
     return prismaDm.issue
       .findMany({
         where: {
-          userId: _socket.data.user!.id,
+          userId: _socket.data.user.id,
           issuecode: {
             not: {
               equals: null,
@@ -93,7 +93,7 @@ export default ({ _socket }: UserServices) => ({
       )
       .then(async (issues) => {
         const collectionPublicationcodes = [
-          ...new Set(issues.map(({ publicationcode }) => publicationcode!)),
+          ...new Set(issues.map(({ publicationcode }) => publicationcode)),
         ];
         const collectionCountrycodes = [
           ...new Set(
@@ -127,7 +127,7 @@ export default ({ _socket }: UserServices) => ({
     condition,
     isToRead,
   }: CollectionUpdateMultipleIssues) => {
-    const user = _socket.data.user!;
+    const user = _socket.data.user;
 
     let checkedPurchaseId: number | null = null;
     if (typeof purchaseId === "number") {
@@ -172,7 +172,7 @@ export default ({ _socket }: UserServices) => ({
     issuecode,
     copies,
   }: CollectionUpdateSingleIssue) => {
-    const userId = _socket.data.user!.id;
+    const userId = _socket.data.user.id;
 
     const checkedPurchaseIds = await checkPurchaseIdsBelongToUser(
       copies
@@ -226,7 +226,7 @@ export default ({ _socket }: UserServices) => ({
                 else round(max(ifnull(estimationmax, 0))) end AS estimationMax
           from dm.numeros
             inner join coa.inducks_issuequotation using (issuecode)
-          where ID_Utilisateur = ${_socket.data.user!.id}
+          where ID_Utilisateur = ${_socket.data.user.id}
             and estimationmin is not null
           group by numeros.ID;
         `.then(getShownQuotations),
@@ -316,7 +316,7 @@ const addOrChangeCopies = async (
       condition: conditions[copyNumber]!,
       isOnSale:
         areOnSale[copyNumber] !== undefined
-          ? (areOnSale[copyNumber] as boolean)
+          ? (areOnSale[copyNumber])
           : false,
       isToRead:
         areToRead[copyNumber] !== undefined ? areToRead[copyNumber] : false,

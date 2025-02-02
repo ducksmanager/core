@@ -54,7 +54,7 @@ export default () => ({
 
       for (const { id, slug, issuecode } of edgesNotInCloudinary) {
         const { publicationcode, issuenumber } =
-          coaEdgesNotInCloudinary[issuecode]!;
+          coaEdgesNotInCloudinary[issuecode];
         const [countrycode, magazinecode] = publicationcode.split("/");
 
         console.log(`Uploading edge with ID ${id} and slug ${slug}...`);
@@ -144,7 +144,7 @@ const updateTags = async (edges: edge[]) => {
   const insertOperations = [];
 
   for (const edge of edges) {
-    const { publicationcode, issuenumber } = edgeIssues[edge.issuecode]!;
+    const { publicationcode, issuenumber } = edgeIssues[edge.issuecode];
     for (const spriteSize of SPRITE_SIZES) {
       const spriteName = getSpriteName(
         publicationcode,

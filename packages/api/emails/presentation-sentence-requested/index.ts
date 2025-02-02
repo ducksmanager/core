@@ -17,7 +17,7 @@ export default class extends Email {
   }
 
   getFrom = () => process.env.SMTP_USERNAME!;
-  getFromName = () => this.data.user.username!;
+  getFromName = () => this.data.user.username;
   getTo = () => process.env.SMTP_USERNAME!;
   getToName = () => process.env.SMTP_FRIENDLYNAME!;
   getSubject = () => i18n.__("Presentation sentence update request");

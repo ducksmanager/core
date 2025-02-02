@@ -1,7 +1,6 @@
 !.gitkeep
 .DS_Store
 .eslintcache
-.eslintrc-auto-import.json
 .idea/
 .secrets
 .vite-ssg-dist

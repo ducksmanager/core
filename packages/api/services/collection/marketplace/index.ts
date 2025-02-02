@@ -13,7 +13,7 @@ export default (services: UserServices) => {
     deleteRequests: async (issueId: number) => {
       await prismaDm.requestedIssue.deleteMany({
         where: {
-          buyerId: _socket.data.user!.id,
+          buyerId: _socket.data.user.id,
           issueId,
         },
       });
@@ -41,7 +41,7 @@ export default (services: UserServices) => {
             issueId: true,
           },
           where: {
-            buyerId: _socket.data.user!.id,
+            buyerId: _socket.data.user.id,
             issueId: { in: issueIds },
           },
         })
@@ -52,7 +52,7 @@ export default (services: UserServices) => {
       await prismaDm.requestedIssue.createMany({
         data: newlyRequestedIssueIds.map((issueId: number) => ({
           isBooked: false,
-          buyerId: _socket.data.user!.id,
+          buyerId: _socket.data.user.id,
           issueId,
         })),
       });
@@ -60,30 +60,30 @@ export default (services: UserServices) => {
 
     getRequests: async (as: "buyer" | "seller") => {
       switch (as) {
-        case "seller":
+        case "seller":{
           const requestedIssuesOnSaleIds = await prismaDm.$queryRaw<
             { id: number }[]
           >`
             SELECT requestedIssue.ID AS id
             FROM numeros_demandes requestedIssue
             INNER JOIN numeros issue ON requestedIssue.ID_Numero = issue.ID
-            WHERE issue.ID_Utilisateur = ${_socket.data.user!.id}
+            WHERE issue.ID_Utilisateur = ${_socket.data.user.id}
         `;
           return await prismaDm.requestedIssue.findMany({
             where: {
               id: { in: requestedIssuesOnSaleIds.map(({ id }) => id) },
             },
-          });
+          });}
         case "buyer":
           return await prismaDm.requestedIssue.findMany({
             where: {
-              buyerId: _socket.data.user!.id,
+              buyerId: _socket.data.user.id,
             },
           });
       }
     },
 
-    getIssuesForSale: () => getIssuesForSale(_socket.data.user!.id),
+    getIssuesForSale: () => getIssuesForSale(_socket.data.user.id),
   };
 };
 

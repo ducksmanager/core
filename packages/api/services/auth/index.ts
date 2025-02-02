@@ -113,9 +113,9 @@ const listenEvents = () => ({
   getCsrf: async () => "",
 
   signup: (input: { username: string; password: string; email: string }) =>
-    new Promise<Errorable<string, "Bad request">>(async (resolve) => {
+    new Promise<Errorable<string, "Bad request">>((resolve) => {
       console.log(`signup with user ${input.username}`);
-      await prismaDm.$transaction(async (transaction) => {
+      prismaDm.$transaction(async (transaction) => {
         const scopedError = await validate(transaction, input, [
           new UsernameValidation(),
           new UsernameCreationValidation(),
@@ -189,7 +189,7 @@ const listenEvents = () => ({
     } else {
       const token = await loginAs(
         demoUser,
-        getHashedPassword(demoUser!.password),
+        getHashedPassword(demoUser.password),
       );
 
       return { token };

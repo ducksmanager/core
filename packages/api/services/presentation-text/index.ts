@@ -17,7 +17,7 @@ const listenEvents = () => ({
   ) => {
     switch (decision) {
       case "approve":
-        const user = await prismaDm.user.update({
+        {const user = await prismaDm.user.update({
           data: {
             presentationText: sentence,
           },
@@ -25,7 +25,7 @@ const listenEvents = () => ({
             id: userId,
           },
         });
-        await new PresentationSentenceApproved({ user }).send();
+        await new PresentationSentenceApproved({ user }).send();}
         break;
       case "refuse":
         await new PresentationSentenceRefused({

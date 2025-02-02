@@ -16,7 +16,7 @@ export const getShownQuotations = <
       ...quotation,
       estimationAverage:
         (quotation.estimationMax
-          ? ((quotation.estimationMin || 0) + quotation.estimationMax!) / 2
+          ? ((quotation.estimationMin || 0) + quotation.estimationMax) / 2
           : quotation.estimationMin) || 0,
     }))
     .groupBy("issuecode");

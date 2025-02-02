@@ -9,7 +9,7 @@ const maxWatchedAuthors = 5;
 export default ({ _socket }: UserServices) => ({
   getWatchedAuthors: async () => {
     const authorsUsers = await prismaDm.authorUser.findMany({
-      where: { userId: _socket.data.user!.id },
+      where: { userId: _socket.data.user.id },
     });
     const authorNames = (
       await prismaCoa.inducks_person.findMany({
@@ -23,13 +23,13 @@ export default ({ _socket }: UserServices) => ({
 
     return authorsUsers.map((au) => ({
       ...au,
-      fullname: authorNames[au.personcode]!.fullname,
+      fullname: authorNames[au.personcode].fullname,
     }));
   },
 
   addWatchedAuthor: async (personcode: string) => {
     try {
-      await upsertAuthorUser(personcode, _socket.data.user!.id);
+      await upsertAuthorUser(personcode, _socket.data.user.id);
     } catch (e) {
       console.log(e);
       return { error: "Error", errorDetails: (e as Error).message };
@@ -39,7 +39,7 @@ export default ({ _socket }: UserServices) => ({
   updateWatchedAuthor: async (data: authorUser) => {
     try {
       const { personcode, notation } = data;
-      await upsertAuthorUser(personcode, _socket.data.user!.id, notation);
+      await upsertAuthorUser(personcode, _socket.data.user.id, notation);
     } catch (e) {
       console.error(e);
       return { error: "Error", errorDetails: (e as Error).message };
@@ -50,7 +50,7 @@ export default ({ _socket }: UserServices) => ({
     await prismaDm.authorUser.deleteMany({
       where: {
         personcode,
-        userId: _socket.data.user!.id,
+        userId: _socket.data.user.id,
       },
     });
   },

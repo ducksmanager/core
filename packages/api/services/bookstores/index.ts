@@ -95,7 +95,7 @@ const adminListenEvents = ({ _socket }: UserServices) => ({
     });
     const user = await prismaDm.user.findUniqueOrThrow({
       where: {
-        id: _socket.data.user!.id,
+        id: _socket.data.user.id,
       },
     });
     await persistContribution(user, 1, bookstoreComment);
