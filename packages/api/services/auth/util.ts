@@ -61,6 +61,9 @@ const AuthMiddleware = (
         if (user) {
           socket.data.user = { ...user, token } as SessionUser;
         }
+        else {
+          console.error('There is no user in the payload:', payload)
+        }
         next();
       }
     },
