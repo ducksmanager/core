@@ -61,13 +61,17 @@ const AuthMiddleware = (
         if (user) {
           socket.data.user = { ...user, token } as SessionUser;
         }
+        else if (typeof payload === 'object' && payload !== null && 'username' in payload) {
+          socket.data.user = { ...(payload as Omit<SessionUser, 'token'>), token } as SessionUser;
+        }
         else {
           console.error('There is no user in the payload:', payload)
+          next(new Error(`Invalid payload: ${payload}`));
+          return
         }
         next();
       }
-    },
-  );
+    },  );
 };
 
 export const RequiredAuthMiddleware = (
