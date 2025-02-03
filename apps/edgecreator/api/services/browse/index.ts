@@ -172,15 +172,13 @@ const listenEvents = (services: BrowseServices) => ({
         .then((results) => {
           resolve({ results });
         })
-        .catch((errorDetails) =>
-          {
-            console.error(errorDetails);
-            return resolve({
-              error: "Generic error",
-              errorDetails: errorDetails as string,
-            });
-          },
-        );
+        .catch((errorDetails) => {
+          console.error(errorDetails);
+          return resolve({
+            error: "Generic error",
+            errorDetails: errorDetails as string,
+          });
+        });
     }),
 
   listEdgeParts: async (parameters: {

@@ -25,7 +25,7 @@ export const getEdgesPath = () =>
     ? process.env.EDGES_PATH!
     : `${import.meta.dirname}/../../${process.env.EDGES_PATH!}`;
 
-export type SessionData = {
+export interface SessionData {
   user?: SessionUser;
   token: string;
 }

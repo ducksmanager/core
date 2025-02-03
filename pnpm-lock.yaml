@@ -425,8 +425,8 @@ importers:
         specifier: ^5.2.1
         version: 5.2.1(vite@6.0.11(@types/node@22.12.0)(jiti@1.21.7)(sass@1.83.4)(tsx@4.19.2)(yaml@2.7.0))(vue@3.5.13(typescript@5.7.3))
       '@vue/eslint-config-prettier':
-        specifier: ^7.1.0
-        version: 7.1.0(eslint@9.19.0(jiti@1.21.7))(prettier@3.4.2)
+        specifier: ^10.2.0
+        version: 10.2.0(@types/eslint@9.6.1)(eslint@9.19.0(jiti@1.21.7))(prettier@3.4.2)
       '@vue/eslint-config-typescript':
         specifier: ^14.3.0
         version: 14.3.0(eslint-plugin-vue@9.32.0(eslint@9.19.0(jiti@1.21.7)))(eslint@9.19.0(jiti@1.21.7))(typescript@5.7.3)
@@ -3568,6 +3568,9 @@ packages:
   '@vitest/pretty-format@2.1.8':
     resolution: {integrity: sha512-9HiSZ9zpqNLKlbIDRWOnAWqgcA7xu+8YxXSekhr0Ykab7PAYFkhkwoqVArPOtJhPmYeE2YHgKZlj3CP36z2AJQ==}
 
+  '@vitest/pretty-format@2.1.9':
+    resolution: {integrity: sha512-KhRIdGV2U9HOUzxfiHmY8IFHTdqtOhIzCpd8WRdJiE7D/HUcZVD0EgQCVjm+Q9gkUXWgBvMmTtZgIG48wq7sOQ==}
+
   '@vitest/runner@2.1.8':
     resolution: {integrity: sha512-17ub8vQstRnRlIU5k50bG+QOMLHRhYPAna5tw8tYbj+jzjcspnwnwtPtiOlkuKC4+ixDPTuLZiqiWWQ2PSXHVg==}
 
@@ -3625,11 +3628,11 @@ packages:
   '@vue/devtools-api@6.6.4':
     resolution: {integrity: sha512-sGhTPMuXqZ1rVOk32RylztWkfXTRhuS7vgAKv0zjqk8gbsHkJ7xfFf+jbySxt7tWObEJwyKaHMikV/WGDiQm8g==}
 
-  '@vue/eslint-config-prettier@7.1.0':
-    resolution: {integrity: sha512-Pv/lVr0bAzSIHLd9iz0KnvAr4GKyCEl+h52bc4e5yWuDVtLgFwycF7nrbWTAQAS+FU6q1geVd07lc6EWfJiWKQ==}
+  '@vue/eslint-config-prettier@10.2.0':
+    resolution: {integrity: sha512-GL3YBLwv/+b86yHcNNfPJxOTtVFJ4Mbc9UU3zR+KVoG7SwGTjPT+32fXamscNumElhcpXW3mT0DgzS9w32S7Bw==}
     peerDependencies:
-      eslint: '>= 7.28.0'
-      prettier: '>= 2.0.0'
+      eslint: '>= 8.21.0'
+      prettier: '>= 3.0.0'
 
   '@vue/eslint-config-typescript@14.3.0':
     resolution: {integrity: sha512-bOreIxlSC/xsUdhDdKIHb1grwJah+IokNeJ50LqA1StdOHeSPUxSIPNxyKgRx4YdjhyzC6TKtrCf6yYK99x3Uw==}
@@ -4949,12 +4952,6 @@ packages:
     peerDependencies:
       eslint: '>=7.0.0'
 
-  eslint-config-prettier@8.10.0:
-    resolution: {integrity: sha512-SM8AMJdeQqRYT9O9zguiruQZaN7+z+E4eAP9oiLNGKMtomwaB1E9dcgUD6ZAn/eQAb52USbvezbiljfZUhbJcg==}
-    hasBin: true
-    peerDependencies:
-      eslint: '>=7.0.0'
-
   eslint-flat-config-utils@1.1.0:
     resolution: {integrity: sha512-W49wz7yQJGRfg4QSV3nwdO/fYcWetiSKhLV5YykfQMcqnIATNpoS7EPdINhLB9P3fmdjNmFtOgZjiKnCndWAnw==}
 
@@ -5065,17 +5062,6 @@ packages:
   eslint-plugin-prettier-vue@5.0.0:
     resolution: {integrity: sha512-VsWmk/fftpjHBM7QFci0jZDLsc6Fh7jhenDHJ7Mbd/V0EMolcbezJRhtidE//3Liy5vEaVeX+U3skCQduWlmGA==}
     engines: {node: '>=16'}
-
-  eslint-plugin-prettier@4.2.1:
-    resolution: {integrity: sha512-f/0rXLXUt0oFYs8ra4w49wYZBG5GKZpAYsJSm6rnYL5uVDjd+zowwMwVZHnAjf4edNrKpCDYfXDgmRE/Ak7QyQ==}
-    engines: {node: '>=12.0.0'}
-    peerDependencies:
-      eslint: '>=7.28.0'
-      eslint-config-prettier: '*'
-      prettier: '>=2.0.0'
-    peerDependenciesMeta:
-      eslint-config-prettier:
-        optional: true
 
   eslint-plugin-prettier@5.2.3:
     resolution: {integrity: sha512-qJ+y0FfCp/mQYQ/vWQ3s7eUlFEL4PyKfAJxsnYTJ4YT73nsJBWqmEpFryxV9OeUiqmsTsYJ5Y+KDNaeP31wrRw==}
@@ -11366,6 +11352,11 @@ snapshots:
       tinyrainbow: 1.2.0
     optional: true
 
+  '@vitest/pretty-format@2.1.9':
+    dependencies:
+      tinyrainbow: 1.2.0
+    optional: true
+
   '@vitest/runner@2.1.8':
     dependencies:
       '@vitest/utils': 2.1.8
@@ -11469,12 +11460,14 @@ snapshots:
 
   '@vue/devtools-api@6.6.4': {}
 
-  '@vue/eslint-config-prettier@7.1.0(eslint@9.19.0(jiti@1.21.7))(prettier@3.4.2)':
+  '@vue/eslint-config-prettier@10.2.0(@types/eslint@9.6.1)(eslint@9.19.0(jiti@1.21.7))(prettier@3.4.2)':
     dependencies:
       eslint: 9.19.0(jiti@1.21.7)
-      eslint-config-prettier: 8.10.0(eslint@9.19.0(jiti@1.21.7))
-      eslint-plugin-prettier: 4.2.1(eslint-config-prettier@8.10.0(eslint@9.19.0(jiti@1.21.7)))(eslint@9.19.0(jiti@1.21.7))(prettier@3.4.2)
+      eslint-config-prettier: 10.0.1(eslint@9.19.0(jiti@1.21.7))
+      eslint-plugin-prettier: 5.2.3(@types/eslint@9.6.1)(eslint-config-prettier@10.0.1(eslint@9.19.0(jiti@1.21.7)))(eslint@9.19.0(jiti@1.21.7))(prettier@3.4.2)
       prettier: 3.4.2
+    transitivePeerDependencies:
+      - '@types/eslint'
 
   '@vue/eslint-config-typescript@14.3.0(eslint-plugin-vue@9.32.0(eslint@9.19.0(jiti@1.21.7)))(eslint@9.19.0(jiti@1.21.7))(typescript@5.7.3)':
     dependencies:
@@ -12994,10 +12987,6 @@ snapshots:
     dependencies:
       eslint: 9.19.0(jiti@1.21.7)
 
-  eslint-config-prettier@8.10.0(eslint@9.19.0(jiti@1.21.7)):
-    dependencies:
-      eslint: 9.19.0(jiti@1.21.7)
-
   eslint-flat-config-utils@1.1.0:
     dependencies:
       pathe: 2.0.2
@@ -13163,14 +13152,6 @@ snapshots:
       prettier: 3.4.2
       prettier-linter-helpers: 1.0.0
       synckit: 0.8.8
-
-  eslint-plugin-prettier@4.2.1(eslint-config-prettier@8.10.0(eslint@9.19.0(jiti@1.21.7)))(eslint@9.19.0(jiti@1.21.7))(prettier@3.4.2):
-    dependencies:
-      eslint: 9.19.0(jiti@1.21.7)
-      prettier: 3.4.2
-      prettier-linter-helpers: 1.0.0
-    optionalDependencies:
-      eslint-config-prettier: 8.10.0(eslint@9.19.0(jiti@1.21.7))
 
   eslint-plugin-prettier@5.2.3(@types/eslint@9.6.1)(eslint-config-prettier@10.0.1(eslint@9.19.0(jiti@1.21.7)))(eslint@9.19.0(jiti@1.21.7))(prettier@3.4.2):
     dependencies:
@@ -17084,7 +17065,7 @@ snapshots:
     dependencies:
       '@vitest/expect': 2.1.8
       '@vitest/mocker': 2.1.8(vite@5.4.14(@types/node@22.12.0)(sass@1.83.4))
-      '@vitest/pretty-format': 2.1.8
+      '@vitest/pretty-format': 2.1.9
       '@vitest/runner': 2.1.8
       '@vitest/snapshot': 2.1.8
       '@vitest/spy': 2.1.8
