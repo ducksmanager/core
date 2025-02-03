@@ -26,12 +26,12 @@ const REGEX_IS_PNG_FILE = /^_?.+\.png$/;
 
 const getSvgMetadata = (
   metadataNodes: { "#text": string; type?: string }[],
-  metadataType: string,
+  metadataType: string
 ) =>
   metadataNodes
     .filter(
       ({ type, "#text": text }) =>
-        type === metadataType && typeof text === "string",
+        type === metadataType && typeof text === "string"
     )
     .map(({ "#text": text }) => text.trim());
 
@@ -50,7 +50,7 @@ const findInDir = async (dir: string, currentUsername?: string) => {
 
   const filteredFiles = [
     ...new Set(
-      publicationcodes.map((publicationcode) => publicationcode.split("/")[0]),
+      publicationcodes.map((publicationcode) => publicationcode.split("/")[0])
     ),
   ]
     .map((countrycode) =>
@@ -68,52 +68,57 @@ const findInDir = async (dir: string, currentUsername?: string) => {
                 magazinecodeAndIssuenumber.split(".");
               const publicationcode = `${countrycode}/${magazinecode}`;
 
-              const doc = parser.parse(readFileSync(filePath));
-              const metadataNodes = doc.svg.metadata;
+              try {
+                const doc = parser.parse(readFileSync(filePath));
+                const metadataNodes = doc.svg.metadata;
 
-              const designers = getSvgMetadata(
-                metadataNodes,
-                "contributor-designer",
-              );
-              const photographers = getSvgMetadata(
-                metadataNodes,
-                "contributor-photographer",
-              );
-
-              const svgUrl = filePath.replace(".png", ".svg");
-
-              const issue = existingEdges[publicationcode]?.find(
-                ({ issuecode }) =>
-                  issuecode.replaceAll(" ", "") ===
-                  `${publicationcode}${issuenumberShort}`,
-              );
-
-              if (!issue) {
-                console.warn(
-                  `Issue ${publicationcode}${issuenumberShort} not found in database`,
+                const designers = getSvgMetadata(
+                  metadataNodes,
+                  "contributor-designer"
                 );
-                return [];
-              }
+                const photographers = getSvgMetadata(
+                  metadataNodes,
+                  "contributor-photographer"
+                );
 
-              return {
-                id: issue.id,
-                publicationcode,
-                issuenumberShort,
-                url: `${process.env.EDGES_URL!}/${filePath}`,
-                svgUrl: existsSync(svgUrl) ? svgUrl : undefined,
-                designers,
-                photographers,
-                ...({
-                  status: file.name.startsWith("_")
-                    ? currentUsername && designers.includes(currentUsername)
-                      ? "Ongoing"
-                      : designers.length
-                        ? "Ongoing by another user"
-                        : "Pending"
-                    : "Published",
-                } as const),
-              };
-            }),
+                const svgUrl = filePath.replace(".png", ".svg");
+
+                const issue = existingEdges[publicationcode]?.find(
+                  ({ issuecode }) =>
+                    issuecode.replaceAll(" ", "") ===
+                    `${publicationcode}${issuenumberShort}`
+                );
+
+                if (!issue) {
+                  console.warn(
+                    `Issue ${publicationcode}${issuenumberShort} not found in database`
+                  );
+                  return [];
+                }
+
+                return {
+                  id: issue.id,
+                  publicationcode,
+                  issuenumberShort,
+                  url: `${process.env.EDGES_URL!}/${filePath}`,
+                  svgUrl: existsSync(svgUrl) ? svgUrl : undefined,
+                  designers,
+                  photographers,
+                  ...({
+                    status: file.name.startsWith("_")
+                      ? currentUsername && designers.includes(currentUsername)
+                        ? "Ongoing"
+                        : designers.length
+                          ? "Ongoing by another user"
+                          : "Pending"
+                      : "Published",
+                  } as const),
+                };
+              } catch (_e) {
+                console.error(`Error parsing ${filePath}`);
+                return []
+              }
+            })
     )
     .filter((edge) => !!edge)
     .flat();
@@ -142,11 +147,11 @@ const findInDir = async (dir: string, currentUsername?: string) => {
   const filesWithInducksIssuecode = filteredFiles.flatMap((edge) => {
     const issuecode = existingIssuecodes[edge.publicationcode].find(
       ({ issuenumber }) =>
-        issuenumber.replaceAll(" ", "") === edge.issuenumberShort,
+        issuenumber.replaceAll(" ", "") === edge.issuenumberShort
     )?.issuecode;
     if (!issuecode) {
       console.warn(
-        `No issuecode found for ${edge.publicationcode} ${edge.issuenumberShort}`,
+        `No issuecode found for ${edge.publicationcode} ${edge.issuenumberShort}`
       );
       return [];
     }
@@ -197,9 +202,9 @@ const listenEvents = (services: BrowseServices) => ({
     try {
       return {
         results: readdirSync(
-          `${process.env.EDGES_PATH!}/${country}/${imageType}`,
+          `${process.env.EDGES_PATH!}/${country}/${imageType}`
         ).filter((item) =>
-          new RegExp(`(?:^|[. ])${magazine}(?:[. ]|$)`).test(item),
+          new RegExp(`(?:^|[. ])${magazine}(?:[. ]|$)`).test(item)
         ),
       };
     } catch (_e) {
