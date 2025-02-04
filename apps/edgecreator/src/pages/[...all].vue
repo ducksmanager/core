@@ -74,7 +74,7 @@ meta:
       <hr />
 
       <template
-        v-for="status in ['Ongoing', 'Ongoing by another user', 'Ongoing'] as const"
+        v-for="status in ['Ongoing', 'Ongoing by another user', 'Pending edition'] as const"
         :key="`${status}`"
       >
         <h3>{{ $t(status) }}</h3>
