@@ -158,7 +158,12 @@ export const main = defineStore("main", () => {
   );
 
   const edgeIssuecodesBefore = computed(() => {
-    if (!edgeCatalog().isCatalogLoaded || !publicationIssues.value) {
+    if (
+      !edgeCatalog().ongoingEdges ||
+      !publicationcode.value ||
+      !publicationIssues.value ||
+      !(publicationcode.value in edgeCatalog().publishedEdges)
+    ) {
       return [];
     }
     const issuesBefore = publicationIssues.value.filter(
@@ -174,7 +179,12 @@ export const main = defineStore("main", () => {
   });
 
   const edgeIssuecodesAfter = computed(() => {
-    if (!edgeCatalog().isCatalogLoaded || !publicationIssues.value) {
+    if (
+      !edgeCatalog().ongoingEdges ||
+      !publicationcode.value ||
+      !publicationIssues.value ||
+      !(publicationcode.value in edgeCatalog().publishedEdges)
+    ) {
       return [];
     }
     const issuesAfter = publicationIssues.value.filter(

@@ -41,7 +41,7 @@
                 :class="{
                   clickable: true,
                   published: isPublished(issuecode),
-                  pending: isPending(issuecode),
+                  ongoing: isOngoing(issuecode),
                 }"
                 @click.exact="editingStepStore.replaceIssuecode(issuecode)"
                 @click.shift="editingStepStore.toggleIssuecode(issuecode)"
@@ -233,6 +233,7 @@ try {
   publicationcode.value = issuecodeParts[0];
 
   await mainStore.loadPublicationIssues();
+  edgeCatalog().fetchPublishedEdges(publicationcode.value);
   firstIssuecode = getActualIssuecode(firstIssuecode);
   if (lastIssuecode) {
     lastIssuecode = getActualIssuecode(lastIssuecode);
@@ -289,7 +290,7 @@ const setColorFromPhoto = ({ target, offsetX, offsetY }: MouseEvent) => {
   });
 };
 
-const isPending = (issuecode: string) =>
+const isOngoing = (issuecode: string) =>
   !!edgeCatalog().ongoingEdges[issuecode];
 const isPublished = (issuecode: string) =>
   edgeCatalog().publishedEdges[issuecode];
@@ -330,7 +331,7 @@ table.edges {
         background: green;
       }
 
-      &.pending {
+      &.ongoing {
         background: orange;
       }
 

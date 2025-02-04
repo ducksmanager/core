@@ -9,12 +9,23 @@ import { socketInjectionKey as dmSocketInjectionKey } from "~web/src/composables
 
 export const edgeCatalog = defineStore("edgeCatalog", () => {
   const { edgeCreator: edgeCreatorEvents } = inject(dmSocketInjectionKey)!;
-
   const { browse: browseEvents } = inject(edgecreatorSocketInjectionKey)!;
-  const isCatalogLoaded = ref(false),
-    edges = ref<
-      SuccessfulEventOutput<BrowseClientEvents, "listEdgeModels">["results"]
-    >([]),
+
+  const ongoingEdges = ref<
+      SuccessfulEventOutput<
+        BrowseClientEvents,
+        "listOngoingEdgeModels"
+      >["results"]
+    >({}),
+    publishedEdges = ref<
+      Record<
+        string,
+        SuccessfulEventOutput<
+          BrowseClientEvents,
+          "listPublishedEdgeModels"
+        >["results"]
+      >
+    >({}),
     publishedEdgesSteps = ref<ModelSteps>({}),
     addPublishedEdgesSteps = (newPublishedEdgesSteps: ModelSteps) => {
       publishedEdgesSteps.value = {
@@ -22,11 +33,7 @@ export const edgeCatalog = defineStore("edgeCatalog", () => {
         ...newPublishedEdgesSteps,
       };
     },
-    loadPublishedEdgesSteps = async ({
-      edgeModelIds,
-    }: {
-      edgeModelIds: number[];
-    }) => {
+    loadPublishedEdgesSteps = async (edgeModelIds: number[]) => {
       if (!edgeModelIds.length) {
         return;
       }
@@ -37,49 +44,56 @@ export const edgeCatalog = defineStore("edgeCatalog", () => {
         ),
       );
     },
-    canEditEdge = (status: (typeof edges.value)[number]["status"]) =>
+    canEditEdge = (status: (typeof ongoingEdges.value)[number]["status"]) =>
       webStores.collection().hasRole("Admin") ||
       status !== "Ongoing by another user",
-    loadCatalog = async () => {
-      if (isCatalogLoaded.value) {
+    fetchOngoingEdges = async () => {
+      if (Object.keys(ongoingEdges.value).length) {
         return;
       }
 
-      const models = await browseEvents.listEdgeModels();
+      const models = await browseEvents.listOngoingEdgeModels();
       if ("error" in models) {
         console.error(
-          "Error while loading edge catalog",
+          "Error while loading ongoing edges",
           models.error,
           models.errorDetails,
         );
         return;
       }
 
-      edges.value = [...edges.value, ...models.results];
+      ongoingEdges.value = models.results;
+    },
+    fetchPublishedEdges = async (publicationcode: string) => {
+      if (publicationcode in publishedEdges.value) {
+        return;
+      }
 
-      isCatalogLoaded.value = true;
+      const models =
+        await browseEvents.listPublishedEdgeModels(publicationcode);
+      if ("error" in models) {
+        console.error(
+          "Error while loading ongoing edges",
+          models.error,
+          models.errorDetails,
+        );
+        return;
+      }
+
+      publishedEdges.value = {
+        ...publishedEdges.value,
+        publicationcode: models.results,
+      };
     };
 
-  const publishedEdges = computed(() =>
-    edges.value
-      .filter(({ status }) => status === "Published")
-      .groupBy("issuecode"),
-  );
-
-  const ongoingEdges = computed(() =>
-    edges.value
-      .filter(({ status }) => status !== "Published")
-      .groupBy("issuecode"),
-  );
-
   return {
+    addPublishedEdgesSteps,
     canEditEdge,
-    loadCatalog,
-    isCatalogLoaded,
+    fetchOngoingEdges,
+    fetchPublishedEdges,
+    loadPublishedEdgesSteps,
     ongoingEdges,
     publishedEdges,
     publishedEdgesSteps,
-    addPublishedEdgesSteps,
-    loadPublishedEdgesSteps,
   };
 });

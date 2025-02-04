@@ -215,9 +215,7 @@ export default () => {
         await loadSvg(true);
       } catch (_e) {
         const edge = (await edgeCreatorEvents.getModel(issuecode))!;
-        await edgeCatalogStore.loadPublishedEdgesSteps({
-          edgeModelIds: [edge.id],
-        });
+        await edgeCatalogStore.loadPublishedEdgesSteps([edge.id]);
         const apiSteps = edgeCatalogStore.publishedEdgesSteps[issuecode];
         loadDimensionsFromApi(issuecode, apiSteps);
         await loadStepsFromApi(issuecode, apiSteps, true, (error: string) =>

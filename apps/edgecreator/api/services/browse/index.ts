@@ -33,14 +33,16 @@ const getSvgMetadata = (
     )
     .map(({ "#text": text }) => text.trim());
 
-const findInDir = async (dir: string, currentUsername?: string) => {
+const findPublishedEdges = async (publicationcode: string) => {
+  const [countrycode, magazinecode] = publicationcode.split("/");
   const existingEdges = (
     await prismaDm.edge.findMany({
       select: {
         id: true,
-        publicationcode: true,
         issuecode: true,
-        users_contributions: true,
+      },
+      where: {
+        publicationcode,
       },
     })
   )
@@ -48,16 +50,122 @@ const findInDir = async (dir: string, currentUsername?: string) => {
       ...edge,
       shortIssuecode: edge.issuecode.replace(/[ ]+/, " "),
     }))
-    .groupBy("publicationcode", "[]");
+    .groupBy("shortIssuecode");
 
-  const usersById = (await prismaDm.user.findMany()).groupBy("id", "username");
+  const coaIssuecodesByShortIssuecode = (
+    await prismaCoa.inducks_issue.findMany({
+      select: {
+        issuecode: true,
+      },
+      where: {
+        publicationcode,
+      },
+    })
+  )
+    .map((issue) => ({
+      ...issue,
+      shortIssuecode: issue.issuecode.replace(/[ ]+/, " "),
+    }))
+    .groupBy("shortIssuecode", "issuecode");
 
-  const publicationcodes = Object.keys(existingEdges);
-  const countrycodes = [
-    ...new Set(
-      publicationcodes.map((publicationcode) => publicationcode.split("/")[0])
-    ),
-  ];
+  const genDir = `${getEdgesPath()}/${countrycode}/gen`;
+  if (!existsSync(genDir)) {
+    console.warn("No gen directory found for", countrycode);
+    return [];
+  }
+  console.log("Scanning edges in directory", genDir);
+  return readdirSync(genDir, {
+    withFileTypes: true,
+  })
+    .filter((file) => new RegExp(`^${magazinecode}\..+\.png$`).test(file.name))
+    .flatMap((file) => {
+      const filePath = path.join(file.parentPath, file.name);
+      const [magazinecode, issuenumberShort] = file.name.split(".");
+      const publicationcode = `${countrycode}/${magazinecode}`;
+      const shortIssuecode = `${publicationcode} ${issuenumberShort}`;
+
+      let svgUrl: string | undefined;
+      const edge = existingEdges[`${publicationcode} ${issuenumberShort}`];
+      if (!edge) {
+        // Auto-generated edge image
+        return [];
+      }
+
+      const potentialSvgPath = filePath.replace(".png", ".svg");
+      if (existsSync(potentialSvgPath)) {
+        svgUrl = `${genDir}/${file.name.replace(".png", ".svg")}`;
+      }
+
+      return {
+        id: edge.id,
+        issuecode: coaIssuecodesByShortIssuecode[shortIssuecode],
+        publicationcode,
+        url: `${genDir}/${filePath}`,
+        svgUrl,
+      };
+    }).groupBy('issuecode')
+};
+
+const findOngoingEdges = async (currentUsername?: string) => {
+  const edges = readdirSync(getEdgesPath(), {
+    withFileTypes: true,
+  })
+    .filter((file) => file.isDirectory() && existsSync(`${getEdgesPath()}/${file.name}/gen`))
+    .flatMap((countryDir) => {
+      const genDir = `${getEdgesPath()}/${countryDir.name}/gen`;
+      console.log("Scanning edges in directory", genDir);
+      const edges = readdirSync(genDir, {
+        recursive: true,
+        withFileTypes: true,
+      })
+        .filter((file) => /^_.+.svg$/.test(file.name))
+        .flatMap((file) => {
+          const filePath = path.join(file.parentPath, file.name);
+          const [magazinecode, issuenumberShort] = file.name
+            .replace("_", "")
+            .split(".");
+          const publicationcode = `${countryDir.name}/${magazinecode}`;
+          const shortIssuecode = `${publicationcode} ${issuenumberShort}`;
+
+          const doc = parser.parse(readFileSync(filePath));
+          const metadataNodes = doc.svg.metadata || [];
+
+          if (!Array.isArray(metadataNodes)) {
+            console.warn(
+              "Invalid metadata nodes found in SVG file",
+              file.name,
+              metadataNodes
+            );
+            return [];
+          }
+
+          const designers = getSvgMetadata(
+            metadataNodes,
+            "contributor-designer"
+          );
+          const photographers = getSvgMetadata(
+            metadataNodes,
+            "contributor-photographer"
+          );
+
+          return {
+            shortIssuecode,
+            designers,
+            publicationcode,
+            photographers,
+            svgPath: `/${countryDir.name}/gen/${file.name}`,
+            ...({
+              status:
+                currentUsername && designers.includes(currentUsername)
+                  ? "Ongoing"
+                  : designers.length
+                    ? "Ongoing by another user"
+                    : "Pending edition",
+            } as const),
+          };
+        });
+      return edges;
+    });
 
   const coaIssuecodesByShortIssuecode = (
     await prismaCoa.inducks_issue.findMany({
@@ -66,7 +174,7 @@ const findInDir = async (dir: string, currentUsername?: string) => {
       },
       where: {
         publicationcode: {
-          in: publicationcodes,
+          in: [...new Set(edges.map((edge) => edge.publicationcode))],
         },
       },
     })
@@ -77,109 +185,44 @@ const findInDir = async (dir: string, currentUsername?: string) => {
     }))
     .groupBy("shortIssuecode", "issuecode");
 
-  return countrycodes.flatMap((countrycode) => {
-    const genDir = `${dir}/${countrycode}/gen`;
-    if (!existsSync(genDir)) {
-      console.warn("No gen directory found for", countrycode);
-      return [];
-    }
-    console.log("Scanning edges in directory", genDir);
-    return readdirSync(genDir, {
-      recursive: true,
-      withFileTypes: true,
-    })
-      .filter((file) => /.png$/.test(file.name) || /^_.+.svg$/.test(file.name))
-      .flatMap((file) => {
-        const filePath = path.join(file.parentPath, file.name);
-        const [magazinecode, issuenumberShort] = file.name
-          .replace("_", "")
-          .split(".");
-        const publicationcode = `${countrycode}/${magazinecode}`;
-
-        let svgFileName: string | undefined;
-        let isPending = false;
-        let edge: (typeof existingEdges)[string][number] | undefined;
-        let designers: string[] = [];
-        let photographers: string[] = [];
-
-        if (/.png$/.test(file.name)) {
-          const potentialSvgFileName = filePath.replace(".png", ".svg");
-          if (existsSync(potentialSvgFileName)) {
-            svgFileName = potentialSvgFileName;
-
-            edge = existingEdges[publicationcode]?.find(
-              ({ shortIssuecode }) =>
-                shortIssuecode === `${publicationcode} ${issuenumberShort}`
-            );
-            if (!edge) {
-              // Auto-generated edge image
-              return [];
-            }
-            designers = edge.users_contributions
-              .filter(({ contribution }) => contribution === "createur")
-              .map(({ userId }) => usersById[userId]);
-            photographers = edge.users_contributions
-              .filter(({ contribution }) => contribution === "photographe")
-              .map(({ userId }) => usersById[userId]);
-          }
-        } else {
-          svgFileName = filePath;
-          isPending = true;
-        }
-
-        if (svgFileName) {
-          const doc = parser.parse(readFileSync(svgFileName));
-          const metadataNodes = doc.svg.metadata || [];
-
-          if (!Array.isArray(metadataNodes)) {
-            console.warn(
-              "Invalid metadata nodes found in SVG file",
-              svgFileName,
-              metadataNodes
-            );
-            return [];
-          }
-
-          designers = getSvgMetadata(metadataNodes, "contributor-designer");
-          photographers = getSvgMetadata(
-            metadataNodes,
-            "contributor-photographer"
-          );
-        }
-
-        return {
-          edgeId: edge?.id,
-          issuecode: coaIssuecodesByShortIssuecode[issuenumberShort],
-          publicationcode,
-          issuenumberShort,
-          url: `${genDir}/${filePath}`,
-          svgUrl: `${genDir}/${svgFileName}`,
-          designers,
-          photographers,
-          ...({
-            status: isPending
-              ? currentUsername && designers.includes(currentUsername)
-                ? "Ongoing"
-                : designers.length
-                  ? "Ongoing by another user"
-                  : "Pending"
-              : "Published",
-          } as const),
-        };
-      });
-  });
+  return edges.map(({shortIssuecode, ...edge}) => ({
+    ...edge,
+    issuecode: coaIssuecodesByShortIssuecode[shortIssuecode],
+  })).filter(({issuecode}) => !!issuecode).groupBy('issuecode')
 };
 
 const listenEvents = (services: BrowseServices) => ({
-  listEdgeModels: async (): Promise<
+  listPublishedEdgeModels: async (
+    publicationcode: string
+  ): Promise<
     | {
         error: "Generic error";
         errorDetails: string;
       }
-    | { results: Awaited<ReturnType<typeof findInDir>> }
+    | { results: Awaited<ReturnType<typeof findPublishedEdges>> }
   > =>
     new Promise((resolve) => {
-      findInDir(getEdgesPath(), services._socket.data.user?.username)
+      findPublishedEdges(publicationcode)
+        .then((results) => {
+          resolve({ results });
+        })
+        .catch((errorDetails) => {
+          console.error(errorDetails);
+          return resolve({
+            error: "Generic error",
+            errorDetails: errorDetails as string,
+          } as const);
+        });
+    }),
+  listOngoingEdgeModels: async (): Promise<
+    | {
+        error: "Generic error";
+        errorDetails: string;
+      }
+    | { results: Awaited<ReturnType<typeof findOngoingEdges>> }
+  > =>
+    new Promise((resolve) => {
+      findOngoingEdges(services._socket.data.user?.username)
         .then((results) => {
           resolve({ results });
         })

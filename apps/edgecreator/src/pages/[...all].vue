@@ -7,7 +7,11 @@ meta:
     <session-info />
     <h1>{{ $t("Dashboard") }}</h1>
 
-    <b-alert v-if="!isCatalogLoaded" variant="info" :model-value="true">
+    <b-alert
+      v-if="!Object.keys(ongoingEdges).length"
+      variant="info"
+      :model-value="true"
+    >
       {{ $t("Loading...") }}
     </b-alert>
 
@@ -70,7 +74,7 @@ meta:
       <hr />
 
       <template
-        v-for="status in ['Ongoing', 'Ongoing by another user', 'Pending'] as const"
+        v-for="status in ['Ongoing', 'Ongoing by another user', 'Ongoing'] as const"
         :key="`${status}`"
       >
         <h3>{{ $t(status) }}</h3>
@@ -125,18 +129,15 @@ meta:
                   >
                     <b-card-text>
                       <img
-                        v-if="
-                          (hoveredEdge === edge && edge.svgUrl) ||
-                          status === 'Pending'
-                        "
+                        v-if="hoveredEdge === edge"
                         :alt="edge.issuecode"
                         class="edge-preview"
-                        :src="edge.svgUrl || undefined"
+                        :src="getSvgUrl(edge)"
                       /><edge-link
                         :issuecode="edge.issuecode"
                         :designers="edge.designers"
                         :photographers="edge.photographers"
-                        :published="edge.status === 'Published'"
+                        :published="false"
                       />
                     </b-card-text>
                   </b-link>
@@ -186,8 +187,8 @@ const { hasRole } = collectionStore;
 const { user } = storeToRefs(collectionStore);
 
 const edgeCatalogStore = edgeCatalog();
-const { loadCatalog, canEditEdge } = edgeCatalogStore;
-const { ongoingEdges, isCatalogLoaded } = storeToRefs(edgeCatalogStore);
+const { fetchOngoingEdges, canEditEdge } = edgeCatalogStore;
+const { ongoingEdges } = storeToRefs(edgeCatalogStore);
 
 const edgesByStatusAndPublicationcode = computed(() => {
   const edgesByStatus = Object.values(ongoingEdges.value || []).groupBy(
@@ -197,13 +198,7 @@ const edgesByStatusAndPublicationcode = computed(() => {
   return Object.fromEntries(
     Object.entries(edgesByStatus).map(([status, edges]) => [
       status,
-      edges
-        .map((edge) => ({
-          ...edge,
-          publicationcode:
-            issuecodeDetails.value[edge.issuecode].publicationcode,
-        }))
-        .groupBy("publicationcode", "[]"),
+      edges.groupBy("publicationcode", "[]"),
     ]),
   );
 });
@@ -237,6 +232,9 @@ const mostPopularIssuesInCollectionWithoutEdge = computed(() =>
     )
     .filter((_, index) => index < 10),
 );
+
+const getSvgUrl = (edge: { svgPath: string }) =>
+  edge.svgPath ? `${import.meta.env.VITE_EDGES_URL}${edge.svgPath}` : undefined;
 
 const loadMostWantedEdges = async () => {
   const wantedEdges = await edgesEvents.getWantedEdges();
@@ -282,7 +280,7 @@ watch(
 
 (async () => {
   await loadMostWantedEdges();
-  await loadCatalog();
+  await fetchOngoingEdges();
   await coaStore.fetchIssuecodeDetails(
     Object.keys(ongoingEdges.value).map((issuecode) => issuecode),
   );

@@ -20,7 +20,7 @@
     <template v-if="currentCountrycode && currentPublicationcode">
       <template v-if="withEdgeGallery">
         <edge-gallery
-          v-if="isCatalogLoaded"
+          v-if="currentPublicationcode in publishedEdges"
           :publicationcode="currentPublicationcode"
           :selected="currentFirstIssuecode"
           :has-more-before="hasMoreIssuesToLoad.before"
@@ -86,7 +86,7 @@ import { stores as webStores } from "~web";
 const { t: $t } = useI18n();
 
 const edgeCatalogStore = edgeCatalog();
-const { isCatalogLoaded } = storeToRefs(edgeCatalogStore);
+const { publishedEdges } = storeToRefs(edgeCatalogStore);
 
 const coaStore = webStores.coa();
 const {
@@ -263,7 +263,7 @@ const onChange = () => {
 };
 (async () => {
   await coaStore.fetchCountryNames();
-  await edgeCatalogStore.loadCatalog();
+  await edgeCatalogStore.fetchOngoingEdges();
 })();
 </script>
 <style scoped lang="scss">

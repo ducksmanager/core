@@ -163,7 +163,6 @@ const listenEvents = () => ({
     username: string;
     password: string;
   }) => {
-    console.log("login");
     const hashedPassword = getHashedPassword(password);
     const user = await prismaDm.user.findFirst({
       where: {

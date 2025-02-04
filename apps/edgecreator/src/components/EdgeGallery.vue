@@ -67,9 +67,7 @@ const populateItems = async (itemsForPublication: { id: number }[]) => {
   const publishedIssueModels = Object.values(itemsForPublication).map(
     ({ id }) => id,
   );
-  await loadPublishedEdgesSteps({
-    edgeModelIds: publishedIssueModels,
-  });
+  await loadPublishedEdgesSteps(publishedIssueModels);
   items.value = (
     await Promise.all(
       Object.keys(itemsForPublication).map(async (issuecode) => {
@@ -138,12 +136,7 @@ const onPublicationOrEdgeChange = async () => {
   if (publishedEdges.value) {
     if (!isPopulating.value) {
       isPopulating.value = true;
-      await populateItems(
-        Object.values(publishedEdges.value).filter(
-          ({ publicationcode: publishedEdgePublicationcode }) =>
-            publishedEdgePublicationcode === publicationcode,
-        ),
-      );
+      await populateItems(Object.values(publishedEdges.value[publicationcode]));
       isPopulating.value = false;
     }
   }
