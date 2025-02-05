@@ -227,7 +227,7 @@
           <b-collapse id="collapse-clone" v-model="collapseClone" class="mt-2">
             <issue-select
               v-if="collapseClone"
-              :publication-code="mainStore.publicationcode"
+              :publicationcode="publicationcode"
               :base-issue-codes="issuecodes"
               :disable-ongoing-or-published="false"
               with-edge-gallery
@@ -264,6 +264,7 @@ const {
   issuecodes,
   publicationIssues,
   photoUrls,
+  publicationcode,
   edgeIssuecodesAfter,
   edgeIssuecodesBefore,
 } = storeToRefs(mainStore);
@@ -281,7 +282,7 @@ const collapseClone = ref(false);
 
 const hasPhotoUrl = computed(() => Object.keys(photoUrls.value).length);
 const publicationName = computed(
-  () => webStores.coa().publicationNames[mainStore.publicationcode!],
+  () => webStores.coa().publicationNames[publicationcode.value!],
 );
 const uniqueDimensions = computed(() =>
   [
@@ -322,7 +323,7 @@ watch(
   },
 );
 
-webStores.coa().fetchPublicationNames([mainStore.publicationcode!]);
+webStores.coa().fetchPublicationNames([publicationcode.value!]);
 </script>
 <style lang="scss">
 .options {

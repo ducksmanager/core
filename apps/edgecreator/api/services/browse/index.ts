@@ -24,12 +24,12 @@ const parser = new XMLParser({
 
 const getSvgMetadata = (
   metadataNodes: { "#text": string; type?: string }[],
-  metadataType: string
+  metadataType: string,
 ) =>
   metadataNodes
     .filter(
       ({ type, "#text": text }) =>
-        type === metadataType && typeof text === "string"
+        type === metadataType && typeof text === "string",
     )
     .map(({ "#text": text }) => text.trim());
 
@@ -93,24 +93,28 @@ const findPublishedEdges = async (publicationcode: string) => {
 
       const potentialSvgPath = filePath.replace(".png", ".svg");
       if (existsSync(potentialSvgPath)) {
-        svgUrl = `${genDir}/${file.name.replace(".png", ".svg")}`;
+        svgUrl = potentialSvgPath.replace(/^.+\/edges\//, '')
       }
 
       return {
         id: edge.id,
         issuecode: coaIssuecodesByShortIssuecode[shortIssuecode],
         publicationcode,
-        url: `${genDir}/${filePath}`,
+        url: filePath.replace(/^.+\/edges\//, ''),
         svgUrl,
       };
-    }).groupBy('issuecode')
+    })
+    .groupBy("issuecode");
 };
 
 const findOngoingEdges = async (currentUsername?: string) => {
   const edges = readdirSync(getEdgesPath(), {
     withFileTypes: true,
   })
-    .filter((file) => file.isDirectory() && existsSync(`${getEdgesPath()}/${file.name}/gen`))
+    .filter(
+      (file) =>
+        file.isDirectory() && existsSync(`${getEdgesPath()}/${file.name}/gen`),
+    )
     .flatMap((countryDir) => {
       const genDir = `${getEdgesPath()}/${countryDir.name}/gen`;
       console.log("Scanning edges in directory", genDir);
@@ -134,18 +138,18 @@ const findOngoingEdges = async (currentUsername?: string) => {
             console.warn(
               "Invalid metadata nodes found in SVG file",
               file.name,
-              metadataNodes
+              metadataNodes,
             );
             return [];
           }
 
           const designers = getSvgMetadata(
             metadataNodes,
-            "contributor-designer"
+            "contributor-designer",
           );
           const photographers = getSvgMetadata(
             metadataNodes,
-            "contributor-photographer"
+            "contributor-photographer",
           );
 
           return {
@@ -185,15 +189,18 @@ const findOngoingEdges = async (currentUsername?: string) => {
     }))
     .groupBy("shortIssuecode", "issuecode");
 
-  return edges.map(({shortIssuecode, ...edge}) => ({
-    ...edge,
-    issuecode: coaIssuecodesByShortIssuecode[shortIssuecode],
-  })).filter(({issuecode}) => !!issuecode).groupBy('issuecode')
+  return edges
+    .map(({ shortIssuecode, ...edge }) => ({
+      ...edge,
+      issuecode: coaIssuecodesByShortIssuecode[shortIssuecode],
+    }))
+    .filter(({ issuecode }) => !!issuecode)
+    .groupBy("issuecode");
 };
 
 const listenEvents = (services: BrowseServices) => ({
   listPublishedEdgeModels: async (
-    publicationcode: string
+    publicationcode: string,
   ): Promise<
     | {
         error: "Generic error";
@@ -251,9 +258,9 @@ const listenEvents = (services: BrowseServices) => ({
     try {
       return {
         results: readdirSync(
-          `${process.env.EDGES_PATH!}/${country}/${imageType}`
+          `${process.env.EDGES_PATH!}/${country}/${imageType}`,
         ).filter((item) =>
-          new RegExp(`(?:^|[. ])${magazine}(?:[. ]|$)`).test(item)
+          new RegExp(`(?:^|[. ])${magazine}(?:[. ]|$)`).test(item),
         ),
       };
     } catch (_e) {

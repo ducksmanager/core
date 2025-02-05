@@ -103,10 +103,10 @@ const slots = defineSlots<{
 
 interface Selection {
   editMode: "single" | "range";
-  countrycode: string;
-  publicationcode: string;
-  issuecode: string;
-  issuecodeEnd?: string;
+  countrycode: string | undefined;
+  publicationcode: string | undefined;
+  issuecode: string | undefined;
+  issuecodeEnd?: string | undefined;
 }
 
 const emit = defineEmits<(e: "change", value: Selection | null) => void>();
@@ -117,10 +117,8 @@ const {
   canBeMultiple = false,
   withEdgeGallery = false,
   publicationcode = null,
-  countrycode = null,
   baseIssuenumbers = [],
 } = defineProps<{
-  countrycode?: string | null;
   publicationcode?: string | null;
   canBeMultiple?: boolean;
   disableOngoingOrPublished: boolean;
@@ -129,8 +127,12 @@ const {
   baseIssuenumbers?: string[];
 }>();
 
-const currentCountrycode = ref<string>();
-const currentPublicationcode = ref<string>();
+const currentCountrycode = ref<string | undefined>(
+  publicationcode?.split("/")[0] || undefined,
+);
+const currentPublicationcode = ref<string | undefined>(
+  publicationcode || undefined,
+);
 const currentFirstIssuecode = ref<string>();
 const currentLastIssuecode = ref<string>();
 const editMode = ref<"single" | "range">("single");
@@ -157,7 +159,7 @@ const publications = computed(
     publicationNames.value &&
     Object.keys(publicationNames.value)
       .filter((publicationcode) =>
-        publicationcode.startsWith(`${currentCountrycode.value!}/`),
+        publicationcode.startsWith(`${currentCountrycode.value}/`),
       )
       .map((publicationcode) => ({
         text: publicationNames.value[publicationcode],
@@ -220,10 +222,6 @@ watch(currentPublicationcode, async (newValue) => {
 
 watch(surroundingIssuesToLoad, async () => await loadEdges());
 
-if (countrycode) {
-  currentCountrycode.value = countrycode;
-}
-
 const loadEdges = async () => {
   let issueNumbersFilter = "";
   if (withEdgeGallery) {
@@ -255,7 +253,7 @@ const loadEdges = async () => {
 const onChange = () => {
   emit("change", {
     editMode: editMode.value,
-    countrycode: currentCountrycode.value!,
+    countrycode: currentCountrycode.value,
     publicationcode: currentPublicationcode.value!,
     issuecode: currentFirstIssuecode.value!,
     issuecodeEnd: currentLastIssuecode.value,

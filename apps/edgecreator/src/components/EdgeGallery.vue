@@ -63,17 +63,20 @@ const { loadPublishedEdgesSteps } = edgeCatalog();
 const { issuecodesByPublicationcode } = storeToRefs(webStores.coa());
 const { fetchIssuecodesByPublicationcode } = webStores.coa();
 
-const populateItems = async (itemsForPublication: { id: number }[]) => {
+const populateItems = async (
+  itemsForPublication: {
+    id: number;
+    issuecode: string;
+    url: string;
+  }[],
+) => {
   const publishedIssueModels = Object.values(itemsForPublication).map(
     ({ id }) => id,
   );
   await loadPublishedEdgesSteps(publishedIssueModels);
   items.value = (
     await Promise.all(
-      Object.keys(itemsForPublication).map(async (issuecode) => {
-        const url = `${
-          import.meta.env.VITE_EDGES_URL as string
-        }/${publicationcode.replace("/", "/gen/")}.${issuecode}.png`;
+      itemsForPublication.map(async ({ issuecode, url }) => {
         let quality;
         let tooltip;
         const allSteps = publishedEdgesSteps.value[issuecode];
@@ -120,7 +123,7 @@ const populateItems = async (itemsForPublication: { id: number }[]) => {
           quality,
           disabled: quality === 0,
           tooltip,
-          url,
+          url: `${import.meta.env.VITE_EDGES_URL as string}/${url}`,
         };
       }),
     )
@@ -142,10 +145,6 @@ const onPublicationOrEdgeChange = async () => {
   }
 };
 
-watch(publishedEdges, onPublicationOrEdgeChange, {
-  deep: true,
-  immediate: true,
-});
 watch(
   () => publicationcode,
   async () => {

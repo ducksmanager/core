@@ -82,7 +82,7 @@ export const edgeCatalog = defineStore("edgeCatalog", () => {
 
       publishedEdges.value = {
         ...publishedEdges.value,
-        publicationcode: models.results,
+        [publicationcode]: models.results,
       };
     };
 
