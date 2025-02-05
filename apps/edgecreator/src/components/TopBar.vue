@@ -228,7 +228,6 @@
             <issue-select
               v-if="collapseClone"
               :publicationcode="publicationcode"
-              :base-issue-codes="issuecodes"
               :disable-ongoing-or-published="false"
               with-edge-gallery
               disable-not-ongoing-nor-published

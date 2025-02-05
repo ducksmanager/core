@@ -98,7 +98,9 @@ const {
   items: GalleryItem[];
 }>();
 
-const emit = defineEmits<(e: "change", value: string) => void>();
+const emit = defineEmits<{
+  change: [value: string];
+}>();
 
 const clickedImage = ref<GalleryItem>();
 const showUploadModal = ref(false);

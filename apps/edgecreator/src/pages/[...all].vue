@@ -235,8 +235,8 @@ const mostPopularIssuesInCollectionWithoutEdge = computed(() =>
     .filter((_, index) => index < 10),
 );
 
-const getSvgUrl = (edge: { svgPath: string }) =>
-  edge.svgPath ? `${import.meta.env.VITE_EDGES_URL}${edge.svgPath}` : undefined;
+const getSvgUrl = (edge: { svgUrl: string }) =>
+  edge.svgUrl ? `${import.meta.env.VITE_EDGES_URL}${edge.svgUrl}` : undefined;
 
 const loadMostWantedEdges = async () => {
   const wantedEdges = await edgesEvents.getWantedEdges();

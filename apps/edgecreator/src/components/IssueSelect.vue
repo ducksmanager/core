@@ -21,8 +21,8 @@
       <template v-if="withEdgeGallery">
         <edge-gallery
           v-if="currentPublicationcode in publishedEdges"
+          v-model="currentFirstIssuecode"
           :publicationcode="currentPublicationcode"
-          :selected="currentFirstIssuecode"
           :has-more-before="hasMoreIssuesToLoad.before"
           :has-more-after="hasMoreIssuesToLoad.after"
           @load-more="
@@ -30,10 +30,6 @@
               ...surroundingIssuesToLoad,
               [$event]: surroundingIssuesToLoad[$event as string] + 10,
             }
-          "
-          @change="
-            currentFirstIssuecode = $event.issuecode;
-            onChange();
           "
         />
         <b-alert v-else :model-value="true" variant="info">
@@ -45,7 +41,6 @@
           v-show="currentPublicationcode"
           v-model="currentFirstIssuecode"
           :options="issues"
-          @change="onChange()"
         >
           <template #first>
             <b-form-select-option :value="undefined" disabled>
@@ -66,7 +61,6 @@
             v-show="editMode === 'range'"
             v-model="currentLastIssuecode"
             :options="issues"
-            @change="onChange()"
           />
         </template>
       </template>
@@ -117,14 +111,14 @@ const {
   canBeMultiple = false,
   withEdgeGallery = false,
   publicationcode = null,
-  baseIssuenumbers = [],
+  baseIssuecodes = [],
 } = defineProps<{
   publicationcode?: string | null;
   canBeMultiple?: boolean;
   disableOngoingOrPublished: boolean;
   disableNotOngoingNorPublished: boolean;
   withEdgeGallery?: boolean;
-  baseIssuenumbers?: string[];
+  baseIssuecodes?: string[];
 }>();
 
 const currentCountrycode = ref<string | undefined>(
@@ -135,8 +129,8 @@ const currentPublicationcode = ref<string | undefined>(
 );
 const currentFirstIssuecode = ref<string>();
 const currentLastIssuecode = ref<string>();
+
 const editMode = ref<"single" | "range">("single");
-const hasMoreIssuesToLoad = ref({ before: false, after: false });
 const surroundingIssuesToLoad = ref({ before: 10, after: 10 } as Record<
   string,
   number
@@ -216,41 +210,33 @@ watch(currentPublicationcode, async (newValue) => {
   if (newValue) {
     currentFirstIssuecode.value = undefined;
     await coaStore.fetchIssuecodesByPublicationcode([newValue]);
-    await loadEdges();
   }
 });
 
-watch(surroundingIssuesToLoad, async () => await loadEdges());
-
-const loadEdges = async () => {
-  let issueNumbersFilter = "";
-  if (withEdgeGallery) {
-    const minBaseIssueNumberIndex = publicationIssues.value.indexOf(
-      baseIssuenumbers[0],
-    );
-    const maxBaseIssueNumberIndex = publicationIssues.value.indexOf(
-      baseIssuenumbers[baseIssuenumbers.length - 1],
-    );
-    issueNumbersFilter = `/${publicationIssues.value
-      .filter(
-        (issuenumber, index) =>
-          minBaseIssueNumberIndex - index <
-            surroundingIssuesToLoad.value.before &&
-          index - maxBaseIssueNumberIndex <
-            surroundingIssuesToLoad.value.after &&
-          !baseIssuenumbers.includes(issuenumber),
-      )
-      .join(",")}`;
-    hasMoreIssuesToLoad.value = {
-      before: issueNumbersFilter[0] !== publicationIssues.value[0],
-      after:
-        issueNumbersFilter[issueNumbersFilter.length] !==
-        publicationIssues.value[publicationIssues.value.length],
-    };
+const hasMoreIssuesToLoad = computed(() => {
+  if (!publicationcode) {
+    return { before: false, after: false };
   }
-};
+  const publishedIssuecodes = Object.values(
+    publishedEdges.value[publicationcode],
+  ).map(({ issuecode }) => issuecode);
+  const minBaseIssuecodeIndex = publishedIssuecodes.indexOf(baseIssuecodes[0]);
+  const maxBaseIssuecodeIndex = publishedIssuecodes.indexOf(
+    baseIssuecodes[baseIssuecodes.length - 1],
+  );
+  const issuecodesFilter = publishedIssuecodes.filter(
+    (issuecode, index) =>
+      minBaseIssuecodeIndex - index < surroundingIssuesToLoad.value.before &&
+      index - maxBaseIssuecodeIndex < surroundingIssuesToLoad.value.after &&
+      !baseIssuecodes.includes(issuecode),
+  );
+  return {
+    before: issuecodesFilter[0] !== publishedIssuecodes[0],
+    after: [...issuecodesFilter].pop() !== [...publishedIssuecodes].pop(),
+  };
+});
 
-const onChange = () => {
+watch([currentFirstIssuecode, currentLastIssuecode], () => {
   emit("change", {
     editMode: editMode.value,
     countrycode: currentCountrycode.value,
@@ -258,7 +244,7 @@ const onChange = () => {
     issuecode: currentFirstIssuecode.value!,
     issuecodeEnd: currentLastIssuecode.value,
   });
-};
+});
 (async () => {
   await coaStore.fetchCountryNames();
   await edgeCatalogStore.fetchOngoingEdges();

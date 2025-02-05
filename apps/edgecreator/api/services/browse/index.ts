@@ -157,7 +157,7 @@ const findOngoingEdges = async (currentUsername?: string) => {
             designers,
             publicationcode,
             photographers,
-            svgPath: `/${countryDir.name}/gen/${file.name}`,
+            svgUrl: `${countryDir.name}/gen/${file.name}`,
             ...({
               status:
                 currentUsername && designers.includes(currentUsername)

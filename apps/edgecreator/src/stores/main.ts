@@ -213,6 +213,7 @@ export const main = defineStore("main", () => {
     publicationPhotos,
     warnings,
     publicationIssues,
+    publicationIssuecodes,
     publicationElementsForGallery,
     publicationPhotosForGallery,
     addContributor,

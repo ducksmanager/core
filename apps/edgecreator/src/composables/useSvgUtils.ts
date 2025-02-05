@@ -17,7 +17,9 @@ export default () => {
     mtime: string,
     publishedVersion = false,
   ) => {
+    await coa().fetchIssuecodeDetails([issuecode]);
     const edgeUrl = getEdgeUrl(issuecode, `svg?${mtime}`, publishedVersion);
+
     const svgString = (await axios.get(edgeUrl)).data as string;
     if (!svgString) {
       throw new Error(`No SVG found : ${edgeUrl}`);
