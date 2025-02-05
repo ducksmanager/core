@@ -52,9 +52,7 @@
                 </div>
                 <div>
                   {{
-                    publicationIssues!.find(
-                      (issue) => issue.issuecode === issuecode,
-                    )!.issuenumber
+                    publicationIssues![issuecode]!.issuenumber
                   }}
                 </div>
               </th>
@@ -186,18 +184,6 @@ const dimensionsPerIssuecode = computed(() =>
   ),
 );
 
-const getActualIssuecode = (issuecode: string) => {
-  const actualIssuecode = publicationIssues.value!.find(
-    ({ issuenumber }) => issuenumber === issuecode.split(/[ ]+/)[1],
-  )?.issuecode;
-
-  if (actualIssuecode === undefined) {
-    throw new Error(`Issue ${issuecode} doesn't exist`);
-  }
-
-  return actualIssuecode;
-};
-
 const stepsPerIssuecode = computed(() =>
   issuecodes.value.reduce<Record<string, Options>>(
     (acc, issuecode) => ({
@@ -220,27 +206,24 @@ watch(
 try {
   await webStores.users().fetchAllUsers();
 
-  let [firstIssuecode, lastIssuecode] = (route.params.all as string).split(
-    " to ",
-  );
+  const issuecodeParams = (route.params.all as string).replaceAll("_", " ");
+
+  let [firstIssuecode, lastIssuecode] = issuecodeParams.split(" to ");
   let otherIssuecodes: string[] | undefined = undefined;
   if (!lastIssuecode) {
     [firstIssuecode, ...otherIssuecodes] = firstIssuecode.split(",");
   }
 
-  const issuecodeParts = firstIssuecode.split(/[ ]+/);
+  await coa().fetchIssuecodeDetails([firstIssuecode]);
+  publicationcode.value =
+    coa().issuecodeDetails[firstIssuecode]?.publicationcode;
 
-  publicationcode.value = issuecodeParts[0];
+  if (!publicationcode.value) {
+    throw new Error(`Issue ${firstIssuecode} doesn't exist`);
+  }
 
   await mainStore.loadPublicationIssues();
   edgeCatalog().fetchPublishedEdges(publicationcode.value);
-  firstIssuecode = getActualIssuecode(firstIssuecode);
-  if (lastIssuecode) {
-    lastIssuecode = getActualIssuecode(lastIssuecode);
-  }
-  otherIssuecodes = otherIssuecodes?.map((issuecode) =>
-    getActualIssuecode(issuecode),
-  );
 
   try {
     mainStore.setIssuecodes(firstIssuecode, lastIssuecode, otherIssuecodes);

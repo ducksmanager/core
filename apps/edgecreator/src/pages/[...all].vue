@@ -93,7 +93,9 @@ meta:
             <b-row>
               <b-col>
                 <publication
-                  :publicationname="publicationNames[publicationcode]"
+                  :publicationname="
+                    publicationNames[publicationcode] || publicationcode
+                  "
                   :publicationcode="publicationcode"
                   display-class="d-inline-block"
                 />

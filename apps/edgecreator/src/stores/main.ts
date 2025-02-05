@@ -32,6 +32,9 @@ export const main = defineStore("main", () => {
           webStores.coa().issuesByPublicationcode[publicationcode.value]) ||
         undefined,
     ),
+    publicationIssuecodes = computed(
+      () => publicationIssues.value && Object.keys(publicationIssues.value),
+    ),
     publicationElementsForGallery = computed(
       () =>
         country.value &&
@@ -90,35 +93,44 @@ export const main = defineStore("main", () => {
     setIssuecodes = (
       firstIssuecode: string,
       lastIssuecode?: string,
-      otherIssuecodes?: string[],
+      otherIssuecodes: string[] = [],
     ) => {
-      if (!publicationIssues.value) {
+      if (!publicationIssuecodes.value) {
         console.error("Publication issues not loaded");
         return;
       }
-      const firstIssueIndex = publicationIssues.value.findIndex(
-        ({ issuecode }) => issuecode === firstIssuecode,
-      );
-      if (lastIssuecode === undefined) {
-        issuecodes.value = [firstIssuecode, ...(otherIssuecodes || [])];
+      const errors: string[] = [];
+      const firstIssueIndex =
+        publicationIssuecodes.value.indexOf(firstIssuecode);
+      if (!lastIssuecode) {
+        issuecodes.value = [firstIssuecode, ...otherIssuecodes];
       } else {
         isRange.value = true;
-        let lastIssueIndex = publicationIssues.value.findIndex(
-          ({ issuecode }) => issuecode === lastIssuecode,
-        );
+
+        const lastIssueIndex =
+          publicationIssuecodes.value.indexOf(lastIssuecode);
         if (lastIssueIndex === -1) {
-          lastIssueIndex = publicationIssues.value.length - 1;
-          console.warn(
-            `Issue ${lastIssuecode} doesn't exist, falling back to ${publicationIssues.value[lastIssueIndex]}`,
-          );
+          errors.push(`Issue ${lastIssuecode} doesn't exist`);
         }
 
-        issuecodes.value = publicationIssues.value
-          .filter(
-            (_, index) => index >= firstIssueIndex && index <= lastIssueIndex,
-          )
-          .map(({ issuecode }) => issuecode);
+        issuecodes.value = publicationIssuecodes.value.filter(
+          (_, index) => index >= firstIssueIndex && index <= lastIssueIndex,
+        );
       }
+
+      const { existing, nonExisting } = Object.groupBy(
+        issuecodes.value,
+        (issuecode) =>
+          publicationIssuecodes.value!.includes(issuecode)
+            ? "existing"
+            : "nonExisting",
+      );
+      issuecodes.value = existing || [];
+      for (const nonExistingIssue of nonExisting || []) {
+        errors.push(`Issue ${nonExistingIssue} doesn't exist, ignoring`);
+      }
+
+      return errors;
     },
     loadItems = async ({ itemType }: { itemType: "elements" | "photos" }) => {
       const items = (
@@ -145,58 +157,49 @@ export const main = defineStore("main", () => {
           ),
         );
 
-  const firstIssueIndex = computed(() =>
-    publicationIssues.value?.findIndex(
-      ({ issuecode }) => issuecode === issuecodes.value[0],
-    ),
-  );
-  const lastIssueIndex = computed(() =>
-    publicationIssues.value?.findIndex(
-      ({ issuecode }) =>
-        issuecode === issuecodes.value[issuecodes.value.length - 1],
-    ),
-  );
-
   const edgeIssuecodesBefore = computed(() => {
     if (
       !edgeCatalog().ongoingEdges ||
       !publicationcode.value ||
-      !publicationIssues.value ||
+      !publicationIssuecodes.value ||
       !(publicationcode.value in edgeCatalog().publishedEdges)
     ) {
       return [];
     }
-    const issuesBefore = publicationIssues.value.filter(
+    const firstIssueIndex = publicationIssuecodes.value.indexOf(
+      issuecodes.value[0],
+    );
+    const issuesBefore = publicationIssuecodes.value.filter(
       (_, index) =>
-        firstIssueIndex.value !== -1 &&
-        index >= firstIssueIndex.value! - 10 &&
-        index < firstIssueIndex.value!,
+        firstIssueIndex !== -1 &&
+        index >= firstIssueIndex - 10 &&
+        index < firstIssueIndex,
     );
 
-    return getEdgePublicationStates(
-      issuesBefore.map(({ issuecode }) => issuecode),
-    );
+    return getEdgePublicationStates(issuesBefore);
   });
 
   const edgeIssuecodesAfter = computed(() => {
     if (
       !edgeCatalog().ongoingEdges ||
       !publicationcode.value ||
-      !publicationIssues.value ||
+      !publicationIssuecodes.value ||
       !(publicationcode.value in edgeCatalog().publishedEdges)
     ) {
       return [];
     }
-    const issuesAfter = publicationIssues.value.filter(
+
+    const lastIssueIndex = publicationIssuecodes.value?.indexOf(
+      issuecodes.value[issuecodes.value.length - 1],
+    );
+    const issuesAfter = publicationIssuecodes.value.filter(
       (_, index) =>
-        lastIssueIndex.value !== -1 &&
-        index > lastIssueIndex.value! &&
-        index <= lastIssueIndex.value! + 10,
+        lastIssueIndex !== -1 &&
+        index > lastIssueIndex &&
+        index <= lastIssueIndex + 10,
     );
 
-    return getEdgePublicationStates(
-      issuesAfter.map(({ issuecode }) => issuecode),
-    );
+    return getEdgePublicationStates(issuesAfter);
   });
   return {
     publicationcode,

@@ -1,20 +1,25 @@
 <template>
   <div :class="`d-${noWrap ? 'inline' : 'block'}`">
-    <router-link
-      :class="{ clickable, flex }"
-      :to="`/collection/show/${issue.publicationcode}#${issue.issuenumber}`"
-    >
-      <span v-if="!hideCondition" class="me-1 d-flex"
-        ><Condition v-once :is-public="isPublic" :issuecode="issue.issuecode"
-      /></span>
-      <Publication
-        :publicationcode="issue.publicationcode"
-        :publicationname="publicationname || issue.publicationcode"
-        display-class="d-inline"
-      />{{ issue.issuenumber }}
-      <slot name="title-suffix" />
-    </router-link>
-    <slot />
+    <template v-if="issue?.publicationcode">
+      <router-link
+        :class="{ clickable, flex }"
+        :to="`/collection/show/${issue.publicationcode}#${issue.issuenumber}`"
+      >
+        <span v-if="!hideCondition" class="me-1 d-flex"
+          ><Condition v-once :is-public="isPublic" :issuecode="issue.issuecode"
+        /></span>
+        <Publication
+          :publicationcode="issue.publicationcode"
+          :publicationname="publicationname || issue.publicationcode"
+          display-class="d-inline"
+        />{{ issue.issuenumber }}
+        <slot name="title-suffix" />
+      </router-link>
+      <slot />
+    </template>
+    <template v-else>
+      <span>{{ issuecode }}</span>
+    </template>
   </div>
 </template>
 

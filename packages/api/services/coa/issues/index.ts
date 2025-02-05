@@ -28,14 +28,13 @@ export default {
     prismaCoa.inducks_issue
       .findMany({
         select: {
-          publicationcode: true,
           issuecode: true,
           issuenumber: true,
         },
         where: {
           publicationcode
         },
-      }),
+      }).then((data) => data.groupBy("issuecode")),
 
   getIssuesByStorycode: async (storycode: string) =>
     prismaCoa.$queryRaw<IssueWithIssuecodeOnly[]>`

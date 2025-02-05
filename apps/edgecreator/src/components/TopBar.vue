@@ -109,30 +109,17 @@
     </b-row>
     <b-row align="center" class="pb-1">
       <b-col v-if="publicationName" align-self="center">
-        <issue
-          :issue="
-            publicationIssues!.find(
-              ({ issuecode }) => issuecode === issuecodes[0],
-            )
-          "
-          hide-condition
-          no-wrap
-        >
+        <issue :issue="publicationIssues[issuecodes[0]]" hide-condition no-wrap>
           <template v-if="isEditingMultiple" #title-suffix>
             <template v-if="mainStore.isRange">
               {{ $t("to") }}
-              {{ publicationIssues!.find(
-              ({ issuecode }) => issuecode === issuecodes[issuecodes.length - 1],
-            )!.issuenumber }}
+              {{ publicationIssues![issuecodes[issuecodes.length - 1]]!.issuenumber }}
             </template>
             <template v-else-if="issuecodes.length > 1">
               <span
                 v-for="otherIssuecode in issuecodes.slice(1)"
                 :key="`other-${otherIssuecode}`"
-                >,
-                {{ publicationIssues!.find(
-              ({ issuecode }) => issuecode === issuecodes[issuecodes.length - 1],
-            )!.issuenumber }}</span
+                >, {{ publicationIssues![otherIssuecode]!.issuenumber }}</span
               >
             </template>
           </template>
@@ -234,11 +221,7 @@
             class="mt-2"
           >
             <confirm-edit-multiple-values :values="uniqueDimensions">
-              <dimensions
-                :width="uniqueDimensions[0].width"
-                :height="uniqueDimensions[0].height"
-                @change="overwriteDimensions($event)"
-              />
+              <dimensions v-model="editingDimensions[0]" />
             </confirm-edit-multiple-values>
           </b-collapse>
           <b-collapse id="collapse-clone" v-model="collapseClone" class="mt-2">
@@ -303,8 +286,8 @@ const publicationName = computed(
 const uniqueDimensions = computed(() =>
   [
     ...new Set(
-      Object.values(editingDimensions.value).map((item) =>
-        JSON.stringify(item),
+      Object.values(editingDimensions.value).map(({ width, height }) =>
+        JSON.stringify({ width, height }),
       ),
     ),
   ].map((item) => JSON.parse(item) as { width: number; height: number }),
@@ -328,15 +311,16 @@ const overwriteModel = async () => {
     }
   }
 };
-const overwriteDimensions = ({
-  width,
-  height,
-}: {
-  width: number;
-  height: number;
-}) => {
-  stepStore.setDimensions({ width, height }, { issuecodes: issuecodes.value });
-};
+
+watch(
+  () => editingDimensions.value[0],
+  ({ width, height }) => {
+    stepStore.setDimensions(
+      { width, height },
+      { issuecodes: issuecodes.value },
+    );
+  },
+);
 
 webStores.coa().fetchPublicationNames([mainStore.publicationcode!]);
 </script>
