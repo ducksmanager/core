@@ -245,25 +245,17 @@ const loadMostWantedEdges = async () => {
   );
   mostWantedEdges.value = wantedEdges
     .slice(0, 10)
-    .map(
-      ({
-        issuecode,
-        numberOfIssues,
-      }: {
-        issuecode: string;
-        numberOfIssues: number;
-      }) => ({
-        ...issuecodeDetails.value[issuecode],
-        id: 0,
-        edgeId: 0,
-        creationDate: new Date(),
-        timestamp: new Date().getTime(),
-        sprites: [],
-        slug: "",
-        points: numberOfIssues,
-        popularity: numberOfIssues,
-      }),
-    );
+    .map(({ issuecode, numberOfIssues }) => ({
+      ...issuecodeDetails.value[issuecode],
+      id: 0,
+      edgeId: 0,
+      creationDate: new Date(),
+      timestamp: new Date().getTime(),
+      sprites: [],
+      slug: "",
+      points: numberOfIssues,
+      popularity: numberOfIssues,
+    }));
 };
 
 watch(

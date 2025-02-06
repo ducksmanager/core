@@ -37,8 +37,8 @@
     </metadata>
     <g
       v-for="(stepComponent, stepNumber) in stepComponentNames"
+      v-show="JSON.stringify(getStepOptions(stepNumber, true))"
       :key="stepNumber"
-      :is-visible="JSON.stringify(getStepOptions(stepNumber, true))"
       :class="{
         [stepComponent]: true,
         hovered:

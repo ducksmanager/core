@@ -217,9 +217,9 @@ const hasMoreIssuesToLoad = computed(() => {
   if (!publicationcode) {
     return { before: false, after: false };
   }
-  const publishedIssuecodes = Object.values(
+  const publishedIssuecodes = Object.keys(
     publishedEdges.value[publicationcode],
-  ).map(({ issuecode }) => issuecode);
+  );
   const minBaseIssuecodeIndex = publishedIssuecodes.indexOf(baseIssuecodes[0]);
   const maxBaseIssuecodeIndex = publishedIssuecodes.indexOf(
     baseIssuecodes[baseIssuecodes.length - 1],

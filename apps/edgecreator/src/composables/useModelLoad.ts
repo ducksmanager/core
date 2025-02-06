@@ -200,11 +200,11 @@ export default () => {
         publishedVersion,
       );
 
-      loadDimensionsFromSvg(issuecode, svgElement);
-      loadStepsFromSvg(issuecode, svgChildNodes);
+      loadDimensionsFromSvg(targetIssuecode, svgElement);
+      loadStepsFromSvg(targetIssuecode, svgChildNodes);
       if (!onlyLoadStepsAndDimensions) {
-        setPhotoUrlsFromSvg(issuecode, svgChildNodes);
-        setContributorsFromSvg(issuecode, svgChildNodes);
+        setPhotoUrlsFromSvg(targetIssuecode, svgChildNodes);
+        setContributorsFromSvg(targetIssuecode, svgChildNodes);
       }
     };
 

@@ -50,6 +50,13 @@ const effectiveSource = computed(() =>
 
 const countrycode = computed(() => main().publicationcode!.split("/")[0]);
 
+const { enableDragResize } = useStepOptions(props, [
+  "x",
+  "y",
+  "width",
+  "height",
+]);
+
 watch(
   () => props.options.src,
   () => {
@@ -76,13 +83,6 @@ watch(
   },
   { immediate: true },
 );
-
-const { enableDragResize } = useStepOptions(props, [
-  "x",
-  "y",
-  "width",
-  "height",
-]);
 </script>
 
 <style scoped>

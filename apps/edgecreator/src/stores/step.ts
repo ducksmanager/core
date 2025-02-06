@@ -105,29 +105,25 @@ export const step = defineStore("step", () => {
           ? editingStep().issuecodes
           : overrides.issuecodes;
 
-      const processedOptions: {
-        stepNumber: number;
-        issuecode: string;
-        optionName: string;
-      }[] = [];
-      options.value.forEach(({ stepNumber, issuecode, optionName }, idx) => {
-        if (
-          stepNumber === defaultStepNumber &&
-          defaultIssuecodes.includes(issuecode)
-        ) {
-          optionsAsArray.forEach(
-            ({
+      const processedOptions = options.value.flatMap(
+        ({ stepNumber, issuecode, optionName }, idx) => {
+          if (
+            stepNumber === defaultStepNumber &&
+            defaultIssuecodes.includes(issuecode)
+          ) {
+            for (const {
               optionName: optionNameToUpdate,
               optionValue: optionValueToUpdate,
-            }) => {
+            } of optionsAsArray) {
               if (optionName === optionNameToUpdate) {
                 options.value[idx].optionValue = optionValueToUpdate;
-                processedOptions.push({ stepNumber, issuecode, optionName });
+                return { stepNumber, issuecode, optionName };
               }
-            },
-          );
-        }
-      });
+            }
+          }
+          return [];
+        },
+      );
       for (const issuecodeToProcess of defaultIssuecodes) {
         for (const optionNameToProcess of newOptionsKeys) {
           if (

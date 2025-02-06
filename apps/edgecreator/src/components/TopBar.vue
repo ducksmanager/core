@@ -313,8 +313,9 @@ const overwriteModel = async () => {
 };
 
 watch(
-  () => editingDimensions.value[0],
-  ({ width, height }) => {
+  () => JSON.stringify(editingDimensions.value[0]),
+  (dimensions) => {
+    const { width, height } = JSON.parse(dimensions);
     stepStore.setDimensions(
       { width, height },
       { issuecodes: issuecodes.value },
