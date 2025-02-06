@@ -157,7 +157,7 @@ export const useStepOptions = (props: BaseProps, attributeKeys: string[]) => {
 
       .on("resizeend", () => document.body.classList.remove("interacting"));
 
-  stepStore.setOptionValues(props.options!);
+  // stepStore.setOptionValues(props.options!);
 
   return {
     zoom,

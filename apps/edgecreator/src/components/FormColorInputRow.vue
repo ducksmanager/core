@@ -45,10 +45,10 @@
             :key="colorLocation"
           >
             <template v-if="otherColorsForLocation">
-              <h6 v-if="colorLocation === 'sameIssuenumber'">
+              <h6 v-if="colorLocation === 'sameIssuecode'">
                 {{ $t("Colors used in other steps") }}
               </h6>
-              <h6 v-if="colorLocation === 'differentIssuenumber'">
+              <h6 v-if="colorLocation === 'differentIssuecode'">
                 {{ $t("Colors used in other edges") }}
               </h6>
               <ul>
@@ -59,7 +59,7 @@
                   <span
                     :class="{
                       'text-secondary':
-                        !otherColorsForLocation[stepNumber].length,
+                        !otherColorsForLocation[stepNumber]?.length,
                     }"
                     >{{ $t("Step") }} {{ stepNumber }}</span
                   >
@@ -108,8 +108,8 @@ const {
   inputValues: PossibleInputValueType[];
   optionName: string;
   otherColors: {
-    differentIssuenumber: Options;
-    sameIssuenumber: Options;
+    differentIssuecode: Options;
+    sameIssuecode: Options;
   };
   label?: string | null;
   canBeTransparent?: false | null;
@@ -133,25 +133,14 @@ watch(
 );
 
 const getOptionStringValuesByStepNumber = (options: Options) =>
-  options.reduce<Record<number, string[]>>(
-    (acc, option) => ({
-      ...acc,
-      [option.stepNumber]: [
-        ...(acc[option.stepNumber] || []),
-        option.optionValue as string,
-      ],
-    }),
-    {},
-  );
+  options.groupBy("stepNumber", "optionValue[]") as Record<number, string[]>;
 
 const otherColorsByLocationAndStepNumber = computed(() => ({
-  differentIssuenumber:
+  differentIssuecode:
     issuecodes.value.length === 1
-      ? null
-      : getOptionStringValuesByStepNumber(otherColors.differentIssuenumber),
-  sameIssuenumber: getOptionStringValuesByStepNumber(
-    otherColors.sameIssuenumber,
-  ),
+      ? []
+      : getOptionStringValuesByStepNumber(otherColors.differentIssuecode),
+  sameIssuecode: getOptionStringValuesByStepNumber(otherColors.sameIssuecode),
 }));
 watch(
   () => inputValues,

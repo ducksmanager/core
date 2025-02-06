@@ -327,12 +327,12 @@ const components = computed(() =>
 
 const otherColors = computed(() =>
   stepNumbers.value.map((currentStepNumber) => ({
-    sameIssuenumber: stepStore.colors.filter(
+    sameIssuecode: stepStore.colors.filter(
       ({ issuecode: thisIssuecode, stepNumber: thisStepNumber }) =>
         issuecodes.value.includes(thisIssuecode) &&
         thisStepNumber !== currentStepNumber,
     ),
-    differentIssuenumber: stepStore.colors.filter(
+    differentIssuecode: stepStore.colors.filter(
       ({ issuecode: thisIssuecode }) =>
         !issuecodes.value.includes(thisIssuecode),
     ),
