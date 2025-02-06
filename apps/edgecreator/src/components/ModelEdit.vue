@@ -187,15 +187,10 @@
             list-id="src-list"
             :input-values="inputValues[stepNumber].src"
           >
-            <b-form-select
-              id="src-list"
-              :options="mainStore.publicationElements"
-            />
             <gallery
-              :items="mainStore.publicationElementsForGallery"
+              v-model:selected="selectedGalleryItems[stepNumber]"
+              v-model:items="mainStore.publicationElementsForGallery"
               image-type="elements"
-              :selected="inputValues[stepNumber].src"
-              @change="stepStore.setOptionValues({ src: $event })"
             />
           </form-input-row>
         </b-card-text>
@@ -308,6 +303,23 @@ const inputValues = computed(
         {},
       ),
 );
+
+const selectedGalleryItems = computed({
+  get: () =>
+    Object.values(inputValues.value).map(
+      (stepInputValue) => "src" in stepInputValue && stepInputValue.src[0],
+    ),
+  set: (values) => {
+    values.forEach((value, stepNumber) => {
+      stepStore.setOptionValues(
+        { src: value },
+        {
+          stepNumber,
+        },
+      );
+    });
+  },
+});
 
 const stepNumbers = computed(() =>
   Object.keys(inputValues.value).map((stepNumber) => parseInt(stepNumber)),

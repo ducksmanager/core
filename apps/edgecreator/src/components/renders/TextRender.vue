@@ -1,4 +1,3 @@
-<!--suppress RequiredAttributes, HtmlUnknownAttribute -->
 <template>
   <svg v-if="options.height !== null">
     <image

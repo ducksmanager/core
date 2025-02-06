@@ -9,7 +9,7 @@
       :title="clickedImage.name"
       scrollable
       :ok-title="$t('Choose')"
-      @ok="clickedImage && emit('change', clickedImage.name)"
+      @ok="selected = clickedImage.name"
     >
       <img :alt="clickedImage.name" :src="clickedImage.url" />
     </b-modal>
@@ -46,7 +46,7 @@
           :class="{
             'mt-1': true,
             'mb-4': true,
-            selected: selected.includes(item.name),
+            selected: selected === item.name,
             disabled: item.disabled,
           }"
           @click="onSelect(item)"
@@ -86,21 +86,17 @@
 import { main } from "~/stores/main";
 import type { GalleryItem } from "~/types/GalleryItem";
 
-const {
-  loading = false,
-  selected = [],
-  allowUpload = true,
-} = defineProps<{
+const { loading = false, allowUpload = true } = defineProps<{
   loading?: boolean;
   imageType: string;
-  selected?: string[];
   allowUpload?: boolean;
-  items: GalleryItem[];
 }>();
 
-const emit = defineEmits<{
-  change: [value: string];
-}>();
+const selected = defineModel<string | undefined>("selected", {
+  default: undefined,
+});
+
+const items = defineModel<GalleryItem[]>("items");
 
 const clickedImage = ref<GalleryItem>();
 const showUploadModal = ref(false);

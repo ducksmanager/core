@@ -175,8 +175,8 @@
           <i-bi-camera />
           <b-modal v-model="showPhotoModal" ok-only>
             <gallery
+              v-model:items="mainStore.publicationPhotosForGallery"
               image-type="photos"
-              :items="mainStore.publicationPhotosForGallery"
               @change="addPhoto"
             />
           </b-modal> </b-button

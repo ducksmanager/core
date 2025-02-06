@@ -258,7 +258,7 @@ const listenEvents = (services: BrowseServices) => ({
     try {
       return {
         results: readdirSync(
-          `${process.env.EDGES_PATH!}/${country}/${imageType}`,
+          `${getEdgesPath()}/${country}/${imageType}`,
         ).filter((item) =>
           new RegExp(`(?:^|[. ])${magazine}(?:[. ]|$)`).test(item),
         ),

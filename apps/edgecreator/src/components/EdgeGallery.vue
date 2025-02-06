@@ -11,12 +11,11 @@
     </b-button>
     <gallery
       v-if="items"
+      v-model:selected="selected"
+      v-model:items="items"
       image-type="edges"
       :loading="isPopulating"
-      :selected="selected ? [selected] : []"
-      :items="items"
       :allow-upload="false"
-      @change="selected = $event"
     />
     <b-button
       v-if="!isPopulating && hasMoreAfter"
