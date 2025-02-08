@@ -18,7 +18,7 @@ import { getNextAvailableFile } from "../_upload_utils";
 
 const getEdgeCreatorServices = (token: string) =>
   new SocketClient(
-    process.env.DM_SOCKET_URL!,
+    process.env.DM_SOCKET_URL!
   ).addNamespace<EdgeCreatorServices>(namespaces.EDGECREATOR, {
     session: {
       getToken: () => Promise.resolve(token),
@@ -35,7 +35,7 @@ const hasAlreadySentPhoto = async (hash: string, token: string) =>
   (await getEdgeCreatorServices(token).getImageByHash(hash)) === null;
 
 const calculateHash = (data: string) => {
-  const hashSum = crypto.createHash("sha256");
+  const hashSum = crypto.createHash("sha1");
   hashSum.update(data);
 
   return hashSum.digest("hex");
@@ -44,7 +44,7 @@ const calculateHash = (data: string) => {
 const getFilenameUsagesInOtherModels = async (
   filename: string,
   currentIssuecode: string,
-  token: string,
+  token: string
 ) => {
   const issue = await prismaCoa.inducks_issue.findFirstOrThrow({
     where: { issuecode: currentIssuecode },
@@ -57,7 +57,7 @@ const getFilenameUsagesInOtherModels = async (
 const storePhotoHash = async (
   filename: string,
   hash: string,
-  token: string,
+  token: string
 ) => {
   await getEdgeCreatorServices(token).createElementImage(hash, filename);
 };
@@ -67,7 +67,7 @@ const validateUpload = async (
   isEdgePhoto: boolean,
   issuecode: string,
   filePath: string,
-  token: string,
+  token: string
 ) => {
   const hash = calculateHash(filePath);
   if (isEdgePhoto) {
@@ -80,11 +80,13 @@ const validateUpload = async (
       return { error: "You have already sent this photo" } as const;
     }
   } else {
-    const otherElementUses = await getFilenameUsagesInOtherModels(
-      filename,
-      issuecode,
-      token,
-    );
+    // TODO uncomment once getImagesFromFilename supports searching file names in SVG models
+    // const otherElementUses = await getFilenameUsagesInOtherModels(
+    //   filename,
+    //   issuecode,
+    //   token
+    // );
+    const otherElementUses: string[] = [];
     if (fs.existsSync(filename) && otherElementUses.length) {
       return {
         error:
@@ -102,14 +104,14 @@ const getTargetFilePath = async (
   filename: string,
   isMultipleEdgePhoto: boolean,
   issuecode: string,
-  isEdgePhoto: boolean,
+  isEdgePhoto: boolean
 ) => {
   filename = filename.normalize("NFD").replace(/[\u0300-\u036F]/g, "");
 
   if (isMultipleEdgePhoto) {
     return getNextAvailableFile(
       `${getEdgesPath()}/tranches_multiples/photo.multiple`,
-      "jpg",
+      "jpg"
     );
   } else {
     const { publicationcode, issuenumber } =
@@ -121,7 +123,7 @@ const getTargetFilePath = async (
     filePath = isEdgePhoto
       ? getNextAvailableFile(
           `${filePath}/photos/${magazinecode}.${issuenumber}.photo`,
-          "jpg",
+          "jpg"
         )
       : `${filePath}/elements/${
           filename.includes(magazinecode)
@@ -153,9 +155,10 @@ const listenEvents = ({ _socket: socket }: UploadServices) => ({
       fileName,
       isMultiple,
       issuecode,
-      isEdgePhoto,
+      isEdgePhoto
     );
 
+    const token = socket.data.user!.token;
     const targetFileName = targetFilePath.split("/").pop()!;
 
     const validationResults = await validateUpload(
@@ -163,7 +166,7 @@ const listenEvents = ({ _socket: socket }: UploadServices) => ({
       isEdgePhoto,
       issuecode,
       cleanData,
-      socket.data.token,
+      token
     );
 
     if ("error" in validationResults) {
@@ -177,11 +180,9 @@ const listenEvents = ({ _socket: socket }: UploadServices) => ({
       ext: "jpg",
     });
 
-    await storePhotoHash(targetFileName, hash, socket.data.token);
+    await storePhotoHash(targetFileName, hash, token);
 
-    await getEdgeCreatorServices(socket.data.token).sendNewEdgePhotoEmail(
-      issuecode,
-    );
+    await getEdgeCreatorServices(token).sendNewEdgePhotoEmail(issuecode);
 
     return { fileName };
   },

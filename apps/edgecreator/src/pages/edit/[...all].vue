@@ -226,7 +226,15 @@ try {
   edgeCatalog().fetchPublishedEdges(publicationcode.value);
 
   try {
-    mainStore.setIssuecodes(firstIssuecode, lastIssuecode, otherIssuecodes);
+    const errors = mainStore.setIssuecodes(
+      firstIssuecode,
+      lastIssuecode,
+      otherIssuecodes,
+    );
+
+    if (errors) {
+      error.value = errors.join("\n");
+    }
 
     editingStepStore.addIssuecode(firstIssuecode);
 

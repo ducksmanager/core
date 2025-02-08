@@ -107,10 +107,10 @@ export const main = defineStore("main", () => {
       } else {
         isRange.value = true;
 
-        const lastIssueIndex =
-          publicationIssuecodes.value.indexOf(lastIssuecode);
+        let lastIssueIndex = publicationIssuecodes.value.indexOf(lastIssuecode);
         if (lastIssueIndex === -1) {
           errors.push(`Issue ${lastIssuecode} doesn't exist`);
+          lastIssueIndex = firstIssueIndex;
         }
 
         issuecodes.value = publicationIssuecodes.value.filter(

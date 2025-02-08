@@ -27,10 +27,11 @@ const listenEvents = (services: UserServices) => {
     ...edgePublication(),
     ...multipleEdgePhotos(services),
 
+    // TODO check if usages in SVG models
     getImagesFromFilename: async (fileName: string) =>
-      // TODO prismmaClient.edgeModel.findMany ?
+      // TODO prismaClient.edgeModel.findMany ?
       (
-        (await prismaDm.$queryRaw<ImageElement[]>`
+        await prismaDm.$queryRaw<ImageElement[]>`
       SELECT Pays AS country, Magazine AS magazine, Option_valeur AS optionValue, Numero_debut AS issuenumberStart, Numero_fin AS issuenumberEnd
       FROM edgecreator_valeurs valeurs
         INNER JOIN edgecreator_modeles2 modeles ON valeurs.ID_Option = modeles.ID
@@ -42,7 +43,7 @@ const listenEvents = (services: UserServices) => {
       FROM tranches_en_cours_modeles modeles
         INNER JOIN tranches_en_cours_valeurs valeurs ON modeles.ID = valeurs.ID_Modele
       WHERE Nom_fonction = 'Image' AND Option_nom = 'Source' AND (Option_valeur = '${fileName}' OR (Option_valeur LIKE '%[Numero]%' AND Option_valeur LIKE '%.png'))
-    `)
+    `
       ).filter(({ optionValue }) =>
         optionValue
           .split(/\[[^]]+]/)
