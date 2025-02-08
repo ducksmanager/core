@@ -13,7 +13,7 @@
     >
       <img :alt="clickedImage.name" :src="clickedImage.url" />
     </b-modal>
-    <b-modal v-model="showUploadModal" ok-only>
+    <b-modal v-if="showUploadModal" v-model="showUploadModal" ok-only>
       <upload
         :photo="imageType === 'photos'"
         :edge="{
@@ -27,7 +27,7 @@
       <a
         v-if="allowUpload"
         href="javascript:void(0)"
-        @click="showUploadModal = !showUploadModal"
+        @click="showUploadModal = true"
         >{{ $t("Upload new") }}</a
       >
     </b-alert>
@@ -35,7 +35,7 @@
       <a
         v-if="allowUpload"
         href="javascript:void(0)"
-        @click="showUploadModal = !showUploadModal"
+        @click="showUploadModal = true"
         >{{ $t("Upload new") }}</a
       >
       <b-row ref="gallery" class="gallery mt-1">
