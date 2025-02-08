@@ -304,22 +304,32 @@ const inputValues = computed(
       ),
 );
 
-const selectedGalleryItems = computed({
-  get: () =>
-    Object.values(inputValues.value).map(
-      (stepInputValue) => "src" in stepInputValue && stepInputValue.src[0],
-    ),
-  set: (values) => {
-    values.forEach((value, stepNumber) => {
+const selectedGalleryItems = ref<string[]>([]);
+
+watch(
+  inputValues,
+  (inputValues) => {
+    selectedGalleryItems.value = Object.values(inputValues)
+      .filter((stepInputValue) => "src" in stepInputValue)
+      .map((stepInputValue) => stepInputValue.src[0] as string);
+  },
+  { immediate: true },
+);
+
+watch(
+  selectedGalleryItems,
+  (selectedGalleryItems) => {
+    selectedGalleryItems.forEach((selectedGalleryItem, stepNumber) => {
       stepStore.setOptionValues(
-        { src: value },
+        { src: selectedGalleryItem },
         {
           stepNumber,
         },
       );
     });
   },
-});
+  { deep: true },
+);
 
 const stepNumbers = computed(() =>
   Object.keys(inputValues.value).map((stepNumber) => parseInt(stepNumber)),
