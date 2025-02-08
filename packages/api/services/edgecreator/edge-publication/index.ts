@@ -122,13 +122,8 @@ const publishEdgeOnDm = async (
     });
   } else {
     contributions = [];
-    const { publicationcode } = await prismaCoa.inducks_issue.findFirstOrThrow({
-      where: { issuecode },
-      select: { publicationcode: true },
-    });
     edgeToPublish = await prismaDm.edge.create({
       data: {
-        publicationcode,
         issuecode,
         creationDate: new Date(),
       },

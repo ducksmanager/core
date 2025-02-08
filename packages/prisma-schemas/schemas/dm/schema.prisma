@@ -175,9 +175,10 @@ model tranches_doublons {
 
 model edge {
   id                  Int                @id @default(autoincrement()) @map("ID")
-  publicationcode     String             @db.VarChar(12)
   /// @deprecated
-  issuenumber         String             @ignore @db.VarChar(12)
+  publicationcode     String?            @ignore @db.VarChar(12)
+  /// @deprecated
+  issuenumber         String?            @ignore @db.VarChar(12)
   creationDate        DateTime           @default(now()) @map("dateajout") @db.Timestamp(0)
   points              Int?
   slug                String?            @db.VarChar(30)

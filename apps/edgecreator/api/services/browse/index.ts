@@ -35,6 +35,14 @@ const getSvgMetadata = (
 
 const findPublishedEdges = async (publicationcode: string) => {
   const [countrycode, magazinecode] = publicationcode.split("/");
+  const coaIssues = await prismaCoa.inducks_issue.findMany({
+    select: {
+      issuecode: true,
+    },
+    where: {
+      publicationcode,
+    },
+  });
   const existingEdges = (
     await prismaDm.edge.findMany({
       select: {
@@ -42,7 +50,9 @@ const findPublishedEdges = async (publicationcode: string) => {
         issuecode: true,
       },
       where: {
-        publicationcode,
+        issuecode: {
+          in: coaIssues.map((issue) => issue.issuecode),
+        }
       },
     })
   )
