@@ -185,7 +185,7 @@
             :label="$t('Image').toString()"
             type="text"
             list-id="src-list"
-            :input-values="inputValues[stepNumber].src"
+            :input-values="[selectedGalleryItems[stepNumber]]"
           >
             <gallery
               v-model:selected="selectedGalleryItems[stepNumber]"
@@ -304,14 +304,16 @@ const inputValues = computed(
       ),
 );
 
-const selectedGalleryItems = ref<string[]>([]);
+const selectedGalleryItems = ref<(string | undefined)[]>([]);
 
 watch(
   inputValues,
   (inputValues) => {
-    selectedGalleryItems.value = Object.values(inputValues)
-      .filter((stepInputValue) => "src" in stepInputValue)
-      .map((stepInputValue) => stepInputValue.src[0] as string);
+    selectedGalleryItems.value = Object.values(inputValues).map(
+      (stepInputValue) =>
+        ("src" in stepInputValue && (stepInputValue.src[0] as string)) ||
+        undefined,
+    );
   },
   { immediate: true },
 );
