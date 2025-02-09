@@ -5,7 +5,7 @@
   },
   "version": "1.0.0",
   "scripts": {
-    "build": "bun build --target node index.ts --sourcemap=linked --outdir dist && pnpm sentry:sourcemaps",
+    "build": "for file in index.ts scripts/*; do bun build $file --entry-naming [dir]/[name].mjs --target node --sourcemap=linked --outdir dist; done && pnpm sentry:sourcemaps",
     "dev:blocking-up": "wait-on tcp:3000",
     "dev": "docker compose -f docker-compose-dev.yml up",
     "lint": "eslint --debug --fix .",

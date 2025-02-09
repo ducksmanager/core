@@ -68,7 +68,6 @@ jobs:
           envs: REMOTE_ROOT
           script: |
             cd $REMOTE_ROOT/apps/duck-estimator
-            echo ${{ secrets.DOCKER_REGISTRY_TOKEN_DM }} | docker login ghcr.io -u bperel --password-stdin
             docker compose pull
             docker compose run --rm duck-estimator
 
