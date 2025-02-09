@@ -86,8 +86,6 @@ jobs:
 
       - name: Run subscription-handler
         uses: appleboy/ssh-action@v1.0.3
-        env:
-          SUBSCRIPTIONS_BASIC_AUTH: ${{ secrets.PRODUCTION_SUBSCRIPTIONS_BASIC_AUTH }}
         with:
           host: ${{ secrets.PRODUCTION_SSH_HOST }}
           username: ${{ secrets.PRODUCTION_SSH_USER }}
