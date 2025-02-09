@@ -1,18 +1,24 @@
 <template>
-  <b-container fluid class="d-flex flex-grow-1 h-100">
+  <b-container
+    fluid
+    class="d-flex flex-grow-1 h-100 flex-column align-items-start"
+  >
     <b-alert v-if="!issue" variant="danger" :model-value="true">
       {{
         $t("Vous devez spécifier une publication et un numéro pour continuer")
       }}</b-alert
     >
-    <b-form-textarea
-      v-if="acceptedStories"
-      v-model="textContent"
-      :rows="Object.keys(acceptedStories).length + 1"
-      readonly
-      :disabled="!issue"
-      :placeholder="textContentError"
-    ></b-form-textarea
+    <template v-if="acceptedStories">
+      <b-form-checkbox v-model="showEntryLetters" class="m-2">{{
+        $t("Afficher des lettres au lieu des numéros de pages")
+      }}</b-form-checkbox>
+      <b-form-textarea
+        v-model="textContent"
+        :rows="Object.keys(acceptedStories).length + 1"
+        readonly
+        :disabled="!issue"
+        :placeholder="textContentError"
+      ></b-form-textarea></template
   ></b-container>
 </template>
 <script setup lang="ts">
@@ -32,6 +38,8 @@ const { coa: coaEvents } = inject(dmSocketInjectionKey)!;
 
 const textContentError = ref("");
 const { acceptedIssue: issue } = storeToRefs(suggestions());
+
+const showEntryLetters = ref(false);
 
 const acceptedStories = computed(() =>
   indexation.value?.entries
@@ -68,16 +76,20 @@ const textContent = computed(() => {
   const issuecode = `${issue.value!.publicationcode} ${issue.value!.issuenumber}`;
   const rows = [
     [
-      [issuecode],
+      issuecode,
       indexation.value!.price ? [`[price:${indexation.value!.price}]`] : [],
-      [`[pages:${indexation.value!.pages.length}]`],
+      `[pages:${indexation.value!.pages.length}]`,
     ].flat(),
-    ...indexation.value!.entries.map((entry, idx) => {
+    ...indexation.value!.entries.map((entry, idx, arr) => {
       const storyWithDetails = storiesWithDetails.value!.find(
         ({ storycode }) => storycode === entry.acceptedStory?.storycode,
       );
       return [
-        `${issuecode}${String.fromCharCode(97 + idx)}`,
+        `${issuecode}${
+          showEntryLetters.value
+            ? String.fromCharCode(97 + idx)
+            : `p${String(arr.slice(0, idx).reduce((acc, _, i) => acc + getEntryPages(indexation.value!, arr[i].id).length, 0) + 1).padStart(3, "0")}`
+        }`,
         entry.acceptedStory?.storycode,
         undefined,
         String(getEntryPages(indexation.value!, entry.id).length),
