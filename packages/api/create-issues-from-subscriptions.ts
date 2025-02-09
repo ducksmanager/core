@@ -1,7 +1,7 @@
-// import dotenv from "dotenv";
-// dotenv.config({
-//   path: "./.env",
-// });
+import dotenv from "dotenv";
+dotenv.config({
+  path: "./.env",
+});
 
 import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
 import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa/client";
