@@ -14,11 +14,14 @@ export default () => {
 
   const loadSvgFromString = async (
     issuecode: string,
-    mtime: string,
     publishedVersion = false,
   ) => {
     await coa().fetchIssuecodeDetails([issuecode]);
-    const edgeUrl = getEdgeUrl(issuecode, `svg?${mtime}`, publishedVersion);
+    const edgeUrl = getEdgeUrl(
+      issuecode,
+      `svg?${new Date().toISOString()}`,
+      publishedVersion,
+    );
 
     const svgString = (await axios.get(edgeUrl)).data as string;
     if (!svgString) {

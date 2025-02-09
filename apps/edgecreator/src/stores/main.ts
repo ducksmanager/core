@@ -64,6 +64,14 @@ export const main = defineStore("main", () => {
       contributionType: userContributionType;
       user: SimpleUser;
     }) => {
+      if (!user) {
+        console.warn("User not found when adding contributor", {
+          issuecode,
+          contributionType,
+          user,
+        });
+        return;
+      }
       removeContributor({ contributionType, userToRemove: user });
       contributors.value.push({
         issuecode,

@@ -241,7 +241,15 @@ try {
     for (const issuecode of issuecodes.value) {
       const idx = issuecodes.value.indexOf(issuecode);
       try {
-        await loadModel(firstIssuecode, issuecode);
+        await loadModel(issuecode);
+
+        if (
+          !stepStore.options.some(
+            ({ issuecode: thisIssuecode }) => thisIssuecode === issuecode,
+          )
+        ) {
+          throw new Error(`no options found for issue code ${issuecode}`);
+        }
       } catch {
         const previousIssuecode = issuecodes.value[idx - 1];
         if (previousIssuecode) {

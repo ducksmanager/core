@@ -226,18 +226,18 @@ export const step = defineStore("step", () => {
         );
       }
     },
-    copyDimensionsAndSteps = (issuecode: string, otherIssuecode: string) => {
+    copyDimensionsAndSteps = (toIssuecode: string, fromIssuecode: string) => {
       setDimensions(
         getFilteredDimensions({
-          issuecodes: [otherIssuecode],
-        }).map((dimension) => ({ ...dimension, issuecode }))[0],
+          issuecodes: [fromIssuecode],
+        }).map((dimension) => ({ ...dimension, issuecode: toIssuecode }))[0],
         {
-          issuecodes: [issuecode],
+          issuecodes: [toIssuecode],
         },
       );
 
       const steps = getFilteredOptions({
-        issuecodes: [issuecode],
+        issuecodes: [fromIssuecode],
       });
 
       for (
@@ -251,7 +251,8 @@ export const step = defineStore("step", () => {
               ({ stepNumber: optionStepNumber }) =>
                 optionStepNumber === stepNumber,
             )
-            .map((step) => ({ ...step, issuecode: otherIssuecode })),
+            .map((step) => ({ ...step, issuecode: toIssuecode })),
+          { issuecodes: [toIssuecode], stepNumber },
         );
       }
     },

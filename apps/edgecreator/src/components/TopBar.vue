@@ -233,7 +233,7 @@
               disable-not-ongoing-nor-published
               @change="modelToBeCloned = $event"
             />
-            <b-button :disabled="!modelToBeCloned" @click="overwriteModel()">
+            <b-button :disabled="!modelToBeCloned" @click="clone">
               {{ $t("Clone") }}
             </b-button>
           </b-collapse>
@@ -253,7 +253,6 @@ import { stores as webStores } from "~web";
 
 const uiStore = ui();
 const mainStore = main();
-const { loadModel } = useModelLoad();
 
 const { showPreviousEdge, showNextEdge } = surroundingEdge();
 const { dimensions: editingDimensions } = storeToRefs(editingStep());
@@ -301,14 +300,14 @@ const addPhoto = (src: string) => {
   photoUrls.value[issuecodes.value[0]] = src;
 };
 
-const overwriteModel = async () => {
-  const { issuecode } = modelToBeCloned.value!;
-  for (const targetIssuecode of issuecodes.value) {
-    try {
-      await loadModel(issuecode, targetIssuecode);
-    } catch (e) {
-      mainStore.addWarning(e as string);
-    }
+const clone = () => {
+  for (const issuecode of issuecodes.value.filter(
+    (issuecode) => issuecode !== modelToBeCloned.value!.issuecode,
+  )) {
+    stepStore.copyDimensionsAndSteps(
+      issuecode,
+      modelToBeCloned.value!.issuecode,
+    );
   }
 };
 
