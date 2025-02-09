@@ -93,15 +93,10 @@ jobs:
           username: ${{ secrets.PRODUCTION_SSH_USER }}
           key: ${{ secrets.PRODUCTION_SSH_KEY }}
           command_timeout: 5m
-          script_stop: true
-          envs: SUBSCRIPTIONS_BASIC_AUTH
+          envs: REMOTE_ROOT
           script: |
-            cd workspace/dm-server
-            docker compose run --rm --no-deps subscription-runner | ts '[%Y-%m-%d %H:%M:%S]'
-            curl --location --request POST "https://api.ducksmanager.net/ducksmanager/emails/subscription/release" \
-                 --header "x-dm-version: 1.0.0" \
-                 --header "Content-Type: application/x-www-form-urlencoded" \
-                 --header "Authorization: Basic $SUBSCRIPTIONS_BASIC_AUTH"
+            cd $REMOTE_ROOT/packages/api
+            docker compose exec api-websocket node ./create-issues-from-subscriptions.mjs
 
       - name: Run backup
         uses: appleboy/ssh-action@v1.0.3

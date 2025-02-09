@@ -27,19 +27,20 @@ model subscription {
   @@map("abonnements")
 }
 
-model abonnements_sorties {
+model subscriptionRelease {
   /// @deprecated
-  Pays            String   @db.VarChar(3)
+  countrycode         String   @map("Pays") @db.VarChar(3)
   /// @deprecated
-  Magazine        String   @db.VarChar(6)
+  magazinecode        String   @map("Magazine") @db.VarChar(6)
   /// @deprecated
-  Numero          String   @db.VarChar(8)
-  Date_sortie     DateTime @db.Date
-  Numeros_ajoutes Boolean  @default(false)
-  issuecode       String   @default(dbgenerated("(concat(convert(`Pays` using utf8mb3),'/',convert(`Magazine` using utf8mb3),' ',convert(`Numero` using utf8mb3)))")) @db.VarChar(25)
+  issuenumber         String   @map("Numero") @db.VarChar(8)
+  releaseDate         DateTime @map("Date_sortie") @db.Date
+  haveIssuesBeenAdded Boolean  @default(false) @map("Numeros_ajoutes")
+  issuecode           String   @default(dbgenerated("(concat(convert(`Pays` using utf8mb3),'/',convert(`Magazine` using utf8mb3),' ',convert(`Numero` using utf8mb3)))")) @db.VarChar(25)
 
-  @@id([Pays, Magazine, Numero])
+  @@id([countrycode, magazinecode, issuenumber])
   @@index([issuecode], map: "abonnements_sorties_issuecode_unique")
+  @@map("abonnements_sorties")
 }
 
 model purchase {
