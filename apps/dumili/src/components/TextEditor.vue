@@ -12,13 +12,25 @@
       <b-form-checkbox v-model="showEntryLetters" class="m-2">{{
         $t("Afficher des lettres au lieu des numéros de pages")
       }}</b-form-checkbox>
-      <b-form-textarea
-        v-model="textContent"
-        :rows="Object.keys(acceptedStories).length + 1"
-        readonly
-        :disabled="!issue"
-        :placeholder="textContentError"
-      ></b-form-textarea></template
+      <div class="position-relative d-flex flex-grow-1 w-100">
+        <b-form-textarea
+          v-model="textContent"
+          class="flex-grow-1 p-3"
+          :rows="Object.keys(acceptedStories).length + 1"
+          readonly
+          :disabled="!issue"
+          :placeholder="textContentError"
+        ></b-form-textarea>
+        <div class="column-helpers">
+          <div
+            v-for="(colMaxLength, idx) in colsMaxLengths?.filter(
+              (length) => length,
+            )"
+            :key="`column-helper-${idx}`"
+            class="column-helper"
+            :style="{ width: `${colMaxLength * 7.6}px` }"
+          ></div>
+        </div></div></template
   ></b-container>
 </template>
 <script setup lang="ts">
@@ -69,12 +81,12 @@ const getStoriesWithDetails = async (stories: storySuggestion[]) =>
       }),
   );
 
-const textContent = computed(() => {
+const rows = computed(() => {
   if (!storiesWithDetails.value?.length) {
     return undefined;
   }
   const issuecode = `${issue.value!.publicationcode} ${issue.value!.issuenumber}`;
-  const rows = [
+  return [
     [
       issuecode,
       indexation.value!.price ? [`[price:${indexation.value!.price}]`] : [],
@@ -104,15 +116,30 @@ const textContent = computed(() => {
       ];
     }),
   ];
-  const colsMaxLengths = rows[0].map((_, colIndex) =>
-    Math.max(...rows.map((row) => row[colIndex]?.length || 0)),
-  );
+});
+
+const colsMaxLengths = computed(() =>
+  !rows.value
+    ? undefined
+    : rows.value[1].map((_, colIndex) =>
+        Math.max(
+          ...rows
+            .value!.filter((_, idx) => idx > 0)
+            .map((row) => row[colIndex]?.length || 0),
+        ),
+      ),
+);
+
+const textContent = computed(() => {
+  if (!rows.value || !colsMaxLengths.value) {
+    return undefined;
+  }
 
   return rows
-    .map((row) =>
+    .value!.map((row) =>
       row
         .map((col, colIndex) =>
-          (col || "").padEnd(colsMaxLengths[colIndex], " "),
+          (col || "").padEnd(colsMaxLengths.value![colIndex], " "),
         )
         .join(" "),
     )
@@ -135,8 +162,38 @@ watch(
 </script>
 <style scoped lang="scss">
 textarea {
+  z-index: 2;
   font-family: monospace;
-  margin: 2rem 0;
   flex-grow: 1;
+  background: transparent;
+  color: black;
+}
+.column-helpers {
+  position: absolute;
+  display: flex;
+  z-index: 1;
+  height: 100%;
+  left: 0.6rem;
+  .column-helper {
+    padding: 0 3px;
+
+    $column-colors: (
+      white,
+      #d2ffc4,
+      #ffffcc,
+      #fff284,
+      #f2e4d5,
+      white,
+      #d8f0f8,
+      #ffecec,
+      white
+    );
+
+    @for $i from 1 through length($column-colors) {
+      &:nth-of-type(#{$i}) {
+        background: nth($column-colors, $i) !important;
+      }
+    }
+  }
 }
 </style>
