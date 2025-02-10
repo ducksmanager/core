@@ -53,7 +53,7 @@ meta:
 import { socketInjectionKey } from "../composables/useDmSocket";
 import Cookies from "js-cookie";
 
-const { login: userLogin, loadUser } = collection();
+const { login: userLogin } = collection();
 const { user } = storeToRefs(collection());
 
 let router = useRouter();
