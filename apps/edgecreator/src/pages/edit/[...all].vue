@@ -52,7 +52,7 @@
                 </div>
                 <div>
                   {{
-                    publicationIssues![issuecode]!.issuenumber
+                    publicationIssues!.find(({issuecode: thisIssuecode}) => issuecode === thisIssuecode)!.issuenumber
                   }}
                 </div>
               </th>

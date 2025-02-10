@@ -24,7 +24,7 @@
       </div>
       <template v-else-if="fullUrl">
         <img
-          :alt="issuenumber"
+          :alt="issuecode"
           :src="fullUrl"
           class="cover"
           @error="fullUrl = undefined"
@@ -50,17 +50,15 @@ defineEmits<{ (e: "click"): void }>();
 let isCoverLoading = $ref(true);
 let fullUrl = $ref<string>();
 let publicationcode = $ref<string>("");
-let issuenumber = $ref<string>("");
 
-const { fetchIssueUrls, setCoverUrl, fetchIssuecodeDetails } = coa();
+const { fetchIssueUrls, setCoverUrl } = coa();
 const { publicationNames, issueDetails, issuecodeDetails, coverUrls } =
   storeToRefs(coa());
 
 watch(
-  $$(issuecode),
-  async () => {
-    await fetchIssuecodeDetails([issuecode]);
-    ({ publicationcode, issuenumber } = issuecodeDetails.value[issuecode]);
+  () => issuecode,
+  () => {
+    ({ publicationcode } = issuecodeDetails.value[issuecode]);
   },
   { immediate: true },
 );

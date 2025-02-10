@@ -107,19 +107,20 @@
       </b-col>
       <b-col />
     </b-row>
-    <b-row align="center" class="pb-1">
+    <b-row v-if="publicationIssues" align="center" class="pb-1">
       <b-col v-if="publicationName" align-self="center">
-        <issue :issue="publicationIssues[issuecodes[0]]" hide-condition no-wrap>
+        <issue :issue="publicationIssues[0]" hide-condition no-wrap>
           <template v-if="isEditingMultiple" #title-suffix>
             <template v-if="mainStore.isRange">
               {{ $t("to") }}
-              {{ publicationIssues![issuecodes[issuecodes.length - 1]]!.issuenumber }}
+              {{ publicationIssues[publicationIssues.length - 1]!.issuenumber }}
             </template>
             <template v-else-if="issuecodes.length > 1">
               <span
                 v-for="otherIssuecode in issuecodes.slice(1)"
                 :key="`other-${otherIssuecode}`"
-                >, {{ publicationIssues![otherIssuecode]!.issuenumber }}</span
+                >,
+                {{ publicationIssues.find(({issuecode}) => issuecode === otherIssuecode)!.issuenumber }}</span
               >
             </template>
           </template>

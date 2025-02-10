@@ -104,6 +104,7 @@
             <div
               v-for="{
                 issuecode,
+                issuenumber,
                 title,
                 userCopies,
                 key,
@@ -124,8 +125,7 @@
                 />
 
                 <span class="issue-text">
-                  {{ issueNumberTextPrefix
-                  }}{{ issuecodeDetails[issuecode]?.issuenumber }}
+                  {{ issueNumberTextPrefix }}{{ issuenumber }}
                   <span class="issue-title">{{ title }}</span>
                 </span>
               </span>
@@ -153,6 +153,7 @@
             <div
               v-for="{
                 issuecode,
+                issuenumber,
                 title,
                 userCopies,
                 key,
@@ -186,8 +187,7 @@
                 />
 
                 <span class="issue-text">
-                  {{ issueNumberTextPrefix
-                  }}{{ issuecodeDetails[issuecode]?.issuenumber }}
+                  {{ issueNumberTextPrefix }}{{ issuenumber }}
                   <span class="issue-title">{{ title }}</span>
                 </span>
               </span>
@@ -337,11 +337,14 @@ import ContextMenuOwnCollection from "./ContextMenuOwnCollection.vue";
 
 type simpleIssue = {
   issuecode: string;
+  issuenumber: string;
   title?: string | null;
   key: string;
 };
 type issueWithCopies = simpleIssue & {
-  userCopies: ((issue & { issuecode: string }) & { copyIndex: number })[];
+  userCopies: ((issue & { issuecode: string; issuenumber: string }) & {
+    copyIndex: number;
+  })[];
 };
 
 const {
@@ -399,13 +402,9 @@ switch (contextMenuComponentName) {
     break;
 }
 
-const { fetchPublicationNames, fetchIssuecodesByPublicationcode } = coa();
-const {
-  publicationNames,
-  coverUrls,
-  issuecodesByPublicationcode,
-  issuecodeDetails,
-} = storeToRefs(coa());
+const { fetchPublicationNames, fetchIssuesByPublicationcode } = coa();
+const { publicationNames, coverUrls, issuesByPublicationcode } =
+  storeToRefs(coa());
 
 let hoveredIndex = $ref<number>();
 let loading = $ref(true);
@@ -475,8 +474,8 @@ const publicationName = $computed(
   () => publicationNames.value[publicationcode],
 );
 const isTouchScreen = window.matchMedia("(pointer: coarse)").matches;
-const coaIssuecodes = $computed(
-  () => issuecodesByPublicationcode.value[publicationcode],
+const coaIssues = $computed(
+  () => issuesByPublicationcode.value[publicationcode],
 );
 const filteredIssues = $computed(
   () =>
@@ -587,26 +586,28 @@ const loadIssues = async () => {
         ).dbValue,
       }));
 
-    await fetchIssuecodesByPublicationcode([publicationcode]);
+    await fetchIssuesByPublicationcode(publicationcode);
 
     if (groupUserCopies) {
-      issues = coaIssuecodes.map((issuecode) => ({
-        issuecode,
+      issues = coaIssues.map((issue) => ({
+        ...issue,
         userCopies: userIssuesForPublication!
-          .filter(({ issuecode: userIssuecode }) => userIssuecode === issuecode)
+          .filter(
+            ({ issuecode: userIssuecode }) => userIssuecode === issue.issuecode,
+          )
           .map((issue, copyIndex) => ({
             ...issue,
             copyIndex,
           })),
-        key: issuecode,
+        key: issue.issuecode,
       }));
     } else {
       const userIssuecodes = [
         ...new Set(userIssuesForPublication.map(({ issuecode }) => issuecode)),
       ];
-      issues = coaIssuecodes
-        .filter((issuecode) => userIssuecodes.includes(issuecode))
-        .reduce<issueWithCopies[]>((acc, issuecode) => {
+      issues = coaIssues
+        .filter(({ issuecode }) => userIssuecodes.includes(issuecode))
+        .reduce<issueWithCopies[]>((acc, { issuecode }) => {
           const filteredIssues = userIssuesForPublication!
             .filter(
               ({ issuecode: userIssuecode }) => userIssuecode === issuecode,
@@ -648,7 +649,10 @@ const loadIssues = async () => {
     }
 
     userIssuecodesNotFoundForPublication = userIssuesForPublication
-      .filter(({ issuecode }) => !coaIssuecodes.includes(issuecode))
+      .filter(
+        ({ issuecode }) =>
+          !coaIssues.some((issue) => issuecode === issue.issuecode),
+      )
       .map(({ issuecode }) => issuecode);
     loading = false;
   }
@@ -662,18 +666,18 @@ watch($$(preselectedIndexEnd), () => {
   preselected = getPreselected();
 });
 
-watch(
-  [$$(publicationcode), $$(userIssues)],
-  async () => {
-    await loadIssues();
-  },
-  { immediate: true },
-);
+watch([$$(publicationcode), $$(userIssues)], () => loadIssues(), {
+  immediate: true,
+});
 
 watch(
-  $$(userIssues),
-  async () => {
-    await loadIssues();
+  $$(publicationcode),
+  async (newPublicationcode) => {
+    if (newPublicationcode) {
+      publicationNameLoading = true;
+      await fetchPublicationNames([newPublicationcode]);
+      publicationNameLoading = false;
+    }
   },
   { immediate: true },
 );
@@ -684,8 +688,6 @@ watch(
   } else {
     await loadPurchases();
   }
-  await fetchPublicationNames([publicationcode]);
-  publicationNameLoading = false;
 })();
 </script>
 
