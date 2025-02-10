@@ -12,9 +12,11 @@ let isReady = $ref(false);
 
 const socket = useDmSocket({
   cacheStorage: buildWebStorage(sessionStorage),
-  onConnected: () => {
+  onConnected: (namespace) => {
     isReady = true;
-    collection().loadUser();
+    if (namespace === "/collection") {
+      collection().loadUser();
+    }
   },
   onConnectError: (e) => {
     console.error(e);

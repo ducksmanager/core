@@ -76,7 +76,6 @@ const login = async () => {
       });
 
       collectionSocket._connect();
-      await loadUser(true);
     },
     (e) => {
       error = e;
