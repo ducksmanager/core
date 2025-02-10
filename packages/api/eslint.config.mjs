@@ -1,19 +1,13 @@
-import eslint from '@eslint/js';
-import tseslint from 'typescript-eslint';
-import _import from "eslint-plugin-import"
-import prettierConfig from 'eslint-config-prettier';
+import eslint from "@eslint/js";
+import prettierConfig from "eslint-config-prettier";
+import tseslint from "typescript-eslint";
 
 export default tseslint.config(
   eslint.configs.recommended,
   tseslint.configs.recommended,
   prettierConfig,
   {
-    ignores: [
-      "**/node_modules",
-      "**/dist",
-      "**/bundle.mjs",
-      "**/*.d.ts"
-    ]
+    ignores: ["**/node_modules", "**/dist", "**/bundle.mjs", "**/*.d.ts"],
   },
   {
     languageOptions: {
@@ -45,6 +39,6 @@ export default tseslint.config(
     },
   },
   {
-    files: ["**/*.ts"]
-  }
+    files: ["**/*.ts"],
+  },
 );

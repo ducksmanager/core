@@ -3,9 +3,10 @@ dotenv.config({
   path: "./.env",
 });
 
-import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
-import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa/client";
 import dayjs from "dayjs";
+
+import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa/client";
+import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
 (async () => {
   const ongoingSubscriptions = await prismaDm.$queryRaw<
     {
@@ -25,8 +26,12 @@ where current_date between earliestReleaseDate and latestReleaseDate
 `;
 
   for (const subscription of ongoingSubscriptions) {
-    const earliestReleaseDate = dayjs(subscription.earliestReleaseDate).format('YYYY-MM-DD');
-    const latestReleaseDate = dayjs(subscription.latestReleaseDate).format('YYYY-MM-DD');
+    const earliestReleaseDate = dayjs(subscription.earliestReleaseDate).format(
+      "YYYY-MM-DD",
+    );
+    const latestReleaseDate = dayjs(subscription.latestReleaseDate).format(
+      "YYYY-MM-DD",
+    );
     console.log(
       "Checking releases for user %s, publication %s, between %s and %s",
       subscription.userId,
@@ -59,7 +64,11 @@ where current_date between earliestReleaseDate and latestReleaseDate
         }))
       ) {
         const [countrycode, magazinecode] = release.publicationcode.split("/");
-        console.log('Adding issue %s to user %s', release.issuecode, subscription.userId);
+        console.log(
+          "Adding issue %s to user %s",
+          release.issuecode,
+          subscription.userId,
+        );
         await prismaDm.subscriptionRelease.create({
           data: {
             countrycode,

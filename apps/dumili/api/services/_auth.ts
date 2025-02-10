@@ -1,10 +1,9 @@
 import jwt from "jsonwebtoken";
 import type { Socket } from "socket.io";
+
 import type { SessionUser } from "~dm-types/SessionUser";
 
-const authenticateUser = async (
-  token?: string | null,
-): Promise<SessionUser> =>
+const authenticateUser = async (token?: string | null): Promise<SessionUser> =>
   new Promise((resolve, reject) => {
     if (!token) {
       reject("No token provided");
@@ -19,7 +18,7 @@ const authenticateUser = async (
           console.error(err);
           reject(`Invalid token: ${err}`);
         } else {
-          const user = (payload as {data?: Omit<SessionUser, 'token'>}).data
+          const user = (payload as { data?: Omit<SessionUser, "token"> }).data;
           if (user) {
             resolve(user as SessionUser);
           }

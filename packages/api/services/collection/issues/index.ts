@@ -315,9 +315,7 @@ const addOrChangeCopies = async (
     const common = {
       condition: conditions[copyNumber]!,
       isOnSale:
-        areOnSale[copyNumber] !== undefined
-          ? (areOnSale[copyNumber])
-          : false,
+        areOnSale[copyNumber] !== undefined ? areOnSale[copyNumber] : false,
       isToRead:
         areToRead[copyNumber] !== undefined ? areToRead[copyNumber] : false,
       purchaseId: purchaseIds[copyNumber] || -2,

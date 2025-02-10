@@ -139,7 +139,10 @@ const updateTags = async (edges: edge[]) => {
   });
 
   const edgeIssuesByIssuecode = edgeIssues.groupBy("issuecode");
-  const issuecodesByPublicationcode = edgeIssues.groupBy("publicationcode", 'issuecode[]');
+  const issuecodesByPublicationcode = edgeIssues.groupBy(
+    "publicationcode",
+    "issuecode[]",
+  );
 
   const tagsToAdd: { [spriteName: string]: Tag } = {};
   const insertOperations = [];
@@ -158,7 +161,9 @@ const updateTags = async (edges: edge[]) => {
       let actualSpriteSize;
       if (spriteSize === "full") {
         actualSpriteSize = await prismaDm.edge.count({
-          where: { issuecode: {in: issuecodesByPublicationcode[publicationcode] } },
+          where: {
+            issuecode: { in: issuecodesByPublicationcode[publicationcode] },
+          },
         });
         if (actualSpriteSize > MAX_SPRITE_SIZE) {
           console.log(

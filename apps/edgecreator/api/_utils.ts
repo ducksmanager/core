@@ -1,4 +1,5 @@
 import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa/client";
+
 import { getEdgesPath } from ".";
 
 export const getSvgPath = async (isExport: boolean, issuecode: string) => {

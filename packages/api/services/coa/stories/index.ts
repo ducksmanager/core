@@ -96,9 +96,7 @@ export default {
     }
   },
 
-  searchStoryByStorycode: async(
-    partialStorycode: string,
-  ) => {
+  searchStoryByStorycode: async (partialStorycode: string) => {
     const limit = 10;
     let results = await prismaCoa.$queryRaw<
       StorySearchResults<false>["results"]
@@ -114,11 +112,11 @@ export default {
 
     const hasMore = results.length > limit;
     results = results.slice(0, limit);
-      return {
-        results,
-        hasMore,
-      };
-  }
+    return {
+      results,
+      hasMore,
+    };
+  },
 };
 
 const listIssuesFromStoryCode = async (storycode: string) =>

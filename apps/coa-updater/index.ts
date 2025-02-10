@@ -35,33 +35,34 @@ try {
   }
 
   console.log("iconv done");
-  let cleanSql = readFileSync(`${isvPath}/createtables.sql`, "utf8")
-    .split("\n")
-    .filter(
-      (line) =>
-        !(
-          ["USE ", "RENAME ", "DROP ", "# Step ", "#End of file"].some(
-            (prefix) => line.startsWith(prefix),
-          ) ||
-          /^.+priv[^;]+;$/.test(line) ||
-          /^CREATE TABLE IF NOT EXISTS ([^ ]+) LIKE \1_temp/.test(line)
-        ),
-    )
-    .join("\n")
-    // TODO uncomment? Replace "pk0" indexes with actual primary keys
-    // .replace(/KEY pk0/gms, "CONSTRAINT `PRIMARY` PRIMARY KEY")
+  let cleanSql =
+    readFileSync(`${isvPath}/createtables.sql`, "utf8")
+      .split("\n")
+      .filter(
+        (line) =>
+          !(
+            ["USE ", "RENAME ", "DROP ", "# Step ", "#End of file"].some(
+              (prefix) => line.startsWith(prefix),
+            ) ||
+            /^.+priv[^;]+;$/.test(line) ||
+            /^CREATE TABLE IF NOT EXISTS ([^ ]+) LIKE \1_temp/.test(line)
+          ),
+      )
+      .join("\n")
+      // TODO uncomment? Replace "pk0" indexes with actual primary keys
+      // .replace(/KEY pk0/gms, "CONSTRAINT `PRIMARY` PRIMARY KEY")
 
-    // Replace ISV file paths with absolute paths
-    .replace(
-      /LOAD DATA LOCAL INFILE ".\/([^"]+)"/gms,
-      `LOAD DATA LOCAL INFILE '${dataPath}/$1'`,
-    )
+      // Replace ISV file paths with absolute paths
+      .replace(
+        /LOAD DATA LOCAL INFILE ".\/([^"]+)"/gms,
+        `LOAD DATA LOCAL INFILE '${dataPath}/$1'`,
+      )
 
-    // Prefix fulltext indexes with table name
-    .replace(
-      /(ALTER TABLE )(([^ ]+)_temp)( ADD FULLTEXT)(\([^()]+\));/gs,
-      "$1$2$4 fulltext_$3 $5;",
-    ) + "ALTER TABLE inducks_story_temp ADD FULLTEXT(storycode);";
+      // Prefix fulltext indexes with table name
+      .replace(
+        /(ALTER TABLE )(([^ ]+)_temp)( ADD FULLTEXT)(\([^()]+\));/gs,
+        "$1$2$4 fulltext_$3 $5;",
+      ) + "ALTER TABLE inducks_story_temp ADD FULLTEXT(storycode);";
 
   console.log("Renaming foreign keys...");
   for (let fkIndex = 0; fkIndex <= 5; fkIndex++) {

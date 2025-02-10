@@ -33,15 +33,19 @@ export default () => ({
     const [country, magazine] = publicationcode.split("/");
 
     const modelContributors = [
-      ...Object.values(await getUserIdsByUsername(designers)).map((userId) => ({
-        userId,
-        contribution: "createur",
-      } as const)),
+      ...Object.values(await getUserIdsByUsername(designers)).map(
+        (userId) =>
+          ({
+            userId,
+            contribution: "createur",
+          }) as const,
+      ),
       ...Object.values(await getUserIdsByUsername(photographers)).map(
-        (userId) => ({
-          userId,
-          contribution: "photographe",
-        } as const),
+        (userId) =>
+          ({
+            userId,
+            contribution: "photographe",
+          }) as const,
       ),
     ];
     const { edgeId, contributors, isNew } = await publishEdgeOnDm(

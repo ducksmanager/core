@@ -6,8 +6,8 @@ import type { NamespaceProxyTarget } from "socket-call-server";
 import { useSocketEvents } from "socket-call-server";
 
 import { OptionalAuthMiddleware } from "~dm-services/auth/util";
-import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
 import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa/client";
+import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
 
 import type { SessionData } from "../../index";
 import { getEdgesPath } from "../../index";
@@ -52,7 +52,7 @@ const findPublishedEdges = async (publicationcode: string) => {
       where: {
         issuecode: {
           in: coaIssues.map((issue) => issue.issuecode),
-        }
+        },
       },
     })
   )
@@ -103,14 +103,14 @@ const findPublishedEdges = async (publicationcode: string) => {
 
       const potentialSvgPath = filePath.replace(".png", ".svg");
       if (existsSync(potentialSvgPath)) {
-        svgUrl = potentialSvgPath.replace(/^.+\/edges\//, '')
+        svgUrl = potentialSvgPath.replace(/^.+\/edges\//, "");
       }
 
       return {
         id: edge.id,
         issuecode: coaIssuecodesByShortIssuecode[shortIssuecode],
         publicationcode,
-        url: filePath.replace(/^.+\/edges\//, ''),
+        url: filePath.replace(/^.+\/edges\//, ""),
         svgUrl,
       };
     })

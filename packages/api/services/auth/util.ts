@@ -19,7 +19,10 @@ const EMAIL_REGEX =
 export const isValidEmail = (email: string) => EMAIL_REGEX.test(email);
 
 export const generateAccessToken = (payload: Omit<SessionUser, "token">) =>
-  jwt.sign({exp: Math.floor(Date.now() / 1000) + 60 * 60 * 24 * 14, data: payload}, process.env.TOKEN_SECRET!);
+  jwt.sign(
+    { exp: Math.floor(Date.now() / 1000) + 60 * 60 * 24 * 14, data: payload },
+    process.env.TOKEN_SECRET!,
+  );
 export const loginAs = async (user: user, hashedPassword: string) =>
   generateAccessToken({
     id: user.id,
@@ -57,21 +60,27 @@ const AuthMiddleware = (
       if (required && err) {
         next(new Error(`Invalid token: ${err}`));
       } else {
-        const user = (payload as {data?: Omit<SessionUser, 'token'>}).data
+        const user = (payload as { data?: Omit<SessionUser, "token"> }).data;
         if (user) {
           socket.data.user = { ...user, token } as SessionUser;
-        }
-        else if (typeof payload === 'object' && payload !== null && 'username' in payload) {
-          socket.data.user = { ...(payload as Omit<SessionUser, 'token'>), token } as SessionUser;
-        }
-        else {
-          console.error('There is no user in the payload:', payload)
+        } else if (
+          typeof payload === "object" &&
+          payload !== null &&
+          "username" in payload
+        ) {
+          socket.data.user = {
+            ...(payload as Omit<SessionUser, "token">),
+            token,
+          } as SessionUser;
+        } else {
+          console.error("There is no user in the payload:", payload);
           next(new Error(`Invalid payload: ${payload}`));
-          return
+          return;
         }
         next();
       }
-    },  );
+    },
+  );
 };
 
 export const RequiredAuthMiddleware = (

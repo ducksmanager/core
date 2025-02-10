@@ -60,7 +60,7 @@ export default (services: UserServices) => {
 
     getRequests: async (as: "buyer" | "seller") => {
       switch (as) {
-        case "seller":{
+        case "seller": {
           const requestedIssuesOnSaleIds = await prismaDm.$queryRaw<
             { id: number }[]
           >`
@@ -73,7 +73,8 @@ export default (services: UserServices) => {
             where: {
               id: { in: requestedIssuesOnSaleIds.map(({ id }) => id) },
             },
-          });}
+          });
+        }
         case "buyer":
           return await prismaDm.requestedIssue.findMany({
             where: {
