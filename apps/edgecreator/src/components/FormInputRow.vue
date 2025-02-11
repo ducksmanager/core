@@ -4,7 +4,7 @@
       <label :for="optionName">{{ label }}</label>
     </b-col>
     <b-col sm="9" class="d-flex flex-column align-items-center">
-      <div>
+      <div class="w-100">
         <slot name="prefix" />
         <confirm-edit-multiple-values :values="values" @change="onChangeValue">
           <b-form-select
@@ -20,12 +20,12 @@
             size="sm"
             autocomplete="off"
             :type="type"
-            :min="String(min)"
-            :max="String(max)"
-            :step="String(rangeStep)"
+            :min="min === undefined ? undefined : String(min)"
+            :max="max === undefined ? undefined : String(max)"
+            :step="rangeStep === undefined ? undefined : String(rangeStep)"
             :range="range"
             :disabled="disabled || false"
-            :list="String(listId)"
+            :list="listId === undefined ? undefined : String(listId)"
             @blur="onBlur"
           />
         </confirm-edit-multiple-values>

@@ -304,16 +304,14 @@ const inputValues = computed(
       ),
 );
 
-const selectedGalleryItems = ref<(string | undefined)[]>([]);
+const selectedGalleryItems = ref<string[]>([]);
 
 watch(
   inputValues,
   (inputValues) => {
-    selectedGalleryItems.value = Object.values(inputValues).map(
-      (stepInputValue) =>
-        ("src" in stepInputValue && (stepInputValue.src[0] as string)) ||
-        undefined,
-    );
+    selectedGalleryItems.value = Object.values(inputValues)
+      .filter((stepInputValue) => "src" in stepInputValue)
+      .map((stepInputValue) => stepInputValue.src[0] as string);
   },
   { immediate: true },
 );

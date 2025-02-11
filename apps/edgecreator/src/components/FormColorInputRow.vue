@@ -101,7 +101,7 @@ type PossibleInputValueType = string | number;
 const {
   label = null,
   canBeTransparent = false,
-  inputValues,
+  inputValues = [],
   otherColors,
   optionName,
 } = defineProps<{
@@ -133,7 +133,7 @@ watch(
 );
 
 const getOptionStringValuesByStepNumber = (options: Options) =>
-  options.groupBy("stepNumber", "optionValue[]") as Record<number, string[]>;
+  options.groupBy("stepNumber", "optionValue[]");
 
 const otherColorsByLocationAndStepNumber = computed(() => ({
   differentIssuecode:
