@@ -161,7 +161,7 @@ const publicationCodesWithOther = $computed(
       {},
     );
 
-    let accDate: { [label: string]: number } = labels!.reduce(
+    let accDate = labels!.reduce<{ [label: string]: number }>(
       (acc, value) => ({ ...acc, [value]: 0 }),
       {},
     );

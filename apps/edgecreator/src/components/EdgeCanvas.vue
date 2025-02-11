@@ -140,13 +140,7 @@ const getStepOptions = (stepNumber: number, withComponentOption = true) =>
   );
 
 const toKeyValue = (arr: OptionNameAndValue[]) => {
-  const val = arr.reduce(
-    (acc, { optionName, optionValue }) => ({
-      ...acc,
-      [optionName]: optionValue,
-    }),
-    {},
-  );
+  const val = arr.groupBy("optionName", "optionValue");
   return Object.keys(val).length ? val : undefined;
 };
 const borderWidth = ref(1);

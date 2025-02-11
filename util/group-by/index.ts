@@ -1,3 +1,22 @@
+type GroupByValueType<
+  T,
+  V extends
+    | undefined
+    | "[]"
+    | (keyof T & string)
+    | `${keyof T & string}[]` = undefined,
+> = V extends undefined
+  ? T
+  : V extends "[]"
+    ? T[]
+    : V extends `${infer U}[]`
+      ? U extends keyof T
+        ? T[U][]
+        : never
+      : V extends keyof T
+        ? T[V]
+        : never;
+
 declare global {
   interface Array<T> {
     /**
@@ -8,6 +27,7 @@ declare global {
      *                         If not provided, the entire object will be used as the value.
      *                         If set to '[]', an array of objects will be used as the value.
      *                         If set to 'myField[]', an array of values of myField will be used as the value.
+     * @param mapperFn - Optional. If set, each value will be passed to the function and the result will be used as the value or an array of values (depending on the value of valueFieldName).
      * @returns An object with the grouped elements.
      * @example
      * // returns { John: { id: 3, name: 'John' }, Jane: { id: 2, name: 'Jane' } }
@@ -28,6 +48,11 @@ declare global {
      * // returns { John: [1, 3], Jane: [2] }
      * [{ id: 1, name: 'John' }, { id: 2, name: 'Jane' }, { id: 3, name: 'John' }]
      *      .groupBy('name', 'id[]');
+     *
+     * @example
+     * // returns { John: [3, 9], Jane: [6] }
+     * [{ id: 1, name: 'John' }, { id: 2, name: 'Jane' }, { id: 3, name: 'John' }]
+     *      .groupBy('name', 'id[]', (id) => id * 3);
      */
     groupBy<
       K extends keyof T & string,
@@ -36,76 +61,45 @@ declare global {
         | "[]"
         | (keyof T & string)
         | `${keyof T & string}[]` = undefined,
+      R = any,
     >(
       fieldName: K,
       valueFieldName?: V,
-    ): Record<
-      T[K] & (string | number),
-      V extends "[]"
-        ? T[]
-        : V extends `${infer U}[]`
-          ? U extends keyof T
-            ? T[U][]
-            : never
+      mapperFn?: (
+        value: GroupByValueType<T, V> extends (infer U)[]
+          ? U
           : V extends keyof T
             ? T[V]
-            : T
+            : T,
+        index: number
+      ) => R
+    ): Record<
+      T[K] & (string | number),
+      typeof mapperFn extends undefined ? GroupByValueType<T, V> : R
     >;
   }
 }
 
-Array.prototype.groupBy = function (fieldName, valueFieldName) {
-  return this.reduce((acc, object) => {
+Array.prototype.groupBy = function (fieldName, mapper, mapperFn) {
+  return this.reduce((acc, object, idx) => {
     const key = object[fieldName];
-    if (valueFieldName === "[]") {
+    if (mapper === "[]" || mapper?.endsWith("[]")) {
       if (!acc[key]) {
         acc[key] = [];
       }
-      acc[key].push(object);
-    } else if (valueFieldName?.endsWith("[]")) {
-      if (!acc[key]) {
-        acc[key] = [];
-      }
-      acc[key].push(object[valueFieldName.slice(0, -"[]".length)]);
-    } else if (valueFieldName) {
-      acc[key] = object[valueFieldName] || undefined;
+      acc[key].push(
+        (mapperFn || ((value) => value))(
+          mapper === "[]" ? object : object[mapper.slice(0, -"[]".length)],
+          idx
+        )
+      );
     } else {
-      acc[key] = object;
+      acc[key] = (mapperFn || ((value) => value))(
+        mapper ? object[mapper] : object,
+        idx
+      );
     }
     return acc;
   }, {});
 };
-
-[
-  { id: 1, name: "John" },
-  { id: 2, name: "Jane" },
-  { id: 3, name: "John" },
-].groupBy("name");
-// ^ inferred as Record<string, {id: number, name: string}>
-// Output:{ John: { id: 3, name: 'John' }, Jane: { id: 2, name: 'Jane' } }
-
-[
-  { id: 1, name: "John" },
-  { id: 2, name: "Jane" },
-  { id: 3, name: "John" },
-].groupBy("name", "[]");
-// ^ inferred as Record<string, {id: number, name: string}[]>
-// Output: { John: [{ id: 1, name: 'John' }, { id: 3, name: 'John' }], Jane: [{ id: 2, name: 'Jane' }] }
-
-[
-  { id: 1, name: "John" },
-  { id: 2, name: "Jane" },
-  { id: 3, name: "John" },
-].groupBy("name", "id");
-// ^ inferred as Record<string, number>
-// Output: { John: 3, Jane: 2 }
-
-[
-  { id: 1, name: "John" },
-  { id: 2, name: "Jane" },
-  { id: 3, name: "John" },
-].groupBy("name", "id[]");
-// ^ inferred as Record<string, number[]>
-// Output: { John: [1, 3], Jane: [2] }
-
 export default {};
