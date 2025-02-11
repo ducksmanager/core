@@ -117,7 +117,7 @@ export const getCoverUrls = async (issuecodes: string[]) => {
       };
     }
 
-    const urlPrefix = /^\d/.test(coverEntryUrl.url!)
+    const urlPrefix = /^\d/.test(coverEntryUrl.url)
       ? "webusers/webusers"
       : coverEntryUrl.url!.startsWith("webusers")
         ? "webusers"
