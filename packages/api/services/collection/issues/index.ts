@@ -1,10 +1,11 @@
 import { parse } from "csv-parse/sync";
 import { existsSync, readFileSync } from "fs";
 import { cwd } from "process";
-import type { Socket } from "socket.io";
 
-import { getPublicationTitles } from "~/services/coa/publications";
-import { getShownQuotations } from "~/services/coa/quotations";
+import type {
+  CollectionUpdateMultipleIssues,
+  CollectionUpdateSingleIssue,
+} from "~dm-types/CollectionUpdate";
 import type { InducksIssueQuotationSimple } from "~dm-types/InducksIssueQuotationSimple";
 import type { TransactionResults } from "~dm-types/TransactionResults";
 import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa/client";
@@ -12,7 +13,9 @@ import type { issue, user } from "~prisma-schemas/schemas/dm";
 import { issue_condition } from "~prisma-schemas/schemas/dm";
 import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
 
-import type Events from "../types";
+import type { UserServices } from "../../../index";
+import { getPublicationTitles } from "../../coa/publications";
+import { getShownQuotations } from "../../coa/quotations";
 import {
   checkPurchaseIdsBelongToUser,
   deleteIssues,
@@ -35,7 +38,7 @@ const getCoaCountByPublicationcode = (collectionPublicationcodes: string[]) =>
     .then((data) =>
       Object.fromEntries(
         data.map(({ publicationcode, _count }) => [
-          publicationcode!,
+          publicationcode,
           _count.issuenumber,
         ]),
       ),
@@ -59,7 +62,7 @@ const getCoaCountByCountrycode = (collectionCountrycodes: string[]) =>
     .then((data) =>
       data.reduce<Record<string, number>>(
         (acc, { publicationcode, _count }) => {
-          const countrycode = publicationcode!.split("/")[0];
+          const countrycode = publicationcode.split("/")[0];
           acc[countrycode] = _count.issuenumber + (acc[countrycode] || 0);
           return acc;
         },
@@ -67,15 +70,15 @@ const getCoaCountByCountrycode = (collectionCountrycodes: string[]) =>
       ),
     );
 
-export default (socket: Socket<Events>) => {
-  socket.on("getIssues", async (callback) => {
-    if (socket.data.user!.username === "demo") {
+export default ({ _socket }: UserServices) => ({
+  getIssues: async () => {
+    if (_socket.data.user.username === "demo") {
       await resetDemo();
     }
-    prismaDm.issue
+    return prismaDm.issue
       .findMany({
         where: {
-          userId: socket.data.user!.id,
+          userId: _socket.data.user.id,
           issuecode: {
             not: {
               equals: null,
@@ -90,7 +93,7 @@ export default (socket: Socket<Events>) => {
       )
       .then(async (issues) => {
         const collectionPublicationcodes = [
-          ...new Set(issues.map(({ publicationcode }) => publicationcode!)),
+          ...new Set(issues.map(({ publicationcode }) => publicationcode)),
         ];
         const collectionCountrycodes = [
           ...new Set(
@@ -114,62 +117,62 @@ export default (socket: Socket<Events>) => {
             },
           }),
         };
-      })
-      .then(callback);
-  });
+      });
+  },
 
-  socket.on(
-    "addOrChangeIssues",
-    async (
-      { issuecodes, purchaseId, isOnSale, condition, isToRead },
-      callback,
-    ) => {
-      const user = socket.data.user!;
+  addOrChangeIssues: async ({
+    issuecodes,
+    purchaseId,
+    isOnSale,
+    condition,
+    isToRead,
+  }: CollectionUpdateMultipleIssues) => {
+    const user = _socket.data.user;
 
-      let checkedPurchaseId: number | null = null;
-      if (typeof purchaseId === "number") {
-        checkedPurchaseId = (
-          await checkPurchaseIdsBelongToUser([purchaseId], user.id)
-        )[0];
-      }
+    let checkedPurchaseId: number | null = null;
+    if (typeof purchaseId === "number") {
+      checkedPurchaseId = (
+        await checkPurchaseIdsBelongToUser([purchaseId], user.id)
+      )[0];
+    }
 
-      if (isOnSale !== undefined) {
-        const issueIds = (
-          await prismaDm.issue.findMany({
-            select: {
-              id: true,
+    if (isOnSale !== undefined) {
+      const issueIds = (
+        await prismaDm.issue.findMany({
+          select: {
+            id: true,
+          },
+          where: {
+            userId: user.id,
+            issuecode: {
+              in: issuecodes,
             },
-            where: {
-              userId: user.id,
-              issuecode: {
-                in: issuecodes,
-              },
-            },
-          })
-        ).map(({ id }) => id);
-        for (const issueId of issueIds) {
-          await handleIsOnSale(issueId, isOnSale);
-        }
+          },
+        })
+      ).map(({ id }) => id);
+      for (const issueId of issueIds) {
+        await handleIsOnSale(issueId, isOnSale);
       }
+    }
 
-      if (condition === null) {
-        await deleteIssues(user.id, issuecodes);
-        return callback({});
-      }
-      callback(
-        await addOrChangeIssues(
-          user.id,
-          issuecodes,
-          condition,
-          isOnSale === undefined ? undefined : isOnSale !== false,
-          isToRead,
-          checkedPurchaseId,
-        ),
-      );
-    },
-  );
-  socket.on("addOrChangeCopies", async ({ issuecode, copies }, callback) => {
-    const userId = socket.data.user!.id;
+    if (condition === null) {
+      await deleteIssues(user.id, issuecodes);
+      return Promise.resolve({});
+    }
+    return await addOrChangeIssues(
+      user.id,
+      issuecodes,
+      condition,
+      isOnSale === undefined ? undefined : isOnSale !== false,
+      isToRead,
+      checkedPurchaseId,
+    );
+  },
+  addOrChangeCopies: async ({
+    issuecode,
+    copies,
+  }: CollectionUpdateSingleIssue) => {
+    const userId = _socket.data.user.id;
 
     const checkedPurchaseIds = await checkPurchaseIdsBelongToUser(
       copies
@@ -208,10 +211,12 @@ export default (socket: Socket<Events>) => {
         await handleIsOnSale(issueId, copies[idx].isOnSale);
       }
     }
-    callback(output);
-  });
+    return output;
+  },
 
-  socket.on("getCollectionQuotations", async (callback) =>
+  getCollectionQuotations: (): Promise<
+    Record<string, InducksIssueQuotationSimple>
+  > =>
     prismaDm.$queryRaw<InducksIssueQuotationSimple[]>`
           select
             issuecode,
@@ -221,14 +226,11 @@ export default (socket: Socket<Events>) => {
                 else round(max(ifnull(estimationmax, 0))) end AS estimationMax
           from dm.numeros
             inner join coa.inducks_issuequotation using (issuecode)
-          where ID_Utilisateur = ${socket.data.user!.id}
+          where ID_Utilisateur = ${_socket.data.user.id}
             and estimationmin is not null
           group by numeros.ID;
-        `
-      .then(getShownQuotations)
-      .then((quotations) => callback({ quotations })),
-  );
-};
+        `.then(getShownQuotations),
+});
 
 const addOrChangeIssues = async (
   userId: number,
@@ -313,9 +315,7 @@ const addOrChangeCopies = async (
     const common = {
       condition: conditions[copyNumber]!,
       isOnSale:
-        areOnSale[copyNumber] !== undefined
-          ? (areOnSale[copyNumber] as boolean)
-          : false,
+        areOnSale[copyNumber] !== undefined ? areOnSale[copyNumber] : false,
       isToRead:
         areToRead[copyNumber] !== undefined ? areToRead[copyNumber] : false,
       purchaseId: purchaseIds[copyNumber] || -2,
@@ -377,9 +377,6 @@ export const resetDemo = async () => {
     condition: issue_condition;
     purchaseId: string;
   }
-
-  const currentDir = process.cwd();
-  console.log(currentDir);
 
   const csvIssues: CsvIssue[] = parse(
     readFileSync(`${csvPath}demo_issues.csv`),

@@ -1,184 +1,99 @@
 import { defineStore } from "pinia";
+import type { SuccessfulEventOutput } from "socket-call-client";
 
 import { edgecreatorSocketInjectionKey } from "~/composables/useEdgecreatorSocket";
 import type { ModelSteps } from "~dm-types/ModelSteps";
+import type { ClientEvents as BrowseClientEvents } from "~edgecreator-services/browse";
 import { stores as webStores } from "~web";
 import { socketInjectionKey as dmSocketInjectionKey } from "~web/src/composables/useDmSocket";
 
-interface Edge {
-  issuecode: string;
-  url: string;
-  designers: string[];
-  photographers: string[];
-}
-
-export type EdgeWithVersionAndStatus = Edge & {
-  status: string | null;
-  v3: boolean;
-  published?: string | null;
-};
-
 export const edgeCatalog = defineStore("edgeCatalog", () => {
-  const {
-    edgeCreator: { services: edgeCreatorServices },
-    edges: { services: edgesServices },
-  } = inject(dmSocketInjectionKey)!;
+  const { edgeCreator: edgeCreatorEvents } = inject(dmSocketInjectionKey)!;
+  const { browse: browseEvents } = inject(edgecreatorSocketInjectionKey)!;
 
-  const edgeCategories = [
-    {
-      status: "ongoing",
-      l10n: "Ongoing edges",
-      svgCheckFn: (edge: Edge, currentUser: string) =>
-        edge.designers.includes(currentUser),
-    },
-    {
-      status: "ongoing by another user",
-      l10n: "Ongoing edges handled by other users",
-      svgCheckFn: (edge: Edge) => edge.designers.length,
-    },
-    {
-      status: "pending",
-      l10n: "Pending edges",
-      svgCheckFn: () => true,
-    },
-  ];
-
-  const {
-    browse: { services: browseServices },
-  } = inject(edgecreatorSocketInjectionKey)!;
-  const isCatalogLoaded = ref(false),
-    currentEdges = ref<Record<string, EdgeWithVersionAndStatus>>({}),
-    publishedEdges = ref<Record<string, { v3: boolean }>>({}),
+  const ongoingEdges = ref<
+      SuccessfulEventOutput<
+        BrowseClientEvents,
+        "listOngoingEdgeModels"
+      >["results"]
+    >({}),
+    publishedEdges = ref<
+      Record<
+        string,
+        SuccessfulEventOutput<
+          BrowseClientEvents,
+          "listPublishedEdgeModels"
+        >["results"]
+      >
+    >({}),
     publishedEdgesSteps = ref<ModelSteps>({}),
-    fetchPublishedEdges = async (publicationcode: string) => {
-      const edges = await edgesServices.getEdges({ publicationcode });
-      if (!("error" in edges)) {
-        addPublishedEdges(edges);
-      }
-    },
-    addCurrentEdges = (edges: Record<string, EdgeWithVersionAndStatus>) => {
-      currentEdges.value = { ...currentEdges.value, ...edges };
-    },
-    addPublishedEdges = (
-      newPublishedEdges: Record<string, { v3: boolean }>,
-    ) => {
-      publishedEdges.value = { ...publishedEdges.value, ...newPublishedEdges };
-    },
     addPublishedEdgesSteps = (newPublishedEdgesSteps: ModelSteps) => {
       publishedEdgesSteps.value = {
         ...publishedEdgesSteps.value,
         ...newPublishedEdgesSteps,
       };
     },
-    loadPublishedEdgesSteps = async ({
-      edgeModelIds,
-    }: {
-      edgeModelIds: number[];
-    }) => {
+    loadPublishedEdgesSteps = async (edgeModelIds: number[]) => {
       if (!edgeModelIds.length) {
         return;
       }
 
       addPublishedEdgesSteps(
-        await edgeCreatorServices.getModelsSteps(
+        await edgeCreatorEvents.getModelsSteps(
           edgeModelIds.map((modelId) => modelId),
         ),
       );
     },
-    getEdgeFromSvg = (edge: Edge): EdgeWithVersionAndStatus => ({
-      ...edge,
-      v3: true,
-      status: edgeCategories.reduce(
-        (acc: string | null, { status, svgCheckFn }) =>
-          acc ??
-          (svgCheckFn(edge, webStores.collection().user!.username)
-            ? status
-            : null),
-        null,
-      ),
-    }),
-    canEditEdge = (status: string) =>
+    canEditEdge = (status: (typeof ongoingEdges.value)[number]["status"]) =>
       webStores.collection().hasRole("Admin") ||
-      status !== "ongoing by another user",
-    getEdgeStatus = (issuecode: string) => {
-      let isPublished = false;
-      if (publishedEdges.value[issuecode]) {
-        isPublished = true;
+      status !== "Ongoing by another user",
+    fetchOngoingEdges = async () => {
+      if (Object.keys(ongoingEdges.value).length) {
+        return;
       }
 
-      return (
-        currentEdges.value[issuecode] || {
-          status: isPublished ? "Published" : "none",
-        }
-      ).status;
+      const models = await browseEvents.listOngoingEdgeModels();
+      if ("error" in models) {
+        console.error(
+          "Error while loading ongoing edges",
+          models.error,
+          models.errorDetails,
+        );
+        return;
+      }
+
+      ongoingEdges.value = models.results;
     },
-    loadCatalog = async () => {
-      if (isCatalogLoaded.value) {
+    fetchPublishedEdges = async (publicationcode: string) => {
+      if (publicationcode in publishedEdges.value) {
         return;
       }
 
-      const newCurrentEdges: typeof currentEdges.value = {};
-      const publishedSvgEdges: typeof publishedEdges.value = {};
-
-      const {
-        results: edges,
-        error,
-        errorDetails,
-      } = await browseServices.listEdgeModels();
-      if (error) {
-        console.error("Error while loading edge catalog", error, errorDetails);
+      const models =
+        await browseEvents.listPublishedEdgeModels(publicationcode);
+      if ("error" in models) {
+        console.error(
+          "Error while loading ongoing edges",
+          models.error,
+          models.errorDetails,
+        );
         return;
       }
-      for (const edgeStatus in edges) {
-        for (const { designers, photographers, issuecode, url } of edges[
-          edgeStatus as keyof typeof edges
-        ]) {
-          try {
-            if (edgeStatus === "published") {
-              publishedSvgEdges[issuecode] = {
-                v3: true,
-              };
-            } else {
-              newCurrentEdges[issuecode] = getEdgeFromSvg({
-                issuecode,
-                designers,
-                photographers,
-                url,
-              });
-            }
-          } catch (_e) {
-            console.error(`No SVG found : ${issuecode}`);
-          }
-        }
-      }
 
-      if (Object.keys(newCurrentEdges).length) {
-        for (const edgeIssueCode of Object.keys(newCurrentEdges)) {
-          newCurrentEdges[edgeIssueCode].published =
-            getEdgeStatus(edgeIssueCode);
-        }
-
-        addCurrentEdges(newCurrentEdges);
-      }
-
-      addPublishedEdges(publishedSvgEdges);
-
-      isCatalogLoaded.value = true;
+      publishedEdges.value = {
+        ...publishedEdges.value,
+        [publicationcode]: models.results,
+      };
     };
 
   return {
-    getEdgeStatus,
+    addPublishedEdgesSteps,
     canEditEdge,
-    loadCatalog,
-    isCatalogLoaded,
-    edgeCategories,
-    currentEdges,
+    fetchOngoingEdges,
+    fetchPublishedEdges,
+    loadPublishedEdgesSteps,
+    ongoingEdges,
     publishedEdges,
     publishedEdgesSteps,
-    fetchPublishedEdges,
-    addCurrentEdges,
-    addPublishedEdges,
-    addPublishedEdgesSteps,
-    loadPublishedEdgesSteps,
   };
 });

@@ -9,10 +9,9 @@
     ]"
     :status="storyKindAiSuggestion?.kind ? 'success' : 'idle'"
     @toggled="
-      showAiDetectionsOn = $event ? { type: 'entry', id: entry.id } : undefined
+      overlay = $event ? { type: 'panels', entryId: entry.id } : undefined
     "
   >
-    <b>{{ $t("Types d'entrées déduits pour les pages") }}</b>
     <b-table
       :fields="[
         { key: 'page' },
@@ -38,10 +37,7 @@
 <script setup lang="ts">
 import { suggestions } from "~/stores/suggestions";
 import { ui } from "~/stores/ui";
-import type {
-  FullEntry,
-  FullIndexation,
-} from "~dumili-services/indexation/types";
+import type { FullEntry, FullIndexation } from "~dumili-services/indexation";
 import { getEntryPages } from "~dumili-utils/entryPages";
 
 const { entry } = defineProps<{
@@ -49,7 +45,7 @@ const { entry } = defineProps<{
 }>();
 
 const indexation = storeToRefs(suggestions()).indexation as Ref<FullIndexation>;
-const { showAiDetectionsOn } = storeToRefs(ui());
+const { overlay } = storeToRefs(ui());
 
 const pages = computed(() =>
   getEntryPages(indexation.value!, entry.id).map(

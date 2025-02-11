@@ -120,7 +120,7 @@ import { socketInjectionKey } from "../../../composables/useDmSocket";
 const { getImagePath } = images();
 
 let hasData = $ref(false);
-let mostWanted = $shallowRef<WantedEdge[] | null>(null);
+let mostWanted = $shallowRef<WantedEdge[]>();
 let publishedEdges = $ref<SimpleInducksIssue[]>([]);
 const showEdgesForPublication = $ref<string[]>([]);
 const bookcaseTextures = $ref({
@@ -128,9 +128,7 @@ const bookcaseTextures = $ref({
   bookshelf: "bois/KNOTTY PINE",
 });
 
-const {
-  edges: { services: edgesServices },
-} = inject(socketInjectionKey)!;
+const { edges: edgesEvents } = inject(socketInjectionKey)!;
 
 const { fetchPublicationNames, fetchIssuecodesByPublicationcode } = coa();
 const { publicationNames, issuecodesByPublicationcode, issuecodeDetails } =
@@ -195,9 +193,9 @@ const sortedBookcase = computed(() =>
 );
 
 (async () => {
-  mostWanted = await edgesServices.getWantedEdges();
+  mostWanted = await edgesEvents.getWantedEdges();
 
-  publishedEdges = await edgesServices.getPublishedEdges();
+  publishedEdges = await edgesEvents.getPublishedEdges();
 
   await fetchPublicationNames([
     ...mostWanted.map((mostWantedIssue) => mostWantedIssue.publicationcode),

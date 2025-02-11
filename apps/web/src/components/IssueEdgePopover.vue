@@ -19,7 +19,7 @@
             <div v-t="'Vous pouvez photographier cette tranche ?'"></div>
             <div class="medal-progress-wrapper">
               <MedalProgress
-                v-if="userPoints !== null && extraPoints !== null"
+                v-if="userPoints !== undefined && extraPoints !== null"
                 contribution="edge_photographer"
                 :user-level-points="userPoints"
                 :extra-points="extraPoints"
@@ -59,7 +59,8 @@ const { isSharedBookcase } = storeToRefs(bookcase());
 const { user } = storeToRefs(collection());
 const { points } = storeToRefs(users());
 const userPoints = $computed(
-  () => (user.value && points.value?.[user.value.id][contribution]) || null,
+  () =>
+    (user.value && points.value?.[user.value.id][contribution]) || undefined,
 );
 </script>
 

@@ -1,42 +1,64 @@
 <template>
   <div :class="`d-${noWrap ? 'inline' : 'block'}`">
-    <router-link
-      :class="{ clickable, flex }"
-      :to="`/collection/show/${issue.publicationcode}#${issue.issuenumber}`"
-    >
-      <span v-if="!hideCondition" class="me-1 d-flex"
-        ><Condition v-once :is-public="isPublic" :issuecode="issue.issuecode"
-      /></span>
-      <Publication
-        :publicationcode="issue.publicationcode"
-        :publicationname="publicationname || issue.publicationcode"
-        display-class="d-inline"
-      />{{ issue.issuenumber }}
-      <slot name="title-suffix" />
-    </router-link>
-    <slot />
+    <template v-if="issue?.publicationcode">
+      <router-link
+        :class="{ clickable, flex }"
+        :to="`/collection/show/${issue.publicationcode}#${issue.issuenumber}`"
+      >
+        <span v-if="!hideCondition" class="me-1 d-flex"
+          ><Condition v-once :is-public="isPublic" :issuecode="issue.issuecode"
+        /></span>
+        <Publication
+          :publicationcode="issue.publicationcode"
+          :publicationname="publicationname || issue.publicationcode"
+          display-class="d-inline"
+        />{{ issue.issuenumber }}
+        <slot name="title-suffix" />
+      </router-link>
+      <slot />
+    </template>
+    <template v-else>
+      <span>{{ issuecode }}</span>
+    </template>
   </div>
 </template>
 
 <script setup lang="ts">
 const {
-  issuecode,
+  issuecode = undefined,
+  issue: propIssue = undefined,
   clickable = false,
   hideCondition = false,
   noWrap = true,
   flex = true,
   isPublic = false,
-} = defineProps<{
-  issuecode: string;
-  clickable?: boolean;
-  hideCondition?: boolean;
-  noWrap?: boolean;
-  flex?: boolean;
-  isPublic?: boolean;
-}>();
+} = defineProps<
+  (
+    | {
+        issuecode: string;
+        issue?: never;
+      }
+    | {
+        issue: {
+          issuecode: string;
+          publicationcode: string;
+          issuenumber: string;
+        };
+        issuecode?: never;
+      }
+  ) & {
+    clickable?: boolean;
+    hideCondition?: boolean;
+    noWrap?: boolean;
+    flex?: boolean;
+    isPublic?: boolean;
+  }
+>();
 
 const store = coa();
-const issue = computed(() => store.issuecodeDetails?.[issuecode]);
+const issue = computed(() =>
+  issuecode ? store.issuecodeDetails?.[issuecode] : propIssue!,
+);
 const publicationname = computed(
   () =>
     issue.value?.publicationcode &&

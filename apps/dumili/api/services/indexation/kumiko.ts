@@ -1,15 +1,12 @@
 import axios from "axios";
-import type { Socket } from "socket.io";
 
-import type { SessionDataWithIndexation } from "~/index";
-import { prisma } from "~/index";
-import type { aiKumikoResultPanel, Prisma } from "~/prisma/client_dumili";
 import { COVER, ILLUSTRATION, STORY } from "~dumili-types/storyKinds";
 import { getEntryFromPage } from "~dumili-utils/entryPages";
+import type { aiKumikoResultPanel, Prisma } from "~prisma/client_dumili";
 
-import type { ServerSentEvents } from "./types";
-import type { FullIndexation } from "./types";
-import type Events from "./types";
+import { prisma } from "../../index";
+import type { IndexationServices } from ".";
+import { type FullIndexation, refreshIndexation } from ".";
 
 type KumikoResult = {
   filename: string;
@@ -24,13 +21,6 @@ type KumikoProcessedResult = Pick<
   "x" | "y" | "width" | "height"
 >;
 
-type IndexationSocket = Socket<
-  Events,
-  ServerSentEvents,
-  Record<string, never>,
-  SessionDataWithIndexation
->;
-
 const inferStoryKindFromAiResults = (
   panelsOfPage: KumikoProcessedResult[],
   pageNumber: number,
@@ -38,7 +28,7 @@ const inferStoryKindFromAiResults = (
   pageNumber === 1 ? COVER : panelsOfPage.length === 1 ? ILLUSTRATION : STORY;
 
 const runKumikoOnPage = async (
-  indexationSocket: IndexationSocket,
+  indexationServices: IndexationServices,
   page: Prisma.pageGetPayload<{
     include: { image: { include: { aiKumikoResult: true } } };
   }>,
@@ -49,9 +39,9 @@ const runKumikoOnPage = async (
   } else if (page.image.aiKumikoResult && !force) {
     console.info(`Kumiko: page ${page.pageNumber}: already inferred`);
   } else {
-    indexationSocket.emit("setKumikoInferredPageStoryKinds", page.id);
+    indexationServices.setKumikoInferredPageStoryKinds(page.id);
     const panelsPerPage = await runKumiko([page.image.url]);
-    const panelsOfPage = panelsPerPage[0];
+    const panelsOfPage = panelsPerPage[0] || [];
     console.info(
       `Kumiko: page ${page.pageNumber}: detected ${panelsOfPage.length} panels`,
     );
@@ -82,7 +72,7 @@ const runKumikoOnPage = async (
                 createMany: {
                   data: panelsOfPage,
                 },
-              }
+              },
             },
             update: {
               inferredStoryKind: inferredStoryKind,
@@ -91,8 +81,8 @@ const runKumikoOnPage = async (
                 createMany: {
                   data: panelsOfPage,
                 },
-              }
-            }
+              },
+            },
           },
         },
       },
@@ -101,32 +91,36 @@ const runKumikoOnPage = async (
       },
     });
 
-    indexationSocket.emit("setKumikoInferredPageStoryKindsEnd", page.id);
+    await refreshIndexation(indexationServices);
+
+    indexationServices.setKumikoInferredPageStoryKindsEnd(page.id);
     return true;
   }
   return false;
 };
 
 export const runKumikoOnPages = async (
-  socket: IndexationSocket,
+  services: IndexationServices,
   indexation: FullIndexation,
   force = false,
 ) => {
-  let updatedImageIds = []
+  const updatedImageIds = [];
   for (const page of indexation.pages) {
-    if (await runKumikoOnPage(socket, page, force)) {
+    if (await runKumikoOnPage(services, page, force)) {
       updatedImageIds.push(page.id);
     }
   }
 
-  const outdatedEntryIds = new Set(updatedImageIds
-    .map((id ) => getEntryFromPage(indexation, id)?.id)
-    .filter((id) => !!id)
-    .map((id) => id!))
+  const outdatedEntryIds = new Set(
+    updatedImageIds
+      .map((id) => getEntryFromPage(indexation, id)?.id)
+      .filter((id) => !!id)
+      .map((id) => id!),
+  );
 
-    if (!outdatedEntryIds.size) {
-      return
-    }
+  if (!outdatedEntryIds.size) {
+    return;
+  }
 
   // Invalidate story kind suggestions for entries whose pages have been updated
   await prisma.storyKindSuggestionAi.deleteMany({
@@ -134,7 +128,7 @@ export const runKumikoOnPages = async (
       storyKindSuggestion: {
         entry: {
           id: {
-            in: outdatedEntryIds.values().toArray(),
+            in: [...outdatedEntryIds.values()],
           },
         },
       },
@@ -147,7 +141,7 @@ export const runKumikoOnPages = async (
       storySuggestion: {
         entry: {
           id: {
-            in: outdatedEntryIds.values().toArray(),
+            in: [...outdatedEntryIds.values()],
           },
         },
       },
@@ -162,7 +156,7 @@ export const runKumiko = async (
     .get(
       `${process.env.KUMIKO_HOST}?i=${urls.filter((url) => !!url).join(",")}`,
     )
-    .then<KumikoResult[]>((result) => result.data)
+    .then<KumikoResult[]>((result) => result.data || [])
     .then((data) =>
       data.map(({ panels }) =>
         panels.map(([x, y, width, height]) => ({

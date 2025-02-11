@@ -5,14 +5,14 @@ import type { Router } from 'vue-router';
 
 export default (
   router: Router,
-  coverIdServices: ReturnType<typeof useDmSocket>['coverId']['services'],
+  coverIdEvents: ReturnType<typeof useDmSocket>['coverId'],
 ): {
   pickCoverFile: () => Promise<void>;
   takePhoto: () => Promise<void>;
 } => {
   const { t } = useI18n();
   const searchCoverFromBase64String = async (base64: string, origin: 'pickCoverFile' | 'takePhoto') =>
-    coverIdServices.searchFromCover({ base64 }).then(async (results) => {
+    coverIdEvents.searchFromCover({ base64 }).then(async (results) => {
       CameraPreview.stop();
       if (results.covers?.length) {
         await router.push({

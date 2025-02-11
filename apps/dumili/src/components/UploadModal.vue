@@ -86,12 +86,30 @@ import { stores as webStores } from "~web";
 
 const { indexationSocket } = inject(dumiliSocketInjectionKey)!;
 
-const { pagesWithoutOverwrite, pagesAllowOverwrite, uploadPageNumber } =
-  defineProps<{
-    uploadPageNumber?: number;
-    pagesWithoutOverwrite: { id: number; pageNumber: number }[];
-    pagesAllowOverwrite: { id: number; pageNumber: number }[];
-  }>();
+const {
+  pagesWithoutOverwrite: pagesWithoutOverwriteInitial,
+  pagesAllowOverwrite: pagesAllowOverwriteInitial,
+  uploadPageNumber,
+} = defineProps<{
+  uploadPageNumber?: number;
+  pagesWithoutOverwrite: { id: number; pageNumber: number }[];
+  pagesAllowOverwrite: { id: number; pageNumber: number }[];
+}>();
+
+const modal = ref(false);
+
+const pagesWithoutOverwrite = ref(pagesWithoutOverwriteInitial);
+const pagesAllowOverwrite = ref(pagesAllowOverwriteInitial);
+
+watch(
+  () => modal,
+  (value) => {
+    if (value) {
+      pagesWithoutOverwrite.value = pagesWithoutOverwriteInitial;
+      pagesAllowOverwrite.value = pagesAllowOverwriteInitial;
+    }
+  },
+);
 
 const { t: $t } = useI18n();
 
@@ -99,25 +117,12 @@ const { indexation } = storeToRefs(suggestions());
 
 const { user } = storeToRefs(webStores.collection());
 
-const modal = ref(false);
 const showWidget = ref(true);
-
-watch(
-  () => uploadPageNumber,
-  (value) => {
-    if (value !== undefined) {
-      modal.value = true;
-      showWidget.value = true;
-    }
-  },
-  { immediate: true },
-);
 
 const uploadFileType = ref<"PDF_ignore" | "PDF_replace" | "Images">(
   "PDF_ignore",
 );
 
-const currentPageIndex = ref(0);
 const isUploading = ref(false);
 const processLog = ref("");
 
@@ -130,19 +135,31 @@ declare var cloudinary: {
   createUploadWidget: CloudinaryCreateUploadWidget;
 };
 
+watch(
+  () => uploadPageNumber,
+  (value) => {
+    if (value !== undefined) {
+      modal.value = true;
+      showWidget.value = true;
+    }
+  },
+  { immediate: true },
+);
+
 const pages = computed(() =>
   uploadFileType.value === "PDF_ignore"
-    ? pagesWithoutOverwrite
-    : pagesAllowOverwrite,
+    ? pagesWithoutOverwrite.value
+    : pagesAllowOverwrite.value,
 );
 
 const processPage = async (pageIndex: number, url: string) => {
   const page = pages.value[pageIndex];
   processLog.value = `Processing page ${page.pageNumber}...`;
-  await indexationSocket.value!.services.setPageUrl(page.id, url);
+  await indexationSocket.value!.setPageUrl(page.id, url);
 };
 
 onMounted(() => {
+  const fileIds: string[] = [];
   const folderName = indexation.value!.id;
   const uploadWidget = cloudinary.createUploadWidget(
     {
@@ -165,6 +182,9 @@ onMounted(() => {
         console.error(error);
       } else {
         switch (result?.event) {
+          case "upload-added":
+            fileIds.push((result.info as CloudinaryUploadWidgetInfo).id);
+            break;
           case "queues-start":
             isUploading.value = true;
             break;
@@ -173,6 +193,9 @@ onMounted(() => {
             const info = result.info as CloudinaryUploadWidgetInfo;
             console.log("Done! Here is the image info: ", info);
 
+            const firstUploadPageIndex = pages.value.findIndex(
+              (page) => page.pageNumber === uploadPageNumber,
+            );
             if (info.pages) {
               for (
                 let page = 1;
@@ -180,16 +203,18 @@ onMounted(() => {
                 page++
               ) {
                 await processPage(
-                  currentPageIndex.value++,
+                  firstUploadPageIndex + page - 1,
                   info.secure_url
                     .replace("/upload/", `/upload/pg_${page}/`)
                     .replace(/.pdf$/g, ".png"),
                 );
               }
             } else {
-              await processPage(currentPageIndex.value++, info.secure_url);
+              await processPage(
+                firstUploadPageIndex + fileIds.indexOf(info.id),
+                info.secure_url,
+              );
             }
-            currentPageIndex.value = 0;
             modal.value = false;
             emit("done");
             break;

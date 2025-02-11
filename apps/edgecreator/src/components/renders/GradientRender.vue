@@ -19,11 +19,7 @@
           />
         </linearGradient>
       </defs>
-      <rect
-        ref="rect"
-        v-bind="attributes"
-        :fill="`url(#${gradientId})`"
-      >
+      <rect ref="rect" v-bind="attributes" :fill="`url(#${gradientId})`">
         <metadata>{{ options }}</metadata>
       </rect>
     </g>
@@ -31,7 +27,7 @@
 </template>
 
 <script setup lang="ts">
-const rect = ref<SVGRectElement | null>(null);
+const rect = ref<SVGRectElement>();
 
 interface Props {
   issuecode: string;

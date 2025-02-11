@@ -119,8 +119,8 @@ const { t: $t } = useI18n(),
 
 let hasPublicationNames = $ref(false),
   options = $ref<ChartOptions<"bar">>({}),
-  width = $ref<string | null>(null),
-  height = $ref<string | null>(null),
+  width = $ref<string>(),
+  height = $ref<string>(),
   purchaseTypeCurrent = $ref<string>("new");
 
 const publicationCodesWithOther = $computed(
@@ -161,7 +161,7 @@ const publicationCodesWithOther = $computed(
       {},
     );
 
-    let accDate: { [label: string]: number } = labels!.reduce(
+    let accDate = labels!.reduce<{ [label: string]: number }>(
       (acc, value) => ({ ...acc, [value]: 0 }),
       {},
     );
@@ -236,8 +236,8 @@ const publicationCodesWithOther = $computed(
     !(datasets && labels)
       ? null
       : {
-          datasets: datasets!,
-          labels: labels!,
+          datasets: datasets,
+          labels: labels,
         },
   );
 
@@ -252,7 +252,7 @@ watch($$(maxPerDate), (newValue) => {
 
 watch($$(labels), (newValue) => {
   if (newValue) {
-    changeDimension("width", 250 + 30 * newValue!.length);
+    changeDimension("width", 250 + 30 * newValue.length);
   }
 });
 

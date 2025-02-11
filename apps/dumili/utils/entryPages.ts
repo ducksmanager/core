@@ -20,8 +20,8 @@ export const getEntryPages = <P extends page>(
   return pages.slice(firstPageOfEntry, firstPageOfEntry + entry.entirepages);
 };
 
-export const getEntryFromPage = (
-  { entries, pages }: { entries: entry[]; pages: page[] },
+export const getEntryFromPage = <E extends entry, P extends page>(
+  { entries, pages }: { entries: E[]; pages: P[] },
   pageId: page["id"],
 ) =>
   entries.find(({ id }) =>

@@ -60,10 +60,12 @@ export const step = defineStore("step", () => {
     }: {
       stepNumbers?: number[];
       issuecodes?: string[];
-    }) => options.value.filter(
-      ({ stepNumber, issuecode }) => (!stepNumbers || stepNumbers.includes(stepNumber)) &&
-        (!issuecodes || issuecodes.includes(issuecode))
-    ),
+    }) =>
+      options.value.filter(
+        ({ stepNumber, issuecode }) =>
+          (!stepNumbers || stepNumbers.includes(stepNumber)) &&
+          (!issuecodes || issuecodes.includes(issuecode)),
+      ),
     getFilteredDimensions = ({ issuecodes }: { issuecodes?: string[] }) =>
       dimensions.value.filter(
         ({ issuecode }) => !issuecodes || issuecodes.includes(issuecode),
@@ -103,29 +105,25 @@ export const step = defineStore("step", () => {
           ? editingStep().issuecodes
           : overrides.issuecodes;
 
-      const processedOptions: {
-        stepNumber: number;
-        issuecode: string;
-        optionName: string;
-      }[] = [];
-      options.value.forEach(({ stepNumber, issuecode, optionName }, idx) => {
-        if (
-          stepNumber === defaultStepNumber &&
-          defaultIssuecodes.includes(issuecode)
-        ) {
-          optionsAsArray.forEach(
-            ({
+      const processedOptions = options.value.flatMap(
+        ({ stepNumber, issuecode, optionName }, idx) => {
+          if (
+            stepNumber === defaultStepNumber &&
+            defaultIssuecodes.includes(issuecode)
+          ) {
+            for (const {
               optionName: optionNameToUpdate,
               optionValue: optionValueToUpdate,
-            }) => {
+            } of optionsAsArray) {
               if (optionName === optionNameToUpdate) {
                 options.value[idx].optionValue = optionValueToUpdate;
-                processedOptions.push({ stepNumber, issuecode, optionName });
+                return { stepNumber, issuecode, optionName };
               }
-            },
-          );
-        }
-      });
+            }
+          }
+          return [];
+        },
+      );
       for (const issuecodeToProcess of defaultIssuecodes) {
         for (const optionNameToProcess of newOptionsKeys) {
           if (
@@ -228,18 +226,18 @@ export const step = defineStore("step", () => {
         );
       }
     },
-    copyDimensionsAndSteps = (issuecode: string, otherIssuecode: string) => {
+    copyDimensionsAndSteps = (toIssuecode: string, fromIssuecode: string) => {
       setDimensions(
         getFilteredDimensions({
-          issuecodes: [otherIssuecode],
-        }).map((dimension) => ({ ...dimension, issuecode }))[0],
+          issuecodes: [fromIssuecode],
+        }).map((dimension) => ({ ...dimension, issuecode: toIssuecode }))[0],
         {
-          issuecodes: [issuecode],
+          issuecodes: [toIssuecode],
         },
       );
 
       const steps = getFilteredOptions({
-        issuecodes: [issuecode],
+        issuecodes: [fromIssuecode],
       });
 
       for (
@@ -253,7 +251,8 @@ export const step = defineStore("step", () => {
               ({ stepNumber: optionStepNumber }) =>
                 optionStepNumber === stepNumber,
             )
-            .map((step) => ({ ...step, issuecode: otherIssuecode })),
+            .map((step) => ({ ...step, issuecode: toIssuecode })),
+          { issuecodes: [toIssuecode], stepNumber },
         );
       }
     },
@@ -276,13 +275,9 @@ export const step = defineStore("step", () => {
         ({ stepNumber }) => stepNumberToRemove !== stepNumber,
       );
 
-      for (
-        let optionIndex = 0;
-        optionIndex < options.value.length;
-        optionIndex++
-      ) {
-        if (options.value[optionIndex].stepNumber > stepNumberToRemove) {
-          options.value[optionIndex].stepNumber--;
+      for (const option of options.value) {
+        if (option.stepNumber > stepNumberToRemove) {
+          option.stepNumber--;
         }
       }
     },
@@ -299,15 +294,10 @@ export const step = defineStore("step", () => {
       );
     },
     swapSteps = (stepNumbers: [number, number]) => {
-      for (
-        let optionIndex = 0;
-        optionIndex < options.value.length;
-        optionIndex++
-      ) {
-        const stepNumber = options.value[optionIndex].stepNumber;
+      for (const option of options.value) {
+        const stepNumber = option.stepNumber;
         if (stepNumbers.includes(stepNumber)) {
-          options.value[optionIndex].stepNumber =
-            stepNumbers[1 - stepNumbers.indexOf(stepNumber)];
+          option.stepNumber = stepNumbers[1 - stepNumbers.indexOf(stepNumber)];
         }
       }
       options.value.sort(

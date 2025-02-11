@@ -1,12 +1,12 @@
 !.gitkeep
 .DS_Store
 .eslintcache
-.eslintrc-auto-import.json
 .idea/
 .secrets
 .vite-ssg-dist
 .vite-ssg-temp
 .vscode
+!.vscode/launch.json
 *.local
 *.log
 **/.eslintcache

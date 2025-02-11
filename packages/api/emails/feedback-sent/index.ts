@@ -1,5 +1,6 @@
-import { Email, i18n } from "~emails/email";
 import type { user } from "~prisma-schemas/schemas/dm";
+
+import { Email, i18n } from "../email";
 
 type InputData = {
   user: user;
@@ -9,7 +10,9 @@ type Data = InputData & {
 };
 export default class extends Email {
   data: Data;
-  templatePath = import.meta.dirname.includes('emails') ? import.meta.dirname:`${import.meta.dirname}/emails/feedback-sent`;;
+  templatePath = import.meta.dirname.includes("emails")
+    ? import.meta.dirname
+    : `${import.meta.dirname}/emails/feedback-sent`;
 
   constructor(data: Data) {
     super();

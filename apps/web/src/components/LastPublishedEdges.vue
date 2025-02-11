@@ -49,7 +49,7 @@
 const { loadLastPublishedEdgesForCurrentUser } = collection();
 const { previousVisit, lastPublishedEdgesForCurrentUser } =
   storeToRefs(collection());
-const { publicationNames } = storeToRefs(coa());
+const { publicationNames, issuecodeDetails } = storeToRefs(coa());
 const publishedEdgesSincePreviousVisit = $computed(
   () =>
     lastPublishedEdgesForCurrentUser.value?.filter(
@@ -59,7 +59,9 @@ const publishedEdgesSincePreviousVisit = $computed(
 );
 const hasPublicationNames = $computed(() =>
   publishedEdgesSincePreviousVisit?.every(
-    ({ publicationcode }) => publicationNames.value[publicationcode],
+    ({ issuecode }) =>
+      issuecodeDetails.value[issuecode] &&
+      publicationNames.value[issuecodeDetails.value[issuecode].publicationcode],
   ),
 );
 

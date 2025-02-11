@@ -1,11 +1,12 @@
+import type { SocketClient } from "socket-call-client";
 import { inject, type InjectionKey } from "vue";
 
-import BrowseServices from "~edgecreator-services/browse/types";
-import ImageInfoServices from "~edgecreator-services/image-info/types";
-import SaveServices from "~edgecreator-services/save/types";
-import TextServices from "~edgecreator-services/text/types";
-import UploadServices from "~edgecreator-services/upload/types";
-import type { SocketClient } from "~socket.io-client-services";
+import type { ClientEvents as BrowseServices } from "~edgecreator-services/browse";
+import type { ClientEvents as ImageInfoServices } from "~edgecreator-services/image-info";
+import namespaces from "~edgecreator-services/namespaces";
+import type { ClientEvents as SaveServices } from "~edgecreator-services/save";
+import type { ClientEvents as TextServices } from "~edgecreator-services/text";
+import type { ClientEvents as UploadServices } from "~edgecreator-services/upload";
 
 const defaultExport = (options: {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -22,28 +23,21 @@ const defaultExport = (options: {
 
   return {
     options,
-    imageInfo: socket.addNamespace<ImageInfoServices>(
-      ImageInfoServices.namespaceEndpoint,
-      { session },
-    ),
-    browse: socket.addNamespace<BrowseServices>(
-      BrowseServices.namespaceEndpoint,
-      {
-        session,
-      },
-    ),
-    save: socket.addNamespace<SaveServices>(SaveServices.namespaceEndpoint, {
+    imageInfo: socket.addNamespace<ImageInfoServices>(namespaces.IMAGE_INFO, {
       session,
     }),
-    text: socket.addNamespace<TextServices>(TextServices.namespaceEndpoint, {
+    browse: socket.addNamespace<BrowseServices>(namespaces.BROWSE, {
       session,
     }),
-    upload: socket.addNamespace<UploadServices>(
-      UploadServices.namespaceEndpoint,
-      {
-        session,
-      },
-    ),
+    save: socket.addNamespace<SaveServices>(namespaces.SAVE, {
+      session,
+    }),
+    text: socket.addNamespace<TextServices>(namespaces.TEXT, {
+      session,
+    }),
+    upload: socket.addNamespace<UploadServices>(namespaces.UPLOAD, {
+      session,
+    }),
   };
 };
 

@@ -14,7 +14,7 @@
 import { step } from "~/stores/step";
 import { ui } from "~/stores/ui";
 
-const polygon = ref<SVGPolygonElement | null>(null);
+const polygon = ref<SVGPolygonElement>();
 
 interface Props {
   issuecode: string;
@@ -51,6 +51,8 @@ const points = computed((): [number, number][] =>
     ]),
 );
 
+const { enableDragResize } = useStepOptions(props, []);
+
 onMounted(() => {
   enableDragResize(polygon.value!, {
     onmove: ({ dy, dx }): void => {
@@ -84,6 +86,4 @@ onMounted(() => {
     },
   });
 });
-
-const { enableDragResize } = useStepOptions(props, []);
 </script>

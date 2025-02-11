@@ -89,7 +89,7 @@
                     <b-button type="submit">
                       {{ $t("Ajouter un commentaire") }}
                     </b-button>
-                    <b-button @click="existingBookstore = null">
+                    <b-button @click="existingBookstore = undefined">
                       {{ $t("Annuler") }}
                     </b-button>
                   </form>
@@ -176,15 +176,13 @@ import type { SimpleBookstore } from "~dm-types/SimpleBookstore";
 
 import { socketInjectionKey } from "../composables/useDmSocket";
 
-const {
-  bookstore: { services: bookstoreServices },
-} = inject(socketInjectionKey)!;
+const { bookstore: bookstoreEvents } = inject(socketInjectionKey)!;
 
 const { fetchStats } = users();
 const { stats: userStats } = storeToRefs(users());
 
-let bookstores = $shallowRef<SimpleBookstore[] | null>(null);
-let existingBookstore = $ref<SimpleBookstore | null>(null);
+let bookstores = $shallowRef<SimpleBookstore[]>();
+let existingBookstore = $ref<SimpleBookstore>();
 let newBookstoreSent = $ref(false);
 let existingBookstoreSent = $ref(false);
 
@@ -225,7 +223,7 @@ const decodeText = (value: string) => {
   }
 };
 const fetchBookstores = async () => {
-  bookstores = (await bookstoreServices.getActiveBookstores())
+  bookstores = (await bookstoreEvents.getActiveBookstores())
     .map((bookstore) => {
       bookstore.name = decodeText(bookstore.name);
       bookstore.address = decodeText(bookstore.address);
@@ -245,10 +243,10 @@ const suggestComment = async (bookstore: SimpleBookstore) => {
     );
     return false;
   }
-  await bookstoreServices.createBookstoreComment(bookstore);
+  await bookstoreEvents.createBookstoreComment(bookstore);
   if (bookstore.id) {
     existingBookstoreSent = true;
-    existingBookstore = null;
+    existingBookstore = undefined;
   } else {
     newBookstoreSent = true;
   }
@@ -262,8 +260,8 @@ const formatDate = (date: Date | null) =>
 
 const initCommentOnExistingBookstore = (bookstore: SimpleBookstore) => {
   existingBookstore = bookstore;
-  if (!existingBookstore!.comments.some(({ comment }) => !comment)) {
-    existingBookstore!.comments.push({
+  if (!existingBookstore.comments.some(({ comment }) => !comment)) {
+    existingBookstore.comments.push({
       comment: "",
       creationDate: null,
       userId: null,

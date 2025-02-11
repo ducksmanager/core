@@ -1,26 +1,22 @@
-import type CollectionServices from "~dm-services/collection/types";
+import type { EventOutput } from "socket-call-client";
+
+import type { ClientEvents as CollectionServices } from "~dm-services/collection";
 import type { requestedIssue } from "~prisma-schemas/schemas/dm";
-import type { EventReturnType } from "~socket.io-services";
 
 import { socketInjectionKey } from "../composables/useDmSocket";
 
 export const marketplace = defineStore("marketplace", () => {
-  const {
-    collection: { services: collectionServices },
-  } = inject(socketInjectionKey)!;
+  const { collection: collectionEvents } = inject(socketInjectionKey)!;
 
-  const issuesOnSaleByOthers = ref<EventReturnType<
-      CollectionServices["getIssuesForSale"]
-    > | null>(null),
-    issueRequestsAsBuyer = shallowRef<requestedIssue[] | null>(null),
-    issueRequestsAsSeller = shallowRef<requestedIssue[] | null>(null),
+  const issuesOnSaleByOthers =
+      ref<EventOutput<CollectionServices, "getIssuesForSale">>(),
+    issueRequestsAsBuyer = shallowRef<requestedIssue[]>(),
+    issueRequestsAsSeller = shallowRef<requestedIssue[]>(),
     isLoadingIssueRequestsAsBuyer = ref(false),
     isLoadingIssueRequestsAsSeller = ref(false),
     isLoadingIssuesOnSaleByOthers = ref(false),
     contactMethods = ref<{
-      [userId: number]: EventReturnType<
-        CollectionServices["getContactMethods"]
-      >;
+      [userId: number]: EventOutput<CollectionServices, "getContactMethods">;
     }>({}),
     sentRequestIssueIds = computed(() =>
       issueRequestsAsBuyer.value?.map(({ issueId }) => issueId),
@@ -77,11 +73,11 @@ export const marketplace = defineStore("marketplace", () => {
       () => issuesOnSaleByOthers.value?.groupBy("id") || {},
     ),
     requestIssues = async (issueIds: number[]) => {
-      await collectionServices.createRequests(issueIds);
+      await collectionEvents.createRequests(issueIds);
       await loadIssueRequestsAsBuyer();
     },
     loadContactMethods = async (userId: number) => {
-      const result = await collectionServices.getContactMethods(userId);
+      const result = await collectionEvents.getContactMethods(userId);
       switch (result.error) {
         case undefined:
           contactMethods.value[userId] = result;
@@ -98,8 +94,7 @@ export const marketplace = defineStore("marketplace", () => {
         return;
       }
       isLoadingIssueRequestsAsBuyer.value = true;
-      issueRequestsAsBuyer.value =
-        await collectionServices.getRequests("buyer");
+      issueRequestsAsBuyer.value = await collectionEvents.getRequests("buyer");
       isLoadingIssueRequestsAsBuyer.value = false;
     },
     loadIssueRequestsAsSeller = async (afterUpdate = false) => {
@@ -111,7 +106,7 @@ export const marketplace = defineStore("marketplace", () => {
       }
       isLoadingIssueRequestsAsSeller.value = true;
       issueRequestsAsSeller.value =
-        await collectionServices.getRequests("seller");
+        await collectionEvents.getRequests("seller");
       isLoadingIssueRequestsAsSeller.value = false;
     },
     loadIssuesOnSaleByOthers = async (afterUpdate = false) => {
@@ -122,11 +117,11 @@ export const marketplace = defineStore("marketplace", () => {
         return;
       }
       isLoadingIssuesOnSaleByOthers.value = true;
-      issuesOnSaleByOthers.value = await collectionServices.getIssuesForSale();
+      issuesOnSaleByOthers.value = await collectionEvents.getIssuesForSale();
       isLoadingIssuesOnSaleByOthers.value = false;
     },
     deleteRequestToSeller = async (issueId: number) => {
-      await collectionServices.deleteRequests(issueId);
+      await collectionEvents.deleteRequests(issueId);
     };
 
   return {

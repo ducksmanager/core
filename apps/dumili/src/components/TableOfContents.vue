@@ -4,7 +4,7 @@
     class="table-of-contents d-flex w-100 h-100 m-0 p-0"
     body-class="flex-grow-1 w-100 h-100"
     header-class="position-relative p-0"
-    @mouseleave="hoveredEntry = null"
+    @mouseleave="hoveredEntry = undefined"
   >
     <template #header>
       <IssueSuggestionModal />
@@ -74,12 +74,10 @@
           />
         </template>
 
-        <div
-          class="position-absolute w-100 h-100 d-flex justify-content-center"
-        >
+        <div class="position-absolute w-100 d-flex justify-content-center">
           <b-button
             class="create-entry fw-bold position-absolute mt-n1 d-flex justify-content-center align-items-center"
-            variant="info"
+            variant="success"
             @click="createEntry"
             >{{ $t("Ajouter une entrée") }}</b-button
           >
@@ -94,12 +92,11 @@ import { dumiliSocketInjectionKey } from "~/composables/useDumiliSocket";
 import { getEntryFromPage } from "~dumili-utils/entryPages";
 import { suggestions } from "~/stores/suggestions";
 import { ui } from "~/stores/ui";
-import type { FullIndexation } from "~dumili-services/indexation/types";
+import type { FullIndexation } from "~dumili-services/indexation";
 import TableOfContentsEntry from "./TableOfContentsEntry.vue";
 
 const { indexationSocket } = inject(dumiliSocketInjectionKey)!;
 
-const { loadIndexation } = suggestions();
 const { hoveredEntry, currentEntry } = storeToRefs(ui());
 const indexation = storeToRefs(suggestions()).indexation as Ref<FullIndexation>;
 const { currentPage, pageHeight } = storeToRefs(ui());
@@ -137,13 +134,12 @@ const onEntryResizeStop = (entryIdx: number, height: number) => {
 };
 
 const createEntry = async () => {
-  await indexationSocket.value!.services.createEntry();
-  return loadIndexation();
+  await indexationSocket.value!.createEntry();
 };
 
 const updateIndexation = () => {
   const { price } = indexation.value;
-  indexationSocket.value!.services.updateIndexation({
+  indexationSocket.value!.updateIndexation({
     price,
     numberOfPages: numberOfPages.value,
   });
@@ -153,15 +149,11 @@ watch(
   currentPage,
   (value) => {
     if (indexation.value && value !== undefined) {
-      currentEntry.value = indexation.value.entries.find(
-        ({ id }) =>
-          id ===
-          getEntryFromPage(
-            indexation.value,
-            indexation.value.pages.find(
-              ({ pageNumber }) => pageNumber === value + 1,
-            )!.id,
-          )!.id,
+      currentEntry.value = getEntryFromPage(
+        indexation.value,
+        indexation.value.pages.find(
+          ({ pageNumber }) => pageNumber === value + 1,
+        )!.id,
       );
     }
   },
@@ -230,6 +222,6 @@ watch(
 
 :deep(.resizable .handle) {
   bottom: 0;
-  z-index: 9999;
+  z-index: 1021 !important;
 }
 </style>

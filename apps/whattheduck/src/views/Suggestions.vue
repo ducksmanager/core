@@ -174,12 +174,12 @@ watch(
       );
 
       const publicationcodes = Object.values(suggestions.value)
-        .map(({ issues }: { issues: { issuecode: string }[] }) =>
+        .map(({ issues }) =>
           Object.values(issues)
             .filter(({ issuecode }) => issuecodeDetails.value[issuecode])
             .map(({ issuecode }) => issuecodeDetails.value[issuecode]!.publicationcode),
         )
-        .flat() as string[];
+        .flat();
 
       await fetchPublicationNames(publicationcodes);
 

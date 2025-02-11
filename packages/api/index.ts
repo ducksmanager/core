@@ -4,31 +4,42 @@ import cluster from "cluster";
 import dotenv from "dotenv";
 import { createServer } from "http";
 import { cpus } from "os";
+import type { Socket } from "socket.io";
 import { Server } from "socket.io";
+import type { NamespaceProxyTarget } from "socket-call-server";
 
 import type { SessionUser } from "~dm-types/SessionUser";
 
-import app, { getUpdateFileUrl } from "./services/app";
-import auth from "./services/auth";
-import { OptionalAuthMiddleware } from "./services/auth/util";
-import bookcase from "./services/bookcase";
-import bookstores from "./services/bookstores";
-import coa from "./services/coa";
-import collection from "./services/collection";
-import coverId from "./services/cover-id";
-import edgecreator from "./services/edgecreator";
-import edges from "./services/edges";
-import events from "./services/events";
-import feedback from "./services/feedback";
-import globalStats from "./services/global-stats";
-import presentationText from "./services/presentation-text";
-import publicCollection from "./services/public-collection";
-import stats from "./services/stats";
+import { getUpdateFileUrl, server as app } from "./services/app";
+import { server as auth } from "./services/auth";
+import { server as bookcase } from "./services/bookcase";
+import { server as bookstores } from "./services/bookstores";
+import { server as coa } from "./services/coa";
+import { server as collection } from "./services/collection";
+import { server as coverId } from "./services/cover-id";
+import { server as edgecreator } from "./services/edgecreator";
+import { server as edges } from "./services/edges";
+import { server as events } from "./services/events";
+import { server as feedback } from "./services/feedback";
+import { server as globalStats } from "./services/global-stats";
+import { server as presentationText } from "./services/presentation-text";
+import { server as publicCollection } from "./services/public-collection";
+import { server as stats } from "./services/stats";
 import {
   getDbStatus,
   getPastecSearchStatus,
   getPastecStatus,
 } from "./services/status";
+
+export type UserServices<OptionalUser = false> = NamespaceProxyTarget<
+  Socket<
+    object,
+    object,
+    object,
+    OptionalUser extends false ? { user: SessionUser } : { user?: SessionUser }
+  >,
+  Record<string, never>
+>;
 
 class ServerWithUser extends Server<
   Record<string, never>,
@@ -56,6 +67,7 @@ const httpServer = createServer(async (req, res) => {
   switch (req.url) {
     case "/app/updates":
       data = getUpdateFileUrl();
+      break;
     case "/status/db":
       data = await getDbStatus();
       break;
@@ -99,7 +111,6 @@ if (cluster.isPrimary) {
     auth: false,
   });
 
-  io.use(OptionalAuthMiddleware);
   io.use((_socket, next) => {
     process.on("unhandledRejection", (reason: Error) => {
       console.error(reason);

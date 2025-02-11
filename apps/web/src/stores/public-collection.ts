@@ -6,12 +6,11 @@ import useCollection from "../composables/useCollection";
 import { socketInjectionKey } from "../composables/useDmSocket";
 
 export const publicCollection = defineStore("publicCollection", () => {
-  const {
-    publicCollection: { services: publicCollectionServices },
-  } = inject(socketInjectionKey)!;
+  const { publicCollection: publicCollectionEvents } =
+    inject(socketInjectionKey)!;
 
-  const issues = shallowRef<(issue & { issuecode: string })[] | null>(null),
-    publicUsername = ref<string | null>(null),
+  const issues = shallowRef<(issue & { issuecode: string })[]>(),
+    publicUsername = ref<string>(),
     publicationUrlRoot = computed(
       () => `/collection/user/${publicUsername.value || ""}`,
     ),
@@ -22,7 +21,7 @@ export const publicCollection = defineStore("publicCollection", () => {
     ),
     loadPublicCollection = async (username: string) => {
       publicUsername.value = username;
-      const data = await publicCollectionServices.getPublicCollection(username);
+      const data = await publicCollectionEvents.getPublicCollection(username);
       if (data.error) {
         console.error(data.error);
       }

@@ -48,7 +48,7 @@ alias: [/collection/a-lire]
 
 <script setup lang="ts">
 let hasPublicationNames = $ref(false);
-let publicationCodes = $ref<string[] | null>(null);
+let publicationCodes = $ref<string[]>();
 
 const { loadCollection, loadMarketplaceContactMethods } = collection();
 const { issuesInOnSaleStack, marketplaceContactMethods } =
