@@ -32,8 +32,8 @@ export const main = defineStore("main", () => {
           webStores.coa().issuesByPublicationcode[publicationcode.value]) ||
         undefined,
     ),
-    publicationIssuecodes = computed(
-      () => publicationIssues.value && Object.keys(publicationIssues.value),
+    publicationIssuecodes = computed(() =>
+      publicationIssues.value?.map(({ issuecode }) => issuecode),
     ),
     publicationElementsForGallery = computed(
       () =>
