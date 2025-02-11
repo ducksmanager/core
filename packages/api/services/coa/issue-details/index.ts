@@ -109,7 +109,7 @@ export const getCoverUrls = async (issuecodes: string[]) => {
 
   return Object.entries(issues).map(([issuecode, issue]) => {
     const coverEntryUrl = entryurls[entrycodeByIssuecode[issuecode]];
-    if (!coverEntryUrl) {
+    if (!coverEntryUrl?.url) {
       return {
         issuecode,
         title: issue.title!,
@@ -119,7 +119,7 @@ export const getCoverUrls = async (issuecodes: string[]) => {
 
     const urlPrefix = /^\d/.test(coverEntryUrl.url)
       ? "webusers/webusers"
-      : coverEntryUrl.url!.startsWith("webusers")
+      : coverEntryUrl.url.startsWith("webusers")
         ? "webusers"
         : coverEntryUrl.sitecode;
     return {

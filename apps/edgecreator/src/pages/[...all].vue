@@ -124,7 +124,7 @@ meta:
                 @mouseover="hoveredEdge = edge!"
                 @mouseout="hoveredEdge = undefined"
               >
-                <b-card class="text-center">
+                <b-card class="text-center m-2" body-class="p-2">
                   <b-link
                     :to="`edit/${edge.issuecode.replaceAll(' ', '_')}`"
                     :disabled="!canEditEdge(status)"
@@ -139,7 +139,10 @@ meta:
                         :issuecode="edge.issuecode"
                         :designers="edge.designers"
                         :photographers="edge.photographers"
-                        :published="false"
+                        :published="
+                          publicationcode in publishedEdges &&
+                          edge.issuecode in publishedEdges[publicationcode]
+                        "
                       />
                     </b-card-text>
                   </b-link>
@@ -189,8 +192,9 @@ const { hasRole } = collectionStore;
 const { user } = storeToRefs(collectionStore);
 
 const edgeCatalogStore = edgeCatalog();
-const { fetchOngoingEdges, canEditEdge } = edgeCatalogStore;
-const { ongoingEdges } = storeToRefs(edgeCatalogStore);
+const { fetchOngoingEdges, canEditEdge, fetchPublishedEdges } =
+  edgeCatalogStore;
+const { ongoingEdges, publishedEdges } = storeToRefs(edgeCatalogStore);
 
 const edgesByStatusAndPublicationcode = computed(() => {
   const edgesByStatus = Object.values(ongoingEdges.value || []).groupBy(
@@ -286,6 +290,10 @@ watch(
       issuecodeDetails.value[issuecode]?.publicationcode || "fr/JM",
   );
 
+  for (const publicationcode of publicationcodes) {
+    await fetchPublishedEdges(publicationcode);
+  }
+
   await coaStore.fetchPublicationNames(publicationcodes);
   isCatalogReady.value = true;
 })();
@@ -305,8 +313,6 @@ watch(
 }
 
 .card {
-  margin: 15px 0;
-
   .edge-preview {
     position: absolute;
     top: 0;
