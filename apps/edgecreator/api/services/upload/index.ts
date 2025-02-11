@@ -41,7 +41,7 @@ const calculateHash = (data: string) => {
   return hashSum.digest("hex");
 };
 
-const getFilenameUsagesInOtherModels = async (
+const _getFilenameUsagesInOtherModels = async (
   filename: string,
   currentIssuecode: string,
   token: string,

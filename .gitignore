@@ -6,6 +6,7 @@
 .vite-ssg-dist
 .vite-ssg-temp
 .vscode
+!.vscode/launch.json
 *.local
 *.log
 **/.eslintcache
