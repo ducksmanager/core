@@ -31,6 +31,10 @@ export const post = [
         } else if (password !== password2) {
           res.writeHead(400, { "Content-Type": "application/text" });
           res.end("The two passwords should be identical");
+        } else if (!('payload' in (data as { payload?: string }))) {
+          console.error('Invalid token data:', data);
+          res.writeHead(400, { "Content-Type": "application/text" });
+          res.end("Invalid token");
         } else {
           const email = (data as { payload: string }).payload.split(',')[0];
           const hashedPassword = crypto
