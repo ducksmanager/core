@@ -86,7 +86,7 @@ declare global {
      *      .groupBy(null, null, (name, index) => ({ name, id: index+1 }));
      */
     groupBy<
-      K extends "" | (keyof T & (string | number)),
+      K extends null | (keyof T & (string | number)),
       V extends
         | null
         | "[]"
@@ -105,7 +105,7 @@ declare global {
         index: number
       ) => R
     ): Record<
-      K extends ""
+      K extends null
         ? T & string
         : T[K & (keyof T & (string | number))] & (string | number),
       R
@@ -123,13 +123,13 @@ const getNestedValue = <T, P extends string>(
 
 Array.prototype.groupBy = function (fieldName, mapper, mapperFn) {
   return this.reduce((acc, object, idx) => {
-    const key = fieldName === "" ? object : object[fieldName];
+    const key = fieldName === null ? object : object[fieldName];
     if (mapper === "[]" || mapper?.endsWith("[]")) {
       if (!acc[key]) {
         acc[key] = [];
       }
     }
-    if (fieldName === "") {
+    if (fieldName === null) {
       const value = (mapperFn || ((val) => val))(object, idx);
       if (mapper === "[]") {
         acc[key].push(value);

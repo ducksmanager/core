@@ -93,7 +93,7 @@ describe("Array.groupBy", () => {
 
   test("groups by field name using an array of strings and a callback", () => {
     const testDataWithSubKey = ["John", "Jane"]
-    const result = testDataWithSubKey.groupBy('', null, (name, index) => ({ name, id: index+1 }));
+    const result = testDataWithSubKey.groupBy(null, null, (name, index) => ({ name, id: index+1 }));
     expect(result).toEqual({ John: {name: 'John', id: 1}, Jane: {name: 'Jane', id: 2} });
   });
 });
