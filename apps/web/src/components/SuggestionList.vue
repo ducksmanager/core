@@ -76,7 +76,8 @@ const { countrycode = null, sinceLastVisit = false } = defineProps<{
   sinceLastVisit?: boolean;
 }>();
 const { t: $t } = useI18n();
-const { fetchIssuecodeDetails } = coa();
+const { fetchIssuecodeDetails, fetchPublicationNames } = coa();
+const { issuecodeDetails } = storeToRefs(coa());
 const { loadSuggestions } = collection();
 const { suggestions, hasSuggestions } = storeToRefs(collection());
 const suggestionSorts = () => ({
@@ -110,6 +111,15 @@ watch(
       sinceLastVisit,
     });
     await fetchIssuecodeDetails(Object.keys(sortedSuggestions.value.issues));
+    await fetchPublicationNames([
+      ...new Set(
+        Object.keys(sortedSuggestions.value.issues)
+          .map(
+            (issuecode) => issuecodeDetails.value[issuecode]?.publicationcode,
+          )
+          .filter(Boolean),
+      ),
+    ]);
     loading = false;
   },
   { immediate: true },

@@ -174,11 +174,13 @@ export const collection = defineStore("collection", () => {
         coa().addPublicationNames(publicationNames);
         Object.assign(
           coa().issuecodeDetails,
-          issues.value.map(({ issuecode, publicationcode, issuenumber }) => ({
-            issuecode,
-            publicationcode,
-            issuenumber,
-          })),
+          issues.value
+            .map(({ issuecode, publicationcode, issuenumber }) => ({
+              issuecode,
+              publicationcode,
+              issuenumber,
+            }))
+            .groupBy("issuecode"),
         );
       }
 
