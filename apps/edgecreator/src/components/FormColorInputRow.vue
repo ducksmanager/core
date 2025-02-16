@@ -53,18 +53,20 @@
               </h6>
               <ul>
                 <li
-                  v-for="(_, stepNumber) in Object.keys(otherColorsForLocation)"
-                  :key="`${colorLocation}-${stepNumber}`"
+                  v-for="(_, otherStepNumber) in Object.keys(
+                    otherColorsForLocation,
+                  )"
+                  :key="`${colorLocation}-${otherStepNumber}`"
                 >
                   <span
                     :class="{
                       'text-secondary':
-                        !otherColorsForLocation[stepNumber]?.length,
+                        !otherColorsForLocation[otherStepNumber]?.length,
                     }"
                     >{{ $t("Step") }} {{ stepNumber }}</span
                   >
                   <span
-                    v-for="color in otherColorsForLocation[stepNumber]"
+                    v-for="color of otherColorsForLocation[otherStepNumber] as string[]"
                     :key="color"
                     class="frequent-color"
                     :style="{ background: color }"
@@ -102,16 +104,13 @@ const {
   label = null,
   canBeTransparent = false,
   inputValues = [],
-  otherColors,
   optionName,
+  stepNumber,
 } = defineProps<{
   inputValues: PossibleInputValueType[];
   optionName: string;
-  otherColors: {
-    differentIssuecode: Options;
-    sameIssuecode: Options;
-  };
   label?: string | null;
+  stepNumber: number;
   canBeTransparent?: false | null;
 }>();
 
@@ -124,6 +123,8 @@ const { colorPickerOption, showEdgePhotos } = storeToRefs(ui());
 const isTransparent = ref(false);
 const hasPhotoUrl = computed(() => Object.keys(photoUrls.value).length);
 
+const { colors: allStepColors } = storeToRefs(step());
+
 watch(
   () => inputValues,
   (inputValues) => {
@@ -132,6 +133,16 @@ watch(
   { immediate: true },
 );
 
+const otherColors = computed(() => ({
+  sameIssuecode: allStepColors.value.filter(
+    ({ issuecode: thisIssuecode, stepNumber: thisStepNumber }) =>
+      issuecodes.value.includes(thisIssuecode) && thisStepNumber !== stepNumber,
+  ),
+  differentIssuecode: allStepColors.value.filter(
+    ({ issuecode: thisIssuecode }) => !issuecodes.value.includes(thisIssuecode),
+  ),
+}));
+
 const getOptionStringValuesByStepNumber = (options: Options) =>
   options.groupBy("stepNumber", "optionValue[]");
 
@@ -139,8 +150,10 @@ const otherColorsByLocationAndStepNumber = computed(() => ({
   differentIssuecode:
     issuecodes.value.length === 1
       ? []
-      : getOptionStringValuesByStepNumber(otherColors.differentIssuecode),
-  sameIssuecode: getOptionStringValuesByStepNumber(otherColors.sameIssuecode),
+      : getOptionStringValuesByStepNumber(otherColors.value.differentIssuecode),
+  sameIssuecode: getOptionStringValuesByStepNumber(
+    otherColors.value.sameIssuecode,
+  ),
 }));
 watch(
   () => inputValues,
@@ -157,7 +170,7 @@ watch(
 watch(isTransparent, (newValue) => {
   setOptionValues([
     {
-      optionName: optionName,
+      optionName,
       optionValue: newValue ? "transparent" : originalColor.value,
     },
   ]);

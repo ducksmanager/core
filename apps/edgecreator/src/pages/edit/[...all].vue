@@ -145,7 +145,6 @@ import useSurroundingEdge from "~/composables/useSurroundingEdge";
 import { edgeCatalog } from "~/stores/edgeCatalog";
 import { editingStep } from "~/stores/editingStep";
 import { main } from "~/stores/main";
-import type { Dimensions, Options } from "~/stores/step";
 import { step } from "~/stores/step";
 import { ui } from "~/stores/ui";
 import { stores as webStores } from "~web";
@@ -173,26 +172,21 @@ const error = ref<string>();
 const { dimensions } = storeToRefs(stepStore);
 
 const dimensionsPerIssuecode = computed(() =>
-  issuecodes.value.reduce<Record<string, Dimensions>>(
-    (acc, issuecode) => ({
-      ...acc,
-      [issuecode]: stepStore.getFilteredDimensions({
+  issuecodes.value.groupBy(
+    null,
+    null,
+    (issuecode) =>
+      stepStore.getFilteredDimensions({
         issuecodes: [issuecode],
       })[0],
-    }),
-    {},
   ),
 );
 
 const stepsPerIssuecode = computed(() =>
-  issuecodes.value.reduce<Record<string, Options>>(
-    (acc, issuecode) => ({
-      ...acc,
-      [issuecode]: stepStore.getFilteredOptions({
-        issuecodes: [issuecode],
-      }),
+  issuecodes.value.groupBy(null, null, (issuecode) =>
+    stepStore.getFilteredOptions({
+      issuecodes: [issuecode],
     }),
-    {},
   ),
 );
 watch(

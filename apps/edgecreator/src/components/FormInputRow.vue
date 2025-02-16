@@ -70,7 +70,17 @@ const shouldWaitForBlurToUpdate = computed(() =>
   ["text", "font"].includes(optionName),
 );
 
-const inputValue = ref(inputValues[0] as PossibleInputValueType | undefined);
+const inputValue = ref<PossibleInputValueType>();
+
+watch(
+  () => inputValues,
+  (inputValues) => {
+    inputValue.value = inputValues[0] || undefined;
+  },
+  {
+    immediate: true,
+  },
+);
 
 const values = computed(() => [
   ...new Set(
@@ -85,16 +95,6 @@ const onBlur = () => {
     onChangeValue(inputValue.value);
   }
 };
-
-watch(
-  () => inputValues,
-  (inputValues) => {
-    inputValue.value = inputValues[0] || undefined;
-  },
-  {
-    immediate: true,
-  },
-);
 
 watch(inputValue, (newValue: PossibleInputValueType | undefined) => {
   if (
