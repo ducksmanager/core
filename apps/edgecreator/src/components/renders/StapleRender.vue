@@ -49,6 +49,10 @@ const props = withDefaults(defineProps<Props>(), {
   }),
 });
 
+const { enableDragResize, height, attributes } = useStepOptions(props, [
+  "height",
+]);
+
 const dimensions = computed(
   () =>
     step().getFilteredDimensions({
@@ -100,8 +104,4 @@ onMounted(() => {
     },
   });
 });
-
-const { enableDragResize, height, attributes } = useStepOptions(props, [
-  "height",
-]);
 </script>

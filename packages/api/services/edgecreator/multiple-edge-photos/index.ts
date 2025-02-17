@@ -9,7 +9,7 @@ import type { UserServices } from "../../../index";
 export default ({ _socket }: UserServices) => ({
   sendNewEdgePhotoEmail: async (issuecode: string) => {
     const user = await prismaDm.user.findUniqueOrThrow({
-      where: { id: _socket.data.user!.id },
+      where: { id: _socket.data.user.id },
     });
     const email = new EdgePhotoSent({
       user,
@@ -33,7 +33,7 @@ export default ({ _socket }: UserServices) => ({
       .findMany({
         select: { fileName: true },
         where: {
-          userId: _socket.data.user!.id,
+          userId: _socket.data.user.id,
           createdAt: {
             gt: dayjs().hour(0).minute(0).toDate(),
             lt: dayjs().add(1, "day").hour(0).minute(0).toDate(),
@@ -48,7 +48,7 @@ export default ({ _socket }: UserServices) => ({
     prismaEdgeCreator.elementImage
       .findFirstOrThrow({
         where: {
-          userId: _socket.data.user!.id,
+          userId: _socket.data.user.id,
           hash,
         },
       })

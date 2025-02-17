@@ -40,7 +40,8 @@
     }
   },
   "exclude": [
+    ".turbo",
+    "dist",
     "node_modules",
-    ".turbo"
   ]
 }

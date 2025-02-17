@@ -33,10 +33,6 @@ const props = withDefaults(defineProps<Props>(), {
   }),
 });
 
-onMounted(() => {
-  enableDragResize(rect.value!);
-});
-
 const { enableDragResize } = useStepOptions(props, [
   "x",
   "y",
@@ -45,4 +41,8 @@ const { enableDragResize } = useStepOptions(props, [
   "fill",
   "stroke",
 ]);
+
+onMounted(() => {
+  enableDragResize(rect.value!);
+});
 </script>

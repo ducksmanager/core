@@ -7,7 +7,11 @@ meta:
     <session-info />
     <h1>{{ $t("Dashboard") }}</h1>
 
-    <b-alert v-if="!isCatalogLoaded" variant="info" :model-value="true">
+    <b-alert
+      v-if="!Object.keys(ongoingEdges).length"
+      variant="info"
+      :model-value="true"
+    >
       {{ $t("Loading...") }}
     </b-alert>
 
@@ -70,7 +74,7 @@ meta:
       <hr />
 
       <template
-        v-for="status in ['Ongoing', 'Ongoing by another user', 'Pending'] as const"
+        v-for="status in ['Ongoing', 'Ongoing by another user', 'Pending edition'] as const"
         :key="`${status}`"
       >
         <h3>{{ $t(status) }}</h3>
@@ -89,7 +93,9 @@ meta:
             <b-row>
               <b-col>
                 <publication
-                  :publicationname="publicationNames[publicationcode]"
+                  :publicationname="
+                    publicationNames[publicationcode] || publicationcode
+                  "
                   :publicationcode="publicationcode"
                   display-class="d-inline-block"
                 />
@@ -118,25 +124,25 @@ meta:
                 @mouseover="hoveredEdge = edge!"
                 @mouseout="hoveredEdge = undefined"
               >
-                <b-card class="text-center">
+                <b-card class="text-center m-2" body-class="p-2">
                   <b-link
                     :to="`edit/${edge.issuecode.replaceAll(' ', '_')}`"
                     :disabled="!canEditEdge(status)"
                   >
                     <b-card-text>
                       <img
-                        v-if="
-                          (hoveredEdge === edge && edge.svgUrl) ||
-                          status === 'Pending'
-                        "
+                        v-if="hoveredEdge === edge"
                         :alt="edge.issuecode"
                         class="edge-preview"
-                        :src="edge.svgUrl || undefined"
+                        :src="getSvgUrl(edge)"
                       /><edge-link
                         :issuecode="edge.issuecode"
                         :designers="edge.designers"
                         :photographers="edge.photographers"
-                        :published="edge.status === 'Published'"
+                        :published="
+                          publicationcode in publishedEdges &&
+                          edge.issuecode in publishedEdges[publicationcode]
+                        "
                       />
                     </b-card-text>
                   </b-link>
@@ -186,8 +192,9 @@ const { hasRole } = collectionStore;
 const { user } = storeToRefs(collectionStore);
 
 const edgeCatalogStore = edgeCatalog();
-const { loadCatalog, canEditEdge } = edgeCatalogStore;
-const { ongoingEdges, isCatalogLoaded } = storeToRefs(edgeCatalogStore);
+const { fetchOngoingEdges, canEditEdge, fetchPublishedEdges } =
+  edgeCatalogStore;
+const { ongoingEdges, publishedEdges } = storeToRefs(edgeCatalogStore);
 
 const edgesByStatusAndPublicationcode = computed(() => {
   const edgesByStatus = Object.values(ongoingEdges.value || []).groupBy(
@@ -197,13 +204,7 @@ const edgesByStatusAndPublicationcode = computed(() => {
   return Object.fromEntries(
     Object.entries(edgesByStatus).map(([status, edges]) => [
       status,
-      edges
-        .map((edge) => ({
-          ...edge,
-          publicationcode:
-            issuecodeDetails.value[edge.issuecode].publicationcode,
-        }))
-        .groupBy("publicationcode", "[]"),
+      edges.groupBy("publicationcode", "[]"),
     ]),
   );
 });
@@ -238,6 +239,9 @@ const mostPopularIssuesInCollectionWithoutEdge = computed(() =>
     .filter((_, index) => index < 10),
 );
 
+const getSvgUrl = (edge: { svgUrl: string }) =>
+  edge.svgUrl ? `${import.meta.env.VITE_EDGES_URL}${edge.svgUrl}` : undefined;
+
 const loadMostWantedEdges = async () => {
   const wantedEdges = await edgesEvents.getWantedEdges();
   await coaStore.fetchIssuecodeDetails(
@@ -245,25 +249,17 @@ const loadMostWantedEdges = async () => {
   );
   mostWantedEdges.value = wantedEdges
     .slice(0, 10)
-    .map(
-      ({
-        issuecode,
-        numberOfIssues,
-      }: {
-        issuecode: string;
-        numberOfIssues: number;
-      }) => ({
-        ...issuecodeDetails.value[issuecode],
-        id: 0,
-        edgeId: 0,
-        creationDate: new Date(),
-        timestamp: new Date().getTime(),
-        sprites: [],
-        slug: "",
-        points: numberOfIssues,
-        popularity: numberOfIssues,
-      }),
-    );
+    .map(({ issuecode, numberOfIssues }) => ({
+      ...issuecodeDetails.value[issuecode],
+      id: 0,
+      edgeId: 0,
+      creationDate: new Date(),
+      timestamp: new Date().getTime(),
+      sprites: [],
+      slug: "",
+      points: numberOfIssues,
+      popularity: numberOfIssues,
+    }));
 };
 
 watch(
@@ -282,7 +278,7 @@ watch(
 
 (async () => {
   await loadMostWantedEdges();
-  await loadCatalog();
+  await fetchOngoingEdges();
   await coaStore.fetchIssuecodeDetails(
     Object.keys(ongoingEdges.value).map((issuecode) => issuecode),
   );
@@ -293,6 +289,10 @@ watch(
     (issuecode) =>
       issuecodeDetails.value[issuecode]?.publicationcode || "fr/JM",
   );
+
+  for (const publicationcode of publicationcodes) {
+    await fetchPublishedEdges(publicationcode);
+  }
 
   await coaStore.fetchPublicationNames(publicationcodes);
   isCatalogReady.value = true;
@@ -313,8 +313,6 @@ watch(
 }
 
 .card {
-  margin: 15px 0;
-
   .edge-preview {
     position: absolute;
     top: 0;

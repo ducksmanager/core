@@ -1,39 +1,38 @@
 <template>
-  <b-row class="mb-3">
-    <b-col sm="3" class="d-flex align-items-center">
+  <b-row class="mb-3 d-flex">
+    <b-col sm="3" class="d-flex align-items-start">
       <label :for="optionName">{{ label }}</label>
     </b-col>
-    <b-col sm="6" class="d-flex align-items-center">
-      <slot name="prefix" />
-      <confirm-edit-multiple-values :values="values" @change="onChangeValue">
-        <b-form-select
-          v-if="type === 'select'"
-          :id="optionName"
-          v-model="inputValue"
-          :options="selectOptions"
-        />
-        <b-form-input
-          v-else
-          :id="optionName"
-          v-model="inputValue"
-          size="sm"
-          autocomplete="off"
-          :type="type"
-          :min="String(min)"
-          :max="String(max)"
-          :step="String(rangeStep)"
-          :range="range"
-          :disabled="disabled || false"
-          :list="String(listId)"
-          @blur="onBlur"
-        />
-      </confirm-edit-multiple-values>
-    </b-col>
-    <b-col
-      sm="3"
-      class="d-flex flex-column align-items-center justify-content-center"
-    >
-      <slot />
+    <b-col sm="9" class="d-flex flex-column align-items-center">
+      <div class="w-100">
+        <slot name="prefix" />
+        <confirm-edit-multiple-values :values="values" @change="onChangeValue">
+          <b-form-select
+            v-if="type === 'select'"
+            :id="optionName"
+            v-model="inputValue"
+            :options="selectOptions"
+          />
+          <b-form-input
+            v-else
+            :id="optionName"
+            v-model="inputValue"
+            size="sm"
+            autocomplete="off"
+            :type="type"
+            :min="min === undefined ? undefined : String(min)"
+            :max="max === undefined ? undefined : String(max)"
+            :step="rangeStep === undefined ? undefined : String(rangeStep)"
+            :range="range"
+            :disabled="disabled || false"
+            :list="listId === undefined ? undefined : String(listId)"
+            @blur="onBlur"
+          />
+        </confirm-edit-multiple-values>
+      </div>
+      <div>
+        <slot />
+      </div>
     </b-col>
   </b-row>
 </template>

@@ -7,11 +7,7 @@ export default () => {
 
   const removeVueMarkup = (element: HTMLElement) => {
     Object.values(element.attributes || [])
-      .filter(
-        (attribute) =>
-          attribute.name.startsWith("data-v-") ||
-          attribute.name === "is-visible",
-      )
+      .filter((attribute) => attribute.name.startsWith("data-v-"))
       .forEach(({ name: attributeName }) =>
         element.removeAttribute(attributeName),
       );

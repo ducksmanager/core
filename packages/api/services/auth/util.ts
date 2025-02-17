@@ -14,14 +14,15 @@ type SocketWithUser = Socket<
 >;
 
 const EMAIL_REGEX =
-  /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,24}))$/;
+  /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,24}))$/;
 
 export const isValidEmail = (email: string) => EMAIL_REGEX.test(email);
 
 export const generateAccessToken = (payload: Omit<SessionUser, "token">) =>
-  jwt.sign(payload, process.env.TOKEN_SECRET!, {
-    expiresIn: `${60 * 24 * 14}m`,
-  });
+  jwt.sign(
+    { exp: Math.floor(Date.now() / 1000) + 60 * 60 * 24 * 14, data: payload },
+    process.env.TOKEN_SECRET!,
+  );
 export const loginAs = async (user: user, hashedPassword: string) =>
   generateAccessToken({
     id: user.id,
@@ -55,43 +56,32 @@ const AuthMiddleware = (
   jwt.verify(
     token,
     process.env.TOKEN_SECRET as string,
-    (err: unknown, user: unknown) => {
+    (err: unknown, payload: unknown) => {
       if (required && err) {
         next(new Error(`Invalid token: ${err}`));
       } else {
+        const user = (payload as { data?: Omit<SessionUser, "token"> }).data;
         if (user) {
           socket.data.user = { ...user, token } as SessionUser;
+        } else if (
+          typeof payload === "object" &&
+          payload !== null &&
+          "username" in payload
+        ) {
+          socket.data.user = {
+            ...(payload as Omit<SessionUser, "token">),
+            token,
+          } as SessionUser;
+        } else {
+          console.error("There is no user in the payload:", payload);
+          next(new Error(`Invalid payload: ${payload}`));
+          return;
         }
         next();
       }
     },
   );
 };
-
-export const authenticateUser = async (
-  token?: string | null,
-): Promise<SessionUser> =>
-  new Promise((resolve, reject) => {
-    if (!token) {
-      reject("No token provided");
-      return;
-    }
-
-    jwt.verify(
-      token,
-      process.env.TOKEN_SECRET as string,
-      (err: unknown, user: unknown) => {
-        if (err) {
-          reject(`Invalid token: ${err}`);
-        } else {
-          if (user) {
-            resolve(user as SessionUser);
-          }
-          reject(`Invalid user: ${user}`);
-        }
-      },
-    );
-  });
 
 export const RequiredAuthMiddleware = (
   { _socket }: { _socket: Socket },

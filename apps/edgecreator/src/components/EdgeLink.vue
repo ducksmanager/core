@@ -2,7 +2,7 @@
   <span>
     <issue :issuecode="issuecode" hide-condition no-wrap />
     <div>
-      <b-badge v-if="published">modification</b-badge>
+      <div><b-badge v-if="published" variant="info">modification</b-badge></div>
       <b-badge v-for="designer in designers" :key="`designer-${designer}`"
         >{{ $t("Designer") }}:{{ designer }}</b-badge
       >

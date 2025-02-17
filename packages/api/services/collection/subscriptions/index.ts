@@ -18,7 +18,7 @@ export default ({ _socket }: UserServices) => ({
       .findMany({
         where: {
           users: {
-            id: _socket.data.user!.id,
+            id: _socket.data.user.id,
           },
         },
       })
@@ -31,14 +31,14 @@ export default ({ _socket }: UserServices) => ({
       ),
 
   createSubscription: async (subscription: EditSubscription) => {
-    await upsertSubscription(null, subscription, _socket.data.user!.id);
+    await upsertSubscription(null, subscription, _socket.data.user.id);
   },
 
   updateSubscription: async (
     id: number,
     subscription: SubscriptionTransformedStringDates,
   ) => {
-    await upsertSubscription(id, subscription, _socket.data.user!.id);
+    await upsertSubscription(id, subscription, _socket.data.user.id);
   },
 
   deleteSubscription: async (id: number) => {
@@ -46,7 +46,7 @@ export default ({ _socket }: UserServices) => ({
       where: {
         id,
         users: {
-          id: _socket.data.user!.id,
+          id: _socket.data.user.id,
         },
       },
     });
@@ -79,7 +79,7 @@ export async function upsertSubscription(
   await prismaDm.subscription.upsert({
     update: dates,
     create: {
-      publicationcode: subscription.publicationcode!,
+      publicationcode: subscription.publicationcode,
       users: {
         connect: { id: userId },
       },

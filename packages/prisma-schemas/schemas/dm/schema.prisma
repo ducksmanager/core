@@ -27,19 +27,20 @@ model subscription {
   @@map("abonnements")
 }
 
-model abonnements_sorties {
+model subscriptionRelease {
   /// @deprecated
-  Pays            String   @db.VarChar(3)
+  countrycode         String   @map("Pays") @db.VarChar(3)
   /// @deprecated
-  Magazine        String   @db.VarChar(6)
+  magazinecode        String   @map("Magazine") @db.VarChar(6)
   /// @deprecated
-  Numero          String   @db.VarChar(8)
-  Date_sortie     DateTime @db.Date
-  Numeros_ajoutes Boolean  @default(false)
-  issuecode       String   @default(dbgenerated("(concat(convert(`Pays` using utf8mb3),'/',convert(`Magazine` using utf8mb3),' ',convert(`Numero` using utf8mb3)))")) @db.VarChar(25)
+  issuenumber         String   @map("Numero") @db.VarChar(8)
+  releaseDate         DateTime @map("Date_sortie") @db.Date
+  haveIssuesBeenAdded Boolean  @default(false) @map("Numeros_ajoutes")
+  issuecode           String   @default(dbgenerated("(concat(convert(`Pays` using utf8mb3),'/',convert(`Magazine` using utf8mb3),' ',convert(`Numero` using utf8mb3)))")) @db.VarChar(25)
 
-  @@id([Pays, Magazine, Numero])
+  @@id([countrycode, magazinecode, issuenumber])
   @@index([issuecode], map: "abonnements_sorties_issuecode_unique")
+  @@map("abonnements_sorties")
 }
 
 model purchase {
@@ -175,9 +176,10 @@ model tranches_doublons {
 
 model edge {
   id                  Int                @id @default(autoincrement()) @map("ID")
-  publicationcode     String             @db.VarChar(12)
   /// @deprecated
-  issuenumber         String             @ignore @db.VarChar(12)
+  publicationcode     String?            @ignore @db.VarChar(12)
+  /// @deprecated
+  issuenumber         String?            @ignore @db.VarChar(12)
   creationDate        DateTime           @default(now()) @map("dateajout") @db.Timestamp(0)
   points              Int?
   slug                String?            @db.VarChar(30)
@@ -247,7 +249,7 @@ model user {
   username                    String             @unique(map: "username") @db.VarChar(25)
   password                    String             @db.VarChar(40)
   allowSharing                Boolean            @default(true) @map("AccepterPartage")
-  signupDate                  DateTime           @map("DateInscription") @db.Date
+  signupDate                  DateTime?          @map("DateInscription") @db.Date
   email                       String             @map("EMail") @db.VarChar(50)
   discordId                   String?            @map("ID_Discord") @db.VarChar(20)
   showRecommendations         Boolean            @default(true) @map("RecommandationsListeMags")
@@ -272,20 +274,20 @@ model user {
 }
 
 model userContribution {
-  id                        Int               @id @default(autoincrement()) @map("ID")
-  userId                    Int               @map("ID_user")
-  date                      DateTime          @default(now()) @db.DateTime(0)
-  contribution              String            @db.VarChar(255)
-  newPoints                 Int               @map("points_new")
-  totalPoints               Int               @map("points_total")
-  isEmailSent               Boolean           @map("emails_sent")
-  edgeId                    Int?              @map("ID_tranche")
-  bookstoreId               Int?              @map("ID_bookstore")
-  bookstoreCommentId        Int?              @map("ID_bookstore_comment")
-  tranches_pretes           edge?             @relation(fields: [edgeId], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "FK_7FDC16F375567043")
-  bouquineries              bookstore?        @relation(fields: [bookstoreId], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "FK_7FDC16F3A5778B6C")
-  users                     user              @relation(fields: [userId], references: [id], onUpdate: Restrict, map: "users_contributions___fk_user")
-  bouquineries_commentaires bookstoreComment? @relation(fields: [bookstoreCommentId], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "users_contributions_bouquineries_commentaires_ID_fk")
+  id                        Int                  @id @default(autoincrement()) @map("ID")
+  userId                    Int                  @map("ID_user")
+  date                      DateTime             @default(now()) @db.DateTime(0)
+  contribution              userContributionType
+  newPoints                 Int                  @map("points_new")
+  totalPoints               Int                  @map("points_total")
+  isEmailSent               Boolean              @map("emails_sent")
+  edgeId                    Int?                 @map("ID_tranche")
+  bookstoreId               Int?                 @map("ID_bookstore")
+  bookstoreCommentId        Int?                 @map("ID_bookstore_comment")
+  tranches_pretes           edge?                @relation(fields: [edgeId], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "FK_7FDC16F375567043")
+  bouquineries              bookstore?           @relation(fields: [bookstoreId], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "FK_7FDC16F3A5778B6C")
+  users                     user                 @relation(fields: [userId], references: [id], onUpdate: Restrict, map: "users_contributions___fk_user")
+  bouquineries_commentaires bookstoreComment?    @relation(fields: [bookstoreCommentId], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "users_contributions_bouquineries_commentaires_ID_fk")
 
   @@index([edgeId], map: "IDX_7FDC16F375567043")
   @@index([bookstoreId], map: "IDX_7FDC16F3A5778B6C")

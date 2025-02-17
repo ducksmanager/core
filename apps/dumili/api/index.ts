@@ -51,4 +51,4 @@ indexations(io);
 indexation(io);
 
 httpServer.listen(3002);
-console.log("Dumuli API open on port 3002");
+console.log("Dumili API open on port 3002");

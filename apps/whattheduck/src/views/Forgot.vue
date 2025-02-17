@@ -26,21 +26,23 @@
       <ion-button :disabled="showConfirmation" @click="submitForgot">
         {{ $t('Envoyer') }}
       </ion-button>
-      <template v-if="showConfirmation">
+      <br />
+      <ion-label v-if="showConfirmation" color="medium" class="ion-padding-top">
         {{
           $t(
             "Si l'adresse e-mail entrée correspond à un compte DucksManager, nous venons d'y envoyer un lien permettant la réinitialisation du mot de passe. Si l'e-mail ne vous parvient pas d'ici quelques minutes, veuillez vérifier votre dossier Spam.",
           )
         }}
-      </template>
+      </ion-label>
     </ion-content>
   </ion-page>
 </template>
 
 <script setup lang="ts">
-import { socketInjectionKey as dmSocketInjectionKey } from '~web/src/composables/useDmSocket';
+import { app } from '~/stores/app';
 
-const { auth: authEvents } = inject(dmSocketInjectionKey)!;
+const { socket } = storeToRefs(app());
+const { auth: authEvents } = socket.value!;
 
 const validInputs = ref<string[]>([]);
 const invalidInputs = ref<string[]>([]);

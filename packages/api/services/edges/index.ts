@@ -2,7 +2,6 @@ import { useSocketEvents } from "socket-call-server";
 
 import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa/client";
 import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
-import type { edgeModel } from "~prisma-schemas/schemas/edgecreator";
 import { prismaClient as prismaEdgeCreator } from "~prisma-schemas/schemas/edgecreator/client";
 
 import namespaces from "../namespaces";
@@ -14,12 +13,19 @@ const getEdges = async (filters: {
   if (!(filters.publicationcode || filters.issuecodes)) {
     throw new Error("Invalid filter");
   }
-  const issuecode = filters.issuecodes
-    ? {
-        in: filters.issuecodes,
-      }
-    : undefined;
-  const edgeModels: Record<string, edgeModel> = (
+  const issuecode = {
+    in:
+      filters.issuecodes ||
+      (
+        await prismaCoa.inducks_issue.findMany({
+          select: { issuecode: true },
+          where: {
+            publicationcode: filters.publicationcode,
+          },
+        })
+      ).map(({ issuecode }) => issuecode),
+  };
+  const edgeModels = (
     await prismaEdgeCreator.edgeModel.findMany({
       where: {
         issuecode,
@@ -34,7 +40,6 @@ const getEdges = async (filters: {
         issuecode: true,
       },
       where: {
-        publicationcode: filters.publicationcode,
         issuecode,
       },
     })

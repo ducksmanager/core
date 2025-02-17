@@ -190,46 +190,39 @@ export default () => {
     }
   };
 
-  const loadModel = async (issuecode: string, targetIssuecode: string) => {
-    const onlyLoadStepsAndDimensions = issuecode !== targetIssuecode;
+  const overwriteModel = (
+    targetIssuecode: string,
+    {
+      svgElement,
+      svgChildNodes,
+    }: Awaited<ReturnType<typeof loadSvgFromString>>,
+  ) => {
+    loadDimensionsFromSvg(targetIssuecode, svgElement);
+    loadStepsFromSvg(targetIssuecode, svgChildNodes);
+    setPhotoUrlsFromSvg(targetIssuecode, svgChildNodes);
+    setContributorsFromSvg(targetIssuecode, svgChildNodes);
+  };
 
-    const loadSvg = async (publishedVersion: boolean) => {
-      const { svgElement, svgChildNodes } = await loadSvgFromString(
-        issuecode,
-        new Date().toISOString(),
-        publishedVersion,
-      );
-
-      loadDimensionsFromSvg(issuecode, svgElement);
-      loadStepsFromSvg(issuecode, svgChildNodes);
-      if (!onlyLoadStepsAndDimensions) {
-        setPhotoUrlsFromSvg(issuecode, svgChildNodes);
-        setContributorsFromSvg(issuecode, svgChildNodes);
-      }
-    };
-
+  const loadModel = async (issuecode: string) => {
     try {
-      await loadSvg(false);
+      overwriteModel(issuecode, await loadSvgFromString(issuecode, false));
     } catch (_e) {
       try {
-        await loadSvg(true);
+        overwriteModel(issuecode, await loadSvgFromString(issuecode, true));
       } catch (_e) {
         const edge = (await edgeCreatorEvents.getModel(issuecode))!;
-        await edgeCatalogStore.loadPublishedEdgesSteps({
-          edgeModelIds: [edge.id],
-        });
+        await edgeCatalogStore.loadPublishedEdgesSteps([edge.id]);
         const apiSteps = edgeCatalogStore.publishedEdgesSteps[issuecode];
         loadDimensionsFromApi(issuecode, apiSteps);
         await loadStepsFromApi(issuecode, apiSteps, true, (error: string) =>
           mainStore.addWarning(error),
         );
 
-        if (!onlyLoadStepsAndDimensions) {
-          await setPhotoUrlsFromApi(issuecode, edge.id);
-          await setContributorsFromApi(issuecode, edge.id);
-        }
+        await setPhotoUrlsFromApi(issuecode, edge.id);
+        await setContributorsFromApi(issuecode, edge.id);
       }
     }
+
     if (!stepStore.options.length) {
       throw new Error(`No model found for issue ${issuecode}`);
     }
@@ -250,5 +243,6 @@ export default () => {
     setContributorsFromApi,
     loadModel,
     setPhotoUrlsFromApi,
+    overwriteModel,
   };
 };

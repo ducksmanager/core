@@ -35,13 +35,13 @@ const hasAlreadySentPhoto = async (hash: string, token: string) =>
   (await getEdgeCreatorServices(token).getImageByHash(hash)) === null;
 
 const calculateHash = (data: string) => {
-  const hashSum = crypto.createHash("sha256");
+  const hashSum = crypto.createHash("sha1");
   hashSum.update(data);
 
   return hashSum.digest("hex");
 };
 
-const getFilenameUsagesInOtherModels = async (
+const _getFilenameUsagesInOtherModels = async (
   filename: string,
   currentIssuecode: string,
   token: string,
@@ -80,11 +80,13 @@ const validateUpload = async (
       return { error: "You have already sent this photo" } as const;
     }
   } else {
-    const otherElementUses = await getFilenameUsagesInOtherModels(
-      filename,
-      issuecode,
-      token,
-    );
+    // TODO uncomment once getImagesFromFilename supports searching file names in SVG models
+    // const otherElementUses = await getFilenameUsagesInOtherModels(
+    //   filename,
+    //   issuecode,
+    //   token
+    // );
+    const otherElementUses: string[] = [];
     if (fs.existsSync(filename) && otherElementUses.length) {
       return {
         error:
@@ -156,6 +158,7 @@ const listenEvents = ({ _socket: socket }: UploadServices) => ({
       isEdgePhoto,
     );
 
+    const token = socket.data.user!.token;
     const targetFileName = targetFilePath.split("/").pop()!;
 
     const validationResults = await validateUpload(
@@ -163,7 +166,7 @@ const listenEvents = ({ _socket: socket }: UploadServices) => ({
       isEdgePhoto,
       issuecode,
       cleanData,
-      socket.data.token,
+      token,
     );
 
     if ("error" in validationResults) {
@@ -177,11 +180,9 @@ const listenEvents = ({ _socket: socket }: UploadServices) => ({
       ext: "jpg",
     });
 
-    await storePhotoHash(targetFileName, hash, socket.data.token);
+    await storePhotoHash(targetFileName, hash, token);
 
-    await getEdgeCreatorServices(socket.data.token).sendNewEdgePhotoEmail(
-      issuecode,
-    );
+    await getEdgeCreatorServices(token).sendNewEdgePhotoEmail(issuecode);
 
     return { fileName };
   },

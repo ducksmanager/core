@@ -4,6 +4,7 @@ import type {
   edge,
   user,
   userContribution,
+  userContributionType,
 } from "~prisma-schemas/schemas/dm";
 import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
 
@@ -32,15 +33,19 @@ export default () => ({
     const [country, magazine] = publicationcode.split("/");
 
     const modelContributors = [
-      ...Object.values(await getUserIdsByUsername(designers)).map((userId) => ({
-        userId,
-        contribution: "createur",
-      })),
+      ...Object.values(await getUserIdsByUsername(designers)).map(
+        (userId) =>
+          ({
+            userId,
+            contribution: "createur",
+          }) as const,
+      ),
       ...Object.values(await getUserIdsByUsername(photographers)).map(
-        (userId) => ({
-          userId,
-          contribution: "photographe",
-        }),
+        (userId) =>
+          ({
+            userId,
+            contribution: "photographe",
+          }) as const,
       ),
     ];
     const { edgeId, contributors, isNew } = await publishEdgeOnDm(
@@ -75,7 +80,7 @@ const getUserIdsByUsername = async (
 
 const createContribution = async (
   user: user,
-  contribution: string,
+  contribution: userContributionType,
   issuePopularity: number,
   edgeToPublish: edge | null,
   bookstoreCommentToPublish: bookstoreComment | null = null,
@@ -103,7 +108,7 @@ const createContribution = async (
 };
 
 const publishEdgeOnDm = async (
-  contributors: { contribution: string; userId: number }[],
+  contributors: { contribution: userContributionType; userId: number }[],
   issuecode: string,
 ) => {
   let contributions: userContribution[];
@@ -121,13 +126,8 @@ const publishEdgeOnDm = async (
     });
   } else {
     contributions = [];
-    const { publicationcode } = await prismaCoa.inducks_issue.findFirstOrThrow({
-      where: { issuecode },
-      select: { publicationcode: true },
-    });
     edgeToPublish = await prismaDm.edge.create({
       data: {
-        publicationcode,
         issuecode,
         creationDate: new Date(),
       },

@@ -185,17 +185,12 @@
             :label="$t('Image').toString()"
             type="text"
             list-id="src-list"
-            :input-values="inputValues[stepNumber].src"
+            :input-values="[selectedGalleryItems[stepNumber]]"
           >
-            <b-form-select
-              id="src-list"
-              :options="mainStore.publicationElements"
-            />
             <gallery
-              :items="mainStore.publicationElementsForGallery"
+              v-model:selected="selectedGalleryItems[stepNumber]"
+              v-model:items="mainStore.publicationElementsForGallery"
               image-type="elements"
-              :selected="inputValues[stepNumber].src"
-              @change="stepStore.setOptionValues({ src: $event })"
             />
           </form-input-row>
         </b-card-text>
@@ -309,6 +304,33 @@ const inputValues = computed(
       ),
 );
 
+const selectedGalleryItems = ref<string[]>([]);
+
+watch(
+  inputValues,
+  (inputValues) => {
+    selectedGalleryItems.value = Object.values(inputValues)
+      .filter((stepInputValue) => "src" in stepInputValue)
+      .map((stepInputValue) => stepInputValue.src[0] as string);
+  },
+  { immediate: true },
+);
+
+watch(
+  selectedGalleryItems,
+  (selectedGalleryItems) => {
+    selectedGalleryItems.forEach((selectedGalleryItem, stepNumber) => {
+      stepStore.setOptionValues(
+        { src: selectedGalleryItem },
+        {
+          stepNumber,
+        },
+      );
+    });
+  },
+  { deep: true },
+);
+
 const stepNumbers = computed(() =>
   Object.keys(inputValues.value).map((stepNumber) => parseInt(stepNumber)),
 );
@@ -327,12 +349,12 @@ const components = computed(() =>
 
 const otherColors = computed(() =>
   stepNumbers.value.map((currentStepNumber) => ({
-    sameIssuenumber: stepStore.colors.filter(
+    sameIssuecode: stepStore.colors.filter(
       ({ issuecode: thisIssuecode, stepNumber: thisStepNumber }) =>
         issuecodes.value.includes(thisIssuecode) &&
         thisStepNumber !== currentStepNumber,
     ),
-    differentIssuenumber: stepStore.colors.filter(
+    differentIssuecode: stepStore.colors.filter(
       ({ issuecode: thisIssuecode }) =>
         !issuecodes.value.includes(thisIssuecode),
     ),

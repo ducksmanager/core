@@ -174,11 +174,13 @@ export const collection = defineStore("collection", () => {
         coa().addPublicationNames(publicationNames);
         Object.assign(
           coa().issuecodeDetails,
-          issues.value.map(({ issuecode, publicationcode, issuenumber }) => ({
-            issuecode,
-            publicationcode,
-            issuenumber,
-          })),
+          issues.value
+            .map(({ issuecode, publicationcode, issuenumber }) => ({
+              issuecode,
+              publicationcode,
+              issuenumber,
+            }))
+            .groupBy("issuecode"),
         );
       }
 
@@ -312,14 +314,17 @@ export const collection = defineStore("collection", () => {
       }
       if (!isLoadingUser.value && (afterUpdate || !user.value)) {
         isLoadingUser.value = true;
-        const response = await collectionEvents.getUser();
-        if (typeof response === "object" && "error" in response) {
-          socketOptions.session.clearSession();
-          user.value = null;
-        } else {
-          user.value = response;
+        try {
+          const response = await collectionEvents.getUser();
+          if (typeof response === "object" && "error" in response) {
+            socketOptions.session.clearSession();
+            user.value = null;
+          } else {
+            user.value = response;
+          }
+        } finally {
+          isLoadingUser.value = false;
         }
-        isLoadingUser.value = false;
       }
     },
     loadUserPermissions = async () => {

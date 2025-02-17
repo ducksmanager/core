@@ -9,11 +9,11 @@
       :title="clickedImage.name"
       scrollable
       :ok-title="$t('Choose')"
-      @ok="clickedImage && emit('change', clickedImage.name)"
+      @ok="selected = clickedImage.name"
     >
       <img :alt="clickedImage.name" :src="clickedImage.url" />
     </b-modal>
-    <b-modal v-model="showUploadModal" ok-only>
+    <b-modal v-if="showUploadModal" v-model="showUploadModal" ok-only>
       <upload
         :photo="imageType === 'photos'"
         :edge="{
@@ -27,7 +27,7 @@
       <a
         v-if="allowUpload"
         href="javascript:void(0)"
-        @click="showUploadModal = !showUploadModal"
+        @click="showUploadModal = true"
         >{{ $t("Upload new") }}</a
       >
     </b-alert>
@@ -35,7 +35,7 @@
       <a
         v-if="allowUpload"
         href="javascript:void(0)"
-        @click="showUploadModal = !showUploadModal"
+        @click="showUploadModal = true"
         >{{ $t("Upload new") }}</a
       >
       <b-row ref="gallery" class="gallery mt-1">
@@ -46,7 +46,7 @@
           :class="{
             'mt-1': true,
             'mb-4': true,
-            selected: selected.includes(item.name),
+            selected: selected === item.name,
             disabled: item.disabled,
           }"
           @click="onSelect(item)"
@@ -86,19 +86,17 @@
 import { main } from "~/stores/main";
 import type { GalleryItem } from "~/types/GalleryItem";
 
-const {
-  loading = false,
-  selected = [],
-  allowUpload = true,
-} = defineProps<{
+const { loading = false, allowUpload = true } = defineProps<{
   loading?: boolean;
   imageType: string;
-  selected?: string[];
   allowUpload?: boolean;
-  items: GalleryItem[];
 }>();
 
-const emit = defineEmits<(e: "change", value: string) => void>();
+const selected = defineModel<string | undefined>("selected", {
+  default: undefined,
+});
+
+const items = defineModel<GalleryItem[]>("items");
 
 const clickedImage = ref<GalleryItem>();
 const showUploadModal = ref(false);

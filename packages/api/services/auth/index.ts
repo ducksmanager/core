@@ -41,9 +41,10 @@ const listenEvents = () => ({
         console.log(
           `A visitor requested to reset a password for a valid e-mail: ${email}`,
         );
-        const token = jwt.sign(email, process.env.TOKEN_SECRET!, {
-          expiresIn: "60m",
-        });
+        const token = jwt.sign(
+          { exp: Math.floor(Date.now() / 1000) + 60 * 60, data: email },
+          process.env.TOKEN_SECRET!,
+        );
         await prismaClient.userPasswordToken.create({
           data: { userId: user.id, token },
         });
@@ -112,9 +113,9 @@ const listenEvents = () => ({
   getCsrf: async () => "",
 
   signup: (input: { username: string; password: string; email: string }) =>
-    new Promise<Errorable<string, "Bad request">>(async (resolve) => {
+    new Promise<Errorable<string, "Bad request">>((resolve) => {
       console.log(`signup with user ${input.username}`);
-      await prismaDm.$transaction(async (transaction) => {
+      prismaDm.$transaction(async (transaction) => {
         const scopedError = await validate(transaction, input, [
           new UsernameValidation(),
           new UsernameCreationValidation(),
@@ -162,7 +163,6 @@ const listenEvents = () => ({
     username: string;
     password: string;
   }) => {
-    console.log("login");
     const hashedPassword = getHashedPassword(password);
     const user = await prismaDm.user.findFirst({
       where: {
@@ -188,7 +188,7 @@ const listenEvents = () => ({
     } else {
       const token = await loginAs(
         demoUser,
-        getHashedPassword(demoUser!.password),
+        getHashedPassword(demoUser.password),
       );
 
       return { token };

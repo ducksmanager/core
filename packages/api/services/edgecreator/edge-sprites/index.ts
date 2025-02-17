@@ -4,7 +4,7 @@ import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa/client";
 import type { edge } from "~prisma-schemas/schemas/dm";
 import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
 
-const SPRITE_SIZES = [10, 20, 50, 100, "full"];
+const SPRITE_SIZES = [10, 20, 50, 100, "full"] as const;
 const MAX_SPRITE_SIZE = 100;
 
 export default () => ({
@@ -54,7 +54,7 @@ export default () => ({
 
       for (const { id, slug, issuecode } of edgesNotInCloudinary) {
         const { publicationcode, issuenumber } =
-          coaEdgesNotInCloudinary[issuecode]!;
+          coaEdgesNotInCloudinary[issuecode];
         const [countrycode, magazinecode] = publicationcode.split("/");
 
         console.log(`Uploading edge with ID ${id} and slug ${slug}...`);
@@ -125,26 +125,31 @@ const updateTags = async (edges: edge[]) => {
     },
   });
 
-  const edgeIssues = (
-    await prismaCoa.inducks_issue.findMany({
-      select: {
-        issuenumber: true,
-        publicationcode: true,
-        issuecode: true,
+  const edgeIssues = await prismaCoa.inducks_issue.findMany({
+    select: {
+      issuenumber: true,
+      publicationcode: true,
+      issuecode: true,
+    },
+    where: {
+      issuecode: {
+        in: edges.map(({ issuecode }) => issuecode),
       },
-      where: {
-        issuecode: {
-          in: edges.map(({ issuecode }) => issuecode),
-        },
-      },
-    })
-  ).groupBy("issuecode");
+    },
+  });
+
+  const edgeIssuesByIssuecode = edgeIssues.groupBy("issuecode");
+  const issuecodesByPublicationcode = edgeIssues.groupBy(
+    "publicationcode",
+    "issuecode[]",
+  );
 
   const tagsToAdd: { [spriteName: string]: Tag } = {};
   const insertOperations = [];
 
   for (const edge of edges) {
-    const { publicationcode, issuenumber } = edgeIssues[edge.issuecode]!;
+    const { publicationcode, issuenumber } =
+      edgeIssuesByIssuecode[edge.issuecode];
     for (const spriteSize of SPRITE_SIZES) {
       const spriteName = getSpriteName(
         publicationcode,
@@ -156,7 +161,9 @@ const updateTags = async (edges: edge[]) => {
       let actualSpriteSize;
       if (spriteSize === "full") {
         actualSpriteSize = await prismaDm.edge.count({
-          where: { publicationcode },
+          where: {
+            issuecode: { in: issuecodesByPublicationcode[publicationcode] },
+          },
         });
         if (actualSpriteSize > MAX_SPRITE_SIZE) {
           console.log(

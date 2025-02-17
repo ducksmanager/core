@@ -22,6 +22,7 @@ import { server as edges } from "./services/edges";
 import { server as events } from "./services/events";
 import { server as feedback } from "./services/feedback";
 import { server as globalStats } from "./services/global-stats";
+import { server as globalStatsUser } from "./services/global-stats-user";
 import { server as presentationText } from "./services/presentation-text";
 import { server as publicCollection } from "./services/public-collection";
 import { server as stats } from "./services/stats";
@@ -154,6 +155,7 @@ if (cluster.isPrimary) {
   events(io);
   feedback(io);
   globalStats(io);
+  globalStatsUser(io);
   presentationText(io);
   publicCollection(io);
   stats(io);

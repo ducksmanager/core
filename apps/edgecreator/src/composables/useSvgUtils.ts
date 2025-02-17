@@ -14,10 +14,15 @@ export default () => {
 
   const loadSvgFromString = async (
     issuecode: string,
-    mtime: string,
     publishedVersion = false,
   ) => {
-    const edgeUrl = getEdgeUrl(issuecode, `svg?${mtime}`, publishedVersion);
+    await coa().fetchIssuecodeDetails([issuecode]);
+    const edgeUrl = getEdgeUrl(
+      issuecode,
+      `svg?${new Date().toISOString()}`,
+      publishedVersion,
+    );
+
     const svgString = (await axios.get(edgeUrl)).data as string;
     if (!svgString) {
       throw new Error(`No SVG found : ${edgeUrl}`);

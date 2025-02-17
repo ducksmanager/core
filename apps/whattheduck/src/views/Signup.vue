@@ -11,24 +11,21 @@
         :class="{
           'ion-valid': validInputs.includes('username'),
           'ion-invalid': invalidInputs.includes('username'),
-          'ion-touched': touchedInputs.includes('username'),
         }"
         :error-text="errorTexts.username"
         :aria-label="$t('Nom d\'utilisateur DucksManager')"
         :placeholder="$t('Nom d\'utilisateur DucksManager')"
-        @ion-blur="touchedInputs.push('username')"
       />
       <ion-input
         v-model="email"
         :class="{
           'ion-valid': validInputs.includes('email'),
           'ion-invalid': invalidInputs.includes('email'),
-          'ion-touched': touchedInputs.includes('email'),
+          'ion-touched': formHasChanged,
         }"
         :error-text="errorTexts.email"
         :aria-label="$t('Adresse e-mail')"
         :placeholder="$t('Adresse e-mail')"
-        @ion-blur="touchedInputs.push('email')"
       />
       <ion-input
         v-model="password"
@@ -36,12 +33,11 @@
         :class="{
           'ion-valid': validInputs.includes('password'),
           'ion-invalid': invalidInputs.includes('password'),
-          'ion-touched': touchedInputs.includes('password'),
+          'ion-touched': formHasChanged,
         }"
         :error-text="errorTexts.password"
         :aria-label="$t('Mot de passe')"
         :placeholder="$t('Mot de passe')"
-        @ion-blur="touchedInputs.push('password')"
       >
         <ion-icon
           style="float: right"
@@ -56,12 +52,11 @@
         :class="{
           'ion-valid': validInputs.includes('passwordConfirmation'),
           'ion-invalid': invalidInputs.includes('passwordConfirmation'),
-          'ion-touched': touchedInputs.includes('passwordConfirmation'),
+          'ion-touched': formHasChanged,
         }"
         :error-text="errorTexts.passwordConfirmation"
         :aria-label="$t('Confirmation mot de passe')"
         :placeholder="$t('Confirmation mot de passe')"
-        @ion-blur="touchedInputs.push('passwordConfirmation')"
       >
         <ion-icon
           style="float: right"
@@ -92,8 +87,9 @@ const { token, socket } = storeToRefs(app());
 
 const { t } = useI18n();
 const router = useRouter();
+const formHasChanged = ref(false);
 
-const { validInputs, invalidInputs, touchedInputs, errorTexts, clearErrors, submit } = useFormErrorHandling([
+const { validInputs, invalidInputs, errorTexts, clearErrors, submit } = useFormErrorHandling([
   'username',
   'email',
   'password',
@@ -130,6 +126,7 @@ const submitSignup = async () => {
       token.value = response;
     },
   );
+  formHasChanged.value = true;
 };
 
 watch(
@@ -141,6 +138,10 @@ watch(
   },
   { immediate: true },
 );
+
+watch([username, email, password, passwordConfirmation], () => {
+  formHasChanged.value = false;
+});
 </script>
 <style lang="scss" scoped>
 ion-row {

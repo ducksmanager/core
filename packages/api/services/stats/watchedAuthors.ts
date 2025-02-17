@@ -23,13 +23,7 @@ const getStoryCountPerAuthor = async (
         personcode: { in: personcodes },
       },
     })
-  ).reduce(
-    (acc, { personcode, _count }) => ({
-      ...acc,
-      [personcode]: _count.storycode,
-    }),
-    {},
-  );
+  ).groupBy("personcode", "_count", ({ storycode }) => storycode);
 
 const getMissingStoryCountPerAuthor = async (
   userId: number,
@@ -42,13 +36,7 @@ const getMissingStoryCountPerAuthor = async (
       },
       where: { userId },
     })
-  ).reduce(
-    (acc, { personcode, _count }) => ({
-      ...acc,
-      [personcode]: _count.storycode,
-    }),
-    {},
-  );
+  ).groupBy("personcode", "_count", ({ storycode }) => storycode);
 
 export default ({ _socket }: UserServices) => ({
   getWatchedAuthorsStats: async () => {

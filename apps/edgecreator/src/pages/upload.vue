@@ -61,9 +61,11 @@ meta:
         >
           <template #dimensions>
             <dimensions
-              :width="currentCrop ? currentCrop.width : 15"
-              :height="currentCrop ? currentCrop.height : 200"
-              @change="
+              :model-value="{
+                width: currentCrop?.width || 15,
+                height: currentCrop?.height || 200,
+              }"
+              @update:model-value="
                 currentCrop = currentCrop
                   ? { ...currentCrop, ...$event }
                   : $event

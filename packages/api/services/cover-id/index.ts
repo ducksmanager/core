@@ -80,31 +80,31 @@ const listenEvents = () => ({
     ),
 
   downloadCover: (coverId: number) =>
-    new Promise(async (resolve) => {
-      const coverUrl = await getCoverUrl(coverId);
-
-      const data: Uint8Array[] = [];
-      const externalRequest = https.request(
-        {
-          hostname: process.env.INDUCKS_COVERS_ROOT,
-          path: coverUrl,
-        },
-        (res) => {
-          res
-            .on("data", function (chunk) {
-              data.push(chunk);
-            })
-            .on("end", function () {
-              //at this point data is an array of Buffers so Buffer.concat() can make us a new Buffer of all of them together
-              resolve({ buffer: Buffer.concat(data) });
-            });
-        },
-      );
-      externalRequest.on("error", function (err) {
-        console.error(err);
-        resolve({ error: "Error", errorDetails: err.message });
+    new Promise((resolve) => {
+      getCoverUrl(coverId).then((coverUrl) => {
+        const data: Uint8Array[] = [];
+        const externalRequest = https.request(
+          {
+            hostname: process.env.INDUCKS_COVERS_ROOT,
+            path: coverUrl,
+          },
+          (res) => {
+            res
+              .on("data", function (chunk) {
+                data.push(chunk);
+              })
+              .on("end", function () {
+                //at this point data is an array of Buffers so Buffer.concat() can make us a new Buffer of all of them together
+                resolve({ buffer: Buffer.concat(data) });
+              });
+          },
+        );
+        externalRequest.on("error", function (err) {
+          console.error(err);
+          resolve({ error: "Error", errorDetails: err.message });
+        });
+        externalRequest.end();
       });
-      externalRequest.end();
     }),
 });
 

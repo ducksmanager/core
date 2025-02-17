@@ -65,6 +65,7 @@ export default [
 
       "@typescript-eslint/consistent-type-imports": "error",
       "@typescript-eslint/no-empty-function": "off",
+      "@typescript-eslint/no-inferrable-types": "error",
       "@typescript-eslint/no-floating-promises": "off",
       "@typescript-eslint/no-non-null-assertion": "off",
       "vue/multi-word-component-names": "off",

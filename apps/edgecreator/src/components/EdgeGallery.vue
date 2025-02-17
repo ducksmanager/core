@@ -11,12 +11,11 @@
     </b-button>
     <gallery
       v-if="items"
+      v-model:selected="selected"
+      v-model:items="items"
       image-type="edges"
       :loading="isPopulating"
-      :selected="selected == null ? [] : [selected]"
-      :items="items"
       :allow-upload="false"
-      @change="emit('change', $event)"
     />
     <b-button
       v-if="!isPopulating && hasMoreAfter"
@@ -38,21 +37,21 @@ import { stores as webStores } from "~web";
 
 const { loadDimensionsFromApi, loadStepsFromApi } = useModelLoad();
 
+const selected = defineModel<string>();
+
 const {
-  selected = null,
   hasMoreBefore = false,
   hasMoreAfter = false,
   publicationcode,
 } = defineProps<{
   publicationcode: string;
-  selected?: string | null;
   hasMoreBefore?: boolean;
   hasMoreAfter?: boolean;
 }>();
 
 const emit = defineEmits<{
-  (e: "load-more", where: "before" | "after"): void;
-  (e: "change", value: string): void;
+  "load-more": [where: "before" | "after"];
+  change: [value: string];
 }>();
 
 const items = ref<GalleryItem[]>([]);
@@ -63,66 +62,71 @@ const { loadPublishedEdgesSteps } = edgeCatalog();
 const { issuecodesByPublicationcode } = storeToRefs(webStores.coa());
 const { fetchIssuecodesByPublicationcode } = webStores.coa();
 
-const populateItems = async (itemsForPublication: { id: number }[]) => {
-  const publishedIssueModels = Object.values(itemsForPublication).map(
-    ({ id }) => id,
+const populateItems = async (
+  itemsForPublication: {
+    id: number;
+    issuecode: string;
+    url: string;
+    svgUrl?: string;
+  }[],
+) => {
+  await loadPublishedEdgesSteps(
+    itemsForPublication.filter(({ svgUrl }) => !svgUrl).map(({ id }) => id),
   );
-  await loadPublishedEdgesSteps({
-    edgeModelIds: publishedIssueModels,
-  });
   items.value = (
     await Promise.all(
-      Object.keys(itemsForPublication).map(async (issuecode) => {
-        const url = `${
-          import.meta.env.VITE_EDGES_URL as string
-        }/${publicationcode.replace("/", "/gen/")}.${issuecode}.png`;
+      itemsForPublication.map(async ({ issuecode, svgUrl, url }) => {
         let quality;
-        let tooltip;
-        const allSteps = publishedEdgesSteps.value[issuecode];
-        if (!allSteps) {
-          quality = 0;
-          tooltip = "No steps or dimensions found";
+        let tooltip = "";
+        if (svgUrl) {
+          quality = 1;
         } else {
-          const issueStepWarnings: Record<number, string[]> = {};
-          loadDimensionsFromApi(issuecode, allSteps);
-
-          try {
-            await loadStepsFromApi(
-              issuecode,
-              allSteps,
-              false,
-              (error: string, stepNumber: number) => {
-                if (!issueStepWarnings[stepNumber]) {
-                  issueStepWarnings[stepNumber] = [];
-                }
-                issueStepWarnings[stepNumber].push(
-                  `Step ${stepNumber}: ${error}`,
-                );
-              },
-            );
-          } catch (e) {
-            issueStepWarnings[-1] = [e as string];
-          }
-          const issueSteps = step().getFilteredOptions({
-            issuecodes: [issuecode],
-          });
-          if (!issueSteps.length) {
-            issueStepWarnings[0] = ["No steps"];
+          const allSteps = publishedEdgesSteps.value[issuecode];
+          if (!allSteps) {
             quality = 0;
+            tooltip = "No steps or dimensions found";
           } else {
-            quality = Math.max(
-              0,
-              1 - Object.keys(issueStepWarnings).length / issueSteps.length,
-            );
+            const issueStepWarnings: Record<number, string[]> = {};
+            loadDimensionsFromApi(issuecode, allSteps);
+
+            try {
+              await loadStepsFromApi(
+                issuecode,
+                allSteps,
+                false,
+                (error: string, stepNumber: number) => {
+                  if (!issueStepWarnings[stepNumber]) {
+                    issueStepWarnings[stepNumber] = [];
+                  }
+                  issueStepWarnings[stepNumber].push(
+                    `Step ${stepNumber}: ${error}`,
+                  );
+                },
+              );
+            } catch (e) {
+              issueStepWarnings[-1] = [e as string];
+            }
+            const issueSteps = step().getFilteredOptions({
+              issuecodes: [issuecode],
+            });
+            if (!issueSteps.length) {
+              issueStepWarnings[0] = ["No steps"];
+              quality = 0;
+            } else {
+              quality = Math.max(
+                0,
+                1 - Object.keys(issueStepWarnings).length / issueSteps.length,
+              );
+            }
+            tooltip = Object.values(issueStepWarnings).join("\n");
           }
-          tooltip = Object.values(issueStepWarnings).join("\n");
         }
         return {
           name: issuecode,
           quality,
           disabled: quality === 0,
           tooltip,
-          url,
+          url: `${import.meta.env.VITE_EDGES_URL as string}/${url}`,
         };
       }),
     )
@@ -138,21 +142,12 @@ const onPublicationOrEdgeChange = async () => {
   if (publishedEdges.value) {
     if (!isPopulating.value) {
       isPopulating.value = true;
-      await populateItems(
-        Object.values(publishedEdges.value).filter(
-          ({ publicationcode: publishedEdgePublicationcode }) =>
-            publishedEdgePublicationcode === publicationcode,
-        ),
-      );
+      await populateItems(Object.values(publishedEdges.value[publicationcode]));
       isPopulating.value = false;
     }
   }
 };
 
-watch(publishedEdges, onPublicationOrEdgeChange, {
-  deep: true,
-  immediate: true,
-});
 watch(
   () => publicationcode,
   async () => {

@@ -29,14 +29,14 @@ const listenEvents = (services: UserServices) => {
     emptyCollection: () =>
       prismaDm.issue
         .deleteMany({
-          where: { userId: _socket.data.user!.id },
+          where: { userId: _socket.data.user.id },
         })
         .finally(() => {}),
 
     getUserPermissions: () =>
       prismaDm.userPermission.findMany({
         where: {
-          username: _socket.data.user!.username,
+          username: _socket.data.user.username,
         },
       }),
 
@@ -45,21 +45,21 @@ const listenEvents = (services: UserServices) => {
       select userIssue.issuecode, COUNT(issue.ID) AS popularity
       from numeros userIssue
               inner join numeros issue using (issuecode)
-      where issue.ID_Utilisateur = ${_socket.data.user!.id}
+      where issue.ID_Utilisateur = ${_socket.data.user.id}
       group by issuecode
       order by COUNT(issue.ID) DESC`.then((results) =>
         results.groupBy("issuecode", "popularity"),
       ),
 
     getNotificationToken: async (username: string) => {
-      if (username !== _socket.data.user!.username) {
+      if (username !== _socket.data.user.username) {
         return { error: "Unauthorized" };
       } else {
         try {
           return new PushNotifications({
             instanceId: process.env.PUSHER_INSTANCE_ID || "",
             secretKey: process.env.PUSHER_SECRET_KEY || "",
-          }).generateToken(_socket.data.user!.username).token;
+          }).generateToken(_socket.data.user.username).token;
         } catch (e) {
           console.error(e);
           return { error: "Error", errorDetails: (e as Error).message };
@@ -70,25 +70,25 @@ const listenEvents = (services: UserServices) => {
     getLastVisit: async () => {
       let user: Awaited<ReturnType<typeof getUser>>;
       try {
-        user = await getUser(_socket.data.user!.id);
+        user = await getUser(_socket.data.user.id);
       } catch (_e) {
         return { error: "This user does not exist" };
       }
       if (!user.lastAccess) {
         console.log(
-          `Initializing last access for user ${_socket.data.user!.id}`,
+          `Initializing last access for user ${_socket.data.user.id}`,
         );
         user.previousAccess = null;
         user.lastAccess = new Date();
       } else {
-        console.log(`Updating last access for user ${_socket.data.user!.id}`);
+        console.log(`Updating last access for user ${_socket.data.user.id}`);
         user.previousAccess = user.lastAccess;
         user.lastAccess = new Date();
       }
       prismaDm.user.update({
         data: user,
         where: {
-          id: _socket.data.user!.id,
+          id: _socket.data.user.id,
         },
       });
 
@@ -102,13 +102,13 @@ const listenEvents = (services: UserServices) => {
       const userIssues = (
         await prismaDm.issue.findMany({
           where: {
-            userId: _socket.data.user!.id,
+            userId: _socket.data.user.id,
           },
           select: {
             issuecode: true,
           },
         })
-      ).map((issue) => `${issue.issuecode}`) as string[];
+      ).map((issue) => `${issue.issuecode}`);
       return (
         await prismaDm.edge.findMany({
           where: {

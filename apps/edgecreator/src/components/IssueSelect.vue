@@ -20,9 +20,9 @@
     <template v-if="currentCountrycode && currentPublicationcode">
       <template v-if="withEdgeGallery">
         <edge-gallery
-          v-if="isCatalogLoaded"
+          v-if="currentPublicationcode in publishedEdges"
+          v-model="currentFirstIssuecode"
           :publicationcode="currentPublicationcode"
-          :selected="currentFirstIssuecode"
           :has-more-before="hasMoreIssuesToLoad.before"
           :has-more-after="hasMoreIssuesToLoad.after"
           @load-more="
@@ -30,10 +30,6 @@
               ...surroundingIssuesToLoad,
               [$event]: surroundingIssuesToLoad[$event as string] + 10,
             }
-          "
-          @change="
-            currentFirstIssuecode = $event.issuecode;
-            onChange();
           "
         />
         <b-alert v-else :model-value="true" variant="info">
@@ -45,7 +41,6 @@
           v-show="currentPublicationcode"
           v-model="currentFirstIssuecode"
           :options="issues"
-          @change="onChange()"
         >
           <template #first>
             <b-form-select-option :value="undefined" disabled>
@@ -66,7 +61,6 @@
             v-show="editMode === 'range'"
             v-model="currentLastIssuecode"
             :options="issues"
-            @change="onChange()"
           />
         </template>
       </template>
@@ -86,7 +80,7 @@ import { stores as webStores } from "~web";
 const { t: $t } = useI18n();
 
 const edgeCatalogStore = edgeCatalog();
-const { isCatalogLoaded } = storeToRefs(edgeCatalogStore);
+const { publishedEdges } = storeToRefs(edgeCatalogStore);
 
 const coaStore = webStores.coa();
 const {
@@ -103,10 +97,10 @@ const slots = defineSlots<{
 
 interface Selection {
   editMode: "single" | "range";
-  countrycode: string;
-  publicationcode: string;
-  issuecode: string;
-  issuecodeEnd?: string;
+  countrycode: string | undefined;
+  publicationcode: string | undefined;
+  issuecode: string | undefined;
+  issuecodeEnd?: string | undefined;
 }
 
 const emit = defineEmits<(e: "change", value: Selection | null) => void>();
@@ -117,24 +111,26 @@ const {
   canBeMultiple = false,
   withEdgeGallery = false,
   publicationcode = null,
-  countrycode = null,
-  baseIssuenumbers = [],
+  baseIssuecodes = [],
 } = defineProps<{
-  countrycode?: string | null;
   publicationcode?: string | null;
   canBeMultiple?: boolean;
   disableOngoingOrPublished: boolean;
   disableNotOngoingNorPublished: boolean;
   withEdgeGallery?: boolean;
-  baseIssuenumbers?: string[];
+  baseIssuecodes?: string[];
 }>();
 
-const currentCountrycode = ref<string>();
-const currentPublicationcode = ref<string>();
+const currentCountrycode = ref<string | undefined>(
+  publicationcode?.split("/")[0] || undefined,
+);
+const currentPublicationcode = ref<string | undefined>(
+  publicationcode || undefined,
+);
 const currentFirstIssuecode = ref<string>();
 const currentLastIssuecode = ref<string>();
+
 const editMode = ref<"single" | "range">("single");
-const hasMoreIssuesToLoad = ref({ before: false, after: false });
 const surroundingIssuesToLoad = ref({ before: 10, after: 10 } as Record<
   string,
   number
@@ -157,7 +153,7 @@ const publications = computed(
     publicationNames.value &&
     Object.keys(publicationNames.value)
       .filter((publicationcode) =>
-        publicationcode.startsWith(`${currentCountrycode.value!}/`),
+        publicationcode.startsWith(`${currentCountrycode.value}/`),
       )
       .map((publicationcode) => ({
         text: publicationNames.value[publicationcode],
@@ -214,56 +210,44 @@ watch(currentPublicationcode, async (newValue) => {
   if (newValue) {
     currentFirstIssuecode.value = undefined;
     await coaStore.fetchIssuecodesByPublicationcode([newValue]);
-    await loadEdges();
   }
 });
 
-watch(surroundingIssuesToLoad, async () => await loadEdges());
-
-if (countrycode) {
-  currentCountrycode.value = countrycode;
-}
-
-const loadEdges = async () => {
-  let issueNumbersFilter = "";
-  if (withEdgeGallery) {
-    const minBaseIssueNumberIndex = publicationIssues.value.indexOf(
-      baseIssuenumbers[0],
-    );
-    const maxBaseIssueNumberIndex = publicationIssues.value.indexOf(
-      baseIssuenumbers[baseIssuenumbers.length - 1],
-    );
-    issueNumbersFilter = `/${publicationIssues.value
-      .filter(
-        (issuenumber, index) =>
-          minBaseIssueNumberIndex - index <
-            surroundingIssuesToLoad.value.before &&
-          index - maxBaseIssueNumberIndex <
-            surroundingIssuesToLoad.value.after &&
-          !baseIssuenumbers.includes(issuenumber),
-      )
-      .join(",")}`;
-    hasMoreIssuesToLoad.value = {
-      before: issueNumbersFilter[0] !== publicationIssues.value[0],
-      after:
-        issueNumbersFilter[issueNumbersFilter.length] !==
-        publicationIssues.value[publicationIssues.value.length],
-    };
+const hasMoreIssuesToLoad = computed(() => {
+  if (!publicationcode) {
+    return { before: false, after: false };
   }
-};
+  const publishedIssuecodes = Object.keys(
+    publishedEdges.value[publicationcode],
+  );
+  const minBaseIssuecodeIndex = publishedIssuecodes.indexOf(baseIssuecodes[0]);
+  const maxBaseIssuecodeIndex = publishedIssuecodes.indexOf(
+    baseIssuecodes[baseIssuecodes.length - 1],
+  );
+  const issuecodesFilter = publishedIssuecodes.filter(
+    (issuecode, index) =>
+      minBaseIssuecodeIndex - index < surroundingIssuesToLoad.value.before &&
+      index - maxBaseIssuecodeIndex < surroundingIssuesToLoad.value.after &&
+      !baseIssuecodes.includes(issuecode),
+  );
+  return {
+    before: issuecodesFilter[0] !== publishedIssuecodes[0],
+    after: [...issuecodesFilter].pop() !== [...publishedIssuecodes].pop(),
+  };
+});
 
-const onChange = () => {
+watch([currentFirstIssuecode, currentLastIssuecode], () => {
   emit("change", {
     editMode: editMode.value,
-    countrycode: currentCountrycode.value!,
+    countrycode: currentCountrycode.value,
     publicationcode: currentPublicationcode.value!,
     issuecode: currentFirstIssuecode.value!,
     issuecodeEnd: currentLastIssuecode.value,
   });
-};
+});
 (async () => {
   await coaStore.fetchCountryNames();
-  await edgeCatalogStore.loadCatalog();
+  await edgeCatalogStore.fetchOngoingEdges();
 })();
 </script>
 <style scoped lang="scss">

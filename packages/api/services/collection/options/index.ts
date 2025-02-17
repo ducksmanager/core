@@ -15,7 +15,7 @@ export default ({ _socket }: UserServices) => ({
     prismaDm.userOption
       .findMany({
         where: {
-          userId: _socket.data.user!.id,
+          userId: _socket.data.user.id,
           optionName: optionNameToEnum(optionName),
         },
       })
@@ -23,7 +23,7 @@ export default ({ _socket }: UserServices) => ({
 
   setOption: async (optionName: userOptionType, optionValues: string[]) => {
     {
-      const userId = _socket.data.user!.id;
+      const userId = _socket.data.user.id;
       await prismaDm.userOption.deleteMany({
         where: {
           userId,

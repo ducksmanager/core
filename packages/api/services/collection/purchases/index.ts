@@ -8,7 +8,7 @@ export default ({ _socket }: UserServices) => ({
     prismaDm.purchase
       .findMany({
         where: {
-          userId: _socket.data.user!.id,
+          userId: _socket.data.user.id,
         },
         orderBy: {
           date: "desc",
@@ -23,7 +23,7 @@ export default ({ _socket }: UserServices) => ({
 
   createPurchase: async (date: string, description: string) => {
     const criteria = {
-      userId: _socket.data.user!.id,
+      userId: _socket.data.user.id,
       date: new Date(date),
       description,
     };
@@ -42,7 +42,7 @@ export default ({ _socket }: UserServices) => ({
 
   deletePurchase: async (purchaseId: number) => {
     const criteria = {
-      userId: _socket.data.user!.id,
+      userId: _socket.data.user.id,
       id: purchaseId,
     };
     const purchase = await getUserPurchase(criteria.userId, criteria.id);

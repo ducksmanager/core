@@ -9,7 +9,7 @@ import namespaces from "../namespaces";
 const listenEvents = ({ _socket }: UserServices) => ({
   sendFeedback: async (feedbackMessage: string) => {
     const user = await prismaDm.user.findUniqueOrThrow({
-      where: { id: _socket.data.user!.id },
+      where: { id: _socket.data.user.id },
     });
     const email = new feedbackSent({
       user,

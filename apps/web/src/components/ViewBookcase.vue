@@ -180,7 +180,8 @@ const {
 } = storeToRefs(collection());
 
 const { fetchPublicationNames, fetchIssuecodesByPublicationcode } = coa();
-const { publicationNames, issuecodesByPublicationcode } = storeToRefs(coa());
+const { publicationNames, issuecodesByPublicationcode, issuecodeDetails } =
+  storeToRefs(coa());
 
 const { loadBookcase, loadBookcaseOptions, loadBookcaseOrder } = bookcase();
 const {
@@ -241,13 +242,11 @@ const sortedBookcase = $computed(
     bookcaseOrder.value &&
     hasIssuecodes &&
     [...bookcaseWithPopularities.value].sort(
-      (
-        { publicationcode: publicationcode1, issuecode: issuecode1 },
-        { publicationcode: publicationcode2, issuecode: issuecode2 },
-      ) => {
-        if (!issuecodesByPublicationcode.value[publicationcode1]) return -1;
-
-        if (!issuecodesByPublicationcode.value[publicationcode2]) return 1;
+      ({ issuecode: issuecode1 }, { issuecode: issuecode2 }) => {
+        const publicationcode1 =
+          issuecodeDetails.value[issuecode1]?.publicationcode;
+        const publicationcode2 =
+          issuecodeDetails.value[issuecode2]?.publicationcode;
 
         const publicationOrderSign = Math.sign(
           bookcaseOrder.value!.indexOf(publicationcode1) -

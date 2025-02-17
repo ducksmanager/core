@@ -15,6 +15,7 @@ import useEdgecreatorSocket, {
   edgecreatorSocketInjectionKey,
 } from "./composables/useEdgecreatorSocket";
 import { getCurrentInstance } from "vue";
+import { edgeCatalog } from "./stores/edgeCatalog";
 
 const session = {
   getToken: () => Promise.resolve(Cookies.get("token")),
@@ -60,6 +61,7 @@ const { user, userPermissions } = storeToRefs(collectionStore);
 try {
   collectionStore.loadUser();
   collectionStore.loadUserPermissions();
+  edgeCatalog().fetchOngoingEdges();
 } catch (e) {
   console.error(e);
 }
