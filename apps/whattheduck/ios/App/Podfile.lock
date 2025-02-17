@@ -1,5 +1,5 @@
 PODS:
-  - Alamofire (5.10.1)
+  - Alamofire (5.10.2)
   - Capacitor (7.0.1):
     - CapacitorCordova
   - CapacitorApp (7.0.0):
@@ -8,7 +8,7 @@ PODS:
     - Capacitor
   - CapacitorClipboard (7.0.0):
     - Capacitor
-  - CapacitorCommunityCameraPreview (6.0.1):
+  - CapacitorCommunityCameraPreview (7.0.0):
     - Capacitor
   - CapacitorCordova (7.0.1)
   - CapacitorDevice (7.0.0):
@@ -21,17 +21,17 @@ PODS:
     - Capacitor
   - CapacitorStatusBar (7.0.0):
     - Capacitor
-  - CapawesomeCapacitorAppUpdate (7.0.0):
+  - CapawesomeCapacitorAppUpdate (7.0.1):
     - Capacitor
-  - CapawesomeCapacitorFilePicker (7.0.0):
+  - CapawesomeCapacitorFilePicker (7.0.1):
     - Capacitor
-  - CapgoCapacitorUpdater (6.14.8):
+  - CapgoCapacitorUpdater (7.0.16):
     - Alamofire
     - Capacitor
     - SSZipArchive (= 2.4.3)
     - Version
   - Sentry/HybridSDK (8.36.0)
-  - SentryCapacitor (1.1.0):
+  - SentryCapacitor (1.2.0):
     - Capacitor
     - Sentry/HybridSDK (= 8.36.0)
   - SSZipArchive (2.4.3)
@@ -42,17 +42,17 @@ DEPENDENCIES:
   - "CapacitorApp (from `../../../../node_modules/.pnpm/@capacitor+app@7.0.0_@capacitor+core@7.0.1/node_modules/@capacitor/app`)"
   - "CapacitorCamera (from `../../../../node_modules/.pnpm/@capacitor+camera@7.0.0_@capacitor+core@7.0.1/node_modules/@capacitor/camera`)"
   - "CapacitorClipboard (from `../../../../node_modules/.pnpm/@capacitor+clipboard@7.0.0_@capacitor+core@7.0.1/node_modules/@capacitor/clipboard`)"
-  - "CapacitorCommunityCameraPreview (from `../../../../node_modules/.pnpm/@capacitor-community+camera-preview@6.0.1_@capacitor+core@7.0.1/node_modules/@capacitor-community/camera-preview`)"
+  - "CapacitorCommunityCameraPreview (from `../../../../node_modules/.pnpm/@capacitor-community+camera-preview@7.0.0_@capacitor+core@7.0.1/node_modules/@capacitor-community/camera-preview`)"
   - "CapacitorCordova (from `../../../../node_modules/.pnpm/@capacitor+ios@7.0.1_@capacitor+core@7.0.1/node_modules/@capacitor/ios`)"
   - "CapacitorDevice (from `../../../../node_modules/.pnpm/@capacitor+device@7.0.0_@capacitor+core@7.0.1/node_modules/@capacitor/device`)"
   - "CapacitorHaptics (from `../../../../node_modules/.pnpm/@capacitor+haptics@7.0.0_@capacitor+core@7.0.1/node_modules/@capacitor/haptics`)"
   - "CapacitorKeyboard (from `../../../../node_modules/.pnpm/@capacitor+keyboard@7.0.0_@capacitor+core@7.0.1/node_modules/@capacitor/keyboard`)"
   - "CapacitorPreferences (from `../../../../node_modules/.pnpm/@capacitor+preferences@7.0.0_@capacitor+core@7.0.1/node_modules/@capacitor/preferences`)"
   - "CapacitorStatusBar (from `../../../../node_modules/.pnpm/@capacitor+status-bar@7.0.0_@capacitor+core@7.0.1/node_modules/@capacitor/status-bar`)"
-  - "CapawesomeCapacitorAppUpdate (from `../../../../node_modules/.pnpm/@capawesome+capacitor-app-update@7.0.0_@capacitor+core@7.0.1/node_modules/@capawesome/capacitor-app-update`)"
-  - "CapawesomeCapacitorFilePicker (from `../../../../node_modules/.pnpm/@capawesome+capacitor-file-picker@7.0.0_@capacitor+core@7.0.1/node_modules/@capawesome/capacitor-file-picker`)"
-  - "CapgoCapacitorUpdater (from `../../../../node_modules/.pnpm/@capgo+capacitor-updater@6.14.8_@capacitor+core@7.0.1/node_modules/@capgo/capacitor-updater`)"
-  - "SentryCapacitor (from `../../../../node_modules/.pnpm/@sentry+capacitor@1.1.0_@capacitor+core@7.0.1_@sentry+vue@8.52.1_pinia@2.3.1_typescript@5.7.3_vmf4m3wcsrhs57odx3sukqadna/node_modules/@sentry/capacitor`)"
+  - "CapawesomeCapacitorAppUpdate (from `../../../../node_modules/.pnpm/@capawesome+capacitor-app-update@7.0.1_@capacitor+core@7.0.1/node_modules/@capawesome/capacitor-app-update`)"
+  - "CapawesomeCapacitorFilePicker (from `../../../../node_modules/.pnpm/@capawesome+capacitor-file-picker@7.0.1_@capacitor+core@7.0.1/node_modules/@capawesome/capacitor-file-picker`)"
+  - "CapgoCapacitorUpdater (from `../../../../node_modules/.pnpm/@capgo+capacitor-updater@7.0.16_@capacitor+core@7.0.1/node_modules/@capgo/capacitor-updater`)"
+  - "SentryCapacitor (from `../../../../node_modules/.pnpm/@sentry+capacitor@1.2.0_@capacitor+core@7.0.1_@sentry+vue@9.1.0_pinia@2.3.1_typescript@5.7.3__k6q6unrfsgowd7a6l27pvjvnoe/node_modules/@sentry/capacitor`)"
 
 SPEC REPOS:
   trunk:
@@ -71,7 +71,7 @@ EXTERNAL SOURCES:
   CapacitorClipboard:
     :path: "../../../../node_modules/.pnpm/@capacitor+clipboard@7.0.0_@capacitor+core@7.0.1/node_modules/@capacitor/clipboard"
   CapacitorCommunityCameraPreview:
-    :path: "../../../../node_modules/.pnpm/@capacitor-community+camera-preview@6.0.1_@capacitor+core@7.0.1/node_modules/@capacitor-community/camera-preview"
+    :path: "../../../../node_modules/.pnpm/@capacitor-community+camera-preview@7.0.0_@capacitor+core@7.0.1/node_modules/@capacitor-community/camera-preview"
   CapacitorCordova:
     :path: "../../../../node_modules/.pnpm/@capacitor+ios@7.0.1_@capacitor+core@7.0.1/node_modules/@capacitor/ios"
   CapacitorDevice:
@@ -85,35 +85,35 @@ EXTERNAL SOURCES:
   CapacitorStatusBar:
     :path: "../../../../node_modules/.pnpm/@capacitor+status-bar@7.0.0_@capacitor+core@7.0.1/node_modules/@capacitor/status-bar"
   CapawesomeCapacitorAppUpdate:
-    :path: "../../../../node_modules/.pnpm/@capawesome+capacitor-app-update@7.0.0_@capacitor+core@7.0.1/node_modules/@capawesome/capacitor-app-update"
+    :path: "../../../../node_modules/.pnpm/@capawesome+capacitor-app-update@7.0.1_@capacitor+core@7.0.1/node_modules/@capawesome/capacitor-app-update"
   CapawesomeCapacitorFilePicker:
-    :path: "../../../../node_modules/.pnpm/@capawesome+capacitor-file-picker@7.0.0_@capacitor+core@7.0.1/node_modules/@capawesome/capacitor-file-picker"
+    :path: "../../../../node_modules/.pnpm/@capawesome+capacitor-file-picker@7.0.1_@capacitor+core@7.0.1/node_modules/@capawesome/capacitor-file-picker"
   CapgoCapacitorUpdater:
-    :path: "../../../../node_modules/.pnpm/@capgo+capacitor-updater@6.14.8_@capacitor+core@7.0.1/node_modules/@capgo/capacitor-updater"
+    :path: "../../../../node_modules/.pnpm/@capgo+capacitor-updater@7.0.16_@capacitor+core@7.0.1/node_modules/@capgo/capacitor-updater"
   SentryCapacitor:
-    :path: "../../../../node_modules/.pnpm/@sentry+capacitor@1.1.0_@capacitor+core@7.0.1_@sentry+vue@8.52.1_pinia@2.3.1_typescript@5.7.3_vmf4m3wcsrhs57odx3sukqadna/node_modules/@sentry/capacitor"
+    :path: "../../../../node_modules/.pnpm/@sentry+capacitor@1.2.0_@capacitor+core@7.0.1_@sentry+vue@9.1.0_pinia@2.3.1_typescript@5.7.3__k6q6unrfsgowd7a6l27pvjvnoe/node_modules/@sentry/capacitor"
 
 SPEC CHECKSUMS:
-  Alamofire: 840d2a1ad82355b536ec6ba5f97e5bfa54600ca3
+  Alamofire: 7193b3b92c74a07f85569e1a6c4f4237291e7496
   Capacitor: 23fff43571a4d1e3ee7d67b5a3588c6e757c2913
   CapacitorApp: 45cb7cbef4aa380b9236fd6980033eb5cde6fcd2
   CapacitorCamera: 777ddf61d727754fcda0b92303ae09ea3765d7b7
   CapacitorClipboard: 2afc5e21902233d7990978c8f41f023ddcee3e3d
-  CapacitorCommunityCameraPreview: 3b37673576ad824c282429a0bd093b45d0215921
+  CapacitorCommunityCameraPreview: e303ab0c47828bbab6209bdf4ef643b7b175cdb0
   CapacitorCordova: 63d476958d5022d76f197031e8b7ea3519988c64
   CapacitorDevice: 62066b65e148a133df7b8c5bf972ba835b329748
   CapacitorHaptics: 1fba3e460e7614349c6d5f868b1fccdc5c87b66d
   CapacitorKeyboard: 2c26c6fccde35023c579fc37d4cae6326d5e6343
   CapacitorPreferences: e24a50a936f0e4f54a6b43be6121f923b4d91c27
   CapacitorStatusBar: 438e90beeeefa8276b24e6c5991cb02dd13e51bf
-  CapawesomeCapacitorAppUpdate: bec8630026a1404556e9d7cf508fe16acd67e4af
-  CapawesomeCapacitorFilePicker: 8848df9abf143614115b6c17086f0d3dfa597028
-  CapgoCapacitorUpdater: e71f9dbf57f2effe9c33e9d76a90f99b26d78c09
+  CapawesomeCapacitorAppUpdate: 8ba98e54b0c5c43e9bdeeb0cbf97ef32465be321
+  CapawesomeCapacitorFilePicker: 6673764afb8768eba0197876e222adc19fd4c120
+  CapgoCapacitorUpdater: fc84602ec9d928d675c3c5152793c5e826b226c8
   Sentry: f8374b5415bc38dfb5645941b3ae31230fbeae57
-  SentryCapacitor: 9955a523b8cf0bae16f257069e5838a0b1085d5a
+  SentryCapacitor: 8c9d5b901ab6e835e88743ff187fc00926d85dc5
   SSZipArchive: fe6a26b2a54d5a0890f2567b5cc6de5caa600aef
   Version: de5907f2c5d0f3cf21708db7801d1d5401139486
 
-PODFILE CHECKSUM: 46769eec922ddadc1d416d5e8385c5891c2e5f58
+PODFILE CHECKSUM: 38076d0f2a5ae0371b6f09b6b9353a169afa1bef
 
-COCOAPODS: 1.15.2
+COCOAPODS: 1.16.2
