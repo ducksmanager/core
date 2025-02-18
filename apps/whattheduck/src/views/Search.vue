@@ -123,7 +123,7 @@ watchDebounced(
         issues: story.issues.map(({ part, estimatedpanels, total_estimatedpanels, ...issue }) => ({
           ...issue,
           partInfo: { part, estimatedpanels, total_estimatedpanels },
-          collectionIssues: (collectionIssuesByIssuecode.value[issue.issuecode] || []).map((collectionIssue) => ({
+          collectionIssues: (collectionIssuesByIssuecode.value?.[issue.issuecode] || []).map((collectionIssue) => ({
             condition: collectionIssue.condition,
           })),
         })),
