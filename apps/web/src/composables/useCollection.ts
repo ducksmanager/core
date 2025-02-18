@@ -2,10 +2,25 @@ import type { ShallowRef } from "vue";
 
 import type { QuotedIssue } from "~dm-types/QuotedIssue";
 import type { issue, issue_condition } from "~prisma-schemas/schemas/dm";
+import type { ClientEvents as CollectionServices } from "~dm-services/collection";
 
 import { coa } from "../stores/coa";
+import { EventOutput } from "socket-call-client";
 
-export default (issues: ShallowRef<(issue & { issuecode: string })[]>) => {
+export default (
+  issues: ShallowRef<(issue & { issuecode: string })[] | undefined>,
+) => {
+  const isLoadingCollection = ref(false);
+
+  const coaIssueCountsPerCountrycode =
+      shallowRef<
+        EventOutput<CollectionServices, "getIssues">["countByCountrycode"]
+      >(),
+    coaIssueCountsByPublicationcode =
+      shallowRef<
+        EventOutput<CollectionServices, "getIssues">["countByPublicationcode"]
+      >();
+
   const total = computed(() => issues.value?.length);
   const mostPossessedPublication = computed(
     () =>
@@ -134,7 +149,56 @@ export default (issues: ShallowRef<(issue & { issuecode: string })[]>) => {
         : null,
     );
 
+  const loadCollection = async (
+    username: string | null = null,
+    afterUpdate = false,
+  ) => {
+    if (afterUpdate || (!isLoadingCollection.value && !issues.value)) {
+      isLoadingCollection.value = true;
+      const socket = inject(socketInjectionKey)!;
+      const results = username
+        ? await socket.publicCollection.getPublicCollection(username)
+        : await socket.collection.getIssues();
+      if ("error" in results) {
+        console.error(results.error);
+      } else {
+        let publicationNames: Record<string, string> = {};
+        ({
+          issues: issues.value,
+          countByCountrycode: coaIssueCountsPerCountrycode.value,
+          countByPublicationcode: coaIssueCountsByPublicationcode.value,
+          publicationNames,
+        } = results);
+        coa().addPublicationNames(publicationNames);
+        Object.assign(
+          coa().issuecodeDetails,
+          issues.value
+            .map(({ issuecode, publicationcode, issuenumber }) => ({
+              issuecode,
+              publicationcode,
+              issuenumber,
+            }))
+            .groupBy("issuecode"),
+        );
+      }
+
+      Object.assign(
+        coa().issuecodeDetails,
+        issues
+          .value!.map(({ issuecode, publicationcode, issuenumber }) => ({
+            issuecode,
+            publicationcode,
+            issuenumber,
+          }))
+          .groupBy("issuecode"),
+      );
+    }
+    isLoadingCollection.value = false;
+  };
+
   return {
+    coaIssueCountsPerCountrycode,
+    coaIssueCountsByPublicationcode,
     duplicateIssues,
     issuesInOnSaleStack,
     issuesInToReadStack,
@@ -148,5 +212,6 @@ export default (issues: ShallowRef<(issue & { issuecode: string })[]>) => {
     totalPerPublication,
     totalUniqueIssues,
     findInCollection,
+    loadCollection,
   };
 };

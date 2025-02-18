@@ -1,5 +1,4 @@
 import { defineStore } from 'pinia';
-import type { ShallowRef } from 'vue';
 
 import type { EntryPartInfo } from '~dm-types/EntryPartInfo';
 import type { IssueWithIssuecodeOnly } from '~dm-types/IssueWithIssuecodeOnly';
@@ -29,8 +28,6 @@ export const wtdcollection = defineStore('wtdcollection', () => {
   } = webCollectionStore;
 
   const {
-    coaIssueCountsByPublicationcode,
-    coaIssueCountsPerCountrycode,
     issues,
     issuesByIssuecode,
     numberPerCondition,
@@ -45,9 +42,8 @@ export const wtdcollection = defineStore('wtdcollection', () => {
   } = storeToRefs(webCollectionStore);
   const statsStore = webStores.stats();
   const usersStore = webStores.users();
-  const { quotedIssues, quotationSum } = webComposables.useCollection(
-    issues as ShallowRef<(issue & { issuecode: string })[]>,
-  );
+  const { quotedIssues, quotationSum, coaIssueCountsByPublicationcode, coaIssueCountsPerCountrycode } =
+    webComposables.useCollection(issues);
 
   const ownedCountries = computed(() =>
       ownedPublications.value
@@ -60,7 +56,7 @@ export const wtdcollection = defineStore('wtdcollection', () => {
         : issues.value,
     ),
     fetchCollection = async (force = false) => {
-      await loadCollection(force);
+      await loadCollection(null, force);
       await loadPurchases(force);
       await loadUser(force);
       await coaStore.fetchCountryNames(true);

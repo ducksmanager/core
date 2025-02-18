@@ -71,54 +71,7 @@ const getCoaCountByCountrycode = (collectionCountrycodes: string[]) =>
     );
 
 export default ({ _socket }: UserServices) => ({
-  getIssues: async () => {
-    if (_socket.data.user.username === "demo") {
-      await resetDemo();
-    }
-    return prismaDm.issue
-      .findMany({
-        where: {
-          userId: _socket.data.user.id,
-          issuecode: {
-            not: {
-              equals: null,
-            },
-          },
-        },
-      })
-      .then((issues) =>
-        prismaCoa.augmentIssueArrayWithInducksData(
-          issues as (issue & { issuecode: string })[],
-        ),
-      )
-      .then(async (issues) => {
-        const collectionPublicationcodes = [
-          ...new Set(issues.map(({ publicationcode }) => publicationcode)),
-        ];
-        const collectionCountrycodes = [
-          ...new Set(
-            collectionPublicationcodes.map(
-              (publicationcode) => publicationcode.split("/")[0],
-            ),
-          ),
-        ];
-
-        return {
-          issues,
-          countByCountrycode: await getCoaCountByCountrycode(
-            collectionCountrycodes,
-          ),
-          countByPublicationcode: await getCoaCountByPublicationcode(
-            collectionPublicationcodes,
-          ),
-          publicationNames: await getPublicationTitles({
-            publicationcode: {
-              in: collectionPublicationcodes,
-            },
-          }),
-        };
-      });
-  },
+  getIssues: async () => getIssues(_socket.data.user.id),
 
   addOrChangeIssues: async ({
     issuecodes,
@@ -443,3 +396,61 @@ const resetBookcaseOptions = async (user: user) => {
     where: { id: user.id },
   });
 };
+
+export const getIssuesFromUsername = async (username: string) =>
+  prismaDm.user.findFirstOrThrow({
+    select: {
+      id: true,
+    },
+    where: { username },
+  }).then((user) => getIssues(user.id));
+
+
+ const getIssues = async (userId: number) => {
+  if (userId === 999) {
+    await resetDemo();
+  }
+  return prismaDm.issue
+    .findMany({
+      where: {
+        userId,
+        issuecode: {
+          not: {
+            equals: null,
+          },
+        },
+      },
+    })
+    .then((issues) =>
+      prismaCoa.augmentIssueArrayWithInducksData(
+        issues as (issue & { issuecode: string })[],
+      ),
+    )
+    .then(async (issues) => {
+      const collectionPublicationcodes = [
+        ...new Set(issues.map(({ publicationcode }) => publicationcode)),
+      ];
+      const collectionCountrycodes = [
+        ...new Set(
+          collectionPublicationcodes.map(
+            (publicationcode) => publicationcode.split("/")[0],
+          ),
+        ),
+      ];
+
+      return {
+        issues,
+        countByCountrycode: await getCoaCountByCountrycode(
+          collectionCountrycodes,
+        ),
+        countByPublicationcode: await getCoaCountByPublicationcode(
+          collectionPublicationcodes,
+        ),
+        publicationNames: await getPublicationTitles({
+          publicationcode: {
+            in: collectionPublicationcodes,
+          },
+        }),
+      };
+    });
+}

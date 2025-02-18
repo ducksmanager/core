@@ -9,6 +9,16 @@ import {
   computePublicationcode,
 } from "./overrideNullableCodes";
 
+type AugmentedIssue<WithTitle extends boolean> = {
+  publicationcode: string;
+  issuenumber: string;
+  issuecode: string;
+} & (WithTitle extends true
+  ? {
+      title?: string;
+    }
+  : object);
+
 export default (prismaClient: PrismaClient) =>
   prismaClient
     .$extends({
@@ -26,7 +36,7 @@ export default (prismaClient: PrismaClient) =>
           withTitle: WithTitle,
         ) =>
           !issuecodes.length
-            ? ({} as Record<string, never>)
+            ? ({} as Record<string, AugmentedIssue<WithTitle>>)
             : prismaClient.inducks_issue
                 .findMany({
                   select: {
@@ -42,17 +52,10 @@ export default (prismaClient: PrismaClient) =>
                   },
                 })
                 .then((inducksIssues) =>
-                  (
-                    inducksIssues as ({
-                      publicationcode: string;
-                      issuenumber: string;
-                      issuecode: string;
-                    } & (WithTitle extends boolean
-                      ? {
-                          title?: string;
-                        }
-                      : object))[]
-                  ).groupBy("issuecode"),
+                  Object.groupBy(
+                    inducksIssues as AugmentedIssue<WithTitle>[],
+                    (issue) => issue.issuecode,
+                  ),
                 ),
       },
     })
@@ -60,17 +63,18 @@ export default (prismaClient: PrismaClient) =>
       client: {
         augmentIssueArrayWithInducksData: async function <
           Entity extends { issuecode: string },
-        >(issues: Entity[], withTitle: boolean = false) {
+          WithTitle extends boolean,
+        >(issues: Entity[], withTitle?: WithTitle) {
           const inducksIssues = await Prisma.getExtensionContext(
             this,
           ).getInducksIssueData(
             [...new Set(issues.map(({ issuecode }) => issuecode))],
-            withTitle,
+            withTitle || false,
           );
           return issues.map((issue) => ({
             ...issue,
             ...inducksIssues[issue.issuecode],
-          }));
+          })) as (Entity & AugmentedIssue<WithTitle>)[];
         },
       },
     });

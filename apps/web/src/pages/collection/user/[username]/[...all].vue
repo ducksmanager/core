@@ -28,17 +28,17 @@ meta:
 
 <script lang="ts" setup>
 const route = useRoute();
-const username = $computed(() => route.params.username as string);
-const publicationcode = $computed(() => (route.params.all as string) || null);
+const username = computed(() => route.params.username as string);
+const publicationcode = computed(() => (route.params.all as string) || null);
 
 const { loadPublicCollection } = publicCollection();
 const { mostPossessedPublication, issues } = storeToRefs(publicCollection());
 
 watch(
-  $$(username),
+  username,
   async (newUsername) => {
     if (newUsername) {
-      await loadPublicCollection(username);
+      await loadPublicCollection(newUsername);
     }
   },
   { immediate: true },

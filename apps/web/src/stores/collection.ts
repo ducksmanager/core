@@ -1,5 +1,4 @@
 import type { EventOutput, SuccessfulEventOutput } from "socket-call-client";
-import type { ShallowRef } from "vue";
 
 import type { ClientEvents as CollectionServices } from "~dm-services/collection";
 import type { SubscriptionTransformedStringDates } from "~dm-services/collection/subscriptions";
@@ -43,9 +42,7 @@ export const collection = defineStore("collection", () => {
   const issues =
     shallowRef<EventOutput<CollectionServices, "getIssues">["issues"]>();
 
-  const collectionUtils = useCollection(
-      issues as ShallowRef<(issue & { issuecode: string })[]>,
-    ),
+  const collectionUtils = useCollection(issues),
     watchedPublicationsWithSales = shallowRef<string[]>(),
     purchases = shallowRef<purchase[]>(),
     watchedAuthors = shallowRef<authorUser[]>(),
@@ -59,20 +56,11 @@ export const collection = defineStore("collection", () => {
     lastPublishedEdgesForCurrentUser =
       shallowRef<EventOutput<CollectionServices, "getLastPublishedEdges">>(),
     isLoadingUser = ref(false),
-    isLoadingCollection = ref(false),
     isLoadingWatchedPublicationsWithSales = ref(false),
     isLoadingMarketplaceContactMethods = ref(false),
     isLoadingPurchases = ref(false),
     isLoadingSuggestions = ref(false),
     isLoadingSubscriptions = ref(false),
-    coaIssueCountsPerCountrycode =
-      shallowRef<
-        EventOutput<CollectionServices, "getIssues">["countByCountrycode"]
-      >(),
-    coaIssueCountsByPublicationcode =
-      shallowRef<
-        EventOutput<CollectionServices, "getIssues">["countByPublicationcode"]
-      >(),
     user = shallowRef<
       SuccessfulEventOutput<CollectionServices, "getUser"> | undefined | null
     >(),
@@ -137,13 +125,13 @@ export const collection = defineStore("collection", () => {
     }),
     updateCollectionSingleIssue = async (data: CollectionUpdateSingleIssue) => {
       await collectionEvents.addOrChangeCopies(data);
-      await loadCollection(true);
+      await collectionUtils.loadCollection(null, true);
     },
     updateCollectionMultipleIssues = async (
       data: CollectionUpdateMultipleIssues,
     ) => {
       await collectionEvents.addOrChangeIssues(data);
-      await loadCollection(true);
+      await collectionUtils.loadCollection(null, true);
     },
     createPurchase = async (date: string, description: string) => {
       await collectionEvents.createPurchase(date, description);
@@ -160,41 +148,6 @@ export const collection = defineStore("collection", () => {
       } else if (result) {
         previousVisit.value = new Date(result as string);
       }
-    },
-    loadCollection = async (afterUpdate = false) => {
-      if (afterUpdate || (!isLoadingCollection.value && !issues.value)) {
-        isLoadingCollection.value = true;
-        let publicationNames: Record<string, string> = {};
-        ({
-          issues: issues.value,
-          countByCountrycode: coaIssueCountsPerCountrycode.value,
-          countByPublicationcode: coaIssueCountsByPublicationcode.value,
-          publicationNames,
-        } = await collectionEvents.getIssues());
-        coa().addPublicationNames(publicationNames);
-        Object.assign(
-          coa().issuecodeDetails,
-          issues.value
-            .map(({ issuecode, publicationcode, issuenumber }) => ({
-              issuecode,
-              publicationcode,
-              issuenumber,
-            }))
-            .groupBy("issuecode"),
-        );
-      }
-
-      Object.assign(
-        coa().issuecodeDetails,
-        issues
-          .value!.map(({ issuecode, publicationcode, issuenumber }) => ({
-            issuecode,
-            publicationcode,
-            issuenumber,
-          }))
-          .groupBy("issuecode"),
-      );
-      isLoadingCollection.value = false;
     },
     loadPurchases = async (afterUpdate = false) => {
       if (afterUpdate || (!isLoadingPurchases.value && !purchases.value)) {
@@ -345,13 +298,10 @@ export const collection = defineStore("collection", () => {
     hasRole,
     hasSuggestions,
     isLoadingUser,
-    coaIssueCountsByPublicationcode,
     copiesPerIssuecode,
-    coaIssueCountsPerCountrycode,
     isLoadingSuggestions,
     issuecodesPerPublication,
     lastPublishedEdgesForCurrentUser,
-    loadCollection,
     loadUserIssueQuotations,
     loadLastPublishedEdgesForCurrentUser,
     loadMarketplaceContactMethods,

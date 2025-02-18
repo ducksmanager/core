@@ -1,31 +1,10 @@
 import { useSocketEvents } from "socket-call-server";
 
-import type { user } from "~prisma-schemas/schemas/dm";
-import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
-
 import namespaces from "../namespaces";
+import { getIssuesFromUsername } from "../collection/issues";
 
 const listenEvents = () => ({
-  getPublicCollection: async (username: string) => {
-    let user: user;
-    try {
-      user = await prismaDm.user.findFirstOrThrow({
-        where: { username },
-      });
-    } catch (_e) {
-      return { error: "User not found" };
-    }
-    if (!user.allowSharing) {
-      return { error: "This user does not allow sharing" };
-    }
-    return {
-      issues: await prismaDm.issue.findMany({
-        where: {
-          userId: user.id,
-        },
-      }),
-    };
-  },
+  getPublicCollection: async (username: string) => getIssuesFromUsername(username)
 });
 
 export const { client, server } = useSocketEvents<typeof listenEvents>(
