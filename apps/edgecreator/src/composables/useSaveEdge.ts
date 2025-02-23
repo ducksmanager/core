@@ -3,7 +3,7 @@ import type { ModelContributor } from "~types/ModelContributor";
 import { edgecreatorSocketInjectionKey } from "./useEdgecreatorSocket";
 
 export default () => {
-  const { save: saveEvents } = inject(edgecreatorSocketInjectionKey)!;
+  const { save: saveEvents } = injectLocal(edgecreatorSocketInjectionKey)!;
 
   const removeVueMarkup = (element: HTMLElement) => {
     Object.values(element.attributes || [])

@@ -27,7 +27,7 @@ import { step } from "~/stores/step";
 import { ui } from "~/stores/ui";
 import { coa } from "~web/src/stores/coa";
 
-const { text: textEvents } = inject(edgecreatorSocketInjectionKey)!;
+const { text: textEvents } = injectLocal(edgecreatorSocketInjectionKey)!;
 
 const { resolveIssueNumberTemplate, resolveIssueNumberPartTemplate } =
   useTextTemplate();
@@ -121,7 +121,7 @@ watch(
       waitUntil(
         () => imageRef.value,
         () => {
-          enableDragResize(imageRef.value!, {
+          enableDragResize(imageRef.value, {
             onresizemove: ({ rect }) => {
               let { width, height } = rect;
               const isVertical = [90, 270].includes(props.options.rotation);

@@ -14,8 +14,11 @@ import useDmSocket, {
 import useEdgecreatorSocket, {
   edgecreatorSocketInjectionKey,
 } from "./composables/useEdgecreatorSocket";
-import { getCurrentInstance } from "vue";
 import { edgeCatalog } from "./stores/edgeCatalog";
+import { provideLocal } from "@vueuse/core";
+import { useRoute } from "vue-router";
+import { storeToRefs } from "pinia";
+import { watch } from "vue";
 
 const session = {
   getToken: () => Promise.resolve(Cookies.get("token")),
@@ -38,7 +41,7 @@ const onConnectError = (e: Error) => {
     );
   }
 };
-getCurrentInstance()!.appContext.app.provide(
+provideLocal(
   edgecreatorSocketInjectionKey,
   useEdgecreatorSocket({
     session,
@@ -52,7 +55,7 @@ const dmSocket = useDmSocket({
   onConnectError,
 });
 
-getCurrentInstance()!.appContext.app.provide(dmSocketInjectionKey, dmSocket);
+provideLocal(dmSocketInjectionKey, dmSocket);
 const route = useRoute();
 
 const collectionStore = webStores.collection();

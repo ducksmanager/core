@@ -42,7 +42,7 @@ import { socketInjectionKey as dmSocketInjectionKey } from "~web/src/composables
 import type { EventOutput } from "socket-call-client";
 import type { ClientEvents as CoaServices } from "~dm-services/coa";
 
-const { coa: coaEvents } = inject(dmSocketInjectionKey)!;
+const { coa: coaEvents } = injectLocal(dmSocketInjectionKey)!;
 
 const emit = defineEmits<{
   (e: "story-selected", searchResult: SimpleStory): void;

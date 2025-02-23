@@ -132,7 +132,7 @@ const entry = defineModel<FullEntry>({
   required: true,
 });
 
-const { indexationSocket } = inject(dumiliSocketInjectionKey)!;
+const { indexationSocket } = injectLocal(dumiliSocketInjectionKey)!;
 const indexation = storeToRefs(suggestions()).indexation as Ref<FullIndexation>;
 const { storyUrls } = storeToRefs(coa());
 

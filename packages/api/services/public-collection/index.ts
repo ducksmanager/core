@@ -1,10 +1,11 @@
 import { useSocketEvents } from "socket-call-server";
 
-import namespaces from "../namespaces";
 import { getIssuesFromUsername } from "../collection/issues";
+import namespaces from "../namespaces";
 
 const listenEvents = () => ({
-  getPublicCollection: async (username: string) => getIssuesFromUsername(username)
+  getPublicCollection: async (username: string) =>
+    getIssuesFromUsername(username),
 });
 
 export const { client, server } = useSocketEvents<typeof listenEvents>(

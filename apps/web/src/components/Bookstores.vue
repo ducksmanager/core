@@ -176,7 +176,7 @@ import type { SimpleBookstore } from "~dm-types/SimpleBookstore";
 
 import { socketInjectionKey } from "../composables/useDmSocket";
 
-const { bookstore: bookstoreEvents } = inject(socketInjectionKey)!;
+const { bookstore: bookstoreEvents } = injectLocal(socketInjectionKey)!;
 
 const { fetchStats } = users();
 const { stats: userStats } = storeToRefs(users());

@@ -398,15 +398,16 @@ const resetBookcaseOptions = async (user: user) => {
 };
 
 export const getIssuesFromUsername = async (username: string) =>
-  prismaDm.user.findFirstOrThrow({
-    select: {
-      id: true,
-    },
-    where: { username },
-  }).then((user) => getIssues(user.id));
+  prismaDm.user
+    .findFirstOrThrow({
+      select: {
+        id: true,
+      },
+      where: { username },
+    })
+    .then((user) => getIssues(user.id));
 
-
- const getIssues = async (userId: number) => {
+const getIssues = async (userId: number) => {
   if (userId === 999) {
     await resetDemo();
   }
@@ -453,4 +454,4 @@ export const getIssuesFromUsername = async (username: string) =>
         }),
       };
     });
-}
+};

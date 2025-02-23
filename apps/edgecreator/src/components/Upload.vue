@@ -26,7 +26,7 @@ const {
   edge: { issuenumber: string } | null;
 }>();
 
-const { upload: uploadServices } = inject(edgecreatorSocketInjectionKey)!;
+const { upload: uploadServices } = injectLocal(edgecreatorSocketInjectionKey)!;
 
 const mainStore = main();
 const { locale, t: $t } = useI18n();

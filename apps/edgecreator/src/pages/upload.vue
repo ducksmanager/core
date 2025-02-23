@@ -158,7 +158,7 @@ import type { ModelContributor } from "~types/ModelContributor";
 
 const i18n = useI18n();
 
-const { upload: uploadEvents } = inject(edgecreatorSocketInjectionKey)!;
+const { upload: uploadEvents } = injectLocal(edgecreatorSocketInjectionKey)!;
 
 const { saveEdgeSvg } = useSaveEdge();
 

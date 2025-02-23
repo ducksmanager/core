@@ -29,7 +29,7 @@ const socket = useDmSocket({
   },
 });
 
-getCurrentInstance()!.appContext.app.provide(socketInjectionKey, socket);
+provideLocal(socketInjectionKey, socket);
 
 socket.app._connect();
 </script>

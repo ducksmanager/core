@@ -73,12 +73,9 @@ const isSocketConnected = computed(
   () => !!dumiliSocket.indexationsSocket.value,
 );
 
-getCurrentInstance()!.appContext.app.provide(
-  dumiliSocketInjectionKey,
-  dumiliSocket,
-);
+provideLocal(dumiliSocketInjectionKey, dumiliSocket);
 
-getCurrentInstance()!.appContext.app.provide(
+provideLocal(
   dmSocketInjectionKey,
   useDmSocket({
     cacheStorage: buildWebStorage(sessionStorage),

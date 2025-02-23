@@ -84,7 +84,7 @@ import { dumiliSocketInjectionKey } from "~/composables/useDumiliSocket";
 import { ui } from "~/stores/ui";
 import { suggestions } from "~/stores/suggestions";
 
-const { indexationSocket } = inject(dumiliSocketInjectionKey)!;
+const { indexationSocket } = injectLocal(dumiliSocketInjectionKey)!;
 const { loadIndexation } = suggestions();
 
 const imagesInViewport = ref(new Set<number>());

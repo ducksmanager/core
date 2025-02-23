@@ -34,7 +34,7 @@ const { storyDetails } = storeToRefs(coa());
 
 const { indexation } = storeToRefs(suggestions());
 
-const { coa: coaEvents } = inject(dmSocketInjectionKey)!;
+const { coa: coaEvents } = injectLocal(dmSocketInjectionKey)!;
 
 const { acceptedIssue: issue } = storeToRefs(suggestions());
 

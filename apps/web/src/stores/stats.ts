@@ -8,7 +8,7 @@ import { socketInjectionKey } from "../composables/useDmSocket";
 
 export const stats = defineStore("stats", () => {
   const { coa: coaEvents, collection: collectionEvents } =
-    inject(socketInjectionKey)!;
+    injectLocal(socketInjectionKey)!;
 
   const ratings =
     shallowRef<EventOutput<CollectionServices, "getWatchedAuthors">>();

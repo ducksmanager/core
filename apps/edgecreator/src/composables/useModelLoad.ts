@@ -20,7 +20,7 @@ export default () => {
   const rendersStore = renders();
   const userStore = webStores.users();
   const edgeCatalogStore = edgeCatalog();
-  const { edgeCreator: edgeCreatorEvents } = inject(dmSocketInjectionKey)!;
+  const { edgeCreator: edgeCreatorEvents } = injectLocal(dmSocketInjectionKey)!;
 
   const loadDimensionsFromSvg = (issuecode: string, svgElement: SVGElement) => {
     stepStore.setDimensions(
@@ -146,7 +146,7 @@ export default () => {
         try {
           stepStore.setOptionValues(
             optionObjectToArray(
-              (await getOptionsFromDb(
+              await getOptionsFromDb(
                 issuecode,
                 stepNumber,
                 {
@@ -155,7 +155,7 @@ export default () => {
                 } as LegacyComponent,
                 dimensions[0],
                 calculateBase64,
-              ))!,
+              ),
             ),
             {
               issuecodes: [issuecode],

@@ -11,7 +11,7 @@ type SimpleUser = Pick<user, "id" | "username">;
 
 export const users = defineStore("users", () => {
   const { events: eventsEvents, globalStats: globalStatsEvents } =
-    inject(socketInjectionKey)!;
+    injectLocal(socketInjectionKey)!;
   const count = ref<EventOutput<GlobalStatsServices, "getUserCount"> | null>(
       null,
     ),

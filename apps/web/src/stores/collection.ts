@@ -35,7 +35,7 @@ export const collection = defineStore("collection", () => {
     stats: statsEvents,
     auth: authEvents,
     options: socketOptions,
-  } = inject(socketInjectionKey)!;
+  } = injectLocal(socketInjectionKey)!;
 
   const { bookcaseWithPopularities } = storeToRefs(bookcase());
 

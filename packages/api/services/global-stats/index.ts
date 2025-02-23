@@ -1,12 +1,12 @@
 import { useSocketEvents } from "socket-call-server";
 
 import type { BookcaseContributor } from "~dm-types/BookcaseContributor";
-import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
+import type { QuickStatsPerUser } from "~dm-types/QuickStatsPerUser";
 import { Prisma } from "~prisma-schemas/schemas/dm";
+import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
 
 import { getMedalPoints } from "../collection/util";
 import namespaces from "../namespaces";
-import type { QuickStatsPerUser } from "~dm-types/QuickStatsPerUser";
 
 const getUsersQuickStats = async (userIds: number[]) =>
   Promise.all([

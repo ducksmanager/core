@@ -95,7 +95,7 @@ import { ui } from "~/stores/ui";
 import type { FullIndexation } from "~dumili-services/indexation";
 import TableOfContentsEntry from "./TableOfContentsEntry.vue";
 
-const { indexationSocket } = inject(dumiliSocketInjectionKey)!;
+const { indexationSocket } = injectLocal(dumiliSocketInjectionKey)!;
 
 const { hoveredEntry, currentEntry } = storeToRefs(ui());
 const indexation = storeToRefs(suggestions()).indexation as Ref<FullIndexation>;

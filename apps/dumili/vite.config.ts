@@ -36,7 +36,7 @@ export default defineConfig({
     }),
     AutoImport({
       dts: true,
-      imports: ["vue", "vue-router", "vue-i18n", "pinia"],
+      imports: ["vue", "vue-router", "@vueuse/core", "vue-i18n", "pinia"],
 
       vueTemplate: true,
       eslintrc: {

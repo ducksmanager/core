@@ -16,7 +16,7 @@ const defaultExport = (options: {
     sessionExists: () => Promise<boolean>;
   };
 }) => {
-  const socket = inject("dumiliSocket") as SocketClient;
+  const socket = injectLocal("dumiliSocket") as SocketClient;
 
   const { session } = options;
 

@@ -80,7 +80,7 @@ let username = $ref(""),
 
 const { t: $t } = useI18n();
 
-const { auth: authEvents } = inject(socketInjectionKey)!;
+const { auth: authEvents } = injectLocal(socketInjectionKey)!;
 
 const signup = async () => {
   const response = await authEvents.signup({

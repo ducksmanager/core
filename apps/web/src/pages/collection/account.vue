@@ -247,7 +247,7 @@ const { updateMarketplaceContactMethods, loadMarketplaceContactMethods } =
 const { userForAccountForm, marketplaceContactMethods } =
   storeToRefs(collection());
 
-const { collection: collectionEvents } = inject(socketInjectionKey)!;
+const { collection: collectionEvents } = injectLocal(socketInjectionKey)!;
 
 const emptyCollection = async () => {
   if (confirm(t("Votre collection va être vidée. Continuer ?"))) {

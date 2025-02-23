@@ -83,7 +83,7 @@ import type { EventOutput } from "socket-call-client";
 import type { ClientEmitEvents as IndexationsEvents } from "~dumili-services/indexations";
 
 const router = useRouter();
-const { indexationsSocket, getIndexationSocketFromId } = inject(
+const { indexationsSocket, getIndexationSocketFromId } = injectLocal(
   dumiliSocketInjectionKey,
 )!;
 

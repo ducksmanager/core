@@ -33,7 +33,7 @@ const suggestionsStore = suggestions();
 const { createIssueSuggestion } = suggestionsStore;
 const { indexation } = storeToRefs(suggestionsStore);
 
-const { indexationSocket } = inject(dumiliSocketInjectionKey)!;
+const { indexationSocket } = injectLocal(dumiliSocketInjectionKey)!;
 
 const createAndAcceptIssueSuggestion = async (data: {
   publicationcode: string;

@@ -6,7 +6,7 @@ import type { issueSuggestion } from "~prisma/client_dumili";
 import { ui } from "./ui";
 
 export const suggestions = defineStore("suggestions", () => {
-  const { indexationSocket, setIndexationSocketFromId } = inject(
+  const { indexationSocket, setIndexationSocketFromId } = injectLocal(
     dumiliSocketInjectionKey,
   )!;
   const indexation = ref<FullIndexation>();

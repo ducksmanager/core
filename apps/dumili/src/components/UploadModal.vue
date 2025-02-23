@@ -107,7 +107,7 @@ import { suggestions } from "~/stores/suggestions";
 
 import { stores as webStores } from "~web";
 
-const { indexationSocket } = inject(dumiliSocketInjectionKey)!;
+const { indexationSocket } = injectLocal(dumiliSocketInjectionKey)!;
 
 const {
   pagesWithoutOverwrite: pagesWithoutOverwriteInitial,

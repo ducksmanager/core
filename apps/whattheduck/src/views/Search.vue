@@ -72,7 +72,7 @@ import FullIssue from '~/components/FullIssue.vue';
 import { app } from '~/stores/app';
 import { wtdcollection } from '~/stores/wtdcollection';
 
-const { coa: coaEvents } = inject(dmSocketInjectionKey)!;
+const { coa: coaEvents } = injectLocal(dmSocketInjectionKey)!;
 
 const { issuesByIssuecode: collectionIssuesByIssuecode } = storeToRefs(wtdcollection());
 const coaStore = stores.coa();

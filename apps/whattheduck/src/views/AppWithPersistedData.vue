@@ -19,7 +19,7 @@ import { wtdcollection } from '~/stores/wtdcollection';
 
 const { offlineBannerHeight, socket, isPersistedDataLoaded, token } = storeToRefs(app());
 
-getCurrentInstance()!.appContext.app.provide(dmSocketInjectionKey, socket.value!);
+provideLocal(dmSocketInjectionKey, socket.value!);
 
 const collectionStore = wtdcollection();
 const { fetchCollection } = collectionStore;

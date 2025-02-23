@@ -39,7 +39,7 @@ const emit = defineEmits<{
   (e: "toggled", toggle: boolean): void;
 }>();
 
-const { indexationSocket } = inject(dumiliSocketInjectionKey)!;
+const { indexationSocket } = injectLocal(dumiliSocketInjectionKey)!;
 
 const isLoading = ref(false);
 const disabled = ref(false); // TODO handle failed suggestions

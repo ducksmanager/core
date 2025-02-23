@@ -86,7 +86,7 @@ const { t: $t } = useI18n();
 const { loadRatings } = stats();
 const { ratings } = storeToRefs(stats());
 
-const { stats: statsEvents } = inject(socketInjectionKey)!;
+const { stats: statsEvents } = injectLocal(socketInjectionKey)!;
 
 const unitTypes = {
   number: $t("Afficher en valeurs réelles"),

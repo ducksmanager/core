@@ -14,11 +14,7 @@ type GetNestedType<T, P extends string> = P extends keyof T
 
 type GroupByValueType<
   T,
-  V extends
-    | null
-    | "[]"
-    | NestedKeyOf<T>
-    | `${NestedKeyOf<T>}[]` = null,
+  V extends null | "[]" | NestedKeyOf<T> | `${NestedKeyOf<T>}[]` = null,
 > = V extends null
   ? T
   : V extends "[]"
@@ -87,11 +83,7 @@ declare global {
      */
     groupBy<
       K extends null | (keyof T & (string | number)),
-      V extends
-        | null
-        | "[]"
-        | NestedKeyOf<T>
-        | `${NestedKeyOf<T>}[]` = null,
+      V extends null | "[]" | NestedKeyOf<T> | `${NestedKeyOf<T>}[]` = null,
       R = GroupByValueType<T, V>,
     >(
       fieldName: K,
@@ -102,8 +94,8 @@ declare global {
           : V extends keyof T
             ? T[V]
             : T,
-        index: number
-      ) => R
+        index: number,
+      ) => R,
     ): Record<
       K extends null
         ? T & string
@@ -115,7 +107,7 @@ declare global {
 
 const getNestedValue = <T, P extends string>(
   object: T,
-  path: P
+  path: P,
 ): GetNestedType<T, P> =>
   path
     .split(".")
@@ -143,13 +135,13 @@ Array.prototype.groupBy = function (fieldName, mapper, mapperFn) {
           mapper === "[]"
             ? object
             : getNestedValue(object, mapper.slice(0, -"[]".length)),
-          idx
-        )
+          idx,
+        ),
       );
     } else {
       acc[key] = (mapperFn || ((value) => value))(
         mapper ? getNestedValue(object, mapper) : object,
-        idx
+        idx,
       );
     }
     return acc;

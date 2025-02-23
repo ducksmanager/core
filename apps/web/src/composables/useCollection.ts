@@ -1,11 +1,12 @@
+import type { EventOutput } from "socket-call-client";
 import type { ShallowRef } from "vue";
 
+import type { ClientEvents as CollectionServices } from "~dm-services/collection";
 import type { QuotedIssue } from "~dm-types/QuotedIssue";
 import type { issue, issue_condition } from "~prisma-schemas/schemas/dm";
-import type { ClientEvents as CollectionServices } from "~dm-services/collection";
 
 import { coa } from "../stores/coa";
-import { EventOutput } from "socket-call-client";
+import { socketInjectionKey } from "./useDmSocket";
 
 export default (
   issues: ShallowRef<(issue & { issuecode: string })[] | undefined>,
@@ -155,7 +156,7 @@ export default (
   ) => {
     if (afterUpdate || (!isLoadingCollection.value && !issues.value)) {
       isLoadingCollection.value = true;
-      const socket = inject(socketInjectionKey)!;
+      const socket = injectLocal(socketInjectionKey)!;
       const results = username
         ? await socket.publicCollection.getPublicCollection(username)
         : await socket.collection.getIssues();

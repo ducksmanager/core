@@ -35,7 +35,7 @@ import type { issueSuggestion } from "~prisma/client_dumili";
 import { socketInjectionKey as dmSocketInjectionKey } from "~web/src/composables/useDmSocket";
 
 const { t: $t } = useI18n();
-const { coverId: coverIdEvents } = inject(dmSocketInjectionKey)!;
+const { coverId: coverIdEvents } = injectLocal(dmSocketInjectionKey)!;
 const { indexationSocket } = injectLocal(dumiliSocketInjectionKey)!;
 
 const { hasPendingIssueSuggestions } = storeToRefs(suggestions());

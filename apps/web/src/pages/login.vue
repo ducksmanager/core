@@ -63,7 +63,7 @@ let username = $ref("");
 let error = $ref<string>();
 let password = $ref("");
 
-const { collection: collectionSocket } = inject(socketInjectionKey)!;
+const { collection: collectionSocket } = injectLocal(socketInjectionKey)!;
 
 const login = async () => {
   await userLogin(

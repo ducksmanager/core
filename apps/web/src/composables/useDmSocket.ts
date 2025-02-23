@@ -39,7 +39,7 @@ const defaultExport = (options: {
     sessionExists: () => Promise<boolean>;
   };
 }) => {
-  const socket = inject("dmSocket") as SocketClient;
+  const socket = injectLocal("dmSocket") as SocketClient;
   const { session, cacheStorage, onConnectError, onConnected } = options;
   const until4am = () => {
     const now = dayjs();

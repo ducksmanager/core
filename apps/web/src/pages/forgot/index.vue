@@ -53,7 +53,7 @@ const email = $ref("");
 let token = $ref("");
 const { t: $t } = useI18n();
 
-const { auth: authEvents } = inject(socketInjectionKey)!;
+const { auth: authEvents } = injectLocal(socketInjectionKey)!;
 
 const sendPasswordToken = async () => {
   const response = await authEvents.requestTokenForForgotPassword(email);

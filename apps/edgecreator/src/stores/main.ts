@@ -13,7 +13,7 @@ const numericSortCollator = new Intl.Collator(undefined, {
   sensitivity: "base",
 });
 export const main = defineStore("main", () => {
-  const { browse: browseEvents } = inject(edgecreatorSocketInjectionKey)!;
+  const { browse: browseEvents } = injectLocal(edgecreatorSocketInjectionKey)!;
 
   const publicationcode = ref<string>(),
     issuecodes = ref<string[]>([]),
@@ -155,7 +155,7 @@ export const main = defineStore("main", () => {
       }
     },
     loadPublicationIssues = async () =>
-      webStores.coa().fetchIssuesByPublicationcode(publicationcode.value!),
+      webStores.coa().fetchIssuesByPublicationcode(publicationcode.value),
     getEdgePublicationStates = (issuecodes: string[]) =>
       Object.keys(edgeCatalog().publishedEdges)
         .filter((issuecode) => issuecodes.includes(issuecode))

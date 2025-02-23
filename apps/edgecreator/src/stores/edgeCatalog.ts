@@ -8,8 +8,8 @@ import { stores as webStores } from "~web";
 import { socketInjectionKey as dmSocketInjectionKey } from "~web/src/composables/useDmSocket";
 
 export const edgeCatalog = defineStore("edgeCatalog", () => {
-  const { edgeCreator: edgeCreatorEvents } = inject(dmSocketInjectionKey)!;
-  const { browse: browseEvents } = inject(edgecreatorSocketInjectionKey)!;
+  const { edgeCreator: edgeCreatorEvents } = injectLocal(dmSocketInjectionKey)!;
+  const { browse: browseEvents } = injectLocal(edgecreatorSocketInjectionKey)!;
 
   const ongoingEdges = ref<
       SuccessfulEventOutput<

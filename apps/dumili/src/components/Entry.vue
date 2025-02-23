@@ -138,7 +138,7 @@ defineProps<{
   editable: boolean;
 }>();
 
-const { indexationSocket } = inject(dumiliSocketInjectionKey)!;
+const { indexationSocket } = injectLocal(dumiliSocketInjectionKey)!;
 const indexation = storeToRefs(suggestions()).indexation as Ref<FullIndexation>;
 
 const { storyDetails } = storeToRefs(coa());

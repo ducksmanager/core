@@ -98,7 +98,7 @@ const { publicationNames } = storeToRefs(coa());
 const { loadSubscriptions } = collection();
 const { subscriptions } = storeToRefs(collection());
 
-const { collection: collectionEvents } = inject(socketInjectionKey)!;
+const { collection: collectionEvents } = injectLocal(socketInjectionKey)!;
 
 const newSubscription = $ref({
   publicationcode: "fr/SPG",

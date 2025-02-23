@@ -8,7 +8,7 @@ export default () => {
   const { fetchIssuecodeDetails, fetchPublicationNames } = coa();
   const { issuecodeDetails } = storeToRefs(coa());
 
-  const { indexationSocket } = inject(dumiliSocketInjectionKey)!;
+  const { indexationSocket } = injectLocal(dumiliSocketInjectionKey)!;
 
   const applyHintsFromCoverSearch = async (
     results: EventOutput<CoverIdServices, "searchFromCover">,

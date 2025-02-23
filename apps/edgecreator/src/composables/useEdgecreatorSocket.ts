@@ -1,5 +1,5 @@
 import type { SocketClient } from "socket-call-client";
-import { inject, type InjectionKey } from "vue";
+import { type InjectionKey } from "vue";
 
 import type { ClientEvents as BrowseServices } from "~edgecreator-services/browse";
 import type { ClientEvents as ImageInfoServices } from "~edgecreator-services/image-info";
@@ -17,7 +17,7 @@ const defaultExport = (options: {
     sessionExists: () => Promise<boolean>;
   };
 }) => {
-  const socket = inject("edgecreatorSocket") as SocketClient;
+  const socket = injectLocal("edgecreatorSocket") as SocketClient;
   socket.onConnectError = options.onConnectError;
   const { session } = options;
 

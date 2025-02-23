@@ -20,7 +20,7 @@ export const bookcase = defineStore("bookcase", () => {
   const route = useRoute();
 
   const { bookcase: bookcaseEvents, userBookcase: userBookcaseEvents } =
-    inject(socketInjectionKey)!;
+    injectLocal(socketInjectionKey)!;
 
   const loadedSprites = ref<{ [key: string]: string }>({}),
     isPrivateBookcase = ref(false),

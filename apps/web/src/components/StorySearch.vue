@@ -106,7 +106,7 @@ const emit = defineEmits<{
 }>();
 const { conditions } = useCondition();
 
-const { coa: coaEvents } = inject(socketInjectionKey)!;
+const { coa: coaEvents } = injectLocal(socketInjectionKey)!;
 
 const { findInCollection } = isPublic ? publicCollection() : collection();
 const { issues } = storeToRefs(collection());

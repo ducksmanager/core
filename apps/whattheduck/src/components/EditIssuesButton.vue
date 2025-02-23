@@ -74,7 +74,7 @@ import useCoverSearch from '../composables/useCoverSearch';
 
 import { app } from '~/stores/app';
 
-const { coverId: coverIdEvents } = inject(dmSocketInjectionKey)!;
+const { coverId: coverIdEvents } = injectLocal(dmSocketInjectionKey)!;
 
 const emit = defineEmits<(e: 'show-camera-preview') => void>();
 

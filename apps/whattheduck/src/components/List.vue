@@ -120,7 +120,7 @@ const emit = defineEmits<(e: 'items-filtered', items: string[]) => void>();
 const overlay = ref<HTMLElement>();
 const takePhotoButton = ref<{ $el: HTMLElement }>();
 
-const { coverId: coverIdEvents } = inject(dmSocketInjectionKey)!;
+const { coverId: coverIdEvents } = injectLocal(dmSocketInjectionKey)!;
 
 const cameraPreviewElementId = 'camera-preview';
 const { takePhoto } = useCoverSearch(useRouter(), coverIdEvents);
