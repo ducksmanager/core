@@ -8,14 +8,15 @@
   "scripts": {
     "dumili": "concurrently -p \"[dumili-{name}]\" --kill-others-on-fail -n front,api,dm,kumiko+paddleocr \"pnpm -F ~dumili dev\" \"pnpm -F ~dumili-api dev\" \"pnpm -F ~web web\" \"docker compose -f docker-compose-dev.yml up kumiko db\"",
     "dev": "concurrently -n vite,vue-tsc \"vite --port 8004\" \"vue-tsc --noEmit --watch\"",
-    "build": "mv .env.prod .env && vite build",
+    "build": "mv .env.prod .env && vite build && pnpm sentry:sourcemaps",
     "preview": "vite preview",
     "typecheck": "vue-tsc --noEmit",
     "lint": "eslint --fix .",
     "prod:deploy": "DIR=apps/dumili pnpm -F '~ci' prod:docker-compose-up",
     "prod-build-docker-web": "REPO_NAME=ghcr.io/bperel/dumili-app pnpm -F '~ci' prod:build-docker -f apps/dumili/Dockerfile",
     "prod:build-docker": "pnpm run '/^prod-build-docker-/'",
-    "prod:transfer-files-post": "pnpm -F '~ci' prod:transfer-files apps/dumili/docker-compose.yml:@apps/dumili/docker-compose.yml"
+    "prod:transfer-files-post": "pnpm -F '~ci' prod:transfer-files apps/dumili/docker-compose.yml:@apps/dumili/docker-compose.yml",
+    "sentry:sourcemaps": "sentry-cli sourcemaps inject --org bruno-perel --project dumili ./dist && sentry-cli sourcemaps upload --org bruno-perel --project dumili ./dist"
   },
   "dependencies": {
     "@iconify-json/bi": "^1.2.2",
@@ -44,6 +45,7 @@
     "@eslint/js": "^9.20.0",
     "@intlify/eslint-plugin-vue-i18n": "^3.2.0",
     "@intlify/unplugin-vue-i18n": "^6.0.3",
+    "@sentry/cli": "^2.42.1",
     "@types/js-cookie": "^3.0.6",
     "@vitejs/plugin-vue": "^5.2.1",
     "concurrently": "^9.1.2",

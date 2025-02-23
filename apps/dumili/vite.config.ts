@@ -14,6 +14,9 @@ import Pages from "vite-plugin-pages";
 import Layouts from "vite-plugin-vue-layouts";
 
 export default defineConfig({
+  build: {
+    sourcemap: true,
+  },
   plugins: [
     vue(),
     Icons({

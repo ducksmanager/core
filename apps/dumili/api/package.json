@@ -7,7 +7,7 @@
   },
   "scripts": {
     "clean": "rm -rf dist",
-    "build": "prisma generate && bun build --target node index.ts --outfile bundle.mjs",
+    "build": "prisma generate && bun build --entry-naming [dir]/[name].mjs --sourcemap=linked --target node index.ts --outdir dist && pnpm sentry:sourcemaps",
     "prisma-pull-generate": "prisma db pull && prisma generate",
     "prisma-generate": "prisma generate",
     "prisma-migrate": "prisma migrate deploy",
@@ -18,11 +18,14 @@
     "prod-build-docker-paddleocr": "REPO_NAME=ghcr.io/bperel/paddleocr pnpm -F '~ci' prod:build-docker -f apps/dumili/api/paddleocr/Dockerfile",
     "prod:build-docker": "pnpm run '/^prod-build-docker-/'",
     "prod:transfer-files-pre": "pnpm -F '~ci' prod:transfer-files @apps/dumili/api/.env.prod.local:apps/dumili/api/.env",
-    "prod:transfer-files-post": "pnpm -F '~ci' prod:transfer-files apps/dumili/api/docker-compose.yml:@apps/dumili/api/docker-compose.yml"
+    "prod:transfer-files-post": "pnpm -F '~ci' prod:transfer-files apps/dumili/api/docker-compose.yml:@apps/dumili/api/docker-compose.yml",
+    "sentry:sourcemaps": "sentry-cli sourcemaps inject --org bruno-perel --project dumili-api ./dist && sentry-cli sourcemaps upload --org bruno-perel --project dumili-api ./dist"
   },
   "dependencies": {
+    "@opentelemetry/instrumentation-socket.io": "^0.46.0",
     "@prisma/client": "^6.3.1",
     "@sentry/node": "^8.54.0",
+    "@sentry/profiling-node": "^9.1.0",
     "axios": "^1.7.9",
     "busboy": "^1.6.0",
     "cloudinary": "^1.41.3",
@@ -36,6 +39,7 @@
     "~prisma-schemas": "workspace:*"
   },
   "devDependencies": {
+    "@sentry/cli": "^2.42.1",
     "@socket.io/admin-ui": "^0.5.1",
     "@types/busboy": "^1.5.4",
     "@types/i18n": "^0.13.12",
