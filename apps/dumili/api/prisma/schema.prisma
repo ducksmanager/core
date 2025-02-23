@@ -15,6 +15,7 @@ model entry {
   acceptedStoryKindSuggestionId Int?                  @map("accepted_story_kind_suggested_id")
   indexationId                  String                @map("indexation_id") @db.VarChar(20)
   entrycomment                  String?               @db.VarChar(2009)
+  position                      Int
   part                          String?               @db.VarChar(5)
   title                         String?               @db.VarChar(100)
   entirepages                   Int

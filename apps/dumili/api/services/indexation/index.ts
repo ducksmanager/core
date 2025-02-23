@@ -78,7 +78,7 @@ const indexationPayloadInclude = {
           ocrDetails: true,
         },
       },
-    },
+    }
   },
 } as const;
 
@@ -111,7 +111,7 @@ let isAiRunning = false;
 export const getFullIndexation = (
   services: IndexationServices,
   indexationId: string,
-  runAi: boolean = true,
+  runAi: boolean = true
 ) =>
   prisma.indexation
     .findUnique({
@@ -119,7 +119,9 @@ export const getFullIndexation = (
       include: indexationPayloadInclude,
     })
     .then((indexation) => {
-      if (indexation && runAi && !isAiRunning) {
+      if (indexation) {
+      indexation.entries = indexation.entries.sort((a, b) => a.position - b.position);
+      if ( runAi && !isAiRunning) {
         isAiRunning = true;
         runKumikoOnPages(services, indexation)
           .then(() =>
@@ -130,16 +132,16 @@ export const getFullIndexation = (
                   ({ image, id }) =>
                     !!image &&
                     getEntryFromPage(indexation, id)?.acceptedStoryKind
-                      ?.kind === STORY,
+                      ?.kind === STORY
                 )
                 .map(({ pageNumber, image }) => ({
                   pageNumber,
                   image: image!,
-                })),
-            ),
+                }))
+            )
           )
           .then(() =>
-            setInferredEntriesStoryKinds(services, indexation.entries),
+            setInferredEntriesStoryKinds(services, indexation.entries)
           )
           .then(() => createAiStorySuggestions(services, indexation))
           .finally(() => {
@@ -147,25 +149,26 @@ export const getFullIndexation = (
             refreshIndexation(services, false, indexationId);
           });
       }
+    }
       return indexation;
     });
 
 export const refreshIndexation = async (
   services: IndexationServices,
   runAi: boolean = true,
-  id = services._socket.data.indexation.id,
+  id = services._socket.data.indexation.id
 ) => {
   services._socket.data.indexation = (await getFullIndexation(
     services,
     id,
-    runAi,
+    runAi
   ))!;
   services.indexationUpdated(services._socket.data.indexation);
 };
 
 const createAiStorySuggestions = async (
   services: IndexationServices,
-  indexation: FullIndexation,
+  indexation: FullIndexation
 ) => {
   for (const entry of indexation.entries) {
     if (
@@ -177,7 +180,7 @@ const createAiStorySuggestions = async (
 
       if (!ocrResults) {
         console.log(
-          `Entry ${entry.id}: No OCR results found on the first page`,
+          `Entry ${entry.id}: No OCR results found on the first page`
         );
         continue;
       }
@@ -186,11 +189,11 @@ const createAiStorySuggestions = async (
 
       const { results: searchResults } = await coaEvents.searchStory(
         ocrResults.map(({ text }) => text),
-        false,
+        false
       );
 
       const storyDetailsOutput = await coaEvents.getStoryDetails(
-        searchResults.map(({ storycode }) => storycode),
+        searchResults.map(({ storycode }) => storycode)
       );
 
       if (!("stories" in storyDetailsOutput)) {
@@ -202,8 +205,8 @@ const createAiStorySuggestions = async (
 
       const storyversionDetailsOutput = await coaEvents.getStoryversionsDetails(
         searchResults.map(
-          ({ storycode }) => storyDetails![storycode].originalstoryversioncode!,
-        ),
+          ({ storycode }) => storyDetails![storycode].originalstoryversioncode!
+        )
       );
 
       if (!("storyversions" in storyversionDetailsOutput)) {
@@ -218,7 +221,7 @@ const createAiStorySuggestions = async (
         ({ storycode }) =>
           storyversionDetails![
             storyDetails![storycode].originalstoryversioncode!
-          ].kind === STORY,
+          ].kind === STORY
       );
 
       const currentlyAcceptedStorycode = entry.acceptedStory?.storycode;
@@ -253,13 +256,13 @@ const createAiStorySuggestions = async (
                     score,
                   },
                 },
-              }),
+              })
             ),
           },
         },
       });
       const acceptedStorySuggestionId = newEntry.storySuggestions.find(
-        ({ storycode }) => storycode === currentlyAcceptedStorycode,
+        ({ storycode }) => storycode === currentlyAcceptedStorycode
       )?.id;
       if (acceptedStorySuggestionId) {
         await prisma.entry.update({
@@ -286,7 +289,7 @@ const createAiStorySuggestions = async (
 const setInferredEntriesStoryKinds = async (
   services: IndexationServices,
   entries: FullIndexation["entries"],
-  force?: boolean,
+  force?: boolean
 ) => {
   for (const entry of entries) {
     if (entry.storyKindSuggestions.some(({ ai }) => ai) && !force) {
@@ -316,7 +319,7 @@ const setInferredEntriesStoryKinds = async (
 
     if (!pagesInferredStoryKinds.length) {
       console.log(
-        `Entry ${entry.id}: No pages with inferred story kinds found`,
+        `Entry ${entry.id}: No pages with inferred story kinds found`
       );
       continue;
     }
@@ -327,23 +330,23 @@ const setInferredEntriesStoryKinds = async (
           ...aiKumikoResult,
           kind: aiKumikoResult?.inferredStoryKind,
         }))
-        .groupBy("kind", "id[]"),
+        .groupBy("kind", "id[]")
     ).sort((a, b) => b[1].length - a[1].length)[0][0] as
       | keyof typeof storyKinds
       | undefined;
 
     const entryIdx = services._socket.data.indexation.entries.findIndex(
-      ({ id }) => id === entry.id,
+      ({ id }) => id === entry.id
     );
     console.log(
-      `Kumiko: entry #${entryIdx}: inferred story kind is ${mostInferredStoryKind}`,
+      `Kumiko: entry #${entryIdx}: inferred story kind is ${mostInferredStoryKind}`
     );
 
     await prisma.storyKindSuggestionAi.deleteMany({
       where: {
         suggestionId: {
           in: indexation.entries[entryIdx].storyKindSuggestions.map(
-            ({ id }) => id,
+            ({ id }) => id
           ),
         },
       },
@@ -353,7 +356,7 @@ const setInferredEntriesStoryKinds = async (
       await prisma.storyKindSuggestionAi.create({
         data: {
           suggestionId: indexation.entries[entryIdx].storyKindSuggestions.find(
-            ({ kind }) => kind === mostInferredStoryKind,
+            ({ kind }) => kind === mostInferredStoryKind
           )!.id,
         },
       });
@@ -373,417 +376,384 @@ export type IndexationServices = NamespaceProxyTarget<
   IndexationServerSentStartEndEvents
 >;
 
-const listenEvents = (services: IndexationServices) => {
-  const { _socket } = services;
-  return {
-    setPageUrl: async (id: number, url: string | null) => {
-      if (
-        !_socket.data.indexation.pages.some(({ id: pageId }) => pageId === id)
-      ) {
-        return {
-          error: "This indexation does not have any page with this ID",
-        };
-      }
-      return prisma.page
-        .update({
-          data: {
-            image: url
-              ? {
-                  connectOrCreate: {
-                    create: {
-                      url,
-                    },
-                    where: {
-                      url,
-                    },
+const listenEvents = (services: IndexationServices) => ({
+  setPageUrl: async (id: number, url: string | null) => {
+    if (
+      !services._socket.data.indexation.pages.some(
+        ({ id: pageId }) => pageId === id
+      )
+    ) {
+      return {
+        error: "This indexation does not have any page with this ID",
+      };
+    }
+    return prisma.page
+      .update({
+        data: {
+          image: url
+            ? {
+                connectOrCreate: {
+                  create: {
+                    url,
                   },
-                }
-              : { disconnect: true },
-          },
-          where: {
-            id,
-          },
-        })
-        .then(async () => {
-          await refreshIndexation(services);
-          return "OK" as const;
-        });
-    },
-
-    deleteIndexation: async () => {
-      const { id: indexationId } = _socket.data.indexation;
-      await prisma.indexation.delete({
-        where: {
-          id: indexationId,
-        },
-      });
-    },
-
-    loadIndexation: async () => {
-      services.setKumikoInferredPageStoryKinds(1);
-      return { indexation: _socket.data.indexation };
-    },
-
-    deleteEntry: async (
-      entryId: entry["id"],
-      entryIdToExtend?: "previous" | "next",
-    ) => {
-      const { indexation } = _socket.data;
-      const entry = indexation.entries.find(({ id }) => id === entryId);
-      if (!entry) {
-        return {
-          error: "This indexation does not have any entry with this ID",
-        };
-      }
-      const entryIdx = indexation.entries.findIndex(({ id }) => id === entryId);
-      const isLastEntry = entryIdx === indexation.entries.length - 1;
-
-      let entryToExtend: entry | undefined;
-      if (!isLastEntry) {
-        entryToExtend =
-          indexation.entries[
-            entryIdToExtend === "previous" ? entryIdx - 1 : entryIdx + 1
-          ];
-        if (!entryToExtend) {
-          if (entryIdToExtend === "previous") {
-            return { error: "This entry does not have any previous entry" };
-          } else {
-            return { error: "This entry does not have any next entry" };
-          }
-        }
-      }
-
-      await prisma.entry.delete({
-        include: {
-          storySuggestions: true,
-          storyKindSuggestions: true,
+                  where: {
+                    url,
+                  },
+                },
+              }
+            : { disconnect: true },
         },
         where: {
-          id: entryId,
+          id,
         },
+      })
+      .then(async () => {
+        await refreshIndexation(services);
+        return "OK" as const;
       });
+  },
 
-      if (entryToExtend) {
-        await prisma.entry.update({
-          data: {
-            entirepages: entryToExtend.entirepages + entry.entirepages,
+  deleteIndexation: async () => {
+    const { id: indexationId } = services._socket.data.indexation;
+    await prisma.indexation.delete({
+      where: {
+        id: indexationId,
+      },
+    });
+  },
+
+  loadIndexation: async () => {
+    services.setKumikoInferredPageStoryKinds(1);
+    return { indexation: services._socket.data.indexation };
+  },
+
+  deleteEntry: async (
+    entryId: entry["id"],
+  ) => {
+    const { indexation } = services._socket.data;
+    const entry = indexation.entries.find(({ id }) => id === entryId);
+    if (!entry) {
+      return {
+        error: "This indexation does not have any entry with this ID",
+      };
+    }
+
+    await prisma.entry.delete({
+      include: {
+        storySuggestions: true,
+        storyKindSuggestions: true,
+      },
+      where: {
+        id: entryId,
+      },
+    });
+
+    await refreshIndexation(services);
+
+    return { status: "OK" };
+  },
+
+  swapPageUrls: async (pageNumber1: number, pageNumber2: number) =>
+    // In 2 steps so that we don't have to deal with unique constraints
+    prisma.indexation
+      .update({
+        data: {
+          pages: {
+            updateMany: [
+              {
+                data: {
+                  pageNumber: -pageNumber1,
+                },
+                where: {
+                  pageNumber: pageNumber1,
+                },
+              },
+              {
+                data: {
+                  pageNumber: -pageNumber2,
+                },
+                where: {
+                  pageNumber: pageNumber2,
+                },
+              },
+            ],
           },
-          where: {
-            id: entryToExtend.id,
+        },
+        where: {
+          id: services._socket.data.indexation.id,
+        },
+      })
+      .then(() =>
+        prisma.indexation.update({
+          include: {
+            pages: true,
+            entries: true,
           },
-        });
-      }
-
-      await refreshIndexation(services);
-
-      return { status: "OK" };
-    },
-
-    swapPageUrls: async (pageNumber1: number, pageNumber2: number) =>
-      // In 2 steps so that we don't have to deal with unique constraints
-      prisma.indexation
-        .update({
           data: {
             pages: {
               updateMany: [
                 {
                   data: {
-                    pageNumber: -pageNumber1,
+                    pageNumber: pageNumber2,
                   },
                   where: {
-                    pageNumber: pageNumber1,
+                    pageNumber: -pageNumber1,
                   },
                 },
                 {
                   data: {
-                    pageNumber: -pageNumber2,
+                    pageNumber: pageNumber1,
                   },
                   where: {
-                    pageNumber: pageNumber2,
+                    pageNumber: -pageNumber2,
                   },
                 },
               ],
             },
           },
           where: {
-            id: _socket.data.indexation.id,
+            id: services._socket.data.indexation.id,
           },
         })
-        .then(() =>
-          prisma.indexation.update({
-            include: {
-              pages: true,
-              entries: true,
-            },
-            data: {
-              pages: {
-                updateMany: [
-                  {
-                    data: {
-                      pageNumber: pageNumber2,
-                    },
-                    where: {
-                      pageNumber: -pageNumber1,
-                    },
-                  },
-                  {
-                    data: {
-                      pageNumber: pageNumber1,
-                    },
-                    where: {
-                      pageNumber: -pageNumber2,
-                    },
-                  },
-                ],
-              },
-            },
-            where: {
-              id: _socket.data.indexation.id,
-            },
-          }),
-        )
-        .then(async () => {
-          await refreshIndexation(services);
-          return {
-            status: "OK" as const,
-          };
-        }),
-
-    acceptIssueSuggestion: async (
-      suggestionId: issueSuggestion["id"] | null,
-    ) => {
-      if (
-        !_socket.data.indexation.issueSuggestions.some(
-          ({ id }) => id === suggestionId,
-        )
-      ) {
-        return {
-          error: "This issue suggestion does not exist in this indexation",
-        };
-      }
-      return prisma.indexation
-        .update({
-          data: {
-            acceptedIssueSuggestion:
-              suggestionId === null
-                ? { disconnect: true }
-                : {
-                    connect: {
-                      id: suggestionId,
-                      indexationId: _socket.data.indexation.id,
-                    },
-                  },
-          },
-          where: {
-            id: _socket.data.indexation.id,
-          },
-        })
-        .then(async () => {
-          await refreshIndexation(services);
-          return {
-            status: "OK",
-          };
-        });
-    },
-
-    createStorySuggestion: async (
-      suggestion: Prisma.storySuggestionUncheckedCreateInput & { ai: boolean },
-    ) =>
-      prisma.storySuggestion
-        .create({
-          data: {
-            ...suggestion,
-            ai: suggestion.ai
-              ? {
-                  create: {},
-                }
-              : undefined,
-          },
-        })
-        .then(async (createdStorySuggestion) => {
-          await refreshIndexation(services);
-          return {
-            createdStorySuggestion,
-          };
-        }),
-
-    createIssueSuggestion: async (
-      suggestion: Omit<
-        Prisma.issueSuggestionUncheckedCreateInput,
-        "indexationId"
-      >,
-    ) =>
-      prisma.issueSuggestion
-        .create({
-          data: {
-            ...suggestion,
-            indexationId: _socket.data.indexation.id,
-          },
-        })
-        .then(async ({ id }) => {
-          await refreshIndexation(services);
-          return {
-            suggestionId: id,
-          };
-        }),
-
-    updateIndexation: async (
-      indexation: Pick<indexation, "price"> & { numberOfPages: number },
-    ) => {
-      const { numberOfPages } = indexation;
-      if (numberOfPages < 4 || numberOfPages > 996 || numberOfPages % 2 !== 0) {
-        return {
-          error: `Invalid number of pages`,
-          errorDetails: JSON.stringify({ numberOfPages }),
-        };
-      }
-      const currentMaxPageNumber = Math.max(
-        ..._socket.data.indexation.pages.map(({ pageNumber }) => pageNumber),
-      );
-
-      const pagesToCreate = Array.from({
-        length: numberOfPages - currentMaxPageNumber,
-      }).map((_, idx) => ({
-        pageNumber: currentMaxPageNumber + idx + 1,
-      }));
-
-      if (pagesToCreate.length) {
-        await prisma.indexation.update({
-          data: {
-            pages: {
-              deleteMany: {
-                pageNumber: {
-                  gt: numberOfPages,
-                },
-              },
-              createMany: {
-                data: pagesToCreate,
-              },
-            },
-          },
-          where: {
-            id: _socket.data.indexation.id,
-          },
-        });
-      }
-      return prisma.indexation
-        .update({
-          data: indexation,
-          where: {
-            id: _socket.data.indexation.id,
-          },
-        })
-        .then(async () => {
-          await refreshIndexation(services);
-          return {
-            status: "OK",
-          };
-        });
-    },
-
-    acceptStorySuggestion: async (
-      entryId: entry["id"],
-      storySuggestionId: storySuggestion["id"] | null,
-    ) => {
-      const entry = _socket.data.indexation.entries.find(
-        ({ id, storySuggestions }) =>
-          (entryId === id && storySuggestionId === null) ||
-          storySuggestions.some(({ id }) => id === storySuggestionId),
-      );
-      if (!entry) {
-        return {
-          error: `This indexation does not have any entry with this suggestion`,
-          errorDetails: JSON.stringify({ storySuggestionId }),
-        };
-      }
-
-      await prisma.entry.update({
-        data: {
-          acceptedStorySuggestionId: storySuggestionId,
-        },
-        where: {
-          id: entry.id,
-        },
-      });
-
-      await refreshIndexation(services);
-      return { status: "OK" };
-    },
-
-    acceptStoryKindSuggestion: async (
-      entryId: entry["id"],
-      storyKindSuggestionId: storyKindSuggestion["id"] | null,
-    ) => {
-      const entry = _socket.data.indexation.entries.find(
-        ({ storyKindSuggestions }) =>
-          storyKindSuggestions.some(({ id }) => id === storyKindSuggestionId),
-      );
-      if (!entry) {
-        return {
-          error: `This indexation does not have any entry with this story kind suggestion`,
-          errorDetails: JSON.stringify({ storyKindSuggestionId }),
-        };
-      }
-      if (entry.id !== entryId) {
-        return {
-          error: `This indexation does not have any entry with this ID`,
-          errorDetails: JSON.stringify({ entryId }),
-        };
-      }
-
-      await prisma.entry.update({
-        data: {
-          acceptedStoryKindSuggestionId: storyKindSuggestionId,
-        },
-        where: {
-          id: entryId,
-        },
-      });
-
-      await refreshIndexation(services);
-
-      return { status: "OK" };
-    },
-
-    updateEntry: async (
-      entryId: entry["id"],
-      data: Pick<
-        entry,
-        | "entirepages"
-        | "brokenpagenumerator"
-        | "brokenpagedenominator"
-        | "title"
-      >,
-    ) => {
-      const entry = _socket.data.indexation.entries.find(
-        ({ id }) => id === entryId,
-      );
-      if (!entry) {
-        return {
-          error: `This indexation does not have any entry with this ID`,
-          errorDetails: JSON.stringify({ entryId }),
-        };
-      }
-
-      await prisma.entry.update({
-        data,
-        where: {
-          id: entryId,
-        },
-      });
-
-      await refreshIndexation(services);
-
-      return { status: "OK" };
-    },
-
-    createEntry: async () =>
-      createEntry(_socket.data.indexation.id).then(async () => {
+      )
+      .then(async () => {
         await refreshIndexation(services);
-        return { status: "OK" };
+        return {
+          status: "OK" as const,
+        };
       }),
-  };
-};
+
+  acceptIssueSuggestion: async (suggestionId: issueSuggestion["id"] | null) => {
+    if (
+      !services._socket.data.indexation.issueSuggestions.some(
+        ({ id }) => id === suggestionId
+      )
+    ) {
+      return {
+        error: "This issue suggestion does not exist in this indexation",
+      };
+    }
+    return prisma.indexation
+      .update({
+        data: {
+          acceptedIssueSuggestion:
+            suggestionId === null
+              ? { disconnect: true }
+              : {
+                  connect: {
+                    id: suggestionId,
+                    indexationId: services._socket.data.indexation.id,
+                  },
+                },
+        },
+        where: {
+          id: services._socket.data.indexation.id,
+        },
+      })
+      .then(async () => {
+        await refreshIndexation(services);
+        return {
+          status: "OK",
+        };
+      });
+  },
+
+  createStorySuggestion: async (
+    suggestion: Prisma.storySuggestionUncheckedCreateInput & { ai: boolean }
+  ) =>
+    prisma.storySuggestion
+      .create({
+        data: {
+          ...suggestion,
+          ai: suggestion.ai
+            ? {
+                create: {},
+              }
+            : undefined,
+        },
+      })
+      .then(async (createdStorySuggestion) => {
+        await refreshIndexation(services);
+        return {
+          createdStorySuggestion,
+        };
+      }),
+
+  createIssueSuggestion: async (
+    suggestion: Omit<Prisma.issueSuggestionUncheckedCreateInput, "indexationId">
+  ) =>
+    prisma.issueSuggestion
+      .create({
+        data: {
+          ...suggestion,
+          indexationId: services._socket.data.indexation.id,
+        },
+      })
+      .then(async ({ id }) => {
+        await refreshIndexation(services);
+        return {
+          suggestionId: id,
+        };
+      }),
+
+  updateIndexation: async (
+    indexation: Pick<indexation, "price"> & { numberOfPages: number }
+  ) => {
+    const { numberOfPages } = indexation;
+    if (numberOfPages < 4 || numberOfPages > 996 || numberOfPages % 2 !== 0) {
+      return {
+        error: `Invalid number of pages`,
+        errorDetails: JSON.stringify({ numberOfPages }),
+      };
+    }
+    const currentMaxPageNumber = Math.max(
+      ...services._socket.data.indexation.pages.map(
+        ({ pageNumber }) => pageNumber
+      )
+    );
+
+    const pagesToCreate = Array.from({
+      length: numberOfPages - currentMaxPageNumber,
+    }).map((_, idx) => ({
+      pageNumber: currentMaxPageNumber + idx + 1,
+    }));
+
+    if (pagesToCreate.length) {
+      await prisma.indexation.update({
+        data: {
+          pages: {
+            deleteMany: {
+              pageNumber: {
+                gt: numberOfPages,
+              },
+            },
+            createMany: {
+              data: pagesToCreate,
+            },
+          },
+        },
+        where: {
+          id: services._socket.data.indexation.id,
+        },
+      });
+    }
+    return prisma.indexation
+      .update({
+        data: indexation,
+        where: {
+          id: services._socket.data.indexation.id,
+        },
+      })
+      .then(async () => {
+        await refreshIndexation(services);
+        return {
+          status: "OK",
+        };
+      });
+  },
+
+  acceptStorySuggestion: async (
+    entryId: entry["id"],
+    storySuggestionId: storySuggestion["id"] | null
+  ) => {
+    const entry = services._socket.data.indexation.entries.find(
+      ({ id, storySuggestions }) =>
+        (entryId === id && storySuggestionId === null) ||
+        storySuggestions.some(({ id }) => id === storySuggestionId)
+    );
+    if (!entry) {
+      return {
+        error: `This indexation does not have any entry with this suggestion`,
+        errorDetails: JSON.stringify({ storySuggestionId }),
+      };
+    }
+
+    await prisma.entry.update({
+      data: {
+        acceptedStorySuggestionId: storySuggestionId,
+      },
+      where: {
+        id: entry.id,
+      },
+    });
+
+    await refreshIndexation(services);
+    return { status: "OK" };
+  },
+
+  acceptStoryKindSuggestion: async (
+    entryId: entry["id"],
+    storyKindSuggestionId: storyKindSuggestion["id"] | null
+  ) => {
+    const entry = services._socket.data.indexation.entries.find(
+      ({ storyKindSuggestions }) =>
+        storyKindSuggestions.some(({ id }) => id === storyKindSuggestionId)
+    );
+    if (!entry) {
+      return {
+        error: `This indexation does not have any entry with this story kind suggestion`,
+        errorDetails: JSON.stringify({ storyKindSuggestionId }),
+      };
+    }
+    if (entry.id !== entryId) {
+      return {
+        error: `This indexation does not have any entry with this ID`,
+        errorDetails: JSON.stringify({ entryId }),
+      };
+    }
+
+    await prisma.entry.update({
+      data: {
+        acceptedStoryKindSuggestionId: storyKindSuggestionId,
+      },
+      where: {
+        id: entryId,
+      },
+    });
+
+    await refreshIndexation(services);
+
+    return { status: "OK" };
+  },
+
+  updateEntry: async (
+    entryId: entry["id"],
+    data: Pick<
+      entry,
+      | "entirepages"
+      | "brokenpagenumerator"
+      | "brokenpagedenominator"
+      | "title"
+      | "position"
+    >
+  ) => {
+    const entry = services._socket.data.indexation.entries.find(
+      ({ id }) => id === entryId
+    );
+    if (!entry) {
+      return {
+        error: `This indexation does not have any entry with this ID`,
+        errorDetails: JSON.stringify({ entryId }),
+      };
+    }
+
+    await prisma.entry.update({
+      data,
+      where: {
+        id: entryId,
+      },
+    });
+
+    await refreshIndexation(services);
+
+    return { status: "OK" };
+  },
+
+  createEntry: async (position: number) =>
+    createEntry(services._socket.data.indexation.id, position)
+      .then(() => refreshIndexation(services))
+      .then(() => ({ status: "OK" })),
+});
 
 export const { client, server } = useSocketEvents<
   typeof listenEvents,
@@ -805,18 +775,19 @@ export const { client, server } = useSocketEvents<
         next();
       },
     ],
-  },
+  }
 );
 
 export type ClientEmitEvents = (typeof client)["emitEvents"];
 export type ClientListenEvents = (typeof client)["listenEventsInterfaces"];
 
-export const createEntry = async (indexationId: string) =>
+export const createEntry = async (indexationId: string, position: number) =>
   prisma.entry.create({
     include: {
       storyKindSuggestions: true,
     },
     data: {
+      position,
       entirepages: 1,
       indexation: {
         connect: {
@@ -828,7 +799,7 @@ export const createEntry = async (indexationId: string) =>
           data: (Object.keys(storyKinds) as (keyof typeof storyKinds)[]).map(
             (code) => ({
               kind: code,
-            }),
+            })
           ),
         },
       },

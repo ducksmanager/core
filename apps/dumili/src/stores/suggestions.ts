@@ -22,7 +22,10 @@ export const suggestions = defineStore("suggestions", () => {
           (entry) => entry.id === uiStore.currentEntry!.id,
         );
       } else {
-        uiStore.currentEntry = getEntryFromPage(indexation.value!, 0)!;
+        uiStore.currentEntry = getEntryFromPage(
+          indexation.value!,
+          indexation.value!.pages[0].id,
+        )!;
       }
     };
   };

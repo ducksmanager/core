@@ -65,23 +65,27 @@
       </b-col>
       <b-col :cols="11" class="position-relative p-0">
         <template
-          v-for="(_, idx) in indexation.entries"
+          v-for="(entry, idx) in indexation.entries"
           :key="indexation.entries[idx].id"
         >
+          <div class="position-absolute w-100 d-flex justify-content-center">
+            <b-button
+              v-if="hasEntryGapWithNext(idx)"
+              class="create-entry fw-bold position-absolute mx-md-n5 d-flex justify-content-center align-items-center"
+              :style="{
+                top: `${pageHeight * (entry.position + entry.entirepages - 1)}px`,
+              }"
+              variant="success"
+              @click="createEntry(entry.position + entry.entirepages)"
+              >{{ $t("Ajouter une entrée") }}</b-button
+            >
+          </div>
           <TableOfContentsEntry
             v-model="indexation.entries[idx]"
             @on-entry-resize-stop="($event) => onEntryResizeStop(idx, $event)"
+            @on-entry-drag-stop="($event) => onEntryDragStop(idx, $event)"
           />
         </template>
-
-        <div class="position-absolute w-100 d-flex justify-content-center">
-          <b-button
-            class="create-entry fw-bold position-absolute mt-n1 d-flex justify-content-center align-items-center"
-            variant="success"
-            @click="createEntry"
-            >{{ $t("Ajouter une entrée") }}</b-button
-          >
-        </div>
       </b-col>
     </b-row>
   </b-card>
@@ -122,6 +126,13 @@ const numberOfPages = computed({
   },
 });
 
+const hasEntryGapWithNext = (entryIdx: number) => {
+  const entry = indexation.value.entries[entryIdx];
+  const nextEntry = indexation.value.entries[entryIdx + 1];
+  debugger;
+  return nextEntry && entry.position + entry.entirepages < nextEntry.position;
+};
+
 const updateNumberOfPages = (event: Event) => {
   numberOfPages.value = parseInt((event.target as HTMLInputElement).value);
 };
@@ -133,8 +144,12 @@ const onEntryResizeStop = (entryIdx: number, height: number) => {
   );
 };
 
-const createEntry = async () => {
-  await indexationSocket.value!.createEntry();
+const onEntryDragStop = (entryIdx: number, y: number) => {
+  indexation.value!.entries[entryIdx].position = 1 + y / pageHeight.value;
+};
+
+const createEntry = async (position: number) => {
+  await indexationSocket.value!.createEntry(position);
 };
 
 const updateIndexation = () => {

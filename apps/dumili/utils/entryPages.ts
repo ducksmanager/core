@@ -1,29 +1,26 @@
 import type { entry, page } from "~prisma/client_dumili";
 
 export const getFirstPageOfEntry = (entries: entry[], entryId: number) =>
-  Math.floor(
-    entries
-      .filter((_, idx) => idx < entries.map(({ id }) => id).indexOf(entryId))
-      .reduce(
-        (acc, { entirepages, brokenpagenumerator, brokenpagedenominator }) =>
-          acc + entirepages + brokenpagenumerator / brokenpagedenominator,
-        0,
-      ),
-  );
+  entries.find((entry) => entry.id === entryId)!.position - 1;
 
 export const getEntryPages = <P extends page>(
   { entries, pages }: { entries: entry[]; pages: P[] },
   entryId: number,
 ) => {
-  const firstPageOfEntry = getFirstPageOfEntry(entries, entryId);
   const entry = entries.find(({ id }) => id === entryId)!;
-  return pages.slice(firstPageOfEntry, firstPageOfEntry + entry.entirepages);
+  return pages.slice(
+    entry.position - 1,
+    entry.position + entry.entirepages - 1,
+  );
 };
 
 export const getEntryFromPage = <E extends entry, P extends page>(
   { entries, pages }: { entries: E[]; pages: P[] },
   pageId: page["id"],
-) =>
-  entries.find(({ id }) =>
-    getEntryPages({ entries, pages }, id).some(({ id }) => id === pageId),
+) => {
+  const { pageNumber } = pages.find(({ id }) => pageId === id)!;
+  return entries.find(
+    ({ position, entirepages }) =>
+      position <= pageNumber && position + entirepages > pageNumber,
   );
+};

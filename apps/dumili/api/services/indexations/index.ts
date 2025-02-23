@@ -36,7 +36,7 @@ const listenEvents = ({ _socket }: IndexationsServices) => ({
           },
         },
       })
-      .then((indexation) => createEntry(indexation.id))
+      .then((indexation) => createEntry(indexation.id, 1))
       .then((entry) => {
         return prisma.entry.update({
           data: {
