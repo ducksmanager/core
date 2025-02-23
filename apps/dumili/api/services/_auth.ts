@@ -22,7 +22,7 @@ const authenticateUser = async (token?: string | null): Promise<SessionUser> =>
           if (user) {
             resolve(user as SessionUser);
           } else {
-            console.error(`Invalid user: ${user}, payload: ${payload}`);
+            console.error(`Invalid user: ${user}, payload: ${JSON.stringify(payload)}`);
             reject(`Invalid user: ${user}`);
           }
         }
