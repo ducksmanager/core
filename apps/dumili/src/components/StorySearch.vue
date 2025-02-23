@@ -1,14 +1,18 @@
 <template>
   <div class="d-flex align-items-top">
     <b-dropdown variant="dark">
-      <b-dropdown-item @click="searchType = 'byStoryTitle'"
-        >By story title</b-dropdown-item
-      >
-      <b-dropdown-item @click="searchType = 'byStoryCode'"
-        >By story code</b-dropdown-item
-      >
+      <b-dropdown-item @click="searchType = 'byStoryTitle'">{{
+        $t("Par titre d'histoire")
+      }}</b-dropdown-item>
+      <b-dropdown-item @click="searchType = 'byStoryCode'">{{
+        $t("Par code histoire")
+      }}</b-dropdown-item>
       <template #button-content>
-        {{ searchType === "byStoryTitle" ? "By story title" : "By story code" }}
+        {{
+          searchType === "byStoryTitle"
+            ? $t("Par titre d'histoire")
+            : $t("Par code histoire")
+        }}
       </template>
     </b-dropdown>
     <ul class="navbar-nav mw-100 z-4">

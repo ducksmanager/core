@@ -21,8 +21,7 @@ const authenticateUser = async (token?: string | null): Promise<SessionUser> =>
           const user = (payload as { data?: Omit<SessionUser, "token"> }).data;
           if (user) {
             resolve(user as SessionUser);
-          }
-          else {
+          } else {
             console.error(`Invalid user: ${user}`);
             reject(`Invalid user: ${user}`);
           }
