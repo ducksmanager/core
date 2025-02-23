@@ -85,7 +85,7 @@ const issueRow = computed(() => ({
 const rows = computed(() =>
   !storiesWithDetails.value?.length
     ? undefined
-    : indexation.value!.entries.map((entry, idx, arr) => {
+    : indexation.value!.entries.map((entry, idx) => {
         const storyWithDetails = storiesWithDetails.value!.find(
           ({ storycode }) => storycode === entry.acceptedStory?.storycode,
         );
@@ -93,7 +93,7 @@ const rows = computed(() =>
           entrycode: `${issuecode.value}${
             showEntryLetters.value
               ? String.fromCharCode(97 + idx)
-              : `p${String(arr.slice(0, idx).reduce((acc, _, i) => acc + getEntryPages(indexation.value!, arr[i].id).length, 0) + 1).padStart(3, "0")}`
+              : `p${String(entry.position).padStart(3, "0")}`
           }`,
           storycode: entry.acceptedStory?.storycode,
           pg: String(getEntryPages(indexation.value!, entry.id).length),

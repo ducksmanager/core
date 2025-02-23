@@ -129,7 +129,6 @@ const numberOfPages = computed({
 const hasEntryGapWithNext = (entryIdx: number) => {
   const entry = indexation.value.entries[entryIdx];
   const nextEntry = indexation.value.entries[entryIdx + 1];
-  debugger;
   return nextEntry && entry.position + entry.entirepages < nextEntry.position;
 };
 
