@@ -3,10 +3,7 @@
     v-model:fab="fab"
     :icon="{ ios: copyOutline, md: copySharp }"
     :options="[...copyListModes]"
-    @update:value="
-      copyToClipboard($event.textPrefix!, $event.getTextToCopy!());
-      (fab?.$el as HTMLIonFabElement).close();
-    "
+    @update:value="copyToClipboard($event)"
   />
 </template>
 <script setup lang="ts">
@@ -22,9 +19,13 @@ const { copyListModes } = app();
 
 const fab = shallowRef<ComponentPublicInstance<HTMLIonFabElement>>();
 
-const copyToClipboard = async (textPrefix: string, text: Promise<string>) => {
+const copyToClipboard = async (event?: (typeof copyListModes)[number]) => {
+  (fab.value?.$el as HTMLIonFabElement).close();
+  if (!event) {
+    return;
+  }
   await CapacitorClipboard.write({
-    string: `${textPrefix} ${clipboardTextPrefix.value} ${await text}`,
+    string: `${event.textPrefix} ${clipboardTextPrefix.value} ${await event.getTextToCopy()}`,
   });
 
   const toast = await toastController.create({
