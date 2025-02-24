@@ -79,7 +79,7 @@
         >
           <div class="position-absolute w-100 d-flex justify-content-center">
             <b-button
-              v-if="hasEntryGapWithNext(idx)"
+              v-if="showCreateEntryAfter(idx)"
               class="create-entry fw-bold position-absolute mx-md-n5 d-flex justify-content-center align-items-center"
               :style="{
                 top: `${pageHeight * (entry.position + entry.entirepages - 1)}px`,
@@ -125,10 +125,13 @@ watch(
   { immediate: true },
 );
 
-const hasEntryGapWithNext = (entryIdx: number) => {
+const showCreateEntryAfter = (entryIdx: number) => {
   const entry = indexation.value.entries[entryIdx];
   const nextEntry = indexation.value.entries[entryIdx + 1];
-  return nextEntry && entry.position + entry.entirepages < nextEntry.position;
+  return (
+    (nextEntry && entry.position + entry.entirepages < nextEntry.position) ||
+    (!nextEntry && entry.position + entry.entirepages - 1 < numberOfPages.value)
+  );
 };
 
 const onEntryResizeStop = (entryIdx: number, height: number) => {
