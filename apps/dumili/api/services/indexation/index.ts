@@ -599,7 +599,7 @@ const listenEvents = (services: IndexationServices) => ({
   updateIndexation: async (
     indexation: Pick<indexation, "price"> & { numberOfPages: number }
   ) => {
-    const { numberOfPages } = indexation;
+    const { numberOfPages, ...changes } = indexation;
     if (numberOfPages < 4 || numberOfPages > 996 || numberOfPages % 2 !== 0) {
       return {
         error: `Invalid number of pages`,
@@ -618,28 +618,26 @@ const listenEvents = (services: IndexationServices) => ({
       pageNumber: currentMaxPageNumber + idx + 1,
     }));
 
-    if (pagesToCreate.length) {
-      await prisma.indexation.update({
-        data: {
-          pages: {
-            deleteMany: {
-              pageNumber: {
-                gt: numberOfPages,
-              },
-            },
-            createMany: {
-              data: pagesToCreate,
+    await prisma.indexation.update({
+      data: {
+        pages: {
+          deleteMany: {
+            pageNumber: {
+              gt: numberOfPages,
             },
           },
+          createMany: {
+            data: pagesToCreate,
+          },
         },
-        where: {
-          id: services._socket.data.indexation.id,
-        },
-      });
-    }
+      },
+      where: {
+        id: services._socket.data.indexation.id,
+      },
+    });
     return prisma.indexation
       .update({
-        data: indexation,
+        data: changes,
         where: {
           id: services._socket.data.indexation.id,
         },

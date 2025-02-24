@@ -84,6 +84,7 @@
   "Voir sur Inducks": "See on Inducks",
   "Voulez-vous vraiment supprimer cette entrée ?": "Do you really want to delete this entry?",
   "Vous devez être connecté pour accéder à cette page.": "You must be logged in to access this page.",
+  "Vous devez indiquer les caractéristiques du numéro\navant de pouvoir modifier certaines de ses méta-données.": "You must specify the characteristics of the issue\nbefore being able to modify some of its metadata.",
   "Vous devez spécifier une publication et un numéro pour continuer": "You must specify a publication and an issue number to continue",
   "Vous êtes sur le point de supprimer les {numberOfPagesToDelete} dernières pages de l'indexation. Êtes-vous sûr(e) ?": "You are about to delete the last {numberOfPagesToDelete} pages of the indexation. Are you sure?"
 }

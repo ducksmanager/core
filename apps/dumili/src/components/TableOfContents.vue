@@ -10,43 +10,52 @@
       <IssueSuggestionModal />
       <IssueSuggestionList />
       <b-dropdown
-        v-if="indexation.acceptedIssueSuggestion"
+        :auto-close="false"
         variant="light"
         class="position-absolute h-100 end-0 d-flex"
         style="z-index: 1030"
       >
         <template #button-content>{{ $t("Méta-données") }}</template>
         <b-form @submit.prevent="updateIndexation">
+          <b-alert
+            v-if="indexation.acceptedIssueSuggestion === null"
+            variant="warning"
+            :model-value="true"
+            style="white-space: pre"
+            >{{
+              $t(
+                "Vous devez indiquer les caractéristiques du numéro\navant de pouvoir modifier certaines de ses méta-données.",
+              )
+            }}</b-alert
+          >
           <b-dropdown-item
             >{{ $t("Prix") }}
             <input
               v-model="indexation.price"
               type="text"
+              :disabled="indexation.acceptedIssueSuggestion === null"
+              :style="
+                indexation.acceptedIssueSuggestion === null
+                  ? { cursor: 'not-allowed' }
+                  : undefined
+              "
               @click.stop="() => {}"
           /></b-dropdown-item>
           <b-dropdown-item
             >{{ $t("Nombre de pages") }}
             <input
-              :value="numberOfPages"
+              v-model.number="numberOfPages"
               type="number"
               min="4"
               max="996"
               step="2"
-              @click.stop="updateNumberOfPages"
-              @blur.stop="updateNumberOfPages"
+              @click.stop="() => {}"
           /></b-dropdown-item>
           <b-dropdown-item>
             <b-button type="submit" variant="primary">{{ $t("OK") }}</b-button>
           </b-dropdown-item>
         </b-form>
       </b-dropdown>
-      <!-- <div>
-        <ai-tooltip
-          id="ai-issue-suggestion"
-          :status="issueAiSuggestion?.issuecode ? 'success' : 'idle'"
-          :on-click-rerun="() => runKumikoOnPage(1)"
-        /></div
-    > -->
     </template>
 
     <b-row
@@ -107,33 +116,19 @@ const { currentPage, pageHeight } = storeToRefs(ui());
 
 const { t: $t } = useI18n();
 
-const numberOfPages = computed({
-  get: () => indexation.value.pages.length,
-  set: async (value) => {
-    if (value < numberOfPages.value) {
-      if (
-        !confirm(
-          $t(
-            "Vous êtes sur le point de supprimer les {numberOfPagesToDelete} dernières pages de l'indexation. Êtes-vous sûr(e) ?",
-            { numberOfPagesToDelete: numberOfPages.value - value },
-          ),
-        )
-      ) {
-        numberOfPages.value = indexation.value.pages.length;
-        return;
-      }
-    }
+const numberOfPages = ref(indexation.value.pages.length);
+watch(
+  () => indexation.value.pages.length,
+  () => {
+    numberOfPages.value = indexation.value.pages.length;
   },
-});
+  { immediate: true },
+);
 
 const hasEntryGapWithNext = (entryIdx: number) => {
   const entry = indexation.value.entries[entryIdx];
   const nextEntry = indexation.value.entries[entryIdx + 1];
   return nextEntry && entry.position + entry.entirepages < nextEntry.position;
-};
-
-const updateNumberOfPages = (event: Event) => {
-  numberOfPages.value = parseInt((event.target as HTMLInputElement).value);
 };
 
 const onEntryResizeStop = (entryIdx: number, height: number) => {
@@ -152,6 +147,22 @@ const createEntry = async (position: number) => {
 };
 
 const updateIndexation = () => {
+  if (numberOfPages.value < indexation.value.pages.length) {
+    if (
+      !confirm(
+        $t(
+          "Vous êtes sur le point de supprimer les {numberOfPagesToDelete} dernières pages de l'indexation. Êtes-vous sûr(e) ?",
+          {
+            numberOfPagesToDelete:
+              indexation.value.pages.length - numberOfPages.value,
+          },
+        ),
+      )
+    ) {
+      numberOfPages.value = indexation.value.pages.length;
+      return;
+    }
+  }
   const { price } = indexation.value;
   indexationSocket.value!.updateIndexation({
     price,
