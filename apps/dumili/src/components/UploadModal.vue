@@ -19,7 +19,12 @@
       >{{ $t("Images") }}
     </b-form-radio>
 
-    <template v-if="firstOutOfRangePage < pages.length">
+    <template
+      v-if="
+        firstOutOfRangePage <=
+        pagesWithoutOverwrite[0].pageNumber + pagesWithoutOverwrite.length
+      "
+    >
       <label class="mt-3">{{
         $t("Comportement pour les pages existantes")
       }}</label>
@@ -92,6 +97,17 @@
           >
         </i18n-t></b-alert
       >
+      <b-alert
+        variant="warning"
+        :model-value="uploadFileType === 'Images'"
+        :dismissible="false"
+        class="w-100"
+        >{{
+          $t(
+            "Lors de l'envoi de vos images, il est possible qu'un message avec le texte 'There are running uploads. Click OK to abort.' apparaisse. Si cela se produit, cliquez sur le bouton 'Cancel'.",
+          )
+        }}
+      </b-alert>
     </div>
     <div v-show="showWidget" id="widget-container" class="w-100"></div>
   </b-modal>

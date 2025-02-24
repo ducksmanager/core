@@ -40,6 +40,7 @@
   "La première page est généralement une page de couverture": "The first page is usually a cover page",
   "Le type de l'histoire sélectionnée ne correspond pas au type de l'entrée": "The type of the selected story doesn't correspond to the entry type",
   "Les images envoyées seront associées aux pages à partir de la page {firstPage}.": "The uploaded images will be associated with pages from page number {firstPage}.",
+  "Lors de l'envoi de vos images, il est possible qu'un message avec le texte 'There are running uploads. Click OK to abort.' apparaisse. Si cela se produit, cliquez sur le bouton 'Cancel'.": "When uploading your images, it is possible that a message with the text 'There are running uploads. Click OK to abort.' appears. If this happens, click the 'Cancel' button.",
   "Livre": "Book",
   "Méta-données": "Metadata",
   "Nombre de pages": "Number of pages",
