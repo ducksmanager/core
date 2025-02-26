@@ -78,7 +78,7 @@ const indexationPayloadInclude = {
           ocrDetails: true,
         },
       },
-    }
+    },
   },
 } as const;
 
@@ -120,36 +120,38 @@ export const getFullIndexation = (
     })
     .then((indexation) => {
       if (indexation) {
-      indexation.entries = indexation.entries.sort((a, b) => a.position - b.position);
-      if ( runAi && !isAiRunning) {
-        isAiRunning = true;
-        runKumikoOnPages(services, indexation)
-          .then(() =>
-            runOcrOnImages(
-              services,
-              indexation.pages
-                .filter(
-                  ({ image, id }) =>
-                    !!image &&
-                    getEntryFromPage(indexation, id)?.acceptedStoryKind
-                      ?.kind === STORY
-                )
-                .map(({ pageNumber, image }) => ({
-                  pageNumber,
-                  image: image!,
-                }))
+        indexation.entries = indexation.entries.sort(
+          (a, b) => a.position - b.position
+        );
+        if (runAi && !isAiRunning) {
+          isAiRunning = true;
+          runKumikoOnPages(services, indexation)
+            .then(() =>
+              runOcrOnImages(
+                services,
+                indexation.pages
+                  .filter(
+                    ({ image, id }) =>
+                      !!image &&
+                      getEntryFromPage(indexation, id)?.acceptedStoryKind
+                        ?.kind === STORY
+                  )
+                  .map(({ pageNumber, image }) => ({
+                    pageNumber,
+                    image: image!,
+                  }))
+              )
             )
-          )
-          .then(() =>
-            setInferredEntriesStoryKinds(services, indexation.entries)
-          )
-          .then(() => createAiStorySuggestions(services, indexation))
-          .finally(() => {
-            isAiRunning = false;
-            refreshIndexation(services, false, indexationId);
-          });
+            .then(() =>
+              setInferredEntriesStoryKinds(services, indexation.entries)
+            )
+            .then(() => createAiStorySuggestions(services, indexation))
+            .finally(() => {
+              isAiRunning = false;
+              refreshIndexation(services, false, indexationId);
+            });
+        }
       }
-    }
       return indexation;
     });
 
@@ -427,9 +429,7 @@ const listenEvents = (services: IndexationServices) => ({
     return { indexation: services._socket.data.indexation };
   },
 
-  deleteEntry: async (
-    entryId: entry["id"],
-  ) => {
+  deleteEntry: async (entryId: entry["id"]) => {
     const { indexation } = services._socket.data;
     const entry = indexation.entries.find(({ id }) => id === entryId);
     if (!entry) {
@@ -597,9 +597,17 @@ const listenEvents = (services: IndexationServices) => ({
       }),
 
   updateIndexation: async (
-    indexation: Pick<indexation, "price"> & { numberOfPages: number }
+    indexation: Pick<indexation, "price" | "releaseDate"> & {
+      numberOfPages: number;
+    }
   ) => {
     const { numberOfPages, ...changes } = indexation;
+    if (changes.releaseDate && !new Date(changes.releaseDate)) {
+      return {
+        error: `Invalid release date`,
+        errorDetails: JSON.stringify({ releaseDate: changes.releaseDate }),
+      };
+    }
     if (numberOfPages < 4 || numberOfPages > 996 || numberOfPages % 2 !== 0) {
       return {
         error: `Invalid number of pages`,

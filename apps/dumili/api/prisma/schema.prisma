@@ -65,6 +65,7 @@ model indexation {
   acceptedIssueSuggestionId Int?              @map("accepted_issue_suggestion_id")
   dmUserId                  Int               @map("dm_user_id")
   price                     String?           @db.VarChar(150)
+  releaseDate               String?           @map("release_date") @db.VarChar(10)
   entries                   entry[]
   acceptedIssueSuggestion   issueSuggestion?  @relation("indexation_accepted_issue_suggestion_idToissue_suggestion", fields: [acceptedIssueSuggestionId], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "indexation_issue_suggestion_id_fk")
   issueSuggestions          issueSuggestion[]

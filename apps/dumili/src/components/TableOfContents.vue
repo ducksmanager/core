@@ -29,16 +29,24 @@
             }}</b-alert
           >
           <b-dropdown-item
+            >{{ $t("Date de publication") }}
+            <input
+              :value="(indexation.releaseDate as unknown as string)?.split('T')[0]"
+              type="date"
+              v-bind="getInputProps()"
+              @input="
+                if ($event.target) {
+                  indexation.releaseDate = (($event.target as HTMLInputElement).value);
+                }
+              "
+              @click.stop="() => {}"
+          /></b-dropdown-item>
+          <b-dropdown-item
             >{{ $t("Prix") }}
             <input
               v-model="indexation.price"
               type="text"
-              :disabled="indexation.acceptedIssueSuggestion === null"
-              :style="
-                indexation.acceptedIssueSuggestion === null
-                  ? { cursor: 'not-allowed' }
-                  : undefined
-              "
+              v-bind="getInputProps()"
               @click.stop="() => {}"
           /></b-dropdown-item>
           <b-dropdown-item
@@ -124,6 +132,16 @@ watch(
   },
   { immediate: true },
 );
+const hasAcceptedIssueSuggestion = computed(
+  () => indexation.value.acceptedIssueSuggestion !== null,
+);
+
+const getInputProps = () => ({
+  disabled: !hasAcceptedIssueSuggestion.value,
+  style: hasAcceptedIssueSuggestion.value
+    ? undefined
+    : { cursor: "not-allowed" },
+});
 
 const showCreateEntryAfter = (entryIdx: number) => {
   const entry = indexation.value.entries[entryIdx];
@@ -166,9 +184,10 @@ const updateIndexation = () => {
       return;
     }
   }
-  const { price } = indexation.value;
+  const { price, releaseDate } = indexation.value;
   indexationSocket.value!.updateIndexation({
     price,
+    releaseDate,
     numberOfPages: numberOfPages.value,
   });
 };

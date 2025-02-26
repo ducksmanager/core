@@ -76,6 +76,11 @@ const issueRow = computed(() => ({
   issuecode: issuecode.value,
   details: [
     ...[indexation.value!.price ? [`[price:${indexation.value!.price}]`] : []],
+    ...[
+      indexation.value!.releaseDate
+        ? [`[issdate:${indexation.value!.releaseDate}]`]
+        : [],
+    ],
     `[pages:${indexation.value!.pages.length}]`,
   ]
     .flat()
