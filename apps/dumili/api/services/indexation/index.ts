@@ -111,7 +111,7 @@ let isAiRunning = false;
 export const getFullIndexation = (
   services: IndexationServices,
   indexationId: string,
-  runAi: boolean = true
+  runAi: boolean = true,
 ) =>
   prisma.indexation
     .findUnique({
@@ -121,7 +121,7 @@ export const getFullIndexation = (
     .then((indexation) => {
       if (indexation) {
         indexation.entries = indexation.entries.sort(
-          (a, b) => a.position - b.position
+          (a, b) => a.position - b.position,
         );
         if (runAi && !isAiRunning) {
           isAiRunning = true;
@@ -134,16 +134,16 @@ export const getFullIndexation = (
                     ({ image, id }) =>
                       !!image &&
                       getEntryFromPage(indexation, id)?.acceptedStoryKind
-                        ?.kind === STORY
+                        ?.kind === STORY,
                   )
                   .map(({ pageNumber, image }) => ({
                     pageNumber,
                     image: image!,
-                  }))
-              )
+                  })),
+              ),
             )
             .then(() =>
-              setInferredEntriesStoryKinds(services, indexation.entries)
+              setInferredEntriesStoryKinds(services, indexation.entries),
             )
             .then(() => createAiStorySuggestions(services, indexation))
             .finally(() => {
@@ -158,19 +158,19 @@ export const getFullIndexation = (
 export const refreshIndexation = async (
   services: IndexationServices,
   runAi: boolean = true,
-  id = services._socket.data.indexation.id
+  id = services._socket.data.indexation.id,
 ) => {
   services._socket.data.indexation = (await getFullIndexation(
     services,
     id,
-    runAi
+    runAi,
   ))!;
   services.indexationUpdated(services._socket.data.indexation);
 };
 
 const createAiStorySuggestions = async (
   services: IndexationServices,
-  indexation: FullIndexation
+  indexation: FullIndexation,
 ) => {
   for (const entry of indexation.entries) {
     if (
@@ -182,7 +182,7 @@ const createAiStorySuggestions = async (
 
       if (!ocrResults) {
         console.log(
-          `Entry ${entry.id}: No OCR results found on the first page`
+          `Entry ${entry.id}: No OCR results found on the first page`,
         );
         continue;
       }
@@ -191,11 +191,11 @@ const createAiStorySuggestions = async (
 
       const { results: searchResults } = await coaEvents.searchStory(
         ocrResults.map(({ text }) => text),
-        false
+        false,
       );
 
       const storyDetailsOutput = await coaEvents.getStoryDetails(
-        searchResults.map(({ storycode }) => storycode)
+        searchResults.map(({ storycode }) => storycode),
       );
 
       if (!("stories" in storyDetailsOutput)) {
@@ -207,8 +207,8 @@ const createAiStorySuggestions = async (
 
       const storyversionDetailsOutput = await coaEvents.getStoryversionsDetails(
         searchResults.map(
-          ({ storycode }) => storyDetails![storycode].originalstoryversioncode!
-        )
+          ({ storycode }) => storyDetails![storycode].originalstoryversioncode!,
+        ),
       );
 
       if (!("storyversions" in storyversionDetailsOutput)) {
@@ -223,7 +223,7 @@ const createAiStorySuggestions = async (
         ({ storycode }) =>
           storyversionDetails![
             storyDetails![storycode].originalstoryversioncode!
-          ].kind === STORY
+          ].kind === STORY,
       );
 
       const currentlyAcceptedStorycode = entry.acceptedStory?.storycode;
@@ -258,13 +258,13 @@ const createAiStorySuggestions = async (
                     score,
                   },
                 },
-              })
+              }),
             ),
           },
         },
       });
       const acceptedStorySuggestionId = newEntry.storySuggestions.find(
-        ({ storycode }) => storycode === currentlyAcceptedStorycode
+        ({ storycode }) => storycode === currentlyAcceptedStorycode,
       )?.id;
       if (acceptedStorySuggestionId) {
         await prisma.entry.update({
@@ -291,7 +291,7 @@ const createAiStorySuggestions = async (
 const setInferredEntriesStoryKinds = async (
   services: IndexationServices,
   entries: FullIndexation["entries"],
-  force?: boolean
+  force?: boolean,
 ) => {
   for (const entry of entries) {
     if (entry.storyKindSuggestions.some(({ ai }) => ai) && !force) {
@@ -321,7 +321,7 @@ const setInferredEntriesStoryKinds = async (
 
     if (!pagesInferredStoryKinds.length) {
       console.log(
-        `Entry ${entry.id}: No pages with inferred story kinds found`
+        `Entry ${entry.id}: No pages with inferred story kinds found`,
       );
       continue;
     }
@@ -332,23 +332,23 @@ const setInferredEntriesStoryKinds = async (
           ...aiKumikoResult,
           kind: aiKumikoResult?.inferredStoryKind,
         }))
-        .groupBy("kind", "id[]")
+        .groupBy("kind", "id[]"),
     ).sort((a, b) => b[1].length - a[1].length)[0][0] as
       | keyof typeof storyKinds
       | undefined;
 
     const entryIdx = services._socket.data.indexation.entries.findIndex(
-      ({ id }) => id === entry.id
+      ({ id }) => id === entry.id,
     );
     console.log(
-      `Kumiko: entry #${entryIdx}: inferred story kind is ${mostInferredStoryKind}`
+      `Kumiko: entry #${entryIdx}: inferred story kind is ${mostInferredStoryKind}`,
     );
 
     await prisma.storyKindSuggestionAi.deleteMany({
       where: {
         suggestionId: {
           in: indexation.entries[entryIdx].storyKindSuggestions.map(
-            ({ id }) => id
+            ({ id }) => id,
           ),
         },
       },
@@ -358,7 +358,7 @@ const setInferredEntriesStoryKinds = async (
       await prisma.storyKindSuggestionAi.create({
         data: {
           suggestionId: indexation.entries[entryIdx].storyKindSuggestions.find(
-            ({ kind }) => kind === mostInferredStoryKind
+            ({ kind }) => kind === mostInferredStoryKind,
           )!.id,
         },
       });
@@ -382,7 +382,7 @@ const listenEvents = (services: IndexationServices) => ({
   setPageUrl: async (id: number, url: string | null) => {
     if (
       !services._socket.data.indexation.pages.some(
-        ({ id: pageId }) => pageId === id
+        ({ id: pageId }) => pageId === id,
       )
     ) {
       return {
@@ -514,7 +514,7 @@ const listenEvents = (services: IndexationServices) => ({
           where: {
             id: services._socket.data.indexation.id,
           },
-        })
+        }),
       )
       .then(async () => {
         await refreshIndexation(services);
@@ -526,7 +526,7 @@ const listenEvents = (services: IndexationServices) => ({
   acceptIssueSuggestion: async (suggestionId: issueSuggestion["id"] | null) => {
     if (
       !services._socket.data.indexation.issueSuggestions.some(
-        ({ id }) => id === suggestionId
+        ({ id }) => id === suggestionId,
       )
     ) {
       return {
@@ -559,7 +559,7 @@ const listenEvents = (services: IndexationServices) => ({
   },
 
   createStorySuggestion: async (
-    suggestion: Prisma.storySuggestionUncheckedCreateInput & { ai: boolean }
+    suggestion: Prisma.storySuggestionUncheckedCreateInput & { ai: boolean },
   ) =>
     prisma.storySuggestion
       .create({
@@ -580,7 +580,10 @@ const listenEvents = (services: IndexationServices) => ({
       }),
 
   createIssueSuggestion: async (
-    suggestion: Omit<Prisma.issueSuggestionUncheckedCreateInput, "indexationId">
+    suggestion: Omit<
+      Prisma.issueSuggestionUncheckedCreateInput,
+      "indexationId"
+    >,
   ) =>
     prisma.issueSuggestion
       .create({
@@ -599,7 +602,7 @@ const listenEvents = (services: IndexationServices) => ({
   updateIndexation: async (
     indexation: Pick<indexation, "price" | "releaseDate"> & {
       numberOfPages: number;
-    }
+    },
   ) => {
     const { numberOfPages, ...changes } = indexation;
     if (changes.releaseDate && !new Date(changes.releaseDate)) {
@@ -616,8 +619,8 @@ const listenEvents = (services: IndexationServices) => ({
     }
     const currentMaxPageNumber = Math.max(
       ...services._socket.data.indexation.pages.map(
-        ({ pageNumber }) => pageNumber
-      )
+        ({ pageNumber }) => pageNumber,
+      ),
     );
 
     const pagesToCreate = Array.from({
@@ -660,12 +663,12 @@ const listenEvents = (services: IndexationServices) => ({
 
   acceptStorySuggestion: async (
     entryId: entry["id"],
-    storySuggestionId: storySuggestion["id"] | null
+    storySuggestionId: storySuggestion["id"] | null,
   ) => {
     const entry = services._socket.data.indexation.entries.find(
       ({ id, storySuggestions }) =>
         (entryId === id && storySuggestionId === null) ||
-        storySuggestions.some(({ id }) => id === storySuggestionId)
+        storySuggestions.some(({ id }) => id === storySuggestionId),
     );
     if (!entry) {
       return {
@@ -689,11 +692,11 @@ const listenEvents = (services: IndexationServices) => ({
 
   acceptStoryKindSuggestion: async (
     entryId: entry["id"],
-    storyKindSuggestionId: storyKindSuggestion["id"] | null
+    storyKindSuggestionId: storyKindSuggestion["id"] | null,
   ) => {
     const entry = services._socket.data.indexation.entries.find(
       ({ storyKindSuggestions }) =>
-        storyKindSuggestions.some(({ id }) => id === storyKindSuggestionId)
+        storyKindSuggestions.some(({ id }) => id === storyKindSuggestionId),
     );
     if (!entry) {
       return {
@@ -731,10 +734,10 @@ const listenEvents = (services: IndexationServices) => ({
       | "brokenpagedenominator"
       | "title"
       | "position"
-    >
+    >,
   ) => {
     const entry = services._socket.data.indexation.entries.find(
-      ({ id }) => id === entryId
+      ({ id }) => id === entryId,
     );
     if (!entry) {
       return {
@@ -781,7 +784,7 @@ export const { client, server } = useSocketEvents<
         next();
       },
     ],
-  }
+  },
 );
 
 export type ClientEmitEvents = (typeof client)["emitEvents"];
@@ -805,7 +808,7 @@ export const createEntry = async (indexationId: string, position: number) =>
           data: (Object.keys(storyKinds) as (keyof typeof storyKinds)[]).map(
             (code) => ({
               kind: code,
-            })
+            }),
           ),
         },
       },

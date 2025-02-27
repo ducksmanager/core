@@ -1,9 +1,4 @@
 import * as Sentry from "@sentry/node";
-
-Sentry.init({
-  dsn: process.env.SENTRY_DSN,
-});
-
 import { instrument } from "@socket.io/admin-ui";
 import express from "express";
 import { createServer } from "http";

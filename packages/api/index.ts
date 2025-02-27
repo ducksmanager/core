@@ -1,3 +1,4 @@
+import { SocketIoInstrumentation } from "@opentelemetry/instrumentation-socket.io";
 import * as Sentry from "@sentry/node";
 import { instrument } from "@socket.io/admin-ui";
 import cluster from "cluster";
@@ -61,6 +62,8 @@ dotenv.config({
 
 Sentry.init({
   dsn: process.env.SENTRY_DSN,
+  tracesSampleRate: 1.0,
+  openTelemetryInstrumentations: [new SocketIoInstrumentation()],
 });
 
 const httpServer = createServer(async (req, res) => {
