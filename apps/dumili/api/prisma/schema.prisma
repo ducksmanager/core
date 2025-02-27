@@ -61,7 +61,6 @@ model page {
 
 model indexation {
   id                        String            @id @db.VarChar(20)
-  issuecode                 String?           @db.VarChar(9)
   acceptedIssueSuggestionId Int?              @map("accepted_issue_suggestion_id")
   dmUserId                  Int               @map("dm_user_id")
   price                     String?           @db.VarChar(150)

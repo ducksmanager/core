@@ -158,7 +158,6 @@ watch(
 watch(
   () => currentIssue.value.publicationcode,
   async (newValue, oldValue) => {
-    debugger;
     if (newValue) {
       if (oldValue !== newValue && oldValue !== undefined) {
         currentIssue.value.issuenumber = undefined;

@@ -394,15 +394,15 @@ const listenEvents = (services: IndexationServices) => ({
         data: {
           image: url
             ? {
-                connectOrCreate: {
-                  create: {
-                    url,
-                  },
-                  where: {
-                    url,
-                  },
+              connectOrCreate: {
+                create: {
+                  url,
                 },
-              }
+                where: {
+                  url,
+                },
+              },
+            }
             : { disconnect: true },
         },
         where: {
@@ -540,11 +540,11 @@ const listenEvents = (services: IndexationServices) => ({
             suggestionId === null
               ? { disconnect: true }
               : {
-                  connect: {
-                    id: suggestionId,
-                    indexationId: services._socket.data.indexation.id,
-                  },
+                connect: {
+                  id: suggestionId,
+                  indexationId: services._socket.data.indexation.id,
                 },
+              },
         },
         where: {
           id: services._socket.data.indexation.id,
@@ -567,8 +567,8 @@ const listenEvents = (services: IndexationServices) => ({
           ...suggestion,
           ai: suggestion.ai
             ? {
-                create: {},
-              }
+              create: {},
+            }
             : undefined,
         },
       })
@@ -592,11 +592,30 @@ const listenEvents = (services: IndexationServices) => ({
           indexationId: services._socket.data.indexation.id,
         },
       })
-      .then(async ({ id }) => {
+      .then(async (createdIssueSuggestion) =>
+        prisma.indexation.update({
+          data: {
+            acceptedIssueSuggestion: {
+              connect: {
+                id: createdIssueSuggestion.id,
+                indexationId: services._socket.data.indexation.id,
+              },
+            },
+          },
+          where: {
+            id: services._socket.data.indexation.id,
+          },
+        }).then(() => prisma.issueSuggestion.deleteMany({
+          where: {
+            indexationId: services._socket.data.indexation.id,
+            ai: null,
+            id: {
+              not: createdIssueSuggestion.id,  // Only one user-based issue suggestion
+            }
+          },
+        })))
+      .then(async () => {
         await refreshIndexation(services);
-        return {
-          suggestionId: id,
-        };
       }),
 
   updateIndexation: async (
