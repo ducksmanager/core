@@ -13,67 +13,86 @@
     </b-form-select>
     <b-form-select
       v-show="currentCountrycode"
-      v-model="currentPublicationcode"
+      v-model="currentIssue.publicationcode"
       :options="publicationNamesForCurrentCountry"
       @change="emit('change')"
     />
-    <template v-if="currentCountrycode && currentPublicationcode">
+    <template v-if="currentIssue.publicationcode">
       <b-form-input
-        v-model="currentIssuenumber"
+        v-model="currentIssue.issuenumber"
         :placeholder="$t('Entrez le numéro')"
         :state="isValid"
       />
       <div class="invalid-feedback">
-        <template v-if="['', undefined].includes(currentIssuenumber)">{{
+        <template v-if="['', undefined].includes(currentIssue.issuenumber)">{{
           $t("Veuillez entrer le numéro")
         }}</template
-        ><template v-else>{{ $t("Ce numéro est déjà référencé !") }}</template>
+        ><template v-else-if="isIssueAlreadyReferenced">{{
+          $t("Ce numéro est déjà référencé !")
+        }}</template>
       </div>
     </template>
     <b-button
-      v-if="currentIssuenumber !== undefined"
       variant="success"
       :disabled="!isValid"
-      @click="
-        emit('change', {
-          publicationcode: currentPublicationcode!,
-          issuenumber: currentIssuenumber,
-          issuecode: `${currentPublicationcode} ${currentIssuenumber}`,
-        })
-      "
+      @click="emit('change', currentIssue as IndexationIssue)"
       >OK</b-button
     >
   </div>
 </template>
 <script setup lang="ts">
+type IndexationIssue = {
+  publicationcode: string;
+  issuenumber: string;
+};
+
 const { t: $t } = useI18n();
 
-const emit = defineEmits<
-  (
-    e: "change",
-    data?: {
-      publicationcode: string;
-      issuenumber: string;
-      issuecode: string;
-    },
-  ) => void
->();
+const emit = defineEmits<(e: "change", data?: IndexationIssue) => void>();
+
+const { issue } = defineProps<{
+  issue: IndexationIssue | null;
+}>();
+
+const currentIssue = ref<Partial<IndexationIssue>>(issue!);
 
 const currentCountrycode = ref<string>();
-const currentPublicationcode = ref<string>();
-const currentIssuenumber = ref<string>();
+
+watch(
+  () => issue,
+  (newValue) => {
+    if (newValue) {
+      currentIssue.value = {
+        publicationcode: newValue.publicationcode,
+        issuenumber: newValue.issuenumber,
+      };
+    } else {
+      currentIssue.value = {
+        publicationcode: undefined,
+        issuenumber: undefined,
+      };
+    }
+    currentCountrycode.value =
+      currentIssue.value.publicationcode?.split("/")[0];
+  },
+  { immediate: true },
+);
 
 const {
   countryNames: coaCountryNames,
   publicationNames,
   issuecodeDetails,
   issuecodesByPublicationcode,
+  publicationNamesFullCountries,
 } = storeToRefs(coa());
 const {
   fetchPublicationNamesFromCountry,
   fetchIssuecodesByPublicationcode,
+  fetchIssuecodeDetails,
   fetchCountryNames,
 } = coa();
+
+const issues = ref<{ issuecode: string; issuenumber: string }[]>([]);
 
 const countryNames = computed(
   () =>
@@ -90,7 +109,7 @@ const countryNames = computed(
 );
 
 const publicationNamesForCurrentCountry = computed(() =>
-  coa().publicationNamesFullCountries.includes(currentCountrycode.value || "")
+  publicationNamesFullCountries.value.includes(currentCountrycode.value || "")
     ? Object.keys(publicationNames.value)
         .filter(
           (publicationcode) =>
@@ -105,35 +124,30 @@ const publicationNamesForCurrentCountry = computed(() =>
         )
     : [],
 );
-const publicationIssues = computed(
-  () => issuecodesByPublicationcode.value[currentPublicationcode.value!],
-);
 
-const issues = computed(
-  () =>
-    publicationIssues.value &&
-    issuecodesByPublicationcode.value[currentPublicationcode.value!].map(
-      (issuecode) => ({
-        value: issuecode,
-        text: issuecodeDetails.value[issuecode]!.issuenumber,
-      }),
-    ),
+const isIssueAlreadyReferenced = computed(() =>
+  issues.value?.some(
+    ({ issuenumber }) => issuenumber === currentIssue.value.issuenumber,
+  ),
 );
 
 const isValid = computed(
   () =>
-    !!currentIssuenumber.value &&
-    !issues.value?.some(({ value }) => value === currentIssuenumber.value),
+    currentIssue.value.issuenumber !== undefined &&
+    !isIssueAlreadyReferenced.value,
 );
 
 watch(
   currentCountrycode,
   async (newValue) => {
     if (newValue) {
-      currentPublicationcode.value = undefined;
-      currentIssuenumber.value = undefined;
-
-      await fetchPublicationNamesFromCountry(newValue);
+      if (newValue !== currentIssue.value?.publicationcode?.split("/")[0]) {
+        currentIssue.value = {
+          publicationcode: undefined,
+          issuenumber: undefined,
+        };
+      }
+      await fetchPublicationNamesFromCountry(newValue!);
     }
   },
   {
@@ -141,12 +155,29 @@ watch(
   },
 );
 
-watch(currentPublicationcode, async (newValue) => {
-  if (newValue) {
-    currentIssuenumber.value = undefined;
-    await fetchIssuecodesByPublicationcode([newValue]);
-  }
-});
+watch(
+  () => currentIssue.value.publicationcode,
+  async (newValue, oldValue) => {
+    debugger;
+    if (newValue) {
+      if (oldValue !== newValue && oldValue !== undefined) {
+        currentIssue.value.issuenumber = undefined;
+      }
+      await fetchIssuecodesByPublicationcode([newValue]);
+      const publicationIssues = issuecodesByPublicationcode.value[newValue];
+      await fetchIssuecodeDetails(publicationIssues);
+      issues.value = issuecodesByPublicationcode.value[
+        currentIssue.value.publicationcode!
+      ].map((issuecode) => ({
+        issuecode,
+        issuenumber: issuecodeDetails.value[issuecode]!.issuenumber,
+      }));
+    }
+  },
+  {
+    immediate: true,
+  },
+);
 
 (async () => {
   await fetchCountryNames();
