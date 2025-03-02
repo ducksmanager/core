@@ -10,7 +10,7 @@ import { userContributionType } from "~prisma-schemas/schemas/dm";
 import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
 
 import type { UserServices } from "../../index";
-import { UserIsAdminMiddleware } from "../auth/util";
+import { RequiredAuthMiddleware, UserIsAdminMiddleware } from "../auth/util";
 import namespaces from "../namespaces";
 
 const persistContribution = async (
@@ -107,7 +107,7 @@ export const { client: adminClient, server: adminServer } = useSocketEvents<
   Record<string, never>
 >(namespaces.BOOKSTORES_ADMIN, {
   listenEvents: adminListenEvents,
-  middlewares: [UserIsAdminMiddleware],
+  middlewares: [RequiredAuthMiddleware, UserIsAdminMiddleware],
 });
 
 const listenEvents = ({ _socket }: UserServices) => ({
@@ -173,7 +173,7 @@ export const { client, server } = useSocketEvents<
   Record<string, never>
 >(namespaces.BOOKSTORES, {
   listenEvents,
-  middlewares: [UserIsAdminMiddleware],
+  middlewares: [RequiredAuthMiddleware, UserIsAdminMiddleware],
 });
 
 export type ClientEvents = (typeof client)["emitEvents"];

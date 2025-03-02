@@ -125,6 +125,9 @@ const defaultExport = (options: {
     bookstore: socket.addNamespace<BookstoreEvents>(namespaces.BOOKSTORES),
     adminBookstore: socket.addNamespace<AdminBookstoreEvents>(
       namespaces.BOOKSTORES_ADMIN,
+      {
+        session,
+      },
     ),
     collection: socket.addNamespace<CollectionEvents>(namespaces.COLLECTION, {
       session,
