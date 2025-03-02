@@ -51,11 +51,7 @@ const getBookstores = async (onlyActive?: true) =>
       address: true,
       coordX: true,
       coordY: true,
-      comments: {
-        where: {
-          isActive: true,
-        },
-      },
+      comments: true,
     },
     where: onlyActive
       ? {
