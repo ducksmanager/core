@@ -60,7 +60,9 @@ const AuthMiddleware = (
       if (required && err) {
         next(new Error(`Invalid token: ${err}`));
       } else {
-        const user = (payload as { data?: Omit<SessionUser, "token"> }).data;
+        const user = (
+          payload as { data?: Omit<SessionUser, "token"> } | undefined
+        )?.data;
         if (user) {
           socket.data.user = { ...user, token } as SessionUser;
         } else if (
@@ -73,9 +75,11 @@ const AuthMiddleware = (
             token,
           } as SessionUser;
         } else {
-          console.error("There is no user in the payload:", payload);
-          next(new Error(`Invalid payload: ${payload}`));
-          return;
+          if (required) {
+            console.error("There is no user in the payload:", payload);
+            next(new Error(`Invalid payload: ${payload}`));
+            return;
+          }
         }
         next();
       }
