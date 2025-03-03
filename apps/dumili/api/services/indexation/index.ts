@@ -32,6 +32,7 @@ const socket = new SocketClient(process.env.DM_SOCKET_URL!);
 const coaEvents = socket.addNamespace<CoaEvents>(dmNamespaces.COA);
 
 const indexationPayloadInclude = {
+  user: true,
   pages: {
     orderBy: {
       pageNumber: "asc",
@@ -673,12 +674,12 @@ const listenEvents = (services: IndexationServices) => ({
           id: services._socket.data.indexation.id,
         },
       })
-      .then(async () => {
-        await refreshIndexation(services);
-        return {
-          status: "OK",
-        };
-      });
+      .then(() =>
+        refreshIndexation(services)
+      ).then(() => ({
+        status: "OK",
+      }
+      ))
   },
 
   acceptStorySuggestion: async (

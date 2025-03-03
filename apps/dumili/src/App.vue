@@ -63,6 +63,7 @@ import useDumiliSocket, {
 
 import { buildWebStorage } from "socket-call-client";
 import type { user } from "~prisma/client_dumili";
+import { suggestions } from "./stores/suggestions";
 
 const { t: $t } = useI18n();
 
@@ -120,6 +121,9 @@ const dumiliUser = ref<user>();
 const updateUser = async () => {
   const { indexationsSocket } = dumiliSocket;
   await indexationsSocket.value!.updateUser(dumiliUser.value!);
+  if (dumiliSocket.indexationSocket) {
+    suggestions().loadIndexation();
+  }
 };
 
 watch(

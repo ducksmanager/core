@@ -81,6 +81,7 @@ const issueRow = computed(() => ({
         ? [`[issdate:${indexation.value!.releaseDate}]`]
         : [],
     ],
+    `[inx:${indexation.value!.user.inducksUsername}]`,
     `[pages:${indexation.value!.pages.length}]`,
   ]
     .flat()
