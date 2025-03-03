@@ -613,10 +613,11 @@ const listenEvents = (services: IndexationServices) => ({
               not: createdIssueSuggestion.id,  // Only one user-based issue suggestion
             }
           },
-        })))
-      .then(async () => {
-        await refreshIndexation(services);
-      }),
+        }))
+          .then(async () => {
+            await refreshIndexation(services);
+            return createdIssueSuggestion;
+          })),
 
   updateIndexation: async (
     indexation: Pick<indexation, "price" | "releaseDate"> & {

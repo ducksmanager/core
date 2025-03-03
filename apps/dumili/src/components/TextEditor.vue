@@ -1,14 +1,14 @@
 <template>
   <b-container
     fluid
-    class="d-flex flex-grow-1 h-100 flex-column align-items-start"
+    class="d-flex flex-grow-1 h-100 flex-column align-items-center"
   >
     <b-alert v-if="!issue" variant="danger" :model-value="true">
       {{
         $t("Vous devez spécifier une publication et un numéro pour continuer")
       }}</b-alert
     >
-    <template v-if="acceptedStories">
+    <template v-if="rows">
       <b-form-checkbox v-model="showEntryLetters" class="m-2">{{
         $t("Afficher des lettres au lieu des numéros de pages")
       }}</b-form-checkbox>
