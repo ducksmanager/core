@@ -30,12 +30,14 @@ export const post = async (
       id: bookstoreComment.id,
     },
   });
-  const user = await prismaDm.user.findUniqueOrThrow({
-    where: {
-      id: req.user!.id,
-    },
-  });
-  await persistContribution(user, 1, bookstoreComment);
+  if (bookstoreComment.userId) {
+    const user = await prismaDm.user.findUniqueOrThrow({
+      where: {
+        id: bookstoreComment.userId,
+      },
+    });
+    await persistContribution(user, 1, bookstoreComment);
+  }
 };
 
 const persistContribution = async (
