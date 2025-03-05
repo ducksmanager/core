@@ -1,7 +1,7 @@
 <template>
   <b-container
     fluid
-    class="d-flex flex-grow-1 h-100 flex-column align-items-center"
+    class="d-flex flex-grow-1 h-100 flex-column align-items-start"
   >
     <b-alert v-if="!issue" variant="danger" :model-value="true">
       {{
@@ -12,13 +12,22 @@
       <b-form-checkbox v-model="showEntryLetters" class="m-2">{{
         $t("Afficher des lettres au lieu des numéros de pages")
       }}</b-form-checkbox>
-      <b-table head-variant="light" :items="rows" borderless small
-        ><template #top-row
-          ><b-td>{{ issueRow.issuecode }}</b-td
-          ><b-td>{{ issueRow.details }}</b-td
-          ><b-td
-            v-for="idx in Object.keys(rows![0]).filter((_, idx) => idx >= 2)"
-            :key="idx" /></template></b-table></template
+      <b-form-checkbox v-model="showHorizontalScroll" class="m-2">{{
+        $t("Afficher la barre de défilement horizontale")
+      }}</b-form-checkbox>
+      <div
+        :class="{
+          'mw-100 text-nowrap overflow-auto': showHorizontalScroll,
+        }"
+      >
+        <b-table head-variant="light" :items="rows" borderless small
+          ><template #top-row
+            ><b-td>{{ issueRow.issuecode }}</b-td
+            ><b-td>{{ issueRow.details }}</b-td
+            ><b-td
+              v-for="idx in Object.keys(rows![0]).filter((_, idx) => idx >= 2)"
+              :key="idx" /></template
+        ></b-table></div></template
   ></b-container>
 </template>
 <script setup lang="ts">
@@ -39,6 +48,7 @@ const { coa: coaEvents } = inject(dmSocketInjectionKey)!;
 const { acceptedIssue: issue } = storeToRefs(suggestions());
 
 const showEntryLetters = ref(false);
+const showHorizontalScroll = ref(false);
 
 const acceptedStories = computed(() =>
   indexation.value?.entries
@@ -69,7 +79,8 @@ const getStoriesWithDetails = async (stories: storySuggestion[]) =>
   );
 
 const issuecode = computed(
-  () => `${issue.value!.publicationcode} ${issue.value!.issuenumber}`,
+  () =>
+    `${issue.value!.publicationcode.split("/")[1]} ${issue.value!.issuenumber}`,
 );
 
 const issueRow = computed(() => ({

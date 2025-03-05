@@ -31,12 +31,12 @@
           <b-dropdown-item
             >{{ $t("Date de publication") }}
             <input
-              :value="(indexation.releaseDate as unknown as string)?.split('T')[0]"
+              :value="(indexationEdit.releaseDate as unknown as string)?.split('T')[0]"
               type="date"
               v-bind="getInputProps()"
               @input="
                 if ($event.target) {
-                  indexation.releaseDate = (($event.target as HTMLInputElement).value);
+                  indexationEdit.releaseDate = (($event.target as HTMLInputElement).value);
                 }
               "
               @click.stop="() => {}"
@@ -44,7 +44,7 @@
           <b-dropdown-item
             >{{ $t("Prix") }}
             <input
-              v-model="indexation.price"
+              v-model="indexationEdit.price"
               type="text"
               v-bind="getInputProps()"
               @click.stop="() => {}"
@@ -52,7 +52,7 @@
           <b-dropdown-item
             >{{ $t("Nombre de pages") }}
             <input
-              v-model.number="numberOfPages"
+              v-model.number="indexationEdit.numberOfPages"
               type="number"
               min="4"
               max="996"
@@ -120,18 +120,28 @@ const { indexationSocket } = inject(dumiliSocketInjectionKey)!;
 
 const { hoveredEntry, currentEntry } = storeToRefs(ui());
 const indexation = storeToRefs(suggestions()).indexation as Ref<FullIndexation>;
-const { currentPage, pageHeight } = storeToRefs(ui());
+const indexationEdit = ref() as Ref<
+  Pick<FullIndexation, "price" | "releaseDate"> & {
+    numberOfPages: number;
+  }
+>;
 
-const { t: $t } = useI18n();
-
-const numberOfPages = ref(indexation.value.pages.length);
 watch(
-  () => indexation.value.pages.length,
+  indexation,
   () => {
-    numberOfPages.value = indexation.value.pages.length;
+    const { price, releaseDate } = indexation.value;
+    indexationEdit.value = {
+      numberOfPages: indexation.value.pages.length,
+      price,
+      releaseDate,
+    };
   },
   { immediate: true },
 );
+
+const { currentPage, pageHeight } = storeToRefs(ui());
+const { t: $t } = useI18n();
+
 const hasAcceptedIssueSuggestion = computed(
   () => indexation.value.acceptedIssueSuggestion !== null,
 );
@@ -148,7 +158,9 @@ const showCreateEntryAfter = (entryIdx: number) => {
   const nextEntry = indexation.value.entries[entryIdx + 1];
   return (
     (nextEntry && entry.position + entry.entirepages < nextEntry.position) ||
-    (!nextEntry && entry.position + entry.entirepages - 1 < numberOfPages.value)
+    (!nextEntry &&
+      entry.position + entry.entirepages - 1 <
+        indexationEdit.value.numberOfPages)
   );
 };
 
@@ -163,33 +175,28 @@ const onEntryDragStop = (entryIdx: number, y: number) => {
   indexation.value!.entries[entryIdx].position = 1 + y / pageHeight.value;
 };
 
-const createEntry = async (position: number) => {
-  await indexationSocket.value!.createEntry(position);
-};
+const createEntry = (position: number) =>
+  indexationSocket.value!.createEntry(position);
 
 const updateIndexation = () => {
-  if (numberOfPages.value < indexation.value.pages.length) {
+  if (indexationEdit.value.numberOfPages < indexation.value.pages.length) {
     if (
       !confirm(
         $t(
           "Vous êtes sur le point de supprimer les {numberOfPagesToDelete} dernières pages de l'indexation. Êtes-vous sûr(e) ?",
           {
             numberOfPagesToDelete:
-              indexation.value.pages.length - numberOfPages.value,
+              indexation.value.pages.length -
+              indexationEdit.value.numberOfPages,
           },
         ),
       )
     ) {
-      numberOfPages.value = indexation.value.pages.length;
+      indexationEdit.value.numberOfPages = indexation.value.pages.length;
       return;
     }
   }
-  const { price, releaseDate } = indexation.value;
-  indexationSocket.value!.updateIndexation({
-    price,
-    releaseDate,
-    numberOfPages: numberOfPages.value,
-  });
+  indexationSocket.value!.updateIndexation(indexationEdit.value);
 };
 
 watch(
