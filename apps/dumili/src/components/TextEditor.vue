@@ -108,7 +108,7 @@ const rows = computed(() =>
         );
         return {
           entrycode: `${issuecode.value}${
-            showEntryLetters.value
+            idx === 0 || showEntryLetters.value
               ? String.fromCharCode(97 + idx)
               : `p${String(entry.position).padStart(3, "0")}`
           }`,
