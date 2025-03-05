@@ -23,14 +23,19 @@
         :placeholder="$t('Entrez le numéro')"
         :state="isValid"
       />
-      <div class="invalid-feedback">
-        <template v-if="['', undefined].includes(currentIssue.issuenumber)">{{
-          $t("Veuillez entrer le numéro")
-        }}</template
-        ><template v-else-if="isIssueAlreadyReferenced">{{
-          $t("Ce numéro est déjà référencé !")
-        }}</template>
-      </div>
+      <b-alert
+        v-if="['', undefined].includes(currentIssue.issuenumber)"
+        :model-value="true"
+        variant="danger"
+      >
+        {{ $t("Veuillez entrer le numéro") }}
+      </b-alert>
+      <b-alert
+        v-else-if="isIssueAlreadyReferenced"
+        :model-value="isIssueAlreadyReferenced"
+        variant="warning"
+        >{{ $t("Ce numéro est déjà référencé") }}
+      </b-alert>
     </template>
     <b-button
       variant="success"
@@ -131,11 +136,7 @@ const isIssueAlreadyReferenced = computed(() =>
   ),
 );
 
-const isValid = computed(
-  () =>
-    currentIssue.value.issuenumber !== undefined &&
-    !isIssueAlreadyReferenced.value,
-);
+const isValid = computed(() => currentIssue.value.issuenumber !== undefined);
 
 watch(
   currentCountrycode,

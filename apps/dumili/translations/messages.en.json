@@ -15,7 +15,7 @@
   "Aucune image": "No image",
   "Aucune suggestion car cette entrée n'est pas une histoire.": "No suggestion because this entry is not a story.",
   "Cases détectées": "Detected panels",
-  "Ce numéro est déjà référencé !": "This issue is already referenced!",
+  "Ce numéro est déjà référencé": "This issue is already referenced",
   "Cette histoire fait généralement {originalPagesCount} pages mais l'entrée de votre indexation en contient {entryPagesCount}.": "This story usually has {originalPagesCount} pages but the entry in your index contains {entryPagesCount} pages.",
   "Cette indexation n'existe pas ou appartient à un autre utilisateur.": "This indexation doesn't exist or belongs to another user.",
   "Code histoire": "Story code",
