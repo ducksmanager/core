@@ -2,7 +2,7 @@
   "name": "~coa-updater",
   "scripts": {
     "build": "bun build --target bun index.ts --outfile bundle.mjs",
-    "prod-build-docker": "REPO_NAME=ghcr.io/bperel/coa-updater pnpm -F '~ci' prod:build-docker -f apps/coa-updater/Dockerfile",
+    "prod:build-docker": "REPO_NAME=ghcr.io/bperel/coa-updater pnpm -F '~ci' prod:build-docker -f apps/coa-updater/Dockerfile",
     "prod:transfer-files-post": "pnpm -F '~ci' prod:transfer-files apps/coa-updater/docker-compose.yml:@apps/coa-updater/docker-compose.yml"
   },
   "keywords": [],
