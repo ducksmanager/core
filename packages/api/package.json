@@ -42,7 +42,7 @@
     "@types/ejs": "^3.1.5",
     "@types/i18n": "^0.13.12",
     "@types/jsonwebtoken": "^9.0.9",
-    "@types/node": "^22.13.5",
+    "@types/node": "^22.13.9",
     "@types/nodemailer": "^6.4.17",
     "@typescript-eslint/eslint-plugin": "^8.25.0",
     "concurrently": "^9.1.2",
