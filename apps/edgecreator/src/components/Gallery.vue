@@ -1,9 +1,5 @@
 <template>
-  <b-alert
-    v-if="loading"
-    :model-value="true"
-    variant="info"
-  >
+  <b-alert v-if="loading" :model-value="true" variant="info">
     {{ $t("Loading...") }}
   </b-alert>
   <div v-else-if="items">
@@ -13,17 +9,11 @@
       :title="clickedImage.name"
       scrollable
       :ok-title="$t('Choose')"
-      @ok="clickedImage && emit('change', clickedImage.name)"
+      @ok="selected = clickedImage.name"
     >
-      <img
-        :alt="clickedImage.name"
-        :src="clickedImage.url"
-      >
+      <img :alt="clickedImage.name" :src="clickedImage.url" />
     </b-modal>
-    <b-modal
-      v-model="showUploadModal"
-      ok-only
-    >
+    <b-modal v-if="showUploadModal" v-model="showUploadModal" ok-only>
       <upload
         :photo="imageType === 'photos'"
         :edge="{
@@ -32,28 +22,23 @@
         }"
       />
     </b-modal>
-    <b-alert
-      v-if="!items.length"
-      :model-value="true"
-      variant="warning"
-    >
+    <b-alert v-if="!items.length" :model-value="true" variant="warning">
       {{ $t("No item in this section.") }}
       <a
         v-if="allowUpload"
         href="javascript:void(0)"
-        @click="showUploadModal = !showUploadModal"
-      >{{ $t("Upload new") }}</a>
+        @click="showUploadModal = true"
+        >{{ $t("Upload new") }}</a
+      >
     </b-alert>
     <template v-else>
       <a
         v-if="allowUpload"
         href="javascript:void(0)"
-        @click="showUploadModal = !showUploadModal"
-      >{{ $t("Upload new") }}</a>
-      <b-row
-        ref="gallery"
-        class="gallery mt-1"
+        @click="showUploadModal = true"
+        >{{ $t("Upload new") }}</a
       >
+      <b-row ref="gallery" class="gallery mt-1">
         <b-col
           v-for="item in items"
           :key="item.name"
@@ -61,15 +46,12 @@
           :class="{
             'mt-1': true,
             'mb-4': true,
-            selected: selected.includes(item.name),
+            selected: selected === item.name,
             disabled: item.disabled,
           }"
           @click="onSelect(item)"
         >
-          <a
-            v-if="imageType === 'edges'"
-            class="position-relative"
-          >
+          <a v-if="imageType === 'edges'" class="position-relative">
             <i-bi-emoji-smile-fill
               v-if="item.quality === 1"
               class="variant-success"
@@ -104,24 +86,19 @@
 import { main } from "~/stores/main";
 import type { GalleryItem } from "~/types/GalleryItem";
 
-withDefaults(
-  defineProps<{
-    loading?: boolean;
-    imageType: string;
-    selected?: string[];
-    allowUpload?: boolean;
-    items: GalleryItem[];
-  }>(),
-  {
-    loading: false,
-    selected: () => [],
-    allowUpload: true,
-  },
-);
+const { loading = false, allowUpload = true } = defineProps<{
+  loading?: boolean;
+  imageType: string;
+  allowUpload?: boolean;
+}>();
 
-const emit = defineEmits<(e: "change", value: string) => void>();
+const selected = defineModel<string | undefined>("selected", {
+  default: undefined,
+});
 
-const clickedImage = ref<GalleryItem | null>(null);
+const items = defineModel<GalleryItem[]>("items");
+
+const clickedImage = ref<GalleryItem>();
 const showUploadModal = ref(false);
 const showChooseImageModal = ref(false);
 

@@ -7,7 +7,7 @@
       'edge-canvas': true,
       'hide-overflow': !showEdgeOverflow,
       'position-relative': true,
-      editing: editingStepStore.issuecodes.includes(issuecode),
+      editing: issuecodes.includes(issuecode),
     }"
     :viewBox="`0 0 ${width} ${height}`"
     :width="zoom * width"
@@ -16,12 +16,9 @@
     xmlns:xlink="http://www.w3.org/1999/xlink"
     preserveAspectRatio="none"
     @mousemove="setPosition"
-    @mouseout="positionInCanvas = null"
+    @mouseout="positionInCanvas = undefined"
   >
-    <metadata
-      v-if="photoUrl"
-      type="photo"
-    >
+    <metadata v-if="photoUrl" type="photo">
       {{ photoUrl }}
     </metadata>
     <metadata
@@ -40,13 +37,13 @@
     </metadata>
     <g
       v-for="(stepComponent, stepNumber) in stepComponentNames"
+      v-show="JSON.stringify(getStepOptions(stepNumber, true))"
       :key="stepNumber"
-      :is-visible="JSON.stringify(getStepOptions(stepNumber, true))"
       :class="{
         [stepComponent]: true,
         hovered:
           hoveredStepStore.stepNumber === stepNumber &&
-          editingStepStore.issuecodes.includes(issuecode),
+          issuecodes.includes(issuecode),
       }"
       @mousedown.exact="
         replaceEditingIssuecodeIfNotAlreadyEditing(issuecode);
@@ -61,8 +58,8 @@
         hoveredStepStore.issuecode = issuecode;
       "
       @mouseout="
-        hoveredStepStore.stepNumber = null;
-        hoveredStepStore.issuecode = null;
+        hoveredStepStore.stepNumber = undefined;
+        hoveredStepStore.issuecode = undefined;
       "
     >
       <component
@@ -93,30 +90,32 @@ import { ui } from "~/stores/ui";
 import type { OptionNameAndValue } from "~/types/OptionNameAndValue";
 import type { ModelContributor } from "~types/ModelContributor";
 
-const props = withDefaults(
-  defineProps<{
-    issuecode: string;
-    dimensions: { width: number; height: number };
-    steps: StepOption[];
-    photoUrl?: string | null;
-    contributors: Omit<ModelContributor, "issuecode">[];
-  }>(),
-  { photoUrl: null },
-);
+const {
+  contributors,
+  dimensions,
+  steps,
+  photoUrl = null,
+} = defineProps<{
+  issuecode: string;
+  dimensions: { width: number; height: number };
+  steps: StepOption[];
+  photoUrl?: string | null;
+  contributors: Omit<ModelContributor, "issuecode">[];
+}>();
 
 const photographers = computed(() =>
-  props.contributors.filter(
+  contributors.filter(
     (contributor) => contributor.contributionType === "photographe",
   ),
 );
 const designers = computed(() =>
-  props.contributors.filter(
+  contributors.filter(
     (contributor) => contributor.contributionType === "createur",
   ),
 );
 
 const stepComponents = computed(() =>
-  props.steps.filter(({ optionName }) => optionName === "component"),
+  steps.filter(({ optionName }) => optionName === "component"),
 );
 
 const stepComponentNames = computed(() =>
@@ -134,32 +133,27 @@ const visibleSteps = computed(() =>
 );
 
 const getStepOptions = (stepNumber: number, withComponentOption = true) =>
-  props.steps.filter(
+  steps.filter(
     ({ stepNumber: thisStepNumber, optionName }) =>
       stepNumber === thisStepNumber &&
       (withComponentOption || optionName !== "component"),
   );
 
 const toKeyValue = (arr: OptionNameAndValue[]) => {
-  const val = arr.reduce(
-    (acc, { optionName, optionValue }) => ({
-      ...acc,
-      [optionName]: optionValue,
-    }),
-    {},
-  );
+  const val = arr.groupBy("optionName", "optionValue");
   return Object.keys(val).length ? val : undefined;
 };
 const borderWidth = ref(1);
 
-const canvas = ref<HTMLElement | null>(null);
+const canvas = ref<HTMLElement>();
 
 const hoveredStepStore = hoveredStep();
 const editingStepStore = editingStep();
+const { issuecodes } = storeToRefs(editingStepStore);
 const { zoom, showEdgeOverflow, positionInCanvas } = storeToRefs(ui());
 
-const width = computed(() => props.dimensions.width);
-const height = computed(() => props.dimensions.height);
+const width = computed(() => dimensions.width);
+const height = computed(() => dimensions.height);
 
 const setPosition = ({ clientX: left, clientY: top }: MouseEvent) => {
   const { left: svgLeft, top: svgTop } = canvas.value!.getBoundingClientRect();
@@ -168,7 +162,7 @@ const setPosition = ({ clientX: left, clientY: top }: MouseEvent) => {
   ) as [number, number];
 };
 const replaceEditingIssuecodeIfNotAlreadyEditing = (issuecode: string) => {
-  if (!editingStepStore.issuecodes.includes(issuecode)) {
+  if (!issuecodes.value.includes(issuecode)) {
     editingStepStore.replaceIssuecode(issuecode);
   }
 };

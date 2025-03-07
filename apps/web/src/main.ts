@@ -7,6 +7,7 @@ import "bootstrap-vue-next/dist/bootstrap-vue-next.css";
 import * as Sentry from "@sentry/vue";
 import { createHead } from "@unhead/vue";
 import Cookies from "js-cookie";
+import { SocketClient } from "socket-call-client";
 // @ts-ignore
 import contextmenu from "v-contextmenu";
 // @ts-ignore
@@ -16,7 +17,6 @@ import { createRouter, createWebHistory } from "vue-router";
 
 import App from "~/App.vue";
 import i18n from "~/i18n";
-import { SocketClient } from "~socket.io-client-services";
 import en from "~translations/messages.en.json";
 
 const head = createHead();
@@ -46,13 +46,17 @@ app.mount("#app");
 
 if (process.env.NODE_ENV === "production") {
   Sentry.init({
+    integrations: [
+      Sentry.vueIntegration({
+        tracingOptions: {
+          trackComponents: true,
+          timeout: 1000,
+          hooks: ["mount", "update", "unmount"],
+        },
+      }),
+    ],
     app,
     dsn: "https://a225a6550b8c4c07914327618685a61c@sentry.ducksmanager.net/1385898",
-    logErrors: true,
-    integrations: [Sentry.browserTracingIntegration()],
     tracesSampleRate: 1.0,
-    tracingOptions: {
-      trackComponents: true,
-    },
   });
 }

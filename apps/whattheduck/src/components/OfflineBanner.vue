@@ -1,6 +1,6 @@
 <template>
   <ion-item class="ion-text-center offline-banner">
-    <ion-label v-if="isOfflineMode === 'offline_no_cache' || onOffline !== 'readonly'" color="danger">{{
+    <ion-label v-if="isOfflineMode === 'offline_no_cache'" color="danger">{{
       $t(
         'La connexion à DucksManager a échoué, vérifiez que votre connexion Internet est active. Vous pourrez consulter votre collection hors-ligne une fois que votre collection sera synchronisée.',
       )
@@ -8,7 +8,7 @@
     <ion-label v-else color="warning">
       {{
         $t(
-          'Vous êtes en mode hors-ligne. Vous pouvez naviguer dans votre collection mais pas la modifier. Certaines fonctionnalités ne sont pas disponibles.',
+          'Vous êtes en mode hors-ligne. Vous pouvez naviguer dans votre collection mais pas la modifier.{br}Certaines fonctionnalités ne sont pas disponibles.',
         )
       }}
     </ion-label>
@@ -17,10 +17,6 @@
 
 <script setup lang="ts">
 import { app } from '~/stores/app';
-
-defineProps<{
-  onOffline: 'readonly' | 'unavailable' | undefined;
-}>();
 
 const { offlineBannerHeight, isOfflineMode } = storeToRefs(app());
 

@@ -1,9 +1,7 @@
-import type { Socket } from "socket.io";
-
 import { prismaClient as prismaDmStats } from "~prisma-schemas/schemas/dm_stats/client";
 
+import type { UserServices } from "../../index";
 import { getAuthorFullNames } from "../coa/authors";
-import type Events from "./types";
 
 export interface AuthorDetails {
   personcode: string;
@@ -25,13 +23,7 @@ const getStoryCountPerAuthor = async (
         personcode: { in: personcodes },
       },
     })
-  ).reduce(
-    (acc, { personcode, _count }) => ({
-      ...acc,
-      [personcode]: _count.storycode,
-    }),
-    {},
-  );
+  ).groupBy("personcode", "_count", ({ storycode }) => storycode);
 
 const getMissingStoryCountPerAuthor = async (
   userId: number,
@@ -44,33 +36,25 @@ const getMissingStoryCountPerAuthor = async (
       },
       where: { userId },
     })
-  ).reduce(
-    (acc, { personcode, _count }) => ({
-      ...acc,
-      [personcode]: _count.storycode,
-    }),
-    {},
-  );
+  ).groupBy("personcode", "_count", ({ storycode }) => storycode);
 
-export default (socket: Socket<Events>) => {
-  socket.on("getWatchedAuthorsStats", async (callback) => {
+export default ({ _socket }: UserServices) => ({
+  getWatchedAuthorsStats: async () => {
     const missingStoryCountPerAuthor = await getMissingStoryCountPerAuthor(
-      socket.data.user!.id,
+      _socket.data.user.id,
     );
     const personcodes = Object.keys(missingStoryCountPerAuthor);
 
     const storyCountPerAuthor = await getStoryCountPerAuthor(personcodes);
     const personNames = await getAuthorFullNames(personcodes);
 
-    callback(
-      personcodes.map((personcode) => ({
-        personcode,
-        missingStoryCount: missingStoryCountPerAuthor[personcode],
-        storyCount:
-          storyCountPerAuthor[personcode] ||
-          missingStoryCountPerAuthor[personcode],
-        fullname: personNames[personcode],
-      })),
-    );
-  });
-};
+    return personcodes.map((personcode) => ({
+      personcode,
+      missingStoryCount: missingStoryCountPerAuthor[personcode],
+      storyCount:
+        storyCountPerAuthor[personcode] ||
+        missingStoryCountPerAuthor[personcode],
+      fullname: personNames[personcode],
+    }));
+  },
+});

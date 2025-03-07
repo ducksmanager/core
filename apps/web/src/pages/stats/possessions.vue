@@ -42,7 +42,7 @@ Chart.register(
 
 let height = $ref<string>("400px");
 let hasCoaData = $ref(false);
-let chartData = $ref<ChartData<"bar", number[]> | null>(null),
+let chartData = $ref<ChartData<"bar", number[]>>(),
   unitTypeCurrent = $ref<string>("number"),
   options = $ref<ChartOptions<"bar">>({});
 

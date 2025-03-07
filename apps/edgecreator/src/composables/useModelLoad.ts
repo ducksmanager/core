@@ -20,9 +20,7 @@ export default () => {
   const rendersStore = renders();
   const userStore = webStores.users();
   const edgeCatalogStore = edgeCatalog();
-  const {
-    edgeCreator: { services: edgeCreatorServices },
-  } = inject(dmSocketInjectionKey)!;
+  const { edgeCreator: edgeCreatorEvents } = inject(dmSocketInjectionKey)!;
 
   const loadDimensionsFromSvg = (issuecode: string, svgElement: SVGElement) => {
     stepStore.setDimensions(
@@ -148,7 +146,7 @@ export default () => {
         try {
           stepStore.setOptionValues(
             optionObjectToArray(
-              (await getOptionsFromDb(
+              await getOptionsFromDb(
                 issuecode,
                 stepNumber,
                 {
@@ -157,7 +155,7 @@ export default () => {
                 } as LegacyComponent,
                 dimensions[0],
                 calculateBase64,
-              ))!,
+              ),
             ),
             {
               issuecodes: [issuecode],
@@ -182,7 +180,7 @@ export default () => {
     return steps;
   };
   const setContributorsFromApi = async (issuecode: string, edgeId: number) => {
-    const contributors = await edgeCreatorServices.getModelContributors(edgeId);
+    const contributors = await edgeCreatorEvents.getModelContributors(edgeId);
     for (const { contribution, userId } of contributors) {
       mainStore.addContributor({
         issuecode,
@@ -192,53 +190,46 @@ export default () => {
     }
   };
 
-  const loadModel = async (issuecode: string, targetIssuecode: string) => {
-    const onlyLoadStepsAndDimensions = issuecode !== targetIssuecode;
+  const overwriteModel = (
+    targetIssuecode: string,
+    {
+      svgElement,
+      svgChildNodes,
+    }: Awaited<ReturnType<typeof loadSvgFromString>>,
+  ) => {
+    loadDimensionsFromSvg(targetIssuecode, svgElement);
+    loadStepsFromSvg(targetIssuecode, svgChildNodes);
+    setPhotoUrlsFromSvg(targetIssuecode, svgChildNodes);
+    setContributorsFromSvg(targetIssuecode, svgChildNodes);
+  };
 
-    const loadSvg = async (publishedVersion: boolean) => {
-      const { svgElement, svgChildNodes } = await loadSvgFromString(
-        issuecode,
-        new Date().toISOString(),
-        publishedVersion,
-      );
-
-      loadDimensionsFromSvg(issuecode, svgElement);
-      loadStepsFromSvg(issuecode, svgChildNodes);
-      if (!onlyLoadStepsAndDimensions) {
-        setPhotoUrlsFromSvg(issuecode, svgChildNodes);
-        setContributorsFromSvg(issuecode, svgChildNodes);
-      }
-    };
-
+  const loadModel = async (issuecode: string) => {
     try {
-      await loadSvg(false);
+      overwriteModel(issuecode, await loadSvgFromString(issuecode, false));
     } catch (_e) {
       try {
-        await loadSvg(true);
+        overwriteModel(issuecode, await loadSvgFromString(issuecode, true));
       } catch (_e) {
-        const edge = (await edgeCreatorServices.getModel(issuecode))!;
-        await edgeCatalogStore.loadPublishedEdgesSteps({
-          edgeModelIds: [edge.id],
-        });
+        const edge = (await edgeCreatorEvents.getModel(issuecode))!;
+        await edgeCatalogStore.loadPublishedEdgesSteps([edge.id]);
         const apiSteps = edgeCatalogStore.publishedEdgesSteps[issuecode];
         loadDimensionsFromApi(issuecode, apiSteps);
         await loadStepsFromApi(issuecode, apiSteps, true, (error: string) =>
           mainStore.addWarning(error),
         );
 
-        if (!onlyLoadStepsAndDimensions) {
-          await setPhotoUrlsFromApi(issuecode, edge.id);
-          await setContributorsFromApi(issuecode, edge.id);
-        }
+        await setPhotoUrlsFromApi(issuecode, edge.id);
+        await setContributorsFromApi(issuecode, edge.id);
       }
     }
+
     if (!stepStore.options.length) {
       throw new Error(`No model found for issue ${issuecode}`);
     }
   };
 
   const setPhotoUrlsFromApi = async (issuecode: string, edgeId: number) => {
-    const photo = await edgeCreatorServices.getModelMainPhoto(edgeId);
+    const photo = await edgeCreatorEvents.getModelMainPhoto(edgeId);
     mainStore.photoUrls[issuecode] = photo.fileName;
   };
 
@@ -252,5 +243,6 @@ export default () => {
     setContributorsFromApi,
     loadModel,
     setPhotoUrlsFromApi,
+    overwriteModel,
   };
 };

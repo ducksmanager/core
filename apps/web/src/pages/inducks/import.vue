@@ -280,20 +280,18 @@ const { getImagePath } = images();
 
 let step = $ref(1);
 const rawData = $ref("");
-const expandedPublicationAccordion = $ref<string | null>(null);
-const expandedNotImportableAccordion = $ref<string | null>(null);
+const expandedPublicationAccordion = $ref<string>();
+const expandedNotImportableAccordion = $ref<string>();
 let hasPublicationNames = $ref(false);
 let hasIssuecodes = $ref(false);
 const issueDefaultCondition = $ref<issue_condition>("bon");
-let issuesToImport = $shallowRef<string[] | null>(null);
-let issuesNotReferenced = $shallowRef<string[] | null>(null);
-let issuesAlreadyInCollection = $shallowRef<string[] | null>(null);
-let issuesImportable = $shallowRef<string[] | null>(null);
+let issuesToImport = $shallowRef<string[]>();
+let issuesNotReferenced = $shallowRef<string[]>();
+let issuesAlreadyInCollection = $shallowRef<string[]>();
+let issuesImportable = $shallowRef<string[]>();
 let importProgress = $ref(0);
 
-const {
-  collection: { services: collectionServices },
-} = inject(socketInjectionKey)!;
+const { collection: collectionEvents } = inject(socketInjectionKey)!;
 
 const { t: $t } = useI18n();
 
@@ -328,7 +326,7 @@ const processRawData = async () => {
     return;
   }
   const issues = issueCodes.filter(
-    (issueCode) => issuecodeDetails.value![issueCode],
+    (issueCode) => issuecodeDetails.value[issueCode],
   );
   if (issues.length) {
     issuesToImport = issues;
@@ -340,7 +338,7 @@ const groupByPublicationCode = (issues: string[]) =>
   issues
     ?.map((issuecode) => ({
       issuecode,
-      publicationcode: issuecodeDetails.value![issuecode].publicationcode,
+      publicationcode: issuecodeDetails.value[issuecode].publicationcode,
     }))
     .groupBy("publicationcode", "[]");
 
@@ -350,7 +348,7 @@ const importIssues = async () => {
   );
   for (const publicationcode in importableIssuesByPublicationCode) {
     if (importableIssuesByPublicationCode.hasOwnProperty(publicationcode)) {
-      await collectionServices.addOrChangeIssues({
+      await collectionEvents.addOrChangeIssues({
         issuecodes: importableIssuesByPublicationCode[publicationcode].map(
           ({ issuecode }) => issuecode,
         ),
@@ -373,9 +371,9 @@ watch($$(importDataReady), (newValue) => {
     issuesAlreadyInCollection = [];
     issuesImportable = [];
     issuesToImport!.forEach((issuecode) => {
-      if (!issuecodes.value.includes(issuecode!.replace(/[ ]+/g, " ")))
+      if (!issuecodes.value.includes(issuecode.replace(/[ ]+/g, " ")))
         issuesNotReferenced!.push(issuecode);
-      else if (findInCollection(issuecode!))
+      else if (findInCollection(issuecode))
         issuesAlreadyInCollection!.push(issuecode);
       else issuesImportable!.push(issuecode);
     });
@@ -389,7 +387,7 @@ watch($$(issuesToImport), async (newValue) => {
     return;
   }
   const publicationCodes = newValue.map(
-    (issuecode) => issuecodeDetails.value![issuecode].publicationcode!,
+    (issuecode) => issuecodeDetails.value[issuecode].publicationcode,
   );
   await fetchPublicationNames(publicationCodes);
   hasPublicationNames = true;

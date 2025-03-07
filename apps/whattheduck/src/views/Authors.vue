@@ -35,8 +35,8 @@
               :readonly="isOffline"
               :max-rating="10"
               @update:rating="updateRating(author)"
-              ><template #filledStarIcon><ion-icon style="width: 10%" :ios="starOutline" :md="starSharp" /></template
-              ><template #emptyStarIcon><ion-icon style="width: 10%" :ios="star" :md="star" /></template
+              ><template #filledStarIcon><ion-icon style="width: 10%" :icon="starOutline" /></template
+              ><template #emptyStarIcon><ion-icon style="width: 10%" :icon="star" /></template
             ></StarRating>
           </ion-col>
           <ion-col size="3">
@@ -58,9 +58,9 @@
         <ion-item
           v-for="(author, personcode) of authorResults"
           :key="personcode"
-          :class="{ disabled: isAuthorWatched(personcode) }"
+          :class="{ disabled: isAuthorWatched(personcode as string) }"
           @click="
-            createRating(personcode);
+            createRating(personcode as string);
             authorName = '';
           "
         >
@@ -72,7 +72,7 @@
 </template>
 
 <script setup lang="ts">
-import { starOutline, starSharp, star } from 'ionicons/icons';
+import { starOutline, star } from 'ionicons/icons';
 import { components } from '~web';
 import { coa as webCoa } from '~web/src/stores/coa';
 import { stats as webStats } from '~web/src/stores/stats';

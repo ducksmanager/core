@@ -1,8 +1,5 @@
 <template>
-  <b-card
-    id="edit-card"
-    no-body
-  >
+  <b-card id="edit-card" no-body>
     <b-tabs
       v-model="editingStepStore.stepNumber"
       lazy
@@ -25,7 +22,7 @@
               'hovered-step': hoveredStepStore.stepNumber === stepNumber,
             }"
             @mouseover="hoveredStepStore.stepNumber = stepNumber"
-            @mouseout="hoveredStepStore.stepNumber = null"
+            @mouseout="hoveredStepStore.stepNumber = undefined"
           >
             {{
               $t(
@@ -83,16 +80,10 @@
             type="text"
             :input-values="inputValues[stepNumber].text"
           >
-            <popover
-              triggers="hover"
-              placement="left"
-            >
+            <popover triggers="hover" placement="left">
               <i-bi-info-circle-fill variant="secondary" />
               <template #content>
-                <b-alert
-                  variant="info"
-                  :model-value="true"
-                >
+                <b-alert variant="info" :model-value="true">
                   {{
                     $t(
                       "You can use special text parts to make your text dynamic :",
@@ -129,12 +120,7 @@
             type="text"
             :input-values="inputValues[stepNumber].font"
           >
-            <a
-              target="_blank"
-              :href="fontSearchUrl"
-            >{{
-              $t("Search")
-            }}</a>
+            <a target="_blank" :href="fontSearchUrl">{{ $t("Search") }}</a>
           </form-input-row>
           <form-color-input-row
             :other-colors="otherColors[stepNumber]"
@@ -199,17 +185,12 @@
             :label="$t('Image').toString()"
             type="text"
             list-id="src-list"
-            :input-values="inputValues[stepNumber].src"
+            :input-values="[selectedGalleryItems[stepNumber]]"
           >
-            <b-form-select
-              id="src-list"
-              :options="mainStore.publicationElements"
-            />
             <gallery
-              :items="mainStore.publicationElementsForGallery"
+              v-model:selected="selectedGalleryItems[stepNumber]"
+              v-model:items="mainStore.publicationElementsForGallery"
               image-type="elements"
-              :selected="inputValues[stepNumber].src"
-              @change="stepStore.setOptionValues({ src: $event })"
             />
           </form-input-row>
         </b-card-text>
@@ -260,11 +241,7 @@
           />
         </b-card-text>
       </b-tab>
-      <b-tab
-        key="99"
-        :title="$t('Add step')"
-        title-item-class="fw-bold"
-      >
+      <b-tab key="99" :title="$t('Add step')" title-item-class="fw-bold">
         <b-card-text>
           <b-dropdown :text="$t('Select a step type')">
             <b-dropdown-item
@@ -327,6 +304,33 @@ const inputValues = computed(
       ),
 );
 
+const selectedGalleryItems = ref<string[]>([]);
+
+watch(
+  inputValues,
+  (inputValues) => {
+    selectedGalleryItems.value = Object.values(inputValues)
+      .filter((stepInputValue) => "src" in stepInputValue)
+      .map((stepInputValue) => stepInputValue.src[0] as string);
+  },
+  { immediate: true },
+);
+
+watch(
+  selectedGalleryItems,
+  (selectedGalleryItems) => {
+    selectedGalleryItems.forEach((selectedGalleryItem, stepNumber) => {
+      stepStore.setOptionValues(
+        { src: selectedGalleryItem },
+        {
+          stepNumber,
+        },
+      );
+    });
+  },
+  { deep: true },
+);
+
 const stepNumbers = computed(() =>
   Object.keys(inputValues.value).map((stepNumber) => parseInt(stepNumber)),
 );
@@ -345,12 +349,12 @@ const components = computed(() =>
 
 const otherColors = computed(() =>
   stepNumbers.value.map((currentStepNumber) => ({
-    sameIssuenumber: stepStore.colors.filter(
+    sameIssuecode: stepStore.colors.filter(
       ({ issuecode: thisIssuecode, stepNumber: thisStepNumber }) =>
         issuecodes.value.includes(thisIssuecode) &&
         thisStepNumber !== currentStepNumber,
     ),
-    differentIssuenumber: stepStore.colors.filter(
+    differentIssuecode: stepStore.colors.filter(
       ({ issuecode: thisIssuecode }) =>
         !issuecodes.value.includes(thisIssuecode),
     ),
@@ -364,7 +368,7 @@ const resetPositionAndSize = (stepNumber: number) => {
   for (const issuecode of editingStepStore.issuecodes) {
     const issueDimensions = stepStore.getFilteredDimensions({
       issuecodes: [issuecode],
-    })[0]!;
+    })[0];
     stepStore.setOptionValues(
       {
         x: 0,
@@ -389,13 +393,13 @@ const splitImageAcrossEdges = () => {
       acc +
       stepStore.getFilteredDimensions({
         issuecodes: [issuecode],
-      })[0]!.width,
+      })[0].width,
     0,
   );
   for (const issuecode of editingStepStore.issuecodes) {
     const issueDimensions = stepStore.getFilteredDimensions({
       issuecodes: [issuecode],
-    })[0]!;
+    })[0];
     stepStore.setOptionValues(
       {
         x: leftOffset,

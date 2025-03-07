@@ -59,7 +59,7 @@
           >{{ $t("Ajouter") }}</b-button
         >
         <div class="position-absolute bottom-0 text-center">
-          {{ $t("Page {pageNumber} (ID: {id})", { pageNumber, id }) }}
+          {{ $t("Page {pageNumber}", { pageNumber }) }}
         </div>
       </b-col>
     </b-row>
@@ -143,7 +143,7 @@ const maxUploadableImagesFromPageNumber = (
 const { visiblePages, currentPage, hoveredEntry, hoveredEntryPageNumbers } =
   storeToRefs(ui());
 
-const imagesRef = ref<HTMLElement | null>(null);
+const imagesRef = ref<HTMLElement>();
 
 useSortable(imagesRef, pages, {
   multiDrag: true,
@@ -155,20 +155,18 @@ useSortable(imagesRef, pages, {
     const event = e as unknown as { oldIndex: number; newIndex: number };
     moveArrayElement(pages, event.oldIndex, event.newIndex, e);
     nextTick(async () => {
-      await indexationSocket.value?.services.swapPageUrls(
+      await indexationSocket.value?.swapPageUrls(
         pages[event.oldIndex].pageNumber,
         pages[event.newIndex].pageNumber,
       );
-      await loadIndexation();
     });
   },
 });
 
-const selectedId = ref<number | undefined>(undefined);
+const selectedId = ref<number>();
 
 const disconnectPageUrl = async (id: number) => {
-  await indexationSocket.value!.services.setPageUrl(id, null);
-  await loadIndexation();
+  await indexationSocket.value!.setPageUrl(id, null);
 };
 
 watch(selectedId, (id) => {

@@ -16,7 +16,7 @@ const { token, socket } = storeToRefs(app());
 
 watch(socket, () => {
   if (socket.value) {
-    socket.value.collection.services.getIssues();
+    socket.value.collection.getIssues();
   }
 });
 </script>

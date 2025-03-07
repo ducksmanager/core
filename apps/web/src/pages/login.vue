@@ -50,20 +50,20 @@ meta:
 </template>
 
 <script setup lang="ts">
+import { socketInjectionKey } from "../composables/useDmSocket";
 import Cookies from "js-cookie";
 
-const { login: userLogin, loadUser } = collection();
+const { login: userLogin } = collection();
 const { user } = storeToRefs(collection());
-const {
-  collection: { socket: collectionSocket },
-} = inject(socketInjectionKey)!;
 
 let router = useRouter();
 let route = useRoute();
 
 let username = $ref("");
-let error = $ref<string | null>(null);
+let error = $ref<string>();
 let password = $ref("");
+
+const { collection: collectionSocket } = inject(socketInjectionKey)!;
 
 const login = async () => {
   await userLogin(
@@ -75,11 +75,7 @@ const login = async () => {
         domain,
       });
 
-      collectionSocket!.connect();
-
-      // const tmp = inject(socketInjectionKey)!;
-      // collectionSocket!.connect();
-      await loadUser();
+      collectionSocket._connect();
     },
     (e) => {
       error = e;

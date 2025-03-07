@@ -212,9 +212,9 @@ alias: [/agrandir/marketplace]
 const isTouchScreen = window.matchMedia("(pointer: coarse)").matches;
 
 let showModal = $ref(false);
-let modalContactId = $ref<number | null>(null);
-let modalContactMethod = $ref<string | null>(null);
-let modalIssueIds = $ref<number[] | null>(null);
+let modalContactId = $ref<number>();
+let modalContactMethod = $ref<string>();
+let modalIssueIds = $ref<number[]>();
 
 const { user } = storeToRefs(collection());
 
@@ -241,7 +241,7 @@ const { fetchStats } = users();
 const { stats } = storeToRefs(users());
 
 let hasPublicationNames = $ref(false);
-let userIdFilter = $ref<number | undefined>(undefined);
+let userIdFilter = $ref<number>();
 
 const launchModal = (e: {
   sellerId: number;

@@ -1,132 +1,106 @@
 import crypto from "crypto";
-import type { Request, Response } from "express";
-import fs from "fs";
+import fs, { mkdirSync } from "fs";
 import { decode } from "node-base64-image";
 import { dirname } from "path";
-import type { Namespace, Server } from "socket.io";
+import type { Socket } from "socket.io";
+import { SocketClient } from "socket-call-client";
+import type { NamespaceProxyTarget } from "socket-call-server";
+import { useSocketEvents } from "socket-call-server";
 
-import EdgeCreatorServices from "~dm-services/edgecreator/types";
+import { RequiredAuthMiddleware } from "~dm-services/auth/util";
+import type { ClientEvents as EdgeCreatorServices } from "~dm-services/edgecreator";
+import namespaces from "~dm-services/namespaces";
 import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa/client";
-import type { EventCalls } from "~socket.io-client-services";
-import { SocketClient } from "~socket.io-client-services";
 
+import type { SessionData } from "../../index";
+import { getEdgesPath } from "../../index";
 import { getNextAvailableFile } from "../_upload_utils";
-import type Events from "./types";
-import { namespaceEndpoint } from "./types";
-import { getEdgesPath } from "~/index";
 
-let edgeCreatorServices: EventCalls<EdgeCreatorServices>;
-
-export default (io: Server) => {
-  (io.of(namespaceEndpoint) as Namespace<Events>).on("connection", (socket) => {
-    const dmSocket = new SocketClient(process.env.DM_SOCKET_URL!);
-    ({ services: edgeCreatorServices } =
-      dmSocket.addNamespace<EdgeCreatorServices>(
-        EdgeCreatorServices.namespaceEndpoint,
-        {
-          session: {
-            getToken: () => socket.handshake.auth.token,
-            clearSession: () => {},
-            sessionExists: () => Promise.resolve(true),
-          }
-        }
-      ));
-    console.log("connected to upload");
-
-    socket.on("uploadFromBase64", async (parameters, callback) => {
-      const { issuecode, data } = parameters;
-      const { publicationcode, issuenumber } =
-        await prismaCoa.inducks_issue.findFirstOrThrow({
-          where: { issuecode },
-        });
-      const [countrycode, magazinecode] = publicationcode.split("/");
-      const path = `${getEdgesPath()}/${countrycode}/photos`;
-      if (!fs.existsSync(path)) {
-        fs.mkdirSync(path, { recursive: true });
-      }
-      const tentativeFileName = `${magazinecode}.${issuenumber}.photo`;
-      const fileName = getNextAvailableFile(
-        `${path}/${tentativeFileName}`,
-        "jpg",
-      ).match(/\/([^/]+)$/)![1];
-
-      await decode(data.includes(',') ? data.split(',')[1]: data, {
-        fname: `${path}/${fileName.replace(/.jpg$/, "")}`,
-        ext: "jpg",
-      });
-
-      await edgeCreatorServices.sendNewEdgePhotoEmail(issuecode);
-
-      callback({ fileName });
-    });
+const getEdgeCreatorServices = (token: string) =>
+  new SocketClient(
+    process.env.DM_SOCKET_URL!,
+  ).addNamespace<EdgeCreatorServices>(namespaces.EDGECREATOR, {
+    session: {
+      getToken: () => Promise.resolve(token),
+      clearSession: () => {},
+      sessionExists: () => Promise.resolve(true),
+    },
   });
+
+const hasReachedDailyUploadLimit = async (token: string) =>
+  (await getEdgeCreatorServices(token).checkTodayLimit()).uploadedFilesToday
+    .length > 10;
+
+const hasAlreadySentPhoto = async (hash: string, token: string) =>
+  (await getEdgeCreatorServices(token).getImageByHash(hash)) === null;
+
+const calculateHash = (data: string) => {
+  const hashSum = crypto.createHash("sha1");
+  hashSum.update(data);
+
+  return hashSum.digest("hex");
 };
 
-export const upload = async (
-  req: Request<
-    Record<string, never>,
-    {
-      photo: boolean;
-      multiple: boolean;
-      edge: {
-        country: string;
-        magazine: string;
-        issuenumber: string;
-      };
-    }
-  >,
-  res: Response,
+const _getFilenameUsagesInOtherModels = async (
+  filename: string,
+  currentIssuecode: string,
+  token: string,
 ) => {
-  let allowedMimeTypes: string[];
+  const issue = await prismaCoa.inducks_issue.findFirstOrThrow({
+    where: { issuecode: currentIssuecode },
+  });
+  return (
+    await getEdgeCreatorServices(token).getImagesFromFilename(filename)
+  ).filter((otherUse) => issue.issuenumber !== otherUse.issuenumberStart);
+};
 
-  const { photo: isEdgePhoto, multiple: isMultipleEdgePhoto, edge } = req.body;
-  const files = req.files! as Express.Multer.File[];
-  const targetFilesnames = [];
-  for (const {
-    originalname: filename,
-    mimetype: mimetype,
-    path: temporaryPath,
-  } of files) {
-    allowedMimeTypes = isEdgePhoto
-      ? ["image/jpg", "image/jpeg"]
-      : ["image/png"];
+const storePhotoHash = async (
+  filename: string,
+  hash: string,
+  token: string,
+) => {
+  await getEdgeCreatorServices(token).createElementImage(hash, filename);
+};
 
-    const targetFilename = await getTargetFilename(
-      filename,
-      isMultipleEdgePhoto,
-      edge,
-      isEdgePhoto,
-    );
-    try {
-      const { hash } = await validateUpload(
-        mimetype,
-        targetFilename,
-        allowedMimeTypes,
-        isEdgePhoto,
-        edge,
-        temporaryPath
-      );
-      saveFile(temporaryPath, targetFilename);
-      await storePhotoHash(targetFilename, hash);
-      targetFilesnames.push(
-        targetFilename.replace(
-          getEdgesPath(),
-          process.env.VITE_EDGES_URL!,
-        ),
-      );
-    } catch (e: unknown) {
-      res.writeHead(400, {
-        Connection: "close",
-        "Content-Type": "application/json",
-      });
-      res.end((e as Error).message);
+const validateUpload = async (
+  filename: string,
+  isEdgePhoto: boolean,
+  issuecode: string,
+  filePath: string,
+  token: string,
+) => {
+  const hash = calculateHash(filePath);
+  if (isEdgePhoto) {
+    if (await hasReachedDailyUploadLimit(token)) {
+      return {
+        error: "You have reached your daily upload limit",
+      } as const;
+    }
+    if (await hasAlreadySentPhoto(hash, token)) {
+      return { error: "You have already sent this photo" } as const;
+    }
+  } else {
+    // TODO uncomment once getImagesFromFilename supports searching file names in SVG models
+    // const otherElementUses = await getFilenameUsagesInOtherModels(
+    //   filename,
+    //   issuecode,
+    //   token
+    // );
+    const otherElementUses: string[] = [];
+    if (fs.existsSync(filename) && otherElementUses.length) {
+      return {
+        error:
+          "This file name is already used in other models, please rename your file",
+        errorDetails: {
+          otherElementUses: JSON.stringify(otherElementUses),
+        },
+      } as const;
     }
   }
-  res.writeHead(200, { Connection: "close" });
-  return res.json(targetFilesnames.map((fileName) => ({ fileName })));
+  return { hash };
 };
 
-const getTargetFilename = async (
+const getTargetFilePath = async (
   filename: string,
   isMultipleEdgePhoto: boolean,
   issuecode: string,
@@ -145,107 +119,81 @@ const getTargetFilename = async (
         where: { issuecode },
       });
     const [countrycode, magazinecode] = publicationcode.split("/");
-    if (isEdgePhoto) {
-      return getNextAvailableFile(
-        `${getEdgesPath()}/${countrycode}/photos/${magazinecode}.${issuenumber}.photo`,
-        "jpg",
-      );
-    } else {
-      return `${getEdgesPath()}/${countrycode}/elements/${
-        filename.includes(magazinecode)
-          ? filename
-          : `${magazinecode}.${filename}`
-      }`;
-    }
+    let filePath = `${getEdgesPath()}/${countrycode}`;
+    filePath = isEdgePhoto
+      ? getNextAvailableFile(
+          `${filePath}/photos/${magazinecode}.${issuenumber}.photo`,
+          "jpg",
+        )
+      : `${filePath}/elements/${
+          filename.includes(magazinecode)
+            ? filename
+            : `${magazinecode}.${filename}`
+        }`;
+
+    mkdirSync(dirname(filePath), { recursive: true });
+    return filePath;
   }
 };
 
-const validateUpload = async (
-  mimetype: string,
-  filename: string,
-  allowedMimeTypes: string[],
-  isEdgePhoto: boolean,
-  issuecode: string,
-  filePath: string
-): Promise<{ hash: string }> => {
-  if (!allowedMimeTypes.includes(mimetype)) {
-    throw new Error(
-      JSON.stringify({
-        error:
-          "Invalid file type: {mimetype}, the following types are allowed: {allowedMimeTypes}",
-        placeholders: { mimetype, allowedMimeTypes },
-      }),
-    );
-  }
-  const { hash } = readContentsAndCalculateHash(filePath);
-  if (isEdgePhoto) {
-    if (await hasReachedDailyUploadLimit()) {
-      throw new Error(
-        JSON.stringify({
-          error: "You have reached your daily upload limit",
-        }),
-      );
-    }
-    if (await hasAlreadySentPhoto(hash)) {
-      throw new Error(
-        JSON.stringify({ error: "You have already sent this photo" }),
-      );
-    }
-  } else {
-    // await readFile(filestream);
-    const otherElementUses = await getFilenameUsagesInOtherModels(
-      filename,
+export type UploadServices = NamespaceProxyTarget<
+  Socket<typeof listenEvents, object, object, SessionData>,
+  Record<string, never>
+>;
+
+const listenEvents = ({ _socket: socket }: UploadServices) => ({
+  uploadFromBase64: async (parameters: {
+    data: string;
+    issuecode: string;
+    isMultiple: boolean;
+    fileName: string;
+  }) => {
+    const { issuecode, isMultiple, fileName, data } = parameters;
+    const cleanData = data.includes(",") ? data.split(",")[1] : data;
+    const isEdgePhoto = !fileName.toLowerCase().endsWith(".png");
+    const targetFilePath = await getTargetFilePath(
+      fileName,
+      isMultiple,
       issuecode,
+      isEdgePhoto,
     );
-    if (fs.existsSync(filename) && otherElementUses.length) {
-      throw new Error(
-        JSON.stringify({
-          error:
-            "This file name is already used in other models, please rename your file",
-          placeholders: {
-            otherElementUses: JSON.stringify(otherElementUses),
-          },
-        }),
-      );
+
+    const token = socket.data.user!.token;
+    const targetFileName = targetFilePath.split("/").pop()!;
+
+    const validationResults = await validateUpload(
+      targetFileName,
+      isEdgePhoto,
+      issuecode,
+      cleanData,
+      token,
+    );
+
+    if ("error" in validationResults) {
+      return validationResults;
     }
-  }
-  return { hash };
-};
 
-const hasReachedDailyUploadLimit = async () =>
-  (await edgeCreatorServices.checkTodayLimit()).uploadedFilesToday.length > 10;
+    const { hash } = validationResults;
 
-const hasAlreadySentPhoto = async (hash: string) =>
-  (await edgeCreatorServices.getImageByHash(hash)) === null;
-
-const readContentsAndCalculateHash = (
-  fileName: string,
-): { contents: Buffer; hash: string } => {
-  const fileBuffer = fs.readFileSync(fileName);
-  const hashSum = crypto.createHash("sha256");
-  hashSum.update(fileBuffer);
-
-  return { contents: fileBuffer, hash: hashSum.digest("hex") };
-};
-
-const getFilenameUsagesInOtherModels = async (
-  filename: string,
-  currentIssuecode: string,
-) =>
-  {
-    const issue = await prismaCoa.inducks_issue.findFirstOrThrow({
-      where: { issuecode: currentIssuecode },
+    await decode(cleanData, {
+      fname: `${targetFilePath.replace(/.[^\.]+$/, "")}`,
+      ext: "jpg",
     });
-    return (await edgeCreatorServices.getImagesFromFilename(filename)).filter(
-      (otherUse) => issue.issuenumber !== otherUse.issuenumberStart
-    );
-  };
 
-const saveFile = (temporaryPath: string, finalPath: string) => {
-  fs.mkdirSync(dirname(finalPath), { recursive: true });
-  fs.renameSync(temporaryPath, finalPath);
-};
+    await storePhotoHash(targetFileName, hash, token);
 
-const storePhotoHash = async (filename: string, hash: string) => {
-  await edgeCreatorServices.createElementImage(hash, filename);
-};
+    await getEdgeCreatorServices(token).sendNewEdgePhotoEmail(issuecode);
+
+    return { fileName };
+  },
+});
+
+export const { client, server } = useSocketEvents<
+  typeof listenEvents,
+  Record<string, never>
+>("/upload", {
+  listenEvents,
+  middlewares: [RequiredAuthMiddleware],
+});
+
+export type ClientEvents = (typeof client)["emitEvents"];

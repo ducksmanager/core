@@ -4,7 +4,7 @@ export interface ImageMetadata {
   height: number | null;
 }
 export default () => {
-  const image = ref<ImageMetadata | null>(null);
+  const image = ref<ImageMetadata>();
   const loadImage = (
     src: string,
     callback: (img: HTMLImageElement) => void,

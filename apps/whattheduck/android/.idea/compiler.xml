@@ -12,6 +12,10 @@
       <module name="android.capacitor-keyboard" target="21" />
       <module name="android.capacitor-preferences" target="21" />
       <module name="android.capacitor-status-bar" target="21" />
+      <module name="android.capawesome-capacitor-app-update" target="21" />
+      <module name="android.capawesome-capacitor-file-picker" target="21" />
+      <module name="android.capgo-capacitor-updater" target="21" />
+      <module name="android.sentry-capacitor" target="21" />
     </bytecodeTargetLevel>
   </component>
 </project>

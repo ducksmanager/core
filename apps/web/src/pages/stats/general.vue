@@ -155,9 +155,7 @@
 <script setup lang="ts">
 import { socketInjectionKey } from "../../composables/useDmSocket";
 
-const {
-  globalStats: { services: globalStatsServices },
-} = inject(socketInjectionKey)!;
+const { userGlobalStats: userGlobalStatsEvents } = inject(socketInjectionKey)!;
 
 const { getConditionLabel } = useCondition();
 
@@ -192,7 +190,7 @@ const quotationFields = [
   },
 ];
 
-let rarityValue = $ref<number | null>(null);
+let rarityValue = $ref<number>();
 let hasPublicationNames = $ref(false);
 
 watch(
@@ -224,7 +222,7 @@ watch(
 (async () => {
   await loadCollection();
   await fetchCount();
-  const { userScores } = await globalStatsServices.getUsersCollectionRarity();
+  const { userScores } = await userGlobalStatsEvents.getUsersCollectionRarity();
   rarityValue =
     userScores.length -
     userScores.findIndex(({ userId }) => userId === user.value?.id);

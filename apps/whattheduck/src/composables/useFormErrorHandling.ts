@@ -1,4 +1,4 @@
-import type { Errorable, ScopedError } from '~socket.io-services';
+import type { Errorable, ScopedError } from 'socket-call-client';
 
 export default (fields: string[]) => {
   const errorTexts = ref<Record<string, string>>({});
@@ -17,7 +17,7 @@ export default (fields: string[]) => {
       if ('selector' in response && response.selector) {
         errorTexts.value[response.selector!.replace('#', '')] = response.message;
       } else {
-        errorTexts.value[fields[0]] = response.errorDetails || response.error;
+        errorTexts.value[fields[0]] = ('errorDetails' in response && response.errorDetails) || response.error;
         console.error(response);
       }
       return true;

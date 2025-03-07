@@ -1,5 +1,3 @@
-/// <reference types="vitest" />
-
 import VueI18n from "@intlify/unplugin-vue-i18n/vite";
 import Vue from "@vitejs/plugin-vue";
 import ReactivityTransform from "@vue-macros/reactivity-transform/vite";
@@ -21,14 +19,6 @@ export default defineConfig({
       "~dm-services": path.resolve(__dirname, "../../packages/api/services"),
       "~dm-types": path.resolve(__dirname, "../../packages/types"),
       "~group-by": path.resolve(__dirname, "../../util/group-by"),
-      "~socket.io-services": path.resolve(
-        __dirname,
-        "../../packages/socket.io-services",
-      ),
-      "~socket.io-client-services": path.resolve(
-        __dirname,
-        "../../packages/socket.io-client-services",
-      ),
       "~prisma-schemas": path.resolve(
         __dirname,
         "../../packages/prisma-schemas",

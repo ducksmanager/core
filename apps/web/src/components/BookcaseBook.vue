@@ -112,13 +112,13 @@ const { fetchIssueUrls } = coa();
 const { getImagePath } = images();
 
 const toast = useToastController();
-const edgeWidth = ref<number | null>(null);
-const coverHeight = ref<number | undefined>(undefined);
-const coverRatio = ref<number | undefined>(undefined);
+const edgeWidth = ref<number>();
+const coverHeight = ref<number>();
+const coverRatio = ref<number>();
 const opening = ref(false);
 const opened = ref(false);
 const closing = ref(false);
-const book = ref<PageFlip | undefined>(undefined);
+const book = ref<PageFlip>();
 const currentPage = ref(0);
 const currentTabIndex = ref(0);
 const { publicationNames, issueDetails, issuecodeDetails } = storeToRefs(coa());

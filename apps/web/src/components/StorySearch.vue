@@ -106,9 +106,7 @@ const emit = defineEmits<{
 }>();
 const { conditions } = useCondition();
 
-const {
-  coa: { services: coaServices },
-} = inject(socketInjectionKey)!;
+const { coa: coaEvents } = inject(socketInjectionKey)!;
 
 const { findInCollection } = isPublic ? publicCollection() : collection();
 const { issues } = storeToRefs(collection());
@@ -116,7 +114,7 @@ const { fetchPublicationNames, fetchIssuecodeDetails, fetchCountryNames } =
   coa();
 const { issuecodeDetails } = storeToRefs(coa());
 
-const nav = shallowRef<HTMLElement | null>(null);
+const nav = shallowRef<HTMLElement>();
 
 onClickOutside(nav, () => {
   showSearchResults = false;
@@ -127,12 +125,12 @@ type SimpleStoryWithOptionalCollectionIssue = SimpleStory & {
 };
 
 let isSearching = $ref(false);
-let pendingSearch = $ref<string | null>(null);
+let pendingSearch = $ref<string>();
 let search = $ref("");
 let storyResults = $ref<{
   results: SimpleStoryWithOptionalCollectionIssue[];
   hasMore: boolean;
-} | null>(null);
+}>();
 
 const { t: $t } = useI18n();
 const searchContexts = {
@@ -178,7 +176,7 @@ const runSearch = async (value: string) => {
   isSearching = true;
   try {
     if (isSearchByCode) {
-      const data = await coaServices.getIssuesByStorycode(
+      const data = await coaEvents.getIssuesByStorycode(
         value.replace(/^code=/, ""),
       );
       issueResults = {
@@ -197,7 +195,7 @@ const runSearch = async (value: string) => {
         ),
       );
     } else {
-      const data = await coaServices.searchStory(value.split(","), true);
+      const data = await coaEvents.searchStory(value.split(","), true);
       storyResults = {
         hasMore: data.hasMore,
         results: data.results.map((story) => ({

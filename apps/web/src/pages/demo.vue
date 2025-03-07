@@ -13,9 +13,7 @@ const { user } = storeToRefs(collection());
 
 const router = useRouter();
 
-const {
-  auth: { services: authServices },
-} = inject(socketInjectionKey)!;
+const { auth: authEvents } = inject(socketInjectionKey)!;
 
 watch(
   user,
@@ -28,7 +26,7 @@ watch(
 );
 
 (async () => {
-  const result = await authServices.loginAsDemo();
+  const result = await authEvents.loginAsDemo();
   switch (result.error) {
     case "No demo user found":
       console.error(result.error);

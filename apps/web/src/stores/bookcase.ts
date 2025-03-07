@@ -1,7 +1,8 @@
-import type BookcaseServices from "~dm-services/bookcase/types";
+import type { SuccessfulEventOutput } from "socket-call-client";
+
+import type { ClientEvents as BookcaseEvents } from "~dm-services/bookcase";
 import type { BookcaseEdge } from "~dm-types/BookcaseEdge";
 import type { issue_condition } from "~prisma-schemas/schemas/dm";
-import type { EventReturnType } from "~socket.io-services";
 
 import { socketInjectionKey } from "../composables/useDmSocket";
 import { collection } from "./collection";
@@ -18,19 +19,17 @@ export type BookcaseEdgeWithPopularity = BookcaseEdge & {
 export const bookcase = defineStore("bookcase", () => {
   const route = useRoute();
 
-  const {
-    bookcase: { services: bookcaseServices },
-  } = inject(socketInjectionKey)!;
+  const { bookcase: bookcaseEvents, userBookcase: userBookcaseEvents } =
+    inject(socketInjectionKey)!;
 
   const loadedSprites = ref<{ [key: string]: string }>({}),
     isPrivateBookcase = ref(false),
     isUserNotExisting = ref(false),
-    bookcaseUsername = ref<string | null>(null),
-    bookcase = shallowRef<BookcaseEdge[] | null>(null),
-    bookcaseOptions = shallowRef<EventReturnType<
-      BookcaseServices["getBookcaseOptions"]
-    > | null>(null),
-    bookcaseOrder = ref<string[] | null>(null),
+    bookcaseUsername = ref<string>(),
+    bookcase = shallowRef<BookcaseEdge[]>(),
+    bookcaseOptions =
+      shallowRef<SuccessfulEventOutput<BookcaseEvents, "getBookcaseOptions">>(),
+    bookcaseOrder = ref<string[]>(),
     edgeIndexToLoad = ref(0),
     isSharedBookcase = computed(() => route.params.username !== undefined),
     bookcaseWithPopularities = computed(
@@ -61,24 +60,26 @@ export const bookcase = defineStore("bookcase", () => {
     },
     loadBookcase = async () => {
       if (!bookcase.value) {
-        const response = await bookcaseServices.getBookcase(
+        const response = await bookcaseEvents.getBookcase(
           collection().user!.username,
         );
-        switch (response.error) {
-          case "Forbidden":
-            isPrivateBookcase.value = true;
-            return;
-          case "Not found":
-            isUserNotExisting.value = true;
-            return;
-          case undefined:
-            bookcase.value = response.edges;
+        if ("error" in response) {
+          switch (response.error) {
+            case "Forbidden":
+              isPrivateBookcase.value = true;
+              return;
+            case "Not found":
+              isUserNotExisting.value = true;
+              return;
+          }
+        } else {
+          bookcase.value = response.edges;
         }
       }
     },
     loadBookcaseOptions = async () => {
       if (!bookcaseOptions.value) {
-        const response = await bookcaseServices.getBookcaseOptions(
+        const response = await bookcaseEvents.getBookcaseOptions(
           bookcaseUsername.value!,
         );
         if ("error" in response) {
@@ -89,11 +90,11 @@ export const bookcase = defineStore("bookcase", () => {
       }
     },
     updateBookcaseOptions = async () => {
-      await bookcaseServices.setBookcaseOptions(bookcaseOptions.value!);
+      await userBookcaseEvents.setBookcaseOptions(bookcaseOptions.value!);
     },
     loadBookcaseOrder = async () => {
       if (!bookcaseOrder.value) {
-        const response = await bookcaseServices.getBookcaseOrder(
+        const response = await bookcaseEvents.getBookcaseOrder(
           bookcaseUsername.value!,
         );
         if ("error" in response) {
@@ -104,7 +105,8 @@ export const bookcase = defineStore("bookcase", () => {
       }
     },
     updateBookcaseOrder = async () => {
-      await bookcaseServices.setBookcaseOrder(bookcaseOrder.value!);
+      // TODO implement
+      // await userBookcaseEvents.setBookcaseOrder(bookcaseOrder.value!);
     };
 
   return {

@@ -73,7 +73,7 @@ model edgeModel {
   issuenumber   String            @map("Numero") @db.VarChar(10)
   username      String?           @db.VarChar(25)
   mainPhotoName String?           @map("NomPhotoPrincipale") @db.VarChar(60)
-  photographs   String?           @map("photographes") @db.Text
+  photographers String?           @map("photographes") @db.Text
   creators      String?           @map("createurs") @db.Text
   isActive      Boolean           @map("Active")
   issuecode     String            @default(dbgenerated("(concat(convert(`Pays` using utf8mb3),'/',`Magazine`,' ',`Numero`))")) @db.VarChar(21)

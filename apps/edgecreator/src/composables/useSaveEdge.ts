@@ -3,17 +3,11 @@ import type { ModelContributor } from "~types/ModelContributor";
 import { edgecreatorSocketInjectionKey } from "./useEdgecreatorSocket";
 
 export default () => {
-  const {
-    save: { services: saveServices },
-  } = inject(edgecreatorSocketInjectionKey)!;
+  const { save: saveEvents } = inject(edgecreatorSocketInjectionKey)!;
 
   const removeVueMarkup = (element: HTMLElement) => {
     Object.values(element.attributes || [])
-      .filter(
-        (attribute) =>
-          attribute.name.startsWith("data-v-") ||
-          attribute.name === "is-visible",
-      )
+      .filter((attribute) => attribute.name.startsWith("data-v-"))
       .forEach(({ name: attributeName }) =>
         element.removeAttribute(attributeName),
       );
@@ -32,7 +26,7 @@ export default () => {
     const cleanSvg = removeVueMarkup(
       document.getElementById(svgElementId)!.cloneNode(true) as HTMLElement,
     );
-    return saveServices
+    return saveEvents
       .saveEdge({
         runExport: withExport,
         runSubmit: withSubmit,

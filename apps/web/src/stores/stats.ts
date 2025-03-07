@@ -1,25 +1,22 @@
-import type CoaServices from "~dm-services/coa/types";
-import type CollectionServices from "~dm-services/collection/types";
+import type { EventOutput } from "socket-call-client";
+
+import type { ClientEvents as CoaServices } from "~dm-services/coa";
+import type { ClientEvents as CollectionServices } from "~dm-services/collection";
 import type { authorUser } from "~prisma-schemas/schemas/dm";
-import type { EventReturnType } from "~socket.io-services";
 
 import { socketInjectionKey } from "../composables/useDmSocket";
 
 export const stats = defineStore("stats", () => {
-  const {
-    coa: { services: coaServices },
-    collection: { services: collectionServices },
-  } = inject(socketInjectionKey)!;
+  const { coa: coaEvents, collection: collectionEvents } =
+    inject(socketInjectionKey)!;
 
-  const ratings = shallowRef<
-    EventReturnType<CollectionServices["getWatchedAuthors"]> | undefined
-  >(undefined);
+  const ratings =
+    shallowRef<EventOutput<CollectionServices, "getWatchedAuthors">>();
   const isSearching = ref(false);
   const isLoadingWatchedAuthors = ref(false);
-  const authorSearchResults = shallowRef<
-    EventReturnType<CoaServices["searchAuthor"]> | undefined
-  >(undefined);
-  const pendingSearch = ref<string | null>(null);
+  const authorSearchResults =
+    shallowRef<EventOutput<CoaServices, "searchAuthor">>();
+  const pendingSearch = ref<string>();
 
   const isAuthorWatched = (personcode: string) =>
     ratings.value?.some(
@@ -29,7 +26,7 @@ export const stats = defineStore("stats", () => {
   const loadRatings = async (afterUpdate = false) => {
     if (afterUpdate || (!isLoadingWatchedAuthors.value && !ratings.value)) {
       isLoadingWatchedAuthors.value = true;
-      ratings.value = await collectionServices.getWatchedAuthors();
+      ratings.value = await collectionEvents.getWatchedAuthors();
       isLoadingWatchedAuthors.value = false;
     }
   };
@@ -39,25 +36,25 @@ export const stats = defineStore("stats", () => {
     if (!isSearching.value) {
       try {
         isSearching.value = true;
-        authorSearchResults.value = await coaServices.searchAuthor(value);
+        authorSearchResults.value = await coaEvents.searchAuthor(value);
       } finally {
         isSearching.value = false;
         // The input value has changed since the beginning of the search, searching again
         if (value !== pendingSearch.value)
-          await searchAuthors(pendingSearch.value!);
+          await searchAuthors(pendingSearch.value);
       }
     }
   };
 
   const createRating = async (personcode: string) => {
-    await collectionServices.addWatchedAuthor(personcode);
+    await collectionEvents.addWatchedAuthor(personcode);
     await loadRatings(true);
   };
   const updateRating = async (data: authorUser) => {
-    await collectionServices.updateWatchedAuthor(data);
+    await collectionEvents.updateWatchedAuthor(data);
   };
   const deleteAuthor = async (personcode: string) => {
-    await collectionServices.deleteWatchedAuthor(personcode);
+    await collectionEvents.deleteWatchedAuthor(personcode);
     await loadRatings(true);
   };
 

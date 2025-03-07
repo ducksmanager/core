@@ -21,9 +21,9 @@
     />
   </div>
 </template>
-<script setup lang="ts" generic="LoadingEventStart extends keyof ServerSentStartEvents">
+<script setup lang="ts" generic="LoadingEventStart extends keyof IndexationServerSentStartEvents">
 import { dumiliSocketInjectionKey } from "~/composables/useDumiliSocket";
-import type { ServerSentStartEvents } from "~dumili-services/indexation/types";
+import type { IndexationServerSentStartEvents } from "~dumili-services/indexation";
 
 const { status, loadingEvents = [] } = defineProps<{
   id: string;
@@ -31,13 +31,9 @@ const { status, loadingEvents = [] } = defineProps<{
   topCenter?: boolean;
   loadingEvents?: {
     eventName: LoadingEventStart;
-    checkMatch: (
-      ...args: Parameters<ServerSentStartEvents[LoadingEventStart]>
-    ) => boolean;
+    checkMatch: (id: number) => boolean;
   }[];
 }>();
-
-defineSlots();
 
 const emit = defineEmits<{
   (e: "toggled", toggle: boolean): void;
@@ -53,21 +49,21 @@ watch(
   (socket) => {
     if (socket) {
       for (const loadingEvent of loadingEvents) {
-        indexationSocket.value!.on(loadingEvent.eventName, (...args) => {
-          if (loadingEvent.checkMatch(...args)) {
+        indexationSocket.value![loadingEvent.eventName] = (id) => {
+          if (loadingEvent.checkMatch(id)) {
             isLoading.value = true;
           }
-        });
+        };
 
         const endEvent: `${LoadingEventStart}End` = `${loadingEvent.eventName}End`;
 
-        indexationSocket.value!.on(endEvent, (...args) => {
-          if (loadingEvent.checkMatch(...args)) {
+        indexationSocket.value![endEvent] = (id) => {
+          if (loadingEvent.checkMatch(id)) {
             setTimeout(() => {
               isLoading.value = false;
             }, 1500);
           }
-        });
+        };
       }
     }
   },

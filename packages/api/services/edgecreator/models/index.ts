@@ -1,24 +1,18 @@
-import type { Socket } from "socket.io";
-
 import type { ModelSteps } from "~dm-types/ModelSteps";
+import { Prisma } from "~prisma-schemas/client_dm";
 import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
 import { prismaClient as prismaEdgeCreator } from "~prisma-schemas/schemas/edgecreator/client";
 
-import type Events from "../types";
-import { Prisma } from "~prisma-schemas/client_edgecreator";
-
-export default (socket: Socket<Events>) => {
-  socket.on("getModelsSteps", async (modelIds, callback) => {
-    callback(
-      (
-        await prismaEdgeCreator.$queryRaw<
-          {
-            issuecode: string;
-            stepNumber: number;
-            functionName: string;
-            options: string;
-          }[]
-        >`
+export default () => ({
+  getModelsSteps: async (modelIds: number[]) =>
+    prismaEdgeCreator.$queryRaw<
+      {
+        issuecode: string;
+        stepNumber: number;
+        functionName: string;
+        options: string;
+      }[]
+    >`
           select model.issuecode,
                  optionValue.ordre AS stepNumber,
                  optionValue.Nom_fonction AS functionName,
@@ -31,8 +25,8 @@ export default (socket: Socket<Events>) => {
           where model.ID IN (${Prisma.join(modelIds)})
           group by model.numero, optionValue.ordre
           order by optionValue.ordre
-      `
-      ).reduce<ModelSteps>(
+      `.then((steps) =>
+      steps.reduce<ModelSteps>(
         (acc, { issuecode, stepNumber, functionName, options }) => {
           if (!acc[issuecode]) {
             acc[issuecode] = {};
@@ -53,10 +47,8 @@ export default (socket: Socket<Events>) => {
         },
         {},
       ),
-    );
-  });
-
-  socket.on("getModel", async (issuecode, callback) => {
+    ),
+  getModel: async (issuecode: string) => {
     const model = await prismaEdgeCreator.edgeModel.findFirst({
       where: {
         issuecode,
@@ -68,6 +60,29 @@ export default (socket: Socket<Events>) => {
           issuecode,
         },
       })) > 0;
-    callback(model && modelIsPublished ? model : null);
-  });
-};
+    return model && modelIsPublished ? model : null;
+  },
+
+  getModelMainPhoto: (modelId: number) =>
+    prismaEdgeCreator.elementImage.findFirstOrThrow({
+      select: {
+        id: true,
+        fileName: true,
+      },
+      where: {
+        tranches_en_cours_modeles_images: {
+          every: {
+            modelId,
+            isMainPhoto: true,
+          },
+        },
+      },
+    }),
+
+  getModelContributors: (modelId: number) =>
+    prismaEdgeCreator.edgeContributor.findMany({
+      where: {
+        modelId,
+      },
+    }),
+});

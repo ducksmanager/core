@@ -18,7 +18,7 @@ alias: [/collection/a-lire]
 
 <script setup lang="ts">
 let hasPublicationNames = $ref(false);
-let publicationCodes = $ref<string[] | null>(null);
+let publicationCodes = $ref<string[]>();
 
 const { loadCollection } = collection();
 const { issuesInToReadStack } = storeToRefs(collection());

@@ -7,7 +7,11 @@ meta:
     <session-info />
     <h1>{{ $t("Dashboard") }}</h1>
 
-    <b-alert v-if="!isCatalogLoaded" variant="info" :model-value="true">
+    <b-alert
+      v-if="!Object.keys(ongoingEdges).length"
+      variant="info"
+      :model-value="true"
+    >
       {{ $t("Loading...") }}
     </b-alert>
 
@@ -25,7 +29,7 @@ meta:
                 {{
                   $t(
                     "Send us photos of magazine edges that you own and earn up to {0} Edge photographer points per edge!",
-                    [mostPopularIssuesInCollectionWithoutEdge[0].popularity]
+                    [mostPopularIssuesInCollectionWithoutEdge[0].popularity],
                   )
                 }}
               </template>
@@ -46,7 +50,7 @@ meta:
               {{
                 $t(
                   "Send us photos of magazine edges that you find on the Internet and earn up to {0} Edge photographer points per edge!",
-                  [mostWantedEdges[0].popularity]
+                  [mostWantedEdges[0].popularity],
                 )
               }}
             </template>
@@ -69,11 +73,16 @@ meta:
 
       <hr />
 
-      <template v-for="{ status, l10n } in edgeCategories" :key="`${status}`">
-        <h3>{{ $t(l10n) }}</h3>
+      <template
+        v-for="status in ['Ongoing', 'Ongoing by another user', 'Pending edition'] as const"
+        :key="`${status}`"
+      >
+        <h3>{{ $t(status) }}</h3>
 
         <b-container
-          v-if="Object.keys(edgesByStatusAndPublicationcode[status]).length"
+          v-if="
+            Object.keys(edgesByStatusAndPublicationcode[status] || []).length
+          "
         >
           <template
             v-for="(edges, publicationcode) in edgesByStatusAndPublicationcode[
@@ -84,7 +93,9 @@ meta:
             <b-row>
               <b-col>
                 <publication
-                  :publicationname="publicationNames[publicationcode]"
+                  :publicationname="
+                    publicationNames[publicationcode] || publicationcode
+                  "
                   :publicationcode="publicationcode"
                   display-class="d-inline-block"
                 />
@@ -110,32 +121,28 @@ meta:
                 cols="12"
                 md="6"
                 lg="3"
-                @mouseover="hoveredEdge = edge"
-                @mouseout="hoveredEdge = null"
+                @mouseover="hoveredEdge = edge!"
+                @mouseout="hoveredEdge = undefined"
               >
-                <b-card class="text-center">
+                <b-card class="text-center m-2" body-class="p-2">
                   <b-link
                     :to="`edit/${edge.issuecode.replaceAll(' ', '_')}`"
                     :disabled="!canEditEdge(status)"
                   >
                     <b-card-text>
                       <img
-                        v-if="
-                          (hoveredEdge === edge && edge.v3) ||
-                          status === 'pending'
-                        "
+                        v-if="hoveredEdge === edge"
                         :alt="edge.issuecode"
                         class="edge-preview"
-                        :src="
-                          edge.v3
-                            ? getEdgeUrl(edge.issuecode, 'svg', false)
-                            : undefined
-                        "
+                        :src="getSvgUrl(edge)"
                       /><edge-link
                         :issuecode="edge.issuecode"
                         :designers="edge.designers"
                         :photographers="edge.photographers"
-                        :published="edge.published === 'Published'"
+                        :published="
+                          publicationcode in publishedEdges &&
+                          edge.issuecode in publishedEdges[publicationcode]
+                        "
                       />
                     </b-card-text>
                   </b-link>
@@ -158,7 +165,7 @@ meta:
     >
       {{
         $t(
-          "EdgeCreator is a tool allowing to create edges for the DucksManager bookcase."
+          "EdgeCreator is a tool allowing to create edges for the DucksManager bookcase.",
         )
       }}<br /><a href="https://ducksmanager.net">{{
         $t("Go to DucksManager")
@@ -169,18 +176,13 @@ meta:
 <script setup lang="ts">
 import { storeToRefs } from "pinia";
 
-import type { EdgeWithVersionAndStatus } from "~/stores/edgeCatalog";
 import { edgeCatalog } from "~/stores/edgeCatalog";
 
-const {
-  edges: { services: edgesServices },
-} = inject(dmSocketInjectionKey)!;
+const { edges: edgesEvents } = inject(dmSocketInjectionKey)!;
 
 import { stores as webStores } from "~web";
 import { socketInjectionKey as dmSocketInjectionKey } from "~web/src/composables/useDmSocket";
 import type { BookcaseEdgeWithPopularity } from "~web/src/stores/bookcase";
-
-const { getEdgeUrl } = useSvgUtils();
 
 const collectionStore = webStores.collection();
 const bookcaseStore = webStores.bookcase();
@@ -190,78 +192,74 @@ const { hasRole } = collectionStore;
 const { user } = storeToRefs(collectionStore);
 
 const edgeCatalogStore = edgeCatalog();
-const { loadCatalog, canEditEdge, edgeCategories } = edgeCatalogStore;
-const { currentEdges, isCatalogLoaded } = storeToRefs(edgeCatalogStore);
+const { fetchOngoingEdges, canEditEdge, fetchPublishedEdges } =
+  edgeCatalogStore;
+const { ongoingEdges, publishedEdges } = storeToRefs(edgeCatalogStore);
 
 const edgesByStatusAndPublicationcode = computed(() => {
-  const edgesByStatus = currentEdges.value?.length
-    ? Object.values(currentEdges.value).groupBy("status", "[]")
-    : { ongoing: [], "ongoing by another user": [], pending: [] };
+  const edgesByStatus = Object.values(ongoingEdges.value || []).groupBy(
+    "status",
+    "[]",
+  );
   return Object.fromEntries(
     Object.entries(edgesByStatus).map(([status, edges]) => [
       status,
-      edges
-        .map((edge) => ({
-          ...edge,
-          publicationcode:
-            issuecodeDetails.value[edge.issuecode].publicationcode,
-        }))
-        .groupBy("publicationcode", "[]"),
-    ])
+      edges.groupBy("publicationcode", "[]"),
+    ]),
   );
 });
 const userPhotographerPoints = computed(
-  () => usersStore.points[user.value!.id].edge_photographer
+  () => usersStore.points[user.value!.id].edge_photographer,
 );
 
 const { publicationNames, issuecodeDetails } = storeToRefs(webStores.coa());
 
-const isUploadableEdgesCarouselReady = ref(false);
-const mostWantedEdges = ref<
-  | (BookcaseEdgeWithPopularity & {
-      publicationcode: string | null;
-      issuenumber: string | null;
-    })[]
-  | null
->(null);
+const isUserBookcaseReady = ref(false);
+const isCatalogReady = ref(false);
 
-const hoveredEdge = ref<EdgeWithVersionAndStatus | null>(null);
+const isUploadableEdgesCarouselReady = computed(
+  () => isUserBookcaseReady.value && isCatalogReady.value,
+);
+
+const mostWantedEdges = ref<
+  (BookcaseEdgeWithPopularity & {
+    publicationcode: string | null;
+    issuenumber: string | null;
+  })[]
+>();
+
+const hoveredEdge = ref();
 
 const mostPopularIssuesInCollectionWithoutEdge = computed(() =>
   collectionStore.popularIssuesInCollectionWithoutEdge
     ?.sort(
       ({ popularity: popularity1 }, { popularity: popularity2 }) =>
-        (popularity2 ?? 0) - (popularity1 ?? 0)
+        (popularity2 ?? 0) - (popularity1 ?? 0),
     )
-    .filter((_, index) => index < 10)
+    .filter((_, index) => index < 10),
 );
 
+const getSvgUrl = (edge: { svgUrl: string }) =>
+  edge.svgUrl ? `${import.meta.env.VITE_EDGES_URL}${edge.svgUrl}` : undefined;
+
 const loadMostWantedEdges = async () => {
-  const wantedEdges = (await edgesServices.getWantedEdges())
+  const wantedEdges = await edgesEvents.getWantedEdges();
   await coaStore.fetchIssuecodeDetails(
-    wantedEdges.map(({ issuecode }) => issuecode)
+    wantedEdges.map(({ issuecode }) => issuecode),
   );
-  mostWantedEdges.value = (await edgesServices.getWantedEdges())
+  mostWantedEdges.value = wantedEdges
     .slice(0, 10)
-    .map(
-      ({
-        issuecode,
-        numberOfIssues,
-      }: {
-        issuecode: string;
-        numberOfIssues: number;
-      }) => ({
-        ...issuecodeDetails.value[issuecode],
-        id: 0,
-        edgeId: 0,
-        creationDate: new Date(),
-        timestamp: new Date().getTime(),
-        sprites: [],
-        slug: "",
-        points: numberOfIssues,
-        popularity: numberOfIssues,
-      })
-    );
+    .map(({ issuecode, numberOfIssues }) => ({
+      ...issuecodeDetails.value[issuecode],
+      id: 0,
+      edgeId: 0,
+      creationDate: new Date(),
+      timestamp: new Date().getTime(),
+      sprites: [],
+      slug: "",
+      points: numberOfIssues,
+      popularity: numberOfIssues,
+    }));
 };
 
 watch(
@@ -273,23 +271,32 @@ watch(
     await usersStore.fetchStats([user.value!.id]);
     await collectionStore.loadPopularIssuesInCollection();
     await bookcaseStore.loadBookcase();
-    await loadMostWantedEdges();
-    await loadCatalog();
-    await coaStore.fetchIssuecodeDetails(
-      Object.keys(currentEdges.value).map((issuecode) => issuecode)
-    );
-    const publicationcodes = [
-      ...mostWantedEdges.value!.map(({ issuecode }) => issuecode!),
-      ...Object.values(currentEdges.value).map(({ issuecode }) => issuecode),
-    ].map((issuecode) => issuecodeDetails.value[issuecode]?.publicationcode || 'fr/JM');
-
-    await coaStore.fetchPublicationNames(publicationcodes);
-    isUploadableEdgesCarouselReady.value = true;
+    isUserBookcaseReady.value = true;
   },
-  { immediate: true }
+  { immediate: true },
 );
 
-await collectionStore.loadUser();
+(async () => {
+  await loadMostWantedEdges();
+  await fetchOngoingEdges();
+  await coaStore.fetchIssuecodeDetails(
+    Object.keys(ongoingEdges.value).map((issuecode) => issuecode),
+  );
+  const publicationcodes = [
+    ...mostWantedEdges.value!.map(({ issuecode }) => issuecode),
+    ...Object.values(ongoingEdges.value).map(({ issuecode }) => issuecode),
+  ].map(
+    (issuecode) =>
+      issuecodeDetails.value[issuecode]?.publicationcode || "fr/JM",
+  );
+
+  for (const publicationcode of publicationcodes) {
+    await fetchPublishedEdges(publicationcode);
+  }
+
+  await coaStore.fetchPublicationNames(publicationcodes);
+  isCatalogReady.value = true;
+})();
 </script>
 <style scoped lang="scss">
 :deep(.carousel) {
@@ -306,8 +313,6 @@ await collectionStore.loadUser();
 }
 
 .card {
-  margin: 15px 0;
-
   .edge-preview {
     position: absolute;
     top: 0;

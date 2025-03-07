@@ -31,7 +31,7 @@ export default [
   },
   ...vueI18n.configs['flat/recommended'],
   ...compat.extends(
-    'plugin:vue/vue3-recommended',
+    'plugin:vue/recommended',
     'plugin:prettier-vue/recommended',
     'prettier',
     'plugin:@typescript-eslint/recommended',
@@ -58,7 +58,7 @@ export default [
       'vue/multi-word-component-names': 'off',
       'vue/no-deprecated-slot-attribute': 'off',
       'vue/no-dupe-keys': 'off',
-      'vue/no-setup-props-destructure': 'off',
+      'vue/no-setup-props-reactivity-loss': 'off',
       'vue/no-v-html': 'off',
       'vue/no-v-text-v-html-on-component': 'off',
       'vue/define-emits-declaration': 'error',

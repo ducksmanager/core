@@ -7,17 +7,26 @@
     :cover-ratio="coverRatio"
     :pages="indexation.pages"
   >
-    <template #page-overlay="{ index, page }">
-      <template v-if="hoveredEntryPageNumbers?.includes(index + 1)">
+    <template v-if="overlay" #page-overlay="{ index, page }">
+      <template
+        v-if="
+          overlay.type === 'story kind' &&
+          getEntryPages(indexation, overlay.entryId)
+            .map(({ id }) => id)
+            .includes(page.id)
+        "
+      >
         <div
-          :class="`overlay kind-${hoveredEntry!.acceptedStoryKind?.kind} striped`"
+          :class="`overlay kind-${getEntryFromPage(indexation, page.id)!.acceptedStoryKind?.kind} striped`"
         ></div>
       </template>
-      <template v-if="page.image">
+      <template v-if="overlay && page.image && visiblePages.has(page.id)">
         <template
           v-if="
-            showAiDetectionsOn?.type === 'page' &&
-            showAiDetectionsOn.id === page.id
+            overlay.type === 'panels' &&
+            (('pageId' in overlay && overlay.pageId === page.id) ||
+              ('entryId' in overlay &&
+                getEntryPages(indexation, overlay.entryId).includes(page)))
           "
         >
           <div
@@ -29,8 +38,8 @@
         </template>
         <template
           v-if="
-            showAiDetectionsOn?.type === 'entry' &&
-            getEntryPages(indexation, showAiDetectionsOn.id).includes(page)
+            overlay.type === 'ocr' &&
+            getEntryPages(indexation, overlay.entryId).includes(page)
           "
         >
           <div
@@ -47,10 +56,10 @@
   </Book>
 </template>
 
-  <script setup lang="ts">
+<script setup lang="ts">
 import { components as webComponents, type PageFlip } from "~web";
-import { getEntryPages } from "~dumili-utils/entryPages";
-import type { FullIndexation } from "~dumili-services/indexation/types";
+import { getEntryFromPage, getEntryPages } from "~dumili-utils/entryPages";
+import type { FullIndexation } from "~dumili-services/indexation";
 import type {
   aiKumikoResultPanel,
   aiOcrResultMatch,
@@ -65,13 +74,7 @@ const { indexation, firstPageDimensions } = defineProps<{
   firstPageDimensions: { width: number; height: number };
 }>();
 
-const {
-  hoveredEntry,
-  hoveredEntryPageNumbers,
-  currentPage,
-  visiblePages,
-  showAiDetectionsOn,
-} = storeToRefs(ui());
+const { currentPage, visiblePages, overlay } = storeToRefs(ui());
 
 const book = ref<PageFlip>();
 const isBookOpened = ref(true);

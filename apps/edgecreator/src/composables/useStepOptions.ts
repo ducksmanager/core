@@ -22,13 +22,13 @@ export const useStepOptions = (props: BaseProps, attributeKeys: string[]) => {
     () =>
       stepStore.getFilteredDimensions({
         issuecodes: [props.issuecode],
-      })[0]!.width,
+      })[0].width,
   );
   const height = computed(
     () =>
       stepStore.getFilteredDimensions({
         issuecodes: [props.issuecode],
-      })[0]!.height,
+      })[0].height,
   );
   const attributes = computed(() =>
     Object.keys(props.options!)
@@ -157,7 +157,7 @@ export const useStepOptions = (props: BaseProps, attributeKeys: string[]) => {
 
       .on("resizeend", () => document.body.classList.remove("interacting"));
 
-  stepStore.setOptionValues(props.options!);
+  // stepStore.setOptionValues(props.options!);
 
   return {
     zoom,

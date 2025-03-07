@@ -24,7 +24,7 @@ meta:
 </template>
 
 <script setup lang="ts">
-let ownedIssuecodes = $ref<{ [publicationcode: string]: string } | null>(null);
+let ownedIssuecodes = $ref<{ [publicationcode: string]: string }>();
 
 const {
   fetchCountryNames,

@@ -1,6 +1,7 @@
 import type { user } from "~prisma-schemas/schemas/dm";
 import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
-import { getHashedPassword, isValidEmail } from "~services/auth/util";
+
+import { getHashedPassword, isValidEmail } from "../../auth/util";
 
 type PrismaDmTransaction = Parameters<
   Parameters<typeof prismaDm.$transaction>[0]
@@ -17,8 +18,8 @@ export type ScopedErrorDetails = {
   selector: ScopedError["selector"];
 };
 
-export const getUser = async (id: number, transaction = prismaDm) =>
-  await transaction.user.findUniqueOrThrow({
+export const getUser = (id: number, transaction = prismaDm) =>
+  transaction.user.findUniqueOrThrow({
     omit: { password: true },
     where: { id },
   });

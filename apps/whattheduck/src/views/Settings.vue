@@ -49,14 +49,16 @@
           <img src="/icons/youtube.png" /><ion-text class="ion-padding-start">YouTube</ion-text>
         </ion-item>
       </ion-list>
-      <ion-item-group style="padding-top: 1rem">
-        <ion-item-divider>
-          <ion-label>{{ $t('Compte') }}</ion-label>
-        </ion-item-divider>
-      </ion-item-group>
-      <ion-button fill="outline" color="danger" style="display: flex" @click="deleteAccount">
-        {{ $t('Supprimer mon compte') }}
-      </ion-button>
+      <template v-if="!isOfflineMode">
+        <ion-item-group style="padding-top: 1rem">
+          <ion-item-divider>
+            <ion-label>{{ $t('Compte') }}</ion-label>
+          </ion-item-divider>
+        </ion-item-group>
+        <ion-button fill="outline" color="danger" style="display: flex" @click="deleteAccount">
+          {{ $t('Supprimer mon compte') }}
+        </ion-button>
+      </template>
     </ion-content>
   </ion-page>
 </template>
@@ -77,13 +79,13 @@ const facebookUrl = import.meta.env.VITE_FACEBOOK_URL;
 const instagramUrl = import.meta.env.VITE_INSTAGRAM_URL;
 const youtubeUrl = import.meta.env.VITE_YOUTUBE_URL;
 
-const currentAppVersion = ref<string | null>(null);
-const currentBundleVersion = ref<string | null>(null);
-const storeName = ref<'App Store' | 'Play Store' | null>(null);
+const currentAppVersion = ref<string>();
+const currentBundleVersion = ref<string>();
+const storeName = ref<'App Store' | 'Play Store'>();
 
 const storeUrl = computed(() => (storeName.value === 'Play Store' ? playStoreUrl : appStoreUrl));
 
-const { socket, token } = storeToRefs(app());
+const { socket, token, isOfflineMode } = storeToRefs(app());
 const router = useRouter();
 
 AppUpdate.getAppUpdateInfo()
@@ -103,7 +105,7 @@ AppUpdate.getAppUpdateInfo()
 
 const deleteAccount = async () => {
   if (confirm(t('Êtes-vous sûr(e) de vouloir supprimer votre compte ?'))) {
-    await socket.value!.collection.services.deleteUser();
+    await socket.value!.collection.deleteUser();
     token.value = null;
     await router.replace('/');
   }

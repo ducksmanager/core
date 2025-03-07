@@ -1,5 +1,3 @@
-import type { Socket } from "socket.io";
-
 import type { IssueSuggestion } from "~dm-types/IssueSuggestion";
 import { IssueSuggestionList } from "~dm-types/IssueSuggestionList";
 import type { StoryDetail } from "~dm-types/StoryDetail";
@@ -10,45 +8,47 @@ import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
 import type { Prisma as PrismaDmStats } from "~prisma-schemas/schemas/dm_stats";
 import { prismaClient as prismaDmStats } from "~prisma-schemas/schemas/dm_stats/client";
 
+import type { UserServices } from "../../index";
+
 export enum COUNTRY_CODE_OPTION {
   ALL = "ALL",
   countries_to_notify = "countries_to_notify",
 }
 
-import type Events from "./types";
-export default (socket: Socket<Events>) => {
-  socket.on(
-    "getSuggestionsForCountry",
-    async (countrycode, sincePreviousVisit, limit, callback) => {
-      const user = socket.data.user;
-      const since =
-        sincePreviousVisit === "since_previous_visit"
-          ? (await prismaDm.user.findUnique({ where: { id: user!.id } }))!
-              .previousAccess
-          : null;
+export default ({ _socket }: UserServices) => ({
+  getSuggestionsForCountry: async (
+    countrycode: string,
+    sincePreviousVisit: "since_previous_visit" | "_",
+    limit: number,
+  ) => {
+    const user = _socket.data.user;
+    const since =
+      sincePreviousVisit === "since_previous_visit"
+        ? (await prismaDm.user.findUnique({ where: { id: user.id } }))!
+            .previousAccess
+        : null;
 
-      const results: Partial<Parameters<typeof callback>[0]> = {};
-
-      for (const sort of ["oldestdate", "score"] as const) {
-        const { suggestionsPerUser, authors, storyDetails } =
-          await getSuggestions(since, countrycode, sort, user!.id, limit, true);
-
-        const suggestionsForUser =
-          suggestionsPerUser[user!.id] || new IssueSuggestionList();
-
-        results[sort] = {
-          issues: suggestionsForUser.issues,
-          minScore: suggestionsForUser.minScore,
-          maxScore: suggestionsForUser.maxScore,
-          authors,
-          storyDetails,
-        };
-      }
-
-      callback(results as Parameters<typeof callback>[0]);
-    },
-  );
-};
+    return Promise.all(
+      (["oldestdate", "score"] as const).map((sort) =>
+        getSuggestions(since, countrycode, sort, user.id, limit, true).then(
+          (results) => {
+            const { suggestionsPerUser, authors, storyDetails } = results;
+            const suggestionsForUser =
+              suggestionsPerUser[user.id] || new IssueSuggestionList();
+            return {
+              sort,
+              issues: suggestionsForUser.issues,
+              minScore: suggestionsForUser.minScore,
+              maxScore: suggestionsForUser.maxScore,
+              authors,
+              storyDetails,
+            };
+          },
+        ),
+      ),
+    ).then((results) => results.groupBy("sort"));
+  },
+});
 
 type SuggestedPublications = {
   select: {

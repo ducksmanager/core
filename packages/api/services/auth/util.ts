@@ -14,14 +14,15 @@ type SocketWithUser = Socket<
 >;
 
 const EMAIL_REGEX =
-  /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,24}))$/;
+  /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,24}))$/;
 
 export const isValidEmail = (email: string) => EMAIL_REGEX.test(email);
 
-export const generateAccessToken = (payload: SessionUser) =>
-  jwt.sign(payload, process.env.TOKEN_SECRET!, {
-    expiresIn: `${60 * 24 * 14}m`,
-  });
+export const generateAccessToken = (payload: Omit<SessionUser, "token">) =>
+  jwt.sign(
+    { exp: Math.floor(Date.now() / 1000) + 60 * 60 * 24 * 14, data: payload },
+    process.env.TOKEN_SECRET!,
+  );
 export const loginAs = async (user: user, hashedPassword: string) =>
   generateAccessToken({
     id: user.id,
@@ -55,12 +56,30 @@ const AuthMiddleware = (
   jwt.verify(
     token,
     process.env.TOKEN_SECRET as string,
-    (err: unknown, user: unknown) => {
+    (err: unknown, payload: unknown) => {
       if (required && err) {
         next(new Error(`Invalid token: ${err}`));
       } else {
+        const user = (
+          payload as { data?: Omit<SessionUser, "token"> } | undefined
+        )?.data;
         if (user) {
-          socket.data.user = user as SessionUser;
+          socket.data.user = { ...user, token } as SessionUser;
+        } else if (
+          typeof payload === "object" &&
+          payload !== null &&
+          "username" in payload
+        ) {
+          socket.data.user = {
+            ...(payload as Omit<SessionUser, "token">),
+            token,
+          } as SessionUser;
+        } else {
+          if (required) {
+            console.error("There is no user in the payload:", payload);
+            next(new Error(`Invalid payload: ${payload}`));
+            return;
+          }
         }
         next();
       }
@@ -69,14 +88,14 @@ const AuthMiddleware = (
 };
 
 export const RequiredAuthMiddleware = (
-  socket: Socket,
+  { _socket }: { _socket: Socket },
   next: (error?: Error) => void,
-) => AuthMiddleware(socket, next, true);
+) => AuthMiddleware(_socket, next, true);
 
 export const OptionalAuthMiddleware = (
-  socket: Socket,
+  { _socket }: { _socket: Socket },
   next: (error?: Error) => void,
-) => AuthMiddleware(socket, next, false);
+) => AuthMiddleware(_socket, next, false);
 
 export const UserIsEdgeCreatorEditorAuthMiddleware = (
   socket: SocketWithUser,
@@ -93,12 +112,12 @@ export const UserIsEdgeCreatorEditorAuthMiddleware = (
 };
 
 export const UserIsAdminMiddleware = (
-  socket: Socket,
+  { _socket }: { _socket: Socket },
   next: (error?: Error) => void,
 ) => {
   if (
-    !socket.data.user ||
-    !["Admin"].includes(socket.data.user.privileges?.["DucksManager"])
+    !_socket.data.user ||
+    !["Admin"].includes(_socket.data.user.privileges?.["DucksManager"])
   ) {
     next(new Error("Unauthorized"));
     return;

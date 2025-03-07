@@ -66,7 +66,7 @@ meta:
 <script setup lang="ts">
 import Cookies from "js-cookie";
 
-import type { ScopedError } from "~socket.io-services";
+import type { ScopedError } from "socket-call-client";
 
 const { loadUser } = collection();
 const { user } = storeToRefs(collection());
@@ -76,16 +76,14 @@ let username = $ref(""),
   email = $ref(""),
   password = $ref(""),
   password2 = $ref(""),
-  error = $ref<ScopedError | null | undefined>(undefined);
+  error = $ref<ScopedError | null>();
 
 const { t: $t } = useI18n();
 
-const {
-  auth: { services: authServices },
-} = inject(socketInjectionKey)!;
+const { auth: authEvents } = inject(socketInjectionKey)!;
 
 const signup = async () => {
-  const response = await authServices.signup({
+  const response = await authEvents.signup({
     username,
     password,
     email,

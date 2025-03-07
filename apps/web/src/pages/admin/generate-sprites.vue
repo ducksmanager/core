@@ -8,10 +8,8 @@ meta:
 </template>
 
 <script setup lang="ts">
-const {
-  edgeCreator: { services: edgeCreatorServices },
-} = inject(socketInjectionKey)!;
+const { edgeCreator: edgeCreatorEvents } = inject(socketInjectionKey)!;
 const generateSprites = async () => {
-  await edgeCreatorServices.uploadEdges();
+  await edgeCreatorEvents.uploadEdges();
 };
 </script>

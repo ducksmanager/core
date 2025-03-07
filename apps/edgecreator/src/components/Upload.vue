@@ -14,22 +14,19 @@ import { useI18n } from "vue-i18n";
 // import enTranslation from "@uppy/locales/lib/en_US";
 import { main } from "~/stores/main";
 
-const props = withDefaults(
-  defineProps<{
-    withProgress?: boolean;
-    photo: boolean;
-    multiple?: boolean;
-    edge: { issuenumber: string } | null;
-  }>(),
-  {
-    withProgress: true,
-    photo: false,
-    multiple: false,
-    edge: null,
-  },
-);
+const {
+  withProgress = true,
+  photo = false,
+  multiple = false,
+  edge = null,
+} = defineProps<{
+  withProgress?: boolean;
+  photo: boolean;
+  multiple?: boolean;
+  edge: { issuenumber: string } | null;
+}>();
 
-const { upload: { services: uploadServices } } = inject(edgecreatorSocketInjectionKey)!;
+const { upload: uploadServices } = inject(edgecreatorSocketInjectionKey)!;
 
 const mainStore = main();
 const { locale, t: $t } = useI18n();
@@ -55,16 +52,16 @@ const uppy = Uppy({
   // locale: uppyTranslations[i18n.locale.value],
   allowMultipleUploads: false,
   meta: {
-    photo: props.photo,
-    multiple: props.multiple,
-    edge: JSON.stringify(props.edge),
+    photo: photo,
+    multiple: multiple,
+    edge: JSON.stringify(edge),
     locale: locale.value === "fr" ? "fr-FR" : "en-US",
   },
   restrictions: {
     maxFileSize: 3 * 1024 * 1024,
     minNumberOfFiles: 1,
-    maxNumberOfFiles: props.photo ? 1 : 10,
-    allowedFileTypes: props.photo ? ["image/jpg", "image/jpeg"] : ["image/png"],
+    maxNumberOfFiles: photo ? 1 : 10,
+    allowedFileTypes: photo ? ["image/jpg", "image/jpeg"] : ["image/png"],
   },
 });
 
@@ -83,23 +80,24 @@ onMounted(() => {
       const fileArrayBuffer = await file.data.arrayBuffer();
       const results = await uploadServices.uploadFromBase64({
         issuecode: mainStore.issuecodes[0],
-        data: arrayBufferToBase64(fileArrayBuffer)
-
+        data: arrayBufferToBase64(fileArrayBuffer),
+        isMultiple: false,
+        fileName: file.name,
       });
-      if ('error' in results) {
+      if ("error" in results) {
         window.alert(results.errorDetails);
-        return;
-      }
-      else {
-        if (props.photo && !props.multiple) {
-          mainStore.photoUrls[props.edge!.issuenumber] = results.fileName;
-        } else {
-          mainStore.loadItems({
-            itemType: props.photo ? "photos" : "elements",
-          });
+      } else {
+        if (photo && !multiple) {
+          mainStore.photoUrls[edge!.issuenumber] = (
+            results as { fileName: string }
+          ).fileName;
         }
+
+        mainStore.loadItems({
+          itemType: photo ? "photos" : "elements",
+        });
       }
-    })
+    });
 });
 </script>
 

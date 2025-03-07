@@ -1,7 +1,9 @@
+import type { EventOutput, SuccessfulEventOutput } from "socket-call-client";
 import type { ShallowRef } from "vue";
 
-import type CollectionServices from "~dm-services/collection/types";
-import type StatsServices from "~dm-services/stats/types";
+import type { ClientEvents as CollectionServices } from "~dm-services/collection";
+import type { SubscriptionTransformedStringDates } from "~dm-services/collection/subscriptions";
+import type { ClientEvents as StatsServices } from "~dm-services/stats";
 import type {
   CollectionUpdateMultipleIssues,
   CollectionUpdateSingleIssue,
@@ -12,7 +14,6 @@ import type {
   purchase,
   subscription,
 } from "~prisma-schemas/schemas/dm";
-import type { EventReturnType } from "~socket.io-services";
 
 import useCollection from "../composables/useCollection";
 import { socketInjectionKey } from "../composables/useDmSocket";
@@ -25,49 +26,38 @@ export type IssueWithPublicationcodeOptionalId = Omit<
   id: number | null;
 };
 
-export type SubscriptionTransformedStringDates = Omit<
-  subscription,
-  "startDate" | "endDate"
-> & {
-  startDate: string;
-  endDate: string;
-};
-
 export type purchaseWithStringDate = Omit<purchase, "date"> & {
   date: string;
 };
 
 export const collection = defineStore("collection", () => {
   const {
-    collection: { services: collectionServices },
-    stats: { services: statsServices },
-    auth: { services: authServices },
+    collection: collectionEvents,
+    stats: statsEvents,
+    auth: authEvents,
     options: socketOptions,
   } = inject(socketInjectionKey)!;
 
   const { bookcaseWithPopularities } = storeToRefs(bookcase());
 
-  const issues = shallowRef<
-    EventReturnType<CollectionServices["getIssues"]>["issues"] | null
-  >(null);
+  const issues =
+    shallowRef<EventOutput<CollectionServices, "getIssues">["issues"]>();
 
   const collectionUtils = useCollection(
       issues as ShallowRef<(issue & { issuecode: string })[]>,
     ),
-    watchedPublicationsWithSales = shallowRef<string[] | null>(null),
-    purchases = shallowRef<purchase[] | null>(null),
-    watchedAuthors = shallowRef<authorUser[] | null>(null),
-    marketplaceContactMethods = ref<string[] | null>(null),
-    suggestions = shallowRef<EventReturnType<
-      StatsServices["getSuggestionsForCountry"]
-    > | null>(null),
-    subscriptions = shallowRef<subscription[] | null>(null),
+    watchedPublicationsWithSales = shallowRef<string[]>(),
+    purchases = shallowRef<purchase[]>(),
+    watchedAuthors = shallowRef<authorUser[]>(),
+    marketplaceContactMethods = ref<string[]>(),
+    suggestions =
+      shallowRef<EventOutput<StatsServices, "getSuggestionsForCountry">>(),
+    subscriptions = shallowRef<subscription[]>(),
     popularIssuesInCollection = ref<{
       [issuecode: string]: number;
-    } | null>(null),
-    lastPublishedEdgesForCurrentUser = shallowRef<EventReturnType<
-      CollectionServices["getLastPublishedEdges"]
-    > | null>(null),
+    }>(),
+    lastPublishedEdgesForCurrentUser =
+      shallowRef<EventOutput<CollectionServices, "getLastPublishedEdges">>(),
     isLoadingUser = ref(false),
     isLoadingCollection = ref(false),
     isLoadingWatchedPublicationsWithSales = ref(false),
@@ -75,30 +65,27 @@ export const collection = defineStore("collection", () => {
     isLoadingPurchases = ref(false),
     isLoadingSuggestions = ref(false),
     isLoadingSubscriptions = ref(false),
-    coaIssueCountsPerCountrycode = shallowRef<
-      | EventReturnType<CollectionServices["getIssues"]>["countByCountrycode"]
-      | null
-    >(null),
-    coaIssueCountsByPublicationcode = shallowRef<
-      | EventReturnType<
-          CollectionServices["getIssues"]
-        >["countByPublicationcode"]
-      | null
-    >(null),
+    coaIssueCountsPerCountrycode =
+      shallowRef<
+        EventOutput<CollectionServices, "getIssues">["countByCountrycode"]
+      >(),
+    coaIssueCountsByPublicationcode =
+      shallowRef<
+        EventOutput<CollectionServices, "getIssues">["countByPublicationcode"]
+      >(),
     user = shallowRef<
-      EventReturnType<CollectionServices["getUser"]> | undefined | null
-    >(undefined),
-    userPermissions = shallowRef<
-      EventReturnType<CollectionServices["getUserPermissions"]> | undefined
-    >(undefined),
-    previousVisit = ref<Date | null>(null),
+      SuccessfulEventOutput<CollectionServices, "getUser"> | undefined | null
+    >(),
+    userPermissions =
+      shallowRef<EventOutput<CollectionServices, "getUserPermissions">>(),
+    previousVisit = ref<Date>(),
     publicationUrlRoot = computed(() => "/collection/show"),
     purchasesById = computed(() => purchases.value?.groupBy("id")),
     copiesPerIssuecode = computed(() =>
       issues.value?.groupBy("issuecode", "[]"),
     ),
     hasSuggestions = computed(
-      () => Object.keys(suggestions.value?.oldestdate.issues || {}).length,
+      () => Object.keys(suggestions.value?.oldestdate || {}).length,
     ),
     issuecodesPerPublication = computed(
       () => issues.value?.groupBy("publicationcode", "[]") || {},
@@ -119,8 +106,8 @@ export const collection = defineStore("collection", () => {
         Object.entries(totalPerPublicationUniqueIssuecodes.value).sort(
           ([publicationcode1], [publicationcode2]) =>
             Math.sign(
-              totalPerPublicationUniqueIssuecodes.value[publicationcode2]! -
-                totalPerPublicationUniqueIssuecodes.value[publicationcode1]!,
+              totalPerPublicationUniqueIssuecodes.value[publicationcode2] -
+                totalPerPublicationUniqueIssuecodes.value[publicationcode1],
             ),
         ),
     ),
@@ -143,31 +130,31 @@ export const collection = defineStore("collection", () => {
           ? String(user.value.discordId)
           : undefined,
         presentationText: user.value.presentationText || "",
-        email: user.value.email!,
+        email: user.value.email,
         marketplaceAcceptsExchanges:
           user.value.marketplaceAcceptsExchanges || false,
       };
     }),
     updateCollectionSingleIssue = async (data: CollectionUpdateSingleIssue) => {
-      await collectionServices.addOrChangeCopies(data);
+      await collectionEvents.addOrChangeCopies(data);
       await loadCollection(true);
     },
     updateCollectionMultipleIssues = async (
       data: CollectionUpdateMultipleIssues,
     ) => {
-      await collectionServices.addOrChangeIssues(data);
+      await collectionEvents.addOrChangeIssues(data);
       await loadCollection(true);
     },
     createPurchase = async (date: string, description: string) => {
-      await collectionServices.createPurchase(date, description);
+      await collectionEvents.createPurchase(date, description);
       await loadPurchases(true);
     },
     deletePurchase = async (id: number) => {
-      await collectionServices.deletePurchase(id);
+      await collectionEvents.deletePurchase(id);
       await loadPurchases(true);
     },
     loadPreviousVisit = async () => {
-      const result = await collectionServices.getLastVisit();
+      const result = await collectionEvents.getLastVisit();
       if (typeof result === "object" && result?.error) {
         console.error(result.error);
       } else if (result) {
@@ -183,15 +170,17 @@ export const collection = defineStore("collection", () => {
           countByCountrycode: coaIssueCountsPerCountrycode.value,
           countByPublicationcode: coaIssueCountsByPublicationcode.value,
           publicationNames,
-        } = await collectionServices.getIssues());
+        } = await collectionEvents.getIssues());
         coa().addPublicationNames(publicationNames);
         Object.assign(
           coa().issuecodeDetails,
-          issues.value.map(({ issuecode, publicationcode, issuenumber }) => ({
-            issuecode,
-            publicationcode,
-            issuenumber,
-          })),
+          issues.value
+            .map(({ issuecode, publicationcode, issuenumber }) => ({
+              issuecode,
+              publicationcode,
+              issuenumber,
+            }))
+            .groupBy("issuecode"),
         );
       }
 
@@ -210,7 +199,7 @@ export const collection = defineStore("collection", () => {
     loadPurchases = async (afterUpdate = false) => {
       if (afterUpdate || (!isLoadingPurchases.value && !purchases.value)) {
         isLoadingPurchases.value = true;
-        purchases.value = (await collectionServices.getPurchases()).map(
+        purchases.value = (await collectionEvents.getPurchases()).map(
           (purchase) => ({
             ...purchase,
             date: new Date(purchase.date),
@@ -226,7 +215,7 @@ export const collection = defineStore("collection", () => {
           !watchedPublicationsWithSales.value)
       ) {
         isLoadingWatchedPublicationsWithSales.value = true;
-        watchedPublicationsWithSales.value = await collectionServices.getOption(
+        watchedPublicationsWithSales.value = await collectionEvents.getOption(
           "sales_notification_publications",
         );
         isLoadingWatchedPublicationsWithSales.value = false;
@@ -239,16 +228,16 @@ export const collection = defineStore("collection", () => {
           !marketplaceContactMethods.value)
       ) {
         isLoadingMarketplaceContactMethods.value = true;
-        marketplaceContactMethods.value = await collectionServices.getOption(
+        marketplaceContactMethods.value = await collectionEvents.getOption(
           "marketplace_contact_methods",
         );
         isLoadingMarketplaceContactMethods.value = false;
       }
     },
     updateMarketplaceContactMethods = async () =>
-      await collectionServices.getOption("marketplace_contact_methods"),
+      await collectionEvents.getOption("marketplace_contact_methods"),
     updateWatchedPublicationsWithSales = async () =>
-      await collectionServices.setOption(
+      await collectionEvents.setOption(
         "sales_notification_publications",
         watchedPublicationsWithSales.value!,
       ),
@@ -261,7 +250,7 @@ export const collection = defineStore("collection", () => {
     }) => {
       if (!isLoadingSuggestions.value) {
         isLoadingSuggestions.value = true;
-        suggestions.value = await statsServices.getSuggestionsForCountry(
+        suggestions.value = await statsEvents.getSuggestionsForCountry(
           countryCode || "ALL",
           sinceLastVisit ? "since_previous_visit" : "_",
           sinceLastVisit ? 100 : 20,
@@ -275,7 +264,7 @@ export const collection = defineStore("collection", () => {
         (!isLoadingSubscriptions.value && !subscriptions.value)
       ) {
         isLoadingSubscriptions.value = true;
-        subscriptions.value = (await collectionServices.getSubscriptions()).map(
+        subscriptions.value = (await collectionEvents.getSubscriptions()).map(
           (subscription: SubscriptionTransformedStringDates) => ({
             ...subscription,
             startDate: new Date(Date.parse(subscription.startDate)),
@@ -288,22 +277,18 @@ export const collection = defineStore("collection", () => {
     loadPopularIssuesInCollection = async () => {
       if (!popularIssuesInCollection.value) {
         popularIssuesInCollection.value =
-          await collectionServices.getCollectionPopularity();
+          await collectionEvents.getCollectionPopularity();
       }
     },
     loadUserIssueQuotations = async () => {
-      const data = await collectionServices.getCollectionQuotations();
-
-      if (data.quotations) {
-        coa().addIssueQuotations(data.quotations);
-      } else {
-        console.error(data.error);
-      }
+      coa().addIssueQuotations(
+        await collectionEvents.getCollectionQuotations(),
+      );
     },
     loadLastPublishedEdgesForCurrentUser = async () => {
       if (!lastPublishedEdgesForCurrentUser.value) {
         lastPublishedEdgesForCurrentUser.value =
-          await collectionServices.getLastPublishedEdges();
+          await collectionEvents.getLastPublishedEdges();
       }
     },
     login = async (
@@ -312,14 +297,14 @@ export const collection = defineStore("collection", () => {
       onSuccess: (token: string) => void,
       onError: (e: string) => void,
     ) => {
-      const response = await authServices.login({
+      const response = await authEvents.login({
         username,
         password,
       });
       if (typeof response !== "string" && "error" in response) {
-        onError(response.error!);
+        onError(response.error);
       } else {
-        onSuccess(response as string);
+        onSuccess(response);
       }
     },
     loadUser = async (afterUpdate = false) => {
@@ -329,18 +314,21 @@ export const collection = defineStore("collection", () => {
       }
       if (!isLoadingUser.value && (afterUpdate || !user.value)) {
         isLoadingUser.value = true;
-        const response = await collectionServices.getUser();
-        if (typeof response === "object" && "error" in response) {
-          socketOptions.session.clearSession();
-          user.value = null;
-        } else {
-          user.value = response;
+        try {
+          const response = await collectionEvents.getUser();
+          if (typeof response === "object" && "error" in response) {
+            socketOptions.session.clearSession();
+            user.value = null;
+          } else {
+            user.value = response;
+          }
+        } finally {
+          isLoadingUser.value = false;
         }
-        isLoadingUser.value = false;
       }
     },
     loadUserPermissions = async () => {
-      userPermissions.value = await collectionServices.getUserPermissions();
+      userPermissions.value = await collectionEvents.getUserPermissions();
     },
     hasRole = (thisPrivilege: string) =>
       userPermissions.value?.some(

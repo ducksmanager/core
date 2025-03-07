@@ -48,7 +48,6 @@ svg {
   &.button {
     background: lightgrey;
     border-radius: 10px;
-    opacity: 0.5;
     cursor: help;
   }
 

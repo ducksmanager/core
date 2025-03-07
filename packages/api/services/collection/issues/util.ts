@@ -31,9 +31,7 @@ export const checkPurchaseIdsBelongToUser = async (
   const checkedPromiseIds: (number | null)[] = [];
   for (const purchaseId of purchaseIds) {
     checkedPromiseIds.push(
-      (await getUserPurchase(purchaseId as number, userId))
-        ? (purchaseId as number)
-        : null,
+      (await getUserPurchase(purchaseId, userId)) ? purchaseId : null,
     );
   }
   return checkedPromiseIds;

@@ -5,16 +5,18 @@
 <script setup lang="ts">
 import Cookies from "js-cookie";
 
-import { buildWebStorage } from "~socket.io-client-services";
+import { buildWebStorage } from "socket-call-client";
 
 import { socketInjectionKey } from "./composables/useDmSocket";
 let isReady = $ref(false);
 
 const socket = useDmSocket({
   cacheStorage: buildWebStorage(sessionStorage),
-  onConnected: () => {
+  onConnected: (namespace) => {
     isReady = true;
-    collection().loadUser();
+    if (namespace === "/collection") {
+      collection().loadUser();
+    }
   },
   onConnectError: (e) => {
     console.error(e);
@@ -29,7 +31,7 @@ const socket = useDmSocket({
 
 getCurrentInstance()!.appContext.app.provide(socketInjectionKey, socket);
 
-socket.app.connect();
+socket.app._connect();
 </script>
 
 <style lang="scss">

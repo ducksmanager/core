@@ -133,7 +133,7 @@
       <Book
         v-if="currentEdgeOpened"
         :issuecode="currentEdgeOpened.issuecode"
-        @close-book="currentEdgeOpened = null"
+        @close-book="currentEdgeOpened = undefined"
       />
       <Bookcase
         v-if="bookcaseOptions && sortedBookcase?.length"
@@ -180,7 +180,8 @@ const {
 } = storeToRefs(collection());
 
 const { fetchPublicationNames, fetchIssuecodesByPublicationcode } = coa();
-const { publicationNames, issuecodesByPublicationcode } = storeToRefs(coa());
+const { publicationNames, issuecodesByPublicationcode, issuecodeDetails } =
+  storeToRefs(coa());
 
 const { loadBookcase, loadBookcaseOptions, loadBookcaseOrder } = bookcase();
 const {
@@ -195,12 +196,12 @@ const {
 } = storeToRefs(bookcase());
 
 let edgesUsingSprites = $ref<{ [edgeId: number]: string }>({});
-const currentEdgeOpened = $shallowRef<BookcaseEdgeWithPopularity | null>(null);
-let currentEdgeHighlighted = $ref<number | null>(null);
+const currentEdgeOpened = $shallowRef<BookcaseEdgeWithPopularity>();
+let currentEdgeHighlighted = $ref<number>();
 let hasPublicationNames = $ref(false);
 let hasIssuecodes = $ref(false);
 const showShareButtons = $ref(false);
-let userPoints = $ref<{ [contribution: string]: number } | null>(null);
+let userPoints = $ref<{ [contribution: string]: number }>();
 
 const inputBookcaseUsername = $computed(
   () => (route.params.username as string) || user.value?.username || null,
@@ -241,13 +242,11 @@ const sortedBookcase = $computed(
     bookcaseOrder.value &&
     hasIssuecodes &&
     [...bookcaseWithPopularities.value].sort(
-      (
-        { publicationcode: publicationcode1, issuecode: issuecode1 },
-        { publicationcode: publicationcode2, issuecode: issuecode2 },
-      ) => {
-        if (!issuecodesByPublicationcode.value[publicationcode1]) return -1;
-
-        if (!issuecodesByPublicationcode.value[publicationcode2]) return 1;
+      ({ issuecode: issuecode1 }, { issuecode: issuecode2 }) => {
+        const publicationcode1 =
+          issuecodeDetails.value[issuecode1]?.publicationcode;
+        const publicationcode2 =
+          issuecodeDetails.value[issuecode2]?.publicationcode;
 
         const publicationOrderSign = Math.sign(
           bookcaseOrder.value!.indexOf(publicationcode1) -
@@ -268,10 +267,9 @@ const sortedBookcase = $computed(
     ),
 );
 const highlightIssue = (issue: IssueWithIssuecodeOnly) => {
-  currentEdgeHighlighted =
-    thisBookcase.value?.find(
-      (issueInCollection) => issue.issuecode === issueInCollection.issuecode,
-    )?.id || null;
+  currentEdgeHighlighted = thisBookcase.value?.find(
+    (issueInCollection) => issue.issuecode === issueInCollection.issuecode,
+  )?.id;
 };
 
 watch(

@@ -4,49 +4,66 @@
     class="table-of-contents d-flex w-100 h-100 m-0 p-0"
     body-class="flex-grow-1 w-100 h-100"
     header-class="position-relative p-0"
-    @mouseleave="hoveredEntry = null"
+    @mouseleave="hoveredEntry = undefined"
   >
     <template #header>
       <IssueSuggestionModal />
       <IssueSuggestionList />
       <b-dropdown
-        v-if="indexation.acceptedIssueSuggestion"
+        :auto-close="false"
         variant="light"
         class="position-absolute h-100 end-0 d-flex"
         style="z-index: 1030"
       >
         <template #button-content>{{ $t("Méta-données") }}</template>
         <b-form @submit.prevent="updateIndexation">
+          <b-alert
+            v-if="indexation.acceptedIssueSuggestion === null"
+            variant="warning"
+            :model-value="true"
+            style="white-space: pre"
+            >{{
+              $t(
+                "Vous devez indiquer les caractéristiques du numéro\navant de pouvoir modifier certaines de ses méta-données.",
+              )
+            }}</b-alert
+          >
+          <b-dropdown-item
+            >{{ $t("Date de publication") }}
+            <input
+              :value="(indexationEdit.releaseDate as unknown as string)?.split('T')[0]"
+              type="date"
+              v-bind="getInputProps()"
+              @input="
+                if ($event.target) {
+                  indexationEdit.releaseDate = (($event.target as HTMLInputElement).value);
+                }
+              "
+              @click.stop="() => {}"
+          /></b-dropdown-item>
           <b-dropdown-item
             >{{ $t("Prix") }}
             <input
-              v-model="indexation.price"
+              v-model="indexationEdit.price"
               type="text"
+              v-bind="getInputProps()"
               @click.stop="() => {}"
           /></b-dropdown-item>
           <b-dropdown-item
             >{{ $t("Nombre de pages") }}
             <input
-              :value="numberOfPages"
+              v-model.number="indexationEdit.numberOfPages"
               type="number"
               min="4"
               max="996"
               step="2"
-              @click.stop="updateNumberOfPages"
-              @blur.stop="updateNumberOfPages"
+              @click.stop="() => {}"
           /></b-dropdown-item>
           <b-dropdown-item>
             <b-button type="submit" variant="primary">{{ $t("OK") }}</b-button>
           </b-dropdown-item>
         </b-form>
       </b-dropdown>
-      <!-- <div>
-        <ai-tooltip
-          id="ai-issue-suggestion"
-          :status="issueAiSuggestion?.issuecode ? 'success' : 'idle'"
-          :on-click-rerun="() => runKumikoOnPage(1)"
-        /></div
-    > -->
     </template>
 
     <b-row
@@ -65,25 +82,27 @@
       </b-col>
       <b-col :cols="11" class="position-relative p-0">
         <template
-          v-for="(_, idx) in indexation.entries"
+          v-for="(entry, idx) in indexation.entries"
           :key="indexation.entries[idx].id"
         >
+          <div class="position-absolute w-100 d-flex justify-content-center">
+            <b-button
+              v-if="showCreateEntryAfter(idx)"
+              class="create-entry fw-bold position-absolute mx-md-n5 d-flex justify-content-center align-items-center"
+              :style="{
+                top: `${pageHeight * (entry.position + entry.entirepages - 1)}px`,
+              }"
+              variant="success"
+              @click="createEntry(entry.position + entry.entirepages)"
+              >{{ $t("Ajouter une entrée") }}</b-button
+            >
+          </div>
           <TableOfContentsEntry
             v-model="indexation.entries[idx]"
             @on-entry-resize-stop="($event) => onEntryResizeStop(idx, $event)"
+            @on-entry-drag-stop="($event) => onEntryDragStop(idx, $event)"
           />
         </template>
-
-        <div
-          class="position-absolute w-100 h-100 d-flex justify-content-center"
-        >
-          <b-button
-            class="create-entry fw-bold position-absolute mt-n1 d-flex justify-content-center align-items-center"
-            variant="info"
-            @click="createEntry"
-            >{{ $t("Ajouter une entrée") }}</b-button
-          >
-        </div>
       </b-col>
     </b-row>
   </b-card>
@@ -94,39 +113,55 @@ import { dumiliSocketInjectionKey } from "~/composables/useDumiliSocket";
 import { getEntryFromPage } from "~dumili-utils/entryPages";
 import { suggestions } from "~/stores/suggestions";
 import { ui } from "~/stores/ui";
-import type { FullIndexation } from "~dumili-services/indexation/types";
+import type { FullIndexation } from "~dumili-services/indexation";
 import TableOfContentsEntry from "./TableOfContentsEntry.vue";
 
 const { indexationSocket } = inject(dumiliSocketInjectionKey)!;
 
-const { loadIndexation } = suggestions();
 const { hoveredEntry, currentEntry } = storeToRefs(ui());
 const indexation = storeToRefs(suggestions()).indexation as Ref<FullIndexation>;
-const { currentPage, pageHeight } = storeToRefs(ui());
+const indexationEdit = ref() as Ref<
+  Pick<FullIndexation, "price" | "releaseDate"> & {
+    numberOfPages: number;
+  }
+>;
 
+watch(
+  indexation,
+  () => {
+    const { price, releaseDate } = indexation.value;
+    indexationEdit.value = {
+      numberOfPages: indexation.value.pages.length,
+      price,
+      releaseDate,
+    };
+  },
+  { immediate: true },
+);
+
+const { currentPage, pageHeight } = storeToRefs(ui());
 const { t: $t } = useI18n();
 
-const numberOfPages = computed({
-  get: () => indexation.value.pages.length,
-  set: async (value) => {
-    if (value < numberOfPages.value) {
-      if (
-        !confirm(
-          $t(
-            "Vous êtes sur le point de supprimer les {numberOfPagesToDelete} dernières pages de l'indexation. Êtes-vous sûr(e) ?",
-            { numberOfPagesToDelete: numberOfPages.value - value },
-          ),
-        )
-      ) {
-        numberOfPages.value = indexation.value.pages.length;
-        return;
-      }
-    }
-  },
+const hasAcceptedIssueSuggestion = computed(
+  () => indexation.value.acceptedIssueSuggestion !== null,
+);
+
+const getInputProps = () => ({
+  disabled: !hasAcceptedIssueSuggestion.value,
+  style: hasAcceptedIssueSuggestion.value
+    ? undefined
+    : { cursor: "not-allowed" },
 });
 
-const updateNumberOfPages = (event: Event) => {
-  numberOfPages.value = parseInt((event.target as HTMLInputElement).value);
+const showCreateEntryAfter = (entryIdx: number) => {
+  const entry = indexation.value.entries[entryIdx];
+  const nextEntry = indexation.value.entries[entryIdx + 1];
+  return (
+    (nextEntry && entry.position + entry.entirepages < nextEntry.position) ||
+    (!nextEntry &&
+      entry.position + entry.entirepages - 1 <
+        indexationEdit.value.numberOfPages)
+  );
 };
 
 const onEntryResizeStop = (entryIdx: number, height: number) => {
@@ -136,32 +171,43 @@ const onEntryResizeStop = (entryIdx: number, height: number) => {
   );
 };
 
-const createEntry = async () => {
-  await indexationSocket.value!.services.createEntry();
-  return loadIndexation();
+const onEntryDragStop = (entryIdx: number, y: number) => {
+  indexation.value!.entries[entryIdx].position = 1 + y / pageHeight.value;
 };
 
+const createEntry = (position: number) =>
+  indexationSocket.value!.createEntry(position);
+
 const updateIndexation = () => {
-  const { price } = indexation.value;
-  indexationSocket.value!.services.updateIndexation({
-    price,
-    numberOfPages: numberOfPages.value,
-  });
+  if (indexationEdit.value.numberOfPages < indexation.value.pages.length) {
+    if (
+      !confirm(
+        $t(
+          "Vous êtes sur le point de supprimer les {numberOfPagesToDelete} dernières pages de l'indexation. Êtes-vous sûr(e) ?",
+          {
+            numberOfPagesToDelete:
+              indexation.value.pages.length -
+              indexationEdit.value.numberOfPages,
+          },
+        ),
+      )
+    ) {
+      indexationEdit.value.numberOfPages = indexation.value.pages.length;
+      return;
+    }
+  }
+  indexationSocket.value!.updateIndexation(indexationEdit.value);
 };
 
 watch(
   currentPage,
   (value) => {
     if (indexation.value && value !== undefined) {
-      currentEntry.value = indexation.value.entries.find(
-        ({ id }) =>
-          id ===
-          getEntryFromPage(
-            indexation.value,
-            indexation.value.pages.find(
-              ({ pageNumber }) => pageNumber === value + 1,
-            )!.id,
-          )!.id,
+      currentEntry.value = getEntryFromPage(
+        indexation.value,
+        indexation.value.pages.find(
+          ({ pageNumber }) => pageNumber === value + 1,
+        )!.id,
       );
     }
   },
@@ -230,6 +276,6 @@ watch(
 
 :deep(.resizable .handle) {
   bottom: 0;
-  z-index: 9999;
+  z-index: 1021 !important;
 }
 </style>

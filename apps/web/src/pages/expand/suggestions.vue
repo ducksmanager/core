@@ -97,7 +97,9 @@ const watchedAuthorsWithNotation = $computed(() =>
 watch(
   ratings,
   async (newValue) => {
-    if (newValue?.length) await fetchCountryNames();
+    if (newValue?.length) {
+      await fetchCountryNames();
+    }
   },
   { immediate: true },
 );

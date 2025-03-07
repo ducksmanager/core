@@ -8,6 +8,10 @@ textarea::placeholder {
   opacity: 1 !important;
 }
 
+.rounded {
+  border-radius: 1rem !important;
+}
+
 .cursor-move {
   cursor: move;
 }
@@ -16,8 +20,20 @@ textarea::placeholder {
   cursor: pointer;
 }
 
+.col > .dropdown {
+  max-width: calc(100% - 40px);
+}
+
 .z-4 {
   z-index: 4 !important;
+}
+
+.w-150 {
+  width: 150% !important;
+}
+
+.start-m50 {
+  left: -50% !important;
 }
 
 .overlay {
