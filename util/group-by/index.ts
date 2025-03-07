@@ -1,16 +1,16 @@
 type NestedKeyOf<T> = {
   [K in keyof T & string]: T[K] extends object
-    ? `${K}` | `${K}.${NestedKeyOf<T[K]>}`
-    : `${K}`;
+  ? `${K}` | `${K}.${NestedKeyOf<T[K]>}`
+  : `${K}`;
 }[keyof T & string];
 
 type GetNestedType<T, P extends string> = P extends keyof T
   ? T[P]
   : P extends `${infer K}.${infer R}`
-    ? K extends keyof T
-      ? GetNestedType<T[K], R>
-      : never
-    : never;
+  ? K extends keyof T
+  ? GetNestedType<T[K], R>
+  : never
+  : never;
 
 type GroupByValueType<
   T,
@@ -18,14 +18,14 @@ type GroupByValueType<
 > = V extends null
   ? T
   : V extends "[]"
-    ? T[]
-    : V extends `${infer U}[]`
-      ? U extends NestedKeyOf<T>
-        ? GetNestedType<T, U>[]
-        : never
-      : V extends NestedKeyOf<T>
-        ? GetNestedType<T, V>
-        : never;
+  ? T[]
+  : V extends `${infer U}[]`
+  ? U extends NestedKeyOf<T>
+  ? GetNestedType<T, U>[]
+  : never
+  : V extends NestedKeyOf<T>
+  ? GetNestedType<T, V>
+  : never;
 
 declare global {
   interface Array<T> {
@@ -92,14 +92,14 @@ declare global {
         value: GroupByValueType<T, V> extends (infer U)[]
           ? U
           : V extends keyof T
-            ? T[V]
-            : T,
+          ? T[V]
+          : T,
         index: number,
       ) => R,
     ): Record<
       K extends null
-        ? T & string
-        : T[K & (keyof T & (string | number))] & (string | number),
+      ? T & string
+      : T[K & (keyof T & (string | number))] & (string | number),
       R
     >;
   }
@@ -109,10 +109,7 @@ const getNestedValue = <T, P extends string>(
   object: T,
   path: P,
 ): GetNestedType<T, P> =>
-  path
-    .split(".")
-    .reduce((acc, key) => (acc as any)[key], object) as GetNestedType<T, P>;
-
+  path.split(".").reduce((acc: any, key: string) => acc[key], object) as GetNestedType<T, P>;
 Array.prototype.groupBy = function (fieldName, mapper, mapperFn) {
   return this.reduce((acc, object, idx) => {
     const key = fieldName === null ? object : object[fieldName];

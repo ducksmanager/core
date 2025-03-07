@@ -49,7 +49,7 @@ const { attributes, enableDragResize } = useStepOptions(props, [
 ]);
 
 onMounted(() => {
-  enableDragResize(ellipse.value!, {
+  enableDragResize(ellipse.value, {
     onmove: ({ dx, dy }) => {
       step().setOptionValues({
         cx: props.options.cx + dx / zoom.value,

@@ -121,7 +121,7 @@ watch(
       waitUntil(
         () => imageRef.value,
         () => {
-          enableDragResize(imageRef.value!, {
+          enableDragResize(imageRef.value, {
             onresizemove: ({ rect }) => {
               let { width, height } = rect;
               const isVertical = [90, 270].includes(props.options.rotation);

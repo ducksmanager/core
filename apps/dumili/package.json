@@ -40,10 +40,9 @@
     "~web": "workspace:*"
   },
   "devDependencies": {
-    "@antfu/eslint-config": "^3.16.0",
     "@eslint/eslintrc": "^3.3.0",
     "@eslint/js": "^9.21.0",
-    "@intlify/eslint-plugin-vue-i18n": "^3.2.0",
+    "@intlify/eslint-plugin-vue-i18n": "^4.0.0",
     "@intlify/unplugin-vue-i18n": "^6.0.3",
     "@sentry/cli": "^2.42.2",
     "@types/js-cookie": "^3.0.6",
@@ -53,7 +52,7 @@
     "eslint-config-prettier": "^10.0.2",
     "eslint-plugin-prettier": "^5.2.3",
     "eslint-plugin-prettier-vue": "^5.0.0",
-    "eslint-plugin-vue": "^9.32.0",
+    "eslint-plugin-vue": "^10.0.0",
     "prettier": "^3.5.2",
     "sass": "^1.85.1",
     "typescript": "^5.7.3",

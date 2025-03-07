@@ -17,20 +17,23 @@ export type IndexationsServices = NamespaceProxyTarget<
 >;
 
 const listenEvents = ({ _socket }: IndexationsServices) => ({
-  getUser: async () => (prisma.user.findUnique({ where: { dmId: _socket.data.user.id } }).then((user) => {
-    if (!user) {
-      console.info('Creating user for DM user', _socket.data.user.id);
-      return prisma.user.create({
-        data: {
-          dmId: _socket.data.user.id,
-          inducksUsername: "change me"
-        },
-      });
-    }
-    return user;
-  })),
+  getUser: async () =>
+    prisma.user
+      .findUnique({ where: { dmId: _socket.data.user.id } })
+      .then((user) => {
+        if (!user) {
+          console.info("Creating user for DM user", _socket.data.user.id);
+          return prisma.user.create({
+            data: {
+              dmId: _socket.data.user.id,
+              inducksUsername: "change me",
+            },
+          });
+        }
+        return user;
+      }),
 
-  updateUser: async (input: Pick<user, 'inducksUsername'>) =>
+  updateUser: async (input: Pick<user, "inducksUsername">) =>
     prisma.user.update({
       where: { dmId: _socket.data.user.id },
       data: input,

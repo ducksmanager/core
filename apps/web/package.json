@@ -48,7 +48,6 @@
     "~prisma-schemas": "workspace:*"
   },
   "devDependencies": {
-    "@antfu/eslint-config": "^3.16.0",
     "@eslint/compat": "^1.2.7",
     "@eslint/eslintrc": "^3.3.0",
     "@eslint/js": "^9.21.0",
@@ -68,7 +67,7 @@
     "eslint-plugin-prettier-vue": "^5.0.0",
     "eslint-plugin-simple-import-sort": "^12.1.1",
     "eslint-plugin-unused-imports": "^4.1.4",
-    "eslint-plugin-vue": "^9.32.0",
+    "eslint-plugin-vue": "^10.0.0",
     "histoire": "^0.17.17",
     "prettier": "^3.5.2",
     "sass": "^1.85.1",

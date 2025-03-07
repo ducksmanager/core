@@ -14,7 +14,10 @@ import type { SessionUser } from "~dm-types/SessionUser";
 import { getUpdateFileUrl, server as app } from "./services/app";
 import { server as auth } from "./services/auth";
 import { server as bookcase } from "./services/bookcase";
-import { server as bookstores, adminServer as bookstoresAdmin } from "./services/bookstores";
+import {
+  adminServer as bookstoresAdmin,
+  server as bookstores,
+} from "./services/bookstores";
 import { server as coa } from "./services/coa";
 import { server as collection } from "./services/collection";
 import { server as coverId } from "./services/cover-id";

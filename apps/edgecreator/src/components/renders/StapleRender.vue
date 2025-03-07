@@ -91,13 +91,13 @@ onMounted(() => {
   //       height.value / 2,
   //   });
   // }
-  enableDragResize(rect1.value!, {
+  enableDragResize(rect1.value, {
     onmove,
     onresizemove: () => {
       return;
     },
   });
-  enableDragResize(rect2.value!, {
+  enableDragResize(rect2.value, {
     onmove,
     onresizemove: () => {
       return;

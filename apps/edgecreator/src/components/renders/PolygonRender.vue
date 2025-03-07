@@ -54,7 +54,7 @@ const points = computed((): [number, number][] =>
 const { enableDragResize } = useStepOptions(props, []);
 
 onMounted(() => {
-  enableDragResize(polygon.value!, {
+  enableDragResize(polygon.value, {
     onmove: ({ dy, dx }): void => {
       step().setOptionValues({
         points: pointsAsString(

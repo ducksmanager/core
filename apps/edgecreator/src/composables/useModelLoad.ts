@@ -146,7 +146,7 @@ export default () => {
         try {
           stepStore.setOptionValues(
             optionObjectToArray(
-              (await getOptionsFromDb(
+              await getOptionsFromDb(
                 issuecode,
                 stepNumber,
                 {
@@ -155,7 +155,7 @@ export default () => {
                 } as LegacyComponent,
                 dimensions[0],
                 calculateBase64,
-              ))!,
+              ),
             ),
             {
               issuecodes: [issuecode],

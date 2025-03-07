@@ -10,7 +10,11 @@ import { userContributionType } from "~prisma-schemas/schemas/dm";
 import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
 
 import type { UserServices } from "../../index";
-import { OptionalAuthMiddleware, RequiredAuthMiddleware, UserIsAdminMiddleware } from "../auth/util";
+import {
+  OptionalAuthMiddleware,
+  RequiredAuthMiddleware,
+  UserIsAdminMiddleware,
+} from "../auth/util";
 import namespaces from "../namespaces";
 
 const persistContribution = async (

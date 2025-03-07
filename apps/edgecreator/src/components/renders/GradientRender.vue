@@ -64,6 +64,6 @@ const { enableDragResize, attributes } = useStepOptions(props, [
 ]);
 
 onMounted(() => {
-  enableDragResize(rect.value!);
+  enableDragResize(rect.value);
 });
 </script>
