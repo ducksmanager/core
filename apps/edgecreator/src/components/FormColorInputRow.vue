@@ -24,9 +24,9 @@
           :id="`${optionName}-transparent`"
           alt="transp"
           src="/transparent.png"
-        >&nbsp;Transparent
-      </b-button>
-    </template><template v-if="!isTransparent">
+        />&nbsp;Transparent
+      </b-button> </template
+    ><template v-if="!isTransparent">
       <popover container="body">
         <b-button
           :id="`${optionName}-popover-colors`"
@@ -45,10 +45,10 @@
             :key="colorLocation"
           >
             <template v-if="otherColorsForLocation">
-              <h6 v-if="colorLocation === 'sameIssuenumber'">
+              <h6 v-if="colorLocation === 'sameIssuecode'">
                 {{ $t("Colors used in other steps") }}
               </h6>
-              <h6 v-if="colorLocation === 'differentIssuenumber'">
+              <h6 v-if="colorLocation === 'differentIssuecode'">
                 {{ $t("Colors used in other edges") }}
               </h6>
               <ul>
@@ -59,22 +59,24 @@
                   <span
                     :class="{
                       'text-secondary':
-                        !otherColorsForLocation[stepNumber].length,
+                        !otherColorsForLocation[stepNumber]?.length,
                     }"
-                  >{{ $t("Step") }} {{ stepNumber }}</span>
+                    >{{ $t("Step") }} {{ stepNumber }}</span
+                  >
                   <span
                     v-for="color in otherColorsForLocation[stepNumber]"
                     :key="color"
                     class="frequent-color"
                     :style="{ background: color }"
                     @click="onColorChange(color)"
-                  >&nbsp;</span>
+                    >&nbsp;</span
+                  >
                 </li>
               </ul>
             </template>
           </div>
-        </template>
-      </popover><b-button
+        </template> </popover
+      ><b-button
         class="mt-0"
         pill
         size="sm"
@@ -82,7 +84,7 @@
         :variant="
           colorPickerOption === optionName ? 'primary' : 'outline-primary'
         "
-        @click="colorPickerOption = colorPickerOption ? null : optionName"
+        @click="colorPickerOption = colorPickerOption ? undefined : optionName"
       >
         {{ $t("From photo") }}
       </b-button>
@@ -96,24 +98,24 @@ import { step } from "~/stores/step";
 import { ui } from "~/stores/ui";
 
 type PossibleInputValueType = string | number;
-const props = withDefaults(
-  defineProps<{
-    inputValues: PossibleInputValueType[];
-    optionName: string;
-    otherColors: {
-      differentIssuenumber: Options;
-      sameIssuenumber: Options;
-    };
-    label?: string | null;
-    canBeTransparent?: false | null;
-  }>(),
-  {
-    label: null,
-    canBeTransparent: false,
-  },
-);
+const {
+  label = null,
+  canBeTransparent = false,
+  inputValues = [],
+  otherColors,
+  optionName,
+} = defineProps<{
+  inputValues: PossibleInputValueType[];
+  optionName: string;
+  otherColors: {
+    differentIssuecode: Options;
+    sameIssuecode: Options;
+  };
+  label?: string | null;
+  canBeTransparent?: false | null;
+}>();
 
-const originalColor = ref<string | null>(null);
+const originalColor = ref<string>();
 
 const { setOptionValues } = step();
 const { photoUrls, issuecodes } = storeToRefs(main());
@@ -123,7 +125,7 @@ const isTransparent = ref(false);
 const hasPhotoUrl = computed(() => Object.keys(photoUrls.value).length);
 
 watch(
-  () => props.inputValues,
+  () => inputValues,
   (inputValues) => {
     isTransparent.value = inputValues[0] === "transparent";
   },
@@ -131,30 +133,17 @@ watch(
 );
 
 const getOptionStringValuesByStepNumber = (options: Options) =>
-  options.reduce<Record<number, string[]>>(
-    (acc, option) => ({
-      ...acc,
-      [option.stepNumber]: [
-        ...(acc[option.stepNumber] || []),
-        option.optionValue as string,
-      ],
-    }),
-    {},
-  );
+  options.groupBy("stepNumber", "optionValue[]");
 
 const otherColorsByLocationAndStepNumber = computed(() => ({
-  differentIssuenumber:
+  differentIssuecode:
     issuecodes.value.length === 1
-      ? null
-      : getOptionStringValuesByStepNumber(
-          props.otherColors.differentIssuenumber,
-        ),
-  sameIssuenumber: getOptionStringValuesByStepNumber(
-    props.otherColors.sameIssuenumber,
-  ),
+      ? []
+      : getOptionStringValuesByStepNumber(otherColors.differentIssuecode),
+  sameIssuecode: getOptionStringValuesByStepNumber(otherColors.sameIssuecode),
 }));
 watch(
-  () => props.inputValues,
+  () => inputValues,
   (newValue) => {
     let newColor = newValue[0];
     if (newColor === "transparent") {
@@ -168,14 +157,14 @@ watch(
 watch(isTransparent, (newValue) => {
   setOptionValues([
     {
-      optionName: props.optionName,
+      optionName: optionName,
       optionValue: newValue ? "transparent" : originalColor.value,
     },
   ]);
 });
 
 const onColorChange = (value: string) => {
-  setOptionValues({ [props.optionName]: value });
+  setOptionValues({ [optionName]: value });
 };
 </script>
 <style lang="scss" scoped>

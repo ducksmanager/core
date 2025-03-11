@@ -39,12 +39,6 @@
       "~prisma-schemas/*": [
         "../../packages/prisma-schemas/*"
       ],
-      "~socket.io-client-services/*": [
-        "../../packages/socket.io-client-services/*"
-      ],
-      "~socket.io-services/*": [
-        "../../packages/socket.io-services/*"
-      ],
       "~translations/*": [
         "translations/*"
       ]
@@ -52,10 +46,14 @@
   },
   "include": [
     "components.d.ts",
+    "eslint.config.mjs",
+    "histoire.config.ts",
     "histoire.d.ts",
+    "index.ts",
     "src/**/*.ts",
     "src/**/*.vue",
-    "auto-imports.d.ts"
+    "auto-imports.d.ts",
+    "vite.config.ts"
   ],
   "exclude": [
     "dist",

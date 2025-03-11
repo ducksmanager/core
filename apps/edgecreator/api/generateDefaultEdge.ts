@@ -12,7 +12,7 @@ const corsHeaders = {
     "If-Modified-Since,Cache-Control,Content-Type,x-dm-user,x-dm-pass",
 };
 export const get = (req: Request, res: Response) => {
-  const { countrycode, magazinecode, issuenumber, extension } = req.params!;
+  const { countrycode, magazinecode, issuenumber, extension } = req.params;
 
   if (countrycode && extension !== "png") {
     res.writeHead(404, corsHeaders);

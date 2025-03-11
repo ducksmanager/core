@@ -13,12 +13,11 @@
             :class="{
               'ion-valid': validInputs.includes('username'),
               'ion-invalid': invalidInputs.includes('username'),
-              'ion-touched': touchedInputs.includes('username'),
+              'ion-touched': formHasChanged,
             }"
             :aria-label="$t('Nom d\'utilisateur DucksManager')"
             :placeholder="$t('Nom d\'utilisateur DucksManager')"
             :error-text="errorTexts.username"
-            @ion-blur="touchedInputs.push('username')"
           />
         </ion-col>
       </ion-row>
@@ -30,12 +29,11 @@
             :class="{
               'ion-valid': validInputs.includes('password'),
               'ion-invalid': invalidInputs.includes('password'),
-              'ion-touched': touchedInputs.includes('password'),
+              'ion-touched': formHasChanged,
             }"
             :error-text="errorTexts.password || $t('Erreur')"
             :aria-label="$t('Mot de passe')"
             :placeholder="$t('Mot de passe')"
-            @ion-blur="touchedInputs.push('password')"
           />
         </ion-col>
         <ion-col size="1">
@@ -94,11 +92,9 @@ const username = ref('');
 const password = ref('');
 
 const showPassword = ref(false);
+const formHasChanged = ref(false);
 
-const { validInputs, invalidInputs, touchedInputs, errorTexts, submit } = useFormErrorHandling([
-  'username',
-  'password',
-]);
+const { validInputs, invalidInputs, errorTexts, submit } = useFormErrorHandling(['username', 'password']);
 
 const forgotPassword = () => {
   router.push('/forgot');
@@ -110,7 +106,7 @@ const signup = () => {
 const submitLogin = async () => {
   await submit(
     () =>
-      socket.value!.auth.services.login({
+      socket.value!.auth.login({
         username: username.value,
         password: password.value,
       }),
@@ -118,6 +114,7 @@ const submitLogin = async () => {
       token.value = response;
     },
   );
+  formHasChanged.value = true;
 };
 
 if (!token.value) {
@@ -133,6 +130,10 @@ watch(
   },
   { immediate: true },
 );
+
+watch([username, password], () => {
+  formHasChanged.value = false;
+});
 </script>
 
 <style lang="scss" scoped>

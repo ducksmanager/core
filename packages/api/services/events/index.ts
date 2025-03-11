@@ -1,5 +1,5 @@
 import dayjs from "dayjs";
-import type { Namespace, Server } from "socket.io";
+import { useSocketEvents } from "socket-call-server";
 
 import type {
   AbstractEvent,
@@ -22,27 +22,29 @@ import type { MedalEvent } from "~dm-types/events/MedalEvent";
 import type { SignupEvent } from "~dm-types/events/SignupEvent";
 import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
 
-import type Events from "./types";
-import { namespaceEndpoint } from "./types";
+import namespaces from "../namespaces";
 
-export default (io: Server) => {
-  (io.of(namespaceEndpoint) as Namespace<Events>).on("connection", (socket) => {
-    console.log("connected to events");
+const listenEvents = () => ({
+  getEvents: () =>
+    Promise.all([
+      retrieveSignups(),
+      retrieveCollectionUpdates(),
+      retrieveCollectionSubscriptionAdditions(),
+      retrieveBookstoreCreations(),
+      retrieveEdgeCreations(),
+      retrieveNewMedals(),
+    ]).then((data) => data.flat()),
+});
 
-    socket.on("getEvents", (callback) =>
-      Promise.all([
-        retrieveSignups(),
-        retrieveCollectionUpdates(),
-        retrieveCollectionSubscriptionAdditions(),
-        retrieveBookstoreCreations(),
-        retrieveEdgeCreations(),
-        retrieveNewMedals(),
-      ])
-        .then((data) => data.flat())
-        .then(callback),
-    );
-  });
-};
+export const { client, server } = useSocketEvents<typeof listenEvents>(
+  namespaces.EVENTS,
+  {
+    listenEvents,
+    middlewares: [],
+  },
+);
+
+export type ClientEvents = (typeof client)["emitEvents"];
 
 const MEDAL_LEVELS = {
   edge_photographer: { 1: 50, 2: 150, 3: 600 },
@@ -135,21 +137,25 @@ const retrieveBookstoreCreations = async (): Promise<BookstoreCommentEvent[]> =>
 const retrieveEdgeCreations = async (): Promise<EdgeCreationEvent[]> =>
   (
     await prismaDm.$queryRaw<EdgeCreationEventRaw[]>`
-        select 'edge'                       AS type,
-               GROUP_CONCAT(issuecode)      AS issuecodes,
-               UNIX_TIMESTAMP(creationDate) AS timestamp,
-               users
-        from (SELECT tp.issuecode,
-                     tp.dateajout                       AS creationDate,
-                     GROUP_CONCAT(DISTINCT tpc.ID_user) AS users
-              FROM tranches_pretes tp
-                       INNER JOIN users_contributions tpc ON tpc.ID_tranche = tp.ID
-              WHERE tp.dateajout > DATE_ADD(NOW(), INTERVAL -1 MONTH)
-                AND NOT (tp.publicationcode = 'fr/JM' AND tp.issuenumber REGEXP '^[0-9]+$')
-                AND tp.publicationcode NOT IN ('be/MMN', 'it/TL', 'se/WDS')
-              GROUP BY tp.ID) as edges_and_collaborators
-        group by DATE_FORMAT(creationDate, '%Y-%m-%d %H:00:00'), edges_and_collaborators.users
-        having count(issuecode) > 0
+      select 'edge'                  AS type,
+        GROUP_CONCAT(issuecode)      AS issuecodes,
+        UNIX_TIMESTAMP(creationDate) AS timestamp,
+        users
+      from (
+        SELECT
+          tp.issuecode,
+          tp.dateajout                       AS creationDate,
+          GROUP_CONCAT(DISTINCT tpc.ID_user) AS users
+        FROM tranches_pretes tp
+          INNER JOIN users_contributions tpc ON tpc.ID_tranche = tp.ID
+        WHERE tp.dateajout > DATE_ADD(NOW(), INTERVAL -1 MONTH)
+          AND NOT (tp.issuecode LIKE 'fr/JM %' and tp.issuecode REGEXP '^[0-9]+$')
+          AND tp.issuecode not like 'be/MMN%' AND tp.issuecode not like 'it/TL %' AND tp.issuecode not like 'se/WDS%'
+          AND tp.dateajout > date_sub(now(), interval 1 MONTH)
+        GROUP BY tp.ID
+      ) as edges_and_collaborators
+      group by DATE_FORMAT(creationDate, '%Y-%m-%d %H:00:00'), edges_and_collaborators.users
+      having count(issuecode) > 0
     `
   ).map((event) => ({
     ...mapUsers<EdgeCreationEvent>(event),

@@ -139,13 +139,13 @@ const purchasesIncludingNone = computed(() =>
     : null,
 );
 
-const selectedPurchase = shallowRef<purchase | null>(null);
+const selectedPurchase = shallowRef<purchase>();
 
 watch(
   issue,
   () => {
     if (issue.value) {
-      const thisPurchase = purchases.value?.find(({ id }) => id === issue.value.purchaseId) || null;
+      const thisPurchase = purchases.value?.find(({ id }) => id === issue.value.purchaseId);
       if (thisPurchase) {
         selectedPurchase.value = thisPurchase;
       }

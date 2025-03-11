@@ -1,12 +1,10 @@
-import type { Namespace, Server } from "socket.io";
+import { useSocketEvents } from "socket-call-server";
 
 import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa/client";
 import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
-import type { edgeModel } from "~prisma-schemas/schemas/edgecreator";
 import { prismaClient as prismaEdgeCreator } from "~prisma-schemas/schemas/edgecreator/client";
 
-import type Events from "./types";
-import { namespaceEndpoint } from "./types";
+import namespaces from "../namespaces";
 
 const getEdges = async (filters: {
   publicationcode?: string;
@@ -15,18 +13,25 @@ const getEdges = async (filters: {
   if (!(filters.publicationcode || filters.issuecodes)) {
     throw new Error("Invalid filter");
   }
-  const issuecode = filters.issuecodes
-    ? {
-        in: filters.issuecodes,
-      }
-    : undefined;
-  const edgeModels: Record<string, edgeModel> = (
+  const issuecode = {
+    in:
+      filters.issuecodes ||
+      (
+        await prismaCoa.inducks_issue.findMany({
+          select: { issuecode: true },
+          where: {
+            publicationcode: filters.publicationcode,
+          },
+        })
+      ).map(({ issuecode }) => issuecode),
+  };
+  const edgeModels = (
     await prismaEdgeCreator.edgeModel.findMany({
       where: {
         issuecode,
       },
     })
-  ).groupBy('issuecode');
+  ).groupBy("issuecode");
 
   return (
     await prismaDm.edge.findMany({
@@ -35,7 +40,6 @@ const getEdges = async (filters: {
         issuecode: true,
       },
       where: {
-        publicationcode: filters.publicationcode,
         issuecode,
       },
     })
@@ -46,12 +50,9 @@ const getEdges = async (filters: {
   }));
 };
 
-export default (io: Server) => {
-  (io.of(namespaceEndpoint) as Namespace<Events>).on("connection", (socket) => {
-    console.log("connected to edges");
-
-    socket.on("getWantedEdges", async (callback) =>
-      prismaDm.$queryRaw<{ numberOfIssues: number; issuecode: string }[]>`
+const listenEvents = () => ({
+  getWantedEdges: () =>
+    prismaDm.$queryRaw<{ numberOfIssues: number; issuecode: string }[]>`
     SELECT Count(Numero) as numberOfIssues, issuecode
     FROM numeros AS issue
     WHERE issuecode IS NOT NULL AND NOT EXISTS(
@@ -62,24 +63,27 @@ export default (io: Server) => {
     GROUP BY issuecode
     ORDER BY numberOfIssues DESC, issuecode
     LIMIT 20
-  `
-        .then((issues) => prismaCoa.augmentIssueArrayWithInducksData(issues))
-        .then(callback),
-    );
+  `.then((issues) => prismaCoa.augmentIssueArrayWithInducksData(issues)),
 
-    socket.on("getPublishedEdges", (callback) =>
-      prismaDm.edge
-        .findMany({
-          select: { issuecode: true },
-        })
-        .then((issues) => prismaCoa.augmentIssueArrayWithInducksData(issues))
-        .then(callback),
-    );
+  getPublishedEdges: () =>
+    prismaDm.edge
+      .findMany({
+        select: { issuecode: true },
+      })
+      .then((issues) => prismaCoa.augmentIssueArrayWithInducksData(issues)),
 
-    socket.on("getEdges", async (filters, callback) =>
-      getEdges(filters)
-        .then((edges) => prismaCoa.augmentIssueArrayWithInducksData(edges))
-        .then((edges) => callback(edges.groupBy("issuecode"))),
-    );
-  });
-};
+  getEdges: (filters: { publicationcode?: string; issuecodes?: string[] }) =>
+    getEdges(filters)
+      .then((edges) => prismaCoa.augmentIssueArrayWithInducksData(edges))
+      .then((edges) => edges.groupBy("issuecode")),
+});
+
+export const { client, server } = useSocketEvents<typeof listenEvents>(
+  namespaces.EDGES,
+  {
+    listenEvents,
+    middlewares: [],
+  },
+);
+
+export type ClientEvents = (typeof client)["emitEvents"];

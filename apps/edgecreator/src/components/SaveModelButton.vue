@@ -40,10 +40,7 @@
         :ok-title="$t(withExport ? 'Export' : 'Submit')"
         @ok="issueIndexToSave = 0"
       >
-        <b-alert
-          :model-value="true"
-          variant="info"
-        >
+        <b-alert :model-value="true" variant="info">
           {{
             $t(
               "Once your edge is ready, indicate the photographers and the designers of the edge. " +
@@ -53,19 +50,16 @@
           }}
         </b-alert>
         <div
-          v-for="contributionType of ['photographes', 'createurs']"
+          v-for="contributionType of Object.keys(userContributionEnL10n) as contribution[]"
           :key="contributionType"
         >
           <h2>{{ $t(ucFirst(userContributionEnL10n[contributionType])) }}</h2>
           <b-alert
-            :model-value="
-              !hasAtLeastOneUser(contributionType as userContributionType)
-            "
+            :model-value="!hasAtLeastOneUser(contributionType)"
             variant="warning"
           >
-            {{ $t("You should select at least one user") }}
-          </b-alert><vue3-simple-typeahead
-            :ref="`${userContributionEnL10n[contributionType]}Typeahead`"
+            {{ $t("You should select at least one user") }} </b-alert
+          ><vue3-simple-typeahead
             :items="
               getUsersWithoutContributors(
                 contributionType as userContributionType
@@ -75,11 +69,11 @@
             :placeholder="$t('Enter a user name').toString()"
             :min-input-length="0"
             @select-item="
-              (user: SimpleUser) =>
+              (user: SimpleUser) => {
                 onUserSelect(
                   user.username,
                   contributionType as userContributionType
-                )
+                )}
             "
           />
           <ul>
@@ -94,7 +88,7 @@
                 v-if="
                   !(
                     contributor.username === collectionStore.user!.username &&
-                    contributionType === 'designers'
+                    contributionType === 'createur'
                   )
                 "
                 class="clickable"
@@ -120,13 +114,14 @@ import Vue3SimpleTypeahead from "vue3-simple-typeahead";
 import saveEdge from "~/composables/useSaveEdge";
 import { main } from "~/stores/main";
 import { ui } from "~/stores/ui";
+import type { contribution } from "~prisma-schemas/client_edgecreator";
 import type { userContributionType } from "~prisma-schemas/schemas/dm";
 import type { SimpleUser } from "~types/SimpleUser";
 import { stores as webStores } from "~web";
 
-const userContributionEnL10n: Record<string, string> = {
-  photographes: "photographers",
-  createurs: "designers",
+const userContributionEnL10n: Record<contribution, string> = {
+  photographe: "photographers",
+  createur: "designers",
 };
 
 const { saveEdgeSvg } = saveEdge();
@@ -136,32 +131,22 @@ const userStore = webStores.users();
 const collectionStore = webStores.collection();
 const mainStore = main();
 
-const props = withDefaults(
-  defineProps<{
-    withSubmit?: boolean;
-    withExport?: boolean;
-  }>(),
-  {
-    withSubmit: false,
-    withExport: false,
-  },
-);
+const { withSubmit = false, withExport = false } = defineProps<{
+  withSubmit?: boolean;
+  withExport?: boolean;
+}>();
 
 const showModal = ref(false);
 const progress = ref(0);
-const issueIndexToSave = ref<number | null>(null);
-const result = ref<string | null>(null);
-const designersTypeahead = ref();
-const photographersTypeahead = ref();
-
-// const progressLeft = computed(() => 100 - progress.value);
+const issueIndexToSave = ref<number>();
+const result = ref<string>();
 
 const label = computed(() =>
-  $t(props.withExport ? "Export" : props.withSubmit ? "Submit" : "Save"),
+  $t(withExport ? "Export" : withSubmit ? "Submit" : "Save"),
 );
 
 const variant = computed((): "success" | "primary" =>
-  props.withExport || props.withSubmit ? "success" : "primary",
+  withExport || withSubmit ? "success" : "primary",
 );
 
 const outlineVariant = computed(
@@ -169,9 +154,8 @@ const outlineVariant = computed(
 );
 
 const isOkDisabled = computed(() =>
-  Object.keys(["photographers", "designers"]).some(
-    (contributionType) =>
-      !hasAtLeastOneUser(contributionType as userContributionType),
+  Object.keys(userContributionEnL10n).some(
+    (contributionType) => !hasAtLeastOneUser(contributionType as contribution),
   ),
 );
 
@@ -181,7 +165,7 @@ watch(progress, (newValue) => {
       progress.value = 0;
       result.value = "success";
       window.setTimeout(() => {
-        result.value = null;
+        result.value = undefined;
       }, 2000);
     }, 1000);
   }
@@ -200,8 +184,8 @@ watch(issueIndexToSave, (newValue) => {
       mainStore.contributors.filter(
         ({ issuecode }) => issuecode === currentIssuecode,
       ),
-      props.withExport,
-      props.withSubmit,
+      withExport,
+      withSubmit,
     ).then((response) => {
       const isSuccess = response!.paths.svgPath;
       if (isSuccess) {
@@ -210,18 +194,18 @@ watch(issueIndexToSave, (newValue) => {
       } else {
         progress.value = 0;
         result.value = "error";
-        issueIndexToSave.value = null;
+        issueIndexToSave.value = undefined;
       }
     });
   });
 });
 
 watch(showModal, (newValue) => {
-  if (newValue && props.withSubmit) {
+  if (newValue && withSubmit) {
     addContributorAllIssues(
       userStore.allUsers!.find(
         (thisUser) => thisUser.username === collectionStore.user!.username,
-      )!,
+      ),
       "createur",
     );
   }
@@ -232,16 +216,9 @@ const onUserSelect = (
   contributionType: userContributionType,
 ) => {
   addContributorAllIssues(
-    userStore.allUsers!.find((thisUser) => thisUser.username === username)!,
+    userStore.allUsers!.find((thisUser) => thisUser.username === username),
     contributionType,
   );
-  switch (contributionType) {
-    case "photographe":
-      photographersTypeahead.value.clearValue();
-      break;
-    case "createur":
-      designersTypeahead.value.clearValue();
-  }
 };
 
 const ucFirst = (text: string) =>
@@ -273,7 +250,7 @@ const addContributorAllIssues = (
       user,
     }),
   );
-const hasAtLeastOneUser = (contributionType: userContributionType) =>
+const hasAtLeastOneUser = (contributionType: contribution) =>
   [
     ...new Set(
       mainStore.contributors
@@ -286,7 +263,7 @@ const hasAtLeastOneUser = (contributionType: userContributionType) =>
   ].length === mainStore.issuecodes.length;
 
 const onClick = () => {
-  if (props.withExport || props.withSubmit) {
+  if (withExport || withSubmit) {
     showModal.value = !showModal.value;
   } else {
     issueIndexToSave.value = 0;

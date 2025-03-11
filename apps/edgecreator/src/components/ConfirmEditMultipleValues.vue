@@ -26,10 +26,10 @@ import type { OptionValue } from "~/types/OptionValue";
 
 const emit = defineEmits<(e: "change", value: OptionValue) => void>();
 
-const props = defineProps<{
+const { values } = defineProps<{
   values: OptionValue[];
 }>();
 
 const edit = ref(false);
-const isMultiple = computed(() => props.values.length > 1 && !edit.value);
+const isMultiple = computed(() => values.length > 1 && !edit.value);
 </script>

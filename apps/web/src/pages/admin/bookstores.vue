@@ -5,13 +5,18 @@ meta:
 
 <template>
   <b-table v-if="bookstores" :items="bookstores">
-    <template #cell(comments)="{ value }: { value: bookstoreComment[] }">
-      <div v-for="comment in value" :key="`comment-${comment.id}`">
-        <u>{{ comment.userId }} on {{ comment.creationDate }}</u
-        >: {{ comment.comment }}
+    <template #cell(comments)="{ value }">
+      <div
+        v-for="comment in value"
+        :key="`comment-${(comment as bookstoreComment).id}`"
+      >
+        <u
+          >{{ (comment as bookstoreComment).userId }} on
+          {{ (comment as bookstoreComment).creationDate }}</u
+        >: {{ (comment as bookstoreComment).comment }}
         <b-button
-          v-if="!comment.isActive"
-          @click="validateBookstoreComment(comment)"
+          v-if="!(comment as bookstoreComment).isActive"
+          @click="validateBookstoreComment((comment as bookstoreComment))"
         >
           {{ $t("Valider") }}
         </b-button>
@@ -24,18 +29,16 @@ meta:
 import type { SimpleBookstore } from "~dm-types/SimpleBookstore";
 import type { bookstoreComment } from "~prisma-schemas/schemas/dm";
 
-let bookstores = $shallowRef<SimpleBookstore[] | null>(null);
+let bookstores = $shallowRef<SimpleBookstore[]>();
 
-const {
-  bookstore: { services: bookstoreServices },
-} = inject(socketInjectionKey)!;
+const { adminBookstore: adminBookstoreEvents } = inject(socketInjectionKey)!;
 
 const validateBookstoreComment = async ({ id }: bookstoreComment) => {
-  await bookstoreServices.approveBookstoreComment(id);
+  await adminBookstoreEvents.approveBookstoreComment(id);
 };
 
 (async () => {
-  bookstores = await bookstoreServices.getBookstores();
+  bookstores = await adminBookstoreEvents.getBookstores();
 })();
 </script>
 

@@ -10,10 +10,12 @@ services:
     container_name: paddleocr
     image: ghcr.io/bperel/paddleocr
     restart: always
+    volumes:
+      - /root/.paddleocr
     networks:
       - dumili-network
 
-  api:
+  dumili-api:
     container_name: dumili-api
     image: ghcr.io/bperel/dumili-api
     restart: always
@@ -21,6 +23,21 @@ services:
       - public-network
       - dumili-network
       - ducksmanager2_dm2-network
+  db:
+    container_name: dumili-db
+    restart: always
+    image: mariadb:11.4
+    env_file:
+      - .env.prod.local
+    ports:
+      - "64097:3306"
+    volumes:
+      - /var/lib/mysql
+    networks:
+      - dumili-network
+    environment:
+      MYSQL_DATABASE: dumili
+      MARIADB_ROOT_PASSWORD: $MYSQL_ROOT_PASSWORD
 
 networks:
   dumili-network:

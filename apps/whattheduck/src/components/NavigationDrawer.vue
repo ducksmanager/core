@@ -37,7 +37,7 @@
         <ion-menu-toggle v-for="p in appFooterPages" :key="p.url" :auto-hide="false">
           <ion-item
             router-direction="root"
-            :disabled="p.disabledOnOfflineMode && isOffline"
+            :disabled="p.isDisabled && isOffline"
             :router-link="p.url"
             lines="none"
             :detail="false"
@@ -84,7 +84,6 @@ const points = computed(() => webStores.users().points);
 interface AppPage {
   title: string;
   url: string;
-  disabledOnOfflineMode?: boolean;
   iosIcon: string;
   mdIcon: string;
   chip?: number;

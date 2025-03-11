@@ -7,12 +7,11 @@
         checkMatch: (id) => id === entry.id,
       },
     ]"
-    :status="storyKindAiSuggestion?.kind ? 'success' : 'idle'"
+    :status="storyKindAiSuggestion?.storyKindRows ? 'success' : 'idle'"
     @toggled="
-      showAiDetectionsOn = $event ? { type: 'entry', id: entry.id } : undefined
+      overlay = $event ? { type: 'panels', entryId: entry.id } : undefined
     "
   >
-    <b>{{ $t("Types d'entrées déduits pour les pages") }}</b>
     <b-table
       :fields="[
         { key: 'page' },
@@ -25,23 +24,21 @@
         })) || []
       "
       ><template #empty>{{ $t("Aucune case détectée") }}</template>
-      <template #cell(kind)="row">
-        <story-kind-badge :story-kind="row.item.kind" /></template></b-table
+      <template #cell(storyKindRows)="row">
+        <story-kind-badge
+          :story-kind-rows="row.item.storyKindRows" /></template></b-table
     ><br />
     <div>
       <b>{{ $t("Type d'entrée déduit") }}</b>
     </div>
-    <story-kind-badge :story-kind="storyKindAiSuggestion?.kind"
+    <story-kind-badge :story-kind-rows="storyKindAiSuggestion?.storyKindRows"
   /></ai-tooltip>
 </template>
 
 <script setup lang="ts">
 import { suggestions } from "~/stores/suggestions";
 import { ui } from "~/stores/ui";
-import type {
-  FullEntry,
-  FullIndexation,
-} from "~dumili-services/indexation/types";
+import type { FullEntry, FullIndexation } from "~dumili-services/indexation";
 import { getEntryPages } from "~dumili-utils/entryPages";
 
 const { entry } = defineProps<{
@@ -49,7 +46,7 @@ const { entry } = defineProps<{
 }>();
 
 const indexation = storeToRefs(suggestions()).indexation as Ref<FullIndexation>;
-const { showAiDetectionsOn } = storeToRefs(ui());
+const { overlay } = storeToRefs(ui());
 
 const pages = computed(() =>
   getEntryPages(indexation.value!, entry.id).map(
@@ -67,7 +64,7 @@ const pagesWithInferredKinds = computed(() =>
     .filter(({ image }) => image)
     .map((page) => ({
       page,
-      kind: page.image?.aiKumikoResult?.inferredStoryKind,
+      storyKindRows: page.image?.aiKumikoResult?.inferredStoryKindRows,
     })),
 );
 </script>

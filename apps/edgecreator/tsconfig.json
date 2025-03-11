@@ -39,12 +39,6 @@
       "~prisma-schemas/*": [
         "../../packages/prisma-schemas/*"
       ],
-      "~socket.io-client-services/*": [
-        "../../packages/socket.io-client-services/*"
-      ],
-      "~socket.io-services/*": [
-        "../../packages/socket.io-services/*"
-      ],
       "~types/*": [
         "types/*"
       ],
@@ -58,12 +52,12 @@
     ]
   },
   "include": [
-    "types/*.ts",
-    "src/**/*.ts",
+    "auto-imports.d.ts",
+    "eslint.config.mjs",
     "src/**/*.d.ts",
-    "src/**/*.tsx",
+    "src/**/*.ts",
     "src/**/*.vue",
-    "auto-imports.d.ts"
+    "types/*.ts",
   ],
   "exclude": [
     "dist",

@@ -47,20 +47,18 @@ meta:
 <script setup lang="ts">
 import { socketInjectionKey } from "../../composables/useDmSocket";
 
-let error = $ref<string | null>(null);
+let error = $ref<string>();
 
 const email = $ref("");
 let token = $ref("");
 const { t: $t } = useI18n();
 
-const {
-  auth: { services: authServices },
-} = inject(socketInjectionKey)!;
+const { auth: authEvents } = inject(socketInjectionKey)!;
 
 const sendPasswordToken = async () => {
-  const response = await authServices.requestTokenForForgotPassword(email);
-  if (response.error) {
-    error = response.error;
+  const response = await authEvents.requestTokenForForgotPassword(email);
+  if ("error" in response) {
+    error = response.error!;
   } else {
     token = response.token;
   }

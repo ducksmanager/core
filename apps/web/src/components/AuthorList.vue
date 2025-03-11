@@ -88,9 +88,9 @@
                   v-for="(fullName, personcode) in searchResults"
                   :key="personcode"
                   :class="{
-                    disabled: isAuthorWatched(personcode),
+                    disabled: isAuthorWatched(String(personcode)),
                   }"
-                  @click="createRating(personcode)"
+                  @click="createRating(String(personcode))"
                 >
                   {{ fullName }}
                 </option>

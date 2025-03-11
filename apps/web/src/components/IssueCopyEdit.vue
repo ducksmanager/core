@@ -259,11 +259,7 @@ const { copy: copyState, copyIndex = null } = defineProps<{
   copyIndex?: number | null;
 }>();
 
-let newCopyState = $ref(
-  copyState as
-    | IssueWithPublicationcodeOptionalId
-    | CollectionUpdateMultipleIssues,
-);
+let newCopyState = $ref(copyState);
 
 const emit = defineEmits<{
   (
@@ -419,13 +415,13 @@ const issueIds = $computed((): (number | null)[] =>
       ? [
           collectionForCurrentPublication
             ?.filter(({ issuecode }) => issuecode === issuecodes[0])
-            .find((_, currentCopyIndex) => copyIndex === currentCopyIndex!)
+            .find((_, currentCopyIndex) => copyIndex === currentCopyIndex)
             ?.id || null,
         ]
       : collectionForCurrentPublication
           ?.filter(({ issuecode }) => issuecodes.includes(issuecode))
           .map(({ id }) => id || null)
-    : [] || [],
+    : [],
 );
 
 watch(

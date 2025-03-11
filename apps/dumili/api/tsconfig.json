@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "noErrorTruncation": true,
     "baseUrl": ".",
     "module": "ES6",
     "target": "esnext",
@@ -43,9 +44,13 @@
       "~prisma/*": [
         "prisma/*"
       ]
-    }
+    },
+    "types": [
+      "./.eslint.d.ts"
+    ]
   },
   "include": [
+    "eslint.config.mjs",
     "index.ts",
     "services/**/*.ts"
   ]

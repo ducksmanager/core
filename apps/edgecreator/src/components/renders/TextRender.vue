@@ -1,4 +1,3 @@
-<!--suppress RequiredAttributes, HtmlUnknownAttribute -->
 <template>
   <svg v-if="options.height !== null">
     <image
@@ -11,8 +10,8 @@
         !options.width
           ? undefined
           : `rotate(${options.rotation}, ${options.x + options.width / 2}, ${
-            options.y + options.height / 2
-          })`
+              options.y + options.height / 2
+            })`
       "
     >
       <metadata>{{ options }}</metadata>
@@ -28,14 +27,12 @@ import { step } from "~/stores/step";
 import { ui } from "~/stores/ui";
 import { coa } from "~web/src/stores/coa";
 
-const {
-  text: { services: textServices },
-} = inject(edgecreatorSocketInjectionKey)!;
+const { text: textEvents } = inject(edgecreatorSocketInjectionKey)!;
 
 const { resolveIssueNumberTemplate, resolveIssueNumberPartTemplate } =
   useTextTemplate();
 
-const imageRef = ref<SVGImageElement | null>(null);
+const imageRef = ref<SVGImageElement>();
 
 interface Props {
   issuecode: string;
@@ -82,19 +79,19 @@ const textImage = ref(
     width: number | null;
     height: number | null;
     url: string;
-  } | null
+  } | null,
 );
-const textImageOptions = ref<typeof props.options | null>(null);
+const textImageOptions = ref<typeof props.options>();
 
 const issuenumber = computed(
-  () => coa().issuecodeDetails[props.issuecode].issuenumber
+  () => coa().issuecodeDetails[props.issuecode].issuenumber,
 );
 
 const effectiveText = computed(() =>
   resolveIssueNumberTemplate(
     props.options.text,
-    resolveIssueNumberPartTemplate(props.options.text, issuenumber.value)
-  )
+    resolveIssueNumberPartTemplate(props.options.text, issuenumber.value),
+  ),
 );
 
 const { width, attributes, enableDragResize } = useStepOptions(props, [
@@ -114,7 +111,7 @@ watch(
       });
     }
   },
-  { immediate: true }
+  { immediate: true },
 );
 
 watch(
@@ -124,7 +121,7 @@ watch(
       waitUntil(
         () => imageRef.value,
         () => {
-          enableDragResize(imageRef.value!, {
+          enableDragResize(imageRef.value, {
             onresizemove: ({ rect }) => {
               let { width, height } = rect;
               const isVertical = [90, 270].includes(props.options.rotation);
@@ -155,44 +152,44 @@ watch(
           applyTextImageDimensions();
         },
         2000,
-        100
+        100,
       );
     }
   },
   {
     immediate: true,
-  }
+  },
 );
 
 watch(
   () => props.options.fgColor,
   async () => {
     await refreshPreview();
-  }
+  },
 );
 watch(
   () => props.options.bgColor,
   async () => {
     await refreshPreview();
-  }
+  },
 );
 watch(
   () => props.options.internalWidth,
   async () => {
     await refreshPreview();
-  }
+  },
 );
 watch(
   () => props.options.text,
   async () => {
     await refreshPreview();
-  }
+  },
 );
 watch(
   () => props.options.font,
   async () => {
     await refreshPreview();
-  }
+  },
 );
 
 const refreshPreview = async () => {
@@ -204,24 +201,24 @@ const refreshPreview = async () => {
   textImageOptions.value = { ...props.options };
   const { fgColor, bgColor, internalWidth, font } = props.options;
 
-  const textData = await textServices.getText({
+  const textData = await textEvents.getText({
     color: fgColor.replace("#", ""),
     colorBackground: bgColor.replace("#", ""),
     width: Math.round(internalWidth * 100) / 100,
     font,
     text: effectiveText.value,
   });
-  if (textData.results) {
+  if ("results" in textData) {
     textImage.value = textData.results;
   } else {
     window.alert(textData.error);
   }
 };
 const waitUntil = (
-  condition: () => SVGImageElement | null,
+  condition: () => SVGImageElement | undefined,
   okCallback: () => void,
   timeout: number,
-  loopEvery: number
+  loopEvery: number,
 ) => {
   let iterations = 0;
   const interval = setInterval(() => {

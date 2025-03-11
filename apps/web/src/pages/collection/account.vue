@@ -221,7 +221,7 @@ alias: [/collection/compte]
 </template>
 
 <script setup lang="ts">
-import type { ScopedError } from "~socket.io-services";
+import type { ScopedError } from "socket-call-client";
 
 const { getImagePath } = images();
 
@@ -233,7 +233,7 @@ let hasRequestedPresentationSentenceUpdate = $ref(false);
 const oldPassword = $ref("");
 const password = $ref("");
 const password2 = $ref("");
-let error = $ref<ScopedError | null | undefined>(undefined);
+let error = $ref<ScopedError | null>();
 
 let hasEmailContactMethod = $ref(false);
 let hasDiscordContactMethod = $ref(false);
@@ -247,28 +247,26 @@ const { updateMarketplaceContactMethods, loadMarketplaceContactMethods } =
 const { userForAccountForm, marketplaceContactMethods } =
   storeToRefs(collection());
 
-const {
-  collection: { services: collectionServices },
-} = inject(socketInjectionKey)!;
+const { collection: collectionEvents } = inject(socketInjectionKey)!;
 
 const emptyCollection = async () => {
   if (confirm(t("Votre collection va être vidée. Continuer ?"))) {
-    await collectionServices.emptyCollection();
+    await collectionEvents.emptyCollection();
     router.push("/collection/show");
   }
 };
 
 const updateAccount = async () => {
   error = undefined;
-  const response = await collectionServices.updateUser({
+  const response = await collectionEvents.updateUser({
     ...userForAccountForm.value!,
     oldPassword,
     password,
     password2,
   });
-  if (response.error) {
-    if (response.selector) {
-      error = response;
+  if ("error" in response) {
+    if ("selector" in response) {
+      error = response as ScopedError;
     } else {
       console.error(response.error);
     }
@@ -293,7 +291,7 @@ const deleteAccount = async () => {
       ),
     )
   ) {
-    await collectionServices.deleteUser();
+    await collectionEvents.deleteUser();
     router.push("/logout");
   }
 };

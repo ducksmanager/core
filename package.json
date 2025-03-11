@@ -9,11 +9,11 @@
     "husky": "^9.1.7"
   },
   "devDependencies": {
-    "turbo": "^2.3.3"
+    "turbo": "^2.4.4"
   },
   "scripts": {
     "prepare": "husky",
-    "lint": "turbo lint --log-order=stream -F '!~duckguessr*' -F '!~edgecreator' -- --cache",
+    "lint": "turbo lint --log-order=stream -F '!~duckguessr*'  -- --cache",
     "lint-no-cache": "turbo lint --log-order=stream -F '!~duckguessr*' -- --fix",
     "dev:dumili": "turbo dev -F '~dumili-api...' -F '~dumili' -F '~web'",
     "dev:edgecreator": "turbo dev -F '~edgecreator-api...' -F '~edgecreator' -F '~web' -F '~edges'",

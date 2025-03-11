@@ -199,7 +199,7 @@ const textureWithoutSuperType = (texture: string) =>
 let error = $ref(false);
 let loading = $ref(true);
 let hasPublicationNames = $ref(false);
-let inputBookcaseOrder = $ref<string[] | null>(null);
+let inputBookcaseOrder = $ref<string[]>();
 
 watch(
   user,

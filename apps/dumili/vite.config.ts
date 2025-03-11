@@ -14,6 +14,9 @@ import Pages from "vite-plugin-pages";
 import Layouts from "vite-plugin-vue-layouts";
 
 export default defineConfig({
+  build: {
+    sourcemap: true,
+  },
   plugins: [
     vue(),
     Icons({
@@ -85,14 +88,6 @@ export default defineConfig({
       "~group-by": path.resolve(__dirname, "../../util/group-by"),
       "~prisma": path.resolve(__dirname, "api/prisma"),
       "~web": path.resolve(__dirname, "../web"),
-      "~socket.io-client-services": path.resolve(
-        __dirname,
-        "../../packages/socket.io-client-services",
-      ),
-      "~socket.io-services": path.resolve(
-        __dirname,
-        "../../packages/socket.io-services",
-      ),
       "~translations": path.resolve(__dirname, "translations"),
     },
   },

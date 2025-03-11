@@ -1,15 +1,15 @@
-import type { Socket } from "socket.io";
-
+import type { authorUser } from "~prisma-schemas/client_dm";
 import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa/client";
 import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
 
-import type Events from "../types";
+import type { UserServices } from "../../../index";
+
 const maxWatchedAuthors = 5;
 
-export default (socket: Socket<Events>) => {
-  socket.on("getWatchedAuthors", async (callback) => {
+export default ({ _socket }: UserServices) => ({
+  getWatchedAuthors: async () => {
     const authorsUsers = await prismaDm.authorUser.findMany({
-      where: { userId: socket.data.user!.id },
+      where: { userId: _socket.data.user.id },
     });
     const authorNames = (
       await prismaCoa.inducks_person.findMany({
@@ -21,45 +21,40 @@ export default (socket: Socket<Events>) => {
       })
     ).groupBy("personcode");
 
-    callback(
-      authorsUsers.map((au) => ({
-        ...au,
-        fullname: authorNames[au.personcode]!.fullname,
-      })),
-    );
-  });
+    return authorsUsers.map((au) => ({
+      ...au,
+      fullname: authorNames[au.personcode].fullname,
+    }));
+  },
 
-  socket.on("addWatchedAuthor", async (personcode, callback) => {
+  addWatchedAuthor: async (personcode: string) => {
     try {
-      await upsertAuthorUser(personcode, socket.data.user!.id);
-      callback();
+      await upsertAuthorUser(personcode, _socket.data.user.id);
     } catch (e) {
       console.log(e);
-      callback({ error: "Error", errorDetails: (e as Error).message });
+      return { error: "Error", errorDetails: (e as Error).message };
     }
-  });
+  },
 
-  socket.on("updateWatchedAuthor", async (data, callback) => {
+  updateWatchedAuthor: async (data: authorUser) => {
     try {
       const { personcode, notation } = data;
-      await upsertAuthorUser(personcode, socket.data.user!.id, notation);
-      callback();
+      await upsertAuthorUser(personcode, _socket.data.user.id, notation);
     } catch (e) {
       console.error(e);
-      callback({ error: "Error", errorDetails: (e as Error).message });
+      return { error: "Error", errorDetails: (e as Error).message };
     }
-  });
+  },
 
-  socket.on("deleteWatchedAuthor", async (personcode, callback) => {
+  deleteWatchedAuthor: async (personcode: string) => {
     await prismaDm.authorUser.deleteMany({
       where: {
         personcode,
-        userId: socket.data.user!.id,
+        userId: _socket.data.user.id,
       },
     });
-    callback();
-  });
-};
+  },
+});
 
 const upsertAuthorUser = async (
   personcode: string,

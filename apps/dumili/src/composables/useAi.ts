@@ -1,14 +1,12 @@
 import { suggestions } from "~/stores/suggestions";
-import type { FullIndexation } from "~dumili-services/indexation/types";
+import type { FullIndexation } from "~dumili-services/indexation";
 import { COVER } from "~dumili-types/storyKinds";
 import { socketInjectionKey as dmSocketInjectionKey } from "~web/src/composables/useDmSocket";
 
 import useHint from "./useHint";
 
 export default () => {
-  const {
-    coverId: { services: coverIdServices },
-  } = inject(dmSocketInjectionKey)!;
+  const { coverId: coverIdEvents } = inject(dmSocketInjectionKey)!;
 
   const indexation = storeToRefs(suggestions())
     .indexation as Ref<FullIndexation>;
@@ -28,7 +26,7 @@ export default () => {
         return;
       }
       nextTick(async () => {
-        coverIdServices.searchFromCover({ url }).then((results) => {
+        coverIdEvents.searchFromCover({ url }).then((results) => {
           if ("error" in results) {
             console.error(results.error);
           } else {

@@ -172,7 +172,7 @@ const groupsInRange = (range: number) => {
 
 let issuesPerCell = $ref<{
   [publicationcode: string]: { [mod: string | number]: string[] };
-} | null>(null);
+}>();
 
 const addIssueToCell = (
   acc: { [publicationcode: string]: { [mod: string | number]: string[] } },

@@ -1,7 +1,11 @@
-import type { ServerSentEvents } from "~dumili-services/indexation/types";
-import IndexationServices from "~dumili-services/indexation/types";
-import IndexationsServices from "~dumili-services/indexations/types";
-import type { SocketClient } from "~socket.io-client-services";
+import type { SocketClient } from "socket-call-client";
+
+import {
+  type ClientEmitEvents as IndexationEmitEvents,
+  type ClientListenEvents as IndexationListenEvents,
+} from "~dumili-services/indexation";
+import { type ClientEmitEvents as IndexationsEmitEvents } from "~dumili-services/indexations";
+import namespaces from "~dumili-services/namespaces";
 
 const defaultExport = (options: {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -17,21 +21,21 @@ const defaultExport = (options: {
   const { session } = options;
 
   const getIndexationSocketFromId = (id: string) =>
-    socket.addNamespace<IndexationServices, ServerSentEvents>(
-      IndexationServices.namespaceEndpoint.replace("{id}", id),
+    socket.addNamespace<IndexationEmitEvents, IndexationListenEvents>(
+      namespaces.INDEXATION.replace("{id}", id),
       { session },
     );
 
-  const indexationSocket = ref<
-    ReturnType<typeof getIndexationSocketFromId> | undefined
-  >(undefined);
+  const indexationsSocket = ref(
+    socket.addNamespace<IndexationsEmitEvents>(namespaces.INDEXATIONS, {
+      session,
+    }),
+  );
+  const indexationSocket = ref<ReturnType<typeof getIndexationSocketFromId>>();
 
   return {
     options,
-    indexations: socket.addNamespace<IndexationsServices>(
-      IndexationsServices.namespaceEndpoint,
-      { session },
-    ),
+    indexationsSocket,
     indexationSocket,
     getIndexationSocketFromId,
     setIndexationSocketFromId: (id: string) => {

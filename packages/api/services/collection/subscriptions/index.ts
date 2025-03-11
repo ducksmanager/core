@@ -1,52 +1,57 @@
-import type { Socket } from "socket.io";
-
 import type { EditSubscription } from "~dm-types/EditSubscription";
+import type { subscription } from "~prisma-schemas/client_dm";
 import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
 
-import type Events from "../types";
-export default (socket: Socket<Events>) => {
-  socket.on("getSubscriptions", (callback) =>
+import type { UserServices } from "../../../index";
+
+export type SubscriptionTransformedStringDates = Omit<
+  subscription,
+  "startDate" | "endDate"
+> & {
+  startDate: string;
+  endDate: string;
+};
+
+export default ({ _socket }: UserServices) => ({
+  getSubscriptions: () =>
     prismaDm.subscription
       .findMany({
         where: {
           users: {
-            id: socket.data.user!.id,
+            id: _socket.data.user.id,
           },
         },
       })
       .then((data) =>
-        callback(
-          data.map((subscription) => ({
-            ...subscription,
-            startDate: subscription.startDate.toISOString(),
-            endDate: subscription.endDate.toISOString(),
-          })),
-        ),
+        data.map((subscription) => ({
+          ...subscription,
+          startDate: subscription.startDate.toISOString(),
+          endDate: subscription.endDate.toISOString(),
+        })),
       ),
-  );
 
-  socket.on("createSubscription", async (subscription, callback) => {
-    await upsertSubscription(null, subscription, socket.data.user!.id);
-    callback();
-  });
+  createSubscription: async (subscription: EditSubscription) => {
+    await upsertSubscription(null, subscription, _socket.data.user.id);
+  },
 
-  socket.on("updateSubscription", async (id, subscription, callback) => {
-    await upsertSubscription(id, subscription, socket.data.user!.id);
-    callback();
-  });
+  updateSubscription: async (
+    id: number,
+    subscription: SubscriptionTransformedStringDates,
+  ) => {
+    await upsertSubscription(id, subscription, _socket.data.user.id);
+  },
 
-  socket.on("deleteSubscription", async (id, callback) => {
+  deleteSubscription: async (id: number) => {
     await prismaDm.subscription.deleteMany({
       where: {
         id,
         users: {
-          id: socket.data.user!.id,
+          id: _socket.data.user.id,
         },
       },
     });
-    callback();
-  });
-};
+  },
+});
 
 export async function upsertSubscription(
   id: number | null,
@@ -74,11 +79,11 @@ export async function upsertSubscription(
   await prismaDm.subscription.upsert({
     update: dates,
     create: {
-      publicationcode: subscription.publicationcode!,
+      publicationcode: subscription.publicationcode,
       users: {
         connect: { id: userId },
       },
-      ...dates
+      ...dates,
     },
     where: {
       id: id || 0,

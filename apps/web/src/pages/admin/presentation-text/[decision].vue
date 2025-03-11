@@ -3,13 +3,12 @@ meta:
   layout: bare
 </route>
 <script setup lang="ts">
-import type { Decision } from "~dm-services/presentation-text/types";
+import type { Decision } from "~dm-services/presentation-text";
 
 let router = useRouter();
 
-const {
-  presentationText: { services: presentationTextServices },
-} = inject(socketInjectionKey)!;
+const { presentationText: presentationTextEvents } =
+  inject(socketInjectionKey)!;
 
 (async () => {
   let currentRoute = router.currentRoute.value;
@@ -17,7 +16,7 @@ const {
     sentence: string;
     userId: string;
   };
-  await presentationTextServices.approveOrDenyPresentationText(
+  await presentationTextEvents.approveOrDenyPresentationText(
     sentence,
     parseInt(userId),
     currentRoute.params.decision as Decision,

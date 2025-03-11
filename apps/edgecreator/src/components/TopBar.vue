@@ -1,25 +1,15 @@
 <template>
   <b-container fluid>
-    <b-row
-      align="center"
-      class="pt-2"
-    >
+    <b-row align="center" class="pt-2">
       <b-col class="text-start position-absolute col-12 col-md-6 options">
-        <b-navbar
-          toggleable
-          class="ps-0 pt-0"
-        >
+        <b-navbar toggleable class="ps-0 pt-0">
           <b-navbar-brand href="#">
             {{ $t("Options") }}
           </b-navbar-brand>
 
           <b-navbar-toggle target="nav-collapse" />
 
-          <b-collapse
-            id="nav-collapse"
-            is-nav
-            class="flex-column p-2 bg-white"
-          >
+          <b-collapse id="nav-collapse" is-nav class="flex-column p-2 bg-white">
             <b-row class="zoom-option">
               <b-col cols="3">
                 <input
@@ -29,7 +19,7 @@
                   max="8"
                   step="0.5"
                   style="width: 100%"
-                >
+                />
               </b-col>
               <b-col>{{ $t("Zoom") }}: {{ uiStore.zoom }}</b-col>
             </b-row>
@@ -52,8 +42,8 @@
                   id="showPreviousEdge"
                   v-model="showPreviousEdge"
                   :disabled="
-                    !mainStore.edgesBefore.length ||
-                      showPreviousEdge === undefined
+                    !edgeIssuecodesBefore.length ||
+                    showPreviousEdge === undefined
                   "
                 />
               </b-col>
@@ -69,14 +59,12 @@
                   id="showNextEdge"
                   v-model="showNextEdge"
                   :disabled="
-                    !mainStore.edgesAfter.length || showNextEdge === undefined
+                    !edgeIssuecodesAfter.length || showNextEdge === undefined
                   "
                 />
               </b-col>
               <b-col>
-                <label for="showNextEdge">{{
-                  $t("Show next edge")
-                }}</label>
+                <label for="showNextEdge">{{ $t("Show next edge") }}</label>
               </b-col>
             </b-row>
             <b-row>
@@ -111,10 +99,7 @@
           </b-collapse>
         </b-navbar>
       </b-col>
-      <b-col
-        align-self="center"
-        class="col-sm-4 offset-4"
-      >
+      <b-col align-self="center" class="col-sm-4 offset-4">
         <b-button to="/">
           <i-bi-house />
           {{ $t("Home") }}
@@ -122,32 +107,21 @@
       </b-col>
       <b-col />
     </b-row>
-    <b-row
-      align="center"
-      class="pb-1"
-    >
-      <b-col
-        v-if="publicationName"
-        align-self="center"
-      >
-        <issue
-          :issuecode="issuecodes[0]"
-          hide-condition
-          no-wrap
-        >
-          <template
-            v-if="isEditingMultiple"
-            #title-suffix
-          >
+    <b-row v-if="publicationIssues" align="center" class="pb-1">
+      <b-col v-if="publicationName" align-self="center">
+        <issue :issue="publicationIssues[0]" hide-condition no-wrap>
+          <template v-if="isEditingMultiple" #title-suffix>
             <template v-if="mainStore.isRange">
               {{ $t("to") }}
-              {{ issuecodes[issuecodes.length - 1] }}
+              {{ publicationIssues[publicationIssues.length - 1]!.issuenumber }}
             </template>
             <template v-else-if="issuecodes.length > 1">
               <span
                 v-for="otherIssuecode in issuecodes.slice(1)"
                 :key="`other-${otherIssuecode}`"
-              >, {{ otherIssuecode }}</span>
+                >,
+                {{ publicationIssues.find(({issuecode}) => issuecode === otherIssuecode)!.issuenumber }}</span
+              >
             </template>
           </template>
         </issue>
@@ -191,36 +165,27 @@
         </template>
       </b-col>
     </b-row>
-    <b-row
-      align="center"
-      class="p-1"
-    >
+    <b-row align="center" class="p-1">
       <b-col align-self="center">
         &nbsp;<b-button
-                pill
-                variant="outline-primary"
-                size="sm"
-                @click="showPhotoModal = !showPhotoModal"
-              >
-                <i-bi-camera />
-                <b-modal
-                  v-model="showPhotoModal"
-                  ok-only
-                >
-                  <gallery
-                    image-type="photos"
-                    :items="mainStore.publicationPhotosForGallery"
-                    @change="addPhoto"
-                  />
-                </b-modal>
-              </b-button>&nbsp;<save-model-button />&nbsp;<save-model-button
-                v-if="hasRole('Edition')"
-                with-submit
-              />
-        <save-model-button
-          v-if="hasRole('Admin')"
-          with-export
+          pill
+          variant="outline-primary"
+          size="sm"
+          @click="showPhotoModal = !showPhotoModal"
+        >
+          <i-bi-camera />
+          <b-modal v-model="showPhotoModal" ok-only>
+            <gallery
+              v-model:items="mainStore.publicationPhotosForGallery"
+              image-type="photos"
+              @change="addPhoto"
+            />
+          </b-modal> </b-button
+        >&nbsp;<save-model-button />&nbsp;<save-model-button
+          v-if="hasRole('Edition')"
+          with-submit
         />
+        <save-model-button v-if="hasRole('Admin')" with-export />
       </b-col>
     </b-row>
     <b-row
@@ -239,8 +204,8 @@
               collapseDimensions = !collapseDimensions;
             "
           >
-            <i-bi-arrows-angle-expand />
-          </b-button>&nbsp;<b-button
+            <i-bi-arrows-angle-expand /> </b-button
+          >&nbsp;<b-button
             pill
             size="sm"
             variant="outline-primary"
@@ -257,31 +222,19 @@
             class="mt-2"
           >
             <confirm-edit-multiple-values :values="uniqueDimensions">
-              <dimensions
-                :width="uniqueDimensions[0].width"
-                :height="uniqueDimensions[0].height"
-                @change="overwriteDimensions($event)"
-              />
+              <dimensions v-model="editingDimensions[0]" />
             </confirm-edit-multiple-values>
           </b-collapse>
-          <b-collapse
-            id="collapse-clone"
-            v-model="collapseClone"
-            class="mt-2"
-          >
+          <b-collapse id="collapse-clone" v-model="collapseClone" class="mt-2">
             <issue-select
               v-if="collapseClone"
-              :publication-code="mainStore.publicationcode"
-              :base-issue-codes="issuecodes"
+              :publicationcode="publicationcode"
               :disable-ongoing-or-published="false"
               with-edge-gallery
               disable-not-ongoing-nor-published
               @change="modelToBeCloned = $event"
             />
-            <b-button
-              :disabled="!modelToBeCloned"
-              @click="overwriteModel()"
-            >
+            <b-button :disabled="!modelToBeCloned" @click="clone">
               {{ $t("Clone") }}
             </b-button>
           </b-collapse>
@@ -301,13 +254,19 @@ import { stores as webStores } from "~web";
 
 const uiStore = ui();
 const mainStore = main();
-const { loadModel } = useModelLoad();
 
 const { showPreviousEdge, showNextEdge } = surroundingEdge();
 const { dimensions: editingDimensions } = storeToRefs(editingStep());
 const { hasRole } = webStores.collection();
 const stepStore = step();
-const { issuecodes, photoUrls } = storeToRefs(mainStore);
+const {
+  issuecodes,
+  publicationIssues,
+  photoUrls,
+  publicationcode,
+  edgeIssuecodesAfter,
+  edgeIssuecodesBefore,
+} = storeToRefs(mainStore);
 
 interface ModelToClone {
   editMode: string;
@@ -316,19 +275,19 @@ interface ModelToClone {
 }
 
 const showPhotoModal = ref(false);
-const modelToBeCloned = ref<ModelToClone | null>(null);
+const modelToBeCloned = ref<ModelToClone>();
 const collapseDimensions = ref(false);
 const collapseClone = ref(false);
 
 const hasPhotoUrl = computed(() => Object.keys(photoUrls.value).length);
 const publicationName = computed(
-  () => webStores.coa().publicationNames[mainStore.publicationcode!],
+  () => webStores.coa().publicationNames[publicationcode.value!],
 );
 const uniqueDimensions = computed(() =>
   [
     ...new Set(
-      Object.values(editingDimensions.value).map((item) =>
-        JSON.stringify(item),
+      Object.values(editingDimensions.value).map(({ width, height }) =>
+        JSON.stringify({ width, height }),
       ),
     ),
   ].map((item) => JSON.parse(item) as { width: number; height: number }),
@@ -342,27 +301,29 @@ const addPhoto = (src: string) => {
   photoUrls.value[issuecodes.value[0]] = src;
 };
 
-const overwriteModel = async () => {
-  const { issuecode } = modelToBeCloned.value!;
-  for (const targetIssuecode of issuecodes.value) {
-    try {
-      await loadModel(issuecode, targetIssuecode);
-    } catch (e) {
-      mainStore.addWarning(e as string);
-    }
+const clone = () => {
+  for (const issuecode of issuecodes.value.filter(
+    (issuecode) => issuecode !== modelToBeCloned.value!.issuecode,
+  )) {
+    stepStore.copyDimensionsAndSteps(
+      issuecode,
+      modelToBeCloned.value!.issuecode,
+    );
   }
 };
-const overwriteDimensions = ({
-  width,
-  height,
-}: {
-  width: number;
-  height: number;
-}) => {
-  stepStore.setDimensions({ width, height }, { issuecodes: issuecodes.value });
-};
 
-webStores.coa().fetchPublicationNames([mainStore.publicationcode!]);
+watch(
+  () => JSON.stringify(editingDimensions.value[0]),
+  (dimensions) => {
+    const { width, height } = JSON.parse(dimensions);
+    stepStore.setDimensions(
+      { width, height },
+      { issuecodes: issuecodes.value },
+    );
+  },
+);
+
+webStores.coa().fetchPublicationNames([publicationcode.value!]);
 </script>
 <style lang="scss">
 .options {

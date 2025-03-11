@@ -36,20 +36,18 @@ import { socketInjectionKey } from "../../composables/useDmSocket";
 
 const { loadUser } = collection();
 
-let initError = $ref<string | null>(null);
-let error = $ref<string | null>(null);
+let initError = $ref<string>();
+let error = $ref<string>();
 const token = useRoute().params.token as string;
 const password = $ref("");
 const password2 = $ref("");
 
 const { t: $t } = useI18n();
 
-const {
-  auth: { services: authServices },
-} = inject(socketInjectionKey)!;
+const { auth: authEvents } = inject(socketInjectionKey)!;
 
 const changePassword = async () => {
-  const response = await authServices.changePassword({
+  const response = await authEvents.changePassword({
     token,
     password,
     password2,

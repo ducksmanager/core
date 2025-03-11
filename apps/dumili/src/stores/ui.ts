@@ -1,14 +1,22 @@
-import type { FullEntry } from "~dumili-services/indexation/types";
-import { getEntryFromPage, getEntryPages } from "~dumili-utils/entryPages";
+import type { FullEntry } from "~dumili-services/indexation";
+import { getEntryPages } from "~dumili-utils/entryPages";
 
 import { suggestions } from "./suggestions";
 
 export const ui = defineStore("ui", () => {
   const { indexation } = storeToRefs(suggestions());
-  const hoveredEntry = ref<FullEntry | null>(null);
+  const hoveredEntry = ref<FullEntry>();
   const currentEntry = ref<FullEntry>();
   const currentPage = ref(0);
   const pageHeight = ref(50);
+  const overlay = ref<
+    | { type: "story kind"; entryId: number }
+    | { type: "panels"; pageId: number }
+    | {
+        type: "ocr" | "panels";
+        entryId: number;
+      }
+  >();
 
   const visiblePages = ref<Set<number>>(new Set());
 
@@ -27,18 +35,19 @@ export const ui = defineStore("ui", () => {
     );
   });
 
-  watch(
-    indexation,
-    () => {
-      currentEntry.value = getEntryFromPage(indexation.value!, 0)!;
-    },
-    { once: true },
-  );
+  watch(hoveredEntry, (entry) => {
+    if (entry) {
+      overlay.value = {
+        type: "story kind",
+        entryId: entry!.id,
+      };
+    } else {
+      overlay.value = undefined;
+    }
+  });
 
   return {
-    showAiDetectionsOn: ref<{ type: "page" | "entry"; id: number } | undefined>(
-      undefined,
-    ),
+    overlay,
     pageHeight,
     currentPage,
     visiblePages,

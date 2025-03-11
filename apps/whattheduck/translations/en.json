@@ -190,7 +190,7 @@
   "Vous possédez déjà ce numéro dans votre collection": "You already have this issue in your collection",
   "Vous pouvez maintenant voir votre bibliothèque depuis l'application ! Lorsque vous consultez une liste de numéros, appuyez sur l'icône \"bibliothèque\" pour passer à la vue bibliothèque.": "You can now add multiple copies of the same issue in your collection!",
   "Vous pouvez spécifier un maximum de 3 exemplaires par numéro.": "You can specify a maximum of 3 copies for each issue",
-  "Vous êtes en mode hors-ligne. Vous pouvez naviguer dans votre collection mais pas la modifier. Certaines fonctionnalités ne sont pas disponibles.": "You are using offline mode. You can browse through your collection but not update it.{br}Some features will not be available.",
+  "Vous êtes en mode hors-ligne. Vous pouvez naviguer dans votre collection mais pas la modifier.{br}Certaines fonctionnalités ne sont pas disponibles.": "You are using offline mode. You can browse through your collection but not update it.{br}Some features will not be available.",
   "Vue Bibliothèque": "Bookcase view",
   "What The Duck": "What The Duck",
   "What The Duck est l'application mobile de DucksManager. Cliquez ici pour accéder au site Web de DucksManager.": "What The Duck is the mobile app of DucksManager. Click here to access the DucksManager website.",

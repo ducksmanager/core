@@ -98,12 +98,13 @@
           <Book
             v-if="currentIssuecodeOpened"
             :issuecode="currentIssuecodeOpened"
-            @close-book="currentIssuecodeOpened = null"
+            @close-book="currentIssuecodeOpened = undefined"
           />
           <div v-if="readonly">
             <div
               v-for="{
                 issuecode,
+                issuenumber,
                 title,
                 userCopies,
                 key,
@@ -124,8 +125,7 @@
                 />
 
                 <span class="issue-text">
-                  {{ issueNumberTextPrefix
-                  }}{{ issuecodeDetails[issuecode]?.issuenumber }}
+                  {{ issueNumberTextPrefix }}{{ issuenumber }}
                   <span class="issue-title">{{ title }}</span>
                 </span>
               </span>
@@ -153,6 +153,7 @@
             <div
               v-for="{
                 issuecode,
+                issuenumber,
                 title,
                 userCopies,
                 key,
@@ -174,7 +175,7 @@
               @mouseup.self.left="updateSelected"
               @mouseover="
                 preselectedIndexEnd =
-                  preselectedIndexStart === null ? null : idx;
+                  preselectedIndexStart === undefined ? undefined : idx;
                 hoveredIndex = idx;
               "
             >
@@ -186,8 +187,7 @@
                 />
 
                 <span class="issue-text">
-                  {{ issueNumberTextPrefix
-                  }}{{ issuecodeDetails[issuecode]?.issuenumber }}
+                  {{ issueNumberTextPrefix }}{{ issuenumber }}
                   <span class="issue-title">{{ title }}</span>
                 </span>
               </span>
@@ -337,11 +337,14 @@ import ContextMenuOwnCollection from "./ContextMenuOwnCollection.vue";
 
 type simpleIssue = {
   issuecode: string;
+  issuenumber: string;
   title?: string | null;
   key: string;
 };
 type issueWithCopies = simpleIssue & {
-  userCopies: ((issue & { issuecode: string }) & { copyIndex: number })[];
+  userCopies: ((issue & { issuecode: string; issuenumber: string }) & {
+    copyIndex: number;
+  })[];
 };
 
 const {
@@ -374,7 +377,7 @@ const { conditions } = useCondition();
 const { t: $t } = useI18n();
 
 let clicks = $ref(0);
-let timer = $ref<NodeJS.Timeout | null>(null);
+let timer = $ref<NodeJS.Timeout>();
 const doubleClickDelay = 500;
 
 type LaunchModalOptions = {
@@ -399,15 +402,11 @@ switch (contextMenuComponentName) {
     break;
 }
 
-const { fetchPublicationNames, fetchIssuecodesByPublicationcode } = coa();
-const {
-  publicationNames,
-  coverUrls,
-  issuecodesByPublicationcode,
-  issuecodeDetails,
-} = storeToRefs(coa());
+const { fetchPublicationNames, fetchIssuesByPublicationcode } = coa();
+const { publicationNames, coverUrls, issuesByPublicationcode } =
+  storeToRefs(coa());
 
-let hoveredIndex = $ref<number | null>(null);
+let hoveredIndex = $ref<number>();
 let loading = $ref(true);
 let publicationNameLoading = $ref(true);
 const filter = $ref<{ missing: boolean; possessed: boolean }>({
@@ -418,11 +417,9 @@ const contextmenuInstance = $ref<{
   visible: boolean;
   hide: (e?: MouseEvent) => void;
   show: (e: MouseEvent) => void;
-} | null>(null);
-let issues = $shallowRef<issueWithCopies[] | null>(null);
-let userIssuesForPublication = $shallowRef<
-  (issue & { issuecode: string })[] | null
->(null);
+}>();
+let issues = $shallowRef<issueWithCopies[]>();
+let userIssuesForPublication = $shallowRef<(issue & { issuecode: string })[]>();
 let userIssuecodesNotFoundForPublication = $shallowRef<string[] | null>([]);
 let selected = $shallowRef<string[]>([]);
 const filteredUserCopies = $computed(() =>
@@ -454,9 +451,9 @@ const copiesBySelectedIssuecode = $computed(() =>
   }, {}),
 );
 let preselected = $shallowRef<string[]>([]);
-let preselectedIndexStart = $ref<number | null>(null);
-let preselectedIndexEnd = $ref<number | null>(null);
-let currentIssuecodeOpened = $shallowRef<string | null>(null);
+let preselectedIndexStart = $ref<number>();
+let preselectedIndexEnd = $ref<number>();
+let currentIssuecodeOpened = $shallowRef<string>();
 const issueNumberTextPrefix = $computed(() => $t("n°"));
 const boughtOnTextPrefix = $computed(() => $t("Acheté le"));
 const showFilter = $computed(
@@ -477,16 +474,16 @@ const publicationName = $computed(
   () => publicationNames.value[publicationcode],
 );
 const isTouchScreen = window.matchMedia("(pointer: coarse)").matches;
-const coaIssuecodes = $computed(
-  () => issuecodesByPublicationcode.value[publicationcode],
+const coaIssues = $computed(
+  () => issuesByPublicationcode.value[publicationcode],
 );
 const filteredIssues = $computed(
   () =>
     issues
       ?.filter(
         ({ userCopies }) =>
-          (filter.possessed && userCopies!.length) ||
-          (filter.missing && !userCopies!.length),
+          (filter.possessed && userCopies.length) ||
+          (filter.missing && !userCopies.length),
       )
       ?.map((issue, idx) => ({ ...issue, idx })) || [],
 );
@@ -522,7 +519,7 @@ const showContextMenuOnDoubleClickTouchScreen = (e: MouseEvent) => {
         contextmenuInstance!.hide(e);
       }, doubleClickDelay);
     } else if (clicks === 2) {
-      clearTimeout(timer!);
+      clearTimeout(timer);
       clicks = 0;
       contextmenuInstance!.show(e);
     }
@@ -530,14 +527,14 @@ const showContextMenuOnDoubleClickTouchScreen = (e: MouseEvent) => {
 };
 
 const getPreselected = () =>
-  [preselectedIndexStart, preselectedIndexEnd].includes(null)
+  [preselectedIndexStart, preselectedIndexEnd].includes(undefined)
     ? preselected
     : filteredIssues
         .map(({ key }) => key || "")
         .filter(
           (_, index) =>
-            preselectedIndexStart !== null &&
-            preselectedIndexEnd !== null &&
+            preselectedIndexStart !== undefined &&
+            preselectedIndexEnd !== undefined &&
             index >= preselectedIndexStart &&
             index <= preselectedIndexEnd,
         );
@@ -549,7 +546,7 @@ const updateSelected = () => {
         (itemKey) =>
           selected.includes(itemKey) !== preselected.includes(itemKey),
       );
-    preselectedIndexStart = preselectedIndexEnd = null;
+    preselectedIndexStart = preselectedIndexEnd = undefined;
     preselected = [];
   }
 };
@@ -570,7 +567,7 @@ const deletePublicationIssues = async (issuecodesToDelete: string[]) => {
 };
 
 const openBook = (issuecode: string) => {
-  currentIssuecodeOpened = coverUrls.value?.[issuecode] ? issuecode : null;
+  currentIssuecodeOpened = coverUrls.value?.[issuecode] ? issuecode : undefined;
 };
 
 const loadIssues = async () => {
@@ -589,26 +586,28 @@ const loadIssues = async () => {
         ).dbValue,
       }));
 
-    await fetchIssuecodesByPublicationcode([publicationcode]);
+    await fetchIssuesByPublicationcode(publicationcode);
 
     if (groupUserCopies) {
-      issues = coaIssuecodes.map((issuecode) => ({
-        issuecode,
+      issues = coaIssues.map((issue) => ({
+        ...issue,
         userCopies: userIssuesForPublication!
-          .filter(({ issuecode: userIssuecode }) => userIssuecode === issuecode)
+          .filter(
+            ({ issuecode: userIssuecode }) => userIssuecode === issue.issuecode,
+          )
           .map((issue, copyIndex) => ({
             ...issue,
             copyIndex,
           })),
-        key: issuecode,
+        key: issue.issuecode,
       }));
     } else {
       const userIssuecodes = [
-        ...new Set(userIssuesForPublication!.map(({ issuecode }) => issuecode)),
+        ...new Set(userIssuesForPublication.map(({ issuecode }) => issuecode)),
       ];
-      issues = coaIssuecodes
-        .filter((issuecode) => userIssuecodes.includes(issuecode))
-        .reduce<issueWithCopies[]>((acc, issuecode) => {
+      issues = coaIssues
+        .filter(({ issuecode }) => userIssuecodes.includes(issuecode))
+        .reduce<issueWithCopies[]>((acc, { issuecode }) => {
           const filteredIssues = userIssuesForPublication!
             .filter(
               ({ issuecode: userIssuecode }) => userIssuecode === issuecode,
@@ -624,33 +623,36 @@ const loadIssues = async () => {
     }
 
     if (duplicatesOnly) {
-      const countPerIssuecode = issues!.reduce<{ [issuecode: string]: number }>(
+      const countPerIssuecode = issues.reduce<{ [issuecode: string]: number }>(
         (acc, { userCopies: [{ issuecode }] }) => {
           acc[issuecode] = (acc[issuecode] || 0) + 1;
           return acc;
         },
         {},
       );
-      issues = issues!.filter(
+      issues = issues.filter(
         ({ issuecode }) => countPerIssuecode[issuecode] > 1,
       );
     }
 
     if (readStackOnly) {
-      issues = issues!.filter(
+      issues = issues.filter(
         ({ userCopies }) =>
           userCopies.filter(({ isToRead }) => isToRead).length,
       );
     }
     if (onSaleStackOnly) {
-      issues = issues!.filter(
+      issues = issues.filter(
         ({ userCopies }) =>
           userCopies.filter(({ isOnSale }) => isOnSale).length,
       );
     }
 
-    userIssuecodesNotFoundForPublication = userIssuesForPublication!
-      .filter(({ issuecode }) => !coaIssuecodes.includes(issuecode))
+    userIssuecodesNotFoundForPublication = userIssuesForPublication
+      .filter(
+        ({ issuecode }) =>
+          !coaIssues.some((issue) => issuecode === issue.issuecode),
+      )
       .map(({ issuecode }) => issuecode);
     loading = false;
   }
@@ -664,18 +666,18 @@ watch($$(preselectedIndexEnd), () => {
   preselected = getPreselected();
 });
 
-watch(
-  [$$(publicationcode), $$(userIssues)],
-  async () => {
-    await loadIssues();
-  },
-  { immediate: true },
-);
+watch([$$(publicationcode), $$(userIssues)], () => loadIssues(), {
+  immediate: true,
+});
 
 watch(
-  $$(userIssues),
-  async () => {
-    await loadIssues();
+  $$(publicationcode),
+  async (newPublicationcode) => {
+    if (newPublicationcode) {
+      publicationNameLoading = true;
+      await fetchPublicationNames([newPublicationcode]);
+      publicationNameLoading = false;
+    }
   },
   { immediate: true },
 );
@@ -686,8 +688,6 @@ watch(
   } else {
     await loadPurchases();
   }
-  await fetchPublicationNames([publicationcode]);
-  publicationNameLoading = false;
 })();
 </script>
 

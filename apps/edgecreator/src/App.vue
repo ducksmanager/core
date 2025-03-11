@@ -5,7 +5,7 @@
 <script setup lang="ts">
 import Cookies from "js-cookie";
 
-import { buildWebStorage } from "~socket.io-client-services/index";
+import { buildWebStorage } from "socket-call-client";
 import { stores as webStores } from "~web";
 import useDmSocket, {
   socketInjectionKey as dmSocketInjectionKey,
@@ -15,6 +15,7 @@ import useEdgecreatorSocket, {
   edgecreatorSocketInjectionKey,
 } from "./composables/useEdgecreatorSocket";
 import { getCurrentInstance } from "vue";
+import { edgeCatalog } from "./stores/edgeCatalog";
 
 const session = {
   getToken: () => Promise.resolve(Cookies.get("token")),
@@ -33,7 +34,7 @@ const onConnectError = (e: Error) => {
     location.replace(
       `${import.meta.env.VITE_DM_URL as string}/login?redirect=${
         window.location.href
-      }`
+      }`,
     );
   }
 };
@@ -42,7 +43,7 @@ getCurrentInstance()!.appContext.app.provide(
   useEdgecreatorSocket({
     session,
     onConnectError,
-  })
+  }),
 );
 
 const dmSocket = useDmSocket({
@@ -54,10 +55,16 @@ const dmSocket = useDmSocket({
 getCurrentInstance()!.appContext.app.provide(dmSocketInjectionKey, dmSocket);
 const route = useRoute();
 
-const user = computed(() => webStores.collection().user);
-const userPermissions = computed(() => webStores.collection().userPermissions);
+const collectionStore = webStores.collection();
+const { user, userPermissions } = storeToRefs(collectionStore);
 
-webStores.collection().loadUser();
+try {
+  collectionStore.loadUser();
+  collectionStore.loadUserPermissions();
+  edgeCatalog().fetchOngoingEdges();
+} catch (e) {
+  console.error(e);
+}
 
 watch(
   user,
@@ -69,7 +76,7 @@ watch(
           !userPermissions.value?.some(
             ({ privilege, role }) =>
               role === "EdgeCreator" &&
-              ["Edition", "Admin"].includes(privilege as string)
+              ["Edition", "Admin"].includes(privilege as string),
           )
         ) {
           location.replace("/");
@@ -77,7 +84,7 @@ watch(
       }
     }
   },
-  { immediate: true }
+  { immediate: true },
 );
 </script>
 

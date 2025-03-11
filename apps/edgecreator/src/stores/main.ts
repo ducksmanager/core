@@ -1,43 +1,39 @@
-import type { AxiosInstance } from "axios";
 import { defineStore } from "pinia";
 
 import { edgecreatorSocketInjectionKey } from "~/composables/useEdgecreatorSocket";
-import type { EdgeWithModelIdAndIssuecode } from "~dm-types/EdgeWithModelIdAndIssuecode";
 import type { userContributionType } from "~prisma-schemas/schemas/dm";
 import type { ModelContributor } from "~types/ModelContributor";
 import type { SimpleUser } from "~types/SimpleUser";
 import { stores as webStores } from "~web";
-import { socketInjectionKey as dmSocketInjectionKey } from "~web/src/composables/useDmSocket";
+
+import { edgeCatalog } from "./edgeCatalog";
 
 const numericSortCollator = new Intl.Collator(undefined, {
   numeric: true,
   sensitivity: "base",
 });
 export const main = defineStore("main", () => {
-  const {
-    browse: { services: browseServices },
-  } = inject(edgecreatorSocketInjectionKey)!;
-  const {
-    edges: { services: edgesServices },
-  } = inject(dmSocketInjectionKey)!;
+  const { browse: browseEvents } = inject(edgecreatorSocketInjectionKey)!;
 
-  const publicationcode = ref<string | null>(null),
+  const publicationcode = ref<string>(),
     issuecodes = ref<string[]>([]),
     isRange = ref(false),
     photoUrls = ref<Record<string, string>>({}),
     contributors = ref<ModelContributor[]>([]),
-    edgesBefore = ref<(EdgeWithModelIdAndIssuecode | undefined)[]>([]),
-    edgesAfter = ref<(EdgeWithModelIdAndIssuecode | undefined)[]>([]),
     publicationElements = ref<string[]>([]),
     publicationPhotos = ref<string[]>([]),
     warnings = ref<string[]>([]),
     country = computed(() => publicationcode.value?.split("/")[0]),
     magazine = computed(() => publicationcode.value?.split("/")[1]),
-    publicationIssuecodes = computed(
+    publicationIssues = computed(
       () =>
         (publicationcode.value &&
-          webStores.coa().issuecodesByPublicationcode[publicationcode.value]) ||
-        [],
+          publicationcode.value in webStores.coa().issuesByPublicationcode &&
+          webStores.coa().issuesByPublicationcode[publicationcode.value]) ||
+        undefined,
+    ),
+    publicationIssuecodes = computed(() =>
+      publicationIssues.value?.map(({ issuecode }) => issuecode),
     ),
     publicationElementsForGallery = computed(
       () =>
@@ -68,6 +64,14 @@ export const main = defineStore("main", () => {
       contributionType: userContributionType;
       user: SimpleUser;
     }) => {
+      if (!user) {
+        console.warn("User not found when adding contributor", {
+          issuecode,
+          contributionType,
+          user,
+        });
+        return;
+      }
       removeContributor({ contributionType, userToRemove: user });
       contributors.value.push({
         issuecode,
@@ -97,33 +101,48 @@ export const main = defineStore("main", () => {
     setIssuecodes = (
       firstIssuecode: string,
       lastIssuecode?: string,
-      otherIssuecodes?: string[],
+      otherIssuecodes: string[] = [],
     ) => {
-      const firstIssueIndex = publicationIssuecodes.value.findIndex(
-        (issuecode) => issuecode === firstIssuecode,
-      );
-      if (lastIssuecode === undefined) {
-        issuecodes.value = [firstIssuecode, ...(otherIssuecodes || [])];
+      if (!publicationIssuecodes.value) {
+        console.error("Publication issues not loaded");
+        return;
+      }
+      const errors: string[] = [];
+      const firstIssueIndex =
+        publicationIssuecodes.value.indexOf(firstIssuecode);
+      if (!lastIssuecode) {
+        issuecodes.value = [firstIssuecode, ...otherIssuecodes];
       } else {
         isRange.value = true;
-        let lastIssueIndex = publicationIssuecodes.value.findIndex(
-          (issuecode) => issuecode === lastIssuecode,
-        );
+
+        let lastIssueIndex = publicationIssuecodes.value.indexOf(lastIssuecode);
         if (lastIssueIndex === -1) {
-          lastIssueIndex = publicationIssuecodes.value.length - 1;
-          console.warn(
-            `Issue ${lastIssuecode} doesn't exist, falling back to ${publicationIssuecodes.value[lastIssueIndex]}`,
-          );
+          errors.push(`Issue ${lastIssuecode} doesn't exist`);
+          lastIssueIndex = firstIssueIndex;
         }
 
         issuecodes.value = publicationIssuecodes.value.filter(
           (_, index) => index >= firstIssueIndex && index <= lastIssueIndex,
         );
       }
+
+      const { existing, nonExisting } = Object.groupBy(
+        issuecodes.value,
+        (issuecode) =>
+          publicationIssuecodes.value!.includes(issuecode)
+            ? "existing"
+            : "nonExisting",
+      );
+      issuecodes.value = existing || [];
+      for (const nonExistingIssue of nonExisting || []) {
+        errors.push(`Issue ${nonExistingIssue} doesn't exist, ignoring`);
+      }
+
+      return errors;
     },
     loadItems = async ({ itemType }: { itemType: "elements" | "photos" }) => {
       const items = (
-        await browseServices.listEdgeParts({
+        await browseEvents.listEdgeParts({
           imageType: itemType,
           country: country.value!,
           magazine: magazine.value!,
@@ -136,82 +155,72 @@ export const main = defineStore("main", () => {
       }
     },
     loadPublicationIssues = async () =>
-      webStores
-        .coa()
-        .fetchIssuecodesByPublicationcode([publicationcode.value!]),
-    getEdgePublicationStates = async (issuecodes: string[]) =>
-      [
-        ...new Set(Object.values(await edgesServices.getEdges({ issuecodes }))),
-      ].sort((a, b) =>
-        Math.sign(
-          issuecodes.indexOf(a!.issuecode) - issuecodes.indexOf(b!.issuecode),
-        ),
-      ),
-    loadSurroundingEdges = async () => {
-      const firstIssueIndex = publicationIssuecodes.value.findIndex(
-        (issue) => issue === issuecodes.value[0],
-      );
-      const lastIssueIndex = publicationIssuecodes.value.findIndex(
-        (issue) => issue === issuecodes.value[issuecodes.value.length - 1],
-      );
-      const issuesBefore = publicationIssuecodes.value.filter(
-        (_, index) =>
-          firstIssueIndex !== -1 &&
-          index >= firstIssueIndex - 10 &&
-          index < firstIssueIndex,
-      );
-      const issuesAfter = publicationIssuecodes.value.filter(
-        (_, index) =>
-          lastIssueIndex !== -1 &&
-          index > lastIssueIndex &&
-          index <= lastIssueIndex + 10,
-      );
+      webStores.coa().fetchIssuesByPublicationcode(publicationcode.value),
+    getEdgePublicationStates = (issuecodes: string[]) =>
+      Object.keys(edgeCatalog().publishedEdges)
+        .filter((issuecode) => issuecodes.includes(issuecode))
+        .sort((issuecode1, issuecode2) =>
+          Math.sign(
+            issuecodes.indexOf(issuecode1) - issuecodes.indexOf(issuecode2),
+          ),
+        );
 
-      if (issuesBefore.length) {
-        edgesBefore.value = await getEdgePublicationStates(issuesBefore);
-      }
+  const edgeIssuecodesBefore = computed(() => {
+    if (
+      !edgeCatalog().ongoingEdges ||
+      !publicationcode.value ||
+      !publicationIssuecodes.value ||
+      !(publicationcode.value in edgeCatalog().publishedEdges)
+    ) {
+      return [];
+    }
+    const firstIssueIndex = publicationIssuecodes.value.indexOf(
+      issuecodes.value[0],
+    );
+    const issuesBefore = publicationIssuecodes.value.filter(
+      (_, index) =>
+        firstIssueIndex !== -1 &&
+        index >= firstIssueIndex - 10 &&
+        index < firstIssueIndex,
+    );
 
-      if (issuesAfter.length) {
-        edgesAfter.value = await getEdgePublicationStates(issuesAfter);
-      }
-    },
-    getChunkedRequests = async ({
-      api,
-      url,
-      parametersToChunk,
-      chunkSize,
-      suffix = "",
-    }: {
-      api: AxiosInstance;
-      url: string;
-      parametersToChunk: (string | number)[];
-      chunkSize: number;
-      suffix?: string;
-    }) =>
-      await Promise.all(
-        await Array.from(
-          { length: Math.ceil(parametersToChunk.length / chunkSize) },
-          (_, i) =>
-            parametersToChunk.slice(i * chunkSize, i * chunkSize + chunkSize),
-        ).reduce(
-          async (acc, codeChunk) =>
-            (await acc).concat(
-              await api.get(`${url}${codeChunk.join(",")}${suffix}`),
-            ),
-          Promise.resolve([]),
-        ),
-      );
+    return getEdgePublicationStates(issuesBefore);
+  });
+
+  const edgeIssuecodesAfter = computed(() => {
+    if (
+      !edgeCatalog().ongoingEdges ||
+      !publicationcode.value ||
+      !publicationIssuecodes.value ||
+      !(publicationcode.value in edgeCatalog().publishedEdges)
+    ) {
+      return [];
+    }
+
+    const lastIssueIndex = publicationIssuecodes.value?.indexOf(
+      issuecodes.value[issuecodes.value.length - 1],
+    );
+    const issuesAfter = publicationIssuecodes.value.filter(
+      (_, index) =>
+        lastIssueIndex !== -1 &&
+        index > lastIssueIndex &&
+        index <= lastIssueIndex + 10,
+    );
+
+    return getEdgePublicationStates(issuesAfter);
+  });
   return {
     publicationcode,
     issuecodes,
     isRange,
     photoUrls,
     contributors,
-    edgesBefore,
-    edgesAfter,
+    edgeIssuecodesBefore,
+    edgeIssuecodesAfter,
     publicationElements,
     publicationPhotos,
     warnings,
+    publicationIssues,
     publicationIssuecodes,
     publicationElementsForGallery,
     publicationPhotosForGallery,
@@ -222,7 +231,5 @@ export const main = defineStore("main", () => {
     setIssuecodes,
     loadItems,
     loadPublicationIssues,
-    loadSurroundingEdges,
-    getChunkedRequests,
   };
 });

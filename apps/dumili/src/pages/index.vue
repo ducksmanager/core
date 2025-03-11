@@ -30,7 +30,14 @@
               fluid
             />
             <div class="position-absolute bottom-0 pb-3">
-              <Issue v-bind="acceptedIssueSuggestion" />
+              <Issue
+                v-if="
+                  acceptedIssueSuggestion &&
+                  publicationNames[acceptedIssueSuggestion?.publicationcode]
+                "
+                :issue="acceptedIssueSuggestion"
+              />
+              <Issue v-else />
             </div>
           </router-link>
         </b-col>
@@ -63,7 +70,7 @@
           )
         }}
         <b-form-input
-          v-model.number="totalPages"
+          v-model="totalPages"
           type="number"
           min="4"
           max="996" /></b-form></b-modal
@@ -72,33 +79,34 @@
 
 <script setup lang="ts">
 import { dumiliSocketInjectionKey } from "~/composables/useDumiliSocket";
-import type { IndexationWithFirstPageAndAcceptedIssueSuggestion } from "~dumili-services/indexations/types";
+import type { EventOutput } from "socket-call-client";
+import type { ClientEmitEvents as IndexationsEvents } from "~dumili-services/indexations";
 
 const router = useRouter();
-const {
-  indexations: { services: indexationsServices },
-  getIndexationSocketFromId,
-} = inject(dumiliSocketInjectionKey)!;
+const { indexationsSocket, getIndexationSocketFromId } = inject(
+  dumiliSocketInjectionKey,
+)!;
 
 const { fetchPublicationNames } = coa();
+const { publicationNames } = storeToRefs(coa());
 
-const form = ref<HTMLFormElement | null>(null);
+const form = ref<HTMLFormElement>();
 const currentIndexations =
-  ref<IndexationWithFirstPageAndAcceptedIssueSuggestion[]>();
+  shallowRef<EventOutput<IndexationsEvents, "getIndexations">>();
 const modal = ref(false);
 const totalPages = ref(16);
 
 const createIndexation = async () => {
   const cloudinaryFolderName = new Date().toISOString().replace(/[-:.Z]/g, "");
 
-  await indexationsServices.create(cloudinaryFolderName, totalPages.value);
+  await indexationsSocket.value.create(cloudinaryFolderName, totalPages.value);
   router.push(`/indexation/${cloudinaryFolderName}`);
 };
 
 const deleteIndexation = async (id: string) => {
   const indexationSocket = getIndexationSocketFromId(id);
 
-  await indexationSocket.services.deleteIndexation();
+  await indexationSocket.deleteIndexation();
   window.location.reload();
 };
 
@@ -114,7 +122,7 @@ watch(currentIndexations, (indexations) => {
 });
 
 (async () => {
-  currentIndexations.value = await indexationsServices.getIndexations();
+  currentIndexations.value = await indexationsSocket.value.getIndexations();
 })();
 </script>
 

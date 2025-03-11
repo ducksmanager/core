@@ -1,11 +1,13 @@
 import { existsSync, readFileSync } from "fs";
-import type { Namespace, Server } from "socket.io";
+import { useSocketEvents } from "socket-call-server";
 
-import type Events from "./types";
-import type { AppInfos, ErrorableAppUpdate } from "./types";
-import { namespaceEndpoint } from "./types";
+import namespaces from "../namespaces";
 
-export const getUpdateFileUrl = (appInfos?: AppInfos): ErrorableAppUpdate => {
+type AppInfos = {
+  version: string;
+};
+
+export const getUpdateFileUrl = async (appInfos?: AppInfos) => {
   const fileName = import.meta.dirname + "/latest-whattheduck-bundle.txt";
   if (existsSync(fileName)) {
     const mostRecentBundleUrl = readFileSync(fileName).toString().trim();
@@ -21,19 +23,23 @@ export const getUpdateFileUrl = (appInfos?: AppInfos): ErrorableAppUpdate => {
         url: mostRecentBundleUrl,
       };
     } else {
-      return { error: "Already up to date" };
+      return { error: "Already up to date" } as const;
     }
   } else {
-    return { error: "Not found", errorDetails: fileName };
+    return { error: "Not found", errorDetails: fileName } as const;
   }
 };
 
-export default (io: Server) => {
-  (io.of(namespaceEndpoint) as Namespace<Events>).on("connection", (socket) => {
-    console.log("connected to app");
+const listenEvents = () => ({
+  getBundleUrl: (appInfos: AppInfos) => getUpdateFileUrl(appInfos),
+});
 
-    socket.on("getBundleUrl", (appInfos, callback) => {
-      callback(getUpdateFileUrl(appInfos));
-    });
-  });
-};
+export const { client, server } = useSocketEvents<typeof listenEvents>(
+  namespaces.APP,
+  {
+    listenEvents,
+    middlewares: [],
+  },
+);
+
+export type ClientEvents = (typeof client)["emitEvents"];

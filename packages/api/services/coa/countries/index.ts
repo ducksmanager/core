@@ -1,14 +1,9 @@
-import type { Socket } from "socket.io";
-
 import { Prisma } from "~prisma-schemas/schemas/coa";
 import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa/client";
 
-import type Events from "../types";
-
-export default (socket: Socket<Events>) => {
-  socket.on("getCountryList", (locale, countryCodes, callback) =>
-    getCountryNames(locale, countryCodes).then(callback),
-  );
+export default {
+  getCountryList: async (locale: string, countryCodes?: string[]) =>
+    getCountryNames(locale, countryCodes),
 };
 
 const getCountryNames = async (

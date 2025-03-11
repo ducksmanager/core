@@ -67,10 +67,9 @@ import {
 } from "chart.js";
 import { Bar } from "vue-chartjs";
 
-import type StatsServices from "~dm-services/stats/types";
-import type { EventReturnType } from "~socket.io-services";
-
+import type { ClientEvents as StatsServices } from "~dm-services/stats";
 import { socketInjectionKey } from "../../composables/useDmSocket";
+import { EventOutput } from "socket-call-client";
 
 Chart.register(
   Legend,
@@ -87,28 +86,23 @@ const { t: $t } = useI18n();
 const { loadRatings } = stats();
 const { ratings } = storeToRefs(stats());
 
-const {
-  stats: { services: statsServices },
-} = inject(socketInjectionKey)!;
+const { stats: statsEvents } = inject(socketInjectionKey)!;
 
 const unitTypes = {
   number: $t("Afficher en valeurs réelles"),
   percentage: $t("Afficher en pourcentages"),
 };
 
-let watchedAuthorsStoryCount = $ref<EventReturnType<
-  StatsServices["getWatchedAuthorsStats"]
-> | null>(null);
+let watchedAuthorsStoryCount =
+  $ref<EventOutput<StatsServices, "getWatchedAuthorsStats">>();
 let unitTypeCurrent = $ref("number");
-let width = $ref<string | null>(null),
+let width = $ref<string>(),
   height = $ref<string>("300px"),
-  chartData = $ref<ChartData<"bar", number[]> | null>(null),
+  chartData = $ref<ChartData<"bar", number[]>>(),
   options = $ref<ChartOptions<"bar">>({});
 
-const labels = $computed(
-  () =>
-    watchedAuthorsStoryCount &&
-    watchedAuthorsStoryCount.map(({ fullname: fullName }) => fullName),
+const labels = $computed(() =>
+  watchedAuthorsStoryCount?.map(({ fullname: fullName }) => fullName),
 );
 
 const changeWidth = (value: number) => {
@@ -191,7 +185,7 @@ watch(
 
 (async () => {
   await loadRatings();
-  watchedAuthorsStoryCount = await statsServices.getWatchedAuthorsStats();
+  watchedAuthorsStoryCount = await statsEvents.getWatchedAuthorsStats();
 })();
 </script>
 

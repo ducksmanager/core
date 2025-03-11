@@ -27,14 +27,11 @@
             <th
               v-if="
                 showPreviousEdge &&
-                mainStore.edgesBefore[mainStore.edgesBefore.length - 1]
+                edgeIssuecodesBefore[edgeIssuecodesBefore.length - 1]
               "
               class="surrounding-edge"
             >
-              {{
-                mainStore.edgesBefore[mainStore.edgesBefore.length - 1]!
-                  .issuecode
-              }}
+              {{ edgeIssuecodesBefore[edgeIssuecodesBefore.length - 1] }}
             </th>
             <template
               v-for="issuecode in issuecodes"
@@ -44,7 +41,7 @@
                 :class="{
                   clickable: true,
                   published: isPublished(issuecode),
-                  pending: isPending(issuecode),
+                  ongoing: isOngoing(issuecode),
                 }"
                 @click.exact="editingStepStore.replaceIssuecode(issuecode)"
                 @click.shift="editingStepStore.toggleIssuecode(issuecode)"
@@ -54,7 +51,9 @@
                   <i-bi-pencil />
                 </div>
                 <div>
-                  {{ issuecodeDetails[issuecode].issuenumber }}
+                  {{
+                    publicationIssues!.find(({issuecode: thisIssuecode}) => issuecode === thisIssuecode)!.issuenumber
+                  }}
                 </div>
               </th>
               <th
@@ -65,18 +64,17 @@
               </th>
             </template>
             <th
-              v-if="showNextEdge && mainStore.edgesAfter[0]"
+              v-if="showNextEdge && edgeIssuecodesAfter[0]"
               class="surrounding-edge"
             >
-              {{ mainStore.edgesAfter[0].issuecode }}
+              {{ edgeIssuecodesAfter[0] }}
             </th>
           </tr>
           <tr>
-            <td v-if="showPreviousEdge && mainStore.edgesBefore.length">
+            <td v-if="showPreviousEdge && edgeIssuecodesBefore.length">
               <published-edge
                 :issuecode="
-                  mainStore.edgesBefore[mainStore.edgesBefore.length - 1]!
-                    .issuecode
+                  edgeIssuecodesBefore[edgeIssuecodesBefore.length - 1]!
                 "
                 @load="showPreviousEdge = true"
                 @error="showPreviousEdge = undefined"
@@ -96,7 +94,7 @@
                   :contributors="
                     mainStore.contributors.filter(
                       ({ issuecode: thisIssuecode }) =>
-                        thisIssuecode === issuecode
+                        thisIssuecode === issuecode,
                     )
                   "
                 />
@@ -120,9 +118,9 @@
                 />
               </td>
             </template>
-            <td v-if="showNextEdge && mainStore.edgesAfter.length">
+            <td v-if="showNextEdge && edgeIssuecodesAfter.length">
               <published-edge
-                :issuecode="mainStore.edgesAfter[0]!.issuecode"
+                :issuecode="edgeIssuecodesAfter[0]!"
                 @load="showNextEdge = true"
                 @error="showNextEdge = undefined"
               />
@@ -151,20 +149,26 @@ import type { Dimensions, Options } from "~/stores/step";
 import { step } from "~/stores/step";
 import { ui } from "~/stores/ui";
 import { stores as webStores } from "~web";
-import { coa } from "~web/src/stores/coa";
 
 const route = useRoute();
 const uiStore = ui();
+
 const mainStore = main();
-const {issuecodeDetails} = storeToRefs(coa());
+const { publicationIssues } = storeToRefs(mainStore);
+
 const stepStore = step();
 const editingStepStore = editingStep();
 const { showPreviousEdge, showNextEdge } = useSurroundingEdge();
 
 const { loadModel } = useModelLoad();
-const { publicationcode, issuecodes } = storeToRefs(mainStore);
+const {
+  publicationcode,
+  issuecodes,
+  edgeIssuecodesAfter,
+  edgeIssuecodesBefore,
+} = storeToRefs(mainStore);
 
-const error = ref<string | null>(null);
+const error = ref<string>();
 
 const { dimensions } = storeToRefs(stepStore);
 
@@ -179,18 +183,6 @@ const dimensionsPerIssuecode = computed(() =>
     {},
   ),
 );
-
-const getActualIssuecode = (issuecode: string) => {
-  const actualIssuecode = Object.values(issuecodeDetails.value).find(
-      ({ publicationcode: thisPublicationcode, issuenumber }) => thisPublicationcode === publicationcode.value && issuenumber === issuecode.split(/[ ]+/)[1],
-    )?.issuecode;
-
-  if (actualIssuecode === undefined) {
-    throw new Error(`Issue ${issuecode} doesn't exist`);
-  }
-
-  return actualIssuecode
-}
 
 const stepsPerIssuecode = computed(() =>
   issuecodes.value.reduce<Record<string, Options>>(
@@ -208,42 +200,56 @@ watch(
   async () => {
     await mainStore.loadItems({ itemType: "elements" });
     await mainStore.loadItems({ itemType: "photos" });
-    await mainStore.loadSurroundingEdges();
   },
 );
 
 try {
   await webStores.users().fetchAllUsers();
 
-  let [firstIssuecode, lastIssuecode] = (route.params.all as string).split(
-    " to ",
-  );
+  const issuecodeParams = (route.params.all as string).replaceAll("_", " ");
+
+  let [firstIssuecode, lastIssuecode] = issuecodeParams.split(" to ");
   let otherIssuecodes: string[] | undefined = undefined;
   if (!lastIssuecode) {
     [firstIssuecode, ...otherIssuecodes] = firstIssuecode.split(",");
   }
 
-  const issuecodeParts = firstIssuecode.split(/[ ]+/);
+  await coa().fetchIssuecodeDetails([firstIssuecode]);
+  publicationcode.value =
+    coa().issuecodeDetails[firstIssuecode]?.publicationcode;
 
-  publicationcode.value = issuecodeParts[0];
+  if (!publicationcode.value) {
+    throw new Error(`Issue ${firstIssuecode} doesn't exist`);
+  }
 
   await mainStore.loadPublicationIssues();
-
-  firstIssuecode = getActualIssuecode(firstIssuecode);
-  if (lastIssuecode) {
-  lastIssuecode = getActualIssuecode(lastIssuecode);
-  }
-  otherIssuecodes = otherIssuecodes?.map(issuecode => getActualIssuecode(issuecode));
+  edgeCatalog().fetchPublishedEdges(publicationcode.value);
 
   try {
-    mainStore.setIssuecodes(firstIssuecode, lastIssuecode, otherIssuecodes);
+    const errors = mainStore.setIssuecodes(
+      firstIssuecode,
+      lastIssuecode,
+      otherIssuecodes,
+    );
 
-    editingStepStore.addIssuecode(firstIssuecode!);
+    if (errors) {
+      error.value = errors.join("\n");
+    }
+
+    editingStepStore.addIssuecode(firstIssuecode);
 
     for (const issuecode of issuecodes.value) {
       const idx = issuecodes.value.indexOf(issuecode);
       try {
-        await loadModel(firstIssuecode, issuecode);
+        await loadModel(issuecode);
+
+        if (
+          !stepStore.options.some(
+            ({ issuecode: thisIssuecode }) => thisIssuecode === issuecode,
+          )
+        ) {
+          throw new Error(`no options found for issue code ${issuecode}`);
+        }
       } catch {
         const previousIssuecode = issuecodes.value[idx - 1];
         if (previousIssuecode) {
@@ -283,8 +289,8 @@ const setColorFromPhoto = ({ target, offsetX, offsetY }: MouseEvent) => {
   });
 };
 
-const isPending = (issuecode: string) =>
-  !!edgeCatalog().currentEdges[issuecode];
+const isOngoing = (issuecode: string) =>
+  !!edgeCatalog().ongoingEdges[issuecode];
 const isPublished = (issuecode: string) =>
   edgeCatalog().publishedEdges[issuecode];
 
@@ -324,7 +330,7 @@ table.edges {
         background: green;
       }
 
-      &.pending {
+      &.ongoing {
         background: orange;
       }
 

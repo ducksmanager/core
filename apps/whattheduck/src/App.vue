@@ -1,7 +1,7 @@
 <template>
   <ion-app>
     <ion-progress-bar v-if="bundleDownloadProgress" :value="bundleDownloadProgress"></ion-progress-bar>
-    <OfflineBanner v-if="isOfflineMode" :on-offline="routeMeta.onOffline" />
+    <OfflineBanner v-if="isOfflineMode" />
 
     <ion-router-outlet
       v-if="['/login', '/signup', '/test', '/forgot'].includes(route.path)"
@@ -17,14 +17,14 @@
 import { Capacitor } from '@capacitor/core';
 import { CapacitorUpdater } from '@capgo/capacitor-updater';
 import type { Storage as IonicStorage } from '@ionic/storage';
-import { buildStorage } from '~socket.io-client-services';
+import { buildStorage } from 'socket-call-client';
 
 import OfflineBanner from './components/OfflineBanner.vue';
 import { app } from './stores/app';
 import { collection } from '~web/src/stores/collection';
 import AppWithPersistedData from './views/AppWithPersistedData.vue';
 
-import CollectionServices from '~dm-services/collection/types';
+import namespaces from '~dm-services/namespaces';
 
 const storage = injectLocal<IonicStorage>('storage')!;
 
@@ -35,14 +35,7 @@ console.log('token after storeToRefs', token.value);
 const route = useRoute();
 const router = useRouter();
 
-const bundleDownloadProgress = ref<number | undefined>(undefined);
-
-interface RouteMeta {
-  onOffline?: 'readonly' | 'unavailable';
-  onNoToken?: 'logout';
-}
-
-const routeMeta = computed(() => route.meta as RouteMeta);
+const bundleDownloadProgress = ref<number>();
 
 const cacheStorage = buildStorage({
   set: (key, data, currentRequest) => {
@@ -83,7 +76,7 @@ const assignSocket = () => {
     },
     onConnectError: (e, namespace) => {
       if (
-        namespace === CollectionServices.namespaceEndpoint &&
+        namespace === namespaces.COLLECTION &&
         [/jwt expired/, /invalid signature/].some((regex) => regex.test(e.message))
       ) {
         session.clearSession();
@@ -100,7 +93,7 @@ const assignSocket = () => {
 const updateBundle = async () => {
   const currentBundleVersion = (await CapacitorUpdater.current())?.bundle.version;
   try {
-    const bundle = await socket.value!.app.services.getBundleUrl({ version: currentBundleVersion });
+    const bundle = await socket.value!.app.getBundleUrl({ version: currentBundleVersion });
     console.info('Latest bundle', bundle);
     if (Capacitor.isNativePlatform() && 'url' in bundle && bundle.url) {
       CapacitorUpdater.addListener('download', ({ percent }) => {

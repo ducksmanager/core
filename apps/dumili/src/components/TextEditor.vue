@@ -1,39 +1,54 @@
 <template>
-  <b-container fluid class="d-flex flex-grow-1 h-100">
+  <b-container
+    fluid
+    class="d-flex flex-grow-1 h-100 flex-column align-items-start"
+  >
     <b-alert v-if="!issue" variant="danger" :model-value="true">
       {{
         $t("Vous devez spécifier une publication et un numéro pour continuer")
       }}</b-alert
     >
-    <b-form-textarea
-      v-if="acceptedStories"
-      v-model="textContent"
-      :rows="Object.keys(acceptedStories).length + 1"
-      readonly
-      :disabled="!issue"
-      :placeholder="textContentError"
-    ></b-form-textarea
+    <template v-if="rows">
+      <b-form-checkbox v-model="showEntryLetters" class="m-2">{{
+        $t("Afficher des lettres au lieu des numéros de pages")
+      }}</b-form-checkbox>
+      <b-form-checkbox v-model="showHorizontalScroll" class="m-2">{{
+        $t("Afficher la barre de défilement horizontale")
+      }}</b-form-checkbox>
+      <div
+        :class="{
+          'mw-100 text-nowrap overflow-auto': showHorizontalScroll,
+        }"
+      >
+        <b-table head-variant="light" :items="rows" borderless small
+          ><template #top-row
+            ><b-td>{{ issueRow.issuecode }}</b-td
+            ><b-td>{{ issueRow.details }}</b-td
+            ><b-td
+              v-for="idx in Object.keys(rows![0]).filter((_, idx) => idx >= 2)"
+              :key="idx" /></template
+        ></b-table></div></template
   ></b-container>
 </template>
 <script setup lang="ts">
 const { t: $t } = useI18n();
 
 import { suggestions } from "~/stores/suggestions";
-import type { FullEntry } from "~dumili-services/indexation/types";
+import type { FullEntry } from "~dumili-services/indexation";
 import { getEntryPages } from "~dumili-utils/entryPages";
-import type { storySuggestion } from "~prisma/client_dumili";
+import { type storySuggestion } from "~prisma/client_dumili";
 import { socketInjectionKey as dmSocketInjectionKey } from "~web/src/composables/useDmSocket";
 
 const { storyDetails } = storeToRefs(coa());
 
 const { indexation } = storeToRefs(suggestions());
 
-const {
-  coa: { services: coaServices },
-} = inject(dmSocketInjectionKey)!;
+const { coa: coaEvents } = inject(dmSocketInjectionKey)!;
 
-const textContentError = ref("");
 const { acceptedIssue: issue } = storeToRefs(suggestions());
+
+const showEntryLetters = ref(false);
+const showHorizontalScroll = ref(false);
 
 const acceptedStories = computed(() =>
   indexation.value?.entries
@@ -51,63 +66,77 @@ const getStoriesWithDetails = async (stories: storySuggestion[]) =>
         (story): story is storySuggestion & { storycode: string } =>
           story !== undefined && story.storycode !== null,
       )
-      .map(async (story) => ({
-        ...story,
-        ...storyDetails.value[story!.storycode],
-        storyjobs: (await coaServices.getStoryjobs(story!.storycode)).data,
-      })),
+      .map(async (story) => {
+        const storyjobsResult = await coaEvents.getStoryjobs(story!.storycode);
+        const storyjobs =
+          "error" in storyjobsResult ? [] : storyjobsResult.data;
+        return {
+          ...story,
+          ...storyDetails.value[story!.storycode],
+          storyjobs,
+        };
+      }),
   );
 
-const textContent = computed(() => {
-  if (!storiesWithDetails.value?.length) {
-    return undefined;
-  }
-  const issuecode = issue.value!.issuecode!.split("/")[1];
-  const rows = [
-    [
-      [issuecode],
-      indexation.value!.price ? [`[price:${indexation.value!.price}]`] : [],
-      [`[pages:${indexation.value!.pages.length}]`],
-    ].flat(),
-    ...indexation.value!.entries.map((entry, idx) => {
-      const storyWithDetails = storiesWithDetails.value!.find(
-        ({ storycode }) => storycode === entry.acceptedStory?.storycode,
-      );
-      return [
-        `${issuecode}${String.fromCharCode(97 + idx)}`,
-        entry.acceptedStory?.storycode,
-        undefined,
-        String(getEntryPages(indexation.value!, entry.id).length),
-        ...["plot", "writer", "artist", "ink"].map(
-          (job) =>
-            storyWithDetails?.storyjobs?.find(
-              ({ plotwritartink }) => plotwritartink === job,
-            )?.personcode,
-        ),
-        "", //story!.printedhero,
-        entry.title,
-      ];
-    }),
-  ];
-  const colsMaxLengths = rows[0].map((_, colIndex) =>
-    Math.max(...rows.map((row) => row[colIndex]?.length || 0)),
-  );
+const issuecode = computed(
+  () =>
+    `${issue.value!.publicationcode.split("/")[1]} ${issue.value!.issuenumber}`,
+);
 
-  return rows
-    .map((row) =>
-      row
-        .map((col, colIndex) =>
-          (col || "").padEnd(colsMaxLengths[colIndex], " "),
-        )
-        .join(" "),
-    )
-    .join("\n");
-});
+const issueRow = computed(() => ({
+  issuecode: issuecode.value,
+  details: [
+    "h3",
+    ...[indexation.value!.price ? [`[price:${indexation.value!.price}]`] : []],
+    ...[
+      indexation.value!.releaseDate
+        ? [`[issdate:${indexation.value!.releaseDate}]`]
+        : [],
+    ],
+    `[inx:${indexation.value!.user.inducksUsername}]`,
+    `[pages:${indexation.value!.pages.length}]`,
+  ]
+    .flat()
+    .join(" "),
+}));
+
+const rows = computed(() =>
+  !storiesWithDetails.value?.length
+    ? undefined
+    : indexation.value!.entries.map((entry, idx) => {
+        const storyWithDetails = storiesWithDetails.value!.find(
+          ({ storycode }) => storycode === entry.acceptedStory?.storycode,
+        );
+        return {
+          entrycode: `${issuecode.value}${
+            idx === 0 || showEntryLetters.value
+              ? String.fromCharCode(97 + idx)
+              : `p${String(entry.position).padStart(3, "0")}`
+          }`,
+          storycode: entry.acceptedStory?.storycode,
+          pg: String(getEntryPages(indexation.value!, entry.id).length),
+          la:
+            entry.acceptedStoryKind?.kind === "n"
+              ? entry.acceptedStoryKind?.numberOfRows
+              : entry.acceptedStoryKind?.kind,
+          ...Object.fromEntries(
+            ["plot", "writer", "artist", "ink"].map((job) => [
+              job,
+              storyWithDetails?.storyjobs?.find(
+                ({ plotwritartink }) => plotwritartink === job,
+              )?.personcode,
+            ]),
+          ),
+          hero: "", //story!.printedhero,
+          title: entry.title,
+        };
+      }),
+);
 
 watch(
   acceptedStories,
   async (value) => {
-    if (value && issue.value?.issuecode) {
+    if (value) {
       storiesWithDetails.value = await getStoriesWithDetails(
         value.filter(
           (story): story is NonNullable<typeof story> => story !== null,
@@ -120,8 +149,34 @@ watch(
 </script>
 <style scoped lang="scss">
 textarea {
+  z-index: 2;
   font-family: monospace;
-  margin: 2rem 0;
   flex-grow: 1;
+  background: transparent;
+  color: black;
+}
+:deep(table) {
+  text-align: left;
+  * {
+    color: black;
+  }
+  $column-colors: (
+    white,
+    #d2ffc4,
+    #e3e3e3,
+    #ffffcc,
+    #fff284,
+    #f2e4d5,
+    white,
+    #d8f0f8,
+    #ffecec,
+    white
+  );
+
+  @for $i from 1 through length($column-colors) {
+    td:nth-of-type(#{$i}) {
+      background: nth($column-colors, $i) !important;
+    }
+  }
 }
 </style>

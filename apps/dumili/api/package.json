@@ -7,10 +7,11 @@
   },
   "scripts": {
     "clean": "rm -rf dist",
-    "build": "bun build --target node index.ts --outfile bundle.mjs",
+    "build": "prisma generate && bun build --entry-naming [dir]/[name].mjs --sourcemap=linked --target node index.ts --outdir dist && pnpm sentry:sourcemaps",
     "prisma-pull-generate": "prisma db pull && prisma generate",
     "prisma-generate": "prisma generate",
     "prisma-migrate": "prisma migrate deploy",
+    "lint": "eslint --fix .",
     "dev": "docker compose -f docker-compose-dev.yml up --force-recreate -d && bash ../../../packages/prisma-schemas/wait-until-db-ready.bash && prisma migrate deploy && prisma generate && concurrently --kill-others-on-fail -n docker-compose,typecheck \"docker compose -f docker-compose-dev.yml logs -f\" \"tsc --noEmit\"",
     "prod:deploy": "DIR=apps/dumili/api pnpm -F '~ci' prod:docker-compose-up",
     "prod-build-docker-api": "REPO_NAME=ghcr.io/bperel/dumili-api pnpm -F '~ci' prod:build-docker -f apps/dumili/api/Dockerfile",
@@ -18,31 +19,40 @@
     "prod-build-docker-paddleocr": "REPO_NAME=ghcr.io/bperel/paddleocr pnpm -F '~ci' prod:build-docker -f apps/dumili/api/paddleocr/Dockerfile",
     "prod:build-docker": "pnpm run '/^prod-build-docker-/'",
     "prod:transfer-files-pre": "pnpm -F '~ci' prod:transfer-files @apps/dumili/api/.env.prod.local:apps/dumili/api/.env",
-    "prod:transfer-files-post": "pnpm -F '~ci' prod:transfer-files apps/dumili/api/docker-compose.yml:@apps/dumili/api/docker-compose.yml"
+    "prod:transfer-files-post": "pnpm -F '~ci' prod:transfer-files apps/dumili/api/docker-compose.yml:@apps/dumili/api/docker-compose.yml",
+    "sentry:sourcemaps": "sentry-cli sourcemaps inject --org bruno-perel --project dumili-api ./dist && sentry-cli sourcemaps upload --org bruno-perel --project dumili-api ./dist"
   },
   "dependencies": {
-    "@prisma/client": "^6.1.0",
-    "@sentry/node": "^8.47.0",
-    "axios": "^1.7.9",
+    "@opentelemetry/instrumentation-socket.io": "^0.46.1",
+    "@prisma/client": "^6.4.1",
+    "@sentry/node": "^9.5.0",
+    "@sentry/profiling-node": "^9.5.0",
+    "axios": "^1.8.2",
     "busboy": "^1.6.0",
     "cloudinary": "^1.41.3",
     "dotenv": "^16.4.7",
     "jsonwebtoken": "^9.0.2",
     "sharp": "^0.33.5",
+    "socket-call-client": "^0.6.0",
+    "socket-call-server": "^0.6.0",
     "socket.io": "^4.8.1",
     "~api": "workspace:*",
-    "~prisma-schemas": "workspace:*",
-    "~socket.io-client-services": "workspace:*",
-    "~socket.io-services": "workspace:*"
+    "~prisma-schemas": "workspace:*"
   },
   "devDependencies": {
+    "@eslint/eslintrc": "^3.3.0",
+    "@eslint/js": "^9.22.0",
+    "@sentry/cli": "^2.42.2",
     "@socket.io/admin-ui": "^0.5.1",
     "@types/busboy": "^1.5.4",
     "@types/i18n": "^0.13.12",
-    "@types/jsonwebtoken": "^9.0.7",
-    "@types/node": "^22.10.2",
-    "concurrently": "^9.1.0",
-    "prisma": "^6.1.0",
-    "typescript": "^5.7.2"
+    "@types/jsonwebtoken": "^9.0.9",
+    "@types/node": "^22.13.10",
+    "concurrently": "^9.1.2",
+    "eslint": "^9.22.0",
+    "eslint-config-prettier": "^10.1.1",
+    "prisma": "^6.4.1",
+    "typescript": "^5.8.2",
+    "typescript-eslint": "^8.26.0"
   }
 }

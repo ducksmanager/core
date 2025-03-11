@@ -31,8 +31,8 @@
 import { step } from "~/stores/step";
 import { ui } from "~/stores/ui";
 
-const rect1 = ref<SVGRectElement | null>(null);
-const rect2 = ref<SVGRectElement | null>(null);
+const rect1 = ref<SVGRectElement>();
+const rect2 = ref<SVGRectElement>();
 
 interface Props {
   issuecode: string;
@@ -48,6 +48,10 @@ const props = withDefaults(defineProps<Props>(), {
     height: 15,
   }),
 });
+
+const { enableDragResize, height, attributes } = useStepOptions(props, [
+  "height",
+]);
 
 const dimensions = computed(
   () =>
@@ -87,21 +91,17 @@ onMounted(() => {
   //       height.value / 2,
   //   });
   // }
-  enableDragResize(rect1.value!, {
+  enableDragResize(rect1.value, {
     onmove,
     onresizemove: () => {
       return;
     },
   });
-  enableDragResize(rect2.value!, {
+  enableDragResize(rect2.value, {
     onmove,
     onresizemove: () => {
       return;
     },
   });
 });
-
-const { enableDragResize, height, attributes } = useStepOptions(props, [
-  "height",
-]);
 </script>

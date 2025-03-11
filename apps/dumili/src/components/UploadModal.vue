@@ -11,51 +11,79 @@
     dialog-class="h-100"
     body-class="d-flex flex-column align-items-start overflow-auto"
   >
-    <b-form-radio
-      disabled
-      :model-value="['PDF_ignore', 'PDF_replace'].includes(uploadFileType)"
+    <label>{{ $t("Type de fichier") }}</label>
+    <b-form-radio v-model="uploadFileType" name="file-type" value="PDF"
       >{{ $t("PDF") }}
-    </b-form-radio>
-    <b-form-radio
-      v-model="uploadFileType"
-      class="ms-2"
-      name="file-type"
-      value="PDF_ignore"
-      >{{ $t("Ignorer les pages existantes") }}
-    </b-form-radio>
-    <b-form-radio
-      v-model="uploadFileType"
-      class="ms-2"
-      name="file-type"
-      value="PDF_replace"
-      >{{ $t("Remplacer les pages existantes") }}
     </b-form-radio>
     <b-form-radio v-model="uploadFileType" name="file-type" value="Images"
       >{{ $t("Images") }}
     </b-form-radio>
-    <div class="status">{{ processLog }}</div>
-    <div class="d-flex flex-column align-items-center">
-      <b-alert
-        :variant="uploadFileType === 'PDF_ignore' ? 'info' : 'warning'"
-        :model-value="['PDF_ignore', 'PDF_replace'].includes(uploadFileType)"
-        :dismissible="false"
-        class="w-100 mt-3"
+
+    <template
+      v-if="
+        firstOutOfRangePage <=
+        pagesWithoutOverwrite[0].pageNumber + pagesWithoutOverwrite.length
+      "
+    >
+      <label class="mt-3">{{
+        $t("Comportement pour les pages existantes")
+      }}</label>
+      <b-form-radio
+        v-model="uploadExistingFileAction"
+        name="existing-file-behavior"
+        value="ignore"
+        >{{ $t("Ignorer les pages existantes") }}
+      </b-form-radio>
+      <b-form-radio
+        v-model="uploadExistingFileAction"
+        name="existing-file-behavior"
+        value="replace"
+        >{{ $t("Remplacer les pages existantes") }}
+      </b-form-radio>
+    </template>
+    <b-alert
+      :variant="uploadExistingFileAction === 'ignore' ? 'info' : 'warning'"
+      :model-value="true"
+      :dismissible="false"
+      class="w-100 mt-3"
+      >{{
+        $t(
+          "Les images envoyées seront associées aux pages à partir de la page {firstPage}.",
+          { firstPage: pagesWithoutOverwrite[0].pageNumber },
+        )
+      }}
+      <template v-if="uploadFileType === 'PDF'"
         >{{
           $t(
-            uploadFileType === "PDF_ignore"
-              ? "Les images envoyées seront associées aux pages {firstPage} à {lastPage}. Si votre PDF fait plus de {maxPages} page(s), les pages suivantes seront ignorées."
-              : "Les images envoyées seront associées aux pages {firstPage} à {lastPage}. Si votre PDF fait plus de {maxPages} page(s), les pages suivantes seront remplacées.",
+            uploadExistingFileAction === "ignore"
+              ? "Si votre PDF fait plus de {maxPages} page(s), les pages à partir de la page {firstOutOfRangePage} seront ignorées."
+              : "Si votre PDF fait plus de {maxPages} page(s), les pages à partir de la page {firstOutOfRangePage} seront remplacées.",
             {
-              firstPage: pagesWithoutOverwrite[0].pageNumber,
-              lastPage: pages[pages.length - 1].pageNumber,
               maxPages: pagesWithoutOverwrite.length,
+              firstOutOfRangePage,
             },
           )
         }}
-      </b-alert>
+      </template>
+      <template v-else
+        >{{
+          $t(
+            uploadExistingFileAction === "ignore"
+              ? "Si vous envoyez plus de {maxPages} fichier(s), les pages à partir de la page {firstOutOfRangePage} seront ignorées."
+              : "Si vous envoyez plus de {maxPages} fichier(s), les pages à partir de la page {firstOutOfRangePage} seront remplacées.",
+            {
+              maxPages: pagesWithoutOverwrite.length,
+              firstOutOfRangePage,
+            },
+          )
+        }}
+      </template>
+    </b-alert>
+    <div class="d-flex flex-column align-items-center">
+      <div class="status">{{ processLog }}</div>
       <b-alert
         variant="info"
-        :model-value="['PDF_ignore', 'PDF_replace'].includes(uploadFileType)"
+        :model-value="uploadFileType === 'PDF'"
         :dismissible="false"
         class="w-100"
         ><i18n-t
@@ -69,6 +97,17 @@
           >
         </i18n-t></b-alert
       >
+      <b-alert
+        variant="warning"
+        :model-value="uploadFileType === 'Images'"
+        :dismissible="false"
+        class="w-100"
+        >{{
+          $t(
+            "Lors de l'envoi de vos images, il est possible qu'un message avec le texte 'There are running uploads. Click OK to abort.' apparaisse. Si cela se produit, cliquez sur le bouton 'Cancel'.",
+          )
+        }}
+      </b-alert>
     </div>
     <div v-show="showWidget" id="widget-container" class="w-100"></div>
   </b-modal>
@@ -86,12 +125,27 @@ import { stores as webStores } from "~web";
 
 const { indexationSocket } = inject(dumiliSocketInjectionKey)!;
 
-const { pagesWithoutOverwrite, pagesAllowOverwrite, uploadPageNumber } =
-  defineProps<{
-    uploadPageNumber?: number;
-    pagesWithoutOverwrite: { id: number; pageNumber: number }[];
-    pagesAllowOverwrite: { id: number; pageNumber: number }[];
-  }>();
+const {
+  pagesWithoutOverwrite: pagesWithoutOverwriteInitial,
+  pagesAllowOverwrite: pagesAllowOverwriteInitial,
+  uploadPageNumber,
+} = defineProps<{
+  uploadPageNumber?: number;
+  pagesWithoutOverwrite: { id: number; pageNumber: number }[];
+  pagesAllowOverwrite: { id: number; pageNumber: number }[];
+}>();
+
+const modal = ref(false);
+
+const pagesWithoutOverwrite = ref(pagesWithoutOverwriteInitial);
+const pagesAllowOverwrite = ref(pagesAllowOverwriteInitial);
+
+watch(modal, (value) => {
+  if (value) {
+    pagesWithoutOverwrite.value = pagesWithoutOverwriteInitial;
+    pagesAllowOverwrite.value = pagesAllowOverwriteInitial;
+  }
+});
 
 const { t: $t } = useI18n();
 
@@ -99,25 +153,12 @@ const { indexation } = storeToRefs(suggestions());
 
 const { user } = storeToRefs(webStores.collection());
 
-const modal = ref(false);
 const showWidget = ref(true);
 
-watch(
-  () => uploadPageNumber,
-  (value) => {
-    if (value !== undefined) {
-      modal.value = true;
-      showWidget.value = true;
-    }
-  },
-  { immediate: true },
-);
+const uploadFileType = ref<"Images" | "PDF">("PDF");
 
-const uploadFileType = ref<"PDF_ignore" | "PDF_replace" | "Images">(
-  "PDF_ignore",
-);
+const uploadExistingFileAction = ref<"ignore" | "replace">("ignore");
 
-const currentPageIndex = ref(0);
 const isUploading = ref(false);
 const processLog = ref("");
 
@@ -130,19 +171,38 @@ declare var cloudinary: {
   createUploadWidget: CloudinaryCreateUploadWidget;
 };
 
+watch(
+  () => uploadPageNumber,
+  (value) => {
+    if (value !== undefined) {
+      modal.value = true;
+      showWidget.value = true;
+    }
+  },
+  { immediate: true },
+);
+
 const pages = computed(() =>
-  uploadFileType.value === "PDF_ignore"
-    ? pagesWithoutOverwrite
-    : pagesAllowOverwrite,
+  uploadExistingFileAction.value === "replace"
+    ? pagesWithoutOverwrite.value
+    : pagesAllowOverwrite.value,
+);
+
+const firstOutOfRangePage = computed(
+  () =>
+    pagesWithoutOverwrite.value[pagesWithoutOverwrite.value.length - 1]
+      .pageNumber + 1,
 );
 
 const processPage = async (pageIndex: number, url: string) => {
   const page = pages.value[pageIndex];
+  console.log(`Processing page ${page.pageNumber}...`);
   processLog.value = `Processing page ${page.pageNumber}...`;
-  await indexationSocket.value!.services.setPageUrl(page.id, url);
+  await indexationSocket.value!.setPageUrl(page.id, url);
 };
 
 onMounted(() => {
+  const fileIds: string[] = [];
   const folderName = indexation.value!.id;
   const uploadWidget = cloudinary.createUploadWidget(
     {
@@ -164,7 +224,11 @@ onMounted(() => {
       if (error) {
         console.error(error);
       } else {
+        console.log("Event: ", result.event);
         switch (result?.event) {
+          case "upload-added":
+            fileIds.push((result.info as CloudinaryUploadWidgetInfo).id);
+            break;
           case "queues-start":
             isUploading.value = true;
             break;
@@ -173,6 +237,9 @@ onMounted(() => {
             const info = result.info as CloudinaryUploadWidgetInfo;
             console.log("Done! Here is the image info: ", info);
 
+            const firstUploadPageIndex = pages.value.findIndex(
+              (page) => page.pageNumber === uploadPageNumber,
+            );
             if (info.pages) {
               for (
                 let page = 1;
@@ -180,16 +247,18 @@ onMounted(() => {
                 page++
               ) {
                 await processPage(
-                  currentPageIndex.value++,
+                  firstUploadPageIndex + page - 1,
                   info.secure_url
                     .replace("/upload/", `/upload/pg_${page}/`)
                     .replace(/.pdf$/g, ".png"),
                 );
               }
             } else {
-              await processPage(currentPageIndex.value++, info.secure_url);
+              await processPage(
+                firstUploadPageIndex + fileIds.indexOf(info.id),
+                info.secure_url,
+              );
             }
-            currentPageIndex.value = 0;
             modal.value = false;
             emit("done");
             break;

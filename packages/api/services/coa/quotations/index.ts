@@ -1,5 +1,3 @@
-import type { Socket } from "socket.io";
-
 import type { inducks_issuequotation } from "~prisma-schemas/schemas/coa";
 import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa/client";
 
@@ -18,7 +16,7 @@ export const getShownQuotations = <
       ...quotation,
       estimationAverage:
         (quotation.estimationMax
-          ? ((quotation.estimationMin || 0) + quotation.estimationMax!) / 2
+          ? ((quotation.estimationMin || 0) + quotation.estimationMax) / 2
           : quotation.estimationMin) || 0,
     }))
     .groupBy("issuecode");
@@ -35,23 +33,19 @@ export const getQuotationsByIssuecodes = async (issuecodes: string[]) =>
     })
     .then(getShownQuotations);
 
-import type Events from "../types";
-export default (socket: Socket<Events>) => {
-  socket.on(
-    "getQuotationsByIssuecodes",
-    async (issuesByIssuecodes, callback) => {
-      const codes = issuesByIssuecodes.filter((code) =>
-        ISSUE_CODE_REGEX.test(code),
-      );
-      if (!codes.length) {
-        callback({ error: "Bad request" });
-      } else if (codes.length > 4) {
-        callback({ error: "Too many requests" });
-      } else {
-        callback({
-          quotations: await getQuotationsByIssuecodes(codes),
-        });
-      }
-    },
-  );
+export default {
+  getQuotationsByIssuecodes: async (issuesByIssuecodes: string[]) => {
+    const codes = issuesByIssuecodes.filter((code) =>
+      ISSUE_CODE_REGEX.test(code),
+    );
+    if (!codes.length) {
+      return Promise.resolve({ error: "Bad request" });
+    } else if (codes.length > 4) {
+      return Promise.resolve({ error: "Too many requests" });
+    } else {
+      return {
+        quotations: await getQuotationsByIssuecodes(codes),
+      };
+    }
+  },
 };

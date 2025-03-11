@@ -50,7 +50,7 @@
             :confirm-md="pencilSharp"
             :cancel-ios="closeOutline"
             :cancel-md="closeSharp"
-            @cancel="selectedIssuecodes = null"
+            @cancel="selectedIssuecodes = undefined"
             @confirm="updateNavigationToSelectedIssuecodes"
           /></div
       ></template>
@@ -120,12 +120,10 @@ const emit = defineEmits<(e: 'items-filtered', items: string[]) => void>();
 const overlay = ref<HTMLElement>();
 const takePhotoButton = ref<{ $el: HTMLElement }>();
 
-const {
-  coverId: { services: coverIdServices },
-} = inject(dmSocketInjectionKey)!;
+const { coverId: coverIdEvents } = inject(dmSocketInjectionKey)!;
 
 const cameraPreviewElementId = 'camera-preview';
-const { takePhoto } = useCoverSearch(useRouter(), coverIdServices);
+const { takePhoto } = useCoverSearch(useRouter(), coverIdEvents);
 const { isCameraPreviewShown, filterText, selectedIssuecodes, currentNavigationItem } = storeToRefs(app());
 
 watch(isCameraPreviewShown, async () => {
@@ -162,7 +160,7 @@ watch(isCameraPreviewShown, async () => {
   }
 });
 
-const content = ref<InstanceType<typeof IonContent> | null>(null);
+const content = ref<InstanceType<typeof IonContent>>();
 
 const scrollPositionPct = ref(0);
 const isScrolling = ref(false);

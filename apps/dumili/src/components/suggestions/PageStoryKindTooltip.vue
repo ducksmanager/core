@@ -1,7 +1,9 @@
 <template>
   <ai-tooltip
     :id="`ai-results-page-${page.pageNumber}`"
-    :status="page.image?.aiKumikoResult?.inferredStoryKind ? 'success' : 'idle'"
+    :status="
+      page.image?.aiKumikoResult?.inferredStoryKindRows ? 'success' : 'idle'
+    "
     top-center
     :loading-events="[
       {
@@ -10,7 +12,7 @@
       },
     ]"
     @toggled="
-      showAiDetectionsOn = $event ? { type: 'page', id: page.id } : undefined
+      overlay = $event ? { type: 'panels', pageId: page.id } : undefined
     "
   >
     <div v-if="!page.image">
@@ -33,18 +35,18 @@
         <b>{{ $t("Type d'entrée déduit pour la page") }}</b>
       </div>
       <story-kind-badge
-        :story-kind="page.image?.aiKumikoResult?.inferredStoryKind"
+        :story-kind-rows="page.image?.aiKumikoResult?.inferredStoryKindRows"
     /></template>
   </ai-tooltip>
 </template>
 
 <script setup lang="ts">
 import { ui } from "~/stores/ui";
-import type { FullIndexation } from "~dumili-services/indexation/types";
+import type { FullIndexation } from "~dumili-services/indexation";
 
 const { page } = defineProps<{
   page: FullIndexation["pages"][number];
 }>();
 
-const { showAiDetectionsOn } = storeToRefs(ui());
+const { overlay } = storeToRefs(ui());
 </script>

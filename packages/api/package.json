@@ -5,9 +5,10 @@
   },
   "version": "1.0.0",
   "scripts": {
-    "build": "bun build --target node index.ts --sourcemap=linked --outdir dist && pnpm sentry:sourcemaps",
+    "build": "for file in index.ts send-notifications.ts send-pending-emails.ts create-issues-from-subscriptions.ts; do bun build $file --entry-naming [dir]/[name].mjs --target node --sourcemap=linked --outdir dist; done && pnpm sentry:sourcemaps",
     "dev:blocking-up": "wait-on tcp:3000",
-    "dev": "concurrently -n api,docker-compose \"pnpm -F ~api nodemon-watch\" \"docker compose -f docker-compose-dev.yml up\"",
+    "dev": "docker compose -f docker-compose-dev.yml up",
+    "lint": "eslint --fix .",
     "nodemon-watch": "bun --inspect run --watch index.ts",
     "prod:deploy": "DIR=packages/api SERVICES=api-websocket pnpm -F '~ci' prod:docker-compose-up",
     "prod:build-docker": "REPO_NAME=ghcr.io/bperel/ducksmanager-api:websocket pnpm -F '~ci' prod:build-docker -f packages/api/Dockerfile",
@@ -16,11 +17,11 @@
     "sentry:sourcemaps": "sentry-cli sourcemaps inject --org bruno-perel --project dm-api ./dist && sentry-cli sourcemaps upload --org bruno-perel --project dm-api ./dist"
   },
   "dependencies": {
-    "@opentelemetry/instrumentation-socket.io": "^0.46.0",
+    "@opentelemetry/instrumentation-socket.io": "^0.46.1",
     "@pusher/push-notifications-server": "^1.2.7",
-    "@sentry/node": "^8.47.0",
+    "@sentry/node": "^9.5.0",
     "@socket.io/admin-ui": "^0.5.1",
-    "axios": "^1.7.9",
+    "axios": "^1.8.2",
     "cloudinary": "^1.41.3",
     "csv-parse": "^5.6.0",
     "dayjs": "^1.11.13",
@@ -28,25 +29,27 @@
     "ejs": "^3.1.10",
     "i18n": "^0.15.1",
     "jsonwebtoken": "^9.0.2",
-    "nodemailer": "^6.9.16",
+    "nodemailer": "^6.10.0",
+    "socket-call-server": "^0.5.3",
     "socket.io": "^4.8.1",
     "~dm-types": "workspace:*",
-    "~prisma-schemas": "workspace:*",
-    "~socket.io-services": "workspace:*"
+    "~prisma-schemas": "workspace:*"
   },
   "devDependencies": {
-    "@sentry/cli": "^2.39.1",
+    "@eslint/eslintrc": "^3.3.0",
+    "@eslint/js": "^9.22.0",
+    "@sentry/cli": "^2.42.2",
     "@types/ejs": "^3.1.5",
     "@types/i18n": "^0.13.12",
-    "@types/jsonwebtoken": "^9.0.7",
-    "@types/node": "^22.10.2",
+    "@types/jsonwebtoken": "^9.0.9",
+    "@types/node": "^22.13.10",
     "@types/nodemailer": "^6.4.17",
-    "concurrently": "^9.1.0",
+    "@typescript-eslint/eslint-plugin": "^8.26.0",
+    "concurrently": "^9.1.2",
+    "eslint": "^9.22.0",
+    "eslint-config-prettier": "^10.1.1",
     "nodemon": "^3.1.9",
-    "ts-node": "^10.9.2",
-    "tsc-alias": "^1.8.10",
-    "tsconfig-paths": "^4.2.0",
-    "typescript": "^5.7.2",
-    "wait-on": "^8.0.1"
+    "typescript": "^5.8.2",
+    "wait-on": "^8.0.2"
   }
 }

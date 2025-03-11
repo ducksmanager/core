@@ -15,7 +15,8 @@
       <span
         @mouseover="isOverPopupText = true"
         @mouseout.prevent="closePopupSoon"
-      ><slot /></span>
+        ><slot
+      /></span>
     </template>
     <slot name="header" />
     <slot name="content" />
@@ -23,10 +24,10 @@
 </template>
 
 <script setup lang="ts">
-import type Placement from "bootstrap-vue-next/dist/src/types/PopoverPlacement";
+import type { PopoverPlacement } from "bootstrap-vue-next";
 
 const { placement = "top" } = defineProps<{
-  placement?: Placement.PopoverPlacement;
+  placement?: PopoverPlacement;
 }>();
 
 defineEmits<(e: "@open:popper") => void>();

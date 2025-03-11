@@ -6,6 +6,7 @@
     "lib": [
       "ES2022"
     ],
+    "noErrorTruncation": true,
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
@@ -33,16 +34,17 @@
       "~prisma-schemas/*": [
         "../prisma-schemas/*"
       ],
-      "~socket.io-services/*": [
-        "../socket.io-types/*"
-      ],
       "~translations/*": [
         "translations/*"
       ]
-    }
+    },
+    "types": [
+      "./.eslint.d.ts"
+    ]
   },
   "exclude": [
+    ".turbo",
+    "dist",
     "node_modules",
-    ".turbo"
   ]
 }

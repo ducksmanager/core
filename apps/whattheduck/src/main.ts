@@ -26,9 +26,9 @@ import { IonicVue } from '@ionic/vue';
 import * as Sentry from '@sentry/capacitor';
 import * as SentryVue from '@sentry/vue';
 import { createPinia } from 'pinia';
+import { SocketClient } from 'socket-call-client';
 import VueVirtualScroller from 'vue-virtual-scroller';
 
-import { SocketClient } from '~socket.io-client-services/index';
 import en from '~translations/en.json';
 import sv from '~translations/sv.json';
 import { i18n } from '~web';
