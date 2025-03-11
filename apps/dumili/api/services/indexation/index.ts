@@ -21,9 +21,6 @@ import type {
   storyKindSuggestion,
   storySuggestion
 } from "~prisma/client_dumili";
-import type {
-  storyKind
-} from "~prisma/client_dumili";
 
 import type { SessionDataWithIndexation } from "../../index";
 import { prisma } from "../../index";
@@ -338,9 +335,7 @@ const setInferredEntriesStoryKinds = async (
           inferredStoryKindRowsStr
         }))
         .groupBy("inferredStoryKindRowsStr", "id[]"),
-    ).sort((a, b) => b[1].length - a[1].length)[0][0] as
-      | `${storyKind}/${number}`
-      | undefined;
+    ).sort((a, b) => b[1].length - a[1].length)[0][0]
 
     const entryIdx = services._socket.data.indexation.entries.findIndex(
       ({ id }) => id === entry.id,
