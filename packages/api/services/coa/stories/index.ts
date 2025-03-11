@@ -1,10 +1,11 @@
 import type { SimpleIssueWithPartInfo } from "~dm-types/SimpleIssue";
 import type { StorySearchResults } from "~dm-types/StorySearchResults";
+import type { inducks_story } from "~prisma-schemas/schemas/coa";
 import { Prisma } from "~prisma-schemas/schemas/coa";
 import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa/client";
 
 export default {
-  getStoryDetails: async (storycodes: string[]) => !storycodes.length ? [] :
+  getStoryDetails: async (storycodes: string[]) => !storycodes.length ? ({ stories: {} as Record<string, inducks_story>, storyUrls: {} as Record<string, string> }) :
     Promise.all([
       prismaCoa.inducks_story.findMany({
         where: {
