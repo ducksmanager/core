@@ -27,6 +27,31 @@ const inferStoryKindFromAiResults = (
 ) =>
   pageNumber === 1 ? COVER : panelsOfPage.length === 1 ? ILLUSTRATION : STORY;
 
+const getPanelRows = (
+  panels: Awaited<ReturnType<typeof runKumiko>>[number],
+): number => {
+  if (!panels.length) {
+    return 0;
+  }
+
+  const sortedPanels = [...panels].sort((a, b) => a.y - b.y);
+  const rows: number[] = [sortedPanels[0].y];
+  const tolerance = 5;
+  for (let i = 0; i < sortedPanels.length; i++) {
+    const panelY = sortedPanels[i].y;
+
+    const belongsToExistingRow = rows.some(
+      (rowY) => Math.abs(panelY - rowY) <= tolerance,
+    );
+
+    if (!belongsToExistingRow) {
+      rows.push(panelY);
+    }
+  }
+
+  return rows.length;
+};
+
 const runKumikoOnPage = async (
   indexationServices: IndexationServices,
   page: Prisma.pageGetPayload<{
@@ -51,8 +76,10 @@ const runKumikoOnPage = async (
       page.pageNumber,
     );
 
+    const inferredNumberOfRows = getPanelRows(panelsOfPage);
+
     console.log(
-      `Kumiko: page ${page.pageNumber}: inferred story kind is ${inferredStoryKind}`,
+      `Kumiko: page ${page.pageNumber}: inferred story kind is ${inferredStoryKind}, inferred number of rows is ${inferredNumberOfRows}`,
     );
 
     await prisma.image.update({
@@ -67,7 +94,8 @@ const runKumikoOnPage = async (
         aiKumikoResult: {
           upsert: {
             create: {
-              inferredStoryKind: inferredStoryKind,
+              inferredNumberOfRows,
+              inferredStoryKind,
               detectedPanels: {
                 createMany: {
                   data: panelsOfPage,
@@ -75,7 +103,8 @@ const runKumikoOnPage = async (
               },
             },
             update: {
-              inferredStoryKind: inferredStoryKind,
+              inferredNumberOfRows,
+              inferredStoryKind,
               detectedPanels: {
                 deleteMany: {},
                 createMany: {

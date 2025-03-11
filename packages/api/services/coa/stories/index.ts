@@ -4,7 +4,7 @@ import { Prisma } from "~prisma-schemas/schemas/coa";
 import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa/client";
 
 export default {
-  getStoryDetails: async (storycodes: string[]) =>
+  getStoryDetails: async (storycodes: string[]) => !storycodes.length ? [] :
     Promise.all([
       prismaCoa.inducks_story.findMany({
         where: {
@@ -25,9 +25,7 @@ export default {
         stories: stories.groupBy("storycode"),
         storyUrls: storyUrls.groupBy("storycode", "url"),
       }))
-      .catch((e) => {
-        return { error: "Error", errorDetails: e };
-      }),
+      .catch((e) => ({ error: "Error", errorDetails: e })),
 
   getStoryversionsDetails: (storyversioncodes: string[]) =>
     prismaCoa.inducks_storyversion

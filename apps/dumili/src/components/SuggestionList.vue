@@ -77,7 +77,7 @@ defineSlots<{
 const current = defineModel<S | null>();
 
 const {
-  class: classes,
+  class: classes = "",
   suggestions,
   isAiSource,
   itemClass = () => [],
@@ -85,7 +85,7 @@ const {
   showCustomizeForm = false,
   extraMenuClass = [],
 } = defineProps<{
-  class: string;
+  class?: string;
   suggestions: S[];
   isAiSource: (suggestion: S) => boolean;
   itemClass?: (suggestion: S) => string[];

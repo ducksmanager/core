@@ -9,7 +9,7 @@
         {{ $t("(hors-ligne)") }}
       </div>
     </div>
-    {{ $t("DUcksManager Inducks LIttle helper") }}
+    DUcksManager Inducks LIttle helper
     <b-dropdown
       v-if="dumiliUser"
       id="user-dropdown"

@@ -77,11 +77,13 @@ model indexation {
 model storyKindSuggestion {
   id                Int                    @id @default(autoincrement())
   kind              storyKind
+  numberOfRows      Int                    @map("number_of_rows") @db.TinyInt
   entryId           Int                    @map("entry_id")
   acceptedOnEntries entry[]                @relation("entry_accepted_story_kind_suggested_idTostory_kind_suggestion")
   entry             entry                  @relation("story_kind_suggestion_entry_idToentry", fields: [entryId], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "story_kind_suggestion_entry_id_fk")
   ai                storyKindSuggestionAi?
 
+  @@unique([kind, numberOfRows, entryId], map: "story_kind_suggestion")
   @@index([entryId], map: "story_kind_suggestion_entry_id_fk")
   @@map("story_kind_suggestion")
 }
@@ -97,7 +99,6 @@ model storySuggestion {
   ai                storySuggestionAi?
 
   @@unique([entryId, storycode], map: "story_suggestion_entry_id_storycode_uindex")
-  @@index([entryId], map: "story_suggestion_entry_id_fk")
   @@index([ocrDetailsId], map: "story_suggestion_ai_ocr_possible_story_id_fk")
   @@map("story_suggestion")
 }
@@ -171,10 +172,11 @@ model storySuggestionAi {
 }
 
 model aiKumikoResult {
-  id                Int                   @id @default(autoincrement())
-  inferredStoryKind storyKind?            @map("ai_kumiko_inferred_story_kind")
-  detectedPanels    aiKumikoResultPanel[]
-  image             image[]
+  id                   Int                   @id @default(autoincrement())
+  inferredStoryKind    storyKind?            @map("ai_kumiko_inferred_story_kind")
+  inferredNumberOfRows Int                   @default(3) @map("ai_kumiko_inferred_number_of_rows") @db.TinyInt
+  detectedPanels       aiKumikoResultPanel[]
+  image                image[]
 
   @@map("ai_kumiko_result")
 }

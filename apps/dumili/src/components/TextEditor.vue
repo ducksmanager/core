@@ -36,7 +36,6 @@ const { t: $t } = useI18n();
 import { suggestions } from "~/stores/suggestions";
 import type { FullEntry } from "~dumili-services/indexation";
 import { getEntryPages } from "~dumili-utils/entryPages";
-import type { aiKumikoResultPanel } from "~prisma/client_dumili";
 import { type storySuggestion } from "~prisma/client_dumili";
 import { socketInjectionKey as dmSocketInjectionKey } from "~web/src/composables/useDmSocket";
 
@@ -101,29 +100,6 @@ const issueRow = computed(() => ({
     .join(" "),
 }));
 
-const getPanelRows = (panels: aiKumikoResultPanel[]): number => {
-  if (!panels || panels.length === 0) {
-    return 0;
-  }
-
-  const sortedPanels = [...panels].sort((a, b) => a.y - b.y);
-  const rows: number[] = [sortedPanels[0].y];
-  const tolerance = 5;
-  for (let i = 1; i < sortedPanels.length; i++) {
-    const panelY = sortedPanels[i].y;
-
-    const belongsToExistingRow = rows.some(
-      (rowY) => Math.abs(panelY - rowY) <= tolerance,
-    );
-
-    if (!belongsToExistingRow) {
-      rows.push(panelY);
-    }
-  }
-
-  return rows.length;
-};
-
 const rows = computed(() =>
   !storiesWithDetails.value?.length
     ? undefined
@@ -131,8 +107,6 @@ const rows = computed(() =>
         const storyWithDetails = storiesWithDetails.value!.find(
           ({ storycode }) => storycode === entry.acceptedStory?.storycode,
         );
-        const detectedPanels = getEntryPages(indexation.value!, entry.id)[0]
-          .image?.aiKumikoResult?.detectedPanels;
         return {
           entrycode: `${issuecode.value}${
             idx === 0 || showEntryLetters.value
@@ -143,9 +117,7 @@ const rows = computed(() =>
           pg: String(getEntryPages(indexation.value!, entry.id).length),
           la:
             entry.acceptedStoryKind?.kind === "n"
-              ? detectedPanels
-                ? getPanelRows(detectedPanels)
-                : 3
+              ? entry.acceptedStoryKind?.numberOfRows
               : entry.acceptedStoryKind?.kind,
           ...Object.fromEntries(
             ["plot", "writer", "artist", "ink"].map((job) => [

@@ -18,7 +18,10 @@ import type {
   issueSuggestion,
   Prisma,
   storyKindSuggestion,
-  storySuggestion,
+  storySuggestion
+} from "~prisma/client_dumili";
+import {
+  storyKind
 } from "~prisma/client_dumili";
 
 import type { SessionDataWithIndexation } from "../../index";
@@ -208,7 +211,7 @@ const createAiStorySuggestions = async (
 
       const storyversionDetailsOutput = await coaEvents.getStoryversionsDetails(
         searchResults.map(
-          ({ storycode }) => storyDetails![storycode].originalstoryversioncode!,
+          ({ storycode }) => storyDetails[storycode].originalstoryversioncode!,
         ),
       );
 
@@ -222,9 +225,8 @@ const createAiStorySuggestions = async (
 
       const storyResults = searchResults.filter(
         ({ storycode }) =>
-          storyversionDetails![
-            storyDetails![storycode].originalstoryversioncode!
-          ].kind === STORY,
+          storyversionDetails[storyDetails[storycode].originalstoryversioncode!]
+            .kind === STORY,
       );
 
       const currentlyAcceptedStorycode = entry.acceptedStory?.storycode;
@@ -308,6 +310,7 @@ const setInferredEntriesStoryKinds = async (
           select: {
             id: true,
             inferredStoryKind: true,
+            inferredNumberOfRows: true,
           },
         },
       },
@@ -331,18 +334,18 @@ const setInferredEntriesStoryKinds = async (
       pagesInferredStoryKinds
         .map(({ aiKumikoResult }) => ({
           ...aiKumikoResult,
-          kind: aiKumikoResult?.inferredStoryKind,
+          kindAndNumberOfRows: `${aiKumikoResult?.inferredStoryKind}/${aiKumikoResult?.inferredNumberOfRows}`,
         }))
-        .groupBy("kind", "id[]"),
+        .groupBy("kindAndNumberOfRows", "id[]"),
     ).sort((a, b) => b[1].length - a[1].length)[0][0] as
-      | keyof typeof storyKinds
+      | `${storyKind}/${number}`
       | undefined;
 
     const entryIdx = services._socket.data.indexation.entries.findIndex(
       ({ id }) => id === entry.id,
     );
     console.log(
-      `Kumiko: entry #${entryIdx}: inferred story kind is ${mostInferredStoryKind}`,
+      `Kumiko: entry #${entryIdx}: inferred story kind and number of rows are ${mostInferredStoryKind}`,
     );
 
     await prisma.storyKindSuggestionAi.deleteMany({
@@ -356,10 +359,12 @@ const setInferredEntriesStoryKinds = async (
     });
 
     if (mostInferredStoryKind) {
+      console.log('Story kind suggestions: ', indexation.entries[entryIdx].storyKindSuggestions)
       await prisma.storyKindSuggestionAi.create({
         data: {
           suggestionId: indexation.entries[entryIdx].storyKindSuggestions.find(
-            ({ kind }) => kind === mostInferredStoryKind,
+            ({ kind, numberOfRows }) =>
+              `${kind}/${numberOfRows}` === mostInferredStoryKind,
           )!.id,
         },
       });
@@ -395,15 +400,15 @@ const listenEvents = (services: IndexationServices) => ({
         data: {
           image: url
             ? {
-                connectOrCreate: {
-                  create: {
-                    url,
-                  },
-                  where: {
-                    url,
-                  },
+              connectOrCreate: {
+                create: {
+                  url,
                 },
-              }
+                where: {
+                  url,
+                },
+              },
+            }
             : { disconnect: true },
         },
         where: {
@@ -541,11 +546,11 @@ const listenEvents = (services: IndexationServices) => ({
             suggestionId === null
               ? { disconnect: true }
               : {
-                  connect: {
-                    id: suggestionId,
-                    indexationId: services._socket.data.indexation.id,
-                  },
+                connect: {
+                  id: suggestionId,
+                  indexationId: services._socket.data.indexation.id,
                 },
+              },
         },
         where: {
           id: services._socket.data.indexation.id,
@@ -568,8 +573,8 @@ const listenEvents = (services: IndexationServices) => ({
           ...suggestion,
           ai: suggestion.ai
             ? {
-                create: {},
-              }
+              create: {},
+            }
             : undefined,
         },
       })
@@ -829,12 +834,24 @@ export const createEntry = async (indexationId: string, position: number) =>
       },
       storyKindSuggestions: {
         createMany: {
-          data: (Object.keys(storyKinds) as (keyof typeof storyKinds)[]).map(
-            (code) => ({
-              kind: code,
-            }),
-          ),
-        },
+          data: (Object.keys(storyKinds) as (keyof typeof storyKinds)[]).flatMap(
+            (kind) => {
+              switch (kind) {
+                case storyKind.k:
+                  return [{
+                    kind: storyKind.n,
+                    numberOfRows: 0,
+                  }]
+                case storyKind.n:
+                  return [2, 3, 4, 5, 6, 7].map((numberOfRows) => ({ kind: storyKind.n, numberOfRows }))
+                default:
+                  return [{
+                    kind: storyKind.n,
+                    numberOfRows: 1,
+                  }]
+              }
+            })
+        }
       },
     },
   });

@@ -13,49 +13,10 @@
       cols="3"
       class="position-relative d-flex flex-column justify-content-center align-items-center h-100"
     >
-      <EntryStoryKindTooltip :entry="entry" />
-      <template v-if="editable">
-        <suggestion-list
-          v-model="entry.acceptedStoryKind"
-          class="position-absolute"
-          :suggestions="entry.storyKindSuggestions"
-          :is-ai-source="({ ai }) => ai !== null"
-          :item-class="(suggestion) => [`kind-${suggestion.kind}`]"
-        >
-          <template #default="{ suggestion, location }">
-            {{ storyKinds[suggestion.kind] }}
-            <span
-              v-if="
-                location === 'button' &&
-                getEntryPages(indexation, entry.id)[0].pageNumber === 1 &&
-                entry.acceptedStoryKind?.kind !== COVER
-              "
-              class="d-flex ms-1"
-              :title="
-                $t('La première page est généralement une page de couverture')
-              "
-            >
-              <i-bi-exclamation-triangle-fill
-            /></span>
-            <span
-              v-if="
-                location === 'button' &&
-                getEntryPages(indexation, entry.id).length > 1 &&
-                entry.acceptedStoryKind?.kind === COVER
-              "
-              class="d-flex ms-1"
-              :title="$t('La couverture ne devrait faire qu\'une page')"
-            >
-              <i-bi-exclamation-triangle-fill
-            /></span>
-          </template>
-          <template #unknown-text>{{
-            $t("Type inconnu")
-          }}</template></suggestion-list
-        ></template
-      ><story-kind-badge
-        v-else
-        :story-kind="entry.acceptedStoryKind?.kind" /></b-col
+      <story-kind-suggestion-list
+        v-model="entry.acceptedStoryKind"
+        v-bind="{ entry, editable }"
+      /> </b-col
     ><b-col
       col
       cols="4"
@@ -83,8 +44,8 @@
         @update:model-value="entry.title = ($event as string).replace(/[\r\n]+/g, '')"
       /><template v-else>
         {{ title || $t("Sans titre") }}
-        <template v-if="entry.part"
-          >{{ " - " }}{{ $t("partie") }} {{ entry.part }}</template
+        <template v-if="entry.part">
+          &nbsp;-&nbsp;{{ $t("partie") }} {{ entry.part }}</template
         >
         <br />
         <small>{{ entry.entrycomment }}</small>
@@ -123,8 +84,6 @@ import { watchDebounced } from "@vueuse/core";
 import { dumiliSocketInjectionKey } from "~/composables/useDumiliSocket";
 import { suggestions } from "~/stores/suggestions";
 import type { FullEntry, FullIndexation } from "~dumili-services/indexation";
-import { COVER, storyKinds } from "~dumili-types/storyKinds";
-import { getEntryPages } from "~dumili-utils/entryPages";
 
 const { t } = useI18n();
 defineProps<{
