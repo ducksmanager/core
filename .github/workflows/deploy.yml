@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
   push:
     branches:
-      - "refactor-socket-services"
+      - "master"
 jobs:
   build:
     runs-on: ubuntu-latest
