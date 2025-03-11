@@ -9,14 +9,14 @@
         class="position-absolute"
         :suggestions="entry.storyKindSuggestions"
         :is-ai-source="({ ai }) => ai !== null"
-        :item-class="(suggestion) => [`kind-${suggestion.kind}`]"
+        :item-class="(suggestion) => [`kind-${suggestion.storyKindRows.kind}`]"
       >
         <template #default="{ suggestion, location }">
-          {{ storyKinds[suggestion.kind]
-          }}<template v-if="suggestion.kind === 'n'"
+          {{ storyKinds[suggestion.storyKindRows.kind]
+          }}<template v-if="suggestion.storyKindRows.kind === 'n'"
             >&nbsp;{{
               $t("({rowsPerPage} lignes / page)", {
-                rowsPerPage: suggestion.numberOfRows,
+                rowsPerPage: suggestion.storyKindRows.numberOfRows,
               })
             }}</template
           >
@@ -24,7 +24,7 @@
             v-if="
               location === 'button' &&
               getEntryPages(indexation, entry.id)[0].pageNumber === 1 &&
-              acceptedStoryKind?.kind !== COVER
+              acceptedStoryKind?.storyKindRows.kind !== COVER
             "
             class="d-flex ms-1"
             :title="
@@ -37,7 +37,7 @@
             v-if="
               location === 'button' &&
               getEntryPages(indexation, entry.id).length > 1 &&
-              acceptedStoryKind?.kind === COVER
+              acceptedStoryKind?.storyKindRows.kind === COVER
             "
             class="d-flex ms-1"
             :title="$t('La couverture ne devrait faire qu\'une page')"
@@ -48,7 +48,10 @@
         <template #unknown-text>{{ $t("Type inconnu") }}</template>
       </suggestion-list>
     </template>
-    <story-kind-badge v-else :story-kind="acceptedStoryKind?.kind" />
+    <story-kind-badge
+      v-else
+      :story-kind-rows="acceptedStoryKind?.storyKindRows"
+    />
   </div>
 </template>
 

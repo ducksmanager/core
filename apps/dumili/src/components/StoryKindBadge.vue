@@ -1,17 +1,19 @@
 <template>
   <b-badge
     size="xl"
-    :class="{ [`kind-${storyKind}`]: true }"
+    :class="{ [`kind-${storyKindRows?.kind}`]: true }"
     class="text-black fw-normal fs-6"
-    >{{ (storyKind && storyKinds[storyKind]) || $t("Type inconnu") }}</b-badge
+    >{{
+      (storyKindRows && storyKinds[storyKindRows?.kind]) || $t("Type inconnu")
+    }}</b-badge
   >
 </template>
 <script setup lang="ts">
 import { storyKinds } from "~dumili-types/storyKinds";
-import type { storyKind } from "~prisma/client_dumili";
+import type { storyKindRows } from "~prisma/client_dumili";
 
 defineProps<{
-  storyKind?: storyKind | null;
+  storyKindRows?: storyKindRows | null;
 }>();
 
 const { t: $t } = useI18n();

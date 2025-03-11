@@ -76,15 +76,16 @@ model indexation {
 
 model storyKindSuggestion {
   id                Int                    @id @default(autoincrement())
-  kind              storyKind
-  numberOfRows      Int                    @map("number_of_rows") @db.TinyInt
+  storyKindRowsStr  String                 @map("kind_number_of_rows") @db.VarChar(4)
   entryId           Int                    @map("entry_id")
   acceptedOnEntries entry[]                @relation("entry_accepted_story_kind_suggested_idTostory_kind_suggestion")
   entry             entry                  @relation("story_kind_suggestion_entry_idToentry", fields: [entryId], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "story_kind_suggestion_entry_id_fk")
+  storyKindRows     storyKindRows          @relation(fields: [storyKindRowsStr], references: [id], onUpdate: Restrict, map: "story_kind_suggestion_story_kind_rows_id_fk")
   ai                storyKindSuggestionAi?
 
-  @@unique([kind, numberOfRows, entryId], map: "story_kind_suggestion")
+  @@unique([storyKindRowsStr, entryId], map: "story_kind_suggestion")
   @@index([entryId], map: "story_kind_suggestion_entry_id_fk")
+  @@index([storyKindRowsStr], map: "story_kind_suggestion_story_kind_rows_id_fk")
   @@map("story_kind_suggestion")
 }
 
@@ -172,12 +173,13 @@ model storySuggestionAi {
 }
 
 model aiKumikoResult {
-  id                   Int                   @id @default(autoincrement())
-  inferredStoryKind    storyKind?            @map("ai_kumiko_inferred_story_kind")
-  inferredNumberOfRows Int                   @default(3) @map("ai_kumiko_inferred_number_of_rows") @db.TinyInt
-  detectedPanels       aiKumikoResultPanel[]
-  image                image[]
+  id                       Int                   @id @default(autoincrement())
+  inferredStoryKindRowsStr String?               @map("ai_kumiko_inferred_story_kind_rows") @db.VarChar(4)
+  inferredStoryKindRows    storyKindRows?        @relation(fields: [inferredStoryKindRowsStr], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "ai_kumiko_result_story_kind_rows_id_fk")
+  detectedPanels           aiKumikoResultPanel[]
+  image                    image[]
 
+  @@index([inferredStoryKindRowsStr], map: "ai_kumiko_result_story_kind_rows_id_fk")
   @@map("ai_kumiko_result")
 }
 
@@ -204,6 +206,17 @@ model user {
   dmId            Int          @id @map("dm_id")
   inducksUsername String       @map("inducks_username") @db.VarChar(64)
   indexation      indexation[]
+}
+
+model storyKindRows {
+  id                  String                @id @db.VarChar(4)
+  kind                storyKind
+  numberOfRows        Int                   @map("number_of_rows") @db.TinyInt
+  aiKumikoResult      aiKumikoResult[]
+  storyKindSuggestion storyKindSuggestion[]
+
+  @@unique([kind, numberOfRows], map: "story_kind_rows_pk")
+  @@map("story_kind_rows")
 }
 
 enum storyKind {

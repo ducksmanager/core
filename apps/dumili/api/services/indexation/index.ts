@@ -10,9 +10,10 @@ import {
 
 import { type ClientEvents as CoaEvents } from "~dm-services/coa";
 import dmNamespaces from "~dm-services/namespaces";
-import { STORY, storyKinds } from "~dumili-types/storyKinds";
+import { STORY } from "~dumili-types/storyKinds";
 import { getEntryFromPage, getEntryPages } from "~dumili-utils/entryPages";
 import type {
+  aiKumikoResult,
   entry,
   indexation,
   issueSuggestion,
@@ -20,7 +21,7 @@ import type {
   storyKindSuggestion,
   storySuggestion
 } from "~prisma/client_dumili";
-import {
+import type {
   storyKind
 } from "~prisma/client_dumili";
 
@@ -46,6 +47,7 @@ const indexationPayloadInclude = {
           aiKumikoResult: {
             include: {
               detectedPanels: true,
+              inferredStoryKindRows: true,
             },
           },
           aiOcrResult: {
@@ -74,8 +76,8 @@ const indexationPayloadInclude = {
           ocrDetails: true,
         },
       },
-      acceptedStoryKind: { include: { ai: true } },
-      storyKindSuggestions: { include: { ai: true } },
+      acceptedStoryKind: { include: { ai: true, storyKindRows: true } },
+      storyKindSuggestions: { include: { ai: true, storyKindRows: true } },
       storySuggestions: {
         include: {
           ai: true,
@@ -138,7 +140,7 @@ export const getFullIndexation = (
                     ({ image, id }) =>
                       !!image &&
                       getEntryFromPage(indexation, id)?.acceptedStoryKind
-                        ?.kind === STORY,
+                        ?.storyKindRows.kind === STORY,
                   )
                   .map(({ pageNumber, image }) => ({
                     pageNumber,
@@ -178,7 +180,7 @@ const createAiStorySuggestions = async (
 ) => {
   for (const entry of indexation.entries) {
     if (
-      entry.acceptedStoryKind?.kind === STORY &&
+      entry.acceptedStoryKind?.storyKindRows?.kind === STORY &&
       !entry.storySuggestions.length
     ) {
       const firstPageOfEntry = getEntryPages(indexation, entry.id)[0];
@@ -309,8 +311,6 @@ const setInferredEntriesStoryKinds = async (
         aiKumikoResult: {
           select: {
             id: true,
-            inferredStoryKind: true,
-            inferredNumberOfRows: true,
           },
         },
       },
@@ -331,12 +331,13 @@ const setInferredEntriesStoryKinds = async (
     }
 
     const mostInferredStoryKind = Object.entries(
-      pagesInferredStoryKinds
-        .map(({ aiKumikoResult }) => ({
-          ...aiKumikoResult,
-          kindAndNumberOfRows: `${aiKumikoResult?.inferredStoryKind}/${aiKumikoResult?.inferredNumberOfRows}`,
+      (pagesInferredStoryKinds
+        .filter(({ aiKumikoResult }) => aiKumikoResult !== null) as { aiKumikoResult: aiKumikoResult }[])
+        .map(({ aiKumikoResult: { id, inferredStoryKindRowsStr } }) => ({
+          id,
+          inferredStoryKindRowsStr
         }))
-        .groupBy("kindAndNumberOfRows", "id[]"),
+        .groupBy("inferredStoryKindRowsStr", "id[]"),
     ).sort((a, b) => b[1].length - a[1].length)[0][0] as
       | `${storyKind}/${number}`
       | undefined;
@@ -363,8 +364,8 @@ const setInferredEntriesStoryKinds = async (
       await prisma.storyKindSuggestionAi.create({
         data: {
           suggestionId: indexation.entries[entryIdx].storyKindSuggestions.find(
-            ({ kind, numberOfRows }) =>
-              `${kind}/${numberOfRows}` === mostInferredStoryKind,
+            ({ storyKindRowsStr }) =>
+              storyKindRowsStr === mostInferredStoryKind,
           )!.id,
         },
       });
@@ -834,24 +835,10 @@ export const createEntry = async (indexationId: string, position: number) =>
       },
       storyKindSuggestions: {
         createMany: {
-          data: (Object.keys(storyKinds) as (keyof typeof storyKinds)[]).flatMap(
-            (kind) => {
-              switch (kind) {
-                case storyKind.k:
-                  return [{
-                    kind: storyKind.n,
-                    numberOfRows: 0,
-                  }]
-                case storyKind.n:
-                  return [2, 3, 4, 5, 6, 7].map((numberOfRows) => ({ kind: storyKind.n, numberOfRows }))
-                default:
-                  return [{
-                    kind: storyKind.n,
-                    numberOfRows: 1,
-                  }]
-              }
-            })
+          data: (await prisma.storyKindRows.findMany()).map(({ id }) => ({
+            storyKindRowsStr: id
+          }))
         }
-      },
+      }
     },
-  });
+  })

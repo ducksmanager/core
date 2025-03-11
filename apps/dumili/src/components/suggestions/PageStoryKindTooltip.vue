@@ -1,7 +1,9 @@
 <template>
   <ai-tooltip
     :id="`ai-results-page-${page.pageNumber}`"
-    :status="page.image?.aiKumikoResult?.inferredStoryKind ? 'success' : 'idle'"
+    :status="
+      page.image?.aiKumikoResult?.inferredStoryKindRows ? 'success' : 'idle'
+    "
     top-center
     :loading-events="[
       {
@@ -33,7 +35,7 @@
         <b>{{ $t("Type d'entrée déduit pour la page") }}</b>
       </div>
       <story-kind-badge
-        :story-kind="page.image?.aiKumikoResult?.inferredStoryKind"
+        :story-kind-rows="page.image?.aiKumikoResult?.inferredStoryKindRows"
     /></template>
   </ai-tooltip>
 </template>
