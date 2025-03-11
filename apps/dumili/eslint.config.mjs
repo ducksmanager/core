@@ -81,7 +81,7 @@ export default [
             "OK",
             "11zon.com",
             "DUcksManager Inducks LIttle helper",
-            " - ",
+            "-",
           ],
         },
       ],
