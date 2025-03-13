@@ -85,7 +85,6 @@ model storyKindSuggestion {
 
   @@unique([storyKindRowsStr, entryId], map: "story_kind_suggestion")
   @@index([entryId], map: "story_kind_suggestion_entry_id_fk")
-  @@index([storyKindRowsStr], map: "story_kind_suggestion_story_kind_rows_id_fk")
   @@map("story_kind_suggestion")
 }
 

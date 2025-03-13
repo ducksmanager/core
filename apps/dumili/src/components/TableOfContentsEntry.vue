@@ -13,7 +13,7 @@
     :on-resize="onResize"
     :on-drag="onDrag"
     role="button"
-    :class-name="`position-absolute d-flex z-3 align-items-center justify-content-center cursor-pointer col w-100 border kind-${entry.acceptedStoryKind?.kind} ${(overlay?.type === 'story kind' && overlay.entryId === entry.id && 'striped') || ''} ${(currentEntry?.id === entry.id && 'z-4 border-2') || 'border-1'}`"
+    :class-name="`position-absolute d-flex z-3 align-items-center justify-content-center cursor-pointer col w-100 border kind-${entry.acceptedStoryKind?.storyKindRows.kind} ${(overlay?.type === 'story kind' && overlay.entryId === entry.id && 'striped') || ''} ${(currentEntry?.id === entry.id && 'z-4 border-2') || 'border-1'}`"
     @mouseover="hoveredEntry = entry"
     @mouseleave="hoveredEntry = undefined"
     @resize-stop="

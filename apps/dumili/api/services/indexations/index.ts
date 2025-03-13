@@ -55,18 +55,16 @@ const listenEvents = ({ _socket }: IndexationsServices) => ({
         },
       })
       .then((indexation) => createEntry(indexation.id, 1))
-      .then((entry) => {
-        return prisma.entry.update({
-          data: {
-            acceptedStoryKindSuggestionId: entry.storyKindSuggestions.find(
-              (s) => s.kind === COVER,
-            )!.id,
-          },
-          where: {
-            id: entry.id,
-          },
-        });
-      }),
+      .then((entry) => prisma.entry.update({
+        data: {
+          acceptedStoryKindSuggestionId: entry.storyKindSuggestions.find(
+            (s) => s.storyKindRowsStr.split('/')[0] === COVER
+          )!.id,
+        },
+        where: {
+          id: entry.id,
+        },
+      })),
 
   getIndexations: (): Promise<
     Prisma.indexationGetPayload<{

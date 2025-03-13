@@ -17,7 +17,7 @@
         "
       >
         <div
-          :class="`overlay kind-${getEntryFromPage(indexation, page.id)!.acceptedStoryKind?.kind} striped`"
+          :class="`overlay kind-${getEntryFromPage(indexation, page.id)!.acceptedStoryKind?.storyKindRows.kind} striped`"
         ></div>
       </template>
       <template v-if="overlay && page.image && visiblePages.has(page.id)">

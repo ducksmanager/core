@@ -116,9 +116,9 @@ const rows = computed(() =>
           storycode: entry.acceptedStory?.storycode,
           pg: String(getEntryPages(indexation.value!, entry.id).length),
           la:
-            entry.acceptedStoryKind?.kind === "n"
-              ? entry.acceptedStoryKind?.numberOfRows
-              : entry.acceptedStoryKind?.kind,
+            entry.acceptedStoryKind?.storyKindRows.kind === "n"
+              ? entry.acceptedStoryKind?.storyKindRows.numberOfRows
+              : entry.acceptedStoryKind?.storyKindRows.kind,
           ...Object.fromEntries(
             ["plot", "writer", "artist", "ink"].map((job) => [
               job,

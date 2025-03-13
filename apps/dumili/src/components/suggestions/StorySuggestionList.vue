@@ -29,7 +29,7 @@
                 v-if="
                 entry.acceptedStoryKind &&
                 storyDetails[suggestion.storycode]?.originalstoryversioncode &&
-                entry.acceptedStoryKind?.kind !=
+                entry.acceptedStoryKind?.storyKindRows.kind !=
                 storyversionDetails[storyDetails[suggestion.storycode].originalstoryversioncode!]?.kind
               "
                 :title="
@@ -169,8 +169,8 @@ const acceptStory = async (storycode: storySuggestion["storycode"] | null) => {
   );
   if (storySuggestion?.id) {
     const correspondingStoryKindId = entry.value.storyKindSuggestions.find(
-      ({ kind }) =>
-        kind ===
+      ({ storyKindRows }) =>
+        storyKindRows.kind ===
         storyversionDetails.value[
           storyDetails.value[storySuggestion.storycode]
             .originalstoryversioncode!
