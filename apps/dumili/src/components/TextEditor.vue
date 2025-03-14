@@ -26,9 +26,13 @@
             ><b-td>{{ issueRow.details }}</b-td
             ><b-td
               v-for="idx in Object.keys(rows![0]).filter((_, idx) => idx >= 2)"
-              :key="idx" /></template
-        ></b-table></div></template
-  ></b-container>
+              :key="idx" /></template></b-table
+        ><b-button variant="light" @click="copyToClipboard">{{
+          $t("Copier")
+        }}</b-button>
+      </div></template
+    ></b-container
+  >
 </template>
 <script setup lang="ts">
 const { t: $t } = useI18n();
@@ -49,6 +53,12 @@ const { acceptedIssue: issue } = storeToRefs(suggestions());
 
 const showEntryLetters = ref(false);
 const showHorizontalScroll = ref(false);
+
+const copyToClipboard = () => {
+  navigator.clipboard.writeText(
+    rows.value!.map((row) => Object.values(row).join("\t")).join("\n"),
+  );
+};
 
 const acceptedStories = computed(() =>
   indexation.value?.entries
