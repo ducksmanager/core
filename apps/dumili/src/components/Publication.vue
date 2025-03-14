@@ -3,15 +3,16 @@
     :class="{ [size]: true, [displayClass]: true }"
     class="align-items-center"
   >
-    <img :alt="countrycode" :src="getFlagsPath(`${countrycode}.png`)" />
+    <img
+      :alt="countrycode"
+      :src="images().getFlagsPath(`${countrycode}.png`)"
+    />
     <span class="mx-1">{{ publicationname }}</span>
     <slot />
   </span>
 </template>
 
 <script setup lang="ts">
-import { images } from "~/stores/images";
-
 const {
   publicationcode,
   size = "md",
@@ -23,7 +24,6 @@ const {
   displayClass?: string;
 }>();
 const countrycode = computed(() => publicationcode.split("/")[0]);
-const getFlagsPath = images().getFlagsPath;
 </script>
 
 <style scoped lang="scss">

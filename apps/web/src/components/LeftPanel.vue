@@ -33,7 +33,7 @@
         </popper>
 
         <a class="navbar-brand" href="#">
-          <SwitchLocale fixed />
+          <SwitchLocale />
           <Banner small
         /></a>
       </div>

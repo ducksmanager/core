@@ -8,6 +8,7 @@
       <div v-if="!isSocketConnected" class="ms-2 text-danger">
         {{ $t("(hors-ligne)") }}
       </div>
+      <SwitchLocale right />
     </div>
     DUcksManager Inducks LIttle helper
     <b-dropdown
@@ -51,6 +52,7 @@
 </template>
 
 <script setup lang="ts">
+import SwitchLocale from "~web/src/components/SwitchLocale.vue";
 import Cookies from "js-cookie";
 
 import useDmSocket, {
@@ -153,5 +155,9 @@ watch(
 
 .dropdown {
   margin-left: calc(var(--bs-gutter-x) * 0.5);
+}
+
+:deep(#flags) {
+  right: 0 !important;
 }
 </style>
