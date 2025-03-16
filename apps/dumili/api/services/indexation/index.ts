@@ -356,14 +356,20 @@ const setInferredEntriesStoryKinds = async (
 
     if (mostInferredStoryKind) {
       console.log('Story kind suggestions: ', indexation.entries[entryIdx].storyKindSuggestions)
-      await prisma.storyKindSuggestionAi.create({
-        data: {
-          suggestionId: indexation.entries[entryIdx].storyKindSuggestions.find(
-            ({ storyKindRowsStr }) =>
-              storyKindRowsStr === mostInferredStoryKind,
-          )!.id,
-        },
-      });
+      const suggestion = indexation.entries[entryIdx].storyKindSuggestions.find(
+        ({ storyKindRowsStr }) =>
+          storyKindRowsStr === mostInferredStoryKind,
+      )
+      if (suggestion) {
+        await prisma.storyKindSuggestionAi.create({
+          data: {
+            suggestionId: suggestion.id,
+          },
+        });
+      }
+      else {
+        console.warn('No suggestion found for ', mostInferredStoryKind)
+      }
     }
 
     services.setInferredEntryStoryKindEnd(entry.id);
