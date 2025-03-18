@@ -8,13 +8,16 @@
       />
       <TextEditor v-else-if="activeTabIndex === 2" />
       <b-container class="start-0 bottom-0 mw-100 pt-2" style="height: 35px"
-        ><b-tabs v-model:model-value="activeTabIndex" align="center"
-          ><b-tab
+        ><b-nav tabs align="center"
+          ><b-nav-item
             v-for="{ id, label } of tabNames"
             :key="id"
-            :button-id="id"
-            :title="label" /></b-tabs
-      ></b-container>
+            :href="`#${id}`"
+            :active="`#${id}` === $route.hash"
+            >{{ label }}</b-nav-item
+          ></b-nav
+        ></b-container
+      >
     </b-col>
 
     <b-col :cols="6" class="h-100">
@@ -91,6 +94,16 @@ watch(
   () => route.params.id,
   async (id) => {
     await loadIndexation(id as string);
+  },
+  { immediate: true },
+);
+
+watch(
+  () => route.hash,
+  (hash) => {
+    activeTabIndex.value = tabNames.findIndex(
+      ({ id: tabId }) => `#${tabId}` === hash,
+    );
   },
   { immediate: true },
 );
