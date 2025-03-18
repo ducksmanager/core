@@ -161,8 +161,8 @@ export const collection = defineStore("collection", () => {
         previousVisit.value = new Date(result as string);
       }
     },
-    loadCollection = async (afterUpdate = false) => {
-      if (afterUpdate || (!isLoadingCollection.value && !issues.value)) {
+    loadCollection = async (ignoreCache = false) => {
+      if (ignoreCache || (!isLoadingCollection.value && !issues.value)) {
         isLoadingCollection.value = true;
         let publicationNames: Record<string, string> = {};
         ({
@@ -196,8 +196,8 @@ export const collection = defineStore("collection", () => {
       );
       isLoadingCollection.value = false;
     },
-    loadPurchases = async (afterUpdate = false) => {
-      if (afterUpdate || (!isLoadingPurchases.value && !purchases.value)) {
+    loadPurchases = async (ignoreCache = false) => {
+      if (ignoreCache || (!isLoadingPurchases.value && !purchases.value)) {
         isLoadingPurchases.value = true;
         purchases.value = (await collectionEvents.getPurchases()).map(
           (purchase) => ({
@@ -208,9 +208,9 @@ export const collection = defineStore("collection", () => {
         isLoadingPurchases.value = false;
       }
     },
-    loadWatchedPublicationsWithSales = async (afterUpdate = false) => {
+    loadWatchedPublicationsWithSales = async (ignoreCache = false) => {
       if (
-        afterUpdate ||
+        ignoreCache ||
         (!isLoadingWatchedPublicationsWithSales.value &&
           !watchedPublicationsWithSales.value)
       ) {
@@ -221,9 +221,9 @@ export const collection = defineStore("collection", () => {
         isLoadingWatchedPublicationsWithSales.value = false;
       }
     },
-    loadMarketplaceContactMethods = async (afterUpdate = false) => {
+    loadMarketplaceContactMethods = async (ignoreCache = false) => {
       if (
-        afterUpdate ||
+        ignoreCache ||
         (!isLoadingMarketplaceContactMethods.value &&
           !marketplaceContactMethods.value)
       ) {
@@ -258,9 +258,9 @@ export const collection = defineStore("collection", () => {
         isLoadingSuggestions.value = false;
       }
     },
-    loadSubscriptions = async (afterUpdate = false) => {
+    loadSubscriptions = async (ignoreCache = false) => {
       if (
-        afterUpdate ||
+        ignoreCache ||
         (!isLoadingSubscriptions.value && !subscriptions.value)
       ) {
         isLoadingSubscriptions.value = true;
@@ -307,12 +307,12 @@ export const collection = defineStore("collection", () => {
         onSuccess(response);
       }
     },
-    loadUser = async (afterUpdate = false) => {
+    loadUser = async (ignoreCache = false) => {
       if (!socketOptions.session.getToken()) {
         user.value = null;
         return;
       }
-      if (!isLoadingUser.value && (afterUpdate || !user.value)) {
+      if (!isLoadingUser.value && (ignoreCache || !user.value)) {
         isLoadingUser.value = true;
         try {
           const response = await collectionEvents.getUser();

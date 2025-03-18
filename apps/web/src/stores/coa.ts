@@ -114,10 +114,10 @@ export const coa = defineStore("coa", () => {
     ) => {
       Object.assign(issueQuotations.value, newIssueQuotations);
     },
-    fetchCountryNames = async (afterUpdate = false) => {
+    fetchCountryNames = async (ignoreCache = false) => {
       if (
         (!isLoadingCountryNames.value && !countryNames.value) ||
-        afterUpdate
+        ignoreCache
       ) {
         isLoadingCountryNames.value = true;
         countryNames.value = await events.getCountryList(
