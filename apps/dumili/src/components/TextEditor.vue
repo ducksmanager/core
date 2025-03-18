@@ -56,7 +56,9 @@ const showHorizontalScroll = ref(false);
 
 const copyToClipboard = () => {
   navigator.clipboard.writeText(
-    rows.value!.map((row) => Object.values(row).join("\t")).join("\n"),
+    Object.values(issueRow.value).join("\t") +
+      "\n" +
+      rows.value!.map((row) => Object.values(row).join("\t")).join("\n"),
   );
 };
 
@@ -123,7 +125,7 @@ const rows = computed(() =>
               ? String.fromCharCode(97 + idx)
               : `p${String(entry.position).padStart(3, "0")}`
           }`,
-          storycode: entry.acceptedStory?.storycode,
+          storycode: entry.acceptedStory?.storycode || " ",
           pg: String(getEntryPages(indexation.value!, entry.id).length),
           la:
             entry.acceptedStoryKind?.storyKindRows.kind === "n"

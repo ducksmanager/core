@@ -97,6 +97,13 @@ const { storyDetails } = storeToRefs(coa());
 
 const entry = defineModel<FullEntry>({ required: true });
 
+if (
+  entry.value.acceptedStory &&
+  !storyDetails.value[entry.value.acceptedStory!.storycode]
+) {
+  console.error("No story details for", entry.value.acceptedStory!.storycode);
+}
+
 const showDeleteEntryModal = ref(false);
 
 const isFirst = computed(
