@@ -1,7 +1,7 @@
 <template>
   <b-container
     fluid
-    class="d-flex flex-grow-1 h-100 flex-column align-items-start"
+    class="d-flex flex-grow-1 h-100 flex-column align-items-start overflow-y-auto"
   >
     <b-alert v-if="!issue" variant="danger" :model-value="true">
       {{
@@ -16,8 +16,9 @@
         $t("Afficher la barre de défilement horizontale")
       }}</b-form-checkbox>
       <div
+        class="h-100 overflow-y-auto align-items-start"
         :class="{
-          'mw-100 text-nowrap overflow-auto': showHorizontalScroll,
+          'mw-100 text-nowrap overflow-x-auto': showHorizontalScroll,
         }"
       >
         <b-table head-variant="light" :items="rows" borderless small
@@ -27,9 +28,10 @@
             ><b-td
               v-for="idx in Object.keys(rows![0]).filter((_, idx) => idx >= 2)"
               :key="idx" /></template></b-table
-        ><b-button variant="light" @click="copyToClipboard">{{
-          $t("Copier")
-        }}</b-button>
+        ><b-button variant="light" @click="copyToClipboard"
+          ><template v-if="isCopied">{{ $t("Copié !") }}<i-bi-check /></template
+          ><template v-else>{{ $t("Copier") }}</template>
+        </b-button>
       </div></template
     ></b-container
   >
@@ -54,6 +56,8 @@ const { acceptedIssue: issue } = storeToRefs(suggestions());
 const showEntryLetters = ref(false);
 const showHorizontalScroll = ref(false);
 
+const isCopied = ref(false);
+
 const columnWidths = [12, 14, 3, 2, 1, 4, 4, 4, 4, 4];
 
 const text = computed(() =>
@@ -69,6 +73,10 @@ const text = computed(() =>
 
 const copyToClipboard = () => {
   navigator.clipboard.writeText(text.value);
+  isCopied.value = true;
+  setTimeout(() => {
+    isCopied.value = false;
+  }, 2000);
 };
 
 const acceptedStories = computed(() =>
