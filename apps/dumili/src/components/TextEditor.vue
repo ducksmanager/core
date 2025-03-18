@@ -54,12 +54,21 @@ const { acceptedIssue: issue } = storeToRefs(suggestions());
 const showEntryLetters = ref(false);
 const showHorizontalScroll = ref(false);
 
+const columnWidths = [12, 14, 3, 2, 1, 4, 4, 4, 4, 4];
+
+const text = computed(() =>
+  [Object.values(issueRow.value)]
+    .concat((rows.value || []).map(Object.values))
+    .map((row) =>
+      row
+        .map((text, idx) => String(text || "").padEnd(columnWidths[idx] || 0))
+        .join(" "),
+    )
+    .join("\n"),
+);
+
 const copyToClipboard = () => {
-  navigator.clipboard.writeText(
-    Object.values(issueRow.value).join("\t") +
-      "\n" +
-      rows.value!.map((row) => Object.values(row).join("\t")).join("\n"),
-  );
+  navigator.clipboard.writeText(text.value);
 };
 
 const acceptedStories = computed(() =>
@@ -71,8 +80,8 @@ const acceptedStories = computed(() =>
 const storiesWithDetails =
   ref<Awaited<ReturnType<typeof getStoriesWithDetails>>>();
 
-const getStoriesWithDetails = async (stories: storySuggestion[]) =>
-  await Promise.all(
+const getStoriesWithDetails = (stories: storySuggestion[]) =>
+  Promise.all(
     Object.values(stories)
       .filter(
         (story): story is storySuggestion & { storycode: string } =>
@@ -120,25 +129,25 @@ const rows = computed(() =>
           ({ storycode }) => storycode === entry.acceptedStory?.storycode,
         );
         return {
-          entrycode: `${issuecode.value}${
-            idx === 0 || showEntryLetters.value
-              ? String.fromCharCode(97 + idx)
-              : `p${String(entry.position).padStart(3, "0")}`
-          }`,
-          storycode: entry.acceptedStory?.storycode || " ",
+          entrycode: `${issuecode.value}${(idx === 0 || showEntryLetters.value
+            ? String.fromCharCode(97 + idx)
+            : `p${String(entry.position)}`
+          ).padStart(3, "0")}`,
+          storycode: entry.acceptedStory?.storycode || "",
           pg: String(getEntryPages(indexation.value!, entry.id).length),
           la:
             entry.acceptedStoryKind?.storyKindRows.kind === "n"
               ? entry.acceptedStoryKind?.storyKindRows.numberOfRows
               : entry.acceptedStoryKind?.storyKindRows.kind,
-          ...Object.fromEntries(
-            ["plot", "writer", "artist", "ink"].map((job) => [
+          _: " ",
+          ...(Object.fromEntries(
+            (["plot", "writer", "artist", "ink"] as const).map((job) => [
               job,
               storyWithDetails?.storyjobs?.find(
                 ({ plotwritartink }) => plotwritartink === job,
               )?.personcode,
             ]),
-          ),
+          ) as { plot: string; writer: string; artist: string; ink: string }),
           hero: "", //story!.printedhero,
           title: entry.title,
         };
@@ -173,10 +182,12 @@ textarea {
     color: black;
   }
   $column-colors: (
+    // TODO v-bind?
     white,
     #d2ffc4,
     #e3e3e3,
     #ffffcc,
+    white,
     #fff284,
     #f2e4d5,
     white,
