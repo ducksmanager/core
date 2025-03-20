@@ -9,9 +9,14 @@
       }}</b-alert
     >
     <template v-if="rows">
-      <b-form-checkbox v-model="showEntryLetters" class="m-2">{{
-        $t("Afficher des lettres au lieu des numéros de pages")
-      }}</b-form-checkbox>
+      <b-form-checkbox
+        v-model="showEntryLetters"
+        :disabled="hasEntrycodesLongerThanFirstColumnMaxWidth"
+        class="m-2"
+        >{{
+          $t("Afficher des lettres au lieu des numéros de pages")
+        }}</b-form-checkbox
+      >
       <b-form-checkbox v-model="showHorizontalScroll" class="m-2">{{
         $t("Afficher la barre de défilement horizontale")
       }}</b-form-checkbox>
@@ -60,17 +65,6 @@ const isCopied = ref(false);
 
 const columnWidths = [12, 14, 3, 2, 1, 4, 4, 4, 4, 4];
 
-const text = computed(() =>
-  [Object.values(issueRow.value)]
-    .concat((rows.value || []).map(Object.values))
-    .map((row) =>
-      row
-        .map((text, idx) => String(text || "").padEnd(columnWidths[idx] || 0))
-        .join(" "),
-    )
-    .join("\n"),
-);
-
 const copyToClipboard = () => {
   navigator.clipboard.writeText(text.value);
   isCopied.value = true;
@@ -112,6 +106,40 @@ const issuecode = computed(
     `${issue.value!.publicationcode.split("/")[1]} ${issue.value!.issuenumber}`,
 );
 
+const entrycodesWithPageNumbers = computed(() =>
+  indexation.value!.entries.map(
+    (entry, idx) =>
+      `${issuecode.value}${
+        idx === 0
+          ? String.fromCharCode(97 + idx)
+          : `p${String(entry.position).padStart(3, "0")}`
+      }`,
+  ),
+);
+
+const entrycodesWithLetters = computed(() =>
+  indexation.value!.entries.map(
+    (_entry, idx) => `${issuecode.value}${String.fromCharCode(97 + idx)}`,
+  ),
+);
+
+const hasEntrycodesLongerThanFirstColumnMaxWidth = computed(() =>
+  entrycodesWithPageNumbers.value.some(
+    (entrycode) => entrycode.length > columnWidths[0],
+  ),
+);
+
+watch(
+  hasEntrycodesLongerThanFirstColumnMaxWidth,
+  (value) => {
+    if (value) {
+      debugger;
+      showEntryLetters.value = true;
+    }
+  },
+  { immediate: true },
+);
+
 const issueRow = computed(() => ({
   issuecode: issuecode.value,
   details: [
@@ -137,10 +165,14 @@ const rows = computed(() =>
           ({ storycode }) => storycode === entry.acceptedStory?.storycode,
         );
         return {
-          entrycode: `${issuecode.value}${(idx === 0 || showEntryLetters.value
-            ? String.fromCharCode(97 + idx)
-            : `p${String(entry.position)}`
-          ).padStart(3, "0")}`,
+          entrycode:
+            idx === 0 ||
+            (showEntryLetters.value &&
+              !hasEntrycodesLongerThanFirstColumnMaxWidth.value)
+              ? entrycodesWithLetters.value[idx]
+              : hasEntrycodesLongerThanFirstColumnMaxWidth.value
+                ? "->"
+                : entrycodesWithPageNumbers.value[idx],
           storycode: entry.acceptedStory?.storycode || "",
           pg: String(getEntryPages(indexation.value!, entry.id).length),
           la:
@@ -157,9 +189,24 @@ const rows = computed(() =>
             ]),
           ) as { plot: string; writer: string; artist: string; ink: string }),
           hero: "", //story!.printedhero,
-          title: entry.title,
+          title: `${entry.title || ""}${
+            hasEntrycodesLongerThanFirstColumnMaxWidth.value && idx > 0
+              ? `[entrycode:${entrycodesWithPageNumbers.value[idx]}]`
+              : ""
+          }`,
         };
       }),
+);
+
+const text = computed(() =>
+  [Object.values(issueRow.value)]
+    .concat((rows.value || []).map(Object.values))
+    .map((row) =>
+      row
+        .map((text, idx) => String(text || "").padEnd(columnWidths[idx] || 0))
+        .join(" "),
+    )
+    .join("\n"),
 );
 
 watch(
