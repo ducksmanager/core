@@ -173,7 +173,7 @@ const publications = computed(
 
 const issues = ref<
   {
-    value: { issuecode: string };
+    value: string;
     text: string;
     disabled: boolean;
   }[]
@@ -208,7 +208,7 @@ watch(currentPublicationcode, async (newValue) => {
               ? "Ongoing"
               : "none";
         return {
-          value: { issuecode },
+          value: issuecode.replace(/ /g, "_"),
           text: `${issuecodeDetails.value[issuecode]?.issuenumber}${status === "none" ? "" : ` (${$t(status)})`}`,
           disabled:
             (disableOngoingOrPublished && status !== "none") ||
