@@ -256,6 +256,8 @@ const uiStore = ui();
 const mainStore = main();
 
 const { showPreviousEdge, showNextEdge } = surroundingEdge();
+const { overwriteModel } = useModelLoad();
+const { loadSvgFromString } = useSvgUtils();
 const { dimensions: editingDimensions } = storeToRefs(editingStep());
 const { hasRole } = webStores.collection();
 const stepStore = step();
@@ -301,13 +303,13 @@ const addPhoto = (src: string) => {
   photoUrls.value[issuecodes.value[0]] = src;
 };
 
-const clone = () => {
+const clone = async () => {
   for (const issuecode of issuecodes.value.filter(
     (issuecode) => issuecode !== modelToBeCloned.value!.issuecode,
   )) {
-    stepStore.copyDimensionsAndSteps(
+    overwriteModel(
       issuecode,
-      modelToBeCloned.value!.issuecode,
+      await loadSvgFromString(modelToBeCloned.value!.issuecode, true),
     );
   }
 };

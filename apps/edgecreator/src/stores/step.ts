@@ -213,8 +213,8 @@ export const step = defineStore("step", () => {
           useI18n()
             .t(
               `Issue codes {completedIssuecode} and {issuecode} ` +
-                `don't have the same components` +
-                `: {completedIssueSteps} vs {currentIssueComponents}`,
+              `don't have the same components` +
+              `: {completedIssueSteps} vs {currentIssueComponents}`,
               {
                 completedIssuecode,
                 issuecode,
@@ -223,36 +223,6 @@ export const step = defineStore("step", () => {
               },
             )
             .toString(),
-        );
-      }
-    },
-    copyDimensionsAndSteps = (toIssuecode: string, fromIssuecode: string) => {
-      setDimensions(
-        getFilteredDimensions({
-          issuecodes: [fromIssuecode],
-        }).map((dimension) => ({ ...dimension, issuecode: toIssuecode }))[0],
-        {
-          issuecodes: [toIssuecode],
-        },
-      );
-
-      const steps = getFilteredOptions({
-        issuecodes: [fromIssuecode],
-      });
-
-      for (
-        let stepNumber = 0;
-        stepNumber <= maxStepNumber.value;
-        stepNumber++
-      ) {
-        setOptionValues(
-          steps
-            .filter(
-              ({ stepNumber: optionStepNumber }) =>
-                optionStepNumber === stepNumber,
-            )
-            .map((step) => ({ ...step, issuecode: toIssuecode })),
-          { issuecodes: [toIssuecode], stepNumber },
         );
       }
     },
@@ -318,7 +288,6 @@ export const step = defineStore("step", () => {
     setDimensions,
     setSteps,
     checkSameComponentsAsCompletedEdge,
-    copyDimensionsAndSteps,
     addStep,
     removeStep,
     duplicateStep,
