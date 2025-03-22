@@ -188,7 +188,7 @@
             :input-values="[selectedGalleryItems[stepNumber]]"
           >
             <gallery
-              v-model:selected="selectedGalleryItems[stepNumber]"
+              v-model="selectedGalleryItems[stepNumber]"
               v-model:items="mainStore.publicationElementsForGallery"
               image-type="elements"
             />
