@@ -31,10 +31,8 @@ const hasReachedDailyUploadLimit = async (token: string) =>
   (await getEdgeCreatorServices(token).checkTodayLimit()).uploadedFilesToday
     .length > 10;
 
-const hasAlreadySentPhoto = async (hash: string, token: string) => {
-  console.log("hash", hash);
-  return (await getEdgeCreatorServices(token).getImageByHash(hash)) === null;
-};
+const hasAlreadySentPhoto = async (hash: string, token: string) =>
+  (await getEdgeCreatorServices(token).getImageByHash(hash)) !== null;
 
 const calculateHash = (data: string) => {
   const hashSum = crypto.createHash("sha1");
