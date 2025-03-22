@@ -19,9 +19,9 @@
   "dependencies": {
     "@opentelemetry/instrumentation-socket.io": "^0.46.1",
     "@pusher/push-notifications-server": "^1.2.7",
-    "@sentry/node": "^9.5.0",
+    "@sentry/node": "^9.8.0",
     "@socket.io/admin-ui": "^0.5.1",
-    "axios": "^1.8.2",
+    "axios": "^1.8.4",
     "cloudinary": "^1.41.3",
     "csv-parse": "^5.6.0",
     "dayjs": "^1.11.13",
@@ -36,20 +36,20 @@
     "~prisma-schemas": "workspace:*"
   },
   "devDependencies": {
-    "@eslint/eslintrc": "^3.3.0",
-    "@eslint/js": "^9.22.0",
-    "@sentry/cli": "^2.42.2",
+    "@eslint/eslintrc": "^3.3.1",
+    "@eslint/js": "^9.23.0",
+    "@sentry/cli": "^2.42.4",
     "@types/ejs": "^3.1.5",
     "@types/i18n": "^0.13.12",
     "@types/jsonwebtoken": "^9.0.9",
-    "@types/node": "^22.13.10",
+    "@types/node": "^22.13.11",
     "@types/nodemailer": "^6.4.17",
-    "@typescript-eslint/eslint-plugin": "^8.26.0",
+    "@typescript-eslint/eslint-plugin": "^8.27.0",
     "concurrently": "^9.1.2",
-    "eslint": "^9.22.0",
+    "eslint": "^9.23.0",
     "eslint-config-prettier": "^10.1.1",
     "nodemon": "^3.1.9",
     "typescript": "^5.8.2",
-    "wait-on": "^8.0.2"
+    "wait-on": "^8.0.3"
   }
 }
