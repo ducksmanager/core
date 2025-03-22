@@ -92,7 +92,7 @@ const { loading = false, allowUpload = true } = defineProps<{
   allowUpload?: boolean;
 }>();
 
-const selected = defineModel<string | undefined>("selected", {
+const selected = defineModel<string | undefined>({
   default: undefined,
 });
 

@@ -177,8 +177,9 @@
           <b-modal v-model="showPhotoModal" ok-only>
             <gallery
               v-model:items="mainStore.publicationPhotosForGallery"
+              :model-value="photoUrls?.[issuecodesToEdit[0]]"
               image-type="photos"
-              @change="addPhoto"
+              @update:model-value="setPhotoUrl"
             />
           </b-modal> </b-button
         >&nbsp;<save-model-button />&nbsp;<save-model-button
@@ -270,6 +271,8 @@ const {
   edgeIssuecodesBefore,
 } = storeToRefs(mainStore);
 
+const { issuecodes: issuecodesToEdit } = storeToRefs(editingStep());
+
 interface ModelToClone {
   editMode: string;
   issuecode: string;
@@ -299,12 +302,14 @@ const isEditingMultiple = computed(
   () => mainStore.isRange || issuecodes.value.length > 1,
 );
 
-const addPhoto = (src: string) => {
-  photoUrls.value[issuecodes.value[0]] = src;
+const setPhotoUrl = (photoUrl: string) => {
+  for (const issuecode of issuecodesToEdit.value) {
+    photoUrls.value[issuecode] = photoUrl;
+  }
 };
 
 const clone = async () => {
-  for (const issuecode of issuecodes.value.filter(
+  for (const issuecode of issuecodesToEdit.value.filter(
     (issuecode) => issuecode !== modelToBeCloned.value!.issuecode,
   )) {
     overwriteModel(
@@ -320,7 +325,7 @@ watch(
     const { width, height } = JSON.parse(dimensions);
     stepStore.setDimensions(
       { width, height },
-      { issuecodes: issuecodes.value },
+      { issuecodes: issuecodesToEdit.value },
     );
   },
 );
