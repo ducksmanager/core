@@ -33,7 +33,10 @@
       "~prisma-schemas/*": [
         "../../../packages/prisma-schemas/*"
       ]
-    }
+    },
+    "types": [
+      "./.eslint.d.ts"
+    ],
   },
   "exclude": [
     "node_modules",

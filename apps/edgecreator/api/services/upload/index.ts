@@ -176,7 +176,7 @@ const listenEvents = ({ _socket: socket }: UploadServices) => ({
     const { hash } = validationResults;
 
     await decode(cleanData, {
-      fname: `${targetFilePath.replace(/.[^\.]+$/, "")}`,
+      fname: `${targetFilePath.replace(/.[^.]+$/, "")}`,
       ext: "jpg",
     });
 

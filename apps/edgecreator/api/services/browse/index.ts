@@ -87,7 +87,7 @@ const findPublishedEdges = async (publicationcode: string) => {
   return readdirSync(genDir, {
     withFileTypes: true,
   })
-    .filter((file) => new RegExp(`^${magazinecode}\..+\.png$`).test(file.name))
+    .filter((file) => new RegExp(`^${magazinecode}..+.png$`).test(file.name))
     .flatMap((file) => {
       const filePath = path.join(file.parentPath, file.name);
       const [magazinecode, issuenumberShort] = file.name.split(".");

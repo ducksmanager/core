@@ -5,6 +5,7 @@
   "scripts": {
     "build": "bun build --target node index.ts --outfile bundle.mjs",
     "dev": "tsc --noEmit --watch",
+    "lint": "eslint --fix .",
     "prod:deploy": "SERVICES=api-websocket DIR=apps/edgecreator/api pnpm -F '~ci' prod:docker-compose-up",
     "prod:build-docker": "REPO_NAME=ghcr.io/bperel/edgecreator-api:websocket pnpm -F '~ci' prod:build-docker -f apps/edgecreator/api/Dockerfile",
     "prod:transfer-files-pre": "pnpm -F '~ci' prod:transfer-files @apps/edgecreator/api/.env:apps/edgecreator/api/.env @packages/prisma-clients/.env.prod.local:packages/prisma-schemas/.env",
@@ -33,12 +34,17 @@
     "~prisma-schemas": "workspace:*"
   },
   "devDependencies": {
+    "@eslint/eslintrc": "^3.3.0",
+    "@eslint/js": "^9.22.0",
     "@types/express": "^4.17.21",
     "@types/i18n": "^0.13.12",
     "@types/jsdom": "^21.1.7",
     "@types/jsonwebtoken": "^9.0.9",
     "@types/node": "^22.13.10",
     "concurrently": "^9.1.2",
-    "typescript": "^5.8.2"
+    "eslint": "^9.22.0",
+    "eslint-config-prettier": "^10.1.1",
+    "typescript": "^5.8.2",
+    "typescript-eslint": "^8.26.0"
   }
 }

@@ -69,7 +69,7 @@ const listenEvents = () => ({
       }
     | { results: { width: number; height: number; url: string } }
   > =>
-    new Promise(async (resolve) => {
+    new Promise((resolve) => {
       const { color, colorBackground, width, font, text } = parameters;
       const context: Record<string, number | string> = {
         color,
@@ -77,7 +77,7 @@ const listenEvents = () => ({
         width,
         text,
       };
-      await cloudinary.search
+      cloudinary.search
         .expression(
           `tags=${font} AND ${Object.keys(context)
             .reduce<string[]>(
@@ -122,6 +122,10 @@ const listenEvents = () => ({
         )
         .catch((e) => {
           console.error(e);
+          resolve({
+            error: "Image generation error",
+            errorDetails: e.message,
+          });
         });
     }),
 });
