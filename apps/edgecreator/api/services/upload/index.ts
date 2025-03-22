@@ -22,7 +22,7 @@ const getEdgeCreatorServices = (token: string) =>
   ).addNamespace<EdgeCreatorServices>(namespaces.EDGECREATOR, {
     session: {
       getToken: () => Promise.resolve(token),
-      clearSession: () => {},
+      clearSession: () => { },
       sessionExists: () => Promise.resolve(true),
     },
   });
@@ -31,8 +31,10 @@ const hasReachedDailyUploadLimit = async (token: string) =>
   (await getEdgeCreatorServices(token).checkTodayLimit()).uploadedFilesToday
     .length > 10;
 
-const hasAlreadySentPhoto = async (hash: string, token: string) =>
-  (await getEdgeCreatorServices(token).getImageByHash(hash)) === null;
+const hasAlreadySentPhoto = async (hash: string, token: string) => {
+  console.log("hash", hash);
+  return (await getEdgeCreatorServices(token).getImageByHash(hash)) === null;
+};
 
 const calculateHash = (data: string) => {
   const hashSum = crypto.createHash("sha1");
@@ -122,14 +124,13 @@ const getTargetFilePath = async (
     let filePath = `${getEdgesPath()}/${countrycode}`;
     filePath = isEdgePhoto
       ? getNextAvailableFile(
-          `${filePath}/photos/${magazinecode}.${issuenumber}.photo`,
-          "jpg",
-        )
-      : `${filePath}/elements/${
-          filename.includes(magazinecode)
-            ? filename
-            : `${magazinecode}.${filename}`
-        }`;
+        `${filePath}/photos/${magazinecode}.${issuenumber}.photo`,
+        "jpg",
+      )
+      : `${filePath}/elements/${filename.includes(magazinecode)
+        ? filename
+        : `${magazinecode}.${filename}`
+      }`;
 
     mkdirSync(dirname(filePath), { recursive: true });
     return filePath;
