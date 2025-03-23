@@ -5,14 +5,19 @@ import { Prisma } from "~prisma-schemas/schemas/coa";
 import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa/client";
 
 export default {
-  getStoryDetails: async (storycodes: string[]) => !storycodes.length ? ({ stories: {} as Record<string, inducks_story>, storyUrls: {} as Record<string, string> }) :
-    Promise.all([
-      prismaCoa.inducks_story.findMany({
-        where: {
-          storycode: { in: storycodes },
-        },
-      }),
-      prismaCoa.$queryRaw<{ storycode: string; url: string }[]>`
+  getStoryDetails: async (storycodes: string[]) =>
+    !storycodes.length
+      ? {
+          stories: {} as Record<string, inducks_story>,
+          storyUrls: {} as Record<string, string>,
+        }
+      : Promise.all([
+          prismaCoa.inducks_story.findMany({
+            where: {
+              storycode: { in: storycodes },
+            },
+          }),
+          prismaCoa.$queryRaw<{ storycode: string; url: string }[]>`
       select s.storycode, CONCAT('webusers/webusers/', url) AS url
       from inducks_story s
               inner join coa.inducks_storyversion sv on s.originalstoryversioncode = sv.storyversioncode
@@ -21,12 +26,12 @@ export default {
       where s.storycode IN (${Prisma.join(storycodes)})
         and eu.sitecode = 'webusers'
       group by s.storycode`,
-    ])
-      .then(([stories, storyUrls]) => ({
-        stories: stories.groupBy("storycode"),
-        storyUrls: storyUrls.groupBy("storycode", "url"),
-      }))
-      .catch((e) => ({ error: "Error", errorDetails: e })),
+        ])
+          .then(([stories, storyUrls]) => ({
+            stories: stories.groupBy("storycode"),
+            storyUrls: storyUrls.groupBy("storycode", "url"),
+          }))
+          .catch((e) => ({ error: "Error", errorDetails: e })),
 
   getStoryversionsDetails: (storyversioncodes: string[]) =>
     prismaCoa.inducks_storyversion

@@ -133,7 +133,6 @@ watch(
   hasEntrycodesLongerThanFirstColumnMaxWidth,
   (value) => {
     if (value) {
-      debugger;
       showEntryLetters.value = true;
     }
   },
@@ -204,7 +203,7 @@ const text = computed(() =>
     .map((row) =>
       row
         .map((text, idx) => String(text || "").padEnd(columnWidths[idx] || 0))
-        .join(" "),
+        .join(""),
     )
     .join("\n"),
 );

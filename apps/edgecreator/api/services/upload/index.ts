@@ -22,7 +22,7 @@ const getEdgeCreatorServices = (token: string) =>
   ).addNamespace<EdgeCreatorServices>(namespaces.EDGECREATOR, {
     session: {
       getToken: () => Promise.resolve(token),
-      clearSession: () => { },
+      clearSession: () => {},
       sessionExists: () => Promise.resolve(true),
     },
   });
@@ -122,13 +122,14 @@ const getTargetFilePath = async (
     let filePath = `${getEdgesPath()}/${countrycode}`;
     filePath = isEdgePhoto
       ? getNextAvailableFile(
-        `${filePath}/photos/${magazinecode}.${issuenumber}.photo`,
-        "jpg",
-      )
-      : `${filePath}/elements/${filename.includes(magazinecode)
-        ? filename
-        : `${magazinecode}.${filename}`
-      }`;
+          `${filePath}/photos/${magazinecode}.${issuenumber}.photo`,
+          "jpg",
+        )
+      : `${filePath}/elements/${
+          filename.includes(magazinecode)
+            ? filename
+            : `${magazinecode}.${filename}`
+        }`;
 
     mkdirSync(dirname(filePath), { recursive: true });
     return filePath;

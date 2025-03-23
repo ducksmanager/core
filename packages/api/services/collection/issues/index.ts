@@ -320,7 +320,7 @@ const addOrChangeCopies = async (
         areToRead[copyNumber] !== undefined ? areToRead[copyNumber] : false,
       purchaseId: purchaseIds[copyNumber] || -2,
     };
-    console.log('upsert', {
+    console.log("upsert", {
       create: {
         ...common,
         country: "",
@@ -334,7 +334,7 @@ const addOrChangeCopies = async (
       where: {
         id: issueId || 0,
       },
-    })
+    });
     return prismaDm.issue.upsert({
       create: {
         ...common,

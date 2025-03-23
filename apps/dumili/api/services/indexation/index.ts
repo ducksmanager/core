@@ -19,7 +19,7 @@ import type {
   issueSuggestion,
   Prisma,
   storyKindSuggestion,
-  storySuggestion
+  storySuggestion,
 } from "~prisma/client_dumili";
 
 import type { SessionDataWithIndexation } from "../../index";
@@ -328,14 +328,17 @@ const setInferredEntriesStoryKinds = async (
     }
 
     const mostInferredStoryKind = Object.entries(
-      (pagesInferredStoryKinds
-        .filter(({ aiKumikoResult }) => aiKumikoResult !== null) as { aiKumikoResult: aiKumikoResult }[])
+      (
+        pagesInferredStoryKinds.filter(
+          ({ aiKumikoResult }) => aiKumikoResult !== null,
+        ) as { aiKumikoResult: aiKumikoResult }[]
+      )
         .map(({ aiKumikoResult: { id, inferredStoryKindRowsStr } }) => ({
           id,
-          inferredStoryKindRowsStr
+          inferredStoryKindRowsStr,
         }))
         .groupBy("inferredStoryKindRowsStr", "id[]"),
-    ).sort((a, b) => b[1].length - a[1].length)[0][0]
+    ).sort((a, b) => b[1].length - a[1].length)[0][0];
 
     const entryIdx = services._socket.data.indexation.entries.findIndex(
       ({ id }) => id === entry.id,
@@ -355,20 +358,21 @@ const setInferredEntriesStoryKinds = async (
     });
 
     if (mostInferredStoryKind) {
-      console.log('Story kind suggestions: ', indexation.entries[entryIdx].storyKindSuggestions)
+      console.log(
+        "Story kind suggestions: ",
+        indexation.entries[entryIdx].storyKindSuggestions,
+      );
       const suggestion = indexation.entries[entryIdx].storyKindSuggestions.find(
-        ({ storyKindRowsStr }) =>
-          storyKindRowsStr === mostInferredStoryKind,
-      )
+        ({ storyKindRowsStr }) => storyKindRowsStr === mostInferredStoryKind,
+      );
       if (suggestion) {
         await prisma.storyKindSuggestionAi.create({
           data: {
             suggestionId: suggestion.id,
           },
         });
-      }
-      else {
-        console.warn('No suggestion found for ', mostInferredStoryKind)
+      } else {
+        console.warn("No suggestion found for ", mostInferredStoryKind);
       }
     }
 
@@ -402,15 +406,15 @@ const listenEvents = (services: IndexationServices) => ({
         data: {
           image: url
             ? {
-              connectOrCreate: {
-                create: {
-                  url,
+                connectOrCreate: {
+                  create: {
+                    url,
+                  },
+                  where: {
+                    url,
+                  },
                 },
-                where: {
-                  url,
-                },
-              },
-            }
+              }
             : { disconnect: true },
         },
         where: {
@@ -548,11 +552,11 @@ const listenEvents = (services: IndexationServices) => ({
             suggestionId === null
               ? { disconnect: true }
               : {
-                connect: {
-                  id: suggestionId,
-                  indexationId: services._socket.data.indexation.id,
+                  connect: {
+                    id: suggestionId,
+                    indexationId: services._socket.data.indexation.id,
+                  },
                 },
-              },
         },
         where: {
           id: services._socket.data.indexation.id,
@@ -575,8 +579,8 @@ const listenEvents = (services: IndexationServices) => ({
           ...suggestion,
           ai: suggestion.ai
             ? {
-              create: {},
-            }
+                create: {},
+              }
             : undefined,
         },
       })
@@ -837,9 +841,9 @@ export const createEntry = async (indexationId: string, position: number) =>
       storyKindSuggestions: {
         createMany: {
           data: (await prisma.storyKindRows.findMany()).map(({ id }) => ({
-            storyKindRowsStr: id
-          }))
-        }
-      }
+            storyKindRowsStr: id,
+          })),
+        },
+      },
     },
-  })
+  });

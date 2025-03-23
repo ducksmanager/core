@@ -15,10 +15,10 @@ const listenEvents = () => ({
   }: EitherOr<{ base64?: string }, { url?: string }>) => {
     const buffer = url
       ? (
-        await axios.get(url, {
-          responseType: "arraybuffer",
-        })
-      ).data
+          await axios.get(url, {
+            responseType: "arraybuffer",
+          })
+        ).data
       : Buffer.from(base64!.split(";base64,").pop()!, "base64");
 
     const pastecResponse: SimilarImagesResult | null =
@@ -59,12 +59,14 @@ const listenEvents = () => ({
         covers.sort((cover1, cover2) =>
           Math.sign(
             pastecResponse.image_ids.indexOf(cover1.id) -
-            pastecResponse.image_ids.indexOf(cover2.id),
+              pastecResponse.image_ids.indexOf(cover2.id),
           ),
         ),
       );
 
-    console.log(`Cover ID search: matched issue codes ${coversByIssuecode.map(({ issuecode }) => issuecode).join(",")}`);
+    console.log(
+      `Cover ID search: matched issue codes ${coversByIssuecode.map(({ issuecode }) => issuecode).join(",")}`,
+    );
 
     return {
       covers: coversByIssuecode.map(({ issuecode, fullUrl }) => ({
@@ -135,7 +137,8 @@ const getCoverUrl = async (coverId: number) =>
     })
     .then(
       (cover) =>
-        `${cover.sitecode}/${cover.sitecode === "webusers" ? "webusers" : ""
+        `${cover.sitecode}/${
+          cover.sitecode === "webusers" ? "webusers" : ""
         }${cover.url}`,
     );
 
@@ -144,7 +147,8 @@ const getSimilarImages = async (
 ): Promise<SimilarImagesResult | null> =>
   axios
     .post(
-      `http://${process.env.PASTEC_HOSTS!}:${process.env.PASTEC_PORT
+      `http://${process.env.PASTEC_HOSTS!}:${
+        process.env.PASTEC_PORT
       }/index/searcher`,
       cover,
       {

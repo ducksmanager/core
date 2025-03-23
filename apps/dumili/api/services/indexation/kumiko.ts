@@ -82,12 +82,14 @@ const runKumikoOnPage = async (
       `Kumiko: page ${page.pageNumber}: inferred story kind is ${inferredStoryKind}, inferred number of rows is ${inferredNumberOfRows}`,
     );
 
-    const inferredStoryKindRowsStr = (await prisma.storyKindRows.findFirst({
-      where: {
-        kind: inferredStoryKind,
-        numberOfRows: inferredNumberOfRows,
-      },
-    }))?.id
+    const inferredStoryKindRowsStr = (
+      await prisma.storyKindRows.findFirst({
+        where: {
+          kind: inferredStoryKind,
+          numberOfRows: inferredNumberOfRows,
+        },
+      })
+    )?.id;
 
     await prisma.image.update({
       include: {

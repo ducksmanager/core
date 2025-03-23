@@ -213,8 +213,8 @@ export const step = defineStore("step", () => {
           useI18n()
             .t(
               `Issue codes {completedIssuecode} and {issuecode} ` +
-              `don't have the same components` +
-              `: {completedIssueSteps} vs {currentIssueComponents}`,
+                `don't have the same components` +
+                `: {completedIssueSteps} vs {currentIssueComponents}`,
               {
                 completedIssuecode,
                 issuecode,
