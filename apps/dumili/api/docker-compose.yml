@@ -26,7 +26,7 @@ services:
   db:
     container_name: dumili-db
     restart: always
-    image: mariadb:11.4
+    image: mariadb:11.7
     env_file:
       - .env.prod.local
     ports:
