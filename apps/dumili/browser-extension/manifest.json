@@ -1,0 +1,22 @@
+{
+    "manifest_version": 3,
+    "name": "Dumili Auto-indexer",
+    "version": "1.0",
+    "description": "Fills the Inducks online indexing form using Dumili output",
+    "permissions": [
+        "activeTab"
+    ],
+    "content_scripts": [
+        {
+            "matches": [
+                "https://inducks.org/onlineinx.php*"
+            ],
+            "js": [
+                "content.js"
+            ],
+            "css": [
+                "style.css"
+            ]
+        }
+    ]
+}
