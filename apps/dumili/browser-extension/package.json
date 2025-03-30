@@ -8,13 +8,13 @@
         "watch": "vite build --watch"
     },
     "dependencies": {
-        "dom-helpers": "^5.2.1",
-        "jquery": "^3.7.1"
+        "jquery": "^3.7.1",
+        "~dumili": "workspace:*"
     },
     "devDependencies": {
         "@types/chrome": "^0.0.260",
-        "@types/dom-helpers": "^3.0.0",
         "@types/jquery": "^3.5.29",
+        "sass": "^1.71.1",
         "typescript": "^5.8.2",
         "vite": "^6.2.3"
     }

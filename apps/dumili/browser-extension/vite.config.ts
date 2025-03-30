@@ -1,10 +1,11 @@
 import { defineConfig } from "vite";
-import { resolve } from "path";
+import path, { resolve } from "path";
 import fs from "fs";
 
 export default defineConfig({
   build: {
     outDir: "dist",
+    cssCodeSplit: false,
     rollupOptions: {
       input: {
         content: resolve(__dirname, "src/content.ts"),
@@ -12,7 +13,7 @@ export default defineConfig({
       output: {
         entryFileNames: "[name].js",
         chunkFileNames: "[name].js",
-        assetFileNames: "[name].[ext]",
+        assetFileNames: "style.[ext]",
       },
     },
   },
@@ -24,17 +25,25 @@ export default defineConfig({
         if (!fs.existsSync(distDir)) {
           fs.mkdirSync(distDir, { recursive: true });
         }
-        // Copy manifest.json
         fs.copyFileSync(
           resolve(__dirname, "manifest.json"),
           resolve(distDir, "manifest.json"),
         );
-        // Copy style.css
-        fs.copyFileSync(
-          resolve(__dirname, "style.css"),
-          resolve(distDir, "style.css"),
-        );
       },
     },
   ],
+
+  resolve: {
+    alias: {
+      "~dumili": path.resolve(__dirname, ".."),
+    },
+  },
+
+  assetsInclude: ["**/*.html"],
+
+  css: {
+    preprocessorOptions: {
+      scss: {},
+    },
+  },
 });

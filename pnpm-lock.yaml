@@ -306,22 +306,22 @@ importers:
 
   apps/dumili/browser-extension:
     dependencies:
-      dom-helpers:
-        specifier: ^5.2.1
-        version: 5.2.1
       jquery:
         specifier: ^3.7.1
         version: 3.7.1
+      ~dumili:
+        specifier: workspace:*
+        version: link:..
     devDependencies:
       '@types/chrome':
         specifier: ^0.0.260
         version: 0.0.260
-      '@types/dom-helpers':
-        specifier: ^3.0.0
-        version: 3.4.1
       '@types/jquery':
         specifier: ^3.5.29
         version: 3.5.32
+      sass:
+        specifier: ^1.71.1
+        version: 1.86.0
       typescript:
         specifier: ^5.8.2
         version: 5.8.2
@@ -3155,9 +3155,6 @@ packages:
   '@types/debug@4.1.12':
     resolution: {integrity: sha512-vIChWdVG3LG1SMxEvI/AK+FWJthlrqlTu7fbrlywTkkaONwk/UAGaULXRlf8vkzFBLVm0zkMdCquhL5aOjhXPQ==}
 
-  '@types/dom-helpers@3.4.1':
-    resolution: {integrity: sha512-j6d+NJ8TaPKoIdyjJx7nuhhCaNmxZF86wBSc4wAT5AKikwftpPjVKi9HxEKLrmRztFEYRpje6T8W3R7Q9nyHcg==}
-
   '@types/ejs@3.1.5':
     resolution: {integrity: sha512-nv+GSx77ZtXiJzwKdsASqi+YQ5Z7vwHsTP0JY2SiQgjGckkBRKZnk8nIM+7oUZ1VCtuTz0+By4qVR7fqzp/Dfg==}
 
@@ -4605,9 +4602,6 @@ packages:
   doctrine@2.1.0:
     resolution: {integrity: sha512-35mSku4ZXK0vfCuHEDAwt55dg2jNajHZ1odvF+8SSr82EsZY4QmXfuWso8oEd8zRhVObSN18aM0CjSdoBX7zIw==}
     engines: {node: '>=0.10.0'}
-
-  dom-helpers@5.2.1:
-    resolution: {integrity: sha512-nRCa7CK3VTrM2NmGkIy4cbK7IZlgBE/PYMn55rrXefr5xXDP0LdtfPnblFDoVdcAfslJ7or6iqAUnx0CCGIWQA==}
 
   dom-serializer@1.4.1:
     resolution: {integrity: sha512-VHwB3KfrcOOkelEG2ZOfxqLZdfkil8PtJi4P8N2MMXucZq2yLp75ClViUlOVwyoHEDjYU433Aq+5zWP61+RGag==}
@@ -10485,8 +10479,6 @@ snapshots:
     dependencies:
       '@types/ms': 2.1.0
 
-  '@types/dom-helpers@3.4.1': {}
-
   '@types/ejs@3.1.5': {}
 
   '@types/eslint@8.56.12':
@@ -12142,11 +12134,6 @@ snapshots:
   doctrine@2.1.0:
     dependencies:
       esutils: 2.0.3
-
-  dom-helpers@5.2.1:
-    dependencies:
-      '@babel/runtime': 7.26.10
-      csstype: 3.1.3
 
   dom-serializer@1.4.1:
     dependencies:

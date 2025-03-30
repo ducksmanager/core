@@ -1,81 +1,68 @@
 import $ from "jquery";
+import useTextEditor from "~dumili/src/composables/useTextEditor";
+import contentHtml from "./content.html?raw";
+import "./style.scss";
 
-// Create a container for our app
-const $container = $("<div>", { id: "inducks-selector-app" });
-$("body").append($container);
+const { unText } = useTextEditor();
 
-// Create the UI elements
-const $button = $("<button>", {
-  class: "inducks-selector-button",
-  text: "Select Option",
-});
-$container.append($button);
+const container = $(contentHtml);
+$("body").append(container);
 
-const $modal = $("<div>", {
-  class: "inducks-selector-modal",
-});
-$container.append($modal);
+const button = $("#dumili-modal-trigger");
+const modal = $("#dumili-modal");
 
-const $textarea = $("<textarea>", {
-  class: "inducks-selector-textarea",
-  placeholder: "Enter option name",
-});
-$modal.append($textarea);
-
-const $submitButton = $("<button>", {
-  class: "inducks-selector-submit",
-  text: "Submit",
-});
-$modal.append($submitButton);
-
-let isModalVisible = false;
-
-$button.on("click", () => {
-  isModalVisible = !isModalVisible;
-  $modal.toggleClass("show", isModalVisible);
+button.on("click", () => {
+  modal.toggleClass("hidden");
 });
 
 const pickOption = (dropdownName: string, optionValue: string) => {
-  const $select = $(`[name='${dropdownName}']`) as JQuery<HTMLSelectElement>;
-  if ($select.length) {
-    const options = Array.from($select[0].options);
+  const select = $<HTMLSelectElement>(`[name='${dropdownName}']`);
+  if (select.length) {
+    const options = Array.from(select[0].options);
     const matchingOption = options.find(
       (option) => option.value.toLowerCase() === optionValue.toLowerCase(),
     );
 
     if (matchingOption) {
-      $select.val(matchingOption.value);
-      $select.trigger("change");
-      const selectElement = $select[0];
-      selectElement.dispatchEvent(new Event("change", { bubbles: true }));
+      select.val(matchingOption.value);
+      select.trigger("change");
+      select[0].dispatchEvent(new Event("change", { bubbles: true }));
+    } else {
+      window.alert(
+        `Option with value ${optionValue} in dropdown ${dropdownName} not found`,
+      );
     }
   } else {
-    console.error(`Dropdown with name ${dropdownName} not found`);
+    window.alert(`Dropdown with name ${dropdownName} not found`);
   }
 };
 
-$submitButton.on("click", () => {
-  if ($textarea.val()?.toString().trim()) {
-    const url = window.location.href;
-    if (url.startsWith("https://inducks.org/onlineinx.php?addissue=1&c=")) {
-      pickOption("s", $textarea.val()!.toString().toLowerCase());
+modal.find("button#next").on("click", () => {
+  const textarea = modal.find("textarea");
+  const data = unText(textarea.val()?.toString().trim());
+  if (data) {
+    const params = new URLSearchParams(window.location.search);
+    const countrycode = params.get("c");
+    if (!countrycode) {
+      window.alert("Select a country first");
+      return;
+    }
+    const [magazinecode, issuenumber] = data[0].entrycode.split(" ");
+    if (!params.get("s")) {
+      pickOption("s", magazinecode);
     } else {
-      pickOption("c", $textarea.val()!.toString().toLowerCase());
+      pickOption("issNotInInducks", issuenumber);
     }
   }
-  $textarea.val("");
-  isModalVisible = false;
-  $modal.removeClass("show");
 });
 
 $(document).on("click", (event: JQuery.ClickEvent) => {
   if (
-    !$modal.is(event.target) &&
-    $modal.has(event.target).length === 0 &&
-    !$button.is(event.target) &&
-    $button.has(event.target).length === 0
+    !modal.is(event.target) &&
+    modal.has(event.target).length === 0 &&
+    !button.is(event.target) &&
+    button.has(event.target).length === 0
   ) {
-    isModalVisible = false;
-    $modal.removeClass("show");
+    modal.removeClass("show");
   }
 });

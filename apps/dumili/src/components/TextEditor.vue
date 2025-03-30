@@ -44,26 +44,24 @@
 <script setup lang="ts">
 const { t: $t } = useI18n();
 
+import useTextEditor from "~/composables/useTextEditor";
 import { suggestions } from "~/stores/suggestions";
 import type { FullEntry } from "~dumili-services/indexation";
 import { getEntryPages } from "~dumili-utils/entryPages";
 import { type storySuggestion } from "~prisma/client_dumili";
 import { socketInjectionKey as dmSocketInjectionKey } from "~web/src/composables/useDmSocket";
 
-const { storyDetails } = storeToRefs(coa());
+const { columnWidths } = useTextEditor();
 
+const { storyDetails } = storeToRefs(coa());
 const { indexation } = storeToRefs(suggestions());
+const { acceptedIssue: issue } = storeToRefs(suggestions());
 
 const { coa: coaEvents } = inject(dmSocketInjectionKey)!;
 
-const { acceptedIssue: issue } = storeToRefs(suggestions());
-
 const showEntryLetters = ref(false);
 const showHorizontalScroll = ref(false);
-
 const isCopied = ref(false);
-
-const columnWidths = [12, 14, 3, 2, 1, 4, 4, 4, 4, 4];
 
 const copyToClipboard = () => {
   navigator.clipboard.writeText(text.value);
