@@ -30,7 +30,7 @@ importers:
     devDependencies:
       '@types/bun':
         specifier: latest
-        version: 1.2.5
+        version: 1.2.8
       '@types/node':
         specifier: ^22.13.11
         version: 22.13.11
@@ -309,18 +309,24 @@ importers:
       jquery:
         specifier: ^3.7.1
         version: 3.7.1
+      vue:
+        specifier: ^3.5.13
+        version: 3.5.13(typescript@5.8.2)
       ~dumili:
         specifier: workspace:*
         version: link:..
     devDependencies:
       '@types/chrome':
-        specifier: ^0.0.260
-        version: 0.0.260
+        specifier: ^0.0.313
+        version: 0.0.313
       '@types/jquery':
         specifier: ^3.5.29
         version: 3.5.32
+      '@vitejs/plugin-vue':
+        specifier: ^5.2.3
+        version: 5.2.3(vite@6.2.3(@types/node@22.13.11)(jiti@1.21.7)(sass@1.86.0)(tsx@4.19.3)(yaml@2.7.0))(vue@3.5.13(typescript@5.8.2))
       sass:
-        specifier: ^1.71.1
+        specifier: ^1.86.0
         version: 1.86.0
       typescript:
         specifier: ^5.8.2
@@ -632,7 +638,7 @@ importers:
     devDependencies:
       '@types/bun':
         specifier: latest
-        version: 1.2.5
+        version: 1.2.8
       typescript:
         specifier: ^5.8.2
         version: 5.8.2
@@ -1182,7 +1188,7 @@ importers:
     devDependencies:
       '@types/bun':
         specifier: latest
-        version: 1.2.5
+        version: 1.2.8
       typescript:
         specifier: ^5.8.2
         version: 5.8.2
@@ -3131,14 +3137,17 @@ packages:
   '@types/bun@1.2.5':
     resolution: {integrity: sha512-w2OZTzrZTVtbnJew1pdFmgV99H0/L+Pvw+z1P67HaR18MHOzYnTYOi6qzErhK8HyT+DB782ADVPPE92Xu2/Opg==}
 
+  '@types/bun@1.2.8':
+    resolution: {integrity: sha512-t8L1RvJVUghW5V+M/fL3Thbxcs0HwNsXsnTEBEfEVqGteiJToOlZ/fyOEaR1kZsNqnu+3XA4RI/qmnX4w6+S+w==}
+
   '@types/busboy@1.5.4':
     resolution: {integrity: sha512-kG7WrUuAKK0NoyxfQHsVE6j1m01s6kMma64E+OZenQABMQyTJop1DumUWcLwAQ2JzpefU7PDYoRDKl8uZosFjw==}
 
   '@types/cacheable-request@6.0.3':
     resolution: {integrity: sha512-IQ3EbTzGxIigb1I3qPZc1rWJnH0BmSKv5QYTalEwweFvyBDLSAe24zP0le/hyi7ecGfZVlIVAg4BZqb8WBwKqw==}
 
-  '@types/chrome@0.0.260':
-    resolution: {integrity: sha512-lX6QpgfsZRTDpNcCJ+3vzfFnFXq9bScFRTlfhbK5oecSAjamsno+ejFTCbNtc5O/TPnVK9Tja/PyecvWQe0F2w==}
+  '@types/chrome@0.0.313':
+    resolution: {integrity: sha512-9R5T7gTaYZhkxlu+Ho4wk9FL+y/werWQY2yjGWSqCuiTsqS7nL/BE5UMTP6rU7J+oIG2FRKqrEycHhJATeltVA==}
 
   '@types/connect@3.4.38':
     resolution: {integrity: sha512-K6uROf1LD88uDQqJCktA4yzL1YYAK6NgfsI0v/mTgyPKWsX1CnJ0XPSDhViejru1GcRkLWb8RlzFYJRqGUbaug==}
@@ -4019,6 +4028,9 @@ packages:
 
   bun-types@1.2.5:
     resolution: {integrity: sha512-3oO6LVGGRRKI4kHINx5PIdIgnLRb7l/SprhzqXapmoYkFl5m4j6EvALvbDVuuBFaamB46Ap6HCUxIXNLCGy+tg==}
+
+  bun-types@1.2.7:
+    resolution: {integrity: sha512-P4hHhk7kjF99acXqKvltyuMQ2kf/rzIw3ylEDpCxDS9Xa0X0Yp/gJu/vDCucmWpiur5qJ0lwB2bWzOXa2GlHqA==}
 
   busboy@1.6.0:
     resolution: {integrity: sha512-8SFQbg/0hQ9xy3UNTB0YEnsNBbWfhf7RtnzpL7TkBiTBRfrQ9Fxcnz7VJsleJpyp6rVLvXiuORqjlHi5q+PYuA==}
@@ -10447,6 +10459,10 @@ snapshots:
     dependencies:
       bun-types: 1.2.5
 
+  '@types/bun@1.2.8':
+    dependencies:
+      bun-types: 1.2.7
+
   '@types/busboy@1.5.4':
     dependencies:
       '@types/node': 22.13.11
@@ -10458,7 +10474,7 @@ snapshots:
       '@types/node': 22.13.11
       '@types/responselike': 1.0.3
 
-  '@types/chrome@0.0.260':
+  '@types/chrome@0.0.313':
     dependencies:
       '@types/filesystem': 0.0.36
       '@types/har-format': 1.2.16
@@ -10922,6 +10938,11 @@ snapshots:
   '@vitejs/plugin-vue@5.2.3(vite@6.2.2(@types/node@22.13.11)(jiti@1.21.7)(sass@1.86.0)(tsx@4.19.3)(yaml@2.7.0))(vue@3.5.13(typescript@5.8.2))':
     dependencies:
       vite: 6.2.2(@types/node@22.13.11)(jiti@1.21.7)(sass@1.86.0)(tsx@4.19.3)(yaml@2.7.0)
+      vue: 3.5.13(typescript@5.8.2)
+
+  '@vitejs/plugin-vue@5.2.3(vite@6.2.3(@types/node@22.13.11)(jiti@1.21.7)(sass@1.86.0)(tsx@4.19.3)(yaml@2.7.0))(vue@3.5.13(typescript@5.8.2))':
+    dependencies:
+      vite: 6.2.3(@types/node@22.13.11)(jiti@1.21.7)(sass@1.86.0)(tsx@4.19.3)(yaml@2.7.0)
       vue: 3.5.13(typescript@5.8.2)
 
   '@volar/language-core@2.4.12':
@@ -11508,6 +11529,11 @@ snapshots:
     optional: true
 
   bun-types@1.2.5:
+    dependencies:
+      '@types/node': 22.13.11
+      '@types/ws': 8.5.14
+
+  bun-types@1.2.7:
     dependencies:
       '@types/node': 22.13.11
       '@types/ws': 8.5.14

@@ -12,10 +12,21 @@
                 "https://inducks.org/onlineinx.php*"
             ],
             "js": [
-                "content.js"
+                "/content.js"
             ],
             "css": [
-                "style.css"
+                "/content.css"
+            ],
+            "type": "module"
+        }
+    ],
+    "web_accessible_resources": [
+        {
+            "resources": [
+                "/components/*"
+            ],
+            "matches": [
+                "https://inducks.org/*"
             ]
         }
     ]
