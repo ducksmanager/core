@@ -44,14 +44,12 @@
 <script setup lang="ts">
 const { t: $t } = useI18n();
 
-import useTextEditor from "~/composables/useTextEditor";
+import { entryColumns, issueColumns } from "~/composables/useTextEditor";
 import { suggestions } from "~/stores/suggestions";
 import type { FullEntry } from "~dumili-services/indexation";
 import { getEntryPages } from "~dumili-utils/entryPages";
 import { type storySuggestion } from "~prisma/client_dumili";
 import { socketInjectionKey as dmSocketInjectionKey } from "~web/src/composables/useDmSocket";
-
-const { columnWidths } = useTextEditor();
 
 const { storyDetails } = storeToRefs(coa());
 const { indexation } = storeToRefs(suggestions());
@@ -123,7 +121,9 @@ const entrycodesWithLetters = computed(() =>
 
 const hasEntrycodesLongerThanFirstColumnMaxWidth = computed(() =>
   entrycodesWithPageNumbers.value.some(
-    (entrycode) => entrycode.length > columnWidths[0],
+    (entrycode) =>
+      entrycode.length >
+      entryColumns.find(({ field }) => field === "entrycode")!.width,
   ),
 );
 
@@ -198,11 +198,16 @@ const rows = computed(() =>
 const text = computed(() =>
   [Object.values(issueRow.value)]
     .concat((rows.value || []).map(Object.values))
-    .map((row) =>
-      row
-        .map((text, idx) => String(text || "").padEnd(columnWidths[idx] || 0))
-        .join(""),
-    )
+    .map((row, rowIndex) => {
+      const columnWidths = rowIndex === 0 ? issueColumns : entryColumns;
+      return Object.entries(row)
+        .map(([thisField, text]) =>
+          String(text || "").padEnd(
+            columnWidths.find(({ field }) => field === thisField)?.width || 0,
+          ),
+        )
+        .join("");
+    })
     .join("\n"),
 );
 

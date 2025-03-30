@@ -47,6 +47,7 @@ export default defineConfig({
     },
   ],
   build: {
+    minify: false,
     outDir: "dist",
     cssCodeSplit: false,
     rollupOptions: {
