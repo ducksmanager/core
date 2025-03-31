@@ -1,7 +1,16 @@
 export const issueColumns = [
-  { field: "issuecodeNoCountry", formField: "issNotInInducks", width: 12 },
+  { field: "issuecode", formField: "issNotInInducks", width: 12 },
   { field: "h3", width: 3 },
-  { field: "header", width: Infinity },
+  {
+    width: 0,
+    subFields: [
+      { field: "title" },
+      { field: "issdate", brackets: { withPrefix: true } },
+      { field: "price", brackets: { withPrefix: true } },
+      { field: "pages", formField: "npages", brackets: { withPrefix: true } },
+      { field: "comment", brackets: { withPrefix: false } },
+    ],
+  },
 ] as const;
 
 export const entryColumns = [
@@ -16,35 +25,77 @@ export const entryColumns = [
   { field: "ink", width: 4 },
   { field: "hero", width: 4 },
   { field: "title", width: 4 },
+  {
+    width: 0,
+    subFields: [
+      { field: "comment", brackets: { withPrefix: false } },
+      { field: "col", brackets: { withPrefix: true } },
+      { field: "let", brackets: { withPrefix: true } },
+      { field: "trans", brackets: { withPrefix: true } },
+      { field: "xapp", brackets: { withPrefix: true } },
+      { field: "desc", brackets: { withPrefix: true } },
+    ],
+  },
 ] as const;
 
 type DumiliData<
-  T extends readonly { field: string; formField?: string; width: number }[],
+  T extends readonly ({ width: number } & (
+    | { field: string; formField?: string }
+    | {
+        subFields: readonly {
+          field: string;
+          formField?: string;
+          brackets?: { withPrefix: boolean };
+        }[];
+      }
+  ))[],
 > = {
-  [K in T[number] as K["formField"] extends string
+  [K in T[number] as K extends { formField: string }
     ? K["formField"]
-    : K["field"]]: string;
+    : K extends { field: string }
+      ? K["field"]
+      : K extends {
+            subFields: readonly { field: string; formField?: string }[];
+          }
+        ? K["subFields"][number]["field"]
+        : never]: K extends {
+    subFields: readonly { field: string; formField?: string }[];
+  }
+    ? string | undefined
+    : string;
 };
 
 export type DumiliIssueData = DumiliData<typeof issueColumns>;
 
 export type DumiliEntryData = DumiliData<typeof entryColumns>;
 
+export type DumiliOutput = [DumiliIssueData, ...DumiliEntryData[]] | [];
+
 export default () => {
-  const unText = (
-    text?: string,
-  ): [DumiliIssueData, ...DumiliEntryData[]] | [] => {
+  const unText = (text?: string): DumiliOutput => {
     if (!text) return [];
     const lines = text.split("\n");
     const result = lines.map((line, idx) => {
       let pos = 0;
       const keys = idx === 0 ? issueColumns : entryColumns;
-      return Object.fromEntries(
-        keys.map(({ width, field, ...rest }) => [
-          "formField" in rest ? rest.formField : field,
-          line.slice(pos, (pos += width)).trim(),
-        ]),
-      );
+      const entries: [string, string][] = [];
+
+      for (const key of keys) {
+        if ("subFields" in key) {
+          // Handle subFields case
+          for (const subField of key.subFields) {
+            const fieldName =
+              "formField" in subField ? subField.formField : subField.field;
+            entries.push([fieldName, line.slice(pos, (pos += 4)).trim()]);
+          }
+        } else {
+          // Handle regular field case
+          const fieldName = "formField" in key ? key.formField : key.field;
+          entries.push([fieldName, line.slice(pos, (pos += key.width)).trim()]);
+        }
+      }
+
+      return Object.fromEntries(entries);
     });
     return result as [DumiliIssueData, ...DumiliEntryData[]];
   };

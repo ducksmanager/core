@@ -25,7 +25,7 @@
 <script setup lang="ts">
 import { ref, onMounted, watch, nextTick } from "vue";
 import $ from "jquery";
-import useTextEditor, { DumiliEntryData, DumiliIssueData } from "~dumili/src/composables/useTextEditor";
+import useTextEditor, { DumiliEntryData, DumiliIssueData, DumiliOutput } from "~dumili/src/composables/useTextEditor";
 
 interface SelectOption {
   value: string;
@@ -46,12 +46,17 @@ type DumiliContext = {
 const isModalVisible = ref(true);
 const context = ref<DumiliContext>({});
 
-type DumiliOutput = [DumiliIssueData, ...DumiliEntryData[]] | [];
-
 const sessionData = ref<{ dumiliOutput: DumiliOutput, currentRow: number, auto: boolean }>({ dumiliOutput: [], currentRow: 0, auto: false });
 
 const content = ref('');
-
+/* Example:
+DVBH 56     h3 [inx:Bruno Perel] [pages:116]
+DVBH 56a                  1  c                          
+DVBH 56p002 D 97006       9  3                          
+DVBH 56p011 D 96163       11 3                          
+DVBH 56p022               12 3                          
+DVBH 56p033               1  3                          
+DVBH 56p034               1  i                          */
 const persistDumiliData = (): void => {
   sessionStorage.setItem("dumiliData", JSON.stringify(sessionData.value));
 };
@@ -112,29 +117,29 @@ const pickOption = (select: JQuery<HTMLSelectElement>, optionValue: string) => {
 };
 
 const fillFormFields = <Data extends DumiliEntryData | DumiliIssueData>(data: Partial<Data>, defaultInputToSubmitFrom?: string & (keyof Data | 'npages') | undefined, incrementCurrentRow = true): void => {
-  let input = $();
+  let lastFilledInput = $();
   for (const [key, value] of Object.entries(data)) {
-    input = $(`[name='${key}']`);
+    const input = $(`[name='${key}']`);
     if (input.length) {
-
+      lastFilledInput = input;
       input.val(value as string);
     }
   }
 
-  if (!input.length && defaultInputToSubmitFrom) {
-    input = $(`[name='${defaultInputToSubmitFrom}']`);
+  if (!lastFilledInput.length && defaultInputToSubmitFrom) {
+    lastFilledInput = $(`[name='${defaultInputToSubmitFrom}']`);
   }
-  if (input.length) {
+  if (lastFilledInput.length) {
     if (incrementCurrentRow) {
       sessionData.value.currentRow++;
     }
     nextTick(() => {
       persistDumiliData();
-      input!.closest("form")
+      lastFilledInput!.closest("form")
         .trigger("submit");
     });
   } else if (!defaultInputToSubmitFrom) {
-    alert('No field match in the form')
+    alert(`No field match in the form, data: ${JSON.stringify(data)}`)
   }
 };
 

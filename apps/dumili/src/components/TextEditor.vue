@@ -123,7 +123,9 @@ const hasEntrycodesLongerThanFirstColumnMaxWidth = computed(() =>
   entrycodesWithPageNumbers.value.some(
     (entrycode) =>
       entrycode.length >
-      entryColumns.find(({ field }) => field === "entrycode")!.width,
+      entryColumns.find(
+        (column) => "field" in column && column.field === "entrycode",
+      )!.width,
   ),
 );
 
@@ -196,14 +198,16 @@ const rows = computed(() =>
 );
 
 const text = computed(() =>
-  [Object.values(issueRow.value)]
-    .concat((rows.value || []).map(Object.values))
+  [Object.entries(issueRow.value)]
+    .concat((rows.value || []).map(Object.entries))
     .map((row, rowIndex) => {
-      const columnWidths = rowIndex === 0 ? issueColumns : entryColumns;
-      return Object.entries(row)
+      const columns = rowIndex === 0 ? issueColumns : entryColumns;
+      return row
         .map(([thisField, text]) =>
           String(text || "").padEnd(
-            columnWidths.find(({ field }) => field === thisField)?.width || 0,
+            columns.find(
+              (column) => "field" in column && column.field === thisField,
+            )?.width || 0,
           ),
         )
         .join("");
