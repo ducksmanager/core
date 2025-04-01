@@ -9,6 +9,7 @@ export default {
   COLLECTION: "/collection",
   COLLECTION_USER: "/collection-user",
   COVER_ID: "/cover-id",
+  COVER_ID2: "/cover-id2",
   EDGECREATOR: "/edgecreator",
   EDGES: "/edges",
   EVENTS: "/events",

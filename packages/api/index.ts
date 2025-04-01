@@ -35,6 +35,7 @@ import {
   getPastecSearchStatus,
   getPastecStatus,
 } from "./services/status";
+import { server as imageVector } from "./services/cover-id2";
 
 export type UserServices<OptionalUser = false> = NamespaceProxyTarget<
   Socket<
@@ -51,7 +52,7 @@ class ServerWithUser extends Server<
   Record<string, never>,
   Record<string, never>,
   { user?: SessionUser }
-> {}
+> { }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 (BigInt.prototype as any).toJSON = function () {
@@ -163,6 +164,7 @@ if (cluster.isPrimary) {
   feedback(io);
   globalStats(io);
   globalStatsUser(io);
+  imageVector(io);
   presentationText(io);
   publicCollection(io);
   stats(io);
