@@ -1,4 +1,5 @@
 import SFTPClient from "ssh2-sftp-client";
+import path from "path";
 
 const {
   PRODUCTION_SSH_HOST,
@@ -31,12 +32,16 @@ await Promise.all(
     const localFile = `../../${targetFileIsRemote ? sourceFile : targetFile}`;
     if (targetFileIsRemote) {
       console.log(`Uploading ${localFile} to ${remoteFile}`);
-      return sftp.put(localFile, remoteFile);
+      const remoteFileDir = path.dirname(remoteFile);
+      return [
+        sftp.mkdir(remoteFileDir, true),
+        sftp.put(localFile, remoteFile),
+      ];
     } else {
       console.log(`Downloading ${remoteFile} to ${localFile}`);
       return sftp.get(remoteFile, localFile);
     }
-  }),
+  }).flat(),
 )
   .catch((error) => {
     console.error("Error:", error.message);
