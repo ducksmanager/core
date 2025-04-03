@@ -8,7 +8,7 @@
   "scripts": {
     "dumili": "concurrently -p \"[dumili-{name}]\" --kill-others-on-fail -n front,api,dm,kumiko+paddleocr \"pnpm -F ~dumili dev\" \"pnpm -F ~dumili-api dev\" \"pnpm -F ~web web\" \"docker compose -f docker-compose-dev.yml up kumiko db\"",
     "dev": "concurrently -n vite,vue-tsc \"vite --port 8004\" \"vue-tsc --noEmit --watch\"",
-    "build": "mv .env.prod .env && vite build && pnpm sentry:sourcemaps",
+    "build": "vite build && pnpm sentry:sourcemaps",
     "preview": "vite preview",
     "typecheck": "vue-tsc --noEmit",
     "lint": "eslint --fix .",

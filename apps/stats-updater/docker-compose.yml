@@ -7,10 +7,10 @@ services:
     environment:
       - DATABASE_URL_DM_STATS=${DATABASE_URL_DM_STATS}_new
     networks:
-      - dm-server_db-network
-      - ducksmanager_dm-network
+      - dm-db-network
+      - dm-api-network
 networks:
-  ducksmanager_dm-network:
+  dm-api-network:
     external: true
-  dm-server_db-network:
+  dm-db-network:
     external: true

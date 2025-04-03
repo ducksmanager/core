@@ -8,14 +8,14 @@ services:
       GIT_AUTHOR_EMAIL: admin@ducksmanager.net
       GIT_COMMITTER_EMAIL: admin@ducksmanager.net
     networks:
-      - ducksmanager_dm-network
+      - dm-api-network
     volumes:
       - duck-estimator_cache:/home/cache
       - duck-estimator_node_cache:/root/.cache
       - ~/.ssh/id_ed25519:/root/.ssh/id_ed25519:ro
 
 networks:
-  ducksmanager_dm-network:
+  dm-api-network:
     external: true
 
 volumes:

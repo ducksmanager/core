@@ -9,10 +9,10 @@ services:
       MYSQL_DATABASE: coa
       MYSQL_DATABASE_NEW: coa_new
     networks:
-      - dm-server_db-network
-      - ducksmanager_dm-network
+      - dm-db-network
+      - dm-api-network
 networks:
-  ducksmanager_dm-network:
+  dm-api-network:
     external: true
-  dm-server_db-network:
+  dm-db-network:
     external: true
