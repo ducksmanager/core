@@ -12,7 +12,7 @@ services:
       public-network:
         aliases:
           - edgecreator-api
-      dm-server_db-network:
+      dm-db-network:
 
   api-websocket:
     container_name: edgecreator-api-websocket
@@ -26,13 +26,13 @@ services:
       public-network:
         aliases:
           - edgecreator-api-websocket
-      dm-server_db-network:
-      ducksmanager_dm-network:
+      dm-api-network:
+      dm-db-network:
 
 networks:
   public-network:
     external: true
-  dm-server_db-network:
+  dm-db-network:
     external: true
-  ducksmanager_dm-network:
+  dm-api-network:
     external: true

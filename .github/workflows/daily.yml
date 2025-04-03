@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     environment: production
     env:
-      REMOTE_ROOT: workspace/DucksManager2
+      REMOTE_ROOT: apps/dm
     steps:
       - name: Run coa-updater
         uses: appleboy/ssh-action@v1.0.3

@@ -1,0 +1,7 @@
+edgecreator-api.ducksmanager.net {
+    reverse_proxy edgecreator-api:3001
+}
+
+edgecreator-api-websocket.ducksmanager.net {
+    reverse_proxy edgecreator-api-websocket:3001
+}

@@ -1,0 +1,6 @@
+api.ducksmanager.net {
+    reverse_proxy ducksmanager-api:80
+    tls {
+        issuer acme
+    }
+}

@@ -1,0 +1,3 @@
+api.dumili.ducksmanager.net {
+    reverse_proxy dumili-api:3001
+}

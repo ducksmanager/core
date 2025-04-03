@@ -1,0 +1,7 @@
+http://ducksmanager.net, https://ducksmanager.net {
+    reverse_proxy ducksmanager-web
+}
+
+http://websocket.ducksmanager.net, https://websocket.ducksmanager.net {
+    reverse_proxy ducksmanager-web-websocket
+}
