@@ -6,3 +6,4 @@ packages:
   - "!apps/duckguessr*"
   - "packages/*"
   - "util/*"
+shellEmulator: true

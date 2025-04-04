@@ -36,35 +36,35 @@ jobs:
       - name: Run coa-updater
         timeout-minutes: 40
         run: |
-          pnpm -r --shell-emulator -F '~coa-updater' prod:docker-compose-run
+          pnpm -r -F '~coa-updater' prod:docker-compose-run
 
       - name: Run stats-updater
         timeout-minutes: 90
         run: |
-          pnpm -r --shell-emulator -F '~stats-updater' prod:docker-compose-run
+          pnpm -r -F '~stats-updater' prod:docker-compose-run
 
       - name: Run cover-updater
         timeout-minutes: 20
         run: |
-          pnpm -r --shell-emulator -F '~cover-updater' prod:docker-compose-run
+          pnpm -r -F '~cover-updater' prod:docker-compose-run
 
       - name: Run duck-estimator
         timeout-minutes: 90
         continue-on-error: true
         run: |
-          pnpm -r --shell-emulator -F '~duck-estimator' prod:docker-compose-run
+          pnpm -r -F '~duck-estimator' prod:docker-compose-run
 
       - name: Run sprite-names-updater
         timeout-minutes: 5
         run: |
-          pnpm -r --shell-emulator -F '~edgecreator-api' prod:run:sprite-names-updater
+          pnpm -r -F '~edgecreator-api' prod:run:sprite-names-updater
 
       - name: Run subscription-handler
         timeout-minutes: 5
         run: |
-          pnpm -r --shell-emulator -F '~api' prod:docker-compose-run-create-issues-from-subscriptions
+          pnpm -r -F '~api' prod:docker-compose-run-create-issues-from-subscriptions
 
       - name: Run duck-estimator
         timeout-minutes: 10
         run: |
-          pnpm -r --shell-emulator -F '~backup' prod:docker-compose-run
+          pnpm -r -F '~backup' prod:docker-compose-run
