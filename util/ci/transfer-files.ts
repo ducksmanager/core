@@ -23,26 +23,36 @@ await sftp.connect({
 
 const transfers: string[] = process.argv.slice(2);
 
+const getLocalAndRemoteFiles = (transfer: string) => {
+  const [sourceFile, targetFile] = transfer.split(":");
+
+  const targetFileIsRemote = targetFile.startsWith("@");
+
+  return { localFile: `../../${targetFileIsRemote ? sourceFile : targetFile}`, remoteFile: `${REMOTE_ROOT}/${(targetFileIsRemote ? targetFile : sourceFile).replace("@", "")}`, targetFileIsRemote };
+}
+
 await Promise.all(
   transfers.map((transfer) => {
-    const [sourceFile, targetFile] = transfer.split(":");
+    const { remoteFile, targetFileIsRemote } = getLocalAndRemoteFiles(transfer);
 
-    const targetFileIsRemote = targetFile.startsWith("@");
-    const remoteFile = `${REMOTE_ROOT}/${(targetFileIsRemote ? targetFile : sourceFile).replace("@", "")}`;
-    const localFile = `../../${targetFileIsRemote ? sourceFile : targetFile}`;
     if (targetFileIsRemote) {
-      console.log(`Uploading ${localFile} to ${remoteFile}`);
       const remoteFileDir = path.dirname(remoteFile);
       console.log(`Creating directory ${remoteFileDir} if it doesn't exist`);
-      return [
-        sftp.mkdir(remoteFileDir, true),
-        sftp.put(localFile, remoteFile),
-      ];
+      return sftp.mkdir(remoteFileDir, true);
+    }
+  }),
+)
+await Promise.all(
+  transfers.map((transfer) => {
+    const { localFile, remoteFile, targetFileIsRemote } = getLocalAndRemoteFiles(transfer);
+    if (targetFileIsRemote) {
+      console.log(`Uploading ${localFile} to ${remoteFile}`);
+      return sftp.put(localFile, remoteFile);
     } else {
       console.log(`Downloading ${remoteFile} to ${localFile}`);
       return sftp.get(remoteFile, localFile);
     }
-  }).flat(),
+  }),
 )
   .catch((error) => {
     console.error("Error:", error.message);
