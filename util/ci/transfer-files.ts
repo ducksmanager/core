@@ -33,6 +33,7 @@ await Promise.all(
     if (targetFileIsRemote) {
       console.log(`Uploading ${localFile} to ${remoteFile}`);
       const remoteFileDir = path.dirname(remoteFile);
+      console.log(`Creating directory ${remoteFileDir} if it doesn't exist`);
       return [
         sftp.mkdir(remoteFileDir, true),
         sftp.put(localFile, remoteFile),
