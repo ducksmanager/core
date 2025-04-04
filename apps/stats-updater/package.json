@@ -5,6 +5,7 @@
   "main": "index.ts",
   "scripts": {
     "build": "bun build --target bun index.ts --outfile bundle.mjs",
+    "prod:docker-compose-run": "SERVICE=stats-updater pnpm -F '~ci' prod:docker-compose-run",
     "prod:build-docker": "REPO_NAME=ghcr.io/bperel/stats-updater pnpm -F '~ci' prod:build-docker -f apps/stats-updater/Dockerfile",
     "prod:transfer-files-post": "pnpm -F '~ci' prod:transfer-files apps/stats-updater/docker-compose.yml:@apps/stats-updater/docker-compose.yml"
   },

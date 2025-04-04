@@ -11,6 +11,7 @@
   "scripts": {
     "build": "bun build --target node index.ts --outdir dist && mv dist/index.js bundle.mjs && rm -rf dist",
     "start": "bun --inspect run --watch index.ts",
+    "prod:docker-compose-run": "SERVICE=duck-estimator pnpm -F '~ci' prod:docker-compose-run",
     "prod:build-docker": "REPO_NAME=ghcr.io/bperel/duck-estimator pnpm -F '~ci' prod:build-docker -f apps/duck-estimator/Dockerfile",
     "prod:transfer-files-pre": "pnpm -F '~ci' prod:transfer-files @apps/duck-estimator/.env:apps/duck-estimator/.env",
     "prod:transfer-files-post": "pnpm -F '~ci' prod:transfer-files apps/duck-estimator/docker-compose.yml:@apps/duck-estimator/docker-compose.yml"

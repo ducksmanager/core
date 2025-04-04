@@ -6,7 +6,11 @@
   "type": "module",
   "scripts": {
     "prod:build-docker": "export CACHE_REF=$(echo $REPO_NAME | tr ':' '-'):buildcache && echo $CACHE_REF; cd ../.. && docker buildx build . --platform linux/amd64 --cache-to=\"type=registry,ref=${CACHE_REF},mode=max\" --cache-from=\"type=registry,ref=${CACHE_REF}\" -t $REPO_NAME --push $@",
-    "prod:docker-compose-up": "echo \"$PRODUCTION_SSH_KEY\" > /tmp/id_rsa && chmod 700 /tmp/id_rsa && ssh -o StrictHostKeyChecking=no -i /tmp/id_rsa $PRODUCTION_SSH_USER@$PRODUCTION_SSH_HOST \"cd $REMOTE_ROOT/$DIR && docker compose pull && docker compose up -d --force-recreate $SERVICES\"",
+    "prod:setup-ssh": "echo \"$PRODUCTION_SSH_KEY\" > /tmp/id_rsa && chmod 700 /tmp/id_rsa",
+    "prod-run-ssh-command": "pnpm -F '~ci' setup-ssh && ssh -o StrictHostKeyChecking=no -i /tmp/id_rsa $PRODUCTION_SSH_USER@$PRODUCTION_SSH_HOST \"$COMMAND\"",
+    "prod:docker-compose-command": "COMMAND=\"cd $REMOTE_ROOT/$DIR && docker compose pull && docker compose $COMMAND\" pnpm -F '~ci' prod-run-ssh-command",
+    "prod:docker-compose-up": "DIR=$DIR COMMAND=\"up -d --force-recreate $SERVICES\" pnpm -F '~ci' prod:docker-compose-command",
+    "prod:docker-compose-run": "DIR=${DIR:-$SERVICE} COMMAND=\"run --rm --no-deps $SERVICE\" pnpm -F '~ci' prod:docker-compose-command",
     "prod:transfer-files": "tsx transfer-files.ts"
   },
   "dependencies": {

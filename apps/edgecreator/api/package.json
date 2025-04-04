@@ -6,6 +6,7 @@
     "build": "bun build --target node index.ts --outfile bundle.mjs",
     "dev": "tsc --noEmit --watch",
     "lint": "eslint --fix .",
+    "prod:run:sprite-names-updater": "DIR=apps/edgecreator/api SERVICE=sprite-names-updater pnpm -F '~ci' prod:docker-compose-run",
     "prod:deploy": "SERVICES=api-websocket DIR=apps/edgecreator/api pnpm -F '~ci' prod:docker-compose-up",
     "prod:build-docker": "REPO_NAME=ghcr.io/bperel/edgecreator-api:websocket pnpm -F '~ci' prod:build-docker -f apps/edgecreator/api/Dockerfile",
     "prod:transfer-files-pre": "pnpm -F '~ci' prod:transfer-files @apps/edgecreator/api/.env:apps/edgecreator/api/.env @packages/prisma-schemas/.env:packages/prisma-schemas/.env",

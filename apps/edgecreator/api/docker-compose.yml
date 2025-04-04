@@ -29,6 +29,15 @@ services:
       dm-api-network:
       dm-db-network:
 
+  sprite-names-updater:
+    container_name: sprite-names-updater
+    image: mariadb:11.7
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+    command: mariadb -uroot -p${MYSQL_ROOT_PASSWORD} -h db dm -e "CALL generate_sprite_names"
+    networks:
+      - dm-db-network
+
 networks:
   public-network:
     external: true
