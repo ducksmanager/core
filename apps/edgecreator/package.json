@@ -15,7 +15,7 @@
     "typecheck": "vue-tsc --noEmit",
     "prod:deploy": "SERVICES=app-websocket DIR=apps/edgecreator pnpm -F '~ci' prod:docker-compose-up",
     "prod:build-docker": "REPO_NAME=ghcr.io/bperel/edgecreator-app:websocket pnpm -F '~ci' prod:build-docker -f apps/edgecreator/Dockerfile",
-    "prod:transfer-files-post": "pnpm -F '~ci' prod:transfer-files apps/edgecreator/docker-compose.yml:@apps/edgecreator/docker-compose.yml apps/edgecreator/config/sentry-relay/config.yml:@apps/edgecreator/config/sentry-relay/config.yml"
+    "prod:transfer-files-post": "pnpm -F '~ci' prod:transfer-files apps/edgecreator/docker-compose.yml:@apps/edgecreator/docker-compose.yml apps/edgecreator/config/sentry-relay/config.yml:@apps/edgecreator/config/sentry-relay/config.yml apps/edgecreator/Caddyfile:@apps/edgecreator/Caddyfile"
   },
   "dependencies": {
     "@popperjs/core": "^2.11.8",

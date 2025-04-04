@@ -19,7 +19,7 @@
     "prod-build-docker-paddleocr": "REPO_NAME=ghcr.io/bperel/paddleocr pnpm -F '~ci' prod:build-docker -f apps/dumili/api/paddleocr/Dockerfile",
     "prod:build-docker": "pnpm run '/^prod-build-docker-/'",
     "prod:transfer-files-pre": "pnpm -F '~ci' prod:transfer-files @apps/dumili/api/.env:apps/dumili/api/.env",
-    "prod:transfer-files-post": "pnpm -F '~ci' prod:transfer-files apps/dumili/api/docker-compose.yml:@apps/dumili/api/docker-compose.yml",
+    "prod:transfer-files-post": "pnpm -F '~ci' prod:transfer-files apps/dumili/api/docker-compose.yml:@apps/dumili/api/docker-compose.yml apps/dumili/api/Caddyfile:@apps/dumili/api/Caddyfile",
     "sentry:sourcemaps": "sentry-cli sourcemaps inject --org bruno-perel --project dumili-api ./dist && sentry-cli sourcemaps upload --org bruno-perel --project dumili-api ./dist"
   },
   "dependencies": {

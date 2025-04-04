@@ -1,7 +1,11 @@
-http://ducksmanager.net, https://ducksmanager.net {
-    reverse_proxy ducksmanager-web
+ducksmanager.net {
+    reverse_proxy web
 }
 
-http://websocket.ducksmanager.net, https://websocket.ducksmanager.net {
-    reverse_proxy ducksmanager-web-websocket
+websocket.ducksmanager.net {
+    reverse_proxy web-websocket
+}
+
+sentry.ducksmanager.net {
+    reverse_proxy web-sentry:3000
 }

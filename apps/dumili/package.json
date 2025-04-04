@@ -15,7 +15,7 @@
     "prod:deploy": "DIR=apps/dumili pnpm -F '~ci' prod:docker-compose-up",
     "prod:build-docker-web": "REPO_NAME=ghcr.io/bperel/dumili-app pnpm -F '~ci' prod:build-docker -f apps/dumili/Dockerfile",
     "prod:build-docker": "pnpm run '/^prod:build-docker-/'",
-    "prod:transfer-files-post": "pnpm -F '~ci' prod:transfer-files apps/dumili/docker-compose.yml:@apps/dumili/docker-compose.yml",
+    "prod:transfer-files-post": "pnpm -F '~ci' prod:transfer-files apps/dumili/docker-compose.yml:@apps/dumili/docker-compose.yml apps/dumili/Caddyfile:@apps/dumili/Caddyfile",
     "sentry:sourcemaps": "sentry-cli sourcemaps inject --org bruno-perel --project dumili ./dist && sentry-cli sourcemaps upload --org bruno-perel --project dumili ./dist"
   },
   "dependencies": {
