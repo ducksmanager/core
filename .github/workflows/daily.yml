@@ -32,6 +32,7 @@ jobs:
       - name: Install dependencies
         run: |
           pnpm -r i
+          echo "root: $REMOTE_ROOT"
 
       - name: Run coa-updater
         timeout-minutes: 40
