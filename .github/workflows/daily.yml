@@ -29,6 +29,10 @@ jobs:
           node-version: 22
           cache: "pnpm"
 
+      - name: Install dependencies
+        run: |
+          pnpm -r i
+
       - name: Run coa-updater
         timeout-minutes: 40
         run: |
