@@ -167,18 +167,14 @@ const replaceEditingIssuecodeIfNotAlreadyEditing = (issuecode: string) => {
   }
 };
 const renderComponents: Record<string, unknown> = {
-  ArcCircle: defineAsyncComponent(
-    () => import("./renders/ArcCircleRender.vue"),
-  ),
-  Fill: defineAsyncComponent(() => import("./renders/FillRender.vue")),
-  Gradient: defineAsyncComponent(() => import("./renders/GradientRender.vue")),
-  Image: defineAsyncComponent(() => import("./renders/ImageRender.vue")),
-  Polygon: defineAsyncComponent(() => import("./renders/PolygonRender.vue")),
-  Rectangle: defineAsyncComponent(
-    () => import("./renders/RectangleRender.vue"),
-  ),
-  Staple: defineAsyncComponent(() => import("./renders/StapleRender.vue")),
-  Text: defineAsyncComponent(() => import("./renders/TextRender.vue")),
+  ArcCircle: defineAsyncComponent(() => import("./renders/ArcCircle.vue")),
+  Fill: defineAsyncComponent(() => import("./renders/Fill.vue")),
+  Gradient: defineAsyncComponent(() => import("./renders/Gradient.vue")),
+  Image: defineAsyncComponent(() => import("./renders/Image.vue")),
+  Polygon: defineAsyncComponent(() => import("./renders/Polygon.vue")),
+  Rectangle: defineAsyncComponent(() => import("./renders/Rectangle.vue")),
+  Staple: defineAsyncComponent(() => import("./renders/Staple.vue")),
+  Text: defineAsyncComponent(() => import("./renders/Text.vue")),
 };
 </script>
 
