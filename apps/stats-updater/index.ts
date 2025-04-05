@@ -230,16 +230,6 @@ connect().then(async () => {
 
   await prismaDmStats.$executeRaw`OPTIMIZE TABLE utilisateurs_publications_suggerees`;
 
-  console.log(
-    "Adding oldestdate; adding publicationcode and issuenumber for WTD < 3"
-  );
-  await runQuery(`
-    UPDATE ${DATABASE_NAME_DM_STATS_NEW}.utilisateurs_publications_suggerees
-    JOIN ${DATABASE_NAME_COA}.inducks_issue i using (issuecode)
-    SET utilisateurs_publications_suggerees.publicationcode = i.publicationcode
-      , utilisateurs_publications_suggerees.issuenumber     = i.issuenumber
-      , utilisateurs_publications_suggerees.oldestdate      = i.oldestdate`);
-
   await runQuery(`DROP DATABASE IF EXISTS ${DATABASE_NAME_DM_STATS}_old`);
   await runQuery(`CREATE DATABASE ${DATABASE_NAME_DM_STATS}_old`);
 
