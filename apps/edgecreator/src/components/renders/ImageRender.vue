@@ -21,43 +21,45 @@ const { resolveIssueNumberTemplate } = useTextTemplate();
 
 const image = ref<SVGImageElement>();
 const { image: imageDetails, loadImage } = useBase64Legacy();
-
-interface Props {
+const {
+  issuecode,
+  stepNumber,
+  options = {
+    x: 5,
+    y: 5,
+    width: 15,
+    height: 15,
+    src: "",
+  },
+} = defineProps<{
   issuecode: string;
   stepNumber: number;
-  options: {
+  options?: {
     x: number;
     y: number;
     width: number;
     height: number;
     src: string | null;
   };
-}
-const props = withDefaults(defineProps<Props>(), {
-  options: () => ({
-    x: 5,
-    y: 5,
-    width: 15,
-    height: 15,
-    src: "",
-  }),
-});
+}>();
 
 const effectiveSource = computed(() =>
-  resolveIssueNumberTemplate(props.options.src!, props.issuecode),
+  resolveIssueNumberTemplate(options.src!, issuecode),
 );
 
 const countrycode = computed(() => main().publicationcode!.split("/")[0]);
 
-const { enableDragResize } = useStepOptions(props, [
-  "x",
-  "y",
-  "width",
-  "height",
-]);
+const { enableDragResize } = useStepOptions(
+  {
+    issuecode,
+    stepNumber,
+    options,
+  },
+  ["x", "y", "width", "height"],
+);
 
 watch(
-  () => props.options.src,
+  () => options.src,
   () => {
     if (effectiveSource.value) {
       loadImage(

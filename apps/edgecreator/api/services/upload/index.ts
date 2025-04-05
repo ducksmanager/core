@@ -41,6 +41,7 @@ const calculateHash = (data: string) => {
   return hashSum.digest("hex");
 };
 
+// @ts-expect-error Function will be used when getImagesFromFilename supports SVG models
 const _getFilenameUsagesInOtherModels = async (
   filename: string,
   currentIssuecode: string,

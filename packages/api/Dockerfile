@@ -15,5 +15,5 @@ COPY packages/api/services/auth/demo_purchases.csv /app/demo_purchases.csv
 COPY packages/api/emails /app/emails
 COPY packages/api/dist/ /app/
 
-EXPOSE 3000
+EXPOSE 3001
 CMD ["pm2", "start", "--no-daemon", "-i", "max", "index.mjs"]

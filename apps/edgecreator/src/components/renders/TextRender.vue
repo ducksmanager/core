@@ -34,10 +34,28 @@ const { resolveIssueNumberTemplate, resolveIssueNumberPartTemplate } =
 
 const imageRef = ref<SVGImageElement>();
 
-interface Props {
+const {
+  issuecode,
+  stepNumber,
+  options = {
+    x: -25,
+    y: 50,
+    width: null,
+    height: null,
+    src: null,
+    rotation: 270,
+    fgColor: "#000000",
+    bgColor: "#ffffff",
+    font: "redrooster/block-gothic-rr/demi-extra-condensed",
+    text: "Le journal de mickey",
+    internalWidth: 700,
+    isHalfHeight: true,
+    aspectRatio: 1,
+  },
+} = defineProps<{
   issuecode: string;
   stepNumber: number;
-  options: {
+  options?: {
     x: number;
     y: number;
     width: number | null;
@@ -54,24 +72,7 @@ interface Props {
     widthCompression?: number;
     aspectRatio: number;
   };
-}
-const props = withDefaults(defineProps<Props>(), {
-  options: () => ({
-    x: -25,
-    y: 50,
-    width: null,
-    height: null,
-    src: null,
-    rotation: 270,
-    fgColor: "#000000",
-    bgColor: "#ffffff",
-    font: "redrooster/block-gothic-rr/demi-extra-condensed",
-    text: "Le journal de mickey",
-    internalWidth: 700,
-    isHalfHeight: true,
-    aspectRatio: 1,
-  }),
-});
+}>();
 
 const textImage = ref(
   null as {
@@ -81,25 +82,27 @@ const textImage = ref(
     url: string;
   } | null,
 );
-const textImageOptions = ref<typeof props.options>();
+const textImageOptions = ref<typeof options>();
 
 const issuenumber = computed(
-  () => coa().issuecodeDetails[props.issuecode].issuenumber,
+  () => coa().issuecodeDetails[issuecode].issuenumber,
 );
 
 const effectiveText = computed(() =>
   resolveIssueNumberTemplate(
-    props.options.text,
-    resolveIssueNumberPartTemplate(props.options.text, issuenumber.value),
+    options.text,
+    resolveIssueNumberPartTemplate(options.text, issuenumber.value),
   ),
 );
 
-const { width, attributes, enableDragResize } = useStepOptions(props, [
-  "x",
-  "y",
-  "width",
-  "height",
-]);
+const { width, attributes, enableDragResize } = useStepOptions(
+  {
+    issuecode,
+    stepNumber,
+    options,
+  },
+  ["x", "y", "width", "height"],
+);
 const { image, loadImage } = useBase64Legacy();
 
 watch(
@@ -121,14 +124,14 @@ watch(
       waitUntil(
         () => imageRef.value,
         () => {
-          enableDragResize(imageRef.value, {
+          enableDragResize(imageRef.value!, {
             onresizemove: ({ rect }) => {
               let { width, height } = rect;
-              const isVertical = [90, 270].includes(props.options.rotation);
+              const isVertical = [90, 270].includes(options.rotation);
               if (isVertical) {
                 [width, height] = [height, width];
               }
-              const options: {
+              const newOptions: {
                 x?: number;
                 y?: number;
                 width: number;
@@ -140,11 +143,10 @@ watch(
 
               // Correct coordinates due to rotation center moving after resize
               if (isVertical) {
-                options.y =
-                  props.options.y -
-                  (options.height - props.options.height!) / 2;
-                options.x =
-                  props.options.x - (options.width - props.options.width!) / 2;
+                newOptions.y =
+                  options.y - (newOptions.height - options.height!) / 2;
+                newOptions.x =
+                  options.x - (newOptions.width - options.width!) / 2;
               }
               step().setOptionValues(options);
             },
@@ -162,44 +164,42 @@ watch(
 );
 
 watch(
-  () => props.options.fgColor,
+  () => options.fgColor,
   async () => {
     await refreshPreview();
   },
 );
 watch(
-  () => props.options.bgColor,
+  () => options.bgColor,
   async () => {
     await refreshPreview();
   },
 );
 watch(
-  () => props.options.internalWidth,
+  () => options.internalWidth,
   async () => {
     await refreshPreview();
   },
 );
 watch(
-  () => props.options.text,
+  () => options.text,
   async () => {
     await refreshPreview();
   },
 );
 watch(
-  () => props.options.font,
+  () => options.font,
   async () => {
     await refreshPreview();
   },
 );
 
 const refreshPreview = async () => {
-  if (
-    JSON.stringify(textImageOptions.value) === JSON.stringify(props.options)
-  ) {
+  if (JSON.stringify(textImageOptions.value) === JSON.stringify(options)) {
     return;
   }
-  textImageOptions.value = { ...props.options };
-  const { fgColor, bgColor, internalWidth, font } = props.options;
+  textImageOptions.value = { ...options };
+  const { fgColor, bgColor, internalWidth, font } = options;
 
   const textData = await textEvents.getText({
     color: fgColor.replace("#", ""),
@@ -234,34 +234,34 @@ const waitUntil = (
 
 const applyTextImageDimensions = () => {
   const naturalAspectRatio = textImage.value!.height! / textImage.value!.width!;
-  const options = {
-    ...props.options,
+  const newOptions = {
+    ...options,
   };
-  if (options.height === null) {
+  if (newOptions.height === null) {
     // By default, with a 270° rotation,
     // the text shouldn't be larger than the width of the edge
     // noinspection JSSuspiciousNameCombination
-    options.height = 0.8 * width.value;
-    options.width = options.height / naturalAspectRatio;
+    newOptions.height = 0.8 * width.value;
+    newOptions.width = newOptions.height / naturalAspectRatio;
   } else if (options.heightCompression && options.widthCompression) {
-    if (props.options.rotation === 90 || options.rotation === 270) {
-      options.height = options.widthCompression * width.value;
-      options.width =
-        (options.heightCompression * width.value) / naturalAspectRatio;
-      options.x -= options.width / 2 - options.height / 2;
-      options.y += options.width / 2;
+    if (options.rotation === 90 || newOptions.rotation === 270) {
+      newOptions.height = newOptions.widthCompression! * width.value;
+      newOptions.width =
+        (newOptions.heightCompression! * width.value) / naturalAspectRatio;
+      newOptions.x -= newOptions.width / 2 - newOptions.height / 2;
+      newOptions.y += newOptions.width / 2;
     } else {
-      options.height =
-        options.heightCompression * width.value * naturalAspectRatio;
-      options.width = options.widthCompression * width.value;
+      newOptions.height =
+        newOptions.heightCompression! * width.value * naturalAspectRatio;
+      newOptions.width = newOptions.widthCompression! * width.value;
     }
-    options.heightCompression = undefined;
-    options.widthCompression = undefined;
+    newOptions.heightCompression = undefined;
+    newOptions.widthCompression = undefined;
   }
-  options.aspectRatio = options.height / options.width!;
-  step().setOptionValues(options, {
-    stepNumber: props.stepNumber,
-    issuecodes: [props.issuecode],
+  newOptions.aspectRatio = newOptions.height / newOptions.width!;
+  step().setOptionValues(newOptions, {
+    stepNumber: stepNumber,
+    issuecodes: [issuecode],
   });
 };
 

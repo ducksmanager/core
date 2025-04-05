@@ -34,29 +34,35 @@ import { ui } from "~/stores/ui";
 const rect1 = ref<SVGRectElement>();
 const rect2 = ref<SVGRectElement>();
 
-interface Props {
+const {
+  issuecode,
+  stepNumber,
+  options = {
+    yDistanceFromCenter: 5,
+    height: 15,
+  },
+} = defineProps<{
   issuecode: string;
   stepNumber: number;
-  options: {
+  options?: {
     yDistanceFromCenter?: number | undefined;
     height: number;
   };
-}
-const props = withDefaults(defineProps<Props>(), {
-  options: () => ({
-    yDistanceFromCenter: 5,
-    height: 15,
-  }),
-});
+}>();
 
-const { enableDragResize, height, attributes } = useStepOptions(props, [
-  "height",
-]);
+const { enableDragResize, height, attributes } = useStepOptions(
+  {
+    issuecode,
+    stepNumber,
+    options,
+  },
+  ["height"],
+);
 
 const dimensions = computed(
   () =>
     step().getFilteredDimensions({
-      issuecodes: [props.issuecode],
+      issuecodes: [issuecode],
     })[0],
 );
 
@@ -68,12 +74,12 @@ const onmove = ({
   dx: number;
   dy: number;
 }) => {
-  const stapleHeight = props.options.height;
+  const stapleHeight = options.height;
   const isStaple2 = rect2.value === currentTarget;
   const yDistanceFromCenter = Math.min(
     Math.max(
       stapleHeight,
-      (props.options.yDistanceFromCenter ?? 0) +
+      (options.yDistanceFromCenter ?? 0) +
         ((isStaple2 ? 1 : -1) * dy) / ui().zoom,
     ),
     height.value / 2 - stapleHeight * 2,
@@ -91,17 +97,13 @@ onMounted(() => {
   //       height.value / 2,
   //   });
   // }
-  enableDragResize(rect1.value, {
+  enableDragResize(rect1.value!, {
     onmove,
-    onresizemove: () => {
-      return;
-    },
+    onresizemove: () => void 0,
   });
-  enableDragResize(rect2.value, {
+  enableDragResize(rect2.value!, {
     onmove,
-    onresizemove: () => {
-      return;
-    },
+    onresizemove: () => void 0,
   });
 });
 </script>

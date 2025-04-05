@@ -15,18 +15,26 @@
 </template>
 
 <script setup lang="ts">
-interface Props {
+const {
+  issuecode,
+  stepNumber,
+  options = {
+    fill: "#ff0000",
+  },
+} = defineProps<{
   issuecode: string;
   stepNumber: number;
-  options: {
+  options?: {
     fill: string;
   };
-}
-const props = withDefaults(defineProps<Props>(), {
-  options: () => ({
-    fill: "#ff0000",
-  }),
-});
+}>();
 
-const { attributes, width, height } = useStepOptions(props, ["fill"]);
+const { attributes, width, height } = useStepOptions(
+  {
+    issuecode,
+    stepNumber,
+    options,
+  },
+  ["fill"],
+);
 </script>

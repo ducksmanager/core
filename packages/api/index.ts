@@ -105,8 +105,8 @@ if (cluster.isPrimary) {
     cluster.fork();
   });
 } else {
-  httpServer.listen(3000);
-  console.log("WebSocket open on port 3000");
+  httpServer.listen(3001);
+  console.log("WebSocket open on port 3001");
 
   const io = new ServerWithUser(httpServer, {
     cors: {

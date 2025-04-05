@@ -29,10 +29,22 @@
 <script setup lang="ts">
 const rect = ref<SVGRectElement>();
 
-interface Props {
+const {
+  issuecode,
+  stepNumber,
+  options = {
+    x: 3,
+    y: 3,
+    width: 10,
+    height: 80,
+    colorStart: "#D01721",
+    colorEnd: "#0000FF",
+    direction: "Vertical",
+  },
+} = defineProps<{
   issuecode: string;
   stepNumber: number;
-  options: {
+  options?: {
     x: number;
     y: number;
     width: number;
@@ -41,29 +53,20 @@ interface Props {
     colorEnd: string;
     direction: string;
   };
-}
-const props = withDefaults(defineProps<Props>(), {
-  options: () => ({
-    x: 3,
-    y: 3,
-    width: 10,
-    height: 80,
-    colorStart: "#D01721",
-    colorEnd: "#0000FF",
-    direction: "Vertical",
-  }),
-});
+}>();
 
-const gradientId = computed(() => btoa(JSON.stringify(props.options)));
+const gradientId = computed(() => btoa(JSON.stringify(options)));
 
-const { enableDragResize, attributes } = useStepOptions(props, [
-  "x",
-  "y",
-  "width",
-  "height",
-]);
+const { enableDragResize, attributes } = useStepOptions(
+  {
+    issuecode,
+    stepNumber,
+    options,
+  },
+  ["x", "y", "width", "height"],
+);
 
 onMounted(() => {
-  enableDragResize(rect.value);
+  enableDragResize(rect.value!);
 });
 </script>

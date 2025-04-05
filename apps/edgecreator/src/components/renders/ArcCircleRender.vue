@@ -13,10 +13,21 @@ import { ui } from "~/stores/ui";
 
 const { zoom } = storeToRefs(ui());
 
-interface Props {
+const {
+  issuecode,
+  stepNumber,
+  options = {
+    cx: 10,
+    cy: 50,
+    rx: 10,
+    ry: 20,
+    fill: "#bb0000",
+    stroke: "transparent",
+  },
+} = defineProps<{
   issuecode: string;
   stepNumber: number;
-  options: {
+  options?: {
     cx: number;
     cy: number;
     rx: number;
@@ -24,36 +35,25 @@ interface Props {
     fill: string;
     stroke: string;
   };
-}
-
-const props = withDefaults(defineProps<Props>(), {
-  options: () => ({
-    cx: 10,
-    cy: 50,
-    rx: 10,
-    ry: 20,
-    fill: "#bb0000",
-    stroke: "transparent",
-  }),
-});
+}>();
 
 const ellipse = ref<HTMLElement>();
 
-const { attributes, enableDragResize } = useStepOptions(props, [
-  "cx",
-  "cy",
-  "rx",
-  "ry",
-  "fill",
-  "stroke",
-]);
+const { attributes, enableDragResize } = useStepOptions(
+  {
+    issuecode,
+    stepNumber,
+    options,
+  },
+  ["cx", "cy", "rx", "ry", "fill", "stroke"],
+);
 
 onMounted(() => {
-  enableDragResize(ellipse.value, {
+  enableDragResize(ellipse.value!, {
     onmove: ({ dx, dy }) => {
       step().setOptionValues({
-        cx: props.options.cx + dx / zoom.value,
-        cy: props.options.cy + dy / zoom.value,
+        cx: options.cx + dx / zoom.value,
+        cy: options.cy + dy / zoom.value,
       });
     },
     onresizemove: ({ rect }) => {

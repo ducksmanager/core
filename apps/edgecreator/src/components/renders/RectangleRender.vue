@@ -9,10 +9,21 @@
 <script setup lang="ts">
 const rect = ref<SVGRectElement>();
 
-interface Props {
+const {
+  issuecode,
+  stepNumber,
+  options = {
+    x: 5,
+    y: 5,
+    width: 15,
+    height: 15,
+    fill: "#ff0000",
+    stroke: "transparent",
+  },
+} = defineProps<{
   issuecode: string;
   stepNumber: number;
-  options: {
+  options?: {
     x: number;
     y: number;
     width: number;
@@ -20,29 +31,18 @@ interface Props {
     fill: string;
     stroke: string;
   };
-}
+}>();
 
-const props = withDefaults(defineProps<Props>(), {
-  options: () => ({
-    x: 5,
-    y: 5,
-    width: 15,
-    height: 15,
-    fill: "#ff0000",
-    stroke: "transparent",
-  }),
-});
-
-const { enableDragResize } = useStepOptions(props, [
-  "x",
-  "y",
-  "width",
-  "height",
-  "fill",
-  "stroke",
-]);
+const { enableDragResize } = useStepOptions(
+  {
+    issuecode,
+    stepNumber,
+    options,
+  },
+  ["x", "y", "width", "height", "fill", "stroke"],
+);
 
 onMounted(() => {
-  enableDragResize(rect.value);
+  enableDragResize(rect.value!);
 });
 </script>

@@ -1,13 +1,13 @@
 api.ducksmanager.net {
-    reverse_proxy ducksmanager-api:3000
+    reverse_proxy ducksmanager-api:3001
 }
 
 api-2.ducksmanager.net {
-    reverse_proxy ducksmanager-api:3000
+    reverse_proxy ducksmanager-api:3001
 }
 
 api-websocket.ducksmanager.net {
-    reverse_proxy ducksmanager-api-websocket:3000 {
+    reverse_proxy ducksmanager-api-websocket:3001 {
         header_up Host {http.request.host}
     }
 }

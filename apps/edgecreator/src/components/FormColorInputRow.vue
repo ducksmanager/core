@@ -65,10 +65,10 @@
                   >
                   <span
                     v-for="color in otherColorsForLocation[stepNumber]"
-                    :key="color"
+                    :key="color as string"
                     class="frequent-color"
-                    :style="{ background: color }"
-                    @click="onColorChange(color)"
+                    :style="{ background: color as string }"
+                    @click="onColorChange(color as string)"
                     >&nbsp;</span
                   >
                 </li>
@@ -105,7 +105,7 @@ const {
   otherColors,
   optionName,
 } = defineProps<{
-  inputValues: PossibleInputValueType[];
+  inputValues?: PossibleInputValueType[];
   optionName: string;
   otherColors: {
     differentIssuecode: Options;

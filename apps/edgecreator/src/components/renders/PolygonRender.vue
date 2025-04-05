@@ -16,31 +16,32 @@ import { ui } from "~/stores/ui";
 
 const polygon = ref<SVGPolygonElement>();
 
-interface Props {
-  issuecode: string;
-  stepNumber: number;
-  options: {
-    points: string;
-    fill: string;
-  };
-}
-
 const pointsAsString = (points: [number, number][]) =>
   points.map((point) => point.join(",")).join(";");
 
-const props = withDefaults(defineProps<Props>(), {
-  options: () => ({
-    points: [
-      [1, 5],
-      [4, 25],
-      [7, 14],
-      [14, 12],
-    ]
-      .map((point) => point.join(","))
-      .join(";"),
-    fill: "#000000",
-  }),
-});
+const props = withDefaults(
+  defineProps<{
+    issuecode: string;
+    stepNumber: number;
+    options?: {
+      points: string;
+      fill: string;
+    };
+  }>(),
+  {
+    options: () => ({
+      points: [
+        [1, 5],
+        [4, 25],
+        [7, 14],
+        [14, 12],
+      ]
+        .map((point) => point.join(","))
+        .join(";"),
+      fill: "#000000",
+    }),
+  },
+);
 
 const points = computed((): [number, number][] =>
   props.options.points
@@ -54,7 +55,7 @@ const points = computed((): [number, number][] =>
 const { enableDragResize } = useStepOptions(props, []);
 
 onMounted(() => {
-  enableDragResize(polygon.value, {
+  enableDragResize(polygon.value!, {
     onmove: ({ dy, dx }): void => {
       step().setOptionValues({
         points: pointsAsString(
