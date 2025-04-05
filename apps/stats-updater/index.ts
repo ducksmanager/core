@@ -9,7 +9,6 @@ import * as process from "process";
 import {
   type inducks_issue,
   type inducks_storyjob,
-  type inducks_storyversion,
   Prisma,
 } from "~prisma-schemas/schemas/coa";
 import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa/client";
@@ -50,11 +49,11 @@ const {
 // These are required for the respective Prisma clients to work
 process.env.DATABASE_URL_COA = DATABASE_URL_DM_STATS.replace(
   /\/[^/]+$/,
-  `/${DATABASE_NAME_COA}`,
+  `/${DATABASE_NAME_COA}`
 );
 process.env.DATABASE_URL_DM = DATABASE_URL_DM_STATS.replace(
   /\/[^/]+$/,
-  `/${DATABASE_NAME_DM}`,
+  `/${DATABASE_NAME_DM}`
 );
 
 const [
@@ -65,6 +64,8 @@ const [
   MYSQL_PORT,
   DATABASE_NAME_DM_STATS_NEW,
 ] = DATABASE_URL_DM_STATS.split(/\W+/);
+
+console.log("DATABASE_NAME_DM_STATS_NEW", DATABASE_NAME_DM_STATS_NEW);
 
 const tables = [
   "auteurs_histoires",
@@ -123,7 +124,7 @@ connect().then(async () => {
   });
   const personcodes = Object.keys(authorUsers.groupBy("personcode"));
   const userIdsWithPersoncodes = Object.keys(authorUsers.groupBy("userId")).map(
-    (userId) => parseInt(userId),
+    (userId) => parseInt(userId)
   );
 
   await prismaDmStats.authorUser.createMany({
@@ -151,8 +152,7 @@ connect().then(async () => {
   console.log("Creating storyIssue entries");
   await prismaDmStats.storyIssue.createMany({
     data: await prismaCoa.$queryRaw<
-      (Pick<inducks_storyversion, "storycode"> &
-        Pick<inducks_issue, "issuecode">)[]
+      ({ storycode: string } & Pick<inducks_issue, "issuecode">)[]
     >`
       select distinct sv.storycode, i.issuecode
       from inducks_storyjob sj
@@ -168,8 +168,7 @@ connect().then(async () => {
   console.log("Creating authorStory entries");
   await prismaDmStats.authorStory.createMany({
     data: await prismaCoa.$queryRaw<
-      (Pick<inducks_storyjob, "personcode"> &
-        Pick<inducks_storyversion, "storycode">)[]
+      (Pick<inducks_storyjob, "personcode"> & { storycode: string })[]
     >`
       select distinct sj.personcode, sv.storycode
       from inducks_storyjob sj
@@ -232,7 +231,7 @@ connect().then(async () => {
   await prismaDmStats.$executeRaw`OPTIMIZE TABLE utilisateurs_publications_suggerees`;
 
   console.log(
-    "Adding oldestdate; adding publicationcode and issuenumber for WTD < 3",
+    "Adding oldestdate; adding publicationcode and issuenumber for WTD < 3"
   );
   await runQuery(`
     UPDATE ${DATABASE_NAME_DM_STATS_NEW}.utilisateurs_publications_suggerees
