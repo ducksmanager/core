@@ -1,3 +1,5 @@
 api.dumili.ducksmanager.net {
-    reverse_proxy dumili-api:3002
+    reverse_proxy dumili-api:3002 {
+        header_up Host {http.request.host}
+    }
 }

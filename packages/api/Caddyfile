@@ -7,5 +7,7 @@ api-2.ducksmanager.net {
 }
 
 api-websocket.ducksmanager.net {
-    reverse_proxy ducksmanager-api-websocket:3000
+    reverse_proxy ducksmanager-api-websocket:3000 {
+        header_up Host {http.request.host}
+    }
 }
