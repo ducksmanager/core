@@ -1,10 +1,8 @@
-import { useToastController } from "bootstrap-vue-next";
 import interact from "interactjs";
 import { useI18n } from "vue-i18n";
 
 import { step } from "~/stores/step";
 import { ui } from "~/stores/ui";
-import type { BaseProps } from "~/types/StepOptionBaseProps";
 
 // type Interactive = {
 //   onmove: (params: { dx: number; dy: number }) => void;
@@ -13,33 +11,25 @@ import type { BaseProps } from "~/types/StepOptionBaseProps";
 
 const shownTips: string[] = [];
 
-export const useStepOptions = (props: BaseProps, attributeKeys: string[]) => {
+export const useStepOptions = () => {
+  const issuecode = inject<string>("issuecode");
+  if (!issuecode) {
+    throw new Error("issuecode not provided");
+  }
   const stepStore = step();
-  const toast = useToastController();
   const { t } = useI18n();
   const { zoom } = storeToRefs(ui());
   const width = computed(
     () =>
       stepStore.getFilteredDimensions({
-        issuecodes: [props.issuecode],
+        issuecodes: [issuecode],
       })[0].width,
   );
   const height = computed(
     () =>
       stepStore.getFilteredDimensions({
-        issuecodes: [props.issuecode],
+        issuecodes: [issuecode],
       })[0].height,
-  );
-  const attributes = computed(() =>
-    Object.keys(props.options!)
-      .filter((optionKey) => attributeKeys.includes(optionKey))
-      .reduce(
-        (acc, optionKey) => ({
-          ...acc,
-          [optionKey]: props.options![optionKey],
-        }),
-        {},
-      ),
   );
 
   const showMoveResizeToast = (
@@ -70,15 +60,16 @@ export const useStepOptions = (props: BaseProps, attributeKeys: string[]) => {
           },
         );
     }
-    toast.show!({
-      props: {
-        body: text!,
-        title: t("Tip").toString(),
-        pos: "top-center",
-        noCloseButton: true,
-      },
-    });
-    shownTips.push(type);
+
+    // useToastController().show!({
+    //   props: {
+    //     body: text!,
+    //     title: t("Tip").toString(),
+    //     pos: "top-center",
+    //     noCloseButton: true,
+    //   },
+    // });
+    // shownTips.push(type);
   };
   const isColorOption = (optionName: string) =>
     optionName.toLowerCase().includes("color") ||
@@ -99,20 +90,26 @@ export const useStepOptions = (props: BaseProps, attributeKeys: string[]) => {
 
   const enableDragResize = (
     element: HTMLElement | SVGElement,
-    callbacks: {
-      onmove?: null | ((params: OnMoveParams) => void);
-      onresizemove?: null | ((params: OnResizemoveParams) => void);
-    } = {
-      onmove: null,
-      onresizemove: null,
-    },
+    params: {
+      onresizemove?: (params: OnResizemoveParams) => void;
+    } & (
+      | {
+          onmove: (params: OnMoveParams) => void;
+        }
+      | {
+          coords: () => {
+            x: number;
+            y: number;
+          };
+        }
+    ),
   ) =>
     interact(element)
       .draggable({
         onmove: (e: OnMoveParams) => {
           document.body.classList.add("interacting");
-          if (callbacks.onmove) {
-            callbacks.onmove(e);
+          if ("onmove" in params) {
+            params.onmove(e);
           } else {
             const { dx, dy, shiftKey } = e;
             showMoveResizeToast("move");
@@ -123,8 +120,8 @@ export const useStepOptions = (props: BaseProps, attributeKeys: string[]) => {
               });
             } else {
               stepStore.setOptionValues({
-                x: (props.options!.x as number) + dx / zoom.value,
-                y: (props.options!.y as number) + dy / zoom.value,
+                x: params.coords().x + dx / zoom.value,
+                y: params.coords().y + dy / zoom.value,
               });
             }
           }
@@ -136,8 +133,8 @@ export const useStepOptions = (props: BaseProps, attributeKeys: string[]) => {
       })
       .on("resizemove", (e: OnResizemoveParams) => {
         document.body.classList.add("interacting");
-        if (callbacks.onresizemove) {
-          callbacks.onresizemove(e);
+        if ("onresizemove" in params && params.onresizemove) {
+          params.onresizemove(e);
         } else {
           const { rect, shiftKey, edges } = e;
           showMoveResizeToast("resize", { edges });
@@ -163,7 +160,6 @@ export const useStepOptions = (props: BaseProps, attributeKeys: string[]) => {
     zoom,
     width,
     height,
-    attributes,
     showMoveResizeToast,
     isColorOption,
     enableDragResize,

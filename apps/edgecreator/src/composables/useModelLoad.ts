@@ -139,10 +139,19 @@ export default () => {
     } of Object.values(apiSteps).filter(
       ({ stepNumber: originalStepNumber }) => originalStepNumber !== -1,
     )) {
-      const { component } = rendersStore.supportedRenders.find(
-        (component) => component.originalName === originalComponentName,
-      ) ?? { component: null };
-      if (component) {
+      const componentName = Object.keys(rendersStore.supportedRenders).find(
+        (componentName) => {
+          const component =
+            rendersStore.supportedRenders[
+              componentName as keyof typeof rendersStore.supportedRenders
+            ];
+          return (
+            "originalName" in component &&
+            originalComponentName === component.originalName
+          );
+        },
+      );
+      if (componentName) {
         try {
           stepStore.setOptionValues(
             optionObjectToArray(
@@ -150,7 +159,7 @@ export default () => {
                 issuecode,
                 stepNumber,
                 {
-                  component,
+                  component: componentName,
                   options: originalOptions,
                 } as LegacyComponent,
                 dimensions[0],
@@ -164,7 +173,7 @@ export default () => {
           );
         } catch (e) {
           onError(
-            `Invalid step ${originalStepNumber} (${component}) : ${
+            `Invalid step ${originalStepNumber} (${componentName}) : ${
               e as string
             }, step will be ignored.`,
             originalStepNumber,

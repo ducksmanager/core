@@ -1,4 +1,5 @@
 <template>
+  <BToastOrchestrator />
   <suspense><router-view /></suspense>
 </template>
 

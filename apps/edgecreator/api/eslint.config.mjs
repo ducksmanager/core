@@ -14,6 +14,7 @@ export default tseslint.config(
       "**/*.d.ts",
       "prisma/client_dumili",
       "paddleocr",
+      "tsconfig.json",
     ],
   },
   {

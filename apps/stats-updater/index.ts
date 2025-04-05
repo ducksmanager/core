@@ -49,11 +49,11 @@ const {
 // These are required for the respective Prisma clients to work
 process.env.DATABASE_URL_COA = DATABASE_URL_DM_STATS.replace(
   /\/[^/]+$/,
-  `/${DATABASE_NAME_COA}`
+  `/${DATABASE_NAME_COA}`,
 );
 process.env.DATABASE_URL_DM = DATABASE_URL_DM_STATS.replace(
   /\/[^/]+$/,
-  `/${DATABASE_NAME_DM}`
+  `/${DATABASE_NAME_DM}`,
 );
 
 const [
@@ -124,7 +124,7 @@ connect().then(async () => {
   });
   const personcodes = Object.keys(authorUsers.groupBy("personcode"));
   const userIdsWithPersoncodes = Object.keys(authorUsers.groupBy("userId")).map(
-    (userId) => parseInt(userId)
+    (userId) => parseInt(userId),
   );
 
   await prismaDmStats.authorUser.createMany({

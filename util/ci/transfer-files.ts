@@ -1,5 +1,5 @@
-import SFTPClient from "ssh2-sftp-client";
 import path from "path";
+import SFTPClient from "ssh2-sftp-client";
 
 const {
   PRODUCTION_SSH_HOST,
@@ -28,8 +28,12 @@ const getLocalAndRemoteFiles = (transfer: string) => {
 
   const targetFileIsRemote = targetFile.startsWith("@");
 
-  return { localFile: `../../${targetFileIsRemote ? sourceFile : targetFile}`, remoteFile: `${REMOTE_ROOT}/${(targetFileIsRemote ? targetFile : sourceFile).replace("@", "")}`, targetFileIsRemote };
-}
+  return {
+    localFile: `../../${targetFileIsRemote ? sourceFile : targetFile}`,
+    remoteFile: `${REMOTE_ROOT}/${(targetFileIsRemote ? targetFile : sourceFile).replace("@", "")}`,
+    targetFileIsRemote,
+  };
+};
 
 await Promise.all(
   transfers.map((transfer) => {
@@ -41,10 +45,11 @@ await Promise.all(
       return sftp.mkdir(remoteFileDir, true);
     }
   }),
-)
+);
 await Promise.all(
   transfers.map((transfer) => {
-    const { localFile, remoteFile, targetFileIsRemote } = getLocalAndRemoteFiles(transfer);
+    const { localFile, remoteFile, targetFileIsRemote } =
+      getLocalAndRemoteFiles(transfer);
     if (targetFileIsRemote) {
       console.log(`Uploading ${localFile} to ${remoteFile}`);
       return sftp.put(localFile, remoteFile);

@@ -19,6 +19,7 @@ const compat = new FlatCompat({
 export default [
   {
     ignores: [
+      "**/api",
       "**/node_modules",
       "**/dist",
       "**/bundle.mjs",
