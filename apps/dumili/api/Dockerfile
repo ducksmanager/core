@@ -10,5 +10,5 @@ COPY apps/dumili/api/prisma/client_dumili/libquery_engine-debian-openssl-3.0.x.s
 COPY apps/dumili/api/.env /app/
 COPY apps/dumili/api/dist/index.mjs /app/bundle.mjs
 
-EXPOSE 3001
+EXPOSE 3002
 CMD ["node", "bundle.mjs"]

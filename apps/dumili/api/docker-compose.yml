@@ -1,3 +1,4 @@
+name: dumili-api
 services:
   kumiko:
     container_name: kumiko
