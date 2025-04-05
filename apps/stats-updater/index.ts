@@ -65,7 +65,7 @@ const [
   DATABASE_NAME_DM_STATS_NEW,
 ] = DATABASE_URL_DM_STATS.split(/\W+/);
 
-console.log("DATABASE_NAME_DM_STATS_NEW", DATABASE_NAME_DM_STATS_NEW);
+console.log("DATABASE_URL_DM_STATS", DATABASE_URL_DM_STATS);
 
 const tables = [
   "auteurs_histoires",
