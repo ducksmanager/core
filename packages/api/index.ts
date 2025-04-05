@@ -1,3 +1,4 @@
+import { SocketIoInstrumentation } from "@opentelemetry/instrumentation-socket.io";
 import * as Sentry from "@sentry/node";
 import { instrument } from "@socket.io/admin-ui";
 import cluster from "cluster";
@@ -13,7 +14,10 @@ import type { SessionUser } from "~dm-types/SessionUser";
 import { getUpdateFileUrl, server as app } from "./services/app";
 import { server as auth } from "./services/auth";
 import { server as bookcase } from "./services/bookcase";
-import { server as bookstores } from "./services/bookstores";
+import {
+  adminServer as bookstoresAdmin,
+  server as bookstores,
+} from "./services/bookstores";
 import { server as coa } from "./services/coa";
 import { server as collection } from "./services/collection";
 import { server as coverId } from "./services/cover-id";
@@ -22,6 +26,7 @@ import { server as edges } from "./services/edges";
 import { server as events } from "./services/events";
 import { server as feedback } from "./services/feedback";
 import { server as globalStats } from "./services/global-stats";
+import { server as globalStatsUser } from "./services/global-stats-user";
 import { server as presentationText } from "./services/presentation-text";
 import { server as publicCollection } from "./services/public-collection";
 import { server as stats } from "./services/stats";
@@ -60,6 +65,8 @@ dotenv.config({
 
 Sentry.init({
   dsn: process.env.SENTRY_DSN,
+  tracesSampleRate: 1.0,
+  openTelemetryInstrumentations: [new SocketIoInstrumentation()],
 });
 
 const httpServer = createServer(async (req, res) => {
@@ -98,8 +105,8 @@ if (cluster.isPrimary) {
     cluster.fork();
   });
 } else {
-  httpServer.listen(3000);
-  console.log("WebSocket open on port 3000");
+  httpServer.listen(3001);
+  console.log("WebSocket open on port 3001");
 
   const io = new ServerWithUser(httpServer, {
     cors: {
@@ -146,6 +153,7 @@ if (cluster.isPrimary) {
   auth(io);
   bookcase(io);
   bookstores(io);
+  bookstoresAdmin(io);
   coa(io);
   collection(io);
   coverId(io);
@@ -154,6 +162,7 @@ if (cluster.isPrimary) {
   events(io);
   feedback(io);
   globalStats(io);
+  globalStatsUser(io);
   presentationText(io);
   publicCollection(io);
   stats(io);

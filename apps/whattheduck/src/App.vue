@@ -1,7 +1,7 @@
 <template>
   <ion-app>
     <ion-progress-bar v-if="bundleDownloadProgress" :value="bundleDownloadProgress"></ion-progress-bar>
-    <OfflineBanner v-if="isOfflineMode" :on-offline="routeMeta.onOffline" />
+    <OfflineBanner v-if="isOfflineMode" />
 
     <ion-router-outlet
       v-if="['/login', '/signup', '/test', '/forgot'].includes(route.path)"
@@ -36,13 +36,6 @@ const route = useRoute();
 const router = useRouter();
 
 const bundleDownloadProgress = ref<number>();
-
-interface RouteMeta {
-  onOffline?: 'readonly' | 'unavailable';
-  onNoToken?: 'logout';
-}
-
-const routeMeta = computed(() => route.meta as RouteMeta);
 
 const cacheStorage = buildStorage({
   set: (key, data, currentRequest) => {

@@ -1,15 +1,37 @@
 <template>
   <b-container
     fluid
-    class="d-flex flex-column align-items-center justify-content-center p-2 border-bottom"
+    class="position-relative d-flex flex-column align-items-center justify-content-center p-2"
   >
     <div class="d-flex flex-row align-items-center">
       <router-link class="display-6" to="/">DuMILi</router-link>
       <div v-if="!isSocketConnected" class="ms-2 text-danger">
         {{ $t("(hors-ligne)") }}
       </div>
+      <SwitchLocale right />
     </div>
-    {{ $t("DUcksManager Inducks LIttle helper") }}
+    DUcksManager Inducks LIttle helper
+    <b-dropdown
+      v-if="dumiliUser"
+      id="user-dropdown"
+      :auto-close="false"
+      variant="light"
+      class="position-absolute start-0 d-flex"
+    >
+      <template #button-content><i-bi-person-fill /></template>
+      <b-form @submit.prevent="updateUser">
+        <b-dropdown-item
+          >{{ $t("Nom d'utilisateur Inducks") }}
+          <input
+            v-model="dumiliUser.inducksUsername"
+            type="text"
+            @click.stop="() => {}"
+        /></b-dropdown-item>
+        <b-dropdown-item>
+          <b-button type="submit" variant="primary">{{ $t("OK") }}</b-button>
+        </b-dropdown-item>
+      </b-form>
+    </b-dropdown>
   </b-container>
 
   <b-container
@@ -30,6 +52,7 @@
 </template>
 
 <script setup lang="ts">
+import SwitchLocale from "~web/src/components/SwitchLocale.vue";
 import Cookies from "js-cookie";
 
 import useDmSocket, {
@@ -41,6 +64,8 @@ import useDumiliSocket, {
 } from "./composables/useDumiliSocket";
 
 import { buildWebStorage } from "socket-call-client";
+import type { user } from "~prisma/client_dumili";
+import { suggestions } from "./stores/suggestions";
 
 const { t: $t } = useI18n();
 
@@ -93,6 +118,26 @@ const loginUrl = computed(
 
 const { isLoadingUser, user } = storeToRefs(collection());
 const { loadUser } = collection();
+const dumiliUser = ref<user>();
+
+const updateUser = async () => {
+  const { indexationsSocket } = dumiliSocket;
+  await indexationsSocket.value!.updateUser(dumiliUser.value!);
+  if (dumiliSocket.indexationSocket) {
+    suggestions().loadIndexation();
+  }
+};
+
+watch(
+  user,
+  async (newUser, oldUser) => {
+    if (newUser && !oldUser) {
+      const { indexationsSocket } = dumiliSocket;
+      dumiliUser.value = await indexationsSocket.value!.getUser();
+    }
+  },
+  { immediate: true },
+);
 
 watch(
   isSocketConnected,
@@ -107,4 +152,12 @@ watch(
 <style lang="scss">
 @import "./style.scss";
 @import "vue-draggable-resizable/style.css";
+
+.dropdown {
+  margin-left: calc(var(--bs-gutter-x) * 0.5);
+}
+
+:deep(#flags) {
+  right: 0 !important;
+}
 </style>

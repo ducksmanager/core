@@ -19,6 +19,7 @@ const compat = new FlatCompat({
 export default [
   {
     ignores: [
+      "**/api",
       "**/node_modules",
       "**/dist",
       "**/bundle.mjs",
@@ -31,7 +32,7 @@ export default [
     compat.extends(
       "plugin:@typescript-eslint/recommended",
       "plugin:@typescript-eslint/stylistic",
-      "plugin:vue/vue3-recommended",
+      "plugin:vue/recommended",
       "plugin:prettier-vue/recommended",
       "prettier",
     ),
@@ -69,7 +70,7 @@ export default [
       "@typescript-eslint/no-floating-promises": "off",
       "@typescript-eslint/no-non-null-assertion": "off",
       "vue/multi-word-component-names": "off",
-      "vue/no-setup-props-destructure": "off",
+      "vue/no-setup-props-reactivity-loss": "off",
       "vue/no-v-html": "off",
       "vue/no-v-text-v-html-on-component": "off",
       "vue/define-emits-declaration": "error",

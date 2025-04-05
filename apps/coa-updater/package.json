@@ -2,7 +2,8 @@
   "name": "~coa-updater",
   "scripts": {
     "build": "bun build --target bun index.ts --outfile bundle.mjs",
-    "prod-build-docker": "REPO_NAME=ghcr.io/bperel/coa-updater pnpm -F '~ci' prod:build-docker -f apps/coa-updater/Dockerfile",
+    "prod:docker-compose-run": "SERVICE=coa-updater pnpm -F '~ci' prod:docker-compose-run",
+    "prod:build-docker": "REPO_NAME=ghcr.io/bperel/coa-updater pnpm -F '~ci' prod:build-docker -f apps/coa-updater/Dockerfile",
     "prod:transfer-files-post": "pnpm -F '~ci' prod:transfer-files apps/coa-updater/docker-compose.yml:@apps/coa-updater/docker-compose.yml"
   },
   "keywords": [],
@@ -15,8 +16,8 @@
   },
   "devDependencies": {
     "@types/bun": "latest",
-    "@types/node": "^22.13.1",
-    "typescript": "^5.7.3"
+    "@types/node": "^22.13.11",
+    "typescript": "^5.8.2"
   },
   "module": "index.ts",
   "type": "module"

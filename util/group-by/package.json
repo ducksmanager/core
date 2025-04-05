@@ -5,7 +5,7 @@
     "node": ">=22.0.0 <23.0.0"
   },
   "devDependencies": {
-    "typescript": "^5.7.3",
-    "@types/bun": "^1.2.2"
+    "@types/bun": "^1.2.5",
+    "typescript": "^5.8.2"
   }
 }

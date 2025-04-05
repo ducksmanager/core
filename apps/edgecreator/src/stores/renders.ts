@@ -1,11 +1,12 @@
 import { defineStore } from "pinia";
+
 import ArcCircle from "../components/renders/ArcCircle.vue";
+import Fill from "../components/renders/Fill.vue";
+import Gradient from "../components/renders/Gradient.vue";
+import Image from "../components/renders/Image.vue";
+import Polygon from "../components/renders/Polygon.vue";
 import Rectangle from "../components/renders/Rectangle.vue";
 import Staple from "../components/renders/Staple.vue";
-import Gradient from "../components/renders/Gradient.vue";
-import Polygon from "../components/renders/Polygon.vue";
-import Image from "../components/renders/Image.vue";
-import Fill from "../components/renders/Fill.vue";
 import Text from "../components/renders/Text.vue";
 
 export const renders = defineStore("renders", () => ({

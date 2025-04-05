@@ -11,7 +11,7 @@
     </b-button>
     <gallery
       v-if="items"
-      v-model:selected="selected"
+      v-model="selected"
       v-model:items="items"
       image-type="edges"
       :loading="isPopulating"
@@ -51,7 +51,6 @@ const {
 
 const emit = defineEmits<{
   "load-more": [where: "before" | "after"];
-  change: [value: string];
 }>();
 
 const items = ref<GalleryItem[]>([]);

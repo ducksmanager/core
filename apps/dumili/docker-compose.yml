@@ -18,7 +18,5 @@ services:
 
 networks:
   dumili-network:
-  ducksmanager2_dm2-network:
-    external: true
   public-network:
     external: true

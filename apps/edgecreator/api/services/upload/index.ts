@@ -32,7 +32,7 @@ const hasReachedDailyUploadLimit = async (token: string) =>
     .length > 10;
 
 const hasAlreadySentPhoto = async (hash: string, token: string) =>
-  (await getEdgeCreatorServices(token).getImageByHash(hash)) === null;
+  (await getEdgeCreatorServices(token).getImageByHash(hash)) !== null;
 
 const calculateHash = (data: string) => {
   const hashSum = crypto.createHash("sha1");
@@ -41,6 +41,7 @@ const calculateHash = (data: string) => {
   return hashSum.digest("hex");
 };
 
+// @ts-expect-error Function will be used when getImagesFromFilename supports SVG models
 const _getFilenameUsagesInOtherModels = async (
   filename: string,
   currentIssuecode: string,
@@ -176,7 +177,7 @@ const listenEvents = ({ _socket: socket }: UploadServices) => ({
     const { hash } = validationResults;
 
     await decode(cleanData, {
-      fname: `${targetFilePath.replace(/.[^\.]+$/, "")}`,
+      fname: `${targetFilePath.replace(/.[^.]+$/, "")}`,
       ext: "jpg",
     });
 

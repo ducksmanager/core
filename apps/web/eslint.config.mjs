@@ -27,7 +27,7 @@ export default [
   },
   ...fixupConfigRules(
     compat.extends(
-      "plugin:vue/vue3-recommended",
+      "plugin:vue/recommended",
       "plugin:prettier-vue/recommended",
       "prettier",
       "plugin:@typescript-eslint/recommended",
@@ -57,7 +57,7 @@ export default [
       "arrow-body-style": ["error", "as-needed"],
       "vue/multi-word-component-names": "off",
       "vue/no-dupe-keys": "off",
-      "vue/no-setup-props-destructure": "off",
+      "vue/no-setup-props-reactivity-loss": "off",
       "vue/no-v-html": "off",
       "vue/no-v-text-v-html-on-component": "off",
       "vue/define-emits-declaration": "error",

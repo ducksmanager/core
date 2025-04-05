@@ -226,36 +226,6 @@ export const step = defineStore("step", () => {
         );
       }
     },
-    copyDimensionsAndSteps = (toIssuecode: string, fromIssuecode: string) => {
-      setDimensions(
-        getFilteredDimensions({
-          issuecodes: [fromIssuecode],
-        }).map((dimension) => ({ ...dimension, issuecode: toIssuecode }))[0],
-        {
-          issuecodes: [toIssuecode],
-        },
-      );
-
-      const steps = getFilteredOptions({
-        issuecodes: [fromIssuecode],
-      });
-
-      for (
-        let stepNumber = 0;
-        stepNumber <= maxStepNumber.value;
-        stepNumber++
-      ) {
-        setOptionValues(
-          steps
-            .filter(
-              ({ stepNumber: optionStepNumber }) =>
-                optionStepNumber === stepNumber,
-            )
-            .map((step) => ({ ...step, issuecode: toIssuecode })),
-          { issuecodes: [toIssuecode], stepNumber },
-        );
-      }
-    },
     addStep = (component: string) => {
       setOptionValues(
         [
@@ -318,7 +288,6 @@ export const step = defineStore("step", () => {
     setDimensions,
     setSteps,
     checkSameComponentsAsCompletedEdge,
-    copyDimensionsAndSteps,
     addStep,
     removeStep,
     duplicateStep,

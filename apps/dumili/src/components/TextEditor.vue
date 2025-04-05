@@ -1,44 +1,73 @@
 <template>
   <b-container
     fluid
-    class="d-flex flex-grow-1 h-100 flex-column align-items-start"
+    class="d-flex flex-grow-1 h-100 flex-column align-items-start overflow-y-auto"
   >
     <b-alert v-if="!issue" variant="danger" :model-value="true">
       {{
         $t("Vous devez spécifier une publication et un numéro pour continuer")
       }}</b-alert
     >
-    <template v-if="acceptedStories">
-      <b-form-checkbox v-model="showEntryLetters" class="m-2">{{
-        $t("Afficher des lettres au lieu des numéros de pages")
+    <template v-if="rows">
+      <b-form-checkbox
+        v-model="showEntryLetters"
+        :disabled="hasEntrycodesLongerThanFirstColumnMaxWidth"
+        class="m-2"
+        >{{
+          $t("Afficher des lettres au lieu des numéros de pages")
+        }}</b-form-checkbox
+      >
+      <b-form-checkbox v-model="showHorizontalScroll" class="m-2">{{
+        $t("Afficher la barre de défilement horizontale")
       }}</b-form-checkbox>
-      <b-table head-variant="light" :items="rows" borderless small
-        ><template #top-row
-          ><b-td>{{ issueRow.issuecode }}</b-td
-          ><b-td>{{ issueRow.details }}</b-td
-          ><b-td
-            v-for="idx in Object.keys(rows![0]).filter((_, idx) => idx >= 2)"
-            :key="idx" /></template></b-table></template
-  ></b-container>
+      <div
+        class="h-100 overflow-y-auto align-items-start"
+        :class="{
+          'mw-100 text-nowrap overflow-x-auto': showHorizontalScroll,
+        }"
+      >
+        <b-table head-variant="light" :items="rows" borderless small
+          ><template #top-row
+            ><b-td>{{ issueRow.issuecode }}</b-td
+            ><b-td>{{ issueRow.details }}</b-td
+            ><b-td
+              v-for="idx in Object.keys(rows![0]).filter((_, idx) => idx >= 2)"
+              :key="idx" /></template></b-table
+        ><b-button variant="light" @click="copyToClipboard"
+          ><template v-if="isCopied">{{ $t("Copié !") }}<i-bi-check /></template
+          ><template v-else>{{ $t("Copier") }}</template>
+        </b-button>
+      </div></template
+    ></b-container
+  >
 </template>
 <script setup lang="ts">
 const { t: $t } = useI18n();
 
+import { entryColumns, issueColumns } from "~/composables/useTextEditor";
 import { suggestions } from "~/stores/suggestions";
 import type { FullEntry } from "~dumili-services/indexation";
 import { getEntryPages } from "~dumili-utils/entryPages";
-import type { storySuggestion } from "~prisma/client_dumili";
+import { type storySuggestion } from "~prisma/client_dumili";
 import { socketInjectionKey as dmSocketInjectionKey } from "~web/src/composables/useDmSocket";
 
 const { storyDetails } = storeToRefs(coa());
-
 const { indexation } = storeToRefs(suggestions());
+const { acceptedIssue: issue } = storeToRefs(suggestions());
 
 const { coa: coaEvents } = inject(dmSocketInjectionKey)!;
 
-const { acceptedIssue: issue } = storeToRefs(suggestions());
-
 const showEntryLetters = ref(false);
+const showHorizontalScroll = ref(false);
+const isCopied = ref(false);
+
+const copyToClipboard = () => {
+  navigator.clipboard.writeText(text.value);
+  isCopied.value = true;
+  setTimeout(() => {
+    isCopied.value = false;
+  }, 2000);
+};
 
 const acceptedStories = computed(() =>
   indexation.value?.entries
@@ -49,8 +78,8 @@ const acceptedStories = computed(() =>
 const storiesWithDetails =
   ref<Awaited<ReturnType<typeof getStoriesWithDetails>>>();
 
-const getStoriesWithDetails = async (stories: storySuggestion[]) =>
-  await Promise.all(
+const getStoriesWithDetails = (stories: storySuggestion[]) =>
+  Promise.all(
     Object.values(stories)
       .filter(
         (story): story is storySuggestion & { storycode: string } =>
@@ -69,13 +98,58 @@ const getStoriesWithDetails = async (stories: storySuggestion[]) =>
   );
 
 const issuecode = computed(
-  () => `${issue.value!.publicationcode} ${issue.value!.issuenumber}`,
+  () =>
+    `${issue.value!.publicationcode.split("/")[1]} ${issue.value!.issuenumber}`,
+);
+
+const entrycodesWithPageNumbers = computed(() =>
+  indexation.value!.entries.map(
+    (entry, idx) =>
+      `${issuecode.value}${
+        idx === 0
+          ? String.fromCharCode(97 + idx)
+          : `p${String(entry.position).padStart(3, "0")}`
+      }`,
+  ),
+);
+
+const entrycodesWithLetters = computed(() =>
+  indexation.value!.entries.map(
+    (_entry, idx) => `${issuecode.value}${String.fromCharCode(97 + idx)}`,
+  ),
+);
+
+const hasEntrycodesLongerThanFirstColumnMaxWidth = computed(() =>
+  entrycodesWithPageNumbers.value.some(
+    (entrycode) =>
+      entrycode.length >
+      entryColumns.find(
+        (column) => "field" in column && column.field === "entrycode",
+      )!.width,
+  ),
+);
+
+watch(
+  hasEntrycodesLongerThanFirstColumnMaxWidth,
+  (value) => {
+    if (value) {
+      showEntryLetters.value = true;
+    }
+  },
+  { immediate: true },
 );
 
 const issueRow = computed(() => ({
   issuecode: issuecode.value,
   details: [
+    "h3",
     ...[indexation.value!.price ? [`[price:${indexation.value!.price}]`] : []],
+    ...[
+      indexation.value!.releaseDate
+        ? [`[issdate:${indexation.value!.releaseDate}]`]
+        : [],
+    ],
+    `[inx:${indexation.value!.user.inducksUsername}]`,
     `[pages:${indexation.value!.pages.length}]`,
   ]
     .flat()
@@ -85,31 +159,60 @@ const issueRow = computed(() => ({
 const rows = computed(() =>
   !storiesWithDetails.value?.length
     ? undefined
-    : indexation.value!.entries.map((entry, idx, arr) => {
+    : indexation.value!.entries.map((entry, idx) => {
         const storyWithDetails = storiesWithDetails.value!.find(
           ({ storycode }) => storycode === entry.acceptedStory?.storycode,
         );
         return {
-          entrycode: `${issuecode.value}${
-            showEntryLetters.value
-              ? String.fromCharCode(97 + idx)
-              : `p${String(arr.slice(0, idx).reduce((acc, _, i) => acc + getEntryPages(indexation.value!, arr[i].id).length, 0) + 1).padStart(3, "0")}`
-          }`,
-          storycode: entry.acceptedStory?.storycode,
+          entrycode:
+            idx === 0 ||
+            (showEntryLetters.value &&
+              !hasEntrycodesLongerThanFirstColumnMaxWidth.value)
+              ? entrycodesWithLetters.value[idx]
+              : hasEntrycodesLongerThanFirstColumnMaxWidth.value
+                ? "->"
+                : entrycodesWithPageNumbers.value[idx],
+          storycode: entry.acceptedStory?.storycode || "",
           pg: String(getEntryPages(indexation.value!, entry.id).length),
-          la: "", // entry.acceptedStorykind
-          ...Object.fromEntries(
-            ["plot", "writer", "artist", "ink"].map((job) => [
+          la:
+            entry.acceptedStoryKind?.storyKindRows.kind === "n"
+              ? entry.acceptedStoryKind?.storyKindRows.numberOfRows
+              : entry.acceptedStoryKind?.storyKindRows.kind,
+          _: " ",
+          ...(Object.fromEntries(
+            (["plot", "writer", "artist", "ink"] as const).map((job) => [
               job,
               storyWithDetails?.storyjobs?.find(
                 ({ plotwritartink }) => plotwritartink === job,
               )?.personcode,
             ]),
-          ),
+          ) as { plot: string; writer: string; artist: string; ink: string }),
           hero: "", //story!.printedhero,
-          title: entry.title,
+          title: `${entry.title || ""}${
+            hasEntrycodesLongerThanFirstColumnMaxWidth.value && idx > 0
+              ? `[entrycode:${entrycodesWithPageNumbers.value[idx]}]`
+              : ""
+          }`,
         };
       }),
+);
+
+const text = computed(() =>
+  [Object.entries(issueRow.value)]
+    .concat((rows.value || []).map(Object.entries))
+    .map((row, rowIndex) => {
+      const columns = rowIndex === 0 ? issueColumns : entryColumns;
+      return row
+        .map(([thisField, text]) =>
+          String(text || "").padEnd(
+            columns.find(
+              (column) => "field" in column && column.field === thisField,
+            )?.width || 0,
+          ),
+        )
+        .join("");
+    })
+    .join("\n"),
 );
 
 watch(
@@ -140,10 +243,12 @@ textarea {
     color: black;
   }
   $column-colors: (
+    // TODO v-bind?
     white,
     #d2ffc4,
     #e3e3e3,
     #ffffcc,
+    white,
     #fff284,
     #f2e4d5,
     white,

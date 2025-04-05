@@ -26,7 +26,7 @@
           @click.stop="emit('swap-steps', stepNumber - 1)"
         />
         <i-bi-eye-slash-fill
-          v-if="inputValues.visible?.[0] === false"
+          v-if="!inputValues.visible"
           :title="$t('Click to show')"
           @click.stop="
             setOptionValues({ visible: true }, { stepNumber, issuecodes })
@@ -93,11 +93,11 @@ const inputValues = computed(() =>
         thisStepNumber === stepNumber &&
         editingIssuecodes.value.includes(issuecode),
     )
-    .groupBy("optionName", "optionValue[]"),
+    .groupBy("optionName", "optionValue"),
 );
 
 const componentName = computed(
-  () => inputValues.value["component"][0] as keyof typeof supportedRenders,
+  () => inputValues.value["component"] as keyof typeof supportedRenders,
 );
 </script>
 

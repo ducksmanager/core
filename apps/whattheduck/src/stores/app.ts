@@ -135,7 +135,7 @@ export const app = defineStore('app', () => {
 
   const currentFilter = ref<(typeof filters)[number]>(filters[0]);
 
-  const copyListModes: FabOption[] = [
+  const copyListModes = [
     {
       id: 'owned',
       label: 'Copy owned issues',

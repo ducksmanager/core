@@ -2,6 +2,8 @@ packages:
   - "apps/*"
   - "apps/*/packages/*"
   - "apps/*/api"
+  - "apps/*/browser-extension"
   - "!apps/duckguessr*"
   - "packages/*"
   - "util/*"
+shellEmulator: true

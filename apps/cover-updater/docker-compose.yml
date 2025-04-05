@@ -13,11 +13,11 @@ services:
       PASTEC_PORT: 4212
       PASTEC_CONTAINER_HOME: /pastec/build
     networks:
-      - dm-server_db-network
+      - dm-db-network
       - dm-server_cover-id-network
 
 networks:
-  dm-server_db-network:
+  dm-db-network:
     external: true
   dm-server_cover-id-network:
     external: true

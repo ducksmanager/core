@@ -18,12 +18,17 @@ const authenticateUser = async (token?: string | null): Promise<SessionUser> =>
           console.error(err);
           reject(`Invalid token: ${err}`);
         } else {
-          const user = (payload as { data?: Omit<SessionUser, "token"> }).data;
-          if (user) {
+          const user = payload as
+            | Omit<SessionUser, "token">
+            | { data?: Omit<SessionUser, "token"> };
+          if ("data" in user) {
+            resolve(user.data as SessionUser);
+          } else if ("id" in user) {
             resolve(user as SessionUser);
+          } else {
+            console.error(`Invalid payload`, payload);
+            reject(`Invalid payload: ${JSON.stringify(payload)}`);
           }
-          console.error(`Invalid user: ${user}`);
-          reject(`Invalid user: ${user}`);
         }
       },
     );

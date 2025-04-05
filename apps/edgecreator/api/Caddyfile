@@ -1,0 +1,9 @@
+api.edgecreator.ducksmanager.net {
+    reverse_proxy edgecreator-api:3002
+}
+
+api-websocket.edgecreator.ducksmanager.net {
+    reverse_proxy edgecreator-api-websocket:3002 {
+        header_up Host {http.request.host}
+    }
+}

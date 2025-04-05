@@ -7,6 +7,7 @@
   "scripts": {
     "build": "bun build --target bun index.ts --outfile bundle.mjs",
     "start": "bun index.ts",
+    "prod:docker-compose-run": "DIR=packages/backup SERVICE=backup pnpm -F '~ci' prod:docker-compose-run",
     "prod:build-docker": "REPO_NAME=ghcr.io/bperel/dm-backup pnpm -F '~ci' prod:build-docker -f packages/backup/Dockerfile",
     "prod:transfer-files-post": "pnpm -F '~ci' prod:transfer-files packages/backup/docker-compose.yml:@packages/backup/docker-compose.yml"
   },
@@ -16,6 +17,6 @@
   },
   "devDependencies": {
     "@types/bun": "latest",
-    "typescript": "^5.7.3"
+    "typescript": "^5.8.2"
   }
 }

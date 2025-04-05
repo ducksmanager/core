@@ -1,5 +1,6 @@
 <template>
   <form-input-row
+    v-model="inputValue"
     type="color"
     :option-name="optionName"
     :label="label || optionName"
@@ -9,7 +10,6 @@
       'can-be-transparent': canBeTransparent,
       'transparent-selected': isTransparent,
     }"
-    :input-values="inputValues"
     :disabled="isTransparent"
   >
     <template #prefix>
@@ -67,10 +67,10 @@
                   >
                   <span
                     v-for="color of otherColorsForLocation[otherStepNumber] as string[]"
-                    :key="color"
+                    :key="color as string"
                     class="frequent-color"
-                    :style="{ background: color }"
-                    @click="onColorChange(color)"
+                    :style="{ background: color as string }"
+                    @click="onColorChange(color as string)"
                     >&nbsp;</span
                   >
                 </li>
@@ -99,20 +99,19 @@ import type { Options } from "~/stores/step";
 import { step } from "~/stores/step";
 import { ui } from "~/stores/ui";
 
-type PossibleInputValueType = string | number;
 const {
   label = null,
   canBeTransparent = false,
-  inputValues = [],
   optionName,
   stepNumber,
 } = defineProps<{
-  inputValues: PossibleInputValueType[];
   optionName: string;
   label?: string | null;
   stepNumber: number;
   canBeTransparent?: false | null;
 }>();
+
+const inputValue = defineModel<string>();
 
 const originalColor = ref<string>();
 
@@ -124,14 +123,6 @@ const isTransparent = ref(false);
 const hasPhotoUrl = computed(() => Object.keys(photoUrls.value).length);
 
 const { colors: allStepColors } = storeToRefs(step());
-
-watch(
-  () => inputValues,
-  (inputValues) => {
-    isTransparent.value = inputValues[0] === "transparent";
-  },
-  { immediate: true },
-);
 
 const otherColors = computed(() => ({
   sameIssuecode: allStepColors.value.filter(
@@ -156,9 +147,10 @@ const otherColorsByLocationAndStepNumber = computed(() => ({
   ),
 }));
 watch(
-  () => inputValues,
-  (newValue) => {
-    let newColor = newValue[0];
+  inputValue,
+  (newColor) => {
+    isTransparent.value = newColor === "transparent";
+
     if (newColor === "transparent") {
       newColor = "#000000";
     }

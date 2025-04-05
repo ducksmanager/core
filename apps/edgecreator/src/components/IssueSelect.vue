@@ -89,6 +89,12 @@ const {
   issuecodesByPublicationcode,
   issuecodeDetails,
 } = storeToRefs(coaStore);
+const {
+  fetchPublicationNamesFromCountry,
+  fetchIssuecodesByPublicationcode,
+  fetchIssuecodeDetails,
+  fetchCountryNames,
+} = coaStore;
 
 const slots = defineSlots<{
   default(): never;
@@ -165,31 +171,13 @@ const publications = computed(
       ),
 );
 
-const publicationIssues = computed(
-  () => issuecodesByPublicationcode.value[currentPublicationcode.value!],
-);
-
-const issues = computed(
-  () =>
-    publicationIssues.value &&
-    coaStore.issuecodesByPublicationcode[currentPublicationcode.value!].map(
-      (issuecode) => {
-        const status =
-          issuecode in edgeCatalogStore.publishedEdges
-            ? "Published"
-            : issuecode in edgeCatalogStore.ongoingEdges
-              ? "Ongoing"
-              : "none";
-        return {
-          value: { issuecode },
-          text: `${issuecodeDetails.value[issuecode].issuenumber}${status === "none" ? "" : ` (${$t(status)})`}`,
-          disabled:
-            (disableOngoingOrPublished && status !== "none") ||
-            (disableNotOngoingNorPublished && status === "none"),
-        };
-      },
-    ),
-);
+const issues = ref<
+  {
+    value: string;
+    text: string;
+    disabled: boolean;
+  }[]
+>([]);
 
 watch(
   currentCountrycode,
@@ -198,7 +186,7 @@ watch(
       currentPublicationcode.value = publicationcode!;
       currentFirstIssuecode.value = undefined;
 
-      await coaStore.fetchPublicationNamesFromCountry(newValue);
+      await fetchPublicationNamesFromCountry(newValue);
     }
   },
   {
@@ -209,7 +197,25 @@ watch(
 watch(currentPublicationcode, async (newValue) => {
   if (newValue) {
     currentFirstIssuecode.value = undefined;
-    await coaStore.fetchIssuecodesByPublicationcode([newValue]);
+    await fetchIssuecodesByPublicationcode([newValue]);
+    await fetchIssuecodeDetails(issuecodesByPublicationcode.value[newValue]);
+    issues.value = issuecodesByPublicationcode.value[newValue].map(
+      (issuecode) => {
+        const status =
+          issuecode in edgeCatalogStore.publishedEdges
+            ? "Published"
+            : issuecode in edgeCatalogStore.ongoingEdges
+              ? "Ongoing"
+              : "none";
+        return {
+          value: issuecode.replace(/ /g, "_"),
+          text: `${issuecodeDetails.value[issuecode]?.issuenumber}${status === "none" ? "" : ` (${$t(status)})`}`,
+          disabled:
+            (disableOngoingOrPublished && status !== "none") ||
+            (disableNotOngoingNorPublished && status === "none"),
+        };
+      },
+    );
   }
 });
 
@@ -246,7 +252,7 @@ watch([currentFirstIssuecode, currentLastIssuecode], () => {
   });
 });
 (async () => {
-  await coaStore.fetchCountryNames();
+  await fetchCountryNames();
   await edgeCatalogStore.fetchOngoingEdges();
 })();
 </script>

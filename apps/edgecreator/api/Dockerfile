@@ -11,5 +11,5 @@ COPY apps/edgecreator/api/.env /app/
 COPY apps/edgecreator/api/assets/default.svg /app/assets/
 COPY apps/edgecreator/api/bundle.mjs /app/
 
-EXPOSE 3001
+EXPOSE 3002
 CMD ["node", "bundle.mjs"]

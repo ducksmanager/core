@@ -7,7 +7,7 @@
         checkMatch: (id) => id === entry.id,
       },
     ]"
-    :status="storyKindAiSuggestion?.kind ? 'success' : 'idle'"
+    :status="storyKindAiSuggestion?.storyKindRows ? 'success' : 'idle'"
     @toggled="
       overlay = $event ? { type: 'panels', entryId: entry.id } : undefined
     "
@@ -24,13 +24,14 @@
         })) || []
       "
       ><template #empty>{{ $t("Aucune case détectée") }}</template>
-      <template #cell(kind)="row">
-        <story-kind-badge :story-kind="row.item.kind" /></template></b-table
+      <template #cell(storyKindRows)="row">
+        <story-kind-badge
+          :story-kind-rows="row.item.storyKindRows" /></template></b-table
     ><br />
     <div>
       <b>{{ $t("Type d'entrée déduit") }}</b>
     </div>
-    <story-kind-badge :story-kind="storyKindAiSuggestion?.kind"
+    <story-kind-badge :story-kind-rows="storyKindAiSuggestion?.storyKindRows"
   /></ai-tooltip>
 </template>
 
@@ -63,7 +64,7 @@ const pagesWithInferredKinds = computed(() =>
     .filter(({ image }) => image)
     .map((page) => ({
       page,
-      kind: page.image?.aiKumikoResult?.inferredStoryKind,
+      storyKindRows: page.image?.aiKumikoResult?.inferredStoryKindRows,
     })),
 );
 </script>

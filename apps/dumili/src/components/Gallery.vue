@@ -31,7 +31,7 @@
       >
         <template v-if="hoveredEntryPageNumbers?.includes(pageNumber)">
           <div
-            :class="`overlay kind-${hoveredEntry!.acceptedStoryKind?.kind} striped`"
+            :class="`overlay kind-${hoveredEntry!.acceptedStoryKind?.storyKindRows.kind} striped`"
           ></div>
         </template>
         <b-button

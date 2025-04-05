@@ -23,8 +23,8 @@ export const stats = defineStore("stats", () => {
       ({ personcode: watchedPersonCode }) => personcode === watchedPersonCode,
     );
 
-  const loadRatings = async (afterUpdate = false) => {
-    if (afterUpdate || (!isLoadingWatchedAuthors.value && !ratings.value)) {
+  const loadRatings = async (ignoreCache = false) => {
+    if (ignoreCache || (!isLoadingWatchedAuthors.value && !ratings.value)) {
       isLoadingWatchedAuthors.value = true;
       ratings.value = await collectionEvents.getWatchedAuthors();
       isLoadingWatchedAuthors.value = false;

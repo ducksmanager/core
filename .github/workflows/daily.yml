@@ -9,102 +9,62 @@ jobs:
     runs-on: ubuntu-latest
     environment: production
     env:
-      REMOTE_ROOT: workspace/DucksManager2
+      REMOTE_ROOT: apps/dm
+      PRODUCTION_SSH_HOST: ${{ secrets.PRODUCTION_SSH_HOST }}
+      PRODUCTION_SSH_USER: ${{ secrets.PRODUCTION_SSH_USER }}
+      PRODUCTION_SSH_KEY: ${{ secrets.PRODUCTION_SSH_KEY }}
     steps:
-      - name: Run coa-updater
-        uses: appleboy/ssh-action@v1.0.3
+      - uses: actions/checkout@v4
         with:
-          host: ${{ secrets.PRODUCTION_SSH_HOST }}
-          fingerprint: ${{ secrets.PRODUCTION_SSH_FINGERPRINT }}
-          username: ${{ secrets.PRODUCTION_SSH_USER }}
-          key: ${{ secrets.PRODUCTION_SSH_KEY }}
-          command_timeout: 40m
-          script_stop: true
-          envs: REMOTE_ROOT
-          script: |
-            cd $REMOTE_ROOT/apps/coa-updater
-            docker compose pull
-            docker compose run --rm --no-deps coa-updater | ts "[%Y-%m-%d %H:%M:%S]"
+          fetch-depth: 0
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9.8.0
+
+      - name: Use Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: "pnpm"
+
+      - name: Install dependencies
+        run: |
+          pnpm -r i
+
+      - name: Run coa-updater
+        timeout-minutes: 40
+        run: |
+          pnpm -r -F '~coa-updater' prod:docker-compose-run
 
       - name: Run stats-updater
-        continue-on-error: true
-        uses: appleboy/ssh-action@v1.0.3
-        with:
-          host: ${{ secrets.PRODUCTION_SSH_HOST }}
-          username: ${{ secrets.PRODUCTION_SSH_USER }}
-          key: ${{ secrets.PRODUCTION_SSH_KEY }}
-          command_timeout: 90m
-          script_stop: true
-          envs: REMOTE_ROOT
-          script: |
-            cd $REMOTE_ROOT/apps/stats-updater
-            docker compose pull stats-updater
-            docker compose run --rm --no-deps stats-updater
+        timeout-minutes: 90
+        run: |
+          pnpm -r -F '~stats-updater' prod:docker-compose-run
 
       - name: Run cover-updater
-        continue-on-error: true
-        uses: appleboy/ssh-action@v1.0.3
-        with:
-          host: ${{ secrets.PRODUCTION_SSH_HOST }}
-          username: ${{ secrets.PRODUCTION_SSH_USER }}
-          key: ${{ secrets.PRODUCTION_SSH_KEY }}
-          command_timeout: 20m
-          script_stop: true
-          envs: REMOTE_ROOT
-          script: |
-            cd $REMOTE_ROOT/apps/cover-updater
-            docker compose pull cover-updater
-            docker compose run --rm --no-deps cover-updater
+        timeout-minutes: 20
+        run: |
+          pnpm -r -F '~cover-updater' prod:docker-compose-run
 
       - name: Run duck-estimator
+        timeout-minutes: 90
         continue-on-error: true
-        uses: appleboy/ssh-action@v1.0.3
-        with:
-          host: ${{ secrets.PRODUCTION_SSH_HOST }}
-          username: ${{ secrets.PRODUCTION_SSH_USER }}
-          key: ${{ secrets.PRODUCTION_SSH_KEY }}
-          command_timeout: 90m
-          script_stop: true
-          envs: REMOTE_ROOT
-          script: |
-            cd $REMOTE_ROOT/apps/duck-estimator
-            docker compose pull
-            docker compose run --rm duck-estimator
+        run: |
+          pnpm -r -F '~duck-estimator' prod:docker-compose-run
 
       - name: Run sprite-names-updater
-        uses: appleboy/ssh-action@v1.0.3
-        with:
-          host: ${{ secrets.PRODUCTION_SSH_HOST }}
-          username: ${{ secrets.PRODUCTION_SSH_USER }}
-          key: ${{ secrets.PRODUCTION_SSH_KEY }}
-          command_timeout: 5m
-          script_stop: true
-          envs: REMOTE_ROOT
-          script: |
-            cd $REMOTE_ROOT/packages/api
-            docker compose run --rm --no-deps sprite-names-updater
+        timeout-minutes: 5
+        run: |
+          pnpm -r -F '~edgecreator-api' prod:run:sprite-names-updater
 
       - name: Run subscription-handler
-        uses: appleboy/ssh-action@v1.0.3
-        with:
-          host: ${{ secrets.PRODUCTION_SSH_HOST }}
-          username: ${{ secrets.PRODUCTION_SSH_USER }}
-          key: ${{ secrets.PRODUCTION_SSH_KEY }}
-          command_timeout: 5m
-          envs: REMOTE_ROOT
-          script: |
-            cd $REMOTE_ROOT/packages/api
-            docker compose exec api-websocket node ./create-issues-from-subscriptions.mjs
+        timeout-minutes: 5
+        run: |
+          pnpm -r -F '~api' prod:docker-compose-run-create-issues-from-subscriptions
 
-      - name: Run backup
-        uses: appleboy/ssh-action@v1.0.3
-        with:
-          host: ${{ secrets.PRODUCTION_SSH_HOST }}
-          username: ${{ secrets.PRODUCTION_SSH_USER }}
-          key: ${{ secrets.PRODUCTION_SSH_KEY }}
-          command_timeout: 10m
-          script_stop: true
-          envs: REMOTE_ROOT
-          script: |
-            cd $REMOTE_ROOT/packages/backup
-            docker compose run --rm --no-deps backup
+      - name: Run duck-estimator
+        timeout-minutes: 10
+        run: |
+          pnpm -r -F '~backup' prod:docker-compose-run

@@ -1,5 +1,5 @@
 <template>
-  <div id="flags" :class="{ fixed }">
+  <div id="flags" :class="{ right }">
     <img
       v-for="locale in locales"
       :key="locale.key"
@@ -12,15 +12,13 @@
 </template>
 
 <script setup lang="ts">
-const { fixed = false } = defineProps<{
-  fixed?: boolean;
-}>();
-
 const { getImagePath } = images();
 const { fetchCountryNames } = coa();
 
+const { right } = defineProps<{ right?: boolean }>();
+
 const i18n = useI18n();
-const locales = $computed(() => availableLocales);
+const locales = computed(() => availableLocales);
 const reloadWithLocale = async ({ key }: { key: string }) => {
   localStorage.setItem("locale", key);
   i18n.locale.value = key;
@@ -30,17 +28,16 @@ const reloadWithLocale = async ({ key }: { key: string }) => {
 
 <style scoped lang="scss">
 #flags {
-  position: absolute;
   top: 0;
-  right: 0;
   z-index: 50;
   background: inherit;
   padding: 8px;
   cursor: pointer;
+  position: fixed;
+  right: 165px;
 
-  &.fixed {
-    position: fixed;
-    right: 165px;
+  &.right {
+    right: 0;
   }
 }
 </style>

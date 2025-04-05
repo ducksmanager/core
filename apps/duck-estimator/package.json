@@ -11,8 +11,9 @@
   "scripts": {
     "build": "bun build --target node index.ts --outdir dist && mv dist/index.js bundle.mjs && rm -rf dist",
     "start": "bun --inspect run --watch index.ts",
+    "prod:docker-compose-run": "SERVICE=duck-estimator pnpm -F '~ci' prod:docker-compose-run",
     "prod:build-docker": "REPO_NAME=ghcr.io/bperel/duck-estimator pnpm -F '~ci' prod:build-docker -f apps/duck-estimator/Dockerfile",
-    "prod:transfer-files-pre": "pnpm -F '~ci' prod:transfer-files @apps/duck-estimator/.env.local:apps/duck-estimator/.env",
+    "prod:transfer-files-pre": "pnpm -F '~ci' prod:transfer-files @apps/duck-estimator/.env:apps/duck-estimator/.env",
     "prod:transfer-files-post": "pnpm -F '~ci' prod:transfer-files apps/duck-estimator/docker-compose.yml:@apps/duck-estimator/docker-compose.yml"
   },
   "dependencies": {
@@ -20,16 +21,14 @@
     "csv-parse": "^5.6.0",
     "csv-writer": "^1.6.0",
     "dotenv": "^16.4.7",
-    "electron": "^32.3.0",
+    "electron": "^32.3.3",
     "playwright-firefox": "~1.47.2",
     "yargs": "^17.7.2",
     "~prisma-schemas": "workspace:*"
   },
   "devDependencies": {
-    "@types/node": "^22.13.1",
+    "@types/node": "^22.13.11",
     "@types/yargs": "^17.0.33",
-    "tsc-alias": "^1.8.10",
-    "tsx": "^4.19.2",
-    "typescript": "^5.7.3"
+    "typescript": "^5.8.2"
   }
 }

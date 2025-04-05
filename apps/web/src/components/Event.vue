@@ -80,7 +80,7 @@
     </template>
     <template v-else-if="collectionSubscriptionAdditionEvent">
       <template v-if="event.users.length > 1"
-        >{{ " " }}{{ $t("ont reçu") }}{{ " " }}
+        >&nbsp;{{ $t("ont reçu") }}&nbsp;
       </template>
       <template v-else> {{ $t("a reçu") }} </template>
       <Issue
@@ -89,10 +89,10 @@
         :flex="false"
       />
       <template v-if="event.users.length > 1">
-        {{ " " }}{{ $t("grâce à leur abonnement à ce magazine") }}
+        &nbsp;{{ $t("grâce à leur abonnement à ce magazine") }}
       </template>
       <template v-else>
-        {{ " " }}{{ $t("grâce à son abonnement à ce magazine") }}
+        &nbsp;{{ $t("grâce à son abonnement à ce magazine") }}
       </template>
     </template>
     <slot />

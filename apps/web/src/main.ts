@@ -46,13 +46,17 @@ app.mount("#app");
 
 if (process.env.NODE_ENV === "production") {
   Sentry.init({
+    integrations: [
+      Sentry.vueIntegration({
+        tracingOptions: {
+          trackComponents: true,
+          timeout: 1000,
+          hooks: ["mount", "update", "unmount"],
+        },
+      }),
+    ],
     app,
     dsn: "https://a225a6550b8c4c07914327618685a61c@sentry.ducksmanager.net/1385898",
-    logErrors: true,
-    integrations: [Sentry.browserTracingIntegration()],
     tracesSampleRate: 1.0,
-    tracingOptions: {
-      trackComponents: true,
-    },
   });
 }

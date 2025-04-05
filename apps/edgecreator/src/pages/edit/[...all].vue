@@ -159,7 +159,8 @@ const stepStore = step();
 const editingStepStore = editingStep();
 const { showPreviousEdge, showNextEdge } = useSurroundingEdge();
 
-const { loadModel } = useModelLoad();
+const { loadSvgFromString } = useSvgUtils();
+const { loadModel, overwriteModel } = useModelLoad();
 const {
   publicationcode,
   issuecodes,
@@ -247,7 +248,10 @@ try {
       } catch {
         const previousIssuecode = issuecodes.value[idx - 1];
         if (previousIssuecode) {
-          stepStore.copyDimensionsAndSteps(issuecode, previousIssuecode);
+          overwriteModel(
+            issuecode,
+            await loadSvgFromString(previousIssuecode, false),
+          );
         } else {
           stepStore.setDimensions(
             { width: 15, height: 200 },

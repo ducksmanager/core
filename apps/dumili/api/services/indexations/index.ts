@@ -3,7 +3,7 @@ import type { NamespaceProxyTarget } from "socket-call-server";
 import { useSocketEvents } from "socket-call-server";
 
 import { COVER } from "~dumili-types/storyKinds";
-import type { Prisma } from "~prisma/client_dumili";
+import type { Prisma, user } from "~prisma/client_dumili";
 
 import type { SessionData } from "../../index";
 import { prisma } from "../../index";
@@ -17,9 +17,27 @@ export type IndexationsServices = NamespaceProxyTarget<
 >;
 
 const listenEvents = ({ _socket }: IndexationsServices) => ({
-  getUser: async () => ({
-    username: _socket.data.user.username,
-  }),
+  getUser: async () =>
+    prisma.user
+      .findUnique({ where: { dmId: _socket.data.user.id } })
+      .then((user) => {
+        if (!user) {
+          console.info("Creating user for DM user", _socket.data.user.id);
+          return prisma.user.create({
+            data: {
+              dmId: _socket.data.user.id,
+              inducksUsername: "change me",
+            },
+          });
+        }
+        return user;
+      }),
+
+  updateUser: async (input: Pick<user, "inducksUsername">) =>
+    prisma.user.update({
+      where: { dmId: _socket.data.user.id },
+      data: input,
+    }),
 
   create: async (id: string, numberOfPages: number) =>
     prisma.indexation
@@ -36,19 +54,19 @@ const listenEvents = ({ _socket }: IndexationsServices) => ({
           },
         },
       })
-      .then((indexation) => createEntry(indexation.id))
-      .then((entry) => {
-        return prisma.entry.update({
+      .then((indexation) => createEntry(indexation.id, 1))
+      .then((entry) =>
+        prisma.entry.update({
           data: {
             acceptedStoryKindSuggestionId: entry.storyKindSuggestions.find(
-              (s) => s.kind === COVER,
+              (s) => s.storyKindRowsStr.split("/")[0] === COVER,
             )!.id,
           },
           where: {
             id: entry.id,
           },
-        });
-      }),
+        }),
+      ),
 
   getIndexations: (): Promise<
     Prisma.indexationGetPayload<{

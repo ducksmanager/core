@@ -21,9 +21,9 @@ const {
   edge = null,
 } = defineProps<{
   withProgress?: boolean;
-  photo: boolean;
+  photo?: boolean;
   multiple?: boolean;
-  edge: { issuenumber: string } | null;
+  edge?: { issuenumber: string } | null;
 }>();
 
 const { upload: uploadServices } = inject(edgecreatorSocketInjectionKey)!;

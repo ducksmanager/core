@@ -1,5 +1,5 @@
 <template>
-  <template v-if="props.form">
+  <template v-if="isForm">
     {{ $t("Move and resize the staples directly on the edge.") }}
   </template>
   <svg v-else>
@@ -11,6 +11,10 @@
           ...(options as SVGAttributes),
           width: 0.5,
           stroke: 'black',
+
+          x: dimensions.width / 2 - 0.25,
+          y:
+            dimensions.height / 2 - yDistanceFromCenter! - height,
         }"
       />
       <rect
@@ -19,6 +23,9 @@
           ...(options as SVGAttributes),
           width: 0.5,
           stroke: 'black',
+
+          x: dimensions.width / 2 - 0.25,
+          y: dimensions.height / 2 + yDistanceFromCenter!,
         }"
       />
     </g>
@@ -29,20 +36,19 @@
 import { type SVGAttributes } from "vue";
 import { step } from "~/stores/step";
 import { ui } from "~/stores/ui";
-import type { RenderOrForm } from "./RenderOrForm";
 
 const rect1 = ref<SVGRectElement>();
 const rect2 = ref<SVGRectElement>();
 
-const props = withDefaults(
-  defineProps<
-    RenderOrForm<{
-      yDistanceFromCenter: number;
-      height: number;
-    }>
-  >(),
-  { yDistanceFromCenter: 5, height: 15 },
-);
+const { stepNumber = undefined } = defineProps<{
+  stepNumber?: number;
+  hasMultipleValues?: boolean;
+}>();
+
+const isForm = computed(() => stepNumber !== undefined);
+
+const yDistanceFromCenter = defineModel<number>({ default: 5 });
+const height = defineModel<number>({ default: 15 });
 
 const issuecode = inject<string>("issuecode");
 if (!issuecode) {
@@ -57,13 +63,13 @@ const dimensions = computed(
 );
 
 const options = computed(() => {
-  if (props.form) {
+  if (isForm.value) {
     throw new Error("not implemented in form mode");
   }
   return {
     x: dimensions.value.width / 2 - 0.25,
-    y1: dimensions.value.height / 2 - props.yDistanceFromCenter - props.height,
-    y2: useStepOptions().height.value / 2 + props.yDistanceFromCenter,
+    y1: dimensions.value.height / 2 - yDistanceFromCenter.value - height.value,
+    y2: useStepOptions().height.value / 2 + yDistanceFromCenter.value,
   };
 });
 
@@ -75,17 +81,17 @@ const onmove = ({
   dx: number;
   dy: number;
 }) => {
-  if (!props.form) {
+  if (!isForm.value) {
     const { height: edgeHeight } = useStepOptions();
     const isStaple2 = rect2.value === currentTarget;
     step().setOptionValues({
       yDistanceFromCenter: Math.min(
         Math.max(
-          props.height,
-          (props.yDistanceFromCenter ?? 0) +
+          height.value,
+          (yDistanceFromCenter.value ?? 0) +
             ((isStaple2 ? 1 : -1) * dy) / ui().zoom,
         ),
-        edgeHeight.value / 2 - props.height * 2,
+        edgeHeight.value / 2 - height.value * 2,
       ),
     });
   }
@@ -99,7 +105,7 @@ onMounted(() => {
   //       height.value / 2,
   //   });
   // }
-  if (!props.form) {
+  if (!isForm.value) {
     const { enableDragResize } = useStepOptions();
     enableDragResize(rect1.value!, {
       onmove,

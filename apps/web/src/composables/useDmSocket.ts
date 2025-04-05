@@ -17,10 +17,8 @@ import { type ClientEvents as CoverIdEvents } from "~dm-services/cover-id";
 import { type ClientEvents as EdgeCreatorEvents } from "~dm-services/edgecreator";
 import { type ClientEvents as EdgesEvents } from "~dm-services/edges";
 import { type ClientEvents as EventsEvents } from "~dm-services/events";
-import {
-  type ClientEvents as GlobalStatsEvents,
-  type UserClientEvents as UserGlobalStatsEvents,
-} from "~dm-services/global-stats";
+import { type ClientEvents as GlobalStatsEvents } from "~dm-services/global-stats";
+import { type ClientEvents as GlobalStatsUserEvents } from "~dm-services/global-stats-user";
 import namespaces from "~dm-services/namespaces";
 import { type ClientEvents as PresentationTextEvents } from "~dm-services/presentation-text";
 import { type ClientEvents as PublicCollectionEvents } from "~dm-services/public-collection";
@@ -113,9 +111,10 @@ const defaultExport = (options: {
         },
       },
     ),
-    userGlobalStats: socket.addNamespace<UserGlobalStatsEvents>(
+    userGlobalStats: socket.addNamespace<GlobalStatsUserEvents>(
       namespaces.GLOBAL_STATS_USER,
       {
+        session,
         cache: {
           storage: cacheStorage,
           ttl: 1000, // 1 second only, because we want to always get the latest data but still cache in case of offline
@@ -126,14 +125,17 @@ const defaultExport = (options: {
     bookstore: socket.addNamespace<BookstoreEvents>(namespaces.BOOKSTORES),
     adminBookstore: socket.addNamespace<AdminBookstoreEvents>(
       namespaces.BOOKSTORES_ADMIN,
+      {
+        session,
+      },
     ),
     collection: socket.addNamespace<CollectionEvents>(namespaces.COLLECTION, {
       session,
-      // cache: {
-      //   storage: cacheStorage,
-      //   disableCache: (eventName) => eventName.indexOf("get") !== 0,
-      //   ttl: 1000, // 1 second only, because we want to always get the latest data but still cache in case of offline
-      // },
+      cache: {
+        storage: cacheStorage,
+        disableCache: (eventName) => eventName.indexOf("get") !== 0,
+        ttl: 1000, // 1 second only, because we want to always get the latest data but still cache in case of offline
+      },
     }),
     coverId: socket.addNamespace<CoverIdEvents>(namespaces.COVER_ID, {}),
   };

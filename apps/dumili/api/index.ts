@@ -1,3 +1,5 @@
+import "./instrument";
+
 import { v2 as cloudinary } from "cloudinary";
 import dotenv from "dotenv";
 import { createServer } from "http";
@@ -50,5 +52,5 @@ const io = new Server(httpServer, {
 indexations(io);
 indexation(io);
 
-httpServer.listen(3002);
-console.log("Dumili API open on port 3002");
+httpServer.listen(3003);
+console.log("Dumili API open on port 3003");

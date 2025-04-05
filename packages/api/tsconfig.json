@@ -37,7 +37,10 @@
       "~translations/*": [
         "translations/*"
       ]
-    }
+    },
+    "types": [
+      "./.eslint.d.ts"
+    ]
   },
   "exclude": [
     ".turbo",

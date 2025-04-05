@@ -1,8 +1,8 @@
 <template>
   <suggestion-list
-    v-model="indexation!.acceptedIssueSuggestion"
+    v-model="indexation.acceptedIssueSuggestion"
     class="position-static"
-    :suggestions="indexation!.issueSuggestions"
+    :suggestions="indexation.issueSuggestions"
     :is-ai-source="(suggestion) => suggestion.ai !== null"
     :show-customize-form="showIssueSelect"
     @toggle-customize-form="showIssueSelect = $event"
@@ -11,6 +11,7 @@
     ><template #unknown-text>{{ $t("Numéro inconnu") }}</template>
     <template #customize-form>
       <issue-select
+        :issue="indexation.acceptedIssueSuggestion"
         @change="
           $event &&
           createAndAcceptIssueSuggestion({
@@ -25,13 +26,15 @@
 <script lang="ts" setup>
 import { dumiliSocketInjectionKey } from "~/composables/useDumiliSocket";
 import { suggestions } from "~/stores/suggestions";
+import type { FullIndexation } from "~dumili-services/indexation";
 
 const { t: $t } = useI18n();
 
 const showIssueSelect = ref(false);
 const suggestionsStore = suggestions();
 const { createIssueSuggestion } = suggestionsStore;
-const { indexation } = storeToRefs(suggestionsStore);
+const indexation = storeToRefs(suggestionsStore)
+  .indexation as Ref<FullIndexation>;
 
 const { indexationSocket } = inject(dumiliSocketInjectionKey)!;
 

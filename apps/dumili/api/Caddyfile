@@ -1,0 +1,8 @@
+api.dumili.ducksmanager.net {
+    reverse_proxy dumili-api:3003 {
+        header_up Host {http.request.host}
+        transport http {
+            versions h1 1.1
+        }
+    }
+}

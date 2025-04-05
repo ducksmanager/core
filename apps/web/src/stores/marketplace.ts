@@ -86,9 +86,9 @@ export const marketplace = defineStore("marketplace", () => {
           console.error(result.error, result.errorDetails);
       }
     },
-    loadIssueRequestsAsBuyer = async (afterUpdate = false) => {
+    loadIssueRequestsAsBuyer = async (ignoreCache = false) => {
       if (
-        !afterUpdate &&
+        !ignoreCache &&
         (issueRequestsAsBuyer.value || isLoadingIssueRequestsAsBuyer.value)
       ) {
         return;
@@ -97,9 +97,9 @@ export const marketplace = defineStore("marketplace", () => {
       issueRequestsAsBuyer.value = await collectionEvents.getRequests("buyer");
       isLoadingIssueRequestsAsBuyer.value = false;
     },
-    loadIssueRequestsAsSeller = async (afterUpdate = false) => {
+    loadIssueRequestsAsSeller = async (ignoreCache = false) => {
       if (
-        !afterUpdate &&
+        !ignoreCache &&
         (issueRequestsAsSeller.value || isLoadingIssueRequestsAsSeller.value)
       ) {
         return;
@@ -109,9 +109,9 @@ export const marketplace = defineStore("marketplace", () => {
         await collectionEvents.getRequests("seller");
       isLoadingIssueRequestsAsSeller.value = false;
     },
-    loadIssuesOnSaleByOthers = async (afterUpdate = false) => {
+    loadIssuesOnSaleByOthers = async (ignoreCache = false) => {
       if (
-        !afterUpdate &&
+        !ignoreCache &&
         (issuesOnSaleByOthers.value || isLoadingIssuesOnSaleByOthers.value)
       ) {
         return;

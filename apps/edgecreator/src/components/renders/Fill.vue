@@ -1,9 +1,10 @@
 <template>
   <form-color-input-row
-    v-if="options.form"
-    :input-values="options.form"
+    v-if="isForm"
+    v-model="fill"
     option-name="fill"
     :label="$t('Fill color').toString()"
+    :has-multiple-values="hasMultipleValues"
   />
   <svg v-else>
     <rect
@@ -22,22 +23,19 @@
 
 <script setup lang="ts">
 import type { SVGAttributes } from "vue";
-import type { RenderOrForm } from "./RenderOrForm";
 
-const options = withDefaults(
-  defineProps<
-    RenderOrForm<{
-      fill?: string;
-    }>
-  >(),
-  {
-    fill: "#ff0000",
-  },
-);
+const { stepNumber = undefined, hasMultipleValues = false } = defineProps<{
+  stepNumber?: number;
+  hasMultipleValues?: boolean;
+}>();
+
+const isForm = computed(() => stepNumber !== undefined);
+
+const fill = defineModel<string>({ default: "#ff0000" });
 
 const width = ref();
 const height = ref();
-if (!options.form) {
+if (!isForm.value) {
   const stepOptions = useStepOptions();
   width.value = stepOptions.width;
   height.value = stepOptions.height;

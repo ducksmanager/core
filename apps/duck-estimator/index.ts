@@ -19,7 +19,12 @@ const scrapes = [
   { name: "gocollect", scrape: gocollect },
 ];
 
-dotenv.config({ path: ".env.local" });
+dotenv.config({ path: ".env" });
+
+dotenv.config({
+  path: ".env.local",
+  override: true,
+});
 
 (async () => {
   mkdirSync(getCacheDir(), { recursive: true });

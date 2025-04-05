@@ -64,8 +64,9 @@ const listenEvents = () => ({
         ),
       );
 
-    const issuecodes = Object.keys(coversByIssuecode);
-    console.log(`Cover ID search: matched issue codes ${issuecodes.join(",")}`);
+    console.log(
+      `Cover ID search: matched issue codes ${coversByIssuecode.map(({ issuecode }) => issuecode).join(",")}`,
+    );
 
     return {
       covers: coversByIssuecode.map(({ issuecode, fullUrl }) => ({

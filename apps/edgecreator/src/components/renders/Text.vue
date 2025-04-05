@@ -1,10 +1,11 @@
 <template>
-  <template v-if="form">
+  <template v-if="isForm">
     <form-input-row
+      v-model="text"
       option-name="text"
       :label="$t('Text').toString()"
       type="text"
-      :input-values="form.options.text"
+      :has-multiple-values="hasMultipleValues"
     >
       <popover triggers="hover" placement="left">
         <i-bi-info-circle-fill variant="secondary" />
@@ -39,35 +40,39 @@
       </popover>
     </form-input-row>
     <form-input-row
+      v-model="font"
       option-name="font"
       :label="$t('Font').toString()"
       type="text"
-      :input-values="form.options.font"
+      :has-multiple-values="hasMultipleValues"
     >
       <a target="_blank" :href="fontSearchUrl">{{ $t("Search") }}</a>
     </form-input-row>
     <form-color-input-row
+      v-model="bgColor"
       option-name="bgColor"
-      :input-values="form.options.bgColor"
+      :has-multiple-values="hasMultipleValues"
       :label="$t('Background color').toString()"
     />
     <form-color-input-row
-      :input-values="form.options.fgColor"
+      v-model="fgColor"
+      :has-multiple-values="hasMultipleValues"
       option-name="fgColor"
       :label="$t('Foreground color').toString()"
     />
     <form-input-row
+      v-model="rotation"
       option-name="rotation"
       :label="
         $t('Rotation : {rotation}°', {
-          rotation: form.options.rotation[0],
+          rotation,
         }).toString()
       "
       type="range"
       :min="0"
       :max="270"
       :range-step="90"
-      :input-values="form.options.rotation"
+      :has-multiple-values="hasMultipleValues"
     />
     <b-button
       size="sm"
@@ -105,43 +110,47 @@ import { editingStep } from "~/stores/editingStep";
 import { step } from "~/stores/step";
 import { ui } from "~/stores/ui";
 import { coa } from "~web/src/stores/coa";
-import type { RenderOrForm } from "./RenderOrForm";
 
 const issuecode = inject<string>("issuecode");
 if (!issuecode) {
   throw new Error("issuecode not provided");
 }
 
-const options = withDefaults(
-  defineProps<
-    RenderOrForm<{
-      x: number;
-      y: number;
-      width: number | null;
-      height: number | null;
-      rotation: number;
-      fgColor: string;
-      bgColor: string;
-      font: string;
-      text: string;
-      internalWidth: number;
-      heightCompression?: number;
-      widthCompression?: number;
-    }>
-  >(),
-  {
-    x: -25,
-    y: 50,
-    width: null,
-    height: null,
-    rotation: 270,
-    fgColor: "#000000",
-    bgColor: "#ffffff",
-    font: "redrooster/block-gothic-rr/demi-extra-condensed",
-    text: "Le journal de mickey",
-    internalWidth: 700,
-  },
-);
+const { stepNumber = undefined, hasMultipleValues = false } = defineProps<{
+  stepNumber?: number;
+  hasMultipleValues?: boolean;
+}>();
+
+const isForm = computed(() => stepNumber !== undefined);
+
+const x = defineModel<number>({ default: -25 });
+const y = defineModel<number>({ default: 50 });
+const width = defineModel<number | null>({ default: null });
+const height = defineModel<number | null>({ default: null });
+const rotation = defineModel<number>({ default: 270 });
+const fgColor = defineModel<string>({ default: "#000000" });
+const bgColor = defineModel<string>({ default: "#ffffff" });
+const font = defineModel<string>({
+  default: "redrooster/block-gothic-rr/demi-extra-condensed",
+});
+const text = defineModel<string>({ default: "Le journal de mickey" });
+const internalWidth = defineModel<number>({ default: 700 });
+const heightCompression = defineModel<number | undefined>({
+  default: undefined,
+});
+const widthCompression = defineModel<number | undefined>({
+  default: undefined,
+});
+
+const options = computed(() => ({
+  x: x.value,
+  y: y.value,
+  width: width.value,
+  height: height.value,
+  rotation: rotation.value,
+  heightCompression: heightCompression.value,
+  widthCompression: widthCompression.value,
+}));
 
 const textImage = ref<{
   base64?: string | null;
@@ -172,14 +181,14 @@ const issuenumber = computed(
 const { issuecodes: editingIssuecodes } = storeToRefs(editingStep());
 
 const resetPositionAndSize = () => {
-  if (!options.form) {
+  if (stepNumber === undefined) {
     return;
   }
   for (const issuecode of editingIssuecodes.value) {
     const issueDimensions = getFilteredDimensions({
       issuecodes: [issuecode],
     })[0];
-    const aspectRatio = options.form.height[0]! / options.form.width[0]!;
+    const aspectRatio = height.value! / width.value!;
     setOptionValues(
       {
         x: 0,
@@ -189,22 +198,23 @@ const resetPositionAndSize = () => {
       },
       {
         issuecodes: [issuecode],
-        stepNumber: options.form.stepNumber,
+        stepNumber,
       },
     );
   }
 };
 
-if (!options.form) {
+const { image, loadImage } = useBase64Legacy();
+
+if (!isForm.value) {
   const effectiveText = computed(() =>
     resolveIssueNumberTemplate(
-      options.text,
-      resolveIssueNumberPartTemplate(options.text, issuenumber.value),
+      text.value,
+      resolveIssueNumberPartTemplate(text.value, issuenumber.value),
     ),
   );
 
   const { width: edgeWidth, enableDragResize } = useStepOptions();
-  const { image, loadImage } = useBase64Legacy();
 
   watch(
     textImage,
@@ -212,7 +222,7 @@ if (!options.form) {
       if (newValue) {
         loadImage(textImage.value!.url, (img) => {
           enableDragResize(img, {
-            coords: () => ({ x: options.x, y: options.y }),
+            coords: () => ({ x: x.value, y: y.value }),
           });
         });
       }
@@ -228,10 +238,10 @@ if (!options.form) {
           () => imageRef.value,
           () => {
             enableDragResize(imageRef.value!, {
-              coords: () => ({ x: options.x, y: options.y }),
+              coords: () => ({ x: x.value, y: y.value }),
               onresizemove: ({ rect }) => {
                 let { width, height } = rect;
-                const isVertical = [90, 270].includes(options.rotation);
+                const isVertical = [90, 270].includes(rotation.value);
                 if (isVertical) {
                   [width, height] = [height, width];
                 }
@@ -247,10 +257,10 @@ if (!options.form) {
 
                 // Correct coordinates due to rotation center moving after resize
                 if (isVertical) {
-                  newOptions.y = options.y - (newOptions.height - height) / 2;
-                  newOptions.x = options.x - (newOptions.width - width) / 2;
+                  newOptions.y = y.value - (newOptions.height - height) / 2;
+                  newOptions.x = x.value - (newOptions.width - width) / 2;
                 }
-                setOptionValues(options);
+                setOptionValues(newOptions);
               },
             });
             applyTextImageDimensions();
@@ -265,36 +275,21 @@ if (!options.form) {
     },
   );
 
-  watch(
-    () => options.fgColor,
-    async () => {
-      await refreshPreview();
-    },
-  );
-  watch(
-    () => options.bgColor,
-    async () => {
-      await refreshPreview();
-    },
-  );
-  watch(
-    () => options.internalWidth,
-    async () => {
-      await refreshPreview();
-    },
-  );
-  watch(
-    () => options.text,
-    async () => {
-      await refreshPreview();
-    },
-  );
-  watch(
-    () => options.font,
-    async () => {
-      await refreshPreview();
-    },
-  );
+  watch(fgColor, async () => {
+    await refreshPreview();
+  });
+  watch(bgColor, async () => {
+    await refreshPreview();
+  });
+  watch(internalWidth, async () => {
+    await refreshPreview();
+  });
+  watch(text, async () => {
+    await refreshPreview();
+  });
+  watch(font, async () => {
+    await refreshPreview();
+  });
 
   const refreshPreview = async () => {
     if (JSON.stringify(textImageOptions.value) === JSON.stringify(options)) {
@@ -303,10 +298,10 @@ if (!options.form) {
     textImageOptions.value = { ...options };
 
     const textData = await textEvents.getText({
-      color: options.fgColor.replace("#", ""),
-      colorBackground: options.bgColor.replace("#", ""),
-      width: Math.round(options.internalWidth * 100) / 100,
-      font: options.font,
+      color: fgColor.value.replace("#", ""),
+      colorBackground: bgColor.value.replace("#", ""),
+      width: Math.round(internalWidth.value * 100) / 100,
+      font: font.value,
       text: effectiveText.value,
     });
     if ("results" in textData) {
@@ -336,24 +331,24 @@ if (!options.form) {
   const applyTextImageDimensions = () => {
     const naturalAspectRatio =
       textImage.value!.height! / textImage.value!.width!;
-    const newOptions = { ...options };
-    if (options.height === null) {
+    const newOptions = { ...options.value };
+    if (height.value === null) {
       // By default, with a 270° rotation,
       // the text shouldn't be larger than the width of the edge
       // noinspection JSSuspiciousNameCombination
       newOptions.height = 0.8 * edgeWidth.value;
       newOptions.width = newOptions.height / naturalAspectRatio;
-    } else if (options.heightCompression && options.widthCompression) {
-      if (options.rotation === 90 || options.rotation === 270) {
-        newOptions.height = options.widthCompression * edgeWidth.value;
+    } else if (heightCompression.value && widthCompression.value) {
+      if (rotation.value === 90 || rotation.value === 270) {
+        newOptions.height = widthCompression.value * edgeWidth.value;
         newOptions.width =
-          (options.heightCompression * edgeWidth.value) / naturalAspectRatio;
-        newOptions.x -= newOptions.width / 2 - options.height / 2;
+          (heightCompression.value * edgeWidth.value) / naturalAspectRatio;
+        newOptions.x -= newOptions.width / 2 - options.value.height! / 2;
         newOptions.y += newOptions.width / 2;
       } else {
         newOptions.height =
-          options.heightCompression * edgeWidth.value * naturalAspectRatio;
-        newOptions.width = options.widthCompression * edgeWidth.value;
+          heightCompression.value * edgeWidth.value * naturalAspectRatio;
+        newOptions.width = widthCompression.value * edgeWidth.value;
       }
       newOptions.heightCompression = undefined;
       newOptions.widthCompression = undefined;

@@ -7,13 +7,13 @@ on:
   workflow_dispatch:
   push:
     branches:
-      - "refactor-socket-services"
+      - "master"
 jobs:
   build:
     runs-on: ubuntu-latest
     environment: production
     env:
-      REMOTE_ROOT: workspace/DucksManager2
+      REMOTE_ROOT: apps/dm
       PRODUCTION_SSH_HOST: ${{ secrets.PRODUCTION_SSH_HOST }}
       PRODUCTION_SSH_USER: ${{ secrets.PRODUCTION_SSH_USER }}
       PRODUCTION_SSH_KEY: ${{ secrets.PRODUCTION_SSH_KEY }}

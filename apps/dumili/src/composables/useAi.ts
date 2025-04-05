@@ -15,7 +15,7 @@ export default () => {
 
   const runCoverSearch = async () => {
     const firstEntry = indexation.value!.entries[0];
-    if (firstEntry?.acceptedStoryKind?.kind === COVER) {
+    if (firstEntry?.acceptedStoryKind?.storyKindRows.kind === COVER) {
       console.info(
         "La première page est une couverture, on va chercher si on la détecte parmi les résultats de la recherche par image...",
       );

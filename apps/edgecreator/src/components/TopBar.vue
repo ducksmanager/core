@@ -177,8 +177,9 @@
           <b-modal v-model="showPhotoModal" ok-only>
             <gallery
               v-model:items="mainStore.publicationPhotosForGallery"
+              :model-value="photoUrls?.[issuecodesToEdit[0]]"
               image-type="photos"
-              @change="addPhoto"
+              @update:model-value="setPhotoUrl"
             />
           </b-modal> </b-button
         >&nbsp;<save-model-button />&nbsp;<save-model-button
@@ -256,6 +257,8 @@ const uiStore = ui();
 const mainStore = main();
 
 const { showPreviousEdge, showNextEdge } = surroundingEdge();
+const { overwriteModel } = useModelLoad();
+const { loadSvgFromString } = useSvgUtils();
 const { dimensions: editingDimensions } = storeToRefs(editingStep());
 const { hasRole } = webStores.collection();
 const stepStore = step();
@@ -267,6 +270,8 @@ const {
   edgeIssuecodesAfter,
   edgeIssuecodesBefore,
 } = storeToRefs(mainStore);
+
+const { issuecodes: issuecodesToEdit } = storeToRefs(editingStep());
 
 interface ModelToClone {
   editMode: string;
@@ -297,17 +302,19 @@ const isEditingMultiple = computed(
   () => mainStore.isRange || issuecodes.value.length > 1,
 );
 
-const addPhoto = (src: string) => {
-  photoUrls.value[issuecodes.value[0]] = src;
+const setPhotoUrl = (photoUrl: string) => {
+  for (const issuecode of issuecodesToEdit.value) {
+    photoUrls.value[issuecode] = photoUrl;
+  }
 };
 
-const clone = () => {
-  for (const issuecode of issuecodes.value.filter(
+const clone = async () => {
+  for (const issuecode of issuecodesToEdit.value.filter(
     (issuecode) => issuecode !== modelToBeCloned.value!.issuecode,
   )) {
-    stepStore.copyDimensionsAndSteps(
+    overwriteModel(
       issuecode,
-      modelToBeCloned.value!.issuecode,
+      await loadSvgFromString(modelToBeCloned.value!.issuecode, true),
     );
   }
 };
@@ -318,7 +325,7 @@ watch(
     const { width, height } = JSON.parse(dimensions);
     stepStore.setDimensions(
       { width, height },
-      { issuecodes: issuecodes.value },
+      { issuecodes: issuecodesToEdit.value },
     );
   },
 );

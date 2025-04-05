@@ -14,7 +14,7 @@
     :status="entry.storySuggestions.length ? 'success' : 'idle'"
     @toggled="overlay = $event ? { type: 'ocr', entryId: entry.id } : undefined"
   >
-    <template v-if="entry.acceptedStoryKind?.kind === STORY">
+    <template v-if="entry.acceptedStoryKind?.storyKindRows.kind === STORY">
       <template v-if="firstPageOcrResult">
         <h4>{{ $t("Résultats OCR pour la première case") }}</h4>
         <b-table
