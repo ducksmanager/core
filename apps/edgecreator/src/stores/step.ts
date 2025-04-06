@@ -163,37 +163,24 @@ export const step = defineStore("step", () => {
         })),
       ];
     },
-    setSteps = (issuecode: string, issueSteps: StepOption[]) => {
-      checkSameComponentsAsCompletedEdge(issuecode, issueSteps);
+    setSteps = (issuecode: string, stepOptions: StepOption[]) => {
+      checkSameComponentsAsFirstEdge(issuecode, stepOptions);
       // nextTick().then(() => {
-      setOptionValues(issueSteps, {
+      setOptionValues(stepOptions, {
         issuecodes: [issuecode],
       });
       // });
     },
-    checkSameComponentsAsCompletedEdge = (
+    checkSameComponentsAsFirstEdge = (
       issuecode: string,
       issueSteps: StepOption[],
     ) => {
-      let completedIssuecode: string | null = null;
-      for (
-        let stepNumber = 0;
-        stepNumber <= maxStepNumber.value;
-        stepNumber++
-      ) {
-        const stepOptions = getFilteredOptions({
-          stepNumbers: [stepNumber],
-          issuecodes: [issuecode],
-        });
-        if (stepOptions.length) {
-          completedIssuecode = issuecode;
-        }
-      }
-      if (completedIssuecode === null) {
+      const firstIssuecode = main().issuecodes[0];
+      if (firstIssuecode === issuecode) {
         return;
       }
-      const completedIssueSteps = getFilteredOptions({
-        issuecodes: [issuecode],
+      const firstIssueSteps = getFilteredOptions({
+        issuecodes: [firstIssuecode],
       });
 
       const getComponents = (steps: StepOption[]) =>
@@ -201,24 +188,22 @@ export const step = defineStore("step", () => {
           .filter(({ optionName }) => optionName === "component")
           .map(({ optionValue }) => optionValue)
           .join("+");
-      const previousIssueComponents = getComponents(
-        Object.values(completedIssueSteps),
+
+      const firstIssueComponents = getComponents(
+        Object.values(firstIssueSteps),
       );
       const currentIssueComponents = getComponents(issueSteps);
-      if (
-        completedIssuecode !== issuecode &&
-        previousIssueComponents !== currentIssueComponents
-      ) {
+      if (firstIssueComponents !== currentIssueComponents) {
         throw new Error(
           useI18n()
             .t(
-              `Issue codes {completedIssuecode} and {issuecode} ` +
+              `Issue codes {firstIssuecode} and {issuecode} ` +
                 `don't have the same components` +
-                `: {completedIssueSteps} vs {currentIssueComponents}`,
+                `: {firstIssueComponents} vs {currentIssueComponents}`,
               {
-                completedIssuecode,
+                firstIssuecode: firstIssuecode,
                 issuecode,
-                previousIssueComponents,
+                firstIssueComponents,
                 currentIssueComponents,
               },
             )
@@ -287,7 +272,7 @@ export const step = defineStore("step", () => {
     removeOptionValues,
     setDimensions,
     setSteps,
-    checkSameComponentsAsCompletedEdge,
+    checkSameComponentsAsCompletedEdge: checkSameComponentsAsFirstEdge,
     addStep,
     removeStep,
     duplicateStep,

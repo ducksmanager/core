@@ -61,7 +61,7 @@
   "Insert a text": "Ajouter un texte",
   "Insert an image": "Ajouter une image",
   "Invalid file type: {mimetype}, the following types are allowed: {allowedMimeTypes}": "Type de fichier invalide : {mimetype}, les types suivants sont autorisés : {allowedMimeTypes}",
-  "Issue numbers {completedIssuenumber} and {issuenumber} don't have the same components: {completedIssueSteps} vs {currentIssueComponents}": "Les tranches des numéros {completedIssuenumber} et {issuenumber} ne contiennent pas les mêmes composants : {completedIssueSteps} vs {currentIssueComponents}",
+  "Issue codes {firstIssuecode} and {issuecode} don't have the same components: {firstIssueComponents} vs {currentIssueComponents}": "Les modèles des numéros {firstIssuecode} et {issuecode} ne contiennent pas les mêmes composants : {firstIssueComponents} vs {currentIssueComponents}",
   "Loading...": "Chargement...",
   "Login": "Se connecter",
   "Move and resize the staples directly on the edge.": "Déplacez et redimensionnez les agrafes directement sur la tranche.",

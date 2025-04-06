@@ -32,27 +32,29 @@ export default () => {
     );
   };
   const loadStepsFromSvg = (issuecode: string, svgChildNodes: SVGElement[]) => {
-    svgChildNodes
-      .filter(({ nodeName }) => nodeName === "g")
-      .forEach((group, stepNumber) => {
-        stepStore.setOptionValues(
-          [
-            {
-              optionName: "component",
-              optionValue: group.getAttribute("class")!,
-            },
-            ...optionObjectToArray(
-              JSON.parse(
-                group.getElementsByTagName("metadata")[0].textContent!,
-              ) as Record<string, OptionValue>,
-            ),
-          ],
+    stepStore.setSteps(
+      issuecode,
+      svgChildNodes
+        .filter(({ nodeName }) => nodeName === "g")
+        .flatMap((group, stepNumber) => [
           {
+            optionName: "component",
+            optionValue: group.getAttribute("class")!,
             stepNumber,
-            issuecodes: [issuecode],
+            issuecode,
           },
-        );
-      });
+          ...optionObjectToArray(
+            JSON.parse(
+              group.getElementsByTagName("metadata")[0].textContent!,
+            ) as Record<string, OptionValue>,
+          ).map(({ optionName, optionValue }) => ({
+            optionName,
+            optionValue,
+            stepNumber,
+            issuecode,
+          })),
+        ]),
+    );
   };
 
   const setPhotoUrlsFromSvg = (
