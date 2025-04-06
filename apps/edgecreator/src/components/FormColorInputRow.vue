@@ -99,7 +99,6 @@ import type { Options } from "~/stores/step";
 import { step } from "~/stores/step";
 import { ui } from "~/stores/ui";
 
-
 const {
   label = null,
   canBeTransparent = false,

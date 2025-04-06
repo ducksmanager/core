@@ -26,7 +26,7 @@
           @click.stop="emit('swap-steps', stepNumber - 1)"
         />
         <i-bi-eye-slash-fill
-          v-if="!options.visible"
+          v-if="'visible' in options && !options.visible"
           :title="$t('Click to show')"
           @click.stop="
             setOptionValues({ visible: true }, { stepNumber, issuecodes })

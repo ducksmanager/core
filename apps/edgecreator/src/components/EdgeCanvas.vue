@@ -64,10 +64,8 @@
       <component
         :is="supportedRenders[stepComponent].component"
         v-show="visibleSteps[stepNumber]"
-        v-bind="
-          getStepOptions(stepNumber, false).groupBy('optionName', 'optionValue') as RenderProps<typeof stepComponent>
-        "
-        v-on="onOptionUpdate"
+        v-bind="getStepOptionsObject(stepNumber)"
+        v-on="onOptionUpdate(stepNumber)"
       />
     </g>
     <rect
@@ -89,6 +87,7 @@ import { step, type StepOption } from "~/stores/step";
 import { ui } from "~/stores/ui";
 import type { ModelContributor } from "~types/ModelContributor";
 import { renders } from "~/stores/renders";
+import type { OptionValue } from "~/types/OptionValue";
 
 const { supportedRenders } = renders();
 
@@ -148,6 +147,12 @@ const getStepOptions = (stepNumber: number, withComponentOption = true) =>
     ({ optionName }) => withComponentOption || optionName !== "component",
   );
 
+const getStepOptionsObject = (stepNumber: number) =>
+  getStepOptions(stepNumber, false).groupBy(
+    "optionName",
+    "optionValue",
+  ) as RenderProps<(typeof stepComponentNames.value)[number]>;
+
 const borderWidth = ref(1);
 
 const canvas = shallowRef<SVGElement>();
@@ -172,13 +177,23 @@ const replaceEditingIssuecodeIfNotAlreadyEditing = (issuecode: string) => {
   }
 };
 
-const onOptionUpdate = computed(() => ({
-  "update:yDistanceFromCenter": (yDistanceFromCenter: number) => {
-    step().setOptionValues({
-      yDistanceFromCenter,
-    });
-  },
-}));
+const onOptionUpdate = (stepNumber: number) =>
+  optionsPerStepNumber.value[stepNumber].reduce(
+    (acc, { optionName }) => ({
+      ...acc,
+      [`update:${optionName}`]: (optionValue: OptionValue) => {
+        step().setOptionValues(
+          {
+            [optionName]: optionValue,
+          },
+          {
+            stepNumber,
+          },
+        );
+      },
+    }),
+    {} as Record<string, (optionValue: OptionValue) => void>,
+  );
 
 provide("issuecode", issuecode);
 </script>
