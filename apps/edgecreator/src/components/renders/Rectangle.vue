@@ -4,14 +4,14 @@
       v-model="fill"
       option-name="fill"
       :label="$t('Fill color').toString()"
-      :has-multiple-values="hasMultipleValues"
+      :is-multiple="isMultiple"
       can-be-transparent
     />
     <form-color-input-row
       v-model="stroke"
       option-name="stroke"
       :label="$t('Stroke color').toString()"
-      :has-multiple-values="hasMultipleValues"
+      :is-multiple="isMultiple"
       can-be-transparent
     />
   </template>
@@ -25,19 +25,21 @@
 <script setup lang="ts">
 const rect = ref<SVGRectElement>();
 
-const { stepNumber = undefined, hasMultipleValues = false } = defineProps<{
+const { stepNumber = undefined, isMultiple = false } = defineProps<{
   stepNumber?: number;
-  hasMultipleValues?: boolean;
+  isMultiple?: boolean;
 }>();
+
+provide("stepNumber", stepNumber);
 
 const isForm = computed(() => stepNumber !== undefined);
 
-const x = defineModel<number>({ default: 5 });
-const y = defineModel<number>({ default: 5 });
-const width = defineModel<number>({ default: 15 });
-const height = defineModel<number>({ default: 15 });
-const fill = defineModel<string>({ default: "#ff0000" });
-const stroke = defineModel<string>({ default: "transparent" });
+const x = defineModel<number>("x", { default: 5 });
+const y = defineModel<number>("y", { default: 5 });
+const width = defineModel<number>("width", { default: 15 });
+const height = defineModel<number>("height", { default: 15 });
+const fill = defineModel<string>("fill", { default: "#ff0000" });
+const stroke = defineModel<string>("stroke", { default: "transparent" });
 
 onMounted(() => {
   if (!isForm.value) {

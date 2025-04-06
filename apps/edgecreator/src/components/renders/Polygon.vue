@@ -4,7 +4,7 @@
     v-model="fill"
     option-name="fill"
     :label="$t('Fill color').toString()"
-    :has-multiple-values="hasMultipleValues"
+    :is-multiple="isMultiple"
   />
   <svg v-else>
     <polygon ref="polygon" :points="pointsAsString(pointsArray)" :fill="fill">
@@ -22,14 +22,16 @@ const polygon = ref<SVGPolygonElement>();
 const pointsAsString = (points: [number, number][]) =>
   points.map((point) => point.join(",")).join(";");
 
-const { stepNumber = undefined, hasMultipleValues = false } = defineProps<{
+const { stepNumber = undefined, isMultiple = false } = defineProps<{
   stepNumber?: number;
-  hasMultipleValues?: boolean;
+  isMultiple?: boolean;
 }>();
+
+provide("stepNumber", stepNumber);
 
 const isForm = computed(() => stepNumber !== undefined);
 
-const points = defineModel<string>({
+const points = defineModel<string>("points", {
   default: [
     [1, 5],
     [4, 25],
@@ -39,7 +41,7 @@ const points = defineModel<string>({
     .map((point) => point.join(","))
     .join(";"),
 });
-const fill = defineModel<string>({ default: "#000000" });
+const fill = defineModel<string>("fill", { default: "#000000" });
 
 const pointsArray = computed((): [number, number][] =>
   isForm.value

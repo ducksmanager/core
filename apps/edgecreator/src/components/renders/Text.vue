@@ -5,7 +5,7 @@
       option-name="text"
       :label="$t('Text').toString()"
       type="text"
-      :has-multiple-values="hasMultipleValues"
+      :is-multiple="isMultiple"
     >
       <popover triggers="hover" placement="left">
         <i-bi-info-circle-fill variant="secondary" />
@@ -44,19 +44,19 @@
       option-name="font"
       :label="$t('Font').toString()"
       type="text"
-      :has-multiple-values="hasMultipleValues"
+      :is-multiple="isMultiple"
     >
       <a target="_blank" :href="fontSearchUrl">{{ $t("Search") }}</a>
     </form-input-row>
     <form-color-input-row
       v-model="bgColor"
       option-name="bgColor"
-      :has-multiple-values="hasMultipleValues"
+      :is-multiple="isMultiple"
       :label="$t('Background color').toString()"
     />
     <form-color-input-row
       v-model="fgColor"
-      :has-multiple-values="hasMultipleValues"
+      :is-multiple="isMultiple"
       option-name="fgColor"
       :label="$t('Foreground color').toString()"
     />
@@ -72,7 +72,7 @@
       :min="0"
       :max="270"
       :range-step="90"
-      :has-multiple-values="hasMultipleValues"
+      :is-multiple="isMultiple"
     />
     <b-button
       size="sm"
@@ -116,29 +116,31 @@ if (!issuecode) {
   throw new Error("issuecode not provided");
 }
 
-const { stepNumber = undefined, hasMultipleValues = false } = defineProps<{
+const { stepNumber = undefined, isMultiple = false } = defineProps<{
   stepNumber?: number;
-  hasMultipleValues?: boolean;
+  isMultiple?: boolean;
 }>();
+
+provide("stepNumber", stepNumber);
 
 const isForm = computed(() => stepNumber !== undefined);
 
-const x = defineModel<number>({ default: -25 });
-const y = defineModel<number>({ default: 50 });
-const width = defineModel<number | null>({ default: null });
-const height = defineModel<number | null>({ default: null });
-const rotation = defineModel<number>({ default: 270 });
-const fgColor = defineModel<string>({ default: "#000000" });
-const bgColor = defineModel<string>({ default: "#ffffff" });
-const font = defineModel<string>({
+const x = defineModel<number>("x", { default: -25 });
+const y = defineModel<number>("y", { default: 50 });
+const width = defineModel<number | null>("width", { default: null });
+const height = defineModel<number | null>("height", { default: null });
+const rotation = defineModel<number>("rotation", { default: 270 });
+const fgColor = defineModel<string>("fgColor", { default: "#000000" });
+const bgColor = defineModel<string>("bgColor", { default: "#ffffff" });
+const font = defineModel<string>("font", {
   default: "redrooster/block-gothic-rr/demi-extra-condensed",
 });
-const text = defineModel<string>({ default: "Le journal de mickey" });
-const internalWidth = defineModel<number>({ default: 700 });
-const heightCompression = defineModel<number | undefined>({
+const text = defineModel<string>("text", { default: "Le journal de mickey" });
+const internalWidth = defineModel<number>("internalWidth", { default: 700 });
+const heightCompression = defineModel<number | undefined>("heightCompression", {
   default: undefined,
 });
-const widthCompression = defineModel<number | undefined>({
+const widthCompression = defineModel<number | undefined>("widthCompression", {
   default: undefined,
 });
 

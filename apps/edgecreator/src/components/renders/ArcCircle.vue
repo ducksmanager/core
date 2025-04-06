@@ -4,14 +4,14 @@
       v-model="fill"
       option-name="fill"
       :label="$t(ucFirst(`fill color`)).toString()"
-      :has-multiple-values="hasMultipleValues"
+      :is-multiple="isMultiple"
       can-be-transparent
     />
     <form-color-input-row
       v-model="stroke"
       option-name="stroke"
       :label="$t(ucFirst(`stroke color`)).toString()"
-      :has-multiple-values="hasMultipleValues"
+      :is-multiple="isMultiple"
       can-be-transparent
     />
   </template>
@@ -28,17 +28,19 @@ import { ui } from "~/stores/ui";
 
 const { zoom } = storeToRefs(ui());
 
-const { stepNumber = undefined, hasMultipleValues = false } = defineProps<{
+const { stepNumber = undefined, isMultiple = false } = defineProps<{
   stepNumber?: number;
-  hasMultipleValues?: boolean;
+  isMultiple?: boolean;
 }>();
 
-const cx = defineModel<number>({ default: 5 });
-const cy = defineModel<number>({ default: 5 });
-const rx = defineModel<number>({ default: 10 });
-const ry = defineModel<number>({ default: 10 });
-const fill = defineModel<string>({ default: "#000000" });
-const stroke = defineModel<string>({ default: "#ff0000" });
+provide("stepNumber", stepNumber);
+
+const cx = defineModel<number>("cx", { default: 5 });
+const cy = defineModel<number>("cy", { default: 5 });
+const rx = defineModel<number>("rx", { default: 10 });
+const ry = defineModel<number>("ry", { default: 10 });
+const fill = defineModel<string>("fill", { default: "#000000" });
+const stroke = defineModel<string>("stroke", { default: "#ff0000" });
 
 const isForm = computed(() => stepNumber !== undefined);
 

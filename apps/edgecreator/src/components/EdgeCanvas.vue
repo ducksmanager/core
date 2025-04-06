@@ -67,7 +67,7 @@
         v-bind="
           getStepOptions(stepNumber, false).groupBy('optionName', 'optionValue') as RenderProps<typeof stepComponent>
         "
-        :step-number="stepNumber"
+        v-on="onOptionUpdate"
       />
     </g>
     <rect
@@ -85,7 +85,7 @@
 <script setup lang="ts">
 import { editingStep } from "~/stores/editingStep";
 import { hoveredStep } from "~/stores/hoveredStep";
-import type { StepOption } from "~/stores/step";
+import { step, type StepOption } from "~/stores/step";
 import { ui } from "~/stores/ui";
 import type { ModelContributor } from "~types/ModelContributor";
 import { renders } from "~/stores/renders";
@@ -150,7 +150,7 @@ const getStepOptions = (stepNumber: number, withComponentOption = true) =>
 
 const borderWidth = ref(1);
 
-const canvas = ref<HTMLElement>();
+const canvas = shallowRef<SVGElement>();
 
 const hoveredStepStore = hoveredStep();
 const editingStepStore = editingStep();
@@ -171,6 +171,14 @@ const replaceEditingIssuecodeIfNotAlreadyEditing = (issuecode: string) => {
     editingStepStore.replaceIssuecode(issuecode);
   }
 };
+
+const onOptionUpdate = computed(() => ({
+  "update:yDistanceFromCenter": (yDistanceFromCenter: number) => {
+    step().setOptionValues({
+      yDistanceFromCenter,
+    });
+  },
+}));
 
 provide("issuecode", issuecode);
 </script>

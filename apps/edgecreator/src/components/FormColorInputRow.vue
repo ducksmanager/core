@@ -99,17 +99,18 @@ import type { Options } from "~/stores/step";
 import { step } from "~/stores/step";
 import { ui } from "~/stores/ui";
 
+
 const {
   label = null,
   canBeTransparent = false,
   optionName,
-  stepNumber,
 } = defineProps<{
   optionName: string;
   label?: string | null;
-  stepNumber: number;
   canBeTransparent?: false | null;
 }>();
+
+const stepNumber = inject<number>("stepNumber");
 
 const inputValue = defineModel<string>();
 

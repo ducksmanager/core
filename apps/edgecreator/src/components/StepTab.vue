@@ -26,7 +26,7 @@
           @click.stop="emit('swap-steps', stepNumber - 1)"
         />
         <i-bi-eye-slash-fill
-          v-if="!inputValues.visible"
+          v-if="!options.visible"
           :title="$t('Click to show')"
           @click.stop="
             setOptionValues({ visible: true }, { stepNumber, issuecodes })
@@ -58,7 +58,7 @@
     <b-card-text>
       <component
         :is="supportedRenders[componentName].component"
-        :form="{ ...inputValues, stepNumber }"
+        v-bind="{ ...optionsWithoutComponent, stepNumber }"
       />
     </b-card-text>
   </b-tab>
@@ -86,7 +86,7 @@ const { setOptionValues } = step();
 const { supportedRenders } = renders();
 const { issuecodes } = storeToRefs(main());
 
-const inputValues = computed(() =>
+const options = computed(() =>
   allStepOptions.value
     .filter(
       ({ issuecode, stepNumber: thisStepNumber }) =>
@@ -96,8 +96,14 @@ const inputValues = computed(() =>
     .groupBy("optionName", "optionValue"),
 );
 
+const optionsWithoutComponent = computed(() =>
+  Object.fromEntries(
+    Object.entries(options.value).filter(([key]) => key !== "component"),
+  ),
+);
+
 const componentName = computed(
-  () => inputValues.value["component"] as keyof typeof supportedRenders,
+  () => options.value["component"] as keyof typeof supportedRenders,
 );
 </script>
 

@@ -7,7 +7,7 @@
       <div class="w-100">
         <slot name="prefix" />
         <confirm-edit-multiple-values
-          :has-multiple-values="hasMultipleValues"
+          :is-multiple="isMultiple"
           @set-to-first-value="onChangeValue(inputValue)"
         >
           <b-form-select
@@ -47,7 +47,7 @@ import type { OptionValue } from "~/types/OptionValue";
 type PossibleInputValueType = string | number;
 const {
   disabled = undefined,
-  hasMultipleValues,
+  isMultiple,
   listId = undefined,
   max = undefined,
   min = undefined,
@@ -57,7 +57,7 @@ const {
   selectOptions = undefined,
 } = defineProps<{
   disabled?: boolean;
-  hasMultipleValues: boolean;
+  isMultiple: boolean;
   label: string;
   listId?: string;
   max?: number;
@@ -84,7 +84,7 @@ const onBlur = () => {
 watch(inputValue, (newValue: PossibleInputValueType | undefined) => {
   if (
     !shouldWaitForBlurToUpdate.value &&
-    !hasMultipleValues &&
+    !isMultiple &&
     newValue !== undefined
   ) {
     onChangeValue(newValue);

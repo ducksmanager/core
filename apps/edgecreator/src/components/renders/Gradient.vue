@@ -8,7 +8,7 @@
       :label="
         $t(optionName === 'colorStart' ? 'Start color' : 'End color').toString()
       "
-      :has-multiple-values="hasMultipleValues"
+      :is-multiple="isMultiple"
     />
 
     <form-input-row
@@ -17,7 +17,7 @@
       option-name="direction"
       :label="$t('Direction').toString()"
       :select-options="[$t('Vertical'), $t('Horizontal')]"
-      :has-multiple-values="hasMultipleValues"
+      :is-multiple="isMultiple"
     />
   </template>
   <svg v-else>
@@ -54,20 +54,22 @@
 <script setup lang="ts">
 const rect = ref<SVGRectElement>();
 
-const { stepNumber = undefined, hasMultipleValues = false } = defineProps<{
+const { stepNumber = undefined, isMultiple = false } = defineProps<{
   stepNumber?: number;
-  hasMultipleValues?: boolean;
+  isMultiple?: boolean;
 }>();
+
+provide("stepNumber", stepNumber);
 
 const isForm = computed(() => stepNumber !== undefined);
 
-const x = defineModel<number>({ default: 3 });
-const y = defineModel<number>({ default: 3 });
-const width = defineModel<number>({ default: 10 });
-const height = defineModel<number>({ default: 80 });
-const colorStart = defineModel<string>({ default: "#D01721" });
-const colorEnd = defineModel<string>({ default: "#0000FF" });
-const direction = defineModel<"Vertical" | "Horizontal">({
+const x = defineModel<number>("x", { default: 3 });
+const y = defineModel<number>("y", { default: 3 });
+const width = defineModel<number>("width", { default: 10 });
+const height = defineModel<number>("height", { default: 80 });
+const colorStart = defineModel<string>("colorStart", { default: "#D01721" });
+const colorEnd = defineModel<string>("colorEnd", { default: "#0000FF" });
+const direction = defineModel<"Vertical" | "Horizontal">("direction", {
   default: "Vertical",
 });
 

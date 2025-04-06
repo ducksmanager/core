@@ -10,6 +10,7 @@
         v-bind="{
           ...(options as SVGAttributes),
           width: 0.5,
+          height,
           stroke: 'black',
 
           x: dimensions.width / 2 - 0.25,
@@ -22,6 +23,7 @@
         v-bind="{
           ...(options as SVGAttributes),
           width: 0.5,
+          height,
           stroke: 'black',
 
           x: dimensions.width / 2 - 0.25,
@@ -42,23 +44,21 @@ const rect2 = ref<SVGRectElement>();
 
 const { stepNumber = undefined } = defineProps<{
   stepNumber?: number;
-  hasMultipleValues?: boolean;
 }>();
+
+provide("stepNumber", stepNumber);
 
 const isForm = computed(() => stepNumber !== undefined);
 
-const yDistanceFromCenter = defineModel<number>({ default: 5 });
-const height = defineModel<number>({ default: 15 });
-
-const issuecode = inject<string>("issuecode");
-if (!issuecode) {
-  throw new Error("issuecode not provided");
-}
+const yDistanceFromCenter = defineModel<number>("yDistanceFromCenter", {
+  default: 5,
+});
+const height = defineModel<number>("height", { default: 15 });
 
 const dimensions = computed(
   () =>
     step().getFilteredDimensions({
-      issuecodes: [issuecode],
+      issuecodes: [inject<string>("issuecode")!],
     })[0],
 );
 
@@ -69,7 +69,7 @@ const options = computed(() => {
   return {
     x: dimensions.value.width / 2 - 0.25,
     y1: dimensions.value.height / 2 - yDistanceFromCenter.value - height.value,
-    y2: useStepOptions().height.value / 2 + yDistanceFromCenter.value,
+    y2: height.value / 2 + yDistanceFromCenter.value,
   };
 });
 
@@ -82,18 +82,19 @@ const onmove = ({
   dy: number;
 }) => {
   if (!isForm.value) {
-    const { height: edgeHeight } = useStepOptions();
+    const edgeHeight = dimensions.value.height;
     const isStaple2 = rect2.value === currentTarget;
-    step().setOptionValues({
-      yDistanceFromCenter: Math.min(
-        Math.max(
-          height.value,
-          (yDistanceFromCenter.value ?? 0) +
-            ((isStaple2 ? 1 : -1) * dy) / ui().zoom,
-        ),
-        edgeHeight.value / 2 - height.value * 2,
-      ),
-    });
+    const newDistance =
+      (yDistanceFromCenter.value ?? 0) +
+      ((isStaple2 ? 1 : -1) * dy) / ui().zoom;
+
+    if (
+      // newDistance > height.value &&
+      newDistance <
+      edgeHeight / 2 - height.value * 2
+    ) {
+      yDistanceFromCenter.value = newDistance;
+    }
   }
 };
 

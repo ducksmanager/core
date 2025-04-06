@@ -4,7 +4,7 @@
     v-model="fill"
     option-name="fill"
     :label="$t('Fill color').toString()"
-    :has-multiple-values="hasMultipleValues"
+    :is-multiple="isMultiple"
   />
   <svg v-else>
     <rect
@@ -23,21 +23,42 @@
 
 <script setup lang="ts">
 import type { SVGAttributes } from "vue";
+import { step } from "~/stores/step";
 
-const { stepNumber = undefined, hasMultipleValues = false } = defineProps<{
+const { getFilteredDimensions } = step();
+
+const { stepNumber = undefined, isMultiple = false } = defineProps<{
   stepNumber?: number;
-  hasMultipleValues?: boolean;
+  isMultiple?: boolean;
 }>();
+
+provide("stepNumber", stepNumber);
 
 const isForm = computed(() => stepNumber !== undefined);
 
-const fill = defineModel<string>({ default: "#ff0000" });
+const fill = defineModel<string>("fill", { default: "#ff0000" });
 
 const width = ref();
 const height = ref();
-if (!isForm.value) {
-  const stepOptions = useStepOptions();
-  width.value = stepOptions.width;
-  height.value = stepOptions.height;
-}
+
+watch(
+  isForm,
+  (isForm) => {
+    if (!isForm) {
+      const issuecode = inject<string>("issuecode")!;
+      watch(
+        () =>
+          getFilteredDimensions({
+            issuecodes: [issuecode],
+          })[0],
+        (issueDimensions) => {
+          width.value = issueDimensions.width;
+          height.value = issueDimensions.height;
+        },
+        { immediate: true },
+      );
+    }
+  },
+  { immediate: true },
+);
 </script>

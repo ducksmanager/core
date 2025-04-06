@@ -222,7 +222,10 @@
             v-model="collapseDimensions"
             class="mt-2"
           >
-            <confirm-edit-multiple-values :values="uniqueDimensions">
+            <confirm-edit-multiple-values
+              :is-multiple="uniqueDimensions.length > 1"
+              @set-to-first-value="editingDimensions = [editingDimensions[0]]"
+            >
               <dimensions v-model="editingDimensions[0]" />
             </confirm-edit-multiple-values>
           </b-collapse>

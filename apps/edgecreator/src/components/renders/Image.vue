@@ -21,7 +21,7 @@
       :label="$t('Image').toString()"
       type="text"
       list-id="src-list"
-      :has-multiple-values="hasMultipleValues"
+      :is-multiple="isMultiple"
     >
       <gallery
         v-model:selected="src"
@@ -57,20 +57,22 @@ const { image: imageDetails, loadImage } = useBase64Legacy();
 const { issuecodes: editingIssuecodes } = storeToRefs(editingStep());
 const { setOptionValues, getFilteredDimensions } = step();
 
-const { stepNumber = undefined, hasMultipleValues = false } = defineProps<{
+const { stepNumber = undefined, isMultiple = false } = defineProps<{
   stepNumber?: number;
-  hasMultipleValues?: boolean;
+  isMultiple?: boolean;
 }>();
 
-const x = defineModel<number>({ default: 5 });
-const y = defineModel<number>({ default: 5 });
-const width = defineModel<number>({
+provide("stepNumber", stepNumber);
+
+const x = defineModel<number>("x", { default: 5 });
+const y = defineModel<number>("y", { default: 5 });
+const width = defineModel<number>("width", {
   default: 15,
 });
-const height = defineModel<number>({
+const height = defineModel<number>("height", {
   default: 15,
 });
-const src = defineModel<string>({
+const src = defineModel<string>("src", {
   default: "",
 });
 
