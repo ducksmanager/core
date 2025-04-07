@@ -18,7 +18,7 @@ import { getNextAvailableFile } from "../_upload_utils";
 
 const getEdgeCreatorServices = (token: string) =>
   new SocketClient(
-    process.env.DM_SOCKET_URL!,
+    process.env.DM_SOCKET_URL!
   ).addNamespace<EdgeCreatorServices>(namespaces.EDGECREATOR, {
     session: {
       getToken: () => Promise.resolve(token),
@@ -45,7 +45,7 @@ const calculateHash = (data: string) => {
 const _getFilenameUsagesInOtherModels = async (
   filename: string,
   currentIssuecode: string,
-  token: string,
+  token: string
 ) => {
   const issue = await prismaCoa.inducks_issue.findFirstOrThrow({
     where: { issuecode: currentIssuecode },
@@ -58,7 +58,7 @@ const _getFilenameUsagesInOtherModels = async (
 const storePhotoHash = async (
   filename: string,
   hash: string,
-  token: string,
+  token: string
 ) => {
   await getEdgeCreatorServices(token).createElementImage(hash, filename);
 };
@@ -68,7 +68,7 @@ const validateUpload = async (
   isEdgePhoto: boolean,
   issuecode: string,
   filePath: string,
-  token: string,
+  token: string
 ) => {
   const hash = calculateHash(filePath);
   if (isEdgePhoto) {
@@ -101,40 +101,42 @@ const validateUpload = async (
   return { hash };
 };
 
-const getTargetFilePath = async (
-  filename: string,
-  isMultipleEdgePhoto: boolean,
-  issuecode: string,
-  isEdgePhoto: boolean,
-) => {
-  filename = filename.normalize("NFD").replace(/[\u0300-\u036F]/g, "");
+const getTargetFilePath = async ({
+  fileName,
+  issuecode,
+  isEdgePhoto,
+}:
+  | {
+      issuecode: string;
+      fileName: string;
+      isEdgePhoto: false;
+    }
+  | {
+      issuecode: string;
+      fileName?: undefined;
+      isEdgePhoto: true;
+    }) => {
+  const { publicationcode, issuenumber } =
+    await prismaCoa.inducks_issue.findFirstOrThrow({
+      where: { issuecode },
+    });
+  const [countrycode, magazinecode] = publicationcode.split("/");
+  let filePath = `${getEdgesPath()}/${countrycode}`;
 
-  if (isMultipleEdgePhoto) {
-    return getNextAvailableFile(
-      `${getEdgesPath()}/tranches_multiples/photo.multiple`,
-      "jpg",
+  if (isEdgePhoto) {
+    filePath = getNextAvailableFile(
+      `${filePath}/photos/${magazinecode}.${issuenumber}.photo`,
+      "jpg"
     );
   } else {
-    const { publicationcode, issuenumber } =
-      await prismaCoa.inducks_issue.findFirstOrThrow({
-        where: { issuecode },
-      });
-    const [countrycode, magazinecode] = publicationcode.split("/");
-    let filePath = `${getEdgesPath()}/${countrycode}`;
-    filePath = isEdgePhoto
-      ? getNextAvailableFile(
-          `${filePath}/photos/${magazinecode}.${issuenumber}.photo`,
-          "jpg",
-        )
-      : `${filePath}/elements/${
-          filename.includes(magazinecode)
-            ? filename
-            : `${magazinecode}.${filename}`
-        }`;
-
-    mkdirSync(dirname(filePath), { recursive: true });
-    return filePath;
+    fileName = fileName!.normalize("NFD").replace(/[\u0300-\u036F]/g, "");
+    filePath = `${filePath}/elements/${
+      fileName.includes(magazinecode) ? fileName : `${magazinecode}.${fileName}`
+    }`;
   }
+
+  mkdirSync(dirname(filePath), { recursive: true });
+  return filePath;
 };
 
 export type UploadServices = NamespaceProxyTarget<
@@ -146,17 +148,20 @@ const listenEvents = ({ _socket: socket }: UploadServices) => ({
   uploadFromBase64: async (parameters: {
     data: string;
     issuecode: string;
-    isMultiple: boolean;
-    fileName: string;
-  }) => {
-    const { issuecode, isMultiple, fileName, data } = parameters;
+  } & ({
+      isEdgePhoto: false;
+      fileName: string;
+    }
+  | {
+      isEdgePhoto: true;
+      fileName?: undefined;
+    })) => {
+    const { issuecode, data, isEdgePhoto, fileName } = parameters;
     const cleanData = data.includes(",") ? data.split(",")[1] : data;
-    const isEdgePhoto = !fileName.toLowerCase().endsWith(".png");
     const targetFilePath = await getTargetFilePath(
-      fileName,
-      isMultiple,
-      issuecode,
-      isEdgePhoto,
+      isEdgePhoto
+        ? { issuecode, isEdgePhoto }
+        : { issuecode, isEdgePhoto, fileName: fileName! }
     );
 
     const token = socket.data.user!.token;
@@ -167,7 +172,7 @@ const listenEvents = ({ _socket: socket }: UploadServices) => ({
       isEdgePhoto,
       issuecode,
       cleanData,
-      token,
+      token
     );
 
     if ("error" in validationResults) {
@@ -185,7 +190,7 @@ const listenEvents = ({ _socket: socket }: UploadServices) => ({
 
     await getEdgeCreatorServices(token).sendNewEdgePhotoEmail(issuecode);
 
-    return { fileName };
+    return { fileName: targetFileName };
   },
 });
 

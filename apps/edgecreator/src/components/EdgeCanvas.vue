@@ -91,21 +91,11 @@ import type { OptionValue } from "~/types/OptionValue";
 
 const { supportedRenders } = renders();
 
-type RenderProps<T extends keyof typeof supportedRenders> = InstanceType<
-  (typeof supportedRenders)[T]["component"]
->["$props"];
-
-const {
-  issuecode,
-  contributors,
-  dimensions,
-  steps,
-  photoUrl = null,
-} = defineProps<{
+const { issuecode, contributors, dimensions, steps } = defineProps<{
   issuecode: string;
   dimensions: { width: number; height: number };
   steps: StepOption[];
-  photoUrl?: string | null;
+  photoUrl?: string;
   contributors: Omit<ModelContributor, "issuecode">[];
 }>();
 
@@ -148,10 +138,7 @@ const getStepOptions = (stepNumber: number, withComponentOption = true) =>
   );
 
 const getStepOptionsObject = (stepNumber: number) =>
-  getStepOptions(stepNumber, false).groupBy(
-    "optionName",
-    "optionValue",
-  ) as RenderProps<(typeof stepComponentNames.value)[number]>;
+  getStepOptions(stepNumber, false).groupBy("optionName", "optionValue");
 
 const borderWidth = ref(1);
 

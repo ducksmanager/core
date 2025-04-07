@@ -55,7 +55,7 @@ const { resolveIssueNumberTemplate } = useTextTemplate();
 const image = ref<SVGImageElement>();
 const { image: imageDetails, loadImage } = useBase64Legacy();
 const { issuecodes: editingIssuecodes } = storeToRefs(editingStep());
-const { setOptionValues, getFilteredDimensions } = step();
+const { getFilteredDimensions } = step();
 
 const { stepNumber = undefined, isMultiple = false } = defineProps<{
   stepNumber?: number;
@@ -96,15 +96,10 @@ const splitImageAcrossEdges = () => {
     const issueDimensions = getFilteredDimensions({
       issuecodes: [issuecode],
     })[0];
-    setOptionValues(
-      {
-        x: leftOffset,
-        y: 0,
-        width: widthSum,
-        height: issueDimensions.height,
-      },
-      { issuecodes: [issuecode] },
-    );
+    x.value = leftOffset;
+    y.value = 0;
+    width.value = widthSum;
+    height.value = issueDimensions.height;
     leftOffset -= issueDimensions.width;
   }
 };
@@ -124,12 +119,7 @@ if (stepNumber !== undefined) {
     selectedGalleryItem,
     (selectedGalleryItem) => {
       if (selectedGalleryItem) {
-        setOptionValues(
-          { src: selectedGalleryItem },
-          {
-            stepNumber,
-          },
-        );
+        src.value = selectedGalleryItem;
       }
     },
     { deep: true },

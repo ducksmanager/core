@@ -23,7 +23,6 @@
 </template>
 
 <script setup lang="ts">
-import { step } from "~/stores/step";
 import { ui } from "~/stores/ui";
 
 const { zoom } = storeToRefs(ui());
@@ -54,16 +53,12 @@ onMounted(() => {
     const { enableDragResize } = useStepOptions();
     enableDragResize(ellipse.value!, {
       onmove: ({ dx, dy }) => {
-        step().setOptionValues({
-          cx: cx.value + dx / zoom.value,
-          cy: cy.value + dy / zoom.value,
-        });
+        cx.value += dx / zoom.value;
+        cy.value += dy / zoom.value;
       },
       onresizemove: ({ rect }) => {
-        step().setOptionValues({
-          rx: rect.width / 2 / zoom.value,
-          ry: rect.height / 2 / zoom.value,
-        });
+        rx.value = rect.width / 2 / zoom.value;
+        ry.value = rect.height / 2 / zoom.value;
       },
     });
   }

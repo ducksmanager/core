@@ -14,7 +14,6 @@
 </template>
 
 <script setup lang="ts">
-import { step } from "~/stores/step";
 import { ui } from "~/stores/ui";
 
 const polygon = ref<SVGPolygonElement>();
@@ -59,14 +58,12 @@ onMounted(() => {
     const { enableDragResize } = useStepOptions();
     enableDragResize(polygon.value!, {
       onmove: ({ dy, dx }): void => {
-        step().setOptionValues({
-          points: pointsAsString(
-            pointsArray.value.map(([x, y]) => [
-              x + dx / ui().zoom,
-              y + dy / ui().zoom,
-            ]),
-          ),
-        });
+        points.value = pointsAsString(
+          pointsArray.value.map(([x, y]) => [
+            x + dx / ui().zoom,
+            y + dy / ui().zoom,
+          ]),
+        );
       },
       onresizemove: ({ rect: { width, height } }): void => {
         const heightMaxGrowth = height / ui().zoom;
@@ -78,14 +75,13 @@ onMounted(() => {
         const maxY = Math.max(...pointsArray.value.map(([, y]) => y));
         const currentWidth = maxX - minX;
         const currentHeight = maxY - minY;
-        step().setOptionValues({
-          points: pointsAsString(
-            pointsArray.value.map(([x, y]) => [
-              x + widthMaxGrowth * ((x - minX) / currentWidth),
-              y + heightMaxGrowth * ((y - minY) / currentHeight),
-            ]),
-          ),
-        });
+
+        points.value = pointsAsString(
+          pointsArray.value.map(([x, y]) => [
+            x + widthMaxGrowth * ((x - minX) / currentWidth),
+            y + heightMaxGrowth * ((y - minY) / currentHeight),
+          ]),
+        );
       },
     });
   }

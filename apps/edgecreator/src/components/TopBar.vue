@@ -236,7 +236,13 @@
               :disable-ongoing-or-published="false"
               with-edge-gallery
               disable-not-ongoing-nor-published
-              @change="modelToBeCloned = $event"
+              @change="
+                modelToBeCloned = {
+                  ...$event,
+                  issuecode: $event.issuecode.replace(/ /g, '_'),
+                  issuenumberEnd: $event.issuenumberEnd.replace(/ /g, '_'),
+                }
+              "
             />
             <b-button :disabled="!modelToBeCloned" @click="clone">
               {{ $t("Clone") }}

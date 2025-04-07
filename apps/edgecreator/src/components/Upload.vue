@@ -81,7 +81,7 @@ onMounted(() => {
       const results = await uploadServices.uploadFromBase64({
         issuecode: mainStore.issuecodes[0],
         data: arrayBufferToBase64(fileArrayBuffer),
-        isMultiple: false,
+        isEdgePhoto: false,
         fileName: file.name,
       });
       if ("error" in results) {

@@ -1,10 +1,6 @@
 <template>
   <div v-if="countries">
-    <b-form-select
-      v-model="currentCountrycode"
-      :options="countries"
-      @change="emit('change', null)"
-    >
+    <b-form-select v-model="currentCountrycode" :options="countries">
       <template #first>
         <b-form-select-option :value="undefined" disabled>
           {{ $t("Select a country") }}
@@ -15,7 +11,6 @@
       v-show="currentCountrycode"
       v-model="currentPublicationcode"
       :options="publications"
-      @change="emit('change', null)"
     />
     <template v-if="currentCountrycode && currentPublicationcode">
       <template v-if="withEdgeGallery">
@@ -77,6 +72,14 @@ import { useI18n } from "vue-i18n";
 import { edgeCatalog } from "~/stores/edgeCatalog";
 import { stores as webStores } from "~web";
 
+interface Selection {
+  editMode: "single" | "range";
+  countrycode: string | undefined;
+  publicationcode: string | undefined;
+  issuecode: string | undefined;
+  issuecodeEnd?: string | undefined;
+}
+
 const { t: $t } = useI18n();
 
 const edgeCatalogStore = edgeCatalog();
@@ -101,15 +104,7 @@ const slots = defineSlots<{
   dimensions?(): never;
 }>();
 
-interface Selection {
-  editMode: "single" | "range";
-  countrycode: string | undefined;
-  publicationcode: string | undefined;
-  issuecode: string | undefined;
-  issuecodeEnd?: string | undefined;
-}
-
-const emit = defineEmits<(e: "change", value: Selection | null) => void>();
+const emit = defineEmits<(e: "change", value: Selection) => void>();
 
 const {
   disableOngoingOrPublished,
@@ -208,7 +203,7 @@ watch(currentPublicationcode, async (newValue) => {
               ? "Ongoing"
               : "none";
         return {
-          value: issuecode.replace(/ /g, "_"),
+          value: issuecode,
           text: `${issuecodeDetails.value[issuecode]?.issuenumber}${status === "none" ? "" : ` (${$t(status)})`}`,
           disabled:
             (disableOngoingOrPublished && status !== "none") ||

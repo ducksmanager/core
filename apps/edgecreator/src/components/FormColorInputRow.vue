@@ -70,7 +70,7 @@
                     :key="color as string"
                     class="frequent-color"
                     :style="{ background: color as string }"
-                    @click="onColorChange(color as string)"
+                    @click="inputValue = (color as string)"
                     >&nbsp;</span
                   >
                 </li>
@@ -115,7 +115,6 @@ const inputValue = defineModel<string>();
 
 const originalColor = ref<string>();
 
-const { setOptionValues } = step();
 const { photoUrls, issuecodes } = storeToRefs(main());
 const { colorPickerOption, showEdgePhotos } = storeToRefs(ui());
 
@@ -160,17 +159,8 @@ watch(
 );
 
 watch(isTransparent, (newValue) => {
-  setOptionValues([
-    {
-      optionName,
-      optionValue: newValue ? "transparent" : originalColor.value,
-    },
-  ]);
+  inputValue.value = newValue ? "transparent" : originalColor.value;
 });
-
-const onColorChange = (value: string) => {
-  setOptionValues({ [optionName]: value });
-};
 </script>
 <style lang="scss" scoped>
 ul {

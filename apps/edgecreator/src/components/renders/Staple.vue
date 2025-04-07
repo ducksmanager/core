@@ -99,13 +99,6 @@ const onmove = ({
 };
 
 onMounted(() => {
-  // if (props.options.yDistanceFromCenter === undefined) {
-  //   step().setOptionValues({
-  //     yDistanceFromCenter:
-  //       parseInt(resolveHeightTemplate(props.options.y2, height.value)) -
-  //       height.value / 2,
-  //   });
-  // }
   if (!isForm.value) {
     const { enableDragResize } = useStepOptions();
     enableDragResize(rect1.value!, {

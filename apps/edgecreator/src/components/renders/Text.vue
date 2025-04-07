@@ -161,7 +161,7 @@ const textImage = ref<{
   url: string;
 }>();
 
-const { getFilteredDimensions, setOptionValues } = step();
+const { getFilteredDimensions } = step();
 
 const fontSearchUrl = computed(
   () => import.meta.env.VITE_FONT_SEARCH_URL as string,
@@ -191,18 +191,10 @@ const resetPositionAndSize = () => {
       issuecodes: [issuecode],
     })[0];
     const aspectRatio = height.value! / width.value!;
-    setOptionValues(
-      {
-        x: 0,
-        y: 0,
-        width: issueDimensions.width,
-        height: issueDimensions.width * aspectRatio,
-      },
-      {
-        issuecodes: [issuecode],
-        stepNumber,
-      },
-    );
+    x.value = 0;
+    y.value = 0;
+    width.value = issueDimensions.width;
+    height.value = issueDimensions.width * aspectRatio;
   }
 };
 
@@ -242,27 +234,20 @@ if (!isForm.value) {
             enableDragResize(imageRef.value!, {
               coords: () => ({ x: x.value, y: y.value }),
               onresizemove: ({ rect }) => {
-                let { width, height } = rect;
+                let { width: newWidth, height: newHeight } = rect;
                 const isVertical = [90, 270].includes(rotation.value);
                 if (isVertical) {
-                  [width, height] = [height, width];
+                  [newWidth, newHeight] = [newHeight, newWidth];
                 }
-                const newOptions: {
-                  x?: number;
-                  y?: number;
-                  width: number;
-                  height: number;
-                } = {
-                  width: width / ui().zoom,
-                  height: height / ui().zoom,
-                };
 
                 // Correct coordinates due to rotation center moving after resize
                 if (isVertical) {
-                  newOptions.y = y.value - (newOptions.height - height) / 2;
-                  newOptions.x = x.value - (newOptions.width - width) / 2;
+                  y.value -= (newHeight - height.value!) / 2;
+                  x.value -= (newWidth - width.value!) / 2;
                 }
-                setOptionValues(newOptions);
+
+                width.value = newWidth / ui().zoom;
+                height.value = newHeight / ui().zoom;
               },
             });
             applyTextImageDimensions();
@@ -333,34 +318,27 @@ if (!isForm.value) {
   const applyTextImageDimensions = () => {
     const naturalAspectRatio =
       textImage.value!.height! / textImage.value!.width!;
-    const newOptions = { ...options.value };
     if (height.value === null) {
       // By default, with a 270° rotation,
       // the text shouldn't be larger than the width of the edge
       // noinspection JSSuspiciousNameCombination
-      newOptions.height = 0.8 * edgeWidth.value;
-      newOptions.width = newOptions.height / naturalAspectRatio;
+      height.value = 0.8 * edgeWidth.value;
+      width.value = height.value / naturalAspectRatio;
     } else if (heightCompression.value && widthCompression.value) {
       if (rotation.value === 90 || rotation.value === 270) {
-        newOptions.height = widthCompression.value * edgeWidth.value;
-        newOptions.width =
+        height.value = widthCompression.value * edgeWidth.value;
+        width.value =
           (heightCompression.value * edgeWidth.value) / naturalAspectRatio;
-        newOptions.x -= newOptions.width / 2 - options.value.height! / 2;
-        newOptions.y += newOptions.width / 2;
+        x.value -= width.value / 2 - height.value / 2;
+        y.value += width.value / 2;
       } else {
-        newOptions.height =
+        height.value =
           heightCompression.value * edgeWidth.value * naturalAspectRatio;
-        newOptions.width = widthCompression.value * edgeWidth.value;
+        width.value = widthCompression.value * edgeWidth.value;
       }
-      newOptions.heightCompression = undefined;
-      newOptions.widthCompression = undefined;
+      heightCompression.value = undefined;
+      widthCompression.value = undefined;
     }
-    setOptionValues(
-      { ...newOptions, aspectRatio: newOptions.height! / newOptions.width! },
-      {
-        issuecodes: [issuecode],
-      },
-    );
   };
 
   (async () => {
