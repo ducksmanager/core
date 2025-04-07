@@ -5,5 +5,8 @@ api.edgecreator.ducksmanager.net {
 api-websocket.edgecreator.ducksmanager.net {
     reverse_proxy edgecreator-api-websocket:3002 {
         header_up Host {http.request.host}
+        transport http {
+            versions h1 1.1
+        }
     }
 }
