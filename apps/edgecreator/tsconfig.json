@@ -60,6 +60,7 @@
     "types/*.ts",
   ],
   "exclude": [
+    "api",
     "dist",
     "node_modules"
   ]

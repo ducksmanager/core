@@ -1,19 +1,33 @@
 <template>
   <div class="dumili-helper-app">
-    <button class="dumili-modal-trigger" @click="isModalVisible = !isModalVisible">
+    <button
+      class="dumili-modal-trigger"
+      @click="isModalVisible = !isModalVisible"
+    >
       Dumili helper
     </button>
     <div class="dumili-modal" :class="{ hidden: !isModalVisible }">
-      <div v-if="context.countrycode || context.isEditingIssue || context.entryId">
+      <div
+        v-if="context.countrycode || context.isEditingIssue || context.entryId"
+      >
         <div id="dumili-editor">
           <div v-if="content" id="current-row">→</div>
-          <div id="dumili-output" :contenteditable="!content" placeholder="Enter Dumili text output" v-text="content"
-            @input="content = ($event.target as HTMLDivElement).innerText">
-          </div>
+          <div
+            id="dumili-output"
+            :contenteditable="!content"
+            placeholder="Enter Dumili text output"
+            @input="content = ($event.target as HTMLDivElement).innerText"
+            v-text="content"
+          />
         </div>
         <div style="display: flex; justify-content: space-between">
-          <template v-if="sessionData.dumiliOutput.length && sessionData.currentRow !== -1"><button @click="handleNext">&gt; Next</button>
-          <button @click="handleAuto">ϟ Auto</button></template>
+          <template
+            v-if="
+              sessionData.dumiliOutput.length && sessionData.currentRow !== -1
+            "
+            ><button @click="handleNext">&gt; Next</button>
+            <button @click="handleAuto">ϟ Auto</button></template
+          >
           <button id="reset" @click="content = ''">↻ Reset</button>
         </div>
       </div>
@@ -25,7 +39,12 @@
 <script setup lang="ts">
 import { ref, onMounted, watch, nextTick } from "vue";
 import $ from "jquery";
-import useTextEditor, { DumiliEntryData, DumiliIssueData, DumiliOutput } from "~dumili/src/composables/useTextEditor";
+import type {
+  DumiliEntryData,
+  DumiliIssueData,
+  DumiliOutput,
+} from "~dumili/src/composables/useTextEditor";
+import useTextEditor from "~dumili/src/composables/useTextEditor";
 
 interface SelectOption {
   value: string;
@@ -41,14 +60,18 @@ type DumiliContext = {
   isEditingIssue?: boolean;
   hasEditedIssueDetails?: boolean;
   entryId?: string;
-}
+};
 
 const isModalVisible = ref(true);
 const context = ref<DumiliContext>({});
 
-const sessionData = ref<{ dumiliOutput: DumiliOutput, currentRow: number, auto: boolean }>({ dumiliOutput: [], currentRow: 0, auto: false });
+const sessionData = ref<{
+  dumiliOutput: DumiliOutput;
+  currentRow: number;
+  auto: boolean;
+}>({ dumiliOutput: [], currentRow: 0, auto: false });
 
-const content = ref('');
+const content = ref("");
 /* Example:
 DVBH 56     h3 [inx:Bruno Perel] [pages:116]
 DVBH 56a                  1  c                          
@@ -63,43 +86,51 @@ const persistDumiliData = (): void => {
 
 const restoreDumiliData = (): void => {
   if (sessionStorage.getItem("dumiliData")) {
-    sessionData.value = JSON.parse(sessionStorage.getItem("dumiliData")!)
+    sessionData.value = JSON.parse(sessionStorage.getItem("dumiliData")!);
   }
 };
 
 restoreDumiliData();
-if (sessionData.value.dumiliOutput.length && sessionData.value.currentRow >= sessionData.value.dumiliOutput.length) {
-  sessionStorage.clear()
-  sessionData.value = { dumiliOutput: [], currentRow: 0, auto: false }
-  alert('All the entries have been created. Review them and then click on "Submit to Inducks".')
+if (
+  sessionData.value.dumiliOutput.length &&
+  sessionData.value.currentRow >= sessionData.value.dumiliOutput.length
+) {
+  sessionStorage.clear();
+  sessionData.value = { dumiliOutput: [], currentRow: 0, auto: false };
+  alert(
+    'All the entries have been created. Review them and then click on "Submit to Inducks".',
+  );
 }
 
-watch(content, (newContent, oldContent) => {
-  if (!oldContent && sessionData.value.dumiliOutput.length) {
-    return; // Let the content be set by the session data
-  }
-  const { unText } = useTextEditor();
-  const dumiliOutput = unText(newContent.trim());
-  if (newContent.trim() && dumiliOutput.length <= 2) {
-    content.value = ''
-    nextTick(() => {
-      alert('Invalid Dumili text output');
-    });
-  }
-  else {
-    sessionData.value = { currentRow: 0, dumiliOutput, auto: false }
-    persistDumiliData();
-  }
+watch(
+  content,
+  (newContent, oldContent) => {
+    if (!oldContent && sessionData.value.dumiliOutput.length) {
+      return; // Let the content be set by the session data
+    }
+    const { unText } = useTextEditor();
+    const dumiliOutput = unText(newContent.trim());
+    if (newContent.trim() && dumiliOutput.length <= 2) {
+      content.value = "";
+      nextTick(() => {
+        alert("Invalid Dumili text output");
+      });
+    } else {
+      sessionData.value = { currentRow: 0, dumiliOutput, auto: false };
+      persistDumiliData();
+    }
 
-  console.log("sessionStorageData", sessionData.value);
-}, { immediate: true });
+    console.log("sessionStorageData", sessionData.value);
+  },
+  { immediate: true },
+);
 
 const pickOption = (select: JQuery<HTMLSelectElement>, optionValue: string) => {
   const selectElement = select[0];
   if (selectElement) {
     const options = Array.from(selectElement.options) as SelectOption[];
     const matchingOption = options.find(
-      (option) => option.value.toLowerCase() === optionValue.toLowerCase()
+      (option) => option.value.toLowerCase() === optionValue.toLowerCase(),
     );
 
     if (matchingOption) {
@@ -108,15 +139,19 @@ const pickOption = (select: JQuery<HTMLSelectElement>, optionValue: string) => {
       selectElement.dispatchEvent(new Event("change", { bubbles: true }));
     } else {
       window.alert(
-        `Option with value ${optionValue} in dropdown ${select.attr('name')} not found`
+        `Option with value ${optionValue} in dropdown ${select.attr("name")} not found`,
       );
     }
   } else {
-    window.alert(`Dropdown with name ${select.attr('name')} not found`);
+    window.alert(`Dropdown with name ${select.attr("name")} not found`);
   }
 };
 
-const fillFormFields = <Data extends DumiliEntryData | DumiliIssueData>(data: Partial<Data>, defaultInputToSubmitFrom?: string & (keyof Data | 'npages') | undefined, incrementCurrentRow = true): void => {
+const fillFormFields = <Data extends DumiliEntryData | DumiliIssueData>(
+  data: Partial<Data>,
+  defaultInputToSubmitFrom?: (string & (keyof Data | "npages")) | undefined,
+  incrementCurrentRow = true,
+): void => {
   let lastFilledInput = $();
   for (const [key, value] of Object.entries(data)) {
     const input = $(`[name='${key}']`);
@@ -135,18 +170,18 @@ const fillFormFields = <Data extends DumiliEntryData | DumiliIssueData>(data: Pa
     }
     nextTick(() => {
       persistDumiliData();
-      lastFilledInput!.closest("form")
-        .trigger("submit");
+      lastFilledInput!.closest("form").trigger("submit");
     });
   } else if (!defaultInputToSubmitFrom) {
-    alert(`No field match in the form, data: ${JSON.stringify(data)}`)
+    alert(`No field match in the form, data: ${JSON.stringify(data)}`);
   }
 };
 
 const handleNext = () => {
   if (sessionData.value.dumiliOutput[0]) {
     const ctx = context.value;
-    const issuecodeNoCountry = sessionData.value.dumiliOutput[0].issNotInInducks;
+    const issuecodeNoCountry =
+      sessionData.value.dumiliOutput[0].issNotInInducks;
     const issuecodeNoCountryParts = issuecodeNoCountry?.split(" ");
     if (issuecodeNoCountryParts?.length !== 2) {
       window.alert(`Invalid issue code format: ${issuecodeNoCountry}`);
@@ -155,18 +190,19 @@ const handleNext = () => {
 
     if (ctx.entryId !== undefined) {
       // "Edit entry" page
-      fillFormFields(sessionData.value.dumiliOutput[sessionData.value.currentRow] as DumiliEntryData);
-    }
-    else if (ctx.hasEditedIssueDetails) {
-      $(`a:contains("Edit entries")`)[0]?.click()
-    }
-    else if (ctx.isEditingIssue) {
+      fillFormFields(
+        sessionData.value.dumiliOutput[
+          sessionData.value.currentRow
+        ] as DumiliEntryData,
+      );
+    } else if (ctx.hasEditedIssueDetails) {
+      $(`a:contains("Edit entries")`)[0]?.click();
+    } else if (ctx.isEditingIssue) {
       const createNewEntryButton = $(`a:contains("a new entry")`)[0];
       if (createNewEntryButton) {
         createNewEntryButton.click();
-      }
-      else {
-        fillFormFields(sessionData.value.dumiliOutput[0], 'npages');
+      } else {
+        fillFormFields(sessionData.value.dumiliOutput[0], "npages");
       }
     }
     // "Issues being indexed" page
@@ -180,16 +216,17 @@ const handleNext = () => {
     }
     // "Add issue" page
     else if (ctx.magazinecode) {
-      fillFormFields({
-        issNotInInducks: issuecodeNoCountryParts[1],
-      },
+      fillFormFields(
+        {
+          issNotInInducks: issuecodeNoCountryParts[1],
+        },
         undefined,
-        false);
+        false,
+      );
     } else if (ctx.countrycode) {
       pickOption($('select[name="s"]'), issuecodeNoCountryParts[0]);
-    }
-    else {
-      alert('Nothing to do!')
+    } else {
+      alert("Nothing to do!");
     }
   }
 };
@@ -206,9 +243,11 @@ onMounted(() => {
     countrycode: params.get("c") || undefined,
     magazinecode: params.get("s") || undefined,
     issuenumber: params.get("issNotInInducks") || undefined,
-    isEditingIssue: params.get("editissue") !== null || $('a:contains("a new entry")').length > 0,
-    hasEditedIssueDetails: $('body').text().includes('Succesfully updated'),
-    entryId: params.get("identry") || undefined
+    isEditingIssue:
+      params.get("editissue") !== null ||
+      $('a:contains("a new entry")').length > 0,
+    hasEditedIssueDetails: $("body").text().includes("Succesfully updated"),
+    entryId: params.get("identry") || undefined,
   };
 
   console.log("context", context.value);

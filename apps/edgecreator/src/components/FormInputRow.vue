@@ -6,7 +6,10 @@
     <b-col sm="9" class="d-flex flex-column align-items-center">
       <div class="w-100">
         <slot name="prefix" />
-        <confirm-edit-multiple-values :values="values" @change="onChangeValue">
+        <confirm-edit-multiple-values
+          :is-multiple="isMultiple"
+          @set-to-first-value="onChangeValue(inputValue)"
+        >
           <b-form-select
             v-if="type === 'select'"
             :id="optionName"
@@ -44,7 +47,7 @@ import type { OptionValue } from "~/types/OptionValue";
 type PossibleInputValueType = string | number;
 const {
   disabled = undefined,
-  inputValues,
+  isMultiple,
   listId = undefined,
   max = undefined,
   min = undefined,
@@ -54,7 +57,7 @@ const {
   selectOptions = undefined,
 } = defineProps<{
   disabled?: boolean;
-  inputValues: PossibleInputValueType[];
+  isMultiple: boolean;
   label: string;
   listId?: string;
   max?: number;
@@ -66,19 +69,11 @@ const {
   type: "color" | "text" | "range" | "select";
 }>();
 
+const inputValue = defineModel<PossibleInputValueType>();
+
 const shouldWaitForBlurToUpdate = computed(() =>
   ["text", "font"].includes(optionName),
 );
-
-const inputValue = ref(inputValues[0] as PossibleInputValueType | undefined);
-
-const values = computed(() => [
-  ...new Set(
-    optionName === "xlink:href"
-      ? (inputValues as string[]).map((value) => value.match(/\/([^/]+)$/)![1])
-      : inputValues,
-  ),
-]);
 
 const onBlur = () => {
   if (shouldWaitForBlurToUpdate.value) {
@@ -86,20 +81,10 @@ const onBlur = () => {
   }
 };
 
-watch(
-  () => inputValues,
-  (inputValues) => {
-    inputValue.value = inputValues[0] || undefined;
-  },
-  {
-    immediate: true,
-  },
-);
-
 watch(inputValue, (newValue: PossibleInputValueType | undefined) => {
   if (
     !shouldWaitForBlurToUpdate.value &&
-    [...new Set(inputValues)].length <= 1 &&
+    !isMultiple &&
     newValue !== undefined
   ) {
     onChangeValue(newValue);

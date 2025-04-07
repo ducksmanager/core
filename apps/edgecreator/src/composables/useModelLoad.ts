@@ -32,27 +32,29 @@ export default () => {
     );
   };
   const loadStepsFromSvg = (issuecode: string, svgChildNodes: SVGElement[]) => {
-    svgChildNodes
-      .filter(({ nodeName }) => nodeName === "g")
-      .forEach((group, stepNumber) => {
-        stepStore.setOptionValues(
-          [
-            {
-              optionName: "component",
-              optionValue: group.getAttribute("class")!,
-            },
-            ...optionObjectToArray(
-              JSON.parse(
-                group.getElementsByTagName("metadata")[0].textContent!,
-              ) as Record<string, OptionValue>,
-            ),
-          ],
+    stepStore.setSteps(
+      issuecode,
+      svgChildNodes
+        .filter(({ nodeName }) => nodeName === "g")
+        .flatMap((group, stepNumber) => [
           {
+            optionName: "component",
+            optionValue: group.getAttribute("class")!,
             stepNumber,
-            issuecodes: [issuecode],
+            issuecode,
           },
-        );
-      });
+          ...optionObjectToArray(
+            JSON.parse(
+              group.getElementsByTagName("metadata")[0].textContent!,
+            ) as Record<string, OptionValue>,
+          ).map(({ optionName, optionValue }) => ({
+            optionName,
+            optionValue,
+            stepNumber,
+            issuecode,
+          })),
+        ]),
+    );
   };
 
   const setPhotoUrlsFromSvg = (
@@ -139,10 +141,19 @@ export default () => {
     } of Object.values(apiSteps).filter(
       ({ stepNumber: originalStepNumber }) => originalStepNumber !== -1,
     )) {
-      const { component } = rendersStore.supportedRenders.find(
-        (component) => component.originalName === originalComponentName,
-      ) ?? { component: null };
-      if (component) {
+      const componentName = Object.keys(rendersStore.supportedRenders).find(
+        (componentName) => {
+          const component =
+            rendersStore.supportedRenders[
+              componentName as keyof typeof rendersStore.supportedRenders
+            ];
+          return (
+            "originalName" in component &&
+            originalComponentName === component.originalName
+          );
+        },
+      );
+      if (componentName) {
         try {
           stepStore.setOptionValues(
             optionObjectToArray(
@@ -150,7 +161,7 @@ export default () => {
                 issuecode,
                 stepNumber,
                 {
-                  component,
+                  component: componentName,
                   options: originalOptions,
                 } as LegacyComponent,
                 dimensions[0],
@@ -164,7 +175,7 @@ export default () => {
           );
         } catch (e) {
           onError(
-            `Invalid step ${originalStepNumber} (${component}) : ${
+            `Invalid step ${originalStepNumber} (${componentName}) : ${
               e as string
             }, step will be ignored.`,
             originalStepNumber,

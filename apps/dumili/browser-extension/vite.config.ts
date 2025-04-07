@@ -1,7 +1,7 @@
-import { defineConfig } from "vite";
-import path, { resolve } from "path";
+import vue from "@vitejs/plugin-vue";
 import fs from "fs";
-import vue from '@vitejs/plugin-vue';
+import path, { resolve } from "path";
+import { defineConfig } from "vite";
 
 export default defineConfig({
   plugins: [
@@ -30,14 +30,14 @@ export default defineConfig({
         // Copy components directory
         const componentsDir = resolve(__dirname, "src/components");
         const distComponentsDir = resolve(distDir, "components");
-        
+
         if (!fs.existsSync(distComponentsDir)) {
           fs.mkdirSync(distComponentsDir, { recursive: true });
         }
 
         // Copy all files from components directory
         const files = fs.readdirSync(componentsDir);
-        files.forEach(file => {
+        files.forEach((file) => {
           fs.copyFileSync(
             resolve(componentsDir, file),
             resolve(distComponentsDir, file),
@@ -58,7 +58,7 @@ export default defineConfig({
         entryFileNames: "content.js",
         chunkFileNames: "[name].js",
         assetFileNames: (assetInfo) => {
-          if (assetInfo.name === 'style.css') return 'content.css';
+          if (assetInfo.name === "style.css") return "content.css";
           return assetInfo.name;
         },
       },

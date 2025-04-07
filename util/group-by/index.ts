@@ -105,6 +105,7 @@ declare global {
   }
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const getNestedValue = <T extends Record<string, any>, P extends string>(
   obj: T,
   path: P,

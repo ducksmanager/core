@@ -4,14 +4,14 @@
     <div
       class="d-flex flex-row justify-space-around align-items-center edit-wrapper"
     >
-      <template v-if="isMultiple">
+      <template v-if="isMultipleAndNotEditing">
         {{ $t("Multiple values.") }}
         <b-button
           size="sm"
           pill
           @click="
             edit = true;
-            emit('change', values[0]);
+            emit('setToFirstValue');
           "
         >
           {{ $t("Edit") }}
@@ -22,14 +22,12 @@
   </div>
 </template>
 <script setup lang="ts">
-import type { OptionValue } from "~/types/OptionValue";
+const emit = defineEmits<(e: "setToFirstValue") => void>();
 
-const emit = defineEmits<(e: "change", value: OptionValue) => void>();
-
-const { values } = defineProps<{
-  values: OptionValue[];
+const { isMultiple } = defineProps<{
+  isMultiple: boolean;
 }>();
 
 const edit = ref(false);
-const isMultiple = computed(() => values.length > 1 && !edit.value);
+const isMultipleAndNotEditing = computed(() => isMultiple && !edit.value);
 </script>

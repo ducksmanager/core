@@ -1,89 +1,172 @@
 <template>
-  <svg>
+  <template v-if="isForm">
+    <b-button
+      size="sm"
+      variant="outline-warning"
+      class="d-block my-3 float-end"
+      @click="splitImageAcrossEdges()"
+    >
+      {{
+        $t(
+          editingIssuecodes.length === 1
+            ? "Fill the edge with this image"
+            : "Split this image to fit all selected edges",
+        )
+      }}
+    </b-button>
+    <div class="clearfix" />
+    <form-input-row
+      v-model="src"
+      option-name="src"
+      :label="$t('Image').toString()"
+      type="text"
+      list-id="src-list"
+      :is-multiple="isMultiple"
+    >
+      <gallery
+        v-model:selected="src"
+        v-model:items="publicationElementsForGallery"
+        image-type="elements"
+      />
+    </form-input-row>
+  </template>
+  <svg v-else>
     <image
       v-if="imageDetails"
       ref="image"
-      v-bind="options"
+      v-bind="{ x, y, width, height }"
       :xlink:href="imageDetails.base64"
       preserveAspectRatio="none"
     >
-      <metadata>{{ options }}</metadata>
+      <metadata>{{ $props }}</metadata>
     </image>
   </svg>
 </template>
-
 <script setup lang="ts">
 import useBase64Legacy from "~/composables/useBase64Legacy";
+
 import useTextTemplate from "~/composables/useTextTemplate";
+import { editingStep } from "~/stores/editingStep";
 import { main } from "~/stores/main";
+import { step } from "~/stores/step";
 
 const { resolveIssueNumberTemplate } = useTextTemplate();
 
 const image = ref<SVGImageElement>();
 const { image: imageDetails, loadImage } = useBase64Legacy();
-const {
-  issuecode,
-  stepNumber,
-  options = {
-    x: 5,
-    y: 5,
-    width: 15,
-    height: 15,
-    src: "",
-  },
-} = defineProps<{
-  issuecode: string;
-  stepNumber: number;
-  options?: {
-    x: number;
-    y: number;
-    width: number;
-    height: number;
-    src: string | null;
-  };
+const { issuecodes: editingIssuecodes } = storeToRefs(editingStep());
+const { getFilteredDimensions } = step();
+
+const { stepNumber = undefined, isMultiple = false } = defineProps<{
+  stepNumber?: number;
+  isMultiple?: boolean;
 }>();
 
-const effectiveSource = computed(() =>
-  resolveIssueNumberTemplate(options.src!, issuecode),
-);
+provide("stepNumber", stepNumber);
 
-const countrycode = computed(() => main().publicationcode!.split("/")[0]);
+const x = defineModel<number>("x", { default: 5 });
+const y = defineModel<number>("y", { default: 5 });
+const width = defineModel<number>("width", {
+  default: 15,
+});
+const height = defineModel<number>("height", {
+  default: 15,
+});
+const src = defineModel<string>("src", {
+  default: "",
+});
 
-const { enableDragResize } = useStepOptions(
-  {
-    issuecode,
-    stepNumber,
-    options,
-  },
-  ["x", "y", "width", "height"],
-);
+const isForm = computed(() => stepNumber !== undefined);
 
-watch(
-  () => options.src,
-  () => {
-    if (effectiveSource.value) {
-      loadImage(
-        `${import.meta.env.VITE_EDGES_URL as string}/${
-          countrycode.value
-        }/elements/${effectiveSource.value}`,
-        (img) => {
-          enableDragResize(img, {});
-        },
-      );
-    }
-  },
-  { immediate: true },
-);
+const { publicationElementsForGallery, publicationcode } = storeToRefs(main());
 
-watch(
-  image,
-  (value) => {
-    if (value) {
-      enableDragResize(value);
-    }
-  },
-  { immediate: true },
-);
+const countrycode = computed(() => publicationcode.value!.split("/")[0]);
+
+const splitImageAcrossEdges = () => {
+  let leftOffset = 0;
+  const widthSum = editingIssuecodes.value.reduce(
+    (acc, issuecode) =>
+      acc +
+      getFilteredDimensions({
+        issuecodes: [issuecode],
+      })[0].width,
+    0,
+  );
+  for (const issuecode of editingIssuecodes.value) {
+    const issueDimensions = getFilteredDimensions({
+      issuecodes: [issuecode],
+    })[0];
+    x.value = leftOffset;
+    y.value = 0;
+    width.value = widthSum;
+    height.value = issueDimensions.height;
+    leftOffset -= issueDimensions.width;
+  }
+};
+
+if (stepNumber !== undefined) {
+  const selectedGalleryItem = ref<string>();
+
+  watch(
+    src,
+    (srcValues) => {
+      selectedGalleryItem.value = srcValues?.[0];
+    },
+    { immediate: true },
+  );
+
+  watch(
+    selectedGalleryItem,
+    (selectedGalleryItem) => {
+      if (selectedGalleryItem) {
+        src.value = selectedGalleryItem;
+      }
+    },
+    { deep: true },
+  );
+} else {
+  const issuecode = inject<string>("issuecode");
+  if (!issuecode) {
+    throw new Error("issuecode not provided");
+  }
+  const { enableDragResize } = useStepOptions();
+  const effectiveSource = computed(() =>
+    resolveIssueNumberTemplate(src.value, issuecode),
+  );
+  watch(
+    src,
+    () => {
+      if (effectiveSource.value) {
+        loadImage(
+          `${import.meta.env.VITE_EDGES_URL as string}/${
+            countrycode.value
+          }/elements/${effectiveSource.value}`,
+          (img) => {
+            enableDragResize(img, {
+              coords: () => ({ x: x.value, y: y.value }),
+            });
+          },
+        );
+      }
+    },
+    { immediate: true },
+  );
+
+  watch(
+    image,
+    (value) => {
+      if (value) {
+        enableDragResize(value, {
+          coords: () => ({
+            x: x.value,
+            y: y.value,
+          }),
+        });
+      }
+    },
+    { immediate: true },
+  );
+}
 </script>
 
 <style scoped>

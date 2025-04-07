@@ -21,9 +21,9 @@ const {
   edge = null,
 } = defineProps<{
   withProgress?: boolean;
-  photo: boolean;
+  photo?: boolean;
   multiple?: boolean;
-  edge: { issuenumber: string } | null;
+  edge?: { issuenumber: string } | null;
 }>();
 
 const { upload: uploadServices } = inject(edgecreatorSocketInjectionKey)!;
@@ -81,7 +81,7 @@ onMounted(() => {
       const results = await uploadServices.uploadFromBase64({
         issuecode: mainStore.issuecodes[0],
         data: arrayBufferToBase64(fileArrayBuffer),
-        isMultiple: false,
+        isEdgePhoto: false,
         fileName: file.name,
       });
       if ("error" in results) {

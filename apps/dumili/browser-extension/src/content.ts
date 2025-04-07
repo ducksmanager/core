@@ -1,9 +1,10 @@
-import { createApp } from 'vue';
-import DumiliHelper from './components/DumiliHelper.vue';
+import { createApp } from "vue";
 
-const container = document.createElement('div');
-container.id = 'dumili-helper-app';
+import DumiliHelper from "./components/DumiliHelper.vue";
+
+const container = document.createElement("div");
+container.id = "dumili-helper-app";
 document.body.appendChild(container);
 
 const app = createApp(DumiliHelper);
-app.mount('#dumili-helper-app');
+app.mount("#dumili-helper-app");

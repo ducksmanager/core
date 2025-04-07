@@ -1,67 +1,66 @@
-<!--suppress RequiredAttributes -->
 <template>
-  <svg>
-    <ellipse ref="ellipse" v-bind="attributes">
-      <metadata>{{ options }}</metadata>
+  <template v-if="isForm">
+    <form-color-input-row
+      v-model="fill"
+      option-name="fill"
+      :label="$t(ucFirst(`fill color`)).toString()"
+      :is-multiple="isMultiple"
+      can-be-transparent
+    />
+    <form-color-input-row
+      v-model="stroke"
+      option-name="stroke"
+      :label="$t(ucFirst(`stroke color`)).toString()"
+      :is-multiple="isMultiple"
+      can-be-transparent
+    />
+  </template>
+  <svg v-else>
+    <ellipse ref="ellipse" v-bind="{ cx, cy, rx, ry, fill, stroke }">
+      <metadata>{{ $props }}</metadata>
     </ellipse>
   </svg>
 </template>
 
 <script setup lang="ts">
-import { step } from "~/stores/step";
 import { ui } from "~/stores/ui";
 
 const { zoom } = storeToRefs(ui());
 
-const {
-  issuecode,
-  stepNumber,
-  options = {
-    cx: 10,
-    cy: 50,
-    rx: 10,
-    ry: 20,
-    fill: "#bb0000",
-    stroke: "transparent",
-  },
-} = defineProps<{
-  issuecode: string;
-  stepNumber: number;
-  options?: {
-    cx: number;
-    cy: number;
-    rx: number;
-    ry: number;
-    fill: string;
-    stroke: string;
-  };
+const { stepNumber = undefined, isMultiple = false } = defineProps<{
+  stepNumber?: number;
+  isMultiple?: boolean;
 }>();
+
+provide("stepNumber", stepNumber);
+
+const cx = defineModel<number>("cx", { default: 5 });
+const cy = defineModel<number>("cy", { default: 5 });
+const rx = defineModel<number>("rx", { default: 10 });
+const ry = defineModel<number>("ry", { default: 10 });
+const fill = defineModel<string>("fill", { default: "#000000" });
+const stroke = defineModel<string>("stroke", { default: "#ff0000" });
+
+const isForm = computed(() => stepNumber !== undefined);
 
 const ellipse = ref<HTMLElement>();
 
-const { attributes, enableDragResize } = useStepOptions(
-  {
-    issuecode,
-    stepNumber,
-    options,
-  },
-  ["cx", "cy", "rx", "ry", "fill", "stroke"],
-);
+const ucFirst = (text: string) =>
+  text[0].toUpperCase() + text.substring(1, text.length);
 
 onMounted(() => {
-  enableDragResize(ellipse.value!, {
-    onmove: ({ dx, dy }) => {
-      step().setOptionValues({
-        cx: options.cx + dx / zoom.value,
-        cy: options.cy + dy / zoom.value,
-      });
-    },
-    onresizemove: ({ rect }) => {
-      step().setOptionValues({
-        rx: rect.width / 2 / zoom.value,
-        ry: rect.height / 2 / zoom.value,
-      });
-    },
-  });
+  if (!isForm.value) {
+    const { enableDragResize } = useStepOptions();
+    enableDragResize(ellipse.value!, {
+      onmove: ({ dx, dy }) => {
+        cx.value += dx / zoom.value;
+        cy.value += dy / zoom.value;
+      },
+      onresizemove: ({ rect }) => {
+        rx.value = rect.width / 2 / zoom.value;
+        ry.value = rect.height / 2 / zoom.value;
+      },
+    });
+  }
 });
 </script>

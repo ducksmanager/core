@@ -1,26 +1,51 @@
 <template>
-  <svg>
+  <template v-if="isForm">
+    <form-color-input-row
+      v-for="optionName in ['colorStart', 'colorEnd']"
+      :key="optionName"
+      v-model="colorStart"
+      option-name="colorStart"
+      :label="
+        $t(optionName === 'colorStart' ? 'Start color' : 'End color').toString()
+      "
+      :is-multiple="isMultiple"
+    />
+
+    <form-input-row
+      v-model="direction"
+      type="select"
+      option-name="direction"
+      :label="$t('Direction').toString()"
+      :select-options="[$t('Vertical'), $t('Horizontal')]"
+      :is-multiple="isMultiple"
+    />
+  </template>
+  <svg v-else>
     <g>
       <defs>
         <linearGradient
           :id="gradientId"
           x1="0%"
           y1="0%"
-          :x2="options.direction === 'Vertical' ? '0%' : '100%'"
-          :y2="options.direction === 'Vertical' ? '100%' : '0%'"
+          :x2="direction === 'Vertical' ? '0%' : '100%'"
+          :y2="direction === 'Vertical' ? '100%' : '0%'"
         >
           <stop
             offset="0%"
-            :style="{ 'stop-color': options.colorStart, 'stop-opacity': 1 }"
+            :style="{ 'stop-color': colorStart, 'stop-opacity': 1 }"
           />
           <stop
             offset="100%"
-            :style="{ 'stop-color': options.colorEnd, 'stop-opacity': 1 }"
+            :style="{ 'stop-color': colorEnd, 'stop-opacity': 1 }"
           />
         </linearGradient>
       </defs>
-      <rect ref="rect" v-bind="attributes" :fill="`url(#${gradientId})`">
-        <metadata>{{ options }}</metadata>
+      <rect
+        ref="rect"
+        v-bind="{ x, y, width, height }"
+        :fill="`url(#${gradientId})`"
+      >
+        <metadata>{{ $props }}</metadata>
       </rect>
     </g>
   </svg>
@@ -29,44 +54,37 @@
 <script setup lang="ts">
 const rect = ref<SVGRectElement>();
 
-const {
-  issuecode,
-  stepNumber,
-  options = {
-    x: 3,
-    y: 3,
-    width: 10,
-    height: 80,
-    colorStart: "#D01721",
-    colorEnd: "#0000FF",
-    direction: "Vertical",
-  },
-} = defineProps<{
-  issuecode: string;
-  stepNumber: number;
-  options?: {
-    x: number;
-    y: number;
-    width: number;
-    height: number;
-    colorStart: string;
-    colorEnd: string;
-    direction: string;
-  };
+const { stepNumber = undefined, isMultiple = false } = defineProps<{
+  stepNumber?: number;
+  isMultiple?: boolean;
 }>();
 
-const gradientId = computed(() => btoa(JSON.stringify(options)));
+provide("stepNumber", stepNumber);
 
-const { enableDragResize, attributes } = useStepOptions(
-  {
-    issuecode,
-    stepNumber,
-    options,
-  },
-  ["x", "y", "width", "height"],
+const isForm = computed(() => stepNumber !== undefined);
+
+const x = defineModel<number>("x", { default: 3 });
+const y = defineModel<number>("y", { default: 3 });
+const width = defineModel<number>("width", { default: 10 });
+const height = defineModel<number>("height", { default: 80 });
+const colorStart = defineModel<string>("colorStart", { default: "#D01721" });
+const colorEnd = defineModel<string>("colorEnd", { default: "#0000FF" });
+const direction = defineModel<"Vertical" | "Horizontal">("direction", {
+  default: "Vertical",
+});
+
+const gradientId = computed(() =>
+  btoa(
+    JSON.stringify({ x, y, width, height, colorStart, colorEnd, direction }),
+  ),
 );
 
 onMounted(() => {
-  enableDragResize(rect.value!);
+  if (!isForm.value) {
+    const { enableDragResize } = useStepOptions();
+    enableDragResize(rect.value!, {
+      coords: () => ({ x: x.value, y: y.value }),
+    });
+  }
 });
 </script>

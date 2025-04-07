@@ -44,33 +44,12 @@ meta:
         </b-container>
         <issue-select
           :key="crops.length"
-          :dimensions="
-            currentCrop
-              ? { width: currentCrop.width, height: currentCrop.height }
-              : { width: 15, height: 200 }
-          "
           disable-ongoing-or-published
           :disable-not-ongoing-nor-published="false"
-          @change="
-            currentCrop = $event?.issuecode
-              ? currentCrop
-                ? { ...currentCrop, ...$event.issuecode }
-                : $event.issuecode
-              : undefined
-          "
+          @change="currentCrop.issuecode = $event.issuecode"
         >
           <template #dimensions>
-            <dimensions
-              :model-value="{
-                width: currentCrop?.width || 15,
-                height: currentCrop?.height || 200,
-              }"
-              @update:model-value="
-                currentCrop = currentCrop
-                  ? { ...currentCrop, ...$event }
-                  : $event
-              "
-            />
+            <dimensions v-model="currentCrop" />
           </template>
         </issue-select>
         <b-button :disabled="!currentCrop" class="mt-3 mb-4" @click="addCrop">
@@ -101,7 +80,7 @@ meta:
               :steps="[]"
               :issuecode="crop.issuecode"
               :dimensions="{ width: crop.width, height: crop.height }"
-              :photo-url="crop.filename"
+              :photo-url="crop.photoFileName"
               :contributors="initialContributors"
             />
             <div>
@@ -153,7 +132,6 @@ import { useI18n } from "vue-i18n";
 
 import { edgecreatorSocketInjectionKey } from "~/composables/useEdgecreatorSocket";
 import useSaveEdge from "~/composables/useSaveEdge";
-import type { Crop } from "~types/Crop";
 import type { ModelContributor } from "~types/ModelContributor";
 
 const i18n = useI18n();
@@ -162,15 +140,22 @@ const { upload: uploadEvents } = inject(edgecreatorSocketInjectionKey)!;
 
 const { saveEdgeSvg } = useSaveEdge();
 
+interface Crop {
+  width: number;
+  height: number;
+  issuecode?: string;
+  photoFileName?: string;
+}
 type CropWithData = Crop & {
-  data: CropperData;
-  filename?: string;
   url: string;
   sent: boolean;
   error?: string;
 };
 
-const currentCrop = ref<CropWithData>();
+const currentCrop = ref<Crop>({
+  width: 15,
+  height: 200,
+});
 const crops = ref<CropWithData[]>([]);
 const uploadedImageData = ref<{ url: string }>();
 const cropper = ref<Cropper>();
@@ -205,33 +190,33 @@ const addCrop = () => {
     });
   } else {
     crops.value.push({
-      ...currentCrop.value!,
-      data,
+      ...currentCrop.value,
+      sent: false,
       url: cropper.value!.getCroppedCanvas().toDataURL("image/jpeg"),
     });
-    currentCrop.value = undefined;
+    currentCrop.value = { width: 15, height: 200 };
   }
 };
 const uploadAll = async () => {
   for (const crop of crops.value.filter(({ sent }) => !sent)) {
     const uploadResults = await uploadEvents.uploadFromBase64({
-      issuecode: crop.issuecode,
+      issuecode: crop.issuecode!,
       data: crop.url,
-      isMultiple: false,
-      fileName: crop.filename!,
+      isEdgePhoto: true,
     });
     if ("error" in uploadResults) {
       window.alert(uploadResults.errorDetails);
-    } else {
-      crop.filename = (uploadResults as { fileName: string }).fileName;
+      return;
     }
+
+    crop.photoFileName = uploadResults.fileName;
 
     await nextTick().then(async () => {
       const response = await saveEdgeSvg(
-        crop.issuecode,
+        crop.issuecode!,
         initialContributors.value.map((contribution) => ({
           ...contribution,
-          issuecode: crop.issuecode,
+          issuecode: crop.issuecode!,
         })),
       );
       const isSuccess = response!.paths.svgPath;
