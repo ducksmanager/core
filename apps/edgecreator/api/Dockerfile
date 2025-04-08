@@ -3,6 +3,7 @@ LABEL org.opencontainers.image.authors="Bruno Perel"
 WORKDIR /app
 
 RUN apt update && apt install -y imagemagick && apt clean && rm -rf /var/lib/apt/lists/*
+RUN npm install pm2 -g
 COPY packages/prisma-schemas/client_coa/libquery_engine-debian-openssl-3.0.x.so.node /tmp/prisma-engines/
 COPY packages/prisma-schemas/client_edgecreator/libquery_engine-debian-openssl-3.0.x.so.node /tmp/prisma-engines/
 COPY packages/prisma-schemas/client_dm/libquery_engine-debian-openssl-3.0.x.so.node /tmp/prisma-engines/
@@ -12,4 +13,4 @@ COPY apps/edgecreator/api/assets/default.svg /app/assets/
 COPY apps/edgecreator/api/bundle.mjs /app/
 
 EXPOSE 3002
-CMD ["node", "bundle.mjs"]
+CMD ["pm2", "start", "--no-daemon", "-i", "max", "bundle.mjs"]
