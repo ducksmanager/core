@@ -14,10 +14,10 @@
     },
     "devDependencies": {
         "@types/chrome": "^0.0.313",
-        "@types/jquery": "^3.5.29",
+        "@types/jquery": "^3.5.32",
         "@vitejs/plugin-vue": "^5.2.3",
-        "sass": "^1.86.0",
-        "typescript": "^5.8.2",
-        "vite": "^6.2.3"
+        "sass": "^1.86.3",
+        "typescript": "^5.8.3",
+        "vite": "^6.2.5"
     }
 }
