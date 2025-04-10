@@ -45,6 +45,7 @@
     "src/**/*.ts",
     "src/**/*.vue",
     "types/*.ts",
+    "services/**/*.ts"
   ],
   "exclude": [
     "node_modules",

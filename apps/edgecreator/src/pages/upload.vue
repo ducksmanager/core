@@ -207,10 +207,9 @@ const uploadAll = async () => {
     if ("error" in uploadResults) {
       window.alert(uploadResults.errorDetails);
       return;
+    } else if ("fileName" in uploadResults) {
+      crop.photoFileName = uploadResults.fileName;
     }
-
-    crop.photoFileName = uploadResults.fileName;
-
     await nextTick().then(async () => {
       const response = await saveEdgeSvg(
         crop.issuecode!,
