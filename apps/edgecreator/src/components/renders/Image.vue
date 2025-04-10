@@ -24,7 +24,7 @@
       :is-multiple="isMultiple"
     >
       <gallery
-        v-model:selected="src"
+        v-model="src"
         v-model:items="publicationElementsForGallery"
         image-type="elements"
       />
