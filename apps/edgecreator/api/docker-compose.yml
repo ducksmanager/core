@@ -21,7 +21,7 @@ services:
     env_file:
       - .env
     volumes:
-      - "${EDGES_PATH}:/home/edges"
+      - "${EDGES_PATH_HOST}:${EDGES_PATH}"
     networks:
       public-network:
         aliases:
