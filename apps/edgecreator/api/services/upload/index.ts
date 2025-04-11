@@ -70,14 +70,14 @@ const validateUpload = async (
   token: string,
 ) => {
   const hash = calculateHash(filePath);
+  if (await hasAlreadySentPhoto(hash, token)) {
+    return { error: "You have already sent this photo" } as const;
+  }
   if (isEdgePhoto) {
     if (await hasReachedDailyUploadLimit(token)) {
       return {
         error: "You have reached your daily upload limit",
       } as const;
-    }
-    if (await hasAlreadySentPhoto(hash, token)) {
-      return { error: "You have already sent this photo" } as const;
     }
   } else {
     // TODO uncomment once getImagesFromFilename supports searching file names in SVG models

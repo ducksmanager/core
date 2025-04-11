@@ -58,7 +58,9 @@
     <b-card-text>
       <component
         :is="supportedRenders[componentName].component"
-        v-bind="{ ...optionsWithoutComponent, stepNumber }"
+        v-bind="optionsWithoutComponent"
+        :step-number="stepNumber"
+        v-on="onOptionUpdate()"
       />
     </b-card-text>
   </b-tab>
@@ -69,6 +71,7 @@ import { hoveredStep } from "~/stores/hoveredStep";
 import { main } from "~/stores/main";
 import { renders } from "~/stores/renders";
 import { step } from "~/stores/step";
+import type { OptionValue } from "~/types/OptionValue";
 
 const { stepNumber } = defineProps<{
   stepNumber: number;
@@ -101,6 +104,24 @@ const optionsWithoutComponent = computed(() =>
     Object.entries(options.value).filter(([key]) => key !== "component"),
   ),
 );
+
+const onOptionUpdate = () =>
+  Object.keys(optionsWithoutComponent.value).reduce(
+    (acc, optionName) => ({
+      ...acc,
+      [`update:${optionName}`]: (optionValue: OptionValue) => {
+        step().setOptionValues(
+          {
+            [optionName]: optionValue,
+          },
+          {
+            stepNumber,
+          },
+        );
+      },
+    }),
+    {} as Record<string, (optionValue: OptionValue) => void>,
+  );
 
 const componentName = computed(
   () => options.value["component"] as keyof typeof supportedRenders,
