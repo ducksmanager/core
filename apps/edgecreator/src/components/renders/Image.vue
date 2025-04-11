@@ -104,27 +104,7 @@ const splitImageAcrossEdges = () => {
   }
 };
 
-if (stepNumber !== undefined) {
-  const selectedGalleryItem = ref<string>();
-
-  watch(
-    src,
-    (srcValues) => {
-      selectedGalleryItem.value = srcValues?.[0];
-    },
-    { immediate: true },
-  );
-
-  watch(
-    selectedGalleryItem,
-    (selectedGalleryItem) => {
-      if (selectedGalleryItem) {
-        src.value = selectedGalleryItem;
-      }
-    },
-    { deep: true },
-  );
-} else {
+if (stepNumber === undefined) {
   const issuecode = inject<string>("issuecode");
   if (!issuecode) {
     throw new Error("issuecode not provided");

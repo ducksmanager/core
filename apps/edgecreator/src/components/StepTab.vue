@@ -58,9 +58,10 @@
     <b-card-text>
       <component
         :is="supportedRenders[componentName].component"
+        ref="renderComponent"
         v-bind="optionsWithoutComponent"
         :step-number="stepNumber"
-        v-on="onOptionUpdate()"
+        v-on="onOptionUpdate"
       />
     </b-card-text>
   </b-tab>
@@ -81,6 +82,10 @@ const emit = defineEmits<{
   (event: "swap-steps", otherStep: number): void;
   (event: "duplicate-step" | "remove-step"): void;
 }>();
+
+const onOptionUpdate = ref<Record<string, (optionValue: OptionValue) => void>>(
+  {},
+);
 
 const { stepNumber: hoveredStepNumber } = storeToRefs(hoveredStep());
 const { options: allStepOptions, maxStepNumber } = storeToRefs(step());
@@ -105,27 +110,38 @@ const optionsWithoutComponent = computed(() =>
   ),
 );
 
-const onOptionUpdate = () =>
-  Object.keys(optionsWithoutComponent.value).reduce(
-    (acc, optionName) => ({
-      ...acc,
-      [`update:${optionName}`]: (optionValue: OptionValue) => {
-        step().setOptionValues(
-          {
-            [optionName]: optionValue,
-          },
-          {
-            stepNumber,
-          },
-        );
-      },
-    }),
-    {} as Record<string, (optionValue: OptionValue) => void>,
-  );
-
 const componentName = computed(
   () => options.value["component"] as keyof typeof supportedRenders,
 );
+
+const renderComponent =
+  ref<
+    InstanceType<
+      (typeof supportedRenders)[typeof componentName.value]["component"]
+    >
+  >();
+
+watch(renderComponent, () => {
+  onOptionUpdate.value = {
+    ...onOptionUpdate.value,
+    ...Object.keys(renderComponent.value?.$props || {}).reduce(
+      (acc, optionName) => ({
+        ...acc,
+        [`update:${optionName}`]: (optionValue: OptionValue) => {
+          step().setOptionValues(
+            {
+              [optionName]: optionValue,
+            },
+            {
+              stepNumber,
+            },
+          );
+        },
+      }),
+      {},
+    ),
+  };
+});
 </script>
 
 <style lang="scss" scoped>
