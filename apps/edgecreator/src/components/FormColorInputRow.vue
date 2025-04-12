@@ -67,10 +67,10 @@
                   >
                   <span
                     v-for="color of otherColorsForLocation[otherStepNumber] as string[]"
-                    :key="color as string"
+                    :key="color"
                     class="frequent-color"
-                    :style="{ background: color as string }"
-                    @click="inputValue = (color as string)"
+                    :style="{ background: color }"
+                    @click="inputValue = color"
                     >&nbsp;</span
                   >
                 </li>
