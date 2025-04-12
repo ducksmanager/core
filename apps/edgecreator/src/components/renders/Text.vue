@@ -242,14 +242,17 @@ if (!isForm.value) {
                   [newWidth, newHeight] = [newHeight, newWidth];
                 }
 
+                newWidth /= ui().zoom;
+                newHeight /= ui().zoom;
+
                 // Correct coordinates due to rotation center moving after resize
                 if (isVertical) {
                   y.value -= (newHeight - height.value!) / 2;
                   x.value -= (newWidth - width.value!) / 2;
                 }
 
-                width.value = newWidth / ui().zoom;
-                height.value = newHeight / ui().zoom;
+                width.value = newWidth;
+                height.value = newHeight;
               },
             });
             applyTextImageDimensions();
