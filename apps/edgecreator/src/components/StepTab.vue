@@ -124,21 +124,19 @@ const renderComponent =
 watch(renderComponent, () => {
   onOptionUpdate.value = {
     ...onOptionUpdate.value,
-    ...Object.keys(renderComponent.value?.$props || {}).reduce(
-      (acc, optionName) => ({
-        ...acc,
-        [`update:${optionName}`]: (optionValue: OptionValue) => {
-          step().setOptionValues(
-            {
-              [optionName]: optionValue,
-            },
-            {
-              stepNumber,
-            },
-          );
-        },
-      }),
-      {},
+    ...Object.keys(renderComponent.value?.$props || {}).groupBy(
+      (optionName) => `update:${optionName}`,
+      null,
+      (optionName) => (optionValue: OptionValue) => {
+        step().setOptionValues(
+          {
+            [optionName]: optionValue,
+          },
+          {
+            stepNumber,
+          },
+        );
+      },
     ),
   };
 });

@@ -17,6 +17,14 @@ describe("Array.groupBy", () => {
     });
   });
 
+  test("groups by callback", () => {
+    const result = testData.groupBy((item) => `${item.name} Doe`);
+    expect(result).toEqual({
+      "John Doe": { id: 3, name: "John" },
+      "Jane Doe": { id: 2, name: "Jane" },
+    });
+  });
+
   test("groups by field name with an array value", () => {
     const result = testData.groupBy("name", "[]");
     expect(result).toEqual({
