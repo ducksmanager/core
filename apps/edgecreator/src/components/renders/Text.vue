@@ -88,7 +88,7 @@
       v-if="image"
       ref="imageRef"
       preserveAspectRatio="none"
-      v-bind="options as SVGAttributes"
+      v-bind="imageOptions as SVGAttributes"
       :xlink:href="image.base64"
       :transform="
         !width
@@ -96,7 +96,7 @@
           : `rotate(${rotation}, ${x + width / 2}, ${y + height / 2})`
       "
     >
-      <metadata>{{ options }}</metadata>
+      <metadata>{{ { ...textOptions, ...imageOptions } }}</metadata>
     </image>
   </svg>
 </template>
@@ -110,11 +110,6 @@ import { editingStep } from "~/stores/editingStep";
 import { step } from "~/stores/step";
 import { ui } from "~/stores/ui";
 import { coa } from "~web/src/stores/coa";
-
-const issuecode = inject<string>("issuecode");
-if (!issuecode) {
-  throw new Error("issuecode not provided");
-}
 
 const { stepNumber = undefined, isMultiple = false } = defineProps<{
   stepNumber?: number;
@@ -144,7 +139,7 @@ const widthCompression = defineModel<number | undefined>("widthCompression", {
   default: undefined,
 });
 
-const options = computed(() => ({
+const imageOptions = computed(() => ({
   x: x.value,
   y: y.value,
   width: width.value,
@@ -152,6 +147,14 @@ const options = computed(() => ({
   rotation: rotation.value,
   heightCompression: heightCompression.value,
   widthCompression: widthCompression.value,
+}));
+
+const textOptions = computed(() => ({
+  fgColor: fgColor.value,
+  bgColor: bgColor.value,
+  internalWidth: internalWidth.value,
+  font: font.value,
+  text: text.value,
 }));
 
 const textImage = ref<{
@@ -163,9 +166,7 @@ const textImage = ref<{
 
 const { getFilteredDimensions } = step();
 
-const fontSearchUrl = computed(
-  () => import.meta.env.VITE_FONT_SEARCH_URL as string,
-);
+const fontSearchUrl = import.meta.env.VITE_FONT_SEARCH_URL as string;
 
 const { text: textEvents } = inject(edgecreatorSocketInjectionKey)!;
 
@@ -173,12 +174,6 @@ const { resolveIssueNumberTemplate, resolveIssueNumberPartTemplate } =
   useTextTemplate();
 
 const imageRef = ref<SVGImageElement>();
-
-const textImageOptions = ref<typeof options>();
-
-const issuenumber = computed(
-  () => coa().issuecodeDetails[issuecode].issuenumber,
-);
 
 const { issuecodes: editingIssuecodes } = storeToRefs(editingStep());
 
@@ -201,10 +196,17 @@ const resetPositionAndSize = () => {
 const { image, loadImage } = useBase64Legacy();
 
 if (!isForm.value) {
+  const issuecode = inject<string>("issuecode");
+  if (!issuecode) {
+    throw new Error("issuecode not provided");
+  }
   const effectiveText = computed(() =>
     resolveIssueNumberTemplate(
       text.value,
-      resolveIssueNumberPartTemplate(text.value, issuenumber.value),
+      resolveIssueNumberPartTemplate(
+        text.value,
+        coa().issuecodeDetails[issuecode].issuenumber,
+      ),
     ),
   );
 
@@ -262,28 +264,13 @@ if (!isForm.value) {
     },
   );
 
-  watch(fgColor, async () => {
-    await refreshPreview();
-  });
-  watch(bgColor, async () => {
-    await refreshPreview();
-  });
-  watch(internalWidth, async () => {
-    await refreshPreview();
-  });
-  watch(text, async () => {
-    await refreshPreview();
-  });
-  watch(font, async () => {
-    await refreshPreview();
+  watch(textOptions, async (newValue, oldValue) => {
+    if (JSON.stringify(newValue) !== JSON.stringify(oldValue)) {
+      await refreshPreview();
+    }
   });
 
   const refreshPreview = async () => {
-    if (JSON.stringify(textImageOptions.value) === JSON.stringify(options)) {
-      return;
-    }
-    textImageOptions.value = { ...options };
-
     const textData = await textEvents.getText({
       color: fgColor.value.replace("#", ""),
       colorBackground: bgColor.value.replace("#", ""),
@@ -293,6 +280,8 @@ if (!isForm.value) {
     });
     if ("results" in textData) {
       textImage.value = textData.results;
+
+      applyTextImageDimensions();
     } else {
       window.alert(textData.error);
     }

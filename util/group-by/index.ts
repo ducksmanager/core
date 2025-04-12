@@ -32,7 +32,7 @@ declare global {
     /**
      * Groups the elements of an array by a specified field name.
      *
-     * @param fieldName - The field name to group by. If equal to null and the array to group by is an array of strings, the keys of the output array will be the values of the input array. Implies that the valueFieldName must be set to '[]' or null.
+     * @param fieldNameOrCallback - The field name to group by. If equal to null and the array to group by is an array of strings, the keys of the output array will be the values of the input array. Implies that the valueFieldName must be set to '[]' or null. If equal to a function, the function will be called for each element of the array and the result will be used as the key.
      * @param valueFieldName - Optional. The field name to use as the value in the grouped result.
      *                         If set to 'myField.myOtherField', the value of each object at myField.myOtherField will be used as the value. Only one level of nesting is supported.
      *                         If set to '[]', an array of objects will be used as the value.
@@ -82,7 +82,7 @@ declare global {
      *      .groupBy(null, null, (name, index) => ({ name, id: index+1 }));
      */
     groupBy<
-      K extends null | (keyof T & (string | number)),
+      K extends null | (keyof T & (string | number)) | ((item: T) => string),
       V extends null | "[]" | NestedKeyOf<T> | `${NestedKeyOf<T>}[]` = null,
       R = GroupByValueType<T, V>,
     >(
@@ -99,7 +99,9 @@ declare global {
     ): Record<
       K extends null
         ? T & string
-        : T[K & (keyof T & (string | number))] & (string | number),
+        : K extends ((item: T) => string)
+          ? string
+          : T[K & (keyof T & (string | number))] & (string | number),
       R
     >;
   }
@@ -123,15 +125,15 @@ export const getNestedValue = <T extends Record<string, any>, P extends string>(
   return current as NestedValue<T, P> | undefined;
 };
 
-Array.prototype.groupBy = function (fieldName, mapper, mapperFn) {
+Array.prototype.groupBy = function (fieldNameOrCallback, mapper, mapperFn) {
   return this.reduce((acc, object, idx) => {
-    const key = fieldName === null ? object : object[fieldName];
+    const key = fieldNameOrCallback === null ? object : typeof fieldNameOrCallback === "function" ? fieldNameOrCallback(object) : object[fieldNameOrCallback];
     if (mapper === "[]" || mapper?.endsWith("[]")) {
       if (!acc[key]) {
         acc[key] = [];
       }
     }
-    if (fieldName === null) {
+    if (fieldNameOrCallback === null) {
       const value = (mapperFn || ((val) => val))(object, idx);
       if (mapper === "[]") {
         acc[key].push(value);

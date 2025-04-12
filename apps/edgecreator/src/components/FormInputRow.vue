@@ -8,7 +8,7 @@
         <slot name="prefix" />
         <confirm-edit-multiple-values
           :is-multiple="isMultiple"
-          @set-to-first-value="onChangeValue(inputValue)"
+          @set-to-first-value="onChangeValue(inputValue!)"
         >
           <b-form-select
             v-if="type === 'select'"
@@ -41,9 +41,6 @@
 </template>
 
 <script setup lang="ts">
-import { step } from "~/stores/step";
-import type { OptionValue } from "~/types/OptionValue";
-
 type PossibleInputValueType = string | number;
 const {
   disabled = undefined,
@@ -77,7 +74,7 @@ const shouldWaitForBlurToUpdate = computed(() =>
 
 const onBlur = () => {
   if (shouldWaitForBlurToUpdate.value) {
-    onChangeValue(inputValue.value);
+    onChangeValue(inputValue.value!);
   }
 };
 
@@ -91,14 +88,12 @@ watch(inputValue, (newValue: PossibleInputValueType | undefined) => {
   }
 });
 
-const onChangeValue = (optionValue: OptionValue) => {
+const onChangeValue = (optionValue: PossibleInputValueType) => {
   let intValue: number | null = null;
   if (optionName === "rotation") {
     intValue = parseInt(optionValue as string);
   }
-  step().setOptionValues({
-    [optionName]: intValue !== null ? intValue : optionValue,
-  });
+  inputValue.value = intValue !== null ? intValue : optionValue;
 };
 </script>
 

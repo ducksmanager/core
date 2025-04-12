@@ -165,11 +165,9 @@ export const step = defineStore("step", () => {
     },
     setSteps = (issuecode: string, stepOptions: StepOption[]) => {
       checkSameComponentsAsFirstEdge(issuecode, stepOptions);
-      // nextTick().then(() => {
-      setOptionValues(stepOptions, {
-        issuecodes: [issuecode],
-      });
-      // });
+      for (const stepOption of stepOptions) {
+        options.value.push(stepOption);
+      }
     },
     checkSameComponentsAsFirstEdge = (
       issuecode: string,

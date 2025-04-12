@@ -3,12 +3,14 @@
     <form-color-input-row
       v-for="optionName in ['colorStart', 'colorEnd']"
       :key="optionName"
-      v-model="colorStart"
-      option-name="colorStart"
-      :label="
-        $t(optionName === 'colorStart' ? 'Start color' : 'End color').toString()
-      "
+      :model-value="optionName === 'colorStart' ? colorStart : colorEnd"
       :is-multiple="isMultiple"
+      :label="$t(optionName === 'colorStart' ? 'Start color' : 'End color')"
+      @update:model-value="
+        optionName === 'colorStart'
+          ? (colorStart = $event)
+          : (colorEnd = $event)
+      "
     />
 
     <form-input-row
@@ -24,7 +26,7 @@
     <g>
       <defs>
         <linearGradient
-          :id="gradientId"
+          id="gradient"
           x1="0%"
           y1="0%"
           :x2="direction === 'Vertical' ? '0%' : '100%'"
@@ -40,11 +42,7 @@
           />
         </linearGradient>
       </defs>
-      <rect
-        ref="rect"
-        v-bind="{ x, y, width, height }"
-        :fill="`url(#${gradientId})`"
-      >
+      <rect ref="rect" v-bind="{ x, y, width, height }" fill="url(#gradient)">
         <metadata>{{ $props }}</metadata>
       </rect>
     </g>
@@ -72,12 +70,6 @@ const colorEnd = defineModel<string>("colorEnd", { default: "#0000FF" });
 const direction = defineModel<"Vertical" | "Horizontal">("direction", {
   default: "Vertical",
 });
-
-const gradientId = computed(() =>
-  btoa(
-    JSON.stringify({ x, y, width, height, colorStart, colorEnd, direction }),
-  ),
-);
 
 onMounted(() => {
   if (!isForm.value) {
