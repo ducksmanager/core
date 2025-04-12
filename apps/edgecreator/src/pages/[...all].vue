@@ -29,7 +29,7 @@ meta:
                 {{
                   $t(
                     "Send us photos of magazine edges that you own and earn up to {0} Edge photographer points per edge!",
-                    [mostPopularIssuesInCollectionWithoutEdge[0].popularity]
+                    [mostPopularIssuesInCollectionWithoutEdge[0].popularity],
                   )
                 }}
               </template>
@@ -50,7 +50,7 @@ meta:
               {{
                 $t(
                   "Send us photos of magazine edges that you find on the Internet and earn up to {0} Edge photographer points per edge!",
-                  [mostWantedEdges[0].popularity]
+                  [mostWantedEdges[0].popularity],
                 )
               }}
             </template>
@@ -169,7 +169,7 @@ meta:
     >
       {{
         $t(
-          "EdgeCreator is a tool allowing to create edges for the DucksManager bookcase."
+          "EdgeCreator is a tool allowing to create edges for the DucksManager bookcase.",
         )
       }}<br /><a href="https://ducksmanager.net">{{
         $t("Go to DucksManager")
@@ -203,17 +203,17 @@ const { ongoingEdges, publishedEdges } = storeToRefs(edgeCatalogStore);
 const edgesByStatusAndPublicationcode = computed(() => {
   const edgesByStatus = Object.values(ongoingEdges.value || []).groupBy(
     "status",
-    "[]"
+    "[]",
   );
   return Object.fromEntries(
     Object.entries(edgesByStatus).map(([status, edges]) => [
       status,
       edges.groupBy("publicationcode", "[]"),
-    ])
+    ]),
   );
 });
 const userPhotographerPoints = computed(
-  () => usersStore.points[user.value!.id].edge_photographer
+  () => usersStore.points[user.value!.id].edge_photographer,
 );
 
 const { publicationNames, issuecodeDetails } = storeToRefs(webStores.coa());
@@ -222,7 +222,7 @@ const isUserBookcaseReady = ref(false);
 const isCatalogReady = ref(false);
 
 const isUploadableEdgesCarouselReady = computed(
-  () => isUserBookcaseReady.value && isCatalogReady.value
+  () => isUserBookcaseReady.value && isCatalogReady.value,
 );
 
 const mostWantedEdges = ref<
@@ -238,9 +238,9 @@ const mostPopularIssuesInCollectionWithoutEdge = computed(() =>
   collectionStore.popularIssuesInCollectionWithoutEdge
     ?.sort(
       ({ popularity: popularity1 }, { popularity: popularity2 }) =>
-        (popularity2 ?? 0) - (popularity1 ?? 0)
+        (popularity2 ?? 0) - (popularity1 ?? 0),
     )
-    .filter((_, index) => index < 10)
+    .filter((_, index) => index < 10),
 );
 
 const getSvgUrl = (edge: { svgUrl: string }) =>
@@ -249,7 +249,7 @@ const getSvgUrl = (edge: { svgUrl: string }) =>
 const loadMostWantedEdges = async () => {
   const wantedEdges = await edgesEvents.getWantedEdges();
   await coaStore.fetchIssuecodeDetails(
-    wantedEdges.map(({ issuecode }) => issuecode)
+    wantedEdges.map(({ issuecode }) => issuecode),
   );
   mostWantedEdges.value = wantedEdges
     .slice(0, 10)
@@ -277,20 +277,21 @@ watch(
     await bookcaseStore.loadBookcase();
     isUserBookcaseReady.value = true;
   },
-  { immediate: true }
+  { immediate: true },
 );
 
 (async () => {
   await loadMostWantedEdges();
   await fetchOngoingEdges();
   await coaStore.fetchIssuecodeDetails(
-    Object.keys(ongoingEdges.value).map((issuecode) => issuecode)
+    Object.keys(ongoingEdges.value).map((issuecode) => issuecode),
   );
   const publicationcodes = [
     ...mostWantedEdges.value!.map(({ issuecode }) => issuecode),
     ...Object.values(ongoingEdges.value).map(({ issuecode }) => issuecode),
   ].map(
-    (issuecode) => issuecodeDetails.value[issuecode]?.publicationcode || "fr/JM"
+    (issuecode) =>
+      issuecodeDetails.value[issuecode]?.publicationcode || "fr/JM",
   );
 
   for (const publicationcode of publicationcodes) {
