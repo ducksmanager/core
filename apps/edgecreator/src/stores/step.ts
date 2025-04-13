@@ -239,12 +239,9 @@ export const step = defineStore("step", () => {
         stepNumbers: [stepNumber],
       });
 
-      setOptionValues(
-        existingStepOptions.map((option) => ({
-          ...option,
-          stepNumber: maxStepNumber.value + 1,
-        })),
-      );
+      setOptionValues(existingStepOptions, {
+        stepNumber: maxStepNumber.value + 1,
+      });
     },
     swapSteps = (stepNumbers: [number, number]) => {
       for (const option of options.value) {
