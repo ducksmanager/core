@@ -16,6 +16,7 @@
     "build:web": "NODE_ENV=production turbo build -F '~web...'",
     "build:edgecreator": "NODE_ENV=production turbo build -F '~edgecreator' -F '~edgecreator-api'",
     "build:api": "NODE_ENV=production turbo build -F '~api...'",
-    "dev:edgecreator": "turbo dev -F '~edgecreator-api...' -F '~edgecreator' -F '~web...' -F '~edges'"
+    "dev:edgecreator": "turbo dev -F '~edgecreator-api...' -F '~edgecreator' -F '~web...' -F '~edges'",
+    "dev:web": "turbo dev -F '~web...' -F '~edges'"
   }
 }
