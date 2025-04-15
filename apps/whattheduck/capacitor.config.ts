@@ -9,6 +9,7 @@ const config: CapacitorConfig = {
       keystorePath: '~/Documents/whattheduck.keystore',
       keystoreAlias: 'whattheduck',
     },
+    webContentsDebuggingEnabled: true,
   },
   ios: {
     scheme: 'What The Duck',
