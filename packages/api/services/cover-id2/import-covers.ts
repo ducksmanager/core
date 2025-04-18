@@ -1,8 +1,13 @@
 import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa/client";
 import { readdirSync, readFileSync } from "fs";
 import { getImageVector, preprocessImage } from ".";
+import { execSync } from "child_process";
 
-const root = `${__dirname}/covers`;
+const root = `${import.meta.dir}/covers`;
+
+execSync(
+  `rsync -a -m --include='**/*fr_tp_*.jpg' --include='*/' --exclude='*' bperel@ducksmanager.net:/data/covers ${import.meta.dir}`,
+);
 
 const files = readdirSync(root, {
   recursive: true,
@@ -16,7 +21,11 @@ SELECT entryurl_id FROM inducks_entryurl_vector2
 ).map((v) => v.entryurl_id);
 
 for (const file of files) {
-  if (file.isDirectory() || !file.name.includes("fr_tp_")) {
+  if (
+    file.isDirectory() ||
+    !file.parentPath.includes("webusers") ||
+    !file.name.includes("fr_tp_")
+  ) {
     continue;
   }
 
@@ -24,7 +33,7 @@ for (const file of files) {
 
   const entry = (
     await prismaCoa.$queryRaw<{ id: number }[]>`
-        SELECT id from inducks_entryurl WHERE url = ${relativePath.replace("webusers/webusers", "webusers")}
+        SELECT id from inducks_entryurl WHERE sitecode='webusers' AND url = ${relativePath.replace("webusers/webusers/", "")}
     `
   )[0];
 
@@ -57,7 +66,7 @@ for (const file of files) {
             VALUES (${entry.id}, VEC_FromText(${vectorString}))
         `
     .then(() => {
-      console.log(`Added image vector for ${relativePath}`);
+      console.log(`Added image vector ${entry.id} for ${relativePath}`);
     })
     .catch((error) => {
       console.error(`Error adding image vector for ${relativePath}`, error);
