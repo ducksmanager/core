@@ -117,7 +117,8 @@ const submitLogin = async () => {
   formHasChanged.value = true;
 };
 
-if (!token.value) {
+if (token.value === null) {
+  console.log('clearing storage');
   injectLocal<Storage>('storage')!.clear();
 }
 
