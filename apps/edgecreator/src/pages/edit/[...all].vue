@@ -253,10 +253,16 @@ try {
             await loadSvgFromString(previousIssuecode, false),
           );
         } else {
-          stepStore.setDimensions(
-            { width: 15, height: 200 },
-            { issuecodes: [issuecode] },
-          );
+          if (
+            !stepStore.dimensions.some(
+              ({ issuecode }) => issuecode === issuecode,
+            )
+          ) {
+            stepStore.setDimensions(
+              { width: 15, height: 200 },
+              { issuecodes: [issuecode] },
+            );
+          }
 
           stepStore.setOptionValues([]);
         }
