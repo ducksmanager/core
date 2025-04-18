@@ -99,7 +99,7 @@ declare global {
     ): Record<
       K extends null
         ? T & string
-        : K extends ((item: T) => string)
+        : K extends (item: T) => string
           ? string
           : T[K & (keyof T & (string | number))] & (string | number),
       R
@@ -127,7 +127,12 @@ export const getNestedValue = <T extends Record<string, any>, P extends string>(
 
 Array.prototype.groupBy = function (fieldNameOrCallback, mapper, mapperFn) {
   return this.reduce((acc, object, idx) => {
-    const key = fieldNameOrCallback === null ? object : typeof fieldNameOrCallback === "function" ? fieldNameOrCallback(object) : object[fieldNameOrCallback];
+    const key =
+      fieldNameOrCallback === null
+        ? object
+        : typeof fieldNameOrCallback === "function"
+          ? fieldNameOrCallback(object)
+          : object[fieldNameOrCallback];
     if (mapper === "[]" || mapper?.endsWith("[]")) {
       if (!acc[key]) {
         acc[key] = [];

@@ -68,7 +68,7 @@ const listenEvents = (services: SaveServices) => ({
           issuecode,
           designers,
           photographers,
-        }
+        },
       );
       if ("error" in publicationResult) {
         return {

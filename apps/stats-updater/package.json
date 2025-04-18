@@ -10,7 +10,7 @@
     "prod:transfer-files-post": "pnpm -F '~ci' prod:transfer-files apps/stats-updater/docker-compose.yml:@apps/stats-updater/docker-compose.yml"
   },
   "dependencies": {
-    "dotenv": "^16.4.7",
+    "dotenv": "^16.5.0",
     "mariadb": "^3.4.1",
     "~prisma-schemas": "workspace:*"
   },
