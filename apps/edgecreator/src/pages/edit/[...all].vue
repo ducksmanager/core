@@ -159,8 +159,7 @@ const stepStore = step();
 const editingStepStore = editingStep();
 const { showPreviousEdge, showNextEdge } = useSurroundingEdge();
 
-const { loadSvgFromString } = useSvgUtils();
-const { loadModel, overwriteModel } = useModelLoad();
+const { loadModel } = useModelLoad();
 const {
   publicationcode,
   issuecodes,
@@ -248,14 +247,26 @@ try {
       } catch {
         const previousIssuecode = issuecodes.value[idx - 1];
         if (previousIssuecode) {
-          overwriteModel(
+          stepStore.setDimensions(
+            stepStore.dimensions.find(
+              ({ issuecode: thisIssuecode }) =>
+                previousIssuecode === thisIssuecode,
+            )!,
+            { issuecodes: [issuecode] },
+          );
+          stepStore.setSteps(
             issuecode,
-            await loadSvgFromString(previousIssuecode, false),
+            stepStore.options
+              .filter(({ issuecode }) => issuecode === previousIssuecode)
+              .map((option) => ({
+                ...option,
+                issuecode,
+              })),
           );
         } else {
           if (
             !stepStore.dimensions.some(
-              ({ issuecode }) => issuecode === issuecode,
+              ({ issuecode: thisIssuecode }) => issuecode === thisIssuecode,
             )
           ) {
             stepStore.setDimensions(
@@ -264,7 +275,9 @@ try {
             );
           }
 
-          stepStore.setOptionValues([]);
+          stepStore.setOptionValues([], {
+            issuecodes: [issuecode],
+          });
         }
       }
     }

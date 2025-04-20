@@ -158,8 +158,8 @@ export const step = defineStore("step", () => {
             overrides.issuecodes && !overrides.issuecodes.includes(issuecode),
         ),
         ...(overrides.issuecodes ?? main().issuecodes).map((issuecode) => ({
-          issuecode,
           ...newDimensions,
+          issuecode,
         })),
       ];
     },

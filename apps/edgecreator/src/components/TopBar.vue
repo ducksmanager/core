@@ -236,15 +236,9 @@
               :disable-ongoing-or-published="false"
               with-edge-gallery
               disable-not-ongoing-nor-published
-              @change="
-                modelToBeCloned = {
-                  ...$event,
-                  issuecode: $event.issuecode.replace(/ /g, '_'),
-                  issuenumberEnd: $event.issuenumberEnd.replace(/ /g, '_'),
-                }
-              "
+              @change="issuecodeToClone = $event.issuecode"
             />
-            <b-button :disabled="!modelToBeCloned" @click="clone">
+            <b-button :disabled="!issuecodeToClone" @click="clone">
               {{ $t("Clone") }}
             </b-button>
           </b-collapse>
@@ -282,14 +276,8 @@ const {
 
 const { issuecodes: issuecodesToEdit } = storeToRefs(editingStep());
 
-interface ModelToClone {
-  editMode: string;
-  issuecode: string;
-  issuecodeEnd: string;
-}
-
 const showPhotoModal = ref(false);
-const modelToBeCloned = ref<ModelToClone>();
+const issuecodeToClone = ref<string>();
 const collapseDimensions = ref(false);
 const collapseClone = ref(false);
 
@@ -319,11 +307,11 @@ const setPhotoUrl = (photoUrl: string) => {
 
 const clone = async () => {
   for (const issuecode of issuecodesToEdit.value.filter(
-    (issuecode) => issuecode !== modelToBeCloned.value!.issuecode,
+    (issuecode) => issuecode !== issuecodeToClone.value!,
   )) {
     overwriteModel(
       issuecode,
-      await loadSvgFromString(modelToBeCloned.value!.issuecode, true),
+      await loadSvgFromString(issuecodeToClone.value!, true),
     );
   }
 };
