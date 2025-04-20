@@ -2,6 +2,9 @@
   <div
     v-if="sortedBookcase"
     class="bookcase"
+    :class="{
+      horizontal: orientation === 'horizontal',
+    }"
     :style="{
       backgroundImage: getTextureBackgroundImage(bookcaseTextures.bookcase),
     }"
@@ -184,9 +187,8 @@ onMounted(() => {
   background: transparent repeat left top;
   clear: both;
 
-  &.vertical {
-    margin-top: 35px;
-    padding: 10px 5px 10px 15px;
+  &.horizontal {
+    overflow-y: auto;
   }
 }
 </style>

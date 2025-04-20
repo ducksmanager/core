@@ -75,7 +75,7 @@ defineSlots<{
 }>();
 
 const CLOUDINARY_ROTATED_URL =
-  "https://res.cloudinary.com/dl7hskxab/image/upload/a_270/edges/";
+  "https://res.cloudinary.com/dl7hskxab/image/upload/a_90/edges/";
 
 const { publicationNames, issuecodeDetails } = storeToRefs(coa());
 
