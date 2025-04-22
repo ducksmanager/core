@@ -8,7 +8,7 @@
     fluid
   >
     <b-alert
-      v-for="(warning, idx) in mainStore.warnings"
+      v-for="(warning, idx) in warnings"
       :key="`warning-${idx}`"
       align="center"
       dismissible
@@ -23,7 +23,7 @@
     <b-row class="flex-grow-1 pt-2" align-h="end">
       <b-col class="d-flex align-items-end flex-column overflow-auto h-100">
         <table class="edges">
-          <tr v-if="uiStore.showIssueNumbers">
+          <tr v-if="showIssueNumbers">
             <th
               v-if="
                 showPreviousEdge &&
@@ -57,7 +57,7 @@
                 </div>
               </th>
               <th
-                v-if="uiStore.showEdgePhotos && mainStore.photoUrls[issuecode]"
+                v-if="showEdgePhotos && photoUrls[issuecode]"
                 :key="`photo-icon-${issuecode}`"
               >
                 <i-bi-camera />
@@ -90,31 +90,29 @@
                   :steps="stepsPerIssuecode[issuecode]"
                   :issuecode="issuecode"
                   :dimensions="dimensionsPerIssuecode[issuecode]"
-                  :photo-url="mainStore.photoUrls[issuecode]"
+                  :photo-url="photoUrls[issuecode]"
                   :contributors="
-                    mainStore.contributors.filter(
+                    contributors.filter(
                       ({ issuecode: thisIssuecode }) =>
                         thisIssuecode === issuecode,
                     )
                   "
                 />
               </td>
-              <td
-                v-if="uiStore.showEdgePhotos && mainStore.photoUrls[issuecode]"
-              >
+              <td v-if="showEdgePhotos && photoUrls[issuecode]">
                 <img
-                  :alt="mainStore.photoUrls[issuecode]"
-                  :src="getImageUrl('photos', mainStore.photoUrls[issuecode])"
-                  :class="{ picker: !!uiStore.colorPickerOption }"
+                  :alt="photoUrls[issuecode]"
+                  :src="
+                    getImageUrl(countrycode, 'photos', photoUrls[issuecode])
+                  "
+                  :class="{ picker: !!colorPickerOption }"
                   :style="{
                     height: `${
-                      uiStore.zoom * dimensionsPerIssuecode[issuecode].height
+                      zoom * dimensionsPerIssuecode[issuecode].height
                     }px`,
                   }"
                   crossorigin=""
                   @click="setColorFromPhoto"
-                  @load="uiStore.showEdgePhotos = true"
-                  @error="uiStore.showEdgePhotos = undefined"
                 />
               </td>
             </template>
@@ -150,7 +148,8 @@ import { ui } from "~/stores/ui";
 import { stores as webStores } from "~web";
 
 const route = useRoute();
-const uiStore = ui();
+const { showIssueNumbers, showEdgePhotos, colorPickerOption, zoom } =
+  storeToRefs(ui());
 
 const mainStore = main();
 const { publicationIssues } = storeToRefs(mainStore);
@@ -165,7 +164,12 @@ const {
   issuecodes,
   edgeIssuecodesAfter,
   edgeIssuecodesBefore,
+  warnings,
+  photoUrls,
+  contributors,
 } = storeToRefs(mainStore);
+
+const countrycode = computed(() => publicationcode.value!.split("/")[0]);
 
 const error = ref<string>();
 
@@ -288,9 +292,13 @@ try {
   error.value = e as string;
 }
 
-const getImageUrl = (fileType: string, fileName: string) =>
-  `${import.meta.env.VITE_EDGES_URL as string}/${mainStore.publicationcode!.split("/")[0]}/${
-    fileType === "elements" ? fileType : "photos"
+const getImageUrl = (
+  countrycode: string,
+  fileType: "elements" | "photos" | "gen",
+  fileName: string,
+) =>
+  `${import.meta.env.VITE_EDGES_URL as string}/${countrycode}/${
+    fileType
   }/${fileName}`;
 
 const setColorFromPhoto = ({ target, offsetX, offsetY }: MouseEvent) => {
@@ -302,7 +310,7 @@ const setColorFromPhoto = ({ target, offsetX, offsetY }: MouseEvent) => {
   context.drawImage(imgElement, 0, 0, imgElement.width, imgElement.height);
   const color = context.getImageData(offsetX, offsetY, 1, 1).data;
   stepStore.setOptionValues({
-    [uiStore.colorPickerOption!]: rgbToHex(color[0], color[1], color[2]),
+    [colorPickerOption.value!]: rgbToHex(color[0], color[1], color[2]),
   });
 };
 
