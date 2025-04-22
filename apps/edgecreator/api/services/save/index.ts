@@ -51,7 +51,7 @@ const listenEvents = (services: SaveServices) => ({
     if (runExport) {
       const pngPath = svgPath.replace(".svg", ".png");
 
-      execSync(`rsvg-convert "${svgPath}" "${pngPath}"`);
+      execSync(`rsvg-convert "${svgPath}" -o "${pngPath}"`);
 
       paths = { ...paths, pngPath };
 
