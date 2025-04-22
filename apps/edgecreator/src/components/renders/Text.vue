@@ -5,7 +5,6 @@
       option-name="text"
       :label="$t('Text').toString()"
       type="text"
-      :is-multiple="isMultiple"
     >
       <popover triggers="hover" placement="left">
         <i-bi-info-circle-fill variant="secondary" />
@@ -44,19 +43,16 @@
       option-name="font"
       :label="$t('Font').toString()"
       type="text"
-      :is-multiple="isMultiple"
     >
       <a target="_blank" :href="fontSearchUrl">{{ $t("Search") }}</a>
     </form-input-row>
     <form-color-input-row
       v-model="bgColor"
       option-name="bgColor"
-      :is-multiple="isMultiple"
       :label="$t('Background color').toString()"
     />
     <form-color-input-row
       v-model="fgColor"
-      :is-multiple="isMultiple"
       option-name="fgColor"
       :label="$t('Foreground color').toString()"
     />
@@ -72,7 +68,6 @@
       :min="0"
       :max="270"
       :range-step="90"
-      :is-multiple="isMultiple"
     />
     <b-button
       size="sm"
@@ -111,9 +106,8 @@ import { step } from "~/stores/step";
 import { ui } from "~/stores/ui";
 import { coa } from "~web/src/stores/coa";
 
-const { stepNumber = undefined, isMultiple = false } = defineProps<{
+const { stepNumber = undefined } = defineProps<{
   stepNumber?: number;
-  isMultiple?: boolean;
 }>();
 
 provide("stepNumber", stepNumber);

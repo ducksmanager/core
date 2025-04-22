@@ -4,7 +4,6 @@
       v-for="optionName in ['colorStart', 'colorEnd']"
       :key="optionName"
       :model-value="optionName === 'colorStart' ? colorStart : colorEnd"
-      :is-multiple="isMultiple"
       :label="$t(optionName === 'colorStart' ? 'Start color' : 'End color')"
       @update:model-value="
         optionName === 'colorStart'
@@ -16,10 +15,8 @@
     <form-input-row
       v-model="direction"
       type="select"
-      option-name="direction"
       :label="$t('Direction').toString()"
       :select-options="[$t('Vertical'), $t('Horizontal')]"
-      :is-multiple="isMultiple"
     />
   </template>
   <svg v-else>
@@ -52,9 +49,8 @@
 <script setup lang="ts">
 const rect = ref<SVGRectElement>();
 
-const { stepNumber = undefined, isMultiple = false } = defineProps<{
+const { stepNumber = undefined } = defineProps<{
   stepNumber?: number;
-  isMultiple?: boolean;
 }>();
 
 provide("stepNumber", stepNumber);

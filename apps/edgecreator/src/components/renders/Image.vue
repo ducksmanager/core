@@ -21,7 +21,6 @@
       :label="$t('Image').toString()"
       type="text"
       list-id="src-list"
-      :is-multiple="isMultiple"
     >
       <gallery
         v-model="src"
@@ -57,9 +56,8 @@ const { image: imageDetails, loadImage } = useBase64Legacy();
 const { issuecodes: editingIssuecodes } = storeToRefs(editingStep());
 const { getFilteredDimensions } = step();
 
-const { stepNumber = undefined, isMultiple = false } = defineProps<{
+const { stepNumber = undefined } = defineProps<{
   stepNumber?: number;
-  isMultiple?: boolean;
 }>();
 
 provide("stepNumber", stepNumber);

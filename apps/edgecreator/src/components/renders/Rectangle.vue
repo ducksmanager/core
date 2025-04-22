@@ -4,14 +4,12 @@
       v-model="fill"
       option-name="fill"
       :label="$t('Fill color').toString()"
-      :is-multiple="isMultiple"
       can-be-transparent
     />
     <form-color-input-row
       v-model="stroke"
       option-name="stroke"
       :label="$t('Stroke color').toString()"
-      :is-multiple="isMultiple"
       can-be-transparent
     />
   </template>
@@ -25,9 +23,8 @@
 <script setup lang="ts">
 const rect = ref<SVGRectElement>();
 
-const { stepNumber = undefined, isMultiple = false } = defineProps<{
+const { stepNumber = undefined } = defineProps<{
   stepNumber?: number;
-  isMultiple?: boolean;
 }>();
 
 provide("stepNumber", stepNumber);

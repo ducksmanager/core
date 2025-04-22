@@ -44,7 +44,6 @@
 type PossibleInputValueType = string | number;
 const {
   disabled = undefined,
-  isMultiple,
   listId = undefined,
   max = undefined,
   min = undefined,
@@ -54,7 +53,6 @@ const {
   selectOptions = undefined,
 } = defineProps<{
   disabled?: boolean;
-  isMultiple: boolean;
   label: string;
   listId?: string;
   max?: number;
@@ -65,6 +63,14 @@ const {
   selectOptions?: string[];
   type: "color" | "text" | "range" | "select";
 }>();
+
+const stepOptionsWithMultipleValues = inject<Ref<string[]>>(
+  "stepOptionsWithMultipleValues",
+)!;
+
+const isMultiple = computed(() =>
+  stepOptionsWithMultipleValues.value.includes(optionName),
+);
 
 const inputValue = defineModel<PossibleInputValueType>();
 

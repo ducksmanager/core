@@ -4,14 +4,12 @@
       v-model="fill"
       option-name="fill"
       :label="$t(ucFirst(`fill color`)).toString()"
-      :is-multiple="isMultiple"
       can-be-transparent
     />
     <form-color-input-row
       v-model="stroke"
       option-name="stroke"
       :label="$t(ucFirst(`stroke color`)).toString()"
-      :is-multiple="isMultiple"
       can-be-transparent
     />
   </template>
@@ -27,9 +25,8 @@ import { ui } from "~/stores/ui";
 
 const { zoom } = storeToRefs(ui());
 
-const { stepNumber = undefined, isMultiple = false } = defineProps<{
+const { stepNumber = undefined } = defineProps<{
   stepNumber?: number;
-  isMultiple?: boolean;
 }>();
 
 provide("stepNumber", stepNumber);

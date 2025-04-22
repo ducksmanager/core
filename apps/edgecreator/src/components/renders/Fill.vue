@@ -4,7 +4,6 @@
     v-model="fill"
     option-name="fill"
     :label="$t('Fill color').toString()"
-    :is-multiple="isMultiple"
   />
   <svg v-else>
     <rect
@@ -27,9 +26,8 @@ import { step } from "~/stores/step";
 
 const { getFilteredDimensions } = step();
 
-const { stepNumber = undefined, isMultiple = false } = defineProps<{
+const { stepNumber = undefined } = defineProps<{
   stepNumber?: number;
-  isMultiple?: boolean;
 }>();
 
 provide("stepNumber", stepNumber);

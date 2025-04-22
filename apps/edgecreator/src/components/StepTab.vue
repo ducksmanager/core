@@ -26,7 +26,10 @@
           @click.stop="emit('swap-steps', stepNumber - 1)"
         />
         <i-bi-eye-slash-fill
-          v-if="'visible' in options && !options.visible"
+          v-if="
+            'visible' in stepOptionUniqueValues &&
+            !stepOptionUniqueValues.visible
+          "
           :title="$t('Click to show')"
           @click.stop="
             setOptionValues({ visible: true }, { stepNumber, issuecodes })
@@ -59,7 +62,7 @@
       <component
         :is="supportedRenders[componentName].component"
         ref="renderComponent"
-        v-bind="optionsWithoutComponent"
+        v-bind="stepOptionUniqueValuesWithoutComponent"
         :step-number="stepNumber"
         v-on="onOptionUpdate"
       />
@@ -78,6 +81,8 @@ const { stepNumber } = defineProps<{
   stepNumber: number;
 }>();
 
+provide("stepNumber", stepNumber);
+
 const emit = defineEmits<{
   (event: "swap-steps", otherStep: number): void;
   (event: "duplicate-step" | "remove-step"): void;
@@ -94,24 +99,40 @@ const { setOptionValues } = step();
 const { supportedRenders } = renders();
 const { issuecodes } = storeToRefs(main());
 
-const options = computed(() =>
-  allStepOptions.value
-    .filter(
-      ({ issuecode, stepNumber: thisStepNumber }) =>
-        thisStepNumber === stepNumber &&
-        editingIssuecodes.value.includes(issuecode),
-    )
-    .groupBy("optionName", "optionValue"),
+const stepOptions = computed(() =>
+  allStepOptions.value.filter(
+    ({ issuecode, stepNumber: thisStepNumber }) =>
+      thisStepNumber === stepNumber &&
+      editingIssuecodes.value.includes(issuecode),
+  ),
+);
+const stepOptionUniqueValues = computed(() =>
+  stepOptions.value.groupBy("optionName", "optionValue"),
 );
 
-const optionsWithoutComponent = computed(() =>
+const stepOptionUniqueValuesWithoutComponent = computed(() =>
   Object.fromEntries(
-    Object.entries(options.value).filter(([key]) => key !== "component"),
+    Object.entries(stepOptionUniqueValues.value).filter(
+      ([key]) => key !== "component",
+    ),
   ),
 );
 
+const stepOptionsWithMultipleValues = computed(() =>
+  Object.keys(
+    Object.fromEntries(
+      Object.entries(
+        stepOptions.value.groupBy("optionName", "optionValue[]"),
+      ).filter(([_optionName, optionValues]) => optionValues.length > 1),
+    ),
+  ),
+);
+
+provide("stepOptionsWithMultipleValues", stepOptionsWithMultipleValues);
+
 const componentName = computed(
-  () => options.value["component"] as keyof typeof supportedRenders,
+  () =>
+    stepOptionUniqueValues.value["component"] as keyof typeof supportedRenders,
 );
 
 const renderComponent =
