@@ -49,7 +49,7 @@ import CountryList from '~/views/CountryList.vue';
 import IssueList from '~/views/IssueList.vue';
 import PublicationList from '~/views/PublicationList.vue';
 
-const list = ref<InstanceType<typeof CountryList | typeof PublicationList | typeof IssueList>>();
+const list = shallowRef<InstanceType<typeof CountryList | typeof PublicationList | typeof IssueList>>();
 
 const { total, ownedCountries, ownedPublications } = storeToRefs(wtdcollection());
 const {
