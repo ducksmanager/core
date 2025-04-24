@@ -1,13 +1,15 @@
 <template>
   <table v-if="username">
-    <tr>
-      <td>
-        <router-link to="/collection/show"
-          ><img id="logo" alt="logo" :src="getImagePath('logo_small.png')"
-        /></router-link>
-      </td>
-      <td>{{ $t("Collection de {username}", { username }) }}</td>
-    </tr>
+    <tbody>
+      <tr>
+        <td>
+          <router-link to="/collection/show"
+            ><img id="logo" alt="logo" :src="getImagePath('logo_small.png')"
+          /></router-link>
+        </td>
+        <td>{{ $t("Collection de {username}", { username }) }}</td>
+      </tr>
+    </tbody>
   </table>
 </template>
 

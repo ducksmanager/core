@@ -15,33 +15,35 @@
       <div v-if="issues && purchases">
         <div v-if="showFilter" v-once class="issue-filter">
           <table>
-            <tr
-              v-for="conditionFilter in ['possessed', 'missing'] as const"
-              :key="conditionFilter"
-            >
-              <td>
-                <input
-                  :id="`show-${conditionFilter}`"
-                  v-model="filter[conditionFilter]"
-                  type="checkbox"
-                />
-              </td>
-              <td>
-                <label :for="`show-${conditionFilter}`">
-                  <template v-if="conditionFilter === 'possessed'">{{
-                    $t("Afficher les numéros possédés")
-                  }}</template>
-                  <template v-else-if="conditionFilter === 'missing'"
-                    >{{ $t("Afficher les numéros manquants") }}
-                  </template>
-                  ({{
-                    conditionFilter === "possessed"
-                      ? ownedIssuesCount
-                      : issues.length - ownedIssuesCount
-                  }})
-                </label>
-              </td>
-            </tr>
+            <tbody>
+              <tr
+                v-for="conditionFilter in ['possessed', 'missing'] as const"
+                :key="conditionFilter"
+              >
+                <td>
+                  <input
+                    :id="`show-${conditionFilter}`"
+                    v-model="filter[conditionFilter]"
+                    type="checkbox"
+                  />
+                </td>
+                <td>
+                  <label :for="`show-${conditionFilter}`">
+                    <template v-if="conditionFilter === 'possessed'">{{
+                      $t("Afficher les numéros possédés")
+                    }}</template>
+                    <template v-else-if="conditionFilter === 'missing'"
+                      >{{ $t("Afficher les numéros manquants") }}
+                    </template>
+                    ({{
+                      conditionFilter === "possessed"
+                        ? ownedIssuesCount
+                        : issues.length - ownedIssuesCount
+                    }})
+                  </label>
+                </td>
+              </tr>
+            </tbody>
           </table>
         </div>
         <div class="issue-list">

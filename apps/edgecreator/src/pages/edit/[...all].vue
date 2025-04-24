@@ -23,107 +23,111 @@
     <b-row class="flex-grow-1 pt-2" align-h="end">
       <b-col class="d-flex align-items-end flex-column overflow-auto h-100">
         <table class="edges">
-          <tr v-if="showIssueNumbers">
-            <th
-              v-if="
-                showPreviousEdge &&
-                edgeIssuecodesBefore[edgeIssuecodesBefore.length - 1]
-              "
-              class="surrounding-edge"
-            >
-              {{ edgeIssuecodesBefore[edgeIssuecodesBefore.length - 1] }}
-            </th>
-            <template
-              v-for="issuecode in issuecodes"
-              :key="`issuecode-${issuecode}`"
-            >
+          <tbody>
+            <tr v-if="showIssueNumbers">
               <th
-                :class="{
-                  clickable: true,
-                  published: isPublished(issuecode),
-                  ongoing: isOngoing(issuecode),
-                }"
-                @click.exact="editingStepStore.replaceIssuecode(issuecode)"
-                @click.shift="editingStepStore.toggleIssuecode(issuecode)"
-                @dblclick="editingStepStore.addIssuecodes(issuecodes)"
-              >
-                <div v-if="editingStepStore.issuecodes.includes(issuecode)">
-                  <i-bi-pencil />
-                </div>
-                <div>
-                  {{
-                    publicationIssues!.find(({issuecode: thisIssuecode}) => issuecode === thisIssuecode)!.issuenumber
-                  }}
-                </div>
-              </th>
-              <th
-                v-if="showEdgePhotos && photoUrls[issuecode]"
-                :key="`photo-icon-${issuecode}`"
-              >
-                <i-bi-camera />
-              </th>
-            </template>
-            <th
-              v-if="showNextEdge && edgeIssuecodesAfter[0]"
-              class="surrounding-edge"
-            >
-              {{ edgeIssuecodesAfter[0] }}
-            </th>
-          </tr>
-          <tr>
-            <td v-if="showPreviousEdge && edgeIssuecodesBefore.length">
-              <published-edge
-                :issuecode="
-                  edgeIssuecodesBefore[edgeIssuecodesBefore.length - 1]!
+                v-if="
+                  showPreviousEdge &&
+                  edgeIssuecodesBefore[edgeIssuecodesBefore.length - 1]
                 "
-                @load="showPreviousEdge = true"
-                @error="showPreviousEdge = undefined"
-              />
-            </td>
-            <template
-              v-for="issuecode in issuecodes"
-              :key="`canvas-${issuecode}`"
-            >
-              <td>
-                <edge-canvas
-                  v-if="dimensionsPerIssuecode[issuecode]"
-                  :steps="stepsPerIssuecode[issuecode]"
-                  :issuecode="issuecode"
-                  :dimensions="dimensionsPerIssuecode[issuecode]"
-                  :photo-url="photoUrls[issuecode]"
-                  :contributors="
-                    contributors.filter(
-                      ({ issuecode: thisIssuecode }) =>
-                        thisIssuecode === issuecode,
-                    )
-                  "
-                />
-              </td>
-              <td v-if="showEdgePhotos && photoUrls[issuecode]">
-                <img
-                  :alt="photoUrls[issuecode]"
-                  :src="
-                    getImageUrl(countrycode, 'photos', photoUrls[issuecode])
-                  "
-                  :class="{ picker: !!colorPickerOption }"
-                  :style="{
-                    height: `${
-                      zoom * dimensionsPerIssuecode[issuecode].height
-                    }px`,
+                class="surrounding-edge"
+              >
+                {{ edgeIssuecodesBefore[edgeIssuecodesBefore.length - 1] }}
+              </th>
+              <template
+                v-for="issuecode in issuecodes"
+                :key="`issuecode-${issuecode}`"
+              >
+                <th
+                  :class="{
+                    clickable: true,
+                    published: isPublished(issuecode),
+                    ongoing: isOngoing(issuecode),
                   }"
-                  crossorigin=""
-                  @click="setColorFromPhoto"
+                  @click.exact="editingStepStore.replaceIssuecode(issuecode)"
+                  @click.shift="editingStepStore.toggleIssuecode(issuecode)"
+                  @dblclick="editingStepStore.addIssuecodes(issuecodes)"
+                >
+                  <div v-if="editingStepStore.issuecodes.includes(issuecode)">
+                    <i-bi-pencil />
+                  </div>
+                  <div>
+                    {{
+                      publicationIssues!.find(({issuecode: thisIssuecode}) => issuecode === thisIssuecode)!.issuenumber
+                    }}
+                  </div>
+                </th>
+                <th
+                  v-if="showEdgePhotos && photoUrls[issuecode]"
+                  :key="`photo-icon-${issuecode}`"
+                >
+                  <i-bi-camera />
+                </th>
+              </template>
+              <th
+                v-if="showNextEdge && edgeIssuecodesAfter[0]"
+                class="surrounding-edge"
+              >
+                {{ edgeIssuecodesAfter[0] }}
+              </th>
+            </tr>
+          </tbody>
+          <tbody>
+            <tr>
+              <td v-if="showPreviousEdge && edgeIssuecodesBefore.length">
+                <published-edge
+                  :issuecode="
+                    edgeIssuecodesBefore[edgeIssuecodesBefore.length - 1]!
+                  "
+                  @load="showPreviousEdge = true"
+                  @error="showPreviousEdge = undefined"
                 />
               </td>
-            </template>
-            <td v-if="showNextEdge && edgeIssuecodesAfter.length">
-              <published-edge
-                :issuecode="edgeIssuecodesAfter[0]!"
-                @load="showNextEdge = true"
-                @error="showNextEdge = undefined"
-              />
-            </td>
-          </tr>
+              <template
+                v-for="issuecode in issuecodes"
+                :key="`canvas-${issuecode}`"
+              >
+                <td>
+                  <edge-canvas
+                    v-if="dimensionsPerIssuecode[issuecode]"
+                    :steps="stepsPerIssuecode[issuecode]"
+                    :issuecode="issuecode"
+                    :dimensions="dimensionsPerIssuecode[issuecode]"
+                    :photo-url="photoUrls[issuecode]"
+                    :contributors="
+                      contributors.filter(
+                        ({ issuecode: thisIssuecode }) =>
+                          thisIssuecode === issuecode,
+                      )
+                    "
+                  />
+                </td>
+                <td v-if="showEdgePhotos && photoUrls[issuecode]">
+                  <img
+                    :alt="photoUrls[issuecode]"
+                    :src="
+                      getImageUrl(countrycode, 'photos', photoUrls[issuecode])
+                    "
+                    :class="{ picker: !!colorPickerOption }"
+                    :style="{
+                      height: `${
+                        zoom * dimensionsPerIssuecode[issuecode].height
+                      }px`,
+                    }"
+                    crossorigin=""
+                    @click="setColorFromPhoto"
+                  />
+                </td>
+              </template>
+              <td v-if="showNextEdge && edgeIssuecodesAfter.length">
+                <published-edge
+                  :issuecode="edgeIssuecodesAfter[0]!"
+                  @load="showNextEdge = true"
+                  @error="showNextEdge = undefined"
+                />
+              </td>
+            </tr>
+          </tbody>
         </table>
       </b-col>
       <b-col sm="10" md="8" lg="6">
