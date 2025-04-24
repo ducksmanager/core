@@ -36,6 +36,14 @@ export default () => {
       issuecode,
       svgChildNodes
         .filter(({ nodeName }) => nodeName === "g")
+        .filter((group, stepNumber) => {
+          const metadata = group.getElementsByTagName("metadata");
+          if (!metadata.length) {
+            console.warn("No metadata found for step", stepNumber);
+            return false;
+          }
+          return true;
+        })
         .flatMap((group, stepNumber) => [
           {
             optionName: "component",
@@ -216,9 +224,9 @@ export default () => {
 
   const logModelLoadError = (e: unknown) => {
     if (typeof e === "object" && e !== null && "name" in e && "message" in e) {
-      console.log(e.message);
+      console.warn(e.message);
     } else {
-      console.log(e);
+      console.warn(e);
     }
   };
 
