@@ -37,6 +37,7 @@ const isColorOption = (optionName: string) =>
   ["fill", "stroke"].includes(optionName);
 
 export const step = defineStore("step", () => {
+  const { t } = useI18n();
   const options = ref<Options>([]),
     dimensions = ref<DimensionsArray>([]),
     colors = computed(() =>
@@ -193,19 +194,17 @@ export const step = defineStore("step", () => {
       const currentIssueComponents = getComponents(issueSteps);
       if (firstIssueComponents !== currentIssueComponents) {
         throw new Error(
-          useI18n()
-            .t(
-              `Issue codes {firstIssuecode} and {issuecode} ` +
-                `don't have the same components` +
-                `: {firstIssueComponents} vs {currentIssueComponents}`,
-              {
-                firstIssuecode: firstIssuecode,
-                issuecode,
-                firstIssueComponents,
-                currentIssueComponents,
-              },
-            )
-            .toString(),
+          t(
+            `Issue codes {firstIssuecode} and {issuecode} ` +
+              `don't have the same components` +
+              `: {firstIssueComponents} vs {currentIssueComponents}`,
+            {
+              firstIssuecode: firstIssuecode,
+              issuecode,
+              firstIssueComponents,
+              currentIssueComponents,
+            },
+          ).toString(),
         );
       }
     },

@@ -214,13 +214,25 @@ export default () => {
     setContributorsFromSvg(targetIssuecode, svgChildNodes);
   };
 
+  const logModelLoadError = (e: unknown) => {
+    if (typeof e === "object" && e !== null && "name" in e && "message" in e) {
+      console.log(e.message);
+    } else {
+      console.log(e);
+    }
+  };
+
   const loadModel = async (issuecode: string) => {
     try {
+      console.log("Loading non-published version of", issuecode);
       overwriteModel(issuecode, await loadSvgFromString(issuecode, false));
-    } catch (_e) {
+    } catch (e) {
+      logModelLoadError(e);
       try {
+        console.log("Loading published version of", issuecode);
         overwriteModel(issuecode, await loadSvgFromString(issuecode, true));
-      } catch (_e) {
+      } catch (e) {
+        logModelLoadError(e);
         const edge = (await edgeCreatorEvents.getModel(issuecode))!;
         await edgeCatalogStore.loadPublishedEdgesSteps([edge.id]);
         const apiSteps = edgeCatalogStore.publishedEdgesSteps[issuecode];
