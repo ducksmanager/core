@@ -30,7 +30,7 @@ importers:
     devDependencies:
       '@types/bun':
         specifier: latest
-        version: 1.2.8
+        version: 1.2.10
       '@types/node':
         specifier: ^22.13.11
         version: 22.13.11
@@ -638,7 +638,7 @@ importers:
     devDependencies:
       '@types/bun':
         specifier: latest
-        version: 1.2.8
+        version: 1.2.10
       typescript:
         specifier: ^5.8.2
         version: 5.8.2
@@ -1188,7 +1188,7 @@ importers:
     devDependencies:
       '@types/bun':
         specifier: latest
-        version: 1.2.8
+        version: 1.2.10
       typescript:
         specifier: ^5.8.2
         version: 5.8.2
@@ -3134,11 +3134,11 @@ packages:
   '@types/body-parser@1.19.5':
     resolution: {integrity: sha512-fB3Zu92ucau0iQ0JMCFQE7b/dv8Ot07NI3KaZIkIUNXq82k4eBAqUaneXfleGY9JWskeS9y+u0nXMyspcuQrCg==}
 
+  '@types/bun@1.2.10':
+    resolution: {integrity: sha512-eilv6WFM3M0c9ztJt7/g80BDusK98z/FrFwseZgT4bXCq2vPhXD4z8R3oddmAn+R/Nmz9vBn4kweJKmGTZj+lg==}
+
   '@types/bun@1.2.5':
     resolution: {integrity: sha512-w2OZTzrZTVtbnJew1pdFmgV99H0/L+Pvw+z1P67HaR18MHOzYnTYOi6qzErhK8HyT+DB782ADVPPE92Xu2/Opg==}
-
-  '@types/bun@1.2.8':
-    resolution: {integrity: sha512-t8L1RvJVUghW5V+M/fL3Thbxcs0HwNsXsnTEBEfEVqGteiJToOlZ/fyOEaR1kZsNqnu+3XA4RI/qmnX4w6+S+w==}
 
   '@types/busboy@1.5.4':
     resolution: {integrity: sha512-kG7WrUuAKK0NoyxfQHsVE6j1m01s6kMma64E+OZenQABMQyTJop1DumUWcLwAQ2JzpefU7PDYoRDKl8uZosFjw==}
@@ -4026,11 +4026,11 @@ packages:
     resolution: {integrity: sha512-8f9ZJCUXyT1M35Jx7MkBgmBMo3oHTTBIPLiY9xyL0pl3T5RwcPEY8cUHr5LBNfu/fk6c2T4DJZuVM/8ZZT2D2A==}
     engines: {node: '>=10.0.0'}
 
+  bun-types@1.2.10:
+    resolution: {integrity: sha512-b5ITZMnVdf3m1gMvJHG+gIfeJHiQPJak0f7925Hxu6ZN5VKA8AGy4GZ4lM+Xkn6jtWxg5S3ldWvfmXdvnkp3GQ==}
+
   bun-types@1.2.5:
     resolution: {integrity: sha512-3oO6LVGGRRKI4kHINx5PIdIgnLRb7l/SprhzqXapmoYkFl5m4j6EvALvbDVuuBFaamB46Ap6HCUxIXNLCGy+tg==}
-
-  bun-types@1.2.7:
-    resolution: {integrity: sha512-P4hHhk7kjF99acXqKvltyuMQ2kf/rzIw3ylEDpCxDS9Xa0X0Yp/gJu/vDCucmWpiur5qJ0lwB2bWzOXa2GlHqA==}
 
   busboy@1.6.0:
     resolution: {integrity: sha512-8SFQbg/0hQ9xy3UNTB0YEnsNBbWfhf7RtnzpL7TkBiTBRfrQ9Fxcnz7VJsleJpyp6rVLvXiuORqjlHi5q+PYuA==}
@@ -10455,13 +10455,13 @@ snapshots:
       '@types/connect': 3.4.38
       '@types/node': 22.13.11
 
+  '@types/bun@1.2.10':
+    dependencies:
+      bun-types: 1.2.10
+
   '@types/bun@1.2.5':
     dependencies:
       bun-types: 1.2.5
-
-  '@types/bun@1.2.8':
-    dependencies:
-      bun-types: 1.2.7
 
   '@types/busboy@1.5.4':
     dependencies:
@@ -11528,12 +11528,11 @@ snapshots:
   buildcheck@0.0.6:
     optional: true
 
-  bun-types@1.2.5:
+  bun-types@1.2.10:
     dependencies:
       '@types/node': 22.13.11
-      '@types/ws': 8.5.14
 
-  bun-types@1.2.7:
+  bun-types@1.2.5:
     dependencies:
       '@types/node': 22.13.11
       '@types/ws': 8.5.14

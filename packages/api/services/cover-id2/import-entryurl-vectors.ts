@@ -1,13 +1,8 @@
 import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa/client";
 import { readdirSync, readFileSync } from "fs";
 import { getImageVector, preprocessImage } from ".";
-import { execSync } from "child_process";
 
 const root = `${import.meta.dir}/covers`;
-
-execSync(
-  `rsync -a -m --include='**/*fr_tp_*.jpg' --include='*/' --exclude='*' bperel@ducksmanager.net:/data/covers ${import.meta.dir}`,
-);
 
 const files = readdirSync(root, {
   recursive: true,
@@ -23,8 +18,8 @@ SELECT entryurl_id FROM inducks_entryurl_vector2
 for (const file of files) {
   if (
     file.isDirectory() ||
-    !file.parentPath.includes("webusers") ||
-    !file.name.includes("fr_tp_")
+    !file.parentPath.includes("webusers")
+    // !file.name.includes("fr_tp_")
   ) {
     continue;
   }
@@ -43,7 +38,7 @@ for (const file of files) {
   }
 
   if (existingVectors.includes(entry.id)) {
-    // console.log(`Vector already exists for ${relativePath}`);
+    console.log(`Vector already exists for ${relativePath}`);
     continue;
   }
 
