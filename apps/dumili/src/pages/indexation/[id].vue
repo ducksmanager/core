@@ -8,16 +8,13 @@
       />
       <TextEditor v-else-if="activeTabIndex === 2" />
       <b-container class="start-0 bottom-0 mw-100 pt-2" style="height: 35px"
-        ><b-nav tabs align="center"
-          ><b-nav-item
+        ><b-tabs v-model="activeTabIndex" tabs align="center"
+          ><b-tab
             v-for="{ id, label } of tabNames"
             :key="id"
             :href="`#${id}`"
-            :active="`#${id}` === $route.hash"
-            >{{ label }}</b-nav-item
-          ></b-nav
-        ></b-container
-      >
+            :title="label" /></b-tabs
+      ></b-container>
     </b-col>
 
     <b-col :cols="6" class="h-100">
@@ -37,7 +34,7 @@ import { tabs } from "~/stores/tabs";
 import type { FullIndexation } from "~dumili-services/indexation";
 
 const route = useRoute();
-
+const router = useRouter();
 const { t: $t } = useI18n();
 
 const { activeTabIndex } = storeToRefs(tabs());
@@ -101,12 +98,17 @@ watch(
 watch(
   () => route.hash,
   (hash) => {
-    activeTabIndex.value = tabNames.findIndex(
-      ({ id: tabId }) => `#${tabId}` === hash,
+    activeTabIndex.value = Math.max(
+      tabNames.findIndex(({ id: tabId }) => `#${tabId}` === hash),
+      0,
     );
   },
   { immediate: true },
 );
+
+watch(activeTabIndex, (activeTabIndex) => {
+  router.push(`#${tabNames[activeTabIndex].id}`);
+});
 </script>
 
 <style lang="scss" scoped>
