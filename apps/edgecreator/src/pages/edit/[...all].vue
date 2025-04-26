@@ -32,7 +32,11 @@
                 "
                 class="surrounding-edge"
               >
-                {{ edgeIssuecodesBefore[edgeIssuecodesBefore.length - 1] }}
+                {{
+                  coa().issuecodeDetails[
+                    edgeIssuecodesBefore[edgeIssuecodesBefore.length - 1]
+                  ]?.issuenumber
+                }}
               </th>
               <template
                 v-for="issuecode in issuecodes"
@@ -68,7 +72,11 @@
                 v-if="showNextEdge && edgeIssuecodesAfter[0]"
                 class="surrounding-edge"
               >
-                {{ edgeIssuecodesAfter[0] }}
+                {{
+                  coa().issuecodeDetails[
+                    edgeIssuecodesAfter[edgeIssuecodesAfter.length - 1]
+                  ]?.issuenumber
+                }}
               </th>
             </tr>
           </tbody>
@@ -156,7 +164,6 @@ const { showIssueNumbers, showEdgePhotos, colorPickerOption, zoom } =
   storeToRefs(ui());
 
 const mainStore = main();
-const { publicationIssues } = storeToRefs(mainStore);
 
 const stepStore = step();
 const editingStepStore = editingStep();
@@ -165,6 +172,7 @@ const { showPreviousEdge, showNextEdge } = useSurroundingEdge();
 const { loadModel } = useModelLoad();
 const {
   publicationcode,
+  publicationIssues,
   issuecodes,
   edgeIssuecodesAfter,
   edgeIssuecodesBefore,
@@ -220,6 +228,11 @@ try {
   publicationcode.value =
     coa().issuecodeDetails[firstIssuecode]?.publicationcode;
 
+  await coa().fetchIssuecodesByPublicationcode([publicationcode.value]);
+  await coa().fetchIssuecodeDetails(
+    coa().issuecodesByPublicationcode[publicationcode.value],
+  );
+
   if (!publicationcode.value) {
     throw new Error(`Issue ${firstIssuecode} doesn't exist`);
   }
@@ -254,6 +267,12 @@ try {
         }
       } catch {
         const previousIssuecode = issuecodes.value[idx - 1];
+        console.log(
+          "Could not load model for",
+          issuecode,
+          "falling back to previous issuecode",
+          previousIssuecode,
+        );
         if (previousIssuecode) {
           stepStore.setDimensions(
             stepStore.dimensions.find(
@@ -262,7 +281,7 @@ try {
             )!,
             { issuecodes: [issuecode] },
           );
-          stepStore.setSteps(
+          stepStore.overwriteSteps(
             issuecode,
             stepStore.options
               .filter(({ issuecode }) => issuecode === previousIssuecode)

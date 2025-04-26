@@ -35,6 +35,11 @@ export const main = defineStore("main", () => {
     publicationIssuecodes = computed(() =>
       publicationIssues.value?.map(({ issuecode }) => issuecode),
     ),
+    publicationPublishedEdges = computed(
+      () =>
+        publicationcode.value &&
+        edgeCatalog().publishedEdges?.[publicationcode.value],
+    ),
     publicationElementsForGallery = computed(
       () =>
         country.value &&
@@ -157,7 +162,7 @@ export const main = defineStore("main", () => {
     loadPublicationIssues = async () =>
       webStores.coa().fetchIssuesByPublicationcode(publicationcode.value!),
     getEdgePublicationStates = (issuecodes: string[]) =>
-      Object.keys(edgeCatalog().publishedEdges)
+      Object.keys(publicationPublishedEdges.value || {})
         .filter((issuecode) => issuecodes.includes(issuecode))
         .sort((issuecode1, issuecode2) =>
           Math.sign(
@@ -169,9 +174,10 @@ export const main = defineStore("main", () => {
     if (
       !edgeCatalog().ongoingEdges ||
       !publicationcode.value ||
-      !publicationIssuecodes.value ||
-      !(publicationcode.value in edgeCatalog().publishedEdges)
+      !publicationIssuecodes.value?.length ||
+      !(publicationPublishedEdges.value || {})
     ) {
+      debugger;
       return [];
     }
     const firstIssueIndex = publicationIssuecodes.value.indexOf(
@@ -192,7 +198,7 @@ export const main = defineStore("main", () => {
       !edgeCatalog().ongoingEdges ||
       !publicationcode.value ||
       !publicationIssuecodes.value ||
-      !(publicationcode.value in edgeCatalog().publishedEdges)
+      !publicationPublishedEdges.value
     ) {
       return [];
     }
@@ -220,6 +226,7 @@ export const main = defineStore("main", () => {
     publicationElements,
     publicationPhotos,
     warnings,
+    publicationPublishedEdges,
     publicationIssues,
     publicationIssuecodes,
     publicationElementsForGallery,

@@ -164,11 +164,14 @@ export const step = defineStore("step", () => {
         })),
       ];
     },
-    setSteps = (issuecode: string, stepOptions: StepOption[]) => {
+    overwriteSteps = (issuecode: string, stepOptions: StepOption[]) => {
       checkSameComponentsAsFirstEdge(issuecode, stepOptions);
-      for (const stepOption of stepOptions) {
-        options.value.push(stepOption);
-      }
+      options.value = [
+        ...options.value.filter(
+          ({ issuecode: thisIssuecode }) => thisIssuecode !== issuecode,
+        ),
+        ...stepOptions,
+      ];
     },
     checkSameComponentsAsFirstEdge = (
       issuecode: string,
@@ -265,7 +268,7 @@ export const step = defineStore("step", () => {
     setOptionValues,
     removeOptionValues,
     setDimensions,
-    setSteps,
+    overwriteSteps,
     checkSameComponentsAsCompletedEdge: checkSameComponentsAsFirstEdge,
     addStep,
     removeStep,

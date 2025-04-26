@@ -32,7 +32,7 @@ export default () => {
     );
   };
   const loadStepsFromSvg = (issuecode: string, svgChildNodes: SVGElement[]) => {
-    stepStore.setSteps(
+    stepStore.overwriteSteps(
       issuecode,
       svgChildNodes
         .filter(({ nodeName }) => nodeName === "g")
