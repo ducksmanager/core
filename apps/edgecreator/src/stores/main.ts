@@ -177,7 +177,6 @@ export const main = defineStore("main", () => {
       !publicationIssuecodes.value?.length ||
       !(publicationPublishedEdges.value || {})
     ) {
-      debugger;
       return [];
     }
     const firstIssueIndex = publicationIssuecodes.value.indexOf(
