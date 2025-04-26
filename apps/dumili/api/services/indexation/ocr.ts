@@ -17,10 +17,10 @@ type OcrResult = {
 
 export const runOcrOnImages = async (
   services: IndexationServices,
-  pages: Exclude<
-    Pick<FullIndexation["pages"][number], "pageNumber" | "image">,
-    { image: null }
-  >[],
+  pages: {
+    pageNumber: number;
+    image: NonNullable<FullIndexation["pages"][number]["image"]>;
+  }[],
 ) => {
   for (const { image, pageNumber } of pages) {
     const firstPanel = image.aiKumikoResult?.detectedPanels[0];
