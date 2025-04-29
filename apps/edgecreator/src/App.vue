@@ -26,7 +26,7 @@ const session = {
 };
 
 const onConnectError = (e: Error) => {
-  const error = String(e);
+  const error = typeof e === "object" && "message" in e ? e.message : String(e);
   console.error(error);
   if (
     error.indexOf("No token provided") !== -1 ||

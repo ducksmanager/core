@@ -1,28 +1,28 @@
 <template>
   <div>
     <b-button
-      v-if="!isPopulating && hasMoreBefore"
+      v-if="!isPopulating && hasMoreIssuesToLoad.before"
       class="w-100"
       show
       variant="info"
-      @click="emit('load-more', 'before')"
+      @click="loadMore('before')"
     >
       Load more...
     </b-button>
     <gallery
-      v-if="items"
+      v-if="edges"
       v-model="selected"
-      v-model:items="items"
+      v-model:edges="edges"
       image-type="edges"
       :loading="isPopulating"
       :allow-upload="false"
     />
     <b-button
-      v-if="!isPopulating && hasMoreAfter"
+      v-if="!isPopulating && hasMoreIssuesToLoad.after"
       class="w-100"
       show
       variant="info"
-      @click="emit('load-more', 'after')"
+      @click="loadMore('after')"
     >
       Load more...
     </b-button>
@@ -31,6 +31,7 @@
 
 <script setup lang="ts">
 import { edgeCatalog } from "~/stores/edgeCatalog";
+import { main } from "~/stores/main";
 import { step } from "~/stores/step";
 import type { GalleryItem } from "~/types/GalleryItem";
 import { stores as webStores } from "~web";
@@ -39,27 +40,52 @@ const { loadDimensionsFromApi, loadStepsFromApi } = useModelLoad();
 
 const selected = defineModel<string>();
 
-const {
-  hasMoreBefore = false,
-  hasMoreAfter = false,
-  publicationcode,
-} = defineProps<{
-  publicationcode: string;
-  hasMoreBefore?: boolean;
-  hasMoreAfter?: boolean;
-}>();
+const { publicationcode, publicationPublishedEdges, publicationIssuecodes } =
+  defineProps<{
+    publicationcode: string;
+    publicationPublishedEdges: Record<string, string>;
+    publicationIssuecodes: string[];
+  }>();
 
-const emit = defineEmits<{
-  "load-more": [where: "before" | "after"];
-}>();
+const { issuecodes } = storeToRefs(main());
 
-const items = ref<GalleryItem[]>([]);
+const edges = ref<GalleryItem[]>([]);
 const isPopulating = ref(false);
 
 const { publishedEdges, publishedEdgesSteps } = storeToRefs(edgeCatalog());
 const { loadPublishedEdgesSteps } = edgeCatalog();
 const { issuecodesByPublicationcode } = storeToRefs(webStores.coa());
-const { fetchIssuecodesByPublicationcode } = webStores.coa();
+
+const editingIssuecodeIndexes = computed(() => ({
+  min: publicationIssuecodes.indexOf(issuecodes.value[0]),
+  max: publicationIssuecodes.indexOf([...issuecodes.value].pop()!),
+}));
+
+const surroundingIssuesToLoad = ref({ before: 10, after: 10 } as const);
+
+const hasMoreIssuesToLoad = computed(() => {
+  const issuecodesFilter = publicationIssuecodes.filter(
+    (issuecode, index) =>
+      index >=
+        editingIssuecodeIndexes.value.min -
+          surroundingIssuesToLoad.value.before &&
+      index <=
+        editingIssuecodeIndexes.value.max +
+          surroundingIssuesToLoad.value.after &&
+      !issuecodes.value.includes(issuecode),
+  );
+  return {
+    before: issuecodesFilter[0] !== publicationIssuecodes[0],
+    after: [...issuecodesFilter].pop() !== [...publicationIssuecodes].pop(),
+  };
+});
+
+const loadMore = (where: "before" | "after") => {
+  surroundingIssuesToLoad.value = {
+    ...surroundingIssuesToLoad.value,
+    [where]: surroundingIssuesToLoad.value[where] + 10,
+  };
+};
 
 const populateItems = async (
   itemsForPublication: {
@@ -69,12 +95,14 @@ const populateItems = async (
     svgUrl?: string;
   }[],
 ) => {
+  debugger;
   await loadPublishedEdgesSteps(
     itemsForPublication.filter(({ svgUrl }) => !svgUrl).map(({ id }) => id),
   );
-  items.value = (
+  edges.value = (
     await Promise.all(
       itemsForPublication.map(async ({ issuecode, svgUrl, url }) => {
+        debugger;
         let quality;
         let tooltip = "";
         if (svgUrl) {
@@ -137,21 +165,17 @@ const populateItems = async (
   );
 };
 
-const onPublicationOrEdgeChange = async () => {
-  if (publishedEdges.value) {
-    if (!isPopulating.value) {
-      isPopulating.value = true;
-      await populateItems(Object.values(publishedEdges.value[publicationcode]));
-      isPopulating.value = false;
-    }
-  }
-};
-
 watch(
   () => publicationcode,
   async () => {
-    await fetchIssuecodesByPublicationcode([publicationcode]);
-    onPublicationOrEdgeChange();
+    if (publishedEdges.value && !isPopulating.value) {
+      isPopulating.value = true;
+      populateItems(Object.values(publishedEdges.value[publicationcode])).then(
+        () => {
+          isPopulating.value = false;
+        },
+      );
+    }
   },
   {
     immediate: true,
