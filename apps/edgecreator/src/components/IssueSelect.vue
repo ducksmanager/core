@@ -18,13 +18,9 @@
           v-if="currentPublicationcode in publishedEdges"
           v-model="currentFirstIssuecode"
           :publicationcode="currentPublicationcode"
-          :has-more-before="hasMoreIssuesToLoad.before"
-          :has-more-after="hasMoreIssuesToLoad.after"
-          @load-more="
-            surroundingIssuesToLoad = {
-              ...surroundingIssuesToLoad,
-              [$event]: surroundingIssuesToLoad[$event as string] + 10,
-            }
+          :publication-published-edges="publishedEdges[currentPublicationcode]"
+          :publication-issuecodes="
+            issuecodesByPublicationcode[currentPublicationcode]
           "
         />
         <b-alert v-else :model-value="true" variant="info">
@@ -112,14 +108,12 @@ const {
   canBeMultiple = false,
   withEdgeGallery = false,
   publicationcode = null,
-  baseIssuecodes = [],
 } = defineProps<{
   publicationcode?: string | null;
   canBeMultiple?: boolean;
   disableOngoingOrPublished: boolean;
   disableNotOngoingNorPublished: boolean;
   withEdgeGallery?: boolean;
-  baseIssuecodes?: string[];
 }>();
 
 const currentCountrycode = ref<string | undefined>(
@@ -132,10 +126,6 @@ const currentFirstIssuecode = ref<string>();
 const currentLastIssuecode = ref<string>();
 
 const editMode = ref<"single" | "range">("single");
-const surroundingIssuesToLoad = ref({ before: 10, after: 10 } as Record<
-  string,
-  number
->);
 
 const countries = computed(
   () =>
@@ -212,29 +202,6 @@ watch(currentPublicationcode, async (newValue) => {
       },
     );
   }
-});
-
-const hasMoreIssuesToLoad = computed(() => {
-  if (!publicationcode) {
-    return { before: false, after: false };
-  }
-  const publishedIssuecodes = Object.keys(
-    publishedEdges.value[publicationcode],
-  );
-  const minBaseIssuecodeIndex = publishedIssuecodes.indexOf(baseIssuecodes[0]);
-  const maxBaseIssuecodeIndex = publishedIssuecodes.indexOf(
-    baseIssuecodes[baseIssuecodes.length - 1],
-  );
-  const issuecodesFilter = publishedIssuecodes.filter(
-    (issuecode, index) =>
-      minBaseIssuecodeIndex - index < surroundingIssuesToLoad.value.before &&
-      index - maxBaseIssuecodeIndex < surroundingIssuesToLoad.value.after &&
-      !baseIssuecodes.includes(issuecode),
-  );
-  return {
-    before: issuecodesFilter[0] !== publishedIssuecodes[0],
-    after: [...issuecodesFilter].pop() !== [...publishedIssuecodes].pop(),
-  };
 });
 
 watch([currentFirstIssuecode, currentLastIssuecode], () => {

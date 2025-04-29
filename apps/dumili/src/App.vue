@@ -77,8 +77,7 @@ const session = {
 };
 
 const onConnectError = (e: Error) => {
-  const error = String(e);
-  console.error(error);
+  const error = typeof e === "object" && "message" in e ? e.message : String(e);
   if (
     error.indexOf("No token provided") !== -1 ||
     error.indexOf("jwt expired") !== -1

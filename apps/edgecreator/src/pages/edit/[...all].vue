@@ -267,13 +267,13 @@ try {
         }
       } catch {
         const previousIssuecode = issuecodes.value[idx - 1];
-        console.log(
-          "Could not load model for",
-          issuecode,
-          "falling back to previous issuecode",
-          previousIssuecode,
-        );
         if (previousIssuecode) {
+          console.log(
+            "Could not load model for",
+            issuecode,
+            "falling back to previous issuecode",
+            previousIssuecode,
+          );
           stepStore.setDimensions(
             stepStore.dimensions.find(
               ({ issuecode: thisIssuecode }) =>
