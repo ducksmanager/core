@@ -35,7 +35,7 @@ import {
   getPastecSearchStatus,
   getPastecStatus,
 } from "./services/status";
-import { server as imageVector } from "./services/cover-id2";
+import { server as storySearch } from "./services/story-search";
 
 export type UserServices<OptionalUser = false> = NamespaceProxyTarget<
   Socket<
@@ -164,7 +164,7 @@ if (cluster.isPrimary) {
   feedback(io);
   globalStats(io);
   globalStatsUser(io);
-  imageVector(io);
+  storySearch(io);
   presentationText(io);
   publicCollection(io);
   stats(io);

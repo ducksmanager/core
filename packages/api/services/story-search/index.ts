@@ -4,7 +4,7 @@ import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa/client";
 import namespaces from "../namespaces";
 import { useSocketEvents } from "socket-call-server";
 
-export const model = () => mobilenet.load();
+const model = await mobilenet.load();
 
 export const preprocessImage = async (imageBuffer: Buffer) => {
   const tensor = tf.node.decodeImage(imageBuffer);
@@ -37,7 +37,7 @@ export const preprocessImage = async (imageBuffer: Buffer) => {
 };
 
 export const getImageVector = async (tensor: tf.Tensor) => {
-  const features = (await model()).infer(tensor, true);
+  const features = model.infer(tensor, true);
   return features.dataSync();
 };
 
@@ -73,7 +73,7 @@ const listenEvents = () => ({
 export const { client, server } = useSocketEvents<
   typeof listenEvents,
   Record<string, never>
->(namespaces.COVER_ID2, {
+>(namespaces.STORY_SEARCH, {
   listenEvents,
   middlewares: [],
 });

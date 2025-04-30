@@ -1,6 +1,7 @@
 import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa/client";
 import { readdirSync, readFileSync } from "fs";
 import { getImageVector, preprocessImage } from ".";
+import { execSync } from "child_process";
 
 const root = `${import.meta.dir}/covers`;
 
@@ -11,7 +12,7 @@ const files = readdirSync(root, {
 
 const existingVectors = (
   await prismaCoa.$queryRaw<{ entryurl_id: number }[]>`
-SELECT entryurl_id FROM inducks_entryurl_vector2
+SELECT entryurl_id FROM inducks_entryurl_vector
 `
 ).map((v) => v.entryurl_id);
 
@@ -19,7 +20,6 @@ for (const file of files) {
   if (
     file.isDirectory() ||
     !file.parentPath.includes("webusers")
-    // !file.name.includes("fr_tp_")
   ) {
     continue;
   }
@@ -57,7 +57,7 @@ for (const file of files) {
   }
 
   prismaCoa.$executeRaw`
-            INSERT INTO inducks_entryurl_vector2 (entryurl_id, v)
+            INSERT INTO inducks_entryurl_vector (entryurl_id, v)
             VALUES (${entry.id}, VEC_FromText(${vectorString}))
         `
     .then(() => {
