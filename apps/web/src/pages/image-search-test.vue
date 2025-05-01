@@ -46,6 +46,7 @@ const examples = [
   "https://res.cloudinary.com/dl7hskxab/image/upload/inducks-covers/webusers/webusers/2018/07/fr_aljm_011a_001.jpg",
   "https://res.cloudinary.com/dl7hskxab/image/upload/inducks-covers/webusers/webusers/2014/02/fr_tp_0024a_001.jpg",
   "https://res.cloudinary.com/dl7hskxab/image/upload/inducks-covers/webusers/webusers/2024/05/eg_mg_0149p053_001.jpg",
+  "https://res.cloudinary.com/dl7hskxab/image/upload/inducks-covers/webusers/webusers/2011/01/fr_tp_0013a_001.jpg",
 ];
 const models = ref<
   {
@@ -90,7 +91,7 @@ const models = ref<
     run: async (base64: string) => {
       try {
         const searchResults = await storySearchEvents.findSimilarImages(base64);
-        return JSON.stringify(searchResults.map(({ entrycode }) => entrycode));
+        return JSON.stringify(searchResults.map(({ issuecode }) => issuecode));
       } catch (error) {
         return typeof error === "object" && "errorDetails" in error!
           ? (error.errorDetails as string) || "Error"
@@ -123,16 +124,23 @@ const handleExampleClick = (url: string) => {
     });
 };
 
-watch(currentBase64, async (base64) => {
+watch(currentBase64, (base64) => {
   if (base64) {
     for (const model of models.value) {
-      const start = performance.now();
-      const interval = setInterval(() => {
-        model.time = `${(performance.now() - start).toFixed()}ms`;
-      }, 10);
-      model.results = await model.run(base64);
-      clearInterval(interval);
+      model.time = undefined;
+      model.results = undefined;
     }
+    nextTick(async () => {
+      for (const model of models.value) {
+        const start = performance.now();
+        const interval = setInterval(() => {
+          model.time = `${(performance.now() - start).toFixed()}ms`;
+        }, 10);
+        model.results = await model.run(base64);
+        clearInterval(interval);
+        currentBase64.value = undefined;
+      }
+    });
   }
 });
 

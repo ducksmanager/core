@@ -76,17 +76,21 @@ const listenEvents = () => {
         // Clean up tensor to prevent memory leaks
         tensor.dispose();
 
+        const vectorString = `[${queryVector.join(",")}]`;
+
         return await prismaCoa.$queryRaw<
-          { entryurlId: number; entrycode: string; similarity: number; }[]
+          { entryurlId: number; entrycode: string; issuecode: string; similarity: number; }[]
         > `
                 SELECT 
                     ev.entryurl_id as entryurlId,
                     eu.entrycode,
-                    1 - VEC_DISTANCE_COSINE(ev.v, vec_fromtext(${queryVector})) as similarity
+                    e.issuecode,
+                    VEC_DISTANCE_COSINE(ev.v, vec_fromtext(${vectorString})) as similarity
                 FROM inducks_entryurl_vector ev
                 INNER JOIN inducks_entryurl eu ON eu.id = ev.entryurl_id
-                WHERE eu.entrycode IS NOT NULL
-                ORDER BY similarity DESC
+                INNER JOIN inducks_entry e ON e.entrycode = eu.entrycode
+                WHERE eu.entrycode IS NOT NULL and VEC_DISTANCE_COSINE(ev.v, vec_fromtext(${vectorString})) < 0.1
+                ORDER BY similarity
                 LIMIT 5
             `;
       } catch (error) {
