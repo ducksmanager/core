@@ -7,6 +7,7 @@ import { prismaClient as prismaCoverInfo } from "~prisma-schemas/schemas/cover_i
 
 import { getCoverUrls } from "../coa/issue-details";
 import namespaces from "../namespaces";
+import { getPastecStatus } from "../status";
 
 const listenEvents = () => ({
   searchFromCover: async ({
@@ -75,6 +76,7 @@ const listenEvents = () => ({
       })),
     };
   },
+  getIndexSize: async () => getPastecStatus(),
   getCoverUrl: async (coverId: number) =>
     getCoverUrl(coverId).then(
       (url) => `${process.env.INDUCKS_COVERS_ROOT}/${url}`,

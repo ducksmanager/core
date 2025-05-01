@@ -3,10 +3,33 @@ import * as tf from "@tensorflow/tfjs-node";
 import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa/client";
 import namespaces from "../namespaces";
 import { useSocketEvents } from "socket-call-server";
+import path from "path";
 
-const model = await mobilenet.load();
+let model: mobilenet.MobileNet;
 
-export const preprocessImage = async (imageBuffer: Buffer) => {
+export const loadModel = async () => {
+  if (!model) {
+    const modelPath = path.join(__dirname, "model");
+    model = await mobilenet.load({
+      modelUrl: `file://${modelPath}/model.json`,
+      version: 1,
+    });
+    console.log("Model loaded");
+  }
+  return model;
+};
+
+export const preprocessImage = async (imageInput: Buffer | string) => {
+  let imageBuffer: Buffer;
+  
+  if (typeof imageInput === 'string') {
+    // Remove data URL prefix if present (e.g., "data:image/jpeg;base64,")
+    const base64Data = imageInput.replace(/^data:image\/\w+;base64,/, '');
+    imageBuffer = Buffer.from(base64Data, 'base64');
+  } else {
+    imageBuffer = imageInput;
+  }
+
   const tensor = tf.node.decodeImage(imageBuffer);
   
   // Ensure we have a 3D tensor (height, width, channels)
@@ -41,34 +64,38 @@ export const getImageVector = async (tensor: tf.Tensor) => {
   return features.dataSync();
 };
 
-const listenEvents = () => ({
-  findSimilarImages: async (imageBuffer: Buffer) => {
-    try {
-      const tensor = await preprocessImage(imageBuffer);
-      const queryVector = await getImageVector(tensor);
+const listenEvents = () => {
+  loadModel();
+  return ({
+    getIndexSize: async () => prismaCoa.entryUrlVector.count(),
+    findSimilarImages: async (imageBufferOrBase64: Buffer | string) => {
+      try {
+        const tensor = await preprocessImage(imageBufferOrBase64);
+        const queryVector = await getImageVector(tensor);
 
-      // Clean up tensor to prevent memory leaks
-      tensor.dispose();
+        // Clean up tensor to prevent memory leaks
+        tensor.dispose();
 
-      return await prismaCoa.$queryRaw<
-        { entryurlId: number; entrycode: string; similarity: number }[]
-      >`
+        return await prismaCoa.$queryRaw<
+          { entryurlId: number; entrycode: string; similarity: number; }[]
+        > `
                 SELECT 
                     ev.entryurl_id as entryurlId,
                     eu.entrycode,
-                    1 - VEC_DISTANCE_COSINE(ev.v, ${queryVector}) as similarity
+                    1 - VEC_DISTANCE_COSINE(ev.v, vec_fromtext(${queryVector})) as similarity
                 FROM inducks_entryurl_vector ev
-                INNER JOIN inducks_entryurl eu ON eu.id = ev.entryurlId
+                INNER JOIN inducks_entryurl eu ON eu.id = ev.entryurl_id
                 WHERE eu.entrycode IS NOT NULL
                 ORDER BY similarity DESC
                 LIMIT 5
             `;
-    } catch (error) {
-      console.error("Error finding similar images:", error);
-      throw error;
-    }
-  },
-});
+      } catch (error) {
+        console.error("Error finding similar images:", error);
+        throw error;
+      }
+    },
+  });
+};
 
 export const { client, server } = useSocketEvents<
   typeof listenEvents,

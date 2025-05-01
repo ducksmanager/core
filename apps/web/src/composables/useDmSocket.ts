@@ -23,6 +23,7 @@ import namespaces from "~dm-services/namespaces";
 import { type ClientEvents as PresentationTextEvents } from "~dm-services/presentation-text";
 import { type ClientEvents as PublicCollectionEvents } from "~dm-services/public-collection";
 import { type ClientEvents as StatsEvents } from "~dm-services/stats";
+import { type ClientEvents as StorySearchEvents } from "~dm-services/story-search";
 
 const defaultExport = (options: {
   cacheStorage: AxiosStorage;
@@ -122,6 +123,10 @@ const defaultExport = (options: {
       },
     ),
     events: socket.addNamespace<EventsEvents>(namespaces.EVENTS, {}),
+    storySearch: socket.addNamespace<StorySearchEvents>(
+      namespaces.STORY_SEARCH,
+      {},
+    ),
     bookstore: socket.addNamespace<BookstoreEvents>(namespaces.BOOKSTORES),
     adminBookstore: socket.addNamespace<AdminBookstoreEvents>(
       namespaces.BOOKSTORES_ADMIN,

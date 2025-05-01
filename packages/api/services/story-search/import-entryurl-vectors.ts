@@ -1,7 +1,8 @@
 import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa/client";
 import { readdirSync, readFileSync } from "fs";
-import { getImageVector, preprocessImage } from ".";
-import { execSync } from "child_process";
+import { getImageVector, preprocessImage, loadModel } from ".";
+
+await loadModel();
 
 const root = `${import.meta.dir}/covers`;
 
