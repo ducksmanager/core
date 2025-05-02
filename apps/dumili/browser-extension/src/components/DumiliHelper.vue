@@ -18,9 +18,7 @@
             placeholder="Enter Dumili text output"
             @input="content = ($event.target as HTMLDivElement).innerText"
             v-text="content"
-          >
-            >
-          </div>
+          />
         </div>
         <div style="display: flex; justify-content: space-between">
           <template

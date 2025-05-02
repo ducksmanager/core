@@ -32,27 +32,37 @@ export default () => {
     );
   };
   const loadStepsFromSvg = (issuecode: string, svgChildNodes: SVGElement[]) => {
-    svgChildNodes
-      .filter(({ nodeName }) => nodeName === "g")
-      .forEach((group, stepNumber) => {
-        stepStore.setOptionValues(
-          [
-            {
-              optionName: "component",
-              optionValue: group.getAttribute("class")!,
-            },
-            ...optionObjectToArray(
-              JSON.parse(
-                group.getElementsByTagName("metadata")[0].textContent!,
-              ) as Record<string, OptionValue>,
-            ),
-          ],
+    stepStore.overwriteSteps(
+      issuecode,
+      svgChildNodes
+        .filter(({ nodeName }) => nodeName === "g")
+        .filter((group, stepNumber) => {
+          const metadata = group.getElementsByTagName("metadata");
+          if (!metadata.length) {
+            console.warn("No metadata found for step", stepNumber);
+            return false;
+          }
+          return true;
+        })
+        .flatMap((group, stepNumber) => [
           {
+            optionName: "component",
+            optionValue: group.getAttribute("class")!,
             stepNumber,
-            issuecodes: [issuecode],
+            issuecode,
           },
-        );
-      });
+          ...optionObjectToArray(
+            JSON.parse(
+              group.getElementsByTagName("metadata")[0].textContent!,
+            ) as Record<string, OptionValue>,
+          ).map(({ optionName, optionValue }) => ({
+            optionName,
+            optionValue,
+            stepNumber,
+            issuecode,
+          })),
+        ]),
+    );
   };
 
   const setPhotoUrlsFromSvg = (
@@ -139,23 +149,32 @@ export default () => {
     } of Object.values(apiSteps).filter(
       ({ stepNumber: originalStepNumber }) => originalStepNumber !== -1,
     )) {
-      const { component } = rendersStore.supportedRenders.find(
-        (component) => component.originalName === originalComponentName,
-      ) ?? { component: null };
-      if (component) {
+      const componentName = Object.keys(rendersStore.supportedRenders).find(
+        (componentName) => {
+          const component =
+            rendersStore.supportedRenders[
+              componentName as keyof typeof rendersStore.supportedRenders
+            ];
+          return (
+            "originalName" in component &&
+            originalComponentName === component.originalName
+          );
+        },
+      );
+      if (componentName) {
         try {
           stepStore.setOptionValues(
             optionObjectToArray(
-              await getOptionsFromDb(
+              (await getOptionsFromDb(
                 issuecode,
                 stepNumber,
                 {
-                  component,
+                  component: componentName,
                   options: originalOptions,
                 } as LegacyComponent,
                 dimensions[0],
                 calculateBase64,
-              ),
+              ))!,
             ),
             {
               issuecodes: [issuecode],
@@ -164,7 +183,7 @@ export default () => {
           );
         } catch (e) {
           onError(
-            `Invalid step ${originalStepNumber} (${component}) : ${
+            `Invalid step ${originalStepNumber} (${componentName}) : ${
               e as string
             }, step will be ignored.`,
             originalStepNumber,
@@ -203,13 +222,25 @@ export default () => {
     setContributorsFromSvg(targetIssuecode, svgChildNodes);
   };
 
+  const logModelLoadError = (e: unknown) => {
+    if (typeof e === "object" && e !== null && "name" in e && "message" in e) {
+      console.warn(e.message);
+    } else {
+      console.warn(e);
+    }
+  };
+
   const loadModel = async (issuecode: string) => {
     try {
+      console.log("Loading non-published version of", issuecode);
       overwriteModel(issuecode, await loadSvgFromString(issuecode, false));
-    } catch (_e) {
+    } catch (e) {
+      logModelLoadError(e);
       try {
+        console.log("Loading published version of", issuecode);
         overwriteModel(issuecode, await loadSvgFromString(issuecode, true));
-      } catch (_e) {
+      } catch (e) {
+        logModelLoadError(e);
         const edge = (await edgeCreatorEvents.getModel(issuecode))!;
         await edgeCatalogStore.loadPublishedEdgesSteps([edge.id]);
         const apiSteps = edgeCatalogStore.publishedEdgesSteps[issuecode];

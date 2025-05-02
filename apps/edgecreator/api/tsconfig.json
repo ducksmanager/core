@@ -38,6 +38,15 @@
       "./.eslint.d.ts"
     ],
   },
+  "include": [
+    "auto-imports.d.ts",
+    "eslint.config.mjs",
+    "src/**/*.d.ts",
+    "src/**/*.ts",
+    "src/**/*.vue",
+    "types/*.ts",
+    "services/**/*.ts"
+  ],
   "exclude": [
     "node_modules",
     "dist",

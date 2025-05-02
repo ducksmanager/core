@@ -29,7 +29,7 @@
           >
             <ion-row><FullIssue :issuecode="cover.issuecode" show-issue-conditions /></ion-row>
             <ion-row style="font-size: 0.8rem; width: 100%"
-              ><ion-col class="ion-text-left">{{
+              ><ion-col v-if="cover.issuecode in issuePopularities" class="ion-text-left">{{
                 $t('{numberOfUsers} utilisateurs possèdent ce numéro', {
                   numberOfUsers: issuePopularities[cover.issuecode]!.popularity,
                 })
@@ -100,7 +100,7 @@ const route = useRoute();
 
 const { getCollectionIssues } = wtdcollection();
 
-const searchResults = ref<SuccessfulEventOutput<CoverIdServices, 'searchFromCover'>>(
+const searchResults = computed<SuccessfulEventOutput<CoverIdServices, 'searchFromCover'>>(() =>
   JSON.parse(route.query.searchResults as string),
 );
 

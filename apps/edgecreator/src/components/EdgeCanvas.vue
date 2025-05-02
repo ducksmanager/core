@@ -37,7 +37,6 @@
     </metadata>
     <g
       v-for="(stepComponent, stepNumber) in stepComponentNames"
-      v-show="JSON.stringify(getStepOptions(stepNumber, true))"
       :key="stepNumber"
       :class="{
         [stepComponent]: true,
@@ -63,11 +62,10 @@
       "
     >
       <component
-        :is="renderComponents[stepComponent]"
+        :is="supportedRenders[stepComponent].component"
         v-show="visibleSteps[stepNumber]"
-        :issuecode="issuecode"
-        :step-number="stepNumber"
-        :options="toKeyValue(getStepOptions(stepNumber, false))"
+        v-bind="getStepOptionsObject(stepNumber)"
+        v-on="onOptionUpdate(stepNumber)"
       />
     </g>
     <rect
@@ -85,23 +83,23 @@
 <script setup lang="ts">
 import { editingStep } from "~/stores/editingStep";
 import { hoveredStep } from "~/stores/hoveredStep";
-import type { StepOption } from "~/stores/step";
+import { step, type StepOption } from "~/stores/step";
 import { ui } from "~/stores/ui";
-import type { OptionNameAndValue } from "~/types/OptionNameAndValue";
 import type { ModelContributor } from "~types/ModelContributor";
+import { renders } from "~/stores/renders";
+import type { OptionValue } from "~/types/OptionValue";
 
-const {
-  contributors,
-  dimensions,
-  steps,
-  photoUrl = null,
-} = defineProps<{
+const { supportedRenders } = renders();
+
+const { issuecode, contributors, dimensions, steps } = defineProps<{
   issuecode: string;
   dimensions: { width: number; height: number };
   steps: StepOption[];
-  photoUrl?: string | null;
+  photoUrl?: string;
   contributors: Omit<ModelContributor, "issuecode">[];
 }>();
+
+const optionsPerStepNumber = computed(() => steps.groupBy("stepNumber", "[]"));
 
 const photographers = computed(() =>
   contributors.filter(
@@ -119,7 +117,9 @@ const stepComponents = computed(() =>
 );
 
 const stepComponentNames = computed(() =>
-  stepComponents.value.map(({ optionValue }) => optionValue as string),
+  stepComponents.value.map(
+    ({ optionValue }) => optionValue as keyof typeof supportedRenders,
+  ),
 );
 
 const visibleSteps = computed(() =>
@@ -133,19 +133,16 @@ const visibleSteps = computed(() =>
 );
 
 const getStepOptions = (stepNumber: number, withComponentOption = true) =>
-  steps.filter(
-    ({ stepNumber: thisStepNumber, optionName }) =>
-      stepNumber === thisStepNumber &&
-      (withComponentOption || optionName !== "component"),
+  optionsPerStepNumber.value[stepNumber].filter(
+    ({ optionName }) => withComponentOption || optionName !== "component",
   );
 
-const toKeyValue = (arr: OptionNameAndValue[]) => {
-  const val = arr.groupBy("optionName", "optionValue");
-  return Object.keys(val).length ? val : undefined;
-};
+const getStepOptionsObject = (stepNumber: number) =>
+  getStepOptions(stepNumber, false).groupBy("optionName", "optionValue");
+
 const borderWidth = ref(1);
 
-const canvas = ref<HTMLElement>();
+const canvas = shallowRef<SVGElement>();
 
 const hoveredStepStore = hoveredStep();
 const editingStepStore = editingStep();
@@ -166,20 +163,26 @@ const replaceEditingIssuecodeIfNotAlreadyEditing = (issuecode: string) => {
     editingStepStore.replaceIssuecode(issuecode);
   }
 };
-const renderComponents: Record<string, unknown> = {
-  ArcCircle: defineAsyncComponent(
-    () => import("./renders/ArcCircleRender.vue"),
-  ),
-  Fill: defineAsyncComponent(() => import("./renders/FillRender.vue")),
-  Gradient: defineAsyncComponent(() => import("./renders/GradientRender.vue")),
-  Image: defineAsyncComponent(() => import("./renders/ImageRender.vue")),
-  Polygon: defineAsyncComponent(() => import("./renders/PolygonRender.vue")),
-  Rectangle: defineAsyncComponent(
-    () => import("./renders/RectangleRender.vue"),
-  ),
-  Staple: defineAsyncComponent(() => import("./renders/StapleRender.vue")),
-  Text: defineAsyncComponent(() => import("./renders/TextRender.vue")),
-};
+
+const onOptionUpdate = (stepNumber: number) =>
+  optionsPerStepNumber.value[stepNumber].reduce(
+    (acc, { optionName }) => ({
+      ...acc,
+      [`update:${optionName}`]: (optionValue: OptionValue) => {
+        step().setOptionValues(
+          {
+            [optionName]: optionValue,
+          },
+          {
+            stepNumber,
+          },
+        );
+      },
+    }),
+    {} as Record<string, (optionValue: OptionValue) => void>,
+  );
+
+provide("issuecode", issuecode);
 </script>
 
 <style lang="scss">

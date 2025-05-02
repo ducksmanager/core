@@ -205,7 +205,7 @@ watch(showModal, (newValue) => {
     addContributorAllIssues(
       userStore.allUsers!.find(
         (thisUser) => thisUser.username === collectionStore.user!.username,
-      ),
+      )!,
       "createur",
     );
   }
@@ -216,7 +216,7 @@ const onUserSelect = (
   contributionType: userContributionType,
 ) => {
   addContributorAllIssues(
-    userStore.allUsers!.find((thisUser) => thisUser.username === username),
+    userStore.allUsers!.find((thisUser) => thisUser.username === username)!,
     contributionType,
   );
 };

@@ -85,9 +85,9 @@ const level = computed(() =>
 const medalTitle = computed(() => {
   switch (contribution) {
     case "edge_photographer":
-      return t("Concepteur de tranches");
-    case "edge_designer":
       return t("Photographe de tranches");
+    case "edge_designer":
+      return t("Concepteur de tranches");
     case "duckhunter":
       return t("Duckhunter");
   }
@@ -98,10 +98,10 @@ const medalDescription = computed(() => {
   if (currentLevel === 3) {
     switch (contribution) {
       case "edge_photographer":
-        textTemplate = "Vous avez {0} points Concepteur de tranches";
+        textTemplate = "Vous avez {0} points Photographe de tranches";
         break;
       case "edge_designer":
-        textTemplate = "Vous avez {0} points Photographe de tranches";
+        textTemplate = "Vous avez {0} points Concepteur de tranches";
         break;
       case "duckhunter":
         textTemplate = "Vous avez signalé {0} bouquineries";

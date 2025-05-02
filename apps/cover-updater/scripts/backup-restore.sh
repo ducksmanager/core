@@ -3,7 +3,7 @@
 pastec_data_dir=/home/bperel/workspace/docker-pastec/
 coverid_container=$1
 backup_date=$2
-backup_source_filename_unzipped="backup_dm-server-box_cover_info.sql"
+backup_source_filename_unzipped="backup_cover_info.sql"
 backup_dest_dir=/home/bperel/backup/
 
 docker cp ${pastec_data_dir}docker_index_${backup_date}.dat \

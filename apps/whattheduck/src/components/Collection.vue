@@ -21,9 +21,15 @@
                 <div>{{ $t('Ma collection') }}</div>
                 <ion-chip v-if="total !== undefined" outline>{{ total }}</ion-chip></template
               >
-            </div>
-          </div></ion-title
-        >
+              <ion-icon
+                v-if="isOfflineMode"
+                class="icon-offline ion-padding-start"
+                :ios="cloudOfflineOutline"
+                :md="cloudOfflineSharp"
+                @click="showOfflineToast"
+              />
+            </div></div
+        ></ion-title>
       </ion-toolbar>
       <Navigation v-if="!isCameraPreviewShown" />
       <template v-if="(list?.hasItems || filterText || currentFilter.id !== 'all') && !isCameraPreviewShown">
@@ -38,18 +44,19 @@
 </template>
 
 <script setup lang="ts">
-import { arrowBackOutline, arrowBackSharp } from 'ionicons/icons';
+import { arrowBackOutline, arrowBackSharp, cloudOfflineOutline, cloudOfflineSharp } from 'ionicons/icons';
 
 import FilterButton from './FilterButton.vue';
 import OwnedIssueCopies from './OwnedIssueCopies.vue';
 
+import { toastController } from '@ionic/vue';
 import { app } from '~/stores/app';
 import { wtdcollection } from '~/stores/wtdcollection';
 import CountryList from '~/views/CountryList.vue';
 import IssueList from '~/views/IssueList.vue';
 import PublicationList from '~/views/PublicationList.vue';
 
-const list = ref<InstanceType<typeof CountryList | typeof PublicationList | typeof IssueList>>();
+const list = shallowRef<InstanceType<typeof CountryList | typeof PublicationList | typeof IssueList>>();
 
 const { total, ownedCountries, ownedPublications } = storeToRefs(wtdcollection());
 const {
@@ -65,7 +72,8 @@ const {
 } = storeToRefs(app());
 
 const { issuecodeDetails } = storeToRefs(coa());
-
+const { isOfflineMode } = storeToRefs(app());
+const { t } = useI18n();
 const componentName = computed(() =>
   currentNavigationItem.value.type === 'all'
     ? CountryList
@@ -79,6 +87,19 @@ const componentName = computed(() =>
 watch(componentName, () => {
   filterText.value = '';
 });
+
+const showOfflineToast = async () => {
+  const toast = await toastController.create({
+    message: t(
+      'Vous êtes en mode hors-ligne. Vous pouvez naviguer dans votre collection mais pas la modifier. Certaines fonctionnalités ne sont pas disponibles.',
+    ),
+    duration: 2000,
+    cssClass: 'icon-offline',
+    position: 'bottom',
+  });
+
+  await toast.present();
+};
 
 const backToCollection = () => {
   isCoaView.value = false;
@@ -113,7 +134,8 @@ ion-buttons {
     right: 0;
     height: 44px;
 
-    ion-fab {
+    ion-fab,
+    ion-icon {
       position: relative;
       top: 0;
       right: 0;
@@ -147,5 +169,9 @@ ion-searchbar {
   ion-icon {
     display: none !important;
   }
+}
+
+.icon-offline {
+  color: var(--ion-color-warning);
 }
 </style>

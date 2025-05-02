@@ -1,0 +1,13 @@
+api.edgecreator.ducksmanager.net {
+	log {
+		output stderr
+		level DEBUG
+		format console
+	}
+    reverse_proxy edgecreator-api-websocket:3002 {
+        header_up Host {http.request.host}
+        transport http {
+            versions h1 1.1
+        }
+    }
+}

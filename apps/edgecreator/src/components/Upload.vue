@@ -21,9 +21,9 @@ const {
   edge = null,
 } = defineProps<{
   withProgress?: boolean;
-  photo: boolean;
+  photo?: boolean;
   multiple?: boolean;
-  edge: { issuenumber: string } | null;
+  edge?: { issuenumber: string } | null;
 }>();
 
 const { upload: uploadServices } = inject(edgecreatorSocketInjectionKey)!;
@@ -78,24 +78,28 @@ onMounted(() => {
     })
     .on("file-added", async (file) => {
       const fileArrayBuffer = await file.data.arrayBuffer();
-      const results = await uploadServices.uploadFromBase64({
-        issuecode: mainStore.issuecodes[0],
-        data: arrayBufferToBase64(fileArrayBuffer),
-        isMultiple: false,
-        fileName: file.name,
-      });
-      if ("error" in results) {
-        window.alert(results.errorDetails);
-      } else {
-        if (photo && !multiple) {
-          mainStore.photoUrls[edge!.issuenumber] = (
-            results as { fileName: string }
-          ).fileName;
-        }
-
-        mainStore.loadItems({
-          itemType: photo ? "photos" : "elements",
+      try {
+        const results = await uploadServices.uploadFromBase64({
+          issuecode: mainStore.issuecodes[0],
+          data: arrayBufferToBase64(fileArrayBuffer),
+          isEdgePhoto: false,
+          fileName: file.name,
         });
+        if ("error" in results) {
+          window.alert(results.errorDetails);
+        } else {
+          if (photo && !multiple) {
+            mainStore.photoUrls[edge!.issuenumber] = (
+              results as { fileName: string }
+            ).fileName;
+          }
+
+          mainStore.loadItems({
+            itemType: photo ? "photos" : "elements",
+          });
+        }
+      } catch (error) {
+        window.alert((error as { error: string }).error);
       }
     });
 });

@@ -20,7 +20,10 @@ export default class extends Email {
     super();
     this.data = {
       ...data,
-      ecLink: `${process.env.EDGECREATOR_ROOT}/edit/${data.issuecode}`,
+      ecLink: `${process.env.EDGECREATOR_ROOT}/edit/${data.issuecode.replace(
+        " ",
+        "_",
+      )}`,
     };
   }
 

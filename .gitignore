@@ -20,6 +20,7 @@
 /vendor/
 apps/edges/edges
 !apps/edges/edges/.gitkeep
+covers
 dist
 dist-ssr
 local.properties

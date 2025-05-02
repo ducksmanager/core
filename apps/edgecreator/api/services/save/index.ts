@@ -1,4 +1,4 @@
-import { exec } from "child_process";
+import { execSync } from "child_process";
 import { mkdirSync, unlinkSync, writeFileSync } from "fs";
 import path from "path";
 import type { Socket } from "socket.io";
@@ -51,7 +51,7 @@ const listenEvents = (services: SaveServices) => ({
     if (runExport) {
       const pngPath = svgPath.replace(".svg", ".png");
 
-      exec(`convert ${svgPath} ${pngPath}`);
+      execSync(`rsvg-convert "${svgPath}" -o "${pngPath}"`);
 
       paths = { ...paths, pngPath };
 

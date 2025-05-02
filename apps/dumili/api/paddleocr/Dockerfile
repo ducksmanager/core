@@ -17,4 +17,4 @@ COPY apps/dumili/api/paddleocr/requirements.txt ./
 RUN pip3 install -r requirements.txt
 COPY --chmod=777 apps/dumili/api/paddleocr/server.py ./
 
-ENTRYPOINT ["./server.py"]
+ENTRYPOINT ["python3", "-u", "./server.py"]

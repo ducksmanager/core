@@ -45,12 +45,9 @@ export default ({ _socket }: UserServices) => ({
       })),
 
   getImageByHash: async (hash: string) =>
-    prismaEdgeCreator.elementImage
-      .findFirstOrThrow({
-        where: {
-          userId: _socket.data.user.id,
-          hash,
-        },
-      })
-      .catch(() => null),
+    prismaEdgeCreator.elementImage.findFirst({
+      where: {
+        hash,
+      },
+    }),
 });

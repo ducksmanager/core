@@ -1,0 +1,3 @@
+edgecreator.ducksmanager.net {
+    reverse_proxy edgecreator-app-websocket
+}

@@ -142,15 +142,10 @@ const findOngoingEdges = async (currentUsername?: string) => {
           const shortIssuecode = `${publicationcode} ${issuenumberShort}`;
 
           const doc = parser.parse(readFileSync(filePath));
-          const metadataNodes = doc.svg.metadata || [];
+          let metadataNodes = doc.svg.metadata || [];
 
           if (!Array.isArray(metadataNodes)) {
-            console.warn(
-              "Invalid metadata nodes found in SVG file",
-              file.name,
-              metadataNodes,
-            );
-            return [];
+            metadataNodes = [metadataNodes];
           }
 
           const designers = getSvgMetadata(

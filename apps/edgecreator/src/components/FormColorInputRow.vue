@@ -1,5 +1,6 @@
 <template>
   <form-input-row
+    v-model="inputValue"
     type="color"
     :option-name="optionName"
     :label="label || optionName"
@@ -9,7 +10,6 @@
       'can-be-transparent': canBeTransparent,
       'transparent-selected': isTransparent,
     }"
-    :input-values="inputValues"
     :disabled="isTransparent"
   >
     <template #prefix>
@@ -53,22 +53,24 @@
               </h6>
               <ul>
                 <li
-                  v-for="(_, stepNumber) in Object.keys(otherColorsForLocation)"
-                  :key="`${colorLocation}-${stepNumber}`"
+                  v-for="(_, otherStepNumber) in Object.keys(
+                    otherColorsForLocation,
+                  )"
+                  :key="`${colorLocation}-${otherStepNumber}`"
                 >
                   <span
                     :class="{
                       'text-secondary':
-                        !otherColorsForLocation[stepNumber]?.length,
+                        !otherColorsForLocation[otherStepNumber]?.length,
                     }"
                     >{{ $t("Step") }} {{ stepNumber }}</span
                   >
                   <span
-                    v-for="color in otherColorsForLocation[stepNumber]"
+                    v-for="color of otherColorsForLocation[otherStepNumber] as string[]"
                     :key="color"
                     class="frequent-color"
                     :style="{ background: color }"
-                    @click="onColorChange(color)"
+                    @click="inputValue = color"
                     >&nbsp;</span
                   >
                 </li>
@@ -97,40 +99,39 @@ import type { Options } from "~/stores/step";
 import { step } from "~/stores/step";
 import { ui } from "~/stores/ui";
 
-type PossibleInputValueType = string | number;
 const {
   label = null,
   canBeTransparent = false,
-  inputValues = [],
-  otherColors,
   optionName,
 } = defineProps<{
-  inputValues: PossibleInputValueType[];
   optionName: string;
-  otherColors: {
-    differentIssuecode: Options;
-    sameIssuecode: Options;
-  };
   label?: string | null;
   canBeTransparent?: false | null;
 }>();
 
+const stepNumber = inject<number>("stepNumber");
+
+const inputValue = defineModel<string>();
+
 const originalColor = ref<string>();
 
-const { setOptionValues } = step();
 const { photoUrls, issuecodes } = storeToRefs(main());
 const { colorPickerOption, showEdgePhotos } = storeToRefs(ui());
 
 const isTransparent = ref(false);
 const hasPhotoUrl = computed(() => Object.keys(photoUrls.value).length);
 
-watch(
-  () => inputValues,
-  (inputValues) => {
-    isTransparent.value = inputValues[0] === "transparent";
-  },
-  { immediate: true },
-);
+const { colors: allStepColors } = storeToRefs(step());
+
+const otherColors = computed(() => ({
+  sameIssuecode: allStepColors.value.filter(
+    ({ issuecode: thisIssuecode, stepNumber: thisStepNumber }) =>
+      issuecodes.value.includes(thisIssuecode) && thisStepNumber !== stepNumber,
+  ),
+  differentIssuecode: allStepColors.value.filter(
+    ({ issuecode: thisIssuecode }) => !issuecodes.value.includes(thisIssuecode),
+  ),
+}));
 
 const getOptionStringValuesByStepNumber = (options: Options) =>
   options.groupBy("stepNumber", "optionValue[]");
@@ -139,13 +140,16 @@ const otherColorsByLocationAndStepNumber = computed(() => ({
   differentIssuecode:
     issuecodes.value.length === 1
       ? []
-      : getOptionStringValuesByStepNumber(otherColors.differentIssuecode),
-  sameIssuecode: getOptionStringValuesByStepNumber(otherColors.sameIssuecode),
+      : getOptionStringValuesByStepNumber(otherColors.value.differentIssuecode),
+  sameIssuecode: getOptionStringValuesByStepNumber(
+    otherColors.value.sameIssuecode,
+  ),
 }));
 watch(
-  () => inputValues,
-  (newValue) => {
-    let newColor = newValue[0];
+  inputValue,
+  (newColor) => {
+    isTransparent.value = newColor === "transparent";
+
     if (newColor === "transparent") {
       newColor = "#000000";
     }
@@ -155,17 +159,8 @@ watch(
 );
 
 watch(isTransparent, (newValue) => {
-  setOptionValues([
-    {
-      optionName: optionName,
-      optionValue: newValue ? "transparent" : originalColor.value,
-    },
-  ]);
+  inputValue.value = newValue ? "transparent" : originalColor.value;
 });
-
-const onColorChange = (value: string) => {
-  setOptionValues({ [optionName]: value });
-};
 </script>
 <style lang="scss" scoped>
 ul {

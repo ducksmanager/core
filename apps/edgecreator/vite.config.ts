@@ -11,6 +11,7 @@ import type { PluginOption } from "vite";
 import { defineConfig } from "vite";
 import { DynamicPublicDirectory } from "vite-multiple-assets";
 import Pages from "vite-plugin-pages";
+import vueDevTools from "vite-plugin-vue-devtools";
 import Layouts from "vite-plugin-vue-layouts";
 
 // https://vitejs.dev/config/
@@ -42,6 +43,7 @@ export default defineConfig({
   publicDir: false,
 
   plugins: [
+    vueDevTools(),
     DynamicPublicDirectory(["public/**", "../web/public/**"]) as PluginOption,
     ReactivityTransform(),
 

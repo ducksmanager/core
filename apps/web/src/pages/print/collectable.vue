@@ -8,105 +8,111 @@ meta:
   <div v-if="ready">
     <print-header />
     <table v-if="issuesPerCell" class="collectable">
-      <tr v-for="line in lines" :key="line">
-        <td />
-        <td v-for="subrange in numbersPerRow" :key="subrange">
-          {{ (line - 1) * numbersPerRow + subrange }}
-        </td>
-        <td v-if="line === 1" :rowspan="lines" class="total_ligne">
-          {{ $t("Total") }}
-        </td>
-      </tr>
-      <template v-for="publicationcode of Object.keys(publicationNames)">
-        <tr v-for="line in lines" :key="`${publicationcode}-line${line}`">
-          <td v-if="line === 1" :rowspan="lines + 1" class="libelle_ligne">
-            <img
-              :alt="publicationcode.split('/')[0]"
-              :src="getImagePath(`flags/${publicationcode.split('/')[0]}.png`)"
-            />
-            <br />
-            {{ publicationcode.split("/")[1] }}
-            <br />
-          </td>
+      <tbody>
+        <tr v-for="line in lines" :key="line">
+          <td />
           <td v-for="subrange in numbersPerRow" :key="subrange">
-            <span
-              v-for="letter in issuesPerCell[publicationcode][
-                (line - 1) * numbersPerRow + subrange
-              ]"
-              :key="letter"
-              class="letter"
-              >{{ letter }}</span
+            {{ (line - 1) * numbersPerRow + subrange }}
+          </td>
+          <td v-if="line === 1" :rowspan="lines" class="total_ligne">
+            {{ $t("Total") }}
+          </td>
+        </tr>
+        <template v-for="publicationcode of Object.keys(publicationNames)">
+          <tr v-for="line in lines" :key="`${publicationcode}-line${line}`">
+            <td v-if="line === 1" :rowspan="lines + 1" class="libelle_ligne">
+              <img
+                :alt="publicationcode.split('/')[0]"
+                :src="
+                  getImagePath(`flags/${publicationcode.split('/')[0]}.png`)
+                "
+              />
+              <br />
+              {{ publicationcode.split("/")[1] }}
+              <br />
+            </td>
+            <td v-for="subrange in numbersPerRow" :key="subrange">
+              <span
+                v-for="letter in issuesPerCell[publicationcode][
+                  (line - 1) * numbersPerRow + subrange
+                ]"
+                :key="letter"
+                class="letter"
+                >{{ letter }}</span
+              >
+            </td>
+            <td v-if="line === 1" class="total_ligne" :rowspan="lines + 1">
+              {{ totalPerPublication![publicationcode] }}
+            </td>
+          </tr>
+          <tr v-for="fakeloop in 1" :key="`${publicationcode}-${fakeloop}`">
+            <td
+              v-if="issuesPerCell[publicationcode]['non-numeric'].length"
+              :colspan="numbersPerRow"
             >
-          </td>
-          <td v-if="line === 1" class="total_ligne" :rowspan="lines + 1">
-            {{ totalPerPublication![publicationcode] }}
-          </td>
-        </tr>
-        <tr v-for="fakeloop in 1" :key="`${publicationcode}-${fakeloop}`">
-          <td
-            v-if="issuesPerCell[publicationcode]['non-numeric'].length"
-            :colspan="numbersPerRow"
-          >
-            Autres :
-            {{ issuesPerCell[publicationcode]["non-numeric"].join(", ") }}
-          </td>
-        </tr>
-      </template>
+              Autres :
+              {{ issuesPerCell[publicationcode]["non-numeric"].join(", ") }}
+            </td>
+          </tr>
+        </template>
+      </tbody>
     </table>
     <table v-if="maxLetter" class="legends">
-      <tr>
-        <td class="issue-legend">
-          <table>
-            <tr>
-              <td align="center" colspan="6">
-                <u>{{ issueCountTitle }}</u>
-              </td>
-            </tr>
-            <tr
-              v-for="i of Object.keys(
-                Math.floor(letterToNumber(maxLetter) / 6) + 1,
-              ).map((number) => Number(number))"
-              :key="i"
-            >
-              <td
-                v-for="group in groupsInRange(i)"
-                :key="group"
-                class="issue-range"
+      <tbody>
+        <tr>
+          <td class="issue-legend">
+            <table>
+              <tr>
+                <td align="center" colspan="6">
+                  <u>{{ issueCountTitle }}</u>
+                </td>
+              </tr>
+              <tr
+                v-for="i of Object.keys(
+                  Math.floor(letterToNumber(maxLetter) / 6) + 1,
+                ).map((number) => Number(number))"
+                :key="i"
               >
-                <span v-if="Math.floor(group / 6) === i">
-                  {{ numberToLetter(group) }}<br />{{ group * 100 + 1 }}-&gt;{{
-                    (group + 1) * 100
-                  }}
-                </span>
-              </td>
-            </tr>
-          </table>
-        </td>
-        <td class="publication-legend">
-          <table>
-            <tr>
-              <td align="center" colspan="4">
-                <u>{{ $t("Publications") }}</u>
-              </td>
-            </tr>
-            <tr
-              v-for="[publicationcode, publicationName] in Object.entries(
-                publicationNames,
-              )"
-              :key="publicationcode"
-            >
-              <td>
-                <Publication
-                  :publicationcode="publicationcode"
-                  :publicationname="`${
-                    publicationcode.split('/')[1]
-                  } : ${publicationName}`"
-                />
-              </td>
-            </tr>
-          </table>
-        </td>
-      </tr>
+                <td
+                  v-for="group in groupsInRange(i)"
+                  :key="group"
+                  class="issue-range"
+                >
+                  <span v-if="Math.floor(group / 6) === i">
+                    {{ numberToLetter(group) }}<br />{{
+                      group * 100 + 1
+                    }}-&gt;{{ (group + 1) * 100 }}
+                  </span>
+                </td>
+              </tr>
+            </table>
+          </td>
+          <td class="publication-legend">
+            <table>
+              <tr>
+                <td align="center" colspan="4">
+                  <u>{{ $t("Publications") }}</u>
+                </td>
+              </tr>
+              <tr
+                v-for="[publicationcode, publicationName] in Object.entries(
+                  publicationNames,
+                )"
+                :key="publicationcode"
+              >
+                <td>
+                  <Publication
+                    :publicationcode="publicationcode"
+                    :publicationname="`${
+                      publicationcode.split('/')[1]
+                    } : ${publicationName}`"
+                  />
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+      </tbody>
     </table>
   </div>
   <div v-else>

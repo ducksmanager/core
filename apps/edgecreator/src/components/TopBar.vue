@@ -13,7 +13,7 @@
             <b-row class="zoom-option">
               <b-col cols="3">
                 <input
-                  v-model="uiStore.zoom"
+                  v-model="zoom"
                   type="range"
                   min="1"
                   max="8"
@@ -21,13 +21,13 @@
                   style="width: 100%"
                 />
               </b-col>
-              <b-col>{{ $t("Zoom") }}: {{ uiStore.zoom }}</b-col>
+              <b-col>{{ $t("Zoom") }}: {{ zoom }}</b-col>
             </b-row>
             <b-row>
               <b-col cols="3">
                 <b-form-checkbox
                   id="showIssueNumbers"
-                  v-model="uiStore.showIssueNumbers"
+                  v-model="showIssueNumbers"
                 />
               </b-col>
               <b-col>
@@ -70,24 +70,20 @@
             <b-row>
               <b-col cols="3">
                 <b-form-checkbox
-                  id="uiStore.showEdgePhotos"
-                  v-model="uiStore.showEdgePhotos"
-                  :disabled="
-                    !hasPhotoUrl || uiStore.showEdgePhotos === undefined
-                  "
+                  id="showEdgePhotos"
+                  v-model="showEdgePhotos"
+                  :disabled="!hasPhotoUrl"
                 />
               </b-col>
               <b-col>
-                <label for="uiStore.showEdgePhotos">{{
-                  $t("Show edge photos")
-                }}</label>
+                <label for="showEdgePhotos">{{ $t("Show edge photos") }}</label>
               </b-col>
             </b-row>
             <b-row>
               <b-col cols="3">
                 <b-form-checkbox
                   id="showEdgeOverflow"
-                  v-model="uiStore.showEdgeOverflow"
+                  v-model="showEdgeOverflow"
                 />
               </b-col>
               <b-col>
@@ -111,7 +107,7 @@
       <b-col v-if="publicationName" align-self="center">
         <issue :issue="publicationIssues[0]" hide-condition no-wrap>
           <template v-if="isEditingMultiple" #title-suffix>
-            <template v-if="mainStore.isRange">
+            <template v-if="isRange">
               {{ $t("to") }}
               {{ publicationIssues[publicationIssues.length - 1]!.issuenumber }}
             </template>
@@ -167,22 +163,7 @@
     </b-row>
     <b-row align="center" class="p-1">
       <b-col align-self="center">
-        &nbsp;<b-button
-          pill
-          variant="outline-primary"
-          size="sm"
-          @click="showPhotoModal = !showPhotoModal"
-        >
-          <i-bi-camera />
-          <b-modal v-model="showPhotoModal" ok-only>
-            <gallery
-              v-model:items="mainStore.publicationPhotosForGallery"
-              :model-value="photoUrls?.[issuecodesToEdit[0]]"
-              image-type="photos"
-              @update:model-value="setPhotoUrl"
-            />
-          </b-modal> </b-button
-        >&nbsp;<save-model-button />&nbsp;<save-model-button
+        &nbsp;<save-model-button />&nbsp;<save-model-button
           v-if="hasRole('Edition')"
           with-submit
         />
@@ -197,6 +178,28 @@
       <b-col align-self="center">
         <multiple-target-options>
           <b-button
+            pill
+            variant="outline-primary"
+            size="sm"
+            @click="showPhotoModal = !showPhotoModal"
+          >
+            <i-bi-camera />
+            <b-modal v-model="showPhotoModal" ok-only>
+              <confirm-edit-multiple-values
+                :is-multiple="uniquePhotoUrls.length > 1"
+                @set-to-first-value="
+                  setPhotoUrls(photoUrls[issuecodesToEdit[0]])
+                "
+              >
+                <gallery
+                  v-model:items="publicationPhotosForGallery"
+                  :model-value="photoUrls[issuecodesToEdit[0]]"
+                  image-type="photos"
+                  @update:model-value="
+                    setPhotoUrls
+                  " /></confirm-edit-multiple-values
+            ></b-modal> </b-button
+          >&nbsp;<b-button
             pill
             size="sm"
             variant="outline-primary"
@@ -222,7 +225,10 @@
             v-model="collapseDimensions"
             class="mt-2"
           >
-            <confirm-edit-multiple-values :values="uniqueDimensions">
+            <confirm-edit-multiple-values
+              :is-multiple="uniqueDimensions.length > 1"
+              @set-to-first-value="editingDimensions = [editingDimensions[0]]"
+            >
               <dimensions v-model="editingDimensions[0]" />
             </confirm-edit-multiple-values>
           </b-collapse>
@@ -233,9 +239,9 @@
               :disable-ongoing-or-published="false"
               with-edge-gallery
               disable-not-ongoing-nor-published
-              @change="modelToBeCloned = $event"
+              @change="issuecodeToClone = $event.issuecode"
             />
-            <b-button :disabled="!modelToBeCloned" @click="clone">
+            <b-button :disabled="!issuecodeToClone" @click="clone">
               {{ $t("Clone") }}
             </b-button>
           </b-collapse>
@@ -253,15 +259,8 @@ import { step } from "~/stores/step";
 import { ui } from "~/stores/ui";
 import { stores as webStores } from "~web";
 
-const uiStore = ui();
-const mainStore = main();
-
-const { showPreviousEdge, showNextEdge } = surroundingEdge();
-const { overwriteModel } = useModelLoad();
-const { loadSvgFromString } = useSvgUtils();
-const { dimensions: editingDimensions } = storeToRefs(editingStep());
-const { hasRole } = webStores.collection();
-const stepStore = step();
+const { zoom, showIssueNumbers, showEdgePhotos, showEdgeOverflow } =
+  storeToRefs(ui());
 const {
   issuecodes,
   publicationIssues,
@@ -269,18 +268,21 @@ const {
   publicationcode,
   edgeIssuecodesAfter,
   edgeIssuecodesBefore,
-} = storeToRefs(mainStore);
+  isRange,
+  publicationPhotosForGallery,
+} = storeToRefs(main());
+
+const { showPreviousEdge, showNextEdge } = surroundingEdge();
+const { overwriteModel } = useModelLoad();
+const { loadSvgFromString } = useSvgUtils();
+const { dimensions: editingDimensions } = storeToRefs(editingStep());
+const { hasRole } = webStores.collection();
+const stepStore = step();
 
 const { issuecodes: issuecodesToEdit } = storeToRefs(editingStep());
 
-interface ModelToClone {
-  editMode: string;
-  issuecode: string;
-  issuecodeEnd: string;
-}
-
 const showPhotoModal = ref(false);
-const modelToBeCloned = ref<ModelToClone>();
+const issuecodeToClone = ref<string>();
 const collapseDimensions = ref(false);
 const collapseClone = ref(false);
 
@@ -288,6 +290,13 @@ const hasPhotoUrl = computed(() => Object.keys(photoUrls.value).length);
 const publicationName = computed(
   () => webStores.coa().publicationNames[publicationcode.value!],
 );
+
+const uniquePhotoUrls = computed(() => [
+  ...new Set(
+    issuecodesToEdit.value.map((issuecode) => photoUrls.value[issuecode]),
+  ),
+]);
+
 const uniqueDimensions = computed(() =>
   [
     ...new Set(
@@ -299,10 +308,10 @@ const uniqueDimensions = computed(() =>
 );
 
 const isEditingMultiple = computed(
-  () => mainStore.isRange || issuecodes.value.length > 1,
+  () => isRange || issuecodes.value.length > 1,
 );
 
-const setPhotoUrl = (photoUrl: string) => {
+const setPhotoUrls = (photoUrl: string) => {
   for (const issuecode of issuecodesToEdit.value) {
     photoUrls.value[issuecode] = photoUrl;
   }
@@ -310,11 +319,11 @@ const setPhotoUrl = (photoUrl: string) => {
 
 const clone = async () => {
   for (const issuecode of issuecodesToEdit.value.filter(
-    (issuecode) => issuecode !== modelToBeCloned.value!.issuecode,
+    (issuecode) => issuecode !== issuecodeToClone.value!,
   )) {
     overwriteModel(
       issuecode,
-      await loadSvgFromString(modelToBeCloned.value!.issuecode, true),
+      await loadSvgFromString(issuecodeToClone.value!, true),
     );
   }
 };

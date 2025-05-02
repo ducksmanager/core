@@ -55,7 +55,7 @@ const app = createApp(App)
   .provide('dmSocket', new SocketClient(socketUrl));
 
 router.isReady().then(async () => {
-  if (Capacitor.isNativePlatform()) {
+  if (Capacitor.isNativePlatform() && !import.meta.env.VITE_DM_SOCKET_URL_NATIVE) {
     const currentBundleVersion = (await CapacitorUpdater.current())?.bundle.version;
     Sentry.init(
       {
@@ -63,7 +63,13 @@ router.isReady().then(async () => {
         app,
         release: `whattheduck@${currentBundleVersion}`,
         dist: currentBundleVersion,
-        integrations: [Sentry.browserTracingIntegration(), Sentry.replayIntegration()],
+        integrations: [
+          Sentry.browserTracingIntegration(),
+          Sentry.replayIntegration({
+            maskAllText: false,
+            blockAllMedia: false,
+          }),
+        ],
         tracesSampleRate: 1.0,
         replaysSessionSampleRate: 1.0,
         replaysOnErrorSampleRate: 1.0,

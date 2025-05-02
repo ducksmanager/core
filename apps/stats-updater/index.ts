@@ -9,7 +9,6 @@ import * as process from "process";
 import {
   type inducks_issue,
   type inducks_storyjob,
-  type inducks_storyversion,
   Prisma,
 } from "~prisma-schemas/schemas/coa";
 import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa/client";
@@ -65,6 +64,8 @@ const [
   MYSQL_PORT,
   DATABASE_NAME_DM_STATS_NEW,
 ] = DATABASE_URL_DM_STATS.split(/\W+/);
+
+console.log("DATABASE_URL_DM_STATS", DATABASE_URL_DM_STATS);
 
 const tables = [
   "auteurs_histoires",
@@ -151,8 +152,7 @@ connect().then(async () => {
   console.log("Creating storyIssue entries");
   await prismaDmStats.storyIssue.createMany({
     data: await prismaCoa.$queryRaw<
-      (Pick<inducks_storyversion, "storycode"> &
-        Pick<inducks_issue, "issuecode">)[]
+      ({ storycode: string } & Pick<inducks_issue, "issuecode">)[]
     >`
       select distinct sv.storycode, i.issuecode
       from inducks_storyjob sj
@@ -168,8 +168,7 @@ connect().then(async () => {
   console.log("Creating authorStory entries");
   await prismaDmStats.authorStory.createMany({
     data: await prismaCoa.$queryRaw<
-      (Pick<inducks_storyjob, "personcode"> &
-        Pick<inducks_storyversion, "storycode">)[]
+      (Pick<inducks_storyjob, "personcode"> & { storycode: string })[]
     >`
       select distinct sj.personcode, sv.storycode
       from inducks_storyjob sj
@@ -230,16 +229,6 @@ connect().then(async () => {
       group by ID_User, issuecode`;
 
   await prismaDmStats.$executeRaw`OPTIMIZE TABLE utilisateurs_publications_suggerees`;
-
-  console.log(
-    "Adding oldestdate; adding publicationcode and issuenumber for WTD < 3",
-  );
-  await runQuery(`
-    UPDATE ${DATABASE_NAME_DM_STATS_NEW}.utilisateurs_publications_suggerees
-    JOIN ${DATABASE_NAME_COA}.inducks_issue i using (issuecode)
-    SET utilisateurs_publications_suggerees.publicationcode = i.publicationcode
-      , utilisateurs_publications_suggerees.issuenumber     = i.issuenumber
-      , utilisateurs_publications_suggerees.oldestdate      = i.oldestdate`);
 
   await runQuery(`DROP DATABASE IF EXISTS ${DATABASE_NAME_DM_STATS}_old`);
   await runQuery(`CREATE DATABASE ${DATABASE_NAME_DM_STATS}_old`);

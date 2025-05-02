@@ -37,6 +37,7 @@ const isColorOption = (optionName: string) =>
   ["fill", "stroke"].includes(optionName);
 
 export const step = defineStore("step", () => {
+  const { t } = useI18n();
   const options = ref<Options>([]),
     dimensions = ref<DimensionsArray>([]),
     colors = computed(() =>
@@ -158,42 +159,30 @@ export const step = defineStore("step", () => {
             overrides.issuecodes && !overrides.issuecodes.includes(issuecode),
         ),
         ...(overrides.issuecodes ?? main().issuecodes).map((issuecode) => ({
-          issuecode,
           ...newDimensions,
+          issuecode,
         })),
       ];
     },
-    setSteps = (issuecode: string, issueSteps: StepOption[]) => {
-      checkSameComponentsAsCompletedEdge(issuecode, issueSteps);
-      // nextTick().then(() => {
-      setOptionValues(issueSteps, {
-        issuecodes: [issuecode],
-      });
-      // });
+    overwriteSteps = (issuecode: string, stepOptions: StepOption[]) => {
+      checkSameComponentsAsFirstEdge(issuecode, stepOptions);
+      options.value = [
+        ...options.value.filter(
+          ({ issuecode: thisIssuecode }) => thisIssuecode !== issuecode,
+        ),
+        ...stepOptions,
+      ];
     },
-    checkSameComponentsAsCompletedEdge = (
+    checkSameComponentsAsFirstEdge = (
       issuecode: string,
       issueSteps: StepOption[],
     ) => {
-      let completedIssuecode: string | null = null;
-      for (
-        let stepNumber = 0;
-        stepNumber <= maxStepNumber.value;
-        stepNumber++
-      ) {
-        const stepOptions = getFilteredOptions({
-          stepNumbers: [stepNumber],
-          issuecodes: [issuecode],
-        });
-        if (stepOptions.length) {
-          completedIssuecode = issuecode;
-        }
-      }
-      if (completedIssuecode === null) {
+      const firstIssuecode = main().issuecodes[0];
+      if (firstIssuecode === issuecode) {
         return;
       }
-      const completedIssueSteps = getFilteredOptions({
-        issuecodes: [issuecode],
+      const firstIssueSteps = getFilteredOptions({
+        issuecodes: [firstIssuecode],
       });
 
       const getComponents = (steps: StepOption[]) =>
@@ -201,28 +190,24 @@ export const step = defineStore("step", () => {
           .filter(({ optionName }) => optionName === "component")
           .map(({ optionValue }) => optionValue)
           .join("+");
-      const previousIssueComponents = getComponents(
-        Object.values(completedIssueSteps),
+
+      const firstIssueComponents = getComponents(
+        Object.values(firstIssueSteps),
       );
       const currentIssueComponents = getComponents(issueSteps);
-      if (
-        completedIssuecode !== issuecode &&
-        previousIssueComponents !== currentIssueComponents
-      ) {
+      if (firstIssueComponents !== currentIssueComponents) {
         throw new Error(
-          useI18n()
-            .t(
-              `Issue codes {completedIssuecode} and {issuecode} ` +
-                `don't have the same components` +
-                `: {completedIssueSteps} vs {currentIssueComponents}`,
-              {
-                completedIssuecode,
-                issuecode,
-                previousIssueComponents,
-                currentIssueComponents,
-              },
-            )
-            .toString(),
+          t(
+            `Issue codes {firstIssuecode} and {issuecode} ` +
+              `don't have the same components` +
+              `: {firstIssueComponents} vs {currentIssueComponents}`,
+            {
+              firstIssuecode: firstIssuecode,
+              issuecode,
+              firstIssueComponents,
+              currentIssueComponents,
+            },
+          ).toString(),
         );
       }
     },
@@ -256,12 +241,9 @@ export const step = defineStore("step", () => {
         stepNumbers: [stepNumber],
       });
 
-      setOptionValues(
-        existingStepOptions.map((option) => ({
-          ...option,
-          stepNumber: maxStepNumber.value + 1,
-        })),
-      );
+      setOptionValues(existingStepOptions, {
+        stepNumber: maxStepNumber.value + 1,
+      });
     },
     swapSteps = (stepNumbers: [number, number]) => {
       for (const option of options.value) {
@@ -286,8 +268,8 @@ export const step = defineStore("step", () => {
     setOptionValues,
     removeOptionValues,
     setDimensions,
-    setSteps,
-    checkSameComponentsAsCompletedEdge,
+    overwriteSteps,
+    checkSameComponentsAsCompletedEdge: checkSameComponentsAsFirstEdge,
     addStep,
     removeStep,
     duplicateStep,

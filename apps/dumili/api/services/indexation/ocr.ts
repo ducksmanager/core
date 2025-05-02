@@ -17,23 +17,23 @@ type OcrResult = {
 
 export const runOcrOnImages = async (
   services: IndexationServices,
-  pages: Exclude<
-    Pick<FullIndexation["pages"][number], "pageNumber" | "image">,
-    { image: null }
-  >[],
+  pages: {
+    pageNumber: number;
+    image: NonNullable<FullIndexation["pages"][number]["image"]>;
+  }[],
 ) => {
   for (const { image, pageNumber } of pages) {
-    const firstPanel = image!.aiKumikoResult?.detectedPanels[0];
+    const firstPanel = image.aiKumikoResult?.detectedPanels[0];
     if (!firstPanel) {
       console.log(`Page ${pageNumber}: This page does not have any panels`);
       continue;
     }
-    if (image!.aiOcrResultId) {
+    if (image.aiOcrResultId) {
       console.log(`Page ${pageNumber}: This page already has OCR results`);
       continue;
     }
-    services.runOcrOnImage(image!.id);
-    const firstPanelUrl = image!.url.replace(
+    services.runOcrOnImage(image.id);
+    const firstPanelUrl = image.url.replace(
       "/pg_",
       `/c_crop,h_${firstPanel.height},w_${firstPanel.width},x_${firstPanel.x},y_${firstPanel.y},pg_`,
     );
@@ -62,7 +62,7 @@ export const runOcrOnImages = async (
 
     await prisma.image.update({
       where: {
-        id: image!.id,
+        id: image.id,
       },
       data: {
         aiOcrResult: {
@@ -85,7 +85,7 @@ export const runOcrOnImages = async (
 
     await refreshIndexation(services);
 
-    services.runOcrOnImageEnd(image!.id);
+    services.runOcrOnImageEnd(image.id);
   }
 };
 /* Adding a bit of extra in case the storycode is just outside the panel */

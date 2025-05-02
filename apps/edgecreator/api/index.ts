@@ -13,8 +13,6 @@ import { server as save } from "./services/save";
 import { server as text } from "./services/text";
 import { server as upload } from "./services/upload";
 
-const port = 3001;
-
 export const getEdgesPath = () =>
   process.env.EDGES_PATH!.startsWith("/")
     ? process.env.EDGES_PATH!
@@ -67,8 +65,8 @@ instrument(io, {
   auth: false,
 });
 
-httpServer.listen(port);
-console.log(`WebSocket open on port ${port}`);
+httpServer.listen(3002);
+console.log(`WebSocket open on port ${3002}`);
 
 text(io);
 browse(io);

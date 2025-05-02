@@ -160,7 +160,7 @@ watch(isCameraPreviewShown, async () => {
   }
 });
 
-const content = ref<InstanceType<typeof IonContent>>();
+const content = shallowRef<InstanceType<typeof IonContent>>();
 
 const scrollPositionPct = ref(0);
 const isScrolling = ref(false);

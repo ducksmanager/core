@@ -1,0 +1,17 @@
+{
+  "slug": "dm",
+  "publicKeys": [
+    {
+      "publicKey": "a225a6550b8c4c07914327618685a61c",
+      "isEnabled": true
+    }
+  ],
+  "config": {
+    "allowedDomains": [
+      "ducksmanager.net",
+      "*.ducksmanager.net",
+      "*.dumili.ducksmanager.net",
+      "*.edgecreator.ducksmanager.net"
+    ]
+  }
+}

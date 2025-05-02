@@ -10,7 +10,7 @@ Store cover info from a COA database and process them through Pastec.
 
 ### Execution
 
-The COA database and Pastec need to be accessible to make the importation and the processing of the covers work. In the following examples we suppose that both are on a Docker network named `dm-server_cover-id-network`.
+The COA database and Pastec need to be accessible to make the importation and the processing of the covers work.
 
 When created, the container runs the following steps :
 

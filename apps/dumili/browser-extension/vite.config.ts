@@ -1,7 +1,7 @@
-import { defineConfig } from "vite";
-import path, { resolve } from "path";
-import fs from "fs";
 import vue from "@vitejs/plugin-vue";
+import fs from "fs";
+import path, { resolve } from "path";
+import { defineConfig } from "vite";
 
 export default defineConfig({
   plugins: [

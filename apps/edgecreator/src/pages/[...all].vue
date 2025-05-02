@@ -74,7 +74,11 @@ meta:
       <hr />
 
       <template
-        v-for="status in ['Ongoing', 'Ongoing by another user', 'Pending edition'] as const"
+        v-for="status in [
+          'Ongoing',
+          'Ongoing by another user',
+          'Pending edition',
+        ] as const"
         :key="`${status}`"
       >
         <h3>{{ $t(status) }}</h3>
@@ -240,7 +244,7 @@ const mostPopularIssuesInCollectionWithoutEdge = computed(() =>
 );
 
 const getSvgUrl = (edge: { svgUrl: string }) =>
-  edge.svgUrl ? `${import.meta.env.VITE_EDGES_URL}${edge.svgUrl}` : undefined;
+  edge.svgUrl ? `${import.meta.env.VITE_EDGES_URL}/${edge.svgUrl}` : undefined;
 
 const loadMostWantedEdges = async () => {
   const wantedEdges = await edgesEvents.getWantedEdges();

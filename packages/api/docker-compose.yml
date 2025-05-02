@@ -5,9 +5,8 @@ services:
     restart: always
     networks:
       - public-network
-      - dm2-network
-      - dm-server_db-network
-      - dm-server_cover-id-network
+      - dm-api-network
+      - dm-db-network
 
   api-websocket:
     container_name: ducksmanager-api-websocket
@@ -17,27 +16,22 @@ services:
       - ./latest-whattheduck-bundle.txt:/app/latest-whattheduck-bundle.txt
     networks:
       - public-network
-      - dm2-network
-      - dm-server_db-network
-      - dm-server_cover-id-network
-
-  sprite-names-updater:
-    container_name: sprite-names-updater
-    image: mariadb:11.7
-    environment:
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
-    command: mariadb -uroot -p${MYSQL_ROOT_PASSWORD} -h db dm -e "CALL generate_sprite_names"
-    networks:
-      - dm-server_db-network
-      - ducksmanager_dm-network
+      - dm-api-network
+      - dm-db-network
+  pastec:
+    container_name: pastec
+    image: "bperel/pastec-ubuntu-1704-timestamps"
+    restart: always
+    ports:
+      - "4212:4212"
+    command: "./pastec -p 4212 -i /pastec-index-last.dat /pastec/data/visualWordsORB.dat"
+    volumes:
+      - ./pastec-index-last.dat:/pastec-index-last.dat:ro
 
 networks:
-  dm2-network:
+  dm-api-network:
+    name: dm-api-network
   public-network:
     external: true
-  ducksmanager_dm-network:
-    external: true
-  dm-server_db-network:
-    external: true
-  dm-server_cover-id-network:
+  dm-db-network:
     external: true

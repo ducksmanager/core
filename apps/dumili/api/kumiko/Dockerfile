@@ -8,4 +8,4 @@ RUN pip3 install -r requirements.txt
 
 COPY --chmod=777 apps/dumili/api/kumiko/server.py ./
 
-ENTRYPOINT ["./server.py"]
+ENTRYPOINT ["python3", "-u", "./server.py"]
