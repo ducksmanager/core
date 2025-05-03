@@ -7,16 +7,13 @@
       <slot v-if="$slots.empty" name="empty" />
       <template v-else>{{ $t('Cette liste est vide.') }}</template>
     </ion-content>
-    <ion-content
-      v-else
-      ref="content"
-      class="no-padding"
-      scroll-events
-      @ion-scroll="onScroll"
-      @ion-scroll-end="isScrolling = false"
-    >
+    <ion-content v-else ref="content" class="no-padding" scroll-events>
+      <ion-refresher v-if="isFirstElementShown" slot="fixed" @ion-refresh="handleRefresh($event)">
+        <ion-refresher-content></ion-refresher-content>
+      </ion-refresher>
       <template v-if="$slots['row-label']">
         <RecycleScroller
+          ref="scroller"
           v-slot="{ item: { key, item, isOwned, nextItemType } }"
           :style="{ visibility: isCameraPreviewShown ? 'hidden' : 'visible' }"
           class="scroller"
@@ -24,6 +21,9 @@
           :item-size="32"
           key-field="uniqueKey"
           item-class="item-wrapper"
+          emit-update
+          :update-interval="50"
+          @update="onScroll"
         >
           <Row
             :id="key"
@@ -87,13 +87,14 @@
 <script setup lang="ts" generic="Item extends Required<any>">
 import type { CameraPreviewOptions } from '@capacitor-community/camera-preview';
 import { CameraPreview } from '@capacitor-community/camera-preview';
-import type { ScrollDetail } from '@ionic/vue';
 import { IonContent, onIonViewWillLeave } from '@ionic/vue';
 import { apertureOutline, apertureSharp, closeOutline, closeSharp, pencilOutline, pencilSharp } from 'ionicons/icons';
 import { socketInjectionKey as dmSocketInjectionKey } from '~web/src/composables/useDmSocket';
+import { collection as collectionStore } from '~web/src/stores/collection';
 
 import useCoverSearch from '~/composables/useCoverSearch';
 import { app } from '~/stores/app';
+import { RecycleScroller } from 'vue-virtual-scroller';
 
 defineSlots<{
   'default'(): unknown;
@@ -117,6 +118,8 @@ const { items, getItemTextFn } = defineProps<{
 
 const emit = defineEmits<(e: 'items-filtered', items: string[]) => void>();
 
+const { loadCollection } = collectionStore();
+
 const overlay = ref<HTMLElement>();
 const takePhotoButton = ref<{ $el: HTMLElement }>();
 
@@ -125,6 +128,13 @@ const { coverId: coverIdEvents } = inject(dmSocketInjectionKey)!;
 const cameraPreviewElementId = 'camera-preview';
 const { takePhoto } = useCoverSearch(useRouter(), coverIdEvents);
 const { isCameraPreviewShown, filterText, selectedIssuecodes, currentNavigationItem } = storeToRefs(app());
+
+const handleRefresh = (event: { target: { complete: () => void } }) => {
+  setTimeout(() => {
+    loadCollection(true);
+    event.target.complete();
+  }, 500);
+};
 
 watch(isCameraPreviewShown, async () => {
   if (isCameraPreviewShown.value) {
@@ -162,19 +172,12 @@ watch(isCameraPreviewShown, async () => {
 
 const content = shallowRef<InstanceType<typeof IonContent>>();
 
+const isFirstElementShown = ref(false);
 const scrollPositionPct = ref(0);
 const isScrolling = ref(false);
 
-const onScroll = (e: CustomEvent<ScrollDetail>) => {
-  const scrollTop = e.detail.scrollTop;
-  isScrolling.value = e.detail.isScrolling;
-  const innerScrollElement = content.value!.$el.shadowRoot.querySelector('.inner-scroll');
-  const scrollHeight = innerScrollElement.scrollHeight;
-  const clientHeight = innerScrollElement.clientHeight;
-
-  const middleOfViewport = scrollTop + clientHeight / 2;
-
-  scrollPositionPct.value = (middleOfViewport / scrollHeight) * 100;
+const onScroll = () => {
+  isFirstElementShown.value = visibleStartIndex === 0;
 };
 
 const updateNavigationToSelectedIssuecodes = () => {
