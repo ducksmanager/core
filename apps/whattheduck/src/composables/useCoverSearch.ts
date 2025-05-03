@@ -12,7 +12,7 @@ export default (
 } => {
   const { t } = useI18n();
   const searchCoverFromBase64String = async (base64: string, origin: 'pickCoverFile' | 'takePhoto') =>
-    coverIdEvents.searchFromCover({ base64 }).then(async (results) => {
+    coverIdEvents.searchFromCover(base64).then(async (results) => {
       CameraPreview.stop();
       if (results.covers?.length) {
         await router.push({
