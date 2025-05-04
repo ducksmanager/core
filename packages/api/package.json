@@ -10,6 +10,7 @@
     "dev": "concurrently -n api,docker-compose,db \"pnpm -F ~api nodemon-watch\" \"docker compose -f docker-compose-dev.yml up pastec mailcatcher\" \"pnpm -F ~prisma-schemas dev\"",
     "nodemon-watch": "concurrently -n nodemon,tsc \"bun --inspect run --hot index.ts\" \"tsc --noEmit --watch\"",
     "prod:deploy": "DIR=packages/api SERVICES=api pnpm -F '~ci' prod:docker-compose-up",
+    "prod:docker-compose-run-create-issues-from-subscriptions": "DIR=packages/api COMMAND=\"exec api-websocket node ./create-issues-from-subscriptions.mjs\" pnpm -F '~ci' prod:docker-compose-command",
     "prod:build-docker": "REPO_NAME=ghcr.io/bperel/ducksmanager-api pnpm -F '~ci' prod:build-docker -f packages/api/Dockerfile",
     "prod:transfer-files-pre": "pnpm -F '~ci' prod:transfer-files @packages/api/.env:packages/api/.env @packages/prisma-schemas/.env.prod.local:packages/prisma-schemas/.env",
     "prod:transfer-files-post": "pnpm -F '~ci' prod:transfer-files packages/api/docker-compose.yml:@packages/api/docker-compose.yml",
