@@ -14,7 +14,7 @@
     "test": "vitest",
     "typecheck": "vue-tsc --noEmit",
     "wait": "wait-on tcp:8001",
-    "prod:deploy": "DIR=. SERVICES='web' pnpm -F '~ci' prod:docker-compose-up",
+    "prod:deploy": "DIR=apps/web SERVICES='web' pnpm -F '~ci' prod:docker-compose-up",
     "prod:build-docker": "REPO_NAME=ghcr.io/bperel/ducksmanager-web pnpm -F '~ci' prod:build-docker -f apps/web/Dockerfile",
     "prod:transfer-files-pre": "pnpm -F '~ci' prod:transfer-files @apps/web/.env:apps/web/.env",
     "prod:transfer-files-post": "pnpm -F '~ci' prod:transfer-files apps/web/docker-compose.yml:@docker-compose.yml"
