@@ -131,26 +131,20 @@ const listenEvents = ({ _socket }: UserServices<true>) => ({
       .then((edges) =>
         edges.groupBy(user.showDuplicatesInBookcase ? "id" : "issuecode", "[]"),
       )
-      .then(Object.entries)
-      .then(
-        (
-          arr: [number | string, BookcaseEdgeRaw[]][],
-        ): [number | string, BookcaseEdge][] =>
-          arr.map(([key, edges]) => [
-            key,
-            {
-              ...edges[0],
-              sprites: edges
-                .map(({ spriteName, spriteSize, spriteVersion }) => ({
-                  name: spriteName,
-                  size: spriteSize,
-                  version: spriteVersion,
-                }))
-                .filter(({ size }) => !!size),
-            },
-          ]),
+      .then(Object.values)
+      .then((arr: BookcaseEdgeRaw[][]) =>
+        arr.map((edges) => ({
+          ...edges[0],
+          sprites: edges
+            .map(({ spriteName, spriteSize, spriteVersion }) => ({
+              name: spriteName,
+              size: spriteSize,
+              version: spriteVersion,
+            }))
+            .filter(({ size }) => !!size),
+        })),
       )
-      .then<BookcaseEdge[]>(Object.values)
+      .then(Object.values)
       .then((edges) => ({ edges }));
   },
 
