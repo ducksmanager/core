@@ -1,6 +1,6 @@
 // noinspection ES6PreferShortImport
 import { Prisma } from "~prisma-schemas/client_dm";
-const simpleUserValidator = Prisma.validator<Prisma.userArgs>()({
+const simpleUserValidator = Prisma.validator<Prisma.userDefaultArgs>()({
   select: {
     id: true,
     username: true,

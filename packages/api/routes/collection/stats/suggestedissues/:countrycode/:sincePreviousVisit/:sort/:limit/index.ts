@@ -62,7 +62,7 @@ export const get = [
 ];
 
 const suggestedPublications =
-  PrismaDmStats.validator<PrismaDmStats.suggestedIssueForUserArgs>()({
+  PrismaDmStats.validator<PrismaDmStats.suggestedIssueForUserDefaultArgs>()({
     select: {
       userId: true,
       score: true,
@@ -73,7 +73,7 @@ const suggestedPublications =
   });
 
 const missingPublications =
-  PrismaDmStats.validator<PrismaDmStats.utilisateurs_publications_manquantesArgs>()(
+  PrismaDmStats.validator<PrismaDmStats.utilisateurs_publications_manquantesDefaultArgs>()(
     {
       select: { personcode: true, storycode: true },
     }
