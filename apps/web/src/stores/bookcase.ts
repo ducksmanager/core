@@ -26,7 +26,7 @@ export const bookcase = defineStore("bookcase", () => {
     isPrivateBookcase = ref(false),
     isUserNotExisting = ref(false),
     bookcaseUsername = ref<string>(),
-    bookcase = shallowRef<BookcaseEdge[]>(),
+    bookcaseContents = shallowRef<BookcaseEdge[]>(),
     bookcaseOptions =
       shallowRef<SuccessfulEventOutput<BookcaseEvents, "getBookcaseOptions">>(),
     bookcaseOrder = ref<string[]>(),
@@ -37,7 +37,7 @@ export const bookcase = defineStore("bookcase", () => {
         ((isSharedBookcase.value
           ? true
           : collection().popularIssuesInCollection) &&
-          bookcase.value?.map(({ issuecode, ...issue }) => ({
+          bookcaseContents.value?.map(({ issuecode, ...issue }) => ({
             ...issue,
             ...coa().issuecodeDetails[issuecode],
             popularity: isSharedBookcase.value
@@ -59,7 +59,7 @@ export const bookcase = defineStore("bookcase", () => {
       };
     },
     loadBookcase = async () => {
-      if (!bookcase.value) {
+      if (!bookcaseContents.value) {
         const response = await bookcaseEvents.getBookcase(
           collection().user!.username,
         );
@@ -73,7 +73,7 @@ export const bookcase = defineStore("bookcase", () => {
               return;
           }
         } else {
-          bookcase.value = response.edges;
+          bookcaseContents.value = response.edges;
         }
       }
     },
@@ -114,7 +114,7 @@ export const bookcase = defineStore("bookcase", () => {
     isPrivateBookcase,
     isUserNotExisting,
     bookcaseUsername,
-    bookcase,
+    bookcaseContents,
     bookcaseOptions,
     bookcaseOrder,
     edgeIndexToLoad,
