@@ -10,8 +10,8 @@
     "prisma-generate-all": "ls schemas/*.prisma | while read -r schema; do pnpx prisma generate --schema=$schema; done && rm -rf dist"
   },
   "dependencies": {
-    "@prisma/client": "^5.20.0",
-    "prisma": "^5.20.0"
+    "@prisma/client": "^6.7.0",
+    "prisma": "^6.7.0"
   },
   "devDependencies": {
     "ts-node": "^10.9.1",
