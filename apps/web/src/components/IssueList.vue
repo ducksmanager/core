@@ -294,7 +294,7 @@
             variant="danger"
             @click="
               deletePublicationIssues(
-                userIssuesForPublication!.map(({ issuecode }) => issuecode)
+                userIssuesForPublication!.map(({ issuecode }) => issuecode),
               )
             "
           >
@@ -404,7 +404,11 @@ switch (contextMenuComponentName) {
     break;
 }
 
-const { fetchPublicationNames, fetchIssuesByPublicationcode } = coa();
+const {
+  fetchPublicationNames,
+  fetchIssuesByPublicationcode,
+  fetchIssuecodeDetails,
+} = coa();
 const { publicationNames, coverUrls, issuesByPublicationcode } =
   storeToRefs(coa());
 
@@ -479,6 +483,17 @@ const isTouchScreen = window.matchMedia("(pointer: coarse)").matches;
 const coaIssues = $computed(
   () => issuesByPublicationcode.value[publicationcode],
 );
+
+watch(
+  $$(coaIssues),
+  () => {
+    if (coaIssues) {
+      fetchIssuecodeDetails(coaIssues.map(({ issuecode }) => issuecode));
+    }
+  },
+  { immediate: true },
+);
+
 const filteredIssues = $computed(
   () =>
     issues
