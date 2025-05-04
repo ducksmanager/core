@@ -51,11 +51,7 @@
         </b-alert>
         <SharePage
           v-if="showShareButtons && bookcaseUrl"
-          :title="
-            $t('Bibliothèque DucksManager de {username}', {
-              username: bookcaseUsername,
-            })
-          "
+          :title="$t('Ma bibliothèque DucksManager !')"
           :url="bookcaseUrl"
         />
         <b-button v-else size="sm" @click="showShareButtons = true">
@@ -214,15 +210,15 @@ const inputBookcaseUsername = $computed(
 const allowSharing = $computed(() => user.value?.allowSharing);
 const bookcaseUrl = $computed(
   (): string | null =>
-    (!isPrivateBookcase &&
+    (!isPrivateBookcase.value &&
       user.value &&
       `${window.location.origin}/bookcase/show/${user.value.username}`) ||
     null,
 );
 const loading = $computed(
   () =>
-    !isPrivateBookcase &&
-    !isUserNotExisting &&
+    !isPrivateBookcase.value &&
+    !isUserNotExisting.value &&
     !(sortedBookcase && bookcaseOptions && edgesUsingSprites),
 );
 const percentVisible = $computed(() =>
