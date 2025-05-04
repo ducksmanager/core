@@ -48,14 +48,14 @@ jobs:
       - name: Retrieve pre-build files
         run: |
           pnpm i -g turbo
-          turbo -F 'web' -F 'api' prod:transfer-files-pre
+          turbo -F '~web' -F '~api' prod:transfer-files-pre
 
       - uses: docker/setup-buildx-action@v3
 
       - name: Build apps
         run: |
-          turbo -F 'web' -F 'api' prod:build-docker
+          turbo -F '~web' -F '~api' prod:build-docker
 
       - name: Deploy
         run: |
-          turbo --concurrency=1 -F 'web' -F 'api' prod:deploy
+          turbo --concurrency=1 -F '~web' -F '~api' prod:deploy
