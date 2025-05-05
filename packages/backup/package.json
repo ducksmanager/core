@@ -9,7 +9,7 @@
     "start": "bun index.ts",
     "prod:docker-compose-run": "DIR=packages/backup SERVICE=backup pnpm -F '~ci' prod:docker-compose-run",
     "prod:build-docker": "REPO_NAME=ghcr.io/bperel/dm-backup pnpm -F '~ci' prod:build-docker -f packages/backup/Dockerfile",
-    "prod:transfer-files-pre": "pnpm -F '~ci' prod:transfer-files packages/backup/.env:@packages/backup/.env",
+    "prod:transfer-files-pre": "pnpm -F '~ci' prod:transfer-files @packages/backup/.env:packages/backup/.env",
     "prod:transfer-files-post": "pnpm -F '~ci' prod:transfer-files packages/backup/docker-compose.yml:@packages/backup/docker-compose.yml"
   },
   "dependencies": {
