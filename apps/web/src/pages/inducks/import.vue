@@ -72,7 +72,7 @@ meta:
       >
     </p>
   </div>
-  <form v-else-if="step === 1" id="inducks-import">
+  <form v-else id="inducks-import">
     <b-alert :model-value="true" variant="info">
       <div>
         {{
@@ -102,7 +102,7 @@ meta:
         <li>{{ $t("Sélectionnez toute la liste, puis copiez-la.") }}</li>
         <li>{{ $t("Collez ce texte dans la partie droite de la page.") }}</li>
         <li>
-          {{ $t(`Cliquez sur le bouton "Importer" en bas de la page.`) }}
+          {{ $t(`Suivez les instructions en-dessous des zones de texte.`) }}
         </li>
       </ol>
     </b-alert>
@@ -114,196 +114,230 @@ meta:
         <b-form-group>
           <b-form-textarea id="inducks-collection" v-model="rawData" />
         </b-form-group>
-        <b-button @click="processRawData()">
-          {{ $t("Importer") }}
-        </b-button>
       </b-col>
     </b-row>
   </form>
-  <template v-else-if="step === 2">
-    <b-alert v-if="issuesImportable" :model-value="true" variant="info">
-      <div>
-        {{ issuesImportable.length }}
-        {{ $t("numéros peuvent être importés.") }}
-      </div>
-      <div v-if="hasPublicationNames" role="tablist">
-        <Accordion
-          v-for="(publicationIssues, publicationcode) in groupByPublicationCode(
-            issuesImportable,
-          )"
-          :id="String(publicationcode).replace('/', '-')"
-          :key="String(publicationcode).replace('/', '-')"
-          :visible="expandedPublicationAccordion === publicationcode"
-          accordion-group-id="import-accordion"
-          @bv::toggle::collapse="expandedPublicationAccordion = publicationcode"
-        >
-          <template #header>
-            <Publication
-              :publicationcode="publicationcode"
-              :publicationname="
-                publicationNames[publicationcode] || publicationcode
-              "
-            />
-            x {{ publicationIssues.length }}
-          </template>
-          <template #content>
-            <div v-for="issue in publicationIssues" :key="issue">
-              {{ $t("Numéro") }} {{ issue }}
-            </div>
-          </template>
-        </Accordion>
-        <b-collapse visible />
-      </div>
-    </b-alert>
-    <b-alert
-      v-if="issuesNotReferenced?.length || issuesAlreadyInCollection?.length"
-      :model-value="true"
-      variant="warning"
+  <b-row class="justify-content-center">
+    <b-button
+      variant="primary"
+      class="my-3 w-auto"
+      :disabled="!rawData"
+      @click="processRawData()"
     >
-      <template v-if="issuesAlreadyInCollection?.length">
+      {{ $t("Analyser mes numéros") }}
+    </b-button>
+  </b-row>
+  <b-row class="justify-content-center" v-if="inducksCollectionIssues">
+    <b-col sm="6">
+      <b-alert v-if="issuesImportable" :model-value="true" variant="info">
+        <b-form-checkbox v-model="importDigitalIssues">{{
+          $t("Inclure les numéros digitaux")
+        }}</b-form-checkbox>
         <div>
-          {{ issuesAlreadyInCollection.length }}
-          {{
-            $t(
-              "numéros ne peuvent pas être importés car vous les possédez déjà dans votre collection.",
-            )
-          }}
+          {{ issuesImportable.length }}
+          {{ $t("numéros peuvent être importés.") }}
         </div>
-        <Accordion
-          id="already-in-collection"
-          accordion-group-id="import-accordion-not-importable"
-          :visible="expandedNotImportableAccordion === 'already-in-collection'"
-          @bv::toggle::collapse="
-            expandedNotImportableAccordion = 'already-in-collection'
-          "
-        >
-          <template #header>
-            {{ $t("Numéros déjà dans la collection") }}
-          </template>
-          <template #content>
-            <div
-              v-for="(
-                publicationIssueNumbers, publicationcode
-              ) in groupByPublicationCode(issuesAlreadyInCollection)"
-              :key="publicationcode"
-            >
+        <div v-if="hasPublicationNames" role="tablist">
+          <Accordion
+            v-for="(
+              publicationIssues, publicationcode
+            ) in groupByPublicationCode(issuesImportable)"
+            :id="publicationcode.replace('/', '-')"
+            :key="publicationcode.replace('/', '-')"
+            :visible="expandedPublicationAccordion === publicationcode"
+            accordion-group-id="import-accordion"
+            @bv::toggle::collapse="
+              expandedPublicationAccordion = publicationcode
+            "
+          >
+            <template #header>
+              <Publication
+                :publicationcode="publicationcode"
+                :publicationname="
+                  publicationNames[publicationcode] || publicationcode
+                "
+              />
+              x {{ publicationIssues.length }}
+            </template>
+            <template #content>
+              <div v-for="issue in publicationIssues" :key="issue">
+                {{ $t("Numéro") }} {{ issue }}
+              </div>
+            </template>
+          </Accordion>
+          <b-collapse visible />
+        </div>
+      </b-alert>
+      <b-alert
+        v-if="issuesNotReferenced?.length || issuesAlreadyInCollection?.length"
+        :model-value="true"
+        variant="warning"
+      >
+        <template v-if="issuesAlreadyInCollection?.length">
+          <div>
+            {{ issuesAlreadyInCollection.length }}
+            {{
+              $t(
+                "numéros ne peuvent pas être importés car vous les possédez déjà dans votre collection.",
+              )
+            }}
+          </div>
+          <Accordion
+            id="already-in-collection"
+            accordion-group-id="import-accordion-not-importable"
+            :visible="
+              expandedNotImportableAccordion === 'already-in-collection'
+            "
+            @bv::toggle::collapse="
+              expandedNotImportableAccordion = 'already-in-collection'
+            "
+          >
+            <template #header>
+              {{ $t("Numéros déjà dans la collection") }}
+            </template>
+            <template #content>
               <div
-                v-for="issuenumber in publicationIssueNumbers"
-                :key="`${publicationcode}-${issuenumber}`"
+                v-for="(
+                  publicationIssueNumbers, publicationcode
+                ) in groupByPublicationCode(issuesAlreadyInCollection)"
+                :key="publicationcode"
+              >
+                <div
+                  v-for="issuenumber in publicationIssueNumbers"
+                  :key="`${publicationcode}-${issuenumber}`"
+                >
+                  <Issue
+                    :publicationcode="publicationcode"
+                    :publicationname="
+                      publicationNames[publicationcode] || publicationcode
+                    "
+                    :issuenumber="issuenumber"
+                  />
+                </div>
+              </div>
+            </template>
+          </Accordion>
+        </template>
+        <template v-if="issuesNotReferenced?.length">
+          <div>
+            {{ issuesNotReferenced.length }}
+            {{
+              $t(
+                "numéros ne peuvent pas être importés car ils n'existent plus sur Inducks.",
+              )
+            }}
+          </div>
+          <Accordion
+            id="not-found"
+            accordion-group-id="import-accordion-not-importable"
+            :visible="expandedNotImportableAccordion === 'not-found'"
+            @bv::toggle::collapse="expandedNotImportableAccordion = 'not-found'"
+          >
+            <template #header>
+              {{ $t("Numéros non référencés") }}
+            </template>
+            <template #content>
+              <div
+                v-for="(
+                  publicationIssueNumbers, publicationcode
+                ) in groupByPublicationCode(issuesNotReferenced)"
+                :key="publicationcode"
               >
                 <Issue
+                  v-for="issuenumber in publicationIssueNumbers"
+                  :key="`${publicationcode}-${issuenumber}`"
                   :publicationcode="publicationcode"
-                  :publicationname="
-                    publicationNames[publicationcode] || publicationcode
-                  "
+                  :publicationname="publicationcode"
                   :issuenumber="issuenumber"
                 />
               </div>
-            </div>
-          </template>
-        </Accordion>
-      </template>
-      <template v-if="issuesNotReferenced?.length">
-        <div>
-          {{ issuesNotReferenced.length }}
-          {{
-            $t(
-              "numéros ne peuvent pas être importés car ils n'existent plus sur Inducks.",
-            )
-          }}
-        </div>
-        <Accordion
-          id="not-found"
-          accordion-group-id="import-accordion-not-importable"
-          :visible="expandedNotImportableAccordion === 'not-found'"
-          @bv::toggle::collapse="expandedNotImportableAccordion = 'not-found'"
-        >
-          <template #header>
-            {{ $t("Numéros non référencés") }}
-          </template>
-          <template #content>
-            <div
-              v-for="(
-                publicationIssueNumbers, publicationcode
-              ) in groupByPublicationCode(issuesNotReferenced)"
-              :key="publicationcode"
-            >
-              <Issue
-                v-for="issuenumber in publicationIssueNumbers"
-                :key="`${publicationcode}-${issuenumber}`"
-                :publicationcode="publicationcode"
-                :publicationname="publicationcode"
-                :issuenumber="issuenumber"
-              />
-            </div>
-          </template>
-        </Accordion>
-      </template>
-    </b-alert>
-    <template v-if="issuesImportable?.length">
-      <b-form-group>
-        <label for="condition">{{ $t("Etat") }}</label>
-        <b-form-select
-          id="condition"
-          v-model="issueDefaultCondition"
-          class="mb-3"
-        >
-          <template #first>
-            <b-form-select-option :value="null" disabled>
-              {{
-                $t("Choisissez un état par défaut pour les nouveaux numéros")
-              }}
-            </b-form-select-option>
-          </template>
-
-          <b-form-select-option
-            v-for="(conditionText, conditionValue) in conditions"
-            :key="conditionValue"
-            :value="conditionValue"
+            </template>
+          </Accordion>
+        </template>
+      </b-alert>
+      <template v-if="issuesImportable?.length">
+        <b-form-group>
+          <label for="condition">{{ $t("État") }}</label>
+          <b-form-select
+            id="condition"
+            v-model="issueDefaultCondition"
+            class="mb-3"
           >
-            {{ conditionText }}
-          </b-form-select-option>
-        </b-form-select>
-      </b-form-group>
-      <b-progress v-if="importProgress" height="2rem">
-        <b-progress-bar
-          :value="importProgress"
-          :label="`${importProgress.toFixed(0)}%`"
-        />
-      </b-progress>
-      <b-button v-else @click="importIssues">
-        {{ $t("Importer") }} {{ issuesImportable.length }}
-        {{ $t("numéro | numéros", issuesImportable.length) }}
-      </b-button>
-    </template>
-  </template>
+            <template #first>
+              <b-form-select-option :value="null" disabled>
+                {{
+                  $t("Choisissez un état par défaut pour les nouveaux numéros")
+                }}
+              </b-form-select-option>
+            </template>
+
+            <b-form-select-option
+              v-for="(conditionText, conditionValue) in conditions"
+              :key="conditionValue"
+              :value="conditionValue"
+            >
+              {{ conditionText }}
+            </b-form-select-option>
+          </b-form-select>
+        </b-form-group>
+        <b-progress v-if="importProgress" height="2rem">
+          <b-progress-bar
+            :value="importProgress"
+            :label="`${importProgress.toFixed(0)}%`"
+          />
+        </b-progress>
+        <b-button v-else @click="importIssues">
+          {{ $t("Importer") }} {{ issuesImportable.length }}
+          {{ $t("numéro | numéros", issuesImportable.length) }}
+        </b-button>
+      </template>
+    </b-col>
+  </b-row>
 </template>
 
 <script setup lang="ts">
 import axios from "axios";
-import { watch } from "vue";
 
 import { call } from "~axios-helper";
 import type { inducks_issue } from "~prisma-schemas/client_coa";
 const { getImagePath } = images();
 
-let step = $ref(1 as number);
 const rawData = $ref("" as string);
 const expandedPublicationAccordion = $ref(null as string | null);
 const expandedNotImportableAccordion = $ref(null as string | null);
 let hasPublicationNames = $ref(false as boolean);
-let hasIssueNumbers = $ref(false as boolean);
 const issueDefaultCondition = $ref("bon" as string);
-let issuesToImport = $ref(null as inducks_issue[] | null);
-let issuesNotReferenced = $ref(null as inducks_issue[] | null);
+
+let inducksCollectionIssues = $ref(
+  null as { issuecode: string; isDigital: boolean }[] | null,
+);
+let issuesNotReferenced = $ref(
+  null as { publicationcode?: string; issuecode: string }[] | null,
+);
 let issuesAlreadyInCollection = $ref(null as inducks_issue[] | null);
-let issuesImportable = $ref(null as inducks_issue[] | null);
+let issuesImportableIncludeDigital = $ref(
+  null as
+    | {
+        publicationcode: string;
+        issuenumber: string;
+        isDigital: boolean;
+        issuecode: string;
+      }[]
+    | null,
+);
 let importProgress = $ref(0 as number);
+let importDigitalIssues = $ref(true as boolean);
+
+let issuesImportable = $computed(() =>
+  importDigitalIssues
+    ? issuesImportableIncludeDigital
+    : issuesImportableIncludeDigital?.filter(({ isDigital }) => !isDigital),
+);
 
 const { t: $t } = useI18n();
 
 const { findInCollection, loadCollection } = collection();
-const { issues, user } = storeToRefs(collection());
+const { user } = storeToRefs(collection());
 
 const { fetchPublicationNames, fetchIssueNumbers, fetchIssueCodesDetails } =
   coa();
@@ -312,42 +346,88 @@ const conditions = {
   mauvais: $t("En mauvais état"),
   bon: $t("En bon état"),
 };
-const importDataReady = $computed(
-  () => issuesToImport && issues.value && hasIssueNumbers,
-);
+
 const router = useRouter();
 const processRawData = async () => {
-  const REGEX_VALID_ROW = /^([^^]+\^[^^]+)\^/;
-  const issueCodes = rawData
-    .split("\n")
-    .filter((row: string) => !/^country/.test(row) && REGEX_VALID_ROW.test(row))
-    .map((row: string) => row.match(REGEX_VALID_ROW)![1].replace("^", "/"));
-  await fetchIssueCodesDetails(issueCodes);
+  hasPublicationNames = false;
+  nextTick(async () => {
+    const REGEX_VALID_ROW = /^([^^]+\^[^^]+)\^/;
+    inducksCollectionIssues = rawData
+      .split("\n")
+      .filter(
+        (row: string) => !/^country/.test(row) && REGEX_VALID_ROW.test(row),
+      )
+      .map((row: string) => ({
+        issuecode: row.match(REGEX_VALID_ROW)![1].replace("^", "/"),
+        isDigital: row.includes("digital"),
+      }));
 
-  if (!issueCodeDetails) {
-    return;
-  }
-  const issues = issueCodes
-    .filter((issueCode) => issueCodeDetails.value![issueCode])
-    .reduce(
-      (acc, issueCode) => [...acc, issueCodeDetails.value![issueCode]],
-      [] as inducks_issue[],
+    const issueCodes = inducksCollectionIssues.map(
+      ({ issuecode }) => issuecode,
     );
-  if (issues.length) {
-    issuesToImport = issues;
-    step = 2;
-  }
+    await fetchIssueCodesDetails(issueCodes);
+    const publicationCodes = Object.entries(issueCodeDetails.value!)
+      .filter(([issuecode]) => issueCodes.includes(issuecode))
+      .map(
+        ([issuecode]) => issueCodeDetails.value![issuecode].publicationcode!,
+      );
+
+    await fetchPublicationNames(publicationCodes);
+    hasPublicationNames = true;
+    await fetchIssueNumbers(publicationCodes);
+
+    issuesNotReferenced = [];
+    issuesAlreadyInCollection = [];
+    issuesImportableIncludeDigital = [];
+    for (const { issuecode, isDigital } of inducksCollectionIssues!) {
+      if (!(issuecode in issueCodeDetails.value!)) {
+        issuesNotReferenced!.push({ issuecode });
+        continue;
+      }
+      const issue = issueCodeDetails.value![issuecode];
+      if (
+        !issueNumbers.value[issue.publicationcode!].includes(
+          issue.issuenumber!.replace(/[ ]+/g, " "),
+        )
+      )
+        issuesNotReferenced!.push({
+          publicationcode: issue.publicationcode!,
+          issuecode,
+        });
+      else if (findInCollection(issue.publicationcode!, issue.issuenumber!))
+        issuesAlreadyInCollection!.push(issue);
+      else
+        issuesImportableIncludeDigital!.push({
+          publicationcode: issue.publicationcode!,
+          issuenumber: issue.issuenumber!,
+          issuecode,
+          isDigital,
+        });
+    }
+
+    issuesNotReferenced = [...new Set(issuesNotReferenced)];
+    issuesAlreadyInCollection = [...new Set(issuesAlreadyInCollection)];
+    issuesImportableIncludeDigital = [
+      ...new Set(issuesImportableIncludeDigital),
+    ];
+  });
 };
 
 type Publicationcode = string;
-const groupByPublicationCode = (issues: inducks_issue[]) =>
+const groupByPublicationCode = (
+  issues: {
+    issuecode: string;
+    publicationcode?: string | null;
+    issuenumber?: string | null | undefined;
+  }[],
+) =>
   issues?.reduce(
-    (acc, { publicationcode, issuenumber }) => ({
+    (acc, { publicationcode, issuenumber, issuecode }) => ({
       ...acc,
-      [publicationcode!]: [
+      [publicationcode || "?"]: [
         ...new Set([
           ...(acc[publicationcode!] || []),
-          issuenumber!.replace(" ", ""),
+          issuenumber?.replace(" ", "") || issuecode,
         ]),
       ],
     }),
@@ -356,10 +436,10 @@ const groupByPublicationCode = (issues: inducks_issue[]) =>
 
 const importIssues = async () => {
   const importableIssuesByPublicationCode = groupByPublicationCode(
-    issuesImportable as inducks_issue[],
+    issuesImportable!,
   );
   for (const publicationcode in importableIssuesByPublicationCode) {
-    if (importableIssuesByPublicationCode.hasOwnProperty(publicationcode)) {
+    if (publicationcode in importableIssuesByPublicationCode) {
       await call(
         axios,
         new POST__collection__issues__multiple({
@@ -380,42 +460,6 @@ const importIssues = async () => {
 
   await router.push("/collection/show");
 };
-
-watch($$(importDataReady), (newValue) => {
-  if (newValue) {
-    issuesNotReferenced = [];
-    issuesAlreadyInCollection = [];
-    issuesImportable = [];
-    issuesToImport!.forEach((issue) => {
-      const { publicationcode, issuenumber } = issue;
-      if (
-        !issueNumbers.value[publicationcode!].includes(
-          issuenumber!.replace(/[ ]+/g, " "),
-        )
-      )
-        issuesNotReferenced!.push(issue);
-      else if (findInCollection(publicationcode!, issuenumber!))
-        issuesAlreadyInCollection!.push(issue);
-      else issuesImportable!.push(issue);
-    });
-    issuesNotReferenced = [...new Set(issuesNotReferenced)];
-    issuesAlreadyInCollection = [...new Set(issuesAlreadyInCollection)];
-    issuesImportable = [...new Set(issuesImportable)];
-  }
-});
-watch($$(issuesToImport), async (newValue) => {
-  if (!newValue) {
-    return;
-  }
-  const publicationCodes = newValue.reduce(
-    (acc, { publicationcode }) => [...acc, publicationcode!],
-    [] as string[],
-  );
-  await fetchPublicationNames(publicationCodes);
-  hasPublicationNames = true;
-  await fetchIssueNumbers(publicationCodes);
-  hasIssueNumbers = true;
-});
 
 loadCollection();
 </script>

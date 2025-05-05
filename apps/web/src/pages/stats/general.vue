@@ -137,7 +137,7 @@
             <li>{{ $t("Numéro en bon état : pas d'ajustement") }}</li>
             <li>{{ $t("Numéro en moyen état : 70% de la cote") }}</li>
             <li>{{ $t("Numéro en mauvais état : 30% de la cote") }}</li>
-            <li>{{ $t("Etat non défini : 70% de la cote") }}</li>
+            <li>{{ $t("État non défini : 70% de la cote") }}</li>
           </ul>
           <div
             v-html="
@@ -190,7 +190,7 @@ const quotedIssuesForCollection = $computed(() =>
 );
 const quotationFields = [
   { key: "issue", label: $t("Numéro") },
-  { key: "condition", label: $t("Etat") },
+  { key: "condition", label: $t("État") },
   { key: "estimation", label: $t("Estimation") },
   {
     key: "estimationGivenCondition",

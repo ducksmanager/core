@@ -1,5 +1,5 @@
 <template>
-  <v-contextmenu-group :title="$t('Etat')">
+  <v-contextmenu-group :title="$t('État')">
     <v-contextmenu-item
       v-for="{ labelContextMenu, value } in conditionStates"
       :key="`condition-${value}`"
