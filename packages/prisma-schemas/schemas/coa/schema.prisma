@@ -162,13 +162,14 @@ model inducks_entryjob {
 }
 
 model inducks_entryurl {
-  entrycode  String?                  @db.VarChar(21)
-  sitecode   String?                  @db.VarChar(11)
-  pagenumber Int?
-  url        String?                  @db.VarChar(46)
-  storycode  String?                  @db.VarChar(39)
-  public     inducks_entryurl_public?
-  id         Int                      @id @default(autoincrement())
+  entrycode   String?                  @db.VarChar(21)
+  sitecode    String?                  @db.VarChar(11)
+  pagenumber  Int?
+  url         String?                  @db.VarChar(46)
+  storycode   String?                  @db.VarChar(39)
+  public      inducks_entryurl_public?
+  id          Int                      @id @default(autoincrement())
+  ImageVector EntryUrlVector?
 
   @@index([entrycode], map: "fk_inducks_entryurl0")
   @@index([sitecode], map: "fk_inducks_entryurl1")
@@ -805,6 +806,16 @@ model inducks_universename {
 
   @@id([universecode, languagecode])
   @@index([languagecode], map: "fk_inducks_universename0")
+}
+
+model EntryUrlVector {
+  id         Int                         @id @default(autoincrement()) @map("ID")
+  entryurlId Int                         @unique @map("entryurl_id")
+  vector     Unsupported("vector(1536)") @map("v")
+  createdAt  DateTime                    @default(now()) @map("created_At") @db.Timestamp(0)
+  entryurl   inducks_entryurl            @relation(fields: [entryurlId], references: [id], onDelete: Cascade)
+
+  @@map("inducks_entryurl_vector")
 }
 
 enum inducks_logocharacter_reallyintitle {
