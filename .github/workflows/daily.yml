@@ -64,7 +64,7 @@ jobs:
         run: |
           pnpm -r -F '~api' prod:docker-compose-run-create-issues-from-subscriptions
 
-      - name: Run duck-estimator
+      - name: Run backup
         timeout-minutes: 10
         run: |
           pnpm -r -F '~backup' prod:docker-compose-run

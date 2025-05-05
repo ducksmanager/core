@@ -12,12 +12,12 @@ const {
   FTP_USER,
   FTP_PASSWORD,
   DATABASE_URL_COA,
-}: {
+} = process.env as {
   FTP_HOST: string;
   FTP_USER: string;
   FTP_PASSWORD: string;
   DATABASE_URL_COA: string;
-} = process.env;
+};
 
 const [
   _protocol,
