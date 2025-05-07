@@ -3,13 +3,11 @@ LABEL org.opencontainers.image.authors="Bruno Perel"
 
 WORKDIR /app
 
-# Install only runtime dependencies
-RUN apt-get update && apt-get install -y \
-    openssl \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
+RUN npm install -g pm2
 
-RUN npm install pm2 -g
+RUN npm install --os=linux --cpu=x64 sharp @huggingface/transformers 
+RUN mkdir -p ../bin/napi-v3/linux/x64
+RUN ln -s node_modules/onnxruntime-node/bin/napi-v3/linux/x64/onnxruntime_binding.node ../bin/napi-v3/linux/x64/onnxruntime_binding.node 
 
 COPY packages/prisma-schemas/client_dm/libquery_engine-debian-openssl-3.0.x.so.node /tmp/prisma-engines/
 
