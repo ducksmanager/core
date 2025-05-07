@@ -3,6 +3,10 @@ LABEL org.opencontainers.image.authors="Bruno Perel"
 
 WORKDIR /app
 
+RUN apt-get update && apt-get install -y openssl \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
 RUN npm install -g pm2
 
 RUN npm install --os=linux --cpu=x64 sharp @huggingface/transformers 
