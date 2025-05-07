@@ -32,7 +32,7 @@ meta:
       responsive
     />
   </div>
-</template> 
+</template>
 
 <script setup lang="ts">
 import { socketInjectionKey } from "../composables/useDmSocket";
@@ -66,16 +66,16 @@ const models = ref<
       coverIdEvents
         .getIndexSize()
         .then((result) =>
-          "error" in result ? result.error : result.numberOfImages,
+          "error" in result ? result.error : result.numberOfImages
         ),
     run: async (base64: string) => {
       try {
-        const searchResults = await coverIdEvents.searchFromCover({ base64 });
+        const searchResults = await coverIdEvents.searchFromCover(base64);
 
         return "error" in searchResults
           ? searchResults.errorDetails || "Error"
           : JSON.stringify(
-              searchResults.covers.map(({ issuecode }) => issuecode),
+              searchResults.covers.map(({ issuecode }) => issuecode)
             );
       } catch (error) {
         return typeof error === "object" && "errorDetails" in error!

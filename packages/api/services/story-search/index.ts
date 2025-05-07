@@ -1,104 +1,141 @@
-import * as mobilenet from "@tensorflow-models/mobilenet";
-import * as tf from "@tensorflow/tfjs-node";
+import type { ImageFeatureExtractionPipeline } from "@huggingface/transformers";
+import { pipeline } from "@huggingface/transformers";
 import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa/client";
 import namespaces from "../namespaces";
 import { useSocketEvents } from "socket-call-server";
 import path from "path";
+import * as fs from "fs/promises";
+import * as os from "os";
+import sharp from "sharp";
 
-let model: mobilenet.MobileNet;
+let model: ImageFeatureExtractionPipeline;
 
 export const loadModel = async () => {
   if (!model) {
-    const modelPath = path.join(__dirname, "model");
-    model = await mobilenet.load({
-      modelUrl: `file://${modelPath}/model.json`,
-      version: 1,
-    });
-    console.log("Model loaded");
+    model = await pipeline<"image-feature-extraction">(
+      "image-feature-extraction",
+      "Xenova/vit-base-patch16-224-in21k",
+      {},
+    );
   }
   return model;
 };
 
-export const preprocessImage = async (imageInput: Buffer | string) => {
+const preprocessImage = async (input: string | Buffer): Promise<string> => {
   let imageBuffer: Buffer;
-  
-  if (typeof imageInput === 'string') {
-    // Remove data URL prefix if present (e.g., "data:image/jpeg;base64,")
-    const base64Data = imageInput.replace(/^data:image\/\w+;base64,/, '');
-    imageBuffer = Buffer.from(base64Data, 'base64');
+
+  if (typeof input === "string") {
+    if (input.startsWith("data:")) {
+      const base64Data = input.replace(/^data:image\/\w+;base64,/, "");
+      imageBuffer = Buffer.from(base64Data, "base64");
+    } else {
+      imageBuffer = await fs.readFile(input);
+    }
   } else {
-    imageBuffer = imageInput;
+    imageBuffer = input;
   }
 
-  const tensor = tf.node.decodeImage(imageBuffer);
-  
-  // Ensure we have a 3D tensor (height, width, channels)
-  let rgbTensor: tf.Tensor3D = tensor as tf.Tensor3D;
+  const processedBuffer = await sharp(imageBuffer)
+    .resize(224, 224)
+    .toFormat("jpeg")
+    .toBuffer();
 
-  // If tensor has more than 3 dimensions, squeeze extra dimensions
-  if (tensor.shape.length > 3) {
-    rgbTensor = tensor.squeeze();
-  }
-
-  // Convert to RGB if needed
-  if (rgbTensor.shape[2] === 1) {
-    // Grayscale to RGB
-    rgbTensor = tf.stack([rgbTensor, rgbTensor, rgbTensor], 2) as tf.Tensor3D;
-  } else if (rgbTensor.shape[2] === 4) {
-    // RGBA to RGB
-    rgbTensor = rgbTensor.slice([0, 0, 0], [-1, -1, 3]);
-  }
-
-  // Resize to 224x224 (MobileNet's expected input size)
-  const resized = tf.image.resizeBilinear(rgbTensor, [224, 224]);
-  
-  // Normalize to [-1, 1] range (MobileNet's expected input range)
-  const expanded = resized.expandDims(0);
-  const normalized = expanded.div(127.5).sub(1);
-  
-  return normalized;
+  const tempPath = path.join(os.tmpdir(), `processed-${Date.now()}.jpg`);
+  await fs.writeFile(tempPath, processedBuffer);
+  return tempPath;
 };
 
-export const getImageVector = async (tensor: tf.Tensor) => {
-  const features = model.infer(tensor, true);
-  return features.dataSync();
+export const getImageVector = async (input: string | Buffer) => {
+  if (!model) {
+    throw new Error("Model not initialized. Call initialize() first.");
+  }
+  try {
+    const startTime = Date.now();
+    const processedPath = await preprocessImage(input);
+    const output = await model(processedPath);
+    await fs.unlink(processedPath);
+
+    // The raw output is a 2D tensor of shape [num_patches, hidden_size]
+    // We need to reduce it to a 1D vector of size 1024
+    const rawVector = Array.from(output.data);
+    const numPatches = 197; // 224x224 image with 16x16 patches = 14x14 patches + 1 CLS token
+    const hiddenSize = 768; // Base ViT hidden size
+
+    // Reshape the raw vector into patches
+    const patches: number[][] = [];
+    for (let i = 0; i < numPatches; i++) {
+      patches.push(
+        rawVector.slice(i * hiddenSize, (i + 1) * hiddenSize) as number[],
+      );
+    }
+
+    // Mean pool across patches to get a 768-dimensional vector
+    const pooledVector = new Array(hiddenSize).fill(0);
+    for (let i = 0; i < hiddenSize; i++) {
+      for (let j = 0; j < numPatches; j++) {
+        pooledVector[i] += patches[j][i];
+      }
+      pooledVector[i] /= numPatches;
+    }
+
+    // Pad or truncate to 1024 dimensions
+    const finalVector = new Array(1024).fill(0);
+    for (let i = 0; i < Math.min(hiddenSize, 1024); i++) {
+      finalVector[i] = pooledVector[i];
+    }
+
+    const filename =
+      typeof input === "string" && !input.startsWith("data:")
+        ? path.basename(input)
+        : `image-${Date.now()}.jpg`;
+
+    const endTime = Date.now();
+    console.log(`Time taken: ${endTime - startTime}ms`);
+
+    return { vector: finalVector, filename };
+  } catch (error) {
+    throw new Error(`Error processing image: ${error}`);
+  }
 };
+
+const formatVectorForDB = (vector: number[]): string =>
+  `[${vector.map((v) => v.toFixed(6)).join(",")}]`;
 
 const listenEvents = () => {
   loadModel();
-  return ({
+  return {
     getIndexSize: async () => prismaCoa.entryUrlVector.count(),
-    findSimilarImages: async (imageBufferOrBase64: Buffer | string) => {
+    findSimilarImages: async (imageBufferOrBase64: string | Buffer) => {
       try {
-        const tensor = await preprocessImage(imageBufferOrBase64);
-        const queryVector = await getImageVector(tensor);
-
-        // Clean up tensor to prevent memory leaks
-        tensor.dispose();
-
-        const vectorString = `[${queryVector.join(",")}]`;
+        const queryVector = await getImageVector(imageBufferOrBase64);
+        const vectorString = formatVectorForDB(queryVector.vector);
 
         return await prismaCoa.$queryRaw<
-          { entryurlId: number; entrycode: string; issuecode: string; similarity: number; }[]
-        > `
-                SELECT 
-                    ev.entryurl_id as entryurlId,
-                    eu.entrycode,
-                    e.issuecode,
-                    VEC_DISTANCE_COSINE(ev.v, vec_fromtext(${vectorString})) as similarity
-                FROM inducks_entryurl_vector ev
-                INNER JOIN inducks_entryurl eu ON eu.id = ev.entryurl_id
-                INNER JOIN inducks_entry e ON e.entrycode = eu.entrycode
-                WHERE eu.entrycode IS NOT NULL and VEC_DISTANCE_COSINE(ev.v, vec_fromtext(${vectorString})) < 0.1
-                ORDER BY similarity
-                LIMIT 5
-            `;
+          {
+            entryurlId: number;
+            entrycode: string;
+            issuecode: string;
+            similarity: number;
+          }[]
+        >`
+          SELECT 
+            ev.entryurl_id as entryurlId,
+            eu.entrycode,
+            e.issuecode,
+            VEC_DISTANCE_COSINE(ev.v, vec_fromtext(${vectorString})) as similarity
+          FROM inducks_entryurl_vector ev
+          INNER JOIN inducks_entryurl eu ON eu.id = ev.entryurl_id
+          INNER JOIN inducks_entry e ON e.entrycode = eu.entrycode
+          WHERE eu.entrycode IS NOT NULL and VEC_DISTANCE_COSINE(ev.v, vec_fromtext(${vectorString})) < 0.1
+          ORDER BY similarity
+          LIMIT 5
+        `;
       } catch (error) {
         console.error("Error finding similar images:", error);
         throw error;
       }
     },
-  });
+  };
 };
 
 export const { client, server } = useSocketEvents<

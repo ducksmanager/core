@@ -46,9 +46,7 @@
         </b-alert>
         <SharePage
           v-if="showShareButtons && bookcaseUrl"
-          :title="
-            $t('Ma bibliothèque DucksManager !')
-          "
+          :title="$t('Ma bibliothèque DucksManager !')"
           :url="bookcaseUrl"
         />
         <b-button v-else size="sm" @click="showShareButtons = true">

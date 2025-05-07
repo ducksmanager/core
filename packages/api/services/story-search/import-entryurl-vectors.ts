@@ -1,6 +1,6 @@
 import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa/client";
-import { readdirSync, readFileSync } from "fs";
-import { getImageVector, preprocessImage, loadModel } from ".";
+import { readdirSync } from "fs";
+import { getImageVector, loadModel } from ".";
 
 await loadModel();
 
@@ -18,10 +18,7 @@ SELECT entryurl_id FROM inducks_entryurl_vector
 ).map((v) => v.entryurl_id);
 
 for (const file of files) {
-  if (
-    file.isDirectory() ||
-    !file.parentPath.includes("webusers")
-  ) {
+  if (file.isDirectory() || !file.parentPath.includes("webusers")) {
     continue;
   }
 
@@ -45,13 +42,11 @@ for (const file of files) {
 
   let vectorString;
   try {
-    const imageBuffer = readFileSync(`${file.parentPath}/${file.name}`);
-    const tensor = await preprocessImage(imageBuffer);
-    const vector = await getImageVector(tensor);
+    const vector = await getImageVector(`${file.parentPath}/${file.name}`);
 
     // Convert the vector to a string representation that MariaDB can understand
     // Format: [x1,x2,x3,...] where xi are floating point numbers
-    vectorString = `[${vector.join(",")}]`;
+    vectorString = `[${vector.vector.join(",")}]`;
   } catch (error) {
     console.error(`Error creating image vector for ${relativePath}`, error);
     continue;

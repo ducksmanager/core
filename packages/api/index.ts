@@ -35,7 +35,7 @@ import {
   getPastecSearchStatus,
   getPastecStatus,
 } from "./services/status";
-// import { server as storySearch } from "./services/story-search";
+import { server as storySearch } from "./services/story-search";
 
 export type UserServices<OptionalUser = false> = NamespaceProxyTarget<
   Socket<
@@ -52,7 +52,7 @@ class ServerWithUser extends Server<
   Record<string, never>,
   Record<string, never>,
   { user?: SessionUser }
-> { }
+> {}
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 (BigInt.prototype as any).toJSON = function () {
@@ -164,7 +164,7 @@ if (cluster.isPrimary) {
   feedback(io);
   globalStats(io);
   globalStatsUser(io);
-  // storySearch(io);
+  storySearch(io);
   presentationText(io);
   publicCollection(io);
   stats(io);
