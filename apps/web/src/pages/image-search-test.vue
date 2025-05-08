@@ -61,7 +61,7 @@ const models = ref<
 >([
   {
     model: "Legacy (WTD 2-3)",
-    modelData: "",
+    modelData: "Covers only",
     getIndexSize: () =>
       coverIdEvents
         .getIndexSize()
@@ -86,7 +86,7 @@ const models = ref<
   },
   {
     model: "Experimental",
-    modelData: "",
+    modelData: "Covers and story first pages",
     getIndexSize: () => storySearchEvents.getIndexSize(),
     run: async (base64: string) => {
       try {

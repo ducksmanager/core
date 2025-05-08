@@ -5,7 +5,7 @@
   },
   "version": "1.0.0",
   "scripts": {
-    "build": "for file in index.ts import-entryurl-vectors.ts send-notifications.ts send-pending-emails.ts create-issues-from-subscriptions.ts; do bun build $file --entry-naming [dir]/[name].mjs --target node --sourcemap=linked --outdir dist; done && pnpm sentry:sourcemaps",
+    "build": "for file in index.ts scripts/*.ts; do bun build $file --entry-naming [name].mjs --target node --sourcemap=linked --outdir dist || exit 1; done && pnpm sentry:sourcemaps",
     "dev:blocking-up": "wait-on tcp:1",
     "dev": "docker compose -f docker-compose-dev.yml up",
     "lint": "eslint --fix .",

@@ -6,7 +6,7 @@ declare global {
 
 import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa/client";
 import { readdirSync } from "fs";
-import { getImageVector, loadModel } from ".";
+import { getImageVector, loadModel } from "../services/story-search";
 
 await loadModel();
 
