@@ -31,12 +31,12 @@ import { getOwnershipText, getOwnershipPercentages } from '~/composables/useOwne
 import { app } from '~/stores/app';
 import { wtdcollection } from '~/stores/wtdcollection';
 
-const { totalPerCountry, ownedCountries, coaIssueCountsPerCountrycode } = storeToRefs(wtdcollection());
+const { totalPerCountryWithoutDuplicates, ownedCountries, coaIssueCountsPerCountrycode } = storeToRefs(wtdcollection());
 const { countryNames } = storeToRefs(stores.coa());
 const { isCoaView } = storeToRefs(app());
 
 const ownershipPercentages = computed(() =>
-  getOwnershipPercentages(totalPerCountry.value, coaIssueCountsPerCountrycode.value!),
+  getOwnershipPercentages(totalPerCountryWithoutDuplicates.value, coaIssueCountsPerCountrycode.value!),
 );
 
 const items = computed(() =>

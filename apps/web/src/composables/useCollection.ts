@@ -7,6 +7,40 @@ import { coa } from "../stores/coa";
 
 export default (issues: ShallowRef<(issue & { issuecode: string })[]>) => {
   const total = computed(() => issues.value?.length);
+
+  const getTotalPerCountry = (includeDuplicates = true) => {
+    if (!issues.value) return issues.value;
+
+    const groupedByCountry = Object.groupBy(
+      issues.value,
+      ({ publicationcode }) => publicationcode.split("/")[0],
+    );
+
+    return Object.fromEntries(
+      Object.entries(groupedByCountry).map(([countrycode, countryIssues]) => [
+        countrycode,
+        includeDuplicates
+          ? countryIssues!.length
+          : new Set(countryIssues!.map((i) => i.issuecode)).size,
+      ]),
+    );
+  };
+
+  const getTotalPerPublication = (includeDuplicates = true) =>
+    issues.value
+      ? Object.fromEntries(
+          Object.entries(issues.value?.groupBy("publicationcode", "[]")).map(
+            ([publicationcode, issues]) => [
+              publicationcode,
+              (includeDuplicates
+                ? issues
+                : [...new Set(issues.map(({ issuecode }) => issuecode))]
+              ).length,
+            ],
+          ),
+        )
+      : null;
+
   const mostPossessedPublication = computed(
     () =>
       totalPerPublication.value &&
@@ -21,14 +55,9 @@ export default (issues: ShallowRef<(issue & { issuecode: string })[]>) => {
       ),
   );
 
-  const totalPerPublication = computed(() =>
-      issues.value
-        ? Object.fromEntries(
-            Object.entries(issues.value?.groupBy("publicationcode", "[]")).map(
-              ([publicationcode, issues]) => [publicationcode, issues.length],
-            ),
-          )
-        : null,
+  const totalPerPublication = computed(() => getTotalPerPublication()),
+    totalPerPublicationWithoutDuplicates = computed(() =>
+      getTotalPerPublication(false),
     ),
     issuesByIssuecode = computed(() =>
       issues.value?.groupBy("issuecode", "[]"),
@@ -63,15 +92,9 @@ export default (issues: ShallowRef<(issue & { issuecode: string })[]>) => {
               ))) ||
         0,
     ),
-    totalPerCountry = computed(() =>
-      issues.value?.reduce<{ [countrycode: string]: number }>(
-        (acc, { publicationcode }) => {
-          const countrycode = publicationcode.split("/")[0];
-          acc[countrycode] = (acc[countrycode] || 0) + 1;
-          return acc;
-        },
-        {},
-      ),
+    totalPerCountry = computed(() => getTotalPerCountry()),
+    totalPerCountryWithoutDuplicates = computed(() =>
+      getTotalPerCountry(false),
     ),
     numberPerCondition = computed(
       () =>
@@ -145,7 +168,9 @@ export default (issues: ShallowRef<(issue & { issuecode: string })[]>) => {
     quotationSum,
     total,
     totalPerCountry,
+    totalPerCountryWithoutDuplicates,
     totalPerPublication,
+    totalPerPublicationWithoutDuplicates,
     totalUniqueIssues,
     findInCollection,
   };
