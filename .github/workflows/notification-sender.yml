@@ -9,7 +9,7 @@ jobs:
     env:
       REMOTE_ROOT: apps/dm
     steps:
-      - name: Send emails
+      - name: Send notifications
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.PRODUCTION_SSH_HOST }}

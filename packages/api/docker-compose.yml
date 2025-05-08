@@ -14,6 +14,7 @@ services:
     restart: always
     volumes:
       - ./latest-whattheduck-bundle.txt:/app/latest-whattheduck-bundle.txt
+      - /data/covers:/app/covers
     networks:
       - public-network
       - dm-api-network
@@ -27,6 +28,8 @@ services:
     command: "./pastec -p 4212 -i /pastec-index-last.dat /pastec/data/visualWordsORB.dat"
     volumes:
       - ./pastec-index-last.dat:/pastec-index-last.dat:ro
+    networks:
+      - dm-api-network
 
 networks:
   dm-api-network:

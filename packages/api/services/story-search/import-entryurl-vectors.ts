@@ -1,3 +1,9 @@
+declare global {
+  interface ImportMeta {
+    dir: string;
+  }
+}
+
 import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa/client";
 import { readdirSync } from "fs";
 import { getImageVector, loadModel } from ".";

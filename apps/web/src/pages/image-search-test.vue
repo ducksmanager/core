@@ -146,7 +146,9 @@ watch(currentBase64, (base64) => {
 
 onMounted(async () => {
   for (const model of models.value) {
-    model.indexSize = await model.getIndexSize();
+    model.getIndexSize().then((size) => {
+      model.indexSize = size;
+    });
   }
 });
 </script>
