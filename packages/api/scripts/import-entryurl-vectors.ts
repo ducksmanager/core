@@ -10,7 +10,7 @@ import { getImageVector, loadModel } from "../services/story-search";
 
 await loadModel();
 
-const root = `${import.meta.dir}/covers`;
+const root = process.env.ENTRYURLS_DIR || `${import.meta.dir}/covers`;
 
 const files = readdirSync(root, {
   recursive: true,

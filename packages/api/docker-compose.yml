@@ -14,7 +14,7 @@ services:
     restart: always
     volumes:
       - ./latest-whattheduck-bundle.txt:/app/latest-whattheduck-bundle.txt
-      - /data/covers:/app/covers
+      - /data/covers:${ENTRYURLS_DIR}
     networks:
       - public-network
       - dm-api-network
