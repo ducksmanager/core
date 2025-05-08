@@ -1,13 +1,18 @@
-declare global {
-  interface ImportMeta {
-    dir: string;
-  }
-}
+import dotenv from "dotenv";
+
+dotenv.config({
+  path: "../.env",
+});
 
 import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa/client";
 import { readdirSync } from "fs";
 import { getImageVector, loadModel } from "../services/story-search";
 
+declare global {
+  interface ImportMeta {
+    dir: string;
+  }
+}
 await loadModel();
 
 const root = process.env.ENTRYURLS_DIR || `${import.meta.dir}/covers`;
