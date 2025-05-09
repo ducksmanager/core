@@ -15,7 +15,8 @@ declare global {
 }
 await loadModel();
 
-const root = process.env.ENTRYURLS_DIR || `${import.meta.dir}/covers`;
+const root =
+  process.env.ENTRYURLS_DIR || `${import.meta.dir}/../services/story-search/covers`;
 
 const files = readdirSync(root, {
   recursive: true,
