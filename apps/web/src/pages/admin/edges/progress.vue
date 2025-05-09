@@ -157,7 +157,7 @@ const open = (publicationcode: string, issuenumber: string) => {
   }
 };
 const inducksIssueNumbersNoSpace = $computed(() =>
-  Object.keys(issueNumbers).reduce<Record<string, string[]>>(
+  Object.keys(issueNumbers.value).reduce<Record<string, string[]>>(
     (acc, publicationcode) => ({
       ...acc,
       [publicationcode]: Object.values(issueNumbers.value[publicationcode]).map(

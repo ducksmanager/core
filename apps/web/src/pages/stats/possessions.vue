@@ -70,7 +70,7 @@ const { t: $t } = useI18n(),
     if (
       !(
         totalPerPublicationUniqueIssueNumbersSorted.value &&
-        issueCounts &&
+        issueCounts.value &&
         hasCoaData
       )
     ) {

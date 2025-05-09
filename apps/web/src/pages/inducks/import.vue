@@ -127,7 +127,7 @@ meta:
       {{ $t("Analyser mes numéros") }}
     </b-button>
   </b-row>
-  <b-row class="justify-content-center" v-if="inducksCollectionIssues">
+  <b-row v-if="inducksCollectionIssues" class="justify-content-center">
     <b-col sm="6">
       <b-alert v-if="issuesImportable" :model-value="true" variant="info">
         <b-form-checkbox v-model="importDigitalIssues">{{

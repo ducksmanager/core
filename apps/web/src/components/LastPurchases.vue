@@ -47,7 +47,7 @@ const { publicationNames } = storeToRefs(coa());
 const { purchasesById, issues: allIssues } = storeToRefs(collection());
 
 const { t, locale } = useI18n();
-const hasPublicationNames = $computed(() => Object.keys(publicationNames)),
+const hasPublicationNames = $computed(() => Object.keys(publicationNames.value)),
   collectionPerPurchaseDate = $computed(
     () =>
       purchasesById.value &&

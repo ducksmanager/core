@@ -128,7 +128,10 @@ const { loadCollection, loadPurchases } = collection();
 const { issues, totalPerPublication } = storeToRefs(collection());
 
 const ready = $computed(
-  () => issuesPerCell && countryNames && Object.keys(publicationNames).length,
+  () =>
+    issuesPerCell &&
+    countryNames.value &&
+    Object.keys(publicationNames.value).length,
 );
 const maxLetter = $computed(() =>
   !issuesPerCell
