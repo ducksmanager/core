@@ -30,7 +30,7 @@
     "bootstrap": "^5.3.5",
     "bootstrap-vue-next": "^0.26.30",
     "js-cookie": "^3.0.5",
-    "pinia": "^2.3.1",
+    "pinia": "^3.0.2",
     "socket-call-client": "^0.7.1",
     "sortablejs": "^1.15.6",
     "vue": "^3.5.13",
