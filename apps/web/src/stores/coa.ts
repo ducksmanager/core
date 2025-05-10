@@ -54,7 +54,8 @@ export const coa = defineStore("coa", () => {
     publicationNames = ref({} as POST__coa__list__publications["resBody"]),
     publicationNamesFullCountries = ref([] as string[]),
     personNames = ref(null as { [personcode: string]: string } | null),
-    issueNumbers = ref({} as { [issuecode: string]: string[] }),
+    issueNumbers = ref({} as { [publicationcode: string]: string[] }),
+    issueNumbersByPublicationcodeAndIssuecode = ref({} as { [publicationcode: string]: { [issuecode: string]: string } }),
     issuesWithTitles = ref(
       {} as {
         [issuenumber: string]: GET__coa__list__issues__withTitle["resBody"];
@@ -301,6 +302,13 @@ export const coa = defineStore("coa", () => {
             {} as typeof issueNumbers.value,
           ),
         );
+
+        for (const issue of data) {
+          if (! (issue.publicationcode in issueNumbersByPublicationcodeAndIssuecode.value)) {
+            issueNumbersByPublicationcodeAndIssuecode.value[issue.publicationcode] = {};
+          }
+          issueNumbersByPublicationcodeAndIssuecode.value[issue.publicationcode][issue.issuecode] = issue.issuenumber;
+        }
       }
     },
     fetchIssueCodesDetails = async (issueCodes: string[]) => {
@@ -371,6 +379,7 @@ export const coa = defineStore("coa", () => {
     publicationNamesFullCountries,
     personNames,
     issueNumbers,
+    issueNumbersByPublicationcodeAndIssuecode,
     issuesWithTitles,
     issueDetails,
     isLoadingCountryNames,

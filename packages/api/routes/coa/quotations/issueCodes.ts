@@ -10,17 +10,17 @@ export const get = async (
     query: { issueCodes: string };
   }>
 ) => {
-  const { issueCodes } = req.query;
-  if (!issueCodes) {
+  const { issueCodes: queryIssueCodes } = req.query;
+  if (!queryIssueCodes) {
     res.writeHead(400);
     res.end();
     return;
   }
-  const codes = [...issueCodes.toString().matchAll(ISSUE_CODE_REGEX)];
-  if (!codes.length) {
+  const issuecodes = [...queryIssueCodes.toString().matchAll(ISSUE_CODE_REGEX)];
+  if (!issuecodes.length) {
     res.writeHead(400);
     res.end();
-  } else if (codes.length > 4) {
+  } else if (issuecodes.length > 4) {
     res.writeHead(429);
     res.end();
   } else {
@@ -28,7 +28,7 @@ export const get = async (
       await prismaCoa.inducks_issuequotation.findMany({
         where: {
           issuecode: {
-            in: codes.map(([code]) => code.replaceAll(/ +/, " ")),
+            in: issuecodes.map(([issuecode]) => issuecode.replaceAll(/ +/, " ")),
           },
           estimationMin: { not: { equals: null } },
         },

@@ -4,11 +4,11 @@ import { ExpressCall } from "~routes/_express-call";
 
 export const get = async (
   ...[, res]: ExpressCall<{
-    resBody: Pick<edge, "publicationcode" | "issuenumber">[];
+    resBody: Pick<edge, "publicationcode" | "issuenumber" | "issuecode">[];
   }>
 ) =>
   res.json(
     await prismaDm.edge.findMany({
-      select: { publicationcode: true, issuenumber: true },
+      select: { publicationcode: true, issuenumber: true, issuecode: true },
     })
   );

@@ -10,7 +10,7 @@ export const get = async (
 ) =>
   res.json(
     (await prismaCoa.$queryRaw`
-            SELECT issuecode as code,
+            SELECT issuecode,
                    publicationcode,
                    issuenumber
             FROM inducks_issue issue

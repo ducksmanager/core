@@ -1,5 +1,5 @@
 export interface SimpleIssue {
-  code: string;
+  issuecode: string;
   publicationcode: string;
   issuenumber: string;
 }

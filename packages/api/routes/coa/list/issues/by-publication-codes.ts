@@ -18,6 +18,7 @@ export const get = async (
     select: {
       publicationcode: true,
       issuenumber: true,
+      issuecode: true,
     },
     where: {
       publicationcode: {
@@ -26,8 +27,8 @@ export const get = async (
     },
   });
   return res.json(
-    data.map(({ publicationcode, issuenumber }) => ({
-      code: "",
+    data.map(({ publicationcode, issuenumber, issuecode }) => ({
+      issuecode: issuecode!,
       publicationcode: publicationcode!,
       issuenumber: issuenumber!.replace(/ +/g, " "),
     }))

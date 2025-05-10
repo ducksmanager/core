@@ -365,7 +365,7 @@ export class POST__presentation_text__$decision  extends ContractWithMethodAndUr
             static readonly url = "/presentation-text/:decision";
         }
 export class GET__edges__published__data  extends ContractWithMethodAndUrl<{
-    resBody: Pick<edge, "publicationcode" | "issuenumber">[];
+    resBody: Pick<edge, "publicationcode" | "issuenumber" | "issuecode">[];
   }> {
             static readonly method = "get";
             static readonly url = "/edges/published/data";
