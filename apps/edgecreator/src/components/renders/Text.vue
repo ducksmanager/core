@@ -196,11 +196,11 @@ if (!isForm.value) {
   }
   const effectiveText = computed(() =>
     resolveIssueNumberTemplate(
-      text.value,
       resolveIssueNumberPartTemplate(
         text.value,
         coa().issuecodeDetails[issuecode].issuenumber,
       ),
+      coa().issuecodeDetails[issuecode].issuenumber,
     ),
   );
 
@@ -212,7 +212,8 @@ if (!isForm.value) {
       if (newValue) {
         loadImage(textImage.value!.url, (img) => {
           enableDragResize(img, {
-            coords: () => ({ x: x.value, y: y.value }),
+            x,
+            y,
           });
         });
       }
@@ -228,7 +229,8 @@ if (!isForm.value) {
           () => imageRef.value,
           () => {
             enableDragResize(imageRef.value!, {
-              coords: () => ({ x: x.value, y: y.value }),
+              x,
+              y,
               onresizemove: ({ rect }) => {
                 let { width: newWidth, height: newHeight } = rect;
                 const isVertical = [90, 270].includes(rotation.value);

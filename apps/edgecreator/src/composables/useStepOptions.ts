@@ -75,7 +75,11 @@ export const useStepOptions = () => {
     optionName.toLowerCase().includes("color") ||
     ["fill", "stroke"].includes(optionName);
 
-  interface OnMoveParams {
+  type EitherOr<T, U> =
+    | (T & { [K in keyof U]?: never })
+    | (U & { [K in keyof T]?: never });
+
+  interface OnMoveHandlerParams {
     currentTarget: SVGElement | HTMLElement;
     dx: number;
     dy: number;
@@ -88,41 +92,45 @@ export const useStepOptions = () => {
     edges: { right: number; bottom: number };
   }
 
+  interface MoveCoordinatesParams {
+    x: Ref<number>;
+    y: Ref<number>;
+  }
+
+  interface ResizeDimensionsParams {
+    width: Ref<number>;
+    height: Ref<number>;
+  }
+
+  type MoveParams = EitherOr<
+    MoveCoordinatesParams,
+    { onmove: (params: OnMoveHandlerParams) => void }
+  >;
+
+  type ResizeParams = EitherOr<
+    ResizeDimensionsParams,
+    { onresizemove: (params: OnResizemoveParams) => void }
+  >;
+
   const enableDragResize = (
     element: HTMLElement | SVGElement,
-    params: {
-      onresizemove?: (params: OnResizemoveParams) => void;
-    } & (
-      | {
-          onmove: (params: OnMoveParams) => void;
-        }
-      | {
-          coords: () => {
-            x: number;
-            y: number;
-          };
-        }
-    ),
+    params: Partial<MoveParams & ResizeParams>,
   ) =>
     interact(element)
       .draggable({
-        onmove: (e: OnMoveParams) => {
+        onmove: (e) => {
           document.body.classList.add("interacting");
-          if ("onmove" in params) {
+          if ("onmove" in params && params.onmove) {
             params.onmove(e);
-          } else {
+          } else if ("x" in params && "y" in params && params.x && params.y) {
             const { dx, dy, shiftKey } = e;
             showMoveResizeToast("move");
             if (shiftKey) {
-              stepStore.setOptionValues({
-                x: 0,
-                y: 0,
-              });
+              params.x.value = 0;
+              params.y.value = 0;
             } else {
-              stepStore.setOptionValues({
-                x: params.coords().x + dx / zoom.value,
-                y: params.coords().y + dy / zoom.value,
-              });
+              params.x.value += dx / zoom.value;
+              params.y.value += dy / zoom.value;
             }
           }
         },
@@ -135,23 +143,26 @@ export const useStepOptions = () => {
         document.body.classList.add("interacting");
         if ("onresizemove" in params && params.onresizemove) {
           params.onresizemove(e);
-        } else {
+        } else if (
+          "width" in params &&
+          "height" in params &&
+          params.width &&
+          params.height
+        ) {
           const { rect, shiftKey, edges } = e;
           showMoveResizeToast("resize", { edges });
-          rect.width /= zoom.value;
-          rect.height /= zoom.value;
+          params.width.value = rect.width / zoom.value;
+          params.height.value = rect.height / zoom.value;
           if (shiftKey) {
             if (edges.bottom) {
-              rect.height = height.value;
+              params.height.value = height.value;
             }
             if (edges.right) {
-              rect.width = width.value;
+              params.width.value = width.value;
             }
           }
-          stepStore.setOptionValues(rect);
         }
       })
-
       .on("resizeend", () => document.body.classList.remove("interacting"));
 
   // stepStore.setOptionValues(props.options!);
