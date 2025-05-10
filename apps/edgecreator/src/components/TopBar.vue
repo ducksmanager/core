@@ -1,15 +1,11 @@
 <template>
   <b-container fluid>
     <b-row align="center" class="pt-2">
-      <b-col class="text-start position-absolute col-12 col-md-6 options">
+      <b-col class="text-start position-absolute w-auto options">
         <b-navbar toggleable class="ps-0 pt-0">
-          <b-navbar-brand href="#">
-            {{ $t("Options") }}
-          </b-navbar-brand>
-
           <b-navbar-toggle target="nav-collapse" />
 
-          <b-collapse id="nav-collapse" is-nav class="flex-column p-2 bg-white">
+          <b-collapse id="nav-collapse" is-nav class="flex-column p-2">
             <b-row class="zoom-option">
               <b-col cols="3">
                 <input
