@@ -7,12 +7,7 @@ import * as process from "process";
 
 dotenv.config();
 
-const {
-  FTP_HOST,
-  FTP_USER,
-  FTP_PASSWORD,
-  DATABASE_URL_COA,
-} = process.env as {
+const { FTP_HOST, FTP_USER, FTP_PASSWORD, DATABASE_URL_COA } = process.env as {
   FTP_HOST: string;
   FTP_USER: string;
   FTP_PASSWORD: string;

@@ -1,12 +1,14 @@
 import type { ImageFeatureExtractionPipeline } from "@huggingface/transformers";
 import { pipeline } from "@huggingface/transformers";
-import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa/client";
-import namespaces from "../namespaces";
-import { useSocketEvents } from "socket-call-server";
-import path from "path";
 import * as fs from "fs/promises";
 import * as os from "os";
+import path from "path";
 import sharp from "sharp";
+import { useSocketEvents } from "socket-call-server";
+
+import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa/client";
+
+import namespaces from "../namespaces";
 
 let model: ImageFeatureExtractionPipeline;
 

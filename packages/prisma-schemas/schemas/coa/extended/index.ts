@@ -8,7 +8,12 @@ import {
   computePublicationcode,
 } from "./overrideNullableCodes";
 
-type Augmented = { issuecode: string; publicationcode: string ; issuenumber: string ; title: string | null; }
+type Augmented = {
+  issuecode: string;
+  publicationcode: string;
+  issuenumber: string;
+  title: string | null;
+};
 
 export default (prismaClient: PrismaClient) =>
   prismaClient
@@ -57,27 +62,34 @@ export default (prismaClient: PrismaClient) =>
                 ),
         augmentIssueArrayWithInducksData: async function <
           Entity extends { issuecode: string },
-        >(issues: Entity[], withTitle: boolean = false): Promise<(Entity & Augmented)[]> {
-          const issuecodes = [...new Set(issues.map(({ issuecode }) => issuecode))];
+        >(
+          issues: Entity[],
+          withTitle: boolean = false,
+        ): Promise<(Entity & Augmented)[]> {
+          const issuecodes = [
+            ...new Set(issues.map(({ issuecode }) => issuecode)),
+          ];
           if (!issuecodes.length) return [];
 
-          const inducksIssues = await prismaClient.inducks_issue.findMany({
-            select: {
-              publicationcode: true,
-              issuenumber: true,
-              issuecode: true,
-              title: withTitle,
-            },
-            where: {
-              issuecode: {
-                in: issuecodes,
+          const inducksIssues = await prismaClient.inducks_issue
+            .findMany({
+              select: {
+                publicationcode: true,
+                issuenumber: true,
+                issuecode: true,
+                title: withTitle,
               },
-            },
-          }).then(issues => issues.groupBy("issuecode"));
+              where: {
+                issuecode: {
+                  in: issuecodes,
+                },
+              },
+            })
+            .then((issues) => issues.groupBy("issuecode"));
 
           return issues.map((issue) => ({
             ...issue,
-            ...inducksIssues[issue.issuecode] as Augmented,
+            ...(inducksIssues[issue.issuecode] as Augmented),
           }));
         },
       },

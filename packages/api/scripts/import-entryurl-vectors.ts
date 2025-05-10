@@ -4,8 +4,10 @@ dotenv.config({
   path: "../.env",
 });
 
-import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa/client";
 import { readdirSync } from "fs";
+
+import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa/client";
+
 import { getImageVector, loadModel } from "../services/story-search";
 
 declare global {
@@ -16,7 +18,8 @@ declare global {
 await loadModel();
 
 const root =
-  process.env.ENTRYURLS_DIR || `${import.meta.dir}/../services/story-search/covers`;
+  process.env.ENTRYURLS_DIR ||
+  `${import.meta.dir}/../services/story-search/covers`;
 
 const files = readdirSync(root, {
   recursive: true,

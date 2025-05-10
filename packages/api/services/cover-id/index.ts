@@ -10,8 +10,7 @@ import namespaces from "../namespaces";
 import { getPastecStatus } from "../status";
 
 const listenEvents = () => ({
-  searchFromCover: async (
-    urlOrBase64: string ) => {
+  searchFromCover: async (urlOrBase64: string) => {
     const buffer = urlOrBase64.includes(";base64,")
       ? (
           await axios.get(urlOrBase64, {
