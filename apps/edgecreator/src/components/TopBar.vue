@@ -37,10 +37,7 @@
                 <b-form-checkbox
                   id="showPreviousEdge"
                   v-model="showPreviousEdge"
-                  :disabled="
-                    !edgeIssuecodesBefore.length ||
-                    showPreviousEdge === undefined
-                  "
+                  :disabled="!edgeIssuecodesBefore.length"
                 />
               </b-col>
               <b-col>
@@ -54,9 +51,7 @@
                 <b-form-checkbox
                   id="showNextEdge"
                   v-model="showNextEdge"
-                  :disabled="
-                    !edgeIssuecodesAfter.length || showNextEdge === undefined
-                  "
+                  :disabled="!edgeIssuecodesAfter.length"
                 />
               </b-col>
               <b-col>
