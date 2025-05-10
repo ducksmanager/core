@@ -156,9 +156,9 @@
       <b-col align-self="center">
         &nbsp;<save-model-button />&nbsp;<save-model-button
           v-if="hasRole('Edition')"
-          with-submit
+          action="submit"
         />
-        <save-model-button v-if="hasRole('Admin')" with-export />
+        <save-model-button v-if="hasRole('Admin')" action="export" />
       </b-col>
     </b-row>
     <b-row

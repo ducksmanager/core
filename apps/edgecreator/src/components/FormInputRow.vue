@@ -82,7 +82,6 @@ const shouldWaitForBlurToUpdate = computed(() =>
 );
 
 const onChangeValue = (optionValue: PossibleInputValueType) => {
-  debugger;
   let intValue: number | null = null;
   if (optionName === "rotation") {
     intValue = parseInt(optionValue as string);

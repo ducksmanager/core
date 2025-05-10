@@ -29,15 +29,17 @@
     size="sm"
     @click="onClick"
   >
-    <i-bi-archive v-if="!withExport && !withSubmit" />
+    <i-bi-archive v-if="!action" />
     <template v-else>
       <i-bi-cloud-arrow-up-fill />
       <b-modal
         v-model="showModal"
-        :title="$t(withExport ? 'Edge publication' : 'Edge validation')"
+        :title="
+          $t(action === 'export' ? 'Edge publication' : 'Edge validation')
+        "
         ok-only
         :ok-disabled="isOkDisabled"
-        :ok-title="$t(withExport ? 'Export' : 'Submit')"
+        :ok-title="$t(action === 'export' ? 'Export' : 'Submit')"
         @ok="issueIndexToSave = 0"
       >
         <b-alert :model-value="true" variant="info">
@@ -131,9 +133,8 @@ const userStore = webStores.users();
 const collectionStore = webStores.collection();
 const mainStore = main();
 
-const { withSubmit = false, withExport = false } = defineProps<{
-  withSubmit?: boolean;
-  withExport?: boolean;
+const { action } = defineProps<{
+  action?: "submit" | "export";
 }>();
 
 const showModal = ref(false);
@@ -141,12 +142,10 @@ const progress = ref(0);
 const issueIndexToSave = ref<number>();
 const result = ref<string>();
 
-const label = computed(() =>
-  $t(withExport ? "Export" : withSubmit ? "Submit" : "Save"),
-);
+const label = computed(() => $t(action === "export" ? "Export" : "Submit"));
 
 const variant = computed((): "success" | "primary" =>
-  withExport || withSubmit ? "success" : "primary",
+  action === "export" || action === "submit" ? "success" : "primary",
 );
 
 const outlineVariant = computed(
@@ -184,8 +183,8 @@ watch(issueIndexToSave, (newValue) => {
       mainStore.contributors.filter(
         ({ issuecode }) => issuecode === currentIssuecode,
       ),
-      withExport,
-      withSubmit,
+      action === "export",
+      action === "submit",
     ).then((response) => {
       const isSuccess = response!.paths.svgPath;
       if (isSuccess) {
@@ -201,7 +200,7 @@ watch(issueIndexToSave, (newValue) => {
 });
 
 watch(showModal, (newValue) => {
-  if (newValue && withSubmit) {
+  if (newValue && action === "submit") {
     addContributorAllIssues(
       userStore.allUsers!.find(
         (thisUser) => thisUser.username === collectionStore.user!.username,
@@ -251,19 +250,15 @@ const addContributorAllIssues = (
     }),
   );
 const hasAtLeastOneUser = (contributionType: contribution) =>
-  [
-    ...new Set(
-      mainStore.contributors
-        .filter(
-          ({ contributionType: thisContributionType }) =>
-            contributionType === thisContributionType,
-        )
-        .map(({ issuecode }) => issuecode),
+  new Set(
+    mainStore.contributors.filter(
+      ({ contributionType: thisContributionType }) =>
+        contributionType === thisContributionType,
     ),
-  ].length === mainStore.issuecodes.length;
+  ).size;
 
 const onClick = () => {
-  if (withExport || withSubmit) {
+  if (action === "export" || action === "submit") {
     showModal.value = !showModal.value;
   } else {
     issueIndexToSave.value = 0;
