@@ -1,8 +1,6 @@
 export default () => ({
-  resolveIssueNumberTemplate: (text: string, issuenumber: string) => {
-    debugger;
-    return !text ? text : text.replaceAll(/\[Numero]/g, issuenumber);
-  },
+  resolveIssueNumberTemplate: (text: string, issuenumber: string) =>
+    !text ? text : text.replaceAll(/\[Numero]/g, issuenumber),
 
   resolveIssueNumberPartTemplate: (text: string, issuenumber: string) =>
     !text
