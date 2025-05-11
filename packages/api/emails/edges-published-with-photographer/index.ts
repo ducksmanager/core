@@ -11,7 +11,7 @@ export default class extends Email {
   };
   templatePath = import.meta.dirname.includes("emails")
     ? import.meta.dirname
-    : `${import.meta.dirname}/emails/edges-published-with-photographer`;
+    : `/app/emails/edges-published-with-photographer`;
 
   constructor(data: {
     user: user;

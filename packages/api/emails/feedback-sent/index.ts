@@ -12,7 +12,7 @@ export default class extends Email {
   data: Data;
   templatePath = import.meta.dirname.includes("emails")
     ? import.meta.dirname
-    : `${import.meta.dirname}/emails/feedback-sent`;
+    : `/app/emails/feedback-sent`;
 
   constructor(data: Data) {
     super();

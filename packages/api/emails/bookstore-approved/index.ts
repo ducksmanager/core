@@ -9,7 +9,7 @@ export default class extends Email {
   };
   templatePath = import.meta.dirname.includes("emails")
     ? import.meta.dirname
-    : `${import.meta.dirname}/emails/bookstore-approved`;
+    : `/app/emails/bookstore-approved`;
 
   constructor(data: {
     user: user;
