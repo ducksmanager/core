@@ -1,12 +1,12 @@
 import { defineStore } from "pinia";
 
 import { edgecreatorSocketInjectionKey } from "~/composables/useEdgecreatorSocket";
-import type { userContributionType } from "~prisma-schemas/schemas/dm";
 import type { ModelContributor } from "~types/ModelContributor";
 import type { SimpleUser } from "~types/SimpleUser";
 import { stores as webStores } from "~web";
 
 import { edgeCatalog } from "./edgeCatalog";
+import type { contribution } from "~prisma-schemas/client_edgecreator";
 
 const numericSortCollator = new Intl.Collator(undefined, {
   numeric: true,
@@ -19,7 +19,7 @@ export const main = defineStore("main", () => {
     issuecodes = ref<string[]>([]),
     isRange = ref(false),
     photoUrls = ref<Record<string, string>>({}),
-    contributors = ref<ModelContributor[]>([]),
+    contributors = ref<Set<ModelContributor>>(new Set()),
     publicationElements = ref<string[]>([]),
     publicationPhotos = ref<string[]>([]),
     warnings = ref<string[]>([]),
@@ -66,36 +66,14 @@ export const main = defineStore("main", () => {
       user,
     }: {
       issuecode: string;
-      contributionType: userContributionType;
+      contributionType: contribution;
       user: SimpleUser;
     }) => {
-      if (!user) {
-        console.warn("User not found when adding contributor", {
-          issuecode,
-          contributionType,
-          user,
-        });
-        return;
-      }
-      removeContributor({ contributionType, userToRemove: user });
-      contributors.value.push({
+      contributors.value.add({
         issuecode,
         contributionType,
         user,
       });
-    },
-    removeContributor = ({
-      contributionType,
-      userToRemove,
-    }: {
-      contributionType: userContributionType;
-      userToRemove: SimpleUser;
-    }) => {
-      contributors.value = contributors.value.filter(
-        ({ contributionType: thisContributionType, user: thisUser }) =>
-          thisContributionType !== contributionType &&
-          thisUser.id !== userToRemove.id,
-      );
     },
     addWarning = (warning: string) => {
       warnings.value = [...warnings.value, warning];
@@ -231,7 +209,6 @@ export const main = defineStore("main", () => {
     publicationElementsForGallery,
     publicationPhotosForGallery,
     addContributor,
-    removeContributor,
     addWarning,
     removeWarning,
     setIssuecodes,
