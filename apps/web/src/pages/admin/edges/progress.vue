@@ -36,7 +36,7 @@ meta:
       "
     >
       <div
-        v-for="publicationcode of publishedEdgesPublicationcodes"
+        v-for="publicationcode of Array.from(publishedEdgesPublicationcodes).sort()"
         :key="publicationcode"
         v-memo="[
           publicationcode,
@@ -97,11 +97,7 @@ meta:
       <br /><br />
       <b
         >{{
-          Object.keys(publishedEdgesIssuecodes).reduce(
-            (acc, publicationcode) =>
-              acc + Array.from(publishedEdgesIssuecodes).filter(issuecode => issuecode.startsWith(publicationcode)).length,
-            0,
-          )
+          publishedEdgesIssuecodes.size
         }}
         tranches prêtes.</b
       ><br />
@@ -200,7 +196,6 @@ const sortedBookcase = computed(() =>
     publishedEdgesPublicationcodes.add(publicationcode);
     publishedEdgesIssuecodes.add(issuecode!);
   }
-  debugger
 
   await fetchPublicationNames([
     ...mostWanted.map((mostWantedIssue) => mostWantedIssue.publicationcode),
