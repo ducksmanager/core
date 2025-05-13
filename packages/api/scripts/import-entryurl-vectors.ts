@@ -2,7 +2,6 @@ import dotenv from "dotenv";
 import { Worker } from "worker_threads";
 import os from "os";
 import path from "path";
-import { fileURLToPath } from "url";
 
 dotenv.config({
   path: ".env",
@@ -47,16 +46,13 @@ const filesToProcess = files.filter(
   (file) => !file.isDirectory() && file.parentPath.includes("webusers")
 );
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
 // Helper to detect Bun
 const isBun = typeof globalThis.Bun !== "undefined";
 
-// Use .ts for Bun, .mjs for Node
+// Use .ts for Bun, .js for Node
 const workerFile = isBun
-  ? path.join(__dirname, "get-entryurl-vector.worker.ts")
-  : path.join(__dirname, "get-entryurl-vector.worker.mjs");
+  ? path.resolve(import.meta.dir, "./get-entryurl-vector.worker.ts")
+  : path.resolve(__dirname, "./get-entryurl-vector.worker.js");
 
 const runWorker = (filePath: string): Promise<{ vector: number[]; filePath: string } | { error: string; filePath: string }> => new Promise((resolve, reject) => {
   const worker = new Worker(workerFile, {
