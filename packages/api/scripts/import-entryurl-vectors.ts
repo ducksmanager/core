@@ -9,6 +9,7 @@ import { readdirSync } from "fs";
 import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa/client";
 
 import { getImageVector, loadModel } from "../services/story-search";
+import type { inducks_entryurl } from "~prisma-schemas/client_coa/client";
 
 declare global {
   interface ImportMeta {
@@ -27,10 +28,12 @@ const files = readdirSync(root, {
 });
 
 const existingVectors = (
-  await prismaCoa.$queryRaw<{ entryurl_id: number }[]>`
-SELECT entryurl_id FROM inducks_entryurl_vector
-`
-).map((v) => v.entryurl_id);
+  await prismaCoa.inducks_entryurl_vector.findMany({
+    select: {
+      entrycode: true,
+    },
+  })
+).map((v) => v.entrycode);
 
 for (const file of files) {
   if (file.isDirectory() || !file.parentPath.includes("webusers")) {
@@ -40,8 +43,8 @@ for (const file of files) {
   const relativePath = `${file.parentPath.replace(root + "/", "")}/${file.name}`;
 
   const entry = (
-    await prismaCoa.$queryRaw<{ id: number }[]>`
-        SELECT id from inducks_entryurl WHERE sitecode='webusers' AND url = ${relativePath.replace("webusers/webusers/", "")}
+    await prismaCoa.$queryRaw<Pick<inducks_entryurl, "entrycode">[]>`
+        SELECT entrycode from inducks_entryurl WHERE sitecode='webusers' AND url = ${relativePath.replace("webusers/webusers/", "")}
     `
   )[0];
 
@@ -50,7 +53,7 @@ for (const file of files) {
     continue;
   }
 
-  if (existingVectors.includes(entry.id)) {
+  if (existingVectors.includes(entry.entrycode!)) {
     console.log(`Vector already exists for ${relativePath}`);
     continue;
   }
@@ -68,11 +71,11 @@ for (const file of files) {
   }
 
   prismaCoa.$executeRaw`
-            INSERT INTO inducks_entryurl_vector (entryurl_id, v)
-            VALUES (${entry.id}, VEC_FromText(${vectorString}))
+            INSERT INTO inducks_entryurl_vector (entrycode, v)
+            VALUES (${entry.entrycode}, VEC_FromText(${vectorString}))
         `
     .then(() => {
-      console.log(`Added image vector ${entry.id} for ${relativePath}`);
+      console.log(`Added image vector ${entry.entrycode} for ${relativePath}`);
     })
     .catch((error) => {
       console.error(`Error adding image vector for ${relativePath}`, error);

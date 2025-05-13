@@ -106,7 +106,7 @@ const formatVectorForDB = (vector: number[]): string =>
 const listenEvents = () => {
   loadModel();
   return {
-    getIndexSize: async () => prismaCoa.entryUrlVector.count(),
+    getIndexSize: async () => prismaCoa.inducks_entryurl_vector.count(),
     findSimilarImages: async (imageBufferOrBase64: string | Buffer) => {
       try {
         const queryVector = await getImageVector(imageBufferOrBase64);
@@ -114,21 +114,21 @@ const listenEvents = () => {
 
         return await prismaCoa.$queryRaw<
           {
-            entryurlId: number;
             entrycode: string;
             issuecode: string;
+            storyversioncode: string;
             similarity: number;
           }[]
         >`
           SELECT 
-            ev.entryurl_id as entryurlId,
-            eu.entrycode,
+            ev.entrycode,
             e.issuecode,
+            sv.storyversioncode,
             VEC_DISTANCE_COSINE(ev.v, vec_fromtext(${vectorString})) as similarity
           FROM inducks_entryurl_vector ev
-          INNER JOIN inducks_entryurl eu ON eu.id = ev.entryurl_id
-          INNER JOIN inducks_entry e ON e.entrycode = eu.entrycode
-          WHERE eu.entrycode IS NOT NULL and VEC_DISTANCE_COSINE(ev.v, vec_fromtext(${vectorString})) < 0.1
+          INNER JOIN inducks_entry e ON e.entrycode = ev.entrycode
+          INNER JOIN inducks_storyversion sv ON sv.storyversioncode = e.storyversioncode
+          WHERE VEC_DISTANCE_COSINE(ev.v, vec_fromtext(${vectorString})) < 0.1
           ORDER BY similarity
           LIMIT 5
         `;
