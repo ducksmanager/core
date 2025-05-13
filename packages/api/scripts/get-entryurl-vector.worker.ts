@@ -1,24 +1,12 @@
-import { parentPort } from "worker_threads";
-import { getImageVector, loadModel } from "../services/story-search";
+import { parentPort, workerData } from "worker_threads";
+import { getImageVector } from "../services/story-search";
 
-let modelLoaded = false;
-
-const processFile = async (filePath: string) => {
+(async () => {
   try {
-    if (!modelLoaded) {
-      await loadModel();
-      modelLoaded = true;
-    }
-    const vector = await getImageVector(filePath);
-    parentPort?.postMessage({ type: "result", vector: vector.vector, filePath });
+    const vector = await getImageVector(workerData.filePath);
+    parentPort?.postMessage({ vector: vector.vector, filePath: workerData.filePath });
   } catch (error: unknown) {
     const message = typeof error === "object" && error && "message" in error ? (error as { message: string }).message : String(error);
-    parentPort?.postMessage({ type: "error", error: message, filePath });
+    parentPort?.postMessage({ error: message, filePath: workerData.filePath });
   }
-};
-
-parentPort?.on("message", (msg) => {
-  if (msg.type === "process" && msg.filePath) {
-    processFile(msg.filePath);
-  }
-}); 
+})(); 

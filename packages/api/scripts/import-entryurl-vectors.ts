@@ -13,6 +13,7 @@ import type { Dirent } from "fs";
 
 import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa/client";
 
+import { loadModel } from "../services/story-search";
 import type { inducks_entryurl } from "~prisma-schemas/client_coa/client";
 
 declare global {
@@ -20,6 +21,7 @@ declare global {
     dir: string;
   }
 }
+await loadModel();
 
 const root =
   process.env.ENTRYURLS_DIR ||
@@ -56,85 +58,86 @@ const workerFile = isBun
   ? path.join(__dirname, "get-entryurl-vector.worker.ts")
   : path.join(__dirname, "get-entryurl-vector.worker.mjs");
 
+const runWorker = (filePath: string): Promise<{ vector: number[]; filePath: string } | { error: string; filePath: string }> => new Promise((resolve, reject) => {
+  const worker = new Worker(workerFile, {
+    workerData: { filePath }
+  });
+  worker.on("message", (msg) => resolve(msg));
+  worker.on("error", reject);
+  worker.on("exit", (code) => {
+    if (code !== 0) reject(new Error(`Worker stopped with exit code ${code}`));
+  });
+});
+
 interface FileWithParentPath extends Dirent {
   parentPath: string;
   name: string;
 }
 
-const runWorkerPool = async (filesToProcess: FileWithParentPath[]) => new Promise<void>((resolve) => {
+const processFile = async (file: FileWithParentPath) => {
+  const relativePath = `${file.parentPath.replace(root + "/", "")}/${file.name}`;
+  const entry = (
+    await prismaCoa.$queryRaw<Pick<inducks_entryurl, "entrycode">[]>`
+      SELECT entrycode from inducks_entryurl WHERE sitecode='webusers' AND url = ${relativePath.replace("webusers/webusers/", "")}
+    `
+  )[0];
+
+  if (!entry) {
+    console.log(`Entry not found for ${relativePath}`);
+    return;
+  }
+
+  if (existingVectors.includes(entry.entrycode!)) {
+    console.log(`Vector already exists for ${relativePath}`);
+    return;
+  }
+
+  const filePath = `${file.parentPath}/${file.name}`;
+  const result = await runWorker(filePath);
+
+  if ("error" in result) {
+    console.error(`Error creating image vector for ${relativePath}: ${result.error}`);
+    return;
+  }
+
+  const vectorString = `[${result.vector.join(",")}]`;
+
+  try {
+    await prismaCoa.$executeRaw`
+      INSERT INTO inducks_entryurl_vector (entrycode, v)
+      VALUES (${entry.entrycode}, VEC_FromText(${vectorString}))
+    `;
+    console.log(`Added image vector ${entry.entrycode} for ${relativePath}`);
+  } catch (error) {
+    console.error(`Error adding image vector for ${relativePath}`, error);
+  }
+};
+
+const runInParallel = async () => {
   let index = 0;
-  const workers: Worker[] = [];
-  const busy: boolean[] = Array(cpuCount).fill(false);
-  const workerFiles: (FileWithParentPath | null)[] = Array(cpuCount).fill(null);
+  let active = 0;
 
-  const assignWork = (workerIdx: number) => {
-    if (index >= filesToProcess.length) {
-      // No more files to assign
-      if (busy.every((b) => !b)) {
-        // All workers are idle, we're done
-        workers.forEach((w) => w.terminate());
+  return new Promise<void>((resolve) => {
+    function next() {
+      if (index >= filesToProcess.length && active === 0) {
         resolve();
-      }
-      return;
-    }
-    const file = filesToProcess[index++];
-    busy[workerIdx] = true;
-    workerFiles[workerIdx] = file;
-    workers[workerIdx].postMessage({ type: "process", filePath: `${file.parentPath}/${file.name}` });
-  };
-
-  for (let i = 0; i < cpuCount; i++) {
-    const worker = new Worker(workerFile);
-    workers.push(worker);
-
-    worker.on("message", async (msg) => {
-      const file = workerFiles[i];
-      if (!file) {
-        busy[i] = false;
-        assignWork(i);
         return;
       }
-      const relativePath = `${file.parentPath.replace(root + "/", "")}/${file.name}`;
-      if (msg.type === "result") {
-        // DB insert logic
-        const entry = (
-          await prismaCoa.$queryRaw<Pick<inducks_entryurl, "entrycode">[]> `
-              SELECT entrycode from inducks_entryurl WHERE sitecode='webusers' AND url = ${relativePath.replace("webusers/webusers/", "")}
-            `
-        )[0];
-        if (!entry) {
-          console.log(`Entry not found for ${relativePath}`);
-        } else if (existingVectors.includes(entry.entrycode!)) {
-          console.log(`Vector already exists for ${relativePath}`);
-        } else {
-          const vectorString = `[${msg.vector.join(",")}]`;
-          try {
-            await prismaCoa.$executeRaw`
-                INSERT INTO inducks_entryurl_vector (entrycode, v)
-                VALUES (${entry.entrycode}, VEC_FromText(${vectorString}))
-              `;
-            console.log(`Added image vector ${entry.entrycode} for ${relativePath}`);
-          } catch (error) {
-            console.error(`Error adding image vector for ${relativePath}`, error);
-          }
-        }
-      } else if (msg.type === "error") {
-        console.error(`Error creating image vector for ${relativePath}: ${msg.error}`);
+      while (active < cpuCount && index < filesToProcess.length) {
+        const file = filesToProcess[index++];
+        active++;
+        processFile(file)
+          .catch((err) => {
+            console.error("Error processing file:", err);
+          })
+          .finally(() => {
+            active--;
+            next();
+          });
       }
-      busy[i] = false;
-      workerFiles[i] = null;
-      assignWork(i);
-    });
+    }
+    next();
+  });
+};
 
-    worker.on("error", (err) => {
-      console.error(`Worker error:`, err);
-      busy[i] = false;
-      workerFiles[i] = null;
-      assignWork(i);
-    });
-
-    assignWork(i);
-  }
-});
-
-await runWorkerPool(filesToProcess);
+await runInParallel();
