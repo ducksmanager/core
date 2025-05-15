@@ -109,10 +109,13 @@ const listenEvents = () => {
     getIndexSize: async () => prismaCoa.inducks_entryurl_vector.count(),
     findSimilarImages: async (imageBufferOrBase64: string | Buffer) => {
       try {
+        console.log("findSimilarImages");
         const queryVector = await getImageVector(imageBufferOrBase64);
+        console.log("getImageVector done");
         const vectorString = formatVectorForDB(queryVector.vector);
+        console.log("formatVectorForDB done");
 
-        return await prismaCoa.$queryRaw<
+        const results = await prismaCoa.$queryRaw<
           {
             entrycode: string;
             issuecode: string;
@@ -132,6 +135,8 @@ const listenEvents = () => {
           ORDER BY similarity
           LIMIT 5
         `;
+        console.log("Query done");
+        return results;
       } catch (error) {
         console.error("Error finding similar images:", error);
         throw error;
