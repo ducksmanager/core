@@ -135,7 +135,7 @@ const listenEvents = () => {
             vector_similarity.entrycode,
             vector_similarity.similarity,
             e.issuecode,
-            sv.storyversioncode,
+            sv.storyversioncode
           FROM vector_similarity
           INNER JOIN inducks_entry e ON e.entrycode = vector_similarity.entrycode
           INNER JOIN inducks_storyversion sv ON sv.storyversioncode = e.storyversioncode
