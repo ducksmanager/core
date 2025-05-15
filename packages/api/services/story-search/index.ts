@@ -115,6 +115,12 @@ const listenEvents = () => {
         const vectorString = formatVectorForDB(queryVector.vector);
         console.log("formatVectorForDB done");
 
+        // First convert the vector to the proper format
+        const vectorResult = await prismaCoa.$queryRaw<{ v: any }[]>`
+          SELECT vec_fromtext(${vectorString}) as v
+        `;
+        const dbVector = vectorResult[0].v;
+
         const results = await prismaCoa.$queryRaw<
           {
             entrycode: string;
@@ -128,7 +134,7 @@ const listenEvents = () => {
               ev.entrycode,
               e.issuecode,
               sv.storyversioncode,
-              VEC_DISTANCE_COSINE(ev.v, vec_fromtext(${vectorString})) as similarity
+              VEC_DISTANCE_COSINE(ev.v, ${dbVector}) as similarity
             FROM inducks_entryurl_vector ev
             INNER JOIN inducks_entry e ON e.entrycode = ev.entrycode
             INNER JOIN inducks_storyversion sv ON sv.storyversioncode = e.storyversioncode
