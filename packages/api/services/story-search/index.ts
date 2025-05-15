@@ -124,7 +124,7 @@ const listenEvents = () => {
           }[]
         >`
         WITH 
-          inputVector AS (SELECT vec_fromtext('${vectorString}') as v),
+          inputVector AS (SELECT vec_fromtext(${vectorString}) as v),
           vector_similarity AS (
             SELECT 
               ev.entrycode,
