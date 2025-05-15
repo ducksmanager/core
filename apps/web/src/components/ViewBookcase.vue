@@ -169,15 +169,10 @@ const { points } = storeToRefs(users());
 
 const { loadPopularIssuesInCollection, loadLastPublishedEdgesForCurrentUser } =
   collection();
-const {
-  user,
-  lastPublishedEdgesForCurrentUser,
-  popularIssuesInCollectionWithoutEdge,
-} = storeToRefs(collection());
+const { user, lastPublishedEdgesForCurrentUser } = storeToRefs(collection());
 
 const { fetchPublicationNames, fetchIssuecodesByPublicationcode } = coa();
-const { publicationNames, issuecodesByPublicationcode, issuecodeDetails } =
-  storeToRefs(coa());
+const { publicationNames, issuecodesByPublicationcode } = storeToRefs(coa());
 
 const { loadBookcase, loadBookcaseOptions, loadBookcaseOrder } = bookcase();
 const {
@@ -189,6 +184,7 @@ const {
   isPrivateBookcase,
   isUserNotExisting,
   isSharedBookcase,
+  popularIssuesInCollectionWithoutEdge,
 } = storeToRefs(bookcase());
 
 let edgesUsingSprites = $ref<{ [edgeId: number]: string }>({});
@@ -238,12 +234,10 @@ const sortedBookcase = $computed(
     bookcaseOrder.value &&
     hasIssuecodes &&
     [...bookcaseWithPopularities.value].sort(
-      ({ issuecode: issuecode1 }, { issuecode: issuecode2 }) => {
-        const publicationcode1 =
-          issuecodeDetails.value[issuecode1]?.publicationcode;
-        const publicationcode2 =
-          issuecodeDetails.value[issuecode2]?.publicationcode;
-
+      (
+        { publicationcode: publicationcode1, issuecode: issuecode1 },
+        { publicationcode: publicationcode2, issuecode: issuecode2 },
+      ) => {
         const publicationOrderSign = Math.sign(
           bookcaseOrder.value!.indexOf(publicationcode1) -
             bookcaseOrder.value!.indexOf(publicationcode2),
@@ -251,12 +245,14 @@ const sortedBookcase = $computed(
         return (
           publicationOrderSign ||
           Math.sign(
-            issuecodesByPublicationcode.value[publicationcode1].indexOf(
+            issuecodesByPublicationcode.value[publicationcode1]?.indexOf(
               issuecode1,
-            ) -
-              issuecodesByPublicationcode.value[publicationcode2].indexOf(
-                issuecode2,
-              ),
+            ) ||
+              0 -
+                issuecodesByPublicationcode.value[publicationcode2]?.indexOf(
+                  issuecode2,
+                ) ||
+              0,
           )
         );
       },

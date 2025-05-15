@@ -3,6 +3,7 @@ import { useSocketEvents } from "socket-call-server";
 import type { BookcaseEdge } from "~dm-types/BookcaseEdge";
 import type { SessionUser } from "~dm-types/SessionUser";
 import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
+import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa/client";
 
 import type { UserServices } from "../../index";
 import { RequiredAuthMiddleware } from "../auth/util";
@@ -128,11 +129,14 @@ const listenEvents = ({ _socket }: UserServices<true>) => ({
             USING(Sprite_name)
           WHERE ID_Utilisateur = ${user.id}
         `
+      .then((edges) => prismaCoa.augmentIssueArrayWithInducksData(
+        edges.filter(({ issuecode }) => !!issuecode)
+      ))
       .then((edges) =>
         edges.groupBy(user.showDuplicatesInBookcase ? "id" : "issuecode", "[]"),
       )
-      .then(Object.values)
-      .then((arr: BookcaseEdgeRaw[][]) =>
+      .then((obj) => Object.values(obj) as BookcaseEdgeRaw[][])
+      .then((arr) =>
         arr.map((edges) => ({
           ...edges[0],
           sprites: edges
@@ -144,7 +148,6 @@ const listenEvents = ({ _socket }: UserServices<true>) => ({
             .filter(({ size }) => !!size),
         })),
       )
-      .then(Object.values)
       .then((edges) => ({ edges }));
   },
 

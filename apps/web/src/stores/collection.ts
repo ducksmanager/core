@@ -17,7 +17,6 @@ import type {
 
 import useCollection from "../composables/useCollection";
 import { socketInjectionKey } from "../composables/useDmSocket";
-import { bookcase } from "./bookcase";
 
 export type IssueWithPublicationcodeOptionalId = Omit<
   issue,
@@ -37,8 +36,6 @@ export const collection = defineStore("collection", () => {
     auth: authEvents,
     options: socketOptions,
   } = inject(socketInjectionKey)!;
-
-  const { bookcaseWithPopularities } = storeToRefs(bookcase());
 
   const issues =
     shallowRef<EventOutput<CollectionServices, "getIssues">["issues"]>();
@@ -109,15 +106,6 @@ export const collection = defineStore("collection", () => {
               totalPerPublicationUniqueIssuecodes.value[publicationcode2] -
                 totalPerPublicationUniqueIssuecodes.value[publicationcode1],
             ),
-        ),
-    ),
-    popularIssuesInCollectionWithoutEdge = computed(() =>
-      bookcaseWithPopularities.value
-        ?.filter(
-          ({ edgeId, popularity }) => !edgeId && popularity && popularity > 0,
-        )
-        .sort(({ popularity: popularity1 }, { popularity: popularity2 }) =>
-          popularity2 && popularity1 ? popularity2 - popularity1 : 0,
         ),
     ),
     userForAccountForm = computed(() => {
@@ -370,7 +358,6 @@ export const collection = defineStore("collection", () => {
     login,
     marketplaceContactMethods,
     popularIssuesInCollection,
-    popularIssuesInCollectionWithoutEdge,
     previousVisit,
     purchases,
     purchasesById,

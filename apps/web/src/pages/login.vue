@@ -72,7 +72,7 @@ const login = async () => {
         domain,
       });
 
-      loadUser();
+      loadUser(true);
     },
     (e) => {
       error = e;

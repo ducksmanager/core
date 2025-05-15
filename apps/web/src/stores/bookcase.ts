@@ -33,7 +33,7 @@ export const bookcase = defineStore("bookcase", () => {
     edgeIndexToLoad = ref(0),
     isSharedBookcase = computed(() => route.params.username !== undefined),
     bookcaseWithPopularities = computed(
-      (): BookcaseEdgeWithPopularity[] | null =>
+      () =>
         ((isSharedBookcase.value
           ? true
           : collection().popularIssuesInCollection) &&
@@ -45,6 +45,15 @@ export const bookcase = defineStore("bookcase", () => {
               : collection().popularIssuesInCollection?.[issuecode] || 0,
           }))) ||
         null,
+    ),
+    popularIssuesInCollectionWithoutEdge = computed(() =>
+      bookcaseWithPopularities.value
+        ?.filter(
+          ({ edgeId, popularity }) => !edgeId && popularity && popularity > 0,
+        )
+        .sort(({ popularity: popularity1 }, { popularity: popularity2 }) =>
+          popularity2 && popularity1 ? popularity2 - popularity1 : 0,
+        ),
     ),
     addLoadedSprite = ({
       spritePath,
@@ -119,6 +128,7 @@ export const bookcase = defineStore("bookcase", () => {
     bookcaseOrder,
     edgeIndexToLoad,
     isSharedBookcase,
+    popularIssuesInCollectionWithoutEdge,
     bookcaseWithPopularities,
     addLoadedSprite,
     loadBookcase,
