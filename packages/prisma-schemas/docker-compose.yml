@@ -1,7 +1,7 @@
 services:
   db:
     container_name: db
-    image: "mariadb:11.7"
+    image: "mariadb:11.8"
     restart: always
     volumes:
       - db:/var/lib/mysql
@@ -25,7 +25,7 @@ services:
         "--innodb-flush-log-at-trx-commit=2",
       ]
     networks:
-      - db-network
+      - dm-db-network
 
 networks:
   dm-db-network:
