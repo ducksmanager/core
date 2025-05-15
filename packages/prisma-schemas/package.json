@@ -14,7 +14,9 @@
     "dev:setup": "docker compose -f docker-compose-dev.yml up --force-recreate -d",
     "dev:blocking": "bash wait-until-db-ready.bash",
     "dev:blocking-up": "pnpm prisma-generate && pnpm prisma-migrate",
-    "lint": "prettier -w schemas"
+    "lint": "prettier -w schemas",
+    "prod:deploy": "DIR=packages/prisma-schemas SERVICES='db' pnpm -F '~ci' prod:docker-compose-up",
+    "prod:transfer-files-post": "pnpm -F '~ci' prod:transfer-files packages/prisma-schemas/docker-compose.yml:@packages/prisma-schemas/docker-compose.yml"
   },
   "dependencies": {
     "@prisma/client": "^6.8.0",
