@@ -123,15 +123,19 @@ const listenEvents = () => {
             similarity: number;
           }[]
         >`
-          SELECT 
-            ev.entrycode,
-            e.issuecode,
-            sv.storyversioncode,
-            VEC_DISTANCE_COSINE(ev.v, vec_fromtext(${vectorString})) as similarity
-          FROM inducks_entryurl_vector ev
-          INNER JOIN inducks_entry e ON e.entrycode = ev.entrycode
-          INNER JOIN inducks_storyversion sv ON sv.storyversioncode = e.storyversioncode
-          WHERE VEC_DISTANCE_COSINE(ev.v, vec_fromtext(${vectorString})) < 0.1
+          WITH vector_similarity AS (
+            SELECT 
+              ev.entrycode,
+              e.issuecode,
+              sv.storyversioncode,
+              VEC_DISTANCE_COSINE(ev.v, vec_fromtext(${vectorString})) as similarity
+            FROM inducks_entryurl_vector ev
+            INNER JOIN inducks_entry e ON e.entrycode = ev.entrycode
+            INNER JOIN inducks_storyversion sv ON sv.storyversioncode = e.storyversioncode
+          )
+          SELECT *
+          FROM vector_similarity
+          WHERE similarity < 0.1
           ORDER BY similarity
           LIMIT 5
         `;
