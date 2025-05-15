@@ -66,7 +66,7 @@ const models = ref<
       coverIdEvents
         .getIndexSize()
         .then((result) =>
-          "error" in result ? result.error : result.numberOfImages
+          "error" in result ? result.error : result.numberOfImages,
         ),
     run: async (base64: string) => {
       try {
@@ -75,7 +75,7 @@ const models = ref<
         return "error" in searchResults
           ? searchResults.errorDetails || "Error"
           : JSON.stringify(
-              searchResults.covers.map(({ issuecode }) => issuecode)
+              searchResults.covers.map(({ issuecode }) => issuecode),
             );
       } catch (error) {
         return typeof error === "object" && "errorDetails" in error!
@@ -89,14 +89,13 @@ const models = ref<
     modelData: "Covers and story first pages",
     getIndexSize: () => storySearchEvents.getIndexSize(),
     run: async (base64: string) => {
-      try {
-        const searchResults = await storySearchEvents.findSimilarImages(base64);
-        return JSON.stringify(searchResults.map(({ issuecode }) => issuecode));
-      } catch (error) {
-        return typeof error === "object" && "errorDetails" in error!
-          ? (error.errorDetails as string) || "Error"
-          : "Error";
-      }
+      const searchResults = await storySearchEvents.findSimilarImages(base64);
+      if ("error" in searchResults) {
+        return searchResults.error!;
+      } else
+        return JSON.stringify(
+          searchResults.results.map(({ issuecode }) => issuecode),
+        );
     },
   },
 ]);

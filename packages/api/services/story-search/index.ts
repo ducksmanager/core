@@ -115,12 +115,6 @@ const listenEvents = () => {
         const vectorString = formatVectorForDB(queryVector.vector);
         console.log("formatVectorForDB done");
 
-        // First convert the vector to the proper format
-        const vectorResult = await prismaCoa.$queryRaw<{ v: any }[]>`
-          SELECT vec_fromtext(${vectorString}) as v
-        `;
-        const dbVector = vectorResult[0].v;
-
         const results = await prismaCoa.$queryRaw<
           {
             entrycode: string;
@@ -129,27 +123,33 @@ const listenEvents = () => {
             similarity: number;
           }[]
         >`
-          WITH vector_similarity AS (
+        WITH 
+          inputVector AS (SELECT vec_fromtext('${vectorString}') as v),
+          vector_similarity AS (
             SELECT 
               ev.entrycode,
-              e.issuecode,
-              sv.storyversioncode,
-              VEC_DISTANCE_COSINE(ev.v, ${dbVector}) as similarity
+              VEC_DISTANCE_COSINE(ev.v, (SELECT v from inputVector)) as similarity
             FROM inducks_entryurl_vector ev
-            INNER JOIN inducks_entry e ON e.entrycode = ev.entrycode
-            INNER JOIN inducks_storyversion sv ON sv.storyversioncode = e.storyversioncode
           )
-          SELECT *
+          SELECT
+            vector_similarity.entrycode,
+            vector_similarity.similarity,
+            e.issuecode,
+            sv.storyversioncode,
           FROM vector_similarity
+          INNER JOIN inducks_entry e ON e.entrycode = vector_similarity.entrycode
+          INNER JOIN inducks_storyversion sv ON sv.storyversioncode = e.storyversioncode
           WHERE similarity < 0.1
           ORDER BY similarity
           LIMIT 5
         `;
         console.log("Query done");
-        return results;
+        return {results} as const;
       } catch (error) {
         console.error("Error finding similar images:", error);
-        throw error;
+        return {
+          error: error as string
+        } as const
       }
     },
   };
