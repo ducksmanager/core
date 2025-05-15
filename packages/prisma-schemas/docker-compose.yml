@@ -1,7 +1,7 @@
 services:
   db:
     container_name: db
-    image: "mariadb:11.8"
+    image: "mariadb:11.7"
     restart: always
     volumes:
       - db:/var/lib/mysql
