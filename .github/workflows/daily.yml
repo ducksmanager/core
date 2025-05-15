@@ -40,11 +40,13 @@ jobs:
 
       - name: Run stats-updater
         timeout-minutes: 90
+        continue-on-error: true
         run: |
           pnpm -r -F '~stats-updater' prod:docker-compose-run
 
       - name: Run cover-updater
         timeout-minutes: 20
+        continue-on-error: true
         run: |
           pnpm -r -F '~cover-updater' prod:docker-compose-run
 
@@ -56,11 +58,13 @@ jobs:
 
       - name: Run sprite-names-updater
         timeout-minutes: 5
+        continue-on-error: true
         run: |
           pnpm -r -F '~edgecreator-api' prod:run:sprite-names-updater
 
       - name: Run subscription-handler
         timeout-minutes: 5
+        continue-on-error: true
         run: |
           pnpm -r -F '~api' prod:docker-compose-run-create-issues-from-subscriptions
 
