@@ -7,21 +7,23 @@ meta:
   <div>
     <h1>Image Search Test</h1>
     <table style="width: 100%">
-      <tr style="width: 100%">
-        <td style="width: 50%">
-          <input type="file" @change="handleFileChange" />
-        </td>
-        <td style="width: 50%; text-align: center">
-          Examples:<br />
-          <img
-            v-for="example in examples"
-            :key="example"
-            style="height: 100px; cursor: pointer"
-            :src="example"
-            @click="handleExampleClick(example)"
-          />
-        </td>
-      </tr>
+      <tbody>
+        <tr style="width: 100%">
+          <td style="width: 50%">
+            <input type="file" @change="handleFileChange" />
+          </td>
+          <td style="width: 50%; text-align: center">
+            Examples:<br />
+            <img
+              v-for="example in examples"
+              :key="example"
+              style="height: 100px; cursor: pointer"
+              :src="example"
+              @click="handleExampleClick(example)"
+            />
+          </td>
+        </tr>
+      </tbody>
     </table>
     <b-table
       :items="models"

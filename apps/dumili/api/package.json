@@ -24,7 +24,7 @@
   },
   "dependencies": {
     "@opentelemetry/instrumentation-socket.io": "^0.46.1",
-    "@prisma/client": "^6.8.0",
+    "@prisma/client": "^6.8.2",
     "@sentry/node": "^9.19.0",
     "@sentry/profiling-node": "^9.19.0",
     "axios": "^1.9.0",
