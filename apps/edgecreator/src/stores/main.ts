@@ -1,12 +1,12 @@
 import { defineStore } from "pinia";
 
 import { edgecreatorSocketInjectionKey } from "~/composables/useEdgecreatorSocket";
+import type { contribution } from "~prisma-schemas/client_edgecreator";
 import type { ModelContributor } from "~types/ModelContributor";
 import type { SimpleUser } from "~types/SimpleUser";
 import { stores as webStores } from "~web";
 
 import { edgeCatalog } from "./edgeCatalog";
-import type { contribution } from "~prisma-schemas/client_edgecreator";
 
 const numericSortCollator = new Intl.Collator(undefined, {
   numeric: true,

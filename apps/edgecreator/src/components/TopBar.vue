@@ -265,7 +265,6 @@ const {
 
 const { showPreviousEdge, showNextEdge } = surroundingEdge();
 const { overwriteModel } = useModelLoad();
-const { loadSvgFromString } = useSvgUtils();
 const { dimensions: editingDimensions } = storeToRefs(editingStep());
 const { hasRole } = webStores.collection();
 const stepStore = step();
@@ -312,10 +311,7 @@ const clone = async () => {
   for (const issuecode of issuecodesToEdit.value.filter(
     (issuecode) => issuecode !== issuecodeToClone.value!,
   )) {
-    overwriteModel(
-      issuecode,
-      await loadSvgFromString(issuecodeToClone.value!, true),
-    );
+    overwriteModel(issuecode, issuecodeToClone.value!, true);
   }
 };
 
