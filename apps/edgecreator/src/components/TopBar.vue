@@ -299,7 +299,7 @@ const uniqueDimensions = computed(() =>
 );
 
 const isEditingMultiple = computed(
-  () => isRange || issuecodes.value.length > 1,
+  () => isRange.value || issuecodes.value.length > 1,
 );
 
 const setPhotoUrls = (photoUrl: string) => {
