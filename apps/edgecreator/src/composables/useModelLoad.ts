@@ -218,8 +218,6 @@ export default () => {
   ) => {
     loadDimensionsFromSvg(targetIssuecode, svgElement);
     loadStepsFromSvg(targetIssuecode, svgChildNodes);
-    setPhotoUrlsFromSvg(targetIssuecode, svgChildNodes);
-    setContributorsFromSvg(targetIssuecode, svgChildNodes);
   };
 
   const logModelLoadError = (e: unknown) => {
