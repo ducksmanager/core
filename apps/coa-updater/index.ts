@@ -116,6 +116,8 @@ ALTER TABLE inducks_entry ADD FULLTEXT INDEX entryTitleFullText(title);
 ALTER TABLE inducks_entry
   ADD COLUMN is_cover tinyint(1) null;
 
+CREATE INDEX inducks_entry_is_cover_index
+  ON inducks_entry (is_cover);
 
 UPDATE inducks_entry entry
 INNER JOIN (
