@@ -103,55 +103,68 @@ export const getImageVector = async (input: string | Buffer) => {
 const formatVectorForDB = (vector: number[]): string =>
   `[${vector.map((v) => v.toFixed(6)).join(",")}]`;
 
+export const findSimilarImages = async (
+  imageBufferOrBase64: string | Buffer,
+  isCover: boolean,
+) => {
+  try {
+    console.log("findSimilarImages");
+    const queryVector = await getImageVector(imageBufferOrBase64);
+    console.log("getImageVector done");
+    const vectorString = formatVectorForDB(queryVector.vector);
+    console.log("formatVectorForDB done");
+
+    const results = await prismaCoa.$queryRaw<
+      {
+        entrycode: string;
+        issuecode: string;
+        storyversioncode: string;
+        similarity: number;
+      }[]
+    >`
+    WITH 
+      inputVector AS (SELECT vec_fromtext(${vectorString}) as v),
+      vector_similarity AS (
+        SELECT 
+          ev.entrycode,
+          VEC_DISTANCE_COSINE(ev.v, (SELECT v from inputVector)) as similarity
+        FROM inducks_entryurl_vector ev WHERE is_cover=${isCover} 
+      )
+      SELECT
+        vector_similarity.entrycode,
+        vector_similarity.similarity,
+        e.issuecode,
+        sv.storyversioncode
+      FROM vector_similarity
+      INNER JOIN inducks_entry e ON e.entrycode = vector_similarity.entrycode
+      INNER JOIN inducks_storyversion sv ON sv.storyversioncode = e.storyversioncode
+      WHERE similarity < 0.15
+      ORDER BY similarity
+      LIMIT 5
+    `;
+    console.log("Query done, results:", results);
+    return { results } as const;
+  } catch (error) {
+    console.error("Error finding similar images:", error);
+    return {
+      error: error as string,
+    } as const;
+  }
+};
+
 const listenEvents = () => {
   loadModel();
   return {
-    getIndexSize: async () => prismaCoa.inducks_entryurl_vector.count(),
-    findSimilarImages: async (imageBufferOrBase64: string | Buffer) => {
-      try {
-        console.log("findSimilarImages");
-        const queryVector = await getImageVector(imageBufferOrBase64);
-        console.log("getImageVector done");
-        const vectorString = formatVectorForDB(queryVector.vector);
-        console.log("formatVectorForDB done");
-
-        const results = await prismaCoa.$queryRaw<
-          {
-            entrycode: string;
-            issuecode: string;
-            storyversioncode: string;
-            similarity: number;
-          }[]
-        >`
-        WITH 
-          inputVector AS (SELECT vec_fromtext(${vectorString}) as v),
-          vector_similarity AS (
-            SELECT 
-              ev.entrycode,
-              VEC_DISTANCE_COSINE(ev.v, (SELECT v from inputVector)) as similarity
-            FROM inducks_entryurl_vector ev
-          )
-          SELECT
-            vector_similarity.entrycode,
-            vector_similarity.similarity,
-            e.issuecode,
-            sv.storyversioncode
-          FROM vector_similarity
-          INNER JOIN inducks_entry e ON e.entrycode = vector_similarity.entrycode
-          INNER JOIN inducks_storyversion sv ON sv.storyversioncode = e.storyversioncode
-          WHERE similarity < 0.1
-          ORDER BY similarity
-          LIMIT 5
-        `;
-        console.log("Query done");
-        return {results} as const;
-      } catch (error) {
-        console.error("Error finding similar images:", error);
-        return {
-          error: error as string
-        } as const
-      }
-    },
+    getIndexSize: async (isCover: boolean) =>
+      prismaCoa.inducks_entryurl_vector.count({
+        where: {
+          isCover,
+        },
+      }),
+    findSimilarImages: async (
+      imageBufferOrBase64: string | Buffer,
+      isCover: boolean,
+    ) => findSimilarImages(imageBufferOrBase64, isCover),
   };
 };
 

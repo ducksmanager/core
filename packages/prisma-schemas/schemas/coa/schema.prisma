@@ -132,6 +132,7 @@ model inducks_entry {
   part                    String?                                @db.VarChar(5)
   entrycomment            String?                                @db.VarChar(2009)
   error                   inducks_entry_error?
+  isCover                 Boolean                                @map("is_cover")
 
   @@index([title], map: "entryTitleFullText")
   @@index([issuecode], map: "fk_inducks_entry0")
@@ -181,6 +182,7 @@ model inducks_entryurl_vector {
   entrycode String                      @db.VarChar(46)
   vector    Unsupported("vector(1536)") @map("v")
   createdAt DateTime                    @default(now()) @map("created_At") @db.Timestamp(0)
+  isCover   Boolean                     @map("is_cover")
 
   @@map("inducks_entryurl_vector")
 }

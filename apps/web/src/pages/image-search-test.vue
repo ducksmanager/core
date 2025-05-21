@@ -6,6 +6,10 @@ meta:
 <template>
   <div>
     <h1>Image Search Test</h1>
+    <b-form-checkbox v-model="isCover"
+      >Search for covers (otherwise search for story first
+      pages)</b-form-checkbox
+    >
     <table style="width: 100%">
       <tbody>
         <tr style="width: 100%">
@@ -16,9 +20,9 @@ meta:
             Examples:<br />
             <img
               v-for="example in examples"
-              :key="example"
+              :key="example.url"
               style="height: 100px; cursor: pointer"
-              :src="example"
+              :src="example.url"
               @click="handleExampleClick(example)"
             />
           </td>
@@ -43,17 +47,35 @@ const { coverId: coverIdEvents, storySearch: storySearchEvents } =
   inject(socketInjectionKey)!;
 
 const currentBase64 = ref<string>();
+const isCover = ref(true);
 
-const examples = [
-  "https://res.cloudinary.com/dl7hskxab/image/upload/inducks-covers/webusers/webusers/2018/07/fr_aljm_011a_001.jpg",
-  "https://res.cloudinary.com/dl7hskxab/image/upload/inducks-covers/webusers/webusers/2014/02/fr_tp_0024a_001.jpg",
-  "https://res.cloudinary.com/dl7hskxab/image/upload/inducks-covers/webusers/webusers/2024/05/eg_mg_0149p053_001.jpg",
-  "https://res.cloudinary.com/dl7hskxab/image/upload/inducks-covers/webusers/webusers/2011/01/fr_tp_0013a_001.jpg",
+type Example = {
+  url: string;
+  isCover: boolean;
+};
+
+const examples: Example[] = [
+  {
+    url: "https://res.cloudinary.com/dl7hskxab/image/upload/inducks-covers/webusers/webusers/2018/07/fr_aljm_011a_001.jpg",
+    isCover: true,
+  },
+  {
+    url: "https://res.cloudinary.com/dl7hskxab/image/upload/inducks-covers/webusers/webusers/2014/02/fr_tp_0024a_001.jpg",
+    isCover: true,
+  },
+  {
+    url: "https://res.cloudinary.com/dl7hskxab/image/upload/inducks-covers/webusers/webusers/2024/05/eg_mg_0149p053_001.jpg",
+    isCover: false,
+  },
+  {
+    url: "https://res.cloudinary.com/dl7hskxab/image/upload/inducks-covers/webusers/webusers/2011/01/fr_tp_0013a_001.jpg",
+    isCover: true,
+  },
 ];
 const models = ref<
   {
     model: string;
-    modelData: string;
+    modelData: "covers" | "story first pages";
     indexSize?: number | string;
     getIndexSize: () => Promise<number | string>;
     run: (base64: string) => Promise<string>;
@@ -63,7 +85,7 @@ const models = ref<
 >([
   {
     model: "Legacy (WTD 2-3)",
-    modelData: "Covers only",
+    modelData: "covers",
     getIndexSize: () =>
       coverIdEvents
         .getIndexSize()
@@ -88,10 +110,30 @@ const models = ref<
   },
   {
     model: "Experimental",
-    modelData: "Covers and story first pages",
-    getIndexSize: () => storySearchEvents.getIndexSize(),
+    modelData: "covers",
+    getIndexSize: () => storySearchEvents.getIndexSize(true),
     run: async (base64: string) => {
-      const searchResults = await storySearchEvents.findSimilarImages(base64);
+      const searchResults = await storySearchEvents.findSimilarImages(
+        base64,
+        true,
+      );
+      if ("error" in searchResults) {
+        return searchResults.error!;
+      } else
+        return JSON.stringify(
+          searchResults.results.map(({ issuecode }) => issuecode),
+        );
+    },
+  },
+  {
+    model: "Experimental",
+    modelData: "story first pages",
+    getIndexSize: () => storySearchEvents.getIndexSize(false),
+    run: async (base64: string) => {
+      const searchResults = await storySearchEvents.findSimilarImages(
+        base64,
+        false,
+      );
       if ("error" in searchResults) {
         return searchResults.error!;
       } else
@@ -116,11 +158,12 @@ const handleFileChange = async (event: Event) => {
   }
 };
 
-const handleExampleClick = (url: string) => {
-  fetch(url)
+const handleExampleClick = (example: Example) => {
+  fetch(example.url)
     .then((response) => response.blob())
     .then(async (blob) => {
       const file = new File([blob], "image.jpg", { type: "image/jpeg" });
+      isCover.value = example.isCover;
       currentBase64.value = await toBase64(file);
     });
 };
@@ -132,7 +175,10 @@ watch(currentBase64, (base64) => {
       model.results = undefined;
     }
     nextTick(async () => {
-      for (const model of models.value) {
+      for (const model of models.value.filter(
+        ({ modelData }) =>
+          modelData === (isCover.value ? "covers" : "story first pages"),
+      )) {
         const start = performance.now();
         const interval = setInterval(() => {
           model.time = `${(performance.now() - start).toFixed()}ms`;
