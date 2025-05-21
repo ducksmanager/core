@@ -119,6 +119,9 @@ ALTER TABLE inducks_entry
 CREATE INDEX inducks_entry_is_cover_index
   ON inducks_entry (is_cover);
 
+CREATE INDEX inducks_entry_issuecode_position_index
+  ON inducks_entry (issuecode, position);
+
 UPDATE inducks_entry entry
 INNER JOIN (
   SELECT issuecode, MIN(position) as min_position
