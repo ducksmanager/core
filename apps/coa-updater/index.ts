@@ -114,7 +114,7 @@ ALTER TABLE inducks_entry ADD FULLTEXT INDEX entryTitleFullText(title);
 
 
 ALTER TABLE inducks_entry
-  ADD COLUMN is_cover tinyint(1) null;
+  ADD COLUMN is_cover tinyint(1) default null null;
 
 CREATE INDEX inducks_entry_is_cover_index
   ON inducks_entry (is_cover);
@@ -130,6 +130,8 @@ INNER JOIN (
   GROUP BY issuecode
 ) min_pos ON entry.issuecode = min_pos.issuecode
 SET entry.is_cover = IF(entry.position = min_pos.min_position AND entry.issuecode != '', 1, 0);
+
+UPDATE inducks_entry entry SET is_cover = 0 WHERE issuecode IS NULL;
 
 ALTER TABLE inducks_entry
   MODIFY COLUMN is_cover tinyint(1) not null;
