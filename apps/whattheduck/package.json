@@ -105,8 +105,5 @@
     "vue-tsc": "^2.2.10"
   },
   "description": "What The Duck",
-  "prettier": "@ionic/prettier-config",
-  "eslintConfig": {
-    "extends": "@antfu"
-  }
+  "prettier": "@ionic/prettier-config"
 }

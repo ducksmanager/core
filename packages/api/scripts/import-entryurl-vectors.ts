@@ -5,6 +5,7 @@ dotenv.config({
 });
 
 import { readdirSync } from "fs";
+import path from "path";
 
 import type {
   inducks_entry,
@@ -13,7 +14,6 @@ import type {
 import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa/client";
 
 import { getImageVector, loadModel } from "../services/story-search";
-import path from "path";
 
 declare global {
   interface ImportMeta {

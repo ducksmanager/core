@@ -3,6 +3,7 @@
   "ui": "tui",
   "tasks": {
     "lint": {},
+    "lint:precommit": {},
     "build": {
       "passThroughEnv": [
         "SENTRY_AUTH_TOKEN"

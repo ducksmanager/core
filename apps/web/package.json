@@ -85,8 +85,5 @@
   "peerDependencies": {
     "pinia": "^2.1.7",
     "vue": "^3.4.15"
-  },
-  "eslintConfig": {
-    "extends": "@antfu"
   }
 }

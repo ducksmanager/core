@@ -17,6 +17,7 @@
     "typescript-eslint": "^8.32.1"
   },
   "scripts": {
+    "lint:precommit": "cd ../.. && pnpm eslint --fix --config ./util/lint/eslint.precommit.config.mjs .",
     "lint": "cd ../.. && ./util/lint/node_modules/.bin/eslint --fix --config ./util/lint/eslint.config.mjs"
   }
 }

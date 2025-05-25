@@ -1,0 +1,26 @@
+{
+    "compilerOptions": {
+        "module": "ESNext",
+        "target": "es2020",
+        "moduleResolution": "bundler",
+        "strict": true,
+        "esModuleInterop": true,
+        "skipLibCheck": true,
+        "forceConsistentCasingInFileNames": true,
+        "composite": true
+    },
+    "files": [
+        "package.json"
+    ],
+    "references": [
+        {
+            "path": "./apps"
+        },
+        {
+            "path": "./packages"
+        },
+        {
+            "path": "./util"
+        }
+    ]
+}
