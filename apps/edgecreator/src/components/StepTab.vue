@@ -93,17 +93,15 @@ const onOptionUpdate = ref<Record<string, (optionValue: OptionValue) => void>>(
 );
 
 const { stepNumber: hoveredStepNumber } = storeToRefs(hoveredStep());
-const { options: allStepOptions, maxStepNumber } = storeToRefs(step());
+const { optionsPerStepNumber, maxStepNumber } = storeToRefs(step());
 const { issuecodes: editingIssuecodes } = storeToRefs(editingStep());
 const { setOptionValues } = step();
 const { supportedRenders } = renders();
 const { issuecodes } = storeToRefs(main());
 
 const stepOptions = computed(() =>
-  allStepOptions.value.filter(
-    ({ issuecode, stepNumber: thisStepNumber }) =>
-      thisStepNumber === stepNumber &&
-      editingIssuecodes.value.includes(issuecode),
+  optionsPerStepNumber.value[stepNumber].filter(({ issuecode }) =>
+    editingIssuecodes.value.includes(issuecode),
   ),
 );
 const stepOptionUniqueValues = computed(() =>
@@ -123,7 +121,7 @@ const stepOptionsWithMultipleValues = computed(() =>
     Object.fromEntries(
       Object.entries(
         stepOptions.value.groupBy("optionName", "optionValue[]"),
-      ).filter(([_optionName, optionValues]) => optionValues.length > 1),
+      ).filter(([_optionName, optionValues]) => new Set(optionValues).size > 1),
     ),
   ),
 );
