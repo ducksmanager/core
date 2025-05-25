@@ -237,12 +237,12 @@ export default () => {
   const loadModel = async (issuecode: string) => {
     try {
       console.log("Loading non-published version of", issuecode);
-      overwriteModel(issuecode, issuecode, false);
+      await overwriteModel(issuecode, issuecode, false);
     } catch (e) {
       logModelLoadError(e);
       try {
         console.log("Loading published version of", issuecode);
-        overwriteModel(issuecode, issuecode, true);
+        await overwriteModel(issuecode, issuecode, true);
       } catch (e) {
         logModelLoadError(e);
         const edge = (await edgeCreatorEvents.getModel(issuecode))!;

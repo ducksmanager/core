@@ -18,7 +18,7 @@ import { ui } from "~/stores/ui";
 const polygon = ref<SVGPolygonElement>();
 
 const pointsAsString = (points: [number, number][]) =>
-  points.map((point) => point.join(",")).join(";");
+  points.map((point) => point.join(",")).join(" ");
 
 const { stepNumber = undefined } = defineProps<{
   stepNumber?: number;
@@ -36,19 +36,22 @@ const points = defineModel<string>("points", {
     [14, 12],
   ]
     .map((point) => point.join(","))
-    .join(";"),
+    .join(" "),
 });
 const fill = defineModel<string>("fill", { default: "#000000" });
 
 const pointsArray = computed((): [number, number][] =>
   isForm.value
     ? []
-    : points.value
-        .split(";")
-        .map((point) => [
-          parseFloat(point.split(",")[0]),
-          parseFloat(point.split(",")[1]),
-        ]),
+    : typeof points.value === "string"
+      ? points.value
+          .replaceAll(";", " ")
+          .split(" ")
+          .map((point) => [
+            parseFloat(point.split(",")[0]),
+            parseFloat(point.split(",")[1]),
+          ])
+      : points.value,
 );
 
 onMounted(() => {
