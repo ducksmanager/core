@@ -21,7 +21,7 @@ meta:
             <img
               v-for="example in examples"
               :key="example.url"
-              style="height: 100px; cursor: pointer"
+              :class="{ disabled: example.isCover !== isCover }"
               :src="example.url"
               @click="handleExampleClick(example)"
             />
@@ -64,12 +64,16 @@ const examples: Example[] = [
     isCover: true,
   },
   {
+    url: "https://res.cloudinary.com/dl7hskxab/image/upload/inducks-covers/webusers/webusers/2011/01/fr_tp_0013a_001.jpg",
+    isCover: true,
+  },
+  {
     url: "https://res.cloudinary.com/dl7hskxab/image/upload/inducks-covers/webusers/webusers/2024/05/eg_mg_0149p053_001.jpg",
     isCover: false,
   },
   {
-    url: "https://res.cloudinary.com/dl7hskxab/image/upload/inducks-covers/webusers/webusers/2011/01/fr_tp_0013a_001.jpg",
-    isCover: true,
+    url: "https://res.cloudinary.com/dl7hskxab/image/upload/inducks-covers/webusers/webusers/2021/06/yu_mzc_983c_001.jpg",
+    isCover: false,
   },
 ];
 const models = ref<
@@ -199,3 +203,15 @@ onMounted(async () => {
   }
 });
 </script>
+
+<style scoped lang="scss">
+img {
+  height: 100px;
+  cursor: pointer;
+
+  &.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+</style>
