@@ -123,6 +123,8 @@ if (stepNumber === undefined) {
             enableDragResize(img, {
               x,
               y,
+              width,
+              height,
             });
           },
         );
@@ -138,6 +140,8 @@ if (stepNumber === undefined) {
         enableDragResize(value, {
           x,
           y,
+          width,
+          height,
         });
       }
     },
