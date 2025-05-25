@@ -1,2 +1,2 @@
-paddleocr>=2.8.1
-paddlepaddle>=3.0.0b1
+paddleocr>=3.0.0
+paddlepaddle>=3.0.0

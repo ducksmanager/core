@@ -12,7 +12,7 @@ services:
     image: ghcr.io/bperel/paddleocr
     restart: always
     volumes:
-      - /root/.paddleocr
+      - /root/.paddlex
     networks:
       - dumili-network
 

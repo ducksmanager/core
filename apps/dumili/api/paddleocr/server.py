@@ -324,7 +324,7 @@ for item in data:
 
 # https://github.com/PaddlePaddle/PaddleOCR/issues/1048
 ocr_languages = {
-    lang: PaddleOCR(use_angle_cls=True, lang=lang, cls_thresh=1)
+    lang: PaddleOCR(use_textline_orientation=True, lang=lang)
     for lang in ['ch', 'en', 'french', 'ar', 'es', 'pt', 'ru', 'german', 'korean', 'japan', 'it', 'ug', 'fa', 'ur', 'oc']
 }
 

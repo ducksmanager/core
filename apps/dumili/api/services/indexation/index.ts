@@ -1,17 +1,14 @@
 import "~group-by";
 
 import type { Socket } from "socket.io";
-import { SocketClient } from "socket-call-client";
 import type { NamespaceProxyTarget } from "socket-call-server";
 import {
   type ServerSentStartEndEvents,
   useSocketEvents,
 } from "socket-call-server";
 
-import { type ClientEvents as CoaEvents } from "~dm-services/coa";
-import dmNamespaces from "~dm-services/namespaces";
 import { STORY } from "~dumili-types/storyKinds";
-import { getEntryFromPage, getEntryPages } from "~dumili-utils/entryPages";
+import { getEntryPages } from "~dumili-utils/entryPages";
 import type {
   aiKumikoResult,
   entry,
@@ -27,10 +24,7 @@ import { prisma } from "../../index";
 import { RequiredAuthMiddleware } from "../_auth";
 import namespaces from "../namespaces";
 import { runKumikoOnPages } from "./kumiko";
-import { runOcrOnImages } from "./ocr";
-
-const socket = new SocketClient(process.env.DM_SOCKET_URL!);
-const coaEvents = socket.addNamespace<CoaEvents>(dmNamespaces.COA);
+import { getStoriesFromImageUrl, getStoriesFromText } from "./story-search";
 
 const indexationPayloadInclude = {
   user: true,
@@ -52,6 +46,7 @@ const indexationPayloadInclude = {
               matches: true,
             },
           },
+          aiStorySearchResult: true,
         },
       },
     },
@@ -71,6 +66,7 @@ const indexationPayloadInclude = {
       acceptedStory: {
         include: {
           ocrDetails: true,
+          storySearchDetails: true,
         },
       },
       acceptedStoryKind: { include: { ai: true, storyKindRows: true } },
@@ -79,6 +75,7 @@ const indexationPayloadInclude = {
         include: {
           ai: true,
           ocrDetails: true,
+          storySearchDetails: true,
         },
       },
     },
@@ -92,10 +89,11 @@ export type FullIndexation = Prisma.indexationGetPayload<{
 export type FullEntry = FullIndexation["entries"][number];
 
 export type IndexationServerSentStartEvents = {
-  setKumikoInferredPageStoryKinds: (pageId: number) => void;
-  setInferredEntryStoryKind: (entryId: number) => void;
-  createAiStorySuggestions: (entryId: number) => void;
-  runOcrOnImage: (imageId: number) => void;
+  reportSetKumikoInferredPageStoryKinds: (pageId: number) => void;
+  reportSetInferredEntryStoryKind: (entryId: number) => void;
+  reportCreateAiStorySuggestions: (entryId: number) => void;
+  reportRunOcrOnImage: (imageId: number) => void;
+  reportRunStorySearchOnImage: (imageId: number) => void;
 };
 
 export type IndexationServerSentStartEndEvents =
@@ -129,22 +127,22 @@ export const getFullIndexation = (
         if (runAi && !isAiRunning) {
           isAiRunning = true;
           runKumikoOnPages(services, indexation)
-            .then(() =>
-              runOcrOnImages(
-                services,
-                indexation.pages
-                  .filter(
-                    ({ image, id }) =>
-                      !!image &&
-                      getEntryFromPage(indexation, id)?.acceptedStoryKind
-                        ?.storyKindRows.kind === STORY,
-                  )
-                  .map(({ pageNumber, image }) => ({
-                    pageNumber,
-                    image: image!,
-                  })),
-              ),
-            )
+            // .then(() =>
+            //   runOcrOnImages(
+            //     services,
+            //     indexation.pages
+            //       .filter(
+            //         ({ image, id }) =>
+            //           !!image &&
+            //           getEntryFromPage(indexation, id)?.acceptedStoryKind
+            //             ?.storyKindRows.kind === STORY
+            //       )
+            //       .map(({ pageNumber, image }) => ({
+            //         pageNumber,
+            //         image: image!,
+            //       }))
+            //   )
+            // )
             .then(() =>
               setInferredEntriesStoryKinds(services, indexation.entries),
             )
@@ -176,59 +174,40 @@ const createAiStorySuggestions = async (
   indexation: FullIndexation,
 ) => {
   for (const entry of indexation.entries) {
-    if (
-      entry.acceptedStoryKind?.storyKindRows?.kind === STORY &&
-      !entry.storySuggestions.length
-    ) {
-      const firstPageOfEntry = getEntryPages(indexation, entry.id)[0];
-      const ocrResults = firstPageOfEntry.image?.aiOcrResult?.matches;
+    if (entry.acceptedStoryKind?.storyKindRows?.kind === STORY) {
+      const currentlyAcceptedStorycode = entry.acceptedStory?.storycode;
 
-      if (!ocrResults) {
-        console.log(
-          `Entry ${entry.id}: No OCR results found on the first page`,
-        );
+      const firstPageOfEntry = getEntryPages(indexation, entry.id)[0];
+
+      if (!firstPageOfEntry.image) {
         continue;
       }
 
-      services.createAiStorySuggestions(entry.id);
+      services.reportCreateAiStorySuggestions(entry.id);
 
-      const { results: searchResults } = await coaEvents.searchStory(
-        ocrResults.map(({ text }) => text),
-        false,
-      );
-
-      const storyDetailsOutput = await coaEvents.getStoryDetails(
-        searchResults.map(({ storycode }) => storycode),
-      );
-
-      if (!("stories" in storyDetailsOutput)) {
-        return {
-          error: `Error when calling getStoryDetails`,
-        };
+      let results;
+      // TODO allow to interpret both OCR results and story search results
+      if (firstPageOfEntry.image?.aiOcrResult?.matches?.length) {
+        results = await getStoriesFromText(
+          firstPageOfEntry.image?.aiOcrResult.matches.map(({ text }) => text),
+        );
+      } else {
+        results = await getStoriesFromImageUrl(
+          firstPageOfEntry.image.url,
+          entry.position === 1,
+        );
       }
-      const storyDetails = storyDetailsOutput.stories;
-
-      const storyversionDetailsOutput = await coaEvents.getStoryversionsDetails(
-        searchResults.map(
-          ({ storycode }) => storyDetails[storycode].originalstoryversioncode!,
-        ),
-      );
-
-      if (!("storyversions" in storyversionDetailsOutput)) {
-        return {
-          error: `Error when calling getStoryversionsDetails`,
-        };
+      if (!results) {
+        console.error(
+          `Entry ${entry.id}: No OCR or story search results found on the first page`,
+        );
+        continue;
       }
-
-      const storyversionDetails = storyversionDetailsOutput.storyversions;
-
-      const storyResults = searchResults.filter(
-        ({ storycode }) =>
-          storyversionDetails[storyDetails[storycode].originalstoryversioncode!]
-            .kind === STORY,
-      );
-
-      const currentlyAcceptedStorycode = entry.acceptedStory?.storycode;
+      if ("error" in results) {
+        console.error(results.error);
+        continue;
+      }
+      const storyResults = results.stories;
 
       await prisma.storySuggestionAi.deleteMany({
         where: {
@@ -248,6 +227,7 @@ const createAiStorySuggestions = async (
           storySuggestions: {
             create: storyResults.map(
               ({
+                type,
                 storycode,
                 score,
               }): Prisma.storySuggestionCreateWithoutEntryInput => ({
@@ -255,7 +235,7 @@ const createAiStorySuggestions = async (
                 ai: {
                   create: {},
                 },
-                ocrDetails: {
+                [type]: {
                   create: {
                     score,
                   },
@@ -283,7 +263,7 @@ const createAiStorySuggestions = async (
         });
       }
 
-      services.createAiStorySuggestionsEnd(entry.id);
+      services.reportCreateAiStorySuggestionsEnd(entry.id);
     } else {
       console.log(`Entry ${entry.id}: This entry is not a story`);
     }
@@ -301,7 +281,7 @@ const setInferredEntriesStoryKinds = async (
       continue;
     }
 
-    services.setInferredEntryStoryKind(entry.id);
+    services.reportSetInferredEntryStoryKind(entry.id);
     const { indexation } = services._socket.data;
     const pagesInferredStoryKinds = await prisma.image.findMany({
       select: {
@@ -376,7 +356,7 @@ const setInferredEntriesStoryKinds = async (
       }
     }
 
-    services.setInferredEntryStoryKindEnd(entry.id);
+    services.reportSetInferredEntryStoryKindEnd(entry.id);
   }
 };
 
@@ -437,7 +417,7 @@ const listenEvents = (services: IndexationServices) => ({
   },
 
   loadIndexation: async () => {
-    services.setKumikoInferredPageStoryKinds(1);
+    services.reportSetKumikoInferredPageStoryKinds(1);
     return { indexation: services._socket.data.indexation };
   },
 
