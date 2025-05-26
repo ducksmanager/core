@@ -31,7 +31,7 @@
     "bootstrap-vue-next": "^0.26.30",
     "js-cookie": "^3.0.5",
     "pinia": "^3.0.2",
-    "socket-call-client": "^0.7.1",
+    "socket-call-client": "^0.7.2",
     "sortablejs": "^1.15.6",
     "vue": "^3.5.14",
     "vue-draggable-resizable": "^3.0.0",

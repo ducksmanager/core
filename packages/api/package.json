@@ -35,7 +35,7 @@
     "jsonwebtoken": "^9.0.2",
     "nodemailer": "^7.0.3",
     "sharp": "^0.34.1",
-    "socket-call-server": "^0.7.1",
+    "socket-call-server": "^0.7.2",
     "socket.io": "^4.8.1",
     "~dm-types": "workspace:*",
     "~prisma-schemas": "workspace:*"
