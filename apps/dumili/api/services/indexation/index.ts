@@ -225,22 +225,29 @@ const createAiStorySuggestions = async (
         },
         data: {
           storySuggestions: {
-            create: storyResults.map(
+            connectOrCreate: storyResults.map(
               ({
                 type,
                 storycode,
                 score,
-              }): Prisma.storySuggestionCreateWithoutEntryInput => ({
-                storycode,
-                ai: {
-                  create: {},
-                },
-                [type]: {
-                  create: {
-                    score,
+              }): Prisma.storySuggestionCreateOrConnectWithoutEntryInput => ({
+                create: {
+                  storycode,
+                  ai: {
+                    create: {},
+                  },
+                  [type]: {
+                    create: { 
+                      score,
+                    },
                   },
                 },
-              }),
+                where: {
+                  id: entry.storySuggestions.find(
+                    ({ storycode }) => storycode === storycode
+                  )?.id,
+                },
+              })
             ),
           },
         },
