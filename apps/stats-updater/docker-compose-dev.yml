@@ -1,18 +1,19 @@
 services:
-  coa-updater:
+  stats-updater:
     init: true
+    container_name: stats-updater
     build:
       context: .
-    env_file:
-      - ../../packages/api/.env
-    command: "run index.ts"
+      dockerfile: Dockerfile-dev
+    command: 'run index.ts'
     volumes:
       - .:/home/bun/app
       - inducks_data:/tmp/inducks
     environment:
       MYSQL_HOST: db
-      MYSQL_DATABASE: coa
-      MYSQL_DATABASE_NEW: coa_new
+      MYSQL_DATABASE: stats
+      MYSQL_DATABASE_NEW: stats_new
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
     networks:
       - db-network
 

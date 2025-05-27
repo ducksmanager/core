@@ -10,6 +10,7 @@ const dataPath = "/tmp/inducks",
 
 const poolParams = {
   host: process.env.MYSQL_HOST,
+  port: parseInt(process.env.MYSQL_PORT || "3306"),
   user: "root",
   password: process.env.MYSQL_ROOT_PASSWORD,
   multipleStatements: true,
@@ -131,7 +132,7 @@ INNER JOIN (
 ) min_pos ON entry.issuecode = min_pos.issuecode
 SET entry.is_cover = IF(entry.position = min_pos.min_position AND entry.issuecode != '', 1, 0);
 
-UPDATE inducks_entry entry SET is_cover = 0 WHERE issuecode IS NULL;
+UPDATE inducks_entry entry SET is_cover = 0 WHERE is_cover IS NULL;
 
 ALTER TABLE inducks_entry
   MODIFY COLUMN is_cover tinyint(1) not null;
