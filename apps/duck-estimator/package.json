@@ -1,6 +1,7 @@
 {
   "name": "~duck-estimator",
   "version": "1.0.0",
+  "type": "module",
   "engines": {
     "node": ">=22.0.0 <23.0.0"
   },
