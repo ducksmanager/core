@@ -198,7 +198,6 @@ watch(showModal, (newValue) => {
         }
       }
     }
-    debugger;
     issueIndexToSave.value = 0;
   }
 });

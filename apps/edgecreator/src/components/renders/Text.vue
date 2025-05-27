@@ -122,7 +122,7 @@ const rotation = defineModel<number>("rotation", { default: 270 });
 const fgColor = defineModel<string>("fgColor", { default: "#000000" });
 const bgColor = defineModel<string>("bgColor", { default: "#ffffff" });
 const font = defineModel<string>("font", {
-  default: "redrooster/block-gothic-rr/demi-extra-condensed",
+  default: "social-gothic-soft-social-gothic-2-429691",
 });
 const text = defineModel<string>("text", { default: "Le journal de mickey" });
 const internalWidth = defineModel<number>("internalWidth", { default: 700 });
