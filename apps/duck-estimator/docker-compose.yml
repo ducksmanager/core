@@ -20,6 +20,4 @@ networks:
 
 volumes:
   duck-estimator_cache:
-    external: true
   duck-estimator_node_cache:
-    external: true
