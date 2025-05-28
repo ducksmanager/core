@@ -38,7 +38,7 @@ try {
     password: FTP_PASSWORD,
   });
   console.log(await client.list());
-  await client.uploadFrom("dump.gz", `dump-${new Date().toISOString()}.gz`);
+  await client.uploadFrom("dump.gz", `./dumps/dump-${new Date().toISOString()}.gz`);
 } catch (err) {
   console.log(err);
 }
