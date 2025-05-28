@@ -25,6 +25,19 @@ const addOrChangeCopies = async (
 ): Promise<TransactionResults> => {
   const [country, magazine] = publicationcode.split("/");
 
+  if (!issueIds.length) {
+    const operations = [
+      prismaDm.issue.deleteMany({
+        where: { userId, country, magazine, issuenumber },
+      })
+    ];
+    await prismaDm.$transaction(operations);
+
+    return {
+      operations: operations.length,
+    };
+  }
+
   const operations = issueIds.map((issueId, copyNumber) => {
     if (issueId && conditions[copyNumber] === null) {
       return prismaDm.issue.delete({
