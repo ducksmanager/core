@@ -5,7 +5,7 @@ export type SaleState =
 
 export type SingleCopyState = {
   id: number | null;
-  condition: string;
+  condition: string | null;
   isToRead: boolean;
   isOnSale: SaleState;
   purchaseId: number | null;
