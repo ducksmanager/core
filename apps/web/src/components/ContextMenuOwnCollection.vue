@@ -59,7 +59,7 @@
           <template #title>
             {{ $t("Exemplaire") }} {{ copyIndex + 1 }}
             <i-bi-trash
-              @click.stop.prevent="initialCopies!.copies.splice(copyIndex, 1)"
+              @click.stop.prevent="editedCopies!.copies[copyIndex] = {...editedCopies!.copies[copyIndex], condition: null}"
             /> </template
           ><IssueCopyEdit
             :copy="copy as IssueWithPublicationcodeOptionalId"
