@@ -12,7 +12,7 @@
     "start": "node index.js",
     "story:dev": "histoire dev",
     "typecheck": "vue-tsc --noEmit",
-    "dev:blocking": "wait-on tcp:8001",
+    "dev:blocking": "wait-on -l tcp:8001",
     "prod:deploy": "DIR=apps/web SERVICES='web web-websocket' pnpm -F '~ci' prod:docker-compose-up",
     "prod:build-docker": "REPO_NAME=ghcr.io/bperel/ducksmanager-web:websocket pnpm -F '~ci' prod:build-docker -f apps/web/Dockerfile",
     "prod:transfer-files-pre": "pnpm -F '~ci' prod:transfer-files @apps/web/.env:apps/web/.env",

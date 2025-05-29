@@ -84,6 +84,6 @@ export const getStoriesFromImageUrl = async (url: string, isCover: boolean) => {
       storycode: storyversioncode,
       score: similarity,
       type: "storySearchDetails",
-    })),
+    } as const)),
   };
 };

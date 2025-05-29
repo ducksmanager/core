@@ -3,7 +3,7 @@
     :id="`ai-results-entry-${entry.id}`"
     :loading-events="[
       {
-        eventName: 'setInferredEntryStoryKind',
+        eventName: 'reportSetInferredEntryStoryKind',
         checkMatch: (id) => id === entry.id,
       },
     ]"

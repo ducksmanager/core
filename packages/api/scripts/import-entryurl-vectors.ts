@@ -50,10 +50,10 @@ for (const file of files) {
     await prismaCoa.$queryRaw<
       {
         entrycode: Exclude<inducks_entryurl["entrycode"], null>;
-        is_cover: inducks_entry["is_cover"];
+        isCover: inducks_entry["isCover"];
       }[]
     >`
-        SELECT entrycode, is_cover
+        SELECT entrycode, is_cover as isCover
         FROM inducks_entryurl eu
         INNER JOIN inducks_entry e USING (entrycode)
         WHERE sitecode='webusers' AND url = ${relativePath.replace("webusers/webusers/", "")}
@@ -79,7 +79,7 @@ for (const file of files) {
 
     prismaCoa.$executeRaw`
   INSERT INTO inducks_entryurl_vector (entrycode, v, is_cover)
-  VALUES (${entry.entrycode}, VEC_FromText(${vectorString}), ${entry.is_cover})
+  VALUES (${entry.entrycode}, VEC_FromText(${vectorString}), ${entry.isCover})
 `
       .then(() => {
         console.log(

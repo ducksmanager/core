@@ -108,7 +108,7 @@ export type IndexationSocket = Socket<
   SessionDataWithIndexation
 >;
 
-let isAiRunning = false;
+const isAiRunning: Record<string, boolean> = {};
 export const getFullIndexation = (
   services: IndexationServices,
   indexationId: string,
@@ -124,8 +124,8 @@ export const getFullIndexation = (
         indexation.entries = indexation.entries.sort(
           (a, b) => a.position - b.position,
         );
-        if (runAi && !isAiRunning) {
-          isAiRunning = true;
+        if (runAi && ! (indexationId in isAiRunning)) {
+          isAiRunning[indexationId] = true;
           runKumikoOnPages(services, indexation)
             // .then(() =>
             //   runOcrOnImages(
@@ -146,9 +146,10 @@ export const getFullIndexation = (
             .then(() =>
               setInferredEntriesStoryKinds(services, indexation.entries),
             )
-            .then(() => createAiStorySuggestions(services, indexation))
+            .then(() => 
+              createAiStorySuggestions(services, indexation))
             .finally(() => {
-              isAiRunning = false;
+              delete isAiRunning[indexationId];
               refreshIndexation(services, false, indexationId);
             });
         }
@@ -207,7 +208,6 @@ const createAiStorySuggestions = async (
         console.error(results.error);
         continue;
       }
-      const storyResults = results.stories;
 
       await prisma.storySuggestionAi.deleteMany({
         where: {
@@ -225,7 +225,7 @@ const createAiStorySuggestions = async (
         },
         data: {
           storySuggestions: {
-            connectOrCreate: storyResults.map(
+            connectOrCreate: results.stories.map(
               ({
                 type,
                 storycode,

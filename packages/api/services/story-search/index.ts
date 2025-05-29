@@ -14,11 +14,13 @@ let model: ImageFeatureExtractionPipeline;
 
 export const loadModel = async () => {
   if (!model) {
+    console.log('Loading model...')
     model = await pipeline<"image-feature-extraction">(
       "image-feature-extraction",
       "Xenova/vit-base-patch16-224-in21k",
       {},
     );
+    console.log('Model loaded')
   }
   return model;
 };
