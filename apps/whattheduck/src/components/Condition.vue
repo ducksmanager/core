@@ -9,7 +9,7 @@ import type { issue_condition } from '~prisma-schemas/schemas/dm';
 const { conditions } = useCondition();
 
 defineProps<{
-  value?: issue_condition;
+  value?: issue_condition | null;
   noMargin?: boolean;
 }>();
 </script>
