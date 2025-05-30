@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/playwright:v1.47.2-noble
+FROM mcr.microsoft.com/playwright:v1.52.0-noble
 LABEL org.opencontainers.image.authors="Bruno Perel"
 
 WORKDIR /app

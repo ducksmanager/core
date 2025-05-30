@@ -1,16 +1,17 @@
-import { syncScrapeCache } from "~/cache";
-
-import { prismaClient } from "~prisma-schemas/schemas/coa/client";
-import { getRevue } from "./get-revue";
 import { Scraper } from "bedetheque-scraper";
+
+import { syncScrapeCache } from "~/cache";
 import { readCsvMapping } from "~/csv";
-import { CsvIssue } from ".";
+import { prismaClient } from "~prisma-schemas/schemas/coa/client";
+
+import type { CsvIssue } from ".";
+import { getRevue } from "./get-revue";
 
 const MAPPING_FILE = "scrapes/bedetheque/coa-mapping.csv";
 
 const mappedIssues: CsvIssue[] = [];
 await readCsvMapping<CsvIssue>(MAPPING_FILE, (record) =>
-  mappedIssues.push(record)
+  mappedIssues.push(record),
 );
 
 const skipNonQuoted = false;
@@ -31,7 +32,7 @@ try {
         ? await getRevue(baseUrl, pageUrl, cacheSubfolder)
         : await Scraper.getSerie(url),
     (contents) => JSON.parse(contents.toString()),
-    (contents) => JSON.stringify(contents)
+    (contents) => JSON.stringify(contents),
   );
 
   for (const { albumNum, albumTitle, estimationEuros } of contents.albums) {
@@ -49,7 +50,7 @@ try {
             (mappedIssue) =>
               mappedIssue.bedetheque_url === pageUrl &&
               mappedIssue.bedetheque_num === albumNum &&
-              mappedIssue.bedetheque_title === storedTitle
+              mappedIssue.bedetheque_title === storedTitle,
           )
         ) {
           await prismaClient.inducks_issue.findFirstOrThrow({
@@ -58,13 +59,13 @@ try {
             },
           });
           console.log(
-            [issuecode, pageUrl, albumNum || "", storedTitle].join(",")
+            [issuecode, pageUrl, albumNum || "", storedTitle].join(","),
           );
         }
       } catch (e) {
         console.warn(`Issue ${issuecode} not found`);
         console.log(
-          ['?'.repeat(10), pageUrl, albumNum || "", storedTitle].join(",")
+          ["?".repeat(10), pageUrl, albumNum || "", storedTitle].join(","),
         );
       }
     }

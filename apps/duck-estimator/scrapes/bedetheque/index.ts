@@ -7,6 +7,7 @@ import {
   isInducksIssuecodeExisting,
 } from "~/coa";
 import { readCsvMapping } from "~/csv";
+
 import { getRevue } from "./get-revue";
 
 const MAPPING_FILE = "scrapes/bedetheque/coa-mapping.csv";
@@ -39,7 +40,10 @@ export async function scrape() {
         "bedetheque",
         `${serieUrl}.json`,
         ROOT_URL + serieUrl,
-        async (url) => serieUrl.startsWith('revue-') ? await getRevue(ROOT_URL, serieUrl, "bedetheque") : await Scraper.getSerie(url),
+        async (url) =>
+          serieUrl.startsWith("revue-")
+            ? await getRevue(ROOT_URL, serieUrl, "bedetheque")
+            : await Scraper.getSerie(url),
         (contents) => JSON.parse(contents.toString()),
         (contents) => JSON.stringify(contents),
       );

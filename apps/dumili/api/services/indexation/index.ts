@@ -124,7 +124,7 @@ export const getFullIndexation = (
         indexation.entries = indexation.entries.sort(
           (a, b) => a.position - b.position,
         );
-        if (runAi && ! (indexationId in isAiRunning)) {
+        if (runAi && !(indexationId in isAiRunning)) {
           isAiRunning[indexationId] = true;
           runKumikoOnPages(services, indexation)
             // .then(() =>
@@ -146,8 +146,7 @@ export const getFullIndexation = (
             .then(() =>
               setInferredEntriesStoryKinds(services, indexation.entries),
             )
-            .then(() => 
-              createAiStorySuggestions(services, indexation))
+            .then(() => createAiStorySuggestions(services, indexation))
             .finally(() => {
               delete isAiRunning[indexationId];
               refreshIndexation(services, false, indexationId);
@@ -237,17 +236,17 @@ const createAiStorySuggestions = async (
                     create: {},
                   },
                   [type]: {
-                    create: { 
+                    create: {
                       score,
                     },
                   },
                 },
                 where: {
                   id: entry.storySuggestions.find(
-                    ({ storycode }) => storycode === storycode
+                    ({ storycode }) => storycode === storycode,
                   )?.id,
                 },
-              })
+              }),
             ),
           },
         },

@@ -80,10 +80,13 @@ export const getStoriesFromImageUrl = async (url: string, isCover: boolean) => {
   }
 
   return {
-    stories: response.results.map(({ storyversioncode, similarity }) => ({
-      storycode: storyversioncode,
-      score: similarity,
-      type: "storySearchDetails",
-    } as const)),
+    stories: response.results.map(
+      ({ storyversioncode, similarity }) =>
+        ({
+          storycode: storyversioncode,
+          score: similarity,
+          type: "storySearchDetails",
+        }) as const,
+    ),
   };
 };

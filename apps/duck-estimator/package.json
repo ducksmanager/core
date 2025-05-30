@@ -23,7 +23,7 @@
     "csv-writer": "^1.6.0",
     "dotenv": "^16.5.0",
     "electron": "^32.3.3",
-    "playwright-firefox": "~1.47.2",
+    "playwright-firefox": "~1.52.0",
     "yargs": "^17.7.2",
     "~prisma-schemas": "workspace:*"
   },

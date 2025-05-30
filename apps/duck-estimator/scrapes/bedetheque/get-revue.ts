@@ -1,5 +1,6 @@
-import { Album } from "bedetheque-scraper";
+import type { Album } from "bedetheque-scraper";
 import { firefox } from "playwright-firefox";
+
 import { syncScrapeCache } from "~/cache";
 
 type SimpleAlbum = Pick<Album, "albumNum" | "albumTitle" | "estimationEuros">;
@@ -7,7 +8,7 @@ type SimpleAlbum = Pick<Album, "albumNum" | "albumTitle" | "estimationEuros">;
 export const getRevue = async (
   baseUrl: string,
   urlPath: string,
-  cacheSubfolder: string
+  cacheSubfolder: string,
 ): Promise<{
   albums: SimpleAlbum[];
 }> => {
@@ -29,25 +30,25 @@ export const getRevue = async (
               .catch((e) => {
                 console.error(`Error while fetching ${url}: ${e}`);
                 throw e;
-              })
+              }),
           ),
         (contentsBuffer) => {
           const contents = contentsBuffer.toString();
           page.setContent(contents);
           return contents;
         },
-        (contents) => contents
+        (contents) => contents,
       );
       await page.waitForSelector(".liste-revues");
 
       const sections = await page.$$("css=.liste-revues > li");
-      
+
       const pageAlbums = await Promise.all(
         sections
           .map(
             async (section) =>
               await section.evaluate((el) => {
-                debugger
+                debugger;
                 const titleSection = el.querySelector(".revue-main .titre");
                 if (!titleSection) {
                   return null;
@@ -57,7 +58,7 @@ export const getRevue = async (
                   .filter(
                     (node) =>
                       node.nodeType === Node.TEXT_NODE &&
-                      node.textContent?.trim()
+                      node.textContent?.trim(),
                   )
                   .map((node) => node.textContent?.trim())
                   .join(" ");
@@ -67,32 +68,32 @@ export const getRevue = async (
                   .textContent!.replace(/[#\. ]/g, "");
 
                 const estimationLabel = Array.from(
-                  el.querySelectorAll("label")
+                  el.querySelectorAll("label"),
                 ).find((label) => label.textContent!.includes("Estimation :"));
                 const estimationEuros = [
                   parseInt(
                     estimationLabel!.parentElement!.textContent!.replace(
                       "Estimation :",
-                      ""
-                    )
+                      "",
+                    ),
                   ),
                 ];
 
                 console.log(albumTitle, albumNum, estimationEuros);
 
                 return { albumTitle, albumNum, estimationEuros };
-              })
+              }),
           )
           .filter(
             (
-              promise
+              promise,
             ): promise is Promise<NonNullable<Awaited<typeof promise>>> =>
-              promise !== null
-          )
+              promise !== null,
+          ),
       );
 
       const validAlbums = (await Promise.all(pageAlbums)).filter(
-        (album): album is NonNullable<typeof album> => album !== null
+        (album): album is NonNullable<typeof album> => album !== null,
       );
       allAlbums.push(...validAlbums);
 
@@ -101,7 +102,7 @@ export const getRevue = async (
         break;
       }
 
-      const nextUrlPath = (await nextPageLink.getAttribute("href"));
+      const nextUrlPath = await nextPageLink.getAttribute("href");
       if (!nextUrlPath) {
         break;
       }
@@ -110,7 +111,7 @@ export const getRevue = async (
 
     return { albums: allAlbums };
   } finally {
-    await page.close()
+    await page.close();
     await browser.close();
   }
 };
