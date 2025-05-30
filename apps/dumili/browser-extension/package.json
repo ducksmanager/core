@@ -9,14 +9,14 @@
     },
     "dependencies": {
         "jquery": "^3.7.1",
-        "vue": "^3.5.14",
+        "vue": "^3.5.16",
         "~dumili": "workspace:*"
     },
     "devDependencies": {
         "@types/chrome": "^0.0.313",
         "@types/jquery": "^3.5.32",
         "@vitejs/plugin-vue": "^5.2.4",
-        "sass": "^1.88.0",
+        "sass": "^1.89.0",
         "typescript": "^5.8.3",
         "vite": "^6.3.5"
     }

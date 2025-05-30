@@ -20,13 +20,13 @@
   },
   "dependencies": {
     "@prisma/client": "^6.8.2",
-    "prisma": "^6.8.0",
+    "prisma": "^6.8.2",
     "~group-by": "workspace:*"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.1",
-    "@eslint/js": "^9.26.0",
-    "@typescript-eslint/eslint-plugin": "^8.32.1",
+    "@eslint/js": "^9.27.0",
+    "@typescript-eslint/eslint-plugin": "^8.33.0",
     "eslint-config-prettier": "^10.1.5",
     "prettier": "^3.5.3",
     "prettier-plugin-prisma": "^5.0.0",
