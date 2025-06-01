@@ -42,6 +42,7 @@
           !contributors.photographe.size || !contributors.createur.size
         "
         :ok-title="$t(action === 'export' ? 'Export' : 'Submit')"
+        @ok="onOK"
       >
         <b-alert :model-value="true" variant="info">
           {{
@@ -118,7 +119,7 @@ const userStore = webStores.users();
 const mainStore = main();
 
 const { action } = defineProps<{
-  action?: "submit" | "export";
+  action: "save" | "submit" | "export";
 }>();
 
 const showModal = ref(false);
@@ -131,15 +132,11 @@ const contributors = ref<Record<contribution, Set<SimpleUser>>>({
   createur: new Set(),
 });
 
-const label = computed(() => $t(action === "export" ? "Export" : "Submit"));
+const label = computed(() => $t(ucFirst(action)));
 
-const variant = computed((): "success" | "primary" =>
-  action === "export" || action === "submit" ? "success" : "primary",
-);
+const variant = computed(() => (action === "save" ? "primary" : "success"));
 
-const outlineVariant = computed(
-  (): "outline-success" | "outline-primary" => `outline-${variant.value}`,
-);
+const outlineVariant = computed(() => `outline-${variant.value}` as const);
 
 watch(progress, (newValue) => {
   if (newValue === 100) {
@@ -183,8 +180,8 @@ watch(issueIndexToSave, (newValue) => {
   });
 });
 
-watch(showModal, (newValue) => {
-  if (!newValue && action) {
+const onOK = () => {
+  if (action) {
     for (const contributionType of Object.keys(
       contributors.value,
     ) as contribution[]) {
@@ -200,7 +197,7 @@ watch(showModal, (newValue) => {
     }
     issueIndexToSave.value = 0;
   }
-});
+};
 
 const ucFirst = (text: string) =>
   text[0].toUpperCase() + text.substring(1, text.length);

@@ -154,7 +154,7 @@
     </b-row>
     <b-row align="center" class="p-1">
       <b-col align-self="center">
-        &nbsp;<save-model-button />&nbsp;<save-model-button
+        &nbsp;<save-model-button action="save" />&nbsp;<save-model-button
           v-if="hasRole('Edition')"
           action="submit"
         />
@@ -311,7 +311,7 @@ const clone = async () => {
   for (const issuecode of issuecodesToEdit.value.filter(
     (issuecode) => issuecode !== issuecodeToClone.value!,
   )) {
-    overwriteModel(issuecode, issuecodeToClone.value!, true);
+    overwriteModel(issuecode, issuecodeToClone.value, true);
   }
 };
 
