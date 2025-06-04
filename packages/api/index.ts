@@ -101,6 +101,8 @@ if (cluster.isPrimary) {
     cluster.fork();
   }
 
+  loadModel()
+
   cluster.on("exit", (worker) => {
     console.log(`Worker ${worker.process.pid} died, starting a new one`);
     cluster.fork();
@@ -108,15 +110,6 @@ if (cluster.isPrimary) {
 } else {
   httpServer.listen(3001);
   console.log("WebSocket open on port 3001");
-
-
-  // void (async () => {
-  //   try {
-  //     await loadModel()
-  //   } catch (error) {
-  //     console.error('Failed to load model:', error)
-  //   }
-  // })();
 
   const io = new ServerWithUser(httpServer, {
     cors: {
