@@ -15,6 +15,7 @@ services:
     volumes:
       - ./latest-whattheduck-bundle.txt:/app/latest-whattheduck-bundle.txt
       - /data/covers:${ENTRYURLS_DIR}
+      - /tmp/cache/models
     networks:
       - public-network
       - dm-api-network

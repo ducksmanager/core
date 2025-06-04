@@ -10,7 +10,7 @@ import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa/client";
 
 import namespaces from "../namespaces";
 
-let model: ImageFeatureExtractionPipeline;
+let model: ImageFeatureExtractionPipeline | undefined = undefined;
 
 export const loadModel = async () => {
   if (!model) {
@@ -18,7 +18,7 @@ export const loadModel = async () => {
     model = await pipeline<"image-feature-extraction">(
       "image-feature-extraction",
       "Xenova/vit-base-patch16-224-in21k",
-      {},
+      {dtype: "fp32", cache_dir: "/tmp/cache/models"},
     );
     console.log("Model loaded");
   }
@@ -110,7 +110,6 @@ export const findSimilarImages = async (
   isCover: boolean,
 ) => {
   try {
-    console.log("findSimilarImages");
     const queryVector = await getImageVector(imageBufferOrBase64);
     console.log("getImageVector done");
     const vectorString = formatVectorForDB(queryVector.vector);
@@ -166,7 +165,7 @@ const listenEvents = () => {
     findSimilarImages: async (
       imageBufferOrBase64: string | Buffer,
       isCover: boolean,
-    ) => findSimilarImages(imageBufferOrBase64, isCover),
+    ) => model ? findSimilarImages(imageBufferOrBase64, isCover) : { error: "Model not initialized" } as const,
   };
 };
 

@@ -290,12 +290,8 @@ const setInferredEntriesStoryKinds = async (
     services.reportSetInferredEntryStoryKind(entry.id);
     const { indexation } = services._socket.data;
     const pagesInferredStoryKinds = await prisma.image.findMany({
-      select: {
-        aiKumikoResult: {
-          select: {
-            id: true,
-          },
-        },
+      include: {
+        aiKumikoResult: true,
       },
       where: {
         id: {
@@ -358,7 +354,7 @@ const setInferredEntriesStoryKinds = async (
           },
         });
       } else {
-        console.warn("No suggestion found for ", mostInferredStoryKind);
+        console.warn("No suggestion found for", mostInferredStoryKind);
       }
     }
 

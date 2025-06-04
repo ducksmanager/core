@@ -35,7 +35,7 @@ import {
   getPastecSearchStatus,
   getPastecStatus,
 } from "./services/status";
-import { server as storySearch } from "./services/story-search";
+import { loadModel, server as storySearch } from "./services/story-search";
 
 export type UserServices<OptionalUser = false> = NamespaceProxyTarget<
   Socket<
@@ -108,6 +108,15 @@ if (cluster.isPrimary) {
 } else {
   httpServer.listen(3001);
   console.log("WebSocket open on port 3001");
+
+
+  void (async () => {
+    try {
+      await loadModel()
+    } catch (error) {
+      console.error('Failed to load model:', error)
+    }
+  })();
 
   const io = new ServerWithUser(httpServer, {
     cors: {

@@ -33,7 +33,7 @@
     "js-cookie": "^3.0.5",
     "page-flip": "^2.0.7",
     "pinia": "^3.0.2",
-    "socket-call-client": "^0.7.3",
+    "socket-call-client": "^0.7.4",
     "timeago.js": "^4.0.2",
     "v-contextmenu": "^3.2.0",
     "vue": "^3.5.16",

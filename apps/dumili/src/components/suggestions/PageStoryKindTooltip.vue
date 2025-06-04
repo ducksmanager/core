@@ -7,7 +7,7 @@
     top-center
     :loading-events="[
       {
-        eventName: 'setKumikoInferredPageStoryKinds',
+        eventName: 'reportSetKumikoInferredPageStoryKinds',
         checkMatch: (id) => id === page.id,
       },
     ]"

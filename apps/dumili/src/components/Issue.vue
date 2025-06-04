@@ -14,7 +14,7 @@
 <script setup lang="ts">
 const { publicationNames } = storeToRefs(coa());
 
-const { issue } = defineProps<{
+const { issue = undefined } = defineProps<{
   issue?: {
     publicationcode: string;
     issuenumber: string;

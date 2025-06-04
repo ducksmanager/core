@@ -18,7 +18,7 @@
     "sentry:sourcemaps": "sentry-cli sourcemaps inject --org bruno-perel --project dm-api ./dist && sentry-cli sourcemaps upload --org bruno-perel --project dm-api ./dist"
   },
   "dependencies": {
-    "@huggingface/transformers": "^3.5.1",
+    "@huggingface/transformers": "~3.3.0",
     "@opentelemetry/instrumentation-socket.io": "^0.46.1",
     "@pusher/push-notifications-server": "^1.2.7",
     "@sentry/node": "^9.24.0",
@@ -35,7 +35,7 @@
     "jsonwebtoken": "^9.0.2",
     "nodemailer": "^7.0.3",
     "sharp": "^0.34.2",
-    "socket-call-server": "^0.7.3",
+    "socket-call-server": "^0.7.4",
     "socket.io": "^4.8.1",
     "~dm-types": "workspace:*",
     "~prisma-schemas": "workspace:*"
