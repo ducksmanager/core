@@ -110,13 +110,13 @@ if (cluster.isPrimary) {
   console.log("WebSocket open on port 3001");
 
 
-  void (async () => {
-    try {
-      await loadModel()
-    } catch (error) {
-      console.error('Failed to load model:', error)
-    }
-  })();
+  // void (async () => {
+  //   try {
+  //     await loadModel()
+  //   } catch (error) {
+  //     console.error('Failed to load model:', error)
+  //   }
+  // })();
 
   const io = new ServerWithUser(httpServer, {
     cors: {
