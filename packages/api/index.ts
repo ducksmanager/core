@@ -64,6 +64,8 @@ dotenv.config({
   path: "./.env",
 });
 
+const isDebugMode = process.env.DEBUG === 'true';
+
 Sentry.init({
   dsn: process.env.SENTRY_DSN,
   tracesSampleRate: 1.0,
@@ -96,18 +98,20 @@ const httpServer = createServer(async (req, res) => {
   res.end();
 });
 
-if (cluster.isPrimary) {
+if (isDebugMode || cluster.isPrimary) {
+  loadModel();
+}
+
+if (!isDebugMode && cluster.isPrimary) {
   for (let i = 0; i < cpus().length; i++) {
     cluster.fork();
   }
-
-  loadModel()
 
   cluster.on("exit", (worker) => {
     console.log(`Worker ${worker.process.pid} died, starting a new one`);
     cluster.fork();
   });
-} else {
+} else {  
   httpServer.listen(3001);
   console.log("WebSocket open on port 3001");
 
