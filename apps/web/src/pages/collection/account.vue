@@ -82,7 +82,18 @@ alias: [/collection/compte]
             $t("Comment trouver mon identifiant de profil Discord ?")
           }}</template>
           <template #content
-            ><div class="text-black mb-2">
+            >
+            <b-alert :model-value="true" variant="info">
+              <i18n-t
+                tag="div"
+                keypath="Vous devez avoir activé le {developerModeLink} dans vos paramètres de Discord pour pouvoir copier l'identifiant de votre profil."
+              >
+                <template #developerModeLink>
+                  <a href="https://discord.com/developers/docs/activities/building-an-activity#step-0-enable-developer-mode" target="_blank">mode développeur</a>
+                </template>
+              </i18n-t>
+            </b-alert>
+            <div class="text-black mb-2">
               {{
                 $t(
                   'Vous pouvez trouver votre identifiant de profil Discord en vous rendant dans le menu "Paramètres utilisateur" > "Mon compte". Faites un clic droit sur "..." puis cliquez sur "Copier l\'identifiant de l\'utilisateur".',
@@ -91,7 +102,7 @@ alias: [/collection/compte]
             </div>
             <img
               :src="getImagePath(`discord-id/${locale}.png`)"
-              class="w-100"
+              class="w-50"
             />
           </template>
         </accordion>

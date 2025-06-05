@@ -102,7 +102,7 @@ meta:
         <li>{{ $t("Sélectionnez toute la liste, puis copiez-la.") }}</li>
         <li>{{ $t("Collez ce texte dans la partie droite de la page.") }}</li>
         <li>
-          {{ $t(`Suivez les instructions en-dessous des zones de texte.`) }}
+          {{ $t(`Suivez les instructions ci-dessous`) }}.
         </li>
       </ol>
     </b-alert>
@@ -124,7 +124,7 @@ meta:
       :disabled="!rawData || isProcessingRawData"
       @click="processRawData()"
     >
-      {{ $t("Analyser mes numéros") }}
+      {{ $t("Analyser ma collection Inducks") }}
     </b-button>
   </b-row>
   <b-row v-if="inducksCollectionIssues" class="justify-content-center">
