@@ -121,7 +121,7 @@ meta:
     <b-button
       variant="primary"
       class="my-3 w-auto"
-      :disabled="!rawData"
+      :disabled="!rawData || isProcessingRawData"
       @click="processRawData()"
     >
       {{ $t("Analyser mes numéros") }}
@@ -212,6 +212,7 @@ meta:
                       publicationNames[publicationcode] || publicationcode
                     "
                     :issuenumber="issuenumber"
+                    hide-condition
                   />
                 </div>
               </div>
@@ -238,18 +239,10 @@ meta:
             </template>
             <template #content>
               <div
-                v-for="(
-                  publicationIssueNumbers, publicationcode
-                ) in groupByPublicationCode(issuesNotReferenced)"
-                :key="publicationcode"
+                v-for="issuecode in issuesNotReferenced"
+                :key="issuecode"
               >
-                <Issue
-                  v-for="issuenumber in publicationIssueNumbers"
-                  :key="`${publicationcode}-${issuenumber}`"
-                  :publicationcode="publicationcode"
-                  :publicationname="publicationcode"
-                  :issuenumber="issuenumber"
-                />
+                {{ issuecode }}
               </div>
             </template>
           </Accordion>
@@ -302,6 +295,7 @@ import { call } from "~axios-helper";
 import type { inducks_issue } from "~prisma-schemas/client_coa";
 const { getImagePath } = images();
 
+let isProcessingRawData = $ref(false);
 const rawData = $ref("" as string);
 const expandedPublicationAccordion = $ref(null as string | null);
 const expandedNotImportableAccordion = $ref(null as string | null);
@@ -311,9 +305,7 @@ const issueDefaultCondition = $ref("bon" as string);
 let inducksCollectionIssues = $ref(
   null as { issuecode: string; isDigital: boolean }[] | null,
 );
-let issuesNotReferenced = $ref(
-  null as { publicationcode?: string; issuecode: string }[] | null,
-);
+let issuesNotReferenced = $ref<string[]>([]);
 let issuesAlreadyInCollection = $ref(null as inducks_issue[] | null);
 let issuesImportableIncludeDigital = $ref(
   null as
@@ -339,9 +331,9 @@ const { t: $t } = useI18n();
 const { findInCollection, loadCollection } = collection();
 const { user } = storeToRefs(collection());
 
-const { fetchPublicationNames, fetchIssueNumbers, fetchIssueCodesDetails } =
+const { fetchPublicationNames, fetchIssueCodesDetails } =
   coa();
-const { publicationNames, issueNumbers, issueCodeDetails } = storeToRefs(coa());
+const { publicationNames, issueCodeDetails } = storeToRefs(coa());
 const conditions = {
   mauvais: $t("En mauvais état"),
   bon: $t("En bon état"),
@@ -350,6 +342,10 @@ const conditions = {
 const router = useRouter();
 const processRawData = async () => {
   hasPublicationNames = false;
+  isProcessingRawData = true;
+  issuesNotReferenced = [];
+  issuesAlreadyInCollection = [];
+  issuesImportableIncludeDigital = [];
   nextTick(async () => {
     const REGEX_VALID_ROW = /^([^^]+\^[^^]+)\^/;
     inducksCollectionIssues = rawData
@@ -374,27 +370,14 @@ const processRawData = async () => {
 
     await fetchPublicationNames(publicationCodes);
     hasPublicationNames = true;
-    await fetchIssueNumbers(publicationCodes);
 
-    issuesNotReferenced = [];
-    issuesAlreadyInCollection = [];
-    issuesImportableIncludeDigital = [];
     for (const { issuecode, isDigital } of inducksCollectionIssues!) {
       if (!(issuecode in issueCodeDetails.value!)) {
-        issuesNotReferenced!.push({ issuecode });
+        issuesNotReferenced!.push( issuecode );
         continue;
       }
       const issue = issueCodeDetails.value![issuecode];
-      if (
-        !issueNumbers.value[issue.publicationcode!].includes(
-          issue.issuenumber!.replace(/[ ]+/g, " "),
-        )
-      )
-        issuesNotReferenced!.push({
-          publicationcode: issue.publicationcode!,
-          issuecode,
-        });
-      else if (findInCollection(issue.publicationcode!, issue.issuenumber!))
+      if (findInCollection(issue.publicationcode!, issue.issuenumber!))
         issuesAlreadyInCollection!.push(issue);
       else
         issuesImportableIncludeDigital!.push({
@@ -410,6 +393,7 @@ const processRawData = async () => {
     issuesImportableIncludeDigital = [
       ...new Set(issuesImportableIncludeDigital),
     ];
+    isProcessingRawData = false;
   });
 };
 
