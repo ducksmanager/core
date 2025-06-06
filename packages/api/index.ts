@@ -115,7 +115,7 @@ if (!isDebugMode && cluster.isPrimary) {
   });
 } else {  
   httpServer.listen(3001);
-  console.log("WebSocket open on port 3001");
+  console.log("WebSocket open on port 3001 on worker", process.env.NODE_APP_INSTANCE);
 
   const io = new ServerWithUser(httpServer, {
     cors: {
