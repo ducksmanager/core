@@ -26,6 +26,7 @@ COPY packages/api/emails /app/emails
 COPY packages/api/dist/ /app/
 
 EXPOSE 3001
+CMD ["pm2", "start", "--no-daemon", "-i", "max", "index.mjs"]
 
 FROM api AS api-story-search
 EXPOSE 3011
