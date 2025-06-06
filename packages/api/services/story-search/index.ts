@@ -21,6 +21,7 @@ export const loadModel = async () => {
         "Xenova/vit-base-patch16-224-in21k",
         {
           cache_dir: "/tmp/cache/models",
+          dtype: "fp32"
         }
       );
       console.log("Model loaded");

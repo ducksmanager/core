@@ -65,6 +65,7 @@ dotenv.config({
 });
 
 const isDebugMode = process.env.DEBUG === 'true';
+const isLoadingModel = ! process.env.NODE_APP_INSTANCE;
 
 Sentry.init({
   dsn: process.env.SENTRY_DSN,
@@ -98,7 +99,7 @@ const httpServer = createServer(async (req, res) => {
   res.end();
 });
 
-if (isDebugMode || cluster.isPrimary) {
+if (isLoadingModel) {
   loadModel();
 }
 
