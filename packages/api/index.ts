@@ -3,7 +3,7 @@ import * as Sentry from "@sentry/node";
 import { instrument } from "@socket.io/admin-ui";
 import cluster from "cluster";
 import dotenv from "dotenv";
-import { createServer } from "http";
+import createHttpServer from "./http";
 import { cpus } from "os";
 import type { Socket } from "socket.io";
 import { Server } from "socket.io";
@@ -11,7 +11,7 @@ import type { NamespaceProxyTarget } from "socket-call-server";
 
 import type { SessionUser } from "~dm-types/SessionUser";
 
-import { getUpdateFileUrl, server as app } from "./services/app";
+import { server as app } from "./services/app";
 import { server as auth } from "./services/auth";
 import { server as bookcase } from "./services/bookcase";
 import {
@@ -30,11 +30,6 @@ import { server as globalStatsUser } from "./services/global-stats-user";
 import { server as presentationText } from "./services/presentation-text";
 import { server as publicCollection } from "./services/public-collection";
 import { server as stats } from "./services/stats";
-import {
-  getDbStatus,
-  getPastecSearchStatus,
-  getPastecStatus,
-} from "./services/status";
 import { loadModel, server as storySearch } from "./services/story-search";
 
 export type UserServices<OptionalUser = false> = NamespaceProxyTarget<
@@ -73,37 +68,13 @@ Sentry.init({
   openTelemetryInstrumentations: [new SocketIoInstrumentation()],
 });
 
-const httpServer = createServer(async (req, res) => {
-  let data: { error: string } | object;
-  switch (req.url) {
-    case "/app/updates":
-      data = getUpdateFileUrl();
-      break;
-    case "/status/db":
-      data = await getDbStatus();
-      break;
-    case "/status/pastecsearch":
-      data = await getPastecSearchStatus();
-      break;
-    case "/status/pastec":
-      data = await getPastecStatus();
-      break;
-    default:
-      res.writeHead(404);
-      res.end();
-      return;
-  }
-
-  res.writeHead("error" in data ? 500 : 200, { "Content-Type": "text/json" });
-  res.write(JSON.stringify(data));
-  res.end();
-});
-
+console.log('process.env.NODE_APP_INSTANCE', process.env.NODE_APP_INSTANCE)
 if (isLoadingModel) {
   loadModel();
 }
 
 if (!isDebugMode && cluster.isPrimary) {
+  console.log('Starting cluster')
   for (let i = 0; i < cpus().length; i++) {
     cluster.fork();
   }
@@ -114,7 +85,8 @@ if (!isDebugMode && cluster.isPrimary) {
       cluster.fork();
     }, 1000);
   });
-} else {  
+} else {
+  const httpServer = createHttpServer();
   httpServer.listen(3001);
   console.log("WebSocket open on port 3001 on worker", process.env.NODE_APP_INSTANCE);
 
