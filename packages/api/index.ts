@@ -29,7 +29,7 @@ import { server as globalStatsUser } from "./services/global-stats-user";
 import { server as presentationText } from "./services/presentation-text";
 import { server as publicCollection } from "./services/public-collection";
 import { server as stats } from "./services/stats";
-import { loadModel, server as storySearch } from "./services/story-search";
+import { server as storySearch } from "./services/story-search";
 
 export type UserServices<OptionalUser = false> = NamespaceProxyTarget<
   Socket<
@@ -53,7 +53,6 @@ dotenv.config({
 });
 
 const isDebugMode = process.env.DEBUG === 'true';
-const isLoadingModel = ['0', undefined].includes(process.env.NODE_APP_INSTANCE);
 
 Sentry.init({
   dsn: process.env.SENTRY_DSN,
@@ -61,8 +60,9 @@ Sentry.init({
   openTelemetryInstrumentations: [new SocketIoInstrumentation()],
 });
 
-if (isLoadingModel) {
-  loadModel();
+if (isDebugMode || cluster.isPrimary) {
+  const storySearchIo = createSocketServer(3011);
+  storySearch(storySearchIo);
 }
 
 if (!isDebugMode && cluster.isPrimary) {
@@ -97,7 +97,4 @@ if (!isDebugMode && cluster.isPrimary) {
   presentationText(io);
   publicCollection(io);
   stats(io);
-
-  const storySearchIo = createSocketServer(3011);
-  storySearch(storySearchIo);
 }
