@@ -18,7 +18,7 @@ export const conditionToEnum = (
   condition: string | undefined
 ): issue_condition | undefined => {
   switch (condition) {
-    case undefined:
+    case undefined: case "indefini":
       return undefined;
     case "mauvais":
     case "moyen":

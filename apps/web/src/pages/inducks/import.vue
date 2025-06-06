@@ -127,7 +127,7 @@ meta:
       {{ $t("Analyser ma collection Inducks") }}
     </b-button>
   </b-row>
-  <b-row v-if="inducksCollectionIssues" class="justify-content-center">
+  <b-row v-if="rawData && !isProcessingRawData" class="justify-content-center">
     <b-col sm="6">
       <b-alert v-if="issuesImportable" :model-value="true" variant="info">
         <b-form-checkbox v-model="importDigitalIssues">{{
@@ -300,7 +300,7 @@ const rawData = $ref("" as string);
 const expandedPublicationAccordion = $ref(null as string | null);
 const expandedNotImportableAccordion = $ref(null as string | null);
 let hasPublicationNames = $ref(false as boolean);
-const issueDefaultCondition = $ref("bon" as string);
+const issueDefaultCondition = $ref("indefini" as string);
 
 let inducksCollectionIssues = $ref(
   null as { issuecode: string; isDigital: boolean }[] | null,
@@ -335,7 +335,9 @@ const { fetchPublicationNames, fetchIssueCodesDetails } =
   coa();
 const { publicationNames, issueCodeDetails } = storeToRefs(coa());
 const conditions = {
+  indefini: $t("En état indéfini"),
   mauvais: $t("En mauvais état"),
+  moyen: $t("En moyen état"),
   bon: $t("En bon état"),
 };
 
