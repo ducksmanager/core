@@ -60,7 +60,7 @@ dotenv.config({
 });
 
 const isDebugMode = process.env.DEBUG === 'true';
-const isLoadingModel = ! process.env.NODE_APP_INSTANCE;
+const isLoadingModel = ['0', undefined].includes(process.env.NODE_APP_INSTANCE);
 
 Sentry.init({
   dsn: process.env.SENTRY_DSN,
@@ -68,7 +68,6 @@ Sentry.init({
   openTelemetryInstrumentations: [new SocketIoInstrumentation()],
 });
 
-console.log('process.env.NODE_APP_INSTANCE', process.env.NODE_APP_INSTANCE)
 if (isLoadingModel) {
   loadModel();
 }
