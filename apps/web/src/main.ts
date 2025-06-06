@@ -40,7 +40,11 @@ const app = createApp(App)
   .use(contextmenu)
   .use(head)
   .use(router)
-  .provide("dmSocket", new SocketClient(import.meta.env.VITE_DM_SOCKET_URL));
+  .provide("dmSocket", new SocketClient(import.meta.env.VITE_DM_SOCKET_URL))
+  .provide(
+    "storySearchSocket",
+    new SocketClient(import.meta.env.VITE_DM_STORY_SEARCH_SOCKET_URL),
+  );
 
 app.mount("#app");
 

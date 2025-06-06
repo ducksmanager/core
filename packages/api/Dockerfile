@@ -26,4 +26,5 @@ COPY packages/api/emails /app/emails
 COPY packages/api/dist/ /app/
 
 EXPOSE 3001
+EXPOSE 3011
 CMD ["pm2", "start", "--no-daemon", "-i", "max", "index.mjs"]

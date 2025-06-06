@@ -1,12 +1,11 @@
 import { SocketIoInstrumentation } from "@opentelemetry/instrumentation-socket.io";
 import * as Sentry from "@sentry/node";
-import { instrument } from "@socket.io/admin-ui";
 import cluster from "cluster";
 import dotenv from "dotenv";
 import createHttpServer from "./http";
+import createSocketServer from "./socket";
 import { cpus } from "os";
 import type { Socket } from "socket.io";
-import { Server } from "socket.io";
 import type { NamespaceProxyTarget } from "socket-call-server";
 
 import type { SessionUser } from "~dm-types/SessionUser";
@@ -42,12 +41,6 @@ export type UserServices<OptionalUser = false> = NamespaceProxyTarget<
   Record<string, never>
 >;
 
-class ServerWithUser extends Server<
-  Record<string, never>,
-  Record<string, never>,
-  Record<string, never>,
-  { user?: SessionUser }
-> {}
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 (BigInt.prototype as any).toJSON = function () {
@@ -85,50 +78,7 @@ if (!isDebugMode && cluster.isPrimary) {
     }, 1000);
   });
 } else {
-  const httpServer = createHttpServer();
-  httpServer.listen(3001);
-  console.log("WebSocket open on port 3001 on worker", process.env.NODE_APP_INSTANCE);
-
-  const io = new ServerWithUser(httpServer, {
-    cors: {
-      origin: true,
-    },
-  });
-
-  instrument(io, {
-    auth: false,
-  });
-
-  io.use((_socket, next) => {
-    process.on("unhandledRejection", (reason: Error) => {
-      console.error(reason);
-      next(reason);
-    });
-
-    process.on("uncaughtException", (error: Error) => {
-      console.error(error);
-      next(error);
-    });
-    next();
-
-    // app.all(
-    //   /^\/(edgecreator\/(publish|edgesprites)|notifications)|(edges\/(published))|(\/demo\/reset)|(bookstores\/(approve|refuse))|(presentation-text\/(approve|refuse))/,
-    //   [checkUserIsAdmin]
-    // );
-
-    // app.all(/^\/edgecreator\/(.+)/, [
-    //   authenticateToken,
-    //   checkUserIsEdgeCreatorEditor,
-    // ]);
-
-    // app.all(/^\/global-stats\/user\/list$/, [
-    //   authenticateToken,
-    //   checkUserIsEdgeCreatorEditor,
-    // ]);
-
-    // app.all(/^\/collection\/(.+)/, authenticateToken);
-    // app.all("/global-stats/user/collection/rarity", authenticateToken);
-  });
+  const io = createSocketServer(3001, createHttpServer());
 
   app(io);
   auth(io);
@@ -144,8 +94,10 @@ if (!isDebugMode && cluster.isPrimary) {
   feedback(io);
   globalStats(io);
   globalStatsUser(io);
-  storySearch(io);
   presentationText(io);
   publicCollection(io);
   stats(io);
+
+  const storySearchIo = createSocketServer(3011);
+  storySearch(storySearchIo);
 }
