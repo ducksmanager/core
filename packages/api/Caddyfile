@@ -13,7 +13,7 @@ api-websocket.ducksmanager.net {
 }
 
 api-story-search.ducksmanager.net {
-    reverse_proxy ducksmanager-api-websocket:3011 {
+    reverse_proxy ducksmanager-api-story-search:3011 {
         header_up Host {http.request.host}
     }
 }
