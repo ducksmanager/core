@@ -78,7 +78,7 @@
         "^dev:blocking-up"
       ]
     },
-    "dev-bun": {
+    "dev:bun": {
       "persistent": true,
       "dependsOn": [
         "^dev:blocking-up"
