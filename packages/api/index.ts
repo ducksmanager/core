@@ -107,9 +107,11 @@ if (!isDebugMode && cluster.isPrimary) {
     cluster.fork();
   }
 
-  cluster.on("exit", (worker) => {
-    console.log(`Worker ${worker.process.pid} died, starting a new one`);
-    cluster.fork();
+  cluster.on("exit", (worker, code, signal) => {
+    console.log(`Worker ${worker.process.pid} died (${signal || code}), starting a new one`);
+    setTimeout(() => {
+      cluster.fork();
+    }, 1000);
   });
 } else {  
   httpServer.listen(3001);

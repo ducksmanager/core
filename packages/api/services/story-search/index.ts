@@ -15,12 +15,19 @@ let model: ImageFeatureExtractionPipeline | undefined = undefined;
 export const loadModel = async () => {
   if (!model) {
     console.log("Loading model...");
-    model = await pipeline<"image-feature-extraction">(
-      "image-feature-extraction",
-      "Xenova/vit-base-patch16-224-in21k",
-      {dtype: "fp32", cache_dir: "/tmp/cache/models"},
-    );
-    console.log("Model loaded");
+    try {
+      model = await pipeline<"image-feature-extraction">(
+        "image-feature-extraction",
+        "Xenova/vit-base-patch16-224-in21k",
+        {
+          cache_dir: "/tmp/cache/models",
+        }
+      );
+      console.log("Model loaded");
+    } catch (error) {
+      console.error("Model loading failed:", error);
+      throw error;
+    }
   }
   return model;
 };
