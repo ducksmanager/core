@@ -161,7 +161,7 @@ export const findSimilarImages = async (
 };
 
 const listenEvents = () => {
-  loadModel();
+  // loadModel();
   return {
     getIndexSize: async (isCover: boolean) =>
       prismaCoa.inducks_entryurl_vector.count({
