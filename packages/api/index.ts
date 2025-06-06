@@ -1,10 +1,8 @@
 import { SocketIoInstrumentation } from "@opentelemetry/instrumentation-socket.io";
 import * as Sentry from "@sentry/node";
-import cluster from "cluster";
 import dotenv from "dotenv";
 import createHttpServer from "./http";
 import createSocketServer from "./socket";
-import { cpus } from "os";
 import type { Socket } from "socket.io";
 import type { NamespaceProxyTarget } from "socket-call-server";
 
@@ -29,7 +27,6 @@ import { server as globalStatsUser } from "./services/global-stats-user";
 import { server as presentationText } from "./services/presentation-text";
 import { server as publicCollection } from "./services/public-collection";
 import { server as stats } from "./services/stats";
-import { server as storySearch } from "./services/story-search";
 
 export type UserServices<OptionalUser = false> = NamespaceProxyTarget<
   Socket<
@@ -41,7 +38,6 @@ export type UserServices<OptionalUser = false> = NamespaceProxyTarget<
   Record<string, never>
 >;
 
-
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 (BigInt.prototype as any).toJSON = function () {
   const int = Number.parseInt(this.toString());
@@ -52,49 +48,28 @@ dotenv.config({
   path: "./.env",
 });
 
-const isDebugMode = process.env.DEBUG === 'true';
-
 Sentry.init({
   dsn: process.env.SENTRY_DSN,
   tracesSampleRate: 1.0,
   openTelemetryInstrumentations: [new SocketIoInstrumentation()],
 });
 
-if (isDebugMode || cluster.isPrimary) {
-  const storySearchIo = createSocketServer(3011);
-  storySearch(storySearchIo);
-}
+const io = createSocketServer(3001, createHttpServer());
 
-if (!isDebugMode && cluster.isPrimary) {
-  console.log('Starting cluster')
-  for (let i = 0; i < cpus().length; i++) {
-    cluster.fork();
-  }
-
-  cluster.on("exit", (worker, code, signal) => {
-    console.log(`Worker ${worker.process.pid} died (${signal || code}), starting a new one`);
-    setTimeout(() => {
-      cluster.fork();
-    }, 1000);
-  });
-} else {
-  const io = createSocketServer(3001, createHttpServer());
-
-  app(io);
-  auth(io);
-  bookcase(io);
-  bookstores(io);
-  bookstoresAdmin(io);
-  coa(io);
-  collection(io);
-  coverId(io);
-  edgecreator(io);
-  edges(io);
-  events(io);
-  feedback(io);
-  globalStats(io);
-  globalStatsUser(io);
-  presentationText(io);
-  publicCollection(io);
-  stats(io);
-}
+app(io);
+auth(io);
+bookcase(io);
+bookstores(io);
+bookstoresAdmin(io);
+coa(io);
+collection(io);
+coverId(io);
+edgecreator(io);
+edges(io);
+events(io);
+feedback(io);
+globalStats(io);
+globalStatsUser(io);
+presentationText(io);
+publicCollection(io);
+stats(io);

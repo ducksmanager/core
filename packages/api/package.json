@@ -5,15 +5,15 @@
   },
   "version": "1.0.0",
   "scripts": {
-    "build": "bun build index.ts --entry-naming index.mjs --target node --sourcemap=linked --outdir dist && for file in scripts/*.ts; do bun build $file --entry-naming scripts/[name].mjs --target node --sourcemap=linked --outdir dist || exit 1; done && pnpm sentry:sourcemaps",
+    "build": "for index in index.ts index-story-search.ts; do bun build $index --entry-naming $index --target node --sourcemap=linked --outdir dist || exit 1; done && for file in scripts/*.ts; do bun build $file --entry-naming scripts/[name].mjs --target node --sourcemap=linked --outdir dist || exit 1; done && pnpm sentry:sourcemaps",
     "dev:blocking-up": "wait-on -l tcp:3001",
     "dev": "docker compose -f docker-compose-dev.yml up -d && docker compose -f docker-compose-dev.yml logs -f --since 1h",
     "dev:bun": "bun run index.ts",
     "lint": "eslint --fix .",
     "nodemon-watch": "bun --inspect run --watch index.ts",
-    "prod:deploy": "DIR=packages/api SERVICES='api api-websocket' pnpm -F '~ci' prod:docker-compose-up",
+    "prod:deploy": "DIR=packages/api SERVICES='api api-websocket api-story-search' pnpm -F '~ci' prod:docker-compose-up",
     "prod:docker-compose-run-create-issues-from-subscriptions": "DIR=packages/api COMMAND=\"exec api-websocket node ./scripts/create-issues-from-subscriptions.mjs\" pnpm -F '~ci' prod:docker-compose-command",
-    "prod:build-docker": "REPO_NAME=ghcr.io/bperel/ducksmanager-api:websocket pnpm -F '~ci' prod:build-docker -f packages/api/Dockerfile",
+    "prod:build-docker": "REPO_NAME=ghcr.io/bperel/ducksmanager-api:websocket pnpm -F '~ci' prod:build-docker --target api -f packages/api/Dockerfile & REPO_NAME=ghcr.io/bperel/ducksmanager-api:story-search pnpm -F '~ci' prod:build-docker --target api-story-search -f packages/api/Dockerfile",
     "prod:transfer-files-pre": "pnpm -F '~ci' prod:transfer-files @packages/api/.env:packages/api/.env @packages/prisma-schemas/.env:packages/prisma-schemas/.env",
     "prod:transfer-files-post": "pnpm -F '~ci' prod:transfer-files packages/api/docker-compose.yml:@packages/api/docker-compose.yml packages/api/Caddyfile:@packages/api/Caddyfile",
     "sentry:sourcemaps": "sentry-cli sourcemaps inject --org bruno-perel --project dm-api ./dist && sentry-cli sourcemaps upload --org bruno-perel --project dm-api ./dist"

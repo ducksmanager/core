@@ -1,4 +1,4 @@
-FROM node:22-slim
+FROM node:22-slim AS api
 LABEL org.opencontainers.image.authors="Bruno Perel"
 
 WORKDIR /app
@@ -26,5 +26,7 @@ COPY packages/api/emails /app/emails
 COPY packages/api/dist/ /app/
 
 EXPOSE 3001
+
+FROM api AS api-story-search
 EXPOSE 3011
-CMD ["pm2", "start", "--no-daemon", "-i", "max", "index.mjs"]
+CMD ["pm2", "start", "--no-daemon", "-i", "1", "index-story-search.mjs"]
