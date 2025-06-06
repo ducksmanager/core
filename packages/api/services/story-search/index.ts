@@ -16,18 +16,36 @@ export const loadModel = async () => {
   if (!model) {
     console.log("Loading model...");
     try {
+      console.log("Checking cache directory...");
+      const cacheDir = "/tmp/cache/models";
+      try {
+        await fs.access(cacheDir);
+        console.log("Cache directory exists and is accessible");
+      } catch (error) {
+        console.error("Cache directory error:", error);
+        throw new Error(`Cache directory not accessible: ${error}`);
+      }
+
+      console.log("Initializing pipeline...");
       model = await pipeline<"image-feature-extraction">(
         "image-feature-extraction",
         "Xenova/vit-base-patch16-224-in21k",
         {
-          cache_dir: "/tmp/cache/models",
+          cache_dir: cacheDir,
           dtype: "fp32"
         }
       );
-      console.log("Model loaded");
+      console.log("Pipeline initialized successfully");
     } catch (error) {
-      console.error("Model loading failed:", error);
-      throw error;
+      console.error("Model loading failed with detailed error:", {
+        error: error instanceof Error ? {
+          message: error.message,
+          stack: error.stack,
+          name: error.name
+        } : error,
+        timestamp: new Date().toISOString()
+      });
+      throw new Error(`Model loading failed: ${error instanceof Error ? error.message : String(error)}`);
     }
   }
   return model;
