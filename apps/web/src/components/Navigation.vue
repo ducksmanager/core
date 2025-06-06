@@ -174,8 +174,9 @@ li {
   line-height: 25px;
   cursor: pointer;
 
-  svg {
+  svg, .b-custom {
     margin-right: 0.5rem;
+    width: 1.2em;
   }
 
   .sub-menu li {
