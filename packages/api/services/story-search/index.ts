@@ -52,6 +52,8 @@ export const loadModel = async () => {
 };
 
 const preprocessImage = async (input: string | Buffer): Promise<string> => {
+  console.log("preprocessImage...");
+  const startTime = Date.now();
   let imageBuffer: Buffer;
 
   if (typeof input === "string") {
@@ -72,6 +74,8 @@ const preprocessImage = async (input: string | Buffer): Promise<string> => {
 
   const tempPath = path.join(os.tmpdir(), `processed-${Date.now()}.jpg`);
   await fs.writeFile(tempPath, processedBuffer);
+
+  console.log(` Done in ${Date.now() - startTime}ms`);
   return tempPath;
 };
 

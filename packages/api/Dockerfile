@@ -9,7 +9,6 @@ RUN apt-get update && apt-get install -y openssl \
 
 RUN npm install -g pm2
 
-RUN npm install --os=linux --cpu=x64 sharp @huggingface/transformers 
 RUN mkdir -p bin/napi-v3/linux/x64
 RUN ln -s /app/node_modules/onnxruntime-node/bin/napi-v3/linux/x64/onnxruntime_binding.node bin/napi-v3/linux/x64/onnxruntime_binding.node
 RUN mkdir -p /bin/napi-v3/linux/x64
