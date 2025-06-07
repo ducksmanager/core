@@ -41,6 +41,10 @@ const app = createApp(App)
   .provide(
     "dumiliSocket",
     new SocketClient(import.meta.env.VITE_DUMILI_SOCKET_URL),
+  )
+  .provide(
+    "storySearchSocket",
+    new SocketClient(import.meta.env.VITE_DM_STORY_SEARCH_SOCKET_URL),
   );
 
 app.mount("#app");

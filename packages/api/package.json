@@ -8,7 +8,7 @@
     "build": "for name in index index-story-search; do bun build ${name}.ts --entry-naming ${name}.mjs --target node --sourcemap=linked --outdir dist || exit 1; done && for file in scripts/*.ts; do bun build $file --entry-naming scripts/[name].mjs --target node --sourcemap=linked --outdir dist || exit 1; done && pnpm sentry:sourcemaps",
     "dev:blocking-up": "wait-on -l tcp:3001",
     "dev": "docker compose -f docker-compose-dev.yml up -d && docker compose -f docker-compose-dev.yml logs -f --since 1h",
-    "dev:bun": "bun run index.ts",
+    "dev:bun": "concurrently --kill-others-on-fail -n index,story-search \"bun --inspect run index.ts\" \"bun --inspect run index-story-search.ts\"",
     "lint": "eslint --fix .",
     "nodemon-watch": "bun --inspect run --watch index.ts",
     "prod:deploy": "DIR=packages/api SERVICES='api api-websocket api-story-search' pnpm -F '~ci' prod:docker-compose-up",

@@ -8,7 +8,11 @@ import { STORY } from "~dumili-types/storyKinds";
 
 const socket = new SocketClient(process.env.DM_SOCKET_URL!);
 const coaEvents = socket.addNamespace<CoaEvents>(dmNamespaces.COA);
-const storySearchEvents = socket.addNamespace<StorySearchEvents>(
+
+const storySearchSocket = new SocketClient(
+  process.env.DM_STORY_SEARCH_SOCKET_URL!,
+);
+const storySearchEvents = storySearchSocket.addNamespace<StorySearchEvents>(
   dmNamespaces.STORY_SEARCH,
 );
 
