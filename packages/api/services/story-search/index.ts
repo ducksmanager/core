@@ -66,11 +66,14 @@ const preprocessImage = async (input: string | Buffer): Promise<string> => {
   } else {
     imageBuffer = input;
   }
+  console.log("Image buffer stored");
 
   const processedBuffer = await sharp(imageBuffer)
     .resize(224, 224)
     .toFormat("jpeg")
     .toBuffer();
+
+  console.log("Processed buffer stored");
 
   const tempPath = path.join(os.tmpdir(), `processed-${Date.now()}.jpg`);
   await fs.writeFile(tempPath, processedBuffer);
