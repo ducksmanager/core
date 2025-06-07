@@ -1,5 +1,6 @@
 import bodyParser from "body-parser";
 
+import BookstoreSuggested from "~/emails/bookstore-suggested";
 import { prismaDm } from "~/prisma";
 import { SimpleBookstore } from "~dm-types/SimpleBookstore";
 import { bookstore, bookstoreComment } from "~prisma-schemas/client_dm";
@@ -94,6 +95,10 @@ export const put = [
         comment: comments[comments.length - 1].comment,
       },
     });
+
+    new BookstoreSuggested({
+      user
+    }).send();
 
     return res.json(createdComment);
   },
