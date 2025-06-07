@@ -10,9 +10,7 @@ RUN apt-get update && apt-get install -y openssl \
 RUN npm install -g pm2
 
 RUN mkdir -p bin/napi-v3/linux/x64
-RUN ln -s /app/node_modules/onnxruntime-node/bin/napi-v3/linux/x64/onnxruntime_binding.node bin/napi-v3/linux/x64/onnxruntime_binding.node
-RUN mkdir -p /bin/napi-v3/linux/x64
-RUN ln -s /app/node_modules/onnxruntime-node/bin/napi-v3/linux/x64/onnxruntime_binding.node /bin/napi-v3/linux/x64/onnxruntime_binding.node
+COPY ./node_modules/.pnpm/onnxruntime-node@*/node_modules/onnxruntime-node/bin/napi-v3/linux/x64/onnxruntime_binding.node /bin/napi-v3/linux/x64/onnxruntime_binding.node
 
 COPY packages/prisma-schemas/client_dm/libquery_engine-debian-openssl-3.0.x.so.node /tmp/prisma-engines/
 
