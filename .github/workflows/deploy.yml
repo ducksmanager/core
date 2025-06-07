@@ -69,6 +69,7 @@ jobs:
       - name: Install dependencies
         run: |
           pnpm -r i --config.platform=linux --config.architecture=x64
+          find . -name onnxruntime_binding.node
 
       - name: Retrieve pre-build files
         run: |
