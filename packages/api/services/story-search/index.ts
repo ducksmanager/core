@@ -3,7 +3,7 @@ import { pipeline } from "@huggingface/transformers";
 import * as fs from "fs/promises";
 import * as os from "os";
 import path from "path";
-import sharp from "sharp";
+import sharp from "sharp-0-34";
 import { useSocketEvents } from "socket-call-server";
 
 import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa/client";

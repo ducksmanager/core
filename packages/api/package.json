@@ -36,6 +36,7 @@
     "jsonwebtoken": "^9.0.2",
     "nodemailer": "^7.0.3",
     "sharp": "0.33.5",
+    "sharp-0-34": "npm:sharp@^0.34.0",
     "socket-call-server": "^0.7.5",
     "socket.io": "^4.8.1",
     "~dm-types": "workspace:*",
