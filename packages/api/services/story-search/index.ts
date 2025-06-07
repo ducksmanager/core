@@ -67,7 +67,6 @@ const preprocessImage = async (input: string | Buffer): Promise<string> => {
     imageBuffer = input;
   }
   console.log("Image buffer stored");
-  console.log("sharp version:", sharp.versions);
 
   const processedBuffer = await sharp(imageBuffer)
     .resize(224, 224)
