@@ -130,7 +130,7 @@ const defaultExport = (options: {
       },
     ),
     events: socket.addNamespace<EventsEvents>(namespaces.EVENTS, {}),
-    storySearch: storySearchSocket.addNamespace<StorySearchEvents>(
+    storySearch: storySearchSocket?.addNamespace<StorySearchEvents>(
       namespaces.STORY_SEARCH,
       {},
     ),
