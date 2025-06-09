@@ -122,7 +122,7 @@ const getPanelCss = (panel: aiKumikoResultPanel, pageUrl: string) => {
 };
 
 const getOcrDetectionCss = (
-  { x1, x2, x3, x4, y1, y2, y3, y4 }: aiOcrResultMatch,
+  { x1, x2, y1, y2 }: aiOcrResultMatch,
   bookPageIndex: number,
 ) => {
   const pageElement = (
@@ -135,9 +135,9 @@ const getOcrDetectionCss = (
   return {
     clipPath: `polygon(${[
       [x1, y1],
+      [x2, y1],
       [x2, y2],
-      [x3, y3],
-      [x4, y4],
+      [x1, y2],
     ]
       .map(([x, y]) =>
         (["width", "height"] as const)

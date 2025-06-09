@@ -9,6 +9,7 @@ import { useSocketEvents } from "socket-call-server";
 import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa/client";
 
 import namespaces from "../namespaces";
+import { existsSync, mkdirSync } from "fs";
 
 let model: ImageFeatureExtractionPipeline | undefined = undefined;
 
@@ -18,12 +19,8 @@ export const loadModel = async () => {
     try {
       console.log("Checking cache directory...");
       const cacheDir = "/tmp/cache/models";
-      try {
-        await fs.access(cacheDir);
-        console.log("Cache directory exists and is accessible");
-      } catch (error) {
-        console.error("Cache directory error:", error);
-        throw new Error(`Cache directory not accessible: ${error}`);
+      if (!existsSync(cacheDir)) {
+        mkdirSync(cacheDir, { recursive: true });
       }
 
       console.log("Initializing pipeline...");
@@ -87,6 +84,7 @@ export const getImageVector = async (input: string | Buffer) => {
     throw new Error("Model not initialized. Call initialize() first.");
   }
   try {
+    console.log("getImageVector...");
     const startTime = Date.now();
     const processedPath = await preprocessImage(input);
     const output = await model(processedPath);
@@ -187,7 +185,6 @@ export const findSimilarImages = async (
 };
 
 const listenEvents = () => {
-  loadModel();
   return {
     getIndexSize: async (isCover: boolean) =>
       prismaCoa.inducks_entryurl_vector.count({

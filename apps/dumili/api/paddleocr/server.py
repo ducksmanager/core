@@ -6,6 +6,7 @@ from paddleocr import PaddleOCR
 from http.server import BaseHTTPRequestHandler, HTTPServer
 import json
 import os
+import numpy as np
 
 # select countrycode, GROUP_CONCAT(languagecode ORDER BY entries_with_language DESC) AS languages
 # from (select countrycode, coalesce(inducks_entry.languagecode, ip.languagecode) as languagecode, count(*) as entries_with_language
@@ -325,8 +326,17 @@ for item in data:
 # https://github.com/PaddlePaddle/PaddleOCR/issues/1048
 ocr_languages = {
     lang: PaddleOCR(use_textline_orientation=True, lang=lang)
-    for lang in ['ch', 'en', 'french', 'ar', 'es', 'pt', 'ru', 'german', 'korean', 'japan', 'it', 'ug', 'fa', 'ur', 'oc']
+    for lang in ['french']
 }
+
+def convert_numpy_to_python(obj):
+    if isinstance(obj, np.ndarray):
+        return obj.tolist()
+    elif isinstance(obj, dict):
+        return {key: convert_numpy_to_python(value) for key, value in obj.items()}
+    elif isinstance(obj, list):
+        return [convert_numpy_to_python(item) for item in obj]
+    return obj
 
 class PaddleOCRRequestHandler(BaseHTTPRequestHandler):
     def do_POST(self):
@@ -336,22 +346,35 @@ class PaddleOCRRequestHandler(BaseHTTPRequestHandler):
         language = post_data['language']
 
         os.remove("tmp.jpg") if os.path.exists("tmp.jpg") else None
-        result = ocr_languages[language].ocr(url, cls=True)
+        result = ocr_languages[language].predict(url)
         result = result[0]
 
         converted_data = []
+        
+        # Print result as JSON string
         if result is not None:
-          boxes = [line[0] for line in result]
-          texts = [line[1][0] for line in result]
-          scores = [line[1][1] for line in result]
+          # Extract texts and scores from the result structure
+          texts = result['rec_texts']
+          scores = result['rec_scores']
+          boxes = result['rec_boxes']
 
-          for i in range(len(boxes)):
-              converted_item = {
-                  "box": boxes[i],
-                  "text": texts[i],
-                  "confidence": scores[i]
-              }
-              converted_data.append(converted_item)
+          for i in range(len(texts)):
+              if texts[i]:  # Only include non-empty texts
+                  # Format box coordinates as [x1, y1, x2, y2]
+                  box = boxes[i]
+                  # The box is a 1D array of 4 values: [x1,y1,x2,y2]
+                  formatted_box = [
+                      int(box[0]),  # x1
+                      int(box[1]),  # y1
+                      int(box[2]),  # x2
+                      int(box[3])   # y2
+                  ]
+                  converted_item = {
+                      "box": formatted_box,
+                      "text": texts[i],
+                      "confidence": float(scores[i])  # Convert numpy float to Python float
+                  }
+                  converted_data.append(converted_item)
 
         self.send_response(200)
         self.send_header('Content-type', 'application/json')

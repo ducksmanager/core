@@ -2,7 +2,7 @@ import { SocketIoInstrumentation } from "@opentelemetry/instrumentation-socket.i
 import * as Sentry from "@sentry/node";
 import dotenv from "dotenv";
 import createSocketServer from "./socket";
-import { server as storySearch } from "./services/story-search";
+import { loadModel, server as storySearch } from "./services/story-search";
 
 dotenv.config({
   path: "./.env",
@@ -16,3 +16,5 @@ Sentry.init({
 
 const storySearchIo = createSocketServer(3011);
 storySearch(storySearchIo);
+
+loadModel();

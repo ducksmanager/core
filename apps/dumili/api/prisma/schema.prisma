@@ -123,19 +123,23 @@ model issueSuggestion {
 }
 
 model aiStorySearchResult {
-  id    Int     @id @default(autoincrement())
-  image image[]
+  id      Int                          @id @default(autoincrement())
+  image   image[]
+  stories aiStorySearchPossibleStory[]
 
   @@map("ai_story_search_result")
 }
 
 model aiStorySearchPossibleStory {
-  id                Int             @id @default(autoincrement())
-  score             Int             @db.SmallInt
-  storySuggestionId Int             @map("story_suggestion_id")
-  storySuggestion   storySuggestion @relation(fields: [storySuggestionId], references: [id], onDelete: Cascade, map: "ai_story_search_possible_story_story_suggestion_id_fk")
+  id                  Int                 @id @default(autoincrement())
+  score               Int                 @db.SmallInt
+  storySuggestionId   Int                 @map("story_suggestion_id")
+  storySuggestion     storySuggestion     @relation(fields: [storySuggestionId], references: [id], onDelete: Cascade, map: "ai_story_search_possible_story_story_suggestion_id_fk")
+  resultId            Int                 @map("result_id")
+  aiStorySearchResult aiStorySearchResult @relation(fields: [resultId], references: [id], onUpdate: Restrict, map: "ai_story_search_result_ai_story_search_result_id_fk")
 
   @@index([storySuggestionId], map: "ai_story_search_possible_story_story_suggestion_id_fk")
+  @@index([resultId], map: "ai_story_search_result_result_id_index")
   @@map("ai_story_search_possible_story")
 }
 
@@ -144,17 +148,35 @@ model aiOcrPossibleStory {
   score             Int             @db.SmallInt
   storySuggestionId Int             @map("story_suggestion_id")
   storySuggestion   storySuggestion @relation(fields: [storySuggestionId], references: [id], onDelete: Cascade, map: "ai_ocr_possible_story_story_suggestion_id_fk")
+  resultId          Int             @map("result_id")
+  aiOcrResult       aiOcrResult     @relation(fields: [resultId], references: [id], onUpdate: Restrict, map: "ai_ocr_possible_story_ai_ocr_result_id_fk")
 
   @@index([storySuggestionId], map: "ai_ocr_possible_story_story_suggestion_id_fk")
   @@map("ai_ocr_possible_story")
 }
 
 model aiOcrResult {
-  id      Int                @id @default(autoincrement())
+  id      Int                  @id @default(autoincrement())
   matches aiOcrResultMatch[]
+  stories aiOcrPossibleStory[]
   image   image[]
 
   @@map("ai_ocr_result")
+}
+
+model aiOcrResultMatch {
+  id          Int         @id @default(autoincrement())
+  resultId    Int         @map("result_id")
+  x1          Int
+  x2          Int
+  y1          Int
+  y2          Int
+  text        String      @db.Text
+  confidence  Float       @db.Float
+  aiOcrResult aiOcrResult @relation(fields: [resultId], references: [id], onUpdate: Restrict, map: "ai_ocr_result_id_fk")
+
+  @@index([resultId], map: "ai_ocr_result_id_index")
+  @@map("ai_ocr_result_match")
 }
 
 model aiKumikoResultPanel {
@@ -203,25 +225,6 @@ model aiKumikoResult {
 
   @@index([inferredStoryKindRowsStr], map: "ai_kumiko_result_story_kind_rows_id_fk")
   @@map("ai_kumiko_result")
-}
-
-model aiOcrResultMatch {
-  id          Int         @id @default(autoincrement())
-  resultId    Int         @map("result_id")
-  x1          Int
-  x2          Int
-  x3          Int
-  x4          Int
-  y1          Int
-  y2          Int
-  y3          Int
-  y4          Int
-  text        String      @db.Text
-  confidence  Float       @db.Float
-  aiOcrResult aiOcrResult @relation(fields: [resultId], references: [id], onUpdate: Restrict, map: "ai_ocr_result_id_fk")
-
-  @@index([resultId], map: "ai_ocr_result_id_index")
-  @@map("ai_ocr_result_match")
 }
 
 model user {

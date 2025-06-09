@@ -10,27 +10,24 @@ import {
 } from ".";
 
 type OcrResult = {
-  box: [[number, number], [number, number], [number, number], [number, number]];
+  box: [number /* x1 */, number /* y1 */, number /* x2 */, number /* y2 */];
   text: string;
   confidence: number;
 };
 
-export const runOcrOnImages = async (
+export const runOcrOnImage = async (
   services: IndexationServices,
-  pages: {
-    pageNumber: number;
-    image: NonNullable<FullIndexation["pages"][number]["image"]>;
-  }[],
+  pageNumber: number,
+  image: NonNullable<FullIndexation["pages"][number]["image"]>,
 ) => {
-  for (const { image, pageNumber } of pages) {
     const firstPanel = image.aiKumikoResult?.detectedPanels[0];
     if (!firstPanel) {
       console.log(`Page ${pageNumber}: This page does not have any panels`);
-      continue;
+      return [];
     }
-    if (image.aiOcrResultId) {
+    if (image.aiOcrResult) {
       console.log(`Page ${pageNumber}: This page already has OCR results`);
-      continue;
+      return image.aiOcrResult.matches;
     }
     services.reportRunOcrOnImage(image.id);
     const firstPanelUrl = image.url.replace(
@@ -45,18 +42,14 @@ export const runOcrOnImages = async (
       ({
         confidence,
         text,
-        box: [[x1, y1], [x2, y2], [x3, y3], [x4, y4]],
+        box: [x1, y1, x2, y2],
       }) => ({
         confidence,
         text,
         x1,
         y1,
         x2,
-        y2,
-        x3,
-        y3,
-        x4,
-        y4,
+        y2
       }),
     );
 
@@ -86,7 +79,7 @@ export const runOcrOnImages = async (
     await refreshIndexation(services);
 
     services.reportRunOcrOnImageEnd(image.id);
-  }
+    return matches
 };
 /* Adding a bit of extra in case the storycode is just outside the panel */
 export const extendBoundaries = (
