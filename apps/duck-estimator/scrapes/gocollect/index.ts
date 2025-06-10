@@ -89,15 +89,9 @@ export async function scrape() {
               },
               async (_contents) => {
                 try {
-                  if (
-                    issueLinkHref ===
-                    "https://gocollect.com/app/comic/uncle-scrooge-116"
-                  ) {
-                    await issuePage.pause();
-                  }
                   await issuePage.waitForSelector(
                     '[wire\\:key*="view-state-company-overview-"]',
-                    { timeout: 1000 },
+                    { timeout: 5000 },
                   );
                   return _contents;
                 } catch (e) {
