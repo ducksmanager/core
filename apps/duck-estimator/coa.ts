@@ -48,6 +48,9 @@ export const getInducksIssuecodesBetween = async (
   issuecodeStart: string,
   issuecodeEnd: string,
 ) => {
+  if (!issuecodeEnd) {
+    issuecodeEnd = issuecodeStart;
+  }
   const publicationcode = (
     await prismaCoa.inducks_issue.findFirstOrThrow({
       where: {
