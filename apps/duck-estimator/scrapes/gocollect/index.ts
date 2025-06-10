@@ -123,7 +123,13 @@ export async function scrape() {
               publicationcode,
               issuenumber,
             },
+          }).catch((e) => {
+            console.error(`Issue ${issuenumber} not found`);
+            return null;
           });
+          if (!issue) {
+            continue;
+          }
 
           const issueQuotationRows = await issuePage.$$(
             '[wire\\:key*="view-state-company-overview-"] > .group',
