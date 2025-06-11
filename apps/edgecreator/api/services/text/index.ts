@@ -17,22 +17,22 @@ const generateImage = (parameters: {
         ? process.env.FONT_BASE_URL!
         : `${process.env.FONT_PRODUCT_BASE_URL!}${parameters.font}`,
     )
-    .then(({ data }: { data: string }) => {
-      const sessionHashMatch = data.match(/(?<=font_rend.php\?id=)[a-z\d]+/);
+    .then(({ data, config }) => {
+      const sessionHashMatch = data.match(/(?<=\/font\/)[a-z\d]+/);
       if (sessionHashMatch) {
         sessionHashes[parameters.font] = sessionHashMatch[0];
       } else {
         throw new Error(
-          `No session ID found in URL ${process.env.FONT_BASE_URL!}${
-            parameters.font
+            `No session ID found in URL ${config.url}
           }`,
         );
       }
     })
+    
     .catch((response: Error) => Promise.reject(response))
     .then(() =>
       cloudinary.uploader.upload(
-        `${process.env.FONT_IMAGE_GEN_URL!}?${new URLSearchParams({
+        `${process.env.FONT_IMAGE_GEN_URL!}${sessionHashes[parameters.font]}?${new URLSearchParams({
           id: sessionHashes[parameters.font],
           rbe: "fixed",
           rt: parameters.text,
