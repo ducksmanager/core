@@ -12,7 +12,7 @@
     <gallery
       v-if="edges"
       v-model="selected"
-      v-model:edges="edges"
+      :items="edges"
       image-type="edges"
       :loading="isPopulating"
       :allow-upload="false"
@@ -56,22 +56,22 @@ const { publishedEdges, publishedEdgesSteps } = storeToRefs(edgeCatalog());
 const { loadPublishedEdgesSteps } = edgeCatalog();
 const { issuecodesByPublicationcode } = storeToRefs(webStores.coa());
 
-const editingIssuecodeIndexes = computed(() => ({
-  min: publicationIssuecodes.indexOf(issuecodes.value[0]),
-  max: publicationIssuecodes.indexOf([...issuecodes.value].pop()!),
-}));
-
 const surroundingIssuesToLoad = ref({ before: 10, after: 10 } as const);
+
+const minMaxEdgeIndexesToLoad = computed(() => ({
+  min:
+    publicationIssuecodes.indexOf(issuecodes.value[0]) -
+    surroundingIssuesToLoad.value.before,
+  max:
+    publicationIssuecodes.indexOf([...issuecodes.value].pop()!) +
+    surroundingIssuesToLoad.value.after,
+}));
 
 const hasMoreIssuesToLoad = computed(() => {
   const issuecodesFilter = publicationIssuecodes.filter(
     (issuecode, index) =>
-      index >=
-        editingIssuecodeIndexes.value.min -
-          surroundingIssuesToLoad.value.before &&
-      index <=
-        editingIssuecodeIndexes.value.max +
-          surroundingIssuesToLoad.value.after &&
+      index >= minMaxEdgeIndexesToLoad.value.min &&
+      index <= minMaxEdgeIndexesToLoad.value.max &&
       !issuecodes.value.includes(issuecode),
   );
   return {
@@ -101,61 +101,66 @@ const populateItems = async (
   );
   edges.value = (
     await Promise.all(
-      itemsForPublication.map(async ({ issuecode, svgUrl, url }) => {
-        debugger;
-        let quality;
-        let tooltip = "";
-        if (svgUrl) {
-          quality = 1;
-        } else {
-          const allSteps = publishedEdgesSteps.value[issuecode];
-          if (!allSteps) {
-            quality = 0;
-            tooltip = "No steps or dimensions found";
+      itemsForPublication
+        .filter(
+          (_, index) =>
+            index >= minMaxEdgeIndexesToLoad.value.min &&
+            index <= minMaxEdgeIndexesToLoad.value.max,
+        )
+        .map(async ({ issuecode, svgUrl, url }) => {
+          let quality;
+          let tooltip = "";
+          if (svgUrl) {
+            quality = 1;
           } else {
-            const issueStepWarnings: Record<number, string[]> = {};
-            loadDimensionsFromApi(issuecode, allSteps);
-
-            try {
-              await loadStepsFromApi(
-                issuecode,
-                allSteps,
-                false,
-                (error: string, stepNumber: number) => {
-                  if (!issueStepWarnings[stepNumber]) {
-                    issueStepWarnings[stepNumber] = [];
-                  }
-                  issueStepWarnings[stepNumber].push(
-                    `Step ${stepNumber}: ${error}`,
-                  );
-                },
-              );
-            } catch (e) {
-              issueStepWarnings[-1] = [e as string];
-            }
-            const issueSteps = step().getFilteredOptions({
-              issuecodes: [issuecode],
-            });
-            if (!issueSteps.length) {
-              issueStepWarnings[0] = ["No steps"];
+            const allSteps = publishedEdgesSteps.value[issuecode];
+            if (!allSteps) {
               quality = 0;
+              tooltip = "No steps or dimensions found";
             } else {
-              quality = Math.max(
-                0,
-                1 - Object.keys(issueStepWarnings).length / issueSteps.length,
-              );
+              const issueStepWarnings: Record<number, string[]> = {};
+              loadDimensionsFromApi(issuecode, allSteps);
+
+              try {
+                await loadStepsFromApi(
+                  issuecode,
+                  allSteps,
+                  false,
+                  (error: string, stepNumber: number) => {
+                    if (!issueStepWarnings[stepNumber]) {
+                      issueStepWarnings[stepNumber] = [];
+                    }
+                    issueStepWarnings[stepNumber].push(
+                      `Step ${stepNumber}: ${error}`,
+                    );
+                  },
+                );
+              } catch (e) {
+                issueStepWarnings[-1] = [e as string];
+              }
+              const issueSteps = step().getFilteredOptions({
+                issuecodes: [issuecode],
+              });
+              if (!issueSteps.length) {
+                issueStepWarnings[0] = ["No steps"];
+                quality = 0;
+              } else {
+                quality = Math.max(
+                  0,
+                  1 - Object.keys(issueStepWarnings).length / issueSteps.length,
+                );
+              }
+              tooltip = Object.values(issueStepWarnings).join("\n");
             }
-            tooltip = Object.values(issueStepWarnings).join("\n");
           }
-        }
-        return {
-          name: issuecode,
-          quality,
-          disabled: quality === 0,
-          tooltip,
-          url: `${import.meta.env.VITE_EDGES_URL as string}/${url}`,
-        };
-      }),
+          return {
+            name: issuecode,
+            quality,
+            disabled: quality === 0,
+            tooltip,
+            url: `${import.meta.env.VITE_EDGES_URL as string}/${url}`,
+          };
+        }),
     )
   ).sort(({ name: name1 }, { name: name2 }) =>
     Math.sign(
@@ -166,7 +171,7 @@ const populateItems = async (
 };
 
 watch(
-  () => publicationcode,
+  () => [publicationcode, surroundingIssuesToLoad.value],
   async () => {
     if (publishedEdges.value && !isPopulating.value) {
       isPopulating.value = true;
