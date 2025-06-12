@@ -375,7 +375,7 @@ importers:
         version: 12.8.2(typescript@5.8.3)
       '@vueuse/integrations':
         specifier: ^12.8.2
-        version: 12.8.2(axios@1.9.0)(sortablejs@1.15.6)(typescript@5.8.3)(universal-cookie@7.2.2)
+        version: 12.8.2(axios@1.9.0)(sortablejs@1.15.6)(typescript@5.8.3)(universal-cookie@8.0.1)
       axios:
         specifier: ^1.9.0
         version: 1.9.0
@@ -407,8 +407,8 @@ importers:
         specifier: ^0.7.5
         version: 0.7.5(axios-cache-interceptor@1.8.0(axios@1.9.0))(typescript@5.8.3)(vue@3.5.16(typescript@5.8.3))
       universal-cookie:
-        specifier: ^7.2.2
-        version: 7.2.2
+        specifier: ^8.0.1
+        version: 8.0.1
       vite-multiple-assets:
         specifier: ^2.2.5
         version: 2.2.5(mime-types@2.1.35)(vite@6.3.5(@types/node@22.15.28)(jiti@2.4.2)(sass@1.89.0)(tsx@4.19.4)(yaml@2.8.0))
@@ -532,7 +532,7 @@ importers:
         version: 0.5.1(socket.io@4.8.1)
       '@vueuse/integrations':
         specifier: ^12.8.2
-        version: 12.8.2(axios@1.9.0)(sortablejs@1.15.6)(typescript@5.8.3)(universal-cookie@4.0.4)
+        version: 12.8.2(axios@1.9.0)(sortablejs@1.15.6)(typescript@5.8.3)(universal-cookie@8.0.1)
       axios:
         specifier: ^1.9.0
         version: 1.9.0
@@ -573,8 +573,8 @@ importers:
         specifier: ^4.8.1
         version: 4.8.1
       universal-cookie:
-        specifier: ^4.0.4
-        version: 4.0.4
+        specifier: ^8.0.1
+        version: 8.0.1
       ~api:
         specifier: workspace:*
         version: link:../../../packages/api
@@ -903,7 +903,7 @@ importers:
         version: 12.8.2(typescript@5.8.3)
       '@vueuse/integrations':
         specifier: ^12.8.2
-        version: 12.8.2(axios@1.9.0)(sortablejs@1.15.6)(typescript@5.8.3)(universal-cookie@7.2.2)
+        version: 12.8.2(axios@1.9.0)(sortablejs@1.15.6)(typescript@5.8.3)(universal-cookie@8.0.1)
       chart.js:
         specifier: ^4.4.9
         version: 4.4.9
@@ -926,8 +926,8 @@ importers:
         specifier: ^0.7.5
         version: 0.7.5(axios-cache-interceptor@1.8.0(axios@1.9.0))(typescript@5.8.3)(vue@3.5.16(typescript@5.8.3))
       universal-cookie:
-        specifier: ^7.2.2
-        version: 7.2.2
+        specifier: ^8.0.1
+        version: 8.0.1
       vue:
         specifier: ^3.5.16
         version: 3.5.16(typescript@5.8.3)
@@ -3279,9 +3279,6 @@ packages:
   '@types/connect@3.4.38':
     resolution: {integrity: sha512-K6uROf1LD88uDQqJCktA4yzL1YYAK6NgfsI0v/mTgyPKWsX1CnJ0XPSDhViejru1GcRkLWb8RlzFYJRqGUbaug==}
 
-  '@types/cookie@0.3.3':
-    resolution: {integrity: sha512-LKVP3cgXBT9RYj+t+9FDKwS5tdI+rPBXaNSkma7hvqy35lc7mAokC2zsqWJH0LaqIt3B962nuYI77hsJoT1gow==}
-
   '@types/cookie@0.6.0':
     resolution: {integrity: sha512-4Kh9a6B2bQciAhf7FSuMRRkUWecJgJu9nPnx3yzpsfXX/c50REIqpHY4C82bXP90qrLtXtkDxTZosYO3UpOwlA==}
 
@@ -4503,10 +4500,6 @@ packages:
   cookie-signature@1.0.6:
     resolution: {integrity: sha512-QADzlaHc8icV8I7vbaJXJwod9HWYp8uCqf1xa4OfNu1T7JVxQIrUgOWtHdNDtPiywmFbiS12VjotIXLrKM3orQ==}
 
-  cookie@0.4.2:
-    resolution: {integrity: sha512-aSWTXFzaKWkvHO1Ny/s+ePFpvKsPnjc551iI41v3ny/ow6tBG5Vd+FuqGNhh1LxOmVzOlGUriIlOaokOvhaStA==}
-    engines: {node: '>= 0.6'}
-
   cookie@0.7.1:
     resolution: {integrity: sha512-6DnInpx7SJ2AK3+CTUE/ZM0vWTUboZCegxhC2xiIydHR9jNuTAASBrfEpHhiGOZw/nX51bHt6YQl8jsGo4y/0w==}
     engines: {node: '>= 0.6'}
@@ -4514,6 +4507,10 @@ packages:
   cookie@0.7.2:
     resolution: {integrity: sha512-yki5XnKuf750l50uGTllt6kKILY4nQ1eNIQatoXEByZ5dWgnKqbnqmTrBE5B4N7lrMJKQ2ytWMiTO2o0v6Ew/w==}
     engines: {node: '>= 0.6'}
+
+  cookie@1.0.2:
+    resolution: {integrity: sha512-9Kr/j4O16ISv8zBBhJoi4bXOYNTkFLOqSL3UDB0njXxCXNezjeyVrJyGOWtgfs/q2km1gwBcfH8q1yEGoMYunA==}
+    engines: {node: '>=18'}
 
   cookiejar@2.1.4:
     resolution: {integrity: sha512-LDx6oHrK+PhzLKJU9j5S7/Y3jM/mUHvD/DeI1WQmJn652iPC5Y4TBzC9l+5OMOXlyTTA+SmVUPm0HQUwpD5Jqw==}
@@ -8009,11 +8006,11 @@ packages:
     resolution: {integrity: sha512-uNaeirEPvpZWSgzwsPGtU2zVSTrn/8L5q/IexZmH0eH6SA73CmAA5U4GwORTxQAZs95TAXLNqeLoPPNO5gZfWg==}
     engines: {node: '>=8'}
 
-  universal-cookie@4.0.4:
-    resolution: {integrity: sha512-lbRVHoOMtItjWbM7TwDLdl8wug7izB0tq3/YVKhT/ahB4VDvWMyvnADfnJI8y6fSvsjh51Ix7lTGC6Tn4rMPhw==}
-
   universal-cookie@7.2.2:
     resolution: {integrity: sha512-fMiOcS3TmzP2x5QV26pIH3mvhexLIT0HmPa3V7Q7knRfT9HG6kTwq02HZGLPw0sAOXrAmotElGRvTLCMbJsvxQ==}
+
+  universal-cookie@8.0.1:
+    resolution: {integrity: sha512-B6ks9FLLnP1UbPPcveOidfvB9pHjP+wekP2uRYB9YDfKVpvcjKgy1W5Zj+cEXJ9KTPnqOKGfVDQBmn8/YCQfRg==}
 
   universalify@0.1.2:
     resolution: {integrity: sha512-rBJeI5CXAlmy1pV+617WB9J63U6XcazHHF2f2dbJix4XzpUF0RS3Zbj0FGIOCAva5P/d/GBOYaACQ1w+0azUkg==}
@@ -10721,9 +10718,8 @@ snapshots:
     dependencies:
       '@types/node': 22.15.28
 
-  '@types/cookie@0.3.3': {}
-
-  '@types/cookie@0.6.0': {}
+  '@types/cookie@0.6.0':
+    optional: true
 
   '@types/cors@2.8.18':
     dependencies:
@@ -11412,18 +11408,6 @@ snapshots:
     transitivePeerDependencies:
       - typescript
 
-  '@vueuse/integrations@12.8.2(axios@1.9.0)(sortablejs@1.15.6)(typescript@5.8.3)(universal-cookie@4.0.4)':
-    dependencies:
-      '@vueuse/core': 12.8.2(typescript@5.8.3)
-      '@vueuse/shared': 12.8.2(typescript@5.8.3)
-      vue: 3.5.16(typescript@5.8.3)
-    optionalDependencies:
-      axios: 1.9.0
-      sortablejs: 1.15.6
-      universal-cookie: 4.0.4
-    transitivePeerDependencies:
-      - typescript
-
   '@vueuse/integrations@12.8.2(axios@1.9.0)(sortablejs@1.15.6)(typescript@5.8.3)(universal-cookie@7.2.2)':
     dependencies:
       '@vueuse/core': 12.8.2(typescript@5.8.3)
@@ -11433,6 +11417,18 @@ snapshots:
       axios: 1.9.0
       sortablejs: 1.15.6
       universal-cookie: 7.2.2
+    transitivePeerDependencies:
+      - typescript
+
+  '@vueuse/integrations@12.8.2(axios@1.9.0)(sortablejs@1.15.6)(typescript@5.8.3)(universal-cookie@8.0.1)':
+    dependencies:
+      '@vueuse/core': 12.8.2(typescript@5.8.3)
+      '@vueuse/shared': 12.8.2(typescript@5.8.3)
+      vue: 3.5.16(typescript@5.8.3)
+    optionalDependencies:
+      axios: 1.9.0
+      sortablejs: 1.15.6
+      universal-cookie: 8.0.1
     transitivePeerDependencies:
       - typescript
 
@@ -12204,11 +12200,11 @@ snapshots:
 
   cookie-signature@1.0.6: {}
 
-  cookie@0.4.2: {}
-
   cookie@0.7.1: {}
 
   cookie@0.7.2: {}
+
+  cookie@1.0.2: {}
 
   cookiejar@2.1.4: {}
 
@@ -16223,15 +16219,15 @@ snapshots:
     dependencies:
       crypto-random-string: 2.0.0
 
-  universal-cookie@4.0.4:
-    dependencies:
-      '@types/cookie': 0.3.3
-      cookie: 0.4.2
-
   universal-cookie@7.2.2:
     dependencies:
       '@types/cookie': 0.6.0
       cookie: 0.7.2
+    optional: true
+
+  universal-cookie@8.0.1:
+    dependencies:
+      cookie: 1.0.2
 
   universalify@0.1.2: {}
 
