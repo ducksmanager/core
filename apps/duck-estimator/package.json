@@ -1,6 +1,7 @@
 {
   "name": "~duck-estimator",
   "version": "1.0.0",
+  "type": "module",
   "engines": {
     "node": ">=22.0.0 <23.0.0"
   },
@@ -11,6 +12,7 @@
   "scripts": {
     "build": "bun build --target node index.ts --outdir dist && mv dist/index.js bundle.mjs && rm -rf dist",
     "start": "bun --inspect run --watch index.ts",
+    "dev": "PWDEBUG=1 bun --inspect run --watch index.ts",
     "prod:docker-compose-run": "SERVICE=duck-estimator pnpm -F '~ci' prod:docker-compose-run",
     "prod:build-docker": "REPO_NAME=ghcr.io/bperel/duck-estimator pnpm -F '~ci' prod:build-docker -f apps/duck-estimator/Dockerfile",
     "prod:transfer-files-pre": "pnpm -F '~ci' prod:transfer-files @apps/duck-estimator/.env:apps/duck-estimator/.env",
@@ -27,7 +29,7 @@
     "~prisma-schemas": "workspace:*"
   },
   "devDependencies": {
-    "@types/node": "^22.14.1",
+    "@types/node": "^22.15.28",
     "@types/yargs": "^17.0.33",
     "typescript": "^5.8.3"
   }

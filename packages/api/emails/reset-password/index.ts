@@ -6,7 +6,7 @@ export default class extends Email {
   data: { user: user; token: string };
   templatePath = import.meta.dirname.includes("emails")
     ? import.meta.dirname
-    : `${import.meta.dirname}/emails/reset-password`;
+    : `/app/emails/reset-password`;
 
   sendCopyToAdmin = false;
 

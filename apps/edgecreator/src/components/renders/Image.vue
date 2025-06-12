@@ -121,7 +121,10 @@ if (stepNumber === undefined) {
           }/elements/${effectiveSource.value}`,
           (img) => {
             enableDragResize(img, {
-              coords: () => ({ x: x.value, y: y.value }),
+              x,
+              y,
+              width,
+              height,
             });
           },
         );
@@ -135,10 +138,10 @@ if (stepNumber === undefined) {
     (value) => {
       if (value) {
         enableDragResize(value, {
-          coords: () => ({
-            x: x.value,
-            y: y.value,
-          }),
+          x,
+          y,
+          width,
+          height,
         });
       }
     },

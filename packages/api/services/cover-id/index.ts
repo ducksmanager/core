@@ -1,25 +1,23 @@
 import axios from "axios";
 import https from "https";
-import { type EitherOr, useSocketEvents } from "socket-call-server";
+import { useSocketEvents } from "socket-call-server";
 
 import type { SimilarImagesResult } from "~dm-types/CoverSearchResults";
 import { prismaClient as prismaCoverInfo } from "~prisma-schemas/schemas/cover_info/client";
 
 import { getCoverUrls } from "../coa/issue-details";
 import namespaces from "../namespaces";
+import { getPastecStatus } from "../status";
 
 const listenEvents = () => ({
-  searchFromCover: async ({
-    url,
-    base64,
-  }: EitherOr<{ base64?: string }, { url?: string }>) => {
-    const buffer = url
+  searchFromCover: async (urlOrBase64: string) => {
+    const buffer = urlOrBase64.includes(";base64,")
       ? (
-          await axios.get(url, {
+          await axios.get(urlOrBase64, {
             responseType: "arraybuffer",
           })
         ).data
-      : Buffer.from(base64!.split(";base64,").pop()!, "base64");
+      : Buffer.from(urlOrBase64.split(";base64,").pop()!, "base64");
 
     const pastecResponse: SimilarImagesResult | null =
       await getSimilarImages(buffer);
@@ -75,6 +73,7 @@ const listenEvents = () => ({
       })),
     };
   },
+  getIndexSize: async () => getPastecStatus(),
   getCoverUrl: async (coverId: number) =>
     getCoverUrl(coverId).then(
       (url) => `${process.env.INDUCKS_COVERS_ROOT}/${url}`,

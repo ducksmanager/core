@@ -25,12 +25,12 @@
             }}</ion-text
           ></ion-item
         >
-        <router-link id="link-to-dm" class="ion-padding" :to="storeUrl">
+        <a id="link-to-dm" target="_blank" :href="storeUrl" class="ion-padding">
           <template v-if="storeName === 'Play Store'">{{
             $t("Notez What The Duck sur le Play Store si vous l'appréciez :-)")
           }}</template>
           <template v-else>{{ $t("Notez What The Duck sur l'App Store si vous l'appréciez :-)") }}</template>
-        </router-link>
+        </a>
         <ion-item-group style="padding-top: 1rem">
           <ion-item-divider>
             <ion-label>{{ $t('Réseaux sociaux') }}</ion-label>

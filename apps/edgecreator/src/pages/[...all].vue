@@ -235,7 +235,7 @@ const mostWantedEdges = ref<
 const hoveredEdge = ref();
 
 const mostPopularIssuesInCollectionWithoutEdge = computed(() =>
-  collectionStore.popularIssuesInCollectionWithoutEdge
+  bookcaseStore.popularIssuesInCollectionWithoutEdge
     ?.sort(
       ({ popularity: popularity1 }, { popularity: popularity2 }) =>
         (popularity2 ?? 0) - (popularity1 ?? 0),

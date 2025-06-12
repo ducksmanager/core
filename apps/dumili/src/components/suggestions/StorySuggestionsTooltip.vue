@@ -3,11 +3,11 @@
     :id="`ai-results-story-suggestions-${entry.id}`"
     :loading-events="[
       {
-        eventName: 'createAiStorySuggestions',
+        eventName: 'reportCreateAiStorySuggestions',
         checkMatch: (id) => id === entry.id,
       },
       {
-        eventName: 'runOcrOnImage',
+        eventName: 'reportRunOcrOnImage',
         checkMatch: (imageId) => imageId === getEntryPages(indexation!, entry.id)[0].image?.id,
       },
     ]"

@@ -14,25 +14,6 @@ services:
     ports:
       - "1025:1025"
       - "1080:1080"
-  # duck-estimator:
-  #   container_name: duck-estimator
-  #   image: "mcr.microsoft.com/playwright:focal"
-  #   depends_on:
-  #    - db
-  #   environment:
-  #    - MYSQL_COA_HOST=db
-  #    - MYSQL_COA_PORT=3306
-  #    - MYSQL_COA_DATABASE=coa
-  #    - GITHUB_TOKEN=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
-  #    - GITHUB_NAME=Admin
-  #    - GITHUB_EMAIL=admin@ducksmanager.net
-  #   networks:
-  #    - db-network
-  #   volumes:
-  #    - duck_estimator_cache:/home/cache
-  #    - node_cache:/root/.cache
-  #   command: "bash -c 'git clone --depth 1 --single-branch https://github.com/bperel/duck-estimator && cd duck-estimator && npm install && node duck-estimator.js --cache-dir=/home/cache'"
 
 volumes:
-  # duck_estimator_cache:
-  node_cache: # pastec_index:
+  node_cache:

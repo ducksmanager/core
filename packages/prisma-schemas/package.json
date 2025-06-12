@@ -8,24 +8,26 @@
   ],
   "scripts": {
     "build": "pnpm prisma-generate",
-    "prisma-pull-generate": "cd schemas && ls | while read -r schema; do (cd $schema && bunx prisma db pull); done && pnpm prisma-generate",
-    "prisma-generate": "cd schemas && ls | while read -r schema; do (cd $schema && bunx prisma generate); done && rm -rf dist",
-    "prisma-migrate": "cd schemas && ls | while read -r schema; do (cd $schema && bunx prisma migrate deploy); done",
+    "prisma-pull-generate": "cd schemas && ls | while read -r schema; do (cd $schema && prisma db pull); done && pnpm prisma-generate",
+    "prisma-generate": "cd schemas && ls | while read -r schema; do (cd $schema && prisma generate); done && rm -rf dist",
+    "prisma-migrate": "cd schemas && ls | while read -r schema; do (cd $schema && prisma migrate deploy); done",
     "dev:setup": "docker compose -f docker-compose-dev.yml up --force-recreate -d",
     "dev:blocking": "bash wait-until-db-ready.bash",
     "dev:blocking-up": "pnpm prisma-generate && pnpm prisma-migrate",
-    "lint": "prettier -w schemas"
+    "lint": "prettier -w schemas",
+    "prod:deploy": "DIR=packages/prisma-schemas SERVICES='db' pnpm -F '~ci' prod:docker-compose-up",
+    "prod:transfer-files-post": "pnpm -F '~ci' prod:transfer-files packages/prisma-schemas/docker-compose.yml:@packages/prisma-schemas/docker-compose.yml"
   },
   "dependencies": {
-    "@prisma/client": "^6.6.0",
-    "prisma": "^6.6.0",
+    "@prisma/client": "^6.8.2",
+    "prisma": "^6.8.2",
     "~group-by": "workspace:*"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.1",
-    "@eslint/js": "^9.24.0",
-    "@typescript-eslint/eslint-plugin": "^8.30.1",
-    "eslint-config-prettier": "^10.1.2",
+    "@eslint/js": "^9.28.0",
+    "@typescript-eslint/eslint-plugin": "^8.34.0",
+    "eslint-config-prettier": "^10.1.5",
     "prettier": "^3.5.3",
     "prettier-plugin-prisma": "^5.0.0",
     "typescript": "^5.8.3"

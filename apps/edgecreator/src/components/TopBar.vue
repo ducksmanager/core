@@ -1,15 +1,11 @@
 <template>
   <b-container fluid>
     <b-row align="center" class="pt-2">
-      <b-col class="text-start position-absolute col-12 col-md-6 options">
+      <b-col class="text-start position-absolute w-auto options">
         <b-navbar toggleable class="ps-0 pt-0">
-          <b-navbar-brand href="#">
-            {{ $t("Options") }}
-          </b-navbar-brand>
-
           <b-navbar-toggle target="nav-collapse" />
 
-          <b-collapse id="nav-collapse" is-nav class="flex-column p-2 bg-white">
+          <b-collapse id="nav-collapse" is-nav class="flex-column p-2">
             <b-row class="zoom-option">
               <b-col cols="3">
                 <input
@@ -41,10 +37,7 @@
                 <b-form-checkbox
                   id="showPreviousEdge"
                   v-model="showPreviousEdge"
-                  :disabled="
-                    !edgeIssuecodesBefore.length ||
-                    showPreviousEdge === undefined
-                  "
+                  :disabled="!edgeIssuecodesBefore.length"
                 />
               </b-col>
               <b-col>
@@ -58,9 +51,7 @@
                 <b-form-checkbox
                   id="showNextEdge"
                   v-model="showNextEdge"
-                  :disabled="
-                    !edgeIssuecodesAfter.length || showNextEdge === undefined
-                  "
+                  :disabled="!edgeIssuecodesAfter.length"
                 />
               </b-col>
               <b-col>
@@ -163,11 +154,11 @@
     </b-row>
     <b-row align="center" class="p-1">
       <b-col align-self="center">
-        &nbsp;<save-model-button />&nbsp;<save-model-button
+        &nbsp;<save-model-button action="save" />&nbsp;<save-model-button
           v-if="hasRole('Edition')"
-          with-submit
+          action="submit"
         />
-        <save-model-button v-if="hasRole('Admin')" with-export />
+        <save-model-button v-if="hasRole('Admin')" action="export" />
       </b-col>
     </b-row>
     <b-row
@@ -274,7 +265,6 @@ const {
 
 const { showPreviousEdge, showNextEdge } = surroundingEdge();
 const { overwriteModel } = useModelLoad();
-const { loadSvgFromString } = useSvgUtils();
 const { dimensions: editingDimensions } = storeToRefs(editingStep());
 const { hasRole } = webStores.collection();
 const stepStore = step();
@@ -308,7 +298,7 @@ const uniqueDimensions = computed(() =>
 );
 
 const isEditingMultiple = computed(
-  () => isRange || issuecodes.value.length > 1,
+  () => isRange.value || issuecodes.value.length > 1,
 );
 
 const setPhotoUrls = (photoUrl: string) => {
@@ -321,10 +311,7 @@ const clone = async () => {
   for (const issuecode of issuecodesToEdit.value.filter(
     (issuecode) => issuecode !== issuecodeToClone.value!,
   )) {
-    overwriteModel(
-      issuecode,
-      await loadSvgFromString(issuecodeToClone.value!, true),
-    );
+    overwriteModel(issuecode, issuecodeToClone.value, true);
   }
 };
 

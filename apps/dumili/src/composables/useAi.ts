@@ -26,7 +26,7 @@ export default () => {
         return;
       }
       nextTick(async () => {
-        coverIdEvents.searchFromCover({ url }).then((results) => {
+        coverIdEvents.searchFromCover(url).then((results) => {
           if ("error" in results) {
             console.error(results.error);
           } else {

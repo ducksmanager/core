@@ -14,7 +14,7 @@ export default class extends Email {
   data: Data;
   templatePath = import.meta.dirname.includes("emails")
     ? import.meta.dirname
-    : `${import.meta.dirname}/emails/edge-photo-sent`;
+    : `/app/emails/edge-photo-sent`;
 
   constructor(data: InputData) {
     super();

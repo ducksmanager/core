@@ -85,7 +85,7 @@ alias: [/collection/compte]
             ><div class="text-black mb-2">
               {{
                 $t(
-                  'Vous pouvez trouver votre identifiant de profil Discord en vous rendant dans le menu "Paramètres utilisateur" > "Mon compte". Faites un clic droit sur "..." puis cliquez sur "Copier l\'identifiant".',
+                  'Vous pouvez trouver votre identifiant de profil Discord en vous rendant dans le menu "Paramètres utilisateur" > "Mon compte". Faites un clic droit sur "..." puis cliquez sur "Copier l\'identifiant de l\'utilisateur".',
                 )
               }}
             </div>

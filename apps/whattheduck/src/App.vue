@@ -1,7 +1,7 @@
 <template>
   <ion-app>
     <ion-progress-bar v-if="bundleDownloadProgress" :value="bundleDownloadProgress"></ion-progress-bar>
-    <OfflineBanner v-if="isOfflineMode" />
+    <OfflineBanner v-if="isOfflineMode === 'offline_no_cache'" />
 
     <ion-router-outlet
       v-if="['/login', '/signup', '/test', '/forgot'].includes(route.path)"

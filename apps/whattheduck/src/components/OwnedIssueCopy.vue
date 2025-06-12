@@ -6,7 +6,7 @@
       >
       <ion-col size="8" class="ion-padding">
         <ion-row style="flex-direction: column" class="ion-align-items-end">
-          <ion-radio-group v-model="issue.condition" style="display: flex; justify-content: end">
+          <ion-radio-group id="state-radio-group" v-model="issue.condition" style="display: flex; justify-content: end">
             <ion-radio
               v-for="item of conditionsWithoutMissing"
               :key="item.dbValue"
@@ -208,5 +208,10 @@ ion-modal#create-purchase-modal {
   .wrapper {
     margin: 1rem;
   }
+}
+
+#state-radio-group:deep(.radio-group-wrapper) {
+  display: flex;
+  justify-content: end;
 }
 </style>

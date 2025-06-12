@@ -128,7 +128,7 @@ const { indexationSocket } = inject(dumiliSocketInjectionKey)!;
 const {
   pagesWithoutOverwrite: pagesWithoutOverwriteInitial,
   pagesAllowOverwrite: pagesAllowOverwriteInitial,
-  uploadPageNumber,
+  uploadPageNumber = undefined,
 } = defineProps<{
   uploadPageNumber?: number;
   pagesWithoutOverwrite: { id: number; pageNumber: number }[];

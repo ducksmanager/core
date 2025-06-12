@@ -209,17 +209,21 @@ export default () => {
     }
   };
 
-  const overwriteModel = (
+  const overwriteModel = async (
     targetIssuecode: string,
-    {
-      svgElement,
-      svgChildNodes,
-    }: Awaited<ReturnType<typeof loadSvgFromString>>,
+    sourceIssuecode: string,
+    isSourcePublished: boolean,
   ) => {
+    const { svgElement, svgChildNodes } = await loadSvgFromString(
+      sourceIssuecode,
+      isSourcePublished,
+    );
     loadDimensionsFromSvg(targetIssuecode, svgElement);
     loadStepsFromSvg(targetIssuecode, svgChildNodes);
-    setPhotoUrlsFromSvg(targetIssuecode, svgChildNodes);
-    setContributorsFromSvg(targetIssuecode, svgChildNodes);
+    if (sourceIssuecode === targetIssuecode) {
+      setPhotoUrlsFromSvg(targetIssuecode, svgChildNodes);
+      setContributorsFromSvg(targetIssuecode, svgChildNodes);
+    }
   };
 
   const logModelLoadError = (e: unknown) => {
@@ -233,12 +237,12 @@ export default () => {
   const loadModel = async (issuecode: string) => {
     try {
       console.log("Loading non-published version of", issuecode);
-      overwriteModel(issuecode, await loadSvgFromString(issuecode, false));
+      await overwriteModel(issuecode, issuecode, false);
     } catch (e) {
       logModelLoadError(e);
       try {
         console.log("Loading published version of", issuecode);
-        overwriteModel(issuecode, await loadSvgFromString(issuecode, true));
+        await overwriteModel(issuecode, issuecode, true);
       } catch (e) {
         logModelLoadError(e);
         const edge = (await edgeCreatorEvents.getModel(issuecode))!;

@@ -10,6 +10,7 @@ const dataPath = "/tmp/inducks",
 
 const poolParams = {
   host: process.env.MYSQL_HOST,
+  port: parseInt(process.env.MYSQL_PORT || "3306"),
   user: "root",
   password: process.env.MYSQL_ROOT_PASSWORD,
   multipleStatements: true,
@@ -112,8 +113,33 @@ ALTER TABLE inducks_entryurl ADD id INT AUTO_INCREMENT NOT NULL, ADD PRIMARY KEY
 # Add full text index on entry titles
 ALTER TABLE inducks_entry ADD FULLTEXT INDEX entryTitleFullText(title);
 
-create index inducks_issue_publicationcode_index
-    on inducks_issue (publicationcode);
+
+ALTER TABLE inducks_entry
+  ADD COLUMN is_cover tinyint(1) default null null;
+
+CREATE INDEX inducks_entry_is_cover_index
+  ON inducks_entry (is_cover);
+
+CREATE INDEX inducks_entry_issuecode_position_index
+  ON inducks_entry (issuecode, position);
+
+UPDATE inducks_entry entry
+INNER JOIN (
+  SELECT issuecode, MIN(position) as min_position
+  FROM inducks_entry
+  WHERE issuecode != ''
+  GROUP BY issuecode
+) min_pos ON entry.issuecode = min_pos.issuecode
+SET entry.is_cover = IF(entry.position = min_pos.min_position AND entry.issuecode != '', 1, 0);
+
+UPDATE inducks_entry entry SET is_cover = 0 WHERE is_cover IS NULL;
+
+ALTER TABLE inducks_entry
+  MODIFY COLUMN is_cover tinyint(1) not null;
+
+
+CREATE INDEX inducks_issue_publicationcode_index
+  ON inducks_issue (publicationcode);
 
 set unique_checks = 1;
 set foreign_key_checks = 1;

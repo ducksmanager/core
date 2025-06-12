@@ -2,6 +2,7 @@ import { useSocketEvents } from "socket-call-server";
 
 import type { BookcaseEdge } from "~dm-types/BookcaseEdge";
 import type { SessionUser } from "~dm-types/SessionUser";
+import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa/client";
 import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
 
 import type { UserServices } from "../../index";
@@ -129,28 +130,26 @@ const listenEvents = ({ _socket }: UserServices<true>) => ({
           WHERE ID_Utilisateur = ${user.id}
         `
       .then((edges) =>
+        prismaCoa.augmentIssueArrayWithInducksData(
+          edges.filter(({ issuecode }) => !!issuecode),
+        ),
+      )
+      .then((edges) =>
         edges.groupBy(user.showDuplicatesInBookcase ? "id" : "issuecode", "[]"),
       )
-      .then(Object.entries)
-      .then(
-        (
-          arr: [number | string, BookcaseEdgeRaw[]][],
-        ): [number | string, BookcaseEdge][] =>
-          arr.map(([key, edges]) => [
-            key,
-            {
-              ...edges[0],
-              sprites: edges
-                .map(({ spriteName, spriteSize, spriteVersion }) => ({
-                  name: spriteName,
-                  size: spriteSize,
-                  version: spriteVersion,
-                }))
-                .filter(({ size }) => !!size),
-            },
-          ]),
+      .then((obj) => Object.values(obj) as BookcaseEdgeRaw[][])
+      .then((arr) =>
+        arr.map((edges) => ({
+          ...edges[0],
+          sprites: edges
+            .map(({ spriteName, spriteSize, spriteVersion }) => ({
+              name: spriteName,
+              size: spriteSize,
+              version: spriteVersion,
+            }))
+            .filter(({ size }) => !!size),
+        })),
       )
-      .then<BookcaseEdge[]>(Object.values)
       .then((edges) => ({ edges }));
   },
 

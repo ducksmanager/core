@@ -29,16 +29,20 @@
     size="sm"
     @click="onClick"
   >
-    <i-bi-archive v-if="!withExport && !withSubmit" />
+    <i-bi-archive v-if="!action" />
     <template v-else>
       <i-bi-cloud-arrow-up-fill />
       <b-modal
         v-model="showModal"
-        :title="$t(withExport ? 'Edge publication' : 'Edge validation')"
+        :title="
+          $t(action === 'export' ? 'Edge publication' : 'Edge validation')
+        "
         ok-only
-        :ok-disabled="isOkDisabled"
-        :ok-title="$t(withExport ? 'Export' : 'Submit')"
-        @ok="issueIndexToSave = 0"
+        :ok-disabled="
+          !contributors.photographe.size || !contributors.createur.size
+        "
+        :ok-title="$t(action === 'export' ? 'Export' : 'Submit')"
+        @ok="onOK"
       >
         <b-alert :model-value="true" variant="info">
           {{
@@ -55,48 +59,33 @@
         >
           <h2>{{ $t(ucFirst(userContributionEnL10n[contributionType])) }}</h2>
           <b-alert
-            :model-value="!hasAtLeastOneUser(contributionType)"
+            :model-value="!contributors[contributionType].size"
             variant="warning"
           >
             {{ $t("You should select at least one user") }} </b-alert
           ><vue3-simple-typeahead
-            :items="
-              getUsersWithoutContributors(
-                contributionType as userContributionType
-              )
-            "
+            :items="getUsersWithoutContributors(contributionType)"
             :item-projection="({ username }: SimpleUser) => username"
             :placeholder="$t('Enter a user name').toString()"
             :min-input-length="0"
             @select-item="
               (user: SimpleUser) => {
-                onUserSelect(
-                  user.username,
-                  contributionType as userContributionType
-                )}
+                contributors[contributionType as contribution].add(user);
+              }
             "
           />
           <ul>
             <li
-              v-for="contributor in getContributors(
-                contributionType as userContributionType
-              )"
+              v-for="contributor in contributors[contributionType]"
               :key="contributor.username"
             >
               {{ contributor.username }}
               <i-bi-x-square-fill
-                v-if="
-                  !(
-                    contributor.username === collectionStore.user!.username &&
-                    contributionType === 'createur'
-                  )
-                "
                 class="clickable"
                 @click="
-                  mainStore.removeContributor({
-                    contributionType: contributionType as userContributionType,
-                    userToRemove: contributor,
-                  })
+                  contributors[contributionType as contribution].delete(
+                    contributor,
+                  );
                 "
               />
             </li>
@@ -115,7 +104,6 @@ import saveEdge from "~/composables/useSaveEdge";
 import { main } from "~/stores/main";
 import { ui } from "~/stores/ui";
 import type { contribution } from "~prisma-schemas/client_edgecreator";
-import type { userContributionType } from "~prisma-schemas/schemas/dm";
 import type { SimpleUser } from "~types/SimpleUser";
 import { stores as webStores } from "~web";
 
@@ -128,12 +116,10 @@ const { saveEdgeSvg } = saveEdge();
 
 const { t: $t } = useI18n();
 const userStore = webStores.users();
-const collectionStore = webStores.collection();
 const mainStore = main();
 
-const { withSubmit = false, withExport = false } = defineProps<{
-  withSubmit?: boolean;
-  withExport?: boolean;
+const { action } = defineProps<{
+  action: "save" | "submit" | "export";
 }>();
 
 const showModal = ref(false);
@@ -141,23 +127,16 @@ const progress = ref(0);
 const issueIndexToSave = ref<number>();
 const result = ref<string>();
 
-const label = computed(() =>
-  $t(withExport ? "Export" : withSubmit ? "Submit" : "Save"),
-);
+const contributors = ref<Record<contribution, Set<SimpleUser>>>({
+  photographe: new Set(),
+  createur: new Set(),
+});
 
-const variant = computed((): "success" | "primary" =>
-  withExport || withSubmit ? "success" : "primary",
-);
+const label = computed(() => $t(ucFirst(action)));
 
-const outlineVariant = computed(
-  (): "outline-success" | "outline-primary" => `outline-${variant.value}`,
-);
+const variant = computed(() => (action === "save" ? "primary" : "success"));
 
-const isOkDisabled = computed(() =>
-  Object.keys(userContributionEnL10n).some(
-    (contributionType) => !hasAtLeastOneUser(contributionType as contribution),
-  ),
-);
+const outlineVariant = computed(() => `outline-${variant.value}` as const);
 
 watch(progress, (newValue) => {
   if (newValue === 100) {
@@ -171,6 +150,7 @@ watch(progress, (newValue) => {
   }
 });
 watch(issueIndexToSave, (newValue) => {
+  console.log("issueIndexToSave", newValue);
   const currentIssuecode = mainStore.issuecodes[newValue!];
 
   if (currentIssuecode === undefined) {
@@ -181,11 +161,11 @@ watch(issueIndexToSave, (newValue) => {
   nextTick(() => {
     saveEdgeSvg(
       currentIssuecode,
-      mainStore.contributors.filter(
+      Array.from(mainStore.contributors).filter(
         ({ issuecode }) => issuecode === currentIssuecode,
       ),
-      withExport,
-      withSubmit,
+      action === "export",
+      action === "submit",
     ).then((response) => {
       const isSuccess = response!.paths.svgPath;
       if (isSuccess) {
@@ -200,70 +180,35 @@ watch(issueIndexToSave, (newValue) => {
   });
 });
 
-watch(showModal, (newValue) => {
-  if (newValue && withSubmit) {
-    addContributorAllIssues(
-      userStore.allUsers!.find(
-        (thisUser) => thisUser.username === collectionStore.user!.username,
-      )!,
-      "createur",
-    );
+const onOK = () => {
+  if (action) {
+    for (const contributionType of Object.keys(
+      contributors.value,
+    ) as contribution[]) {
+      for (const contributor of contributors.value[contributionType]) {
+        for (const issuecode of mainStore.issuecodes) {
+          mainStore.addContributor({
+            issuecode,
+            contributionType,
+            user: contributor,
+          });
+        }
+      }
+    }
+    issueIndexToSave.value = 0;
   }
-});
-
-const onUserSelect = (
-  username: string,
-  contributionType: userContributionType,
-) => {
-  addContributorAllIssues(
-    userStore.allUsers!.find((thisUser) => thisUser.username === username)!,
-    contributionType,
-  );
 };
 
 const ucFirst = (text: string) =>
   text[0].toUpperCase() + text.substring(1, text.length);
-const getContributors = (contributionType: userContributionType) =>
-  userStore.allUsers!.filter((user) => isContributor(user, contributionType));
 
-const getUsersWithoutContributors = (contributionType: userContributionType) =>
+const getUsersWithoutContributors = (contributionType: contribution) =>
   userStore.allUsers!.filter(
-    (contributor) => !isContributor(contributor, contributionType),
+    (contributor) => !contributors.value[contributionType].has(contributor),
   );
-
-const isContributor = (
-  user: SimpleUser,
-  contributionType: userContributionType,
-) =>
-  mainStore.contributors.some(
-    ({ user: thisUser, contributionType: thisContributionType }) =>
-      thisUser.id === user.id && thisContributionType === contributionType,
-  );
-const addContributorAllIssues = (
-  user: SimpleUser,
-  contributionType: userContributionType,
-) =>
-  mainStore.issuecodes.forEach((issuecode) =>
-    mainStore.addContributor({
-      issuecode,
-      contributionType,
-      user,
-    }),
-  );
-const hasAtLeastOneUser = (contributionType: contribution) =>
-  [
-    ...new Set(
-      mainStore.contributors
-        .filter(
-          ({ contributionType: thisContributionType }) =>
-            contributionType === thisContributionType,
-        )
-        .map(({ issuecode }) => issuecode),
-    ),
-  ].length === mainStore.issuecodes.length;
 
 const onClick = () => {
-  if (withExport || withSubmit) {
+  if (action === "export" || action === "submit") {
     showModal.value = !showModal.value;
   } else {
     issueIndexToSave.value = 0;

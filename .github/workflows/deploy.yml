@@ -68,7 +68,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pnpm -r i
+          pnpm -r i --config.platform=linux --config.architecture=x64
 
       - name: Retrieve pre-build files
         run: |

@@ -46,11 +46,7 @@
         </b-alert>
         <SharePage
           v-if="showShareButtons && bookcaseUrl"
-          :title="
-            $t('Bibliothèque DucksManager de {username}', {
-              username: bookcaseUsername,
-            })
-          "
+          :title="$t('Ma bibliothèque DucksManager !')"
           :url="bookcaseUrl"
         />
         <b-button v-else size="sm" @click="showShareButtons = true">
@@ -173,19 +169,14 @@ const { points } = storeToRefs(users());
 
 const { loadPopularIssuesInCollection, loadLastPublishedEdgesForCurrentUser } =
   collection();
-const {
-  user,
-  lastPublishedEdgesForCurrentUser,
-  popularIssuesInCollectionWithoutEdge,
-} = storeToRefs(collection());
+const { user, lastPublishedEdgesForCurrentUser } = storeToRefs(collection());
 
 const { fetchPublicationNames, fetchIssuecodesByPublicationcode } = coa();
-const { publicationNames, issuecodesByPublicationcode, issuecodeDetails } =
-  storeToRefs(coa());
+const { publicationNames, issuecodesByPublicationcode } = storeToRefs(coa());
 
 const { loadBookcase, loadBookcaseOptions, loadBookcaseOrder } = bookcase();
 const {
-  bookcase: thisBookcase,
+  bookcaseContents: thisBookcase,
   bookcaseOptions,
   bookcaseUsername,
   bookcaseWithPopularities,
@@ -193,6 +184,7 @@ const {
   isPrivateBookcase,
   isUserNotExisting,
   isSharedBookcase,
+  popularIssuesInCollectionWithoutEdge,
 } = storeToRefs(bookcase());
 
 let edgesUsingSprites = $ref<{ [edgeId: number]: string }>({});
@@ -209,15 +201,15 @@ const inputBookcaseUsername = $computed(
 const allowSharing = $computed(() => user.value?.allowSharing);
 const bookcaseUrl = $computed(
   (): string | null =>
-    (!isPrivateBookcase &&
+    (!isPrivateBookcase.value &&
       user.value &&
       `${window.location.origin}/bookcase/show/${user.value.username}`) ||
     null,
 );
 const loading = $computed(
   () =>
-    !isPrivateBookcase &&
-    !isUserNotExisting &&
+    !isPrivateBookcase.value &&
+    !isUserNotExisting.value &&
     !(sortedBookcase && bookcaseOptions && edgesUsingSprites),
 );
 const percentVisible = $computed(() =>
@@ -242,12 +234,10 @@ const sortedBookcase = $computed(
     bookcaseOrder.value &&
     hasIssuecodes &&
     [...bookcaseWithPopularities.value].sort(
-      ({ issuecode: issuecode1 }, { issuecode: issuecode2 }) => {
-        const publicationcode1 =
-          issuecodeDetails.value[issuecode1]?.publicationcode;
-        const publicationcode2 =
-          issuecodeDetails.value[issuecode2]?.publicationcode;
-
+      (
+        { publicationcode: publicationcode1, issuecode: issuecode1 },
+        { publicationcode: publicationcode2, issuecode: issuecode2 },
+      ) => {
         const publicationOrderSign = Math.sign(
           bookcaseOrder.value!.indexOf(publicationcode1) -
             bookcaseOrder.value!.indexOf(publicationcode2),
@@ -255,12 +245,14 @@ const sortedBookcase = $computed(
         return (
           publicationOrderSign ||
           Math.sign(
-            issuecodesByPublicationcode.value[publicationcode1].indexOf(
+            issuecodesByPublicationcode.value[publicationcode1]?.indexOf(
               issuecode1,
-            ) -
-              issuecodesByPublicationcode.value[publicationcode2].indexOf(
-                issuecode2,
-              ),
+            ) ||
+              0 -
+                issuecodesByPublicationcode.value[publicationcode2]?.indexOf(
+                  issuecode2,
+                ) ||
+              0,
           )
         );
       },

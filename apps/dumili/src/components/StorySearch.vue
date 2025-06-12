@@ -32,8 +32,7 @@
           class="d-flex align-items-center"
           @click="selectSearchResult(searchResult!)"
         >
-          <b>{{ searchResult.storycode }}</b
-          >&nbsp;{{ searchResult.title }}
+          {{ searchResult.storycode }}&nbsp;{{ searchResult.title }}
         </option>
       </datalist>
     </ul>

@@ -11,7 +11,7 @@ services:
     ports:
       - "8006:8081"
     volumes:
-      - /root/.paddleocr
+      - /root/.paddlex
       - ./paddleocr/server.py:/server.py
     build:
       context: ../../..

@@ -7,17 +7,12 @@ import * as process from "process";
 
 dotenv.config();
 
-const {
-  FTP_HOST,
-  FTP_USER,
-  FTP_PASSWORD,
-  DATABASE_URL_COA,
-}: {
+const { FTP_HOST, FTP_USER, FTP_PASSWORD, DATABASE_URL_COA } = process.env as {
   FTP_HOST: string;
   FTP_USER: string;
   FTP_PASSWORD: string;
   DATABASE_URL_COA: string;
-} = process.env;
+};
 
 const [
   _protocol,
@@ -34,7 +29,7 @@ console.log(
   ).toString(),
 );
 
-const client = new Client();
+const client = new Client(180);
 client.ftp.verbose = true;
 try {
   await client.access({
@@ -43,7 +38,10 @@ try {
     password: FTP_PASSWORD,
   });
   console.log(await client.list());
-  await client.uploadFrom("dump.gz", `dump-${new Date().toISOString()}.gz`);
+  await client.uploadFrom(
+    "dump.gz",
+    `./dumps/dump-${new Date().toISOString()}.gz`,
+  );
 } catch (err) {
   console.log(err);
 }

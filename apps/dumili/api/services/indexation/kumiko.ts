@@ -64,7 +64,7 @@ const runKumikoOnPage = async (
   } else if (page.image.aiKumikoResult && !force) {
     console.info(`Kumiko: page ${page.pageNumber}: already inferred`);
   } else {
-    indexationServices.setKumikoInferredPageStoryKinds(page.id);
+    indexationServices.reportSetKumikoInferredPageStoryKinds(page.id);
     const panelsPerPage = await runKumiko([page.image.url]);
     const panelsOfPage = panelsPerPage[0] || [];
     console.info(
@@ -129,7 +129,7 @@ const runKumikoOnPage = async (
 
     await refreshIndexation(indexationServices);
 
-    indexationServices.setKumikoInferredPageStoryKindsEnd(page.id);
+    indexationServices.reportSetKumikoInferredPageStoryKindsEnd(page.id);
     return true;
   }
   return false;

@@ -42,7 +42,8 @@ onMounted(() => {
   if (!isForm.value) {
     const { enableDragResize } = useStepOptions();
     enableDragResize(rect.value!, {
-      coords: () => ({ x: x.value, y: y.value }),
+      x,
+      y,
     });
   }
 });

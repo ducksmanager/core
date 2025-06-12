@@ -9,7 +9,7 @@ jobs:
     env:
       REMOTE_ROOT: apps/dm
     steps:
-      - name: Send emails
+      - name: Send notifications
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.PRODUCTION_SSH_HOST }}
@@ -19,4 +19,4 @@ jobs:
           envs: REMOTE_ROOT
           script: |
             cd $REMOTE_ROOT/packages/api
-            docker compose exec api-websocket node ./send-notifications.mjs
+            docker compose exec api-websocket node ./scripts/send-notifications.mjs

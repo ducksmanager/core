@@ -7,5 +7,5 @@ websocket.ducksmanager.net {
 }
 
 sentry.ducksmanager.net {
-    reverse_proxy web-sentry:3000
+    reverse_proxy web-sentry:80
 }

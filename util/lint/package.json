@@ -6,17 +6,18 @@
   "type": "module",
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.1",
-    "@eslint/js": "^9.24.0",
-    "eslint": "^9.24.0",
-    "eslint-config-prettier": "^10.1.2",
-    "eslint-plugin-prettier": "^5.2.6",
+    "@eslint/js": "^9.28.0",
+    "eslint": "^9.28.0",
+    "eslint-config-prettier": "^10.1.5",
+    "eslint-plugin-prettier": "^5.4.1",
     "eslint-plugin-simple-import-sort": "^12.1.1",
     "eslint-plugin-unused-imports": "^4.1.4",
     "prettier": "^3.5.3",
     "typescript": "^5.8.3",
-    "typescript-eslint": "^8.30.1"
+    "typescript-eslint": "^8.34.0"
   },
   "scripts": {
+    "lint:precommit": "cd ../.. && pnpm eslint --fix --config ./util/lint/eslint.precommit.config.mjs .",
     "lint": "cd ../.. && ./util/lint/node_modules/.bin/eslint --fix --config ./util/lint/eslint.config.mjs"
   }
 }

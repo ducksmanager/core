@@ -19,7 +19,7 @@
           <b-form-input
             v-else
             :id="optionName"
-            v-model="inputValue"
+            :model-value="inputValue"
             size="sm"
             autocomplete="off"
             :type="type"
@@ -29,7 +29,10 @@
             :range="range"
             :disabled="disabled || false"
             :list="listId === undefined ? undefined : String(listId)"
-            @blur="onBlur"
+            @update:model-value="
+              shouldWaitForBlurToUpdate ? () => {} : onChangeValue($event)
+            "
+            @blur="onChangeValue($event.target.value)"
           />
         </confirm-edit-multiple-values>
       </div>
@@ -77,22 +80,6 @@ const inputValue = defineModel<PossibleInputValueType>();
 const shouldWaitForBlurToUpdate = computed(() =>
   ["text", "font"].includes(optionName),
 );
-
-const onBlur = () => {
-  if (shouldWaitForBlurToUpdate.value) {
-    onChangeValue(inputValue.value!);
-  }
-};
-
-watch(inputValue, (newValue: PossibleInputValueType | undefined) => {
-  if (
-    !shouldWaitForBlurToUpdate.value &&
-    !isMultiple &&
-    newValue !== undefined
-  ) {
-    onChangeValue(newValue);
-  }
-});
 
 const onChangeValue = (optionValue: PossibleInputValueType) => {
   let intValue: number | null = null;

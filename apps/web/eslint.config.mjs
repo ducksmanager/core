@@ -42,10 +42,9 @@ export default [
       parser: parser,
       ecmaVersion: 5,
       sourceType: "script",
-
       parserOptions: {
         parser: "@typescript-eslint/parser",
-        project: "./tsconfig.json",
+        project: false,
         extraFileExtensions: [".vue"],
       },
     },
@@ -53,7 +52,7 @@ export default [
     rules: {
       "@typescript-eslint/no-unused-vars": "off",
       "@typescript-eslint/no-non-null-assertion": "off",
-      "@typescript-eslint/no-unnecessary-type-assertion": "error",
+      "@typescript-eslint/no-unnecessary-type-assertion": "off",
       "arrow-body-style": ["error", "as-needed"],
       "vue/multi-word-component-names": "off",
       "vue/no-dupe-keys": "off",

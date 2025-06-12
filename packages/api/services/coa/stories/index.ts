@@ -56,7 +56,7 @@ export default {
   searchStory: async <WithIssues extends boolean>(
     keywords: string[],
     withIssues: WithIssues,
-  ) => {
+  ): Promise<StorySearchResults<WithIssues>> => {
     const limit = 10;
     const joinedKeywords = keywords.join(" ");
     let results = await prismaCoa.$queryRaw<

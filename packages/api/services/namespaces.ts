@@ -19,4 +19,5 @@ export default {
   PRESENTATION_TEXT: "/presentation-text",
   PUBLIC_COLLECTION: "/public-collection",
   STATS: "/stats",
+  STORY_SEARCH: "/story-search",
 };

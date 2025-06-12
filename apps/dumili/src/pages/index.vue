@@ -61,7 +61,7 @@
       :cancel-title="$t('Annuler')"
       align="center"
       centered
-      @ok.prevent="$refs.form!.$el.reportValidity() && (createIndexation())"
+      @ok.prevent="form!.$el.reportValidity() && (createIndexation())"
     >
       <b-form ref="form" @submit.prevent.stop="createIndexation">
         {{

@@ -23,6 +23,7 @@ import namespaces from "~dm-services/namespaces";
 import { type ClientEvents as PresentationTextEvents } from "~dm-services/presentation-text";
 import { type ClientEvents as PublicCollectionEvents } from "~dm-services/public-collection";
 import { type ClientEvents as StatsEvents } from "~dm-services/stats";
+import { type ClientEvents as StorySearchEvents } from "~dm-services/story-search";
 
 const defaultExport = (options: {
   cacheStorage: AxiosStorage;
@@ -55,10 +56,17 @@ const defaultExport = (options: {
       .diff(now);
   };
 
-  socket.onConnectError = onConnectError;
-  if (onConnected) {
-    socket.onConnected = onConnected;
+  const storySearchSocket = inject("storySearchSocket") as SocketClient;
+
+  for (const eachSocket of [socket, storySearchSocket]) {
+    if (eachSocket) {
+      eachSocket.onConnectError = onConnectError;
+      if (onConnected) {
+        eachSocket.onConnected = onConnected;
+      }
+    }
   }
+
   return {
     socket,
     options,
@@ -122,6 +130,10 @@ const defaultExport = (options: {
       },
     ),
     events: socket.addNamespace<EventsEvents>(namespaces.EVENTS, {}),
+    storySearch: storySearchSocket?.addNamespace<StorySearchEvents>(
+      namespaces.STORY_SEARCH,
+      {},
+    ),
     bookstore: socket.addNamespace<BookstoreEvents>(namespaces.BOOKSTORES),
     adminBookstore: socket.addNamespace<AdminBookstoreEvents>(
       namespaces.BOOKSTORES_ADMIN,

@@ -55,6 +55,8 @@
     "SimpleStory": true,
     "SimpleStoryWithPartInfo": true,
     "SingleCopyState": true,
+    "Slot": true,
+    "Slots": true,
     "StoryDetail": true,
     "StorySearchResults": true,
     "SuggestionList": true,
@@ -154,8 +156,6 @@
     "watch": true,
     "watchEffect": true,
     "watchPostEffect": true,
-    "watchSyncEffect": true,
-    "Slot": true,
-    "Slots": true
+    "watchSyncEffect": true
   }
 }

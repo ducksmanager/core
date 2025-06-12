@@ -103,7 +103,7 @@
                     :dimensions="dimensionsPerIssuecode[issuecode]"
                     :photo-url="photoUrls[issuecode]"
                     :contributors="
-                      contributors.filter(
+                      Array.from(contributors).filter(
                         ({ issuecode: thisIssuecode }) =>
                           thisIssuecode === issuecode,
                       )

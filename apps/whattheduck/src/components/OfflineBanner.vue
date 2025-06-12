@@ -1,24 +1,17 @@
 <template>
   <ion-item class="ion-text-center offline-banner">
-    <ion-label v-if="isOfflineMode === 'offline_no_cache'" color="danger">{{
+    <ion-label color="danger">{{
       $t(
         'La connexion à DucksManager a échoué, vérifiez que votre connexion Internet est active. Vous pourrez consulter votre collection hors-ligne une fois que votre collection sera synchronisée.',
       )
     }}</ion-label>
-    <ion-label v-else color="warning">
-      {{
-        $t(
-          'Vous êtes en mode hors-ligne. Vous pouvez naviguer dans votre collection mais pas la modifier.{br}Certaines fonctionnalités ne sont pas disponibles.',
-        )
-      }}
-    </ion-label>
   </ion-item>
 </template>
 
 <script setup lang="ts">
 import { app } from '~/stores/app';
 
-const { offlineBannerHeight, isOfflineMode } = storeToRefs(app());
+const { offlineBannerHeight } = storeToRefs(app());
 
 onUpdated(() => {
   setTimeout(() => {

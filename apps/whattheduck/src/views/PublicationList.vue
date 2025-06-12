@@ -1,6 +1,6 @@
 <template>
   <List
-    v-if="totalPerPublication && coaIssueCountsByPublicationcode && ownershipPercentages"
+    v-if="totalPerPublicationWithoutDuplicates && coaIssueCountsByPublicationcode && ownershipPercentages"
     :items="sortedItems"
     :get-item-text-fn="getItemTextFn"
     item-type="publicationcode"
@@ -33,7 +33,8 @@ import { getOwnershipPercentages, getOwnershipText } from '~/composables/useOwne
 import { app } from '~/stores/app';
 import { wtdcollection } from '~/stores/wtdcollection';
 
-const { coaIssueCountsByPublicationcode, totalPerPublication, ownedPublications } = storeToRefs(wtdcollection());
+const { coaIssueCountsByPublicationcode, totalPerPublicationWithoutDuplicates, ownedPublications } =
+  storeToRefs(wtdcollection());
 const { fetchPublicationNamesFromCountry } = stores.coa();
 const { publicationNames } = storeToRefs(stores.coa());
 const { countrycode, isCoaView } = storeToRefs(app());
@@ -41,8 +42,8 @@ const { countrycode, isCoaView } = storeToRefs(app());
 const ownershipPercentages = computed(
   () =>
     coaIssueCountsByPublicationcode.value &&
-    totalPerPublication.value &&
-    getOwnershipPercentages(totalPerPublication.value, coaIssueCountsByPublicationcode.value),
+    totalPerPublicationWithoutDuplicates.value &&
+    getOwnershipPercentages(totalPerPublicationWithoutDuplicates.value, coaIssueCountsByPublicationcode.value),
 );
 
 const getItemTextFn = (item: (typeof items)['value'][0]['item']) => item.publicationname || item.publicationcode;

@@ -146,6 +146,7 @@ const publicCollectionUsername = $computed(
 
 const logout = () => {
   Cookies.remove("token");
+  sessionStorage.clear();
   user.value = null;
 };
 </script>

@@ -23,8 +23,8 @@ export const writeCsvMapping = async (data: inducks_issuequotation_raw[]) => {
     header: [
       { id: "publicationcode", title: "publicationcode" },
       { id: "issuenumber", title: "issuenumber" },
-      { id: "estimationmin", title: "estimationmin" },
-      { id: "estimationmax", title: "estimationmax" },
+      { id: "estimationMin", title: "estimationmin" },
+      { id: "estimationMax", title: "estimationmax" },
       { id: "source", title: "source" },
     ],
   });

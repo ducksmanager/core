@@ -3,6 +3,7 @@
   "ui": "tui",
   "tasks": {
     "lint": {},
+    "lint:precommit": {},
     "build": {
       "passThroughEnv": [
         "SENTRY_AUTH_TOKEN"
@@ -72,6 +73,12 @@
       ]
     },
     "dev": {
+      "persistent": true,
+      "dependsOn": [
+        "^dev:blocking-up"
+      ]
+    },
+    "dev:bun": {
       "persistent": true,
       "dependsOn": [
         "^dev:blocking-up"

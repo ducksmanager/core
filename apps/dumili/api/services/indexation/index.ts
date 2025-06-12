@@ -1,17 +1,14 @@
 import "~group-by";
 
 import type { Socket } from "socket.io";
-import { SocketClient } from "socket-call-client";
 import type { NamespaceProxyTarget } from "socket-call-server";
 import {
   type ServerSentStartEndEvents,
   useSocketEvents,
 } from "socket-call-server";
 
-import { type ClientEvents as CoaEvents } from "~dm-services/coa";
-import dmNamespaces from "~dm-services/namespaces";
 import { STORY } from "~dumili-types/storyKinds";
-import { getEntryFromPage, getEntryPages } from "~dumili-utils/entryPages";
+import { getEntryPages } from "~dumili-utils/entryPages";
 import type {
   aiKumikoResult,
   entry,
@@ -27,10 +24,8 @@ import { prisma } from "../../index";
 import { RequiredAuthMiddleware } from "../_auth";
 import namespaces from "../namespaces";
 import { runKumikoOnPages } from "./kumiko";
-import { runOcrOnImages } from "./ocr";
-
-const socket = new SocketClient(process.env.DM_SOCKET_URL!);
-const coaEvents = socket.addNamespace<CoaEvents>(dmNamespaces.COA);
+import { runOcrOnImage } from "./ocr";
+import { getStoriesFromImage, getStoriesFromKeywords } from "./story-search";
 
 const indexationPayloadInclude = {
   user: true,
@@ -50,6 +45,20 @@ const indexationPayloadInclude = {
           aiOcrResult: {
             include: {
               matches: true,
+              stories: {
+                include: {
+                  storySuggestion: true,
+                },
+              },
+            },
+          },
+          aiStorySearchResult: {
+            include: {
+              stories: {
+                include: {
+                  storySuggestion: true,
+                },
+              },
             },
           },
         },
@@ -71,6 +80,7 @@ const indexationPayloadInclude = {
       acceptedStory: {
         include: {
           ocrDetails: true,
+          storySearchDetails: true,
         },
       },
       acceptedStoryKind: { include: { ai: true, storyKindRows: true } },
@@ -79,6 +89,7 @@ const indexationPayloadInclude = {
         include: {
           ai: true,
           ocrDetails: true,
+          storySearchDetails: true,
         },
       },
     },
@@ -92,10 +103,11 @@ export type FullIndexation = Prisma.indexationGetPayload<{
 export type FullEntry = FullIndexation["entries"][number];
 
 export type IndexationServerSentStartEvents = {
-  setKumikoInferredPageStoryKinds: (pageId: number) => void;
-  setInferredEntryStoryKind: (entryId: number) => void;
-  createAiStorySuggestions: (entryId: number) => void;
-  runOcrOnImage: (imageId: number) => void;
+  reportSetKumikoInferredPageStoryKinds: (pageId: number) => void;
+  reportSetInferredEntryStoryKind: (entryId: number) => void;
+  reportCreateAiStorySuggestions: (entryId: number) => void;
+  reportRunOcrOnImage: (imageId: number) => void;
+  reportRunStorySearchOnImage: (imageId: number) => void;
 };
 
 export type IndexationServerSentStartEndEvents =
@@ -110,7 +122,7 @@ export type IndexationSocket = Socket<
   SessionDataWithIndexation
 >;
 
-let isAiRunning = false;
+const isAiRunning: Record<string, boolean> = {};
 export const getFullIndexation = (
   services: IndexationServices,
   indexationId: string,
@@ -126,31 +138,15 @@ export const getFullIndexation = (
         indexation.entries = indexation.entries.sort(
           (a, b) => a.position - b.position,
         );
-        if (runAi && !isAiRunning) {
-          isAiRunning = true;
+        if (runAi && !(indexationId in isAiRunning)) {
+          isAiRunning[indexationId] = true;
           runKumikoOnPages(services, indexation)
-            .then(() =>
-              runOcrOnImages(
-                services,
-                indexation.pages
-                  .filter(
-                    ({ image, id }) =>
-                      !!image &&
-                      getEntryFromPage(indexation, id)?.acceptedStoryKind
-                        ?.storyKindRows.kind === STORY,
-                  )
-                  .map(({ pageNumber, image }) => ({
-                    pageNumber,
-                    image: image!,
-                  })),
-              ),
-            )
             .then(() =>
               setInferredEntriesStoryKinds(services, indexation.entries),
             )
             .then(() => createAiStorySuggestions(services, indexation))
             .finally(() => {
-              isAiRunning = false;
+              delete isAiRunning[indexationId];
               refreshIndexation(services, false, indexationId);
             });
         }
@@ -176,114 +172,159 @@ const createAiStorySuggestions = async (
   indexation: FullIndexation,
 ) => {
   for (const entry of indexation.entries) {
-    if (
-      entry.acceptedStoryKind?.storyKindRows?.kind === STORY &&
-      !entry.storySuggestions.length
-    ) {
-      const firstPageOfEntry = getEntryPages(indexation, entry.id)[0];
-      const ocrResults = firstPageOfEntry.image?.aiOcrResult?.matches;
+    if (entry.acceptedStoryKind?.storyKindRows?.kind === STORY) {
+      const currentlyAcceptedStorycode = entry.acceptedStory?.storycode;
 
-      if (!ocrResults) {
-        console.log(
-          `Entry ${entry.id}: No OCR results found on the first page`,
-        );
+      const firstPageOfEntry = getEntryPages(indexation, entry.id)[0];
+
+      if (!firstPageOfEntry.image) {
         continue;
       }
 
-      services.createAiStorySuggestions(entry.id);
+      services.reportCreateAiStorySuggestions(entry.id);
 
-      const { results: searchResults } = await coaEvents.searchStory(
-        ocrResults.map(({ text }) => text),
-        false,
-      );
-
-      const storyDetailsOutput = await coaEvents.getStoryDetails(
-        searchResults.map(({ storycode }) => storycode),
-      );
-
-      if (!("stories" in storyDetailsOutput)) {
-        return {
-          error: `Error when calling getStoryDetails`,
-        };
-      }
-      const storyDetails = storyDetailsOutput.stories;
-
-      const storyversionDetailsOutput = await coaEvents.getStoryversionsDetails(
-        searchResults.map(
-          ({ storycode }) => storyDetails[storycode].originalstoryversioncode!,
-        ),
-      );
-
-      if (!("storyversions" in storyversionDetailsOutput)) {
-        return {
-          error: `Error when calling getStoryversionsDetails`,
-        };
-      }
-
-      const storyversionDetails = storyversionDetailsOutput.storyversions;
-
-      const storyResults = searchResults.filter(
-        ({ storycode }) =>
-          storyversionDetails[storyDetails[storycode].originalstoryversioncode!]
-            .kind === STORY,
-      );
-
-      const currentlyAcceptedStorycode = entry.acceptedStory?.storycode;
-
-      await prisma.storySuggestionAi.deleteMany({
-        where: {
-          storySuggestion: {
-            entryId: entry.id,
-          },
+      for (const { name, field, storySuggestionRelationship } of [
+        {
+          name: "image-based story search",
+          field: "aiStorySearchResult",
+          storySuggestionRelationship: "storySearchDetails",
         },
-      });
-      const newEntry = await prisma.entry.update({
-        include: {
-          storySuggestions: true,
+        {
+          name: "OCR-based story search",
+          field: "aiOcrResult",
+          storySuggestionRelationship: "ocrDetails",
         },
-        where: {
-          id: entry.id,
-        },
-        data: {
-          storySuggestions: {
-            create: storyResults.map(
-              ({
-                storycode,
-                score,
-              }): Prisma.storySuggestionCreateWithoutEntryInput => ({
-                storycode,
-                ai: {
-                  create: {},
+      ] as const) {
+        const cachedResults = firstPageOfEntry.image[field]?.stories.map(
+          ({ storySuggestion: { storycode } }) => ({
+            type: storySuggestionRelationship,
+            storycode,
+          }),
+        );
+
+        if (cachedResults) {
+          if (cachedResults.length) {
+            console.log(
+              `Entry starting at page ${entry.position}: ${cachedResults.length} ${name} matches found (cached)`,
+            );
+            break;
+          } else {
+            console.log(
+              `Entry starting at page ${entry.position}: No ${name} matches found (cached)`,
+            );
+            continue;
+          }
+        } else {
+          const results =
+            field === "aiStorySearchResult"
+              ? await getStoriesFromImage(
+                  firstPageOfEntry.image,
+                  entry.position === 1,
+                )
+              : await getStoriesFromKeywords(
+                  (
+                    await runOcrOnImage(
+                      services,
+                      entry.position,
+                      firstPageOfEntry.image,
+                    )
+                  ).map(({ text }) => text),
+                );
+          if ("error" in results) {
+            console.error(results.error);
+          } else if (!results.stories.length) {
+            console.info(
+              `Entry starting at page ${entry.position}: No ${name} results found`,
+            );
+
+            const newAiStorySearchResult = await (
+              prisma[field] as unknown as {
+                create: typeof prisma.aiOcrResult.create;
+              }
+            ).create({
+              data: {},
+            });
+
+            await prisma.image.update({
+              where: {
+                id: firstPageOfEntry.image.id,
+              },
+              data: {
+                [`${field}Id`]: newAiStorySearchResult.id,
+              },
+            });
+          } else {
+            console.log(
+              `Entry starting at page ${entry.position}: ${results.stories.length} ${name} matches found`,
+            );
+            await prisma.storySuggestionAi.deleteMany({
+              where: {
+                storySuggestion: {
+                  entryId: entry.id,
                 },
-                ocrDetails: {
-                  create: {
-                    score,
+              },
+            });
+
+            const newEntry = await prisma.entry.update({
+              include: {
+                storySuggestions: true,
+              },
+              where: {
+                id: entry.id,
+              },
+              data: {
+                storySuggestions: {
+                  connectOrCreate: results.stories.map(
+                    ({
+                      type,
+                      storycode,
+                      score,
+                    }): Prisma.storySuggestionCreateOrConnectWithoutEntryInput => ({
+                      create: {
+                        storycode,
+                        ai: {
+                          create: {},
+                        },
+                        [type]: {
+                          create: {
+                            score,
+                          },
+                        },
+                      },
+                      where: {
+                        id: entry.storySuggestions.find(
+                          ({ storycode }) => storycode === storycode,
+                        )?.id,
+                      },
+                    }),
+                  ),
+                },
+              },
+            });
+            const acceptedStorySuggestionId = newEntry.storySuggestions.find(
+              ({ storycode }) => storycode === currentlyAcceptedStorycode,
+            )?.id;
+            // If no story is currently accepted, we can accept the first story suggestion
+            if (acceptedStorySuggestionId) {
+              await prisma.entry.update({
+                where: {
+                  id: entry.id,
+                },
+                data: {
+                  acceptedStory: {
+                    connect: {
+                      id: acceptedStorySuggestionId,
+                    },
                   },
                 },
-              }),
-            ),
-          },
-        },
-      });
-      const acceptedStorySuggestionId = newEntry.storySuggestions.find(
-        ({ storycode }) => storycode === currentlyAcceptedStorycode,
-      )?.id;
-      if (acceptedStorySuggestionId) {
-        await prisma.entry.update({
-          where: {
-            id: entry.id,
-          },
-          data: {
-            acceptedStory: {
-              connect: {
-                id: acceptedStorySuggestionId,
-              },
-            },
-          },
-        });
+              });
+            }
+            break;
+          }
+        }
       }
 
-      services.createAiStorySuggestionsEnd(entry.id);
+      services.reportCreateAiStorySuggestionsEnd(entry.id);
     } else {
       console.log(`Entry ${entry.id}: This entry is not a story`);
     }
@@ -301,15 +342,11 @@ const setInferredEntriesStoryKinds = async (
       continue;
     }
 
-    services.setInferredEntryStoryKind(entry.id);
+    services.reportSetInferredEntryStoryKind(entry.id);
     const { indexation } = services._socket.data;
     const pagesInferredStoryKinds = await prisma.image.findMany({
-      select: {
-        aiKumikoResult: {
-          select: {
-            id: true,
-          },
-        },
+      include: {
+        aiKumikoResult: true,
       },
       where: {
         id: {
@@ -324,59 +361,60 @@ const setInferredEntriesStoryKinds = async (
       console.log(
         `Entry ${entry.id}: No pages with inferred story kinds found`,
       );
-      continue;
-    }
+    } else {
+      const mostInferredStoryKind = Object.entries(
+        (
+          pagesInferredStoryKinds.filter(
+            ({ aiKumikoResult }) => aiKumikoResult !== null,
+          ) as { aiKumikoResult: aiKumikoResult }[]
+        )
+          .map(({ aiKumikoResult: { id, inferredStoryKindRowsStr } }) => ({
+            id,
+            inferredStoryKindRowsStr,
+          }))
+          .groupBy("inferredStoryKindRowsStr", "id[]"),
+      ).sort((a, b) => b[1].length - a[1].length)[0][0];
 
-    const mostInferredStoryKind = Object.entries(
-      (
-        pagesInferredStoryKinds.filter(
-          ({ aiKumikoResult }) => aiKumikoResult !== null,
-        ) as { aiKumikoResult: aiKumikoResult }[]
-      )
-        .map(({ aiKumikoResult: { id, inferredStoryKindRowsStr } }) => ({
-          id,
-          inferredStoryKindRowsStr,
-        }))
-        .groupBy("inferredStoryKindRowsStr", "id[]"),
-    ).sort((a, b) => b[1].length - a[1].length)[0][0];
-
-    const entryIdx = services._socket.data.indexation.entries.findIndex(
-      ({ id }) => id === entry.id,
-    );
-    console.log(
-      `Kumiko: entry #${entryIdx}: inferred story kind and number of rows are ${mostInferredStoryKind}`,
-    );
-
-    await prisma.storyKindSuggestionAi.deleteMany({
-      where: {
-        suggestionId: {
-          in: indexation.entries[entryIdx].storyKindSuggestions.map(
-            ({ id }) => id,
-          ),
-        },
-      },
-    });
-
-    if (mostInferredStoryKind) {
+      const entryIdx = services._socket.data.indexation.entries.findIndex(
+        ({ id }) => id === entry.id,
+      );
       console.log(
-        "Story kind suggestions: ",
-        indexation.entries[entryIdx].storyKindSuggestions,
+        `Kumiko: entry #${entryIdx}: inferred story kind and number of rows are ${mostInferredStoryKind}`,
       );
-      const suggestion = indexation.entries[entryIdx].storyKindSuggestions.find(
-        ({ storyKindRowsStr }) => storyKindRowsStr === mostInferredStoryKind,
-      );
-      if (suggestion) {
-        await prisma.storyKindSuggestionAi.create({
-          data: {
-            suggestionId: suggestion.id,
+
+      await prisma.storyKindSuggestionAi.deleteMany({
+        where: {
+          suggestionId: {
+            in: indexation.entries[entryIdx].storyKindSuggestions.map(
+              ({ id }) => id,
+            ),
           },
-        });
-      } else {
-        console.warn("No suggestion found for ", mostInferredStoryKind);
+        },
+      });
+
+      if (mostInferredStoryKind) {
+        console.log(
+          "Story kind suggestions: ",
+          indexation.entries[entryIdx].storyKindSuggestions,
+        );
+        const suggestion = indexation.entries[
+          entryIdx
+        ].storyKindSuggestions.find(
+          ({ storyKindRowsStr }) => storyKindRowsStr === mostInferredStoryKind,
+        );
+        if (suggestion) {
+          await prisma.storyKindSuggestionAi.create({
+            data: {
+              suggestionId: suggestion.id,
+            },
+          });
+        } else {
+          console.warn("No suggestion found for", mostInferredStoryKind);
+        }
       }
     }
 
-    services.setInferredEntryStoryKindEnd(entry.id);
+    services.reportSetInferredEntryStoryKindEnd(entry.id);
   }
 };
 
@@ -437,7 +475,7 @@ const listenEvents = (services: IndexationServices) => ({
   },
 
   loadIndexation: async () => {
-    services.setKumikoInferredPageStoryKinds(1);
+    services.reportSetKumikoInferredPageStoryKinds(1);
     return { indexation: services._socket.data.indexation };
   },
 

@@ -17,28 +17,29 @@ const generateImage = (parameters: {
         ? process.env.FONT_BASE_URL!
         : `${process.env.FONT_PRODUCT_BASE_URL!}${parameters.font}`,
     )
-    .then(({ data }: { data: string }) => {
-      const sessionHashMatch = data.match(/(?<=font_rend.php\?id=)[a-z\d]+/);
+    .then(({ data, config }) => {
+      const regex = `(?<=md5=")[a-z\\d]+`;
+      const sessionHashMatch = data.match(new RegExp(regex));
       if (sessionHashMatch) {
         sessionHashes[parameters.font] = sessionHashMatch[0];
       } else {
         throw new Error(
-          `No session ID found in URL ${process.env.FONT_BASE_URL!}${
-            parameters.font
-          }`,
+          `No session ID found in URL ${config.url}, regex: ${regex}`,
         );
       }
     })
+
     .catch((response: Error) => Promise.reject(response))
     .then(() =>
       cloudinary.uploader.upload(
-        `${process.env.FONT_IMAGE_GEN_URL!}?${new URLSearchParams({
-          id: sessionHashes[parameters.font],
-          rbe: "fixed",
-          rt: parameters.text,
-          fg: parameters.color,
-          bg: parameters.colorBackground,
-        }).toString()}`,
+        `${process.env.FONT_IMAGE_GEN_URL!}${sessionHashes[parameters.font]}?${new URLSearchParams(
+          {
+            rbe: "fixed",
+            rt: parameters.text,
+            fg: parameters.color,
+            bg: parameters.colorBackground,
+          },
+        ).toString()}`,
         {
           folder: "texts",
           async: false,

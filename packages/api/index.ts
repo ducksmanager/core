@@ -1,17 +1,13 @@
 import { SocketIoInstrumentation } from "@opentelemetry/instrumentation-socket.io";
 import * as Sentry from "@sentry/node";
-import { instrument } from "@socket.io/admin-ui";
-import cluster from "cluster";
 import dotenv from "dotenv";
-import { createServer } from "http";
-import { cpus } from "os";
 import type { Socket } from "socket.io";
-import { Server } from "socket.io";
 import type { NamespaceProxyTarget } from "socket-call-server";
 
 import type { SessionUser } from "~dm-types/SessionUser";
 
-import { getUpdateFileUrl, server as app } from "./services/app";
+import createHttpServer from "./http";
+import { server as app } from "./services/app";
 import { server as auth } from "./services/auth";
 import { server as bookcase } from "./services/bookcase";
 import {
@@ -30,11 +26,7 @@ import { server as globalStatsUser } from "./services/global-stats-user";
 import { server as presentationText } from "./services/presentation-text";
 import { server as publicCollection } from "./services/public-collection";
 import { server as stats } from "./services/stats";
-import {
-  getDbStatus,
-  getPastecSearchStatus,
-  getPastecStatus,
-} from "./services/status";
+import createSocketServer from "./socket";
 
 export type UserServices<OptionalUser = false> = NamespaceProxyTarget<
   Socket<
@@ -45,13 +37,6 @@ export type UserServices<OptionalUser = false> = NamespaceProxyTarget<
   >,
   Record<string, never>
 >;
-
-class ServerWithUser extends Server<
-  Record<string, never>,
-  Record<string, never>,
-  Record<string, never>,
-  { user?: SessionUser }
-> {}
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 (BigInt.prototype as any).toJSON = function () {
@@ -69,101 +54,22 @@ Sentry.init({
   openTelemetryInstrumentations: [new SocketIoInstrumentation()],
 });
 
-const httpServer = createServer(async (req, res) => {
-  let data: { error: string } | object;
-  switch (req.url) {
-    case "/app/updates":
-      data = getUpdateFileUrl();
-      break;
-    case "/status/db":
-      data = await getDbStatus();
-      break;
-    case "/status/pastecsearch":
-      data = await getPastecSearchStatus();
-      break;
-    case "/status/pastec":
-      data = await getPastecStatus();
-      break;
-    default:
-      res.writeHead(404);
-      res.end();
-      return;
-  }
+const io = createSocketServer(3001, createHttpServer());
 
-  res.writeHead("error" in data ? 500 : 200, { "Content-Type": "text/json" });
-  res.write(JSON.stringify(data));
-  res.end();
-});
-
-if (cluster.isPrimary) {
-  for (let i = 0; i < cpus().length; i++) {
-    cluster.fork();
-  }
-
-  cluster.on("exit", (worker) => {
-    console.log(`Worker ${worker.process.pid} died, starting a new one`);
-    cluster.fork();
-  });
-} else {
-  httpServer.listen(3001);
-  console.log("WebSocket open on port 3001");
-
-  const io = new ServerWithUser(httpServer, {
-    cors: {
-      origin: true,
-    },
-  });
-
-  instrument(io, {
-    auth: false,
-  });
-
-  io.use((_socket, next) => {
-    process.on("unhandledRejection", (reason: Error) => {
-      console.error(reason);
-      next(reason);
-    });
-
-    process.on("uncaughtException", (error: Error) => {
-      console.error(error);
-      next(error);
-    });
-    next();
-
-    // app.all(
-    //   /^\/(edgecreator\/(publish|edgesprites)|notifications)|(edges\/(published))|(\/demo\/reset)|(bookstores\/(approve|refuse))|(presentation-text\/(approve|refuse))/,
-    //   [checkUserIsAdmin]
-    // );
-
-    // app.all(/^\/edgecreator\/(.+)/, [
-    //   authenticateToken,
-    //   checkUserIsEdgeCreatorEditor,
-    // ]);
-
-    // app.all(/^\/global-stats\/user\/list$/, [
-    //   authenticateToken,
-    //   checkUserIsEdgeCreatorEditor,
-    // ]);
-
-    // app.all(/^\/collection\/(.+)/, authenticateToken);
-    // app.all("/global-stats/user/collection/rarity", authenticateToken);
-  });
-
-  app(io);
-  auth(io);
-  bookcase(io);
-  bookstores(io);
-  bookstoresAdmin(io);
-  coa(io);
-  collection(io);
-  coverId(io);
-  edgecreator(io);
-  edges(io);
-  events(io);
-  feedback(io);
-  globalStats(io);
-  globalStatsUser(io);
-  presentationText(io);
-  publicCollection(io);
-  stats(io);
-}
+app(io);
+auth(io);
+bookcase(io);
+bookstores(io);
+bookstoresAdmin(io);
+coa(io);
+collection(io);
+coverId(io);
+edgecreator(io);
+edges(io);
+events(io);
+feedback(io);
+globalStats(io);
+globalStatsUser(io);
+presentationText(io);
+publicCollection(io);
+stats(io);

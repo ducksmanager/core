@@ -96,9 +96,9 @@ const signup = async () => {
   } else {
     if ("selector" in response) {
       error = {
-        selector: response.selector!,
+        selector: response.selector,
         error: response.error,
-        message: response.message!,
+        message: response.message,
       };
     } else {
       console.error(response.error);

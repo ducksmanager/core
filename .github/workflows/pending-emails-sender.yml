@@ -19,4 +19,4 @@ jobs:
           envs: REMOTE_ROOT
           script: |
             cd $REMOTE_ROOT/packages/api
-            docker compose exec api-websocket node ./send-pending-emails.mjs
+            docker compose exec api-websocket node ./scripts/send-pending-emails.mjs
