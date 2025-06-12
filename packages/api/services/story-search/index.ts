@@ -1,5 +1,6 @@
 import type { ImageFeatureExtractionPipeline } from "@huggingface/transformers";
 import { pipeline } from "@huggingface/transformers";
+import { existsSync, mkdirSync } from "fs";
 import * as fs from "fs/promises";
 import * as os from "os";
 import path from "path";
@@ -9,7 +10,6 @@ import { useSocketEvents } from "socket-call-server";
 import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa/client";
 
 import namespaces from "../namespaces";
-import { existsSync, mkdirSync } from "fs";
 
 let model: ImageFeatureExtractionPipeline | undefined = undefined;
 
@@ -29,20 +29,25 @@ export const loadModel = async () => {
         "Xenova/vit-base-patch16-224-in21k",
         {
           cache_dir: cacheDir,
-          dtype: "fp32"
-        }
+          dtype: "fp32",
+        },
       );
       console.log("Pipeline initialized successfully");
     } catch (error) {
       console.error("Model loading failed with detailed error:", {
-        error: error instanceof Error ? {
-          message: error.message,
-          stack: error.stack,
-          name: error.name
-        } : error,
-        timestamp: new Date().toISOString()
+        error:
+          error instanceof Error
+            ? {
+                message: error.message,
+                stack: error.stack,
+                name: error.name,
+              }
+            : error,
+        timestamp: new Date().toISOString(),
       });
-      throw new Error(`Model loading failed: ${error instanceof Error ? error.message : String(error)}`);
+      throw new Error(
+        `Model loading failed: ${error instanceof Error ? error.message : String(error)}`,
+      );
     }
   }
   return model;
@@ -195,7 +200,10 @@ const listenEvents = () => {
     findSimilarImages: async (
       imageBufferOrBase64: string | Buffer,
       isCover: boolean,
-    ) => model ? findSimilarImages(imageBufferOrBase64, isCover) : { error: "Model not initialized" } as const,
+    ) =>
+      model
+        ? findSimilarImages(imageBufferOrBase64, isCover)
+        : ({ error: "Model not initialized" } as const),
   };
 };
 

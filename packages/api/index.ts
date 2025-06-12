@@ -1,13 +1,12 @@
 import { SocketIoInstrumentation } from "@opentelemetry/instrumentation-socket.io";
 import * as Sentry from "@sentry/node";
 import dotenv from "dotenv";
-import createHttpServer from "./http";
-import createSocketServer from "./socket";
 import type { Socket } from "socket.io";
 import type { NamespaceProxyTarget } from "socket-call-server";
 
 import type { SessionUser } from "~dm-types/SessionUser";
 
+import createHttpServer from "./http";
 import { server as app } from "./services/app";
 import { server as auth } from "./services/auth";
 import { server as bookcase } from "./services/bookcase";
@@ -27,6 +26,7 @@ import { server as globalStatsUser } from "./services/global-stats-user";
 import { server as presentationText } from "./services/presentation-text";
 import { server as publicCollection } from "./services/public-collection";
 import { server as stats } from "./services/stats";
+import createSocketServer from "./socket";
 
 export type UserServices<OptionalUser = false> = NamespaceProxyTarget<
   Socket<

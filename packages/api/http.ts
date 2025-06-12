@@ -1,14 +1,14 @@
 import { createServer } from "http";
 
 import { getUpdateFileUrl } from "./services/app";
-
 import {
   getDbStatus,
   getPastecSearchStatus,
   getPastecStatus,
 } from "./services/status";
 
-export default () => createServer(async (req, res) => {
+export default () =>
+  createServer(async (req, res) => {
     let data: { error: string } | object;
     switch (req.url) {
       case "/app/updates":
@@ -28,7 +28,7 @@ export default () => createServer(async (req, res) => {
         res.end();
         return;
     }
-  
+
     res.writeHead("error" in data ? 500 : 200, { "Content-Type": "text/json" });
     res.write(JSON.stringify(data));
     res.end();

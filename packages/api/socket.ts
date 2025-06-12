@@ -1,8 +1,8 @@
+import { instrument } from "@socket.io/admin-ui";
 import type { Server as HttpdServer } from "http";
 import { Server } from "socket.io";
 
 import type { SessionUser } from "~dm-types/SessionUser";
-import { instrument } from "@socket.io/admin-ui";
 
 class ServerWithUser extends Server<
   Record<string, never>,

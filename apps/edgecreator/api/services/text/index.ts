@@ -24,20 +24,22 @@ const generateImage = (parameters: {
         sessionHashes[parameters.font] = sessionHashMatch[0];
       } else {
         throw new Error(
-            `No session ID found in URL ${config.url}, regex: ${regex}`,
+          `No session ID found in URL ${config.url}, regex: ${regex}`,
         );
       }
     })
-    
+
     .catch((response: Error) => Promise.reject(response))
     .then(() =>
       cloudinary.uploader.upload(
-        `${process.env.FONT_IMAGE_GEN_URL!}${sessionHashes[parameters.font]}?${new URLSearchParams({
-          rbe: "fixed",
-          rt: parameters.text,
-          fg: parameters.color,
-          bg: parameters.colorBackground,
-        }).toString()}`,
+        `${process.env.FONT_IMAGE_GEN_URL!}${sessionHashes[parameters.font]}?${new URLSearchParams(
+          {
+            rbe: "fixed",
+            rt: parameters.text,
+            fg: parameters.color,
+            bg: parameters.colorBackground,
+          },
+        ).toString()}`,
         {
           folder: "texts",
           async: false,

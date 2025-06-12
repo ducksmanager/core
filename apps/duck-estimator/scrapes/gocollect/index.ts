@@ -111,16 +111,18 @@ export async function scrape() {
             break;
           }
           const issuenumber = issuenumberMatch[0];
-          const issue = await prismaClient.inducks_issue.findFirstOrThrow({
-            select: { issuecode: true },
-            where: {
-              publicationcode,
-              issuenumber,
-            },
-          }).catch((e) => {
-            console.error(`Issue ${issuenumber} not found`);
-            return null;
-          });
+          const issue = await prismaClient.inducks_issue
+            .findFirstOrThrow({
+              select: { issuecode: true },
+              where: {
+                publicationcode,
+                issuenumber,
+              },
+            })
+            .catch((e) => {
+              console.error(`Issue ${issuenumber} not found`);
+              return null;
+            });
           if (!issue) {
             continue;
           }

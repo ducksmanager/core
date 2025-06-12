@@ -1,8 +1,9 @@
 import { SocketIoInstrumentation } from "@opentelemetry/instrumentation-socket.io";
 import * as Sentry from "@sentry/node";
 import dotenv from "dotenv";
-import createSocketServer from "./socket";
+
 import { loadModel, server as storySearch } from "./services/story-search";
+import createSocketServer from "./socket";
 
 dotenv.config({
   path: "./.env",

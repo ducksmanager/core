@@ -57,4 +57,3 @@ exec("sh bump-dump.sh", (error, stdout, stderr) => {
   console.log(`stdout: ${stdout}`);
   process.exit(0);
 });
-

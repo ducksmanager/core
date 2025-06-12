@@ -1,7 +1,7 @@
 import axios from "axios";
 import { SocketClient } from "socket-call-client";
-import type { image } from "~/prisma/client_dumili";
 
+import type { image } from "~/prisma/client_dumili";
 import type { ClientEvents as CoaEvents } from "~dm-services/coa";
 import dmNamespaces from "~dm-services/namespaces";
 import type { ClientEvents as StorySearchEvents } from "~dm-services/story-search";
@@ -11,20 +11,20 @@ const socket = new SocketClient(process.env.DM_SOCKET_URL!);
 const coaEvents = socket.addNamespace<CoaEvents>(dmNamespaces.COA);
 
 const storySearchSocket = new SocketClient(
-  process.env.DM_STORY_SEARCH_SOCKET_URL!
+  process.env.DM_STORY_SEARCH_SOCKET_URL!,
 );
 const storySearchEvents = storySearchSocket.addNamespace<StorySearchEvents>(
-  dmNamespaces.STORY_SEARCH
+  dmNamespaces.STORY_SEARCH,
 );
 
 export const getStoriesFromKeywords = async (keywords: string[]) => {
   const { results: searchResults } = await coaEvents.searchStory(
     keywords,
-    false
+    false,
   );
 
   const storyDetailsOutput = await coaEvents.getStoryDetails(
-    searchResults.map(({ storycode }) => storycode)
+    searchResults.map(({ storycode }) => storycode),
   );
 
   if (!("stories" in storyDetailsOutput)) {
@@ -36,8 +36,8 @@ export const getStoriesFromKeywords = async (keywords: string[]) => {
 
   const storyversionDetailsOutput = await coaEvents.getStoryversionsDetails(
     searchResults.map(
-      ({ storycode }) => storyDetails[storycode].originalstoryversioncode!
-    )
+      ({ storycode }) => storyDetails[storycode].originalstoryversioncode!,
+    ),
   );
 
   if (!("storyversions" in storyversionDetailsOutput)) {
@@ -51,12 +51,12 @@ export const getStoriesFromKeywords = async (keywords: string[]) => {
   const stories = searchResults.filter(
     ({ storycode }) =>
       storyversionDetails[storyDetails[storycode].originalstoryversioncode!]
-        .kind === STORY
+        .kind === STORY,
   );
 
   return {
     stories: stories.map(
-      (result) => ({ ...result, type: "ocrDetails" }) as const
+      (result) => ({ ...result, type: "ocrDetails" }) as const,
     ),
   };
 };
@@ -70,7 +70,7 @@ export const getStoriesFromImage = async (image: image, isCover: boolean) => {
   ).data;
   const response = await storySearchEvents.findSimilarImages(
     imageBuffer,
-    isCover
+    isCover,
   );
   if ("error" in response) {
     return {
@@ -79,12 +79,12 @@ export const getStoriesFromImage = async (image: image, isCover: boolean) => {
   }
 
   const bestMatch = response.results.sort(
-    (a, b) => b.similarity - a.similarity
+    (a, b) => b.similarity - a.similarity,
   )?.[0];
   if (!bestMatch) {
     console.info(`URL ${url}: No match found`);
     return {
-      stories: []
+      stories: [],
     };
   }
 
@@ -94,7 +94,7 @@ export const getStoriesFromImage = async (image: image, isCover: boolean) => {
         storycode: storyversioncode,
         score: similarity,
         type: "storySearchDetails",
-      }) as const
+      }) as const,
   );
 
   return {
