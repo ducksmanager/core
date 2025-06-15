@@ -7,7 +7,7 @@
       { path: '/general', text: $t('Général') },
       { path: '/publications', text: $t('Publications') },
       { path: '/possessions', text: $t('Possessions') },
-      { path: '/conditions', text: $t('Etats des numéros') },
+      { path: '/conditions', text: $t('États des numéros') },
       { path: '/purchases', text: $t('Achats') },
       { path: '/authors', text: $t('Auteurs') },
     ]"
