@@ -18,14 +18,14 @@
 </template>
 <script setup lang="ts">
 const { t: $t } = useI18n();
-const { kind, storycode, showLink } = defineProps<{
+const { kind = undefined, title = undefined, part = undefined, comment = undefined, storycode, showLink } = defineProps<{
   noBadge?: boolean;
   storycode: string;
   kind?: string;
   title?: string;
   part?: number | null;
   comment?: string;
-  showLink?: false | "outer" | "inner";
+  showLink: false | "outer" | "inner";
   dark?: boolean;
 }>();
 

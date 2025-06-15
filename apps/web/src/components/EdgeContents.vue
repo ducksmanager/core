@@ -42,7 +42,7 @@
 const {
   id,
   issuecode,
-  spritePath = null,
+  spritePath,
   invisible = false,
   highlighted = false,
   orientation = "vertical",

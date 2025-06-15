@@ -10,20 +10,20 @@
     }"
   >
     <template v-for="edgeIndex of edgeIndexesToLoad" :key="`edge-${edgeIndex}`">
-      <template v-if="issuecodeDetails[sortedBookcase[edgeIndex].issuecode]">
+      <template v-if="issuecodeDetails[sortedBookcase[edgeIndex].issuecode!]">
         <Edge
           v-if="embedded"
           :id="`edge-${edgeIndex}${embedded}`"
-          :issuecode="sortedBookcase![edgeIndex].issuecode"
+          :issuecode="sortedBookcase![edgeIndex].issuecode!"
           :orientation="orientation"
           existing
           embedded
           @loaded="onEdgeLoaded(edgeIndex)"
-          ><template #edge-prefix="{ edge }"
+          ><template #edge-prefix
             ><slot
               name="edge-prefix"
               :edge="{
-                issueCondition: edge.issueCondition!,
+                issueCondition: sortedBookcase[edgeIndex].issueCondition,
               }" /></template
         ></Edge>
         <Edge
@@ -37,7 +37,7 @@
             currentEdgeHighlighted ===
             sortedBookcaseWithPopularity![edgeIndex].id
           "
-          :issuecode="sortedBookcaseWithPopularity![edgeIndex].issuecode"
+          :issuecode="sortedBookcaseWithPopularity![edgeIndex].issuecode!"
           :creation-date="
             sortedBookcaseWithPopularity![edgeIndex].creationDate?.toString()
           "
@@ -52,11 +52,11 @@
           @open-book="
             $emit('open-book', sortedBookcaseWithPopularity![edgeIndex])
           "
-          ><template #edge-prefix="{ edge }"
+          ><template #edge-prefix
             ><slot
               name="edge-prefix"
               :edge="{
-                issueCondition: edge.issueCondition!,
+                issueCondition: sortedBookcase[edgeIndex].issueCondition,
               }" /></template></Edge></template
     ></template>
   </div>
@@ -72,7 +72,7 @@ import type {
 
 const {
   bookcaseTextures,
-  edgesUsingSprites,
+  edgesUsingSprites = {},
   embedded = false,
   currentEdgeHighlighted = null,
   currentEdgeOpened = null,
@@ -83,7 +83,7 @@ const {
     bookcaseTextures: { bookshelf: string; bookcase: string };
     currentEdgeHighlighted?: number | null;
     currentEdgeOpened?: BookcaseEdgeWithPopularity | null;
-    edgesUsingSprites?: { [edgeId: number]: string };
+    edgesUsingSprites?: { [edgeId: number]: string }; // Never passed!
     orientation?: "vertical" | "horizontal";
   } & (
     | {

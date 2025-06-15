@@ -2,7 +2,6 @@
   <slot
     v-if="$slots['edge-prefix']"
     name="edge-prefix"
-    :edge="{ issueCondition: issueCondition! }"
   />
   <EdgeContents
     v-if="embedded"
@@ -47,7 +46,6 @@ const SPRITES_ROOT = "https://res.cloudinary.com/dl7hskxab/image/sprite/";
 const {
   creationDate = null,
   issuecode,
-  issueCondition,
   spritePath = null,
   popularity = null,
   invisible = false,
@@ -57,7 +55,6 @@ const {
 } = defineProps<{
   id: string;
   issuecode: string;
-  issueCondition?: issue_condition;
   creationDate?: string;
   popularity?: number | null;
   spritePath?: string | null;
@@ -71,7 +68,7 @@ const {
 defineEmits<{ (e: "loaded"): void; (e: "open-book"): void }>();
 
 defineSlots<{
-  "edge-prefix"(props: { edge: { issueCondition: issue_condition } }): never;
+  "edge-prefix"(): never;
 }>();
 
 const CLOUDINARY_ROTATED_URL =

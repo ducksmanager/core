@@ -30,7 +30,7 @@ importers:
     devDependencies:
       '@types/bun':
         specifier: latest
-        version: 1.2.15
+        version: 1.2.16
       '@types/node':
         specifier: ^22.15.28
         version: 22.15.28
@@ -638,7 +638,7 @@ importers:
     devDependencies:
       '@types/bun':
         specifier: latest
-        version: 1.2.15
+        version: 1.2.16
       typescript:
         specifier: ^5.8.3
         version: 5.8.3
@@ -775,6 +775,9 @@ importers:
       eslint-config-prettier:
         specifier: ^10.1.5
         version: 10.1.5(eslint@9.28.0(jiti@2.4.2))
+      eslint-plugin-pinia:
+        specifier: ^0.4.1
+        version: 0.4.1(@typescript-eslint/utils@8.34.0(eslint@9.28.0(jiti@2.4.2))(typescript@5.8.3))(eslint@9.28.0(jiti@2.4.2))
       eslint-plugin-prettier-vue:
         specifier: ^5.0.0
         version: 5.0.0
@@ -1197,7 +1200,7 @@ importers:
     devDependencies:
       '@types/bun':
         specifier: latest
-        version: 1.2.15
+        version: 1.2.16
       typescript:
         specifier: ^5.8.3
         version: 5.8.3
@@ -3267,6 +3270,9 @@ packages:
   '@types/bun@1.2.15':
     resolution: {integrity: sha512-U1ljPdBEphF0nw1MIk0hI7kPg7dFdPyM7EenHsp6W5loNHl7zqy6JQf/RKCgnUn2KDzUpkBwHPnEJEjII594bA==}
 
+  '@types/bun@1.2.16':
+    resolution: {integrity: sha512-1aCZJ/6nSiViw339RsaNhkNoEloLaPzZhxMOYEa7OzRzO41IGg5n/7I43/ZIAW/c+Q6cT12Vf7fOZOoVIzb5BQ==}
+
   '@types/busboy@1.5.4':
     resolution: {integrity: sha512-kG7WrUuAKK0NoyxfQHsVE6j1m01s6kMma64E+OZenQABMQyTJop1DumUWcLwAQ2JzpefU7PDYoRDKl8uZosFjw==}
 
@@ -4202,6 +4208,9 @@ packages:
   bun-types@1.2.15:
     resolution: {integrity: sha512-NarRIaS+iOaQU1JPfyKhZm4AsUOrwUOqRNHY0XxI8GI8jYxiLXLcdjYMG9UKS+fwWasc1uw1htV9AX24dD+p4w==}
 
+  bun-types@1.2.16:
+    resolution: {integrity: sha512-ciXLrHV4PXax9vHvUrkvun9VPVGOVwbbbBF/Ev1cXz12lyEZMoJpIJABOfPcN9gDJRaiKF9MVbSygLg4NXu3/A==}
+
   busboy@1.6.0:
     resolution: {integrity: sha512-8SFQbg/0hQ9xy3UNTB0YEnsNBbWfhf7RtnzpL7TkBiTBRfrQ9Fxcnz7VJsleJpyp6rVLvXiuORqjlHi5q+PYuA==}
     engines: {node: '>=10.16.0'}
@@ -5055,6 +5064,16 @@ packages:
       eslint: ^2 || ^3 || ^4 || ^5 || ^6 || ^7.2.0 || ^8 || ^9
     peerDependenciesMeta:
       '@typescript-eslint/parser':
+        optional: true
+
+  eslint-plugin-pinia@0.4.1:
+    resolution: {integrity: sha512-fiidH7GZ/OMbTHDwHS/tpbdBVBwCk/uEpWCZfzCK7HeiLKUGBBQr3MfHMYx15ACmgRyVu2eGwKELB3s6SMoWbQ==}
+    engines: {node: '>= 18'}
+    peerDependencies:
+      '@typescript-eslint/utils': '>= 7.5 || 8.0.1'
+      eslint: '>=8.0.0'
+    peerDependenciesMeta:
+      '@typescript-eslint/utils':
         optional: true
 
   eslint-plugin-prettier-vue@5.0.0:
@@ -10701,6 +10720,10 @@ snapshots:
     dependencies:
       bun-types: 1.2.15
 
+  '@types/bun@1.2.16':
+    dependencies:
+      bun-types: 1.2.16
+
   '@types/busboy@1.5.4':
     dependencies:
       '@types/node': 22.15.28
@@ -11819,6 +11842,10 @@ snapshots:
     dependencies:
       '@types/node': 22.15.28
 
+  bun-types@1.2.16:
+    dependencies:
+      '@types/node': 22.15.28
+
   busboy@1.6.0:
     dependencies:
       streamsearch: 1.1.0
@@ -12837,6 +12864,12 @@ snapshots:
       - eslint-import-resolver-typescript
       - eslint-import-resolver-webpack
       - supports-color
+
+  eslint-plugin-pinia@0.4.1(@typescript-eslint/utils@8.34.0(eslint@9.28.0(jiti@2.4.2))(typescript@5.8.3))(eslint@9.28.0(jiti@2.4.2)):
+    dependencies:
+      eslint: 9.28.0(jiti@2.4.2)
+    optionalDependencies:
+      '@typescript-eslint/utils': 8.34.0(eslint@9.28.0(jiti@2.4.2))(typescript@5.8.3)
 
   eslint-plugin-prettier-vue@5.0.0:
     dependencies:
