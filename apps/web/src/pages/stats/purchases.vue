@@ -134,7 +134,7 @@ const publicationCodesWithOther = $computed(
   ),
   collectionWithDates = $computed(
     () =>
-      (purchasesById &&
+      (purchasesById.value &&
         issues.value?.map((issue) => ({
           ...issue,
           date: getIssueMonth(issue),
