@@ -159,7 +159,6 @@ const acceptStory = async (storycode: storySuggestion["storycode"] | null) => {
     const result = await indexationSocket.value!.createStorySuggestion({
       entryId: entry.value.id,
       storycode,
-      ai: false,
     });
     storySuggestion = result.createdStorySuggestion;
   }

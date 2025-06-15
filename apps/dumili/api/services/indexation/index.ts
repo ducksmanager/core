@@ -47,7 +47,11 @@ const indexationPayloadInclude = {
               matches: true,
               stories: {
                 include: {
-                  storySuggestion: true,
+                  aiStorySuggestion: {
+                    include: {
+                      storySuggestion: true,
+                    },
+                  },
                 },
               },
             },
@@ -56,7 +60,11 @@ const indexationPayloadInclude = {
             include: {
               stories: {
                 include: {
-                  storySuggestion: true,
+                  aiStorySuggestion: {
+                    include: {
+                      storySuggestion: true,
+                    },
+                  },
                 },
               },
             },
@@ -65,33 +73,14 @@ const indexationPayloadInclude = {
       },
     },
   },
-  acceptedIssueSuggestion: {
-    include: {
-      ai: true,
-    },
-  },
-  issueSuggestions: {
-    include: {
-      ai: true,
-    },
-  },
+  acceptedIssueSuggestion: true,
+  issueSuggestions: true,
   entries: {
     include: {
-      acceptedStory: {
-        include: {
-          ocrDetails: true,
-          storySearchDetails: true,
-        },
-      },
-      acceptedStoryKind: { include: { ai: true, storyKindRows: true } },
-      storyKindSuggestions: { include: { ai: true, storyKindRows: true } },
-      storySuggestions: {
-        include: {
-          ai: true,
-          ocrDetails: true,
-          storySearchDetails: true,
-        },
-      },
+      acceptedStory: true,
+      acceptedStoryKind: { include: { storyKindRows: true } },
+      storyKindSuggestions: { include: { storyKindRows: true } },
+      storySuggestions: true,
     },
   },
 } as const;
@@ -195,12 +184,24 @@ const createAiStorySuggestions = async (
           storySuggestionRelationship: "ocrDetails",
         },
       ] as const) {
-        const cachedResults = firstPageOfEntry.image[field]?.stories.map(
-          ({ storySuggestion: { storycode } }) => ({
-            type: storySuggestionRelationship,
-            storycode,
-          })
-        );
+        const cachedResults = firstPageOfEntry.image[field]?.stories
+          .filter(
+            (
+              story
+            ): story is typeof story & {
+              aiStorySuggestion: { storySuggestion: { storycode: string } };
+            } => !!story.aiStorySuggestion?.storySuggestion
+          )
+          .map(
+            ({
+              aiStorySuggestion: {
+                storySuggestion: { storycode },
+              },
+            }) => ({
+              type: storySuggestionRelationship,
+              storycode,
+            })
+          );
 
         if (cachedResults) {
           if (cachedResults.length) {
@@ -257,11 +258,12 @@ const createAiStorySuggestions = async (
               console.log(
                 `Entry starting at page ${entry.position}: ${results.stories.length} ${name} matches found`
               );
-              await prisma.storySuggestionAi.deleteMany({
+              await prisma.storySuggestion.deleteMany({
                 where: {
-                  storySuggestion: {
-                    entryId: entry.id,
+                  [storySuggestionRelationship]: {
+                    not: null,
                   },
+                  entryId: entry.id,
                 },
               });
 
@@ -294,7 +296,7 @@ const createAiStorySuggestions = async (
                 },
                 where: {
                   id: entry.id,
-                }
+                },
               }))!;
               const acceptedStorySuggestionId = newEntry.storySuggestions.find(
                 ({ storycode }) => storycode === currentlyAcceptedStorycode
@@ -333,7 +335,12 @@ const setInferredEntriesStoryKinds = async (
   force?: boolean
 ) => {
   for (const entry of entries) {
-    if (entry.storyKindSuggestions.some(({ ai }) => ai) && !force) {
+    if (
+      entry.storyKindSuggestions.some(
+        ({ aiKumikoResultId }) => aiKumikoResultId
+      ) &&
+      !force
+    ) {
       console.log(`Entry ${entry.id} already has an inferred story kind`);
       continue;
     }
@@ -378,9 +385,9 @@ const setInferredEntriesStoryKinds = async (
         `Kumiko: entry #${entryIdx}: inferred story kind and number of rows are ${mostInferredStoryKind}`
       );
 
-      await prisma.storyKindSuggestionAi.deleteMany({
+      await prisma.storyKindSuggestion.deleteMany({
         where: {
-          suggestionId: {
+          id: {
             in: indexation.entries[entryIdx].storyKindSuggestions.map(
               ({ id }) => id
             ),
@@ -399,9 +406,10 @@ const setInferredEntriesStoryKinds = async (
           ({ storyKindRowsStr }) => storyKindRowsStr === mostInferredStoryKind
         );
         if (suggestion) {
-          await prisma.storyKindSuggestionAi.create({
+          await prisma.storyKindSuggestion.create({
             data: {
-              suggestionId: suggestion.id,
+              storyKindRowsStr: mostInferredStoryKind,
+              entryId: entry.id,
             },
           });
         } else {
@@ -605,7 +613,7 @@ const listenEvents = (services: IndexationServices) => ({
   },
 
   createStorySuggestion: async (
-    suggestion: Prisma.storySuggestionUncheckedCreateInput & { ai: boolean }
+    suggestion: Prisma.storySuggestionUncheckedCreateInput
   ) =>
     prisma.storySuggestion
       .create({
@@ -647,7 +655,6 @@ const listenEvents = (services: IndexationServices) => ({
             prisma.issueSuggestion.deleteMany({
               where: {
                 indexationId: services._socket.data.indexation.id,
-                ai: null,
                 id: {
                   not: createdIssueSuggestion.id, // Only one user-based issue suggestion
                 },

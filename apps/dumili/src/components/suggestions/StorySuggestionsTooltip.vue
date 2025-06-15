@@ -8,7 +8,8 @@
       },
       {
         eventName: 'reportRunOcrOnImage',
-        checkMatch: (imageId) => imageId === getEntryPages(indexation!, entry.id)[0].image?.id,
+        checkMatch: (imageId) =>
+          imageId === getEntryPages(indexation!, entry.id)[0].image?.id,
       },
     ]"
     :status="entry.storySuggestions.length ? 'success' : 'idle'"
@@ -38,11 +39,27 @@
             ]"
             :empty-text="$t('Aucune histoire trouvée')"
             :items="
-                firstPageStorySearchResult.stories.map(({ storySuggestion: { storycode } }) => ({
-                  storycode,
-                  title: storyDetails[storycode!].title,
-                }))
-              "
+              firstPageStorySearchResult.stories
+                .filter(
+                  (
+                    possibleStory
+                  ): possibleStory is typeof possibleStory & {
+                    aiStorySuggestion: {
+                      storySuggestion: { storycode: string };
+                    };
+                  } => !!possibleStory.aiStorySuggestion?.storySuggestion
+                )
+                .map(
+                  ({
+                    aiStorySuggestion: {
+                      storySuggestion: { storycode },
+                    },
+                  }) => ({
+                    storycode,
+                    title: storyDetails[storycode].title,
+                  })
+                )
+            "
           >
             <template #cell(storycode)="row">
               <a
