@@ -27,17 +27,18 @@
             { key: 'confidence', label: $t('Confiance') },
           ]"
           :items="firstPageOcrResult.matches"
-          ><template #empty>{{ $t("Aucun texte détecté") }}</template>
-        </b-table>
+          :empty-text="$t('Aucun texte détecté')"
+        />
         <h4>{{ $t("Histoires potentielles") }}</h4>
-        <template v-if="entry.storySuggestions.length">
+        <template v-if="firstPageStorySearchResult">
           <b-table
             :fields="[
               { key: 'storycode', label: $t('Code histoire') },
               { key: 'title', label: $t('Titre') },
             ]"
+            :empty-text="$t('Aucune histoire trouvée')"
             :items="
-                entry.storySuggestions.filter(({ai}) => ai).map(({ storycode }) => ({
+                firstPageStorySearchResult.stories.map(({ storySuggestion: { storycode } }) => ({
                   storycode,
                   title: storyDetails[storycode!].title,
                 }))
@@ -82,4 +83,7 @@ const { overlay } = storeToRefs(ui());
 const firstPage = computed(() => getEntryPages(indexation.value!, entry.id)[0]);
 
 const firstPageOcrResult = computed(() => firstPage.value.image?.aiOcrResult);
+const firstPageStorySearchResult = computed(
+  () => firstPage.value.image?.aiStorySearchResult,
+);
 </script>

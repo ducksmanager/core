@@ -342,7 +342,7 @@ class PaddleOCRRequestHandler(BaseHTTPRequestHandler):
     def do_POST(self):
         content_length = int(self.headers['Content-Length'])
         post_data = json.loads(self.rfile.read(content_length))
-        url = post_data['url']
+        url = post_data['url'].replace('upload/', 'upload/c_limit,h_4000,w_4000/')
         language = post_data['language']
 
         os.remove("tmp.jpg") if os.path.exists("tmp.jpg") else None

@@ -55,9 +55,7 @@ export const getStoriesFromKeywords = async (keywords: string[]) => {
   );
 
   return {
-    stories: stories.map(
-      (result) => ({ ...result, type: "ocrDetails" }) as const,
-    ),
+    stories
   };
 };
 
@@ -93,7 +91,6 @@ export const getStoriesFromImage = async (image: image, isCover: boolean) => {
       ({
         storycode: storyversioncode,
         score: similarity,
-        type: "storySearchDetails",
       }) as const,
   );
 
