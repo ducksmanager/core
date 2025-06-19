@@ -107,7 +107,7 @@ const isAiRunning: Record<string, boolean> = {};
 export const getFullIndexation = (
   services: IndexationServices,
   indexationId: string,
-  runAi: boolean = true
+  runAi: boolean = true,
 ) =>
   prisma.indexation
     .findUnique({
@@ -117,13 +117,13 @@ export const getFullIndexation = (
     .then((indexation) => {
       if (indexation) {
         indexation.entries = indexation.entries.sort(
-          (a, b) => a.position - b.position
+          (a, b) => a.position - b.position,
         );
         if (runAi && !(indexationId in isAiRunning)) {
           isAiRunning[indexationId] = true;
           runKumikoOnPages(services, indexation)
             .then(() =>
-              setInferredEntriesStoryKinds(services, indexation.entries)
+              setInferredEntriesStoryKinds(services, indexation.entries),
             )
             .then(() => createAiStorySuggestions(services, indexation))
             .finally(() => {
@@ -138,19 +138,19 @@ export const getFullIndexation = (
 export const refreshIndexation = async (
   services: IndexationServices,
   runAi: boolean = true,
-  id = services._socket.data.indexation.id
+  id = services._socket.data.indexation.id,
 ) => {
   services._socket.data.indexation = (await getFullIndexation(
     services,
     id,
-    runAi
+    runAi,
   ))!;
   services.indexationUpdated(services._socket.data.indexation);
 };
 
 const createAiStorySuggestions = async (
   services: IndexationServices,
-  indexation: FullIndexation
+  indexation: FullIndexation,
 ) => {
   for (const entry of indexation.entries) {
     if (entry.acceptedStoryKind?.storyKindRows?.kind === STORY) {
@@ -179,7 +179,7 @@ const createAiStorySuggestions = async (
         const cachedResults: {
           type: typeof storySuggestionRelationship;
           storycode: string;
-        }[] = [] /*firstPageOfEntry.image[field]?.stories
+        }[] = []; /*firstPageOfEntry.image[field]?.stories
           .filter(
             (
               story
@@ -201,12 +201,12 @@ const createAiStorySuggestions = async (
         if (cachedResults) {
           if (cachedResults.length) {
             console.log(
-              `Entry starting at page ${entry.position}: ${cachedResults.length} ${name} matches found (cached)`
+              `Entry starting at page ${entry.position}: ${cachedResults.length} ${name} matches found (cached)`,
             );
             break;
           } else {
             console.log(
-              `Entry starting at page ${entry.position}: No ${name} matches found (cached)`
+              `Entry starting at page ${entry.position}: No ${name} matches found (cached)`,
             );
             continue;
           }
@@ -215,16 +215,16 @@ const createAiStorySuggestions = async (
             field === "aiStorySearchResult"
               ? await getStoriesFromImage(
                   firstPageOfEntry.image,
-                  entry.position === 1
+                  entry.position === 1,
                 )
               : await getStoriesFromKeywords(
                   (
                     await runOcrOnImage(
                       services,
                       entry.position,
-                      firstPageOfEntry.image
+                      firstPageOfEntry.image,
                     )
-                  ).map(({ text }) => text)
+                  ).map(({ text }) => text),
                 );
           if ("error" in results) {
             console.error(results.error);
@@ -247,11 +247,11 @@ const createAiStorySuggestions = async (
             });
             if (!results.stories.length) {
               console.info(
-                `Entry starting at page ${entry.position}: No ${name} results found`
+                `Entry starting at page ${entry.position}: No ${name} results found`,
               );
             } else {
               console.log(
-                `Entry starting at page ${entry.position}: ${results.stories.length} ${name} matches found`
+                `Entry starting at page ${entry.position}: ${results.stories.length} ${name} matches found`,
               );
               await prisma.storySuggestion.deleteMany({
                 where: {
@@ -294,7 +294,7 @@ const createAiStorySuggestions = async (
                 },
               }))!;
               const acceptedStorySuggestionId = newEntry.storySuggestions.find(
-                ({ storycode }) => storycode === currentlyAcceptedStorycode
+                ({ storycode }) => storycode === currentlyAcceptedStorycode,
               )?.id;
               // If no story is currently accepted, we accept the first story suggestion
               if (acceptedStorySuggestionId) {
@@ -327,12 +327,12 @@ const createAiStorySuggestions = async (
 const setInferredEntriesStoryKinds = async (
   services: IndexationServices,
   entries: FullIndexation["entries"],
-  force?: boolean
+  force?: boolean,
 ) => {
   for (const entry of entries) {
     if (
       entry.storyKindSuggestions.some(
-        ({ aiKumikoResultId }) => aiKumikoResultId
+        ({ aiKumikoResultId }) => aiKumikoResultId,
       ) &&
       !force
     ) {
@@ -357,34 +357,34 @@ const setInferredEntriesStoryKinds = async (
 
     if (!pagesInferredStoryKinds.length) {
       console.log(
-        `Entry ${entry.id}: No pages with inferred story kinds found`
+        `Entry ${entry.id}: No pages with inferred story kinds found`,
       );
     } else {
       const mostInferredStoryKind = Object.entries(
         (
           pagesInferredStoryKinds.filter(
-            ({ aiKumikoResult }) => aiKumikoResult !== null
+            ({ aiKumikoResult }) => aiKumikoResult !== null,
           ) as { aiKumikoResult: aiKumikoResult }[]
         )
           .map(({ aiKumikoResult: { id, inferredStoryKindRowsStr } }) => ({
             id,
             inferredStoryKindRowsStr,
           }))
-          .groupBy("inferredStoryKindRowsStr", "id[]")
+          .groupBy("inferredStoryKindRowsStr", "id[]"),
       ).sort((a, b) => b[1].length - a[1].length)[0][0];
 
       const entryIdx = services._socket.data.indexation.entries.findIndex(
-        ({ id }) => id === entry.id
+        ({ id }) => id === entry.id,
       );
       console.log(
-        `Kumiko: entry #${entryIdx}: inferred story kind and number of rows are ${mostInferredStoryKind}`
+        `Kumiko: entry #${entryIdx}: inferred story kind and number of rows are ${mostInferredStoryKind}`,
       );
 
       if (mostInferredStoryKind) {
         const suggestion = indexation.entries[
           entryIdx
         ].storyKindSuggestions.find(
-          ({ storyKindRowsStr }) => storyKindRowsStr === mostInferredStoryKind
+          ({ storyKindRowsStr }) => storyKindRowsStr === mostInferredStoryKind,
         );
         if (suggestion) {
           await prisma.entry.update({
@@ -392,13 +392,17 @@ const setInferredEntriesStoryKinds = async (
               storyKindSuggestions: {
                 update: {
                   data: {
-                    aiKumikoResultId: pagesInferredStoryKinds.find(({ aiKumikoResult }) => aiKumikoResult?.inferredStoryKindRowsStr === mostInferredStoryKind)?.aiKumikoResultId,
+                    aiKumikoResultId: pagesInferredStoryKinds.find(
+                      ({ aiKumikoResult }) =>
+                        aiKumikoResult?.inferredStoryKindRowsStr ===
+                        mostInferredStoryKind,
+                    )?.aiKumikoResultId,
                   },
                   where: {
                     id: suggestion.id,
                   },
                 },
-              }
+              },
             },
             where: {
               id: entry.id,
@@ -407,7 +411,7 @@ const setInferredEntriesStoryKinds = async (
           if (!entry.acceptedStoryKindSuggestionId) {
             await prisma.entry.update({
               data: {
-                acceptedStoryKindSuggestionId: suggestion.id
+                acceptedStoryKindSuggestionId: suggestion.id,
               },
               where: {
                 id: entry.id,
@@ -438,7 +442,7 @@ const listenEvents = (services: IndexationServices) => ({
   setPageUrl: async (id: number, url: string | null) => {
     if (
       !services._socket.data.indexation.pages.some(
-        ({ id: pageId }) => pageId === id
+        ({ id: pageId }) => pageId === id,
       )
     ) {
       return {
@@ -570,7 +574,7 @@ const listenEvents = (services: IndexationServices) => ({
           where: {
             id: services._socket.data.indexation.id,
           },
-        })
+        }),
       )
       .then(async () => {
         await refreshIndexation(services);
@@ -582,7 +586,7 @@ const listenEvents = (services: IndexationServices) => ({
   acceptIssueSuggestion: async (suggestionId: issueSuggestion["id"] | null) => {
     if (
       !services._socket.data.indexation.issueSuggestions.some(
-        ({ id }) => id === suggestionId
+        ({ id }) => id === suggestionId,
       )
     ) {
       return {
@@ -615,7 +619,7 @@ const listenEvents = (services: IndexationServices) => ({
   },
 
   createStorySuggestion: async (
-    suggestion: Prisma.storySuggestionUncheckedCreateInput
+    suggestion: Prisma.storySuggestionUncheckedCreateInput,
   ) =>
     prisma.storySuggestion
       .create({
@@ -629,7 +633,10 @@ const listenEvents = (services: IndexationServices) => ({
       }),
 
   createIssueSuggestion: async (
-    suggestion: Omit<Prisma.issueSuggestionUncheckedCreateInput, "indexationId">
+    suggestion: Omit<
+      Prisma.issueSuggestionUncheckedCreateInput,
+      "indexationId"
+    >,
   ) =>
     prisma.issueSuggestion
       .create({
@@ -661,18 +668,18 @@ const listenEvents = (services: IndexationServices) => ({
                   not: createdIssueSuggestion.id, // Only one user-based issue suggestion
                 },
               },
-            })
+            }),
           )
           .then(async () => {
             await refreshIndexation(services);
             return createdIssueSuggestion;
-          })
+          }),
       ),
 
   updateIndexation: async (
     indexation: Pick<indexation, "price" | "releaseDate"> & {
       numberOfPages: number;
-    }
+    },
   ) => {
     const { numberOfPages, ...changes } = indexation;
     if (changes.releaseDate && !new Date(changes.releaseDate)) {
@@ -689,8 +696,8 @@ const listenEvents = (services: IndexationServices) => ({
     }
     const currentMaxPageNumber = Math.max(
       ...services._socket.data.indexation.pages.map(
-        ({ pageNumber }) => pageNumber
-      )
+        ({ pageNumber }) => pageNumber,
+      ),
     );
 
     const pagesToCreate = Array.from({
@@ -731,12 +738,12 @@ const listenEvents = (services: IndexationServices) => ({
 
   acceptStorySuggestion: async (
     entryId: entry["id"],
-    storySuggestionId: storySuggestion["id"] | null
+    storySuggestionId: storySuggestion["id"] | null,
   ) => {
     const entry = services._socket.data.indexation.entries.find(
       ({ id, storySuggestions }) =>
         (entryId === id && storySuggestionId === null) ||
-        storySuggestions.some(({ id }) => id === storySuggestionId)
+        storySuggestions.some(({ id }) => id === storySuggestionId),
     );
     if (!entry) {
       return {
@@ -760,11 +767,11 @@ const listenEvents = (services: IndexationServices) => ({
 
   acceptStoryKindSuggestion: async (
     entryId: entry["id"],
-    storyKindSuggestionId: storyKindSuggestion["id"] | null
+    storyKindSuggestionId: storyKindSuggestion["id"] | null,
   ) => {
     const entry = services._socket.data.indexation.entries.find(
       ({ storyKindSuggestions }) =>
-        storyKindSuggestions.some(({ id }) => id === storyKindSuggestionId)
+        storyKindSuggestions.some(({ id }) => id === storyKindSuggestionId),
     );
     if (!entry) {
       return {
@@ -802,10 +809,10 @@ const listenEvents = (services: IndexationServices) => ({
       | "brokenpagedenominator"
       | "title"
       | "position"
-    >
+    >,
   ) => {
     const entry = services._socket.data.indexation.entries.find(
-      ({ id }) => id === entryId
+      ({ id }) => id === entryId,
     );
     if (!entry) {
       return {
@@ -852,7 +859,7 @@ export const { client, server } = useSocketEvents<
         next();
       },
     ],
-  }
+  },
 );
 
 export type ClientEmitEvents = (typeof client)["emitEvents"];

@@ -55,7 +55,7 @@ export const getStoriesFromKeywords = async (keywords: string[]) => {
   );
 
   return {
-    stories
+    stories,
   };
 };
 
