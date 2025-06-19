@@ -14,7 +14,7 @@
     "prod:deploy": "export DATE=$(date +'%Y-%m-%dT%H%M%S'); export BUNDLE_FILE=whattheduck-bundle-$DATE.zip; pnpm bundle-capgo && pnpm prod:deploy-create-release && pnpm prod-deploy-update-latest-bundle",
     "prod-deploy-update-latest-bundle": "echo https://github.com/ducksmanager/core/releases/download/whattheduck-$DATE/$BUNDLE_FILE > latest-whattheduck-bundle.txt && pnpm -F '~ci' prod:transfer-files apps/whattheduck/latest-whattheduck-bundle.txt:@packages/api/latest-whattheduck-bundle.txt",
     "prod:deploy-create-release": "gh release create --title \"WhatTheDuck bundle $DATE\" --generate-notes whattheduck-$DATE $BUNDLE_FILE",
-    "bundle-capgo": "capgo bundle zip --name $BUNDLE_FILE",
+    "bundle-capgo": "capgo bundle zip --package-json package.json --name $BUNDLE_FILE",
     "ionic:build": "pnpm build",
     "preview": "vite preview",
     "story:dev": "histoire dev",
