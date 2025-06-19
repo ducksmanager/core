@@ -11,13 +11,12 @@
     "prod:docker-compose-command": "COMMAND=\"cd $REMOTE_ROOT/$DIR && docker compose pull && docker compose $COMMAND\" pnpm -F '~ci' prod-run-ssh-command",
     "prod:docker-compose-up": "DIR=$DIR COMMAND=\"up -d --force-recreate $SERVICES\" pnpm -F '~ci' prod:docker-compose-command",
     "prod:docker-compose-run": "DIR=${DIR:-apps/$SERVICE} COMMAND=\"run --rm --no-deps $SERVICE\" pnpm -F '~ci' prod:docker-compose-command",
-    "prod:transfer-files": "tsx transfer-files.ts"
+    "prod:transfer-files": "bun transfer-files.ts"
   },
   "dependencies": {
     "ssh2-sftp-client": "^11.0.0"
   },
   "devDependencies": {
-    "@types/ssh2-sftp-client": "^9.0.4",
-    "tsx": "^4.19.4"
+    "@types/ssh2-sftp-client": "^9.0.4"
   }
 }

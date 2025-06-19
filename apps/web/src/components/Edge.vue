@@ -1,8 +1,5 @@
 <template>
-  <slot
-    v-if="$slots['edge-prefix']"
-    name="edge-prefix"
-  />
+  <slot v-if="$slots['edge-prefix']" name="edge-prefix" />
   <EdgeContents
     v-if="embedded"
     :id="id"
@@ -40,8 +37,6 @@
 </template>
 
 <script setup lang="ts">
-import type { issue_condition } from "~prisma-schemas/schemas/dm";
-
 const SPRITES_ROOT = "https://res.cloudinary.com/dl7hskxab/image/sprite/";
 const {
   creationDate = null,

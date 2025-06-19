@@ -28,6 +28,7 @@
             { key: 'confidence', label: $t('Confiance') },
           ]"
           :items="firstPageOcrResult.matches"
+          show-empty
           :empty-text="$t('Aucun texte détecté')"
         />
         <h4>{{ $t("Histoires potentielles") }}</h4>
@@ -37,6 +38,7 @@
               { key: 'storycode', label: $t('Code histoire') },
               { key: 'title', label: $t('Titre') },
             ]"
+            show-empty
             :empty-text="$t('Aucune histoire trouvée')"
             :items="
               firstPageStorySearchResult.stories
