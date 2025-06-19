@@ -157,32 +157,6 @@ export const runKumikoOnPages = async (
   if (!outdatedEntryIds.size) {
     return;
   }
-
-  // Invalidate story kind suggestions for entries whose pages have been updated
-  await prisma.storyKindSuggestionAi.deleteMany({
-    where: {
-      storyKindSuggestion: {
-        entry: {
-          id: {
-            in: [...outdatedEntryIds.values()],
-          },
-        },
-      },
-    },
-  });
-
-  // Invalidate story suggestions for entries whose pages have been updated
-  await prisma.storySuggestionAi.deleteMany({
-    where: {
-      storySuggestion: {
-        entry: {
-          id: {
-            in: [...outdatedEntryIds.values()],
-          },
-        },
-      },
-    },
-  });
 };
 
 export const runKumiko = async (

@@ -35,7 +35,7 @@
           <AiSuggestionIcon v-if="isAiSource(suggestion)" status="success"
         /></b-dropdown-item>
       </b-dropdown-group>
-      <b-dropdown-group>
+      <b-dropdown-group header-class="p-0">
         <b-dropdown-item
           @click="
             current = undefined;

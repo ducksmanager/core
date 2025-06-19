@@ -56,7 +56,9 @@ const pages = computed(() =>
 );
 
 const storyKindAiSuggestion = computed(() =>
-  entry.storyKindSuggestions.find(({ ai }) => !!ai),
+  entry.storyKindSuggestions.find(
+    ({ aiKumikoResultId }) => aiKumikoResultId !== null,
+  ),
 );
 
 const pagesWithInferredKinds = computed(() =>

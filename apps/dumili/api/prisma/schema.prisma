@@ -81,7 +81,7 @@ model storyKindSuggestion {
   id                Int             @id @default(autoincrement())
   storyKindRowsStr  String          @map("kind_number_of_rows") @db.VarChar(4)
   entryId           Int             @map("entry_id")
-  aiKumikoResultId  Int?            @map("kumiko_result_id")
+  aiKumikoResultId  Int?            @map("ai_kumiko_result_id")
   acceptedOnEntries entry[]         @relation("entry_accepted_story_kind_suggested_idTostory_kind_suggestion")
   aiKumikoResult    aiKumikoResult? @relation(fields: [aiKumikoResultId], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "story_kind_suggestion_ai_kumiko_result_id_fk")
   entry             entry           @relation("story_kind_suggestion_entry_idToentry", fields: [entryId], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "story_kind_suggestion_entry_id_fk")
@@ -89,20 +89,22 @@ model storyKindSuggestion {
 
   @@unique([entryId, storyKindRowsStr], map: "story_kind_suggestion_unique")
   @@index([entryId], map: "story_kind_suggestion_entry_id_fk")
-  @@index([aiKumikoResultId], map: "story_kind_suggestion_ai_kumiko_result_id_fk")
   @@index([storyKindRowsStr], map: "story_kind_suggestion_story_kind_rows_id_fk")
+  @@index([aiKumikoResultId], map: "story_kind_suggestion_ai_kumiko_result_id_fk")
   @@map("story_kind_suggestion")
 }
 
 model storySuggestion {
-  id                Int                @id @default(autoincrement())
-  storycode         String             @db.VarChar(19)
-  entryId           Int                @map("entry_id")
-  aiStorySuggestion aiStorySuggestion?
-  acceptedOnEntries entry[]            @relation("entry_accepted_story_suggested_idTostory_suggestion")
-  entry             entry              @relation(fields: [entryId], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "story_suggestion_entry_id_fk")
+  id                  Int                @id @default(autoincrement())
+  storycode           String             @db.VarChar(19)
+  entryId             Int                @map("entry_id")
+  aiStorySuggestionId Int?               @map("ai_story_suggestion_id")
+  acceptedOnEntries   entry[]            @relation("entry_accepted_story_suggested_idTostory_suggestion")
+  aiStorySuggestion   aiStorySuggestion? @relation(fields: [aiStorySuggestionId], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "story_suggestion_ai_story_suggestion_id_fk")
+  entry               entry              @relation(fields: [entryId], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "story_suggestion_entry_id_fk")
 
   @@unique([entryId, storycode], map: "story_suggestion_entry_id_storycode_uindex")
+  @@index([aiStorySuggestionId], map: "story_suggestion_ai_story_suggestion_id_fk")
   @@map("story_suggestion")
 }
 
@@ -205,10 +207,9 @@ model aiStorySuggestion {
   id                         Int                         @id @default(autoincrement())
   ocrPossibleStoryId         Int?                        @unique(map: "ai_ocr_possible_story_id_unique") @map("ocr_possible_story_id")
   storySearchPossibleStoryId Int?                        @unique(map: "ai_story_search_possible_story_id_unique") @map("story_search_possible_story_id")
-  storySuggestionId          Int?                        @unique(map: "ai_story_suggestion_ai_possible_story_id_unique") @map("story_suggestion_id")
   aiOcrPossibleStory         aiOcrPossibleStory?         @relation(fields: [ocrPossibleStoryId], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "ai_story_suggestion_ai_ocr_possible_story_id_fk")
   aiStorySearchPossibleStory aiStorySearchPossibleStory? @relation(fields: [storySearchPossibleStoryId], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "ai_story_suggestion_ai_story_search_possible_story_id_fk")
-  storySuggestion            storySuggestion?            @relation(fields: [storySuggestionId], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "ai_story_suggestion_story_suggestion_id_fk")
+  storySuggestions           storySuggestion[]
 
   @@map("ai_story_suggestion")
 }

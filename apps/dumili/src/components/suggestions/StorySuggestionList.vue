@@ -3,7 +3,7 @@
     v-model="entry.acceptedStory"
     class="position-absolute top-0 d-flex flex-column align-items-center w-100"
     :suggestions="entry.storySuggestions"
-    :is-ai-source="(suggestion) => suggestion.ocrDetails !== null"
+    :is-ai-source="({ aiStorySuggestionId }) => aiStorySuggestionId !== null"
     :show-customize-form="showEntrySelect"
     :extra-menu-class="['w-150', 'start-m50']"
     @toggle-customize-form="showEntrySelect = $event"

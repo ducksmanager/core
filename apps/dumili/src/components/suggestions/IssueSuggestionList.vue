@@ -3,7 +3,10 @@
     v-model="indexation.acceptedIssueSuggestion"
     class="position-static"
     :suggestions="indexation.issueSuggestions"
-    :is-ai-source="(suggestion) => suggestion.ai !== null"
+    :is-ai-source="
+      ({ aiStorySearchPossibleStoryId }) =>
+        aiStorySearchPossibleStoryId !== null
+    "
     :show-customize-form="showIssueSelect"
     @toggle-customize-form="showIssueSelect = $event"
   >

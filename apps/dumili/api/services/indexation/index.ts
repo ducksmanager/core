@@ -47,11 +47,7 @@ const indexationPayloadInclude = {
               matches: true,
               stories: {
                 include: {
-                  aiStorySuggestion: {
-                    include: {
-                      storySuggestion: true,
-                    },
-                  },
+                  aiStorySuggestion: true,
                 },
               },
             },
@@ -60,11 +56,7 @@ const indexationPayloadInclude = {
             include: {
               stories: {
                 include: {
-                  aiStorySuggestion: {
-                    include: {
-                      storySuggestion: true,
-                    },
-                  },
+                  aiStorySuggestion: true,
                 },
               },
             },
@@ -80,7 +72,7 @@ const indexationPayloadInclude = {
       acceptedStory: true,
       acceptedStoryKind: { include: { storyKindRows: true } },
       storyKindSuggestions: { include: { storyKindRows: true } },
-      storySuggestions: true,
+      storySuggestions: { include: { aiStorySuggestion: true } },
     },
   },
 } as const;
@@ -184,13 +176,16 @@ const createAiStorySuggestions = async (
           storySuggestionRelationship: "ocrDetails",
         },
       ] as const) {
-        const cachedResults = firstPageOfEntry.image[field]?.stories
+        const cachedResults: {
+          type: typeof storySuggestionRelationship;
+          storycode: string;
+        }[] = [] /*firstPageOfEntry.image[field]?.stories
           .filter(
             (
               story
             ): story is typeof story & {
-              aiStorySuggestion: { storySuggestion: { storycode: string } };
-            } => !!story.aiStorySuggestion?.storySuggestion
+              aiStorySuggestion: { storycode: string };
+            } => !!story.aiStorySuggestion
           )
           .map(
             ({
@@ -201,7 +196,7 @@ const createAiStorySuggestions = async (
               type: storySuggestionRelationship,
               storycode,
             })
-          );
+          );*/
 
         if (cachedResults) {
           if (cachedResults.length) {
@@ -385,33 +380,40 @@ const setInferredEntriesStoryKinds = async (
         `Kumiko: entry #${entryIdx}: inferred story kind and number of rows are ${mostInferredStoryKind}`
       );
 
-      await prisma.storyKindSuggestion.deleteMany({
-        where: {
-          id: {
-            in: indexation.entries[entryIdx].storyKindSuggestions.map(
-              ({ id }) => id
-            ),
-          },
-        },
-      });
-
       if (mostInferredStoryKind) {
-        console.log(
-          "Story kind suggestions: ",
-          indexation.entries[entryIdx].storyKindSuggestions
-        );
         const suggestion = indexation.entries[
           entryIdx
         ].storyKindSuggestions.find(
           ({ storyKindRowsStr }) => storyKindRowsStr === mostInferredStoryKind
         );
         if (suggestion) {
-          await prisma.storyKindSuggestion.create({
+          await prisma.entry.update({
             data: {
-              storyKindRowsStr: mostInferredStoryKind,
-              entryId: entry.id,
+              storyKindSuggestions: {
+                update: {
+                  data: {
+                    aiKumikoResultId: pagesInferredStoryKinds.find(({ aiKumikoResult }) => aiKumikoResult?.inferredStoryKindRowsStr === mostInferredStoryKind)?.aiKumikoResultId,
+                  },
+                  where: {
+                    id: suggestion.id,
+                  },
+                },
+              }
+            },
+            where: {
+              id: entry.id,
             },
           });
+          if (!entry.acceptedStoryKindSuggestionId) {
+            await prisma.entry.update({
+              data: {
+                acceptedStoryKindSuggestionId: suggestion.id
+              },
+              where: {
+                id: entry.id,
+              },
+            });
+          }
         } else {
           console.warn("No suggestion found for", mostInferredStoryKind);
         }
