@@ -22,10 +22,10 @@
     "lint": "turbo lint --log-order=stream -F '!~duckguessr*'  -- --cache",
     "lint:precommit": "turbo lint:precommit -- --cache",
     "lint-no-cache": "turbo lint --log-order=stream -F '!~duckguessr*' -- --fix",
-    "dev:dumili": "turbo dev -F '~dumili-api...' -F '~dumili' -F '~web'",
-    "dev:edgecreator": "turbo dev -F '~edgecreator-api...' -F '~edgecreator' -F '~web' -F '~edges'",
+    "dev:dumili": "turbo dev dev:bun -F '~dumili-api...' -F '~dumili' -F '~web'",
+    "dev:edgecreator": "turbo dev dev:bun -F '~edgecreator-api...' -F '~edgecreator' -F '~web' -F '~edges'",
     "dev:web": "turbo dev dev:bun -F '~web...'",
-    "dev:whattheduck": "turbo dev -F '~whattheduck' -F '~api' -F '~web'",
+    "dev:whattheduck": "turbo dev dev:bun -F '~whattheduck...'",
     "dev:whattheduck:android": "turbo dev:android -F '~whattheduck'",
     "dev:whattheduck:offline": "pnpm -F '~whattheduck' dev"
   }

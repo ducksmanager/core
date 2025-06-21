@@ -5,6 +5,7 @@
   "scripts": {
     "build": "bun build --target node index.ts --outfile bundle.mjs",
     "dev": "tsc --noEmit --watch",
+    "dev:bun": "bun --inspect run index.ts",
     "lint": "eslint --fix .",
     "prod:run:sprite-names-updater": "DIR=apps/edgecreator/api SERVICE=sprite-names-updater pnpm -F '~ci' prod:docker-compose-run",
     "prod:deploy": "SERVICES=api-websocket DIR=apps/edgecreator/api pnpm -F '~ci' prod:docker-compose-up",
