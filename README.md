@@ -89,6 +89,7 @@ flowchart LR
 
 ### Prerequisites
 
+- [PNPM](https://pnpm.io/)
 - [Node.js](https://nodejs.org/en/) 22
 - [Docker](https://www.docker.com/)
 - Some Unix or WSL2 environment
