@@ -1,0 +1,46 @@
+{
+  "compilerOptions": {
+    "allowJs": true,
+    "baseUrl": ".",
+    "esModuleInterop": true,
+    "experimentalDecorators": true,
+    "lib": [
+      "ESNext",
+      "ESNext.AsyncIterable",
+      "DOM"
+    ],
+    "module": "commonjs",
+    "moduleResolution": "Node",
+    "noEmit": true,
+    "outDir": "dist",
+    "paths": {
+      "~/*": [
+        "./*"
+      ],
+      "@/*": [
+        "./*"
+      ]
+    },
+    "sourceMap": true,
+    "strict": true,
+    "target": "ES2018",
+    "types": [
+      "@nuxt/types",
+      "@nuxtjs/axios",
+      "@types/node",
+      "codeceptjs",
+      "unplugin-vue2-script-setup/types"
+    ]
+  },
+  "ts-node": {
+    "files": true
+  },
+  "exclude": [
+    "node_modules",
+    ".nuxt",
+    "dist"
+  ],
+  "vueCompilerOptions": {
+    "experimentalCompatMode": 2
+  }
+}

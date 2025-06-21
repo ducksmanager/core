@@ -1,0 +1,55 @@
+version: '3.4'
+services:
+  web:
+    container_name: duckguessr
+    image: ghcr.io/bperel/duckguessr-web:latest
+    restart: always
+    networks:
+      public-network:
+        aliases:
+          - duckguessr
+      duckguessr-network:
+      dm-server_db-network:
+      ducksmanager_dm-network:
+  socketio:
+    container_name: duckguessr-socketio
+    image: ghcr.io/bperel/duckguessr-socketio:latest
+    restart: always
+    volumes:
+      - dm_sessions:/tmp/sessions
+    networks:
+      public-network:
+        aliases:
+          - duckguessr-socketio
+      duckguessr-network:
+        aliases:
+          - duckguessr-socketio
+      dm-server_db-network:
+  db:
+    restart: always
+    image: mariadb:10.7
+    ports:
+      - "33061:3306"
+    volumes:
+      - db:/var/lib/mysql
+    environment:
+      MYSQL_DATABASE: duckguessr
+      MYSQL_ROOT_PASSWORD: $MYSQL_ROOT_PASSWORD
+    networks:
+      duckguessr-network:
+        aliases:
+          - duckguessr-db
+
+networks:
+  duckguessr-network:
+  public-network:
+    external: true
+  ducksmanager_dm-network:
+    external: true
+  dm-server_db-network:
+    external: true
+
+volumes:
+  db:
+  dm_sessions:
+    external: true
