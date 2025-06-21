@@ -3,6 +3,7 @@ services:
     init: true
     build:
       context: .
+      dockerfile: Dockerfile-dev
     env_file:
       - ../../packages/api/.env
     command: "run index.ts"
