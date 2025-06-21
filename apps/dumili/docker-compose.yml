@@ -1,0 +1,22 @@
+services:
+  app:
+    container_name: dumili-app
+    image: ghcr.io/bperel/dumili-app
+    restart: always
+    networks:
+      - public-network
+      - dumili-network
+
+  sentry-relay:
+    image: getsentry/relay
+    restart: always
+    container_name: sentry-dumili
+    volumes:
+      - ./config/sentry-relay:/work/.relay
+    networks:
+      - public-network
+
+networks:
+  dumili-network:
+  public-network:
+    external: true

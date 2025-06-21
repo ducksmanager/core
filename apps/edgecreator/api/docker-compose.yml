@@ -1,0 +1,47 @@
+name: edgecreator-api
+services:
+  api:
+    container_name: edgecreator-api
+    image: ghcr.io/bperel/edgecreator-api
+    restart: always
+    env_file:
+      - .env
+    volumes:
+      - "${EDGES_PATH}:/home/edges"
+    networks:
+      public-network:
+        aliases:
+          - edgecreator-api
+      dm-db-network:
+
+  api-websocket:
+    container_name: edgecreator-api-websocket
+    image: ghcr.io/bperel/edgecreator-api:websocket
+    restart: always
+    env_file:
+      - .env
+    volumes:
+      - "${EDGES_PATH_HOST}:${EDGES_PATH}"
+    networks:
+      public-network:
+        aliases:
+          - edgecreator-api-websocket
+      dm-api-network:
+      dm-db-network:
+
+  sprite-names-updater:
+    container_name: sprite-names-updater
+    image: mariadb:11.7
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+    command: mariadb -uroot -p${MYSQL_ROOT_PASSWORD} -h db dm -e "CALL generate_sprite_names"
+    networks:
+      - dm-db-network
+
+networks:
+  public-network:
+    external: true
+  dm-db-network:
+    external: true
+  dm-api-network:
+    external: true

@@ -1,0 +1,16 @@
+services:
+  stats-updater:
+    init: true
+    image: ghcr.io/bperel/stats-updater
+    env_file:
+      - .env
+    environment:
+      - DATABASE_URL_DM_STATS=${DATABASE_URL_DM_STATS}_new
+    networks:
+      - dm-db-network
+      - dm-api-network
+networks:
+  dm-api-network:
+    external: true
+  dm-db-network:
+    external: true

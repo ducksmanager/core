@@ -1,0 +1,22 @@
+name: pending-emails-sender
+
+on:
+  workflow_dispatch:
+jobs:
+  send-emails:
+    runs-on: ubuntu-latest
+    environment: production
+    env:
+      REMOTE_ROOT: apps/dm
+    steps:
+      - name: Send emails
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.PRODUCTION_SSH_HOST }}
+          username: ${{ secrets.PRODUCTION_SSH_USER }}
+          key: ${{ secrets.PRODUCTION_SSH_KEY }}
+          command_timeout: 2m
+          envs: REMOTE_ROOT
+          script: |
+            cd $REMOTE_ROOT/packages/api
+            docker compose exec api-websocket node ./scripts/send-pending-emails.mjs

@@ -1,0 +1,18 @@
+services:
+  coa-updater:
+    init: true
+    image: ghcr.io/bperel/coa-updater
+    env_file:
+      - ../../packages/api/.env
+    environment:
+      MYSQL_HOST: db
+      MYSQL_DATABASE: coa
+      MYSQL_DATABASE_NEW: coa_new
+    networks:
+      - dm-db-network
+      - dm-api-network
+networks:
+  dm-api-network:
+    external: true
+  dm-db-network:
+    external: true

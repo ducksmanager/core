@@ -1,0 +1,3 @@
+edges.ducksmanager.net {
+    reverse_proxy edges
+}

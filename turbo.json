@@ -1,0 +1,88 @@
+{
+  "$schema": "https://turborepo.org/schema.json",
+  "ui": "tui",
+  "tasks": {
+    "lint": {},
+    "lint:precommit": {},
+    "build": {
+      "passThroughEnv": [
+        "SENTRY_AUTH_TOKEN"
+      ],
+      "inputs": [
+        "$TURBO_DEFAULT$",
+        "!api"
+      ],
+      "dependsOn": [
+        "^build"
+      ],
+      "outputs": [
+        "dist/**"
+      ]
+    },
+    "prod:build-docker": {
+      "passThroughEnv": [
+        "REPO_NAME"
+      ],
+      "dependsOn": [
+        "build"
+      ]
+    },
+    "prod:deploy": {
+      "passThroughEnv": [
+        "REMOTE_ROOT",
+        "PRODUCTION_SSH_HOST",
+        "PRODUCTION_SSH_USER",
+        "PRODUCTION_SSH_KEY",
+        "GH_TOKEN"
+      ]
+    },
+    "prod:transfer-files-pre": {
+      "dependsOn": [
+        "^prod:transfer-files-pre"
+      ],
+      "passThroughEnv": [
+        "REMOTE_ROOT",
+        "PRODUCTION_SSH_HOST",
+        "PRODUCTION_SSH_USER",
+        "PRODUCTION_SSH_KEY"
+      ]
+    },
+    "prod:transfer-files-post": {
+      "dependsOn": [
+        "^prod:transfer-files-post"
+      ],
+      "passThroughEnv": [
+        "REMOTE_ROOT",
+        "PRODUCTION_SSH_HOST",
+        "PRODUCTION_SSH_USER",
+        "PRODUCTION_SSH_KEY"
+      ]
+    },
+    "dev:android": {
+      "persistent": true
+    },
+    "dev:setup": {},
+    "dev:blocking": {
+      "dependsOn": [
+        "dev:setup"
+      ]
+    },
+    "dev:blocking-up": {
+      "dependsOn": [
+        "dev:setup"
+      ]
+    },
+    "dev": {
+      "persistent": true,
+      "dependsOn": [
+        "^dev:blocking-up"
+      ]
+    },
+    "dev:bun": {
+      "persistent": true,
+      "dependsOn": [
+        "^dev:blocking-up"
+      ]
+    }
+  }
+}

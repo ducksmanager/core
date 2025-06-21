@@ -1,0 +1,74 @@
+name: "DucksManager daily"
+
+on:
+  schedule:
+    - cron: "0 1 * * *"
+  workflow_dispatch:
+jobs:
+  ducksmanager-daily:
+    runs-on: ubuntu-latest
+    environment: production
+    env:
+      REMOTE_ROOT: apps/dm
+      PRODUCTION_SSH_HOST: ${{ secrets.PRODUCTION_SSH_HOST }}
+      PRODUCTION_SSH_USER: ${{ secrets.PRODUCTION_SSH_USER }}
+      PRODUCTION_SSH_KEY: ${{ secrets.PRODUCTION_SSH_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9.8.0
+
+      - name: Use Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: "pnpm"
+
+      - name: Install dependencies
+        run: |
+          pnpm -r i
+
+      - name: Run coa-updater
+        timeout-minutes: 40
+        run: |
+          pnpm -r -F '~coa-updater' prod:docker-compose-run
+
+      - name: Run stats-updater
+        timeout-minutes: 90
+        continue-on-error: true
+        run: |
+          pnpm -r -F '~stats-updater' prod:docker-compose-run
+
+      - name: Run cover-updater
+        timeout-minutes: 20
+        continue-on-error: true
+        run: |
+          pnpm -r -F '~cover-updater' prod:docker-compose-run
+
+      - name: Run duck-estimator
+        timeout-minutes: 90
+        continue-on-error: true
+        run: |
+          pnpm -r -F '~duck-estimator' prod:docker-compose-run
+
+      - name: Run sprite-names-updater
+        timeout-minutes: 5
+        continue-on-error: true
+        run: |
+          pnpm -r -F '~edgecreator-api' prod:run:sprite-names-updater
+
+      - name: Run subscription-handler
+        timeout-minutes: 5
+        continue-on-error: true
+        run: |
+          pnpm -r -F '~api' prod:docker-compose-run-create-issues-from-subscriptions
+
+      - name: Run backup
+        timeout-minutes: 10
+        run: |
+          pnpm -r -F '~backup' prod:docker-compose-run

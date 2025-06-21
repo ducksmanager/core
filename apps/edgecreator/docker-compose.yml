@@ -1,0 +1,33 @@
+services:
+  app:
+    container_name: edgecreator-app
+    image: ghcr.io/bperel/edgecreator-app
+    restart: always
+    networks:
+      public-network:
+        aliases:
+          - edgecreator-app
+
+  app-websocket:
+    container_name: edgecreator-app-websocket
+    image: ghcr.io/bperel/edgecreator-app:websocket
+    restart: always
+    networks:
+      public-network:
+        aliases:
+          - edgecreator-app-websocket
+
+  sentry-relay:
+    image: getsentry/relay
+    restart: always
+    container_name: sentry-edgecreator
+    volumes:
+      - ./config/sentry-relay:/work/.relay
+    networks:
+      public-network:
+        aliases:
+          - edgecreator-sentry-relay
+
+networks:
+  public-network:
+    external: true

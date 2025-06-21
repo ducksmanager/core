@@ -1,0 +1,50 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "module": "es2022",
+    "target": "es2022",
+    "lib": [
+      "ES2022"
+    ],
+    "noErrorTruncation": true,
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "noUnusedLocals": true,
+    "strictNullChecks": true,
+    "allowJs": true,
+    "forceConsistentCasingInFileNames": true,
+    "outDir": "./dist",
+    "preserveWatchOutput": true,
+    "paths": {
+      "~/*": [
+        "*"
+      ],
+      "~services/*": [
+        "services/*"
+      ],
+      "~dm-types/*": [
+        "../dm-types/*"
+      ],
+      "~emails/*": [
+        "emails/*"
+      ],
+      "~prisma-schemas/*": [
+        "../prisma-schemas/*"
+      ],
+      "~translations/*": [
+        "translations/*"
+      ]
+    },
+    "types": [
+      "./.eslint.d.ts"
+    ]
+  },
+  "exclude": [
+    ".turbo",
+    "dist",
+    "node_modules",
+  ]
+}

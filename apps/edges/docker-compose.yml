@@ -1,0 +1,16 @@
+services:
+  edges:
+    image: "ghcr.io/bperel/dm-edges"
+    container_name: edges
+    restart: always
+    env_file:
+      - .env
+    working_dir: /usr/share/nginx/html
+    volumes:
+      - "${EDGES_PATH}:/usr/share/nginx/html/edges"
+    networks:
+      - public-network
+
+networks:
+  public-network:
+    external: true

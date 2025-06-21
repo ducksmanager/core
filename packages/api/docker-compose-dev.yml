@@ -1,0 +1,19 @@
+services:
+  pastec:
+    container_name: pastec
+    image: "bperel/pastec-ubuntu-1704-timestamps"
+    ports:
+      - "4212:4212"
+    command: "./pastec -p 4212 -i /pastec-index-last.dat /pastec/data/visualWordsORB.dat"
+    volumes:
+      - ./pastec-index-last.dat:/pastec-index-last.dat:ro
+
+  mailcatcher:
+    container_name: mailcatcher
+    image: stpaquet/alpinemailcatcher
+    ports:
+      - "1025:1025"
+      - "1080:1080"
+
+volumes:
+  node_cache:

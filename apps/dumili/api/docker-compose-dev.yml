@@ -1,0 +1,31 @@
+services:
+  kumiko:
+    restart: always
+    ports:
+      - "8005:8080"
+    build:
+      context: ../../..
+      dockerfile: apps/dumili/api/kumiko/Dockerfile
+  paddleocr:
+    restart: always
+    ports:
+      - "8006:8081"
+    volumes:
+      - /root/.paddlex
+      - ./paddleocr/server.py:/server.py
+    build:
+      context: ../../..
+      dockerfile: apps/dumili/api/paddleocr/Dockerfile
+  db:
+    container_name: dumili-db
+    restart: always
+    image: mariadb:11.7
+    env_file:
+      - .env
+    ports:
+      - "64097:3306"
+    volumes:
+      - /var/lib/mysql
+    environment:
+      MYSQL_DATABASE: dumili
+      MARIADB_ROOT_PASSWORD: $MYSQL_ROOT_PASSWORD

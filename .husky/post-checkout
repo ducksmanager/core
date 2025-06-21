@@ -1,0 +1,16 @@
+#!/usr/bin/env sh
+
+# Load nvm if it exists
+if [ -f "$HOME/.nvm/nvm.sh" ]; then
+    . "$HOME/.nvm/nvm.sh"
+    echo "📦 Using correct Node version..."
+    nvm use
+else
+    echo "⚠️  nvm not found, skipping nvm use"
+fi
+
+# Run pnpm install
+echo "📦 Installing dependencies..."
+pnpm i -r
+
+echo "✅ Post-checkout hook completed"

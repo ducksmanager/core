@@ -1,0 +1,57 @@
+{
+  "compilerOptions": {
+    "noErrorTruncation": true,
+    "baseUrl": ".",
+    "module": "ES6",
+    "target": "esnext",
+    "lib": [
+      "ESNext"
+    ],
+    "strict": true,
+    "jsx": "preserve",
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "noUnusedLocals": true,
+    "strictNullChecks": true,
+    "allowJs": true,
+    "forceConsistentCasingInFileNames": true,
+    "outDir": "./dist",
+    "preserveWatchOutput": true,
+    "paths": {
+      "~/*": [
+        "*"
+      ],
+      "~dm-types/*": [
+        "../../../packages/types/*"
+      ],
+      "~dumili-services/*": [
+        "./services/*"
+      ],
+      "~dumili-types/*": [
+        "../types/*"
+      ],
+      "~dumili-utils/*": [
+        "../utils/*"
+      ],
+      "~dm-services/*": [
+        "../../../packages/api/services/*"
+      ],
+      "~prisma-schemas/*": [
+        "../../../packages/prisma-schemas/*"
+      ],
+      "~prisma/*": [
+        "prisma/*"
+      ]
+    },
+    "types": [
+      "./.eslint.d.ts"
+    ]
+  },
+  "include": [
+    "eslint.config.mjs",
+    "index.ts",
+    "services/**/*.ts"
+  ]
+}

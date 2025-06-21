@@ -1,0 +1,8 @@
+.idea
+.turbo
+cache/*/**.html*
+node_modules
+.eslintcache
+.env.local
+duck-estimator-db
+dist

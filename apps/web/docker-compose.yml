@@ -1,0 +1,30 @@
+services:
+  web:
+    container_name: ducksmanager-web
+    image: ghcr.io/bperel/ducksmanager-web
+    restart: always
+    networks:
+      - public-network
+      - dm-api-network
+
+  web-websocket:
+    container_name: ducksmanager-web-websocket
+    image: ghcr.io/bperel/ducksmanager-web:websocket
+    restart: always
+    networks:
+      - public-network
+      - dm-api-network
+
+  sentry-relay:
+    image: getsentry/relay
+    restart: always
+    container_name: web-sentry
+    volumes:
+      - ./config/sentry-relay:/work/.relay
+    networks:
+      - public-network
+
+networks:
+  dm-api-network:
+  public-network:
+    external: true

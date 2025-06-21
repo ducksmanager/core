@@ -1,0 +1,3 @@
+dumili.ducksmanager.net {
+    reverse_proxy dumili-app
+}

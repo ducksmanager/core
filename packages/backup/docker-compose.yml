@@ -1,0 +1,12 @@
+services:
+  backup:
+    init: true
+    image: ghcr.io/bperel/dm-backup
+    networks:
+      - dm-db-network
+      - dm-api-network
+networks:
+  dm-api-network:
+    external: true
+  dm-db-network:
+    external: true

@@ -1,0 +1,198 @@
+@import 'variables.scss';
+
+
+ion-radio {
+  background: initial !important;
+}
+
+ion-label {
+  overflow-x: auto !important;
+}
+
+ion-title {
+  position: static;
+  padding-inline-start: 5px;
+}
+
+ion-content {
+  --padding-top: 20px;
+  --padding-end: 20px;
+  --padding-bottom: 20px;
+  --padding-start: 20px;
+
+  &.no-padding {
+    --padding-top: 0;
+    --padding-end: 0;
+    --padding-bottom: 0;
+    --padding-start: 0;
+  }
+
+  &::part(scroll) {
+    padding-inline-start: O;
+  }
+}
+
+ion-searchbar {
+  padding: 0 !important;
+  padding-inline-start: 0 !important;
+  min-height: initial !important;
+}
+
+ion-button {
+  &::part(native) {
+    min-height: initial;
+    padding: 0.5rem;
+  }
+}
+
+ion-segment-button {
+  ion-label {
+    justify-content: center;
+  }
+}
+
+.dm-condition-background {
+  @each $condition, $conditionColor in $dmConditions {
+    &.#{$condition} {
+
+      &,
+      &::part(mark) {
+        background-color: var(--dm-condition-#{$condition});
+        fill: var(--dm-condition-#{$condition});
+
+        @if $condition =='missing' {
+          background-image: linear-gradient(45deg,
+              red 0%,
+              transparent 0%,
+              transparent 48%,
+              red 48%,
+              red 52%,
+              transparent 52%,
+              transparent 100%);
+          background-size: 50px 50px;
+        }
+      }
+    }
+  }
+}
+
+.toast-error {
+  text-align: center;
+  opacity: 0.85;
+
+  &::part(container) {
+    background: #db663b;
+    color: white;
+  }
+}
+
+ion-fab-list {
+  right: 0;
+  align-items: end;
+
+  background: rgba(0, 0, 0, 0.7);
+  border-radius: 1rem;
+
+  ion-item {
+    background: inherit;
+    width: 100%;
+  }
+}
+
+.fab-button-in-list {
+  --color: white;
+}
+
+.plt-ios ion-app {
+  margin-top: env(safe-area-inset-top);
+}
+
+ion-header ion-toolbar:first-of-type {
+  padding-top: 0;
+}
+
+ion-checkbox {
+  &::part(label) {
+    margin-inline: 0;
+  }
+
+  &::part(container) {
+    border-radius: 5px;
+  }
+}
+
+.searchbar-input {
+  padding-left: 1.5rem !important;
+}
+
+.searchbar-search-icon {
+  display: none !important;
+}
+
+.searchbar-clear-button { 
+   right: 1.5rem !important;
+}
+
+.flex {
+  display: flex !important
+}
+
+.button-native {
+  background: inherit !important
+}
+
+.fab-button-in-list {
+  color: white
+}
+
+.greyed-out {
+  pointer-events: none;
+  opacity: 0.5;
+}
+
+
+.item-wrapper {
+  &:has(> .is-owned.is-next-item-owned),
+  &:has(> .is-owned.is-next-item-same) {
+    .dm-condition-background::after,
+    + .item-wrapper .dm-condition-background::before {
+      position: absolute;
+      width: 2px;
+      margin-left: 6px;
+      height: 50%;
+      content: ' ';
+    }
+
+    .dm-condition-background {
+      @each $condition, $conditionColor in $dmConditions {
+        &.#{$condition}::after {
+          background: $conditionColor;
+        }
+      }
+      &::after {
+        bottom: 0;
+      }
+    }
+
+    + .item-wrapper {
+      .dm-condition-background {
+        @each $condition, $conditionColor in $dmConditions {
+          &.#{$condition}::before {
+            background: $conditionColor;
+          }
+        }
+        &::before {
+          top: 0;
+        }
+      }
+    }
+  }
+
+  &:has(> .is-owned.is-next-item-same) {
+    .dm-condition-background::after,
+    + .item-wrapper .dm-condition-background::before {
+      width: 14px;
+      margin-left: 0;
+    }
+  }
+}

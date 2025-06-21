@@ -1,0 +1,36 @@
+services:
+  db:
+    container_name: db
+    image: "mariadb:11.7"
+    restart: always
+    volumes:
+      - db:/var/lib/mysql
+      - ./schema.sql:/docker-entrypoint-initdb.d/schema.sql:ro
+    ports:
+      - "64999:3306"
+    env_file:
+      - .env
+    command:
+      [
+        "mariadbd",
+        "--character-set-server=utf8",
+        "--collation-server=utf8_unicode_ci",
+        "--innodb-ft-min-token-size=1",
+        "--ft-min-word-len=1",
+        "--innodb-buffer-pool-size=12G",
+        "--innodb-io-capacity=2000",
+        "--innodb-io-capacity-max=4000",
+        "--innodb-read-io-threads=8",
+        "--innodb-write-io-threads=8",
+        "--innodb-flush-log-at-trx-commit=2",
+      ]
+    networks:
+      - db-network
+
+networks:
+  db-network:
+    name: db-network
+    driver: bridge
+
+volumes:
+  db:

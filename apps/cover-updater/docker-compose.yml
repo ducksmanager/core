@@ -1,0 +1,23 @@
+services:
+  cover-updater:
+    container_name: cover-updater
+    image: ghcr.io/bperel/duck-cover-id-updater
+    env_file:
+      - ../../packages/api/.env
+    environment:
+      MYSQL_COVER_INFO_HOST: db
+      MYSQL_COVER_INFO_DATABASE: cover_info
+      MYSQL_COA_HOST: db
+      MYSQL_COA_DATABASE: coa
+      PASTEC_HOST: pastec
+      PASTEC_PORT: 4212
+      PASTEC_CONTAINER_HOME: /pastec/build
+    networks:
+      - dm-db-network
+      - dm-api-network
+
+networks:
+  dm-db-network:
+    external: true
+  dm-api-network:
+    external: true

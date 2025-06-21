@@ -1,0 +1,245 @@
+generator client {
+  provider      = "prisma-client-js"
+  output        = "client_dumili"
+  binaryTargets = ["native", "debian-openssl-1.1.x", "debian-openssl-3.0.x"]
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model entry {
+  id                            Int                   @id @default(autoincrement())
+  acceptedStorySuggestionId     Int?                  @map("accepted_story_suggested_id")
+  acceptedStoryKindSuggestionId Int?                  @map("accepted_story_kind_suggested_id")
+  indexationId                  String                @map("indexation_id") @db.VarChar(20)
+  position                      Int
+  entrycomment                  String?               @db.VarChar(2009)
+  part                          String?               @db.VarChar(5)
+  title                         String?               @db.VarChar(100)
+  entirepages                   Int
+  brokenpagenumerator           Int                   @default(0)
+  brokenpagedenominator         Int                   @default(1)
+  indexation                    indexation            @relation(fields: [indexationId], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "entry_indexation_id_fk")
+  acceptedStoryKind             storyKindSuggestion?  @relation("entry_accepted_story_kind_suggested_idTostory_kind_suggestion", fields: [acceptedStoryKindSuggestionId], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "entry_story_kind_suggestion_id_fk")
+  acceptedStory                 storySuggestion?      @relation("entry_accepted_story_suggested_idTostory_suggestion", fields: [acceptedStorySuggestionId], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "entry_story_suggestion_id_fk")
+  storyKindSuggestions          storyKindSuggestion[] @relation("story_kind_suggestion_entry_idToentry")
+  storySuggestions              storySuggestion[]
+
+  @@index([acceptedStoryKindSuggestionId], map: "entry_story_kind_suggestion_id_fk")
+  @@index([acceptedStorySuggestionId], map: "entry_story_suggestion_id_fk")
+  @@index([indexationId], map: "entry_indexation_id_fk")
+}
+
+model image {
+  id                    Int                  @id @default(autoincrement())
+  url                   String               @unique(map: "image_url_uindex") @db.VarChar(255)
+  aiOcrResultId         Int?                 @map("ai_ocr_result_id")
+  aiStorySearchResultId Int?                 @map("ai_story_search_result_id")
+  aiKumikoResultId      Int?                 @map("ai_kumiko_result_id")
+  aiKumikoResult        aiKumikoResult?      @relation(fields: [aiKumikoResultId], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "image_ai_kumiko_result_id_fk")
+  aiOcrResult           aiOcrResult?         @relation(fields: [aiOcrResultId], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "image_ai_ocr_result_id_fk")
+  aiStorySearchResult   aiStorySearchResult? @relation(fields: [aiStorySearchResultId], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "image_ai_story_search_result_id_fk")
+  page                  page[]
+
+  @@index([aiKumikoResultId], map: "image_ai_kumiko_result_id_fk")
+  @@index([aiStorySearchResultId], map: "image_ai_story_search_result_id_fk")
+  @@index([aiOcrResultId], map: "image_ai_ocr_result_id_fk")
+  @@map("image")
+}
+
+model page {
+  id           Int        @id @default(autoincrement())
+  pageNumber   Int        @map("page_number") @db.SmallInt
+  indexationId String     @map("indexation_id") @db.VarChar(20)
+  imageId      Int?       @map("image_id")
+  image        image?     @relation(fields: [imageId], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "page_image_id_fk")
+  indexation   indexation @relation(fields: [indexationId], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "page_indexation_id_fk")
+
+  @@unique([indexationId, pageNumber], map: "page_indexation_id_page_number_uindex")
+  @@index([imageId], map: "page_image_id_fk")
+}
+
+model indexation {
+  id                        String            @id @db.VarChar(20)
+  acceptedIssueSuggestionId Int?              @map("accepted_issue_suggestion_id")
+  dmUserId                  Int               @map("dm_user_id")
+  price                     String?           @db.VarChar(150)
+  releaseDate               String?           @map("release_date") @db.VarChar(10)
+  entries                   entry[]
+  acceptedIssueSuggestion   issueSuggestion?  @relation("indexation_accepted_issue_suggestion_idToissue_suggestion", fields: [acceptedIssueSuggestionId], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "indexation_issue_suggestion_id_fk")
+  user                      user              @relation(fields: [dmUserId], references: [dmId], onUpdate: Restrict, map: "indexation_user_dm_id_fk")
+  issueSuggestions          issueSuggestion[]
+  pages                     page[]
+
+  @@index([acceptedIssueSuggestionId], map: "indexation_issue_suggestion_id_fk")
+  @@index([dmUserId], map: "indexation_user_dm_id_fk")
+}
+
+model storyKindSuggestion {
+  id                Int             @id @default(autoincrement())
+  storyKindRowsStr  String          @map("kind_number_of_rows") @db.VarChar(4)
+  entryId           Int             @map("entry_id")
+  aiKumikoResultId  Int?            @map("ai_kumiko_result_id")
+  acceptedOnEntries entry[]         @relation("entry_accepted_story_kind_suggested_idTostory_kind_suggestion")
+  aiKumikoResult    aiKumikoResult? @relation(fields: [aiKumikoResultId], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "story_kind_suggestion_ai_kumiko_result_id_fk")
+  entry             entry           @relation("story_kind_suggestion_entry_idToentry", fields: [entryId], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "story_kind_suggestion_entry_id_fk")
+  storyKindRows     storyKindRows   @relation(fields: [storyKindRowsStr], references: [id], onUpdate: Restrict, map: "story_kind_suggestion_story_kind_rows_id_fk")
+
+  @@unique([entryId, storyKindRowsStr], map: "story_kind_suggestion_unique")
+  @@index([entryId], map: "story_kind_suggestion_entry_id_fk")
+  @@index([storyKindRowsStr], map: "story_kind_suggestion_story_kind_rows_id_fk")
+  @@index([aiKumikoResultId], map: "story_kind_suggestion_ai_kumiko_result_id_fk")
+  @@map("story_kind_suggestion")
+}
+
+model storySuggestion {
+  id                  Int                @id @default(autoincrement())
+  storycode           String             @db.VarChar(19)
+  entryId             Int                @map("entry_id")
+  aiStorySuggestionId Int?               @map("ai_story_suggestion_id")
+  acceptedOnEntries   entry[]            @relation("entry_accepted_story_suggested_idTostory_suggestion")
+  aiStorySuggestion   aiStorySuggestion? @relation(fields: [aiStorySuggestionId], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "story_suggestion_ai_story_suggestion_id_fk")
+  entry               entry              @relation(fields: [entryId], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "story_suggestion_entry_id_fk")
+
+  @@unique([entryId, storycode], map: "story_suggestion_entry_id_storycode_uindex")
+  @@index([aiStorySuggestionId], map: "story_suggestion_ai_story_suggestion_id_fk")
+  @@map("story_suggestion")
+}
+
+model issueSuggestion {
+  id                           Int                  @id @default(autoincrement())
+  indexationId                 String               @map("indexation_id") @db.VarChar(20)
+  publicationcode              String               @db.VarChar(12)
+  issuenumber                  String               @db.VarChar(13)
+  aiStorySearchPossibleStoryId Int?                 @map("story_search_possible_story_id")
+  acceptedOnEntries            indexation[]         @relation("indexation_accepted_issue_suggestion_idToissue_suggestion")
+  aiStorySearchPossibleStory   aiStorySearchResult? @relation(fields: [aiStorySearchPossibleStoryId], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "issue_suggestion_ai_story_search_result_id_fk")
+  indexation                   indexation           @relation(fields: [indexationId], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "issue_suggestion_indexation_id_fk")
+
+  @@index([indexationId], map: "issue_suggestion_indexation_id_fk")
+  @@index([aiStorySearchPossibleStoryId], map: "issue_suggestion_ai_story_search_result_id_fk")
+  @@map("issue_suggestion")
+}
+
+model aiStorySearchResult {
+  id               Int                          @id @default(autoincrement())
+  stories          aiStorySearchPossibleStory[]
+  image            image[]
+  issueSuggestions issueSuggestion[]
+
+  @@map("ai_story_search_result")
+}
+
+model aiStorySearchPossibleStory {
+  id                  Int                 @id @default(autoincrement())
+  resultId            Int                 @map("result_id")
+  score               Int                 @db.SmallInt
+  aiStorySearchResult aiStorySearchResult @relation(fields: [resultId], references: [id], onUpdate: Restrict, map: "ai_story_search_result_ai_story_search_result_id_fk")
+  aiStorySuggestion   aiStorySuggestion?
+
+  @@index([resultId], map: "ai_story_search_possible_story_ai_story_search_result_id_fk")
+  @@map("ai_story_search_possible_story")
+}
+
+model aiOcrPossibleStory {
+  id                Int                @id @default(autoincrement())
+  score             Int                @db.SmallInt
+  resultId          Int                @map("result_id")
+  aiOcrResult       aiOcrResult        @relation(fields: [resultId], references: [id], onUpdate: Restrict, map: "ai_ocr_possible_story_ai_ocr_result_id_fk")
+  aiStorySuggestion aiStorySuggestion?
+
+  @@index([resultId], map: "ai_ocr_possible_story_ai_ocr_result_id_fk")
+  @@map("ai_ocr_possible_story")
+}
+
+model aiOcrResult {
+  id      Int                  @id @default(autoincrement())
+  stories aiOcrPossibleStory[]
+  matches aiOcrResultMatch[]
+  image   image[]
+
+  @@map("ai_ocr_result")
+}
+
+model aiOcrResultMatch {
+  id          Int         @id @default(autoincrement())
+  resultId    Int         @map("result_id")
+  x1          Int
+  x2          Int
+  y1          Int
+  y2          Int
+  text        String      @db.Text
+  confidence  Float       @db.Float
+  aiOcrResult aiOcrResult @relation(fields: [resultId], references: [id], onUpdate: Restrict, map: "ai_ocr_result_id_fk")
+
+  @@index([resultId], map: "ai_ocr_result_id_index")
+  @@map("ai_ocr_result_match")
+}
+
+model aiKumikoResultPanel {
+  id             Int            @id @default(autoincrement())
+  resultId       Int            @map("result_id")
+  x              Int            @db.SmallInt
+  y              Int            @db.SmallInt
+  width          Int            @db.SmallInt
+  height         Int            @db.SmallInt
+  aiKumikoResult aiKumikoResult @relation(fields: [resultId], references: [id], onUpdate: Restrict, map: "ai_kumiko_result_panel_result_id_fk")
+
+  @@index([resultId], map: "ai_kumiko_result_panel_result_id_fk")
+  @@map("ai_kumiko_result_panel")
+}
+
+model aiKumikoResult {
+  id                       Int                   @id @default(autoincrement())
+  inferredStoryKindRowsStr String?               @map("ai_kumiko_inferred_story_kind_rows") @db.VarChar(4)
+  inferredStoryKindRows    storyKindRows?        @relation(fields: [inferredStoryKindRowsStr], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "ai_kumiko_result_story_kind_rows_id_fk")
+  detectedPanels           aiKumikoResultPanel[]
+  image                    image[]
+  storyKindSuggestions     storyKindSuggestion[]
+
+  @@index([inferredStoryKindRowsStr], map: "ai_kumiko_result_story_kind_rows_id_fk")
+  @@map("ai_kumiko_result")
+}
+
+model aiStorySuggestion {
+  id                         Int                         @id @default(autoincrement())
+  ocrPossibleStoryId         Int?                        @unique(map: "ai_ocr_possible_story_id_unique") @map("ocr_possible_story_id")
+  storySearchPossibleStoryId Int?                        @unique(map: "ai_story_search_possible_story_id_unique") @map("story_search_possible_story_id")
+  aiOcrPossibleStory         aiOcrPossibleStory?         @relation(fields: [ocrPossibleStoryId], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "ai_story_suggestion_ai_ocr_possible_story_id_fk")
+  aiStorySearchPossibleStory aiStorySearchPossibleStory? @relation(fields: [storySearchPossibleStoryId], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "ai_story_suggestion_ai_story_search_possible_story_id_fk")
+  storySuggestions           storySuggestion[]
+
+  @@map("ai_story_suggestion")
+}
+
+model user {
+  dmId            Int          @id @map("dm_id")
+  inducksUsername String?      @map("inducks_username") @db.VarChar(64)
+  indexation      indexation[]
+}
+
+model storyKindRows {
+  id                  String                @id @db.VarChar(4)
+  kind                storyKind
+  numberOfRows        Int                   @map("number_of_rows") @db.TinyInt
+  aiKumikoResult      aiKumikoResult[]
+  storyKindSuggestion storyKindSuggestion[]
+
+  @@unique([kind, numberOfRows], map: "story_kind_rows_pk")
+  @@map("story_kind_rows")
+}
+
+enum storyKind {
+  a
+  c
+  f
+  g
+  i
+  k
+  n
+  t
+  L
+  P
+}

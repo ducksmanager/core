@@ -1,0 +1,52 @@
+services:
+  api:
+    container_name: ducksmanager-api
+    image: ghcr.io/bperel/ducksmanager-api
+    restart: always
+    networks:
+      - public-network
+      - dm-api-network
+      - dm-db-network
+
+  api-websocket:
+    container_name: ducksmanager-api-websocket
+    image: ghcr.io/bperel/ducksmanager-api:websocket
+    restart: always
+    volumes:
+      - ./latest-whattheduck-bundle.txt:/app/latest-whattheduck-bundle.txt
+      - /data/covers:${ENTRYURLS_DIR}
+    networks:
+      - public-network
+      - dm-api-network
+      - dm-db-network
+
+  api-story-search:
+    container_name: ducksmanager-api-story-search
+    image: ghcr.io/bperel/ducksmanager-api:story-search
+    restart: always
+    volumes:
+      - /tmp/cache/models
+    networks:
+      - public-network
+      - dm-api-network
+      - dm-db-network
+
+  pastec:
+    container_name: pastec
+    image: "bperel/pastec-ubuntu-1704-timestamps"
+    restart: always
+    ports:
+      - "4212:4212"
+    command: "./pastec -p 4212 -i /pastec-index-last.dat /pastec/data/visualWordsORB.dat"
+    volumes:
+      - ./pastec-index-last.dat:/pastec-index-last.dat:ro
+    networks:
+      - dm-api-network
+
+networks:
+  dm-api-network:
+    name: dm-api-network
+  public-network:
+    external: true
+  dm-db-network:
+    external: true
