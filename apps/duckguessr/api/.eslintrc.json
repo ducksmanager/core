@@ -1,0 +1,33 @@
+{
+  "extends": [
+    "prettier",
+    "plugin:@typescript-eslint/recommended"
+  ],
+  "parserOptions": {
+    "parser": "@typescript-eslint/parser"
+  },
+  "overrides": [
+    {
+      "files": [
+        "*.js",
+        "*.ts"
+      ]
+    }
+  ],
+  "root": true,
+  "rules": {
+    "@typescript-eslint/no-non-null-assertion": "off",
+    "object-shorthand": [
+      "error",
+      "always"
+    ]
+  },
+  "plugins": [
+    "@typescript-eslint"
+  ],
+  "ignorePatterns": [
+    "**/node_modules",
+    "**/dist",
+    "prisma/client_*"
+  ]
+}
