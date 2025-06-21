@@ -28,8 +28,7 @@
     "sharp": "^0.33.4",
     "socket.io": "^4.7.5",
     "typescript": "^5.5.4",
-    "~prisma-schemas": "workspace:*",
-    "~socket.io-services": "workspace:*"
+    "~prisma-schemas": "workspace:*"
   },
   "devDependencies": {
     "@types/jsonwebtoken": "^9.0.6",

@@ -21,15 +21,7 @@ export default defineConfig({
         __dirname,
         "api/prisma/client_duckguessr",
       ),
-      "~duckguessr-types": path.resolve(__dirname, "api/types"),
-      "~socket.io-client-services": path.resolve(
-        __dirname,
-        "../../packages/socket.io-client-services",
-      ),
-      "~socket.io-services": path.resolve(
-        __dirname,
-        "../../packages/socket.io-services",
-      ),
+      "~duckguessr-types": path.resolve(__dirname, "api/types")
     },
   },
   plugins: [
