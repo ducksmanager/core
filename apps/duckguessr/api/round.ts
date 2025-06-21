@@ -19,7 +19,7 @@ export const getRoundWithScores = async (roundId: number) =>
 export const setRoundTimes = async (round: round) => {
   const offset = new Date(
     new Date().getTime() +
-    (round.roundNumber === 1 ? gameKickoffTime : kickoffTime)
+      (round.roundNumber === 1 ? gameKickoffTime : kickoffTime),
   ).getTime();
   return await prisma.round.update({
     where: {
@@ -38,7 +38,7 @@ export const setRoundTimes = async (round: round) => {
 export const guess = async (
   player: player,
   roundId: number,
-  { personcode }: GuessRequest
+  { personcode }: GuessRequest,
 ) => {
   const thisRound = (await getRoundWithScores(roundId))!;
   if (
@@ -50,19 +50,19 @@ export const guess = async (
     })
   ) {
     console.error(
-      `Player ${player.username} already guessed round ${thisRound.id}`
+      `Player ${player.username} already guessed round ${thisRound.id}`,
     );
     return;
   }
 
   let roundScore: {
-    playerId: player['id'];
-    roundId: round['id'];
+    playerId: player["id"];
+    roundId: round["id"];
     scoreTypeName: string;
     score: number;
     timeSpentGuessing?: number;
     speedBonus?: number;
-  }
+  };
 
   if (personcode === thisRound.personcode) {
     const timeSpentGuessing = Date.now() - thisRound.startedAt!.getTime();

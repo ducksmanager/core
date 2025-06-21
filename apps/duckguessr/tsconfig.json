@@ -49,7 +49,6 @@
     "resolveJsonModule": true,
     "sourceMap": true,
     "types": [
-      "codeceptjs",
       "vite/client",
       "vite-plugin-pages/client",
       "unplugin-icons/types/vue"

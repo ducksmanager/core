@@ -22,7 +22,7 @@ export const createPlayerSocket = (
     ServerToClientEvents,
     InterServerEvents,
     SocketData
-  >
+  >,
 ) => {
   io.of("/login").on("connection", async (socket) => {
     let player = await getPlayer(socket.handshake.auth.cookie);

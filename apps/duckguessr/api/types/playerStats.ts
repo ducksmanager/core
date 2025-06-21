@@ -12,5 +12,5 @@ export type MedalLevelAndProgress = {
 };
 
 export interface PlayerWithSumScore extends player {
-  sumScore: number
+  sumScore: number;
 }

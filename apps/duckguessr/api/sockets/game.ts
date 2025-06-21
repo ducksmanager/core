@@ -23,15 +23,15 @@ export const createMatchmakingSocket = (
     ServerToClientEvents,
     InterServerEvents,
     SocketData
-  >
+  >,
 ) => {
   io.of("/match").on("connection", async (socket) => {
     const user = await getPlayer(socket.handshake.auth.cookie);
     if (!user) {
       console.log(
         `Can't find user for cookie ${JSON.stringify(
-          socket.handshake.auth.cookie
-        )}`
+          socket.handshake.auth.cookie,
+        )}`,
       );
       return false;
     }
@@ -52,7 +52,7 @@ export const createGameSocket = async (
     InterServerEvents,
     SocketData
   >,
-  gameId: number
+  gameId: number,
 ) => {
   let currentGame = await getGameWithRoundsDatasetPlayers(gameId);
   if (!currentGame) {
@@ -60,7 +60,7 @@ export const createGameSocket = async (
     return;
   }
   let currentRound: round = currentGame.rounds.find(
-    ({ roundNumber }: round) => roundNumber === 1
+    ({ roundNumber }: round) => roundNumber === 1,
   ) as round;
   let currentRoundEndTimeout: NodeJS.Timeout;
 
@@ -69,8 +69,9 @@ export const createGameSocket = async (
       currentGame!.gamePlayers.find(({ playerId }) => playerId === player.id)
     ) {
       console.info(
-        `Player ${player.username} is already associated with game ${currentGame!.id
-        }`
+        `Player ${player.username} is already associated with game ${
+          currentGame!.id
+        }`,
       );
     } else {
       await game.associatePlayer(currentGame!.id, player);
@@ -82,11 +83,12 @@ export const createGameSocket = async (
   const onGuess = async (
     socket: Socket,
     user: player,
-    personcode: string | null
+    personcode: string | null,
   ): Promise<boolean> => {
     console.log(
-      `${user.username} is guessing ${JSON.stringify(personcode)} on round ${currentRound.id
-      }`
+      `${user.username} is guessing ${JSON.stringify(personcode)} on round ${
+        currentRound.id
+      }`,
     );
     try {
       const guessResultsData =
@@ -134,14 +136,14 @@ export const createGameSocket = async (
   const startRound = (socket: Socket) => {
     currentRoundEndTimeout = setTimeout(
       () => finishRound(socket),
-      currentRound.finishedAt!.getTime() - new Date().getTime()
+      currentRound.finishedAt!.getTime() - new Date().getTime(),
     );
 
     if (currentRound.roundNumber === 1) {
       setTimeout(() => {
         socket.broadcast.emit(
           "firstRoundWillStartSoon",
-          currentRound.startedAt!
+          currentRound.startedAt!,
         );
         socket.emit("firstRoundWillStartSoon", currentRound.startedAt!);
       }, 200);
@@ -173,11 +175,11 @@ export const createGameSocket = async (
         const possibleAuthors = currentGame!.rounds
           .filter(
             ({ roundNumber }: round) =>
-              roundNumber === null || roundNumber >= currentRound.roundNumber!
+              roundNumber === null || roundNumber >= currentRound.roundNumber!,
           )
           .map(({ personcode }: round) => personcode);
         predict(currentRound, currentGame!.dataset, possibleAuthors).then(
-          (personcode) => onGuess(socket, botPlayer!, personcode)
+          (personcode) => onGuess(socket, botPlayer!, personcode),
         );
       }
     }, currentRound.startedAt!.getTime() - new Date().getTime());
@@ -191,7 +193,7 @@ export const createGameSocket = async (
       await onGuess(
         socket,
         (await prisma.player.findUnique({ where: { username } }))!,
-        null
+        null,
       );
     }
     const roundWithScores = await getRoundWithScores(currentRound.id);
@@ -204,8 +206,8 @@ export const createGameSocket = async (
       currentRound = await setRoundTimes(
         currentGame!.rounds.find(
           ({ roundNumber }: round) =>
-            roundNumber === currentRound.roundNumber! + 1
-        ) as round
+            roundNumber === currentRound.roundNumber! + 1,
+        ) as round,
       );
       socket.broadcast.emit("roundEnds", roundWithScores, {
         ...currentRound,
@@ -224,8 +226,8 @@ export const createGameSocket = async (
     if (!user) {
       console.log(
         `Can't find user for cookie ${JSON.stringify(
-          socket.handshake.auth.cookie
-        )}`
+          socket.handshake.auth.cookie,
+        )}`,
       );
       return false;
     }
@@ -233,7 +235,7 @@ export const createGameSocket = async (
     const validateGameForBotAddOrRemove = () => {
       if (user!.id !== currentGame!.gamePlayers[0].playerId) {
         console.error(
-          "Only the player creating the match can add or remove a bot!"
+          "Only the player creating the match can add or remove a bot!",
         );
         return false;
       }
@@ -296,7 +298,7 @@ export const createGameSocket = async (
     socket.on("startMatch", async () => {
       if (user.id !== currentGame!.gamePlayers[0].playerId) {
         console.error(
-          "The player starting the match must be the one who created it!"
+          "The player starting the match must be the one who created it!",
         );
         return false;
       }
@@ -323,7 +325,7 @@ export const createGameSocket = async (
       if (reason !== "client namespace disconnect") {
         if (
           currentGame!.gamePlayers.findIndex(
-            ({ player }) => player.id === user.id
+            ({ player }) => player.id === user.id,
           ) > 0
         ) {
           await removePlayer(user);

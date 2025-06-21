@@ -21,7 +21,7 @@ export default defineConfig({
         __dirname,
         "api/prisma/client_duckguessr",
       ),
-      "~duckguessr-types": path.resolve(__dirname, "api/types")
+      "~duckguessr-types": path.resolve(__dirname, "api/types"),
     },
   },
   plugins: [

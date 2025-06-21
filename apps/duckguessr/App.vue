@@ -4,10 +4,12 @@
 
 <script setup lang="ts">
 import Cookies from "js-cookie";
+import { buildWebStorage } from "socket-call-client";
 import { stores as webStores } from "~web";
 
-import { buildWebStorage, useSocket } from "~socket.io-client-services";
-import { dmSocketInjectionKey } from "~web/src/composables/useDmSocket";
+import useDmSocket, {
+  socketInjectionKey as dmSocketInjectionKey,
+} from "~web/src/composables/useDmSocket";
 
 const { loadUser } = webStores.collection();
 const { user, isLoadingUser } = storeToRefs(webStores.collection());
@@ -22,19 +24,17 @@ const session = {
     await session.clearSession();
     isLoadingUser.value = false;
     user.value = null;
-  },
-  cacheStorage = buildWebStorage(sessionStorage);
+  }
 
-const dmSocket = useDmSocket(
-  inject("dmSocket") as ReturnType<typeof useSocket>,
-  {
-    cacheStorage,
+
+getCurrentInstance()!.appContext.app.provide(
+  dmSocketInjectionKey,
+  useDmSocket({
+    cacheStorage: buildWebStorage(sessionStorage),
     session,
     onConnectError,
-  },
+  }),
 );
-
-provideLocal(dmSocketInjectionKey, dmSocket);
 
 onBeforeMount(() => {
   loadUser();

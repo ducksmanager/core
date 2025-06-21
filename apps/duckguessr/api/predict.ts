@@ -9,7 +9,7 @@ interface PredictionResponse {
 export const predict = (
   round: round,
   dataset: dataset,
-  possibleAuthors: string[]
+  possibleAuthors: string[],
 ): Promise<string> =>
   new Promise((resolve) => {
     console.log("Possible authors: " + JSON.stringify(possibleAuthors));
@@ -32,11 +32,11 @@ export const predict = (
           data: PredictionResponse;
         }) => {
           console.log(
-            `Prediction done in ${new Date().getTime() - startTime}ms`
+            `Prediction done in ${new Date().getTime() - startTime}ms`,
           );
           console.log(
             `Round ${round.roundNumber} - Predicted artist = ${predicted},
-            probability of ${predictionProbability}%`
+            probability of ${predictionProbability}%`,
           );
           if (!possibleAuthors.includes(predicted)) {
             console.log("Skipped");
@@ -45,17 +45,17 @@ export const predict = (
             return;
           }
           console.error(
-            "No possible authors match the prediction, choosing a random author"
+            "No possible authors match the prediction, choosing a random author",
           );
           const randomElement =
             possibleAuthors[Math.floor(Math.random() * possibleAuthors.length)];
           resolve(randomElement);
-        }
+        },
       )
       .catch((error: unknown) => {
         console.error(
           (error as { response?: { data?: string } })?.response?.data ||
-          "Bot server seems to be offline"
+            "Bot server seems to be offline",
         );
         console.log("Prediction failed, choosing a random author");
         const randomElement =

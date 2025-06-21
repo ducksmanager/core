@@ -27,9 +27,10 @@ export const MEDAL_LEVELS: MedalLevel[] = [
 ];
 
 export const userStore = defineStore("user", () => {
-  const loginSocket = ref<Socket<ServerToClientEvents, ClientToServerEvents> | null>(
-    null,
-  );
+  const loginSocket = ref<Socket<
+    ServerToClientEvents,
+    ClientToServerEvents
+  > | null>(null);
   const user = ref<player | null>(null);
   const stats = ref<userMedalPoints[] | null>(null);
   const gameStats = ref<userGameMedalPoints[] | null>(null);

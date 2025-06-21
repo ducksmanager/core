@@ -12,3 +12,5 @@ sessions
 
 /*.d.ts
 api/prisma/client_*
+
+*storybook.log
