@@ -86,7 +86,7 @@ import { Avatar } from "~duckguessr-types/avatar";
 import { userStore } from "~/stores/user";
 const { t } = useI18n();
 
-const isAnonymous = computed(() => userStore().isAnonymous);
+const {isAnonymous, user, playerSocket, stats: currentUserStats} = storeToRefs(userStore())
 
 import { avatars, avatarDiskDiameter } from "~duckguessr-types/avatar";
 const tree = ref(null as any | null);
@@ -97,7 +97,6 @@ interface AvatarWithLocalPosition extends Avatar {
   localPosition: number[] | null;
 }
 
-const currentUserStats = computed(() => userStore().stats);
 const hasMedals = computed(
   () =>
     currentUserStats.value &&
@@ -123,7 +122,7 @@ const calculateLocalPosition = (avatar: Avatar) =>
   );
 
 watch(
-  () => userStore().user?.avatar,
+  () => user.value?.avatar,
   (avatarName) => {
     const avatar = avatars.find(
       ({ character }: Avatar) => character === avatarName,
@@ -177,12 +176,11 @@ const onTreeLoad = (event: any) => {
 };
 
 const onSelectAvatar = () => {
-  userStore().user!.avatar = closestAvatar.value!.character;
-  userStore().loginSocket!.emit(
-    "updateUser",
-    userStore().user!,
+  user.value!.avatar = closestAvatar.value!.character;
+  playerSocket.value!.updateUser(
+    user.value!,
     (updatedUser) => {
-      userStore().user = updatedUser;
+      user.value = updatedUser;
     },
   );
 };

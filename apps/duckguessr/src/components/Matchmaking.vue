@@ -12,13 +12,8 @@
 </template>
 
 <script lang="ts" setup>
-import { Socket } from "socket.io-client";
 import { MatchDetails } from "~duckguessr-types/matchDetails";
 import { userStore } from "~/stores/user";
-import {
-  ClientToServerEvents,
-  ServerToClientEvents,
-} from "~duckguessr-types/socketEvents";
 import { player, userMedalPoints } from "~duckguessr-prisma-client";
 
 const players = ref([] as player[]);
@@ -26,12 +21,10 @@ const gamePlayersStats = ref(null as userMedalPoints[] | null);
 const isBotAvailableForGame = ref(null as boolean | null);
 
 const { gameId, gameSocket } =
-  toRefs(
-    defineProps<{
-      gameId: number;
-      gameSocket: Socket<ServerToClientEvents, ClientToServerEvents>;
-    }>(),
-  );
+  defineProps<{
+    gameId: number;
+    gameSocket: ReturnType<typeof useDuckguessrSocket>["gameSocket"];
+  }>();
 
 const emit = defineEmits<{
   (e: "start-match"): void;
@@ -50,25 +43,24 @@ const removePlayer = (player: player) => {
 };
 
 const startMatch = () => {
-  gameSocket.value.emit("startMatch");
+  gameSocket.value!.startMatch();
 };
 
 const addBot = () => {
-  gameSocket.value.emit("addBot");
+  gameSocket.value!.addBot();
 };
 
 const removeBot = () => {
-  gameSocket.value.emit("removeBot");
+  gameSocket.value!.removeBot();
 };
 
 watch(
   () => userStore().user,
   (value) => {
     if (value) {
-      gameSocket.value
+      gameSocket
         .on("playerConnectedToMatch", () => {
-          gameSocket.value.emit(
-            "joinMatch",
+          gameSocket.value!.joinMatch(
             ({ players, isBotAvailable, playerStats }: MatchDetails) => {
               isBotAvailableForGame.value = isBotAvailable;
               gamePlayersStats.value = playerStats;

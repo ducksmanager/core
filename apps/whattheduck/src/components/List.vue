@@ -214,7 +214,7 @@ onIonViewWillLeave(() => {
 </script>
 
 <style scoped>
-::v-deep(ion-content img) {
+:deep(ion-content img) {
   margin-right: 1rem;
 }
 strong {

@@ -4,13 +4,11 @@
 
 <script setup lang="ts">
 const { country } =
-  toRefs(
-    defineProps<{
-      country: string;
-    }>(),
-  );
-const fixedCountry = ref(country.value);
-switch (country.value) {
+  defineProps<{
+    country: string;
+  }>();
+const fixedCountry = ref(country);
+switch (country) {
   case "uk":
     fixedCountry.value = "gb";
 }

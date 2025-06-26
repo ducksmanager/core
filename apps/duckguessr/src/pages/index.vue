@@ -64,26 +64,23 @@
 </template>
 
 <script lang="ts" setup>
-import { io, Socket } from "socket.io-client";
 import { useCookies } from "@vueuse/integrations/useCookies";
 import { userStore } from "~/stores/user";
 import { DatasetWithCounts } from "~duckguessr-types/dataset";
-import { ClientToServerEventsDatasets } from "~duckguessr-types/socketEvents";
+import { duckguessrSocketInjectionKey } from "~/composables/useDuckguessrSocket";
 const router = useRouter();
 
 const { t, locale } = useI18n();
 
 const datasets = ref([] as DatasetWithCounts[]);
 
-const isAnonymous = computed(() => userStore().isAnonymous);
-const matchCreationSocket = ref(null as Socket | null);
+const {isAnonymous, user} = storeToRefs(userStore())
+
+const { datasetsSocket, createMatchmakingSocket } = inject(duckguessrSocketInjectionKey)!;
+const matchCreationSocket = ref();
 
 const youtubeVideoId = computed(() =>
   locale.value === "fr" ? "21Zfy5bOQkA" : "F0j-MMTiT3w",
-);
-
-const datasetsSocket: Socket<ClientToServerEventsDatasets> = io(
-  import.meta.env.VITE_DM_SOCKET_URL + "/datasets",
 );
 
 const createMatch = (datasetName: string) => {
@@ -98,24 +95,17 @@ const createMatch = (datasetName: string) => {
 };
 
 watch(
-  () => userStore().user?.username,
+  () => user.value?.username,
   (username) => {
     if (username) {
-      matchCreationSocket.value = io(
-        `${import.meta.env.VITE_DM_SOCKET_URL}/match`,
-        {
-          auth: {
-            cookie: useCookies().getAll(),
-          },
-        },
-      );
+      matchCreationSocket.value = createMatchmakingSocket(useCookies().getAll()).value;
     }
   },
   { immediate: true },
 );
 
 (async () => {
-  datasets.value = await datasetsSocket.emitWithAck("getDatasets");
+  datasets.value = await datasetsSocket.value.getDatasets();
 })();
 </script>
 

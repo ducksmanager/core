@@ -37,7 +37,7 @@
 <script lang="ts" setup>
 import { Author } from "~duckguessr-types/roundWithScoresAndAuthor";
 
-const props = defineProps<{
+const {firstRoundStartDate} = defineProps<{
   authors: Author[];
   firstRoundStartDate: Date;
 }>();
@@ -50,7 +50,7 @@ const updateTimeBeforeNextRound = () => {
   const time = new Date().getTime();
   timeBeforeFirstRound.value = Math.max(
     0,
-    Math.ceil((new Date(props.firstRoundStartDate).getTime() - time) / 1000),
+    Math.ceil((new Date(firstRoundStartDate).getTime() - time) / 1000),
   );
 };
 
@@ -64,7 +64,7 @@ const initialTimeBeforeFirstRound = timeBeforeFirstRound.value;
 </script>
 
 <style scoped lang="scss">
-::v-deep .modal-dialog {
+:deep(.modal-dialog) {
   height: calc(100% - 60px);
 
   .modal-content {

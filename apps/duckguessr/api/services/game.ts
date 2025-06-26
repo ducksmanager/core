@@ -14,36 +14,24 @@ import {
   ServerToClientEvents,
   SocketData,
 } from "../types/socketEvents";
+import namespaces from "./namespaces";
+import { NamespaceProxyTarget, useSocketEvents } from "socket-call-server";
 
 const prisma = new PrismaClient();
 
-export const createMatchmakingSocket = (
-  io: Server<
-    ClientToServerEvents,
-    ServerToClientEvents,
-    InterServerEvents,
-    SocketData
-  >,
-) => {
-  io.of("/match").on("connection", async (socket) => {
-    const user = await getPlayer(socket.handshake.auth.cookie);
-    if (!user) {
-      console.log(
-        `Can't find user for cookie ${JSON.stringify(
-          socket.handshake.auth.cookie,
-        )}`,
-      );
-      return false;
-    }
+export type GameServices = NamespaceProxyTarget<
+  Socket<typeof listenEvents, object, object, SocketData>,
+  Record<string, never>
+>;
 
-    socket.on("createMatch", async (dataset, callback) => {
-      console.log(`${user.username} is creating a match`);
-      const newGame = (await game.create(dataset))!;
-      await createGameSocket(io, newGame.id);
-      callback(newGame.id);
-    });
-  });
-};
+const listenEvents = ({ _socket }: GameServices) => ({
+  removeBot: async () => {},
+  addBot: async () => {},
+  joinMatch: async () => {},
+  startMatch: async () => {},
+  guess: async (personcode: string) => {},
+  disconnect: async () => {},
+});
 
 export const createGameSocket = async (
   io: Server<
@@ -59,9 +47,9 @@ export const createGameSocket = async (
     console.error(`Game not found for ID ${gameId}`);
     return;
   }
-  let currentRound: round = currentGame.rounds.find(
+  let currentRound = currentGame.rounds.find(
     ({ roundNumber }: round) => roundNumber === 1,
-  ) as round;
+  )!;
   let currentRoundEndTimeout: NodeJS.Timeout;
 
   const checkAndAssociatePlayer = async (player: player) => {
@@ -335,3 +323,14 @@ export const createGameSocket = async (
     });
   });
 };
+
+const { client, server } = useSocketEvents<
+  typeof listenEvents,
+  Record<string, never>
+>(namespaces.GAME, {
+  listenEvents,
+  middlewares: [],
+});
+
+export { client, server };
+export type ClientEmitEvents = (typeof client)["emitEvents"];

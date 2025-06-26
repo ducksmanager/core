@@ -38,24 +38,20 @@ import { useScoreToVariant } from "~/composables/use-score-to-variant";
 import { OngoingRoundScore } from "~duckguessr-types/roundWithScoresAndAuthor";
 import { player, roundScore } from "~duckguessr-prisma-client";
 
-const props = withDefaults(
+const { score, players, 
+    inGame= false,
+    roundDuration= null, } = 
   defineProps<{
     inGame?: boolean;
     players: player[];
     score: roundScore | OngoingRoundScore;
     roundDuration?: number | null;
-  }>(),
-  {
-    inGame: false,
-    roundDuration: null,
-  },
-);
+  }>();
 
-const { score, players } = toRefs(props);
 
-const alertVariant = computed(() => useScoreToVariant(score.value));
-const currentPlayer: player = players.value.find(
-  ({ id }) => id === score.value.playerId,
+const alertVariant = computed(() => useScoreToVariant(score));
+const currentPlayer: player = players.find(
+  ({ id }) => id === score.playerId,
 )!;
 
 const { t } = useI18n();

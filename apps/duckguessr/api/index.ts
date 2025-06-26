@@ -1,19 +1,16 @@
 import "dotenv/config";
 
 import * as Sentry from "@sentry/node";
-import { Namespace, Server } from "socket.io";
+import { Server } from "socket.io";
 
 import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa/client";
 
-import { player, PrismaClient } from "./prisma/client_duckguessr";
-import { createGameSocket } from "./sockets/game";
-import { createMatchmakingSocket } from "./sockets/game";
-import { createPlayerSocket } from "./sockets/player";
+import { PrismaClient } from "./prisma/client_duckguessr";
+import { createGameSocket } from "./services/game";
+import { createMatchmakingSocket } from "./services/game";
+import { createPlayerSocket } from "./services/player";
 import {
   ClientToServerEvents,
-  ClientToServerEventsDatasets,
-  ClientToServerEventsMaintenance,
-  ClientToServerEventsPodium,
   InterServerEvents,
   ServerToClientEvents,
   SocketData,
@@ -36,113 +33,6 @@ const io = new Server<
   SocketData
 >({
   cors,
-});
-
-const maintenanceNamespace: Namespace<ClientToServerEventsMaintenance> =
-  io.of("/maintenance");
-maintenanceNamespace.on("connection", async (socket) => {
-  socket.on("getMaintenanceData", async (callback) => {
-    callback(
-      await prisma.$queryRaw`
-              select name, decision, count(*) as 'count'
-              from dataset
-              left join dataset_entryurl de on dataset.id = de.dataset_id
-              left join entryurl_details using (sitecode_url)
-              group by dataset_id, decision
-            `,
-    );
-  });
-
-  socket.on(
-    "getMaintenanceDataForDataset",
-    async (datasetName, decisions, offset, callback) => {
-      if (!decisions) {
-        throw new Error("No decisions provided");
-      }
-      const dataset = await prisma.dataset.findUnique({
-        where: {
-          name: datasetName,
-        },
-      });
-      if (!dataset) {
-        throw new Error("No dataset exists with name " + datasetName);
-      }
-      callback(
-        await prisma.datasetEntryurl.findMany({
-          where: {
-            OR: decisions.map((decision) => ({
-              datasetId: dataset.id,
-              entryurlDetails: {
-                is: {
-                  decision: decision === "null" ? null : decision,
-                },
-              },
-            })),
-          },
-          include: {
-            dataset: true,
-            entryurlDetails: true,
-          },
-          take: 60,
-          skip: offset,
-          orderBy: {
-            sitecodeUrl: "asc",
-          },
-        }),
-      );
-    },
-  );
-
-  socket.on("updateMaintenanceData", async (data) => {
-    await prisma.$transaction(
-      data.map(({ sitecodeUrl, decision }) =>
-        prisma.entryurlDetails.update({
-          where: {
-            sitecodeUrl,
-          },
-          data: {
-            decision,
-            updatedAt: new Date(),
-          },
-        }),
-      ),
-    );
-  });
-});
-
-const datasetsNamespace: Namespace<ClientToServerEventsDatasets> =
-  io.of("/datasets");
-datasetsNamespace.on("connection", async (socket) => {
-  socket.on("getDatasets", async (callback) => {
-    callback(
-      await prisma.$queryRaw`
-      SELECT dataset.id, name, title, description, COUNT(*) AS images, COUNT(DISTINCT personcode) AS authors
-      FROM dataset
-      LEFT JOIN dataset_entryurl de ON dataset.id = de.dataset_id
-      LEFT JOIN entryurl_details entryurl ON de.sitecode_url = entryurl.sitecode_url
-      WHERE dataset.active = 1
-      AND dataset.name NOT LIKE '%-ml'
-      AND decision = 'ok'
-      GROUP BY dataset.name`,
-    );
-  });
-});
-
-const podiumNamespace: Namespace<ClientToServerEventsPodium> = io.of("/podium");
-podiumNamespace.on("connection", async (socket) => {
-  socket.on("getPodium", async (callback) => {
-    callback(
-      (await prisma.$queryRaw`
-      SELECT player.*, sum(score + speed_bonus) AS sumScore
-      FROM player
-      INNER JOIN round_score ON player.id = round_score.player_id
-      WHERE username NOT like 'bot_%' and username NOT LIKE 'user%'
-      GROUP BY player.id
-      HAVING sumScore > 0
-      ORDER BY sumScore DESC
-    `) as (player & { sumScore: number })[],
-    );
-  });
 });
 
 const convertBlobToBase64 = (blob: Blob) =>

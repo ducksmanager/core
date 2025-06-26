@@ -1,9 +1,8 @@
 import "bootstrap/dist/css/bootstrap.css";
 import "bootstrap-vue-next/dist/bootstrap-vue-next.css";
 
-import { BrowserTracing } from "@sentry/browser";
 import * as Sentry from "@sentry/vue";
-import { createHead } from "@unhead/vue";
+import { createHead } from "@unhead/vue/client";
 import { createPinia } from "pinia";
 import generatedRoutes from "virtual:generated-pages";
 import { createApp } from "vue";
@@ -27,11 +26,18 @@ const router = createRouter({
 const store = createPinia();
 
 const app = createApp(App)
-  .use(i18n("fr", localStorage.getItem("locale") || "fr", { de, en: await en(), fr, es }).instance)
+  .use(
+    i18n("fr", localStorage.getItem("locale") || "fr", {
+      de,
+      en: await en(),
+      fr,
+      es,
+    }).instance,
+  )
   .use(store)
   .use(head)
   .use(router)
-  .provide("dmSocket", new SocketClient(import.meta.env.VITE_DM_SOCKET_URL))
+  .provide("dmSocket", new SocketClient(import.meta.env.VITE_DM_SOCKET_URL));
 
 app.mount("#app");
 
@@ -39,11 +45,10 @@ if (import.meta.env.NODE_ENV === "production") {
   Sentry.init({
     app,
     dsn: "https://a225a6550b8c4c07914327618685a61c@sentry.ducksmanager.net/1385898",
-    logErrors: true,
-    integrations: [new BrowserTracing()],
+    integrations: [
+      Sentry.browserTracingIntegration({ router }),
+      Sentry.replayIntegration(),
+    ],
     tracesSampleRate: 1.0,
-    tracingOptions: {
-      trackComponents: true,
-    },
   });
 }

@@ -39,6 +39,9 @@
       "~duckguessr-prisma-client": [
         "api/prisma/client_duckguessr"
       ],
+      "~duckguessr-services/*": [
+        "api/services/*"
+      ],
       "~duckguessr-types/*": [
         "api/types/*"
       ],

@@ -1,6 +1,6 @@
 import type { EventOutput, SuccessfulEventOutput } from "socket-call-client";
 
-import { getCurrentLocaleShortKey } from "~/composables/useLocales";
+import { getCurrentLocaleShortKey } from "../composables/useLocales";
 import type { ClientEvents as CoaClientEvents } from "~dm-services/coa";
 import type { InducksIssueDetails } from "~dm-types/InducksIssueDetails";
 import type { InducksIssueQuotationSimple } from "~dm-types/InducksIssueQuotationSimple";

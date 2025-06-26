@@ -22,8 +22,6 @@ export const setUserCookieIfNotExists = () => {
   }
 };
 
-export const isAnonymous = (username: string) => /^user\d+$/.test(username);
-
 export const getDuckguessrId = () =>
   parseInt(useCookies().getAll()["duckguessr-id"]);
 

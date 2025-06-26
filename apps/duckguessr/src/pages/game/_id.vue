@@ -50,11 +50,13 @@
 </template>
 
 <script lang="ts" setup>
-import { io } from "socket.io-client";
 import { useCookies } from "@vueuse/integrations/useCookies";
 import { getDuckguessrId } from "~/composables/user";
 import { useScoreToVariant } from "~/composables/use-score-to-variant";
 import { GameFullNoPersoncode } from "~duckguessr-types/game";
+import { duckguessrSocketInjectionKey } from "~/composables/useDuckguessrSocket";
+
+const { getGameSocketFromId, podiumSocket } = inject(duckguessrSocketInjectionKey)!;
 
 const duckguessrId = getDuckguessrId();
 const { t } = useI18n();
@@ -71,11 +73,7 @@ const firstRoundStartDate = ref(null as Date | null);
 
 const game = ref(null as GameFullNoPersoncode | null);
 
-const gameSocket = io(`${import.meta.env.VITE_DM_SOCKET_URL}/game/${gameId}`, {
-  auth: {
-    cookie: useCookies().getAll(),
-  },
-})
+const gameSocket = getGameSocketFromId(gameId)
   .on("connect", () => {
     isConnectedToSocket.value = true;
   })
@@ -169,9 +167,7 @@ const validateGuess = async () => {
 };
 
 const loadGame = async () => {
-  game.value = await io(import.meta.env.VITE_DM_SOCKET_URL).emitWithAck(
-    "getPodium",
-  );
+  game.value = await podiumSocket.value.getPodium();
   if (game.value) {
     const now = new Date().toISOString();
     gameIsFinished.value = game.value.rounds.every(

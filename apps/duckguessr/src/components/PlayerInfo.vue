@@ -49,7 +49,11 @@
 <script setup lang="ts">
 import { isBot, isPotentialBot } from "~/composables/user";
 
-const props = withDefaults(
+const { username, avatar, topPlayer= false,
+    toggleable= false,
+    size= 4,
+    noRightPanel= false,
+    nowrap= true, } = 
   defineProps<{
     username: string;
     topPlayer?: boolean;
@@ -58,27 +62,17 @@ const props = withDefaults(
     size?: number;
     noRightPanel?: boolean;
     nowrap?: boolean;
-  }>(),
-  {
-    topPlayer: false,
-    avatar: "HDL's father",
-    toggleable: false,
-    size: 4,
-    noRightPanel: false,
-    nowrap: true,
-  },
-);
+  }>();
 
-const { username, avatar } = toRefs(props);
 
 const emit = defineEmits<{
   (e: "toggle"): void;
 }>();
 
 const src = computed(() =>
-  isBot(username.value) || isPotentialBot(username.value)
+  isBot(username) || isPotentialBot(username)
     ? "/avatars/Little Helper.png"
-    : `/avatars/${avatar.value}.png`,
+    : `/avatars/${avatar}.png`,
 );
 
 const { t } = useI18n();

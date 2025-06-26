@@ -28,14 +28,12 @@
 </template>
 <script lang="ts" setup>
 import { Author } from "~duckguessr-types/roundWithScoresAndAuthor";
-const { author, enabled, selectable } =
-  toRefs(
-    defineProps<{
-      author: Author;
-      enabled: boolean;
-      selectable: boolean;
-    }>(),
-  );
+
+const { author, enabled, selectable } = defineProps<{
+  author: Author;
+  enabled: boolean;
+  selectable: boolean;
+}>();
 
 const emit = defineEmits<{
   (e: "select", personcode: string): void;
@@ -48,7 +46,7 @@ const setDefaultAuthorUrl = () => {
 };
 
 watch(
-  author,
+  () => author,
   ({ personcode }) => {
     authorImageUrl.value = `https://inducks.org/creators/photos/${personcode}.jpg`;
   },

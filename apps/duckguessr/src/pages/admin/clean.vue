@@ -146,11 +146,12 @@
 
 <script lang="ts" setup>
 import { BaseButtonVariant } from "node_modules/bootstrap-vue-next/dist/src/types";
-import { Socket, io } from "socket.io-client";
 import { userStore } from "~/stores/user";
-import { ClientToServerEventsMaintenance } from "~duckguessr-types/socketEvents";
 import { getUrl } from "~/composables/url";
 import { entryurlDetailsDecision } from "~duckguessr-prisma-client";
+import { duckguessrSocketInjectionKey } from "~/composables/useDuckguessrSocket";
+
+const { maintenanceSocket } = inject(duckguessrSocketInjectionKey)!;
 
 interface DatasetWithDecisionCounts {
   id: number;
@@ -188,10 +189,6 @@ const currentPage = ref(1 as number);
 const totalRows = ref(10000 as number | null);
 const rowsPerPage = 60;
 
-const socket: Socket<ClientToServerEventsMaintenance> = io(
-  import.meta.env.SOCKET_URL + "/maintenance",
-);
-
 const user = computed(() => userStore().user);
 const isAllowed = computed(
   () =>
@@ -205,7 +202,7 @@ const isAllowed = computed(
       "Picsou22",
     ].includes(user.value.username),
 );
-const decisions: Record<entryurlDetailsDecision, Decision> = {
+const decisions = {
   ok: { pressed: false, title: "OK", variant: "outline-success" },
   no_drawing: {
     pressed: false,
@@ -217,7 +214,7 @@ const decisions: Record<entryurlDetailsDecision, Decision> = {
     title: t("Image contains author").toString(),
     variant: "outline-warning",
   },
-};
+} as const;
 const decisionsWithNonValidated = ref({
   null: {
     pressed: true,
@@ -225,10 +222,10 @@ const decisionsWithNonValidated = ref({
     variant: "secondary",
   },
   ...decisions,
-} as Record<entryurlDetailsDecision | "null", Decision>);
+} as const);
 const loadDatasets = async () => {
   datasetsGroupedByDecision.value = (
-    await socket.emitWithAck("getMaintenanceData")
+    await maintenanceSocket.value.getMaintenanceData()
   ).reduce(
     (
       acc: any,
@@ -278,8 +275,7 @@ const loadImagesToMaintain = async (
     return;
   }
   isLoading.value = true;
-  const entryurlsToMaintain = await socket.emitWithAck(
-    "getMaintenanceDataForDataset",
+  const entryurlsToMaintain = await maintenanceSocket.value.getMaintenanceDataForDataset(
     datasetName,
     (
       Object.keys(decisionsWithNonValidated) as (
@@ -350,8 +346,7 @@ watch(
 
 const submitInvalidations = async () => {
   isLoading.value = true;
-  await socket.emitWithAck(
-    "updateMaintenanceData",
+  await maintenanceSocket.value.updateMaintenanceData(
     entryurlsPendingMaintenanceWithUrls.value,
   );
 
@@ -365,7 +360,7 @@ const submitInvalidations = async () => {
 </script>
 
 <style scoped lang="scss">
-::v-deep table {
+:deep(table) {
   color: white !important;
 
   tr {

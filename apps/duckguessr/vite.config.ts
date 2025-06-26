@@ -4,7 +4,7 @@ import Vue from "@vitejs/plugin-vue";
 import AutoImport from "unplugin-auto-import/vite";
 import IconsResolve from "unplugin-icons/resolver";
 import Icons from "unplugin-icons/vite";
-import { BootstrapVueNextResolver } from "unplugin-vue-components/resolvers";
+import { BootstrapVueNextResolver } from "bootstrap-vue-next";
 import Components from "unplugin-vue-components/vite";
 import { defineConfig } from "vite";
 import Pages from "vite-plugin-pages";
@@ -12,16 +12,26 @@ import Pages from "vite-plugin-pages";
 export default defineConfig({
   clearScreen: false,
   resolve: {
+    dedupe: [
+      "pinia",
+      "vue",
+      "vue-i18n",
+      "vue-router",
+      "@vueuse/core",
+      "bootstrap-vue-next",
+    ],
     alias: {
       "~": path.resolve(__dirname, "src"),
       "~locales": path.resolve(__dirname, "locales"),
       "~dm-services": path.resolve(__dirname, "../../packages/api/services"),
       "~dm-types": path.resolve(__dirname, "../../packages/types"),
+      "~duckguessr-services": path.resolve(__dirname, "api/services"),
       "~duckguessr-prisma-client": path.resolve(
         __dirname,
         "api/prisma/client_duckguessr",
       ),
       "~duckguessr-types": path.resolve(__dirname, "api/types"),
+      "~web": path.resolve(__dirname, "../web"),
     },
   },
   plugins: [
@@ -36,7 +46,6 @@ export default defineConfig({
       compositionOnly: true,
     }),
 
-    // https://github.com/antfu/unplugin-auto-import
     AutoImport({
       eslintrc: {
         enabled: true,
@@ -51,7 +60,6 @@ export default defineConfig({
       ],
       dts: true,
       dirs: [
-        "./src/composables",
         "../web/src/composables",
         "../web/src/stores",
         "../../packages/types",

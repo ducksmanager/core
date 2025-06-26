@@ -73,14 +73,12 @@ import { userStore } from "~/stores/user";
 import { player, userMedalPoints } from "~duckguessr-prisma-client";
 
 const { players, gameId, gamePlayersStats } =
-  toRefs(
     defineProps<{
       players: player[];
       gamePlayersStats: userMedalPoints[];
       gameId: number;
       isBotAvailable: boolean;
-    }>(),
-  );
+    }>();
 
 const emit = defineEmits<{
   (e: "start-match"): void;
@@ -94,14 +92,14 @@ const { t } = useI18n();
 const title = computed(() =>
   t("Join {username}'s Duckguessr game!")
     .toString()
-    .replace("{username}", players.value[0].username),
+    .replace("{username}", players[0].username),
 );
-const gameUrl = computed(() => `${location.origin}/game/${gameId.value}`);
+const gameUrl = computed(() => `${location.origin}/game/${gameId}`);
 const isMatchCreator = computed(
-  () => getDuckguessrUsername() === players.value[0].username,
+  () => getDuckguessrUsername() === players[0].username,
 );
 const isBotPlaying = computed(() =>
-  players.value.find(({ username }) => isBot(username)),
+  players.find(({ username }) => isBot(username)),
 );
 
 const isBot = (username: string) => /^bot_/.test(username);
@@ -109,35 +107,18 @@ const isBot = (username: string) => /^bot_/.test(username);
 const isAnonymous = computed(() => userStore().isAnonymous);
 
 const getGamePlayerStats = (playerId: number) =>
-  gamePlayersStats.value.filter(
+  gamePlayersStats.filter(
     ({ playerId: statsPlayerId }) => playerId === statsPlayerId,
   );
 
-useSeoMeta(() => ({
-  title: title.value,
-  meta: [
-    {
-      property: "og:title",
-      content: title.value,
-    },
-    {
-      name: "og:site_name",
-      content: "Duckguessr",
-    },
-    {
-      property: "og:description",
-      content: title.value,
-    },
-    {
-      property: "og:url",
-      content: gameUrl.value,
-    },
-    {
-      property: "og:image",
-      content: `${location.origin}/favicon.png`,
-    },
-  ],
-}));
+useSeoMeta({
+  title,
+  ogTitle: title,
+  ogDescription: title,
+  ogUrl: gameUrl,
+  ogImage: `${location.origin}/favicon.png`,
+  ogSiteName: "Duckguessr",
+});
 </script>
 
 <style scoped lang="scss">

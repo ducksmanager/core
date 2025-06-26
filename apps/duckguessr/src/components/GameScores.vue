@@ -108,24 +108,22 @@ import { ColorVariant } from "bootstrap-vue-next";
 import { player, roundScore } from "~duckguessr-prisma-client";
 
 const { game } =
-  toRefs(
-    defineProps<{
-      game: GameFullNoPersoncode;
-    }>(),
-  );
+  defineProps<{
+    game: GameFullNoPersoncode;
+  }>();
 
 const duckguessrId = getDuckguessrId();
 const isAnonymous = computed(() => userStore().isAnonymous);
 
-const playerIds = game.value.gamePlayers.map(({ playerId }) => playerId);
-const players = game.value.gamePlayers.reduce(
+const playerIds = game.gamePlayers.map(({ playerId }) => playerId);
+const players = game.gamePlayers.reduce(
   (acc, { player }) => ({ ...acc, [player.id]: player }),
   {} as Record<number, player>,
 );
 const roundsWithPersonUrls = ref(
-  game.value.rounds.map((roundScore) => ({
+  game.rounds.map((roundScore) => ({
     ...roundScore,
-    ...game.value.authors.find(
+    ...game.authors.find(
       ({ personcode }) => personcode === roundScore.personcode,
     ),
     personurl: `https://inducks.org/creators/photos/${roundScore.personcode}.jpg`,
@@ -181,10 +179,10 @@ const playersWithScoresAndTotalScore = playerIds
   }));
 
 const currentUserHasParticipated = computed(() =>
-  game.value.gamePlayers.map(({ playerId }) => playerId).includes(duckguessrId),
+  game.gamePlayers.map(({ playerId }) => playerId).includes(duckguessrId),
 );
 
-const currentUserScores = game.value.rounds.map(({ roundScores }) =>
+const currentUserScores = game.rounds.map(({ roundScores }) =>
   roundScores.find(({ playerId }) => playerId === duckguessrId),
 );
 
@@ -200,7 +198,7 @@ const winningPlayerScores = computed(() =>
 
 const winningPlayer = computed(
   () =>
-    game.value.gamePlayers.find(
+    game.gamePlayers.find(
       ({ playerId }) => playerId === winningPlayerScores.value?.playerId,
     )!.player,
 );
@@ -209,7 +207,7 @@ const currentUserWonFastestRounds = currentUserWonRounds.filter(
   (roundScore) =>
     roundScore!.speedBonus ===
     Math.max(
-      ...game.value.rounds
+      ...game.rounds
         .find((score) => score?.id === roundScore!.roundId)!
         .roundScores.map(
           (otherPlayerRoundScore) => otherPlayerRoundScore!.speedBonus || 0,
@@ -220,13 +218,13 @@ const currentUserWonFastestRounds = currentUserWonRounds.filter(
 const hasUserStats = computed(() => userStore().stats && userStore().gameStats);
 
 watch(
-  [userStore().loginSocket, currentUserHasParticipated],
+  [userStore().playerSocket, currentUserHasParticipated],
   (loggedInAndParticipated) => {
     if (loggedInAndParticipated) {
       userStore().loadStats();
       userStore().loadGameStats(
-        game.value.id!,
-        game.value.dataset.name,
+        game.id!,
+        game.dataset.name,
         winningPlayer.value?.id === duckguessrId,
       );
     }
@@ -241,7 +239,7 @@ const { t } = useI18n();
 h3 {
   margin-top: 2rem;
 }
-::v-deep tr {
+:deep(tr) {
   height: 100px;
 
   td {

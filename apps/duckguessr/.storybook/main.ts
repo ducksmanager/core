@@ -1,47 +1,51 @@
 import type { StorybookConfig } from "@storybook/vue3-vite";
-import path from "path";
 import { join, dirname } from "path";
+import AutoImport from "unplugin-auto-import/vite";
 
 /**
  * This function is used to resolve the absolute path of a package.
  * It is needed in projects that use Yarn PnP or are set up within a monorepo.
  */
-function getAbsolutePath(value: string): any {
-  return dirname(require.resolve(join(value, "package.json")));
-}
+const getAbsolutePath = (value: string): any =>
+  dirname(require.resolve(join(value, "package.json")));
+
 const config: StorybookConfig = {
-  stories: ["../src/**/*.stories.@(js|jsx|mjs|ts|tsx)"],
+  stories: ["../src/**/*.stories.ts"],
   addons: [],
   framework: {
     name: getAbsolutePath("@storybook/vue3-vite"),
     options: {},
   },
+  core: {
+    builder: "@storybook/builder-vite",
+  },
   viteFinal: async (config) => {
-    // Add the same aliases as in the main vite.config.ts
-    config.resolve = config.resolve || {};
-    config.resolve.alias = {
-      ...config.resolve.alias,
-      "~": path.resolve(__dirname, "../src"),
-      "~locales": path.resolve(__dirname, "../locales"),
-      "~dm-services": path.resolve(__dirname, "../../../packages/api/services"),
-      "~dm-types": path.resolve(__dirname, "../../../packages/types"),
-      "~duckguessr-prisma-client": path.resolve(
-        __dirname,
-        "../api/prisma/client_duckguessr",
-      ),
-      "~duckguessr-types": path.resolve(__dirname, "../api/types"),
-    };
-    
-    // Add extensions to help with resolution
-    config.resolve.extensions = [
-      ...(config.resolve.extensions || []),
-      ".vue",
-      ".js",
-      ".ts",
-      ".jsx",
-      ".tsx",
-    ];
-    
+    // Add auto-imports for Vue 3 Composition API
+    config.plugins = config.plugins || [];
+    config.plugins.push(
+      AutoImport({
+        eslintrc: {
+          enabled: true,
+        },
+        imports: [
+          "pinia",
+          "vue",
+          "vue/macros",
+          "vue-router",
+          "vue-i18n",
+          "@vueuse/core",
+        ],
+        dts: true,
+        dirs: [
+          "./src/composables",
+          "../web/src/composables",
+          "../web/src/stores",
+          "../../packages/types",
+        ],
+        vueTemplate: true,
+      }),
+    );
+
     return config;
   },
 };

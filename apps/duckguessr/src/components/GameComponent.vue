@@ -64,7 +64,6 @@ defineEmits<{
 }>();
 
 const { currentRound, players, availableTime, remainingTime } =
-  toRefs(
     defineProps<{
       currentRound: RoundWithScoresAndAuthor;
       hasEverybodyGuessed: boolean;
@@ -73,22 +72,21 @@ const { currentRound, players, availableTime, remainingTime } =
       players: player[];
       previousPersoncodes: string[];
       remainingTime: number;
-    }>(),
-  );
+    }>();
 
-const url = computed(() => getUrl(currentRound.value.sitecodeUrl));
+const url = computed(() => getUrl(currentRound.sitecodeUrl));
 
 const roundScoresAllPlayers = computed(() =>
-  players.value
+  players
     .map(
       (player) =>
-        currentRound.value.roundScores.find(
+        currentRound.roundScores.find(
           ({ playerId }) => playerId === player.id,
         ) ||
         ({
-          timeSpentGuessing: 1000 * (availableTime.value - remainingTime.value),
+          timeSpentGuessing: 1000 * (availableTime - remainingTime),
           playerId: player.id,
-          roundId: currentRound.value.id,
+          roundId: currentRound.id,
           speedBonus: 0,
         } as OngoingRoundScore),
     )
@@ -110,8 +108,8 @@ const roundScoresAllPlayers = computed(() =>
 );
 
 const roundDuration = ref(
-  new Date(currentRound.value.finishedAt!).getTime() -
-    new Date(currentRound.value.startedAt!).getTime(),
+  new Date(currentRound.finishedAt!).getTime() -
+    new Date(currentRound.startedAt!).getTime(),
 );
 </script>
 <style lang="scss">

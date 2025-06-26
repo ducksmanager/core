@@ -71,34 +71,26 @@ const medalTypes = computed(
   }),
 );
 
-const props = withDefaults(
+const { medalLevelAndProgress, type, withGameData= false, withTitle = true, withDetails = false } = 
   defineProps<{
     type: string;
     withGameData?: boolean;
     withDetails?: boolean;
     withTitle?: boolean;
     medalLevelAndProgress: MedalLevelAndProgress;
-  }>(),
-  {
-    withGameData: false,
-    withDetails: false,
-    withTitle: true,
-  },
-);
-
-const { medalLevelAndProgress, type, withGameData } = toRefs(props);
+  }>();
 
 const levels = computed(
-  () => MEDAL_LEVELS.find(({ medalType }) => medalType === type.value!)!.levels,
+  () => MEDAL_LEVELS.find(({ medalType }) => medalType === type)!.levels,
 );
 
 const currentLevelThreshold = computed(() =>
-  medalLevelAndProgress.value.level === 0
+  medalLevelAndProgress.level === 0
     ? 0
-    : levels.value[medalLevelAndProgress.value.level - 1],
+    : levels.value[medalLevelAndProgress.level - 1],
 );
 const nextLevelThreshold = computed(
-  () => levels.value[medalLevelAndProgress.value.level],
+  () => levels.value[medalLevelAndProgress.level],
 );
 
 const totalPointsToReachNextLevel = computed(
@@ -107,7 +99,7 @@ const totalPointsToReachNextLevel = computed(
 
 const levelPercentage = computed(
   () =>
-    (100 * medalLevelAndProgress.value.currentLevelPoints) /
+    (100 * medalLevelAndProgress.currentLevelPoints) /
     totalPointsToReachNextLevel.value,
 );
 
@@ -115,19 +107,19 @@ const shownLevelPercentage = computed(() => (levelPercentage.value + 15) / 1.5);
 
 const levelPercentageProgress = computed(
   () =>
-    (100 * medalLevelAndProgress.value.currentLevelProgressPoints) /
+    (100 * medalLevelAndProgress.currentLevelProgressPoints) /
     totalPointsToReachNextLevel.value,
 );
 
 const medalTitle = computed(() => {
-  let title = medalTypes.value[type.value].title;
+  let title = medalTypes.value[type].title;
   const { level, currentLevelProgressPoints, currentLevelPoints } =
-    medalLevelAndProgress.value;
+    medalLevelAndProgress;
   if (level > 0) {
     title += ` - ${t(medalColors[level - 1])}`;
   }
   title += "\n";
-  if (withGameData.value) {
+  if (withGameData) {
     title +=
       t(`+ {newPoints} point(s)`, {
         newPoints: currentLevelProgressPoints,
@@ -164,25 +156,25 @@ const isCurrentLevelPercentageProgressGoingUp = ref(true);
 const medalColors = ["Bronze", "Silver", "Gold"];
 
 const getMedalUrl = (level: number) =>
-  `url('${import.meta.env.URL}/medals/256px/${type.value} ${medalColors[
+  `url('${import.meta.env.URL}/medals/256px/${type} ${medalColors[
     Math.max(0, level - 1)
   ].toUpperCase()}.png')`;
 
 const currentMedalUrl = computed(() =>
-  getMedalUrl(Math.max(0, medalLevelAndProgress.value.level)),
+  getMedalUrl(Math.max(0, medalLevelAndProgress.level)),
 );
 const nextMedalUrl = computed(() =>
-  getMedalUrl(Math.min(3, medalLevelAndProgress.value.level + 1)),
+  getMedalUrl(Math.min(3, medalLevelAndProgress.level + 1)),
 );
 
 onMounted(() => {
   console.log(
-    `Type: ${type.value}, Current level and progress: ${JSON.stringify(
-      medalLevelAndProgress.value,
+    `Type: ${type}, Current level and progress: ${JSON.stringify(
+      medalLevelAndProgress,
     )}`,
   );
   setInterval(() => {
-    if (!withGameData.value) {
+    if (!withGameData) {
       currentLevelPercentageProgress.value = levelPercentageProgress.value;
     } else if (levelPercentageProgress.value) {
       const increment = levelPercentageProgress.value / 20;

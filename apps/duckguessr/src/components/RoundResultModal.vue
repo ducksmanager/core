@@ -62,7 +62,6 @@ import { getUrl } from "~/composables/url";
 import { BaseColorVariant } from "node_modules/bootstrap-vue-next/dist/src/types";
 
 const { nextRoundStartDate, roundUrl } =
-  toRefs(
     defineProps<{
       status: keyof BaseColorVariant;
       roundNumber: number;
@@ -71,10 +70,9 @@ const { nextRoundStartDate, roundUrl } =
       speedBonus?: number | null;
       nextRoundStartDate: Date | null;
       hasEverybodyGuessed: boolean;
-    }>(),
-  );
+    }>();
 
-const nextRoundStartTime = computed(() => nextRoundStartDate.value?.getTime());
+const nextRoundStartTime = computed(() => nextRoundStartDate?.getTime());
 const time = new Date().getTime();
 const initialTimeBeforeNextRound = computed(() =>
   nextRoundStartTime.value ? nextRoundStartTime.value - time : null,
@@ -87,16 +85,16 @@ const emit = defineEmits<{
 
 const { t } = useI18n();
 
-const url = computed(() => getUrl(roundUrl.value));
+const url = computed(() => getUrl(roundUrl));
 
 const updateTimeBeforeNextRound = () => {
   timeBeforeNextRound.value =
-    nextRoundStartDate.value === null
+    nextRoundStartDate === null
       ? null
       : Math.max(
           0,
           Math.ceil(
-            (nextRoundStartDate.value.getTime() - new Date().getTime()) / 1000,
+            (nextRoundStartDate.getTime() - new Date().getTime()) / 1000,
           ),
         );
 };
@@ -115,7 +113,7 @@ watch(timeBeforeNextRound, (value) => {
 </script>
 
 <style scoped lang="scss">
-::v-deep .modal-body {
+:deep(.modal-body) {
   &.bg-success {
     background-color: #52a350 !important;
   }

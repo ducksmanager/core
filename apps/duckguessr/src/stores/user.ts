@@ -1,16 +1,17 @@
 import { defineStore } from "pinia";
-import { io, Socket } from "socket.io-client";
 import { useCookies } from "@vueuse/integrations/useCookies";
 import {
-  isAnonymous as isAnonymousNative,
   removeCookie,
   setDuckguessrUserData,
   setUserCookieIfNotExists,
 } from "~/composables/user";
 import {
-  ClientToServerEvents,
-  ServerToClientEvents,
-} from "~duckguessr-types/socketEvents";
+  type ClientEmitEvents as PlayerEmitEvents,
+  // type ClientListenEvents as PlayerListenEvents,
+} from "~duckguessr-services/player";
+
+import { socketInjectionKey as dmSocketInjectionKey } from "~web/src/composables/useDmSocket";
+import { duckguessrSocketInjectionKey } from "~/composables/useDuckguessrSocket";
 import { MedalLevel } from "~duckguessr-types/playerStats";
 import {
   player,
@@ -27,24 +28,21 @@ export const MEDAL_LEVELS: MedalLevel[] = [
 ];
 
 export const userStore = defineStore("user", () => {
-  const loginSocket = ref<Socket<
-    ServerToClientEvents,
-    ClientToServerEvents
-  > | null>(null);
   const user = ref<player | null>(null);
+  let playerSocket:
+    | ReturnType<typeof useDuckguessrSocket>["playerSocket"]
+    | null = null;
   const stats = ref<userMedalPoints[] | null>(null);
   const gameStats = ref<userGameMedalPoints[] | null>(null);
   const attempts = ref(0);
 
   const isAnonymous = computed(
-    () => user.value && isAnonymousNative(user.value.username),
+    () => user.value && /^user\d+$/.test(user.value.username),
   );
   const login = () => {
-    loginSocket.value = io(`${import.meta.env.VITE_DM_SOCKET_URL}/login`, {
-      auth: {
-        cookie: useCookies().getAll(),
-      },
-    })
+    playerSocket = inject(duckguessrSocketInjectionKey)!
+      .playerSocket // TODO create socket from auth
+      // cookie: useCookies().getAll(),
       .on("logged", (loggedInUser: player) => {
         user.value = loggedInUser;
         console.log(`logged as ${user.value.username}`);
@@ -61,7 +59,7 @@ export const userStore = defineStore("user", () => {
       });
   };
   const loadStats = () => {
-    loginSocket.value!.emit("getStats", null, (newStats) => {
+    playerSocket!.getStats(null, (newStats) => {
       stats.value = newStats;
     });
   };
@@ -70,7 +68,7 @@ export const userStore = defineStore("user", () => {
     currentGameDatasetName: string | null,
     isWinningPlayer: boolean,
   ) => {
-    loginSocket.value!.emit("getGameStats", gameId, (stats) => {
+    playerSocket!.getGameStats(gameId, (stats) => {
       gameStats.value = stats;
       if (currentGameDatasetName) {
         gameStats.value!.push({
@@ -87,7 +85,7 @@ export const userStore = defineStore("user", () => {
     user,
     stats,
     login,
-    loginSocket,
+    playerSocket,
     isAnonymous,
     gameStats,
     loadStats,

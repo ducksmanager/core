@@ -28,15 +28,13 @@ import { RoundWithScoresAndAuthor } from "~duckguessr-types/roundWithScoresAndAu
 import { getUrl } from "~/composables/url";
 
 const { round } =
-  toRefs(
     defineProps<{
       round: RoundWithScoresAndAuthor;
-    }>(),
-  );
+    }>();
 
 const personUrl = ref();
 watch(
-  round,
+  () => round,
   ({ personcode }) => {
     personUrl.value = `https://inducks.org/creators/photos/${personcode}.jpg`;
   },
@@ -46,7 +44,7 @@ const setDefaultAuthorUrl = () => {
   personUrl.value =
     "https://upload.wikimedia.org/wikipedia/commons/7/7c/Interrogation_mark_with_material_shadows.jpg";
 };
-const imageUrl = getUrl(`/${round.value.sitecodeUrl}`);
+const imageUrl = getUrl(`/${round.sitecodeUrl}`);
 </script>
 
 <style scoped lang="scss">

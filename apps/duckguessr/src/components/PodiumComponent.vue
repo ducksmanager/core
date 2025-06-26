@@ -37,15 +37,14 @@
 import { player } from "~duckguessr-prisma-client";
 
 const { t } = useI18n();
-const props = defineProps<{
+const { players } = defineProps<{
   players: (player & { sumScore: number })[];
 }>();
 
-const { players } = toRefs(props);
 
 const topPlayers = computed(() =>
-  players.value.length >= 3
-    ? [players.value[1], players.value[0], players.value[2]]
+  players.length >= 3
+    ? [players[1], players[0], players[2]]
     : [],
 );
 
@@ -56,5 +55,5 @@ const maxPoints = computed(() =>
   ),
 );
 
-const otherPlayers = players.value.slice(3);
+const otherPlayers = players.slice(3);
 </script>
