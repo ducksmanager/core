@@ -30,7 +30,7 @@
     "socket-call-client": "^0.7.5",
     "socket-call-server": "^0.7.5",
     "socket.io": "^4.8.1",
-    "universal-cookie": "^4.0.4",
+    "universal-cookie": "^8.0.1",
     "~api": "workspace:*",
     "~dm-types": "workspace:*",
     "~prisma-schemas": "workspace:*"
