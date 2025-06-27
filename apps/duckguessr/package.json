@@ -10,11 +10,14 @@
     "dev": "concurrently -n vite,vue-tsc \"vite --port 8007\" \"vue-tsc --noEmit --watch\"",
     "dev-storybook": "/* TODO concurrently \"nuxt\" \"pnpm -F ~duckguessr-api dev\" \"npx nuxt storybook\"*/",
     "build": "vite build",
+    "build-storybook": "storybook build",
     "generate-avatars": "ts-node create-avatar-files.ts",
     "lint": "eslint --fix .",
     "test": "npx codeceptjs run -f start",
     "storybook": "storybook dev -p 6006",
-    "build-storybook": "storybook build"
+    "prod:build-docker": "REPO_NAME=ghcr.io/bperel/duckguessr-storybook pnpm -F '~ci' prod:build-docker --target storybook -f apps/duckguessr/Dockerfile",
+    "prod:transfer-files-pre": "pnpm -F '~ci' prod:transfer-files @apps/duckguessr/.env:apps/duckguessr/.env",
+    "prod:transfer-files-post": "pnpm -F '~ci' prod:transfer-files apps/duckguessr/docker-compose.yml:@apps/duckguessr/docker-compose.yml apps/duckguessr/Caddyfile:@apps/duckguessr/Caddyfile"
   },
   "dependencies": {
     "@prisma/client": "^6.10.1",

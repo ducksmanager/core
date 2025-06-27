@@ -1,0 +1,3 @@
+storybook.duckguessr.ducksmanager.net {
+    reverse_proxy storybook
+}
