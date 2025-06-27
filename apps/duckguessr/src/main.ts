@@ -19,7 +19,7 @@ import { SocketClient } from "socket-call-client";
 const head = createHead();
 
 const router = createRouter({
-  history: createWebHistory(import.meta.env.BASE_URL),
+  history: createWebHistory(window.location.origin),
   routes: generatedRoutes,
 });
 
@@ -41,7 +41,7 @@ const app = createApp(App)
 
 app.mount("#app");
 
-if (import.meta.env.NODE_ENV === "production") {
+if (process.env.NODE_ENV === "production") {
   Sentry.init({
     app,
     dsn: "https://a225a6550b8c4c07914327618685a61c@sentry.ducksmanager.net/1385898",

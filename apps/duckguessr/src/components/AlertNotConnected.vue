@@ -17,7 +17,7 @@
 
 <script setup lang="ts">
 const dmUrlWithRedirectToHere = `https://ducksmanager.net/login?redirect=${
-  import.meta.env.VITE_URL
+  window.location.origin
 }`;
 
 const { t } = useI18n();

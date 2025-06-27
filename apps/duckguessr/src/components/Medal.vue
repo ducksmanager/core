@@ -156,7 +156,7 @@ const isCurrentLevelPercentageProgressGoingUp = ref(true);
 const medalColors = ["Bronze", "Silver", "Gold"];
 
 const getMedalUrl = (level: number) =>
-  `url('${import.meta.env.URL}/medals/256px/${type} ${medalColors[
+  `url('/medals/256px/${type} ${medalColors[
     Math.max(0, level - 1)
   ].toUpperCase()}.png')`;
 

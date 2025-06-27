@@ -1,14 +1,28 @@
-import type { Preview } from "@storybook/vue3-vite";
+import { setup } from "@storybook/vue3";
+import "bootstrap/dist/css/bootstrap.css";
+import "bootstrap-vue-next/dist/bootstrap-vue-next.css";
+import { createHead } from "@unhead/vue/client";
+import { createPinia } from "pinia";
 
-const preview: Preview = {
-  parameters: {
-    controls: {
-      matchers: {
-        color: /(background|color)$/i,
-        date: /Date$/i,
-      },
-    },
-  },
-};
 
-export default preview;
+import i18n from "~web/src/i18n";
+import de from "../locales/de.json";
+import fr from "../locales/fr-FR.json";
+import en from "../locales/en-US";
+import es from "../locales/es.json";
+
+const head = createHead();
+
+const store = createPinia();
+
+
+setup(async (app) => {
+  app.use(i18n("fr", localStorage.getItem("locale") || "fr", {
+    de,
+    en: await en(),
+    fr,
+    es,
+  }).instance,)
+  .use(store)
+  .use(head)
+});
