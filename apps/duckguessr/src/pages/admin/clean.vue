@@ -145,10 +145,10 @@
 </template>
 
 <script lang="ts" setup>
-import { BaseButtonVariant } from "node_modules/bootstrap-vue-next/dist/src/types";
+import type { BaseButtonVariant } from "node_modules/bootstrap-vue-next/dist/src/types";
 import { userStore } from "~/stores/user";
 import { getUrl } from "~/composables/url";
-import { entryurlDetailsDecision } from "~duckguessr-prisma-client";
+import type { entryurlDetailsDecision } from "~duckguessr-prisma-client";
 import { duckguessrSocketInjectionKey } from "~/composables/useDuckguessrSocket";
 
 const { maintenanceSocket } = inject(duckguessrSocketInjectionKey)!;
@@ -275,16 +275,17 @@ const loadImagesToMaintain = async (
     return;
   }
   isLoading.value = true;
-  const entryurlsToMaintain = await maintenanceSocket.value.getMaintenanceDataForDataset(
-    datasetName,
-    (
-      Object.keys(decisionsWithNonValidated) as (
-        | entryurlDetailsDecision
-        | "null"
-      )[]
-    ).filter((key) => decisionsWithNonValidated[key].pressed),
-    offset,
-  );
+  const entryurlsToMaintain =
+    await maintenanceSocket.value.getMaintenanceDataForDataset(
+      datasetName,
+      (
+        Object.keys(decisionsWithNonValidated) as (
+          | entryurlDetailsDecision
+          | "null"
+        )[]
+      ).filter((key) => decisionsWithNonValidated[key].pressed),
+      offset,
+    );
   await loadDatasets();
   isLoading.value = false;
   entryurlsPendingMaintenanceWithUrls.value = entryurlsToMaintain.map(

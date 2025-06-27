@@ -24,13 +24,12 @@
 </template>
 
 <script lang="ts" setup>
-import { RoundWithScoresAndAuthor } from "~duckguessr-types/roundWithScoresAndAuthor";
+import type { RoundWithScoresAndAuthor } from "~duckguessr-types/roundWithScoresAndAuthor";
 import { getUrl } from "~/composables/url";
 
-const { round } =
-    defineProps<{
-      round: RoundWithScoresAndAuthor;
-    }>();
+const { round } = defineProps<{
+  round: RoundWithScoresAndAuthor;
+}>();
 
 const personUrl = ref();
 watch(

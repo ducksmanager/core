@@ -1,25 +1,25 @@
-import type { Meta, StoryObj } from '@storybook/vue3';
+import type { Meta, StoryObj } from "@storybook/vue3-vite";
 import PlayerInfo from "~/components/PlayerInfo.vue";
 
 const meta: Meta<typeof PlayerInfo> = {
   title: "PlayerInfo",
   component: PlayerInfo,
   parameters: {
-    layout: 'centered',
+    layout: "centered",
   },
-  tags: ['autodocs'],
+  tags: ["autodocs"],
   argTypes: {
     username: {
-      control: 'text',
+      control: "text",
     },
     topPlayer: {
-      control: 'boolean',
+      control: "boolean",
     },
     toggleable: {
-      control: 'boolean',
+      control: "boolean",
     },
     avatar: {
-      control: 'text',
+      control: "text",
     },
   },
 };

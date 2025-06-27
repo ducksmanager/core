@@ -24,8 +24,7 @@ const session = {
     await session.clearSession();
     isLoadingUser.value = false;
     user.value = null;
-  }
-
+  };
 
 getCurrentInstance()!.appContext.app.provide(
   dmSocketInjectionKey,

@@ -1,5 +1,10 @@
-import { dataset, game, gamePlayer, player } from "../prisma/client_duckguessr";
-import {
+import type {
+  dataset,
+  game,
+  gamePlayer,
+  player,
+} from "../prisma/client_duckguessr";
+import type {
   Author,
   RoundWithScoresAndAuthor,
   UnfinishedRound,
@@ -16,6 +21,9 @@ export interface GameFull extends game {
   gamePlayers: GamePlayerWithFullPlayer[];
 }
 
-export interface GameFullNoPersoncode extends Omit<GameFull, 'rounds'> {
-  rounds: (Omit<UnfinishedRound, 'personcode'> | Omit<RoundWithScoresAndAuthor, 'personcode'>)[];
+export interface GameFullNoPersoncode extends Omit<GameFull, "rounds"> {
+  rounds: (
+    | Omit<UnfinishedRound, "personcode">
+    | Omit<RoundWithScoresAndAuthor, "personcode">
+  )[];
 }

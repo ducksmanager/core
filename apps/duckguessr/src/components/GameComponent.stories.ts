@@ -1,22 +1,22 @@
-import type { Meta, StoryObj } from '@storybook/vue3';
+import type { Meta, StoryObj } from "@storybook/vue3-vite";
 import GameComponent from "~/components/GameComponent.vue";
 
 const meta: Meta<typeof GameComponent> = {
   title: "GameComponent",
   component: GameComponent,
   parameters: {
-    layout: 'centered',
+    layout: "centered",
   },
-  tags: ['autodocs'],
+  tags: ["autodocs"],
   argTypes: {
     availableTime: {
-      control: 'number',
+      control: "number",
     },
     remainingTime: {
-      control: 'number',
+      control: "number",
     },
     hasEverybodyGuessed: {
-      control: 'boolean',
+      control: "boolean",
     },
   },
 };
@@ -29,24 +29,24 @@ export const Default: Story = {
     availableTime: 15,
     chosenAuthor: "DR",
     currentRound: {
-      round_number: 2,
-      started_at: "2022-05-21T00:00:00",
-      finished_at: "2022-05-21T00:01:00",
-      round_scores: [
+      roundNumber: 2,
+      startedAt: new Date("2022-05-21T00:00:00"),
+      finishedAt: new Date("2022-05-21T00:01:00"),
+      roundScores: [
         {
           id: 100,
-          player_id: 1,
-          round_id: 10,
-          score_type_name: "Correct author",
+          playerId: 1,
+          roundId: 10,
+          scoreTypeName: "Correct author",
           score: 100,
-          speed_bonus: 10,
-          time_spent_guessing: 20 * 1000,
+          speedBonus: 10,
+          timeSpentGuessing: 20 * 1000,
         },
         {
           id: 101,
-          player_id: 3,
-          round_id: 10,
-          score_type_name: "Wrong author",
+          playerId: 3,
+          roundId: 10,
+          scoreTypeName: "Wrong author",
           score: 0,
           speed_bonus: 0,
           time_spent_guessing: 10 * 1000,
@@ -56,43 +56,59 @@ export const Default: Story = {
         "https://res.cloudinary.com/dl7hskxab/image/upload/v1623338718/inducks-covers/thumbnails3/webusers/2008/09/us_zz1966b23x_001.jpg",
     },
     authors: [
-      { personcode: "CB", personnationality: "us", personfullname: "Carl Barks" },
-      { personcode: "DR", personnationality: "us", personfullname: "Don Rosa" },
       {
-        personcode: "RSc",
-        personnationality: "us",
-        personfullname: "Romano Scarpa",
+        personcode: "CB",
+        nationalitycountrycode: "us",
+        fullname: "Carl Barks",
       },
-      { personcode: "CB", personnationality: "us", personfullname: "Carl Barks" },
-      { personcode: "DR", personnationality: "us", personfullname: "Don Rosa" },
       {
-        personcode: "RSc",
-        personnationality: "us",
-        personfullname: "Romano Scarpa",
+        personcode: "DR",
+        nationalitycountrycode: "us",
+        fullname: "Don Rosa",
       },
-      { personcode: "CB", personnationality: "us", personfullname: "Carl Barks" },
-      { personcode: "DR", personnationality: "us", personfullname: "Don Rosa" },
       {
         personcode: "RSc",
-        personnationality: "us",
-        personfullname: "Romano Scarpa",
+        nationalitycountrycode: "us",
+        fullname: "Romano Scarpa",
+      },
+      {
+        personcode: "CB",
+        nationalitycountrycode: "us",
+        fullname: "Carl Barks",
+      },
+      { personcode: "DR", nationalitycountrycode: "us", fullname: "Don Rosa" },
+      {
+        personcode: "RSc",
+        nationalitycountrycode: "us",
+        fullname: "Romano Scarpa",
+      },
+      {
+        personcode: "CB",
+        nationalitycountrycode: "us",
+        fullname: "Carl Barks",
+      },
+      { personcode: "DR", nationalitycountrycode: "us", fullname: "Don Rosa" },
+      {
+        personcode: "RSc",
+        nationalitycountrycode: "us",
+        fullname: "Romano Scarpa",
       },
     ],
     players: [
       {
         id: 1,
         username: "brunoperel",
-        ducksmanager_id: 117,
+        ducksmanagerId: 117,
       },
       {
         id: 2,
         username: "Wizyx",
-        ducksmanager_id: 1,
+        ducksmanagerId: 1,
       },
       {
         id: 3,
         username: "remifanpicsou",
-        ducksmanager_id: 3,
+        ducksmanagerId: 3,
       },
     ],
     previousPersoncodes: ["CB", "DR"],

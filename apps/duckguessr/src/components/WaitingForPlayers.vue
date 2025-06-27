@@ -70,15 +70,14 @@
 import { useSeoMeta } from "@unhead/vue";
 import { getDuckguessrUsername } from "~/composables/user";
 import { userStore } from "~/stores/user";
-import { player, userMedalPoints } from "~duckguessr-prisma-client";
+import type { player, userMedalPoints } from "~duckguessr-prisma-client";
 
-const { players, gameId, gamePlayersStats } =
-    defineProps<{
-      players: player[];
-      gamePlayersStats: userMedalPoints[];
-      gameId: number;
-      isBotAvailable: boolean;
-    }>();
+const { players, gameId, gamePlayersStats } = defineProps<{
+  players: player[];
+  gamePlayersStats: userMedalPoints[];
+  gameId: number;
+  isBotAvailable: boolean;
+}>();
 
 const emit = defineEmits<{
   (e: "start-match"): void;

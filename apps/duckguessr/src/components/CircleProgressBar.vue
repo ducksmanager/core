@@ -13,11 +13,10 @@
 </template>
 
 <script setup lang="ts">
-const { total, remaining } =
-    defineProps<{
-      total: number;
-      remaining: number;
-    }>();
+const { total, remaining } = defineProps<{
+  total: number;
+  remaining: number;
+}>();
 
 const percentage = computed(() =>
   Math.max(0, parseInt((100 * (remaining / total)).toFixed(0))),

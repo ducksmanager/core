@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/vue3';
+import type { Meta, StoryObj } from "@storybook/vue3-vite";
 import { useCookies } from "@vueuse/integrations/useCookies";
 import WaitingForPlayers from "~/components/WaitingForPlayers.vue";
 
@@ -6,15 +6,15 @@ const meta: Meta<typeof WaitingForPlayers> = {
   title: "WaitingForPlayers",
   component: WaitingForPlayers,
   parameters: {
-    layout: 'centered',
+    layout: "centered",
   },
-  tags: ['autodocs'],
+  tags: ["autodocs"],
   argTypes: {
     gameId: {
-      control: 'number',
+      control: "number",
     },
     isBotAvailable: {
-      control: 'boolean',
+      control: "boolean",
     },
   },
 };

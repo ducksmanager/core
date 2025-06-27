@@ -1,5 +1,5 @@
-import { roundScore } from "~duckguessr-prisma-client";
-import { OngoingRoundScore } from "~duckguessr-types/roundWithScoresAndAuthor";
+import type { roundScore } from "~duckguessr-prisma-client";
+import type { OngoingRoundScore } from "~duckguessr-types/roundWithScoresAndAuthor";
 
 export const useScoreToVariant = (
   roundScore: roundScore | OngoingRoundScore | null,

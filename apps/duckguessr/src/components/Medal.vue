@@ -37,7 +37,7 @@
 
 <script setup lang="ts">
 import { MEDAL_LEVELS } from "~/stores/user";
-import { MedalLevelAndProgress } from "~duckguessr-types/playerStats";
+import type { MedalLevelAndProgress } from "~duckguessr-types/playerStats";
 
 const { t } = useI18n();
 const medalTypes = computed(
@@ -71,14 +71,19 @@ const medalTypes = computed(
   }),
 );
 
-const { medalLevelAndProgress, type, withGameData= false, withTitle = true, withDetails = false } = 
-  defineProps<{
-    type: string;
-    withGameData?: boolean;
-    withDetails?: boolean;
-    withTitle?: boolean;
-    medalLevelAndProgress: MedalLevelAndProgress;
-  }>();
+const {
+  medalLevelAndProgress,
+  type,
+  withGameData = false,
+  withTitle = true,
+  withDetails = false,
+} = defineProps<{
+  type: string;
+  withGameData?: boolean;
+  withDetails?: boolean;
+  withTitle?: boolean;
+  medalLevelAndProgress: MedalLevelAndProgress;
+}>();
 
 const levels = computed(
   () => MEDAL_LEVELS.find(({ medalType }) => medalType === type)!.levels,

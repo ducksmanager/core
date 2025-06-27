@@ -30,8 +30,8 @@
 </template>
 
 <script lang="ts" setup>
-import { PlayerWithSumScore } from "~duckguessr-types/playerStats";
-const { currentPlayer, maxScoreAllPlayers, rank }  = defineProps<{
+import type { PlayerWithSumScore } from "~duckguessr-types/playerStats";
+const { currentPlayer, maxScoreAllPlayers, rank } = defineProps<{
   currentPlayer: PlayerWithSumScore;
   maxScoreAllPlayers: number;
   vertical: boolean;
@@ -43,9 +43,7 @@ const barSizePct = computed(
   () => (100 * currentPlayer.sumScore) / maxScoreAllPlayers,
 );
 
-const size = computed(() =>
-  rank < 3 ? 4 : rank < 10 ? 3 : rank < 20 ? 2 : 1,
-);
+const size = computed(() => (rank < 3 ? 4 : rank < 10 ? 3 : rank < 20 ? 2 : 1));
 </script>
 
 <style scoped lang="scss">

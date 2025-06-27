@@ -20,6 +20,7 @@ const compat = new FlatCompat({
 export default [
   {
     ignores: [
+      "storybook-static",
       "**/node_modules",
       "**/client_*",
       "**/dist",
@@ -43,10 +44,6 @@ export default [
     },
 
     languageOptions: {
-      globals: {
-        ...globals.browser,
-      },
-
       parser: parser,
       ecmaVersion: 5,
       sourceType: "script",
@@ -62,6 +59,7 @@ export default [
       "node/no-callback-literal": "off",
       "import/default": "off",
       "import/named": "off",
+      "@typescript-eslint/consistent-type-imports": "error",
 
       "vue/html-self-closing": [
         "error",

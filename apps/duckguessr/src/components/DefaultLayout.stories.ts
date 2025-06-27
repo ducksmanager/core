@@ -1,13 +1,13 @@
-import type { Meta, StoryObj } from '@storybook/vue3';
+import type { Meta, StoryObj } from "@storybook/vue3-vite";
 import DefaultLayout from "~/layouts/default.vue";
 
 const meta: Meta<typeof DefaultLayout> = {
   title: "DefaultLayout",
   component: DefaultLayout,
   parameters: {
-    layout: 'fullscreen',
+    layout: "fullscreen",
   },
-  tags: ['autodocs'],
+  tags: ["autodocs"],
 };
 
 export default meta;

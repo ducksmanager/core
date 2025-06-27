@@ -1,13 +1,13 @@
-import type { Meta, StoryObj } from '@storybook/vue3';
+import type { Meta, StoryObj } from "@storybook/vue3-vite";
 import PodiumComponent from "~/components/PodiumComponent.vue";
 
 const meta: Meta<typeof PodiumComponent> = {
   title: "Podium",
   component: PodiumComponent,
   parameters: {
-    layout: 'centered',
+    layout: "centered",
   },
-  tags: ['autodocs'],
+  tags: ["autodocs"],
 };
 
 export default meta;

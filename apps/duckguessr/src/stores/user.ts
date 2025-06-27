@@ -12,8 +12,8 @@ import {
 
 import { socketInjectionKey as dmSocketInjectionKey } from "~web/src/composables/useDmSocket";
 import { duckguessrSocketInjectionKey } from "~/composables/useDuckguessrSocket";
-import { MedalLevel } from "~duckguessr-types/playerStats";
-import {
+import type { MedalLevel } from "~duckguessr-types/playerStats";
+import type {
   player,
   userGameMedalPoints,
   userMedalPoints,

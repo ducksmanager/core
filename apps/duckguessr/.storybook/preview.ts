@@ -4,7 +4,6 @@ import "bootstrap-vue-next/dist/bootstrap-vue-next.css";
 import { createHead } from "@unhead/vue/client";
 import { createPinia } from "pinia";
 
-
 import i18n from "~web/src/i18n";
 import de from "../locales/de.json";
 import fr from "../locales/fr-FR.json";
@@ -15,14 +14,16 @@ const head = createHead();
 
 const store = createPinia();
 
-
 setup(async (app) => {
-  app.use(i18n("fr", localStorage.getItem("locale") || "fr", {
-    de,
-    en: await en(),
-    fr,
-    es,
-  }).instance,)
-  .use(store)
-  .use(head)
+  app
+    .use(
+      i18n("fr", localStorage.getItem("locale") || "fr", {
+        de,
+        en: await en(),
+        fr,
+        es,
+      }).instance,
+    )
+    .use(store)
+    .use(head);
 });

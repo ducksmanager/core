@@ -82,11 +82,16 @@
 </template>
 
 <script lang="ts" setup>
-import { Avatar } from "~duckguessr-types/avatar";
+import type { Avatar } from "~duckguessr-types/avatar";
 import { userStore } from "~/stores/user";
 const { t } = useI18n();
 
-const {isAnonymous, user, playerSocket, stats: currentUserStats} = storeToRefs(userStore())
+const {
+  isAnonymous,
+  user,
+  playerSocket,
+  stats: currentUserStats,
+} = storeToRefs(userStore());
 
 import { avatars, avatarDiskDiameter } from "~duckguessr-types/avatar";
 const tree = ref(null as any | null);
@@ -177,12 +182,9 @@ const onTreeLoad = (event: any) => {
 
 const onSelectAvatar = () => {
   user.value!.avatar = closestAvatar.value!.character;
-  playerSocket.value!.updateUser(
-    user.value!,
-    (updatedUser) => {
-      user.value = updatedUser;
-    },
-  );
+  playerSocket.value!.updateUser(user.value!, (updatedUser) => {
+    user.value = updatedUser;
+  });
 };
 </script>
 

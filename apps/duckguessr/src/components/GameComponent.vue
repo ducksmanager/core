@@ -51,28 +51,27 @@
   </b-row>
 </template>
 <script lang="ts" setup>
-import {
+import type {
   Author,
   OngoingRoundScore,
   RoundWithScoresAndAuthor,
 } from "~duckguessr-types/roundWithScoresAndAuthor";
 import { getUrl } from "~/composables/url";
-import { player } from "~duckguessr-prisma-client";
+import type { player } from "~duckguessr-prisma-client";
 
 defineEmits<{
   (e: "select-author", personcode: string): void;
 }>();
 
-const { currentRound, players, availableTime, remainingTime } =
-    defineProps<{
-      currentRound: RoundWithScoresAndAuthor;
-      hasEverybodyGuessed: boolean;
-      availableTime: number;
-      authors: Author[];
-      players: player[];
-      previousPersoncodes: string[];
-      remainingTime: number;
-    }>();
+const { currentRound, players, availableTime, remainingTime } = defineProps<{
+  currentRound: RoundWithScoresAndAuthor;
+  hasEverybodyGuessed: boolean;
+  availableTime: number;
+  authors: Author[];
+  players: player[];
+  previousPersoncodes: string[];
+  remainingTime: number;
+}>();
 
 const url = computed(() => getUrl(currentRound.sitecodeUrl));
 

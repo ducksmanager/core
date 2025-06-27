@@ -57,20 +57,19 @@
 </template>
 
 <script lang="ts" setup>
-import { Author } from "~duckguessr-types/roundWithScoresAndAuthor";
+import type { Author } from "~duckguessr-types/roundWithScoresAndAuthor";
 import { getUrl } from "~/composables/url";
-import { BaseColorVariant } from "node_modules/bootstrap-vue-next/dist/src/types";
+import type { BaseColorVariant } from "node_modules/bootstrap-vue-next/dist/src/types";
 
-const { nextRoundStartDate, roundUrl } =
-    defineProps<{
-      status: keyof BaseColorVariant;
-      roundNumber: number;
-      roundUrl: string;
-      correctAuthor: Author;
-      speedBonus?: number | null;
-      nextRoundStartDate: Date | null;
-      hasEverybodyGuessed: boolean;
-    }>();
+const { nextRoundStartDate, roundUrl } = defineProps<{
+  status: keyof BaseColorVariant;
+  roundNumber: number;
+  roundUrl: string;
+  correctAuthor: Author;
+  speedBonus?: number | null;
+  nextRoundStartDate: Date | null;
+  hasEverybodyGuessed: boolean;
+}>();
 
 const nextRoundStartTime = computed(() => nextRoundStartDate?.getTime());
 const time = new Date().getTime();

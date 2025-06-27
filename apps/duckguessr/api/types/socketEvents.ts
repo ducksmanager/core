@@ -1,19 +1,19 @@
-import {
+import type {
   datasetEntryurl,
   entryurlDetails,
   entryurlDetailsDecision,
   player,
   Prisma,
-  PrismaClient,
   round,
   roundScore,
   userGameMedalPoints,
   userMedalPoints,
 } from "../prisma/client_duckguessr";
-import { DatasetWithCounts } from "./dataset";
-import { GameFull } from "./game";
-import { GuessResponse } from "./guess";
-import { MatchDetails } from "./matchDetails";
+import { PrismaClient } from "../prisma/client_duckguessr";
+import type { DatasetWithCounts } from "./dataset";
+import type { GameFull } from "./game";
+import type { GuessResponse } from "./guess";
+import type { MatchDetails } from "./matchDetails";
 
 const prisma = new PrismaClient();
 

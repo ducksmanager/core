@@ -35,9 +35,9 @@
 </template>
 
 <script lang="ts" setup>
-import { Author } from "~duckguessr-types/roundWithScoresAndAuthor";
+import type { Author } from "~duckguessr-types/roundWithScoresAndAuthor";
 
-const {firstRoundStartDate} = defineProps<{
+const { firstRoundStartDate } = defineProps<{
   authors: Author[];
   firstRoundStartDate: Date;
 }>();

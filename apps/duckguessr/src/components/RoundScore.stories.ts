@@ -1,22 +1,22 @@
-import type { Meta, StoryObj } from '@storybook/vue3';
+import type { Meta, StoryObj } from "@storybook/vue3-vite";
 import RoundScore from "~/components/RoundScore.vue";
 
 const meta: Meta<typeof RoundScore> = {
   title: "RoundScore",
   component: RoundScore,
   parameters: {
-    layout: 'centered',
+    layout: "centered",
   },
-  tags: ['autodocs'],
+  tags: ["autodocs"],
   argTypes: {
     inGame: {
-      control: 'boolean',
+      control: "boolean",
     },
     scoreTypeName: {
-      control: 'text',
+      control: "text",
     },
     roundDuration: {
-      control: 'number',
+      control: "number",
     },
   },
 };

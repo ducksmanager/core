@@ -1,7 +1,8 @@
-import { NamespaceProxyTarget, useSocketEvents } from "socket-call-server";
-import { Socket } from "socket.io";
+import type { NamespaceProxyTarget } from "socket-call-server";
+import { useSocketEvents } from "socket-call-server";
+import type { Socket } from "socket.io";
 import namespaces from "./namespaces";
-import { SessionUser } from "types/SessionUser";
+import type { SessionUser } from "types/SessionUser";
 import { createGameSocket } from "./game";
 import game from "../game";
 

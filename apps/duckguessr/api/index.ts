@@ -9,7 +9,7 @@ import { PrismaClient } from "./prisma/client_duckguessr";
 import { createGameSocket } from "./services/game";
 import { createMatchmakingSocket } from "./services/game";
 import { createPlayerSocket } from "./services/player";
-import {
+import type {
   ClientToServerEvents,
   InterServerEvents,
   ServerToClientEvents,

@@ -10,11 +10,10 @@
 </template>
 
 <script setup lang="ts">
-const { availableTime, remainingTime } =
-    defineProps<{
-      availableTime: number;
-      remainingTime: number;
-    }>();
+const { availableTime, remainingTime } = defineProps<{
+  availableTime: number;
+  remainingTime: number;
+}>();
 
 const remainingTimePercentage = computed(
   () => remainingTime * (100 / availableTime),

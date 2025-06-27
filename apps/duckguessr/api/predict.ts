@@ -1,4 +1,4 @@
-import { dataset, round } from "./prisma/client_duckguessr";
+import type { dataset, round } from "./prisma/client_duckguessr";
 
 interface PredictionResponse {
   url: string;

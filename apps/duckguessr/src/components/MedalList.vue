@@ -46,10 +46,10 @@
 
 <script setup lang="ts">
 import { MEDAL_LEVELS, userStore } from "~/stores/user";
-import { MedalLevelAndProgress } from "~duckguessr-types/playerStats";
+import type { MedalLevelAndProgress } from "~duckguessr-types/playerStats";
 import { getDuckguessrId } from "~/composables/user";
 import type { dataset, userMedalPoints } from "~duckguessr-prisma-client";
-import { ColsNumbers } from "bootstrap-vue-next";
+import type { ColsNumbers } from "bootstrap-vue-next";
 
 const DATASET_WITH_MEDALS: string[] = ["published-fr-recent", "it", "us"];
 
@@ -57,23 +57,20 @@ const { t } = useI18n();
 const duckguessrId = getDuckguessrId();
 
 const {
-    dataset= null,
-    statsOverride= null,
-    cols= null,
-    colsLg= 3,
-  } = 
-  defineProps<{
-    dataset?: dataset | null;
-    withDetails: boolean;
-    statsOverride?: userMedalPoints[] | null;
-    cols?: ColsNumbers;
-    colsLg?: ColsNumbers;
-  }>();
+  dataset = null,
+  statsOverride = null,
+  cols = null,
+  colsLg = 3,
+} = defineProps<{
+  dataset?: dataset | null;
+  withDetails: boolean;
+  statsOverride?: userMedalPoints[] | null;
+  cols?: ColsNumbers;
+  colsLg?: ColsNumbers;
+}>();
 
 const stats = computed(() =>
-  dataset
-    ? userStore().gameStats
-    : statsOverride || userStore().stats,
+  dataset ? userStore().gameStats : statsOverride || userStore().stats,
 );
 
 const statsMatchingMedals = computed(() =>

@@ -12,19 +12,18 @@
 </template>
 
 <script lang="ts" setup>
-import { MatchDetails } from "~duckguessr-types/matchDetails";
+import type { MatchDetails } from "~duckguessr-types/matchDetails";
 import { userStore } from "~/stores/user";
-import { player, userMedalPoints } from "~duckguessr-prisma-client";
+import type { player, userMedalPoints } from "~duckguessr-prisma-client";
 
 const players = ref([] as player[]);
 const gamePlayersStats = ref(null as userMedalPoints[] | null);
 const isBotAvailableForGame = ref(null as boolean | null);
 
-const { gameId, gameSocket } =
-  defineProps<{
-    gameId: number;
-    gameSocket: ReturnType<typeof useDuckguessrSocket>["gameSocket"];
-  }>();
+const { gameId, gameSocket } = defineProps<{
+  gameId: number;
+  gameSocket: ReturnType<typeof useDuckguessrSocket>["gameSocket"];
+}>();
 
 const emit = defineEmits<{
   (e: "start-match"): void;

@@ -27,7 +27,7 @@
   </b-col>
 </template>
 <script lang="ts" setup>
-import { Author } from "~duckguessr-types/roundWithScoresAndAuthor";
+import type { Author } from "~duckguessr-types/roundWithScoresAndAuthor";
 
 const { author, enabled, selectable } = defineProps<{
   author: Author;

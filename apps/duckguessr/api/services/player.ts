@@ -1,4 +1,4 @@
-import { Server, Socket } from "socket.io";
+import type { Server, Socket } from "socket.io";
 
 import {
   getPlayer,
@@ -7,8 +7,9 @@ import {
   updatePlayer,
 } from "../get-player";
 import namespaces from "./namespaces";
-import { player, PrismaClient } from "../prisma/client_duckguessr";
-import {
+import type { player } from "../prisma/client_duckguessr";
+import { PrismaClient } from "../prisma/client_duckguessr";
+import type {
   ClientToServerEvents,
   InterServerEvents,
   ServerToClientEvents,
@@ -18,26 +19,29 @@ import { useSocketEvents, type NamespaceProxyTarget } from "socket-call-server";
 
 const prisma = new PrismaClient();
 
-
 export type PlayerServices = NamespaceProxyTarget<
   Socket<typeof listenEvents, object, object, SocketData>,
   Record<string, never>
 >;
 
-
 const listenEvents = ({ _socket }: PlayerServices) => ({
-  updateUser: async (updatedPlayer: player) => updatePlayer(updatedPlayer.id, updatedPlayer),
+  updateUser: async (updatedPlayer: player) =>
+    updatePlayer(updatedPlayer.id, updatedPlayer),
 
-  getStats: async (gameId: number): Promise<ReturnType<typeof getPlayerStatistics>> => {
+  getStats: async (
+    gameId: number,
+  ): Promise<ReturnType<typeof getPlayerStatistics>> => {
     // TODO
     return [];
   },
 
-  getGameStats: async (gameId: number): Promise<ReturnType<typeof getPlayerGameStatistics>> => {
+  getGameStats: async (
+    gameId: number,
+  ): Promise<ReturnType<typeof getPlayerGameStatistics>> => {
     // TODO
     return [];
   },
-})
+});
 export const createPlayerSocket = (
   io: Server<
     ClientToServerEvents,

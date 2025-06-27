@@ -49,21 +49,23 @@
 <script setup lang="ts">
 import { isBot, isPotentialBot } from "~/composables/user";
 
-const { username, avatar, topPlayer= false,
-    toggleable= false,
-    size= 4,
-    noRightPanel= false,
-    nowrap= true, } = 
-  defineProps<{
-    username: string;
-    topPlayer?: boolean;
-    avatar?: string;
-    toggleable?: boolean;
-    size?: number;
-    noRightPanel?: boolean;
-    nowrap?: boolean;
-  }>();
-
+const {
+  username,
+  avatar,
+  topPlayer = false,
+  toggleable = false,
+  size = 4,
+  noRightPanel = false,
+  nowrap = true,
+} = defineProps<{
+  username: string;
+  topPlayer?: boolean;
+  avatar?: string;
+  toggleable?: boolean;
+  size?: number;
+  noRightPanel?: boolean;
+  nowrap?: boolean;
+}>();
 
 const emit = defineEmits<{
   (e: "toggle"): void;

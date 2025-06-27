@@ -1,19 +1,19 @@
-import type { Meta, StoryObj } from '@storybook/vue3';
+import type { Meta, StoryObj } from "@storybook/vue3-vite";
 import AuthorCard from "~/components/AuthorCard.vue";
 
 const meta: Meta<typeof AuthorCard> = {
   title: "AuthorCard",
   component: AuthorCard,
   parameters: {
-    layout: 'centered',
+    layout: "centered",
   },
-  tags: ['autodocs'],
+  tags: ["autodocs"],
   argTypes: {
     enabled: {
-      control: 'boolean',
+      control: "boolean",
     },
     selectable: {
-      control: 'boolean',
+      control: "boolean",
     },
   },
 };

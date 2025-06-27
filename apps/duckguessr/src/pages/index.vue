@@ -66,7 +66,7 @@
 <script lang="ts" setup>
 import { useCookies } from "@vueuse/integrations/useCookies";
 import { userStore } from "~/stores/user";
-import { DatasetWithCounts } from "~duckguessr-types/dataset";
+import type { DatasetWithCounts } from "~duckguessr-types/dataset";
 import { duckguessrSocketInjectionKey } from "~/composables/useDuckguessrSocket";
 const router = useRouter();
 
@@ -74,9 +74,11 @@ const { t, locale } = useI18n();
 
 const datasets = ref([] as DatasetWithCounts[]);
 
-const {isAnonymous, user} = storeToRefs(userStore())
+const { isAnonymous, user } = storeToRefs(userStore());
 
-const { datasetsSocket, createMatchmakingSocket } = inject(duckguessrSocketInjectionKey)!;
+const { datasetsSocket, createMatchmakingSocket } = inject(
+  duckguessrSocketInjectionKey,
+)!;
 const matchCreationSocket = ref();
 
 const youtubeVideoId = computed(() =>
@@ -98,7 +100,9 @@ watch(
   () => user.value?.username,
   (username) => {
     if (username) {
-      matchCreationSocket.value = createMatchmakingSocket(useCookies().getAll()).value;
+      matchCreationSocket.value = createMatchmakingSocket(
+        useCookies().getAll(),
+      ).value;
     }
   },
   { immediate: true },

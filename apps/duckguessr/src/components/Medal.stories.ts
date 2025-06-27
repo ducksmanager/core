@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/vue3';
+import type { Meta, StoryObj } from "@storybook/vue3-vite";
 import Medal from "~/components/Medal.vue";
 import type { MedalLevelAndProgress } from "~duckguessr-types/playerStats";
 
@@ -6,16 +6,16 @@ const meta: Meta<typeof Medal> = {
   title: "Medal",
   component: Medal,
   parameters: {
-    layout: 'centered',
+    layout: "centered",
   },
-  tags: ['autodocs'],
+  tags: ["autodocs"],
   argTypes: {
     type: {
-      control: 'select',
-      options: ['published-fr-recent', 'it', 'us', 'fast', 'ultra_fast'],
+      control: "select",
+      options: ["published-fr-recent", "it", "us", "fast", "ultra_fast"],
     },
     withGameData: {
-      control: 'boolean',
+      control: "boolean",
     },
   },
 };

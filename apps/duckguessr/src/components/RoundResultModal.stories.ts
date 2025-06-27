@@ -1,26 +1,26 @@
-import type { Meta, StoryObj } from '@storybook/vue3';
+import type { Meta, StoryObj } from "@storybook/vue3-vite";
 import RoundResultModal from "~/components/RoundResultModal.vue";
 
 const meta: Meta<typeof RoundResultModal> = {
   title: "RoundResultModal",
   component: RoundResultModal,
   parameters: {
-    layout: 'centered',
+    layout: "centered",
   },
-  tags: ['autodocs'],
+  tags: ["autodocs"],
   argTypes: {
     status: {
-      control: 'select',
-      options: ['success', 'danger'],
+      control: "select",
+      options: ["success", "danger"],
     },
     roundNumber: {
-      control: 'number',
+      control: "number",
     },
     speedBonus: {
-      control: 'number',
+      control: "number",
     },
     hasEverybodyGuessed: {
-      control: 'boolean',
+      control: "boolean",
     },
   },
 };

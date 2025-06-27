@@ -53,10 +53,12 @@
 import { useCookies } from "@vueuse/integrations/useCookies";
 import { getDuckguessrId } from "~/composables/user";
 import { useScoreToVariant } from "~/composables/use-score-to-variant";
-import { GameFullNoPersoncode } from "~duckguessr-types/game";
+import type { GameFullNoPersoncode } from "~duckguessr-types/game";
 import { duckguessrSocketInjectionKey } from "~/composables/useDuckguessrSocket";
 
-const { getGameSocketFromId, podiumSocket } = inject(duckguessrSocketInjectionKey)!;
+const { getGameSocketFromId, podiumSocket } = inject(
+  duckguessrSocketInjectionKey,
+)!;
 
 const duckguessrId = getDuckguessrId();
 const { t } = useI18n();

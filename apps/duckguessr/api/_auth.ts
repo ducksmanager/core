@@ -1,5 +1,5 @@
 import { getPlayer } from "get-player";
-import { Socket } from "socket.io";
+import type { Socket } from "socket.io";
 
 export const RequiredAuthMiddleware = async (
   { _socket }: { _socket: Socket },

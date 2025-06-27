@@ -1,9 +1,8 @@
-import {
-  entryurlDetailsDecision,
-  PrismaClient,
-} from "prisma/client_duckguessr";
-import { NamespaceProxyTarget, useSocketEvents } from "socket-call-server";
-import { Socket } from "socket.io";
+import type { entryurlDetailsDecision } from "prisma/client_duckguessr";
+import { PrismaClient } from "prisma/client_duckguessr";
+import type { NamespaceProxyTarget } from "socket-call-server";
+import { useSocketEvents } from "socket-call-server";
+import type { Socket } from "socket.io";
 import namespaces from "./namespaces";
 
 export type MaintenanceServices = NamespaceProxyTarget<

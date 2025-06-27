@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/vue3';
+import type { Meta, StoryObj } from "@storybook/vue3-vite";
 import { useCookies } from "@vueuse/integrations/useCookies";
 import GameScores from "~/components/GameScores.vue";
 
@@ -6,12 +6,12 @@ const meta: Meta<typeof GameScores> = {
   title: "GameScores",
   component: GameScores,
   parameters: {
-    layout: 'centered',
+    layout: "centered",
   },
-  tags: ['autodocs'],
+  tags: ["autodocs"],
   argTypes: {
     gameId: {
-      control: 'number',
+      control: "number",
     },
   },
 };

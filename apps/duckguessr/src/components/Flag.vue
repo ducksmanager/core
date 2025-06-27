@@ -3,10 +3,9 @@
 </template>
 
 <script setup lang="ts">
-const { country } =
-  defineProps<{
-    country: string;
-  }>();
+const { country } = defineProps<{
+  country: string;
+}>();
 const fixedCountry = ref(country);
 switch (country) {
   case "uk":

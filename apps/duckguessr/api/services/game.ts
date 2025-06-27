@@ -1,21 +1,23 @@
-import { Server, Socket } from "socket.io";
+import type { Server, Socket } from "socket.io";
 
 import { getGameWithRoundsDatasetPlayers, numberOfRounds } from "../game";
 import game from "../game";
 import { getPlayer, getPlayerStatistics, getUser } from "../get-player";
 import { predict } from "../predict";
-import { player, PrismaClient, round } from "../prisma/client_duckguessr";
+import type { player, round } from "../prisma/client_duckguessr";
+import { PrismaClient } from "../prisma/client_duckguessr";
 import { getRoundWithScores, setRoundTimes } from "../round";
 import { guess } from "../round";
-import { GuessResponse } from "../types/guess";
-import {
+import type { GuessResponse } from "../types/guess";
+import type {
   ClientToServerEvents,
   InterServerEvents,
   ServerToClientEvents,
   SocketData,
 } from "../types/socketEvents";
 import namespaces from "./namespaces";
-import { NamespaceProxyTarget, useSocketEvents } from "socket-call-server";
+import type { NamespaceProxyTarget } from "socket-call-server";
+import { useSocketEvents } from "socket-call-server";
 
 const prisma = new PrismaClient();
 

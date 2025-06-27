@@ -1,19 +1,19 @@
-import type { Meta, StoryObj } from '@storybook/vue3';
+import type { Meta, StoryObj } from "@storybook/vue3-vite";
 import MedalList from "~/components/MedalList.vue";
 
 const meta: Meta<typeof MedalList> = {
   title: "MedalList",
   component: MedalList,
   parameters: {
-    layout: 'centered',
+    layout: "centered",
   },
-  tags: ['autodocs'],
+  tags: ["autodocs"],
   argTypes: {
     withDetails: {
-      control: 'boolean',
+      control: "boolean",
     },
     cols: {
-      control: 'number',
+      control: "number",
     },
   },
 };
