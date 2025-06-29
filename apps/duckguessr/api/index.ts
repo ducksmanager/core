@@ -7,7 +7,7 @@ import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa/client";
 
 import { PrismaClient } from "./prisma/client_duckguessr";
 import { createGameSocket } from "./services/game";
-import { createMatchmakingSocket } from "./services/game";
+// import { createMatchmakingSocket } from "./services/game";
 import { createPlayerSocket } from "./services/player";
 import type {
   ClientToServerEvents,
@@ -162,7 +162,7 @@ io.of("/game").on("connection", async (socket) => {
 });
 
 createPlayerSocket(io);
-createMatchmakingSocket(io);
+// createMatchmakingSocket(io);
 
 (async () => {
   const pendingGames = await prisma.game.findMany({

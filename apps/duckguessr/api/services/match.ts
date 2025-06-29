@@ -3,7 +3,7 @@ import { useSocketEvents } from "socket-call-server";
 import type { Socket } from "socket.io";
 import namespaces from "./namespaces";
 import type { SessionUser } from "types/SessionUser";
-import { createGameSocket } from "./game";
+// import { createGameSocket } from "./game";
 import game from "../game";
 
 export type MatchServices = NamespaceProxyTarget<
@@ -20,7 +20,7 @@ const listenEvents = ({ _socket }: MatchServices) => ({
   createMatch: async (dataset: string) => {
     console.log(`${_socket.data.user.username} is creating a match`);
     const newGame = (await game.create(dataset))!;
-    await createGameSocket(_socket, newGame.id);
+    // await createGameSocket(_socket, newGame.id);
     return newGame.id;
   },
 });
