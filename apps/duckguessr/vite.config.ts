@@ -8,6 +8,7 @@ import { BootstrapVueNextResolver } from "bootstrap-vue-next";
 import Components from "unplugin-vue-components/vite";
 import { defineConfig } from "vite";
 import Pages from "vite-plugin-pages";
+import { viteStaticCopy } from "vite-plugin-static-copy";
 
 export default defineConfig({
   clearScreen: false,
@@ -35,6 +36,15 @@ export default defineConfig({
     },
   },
   plugins: [
+    viteStaticCopy({
+      targets: [
+        {
+          src: ".env.prod",
+          dest: ".env",
+        },
+      ],
+    }),
+
     Vue(),
 
     // https://github.com/hannoeru/vite-plugin-pages
