@@ -9,7 +9,7 @@
     "duckguessr": "concurrently -p \"[duckguessr-{name}]\" --kill-others-on-fail -n web,api,dm \"pnpm -F ~duckguessr dev\" \"pnpm -F ~duckguessr-api dev\" \"pnpm -F ~web web\"",
     "dev": "concurrently -n vite,vue-tsc \"vite --port 8007\" \"vue-tsc --noEmit --watch\"",
     "dev-storybook": "/* TODO concurrently \"nuxt\" \"pnpm -F ~duckguessr-api dev\" \"npx nuxt storybook\"*/",
-    "build": "vite build",
+    "build": "storybook build",
     "build-storybook": "storybook build",
     "generate-avatars": "ts-node create-avatar-files.ts",
     "lint": "eslint --fix .",
