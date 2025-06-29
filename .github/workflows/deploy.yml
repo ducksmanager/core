@@ -79,12 +79,12 @@ jobs:
 
       - name: Build apps
         run: |
-          turbo -F "...[$lastSuccessfulCommit]" -F '!~ci' -F '!~duckguessr' -F '!~duckguessr-api' build prod:build-docker
+          turbo -F "...[$lastSuccessfulCommit]" -F '!~ci' -F '!~duckguessr-api' build prod:build-docker
 
       - name: Send post-build files
         run: |
-          turbo -F "...[$lastSuccessfulCommit]" -F '!~ci' -F '!~duckguessr' -F '!~duckguessr-api' prod:transfer-files-post
+          turbo -F "...[$lastSuccessfulCommit]" -F '!~ci' -F '!~duckguessr-api' prod:transfer-files-post
 
       - name: Deploy
         run: |
-          turbo --concurrency=1 -F "...[$lastSuccessfulCommit]" -F '!~ci' -F '!~duckguessr' -F '!~duckguessr-api' prod:deploy
+          turbo --concurrency=1 -F "...[$lastSuccessfulCommit]" -F '!~ci' -F '!~duckguessr-api' prod:deploy
