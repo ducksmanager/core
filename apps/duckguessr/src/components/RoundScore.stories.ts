@@ -12,9 +12,6 @@ const meta: Meta<typeof RoundScore> = {
     inGame: {
       control: "boolean",
     },
-    scoreTypeName: {
-      control: "text",
-    },
     roundDuration: {
       control: "number",
     },
@@ -26,19 +23,22 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
   args: {
-    scoreTypeName: "Score type 1",
     players: [
       {
         id: 1,
         username: "Wizyx",
+        ducksmanagerId: 1,
+        avatar: "https://example.com/avatar.png",
       },
     ],
     score: {
-      player_id: 1,
+      id: 1,
+      roundId: 1,
+      playerId: 1,
       score: 10,
       speedBonus: 5,
-      score_type_name: "Correct author",
-      time_spent_guessing: 2500,
+      scoreTypeName: "Correct author",
+      timeSpentGuessing: 2500,
     },
     roundDuration: 1000,
   },
@@ -47,19 +47,22 @@ export const Default: Story = {
 export const InGame: Story = {
   args: {
     inGame: true,
-    scoreTypeName: "Score type 1",
     players: [
       {
         id: 1,
         username: "Wizyx",
+        ducksmanagerId: 1,
+        avatar: "https://example.com/avatar.png",
       },
     ],
     score: {
-      player_id: 1,
+      id: 1,
+      roundId: 1,
+      playerId: 1,
       score: 10,
       speedBonus: 5,
-      score_type_name: "Correct author",
-      time_spent_guessing: 2500,
+      scoreTypeName: "Correct author",
+      timeSpentGuessing: 2500,
     },
     roundDuration: 10000,
   },
@@ -72,13 +75,18 @@ export const InGameNotGuessedYet: Story = {
       {
         id: 1,
         username: "Wizyx",
+        ducksmanagerId: 1,
+        avatar: "https://example.com/avatar.png",
       },
     ],
     score: {
-      player_id: 1,
-      score: null,
-      speedBonus: null,
-      time_spent_guessing: 2500,
+      id: 1,
+      roundId: 1,
+      playerId: 1,
+      score: 0,
+      speedBonus: 0,
+      scoreTypeName: "Correct author",
+      timeSpentGuessing: 2500,
     },
     roundDuration: 10000,
   },
@@ -87,19 +95,22 @@ export const InGameNotGuessedYet: Story = {
 export const InGameWrongAuthor: Story = {
   args: {
     inGame: true,
-    scoreTypeName: "Score type 1",
     players: [
       {
         id: 1,
         username: "Wizyx",
+        ducksmanagerId: 1,
+        avatar: "https://example.com/avatar.png",
       },
     ],
     score: {
-      player_id: 1,
+      id: 1,
+      roundId: 1,
+      playerId: 1,
       score: 0,
       speedBonus: 5,
-      score_type_name: "Wrong author",
-      time_spent_guessing: 3000,
+      scoreTypeName: "Wrong author",
+      timeSpentGuessing: 3000,
     },
     roundDuration: 10000,
   },

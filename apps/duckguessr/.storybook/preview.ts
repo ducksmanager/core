@@ -7,19 +7,17 @@ import { createPinia } from "pinia";
 import i18n from "~web/src/i18n";
 import de from "../locales/de.json";
 import fr from "../locales/fr-FR.json";
-import en from "../locales/en-US";
 import es from "../locales/es.json";
 
 const head = createHead();
 
 const store = createPinia();
 
-setup(async (app) => {
+setup((app) => {
   app
     .use(
       i18n("fr", localStorage.getItem("locale") || "fr", {
         de,
-        en: await en(),
         fr,
         es,
       }).instance,

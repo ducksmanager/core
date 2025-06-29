@@ -1,6 +1,6 @@
 <template>
   <div
-    class="wrapper d-flex flex-column text-center"
+    class="wrapper d-flex flex-column text-center p-0"
     :class="{ simple: !withDetails }"
   >
     <div

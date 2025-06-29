@@ -103,12 +103,12 @@
 import { getDuckguessrId, getShownUsername } from "~/composables/user";
 
 import { userStore } from "~/stores/user";
-import type { GameFullNoPersoncode } from "~duckguessr-types/game";
+import type { GameFull } from "~duckguessr-types/game";
 import type { ColorVariant } from "bootstrap-vue-next";
 import type { player, roundScore } from "~duckguessr-prisma-client";
 
 const { game } = defineProps<{
-  game: GameFullNoPersoncode;
+  game: GameFull;
 }>();
 
 const duckguessrId = getDuckguessrId();

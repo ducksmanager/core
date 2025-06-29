@@ -8,7 +8,7 @@
     </b-row>
     <b-row v-else class="justify-content-center align-items-center w-100">
       <template v-if="cols">
-        <template v-for="medalType in statsMatchingMedals" :key="type">
+        <template v-for="medalType in statsMatchingMedals" :key="medalType">
           <b-col
             class="flex-grow-0"
             :class="{
@@ -126,7 +126,7 @@ const levelsAndProgress = computed(
               ) || {
                 playerPoints: 0,
               }
-            ).playerPoints - currentLevelThreshold;
+            ).playerPoints! - currentLevelThreshold;
           const currentLevelProgressPoints = userStore().gameStats
             ? (
                 userStore().gameStats!.find(

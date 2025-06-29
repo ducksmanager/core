@@ -25,50 +25,32 @@ type Story = StoryObj<typeof meta>;
 export const Default: Story = {
   args: {
     gameId: 123,
-    players: [{ username: "brunoperel", avatar: "DD", id: 33 }],
+    players: [
+      { username: "brunoperel", avatar: "DD", id: 33, ducksmanagerId: 1 },
+    ],
     isBotAvailable: false,
     gamePlayersStats: [
-      { medal_type: "published-fr-recent", player_id: 33, points: 186 },
-      { medal_type: "it", player_id: 33, points: 12 },
-      { medal_type: "ultra_fast", player_id: 33, points: 1 },
-      { medal_type: "fast", player_id: 33, points: 5 },
+      { medalType: "published-fr-recent", playerId: 33, playerPoints: 186 },
+      { medalType: "it", playerId: 33, playerPoints: 12 },
+      { medalType: "ultra_fast", playerId: 33, playerPoints: 1 },
+      { medalType: "fast", playerId: 33, playerPoints: 5 },
     ],
   },
-  decorators: [
-    () => ({
-      setup() {
-        useCookies().set("duckguessr-user", "brunoperel", {
-          expires: new Date(new Date().getTime() + 3600000),
-          path: "/",
-        });
-      },
-    }),
-  ],
 };
 
 export const WithPotentialBot: Story = {
   args: {
     gameId: 123,
     players: [
-      { username: "brunoperel", avatar: "US", id: 33 },
-      { username: "Wizyx", avatar: "US", id: 34 },
-      { username: "remifanpicsou", avatar: "US", id: 35 },
+      { username: "brunoperel", avatar: "US", id: 33, ducksmanagerId: 1 },
+      { username: "Wizyx", avatar: "US", id: 34, ducksmanagerId: 1 },
+      { username: "remifanpicsou", avatar: "US", id: 35, ducksmanagerId: 1 },
     ],
     isBotAvailable: true,
     gamePlayersStats: [
-      { medal_type: "published-fr-recent", player_id: 33, points: 186 },
-      { medal_type: "us", player_id: 34, points: 12 },
-      { medal_type: "ultra_fast", player_id: 34, points: 12 },
+      { medalType: "published-fr-recent", playerId: 33, playerPoints: 186 },
+      { medalType: "us", playerId: 34, playerPoints: 12 },
+      { medalType: "ultra_fast", playerId: 34, playerPoints: 12 },
     ],
   },
-  decorators: [
-    () => ({
-      setup() {
-        useCookies().set("duckguessr-user", "brunoperel", {
-          expires: new Date(new Date().getTime() + 3600000),
-          path: "/",
-        });
-      },
-    }),
-  ],
 };
