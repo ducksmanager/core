@@ -17,7 +17,7 @@ export type BookcaseEdgeWithPopularity = BookcaseEdge & {
 };
 
 export const bookcase = defineStore("bookcase", () => {
-  const route = useRoute();
+  const route = useRoute<'/bookcase/show/[username]'>();
 
   const { bookcase: bookcaseEvents, userBookcase: userBookcaseEvents } =
     inject(socketInjectionKey)!;

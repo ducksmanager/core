@@ -8,8 +8,9 @@ import IconsResolve from "unplugin-icons/resolver";
 import Icons from "unplugin-icons/vite";
 import Components from "unplugin-vue-components/vite";
 import { defineConfig } from "vite";
-import Pages from "vite-plugin-pages";
 import Layouts from "vite-plugin-vue-layouts";
+import VueRouter from 'unplugin-vue-router/vite'
+import { VueRouterAutoImports } from 'unplugin-vue-router'
 
 export default defineConfig({
   clearScreen: false,
@@ -28,10 +29,8 @@ export default defineConfig({
   },
   plugins: [
     ReactivityTransform(),
+    VueRouter(),
     Vue(),
-
-    // https://github.com/hannoeru/vite-plugin-pages
-    Pages(),
 
     // https://github.com/JohnCampionJr/vite-plugin-vue-layouts
     Layouts(),
@@ -48,7 +47,7 @@ export default defineConfig({
       imports: [
         "vue",
         "vue/macros",
-        "vue-router",
+        VueRouterAutoImports,
         "@vueuse/core",
         "pinia",
         "vue-i18n",
