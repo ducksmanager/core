@@ -80,7 +80,7 @@ export const put = [
         },
       });
     }
-    const user = req.user
+    const user = req.user?.id
       ? await prismaDm.user.findUnique({
           where: {
             id: req.user.id,
