@@ -141,7 +141,7 @@ const { getImagePath } = images();
 const username = $computed(() => user.value?.username || null);
 
 const publicCollectionUsername = $computed(
-  () => route.params.username as string | undefined,
+  () => route.query.username as string | undefined,
 );
 
 const logout = () => {
