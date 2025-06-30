@@ -23,7 +23,7 @@ const head = createHead();
 
 const router = createRouter({
   history: createWebHistory(),
-  routes,
+  routes: setupLayouts(routes),
 });
 router.beforeResolve(async (to) => {
   if (!to.meta.public && !Cookies.get("token") && to.path !== "/login") {
