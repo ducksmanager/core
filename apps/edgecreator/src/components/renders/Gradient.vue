@@ -70,7 +70,7 @@ const direction = defineModel<"Vertical" | "Horizontal">("direction", {
 onMounted(() => {
   if (!isForm.value) {
     const { enableDragResize } = useStepOptions();
-    enableDragResize(rect.value!, {
+    enableDragResize(rect.value, {
       x,
       y,
     });

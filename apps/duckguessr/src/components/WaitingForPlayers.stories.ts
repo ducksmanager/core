@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/vue3-vite";
-import { useCookies } from "@vueuse/integrations/useCookies";
+
 import WaitingForPlayers from "~/components/WaitingForPlayers.vue";
 
 const meta: Meta<typeof WaitingForPlayers> = {

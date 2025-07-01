@@ -1,6 +1,5 @@
 import type { EventOutput, SuccessfulEventOutput } from "socket-call-client";
 
-import { getCurrentLocaleShortKey } from "../composables/useLocales";
 import type { ClientEvents as CoaClientEvents } from "~dm-services/coa";
 import type { InducksIssueDetails } from "~dm-types/InducksIssueDetails";
 import type { InducksIssueQuotationSimple } from "~dm-types/InducksIssueQuotationSimple";
@@ -10,6 +9,7 @@ import type {
 } from "~prisma-schemas/client_coa";
 
 import { socketInjectionKey } from "../composables/useDmSocket";
+import { getCurrentLocaleShortKey } from "../composables/useLocales";
 
 const addPartInfo = (issueDetails: InducksIssueDetails) => {
   const storyPartCounter = Object.entries(

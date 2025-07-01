@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/vue3-vite";
-import { useCookies } from "@vueuse/integrations/useCookies";
+
 import GameScores from "~/components/GameScores.vue";
 import type { player } from "~duckguessr-prisma-client";
 

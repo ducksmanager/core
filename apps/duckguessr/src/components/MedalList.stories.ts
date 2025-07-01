@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/vue3-vite";
+
 import MedalList from "~/components/MedalList.vue";
 
 const meta: Meta<typeof MedalList> = {

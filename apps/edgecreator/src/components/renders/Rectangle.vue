@@ -41,7 +41,7 @@ const stroke = defineModel<string>("stroke", { default: "transparent" });
 onMounted(() => {
   if (!isForm.value) {
     const { enableDragResize } = useStepOptions();
-    enableDragResize(rect.value!, {
+    enableDragResize(rect.value, {
       x,
       y,
     });

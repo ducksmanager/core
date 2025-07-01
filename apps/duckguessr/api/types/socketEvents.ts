@@ -115,5 +115,5 @@ export interface ClientToServerEvents {
   ) => void;
 }
 
-export interface InterServerEvents {}
-export interface SocketData {}
+export type InterServerEvents = Record<string, never>;
+export type SocketData = Record<string, never>;

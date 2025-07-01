@@ -1,4 +1,5 @@
 import type { Server, Socket } from "socket.io";
+import { type NamespaceProxyTarget, useSocketEvents } from "socket-call-server";
 
 import {
   getPlayer,
@@ -6,7 +7,6 @@ import {
   getPlayerStatistics,
   updatePlayer,
 } from "../get-player";
-import namespaces from "./namespaces";
 import type { player } from "../prisma/client_duckguessr";
 import { PrismaClient } from "../prisma/client_duckguessr";
 import type {
@@ -15,7 +15,7 @@ import type {
   ServerToClientEvents,
   SocketData,
 } from "../types/socketEvents";
-import { useSocketEvents, type NamespaceProxyTarget } from "socket-call-server";
+import namespaces from "./namespaces";
 
 const prisma = new PrismaClient();
 
@@ -29,14 +29,14 @@ const listenEvents = ({ _socket }: PlayerServices) => ({
     updatePlayer(updatedPlayer.id, updatedPlayer),
 
   getStats: async (
-    gameId: number,
+    _gameId: number,
   ): Promise<ReturnType<typeof getPlayerStatistics>> => {
     // TODO
     return [];
   },
 
   getGameStats: async (
-    gameId: number,
+    _gameId: number,
   ): Promise<ReturnType<typeof getPlayerGameStatistics>> => {
     // TODO
     return [];

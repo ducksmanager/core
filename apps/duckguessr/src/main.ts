@@ -4,17 +4,17 @@ import "bootstrap-vue-next/dist/bootstrap-vue-next.css";
 import * as Sentry from "@sentry/vue";
 import { createHead } from "@unhead/vue/client";
 import { createPinia } from "pinia";
+import { SocketClient } from "socket-call-client";
 import generatedRoutes from "virtual:generated-pages";
 import { createApp } from "vue";
 import { createRouter, createWebHistory } from "vue-router";
 
 import App from "~/App.vue";
-import i18n from "~web/src/i18n";
 import de from "~locales/de.json";
-import fr from "~locales/fr-FR.json";
 import en from "~locales/en-US";
 import es from "~locales/es.json";
-import { SocketClient } from "socket-call-client";
+import fr from "~locales/fr-FR.json";
+import i18n from "~web/src/i18n";
 
 const head = createHead();
 

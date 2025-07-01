@@ -26,12 +26,12 @@
   "dependencies": {
     "@opentelemetry/instrumentation-socket.io": "^0.46.1",
     "@prisma/client": "^6.10.1",
-    "@sentry/node": "^9.30.0",
-    "@sentry/profiling-node": "^9.30.0",
+    "@sentry/node": "^9.33.0",
+    "@sentry/profiling-node": "^9.33.0",
     "axios": "^1.10.0",
     "busboy": "^1.6.0",
     "cloudinary": "^1.41.3",
-    "dotenv": "^16.5.0",
+    "dotenv": "^16.6.1",
     "jsonwebtoken": "^9.0.2",
     "sharp": "^0.33.5",
     "socket-call-client": "^0.7.5",
@@ -42,18 +42,18 @@
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.1",
-    "@eslint/js": "^9.29.0",
+    "@eslint/js": "^9.30.0",
     "@sentry/cli": "^2.46.0",
     "@socket.io/admin-ui": "^0.5.1",
     "@types/busboy": "^1.5.4",
     "@types/i18n": "^0.13.12",
     "@types/jsonwebtoken": "^9.0.10",
-    "@types/node": "^22.15.32",
-    "concurrently": "^9.1.2",
-    "eslint": "^9.29.0",
+    "@types/node": "^22.15.34",
+    "concurrently": "^9.2.0",
+    "eslint": "^9.30.0",
     "eslint-config-prettier": "^10.1.5",
     "prisma": "^6.10.1",
     "typescript": "^5.8.3",
-    "typescript-eslint": "^8.34.1"
+    "typescript-eslint": "^8.35.1"
   }
 }

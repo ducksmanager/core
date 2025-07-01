@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/vue3-vite";
+
 import GameStartingSoonModal from "~/components/GameStartingSoonModal.vue";
 
 const meta: Meta<typeof GameStartingSoonModal> = {

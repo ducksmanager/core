@@ -61,6 +61,15 @@ export default [
       "import/named": "off",
       "@typescript-eslint/consistent-type-imports": "error",
 
+      "@typescript-eslint/no-unused-vars": [
+        "warn",
+        {
+          argsIgnorePattern: "^_",
+          varsIgnorePattern: "^_",
+          caughtErrorsIgnorePattern: "^_",
+        },
+      ],
+
       "vue/html-self-closing": [
         "error",
         {

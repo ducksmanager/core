@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/vue3-vite";
+
 import Medal from "~/components/Medal.vue";
 import type { MedalLevelAndProgress } from "~duckguessr-types/playerStats";
 

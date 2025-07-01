@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/vue3-vite";
+
 import PlayerInfo from "~/components/PlayerInfo.vue";
 
 const meta: Meta<typeof PlayerInfo> = {

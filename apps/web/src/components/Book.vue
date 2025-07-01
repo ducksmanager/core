@@ -37,7 +37,12 @@
 <script setup lang="ts" generic="Page extends { image: {url: string }|null}">
 import { PageFlip } from "page-flip";
 
-const { pages, edgeWidth = undefined, coverRatio, coverHeight } = defineProps<{
+const {
+  pages,
+  edgeWidth = undefined,
+  coverRatio,
+  coverHeight,
+} = defineProps<{
   pages: (Page & object)[];
   edgeWidth?: number; // Never passed!
   coverRatio: number;
