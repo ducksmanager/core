@@ -44,6 +44,7 @@ onMounted(() => {
     enableDragResize(rect.value, {
       x,
       y,
+      onresizemove: () => {},
     });
   }
 });
