@@ -212,7 +212,7 @@ const uploadAll = async () => {
     }
     await nextTick().then(async () => {
       const response = await saveEdgeSvg(
-        crop.issuecode,
+        crop.issuecode!,
         initialContributors.value.map((contribution) => ({
           ...contribution,
           issuecode: crop.issuecode!,

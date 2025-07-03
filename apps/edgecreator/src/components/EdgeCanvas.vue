@@ -140,6 +140,11 @@ const getStepOptions = (stepNumber: number, withComponentOption = true) =>
 const getStepOptionsObject = (stepNumber: number) =>
   getStepOptions(stepNumber, false).groupBy("optionName", "optionValue");
 
+const getStepOptionNames = (stepNumber: number) =>
+  Object.keys(
+    supportedRenders[stepComponentNames.value[stepNumber]].component.props,
+  ).filter((key) => !key.endsWith("Modifiers"));
+
 const borderWidth = ref(1);
 
 const canvas = shallowRef<SVGElement>();
@@ -165,8 +170,8 @@ const replaceEditingIssuecodeIfNotAlreadyEditing = (issuecode: string) => {
 };
 
 const onOptionUpdate = (stepNumber: number) =>
-  optionsPerStepNumber.value[stepNumber].reduce(
-    (acc, { optionName }) => ({
+  getStepOptionNames(stepNumber).reduce(
+    (acc, optionName) => ({
       ...acc,
       [`update:${optionName}`]: (optionValue: OptionValue) => {
         step().setOptionValues(
