@@ -41,7 +41,7 @@ const {
   pages,
   edgeWidth = undefined,
   coverRatio,
-  coverHeight,
+  coverHeight = undefined,
 } = defineProps<{
   pages: (Page & object)[];
   edgeWidth?: number; // Never passed!

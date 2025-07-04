@@ -30,10 +30,10 @@
       v-model:current-page="currentPage"
       :cover-height="coverHeight"
       :cover-ratio="coverRatio"
-      :urls="
+      :pages="
         pagesWithUrl.map((page) => ({
           ...page,
-          url: cloudinaryBaseUrl + page.url,
+          image: { url: cloudinaryBaseUrl + page.url },
         }))
       "
       @close-book="closeBook()"

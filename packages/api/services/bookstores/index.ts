@@ -1,6 +1,7 @@
 import { useSocketEvents } from "socket-call-server";
 
 import type { SimpleBookstore } from "~dm-types/SimpleBookstore";
+import BookstoreSuggested from "~/emails/bookstore-suggested";
 import type {
   bookstore,
   bookstoreComment,
@@ -163,6 +164,11 @@ const listenEvents = ({ _socket }: UserServices) => ({
         comment: comments[comments.length - 1].comment,
       },
     });
+
+
+    new BookstoreSuggested({
+      user
+    }).send();
 
     return createdComment;
   },
