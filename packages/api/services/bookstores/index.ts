@@ -1,7 +1,7 @@
 import { useSocketEvents } from "socket-call-server";
 
 import type { SimpleBookstore } from "~dm-types/SimpleBookstore";
-import BookstoreSuggested from "~/emails/bookstore-suggested";
+import BookstoreSuggested from "../../emails/bookstore-suggested";
 import type {
   bookstore,
   bookstoreComment,
