@@ -84,7 +84,9 @@ const getLevelProgressPercentage = medalData.getLevelProgressPercentage;
     .progress-extra-text {
       position: absolute;
       left: 5px;
-      display: inline-block;
+      display: flex;
+      height: 100%;
+      align-items: center;
       font-weight: bold;
       color: #222;
     }
