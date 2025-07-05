@@ -4,8 +4,9 @@ import type { QuotedIssue } from "~dm-types/QuotedIssue";
 import type { issue, issue_condition } from "~prisma-schemas/schemas/dm";
 
 import { coa } from "../stores/coa";
+import { AugmentedIssue } from "~dm-types/AugmentedIssue";
 
-export default (issues: ShallowRef<(issue & { issuecode: string })[]>) => {
+export default (issues: ShallowRef<AugmentedIssue<issue>[]>) => {
   const total = computed(() => issues.value?.length);
 
   const getTotalPerCountry = (includeDuplicates = true) => {
@@ -13,7 +14,7 @@ export default (issues: ShallowRef<(issue & { issuecode: string })[]>) => {
 
     const groupedByCountry = Object.groupBy(
       issues.value,
-      ({ publicationcode }) => publicationcode.split("/")[0],
+      ({ publicationcode }) => publicationcode.split("/")[0]
     );
 
     return Object.fromEntries(
@@ -22,7 +23,7 @@ export default (issues: ShallowRef<(issue & { issuecode: string })[]>) => {
         includeDuplicates
           ? countryIssues!.length
           : new Set(countryIssues!.map((i) => i.issuecode)).size,
-      ]),
+      ])
     );
   };
 
@@ -36,8 +37,8 @@ export default (issues: ShallowRef<(issue & { issuecode: string })[]>) => {
                 ? issues
                 : [...new Set(issues.map(({ issuecode }) => issuecode))]
               ).length,
-            ],
-          ),
+            ]
+          )
         )
       : null;
 
@@ -51,16 +52,16 @@ export default (issues: ShallowRef<(issue & { issuecode: string })[]>) => {
             totalPerPublication.value![publicationcode]
             ? acc
             : publicationcode,
-        null,
-      ),
+        null
+      )
   );
 
   const totalPerPublication = computed(() => getTotalPerPublication()),
     totalPerPublicationWithoutDuplicates = computed(() =>
-      getTotalPerPublication(false),
+      getTotalPerPublication(false)
     ),
     issuesByIssuecode = computed(() =>
-      issues.value?.groupBy("issuecode", "[]"),
+      issues.value?.groupBy("issuecode", "[]")
     ),
     duplicateIssues = computed(() => {
       const issues = issuesByIssuecode.value || {};
@@ -71,14 +72,14 @@ export default (issues: ShallowRef<(issue & { issuecode: string })[]>) => {
           }
           return acc;
         },
-        {},
+        {}
       );
     }),
     issuesInToReadStack = computed(() =>
-      issues.value?.filter(({ isToRead }) => isToRead),
+      issues.value?.filter(({ isToRead }) => isToRead)
     ),
     issuesInOnSaleStack = computed(() =>
-      issues.value?.filter(({ isOnSale }) => isOnSale),
+      issues.value?.filter(({ isOnSale }) => isOnSale)
     ),
     totalUniqueIssues = computed(
       () =>
@@ -88,13 +89,13 @@ export default (issues: ShallowRef<(issue & { issuecode: string })[]>) => {
             : issues.value?.length -
               Object.values(duplicateIssues.value).reduce(
                 (acc, duplicatedIssue) => acc + duplicatedIssue.length - 1,
-                0,
+                0
               ))) ||
-        0,
+        0
     ),
     totalPerCountry = computed(() => getTotalPerCountry()),
     totalPerCountryWithoutDuplicates = computed(() =>
-      getTotalPerCountry(false),
+      getTotalPerCountry(false)
     ),
     numberPerCondition = computed(
       () =>
@@ -103,13 +104,13 @@ export default (issues: ShallowRef<(issue & { issuecode: string })[]>) => {
             ...acc,
             [condition || "indefini"]: (acc[condition || "indefini"] || 0) + 1,
           }),
-          {} as Record<issue_condition, number>,
-        ) || ({} as Record<issue_condition, number>),
+          {} as Record<issue_condition, number>
+        ) || ({} as Record<issue_condition, number>)
     ),
     findInCollection = (issuecode: string) =>
       issues.value?.find(
         ({ issuecode: collectionIssuecode }) =>
-          collectionIssuecode === issuecode,
+          collectionIssuecode === issuecode
       ),
     quotedIssues = computed<
       (QuotedIssue & { estimationAverage: number })[] | null
@@ -140,7 +141,7 @@ export default (issues: ShallowRef<(issue & { issuecode: string })[]>) => {
               (
                 CONDITION_TO_ESTIMATION_PCT[condition] *
                 estimation.estimationAverage
-              ).toFixed(1),
+              ).toFixed(1)
             ),
           })) || null
       );
@@ -151,10 +152,10 @@ export default (issues: ShallowRef<(issue & { issuecode: string })[]>) => {
             quotedIssues.value?.reduce(
               (acc, { estimationGivenCondition }) =>
                 acc + estimationGivenCondition,
-              0,
-            ) || 0,
+              0
+            ) || 0
           )
-        : null,
+        : null
     );
 
   return {

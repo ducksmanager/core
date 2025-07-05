@@ -17,6 +17,7 @@ import type {
 
 import useCollection from "../composables/useCollection";
 import { socketInjectionKey } from "../composables/useDmSocket";
+import { AugmentedIssue } from "~dm-types/AugmentedIssue";
 
 export type IssueWithPublicationcodeOptionalId = Omit<
   issue,
@@ -41,7 +42,7 @@ export const collection = defineStore("collection", () => {
     shallowRef<EventOutput<CollectionServices, "getIssues">["issues"]>();
 
   const collectionUtils = useCollection(
-      issues as ShallowRef<(issue & { issuecode: string })[]>,
+      issues as ShallowRef<AugmentedIssue<issue>[]>
     ),
     watchedPublicationsWithSales = shallowRef<string[]>(),
     purchases = shallowRef<purchase[]>(),
@@ -79,13 +80,13 @@ export const collection = defineStore("collection", () => {
     publicationUrlRoot = computed(() => "/collection/show"),
     purchasesById = computed(() => purchases.value?.groupBy("id")),
     copiesPerIssuecode = computed(() =>
-      issues.value?.groupBy("issuecode", "[]"),
+      issues.value?.groupBy("issuecode", "[]")
     ),
     hasSuggestions = computed(
-      () => Object.keys(suggestions.value?.oldestdate || {}).length,
+      () => Object.keys(suggestions.value?.oldestdate || {}).length
     ),
     issuecodesPerPublication = computed(
-      () => issues.value?.groupBy("publicationcode", "[]") || {},
+      () => issues.value?.groupBy("publicationcode", "[]") || {}
     ),
     totalPerPublicationUniqueIssuecodes = computed(() =>
       Object.fromEntries(
@@ -93,9 +94,9 @@ export const collection = defineStore("collection", () => {
           ([publicationcode, issuecodes]) => [
             publicationcode,
             new Set(issuecodes).size,
-          ],
-        ),
-      ),
+          ]
+        )
+      )
     ),
     totalPerPublicationUniqueIssuecodesSorted = computed(
       () =>
@@ -104,9 +105,9 @@ export const collection = defineStore("collection", () => {
           ([publicationcode1], [publicationcode2]) =>
             Math.sign(
               totalPerPublicationUniqueIssuecodes.value[publicationcode2] -
-                totalPerPublicationUniqueIssuecodes.value[publicationcode1],
-            ),
-        ),
+                totalPerPublicationUniqueIssuecodes.value[publicationcode1]
+            )
+        )
     ),
     userForAccountForm = computed(() => {
       if (!user.value) {
@@ -128,7 +129,7 @@ export const collection = defineStore("collection", () => {
       await loadCollection(true);
     },
     updateCollectionMultipleIssues = async (
-      data: CollectionUpdateMultipleIssues,
+      data: CollectionUpdateMultipleIssues
     ) => {
       await collectionEvents.addOrChangeIssues(data);
       await loadCollection(true);
@@ -168,7 +169,7 @@ export const collection = defineStore("collection", () => {
               publicationcode,
               issuenumber,
             }))
-            .groupBy("issuecode"),
+            .groupBy("issuecode")
         );
       }
 
@@ -180,7 +181,7 @@ export const collection = defineStore("collection", () => {
             publicationcode,
             issuenumber,
           }))
-          .groupBy("issuecode"),
+          .groupBy("issuecode")
       );
       isLoadingCollection.value = false;
     },
@@ -205,7 +206,7 @@ export const collection = defineStore("collection", () => {
         isLoadingWatchedPublicationsWithSales.value = true;
         watchedPublicationsWithSales.value = await collectionEvents.getOption(
           "sales_notification_publications",
-          { disableCache: ignoreCache },
+          { disableCache: ignoreCache }
         );
         isLoadingWatchedPublicationsWithSales.value = false;
       }
@@ -219,7 +220,7 @@ export const collection = defineStore("collection", () => {
         isLoadingMarketplaceContactMethods.value = true;
         marketplaceContactMethods.value = await collectionEvents.getOption(
           "marketplace_contact_methods",
-          { disableCache: ignoreCache },
+          { disableCache: ignoreCache }
         );
         isLoadingMarketplaceContactMethods.value = false;
       }
@@ -229,7 +230,7 @@ export const collection = defineStore("collection", () => {
     updateWatchedPublicationsWithSales = async () =>
       await collectionEvents.setOption(
         "sales_notification_publications",
-        watchedPublicationsWithSales.value!,
+        watchedPublicationsWithSales.value!
       ),
     loadSuggestions = async ({
       countryCode,
@@ -243,7 +244,7 @@ export const collection = defineStore("collection", () => {
         suggestions.value = await statsEvents.getSuggestionsForCountry(
           countryCode || "ALL",
           sinceLastVisit ? "since_previous_visit" : "_",
-          sinceLastVisit ? 100 : 20,
+          sinceLastVisit ? 100 : 20
         );
         isLoadingSuggestions.value = false;
       }
@@ -272,7 +273,7 @@ export const collection = defineStore("collection", () => {
     },
     loadUserIssueQuotations = async () => {
       coa().addIssueQuotations(
-        await collectionEvents.getCollectionQuotations(),
+        await collectionEvents.getCollectionQuotations()
       );
     },
     loadLastPublishedEdgesForCurrentUser = async () => {
@@ -285,7 +286,7 @@ export const collection = defineStore("collection", () => {
       username: string,
       password: string,
       onSuccess: (token: string) => void,
-      onError: (e: string) => void,
+      onError: (e: string) => void
     ) => {
       const response = await authEvents.login({
         username,
@@ -325,7 +326,7 @@ export const collection = defineStore("collection", () => {
     hasRole = (thisPrivilege: string) =>
       userPermissions.value?.some(
         ({ privilege, role }) =>
-          role === "EdgeCreator" && privilege === thisPrivilege,
+          role === "EdgeCreator" && privilege === thisPrivilege
       ) || false;
 
   return {
