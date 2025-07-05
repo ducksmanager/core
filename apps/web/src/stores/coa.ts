@@ -55,7 +55,9 @@ export const coa = defineStore("coa", () => {
     publicationNamesFullCountries = ref([] as string[]),
     personNames = ref(null as { [personcode: string]: string } | null),
     issueNumbers = ref({} as { [publicationcode: string]: string[] }),
-    issueNumbersByPublicationcodeAndIssuecode = ref({} as { [publicationcode: string]: { [issuecode: string]: string } }),
+    issueNumbersByPublicationcodeAndIssuecode = ref(
+      {} as { [publicationcode: string]: { [issuecode: string]: string } },
+    ),
     issuesWithTitles = ref(
       {} as {
         [issuenumber: string]: GET__coa__list__issues__withTitle["resBody"];
@@ -64,9 +66,7 @@ export const coa = defineStore("coa", () => {
     issueDetails = ref({} as { [issuecode: string]: InducksIssueDetails }),
     isLoadingCountryNames = ref(false as boolean),
     issueCounts = ref(null as { [publicationcode: string]: number } | null),
-    issueCodeDetails = ref(
-      null as { [issuecode: string]: inducks_issue } | null,
-    ),
+    issueCodeDetails = ref({} as { [issuecode: string]: inducks_issue }),
     issueQuotations = ref(
       null as {
         [issuecode: string]: InducksIssueQuotationSimple;
@@ -304,10 +304,19 @@ export const coa = defineStore("coa", () => {
         );
 
         for (const issue of data) {
-          if (! (issue.publicationcode in issueNumbersByPublicationcodeAndIssuecode.value)) {
-            issueNumbersByPublicationcodeAndIssuecode.value[issue.publicationcode] = {};
+          if (
+            !(
+              issue.publicationcode in
+              issueNumbersByPublicationcodeAndIssuecode.value
+            )
+          ) {
+            issueNumbersByPublicationcodeAndIssuecode.value[
+              issue.publicationcode
+            ] = {};
           }
-          issueNumbersByPublicationcodeAndIssuecode.value[issue.publicationcode][issue.issuecode] = issue.issuenumber;
+          issueNumbersByPublicationcodeAndIssuecode.value[
+            issue.publicationcode
+          ][issue.issuecode] = issue.issuenumber;
         }
       }
     },

@@ -516,8 +516,16 @@ export class GET__cover_id__download__$coverId  extends ContractWithMethodAndUrl
         }
 export class GET__global_stats__user__collection__rarity  extends ContractWithMethodAndUrl<{
     resBody: {
-      userScores: { userId: number; averageRarity: number }[];
-      myScore: number;
+      me: {
+        rank: number;
+        rarestIssue: {
+          issuecode: string;
+          numberOfOwners: number;
+        };
+      };
+      aboveMe: {
+        userId: number;
+      };
     };
   }> {
             static readonly method = "get";
