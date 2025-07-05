@@ -155,9 +155,9 @@ const inducksLink = computed(() => {
 const { t: $t } = useI18n();
 
 const loadBookPages = () =>
-  fetchIssueUrls({
+  fetchIssueUrls(
     issuecode,
-  });
+  );
 
 const closeBook = () => {
   if (currentPage.value === 0) {
