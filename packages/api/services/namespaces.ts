@@ -1,7 +1,7 @@
 export default {
   APP: "/app",
   AUTH: "/auth",
-  BOOKCASE: "/bookcase",
+  BOOKCASE_PRIVATE: "/bookcase",
   BOOKCASE_USER: "/bookcase-user",
   BOOKSTORES: "/bookstores",
   BOOKSTORES_ADMIN: "/bookstores-admin",

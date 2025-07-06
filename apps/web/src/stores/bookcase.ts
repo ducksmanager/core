@@ -19,8 +19,10 @@ export type BookcaseEdgeWithPopularity = BookcaseEdge & {
 export const bookcase = defineStore("bookcase", () => {
   const route = useRoute<"/bookcase/show/[username]">();
 
-  const { bookcase: bookcaseEvents, userBookcase: userBookcaseEvents } =
-    inject(socketInjectionKey)!;
+  const {
+    privateBookcase: privateBookcaseEvents,
+    userBookcase: userBookcaseEvents,
+  } = inject(socketInjectionKey)!;
 
   const loadedSprites = ref<{ [key: string]: string }>({}),
     isPrivateBookcase = ref(false),
@@ -46,16 +48,16 @@ export const bookcase = defineStore("bookcase", () => {
               ? 0
               : collection().popularIssuesInCollection?.[issue.issuecode] || 0,
           }))) ||
-        null,
+        null
     ),
     popularIssuesInCollectionWithoutEdge = computed(() =>
       bookcaseWithPopularities.value
         ?.filter(
-          ({ edgeId, popularity }) => !edgeId && popularity && popularity > 0,
+          ({ edgeId, popularity }) => !edgeId && popularity && popularity > 0
         )
         .sort(({ popularity: popularity1 }, { popularity: popularity2 }) =>
-          popularity2 && popularity1 ? popularity2 - popularity1 : 0,
-        ),
+          popularity2 && popularity1 ? popularity2 - popularity1 : 0
+        )
     ),
     addLoadedSprite = ({
       spritePath,
@@ -71,8 +73,8 @@ export const bookcase = defineStore("bookcase", () => {
     },
     loadBookcase = async () => {
       if (!bookcaseContents.value) {
-        const response = await bookcaseEvents.getBookcase(
-          collection().user!.username,
+        const response = await userBookcaseEvents.getBookcase(
+          collection().user!.username
         );
         if ("error" in response) {
           switch (response.error) {
@@ -98,8 +100,8 @@ export const bookcase = defineStore("bookcase", () => {
     },
     loadBookcaseOptions = async () => {
       if (!bookcaseOptions.value) {
-        const response = await bookcaseEvents.getBookcaseOptions(
-          bookcaseUsername.value!,
+        const response = await userBookcaseEvents.getBookcaseOptions(
+          bookcaseUsername.value!
         );
         if ("error" in response) {
           console.error(response.error);
@@ -109,13 +111,14 @@ export const bookcase = defineStore("bookcase", () => {
       }
     },
     updateBookcaseOptions = async () => {
-      await userBookcaseEvents.setBookcaseOptions(bookcaseOptions.value!);
+      await privateBookcaseEvents.setBookcaseOptions(bookcaseOptions.value!);
     },
     loadBookcaseOrder = async () => {
       if (!bookcaseOrder.value) {
-        const response = await bookcaseEvents.getBookcaseOrder(
-          bookcaseUsername.value!,
+        const response = await userBookcaseEvents.getBookcaseOrder(
+          bookcaseUsername.value!
         );
+        debugger;
         if ("error" in response) {
           console.error(response.error);
         } else {
@@ -124,8 +127,7 @@ export const bookcase = defineStore("bookcase", () => {
       }
     },
     updateBookcaseOrder = async () => {
-      // TODO implement
-      // await userBookcaseEvents.setBookcaseOrder(bookcaseOrder.value!);
+      await privateBookcaseEvents.setBookcaseOrder(bookcaseOrder.value!);
     };
 
   return {

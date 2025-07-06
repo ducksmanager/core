@@ -97,7 +97,7 @@
               }}</b>
             </b-alert></template
           >
-          <Book
+          <BookcaseBook
             v-if="currentIssuecodeOpened"
             :issuecode="currentIssuecodeOpened"
             @close-book="currentIssuecodeOpened = undefined"

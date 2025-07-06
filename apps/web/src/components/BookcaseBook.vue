@@ -10,8 +10,8 @@
       "
     />
     <img
-      v-if="pages?.length"
-      :src="cloudinaryBaseUrl + pages[0].url"
+      v-if="entries?.length"
+      :src="cloudinaryBaseUrl + entries[0].url"
       @load="
         ({ target }) => {
           coverRatio =
@@ -23,13 +23,14 @@
 
     <Book
       v-if="coverRatio"
-      v-model:book="book as PageFlip | undefined"
+      v-model:book="book"
       v-model:opening="opening"
       v-model:opened="opened"
       v-model:closing="closing"
       v-model:current-page="currentPage"
       :cover-height="coverHeight"
       :cover-ratio="coverRatio"
+      :edge-width="edgeWidth"
       :pages="
         pagesWithUrl.map((page) => ({
           ...page,
@@ -37,6 +38,7 @@
         }))
       "
       @close-book="closeBook()"
+      @book-closed="bookClosed()"
     >
       <template #table-of-contents>
         <b-card no-body class="table-of-contents d-none d-md-block">
@@ -51,7 +53,7 @@
             <h6 v-if="releaseDate">{{ $t("Sortie :") }} {{ releaseDate }}</h6>
             <h3>{{ $t("Table des matières") }}</h3>
           </template>
-          <b-tabs v-if="pages" v-model="currentTabIndex" pills card vertical>
+          <b-tabs v-if="entries" v-model="currentTabIndex" pills card vertical>
             <b-tab
               v-for="{
                 storycode,
@@ -61,19 +63,17 @@
                 title,
                 position,
                 part,
-              } in pages"
+              } in entries"
               :key="`slide-${position}`"
               :disabled="!url"
             >
               <template #title>
                 <InducksStory
+                  v-bind="{ title, storycode, part }"
                   :show-link="false"
                   :kind="`${kind}${
                     kind === 'n' && entirepages < 1 ? '_g' : ''
                   }`"
-                  :title="title"
-                  :storycode="storycode"
-                  :part="part"
                   :dark="!!url"
                 />
               </template>
@@ -118,7 +118,7 @@ const coverRatio = ref<number>();
 const opening = ref(false);
 const opened = ref(false);
 const closing = ref(false);
-const book = ref<PageFlip>();
+const book = ref<PageFlip | undefined>();
 const currentPage = ref(0);
 const currentTabIndex = ref(0);
 const { publicationNames, issueDetails, issuecodeDetails } = storeToRefs(coa());
@@ -138,8 +138,8 @@ const currentIssueEntryDetails = computed(
   () => issueDetails.value?.[issuecode],
 );
 const issue = computed(() => issuecodeDetails.value?.[issuecode]);
-const pages = computed(() => currentIssueEntryDetails.value?.entries);
-const pagesWithUrl = computed(() => pages.value?.filter(({ url }) => !!url));
+const entries = computed(() => currentIssueEntryDetails.value?.entries);
+const pagesWithUrl = computed(() => entries.value?.filter(({ url }) => !!url));
 const releaseDate = computed(() => {
   if (!issueDetails.value[issuecode]?.releaseDate) return null;
 
@@ -172,9 +172,19 @@ const closeBook = () => {
   }
 };
 
+const bookClosed = () => {
+  emit("close-book");
+};
+
+watch(currentPage, (newValue) => {
+  currentTabIndex.value = entries.value?.findIndex(
+    (entry) => entry.storycode === pagesWithUrl.value[newValue].storycode,
+  );
+});
+
 watch(currentTabIndex, (newValue) => {
   currentPage.value = pagesWithUrl.value.findIndex(
-    (page) => page.storycode === pages.value[newValue].storycode,
+    (page) => page.storycode === entries.value[newValue].storycode,
   );
 });
 

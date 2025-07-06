@@ -126,7 +126,7 @@
           @issue-selected="highlightIssue"
         />
       </div>
-      <Book
+      <BookcaseBook
         v-if="currentEdgeOpened"
         :issuecode="currentEdgeOpened.issuecode"
         @close-book="currentEdgeOpened = undefined"

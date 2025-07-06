@@ -6,9 +6,7 @@ import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa/client";
 import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
 
 import type { UserServices } from "../../index";
-import { RequiredAuthMiddleware } from "../auth/util";
 import namespaces from "../namespaces";
-import options from "./options";
 
 type BookcaseEdgeRaw = Omit<BookcaseEdge, "sprites"> & {
   spriteName: string;
@@ -56,16 +54,27 @@ const listenEvents = ({ _socket }: UserServices<true>) => ({
           where: { userId },
         })
       ).map(({ publicationcode }) => publicationcode);
-      const userPublicationcodes = (
-        await prismaDm.issue.findMany({
-          select: {
-            publicationcode: true,
-          },
-          distinct: ["publicationcode"],
-          where: { userId },
-          orderBy: [{ publicationcode: "asc" }],
-        })
-      ).map(({ publicationcode }) => publicationcode);
+      const userIssuecodes = await prismaDm.issue.findMany({
+        select: {
+          issuecode: true,
+        },
+        distinct: ["issuecode"],
+        where: { userId },
+        orderBy: { issuecode: "asc" },
+      });
+
+      const augmentedIssuecodes =
+        await prismaCoa.augmentIssueArrayWithInducksData(
+          userIssuecodes.filter(
+            (item): item is { issuecode: string } => !!item.issuecode,
+          ),
+        );
+
+      const userPublicationcodes = [
+        ...new Set(
+          augmentedIssuecodes.map(({ publicationcode }) => publicationcode),
+        ),
+      ];
 
       const missingPublicationCodesInOrder = userPublicationcodes.filter(
         (publicationcode) =>
@@ -170,23 +179,9 @@ const listenEvents = ({ _socket }: UserServices<true>) => ({
 export const { client, server } = useSocketEvents<
   typeof listenEvents,
   Record<string, never>
->(namespaces.BOOKCASE, {
+>(namespaces.BOOKCASE_USER, {
   listenEvents,
   middlewares: [],
 });
 
 export type ClientEvents = (typeof client)["emitEvents"];
-
-const authedListenEvents = (services: UserServices) => ({
-  ...options(services),
-});
-
-export const { client: authedClient, server: authedServer } = useSocketEvents<
-  typeof authedListenEvents,
-  Record<string, never>
->(namespaces.BOOKCASE_USER, {
-  listenEvents: authedListenEvents,
-  middlewares: [RequiredAuthMiddleware],
-});
-
-export type AuthedClientEvents = (typeof authedClient)["emitEvents"];
