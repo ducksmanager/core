@@ -57,6 +57,10 @@ watch(
 </script>
 <style lang="scss">
 .author {
+  min-width: 150px;
+  min-height: 150px;
+  display: flex;
+  position: relative;
   font-size: 12px;
   border-radius: 5px;
   pointer-events: none;
@@ -68,9 +72,9 @@ watch(
   .author-image {
     background-size: cover;
     background-position: center;
-    height: 100%;
     border-radius: 5px;
     opacity: 0.2;
+    flex-grow: 1;
 
     .author-name {
       bottom: 10px;

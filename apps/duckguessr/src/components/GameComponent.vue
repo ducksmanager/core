@@ -10,11 +10,19 @@
       id="image-to-guess"
       cols="12"
       md="5"
-      class="d-flex p-2 align-items-center"
+      class="d-flex p-2 align-items-center justify-content-center"
     >
       <b-img center :src="url" />
     </b-col>
     <b-col id="author-list-wrapper" cols="12" md="5">
+      <b-row align-v="center" style="height: 50px" class="d-none d-md-block">
+        <b-col class="text-center">
+          <progress-bar
+            :available-time="availableTime"
+            :remaining-time="hasEverybodyGuessed ? 0 : remainingTime"
+          />
+        </b-col>
+      </b-row>
       <b-row id="author-list">
         <author-card
           v-for="(author, idx) in authors"

@@ -1,6 +1,6 @@
 <template>
-  <b-progress :variant="progressbarVariant">
-    <div class="position-absolute pt-2 w-100 progress-text">
+  <b-progress :variant="progressbarVariant" class="position-relative">
+    <div class="position-absolute w-100 progress-text">
       <template v-if="remainingTime && remainingTime !== Infinity">
         {{ t("Guess the author!") }} ({{ remainingTime }})
       </template>
