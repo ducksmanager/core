@@ -3,7 +3,7 @@ alias:
   - /collection/afficher
 </route>
 <template>
-  <Manage v-if="publicationcode" :publicationcode="publicationcode" />
+  <Manage :publicationcode="publicationcode" />
 </template>
 
 <script lang="ts" setup>
