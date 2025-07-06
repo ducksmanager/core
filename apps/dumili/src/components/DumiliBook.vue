@@ -1,5 +1,5 @@
 <template>
-  <DumiliBookInner
+  <Book
     v-if="coverRatio"
     v-model:book="book"
     v-model:current-page="currentPage"
@@ -53,11 +53,11 @@
         >
       </template>
     </template>
-  </DumiliBookInner>
+  </Book>
 </template>
 
 <script setup lang="ts">
-import { type PageFlip } from "~web";
+import { type PageFlip, components as webComponents } from "~web";
 import { getEntryFromPage, getEntryPages } from "~dumili-utils/entryPages";
 import type { FullIndexation } from "~dumili-services/indexation";
 import type {
@@ -66,7 +66,8 @@ import type {
 } from "~prisma/client_dumili";
 import { ref } from "vue";
 import { ui } from "~/stores/ui";
-import DumiliBookInner from "./DumiliBookInner.vue";
+
+const { Book } = webComponents;
 
 const { indexation, firstPageDimensions } = defineProps<{
   indexation: FullIndexation;
