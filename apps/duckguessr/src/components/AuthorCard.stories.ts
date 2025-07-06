@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/vue3-vite";
+
 import AuthorCard from "~/components/AuthorCard.vue";
 
 const meta: Meta<typeof AuthorCard> = {

@@ -9,6 +9,7 @@ import type {
 import { userContributionType } from "~prisma-schemas/schemas/dm";
 import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
 
+import BookstoreSuggested from "../../emails/bookstore-suggested";
 import type { UserServices } from "../../index";
 import {
   OptionalAuthMiddleware,
@@ -163,6 +164,10 @@ const listenEvents = ({ _socket }: UserServices) => ({
         comment: comments[comments.length - 1].comment,
       },
     });
+
+    new BookstoreSuggested({
+      user,
+    }).send();
 
     return createdComment;
   },

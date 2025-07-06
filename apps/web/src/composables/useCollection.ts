@@ -1,11 +1,12 @@
 import type { ShallowRef } from "vue";
 
+import type { AugmentedIssue } from "~dm-types/AugmentedIssue";
 import type { QuotedIssue } from "~dm-types/QuotedIssue";
 import type { issue, issue_condition } from "~prisma-schemas/schemas/dm";
 
 import { coa } from "../stores/coa";
 
-export default (issues: ShallowRef<(issue & { issuecode: string })[]>) => {
+export default (issues: ShallowRef<AugmentedIssue<issue>[]>) => {
   const total = computed(() => issues.value?.length);
 
   const getTotalPerCountry = (includeDuplicates = true) => {

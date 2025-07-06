@@ -1,15 +1,15 @@
 import type { SocketClient } from "socket-call-client";
 
+import { type ClientEmitEvents as DatasetsEmitEvents } from "~duckguessr-services/datasets";
+import { type ClientEmitEvents as GameEmitEvents } from "~duckguessr-services/game";
+import { type ClientEmitEvents as MaintenanceEmitEvents } from "~duckguessr-services/maintenance";
+import { type ClientEmitEvents as MatchEmitEvents } from "~duckguessr-services/match";
+import namespaces from "~duckguessr-services/namespaces";
 import {
   type ClientEmitEvents as PlayerEmitEvents,
   // type ClientListenEvents as PlayerListenEvents,
 } from "~duckguessr-services/player";
-import { type ClientEmitEvents as GameEmitEvents } from "~duckguessr-services/game";
-import { type ClientEmitEvents as MaintenanceEmitEvents } from "~duckguessr-services/maintenance";
-import { type ClientEmitEvents as DatasetsEmitEvents } from "~duckguessr-services/datasets";
 import { type ClientEmitEvents as PodiumEmitEvents } from "~duckguessr-services/podium";
-import namespaces from "~duckguessr-services/namespaces";
-import { type ClientEmitEvents as MatchEmitEvents } from "~duckguessr-services/match";
 
 const defaultExport = (options: {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

@@ -1,4 +1,6 @@
 import type { Server, Socket } from "socket.io";
+import type { NamespaceProxyTarget } from "socket-call-server";
+import { useSocketEvents } from "socket-call-server";
 
 import { getGameWithRoundsDatasetPlayers, numberOfRounds } from "../game";
 import game from "../game";
@@ -16,8 +18,6 @@ import type {
   SocketData,
 } from "../types/socketEvents";
 import namespaces from "./namespaces";
-import type { NamespaceProxyTarget } from "socket-call-server";
-import { useSocketEvents } from "socket-call-server";
 
 const prisma = new PrismaClient();
 
@@ -31,7 +31,7 @@ const listenEvents = ({ _socket }: GameServices) => ({
   addBot: async () => {},
   joinMatch: async () => {},
   startMatch: async () => {},
-  guess: async (personcode: string) => {},
+  guess: async (_personcode: string) => {},
   disconnect: async () => {},
 });
 

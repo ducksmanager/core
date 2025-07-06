@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/vue3-vite";
+
 import PodiumComponent from "~/components/PodiumComponent.vue";
 
 const meta: Meta<typeof PodiumComponent> = {

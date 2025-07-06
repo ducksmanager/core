@@ -3,14 +3,19 @@
     <LinkToCollectionIfNoIssue />
     <ShortStats v-if="userCount !== null">
       <template #non-empty-collection>
-        <div>
+        <div v-if="rarityRank" id="rarity-stats">
           <i18n-t
             tag="span"
             keypath="Le contenu de votre collection est {rank} en terme de rareté sur DucksManager."
             ><template #rank>
-              <b>{{ $t("n°{0} / {1}", [rarityValue, userCount]) }}</b>
+              <b>{{ $t("n°{0} / {1}", [rarityRank, userCount]) }}</b>
             </template></i18n-t
-          >
+          ><template v-if="userIdAboveMe">&nbsp;<UserPopover
+              v-if="stats[userIdAboveMe]"
+              :stats="stats[userIdAboveMe]"
+              :points="points[userIdAboveMe]"
+            /> {{$t('est n°{0}', [rarityRank - 1])}}
+          </template>
           <br />
           <b-alert
             variant="info"
@@ -18,14 +23,17 @@
             size="sm"
             class="d-inline-block mt-3"
           >
-            <small>
+              <div>
               {{
                 $t(
                   "La rareté de votre collection est calculée sur la base du nombre d'autres utilisateurs qui possèdent chacun des magazines de votre collection.",
                 )
-              }}</small
-            >
+              }}</div><div class="mt-2 d-inline-flex" v-if="rarestIssue"><div class="me-2 pb-2">{{$t('Votre numéro le plus rare est')}}</div><Issue flex v-bind="{...rarestIssue, publicationname: publicationNames[rarestIssue.publicationcode!]!}" />
+              </div>
           </b-alert>
+        </div>
+        <div v-else>
+          {{ $t("Calcul de la rareté...") }}
         </div>
       </template>
     </ShortStats>
@@ -39,7 +47,7 @@
           $t("Votre collection ne contient pas de magazines cotés.")
         }}</small>
       </b-alert>
-      <div v-else>
+      <div v-else id="quotation-stats">
         <div
           class="my-3"
           v-html="
@@ -72,7 +80,7 @@
               :fields="quotationFields"
             >
               <template #cell(issue)="{ item }">
-                <Issue :issuecode="item.issuecode" />
+                <Issue v-bind="{...issuecodeDetails[item.issuecode!], publicationname: publicationNames[issuecodeDetails[item.issuecode!].publicationcode!]!}" />
               </template>
               <template #cell(condition)="{ item }">
                 {{ getConditionLabel(item.condition) }}
@@ -153,6 +161,7 @@
 </template>
 
 <script setup lang="ts">
+import { AugmentedIssue } from "~dm-types/AugmentedIssue";
 import { socketInjectionKey } from "../../composables/useDmSocket";
 
 const { userGlobalStats: userGlobalStatsEvents } = inject(socketInjectionKey)!;
@@ -162,15 +171,15 @@ const { getConditionLabel } = useCondition();
 const { t: $t } = useI18n();
 let currentPage = $ref(1);
 
-const { fetchCount } = users();
-const { count: userCount } = storeToRefs(users());
+const { fetchCount, fetchStats } = users();
+const { count: userCount, stats, points } = storeToRefs(users());
 
 const { loadCollection, loadUserIssueQuotations } = collection();
-const { totalPerPublication, quotedIssues, quotationSum, user } =
+const { totalPerPublication, quotedIssues, quotationSum } =
   storeToRefs(collection());
 
 const { fetchPublicationNames, fetchIssuecodeDetails } = coa();
-const { issuecodeDetails } = storeToRefs(coa());
+const { issuecodeDetails, publicationNames } = storeToRefs(coa());
 
 const quotedIssuesForCollection = $computed(() =>
   quotedIssues.value?.sort(
@@ -190,8 +199,10 @@ const quotationFields = [
   },
 ];
 
-let rarityValue = $ref<number>();
-let hasPublicationNames = $ref(false);
+let rarestIssue = $ref<null | AugmentedIssue<["publicationcode", "issuenumber"]>>(null);
+let rarityRank = $ref<null | number>(null);
+let userIdAboveMe = $ref<null | number>(null);
+let hasPublicationNames = $ref(false as boolean);
 
 watch(
   totalPerPublication,
@@ -207,10 +218,10 @@ watch(
   quotedIssues,
   async (newValue) => {
     if (newValue) {
-      fetchIssuecodeDetails(newValue.map(({ issuecode }) => issuecode));
+      fetchIssuecodeDetails(newValue.map(({ issuecode }) => issuecode!));
       await fetchPublicationNames(
         newValue.map(
-          ({ issuecode }) => issuecodeDetails.value[issuecode].publicationcode,
+          ({ issuecode }) => issuecodeDetails.value[issuecode!].publicationcode,
         ),
       );
       hasPublicationNames = true;
@@ -222,16 +233,34 @@ watch(
 (async () => {
   await loadCollection();
   await fetchCount();
-  const { userScores } = await userGlobalStatsEvents.getUsersCollectionRarity();
-  rarityValue =
-    userScores.length -
-    userScores.findIndex(({ userId }) => userId === user.value?.id);
+  const rarityData =  await userGlobalStatsEvents.getUsersCollectionRarity();
+  rarityRank = rarityData.me.rank;
+  userIdAboveMe = rarityData.aboveMe.userId;
+
+
+  const rarestIssuecode = rarityData.me.rarestIssue.issuecode;
+  await fetchIssuecodeDetails([rarestIssuecode]);
+  await fetchPublicationNames([issuecodeDetails.value[rarestIssuecode].publicationcode!]);
+  rarestIssue = {
+    ...issuecodeDetails.value[rarestIssuecode],
+    publicationcode: issuecodeDetails.value[rarestIssuecode].publicationcode!,
+    issuenumber: issuecodeDetails.value[rarestIssuecode].issuenumber!,
+  }
+  if (rarityData.aboveMe.userId) {
+    await fetchStats([rarityData.aboveMe.userId]);
+  }
 })();
 </script>
 
 <style scoped lang="scss">
-:deep(div) {
-  font-size: 16px;
+#quotation-stats {
+  :deep(div) {
+    font-size: 12px;
+  }
+}
+
+:deep(#short-stats) {
+  font-size: 12px;
 }
 
 :deep(#short-stats > div) {

@@ -73,6 +73,8 @@ onMounted(() => {
     enableDragResize(rect.value!, {
       x,
       y,
+      width,
+      height,
     });
   }
 });

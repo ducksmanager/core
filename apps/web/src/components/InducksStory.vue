@@ -18,7 +18,14 @@
 </template>
 <script setup lang="ts">
 const { t: $t } = useI18n();
-const { kind = undefined, title = undefined, part = undefined, comment = undefined, storycode, showLink } = defineProps<{
+const {
+  kind = undefined,
+  title = undefined,
+  part = undefined,
+  comment = undefined,
+  storycode,
+  showLink,
+} = defineProps<{
   noBadge?: boolean;
   storycode: string;
   kind?: string;

@@ -1,4 +1,5 @@
 import { useCookies } from "@vueuse/integrations/useCookies";
+
 import type { player } from "~duckguessr-prisma-client";
 function setCookie(name: string, value: string) {
   useCookies().set(name, value, {

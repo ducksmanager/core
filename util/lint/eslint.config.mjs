@@ -24,12 +24,12 @@ export default [
     ignores: [
       "**/*.d.ts",
       "**/*.js",
+      "**/.storybook",
       "**/assets",
       "**/build",
       "**/bundle.mjs",
       "**/client_*",
       "**/dist",
-      "**/duckguessr*",
       "**/node_modules",
       "**/prisma-schemas",
       "**/DerivedData",

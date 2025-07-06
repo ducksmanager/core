@@ -1,5 +1,6 @@
-import { Email } from "~emails/email";
 import type { user } from "~prisma-schemas/schemas/dm";
+
+import { Email } from "../email";
 
 export default class extends Email {
   data: {

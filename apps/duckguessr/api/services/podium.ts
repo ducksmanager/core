@@ -1,8 +1,9 @@
 import type { player } from "prisma/client_duckguessr";
 import { PrismaClient } from "prisma/client_duckguessr";
+import type { Socket } from "socket.io";
 import type { NamespaceProxyTarget } from "socket-call-server";
 import { useSocketEvents } from "socket-call-server";
-import type { Socket } from "socket.io";
+
 import namespaces from "./namespaces";
 
 export type PodiumServices = NamespaceProxyTarget<

@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/vue3-vite";
+
 import GameComponent from "~/components/GameComponent.vue";
 
 const meta: Meta<typeof GameComponent> = {

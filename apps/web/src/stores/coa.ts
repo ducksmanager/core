@@ -1,6 +1,5 @@
 import type { EventOutput, SuccessfulEventOutput } from "socket-call-client";
 
-import { getCurrentLocaleShortKey } from "../composables/useLocales";
 import type { ClientEvents as CoaClientEvents } from "~dm-services/coa";
 import type { InducksIssueDetails } from "~dm-types/InducksIssueDetails";
 import type { InducksIssueQuotationSimple } from "~dm-types/InducksIssueQuotationSimple";
@@ -10,6 +9,7 @@ import type {
 } from "~prisma-schemas/client_coa";
 
 import { socketInjectionKey } from "../composables/useDmSocket";
+import { getCurrentLocaleShortKey } from "../composables/useLocales";
 
 const addPartInfo = (issueDetails: InducksIssueDetails) => {
   const storyPartCounter = Object.entries(
@@ -52,7 +52,7 @@ export const coa = defineStore("coa", () => {
     publicationNamesFullCountries = shallowRef<string[]>([]),
     personNames = shallowRef<EventOutput<CoaClientEvents, "getAuthorList">>(),
     issuecodes = ref<string[]>([]),
-    issueDetails = shallowRef<{ [issuecode: string]: InducksIssueDetails }>({}),
+    issueDetails = ref<{ [issuecode: string]: InducksIssueDetails }>({}),
     isLoadingCountryNames = ref(false),
     issuecodeDetails = shallowRef<EventOutput<CoaClientEvents, "getIssues">>(
       {},
@@ -264,7 +264,7 @@ export const coa = defineStore("coa", () => {
       events.getIssueCoverDetailsByPublicationcode(publicationcode),
     fetchCoverUrlsByIssuecodes = (issuecodes: string[]) =>
       events.getIssueCoverDetails(issuecodes),
-    fetchIssueUrls = async ({ issuecode }: { issuecode: string }) => {
+    fetchIssueUrls = async (issuecode: string) => {
       if (!issueDetails.value[issuecode]) {
         const newIssueDetails = await events.getIssueDetails(issuecode);
 

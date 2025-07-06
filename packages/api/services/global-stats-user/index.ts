@@ -11,25 +11,60 @@ const userListenEvents = ({ _socket }: UserServices) => ({
     {
       const userCount = await prismaDm.user.count();
       const userScores = await prismaDm.$queryRaw<
-        { userId: number; averageRarity: number }[]
+        {
+          userId: number;
+          rarityScore: number;
+          rarestIssuecode: string;
+          rarestIssueNumberOfOwners: number;
+        }[]
       >`
-            SELECT ID_Utilisateur AS userId, round(sum(rarity)) AS averageRarity
-            FROM numeros
-            LEFT JOIN
-              (select issuecode, pow(${userCount} / count(*), 1.5) / 10000 as rarity
-              from numeros n1
-              group by issuecode) AS issues_rarity ON numeros.issuecode = issues_rarity.issuecode
-            GROUP BY ID_Utilisateur
-            ORDER BY averageRarity
-        `;
+      WITH issues_rarity AS (SELECT issuecode,
+                              count(*) AS number_of_owners,
+                              IF(
+                                      count(*) = 0, 0,
+                                      pow(${userCount} / count(*), 1.5) / 10000
+                              ) as rarity
+                       FROM numeros
+                       GROUP BY issuecode),
+     user_issues AS (SELECT numeros.ID_Utilisateur,
+                            numeros.issuecode,
+                            issues_rarity.rarity,
+                            issues_rarity.number_of_owners
+                     FROM numeros
+                              LEFT JOIN issues_rarity USING (issuecode))
+    SELECT ID                    AS userId,
+          round(sum(ui.rarity)) AS rarityScore,
+          (SELECT ui2.issuecode
+            FROM user_issues ui2
+            WHERE ui2.ID_Utilisateur = ui.ID_Utilisateur
+            ORDER BY ui2.rarity DESC, issuecode
+            LIMIT 1)             AS rarestIssuecode,
+          (SELECT number_of_owners
+            FROM user_issues ui3
+            WHERE ui3.ID_Utilisateur = ui.ID_Utilisateur
+            ORDER BY ui3.rarity DESC, issuecode
+            LIMIT 1)             AS rarestIssueNumberOfOwners
+    FROM user_issues ui
+            INNER JOIN users ON users.ID = ui.ID_Utilisateur
+    GROUP BY ui.ID_Utilisateur, username
+    ORDER BY rarityScore DESC`;
 
-      const myScore =
-        userScores.find(({ userId }) => userId === _socket.data.user?.id)
-          ?.averageRarity || 0;
+      const myRank =
+        userScores.findIndex(
+          ({ userId }) => userId === _socket.data.user!.id,
+        ) || 0;
 
       return {
-        userScores,
-        myScore,
+        me: {
+          rank: myRank + 1,
+          rarestIssue: {
+            issuecode: userScores[myRank].rarestIssuecode,
+            numberOfOwners: userScores[myRank].rarestIssueNumberOfOwners,
+          },
+        },
+        aboveMe: {
+          userId: userScores[myRank - 1]?.userId,
+        },
       };
     }
   },

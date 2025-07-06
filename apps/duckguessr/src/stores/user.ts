@@ -1,23 +1,17 @@
 import { defineStore } from "pinia";
-import { useCookies } from "@vueuse/integrations/useCookies";
+
+import { duckguessrSocketInjectionKey } from "~/composables/useDuckguessrSocket";
 import {
   removeCookie,
   setDuckguessrUserData,
   setUserCookieIfNotExists,
 } from "~/composables/user";
-import {
-  type ClientEmitEvents as PlayerEmitEvents,
-  // type ClientListenEvents as PlayerListenEvents,
-} from "~duckguessr-services/player";
-
-import { socketInjectionKey as dmSocketInjectionKey } from "~web/src/composables/useDmSocket";
-import { duckguessrSocketInjectionKey } from "~/composables/useDuckguessrSocket";
-import type { MedalLevel } from "~duckguessr-types/playerStats";
 import type {
   player,
   userGameMedalPoints,
   userMedalPoints,
 } from "~duckguessr-prisma-client";
+import type { MedalLevel } from "~duckguessr-types/playerStats";
 
 export const MEDAL_LEVELS: MedalLevel[] = [
   { medalType: "fast", levels: [25, 150, 500] },

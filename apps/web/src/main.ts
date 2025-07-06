@@ -13,7 +13,7 @@ import contextmenu from "v-contextmenu";
 // @ts-ignore
 import { setupLayouts } from "virtual:generated-layouts";
 import { createRouter, createWebHistory } from "vue-router";
-import { routes } from 'vue-router/auto-routes'
+import { routes } from "vue-router/auto-routes";
 
 import App from "~/App.vue";
 import i18n from "~/i18n";

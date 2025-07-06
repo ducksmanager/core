@@ -4,6 +4,7 @@ import type { ShallowRef } from "vue";
 import type { ClientEvents as CollectionServices } from "~dm-services/collection";
 import type { SubscriptionTransformedStringDates } from "~dm-services/collection/subscriptions";
 import type { ClientEvents as StatsServices } from "~dm-services/stats";
+import type { AugmentedIssue } from "~dm-types/AugmentedIssue";
 import type {
   CollectionUpdateMultipleIssues,
   CollectionUpdateSingleIssue,
@@ -41,7 +42,7 @@ export const collection = defineStore("collection", () => {
     shallowRef<EventOutput<CollectionServices, "getIssues">["issues"]>();
 
   const collectionUtils = useCollection(
-      issues as ShallowRef<(issue & { issuecode: string })[]>,
+      issues as ShallowRef<AugmentedIssue<issue>[]>,
     ),
     watchedPublicationsWithSales = shallowRef<string[]>(),
     purchases = shallowRef<purchase[]>(),

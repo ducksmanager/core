@@ -7,10 +7,10 @@ import AutoImport from "unplugin-auto-import/vite";
 import IconsResolve from "unplugin-icons/resolver";
 import Icons from "unplugin-icons/vite";
 import Components from "unplugin-vue-components/vite";
+import { VueRouterAutoImports } from "unplugin-vue-router";
+import VueRouter from "unplugin-vue-router/vite";
 import { defineConfig } from "vite";
 import Layouts from "vite-plugin-vue-layouts";
-import VueRouter from 'unplugin-vue-router/vite'
-import { VueRouterAutoImports } from 'unplugin-vue-router'
 
 export default defineConfig({
   clearScreen: false,
@@ -69,14 +69,6 @@ export default defineConfig({
       dts: true,
     }),
   ],
-
-  css: {
-    preprocessorOptions: {
-      scss: {
-        api: "modern",
-      },
-    },
-  },
 
   server: {
     watch: {

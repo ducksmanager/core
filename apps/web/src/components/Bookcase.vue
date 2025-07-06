@@ -10,54 +10,53 @@
     }"
   >
     <template v-for="edgeIndex of edgeIndexesToLoad" :key="`edge-${edgeIndex}`">
-      <template v-if="issuecodeDetails[sortedBookcase[edgeIndex].issuecode!]">
-        <Edge
-          v-if="embedded"
-          :id="`edge-${edgeIndex}${embedded}`"
-          :issuecode="sortedBookcase![edgeIndex].issuecode!"
-          :orientation="orientation"
-          existing
-          embedded
-          @loaded="onEdgeLoaded(edgeIndex)"
-          ><template #edge-prefix
-            ><slot
-              name="edge-prefix"
-              :edge="{
-                issueCondition: sortedBookcase[edgeIndex].issueCondition,
-              }" /></template
-        ></Edge>
-        <Edge
-          v-else
-          :id="`edge-${edgeIndex}`"
-          :invisible="
+      <Edge
+        v-if="embedded"
+        :id="`edge-${edgeIndex}${embedded}`"
+        :issuecode="sortedBookcase![edgeIndex].issuecode"
+        :orientation="orientation"
+        existing
+        embedded
+        @loaded="onEdgeLoaded(edgeIndex)"
+        ><template #edge-prefix
+          ><slot
+            name="edge-prefix"
+            :edge="{
+              issueCondition: sortedBookcase[edgeIndex].issueCondition,
+            }" /></template
+      ></Edge>
+      <Edge
+        v-else
+        :id="`edge-${edgeIndex}`"
+        :invisible="
             currentEdgeOpened === sortedBookcaseWithPopularity![edgeIndex] ||
             edgeIndex > lastEdgeIndexContinuouslyLoaded
           "
-          :highlighted="
+        :highlighted="
             currentEdgeHighlighted ===
             sortedBookcaseWithPopularity![edgeIndex].id
           "
-          :issuecode="sortedBookcaseWithPopularity![edgeIndex].issuecode!"
-          :creation-date="
+        :issuecode="sortedBookcaseWithPopularity![edgeIndex].issuecode!"
+        :creation-date="
             sortedBookcaseWithPopularity![edgeIndex].creationDate?.toString()
           "
-          :existing="!!sortedBookcaseWithPopularity![edgeIndex].edgeId"
-          :sprite-path="
+        :existing="!!sortedBookcaseWithPopularity![edgeIndex].edgeId"
+        :sprite-path="
             edgesUsingSprites?.[
               sortedBookcaseWithPopularity![edgeIndex].edgeId
             ] || null
           "
-          :orientation="orientation"
-          @loaded="onEdgeLoaded(edgeIndex)"
-          @open-book="
+        :orientation="orientation"
+        @loaded="onEdgeLoaded(edgeIndex)"
+        @open-book="
             $emit('open-book', sortedBookcaseWithPopularity![edgeIndex])
           "
-          ><template #edge-prefix
-            ><slot
-              name="edge-prefix"
-              :edge="{
-                issueCondition: sortedBookcase[edgeIndex].issueCondition,
-              }" /></template></Edge></template
+        ><template #edge-prefix
+          ><slot
+            name="edge-prefix"
+            :edge="{
+              issueCondition: sortedBookcase[edgeIndex].issueCondition,
+            }" /></template></Edge
     ></template>
   </div>
 </template>
@@ -102,8 +101,6 @@ defineSlots<{
     edge: Pick<BookcaseEdgeWithPopularity, "issueCondition">;
   }): never;
 }>();
-
-const { issuecodeDetails } = storeToRefs(coa());
 
 const sortedBookcaseWithPopularity = computed(() =>
   embedded ? undefined : (sortedBookcase as BookcaseEdgeWithPopularity[]),
@@ -183,6 +180,7 @@ onMounted(() => {
 <style lang="scss" scoped>
 .bookcase {
   height: 100%;
+  padding: 10px 5px 10px 15px;
   overflow: hidden;
   background: transparent repeat left top;
   clear: both;

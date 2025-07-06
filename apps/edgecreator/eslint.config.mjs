@@ -62,6 +62,10 @@ export default [
       // TypeError: Cannot read properties of undefined (reading 'members')
       "@typescript-eslint/no-duplicate-enum-values": "off",
 
+      // Disable this lint rule because it crashes eslint:
+      // TypeError: Missing required argument: node.
+      "@typescript-eslint/consistent-indexed-object-style": "off",
+
       "@typescript-eslint/no-unnecessary-type-assertion": "error",
 
       "@typescript-eslint/consistent-type-imports": "error",

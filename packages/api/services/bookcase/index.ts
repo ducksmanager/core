@@ -137,7 +137,7 @@ const listenEvents = ({ _socket }: UserServices<true>) => ({
       .then((edges) =>
         edges.groupBy(user.showDuplicatesInBookcase ? "id" : "issuecode", "[]"),
       )
-      .then((obj) => Object.values(obj) as BookcaseEdgeRaw[][])
+      .then((obj) => Object.values(obj))
       .then((arr) =>
         arr.map((edges) => ({
           ...edges[0],
