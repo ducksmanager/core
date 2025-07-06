@@ -23,7 +23,7 @@
 
     <Book
       v-if="coverRatio"
-      v-model:book="book as PageFlip | undefined"
+      v-model:book="book"
       v-model:opening="opening"
       v-model:opened="opened"
       v-model:closing="closing"
@@ -118,7 +118,7 @@ const coverRatio = ref<number>();
 const opening = ref(false);
 const opened = ref(false);
 const closing = ref(false);
-const book = ref<PageFlip>();
+const book = ref<PageFlip | undefined>();
 const currentPage = ref(0);
 const currentTabIndex = ref(0);
 const { publicationNames, issueDetails, issuecodeDetails } = storeToRefs(coa());
