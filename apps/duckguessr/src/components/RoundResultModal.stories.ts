@@ -37,8 +37,8 @@ export const Default: Story = {
     roundUrl: "thumbnails3/webusers/2014/04/hu_mm1992_07e_001.jpg",
     correctAuthor: {
       personcode: "DR",
-      personfullname: "Don Rosa",
-      personnationality: "us",
+      fullname: "Don Rosa",
+      nationalitycountrycode: "us",
     },
     nextRoundStartDate: (() => {
       const futureDate = new Date();
@@ -57,8 +57,8 @@ export const Incorrect: Story = {
     roundUrl: "thumbnails3/webusers/2017/03/it_om_1341g_001.jpg",
     correctAuthor: {
       personcode: "CB",
-      personfullname: "Carl Barks",
-      personnationality: "us",
+      fullname: "Carl Barks",
+      nationalitycountrycode: "us",
     },
     nextRoundStartDate: (() => {
       const futureDate = new Date();
@@ -77,8 +77,8 @@ export const LastRound: Story = {
     roundUrl: "webusers/webusers-auth/rsc_ommi0o.png",
     correctAuthor: {
       personcode: "CB",
-      personfullname: "Carl Barks",
-      personnationality: "us",
+      fullname: "Carl Barks",
+      nationalitycountrycode: "us",
     },
     nextRoundStartDate: null,
     hasEverybodyGuessed: false,

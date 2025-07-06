@@ -8,6 +8,7 @@ import i18n from "~web/src/i18n";
 import de from "../locales/de.json";
 import fr from "../locales/fr-FR.json";
 import es from "../locales/es.json";
+import "../styles/main.scss";
 
 const head = createHead();
 

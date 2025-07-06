@@ -21,13 +21,13 @@ const players: player[] = [
     id: 1,
     username: "player 1",
     ducksmanagerId: 1,
-    avatar: "https://example.com/avatar.png",
+    avatar: "DD",
   },
   {
     id: 2,
     username: "player 2",
     ducksmanagerId: 2,
-    avatar: "https://example.com/avatar.png",
+    avatar: "DD",
   },
 ];
 
