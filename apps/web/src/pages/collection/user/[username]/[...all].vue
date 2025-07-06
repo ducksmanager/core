@@ -27,7 +27,7 @@ meta:
 </template>
 
 <script lang="ts" setup>
-const route = useRoute<'/collection/user/[username]/[...all]'>();
+const route = useRoute<"/collection/user/[username]/[...all]">();
 const username = computed(() => route.params.username);
 const publicationcode = computed(() => route.params.all);
 

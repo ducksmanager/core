@@ -9,7 +9,7 @@ const { presentationText: presentationTextEvents } =
   inject(socketInjectionKey)!;
 
 (async () => {
-  let currentRoute = useRoute<'/admin/presentation-text/[decision]'>();
+  let currentRoute = useRoute<"/admin/presentation-text/[decision]">();
   const { sentence, userId } = currentRoute.query as unknown as {
     sentence: string;
     userId: string;

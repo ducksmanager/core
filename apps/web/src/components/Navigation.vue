@@ -1,139 +1,44 @@
 <template>
   <ul id="menu-content" class="menu-content collapse show">
-    <NavigationItemGroup
-      :paths="[
-        /^\/collection(?!\/user)/,
-        /^\/bookcase(?!\/show\/.+)/,
-        /^\/stats/,
-        /^\/expand/,
-        /^\/print/,
-      ]"
-      icon="glyphicon-home"
-    >
-      <template #text>
-        <i-bi-house-fill />
-        <span>{{ $t("Collection") }}</span>
+    <li v-for="item in items" :key="item.title">
+      <router-link v-if="'route' in item" :to="item.route">
+        <i v-if="'icon' in item" :class="item.icon" />{{
+          item.title
+        }}</router-link
+      >
+      <template v-else>
+        <span :v-b-toggle="item.title">
+          {{ item.title }}
+        </span>
+        <b-collapse :id="item.title" :model-value="true">
+          <ul class="sub-menu">
+            <li v-for="subItem in item.items" :key="subItem.title">
+              <router-link v-if="'route' in subItem" :to="subItem.route">
+                <i v-if="'icon' in subItem" :class="subItem.icon" />
+                <div
+                  class="b-custom"
+                  :style="{
+                    backgroundImage: `url(${getImagePath('icons/inducks.png')})`,
+                  }"
+                />
+                {{ subItem.title }}</router-link
+              >
+              <span v-else @click="subItem.onClick">{{ subItem.title }}</span>
+            </li>
+          </ul>
+        </b-collapse>
       </template>
-      <template v-if="username !== undefined" #items>
-        <template v-if="username">
-          <NavigationItem>
-            <router-link to="/bookcase/show">
-              <i-bi-book-half />
-              {{ $t("Ma bibliothèque") }}
-            </router-link>
-          </NavigationItem>
-          <NavigationItem>
-            <router-link to="/collection/show">
-              <i-bi-list /> {{ $t("Gérer ma collection") }}</router-link
-            >
-          </NavigationItem>
-          <NavigationItem>
-            <router-link to="/stats/general">
-              <i-bi-graph-up />
-              {{ $t("Statistiques de ma collection") }}</router-link
-            >
-          </NavigationItem>
-          <NavigationItem>
-            <router-link to="/expand/suggestions">
-              <i-bi-capslock-fill />
-              {{ $t("Agrandir ma collection") }}&nbsp;<sup>{{
-                $t("Nouveau !")
-              }}</sup></router-link
-            >
-          </NavigationItem>
-          <NavigationItem>
-            <router-link to="/inducks/import">
-              <div
-                class="b-custom"
-                :style="{
-                  backgroundImage: `url(${getImagePath('icons/inducks.png')})`,
-                }"
-              />
-              {{ $t("Collection Inducks") }}
-            </router-link>
-          </NavigationItem>
-          <NavigationItem>
-            <router-link to="/print">
-              <i-bi-printer-fill />
-              {{ $t("Imprimer ma collection") }}</router-link
-            >
-          </NavigationItem>
-          <NavigationItem>
-            <div @click="logout">
-              <i-bi-x-square-fill />
-              {{ $t("Déconnexion") }}
-            </div>
-          </NavigationItem>
-        </template>
-        <template v-else>
-          <NavigationItem>
-            <router-link to="/signup">
-              <i class="glyphicon glyphicon-certificate" />
-              {{ $t("Inscription") }}</router-link
-            >
-          </NavigationItem>
-          <NavigationItem>
-            <router-link to="/login">
-              <i class="glyphicon glyphicon-folder-open" />
-              {{ $t("Connexion") }}
-            </router-link>
-          </NavigationItem>
-        </template>
-      </template>
-    </NavigationItemGroup>
-    <template v-if="publicCollectionUsername">
-      <li class="empty" />
-      <NavigationItemGroup
-        v-if="publicCollectionUsername"
-        :paths="[/^\/collection\/user/, /^\/bookcase\/show\/.+/]"
-        icon="glyphicon-home"
-      >
-        <template #text>
-          <i-bi-house-fill />
-          <span>
-            {{
-              $t("Collection de {username}", {
-                username: publicCollectionUsername,
-              })
-            }}
-          </span>
-        </template>
-        <template #items>
-          <NavigationItem>
-            <router-link :to="`/bookcase/show/${publicCollectionUsername}`">
-              <i-bi-book-half />
-              {{ $t("Bibliothèque") }}
-            </router-link>
-          </NavigationItem>
-          <NavigationItem>
-            <router-link :to="`/collection/user/${publicCollectionUsername}`">
-              <i-bi-list /> {{ $t("Collection") }}</router-link
-            >
-          </NavigationItem>
-        </template>
-      </NavigationItemGroup>
-    </template>
-    <li class="empty" />
-    <NavigationItem
-      ><router-link to="/bookstores">
-        {{ $t("Trouver des bouquineries") }}</router-link
-      >
-    </NavigationItem>
-    <NavigationItem v-if="!username"
-      ><router-link to="/inducks/import">
-        {{ $t("Vous possédez une collection Inducks ?") }}</router-link
-      >
-    </NavigationItem>
-    <NavigationItem v-if="!username"
-      ><router-link to="/demo"> {{ $t("Une petite démo ?") }}</router-link>
-    </NavigationItem>
+    </li>
   </ul>
 </template>
 
 <script setup lang="ts">
 import Cookies from "js-cookie";
+import { useI18n } from "vue-i18n";
 
 const route = useRoute();
+const router = useRouter();
+const { t: $t } = useI18n();
 
 const { user } = storeToRefs(collection());
 const { getImagePath } = images();
@@ -142,6 +47,127 @@ const username = $computed(() => user.value?.username || null);
 
 const publicCollectionUsername = $computed(
   () => route.query.username as string | undefined,
+);
+
+const collectionMenu = computed(() =>
+  username === undefined
+    ? undefined
+    : ({
+        title: $t("Collection"),
+        icon: "glyphicon-home",
+        items: username
+          ? [
+              {
+                title: $t("Ma bibliothèque"),
+                route: router.resolve({
+                  name: "/bookcase/show/[[username]]",
+                  params: { username: undefined },
+                }),
+                icon: "glyphicon-book-half",
+              },
+              {
+                title: $t("Ma collection"),
+                route: "/collection/show",
+                icon: IBiList,
+              },
+              {
+                title: $t("Statistiques de ma collection"),
+                route: "/stats/general",
+                icon: "glyphicon-graph-up",
+              },
+              {
+                title: $t("Agrandir ma collection"),
+                route: "/expand/suggestions",
+                icon: "glyphicon-capslock-fill",
+              },
+              {
+                title: $t("Collection Inducks"),
+                route: "/inducks/import",
+                icon: "glyphicon-book",
+              },
+              {
+                title: $t("Imprimer ma collection"),
+                route: "/print",
+                icon: "glyphicon-printer-fill",
+              },
+              {
+                title: $t("Déconnexion"),
+                onClick: logout,
+                icon: "glyphicon-x-square-fill",
+              },
+            ]
+          : [
+              {
+                title: $t("Inscription"),
+                route: "/signup",
+                icon: "glyphicon-certificate",
+              },
+              {
+                title: $t("Connexion"),
+                route: "/login",
+                icon: "glyphicon-folder-open",
+              },
+            ],
+      } as const),
+);
+
+const publicCollectionMenu = computed(() =>
+  !publicCollectionUsername
+    ? undefined
+    : ({
+        title: $t("Collection de {username}", {
+          username: publicCollectionUsername,
+        }),
+        icon: "glyphicon-home",
+        items: [
+          {
+            title: $t("Bibliothèque"),
+            route: router.resolve({
+              name: "/bookcase/show/[[username]]",
+              params: { username: publicCollectionUsername },
+            }),
+            icon: "glyphicon-book-half",
+          },
+          {
+            title: $t("Collection"),
+            route: router.resolve({
+              name: "/collection/user/[username]/[...all]",
+              params: { username: publicCollectionUsername, all: "" },
+            }),
+            icon: "glyphicon-list",
+          },
+        ],
+      } as const),
+);
+
+const otherItems = computed(() =>
+  username
+    ? []
+    : ([
+        {
+          title: $t("Vous possédez une collection Inducks ?"),
+          route: "/inducks/import",
+          icon: "glyphicon-book",
+        },
+        {
+          title: $t("Une petite démo ?"),
+          route: "/demo",
+          icon: "glyphicon-demo",
+        },
+        {
+          title: $t("Trouver des bouquineries"),
+          route: "/bookstores",
+          icon: "glyphicon-bookstore",
+        },
+      ] as const),
+);
+
+const items = computed(() =>
+  [
+    collectionMenu.value,
+    publicCollectionMenu.value,
+    ...otherItems.value,
+  ].filter((item) => item !== undefined),
 );
 
 const logout = () => {

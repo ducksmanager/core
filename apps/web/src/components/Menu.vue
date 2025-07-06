@@ -4,15 +4,15 @@
     <h3 v-else-if="title">
       {{ title }}
     </h3>
-    <b-tabs v-if="items.length" v-model="activeTabIndex" class="my-4">
+    <b-tabs v-if="items.length" class="my-4">
       <b-tab
-        v-for="item in items"
+        v-for="(item, index) in items"
         :key="JSON.stringify(item)"
         no-body
-        @click.stop="router.push(`${rootPath}${item.path}`)"
+        :active="activeTabIndex === index"
       >
         <template #title>
-          <router-link :to="`${rootPath}${item.path}`"
+          <router-link :to="(item.route as string).replace('/[...all]', '')"
             >{{ item.text
             }}<template v-if="item.isNew"
               >&nbsp;<sup>{{ $t("Nouveau !") }}</sup></template
@@ -25,29 +25,22 @@
 </template>
 
 <script setup lang="ts">
-const {
-  title = null,
-  items,
-  rootPath = "/",
-} = defineProps<{
+import { RouteNamedMap } from "vue-router/auto-routes";
+
+const { title = null, items } = defineProps<{
   title?: string;
-  rootPath?: string;
-  items: { path: string; text: string; isNew?: boolean | false }[];
+  items: readonly {
+    route: keyof RouteNamedMap;
+    text: string;
+    isNew?: boolean | false;
+  }[];
 }>();
-const router = useRouter();
 const { name: routeName } = useRoute();
 const slots = useSlots();
 
-let activeTabIndex = $ref(-1);
-
-const updateActiveTabIndex = () => {
-  activeTabIndex = items.findIndex(
-    ({ path }) =>
-      routeName === (rootPath + path).replace(/\//g, "-").replace(/^-/, ""),
-  );
-};
-
-watch([$$(items), $$(rootPath)], updateActiveTabIndex, { immediate: true });
+const activeTabIndex = computed(() =>
+  items.findIndex((item) => item.route === routeName),
+);
 </script>
 
 <style scoped lang="scss">

@@ -13,7 +13,8 @@ meta:
   <ViewBookcase />
 </template>
 <script lang="ts" setup>
-
-const route = useRoute<'/bookcase/show/[username]'>();
-const username = computed(() => route.params.username);
+const route = useRoute<"/bookcase/show/[[username]]">();
+const username = computed(
+  () => route.params.username || collection().user?.username,
+);
 </script>

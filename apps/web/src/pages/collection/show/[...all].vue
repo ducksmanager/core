@@ -8,6 +8,7 @@ alias:
 </template>
 
 <script lang="ts" setup>
-const route = useRoute<'/collection/show/[...all]'>();
+const route = useRoute<"/collection/show/[...all]">();
 const publicationcode = computed(() => route.params.all);
 </script>
+ 

@@ -35,7 +35,7 @@ import Cookies from "js-cookie";
 import { socketInjectionKey } from "../../composables/useDmSocket";
 
 const { loadUser } = collection();
-const route = useRoute<'/forgot/[token]'>();
+const route = useRoute<"/forgot/[token]">();
 
 let initError = $ref<string>();
 let error = $ref<string>();
