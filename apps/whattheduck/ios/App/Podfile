@@ -21,8 +21,8 @@ def capacitor_pods
   pod 'CapacitorPreferences', :path => '../../../../node_modules/.pnpm/@capacitor+preferences@7.0.1_@capacitor+core@7.4.0/node_modules/@capacitor/preferences'
   pod 'CapacitorStatusBar', :path => '../../../../node_modules/.pnpm/@capacitor+status-bar@7.0.1_@capacitor+core@7.4.0/node_modules/@capacitor/status-bar'
   pod 'CapawesomeCapacitorAppUpdate', :path => '../../../../node_modules/.pnpm/@capawesome+capacitor-app-update@7.0.1_@capacitor+core@7.4.0/node_modules/@capawesome/capacitor-app-update'
-  pod 'CapawesomeCapacitorFilePicker', :path => '../../../../node_modules/.pnpm/@capawesome+capacitor-file-picker@7.1.0_@capacitor+core@7.4.0/node_modules/@capawesome/capacitor-file-picker'
-  pod 'CapgoCapacitorUpdater', :path => '../../../../node_modules/.pnpm/@capgo+capacitor-updater@7.2.12_@capacitor+core@7.4.0/node_modules/@capgo/capacitor-updater'
+  pod 'CapawesomeCapacitorFilePicker', :path => '../../../../node_modules/.pnpm/@capawesome+capacitor-file-picker@7.2.0_@capacitor+core@7.4.0/node_modules/@capawesome/capacitor-file-picker'
+  pod 'CapgoCapacitorUpdater', :path => '../../../../node_modules/.pnpm/@capgo+capacitor-updater@7.6.0_@capacitor+core@7.4.0/node_modules/@capgo/capacitor-updater'
   pod 'SentryCapacitor', :path => '../../../../node_modules/.pnpm/@sentry+capacitor@1.4.0_@capacitor+core@7.4.0_@sentry+vue@8.55.0_pinia@3.0.3_typescript@5.8.3_4pfgtzuwv2ex7ruzl7kz6olp7y/node_modules/@sentry/capacitor'
 end
 

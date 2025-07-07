@@ -16,6 +16,7 @@ export const wtdcollection = defineStore('wtdcollection', () => {
 
   const {
     createPurchase,
+    deletePurchase,
     findInCollection,
     isLoadingSuggestions,
     loadCollection,
@@ -90,6 +91,7 @@ export const wtdcollection = defineStore('wtdcollection', () => {
     coaIssueCountsByPublicationcode,
     coaIssueCountsPerCountrycode,
     createPurchase,
+    deletePurchase,
     fetchCollection,
     findInCollection,
     getCollectionIssues,

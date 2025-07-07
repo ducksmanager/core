@@ -118,7 +118,6 @@ export const bookcase = defineStore("bookcase", () => {
         const response = await userBookcaseEvents.getBookcaseOrder(
           bookcaseUsername.value!
         );
-        debugger;
         if ("error" in response) {
           console.error(response.error);
         } else {
