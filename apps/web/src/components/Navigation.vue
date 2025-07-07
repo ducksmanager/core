@@ -1,5 +1,5 @@
 <template>
-  <ul id="menu-content" class="menu-content collapse show">
+  <ul id="menu-content" class="menu-content collapse show pb-3">
     <li v-for="item in items" :key="item.title">
       <router-link v-if="'route' in item" :to="item.route">
         <i v-if="'icon' in item" :class="item.icon" />{{
@@ -10,20 +10,18 @@
         <span :v-b-toggle="item.title">
           {{ item.title }}
         </span>
-        <b-collapse :id="item.title" :model-value="true">
+        <b-collapse :id="item.title" :model-value="true" class="mb-2">
           <ul class="sub-menu">
             <li v-for="subItem in item.items" :key="subItem.title">
               <router-link v-if="'route' in subItem" :to="subItem.route">
-                <i v-if="'icon' in subItem" :class="subItem.icon" />
-                <div
-                  class="b-custom"
-                  :style="{
-                    backgroundImage: `url(${getImagePath('icons/inducks.png')})`,
-                  }"
-                />
+                <component :is="subItem.icon" v-if="'icon' in subItem" />
                 {{ subItem.title }}</router-link
               >
-              <span v-else @click="subItem.onClick">{{ subItem.title }}</span>
+              <span v-else @click="subItem.onClick"
+                ><component :is="subItem.icon" v-if="'icon' in subItem" />{{
+                  subItem.title
+                }}</span
+              >
             </li>
           </ul>
         </b-collapse>
@@ -35,13 +33,19 @@
 <script setup lang="ts">
 import Cookies from "js-cookie";
 import { useI18n } from "vue-i18n";
+import IBiBookHalf from "~icons/bi/book-half";
+import IBiList from "~icons/bi/list";
+import IBiGraphUp from "~icons/bi/graph-up";
+import IBiCapslockFill from "~icons/bi/capslock-fill";
+import IBiPrinterFill from "~icons/bi/printer-fill";
+import IBiXSquareFill from "~icons/bi/x-square-fill";
+import ICoaFoot from "~icons/extra-icons/coafoot";
 
 const route = useRoute();
 const router = useRouter();
 const { t: $t } = useI18n();
 
 const { user } = storeToRefs(collection());
-const { getImagePath } = images();
 
 const username = $computed(() => user.value?.username || null);
 
@@ -63,7 +67,7 @@ const collectionMenu = computed(() =>
                   name: "/bookcase/show/[[username]]",
                   params: { username: undefined },
                 }),
-                icon: "glyphicon-book-half",
+                icon: IBiBookHalf,
               },
               {
                 title: $t("Ma collection"),
@@ -73,39 +77,37 @@ const collectionMenu = computed(() =>
               {
                 title: $t("Statistiques de ma collection"),
                 route: "/stats/general",
-                icon: "glyphicon-graph-up",
+                icon: IBiGraphUp,
               },
               {
                 title: $t("Agrandir ma collection"),
                 route: "/expand/suggestions",
-                icon: "glyphicon-capslock-fill",
+                icon: IBiCapslockFill,
               },
               {
                 title: $t("Collection Inducks"),
                 route: "/inducks/import",
-                icon: "glyphicon-book",
+                icon: ICoaFoot,
               },
               {
                 title: $t("Imprimer ma collection"),
                 route: "/print",
-                icon: "glyphicon-printer-fill",
+                icon: IBiPrinterFill,
               },
               {
                 title: $t("Déconnexion"),
                 onClick: logout,
-                icon: "glyphicon-x-square-fill",
+                icon: IBiXSquareFill,
               },
             ]
           : [
               {
                 title: $t("Inscription"),
                 route: "/signup",
-                icon: "glyphicon-certificate",
               },
               {
                 title: $t("Connexion"),
                 route: "/login",
-                icon: "glyphicon-folder-open",
               },
             ],
       } as const),
@@ -140,26 +142,29 @@ const publicCollectionMenu = computed(() =>
       } as const),
 );
 
-const otherItems = computed(() =>
-  username
-    ? []
-    : ([
-        {
-          title: $t("Vous possédez une collection Inducks ?"),
-          route: "/inducks/import",
-          icon: "glyphicon-book",
-        },
-        {
-          title: $t("Une petite démo ?"),
-          route: "/demo",
-          icon: "glyphicon-demo",
-        },
-        {
-          title: $t("Trouver des bouquineries"),
-          route: "/bookstores",
-          icon: "glyphicon-bookstore",
-        },
-      ] as const),
+const otherItems = computed(
+  () =>
+    [
+      ...(username
+        ? []
+        : [
+            {
+              title: $t("Vous possédez une collection Inducks ?"),
+              route: "/inducks/import",
+              icon: "glyphicon-book",
+            },
+            {
+              title: $t("Une petite démo ?"),
+              route: "/demo",
+              icon: "glyphicon-demo",
+            },
+          ]),
+      {
+        title: $t("Trouver des bouquineries"),
+        route: "/bookstores",
+        icon: "glyphicon-bookstore",
+      },
+    ] as const,
 );
 
 const items = computed(() =>

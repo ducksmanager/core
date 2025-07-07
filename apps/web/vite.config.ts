@@ -11,6 +11,7 @@ import { VueRouterAutoImports } from "unplugin-vue-router";
 import VueRouter from "unplugin-vue-router/vite";
 import { defineConfig } from "vite";
 import Layouts from "vite-plugin-vue-layouts";
+import { readFile } from "fs/promises";
 
 export default defineConfig({
   clearScreen: false,
@@ -22,7 +23,7 @@ export default defineConfig({
       "~group-by": path.resolve(__dirname, "../../util/group-by"),
       "~prisma-schemas": path.resolve(
         __dirname,
-        "../../packages/prisma-schemas",
+        "../../packages/prisma-schemas"
       ),
       "~translations": path.resolve(__dirname, "translations"),
     },
@@ -60,6 +61,14 @@ export default defineConfig({
     Icons({
       compiler: "vue3",
       autoInstall: true,
+      customCollections: {
+        "extra-icons": {
+          coafoot: () =>
+            readFile("./public/images/icons/coafoot.svg").then((buffer) =>
+              buffer.toString()
+            ),
+        },
+      },
     }),
 
     // https://github.com/antfu/vite-plugin-components
