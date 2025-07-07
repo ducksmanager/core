@@ -35,10 +35,11 @@ import Cookies from "js-cookie";
 import { socketInjectionKey } from "../../composables/useDmSocket";
 
 const { loadUser } = collection();
+const route = useRoute<"/forgot/[token]">();
 
 let initError = $ref<string>();
 let error = $ref<string>();
-const token = useRoute().params.token as string;
+const token = computed(() => route.params.token);
 const password = $ref("");
 const password2 = $ref("");
 
@@ -47,15 +48,19 @@ const { t: $t } = useI18n();
 const { auth: authEvents } = inject(socketInjectionKey)!;
 
 const changePassword = async () => {
+  if (!token.value) {
+    initError = "Token not found";
+    return;
+  }
   const response = await authEvents.changePassword({
-    token,
+    token: token.value,
     password,
     password2,
   });
   if ("error" in response) {
     error = response.error!;
   } else {
-    Cookies.set("token", token, {
+    Cookies.set("token", token.value, {
       domain: import.meta.env.VITE_COOKIE_DOMAIN,
     });
   }

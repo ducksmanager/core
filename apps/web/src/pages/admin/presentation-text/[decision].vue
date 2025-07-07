@@ -5,13 +5,11 @@ meta:
 <script setup lang="ts">
 import type { Decision } from "~dm-services/presentation-text";
 
-let router = useRouter();
-
 const { presentationText: presentationTextEvents } =
   inject(socketInjectionKey)!;
 
 (async () => {
-  let currentRoute = router.currentRoute.value;
+  let currentRoute = useRoute<"/admin/presentation-text/[decision]">();
   const { sentence, userId } = currentRoute.query as unknown as {
     sentence: string;
     userId: string;

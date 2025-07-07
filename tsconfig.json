@@ -22,5 +22,11 @@
         {
             "path": "./util"
         }
+    ],
+    "exclude": [
+        ".idea",
+        ".turbo",
+        "dist",
+        "node_modules",
     ]
 }

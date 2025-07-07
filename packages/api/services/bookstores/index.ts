@@ -1,7 +1,6 @@
 import { useSocketEvents } from "socket-call-server";
 
 import type { SimpleBookstore } from "~dm-types/SimpleBookstore";
-import BookstoreSuggested from "../../emails/bookstore-suggested";
 import type {
   bookstore,
   bookstoreComment,
@@ -10,6 +9,7 @@ import type {
 import { userContributionType } from "~prisma-schemas/schemas/dm";
 import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
 
+import BookstoreSuggested from "../../emails/bookstore-suggested";
 import type { UserServices } from "../../index";
 import {
   OptionalAuthMiddleware,
@@ -165,9 +165,8 @@ const listenEvents = ({ _socket }: UserServices) => ({
       },
     });
 
-
     new BookstoreSuggested({
-      user
+      user,
     }).send();
 
     return createdComment;

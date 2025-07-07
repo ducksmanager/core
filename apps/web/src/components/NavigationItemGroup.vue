@@ -1,22 +1,21 @@
 <template>
-  <li :class="{ active }">
-    <a href="javascript:void(0)" class="d-flex align-items-center"
+  <li>
+    <span :v-b-toggle="collapseId" class="d-flex align-items-center"
       ><i :class="icon" />
       <slot name="text" />
-    </a>
-    <ul class="sub-menu collapse in show">
-      <slot name="items" />
-    </ul>
+    </span>
+    <b-collapse :id="collapseId" :model-value="true">
+      <ul class="sub-menu">
+        <slot name="items" />
+      </ul>
+    </b-collapse>
   </li>
 </template>
 
 <script setup lang="ts">
-const { paths } = defineProps<{
-  paths: RegExp[];
+const { icon } = defineProps<{
   icon: string;
 }>();
 
-const { path } = useRoute();
-
-const active = $computed(() => paths.some((pathRegex) => pathRegex.test(path)));
+const collapseId = computed(() => `collapse-${icon}`);
 </script>
