@@ -14,7 +14,7 @@ export const del = [
       userId: req.user!.id,
       id: parseInt(req.params.id),
     };
-    const purchase = await getUserPurchase(criteria.userId, criteria.id);
+    const purchase = await getUserPurchase(criteria.id, criteria.userId);
     if (!purchase) {
       res.writeHead(404);
       res.end();
