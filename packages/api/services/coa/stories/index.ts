@@ -1,4 +1,5 @@
 import type { SimpleIssueWithPartInfo } from "~dm-types/SimpleIssue";
+import type { SimpleStory } from "~dm-types/SimpleStory";
 import type { StorySearchResults } from "~dm-types/StorySearchResults";
 import type { inducks_story } from "~prisma-schemas/schemas/coa";
 import { Prisma } from "~prisma-schemas/schemas/coa";
@@ -55,7 +56,10 @@ export default {
 
   searchStory: async <WithIssues extends boolean>(
     keywords: string[],
-    withIssues: WithIssues,
+    options: {
+      withIssues: WithIssues;
+      kind?: SimpleStory["kind"];
+    },
   ): Promise<StorySearchResults<WithIssues>> => {
     const limit = 10;
     const joinedKeywords = keywords.join(" ");
@@ -64,12 +68,14 @@ export default {
     >`
       SELECT inducks_storyversion.storycode,
              inducks_storyversion.entirepages,
+             inducks_storyversion.kind,
              inducks_entry.title,
              MATCH (inducks_entry.title) AGAINST (${joinedKeywords}) /
              (IF(inducks_storyversion.kind = 'n', 1, 2)) AS score
       FROM inducks_entry
                INNER JOIN inducks_storyversion ON inducks_entry.storyversioncode = inducks_storyversion.storyversioncode
       WHERE inducks_storyversion.storycode <> ''
+        AND (inducks_storyversion.kind = ${options.kind} OR ${options.kind} IS NULL)
         AND MATCH (inducks_entry.title) AGAINST (${joinedKeywords})
       GROUP BY inducks_storyversion.storycode
       ORDER BY score DESC, inducks_entry.title
@@ -79,7 +85,7 @@ export default {
     const hasMore = results.length > limit;
     results = results.slice(0, limit);
 
-    if (withIssues) {
+    if (options.withIssues) {
       const resultsWithIssues: StorySearchResults<true>["results"] = [];
       for (const idx of results.keys()) {
         resultsWithIssues[idx] = {

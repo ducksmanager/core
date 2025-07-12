@@ -18,10 +18,9 @@ const storySearchEvents = storySearchSocket.addNamespace<StorySearchEvents>(
 );
 
 export const getStoriesFromKeywords = async (keywords: string[]) => {
-  const { results: searchResults } = await coaEvents.searchStory(
-    keywords,
-    false,
-  );
+  const { results: searchResults } = await coaEvents.searchStory(keywords, {
+    withIssues: false,
+  });
 
   const storyDetailsOutput = await coaEvents.getStoryDetails(
     searchResults.map(({ storycode }) => storycode),

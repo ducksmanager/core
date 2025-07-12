@@ -29,14 +29,20 @@ export default defineConfig({
         },
       },
     }),
-    eslintPlugin({
-      exclude: [
-        `node_modules/**`,
-        `${path.resolve(__dirname, "../..")}/node_modules/**`,
-        `${path.resolve(__dirname, "../..")}/packages/**`,
-        "dist/**",
-      ],
-    }),
+    {
+      // default settings on build (i.e. fail on error)
+      ...eslintPlugin(),
+      apply: "build",
+    },
+    {
+      // do not fail on serve (i.e. local development)
+      ...eslintPlugin({
+        failOnWarning: false,
+        failOnError: false,
+      }),
+      apply: "serve",
+      enforce: "post",
+    },
     AutoImport({
       dts: true,
       imports: ["vue", "vue-router", "vue-i18n", "pinia"],

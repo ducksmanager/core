@@ -20,7 +20,7 @@
   "scripts": {
     "prepare": "husky",
     "lint": "turbo lint --log-order=stream -F '!~duckguessr*'  -- --cache",
-    "lint:precommit": "turbo lint:precommit -- --cache",
+    "lint:precommit": "turbo lint:precommit -- --no-cache",
     "lint-no-cache": "turbo lint --log-order=stream -F '!~duckguessr*' -- --fix",
     "dev:dumili": "turbo dev dev:bun -F '~dumili-api...' -F '~dumili' -F '~web'",
     "dev:edgecreator": "turbo dev dev:bun -F '~edgecreator-api...' -F '~edgecreator' -F '~web' -F '~edges'",

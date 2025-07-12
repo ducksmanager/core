@@ -110,6 +110,7 @@
     >
     <template #customize-form>
       <StorySearch
+        :kind="entry.acceptedStoryKind?.storyKindRows.kind"
         @story-selected="
           acceptStory($event.storycode);
           showEntrySelect = false;

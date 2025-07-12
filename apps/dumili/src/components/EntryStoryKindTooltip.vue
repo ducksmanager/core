@@ -26,12 +26,12 @@
       ><template #empty>{{ $t("Aucune case détectée") }}</template>
       <template #cell(storyKindRows)="row">
         <story-kind-badge
-          :story-kind-rows="row.item.storyKindRows" /></template></b-table
+          :kind="row.item.storyKindRows?.kind" /></template></b-table
     ><br />
     <div>
       <b>{{ $t("Type d'entrée déduit") }}</b>
     </div>
-    <story-kind-badge :story-kind-rows="storyKindAiSuggestion?.storyKindRows"
+    <story-kind-badge :kind="storyKindAiSuggestion?.storyKindRows?.kind"
   /></ai-tooltip>
 </template>
 

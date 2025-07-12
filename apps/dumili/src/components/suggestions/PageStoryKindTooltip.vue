@@ -35,7 +35,7 @@
         <b>{{ $t("Type d'entrée déduit pour la page") }}</b>
       </div>
       <story-kind-badge
-        :story-kind-rows="page.image?.aiKumikoResult?.inferredStoryKindRows"
+        :kind="page.image?.aiKumikoResult?.inferredStoryKindRows?.kind"
     /></template>
   </ai-tooltip>
 </template>

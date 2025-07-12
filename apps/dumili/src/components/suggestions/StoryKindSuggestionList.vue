@@ -48,10 +48,7 @@
         <template #unknown-text>{{ $t("Type inconnu") }}</template>
       </suggestion-list>
     </template>
-    <story-kind-badge
-      v-else
-      :story-kind-rows="acceptedStoryKind?.storyKindRows"
-    />
+    <story-kind-badge v-else :kind="acceptedStoryKind?.storyKindRows.kind" />
   </div>
 </template>
 
