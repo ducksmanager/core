@@ -98,22 +98,23 @@ const onDrag = (_x: number, y: number) =>
   opacity: 1;
 }
 .draggable {
-    border-top: 1px solid black !important;
-    z-index: 2 !important;
+  border-top: 1px solid black !important;
+  z-index: 2 !important;
 
-    &:last-child::after {
-      content: '';
-      position: absolute;
-      bottom: -1px;
-      left: 0;
-      right: 0;
-      border-bottom: 1px solid black !important;
-    }
+  &:last-child::after {
+    content: "";
+    position: absolute;
+    bottom: -1px;
+    left: 0;
+    right: 0;
+    border-bottom: 1px solid black !important;
+  }
 
   &.active {
     z-index: 3 !important;
-     box-shadow:        inset  0  5px 5px -5px grey, 
-                        inset  0 -5px 5px -5px grey;
+    box-shadow:
+      inset 0 5px 5px -5px grey,
+      inset 0 -5px 5px -5px grey;
   }
 }
 </style>

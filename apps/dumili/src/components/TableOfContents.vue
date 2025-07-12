@@ -66,9 +66,7 @@
       </b-dropdown>
     </template>
 
-    <b-row
-      class="overflow-y-auto overflow-x-hidden w-100 m-1"
-    >
+    <b-row class="overflow-y-auto overflow-x-hidden w-100 m-1">
       <b-col :cols="1" style="padding: 0">
         <b-row
           v-for="page in indexation.pages"
