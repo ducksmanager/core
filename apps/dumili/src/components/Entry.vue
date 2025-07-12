@@ -1,6 +1,6 @@
 <template>
   <b-row
-    class="d-flex w-100 align-items-start pt-1 sticky-top"
+    class="d-flex w-100 align-items-start sticky-top"
     :class="{ 'opacity-50': !editable }"
     :style="
       entry.entirepages > 0

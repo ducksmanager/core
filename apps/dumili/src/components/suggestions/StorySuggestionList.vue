@@ -1,7 +1,7 @@
 <template>
   <suggestion-list
     v-model="entry.acceptedStory"
-    class="position-absolute top-0 d-flex flex-column align-items-center w-100"
+    class="position-absolute top-0 d-flex flex-column justify-content-center align-items-center w-100 h-100"
     :suggestions="entry.storySuggestions"
     :is-ai-source="({ aiStorySuggestionId }) => aiStorySuggestionId !== null"
     :show-customize-form="showEntrySelect"

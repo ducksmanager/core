@@ -67,7 +67,6 @@
     </template>
 
     <b-row
-      style="outline: 1px solid black"
       class="overflow-y-auto overflow-x-hidden w-100 m-1"
     >
       <b-col :cols="1" style="padding: 0">
@@ -75,7 +74,7 @@
           v-for="page in indexation.pages"
           :key="page.id"
           :style="{ height: `${pageHeight}px` }"
-          class="g-0 px-0 py-0 align-items-center page outline"
+          class="g-0 px-0 py-0 align-items-center page"
         >
           <TableOfContentsPage :page="page" />
         </b-row>
@@ -267,11 +266,12 @@ watch(
       $background: rgba(238, 238, 238, 0.85);
       box-shadow: 0px 35px 5px -4px;
       color: #{$background};
-
-      border-top: 1px solid lightgray;
-      border-bottom: 1px solid lightgray;
     }
   }
+}
+
+.page {
+  border-top: 1px solid black;
 }
 
 :deep(.resizable .handle) {

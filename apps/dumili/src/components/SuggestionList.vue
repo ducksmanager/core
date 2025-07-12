@@ -1,7 +1,7 @@
 <template>
   <div :class="classes">
     <b-dropdown
-      class="my-2 position-static z-1"
+      class="position-static z-1"
       :menu-class="['border-white', ...extraMenuClass]"
       :toggle-class="['text-wrap', ...(current ? itemClass(current) : [])]"
       ><b-dropdown-group
