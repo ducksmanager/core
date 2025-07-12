@@ -64,7 +64,7 @@ const defaultExport = (options: {
     maintenanceSocket,
     datasetsSocket,
     podiumSocket,
-    createMatchmakingSocket: (cookies) =>
+    createMatchmakingSocket: () =>
       socket.addNamespace<MatchEmitEvents>(namespaces.MATCH, {
         session,
       }),

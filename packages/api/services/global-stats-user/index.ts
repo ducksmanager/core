@@ -50,9 +50,8 @@ const userListenEvents = ({ _socket }: UserServices) => ({
     ORDER BY rarityScore DESC`;
 
       const myRank =
-        userScores.findIndex(
-          ({ userId }) => userId === _socket.data.user!.id,
-        ) || 0;
+        userScores.findIndex(({ userId }) => userId === _socket.data.user.id) ||
+        0;
 
       return {
         me: {

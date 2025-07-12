@@ -10,11 +10,13 @@
             ><template #rank>
               <b>{{ $t("n°{0} / {1}", [rarityRank, userCount]) }}</b>
             </template></i18n-t
-          ><template v-if="userIdAboveMe">&nbsp;<UserPopover
+          ><template v-if="userIdAboveMe"
+            >&nbsp;<UserPopover
               v-if="stats[userIdAboveMe]"
               :stats="stats[userIdAboveMe]"
               :points="points[userIdAboveMe]"
-            /> {{$t('est n°{0}', [rarityRank - 1])}}
+            />
+            {{ $t("est n°{0}", [rarityRank - 1]) }}
           </template>
           <br />
           <b-alert
@@ -23,13 +25,22 @@
             size="sm"
             class="d-inline-block mt-3"
           >
-              <div>
+            <div>
               {{
                 $t(
                   "La rareté de votre collection est calculée sur la base du nombre d'autres utilisateurs qui possèdent chacun des magazines de votre collection.",
                 )
-              }}</div><div class="mt-2 d-inline-flex" v-if="rarestIssue"><div class="me-2 pb-2">{{$t('Votre numéro le plus rare est')}}</div><Issue flex v-bind="{...rarestIssue, publicationname: publicationNames[rarestIssue.publicationcode!]!}" />
+              }}
+            </div>
+            <div v-if="rarestIssue" class="mt-2 d-inline-flex">
+              <div class="me-2 pb-2">
+                {{ $t("Votre numéro le plus rare est") }}
               </div>
+              <Issue
+                flex
+                v-bind="{...rarestIssue, publicationname: publicationNames[rarestIssue.publicationcode!]!}"
+              />
+            </div>
           </b-alert>
         </div>
         <div v-else>
@@ -80,7 +91,9 @@
               :fields="quotationFields"
             >
               <template #cell(issue)="{ item }">
-                <Issue v-bind="{...issuecodeDetails[item.issuecode!], publicationname: publicationNames[issuecodeDetails[item.issuecode!].publicationcode!]!}" />
+                <Issue
+                  v-bind="{...issuecodeDetails[item.issuecode!], publicationname: publicationNames[issuecodeDetails[item.issuecode!].publicationcode!]!}"
+                />
               </template>
               <template #cell(condition)="{ item }">
                 {{ getConditionLabel(item.condition) }}
@@ -199,7 +212,9 @@ const quotationFields = [
   },
 ];
 
-let rarestIssue = $ref<null | AugmentedIssue<["publicationcode", "issuenumber"]>>(null);
+let rarestIssue = $ref<null | AugmentedIssue<
+  ["publicationcode", "issuenumber"]
+>>(null);
 let rarityRank = $ref<null | number>(null);
 let userIdAboveMe = $ref<null | number>(null);
 let hasPublicationNames = $ref(false as boolean);
@@ -233,19 +248,20 @@ watch(
 (async () => {
   await loadCollection();
   await fetchCount();
-  const rarityData =  await userGlobalStatsEvents.getUsersCollectionRarity();
+  const rarityData = await userGlobalStatsEvents.getUsersCollectionRarity();
   rarityRank = rarityData.me.rank;
   userIdAboveMe = rarityData.aboveMe.userId;
 
-
   const rarestIssuecode = rarityData.me.rarestIssue.issuecode;
   await fetchIssuecodeDetails([rarestIssuecode]);
-  await fetchPublicationNames([issuecodeDetails.value[rarestIssuecode].publicationcode!]);
+  await fetchPublicationNames([
+    issuecodeDetails.value[rarestIssuecode].publicationcode!,
+  ]);
   rarestIssue = {
     ...issuecodeDetails.value[rarestIssuecode],
     publicationcode: issuecodeDetails.value[rarestIssuecode].publicationcode!,
     issuenumber: issuecodeDetails.value[rarestIssuecode].issuenumber!,
-  }
+  };
   if (rarityData.aboveMe.userId) {
     await fetchStats([rarityData.aboveMe.userId]);
   }

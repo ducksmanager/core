@@ -20,8 +20,8 @@ const addPartInfo = (issueDetails: InducksIssueDetails) => {
         }
         return acc;
       },
-      {}
-    )
+      {},
+    ),
   )
     .filter(([, occurrences]) => occurrences > 1)
     .reduce<{ [storycode: string]: number }>((acc, [storycode]) => {
@@ -55,7 +55,7 @@ export const coa = defineStore("coa", () => {
     issueDetails = ref<{ [issuecode: string]: InducksIssueDetails }>({}),
     isLoadingCountryNames = ref(false),
     issuecodeDetails = shallowRef<EventOutput<CoaClientEvents, "getIssues">>(
-      {}
+      {},
     ),
     issuePopularities = shallowRef<
       EventOutput<CoaClientEvents, "getIssuePopularities">
@@ -78,7 +78,7 @@ export const coa = defineStore("coa", () => {
     >({}),
     storyversionDetails = ref<Record<string, inducks_storyversion>>({}),
     addPublicationNames = (
-      newPublicationNames: typeof publicationNames.value
+      newPublicationNames: typeof publicationNames.value,
     ) => {
       publicationNames.value = {
         ...publicationNames.value,
@@ -96,10 +96,10 @@ export const coa = defineStore("coa", () => {
     },
     fetchIssueQuotations = async (issuecodes: string[]) => {
       const existingIssuecodes = new Set(
-        Object.keys(issueQuotations.value || {})
+        Object.keys(issueQuotations.value || {}),
       );
       const newIssuecodes = issuecodes.filter(
-        (issuecode) => !existingIssuecodes.has(issuecode)
+        (issuecode) => !existingIssuecodes.has(issuecode),
       );
       if (newIssuecodes.length) {
         const newIssueQuotations =
@@ -110,7 +110,7 @@ export const coa = defineStore("coa", () => {
       }
     },
     addIssueQuotations = (
-      newIssueQuotations: Record<string, InducksIssueQuotationSimple>
+      newIssueQuotations: Record<string, InducksIssueQuotationSimple>,
     ) => {
       Object.assign(issueQuotations.value, newIssueQuotations);
     },
@@ -122,7 +122,7 @@ export const coa = defineStore("coa", () => {
         isLoadingCountryNames.value = true;
         countryNames.value = await events.getCountryList(
           getCurrentLocaleShortKey(locale.value),
-          []
+          [],
         );
         isLoadingCountryNames.value = false;
       }
@@ -132,16 +132,16 @@ export const coa = defineStore("coa", () => {
         ...new Set(
           newPublicationCodes.filter(
             (publicationcode) =>
-              !Object.keys(publicationNames.value).includes(publicationcode)
-          )
+              !Object.keys(publicationNames.value).includes(publicationcode),
+          ),
         ),
       ];
       return (
         actualNewPublicationCodes.length &&
         addPublicationNames(
           await events.getPublicationListFromPublicationcodeList(
-            actualNewPublicationCodes
-          )
+            actualNewPublicationCodes,
+          ),
         )
       );
     },
@@ -165,8 +165,8 @@ export const coa = defineStore("coa", () => {
         ...new Set(
           newPersonCodes.filter(
             (personCode) =>
-              !Object.keys(personNames.value || {}).includes(personCode)
-          )
+              !Object.keys(personNames.value || {}).includes(personCode),
+          ),
         ),
       ];
       return (
@@ -179,38 +179,38 @@ export const coa = defineStore("coa", () => {
     },
     fetchIssuecodeDetails = async (
       issuecodes: string[],
-      withTitles: boolean = false
+      withTitles: boolean = false,
     ) => {
       const newIssuecodes = issuecodes.filter((issuecode) =>
         withTitles
           ? !("title" in (issuecodeDetails.value[issuecode] || {}))
-          : !issuecodeDetails.value[issuecode]
+          : !issuecodeDetails.value[issuecode],
       );
       if (newIssuecodes.length) {
         Object.assign(
           issuecodeDetails.value,
-          await events.getIssues(newIssuecodes, withTitles)
+          await events.getIssues(newIssuecodes, withTitles),
         );
       }
     },
     fetchIssuePopularities = async (issuecodes: string[]) => {
       const existingIssuecodes = new Set(
-        Object.keys(issuePopularities.value || {})
+        Object.keys(issuePopularities.value || {}),
       );
       const newIssuecodes = issuecodes.filter(
-        (issuecode) => !existingIssuecodes.has(issuecode)
+        (issuecode) => !existingIssuecodes.has(issuecode),
       );
       if (newIssuecodes.length) {
         Object.assign(
           issuePopularities.value,
-          await events.getIssuePopularities(newIssuecodes)
+          await events.getIssuePopularities(newIssuecodes),
         );
       }
     },
     fetchStoryDetails = async (storycodes: string[]) => {
       const existingStorycodes = new Set(Object.keys(storyDetails.value || {}));
       const newStorycodes = storycodes.filter(
-        (storycode) => !existingStorycodes.has(storycode)
+        (storycode) => !existingStorycodes.has(storycode),
       );
       if (newStorycodes.length) {
         const newStoryDetails = await events.getStoryDetails(newStorycodes);
@@ -222,10 +222,10 @@ export const coa = defineStore("coa", () => {
     },
     fetchStoryversionDetails = async (storyversioncodes: string[]) => {
       const existingStoryversioncodes = new Set(
-        Object.keys(storyversionDetails.value || {})
+        Object.keys(storyversionDetails.value || {}),
       );
       const newStoryversioncodes = storyversioncodes.filter(
-        (storyversion) => !existingStoryversioncodes.has(storyversion)
+        (storyversion) => !existingStoryversioncodes.has(storyversion),
       );
       if (newStoryversioncodes.length) {
         const newStoryversionDetails =
@@ -233,23 +233,23 @@ export const coa = defineStore("coa", () => {
         if (!("error" in newStoryversionDetails)) {
           Object.assign(
             storyversionDetails.value,
-            newStoryversionDetails.storyversions
+            newStoryversionDetails.storyversions,
           );
         }
       }
     },
     fetchIssuecodesByPublicationcode = async (publicationcodes: string[]) => {
       const existingPublicationcodes = new Set(
-        Object.keys(issuecodesByPublicationcode.value || {})
+        Object.keys(issuecodesByPublicationcode.value || {}),
       );
       const newPublicationcodes = publicationcodes.filter(
-        (publicationcode) => !existingPublicationcodes.has(publicationcode)
+        (publicationcode) => !existingPublicationcodes.has(publicationcode),
       );
 
       if (newPublicationcodes.length) {
         Object.assign(
           issuecodesByPublicationcode.value,
-          await events.getIssuecodesByPublicationcodes(newPublicationcodes)
+          await events.getIssuecodesByPublicationcodes(newPublicationcodes),
         );
       }
     },

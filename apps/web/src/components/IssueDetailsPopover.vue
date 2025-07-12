@@ -68,9 +68,7 @@ const cloudinaryBaseUrl =
 
 const loadIssueUrls = async () => {
   isCoverLoading = true;
-  await fetchIssueUrls(
-    issuecode,
-  );
+  await fetchIssueUrls(issuecode);
   isCoverLoading = false;
 
   const possibleCoverUrl = issueDetails.value?.[issuecode]?.entries?.find(
