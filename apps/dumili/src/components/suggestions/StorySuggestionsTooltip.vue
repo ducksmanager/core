@@ -12,7 +12,7 @@
           imageId === getEntryPages(indexation!, entry.id)[0].image?.id,
       },
     ]"
-    :status="entry.storySuggestions.length ? 'success' : 'idle'"
+    :status="!firstPage.image ? 'failure' : entry.storySuggestions.length ? 'success' : 'idle'"
     @toggled="overlay = $event ? { type: 'ocr', entryId: entry.id } : undefined"
   >
     <template v-if="entry.acceptedStoryKind?.storyKindRows.kind === STORY">

@@ -29,9 +29,9 @@
         md="4"
         @click="selectedId = id"
       >
-        <template v-if="hoveredEntryPageNumbers?.includes(pageNumber)">
+        <template v-if="currentEntryPageNumbers?.includes(pageNumber)">
           <div
-            :class="`overlay kind-${hoveredEntry!.acceptedStoryKind?.storyKindRows.kind} striped`"
+            :class="`overlay kind-${currentEntry!.acceptedStoryKind?.storyKindRows.kind} striped`"
           ></div>
         </template>
         <b-button
@@ -140,7 +140,7 @@ const maxUploadableImagesFromPageNumber = (
     : firstBreakIndex + 1;
 };
 
-const { visiblePages, currentPage, hoveredEntry, hoveredEntryPageNumbers } =
+const { visiblePages, currentPage, currentEntry, currentEntryPageNumbers } =
   storeToRefs(ui());
 
 const imagesRef = ref<HTMLElement>();

@@ -7,11 +7,16 @@
         checkMatch: (id) => id === entry.id,
       },
     ]"
-    :status="storyKindAiSuggestion?.storyKindRows ? 'success' : 'idle'"
+    :status="!pages[0].image ? 'failure' : storyKindAiSuggestion?.storyKindRows ? 'success' : 'idle'"
     @toggled="
       overlay = $event ? { type: 'panels', entryId: entry.id } : undefined
     "
   >
+
+  <div v-if="!pages[0].image">
+      {{ $t("Le type d'entrée ne peut pas être détecté car aucune image n'est associée avec sa première page") }}
+    </div>
+    <template v-else>
     <b-table
       :fields="[
         { key: 'page' },
@@ -32,7 +37,7 @@
       <b>{{ $t("Type d'entrée déduit") }}</b>
     </div>
     <story-kind-badge :kind="storyKindAiSuggestion?.storyKindRows?.kind"
-  /></ai-tooltip>
+  /></template></ai-tooltip>
 </template>
 
 <script setup lang="ts">

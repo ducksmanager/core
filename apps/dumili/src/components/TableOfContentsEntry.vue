@@ -1,21 +1,19 @@
 <template>
   <vue-draggable-resizable
-    :active="hoveredEntry?.id === entry.id"
+    :active="isCurrentEntry"
     :parent="true"
     prevent-deactivation
-    :resizable="true"
+    :resizable="shouldAcceptChange(y, height + pageHeight)"
     :draggable="true"
     :handles="['bm']"
     :grid="[1000, pageHeight]"
-    :h="entry.entirepages * pageHeight"
-    :y="(entry.position - 1) * pageHeight"
+    :h="height"
+    :y="y"
     :min-height="pageHeight"
     :on-resize="onResize"
     :on-drag="onDrag"
     role="button"
-    :class-name="`position-absolute d-flex align-items-center justify-content-center cursor-pointer col w-100 kind-${entry.acceptedStoryKind?.storyKindRows.kind} ${(overlay?.type === 'story kind' && overlay.entryId === entry.id && 'striped') || ''} ${(currentEntry?.id === entry.id && 'active') || ''}`"
-    @mouseover="hoveredEntry = entry"
-    @mouseleave="hoveredEntry = undefined"
+    :class-name="`position-absolute d-flex align-items-center justify-content-center cursor-pointer col w-100 kind-${entry.acceptedStoryKind?.storyKindRows.kind} ${(overlay?.type === 'story kind' && overlay.entryId === entry.id && 'striped') || ''} ${(isCurrentEntry && 'active') || ''}`"
     @resize-stop="
       (_left: number, _top: number, _width: number, height: number) => {
         emit('onEntryResizeStop', height);
@@ -28,6 +26,9 @@
     "
     @click="currentPage = getFirstPageOfEntry(indexation!.entries, entry.id)"
   >
+      <template #bm>
+        <i-bi-arrows-expand />
+      </template>
     <Entry v-model="entry" :editable="currentEntry?.id === entry.id" />
   </vue-draggable-resizable>
 </template>
@@ -49,6 +50,10 @@ const entryIdx = computed(() =>
   indexation.value!.entries.findIndex((e) => e.id === entry.value.id),
 );
 
+const y = computed(() => (entry.value.position - 1) * pageHeight.value);
+
+const height = computed(() => entry.value.entirepages * pageHeight.value);
+
 const previousEntry = computed(
   () => indexation.value!.entries[entryIdx.value - 1],
 );
@@ -67,16 +72,10 @@ const maxLastPageNumber = computed(() =>
     : indexation.value!.pages.length,
 );
 
-const { hoveredEntry, currentEntry, overlay, pageHeight, currentPage } =
+const { currentEntry, overlay, pageHeight, currentPage } =
   storeToRefs(ui());
 
-const lastHoveredEntry = ref<typeof hoveredEntry.value>();
-
-watch(hoveredEntry, (entry) => {
-  if (entry) {
-    lastHoveredEntry.value = entry;
-  }
-});
+const isCurrentEntry = computed(() => currentEntry.value?.id === entry.value.id);
 
 const shouldAcceptChange = (y: number, height: number) =>
   1 + Math.round(y / pageHeight.value) >= minPosition.value &&

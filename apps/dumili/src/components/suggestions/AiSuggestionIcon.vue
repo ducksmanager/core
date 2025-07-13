@@ -51,16 +51,10 @@ svg {
     cursor: help;
   }
 
-  &.idle {
-    color: grey;
-  }
+  color: grey;
 
   &.success {
     color: yellow;
-  }
-
-  &.failure {
-    color: orange;
   }
 
   &.loading {
