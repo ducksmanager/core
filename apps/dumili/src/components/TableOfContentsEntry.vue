@@ -3,7 +3,7 @@
     :active="isCurrentEntry"
     :parent="true"
     prevent-deactivation
-    :resizable="shouldAcceptChange(y, height + pageHeight)"
+    :resizable="showUpResizeHandle || showDownResizeHandle"
     :draggable="true"
     :handles="['bm']"
     :grid="[1000, pageHeight]"
@@ -27,7 +27,9 @@
     @click="currentPage = getFirstPageOfEntry(indexation!.entries, entry.id)"
   >
       <template #bm>
-        <i-bi-arrows-expand />
+        <i-bi-arrows-expand v-if="showUpResizeHandle && showDownResizeHandle" />
+        <i-bi-arrow-up-short v-else-if="showUpResizeHandle" />
+        <i-bi-arrow-down v-else-if="showDownResizeHandle" />
       </template>
     <Entry v-model="entry" :editable="currentEntry?.id === entry.id" />
   </vue-draggable-resizable>
@@ -53,6 +55,9 @@ const entryIdx = computed(() =>
 const y = computed(() => (entry.value.position - 1) * pageHeight.value);
 
 const height = computed(() => entry.value.entirepages * pageHeight.value);
+
+const showUpResizeHandle = computed(() => entry.value.entirepages > 1);
+const showDownResizeHandle = computed(() => shouldAcceptChange(y.value, height.value + pageHeight.value));
 
 const previousEntry = computed(
   () => indexation.value!.entries[entryIdx.value - 1],
