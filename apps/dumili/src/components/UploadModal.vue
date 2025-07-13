@@ -221,7 +221,8 @@ onMounted(() => {
           uploadPreset: "p1urov1k",
           folder: `dumili/${user.value!.username}/${folderName}`,
           showPoweredBy: false,
-          sources: ["local", "url", "camera"],
+          sources:
+            value === "PDF" ? ["local", "url"] : ["local", "url", "camera"],
           maxFileSize: 10 * 1024 * 1024,
           maxImageFileSize: 5 * 1024 * 1024,
           inlineContainer: "#widget-container",
