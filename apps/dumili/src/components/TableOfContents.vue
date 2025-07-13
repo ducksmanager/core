@@ -84,6 +84,7 @@
           <div
             class="position-absolute w-100 d-flex align-items-center justify-content-center"
             :style="{
+              borderTop: '1px solid black',
               height: `${pageHeight}px`,
               top: `${pageHeight * (entry.position + entry.entirepages - 1)}px`,
             }"
@@ -273,13 +274,5 @@ watch(
 
 .page {
   border-top: 1px solid black;
-}
-
-:deep(.resizable .handle) {
-  border: 0;
-  bottom: -7px;
-  z-index: 1021 !important;
-  width: initial;
-  height: initial;
 }
 </style>

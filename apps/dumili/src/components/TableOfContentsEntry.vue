@@ -13,7 +13,7 @@
     :on-resize="onResize"
     :on-drag="onDrag"
     role="button"
-    :class-name="`position-absolute d-flex align-items-center justify-content-center cursor-pointer col w-100 kind-${entry.acceptedStoryKind?.storyKindRows.kind} ${(overlay?.type === 'story kind' && overlay.entryId === entry.id && 'striped') || ''} ${(isCurrentEntry && 'active') || ''}`"
+    :class-name="`position-absolute d-flex align-items-center justify-content-center cursor-pointer col w-100 kind-${entry.acceptedStoryKind?.storyKindRows.kind} ${(overlay?.type === 'story kind' && overlay.entryId === entry.id && 'striped') || ''} ${(isCurrentEntry && 'active') || ''} ${(showUpResizeHandle && showDownResizeHandle && 'up-and-down') || 'up-or-down'}`"
     @resize-stop="
       (_left: number, _top: number, _width: number, height: number) => {
         emit('onEntryResizeStop', height);
@@ -120,8 +120,29 @@ const onDrag = (_x: number, y: number) =>
   &.active {
     z-index: 3 !important;
     box-shadow:
-      inset 0 5px 5px -5px grey,
-      inset 0 -5px 5px -5px grey;
+      inset 0 5px 5px -5px black,
+      inset 0 -5px 5px -5px black;
+  }
+}
+
+.resizable {
+  :deep(.handle) {
+    border: 0;
+    z-index: 1021 !important;
+    width: initial;
+    height: initial;
+  }
+
+  &.up-and-down {
+    :deep(.handle) {
+      bottom: -7px;
+    }
+  }
+
+  &.up-or-down {
+    :deep(.handle) {
+      bottom: -1px;
+    }
   }
 }
 </style>

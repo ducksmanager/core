@@ -186,6 +186,10 @@ const urlEncodedStorycode = computed(
   }
 }
 
+textarea {
+  background: rgb(222, 222, 222) !important;
+}
+
 .dark {
   color: black;
 }

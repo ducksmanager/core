@@ -21,8 +21,9 @@
 
     <template
       v-if="
+        pagesWithoutOverwrite.length !== pages.length &&
         firstOutOfRangePage <=
-        pagesWithoutOverwrite[0].pageNumber + pagesWithoutOverwrite.length
+          pagesWithoutOverwrite[0].pageNumber + pagesWithoutOverwrite.length
       "
     >
       <label class="mt-3">{{
@@ -43,7 +44,7 @@
     </template>
     <b-alert
       :variant="uploadExistingFileAction === 'ignore' ? 'info' : 'warning'"
-      :model-value="true"
+      :model-value="pagesWithoutOverwrite.length !== pages.length"
       :dismissible="false"
       class="w-100 mt-3"
       >{{
@@ -52,7 +53,8 @@
           { firstPage: pagesWithoutOverwrite[0].pageNumber },
         )
       }}
-      <template v-if="uploadFileType === 'PDF'"
+      <template v-if="pagesWithoutOverwrite.length === pages.length" />
+      <template v-else-if="uploadFileType === 'PDF'"
         >{{
           $t(
             uploadExistingFileAction === "ignore"
@@ -202,79 +204,88 @@ const processPage = async (pageIndex: number, url: string) => {
 };
 
 onMounted(() => {
-  const fileIds: string[] = [];
-  const folderName = indexation.value!.id;
-  const uploadWidget = cloudinary.createUploadWidget(
-    {
-      cloudName: import.meta.env.VITE_CLOUDINARY_CLOUDNAME,
-      uploadPreset: "p1urov1k",
-      folder: `dumili/${user.value!.username}/${folderName}`,
-      showPoweredBy: false,
-      sources: ["local", "url", "camera"],
-      maxFileSize: 10 * 1024 * 1024,
-      maxImageFileSize: 5 * 1024 * 1024,
-      inlineContainer: "#widget-container",
-      context: {
-        indexation: folderName,
-        project: "dumili",
-        user: user.value!.username,
-      },
-    },
-    async (error, result) => {
-      if (error) {
-        console.error(error);
-      } else {
-        console.log("Event: ", result.event);
-        switch (result?.event) {
-          case "upload-added":
-            fileIds.push((result.info as CloudinaryUploadWidgetInfo).id);
-            break;
-          case "queues-start":
-            isUploading.value = true;
-            break;
-          case "success":
-            showWidget.value = false;
-            const info = result.info as CloudinaryUploadWidgetInfo;
-            console.log("Done! Here is the image info: ", info);
+  watch(
+    uploadFileType,
+    (value) => {
+      const fileIds: string[] = [];
+      const folderName = indexation.value!.id;
+      document.getElementById("widget-container")!.innerHTML = "";
+      const uploadWidget = cloudinary.createUploadWidget(
+        {
+          cloudName: import.meta.env.VITE_CLOUDINARY_CLOUDNAME,
+          uploadPreset: "p1urov1k",
+          folder: `dumili/${user.value!.username}/${folderName}`,
+          showPoweredBy: false,
+          sources:
+            value === "PDF" ? ["local", "url"] : ["local", "url", "camera"],
+          maxFileSize: 10 * 1024 * 1024,
+          maxImageFileSize: 5 * 1024 * 1024,
+          inlineContainer: "#widget-container",
+          cropping: value === "PDF",
+          context: {
+            indexation: folderName,
+            project: "dumili",
+            user: user.value!.username,
+          },
+        },
+        async (error, result) => {
+          if (error) {
+            console.error(error);
+          } else {
+            console.log("Event: ", result.event);
+            switch (result?.event) {
+              case "upload-added":
+                fileIds.push((result.info as CloudinaryUploadWidgetInfo).id);
+                break;
+              case "queues-start":
+                isUploading.value = true;
+                break;
+              case "success":
+                showWidget.value = false;
+                const info = result.info as CloudinaryUploadWidgetInfo;
+                console.log("Done! Here is the image info: ", info);
 
-            const firstUploadPageIndex = pages.value.findIndex(
-              (page) => page.pageNumber === uploadPageNumber,
-            );
-            if (info.pages) {
-              for (
-                let page = 1;
-                page <= Math.min(info.pages, pages.value.length);
-                page++
-              ) {
-                await processPage(
-                  firstUploadPageIndex + page - 1,
-                  info.secure_url
-                    .replace("/upload/", `/upload/pg_${page}/`)
-                    .replace(/.pdf$/g, ".png"),
+                const firstUploadPageIndex = pages.value.findIndex(
+                  (page) => page.pageNumber === uploadPageNumber,
                 );
-              }
-            } else {
-              await processPage(
-                firstUploadPageIndex + fileIds.indexOf(info.id),
-                info.secure_url,
-              );
+                if (info.pages) {
+                  for (
+                    let page = 1;
+                    page <= Math.min(info.pages, pages.value.length);
+                    page++
+                  ) {
+                    await processPage(
+                      firstUploadPageIndex + page - 1,
+                      info.secure_url
+                        .replace("/upload/", `/upload/pg_${page}/`)
+                        .replace(/.pdf$/g, ".png"),
+                    );
+                  }
+                } else {
+                  await processPage(
+                    firstUploadPageIndex + fileIds.indexOf(info.id),
+                    info.secure_url,
+                  );
+                }
+                modal.value = false;
+                emit("done");
+                break;
+              case "abort":
+                emit("abort");
+                break;
             }
-            modal.value = false;
-            emit("done");
-            break;
-          case "abort":
-            emit("abort");
-            break;
-        }
-      }
-    },
-  );
+          }
+        },
+      );
 
-  watch(showWidget, (value) => {
-    if (!value) {
-      uploadWidget?.close();
-    }
-  });
+      watch(showWidget, (value) => {
+        if (!value) {
+          uploadWidget?.close();
+        }
+      });
+    },
+    { immediate: true },
+  );
 });
 </script>
 
