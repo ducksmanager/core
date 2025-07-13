@@ -81,11 +81,13 @@
           v-for="(entry, idx) in indexation.entries"
           :key="indexation.entries[idx].id"
         >
-          <div class="position-absolute w-100 d-flex align-items-center justify-content-center" 
-              :style="{
-                height: `${pageHeight}px`,
-                top: `${pageHeight * (entry.position + entry.entirepages - 1)}px`,
-              }">
+          <div
+            class="position-absolute w-100 d-flex align-items-center justify-content-center"
+            :style="{
+              height: `${pageHeight}px`,
+              top: `${pageHeight * (entry.position + entry.entirepages - 1)}px`,
+            }"
+          >
             <b-button
               v-if="showCreateEntryAfter(idx)"
               class="create-entry fw-bold position-absolute mx-md-n5 d-flex justify-content-center align-items-center"
