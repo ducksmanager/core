@@ -118,6 +118,7 @@
 <script setup lang="ts">
 import type {
   CloudinaryCreateUploadWidget,
+  CloudinaryUploadWidget,
   CloudinaryUploadWidgetInfo,
 } from "cloudinary-widget";
 import { dumiliSocketInjectionKey } from "~/composables/useDumiliSocket";
@@ -173,6 +174,8 @@ declare var cloudinary: {
   createUploadWidget: CloudinaryCreateUploadWidget;
 };
 
+const uploadWidget = ref<CloudinaryUploadWidget>();
+
 watch(
   () => uploadPageNumber,
   (value) => {
@@ -209,15 +212,16 @@ onMounted(() => {
     (value) => {
       const fileIds: string[] = [];
       const folderName = indexation.value!.id;
-      document.getElementById("widget-container")!.innerHTML = "";
-      const uploadWidget = cloudinary.createUploadWidget(
+      if (uploadWidget.value) {
+        uploadWidget.value.close();
+      }
+      uploadWidget.value = cloudinary.createUploadWidget(
         {
           cloudName: import.meta.env.VITE_CLOUDINARY_CLOUDNAME,
           uploadPreset: "p1urov1k",
           folder: `dumili/${user.value!.username}/${folderName}`,
           showPoweredBy: false,
-          sources:
-            value === "PDF" ? ["local", "url"] : ["local", "url", "camera"],
+          sources: ["local", "url", "camera"],
           maxFileSize: 10 * 1024 * 1024,
           maxImageFileSize: 5 * 1024 * 1024,
           inlineContainer: "#widget-container",
@@ -280,7 +284,7 @@ onMounted(() => {
 
       watch(showWidget, (value) => {
         if (!value) {
-          uploadWidget?.close();
+          uploadWidget.value?.close();
         }
       });
     },
