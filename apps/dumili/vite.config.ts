@@ -12,6 +12,7 @@ import { defineConfig } from "vite";
 import eslintPlugin from "vite-plugin-eslint";
 import Pages from "vite-plugin-pages";
 import Layouts from "vite-plugin-vue-layouts";
+import mkcert from "vite-plugin-mkcert";
 
 export default defineConfig({
   build: {
@@ -19,6 +20,7 @@ export default defineConfig({
   },
   plugins: [
     vue(),
+    mkcert(),
     Icons({
       autoInstall: true,
       customCollections: {

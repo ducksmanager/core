@@ -434,6 +434,9 @@ importers:
       vite-plugin-eslint:
         specifier: ^1.8.1
         version: 1.8.1(eslint@9.31.0(jiti@2.4.2))(vite@6.3.5(@types/node@22.16.3)(jiti@2.4.2)(sass@1.89.2)(terser@5.43.1)(tsx@4.20.3)(yaml@2.8.0))
+      vite-plugin-mkcert:
+        specifier: ^1.17.8
+        version: 1.17.8(vite@6.3.5(@types/node@22.16.3)(jiti@2.4.2)(sass@1.89.2)(terser@5.43.1)(tsx@4.20.3)(yaml@2.8.0))
       vite-plugin-pages:
         specifier: ^0.32.5
         version: 0.32.5(@vue/compiler-sfc@3.5.17)(vite@6.3.5(@types/node@22.16.3)(jiti@2.4.2)(sass@1.89.2)(terser@5.43.1)(tsx@4.20.3)(yaml@2.8.0))(vue-router@4.5.1(vue@3.5.17(typescript@5.8.3)))
@@ -460,7 +463,7 @@ importers:
         version: 9.38.0
       axios:
         specifier: ^1.10.0
-        version: 1.10.0
+        version: 1.10.0(debug@4.4.1)
       busboy:
         specifier: ^1.6.0
         version: 1.6.0
@@ -609,7 +612,7 @@ importers:
         version: 12.8.2(axios@1.10.0)(change-case@5.4.4)(fuse.js@7.1.0)(sortablejs@1.15.6)(typescript@5.8.3)(universal-cookie@7.2.2)
       axios:
         specifier: ^1.10.0
-        version: 1.10.0
+        version: 1.10.0(debug@4.4.1)
       axios-cache-interceptor:
         specifier: ^1.8.0
         version: 1.8.0(axios@1.10.0)
@@ -766,7 +769,7 @@ importers:
         version: 12.8.2(axios@1.10.0)(change-case@5.4.4)(fuse.js@7.1.0)(sortablejs@1.15.6)(typescript@5.8.3)(universal-cookie@4.0.4)
       axios:
         specifier: ^1.10.0
-        version: 1.10.0
+        version: 1.10.0(debug@4.4.1)
       cloudinary:
         specifier: ^1.41.3
         version: 1.41.3
@@ -1330,7 +1333,7 @@ importers:
         version: 4.22.0(seedrandom@3.0.5)
       axios:
         specifier: ^1.10.0
-        version: 1.10.0
+        version: 1.10.0(debug@4.4.1)
       cloudinary:
         specifier: ^1.41.3
         version: 1.41.3
@@ -8687,6 +8690,12 @@ packages:
       eslint: '>=7'
       vite: ^6.3.5
 
+  vite-plugin-mkcert@1.17.8:
+    resolution: {integrity: sha512-S+4tNEyGqdZQ3RLAG54ETeO2qyURHWrVjUWKYikLAbmhh/iJ+36gDEja4OWwFyXNuvyXcZwNt5TZZR9itPeG5Q==}
+    engines: {node: '>=v16.7.0'}
+    peerDependencies:
+      vite: ^6.3.5
+
   vite-plugin-pages@0.32.5:
     resolution: {integrity: sha512-GY2JAt+4vZ4BqTtw+4CSUxPgYiqamrMRIzYk2AtJvQHeBoMlctsQW+tgCpKriUKINiKfi6NegbP07r1XrdxTWA==}
     peerDependencies:
@@ -9256,7 +9265,7 @@ snapshots:
       '@ionic/utils-subprocess': 2.1.14
       '@ionic/utils-terminal': 2.3.5
       commander: 9.5.0
-      debug: 4.3.4
+      debug: 4.4.1(supports-color@5.5.0)
       env-paths: 2.2.1
       kleur: 4.1.5
       native-run: 2.0.1
@@ -10110,7 +10119,7 @@ snapshots:
 
   '@ionic/utils-array@2.1.6':
     dependencies:
-      debug: 4.3.4
+      debug: 4.4.1(supports-color@5.5.0)
       tslib: 2.6.2
     transitivePeerDependencies:
       - supports-color
@@ -10118,7 +10127,7 @@ snapshots:
   '@ionic/utils-fs@3.1.7':
     dependencies:
       '@types/fs-extra': 8.1.5
-      debug: 4.3.4
+      debug: 4.4.1(supports-color@5.5.0)
       fs-extra: 9.1.0
       tslib: 2.6.2
     transitivePeerDependencies:
@@ -10142,7 +10151,7 @@ snapshots:
     dependencies:
       '@ionic/utils-object': 2.1.6
       '@ionic/utils-terminal': 2.3.4
-      debug: 4.3.4
+      debug: 4.4.1(supports-color@5.5.0)
       signal-exit: 3.0.7
       tree-kill: 1.2.2
       tslib: 2.6.2
@@ -10162,7 +10171,7 @@ snapshots:
 
   '@ionic/utils-stream@3.1.6':
     dependencies:
-      debug: 4.3.4
+      debug: 4.4.1(supports-color@5.5.0)
       tslib: 2.6.2
     transitivePeerDependencies:
       - supports-color
@@ -10182,7 +10191,7 @@ snapshots:
       '@ionic/utils-stream': 3.1.6
       '@ionic/utils-terminal': 2.3.4
       cross-spawn: 7.0.6
-      debug: 4.3.4
+      debug: 4.4.1(supports-color@5.5.0)
       tslib: 2.6.2
     transitivePeerDependencies:
       - supports-color
@@ -10203,7 +10212,7 @@ snapshots:
   '@ionic/utils-terminal@2.3.4':
     dependencies:
       '@types/slice-ansi': 4.0.0
-      debug: 4.3.4
+      debug: 4.4.1(supports-color@5.5.0)
       signal-exit: 3.0.7
       slice-ansi: 4.0.0
       string-width: 4.2.3
@@ -12213,7 +12222,7 @@ snapshots:
       '@vueuse/shared': 12.8.2(typescript@5.8.3)
       vue: 3.5.17(typescript@5.8.3)
     optionalDependencies:
-      axios: 1.10.0
+      axios: 1.10.0(debug@4.4.1)
       change-case: 5.4.4
       fuse.js: 7.1.0
       sortablejs: 1.15.6
@@ -12227,7 +12236,7 @@ snapshots:
       '@vueuse/shared': 12.8.2(typescript@5.8.3)
       vue: 3.5.17(typescript@5.8.3)
     optionalDependencies:
-      axios: 1.10.0
+      axios: 1.10.0(debug@4.4.1)
       change-case: 5.4.4
       fuse.js: 7.1.0
       sortablejs: 1.15.6
@@ -12241,7 +12250,7 @@ snapshots:
       '@vueuse/shared': 13.5.0(vue@3.5.17(typescript@5.8.3))
       vue: 3.5.17(typescript@5.8.3)
     optionalDependencies:
-      axios: 1.10.0
+      axios: 1.10.0(debug@4.4.1)
       change-case: 5.4.4
       fuse.js: 7.1.0
       sortablejs: 1.15.6
@@ -12491,23 +12500,23 @@ snapshots:
 
   axios-cache-interceptor@1.8.0(axios@1.10.0):
     dependencies:
-      axios: 1.10.0
+      axios: 1.10.0(debug@4.4.1)
       cache-parser: 1.2.5
       fast-defer: 1.1.8
       object-code: 1.3.3
 
   axios-https-proxy-fix@0.17.1:
     dependencies:
-      follow-redirects: 1.15.9
+      follow-redirects: 1.15.9(debug@4.4.1)
       https-proxy-agent: 2.2.4
       is-buffer: 1.1.6
     transitivePeerDependencies:
       - debug
       - supports-color
 
-  axios@1.10.0:
+  axios@1.10.0(debug@4.4.1):
     dependencies:
-      follow-redirects: 1.15.9
+      follow-redirects: 1.15.9(debug@4.4.1)
       form-data: 4.0.3
       proxy-from-env: 1.1.0
     transitivePeerDependencies:
@@ -14139,7 +14148,9 @@ snapshots:
 
   flexsearch@0.7.21: {}
 
-  follow-redirects@1.15.9: {}
+  follow-redirects@1.15.9(debug@4.4.1):
+    optionalDependencies:
+      debug: 4.4.1(supports-color@5.5.0)
 
   for-each@0.3.5:
     dependencies:
@@ -15611,7 +15622,7 @@ snapshots:
 
   node-base64-image@2.2.0:
     dependencies:
-      axios: 1.10.0
+      axios: 1.10.0(debug@4.4.1)
     transitivePeerDependencies:
       - debug
 
@@ -17624,6 +17635,15 @@ snapshots:
       rollup: 2.79.2
       vite: 6.3.5(@types/node@22.16.3)(jiti@2.4.2)(sass@1.89.2)(terser@5.43.1)(tsx@4.20.3)(yaml@2.8.0)
 
+  vite-plugin-mkcert@1.17.8(vite@6.3.5(@types/node@22.16.3)(jiti@2.4.2)(sass@1.89.2)(terser@5.43.1)(tsx@4.20.3)(yaml@2.8.0)):
+    dependencies:
+      axios: 1.10.0(debug@4.4.1)
+      debug: 4.4.1(supports-color@5.5.0)
+      picocolors: 1.1.1
+      vite: 6.3.5(@types/node@22.16.3)(jiti@2.4.2)(sass@1.89.2)(terser@5.43.1)(tsx@4.20.3)(yaml@2.8.0)
+    transitivePeerDependencies:
+      - supports-color
+
   vite-plugin-pages@0.32.5(@vue/compiler-sfc@3.5.17)(vite@6.3.5(@types/node@22.16.3)(jiti@1.21.7)(sass@1.89.2)(terser@5.43.1)(tsx@4.20.3)(yaml@2.8.0))(vue-router@4.5.1(vue@3.5.17(typescript@5.8.3))):
     dependencies:
       '@types/debug': 4.1.12
@@ -17908,7 +17928,7 @@ snapshots:
 
   wait-on@8.0.3:
     dependencies:
-      axios: 1.10.0
+      axios: 1.10.0(debug@4.4.1)
       joi: 17.13.3
       lodash: 4.17.21
       minimist: 1.2.8

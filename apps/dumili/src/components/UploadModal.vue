@@ -100,6 +100,17 @@
         </i18n-t></b-alert
       >
       <b-alert
+        variant="info"
+        :model-value="uploadFileType === 'Images'"
+        :dismissible="false"
+        class="w-100"
+        >{{
+          $t(
+            "Vous aurez la possibilité de rogner les images avant de les envoyer.",
+          )
+        }}
+      </b-alert>
+      <b-alert
         variant="warning"
         :model-value="uploadFileType === 'Images'"
         :dismissible="false"
@@ -147,6 +158,8 @@ watch(modal, (value) => {
   if (value) {
     pagesWithoutOverwrite.value = pagesWithoutOverwriteInitial;
     pagesAllowOverwrite.value = pagesAllowOverwriteInitial;
+  } else {
+    emit("done");
   }
 });
 
@@ -166,12 +179,12 @@ const isUploading = ref(false);
 const processLog = ref("");
 
 const emit = defineEmits<{
+  (e: "upload-done"): void;
   (e: "done"): void;
-  (e: "abort"): void;
 }>();
 
 declare var cloudinary: {
-  createUploadWidget: CloudinaryCreateUploadWidget;
+  openUploadWidget: CloudinaryCreateUploadWidget;
 };
 
 const uploadWidget = ref<CloudinaryUploadWidget>();
@@ -214,8 +227,9 @@ onMounted(() => {
       const folderName = indexation.value!.id;
       if (uploadWidget.value) {
         uploadWidget.value.close();
+        document.getElementById("widget-container")!.innerHTML = "";
       }
-      uploadWidget.value = cloudinary.createUploadWidget(
+      uploadWidget.value = cloudinary.openUploadWidget(
         {
           cloudName: import.meta.env.VITE_CLOUDINARY_CLOUDNAME,
           uploadPreset: "p1urov1k",
@@ -226,7 +240,7 @@ onMounted(() => {
           maxFileSize: 10 * 1024 * 1024,
           maxImageFileSize: 5 * 1024 * 1024,
           inlineContainer: "#widget-container",
-          cropping: value === "PDF",
+          cropping: value === "Images",
           context: {
             indexation: folderName,
             project: "dumili",
@@ -273,10 +287,10 @@ onMounted(() => {
                   );
                 }
                 modal.value = false;
-                emit("done");
+                emit("upload-done");
                 break;
               case "abort":
-                emit("abort");
+                modal.value = false;
                 break;
             }
           }

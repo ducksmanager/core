@@ -1,7 +1,7 @@
 import axios from "axios";
 import { SocketClient } from "socket-call-client";
 
-import type { image } from "~/prisma/client_dumili";
+import type { image } from "~prisma/client_dumili";
 import type { ClientEvents as CoaEvents } from "~dm-services/coa";
 import dmNamespaces from "~dm-services/namespaces";
 import type { ClientEvents as StorySearchEvents } from "~dm-services/story-search";

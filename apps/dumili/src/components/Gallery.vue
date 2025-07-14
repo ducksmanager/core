@@ -65,11 +65,12 @@
     </b-row>
     <b-container v-else>{{ $t("Chargement...") }}</b-container>
     <upload-modal
-      v-if="uploadablePagesWithoutOverwrite.length"
+      v-if="uploadPageNumber !== undefined"
       :upload-page-number="uploadPageNumber"
       :pages-without-overwrite="uploadablePagesWithoutOverwrite"
       :pages-allow-overwrite="uploadablePagesAllowOverwrite"
-      @done="loadIndexation"
+      @upload-done="loadIndexation"
+      @done="uploadPageNumber = undefined"
     />
   </b-container>
 </template>
