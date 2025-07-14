@@ -232,7 +232,7 @@ onMounted(() => {
       uploadWidget.value = cloudinary.openUploadWidget(
         {
           cloudName: import.meta.env.VITE_CLOUDINARY_CLOUDNAME,
-          uploadPreset: "p1urov1k",
+          uploadPreset: "dumili",
           folder: `dumili/${user.value!.username}/${folderName}`,
           showPoweredBy: false,
           sources:
@@ -243,7 +243,6 @@ onMounted(() => {
           cropping: value === "Images",
           context: {
             indexation: folderName,
-            project: "dumili",
             user: user.value!.username,
           },
         },
