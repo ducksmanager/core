@@ -24,16 +24,11 @@
           { threshold: 1 },
         ]"
         class="position-relative d-flex justify-content-center align-items-center p-3 pb-5 border"
-        :class="{ selectable, selected: selectedId === id }"
+        :class="{ selectable, selected: selectedId === id, ...(currentEntryPageNumbers?.includes(pageNumber) ? {overlay: true, striped: true, [`kind-${currentEntry!.acceptedStoryKind?.storyKindRows.kind}`]: true} : {}) }"
         cols="12"
         md="4"
         @click="selectedId = id"
       >
-        <template v-if="currentEntryPageNumbers?.includes(pageNumber)">
-          <div
-            :class="`overlay kind-${currentEntry!.acceptedStoryKind?.storyKindRows.kind} striped`"
-          ></div>
-        </template>
         <b-button
           v-if="image"
           variant="danger"
@@ -58,7 +53,9 @@
           @click="uploadPageNumber = pageNumber"
           >{{ $t("Ajouter") }}</b-button
         >
-        <div class="position-absolute bottom-0 text-center">
+        <div
+          class="position-absolute bottom-0 text-center bg-black p-2 text-white"
+        >
           {{ $t("Page {pageNumber}", { pageNumber }) }}
         </div>
       </b-col>

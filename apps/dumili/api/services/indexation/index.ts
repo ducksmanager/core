@@ -7,7 +7,7 @@ import {
   useSocketEvents,
 } from "socket-call-server";
 
-import { STORY } from "~dumili-types/storyKinds";
+import { COVER, STORY } from "~dumili-types/storyKinds";
 import { getEntryPages } from "~dumili-utils/entryPages";
 import type {
   aiKumikoResult,
@@ -153,7 +153,9 @@ const createAiStorySuggestions = async (
   indexation: FullIndexation,
 ) => {
   for (const entry of indexation.entries) {
-    if (entry.acceptedStoryKind?.storyKindRows?.kind === STORY) {
+    if (
+      [STORY, COVER].includes(entry.acceptedStoryKind?.storyKindRows?.kind ?? "")
+    ) {
       const currentlyAcceptedStorycode = entry.acceptedStory?.storycode;
 
       const firstPageOfEntry = getEntryPages(indexation, entry.id)[0];
@@ -176,10 +178,10 @@ const createAiStorySuggestions = async (
           storySuggestionRelationship: "ocrDetails",
         },
       ] as const) {
-        const cachedResults: {
+        let cachedResults: {
           type: typeof storySuggestionRelationship;
           storycode: string;
-        }[] = []; /*firstPageOfEntry.image[field]?.stories
+        }[]|undefined; /*firstPageOfEntry.image[field]?.stories
           .filter(
             (
               story
@@ -215,7 +217,7 @@ const createAiStorySuggestions = async (
             field === "aiStorySearchResult"
               ? await getStoriesFromImage(
                   firstPageOfEntry.image,
-                  entry.position === 1,
+                  entry.acceptedStoryKind?.storyKindRows?.kind === COVER,
                 )
               : await getStoriesFromKeywords(
                   (
@@ -319,7 +321,9 @@ const createAiStorySuggestions = async (
 
       services.reportCreateAiStorySuggestionsEnd(entry.id);
     } else {
-      console.log(`Entry ${entry.id}: This entry is not a story`);
+      console.log(
+        `Entry starting at page ${entry.position}: This entry is not a story or a cover`,
+      );
     }
   }
 };
@@ -336,7 +340,9 @@ const setInferredEntriesStoryKinds = async (
       ) &&
       !force
     ) {
-      console.log(`Entry ${entry.id} already has an inferred story kind`);
+      console.log(
+        `Entry starting at page ${entry.position}: already has an inferred story kind`,
+      );
       continue;
     }
 
@@ -357,7 +363,7 @@ const setInferredEntriesStoryKinds = async (
 
     if (!pagesInferredStoryKinds.length) {
       console.log(
-        `Entry ${entry.id}: No pages with inferred story kinds found`,
+        `Entry starting at page ${entry.position}: No pages with inferred story kinds found`,
       );
     } else {
       const mostInferredStoryKind = Object.entries(
@@ -419,7 +425,9 @@ const setInferredEntriesStoryKinds = async (
             });
           }
         } else {
-          console.warn("No suggestion found for", mostInferredStoryKind);
+          console.warn(
+            `Entry starting at page ${entry.position}: no inferred story kind and number of rows found`,
+          );
         }
       }
     }
