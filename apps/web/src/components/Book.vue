@@ -139,7 +139,7 @@ const edgeUrl = $computed(
     `${import.meta.env.VITE_EDGES_ROOT}${publicationcode.replace(
       "/",
       "/gen/",
-    )}.${issuenumber}.png`,
+    )}.${issuenumber.replace(/\s+/g, "")}.png`,
 );
 const coverWidth = $computed(
   () => coverRatio && (coverHeight || 0) / coverRatio,

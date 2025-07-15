@@ -74,9 +74,12 @@ let countryCode = $computed(() => publicationcode.split("/")[0]),
   src = $computed(() =>
     spritePath && !ignoreSprite
       ? `${SPRITES_ROOT}${spritePath}.png`
-      : `${import.meta.env.VITE_EDGES_ROOT}${countryCode}/gen/${magazineCode}.${
+      : `${import.meta.env.VITE_EDGES_ROOT}${countryCode}/gen/${magazineCode}.${(
           issuenumberReference || issuenumber
-        }.png?${creationDate ? new Date(creationDate).getTime() : "default"}`,
+        ).replace(
+          /\s+/g,
+          "",
+        )}.png?${creationDate ? new Date(creationDate).getTime() : "default"}`,
   ),
   ignoreSprite = $ref(false);
 </script>

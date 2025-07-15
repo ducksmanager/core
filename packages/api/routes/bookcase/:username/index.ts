@@ -71,7 +71,7 @@ export const get = async (
                                    AND numeros.Numero_nospace = reference.Numero
                      LEFT JOIN tranches_pretes tp
                                ON CONCAT(numeros.Pays, '/', numeros.Magazine) = tp.publicationcode
-                                   AND IFNULL(reference.NumeroReference, numeros.Numero_nospace) = tp.issuenumber
+                                   AND IFNULL(reference.NumeroReference, numeros.Numero) = tp.issuenumber
                      LEFT JOIN (SELECT sprites.ID_Tranche, sprites.sprite_name, sprites.Sprite_size, sprite_urls.Version
                                 FROM tranches_pretes_sprites sprites
                                          INNER JOIN tranches_pretes_sprites_urls sprite_urls
