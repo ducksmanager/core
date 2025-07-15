@@ -19,7 +19,7 @@ const getEntries = async (
                INNER JOIN inducks_storyversion AS sv using (storyversioncode)
                LEFT JOIN inducks_entryurl AS entryurl using (entrycode)
       WHERE inducks_issue.publicationcode = ${publicationcode}
-        AND (REPLACE(issuenumber, ' ', '') = ${issuenumber})
+        AND (REGEXP_REPLACE(issuenumber, '[ ]+', ' ') = ${issuenumber})
       GROUP BY entry.entrycode, position
       ORDER BY position
   `;
