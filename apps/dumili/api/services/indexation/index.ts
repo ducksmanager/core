@@ -166,15 +166,17 @@ const createAiStorySuggestions = async (
 
       services.reportCreateAiStorySuggestions(entry.id);
 
-      for (const { name, field, storySuggestionRelationship } of [
+      for (const { name, field, storyField } of [
         {
           name: "image-based story search",
           field: "aiStorySearchResult",
+          storyField: "aiStorySearchPossibleStory",
           storySuggestionRelationship: "storySearchDetails",
         },
         {
           name: "OCR-based story search",
           field: "aiOcrResult",
+          storyField: "aiOcrPossibleStory",
           storySuggestionRelationship: "ocrDetails",
         },
       ] as const) {
@@ -231,20 +233,24 @@ const createAiStorySuggestions = async (
           if ("error" in results) {
             console.error(results.error);
           } else {
-            const newAiResult = await (
+            const newAiResultId = (await prisma.image.findUnique({
+              where: {
+                id: firstPageOfEntry.image.id,
+              },
+            }))?.[`${field}Id`] ?? (await (
               prisma[field] as unknown as {
                 create: typeof prisma.aiOcrResult.create;
               }
             ).create({
               data: {},
-            });
+            })).id;
 
             await prisma.image.update({
               where: {
                 id: firstPageOfEntry.image.id,
               },
               data: {
-                [`${field}Id`]: newAiResult.id,
+                [`${field}Id`]: newAiResultId,
               },
             });
             if (!results.stories.length) {
@@ -257,8 +263,10 @@ const createAiStorySuggestions = async (
               );
               await prisma.storySuggestion.deleteMany({
                 where: {
-                  [storySuggestionRelationship]: {
-                    not: null,
+                  aiStorySuggestion: {
+                    [storyField]: { // aiOcrPossibleStory or aiStorySearchPossibleStory
+                      isNot: null,
+                    },
                   },
                   entryId: entry.id,
                 },
@@ -267,10 +275,18 @@ const createAiStorySuggestions = async (
               for (const story of results.stories) {
                 await prisma.storySuggestion.create({
                   data: {
-                    [storySuggestionRelationship]: {
+                    aiStorySuggestion: { 
                       create: {
-                        score: story.score,
-                        [`${field}Id`]: newAiResult.id,
+                        [storyField]: { // aiOcrPossibleStory or aiStorySearchPossibleStory
+                          create: {
+                            [field]: { // aiOcrResult or aiStorySearchResult
+                              connect: {
+                                id: newAiResultId,
+                              },
+                            },
+                            score: story.score,
+                          },
+                        },
                       },
                     },
                     storycode: story.storycode,
@@ -287,7 +303,11 @@ const createAiStorySuggestions = async (
                 include: {
                   storySuggestions: {
                     include: {
-                      [storySuggestionRelationship]: true,
+                      aiStorySuggestion: {
+                        include: {
+                          [storyField]: true, // ocrDetails or storySearchDetails
+                        },
+                      },
                     },
                   },
                 },

@@ -6,7 +6,6 @@ import { prisma } from "../../index";
 import {
   type FullIndexation,
   type IndexationServices,
-  refreshIndexation,
 } from ".";
 
 type OcrResult = {
@@ -71,8 +70,6 @@ export const runOcrOnImage = async (
       },
     },
   });
-
-  await refreshIndexation(services);
 
   services.reportRunOcrOnImageEnd(image.id);
   return matches;
