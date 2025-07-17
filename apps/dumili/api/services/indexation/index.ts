@@ -154,7 +154,9 @@ const createAiStorySuggestions = async (
 ) => {
   for (const entry of indexation.entries) {
     if (
-      [STORY, COVER].includes(entry.acceptedStoryKind?.storyKindRows?.kind ?? "")
+      [STORY, COVER].includes(
+        entry.acceptedStoryKind?.storyKindRows?.kind ?? "",
+      )
     ) {
       const currentlyAcceptedStorycode = entry.acceptedStory?.storycode;
 
@@ -166,24 +168,26 @@ const createAiStorySuggestions = async (
 
       services.reportCreateAiStorySuggestions(entry.id);
 
-      for (const { name, field, storyField } of [
+      for (const { name, field, storyField, _storySuggestionRelationship } of [
         {
           name: "image-based story search",
           field: "aiStorySearchResult",
           storyField: "aiStorySearchPossibleStory",
-          storySuggestionRelationship: "storySearchDetails",
+          _storySuggestionRelationship: "storySearchDetails",
         },
         {
           name: "OCR-based story search",
           field: "aiOcrResult",
           storyField: "aiOcrPossibleStory",
-          storySuggestionRelationship: "ocrDetails",
+          _storySuggestionRelationship: "ocrDetails",
         },
       ] as const) {
-        let cachedResults: {
-          type: typeof storySuggestionRelationship;
-          storycode: string;
-        }[]|undefined; /*firstPageOfEntry.image[field]?.stories
+        let cachedResults:
+          | {
+              type: typeof _storySuggestionRelationship;
+              storycode: string;
+            }[]
+          | undefined; /*firstPageOfEntry.image[field]?.stories
           .filter(
             (
               story
@@ -233,17 +237,23 @@ const createAiStorySuggestions = async (
           if ("error" in results) {
             console.error(results.error);
           } else {
-            const newAiResultId = (await prisma.image.findUnique({
-              where: {
-                id: firstPageOfEntry.image.id,
-              },
-            }))?.[`${field}Id`] ?? (await (
-              prisma[field] as unknown as {
-                create: typeof prisma.aiOcrResult.create;
-              }
-            ).create({
-              data: {},
-            })).id;
+            const newAiResultId =
+              (
+                await prisma.image.findUnique({
+                  where: {
+                    id: firstPageOfEntry.image.id,
+                  },
+                })
+              )?.[`${field}Id`] ??
+              (
+                await (
+                  prisma[field] as unknown as {
+                    create: typeof prisma.aiOcrResult.create;
+                  }
+                ).create({
+                  data: {},
+                })
+              ).id;
 
             await prisma.image.update({
               where: {
@@ -264,7 +274,8 @@ const createAiStorySuggestions = async (
               await prisma.storySuggestion.deleteMany({
                 where: {
                   aiStorySuggestion: {
-                    [storyField]: { // aiOcrPossibleStory or aiStorySearchPossibleStory
+                    [storyField]: {
+                      // aiOcrPossibleStory or aiStorySearchPossibleStory
                       isNot: null,
                     },
                   },
@@ -275,11 +286,13 @@ const createAiStorySuggestions = async (
               for (const story of results.stories) {
                 await prisma.storySuggestion.create({
                   data: {
-                    aiStorySuggestion: { 
+                    aiStorySuggestion: {
                       create: {
-                        [storyField]: { // aiOcrPossibleStory or aiStorySearchPossibleStory
+                        [storyField]: {
+                          // aiOcrPossibleStory or aiStorySearchPossibleStory
                           create: {
-                            [field]: { // aiOcrResult or aiStorySearchResult
+                            [field]: {
+                              // aiOcrResult or aiStorySearchResult
                               connect: {
                                 id: newAiResultId,
                               },

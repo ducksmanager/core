@@ -10,9 +10,9 @@ import Icons from "unplugin-icons/vite";
 import Components from "unplugin-vue-components/vite";
 import { defineConfig } from "vite";
 import eslintPlugin from "vite-plugin-eslint";
+import mkcert from "vite-plugin-mkcert";
 import Pages from "vite-plugin-pages";
 import Layouts from "vite-plugin-vue-layouts";
-import mkcert from "vite-plugin-mkcert";
 
 export default defineConfig({
   build: {

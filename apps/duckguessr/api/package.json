@@ -18,13 +18,13 @@
   "author": "Bruno Perel",
   "license": "ISC",
   "dependencies": {
-    "@prisma/client": "^6.11.1",
+    "@prisma/client": "^6.12.0",
     "@sentry/node": "^7.120.3",
     "cookie": "^0.5.0",
     "dotenv": "^16.6.1",
     "esm": "^3.2.25",
     "jsonwebtoken": "^9.0.2",
-    "prisma": "^6.11.1",
+    "prisma": "^6.12.0",
     "sharp": "^0.33.5",
     "socket-call-server": "^0.7.5",
     "socket.io": "^4.8.1",
@@ -33,7 +33,7 @@
   },
   "devDependencies": {
     "@types/jsonwebtoken": "^9.0.10",
-    "@types/node": "^22.16.3",
+    "@types/node": "^22.16.4",
     "concurrently": "^8.2.2",
     "eslint": "^9.31.0",
     "eslint-config-prettier": "^10.1.5",
@@ -42,6 +42,6 @@
     "ts-node": "^10.9.2",
     "tsconfig-paths": "^4.2.0",
     "typescript": "^5.8.3",
-    "typescript-eslint": "^8.36.0"
+    "typescript-eslint": "^8.37.0"
   }
 }

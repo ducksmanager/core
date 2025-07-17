@@ -3,10 +3,7 @@ import axios from "axios";
 import type { aiKumikoResultPanel } from "~prisma/client_dumili";
 
 import { prisma } from "../../index";
-import {
-  type FullIndexation,
-  type IndexationServices,
-} from ".";
+import { type FullIndexation, type IndexationServices } from ".";
 
 type OcrResult = {
   box: [number /* x1 */, number /* y1 */, number /* x2 */, number /* y2 */];
