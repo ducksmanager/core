@@ -9,7 +9,7 @@ export const readCsvMapping = async <CsvIssue>(
   recordCallback: (record: CsvIssue) => void,
 ) => {
   const parser = createReadStream(mappingFile).pipe(
-    parse({
+    parse<CsvIssue>({
       columns: true,
     }),
   );

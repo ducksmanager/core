@@ -20,7 +20,7 @@
   },
   "dependencies": {
     "bedetheque-scraper": "^3.2.0",
-    "csv-parse": "^5.6.0",
+    "csv-parse": "^6.1.0",
     "csv-writer": "^1.6.0",
     "dotenv": "^16.6.1",
     "electron": "^32.3.3",

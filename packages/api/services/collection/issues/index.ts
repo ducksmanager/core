@@ -393,7 +393,7 @@ export const resetDemo = async () => {
     purchaseId: string;
   }
 
-  const csvIssues: CsvIssue[] = parse(
+  const csvIssues = parse<CsvIssue>(
     readFileSync(`${csvPath}demo_issues.csv`),
     { columns: true },
   );
@@ -415,7 +415,7 @@ export const resetDemo = async () => {
     description: string;
   }
 
-  const csvPurchases: CsvPurchase[] = parse(
+  const csvPurchases = parse<CsvPurchase>(
     readFileSync(`${csvPath}demo_purchases.csv`),
     { columns: true },
   );
