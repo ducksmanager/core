@@ -34,7 +34,7 @@ const reloadWithLocale = async ({ key }: { key: string }) => {
   padding: 8px;
   cursor: pointer;
   position: fixed;
-  right: 165px;
+  right: 0;
 
   &.right {
     right: 0;
