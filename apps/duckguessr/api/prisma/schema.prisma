@@ -1,7 +1,8 @@
 generator client {
   provider        = "prisma-client"
   output          = "client_duckguessr"
-  previewFeatures = ["views", "queryCompiler", "driverAdapters"]
+  previewFeatures = ["views"]
+  binaryTargets   = ["native", "debian-openssl-1.1.x", "debian-openssl-3.0.x"]
 }
 
 datasource db {

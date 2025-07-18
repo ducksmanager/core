@@ -7,7 +7,6 @@ import { Server } from "socket.io";
 
 import type { SessionUser } from "~dm-types/SessionUser";
 import { PrismaClient } from "~prisma/client_dumili/client";
-import { PrismaMariaDb } from '@prisma/adapter-mariadb';
 
 import type { FullIndexation } from "./services/indexation";
 import { server as indexation } from "./services/indexation";
@@ -41,8 +40,7 @@ export type SessionDataWithIndexationId = {
 };
 export type SessionData = { user: SessionUser };
 
-const adapter = new PrismaMariaDb(process.env.DATABASE_URL!);
-export const prisma = new PrismaClient({adapter});
+export const prisma = new PrismaClient();
 
 const httpServer = createServer();
 const io = new Server(httpServer, {
