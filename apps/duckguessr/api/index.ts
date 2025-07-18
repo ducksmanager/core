@@ -3,6 +3,7 @@ import "dotenv/config";
 import * as Sentry from "@sentry/node";
 import { Server } from "socket.io";
 
+import { PrismaMariaDb } from '@prisma/adapter-mariadb';
 import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa/client";
 
 import { PrismaClient } from "./prisma/client_duckguessr/client";
@@ -20,7 +21,8 @@ Sentry.init({
   dsn: process.env.SENTRY_DSN,
 });
 
-const prisma = new PrismaClient();
+const adapter = new PrismaMariaDb(process.env.DATABASE_URL!);
+const prisma = new PrismaClient({adapter});
 
 const cors = {
   origin: process.env.FRONTEND_URL,

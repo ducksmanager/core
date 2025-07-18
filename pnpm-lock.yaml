@@ -240,6 +240,9 @@ importers:
 
   apps/duckguessr/api:
     dependencies:
+      '@prisma/adapter-mariadb':
+        specifier: ^6.12.0
+        version: 6.12.0
       '@prisma/client':
         specifier: ^6.12.0
         version: 6.12.0(prisma@6.12.0(typescript@5.8.3))(typescript@5.8.3)
@@ -452,6 +455,9 @@ importers:
       '@opentelemetry/instrumentation-socket.io':
         specifier: ^0.46.1
         version: 0.46.1(@opentelemetry/api@1.9.0)
+      '@prisma/adapter-mariadb':
+        specifier: ^6.12.0
+        version: 6.12.0
       '@prisma/client':
         specifier: ^6.12.0
         version: 6.12.0(prisma@6.12.0(typescript@5.8.3))(typescript@5.8.3)
@@ -1441,6 +1447,9 @@ importers:
 
   packages/prisma-schemas:
     dependencies:
+      '@prisma/adapter-mariadb':
+        specifier: ^6.12.0
+        version: 6.12.0
       '@prisma/client':
         specifier: ^6.12.0
         version: 6.12.0(prisma@6.12.0(typescript@5.8.3))(typescript@5.8.3)
@@ -1457,6 +1466,9 @@ importers:
       '@eslint/js':
         specifier: ^9.31.0
         version: 9.31.0
+      '@types/node':
+        specifier: ^22.15.32
+        version: 22.16.4
       '@typescript-eslint/eslint-plugin':
         specifier: ^8.37.0
         version: 8.37.0(@typescript-eslint/parser@8.37.0(eslint@9.31.0(jiti@2.4.2))(typescript@5.8.3))(eslint@9.31.0(jiti@2.4.2))(typescript@5.8.3)
@@ -2860,6 +2872,9 @@ packages:
   '@prettier/plugin-xml@2.2.0':
     resolution: {integrity: sha512-UWRmygBsyj4bVXvDiqSccwT1kmsorcwQwaIy30yVh8T+Gspx4OlC0shX1y+ZuwXZvgnafmpRYKks0bAu9urJew==}
 
+  '@prisma/adapter-mariadb@6.12.0':
+    resolution: {integrity: sha512-dvK2D2QJ1c2iGKSK1sxMs6tjgUWwFiCc9szlYaI9kfTWtvdXQ6sw6mATvKLZcV5XKyDhQDLs0E+fIOa2+1/SSw==}
+
   '@prisma/client@6.12.0':
     resolution: {integrity: sha512-wn98bJ3Cj6edlF4jjpgXwbnQIo/fQLqqQHPk2POrZPxTlhY3+n90SSIF3LMRVa8VzRFC/Gec3YKJRxRu+AIGVA==}
     engines: {node: '>=18.18'}
@@ -2877,6 +2892,9 @@ packages:
 
   '@prisma/debug@6.12.0':
     resolution: {integrity: sha512-plbz6z72orcqr0eeio7zgUrZj5EudZUpAeWkFTA/DDdXEj28YHDXuiakvR6S7sD6tZi+jiwQEJAPeV6J6m/tEQ==}
+
+  '@prisma/driver-adapter-utils@6.12.0':
+    resolution: {integrity: sha512-uSUKB17Xs4pZB1UJZL6+PHV9Ab6vCWD20nXoimb5YG4vPqtBVdPKNYa35QbDgdUQbX321daUcgYTsLY/jxOG3w==}
 
   '@prisma/engines-version@6.12.0-15.8047c96bbd92db98a2abc7c9323ce77c02c89dbc':
     resolution: {integrity: sha512-70vhecxBJlRr06VfahDzk9ow4k1HIaSfVUT3X0/kZoHCMl9zbabut4gEXAyzJZxaCGi5igAA7SyyfBI//mmkbQ==}
@@ -6657,6 +6675,10 @@ packages:
   mapbox-gl@3.13.0:
     resolution: {integrity: sha512-TSSJIvDKsiSPk22889FWk9V4mmjljbizUf8Y2Jhho2j0Mj4zonC6kKwoVLf3oGqYWTZ+oQrd0Cxg6LCmZmPPbQ==}
 
+  mariadb@3.4.2:
+    resolution: {integrity: sha512-B17vhYRHDMQ1XXvhSWsvKJbpw3Q8B6py93ThBEXZXSgxIbqnKqoHK1RzoPLbIxoEzWN3jA86ZaMMc3IG6L5wsw==}
+    engines: {node: '>= 14'}
+
   mariadb@3.4.4:
     resolution: {integrity: sha512-feIbZJM8q1ddPAcG9UXcY9/afrpQMxIN3pWQTYBnwCTzQcFkZ6RJHFWB46mDHoLFdQh02lZgyg3uq6Y/74E5bA==}
     engines: {node: '>= 14'}
@@ -8811,8 +8833,8 @@ packages:
   vue-component-type-helpers@2.2.12:
     resolution: {integrity: sha512-YbGqHZ5/eW4SnkPNR44mKVc6ZKQoRs/Rux1sxC6rdwXb4qpbOSYfDr9DsTHolOTGmIKgM9j141mZbBeg05R1pw==}
 
-  vue-component-type-helpers@3.0.2:
-    resolution: {integrity: sha512-pbzPt5TlLZijRXt+/uhYRxTkIQkY09Ylx9t9lSk2ZjCv+bqyDRWH0RDUso7kOYQhG7m6SHXPhXEjD27LxKFryA==}
+  vue-component-type-helpers@3.0.3:
+    resolution: {integrity: sha512-koiBu7lO8e6w/UlbZAAIW11qcFQocYIl7Nh/SVwGZ804ej5KrncU32bRxi2zfU2Kyf6HWuk1CeeVP2rhIL+vyQ==}
 
   vue-cropperjs@5.0.0:
     resolution: {integrity: sha512-RhnC8O33uRZNkn74aiHZwNHnBJOXWlS4P6gsRI0lw4cZlWjKSCywZI9oSI9POlIPI6OYv30jvnHMXGch85tw7w==}
@@ -10775,6 +10797,11 @@ snapshots:
       '@xml-tools/parser': 1.0.11
       prettier: 3.6.2
 
+  '@prisma/adapter-mariadb@6.12.0':
+    dependencies:
+      '@prisma/driver-adapter-utils': 6.12.0
+      mariadb: 3.4.2
+
   '@prisma/client@6.12.0(prisma@6.12.0(typescript@5.8.3))(typescript@5.8.3)':
     optionalDependencies:
       prisma: 6.12.0(typescript@5.8.3)
@@ -10785,6 +10812,10 @@ snapshots:
       jiti: 2.4.2
 
   '@prisma/debug@6.12.0': {}
+
+  '@prisma/driver-adapter-utils@6.12.0':
+    dependencies:
+      '@prisma/debug': 6.12.0
 
   '@prisma/engines-version@6.12.0-15.8047c96bbd92db98a2abc7c9323ce77c02c89dbc': {}
 
@@ -11273,7 +11304,7 @@ snapshots:
       storybook: 9.0.17(@testing-library/dom@10.4.0)(prettier@3.6.2)
       type-fest: 2.19.0
       vue: 3.5.17(typescript@5.8.3)
-      vue-component-type-helpers: 3.0.2
+      vue-component-type-helpers: 3.0.3
 
   '@szmarczak/http-timer@4.0.6':
     dependencies:
@@ -15347,6 +15378,14 @@ snapshots:
       tinyqueue: 3.0.0
       vt-pbf: 3.1.3
 
+  mariadb@3.4.2:
+    dependencies:
+      '@types/geojson': 7946.0.16
+      '@types/node': 22.16.4
+      denque: 2.1.0
+      iconv-lite: 0.6.3
+      lru-cache: 10.4.3
+
   mariadb@3.4.4:
     dependencies:
       denque: 2.1.0
@@ -17791,7 +17830,7 @@ snapshots:
 
   vue-component-type-helpers@2.2.12: {}
 
-  vue-component-type-helpers@3.0.2: {}
+  vue-component-type-helpers@3.0.3: {}
 
   vue-cropperjs@5.0.0(vue@3.5.17(typescript@5.8.3)):
     dependencies:

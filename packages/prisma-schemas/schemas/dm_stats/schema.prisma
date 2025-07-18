@@ -1,7 +1,7 @@
 generator client {
-  provider      = "prisma-client"
-  output        = "../../client_dm_stats"
-  binaryTargets = ["native", "debian-openssl-1.1.x", "debian-openssl-3.0.x", "linux-arm64-openssl-1.1.x", "linux-arm64-openssl-3.0.x"]
+  provider        = "prisma-client"
+  output          = "../../client_dm_stats"
+  previewFeatures = ["queryCompiler", "driverAdapters"]
 }
 
 datasource db {

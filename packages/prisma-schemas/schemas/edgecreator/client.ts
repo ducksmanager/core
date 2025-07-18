@@ -1,2 +1,6 @@
 import { PrismaClient } from "../../client_edgecreator/client";
-export const prismaClient = new PrismaClient();
+import { PrismaMariaDb } from "@prisma/adapter-mariadb";
+
+const adapter = new PrismaMariaDb(process.env.DATABASE_URL_EDGECREATOR!);
+
+export const prismaClient = new PrismaClient({ adapter });
