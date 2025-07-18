@@ -13,8 +13,6 @@ COPY ./node_modules/.pnpm/onnxruntime-node@*/node_modules/onnxruntime-node/bin/n
 
 RUN npm install --os=linux --cpu=x64 sharp
 
-COPY packages/prisma-schemas/client_dm/libquery_engine-debian-openssl-3.0.x.so.node /tmp/prisma-engines/
-
 COPY packages/api/.env /app/
 
 COPY packages/api/services/auth/demo_issues.csv /app/demo_issues.csv
