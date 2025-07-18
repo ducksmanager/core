@@ -27,7 +27,7 @@
     "@tensorflow-models/mobilenet": "^2.1.1",
     "@tensorflow/tfjs-node": "^4.22.0",
     "axios": "^1.10.0",
-    "cloudinary": "^1.41.3",
+    "cloudinary": "^2.7.0",
     "csv-parse": "^6.1.0",
     "dayjs": "^1.11.13",
     "dotenv": "^16.6.1",
