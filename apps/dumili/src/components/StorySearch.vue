@@ -46,7 +46,7 @@ import type { SimpleStory } from "~dm-types/SimpleStory";
 import { socketInjectionKey as dmSocketInjectionKey } from "~web/src/composables/useDmSocket";
 import type { EventOutput } from "socket-call-client";
 import type { ClientEvents as CoaServices } from "~dm-services/coa";
-import type { storyKind } from "~prisma/client_dumili";
+import type { storyKind } from "~prisma/client_dumili/client";
 
 const { coa: coaEvents } = inject(dmSocketInjectionKey)!;
 

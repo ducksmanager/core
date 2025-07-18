@@ -3,7 +3,7 @@ import type {
   game,
   gamePlayer,
   player,
-} from "../prisma/client_duckguessr";
+} from "../prisma/client_duckguessr/client";
 import type {
   Author,
   RoundWithScoresAndAuthor,

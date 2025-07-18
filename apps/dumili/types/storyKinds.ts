@@ -1,4 +1,4 @@
-import type { storyKind } from "~prisma/client_dumili";
+import type { storyKind } from "~prisma/client_dumili/client";
 
 export const STORY = "n";
 export const NEWSPAPER_STRIP = "k";

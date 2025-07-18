@@ -1,6 +1,6 @@
 import axios from "axios";
 
-import type { aiKumikoResultPanel } from "~prisma/client_dumili";
+import type { aiKumikoResultPanel } from "~prisma/client_dumili/client";
 
 import { prisma } from "../../index";
 import { type FullIndexation, type IndexationServices } from ".";

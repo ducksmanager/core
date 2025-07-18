@@ -29,7 +29,7 @@ export default defineConfig({
       "~duckguessr-services": path.resolve(__dirname, "api/services"),
       "~duckguessr-prisma-client": path.resolve(
         __dirname,
-        "api/prisma/client_duckguessr",
+        "api/prisma/client_duckguessr/client",
       ),
       "~duckguessr-types": path.resolve(__dirname, "api/types"),
       "~web": path.resolve(__dirname, "../web"),

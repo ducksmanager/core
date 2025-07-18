@@ -8,7 +8,7 @@
 </template>
 <script setup lang="ts">
 import { storyKinds } from "~dumili-types/storyKinds";
-import type { storyKind } from "~prisma/client_dumili";
+import type { storyKind } from "~prisma/client_dumili/client";
 
 defineProps<{
   kind?: storyKind;

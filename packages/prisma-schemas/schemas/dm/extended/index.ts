@@ -1,4 +1,4 @@
-import type { edge as rawEdge, PrismaClient } from "../../../client_dm";
+import type { edge as rawEdge, PrismaClient } from "../../../client_dm/client";
 import { computeTimestamp } from "./edge.timestamp";
 
 const parseIssueCode = (issuecode: string) => {
@@ -58,4 +58,4 @@ type ExtendedType<
 
 export type edge = ExtendedType<rawEdge, typeof computeTimestamp>;
 
-export * from "../../../client_dm";
+export * from "../../../client_dm/client";

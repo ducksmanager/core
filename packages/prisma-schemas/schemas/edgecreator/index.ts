@@ -1,2 +1,2 @@
 import "~group-by";
-export * from "../../client_edgecreator";
+export * from "../../client_edgecreator/client";

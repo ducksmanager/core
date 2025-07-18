@@ -124,7 +124,7 @@
 import { dumiliSocketInjectionKey } from "~/composables/useDumiliSocket";
 import type { FullEntry, FullIndexation } from "~dumili-services/indexation";
 import { suggestions } from "~/stores/suggestions";
-import type { storySuggestion } from "~prisma/client_dumili";
+import type { storySuggestion } from "~prisma/client_dumili/client";
 import { getEntryPages } from "~dumili-utils/entryPages";
 
 const { t: $t } = useI18n();

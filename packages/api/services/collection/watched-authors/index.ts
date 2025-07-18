@@ -1,4 +1,4 @@
-import type { authorUser } from "~prisma-schemas/client_dm";
+import type { authorUser } from "~prisma-schemas/schemas/dm";
 import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa/client";
 import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
 

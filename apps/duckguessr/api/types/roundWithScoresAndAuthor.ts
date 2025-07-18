@@ -1,6 +1,6 @@
 import type { inducks_person } from "~prisma-schemas/schemas/coa";
 
-import type { round, roundScore } from "../prisma/client_duckguessr";
+import type { round, roundScore } from "../prisma/client_duckguessr/client";
 
 export type Author = Pick<
   inducks_person,

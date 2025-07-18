@@ -8,8 +8,8 @@ import type {
   roundScore,
   userGameMedalPoints,
   userMedalPoints,
-} from "../prisma/client_duckguessr";
-import { PrismaClient } from "../prisma/client_duckguessr";
+} from "../prisma/client_duckguessr/client";
+import { PrismaClient } from "../prisma/client_duckguessr/client";
 import type { DatasetWithCounts } from "./dataset";
 import type { GameFull } from "./game";
 import type { GuessResponse } from "./guess";

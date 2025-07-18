@@ -1,4 +1,4 @@
-import type { player } from "../prisma/client_duckguessr";
+import type { player } from "../prisma/client_duckguessr/client";
 
 export type MedalLevel = {
   medalType: string;

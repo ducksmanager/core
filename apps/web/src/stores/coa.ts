@@ -6,7 +6,7 @@ import type { InducksIssueQuotationSimple } from "~dm-types/InducksIssueQuotatio
 import type {
   inducks_story,
   inducks_storyversion,
-} from "~prisma-schemas/client_coa";
+} from "~prisma-schemas/schemas/coa";
 
 import { socketInjectionKey } from "../composables/useDmSocket";
 import { getCurrentLocaleShortKey } from "../composables/useLocales";

@@ -6,7 +6,7 @@ import { createServer } from "http";
 import { Server } from "socket.io";
 
 import type { SessionUser } from "~dm-types/SessionUser";
-import { PrismaClient } from "~prisma/client_dumili";
+import { PrismaClient } from "~prisma/client_dumili/client";
 
 import type { FullIndexation } from "./services/indexation";
 import { server as indexation } from "./services/indexation";

@@ -1,7 +1,7 @@
 import { defineStore } from "pinia";
 
 import { edgecreatorSocketInjectionKey } from "~/composables/useEdgecreatorSocket";
-import type { contribution } from "~prisma-schemas/client_edgecreator";
+import type { contribution } from "~prisma-schemas/schemas/edgecreator";
 import type { ModelContributor } from "~types/ModelContributor";
 import type { SimpleUser } from "~types/SimpleUser";
 import { stores as webStores } from "~web";

@@ -3,7 +3,7 @@ import type { NamespaceProxyTarget } from "socket-call-server";
 import { useSocketEvents } from "socket-call-server";
 
 import { COVER } from "~dumili-types/storyKinds";
-import type { Prisma, user } from "~prisma/client_dumili";
+import type { Prisma, user } from "~prisma/client_dumili/client";
 
 import type { SessionData } from "../../index";
 import { prisma } from "../../index";

@@ -46,8 +46,9 @@ export default [
       sourceType: "script",
       parserOptions: {
         parser: "@typescript-eslint/parser",
-        project: false,
         extraFileExtensions: [".vue"],
+        project: path.join(__dirname, "tsconfig.json"),
+        tsconfigRootDir: __dirname,
       },
     },
 

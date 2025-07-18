@@ -52,6 +52,7 @@ export default [
         parser: "@typescript-eslint/parser",
         project: "./tsconfig.json",
         extraFileExtensions: [".vue"],
+        tsconfigRootDir: __dirname,
       },
     },
 

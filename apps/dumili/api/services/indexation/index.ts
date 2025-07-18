@@ -17,7 +17,7 @@ import type {
   Prisma,
   storyKindSuggestion,
   storySuggestion,
-} from "~prisma/client_dumili";
+} from "~prisma/client_dumili/client";
 
 import type { SessionDataWithIndexation } from "../../index";
 import { prisma } from "../../index";

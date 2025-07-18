@@ -53,7 +53,7 @@ import { entryColumns, issueColumns } from "~/composables/useTextEditor";
 import { suggestions } from "~/stores/suggestions";
 import type { FullEntry } from "~dumili-services/indexation";
 import { getEntryPages } from "~dumili-utils/entryPages";
-import { type storySuggestion } from "~prisma/client_dumili";
+import { type storySuggestion } from "~prisma/client_dumili/client";
 import { socketInjectionKey as dmSocketInjectionKey } from "~web/src/composables/useDmSocket";
 
 const { storyDetails } = storeToRefs(coa());

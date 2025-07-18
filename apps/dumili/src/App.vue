@@ -64,7 +64,7 @@ import useDumiliSocket, {
 } from "./composables/useDumiliSocket";
 
 import { buildWebStorage } from "socket-call-client";
-import type { user } from "~prisma/client_dumili";
+import type { user } from "~prisma/client_dumili/client";
 import { suggestions } from "./stores/suggestions";
 
 const { t: $t } = useI18n();
