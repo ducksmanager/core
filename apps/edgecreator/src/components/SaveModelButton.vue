@@ -103,7 +103,7 @@ import Vue3SimpleTypeahead from "vue3-simple-typeahead";
 import saveEdge from "~/composables/useSaveEdge";
 import { main } from "~/stores/main";
 import { ui } from "~/stores/ui";
-import type { contribution } from "~prisma-schemas/client_edgecreator";
+import type { contribution } from "~prisma-schemas/schemas/edgecreator";
 import type { SimpleUser } from "~types/SimpleUser";
 import { stores as webStores } from "~web";
 

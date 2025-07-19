@@ -21,8 +21,9 @@
 
     <template
       v-if="
+        pagesWithoutOverwrite.length !== pages.length &&
         firstOutOfRangePage <=
-        pagesWithoutOverwrite[0].pageNumber + pagesWithoutOverwrite.length
+          pagesWithoutOverwrite[0].pageNumber + pagesWithoutOverwrite.length
       "
     >
       <label class="mt-3">{{
@@ -43,7 +44,7 @@
     </template>
     <b-alert
       :variant="uploadExistingFileAction === 'ignore' ? 'info' : 'warning'"
-      :model-value="true"
+      :model-value="pagesWithoutOverwrite.length !== pages.length"
       :dismissible="false"
       class="w-100 mt-3"
       >{{
@@ -52,7 +53,8 @@
           { firstPage: pagesWithoutOverwrite[0].pageNumber },
         )
       }}
-      <template v-if="uploadFileType === 'PDF'"
+      <template v-if="pagesWithoutOverwrite.length === pages.length" />
+      <template v-else-if="uploadFileType === 'PDF'"
         >{{
           $t(
             uploadExistingFileAction === "ignore"
@@ -98,6 +100,17 @@
         </i18n-t></b-alert
       >
       <b-alert
+        variant="info"
+        :model-value="uploadFileType === 'Images'"
+        :dismissible="false"
+        class="w-100"
+        >{{
+          $t(
+            "Vous aurez la possibilité de rogner les images avant de les envoyer.",
+          )
+        }}
+      </b-alert>
+      <b-alert
         variant="warning"
         :model-value="uploadFileType === 'Images'"
         :dismissible="false"
@@ -116,6 +129,7 @@
 <script setup lang="ts">
 import type {
   CloudinaryCreateUploadWidget,
+  CloudinaryUploadWidget,
   CloudinaryUploadWidgetInfo,
 } from "cloudinary-widget";
 import { dumiliSocketInjectionKey } from "~/composables/useDumiliSocket";
@@ -144,6 +158,8 @@ watch(modal, (value) => {
   if (value) {
     pagesWithoutOverwrite.value = pagesWithoutOverwriteInitial;
     pagesAllowOverwrite.value = pagesAllowOverwriteInitial;
+  } else {
+    emit("done");
   }
 });
 
@@ -163,13 +179,15 @@ const isUploading = ref(false);
 const processLog = ref("");
 
 const emit = defineEmits<{
+  (e: "upload-done"): void;
   (e: "done"): void;
-  (e: "abort"): void;
 }>();
 
 declare var cloudinary: {
-  createUploadWidget: CloudinaryCreateUploadWidget;
+  openUploadWidget: CloudinaryCreateUploadWidget;
 };
+
+const uploadWidget = ref<CloudinaryUploadWidget>();
 
 watch(
   () => uploadPageNumber,
@@ -202,79 +220,90 @@ const processPage = async (pageIndex: number, url: string) => {
 };
 
 onMounted(() => {
-  const fileIds: string[] = [];
-  const folderName = indexation.value!.id;
-  const uploadWidget = cloudinary.createUploadWidget(
-    {
-      cloudName: import.meta.env.VITE_CLOUDINARY_CLOUDNAME,
-      uploadPreset: "p1urov1k",
-      folder: `dumili/${user.value!.username}/${folderName}`,
-      showPoweredBy: false,
-      sources: ["local", "url", "camera"],
-      maxFileSize: 10 * 1024 * 1024,
-      maxImageFileSize: 5 * 1024 * 1024,
-      inlineContainer: "#widget-container",
-      context: {
-        indexation: folderName,
-        project: "dumili",
-        user: user.value!.username,
-      },
-    },
-    async (error, result) => {
-      if (error) {
-        console.error(error);
-      } else {
-        console.log("Event: ", result.event);
-        switch (result?.event) {
-          case "upload-added":
-            fileIds.push((result.info as CloudinaryUploadWidgetInfo).id);
-            break;
-          case "queues-start":
-            isUploading.value = true;
-            break;
-          case "success":
-            showWidget.value = false;
-            const info = result.info as CloudinaryUploadWidgetInfo;
-            console.log("Done! Here is the image info: ", info);
-
-            const firstUploadPageIndex = pages.value.findIndex(
-              (page) => page.pageNumber === uploadPageNumber,
-            );
-            if (info.pages) {
-              for (
-                let page = 1;
-                page <= Math.min(info.pages, pages.value.length);
-                page++
-              ) {
-                await processPage(
-                  firstUploadPageIndex + page - 1,
-                  info.secure_url
-                    .replace("/upload/", `/upload/pg_${page}/`)
-                    .replace(/.pdf$/g, ".png"),
-                );
-              }
-            } else {
-              await processPage(
-                firstUploadPageIndex + fileIds.indexOf(info.id),
-                info.secure_url,
-              );
-            }
-            modal.value = false;
-            emit("done");
-            break;
-          case "abort":
-            emit("abort");
-            break;
-        }
+  watch(
+    uploadFileType,
+    (value) => {
+      const fileIds: string[] = [];
+      const folderName = indexation.value!.id;
+      if (uploadWidget.value) {
+        uploadWidget.value.close();
+        document.getElementById("widget-container")!.innerHTML = "";
       }
-    },
-  );
+      uploadWidget.value = cloudinary.openUploadWidget(
+        {
+          cloudName: import.meta.env.VITE_CLOUDINARY_CLOUDNAME,
+          uploadPreset: "dumili",
+          folder: `dumili/${user.value!.username}/${folderName}`,
+          showPoweredBy: false,
+          sources:
+            value === "PDF" ? ["local", "url"] : ["local", "url", "camera"],
+          maxFileSize: 10 * 1024 * 1024,
+          maxImageFileSize: 5 * 1024 * 1024,
+          inlineContainer: "#widget-container",
+          cropping: value === "Images",
+          context: {
+            indexation: folderName,
+            user: user.value!.username,
+          },
+        },
+        async (error, result) => {
+          if (error) {
+            console.error(error);
+          } else {
+            console.log("Event: ", result.event);
+            switch (result?.event) {
+              case "upload-added":
+                fileIds.push((result.info as CloudinaryUploadWidgetInfo).id);
+                break;
+              case "queues-start":
+                isUploading.value = true;
+                break;
+              case "success":
+                showWidget.value = false;
+                const info = result.info as CloudinaryUploadWidgetInfo;
+                console.log("Done! Here is the image info: ", info);
 
-  watch(showWidget, (value) => {
-    if (!value) {
-      uploadWidget?.close();
-    }
-  });
+                const firstUploadPageIndex = pages.value.findIndex(
+                  (page) => page.pageNumber === uploadPageNumber,
+                );
+                if (info.pages) {
+                  for (
+                    let page = 1;
+                    page <= Math.min(info.pages, pages.value.length);
+                    page++
+                  ) {
+                    await processPage(
+                      firstUploadPageIndex + page - 1,
+                      info.secure_url
+                        .replace("/upload/", `/upload/pg_${page}/`)
+                        .replace(/.pdf$/g, ".png"),
+                    );
+                  }
+                } else {
+                  await processPage(
+                    firstUploadPageIndex + fileIds.indexOf(info.id),
+                    info.secure_url,
+                  );
+                }
+                modal.value = false;
+                emit("upload-done");
+                break;
+              case "abort":
+                modal.value = false;
+                break;
+            }
+          }
+        },
+      );
+
+      watch(showWidget, (value) => {
+        if (!value) {
+          uploadWidget.value?.close();
+        }
+      });
+    },
+    { immediate: true },
+  );
 });
 </script>
 

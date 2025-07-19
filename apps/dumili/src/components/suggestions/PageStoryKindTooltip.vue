@@ -2,7 +2,11 @@
   <ai-tooltip
     :id="`ai-results-page-${page.pageNumber}`"
     :status="
-      page.image?.aiKumikoResult?.inferredStoryKindRows ? 'success' : 'idle'
+      !page.image
+        ? 'failure'
+        : page.image?.aiKumikoResult?.inferredStoryKindRows
+          ? 'success'
+          : 'idle'
     "
     top-center
     :loading-events="[
@@ -16,7 +20,11 @@
     "
   >
     <div v-if="!page.image">
-      {{ $t("Aucune image") }}
+      {{
+        $t(
+          "Le type d'entrée de cette page ne peut pas être détecté car aucune image n'y est associée",
+        )
+      }}
     </div>
     <template v-else>
       <b>{{ $t("Cases détectées") }}</b>
@@ -35,7 +43,7 @@
         <b>{{ $t("Type d'entrée déduit pour la page") }}</b>
       </div>
       <story-kind-badge
-        :story-kind-rows="page.image?.aiKumikoResult?.inferredStoryKindRows"
+        :kind="page.image?.aiKumikoResult?.inferredStoryKindRows?.kind"
     /></template>
   </ai-tooltip>
 </template>

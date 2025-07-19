@@ -10,6 +10,7 @@ import Icons from "unplugin-icons/vite";
 import Components from "unplugin-vue-components/vite";
 import { defineConfig } from "vite";
 import eslintPlugin from "vite-plugin-eslint";
+import mkcert from "vite-plugin-mkcert";
 import Pages from "vite-plugin-pages";
 import Layouts from "vite-plugin-vue-layouts";
 
@@ -19,6 +20,7 @@ export default defineConfig({
   },
   plugins: [
     vue(),
+    mkcert(),
     Icons({
       autoInstall: true,
       customCollections: {
@@ -29,14 +31,20 @@ export default defineConfig({
         },
       },
     }),
-    eslintPlugin({
-      exclude: [
-        `node_modules/**`,
-        `${path.resolve(__dirname, "../..")}/node_modules/**`,
-        `${path.resolve(__dirname, "../..")}/packages/**`,
-        "dist/**",
-      ],
-    }),
+    {
+      // default settings on build (i.e. fail on error)
+      ...eslintPlugin(),
+      apply: "build",
+    },
+    {
+      // do not fail on serve (i.e. local development)
+      ...eslintPlugin({
+        failOnWarning: false,
+        failOnError: false,
+      }),
+      apply: "serve",
+      enforce: "post",
+    },
     AutoImport({
       dts: true,
       imports: ["vue", "vue-router", "vue-i18n", "pinia"],

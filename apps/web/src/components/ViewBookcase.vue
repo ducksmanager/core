@@ -196,7 +196,10 @@ const showShareButtons = $ref(false);
 let userPoints = $ref<{ [contribution: string]: number }>();
 
 const inputBookcaseUsername = $computed(
-  () => ('username' in route.params && route.params.username) || user.value?.username || null,
+  () =>
+    ("username" in route.params && route.params.username) ||
+    user.value?.username ||
+    null,
 );
 const allowSharing = $computed(() => user.value?.allowSharing);
 const bookcaseUrl = $computed(

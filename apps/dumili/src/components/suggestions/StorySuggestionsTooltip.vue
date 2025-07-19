@@ -12,10 +12,23 @@
           imageId === getEntryPages(indexation!, entry.id)[0].image?.id,
       },
     ]"
-    :status="entry.storySuggestions.length ? 'success' : 'idle'"
+    :status="
+      !firstPage.image
+        ? 'failure'
+        : entry.storySuggestions.length
+          ? 'success'
+          : 'idle'
+    "
     @toggled="overlay = $event ? { type: 'ocr', entryId: entry.id } : undefined"
   >
-    <template v-if="entry.acceptedStoryKind?.storyKindRows.kind === STORY">
+    <template
+      v-if="
+        entry.acceptedStoryKind?.storyKindRows?.kind &&
+        [STORY, COVER].includes(
+          entry.acceptedStoryKind.storyKindRows.kind as typeof COVER | typeof STORY,
+        )
+      "
+    >
       <template v-if="firstPageOcrResult">
         <h4>{{ $t("Résultats OCR pour la première case") }}</h4>
         <b-table
@@ -79,7 +92,9 @@
       }}</template>
       <template v-else>{{ $t("Non calculé") }}</template></template
     ><template v-else>{{
-      $t("Aucune suggestion car cette entrée n'est pas une histoire.")
+      $t(
+        "Aucune suggestion car cette entrée n'est pas une histoire ni une couverture.",
+      )
     }}</template></ai-tooltip
   >
 </template>
@@ -87,7 +102,7 @@
 import { suggestions } from "~/stores/suggestions";
 import { ui } from "~/stores/ui";
 import type { FullEntry } from "~dumili-services/indexation";
-import { STORY } from "~dumili-types/storyKinds";
+import { COVER, STORY } from "~dumili-types/storyKinds";
 import { getEntryPages } from "~dumili-utils/entryPages";
 
 const { entry } = defineProps<{

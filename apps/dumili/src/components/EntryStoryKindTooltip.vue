@@ -7,32 +7,47 @@
         checkMatch: (id) => id === entry.id,
       },
     ]"
-    :status="storyKindAiSuggestion?.storyKindRows ? 'success' : 'idle'"
+    :status="
+      !pages[0].image
+        ? 'failure'
+        : storyKindAiSuggestion?.storyKindRows
+          ? 'success'
+          : 'idle'
+    "
     @toggled="
       overlay = $event ? { type: 'panels', entryId: entry.id } : undefined
     "
   >
-    <b-table
-      :fields="[
-        { key: 'page' },
-        { key: 'kind', label: $t('Type d\'entrée déduit pour la page') },
-      ]"
-      :items="
-        pagesWithInferredKinds.map(({ page, ...inferredData }) => ({
-          page: page.pageNumber,
-          ...inferredData,
-        })) || []
-      "
-      ><template #empty>{{ $t("Aucune case détectée") }}</template>
-      <template #cell(storyKindRows)="row">
-        <story-kind-badge
-          :story-kind-rows="row.item.storyKindRows" /></template></b-table
-    ><br />
-    <div>
-      <b>{{ $t("Type d'entrée déduit") }}</b>
+    <div v-if="!pages[0].image">
+      {{
+        $t(
+          "Le type d'entrée ne peut pas être détecté car aucune image n'est associée avec sa première page",
+        )
+      }}
     </div>
-    <story-kind-badge :story-kind-rows="storyKindAiSuggestion?.storyKindRows"
-  /></ai-tooltip>
+    <template v-else>
+      <b-table
+        :fields="[
+          { key: 'page' },
+          { key: 'kind', label: $t('Type d\'entrée déduit pour la page') },
+        ]"
+        :items="
+          pagesWithInferredKinds.map(({ page, ...inferredData }) => ({
+            page: page.pageNumber,
+            ...inferredData,
+          })) || []
+        "
+        ><template #empty>{{ $t("Aucune case détectée") }}</template>
+        <template #cell(storyKindRows)="row">
+          <story-kind-badge
+            :kind="row.item.storyKindRows?.kind" /></template></b-table
+      ><br />
+      <div>
+        <b>{{ $t("Type d'entrée déduit") }}</b>
+      </div>
+      <story-kind-badge
+        :kind="storyKindAiSuggestion?.storyKindRows?.kind" /></template
+  ></ai-tooltip>
 </template>
 
 <script setup lang="ts">

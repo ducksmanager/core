@@ -5,7 +5,7 @@ import { Server } from "socket.io";
 
 import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa/client";
 
-import { PrismaClient } from "./prisma/client_duckguessr";
+import { PrismaClient } from "./prisma/client_duckguessr/client";
 import { createGameSocket } from "./services/game";
 // import { createMatchmakingSocket } from "./services/game";
 import { createPlayerSocket } from "./services/player";

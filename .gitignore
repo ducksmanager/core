@@ -5,7 +5,7 @@
 .secrets
 .vite-ssg-dist
 .vite-ssg-temp
-.vscode
+.vscode/*
 !.vscode/launch.json
 *.local
 *.log

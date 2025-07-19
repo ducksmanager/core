@@ -1,5 +1,5 @@
 <template>
-  <div class="d-flex align-items-top">
+  <div class="d-flex align-items-top w-100">
     <b-dropdown variant="dark">
       <b-dropdown-item @click="searchType = 'byStoryTitle'">{{
         $t("Par titre d'histoire")
@@ -22,7 +22,7 @@
         list="search"
         :placeholder="$t('Rechercher une histoire')"
       />
-      <datalist v-if="storyResults?.results && !isSearching" class="mw-100">
+      <datalist v-if="storyResults?.results && !isSearching">
         <option v-if="!storyResults.results.length">
           {{ $t("Aucun résultat.") }}
         </option>
@@ -32,7 +32,9 @@
           class="d-flex align-items-center"
           @click="selectSearchResult(searchResult!)"
         >
-          {{ searchResult.storycode }}&nbsp;{{ searchResult.title }}
+          <story-kind-badge :kind="searchResult.kind" />&nbsp;{{
+            searchResult.storycode
+          }}&nbsp;{{ searchResult.title }}
         </option>
       </datalist>
     </ul>
@@ -44,8 +46,13 @@ import type { SimpleStory } from "~dm-types/SimpleStory";
 import { socketInjectionKey as dmSocketInjectionKey } from "~web/src/composables/useDmSocket";
 import type { EventOutput } from "socket-call-client";
 import type { ClientEvents as CoaServices } from "~dm-services/coa";
+import type { storyKind } from "~prisma/client_dumili/client";
 
 const { coa: coaEvents } = inject(dmSocketInjectionKey)!;
+
+const { kind } = defineProps<{
+  kind?: storyKind;
+}>();
 
 const emit = defineEmits<{
   (e: "story-selected", searchResult: SimpleStory): void;
@@ -70,7 +77,10 @@ const runSearch = async (value: string) => {
   isSearching.value = true;
   try {
     if (searchType.value === "byStoryTitle") {
-      storyResults.value = await coaEvents.searchStory(value.split(" "), false);
+      storyResults.value = await coaEvents.searchStory(value.split(" "), {
+        withIssues: false,
+        kind: kind,
+      });
     } else {
       storyResults.value = await coaEvents.searchStoryByStorycode(value);
     }
@@ -92,14 +102,14 @@ watch(search, async (newValue) => {
 </script>
 
 <style scoped lang="scss">
-input {
-  min-width: 300px;
-}
 datalist {
+  $margin: calc(var(--bs-gutter-x) * 0.5);
   display: block;
-  position: relative;
+  position: absolute;
+  width: calc(100% - #{$margin});
+  margin: 26px $margin;
+  left: 0;
   background: #eee;
-  min-width: 300px;
   padding-left: 0;
 
   option {

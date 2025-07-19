@@ -1,21 +1,19 @@
 <template>
   <vue-draggable-resizable
-    :active="hoveredEntry?.id === entry.id"
+    :active="isCurrentEntry"
     :parent="true"
     prevent-deactivation
-    :resizable="true"
+    :resizable="showUpResizeHandle || showDownResizeHandle"
     :draggable="true"
     :handles="['bm']"
     :grid="[1000, pageHeight]"
-    :h="entry.entirepages * pageHeight"
-    :y="(entry.position - 1) * pageHeight"
+    :h="height"
+    :y="y"
     :min-height="pageHeight"
     :on-resize="onResize"
     :on-drag="onDrag"
     role="button"
-    :class-name="`position-absolute d-flex z-3 align-items-center justify-content-center cursor-pointer col w-100 border kind-${entry.acceptedStoryKind?.storyKindRows.kind} ${(overlay?.type === 'story kind' && overlay.entryId === entry.id && 'striped') || ''} ${(currentEntry?.id === entry.id && 'z-4 border-2') || 'border-1'}`"
-    @mouseover="hoveredEntry = entry"
-    @mouseleave="hoveredEntry = undefined"
+    :class-name="`position-absolute d-flex align-items-center justify-content-center cursor-pointer col w-100 kind-${entry.acceptedStoryKind?.storyKindRows.kind} ${(overlay?.type === 'story kind' && overlay.entryId === entry.id && 'striped') || ''} ${(isCurrentEntry && 'active') || ''} ${(showUpResizeHandle && showDownResizeHandle && 'up-and-down') || 'up-or-down'}`"
     @resize-stop="
       (_left: number, _top: number, _width: number, height: number) => {
         emit('onEntryResizeStop', height);
@@ -28,6 +26,11 @@
     "
     @click="currentPage = getFirstPageOfEntry(indexation!.entries, entry.id)"
   >
+    <template #bm>
+      <i-bi-arrows-expand v-if="showUpResizeHandle && showDownResizeHandle" />
+      <i-bi-arrow-up-short v-else-if="showUpResizeHandle" />
+      <i-bi-arrow-down v-else-if="showDownResizeHandle" />
+    </template>
     <Entry v-model="entry" :editable="currentEntry?.id === entry.id" />
   </vue-draggable-resizable>
 </template>
@@ -49,6 +52,15 @@ const entryIdx = computed(() =>
   indexation.value!.entries.findIndex((e) => e.id === entry.value.id),
 );
 
+const y = computed(() => (entry.value.position - 1) * pageHeight.value);
+
+const height = computed(() => entry.value.entirepages * pageHeight.value);
+
+const showUpResizeHandle = computed(() => entry.value.entirepages > 1);
+const showDownResizeHandle = computed(() =>
+  shouldAcceptChange(y.value, height.value + pageHeight.value),
+);
+
 const previousEntry = computed(
   () => indexation.value!.entries[entryIdx.value - 1],
 );
@@ -67,16 +79,11 @@ const maxLastPageNumber = computed(() =>
     : indexation.value!.pages.length,
 );
 
-const { hoveredEntry, currentEntry, overlay, pageHeight, currentPage } =
-  storeToRefs(ui());
+const { currentEntry, overlay, pageHeight, currentPage } = storeToRefs(ui());
 
-const lastHoveredEntry = ref<typeof hoveredEntry.value>();
-
-watch(hoveredEntry, (entry) => {
-  if (entry) {
-    lastHoveredEntry.value = entry;
-  }
-});
+const isCurrentEntry = computed(
+  () => currentEntry.value?.id === entry.value.id,
+);
 
 const shouldAcceptChange = (y: number, height: number) =>
   1 + Math.round(y / pageHeight.value) >= minPosition.value &&
@@ -97,7 +104,45 @@ const onDrag = (_x: number, y: number) =>
 .striped {
   opacity: 1;
 }
-:deep(.draggable) {
-  background: green;
+.draggable {
+  border-top: 1px solid black !important;
+  z-index: 2 !important;
+
+  &:last-child::after {
+    content: "";
+    position: absolute;
+    bottom: -1px;
+    left: 0;
+    right: 0;
+    border-bottom: 1px solid black !important;
+  }
+
+  &.active {
+    z-index: 3 !important;
+    box-shadow:
+      inset 0 5px 5px -5px black,
+      inset 0 -5px 5px -5px black;
+  }
+}
+
+.resizable {
+  :deep(.handle) {
+    border: 0;
+    z-index: 1021 !important;
+    width: initial;
+    height: initial;
+  }
+
+  &.up-and-down {
+    :deep(.handle) {
+      bottom: -7px;
+    }
+  }
+
+  &.up-or-down {
+    :deep(.handle) {
+      bottom: -1px;
+    }
+  }
 }
 </style>

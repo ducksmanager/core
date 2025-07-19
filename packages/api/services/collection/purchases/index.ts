@@ -45,7 +45,7 @@ export default ({ _socket }: UserServices) => ({
       userId: _socket.data.user.id,
       id: purchaseId,
     };
-    const purchase = await getUserPurchase(criteria.userId, criteria.id);
+    const purchase = await getUserPurchase(criteria.id, criteria.userId);
     if (!purchase) {
       return { error: "Purchase not found" };
     }

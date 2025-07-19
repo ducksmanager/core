@@ -31,7 +31,7 @@
       <ion-col size="8" style="display: flex" class="ion-padding ion-justify-content-end"
         ><ion-checkbox v-model="issue.isToRead" :disabled="isOffline" :aria-label="$t('A lire')" /></ion-col
     ></ion-row>
-    <ion-row>
+    <ion-row class="ion-align-items-start">
       <ion-col size="4" class="ion-padding ion-text-left">
         <ion-label>{{ $t("Date d'achat") }}</ion-label>
       </ion-col>
@@ -62,23 +62,52 @@
         </ion-modal>
 
         <ion-radio-group v-if="purchasesIncludingNone" v-model="issue.purchaseId" class="vertical">
-          <ion-radio
+          <ion-row
             v-for="item of purchasesIncludingNone"
             :key="item.id || 'none'"
-            label-placement="start"
-            justify="end"
-            :disabled="isOffline"
-            :value="item.id"
-            class="ion-text-right ion-padding-bottom"
+            class="ion-align-items-center ion-padding-bottom"
+            ><ion-col size="1" style="min-width: 3rem" class="ion-align-items-start">
+              <div v-if="item.id">
+                <ion-button :id="`delete-purchase-${item.id}`" color="danger" size="small">
+                  <ion-icon :ios="trashOutline" :md="trashSharp" />
+                </ion-button>
+                <ion-alert
+                  :trigger="`delete-purchase-${item.id}`"
+                  :header="$t('Supprimer la date d\'achat')"
+                  :message="
+                    $t(
+                      'Voulez-vous vraiment supprimer cette date d\'achat ? Les numéros associés seront conservés mais n\'auront plus de date d\'achat.',
+                    )
+                  "
+                  :buttons="[
+                    {
+                      text: $t('Supprimer'),
+                      role: 'destructive',
+                      handler: () => deletePurchase(item.id).then(() => loadPurchases(true)),
+                    },
+                    {
+                      text: $t('Annuler'),
+                    },
+                  ]"
+                ></ion-alert></div></ion-col
+            ><ion-col>
+              <ion-radio
+                label-placement="start"
+                justify="end"
+                :disabled="isOffline"
+                :value="item.id"
+                class="ion-text-right"
+              >
+                <div
+                  v-for="descriptionLine of item.dateAndDescription"
+                  :key="descriptionLine"
+                  :style="{ fontStyle: item.id === null ? 'italic' : 'normal' }"
+                >
+                  {{ descriptionLine }}
+                </div>
+              </ion-radio></ion-col
+            ></ion-row
           >
-            <div
-              v-for="descriptionLine of item.dateAndDescription"
-              :key="descriptionLine"
-              :style="{ fontStyle: item.id === null ? 'italic' : 'normal' }"
-            >
-              {{ descriptionLine }}
-            </div>
-          </ion-radio>
         </ion-radio-group></ion-col
       >
     </ion-row></ion-grid
@@ -87,6 +116,7 @@
 <script setup lang="ts">
 import type { SingleCopyState } from '~dm-types/CollectionUpdate';
 import { type purchase } from '~prisma-schemas/schemas/dm';
+import { trashOutline, trashSharp } from 'ionicons/icons';
 
 import { app } from '~/stores/app';
 import { wtdcollection } from '~/stores/wtdcollection';
@@ -100,7 +130,7 @@ const { isOffline } = storeToRefs(app());
 
 const { conditionsWithoutMissing } = useCondition();
 const { purchases } = storeToRefs(wtdcollection());
-const { createPurchase } = wtdcollection();
+const { createPurchase, deletePurchase, loadPurchases } = wtdcollection();
 
 const modal = ref();
 

@@ -393,10 +393,9 @@ export const resetDemo = async () => {
     purchaseId: string;
   }
 
-  const csvIssues: CsvIssue[] = parse(
-    readFileSync(`${csvPath}demo_issues.csv`),
-    { columns: true },
-  );
+  const csvIssues = parse<CsvIssue>(readFileSync(`${csvPath}demo_issues.csv`), {
+    columns: true,
+  });
   await prismaDm.issue.createMany({
     data: csvIssues.map(({ issuecode, condition, purchaseId }) => ({
       userId: demoUser.id,
@@ -415,7 +414,7 @@ export const resetDemo = async () => {
     description: string;
   }
 
-  const csvPurchases: CsvPurchase[] = parse(
+  const csvPurchases = parse<CsvPurchase>(
     readFileSync(`${csvPath}demo_purchases.csv`),
     { columns: true },
   );

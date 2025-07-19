@@ -1,14 +1,19 @@
 <template>
   <b-container
     fluid
-    class="d-flex flex-grow-1 h-100 flex-column align-items-start overflow-y-auto"
+    class="d-flex flex-grow-1 h-100 flex-column align-items-center justify-content-center overflow-y-auto"
   >
-    <b-alert v-if="!issue" variant="danger" :model-value="true">
+    <b-alert v-if="!issue" variant="warning" :model-value="true">
       {{
         $t("Vous devez spécifier une publication et un numéro pour continuer")
       }}</b-alert
     >
-    <template v-if="rows">
+    <b-alert v-else-if="!rows" variant="warning" :model-value="true">
+      {{
+        $t("Vous devez identifier au moins une histoire pour continuer")
+      }}</b-alert
+    >
+    <template v-else>
       <b-form-checkbox
         v-model="showEntryLetters"
         :disabled="hasEntrycodesLongerThanFirstColumnMaxWidth"
@@ -48,7 +53,7 @@ import { entryColumns, issueColumns } from "~/composables/useTextEditor";
 import { suggestions } from "~/stores/suggestions";
 import type { FullEntry } from "~dumili-services/indexation";
 import { getEntryPages } from "~dumili-utils/entryPages";
-import { type storySuggestion } from "~prisma/client_dumili";
+import { type storySuggestion } from "~prisma/client_dumili/client";
 import { socketInjectionKey as dmSocketInjectionKey } from "~web/src/composables/useDmSocket";
 
 const { storyDetails } = storeToRefs(coa());
@@ -97,9 +102,10 @@ const getStoriesWithDetails = (stories: storySuggestion[]) =>
       }),
   );
 
-const issuecode = computed(
-  () =>
-    `${issue.value!.publicationcode.split("/")[1]} ${issue.value!.issuenumber}`,
+const issuecode = computed(() =>
+  issue.value
+    ? `${issue.value.publicationcode.split("/")[1]} ${issue.value.issuenumber}`
+    : null,
 );
 
 const entrycodesWithPageNumbers = computed(() =>

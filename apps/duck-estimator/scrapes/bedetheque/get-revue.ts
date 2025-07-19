@@ -48,7 +48,6 @@ export const getRevue = async (
           .map(
             async (section) =>
               await section.evaluate((el) => {
-                debugger;
                 const titleSection = el.querySelector(".revue-main .titre");
                 if (!titleSection) {
                   return null;

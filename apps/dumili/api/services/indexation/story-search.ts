@@ -1,11 +1,11 @@
 import axios from "axios";
 import { SocketClient } from "socket-call-client";
 
-import type { image } from "~/prisma/client_dumili";
 import type { ClientEvents as CoaEvents } from "~dm-services/coa";
 import dmNamespaces from "~dm-services/namespaces";
 import type { ClientEvents as StorySearchEvents } from "~dm-services/story-search";
 import { STORY } from "~dumili-types/storyKinds";
+import type { image } from "~prisma/client_dumili/client";
 
 const socket = new SocketClient(process.env.DM_SOCKET_URL!);
 const coaEvents = socket.addNamespace<CoaEvents>(dmNamespaces.COA);
@@ -18,10 +18,9 @@ const storySearchEvents = storySearchSocket.addNamespace<StorySearchEvents>(
 );
 
 export const getStoriesFromKeywords = async (keywords: string[]) => {
-  const { results: searchResults } = await coaEvents.searchStory(
-    keywords,
-    false,
-  );
+  const { results: searchResults } = await coaEvents.searchStory(keywords, {
+    withIssues: false,
+  });
 
   const storyDetailsOutput = await coaEvents.getStoryDetails(
     searchResults.map(({ storycode }) => storycode),

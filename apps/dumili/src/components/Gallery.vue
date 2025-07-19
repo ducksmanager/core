@@ -24,16 +24,11 @@
           { threshold: 1 },
         ]"
         class="position-relative d-flex justify-content-center align-items-center p-3 pb-5 border"
-        :class="{ selectable, selected: selectedId === id }"
+        :class="{ selectable, selected: selectedId === id, ...(currentEntryPageNumbers?.includes(pageNumber) ? {overlay: true, striped: true, [`kind-${currentEntry!.acceptedStoryKind?.storyKindRows.kind}`]: true} : {}) }"
         cols="12"
         md="4"
         @click="selectedId = id"
       >
-        <template v-if="hoveredEntryPageNumbers?.includes(pageNumber)">
-          <div
-            :class="`overlay kind-${hoveredEntry!.acceptedStoryKind?.storyKindRows.kind} striped`"
-          ></div>
-        </template>
         <b-button
           v-if="image"
           variant="danger"
@@ -58,18 +53,21 @@
           @click="uploadPageNumber = pageNumber"
           >{{ $t("Ajouter") }}</b-button
         >
-        <div class="position-absolute bottom-0 text-center">
+        <div
+          class="position-absolute bottom-0 text-center bg-black p-2 text-white"
+        >
           {{ $t("Page {pageNumber}", { pageNumber }) }}
         </div>
       </b-col>
     </b-row>
     <b-container v-else>{{ $t("Chargement...") }}</b-container>
     <upload-modal
-      v-if="uploadablePagesWithoutOverwrite.length"
+      v-if="uploadPageNumber !== undefined"
       :upload-page-number="uploadPageNumber"
       :pages-without-overwrite="uploadablePagesWithoutOverwrite"
       :pages-allow-overwrite="uploadablePagesAllowOverwrite"
-      @done="loadIndexation"
+      @upload-done="loadIndexation"
+      @done="uploadPageNumber = undefined"
     />
   </b-container>
 </template>
@@ -140,7 +138,7 @@ const maxUploadableImagesFromPageNumber = (
     : firstBreakIndex + 1;
 };
 
-const { visiblePages, currentPage, hoveredEntry, hoveredEntryPageNumbers } =
+const { visiblePages, currentPage, currentEntry, currentEntryPageNumbers } =
   storeToRefs(ui());
 
 const imagesRef = ref<HTMLElement>();

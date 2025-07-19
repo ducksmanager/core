@@ -7,7 +7,7 @@ import {
   useSocketEvents,
 } from "socket-call-server";
 
-import { STORY } from "~dumili-types/storyKinds";
+import { COVER, STORY } from "~dumili-types/storyKinds";
 import { getEntryPages } from "~dumili-utils/entryPages";
 import type {
   aiKumikoResult,
@@ -17,7 +17,7 @@ import type {
   Prisma,
   storyKindSuggestion,
   storySuggestion,
-} from "~prisma/client_dumili";
+} from "~prisma/client_dumili/client";
 
 import type { SessionDataWithIndexation } from "../../index";
 import { prisma } from "../../index";
@@ -153,7 +153,11 @@ const createAiStorySuggestions = async (
   indexation: FullIndexation,
 ) => {
   for (const entry of indexation.entries) {
-    if (entry.acceptedStoryKind?.storyKindRows?.kind === STORY) {
+    if (
+      [STORY, COVER].includes(
+        entry.acceptedStoryKind?.storyKindRows?.kind ?? "",
+      )
+    ) {
       const currentlyAcceptedStorycode = entry.acceptedStory?.storycode;
 
       const firstPageOfEntry = getEntryPages(indexation, entry.id)[0];
@@ -164,22 +168,26 @@ const createAiStorySuggestions = async (
 
       services.reportCreateAiStorySuggestions(entry.id);
 
-      for (const { name, field, storySuggestionRelationship } of [
+      for (const { name, field, storyField, _storySuggestionRelationship } of [
         {
           name: "image-based story search",
           field: "aiStorySearchResult",
-          storySuggestionRelationship: "storySearchDetails",
+          storyField: "aiStorySearchPossibleStory",
+          _storySuggestionRelationship: "storySearchDetails",
         },
         {
           name: "OCR-based story search",
           field: "aiOcrResult",
-          storySuggestionRelationship: "ocrDetails",
+          storyField: "aiOcrPossibleStory",
+          _storySuggestionRelationship: "ocrDetails",
         },
       ] as const) {
-        const cachedResults: {
-          type: typeof storySuggestionRelationship;
-          storycode: string;
-        }[] = []; /*firstPageOfEntry.image[field]?.stories
+        let cachedResults:
+          | {
+              type: typeof _storySuggestionRelationship;
+              storycode: string;
+            }[]
+          | undefined; /*firstPageOfEntry.image[field]?.stories
           .filter(
             (
               story
@@ -215,7 +223,7 @@ const createAiStorySuggestions = async (
             field === "aiStorySearchResult"
               ? await getStoriesFromImage(
                   firstPageOfEntry.image,
-                  entry.position === 1,
+                  entry.acceptedStoryKind?.storyKindRows?.kind === COVER,
                 )
               : await getStoriesFromKeywords(
                   (
@@ -229,20 +237,30 @@ const createAiStorySuggestions = async (
           if ("error" in results) {
             console.error(results.error);
           } else {
-            const newAiResult = await (
-              prisma[field] as unknown as {
-                create: typeof prisma.aiOcrResult.create;
-              }
-            ).create({
-              data: {},
-            });
+            const newAiResultId =
+              (
+                await prisma.image.findUnique({
+                  where: {
+                    id: firstPageOfEntry.image.id,
+                  },
+                })
+              )?.[`${field}Id`] ??
+              (
+                await (
+                  prisma[field] as unknown as {
+                    create: typeof prisma.aiOcrResult.create;
+                  }
+                ).create({
+                  data: {},
+                })
+              ).id;
 
             await prisma.image.update({
               where: {
                 id: firstPageOfEntry.image.id,
               },
               data: {
-                [`${field}Id`]: newAiResult.id,
+                [`${field}Id`]: newAiResultId,
               },
             });
             if (!results.stories.length) {
@@ -255,8 +273,11 @@ const createAiStorySuggestions = async (
               );
               await prisma.storySuggestion.deleteMany({
                 where: {
-                  [storySuggestionRelationship]: {
-                    not: null,
+                  aiStorySuggestion: {
+                    [storyField]: {
+                      // aiOcrPossibleStory or aiStorySearchPossibleStory
+                      isNot: null,
+                    },
                   },
                   entryId: entry.id,
                 },
@@ -265,10 +286,20 @@ const createAiStorySuggestions = async (
               for (const story of results.stories) {
                 await prisma.storySuggestion.create({
                   data: {
-                    [storySuggestionRelationship]: {
+                    aiStorySuggestion: {
                       create: {
-                        score: story.score,
-                        [`${field}Id`]: newAiResult.id,
+                        [storyField]: {
+                          // aiOcrPossibleStory or aiStorySearchPossibleStory
+                          create: {
+                            [field]: {
+                              // aiOcrResult or aiStorySearchResult
+                              connect: {
+                                id: newAiResultId,
+                              },
+                            },
+                            score: story.score,
+                          },
+                        },
                       },
                     },
                     storycode: story.storycode,
@@ -285,7 +316,11 @@ const createAiStorySuggestions = async (
                 include: {
                   storySuggestions: {
                     include: {
-                      [storySuggestionRelationship]: true,
+                      aiStorySuggestion: {
+                        include: {
+                          [storyField]: true, // ocrDetails or storySearchDetails
+                        },
+                      },
                     },
                   },
                 },
@@ -319,7 +354,9 @@ const createAiStorySuggestions = async (
 
       services.reportCreateAiStorySuggestionsEnd(entry.id);
     } else {
-      console.log(`Entry ${entry.id}: This entry is not a story`);
+      console.log(
+        `Entry starting at page ${entry.position}: This entry is not a story or a cover`,
+      );
     }
   }
 };
@@ -336,7 +373,9 @@ const setInferredEntriesStoryKinds = async (
       ) &&
       !force
     ) {
-      console.log(`Entry ${entry.id} already has an inferred story kind`);
+      console.log(
+        `Entry starting at page ${entry.position}: already has an inferred story kind`,
+      );
       continue;
     }
 
@@ -357,7 +396,7 @@ const setInferredEntriesStoryKinds = async (
 
     if (!pagesInferredStoryKinds.length) {
       console.log(
-        `Entry ${entry.id}: No pages with inferred story kinds found`,
+        `Entry starting at page ${entry.position}: No pages with inferred story kinds found`,
       );
     } else {
       const mostInferredStoryKind = Object.entries(
@@ -419,7 +458,9 @@ const setInferredEntriesStoryKinds = async (
             });
           }
         } else {
-          console.warn("No suggestion found for", mostInferredStoryKind);
+          console.warn(
+            `Entry starting at page ${entry.position}: no inferred story kind and number of rows found`,
+          );
         }
       }
     }

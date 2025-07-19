@@ -1,2 +1,2 @@
 import "~group-by";
-export * from "../../client_cover_info";
+export * from "../../client_cover_info/client";

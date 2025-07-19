@@ -29,7 +29,7 @@ export const Default: Story = {
         id: 1,
         username: "Wizyx",
         ducksmanagerId: 1,
-        avatar: "https://example.com/avatar.png",
+        avatar: "DD",
       },
     ],
     score: {
@@ -53,7 +53,7 @@ export const InGame: Story = {
         id: 1,
         username: "Wizyx",
         ducksmanagerId: 1,
-        avatar: "https://example.com/avatar.png",
+        avatar: "DD",
       },
     ],
     score: {
@@ -77,7 +77,7 @@ export const InGameNotGuessedYet: Story = {
         id: 1,
         username: "Wizyx",
         ducksmanagerId: 1,
-        avatar: "https://example.com/avatar.png",
+        avatar: "DD",
       },
     ],
     score: {
@@ -101,7 +101,7 @@ export const InGameWrongAuthor: Story = {
         id: 1,
         username: "Wizyx",
         ducksmanagerId: 1,
-        avatar: "https://example.com/avatar.png",
+        avatar: "DD",
       },
     ],
     score: {

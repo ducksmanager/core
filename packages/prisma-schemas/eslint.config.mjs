@@ -25,7 +25,8 @@ export default [{
 
         parserOptions: {
             parser: "@typescript-eslint/parser",
-            project: true,
+            project: path.join(__dirname, "tsconfig.json"),
+            tsconfigRootDir: __dirname,
         },
     },
 }, {

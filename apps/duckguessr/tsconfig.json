@@ -37,7 +37,7 @@
         "../../packages/types/*"
       ],
       "~duckguessr-prisma-client": [
-        "api/prisma/client_duckguessr"
+        "api/prisma/client_duckguessr/client"
       ],
       "~duckguessr-services/*": [
         "api/services/*"

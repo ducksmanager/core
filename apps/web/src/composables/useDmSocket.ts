@@ -29,7 +29,7 @@ const defaultExport = (options: {
   onConnectError: (
     e: Error,
     namespace: string,
-    eventName?: string
+    eventName?: string,
   ) => Promise<void> | void;
   onConnected?: (namespace: string) => void;
   session: {
@@ -69,7 +69,7 @@ const defaultExport = (options: {
     socket,
     options,
     publicCollection: socket.addNamespace<PublicCollectionEvents>(
-      namespaces.PUBLIC_COLLECTION
+      namespaces.PUBLIC_COLLECTION,
     ),
     app: socket.addNamespace<AppEvents>(namespaces.APP),
 
@@ -77,13 +77,13 @@ const defaultExport = (options: {
       namespaces.BOOKCASE_PRIVATE,
       {
         session,
-      }
+      },
     ),
     userBookcase: socket.addNamespace<BookcaseEvents>(
       namespaces.BOOKCASE_USER,
       {
         session,
-      }
+      },
     ),
     stats: socket.addNamespace<StatsEvents>(namespaces.STATS, {
       session,
@@ -99,10 +99,10 @@ const defaultExport = (options: {
       namespaces.EDGECREATOR,
       {
         session,
-      }
+      },
     ),
     presentationText: socket.addNamespace<PresentationTextEvents>(
-      namespaces.PRESENTATION_TEXT
+      namespaces.PRESENTATION_TEXT,
     ),
     edges: socket.addNamespace<EdgesEvents>(namespaces.EDGES, {}),
     coa: socket.addNamespace<CoaEvents>(namespaces.COA, {
@@ -118,7 +118,7 @@ const defaultExport = (options: {
           storage: cacheStorage,
           ttl: 1000, // 1 second only, because we want to always get the latest data but still cache in case of offline
         },
-      }
+      },
     ),
     userGlobalStats: socket.addNamespace<GlobalStatsUserEvents>(
       namespaces.GLOBAL_STATS_USER,
@@ -128,19 +128,19 @@ const defaultExport = (options: {
           storage: cacheStorage,
           ttl: 1000, // 1 second only, because we want to always get the latest data but still cache in case of offline
         },
-      }
+      },
     ),
     events: socket.addNamespace<EventsEvents>(namespaces.EVENTS, {}),
     storySearch: storySearchSocket?.addNamespace<StorySearchEvents>(
       namespaces.STORY_SEARCH,
-      {}
+      {},
     ),
     bookstore: socket.addNamespace<BookstoreEvents>(namespaces.BOOKSTORES),
     adminBookstore: socket.addNamespace<AdminBookstoreEvents>(
       namespaces.BOOKSTORES_ADMIN,
       {
         session,
-      }
+      },
     ),
     collection: socket.addNamespace<CollectionEvents>(namespaces.COLLECTION, {
       session,

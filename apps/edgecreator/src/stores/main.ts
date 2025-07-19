@@ -1,7 +1,7 @@
 import { defineStore } from "pinia";
 
 import { edgecreatorSocketInjectionKey } from "~/composables/useEdgecreatorSocket";
-import type { contribution } from "~prisma-schemas/client_edgecreator";
+import type { contribution } from "~prisma-schemas/schemas/edgecreator";
 import type { ModelContributor } from "~types/ModelContributor";
 import type { SimpleUser } from "~types/SimpleUser";
 import { stores as webStores } from "~web";
@@ -138,7 +138,7 @@ export const main = defineStore("main", () => {
       }
     },
     loadPublicationIssues = async () =>
-      webStores.coa().fetchIssuesByPublicationcode(publicationcode.value!),
+      webStores.coa().fetchIssuesByPublicationcode(publicationcode.value),
     getEdgePublicationStates = (issuecodes: string[]) =>
       Object.keys(publicationPublishedEdges.value || {})
         .filter((issuecode) => issuecodes.includes(issuecode))

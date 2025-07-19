@@ -48,16 +48,16 @@ export const bookcase = defineStore("bookcase", () => {
               ? 0
               : collection().popularIssuesInCollection?.[issue.issuecode] || 0,
           }))) ||
-        null
+        null,
     ),
     popularIssuesInCollectionWithoutEdge = computed(() =>
       bookcaseWithPopularities.value
         ?.filter(
-          ({ edgeId, popularity }) => !edgeId && popularity && popularity > 0
+          ({ edgeId, popularity }) => !edgeId && popularity && popularity > 0,
         )
         .sort(({ popularity: popularity1 }, { popularity: popularity2 }) =>
-          popularity2 && popularity1 ? popularity2 - popularity1 : 0
-        )
+          popularity2 && popularity1 ? popularity2 - popularity1 : 0,
+        ),
     ),
     addLoadedSprite = ({
       spritePath,
@@ -74,7 +74,7 @@ export const bookcase = defineStore("bookcase", () => {
     loadBookcase = async () => {
       if (!bookcaseContents.value) {
         const response = await userBookcaseEvents.getBookcase(
-          collection().user!.username
+          collection().user!.username,
         );
         if ("error" in response) {
           switch (response.error) {
@@ -101,7 +101,7 @@ export const bookcase = defineStore("bookcase", () => {
     loadBookcaseOptions = async () => {
       if (!bookcaseOptions.value) {
         const response = await userBookcaseEvents.getBookcaseOptions(
-          bookcaseUsername.value!
+          bookcaseUsername.value!,
         );
         if ("error" in response) {
           console.error(response.error);
@@ -116,7 +116,7 @@ export const bookcase = defineStore("bookcase", () => {
     loadBookcaseOrder = async () => {
       if (!bookcaseOrder.value) {
         const response = await userBookcaseEvents.getBookcaseOrder(
-          bookcaseUsername.value!
+          bookcaseUsername.value!,
         );
         if ("error" in response) {
           console.error(response.error);

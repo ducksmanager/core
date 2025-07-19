@@ -63,7 +63,7 @@ import type { FullIndexation } from "~dumili-services/indexation";
 import type {
   aiKumikoResultPanel,
   aiOcrResultMatch,
-} from "~prisma/client_dumili";
+} from "~prisma/client_dumili/client";
 import { ref } from "vue";
 import { ui } from "~/stores/ui";
 

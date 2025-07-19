@@ -683,12 +683,16 @@ watch($$(preselectedIndexEnd), () => {
   preselected = getPreselected();
 });
 
-watch([$$(publicationcode), $$(userIssues)], () => loadIssues(), {
-  immediate: true,
-});
+watch(
+  () => [publicationcode, userIssues],
+  () => loadIssues(),
+  {
+    immediate: true,
+  },
+);
 
 watch(
-  $$(publicationcode),
+  () => publicationcode,
   async (newPublicationcode) => {
     if (newPublicationcode) {
       publicationNameLoading = true;

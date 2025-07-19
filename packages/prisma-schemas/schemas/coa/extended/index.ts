@@ -2,7 +2,7 @@ import "~group-by";
 import {
   type inducks_issue as rawInducksIssue,
   type PrismaClient,
-} from "../../../client_coa";
+} from "../../../client_coa/client";
 import {
   computeIssuenumber,
   computePublicationcode,
@@ -114,4 +114,4 @@ type inducksIssueWithNonNullableIssuenumber = ExtendedType<
 
 export type inducks_issue = inducksIssueWithNonNullableIssuenumber;
 
-export * from "../../../client_coa";
+export * from "../../../client_coa/client";

@@ -1,0 +1,145 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "bun",
+            "internalConsoleOptions": "openOnFirstSessionStart",
+            "request": "launch",
+            "name": "Debug Dumili API",
+            "program": "index.ts",
+            "cwd": "${workspaceFolder}/apps/dumili/api",
+            "stopOnEntry": false,
+            "watchMode": true
+        },
+        {
+            "type": "bun",
+            "internalConsoleOptions": "openOnFirstSessionStart",
+            "request": "launch",
+            "name": "Debug EdgeCreator API",
+            "program": "index.ts",
+            "cwd": "${workspaceFolder}/apps/edgecreator/api",
+            "stopOnEntry": false,
+            "watchMode": true
+        },
+        {
+            "type": "bun",
+            "request": "launch",
+            "name": "Debug duck-estimator",
+            "program": "index.ts",
+            "cwd": "${workspaceFolder}/apps/duck-estimator",
+            "stopOnEntry": false,
+            "watchMode": true
+        },
+        {
+            "type": "bun",
+            "request": "launch",
+            "name": "Debug coa-updater",
+            "program": "index.ts",
+            "cwd": "${workspaceFolder}/apps/coa-updater",
+            "stopOnEntry": false,
+            "watchMode": true
+        },
+        {
+            "type": "node-terminal",
+            "request": "launch",
+            "name": "Start Web server",
+            "command": "turbo dev -F '~web...'",
+            "presentation": {
+                "reveal": "always",
+                "panel": "shared"
+            }
+        },
+        {
+            "type": "bun",
+            "request": "launch",
+            "name": "Debug DM API",
+            "program": "index.ts",
+            "cwd": "${workspaceFolder}/packages/api",
+            "stopOnEntry": false,
+            "watchMode": true
+        },
+        {
+            "type": "bun",
+            "request": "launch",
+            "name": "Debug DM Story Search API",
+            "program": "index-story-search.ts",
+            "cwd": "${workspaceFolder}/packages/api",
+            "stopOnEntry": false,
+            "watchMode": true
+        },
+        {
+            "type": "node-terminal",
+            "request": "launch",
+            "name": "Start Dumili Web server",
+            "command": "turbo dev -F '~dumili'",
+            "presentation": {
+                "reveal": "always",
+                "panel": "shared"
+            }
+        },
+        {
+            "type": "bun",
+            "request": "launch",
+            "name": "Debug Dumili API",
+            "program": "index.ts",
+            "cwd": "${workspaceFolder}/apps/dumili/api",
+            "stopOnEntry": false,
+            "watchMode": true
+        },
+        {
+            "type": "node-terminal",
+            "request": "launch",
+            "name": "Start EdgeCreator Web server",
+            "command": "turbo dev -F '~edgecreator'",
+            "presentation": {
+                "reveal": "always",
+                "panel": "shared"
+            }
+        },
+        {
+            "type": "bun",
+            "request": "launch",
+            "name": "Debug EdgeCreator API",
+            "program": "index.ts",
+            "cwd": "${workspaceFolder}/apps/edgecreator/api",
+            "stopOnEntry": false,
+            "watchMode": true
+        },
+        {
+            "type": "bun",
+            "request": "launch",
+            "name": "Debug Duck Estimator",
+            "program": "index.ts",
+            "cwd": "${workspaceFolder}/apps/duck-estimator",
+            "stopOnEntry": false,
+            "watchMode": true
+        },
+    ],
+    "compounds": [
+        {
+            "name": "Debug DM API + Web Server",
+            "configurations": [
+                "Debug DM API",
+                "Debug DM Story Search API",
+                "Start Web server"
+            ],
+            "stopAll": true
+        },
+        {
+            "name": "Debug Dumili API + Web Server",
+            "configurations": [
+                "Debug Dumili API",
+                "Start Dumili Web server"
+            ],
+            "stopAll": true
+        },
+        {
+            "name": "Debug EdgeCreator API + Web Server",
+            "configurations": [
+                "Debug EdgeCreator API",
+                "Start EdgeCreator Web server"
+            ],
+            "stopAll": true
+        }
+    ]
+}

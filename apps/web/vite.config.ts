@@ -23,7 +23,7 @@ export default defineConfig({
       "~group-by": path.resolve(__dirname, "../../util/group-by"),
       "~prisma-schemas": path.resolve(
         __dirname,
-        "../../packages/prisma-schemas"
+        "../../packages/prisma-schemas",
       ),
       "~translations": path.resolve(__dirname, "translations"),
     },
@@ -65,7 +65,7 @@ export default defineConfig({
         "extra-icons": {
           coafoot: () =>
             readFile("./public/images/icons/coafoot.svg").then((buffer) =>
-              buffer.toString()
+              buffer.toString(),
             ),
         },
       },

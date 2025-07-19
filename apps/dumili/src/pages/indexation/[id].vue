@@ -2,10 +2,15 @@
   <b-row v-if="hasData" class="d-flex h-100">
     <b-col :cols="6" class="d-flex flex-column h-100">
       <Gallery v-if="activeTabIndex === 0" :pages="indexation.pages" />
-      <DumiliBook
-        v-else-if="activeTabIndex === 1 && firstPageDimensions"
-        v-bind="{ firstPageDimensions, indexation }"
-      />
+      <b-col v-else-if="activeTabIndex === 1" class="d-flex flex-column h-100">
+        <DumiliBook
+          v-if="firstPageDimensions"
+          v-bind="{ firstPageDimensions, indexation }"
+        />
+        <template v-else>{{
+          $t("Ajoutez au moins une image de page pour consulter le livre")
+        }}</template>
+      </b-col>
       <TextEditor v-else-if="activeTabIndex === 2" />
       <b-container class="start-0 bottom-0 mw-100 pt-2" style="height: 35px"
         ><b-tabs v-model="activeTabIndex" tabs align="center"

@@ -7,8 +7,8 @@ import {
   getPlayerStatistics,
   updatePlayer,
 } from "../get-player";
-import type { player } from "../prisma/client_duckguessr";
-import { PrismaClient } from "../prisma/client_duckguessr";
+import type { player } from "../prisma/client_duckguessr/client";
+import { PrismaClient } from "../prisma/client_duckguessr/client";
 import type {
   ClientToServerEvents,
   InterServerEvents,

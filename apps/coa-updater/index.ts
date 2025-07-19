@@ -83,7 +83,7 @@ try {
   for (const [table, fields] of Object.entries(textFieldsToTransform)) {
     for (const field of fields) {
       const parser = createReadStream(`${isvPath}/${table}.isv`).pipe(
-        parse({
+        parse<{ [key: string]: string }>({
           delimiter: "^",
           columns: true,
           quote: null,

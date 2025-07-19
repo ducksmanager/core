@@ -1,7 +1,7 @@
 <template>
   <suggestion-list
     v-model="entry.acceptedStory"
-    class="position-absolute top-0 d-flex flex-column align-items-center w-100"
+    class="position-absolute top-0 d-flex flex-column justify-content-center align-items-center w-100 h-100"
     :suggestions="entry.storySuggestions"
     :is-ai-source="({ aiStorySuggestionId }) => aiStorySuggestionId !== null"
     :show-customize-form="showEntrySelect"
@@ -110,6 +110,7 @@
     >
     <template #customize-form>
       <StorySearch
+        :kind="entry.acceptedStoryKind?.storyKindRows.kind"
         @story-selected="
           acceptStory($event.storycode);
           showEntrySelect = false;
@@ -123,7 +124,7 @@
 import { dumiliSocketInjectionKey } from "~/composables/useDumiliSocket";
 import type { FullEntry, FullIndexation } from "~dumili-services/indexation";
 import { suggestions } from "~/stores/suggestions";
-import type { storySuggestion } from "~prisma/client_dumili";
+import type { storySuggestion } from "~prisma/client_dumili/client";
 import { getEntryPages } from "~dumili-utils/entryPages";
 
 const { t: $t } = useI18n();

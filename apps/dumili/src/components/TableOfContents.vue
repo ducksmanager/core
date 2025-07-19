@@ -4,7 +4,6 @@
     class="table-of-contents d-flex w-100 h-100 m-0 p-0"
     body-class="flex-grow-1 w-100 h-100"
     header-class="position-relative p-0"
-    @mouseleave="hoveredEntry = undefined"
   >
     <template #header>
       <IssueSuggestionModal />
@@ -66,16 +65,13 @@
       </b-dropdown>
     </template>
 
-    <b-row
-      style="outline: 1px solid black"
-      class="overflow-y-auto overflow-x-hidden w-100 m-1"
-    >
+    <b-row class="overflow-y-auto overflow-x-hidden w-100 m-1">
       <b-col :cols="1" style="padding: 0">
         <b-row
           v-for="page in indexation.pages"
           :key="page.id"
           :style="{ height: `${pageHeight}px` }"
-          class="g-0 px-0 py-0 align-items-center page outline"
+          class="g-0 px-0 py-0 align-items-center page"
         >
           <TableOfContentsPage :page="page" />
         </b-row>
@@ -85,13 +81,17 @@
           v-for="(entry, idx) in indexation.entries"
           :key="indexation.entries[idx].id"
         >
-          <div class="position-absolute w-100 d-flex justify-content-center">
+          <div
+            class="position-absolute w-100 d-flex align-items-center justify-content-center"
+            :style="{
+              borderTop: '1px solid black',
+              height: `${pageHeight}px`,
+              top: `${pageHeight * (entry.position + entry.entirepages - 1)}px`,
+            }"
+          >
             <b-button
               v-if="showCreateEntryAfter(idx)"
               class="create-entry fw-bold position-absolute mx-md-n5 d-flex justify-content-center align-items-center"
-              :style="{
-                top: `${pageHeight * (entry.position + entry.entirepages - 1)}px`,
-              }"
               variant="success"
               @click="createEntry(entry.position + entry.entirepages)"
               >{{ $t("Ajouter une entrée") }}</b-button
@@ -118,7 +118,7 @@ import TableOfContentsEntry from "./TableOfContentsEntry.vue";
 
 const { indexationSocket } = inject(dumiliSocketInjectionKey)!;
 
-const { hoveredEntry, currentEntry } = storeToRefs(ui());
+const { currentEntry } = storeToRefs(ui());
 const indexation = storeToRefs(suggestions()).indexation as Ref<FullIndexation>;
 const indexationEdit = ref() as Ref<
   Pick<FullIndexation, "price" | "releaseDate"> & {
@@ -220,6 +220,7 @@ watch(
   background-color: #eee;
   color: black;
   white-space: nowrap;
+  user-select: none;
 
   :deep(.card-header) {
     display: flex;
@@ -267,15 +268,11 @@ watch(
       $background: rgba(238, 238, 238, 0.85);
       box-shadow: 0px 35px 5px -4px;
       color: #{$background};
-
-      border-top: 1px solid lightgray;
-      border-bottom: 1px solid lightgray;
     }
   }
 }
 
-:deep(.resizable .handle) {
-  bottom: 0;
-  z-index: 1021 !important;
+.page {
+  border-top: 1px solid black;
 }
 </style>

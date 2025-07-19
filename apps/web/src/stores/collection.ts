@@ -299,7 +299,7 @@ export const collection = defineStore("collection", () => {
       }
     },
     loadUser = async (ignoreCache = false) => {
-      if (!socketOptions.session.getToken()) {
+      if (!(await socketOptions.session.getToken())) {
         user.value = null;
         return;
       }

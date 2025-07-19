@@ -1,5 +1,5 @@
 import type { EditSubscription } from "~dm-types/EditSubscription";
-import type { subscription } from "~prisma-schemas/client_dm";
+import type { subscription } from "~prisma-schemas/schemas/dm";
 import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
 
 import type { UserServices } from "../../../index";

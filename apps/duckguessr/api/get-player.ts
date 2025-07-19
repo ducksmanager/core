@@ -1,7 +1,7 @@
 import jwt from "jsonwebtoken";
 
-import type { player } from "./prisma/client_duckguessr";
-import { PrismaClient } from "./prisma/client_duckguessr";
+import type { player } from "./prisma/client_duckguessr/client";
+import { PrismaClient } from "./prisma/client_duckguessr/client";
 
 const prisma = new PrismaClient();
 

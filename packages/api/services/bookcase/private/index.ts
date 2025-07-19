@@ -1,9 +1,10 @@
+import { useSocketEvents } from "socket-call-server";
+
 import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
 
 import type { UserServices } from "../../../index";
-import { useSocketEvents } from "socket-call-server";
-import namespaces from "../../namespaces";
 import { RequiredAuthMiddleware } from "../../auth/util";
+import namespaces from "../../namespaces";
 
 const listenEvents = ({ _socket }: UserServices) => ({
   setBookcaseOptions: async ({
@@ -37,7 +38,7 @@ const listenEvents = ({ _socket }: UserServices) => ({
     return "OK";
   },
   setBookcaseOrder: async (publicationCodes: string[]) => {
-    const userId = _socket.data.user!.id;
+    const userId = _socket.data.user.id;
     await prismaDm.bookcasePublicationOrder.deleteMany({
       where: { userId },
     });

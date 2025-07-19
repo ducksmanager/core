@@ -1,13 +1,9 @@
 import axios from "axios";
 
-import type { aiKumikoResultPanel } from "~prisma/client_dumili";
+import type { aiKumikoResultPanel } from "~prisma/client_dumili/client";
 
 import { prisma } from "../../index";
-import {
-  type FullIndexation,
-  type IndexationServices,
-  refreshIndexation,
-} from ".";
+import { type FullIndexation, type IndexationServices } from ".";
 
 type OcrResult = {
   box: [number /* x1 */, number /* y1 */, number /* x2 */, number /* y2 */];
@@ -71,8 +67,6 @@ export const runOcrOnImage = async (
       },
     },
   });
-
-  await refreshIndexation(services);
 
   services.reportRunOcrOnImageEnd(image.id);
   return matches;

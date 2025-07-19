@@ -1,5 +1,5 @@
 import type { ModelSteps } from "~dm-types/ModelSteps";
-import { Prisma } from "~prisma-schemas/client_dm";
+import { Prisma } from "~prisma-schemas/schemas/dm";
 import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
 import { prismaClient as prismaEdgeCreator } from "~prisma-schemas/schemas/edgecreator/client";
 

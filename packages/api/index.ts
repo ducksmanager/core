@@ -10,6 +10,7 @@ import createHttpServer from "./http";
 import { server as app } from "./services/app";
 import { server as auth } from "./services/auth";
 import { server as bookcase } from "./services/bookcase";
+import { server as privateBookcase } from "./services/bookcase/private";
 import {
   adminServer as bookstoresAdmin,
   server as bookstores,
@@ -25,7 +26,6 @@ import { server as globalStats } from "./services/global-stats";
 import { server as globalStatsUser } from "./services/global-stats-user";
 import { server as presentationText } from "./services/presentation-text";
 import { server as publicCollection } from "./services/public-collection";
-import { server as privateBookcase } from "./services/bookcase/private";
 import { server as stats } from "./services/stats";
 import createSocketServer from "./socket";
 

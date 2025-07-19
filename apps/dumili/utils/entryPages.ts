@@ -1,4 +1,4 @@
-import type { entry, page } from "~prisma/client_dumili";
+import type { entry, page } from "~prisma/client_dumili/client";
 
 export const getFirstPageOfEntry = (entries: entry[], entryId: number) =>
   entries.find((entry) => entry.id === entryId)!.position - 1;

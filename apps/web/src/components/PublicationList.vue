@@ -76,7 +76,9 @@ const { isPublic } = defineProps<{
 
 const route = useRoute();
 
-const username = $computed(() => 'username' in route.params && route.params.username);
+const username = $computed(
+  () => "username" in route.params && route.params.username,
+);
 
 const { totalPerCountry, totalPerPublication, publicationUrlRoot } =
   storeToRefs(isPublic ? publicCollection() : collection());

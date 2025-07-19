@@ -1,7 +1,7 @@
 import { dumiliSocketInjectionKey } from "~/composables/useDumiliSocket";
 import type { FullIndexation } from "~dumili-services/indexation";
 import { getEntryFromPage } from "~dumili-utils/entryPages";
-import type { issueSuggestion } from "~prisma/client_dumili";
+import type { issueSuggestion } from "~prisma/client_dumili/client";
 
 import { ui } from "./ui";
 

@@ -10,7 +10,7 @@
       id="image-to-guess"
       cols="12"
       md="5"
-      class="d-flex p-2 align-items-center"
+      class="d-flex p-2 align-items-center justify-content-center"
     >
       <b-img center :src="url" />
     </b-col>

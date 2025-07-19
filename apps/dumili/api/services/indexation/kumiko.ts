@@ -2,7 +2,7 @@ import axios from "axios";
 
 import { COVER, ILLUSTRATION, STORY } from "~dumili-types/storyKinds";
 import { getEntryFromPage } from "~dumili-utils/entryPages";
-import type { aiKumikoResultPanel, Prisma } from "~prisma/client_dumili";
+import type { aiKumikoResultPanel, Prisma } from "~prisma/client_dumili/client";
 
 import { prisma } from "../../index";
 import type { IndexationServices } from ".";

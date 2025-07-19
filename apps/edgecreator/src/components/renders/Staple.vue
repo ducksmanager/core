@@ -101,11 +101,11 @@ const onmove = ({
 onMounted(() => {
   if (!isForm.value) {
     const { enableDragResize } = useStepOptions();
-    enableDragResize(rect1.value!, {
+    enableDragResize(rect1.value, {
       onmove,
       onresizemove: () => {},
     });
-    enableDragResize(rect2.value!, {
+    enableDragResize(rect2.value, {
       onmove,
       onresizemove: () => {},
     });

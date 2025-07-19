@@ -20,7 +20,7 @@
   },
   "dependencies": {
     "bedetheque-scraper": "^3.2.0",
-    "csv-parse": "^5.6.0",
+    "csv-parse": "^6.1.0",
     "csv-writer": "^1.6.0",
     "dotenv": "^16.6.1",
     "electron": "^32.3.3",
@@ -29,7 +29,7 @@
     "~prisma-schemas": "workspace:*"
   },
   "devDependencies": {
-    "@types/node": "^22.15.34",
+    "@types/node": "^22.16.4",
     "@types/yargs": "^17.0.33",
     "typescript": "^5.8.3"
   }

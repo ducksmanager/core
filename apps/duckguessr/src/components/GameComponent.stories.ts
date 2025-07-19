@@ -5,6 +5,7 @@ import GameComponent from "~/components/GameComponent.vue";
 const meta: Meta<typeof GameComponent> = {
   title: "GameComponent",
   component: GameComponent,
+
   parameters: {
     layout: "centered",
   },
@@ -28,8 +29,12 @@ type Story = StoryObj<typeof meta>;
 export const Default: Story = {
   args: {
     availableTime: 15,
-    chosenAuthor: "DR",
     currentRound: {
+      id: 10,
+      personcode: "DR",
+      gameId: 1,
+      nationalitycountrycode: "us",
+      fullname: "Don Rosa",
       roundNumber: 2,
       startedAt: new Date("2022-05-21T00:00:00"),
       finishedAt: new Date("2022-05-21T00:01:00"),
@@ -49,12 +54,11 @@ export const Default: Story = {
           roundId: 10,
           scoreTypeName: "Wrong author",
           score: 0,
-          speed_bonus: 0,
-          time_spent_guessing: 10 * 1000,
+          speedBonus: 0,
+          timeSpentGuessing: 10 * 1000,
         },
       ],
-      sitecode_url:
-        "https://res.cloudinary.com/dl7hskxab/image/upload/v1623338718/inducks-covers/thumbnails3/webusers/2008/09/us_zz1966b23x_001.jpg",
+      sitecodeUrl: "thumbnails3/webusers/2008/09/us_zz1966b23x_001.jpg",
     },
     authors: [
       {
@@ -100,16 +104,19 @@ export const Default: Story = {
         id: 1,
         username: "brunoperel",
         ducksmanagerId: 117,
+        avatar: "DD",
       },
       {
         id: 2,
         username: "Wizyx",
         ducksmanagerId: 1,
+        avatar: "DD",
       },
       {
         id: 3,
         username: "remifanpicsou",
         ducksmanagerId: 3,
+        avatar: "DD",
       },
     ],
     previousPersoncodes: ["CB", "DR"],

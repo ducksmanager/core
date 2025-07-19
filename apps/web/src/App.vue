@@ -20,6 +20,7 @@ const socket = useDmSocket({
   },
   onConnectError: (e) => {
     console.error(e);
+    collection().isLoadingUser = false;
   },
   session: {
     getToken: () => Promise.resolve(Cookies.get("token")),

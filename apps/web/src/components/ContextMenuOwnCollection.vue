@@ -130,8 +130,11 @@ const { loadIssuesOnSaleByOthers, loadIssueRequestsAsSeller } = marketplace();
 const { updateCollectionMultipleIssues, updateCollectionSingleIssue } =
   collection();
 const { user } = storeToRefs(collection());
-let { publicationcode, selectedIssueIdsByIssuecodes } = defineProps<{
-  selectedIssueIdsByIssuecodes: {
+let {
+  publicationcode,
+  selectedIssueIdsByIssuecode: selectedIssueIdsByIssuecode,
+} = defineProps<{
+  selectedIssueIdsByIssuecode: {
     [issuecode: string]: IssueWithPublicationcodeOptionalId[];
   };
   publicationcode: string;
@@ -164,7 +167,7 @@ let editedCopies = $ref<CollectionUpdateSingleIssue>();
 let currentCopyIndex = $ref(0);
 
 const selectedIssues = $computed(() =>
-  Object.keys(selectedIssueIdsByIssuecodes),
+  Object.keys(selectedIssueIdsByIssuecode),
 );
 
 let isSingleIssueSelected = $computed(() => selectedIssues.length === 1);
@@ -176,12 +179,10 @@ const hasNoCopies = $computed(
 const hasMaxCopies = $computed(
   () => initialCopies && initialCopies.copies.length >= 3,
 );
-const hasMultipleCopiesAndMultipleIssues = $computed(
-  () =>
-    Object.values(selectedIssueIdsByIssuecodes).length > 1 &&
-    Object.values(selectedIssueIdsByIssuecodes).some(
-      (issues) => issues.length > 1,
-    ),
+const hasMultipleCopiesAndMultipleIssues = $computed(() =>
+  Object.values(selectedIssueIdsByIssuecode).some(
+    (issues) => issues.length > 1,
+  ),
 );
 const updateSelectedIssues = async () => {
   const isIssueTransfer = (isOnSale: SaleState | undefined) =>
@@ -231,7 +232,7 @@ watch(
       editedIssues = initialIssues = undefined;
       editedCopies = initialCopies = {
         issuecode: newValue[0],
-        copies: selectedIssueIdsByIssuecodes[newValue[0]],
+        copies: selectedIssueIdsByIssuecode[newValue[0]],
       };
     } else {
       editedCopies = initialCopies = undefined;

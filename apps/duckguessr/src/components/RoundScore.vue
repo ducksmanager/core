@@ -18,7 +18,7 @@
     <player-info :username="currentPlayer.username" :top-player="false">
       <div
         v-if="score.scoreTypeName"
-        class="text-center p-1 border border-dark"
+        class="text-center p-1 border z-1 border-dark"
         style="background-color: #e9ecef; height: initial"
       >
         {{ score.scoreTypeName }}

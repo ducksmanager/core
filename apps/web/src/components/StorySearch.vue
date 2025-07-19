@@ -195,7 +195,9 @@ const runSearch = async (value: string) => {
         ),
       );
     } else {
-      const data = await coaEvents.searchStory(value.split(","), true);
+      const data = await coaEvents.searchStory(value.split(","), {
+        withIssues: true,
+      });
       storyResults = {
         hasMore: data.hasMore,
         results: data.results.map((story) => ({
