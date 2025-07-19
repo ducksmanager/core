@@ -1,5 +1,5 @@
 <template>
-  <router-view v-if="isReady" />
+  <LayoutWrapper v-if="isReady" />
 </template>
 
 <script setup lang="ts">

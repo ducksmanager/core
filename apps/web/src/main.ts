@@ -10,8 +10,6 @@ import Cookies from "js-cookie";
 import { SocketClient } from "socket-call-client";
 // @ts-ignore
 import contextmenu from "v-contextmenu";
-// @ts-ignore
-import { setupLayouts } from "virtual:generated-layouts";
 import { createRouter, createWebHistory } from "vue-router";
 import { routes } from "vue-router/auto-routes";
 
@@ -23,7 +21,7 @@ const head = createHead();
 
 const router = createRouter({
   history: createWebHistory(),
-  routes: setupLayouts(routes),
+  routes,
 });
 router.beforeResolve(async (to) => {
   if (!to.meta.public && !Cookies.get("token") && to.path !== "/login") {

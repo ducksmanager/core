@@ -10,7 +10,6 @@ import Components from "unplugin-vue-components/vite";
 import { VueRouterAutoImports } from "unplugin-vue-router";
 import VueRouter from "unplugin-vue-router/vite";
 import { defineConfig } from "vite";
-import Layouts from "vite-plugin-vue-layouts";
 import { readFile } from "fs/promises";
 
 export default defineConfig({
@@ -32,9 +31,6 @@ export default defineConfig({
     ReactivityTransform(),
     VueRouter(),
     Vue(),
-
-    // https://github.com/JohnCampionJr/vite-plugin-vue-layouts
-    Layouts(),
 
     // https://github.com/intlify/bundle-tools/tree/main/packages/unplugin-vue-i18n
     VueI18n({
