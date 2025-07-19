@@ -32,7 +32,7 @@
       </ion-row>
       <ion-row style="height: 50vh" class="ion-padding-vertical">
         <ion-col size="12" class="ion-justify-content-around" style="flex-direction: column">
-          <ion-text style="height: 20%" class="text-medium">{{ $t('Etats des numéros') }}</ion-text>
+          <ion-text style="height: 20%" class="text-medium">{{ $t('États des numéros') }}</ion-text>
           <ConditionsComponent
             :style="{ width: '100%', height: '80%' }"
             :conditions="conditionsWithoutMissing"
