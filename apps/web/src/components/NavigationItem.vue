@@ -9,7 +9,7 @@
     class="d-flex align-items-center"
     :class="{
       'sub-menu-item': isInSubMenu,
-      active: 'route' in item && item.route.name === route.name,
+      active: isActive,
     }"
   >
     <router-link v-if="'route' in item" :to="item.route!">
@@ -27,7 +27,7 @@
 import type { NavigationItem } from "./NavigationMenu.vue";
 import { createReusableTemplate } from "@vueuse/core";
 
-defineProps<{
+const { item } = defineProps<{
   item: NavigationItem;
   isInSubMenu?: boolean;
 }>();
@@ -35,6 +35,22 @@ defineProps<{
 const [DefineTemplate, ReuseTemplate] = createReusableTemplate();
 
 const route = useRoute();
+const router = useRouter();
+
+const isActive = computed(() =>
+  "route" in item
+    ? router
+        .getRoutes()
+        .filter(
+          (r) =>
+            r.name === item.route.name ||
+            r.aliasOf?.name === item.route.name ||
+            r.path.startsWith(item.route.path.match(/^\/[^\/]+/)?.[0] ?? "_"),
+        )
+        .map((r) => r.name)
+        .includes(route.name)
+    : false,
+);
 </script>
 
 <style scoped lang="scss">

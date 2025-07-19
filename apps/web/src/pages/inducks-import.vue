@@ -274,7 +274,7 @@ meta:
 <script setup lang="ts">
 import type { issue_condition } from "~prisma-schemas/schemas/dm";
 
-import { socketInjectionKey } from "../../composables/useDmSocket";
+import { socketInjectionKey } from "../composables/useDmSocket";
 
 const { getImagePath } = images();
 

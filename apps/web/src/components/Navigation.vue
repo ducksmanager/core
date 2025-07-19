@@ -61,22 +61,22 @@ const collectionMenu = computed(() =>
               },
               {
                 title: $t("Statistiques de ma collection"),
-                route: router.resolve("/stats/general"),
+                route: router.resolve("/stats"),
                 icon: IBiGraphUp,
               },
               {
                 title: $t("Agrandir ma collection"),
-                route: router.resolve("/expand/suggestions"),
+                route: router.resolve("/expand"),
                 icon: IBiCapslockFill,
               },
               {
                 title: $t("Collection Inducks"),
-                route: router.resolve("/inducks/import"),
+                route: router.resolve("/inducks-import"),
                 icon: ICoaFoot,
               },
               {
                 title: $t("Imprimer ma collection"),
-                route: router.resolve("/print/"),
+                route: router.resolve("/print"),
                 icon: IBiPrinterFill,
               },
               {

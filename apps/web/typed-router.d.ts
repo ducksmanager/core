@@ -44,7 +44,7 @@ declare module 'vue-router/auto-routes' {
     '/forgot/': RouteRecordInfo<'/forgot/', '/forgot', Record<never, never>, Record<never, never>>,
     '/forgot/[token]': RouteRecordInfo<'/forgot/[token]', '/forgot/:token', { token: ParamValue<true> }, { token: ParamValue<false> }>,
     '/image-search-test': RouteRecordInfo<'/image-search-test', '/image-search-test', Record<never, never>, Record<never, never>>,
-    '/inducks/import': RouteRecordInfo<'/inducks/import', '/inducks/import', Record<never, never>, Record<never, never>>,
+    '/inducks-import': RouteRecordInfo<'/inducks-import', '/inducks-import', Record<never, never>, Record<never, never>>,
     '/login': RouteRecordInfo<'/login', '/login', Record<never, never>, Record<never, never>>,
     '/print/': RouteRecordInfo<'/print/', '/print', Record<never, never>, Record<never, never>>,
     '/print/classic': RouteRecordInfo<'/print/classic', '/print/classic', Record<never, never>, Record<never, never>>,
