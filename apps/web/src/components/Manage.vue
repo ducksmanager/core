@@ -96,7 +96,7 @@
 
 <script setup lang="ts">
 const { publicationcode = null } = defineProps<{
-  publicationcode: string | null;
+  publicationcode?: string;
 }>();
 
 const suggestionsNumber = $ref(0);

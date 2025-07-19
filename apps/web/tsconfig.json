@@ -19,9 +19,9 @@
     "preserveWatchOutput": true,
     "types": [
       "vite/client",
-      "vite-plugin-pages/client",
       "unplugin-icons/types/vue",
-      "@vue-macros/reactivity-transform/macros-global"
+      "@vue-macros/reactivity-transform/macros-global",
+      "unplugin-vue-router/client"
     ],
     "paths": {
       "~/*": [
@@ -53,7 +53,8 @@
     "src/**/*.ts",
     "src/**/*.vue",
     "auto-imports.d.ts",
-    "vite.config.ts"
+    "vite.config.ts",
+    "typed-router.d.ts"
   ],
   "exclude": [
     "dist",

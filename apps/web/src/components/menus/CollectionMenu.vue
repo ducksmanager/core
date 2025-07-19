@@ -22,48 +22,53 @@ const {
 
 const { t: $t } = useI18n();
 const router = useRouter();
-const items = $computed(() => [
-  {
-    path: "/show",
-    text:
-      total.value === undefined
-        ? $t("Mes numéros")
-        : $t("Mes numéros ({0})", [total.value]),
-  },
-  {
-    path: "/duplicates",
-    text:
-      total.value === undefined
-        ? $t("Mes numéros en double")
-        : $t("Mes numéros en double ({0})", [
-            total.value - totalUniqueIssues.value,
-          ]),
-  },
-  {
-    path: "/to-read",
-    text: !issuesInToReadStack.value
-      ? $t("Mes numéros à lire")
-      : $t("Mes numéros à lire ({0})", [issuesInToReadStack.value.length]),
-  },
-  {
-    path: "/on-sale",
-    text: !issuesInOnSaleStack.value
-      ? $t("Mes numéros à vendre")
-      : $t("Mes numéros à vendre ({0})", [issuesInOnSaleStack.value.length]),
-  },
-  {
-    path: "/subscriptions",
-    text:
-      subscriptions.value == undefined
-        ? $t("Mes abonnements")
-        : $t("Mes abonnements ({0})", [subscriptions.value.length]),
-  },
-  {
-    path: "/account",
-    text: $t("Mon compte"),
-    disabled: user.value?.username === "demo",
-  },
-]);
+const items = $computed(
+  () =>
+    [
+      {
+        route: "/collection/show/[...all]",
+        text:
+          total.value === undefined
+            ? $t("Mes numéros")
+            : $t("Mes numéros ({0})", [total.value]),
+      },
+      {
+        route: "/collection/duplicates",
+        text:
+          total.value === undefined
+            ? $t("Mes numéros en double")
+            : $t("Mes numéros en double ({0})", [
+                total.value - totalUniqueIssues.value,
+              ]),
+      },
+      {
+        route: "/collection/to-read",
+        text: !issuesInToReadStack.value
+          ? $t("Mes numéros à lire")
+          : $t("Mes numéros à lire ({0})", [issuesInToReadStack.value.length]),
+      },
+      {
+        route: "/collection/on-sale",
+        text: !issuesInOnSaleStack.value
+          ? $t("Mes numéros à vendre")
+          : $t("Mes numéros à vendre ({0})", [
+              issuesInOnSaleStack.value.length,
+            ]),
+      },
+      {
+        route: "/collection/subscriptions",
+        text:
+          subscriptions.value == undefined
+            ? $t("Mes abonnements")
+            : $t("Mes abonnements ({0})", [subscriptions.value.length]),
+      },
+      {
+        route: "/collection/account",
+        text: $t("Mon compte"),
+        disabled: user.value?.username === "demo",
+      },
+    ] as const,
+);
 
 watch(
   user,
