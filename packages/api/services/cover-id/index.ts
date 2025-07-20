@@ -50,6 +50,7 @@ const listenEvents = () => ({
             issuecode,
             fullUrl,
             id: coverIdByIssuecode[issuecode],
+            score: pastecResponse.scores[pastecResponse.image_ids.indexOf(coverIdByIssuecode[issuecode])],
           })),
         );
       })
@@ -67,9 +68,10 @@ const listenEvents = () => ({
     );
 
     return {
-      covers: coversByIssuecode.map(({ issuecode, fullUrl }) => ({
+      covers: coversByIssuecode.map(({ issuecode, fullUrl, score }) => ({
         issuecode,
         fullUrl,
+        score,
       })),
     };
   },

@@ -4,11 +4,3 @@ export interface SimilarImagesResult {
   tags: string[];
   type: string;
 }
-
-export interface CoverSearchResults {
-  covers: {
-    issuecode: string;
-    fullUrl: string | null;
-  }[];
-  type?: string;
-}

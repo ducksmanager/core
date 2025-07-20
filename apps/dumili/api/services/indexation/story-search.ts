@@ -76,7 +76,7 @@ export const getStoriesFromImage = async (image: image, isCover: boolean) => {
   }
 
   const bestMatch = response.results.sort(
-    (a, b) => b.similarity - a.similarity,
+    (a, b) => b.score - a.score,
   )?.[0];
   if (!bestMatch) {
     console.info(`URL ${url}: No match found`);
@@ -86,10 +86,10 @@ export const getStoriesFromImage = async (image: image, isCover: boolean) => {
   }
 
   const stories = response.results.map(
-    ({ storyversioncode, similarity }) =>
+    ({ storyversioncode, score }) =>
       ({
         storycode: storyversioncode,
-        score: similarity,
+        score,
       }) as const,
   );
 

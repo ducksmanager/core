@@ -10,18 +10,18 @@ meta:
       >Search for covers (otherwise search for story first
       pages)</b-form-checkbox
     >
-    <table style="width: 100%">
+    <table class="w-100">
       <tbody>
-        <tr style="width: 100%">
-          <td style="width: 50%">
+        <tr class="w-100">
+          <td class="w-50">
             <input type="file" @change="handleFileChange" />
           </td>
-          <td style="width: 50%; text-align: center">
+          <td class="w-50 text-center">
             Examples:<br />
             <img
               v-for="example in examples"
               :key="example.url"
-              :class="{ disabled: example.isCover !== isCover }"
+              :class="{ 'h-100': true, disabled: example.isCover !== isCover }"
               :src="example.url"
               @click="handleExampleClick(example)"
             />
@@ -54,7 +54,7 @@ type Example = {
   isCover: boolean;
 };
 
-const examples: Example[] = [
+const examples = [
   {
     url: "https://res.cloudinary.com/dl7hskxab/image/upload/inducks-covers/webusers/webusers/2018/07/fr_aljm_011a_001.jpg",
     isCover: true,
@@ -75,7 +75,7 @@ const examples: Example[] = [
     url: "https://res.cloudinary.com/dl7hskxab/image/upload/inducks-covers/webusers/webusers/2021/06/yu_mzc_983c_001.jpg",
     isCover: false,
   },
-];
+] as const;
 const models = ref<
   {
     model: string;
@@ -125,7 +125,10 @@ const models = ref<
         return searchResults.error!;
       } else
         return JSON.stringify(
-          searchResults.results.map(({ issuecode }) => issuecode),
+          searchResults.results.map(({ entrycode, score }) => ({
+            entrycode,
+            score,
+          })),
         );
     },
   },
@@ -142,7 +145,10 @@ const models = ref<
         return searchResults.error!;
       } else
         return JSON.stringify(
-          searchResults.results.map(({ issuecode }) => issuecode),
+          searchResults.results.map(({ entrycode, score }) => ({
+            entrycode,
+            score,
+          })),
         );
     },
   },
@@ -206,7 +212,6 @@ onMounted(async () => {
 
 <style scoped lang="scss">
 img {
-  height: 100px;
   cursor: pointer;
 
   &.disabled {

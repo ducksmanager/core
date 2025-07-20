@@ -156,7 +156,7 @@ export const findSimilarImages = async (
         entrycode: string;
         issuecode: string;
         storyversioncode: string;
-        similarity: number;
+        score: number;
       }[]
     >`
     WITH 
@@ -164,19 +164,19 @@ export const findSimilarImages = async (
       vector_similarity AS (
         SELECT 
           ev.entrycode,
-          VEC_DISTANCE_COSINE(ev.v, (SELECT v from inputVector)) as similarity
+          VEC_DISTANCE_COSINE(ev.v, (SELECT v from inputVector)) as score
         FROM inducks_entryurl_vector ev WHERE is_cover=${isCover} 
       )
       SELECT
         vector_similarity.entrycode,
-        vector_similarity.similarity,
+        vector_similarity.score,
         e.issuecode,
         sv.storyversioncode
       FROM vector_similarity
       INNER JOIN inducks_entry e ON e.entrycode = vector_similarity.entrycode
       INNER JOIN inducks_storyversion sv ON sv.storyversioncode = e.storyversioncode
-      WHERE similarity < 0.15
-      ORDER BY similarity
+      WHERE score < 0.15
+      ORDER BY score
       LIMIT 5
     `;
     console.log("Query done, results:", results);
