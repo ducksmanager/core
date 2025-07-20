@@ -150,7 +150,7 @@ watch(
 );
 </script>
 <style lang="scss">
-@import "./style.scss";
+@use "./style.scss";
 @import "vue-draggable-resizable/style.css";
 
 .dropdown {

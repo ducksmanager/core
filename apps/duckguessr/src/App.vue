@@ -34,7 +34,7 @@ watch(
 </script>
 
 <style lang="scss">
-@import "../styles/main.scss";
+@use "../styles/main.scss";
 </style>
 <style lang="scss" scoped>
 .row {

@@ -41,5 +41,5 @@ onBeforeMount(() => {
 </script>
 
 <style lang="scss">
-@import "./styles/main.scss";
+@use "./styles/main.scss";
 </style>

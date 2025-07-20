@@ -271,7 +271,7 @@ defineExpose({ hasItems });
 </script>
 
 <style lang="scss" scoped>
-@import '../theme/variables.scss';
+@use '../theme/variables.scss';
 
 :deep(ion-content) {
   margin-bottom: 60px !important;

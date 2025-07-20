@@ -66,7 +66,8 @@ watch(
 </script>
 
 <style scoped lang="scss">
-@import "~/styles/main";
+@use "../styles/main.scss";
+
 #menu {
   font-size: 12px;
   font-weight: 200;
@@ -130,7 +131,7 @@ watch(
   }
 
   .navbar {
-    height: $navbar-height;
+    height: main.$navbar-height;
 
     .navbar-brand {
       position: fixed;

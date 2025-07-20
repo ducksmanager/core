@@ -36,5 +36,5 @@ socket.app._connect();
 </script>
 
 <style lang="scss">
-@import "./styles/main.scss";
+@use "./styles/main.scss";
 </style>

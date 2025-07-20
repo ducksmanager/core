@@ -247,5 +247,5 @@ watch(
 </script>
 
 <style lang="scss">
-@import "~/styles/context-menu.scss";
+@use "../styles/context-menu.scss";
 </style>

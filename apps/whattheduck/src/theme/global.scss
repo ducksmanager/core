@@ -1,5 +1,4 @@
-@import 'variables.scss';
-
+@use 'variables.scss';
 
 ion-radio {
   background: initial !important;
@@ -52,23 +51,24 @@ ion-segment-button {
 }
 
 .dm-condition-background {
-  @each $condition, $conditionColor in $dmConditions {
+  @each $condition, $conditionColor in variables.$dmConditions {
     &.#{$condition} {
-
       &,
       &::part(mark) {
         background-color: var(--dm-condition-#{$condition});
         fill: var(--dm-condition-#{$condition});
 
-        @if $condition =='missing' {
-          background-image: linear-gradient(45deg,
-              red 0%,
-              transparent 0%,
-              transparent 48%,
-              red 48%,
-              red 52%,
-              transparent 52%,
-              transparent 100%);
+        @if $condition == 'missing' {
+          background-image: linear-gradient(
+            45deg,
+            red 0%,
+            transparent 0%,
+            transparent 48%,
+            red 48%,
+            red 52%,
+            transparent 52%,
+            transparent 100%
+          );
           background-size: 50px 50px;
         }
       }
@@ -129,27 +129,26 @@ ion-checkbox {
   display: none !important;
 }
 
-.searchbar-clear-button { 
-   right: 1.5rem !important;
+.searchbar-clear-button {
+  right: 1.5rem !important;
 }
 
 .flex {
-  display: flex !important
+  display: flex !important;
 }
 
 .button-native {
-  background: inherit !important
+  background: inherit !important;
 }
 
 .fab-button-in-list {
-  color: white
+  color: white;
 }
 
 .greyed-out {
   pointer-events: none;
   opacity: 0.5;
 }
-
 
 .item-wrapper {
   &:has(> .is-owned.is-next-item-owned),
@@ -164,7 +163,7 @@ ion-checkbox {
     }
 
     .dm-condition-background {
-      @each $condition, $conditionColor in $dmConditions {
+      @each $condition, $conditionColor in variables.$dmConditions {
         &.#{$condition}::after {
           background: $conditionColor;
         }
@@ -176,7 +175,7 @@ ion-checkbox {
 
     + .item-wrapper {
       .dm-condition-background {
-        @each $condition, $conditionColor in $dmConditions {
+        @each $condition, $conditionColor in variables.$dmConditions {
           &.#{$condition}::before {
             background: $conditionColor;
           }

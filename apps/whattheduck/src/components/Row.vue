@@ -60,7 +60,7 @@ const toggleCheckedIssuecode = (issuecode: string) => {
 </script>
 
 <style lang="scss" scoped>
-@import '../theme/variables.scss';
+@use '../theme/variables.scss';
 
 ion-item {
   --padding-start: 0;

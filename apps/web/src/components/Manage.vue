@@ -153,7 +153,7 @@ watch(
 </script>
 
 <style scoped lang="scss">
-@import "~/styles/main";
+@use "../styles/main.scss";
 
 #demo-intro {
   border: 1px solid white;
@@ -189,8 +189,8 @@ watch(
 
 @media (max-width: 992px) {
   #publication-list {
-    top: $navbar-height;
-    max-height: calc(100vh - $navbar-height);
+    top: main.$navbar-height;
+    max-height: calc(100vh - main.$navbar-height);
     overflow-y: auto;
     position: initial;
   }
