@@ -21,7 +21,7 @@ meta:
             <img
               v-for="example in examples"
               :key="example.url"
-              :class="{ 'h-100': true, disabled: example.isCover !== isCover }"
+              :class="{ disabled: example.isCover !== isCover }"
               :src="example.url"
               @click="handleExampleClick(example)"
             />
@@ -103,7 +103,10 @@ const models = ref<
         return "error" in searchResults
           ? searchResults.errorDetails || "Error"
           : JSON.stringify(
-              searchResults.covers.map(({ issuecode }) => issuecode),
+              searchResults.covers.map(({ issuecode, score }) => ({
+                issuecode,
+                score,
+              })),
             );
       } catch (error) {
         return typeof error === "object" && "errorDetails" in error!
@@ -213,6 +216,7 @@ onMounted(async () => {
 <style scoped lang="scss">
 img {
   cursor: pointer;
+  height: 100px;
 
   &.disabled {
     opacity: 0.5;
