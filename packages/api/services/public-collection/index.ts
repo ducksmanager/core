@@ -1,6 +1,6 @@
 import { useSocketEvents } from "socket-call-server";
 
-import type { user } from "~prisma-schemas/schemas/dm";
+import type { issue, user } from "~prisma-schemas/schemas/dm";
 import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
 
 import namespaces from "../namespaces";
@@ -22,8 +22,11 @@ const listenEvents = () => ({
       issues: await prismaDm.issue.findMany({
         where: {
           userId: user.id,
+          issuecode: {
+            not: null,
+          },
         },
-      }),
+      }) as (issue & { issuecode: string })[],
     };
   },
 });
