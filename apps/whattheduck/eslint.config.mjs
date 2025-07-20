@@ -49,6 +49,7 @@ export default [
 
       parserOptions: {
         parser: '@typescript-eslint/parser',
+        tsconfigRootDir: __dirname,
       },
     },
 

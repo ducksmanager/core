@@ -36,9 +36,11 @@ class ServerWithUser extends Server<
   return int ?? this.toString();
 };
 
+if (process.env.NODE_ENV === "production") {
 Sentry.init({
-  dsn: process.env.SENTRY_DSN,
-});
+    dsn: process.env.SENTRY_DSN,
+  });
+}
 
 const app = express();
 

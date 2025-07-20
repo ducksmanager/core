@@ -16,9 +16,11 @@ import type {
   SocketData,
 } from "./types/socketEvents";
 
-Sentry.init({
-  dsn: process.env.SENTRY_DSN,
-});
+if (process.env.NODE_ENV === "production") {  
+  Sentry.init({
+    dsn: process.env.SENTRY_DSN,
+  });
+}
 
 const prisma = new PrismaClient();
 

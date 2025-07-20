@@ -9,11 +9,13 @@ dotenv.config({
   path: "./.env",
 });
 
+if (process.env.NODE_ENV === "production") {
 Sentry.init({
   dsn: process.env.SENTRY_DSN,
   tracesSampleRate: 1.0,
-  openTelemetryInstrumentations: [new SocketIoInstrumentation()],
-});
+    openTelemetryInstrumentations: [new SocketIoInstrumentation()],
+  });
+}
 
 const storySearchIo = createSocketServer(3011);
 storySearch(storySearchIo);
