@@ -10,12 +10,9 @@ meta:
       })
     }}</b>
   </h5>
-  <ViewBookcase />
+  <ViewBookcase :username="username" />
 </template>
-
 <script lang="ts" setup>
-const route = useRoute<"/bookcase/afficher/[[username]]">();
-const username = computed(
-  () => route.params.username || collection().user?.username,
-);
+const route = useRoute<"/bookcase/show/[username]">();
+const username = computed(() => route.params.username);
 </script>

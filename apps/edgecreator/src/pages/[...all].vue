@@ -274,7 +274,7 @@ watch(
     }
     await usersStore.fetchStats([user.value!.id]);
     await collectionStore.loadPopularIssuesInCollection();
-    await bookcaseStore.loadBookcase();
+    await bookcaseStore.loadBookcase(user.value!.username);
     isUserBookcaseReady.value = true;
   },
   { immediate: true },

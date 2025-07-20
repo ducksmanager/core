@@ -54,6 +54,9 @@ const isActive = computed(() =>
 </script>
 
 <style scoped lang="scss">
+:deep(a) {
+  width: 100%;
+}
 li {
   line-height: 25px;
   cursor: pointer;
