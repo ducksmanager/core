@@ -50,6 +50,7 @@ export default [
 
       parserOptions: {
         parser: typescriptParser,
+        tsconfigRootDir: __dirname,
       },
     },
 
