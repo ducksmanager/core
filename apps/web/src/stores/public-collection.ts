@@ -25,6 +25,7 @@ export const publicCollection = defineStore("publicCollection", () => {
       if (data.error) {
         console.error(data.error);
       }
+      issues.value = data.issues;
     };
   return {
     ...collectionUtils,

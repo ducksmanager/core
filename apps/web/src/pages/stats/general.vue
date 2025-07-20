@@ -1,3 +1,7 @@
+<route lang="yaml">
+alias:
+  - /stats
+</route>
 <template>
   <div>
     <LinkToCollectionIfNoIssue />

@@ -20,7 +20,7 @@
         </div>
       </div>
     </div>
-    <Navigation v-once class="d-none d-md-block" />
+    <Navigation v-once />
     <nav v-once class="navbar navbar-dark d-block d-md-none">
       <div class="container-fluid">
         <popper placement="bottom" teleport="body">

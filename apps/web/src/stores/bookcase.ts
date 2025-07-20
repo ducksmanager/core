@@ -17,7 +17,7 @@ export type BookcaseEdgeWithPopularity = BookcaseEdge & {
 };
 
 export const bookcase = defineStore("bookcase", () => {
-  const route = useRoute();
+  const route = useRoute<"/bookcase/show/[username]">();
 
   const {
     privateBookcase: privateBookcaseEvents,
@@ -74,7 +74,7 @@ export const bookcase = defineStore("bookcase", () => {
     loadBookcase = async () => {
       if (!bookcaseContents.value) {
         const response = await userBookcaseEvents.getBookcase(
-          collection().user!.username,
+          bookcaseUsername.value!,
         );
         if ("error" in response) {
           switch (response.error) {

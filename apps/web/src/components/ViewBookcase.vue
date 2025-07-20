@@ -162,7 +162,9 @@ import type { IssueWithIssuecodeOnly } from "~dm-types/IssueWithIssuecodeOnly";
 
 import type { BookcaseEdgeWithPopularity } from "../stores/bookcase";
 
-const route = useRoute();
+const { username = undefined } = defineProps<{
+  username?: string;
+}>();
 
 const { fetchStats } = users();
 const { points } = storeToRefs(users());
@@ -195,9 +197,7 @@ let hasIssuecodes = $ref(false);
 const showShareButtons = $ref(false);
 let userPoints = $ref<{ [contribution: string]: number }>();
 
-const inputBookcaseUsername = $computed(
-  () => (route.params.username as string) || user.value?.username || null,
-);
+const inputBookcaseUsername = $computed(() => username || user.value?.username);
 const allowSharing = $computed(() => user.value?.allowSharing);
 const bookcaseUrl = $computed(
   (): string | null =>

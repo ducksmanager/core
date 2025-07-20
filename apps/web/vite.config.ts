@@ -7,9 +7,10 @@ import AutoImport from "unplugin-auto-import/vite";
 import IconsResolve from "unplugin-icons/resolver";
 import Icons from "unplugin-icons/vite";
 import Components from "unplugin-vue-components/vite";
+import { VueRouterAutoImports } from "unplugin-vue-router";
+import VueRouter from "unplugin-vue-router/vite";
 import { defineConfig } from "vite";
-import Pages from "vite-plugin-pages";
-import Layouts from "vite-plugin-vue-layouts";
+import { readFile } from "fs/promises";
 
 export default defineConfig({
   clearScreen: false,
@@ -28,13 +29,8 @@ export default defineConfig({
   },
   plugins: [
     ReactivityTransform(),
+    VueRouter(),
     Vue(),
-
-    // https://github.com/hannoeru/vite-plugin-pages
-    Pages(),
-
-    // https://github.com/JohnCampionJr/vite-plugin-vue-layouts
-    Layouts(),
 
     // https://github.com/intlify/bundle-tools/tree/main/packages/unplugin-vue-i18n
     VueI18n({
@@ -48,7 +44,7 @@ export default defineConfig({
       imports: [
         "vue",
         "vue/macros",
-        "vue-router",
+        VueRouterAutoImports,
         "@vueuse/core",
         "pinia",
         "vue-i18n",
@@ -61,6 +57,14 @@ export default defineConfig({
     Icons({
       compiler: "vue3",
       autoInstall: true,
+      customCollections: {
+        "extra-icons": {
+          coafoot: () =>
+            readFile("./public/images/icons/coafoot.svg").then((buffer) =>
+              buffer.toString(),
+            ),
+        },
+      },
     }),
 
     // https://github.com/antfu/vite-plugin-components

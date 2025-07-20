@@ -1,5 +1,8 @@
 <route lang="yaml">
-alias: [/agrandir/suggestions]
+alias:
+  - /agrandir/suggestions
+  - /agrandir
+  - /expand
 </route>
 
 <template>

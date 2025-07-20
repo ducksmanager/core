@@ -10,10 +10,8 @@ import Cookies from "js-cookie";
 import { SocketClient } from "socket-call-client";
 // @ts-ignore
 import contextmenu from "v-contextmenu";
-// @ts-ignore
-import { setupLayouts } from "virtual:generated-layouts";
-import generatedRoutes from "virtual:generated-pages";
 import { createRouter, createWebHistory } from "vue-router";
+import { routes } from "vue-router/auto-routes";
 
 import App from "~/App.vue";
 import i18n from "~/i18n";
@@ -21,14 +19,14 @@ import en from "~translations/messages.en.json";
 
 const head = createHead();
 
-const routes = setupLayouts(generatedRoutes);
 const router = createRouter({
-  history: createWebHistory(import.meta.env.BASE_URL),
+  history: createWebHistory(),
   routes,
 });
 router.beforeResolve(async (to) => {
-  if (!to.meta.public && !Cookies.get("token") && to.name !== "login") {
-    return { name: "login" };
+  if (!to.meta.public && !Cookies.get("token") && to.path !== "/login") {
+    router.push("/login");
+    return false;
   }
 });
 
