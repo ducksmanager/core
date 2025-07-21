@@ -74,14 +74,26 @@ const listenEvents = ({ _socket }: UserServices<true>) => ({
         ...new Set(
           augmentedIssuecodes.map(({ publicationcode }) => publicationcode),
         ),
-      ];
+      ].filter(Boolean);
+
+      const inducksPublications = (await prismaCoa.inducks_publication.findMany({
+        select: {
+          publicationcode: true,
+        },
+        where: {
+          publicationcode: {
+            in: userPublicationcodes,
+          },
+        },
+      })).map(({ publicationcode }) => publicationcode);
 
       const missingPublicationCodesInOrder = userPublicationcodes.filter(
         (publicationcode) =>
-          !userSortedPublicationcodes.includes(publicationcode),
+          inducksPublications.includes(publicationcode) && !userSortedPublicationcodes.includes(publicationcode),
       );
+
       const obsoletePublicationCodesInOrder = userSortedPublicationcodes.filter(
-        (publicationcode) => !userPublicationcodes.includes(publicationcode),
+        (publicationcode) => !inducksPublications.includes(publicationcode) || !userPublicationcodes.includes(publicationcode),
       );
 
       const insertOperations = missingPublicationCodesInOrder.map(

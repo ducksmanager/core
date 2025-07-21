@@ -31,7 +31,7 @@ export default (prismaClient: PrismaClient) =>
           issuecodes: string[],
           withTitle: WithTitle,
         ) =>
-          !issuecodes.length
+          !issuecodes.filter(Boolean).length
             ? ({} as Record<string, never>)
             : prismaClient.inducks_issue
                 .findMany({
@@ -43,7 +43,7 @@ export default (prismaClient: PrismaClient) =>
                   },
                   where: {
                     issuecode: {
-                      in: issuecodes,
+                      in: issuecodes.filter(Boolean),
                     },
                   },
                 })
@@ -67,7 +67,9 @@ export default (prismaClient: PrismaClient) =>
           withTitle: boolean = false,
         ): Promise<(Entity & Augmented)[]> {
           const issuecodes = [
-            ...new Set(issues.map(({ issuecode }) => issuecode)),
+            ...new Set(
+              issues.map(({ issuecode }) => issuecode).filter(Boolean),
+            ),
           ];
           if (!issuecodes.length) return [];
 
