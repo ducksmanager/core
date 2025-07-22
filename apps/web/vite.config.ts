@@ -14,6 +14,9 @@ import { readFile } from "fs/promises";
 
 export default defineConfig({
   clearScreen: false,
+  build: {
+    sourcemap: true,
+  },
   resolve: {
     alias: {
       "~/": `${path.resolve(__dirname, "src")}/`,

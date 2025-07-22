@@ -6,7 +6,7 @@
   },
   "scripts": {
     "web": "concurrently -p \"[dm-{name}]\" --kill-others-on-fail -n front,api \"pnpm -F ~web dev\" \"pnpm -F ~api dev\"",
-    "build": "vite build",
+    "build": "vite build && pnpm sentry:sourcemaps",
     "lint": "eslint --fix .",
     "dev": "concurrently -n vite,vue-tsc \"vite --port 8001\" \"vue-tsc --noEmit --watch\"",
     "start": "node index.js",
@@ -16,7 +16,8 @@
     "prod:deploy": "DIR=apps/web SERVICES='web web-websocket' pnpm -F '~ci' prod:docker-compose-up",
     "prod:build-docker": "REPO_NAME=ghcr.io/bperel/ducksmanager-web:websocket pnpm -F '~ci' prod:build-docker -f apps/web/Dockerfile",
     "prod:transfer-files-pre": "pnpm -F '~ci' prod:transfer-files @apps/web/.env:apps/web/.env",
-    "prod:transfer-files-post": "pnpm -F '~ci' prod:transfer-files apps/web/docker-compose.yml:@apps/web/docker-compose.yml apps/web/Caddyfile:@apps/web/Caddyfile apps/web/config/sentry-relay/config.yml:@apps/web/config/sentry-relay/config.yml apps/web/config/sentry-relay/projects/1385898.json:@apps/web/config/sentry-relay/projects/1385898.json"
+    "prod:transfer-files-post": "pnpm -F '~ci' prod:transfer-files apps/web/docker-compose.yml:@apps/web/docker-compose.yml apps/web/Caddyfile:@apps/web/Caddyfile apps/web/config/sentry-relay/config.yml:@apps/web/config/sentry-relay/config.yml apps/web/config/sentry-relay/projects/1385898.json:@apps/web/config/sentry-relay/projects/1385898.json",
+    "sentry:sourcemaps": "sentry-cli sourcemaps inject --org bruno-perel --project dm ./dist && sentry-cli sourcemaps upload --org bruno-perel --project dm ./dist"
   },
   "dependencies": {
     "@bperel/vue3-popper-teleport": "^1.4.3",
@@ -54,6 +55,7 @@
     "@histoire/plugin-vue": "1.0.0-alpha.2",
     "@iconify-json/bi": "^1.2.4",
     "@intlify/unplugin-vue-i18n": "^6.0.8",
+    "@sentry/cli": "^2.47.1",
     "@types/js-cookie": "^3.0.6",
     "@types/mapbox__mapbox-gl-geocoder": "^5.0.0",
     "@types/page-flip": "^2.0.3",
