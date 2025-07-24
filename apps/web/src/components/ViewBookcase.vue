@@ -244,15 +244,15 @@ const sortedBookcase = $computed(
         );
         return (
           publicationOrderSign ||
-          Math.sign(
+          (Math.sign(
             issuecodesByPublicationcode.value[publicationcode1]?.indexOf(
               issuecode1,
             ) ||
-              0 -
-                issuecodesByPublicationcode.value[publicationcode2]?.indexOf(
+              0) -
+                (issuecodesByPublicationcode.value[publicationcode2]?.indexOf(
                   issuecode2,
-                ) ||
-              0,
+                ) || 0
+            )
           )
         );
       },
