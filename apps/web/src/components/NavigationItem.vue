@@ -43,9 +43,10 @@ const isActive = computed(() =>
         .getRoutes()
         .filter(
           (r) =>
-            r.name === item.route.name ||
+            r.name !== "/[...all]" &&
+            (r.name === item.route.name ||
             r.aliasOf?.name === item.route.name ||
-            r.path.startsWith(item.route.path.match(/^\/[^\/]+/)?.[0] ?? "_"),
+            r.path.startsWith(item.route.path.match(/^\/[^\/]+/)?.[0] ?? "_"))
         )
         .map((r) => r.name)
         .includes(route.name)

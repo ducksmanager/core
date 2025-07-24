@@ -141,7 +141,7 @@ const otherItems = computed(
             },
             {
               title: $t("Vous possédez une collection Inducks ?"),
-              route: router.resolve("/inducks/import"),
+              route: router.resolve("/inducks-import"),
               icon: ICoaFoot,
             },
           ]),
