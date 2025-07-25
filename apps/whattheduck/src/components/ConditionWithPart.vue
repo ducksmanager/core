@@ -10,7 +10,11 @@ import type { issue_condition } from '~prisma-schemas/schemas/dm';
 
 const { conditions } = useCondition();
 
-const { value, noMargin, partInfo } = defineProps<{
+const {
+  value = undefined,
+  noMargin = false,
+  partInfo = undefined,
+} = defineProps<{
   value?: issue_condition;
   noMargin?: boolean;
   partInfo?: EntryPartInfo;

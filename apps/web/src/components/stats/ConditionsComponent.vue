@@ -20,7 +20,11 @@ import type { issue_condition } from "~prisma-schemas/schemas/dm";
 
 import type { Condition } from "../../composables/useCondition";
 
-const { conditions, numberPerCondition } = defineProps<{
+const {
+  conditions,
+  numberPerCondition,
+  style = undefined,
+} = defineProps<{
   conditions: Condition<boolean>[];
   numberPerCondition: Record<issue_condition, number>;
   style?: Record<string, string>;

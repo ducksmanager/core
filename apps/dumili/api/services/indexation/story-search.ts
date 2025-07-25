@@ -75,9 +75,7 @@ export const getStoriesFromImage = async (image: image, isCover: boolean) => {
     };
   }
 
-  const bestMatch = response.results.sort(
-    (a, b) => b.score - a.score,
-  )?.[0];
+  const bestMatch = response.results.sort((a, b) => b.score - a.score)?.[0];
   if (!bestMatch) {
     console.info(`URL ${url}: No match found`);
     return {

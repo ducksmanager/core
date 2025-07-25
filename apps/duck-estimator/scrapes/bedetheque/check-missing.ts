@@ -62,7 +62,7 @@ try {
             [issuecode, pageUrl, albumNum || "", storedTitle].join(","),
           );
         }
-      } catch (e) {
+      } catch (_e) {
         console.warn(`Issue ${issuecode} not found`);
         console.log(
           ["?".repeat(10), pageUrl, albumNum || "", storedTitle].join(","),

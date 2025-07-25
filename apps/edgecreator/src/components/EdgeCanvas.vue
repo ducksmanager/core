@@ -91,7 +91,13 @@ import type { OptionValue } from "~/types/OptionValue";
 
 const { supportedRenders } = renders();
 
-const { issuecode, contributors, dimensions, steps } = defineProps<{
+const {
+  issuecode,
+  contributors,
+  dimensions,
+  photoUrl = undefined,
+  steps,
+} = defineProps<{
   issuecode: string;
   dimensions: { width: number; height: number };
   steps: StepOption[];

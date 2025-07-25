@@ -19,14 +19,14 @@ const listenEvents = () => ({
       return { error: "This user does not allow sharing" };
     }
     return {
-      issues: await prismaDm.issue.findMany({
+      issues: (await prismaDm.issue.findMany({
         where: {
           userId: user.id,
           issuecode: {
             not: null,
           },
         },
-      }) as (issue & { issuecode: string })[],
+      })) as (issue & { issuecode: string })[],
     };
   },
 });

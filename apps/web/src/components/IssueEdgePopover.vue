@@ -49,7 +49,7 @@
 </template>
 
 <script setup lang="ts">
-const { extraPoints = null } = defineProps<{
+const { extraPoints } = defineProps<{
   hasEdge: boolean;
   extraPoints: number | null;
 }>();

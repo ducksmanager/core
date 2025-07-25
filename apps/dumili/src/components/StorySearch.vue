@@ -50,7 +50,7 @@ import type { storyKind } from "~prisma/client_dumili/client";
 
 const { coa: coaEvents } = inject(dmSocketInjectionKey)!;
 
-const { kind } = defineProps<{
+const { kind = undefined } = defineProps<{
   kind?: storyKind;
 }>();
 
@@ -79,7 +79,7 @@ const runSearch = async (value: string) => {
     if (searchType.value === "byStoryTitle") {
       storyResults.value = await coaEvents.searchStory(value.split(" "), {
         withIssues: false,
-        kind: kind,
+        kind,
       });
     } else {
       storyResults.value = await coaEvents.searchStoryByStorycode(value);

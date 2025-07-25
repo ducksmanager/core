@@ -21,7 +21,12 @@ import { stores as webStores } from '~web';
 
 import { wtdcollection } from '~/stores/wtdcollection';
 
-const { issuecode } = defineProps<{
+const {
+  issuecode,
+  classes = undefined,
+  partInfo = undefined,
+  showIssueConditions = undefined,
+} = defineProps<{
   classes?: string[];
   issuecode: string;
   showIssueConditions?: boolean;

@@ -50,7 +50,10 @@ const listenEvents = () => ({
             issuecode,
             fullUrl,
             id: coverIdByIssuecode[issuecode],
-            score: pastecResponse.scores[pastecResponse.image_ids.indexOf(coverIdByIssuecode[issuecode])],
+            score:
+              pastecResponse.scores[
+                pastecResponse.image_ids.indexOf(coverIdByIssuecode[issuecode])
+              ],
           })),
         );
       })

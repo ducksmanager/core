@@ -1,5 +1,5 @@
-import type { authorUser } from "~prisma-schemas/schemas/dm";
 import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa/client";
+import type { authorUser } from "~prisma-schemas/schemas/dm";
 import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
 
 import type { UserServices } from "../../../index";

@@ -2,6 +2,7 @@ import VueI18n from "@intlify/unplugin-vue-i18n/vite";
 import Vue from "@vitejs/plugin-vue";
 import ReactivityTransform from "@vue-macros/reactivity-transform/vite";
 import { BootstrapVueNextResolver } from "bootstrap-vue-next";
+import { readFile } from "fs/promises";
 import * as path from "path";
 import AutoImport from "unplugin-auto-import/vite";
 import IconsResolve from "unplugin-icons/resolver";
@@ -10,7 +11,6 @@ import Components from "unplugin-vue-components/vite";
 import { VueRouterAutoImports } from "unplugin-vue-router";
 import VueRouter from "unplugin-vue-router/vite";
 import { defineConfig } from "vite";
-import { readFile } from "fs/promises";
 
 export default defineConfig({
   clearScreen: false,

@@ -119,7 +119,7 @@ export async function scrape() {
                 issuenumber,
               },
             })
-            .catch((e) => {
+            .catch((_e) => {
               console.error(`Issue ${issuenumber} not found`);
               return null;
             });
