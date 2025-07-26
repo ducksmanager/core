@@ -248,10 +248,11 @@ const sortedBookcase = $computed(
             (issuecodesByPublicationcode.value[publicationcode1]?.indexOf(
               issuecode1,
             ) || 0) -
-            (issuecodesByPublicationcode.value[publicationcode2]?.indexOf(
-              issuecode2,
-            ) || 0)
-        ));
+              (issuecodesByPublicationcode.value[publicationcode2]?.indexOf(
+                issuecode2,
+              ) || 0),
+          )
+        );
       },
     ),
 );

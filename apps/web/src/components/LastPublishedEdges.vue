@@ -22,7 +22,7 @@
         :key="`last-published-${edge.id}`"
       >
         <Issue :issuecode="edge.issuecode" hide-condition>
-          <Ago :timestamp="new Date(edge.creationDate).getTime()" />
+          <Ago :timestamp="new Date(edge.creationDate).getTime() / 1000" />
         </Issue>
       </div>
     </template>
