@@ -12,6 +12,7 @@ let isReady = $ref(false);
 
 const socket = useDmSocket({
   cacheStorage: buildWebStorage(sessionStorage),
+  disableCollectionCache: true,
   onConnected: () => {
     if (!isReady) {
       collection().loadUser();

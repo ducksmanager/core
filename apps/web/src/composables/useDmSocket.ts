@@ -25,7 +25,7 @@ import { type ClientEvents as StorySearchEvents } from "~dm-services/story-searc
 
 const defaultExport = (options: {
   cacheStorage: AxiosStorage;
-
+  disableCollectionCache?: boolean;
   onConnectError: (
     e: Error,
     namespace: string,
@@ -146,7 +146,10 @@ const defaultExport = (options: {
       session,
       cache: {
         storage: cacheStorage,
-        disableCache: (eventName) => eventName.indexOf("get") !== 0,
+        disableCache:
+          "disableCollectionCache" in options && options.disableCollectionCache
+            ? () => true
+            : (eventName) => eventName.indexOf("get") !== 0,
         ttl: 1000, // 1 second only, because we want to always get the latest data but still cache in case of offline
       },
     }),

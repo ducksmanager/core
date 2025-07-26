@@ -37,7 +37,7 @@
     "nodemailer": "^7.0.5",
     "sharp": "0.33.5",
     "sharp-0-34": "npm:sharp@^0.34.3",
-    "socket-call-server": "^0.7.5",
+    "socket-call-server": "^0.7.6",
     "socket.io": "^4.8.1",
     "~dm-types": "workspace:*",
     "~prisma-schemas": "workspace:*"

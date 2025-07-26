@@ -31,7 +31,7 @@
     "bootstrap-vue-next": "^0.30.4",
     "js-cookie": "^3.0.5",
     "pinia": "^3.0.3",
-    "socket-call-client": "^0.7.5",
+    "socket-call-client": "^0.7.6",
     "universal-cookie": "^8.0.1",
     "vue": "^3.5.18",
     "vue-i18n": "^9.14.5",
