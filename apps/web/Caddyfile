@@ -1,8 +1,4 @@
 ducksmanager.net {
-    reverse_proxy web
-}
-
-websocket.ducksmanager.net {
     reverse_proxy web-websocket
 }
 

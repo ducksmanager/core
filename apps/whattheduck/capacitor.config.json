@@ -10,7 +10,7 @@
       "androidSplashResourceName": "splash"
     },
     "CapacitorUpdater": {
-      "updateUrl": "https://api-websocket.ducksmanager.net/app/updates"
+      "updateUrl": "https://api.ducksmanager.net/app/updates"
     }
   }
 }
