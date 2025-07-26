@@ -6,7 +6,7 @@ DucksManager is a free and open-source website enabling comic book collectors to
 
 Apps :
 
-- [Web](apps/web) is the DucksManager website. It calls the backend that's stored in [packages/api](packages/api). Note that the version of web that's currently running on ducksmanager.net is the one stored in the [legacy branch](https://github.com/ducksmanager/core/tree/legacy). Eventually the `master` branch will be used.
+- [Web](apps/web) is the DucksManager website. It calls the backend that's stored in [packages/api](packages/api).
 - [What The Duck](apps/whattheduck) is the mobile app of DucksManager, allowing users to check the contents of their collection on a mobile and add issues to the collection by photographing comic book covers. It calls the backend that's stored in [packages/api](packages/api).
 - [EdgeCreator](apps/edgecreator) is a project allowing users to upload photos of edges and create models out of them in order to generate edge pictures.
 - [Duck cover ID](apps/cover-updater) is a collection of shell scripts launched by a daily cronjob, allowing to retrieve comic book covers from the Inducks website and add the features of these pictures to a Pastec index. This index is searched whn taking a picture of a cover in the WhatTheDuck app.
@@ -28,7 +28,6 @@ flowchart LR
         DBServer --> db_edgecreator("EdgeCreator DB")
         SpriteNamesUpdater(sprite names updater procedure) --> db_edgecreator
     end
-    LegacyAPI[Legacy API] --> DBServer
     subgraph API
         SocketIOServer(socket.io server) --> DBServer
         NotificationSenderScript(Send notifications script) --> db_coa
@@ -67,11 +66,7 @@ flowchart LR
     subgraph "Web"
         Website-->SocketIOServer
     end
-    subgraph "Web (legacy)"
-        WebsiteLegacy(Website)-->LegacyAPI
-    end
-    ducksmanager.net --> WebsiteLegacy
-    ducksmanager.net -.-> Website
+    ducksmanager.net --> Website
     subgraph "GH Actions"
         notification-sender.yml --> NotificationSenderScript
         pending-emails-sender.yml --> PendingEmailsSenderScript
