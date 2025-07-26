@@ -11,11 +11,6 @@
   "devDependencies": {
     "turbo": "^2.5.5"
   },
-  "pnpm": {
-    "overrides": {
-      "@types/node": "^22.15.34"
-    }
-  },
   "scripts": {
     "prepare": "husky",
     "lint": "turbo lint --log-order=stream -F '!~duckguessr*'  -- --cache",
