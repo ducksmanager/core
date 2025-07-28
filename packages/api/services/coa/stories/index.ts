@@ -60,7 +60,7 @@ export default {
       withIssues: WithIssues;
       kind?: SimpleStory["kind"];
     },
-  ): Promise<StorySearchResults<WithIssues>> => {
+  ) => {
     const limit = 10;
     const joinedKeywords = keywords.join(" ");
     let results = await prismaCoa.$queryRaw<

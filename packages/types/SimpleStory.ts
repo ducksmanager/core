@@ -6,7 +6,6 @@ export interface SimpleStory {
   kind: "a" | "c" | "f" | "g" | "i" | "k" | "n" | "t" | "L" | "P";
   title: string;
   score: number;
-  issuecodes: string[];
 }
 
 export interface SimpleStoryWithPartInfo extends SimpleStory {

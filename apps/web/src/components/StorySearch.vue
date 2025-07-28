@@ -61,22 +61,18 @@
         <template v-if="!isSearchByCode">
           <div class="me-1 d-flex">
             <Condition
-              v-if="
-                (searchResult as SimpleStoryWithOptionalCollectionIssue)
-                  .collectionIssue
-              "
+              v-for="collectionIssue in (searchResult as SimpleStoryWithCollectionIssues)
+                  .collectionIssues"
+              :key="collectionIssue.id"
               :value="
                 conditions.find(
-                  ({ dbValue }) =>
-                    dbValue ===
-                    (searchResult as SimpleStoryWithOptionalCollectionIssue)
-                      .collectionIssue!.condition
+                  ({ dbValue }) => dbValue === collectionIssue.condition,
                 )?.dbValue || undefined
               "
             />
           </div>
           <div>
-            {{ (searchResult as SimpleStoryWithOptionalCollectionIssue).title }}
+            {{ (searchResult as SimpleStoryWithCollectionIssues).title }}
           </div>
         </template>
         <Issue
@@ -120,15 +116,19 @@ onClickOutside(nav, () => {
   showSearchResults = false;
 });
 
-type SimpleStoryWithOptionalCollectionIssue = SimpleStory & {
-  collectionIssue: issue | null;
+type SimpleStoryWithCollectionIssues = SimpleStory & {
+  collectionIssues: issue[];
 };
+
+const collectionIssuesByIssuecode = $computed(() =>
+  issues.value!.groupBy(({ issuecode }) => issuecode, "[]"),
+);
 
 let isSearching = $ref(false);
 let pendingSearch = $ref<string>();
 let search = $ref("");
 let storyResults = $ref<{
-  results: SimpleStoryWithOptionalCollectionIssue[];
+  results: SimpleStoryWithCollectionIssues[];
   hasMore: boolean;
 }>();
 
@@ -200,12 +200,12 @@ const runSearch = async (value: string) => {
       });
       storyResults = {
         hasMore: data.hasMore,
-        results: data.results.map((story) => ({
+        results: (data.results as SimpleStoryWithPartInfo[]).map((story) => ({
           ...story,
-          collectionIssue:
-            issues.value!.find(({ issuecode: collectionIssuecode }) =>
-              story.issuecodes.includes(collectionIssuecode),
-            ) || null,
+          collectionIssues: story.issues
+            .filter(({ issuecode }) => collectionIssuesByIssuecode[issuecode])
+            .map(({ issuecode }) => collectionIssuesByIssuecode[issuecode]!)
+            .flat(),
         })),
       };
     }
