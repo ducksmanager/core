@@ -72,14 +72,12 @@
 </template>
 
 <script setup lang="ts">
+import StarRating from '~web/src/components/StarRating.vue';
 import { starOutline, star } from 'ionicons/icons';
-import { components } from '~web';
 import { coa as webCoa } from '~web/src/stores/coa';
 import { stats as webStats } from '~web/src/stores/stats';
 
 import { app } from '~/stores/app';
-
-const StarRating = components['StarRating'];
 
 const { loadRatings, searchAuthors, isAuthorWatched, createRating, updateRating, deleteAuthor } = webStats();
 const { authorSearchResults: authorResults, ratings } = storeToRefs(webStats());

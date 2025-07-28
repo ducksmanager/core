@@ -76,14 +76,12 @@
 </template>
 
 <script setup lang="ts">
-import { components } from '~web';
+import ConditionsComponent from '~web/src/components/stats/ConditionsComponent.vue';
 import { coa as webCoa } from '~web/src/stores/coa';
 import { wtdcollection } from '~/stores/wtdcollection';
 
 const { t } = useI18n();
 const { conditionsWithoutMissing } = useCondition();
-
-const ConditionsComponent = components['Conditions'];
 
 type GraphType = 'pastYear' | 'allTime';
 const currentCollectionProgressionGraphType = ref<GraphType>('pastYear');

@@ -5,13 +5,10 @@ import '@ionic/vue/css/core.css';
 import '@ionic/vue/css/normalize.css';
 import '@ionic/vue/css/structure.css';
 import '@ionic/vue/css/typography.css';
-/* Optional CSS utils that can be commented out */
+/* Only include the CSS utilities that are actually used */
 import '@ionic/vue/css/padding.css';
-import '@ionic/vue/css/float-elements.css';
 import '@ionic/vue/css/text-alignment.css';
-import '@ionic/vue/css/text-transformation.css';
 import '@ionic/vue/css/flex-utils.css';
-import '@ionic/vue/css/display.css';
 /* Theme variables */
 import './theme/variables.scss';
 import './theme/global.scss';
@@ -23,8 +20,6 @@ import { CapacitorUpdater } from '@capgo/capacitor-updater';
 import { defineCustomElements } from '@ionic/pwa-elements/loader';
 import { Drivers, Storage } from '@ionic/storage';
 import { IonicVue } from '@ionic/vue';
-import * as Sentry from '@sentry/capacitor';
-import * as SentryVue from '@sentry/vue';
 import { createPinia } from 'pinia';
 import { SocketClient } from 'socket-call-client';
 import VueVirtualScroller from 'vue-virtual-scroller';
@@ -56,16 +51,20 @@ const app = createApp(App)
 
 router.isReady().then(async () => {
   if (Capacitor.isNativePlatform() && !import.meta.env.VITE_DM_SOCKET_URL_NATIVE) {
+    // Lazy load Sentry only when needed
     const currentBundleVersion = (await CapacitorUpdater.current())?.bundle.version;
-    Sentry.init(
+    const { init: initSentry, browserTracingIntegration, replayIntegration } = await import('@sentry/capacitor');
+    const { init: initSentryVue } = await import('@sentry/vue');
+
+    initSentry(
       {
         dsn: import.meta.env.VITE_SENTRY_DSN,
         app,
         release: `whattheduck@${currentBundleVersion}`,
         dist: currentBundleVersion,
         integrations: [
-          Sentry.browserTracingIntegration(),
-          Sentry.replayIntegration({
+          browserTracingIntegration(),
+          replayIntegration({
             maskAllText: false,
             blockAllMedia: false,
           }),
@@ -74,7 +73,7 @@ router.isReady().then(async () => {
         replaysSessionSampleRate: 1.0,
         replaysOnErrorSampleRate: 1.0,
       },
-      SentryVue.init,
+      initSentryVue,
     );
   }
 

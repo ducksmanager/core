@@ -1,26 +1,11 @@
 import { createRouter, createWebHistory } from '@ionic/vue-router';
 import type { RouteMeta } from 'vue-router';
 
-import Collection from '~/components/Collection.vue';
-import Authors from '~/views/Authors.vue';
-import CoverSearchResults from '~/views/CoverSearchResults.vue';
-import Forgot from '~/views/Forgot.vue';
-import Login from '~/views/Login.vue';
-import Logout from '~/views/Logout.vue';
-import Recent from '~/views/Recent.vue';
-import Report from '~/views/Report.vue';
-import Search from '~/views/Search.vue';
-import Settings from '~/views/Settings.vue';
-import Signup from '~/views/Signup.vue';
-import Stats from '~/views/Stats.vue';
-import Suggestions from '~/views/Suggestions.vue';
-import Test from '~/views/Test.vue';
-
 const routes = [
   {
     name: 'Collection',
     path: '/collection',
-    component: Collection,
+    component: () => import('~/components/Collection.vue'),
     props: true,
     meta: {
       onOffline: 'readonly',
@@ -29,7 +14,7 @@ const routes = [
   },
   {
     path: '/search',
-    component: Search,
+    component: () => import('~/views/Search.vue'),
     meta: {
       onOffline: 'unavailable',
       onNoToken: 'logout',
@@ -37,7 +22,7 @@ const routes = [
   },
   {
     path: '/cover-search-results',
-    component: CoverSearchResults,
+    component: () => import('~/views/CoverSearchResults.vue'),
     meta: {
       onOffline: 'unavailable',
       onNoToken: 'logout',
@@ -45,7 +30,7 @@ const routes = [
   },
   {
     path: '/recent',
-    component: Recent,
+    component: () => import('~/views/Recent.vue'),
     meta: {
       onOffline: 'unavailable',
       onNoToken: 'logout',
@@ -53,7 +38,7 @@ const routes = [
   },
   {
     path: '/report',
-    component: Report,
+    component: () => import('~/views/Report.vue'),
     meta: {
       onOffline: 'unavailable',
       onNoToken: 'logout',
@@ -61,7 +46,7 @@ const routes = [
   },
   {
     path: '/authors',
-    component: Authors,
+    component: () => import('~/views/Authors.vue'),
     meta: {
       onOffline: 'unavailable',
       onNoToken: 'logout',
@@ -69,7 +54,7 @@ const routes = [
   },
   {
     path: '/stats',
-    component: Stats,
+    component: () => import('~/views/Stats.vue'),
     meta: {
       onOffline: 'readonly',
       onNoToken: 'logout',
@@ -77,38 +62,38 @@ const routes = [
   },
   {
     path: '/signup',
-    component: Signup,
+    component: () => import('~/views/Signup.vue'),
     meta: {
       onOffline: 'unavailable',
     } as RouteMeta,
   },
   {
     path: '/forgot',
-    component: Forgot,
+    component: () => import('~/views/Forgot.vue'),
     meta: {
       onOffline: 'unavailable',
     } as RouteMeta,
   },
   {
     path: '/logout',
-    component: Logout,
+    component: () => import('~/views/Logout.vue'),
     onOffline: 'unavailable',
   },
   {
     path: '/login',
-    component: Login,
+    component: () => import('~/views/Login.vue'),
   },
   {
     path: '/suggestions',
-    component: Suggestions,
+    component: () => import('~/views/Suggestions.vue'),
   },
   {
     path: '/settings',
-    component: Settings,
+    component: () => import('~/views/Settings.vue'),
   },
   {
     path: '/test',
-    component: Test,
+    component: () => import('~/views/Test.vue'),
   },
   {
     path: '/',
