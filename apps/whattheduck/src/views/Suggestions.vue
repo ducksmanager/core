@@ -58,7 +58,7 @@
               :classes="['issue-title', 'ion-no-padding']"
             />
             <ion-col class="ion-no-padding flex suggestion-details" size="3">
-              <div class="ion-text-nowrap">
+              <div v-if="issue.releaseDate" class="ion-text-nowrap">
                 <ion-icon :ios="calendarOutline" :md="calendarSharp" />&nbsp;{{ issue.releaseDate }}
               </div>
               <div class="ion-text-nowrap">
@@ -144,7 +144,7 @@ const formattedSuggestions = computed(
       .map(({ issuecode, ...rest }) => ({ ...rest, issuecode }))
       .map(({ stories, issuecode, oldestdate, score }) => ({
         issuecode,
-        releaseDate: oldestdate,
+        releaseDate: oldestdate === '0000-01-01' ? undefined : oldestdate,
         score,
         collectionIssues: [],
         storiesByStorycode: Object.entries(stories).reduce<Record<string, FormattedSuggestion>>(
