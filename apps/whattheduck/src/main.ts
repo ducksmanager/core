@@ -5,10 +5,13 @@ import '@ionic/vue/css/core.css';
 import '@ionic/vue/css/normalize.css';
 import '@ionic/vue/css/structure.css';
 import '@ionic/vue/css/typography.css';
-/* Only include the CSS utilities that are actually used */
+/* Optional CSS utils that can be commented out */
 import '@ionic/vue/css/padding.css';
+import '@ionic/vue/css/float-elements.css';
 import '@ionic/vue/css/text-alignment.css';
+import '@ionic/vue/css/text-transformation.css';
 import '@ionic/vue/css/flex-utils.css';
+import '@ionic/vue/css/display.css';
 /* Theme variables */
 import './theme/variables.scss';
 import './theme/global.scss';
@@ -20,6 +23,8 @@ import { CapacitorUpdater } from '@capgo/capacitor-updater';
 import { defineCustomElements } from '@ionic/pwa-elements/loader';
 import { Drivers, Storage } from '@ionic/storage';
 import { IonicVue } from '@ionic/vue';
+import * as Sentry from '@sentry/capacitor';
+import * as SentryVue from '@sentry/vue';
 import { createPinia } from 'pinia';
 import { SocketClient } from 'socket-call-client';
 import VueVirtualScroller from 'vue-virtual-scroller';
@@ -51,11 +56,7 @@ const app = createApp(App)
 
 router.isReady().then(async () => {
   if (Capacitor.isNativePlatform() && !import.meta.env.VITE_DM_SOCKET_URL_NATIVE) {
-    // Lazy load Sentry only when needed
     const currentBundleVersion = (await CapacitorUpdater.current())?.bundle.version;
-    const { default: Sentry } = await import('@sentry/capacitor');
-    const { default: SentryVue } = await import('@sentry/vue');
-
     Sentry.init(
       {
         dsn: import.meta.env.VITE_SENTRY_DSN,

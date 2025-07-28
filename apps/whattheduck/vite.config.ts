@@ -16,36 +16,6 @@ export default defineConfig({
 
   build: {
     sourcemap: true,
-    rollupOptions: {
-      output: {
-        manualChunks: {
-          // Vendor chunks
-          'vendor-vue': ['vue', 'vue-router', 'pinia'],
-          'vendor-ionic': ['@ionic/vue', '@ionic/vue-router'],
-          'vendor-capacitor': [
-            '@capacitor/core',
-            '@capacitor/app',
-            '@capacitor/device',
-            '@capacitor/haptics',
-            '@capacitor/keyboard',
-            '@capacitor/preferences',
-            '@capacitor/status-bar',
-            '@capacitor/camera',
-            '@capacitor/clipboard',
-            '@capacitor-community/camera-preview',
-            '@capawesome/capacitor-app-update',
-            '@capawesome/capacitor-file-picker',
-            '@capgo/capacitor-updater',
-          ],
-          'vendor-charts': ['chart.js', 'vue-chartjs'],
-          'vendor-utils': ['@vueuse/core', '@vueuse/components', '@vueuse/integrations', 'dayjs'],
-          'vendor-ui': ['ionicons', '@ionic/pwa-elements', 'vue-virtual-scroller'],
-          'vendor-socket': ['socket-call-client'],
-          'vendor-sentry': ['@sentry/capacitor', '@sentry/vue'],
-        },
-      },
-    },
-    chunkSizeWarningLimit: 1000, // Increase warning limit to 1MB
   },
 
   plugins: [

@@ -4,17 +4,8 @@
   </div>
 </template>
 <script setup lang="ts">
-import {
-  BarController,
-  BarElement,
-  CategoryScale,
-  Chart,
-  Legend,
-  LinearScale,
-  Title,
-  Tooltip,
-  type ChartOptions,
-} from 'chart.js';
+import type { ChartOptions } from 'chart.js';
+import { BarController, BarElement, CategoryScale, Chart, Legend, LinearScale, Title, Tooltip } from 'chart.js';
 import dayjs from 'dayjs';
 import { Bar } from 'vue-chartjs';
 import type { issue as dm_issue } from '~prisma-schemas/schemas/dm';
