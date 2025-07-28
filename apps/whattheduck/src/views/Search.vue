@@ -106,7 +106,9 @@ watchDebounced(
       return;
     }
     selectedStory.value = undefined;
-    const { results: data }: StorySearchResults<true> = await coaEvents.searchStory([newValue], { withIssues: true });
+    const { results: data } = (await coaEvents.searchStory([newValue], {
+      withIssues: true,
+    })) as StorySearchResults<true>;
 
     const issuecodes = data
       .map((story) => story.issues)
