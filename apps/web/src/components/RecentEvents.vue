@@ -18,6 +18,7 @@
 
 <script setup lang="ts">
 import type { AbstractEvent } from "~dm-types/events/AbstractEvent";
+import type { CollectionSubscriptionAdditionEvent } from "~dm-types/events/CollectionSubscriptionAdditionEvent";
 import type { CollectionUpdateEvent } from "~dm-types/events/CollectionUpdateEvent";
 import type { EdgeCreationEvent } from "~dm-types/events/EdgeCreationEvent";
 
@@ -37,23 +38,33 @@ const eventUserIds = $computed(() =>
 );
 const isCollectionUpdateEvent = (
   event: AbstractEvent,
-): event is CollectionUpdateEvent => event.hasOwnProperty("numberOfIssues");
+): event is CollectionUpdateEvent => event.type === "collection_update";
 
 const isEdgeCreationEvent = (
   event: AbstractEvent,
-): event is EdgeCreationEvent => event.hasOwnProperty("issuecodes");
+): event is EdgeCreationEvent => event.type === "edge";
+
+const isCollectionSubscriptionAdditionEvent = (
+  event: AbstractEvent,
+): event is CollectionSubscriptionAdditionEvent =>
+  event.type === "subscription_additions";
 
 const fetchEventsAndAssociatedData = async () => {
   await fetchEvents();
 
-  await fetchIssuecodeDetails([
-    ...events.value
-      .filter((event) => isCollectionUpdateEvent(event))
-      .map(({ exampleIssuecode }) => exampleIssuecode),
-    ...events.value
-      .filter((event) => isEdgeCreationEvent(event))
-      .reduce<string[]>((acc, { issuecodes }) => [...acc, ...issuecodes], []),
-  ]);
+  await fetchIssuecodeDetails(
+    [
+      events.value
+        .filter((event) => isCollectionUpdateEvent(event))
+        .map(({ exampleIssuecode }) => exampleIssuecode),
+      events.value
+        .filter((event) => isCollectionSubscriptionAdditionEvent(event))
+        .reduce<string[]>((acc, { issuecode }) => [...acc, issuecode], []),
+      events.value
+        .filter((event) => isEdgeCreationEvent(event))
+        .reduce<string[]>((acc, { issuecodes }) => [...acc, ...issuecodes], []),
+    ].flat(),
+  );
 
   await fetchPublicationNames([
     ...events.value
