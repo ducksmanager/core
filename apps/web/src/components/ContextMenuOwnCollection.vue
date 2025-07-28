@@ -115,7 +115,7 @@
       </template>
     </b-tabs>
     <li
-      v-if="editedCopies?.copies.length"
+      v-if="editedCopies?.copies.length || editedIssues?.issuecodes.length"
       class="footer clickable px-3"
       @click="updateSelectedIssues()"
     >
