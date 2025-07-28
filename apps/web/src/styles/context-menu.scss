@@ -1,13 +1,13 @@
 .v-contextmenu-inner {
   &,
-  li,
+  // li,
   .v-contextmenu-group__menus {
     padding: 0 !important;
 
-  .v-contextmenu-submenu__menus {
-    max-height: 100vh;
-    overflow-y: auto;
-    position: absolute;
+    .v-contextmenu-submenu__menus {
+      max-height: 100vh;
+      overflow-y: auto;
+      position: absolute;
     }
   }
   :deep(.copies-tabs) {
@@ -24,7 +24,8 @@
 
   li {
     &.disabled {
-      a, & {
+      a,
+      & {
         background: initial !important;
         border: initial;
         color: inherit;
@@ -91,10 +92,11 @@
       padding: 0 2rem !important;
     }
 
-    .v-contextmenu-submenu, .v-contextmenu-item {
-
+    .v-contextmenu-submenu,
+    .v-contextmenu-item {
       &.selected {
-        &, > .v-contextmenu-item {
+        &,
+        > .v-contextmenu-item {
           background-color: #a52a2a;
           color: white !important;
         }

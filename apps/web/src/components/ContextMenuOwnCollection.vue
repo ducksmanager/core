@@ -8,7 +8,10 @@
     }}
   </li>
   <b-alert
-    v-if="initialCopies && !initialCopies.copies.length"
+    v-if="
+      initialCopies?.copies?.some((copy) => copy.condition) &&
+      editedCopies?.copies?.every((copy) => !copy.condition)
+    "
     class="text-center m-0"
     :model-value="true"
     variant="danger"
@@ -111,7 +114,11 @@
         </b-nav-item>
       </template>
     </b-tabs>
-    <li class="footer clickable" @click="updateSelectedIssues()">
+    <li
+      v-if="editedCopies?.copies.length"
+      class="footer clickable px-3"
+      @click="updateSelectedIssues()"
+    >
       {{ $t("Enregistrer les changements") }}
     </li>
   </template>
@@ -179,10 +186,12 @@ const hasNoCopies = $computed(
 const hasMaxCopies = $computed(
   () => initialCopies && initialCopies.copies.length >= 3,
 );
-const hasMultipleCopiesAndMultipleIssues = $computed(() =>
-  Object.values(selectedIssueIdsByIssuecode).some(
-    (issues) => issues.length > 1,
-  ),
+const hasMultipleCopiesAndMultipleIssues = $computed(
+  () =>
+    Object.keys(selectedIssueIdsByIssuecode).length > 1 &&
+    Object.values(selectedIssueIdsByIssuecode).some(
+      (issues) => issues.length > 1,
+    ),
 );
 const updateSelectedIssues = async () => {
   const isIssueTransfer = (isOnSale: SaleState | undefined) =>
