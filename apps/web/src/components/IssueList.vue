@@ -10,7 +10,9 @@
         <Watch
           v-if="!readonly && showFilter"
           class="ml-2"
-          :publicationcode="publicationcode"
+          :is-watched="watchedPublicationsWithSales?.includes(publicationcode)"
+          :is-issue="false"
+          @toggled="toggleWatched(publicationcode)"
       /></Publication>
       <div v-if="issues && purchases">
         <div v-if="showFilter" v-once class="issue-filter">
@@ -248,9 +250,21 @@
                   </div>
                 </div>
                 <Watch
-                  v-if="!readonly && (!userCopies.length || onSaleByOthers)"
-                  v-bind="{ issuecode, publicationcode }"
+                  v-if="
+                    !readonly &&
+                    (hoveredIndex === idx ||
+                      watchedPublicationsWithSales?.includes(issuecode)) &&
+                    (!userCopies.length || onSaleByOthers)
+                  "
+                  :is-publication-watched="
+                    watchedPublicationsWithSales?.includes(publicationcode)
+                  "
+                  :is-watched="
+                    watchedPublicationsWithSales?.includes(issuecode)
+                  "
+                  is-issue
                   :constant-width="onSaleByOthers"
+                  @toggled="toggleWatched(issuecode)"
                 />
                 <div v-if="!readonly" class="issue-check">
                   <input
@@ -371,9 +385,15 @@ const {
   readonly?: boolean;
 }>();
 
-const { updateCollectionMultipleIssues, loadPurchases } = collection();
+const {
+  loadWatchedPublicationsWithSales,
+  updateWatchedPublicationsWithSales,
+  updateCollectionMultipleIssues,
+  loadPurchases,
+} = collection();
 const { issues: collectionIssues, purchases: collectionPurchases } =
   storeToRefs(readonly ? publicCollection() : collection());
+const { watchedPublicationsWithSales } = storeToRefs(collection());
 
 const { conditions } = useCondition();
 const { t: $t } = useI18n();
@@ -703,11 +723,26 @@ watch(
   { immediate: true },
 );
 
+const toggleArrayItem = (a: string[], v: string) => {
+  const i = a.indexOf(v);
+  if (i === -1) a.push(v);
+  else a.splice(i, 1);
+};
+
+const toggleWatched = async (key: string) => {
+  if (watchedPublicationsWithSales.value) {
+    toggleArrayItem(watchedPublicationsWithSales.value, key);
+    await updateWatchedPublicationsWithSales();
+    await loadWatchedPublicationsWithSales(true);
+  }
+};
+
 (async () => {
   if (customIssues) {
     collectionPurchases.value = [];
   } else {
     await loadPurchases();
+    await loadWatchedPublicationsWithSales(true);
   }
 })();
 </script>

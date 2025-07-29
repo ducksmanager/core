@@ -167,7 +167,7 @@ alias: [/agrandir/marketplace]
           >. {{ $t("Voici un modèle de message possible :") }}</template
         >
       </header>
-      <blockquote class="m-3 p-4 border border-1 border-secondary">
+      <blockquote class="m-3 p-4 border-1 border-secondary">
         <p>
           {{ $t("Bonjour") }}&nbsp;{{ stats[modalContactId].username }}
           !

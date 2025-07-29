@@ -11,12 +11,10 @@
       class="d-inline-flex xl py-0 px-1 ms-2 me-2"
       :class="{
         'soft-disabled': isPublicationWatchedButNotIssuecode,
-        disabled: !publicationcode,
+        disabled: isIssue === undefined,
       }"
       :title="buttonTooltipText"
-      @click="
-        !isPublicationWatchedButNotIssuecode && toggleWatchedPublication()
-      "
+      @click="!isPublicationWatchedButNotIssuecode && emit('toggled')"
     >
       <i-bi-eyeglasses
         :variant="isWatched ? 'light' : 'secondary'"
@@ -33,63 +31,39 @@
 </template>
 <script setup lang="ts">
 const {
-  issuecode,
-  publicationcode,
+  isWatched = undefined,
+  isPublicationWatched = undefined,
+  isIssue = undefined,
   constantWidth = false,
 } = defineProps<{
-  issuecode?: string;
-  publicationcode?: string;
+  isWatched?: boolean;
+  isPublicationWatched?: boolean;
+  isIssue?: boolean;
   constantWidth?: boolean;
 }>();
 
 const { t: $t } = useI18n();
 
-const { loadWatchedPublicationsWithSales, updateWatchedPublicationsWithSales } =
-  collection();
-const { watchedPublicationsWithSales } = storeToRefs(collection());
+const emit = defineEmits<{
+  (e: "toggled"): void;
+}>();
 
-const key = $computed(() => issuecode || publicationcode || "");
-
-const isWatched = $computed(() =>
-  watchedPublicationsWithSales.value?.includes(key),
-);
 const isPublicationWatchedButNotIssuecode = $computed(
-  () =>
-    !isWatched &&
-    publicationcode &&
-    watchedPublicationsWithSales.value?.includes(publicationcode),
+  () => isPublicationWatched && isIssue,
 );
 const buttonTooltipText = $computed(() =>
   $t(
     isWatched
-      ? issuecode === null
+      ? !isIssue
         ? "Cliquez ici pour ne plus voir les numéros que vous ne possédez pas de ce magazine qui sont en vente"
         : "Cliquez ici pour ne plus voir les propositions de vente de ce numéro"
-      : issuecode === null
+      : !isIssue
         ? "Cliquez ici pour voir les numéros que vous ne possédez pas de ce magazine qui sont en vente !"
         : isPublicationWatchedButNotIssuecode
           ? "Vous surveillez déjà tous les numéros de ce magazine. Cliquez sur 'Surveillé' en face du titre du magazine pour ne surveiller que certains numéros de ce magazine."
           : "Cliquez ici pour surveiller les propositions de vente de ce numéro !",
   ),
 );
-
-if (publicationcode) {
-  loadWatchedPublicationsWithSales(true);
-}
-
-const toggleArrayItem = (a: string[], v: string) => {
-  const i = a.indexOf(v);
-  if (i === -1) a.push(v);
-  else a.splice(i, 1);
-};
-
-const toggleWatchedPublication = async () => {
-  if (watchedPublicationsWithSales.value) {
-    toggleArrayItem(watchedPublicationsWithSales.value, key);
-    await updateWatchedPublicationsWithSales();
-    await loadWatchedPublicationsWithSales(true);
-  }
-};
 </script>
 <style scoped lang="scss">
 .wrapper {
