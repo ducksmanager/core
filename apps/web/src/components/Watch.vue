@@ -23,20 +23,22 @@
         class="mx-1"
       />
       <span v-if="isWatched" class="text-light">{{ $t("Surveillé") }}</span>
-      <span v-else class="text-tertiary on-icon-hover">{{
-        $t("Surveiller")
-      }}</span>
+      <span
+        v-else-if="!isPublicationWatchedButNotIssuecode"
+        class="text-tertiary on-icon-hover"
+        >{{ $t("Surveiller") }}</span
+      >
     </b-button></span
   >
 </template>
 <script setup lang="ts">
 const {
-  issuecode = null,
-  publicationcode = null,
+  issuecode,
+  publicationcode,
   constantWidth = false,
 } = defineProps<{
-  publicationcode?: string;
   issuecode?: string;
+  publicationcode?: string;
   constantWidth?: boolean;
 }>();
 
@@ -67,12 +69,12 @@ const buttonTooltipText = $computed(() =>
         ? "Cliquez ici pour voir les numéros que vous ne possédez pas de ce magazine qui sont en vente !"
         : isPublicationWatchedButNotIssuecode
           ? "Vous surveillez déjà tous les numéros de ce magazine. Cliquez sur 'Surveillé' en face du titre du magazine pour ne surveiller que certains numéros de ce magazine."
-          : "Cliquez ici pour voir les propositions de vente de ce numéro !",
+          : "Cliquez ici pour surveiller les propositions de vente de ce numéro !",
   ),
 );
 
 if (publicationcode) {
-  loadWatchedPublicationsWithSales();
+  loadWatchedPublicationsWithSales(true);
 }
 
 const toggleArrayItem = (a: string[], v: string) => {
@@ -85,6 +87,7 @@ const toggleWatchedPublication = async () => {
   if (watchedPublicationsWithSales.value) {
     toggleArrayItem(watchedPublicationsWithSales.value, key);
     await updateWatchedPublicationsWithSales();
+    await loadWatchedPublicationsWithSales(true);
   }
 };
 </script>
@@ -107,13 +110,18 @@ const toggleWatchedPublication = async () => {
     cursor: not-allowed;
   }
 
-  &:not(.soft-disabled):hover,
-  &:not(.disabled):hover {
+  &:hover {
     color: white !important;
 
     .on-icon-hover {
       display: inline;
     }
+  }
+
+  &.soft-disabled:hover,
+  &.disabled:hover {
+    background-color: var(--bs-btn-bg) !important;
+    color: var(--bs-btn-color) !important;
   }
 
   .on-icon-hover {

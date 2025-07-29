@@ -249,7 +249,7 @@
                 </div>
                 <Watch
                   v-if="!readonly && (!userCopies.length || onSaleByOthers)"
-                  v-bind="{ issuecode }"
+                  v-bind="{ issuecode, publicationcode }"
                   :constant-width="onSaleByOthers"
                 />
                 <div v-if="!readonly" class="issue-check">
