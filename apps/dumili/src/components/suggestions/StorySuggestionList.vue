@@ -10,15 +10,16 @@
   >
     <template #default="{ suggestion, location }">
       <b-row class="w-100" style="height: 100px">
-        <b-col cols="6" class="d-flex justify-content-center">
-          <b-img
-            v-if="storyUrls[suggestion.storycode]"
-            class="w-75"
-            :src="
-              inducksCoverRoot.replace('f_auto', 'c_crop,h_0.5,x_0,w_1') +
-              storyUrls[suggestion.storycode]
-            "
-        /></b-col>
+        <b-col
+          cols="6"
+          class="d-flex justify-content-center story-first-page"
+          :style="{
+            backgroundImage: `url(${inducksCoverRoot.replace('f_auto', 'c_crop,h_0.5,x_0,w_1') + storyUrls[suggestion.storycode]})`,
+          }"
+          @mousemove="handleImageMouseMove"
+          @mouseleave="handleImageLeave"
+        >
+        </b-col>
         <b-col
           cols="6"
           class="d-flex flex-column justify-content-center text-wrap"
@@ -183,6 +184,25 @@ const acceptStory = async (storycode: storySuggestion["storycode"] | null) => {
   }
 };
 
+const handleImageMouseMove = (event: MouseEvent) => {
+  const target = event.currentTarget as HTMLElement;
+  const rect = target.getBoundingClientRect();
+  const mouseY = event.clientY - rect.top;
+  const elementHeight = rect.height;
+
+  // Calculate percentage from top (0 = top, 1 = bottom)
+  const percentage = Math.max(0, Math.min(1, mouseY / elementHeight));
+
+  // Convert percentage to background position (0% = top, 100% = bottom)
+  const backgroundPosition = `center ${percentage * 100}%`;
+  target.style.backgroundPosition = backgroundPosition;
+};
+
+const handleImageLeave = (event: Event) => {
+  const target = event.target as HTMLElement;
+  target.style.backgroundPosition = "top center";
+};
+
 watch(
   () => entry.value.acceptedStory?.storycode || null,
   (storycode) => {
@@ -190,3 +210,11 @@ watch(
   },
 );
 </script>
+
+<style scoped lang="scss">
+.story-first-page {
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: top center;
+}
+</style>

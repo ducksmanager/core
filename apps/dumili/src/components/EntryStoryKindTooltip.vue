@@ -38,7 +38,7 @@
           })) || []
         "
         ><template #empty>{{ $t("Aucune case détectée") }}</template>
-        <template #cell(storyKindRows)="row">
+        <template #cell(kind)="row">
           <story-kind-badge
             :kind="row.item.storyKindRows?.kind" /></template></b-table
       ><br />

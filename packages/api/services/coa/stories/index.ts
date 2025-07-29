@@ -19,14 +19,16 @@ export default {
             },
           }),
           prismaCoa.$queryRaw<{ storycode: string; url: string }[]>`
-      select s.storycode, CONCAT('webusers/webusers/', url) AS url
-      from inducks_story s
-              inner join coa.inducks_storyversion sv on s.originalstoryversioncode = sv.storyversioncode
-              inner join coa.inducks_entry e using (storyversioncode)
-              inner join coa.inducks_entryurl eu using (entrycode)
-      where s.storycode IN (${Prisma.join(storycodes)})
-        and eu.sitecode = 'webusers'
-      group by s.storycode`,
+            SELECT s.storycode,
+                   MIN(CONCAT('webusers/webusers/', eu.url)) AS url
+            FROM inducks_story s
+                     INNER JOIN coa.inducks_storyversion sv ON s.storycode = sv.storycode
+                     INNER JOIN coa.inducks_entry e USING (storyversioncode)
+                     INNER JOIN coa.inducks_entryurl eu USING (entrycode)
+            WHERE sv.storycode = s.storycode
+              AND s.storycode IN (${Prisma.join(storycodes)})
+              AND eu.sitecode = 'webusers'
+            GROUP BY s.storycode`,
         ])
           .then(([stories, storyUrls]) => ({
             stories: stories.groupBy("storycode"),
