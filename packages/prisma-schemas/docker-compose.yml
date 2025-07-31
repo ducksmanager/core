@@ -7,7 +7,7 @@ services:
       - db:/var/lib/mysql
       - ./schema.sql:/docker-entrypoint-initdb.d/schema.sql:ro
     ports:
-      - "64999:3306"
+      - "127.0.0.1:64999:3306"
     env_file:
       - .env
     command:
