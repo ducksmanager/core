@@ -83,11 +83,15 @@ const { t: $t } = useI18n();
 const { auth: authEvents } = inject(socketInjectionKey)!;
 
 const signup = async () => {
-  const response = await authEvents.signup({
-    username,
-    password,
-    email,
-  });
+  const response = await authEvents
+    .signup({
+      username,
+      password,
+      email,
+    })
+    .catch((e) => {
+      error = e;
+    });
   if (typeof response === "string") {
     Cookies.set("token", response, {
       domain: import.meta.env.VITE_COOKIE_DOMAIN,

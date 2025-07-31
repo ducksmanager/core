@@ -77,7 +77,9 @@ const login = async () => {
     (e) => {
       error = e;
     },
-  );
+  ).catch((e) => {
+    error = e;
+  });
 };
 
 watch(
