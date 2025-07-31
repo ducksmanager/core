@@ -49,7 +49,7 @@ dotenv.config({
   path: "./.env",
 });
 
-if (process.env.NODE_ENV === "production") {
+if (process.env.SENTRY_DSN) {
   Sentry.init({
     dsn: process.env.SENTRY_DSN,
     tracesSampleRate: 1.0,

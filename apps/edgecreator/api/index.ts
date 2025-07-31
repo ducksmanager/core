@@ -36,7 +36,7 @@ class ServerWithUser extends Server<
   return int ?? this.toString();
 };
 
-if (process.env.NODE_ENV === "production") {
+if (process.env.SENTRY_DSN) {
   Sentry.init({
     dsn: process.env.SENTRY_DSN,
   });

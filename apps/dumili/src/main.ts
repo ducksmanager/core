@@ -49,7 +49,7 @@ const app = createApp(App)
 
 app.mount("#app");
 
-if (process.env.NODE_ENV === "production") {
+if (process.env.SENTRY_DSN) {
   Sentry.init({
     app,
     dsn: process.env.VITE_SENTRY_DSN,

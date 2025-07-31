@@ -41,7 +41,7 @@ const app = createApp(App)
 
 app.mount("#app");
 
-if (process.env.NODE_ENV === "production") {
+if (process.env.SENTRY_DSN) {
   Sentry.init({
     app,
     dsn: "https://a225a6550b8c4c07914327618685a61c@sentry.ducksmanager.net/1385898",
