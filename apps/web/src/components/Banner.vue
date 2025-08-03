@@ -3,6 +3,7 @@
     <router-link :to="user ? '/collection/show' : '/'">
       <img :src="getImagePath('logo_small.png')" alt="DucksManager" />
     </router-link>
+    <slot />
   </div>
 </template>
 
@@ -24,12 +25,11 @@ div {
   height: 180px;
 
   &.small {
+    height: 50px;
     img {
       height: 50px;
-      top: 0;
-      position: fixed;
-      right: 10px;
     }
+    background-color: rgb(61, 75, 95);
   }
 
   a {

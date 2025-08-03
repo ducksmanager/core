@@ -900,8 +900,8 @@ importers:
         specifier: ^5.3.7
         version: 5.3.7(@popperjs/core@2.11.8)
       bootstrap-vue-next:
-        specifier: ^0.26.30
-        version: 0.26.30(@floating-ui/vue@1.1.6(vue@3.5.18(typescript@5.8.3)))(@vueuse/core@12.8.2(typescript@5.8.3))(vue-router@4.5.1(vue@3.5.18(typescript@5.8.3)))(vue@3.5.18(typescript@5.8.3))
+        specifier: ^0.30.4
+        version: 0.30.4(@floating-ui/vue@1.1.6(vue@3.5.18(typescript@5.8.3)))(@vueuse/core@12.8.2(typescript@5.8.3))(vue-router@4.5.1(vue@3.5.18(typescript@5.8.3)))(vue@3.5.18(typescript@5.8.3))
       chart.js:
         specifier: ^4.5.0
         version: 4.5.0
@@ -9083,8 +9083,8 @@ packages:
   vue-component-type-helpers@2.2.12:
     resolution: {integrity: sha512-YbGqHZ5/eW4SnkPNR44mKVc6ZKQoRs/Rux1sxC6rdwXb4qpbOSYfDr9DsTHolOTGmIKgM9j141mZbBeg05R1pw==}
 
-  vue-component-type-helpers@3.0.4:
-    resolution: {integrity: sha512-WtR3kPk8vqKYfCK/HGyT47lK/T3FaVyWxaCNuosaHYE8h9/k0lYRZ/PI/+T/z2wP+uuNKmL6z30rOcBboOu/YA==}
+  vue-component-type-helpers@3.0.5:
+    resolution: {integrity: sha512-uoNZaJ+a1/zppa/Vgmi8zIOP2PHXDN2rT8NyF+zQRK6ZG94lNB9prcV0GdLJbY9i9lrD47JOVIH92SaiA7oJ1A==}
 
   vue-cropperjs@5.0.0:
     resolution: {integrity: sha512-RhnC8O33uRZNkn74aiHZwNHnBJOXWlS4P6gsRI0lw4cZlWjKSCywZI9oSI9POlIPI6OYv30jvnHMXGch85tw7w==}
@@ -11598,7 +11598,7 @@ snapshots:
       storybook: 9.0.18(@testing-library/dom@10.4.0)(prettier@3.6.2)
       type-fest: 2.19.0
       vue: 3.5.18(typescript@5.8.3)
-      vue-component-type-helpers: 3.0.4
+      vue-component-type-helpers: 3.0.5
 
   '@szmarczak/http-timer@4.0.6':
     dependencies:
@@ -12954,6 +12954,14 @@ snapshots:
   boolean@3.2.0: {}
 
   bootstrap-vue-next@0.26.30(@floating-ui/vue@1.1.6(vue@3.5.18(typescript@5.8.3)))(@vueuse/core@12.8.2(typescript@5.8.3))(vue-router@4.5.1(vue@3.5.18(typescript@5.8.3)))(vue@3.5.18(typescript@5.8.3)):
+    dependencies:
+      vue: 3.5.18(typescript@5.8.3)
+    optionalDependencies:
+      '@floating-ui/vue': 1.1.6(vue@3.5.18(typescript@5.8.3))
+      '@vueuse/core': 12.8.2(typescript@5.8.3)
+      vue-router: 4.5.1(vue@3.5.18(typescript@5.8.3))
+
+  bootstrap-vue-next@0.30.4(@floating-ui/vue@1.1.6(vue@3.5.18(typescript@5.8.3)))(@vueuse/core@12.8.2(typescript@5.8.3))(vue-router@4.5.1(vue@3.5.18(typescript@5.8.3)))(vue@3.5.18(typescript@5.8.3)):
     dependencies:
       vue: 3.5.18(typescript@5.8.3)
     optionalDependencies:
@@ -18144,7 +18152,7 @@ snapshots:
 
   vue-component-type-helpers@2.2.12: {}
 
-  vue-component-type-helpers@3.0.4: {}
+  vue-component-type-helpers@3.0.5: {}
 
   vue-cropperjs@5.0.0(vue@3.5.18(typescript@5.8.3)):
     dependencies:

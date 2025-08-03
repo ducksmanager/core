@@ -1,12 +1,45 @@
 <template>
-  <NavigationMenu v-if="collectionMenu" :menu="collectionMenu" />
-  <NavigationMenu v-if="publicCollectionMenu" :menu="publicCollectionMenu" />
-  <NavigationItem
-    v-for="item in otherItems"
-    :key="item.title"
-    :is-in-sub-menu="false"
-    :item="item"
-  />
+  <nav
+    class="navbar navbar-expand-md navbar-dark flex-row justify-content-between"
+  >
+    <div class="d-flex w-100 flex-row align-items-center">
+      <b-navbar-brand class="d-md-none d-flex position-absolute vw-100">
+        <Banner
+          small
+          :classes="{
+            'position-fixed': true,
+            'w-100': true,
+            'top-0': true,
+          }"
+          ><SwitchLocale />
+        </Banner>
+      </b-navbar-brand>
+      <button
+        v-b-toggle="'nav-collapse'"
+        class="navbar-toggler d-md-none"
+        type="button"
+      >
+        <span class="navbar-toggler-icon" />
+      </button>
+      <b-collapse
+        id="nav-collapse"
+        is-nav
+        class="flex-column align-items-stretch"
+      >
+        <NavigationMenu v-if="collectionMenu" :menu="collectionMenu" />
+        <NavigationMenu
+          v-if="publicCollectionMenu"
+          :menu="publicCollectionMenu"
+        />
+        <NavigationItem
+          v-for="item in otherItems"
+          :key="item.title"
+          :is-in-sub-menu="false"
+          :item="item"
+        />
+      </b-collapse>
+    </div>
+  </nav>
 </template>
 
 <script setup lang="ts">

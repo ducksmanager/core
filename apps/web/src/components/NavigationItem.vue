@@ -5,23 +5,25 @@
     </span>
     {{ item.title }}
   </DefineTemplate>
-  <li
-    class="d-flex align-items-center"
-    :class="{
-      'sub-menu-item': isInSubMenu,
-      active: isActive,
-    }"
-  >
-    <router-link v-if="'route' in item" :to="item.route!">
-      <ReuseTemplate
-    /></router-link>
-    <span v-else-if="'onClick' in item" @click="item.onClick">
-      <ReuseTemplate />
-    </span>
-    <span v-else :v-b-toggle="item.title">
-      <ReuseTemplate />
-    </span>
-  </li>
+  <BNavbarNav>
+    <BNavItem
+      class="d-flex align-items-center w-100"
+      :class="{
+        'sub-menu-item': isInSubMenu,
+        active: isActive,
+      }"
+    >
+      <router-link v-if="'route' in item" :to="item.route!">
+        <ReuseTemplate
+      /></router-link>
+      <span v-else-if="'onClick' in item" @click="item.onClick">
+        <ReuseTemplate />
+      </span>
+      <span v-else :v-b-toggle="item.title">
+        <ReuseTemplate />
+      </span>
+    </BNavItem>
+  </BNavbarNav>
 </template>
 <script setup lang="ts">
 import type { NavigationItem } from "./NavigationMenu.vue";
@@ -62,6 +64,7 @@ const isActive = computed(() =>
 }
 li {
   line-height: 25px;
+  padding: 0 10px;
   cursor: pointer;
 
   &:hover {
@@ -70,7 +73,7 @@ li {
 
   &.active,
   &.active a {
-    color: #c88964;
+    color: #c88964 !important;
   }
 
   a,
@@ -78,7 +81,7 @@ li {
     display: flex;
     align-items: center;
     text-decoration: none !important;
-    color: inherit !important;
+    color: white !important;
     border-bottom: 0 !important;
     margin-left: 1.5rem;
 
@@ -89,11 +92,15 @@ li {
   }
 
   &.sub-menu-item {
-    background-color: #181c20;
+    background-color: rgb(24, 28, 32);
     border: none;
     border-bottom: 1px solid #23282e;
     padding-left: 1.5rem;
     margin-left: 0;
+
+    @media (max-width: 767px) {
+      background-color: rgba(24, 28, 32, 0.9);
+    }
 
     svg {
       left: 2rem;
@@ -103,7 +110,7 @@ li {
 
   &:hover {
     position: relative;
-    background-color: #4f5b69;
+    background-color: rgba(79, 91, 105, 0.9);
     -webkit-transition: all 0.1s ease;
     -moz-transition: all 0.1s ease;
     -o-transition: all 0.1s ease;

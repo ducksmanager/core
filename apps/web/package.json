@@ -28,7 +28,7 @@
     "@unhead/vue": "^1.11.20",
     "@vueuse/core": "^12.8.2",
     "bootstrap": "^5.3.7",
-    "bootstrap-vue-next": "^0.26.30",
+    "bootstrap-vue-next": "^0.30.4",
     "chart.js": "^4.5.0",
     "dayjs": "^1.11.13",
     "js-cookie": "^3.0.5",

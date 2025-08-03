@@ -1,7 +1,7 @@
 <template>
-  <ul class="menu-content collapse show pb-3">
+  <ul class="menu-content collapse show pb-md-3">
     <NavigationItem :item="menu" :is-in-sub-menu="false" />
-    <b-collapse :id="menu.title" :model-value="true" class="mb-2">
+    <b-collapse :id="menu.title" :model-value="true" class="mb-md-2">
       <ul class="sub-menu">
         <NavigationItem
           v-for="item in menu.items"
@@ -57,7 +57,9 @@ defineProps<{
 }
 
 ul {
-  background-color: #3d4b5f;
+  @media (max-width: 767px) {
+    background-color: rgba(46, 53, 61, 0.9);
+  }
   list-style: none;
   padding: 0;
   margin: 0;

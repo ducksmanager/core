@@ -21,30 +21,11 @@
       </div>
     </div>
     <Navigation v-once />
-    <nav v-once class="navbar navbar-dark d-block d-md-none">
-      <div class="container-fluid">
-        <popper placement="bottom" teleport="body">
-          <template #content>
-            <Navigation />
-          </template>
-          <button class="navbar-toggler" type="button">
-            <span class="navbar-toggler-icon" />
-          </button>
-        </popper>
-
-        <a class="navbar-brand" href="#">
-          <SwitchLocale />
-          <Banner small
-        /></a>
-      </div>
-    </nav>
     <RecentEvents />
   </div>
 </template>
 
 <script setup lang="ts">
-import Popper from "@bperel/vue3-popper-teleport";
-
 const { getImagePath } = images();
 const { points } = storeToRefs(users());
 
@@ -104,41 +85,23 @@ watch(
 }
 
 @media (max-width: 767px) {
-  #menu {
-    overflow-y: hidden;
-    position: fixed;
-    width: 100%;
-    height: 38px;
-    margin-bottom: 10px;
-    opacity: 0.95;
-    outline: 2px solid grey;
-
-    .toggle-btn {
-      display: block;
-      cursor: pointer;
-      position: absolute;
-      right: 15px;
-      top: 10px;
-      z-index: 10 !important;
-      padding: 3px;
-      width: 40px;
-      text-align: center;
-    }
-  }
-
   #medals_and_login {
     display: none;
   }
 
-  .navbar {
-    height: main.$navbar-height;
-
-    .navbar-brand {
+  :deep(.navbar) {
+    .navbar-toggler {
+      box-shadow: none;
       position: fixed;
+      margin: 5px;
+      top: 0;
+      border-color: rgba(255, 255, 255, 0.5);
     }
 
-    .navbar-toggler {
-      border-color: rgba(255, 255, 255, 0.5);
+    .navbar-collapse {
+      position: fixed;
+      top: 40px;
+      background-color: rgba(46, 53, 61, 0.9);
     }
   }
 
