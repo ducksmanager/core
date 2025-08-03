@@ -6,6 +6,7 @@ import "bootstrap-vue-next/dist/bootstrap-vue-next.css";
 
 import * as Sentry from "@sentry/vue";
 import { createHead } from "@unhead/vue";
+import { createBootstrap } from "bootstrap-vue-next";
 import Cookies from "js-cookie";
 import { SocketClient } from "socket-call-client";
 // @ts-ignore
@@ -35,6 +36,7 @@ const store = createPinia();
 const app = createApp(App)
   .use(i18n("fr", localStorage.getItem("locale") || "fr", { en }).instance)
   .use(store)
+  .use(createBootstrap())
   .use(contextmenu)
   .use(head)
   .use(router)
