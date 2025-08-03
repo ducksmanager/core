@@ -53,7 +53,7 @@ export default () => {
           },
           ...optionObjectToArray(
             JSON.parse(
-              group.getElementsByTagName("metadata")[0].textContent!,
+              group.getElementsByTagName("metadata")[0].textContent,
             ) as Record<string, OptionValue>,
           ).map(({ optionName, optionValue }) => ({
             optionName,

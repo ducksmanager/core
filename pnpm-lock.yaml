@@ -331,8 +331,8 @@ importers:
         specifier: ^5.3.7
         version: 5.3.7(@popperjs/core@2.11.8)
       bootstrap-vue-next:
-        specifier: ^0.26.30
-        version: 0.26.30(@floating-ui/vue@1.1.6(vue@3.5.18(typescript@5.9.2)))(@vueuse/core@12.8.2(typescript@5.9.2))(vue-router@4.5.1(vue@3.5.18(typescript@5.9.2)))(vue@3.5.18(typescript@5.9.2))
+        specifier: ^0.30.4
+        version: 0.30.4(@floating-ui/vue@1.1.6(vue@3.5.18(typescript@5.9.2)))(@vueuse/core@12.8.2(typescript@5.9.2))(vue-router@4.5.1(vue@3.5.18(typescript@5.9.2)))(vue@3.5.18(typescript@5.9.2))
       js-cookie:
         specifier: ^3.0.5
         version: 3.0.5
@@ -616,8 +616,8 @@ importers:
         specifier: ^5.3.7
         version: 5.3.7(@popperjs/core@2.11.8)
       bootstrap-vue-next:
-        specifier: ^0.26.30
-        version: 0.26.30(@floating-ui/vue@1.1.6(vue@3.5.18(typescript@5.9.2)))(@vueuse/core@12.8.2(typescript@5.9.2))(vue-router@4.5.1(vue@3.5.18(typescript@5.9.2)))(vue@3.5.18(typescript@5.9.2))
+        specifier: ^0.30.4
+        version: 0.30.4(@floating-ui/vue@1.1.6(vue@3.5.18(typescript@5.9.2)))(@vueuse/core@12.8.2(typescript@5.9.2))(vue-router@4.5.1(vue@3.5.18(typescript@5.9.2)))(vue@3.5.18(typescript@5.9.2))
       cropperjs:
         specifier: ^1.6.2
         version: 1.6.2
@@ -4494,21 +4494,6 @@ packages:
   boolean@3.2.0:
     resolution: {integrity: sha512-d0II/GO9uf9lfUHH2BQsjxzRJZBdsjgsBiW4BvhWk/3qoKwQFjIDVN19PfX8F2D/r9PCMTtLWjYVCFrpeYUzsw==}
     deprecated: Package no longer supported. Contact Support at https://www.npmjs.com/support for more info.
-
-  bootstrap-vue-next@0.26.30:
-    resolution: {integrity: sha512-7AhqBMjGKKW/vS6D2qva9uZOjiOVgmyvCroYaBeppRsmpqoeWesWvfZ0AFhky+8QDI/A9gWlNOTHapHXLZ55vA==}
-    peerDependencies:
-      '@floating-ui/vue': '*'
-      '@vueuse/core': '*'
-      vue: ^3.5.13
-      vue-router: '*'
-    peerDependenciesMeta:
-      '@floating-ui/vue':
-        optional: true
-      '@vueuse/core':
-        optional: true
-      vue-router:
-        optional: true
 
   bootstrap-vue-next@0.30.4:
     resolution: {integrity: sha512-F5aTBYkHrXjUK2ont/VdsCpBifrP9YAPUA2+FUVgl1Ff481zfgYxBpJ9syFCFEFNdPsvertlP6gXaGAvpIXq3Q==}
@@ -12785,14 +12770,6 @@ snapshots:
   boolbase@1.0.0: {}
 
   boolean@3.2.0: {}
-
-  bootstrap-vue-next@0.26.30(@floating-ui/vue@1.1.6(vue@3.5.18(typescript@5.9.2)))(@vueuse/core@12.8.2(typescript@5.9.2))(vue-router@4.5.1(vue@3.5.18(typescript@5.9.2)))(vue@3.5.18(typescript@5.9.2)):
-    dependencies:
-      vue: 3.5.18(typescript@5.9.2)
-    optionalDependencies:
-      '@floating-ui/vue': 1.1.6(vue@3.5.18(typescript@5.9.2))
-      '@vueuse/core': 12.8.2(typescript@5.9.2)
-      vue-router: 4.5.1(vue@3.5.18(typescript@5.9.2))
 
   bootstrap-vue-next@0.30.4(@floating-ui/vue@1.1.6(vue@3.5.18(typescript@5.9.2)))(@vueuse/core@12.8.2(typescript@5.9.2))(vue-router@4.5.1(vue@3.5.18(typescript@5.9.2)))(vue@3.5.18(typescript@5.9.2)):
     dependencies:
