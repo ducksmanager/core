@@ -46,7 +46,7 @@ const app = createApp(App)
 
 app.mount("#app");
 
-if (process.env.SENTRY_DSN) {
+if (import.meta.env.SENTRY_DSN) {
   Sentry.init({
     integrations: [
       Sentry.vueIntegration({
