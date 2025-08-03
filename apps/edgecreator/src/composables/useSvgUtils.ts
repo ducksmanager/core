@@ -10,7 +10,7 @@ export default () => {
           node.nodeName === "metadata" &&
           node.attributes.getNamedItem("type")!.nodeValue === metadataType,
       )
-      .map((metadataNode) => metadataNode.textContent.trim());
+      .map((metadataNode) => metadataNode.textContent!.trim());
 
   const loadSvgFromString = async (
     issuecode: string,
