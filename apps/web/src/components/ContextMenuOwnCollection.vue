@@ -46,7 +46,7 @@
   </b-alert>
   <template v-else>
     <b-tabs
-      v-model.number="currentCopyIndex"
+      v-model:index="currentCopyIndex"
       nav-class="copies-tabs"
       @changed="
         (newTabs: any) => {
@@ -94,7 +94,10 @@
               userId: user!.id,
               creationDate: new Date(),
               ...defaultCopyState
-            } as IssueWithPublicationcodeOptionalId)
+            } as IssueWithPublicationcodeOptionalId);
+            nextTick(() => {
+              currentCopyIndex = initialCopies!.copies.length - 1;
+            });
           "
         >
           {{ $t("Ajouter un exemplaire") }}
