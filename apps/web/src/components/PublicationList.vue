@@ -10,7 +10,7 @@
         class="navbar-toggler"
         type="button"
       >
-        <span class="navbar-toggler-icon" />
+        <i-bi-list />
       </button>
       <a class="navbar-brand" :href="publicationUrlRoot">
         {{ title }}

@@ -1,6 +1,6 @@
 <template>
   <nav
-    class="navbar navbar-expand-md navbar-dark flex-row justify-content-between"
+    class="vw-100 navbar navbar-expand-md navbar-dark flex-row justify-content-between"
   >
     <div class="d-flex w-100 flex-row align-items-center">
       <b-navbar-brand class="d-md-none d-flex position-absolute vw-100">
@@ -19,7 +19,7 @@
         class="navbar-toggler d-md-none"
         type="button"
       >
-        <span class="navbar-toggler-icon" />
+        <i-bi-list />
       </button>
       <b-collapse
         id="nav-collapse"
