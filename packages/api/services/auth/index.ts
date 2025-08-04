@@ -89,17 +89,18 @@ const listenEvents = () => ({
               .createHash("sha1")
               .update(password)
               .digest("hex");
+            const email = (data as { data: string }).data;
             await prismaClient.user.updateMany({
               data: {
                 password: hashedPassword,
               },
               where: {
-                email: (data as { payload: string }).payload,
+                email
               },
             });
             const user = (await prismaClient.user.findFirst({
               where: {
-                email: (data as { payload: string }).payload,
+                email
               },
             }))!;
 
