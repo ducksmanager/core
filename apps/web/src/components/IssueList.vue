@@ -329,10 +329,6 @@
           contextmenuInstance!.hide();
           selected = [];
         "
-        @close="
-          contextMenuKey = `context-menu-${Math.random()}`;
-          contextmenuInstance!.hide();
-        "
         v-on="
           contextMenuComponentName === 'context-menu-on-sale-by-others'
             ? {

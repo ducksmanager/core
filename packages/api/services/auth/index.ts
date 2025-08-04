@@ -108,7 +108,6 @@ const listenEvents = () => ({
           }
         },
       );
-      resolve({ error: "Something went wrong" } as const);
     }),
 
   getCsrf: async () => "",

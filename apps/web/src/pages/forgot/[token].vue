@@ -8,6 +8,7 @@ meta:
     <b-alert v-if="initError" :model-value="true" variant="danger">{{
       initError
     }}</b-alert>
+
     <form v-else method="post" @submit.prevent="changePassword">
       <b-alert v-if="error" :model-value="true" variant="danger">{{
         error
@@ -36,6 +37,7 @@ import { socketInjectionKey } from "../../composables/useDmSocket";
 
 const { loadUser } = collection();
 const route = useRoute<"/forgot/[token]">();
+const router = useRouter();
 
 let initError = $ref<string>();
 let error = $ref<string>();
@@ -60,9 +62,17 @@ const changePassword = async () => {
   if ("error" in response) {
     error = response.error!;
   } else {
-    Cookies.set("token", token.value, {
+    Cookies.set("token", response.token, {
       domain: import.meta.env.VITE_COOKIE_DOMAIN,
     });
+    window.location.replace(
+      router.resolve({
+        name: "/collection/show/[...all]",
+        params: {
+          all: "_",
+        },
+      }).href,
+    );
   }
 };
 
