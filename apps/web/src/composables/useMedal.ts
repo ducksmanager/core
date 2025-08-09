@@ -1,8 +1,4 @@
-const MEDAL_LEVELS: { [contribution: string]: { [level: number]: number } } = {
-  edge_photographer: { 1: 50, 2: 150, 3: 600 },
-  edge_designer: { 1: 20, 2: 70, 3: 150 },
-  duckhunter: { 1: 1, 2: 3, 3: 15 },
-};
+import MEDAL_LEVELS from "~dm-types/MedalLevels";
 
 const RADIUS = 42;
 
