@@ -9,7 +9,7 @@ export default () =>
     () => route.hash,
     (newValue) => {
       const toastError = (message: string) =>
-        useToastController().show!({
+        useToastController().show({
           props: {
             body: message,
             title: "Error",

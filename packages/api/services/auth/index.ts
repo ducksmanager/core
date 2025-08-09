@@ -95,12 +95,12 @@ const listenEvents = () => ({
                 password: hashedPassword,
               },
               where: {
-                email
+                email,
               },
             });
             const user = (await prismaClient.user.findFirst({
               where: {
-                email
+                email,
               },
             }))!;
 

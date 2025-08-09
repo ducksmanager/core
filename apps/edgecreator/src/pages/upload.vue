@@ -178,7 +178,7 @@ const initialContributors = computed(
 const addCrop = () => {
   const data = cropper.value!.getData() as CropperData;
   if (data.height < data.width) {
-    useToastController().show!({
+    useToastController().show({
       props: {
         body: i18n
           .t(
