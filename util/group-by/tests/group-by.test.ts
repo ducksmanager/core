@@ -77,11 +77,11 @@ describe("Array.groupBy", () => {
   });
 
   test("groups by field name with no specific value and a callback", () => {
-    const result = testData.groupBy("name", null, ({ id }) => id * 3);
+    const result = testData.groupBy("name", null, ({ id }) => `ID: ${id}`);
 
     expect(result).toEqual({
-      John: 9,
-      Jane: 6,
+      John: "ID: 3",
+      Jane: "ID: 2",
     });
   });
 
