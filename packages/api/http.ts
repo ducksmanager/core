@@ -44,13 +44,25 @@ export default () =>
                           title: true,
                           oldestdate: true,
                           pages: true,
+                          price: true,
                         },
                         where: {
                           publicationcode,
                           issuenumber,
                         },
                       });
-                    const entries = await prismaCoa.inducks_entry.findMany({
+                      const publishers = (
+                        await prismaCoa.inducks_publishingjob.findMany({
+                          select: {
+                            issuecode: true,
+                            publisherid: true,
+                          },
+                          where: {
+                            issuecode: issue.issuecode,
+                          },
+                        })
+                      ).groupBy("issuecode", "publisherid[]");
+                    const entriesList = await prismaCoa.inducks_entry.findMany({
                       select: {
                         entrycode: true,
                         storyversioncode: true,
@@ -60,16 +72,14 @@ export default () =>
                         issuecode: issue.issuecode,
                       },
                     });
-                    const storyversioncodes = entries
+                    const storyversioncodes = entriesList
                       .map((entry) => entry.storyversioncode)
                       .filter(
-                        (
-                          storyversioncode,
-                        ): storyversioncode is string =>
+                        (storyversioncode): storyversioncode is string =>
                           storyversioncode !== null,
                       );
-                    const storyversions =
-                      (await prismaCoa.inducks_storyversion.findMany({
+                    const storyversions = (
+                      await prismaCoa.inducks_storyversion.findMany({
                         select: {
                           storyversioncode: true,
                           storycode: true,
@@ -80,8 +90,10 @@ export default () =>
                             in: storyversioncodes,
                           },
                         },
-                      })).groupBy('storyversioncode');
-                      const storyversionjobs = (await prismaCoa.inducks_storyjob.findMany({
+                      })
+                    ).groupBy("storyversioncode");
+                    const storyversionjobs = (
+                      await prismaCoa.inducks_storyjob.findMany({
                         select: {
                           storyversioncode: true,
                           personcode: true,
@@ -92,15 +104,55 @@ export default () =>
                             in: storyversioncodes,
                           },
                         },
-                      })).groupBy('storyversioncode', '[]');
+                      })
+                    ).groupBy("storyversioncode", "[]", ({ personcode, plotwritartink }) => ({
+                      personcode,
+                      plotwritartink,
+                    }));
+
+                    const storyversionAppearances = (
+                      await prismaCoa.inducks_appearance.findMany({
+                        select: {
+                          storyversioncode: true,
+                          charactercode: true,
+                        },
+                        where: {
+                          storyversioncode: {
+                            in: storyversioncodes,
+                          },
+                        },
+                      })
+                    ).groupBy("storyversioncode", "charactercode[]");
+
+                    const entries = Object.fromEntries(
+                      Object.entries(
+                        entriesList.groupBy(
+                          "entrycode",
+                          null,
+                          ({ title, storyversioncode }) => ({
+                            storyversioncode,
+                            title,
+                            publishers: publishers[issue.issuecode] || [],
+                            appearances:
+                              (storyversioncode &&
+                                storyversionAppearances[storyversioncode]) ||
+                              [],
+                            jobs:
+                              (storyversioncode &&
+                                storyversionjobs[storyversioncode]) ||
+                              [],
+                            storyversion:
+                              (storyversioncode &&
+                                storyversions[storyversioncode]) ||
+                              null,
+                          }),
+                        ),
+                      ).sort(([a], [b]) => a.localeCompare(b)),
+                    );
+
                     data = {
                       issue,
-                      entries: entries.groupBy('entrycode', '[]', ({title, storyversioncode}) => ({
-                        storyversioncode,
-                        title,
-                        jobs: storyversioncode && storyversionjobs[storyversioncode] || [],
-                        storyversion: storyversioncode && storyversions[storyversioncode] || null,
-                      })),
+                      entries,
                     };
                   } catch (error) {
                     res.writeHead(404);
@@ -176,7 +228,9 @@ export default () =>
         }
     }
 
-    res.writeHead("error" in data ? 500 : 200, { "Content-Type": "text/json" });
+    res.writeHead("error" in data ? 500 : 200, {
+      "Content-Type": "application/json",
+    });
     res.write(JSON.stringify(data));
     res.end();
   });
