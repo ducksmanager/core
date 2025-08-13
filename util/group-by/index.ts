@@ -27,6 +27,24 @@ type GroupByValueType<
         ? NestedValue<T, V>
         : never;
 
+type GroupByResultType<
+  T,
+  V extends null | "[]" | NestedKeyOf<T> | `${NestedKeyOf<T>}[]`,
+  R
+> = [R] extends [never]
+  ? GroupByValueType<T, V>
+  : V extends null
+    ? R
+    : V extends "[]"
+      ? R[]
+      : V extends `${infer U}[]`
+        ? U extends NestedKeyOf<T>
+          ? R[]
+          : never
+        : V extends NestedKeyOf<T>
+          ? R
+          : never;
+
 declare global {
   interface Array<T> {
     /**
@@ -84,7 +102,7 @@ declare global {
     groupBy<
       K extends null | (keyof T & (string | number)) | ((item: T) => string),
       V extends null | "[]" | NestedKeyOf<T> | `${NestedKeyOf<T>}[]` = null,
-      R = GroupByValueType<T, V>,
+      R = never,
     >(
       fieldName: K,
       valueFieldName?: V,
@@ -102,7 +120,7 @@ declare global {
         : K extends (item: T) => string
           ? string
           : T[K & (keyof T & (string | number))] & (string | number),
-      R
+      GroupByResultType<T, V, R>
     >;
   }
 }
