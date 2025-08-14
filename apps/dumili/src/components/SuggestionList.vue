@@ -2,8 +2,13 @@
   <div :class="classes">
     <b-dropdown
       class="position-static z-1"
+      style="width: calc(100% - 40px)"
       :menu-class="['border-white', ...extraMenuClass]"
-      :toggle-class="['text-wrap', ...(current ? itemClass(current) : [])]"
+      :toggle-class="[
+        'text-wrap',
+        'w-100',
+        ...(current ? itemClass(current) : []),
+      ]"
       ><b-dropdown-group
         v-for="(group, index) in [userSuggestions, aiSuggestions]"
         :key="index"
@@ -25,6 +30,7 @@
             ...((current?.id === suggestion.id &&
               selectedItemClass(suggestion)) ||
               []),
+            ...itemLinkClasses,
           ]"
           @click.stop="
             current = suggestion;
@@ -49,7 +55,10 @@
       ></template>
       <template #button-content>
         <slot v-if="showCustomizeForm" name="customize-text" />
-        <div v-else class="d-flex justify-content-between align-items-center">
+        <div
+          v-else
+          class="d-flex w-100 justify-content-between align-items-center"
+        >
           <slot
             v-if="current"
             v-bind="{ suggestion: current, location: 'button' }"
@@ -78,6 +87,7 @@ const current = defineModel<S | null>();
 
 const {
   class: classes = "",
+  itemLinkClasses = [],
   suggestions,
   isAiSource,
   itemClass = () => [],
@@ -86,6 +96,7 @@ const {
   extraMenuClass = [],
 } = defineProps<{
   class?: string;
+  itemLinkClasses?: string[];
   suggestions: S[];
   isAiSource: (suggestion: S) => boolean;
   itemClass?: (suggestion: S) => string[];

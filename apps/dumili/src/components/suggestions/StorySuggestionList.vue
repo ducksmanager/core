@@ -1,25 +1,16 @@
 <template>
   <suggestion-list
     v-model="entry.acceptedStory"
-    class="position-absolute top-0 d-flex flex-column justify-content-center align-items-center w-100 h-100"
+    class="position-absolute top-0 d-flex flex-column justify-content-center align-items-start w-100 h-100"
     :suggestions="entry.storySuggestions"
     :is-ai-source="({ aiStorySuggestionId }) => aiStorySuggestionId !== null"
     :show-customize-form="showEntrySelect"
     :extra-menu-class="['w-150', 'start-m50']"
+    :item-link-classes="['h-100p']"
     @toggle-customize-form="showEntrySelect = $event"
   >
     <template #default="{ suggestion, location }">
-      <b-row class="w-100" style="height: 100px">
-        <b-col
-          cols="6"
-          class="d-flex justify-content-center story-first-page"
-          :style="{
-            backgroundImage: `url(${inducksCoverRoot.replace('f_auto', 'c_crop,h_0.5,x_0,w_1') + storyUrls[suggestion.storycode]})`,
-          }"
-          @mousemove="handleImageMouseMove"
-          @mouseleave="handleImageLeave"
-        >
-        </b-col>
+      <b-row class="w-100">
         <b-col
           cols="6"
           class="d-flex flex-column justify-content-center text-wrap"
@@ -102,6 +93,16 @@
               /></template>
             </template>
           </Story>
+        </b-col>
+        <b-col
+          cols="6"
+          class="d-flex justify-content-center story-first-page"
+          :style="{
+            backgroundImage: `url(${inducksCoverRoot.replace('f_auto', 'c_crop,h_0.5,x_0,w_1') + storyUrls[suggestion.storycode]})`,
+          }"
+          @mousemove="handleImageMouseMove"
+          @mouseleave="handleImageLeave"
+        >
         </b-col>
       </b-row>
     </template>

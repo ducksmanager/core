@@ -6,7 +6,7 @@
     <template v-if="editable">
       <suggestion-list
         v-model="acceptedStoryKind"
-        class="position-absolute"
+        class="position-absolute w-100"
         :suggestions="entry.storyKindSuggestions"
         :is-ai-source="({ aiKumikoResultId }) => aiKumikoResultId !== null"
         :item-class="(suggestion) => [`kind-${suggestion.storyKindRows.kind}`]"
