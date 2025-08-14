@@ -44,53 +44,44 @@
           show-empty
           :empty-text="$t('Aucun texte détecté')"
         />
-        <h4>{{ $t("Histoires potentielles") }}</h4>
-        <template v-if="firstPageStorySearchResult">
-          <b-table
-            :fields="[
-              { key: 'storycode', label: $t('Code histoire') },
-              { key: 'title', label: $t('Titre') },
-            ]"
-            show-empty
-            :empty-text="$t('Aucune histoire trouvée')"
-            :items="
-              firstPageStorySearchResult.stories
-                .filter(
-                  (
-                    possibleStory
-                  ): possibleStory is typeof possibleStory & {
-                    aiStorySuggestion: {
-                      storySuggestion: { storycode: string };
-                    };
-                  } => !!possibleStory.aiStorySuggestion?.storySuggestion
-                )
-                .map(
-                  ({
-                    aiStorySuggestion: {
-                      storySuggestion: { storycode },
-                    },
-                  }) => ({
-                    storycode,
-                    title: storyDetails[storycode].title,
-                  })
-                )
-            "
-          >
-            <template #cell(storycode)="row">
-              <a
-                class="text-nowrap"
-                :href="`https://inducks.org/story.php?c=${encodeURIComponent(row.item.storycode)}`"
-                target="_blank"
-                >{{ row.item.storycode }}</a
-              ></template
-            ></b-table
-          ></template
-        ><template v-else>{{ $t("Non calculé") }}</template></template
-      >
-      <template v-else-if="!firstPage.image">{{
+      </template>
+      <template v-if="firstPageStorySearchResult">
+        <h4>{{ $t("Résultats de la recherche par image") }}</h4>
+        <b-table
+          :fields="[
+            { key: 'storycode', label: $t('Code histoire') },
+            { key: 'title', label: $t('Titre') },
+          ]"
+          show-empty
+          :empty-text="$t('Aucune histoire trouvée')"
+          :items="suggestedStories"
+        >
+          <template #cell(storycode)="row">
+            <a
+              class="text-nowrap"
+              :href="`https://inducks.org/story.php?c=${encodeURIComponent(row.item!.storycode)}`"
+              target="_blank"
+              >{{ row.item!.storycode }}</a
+            ></template
+          ><template #cell(title)="row">
+            {{ storyDetails[row.item!.storycode].title }}
+            <b-col
+              cols="6"
+              class="d-flex justify-content-center story-first-page"
+              :style="{
+            backgroundImage: `url(${inducksCoverRoot.replace('f_auto', 'c_crop,h_0.5,x_0,w_1') + storyUrls[row.item!.storycode]})`,
+          }"
+            >
+            </b-col>
+          </template> </b-table
+      ></template>
+      <template v-if="!firstPage.image">{{
         $t("Non calculé car la première page de l'entrée n'a pas d'image")
       }}</template>
-      <template v-else>{{ $t("Non calculé") }}</template></template
+      <template
+        v-else-if="!firstPageOcrResult && !firstPageStorySearchResult"
+        >{{ $t("Non calculé") }}</template
+      ></template
     ><template v-else>{{
       $t(
         "Aucune suggestion car cette entrée n'est pas une histoire ni une couverture.",
@@ -110,7 +101,8 @@ const { entry } = defineProps<{
 }>();
 
 const { indexation } = storeToRefs(suggestions());
-const { storyDetails } = storeToRefs(coa());
+const { storyUrls, storyDetails } = storeToRefs(coa());
+const { fetchStoryDetails } = coa();
 
 const { overlay } = storeToRefs(ui());
 
@@ -119,5 +111,34 @@ const firstPage = computed(() => getEntryPages(indexation.value!, entry.id)[0]);
 const firstPageOcrResult = computed(() => firstPage.value.image?.aiOcrResult);
 const firstPageStorySearchResult = computed(
   () => firstPage.value.image?.aiStorySearchResult,
+);
+
+const inducksCoverRoot = `https://res.cloudinary.com/${import.meta.env.VITE_CLOUDINARY_CLOUDNAME}/image/upload/f_auto/inducks-covers/`;
+
+const suggestedStories = computed(() =>
+  firstPageStorySearchResult.value?.stories
+    .map((possibleStory) =>
+      entry.storySuggestions.find(
+        ({ aiStorySuggestionId }) =>
+          aiStorySuggestionId === possibleStory.aiStorySuggestion?.id,
+      ),
+    )
+    .filter(
+      (
+        possibleStory,
+      ): possibleStory is typeof possibleStory & { storycode: string } =>
+        !!possibleStory,
+    ),
+);
+
+watch(
+  suggestedStories,
+  (value) => {
+    const storycodes = value?.map(({ storycode }) => storycode);
+    if (storycodes) {
+      fetchStoryDetails(storycodes);
+    }
+  },
+  { immediate: true },
 );
 </script>

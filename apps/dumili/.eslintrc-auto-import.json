@@ -36,6 +36,7 @@
     "IssueWithPublicationcodeOptionalId": true,
     "MaybeRef": true,
     "MaybeRefOrGetter": true,
+    "MedalLevels": true,
     "MedalPointsPerUser": true,
     "ModelSteps": true,
     "PropType": true,

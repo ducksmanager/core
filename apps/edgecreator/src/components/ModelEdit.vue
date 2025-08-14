@@ -1,7 +1,7 @@
 <template>
   <b-card id="edit-card" no-body>
     <b-tabs
-      v-model="editingStepStore.stepNumber"
+      v-model:index="editingStepStore.stepNumber"
       lazy
       pills
       card

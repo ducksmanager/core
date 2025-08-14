@@ -237,30 +237,69 @@ const createAiStorySuggestions = async (
           if ("error" in results) {
             console.error(results.error);
           } else {
-            const newAiResultId =
+            let aiResultId =
               (
                 await prisma.image.findUnique({
                   where: {
                     id: firstPageOfEntry.image.id,
                   },
                 })
-              )?.[`${field}Id`] ??
-              (
-                await (
-                  prisma[field] as unknown as {
-                    create: typeof prisma.aiOcrResult.create;
-                  }
-                ).create({
-                  data: {},
-                })
-              ).id;
+              )?.[`${field}Id`];
+
+            if (aiResultId) {
+              if (field === "aiOcrResult") {
+                await prisma.storySuggestion.deleteMany({
+                  where: {
+                    aiStorySuggestion: {
+                      aiOcrPossibleStory: {
+                        resultId: aiResultId,
+                      },
+                    },
+                  },
+                });
+                await prisma.aiOcrPossibleStory.deleteMany({
+                  where: {
+                    resultId: aiResultId,
+                  },
+                });
+              } else {
+                await prisma.storySuggestion.deleteMany({
+                  where: {
+                    aiStorySuggestion: {
+                      aiStorySearchPossibleStory: {
+                        resultId: aiResultId,
+                      },
+                    },
+                  },
+                });
+                await prisma.aiStorySearchPossibleStory.deleteMany({
+                  where: {
+                    resultId: aiResultId,
+                  },
+                });
+              }
+            } else {
+              if (field === "aiOcrResult") {
+                aiResultId = (
+                  await prisma.aiOcrResult.create({
+                    data: {},
+                  })
+                ).id;
+              } else {
+                aiResultId = (
+                  await prisma.aiStorySearchResult.create({
+                    data: {},
+                  })
+                ).id;
+              }
+            }
 
             await prisma.image.update({
               where: {
                 id: firstPageOfEntry.image.id,
               },
               data: {
-                [`${field}Id`]: newAiResultId,
+                [`${field}Id`]: aiResultId,
               },
             });
             if (!results.stories.length) {
@@ -294,7 +333,7 @@ const createAiStorySuggestions = async (
                             [field]: {
                               // aiOcrResult or aiStorySearchResult
                               connect: {
-                                id: newAiResultId,
+                                id: aiResultId,
                               },
                             },
                             score: story.score,

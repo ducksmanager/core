@@ -48,7 +48,7 @@ const app = createApp(App)
 
 app.mount("#app");
 
-if (import.meta.env.SENTRY_DSN) {
+if (import.meta.env.VITE_SENTRY_DSN) {
   Sentry.init({
     integrations: [
       Sentry.vueIntegration({
@@ -60,7 +60,7 @@ if (import.meta.env.SENTRY_DSN) {
       }),
     ],
     app,
-    dsn: "https://a225a6550b8c4c07914327618685a61c@sentry.ducksmanager.net/1385898",
+    dsn: import.meta.env.VITE_SENTRY_DSN,
     tracesSampleRate: 1.0,
   });
 }

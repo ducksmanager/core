@@ -53,7 +53,13 @@
             <h6 v-if="releaseDate">{{ $t("Sortie :") }} {{ releaseDate }}</h6>
             <h3>{{ $t("Table des matières") }}</h3>
           </template>
-          <b-tabs v-if="entries" v-model="currentTabIndex" pills card vertical>
+          <b-tabs
+            v-if="entries"
+            v-model:index="currentTabIndex"
+            pills
+            card
+            vertical
+          >
             <b-tab
               v-for="{
                 storycode,
