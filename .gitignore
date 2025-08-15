@@ -21,6 +21,7 @@
 apps/edges/edges
 !apps/edges/edges/.gitkeep
 covers
+covers-by-storycode
 dist
 dist-ssr
 local.properties
