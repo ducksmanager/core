@@ -60,7 +60,7 @@ WHERE sitecode = 'webusers'
       console.debug(`File already exists for ${relativePath}`);
     }
     else {
-      linkSync(path.join(root, relativePath), path.join(storycodeDir, file.name));
+      console.log(`ln -s '${path.join(root, relativePath)}' '${path.join(storycodeDir, file.name)}'`);
     }
     console.log(`Linked ${relativePath} to ${storycodeDir}`);
   }
