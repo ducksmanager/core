@@ -1,5 +1,6 @@
 import { createServer } from "http";
 import { parse } from "url";
+
 import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa/client";
 
 import { getUpdateFileUrl } from "./services/app";
@@ -51,17 +52,17 @@ export default () =>
                           issuenumber,
                         },
                       });
-                      const publishers = (
-                        await prismaCoa.inducks_publishingjob.findMany({
-                          select: {
-                            issuecode: true,
-                            publisherid: true,
-                          },
-                          where: {
-                            issuecode: issue.issuecode,
-                          },
-                        })
-                      ).groupBy("issuecode", "publisherid[]");
+                    const publishers = (
+                      await prismaCoa.inducks_publishingjob.findMany({
+                        select: {
+                          issuecode: true,
+                          publisherid: true,
+                        },
+                        where: {
+                          issuecode: issue.issuecode,
+                        },
+                      })
+                    ).groupBy("issuecode", "publisherid[]");
                     const entriesList = await prismaCoa.inducks_entry.findMany({
                       select: {
                         entrycode: true,
@@ -105,10 +106,14 @@ export default () =>
                           },
                         },
                       })
-                    ).groupBy("storyversioncode", "[]", ({ personcode, plotwritartink }) => ({
-                      personcode,
-                      plotwritartink,
-                    }));
+                    ).groupBy(
+                      "storyversioncode",
+                      "[]",
+                      ({ personcode, plotwritartink }) => ({
+                        personcode,
+                        plotwritartink,
+                      }),
+                    );
 
                     const storyversionAppearances = (
                       await prismaCoa.inducks_appearance.findMany({

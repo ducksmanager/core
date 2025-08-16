@@ -237,14 +237,13 @@ const createAiStorySuggestions = async (
           if ("error" in results) {
             console.error(results.error);
           } else {
-            let aiResultId =
-              (
-                await prisma.image.findUnique({
-                  where: {
-                    id: firstPageOfEntry.image.id,
-                  },
-                })
-              )?.[`${field}Id`];
+            let aiResultId = (
+              await prisma.image.findUnique({
+                where: {
+                  id: firstPageOfEntry.image.id,
+                },
+              })
+            )?.[`${field}Id`];
 
             if (aiResultId) {
               if (field === "aiOcrResult") {

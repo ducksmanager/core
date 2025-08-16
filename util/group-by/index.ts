@@ -30,7 +30,7 @@ type GroupByValueType<
 type GroupByResultType<
   T,
   V extends null | "[]" | NestedKeyOf<T> | `${NestedKeyOf<T>}[]`,
-  R
+  R,
 > = [R] extends [never]
   ? GroupByValueType<T, V>
   : V extends null
