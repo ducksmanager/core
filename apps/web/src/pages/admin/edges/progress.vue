@@ -146,7 +146,7 @@ const getEdgeUrl = (issuecode: string): string => {
   const [country, magazine] = publicationcode.split("/");
   return `${
     import.meta.env.VITE_EDGES_ROOT
-  }/${country}/gen/${magazine}.${issuenumber}.png`;
+  }/${country}/gen/${magazine}.${issuenumber.replaceAll(" ", "")}.png`;
 };
 const open = (inducksIssuecode: string) => {
   if (

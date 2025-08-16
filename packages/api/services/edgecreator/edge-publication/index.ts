@@ -58,7 +58,7 @@ export default () => ({
       edgeId,
       isNew,
       contributors,
-      url: `${process.env.VITE_EDGES_ROOT}/${country}/gen/${magazine}.${issuenumber}.png`,
+      url: `${process.env.VITE_EDGES_ROOT}/${country}/gen/${magazine}.${issuenumber.replaceAll(" ", "")}.png`,
     };
   },
 });

@@ -1,16 +1,14 @@
-import path from "path";
 import dotenv from "dotenv";
+import path from "path";
 
 dotenv.config({
   path: ".env",
 });
 
-import { existsSync, linkSync, mkdirSync, readdirSync } from "fs";
-import type {
-  inducks_storyversion,
-} from "~prisma-schemas/client_coa/client";
-import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa/client";
+import { existsSync, mkdirSync, readdirSync } from "fs";
 
+import type { inducks_storyversion } from "~prisma-schemas/client_coa/client";
+import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa/client";
 
 declare global {
   interface ImportMeta {
@@ -39,7 +37,7 @@ for (const file of files) {
   const storycode = (
     await prismaCoa.$queryRaw<
       {
-        storycode: inducks_storyversion['storycode'];
+        storycode: inducks_storyversion["storycode"];
       }[]
     >`
         SELECT sv.storycode
@@ -58,13 +56,13 @@ WHERE sitecode = 'webusers'
     }
     if (existsSync(path.join(storycodeDir, file.name))) {
       console.debug(`File already exists for ${relativePath}`);
-    }
-    else {
-      console.log(`ln -s '${path.join(root, relativePath)}' '${path.join(storycodeDir, file.name)}'`);
+    } else {
+      console.log(
+        `ln -s '${path.join(root, relativePath)}' '${path.join(storycodeDir, file.name)}'`,
+      );
     }
     console.log(`Linked ${relativePath} to ${storycodeDir}`);
-  }
-  else {
+  } else {
     console.debug(`Storycode not found for ${relativePath}`);
   }
 }

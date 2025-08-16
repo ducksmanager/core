@@ -138,7 +138,7 @@ const edgeUrl = computed(
     `${import.meta.env.VITE_EDGES_ROOT}${issue.value.publicationcode.replace(
       "/",
       "/gen/",
-    )}.${issue.value.issuenumber}.png`,
+    )}.${issue.value.issuenumber.replaceAll(" ", "")}.png`,
 );
 const currentIssueEntryDetails = computed(
   () => issueDetails.value?.[issuecode],
@@ -181,13 +181,13 @@ const bookClosed = () => {
 
 watch(currentPage, (newValue) => {
   currentTabIndex.value = entries.value?.findIndex(
-    (entry) => entry.storycode === pagesWithUrl.value[newValue].storycode,
+    (entry) => entry.storycode === pagesWithUrl.value[newValue]?.storycode,
   );
 });
 
 watch(currentTabIndex, (newValue) => {
   currentPage.value = pagesWithUrl.value.findIndex(
-    (page) => page.storycode === entries.value[newValue].storycode,
+    (page) => page.storycode === entries.value[newValue]?.storycode,
   );
 });
 

@@ -59,7 +59,7 @@ export default () => ({
 
         console.log(`Uploading edge with ID ${id} and slug ${slug}...`);
         await cloudinaryV2.uploader.upload(
-          `${process.env.VITE_EDGES_ROOT}${countrycode}/gen/${magazinecode}.${issuenumber}.png`,
+          `${process.env.VITE_EDGES_ROOT}${countrycode}/gen/${magazinecode}.${issuenumber.replaceAll(" ", "")}.png`,
           {
             public_id: slug!,
           },
