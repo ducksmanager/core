@@ -23,7 +23,26 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
+          lfs: false # Don't fetch LFS during checkout
           fetch-depth: 0
+        id: checkout
+
+      - name: Fetch required LFS objects
+        run: |
+          echo "Fetching required LFS objects..."
+          git lfs install
+
+          # Try to fetch the LFS objects
+          echo "Attempting to fetch LFS objects..."
+          git lfs pull origin ${{ github.sha }} --include="packages/api/services/story-search/model/*.onnx" || {
+            echo "LFS pull failed, trying alternative approach..."
+            # If LFS pull fails, try to get the file from git directly
+            git checkout ${{ github.sha }} -- packages/api/services/story-search/model/comic_embedding_model.onnx || true
+          }
+
+          # Verify the model file is available and has content
+          ls -lh packages/api/services/story-search/model/comic_embedding_model.onnx || echo "File still missing"
+          file packages/api/services/story-search/model/comic_embedding_model.onnx
 
       - name: Log in to the Container registry
         uses: docker/login-action@65b78e6e13532edd9afa3aa52ac7964289d1a9c1

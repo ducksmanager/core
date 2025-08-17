@@ -220,7 +220,7 @@ const getSortedItemsWithCovers = async () => {
     key,
     item: {
       ...item,
-      cover: coverUrls[item.issuecode]!.fullUrl,
+      cover: coverUrls[item.issuecode]?.fullUrl || null,
     },
   }));
 };
