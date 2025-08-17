@@ -114,6 +114,15 @@
             "stopOnEntry": false,
             "watchMode": true
         },
+        {
+            "type": "bun",
+            "request": "launch",
+            "name": "Debug import-entryurl-vectors",
+            "program": "scripts/import-entryurl-vectors.ts",
+            "cwd": "${workspaceFolder}/packages/api",
+            "stopOnEntry": false,
+            "watchMode": true
+        },
     ],
     "compounds": [
         {

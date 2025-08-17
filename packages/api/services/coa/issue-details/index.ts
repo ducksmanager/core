@@ -107,19 +107,11 @@ export const getCoverUrls = async (issuecodes: string[]) => {
     })
   ).groupBy("entrycode");
 
-  return Object.entries(issues).map(([issuecode, issue]) => {
+  return Object.entries(issues).filter(([issuecode]) => !!entryurls[entrycodeByIssuecode[issuecode]]?.url).map(([issuecode, issue]) => {
     const coverEntryUrl = entryurls[entrycodeByIssuecode[issuecode]];
-    if (!coverEntryUrl?.url) {
-      return {
-        issuecode,
-        title: issue.title!,
-        fullUrl: null,
-      };
-    }
-
-    const urlPrefix = /^\d/.test(coverEntryUrl.url)
+    const urlPrefix = /^\d/.test(coverEntryUrl.url!)
       ? "webusers/webusers"
-      : coverEntryUrl.url.startsWith("webusers")
+      : coverEntryUrl.url!.startsWith("webusers")
         ? "webusers"
         : coverEntryUrl.sitecode;
     return {

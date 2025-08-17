@@ -1,59 +1,24 @@
-import type { ImageFeatureExtractionPipeline } from "@huggingface/transformers";
-import { pipeline } from "@huggingface/transformers";
-import { existsSync, mkdirSync } from "fs";
 import * as fs from "fs/promises";
-import * as os from "os";
-import path from "path";
 import sharp from "sharp-0-34";
 import { useSocketEvents } from "socket-call-server";
+import {Tensor, InferenceSession} from "onnxruntime-node";
 
 import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa/client";
 
 import namespaces from "../namespaces";
 
-let model: ImageFeatureExtractionPipeline | undefined = undefined;
+let session: InferenceSession | undefined = undefined;
 
-export const loadModel = async () => {
-  if (!model) {
+export const getSession = async () => {
+  if (!session) {
     console.log("Loading model...");
-    try {
-      console.log("Checking cache directory...");
-      const cacheDir = "/tmp/cache/models";
-      if (!existsSync(cacheDir)) {
-        mkdirSync(cacheDir, { recursive: true });
-      }
-
-      console.log("Initializing pipeline...");
-      model = await pipeline<"image-feature-extraction">(
-        "image-feature-extraction",
-        "Xenova/vit-base-patch16-224-in21k",
-        {
-          cache_dir: cacheDir,
-          dtype: "fp32",
-        },
-      );
-      console.log("Pipeline initialized successfully");
-    } catch (error) {
-      console.error("Model loading failed with detailed error:", {
-        error:
-          error instanceof Error
-            ? {
-                message: error.message,
-                stack: error.stack,
-                name: error.name,
-              }
-            : error,
-        timestamp: new Date().toISOString(),
-      });
-      throw new Error(
-        `Model loading failed: ${error instanceof Error ? error.message : String(error)}`,
-      );
-    }
+    session = await InferenceSession.create("./services/story-search/model/comic_embedding_model.onnx");
+    console.log("Model loaded");
   }
-  return model;
+  return session;
 };
 
-const preprocessImage = async (input: string | Buffer): Promise<string> => {
+const preprocessImage = async (input: string | Buffer)=> {
   console.log("preprocessImage...");
   const startTime = Date.now();
   let imageBuffer: Buffer;
@@ -70,76 +35,53 @@ const preprocessImage = async (input: string | Buffer): Promise<string> => {
   }
   console.log("Image buffer stored");
 
-  const processedBuffer = await sharp(imageBuffer)
+  const image = await sharp(imageBuffer)
     .resize(224, 224)
-    .toFormat("jpeg")
-    .toBuffer();
+    .raw()
+    .toBuffer({ resolveWithObject: true });
 
-  console.log("Processed buffer stored");
+  const { data } = image;
+  const float32Data = new Float32Array(data.length);
 
-  const tempPath = path.join(os.tmpdir(), `processed-${Date.now()}.jpg`);
-  await fs.writeFile(tempPath, processedBuffer);
+  // Normalize to [-1, 1] just like in training
+  for (let i = 0; i < data.length; i++) {
+    float32Data[i] = (data[i] / 255 - 0.5) / 0.5;
+  }
 
-  console.log(` Done in ${Date.now() - startTime}ms`);
-  return tempPath;
+  // Channels first [1,3,224,224]
+  const transposed = new Float32Array(3 * 224 * 224);
+  for (let i = 0; i < 224 * 224; i++) {
+    transposed[i] = float32Data[i * 3];     // R
+    transposed[i + 224 * 224] = float32Data[i * 3 + 1]; // G
+    transposed[i + 2 * 224 * 224] = float32Data[i * 3 + 2]; // B
+  }
+
+  console.log(`preprocessImage done in ${Date.now() - startTime}ms`);
+
+  return new Tensor("float32", transposed, [1, 3, 224, 224]);
+};
+
+const getEmbedding = async (input: string | Buffer) => {
+  const inputTensor = await preprocessImage(input);
+  const output = await (await getSession()).run({ input: inputTensor });
+  return output.embedding.data as Float32Array; // normalized embedding
 };
 
 export const getImageVector = async (input: string | Buffer) => {
-  if (!model) {
+  if (!session) {
     throw new Error("Model not initialized. Call initialize() first.");
   }
   try {
     console.log("getImageVector...");
-    const startTime = Date.now();
-    const processedPath = await preprocessImage(input);
-    const output = await model(processedPath);
-    await fs.unlink(processedPath);
-
-    // The raw output is a 2D tensor of shape [num_patches, hidden_size]
-    // We need to reduce it to a 1D vector of size 1024
-    const rawVector = Array.from(output.data);
-    const numPatches = 197; // 224x224 image with 16x16 patches = 14x14 patches + 1 CLS token
-    const hiddenSize = 768; // Base ViT hidden size
-
-    // Reshape the raw vector into patches
-    const patches: number[][] = [];
-    for (let i = 0; i < numPatches; i++) {
-      patches.push(
-        rawVector.slice(i * hiddenSize, (i + 1) * hiddenSize) as number[],
-      );
-    }
-
-    // Mean pool across patches to get a 768-dimensional vector
-    const pooledVector = new Array(hiddenSize).fill(0);
-    for (let i = 0; i < hiddenSize; i++) {
-      for (let j = 0; j < numPatches; j++) {
-        pooledVector[i] += patches[j][i];
-      }
-      pooledVector[i] /= numPatches;
-    }
-
-    // Pad or truncate to 1024 dimensions
-    const finalVector = new Array(1024).fill(0);
-    for (let i = 0; i < Math.min(hiddenSize, 1024); i++) {
-      finalVector[i] = pooledVector[i];
-    }
-
-    const filename =
-      typeof input === "string" && !input.startsWith("data:")
-        ? path.basename(input)
-        : `image-${Date.now()}.jpg`;
-
-    const endTime = Date.now();
-    console.log(`Time taken: ${endTime - startTime}ms`);
-
-    return { vector: finalVector, filename };
+    const output = await getEmbedding(input);
+    return { vector: output };
   } catch (error) {
     throw new Error(`Error processing image: ${error}`);
   }
 };
 
-const formatVectorForDB = (vector: number[]): string =>
-  `[${vector.map((v) => v.toFixed(6)).join(",")}]`;
+export const formatVectorForDB = (embedding: Float32Array): string =>
+  `[${Array.from(embedding).join(",")}]`
 
 export const findSimilarImages = async (
   imageBufferOrBase64: string | Buffer,
@@ -157,6 +99,7 @@ export const findSimilarImages = async (
         issuecode: string;
         storyversioncode: string;
         score: number;
+        fullUrl: string;
       }[]
     >`
     WITH 
@@ -171,9 +114,11 @@ export const findSimilarImages = async (
         vector_similarity.entrycode,
         1 - vector_similarity.similarity as score,
         e.issuecode,
-        sv.storyversioncode
+        sv.storyversioncode,
+        CONCAT('webusers/webusers/', eu.url) as fullUrl
       FROM vector_similarity
       INNER JOIN inducks_entry e ON e.entrycode = vector_similarity.entrycode
+      INNER JOIN inducks_entryurl eu ON (eu.entrycode = e.entrycode AND eu.sitecode = 'webusers')
       INNER JOIN inducks_storyversion sv ON sv.storyversioncode = e.storyversioncode
       WHERE similarity < 0.15
       ORDER BY similarity
@@ -201,9 +146,9 @@ const listenEvents = () => {
       imageBufferOrBase64: string | Buffer,
       isCover: boolean,
     ) =>
-      model
+      session
         ? findSimilarImages(imageBufferOrBase64, isCover)
-        : ({ error: "Model not initialized" } as const),
+        : ({ error: "Session not initialized" } as const),
   };
 };
 
