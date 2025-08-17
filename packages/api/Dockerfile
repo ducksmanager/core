@@ -29,5 +29,6 @@ EXPOSE 3001
 CMD ["pm2", "start", "--no-daemon", "-i", "max", "index.mjs"]
 
 FROM api AS api-story-search
+RUN mv /app/scripts/import-entryurl-vectors.mjs /app/
 EXPOSE 3011
 CMD ["pm2", "start", "--no-daemon", "-i", "1", "index-story-search.mjs"]

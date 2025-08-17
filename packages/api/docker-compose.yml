@@ -26,7 +26,8 @@ services:
     image: ghcr.io/bperel/ducksmanager-api:story-search
     restart: always
     volumes:
-      - /tmp/cache/models
+      - /data/covers:${ENTRYURLS_DIR}
+      - /data/covers-by-storycode:${ENTRYURLS_DIR}-by-storycode
     networks:
       - public-network
       - dm-api-network
