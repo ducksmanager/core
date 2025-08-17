@@ -394,6 +394,8 @@ const { watchedPublicationsWithSales } = storeToRefs(collection());
 const { conditions } = useCondition();
 const { t: $t } = useI18n();
 
+const router = useRouter();
+
 let clicks = $ref(0);
 let timer = $ref<NodeJS.Timeout>();
 const doubleClickDelay = 500;
@@ -588,14 +590,15 @@ const deletePublicationIssues = async (issuecodesToDelete: string[]) => {
   if (!readonly) {
     await updateCollectionMultipleIssues({
       issuecodes: issuecodesToDelete,
-      condition:
-        conditions.find(({ dbValue }) => dbValue === null)?.dbValue ||
-        "indefini",
+      condition: null,
       isToRead: false,
       isOnSale: false,
       purchaseId: null,
     });
     selected = [];
+    if (!issues?.length) {
+      router.push("/collection/show");
+    }
   }
 };
 
