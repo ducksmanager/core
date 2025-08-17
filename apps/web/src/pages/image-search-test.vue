@@ -36,7 +36,30 @@ meta:
       small
       caption-top
       responsive
-    />
+    >
+      <template #cell(results)="row">
+        <template v-if="row.item.results">
+          <div v-if="'error' in row.item.results">
+            {{ row.item.results.error }}
+          </div>
+          <div v-else>
+            <b-table
+              class="results"
+              :items="row.item.results"
+              :fields="['score', 'fullUrl']"
+              small
+              responsive
+            >
+              <template #cell(fullUrl)="result">
+                <img
+                  :src="CLOUDINARY_URL + result.item.fullUrl"
+                  class="img-fluid"
+                />
+              </template>
+            </b-table></div
+        ></template>
+      </template>
+    </b-table>
   </div>
 </template>
 
@@ -54,25 +77,37 @@ type Example = {
   isCover: boolean;
 };
 
+type Results =
+  | {
+      error: string;
+    }
+  | {
+      score: number;
+      fullUrl: string;
+    }[];
+
+const CLOUDINARY_URL =
+  "https://res.cloudinary.com/dl7hskxab/image/upload/inducks-covers/";
+
 const examples = [
   {
-    url: "https://res.cloudinary.com/dl7hskxab/image/upload/inducks-covers/webusers/webusers/2018/07/fr_aljm_011a_001.jpg",
+    url: `${CLOUDINARY_URL}webusers/webusers/2018/07/fr_aljm_011a_001.jpg`,
     isCover: true,
   },
   {
-    url: "https://res.cloudinary.com/dl7hskxab/image/upload/inducks-covers/webusers/webusers/2014/02/fr_tp_0024a_001.jpg",
+    url: `${CLOUDINARY_URL}webusers/webusers/2014/02/fr_tp_0024a_001.jpg`,
     isCover: true,
   },
   {
-    url: "https://res.cloudinary.com/dl7hskxab/image/upload/inducks-covers/webusers/webusers/2011/01/fr_tp_0013a_001.jpg",
+    url: `${CLOUDINARY_URL}webusers/webusers/2011/01/fr_tp_0013a_001.jpg`,
     isCover: true,
   },
   {
-    url: "https://res.cloudinary.com/dl7hskxab/image/upload/inducks-covers/webusers/webusers/2024/05/eg_mg_0149p053_001.jpg",
+    url: `${CLOUDINARY_URL}webusers/webusers/2024/05/eg_mg_0149p053_001.jpg`,
     isCover: false,
   },
   {
-    url: "https://res.cloudinary.com/dl7hskxab/image/upload/inducks-covers/webusers/webusers/2021/06/yu_mzc_983c_001.jpg",
+    url: `${CLOUDINARY_URL}webusers/webusers/2021/06/yu_mzc_983c_001.jpg`,
     isCover: false,
   },
 ] as const;
@@ -82,9 +117,9 @@ const models = ref<
     modelData: "covers" | "story first pages";
     indexSize?: number | string;
     getIndexSize: () => Promise<number | string>;
-    run: (base64: string) => Promise<string>;
+    run: (base64: string) => Promise<Results>;
     time?: string;
-    results?: string;
+    results?: Results;
   }[]
 >([
   {
@@ -101,17 +136,12 @@ const models = ref<
         const searchResults = await coverIdEvents.searchFromCover(base64);
 
         return "error" in searchResults
-          ? searchResults.errorDetails || "Error"
-          : JSON.stringify(
-              searchResults.covers.map(({ issuecode, score }) => ({
-                issuecode,
-                score,
-              })),
-            );
+          ? { error: searchResults.errorDetails || "Error" }
+          : searchResults.covers;
       } catch (error) {
         return typeof error === "object" && "errorDetails" in error!
-          ? (error.errorDetails as string) || "Error"
-          : "Error";
+          ? { error: (error.errorDetails as string) || "Error" }
+          : { error: "Error" };
       }
     },
   },
@@ -125,14 +155,8 @@ const models = ref<
         true,
       );
       if ("error" in searchResults) {
-        return searchResults.error!;
-      } else
-        return JSON.stringify(
-          searchResults.results.map(({ entrycode, score }) => ({
-            entrycode,
-            score,
-          })),
-        );
+        return { error: searchResults.error! };
+      } else return searchResults.results;
     },
   },
   {
@@ -145,14 +169,8 @@ const models = ref<
         false,
       );
       if ("error" in searchResults) {
-        return searchResults.error!;
-      } else
-        return JSON.stringify(
-          searchResults.results.map(({ entrycode, score }) => ({
-            entrycode,
-            score,
-          })),
-        );
+        return { error: searchResults.error! };
+      } else return searchResults.results;
     },
   },
 ]);
@@ -214,6 +232,12 @@ onMounted(async () => {
 </script>
 
 <style scoped lang="scss">
+:deep(.results) {
+  td {
+    width: 50%;
+  }
+}
+
 img {
   cursor: pointer;
   height: 100px;
