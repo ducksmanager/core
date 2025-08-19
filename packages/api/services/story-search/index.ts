@@ -1,7 +1,7 @@
 import * as fs from "fs/promises";
+import { InferenceSession, Tensor } from "onnxruntime-node";
 import sharp from "sharp-0-34";
 import { useSocketEvents } from "socket-call-server";
-import {Tensor, InferenceSession} from "onnxruntime-node";
 
 import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa/client";
 
@@ -12,13 +12,15 @@ let session: InferenceSession | undefined = undefined;
 export const getSession = async () => {
   if (!session) {
     console.log("Loading model...");
-    session = await InferenceSession.create("./services/story-search/model/comic_embedding_model.onnx");
+    session = await InferenceSession.create(
+      "./services/story-search/model/comic_embedding_model.onnx",
+    );
     console.log("Model loaded");
   }
   return session;
 };
 
-const preprocessImage = async (input: string | Buffer)=> {
+const preprocessImage = async (input: string | Buffer) => {
   console.log("preprocessImage...");
   const startTime = Date.now();
   let imageBuffer: Buffer;
@@ -51,7 +53,7 @@ const preprocessImage = async (input: string | Buffer)=> {
   // Channels first [1,3,224,224]
   const transposed = new Float32Array(3 * 224 * 224);
   for (let i = 0; i < 224 * 224; i++) {
-    transposed[i] = float32Data[i * 3];     // R
+    transposed[i] = float32Data[i * 3]; // R
     transposed[i + 224 * 224] = float32Data[i * 3 + 1]; // G
     transposed[i + 2 * 224 * 224] = float32Data[i * 3 + 2]; // B
   }
@@ -81,7 +83,7 @@ export const getImageVector = async (input: string | Buffer) => {
 };
 
 export const formatVectorForDB = (embedding: Float32Array): string =>
-  `[${Array.from(embedding).join(",")}]`
+  `[${Array.from(embedding).join(",")}]`;
 
 export const findSimilarImages = async (
   imageBufferOrBase64: string | Buffer,
