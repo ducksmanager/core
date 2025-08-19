@@ -25,7 +25,7 @@
     "@popperjs/core": "^2.11.8",
     "@sentry/tracing": "^7.120.4",
     "@sentry/vue": "^9.46.0",
-    "@unhead/vue": "^1.11.20",
+    "@unhead/vue": "^2.0.14",
     "@vueuse/core": "^12.8.2",
     "bootstrap": "^5.3.7",
     "bootstrap-vue-next": "^0.30.5",
