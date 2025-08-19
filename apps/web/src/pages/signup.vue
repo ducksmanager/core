@@ -67,6 +67,7 @@ meta:
 import Cookies from "js-cookie";
 
 import type { ScopedError } from "socket-call-client";
+import ContextMenuOnSaleByOthers from "~/components/ContextMenuOnSaleByOthers.vue";
 
 const { loadUser } = collection();
 const { user } = storeToRefs(collection());
@@ -97,7 +98,7 @@ const signup = async () => {
       domain: import.meta.env.VITE_COOKIE_DOMAIN,
     });
     await loadUser();
-  } else {
+  } else if (response) {
     if ("selector" in response) {
       error = {
         selector: response.selector,
@@ -107,6 +108,8 @@ const signup = async () => {
     } else {
       console.error(response.error);
     }
+  } else {
+    console.error("Unknown error");
   }
 };
 

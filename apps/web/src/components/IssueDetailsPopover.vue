@@ -58,7 +58,9 @@ const { publicationNames, issueDetails, issuecodeDetails, coverUrls } =
 watch(
   () => issuecode,
   () => {
-    ({ publicationcode } = issuecodeDetails.value[issuecode]);
+    if (issuecodeDetails.value[issuecode]) {
+      ({ publicationcode } = issuecodeDetails.value[issuecode]);
+    }
   },
   { immediate: true },
 );
