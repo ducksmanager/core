@@ -19,7 +19,7 @@
     "prod:transfer-files-post": "pnpm -F '~ci' prod:transfer-files packages/prisma-schemas/docker-compose.yml:@packages/prisma-schemas/docker-compose.yml"
   },
   "dependencies": {
-    "@prisma/client": "^6.14.0",
+    "@prisma/client": "^6.15.0",
     "prisma": "^6.14.0",
     "~group-by": "workspace:*"
   },
