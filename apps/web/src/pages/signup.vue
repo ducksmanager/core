@@ -67,7 +67,6 @@ meta:
 import Cookies from "js-cookie";
 
 import type { ScopedError } from "socket-call-client";
-import ContextMenuOnSaleByOthers from "~/components/ContextMenuOnSaleByOthers.vue";
 
 const { loadUser } = collection();
 const { user } = storeToRefs(collection());

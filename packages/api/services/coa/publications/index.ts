@@ -11,10 +11,10 @@ export default {
 
   getFullPublicationList: () => getPublicationTitles(),
 
-  getPublicationListFromPublicationcodeList: (publicationCodes: string[]) =>
+  getPublicationListFromPublicationcodeList: (publicationcodes: string[]) =>
     getPublicationTitles(
-      publicationCodes.length
-        ? { publicationcode: { in: publicationCodes } }
+      publicationcodes.length
+        ? { publicationcode: { in: publicationcodes } }
         : {},
     ),
 };

@@ -10,7 +10,7 @@ export default {
       )
       .then((data) => data.groupBy("issuecode")),
 
-  getIssuecodesByPublicationcodes: async (publicationcodes: string[]) =>
+  getIssuecodesByPublicationcodes: async (publicationcodes: Set<string>) =>
     prismaCoa.inducks_issue
       .findMany({
         select: {
@@ -20,7 +20,7 @@ export default {
         },
         where: {
           publicationcode: {
-            in: publicationcodes,
+            in: Array.from(publicationcodes),
           },
         },
       })

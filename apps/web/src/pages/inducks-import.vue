@@ -225,6 +225,7 @@ meta:
               <Issue
                 v-for="{ issuecode } in publicationIssuecodes"
                 :key="issuecode"
+                :no-wrap="false"
                 :issuecode="issuecode"
               />
             </div>
@@ -303,7 +304,7 @@ const {
   fetchIssuecodesByPublicationcode,
   fetchIssuecodeDetails,
 } = coa();
-const { publicationNames, issuecodes, issuecodeDetails } = storeToRefs(coa());
+const { publicationNames, issuecodeDetails } = storeToRefs(coa());
 const conditions: Record<issue_condition, string> = {
   mauvais: $t("En mauvais état"),
   moyen: $t("En état moyen"),
@@ -322,9 +323,6 @@ const processRawData = async () => {
     .map((row: string) => row.match(REGEX_VALID_ROW)![1].replace("^", "/"));
   await fetchIssuecodeDetails(issueCodes);
 
-  if (!issuecodeDetails) {
-    return;
-  }
   const issues = issueCodes.filter(
     (issueCode) => issuecodeDetails.value[issueCode],
   );
@@ -370,13 +368,14 @@ watch($$(importDataReady), (newValue) => {
     issuesNotReferenced = [];
     issuesAlreadyInCollection = [];
     issuesImportable = [];
-    issuesToImport!.forEach((issuecode) => {
-      if (!issuecodes.value.includes(issuecode.replace(/[ ]+/g, " ")))
+    for (const issuecode of issuesToImport!) {
+      if (!(issuecode in issuecodeDetails.value))
         issuesNotReferenced!.push(issuecode);
       else if (findInCollection(issuecode))
         issuesAlreadyInCollection!.push(issuecode);
       else issuesImportable!.push(issuecode);
-    });
+    }
+
     issuesNotReferenced = [...new Set(issuesNotReferenced)];
     issuesAlreadyInCollection = [...new Set(issuesAlreadyInCollection)];
     issuesImportable = [...new Set(issuesImportable)];

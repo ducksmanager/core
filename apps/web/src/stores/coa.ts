@@ -51,7 +51,6 @@ export const coa = defineStore("coa", () => {
     >({}),
     publicationNamesFullCountries = shallowRef<string[]>([]),
     personNames = shallowRef<EventOutput<CoaClientEvents, "getAuthorList">>(),
-    issuecodes = ref<string[]>([]),
     issueDetails = ref<{ [issuecode: string]: InducksIssueDetails }>({}),
     isLoadingCountryNames = ref(false),
     issuecodeDetails = shallowRef<EventOutput<CoaClientEvents, "getIssues">>(
@@ -132,6 +131,7 @@ export const coa = defineStore("coa", () => {
         ...new Set(
           newPublicationCodes.filter(
             (publicationcode) =>
+              publicationcode &&
               !Object.keys(publicationNames.value).includes(publicationcode),
           ),
         ),
@@ -242,11 +242,13 @@ export const coa = defineStore("coa", () => {
       const existingPublicationcodes = new Set(
         Object.keys(issuecodesByPublicationcode.value || {}),
       );
-      const newPublicationcodes = publicationcodes.filter(
-        (publicationcode) => !existingPublicationcodes.has(publicationcode),
+      const newPublicationcodes = new Set(
+        publicationcodes.filter(
+          (publicationcode) => !existingPublicationcodes.has(publicationcode),
+        ),
       );
 
-      if (newPublicationcodes.length) {
+      if (newPublicationcodes.size) {
         Object.assign(
           issuecodesByPublicationcode.value,
           await events.getIssuecodesByPublicationcodes(newPublicationcodes),
@@ -301,7 +303,6 @@ export const coa = defineStore("coa", () => {
     issuecodesByPublicationcode,
     issueDetails,
     issuePopularities: issuePopularities,
-    issuecodes,
     issueQuotations,
     issuesByPublicationcode,
     personNames,
