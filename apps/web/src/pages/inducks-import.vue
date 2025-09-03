@@ -92,7 +92,7 @@ meta:
         </li>
         <i18n-t
           tag="li"
-          keypath="Une fois connecté(e), vous parviendrez sur une page contenant votre collection sous forme d'une liste commençant par : {inducks_header}"
+          keypath="Une fois connecté(e), cliquez sur 'Gérer sa collection' puis sur 'Données brutes'. Vous parviendrez sur une page contenant votre collection sous forme d'une liste commençant par : {inducks_header}"
         >
           <template #inducks_header>
             <pre>country^entrycode^collectiontype^comment</pre>
