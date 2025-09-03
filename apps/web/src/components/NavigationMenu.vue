@@ -57,12 +57,13 @@ defineProps<{
 }
 
 ul {
-  @media (max-width: 767px) {
-    background-color: rgba(46, 53, 61, 0.9);
-  }
   list-style: none;
   padding: 0;
   margin: 0;
+
+  @media (max-width: 767px) {
+    background-color: rgba(46, 53, 61, 0.9);
+  }
 
   &.active {
     border-left: 3px solid #c88964;
