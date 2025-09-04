@@ -251,7 +251,9 @@ export const coa = defineStore("coa", () => {
       if (newPublicationcodes.size) {
         Object.assign(
           issuecodesByPublicationcode.value,
-          await events.getIssuecodesByPublicationcodes(newPublicationcodes),
+          await events.getIssuecodesByPublicationcodes(
+            Array.from(newPublicationcodes),
+          ),
         );
       }
     },
