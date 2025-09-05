@@ -75,6 +75,7 @@ export default ({ _socket }: UserServices) => ({
     if (_socket.data.user.username === "demo") {
       await resetDemo();
     }
+    console.log(new Date().toISOString(), "getIssues findMany");
     return prismaDm.issue
       .findMany({
         where: {
@@ -86,12 +87,20 @@ export default ({ _socket }: UserServices) => ({
           },
         },
       })
-      .then((issues) =>
-        prismaCoa.augmentIssueArrayWithInducksData(
+      .then((issues) => {
+        console.log(new Date().toISOString(), "getIssues prismaDm.issue.findMany");
+        return prismaCoa.augmentIssueArrayWithInducksData(
           issues as (issue & { issuecode: string })[],
-        ),
-      )
+        );
+      })
+      .then((issues) => {
+        console.log(new Date().toISOString(), "getIssues prismaCoa.augmentIssueArrayWithInducksData");
+        return prismaCoa.augmentIssueArrayWithInducksData(
+          issues as (issue & { issuecode: string })[]
+        );
+      })
       .then(async (issues) => {
+        console.log(new Date().toISOString(), "getIssues getCoaCountByCountrycode");
         const collectionPublicationcodes = [
           ...new Set(issues.map(({ publicationcode }) => publicationcode)),
         ];
@@ -102,20 +111,27 @@ export default ({ _socket }: UserServices) => ({
             ),
           ),
         ];
-
+        
+        console.log(new Date().toISOString(), "getIssues getCoaCountByCountrycode");
+        const countByCountrycode = await getCoaCountByCountrycode(
+          collectionCountrycodes,
+        );
+        console.log(new Date().toISOString(), "getIssues getCoaCountByPublicationcode");
+        const countByPublicationcode = await getCoaCountByPublicationcode(
+          collectionPublicationcodes,
+        );
+        console.log(new Date().toISOString(), "getIssues getPublicationTitles");
+        const publicationNames = await getPublicationTitles({
+          publicationcode: {
+            in: collectionPublicationcodes,
+          },
+        });
+        console.log(new Date().toISOString(), "getIssues returning data");
         return {
           issues,
-          countByCountrycode: await getCoaCountByCountrycode(
-            collectionCountrycodes,
-          ),
-          countByPublicationcode: await getCoaCountByPublicationcode(
-            collectionPublicationcodes,
-          ),
-          publicationNames: await getPublicationTitles({
-            publicationcode: {
-              in: collectionPublicationcodes,
-            },
-          }),
+          countByCountrycode,
+          countByPublicationcode,
+          publicationNames,
         };
       });
   },
