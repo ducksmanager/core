@@ -1,3 +1,3 @@
-import { PrismaClient } from "../../client_cover_info/client";
+import { getCoverInfoClient } from "../../utils/singleton-clients";
 
-export const prismaClient = new PrismaClient();
+export const prismaClient = getCoverInfoClient();

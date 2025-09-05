@@ -1,4 +1,3 @@
-import { PrismaClient } from "../../client_coa/client";
-import prismaExtended from "./extended";
+import { getCoaClient } from "../../utils/singleton-clients";
 
-export const prismaClient = prismaExtended(new PrismaClient());
+export const prismaClient = getCoaClient();

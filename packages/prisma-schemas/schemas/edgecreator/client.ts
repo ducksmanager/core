@@ -1,2 +1,3 @@
-import { PrismaClient } from "../../client_edgecreator/client";
-export const prismaClient = new PrismaClient();
+import { getEdgeCreatorClient } from "../../utils/singleton-clients";
+
+export const prismaClient = getEdgeCreatorClient();

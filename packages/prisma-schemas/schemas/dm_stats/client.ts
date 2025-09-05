@@ -1,3 +1,3 @@
-import { PrismaClient } from "../../client_dm_stats/client";
+import { getDmStatsClient } from "../../utils/singleton-clients";
 
-export const prismaClient = new PrismaClient();
+export const prismaClient = getDmStatsClient();
