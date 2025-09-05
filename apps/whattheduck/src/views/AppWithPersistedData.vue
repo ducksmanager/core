@@ -8,6 +8,7 @@
     content-id="main-content"
   >
     <NavigationDrawer />
+    <camera-preview-overlay v-if="isCameraPreviewShown" />
     <ion-router-outlet id="main-content" />
   </ion-split-pane>
 </template>
@@ -17,7 +18,7 @@ import { socketInjectionKey as dmSocketInjectionKey } from '~web/src/composables
 import { app } from '~/stores/app';
 import { wtdcollection } from '~/stores/wtdcollection';
 
-const { offlineBannerHeight, socket, isPersistedDataLoaded, token } = storeToRefs(app());
+const { isCameraPreviewShown, offlineBannerHeight, socket, isPersistedDataLoaded, token } = storeToRefs(app());
 
 getCurrentInstance()!.appContext.app.provide(dmSocketInjectionKey, socket.value!);
 

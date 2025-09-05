@@ -46,7 +46,7 @@
             ><template v-else>{{ $t('Ajouter à ma collection') }}</template></ion-button
           >
           <div>
-            <ion-button v-if="coverOrigin === 'takePhoto'" color="light" @click="takePhoto">{{
+            <ion-button v-if="coverOrigin === 'takePhoto'" color="light" @click="isCameraPreviewShown = true">{{
               $t('Prendre une nouvelle photo')
             }}</ion-button>
             <ion-button v-else-if="coverOrigin === 'pickCoverFile'" color="light" @click="pickCoverFile">{{
@@ -78,7 +78,7 @@ import { SuccessfulEventOutput } from 'socket-call-client';
 const hasCoaData = ref(false);
 const { issuecodeDetails, publicationNames, issuePopularities, issueQuotations } = storeToRefs(webStores.coa());
 const { fetchPublicationNames, fetchIssuecodeDetails, fetchIssuePopularities, fetchIssueQuotations } = webStores.coa();
-const { currentNavigationItem } = storeToRefs(app());
+const { currentNavigationItem, isCameraPreviewShown } = storeToRefs(app());
 
 const { IssueQuotation } = webComponents;
 
@@ -94,7 +94,7 @@ const setWidth = (event: Event) => {
 
 const { coverId: coverIdEvents } = inject(dmSocketInjectionKey)!;
 
-const { pickCoverFile, takePhoto } = useCoverSearch(useRouter(), coverIdEvents);
+const { pickCoverFile } = useCoverSearch(useRouter(), coverIdEvents);
 
 const route = useRoute();
 

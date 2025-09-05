@@ -61,17 +61,6 @@
       @show-camera-preview="isCameraPreviewShown = true"
     />
 
-    <template v-if="isCameraPreviewShown">
-      <div :id="cameraPreviewElementId"></div>
-      <div ref="overlay" class="overlay">
-        <ion-button ref="takePhotoButton" size="large" @click="takePhoto().then(() => (isCameraPreviewShown = false))">
-          <ion-icon :ios="apertureOutline" :md="apertureSharp" />
-        </ion-button>
-        <ion-button size="large" color="danger" @click="isCameraPreviewShown = false">
-          <ion-icon :ios="closeOutline" :md="closeSharp" />
-        </ion-button></div
-    ></template>
-
     <div
       v-show="isScrolling"
       v-if="itemInCenterOfViewport"
@@ -85,14 +74,9 @@
 </template>
 
 <script setup lang="ts" generic="Item extends Required<any>">
-import type { CameraPreviewOptions } from '@capacitor-community/camera-preview';
-import { CameraPreview } from '@capacitor-community/camera-preview';
 import type { ScrollDetail } from '@ionic/vue';
-import { IonContent, onIonViewWillLeave } from '@ionic/vue';
-import { apertureOutline, apertureSharp, closeOutline, closeSharp, pencilOutline, pencilSharp } from 'ionicons/icons';
-import { socketInjectionKey as dmSocketInjectionKey } from '~web/src/composables/useDmSocket';
-
-import useCoverSearch from '~/composables/useCoverSearch';
+import { IonContent } from '@ionic/vue';
+import { closeOutline, closeSharp, pencilOutline, pencilSharp } from 'ionicons/icons';
 import { app } from '~/stores/app';
 
 defineSlots<{
@@ -117,48 +101,7 @@ const { items, getItemTextFn } = defineProps<{
 
 const emit = defineEmits<(e: 'items-filtered', items: string[]) => void>();
 
-const overlay = ref<HTMLElement>();
-const takePhotoButton = ref<{ $el: HTMLElement }>();
-
-const { coverId: coverIdEvents } = inject(dmSocketInjectionKey)!;
-
-const cameraPreviewElementId = 'camera-preview';
-const { takePhoto } = useCoverSearch(useRouter(), coverIdEvents);
 const { isCameraPreviewShown, filterText, selectedIssuecodes, currentNavigationItem } = storeToRefs(app());
-
-watch(isCameraPreviewShown, async () => {
-  if (isCameraPreviewShown.value) {
-    let loopIteration = 0;
-    const interval = setInterval(() => {
-      const boundingClientRect = Object.entries(overlay.value!.getBoundingClientRect().toJSON()).reduce(
-        (acc, [key, value]) => ({
-          ...acc,
-          [key]: parseInt(
-            ((value as number) - (key === 'height' ? takePhotoButton.value!.$el.clientHeight : 0)).toFixed(),
-          ),
-        }),
-        {},
-      ) as DOMRect;
-
-      if (boundingClientRect.height) {
-        clearInterval(interval);
-        const cameraPreviewOptions: CameraPreviewOptions = {
-          parent: cameraPreviewElementId,
-          disableAudio: true,
-          position: 'rear',
-          ...boundingClientRect,
-        };
-        CameraPreview.start(cameraPreviewOptions);
-      } else if (loopIteration > 10) {
-        console.error('Could not get overlayElement height');
-        clearInterval(interval);
-      }
-      loopIteration++;
-    }, 50);
-  } else {
-    CameraPreview.stop();
-  }
-});
 
 const content = shallowRef<InstanceType<typeof IonContent>>();
 
@@ -207,10 +150,6 @@ watch(
   },
   { immediate: true },
 );
-
-onIonViewWillLeave(() => {
-  isCameraPreviewShown.value = false;
-});
 </script>
 
 <style scoped>
@@ -311,26 +250,6 @@ ion-title {
     ion-chip {
       margin-left: 0.5rem;
     }
-  }
-}
-
-#camera-preview,
-.overlay {
-  position: absolute;
-  display: flex;
-  justify-content: center;
-  left: 0;
-  top: 0;
-  z-index: 10000;
-  width: 100%;
-}
-
-#camera-preview {
-  display: flex;
-
-  video {
-    width: 100%;
-    height: 100%;
   }
 }
 .overlay {
