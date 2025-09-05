@@ -118,6 +118,7 @@ const updateBundle = async () => {
       default:
         console.warn(error, errorDetails);
     }
+    bundleDownloadProgress.value = undefined;
   }
 };
 
