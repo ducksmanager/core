@@ -60,6 +60,7 @@ router.isReady().then(async () => {
       {
         dsn: import.meta.env.VITE_SENTRY_DSN,
         app,
+        debug: true,
         release: `whattheduck@${currentBundleVersion}`,
         dist: currentBundleVersion,
         integrations: [
