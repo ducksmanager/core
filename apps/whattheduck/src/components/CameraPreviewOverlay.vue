@@ -76,7 +76,7 @@ onIonViewWillLeave(() => {
   display: flex;
   justify-content: center;
   left: 0;
-  top: 0;
+  bottom: 0;
   z-index: 10000;
   width: 100%;
 }

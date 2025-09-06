@@ -9,6 +9,7 @@
       </ion-toolbar>
     </ion-header>
     <ion-content :fullscreen="true">
+      <camera-preview-overlay v-if="isCameraPreviewShown" />
       <div v-if="!covers.length"></div>
       <template v-else>
         <div>

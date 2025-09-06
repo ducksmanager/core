@@ -15,6 +15,7 @@
       @ion-scroll="onScroll"
       @ion-scroll-end="isScrolling = false"
     >
+      <camera-preview-overlay v-if="isCameraPreviewShown" />
       <template v-if="$slots['row-label']">
         <RecycleScroller
           v-slot="{ item: { key, item, isOwned, nextItemType } }"
