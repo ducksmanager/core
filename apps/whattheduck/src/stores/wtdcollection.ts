@@ -30,8 +30,6 @@ export const wtdcollection = defineStore('wtdcollection', () => {
   } = webCollectionStore;
 
   const {
-    coaIssueCountsByPublicationcode,
-    coaIssueCountsPerCountrycode,
     issues,
     issuesByIssuecode,
     numberPerCondition,
@@ -88,8 +86,6 @@ export const wtdcollection = defineStore('wtdcollection', () => {
       issues.value!.filter(({ issuecode: collectionIssuecode }) => collectionIssuecode === issuecode);
 
   return {
-    coaIssueCountsByPublicationcode,
-    coaIssueCountsPerCountrycode,
     createPurchase,
     deletePurchase,
     fetchCollection,

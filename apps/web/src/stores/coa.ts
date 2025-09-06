@@ -65,6 +65,12 @@ export const coa = defineStore("coa", () => {
     issuesByPublicationcode = ref<
       Record<string, EventOutput<CoaClientEvents, "getIssuesByPublicationcode">>
     >({}),
+    issueCountsByCountrycode = ref<
+      EventOutput<CoaClientEvents, "getCoaCountByCountrycode">
+    >({}),
+    issueCountsByPublicationcode = ref<
+      EventOutput<CoaClientEvents, "getCoaCountByPublicationcode">
+    >({}),
     issueQuotations = ref<
       SuccessfulEventOutput<
         CoaClientEvents,
@@ -263,6 +269,27 @@ export const coa = defineStore("coa", () => {
           await events.getIssuesByPublicationcode(publicationcode);
       }
     },
+    fetchIssueCountsByCountrycode = async (countrycodes: string[]) => {
+      Object.assign(
+        issueCountsByCountrycode.value,
+        await events.getCoaCountByCountrycode(
+          countrycodes.filter(
+            (countrycode) => !(countrycode in issueCountsByCountrycode.value),
+          ),
+        ),
+      );
+    },
+    fetchIssueCountsByPublicationcode = async (publicationcodes: string[]) => {
+      Object.assign(
+        issueCountsByPublicationcode.value,
+        await events.getCoaCountByPublicationcode(
+          publicationcodes.filter(
+            (publicationcode) =>
+              !(publicationcode in issueCountsByPublicationcode.value),
+          ),
+        ),
+      );
+    },
     fetchRecentIssues = () => events.getRecentIssues(),
     fetchCoverUrls = (publicationcode: string) =>
       events.getIssueCoverDetailsByPublicationcode(publicationcode),
@@ -290,6 +317,8 @@ export const coa = defineStore("coa", () => {
     fetchIssuecodeDetails,
     fetchIssuecodesByPublicationcode,
     fetchIssuesByPublicationcode,
+    fetchIssueCountsByCountrycode,
+    fetchIssueCountsByPublicationcode,
     fetchIssuePopularities,
     fetchIssueQuotations,
     fetchIssueUrls,
@@ -303,6 +332,8 @@ export const coa = defineStore("coa", () => {
     isLoadingCountryNames,
     issuecodeDetails,
     issuecodesByPublicationcode,
+    issueCountsByCountrycode,
+    issueCountsByPublicationcode,
     issueDetails,
     issuePopularities: issuePopularities,
     issueQuotations,

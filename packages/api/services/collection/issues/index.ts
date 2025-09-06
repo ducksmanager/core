@@ -14,7 +14,6 @@ import { issue_condition } from "~prisma-schemas/schemas/dm";
 import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
 
 import type { UserServices } from "../../../index";
-import { getPublicationTitles } from "../../coa/publications";
 import { getShownQuotations } from "../../coa/quotations";
 import {
   checkPurchaseIdsBelongToUser,
@@ -22,60 +21,11 @@ import {
   handleIsOnSale,
 } from "./util";
 
-const getCoaCountByPublicationcode = (collectionPublicationcodes: string[]) =>
-  prismaCoa.inducks_issue
-    .groupBy({
-      _count: {
-        issuenumber: true,
-      },
-      where: {
-        publicationcode: {
-          in: collectionPublicationcodes,
-        },
-      },
-      by: ["publicationcode"],
-    })
-    .then((data) =>
-      Object.fromEntries(
-        data.map(({ publicationcode, _count }) => [
-          publicationcode,
-          _count.issuenumber,
-        ]),
-      ),
-    );
-
-const getCoaCountByCountrycode = (collectionCountrycodes: string[]) =>
-  prismaCoa.inducks_issue
-    .groupBy({
-      _count: {
-        issuenumber: true,
-      },
-      where: {
-        OR: collectionCountrycodes.map((countrycode) => ({
-          publicationcode: {
-            startsWith: `${countrycode}/`,
-          },
-        })),
-      },
-      by: ["publicationcode"],
-    })
-    .then((data) =>
-      data.reduce<Record<string, number>>(
-        (acc, { publicationcode, _count }) => {
-          const countrycode = publicationcode.split("/")[0];
-          acc[countrycode] = _count.issuenumber + (acc[countrycode] || 0);
-          return acc;
-        },
-        {},
-      ),
-    );
-
 export default ({ _socket }: UserServices) => ({
   getIssues: async () => {
     if (_socket.data.user.username === "demo") {
       await resetDemo();
     }
-    console.log(new Date().toISOString(), "getIssues findMany");
     return prismaDm.issue
       .findMany({
         where: {
@@ -87,53 +37,9 @@ export default ({ _socket }: UserServices) => ({
           },
         },
       })
-      .then((issues) => {
-        console.log(new Date().toISOString(), "getIssues prismaDm.issue.findMany");
-        return prismaCoa.augmentIssueArrayWithInducksData(
-          issues as (issue & { issuecode: string })[],
-        );
-      })
-      .then((issues) => {
-        console.log(new Date().toISOString(), "getIssues prismaCoa.augmentIssueArrayWithInducksData");
-        return prismaCoa.augmentIssueArrayWithInducksData(
-          issues as (issue & { issuecode: string })[]
-        );
-      })
-      .then(async (issues) => {
-        console.log(new Date().toISOString(), "getIssues getCoaCountByCountrycode");
-        const collectionPublicationcodes = [
-          ...new Set(issues.map(({ publicationcode }) => publicationcode)),
-        ];
-        const collectionCountrycodes = [
-          ...new Set(
-            collectionPublicationcodes.map(
-              (publicationcode) => publicationcode.split("/")[0],
-            ),
-          ),
-        ];
-        
-        console.log(new Date().toISOString(), "getIssues getCoaCountByCountrycode");
-        const countByCountrycode = await getCoaCountByCountrycode(
-          collectionCountrycodes,
-        );
-        console.log(new Date().toISOString(), "getIssues getCoaCountByPublicationcode");
-        const countByPublicationcode = await getCoaCountByPublicationcode(
-          collectionPublicationcodes,
-        );
-        console.log(new Date().toISOString(), "getIssues getPublicationTitles");
-        const publicationNames = await getPublicationTitles({
-          publicationcode: {
-            in: collectionPublicationcodes,
-          },
-        });
-        console.log(new Date().toISOString(), "getIssues returning data");
-        return {
-          issues,
-          countByCountrycode,
-          countByPublicationcode,
-          publicationNames,
-        };
-      });
+      .then((issues) => prismaCoa.augmentIssueArrayWithInducksData(
+        issues as (issue & { issuecode: string; })[]
+      ))
   },
 
   addOrChangeIssues: async ({

@@ -38,8 +38,7 @@ export const collection = defineStore("collection", () => {
     options: socketOptions,
   } = inject(socketInjectionKey)!;
 
-  const issues =
-    shallowRef<EventOutput<CollectionServices, "getIssues">["issues"]>();
+  const issues = shallowRef<EventOutput<CollectionServices, "getIssues">>();
 
   const collectionUtils = useCollection(
       issues as ShallowRef<AugmentedIssue<issue>[]>,
@@ -63,14 +62,6 @@ export const collection = defineStore("collection", () => {
     isLoadingPurchases = ref(false),
     isLoadingSuggestions = ref(false),
     isLoadingSubscriptions = ref(false),
-    coaIssueCountsPerCountrycode =
-      shallowRef<
-        EventOutput<CollectionServices, "getIssues">["countByCountrycode"]
-      >(),
-    coaIssueCountsByPublicationcode =
-      shallowRef<
-        EventOutput<CollectionServices, "getIssues">["countByPublicationcode"]
-      >(),
     user = shallowRef<
       SuccessfulEventOutput<CollectionServices, "getUser"> | undefined | null
     >(),
@@ -153,13 +144,30 @@ export const collection = defineStore("collection", () => {
     loadCollection = async (ignoreCache = false) => {
       if (ignoreCache || (!isLoadingCollection.value && !issues.value)) {
         isLoadingCollection.value = true;
-        let publicationNames: Record<string, string> = {};
-        ({
-          issues: issues.value,
-          countByCountrycode: coaIssueCountsPerCountrycode.value,
-          countByPublicationcode: coaIssueCountsByPublicationcode.value,
-          publicationNames,
-        } = await collectionEvents.getIssues({ disableCache: ignoreCache }));
+        const publicationNames: Record<string, string> = {};
+        issues.value = await collectionEvents.getIssues({
+          disableCache: ignoreCache,
+        });
+
+        const collectionPublicationcodes = [
+          ...new Set(
+            issues.value.map(({ publicationcode }) => publicationcode),
+          ),
+        ];
+        const collectionCountrycodes = [
+          ...new Set(
+            collectionPublicationcodes.map(
+              (publicationcode) => publicationcode.split("/")[0],
+            ),
+          ),
+        ];
+
+        await coa().fetchIssueCountsByCountrycode(collectionCountrycodes);
+        await coa().fetchIssueCountsByPublicationcode(
+          collectionPublicationcodes,
+        );
+        await coa().fetchPublicationNames(collectionPublicationcodes);
+
         coa().addPublicationNames(publicationNames);
         Object.assign(
           coa().issuecodeDetails,
@@ -338,9 +346,7 @@ export const collection = defineStore("collection", () => {
     hasRole,
     hasSuggestions,
     isLoadingUser,
-    coaIssueCountsByPublicationcode,
     copiesPerIssuecode,
-    coaIssueCountsPerCountrycode,
     isLoadingSuggestions,
     issuecodesPerPublication,
     lastPublishedEdgesForCurrentUser,

@@ -47,13 +47,13 @@ let chartData = $ref<ChartData<"bar", number[]>>(),
   options = $ref<ChartOptions<"bar">>({});
 
 const { loadCollection } = collection();
-const {
-  totalPerPublicationUniqueIssuecodesSorted,
-  coaIssueCountsByPublicationcode,
-} = storeToRefs(collection());
+const { totalPerPublicationUniqueIssuecodesSorted } = storeToRefs(collection());
 
 const { fetchPublicationNames } = coa();
-const { publicationNames } = storeToRefs(coa());
+const {
+  publicationNames,
+  issueCountsByPublicationcode: coaIssueCountsByPublicationcode,
+} = storeToRefs(coa());
 
 const { t: $t } = useI18n(),
   unitTypes = {
@@ -71,7 +71,7 @@ const { t: $t } = useI18n(),
     if (
       !(
         totalPerPublicationUniqueIssuecodesSorted.value &&
-        coaIssueCountsByPublicationcode &&
+        coaIssueCountsByPublicationcode.value &&
         hasCoaData
       )
     ) {
@@ -82,8 +82,7 @@ const { t: $t } = useI18n(),
     );
     let missingIssues = totalPerPublicationUniqueIssuecodesSorted.value.map(
       ([publicationcode, userIssueCount]) =>
-        coaIssueCountsByPublicationcode.value![publicationcode] -
-        userIssueCount,
+        coaIssueCountsByPublicationcode.value[publicationcode] - userIssueCount,
     );
     if (unitTypeCurrent === "percentage") {
       possessedIssues = possessedIssues.map((possessedCount, key) =>

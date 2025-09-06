@@ -9,6 +9,54 @@ export default {
         withTitles,
       )
       .then((data) => data.groupBy("issuecode")),
+      
+  getCoaCountByPublicationcode: (publicationcodes: string[]) =>
+    prismaCoa.inducks_issue
+      .groupBy({
+        _count: {
+          issuenumber: true,
+        },
+        where: {
+          publicationcode: {
+            in: publicationcodes,
+          },
+        },
+        by: ["publicationcode"],
+      })
+      .then((data) =>
+        Object.fromEntries(
+          data.map(({ publicationcode, _count }) => [
+            publicationcode,
+            _count.issuenumber,
+          ]),
+        ),
+      ),
+    
+  getCoaCountByCountrycode: (countrycodes: string[]) =>
+    prismaCoa.inducks_issue
+      .groupBy({
+        _count: {
+          issuenumber: true,
+        },
+        where: {
+          OR: countrycodes.map((countrycode) => ({
+            publicationcode: {
+              startsWith: `${countrycode}/`,
+            },
+          })),
+        },
+        by: ["publicationcode"],
+      })
+      .then((data) =>
+        data.reduce<Record<string, number>>(
+          (acc, { publicationcode, _count }) => {
+            const countrycode = publicationcode.split("/")[0];
+            acc[countrycode] = _count.issuenumber + (acc[countrycode] || 0);
+            return acc;
+          },
+          {},
+        ),
+     ),
 
   getIssuecodesByPublicationcodes: async (publicationcodes: string[]) =>
     prismaCoa.inducks_issue
