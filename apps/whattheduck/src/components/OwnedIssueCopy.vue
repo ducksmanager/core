@@ -2,7 +2,7 @@
   <ion-grid>
     <ion-row>
       <ion-col size="4" class="ion-padding">
-        <ion-label>{{ $t('Etat') }}</ion-label></ion-col
+        <ion-label>{{ translations.condition }}</ion-label></ion-col
       >
       <ion-col size="8" class="ion-padding">
         <ion-row style="flex-direction: column" class="ion-align-items-end">
@@ -26,21 +26,21 @@
     </ion-row>
     <ion-row>
       <ion-col size="4" class="ion-padding">
-        <ion-label>{{ $t('A lire') }}</ion-label></ion-col
+        <ion-label>{{ translations.toRead }}</ion-label></ion-col
       >
       <ion-col size="8" style="display: flex" class="ion-padding ion-justify-content-end"
-        ><ion-checkbox v-model="issue.isToRead" :disabled="isOffline" :aria-label="$t('A lire')" /></ion-col
+        ><ion-checkbox v-model="issue.isToRead" :disabled="isOffline" :aria-label="translations.toRead" /></ion-col
     ></ion-row>
     <ion-row class="ion-align-items-start">
       <ion-col size="4" class="ion-padding ion-text-left">
-        <ion-label>{{ $t("Date d'achat") }}</ion-label>
+        <ion-label>{{ translations.purchaseDate }}</ion-label>
       </ion-col>
       <ion-col size="8" class="ion-padding ion-text-right">
-        <ion-button id="create-purchase-date" size="small">{{ $t("Créer une date d'achat") }}</ion-button>
+        <ion-button id="create-purchase-date" size="small">{{ translations.createPurchaseDate }}</ion-button>
 
         <ion-modal id="create-purchase-modal" ref="modal" trigger="create-purchase-date">
           <div class="wrapper">
-            <h1>{{ $t("Créer une date d'achat") }}</h1>
+            <h1>{{ translations.createPurchaseDate }}</h1>
             <ion-row>
               <ion-col size="6"> <ion-input v-model="newPurchase.date" type="date" /> </ion-col
               ><ion-col size="6">
@@ -48,13 +48,13 @@
                   v-model="newPurchase.description"
                   type="text"
                   :maxlength="50"
-                  :placeholder="$t('Description')"
+                  :placeholder="translations.description"
                 /> </ion-col
             ></ion-row>
             <ion-row>
               <ion-col size="12">
                 <ion-button @click="createPurchaseDate">
-                  {{ $t('Créer') }}
+                  {{ translations.create }}
                 </ion-button>
               </ion-col>
             </ion-row>
@@ -62,51 +62,53 @@
         </ion-modal>
 
         <ion-radio-group v-if="purchasesIncludingNone" v-model="issue.purchaseId" class="vertical">
-          <ion-row
-            v-for="item of purchasesIncludingNone"
-            :key="item.id || 'none'"
-            class="ion-align-items-center ion-padding-bottom"
-            ><ion-col size="1" style="min-width: 3rem" class="ion-align-items-start">
-              <div v-if="item.id">
-                <ion-button :id="`delete-purchase-${item.id}`" color="danger" size="small">
-                  <ion-icon :ios="trashOutline" :md="trashSharp" />
-                </ion-button>
-                <ion-alert
-                  :trigger="`delete-purchase-${item.id}`"
-                  :header="$t('Supprimer la date d\'achat')"
-                  :message="
-                    $t(
-                      'Voulez-vous vraiment supprimer cette date d\'achat ? Les numéros associés seront conservés mais n\'auront plus de date d\'achat.',
-                    )
-                  "
-                  :buttons="[
-                    {
-                      text: $t('Supprimer'),
-                      role: 'destructive',
-                      handler: () => deletePurchase(item.id).then(() => loadPurchases(true)),
-                    },
-                    {
-                      text: $t('Annuler'),
-                    },
-                  ]"
-                ></ion-alert></div></ion-col
-            ><ion-col>
-              <ion-radio
-                label-placement="start"
-                justify="end"
-                :disabled="isOffline"
-                :value="item.id"
-                class="ion-text-right"
-              >
-                <div
-                  v-for="descriptionLine of item.dateAndDescription"
-                  :key="descriptionLine"
-                  :style="{ fontStyle: item.id === null ? 'italic' : 'normal' }"
+          <RecycleScroller
+            v-slot="{ item }"
+            class="scroller"
+            :items="purchasesIncludingNone"
+            :item-size="48"
+            key-field="id"
+            item-class="item-wrapper"
+          >
+            <ion-row class="ion-align-items-center ion-padding-bottom"
+              ><ion-col v-memo="[item.id]" size="1" style="min-width: 3rem" class="ion-align-items-start">
+                <div v-if="item.id">
+                  <ion-button :id="`delete-purchase-${item.id}`" color="danger" size="small">
+                    <ion-icon :ios="trashOutline" :md="trashSharp" />
+                  </ion-button>
+                  <ion-alert
+                    :trigger="`delete-purchase-${item.id}`"
+                    :header="translations.deletePurchaseDate"
+                    :message="translations.deletePurchaseDateMessage"
+                    :buttons="[
+                      {
+                        text: translations.delete,
+                        role: 'destructive',
+                        handler: () => deletePurchase(item.id).then(() => loadPurchases(true)),
+                      },
+                      {
+                        text: translations.cancel,
+                      },
+                    ]"
+                  ></ion-alert></div></ion-col
+              ><ion-col>
+                <ion-radio
+                  label-placement="start"
+                  justify="end"
+                  :disabled="isOffline"
+                  :value="item.id"
+                  class="ion-text-right"
                 >
-                  {{ descriptionLine }}
-                </div>
-              </ion-radio></ion-col
-            ></ion-row
+                  <div
+                    v-for="descriptionLine of item.dateAndDescription"
+                    :key="descriptionLine"
+                    :style="{ fontStyle: item.id === null ? 'italic' : 'normal' }"
+                  >
+                    {{ descriptionLine }}
+                  </div>
+                </ion-radio></ion-col
+              ></ion-row
+            ></RecycleScroller
           >
         </ion-radio-group></ion-col
       >
@@ -134,6 +136,22 @@ const { createPurchase, deletePurchase, loadPurchases } = wtdcollection();
 
 const modal = ref();
 
+const translations = computed(() => ({
+  cancel: t('Annuler'),
+  condition: t('Etat'),
+  create: t('Créer'),
+  createPurchaseDate: t("Créer une date d'achat"),
+  delete: t('Supprimer'),
+  deletePurchaseDate: t("Supprimer la date d'achat"),
+  deletePurchaseDateMessage: t(
+    "Voulez-vous vraiment supprimer cette date d'achat ? Les numéros associés seront conservés mais n'auront plus de date d'achat.",
+  ),
+  description: t('Description'),
+  noPurchaseDate: t("Pas de date d'achat"),
+  purchaseDate: t("Date d'achat"),
+  toRead: t('A lire'),
+}));
+
 const getCurrentDateFormatted = () => {
   const date = new Date();
   const year = date.getFullYear();
@@ -158,8 +176,8 @@ const purchasesIncludingNone = computed(() =>
   purchases.value
     ? [
         {
-          id: null,
-          dateAndDescription: [t("Pas de date d'achat")],
+          id: '',
+          dateAndDescription: [translations.value.noPurchaseDate],
         },
         ...purchases.value.map(({ id, date, description }) => ({
           id,
@@ -243,5 +261,9 @@ ion-modal#create-purchase-modal {
 #state-radio-group:deep(.radio-group-wrapper) {
   display: flex;
   justify-content: end;
+}
+
+.scroller {
+  height: calc(20 * 48px);
 }
 </style>
