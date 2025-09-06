@@ -11,7 +11,6 @@
     "dev-storybook": "/* TODO concurrently \"nuxt\" \"pnpm -F ~duckguessr-api dev\" \"npx nuxt storybook\"*/",
     "build": "storybook build",
     "build-storybook": "storybook build",
-    "generate-avatars": "ts-node create-avatar-files.ts",
     "lint": "eslint --fix .",
     "storybook": "storybook dev -p 6006",
     "prod:deploy": "DIR=apps/duckguessr SERVICES='storybook' pnpm -F '~ci' prod:docker-compose-up",
