@@ -149,6 +149,18 @@
         </v-contextmenu-submenu>
       </template>
     </v-contextmenu-group>
+    <v-contextmenu-group :title="$t('Étiquettes')">
+      <b-badge
+        v-for="label in ['On sale', 'To read']"
+        :key="label"
+        class="mx-2 border"
+        variant="light"
+        text-variant="secondary"
+        pill
+        >{{ label }}</b-badge
+      >
+      <b-badge>+</b-badge>
+    </v-contextmenu-group>
     <v-contextmenu-group :title="$t('Marketplace')">
       <template
         v-for="{
