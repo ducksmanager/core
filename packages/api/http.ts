@@ -62,7 +62,7 @@ export default () =>
                           issuecode: issue.issuecode,
                         },
                       })
-                    ).groupBy("issuecode", "publisherid[]");
+                    ).groupBy("issuecode", "publisherid[]")["issuecode"];
                     const entriesList = await prismaCoa.inducks_entry.findMany({
                       select: {
                         entrycode: true,
@@ -137,7 +137,7 @@ export default () =>
                           ({ title, storyversioncode }) => ({
                             storyversioncode,
                             title,
-                            publishers: publishers[issue.issuecode] || [],
+                            publishers: publishers || [],
                             appearances:
                               (storyversioncode &&
                                 storyversionAppearances[storyversioncode]) ||
@@ -194,6 +194,16 @@ export default () =>
                   },
                 })
               ).groupBy("languagecode", "languagename");
+              break;
+            case "/comicrack/persons":
+              data = (
+                await prismaCoa.inducks_person.findMany({
+                  select: {
+                    personcode: true,
+                    fullname: true,
+                  },
+                })
+              ).groupBy("personcode", "fullname");
               break;
             case "/comicrack/characters":
               if (req.method === "GET") {
