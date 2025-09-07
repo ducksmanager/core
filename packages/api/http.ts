@@ -9,6 +9,7 @@ import {
   getPastecSearchStatus,
   getPastecStatus,
 } from "./services/status";
+import type { inducks_issue } from "~prisma-schemas/client_coa/client";
 
 export default () =>
   createServer(async (req, res) => {
@@ -38,7 +39,7 @@ export default () =>
                     issuenumber: string;
                   };
                   try {
-                    const issue =
+                    const issue: Pick<inducks_issue, "issuecode" | "title" | "oldestdate" | "pages" | "price"> & { publishers?: string[] } = 
                       await prismaCoa.inducks_issue.findFirstOrThrow({
                         select: {
                           issuecode: true,
@@ -52,7 +53,7 @@ export default () =>
                           issuenumber,
                         },
                       });
-                    const publishers = (
+                    issue.publishers = (
                       await prismaCoa.inducks_publishingjob.findMany({
                         select: {
                           issuecode: true,
@@ -62,7 +63,7 @@ export default () =>
                           issuecode: issue.issuecode,
                         },
                       })
-                    ).groupBy("issuecode", "publisherid[]")["issuecode"];
+                    ).map((publishingjob) => publishingjob.publisherid);
                     const entriesList = await prismaCoa.inducks_entry.findMany({
                       select: {
                         entrycode: true,
@@ -137,7 +138,6 @@ export default () =>
                           ({ title, storyversioncode }) => ({
                             storyversioncode,
                             title,
-                            publishers: publishers || [],
                             appearances:
                               (storyversioncode &&
                                 storyversionAppearances[storyversioncode]) ||
