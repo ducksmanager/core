@@ -23,7 +23,7 @@ import { app } from '~/stores/app';
 import { onIonViewWillLeave } from '@ionic/vue';
 
 const overlay = useTemplateRef<HTMLElement>('overlay');
-const { height: overlayHeight } = useElementSize(overlay);
+const { height: overlayHeight } = useElementSize(() => overlay.value);
 
 const cameraPreview = useTemplateRef<HTMLDivElement>('cameraPreview');
 
@@ -35,12 +35,12 @@ onIonViewWillLeave(() => {
   isCameraPreviewShown.value = false;
 });
 
-watch(overlayHeight, async (overlayHeight) => {
-  if (overlayHeight) {
+watch(overlayHeight, async () => {
+  if (overlayHeight.value) {
     const boundingClientRect = Object.entries(cameraPreview.value!.getBoundingClientRect().toJSON()).reduce(
       (acc, [key, value]) => ({
         ...acc,
-        [key]: parseInt(((value as number) - (key === 'height' ? overlayHeight : 0)).toFixed()),
+        [key]: parseInt(((value as number) - (key === 'height' ? overlayHeight.value : 0)).toFixed()),
       }),
       {},
     ) as DOMRect;

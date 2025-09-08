@@ -16,7 +16,7 @@
   "dependencies": {
     "@sentry/node": "^9.46.0",
     "@socket.io/admin-ui": "^0.5.1",
-    "@vueuse/integrations": "^12.8.2",
+    "@vueuse/integrations": "^13.9.0",
     "axios": "^1.11.0",
     "cloudinary": "^1.41.3",
     "dotenv": "^16.6.1",
