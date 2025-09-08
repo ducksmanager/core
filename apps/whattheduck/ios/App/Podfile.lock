@@ -26,7 +26,7 @@ PODS:
     - Capacitor
   - CapawesomeCapacitorFilePicker (7.2.0):
     - Capacitor
-  - CapgoCapacitorUpdater (7.8.7):
+  - CapgoCapacitorUpdater (7.13.0):
     - Alamofire (= 5.10.2)
     - BigInt (= 5.2.0)
     - Capacitor
@@ -53,7 +53,7 @@ DEPENDENCIES:
   - "CapacitorStatusBar (from `../../../../node_modules/.pnpm/@capacitor+status-bar@7.0.2_@capacitor+core@7.4.2/node_modules/@capacitor/status-bar`)"
   - "CapawesomeCapacitorAppUpdate (from `../../../../node_modules/.pnpm/@capawesome+capacitor-app-update@7.0.1_@capacitor+core@7.4.2/node_modules/@capawesome/capacitor-app-update`)"
   - "CapawesomeCapacitorFilePicker (from `../../../../node_modules/.pnpm/@capawesome+capacitor-file-picker@7.2.0_@capacitor+core@7.4.2/node_modules/@capawesome/capacitor-file-picker`)"
-  - "CapgoCapacitorUpdater (from `../../../../node_modules/.pnpm/@capgo+capacitor-updater@7.8.7_@capacitor+core@7.4.2/node_modules/@capgo/capacitor-updater`)"
+  - "CapgoCapacitorUpdater (from `../../../../node_modules/.pnpm/@capgo+capacitor-updater@7.13.0_@capacitor+core@7.4.2/node_modules/@capgo/capacitor-updater`)"
   - "SentryCapacitor (from `../../../../node_modules/.pnpm/@sentry+capacitor@1.5.0_@capacitor+core@7.4.2_@sentry+vue@8.55.0_pinia@3.0.3_typescript@5.9.2_udlkyn2pgdmwecsbrjytj6hmeu/node_modules/@sentry/capacitor`)"
 
 SPEC REPOS:
@@ -92,7 +92,7 @@ EXTERNAL SOURCES:
   CapawesomeCapacitorFilePicker:
     :path: "../../../../node_modules/.pnpm/@capawesome+capacitor-file-picker@7.2.0_@capacitor+core@7.4.2/node_modules/@capawesome/capacitor-file-picker"
   CapgoCapacitorUpdater:
-    :path: "../../../../node_modules/.pnpm/@capgo+capacitor-updater@7.8.7_@capacitor+core@7.4.2/node_modules/@capgo/capacitor-updater"
+    :path: "../../../../node_modules/.pnpm/@capgo+capacitor-updater@7.13.0_@capacitor+core@7.4.2/node_modules/@capgo/capacitor-updater"
   SentryCapacitor:
     :path: "../../../../node_modules/.pnpm/@sentry+capacitor@1.5.0_@capacitor+core@7.4.2_@sentry+vue@8.55.0_pinia@3.0.3_typescript@5.9.2_udlkyn2pgdmwecsbrjytj6hmeu/node_modules/@sentry/capacitor"
 
@@ -112,12 +112,12 @@ SPEC CHECKSUMS:
   CapacitorStatusBar: 5526833b87fa9c96a2a90c1322bb1f663c04505f
   CapawesomeCapacitorAppUpdate: 8ba98e54b0c5c43e9bdeeb0cbf97ef32465be321
   CapawesomeCapacitorFilePicker: 005c33082078c1dd528ba9204aa49e97d62b68b7
-  CapgoCapacitorUpdater: 155a5050e1ad315e96ed6bf1b003f266bda3b1e6
+  CapgoCapacitorUpdater: a4ccabbac650e28a174cd260e6cc300c9b98354a
   Sentry: 1ca8405451040482877dcd344dfa3ef80b646631
   SentryCapacitor: 08a865d7cc836e560b618be854d4962e5aa6574a
   SSZipArchive: fe6a26b2a54d5a0890f2567b5cc6de5caa600aef
   Version: de5907f2c5d0f3cf21708db7801d1d5401139486
 
-PODFILE CHECKSUM: 1e54f2745fd3b3b4d56cd910324d6d77dea72828
+PODFILE CHECKSUM: d682931a0a7b0e8429d3067d447859d107c42cb2
 
 COCOAPODS: 1.16.2
