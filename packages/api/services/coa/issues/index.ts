@@ -9,7 +9,7 @@ export default {
         withTitles,
       )
       .then((data) => data.groupBy("issuecode")),
-      
+
   getCoaCountByPublicationcode: (publicationcodes: string[]) =>
     prismaCoa.inducks_issue
       .groupBy({
@@ -31,7 +31,7 @@ export default {
           ]),
         ),
       ),
-    
+
   getCoaCountByCountrycode: (countrycodes: string[]) =>
     prismaCoa.inducks_issue
       .groupBy({
@@ -56,7 +56,7 @@ export default {
           },
           {},
         ),
-     ),
+      ),
 
   getIssuecodesByPublicationcodes: async (publicationcodes: string[]) =>
     prismaCoa.inducks_issue

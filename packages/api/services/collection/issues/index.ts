@@ -37,9 +37,11 @@ export default ({ _socket }: UserServices) => ({
           },
         },
       })
-      .then((issues) => prismaCoa.augmentIssueArrayWithInducksData(
-        issues as (issue & { issuecode: string; })[]
-      ))
+      .then((issues) =>
+        prismaCoa.augmentIssueArrayWithInducksData(
+          issues as (issue & { issuecode: string })[],
+        ),
+      );
   },
 
   addOrChangeIssues: async ({
