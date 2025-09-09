@@ -216,17 +216,21 @@ export default () =>
                   res.end();
                   return;
                 }
-                data = (
-                  await prismaCoa.inducks_charactername.findMany({
-                    select: {
-                      charactercode: true,
-                      charactername: true,
-                    },
-                    where: {
-                      languagecode,
-                    },
-                  })
-                ).groupBy("charactercode", "charactername");
+                data = Object.fromEntries(
+                  Object.entries(
+                    (
+                      await prismaCoa.inducks_charactername.findMany({
+                        select: {
+                          charactercode: true,
+                          charactername: true,
+                        },
+                        where: {
+                          languagecode,
+                        },
+                      })
+                    ).groupBy("charactercode", "charactername[]"),
+                  ).map(([key, values]) => [key, values[0]]),
+                );
               } else {
                 res.writeHead(405);
                 res.end();
