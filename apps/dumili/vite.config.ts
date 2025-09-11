@@ -85,6 +85,7 @@ export default defineConfig({
       "~dumili-types": path.resolve(__dirname, "types"),
       "~dumili-utils": path.resolve(__dirname, "utils"),
       "~prisma": path.resolve(__dirname, "api/prisma"),
+      "~translations": path.resolve(__dirname, "translations"),
       "~web": path.resolve(__dirname, "../web"),
     }),
   },

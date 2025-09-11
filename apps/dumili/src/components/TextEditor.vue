@@ -236,6 +236,7 @@ watch(
 );
 </script>
 <style scoped lang="scss">
+@use "sass:list";
 textarea {
   z-index: 2;
   font-family: monospace;
@@ -263,9 +264,9 @@ textarea {
     white
   );
 
-  @for $i from 1 through length($column-colors) {
+  @for $i from 1 through list.length($column-colors) {
     td:nth-of-type(#{$i}) {
-      background: nth($column-colors, $i) !important;
+      background: list.nth($column-colors, $i) !important;
     }
   }
 }
