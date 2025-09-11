@@ -49,6 +49,22 @@ dotenv.config({
   path: "./.env",
 });
 
+// Validate required environment variables
+const requiredEnvVars = [
+  'DATABASE_URL_DM',
+  'DATABASE_URL_COA', 
+  'DATABASE_URL_DM_STATS',
+  'DATABASE_URL_EDGECREATOR',
+  'DATABASE_URL_COVER_INFO'
+];
+
+for (const envVar of requiredEnvVars) {
+  if (!process.env[envVar]) {
+    console.error(`Missing required environment variable: ${envVar}`);
+    process.exit(1);
+  }
+}
+
 if (process.env.SENTRY_DSN) {
   Sentry.init({
     dsn: process.env.SENTRY_DSN,

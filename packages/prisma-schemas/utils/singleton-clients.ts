@@ -8,6 +8,27 @@ import { PrismaMariaDb } from '@prisma/adapter-mariadb';
 import prismaExtendedDm from "../schemas/dm/extended";
 import prismaExtendedCoa from "../schemas/coa/extended";
 
+// Ensure connection string has proper pool parameters
+const ensureConnectionString = (url: string): string => {
+  const urlObj = new URL(url);
+  
+  // Add pool parameters if not present
+  if (!urlObj.searchParams.has('acquireTimeout')) {
+    urlObj.searchParams.set('acquireTimeout', '60000');
+  }
+  if (!urlObj.searchParams.has('connectionLimit')) {
+    urlObj.searchParams.set('connectionLimit', '10');
+  }
+  if (!urlObj.searchParams.has('idleTimeout')) {
+    urlObj.searchParams.set('idleTimeout', '300000');
+  }
+  if (!urlObj.searchParams.has('minimumIdle')) {
+    urlObj.searchParams.set('minimumIdle', '2');
+  }
+  
+  return urlObj.toString();
+};
+
 let dmClient: ReturnType<typeof prismaExtendedDm> | null = null;
 let dmStatsClient: PrismaClientDmStats | null = null;
 let coaClient: ReturnType<typeof prismaExtendedCoa> | null = null;
@@ -16,11 +37,18 @@ let coverInfoClient: PrismaClientCoverInfo | null = null;
 
 export const getDmClient = () => {
   if (!dmClient) {
-    console.log('Creating new DM PrismaClient instance');
-    dmClient = prismaExtendedDm(new PrismaClientDm({
-      adapter: new PrismaMariaDb(process.env.DATABASE_URL_DM!),
-      log: process.env.NODE_ENV === 'development' ? ['error', 'warn'] : ['error'],
-    }));
+    try {
+      console.log('Creating new DM PrismaClient instance');
+      const connectionString = ensureConnectionString(process.env.DATABASE_URL_DM!);
+      console.log('DM connection string configured with pool parameters');
+      dmClient = prismaExtendedDm(new PrismaClientDm({
+        adapter: new PrismaMariaDb(connectionString),
+        log: process.env.NODE_ENV === 'development' ? ['error', 'warn'] : ['error'],
+      }));
+    } catch (error) {
+      console.error('Failed to create DM PrismaClient:', error);
+      throw error;
+    }
   }
   return dmClient;
 };
@@ -28,8 +56,9 @@ export const getDmClient = () => {
 export const getDmStatsClient = () => {
   if (!dmStatsClient) {
     console.log('Creating new DM Stats PrismaClient instance');
+    const connectionString = ensureConnectionString(process.env.DATABASE_URL_DM_STATS!);
     dmStatsClient = new PrismaClientDmStats({
-      adapter: new PrismaMariaDb(process.env.DATABASE_URL_DM_STATS!),
+      adapter: new PrismaMariaDb(connectionString),
       log: process.env.NODE_ENV === 'development' ? ['error', 'warn'] : ['error'],
     });
   }
@@ -39,8 +68,9 @@ export const getDmStatsClient = () => {
 export const getCoaClient = () => {
   if (!coaClient) {
     console.log('Creating new COA PrismaClient instance');
+    const connectionString = ensureConnectionString(process.env.DATABASE_URL_COA!);
     coaClient = prismaExtendedCoa(new PrismaClientCoa({
-      adapter: new PrismaMariaDb(process.env.DATABASE_URL_COA!),
+      adapter: new PrismaMariaDb(connectionString),
       log: process.env.NODE_ENV === 'development' ? ['error', 'warn'] : ['error'],
     }));
   }
@@ -50,8 +80,9 @@ export const getCoaClient = () => {
 export const getEdgeCreatorClient = () => {
   if (!edgeCreatorClient) {
     console.log('Creating new EdgeCreator PrismaClient instance');
+    const connectionString = ensureConnectionString(process.env.DATABASE_URL_EDGECREATOR!);
     edgeCreatorClient = new PrismaClientEdgeCreator({
-      adapter: new PrismaMariaDb(process.env.DATABASE_URL_EDGECREATOR!),
+      adapter: new PrismaMariaDb(connectionString),
       log: process.env.NODE_ENV === 'development' ? ['error', 'warn'] : ['error'],
     });
   }
@@ -61,8 +92,9 @@ export const getEdgeCreatorClient = () => {
 export const getCoverInfoClient = () => {
   if (!coverInfoClient) {
     console.log('Creating new CoverInfo PrismaClient instance');
+    const connectionString = ensureConnectionString(process.env.DATABASE_URL_COVER_INFO!);
     coverInfoClient = new PrismaClientCoverInfo({
-      adapter: new PrismaMariaDb(process.env.DATABASE_URL_COVER_INFO!),
+      adapter: new PrismaMariaDb(connectionString),
       log: process.env.NODE_ENV === 'development' ? ['error', 'warn'] : ['error'],
     });
   }
