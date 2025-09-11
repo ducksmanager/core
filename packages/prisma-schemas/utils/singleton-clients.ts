@@ -10,23 +10,31 @@ import prismaExtendedCoa from "../schemas/coa/extended";
 
 // Ensure connection string has proper pool parameters
 const ensureConnectionString = (url: string): string => {
-  const urlObj = new URL(url);
-  
-  // Add pool parameters if not present
-  if (!urlObj.searchParams.has('acquireTimeout')) {
-    urlObj.searchParams.set('acquireTimeout', '60000');
-  }
-  if (!urlObj.searchParams.has('connectionLimit')) {
-    urlObj.searchParams.set('connectionLimit', '10');
-  }
-  if (!urlObj.searchParams.has('idleTimeout')) {
-    urlObj.searchParams.set('idleTimeout', '300000');
-  }
-  if (!urlObj.searchParams.has('minimumIdle')) {
-    urlObj.searchParams.set('minimumIdle', '2');
+  if (!url || typeof url !== 'string') {
+    throw new Error(`Invalid database URL: ${url}`);
   }
   
-  return urlObj.toString();
+  try {
+    const urlObj = new URL(url);
+    
+    // Add pool parameters if not present
+    if (!urlObj.searchParams.has('acquireTimeout')) {
+      urlObj.searchParams.set('acquireTimeout', '60000');
+    }
+    if (!urlObj.searchParams.has('connectionLimit')) {
+      urlObj.searchParams.set('connectionLimit', '10');
+    }
+    if (!urlObj.searchParams.has('idleTimeout')) {
+      urlObj.searchParams.set('idleTimeout', '300000');
+    }
+    if (!urlObj.searchParams.has('minimumIdle')) {
+      urlObj.searchParams.set('minimumIdle', '2');
+    }
+    
+    return urlObj.toString();
+  } catch (error) {
+    throw new Error(`Invalid database URL format: ${url}. Error: ${error instanceof Error ? error.message : String(error)}`);
+  }
 };
 
 let dmClient: ReturnType<typeof prismaExtendedDm> | null = null;
@@ -67,12 +75,19 @@ export const getDmStatsClient = () => {
 
 export const getCoaClient = () => {
   if (!coaClient) {
-    console.log('Creating new COA PrismaClient instance');
-    const connectionString = ensureConnectionString(process.env.DATABASE_URL_COA!);
-    coaClient = prismaExtendedCoa(new PrismaClientCoa({
-      adapter: new PrismaMariaDb(connectionString),
-      log: process.env.NODE_ENV === 'development' ? ['error', 'warn'] : ['error'],
-    }));
+    try {
+      console.log('Creating new COA PrismaClient instance');
+      const connectionString = ensureConnectionString(process.env.DATABASE_URL_COA!);
+      console.log('COA connection string configured with pool parameters');
+      coaClient = prismaExtendedCoa(new PrismaClientCoa({
+        adapter: new PrismaMariaDb(connectionString),
+        log: process.env.NODE_ENV === 'development' ? ['error', 'warn'] : ['error'],
+      }));
+    } catch (error) {
+      console.error('Failed to create COA PrismaClient:', error);
+      console.error('DATABASE_URL_COA value:', process.env.DATABASE_URL_COA);
+      throw error;
+    }
   }
   return coaClient;
 };
