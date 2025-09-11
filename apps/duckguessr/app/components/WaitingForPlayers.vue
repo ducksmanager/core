@@ -69,7 +69,7 @@
 <script lang="ts" setup>
 import { useSeoMeta } from "@unhead/vue";
 import { getDuckguessrUsername } from "~/composables/user";
-import { userStore } from "~/stores/user";
+import { userStore } from "~/app/stores/user";
 import type { player, userMedalPoints } from "~duckguessr-prisma-client";
 
 const { players, gameId, gamePlayersStats } = defineProps<{

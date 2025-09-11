@@ -64,10 +64,11 @@
 </template>
 
 <script lang="ts" setup>
-import { useCookies } from "@vueuse/integrations/useCookies";
+import { useCookies } from "@vueuse/integrations";
 import { userStore } from "~/stores/user";
 import type { DatasetWithCounts } from "~duckguessr-types/dataset";
 import { duckguessrSocketInjectionKey } from "~/composables/useDuckguessrSocket";
+
 const router = useRouter();
 
 const { t, locale } = useI18n();

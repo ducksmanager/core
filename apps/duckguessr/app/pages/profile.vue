@@ -83,7 +83,7 @@
 
 <script lang="ts" setup>
 import type { Avatar } from "~duckguessr-types/avatar";
-import { userStore } from "~/stores/user";
+import { userStore } from "~/app/stores/user";
 const { t } = useI18n();
 
 const {

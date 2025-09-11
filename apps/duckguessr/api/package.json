@@ -27,6 +27,8 @@
     "socket-call-server": "^0.7.6",
     "socket.io": "^4.8.1",
     "typescript": "^5.9.2",
+    "~api": "workspace:*",
+    "~dm-types": "workspace:*",
     "~prisma-schemas": "workspace:*"
   },
   "devDependencies": {

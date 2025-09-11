@@ -1,7 +1,7 @@
 **/node_modules/
 /.idea/
+.nuxt
 .turbo
-=/test/output
 /server/datasets/*
 storybook-static
 sessions

@@ -13,7 +13,7 @@
 
 <script lang="ts" setup>
 import type { MatchDetails } from "~duckguessr-types/matchDetails";
-import { userStore } from "~/stores/user";
+import { userStore } from "~/app/stores/user";
 import type { player, userMedalPoints } from "~duckguessr-prisma-client";
 
 const players = ref([] as player[]);

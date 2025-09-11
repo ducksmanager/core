@@ -145,12 +145,10 @@
 </template>
 
 <script lang="ts" setup>
-import type { BaseButtonVariant } from "node_modules/bootstrap-vue-next/dist/src/types";
-import { userStore } from "~/stores/user";
+import { userStore } from "~/app/stores/user";
 import { getUrl } from "~/composables/url";
 import type { entryurlDetailsDecision } from "~duckguessr-prisma-client";
 import { duckguessrSocketInjectionKey } from "~/composables/useDuckguessrSocket";
-
 const { maintenanceSocket } = inject(duckguessrSocketInjectionKey)!;
 
 interface DatasetWithDecisionCounts {
@@ -214,7 +212,10 @@ const decisions = {
     title: t("Image contains author").toString(),
     variant: "outline-warning",
   },
-} as const;
+} satisfies Record<
+  string,
+  { pressed: boolean; title: string; variant: string }
+>;
 const decisionsWithNonValidated = ref({
   null: {
     pressed: true,
@@ -222,7 +223,7 @@ const decisionsWithNonValidated = ref({
     variant: "secondary",
   },
   ...decisions,
-} as const);
+});
 const loadDatasets = async () => {
   datasetsGroupedByDecision.value = (
     await maintenanceSocket.value.getMaintenanceData()

@@ -1,5 +1,5 @@
 <template>
-  <router-view />
+  <NuxtPage />
 </template>
 
 <script setup lang="ts">
@@ -41,5 +41,5 @@ onBeforeMount(() => {
 </script>
 
 <style lang="scss">
-@use "./styles/main.scss";
+@use "~/styles/main.scss";
 </style>
