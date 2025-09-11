@@ -26,6 +26,7 @@ export default defineNuxtConfig({
     "@pinia/nuxt",
     "@vueuse/nuxt",
     "@sentry/nuxt",
+    "@nuxtjs/storybook",
   ],
 
   // Auto-imports
