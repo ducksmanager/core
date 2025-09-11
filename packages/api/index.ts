@@ -1,6 +1,13 @@
+import dotenv from "dotenv";
+
+dotenv.config({
+  path: "./.env",
+});
+
 import { SocketIoInstrumentation } from "@opentelemetry/instrumentation-socket.io";
 import * as Sentry from "@sentry/node";
-import dotenv from "dotenv";
+
+
 import type { Socket } from "socket.io";
 import type { NamespaceProxyTarget } from "socket-call-server";
 
@@ -44,10 +51,6 @@ export type UserServices<OptionalUser = false> = NamespaceProxyTarget<
   const int = Number.parseInt(this.toString());
   return int ?? this.toString();
 };
-
-dotenv.config({
-  path: "./.env",
-});
 
 // Validate required environment variables
 const requiredEnvVars = [
