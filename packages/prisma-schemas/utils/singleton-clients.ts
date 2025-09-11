@@ -1,3 +1,13 @@
+import dotenv from "dotenv";
+
+dotenv.config({
+  path: "../.env",
+});
+
+dotenv.config({
+  path: "./.env",
+});
+
 import { PrismaClient as PrismaClientDm } from "../client_dm/client";
 import { PrismaClient as PrismaClientDmStats } from "../client_dm_stats/client";
 import { PrismaClient as PrismaClientCoa } from "../client_coa/client";
