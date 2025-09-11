@@ -45,7 +45,7 @@
 </template>
 
 <script setup lang="ts">
-import { MEDAL_LEVELS, userStore } from "~/app/stores/user";
+import { MEDAL_LEVELS, userStore } from "~/stores/user";
 import type { MedalLevelAndProgress } from "~duckguessr-types/playerStats";
 import { getDuckguessrId } from "~/composables/user";
 import type { dataset, userMedalPoints } from "~duckguessr-prisma-client";

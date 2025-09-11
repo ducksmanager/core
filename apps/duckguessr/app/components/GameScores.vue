@@ -102,7 +102,7 @@
 <script lang="ts" setup>
 import { getDuckguessrId, getShownUsername } from "~/composables/user";
 
-import { userStore } from "~/app/stores/user";
+import { userStore } from "~/stores/user";
 import type { GameFull } from "~duckguessr-types/game";
 import type { ColorVariant } from "bootstrap-vue-next";
 import type { player, roundScore } from "~duckguessr-prisma-client";

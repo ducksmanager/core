@@ -16,7 +16,7 @@
   </div>
 </template>
 <script lang="ts" setup>
-import { userStore } from "~/app/stores/user";
+import { userStore } from "~/stores/user";
 
 const isAnonymous = computed(() => userStore().isAnonymous);
 

@@ -1,15 +1,16 @@
+import getViteAliases from "../../vite-aliases";
+import path from "path";
+
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   alias: {
+    ...getViteAliases(path.resolve(__dirname, "../..")),
     "~/*": "/app/*",
     "~locales/*": "/locales/*",
-    "~dm-services/*": "../../packages/api/services/*",
     "~web/*": "../web/*",
-    "~dm-types/*": "../../packages/types/*",
     "~duckguessr-prisma-client": "/api/prisma/client_duckguessr/client",
     "~duckguessr-services/*": "/api/services/*",
     "~duckguessr-types/*": "/api/types/*",
-    "~prisma-schemas/*": "../../packages/prisma-schemas/*",
   },
 
   devtools: { enabled: true },
@@ -24,6 +25,7 @@ export default defineNuxtConfig({
     "@nuxtjs/i18n",
     "@pinia/nuxt",
     "@vueuse/nuxt",
+    "@sentry/nuxt",
   ],
 
   // Auto-imports
@@ -54,6 +56,19 @@ export default defineNuxtConfig({
     public: {
       dmSocketUrl: process.env.VITE_DM_SOCKET_URL || "",
       sentryDsn: process.env.VITE_SENTRY_DSN || "",
+    },
+  },
+
+  // Sentry configuration
+  sentry: {
+    dsn: process.env.VITE_SENTRY_DSN || "",
+    lazy: true,
+    clientIntegrations: {
+      Replay: {},
+      BrowserTracing: {},
+    },
+    serverIntegrations: {
+      RewriteFrames: {},
     },
   },
 

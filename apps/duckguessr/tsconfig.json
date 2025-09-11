@@ -6,6 +6,9 @@
       "~/*": [
         "./app/*"
       ],
+      "~dm-services/*": [
+        "../../packages/api/services/*"
+      ],
       "~duckguessr-services/*": [
         "./api/services/*"
       ],
@@ -14,6 +17,9 @@
       ],
       "~duckguessr-prisma-client": [
         "./api/prisma/client_duckguessr/client"
+      ],
+      "~web/*": [
+        "../web/*"
       ]
     }
   }

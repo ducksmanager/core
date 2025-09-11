@@ -145,7 +145,7 @@
 </template>
 
 <script lang="ts" setup>
-import { userStore } from "~/app/stores/user";
+import { userStore } from "~/stores/user";
 import { getUrl } from "~/composables/url";
 import type { entryurlDetailsDecision } from "~duckguessr-prisma-client";
 import { duckguessrSocketInjectionKey } from "~/composables/useDuckguessrSocket";

@@ -53,7 +53,7 @@ export const userStore = defineStore("user", () => {
       });
   };
   const loadStats = () => {
-    playerSocket!.getStats(null, (newStats) => {
+    playerSocket!.getStats(null).then((newStats) => {
       stats.value = newStats;
     });
   };
@@ -62,7 +62,7 @@ export const userStore = defineStore("user", () => {
     currentGameDatasetName: string | null,
     isWinningPlayer: boolean,
   ) => {
-    playerSocket!.getGameStats(gameId, (stats) => {
+    playerSocket!.getGameStats(gameId).then((stats) => {
       gameStats.value = stats;
       if (currentGameDatasetName) {
         gameStats.value!.push({
