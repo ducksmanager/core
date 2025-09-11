@@ -54,7 +54,7 @@ DEPENDENCIES:
   - "CapawesomeCapacitorAppUpdate (from `../../../../node_modules/.pnpm/@capawesome+capacitor-app-update@7.0.1_@capacitor+core@7.4.2/node_modules/@capawesome/capacitor-app-update`)"
   - "CapawesomeCapacitorFilePicker (from `../../../../node_modules/.pnpm/@capawesome+capacitor-file-picker@7.2.0_@capacitor+core@7.4.2/node_modules/@capawesome/capacitor-file-picker`)"
   - "CapgoCapacitorUpdater (from `../../../../node_modules/.pnpm/@capgo+capacitor-updater@7.13.0_@capacitor+core@7.4.2/node_modules/@capgo/capacitor-updater`)"
-  - "SentryCapacitor (from `../../../../node_modules/.pnpm/@sentry+capacitor@1.5.0_@capacitor+core@7.4.2_@sentry+vue@8.55.0_pinia@3.0.3_typescript@5.9.2_udlkyn2pgdmwecsbrjytj6hmeu/node_modules/@sentry/capacitor`)"
+  - "SentryCapacitor (from `../../../../node_modules/.pnpm/@sentry+capacitor@1.5.0_@capacitor+core@7.4.2_@sentry+vue@8.55.0_pinia@3.0.3_typescript@5.9.2_3f22jja2gci4hvydbm4zwcgmpq/node_modules/@sentry/capacitor`)"
 
 SPEC REPOS:
   trunk:
@@ -94,7 +94,7 @@ EXTERNAL SOURCES:
   CapgoCapacitorUpdater:
     :path: "../../../../node_modules/.pnpm/@capgo+capacitor-updater@7.13.0_@capacitor+core@7.4.2/node_modules/@capgo/capacitor-updater"
   SentryCapacitor:
-    :path: "../../../../node_modules/.pnpm/@sentry+capacitor@1.5.0_@capacitor+core@7.4.2_@sentry+vue@8.55.0_pinia@3.0.3_typescript@5.9.2_udlkyn2pgdmwecsbrjytj6hmeu/node_modules/@sentry/capacitor"
+    :path: "../../../../node_modules/.pnpm/@sentry+capacitor@1.5.0_@capacitor+core@7.4.2_@sentry+vue@8.55.0_pinia@3.0.3_typescript@5.9.2_3f22jja2gci4hvydbm4zwcgmpq/node_modules/@sentry/capacitor"
 
 SPEC CHECKSUMS:
   Alamofire: 7193b3b92c74a07f85569e1a6c4f4237291e7496
@@ -118,6 +118,6 @@ SPEC CHECKSUMS:
   SSZipArchive: fe6a26b2a54d5a0890f2567b5cc6de5caa600aef
   Version: de5907f2c5d0f3cf21708db7801d1d5401139486
 
-PODFILE CHECKSUM: d682931a0a7b0e8429d3067d447859d107c42cb2
+PODFILE CHECKSUM: 92afd153f2f749e5b1e4e72e24fe743e0fbe21e6
 
 COCOAPODS: 1.16.2

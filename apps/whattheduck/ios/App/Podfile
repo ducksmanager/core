@@ -23,7 +23,7 @@ def capacitor_pods
   pod 'CapawesomeCapacitorAppUpdate', :path => '../../../../node_modules/.pnpm/@capawesome+capacitor-app-update@7.0.1_@capacitor+core@7.4.2/node_modules/@capawesome/capacitor-app-update'
   pod 'CapawesomeCapacitorFilePicker', :path => '../../../../node_modules/.pnpm/@capawesome+capacitor-file-picker@7.2.0_@capacitor+core@7.4.2/node_modules/@capawesome/capacitor-file-picker'
   pod 'CapgoCapacitorUpdater', :path => '../../../../node_modules/.pnpm/@capgo+capacitor-updater@7.13.0_@capacitor+core@7.4.2/node_modules/@capgo/capacitor-updater'
-  pod 'SentryCapacitor', :path => '../../../../node_modules/.pnpm/@sentry+capacitor@1.5.0_@capacitor+core@7.4.2_@sentry+vue@8.55.0_pinia@3.0.3_typescript@5.9.2_udlkyn2pgdmwecsbrjytj6hmeu/node_modules/@sentry/capacitor'
+  pod 'SentryCapacitor', :path => '../../../../node_modules/.pnpm/@sentry+capacitor@1.5.0_@capacitor+core@7.4.2_@sentry+vue@8.55.0_pinia@3.0.3_typescript@5.9.2_3f22jja2gci4hvydbm4zwcgmpq/node_modules/@sentry/capacitor'
 end
 
 target 'What The Duck' do
