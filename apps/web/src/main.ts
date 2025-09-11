@@ -16,7 +16,7 @@ import { routes } from "vue-router/auto-routes";
 
 import App from "~/App.vue";
 import i18n from "~/i18n";
-import en from "~translations/messages.en.json";
+import en from "~web-translations/messages.en.json";
 
 const head = createHead();
 

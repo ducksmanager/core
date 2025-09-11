@@ -39,7 +39,7 @@
       "~prisma-schemas/*": [
         "../../packages/prisma-schemas/*"
       ],
-      "~translations/*": [
+      "~web-translations/*": [
         "translations/*"
       ]
     }

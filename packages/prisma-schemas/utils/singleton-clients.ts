@@ -3,6 +3,7 @@ import { PrismaClient as PrismaClientDmStats } from "../client_dm_stats/client";
 import { PrismaClient as PrismaClientCoa } from "../client_coa/client";
 import { PrismaClient as PrismaClientEdgeCreator } from "../client_edgecreator/client";
 import { PrismaClient as PrismaClientCoverInfo } from "../client_cover_info/client";
+import { PrismaMariaDb } from '@prisma/adapter-mariadb';
 
 import prismaExtendedDm from "../schemas/dm/extended";
 import prismaExtendedCoa from "../schemas/coa/extended";
@@ -17,6 +18,7 @@ export const getDmClient = () => {
   if (!dmClient) {
     console.log('Creating new DM PrismaClient instance');
     dmClient = prismaExtendedDm(new PrismaClientDm({
+      adapter: new PrismaMariaDb(process.env.DATABASE_URL_DM!),
       log: process.env.NODE_ENV === 'development' ? ['error', 'warn'] : ['error'],
     }));
   }
@@ -27,6 +29,7 @@ export const getDmStatsClient = () => {
   if (!dmStatsClient) {
     console.log('Creating new DM Stats PrismaClient instance');
     dmStatsClient = new PrismaClientDmStats({
+      adapter: new PrismaMariaDb(process.env.DATABASE_URL_DM_STATS!),
       log: process.env.NODE_ENV === 'development' ? ['error', 'warn'] : ['error'],
     });
   }
@@ -37,6 +40,7 @@ export const getCoaClient = () => {
   if (!coaClient) {
     console.log('Creating new COA PrismaClient instance');
     coaClient = prismaExtendedCoa(new PrismaClientCoa({
+      adapter: new PrismaMariaDb(process.env.DATABASE_URL_COA!),
       log: process.env.NODE_ENV === 'development' ? ['error', 'warn'] : ['error'],
     }));
   }
@@ -47,6 +51,7 @@ export const getEdgeCreatorClient = () => {
   if (!edgeCreatorClient) {
     console.log('Creating new EdgeCreator PrismaClient instance');
     edgeCreatorClient = new PrismaClientEdgeCreator({
+      adapter: new PrismaMariaDb(process.env.DATABASE_URL_EDGECREATOR!),
       log: process.env.NODE_ENV === 'development' ? ['error', 'warn'] : ['error'],
     });
   }
@@ -57,6 +62,7 @@ export const getCoverInfoClient = () => {
   if (!coverInfoClient) {
     console.log('Creating new CoverInfo PrismaClient instance');
     coverInfoClient = new PrismaClientCoverInfo({
+      adapter: new PrismaMariaDb(process.env.DATABASE_URL_COVER_INFO!),
       log: process.env.NODE_ENV === 'development' ? ['error', 'warn'] : ['error'],
     });
   }

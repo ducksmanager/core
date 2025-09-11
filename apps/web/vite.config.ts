@@ -11,6 +11,7 @@ import Components from "unplugin-vue-components/vite";
 import { VueRouterAutoImports } from "unplugin-vue-router";
 import VueRouter from "unplugin-vue-router/vite";
 import { defineConfig } from "vite";
+import getViteAliases from "../../vite-aliases";
 
 export default defineConfig({
   clearScreen: false,
@@ -18,17 +19,10 @@ export default defineConfig({
     sourcemap: true,
   },
   resolve: {
-    alias: {
+    alias: getViteAliases(path.resolve(__dirname, "../.."), {
       "~/": `${path.resolve(__dirname, "src")}/`,
-      "~dm-services": path.resolve(__dirname, "../../packages/api/services"),
-      "~dm-types": path.resolve(__dirname, "../../packages/types"),
-      "~group-by": path.resolve(__dirname, "../../util/group-by"),
-      "~prisma-schemas": path.resolve(
-        __dirname,
-        "../../packages/prisma-schemas",
-      ),
-      "~translations": path.resolve(__dirname, "translations"),
-    },
+      "~web-translations": path.resolve(__dirname, "translations"),
+    }),
   },
   plugins: [
     ReactivityTransform(),

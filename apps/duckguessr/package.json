@@ -24,7 +24,7 @@
   "dependencies": {
     "@nuxtjs/i18n": "^10.1.0",
     "@pinia/nuxt": "^0.5.1",
-    "@prisma/client": "^6.14.0",
+    "@prisma/client": "^6.16.0",
     "@sentry/browser": "^9.46.0",
     "@sentry/tracing": "^7.120.4",
     "@sentry/vue": "^9.46.0",

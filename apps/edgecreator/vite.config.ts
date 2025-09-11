@@ -12,6 +12,7 @@ import { defineConfig } from "vite";
 import { DynamicPublicDirectory } from "vite-multiple-assets";
 import Pages from "vite-plugin-pages";
 import Layouts from "vite-plugin-vue-layouts";
+import getViteAliases from "../../vite-aliases";
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -24,19 +25,12 @@ export default defineConfig({
       "@vueuse/core",
       "bootstrap-vue-next",
     ],
-    alias: {
+    alias: getViteAliases(path.resolve(__dirname, "../.."), {
       "~": `${path.resolve(__dirname, "src")}/`,
       "~web": path.resolve(__dirname, "../web"),
-      "~dm-services": path.resolve(__dirname, "../../packages/api/services"),
       "~edgecreator-services": path.resolve(__dirname, "api/services"),
-      "~dm-types": path.resolve(__dirname, "../../packages/types"),
-      "~group-by": path.resolve(__dirname, "../../util/group-by"),
-      "~prisma-schemas": path.resolve(
-        __dirname,
-        "../../packages/prisma-schemas",
-      ),
       "~types/": `${path.resolve(__dirname, "types")}/`,
-    },
+    }),
   },
 
   publicDir: false,
