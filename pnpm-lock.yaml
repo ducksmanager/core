@@ -234,6 +234,9 @@ importers:
       unplugin-icons:
         specifier: ^22.2.0
         version: 22.2.0(@vue/compiler-sfc@3.5.21)
+      vue-tsc:
+        specifier: ^3.0.6
+        version: 3.0.6(typescript@5.9.2)
 
   apps/duckguessr/api:
     dependencies:
