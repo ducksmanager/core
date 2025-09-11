@@ -24,7 +24,7 @@ COPY packages/api/emails /app/emails
 COPY packages/api/dist/ /app/
 
 EXPOSE 3001
-CMD ["pm2", "start", "--no-daemon", "-i", "max", "index.mjs"]
+CMD ["pm2", "start", "--no-daemon", "-i", "1", "index.mjs"]
 
 FROM api AS api-story-search
 RUN mv /app/scripts/import-entryurl-vectors.mjs /app/
