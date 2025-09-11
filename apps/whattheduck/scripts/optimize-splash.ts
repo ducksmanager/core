@@ -32,7 +32,7 @@ for (const file of splashFiles) {
           quality: [0.6, 0.8], // 60-80% quality
           speed: 1, // fastest compression
           strip: true, // remove metadata
-        }) as Plugin,
+        }) as unknown as Plugin,
       ],
     });
 
