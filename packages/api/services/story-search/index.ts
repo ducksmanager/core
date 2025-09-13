@@ -12,10 +12,17 @@ let session: InferenceSession | undefined = undefined;
 export const getSession = async () => {
   if (!session) {
     console.log("Loading model...");
-    session = await InferenceSession.create(
-      "./services/story-search/model/comic_embedding_model.onnx",
-    );
-    console.log("Model loaded");
+    try {
+      session = await InferenceSession.create(
+        "./services/story-search/model/comic_embedding_model.onnx",
+      );
+      console.log("Model loaded");
+    } catch (error) {
+      console.error("Failed to load ONNX model:", error);
+      throw new Error(
+        "ONNX model not found. Please ensure the model file is downloaded from GitHub release v1.0.0-model"
+      );
+    }
   }
   return session;
 };
