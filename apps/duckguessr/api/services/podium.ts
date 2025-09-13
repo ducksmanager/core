@@ -13,7 +13,7 @@ export type PodiumServices = NamespaceProxyTarget<
 
 const prisma = new PrismaClient();
 
-const listenEvents = ({}: PodiumServices) => ({
+const listenEvents = () => ({
   getPodium: async () => prisma.$queryRaw<(player & { sumScore: number })[]>`
       SELECT player.*, sum(score + speed_bonus) AS sumScore
       FROM player

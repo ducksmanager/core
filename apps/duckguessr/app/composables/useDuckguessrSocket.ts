@@ -1,7 +1,10 @@
 import type { SocketClient } from "socket-call-client";
 
 import { type ClientEmitEvents as DatasetsEmitEvents } from "~duckguessr-services/datasets";
-import { type ClientEmitEvents as GameEmitEvents } from "~duckguessr-services/game";
+import {
+  type ClientEmitEvents as GameEmitEvents,
+  type ClientListenEvents as GameListenEvents,
+} from "~duckguessr-services/game";
 import { type ClientEmitEvents as MaintenanceEmitEvents } from "~duckguessr-services/maintenance";
 import { type ClientEmitEvents as MatchEmitEvents } from "~duckguessr-services/match";
 import namespaces from "~duckguessr-services/namespaces";
@@ -25,7 +28,7 @@ const defaultExport = (options: {
   const { session } = options;
 
   const getGameSocketFromId = (id: number) =>
-    socket.addNamespace<GameEmitEvents>(
+    socket.addNamespace<GameEmitEvents, GameListenEvents>(
       namespaces.GAME.replace("{id}", id.toString()),
       {
         session,

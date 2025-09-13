@@ -12,7 +12,7 @@ export type DatasetsServices = NamespaceProxyTarget<
 
 const prisma = new PrismaClient();
 
-const listenEvents = ({}: DatasetsServices) => ({
+const listenEvents = () => ({
   getDatasets: async () => prisma.$queryRaw`
       SELECT dataset.id, name, title, description, COUNT(*) AS images, COUNT(DISTINCT personcode) AS authors
       FROM dataset

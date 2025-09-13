@@ -57,30 +57,29 @@ watch(
   () => userStore().user,
   (value) => {
     if (value) {
-      gameSocket
-        .on("playerConnectedToMatch", () => {
-          gameSocket.value!.joinMatch(
-            ({ players, isBotAvailable, playerStats }: MatchDetails) => {
-              isBotAvailableForGame.value = isBotAvailable;
-              gamePlayersStats.value = playerStats;
-              for (const currentPlayer of players) {
-                addPlayer(currentPlayer);
-              }
-            },
-          );
-        })
-        .on("playerJoined", (player: player) => {
-          console.debug(`${player.username} is also ready`);
-          addPlayer(player);
-        })
-        .on("playerLeft", (player: player) => {
-          console.debug(`${player.username} has left`);
-          removePlayer(player);
-        })
-        .on("matchStarts", () => {
-          console.debug(`Match starts on game ${gameId}`);
-          emit("start-match");
-        });
+      gameSocket.value!.playerConnectedToMatch = () => {
+        gameSocket
+          .value!.joinMatch()
+          .then(({ players, isBotAvailable, playerStats }: MatchDetails) => {
+            isBotAvailableForGame.value = isBotAvailable;
+            gamePlayersStats.value = playerStats;
+            for (const currentPlayer of players) {
+              addPlayer(currentPlayer);
+            }
+          });
+      };
+      gameSocket.value!.playerJoined = (player: player) => {
+        console.debug(`${player.username} is also ready`);
+        addPlayer(player);
+      };
+      gameSocket.value!.playerLeft = (player: player) => {
+        console.debug(`${player.username} has left`);
+        removePlayer(player);
+      };
+      gameSocket.value!.matchStarts = () => {
+        console.debug(`Match starts on game ${gameId}`);
+        emit("start-match");
+      };
     }
   },
   { immediate: true },
