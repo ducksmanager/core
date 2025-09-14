@@ -7,9 +7,9 @@ import Cookies from "js-cookie";
 import { buildWebStorage } from "socket-call-client";
 import { stores as webStores } from "~web";
 
-import useDmSocket, {
-  socketInjectionKey as dmSocketInjectionKey,
-} from "~web/src/composables/useDmSocket";
+import { composables } from "~web";
+const { useDmSocket } = composables;
+import { socketInjectionKey as dmSocketInjectionKey } from "~web/src/composables/useDmSocket";
 
 const { loadUser } = webStores.collection();
 const { user, isLoadingUser } = storeToRefs(webStores.collection());
@@ -39,7 +39,3 @@ onBeforeMount(() => {
   loadUser();
 });
 </script>
-
-<style lang="scss">
-@use "~/styles/main.scss";
-</style>

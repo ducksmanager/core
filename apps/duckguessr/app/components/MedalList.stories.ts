@@ -1,6 +1,6 @@
-import type { Meta, StoryObj } from "@storybook/vue3-vite";
+import type { Meta, StoryObj } from "@nuxtjs/storybook";
 
-import MedalList from "~/components/MedalList.vue";
+import MedalList from "./MedalList.vue";
 
 const meta: Meta<typeof MedalList> = {
   title: "MedalList",

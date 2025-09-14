@@ -1,6 +1,6 @@
-import type { Meta, StoryObj } from "@storybook/vue3-vite";
+import type { Meta, StoryObj } from "@nuxtjs/storybook";
 
-import AuthorCard from "~/components/AuthorCard.vue";
+import AuthorCard from "./AuthorCard.vue";
 
 const meta: Meta<typeof AuthorCard> = {
   title: "AuthorCard",

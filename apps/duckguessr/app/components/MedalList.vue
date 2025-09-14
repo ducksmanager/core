@@ -93,7 +93,7 @@ const levelsAndProgress = computed(
       : MEDAL_LEVELS.reduce((acc, { medalType, levels }) => {
           let level =
             levels.length -
-            [...levels]!.reverse().findIndex(
+            [...levels].reverse().findIndex(
               (levelThreshold: number) =>
                 (
                   stats.value!.find(

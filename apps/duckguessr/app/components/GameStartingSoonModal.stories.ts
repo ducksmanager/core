@@ -1,6 +1,6 @@
-import type { Meta, StoryObj } from "@storybook/vue3-vite";
+import type { Meta, StoryObj } from "@nuxtjs/storybook";
 
-import GameStartingSoonModal from "~/components/GameStartingSoonModal.vue";
+import GameStartingSoonModal from "./GameStartingSoonModal.vue";
 
 const meta: Meta<typeof GameStartingSoonModal> = {
   title: "GameStartingSoonModal",

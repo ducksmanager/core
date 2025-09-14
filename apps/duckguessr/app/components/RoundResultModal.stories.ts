@@ -1,6 +1,6 @@
-import type { Meta, StoryObj } from "@storybook/vue3-vite";
+import type { Meta, StoryObj } from "@nuxtjs/storybook";
 
-import RoundResultModal from "~/components/RoundResultModal.vue";
+import RoundResultModal from "./RoundResultModal.vue";
 
 const meta: Meta<typeof RoundResultModal> = {
   title: "RoundResultModal",

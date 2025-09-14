@@ -1,13 +1,17 @@
 import getViteAliases from "../../vite-aliases";
 import path from "path";
+import { defineNuxtConfig } from "nuxt/config";
+import checker from "vite-plugin-checker";
 
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   alias: {
     ...getViteAliases(path.resolve(__dirname, "../..")),
     "~/*": "/app/*",
+    "~styles/*": "/styles/*",
     "~locales/*": "/locales/*",
-    "~web/*": "../web/*",
+    "~web": path.resolve(__dirname, "../web"),
+    "~web/*": path.resolve(__dirname, "../web/*"),
     "~duckguessr-prisma-client": "/api/prisma/client_duckguessr/client",
     "~duckguessr-services/*": "/api/services/*",
     "~duckguessr-types/*": "/api/types/*",
@@ -17,39 +21,55 @@ export default defineNuxtConfig({
   compatibilityDate: "2025-09-09",
 
   // CSS
-  css: ["bootstrap/dist/css/bootstrap.min.css", "~/styles/main.scss"],
+  css: ["bootstrap/dist/css/bootstrap.min.css", "./styles/main.scss"],
 
   // Modules
   modules: [
     "@bootstrap-vue-next/nuxt",
-    "@nuxtjs/i18n",
+    [
+      "@nuxtjs/i18n",
+      {
+        locales: [
+          { code: "fr", file: "fr-FR.json" },
+          { code: "en", file: "en-US.json" },
+          { code: "de", file: "de.json" },
+          { code: "es", file: "es.json" },
+        ],
+        langDir: "../locales",
+        defaultLocale: "fr",
+        strategy: "prefix_except_default",
+        detectBrowserLanguage: {
+          useCookie: true,
+          cookieKey: "locale",
+          redirectOn: "root",
+        },
+      },
+    ],
     "@pinia/nuxt",
     "@vueuse/nuxt",
-    "@sentry/nuxt",
     "@nuxtjs/storybook",
+    [
+      "@sentry/nuxt/module",
+      {
+        sourceMapsUploadOptions: {
+          org: "bruno-perel",
+          project: "duckguessr",
+        },
+      },
+    ],
+    "@nuxt/eslint",
   ],
 
   // Auto-imports
   imports: {
-    dirs: [
-      "../web/src/composables",
-      "../web/src/stores",
-      "../../packages/types",
-    ],
+    dirs: ["~/stores", "../../packages/types"],
   },
-
-  // Components
-  components: [
-    {
-      path: "~/app/components",
-      pathPrefix: false,
-    },
-  ],
 
   // TypeScript
   typescript: {
     strict: true,
     typeCheck: true,
+    shim: true,
   },
 
   // Runtime config
@@ -60,21 +80,9 @@ export default defineNuxtConfig({
     },
   },
 
-  // Sentry configuration
-  sentry: {
-    dsn: process.env.VITE_SENTRY_DSN || "",
-    lazy: true,
-    clientIntegrations: {
-      Replay: {},
-      BrowserTracing: {},
-    },
-    serverIntegrations: {
-      RewriteFrames: {},
-    },
-  },
-
   // Vite config
   vite: {
+    plugins: [checker({ vueTsc: true })],
     resolve: {
       dedupe: [
         "vue",
@@ -83,24 +91,6 @@ export default defineNuxtConfig({
         "@vueuse/core",
         "bootstrap-vue-next",
       ],
-    },
-  },
-
-  // i18n configuration
-  i18n: {
-    locales: [
-      { code: "fr", file: "fr-FR.json" },
-      { code: "en", file: "en-US.json" },
-      { code: "de", file: "de.json" },
-      { code: "es", file: "es.json" },
-    ],
-    langDir: "./locales",
-    defaultLocale: "fr",
-    strategy: "prefix_except_default",
-    detectBrowserLanguage: {
-      useCookie: true,
-      cookieKey: "locale",
-      redirectOn: "root",
     },
   },
 
@@ -113,5 +103,9 @@ export default defineNuxtConfig({
         { name: "viewport", content: "width=device-width, initial-scale=1" },
       ],
     },
+  },
+
+  sourcemap: {
+    client: "hidden",
   },
 });

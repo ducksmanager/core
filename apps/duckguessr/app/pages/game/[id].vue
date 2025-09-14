@@ -18,7 +18,11 @@
       :current-round="currentRound!"
       :authors="game.authors"
       :players="players"
-      :previous-personcodes="game.rounds.map((round) => round?.personcode!)"
+      :previous-personcodes="
+        game.rounds
+          .filter((round) => 'personcode' in round)
+          .map((round) => round.personcode)
+      "
       :remaining-time="remainingTime"
       @select-author="
         chosenAuthor = $event;
@@ -66,49 +70,121 @@ const route = useRoute();
 
 const gameId = parseInt(route.params.id as string);
 
-const isConnectedToSocket = ref(false as boolean);
+const isConnectedToSocket = ref(false);
 
-const chosenAuthor = ref(null as string | null);
-const hasEverybodyGuessed = ref(false as boolean);
-const gameIsFinished = ref(false as boolean);
-const firstRoundStartDate = ref(null as Date | null);
+const chosenAuthor = ref<string>();
+const hasEverybodyGuessed = ref(false);
+const gameIsFinished = ref(false);
+const firstRoundStartDate = ref<Date>();
 
-const game = ref(null as GameFullNoPersoncode | null);
+const game = ref<GameFullNoPersoncode>();
 
-const gameSocket = getGameSocketFromId(gameId)
-  .on("connect", () => {
-    isConnectedToSocket.value = true;
-  })
-  .on("firstRoundWillStartSoon", (receivedFirstRoundStartDate) => {
-    firstRoundStartDate.value = receivedFirstRoundStartDate;
-  })
-  .on("roundStarts", (round) => {
-    hasEverybodyGuessed.value = false;
-    currentRoundNumber.value = round!.roundNumber;
-    game.value!.rounds[currentRoundNumber.value! - 1] = round;
-    hasUrlLoaded.value = false;
-  })
-  .on("roundEnds", (round, nextRound) => {
-    hasEverybodyGuessed.value = true;
-    chosenAuthor.value = null;
-    game.value!.rounds[currentRoundNumber.value! - 1] = round;
-    if (nextRound) {
-      game.value!.rounds[currentRoundNumber.value!] = nextRound;
-    }
-  })
-  .on("gameEnds", () => {
-    gameIsFinished.value = true;
-  })
-  .on("playerGuessed", ({ roundScore, answer }) => {
-    if (roundScore.playerId === duckguessrId) {
-      game.value!.rounds[currentRoundNumber.value! - 1]!.personcode = answer;
-    }
-    game.value!.rounds[currentRoundNumber.value! - 1]!.roundScores.push(
-      roundScore,
-    );
-  });
+const gameSocket = getGameSocketFromId(gameId);
 
-const currentRoundNumber = ref(null as number | null);
+gameSocket.connect = () => {
+  isConnectedToSocket.value = true;
+};
+
+gameSocket.firstRoundWillStartSoon = (receivedFirstRoundStartDate) => {
+  firstRoundStartDate.value = receivedFirstRoundStartDate;
+};
+
+gameSocket.roundStarts = (round) => {
+  hasEverybodyGuessed.value = false;
+  currentRoundNumber.value = round.roundNumber || undefined;
+  game.value!.rounds[currentRoundNumber.value! - 1] = round;
+  hasUrlLoaded.value = false;
+};
+
+gameSocket.roundEnds = (round, nextRound) => {
+  hasEverybodyGuessed.value = true;
+  chosenAuthor.value = undefined;
+  game.value!.rounds[currentRoundNumber.value! - 1] = round;
+  if (nextRound) {
+    game.value!.rounds[currentRoundNumber.value!] = nextRound;
+  }
+};
+
+gameSocket.firstRoundWillStartSoon = (receivedFirstRoundStartDate) => {
+  firstRoundStartDate.value = receivedFirstRoundStartDate;
+};
+
+gameSocket.roundStarts = (round) => {
+  hasEverybodyGuessed.value = false;
+  currentRoundNumber.value = round.roundNumber || undefined;
+  game.value!.rounds[currentRoundNumber.value! - 1] = round;
+  hasUrlLoaded.value = false;
+};
+
+gameSocket.roundEnds = (round, nextRound) => {
+  hasEverybodyGuessed.value = false;
+  currentRoundNumber.value = round.roundNumber || undefined;
+  game.value!.rounds[currentRoundNumber.value! - 1] = round;
+  hasUrlLoaded.value = false;
+};
+
+gameSocket.gameEnds = () => {
+  gameIsFinished.value = true;
+};
+
+gameSocket.playerGuessed = ({ roundScore, answer }) => {
+  if (roundScore.playerId === duckguessrId) {
+    game.value!.rounds[currentRoundNumber.value! - 1]!.personcode = answer;
+  }
+  game.value!.rounds[currentRoundNumber.value! - 1]!.roundScores.push(
+    roundScore,
+  );
+};
+
+gameSocket.roundEnds = (round, nextRound) => {
+  hasEverybodyGuessed.value = true;
+  chosenAuthor.value = undefined;
+  game.value!.rounds[currentRoundNumber.value! - 1] = round;
+  if (nextRound) {
+    game.value!.rounds[currentRoundNumber.value!] = nextRound;
+  }
+};
+
+gameSocket.gameEnds = () => {
+  gameIsFinished.value = true;
+};
+
+gameSocket.playerGuessed = ({ roundScore, answer }) => {
+  if (roundScore.playerId === duckguessrId) {
+    game.value!.rounds[currentRoundNumber.value! - 1]!.personcode = answer;
+  }
+  game.value!.rounds[currentRoundNumber.value! - 1]!.roundScores.push(
+    roundScore,
+  );
+};
+
+gameSocket.gameEnds = () => {
+  gameIsFinished.value = true;
+};
+
+gameSocket.playerGuessed = ({ roundScore, answer }) => {
+  if (roundScore.playerId === duckguessrId) {
+    game.value!.rounds[currentRoundNumber.value! - 1]!.personcode = answer;
+  }
+  game.value!.rounds[currentRoundNumber.value! - 1]!.roundScores.push(
+    roundScore,
+  );
+};
+
+gameSocket.gameEnds = () => {
+  gameIsFinished.value = true;
+};
+
+gameSocket.playerGuessed = ({ roundScore, answer }) => {
+  if (roundScore.playerId === duckguessrId) {
+    game.value!.rounds[currentRoundNumber.value! - 1]!.personcode = answer;
+  }
+  game.value!.rounds[currentRoundNumber.value! - 1]!.roundScores.push(
+    roundScore,
+  );
+};
+
+const currentRoundNumber = ref<number>();
 
 const scoreToVariant = useScoreToVariant;
 
@@ -116,12 +192,12 @@ const players = computed(
   () => game.value?.gamePlayers?.map(({ player }) => player) || [],
 );
 
-const hasUrlLoaded = ref(false as boolean);
+const hasUrlLoaded = ref(false);
 
-const now = ref(Date.now() as number);
+const now = ref(Date.now());
 
-const getRound = (searchedRoundNumber: number | null) =>
-  searchedRoundNumber == null
+const getRound = (searchedRoundNumber: number | undefined) =>
+  searchedRoundNumber == undefined
     ? null
     : (game.value?.rounds || []).find(
         (round) => round?.roundNumber === searchedRoundNumber,
@@ -132,8 +208,8 @@ const currentRound = computed(() => getRound(currentRoundNumber.value));
 const availableTime = computed(() =>
   !currentRound.value
     ? Infinity
-    : (new Date(currentRound.value!.finishedAt!).getTime() -
-        new Date(currentRound.value!.startedAt!).getTime()) /
+    : (new Date(currentRound.value.finishedAt!).getTime() -
+        new Date(currentRound.value.startedAt!).getTime()) /
       1000,
 );
 
@@ -143,7 +219,7 @@ const remainingTime = computed(() =>
     : Math.floor(
         Math.max(
           0,
-          (new Date(currentRound.value!.finishedAt!).getTime() - now.value) /
+          (new Date(currentRound.value.finishedAt!).getTime() - now.value) /
             1000,
         ),
       ),
@@ -160,16 +236,15 @@ const nextRoundStartDate = computed(() => {
 });
 
 const validateGuess = async () => {
-  const hasEverybodyGuessedResult = await gameSocket.emitWithAck(
-    "guess",
-    chosenAuthor.value,
+  const hasEverybodyGuessedResult = await gameSocket.guess(
+    chosenAuthor.value || null,
   );
   hasEverybodyGuessed.value =
     hasEverybodyGuessedResult || hasEverybodyGuessed.value;
 };
 
 const loadGame = async () => {
-  game.value = await podiumSocket.value.getPodium();
+  game.value = await podiumSocket.getPodium();
   if (game.value) {
     const now = new Date().toISOString();
     gameIsFinished.value = game.value.rounds.every(

@@ -1,6 +1,6 @@
-import type { Meta, StoryObj } from "@storybook/vue3-vite";
+import type { Meta, StoryObj } from "@nuxtjs/storybook";
 
-import Medal from "~/components/Medal.vue";
+import Medal from "./Medal.vue";
 import type { MedalLevelAndProgress } from "~duckguessr-types/playerStats";
 
 const meta: Meta<typeof Medal> = {

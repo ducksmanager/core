@@ -48,7 +48,7 @@
     "@eslint/js": "^9.33.0",
     "@iconify-json/bi": "^1.2.6",
     "@nuxt/devtools": "^1.5.0",
-    "@nuxt/eslint": "^0.5.0",
+    "@nuxt/eslint": "^1.9.0",
     "@nuxt/typescript-build": "^3.0.2",
     "@storybook-vue/nuxt": "^9.0.1",
     "@storybook/vue3": "^9.1.5",
@@ -75,6 +75,7 @@
     "typescript": "^5.9.2",
     "typescript-eslint": "^8.42.0",
     "unplugin-icons": "^22.2.0",
+    "vite-plugin-checker": "^0.10.3",
     "vue-tsc": "^3.0.6"
   },
   "eslintConfig": {

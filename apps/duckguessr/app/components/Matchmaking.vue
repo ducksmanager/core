@@ -20,10 +20,12 @@ const players = ref([] as player[]);
 const gamePlayersStats = ref(null as userMedalPoints[] | null);
 const isBotAvailableForGame = ref(null as boolean | null);
 
-const { gameId, gameSocket } = defineProps<{
+const { gameId } = defineProps<{
   gameId: number;
-  gameSocket: ReturnType<typeof useDuckguessrSocket>["gameSocket"];
 }>();
+
+const { getGameSocketFromId } = inject(duckguessrSocketInjectionKey)!;
+const gameSocket = getGameSocketFromId(gameId);
 
 const emit = defineEmits<{
   (e: "start-match"): void;
@@ -42,24 +44,24 @@ const removePlayer = (player: player) => {
 };
 
 const startMatch = () => {
-  gameSocket.value!.startMatch();
+  gameSocket.startMatch();
 };
 
 const addBot = () => {
-  gameSocket.value!.addBot();
+  gameSocket.addBot();
 };
 
 const removeBot = () => {
-  gameSocket.value!.removeBot();
+  gameSocket.removeBot();
 };
 
 watch(
   () => userStore().user,
   (value) => {
     if (value) {
-      gameSocket.value!.playerConnectedToMatch = () => {
+      gameSocket.playerConnectedToMatch = () => {
         gameSocket
-          .value!.joinMatch()
+          .joinMatch()
           .then(({ players, isBotAvailable, playerStats }: MatchDetails) => {
             isBotAvailableForGame.value = isBotAvailable;
             gamePlayersStats.value = playerStats;
@@ -68,15 +70,15 @@ watch(
             }
           });
       };
-      gameSocket.value!.playerJoined = (player: player) => {
+      gameSocket.playerJoined = (player: player) => {
         console.debug(`${player.username} is also ready`);
         addPlayer(player);
       };
-      gameSocket.value!.playerLeft = (player: player) => {
+      gameSocket.playerLeft = (player: player) => {
         console.debug(`${player.username} has left`);
         removePlayer(player);
       };
-      gameSocket.value!.matchStarts = () => {
+      gameSocket.matchStarts = () => {
         console.debug(`Match starts on game ${gameId}`);
         emit("start-match");
       };

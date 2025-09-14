@@ -1,6 +1,6 @@
-import type { Meta, StoryObj } from "@storybook/vue3-vite";
+import type { Meta, StoryObj } from "@nuxtjs/storybook";
 
-import RoundScore from "~/components/RoundScore.vue";
+import RoundScore from "./RoundScore.vue";
 
 const meta: Meta<typeof RoundScore> = {
   title: "RoundScore",

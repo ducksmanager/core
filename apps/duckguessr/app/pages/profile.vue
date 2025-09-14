@@ -182,7 +182,7 @@ const onTreeLoad = (event: any) => {
 
 const onSelectAvatar = () => {
   user.value!.avatar = closestAvatar.value!.character;
-  playerSocket.value!.updateUser(user.value!, (updatedUser) => {
+  playerSocket.value!.updateUser(user.value, (updatedUser) => {
     user.value = updatedUser;
   });
 };

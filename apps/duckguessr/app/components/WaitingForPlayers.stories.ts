@@ -1,6 +1,6 @@
-import type { Meta, StoryObj } from "@storybook/vue3-vite";
+import type { Meta, StoryObj } from "@nuxtjs/storybook";
 
-import WaitingForPlayers from "~/components/WaitingForPlayers.vue";
+import WaitingForPlayers from "./WaitingForPlayers.vue";
 
 const meta: Meta<typeof WaitingForPlayers> = {
   title: "WaitingForPlayers",

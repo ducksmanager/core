@@ -1,4 +1,4 @@
-import { PrismaClient } from "prisma/client_duckguessr/client";
+import { PrismaClient } from "../prisma/client_duckguessr/client";
 import type { Socket } from "socket.io";
 import type { NamespaceProxyTarget } from "socket-call-server";
 import { useSocketEvents } from "socket-call-server";

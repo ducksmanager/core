@@ -1,6 +1,6 @@
-import type { Meta, StoryObj } from "@storybook/vue3-vite";
+import type { Meta, StoryObj } from "@nuxtjs/storybook";
 
-import GameComponent from "~/components/GameComponent.vue";
+import GameComponent from "./GameComponent.vue";
 
 const meta: Meta<typeof GameComponent> = {
   title: "GameComponent",

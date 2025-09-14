@@ -125,7 +125,7 @@
               :disabled="isLoading"
               :variant="variant"
               :pressed="decision === id"
-              @click="entryurlsPendingMaintenanceWithUrls[index].decision = id"
+              @click="entryurlsPendingMaintenanceWithUrls[index]!.decision = id"
             >
               {{ title }}
             </b-button>
@@ -149,6 +149,7 @@ import { userStore } from "~/stores/user";
 import { getUrl } from "~/composables/url";
 import type { entryurlDetailsDecision } from "~duckguessr-prisma-client";
 import { duckguessrSocketInjectionKey } from "~/composables/useDuckguessrSocket";
+import type { BaseButtonVariant } from "bootstrap-vue-next";
 const { maintenanceSocket } = inject(duckguessrSocketInjectionKey)!;
 
 interface DatasetWithDecisionCounts {
@@ -180,11 +181,14 @@ const entryurlsPendingMaintenanceWithUrls = ref(
     url: string;
   }[],
 );
-const validatedAndRemainingImageCount = ref(null as any);
-const selectedDataset = ref(null as string | null);
-const isLoading = ref(false as boolean);
-const currentPage = ref(1 as number);
-const totalRows = ref(10000 as number | null);
+const validatedAndRemainingImageCount = ref<{
+  not_validated: number;
+  validated: number;
+}>();
+const selectedDataset = ref<string>();
+const isLoading = ref(false);
+const currentPage = ref(1);
+const totalRows = ref(10000);
 const rowsPerPage = 60;
 
 const user = computed(() => userStore().user);
@@ -201,32 +205,33 @@ const isAllowed = computed(
     ].includes(user.value.username),
 );
 const decisions = {
-  ok: { pressed: false, title: "OK", variant: "outline-success" },
+  ok: {
+    pressed: false,
+    title: "OK",
+    variant: "outline-success" as keyof BaseButtonVariant,
+  },
   no_drawing: {
     pressed: false,
     title: t("Image doesn't have a drawing").toString(),
-    variant: "outline-warning",
+    variant: "outline-warning" as keyof BaseButtonVariant,
   },
   shows_author: {
     pressed: false,
     title: t("Image contains author").toString(),
-    variant: "outline-warning",
+    variant: "outline-warning" as keyof BaseButtonVariant,
   },
-} satisfies Record<
-  string,
-  { pressed: boolean; title: string; variant: string }
->;
+};
 const decisionsWithNonValidated = ref({
   null: {
     pressed: true,
     title: t("Non-validated images").toString(),
-    variant: "secondary",
+    variant: "secondary" as keyof BaseButtonVariant,
   },
   ...decisions,
 });
 const loadDatasets = async () => {
   datasetsGroupedByDecision.value = (
-    await maintenanceSocket.value.getMaintenanceData()
+    await maintenanceSocket.getMaintenanceData()
   ).reduce(
     (
       acc: any,
@@ -272,12 +277,12 @@ const loadImagesToMaintain = async (
   offset: number,
 ) => {
   if (!datasetName) {
-    validatedAndRemainingImageCount.value = null;
+    validatedAndRemainingImageCount.value = undefined;
     return;
   }
   isLoading.value = true;
   const entryurlsToMaintain =
-    await maintenanceSocket.value.getMaintenanceDataForDataset(
+    await maintenanceSocket.getMaintenanceDataForDataset(
       datasetName,
       (
         Object.keys(decisionsWithNonValidated) as (
@@ -298,7 +303,7 @@ const loadImagesToMaintain = async (
   );
 
   const datasetsAndDecisions =
-    datasetsGroupedByDecision.value[datasetName].decisions;
+    datasetsGroupedByDecision.value[datasetName]!.decisions;
   validatedAndRemainingImageCount.value = {
     not_validated: datasetsAndDecisions.null || 0,
     validated:
@@ -312,7 +317,7 @@ watch(
   decisionsWithNonValidated,
   async (newValue) => {
     await loadImagesToMaintain(
-      selectedDataset.value,
+      selectedDataset.value!,
       newValue,
       (currentPage.value - 1) * rowsPerPage,
     );
@@ -322,7 +327,7 @@ watch(
 
 watch(selectedDataset, async (newValue) => {
   await loadImagesToMaintain(
-    newValue,
+    newValue!,
     decisionsWithNonValidated.value,
     (currentPage.value - 1) * rowsPerPage,
   );
@@ -330,7 +335,7 @@ watch(selectedDataset, async (newValue) => {
 
 watch(currentPage, async (newValue) => {
   await loadImagesToMaintain(
-    selectedDataset.value,
+    selectedDataset.value!,
     decisionsWithNonValidated.value,
     (newValue - 1) * rowsPerPage,
   );
@@ -348,12 +353,12 @@ watch(
 
 const submitInvalidations = async () => {
   isLoading.value = true;
-  await maintenanceSocket.value.updateMaintenanceData(
+  await maintenanceSocket.updateMaintenanceData(
     entryurlsPendingMaintenanceWithUrls.value,
   );
 
   await loadImagesToMaintain(
-    selectedDataset.value,
+    selectedDataset.value!,
     decisionsWithNonValidated.value,
     currentPage.value - 1,
   );

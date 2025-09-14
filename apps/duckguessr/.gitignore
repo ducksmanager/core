@@ -13,3 +13,6 @@ sessions
 api/prisma/client_*
 
 *storybook.log
+
+# Sentry Config File
+.env.sentry-build-plugin

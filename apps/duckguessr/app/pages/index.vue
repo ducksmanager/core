@@ -64,7 +64,7 @@
 </template>
 
 <script lang="ts" setup>
-import { useCookies } from "@vueuse/integrations";
+import { useCookies } from "@vueuse/integrations/useCookies";
 import { userStore } from "~/stores/user";
 import type { DatasetWithCounts } from "~duckguessr-types/dataset";
 import { duckguessrSocketInjectionKey } from "~/composables/useDuckguessrSocket";

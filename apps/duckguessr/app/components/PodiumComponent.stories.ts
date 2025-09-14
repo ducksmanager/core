@@ -1,6 +1,5 @@
-import type { Meta, StoryObj } from "@storybook/vue3-vite";
-
-import PodiumComponent from "~/components/PodiumComponent.vue";
+import type { Meta, StoryObj } from "@nuxtjs/storybook";
+import PodiumComponent from "./PodiumComponent.vue";
 
 const meta: Meta<typeof PodiumComponent> = {
   title: "Podium",

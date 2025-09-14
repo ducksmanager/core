@@ -209,7 +209,7 @@ const currentUserWonFastestRounds = currentUserWonRounds.filter(
       ...game.rounds
         .find((score) => score?.id === roundScore!.roundId)!
         .roundScores.map(
-          (otherPlayerRoundScore) => otherPlayerRoundScore!.speedBonus || 0,
+          (otherPlayerRoundScore) => otherPlayerRoundScore.speedBonus || 0,
         ),
     ),
 );
@@ -222,7 +222,7 @@ watch(
     if (loggedInAndParticipated) {
       userStore().loadStats();
       userStore().loadGameStats(
-        game.id!,
+        game.id,
         game.dataset.name,
         winningPlayer.value?.id === duckguessrId,
       );

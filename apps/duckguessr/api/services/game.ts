@@ -11,34 +11,37 @@ import { PrismaClient } from "../prisma/client_duckguessr/client";
 import { getRoundWithScores, setRoundTimes } from "../round";
 import { guess } from "../round";
 import type { GuessResponse } from "../types/guess";
-import type {
-  CurrentGame,
-  SocketGameData,
-} from "../types/socketEvents";
+import type { CurrentGame, SocketGameData } from "../types/socketEvents";
 import namespaces from "./namespaces";
 
 const prisma = new PrismaClient();
 
-export type ClientListenEvents =
-  {
-    playerJoined: (player: player) => void;
-    playerConnectedToMatch: () => void;
-    playerLeft: (player: player) => void;
-    matchStarts: () => void;
-  };
+export type ClientListenEvents = {
+  playerJoined: (player: player) => void;
+  playerConnectedToMatch: () => void;
+  playerLeft: (player: player) => void;
+  matchStarts: () => void;
+  gameEnds: () => void;
+  playerGuessed: (guessResultsData: GuessResponse) => void;
+  roundEnds: (round: round, nextRound?: Omit<round, "personcode">) => void;
+  roundStarts: (round: Omit<round, "personcode">) => void;
+  firstRoundWillStartSoon: (firstRoundStartDate: Date) => void;
+};
 
 export type GameServices = NamespaceProxyTarget<
   Socket<typeof listenEvents, ClientListenEvents, object, SocketGameData>,
   ClientListenEvents
 >;
 
-export type ClientEmitEvents = ( NonNullable<Awaited<ReturnType<typeof createGameSocket>>>['client'])["emitEvents"];
+export type ClientEmitEvents = NonNullable<
+  Awaited<ReturnType<typeof createGameSocket>>
+>["client"]["emitEvents"];
 
-
-const checkAndAssociatePlayer = async (currentGame: CurrentGame, player: player) => {
-  if (
-    currentGame.gamePlayers.find(({ playerId }) => playerId === player.id)
-  ) {
+const checkAndAssociatePlayer = async (
+  currentGame: CurrentGame,
+  player: player,
+) => {
+  if (currentGame.gamePlayers.find(({ playerId }) => playerId === player.id)) {
     console.info(
       `Player ${player.username} is already associated with game ${
         currentGame!.id
@@ -52,11 +55,12 @@ const checkAndAssociatePlayer = async (currentGame: CurrentGame, player: player)
 };
 
 const onGuess = async (
-  socket: Socket,
+  gameServices: GameServices,
   user: player,
   personcode: string | null,
 ): Promise<boolean> => {
-  const currentRound = socket.data.currentRound;
+  const { _socket, ...events } = gameServices;
+  const currentRound = _socket.data.currentRound;
   console.log(
     `${user.username} is guessing ${JSON.stringify(personcode)} on round ${
       currentRound.id
@@ -69,19 +73,20 @@ const onGuess = async (
         personcode,
       }));
     if (guessResultsData) {
-      socket.emit("playerGuessed", guessResultsData);
-      socket.broadcast.emit("playerGuessed", {
+      events.playerGuessed(guessResultsData);
+      _socket.broadcast.emit("playerGuessed", {
         ...guessResultsData,
         answer: null,
       } as GuessResponse);
 
       if (personcode !== null) {
         const haveAllPlayersGuessed =
-          (await getPlayersMissingRoundScore(socket.data.currentRound)).length === 0;
+          (await getPlayersMissingRoundScore(_socket.data.currentRound))
+            .length === 0;
 
         if (haveAllPlayersGuessed) {
-          clearTimeout(socket.data.currentRoundEndTimeout);
-          await finishRound(socket);
+          clearTimeout(_socket.data.currentRoundEndTimeout);
+          await finishRound(gameServices);
           return true;
         }
       }
@@ -105,29 +110,28 @@ const getPlayersMissingRoundScore = async (currentRound: round) =>
       GROUP BY username
     `;
 
-const startRound = (socket: Socket) => {
-  const currentRound = socket.data.currentRound;
-  socket.data.currentRoundEndTimeout = setTimeout(
+const startRound = (socket: GameServices) => {
+  const { _socket, ...events } = socket;
+  const currentRound = socket._socket.data.currentRound;
+  _socket.data.currentRoundEndTimeout = setTimeout(
     () => finishRound(socket),
     currentRound.finishedAt!.getTime() - new Date().getTime(),
   );
 
   if (currentRound.roundNumber === 1) {
     setTimeout(() => {
-      socket.broadcast.emit(
+      _socket.broadcast.emit(
         "firstRoundWillStartSoon",
         currentRound.startedAt!,
       );
-      socket.emit("firstRoundWillStartSoon", currentRound.startedAt!);
+      events.firstRoundWillStartSoon(currentRound.startedAt!);
     }, 200);
   }
 
+  const { personcode, ...roundWithoutPersoncode } = currentRound;
   setTimeout(async () => {
-    socket.broadcast.emit("roundStarts", {
-      ...currentRound,
-      personcode: null,
-    });
-    socket.emit("roundStarts", { ...currentRound, personcode: null });
+    _socket.broadcast.emit("roundStarts", roundWithoutPersoncode);
+    events.roundStarts(roundWithoutPersoncode);
 
     const botPlayer = (
       await prisma.gamePlayer.findFirst({
@@ -145,37 +149,42 @@ const startRound = (socket: Socket) => {
       })
     )?.player;
     if (botPlayer) {
-      const possibleAuthors = socket.data.currentGame!.rounds
-        .filter(
+      const possibleAuthors = _socket.data
+        .currentGame!.rounds.filter(
           ({ roundNumber }: round) =>
             roundNumber === null || roundNumber >= currentRound.roundNumber!,
         )
         .map(({ personcode }: round) => personcode);
-      predict(currentRound, socket.data.currentGame!.dataset, possibleAuthors).then(
-        (personcode) => onGuess(socket, botPlayer!, personcode),
-      );
+      predict(
+        currentRound,
+        _socket.data.currentGame!.dataset,
+        possibleAuthors,
+      ).then((personcode) => onGuess(socket, botPlayer, personcode));
     }
   }, currentRound.startedAt!.getTime() - new Date().getTime());
 };
 
-const finishRound = async (socket: Socket) => {
-  let {currentRound, currentGame} = socket.data;
+const finishRound = async (gameServices: GameServices) => {
+  const { _socket, ...events } = gameServices;
+  let { currentRound, currentGame } = _socket.data;
   console.log(`Round ${currentRound.id} finished`);
-  const missingScores = await getPlayersMissingRoundScore(socket.data.currentRound);
+  const missingScores = await getPlayersMissingRoundScore(
+    _socket.data.currentRound,
+  );
   for (const { username } of missingScores) {
     console.log(`${username} is missing a score`);
     await onGuess(
-      socket,
+      gameServices,
       (await prisma.player.findUnique({ where: { username } }))!,
       null,
     );
   }
-  const roundWithScores = await getRoundWithScores(currentRound.id);
-  socket.broadcast.emit("roundEnds", roundWithScores, null);
-  socket.emit("roundEnds", roundWithScores, null);
+  const roundWithScores = (await getRoundWithScores(currentRound.id))!;
   if (currentRound.roundNumber === numberOfRounds) {
-    socket.broadcast.emit("gameEnds");
-    socket.emit("gameEnds");
+    _socket.broadcast.emit("roundEnds", roundWithScores);
+    events.roundEnds(roundWithScores);
+    _socket.broadcast.emit("gameEnds");
+    events.gameEnds();
   } else {
     currentRound = await setRoundTimes(
       currentGame!.rounds.find(
@@ -183,20 +192,22 @@ const finishRound = async (socket: Socket) => {
           roundNumber === currentRound.roundNumber! + 1,
       ) as round,
     );
-    socket.broadcast.emit("roundEnds", roundWithScores, {
-      ...currentRound,
-      personcode: null,
-    });
-    socket.emit("roundEnds", roundWithScores, {
-      ...currentRound,
-      personcode: null,
-    });
-    startRound(socket);
+    const { personcode, ...roundWithoutPersoncode } = currentRound;
+    _socket.broadcast.emit(
+      "roundEnds",
+      roundWithScores,
+      roundWithoutPersoncode,
+    );
+    events.roundEnds(roundWithScores, roundWithoutPersoncode);
+    startRound(gameServices);
   }
 };
 
-const validateGameForBotAddOrRemove = (userId: number, currentGame: CurrentGame) => {
-  if (userId !== currentGame.gamePlayers[0].playerId) {
+const validateGameForBotAddOrRemove = (
+  userId: number,
+  currentGame: CurrentGame,
+) => {
+  if (currentGame.gamePlayers[0] && userId !== currentGame.gamePlayers[0].playerId) {
     console.error(
       "Only the player creating the match can add or remove a bot!",
     );
@@ -204,7 +215,11 @@ const validateGameForBotAddOrRemove = (userId: number, currentGame: CurrentGame)
   }
 };
 
-const removePlayer = async (user: player, _socket: GameServices['_socket'], playerLeftEvent: (player: player) => void) => {
+const removePlayer = async (
+  user: player,
+  _socket: GameServices["_socket"],
+  playerLeftEvent: (player: player) => void,
+) => {
   const { currentGame } = _socket.data;
   if (
     !currentGame.gamePlayers
@@ -220,31 +235,52 @@ const removePlayer = async (user: player, _socket: GameServices['_socket'], play
   }
 };
 
-const listenEvents = ({ _socket, playerLeft: playerLeftEvent }: GameServices) => ({
+const listenEvents = ({ _socket, ...events }: GameServices) => ({
   removeBot: async () => {
-    validateGameForBotAddOrRemove(_socket.data.user.id, _socket.data.currentGame);
-    await removePlayer(await getUser(`bot_${_socket.data.currentGame.dataset.name}`), _socket, playerLeftEvent);
-    _socket.data.currentGame = (await getGameWithRoundsDatasetPlayers(_socket.data.gameId))!;
+    validateGameForBotAddOrRemove(
+      _socket.data.user.id,
+      _socket.data.currentGame,
+    );
+    await removePlayer(
+      await getUser(`bot_${_socket.data.currentGame.dataset.name}`),
+      _socket,
+      events.playerLeft,
+    );
+    _socket.data.currentGame = (await getGameWithRoundsDatasetPlayers(
+      _socket.data.gameId,
+    ))!;
   },
   addBot: async () => {
-    validateGameForBotAddOrRemove(_socket.data.user.id, _socket.data.currentGame);
+    validateGameForBotAddOrRemove(
+      _socket.data.user.id,
+      _socket.data.currentGame,
+    );
 
     const botUsername = `bot_${_socket.data.currentGame.dataset.name}`;
     const botPlayer = await getUser(botUsername);
     await checkAndAssociatePlayer(_socket.data.currentGame, botPlayer);
-    _socket.data.currentGame = (await getGameWithRoundsDatasetPlayers(_socket.data.gameId))!;
+    _socket.data.currentGame = (await getGameWithRoundsDatasetPlayers(
+      _socket.data.gameId,
+    ))!;
 
     _socket.broadcast.emit("playerJoined", botPlayer);
     _socket.emit("playerJoined", botPlayer);
   },
-  joinMatch: async ({ _socket, playerJoined }: GameServices) => {
+  joinMatch: async () => {
     {
-      const player = await checkAndAssociatePlayer(_socket.data.currentGame, _socket.data.user);
-      _socket.data.currentGame = (await getGameWithRoundsDatasetPlayers(_socket.data.gameId))!;
+      const player = await checkAndAssociatePlayer(
+        _socket.data.currentGame,
+        _socket.data.user,
+      );
+      _socket.data.currentGame = (await getGameWithRoundsDatasetPlayers(
+        _socket.data.gameId,
+      ))!;
 
-      playerJoined(player);
+      events.playerJoined(player);
 
-      const players = _socket.data.currentGame.gamePlayers.map(({ player }) => player);
+      const players = _socket.data.currentGame.gamePlayers.map(
+        ({ player }) => player,
+      );
 
       return {
         isBotAvailable: [
@@ -257,8 +293,10 @@ const listenEvents = ({ _socket, playerLeft: playerLeftEvent }: GameServices) =>
       };
     }
   },
-  startMatch: async ({ _socket, matchStarts }: GameServices) => {
-    if (_socket.data.user.id !== _socket.data.currentGame!.gamePlayers[0].playerId) {
+  startMatch: async () => {
+    if (
+      _socket.data.currentGame?.gamePlayers[0] && _socket.data.user.id !== _socket.data.currentGame.gamePlayers[0].playerId
+    ) {
       console.error(
         "The player starting the match must be the one who created it!",
       );
@@ -268,41 +306,43 @@ const listenEvents = ({ _socket, playerLeft: playerLeftEvent }: GameServices) =>
     console.log(`Game ${_socket.data.gameId} is starting!`);
 
     _socket.data.currentRound = await setRoundTimes(_socket.data.currentRound);
-    startRound(_socket);
+    startRound({ _socket, ...events });
 
-    _socket.data.currentGame = (await getGameWithRoundsDatasetPlayers(_socket.data.gameId))!;
+    _socket.data.currentGame = (await getGameWithRoundsDatasetPlayers(
+      _socket.data.gameId,
+    ))!;
 
     _socket.broadcast.emit("matchStarts");
-    matchStarts();
+    events.matchStarts();
   },
-  guess: async (personcode: string) => {
+  guess: async (personcode: string | null) => {
     const haveAllPlayersGuessed = await onGuess(
-      _socket,
-      _socket.data.user!,
+      { _socket, ...events },
+      _socket.data.user,
       personcode,
     );
     if (haveAllPlayersGuessed) {
       return haveAllPlayersGuessed;
     }
   },
-  disconnect: async ({_socket}: GameServices, reason: string) => {
+  disconnect: async ({ _socket }: GameServices, reason: string) => {
     if (reason !== "client namespace disconnect") {
       if (
         _socket.data.currentGame!.gamePlayers.findIndex(
           ({ player }) => player.id === _socket.data.user.id,
         ) > 0
       ) {
-        await removePlayer(_socket.data.user, _socket, playerLeftEvent);
-        _socket.data.currentGame = (await getGameWithRoundsDatasetPlayers(_socket.data.gameId))!;
+        await removePlayer(_socket.data.user, _socket, events.playerLeft);
+        _socket.data.currentGame = (await getGameWithRoundsDatasetPlayers(
+          _socket.data.gameId,
+        ))!;
       }
     }
   },
 });
 
-export const createGameSocket = async (
-  gameId: number,
-) => {
-  let currentGame = await getGameWithRoundsDatasetPlayers(gameId);
+export const createGameSocket = async (gameId: number) => {
+  const currentGame = await getGameWithRoundsDatasetPlayers(gameId);
   if (!currentGame) {
     console.error(`Game not found for ID ${gameId}`);
     return;
@@ -313,7 +353,10 @@ export const createGameSocket = async (
     {
       listenEvents,
       middlewares: [
-        ({ _socket, playerConnectedToMatch: playerConnectedToMatchEvent }, next: (error?: Error) => void) => {
+        (
+          { _socket, playerConnectedToMatch: playerConnectedToMatchEvent },
+          next: (error?: Error) => void,
+        ) => {
           getPlayer(_socket.handshake.auth.cookie).then((user) => {
             if (user) {
               _socket.data.user = user;

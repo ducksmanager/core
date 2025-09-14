@@ -22,8 +22,5 @@ export interface GameFull extends game {
 }
 
 export interface GameFullNoPersoncode extends Omit<GameFull, "rounds"> {
-  rounds: (
-    | Omit<UnfinishedRound, "personcode">
-    | Omit<RoundWithScoresAndAuthor, "personcode">
-  )[];
+  rounds: (UnfinishedRound | RoundWithScoresAndAuthor)[];
 }

@@ -1,13 +1,12 @@
 import path from "node:path";
-import { fileURLToPath } from "node:url";
-
-import { fixupConfigRules, fixupPluginRules } from "@eslint/compat";
 import { FlatCompat } from "@eslint/eslintrc";
 import js from "@eslint/js";
 import typescriptEslint from "@typescript-eslint/eslint-plugin";
-import typescriptParser from "@typescript-eslint/parser";
 import parser from "vue-eslint-parser";
-// import globals from "globals";
+
+import { defineConfig } from "eslint/config";
+import { fixupConfigRules, fixupPluginRules } from "@eslint/compat";
+import { fileURLToPath } from "node:url";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -17,16 +16,19 @@ const compat = new FlatCompat({
   allConfig: js.configs.all,
 });
 
-export default [
+export default defineConfig(
   {
     ignores: [
-      "storybook-static",
-      "**/node_modules",
-      "**/client_*",
-      "**/dist",
-      "**/shims.d.ts",
+      "**/.nuxt",
+      "**/api",
       "**/auto-imports.d.ts",
+      "**/client_*",
       "**/components.d.ts",
+      "**/dist",
+      "**/node_modules",
+      "**/shims.d.ts",
+      "sentry.server.config.ts",
+      "storybook-static",
     ],
   },
   ...fixupConfigRules(
@@ -35,7 +37,6 @@ export default [
       "plugin:prettier-vue/recommended",
       "prettier",
       "plugin:@typescript-eslint/recommended",
-      "plugin:storybook/recommended",
     ),
   ),
   {
@@ -47,13 +48,15 @@ export default [
       parser: parser,
       ecmaVersion: 5,
       sourceType: "script",
-
       parserOptions: {
-        parser: typescriptParser,
+        parser: "@typescript-eslint/parser",
+        extraFileExtensions: [".vue"],
+        project: path.join(__dirname, "tsconfig.json"),
         tsconfigRootDir: __dirname,
       },
     },
-
+  },
+  {
     rules: {
       camelcase: "off",
       "no-console": "off",
@@ -61,6 +64,7 @@ export default [
       "import/default": "off",
       "import/named": "off",
       "@typescript-eslint/consistent-type-imports": "error",
+      "@typescript-eslint/no-unnecessary-type-assertion": "error",
 
       "@typescript-eslint/no-unused-vars": [
         "warn",
@@ -101,6 +105,6 @@ export default [
     },
   },
   {
-    files: ["**/*.js", "**/*.ts", "**/*.vue"],
+    files: ["**/*.ts"],
   },
-];
+);
