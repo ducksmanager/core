@@ -24,7 +24,7 @@ import { type ClientEvents as StatsEvents } from "~dm-services/stats";
 import { type ClientEvents as StorySearchEvents } from "~dm-services/story-search";
 
 const defaultExport = (options: {
-  cacheStorage: AxiosStorage;
+  cacheStorage?: AxiosStorage;
   disableCollectionCache?: boolean;
   onConnectError: (
     e: Error,
@@ -87,10 +87,13 @@ const defaultExport = (options: {
     ),
     stats: socket.addNamespace<StatsEvents>(namespaces.STATS, {
       session,
-      cache: {
-        storage: cacheStorage,
-        ttl: (event) => (event === "getSuggestionsForCountry" ? until4am() : 0),
-      },
+      cache: !cacheStorage
+        ? undefined
+        : {
+            storage: cacheStorage,
+            ttl: (event) =>
+              event === "getSuggestionsForCountry" ? until4am() : 0,
+          },
     }),
     auth: socket.addNamespace<AuthEvents>(namespaces.AUTH, {
       session,
@@ -106,28 +109,34 @@ const defaultExport = (options: {
     ),
     edges: socket.addNamespace<EdgesEvents>(namespaces.EDGES, {}),
     coa: socket.addNamespace<CoaEvents>(namespaces.COA, {
-      cache: {
-        storage: cacheStorage,
-        ttl: until4am(),
-      },
+      cache: !cacheStorage
+        ? undefined
+        : {
+            storage: cacheStorage,
+            ttl: until4am(),
+          },
     }),
     globalStats: socket.addNamespace<GlobalStatsEvents>(
       namespaces.GLOBAL_STATS,
       {
-        cache: {
-          storage: cacheStorage,
-          ttl: 1000, // 1 second only, because we want to always get the latest data but still cache in case of offline
-        },
+        cache: !cacheStorage
+          ? undefined
+          : {
+              storage: cacheStorage,
+              ttl: 1000, // 1 second only, because we want to always get the latest data but still cache in case of offline
+            },
       },
     ),
     userGlobalStats: socket.addNamespace<GlobalStatsUserEvents>(
       namespaces.GLOBAL_STATS_USER,
       {
         session,
-        cache: {
-          storage: cacheStorage,
-          ttl: 1000, // 1 second only, because we want to always get the latest data but still cache in case of offline
-        },
+        cache: !cacheStorage
+          ? undefined
+          : {
+              storage: cacheStorage,
+              ttl: 1000, // 1 second only, because we want to always get the latest data but still cache in case of offline
+            },
       },
     ),
     events: socket.addNamespace<EventsEvents>(namespaces.EVENTS, {}),
@@ -146,14 +155,17 @@ const defaultExport = (options: {
     ),
     collection: socket.addNamespace<CollectionEvents>(namespaces.COLLECTION, {
       session,
-      cache: {
-        storage: cacheStorage,
-        disableCache:
-          "disableCollectionCache" in options && options.disableCollectionCache
-            ? () => true
-            : (eventName) => eventName.indexOf("get") !== 0,
-        ttl: 1000, // 1 second only, because we want to always get the latest data but still cache in case of offline
-      },
+      cache: !cacheStorage
+        ? undefined
+        : {
+            storage: cacheStorage,
+            disableCache:
+              "disableCollectionCache" in options &&
+              options.disableCollectionCache
+                ? () => true
+                : (eventName) => eventName.indexOf("get") !== 0,
+            ttl: 1000, // 1 second only, because we want to always get the latest data but still cache in case of offline
+          },
     }),
     coverId: socket.addNamespace<CoverIdEvents>(namespaces.COVER_ID, {}),
   };

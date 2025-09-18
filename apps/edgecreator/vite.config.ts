@@ -12,6 +12,7 @@ import { defineConfig } from "vite";
 import { DynamicPublicDirectory } from "vite-multiple-assets";
 import Pages from "vite-plugin-pages";
 import Layouts from "vite-plugin-vue-layouts";
+
 import getViteAliases from "../../vite-aliases";
 
 // https://vitejs.dev/config/

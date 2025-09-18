@@ -1,10 +1,10 @@
 #!/usr/bin/env bun
 
 import fs from 'fs';
-import path from 'path';
 import { glob } from 'glob';
 import imagemin, { type Plugin } from 'imagemin';
 import imageminPngquant from 'imagemin-pngquant';
+import path from 'path';
 
 interface OptimizationResult {
   file: string;

@@ -11,6 +11,7 @@ import Components from "unplugin-vue-components/vite";
 import { VueRouterAutoImports } from "unplugin-vue-router";
 import VueRouter from "unplugin-vue-router/vite";
 import { defineConfig } from "vite";
+
 import getViteAliases from "../../vite-aliases";
 
 export default defineConfig({

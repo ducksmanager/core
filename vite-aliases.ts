@@ -1,6 +1,9 @@
 import * as path from "path";
 
-export default (baseDir: string, appSpecificAliases: Record<string, string> = {}) => {
+export default (
+  baseDir: string,
+  appSpecificAliases: Record<string, string> = {},
+) => {
   const commonAliases = {
     "~dm-services": path.resolve(baseDir, "packages/api/services"),
     "~dm-types": path.resolve(baseDir, "packages/types"),

@@ -13,6 +13,7 @@ import eslintPlugin from "vite-plugin-eslint";
 import mkcert from "vite-plugin-mkcert";
 import Pages from "vite-plugin-pages";
 import Layouts from "vite-plugin-vue-layouts";
+
 import getViteAliases from "../../vite-aliases";
 
 export default defineConfig({

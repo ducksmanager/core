@@ -6,8 +6,6 @@ dotenv.config({
 
 import { SocketIoInstrumentation } from "@opentelemetry/instrumentation-socket.io";
 import * as Sentry from "@sentry/node";
-
-
 import type { Socket } from "socket.io";
 import type { NamespaceProxyTarget } from "socket-call-server";
 
@@ -54,11 +52,11 @@ export type UserServices<OptionalUser = false> = NamespaceProxyTarget<
 
 // Validate required environment variables
 const requiredEnvVars = [
-  'DATABASE_URL_DM',
-  'DATABASE_URL_COA', 
-  'DATABASE_URL_DM_STATS',
-  'DATABASE_URL_EDGECREATOR',
-  'DATABASE_URL_COVER_INFO'
+  "DATABASE_URL_DM",
+  "DATABASE_URL_COA",
+  "DATABASE_URL_DM_STATS",
+  "DATABASE_URL_EDGECREATOR",
+  "DATABASE_URL_COVER_INFO",
 ];
 
 for (const envVar of requiredEnvVars) {

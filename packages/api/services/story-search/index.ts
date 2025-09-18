@@ -20,7 +20,7 @@ export const getSession = async () => {
     } catch (error) {
       console.error("Failed to load ONNX model:", error);
       throw new Error(
-        "ONNX model not found. Please ensure the model file is downloaded from GitHub release v1.0.0-model"
+        "ONNX model not found. Please ensure the model file is downloaded from GitHub release v1.0.0-model",
       );
     }
   }

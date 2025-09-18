@@ -7,6 +7,7 @@ import { IonicResolver } from 'unplugin-vue-components/resolvers';
 import Components from 'unplugin-vue-components/vite';
 import { defineConfig } from 'vite';
 import { viteStaticCopy } from 'vite-plugin-static-copy';
+
 import getViteAliases from '../../vite-aliases';
 
 // https://vitejs.dev/config/
