@@ -1,7 +1,8 @@
 import type { Meta, StoryObj } from "@nuxtjs/storybook";
 
-import Medal from "./Medal.vue";
 import type { MedalLevelAndProgress } from "~duckguessr-types/playerStats";
+
+import Medal from "./Medal.vue";
 
 const meta: Meta<typeof Medal> = {
   title: "Medal",

@@ -6,15 +6,13 @@ import { getGameWithRoundsDatasetPlayers, numberOfRounds } from "../game";
 import game from "../game";
 import { getPlayer, getPlayerStatistics, getUser } from "../get-player";
 import { predict } from "../predict";
+import prisma from "../prisma/client";
 import type { player, round } from "../prisma/client_duckguessr/client";
-import { PrismaClient } from "../prisma/client_duckguessr/client";
 import { getRoundWithScores, setRoundTimes } from "../round";
 import { guess } from "../round";
 import type { GuessResponse } from "../types/guess";
 import type { CurrentGame, SocketGameData } from "../types/socketEvents";
 import namespaces from "./namespaces";
-
-const prisma = new PrismaClient();
 
 export type ClientListenEvents = {
   playerJoined: (player: player) => void;
@@ -207,7 +205,10 @@ const validateGameForBotAddOrRemove = (
   userId: number,
   currentGame: CurrentGame,
 ) => {
-  if (currentGame.gamePlayers[0] && userId !== currentGame.gamePlayers[0].playerId) {
+  if (
+    currentGame.gamePlayers[0] &&
+    userId !== currentGame.gamePlayers[0].playerId
+  ) {
     console.error(
       "Only the player creating the match can add or remove a bot!",
     );
@@ -295,7 +296,8 @@ const listenEvents = ({ _socket, ...events }: GameServices) => ({
   },
   startMatch: async () => {
     if (
-      _socket.data.currentGame?.gamePlayers[0] && _socket.data.user.id !== _socket.data.currentGame.gamePlayers[0].playerId
+      _socket.data.currentGame?.gamePlayers[0] &&
+      _socket.data.user.id !== _socket.data.currentGame.gamePlayers[0].playerId
     ) {
       console.error(
         "The player starting the match must be the one who created it!",

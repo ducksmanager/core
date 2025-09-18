@@ -69,8 +69,8 @@
 <script lang="ts" setup>
 import { useSeoMeta } from "@unhead/vue";
 import { getDuckguessrUsername } from "~/composables/user";
-import { userStore } from "~/stores/user";
-import type { player, userMedalPoints } from "~duckguessr-prisma-client";
+import { playerStore } from "~/stores/player";
+import type { player, userMedalPoints } from "~duckguessr-prisma-browser";
 
 const { players, gameId, gamePlayersStats } = defineProps<{
   players: player[];
@@ -103,7 +103,7 @@ const isBotPlaying = computed(() =>
 
 const isBot = (username: string) => /^bot_/.test(username);
 
-const isAnonymous = computed(() => userStore().isAnonymous);
+const isAnonymous = computed(() => playerStore().isAnonymous);
 
 const getGamePlayerStats = (playerId: number) =>
   gamePlayersStats.filter(

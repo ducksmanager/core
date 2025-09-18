@@ -16,15 +16,15 @@
   </div>
 </template>
 <script lang="ts" setup>
-import { userStore } from "~/stores/user";
+import { playerStore } from "~/stores/player";
 
-const isAnonymous = computed(() => userStore().isAnonymous);
+const isAnonymous = computed(() => playerStore().isAnonymous);
 
 watch(
   () => isAnonymous.value === false,
   (userIsNotAnonymous: boolean) => {
     if (userIsNotAnonymous) {
-      userStore().loadStats();
+      playerStore().loadStats();
     }
   },
   { immediate: true },

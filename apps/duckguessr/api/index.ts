@@ -3,7 +3,7 @@ import "dotenv/config";
 import * as Sentry from "@sentry/node";
 import { Server } from "socket.io";
 
-import { PrismaClient } from "./prisma/client_duckguessr/client";
+import prisma from "./prisma/client";
 import { createGameSocket } from "./services/game";
 // import { createMatchmakingSocket } from "./services/game";
 import { server as home } from "./services/home";
@@ -15,8 +15,6 @@ if (process.env.SENTRY_DSN) {
   });
 }
 
-const prisma = new PrismaClient();
-
 const cors = {
   origin: process.env.FRONTEND_URL,
 };
@@ -25,7 +23,7 @@ const io = new Server({
   cors,
 });
 
-home(io)
+home(io);
 player(io);
 // createMatchmakingSocket(io);
 
@@ -50,4 +48,4 @@ player(io);
   }
 })();
 
-io.listen(4000);
+io.listen(3003);

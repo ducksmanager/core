@@ -1,7 +1,6 @@
+import prisma from "./prisma/client";
 import type { player, round } from "./prisma/client_duckguessr/client";
-import { PrismaClient } from "./prisma/client_duckguessr/client";
 import type { GuessRequest, GuessResponse } from "./types/guess";
-const prisma = new PrismaClient();
 
 const gameKickoffTime = 10000;
 const kickoffTime = 5000;

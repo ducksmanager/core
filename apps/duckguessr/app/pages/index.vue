@@ -64,8 +64,7 @@
 </template>
 
 <script lang="ts" setup>
-import { useCookies } from "@vueuse/integrations/useCookies";
-import { userStore } from "~/stores/user";
+import { playerStore } from "~/stores/player";
 import type { DatasetWithCounts } from "~duckguessr-types/dataset";
 import { duckguessrSocketInjectionKey } from "~/composables/useDuckguessrSocket";
 
@@ -75,11 +74,15 @@ const { t, locale } = useI18n();
 
 const datasets = ref([] as DatasetWithCounts[]);
 
-const { isAnonymous, user } = storeToRefs(userStore());
+const { isAnonymous, playerUser } = storeToRefs(playerStore());
 
-const { datasetsSocket, createMatchmakingSocket } = inject(
-  duckguessrSocketInjectionKey,
-)!;
+const duckguessrSocket = inject(duckguessrSocketInjectionKey);
+if (!duckguessrSocket) {
+  throw new Error(
+    "Duckguessr socket not available. Make sure the socket plugin is loaded.",
+  );
+}
+const { datasetsSocket, createMatchmakingSocket } = duckguessrSocket;
 const matchCreationSocket = ref();
 
 const youtubeVideoId = computed(() =>
@@ -98,19 +101,18 @@ const createMatch = (datasetName: string) => {
 };
 
 watch(
-  () => user.value?.username,
+  () => playerUser.value?.username,
   (username) => {
     if (username) {
-      matchCreationSocket.value = createMatchmakingSocket(
-        useCookies().getAll(),
-      ).value;
+      matchCreationSocket.value = createMatchmakingSocket().value;
     }
   },
   { immediate: true },
 );
 
 (async () => {
-  datasets.value = await datasetsSocket.value.getDatasets();
+  datasets.value =
+    ((await datasetsSocket.value?.getDatasets()) as DatasetWithCounts[]) || [];
 })();
 </script>
 

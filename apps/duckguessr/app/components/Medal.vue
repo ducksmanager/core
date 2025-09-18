@@ -36,7 +36,7 @@
 </template>
 
 <script setup lang="ts">
-import { MEDAL_LEVELS } from "~/stores/user";
+import { MEDAL_LEVELS } from "~/stores/player";
 import type { MedalLevelAndProgress } from "~duckguessr-types/playerStats";
 
 const { t } = useI18n();

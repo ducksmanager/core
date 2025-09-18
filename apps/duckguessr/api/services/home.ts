@@ -1,15 +1,15 @@
-import { NamespaceProxyTarget, useSocketEvents } from "socket-call-server";
-import namespaces from "./namespaces";
-import { Socket } from "socket.io";
+import { type Socket } from "socket.io";
+import { type NamespaceProxyTarget, useSocketEvents } from "socket-call-server";
+
 import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa/client";
-import { PrismaClient } from "../prisma/client_duckguessr/client";
+
+import prisma from "../prisma/client";
+import namespaces from "./namespaces";
 
 export type HomeServices = NamespaceProxyTarget<
   Socket<typeof listenEvents>,
   Record<string, never>
 >;
-
-const prisma = new PrismaClient();
 
 const convertUrlToBase64 = async (url: string): Promise<string | null> => {
   try {

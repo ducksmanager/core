@@ -1,7 +1,8 @@
 import type { Meta, StoryObj } from "@nuxtjs/storybook";
 
+import type { player } from "~duckguessr-prisma-browser";
+
 import GameScores from "./GameScores.vue";
-import type { player } from "~duckguessr-prisma-client";
 
 const meta: Meta<typeof GameScores> = {
   title: "GameScores",

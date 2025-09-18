@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from "@nuxtjs/storybook";
+
 import PodiumComponent from "./PodiumComponent.vue";
 
 const meta: Meta<typeof PodiumComponent> = {

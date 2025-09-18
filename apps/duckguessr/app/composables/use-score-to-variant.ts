@@ -1,4 +1,4 @@
-import type { roundScore } from "~duckguessr-prisma-client";
+import type { roundScore } from "~duckguessr-prisma-browser";
 import type { OngoingRoundScore } from "~duckguessr-types/roundWithScoresAndAuthor";
 
 export const useScoreToVariant = (

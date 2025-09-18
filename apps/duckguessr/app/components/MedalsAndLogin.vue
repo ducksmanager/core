@@ -59,17 +59,17 @@
   </div>
 </template>
 <script setup lang="ts">
-import { userStore } from "~/stores/user";
+import { playerStore } from "~/stores/player";
 
-const user = computed(() => userStore().user);
-const isAnonymous = computed(() => userStore().isAnonymous);
-const currentUserStats = computed(() => userStore().stats);
+const user = computed(() => playerStore().user);
+const isAnonymous = computed(() => playerStore().isAnonymous);
+const currentUserStats = computed(() => playerStore().stats);
 
 watch(
   () => isAnonymous.value === false,
   (userIsNotAnonymous: boolean) => {
     if (userIsNotAnonymous) {
-      userStore().loadStats();
+      playerStore().loadStats();
     }
   },
   { immediate: true },

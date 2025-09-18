@@ -2,10 +2,9 @@ import type { Socket } from "socket.io";
 import { type NamespaceProxyTarget, useSocketEvents } from "socket-call-server";
 
 import { getPlayer, getPlayerStatistics, updatePlayer } from "../get-player";
-import { PrismaClient, type player } from "../prisma/client_duckguessr/client";
+import prisma from "../prisma/client";
+import { type player } from "../prisma/client_duckguessr/client";
 import namespaces from "./namespaces";
-
-const prisma = new PrismaClient();
 
 export type ClientListenEvents = {
   logged: (player: player) => void;

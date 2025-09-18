@@ -34,7 +34,7 @@
   </div>
 </template>
 <script lang="ts" setup>
-import type { player } from "~duckguessr-prisma-client";
+import type { player } from "~duckguessr-prisma-browser";
 
 const { t } = useI18n();
 const { players } = defineProps<{

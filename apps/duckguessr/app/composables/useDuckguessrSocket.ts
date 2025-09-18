@@ -1,4 +1,4 @@
-import type { SocketClient } from "socket-call-client";
+import { SocketClient } from "socket-call-client";
 
 import { type ClientEmitEvents as DatasetsEmitEvents } from "~duckguessr-services/datasets";
 import {
@@ -23,7 +23,7 @@ const defaultExport = (options: {
     sessionExists: () => Promise<boolean>;
   };
 }) => {
-  const socket = inject("duckguessrSocket") as SocketClient;
+  const socket = new SocketClient(import.meta.env.VITE_SOCKET_URL);
 
   const { session } = options;
 
@@ -35,32 +35,31 @@ const defaultExport = (options: {
       },
     );
 
-  const playerSocket = socket.addNamespace<
-    PlayerEmitEvents,
-    PlayerListenEvents
-  >(namespaces.PLAYER, {
-    session,
-  });
-
-  const maintenanceSocket = socket.addNamespace<MaintenanceEmitEvents>(
-    namespaces.MAINTENANCE,
-    {
-      session,
-    },
+  const playerSocket = ref(
+    socket.addNamespace<PlayerEmitEvents, PlayerListenEvents>(
+      namespaces.PLAYER,
+      {
+        session,
+      },
+    ),
   );
 
-  const datasetsSocket = socket.addNamespace<DatasetsEmitEvents>(
-    namespaces.DATASETS,
-    {
+  const maintenanceSocket = ref(
+    socket.addNamespace<MaintenanceEmitEvents>(namespaces.MAINTENANCE, {
       session,
-    },
+    }),
   );
 
-  const podiumSocket = socket.addNamespace<PodiumEmitEvents>(
-    namespaces.PODIUM,
-    {
+  const datasetsSocket = ref(
+    socket.addNamespace<DatasetsEmitEvents>(namespaces.DATASETS, {
       session,
-    },
+    }),
+  );
+
+  const podiumSocket = ref(
+    socket.addNamespace<PodiumEmitEvents>(namespaces.PODIUM, {
+      session,
+    }),
   );
 
   return {

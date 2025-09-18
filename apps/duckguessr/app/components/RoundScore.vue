@@ -36,7 +36,7 @@
 <script lang="ts" setup>
 import { useScoreToVariant } from "~/composables/use-score-to-variant";
 import type { OngoingRoundScore } from "~duckguessr-types/roundWithScoresAndAuthor";
-import type { player, roundScore } from "~duckguessr-prisma-client";
+import type { player, roundScore } from "~duckguessr-prisma-browser";
 
 const {
   score,

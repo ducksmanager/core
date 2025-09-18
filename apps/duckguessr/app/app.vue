@@ -3,39 +3,176 @@
 </template>
 
 <script setup lang="ts">
-import Cookies from "js-cookie";
-import { buildWebStorage } from "socket-call-client";
-import { stores as webStores } from "~web";
-
-import { composables } from "~web";
+import { buildWebStorage, SocketClient } from "socket-call-client";
+import { stores as webStores, composables } from "~web";
 const { useDmSocket } = composables;
 import { socketInjectionKey as dmSocketInjectionKey } from "~web/src/composables/useDmSocket";
+import { duckguessrSocketInjectionKey } from "~/composables/useDuckguessrSocket";
+import Cookies from "js-cookie";
 
-const { loadUser } = webStores.collection();
-const { user, isLoadingUser } = storeToRefs(webStores.collection());
+// Import the socket types directly
+import { type ClientEmitEvents as DatasetsEmitEvents } from "~duckguessr-services/datasets";
+import {
+  type ClientEmitEvents as GameEmitEvents,
+  type ClientListenEvents as GameListenEvents,
+} from "~duckguessr-services/game";
+import { type ClientEmitEvents as MaintenanceEmitEvents } from "~duckguessr-services/maintenance";
+import { type ClientEmitEvents as MatchEmitEvents } from "~duckguessr-services/match";
+import namespaces from "~duckguessr-services/namespaces";
+import {
+  type ClientEmitEvents as PlayerEmitEvents,
+  type ClientListenEvents as PlayerListenEvents,
+} from "~duckguessr-services/player";
+import { type ClientEmitEvents as PodiumEmitEvents } from "~duckguessr-services/podium";
+
+console.log("🔌 App.vue initializing sockets...");
 
 const session = {
-    getToken: () => Promise.resolve(Cookies.get("token")),
-    clearSession: () => Promise.resolve(Cookies.remove("token")),
-    sessionExists: () =>
-      Promise.resolve(typeof Cookies.get("token") === "string"),
-  },
-  onConnectError = async () => {
-    await session.clearSession();
-    isLoadingUser.value = false;
-    user.value = null;
-  };
+  getToken: () => Promise.resolve(Cookies.get("token")),
+  clearSession: () => Promise.resolve(Cookies.remove("token")),
+  sessionExists: () =>
+    Promise.resolve(typeof Cookies.get("token") === "string"),
+};
 
+const onConnectError = async () => {
+  await session.clearSession();
+  webStores.collection().isLoadingUser = false;
+  webStores.collection().user = null;
+};
+
+// Create raw socket clients first
+const dmSocketClient = new SocketClient(
+  import.meta.env.VITE_DM_SOCKET_URL || "http://localhost:3001",
+);
+const storySearchSocketClient = new SocketClient(
+  "http://localhost:3001", // Default for story search socket
+);
+
+// Provide raw socket clients
+getCurrentInstance()!.appContext.app.provide("dmSocket", dmSocketClient);
 getCurrentInstance()!.appContext.app.provide(
-  dmSocketInjectionKey,
-  useDmSocket({
-    cacheStorage: buildWebStorage(sessionStorage),
+  "storySearchSocket",
+  storySearchSocketClient,
+);
+
+// Create DM socket
+const dmSocket = useDmSocket({
+  cacheStorage: import.meta.client
+    ? buildWebStorage(sessionStorage)
+    : undefined,
+  session,
+  onConnectError,
+});
+
+// Create Duckguessr socket directly
+console.log("🔌 Environment variables:", {
+  VITE_SOCKET_URL: import.meta.env.VITE_SOCKET_URL,
+  VITE_DM_SOCKET_URL: import.meta.env.VITE_DM_SOCKET_URL,
+});
+
+const socketUrl = import.meta.env.VITE_SOCKET_URL || "http://localhost:3001";
+console.log("🔌 Using socket URL:", socketUrl);
+
+console.log("🔌 About to create SocketClient with URL:", socketUrl);
+
+let duckguessrSocketClient;
+try {
+  duckguessrSocketClient = new SocketClient(socketUrl);
+  console.log(
+    "🔌 SocketClient created successfully:",
+    !!duckguessrSocketClient,
+  );
+  console.log("🔌 SocketClient type:", typeof duckguessrSocketClient);
+  console.log(
+    "🔌 SocketClient methods:",
+    Object.getOwnPropertyNames(Object.getPrototypeOf(duckguessrSocketClient)),
+  );
+} catch (error) {
+  console.error("🔌 Error creating SocketClient:", error);
+  throw error;
+}
+
+const getGameSocketFromId = (id: number) =>
+  duckguessrSocketClient.addNamespace<GameEmitEvents, GameListenEvents>(
+    namespaces.GAME.replace("{id}", id.toString()),
+    {
+      session,
+    },
+  );
+
+console.log("🔌 Creating player socket...");
+console.log(
+  "🔌 duckguessrSocketClient before addNamespace:",
+  !!duckguessrSocketClient,
+);
+console.log(
+  "🔌 duckguessrSocketClient.addNamespace:",
+  typeof duckguessrSocketClient?.addNamespace,
+);
+
+let playerSocket;
+try {
+  playerSocket = ref(
+    duckguessrSocketClient.addNamespace<PlayerEmitEvents, PlayerListenEvents>(
+      namespaces.PLAYER,
+      {
+        session,
+      },
+    ),
+  );
+  console.log("🔌 Player socket created:", !!playerSocket.value);
+} catch (error) {
+  console.error("🔌 Error creating player socket:", error);
+  throw error;
+}
+
+const maintenanceSocket = ref(
+  duckguessrSocketClient.addNamespace<MaintenanceEmitEvents>(
+    namespaces.MAINTENANCE,
+    {
+      session,
+    },
+  ),
+);
+
+const datasetsSocket = ref(
+  duckguessrSocketClient.addNamespace<DatasetsEmitEvents>(namespaces.DATASETS, {
     session,
-    onConnectError,
   }),
 );
 
-onBeforeMount(() => {
-  loadUser();
+const podiumSocket = ref(
+  duckguessrSocketClient.addNamespace<PodiumEmitEvents>(namespaces.PODIUM, {
+    session,
+  }),
+);
+
+const duckguessrSocket = {
+  options: { session, onConnectError },
+  playerSocket,
+  maintenanceSocket,
+  datasetsSocket,
+  podiumSocket,
+  createMatchmakingSocket: () =>
+    duckguessrSocketClient.addNamespace<MatchEmitEvents>(namespaces.MATCH, {
+      session,
+    }),
+  getGameSocketFromId,
+};
+
+// Provide socket composables
+getCurrentInstance()!.appContext.app.provide(dmSocketInjectionKey, dmSocket);
+getCurrentInstance()!.appContext.app.provide(
+  duckguessrSocketInjectionKey,
+  duckguessrSocket,
+);
+
+console.log("🔌 Sockets provided:", {
+  dmSocket: !!dmSocket,
+  duckguessrSocket: !!duckguessrSocket,
+});
+
+onMounted(() => {
+  webStores.collection().loadUser();
 });
 </script>

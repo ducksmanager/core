@@ -102,17 +102,17 @@
 <script lang="ts" setup>
 import { getDuckguessrId, getShownUsername } from "~/composables/user";
 
-import { userStore } from "~/stores/user";
+import { playerStore } from "~/stores/player";
 import type { GameFull } from "~duckguessr-types/game";
 import type { ColorVariant } from "bootstrap-vue-next";
-import type { player, roundScore } from "~duckguessr-prisma-client";
+import type { player, roundScore } from "~duckguessr-prisma-browser";
 
 const { game } = defineProps<{
   game: GameFull;
 }>();
 
 const duckguessrId = getDuckguessrId();
-const isAnonymous = computed(() => userStore().isAnonymous);
+const isAnonymous = computed(() => playerStore().isAnonymous);
 
 const playerIds = game.gamePlayers.map(({ playerId }) => playerId);
 const players = game.gamePlayers.reduce(
@@ -214,14 +214,16 @@ const currentUserWonFastestRounds = currentUserWonRounds.filter(
     ),
 );
 
-const hasUserStats = computed(() => userStore().stats && userStore().gameStats);
+const hasUserStats = computed(
+  () => playerStore().stats && playerStore().gameStats,
+);
 
 watch(
-  [userStore().playerSocket, currentUserHasParticipated],
+  currentUserHasParticipated,
   (loggedInAndParticipated) => {
     if (loggedInAndParticipated) {
-      userStore().loadStats();
-      userStore().loadGameStats(
+      playerStore().loadStats();
+      playerStore().loadGameStats(
         game.id,
         game.dataset.name,
         winningPlayer.value?.id === duckguessrId,

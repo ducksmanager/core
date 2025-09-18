@@ -1,7 +1,8 @@
-import getViteAliases from "../../vite-aliases";
-import path from "path";
 import { defineNuxtConfig } from "nuxt/config";
+import path from "path";
 import checker from "vite-plugin-checker";
+
+import getViteAliases from "../../vite-aliases";
 
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
@@ -12,9 +13,11 @@ export default defineNuxtConfig({
     "~locales/*": "/locales/*",
     "~web": path.resolve(__dirname, "../web"),
     "~web/*": path.resolve(__dirname, "../web/*"),
-    "~duckguessr-prisma-client": "/api/prisma/client_duckguessr/client",
-    "~duckguessr-services/*": "/api/services/*",
-    "~duckguessr-types/*": "/api/types/*",
+    "~duckguessr-prisma-browser": "/api/prisma/client_duckguessr/browser",
+    "~duckguessr-services": path.resolve(__dirname, "api/services"),
+    "~duckguessr-services/*": path.resolve(__dirname, "api/services/*"),
+    "~duckguessr-types": path.resolve(__dirname, "api/types"),
+    "~duckguessr-types/*": path.resolve(__dirname, "api/types/*"),
   },
 
   devtools: { enabled: true },
@@ -76,6 +79,7 @@ export default defineNuxtConfig({
   runtimeConfig: {
     public: {
       dmSocketUrl: process.env.VITE_DM_SOCKET_URL || "",
+      duckguessrSocketUrl: process.env.VITE_SOCKET_URL || "",
       sentryDsn: process.env.VITE_SENTRY_DSN || "",
     },
   },
@@ -84,13 +88,7 @@ export default defineNuxtConfig({
   vite: {
     plugins: [checker({ vueTsc: true })],
     resolve: {
-      dedupe: [
-        "vue",
-        "vue-router",
-        "vue-i18n",
-        "@vueuse/core",
-        "bootstrap-vue-next",
-      ],
+      dedupe: ["vue", "vue-i18n", "@vueuse/core", "bootstrap-vue-next"],
     },
   },
 
@@ -108,4 +106,6 @@ export default defineNuxtConfig({
   sourcemap: {
     client: "hidden",
   },
+
+  ignore: ["**/node_modules", "**/dist", ".git/**", "api/prisma/client_*"],
 });

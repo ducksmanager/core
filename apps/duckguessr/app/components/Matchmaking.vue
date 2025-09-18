@@ -13,8 +13,8 @@
 
 <script lang="ts" setup>
 import type { MatchDetails } from "~duckguessr-types/matchDetails";
-import { userStore } from "~/stores/user";
-import type { player, userMedalPoints } from "~duckguessr-prisma-client";
+import { playerStore } from "~/stores/player";
+import type { player, userMedalPoints } from "~duckguessr-prisma-browser";
 
 const players = ref([] as player[]);
 const gamePlayersStats = ref(null as userMedalPoints[] | null);
@@ -56,7 +56,7 @@ const removeBot = () => {
 };
 
 watch(
-  () => userStore().user,
+  () => playerStore().user,
   (value) => {
     if (value) {
       gameSocket.playerConnectedToMatch = () => {

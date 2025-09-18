@@ -1,7 +1,5 @@
+import prisma from "./prisma/client";
 import type { player } from "./prisma/client_duckguessr/client";
-import { PrismaClient } from "./prisma/client_duckguessr/client";
-
-const prisma = new PrismaClient();
 export const numberOfRounds = 8;
 
 export const getGameWithRoundsDatasetPlayers = async (gameId: number) =>
@@ -34,10 +32,12 @@ export const create = async (datasetName: string) => {
     throw new Error(`Cannot find dataset with name ${datasetName}`);
   }
 
-  const roundDataResponse = await prisma.$queryRaw<Array<{
-    personcode: string;
-    sitecodeUrl: string;
-  }>>`
+  const roundDataResponse = await prisma.$queryRaw<
+    Array<{
+      personcode: string;
+      sitecodeUrl: string;
+    }>
+  >`
     SELECT random_images.personcode, random_images.sitecodeUrl
     FROM (
       SELECT DISTINCT entryurlDetails.personcode

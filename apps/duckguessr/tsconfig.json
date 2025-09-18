@@ -2,6 +2,7 @@
   "extends": "./.nuxt/tsconfig.json",
   "compilerOptions": {
     "baseUrl": ".",
+    "verbatimModuleSyntax": false,
     "paths": {
       "~/*": [
         "./app/*"
@@ -15,8 +16,8 @@
       "~duckguessr-types/*": [
         "./api/types/*"
       ],
-      "~duckguessr-prisma-client": [
-        "./api/prisma/client_duckguessr/client"
+      "~duckguessr-prisma-browser": [
+        "./api/prisma/client_duckguessr/browser"
       ],
       "~web": [
         "../web"
@@ -29,6 +30,7 @@
   "include": [
     ".storybook/*.ts",
     "api/types/*.ts",
+    "api/services/**/*.ts",
     "app/**/*.d.ts",
     "app/**/*.ts",
     "app/**/*.vue",

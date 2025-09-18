@@ -45,10 +45,10 @@
 </template>
 
 <script setup lang="ts">
-import { MEDAL_LEVELS, userStore } from "~/stores/user";
+import { MEDAL_LEVELS, playerStore } from "~/stores/player";
 import type { MedalLevelAndProgress } from "~duckguessr-types/playerStats";
 import { getDuckguessrId } from "~/composables/user";
-import type { dataset, userMedalPoints } from "~duckguessr-prisma-client";
+import type { dataset, userMedalPoints } from "~duckguessr-prisma-browser";
 import type { ColsNumbers } from "bootstrap-vue-next";
 
 const DATASET_WITH_MEDALS: string[] = ["published-fr-recent", "it", "us"];
@@ -70,7 +70,7 @@ const {
 }>();
 
 const stats = computed(() =>
-  dataset ? userStore().gameStats : statsOverride || userStore().stats,
+  dataset ? playerStore().gameStats : statsOverride || playerStore().stats,
 );
 
 const statsMatchingMedals = computed(() =>
@@ -127,9 +127,9 @@ const levelsAndProgress = computed(
                 playerPoints: 0,
               }
             ).playerPoints! - currentLevelThreshold;
-          const currentLevelProgressPoints = userStore().gameStats
+          const currentLevelProgressPoints = playerStore().gameStats
             ? (
-                userStore().gameStats!.find(
+                playerStore().gameStats!.find(
                   ({ medalType: statsMedalType }) =>
                     medalType === statsMedalType,
                 ) || {

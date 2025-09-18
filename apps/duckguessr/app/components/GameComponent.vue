@@ -57,7 +57,7 @@ import type {
   RoundWithScoresAndAuthor,
 } from "~duckguessr-types/roundWithScoresAndAuthor";
 import { getUrl } from "~/composables/url";
-import type { player } from "~duckguessr-prisma-client";
+import type { player } from "~duckguessr-prisma-browser";
 
 defineEmits<{
   (e: "select-author", personcode: string): void;

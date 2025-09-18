@@ -83,17 +83,18 @@
 
 <script lang="ts" setup>
 import type { Avatar } from "~duckguessr-types/avatar";
-import { userStore } from "~/stores/user";
+import { playerStore } from "~/stores/player";
+
+import { avatars, avatarDiskDiameter } from "~duckguessr-types/avatar";
+
 const { t } = useI18n();
 
 const {
   isAnonymous,
-  user,
-  playerSocket,
+  playerUser,
   stats: currentUserStats,
-} = storeToRefs(userStore());
-
-import { avatars, avatarDiskDiameter } from "~duckguessr-types/avatar";
+} = storeToRefs(playerStore());
+const { playerSocket } = inject(duckguessrSocketInjectionKey)!;
 const tree = ref(null as any | null);
 
 const treeImageNaturalWidth = ref(null as number | null);
@@ -127,7 +128,7 @@ const calculateLocalPosition = (avatar: Avatar) =>
   );
 
 watch(
-  () => user.value?.avatar,
+  () => playerUser.value?.avatar,
   (avatarName) => {
     const avatar = avatars.find(
       ({ character }: Avatar) => character === avatarName,
@@ -181,9 +182,9 @@ const onTreeLoad = (event: any) => {
 };
 
 const onSelectAvatar = () => {
-  user.value!.avatar = closestAvatar.value!.character;
-  playerSocket.value!.updateUser(user.value, (updatedUser) => {
-    user.value = updatedUser;
+  playerUser.value!.avatar = closestAvatar.value!.character;
+  playerSocket.updateUser(playerUser.value).then((updatedUser) => {
+    playerUser.value = updatedUser;
   });
 };
 </script>

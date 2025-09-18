@@ -89,6 +89,25 @@
         {
             "type": "node-terminal",
             "request": "launch",
+            "name": "Start Duckguessr Web server",
+            "command": "turbo dev -F '~duckguessr'",
+            "presentation": {
+                "reveal": "always",
+                "panel": "shared"
+            }
+        },
+        {
+            "type": "bun",
+            "request": "launch",
+            "name": "Debug Duckguessr API",
+            "program": "index.ts",
+            "cwd": "${workspaceFolder}/apps/duckguessr/api",
+            "stopOnEntry": false,
+            "watchMode": true
+        },
+        {
+            "type": "node-terminal",
+            "request": "launch",
             "name": "Start EdgeCreator Web server",
             "command": "turbo dev -F '~edgecreator'",
             "presentation": {
@@ -139,6 +158,14 @@
             "configurations": [
                 "Debug Dumili API",
                 "Start Dumili Web server"
+            ],
+            "stopAll": true
+        },
+        {
+            "name": "Debug Duckguessr API + Web Server",
+            "configurations": [
+                "Debug Duckguessr API",
+                "Start Duckguessr Web server"
             ],
             "stopAll": true
         },

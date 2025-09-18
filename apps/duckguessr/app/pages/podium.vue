@@ -2,7 +2,7 @@
   <podium-component v-if="players" :players="players" />
 </template>
 <script lang="ts" setup>
-import type { player } from "~duckguessr-prisma-client";
+import type { player } from "~duckguessr-prisma-browser";
 import { duckguessrSocketInjectionKey } from "~/composables/useDuckguessrSocket";
 
 const { podiumSocket } = inject(duckguessrSocketInjectionKey)!;

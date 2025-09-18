@@ -145,9 +145,9 @@
 </template>
 
 <script lang="ts" setup>
-import { userStore } from "~/stores/user";
+import { playerStore } from "~/stores/player";
 import { getUrl } from "~/composables/url";
-import type { entryurlDetailsDecision } from "~duckguessr-prisma-client";
+import type { entryurlDetailsDecision } from "~duckguessr-prisma-browser";
 import { duckguessrSocketInjectionKey } from "~/composables/useDuckguessrSocket";
 import type { BaseButtonVariant } from "bootstrap-vue-next";
 const { maintenanceSocket } = inject(duckguessrSocketInjectionKey)!;
@@ -191,7 +191,7 @@ const currentPage = ref(1);
 const totalRows = ref(10000);
 const rowsPerPage = 60;
 
-const user = computed(() => userStore().user);
+const user = computed(() => playerStore().user);
 const isAllowed = computed(
   () =>
     user.value &&

@@ -17,12 +17,13 @@
   "author": "Bruno Perel",
   "license": "ISC",
   "dependencies": {
-    "@prisma/client": "^6.16.0",
+    "@prisma/adapter-mariadb": "^6.16.2",
+    "@prisma/client": "^6.16.2",
     "@sentry/node": "^7.120.4",
     "cookie": "^0.5.0",
     "dotenv": "^16.6.1",
     "jsonwebtoken": "^9.0.2",
-    "prisma": "^6.16.0",
+    "prisma": "^6.16.2",
     "sharp": "^0.33.5",
     "socket-call-server": "^0.7.6",
     "socket.io": "^4.8.1",
@@ -33,12 +34,12 @@
   },
   "devDependencies": {
     "@types/jsonwebtoken": "^9.0.10",
-    "@types/node": "^22.18.3",
+    "@types/node": "^22.18.6",
     "concurrently": "^8.2.2",
     "eslint": "^9.35.0",
     "eslint-config-prettier": "^10.1.8",
     "prettier": "^3.6.2",
     "typescript": "^5.8.3",
-    "typescript-eslint": "^8.42.0"
+    "typescript-eslint": "^8.44.0"
   }
 }

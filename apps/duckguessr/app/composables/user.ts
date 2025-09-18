@@ -1,6 +1,6 @@
 import { useCookies } from "@vueuse/integrations/useCookies";
 
-import type { player } from "~duckguessr-prisma-client";
+import type { player } from "~duckguessr-prisma-browser";
 function setCookie(name: string, value: string) {
   useCookies().set(name, value, {
     expires: new Date(new Date().getTime() + 3600000),
