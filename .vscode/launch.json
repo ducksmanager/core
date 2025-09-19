@@ -5,16 +5,6 @@
             "type": "bun",
             "internalConsoleOptions": "openOnFirstSessionStart",
             "request": "launch",
-            "name": "Debug Dumili API",
-            "program": "index.ts",
-            "cwd": "${workspaceFolder}/apps/dumili/api",
-            "stopOnEntry": false,
-            "watchMode": true
-        },
-        {
-            "type": "bun",
-            "internalConsoleOptions": "openOnFirstSessionStart",
-            "request": "launch",
             "name": "Debug EdgeCreator API",
             "program": "index.ts",
             "cwd": "${workspaceFolder}/apps/edgecreator/api",
@@ -43,7 +33,7 @@
             "type": "node-terminal",
             "request": "launch",
             "name": "Start Web server",
-            "command": "turbo dev -F '~web...'",
+            "command": "NODE_OPTIONS='--no-inspect' turbo dev -F '~web...'",
             "presentation": {
                 "reveal": "always",
                 "panel": "shared"
@@ -71,7 +61,7 @@
             "type": "node-terminal",
             "request": "launch",
             "name": "Start Dumili Web server",
-            "command": "turbo dev -F '~dumili'",
+            "command": "NODE_OPTIONS='--no-inspect' turbo dev -F '~dumili'",
             "presentation": {
                 "reveal": "always",
                 "panel": "shared"
@@ -90,7 +80,7 @@
             "type": "node-terminal",
             "request": "launch",
             "name": "Start Duckguessr Web server",
-            "command": "turbo dev -F '~duckguessr'",
+            "command": "NODE_OPTIONS='--no-inspect' turbo dev -F '~duckguessr'",
             "presentation": {
                 "reveal": "always",
                 "panel": "shared"
@@ -109,7 +99,7 @@
             "type": "node-terminal",
             "request": "launch",
             "name": "Start EdgeCreator Web server",
-            "command": "turbo dev -F '~edgecreator'",
+            "command": "NODE_OPTIONS='--no-inspect' turbo dev -F '~edgecreator'",
             "presentation": {
                 "reveal": "always",
                 "panel": "shared"
