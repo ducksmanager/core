@@ -1,9 +1,10 @@
 import { defineNuxtConfig } from "nuxt/config";
 import path from "path";
+import IconsResolver from "unplugin-icons/resolver";
+import ViteComponents from "unplugin-vue-components/vite";
 import checker from "vite-plugin-checker";
 
 import getViteAliases from "../../vite-aliases";
-
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   alias: {
@@ -61,6 +62,7 @@ export default defineNuxtConfig({
       },
     ],
     "@nuxt/eslint",
+    "unplugin-icons/nuxt",
   ],
 
   // Auto-imports
@@ -86,7 +88,18 @@ export default defineNuxtConfig({
 
   // Vite config
   vite: {
-    plugins: [checker({ vueTsc: true })],
+    plugins: [
+      checker({ vueTsc: true }),
+      ViteComponents({
+        resolvers: [
+          IconsResolver({
+            prefix: "",
+            strict: true,
+          }),
+        ],
+        dts: true,
+      }),
+    ],
     resolve: {
       dedupe: ["vue", "vue-i18n", "@vueuse/core", "bootstrap-vue-next"],
     },

@@ -25,8 +25,6 @@ import {
 } from "~duckguessr-services/player";
 import { type ClientEmitEvents as PodiumEmitEvents } from "~duckguessr-services/podium";
 
-console.log("🔌 App.vue initializing sockets...");
-
 const session = {
   getToken: () => Promise.resolve(Cookies.get("token")),
   clearSession: () => Promise.resolve(Cookies.remove("token")),
@@ -40,7 +38,6 @@ const onConnectError = async () => {
   webStores.collection().user = null;
 };
 
-// Create raw socket clients first
 const dmSocketClient = new SocketClient(
   import.meta.env.VITE_DM_SOCKET_URL || "http://localhost:3001",
 );
@@ -48,14 +45,12 @@ const storySearchSocketClient = new SocketClient(
   "http://localhost:3001", // Default for story search socket
 );
 
-// Provide raw socket clients
 getCurrentInstance()!.appContext.app.provide("dmSocket", dmSocketClient);
 getCurrentInstance()!.appContext.app.provide(
   "storySearchSocket",
   storySearchSocketClient,
 );
 
-// Create DM socket
 const dmSocket = useDmSocket({
   cacheStorage: import.meta.client
     ? buildWebStorage(sessionStorage)
@@ -64,31 +59,13 @@ const dmSocket = useDmSocket({
   onConnectError,
 });
 
-// Create Duckguessr socket directly
-console.log("🔌 Environment variables:", {
-  VITE_SOCKET_URL: import.meta.env.VITE_SOCKET_URL,
-  VITE_DM_SOCKET_URL: import.meta.env.VITE_DM_SOCKET_URL,
-});
-
 const socketUrl = import.meta.env.VITE_SOCKET_URL || "http://localhost:3001";
-console.log("🔌 Using socket URL:", socketUrl);
-
-console.log("🔌 About to create SocketClient with URL:", socketUrl);
 
 let duckguessrSocketClient;
 try {
   duckguessrSocketClient = new SocketClient(socketUrl);
-  console.log(
-    "🔌 SocketClient created successfully:",
-    !!duckguessrSocketClient,
-  );
-  console.log("🔌 SocketClient type:", typeof duckguessrSocketClient);
-  console.log(
-    "🔌 SocketClient methods:",
-    Object.getOwnPropertyNames(Object.getPrototypeOf(duckguessrSocketClient)),
-  );
 } catch (error) {
-  console.error("🔌 Error creating SocketClient:", error);
+  console.error("Error creating SocketClient:", error);
   throw error;
 }
 
@@ -100,16 +77,6 @@ const getGameSocketFromId = (id: number) =>
     },
   );
 
-console.log("🔌 Creating player socket...");
-console.log(
-  "🔌 duckguessrSocketClient before addNamespace:",
-  !!duckguessrSocketClient,
-);
-console.log(
-  "🔌 duckguessrSocketClient.addNamespace:",
-  typeof duckguessrSocketClient?.addNamespace,
-);
-
 let playerSocket;
 try {
   playerSocket = ref(
@@ -120,9 +87,8 @@ try {
       },
     ),
   );
-  console.log("🔌 Player socket created:", !!playerSocket.value);
 } catch (error) {
-  console.error("🔌 Error creating player socket:", error);
+  console.error("Error creating player socket:", error);
   throw error;
 }
 
@@ -166,11 +132,6 @@ getCurrentInstance()!.appContext.app.provide(
   duckguessrSocketInjectionKey,
   duckguessrSocket,
 );
-
-console.log("🔌 Sockets provided:", {
-  dmSocket: !!dmSocket,
-  duckguessrSocket: !!duckguessrSocket,
-});
 
 onMounted(() => {
   webStores.collection().loadUser();

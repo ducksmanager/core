@@ -4,6 +4,7 @@ import * as Sentry from "@sentry/node";
 import { Server } from "socket.io";
 
 import prisma from "./prisma/client";
+import { server as datasets } from "./services/datasets";
 import { createGameSocket } from "./services/game";
 // import { createMatchmakingSocket } from "./services/game";
 import { server as home } from "./services/home";
@@ -23,6 +24,7 @@ const io = new Server({
   cors,
 });
 
+datasets(io);
 home(io);
 player(io);
 // createMatchmakingSocket(io);
