@@ -1,7 +1,7 @@
 import jwt from "jsonwebtoken";
 
 import prisma from "./prisma/client";
-import type { player } from "./prisma/client_duckguessr/client";
+import type { player } from "./prisma/client_duckguessr/browser";
 
 export const getUser = async (username: string) =>
   (await prisma.player.findFirst({

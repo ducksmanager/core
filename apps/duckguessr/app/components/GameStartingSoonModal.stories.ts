@@ -24,36 +24,48 @@ export const Default: Story = {
     authors: [
       {
         personcode: "CB",
-        personnationality: "us",
-        personfullname: "Carl Barks",
+        nationalitycountrycode: "us",
+        fullname: "Carl Barks",
       },
-      { personcode: "DR", personnationality: "us", personfullname: "Don Rosa" },
+      {
+        personcode: "DR",
+        nationalitycountrycode: "us",
+        fullname: "Don Rosa",
+      },
       {
         personcode: "RSc",
-        personnationality: "us",
-        personfullname: "Romano Scarpa",
+        nationalitycountrycode: "us",
+        fullname: "Romano Scarpa",
       },
       {
         personcode: "CB",
-        personnationality: "us",
-        personfullname: "Carl Barks",
+        nationalitycountrycode: "us",
+        fullname: "Carl Barks",
       },
-      { personcode: "DR", personnationality: "us", personfullname: "Don Rosa" },
+      {
+        personcode: "DR",
+        nationalitycountrycode: "us",
+        fullname: "Don Rosa",
+      },
       {
         personcode: "RSc",
-        personnationality: "us",
-        personfullname: "Romano Scarpa",
+        nationalitycountrycode: "us",
+        fullname: "Romano Scarpa",
       },
       {
         personcode: "CB",
-        personnationality: "us",
-        personfullname: "Carl Barks",
+        nationalitycountrycode: "us",
+        fullname: "Carl Barks",
       },
-      { personcode: "DR", personnationality: "us", personfullname: "Don Rosa" },
+      {
+        personcode: "DR",
+        nationalitycountrycode: "us",
+        fullname: "Don Rosa",
+      },
       {
         personcode: "RSc",
-        personnationality: "us",
-        personfullname: "Romano Scarpa",
+        nationalitycountrycode: "us",
+        fullname: "Romano Scarpa",
       },
     ],
     firstRoundStartDate: (() => {

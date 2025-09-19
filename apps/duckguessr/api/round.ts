@@ -1,5 +1,5 @@
 import prisma from "./prisma/client";
-import type { player, round } from "./prisma/client_duckguessr/client";
+import type { player, round } from "./prisma/client_duckguessr/browser";
 import type { GuessRequest, GuessResponse } from "./types/guess";
 
 const gameKickoffTime = 10000;

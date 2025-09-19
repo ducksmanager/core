@@ -67,7 +67,22 @@ export default defineNuxtConfig({
 
   // Auto-imports
   imports: {
-    dirs: ["~/stores", "../../packages/types"],
+    dirs: [
+      "~/stores",
+      "../../packages/types",
+      "~web/src/composables",
+      "~web/src/stores",
+    ],
+    presets: [
+      {
+        from: "~web/src/stores/coa",
+        imports: ["coa"],
+      },
+      {
+        from: "~web/src/composables/useLocales",
+        imports: ["getCurrentLocaleShortKey", "availableLocales"],
+      },
+    ],
   },
 
   // TypeScript
@@ -75,6 +90,12 @@ export default defineNuxtConfig({
     strict: true,
     typeCheck: true,
     shim: true,
+    tsConfig: {
+      compilerOptions: {
+        noUncheckedIndexedAccess: false,
+        noImplicitOverride: false,
+      },
+    },
   },
 
   // Runtime config

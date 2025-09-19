@@ -1,5 +1,5 @@
 import type { getGameWithRoundsDatasetPlayers } from "../game";
-import type { player, round } from "../prisma/client_duckguessr/client";
+import type { player, round } from "../prisma/client_duckguessr/browser";
 
 export type CurrentGame = NonNullable<
   Awaited<ReturnType<typeof getGameWithRoundsDatasetPlayers>>

@@ -3,7 +3,7 @@ import { type NamespaceProxyTarget, useSocketEvents } from "socket-call-server";
 
 import { getPlayer, getPlayerStatistics, updatePlayer } from "../get-player";
 import prisma from "../prisma/client";
-import { type player } from "../prisma/client_duckguessr/client";
+import { type player } from "../prisma/client_duckguessr/browser";
 import namespaces from "./namespaces";
 
 export type ClientListenEvents = {

@@ -3,6 +3,8 @@
   "compilerOptions": {
     "baseUrl": ".",
     "verbatimModuleSyntax": false,
+    "module": "ESNext",
+    "moduleResolution": "bundler",
     "paths": {
       "~/*": [
         "./app/*"

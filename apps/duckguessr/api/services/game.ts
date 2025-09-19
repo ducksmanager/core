@@ -7,7 +7,7 @@ import game from "../game";
 import { getPlayer, getPlayerStatistics, getUser } from "../get-player";
 import { predict } from "../predict";
 import prisma from "../prisma/client";
-import type { player, round } from "../prisma/client_duckguessr/client";
+import type { player, round } from "../prisma/client_duckguessr/browser";
 import { getRoundWithScores, setRoundTimes } from "../round";
 import { guess } from "../round";
 import type { GuessResponse } from "../types/guess";

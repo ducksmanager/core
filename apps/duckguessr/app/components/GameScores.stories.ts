@@ -30,7 +30,7 @@ const players: player[] = [
     ducksmanagerId: 2,
     avatar: "DD",
   },
-];
+] as const;
 
 export const Default: Story = {
   args: {
