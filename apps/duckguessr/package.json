@@ -17,7 +17,7 @@
     "lint": "eslint --fix .",
     "storybook": "storybook dev -p 6006",
     "prod:deploy": "DIR=apps/duckguessr SERVICES='storybook' pnpm -F '~ci' prod:docker-compose-up",
-    "prod:build-docker": "echo 'disabled, would run REPO_NAME=ghcr.io/bperel/duckguessr-storybook pnpm -F '~ci' prod:build-docker --target storybook -f apps/duckguessr/Dockerfile'",
+    "prod:build-docker": "REPO_NAME=ghcr.io/bperel/duckguessr-storybook pnpm -F '~ci' prod:build-docker --target storybook -f apps/duckguessr/Dockerfile",
     "prod:transfer-files-pre": "pnpm -F '~ci' prod:transfer-files @apps/duckguessr/.env:apps/duckguessr/.env",
     "prod:transfer-files-post": "pnpm -F '~ci' prod:transfer-files apps/duckguessr/docker-compose.yml:@apps/duckguessr/docker-compose.yml apps/duckguessr/Caddyfile:@apps/duckguessr/Caddyfile"
   },
