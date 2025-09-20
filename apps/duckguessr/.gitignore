@@ -8,6 +8,7 @@ sessions
 
 !.gitkeep
 /dist/
+.output
 
 /*.d.ts
 api/prisma/client_*

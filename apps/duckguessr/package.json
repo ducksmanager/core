@@ -9,7 +9,7 @@
     "duckguessr": "concurrently -p \"[duckguessr-{name}]\" --kill-others-on-fail -n web,api,dm \"pnpm -F ~duckguessr dev\" \"pnpm -F ~duckguessr-api dev\" \"pnpm -F ~web web\"",
     "dev": "nuxt dev --port 8007",
     "dev-storybook": "concurrently \"pnpm -F ~duckguessr-api dev\" \"storybook dev\"",
-    "build": "echo 'disabled, would run nuxt build && storybook build'",
+    "build": "nuxt build && storybook build",
     "build-storybook": "storybook build",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
