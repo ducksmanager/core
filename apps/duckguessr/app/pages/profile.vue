@@ -89,15 +89,11 @@ import { avatars, avatarDiskDiameter } from "~duckguessr-types/avatar";
 
 const { t } = useI18n();
 
-const {
-  isAnonymous,
-  playerUser,
-  stats: currentUserStats,
-} = storeToRefs(playerStore());
+const { isAnonymous, stats: currentUserStats } = storeToRefs(playerStore());
 const { playerSocket } = inject(duckguessrSocketInjectionKey)!;
-const tree = ref(null as any | null);
+const tree = useTemplateRef<HTMLImageElement>("tree");
 
-const treeImageNaturalWidth = ref(null as number | null);
+const treeImageNaturalWidth = ref<number>();
 
 interface AvatarWithLocalPosition extends Avatar {
   localPosition: number[] | null;
@@ -106,17 +102,18 @@ interface AvatarWithLocalPosition extends Avatar {
 const hasMedals = computed(
   () =>
     currentUserStats.value &&
-    Object.values(currentUserStats.value).filter(({ points }) => points > 0)
-      .length,
+    Object.values(currentUserStats.value).filter(
+      ({ playerPoints }) => playerPoints && playerPoints > 0,
+    ).length,
 );
 
 const treeImageRatio = computed(
   () => treeImageNaturalWidth.value! / tree.value!.width,
 );
 
-const currentAvatar = ref(null as AvatarWithLocalPosition | null);
-const closestAvatar = ref(null as AvatarWithLocalPosition | null);
-const avatarSize = ref(null as number | null);
+const currentAvatar = ref<AvatarWithLocalPosition>();
+const closestAvatar = ref<AvatarWithLocalPosition>();
+const avatarSize = ref<number>();
 
 const resizeAvatars = () => {
   avatarSize.value = avatarDiskDiameter / treeImageRatio.value;
@@ -128,7 +125,7 @@ const calculateLocalPosition = (avatar: Avatar) =>
   );
 
 watch(
-  () => playerUser.value?.avatar,
+  () => playerStore().playerUser?.avatar,
   (avatarName) => {
     const avatar = avatars.find(
       ({ character }: Avatar) => character === avatarName,
@@ -143,8 +140,8 @@ watch(
   },
 );
 
-const onMouseMove = ({ clientX, clientY, target }: any) => {
-  const rect = target.getBoundingClientRect();
+const onMouseMove = ({ clientX, clientY, target }: MouseEvent) => {
+  const rect = (target as HTMLImageElement).getBoundingClientRect();
   const position = [clientX - rect.left, clientY - rect.top];
   const positionUsingNaturalDimensions = position.map(
     (coordinate) => coordinate * (treeImageNaturalWidth.value! / rect.width),
@@ -175,16 +172,19 @@ const onMouseMove = ({ clientX, clientY, target }: any) => {
   }
 };
 
-const onTreeLoad = (event: any) => {
+const onTreeLoad = (event: Event) => {
   if (event) {
-    treeImageNaturalWidth.value = event.target.naturalWidth;
+    treeImageNaturalWidth.value = (
+      event.target as HTMLImageElement
+    ).naturalWidth;
   }
 };
 
 const onSelectAvatar = () => {
-  playerUser.value!.avatar = closestAvatar.value!.character;
-  playerSocket.updateUser(playerUser.value).then((updatedUser) => {
-    playerUser.value = updatedUser;
+  playerStore().playerUser!.avatar = closestAvatar.value!.character;
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
+  playerSocket.updateUser(playerStore().playerUser!).then((updatedUser) => {
+    playerStore().playerUser = updatedUser;
   });
 };
 </script>

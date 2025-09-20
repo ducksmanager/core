@@ -8,6 +8,7 @@ import namespaces from "./namespaces";
 
 export type ClientListenEvents = {
   logged: (player: player) => void;
+  loginFailed: () => void;
 };
 
 export type PlayerServices = NamespaceProxyTarget<

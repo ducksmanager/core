@@ -112,7 +112,7 @@ watch(
 
 (async () => {
   datasets.value =
-    ((await datasetsSocket.value?.getDatasets()) as DatasetWithCounts[]) || [];
+    ((await datasetsSocket.getDatasets()) as DatasetWithCounts[]) || [];
 })();
 </script>
 

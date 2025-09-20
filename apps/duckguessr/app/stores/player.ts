@@ -49,7 +49,7 @@ export const playerStore = defineStore("player", () => {
   };
   const loadStats = () => {
     const { playerSocket } = inject(duckguessrSocketInjectionKey)!;
-    playerSocket.getStats().then((newStats: userMedalPoints[]) => {
+    playerSocket.getStats().then((newStats) => {
       stats.value = newStats;
     });
   };
@@ -59,18 +59,16 @@ export const playerStore = defineStore("player", () => {
     isWinningPlayer: boolean,
   ) => {
     const { playerSocket } = inject(duckguessrSocketInjectionKey)!;
-    playerSocket
-      .getGameStats(gameId)
-      .then((stats: EventOutput<PlayerEmitEvents, "getGameStats">) => {
-        gameStats.value = stats;
-        if (currentGameDatasetName) {
-          gameStats.value.stats.push({
-            medalType: currentGameDatasetName,
-            playerId: playerUser.value!.id,
-            playerPoints: isWinningPlayer ? 1 : 0,
-          });
-        }
-      });
+    playerSocket.getGameStats(gameId).then((stats) => {
+      gameStats.value = stats;
+      if (currentGameDatasetName) {
+        gameStats.value.stats.push({
+          medalType: currentGameDatasetName,
+          playerId: playerUser.value!.id,
+          playerPoints: isWinningPlayer ? 1 : 0,
+        });
+      }
+    });
   };
 
   return {

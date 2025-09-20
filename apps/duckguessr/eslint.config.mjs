@@ -64,6 +64,7 @@ export default defineConfig(
       "import/default": "off",
       "import/named": "off",
       "@typescript-eslint/consistent-type-imports": "error",
+      "@typescript-eslint/no-inferrable-types": "error",
       "@typescript-eslint/no-unnecessary-type-assertion": "error",
 
       "@typescript-eslint/no-unused-vars": [

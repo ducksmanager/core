@@ -61,7 +61,7 @@
 <script setup lang="ts">
 import { playerStore } from "~/stores/player";
 
-const user = computed(() => playerStore().user);
+const user = computed(() => playerStore().playerUser);
 const isAnonymous = computed(() => playerStore().isAnonymous);
 const currentUserStats = computed(() => playerStore().stats);
 

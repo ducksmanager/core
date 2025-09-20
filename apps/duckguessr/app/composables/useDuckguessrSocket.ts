@@ -35,31 +35,32 @@ const defaultExport = (options: {
       },
     );
 
-  const playerSocket = ref(
-    socket.addNamespace<PlayerEmitEvents, PlayerListenEvents>(
-      namespaces.PLAYER,
-      {
-        session,
-      },
-    ),
+  const playerSocket = socket.addNamespace<
+    PlayerEmitEvents,
+    PlayerListenEvents
+  >(namespaces.PLAYER, {
+    session,
+  });
+
+  const maintenanceSocket = socket.addNamespace<MaintenanceEmitEvents>(
+    namespaces.MAINTENANCE,
+    {
+      session,
+    },
   );
 
-  const maintenanceSocket = ref(
-    socket.addNamespace<MaintenanceEmitEvents>(namespaces.MAINTENANCE, {
+  const datasetsSocket = socket.addNamespace<DatasetsEmitEvents>(
+    namespaces.DATASETS,
+    {
       session,
-    }),
+    },
   );
 
-  const datasetsSocket = ref(
-    socket.addNamespace<DatasetsEmitEvents>(namespaces.DATASETS, {
+  const podiumSocket = socket.addNamespace<PodiumEmitEvents>(
+    namespaces.PODIUM,
+    {
       session,
-    }),
-  );
-
-  const podiumSocket = ref(
-    socket.addNamespace<PodiumEmitEvents>(namespaces.PODIUM, {
-      session,
-    }),
+    },
   );
 
   return {

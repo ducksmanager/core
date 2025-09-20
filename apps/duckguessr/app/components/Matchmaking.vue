@@ -56,7 +56,7 @@ const removeBot = () => {
 };
 
 watch(
-  () => playerStore().user,
+  () => playerStore().playerUser,
   (value) => {
     if (value) {
       gameSocket.playerConnectedToMatch = () => {

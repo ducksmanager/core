@@ -12,7 +12,9 @@ export type MaintenanceServices = NamespaceProxyTarget<
 >;
 
 const listenEvents = ({}: MaintenanceServices) => ({
-  getMaintenanceData: async () => prisma.$queryRaw`
+  getMaintenanceData: async () => prisma.$queryRaw<
+    { name: string; decision: string; count: number }[]
+  >`
               select name, decision, count(*) as 'count'
               from dataset
               left join dataset_entryurl de on dataset.id = de.dataset_id

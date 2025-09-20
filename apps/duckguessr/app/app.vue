@@ -79,38 +79,37 @@ const getGameSocketFromId = (id: number) =>
 
 let playerSocket;
 try {
-  playerSocket = ref(
-    duckguessrSocketClient.addNamespace<PlayerEmitEvents, PlayerListenEvents>(
-      namespaces.PLAYER,
-      {
-        session,
-      },
-    ),
-  );
+  playerSocket = duckguessrSocketClient.addNamespace<
+    PlayerEmitEvents,
+    PlayerListenEvents
+  >(namespaces.PLAYER, {
+    session,
+  });
 } catch (error) {
   console.error("Error creating player socket:", error);
   throw error;
 }
 
-const maintenanceSocket = ref(
+const maintenanceSocket =
   duckguessrSocketClient.addNamespace<MaintenanceEmitEvents>(
     namespaces.MAINTENANCE,
     {
       session,
     },
-  ),
+  );
+
+const datasetsSocket = duckguessrSocketClient.addNamespace<DatasetsEmitEvents>(
+  namespaces.DATASETS,
+  {
+    session,
+  },
 );
 
-const datasetsSocket = ref(
-  duckguessrSocketClient.addNamespace<DatasetsEmitEvents>(namespaces.DATASETS, {
+const podiumSocket = duckguessrSocketClient.addNamespace<PodiumEmitEvents>(
+  namespaces.PODIUM,
+  {
     session,
-  }),
-);
-
-const podiumSocket = ref(
-  duckguessrSocketClient.addNamespace<PodiumEmitEvents>(namespaces.PODIUM, {
-    session,
-  }),
+  },
 );
 
 const duckguessrSocket = {

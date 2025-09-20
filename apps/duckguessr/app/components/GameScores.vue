@@ -7,6 +7,7 @@
           v-for="round in roundsWithPersonUrls"
           :key="`round-${round.roundNumber}`"
           :round="round"
+          :game="game"
         />
       </b-row>
     </b-container>
@@ -106,6 +107,7 @@ import { playerStore } from "~/stores/player";
 import type { GameFull } from "~duckguessr-types/game";
 import type { ColorVariant } from "bootstrap-vue-next";
 import type { player, roundScore } from "~duckguessr-prisma-browser";
+import type { RoundWithScoresAndAuthor } from "~duckguessr-types/roundWithScoresAndAuthor";
 
 const { game } = defineProps<{
   game: GameFull;
@@ -120,7 +122,7 @@ const players = game.gamePlayers.reduce(
   {} as Record<number, player>,
 );
 const roundsWithPersonUrls = ref(
-  game.rounds.map((roundScore) => ({
+  (game.rounds as RoundWithScoresAndAuthor[]).map((roundScore) => ({
     ...roundScore,
     ...game.authors.find(
       ({ personcode }) => personcode === roundScore.personcode,

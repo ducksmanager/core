@@ -70,7 +70,9 @@ const {
 }>();
 
 const stats = computed(() =>
-  dataset ? playerStore().gameStats : statsOverride || playerStore().stats,
+  dataset
+    ? playerStore().gameStats!.stats
+    : statsOverride || playerStore().stats,
 );
 
 const statsMatchingMedals = computed(() =>
@@ -129,7 +131,7 @@ const levelsAndProgress = computed(
             ).playerPoints! - currentLevelThreshold;
           const currentLevelProgressPoints = playerStore().gameStats
             ? (
-                playerStore().gameStats!.find(
+                playerStore().gameStats!.stats.find(
                   ({ medalType: statsMedalType }) =>
                     medalType === statsMedalType,
                 ) || {

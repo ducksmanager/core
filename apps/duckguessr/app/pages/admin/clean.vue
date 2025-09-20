@@ -191,7 +191,7 @@ const currentPage = ref(1);
 const totalRows = ref(10000);
 const rowsPerPage = 60;
 
-const user = computed(() => playerStore().user);
+const user = computed(() => playerStore().playerUser);
 const isAllowed = computed(
   () =>
     user.value &&
@@ -232,9 +232,9 @@ const decisionsWithNonValidated = ref({
 const loadDatasets = async () => {
   datasetsGroupedByDecision.value = (
     await maintenanceSocket.getMaintenanceData()
-  ).reduce(
+  ).reduce<{ [key: string]: DatasetWithDecisionCounts }>(
     (
-      acc: any,
+      acc,
       {
         name,
         decision,
@@ -295,7 +295,7 @@ const loadImagesToMaintain = async (
   await loadDatasets();
   isLoading.value = false;
   entryurlsPendingMaintenanceWithUrls.value = entryurlsToMaintain.map(
-    (data: any) => ({
+    (data) => ({
       ...data,
       decision: data.entryurlDetails.decision || "ok",
       url: getUrl(data.sitecodeUrl),
@@ -303,7 +303,7 @@ const loadImagesToMaintain = async (
   );
 
   const datasetsAndDecisions =
-    datasetsGroupedByDecision.value[datasetName]!.decisions;
+    datasetsGroupedByDecision.value[datasetName].decisions;
   validatedAndRemainingImageCount.value = {
     not_validated: datasetsAndDecisions.null || 0,
     validated:
@@ -317,7 +317,7 @@ watch(
   decisionsWithNonValidated,
   async (newValue) => {
     await loadImagesToMaintain(
-      selectedDataset.value!,
+      selectedDataset.value ?? null,
       newValue,
       (currentPage.value - 1) * rowsPerPage,
     );
@@ -327,7 +327,7 @@ watch(
 
 watch(selectedDataset, async (newValue) => {
   await loadImagesToMaintain(
-    newValue!,
+    newValue ?? null,
     decisionsWithNonValidated.value,
     (currentPage.value - 1) * rowsPerPage,
   );
@@ -335,7 +335,7 @@ watch(selectedDataset, async (newValue) => {
 
 watch(currentPage, async (newValue) => {
   await loadImagesToMaintain(
-    selectedDataset.value!,
+    selectedDataset.value ?? null,
     decisionsWithNonValidated.value,
     (newValue - 1) * rowsPerPage,
   );
@@ -358,7 +358,7 @@ const submitInvalidations = async () => {
   );
 
   await loadImagesToMaintain(
-    selectedDataset.value!,
+    selectedDataset.value ?? null,
     decisionsWithNonValidated.value,
     currentPage.value - 1,
   );

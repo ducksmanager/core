@@ -6,7 +6,7 @@
     <game-scores :game="game!" />
   </b-container>
   <b-container
-    v-else-if="currentRoundNumber"
+    v-else-if="currentRoundNumber && currentRound?.personcode"
     fluid
     class="d-flex flex-grow-1 p-0"
   >
@@ -20,7 +20,7 @@
       :players="players"
       :previous-personcodes="
         game.rounds
-          .filter((round) => 'personcode' in round)
+          .filter((round) => round.personcode !== null)
           .map((round) => round.personcode)
       "
       :remaining-time="remainingTime"
@@ -30,7 +30,11 @@
       "
     />
     <round-result-modal
-      v-if="currentRound && currentRoundPlayerScore !== undefined"
+      v-if="
+        currentRound &&
+        currentRound.personcode &&
+        currentRoundPlayerScore !== undefined
+      "
       :status="scoreToVariant(currentRoundPlayerScore)"
       :speed-bonus="currentRoundPlayerScore.speedBonus"
       :correct-author="getAuthor(currentRound.personcode!)"
@@ -60,9 +64,7 @@ import { useScoreToVariant } from "~/composables/use-score-to-variant";
 import type { GameFullNoPersoncode } from "~duckguessr-types/game";
 import { duckguessrSocketInjectionKey } from "~/composables/useDuckguessrSocket";
 
-const { getGameSocketFromId, podiumSocket } = inject(
-  duckguessrSocketInjectionKey,
-)!;
+const { getGameSocketFromId } = inject(duckguessrSocketInjectionKey)!;
 
 const duckguessrId = getDuckguessrId();
 const { t } = useI18n();
@@ -81,7 +83,7 @@ const game = ref<GameFullNoPersoncode>();
 
 const gameSocket = getGameSocketFromId(gameId);
 
-gameSocket.connect = () => {
+gameSocket._connect = () => {
   isConnectedToSocket.value = true;
 };
 
@@ -129,9 +131,9 @@ gameSocket.gameEnds = () => {
 
 gameSocket.playerGuessed = ({ roundScore, answer }) => {
   if (roundScore.playerId === duckguessrId) {
-    game.value!.rounds[currentRoundNumber.value! - 1]!.personcode = answer;
+    game.value!.rounds[currentRoundNumber.value! - 1].personcode = answer;
   }
-  game.value!.rounds[currentRoundNumber.value! - 1]!.roundScores.push(
+  game.value!.rounds[currentRoundNumber.value! - 1].roundScores.push(
     roundScore,
   );
 };
@@ -151,9 +153,9 @@ gameSocket.gameEnds = () => {
 
 gameSocket.playerGuessed = ({ roundScore, answer }) => {
   if (roundScore.playerId === duckguessrId) {
-    game.value!.rounds[currentRoundNumber.value! - 1]!.personcode = answer;
+    game.value!.rounds[currentRoundNumber.value! - 1].personcode = answer;
   }
-  game.value!.rounds[currentRoundNumber.value! - 1]!.roundScores.push(
+  game.value!.rounds[currentRoundNumber.value! - 1].roundScores.push(
     roundScore,
   );
 };
@@ -164,9 +166,9 @@ gameSocket.gameEnds = () => {
 
 gameSocket.playerGuessed = ({ roundScore, answer }) => {
   if (roundScore.playerId === duckguessrId) {
-    game.value!.rounds[currentRoundNumber.value! - 1]!.personcode = answer;
+    game.value!.rounds[currentRoundNumber.value! - 1].personcode = answer;
   }
-  game.value!.rounds[currentRoundNumber.value! - 1]!.roundScores.push(
+  game.value!.rounds[currentRoundNumber.value! - 1].roundScores.push(
     roundScore,
   );
 };
@@ -177,9 +179,9 @@ gameSocket.gameEnds = () => {
 
 gameSocket.playerGuessed = ({ roundScore, answer }) => {
   if (roundScore.playerId === duckguessrId) {
-    game.value!.rounds[currentRoundNumber.value! - 1]!.personcode = answer;
+    game.value!.rounds[currentRoundNumber.value! - 1].personcode = answer;
   }
-  game.value!.rounds[currentRoundNumber.value! - 1]!.roundScores.push(
+  game.value!.rounds[currentRoundNumber.value! - 1].roundScores.push(
     roundScore,
   );
 };
@@ -206,20 +208,20 @@ const getRound = (searchedRoundNumber: number | undefined) =>
 const currentRound = computed(() => getRound(currentRoundNumber.value));
 
 const availableTime = computed(() =>
-  !currentRound.value
+  !currentRound.value?.finishedAt || !currentRound.value?.startedAt
     ? Infinity
-    : (new Date(currentRound.value.finishedAt!).getTime() -
-        new Date(currentRound.value.startedAt!).getTime()) /
+    : (new Date(currentRound.value.finishedAt).getTime() -
+        new Date(currentRound.value.startedAt).getTime()) /
       1000,
 );
 
 const remainingTime = computed(() =>
-  !currentRound.value
+  !currentRound.value?.finishedAt
     ? Infinity
     : Math.floor(
         Math.max(
           0,
-          (new Date(currentRound.value.finishedAt!).getTime() - now.value) /
+          (new Date(currentRound.value.finishedAt).getTime() - now.value) /
             1000,
         ),
       ),
@@ -244,7 +246,6 @@ const validateGuess = async () => {
 };
 
 const loadGame = async () => {
-  game.value = await podiumSocket.getPodium();
   if (game.value) {
     const now = new Date().toISOString();
     gameIsFinished.value = game.value.rounds.every(

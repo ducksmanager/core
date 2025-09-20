@@ -16,8 +16,8 @@
       }"
     >
       <b-img class="d-none" :src="personUrl" @error="setDefaultAuthorUrl()" />
-      <flag :country="round.nationalitycountrycode!" />&nbsp;{{
-        round.fullname
+      <flag :country="roundAuthor.nationalitycountrycode!" />&nbsp;{{
+        roundAuthor.fullname
       }}
     </div>
   </b-col>
@@ -26,10 +26,16 @@
 <script lang="ts" setup>
 import type { RoundWithScoresAndAuthor } from "~duckguessr-types/roundWithScoresAndAuthor";
 import { getUrl } from "~/composables/url";
+import type { GameFull } from "~duckguessr-types/game";
 
-const { round } = defineProps<{
+const { round, game } = defineProps<{
+  game: GameFull;
   round: RoundWithScoresAndAuthor;
 }>();
+
+const roundAuthor = computed(
+  () => game.authors.find((author) => author.personcode === round.personcode)!,
+);
 
 const personUrl = ref();
 watch(

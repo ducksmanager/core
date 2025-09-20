@@ -2,6 +2,11 @@ import type { Socket } from "socket.io";
 import type { NamespaceProxyTarget } from "socket-call-server";
 import { useSocketEvents } from "socket-call-server";
 
+import type {
+  RoundWithScoresAndAuthor,
+  UnfinishedRound,
+} from "~duckguessr-types/roundWithScoresAndAuthor";
+
 import { getGameWithRoundsDatasetPlayers, numberOfRounds } from "../game";
 import game from "../game";
 import { getPlayer, getPlayerStatistics, getUser } from "../get-player";
@@ -21,8 +26,11 @@ export type ClientListenEvents = {
   matchStarts: () => void;
   gameEnds: () => void;
   playerGuessed: (guessResultsData: GuessResponse) => void;
-  roundEnds: (round: round, nextRound?: Omit<round, "personcode">) => void;
-  roundStarts: (round: Omit<round, "personcode">) => void;
+  roundEnds: (
+    round: RoundWithScoresAndAuthor,
+    nextRound?: UnfinishedRound,
+  ) => void;
+  roundStarts: (round: UnfinishedRound) => void;
   firstRoundWillStartSoon: (firstRoundStartDate: Date) => void;
 };
 
@@ -126,7 +134,11 @@ const startRound = (socket: GameServices) => {
     }, 200);
   }
 
-  const { personcode, ...roundWithoutPersoncode } = currentRound;
+  const roundWithoutPersoncode: UnfinishedRound = {
+    ...currentRound,
+    roundScores: [],
+    personcode: null,
+  };
   setTimeout(async () => {
     _socket.broadcast.emit("roundStarts", roundWithoutPersoncode);
     events.roundStarts(roundWithoutPersoncode);
@@ -177,7 +189,10 @@ const finishRound = async (gameServices: GameServices) => {
       null,
     );
   }
-  const roundWithScores = (await getRoundWithScores(currentRound.id))!;
+  const roundWithScores = {
+    ...(await getRoundWithScores(currentRound.id))!,
+    personcode: currentRound.personcode,
+  };
   if (currentRound.roundNumber === numberOfRounds) {
     _socket.broadcast.emit("roundEnds", roundWithScores);
     events.roundEnds(roundWithScores);
@@ -190,7 +205,11 @@ const finishRound = async (gameServices: GameServices) => {
           roundNumber === currentRound.roundNumber! + 1,
       ) as round,
     );
-    const { personcode, ...roundWithoutPersoncode } = currentRound;
+    const roundWithoutPersoncode: UnfinishedRound = {
+      ...currentRound,
+      roundScores: [],
+      personcode: null,
+    };
     _socket.broadcast.emit(
       "roundEnds",
       roundWithScores,

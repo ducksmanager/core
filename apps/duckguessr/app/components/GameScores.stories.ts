@@ -51,6 +51,7 @@ export const Default: Story = {
           gameId: 100,
           roundNumber: 1,
           sitecodeUrl: "thumbnails3/webusers/2014/04/hu_mm1992_07e_001.jpg",
+          personcode: "DR",
           roundScores: [
             {
               id: 1,
@@ -70,6 +71,7 @@ export const Default: Story = {
           gameId: 100,
           roundNumber: 2,
           sitecodeUrl: "thumbnails3/webusers/2017/03/it_om_1341g_001.jpg",
+          personcode: "DR",
           roundScores: [
             {
               id: 1,
@@ -98,6 +100,7 @@ export const Default: Story = {
           gameId: 100,
           roundNumber: 3,
           sitecodeUrl: "webusers/webusers-auth/rsc_ommi0o.png",
+          personcode: "DR",
           roundScores: [],
         },
       ],

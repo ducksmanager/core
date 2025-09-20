@@ -43,7 +43,8 @@ export const Default: Story = {
   args: {
     userAvatar: "/avatars/DD.png",
     comicImage:
-      "https://inducks.org/hr.php?image=https://outducks.org/thumbnails3/webusers/2015/12/it_tl_0125c_001.jpg&normalsize=1",
+      import.meta.env.VITE_CLOUDINARY_URL_ROOT +
+      "thumbnails3/webusers/2015/12/it_tl_0125c_001.jpg",
     timerProgress: 15,
     cardSlots: Array(9).fill({ filled: false }),
     players: [

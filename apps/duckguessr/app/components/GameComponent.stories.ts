@@ -33,8 +33,6 @@ export const Default: Story = {
       id: 10,
       personcode: "DR",
       gameId: 1,
-      nationalitycountrycode: "us",
-      fullname: "Don Rosa",
       roundNumber: 2,
       startedAt: new Date("2022-05-21T00:00:00"),
       finishedAt: new Date("2022-05-21T00:01:00"),
