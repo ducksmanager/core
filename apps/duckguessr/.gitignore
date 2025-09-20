@@ -11,6 +11,7 @@ sessions
 .output
 
 /*.d.ts
+!env.d.ts
 api/prisma/client_*
 
 *storybook.log
