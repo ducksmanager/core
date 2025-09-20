@@ -13,10 +13,16 @@
         "!api"
       ],
       "dependsOn": [
-        "^build"
+        "^build",
+        "prisma-generate"
       ],
       "outputs": [
         "dist/**"
+      ]
+    },
+    "prisma-generate": {
+      "dependsOn": [
+        "^prisma-generate"
       ]
     },
     "prod:build-docker": {

@@ -131,6 +131,9 @@ importers:
       ~dm-types:
         specifier: workspace:*
         version: link:../../packages/types
+      ~duckguessr-api:
+        specifier: workspace:*
+        version: link:api
       ~web:
         specifier: workspace:*
         version: link:../web
