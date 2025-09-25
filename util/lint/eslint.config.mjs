@@ -24,6 +24,7 @@ export default [
     ignores: [
       "**/*.d.ts",
       "**/*.js",
+      "**/.output",
       "**/.storybook",
       "**/assets",
       "**/build",

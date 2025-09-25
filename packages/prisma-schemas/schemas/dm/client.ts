@@ -9,5 +9,5 @@ export const prismaClient = new Proxy({} as ReturnType<typeof getDmClient>, {
       _prismaClient = getDmClient();
     }
     return _prismaClient[prop as keyof typeof _prismaClient];
-  }
+  },
 });

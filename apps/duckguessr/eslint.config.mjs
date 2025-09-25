@@ -20,6 +20,7 @@ export default defineConfig(
   {
     ignores: [
       "**/.nuxt",
+      "**/.output",
       "**/api",
       "**/auto-imports.d.ts",
       "**/client_*",
