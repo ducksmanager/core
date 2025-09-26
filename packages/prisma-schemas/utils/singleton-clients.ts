@@ -93,10 +93,17 @@ export const getCoaClient = () => {
       console.log('Creating new COA PrismaClient instance');
       const connectionString = ensureConnectionString(process.env.DATABASE_URL_COA!);
       console.log('COA connection string configured with pool parameters');
-      coaClient = prismaExtendedCoa(new PrismaClientCoa({
+      const bareClient = new PrismaClientCoa({
         adapter: new PrismaMariaDb(connectionString),
-        log: process.env.NODE_ENV === 'development' ? ['error', 'warn'] : ['error'],
-      }));
+        log:
+          process.env.NODE_ENV === "development"
+            ? ["error", "warn", "query"]
+            : ["error"],
+      });
+      bareClient.$on("query", async (e) => {
+        console.log(`${e.query} ${e.params}`);
+      });
+      coaClient = prismaExtendedCoa(bareClient); 
     } catch (error) {
       console.error('Failed to create COA PrismaClient:', error);
       console.error('DATABASE_URL_COA value:', process.env.DATABASE_URL_COA);

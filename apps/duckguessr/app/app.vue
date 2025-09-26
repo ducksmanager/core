@@ -125,7 +125,6 @@ const duckguessrSocket = {
   getGameSocketFromId,
 };
 
-// Provide socket composables
 getCurrentInstance()!.appContext.app.provide(dmSocketInjectionKey, dmSocket);
 getCurrentInstance()!.appContext.app.provide(
   duckguessrSocketInjectionKey,
