@@ -1,6 +1,6 @@
 {
   "name": "ducksmanager",
-  "packageManager": "pnpm@10.17.1",
+  "packageManager": "pnpm@9.8.0",
   "engines": {
     "node": ">=22.0.0 <23.0.0"
   },
