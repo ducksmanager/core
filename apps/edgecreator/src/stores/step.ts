@@ -189,7 +189,7 @@ export const step = defineStore("step", () => {
         steps
           .filter(({ optionName }) => optionName === "component")
           .map(({ optionValue }) => optionValue)
-          .join("+");
+          .join("+") || "None";
 
       const firstIssueComponents = getComponents(
         Object.values(firstIssueSteps),
