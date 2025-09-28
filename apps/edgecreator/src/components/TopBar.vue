@@ -311,7 +311,7 @@ const clone = async () => {
   for (const issuecode of issuecodesToEdit.value.filter(
     (issuecode) => issuecode !== issuecodeToClone.value!,
   )) {
-    overwriteModel(issuecode, issuecodeToClone.value, true);
+    overwriteModel(issuecode, issuecodeToClone.value!, true);
   }
 };
 

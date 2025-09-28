@@ -19,7 +19,11 @@ meta:
       <h3>{{ $t("Edge creation") }}</h3>
 
       <b-container v-if="isUploadableEdgesCarouselReady" align="center">
-        <b-alert variant="info" :model-value="true">
+        <b-alert
+          variant="info"
+          :model-value="true"
+          alert-class="d-flex flex-column align-items-center"
+        >
           <template v-if="mostPopularIssuesInCollectionWithoutEdge?.length">
             <uploadable-edges-carousel
               :user-points="userPhotographerPoints"
@@ -272,9 +276,11 @@ watch(
     if (!newValue) {
       return;
     }
-    await usersStore.fetchStats([user.value!.id]);
+    await usersStore.fetchStats([newValue.id]);
     await collectionStore.loadPopularIssuesInCollection();
-    await bookcaseStore.loadBookcase(user.value!.username);
+
+    bookcaseStore.bookcaseUsername = newValue.username;
+    await bookcaseStore.loadBookcase();
     isUserBookcaseReady.value = true;
   },
   { immediate: true },

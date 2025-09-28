@@ -278,7 +278,7 @@ try {
             stepStore.dimensions.find(
               ({ issuecode: thisIssuecode }) =>
                 previousIssuecode === thisIssuecode,
-            ),
+            )!,
             { issuecodes: [issuecode] },
           );
           stepStore.overwriteSteps(
