@@ -31,7 +31,7 @@
     "dayjs": "^1.11.18",
     "dotenv": "^16.6.1",
     "ejs": "^3.1.10",
-    "i18n": "^0.15.1",
+    "i18n": "^0.15.2",
     "jsonwebtoken": "^9.0.2",
     "nodemailer": "^7.0.6",
     "onnxruntime-node": "1.22.0-rev",
