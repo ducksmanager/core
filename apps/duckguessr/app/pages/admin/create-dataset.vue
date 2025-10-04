@@ -64,17 +64,21 @@
                   <b-form-group>
                     <b-form-checkbox
                       class="fw-medium mb-2"
-                      :model-value="personNationalityFilter !== undefined"
+                      :model-value="
+                        filters.personNationalityFilter !== undefined
+                      "
                       @update:model-value="
-                        personNationalityFilter = $event ? [] : undefined
+                        filters.personNationalityFilter = $event
+                          ? []
+                          : undefined
                       "
                     >
                       <BiGlobe class="me-2" />
                       Filter by author nationality
                     </b-form-checkbox>
                     <b-form-select
-                      v-model="personNationalityFilter"
-                      :disabled="!personNationalityFilter"
+                      v-model="filters.personNationalityFilter"
+                      :disabled="!filters.personNationalityFilter"
                       :options="personNationalityOptions"
                       multiple
                       size="lg"
@@ -97,10 +101,10 @@
                   <b-form-group>
                     <b-form-checkbox
                       class="fw-medium mb-3"
-                      :model-value="oldestDateFilterMin !== undefined"
+                      :model-value="filters.oldestDateFilterMin !== undefined"
                       @update:model-value="
-                        oldestDateFilterMin = $event ? 1900 : undefined;
-                        oldestDateFilterMax = $event ? 2025 : undefined;
+                        filters.oldestDateFilterMin = $event ? 1900 : undefined;
+                        filters.oldestDateFilterMax = $event ? 2025 : undefined;
                       "
                     >
                       <BiCalendarRange class="me-2" />
@@ -113,12 +117,12 @@
                           for="oldest-date-filter"
                           class="d-flex align-items-center form-label"
                         >
-                          From {{ oldestDateFilterMin }}
+                          From {{ filters.oldestDateFilterMin }}
                         </label>
                         <b-form-input
                           id="oldest-date-filter"
-                          v-model="oldestDateFilterMin"
-                          :disabled="!oldestDateFilterMin"
+                          v-model="filters.oldestDateFilterMin"
+                          :disabled="!filters.oldestDateFilterMin"
                           type="range"
                           size="lg"
                           class="border-2"
@@ -131,12 +135,12 @@
                           for="newest-date-filter"
                           class="d-flex align-items-center form-label"
                         >
-                          To {{ oldestDateFilterMax }}
+                          To {{ filters.oldestDateFilterMax }}
                         </label>
                         <b-form-input
                           id="newest-date-filter"
-                          v-model="oldestDateFilterMax"
-                          :disabled="!oldestDateFilterMax"
+                          v-model="filters.oldestDateFilterMax"
+                          :disabled="!filters.oldestDateFilterMax"
                           type="range"
                           :min="1900"
                           :max="2025"
@@ -153,10 +157,129 @@
                 <h3
                   class="h5 fw-semibold text-dark mb-3 d-flex align-items-center"
                 >
+                  <BiFunnel class="me-2" />
+                  Amount filters
+                </h3>
+
+                <b-alert
+                  v-if="
+                    !datasetPreview ||
+                    !('datasetSize' in datasetPreview) ||
+                    !datasetPreview.datasetSize
+                  "
+                  variant="warning"
+                  :model-value="true"
+                >
+                  You need to have at least one match to see this section
+                </b-alert>
+                <b-card
+                  v-else-if="datasetPreview && 'authors' in datasetPreview"
+                  class="mb-3 border-light"
+                  body-class="p-3"
+                >
+                  <b-table
+                    :tbody-tr-class="datasetPreviewRowClass"
+                    :items="
+                      Object.entries(datasetPreview.authors).map(
+                        ([key, value]) => ({ key, value }),
+                      )
+                    "
+                    :fields="['key', 'value']"
+                  />
+                  <b-form-group>
+                    <b-form-radio
+                      v-model="filters.authorMatchesCount.type"
+                      name="author-matches-count-filter"
+                      value="minMatchesPerAuthor"
+                      >Restrict to authors with at least this amount of matches
+                      <template
+                        v-if="
+                          filters.authorMatchesCount.type ===
+                          'minMatchesPerAuthor'
+                        "
+                      >
+                        {{ filters.authorMatchesCount.value }}
+                      </template>
+                      <b-form-input
+                        id="min-matches-filter"
+                        :model-value="
+                          filters.authorMatchesCount.type ===
+                          'minMatchesPerAuthor'
+                            ? minMatchesPerAuthorOptions.indexOf(
+                                filters.authorMatchesCount.value ?? 0,
+                              )
+                            : 0
+                        "
+                        :disabled="
+                          filters.authorMatchesCount.type !==
+                          'minMatchesPerAuthor'
+                        "
+                        type="range"
+                        size="lg"
+                        :min="0"
+                        :max="minMatchesPerAuthorOptions.length - 1"
+                        @update:model-value="
+                          filters.authorMatchesCount.value =
+                                minMatchesPerAuthorOptions[parseInt($event as string)]
+                        "
+                      />
+                    </b-form-radio>
+                    <b-form-radio
+                      v-model="filters.authorMatchesCount.type"
+                      name="author-matches-count-filter"
+                      value="minAuthorCount"
+                      >Restrict to at least this amount of authors with the most
+                      matches
+                      <template
+                        v-if="
+                          filters.authorMatchesCount.type === 'minAuthorCount'
+                        "
+                      >
+                        {{ filters.authorMatchesCount.value }}
+                      </template>
+                      <b-form-input
+                        id="min-author-count-filter"
+                        :model-value="
+                          filters.authorMatchesCount.type === 'minAuthorCount'
+                            ? (filters.authorMatchesCount.value ?? 0)
+                            : 0
+                        "
+                        :disabled="
+                          filters.authorMatchesCount.type !== 'minAuthorCount'
+                        "
+                        type="range"
+                        size="lg"
+                        :min="0"
+                        :max="Object.keys(datasetPreview?.authors ?? {}).length"
+                        @update:model-value="
+                          filters.authorMatchesCount.value = parseInt($event as string)
+                        "
+                      />
+                    </b-form-radio>
+                  </b-form-group>
+                </b-card>
+              </div>
+
+              <div class="mb-4">
+                <h3
+                  class="h5 fw-semibold text-dark mb-3 d-flex align-items-center"
+                >
                   <BiEye class="me-2" />
                   Preview Matches
                 </h3>
 
+                <div
+                  v-if="datasetPreview && 'errors' in datasetPreview"
+                  class="mb-4"
+                >
+                  <b-alert
+                    v-for="error in datasetPreview.errors"
+                    :key="error"
+                    variant="warning"
+                    :model-value="true"
+                    >{{ error }}</b-alert
+                  >
+                </div>
                 <b-card class="border-light" body-class="p-3">
                   <div
                     v-if="isCalculatingDatasetPreview"
@@ -167,25 +290,29 @@
                   </div>
 
                   <div
-                    v-else-if="datasetPreview?.matches.length"
+                    v-else-if="
+                      datasetPreview &&
+                      'samples' in datasetPreview &&
+                      datasetPreview.samples.length
+                    "
                     class="matches-preview"
                   >
                     <div class="row g-3 pb-3">
                       <div
-                        v-for="(match, index) in datasetPreview.matches"
+                        v-for="(sample, index) in datasetPreview.samples"
                         :key="index"
                         class="col-6 col-md-4 col-lg-3"
                       >
                         <div class="match-thumbnail d-flex flex-column">
                           <b-img
-                            :src="CLOUDINARY_URL_ROOT + match.url"
+                            :src="CLOUDINARY_URL_ROOT + sample.url"
                             alt="Match preview"
                             fluid
                             class="rounded shadow-sm"
                             style="aspect-ratio: 1; object-fit: cover"
                           />
                           <b-badge variant="success" class="fs-6">
-                            {{ match.personcode }}
+                            {{ sample.personcode }}
                           </b-badge>
                         </div>
                       </div>
@@ -250,17 +377,26 @@ const countryNames = ref({
   it: "Italy",
 });
 
-const datasetPreview = ref<
-  EventOutput<DatasetsEmitEvents, "previewDataset"> | undefined
->();
+const datasetPreview = ref<EventOutput<DatasetsEmitEvents, "previewDataset">>();
 
 const isCalculatingDatasetPreview = ref(false);
 
 const name = ref("");
 const description = ref("");
-const personNationalityFilter = ref<string[]>();
-const oldestDateFilterMin = ref<number | undefined>();
-const oldestDateFilterMax = ref<number | undefined>();
+const filters = ref<{
+  personNationalityFilter: string[] | undefined;
+  oldestDateFilterMin: number | undefined;
+  oldestDateFilterMax: number | undefined;
+  authorMatchesCount: {
+    type: "minMatchesPerAuthor" | "minAuthorCount" | "none";
+    value?: number;
+  };
+}>({
+  personNationalityFilter: undefined,
+  oldestDateFilterMin: undefined,
+  oldestDateFilterMax: undefined,
+  authorMatchesCount: { type: "none" },
+});
 
 const personNationalityOptions = computed(() =>
   Object.entries(countryNames.value).map(([countrycode, countryname]) => ({
@@ -269,13 +405,37 @@ const personNationalityOptions = computed(() =>
   })),
 );
 
+const authors = computed(() =>
+  datasetPreview.value && "authors" in datasetPreview.value
+    ? datasetPreview.value.authors
+    : {},
+);
+
+const minMatchesPerAuthorOptions = computed(() =>
+  new Set(Object.values(authors.value).reverse()).values().toArray(),
+);
+
+const isAuthorFiltered = (item: { key: string; value: number }) =>
+  (filters.value.authorMatchesCount.type === "minMatchesPerAuthor" &&
+    item.value < (filters.value.authorMatchesCount.value ?? 0)) ||
+  (filters.value.authorMatchesCount.type === "minAuthorCount" &&
+    Object.keys(authors.value).reverse().indexOf(item.key) <
+      (filters.value.authorMatchesCount.value ?? 0));
+
+const datasetPreviewRowClass = (
+  item: { key: string; value: number } | null | undefined,
+) => (item && isAuthorFiltered(item) ? "text-decoration-line-through" : "");
+
 // Form functions
 const resetForm = () => {
   name.value = "";
   description.value = "";
-  personNationalityFilter.value = undefined;
-  oldestDateFilterMin.value = undefined;
-  oldestDateFilterMax.value = undefined;
+  filters.value = {
+    personNationalityFilter: undefined,
+    oldestDateFilterMin: undefined,
+    oldestDateFilterMax: undefined,
+    authorMatchesCount: { type: "none" },
+  };
   datasetPreview.value = undefined;
 };
 
@@ -285,18 +445,14 @@ const createDataset = async () => {
   }
 
   try {
-    // TODO: Implement actual dataset creation logic
     console.log("Creating dataset:", {
       name: name.value,
       description: description.value,
-      personNationalityFilter: personNationalityFilter.value,
-      oldestDateFilterMin: oldestDateFilterMin.value,
-      oldestDateFilterMax: oldestDateFilterMax.value,
+      filters: filters.value,
     });
 
     await new Promise((resolve) => setTimeout(resolve, 2000));
 
-    // TODO: Handle success/error states
     console.log("Dataset created successfully!");
   } catch (error) {
     console.error("Error creating dataset:", error);
@@ -305,19 +461,24 @@ const createDataset = async () => {
 
 // Watch for filter changes to update matches
 watch(
-  [personNationalityFilter, oldestDateFilterMin, oldestDateFilterMax],
+  () => [
+    filters.value.personNationalityFilter,
+    filters.value.oldestDateFilterMin,
+    filters.value.oldestDateFilterMax,
+  ],
   async () => {
     console.log("Filters changed, updating matches...");
     isCalculatingDatasetPreview.value = true;
+    datasetPreview.value = undefined;
     datasetsSocket
       .previewDataset({
-        personNationalityFilter: personNationalityFilter.value,
-        oldestDateFilterMin: oldestDateFilterMin.value,
-        oldestDateFilterMax: oldestDateFilterMax.value,
+        personNationalityFilter: filters.value.personNationalityFilter,
+        oldestDateFilterMin: filters.value.oldestDateFilterMin,
+        oldestDateFilterMax: filters.value.oldestDateFilterMax,
+        // minMatchesPerAuthor: filters.value.minMatchesPerAuthor,
       })
       .then((result) => {
         datasetPreview.value = result;
-        isCalculatingDatasetPreview.value = false;
       })
       .finally(() => {
         isCalculatingDatasetPreview.value = false;

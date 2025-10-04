@@ -32,8 +32,28 @@ const listenEvents = () => ({
     personNationalityFilter: string[] | undefined;
     oldestDateFilterMin: number | undefined;
     oldestDateFilterMax: number | undefined;
-  }) =>
-    prismaCoa.$queryRaw<{ datasetSize: number; matches: string | null }[]>`
+  }) => {
+    let errors: string[] = [];
+    if (personNationalityFilter && !personNationalityFilter.length) {
+      errors.push(
+        "At least one nationality is required when using the nationality filter",
+      );
+    }
+    if (errors.length) {
+      return {
+        errors,
+        datasetSize: 0,
+      } as const;
+    }
+    return prismaCoa.$queryRaw<
+      [
+        {
+          datasetSize: number;
+          samples: string;
+          authors: string;
+        },
+      ]
+    >`
       with dataset as (select sitecode, url, REPLACE(artsummary, ',', '') as personcode
       from inducks_entryurl
          inner join inducks_entry using (entrycode)
@@ -41,16 +61,41 @@ const listenEvents = () => ({
       where sitecode = 'thumbnails3'
         and kind = 'n'
         and (${personNationalityFilter?.join(",") || null} IS NULL OR (${personNationalityFilter?.join(",") || null} IS NOT NULL AND artsummary in (select concat(',', personcode, ',') from inducks_person where nationalitycountrycode in (${Prisma.join(personNationalityFilter || ["xxx"])} ))))
+      ),
+      author_counts as (
+        select personcode, count(*) as count
+        from dataset
+        group by personcode
+      ),
+      dataset_stats as (
+        select count(*) as datasetSize,
+        IFNULL(json_arrayagg(
+          json_object('url', CONCAT(sitecode, '/', url), 'personcode', personcode) LIMIT 50
+        ), '[]') as samples
+        from dataset),
+      author_counts_ordered as (
+        select personcode, count, row_number() over (order by count desc) as rn
+        from author_counts
+      ),
+      authors_list as (
+        select IFNULL(json_objectagg(personcode, count), '{}') as authors
+        from author_counts_ordered
       )
-      select count(*) as datasetSize, group_concat(CONCAT(sitecode, '/',url, '|', personcode) LIMIT 50) as matches
-      from dataset
-      `.then(([{ datasetSize, matches }]) => ({
-      datasetSize,
-      matches: (matches?.split(",") || []).map((urlAndPersoncode) => {
-        const [url, personcode] = urlAndPersoncode.split("|");
-        return { url, personcode };
-      }),
-    })),
+      select datasetSize, samples, authors
+      from dataset_stats, authors_list
+      `.then(
+      ([result]) =>
+        ({
+          datasetSize: result.datasetSize,
+          authors: JSON.parse(result.authors),
+          samples: JSON.parse(result.samples),
+        }) as {
+          datasetSize: number;
+          samples: { url: string; personcode: string }[];
+          authors: Record<string, number>;
+        },
+    );
+  },
 });
 
 const { client, server } = useSocketEvents<
