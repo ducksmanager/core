@@ -11,6 +11,7 @@ import { PrismaClient } from "~prisma/client_dumili/client";
 import type { FullIndexation } from "./services/indexation";
 import { server as indexation } from "./services/indexation";
 import { server as indexations } from "./services/indexations";
+import { PrismaMariaDb } from '@prisma/adapter-mariadb';
 
 dotenv.config({
   path: ".env",
@@ -40,7 +41,12 @@ export type SessionDataWithIndexationId = {
 };
 export type SessionData = { user: SessionUser };
 
-export const prisma = new PrismaClient();
+export const prisma = new PrismaClient(
+  {
+    adapter: new PrismaMariaDb(process.env.DATABASE_URL!),
+    log: process.env.NODE_ENV === 'development' ? ['error', 'warn'] : ['error'],
+  }
+);
 
 const httpServer = createServer();
 const io = new Server(httpServer, {

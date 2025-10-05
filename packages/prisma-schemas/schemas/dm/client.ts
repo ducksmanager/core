@@ -4,7 +4,7 @@ import { getDmClient } from "../../utils/singleton-clients";
 let _prismaClient: ReturnType<typeof getDmClient> | null = null;
 
 export const prismaClient = new Proxy({} as ReturnType<typeof getDmClient>, {
-  get(target, prop) {
+  get(_target, prop) {
     if (!_prismaClient) {
       _prismaClient = getDmClient();
     }

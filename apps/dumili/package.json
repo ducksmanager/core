@@ -21,6 +21,7 @@
   },
   "dependencies": {
     "@iconify-json/bi": "^1.2.6",
+    "@prisma/adapter-mariadb": "^6.16.2",
     "@sentry/browser": "^9.46.0",
     "@sentry/vue": "^9.46.0",
     "@unhead/vue": "^1.11.20",
@@ -31,7 +32,7 @@
     "bootstrap-vue-next": "^0.30.5",
     "js-cookie": "^3.0.5",
     "pinia": "^3.0.3",
-    "socket-call-client": "^0.7.6",
+    "socket-call-client": "^0.7.7",
     "sortablejs": "^1.15.6",
     "vue": "^3.5.22",
     "vue-draggable-resizable": "^3.0.0",

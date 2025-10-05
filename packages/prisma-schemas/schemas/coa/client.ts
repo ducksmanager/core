@@ -4,7 +4,7 @@ import { getCoaClient } from "../../utils/singleton-clients";
 let _prismaClient: ReturnType<typeof getCoaClient> | null = null;
 
 export const prismaClient = new Proxy({} as ReturnType<typeof getCoaClient>, {
-  get(target, prop) {
+  get(_target, prop) {
     if (!_prismaClient) {
       _prismaClient = getCoaClient();
     }

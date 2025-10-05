@@ -6,7 +6,7 @@ let _prismaClient: ReturnType<typeof getEdgeCreatorClient> | null = null;
 export const prismaClient = new Proxy(
   {} as ReturnType<typeof getEdgeCreatorClient>,
   {
-    get(target, prop) {
+    get(_target, prop) {
       if (!_prismaClient) {
         _prismaClient = getEdgeCreatorClient();
       }

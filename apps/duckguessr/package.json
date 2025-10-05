@@ -33,7 +33,7 @@
     "js-cookie": "^3.0.5",
     "nuxt": "^4.1.2",
     "pinia": "^3.0.3",
-    "socket-call-client": "^0.7.6",
+    "socket-call-client": "^0.7.7",
     "universal-cookie": "^8.0.1",
     "unplugin-vue-components": "^28.8.0",
     "vue": "^3.5.22",
@@ -75,7 +75,7 @@
     "typescript": "^5.9.2",
     "typescript-eslint": "^8.44.1",
     "unplugin-icons": "^22.3.0",
-    "vite-plugin-checker": "^0.10.3",
+    "vite-plugin-checker": "^0.11.0",
     "vue-tsc": "^3.1.0"
   },
   "eslintConfig": {

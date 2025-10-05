@@ -6,7 +6,7 @@ let _prismaClient: ReturnType<typeof getCoverInfoClient> | null = null;
 export const prismaClient = new Proxy(
   {} as ReturnType<typeof getCoverInfoClient>,
   {
-    get(target, prop) {
+    get(_target, prop) {
       if (!_prismaClient) {
         _prismaClient = getCoverInfoClient();
       }

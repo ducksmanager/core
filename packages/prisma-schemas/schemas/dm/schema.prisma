@@ -137,8 +137,8 @@ model issue {
   condition       issue_condition @default(indefini) @map("Etat")
   purchaseId      Int?            @default(-1) @map("ID_Acquisition")
   isOnSale        Boolean         @map("AV")
-  isToRead        Boolean         @default(false) @map("A_Lire") @db.TinyInt
-  isSubscription  Boolean         @default(false) @map("Abonnement") @db.TinyInt
+  isToRead        Boolean         @default(false) @map("A_Lire")
+  isSubscription  Boolean         @default(false) @map("Abonnement")
   userId          Int             @map("ID_Utilisateur")
   creationDate    DateTime?       @default(now()) @map("DateAjout") @db.Timestamp(0)
   issuecode       String?         @default(dbgenerated("(concat(convert(`Pays` using utf8mb3),'/',convert(`Magazine` using utf8mb3),' ',`Numero`))")) @map("issuecode") @db.VarChar(25)
