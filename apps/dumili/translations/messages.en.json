@@ -74,7 +74,7 @@
   "Remplacer les pages existantes": "Overwrite existing pages",
   "Résultats de la recherche par image": "Image search results",
   "Résultats OCR pour la première case": "OCR results for the first page",
-  "Sans titre": "Untitled.",
+  "(Sans titre)": "(Untitled)",
   "Sélectionner...": "Select...",
   "Sélectionnez un pays": "Select a country",
   "Si aucune ne ressemble,cliquez sur \"Annuler\".": "If none of them match, click \"Cancel\".",
@@ -98,6 +98,6 @@
   "Vous devez être connecté pour accéder à cette page.": "You must be logged in to access this page.",
   "Vous devez identifier au moins une histoire pour continuer": "You must identify at least one story to continue",
   "Vous devez indiquer les caractéristiques du numéro\navant de pouvoir modifier certaines de ses méta-données.": "You must specify the characteristics of the issue\nbefore being able to modify some of its metadata.",
-  "Vous devez spécifier une publication et un numéro pour continuer": "You must specify a publication and an issue number to continue",
+  "Vous devez spécifier une publication et un numéro pour continuer (cliquez sur la liste déroulante qui indique actuellement \"Numéro inconnu\")": "You must specify a publication and an issue number to continue (click on the dropdown that currently says \"Unknown issue\")",
   "Vous êtes sur le point de supprimer les {numberOfPagesToDelete} dernières pages de l'indexation. Êtes-vous sûr(e) ?": "You are about to delete the last {numberOfPagesToDelete} pages of the indexation. Are you sure?"
 }

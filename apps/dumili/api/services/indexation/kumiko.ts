@@ -4,7 +4,7 @@ import { COVER, ILLUSTRATION, STORY } from "~dumili-types/storyKinds";
 import { getEntryFromPage } from "~dumili-utils/entryPages";
 import type { aiKumikoResultPanel, Prisma } from "~prisma/client_dumili/client";
 
-import { prisma } from "../../index";
+import prisma from "~prisma/client";
 import type { IndexationServices } from ".";
 import { type FullIndexation, refreshIndexation } from ".";
 

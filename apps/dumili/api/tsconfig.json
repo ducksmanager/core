@@ -52,6 +52,7 @@
   "include": [
     "eslint.config.mjs",
     "index.ts",
-    "services/**/*.ts"
+    "services/**/*.ts",
+    "prisma/client.ts"
   ]
 }

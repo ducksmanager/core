@@ -5,7 +5,9 @@
   >
     <b-alert v-if="!issue" variant="warning" :model-value="true">
       {{
-        $t("Vous devez spécifier une publication et un numéro pour continuer")
+        $t(
+          'Vous devez spécifier une publication et un numéro pour continuer (cliquez sur la liste déroulante qui indique actuellement "Numéro inconnu")',
+        )
       }}</b-alert
     >
     <b-alert v-else-if="!rows" variant="warning" :model-value="true">

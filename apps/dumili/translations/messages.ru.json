@@ -69,7 +69,7 @@
     "Réduire cette entrée à {originalPagesCount} page|Réduire cette entrée à {originalPagesCount} pages": "Сократить эту запись до {originalPagesCount} страницы|Сократить эту запись до {originalPagesCount} страниц",
     "Remplacer les pages existantes": "Заменить существующие страницы",
     "Résultats OCR pour la première case": "Результаты OCR для первого поля",
-    "Sans titre": "Без названия",
+    "(Sans titre)": "(Без названия)",
     "Sélectionner...": "Выбрать...",
     "Sélectionnez un pays": "Выберите страну",
     "Si aucune ne ressemble,cliquez sur \"Annuler\".": "Если ни один из них не подходит, нажмите «Отмена».",
@@ -91,6 +91,6 @@
     "Voulez-vous vraiment supprimer cette entrée ?": "Вы действительно хотите удалить эту запись?",
     "Vous devez être connecté pour accéder à cette page.": "Вы должны быть авторизованы, чтобы получить доступ к этой странице.",
     "Vous devez indiquer les caractéristiques du numéro\navant de pouvoir modifier certaines de ses méta-données.": "Вы должны указать характеристики номера,\nпрежде чем сможете изменить некоторые из его метаданных.",
-    "Vous devez spécifier une publication et un numéro pour continuer": "Вы должны указать публикацию и номер, чтобы продолжить",
+    "Vous devez spécifier une publication et un numéro pour continuer (cliquez sur la liste déroulante qui indique actuellement \"Numéro inconnu\")": "Вы должны указать публикацию и номер, чтобы продолжить (кликните на выпадающем списке, который в настоящее время говорит \"Неизвестный номер\")",
     "Vous êtes sur le point de supprimer les {numberOfPagesToDelete} dernières pages de l'indexation. Êtes-vous sûr(e) ?": "Вы собираетесь удалить {numberOfPagesToDelete} последних страниц из индексации. Вы уверены?"
 }

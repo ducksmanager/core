@@ -20,7 +20,7 @@ import type {
 } from "~prisma/client_dumili/client";
 
 import type { SessionDataWithIndexation } from "../../index";
-import { prisma } from "../../index";
+import prisma from "~prisma/client";
 import { RequiredAuthMiddleware } from "../_auth";
 import namespaces from "../namespaces";
 import { runKumikoOnPages } from "./kumiko";
