@@ -121,9 +121,14 @@ const entrycodesWithPageNumbers = computed(() =>
   ),
 );
 
+const toLetters = (n: number): string =>
+  n < 26
+    ? String.fromCharCode(97 + n)
+    : toLetters(Math.floor(n / 26) - 1) + String.fromCharCode(97 + (n % 26));
+
 const entrycodesWithLetters = computed(() =>
   indexation.value!.entries.map(
-    (_entry, idx) => `${issuecode.value}${String.fromCharCode(97 + idx)}`,
+    (_entry, idx) => `${issuecode.value}${toLetters(idx)}`,
   ),
 );
 

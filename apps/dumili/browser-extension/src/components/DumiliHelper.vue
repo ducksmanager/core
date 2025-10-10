@@ -59,13 +59,13 @@ type DumiliContext = {
 
 const { unText } = useTextEditor();
 
-const updateContent = (content: string) => {
-  if (content.trim().length <= 2) {
+const updateContent = (newContent: string) => {
+  if (newContent.trim().length <= 2) {
     nextTick(() => {
       alert("Invalid Dumili text output");
     });
   } else {
-    sessionData.value = { currentRow: 0, content, auto: false };
+    sessionData.value = { currentRow: 0, content: newContent, auto: false };
   }
 };
 
@@ -92,15 +92,10 @@ const content = ref(sessionData.value.content);
 
 const dumiliOutput = computed(() => unText(sessionData.value.content));
 
-if (sessionStorage.getItem("dumiliData")) {
-  sessionData.value = JSON.parse(sessionStorage.getItem("dumiliData")!);
-}
-
 if (
   sessionData.value.content &&
   sessionData.value.currentRow >= dumiliOutput.value.length
 ) {
-  sessionStorage.clear();
   sessionData.value = { content: "", currentRow: 0, auto: false };
   alert(
     'All the entries have been created. Review them and then click on "Submit to Inducks".',
@@ -247,7 +242,7 @@ $border-color: #ddd;
 .dumili-helper-app {
   .dumili-modal-trigger {
     position: fixed;
-    bottom: 20px;
+    top: 20px;
     right: 20px;
     padding: 10px 20px;
     background-color: $secondary-color;
@@ -264,7 +259,7 @@ $border-color: #ddd;
 
   .dumili-modal {
     position: fixed;
-    bottom: 80px;
+    top: 80px;
     right: 20px;
     background-color: $white;
     padding: 20px;
@@ -298,6 +293,9 @@ $border-color: #ddd;
       }
 
       #dumili-output {
+        &:empty:not(:focus):before {
+          content: attr(placeholder)
+        }
         font-family: monospace;
         white-space: pre;
         width: calc(100% - 32px);
