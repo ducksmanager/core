@@ -6,6 +6,17 @@
     "permissions": [
         "activeTab"
     ],
+    "browser_specific_settings": {
+        "gecko": {
+            "id": "@dumili-auto-indexer",
+            "strict_min_version": "140.0",
+            "data_collection_permissions": {
+                "required": [
+                    "none"
+                ]
+            }
+        }
+    },
     "content_scripts": [
         {
             "matches": [

@@ -294,7 +294,7 @@ $border-color: #ddd;
 
       #dumili-output {
         &:empty:not(:focus):before {
-          content: attr(placeholder)
+          content: attr(placeholder);
         }
         font-family: monospace;
         white-space: pre;
