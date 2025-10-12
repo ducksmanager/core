@@ -9,7 +9,7 @@ RUN apt-get update && apt-get install -y openssl \
 
 RUN npm install -g pm2
 
-COPY ./node_modules/.pnpm/onnxruntime-node@*/node_modules/onnxruntime-node/bin/napi-v6/linux/x64 /bin/napi-v6/linux/x64
+COPY ./packages/api/node_modules/.pnpm/onnxruntime-node@*/node_modules/onnxruntime-node/bin/napi-v6/linux/x64 /bin/napi-v6/linux/x64
 
 # ONNX model will be downloaded during CI/CD from GitHub release
 # COPY ./packages/api/services/story-search/model/comic_embedding_model.onnx /app/services/story-search/model/comic_embedding_model.onnx
