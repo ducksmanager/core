@@ -4,7 +4,8 @@
     "description": "Browser extension for Dumili",
     "scripts": {
         "dev": "vite",
-        "build": "vite build && cd dist && zip extension.zip content.* manifest.json",
+        "build": "vite build && pnpm publish",
+        "publish": "(cd dist && zip ../extension.zip content.* manifest.json) && cp ../src/components/TextEditor.vue src/components/ && zip -r extension-sources.zip *.json src && rm src/components/TextEditor.vue",
         "watch": "vite build --watch"
     },
     "dependencies": {
