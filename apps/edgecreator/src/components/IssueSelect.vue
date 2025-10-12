@@ -194,6 +194,7 @@ watch(currentPublicationcode, async (newValue) => {
     currentFirstIssuecode.value = undefined;
     await fetchIssuecodesByPublicationcode([newValue]);
     await fetchIssuecodeDetails(issuecodesByPublicationcode.value[newValue]);
+    await edgeCatalogStore.fetchPublishedEdges(newValue);
     issues.value = issuecodesByPublicationcode.value[newValue].map(
       (issuecode) => {
         const status =

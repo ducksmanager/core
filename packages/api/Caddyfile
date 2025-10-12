@@ -10,6 +10,12 @@ api.ducksmanager.net {
     }
 }
 
+api-comicrack.ducksmanager.net {
+    reverse_proxy ducksmanager-api-websocket:3001 {
+        header_up Host {http.request.host}
+    }
+}
+
 api-story-search.ducksmanager.net {
     reverse_proxy ducksmanager-api-story-search:3011 {
         header_up Host {http.request.host}

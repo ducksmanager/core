@@ -3,7 +3,7 @@ import type {
   game,
   gamePlayer,
   player,
-} from "../prisma/client_duckguessr/client";
+} from "../prisma/client_duckguessr/browser";
 import type {
   Author,
   RoundWithScoresAndAuthor,
@@ -22,8 +22,5 @@ export interface GameFull extends game {
 }
 
 export interface GameFullNoPersoncode extends Omit<GameFull, "rounds"> {
-  rounds: (
-    | Omit<UnfinishedRound, "personcode">
-    | Omit<RoundWithScoresAndAuthor, "personcode">
-  )[];
+  rounds: (UnfinishedRound | RoundWithScoresAndAuthor)[];
 }

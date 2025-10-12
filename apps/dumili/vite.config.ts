@@ -14,6 +14,8 @@ import mkcert from "vite-plugin-mkcert";
 import Pages from "vite-plugin-pages";
 import Layouts from "vite-plugin-vue-layouts";
 
+import getViteAliases from "../../vite-aliases";
+
 export default defineConfig({
   build: {
     sourcemap: true,
@@ -78,17 +80,15 @@ export default defineConfig({
   ],
 
   resolve: {
-    alias: {
+    dedupe: ['pinia', 'vue', 'vue-i18n', 'vue-router', '@vueuse/core', 'bootstrap-vue-next'],
+    alias: getViteAliases(path.resolve(__dirname, "../.."), {
       "~": path.resolve(__dirname, "src"),
-      "~dm-services": path.resolve(__dirname, "../../packages/api/services"),
-      "~dm-types": path.resolve(__dirname, "../../packages/types"),
       "~dumili-services": path.resolve(__dirname, "api/services"),
       "~dumili-types": path.resolve(__dirname, "types"),
       "~dumili-utils": path.resolve(__dirname, "utils"),
-      "~group-by": path.resolve(__dirname, "../../util/group-by"),
       "~prisma": path.resolve(__dirname, "api/prisma"),
-      "~web": path.resolve(__dirname, "../web"),
       "~translations": path.resolve(__dirname, "translations"),
-    },
+      "~web": path.resolve(__dirname, "../web"),
+    }),
   },
 });

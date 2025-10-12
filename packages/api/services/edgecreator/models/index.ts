@@ -16,10 +16,7 @@ export default () => ({
           select model.issuecode,
                  optionValue.ordre AS stepNumber,
                  optionValue.Nom_fonction AS functionName,
-                 concat('{',
-                        group_concat(concat('"', optionValue.Option_nom, '": ', '"', optionValue.Option_valeur,
-                                            '"')),
-                        '}') AS options
+                 JSON_OBJECTAGG(optionValue.Option_nom, optionValue.Option_valeur) AS options
           from tranches_en_cours_valeurs optionValue
                     inner join tranches_en_cours_modeles model on optionValue.ID_Modele = model.ID
           where model.ID IN (${Prisma.join(modelIds)})
@@ -41,7 +38,7 @@ export default () => ({
           }
           Object.assign(
             acc[issuecode][stepNumber].options,
-            JSON.parse(options),
+            options,
           );
           return acc;
         },

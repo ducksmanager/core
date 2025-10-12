@@ -3,7 +3,7 @@
     :active="isCurrentEntry"
     :parent="true"
     prevent-deactivation
-    :resizable="showUpResizeHandle || showDownResizeHandle"
+    :resizable="showVerticalResizeHandle"
     :draggable="true"
     :handles="['bm']"
     :grid="[1000, pageHeight]"
@@ -13,7 +13,7 @@
     :on-resize="onResize"
     :on-drag="onDrag"
     role="button"
-    :class-name="`position-absolute d-flex align-items-center justify-content-center cursor-pointer col w-100 kind-${entry.acceptedStoryKind?.storyKindRows.kind} ${(overlay?.type === 'story kind' && overlay.entryId === entry.id && 'striped') || ''} ${(isCurrentEntry && 'active') || ''} ${(showUpResizeHandle && showDownResizeHandle && 'up-and-down') || 'up-or-down'}`"
+    :class-name="`position-absolute d-flex align-items-center justify-content-center cursor-pointer col w-100 kind-${entry.acceptedStoryKind?.storyKindRows.kind} ${(overlay?.type === 'story kind' && overlay.entryId === entry.id && 'striped') || ''} ${(isCurrentEntry && 'active') || ''} ${(showVerticalResizeHandle && 'up-and-down') || ''}`"
     @resize-stop="
       (_left: number, _top: number, _width: number, height: number) => {
         emit('onEntryResizeStop', height);
@@ -27,9 +27,7 @@
     @click="currentPage = getFirstPageOfEntry(indexation!.entries, entry.id)"
   >
     <template #bm>
-      <i-bi-arrows-expand v-if="showUpResizeHandle && showDownResizeHandle" />
-      <i-bi-arrow-up-short v-else-if="showUpResizeHandle" />
-      <i-bi-arrow-down v-else-if="showDownResizeHandle" />
+      <i-bi-arrows-expand v-if="showVerticalResizeHandle" />
     </template>
     <Entry v-model="entry" :editable="currentEntry?.id === entry.id" />
   </vue-draggable-resizable>
@@ -56,9 +54,10 @@ const y = computed(() => (entry.value.position - 1) * pageHeight.value);
 
 const height = computed(() => entry.value.entirepages * pageHeight.value);
 
-const showUpResizeHandle = computed(() => entry.value.entirepages > 1);
-const showDownResizeHandle = computed(() =>
-  shouldAcceptChange(y.value, height.value + pageHeight.value),
+const showVerticalResizeHandle = computed(
+  () =>
+    entry.value.entirepages > 1 ||
+    shouldAcceptChange(y.value, height.value + pageHeight.value),
 );
 
 const previousEntry = computed(
@@ -136,12 +135,6 @@ const onDrag = (_x: number, y: number) =>
   &.up-and-down {
     :deep(.handle) {
       bottom: -7px;
-    }
-  }
-
-  &.up-or-down {
-    :deep(.handle) {
-      bottom: -1px;
     }
   }
 }

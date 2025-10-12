@@ -4,7 +4,7 @@ import { fileURLToPath } from "node:url";
 import { FlatCompat } from "@eslint/eslintrc";
 import js from "@eslint/js";
 import vueI18n from "@intlify/eslint-plugin-vue-i18n";
-import typescriptEslint from "@typescript-eslint/eslint-plugin";
+import tseslint from "typescript-eslint";
 import parser from "vue-eslint-parser";
 
 const __filename = fileURLToPath(import.meta.url);
@@ -31,12 +31,12 @@ export default [
     "plugin:vue/recommended",
     "plugin:prettier-vue/recommended",
     "prettier",
-    "plugin:@typescript-eslint/recommended",
+    "plugin:@typescript-eslint/recommended"
   ),
 
   {
     plugins: {
-      "@typescript-eslint": typescriptEslint,
+      "@typescript-eslint": tseslint.plugin,
     },
 
     languageOptions: {
@@ -45,7 +45,7 @@ export default [
       sourceType: "script",
 
       parserOptions: {
-        parser: "@typescript-eslint/parser",
+        parser: tseslint.parser,
         tsconfigRootDir: __dirname,
       },
     },

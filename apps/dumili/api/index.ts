@@ -1,17 +1,4 @@
-import "./instrument";
-
-import { v2 as cloudinary } from "cloudinary";
 import dotenv from "dotenv";
-import { createServer } from "http";
-import { Server } from "socket.io";
-
-import type { SessionUser } from "~dm-types/SessionUser";
-import { PrismaClient } from "~prisma/client_dumili/client";
-
-import type { FullIndexation } from "./services/indexation";
-import { server as indexation } from "./services/indexation";
-import { server as indexations } from "./services/indexations";
-
 dotenv.config({
   path: ".env",
 });
@@ -20,6 +7,18 @@ dotenv.config({
   path: ".env.local",
   override: true,
 });
+
+import "./instrument";
+
+import { v2 as cloudinary } from "cloudinary";
+import { createServer } from "http";
+import { Server } from "socket.io";
+
+import type { SessionUser } from "~dm-types/SessionUser";
+
+import type { FullIndexation } from "./services/indexation";
+import { server as indexation } from "./services/indexation";
+import { server as indexations } from "./services/indexations";
 
 const [, API_KEY, API_SECRET, CLOUD_NAME] =
   process.env.CLOUDINARY_URL?.match(/cloudinary:\/\/(\d+):(\w+)@(\w+)/) ?? [];
@@ -39,8 +38,6 @@ export type SessionDataWithIndexationId = {
   indexationId: string;
 };
 export type SessionData = { user: SessionUser };
-
-export const prisma = new PrismaClient();
 
 const httpServer = createServer();
 const io = new Server(httpServer, {

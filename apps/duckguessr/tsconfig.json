@@ -1,67 +1,47 @@
 {
+  "extends": "./.nuxt/tsconfig.json",
   "compilerOptions": {
-    "allowJs": true,
     "baseUrl": ".",
-    "esModuleInterop": true,
-    "experimentalDecorators": true,
+    "verbatimModuleSyntax": false,
     "module": "ESNext",
     "moduleResolution": "bundler",
-    "target": "es2020",
-    "lib": [
-      "dom",
-      "dom.iterable",
-      "ESNext"
-    ],
-    "noEmit": true,
-    "outDir": "dist",
-    /* Linting */
-    "strict": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
-    "noFallthroughCasesInSwitch": true,
-    "preserveWatchOutput": true,
     "paths": {
       "~/*": [
-        "src/*"
-      ],
-      "~locales/*": [
-        "locales/*"
+        "./app/*"
       ],
       "~dm-services/*": [
         "../../packages/api/services/*"
       ],
-      "~web/*": [
-        "../web/*"
-      ],
-      "~dm-types/*": [
-        "../../packages/types/*"
-      ],
-      "~duckguessr-prisma-client": [
-        "api/prisma/client_duckguessr/client"
-      ],
       "~duckguessr-services/*": [
-        "api/services/*"
+        "./api/services/*"
       ],
       "~duckguessr-types/*": [
-        "api/types/*"
+        "./api/types/*"
       ],
-      "~prisma-schemas/*": [
-        "../../packages/prisma-schemas/*"
+      "~duckguessr-prisma-browser": [
+        "./api/prisma/client_duckguessr/browser"
+      ],
+      "~web": [
+        "../web"
+      ],
+      "~web/*": [
+        "../web/*"
       ]
-    },
-    "resolveJsonModule": true,
-    "sourceMap": true,
-    "types": [
-      "vite/client",
-      "vite-plugin-pages/client",
-      "unplugin-icons/types/vue"
-    ],
+    }
   },
-  "ts-node": {
-    "files": true
-  },
-  "exclude": [
-    "node_modules",
-    "dist"
+  "include": [
+    ".storybook/*.ts",
+    "api/types/*.ts",
+    "api/services/**/*.ts",
+    "app/**/*.d.ts",
+    "app/**/*.ts",
+    "app/**/*.vue",
+    ".nuxt/imports.d.ts",
+    ".nuxt/components.d.ts",
+    ".nuxt/nuxt.d.ts",
+    "eslint.config.mjs",
+    "nuxt.config.ts",
+    "sentry.client.config.ts",
+    "env.d.ts",
   ]
 }

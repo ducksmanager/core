@@ -1,3 +1,7 @@
 storybook.duckguessr.ducksmanager.net {
     reverse_proxy duckguessr-storybook
+
+	basic_auth {
+        storybook $2a$14$cEd41OQBzoRW.iPU7KA0IOdS1W18F475l0xVtNyUlqUsAdWKCC002
+    }
 }

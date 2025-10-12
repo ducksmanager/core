@@ -31,9 +31,6 @@
       "~translations/*": [
         "./translations/*"
       ],
-      "~types/*": [
-        "./types/*"
-      ],
       "~dm-types/*": [
         "../../packages/types/*"
       ],

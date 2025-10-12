@@ -24,7 +24,7 @@
     >
       <StorySuggestionList v-if="editable" v-model="entry" />
       <template v-else-if="urlEncodedStorycode">
-        {{ storyDetails[entry.acceptedStory!.storycode].title }}
+        {{ storyDetails[entry.acceptedStory!.storycode].title || $t("(Sans titre)") }}
         &nbsp;<inducks-link
           :url-encoded-storycode="urlEncodedStorycode" /></template
       ><template v-else>{{ $t("Contenu inconnu") }}</template>
@@ -43,7 +43,7 @@
         class="w-100 text-center bg-transparent text-black"
         @update:model-value="entry.title = ($event as string).replace(/[\r\n]+/g, '')"
       /><template v-else>
-        {{ title || $t("Sans titre") }}
+        {{ title || $t("(Sans titre)") }}
         <template v-if="entry.part">
           &nbsp;-&nbsp;{{ $t("partie") }} {{ entry.part }}</template
         >
@@ -157,7 +157,7 @@ watchDebounced(
 );
 
 const storycode = computed(() => entry.value.acceptedStory?.storycode);
-const title = computed(() => entry.value.title || t("Sans titre"));
+const title = computed(() => entry.value.title || t("(Sans titre)"));
 
 const urlEncodedStorycode = computed(
   () => storycode.value && encodeURIComponent(storycode.value),

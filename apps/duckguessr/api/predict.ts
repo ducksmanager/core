@@ -1,4 +1,4 @@
-import type { dataset, round } from "./prisma/client_duckguessr/client";
+import type { dataset, round } from "./prisma/client_duckguessr/browser";
 
 interface PredictionResponse {
   url: string;
@@ -49,7 +49,11 @@ export const predict = (
           );
           const randomElement =
             possibleAuthors[Math.floor(Math.random() * possibleAuthors.length)];
-          resolve(randomElement);
+          if (randomElement) {
+            resolve(randomElement);
+          } else {
+            resolve("Unknown");
+          }
         },
       )
       .catch((error: unknown) => {
@@ -60,6 +64,10 @@ export const predict = (
         console.log("Prediction failed, choosing a random author");
         const randomElement =
           possibleAuthors[Math.floor(Math.random() * possibleAuthors.length)];
-        resolve(randomElement);
+        if (randomElement) {
+          resolve(randomElement);
+        } else {
+          resolve("Unknown");
+        }
       });
   });

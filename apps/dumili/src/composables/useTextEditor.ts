@@ -73,6 +73,8 @@ export type DumiliOutput = [DumiliIssueData, ...DumiliEntryData[]] | [];
 
 export default () => {
   const unText = (text?: string): DumiliOutput => {
+    const bracketRegex = /(?<=\[)([^:\]]+:[^\]]+)/gm;
+
     if (!text) return [];
     const lines = text.split("\n");
     const result = lines.map((line, idx) => {
@@ -82,14 +84,31 @@ export default () => {
 
       for (const key of keys) {
         if ("subFields" in key) {
-          // Handle subFields case
           for (const subField of key.subFields) {
             const fieldName =
               "formField" in subField ? subField.formField : subField.field;
-            entries.push([fieldName, line.slice(pos, (pos += 4)).trim()]);
+            let value: string;
+            if ("brackets" in subField) {
+              value =
+                [...line.matchAll(bracketRegex)]
+                  .map(([, contents]) => {
+                    if (subField.brackets.withPrefix) {
+                      const [key, value] = contents.split(":");
+                      if (key === subField.field) {
+                        return value;
+                      }
+                    } else if (!contents.includes(":")) {
+                      return contents;
+                    }
+                  })
+                  ?.pop() || "";
+            } else {
+              // TODO
+              value = "";
+            }
+            entries.push([fieldName, value]);
           }
         } else {
-          // Handle regular field case
           const fieldName = "formField" in key ? key.formField : key.field;
           entries.push([fieldName, line.slice(pos, (pos += key.width)).trim()]);
         }

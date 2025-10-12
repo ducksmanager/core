@@ -1,9 +1,9 @@
-import type { entryurlDetailsDecision } from "prisma/client_duckguessr/client";
-import { PrismaClient } from "prisma/client_duckguessr/client";
 import type { Socket } from "socket.io";
 import type { NamespaceProxyTarget } from "socket-call-server";
 import { useSocketEvents } from "socket-call-server";
 
+import prisma from "../prisma/client";
+import { type entryurlDetailsDecision } from "../prisma/client_duckguessr/browser";
 import namespaces from "./namespaces";
 
 export type MaintenanceServices = NamespaceProxyTarget<
@@ -11,10 +11,10 @@ export type MaintenanceServices = NamespaceProxyTarget<
   Record<string, never>
 >;
 
-const prisma = new PrismaClient();
-
 const listenEvents = ({}: MaintenanceServices) => ({
-  getMaintenanceData: async () => prisma.$queryRaw`
+  getMaintenanceData: async () => prisma.$queryRaw<
+    { name: string; decision: string; count: number }[]
+  >`
               select name, decision, count(*) as 'count'
               from dataset
               left join dataset_entryurl de on dataset.id = de.dataset_id

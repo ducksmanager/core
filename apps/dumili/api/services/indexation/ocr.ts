@@ -2,7 +2,7 @@ import axios from "axios";
 
 import type { aiKumikoResultPanel } from "~prisma/client_dumili/client";
 
-import { prisma } from "../../index";
+import prisma from "~prisma/client";
 import { type FullIndexation, type IndexationServices } from ".";
 
 type OcrResult = {

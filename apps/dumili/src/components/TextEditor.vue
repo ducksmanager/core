@@ -5,7 +5,9 @@
   >
     <b-alert v-if="!issue" variant="warning" :model-value="true">
       {{
-        $t("Vous devez spécifier une publication et un numéro pour continuer")
+        $t(
+          'Vous devez spécifier une publication et un numéro pour continuer (cliquez sur la liste déroulante qui indique actuellement "Numéro inconnu")',
+        )
       }}</b-alert
     >
     <b-alert v-else-if="!rows" variant="warning" :model-value="true">
@@ -119,9 +121,14 @@ const entrycodesWithPageNumbers = computed(() =>
   ),
 );
 
+const toLetters = (n: number): string =>
+  n < 26
+    ? String.fromCharCode(97 + n)
+    : toLetters(Math.floor(n / 26) - 1) + String.fromCharCode(97 + (n % 26));
+
 const entrycodesWithLetters = computed(() =>
   indexation.value!.entries.map(
-    (_entry, idx) => `${issuecode.value}${String.fromCharCode(97 + idx)}`,
+    (_entry, idx) => `${issuecode.value}${toLetters(idx)}`,
   ),
 );
 
@@ -236,6 +243,7 @@ watch(
 );
 </script>
 <style scoped lang="scss">
+@use "sass:list";
 textarea {
   z-index: 2;
   font-family: monospace;
@@ -263,9 +271,9 @@ textarea {
     white
   );
 
-  @for $i from 1 through length($column-colors) {
+  @for $i from 1 through list.length($column-colors) {
     td:nth-of-type(#{$i}) {
-      background: nth($column-colors, $i) !important;
+      background: list.nth($column-colors, $i) !important;
     }
   }
 }

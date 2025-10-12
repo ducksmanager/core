@@ -1,6 +1,6 @@
 <template>
   <div
-    class="position-absolute"
+    class="position-absolute z-1"
     :class="`${topCenter ? 'top-0 mt-1' : 'end-0 me-1'}`"
   >
     <Teleport to="body">

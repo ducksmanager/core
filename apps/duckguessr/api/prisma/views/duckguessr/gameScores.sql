@@ -1,31 +1,27 @@
 SELECT
-  `duckguessr`.`game_player`.`game_id` AS `game_id`,
-  `duckguessr`.`game_player`.`player_id` AS `player_id`,
-  IFNULL(
-    (
-      SELECT
-        cast(
-          sum(
-            `duckguessr`.`round_score`.`score` + `duckguessr`.`round_score`.`speed_bonus`
-          ) AS signed
-        )
-      FROM
-        `duckguessr`.`round_score`
-      WHERE
-        `duckguessr`.`round_score`.`player_id` = `duckguessr`.`game_player`.`player_id`
-        AND `duckguessr`.`round_score`.`round_id` IN (
-          SELECT
-            `duckguessr`.`round`.`id`
-          FROM
-            `duckguessr`.`round`
-          WHERE
-            `duckguessr`.`round`.`game_id` = `duckguessr`.`game_player`.`game_id`
-        )
-    ),
-    0
-  ) AS `game_score`
+  `g`.`id` AS `game_id`,
+  `p`.`id` AS `player_id`,
+  coalesce(sum(`rs`.`score`), 0) AS `game_score`
 FROM
-  `duckguessr`.`game_player`
+  (
+    (
+      (
+        (
+          `duckguessr`.`game` `g`
+          JOIN `duckguessr`.`player` `p`
+        )
+        LEFT JOIN `duckguessr`.`game_player` `gp` ON(
+          `gp`.`game_id` = `g`.`id`
+          AND `gp`.`player_id` = `p`.`id`
+        )
+      )
+      LEFT JOIN `duckguessr`.`round` `r` ON(`r`.`game_id` = `g`.`id`)
+    )
+    LEFT JOIN `duckguessr`.`round_score` `rs` ON(
+      `rs`.`round_id` = `r`.`id`
+      AND `rs`.`player_id` = `p`.`id`
+    )
+  )
 GROUP BY
-  `duckguessr`.`game_player`.`game_id`,
-  `duckguessr`.`game_player`.`player_id`
+  `g`.`id`,
+  `p`.`id`

@@ -9,7 +9,7 @@
     "husky": "^9.1.7"
   },
   "devDependencies": {
-    "turbo": "^2.5.6"
+    "turbo": "^2.5.8"
   },
   "scripts": {
     "prepare": "husky",
@@ -22,5 +22,11 @@
     "dev:whattheduck": "turbo dev dev:bun -F '~whattheduck...'",
     "dev:whattheduck:android": "turbo dev:android -F '~whattheduck'",
     "dev:whattheduck:offline": "pnpm -F '~whattheduck' dev"
+  },
+  "pnpm": {
+    "overrides": {
+      "@vercel/nft": "^0.27.4",
+      "@types/node": "^22.18.6"
+    }
   }
 }

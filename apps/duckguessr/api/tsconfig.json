@@ -1,11 +1,10 @@
 {
   "compilerOptions": {
     "baseUrl": ".",
-    "module": "commonjs",
-    "target": "esnext",
+    "module": "es2022",
+    "target": "es2022",
     "lib": [
-      "ESNext",
-      "DOM"
+      "ES2022",
     ],
     "strict": true,
     "jsx": "preserve",
@@ -22,8 +21,11 @@
       "~/*": [
         "./"
       ],
+      "~dm-services/*": [
+        "../../../packages/api/services/*"
+      ],
       "~duckguessr-types/*": [
-        "./types/"
+        "./types/*"
       ],
       "~prisma-schemas/*": [
         "../../../packages/prisma-schemas/*"

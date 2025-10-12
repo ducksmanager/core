@@ -1,9 +1,9 @@
-import type { player } from "prisma/client_duckguessr/client";
-import { PrismaClient } from "prisma/client_duckguessr/client";
 import type { Socket } from "socket.io";
 import type { NamespaceProxyTarget } from "socket-call-server";
 import { useSocketEvents } from "socket-call-server";
 
+import prisma from "../prisma/client";
+import { type player } from "../prisma/client_duckguessr/browser";
 import namespaces from "./namespaces";
 
 export type PodiumServices = NamespaceProxyTarget<
@@ -11,9 +11,7 @@ export type PodiumServices = NamespaceProxyTarget<
   Record<string, never>
 >;
 
-const prisma = new PrismaClient();
-
-const listenEvents = ({}: PodiumServices) => ({
+const listenEvents = () => ({
   getPodium: async () => prisma.$queryRaw<(player & { sumScore: number })[]>`
       SELECT player.*, sum(score + speed_bonus) AS sumScore
       FROM player

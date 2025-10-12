@@ -1,6 +1,7 @@
 import { createServer } from "http";
 import { parse } from "url";
 
+import type { inducks_issue } from "~prisma-schemas/client_coa/client";
 import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa/client";
 
 import { getUpdateFileUrl } from "./services/app";
@@ -9,7 +10,6 @@ import {
   getPastecSearchStatus,
   getPastecStatus,
 } from "./services/status";
-import type { inducks_issue } from "~prisma-schemas/client_coa/client";
 
 export default () =>
   createServer(async (req, res) => {
@@ -39,7 +39,10 @@ export default () =>
                     issuenumber: string;
                   };
                   try {
-                    const issue: Pick<inducks_issue, "issuecode" | "title" | "oldestdate" | "pages" | "price"> & { publishers?: string[] } = 
+                    const issue: Pick<
+                      inducks_issue,
+                      "issuecode" | "title" | "oldestdate" | "pages" | "price"
+                    > & { publishers?: string[] } =
                       await prismaCoa.inducks_issue.findFirstOrThrow({
                         select: {
                           issuecode: true,
@@ -213,17 +216,21 @@ export default () =>
                   res.end();
                   return;
                 }
-                data = (
-                  await prismaCoa.inducks_charactername.findMany({
-                    select: {
-                      charactercode: true,
-                      charactername: true,
-                    },
-                    where: {
-                      languagecode,
-                    },
-                  })
-                ).groupBy("charactercode", "charactername");
+                data = Object.fromEntries(
+                  Object.entries(
+                    (
+                      await prismaCoa.inducks_charactername.findMany({
+                        select: {
+                          charactercode: true,
+                          charactername: true,
+                        },
+                        where: {
+                          languagecode,
+                        },
+                      })
+                    ).groupBy("charactercode", "charactername[]"),
+                  ).map(([key, values]) => [key, values[0]]),
+                );
               } else {
                 res.writeHead(405);
                 res.end();

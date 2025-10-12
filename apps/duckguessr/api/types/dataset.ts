@@ -1,4 +1,4 @@
-import type { dataset } from "../prisma/client_duckguessr/client";
+import type { dataset } from "../prisma/client_duckguessr/browser";
 
 export interface DatasetWithCounts extends dataset {
   images: number;

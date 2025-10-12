@@ -16,15 +16,12 @@
             id="dumili-output"
             :contenteditable="!content"
             placeholder="Enter Dumili text output"
-            @input="content = ($event.target as HTMLDivElement).innerText"
+            @input="updateContent(($event.target as HTMLDivElement).innerText)"
             v-text="content"
           />
         </div>
         <div style="display: flex; justify-content: space-between">
-          <template
-            v-if="
-              sessionData.dumiliOutput.length && sessionData.currentRow !== -1
-            "
+          <template v-if="dumiliOutput.length && sessionData.currentRow !== -1"
             ><button @click="handleNext">&gt; Next</button>
             <button @click="handleAuto">ϟ Auto</button></template
           >
@@ -37,21 +34,19 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, watch, nextTick } from "vue";
+import { ref, onMounted, nextTick, computed } from "vue";
 import $ from "jquery";
 import type {
   DumiliEntryData,
   DumiliIssueData,
-  DumiliOutput,
 } from "~dumili/src/composables/useTextEditor";
 import useTextEditor from "~dumili/src/composables/useTextEditor";
+import { useSessionStorage } from "@vueuse/core";
 
 interface SelectOption {
   value: string;
   text: string;
 }
-
-const dumiliOutputLineHeight = 24;
 
 type DumiliContext = {
   countrycode?: string;
@@ -62,16 +57,29 @@ type DumiliContext = {
   entryId?: string;
 };
 
+const { unText } = useTextEditor();
+
+const updateContent = (newContent: string) => {
+  if (newContent.trim().length <= 2) {
+    nextTick(() => {
+      alert("Invalid Dumili text output");
+    });
+  } else {
+    sessionData.value = { currentRow: 0, content: newContent, auto: false };
+  }
+};
+
+const dumiliOutputLineHeight = 24;
+
 const isModalVisible = ref(true);
 const context = ref<DumiliContext>({});
 
-const sessionData = ref<{
-  dumiliOutput: DumiliOutput;
+const sessionData = useSessionStorage<{
+  content: string;
   currentRow: number;
   auto: boolean;
-}>({ dumiliOutput: [], currentRow: 0, auto: false });
+}>("dumiliData", { content: "", currentRow: 0, auto: false });
 
-const content = ref("");
 /* Example:
 DVBH 56     h3 [inx:Bruno Perel] [pages:116]
 DVBH 56a                  1  c                          
@@ -80,50 +88,19 @@ DVBH 56p011 D 96163       11 3
 DVBH 56p022               12 3                          
 DVBH 56p033               1  3                          
 DVBH 56p034               1  i                          */
-const persistDumiliData = (): void => {
-  sessionStorage.setItem("dumiliData", JSON.stringify(sessionData.value));
-};
+const content = ref(sessionData.value.content);
 
-const restoreDumiliData = (): void => {
-  if (sessionStorage.getItem("dumiliData")) {
-    sessionData.value = JSON.parse(sessionStorage.getItem("dumiliData")!);
-  }
-};
+const dumiliOutput = computed(() => unText(sessionData.value.content));
 
-restoreDumiliData();
 if (
-  sessionData.value.dumiliOutput.length &&
-  sessionData.value.currentRow >= sessionData.value.dumiliOutput.length
+  sessionData.value.content &&
+  sessionData.value.currentRow >= dumiliOutput.value.length
 ) {
-  sessionStorage.clear();
-  sessionData.value = { dumiliOutput: [], currentRow: 0, auto: false };
+  sessionData.value = { content: "", currentRow: 0, auto: false };
   alert(
     'All the entries have been created. Review them and then click on "Submit to Inducks".',
   );
 }
-
-watch(
-  content,
-  (newContent, oldContent) => {
-    if (!oldContent && sessionData.value.dumiliOutput.length) {
-      return; // Let the content be set by the session data
-    }
-    const { unText } = useTextEditor();
-    const dumiliOutput = unText(newContent.trim());
-    if (newContent.trim() && dumiliOutput.length <= 2) {
-      content.value = "";
-      nextTick(() => {
-        alert("Invalid Dumili text output");
-      });
-    } else {
-      sessionData.value = { currentRow: 0, dumiliOutput, auto: false };
-      persistDumiliData();
-    }
-
-    console.log("sessionStorageData", sessionData.value);
-  },
-  { immediate: true },
-);
 
 const pickOption = (select: JQuery<HTMLSelectElement>, optionValue: string) => {
   const selectElement = select[0];
@@ -169,7 +146,6 @@ const fillFormFields = <Data extends DumiliEntryData | DumiliIssueData>(
       sessionData.value.currentRow++;
     }
     nextTick(() => {
-      persistDumiliData();
       lastFilledInput!.closest("form").trigger("submit");
     });
   } else if (!defaultInputToSubmitFrom) {
@@ -178,10 +154,9 @@ const fillFormFields = <Data extends DumiliEntryData | DumiliIssueData>(
 };
 
 const handleNext = () => {
-  if (sessionData.value.dumiliOutput[0]) {
+  if (dumiliOutput.value[0]) {
     const ctx = context.value;
-    const issuecodeNoCountry =
-      sessionData.value.dumiliOutput[0].issNotInInducks;
+    const issuecodeNoCountry = dumiliOutput.value[0].issNotInInducks;
     const issuecodeNoCountryParts = issuecodeNoCountry?.split(" ");
     if (issuecodeNoCountryParts?.length !== 2) {
       window.alert(`Invalid issue code format: ${issuecodeNoCountry}`);
@@ -191,9 +166,7 @@ const handleNext = () => {
     if (ctx.entryId !== undefined) {
       // "Edit entry" page
       fillFormFields(
-        sessionData.value.dumiliOutput[
-          sessionData.value.currentRow
-        ] as DumiliEntryData,
+        dumiliOutput.value[sessionData.value.currentRow] as DumiliEntryData,
       );
     } else if (ctx.hasEditedIssueDetails) {
       $(`a:contains("Edit entries")`)[0]?.click();
@@ -202,7 +175,7 @@ const handleNext = () => {
       if (createNewEntryButton) {
         createNewEntryButton.click();
       } else {
-        fillFormFields(sessionData.value.dumiliOutput[0], "npages");
+        fillFormFields(dumiliOutput.value[0], "npages");
       }
     }
     // "Issues being indexed" page
@@ -233,7 +206,6 @@ const handleNext = () => {
 
 const handleAuto = (): void => {
   sessionData.value.auto = true;
-  persistDumiliData();
   handleNext();
 };
 
@@ -260,7 +232,8 @@ onMounted(() => {
 
 <style lang="scss" scoped>
 $primary-color: #4caf50;
-$primary-hover-color: #45a049;
+$secondary-color: #0d6efd;
+$secondary-hover-color: #0b5ed7;
 $danger-color: #f44336;
 $white: white;
 $shadow-color: rgba(0, 0, 0, 0.1);
@@ -269,10 +242,10 @@ $border-color: #ddd;
 .dumili-helper-app {
   .dumili-modal-trigger {
     position: fixed;
-    bottom: 20px;
+    top: 20px;
     right: 20px;
     padding: 10px 20px;
-    background-color: $primary-color;
+    background-color: $secondary-color;
     color: $white;
     border: none;
     border-radius: 5px;
@@ -280,13 +253,13 @@ $border-color: #ddd;
     z-index: 10000;
 
     &:hover {
-      background-color: $primary-hover-color;
+      background-color: $secondary-hover-color;
     }
   }
 
   .dumili-modal {
     position: fixed;
-    bottom: 80px;
+    top: 80px;
     right: 20px;
     background-color: $white;
     padding: 20px;
@@ -320,6 +293,9 @@ $border-color: #ddd;
       }
 
       #dumili-output {
+        &:empty:not(:focus):before {
+          content: attr(placeholder);
+        }
         font-family: monospace;
         white-space: pre;
         width: calc(100% - 32px);

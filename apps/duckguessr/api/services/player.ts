@@ -1,26 +1,25 @@
-import type { Server, Socket } from "socket.io";
+import type { Socket } from "socket.io";
 import { type NamespaceProxyTarget, useSocketEvents } from "socket-call-server";
 
-import {
-  getPlayer,
-  getPlayerGameStatistics,
-  getPlayerStatistics,
-  updatePlayer,
-} from "../get-player";
-import type { player } from "../prisma/client_duckguessr/client";
-import { PrismaClient } from "../prisma/client_duckguessr/client";
-import type {
-  ClientToServerEvents,
-  InterServerEvents,
-  ServerToClientEvents,
-  SocketData,
-} from "../types/socketEvents";
+import { getPlayer, getPlayerStatistics, updatePlayer } from "../get-player";
+import prisma from "../prisma/client";
+import { type player } from "../prisma/client_duckguessr/browser";
 import namespaces from "./namespaces";
 
-const prisma = new PrismaClient();
+export type ClientListenEvents = {
+  logged: (player: player) => void;
+  loginFailed: () => void;
+};
 
 export type PlayerServices = NamespaceProxyTarget<
-  Socket<typeof listenEvents, object, object, SocketData>,
+  Socket<
+    typeof listenEvents,
+    ClientListenEvents,
+    object,
+    {
+      user: player;
+    }
+  >,
   Record<string, never>
 >;
 
@@ -28,71 +27,55 @@ const listenEvents = ({ _socket }: PlayerServices) => ({
   updateUser: async (updatedPlayer: player) =>
     updatePlayer(updatedPlayer.id, updatedPlayer),
 
-  getStats: async (
-    _gameId: number,
-  ): Promise<ReturnType<typeof getPlayerStatistics>> => {
-    // TODO
-    return [];
+  getStats: async (gameId?: number) => {
+    const playerIdsToQuery = [_socket.data.user.id];
+    if (gameId) {
+      playerIdsToQuery.push(
+        ...(
+          await prisma.gamePlayer.findMany({
+            where: {
+              gameId,
+            },
+          })
+        ).map(({ playerId }) => playerId),
+      );
+    }
+    return await getPlayerStatistics(playerIdsToQuery);
   },
 
-  getGameStats: async (
-    _gameId: number,
-  ): Promise<ReturnType<typeof getPlayerGameStatistics>> => {
-    // TODO
-    return [];
+  getGameStats: async (gameId: number) => {
+    const playerIdsToQuery = [_socket.data.user.id];
+    if (gameId) {
+      playerIdsToQuery.push(
+        ...(
+          await prisma.gamePlayer.findMany({
+            where: {
+              gameId,
+            },
+          })
+        ).map(({ playerId }) => playerId),
+      );
+    }
+    const stats = await getPlayerStatistics(playerIdsToQuery);
+    return { gameId, stats };
   },
 });
-export const createPlayerSocket = (
-  io: Server<
-    ClientToServerEvents,
-    ServerToClientEvents,
-    InterServerEvents,
-    SocketData
-  >,
-) => {
-  io.of("/login").on("connection", async (socket) => {
-    let player = await getPlayer(socket.handshake.auth.cookie);
-
-    if (player) {
-      socket.emit("logged", player);
-
-      socket.on("updateUser", async (updatedPlayer, callback) => {
-        player = await updatePlayer(player!.id, updatedPlayer);
-        callback(player);
-      });
-
-      socket.on("getStats", async (gameId, callback) => {
-        let playerIdsToQuery: number[] = [player!.id];
-        if (gameId) {
-          playerIdsToQuery = [
-            ...playerIdsToQuery,
-            ...(
-              await prisma.gamePlayer.findMany({
-                where: {
-                  gameId,
-                },
-              })
-            ).map(({ playerId }) => playerId),
-          ];
-        }
-        callback(await getPlayerStatistics(playerIdsToQuery));
-      });
-
-      socket.on("getGameStats", async (gameId, callback) => {
-        callback(await getPlayerGameStatistics(gameId));
-      });
-    } else {
-      socket.emit("loginFailed");
-    }
-  });
-};
 
 const { client, server } = useSocketEvents<
   typeof listenEvents,
   Record<string, never>
 >(namespaces.PLAYER, {
   listenEvents,
-  middlewares: [],
+  middlewares: [
+    ({ _socket }) => {
+      getPlayer(_socket.handshake.auth.cookie).then((player) => {
+        if (player) {
+          _socket.data.user = player;
+          _socket.emit("logged", player);
+        }
+      });
+    },
+  ],
 });
 
 export { client, server };

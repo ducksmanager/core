@@ -1,10 +1,10 @@
 import type { Socket } from "socket.io";
 import type { NamespaceProxyTarget } from "socket-call-server";
 import { useSocketEvents } from "socket-call-server";
-import type { SessionUser } from "types/SessionUser";
 
 // import { createGameSocket } from "./game";
 import game from "../game";
+import type { SessionUser } from "../types/SessionUser";
 import namespaces from "./namespaces";
 
 export type MatchServices = NamespaceProxyTarget<

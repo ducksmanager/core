@@ -21,13 +21,11 @@ export default defineConfig({
           fs.mkdirSync(distDir, { recursive: true });
         }
 
-        // Copy manifest
         fs.copyFileSync(
           resolve(__dirname, "manifest.json"),
           resolve(distDir, "manifest.json"),
         );
 
-        // Copy components directory
         const componentsDir = resolve(__dirname, "src/components");
         const distComponentsDir = resolve(distDir, "components");
 
@@ -35,7 +33,6 @@ export default defineConfig({
           fs.mkdirSync(distComponentsDir, { recursive: true });
         }
 
-        // Copy all files from components directory
         const files = fs.readdirSync(componentsDir);
         files.forEach((file) => {
           fs.copyFileSync(
@@ -57,10 +54,8 @@ export default defineConfig({
       output: {
         entryFileNames: "content.js",
         chunkFileNames: "[name].js",
-        assetFileNames: (assetInfo) => {
-          if (assetInfo.name === "style.css") return "content.css";
-          return assetInfo.name;
-        },
+        assetFileNames: (assetInfo) =>
+          assetInfo.name === "style.css" ? "content.css" : assetInfo.name,
       },
     },
   },

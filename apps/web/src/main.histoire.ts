@@ -11,7 +11,7 @@ import { createHead } from "@unhead/vue";
 import contextmenu from "v-contextmenu";
 
 import i18n from "~/i18n";
-import en from "~translations/messages.en.json";
+import en from "~web-translations/messages.en.json";
 
 export const setupVue3 = defineSetupVue3(({ app }) => {
   const head = createHead();

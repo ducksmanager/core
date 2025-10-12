@@ -1,4 +1,3 @@
-version: '3.4'
 services:
   db:
     restart: always
@@ -12,10 +11,10 @@ services:
       MYSQL_DATABASE: duckguessr
       MYSQL_ROOT_PASSWORD: $MYSQL_ROOT_PASSWORD
     networks:
-      - prisma-schemas_db-network
+      - db-network
 
 volumes:
   db:
 networks:
-  prisma-schemas_db-network:
+  db-network:
     external: true

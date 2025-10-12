@@ -8,6 +8,8 @@ import Components from 'unplugin-vue-components/vite';
 import { defineConfig } from 'vite';
 import { viteStaticCopy } from 'vite-plugin-static-copy';
 
+import getViteAliases from '../../vite-aliases';
+
 // https://vitejs.dev/config/
 export default defineConfig({
   server: {
@@ -98,15 +100,10 @@ export default defineConfig({
 
   resolve: {
     dedupe: ['pinia', 'vue', 'vue-i18n', 'vue-router', '@vueuse/core'],
-    alias: {
+    alias: getViteAliases(path.resolve(__dirname, '../..'), {
       '~': path.resolve(__dirname, './src'),
       '~translations': path.resolve(__dirname, 'translations'),
-      '~types': path.resolve(__dirname, 'types'),
-      '~dm-types': path.resolve(__dirname, '../../packages/types'),
-      '~dm-services': path.resolve(__dirname, '../../packages/api/services'),
-      '~group-by': path.resolve(__dirname, '../../util/group-by'),
-      '~prisma-schemas': path.resolve(__dirname, '../../packages/prisma-schemas'),
       '~web': path.resolve(__dirname, '../web'),
-    },
+    }),
   },
 });

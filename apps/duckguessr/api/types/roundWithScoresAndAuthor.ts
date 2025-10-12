@@ -1,6 +1,6 @@
 import type { inducks_person } from "~prisma-schemas/schemas/coa";
 
-import type { round, roundScore } from "../prisma/client_duckguessr/client";
+import type { round, roundScore } from "../prisma/client_duckguessr/browser";
 
 export type Author = Pick<
   inducks_person,
@@ -10,10 +10,12 @@ export type Author = Pick<
 export interface UnfinishedRound
   extends Omit<round, "sitecodeUrl" | "personcode"> {
   roundScores: roundScore[];
+  personcode: null;
 }
 
-export interface RoundWithScoresAndAuthor extends round, Author {
+export interface RoundWithScoresAndAuthor extends round {
   roundScores: roundScore[];
+  personcode: string;
 }
 
 export interface OngoingRoundScore {
