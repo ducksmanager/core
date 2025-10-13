@@ -60,7 +60,11 @@ const listenEvents = () => ({
          inner join inducks_storyversion using (storyversioncode)
       where sitecode = 'thumbnails3'
         and kind = 'n'
-        and (${personNationalityFilter?.join(",") || null} IS NULL OR (${personNationalityFilter?.join(",") || null} IS NOT NULL AND artsummary in (select concat(',', personcode, ',') from inducks_person where nationalitycountrycode in (${Prisma.join(personNationalityFilter || ["xxx"])} ))))
+        ${
+          personNationalityFilter && personNationalityFilter.length > 0
+            ? Prisma.sql`and artsummary in (select concat(',', personcode, ',') from inducks_person where nationalitycountrycode in (${Prisma.join(personNationalityFilter)}))`
+            : Prisma.empty
+        }
       ),
       author_counts as (
         select personcode, count(*) as count

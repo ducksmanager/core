@@ -9,6 +9,7 @@ import { createGameSocket } from "./services/game";
 // import { createMatchmakingSocket } from "./services/game";
 import { server as home } from "./services/home";
 import { server as player } from "./services/player";
+import { server as maintenance } from "./services/maintenance";
 
 (BigInt.prototype as any).toJSON = function () {
   const int = Number.parseInt(this.toString());
@@ -32,6 +33,7 @@ const io = new Server({
 datasets(io);
 home(io);
 player(io);
+maintenance(io);
 // createMatchmakingSocket(io);
 
 (async () => {

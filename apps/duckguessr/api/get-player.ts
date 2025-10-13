@@ -10,14 +10,16 @@ export const getUser = async (username: string) =>
     },
   }))!;
 
-export const getPlayer = async (cookies: Record<string, string>) => {
-  const { token, "duckguessr-user": duckguessrName } = cookies;
-  let player: player | null;
-  if (token) {
+export const getPlayer = async (cookies?: {
+  token?: string;
+  "duckguessr-user"?: string;
+}) => {
+  let player: player | null = null;
+  if (cookies?.token) {
     console.log(process.env.TOKEN_SECRET);
     try {
       const { id: ducksmanagerId, username } = jwt.verify(
-        token,
+        cookies.token,
         process.env.TOKEN_SECRET as string,
       ) as jwt.JwtPayload;
       player = await prisma.player.findFirst({
@@ -42,6 +44,7 @@ export const getPlayer = async (cookies: Record<string, string>) => {
       return null;
     }
   }
+  const duckguessrName = cookies?.["duckguessr-user"];
   if (duckguessrName && /^user\d+$/.test(duckguessrName)) {
     player = await prisma.player.findFirst({
       where: {
@@ -55,6 +58,9 @@ export const getPlayer = async (cookies: Record<string, string>) => {
         },
       });
     }
+  }
+  if (!player) {
+    throw new Error("No token provided");
   }
   return player!;
 };

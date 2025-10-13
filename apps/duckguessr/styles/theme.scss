@@ -1,0 +1,82 @@
+// Shared SCSS styles for reusable components and utilities
+
+// Utility classes
+.border-2 {
+  border-width: 2px !important;
+}
+
+// Card styles
+.card {
+  backdrop-filter: blur(10px);
+  background-color: rgba(255, 255, 255, 0.95);
+}
+
+// Form styles
+.form-label {
+  color: #495057;
+}
+
+.form-control:focus,
+.form-select:focus {
+  border-color: #667eea;
+  box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+}
+
+.form-check-input:checked {
+  background-color: #667eea;
+  border-color: #667eea;
+}
+
+// Text styles
+.text-white {
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+// Button styles
+.btn {
+  border-radius: 0.5rem;
+  font-weight: 500;
+}
+
+.btn-primary {
+  background: linear-gradient(45deg, #667eea, #764ba2);
+  border: none;
+}
+
+.btn-primary:hover {
+  background: linear-gradient(45deg, #5a6fd8, #6a4190);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+.btn-outline-secondary {
+  border-color: #6c757d;
+  color: #6c757d;
+}
+
+.btn-outline-secondary:hover {
+  background-color: #6c757d;
+  border-color: #6c757d;
+  transform: translateY(-1px);
+}
+
+// Badge styles
+.badge {
+  border-radius: 0.5rem;
+}
+
+// Responsive styles
+@media (max-width: 768px) {
+  .container-fluid {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  .display-4 {
+    font-size: 2rem;
+  }
+
+  .lead {
+    font-size: 1rem;
+  }
+}

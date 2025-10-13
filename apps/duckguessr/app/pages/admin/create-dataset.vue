@@ -3,7 +3,6 @@
     <b-container fluid class="py-4">
       <b-row class="justify-content-center">
         <b-col lg="8" xl="6">
-          <!-- Header Section -->
           <div class="text-center mb-5">
             <h1
               class="display-4 fw-bold text-white mb-3 d-flex align-items-center justify-content-center"
@@ -16,10 +15,8 @@
             </p>
           </div>
 
-          <!-- Main Form Card -->
           <b-card class="shadow-lg border-0" body-class="p-4">
             <b-form @submit.prevent="createDataset">
-              <!-- Basic Information Section -->
               <div class="mb-4">
                 <h3
                   class="h5 fw-semibold text-dark mb-3 d-flex align-items-center"
@@ -59,7 +56,6 @@
                   Author filters
                 </h3>
 
-                <!-- Nationality Filter -->
                 <b-card class="mb-3 border-light" body-class="p-3">
                   <b-form-group>
                     <b-form-checkbox
@@ -96,7 +92,6 @@
                   Date filters
                 </h3>
 
-                <!-- Date Range Filter -->
                 <b-card class="mb-3 border-light" body-class="p-3">
                   <b-form-group>
                     <b-form-checkbox
@@ -188,71 +183,45 @@
                   />
                   <b-form-group>
                     <b-form-radio
+                      v-for="option in authorMatchesCountOptions"
+                      :key="option.value"
                       v-model="filters.authorMatchesCount.type"
                       name="author-matches-count-filter"
-                      value="minMatchesPerAuthor"
-                      >Restrict to authors with at least this amount of matches
+                      :value="option.value"
+                    >
+                      {{ option.label }}
                       <template
-                        v-if="
-                          filters.authorMatchesCount.type ===
-                          'minMatchesPerAuthor'
-                        "
+                        v-if="filters.authorMatchesCount.type === option.value"
                       >
-                        {{ filters.authorMatchesCount.value }}
+                        :&nbsp;{{ filters.authorMatchesCount.value }} (&nbsp;{{
+                          Object.entries(authors).filter(
+                            ([key, value]) =>
+                              !isAuthorFilteredOut({
+                                key,
+                                value,
+                              }),
+                          ).length
+                        }}
+                        authors)
                       </template>
                       <b-form-input
-                        id="min-matches-filter"
+                        :id="option.inputId"
                         :model-value="
-                          filters.authorMatchesCount.type ===
-                          'minMatchesPerAuthor'
-                            ? minMatchesPerAuthorOptions.indexOf(
-                                filters.authorMatchesCount.value ?? 0,
-                              )
-                            : 0
+                          option.getModelValue(filters.authorMatchesCount)
                         "
                         :disabled="
-                          filters.authorMatchesCount.type !==
-                          'minMatchesPerAuthor'
+                          filters.authorMatchesCount.type !== option.value
                         "
                         type="range"
                         size="lg"
-                        :min="0"
-                        :max="minMatchesPerAuthorOptions.length - 1"
+                        :min="option.min"
+                        :max="option.max"
                         @update:model-value="
-                          filters.authorMatchesCount.value =
-                                minMatchesPerAuthorOptions[parseInt($event as string)]
-                        "
-                      />
-                    </b-form-radio>
-                    <b-form-radio
-                      v-model="filters.authorMatchesCount.type"
-                      name="author-matches-count-filter"
-                      value="minAuthorCount"
-                      >Restrict to at least this amount of authors with the most
-                      matches
-                      <template
-                        v-if="
-                          filters.authorMatchesCount.type === 'minAuthorCount'
-                        "
-                      >
-                        {{ filters.authorMatchesCount.value }}
-                      </template>
-                      <b-form-input
-                        id="min-author-count-filter"
-                        :model-value="
-                          filters.authorMatchesCount.type === 'minAuthorCount'
-                            ? (filters.authorMatchesCount.value ?? 0)
-                            : 0
-                        "
-                        :disabled="
-                          filters.authorMatchesCount.type !== 'minAuthorCount'
-                        "
-                        type="range"
-                        size="lg"
-                        :min="0"
-                        :max="Object.keys(datasetPreview?.authors ?? {}).length"
-                        @update:model-value="
-                          filters.authorMatchesCount.value = parseInt($event as string)
+                          (value) =>
+                            option.handleUpdate(
+                              String(value),
+                              filters.authorMatchesCount,
+                            )
                         "
                       />
                     </b-form-radio>
@@ -332,7 +301,6 @@
                 </b-card>
               </div>
 
-              <!-- Action Buttons -->
               <div class="d-grid gap-2 d-md-flex justify-content-md-end">
                 <b-button
                   variant="outline-secondary"
@@ -415,7 +383,50 @@ const minMatchesPerAuthorOptions = computed(() =>
   new Set(Object.values(authors.value).reverse()).values().toArray(),
 );
 
-const isAuthorFiltered = (item: { key: string; value: number }) =>
+const authorMatchesCountOptions = computed(() => {
+  const maxAuthors =
+    datasetPreview.value && "authors" in datasetPreview.value
+      ? Object.keys(datasetPreview.value.authors).length
+      : 0;
+
+  return [
+    {
+      value: "minMatchesPerAuthor",
+      label: "Restrict to authors with at least this amount of matches",
+      inputId: "min-matches-filter",
+      min: 0,
+      max: minMatchesPerAuthorOptions.value.length - 1,
+      getModelValue: (filter: typeof filters.value.authorMatchesCount) =>
+        filter.type === "minMatchesPerAuthor"
+          ? minMatchesPerAuthorOptions.value.indexOf(filter.value ?? 0)
+          : 0,
+      handleUpdate: (
+        newValue: string,
+        filter: typeof filters.value.authorMatchesCount,
+      ) => {
+        filter.value = minMatchesPerAuthorOptions.value[parseInt(newValue)];
+      },
+    },
+    {
+      value: "minAuthorCount",
+      label:
+        "Restrict to at least this amount of authors with the most matches",
+      inputId: "min-author-count-filter",
+      min: 1,
+      max: maxAuthors - 1,
+      getModelValue: (filter: typeof filters.value.authorMatchesCount) =>
+        filter.type === "minAuthorCount" ? (filter.value ?? 0) : 1,
+      handleUpdate: (
+        newValue: string,
+        filter: typeof filters.value.authorMatchesCount,
+      ) => {
+        filter.value = parseInt(newValue);
+      },
+    },
+  ];
+});
+
+const isAuthorFilteredOut = (item: { key: string; value: number }) =>
   (filters.value.authorMatchesCount.type === "minMatchesPerAuthor" &&
     item.value < (filters.value.authorMatchesCount.value ?? 0)) ||
   (filters.value.authorMatchesCount.type === "minAuthorCount" &&
@@ -424,9 +435,8 @@ const isAuthorFiltered = (item: { key: string; value: number }) =>
 
 const datasetPreviewRowClass = (
   item: { key: string; value: number } | null | undefined,
-) => (item && isAuthorFiltered(item) ? "text-decoration-line-through" : "");
+) => (item && isAuthorFilteredOut(item) ? "text-decoration-line-through" : "");
 
-// Form functions
 const resetForm = () => {
   name.value = "";
   description.value = "";
@@ -459,7 +469,6 @@ const createDataset = async () => {
   }
 };
 
-// Watch for filter changes to update matches
 watch(
   () => [
     filters.value.personNationalityFilter,
@@ -489,6 +498,8 @@ watch(
 </script>
 
 <style scoped lang="scss">
+@use "../../../styles/theme.scss";
+
 .create-dataset-page {
   min-height: 100vh;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -509,79 +520,5 @@ watch(
 
 .match-thumbnail:hover {
   transform: scale(1.05);
-}
-
-.border-2 {
-  border-width: 2px !important;
-}
-
-.card {
-  backdrop-filter: blur(10px);
-  background-color: rgba(255, 255, 255, 0.95);
-}
-
-.form-label {
-  color: #495057;
-}
-
-.text-white {
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-}
-
-.btn {
-  border-radius: 0.5rem;
-  font-weight: 500;
-}
-
-.btn-primary {
-  background: linear-gradient(45deg, #667eea, #764ba2);
-  border: none;
-}
-
-.btn-primary:hover {
-  background: linear-gradient(45deg, #5a6fd8, #6a4190);
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
-}
-
-.btn-outline-secondary {
-  border-color: #6c757d;
-  color: #6c757d;
-}
-
-.btn-outline-secondary:hover {
-  background-color: #6c757d;
-  border-color: #6c757d;
-  transform: translateY(-1px);
-}
-
-.form-control:focus,
-.form-select:focus {
-  border-color: #667eea;
-  box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
-}
-
-.form-check-input:checked {
-  background-color: #667eea;
-  border-color: #667eea;
-}
-
-.badge {
-  border-radius: 0.5rem;
-}
-
-@media (max-width: 768px) {
-  .create-dataset-page .container-fluid {
-    padding-left: 1rem;
-    padding-right: 1rem;
-  }
-
-  .display-4 {
-    font-size: 2rem;
-  }
-
-  .lead {
-    font-size: 1rem;
-  }
 }
 </style>

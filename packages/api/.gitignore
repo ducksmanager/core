@@ -1,1 +1,2 @@
 cache
+services/story-search/model/*.onnx

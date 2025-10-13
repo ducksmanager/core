@@ -21,7 +21,7 @@ export default defineNuxtConfig({
     "~duckguessr-types/*": path.resolve(__dirname, "api/types/*"),
   },
 
-  devtools: { enabled: true },
+  devtools: { enabled: false },
   compatibilityDate: "2025-09-09",
 
   // CSS
@@ -77,10 +77,6 @@ export default defineNuxtConfig({
       {
         from: "~web/src/stores/coa",
         imports: ["coa"],
-      },
-      {
-        from: "~web/src/composables/useLocales",
-        imports: ["getCurrentLocaleShortKey", "availableLocales"],
       },
     ],
   },
