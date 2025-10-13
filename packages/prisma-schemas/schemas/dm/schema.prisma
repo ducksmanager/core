@@ -112,15 +112,14 @@ model demo {
   lastReset DateTime @map("DateDernierInit") @db.DateTime(0)
 }
 
-/// @deprecated
-model magazines {
-  PaysAbrege     String   @db.VarChar(4)
-  NomAbrege      String   @db.VarChar(7)
-  NomComplet     String   @db.VarChar(70)
-  RedirigeDepuis String   @db.VarChar(7)
-  NeParaitPlus   Boolean?
+model label {
+  id          Int    @id @default(autoincrement()) @map("ID")
+  description String @map("Description") @db.VarChar(50)
+  userId      Int?   @map("ID_Utilisateur")
+  user        user?  @relation(fields: [userId], references: [id], onDelete: Cascade, map: "labels_users_ID_fk")
 
-  @@id([PaysAbrege, NomAbrege, RedirigeDepuis])
+  @@unique([userId, description], map: "etiquettes_unique")
+  @@map("etiquettes")
 }
 
 model issue {
@@ -192,31 +191,6 @@ model edge {
   @@map("tranches_pretes")
 }
 
-/// @deprecated
-model tranches_pretes_contributeurs {
-  publicationcode String                                     @db.VarChar(15)
-  issuenumber     String                                     @db.VarChar(30)
-  contributeur    Int
-  contribution    tranches_pretes_contributeurs_contribution @default(createur)
-
-  @@id([publicationcode, issuenumber, contributeur, contribution])
-  @@index([contributeur], map: "tranches_pretes_contributeurs_contributeur_index")
-  @@index([publicationcode, issuenumber], map: "tranches_pretes_contributeurs_publicationcode_issuenumber_index")
-}
-
-/// @deprecated
-model tranches_pretes_contributions {
-  ID           Int                                        @id @default(autoincrement())
-  ID_tranche   Int
-  ID_user      Int
-  dateajout    DateTime                                   @default(now()) @db.Timestamp(0)
-  contribution tranches_pretes_contributions_contribution
-  points_new   Int
-  points_total Int
-
-  @@index([ID_user, contribution], map: "tranches_pretes_contributions_ID_user_contribution_index")
-}
-
 model edgeSprite {
   id         Int    @id @default(autoincrement()) @map("ID")
   edgeId     Int    @map("ID_Tranche")
@@ -269,6 +243,7 @@ model user {
   numeros_demandes            requestedIssue[]
   users_contributions         userContribution[]
   users_options               userOption[]
+  label                       label[]
 
   @@map("users")
 }
@@ -373,16 +348,6 @@ enum users_permissions_privilege {
   Admin
   Edition
   Affichage
-}
-
-enum tranches_pretes_contributeurs_contribution {
-  photographe
-  createur
-}
-
-enum tranches_pretes_contributions_contribution {
-  photographe
-  createur
 }
 
 enum issue_condition {

@@ -61,14 +61,6 @@ create table demo (
     ID int default 1 not null primary key,
     DateDernierInit datetime not null
 ) engine = MyISAM collate = latin1_german2_ci;
-create table magazines (
-    PaysAbrege varchar(4) charset latin1 not null,
-    NomAbrege varchar(7) charset latin1 not null,
-    NomComplet varchar(70) not null,
-    RedirigeDepuis varchar(7) not null,
-    NeParaitPlus tinyint(1) null,
-    primary key (PaysAbrege, NomAbrege, RedirigeDepuis)
-) engine = MyISAM collate = utf8mb3_bin;
 create table numeros (
     ID int auto_increment primary key,
     Pays varchar(3) not null,
@@ -169,30 +161,6 @@ create table tranches_pretes (
     constraint tranchespretes_unique unique (publicationcode, issuenumber)
 ) collate = latin1_german2_ci;
 create index tranches_pretes_dateajout_index on tranches_pretes (dateajout);
-create table tranches_pretes_contributeurs (
-    publicationcode varchar(15) not null,
-    issuenumber varchar(30) not null,
-    contributeur int not null,
-    contribution enum ('photographe', 'createur') default 'createur' not null,
-    primary key (
-        publicationcode,
-        issuenumber,
-        contributeur,
-        contribution
-    )
-) engine = MyISAM collate = utf8mb3_general_ci;
-create index tranches_pretes_contributeurs_contributeur_index on tranches_pretes_contributeurs (contributeur);
-create index tranches_pretes_contributeurs_publicationcode_issuenumber_index on tranches_pretes_contributeurs (publicationcode, issuenumber);
-create table tranches_pretes_contributions (
-    ID int auto_increment primary key,
-    ID_tranche int not null,
-    ID_user int not null,
-    dateajout timestamp default current_timestamp() not null on update current_timestamp(),
-    contribution enum ('photographe', 'createur') not null,
-    points_new int not null,
-    points_total int not null
-) charset = latin1;
-create index tranches_pretes_contributions_ID_user_contribution_index on tranches_pretes_contributions (ID_user, contribution);
 create table tranches_pretes_sprites (
     ID int auto_increment primary key,
     ID_Tranche int not null,
