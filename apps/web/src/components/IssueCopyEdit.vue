@@ -15,28 +15,6 @@
     </v-contextmenu-item>
     <v-contextmenu-divider v-show="newCopyState.condition !== null" />
   </v-contextmenu-group>
-  <v-contextmenu-group
-    v-show="newCopyState.condition !== null"
-    :title="$t('Pile de lecture')"
-  >
-    <v-contextmenu-item
-      v-for="{ label: stateText, value: stateId } in toReadStates"
-      :key="`copy-to-read-state-${String(stateId)}`"
-      :hide-on-click="false"
-      :class="`clickable read-state ${stateId} ${
-        newCopyState.isToRead === stateId ? 'selected' : ''
-      }`"
-      @click="
-        newCopyState.isToRead =
-          stateId === undefined ? undefined : stateId === true
-      "
-    >
-      <i-bi-bookmark-check v-if="stateId === true" />
-      <i-bi-bookmark-x v-if="stateId === false" />
-      {{ stateText }}
-    </v-contextmenu-item>
-    <v-contextmenu-divider v-show="newCopyState.condition !== null" />
-  </v-contextmenu-group>
   <template v-if="newCopyState.condition !== null">
     <v-contextmenu-group :title="$t('Date d\'achat')">
       <template
@@ -150,64 +128,105 @@
       </template>
     </v-contextmenu-group>
     <v-contextmenu-group :title="$t('Étiquettes')">
-      <component
-        :is="options ? BDropdown : BButton"
-        v-for="{ text, options, icon } in [
-          { text: $t('On sale'), icon: IBiCart },
-          { text: $t('To read'), icon: IBiBookmarkCheck },
-          { text: $t('Date d\'achat'), icon: IBiCalendar, options: [] },
+      <b-button
+        v-for="{ description, ...label } in [
+          { id: 1, description: $t('À vendre'), icon: IBiCart },
+          { id: 2, description: $t('À lire'), icon: IBiBookmarkCheck },
+          ...[...newCopyState.labels]
+            .filter((label) => !['À vendre', 'À lire'].includes(label))
+            .map((description) => ({
+              description,
+            })),
         ]"
-        :key="text"
-        :pressed="newCopyState.labels.has(text)"
-        class="mx-2 border rounded-pill"
+        :key="description"
+        :pressed="newCopyState.labels.has(description)"
+        class="mx-2 border rounded-pill d-inline-flex align-items-center"
         toggle-class=" rounded-pill"
         variant="light"
         text-variant="secondary"
-        @click="
-          newCopyState.labels.has(text)
-            ? newCopyState.labels.delete(text)
-            : newCopyState.labels.add(text)
+        @click.stop="
+          newCopyState.labels.has(description)
+            ? newCopyState.labels.delete(description)
+            : newCopyState.labels.add(description)
         "
+        ><i-bi-check
+          v-if="newCopyState.labels.has(description)"
+          class="me-2"
+          color="green"
+        />
+        <component :is="label.icon" v-if="'icon' in label" class="me-2" />{{
+          description
+        }}
+      </b-button>
+      <v-contextmenu-submenu
+        :title="$t(`Mes étiquettes`)"
+        @mouseleave.prevent="() => {}"
       >
-        <template v-if="options" #button-content>
-          <component :is="icon" class="me-2" />{{ text }}</template
-        >
-        <template v-if="options">
-          <b-dropdown-item
-            v-for="{ id, date, description } in purchases?.filter(
-              (_, idx) => idx < 10,
-            )"
-            :key="`copy-purchase-${id}`"
+        <template #title> <i-bi-tags />{{ $t(`Mes étiquettes`) }} </template>
+        <v-contextmenu-group :title="$t('Étiquettes')">
+          <v-contextmenu-item
+            v-if="!newLabel.context"
             :hide-on-click="false"
-            style="
-              display: flex;
-              flex-direction: row;
-              justify-content: space-between;
-              align-items: center;
-            "
-            :class="{
-              selected: newCopyState.purchaseId === id,
-            }"
-            @click.stop="newCopyState.purchaseId = id"
+            class="clickable"
+            @click.stop="newLabel.context = !newLabel.context"
           >
-            <small class="date">{{ date.toISOString().split("T")[0] }}</small>
+            <b>{{ $t("Nouvelle étiquette...") }}</b>
+          </v-contextmenu-item>
+          <v-contextmenu-item
+            v-else
+            class="label-description"
+            @click.stop="() => {}"
+          >
+            <input
+              v-model="newLabel.description"
+              required
+              type="text"
+              class="form-control text-center"
+              maxlength="30"
+              :placeholder="$t('Description')"
+              @click.stop="() => {}"
+            />
+            <b-button
+              variant="success"
+              class="btn-sm"
+              @click.stop="
+                  createLabel(newLabel.description!);
+                  newLabel = newLabelDefault;
+                "
+            >
+              <i-bi-check />
+            </b-button>
+            <b-button
+              variant="warning"
+              class="btn-sm"
+              @click.stop="newLabel.context = false"
+            >
+              <i-bi-x />
+            </b-button>
+          </v-contextmenu-item>
+          <v-contextmenu-item
+            v-for="{ id, description } in labels"
+            :key="`copy-label-${id}`"
+            :hide-on-click="false"
+            class="clickable label-description"
+            :class="{
+              selected: newCopyState.labels.has(description),
+            }"
+            @click.stop="newCopyState.labels.add(description)"
+          >
             <div class="mx-2">
               {{ description }}
             </div>
             <b-button
-              class="delete-purchase btn-sm"
+              class="delete-label btn-sm"
               :title="$t('Supprimer')"
-              @click="deletePurchase(id)"
+              @click="deleteLabel({ id, description })"
             >
               <i-bi-trash />
             </b-button>
-          </b-dropdown-item>
-        </template>
-        <template v-else
-          ><component :is="icon" class="me-2" />{{ text }}</template
-        ></component
-      >
-      <b-button>+</b-button>
+          </v-contextmenu-item>
+        </v-contextmenu-group>
+      </v-contextmenu-submenu>
     </v-contextmenu-group>
     <v-contextmenu-group :title="$t('Marketplace')">
       <template
@@ -238,11 +257,9 @@
               ? newCopyState.isOnSale
               : stateId === undefined
                 ? undefined
-                : stateId === true
+                : false
           "
         >
-          <i-bi-cart v-if="stateId === true" />
-          <i-bi-cart-x v-if="stateId === false" />
           <i-bi-lock
             v-if="
               disabled &&
@@ -314,7 +331,7 @@ import IBiCalendar from "~icons/bi/calendar";
 import type { IssueWithPublicationcodeOptionalId } from "~/stores/collection";
 import type { CollectionUpdateMultipleIssues } from "~dm-types/CollectionUpdate";
 import type { issue_condition } from "~prisma-schemas/schemas/dm";
-import { BButton, BDropdown } from "bootstrap-vue-next";
+import { BButton } from "bootstrap-vue-next";
 
 const { conditions } = useCondition();
 
@@ -356,6 +373,46 @@ const newPurchaseDefault: NewPurchase = {
 };
 
 let newPurchase = $ref(newPurchaseDefault);
+
+type NewLabel = {
+  description?: string;
+  context?: boolean;
+};
+
+const newLabelDefault: NewLabel = {
+  description: "",
+  context: false,
+};
+
+let newLabel = $ref(newLabelDefault);
+
+const labels = $ref(
+  new Set([
+    {
+      id: 10,
+      description: "Étiquette 1",
+    },
+    {
+      id: 11,
+      description: "Étiquette 2",
+    },
+    {
+      id: 12,
+      description: "Étiquette 3",
+    },
+  ]),
+);
+
+const createLabel = (description: string) => {
+  labels.add({
+    id: labels.size + 1,
+    description,
+  });
+};
+
+const deleteLabel = (label: { id: number; description: string }) => {
+  labels.delete(label);
+};
 
 const { t: $t } = useI18n();
 const isSaleDisabledGlobally = $computed(
@@ -401,15 +458,8 @@ const purchaseStates = $computed(() => [
   { value: 0, label: $t("Associer avec une date d'achat") },
   { value: null, label: $t("Ne pas associer avec une date d'achat") },
 ]);
-const toReadStates = $computed(() => [
-  { value: undefined, label: $t("Conserver la pile de lecture") },
-  { value: true, label: $t("Inclus dans la pile de lecture") },
-  { value: false, label: $t("Exclus de la pile de lecture") },
-]);
 const marketplaceStates = $computed(() => [
   { value: undefined, text: $t("Ne rien changer"), disabled: false },
-  { value: false, text: $t("Ne pas marquer comme à vendre"), disabled: false },
-  { value: true, text: $t("Marquer comme à vendre"), disabled: false },
   {
     value: { setAsideFor: null },
     text: $t("Réserver pour"),
