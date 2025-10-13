@@ -25,17 +25,24 @@ import {
 } from "~duckguessr-services/player";
 import { type ClientEmitEvents as PodiumEmitEvents } from "~duckguessr-services/podium";
 
-const session = {
+const onConnectError = (e: Error) => {
+  const error = String(e);
+  console.error(error);
+  if (
+    error.indexOf("No token provided") !== -1 ||
+    error.indexOf("jwt expired") !== -1
+  ) {
+    location.replace(
+      `${import.meta.env.VITE_DM_URL}/login?redirect=${window.location.href}`,
+    );
+  }
+};
+
+const session: Parameters<typeof useDmSocket>[0]["session"] = {
   getToken: () => Promise.resolve(Cookies.get("token")),
   clearSession: () => Promise.resolve(Cookies.remove("token")),
   sessionExists: () =>
     Promise.resolve(typeof Cookies.get("token") === "string"),
-};
-
-const onConnectError = async () => {
-  await session.clearSession();
-  webStores.collection().isLoadingUser = false;
-  webStores.collection().user = null;
 };
 
 const dmSocketClient = new SocketClient(
@@ -84,6 +91,7 @@ try {
     PlayerListenEvents
   >(namespaces.PLAYER, {
     session,
+    onConnectError,
   });
 } catch (error) {
   console.error("Error creating player socket:", error);
@@ -95,6 +103,7 @@ const maintenanceSocket =
     namespaces.MAINTENANCE,
     {
       session,
+      onConnectError,
     },
   );
 

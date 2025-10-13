@@ -59,9 +59,13 @@
 <script lang="ts" setup>
 import type { Author } from "~duckguessr-types/roundWithScoresAndAuthor";
 import { getUrl } from "~/composables/url";
-import type { BaseColorVariant } from "node_modules/bootstrap-vue-next/dist/src/types";
+import type { BaseColorVariant } from "bootstrap-vue-next";
 
-const { nextRoundStartDate, roundUrl } = defineProps<{
+const {
+  nextRoundStartDate,
+  roundUrl,
+  speedBonus = 0,
+} = defineProps<{
   status: keyof BaseColorVariant;
   roundNumber: number;
   roundUrl: string;

@@ -5,6 +5,7 @@ import { useSocketEvents } from "socket-call-server";
 import prisma from "../prisma/client";
 import { type entryurlDetailsDecision } from "../prisma/client_duckguessr/browser";
 import namespaces from "./namespaces";
+import { getPlayer } from "get-player";
 
 export type MaintenanceServices = NamespaceProxyTarget<
   Socket<typeof listenEvents>,
@@ -83,7 +84,20 @@ const { client, server } = useSocketEvents<
   Record<string, never>
 >(namespaces.MAINTENANCE, {
   listenEvents,
-  middlewares: [],
+  middlewares: [
+    ({ _socket }, next: (error?: Error) => void) => {
+      getPlayer({ token: _socket.handshake.auth.token })
+        .then((player) => {
+          _socket.data.user = player;
+        })
+        .then(() => {
+          next();
+        })
+        .catch((e) => {
+          next(e);
+        });
+    },
+  ],
 });
 
 export { client, server };
