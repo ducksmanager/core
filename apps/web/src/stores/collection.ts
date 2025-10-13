@@ -24,6 +24,7 @@ export type IssueWithPublicationcodeOptionalId = Omit<
   "id" | "issuenumber"
 > & {
   id: number | null;
+  labels: Set<string>;
 };
 
 export type purchaseWithStringDate = Omit<purchase, "date"> & {

@@ -159,6 +159,7 @@ const defaultCopyState = {
   isToRead: false,
   isOnSale: false,
   purchaseId: null,
+  labels: new Set<string>(),
 };
 
 const defaultIssueState = {
@@ -166,6 +167,7 @@ const defaultIssueState = {
   isToRead: undefined,
   isOnSale: undefined,
   purchaseId: undefined,
+  labels: new Set<string>(),
 };
 
 let initialIssues = $ref<CollectionUpdateMultipleIssues>();

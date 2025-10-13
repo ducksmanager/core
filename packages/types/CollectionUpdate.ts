@@ -11,6 +11,7 @@ export type SingleCopyState = {
   isToRead: boolean;
   isOnSale: SaleState;
   purchaseId: number | null;
+  labels: Set<string>;
 };
 
 export type CopyStateWithUndefined = {
@@ -18,6 +19,7 @@ export type CopyStateWithUndefined = {
   isToRead: boolean | undefined;
   isOnSale: SaleState | undefined;
   purchaseId: number | null | undefined;
+  labels: Set<string>;
 };
 
 export type CollectionUpdateSingleIssue = {

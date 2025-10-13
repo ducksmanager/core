@@ -464,12 +464,13 @@ const copiesBySelectedIssuecode = $computed(() =>
       ...acc,
       [issuecode]: [
         ...(acc[issuecode] || []),
-        ...filteredUserCopies.filter(
-          ({ id: copyId, issuecode: copyIssuecode }) =>
+        ...filteredUserCopies
+          .filter(({ id: copyId, issuecode: copyIssuecode }) =>
             issueId !== null
               ? issueId === copyId
               : issuecode.replaceAll("_", " ") === copyIssuecode,
-        ),
+          )
+          .map((issue) => ({ ...issue, labels: new Set<string>() })),
       ],
     };
   }, {}),

@@ -150,16 +150,64 @@
       </template>
     </v-contextmenu-group>
     <v-contextmenu-group :title="$t('Étiquettes')">
-      <b-badge
-        v-for="label in ['On sale', 'To read']"
-        :key="label"
-        class="mx-2 border"
+      <component
+        :is="options ? BDropdown : BButton"
+        v-for="{ text, options, icon } in [
+          { text: $t('On sale'), icon: IBiCart },
+          { text: $t('To read'), icon: IBiBookmarkCheck },
+          { text: $t('Date d\'achat'), icon: IBiCalendar, options: [] },
+        ]"
+        :key="text"
+        :pressed="newCopyState.labels.has(text)"
+        class="mx-2 border rounded-pill"
+        toggle-class=" rounded-pill"
         variant="light"
         text-variant="secondary"
-        pill
-        >{{ label }}</b-badge
+        @click="
+          newCopyState.labels.has(text)
+            ? newCopyState.labels.delete(text)
+            : newCopyState.labels.add(text)
+        "
       >
-      <b-badge>+</b-badge>
+        <template v-if="options" #button-content>
+          <component :is="icon" class="me-2" />{{ text }}</template
+        >
+        <template v-if="options">
+          <b-dropdown-item
+            v-for="{ id, date, description } in purchases?.filter(
+              (_, idx) => idx < 10,
+            )"
+            :key="`copy-purchase-${id}`"
+            :hide-on-click="false"
+            style="
+              display: flex;
+              flex-direction: row;
+              justify-content: space-between;
+              align-items: center;
+            "
+            :class="{
+              selected: newCopyState.purchaseId === id,
+            }"
+            @click.stop="newCopyState.purchaseId = id"
+          >
+            <small class="date">{{ date.toISOString().split("T")[0] }}</small>
+            <div class="mx-2">
+              {{ description }}
+            </div>
+            <b-button
+              class="delete-purchase btn-sm"
+              :title="$t('Supprimer')"
+              @click="deletePurchase(id)"
+            >
+              <i-bi-trash />
+            </b-button>
+          </b-dropdown-item>
+        </template>
+        <template v-else
+          ><component :is="icon" class="me-2" />{{ text }}</template
+        ></component
+      >
+      <b-button>+</b-button>
     </v-contextmenu-group>
     <v-contextmenu-group :title="$t('Marketplace')">
       <template
@@ -260,9 +308,13 @@
   </template>
 </template>
 <script setup lang="ts">
+import IBiCart from "~icons/bi/cart";
+import IBiBookmarkCheck from "~icons/bi/bookmark-check";
+import IBiCalendar from "~icons/bi/calendar";
 import type { IssueWithPublicationcodeOptionalId } from "~/stores/collection";
 import type { CollectionUpdateMultipleIssues } from "~dm-types/CollectionUpdate";
 import type { issue_condition } from "~prisma-schemas/schemas/dm";
+import { BButton, BDropdown } from "bootstrap-vue-next";
 
 const { conditions } = useCondition();
 
