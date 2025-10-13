@@ -14,7 +14,8 @@ export const publicCollection = defineStore("publicCollection", () => {
     publicationUrlRoot = computed(
       () => `/collection/user/${publicUsername.value || ""}`,
     ),
-    purchases = ref([]);
+    purchases = ref([]),
+    labels = ref([]);
 
   const collectionUtils = useCollection(
       issues as ShallowRef<(issue & { issuecode: string })[]>,
@@ -31,8 +32,10 @@ export const publicCollection = defineStore("publicCollection", () => {
     ...collectionUtils,
     publicationUrlRoot,
     issues,
+    labels,
     purchases,
     loadPublicCollection,
+    loadLabels: () => {},
     loadPurchases: () => {},
   };
 });

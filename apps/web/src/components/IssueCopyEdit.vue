@@ -132,25 +132,23 @@
         v-for="{ description, ...label } in [
           { id: 1, description: $t('À vendre'), icon: IBiCart },
           { id: 2, description: $t('À lire'), icon: IBiBookmarkCheck },
-          ...[...newCopyState.labels]
+          ...[...newCopyState.labelDescriptions]
             .filter((label) => !['À vendre', 'À lire'].includes(label))
             .map((description) => ({
               description,
             })),
         ]"
         :key="description"
-        :pressed="newCopyState.labels.has(description)"
+        :pressed="newCopyState.labelDescriptions.has(description)"
         class="mx-2 border rounded-pill d-inline-flex align-items-center"
         toggle-class=" rounded-pill"
         variant="light"
         text-variant="secondary"
         @click.stop="
-          newCopyState.labels.has(description)
-            ? newCopyState.labels.delete(description)
-            : newCopyState.labels.add(description)
+          toggleSetElement(newCopyState.labelDescriptions, description)
         "
         ><i-bi-check
-          v-if="newCopyState.labels.has(description)"
+          v-if="newCopyState.labelDescriptions.has(description)"
           class="me-2"
           color="green"
         />
@@ -210,9 +208,11 @@
             :hide-on-click="false"
             class="clickable label-description"
             :class="{
-              selected: newCopyState.labels.has(description),
+              selected: newCopyState.labelDescriptions.has(description),
             }"
-            @click.stop="newCopyState.labels.add(description)"
+            @click.stop="
+              toggleSetElement(newCopyState.labelDescriptions, description)
+            "
           >
             <div class="mx-2">
               {{ description }}
@@ -220,7 +220,7 @@
             <b-button
               class="delete-label btn-sm"
               :title="$t('Supprimer')"
-              @click="deleteLabel({ id, description })"
+              @click="deleteLabel(description)"
             >
               <i-bi-trash />
             </b-button>
@@ -354,8 +354,9 @@ const emit = defineEmits<{
 const { issueRequestsAsSeller, buyerUserNamesById } =
   storeToRefs(marketplace());
 
-const { createPurchase, deletePurchase } = collection();
-const { issues, purchases } = storeToRefs(collection());
+const { createPurchase, deletePurchase, createLabel, deleteLabel } =
+  collection();
+const { issues, purchases, labels } = storeToRefs(collection());
 const { issuecodeDetails } = storeToRefs(coa());
 
 const today = new Date().toISOString().slice(0, 10);
@@ -386,32 +387,12 @@ const newLabelDefault: NewLabel = {
 
 let newLabel = $ref(newLabelDefault);
 
-const labels = $ref(
-  new Set([
-    {
-      id: 10,
-      description: "Étiquette 1",
-    },
-    {
-      id: 11,
-      description: "Étiquette 2",
-    },
-    {
-      id: 12,
-      description: "Étiquette 3",
-    },
-  ]),
-);
-
-const createLabel = (description: string) => {
-  labels.add({
-    id: labels.size + 1,
-    description,
-  });
-};
-
-const deleteLabel = (label: { id: number; description: string }) => {
-  labels.delete(label);
+const toggleSetElement = (set: Set<string>, element: string) => {
+  if (set.has(element)) {
+    set.delete(element);
+  } else {
+    set.add(element);
+  }
 };
 
 const { t: $t } = useI18n();

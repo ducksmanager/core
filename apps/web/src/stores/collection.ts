@@ -12,6 +12,7 @@ import type {
 import type {
   authorUser,
   issue,
+  label,
   purchase,
   subscription,
 } from "~prisma-schemas/schemas/dm";
@@ -24,7 +25,7 @@ export type IssueWithPublicationcodeOptionalId = Omit<
   "id" | "issuenumber"
 > & {
   id: number | null;
-  labels: Set<string>;
+  labelDescriptions: Set<string>;
 };
 
 export type purchaseWithStringDate = Omit<purchase, "date"> & {
@@ -46,6 +47,7 @@ export const collection = defineStore("collection", () => {
     ),
     watchedPublicationsWithSales = shallowRef<string[]>(),
     purchases = shallowRef<purchase[]>(),
+    labels = shallowRef<label[]>(),
     watchedAuthors = shallowRef<authorUser[]>(),
     marketplaceContactMethods = ref<string[]>(),
     suggestions =
@@ -61,6 +63,7 @@ export const collection = defineStore("collection", () => {
     isLoadingWatchedPublicationsWithSales = ref(false),
     isLoadingMarketplaceContactMethods = ref(false),
     isLoadingPurchases = ref(false),
+    isLoadingLabels = ref(false),
     isLoadingSuggestions = ref(false),
     isLoadingSubscriptions = ref(false),
     user = shallowRef<
@@ -134,6 +137,14 @@ export const collection = defineStore("collection", () => {
       await collectionEvents.deletePurchase(id);
       await loadPurchases(true);
     },
+    createLabel = async (description: string) => {
+      await collectionEvents.createLabel(description);
+      await loadLabels(true);
+    },
+    deleteLabel = async (description: string) => {
+      await collectionEvents.deleteLabel(description);
+      await loadLabels(true);
+    },
     loadPreviousVisit = async () => {
       const result = await collectionEvents.getLastVisit();
       if (typeof result === "object" && result?.error) {
@@ -204,6 +215,15 @@ export const collection = defineStore("collection", () => {
           date: new Date(purchase.date),
         }));
         isLoadingPurchases.value = false;
+      }
+    },
+    loadLabels = async (ignoreCache = false) => {
+      if (ignoreCache || (!isLoadingLabels.value && !labels.value)) {
+        isLoadingLabels.value = true;
+        labels.value = await collectionEvents.getLabels({
+          disableCache: ignoreCache,
+        });
+        isLoadingLabels.value = false;
       }
     },
     loadWatchedPublicationsWithSales = async (ignoreCache = false) => {
@@ -342,7 +362,9 @@ export const collection = defineStore("collection", () => {
     ...collectionUtils,
     issues,
     publicationUrlRoot,
+    createLabel,
     createPurchase,
+    deleteLabel,
     deletePurchase,
     hasRole,
     hasSuggestions,
@@ -350,9 +372,11 @@ export const collection = defineStore("collection", () => {
     copiesPerIssuecode,
     isLoadingSuggestions,
     issuecodesPerPublication,
+    labels,
     lastPublishedEdgesForCurrentUser,
     loadCollection,
     loadUserIssueQuotations,
+    loadLabels,
     loadLastPublishedEdgesForCurrentUser,
     loadMarketplaceContactMethods,
     loadPopularIssuesInCollection,

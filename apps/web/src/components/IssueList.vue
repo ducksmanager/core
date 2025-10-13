@@ -385,10 +385,14 @@ const {
   loadWatchedPublicationsWithSales,
   updateWatchedPublicationsWithSales,
   updateCollectionMultipleIssues,
+  loadLabels,
   loadPurchases,
 } = collection();
-const { issues: collectionIssues, purchases: collectionPurchases } =
-  storeToRefs(readonly ? publicCollection() : collection());
+const {
+  issues: collectionIssues,
+  purchases,
+  labels,
+} = storeToRefs(readonly ? publicCollection() : collection());
 const { watchedPublicationsWithSales } = storeToRefs(collection());
 
 const { conditions } = useCondition();
@@ -470,7 +474,7 @@ const copiesBySelectedIssuecode = $computed(() =>
               ? issueId === copyId
               : issuecode.replaceAll("_", " ") === copyIssuecode,
           )
-          .map((issue) => ({ ...issue, labels: new Set<string>() })),
+          .map((issue) => ({ ...issue, labelDescriptions: new Set<string>() })),
       ],
     };
   }, {}),
@@ -493,7 +497,6 @@ const issueIds = $computed(() =>
 
 let contextMenuKey = $ref<string>("context-menu");
 const userIssues = $computed(() => customIssues || collectionIssues.value);
-let purchases = $computed(() => collectionPurchases.value);
 const country = $computed(() => publicationcode.split("/")[0]);
 const publicationName = $computed(
   () => publicationNames.value[publicationcode],
@@ -595,6 +598,7 @@ const deletePublicationIssues = async (issuecodesToDelete: string[]) => {
       isToRead: false,
       isOnSale: false,
       purchaseId: null,
+      labelDescriptions: new Set<string>(),
     });
     selected = [];
     if (!issues?.length) {
@@ -739,9 +743,11 @@ const toggleWatched = async (key: string) => {
 
 (async () => {
   if (customIssues) {
-    collectionPurchases.value = [];
+    purchases.value = [];
+    labels.value = [];
   } else {
     await loadPurchases();
+    await loadLabels();
     await loadWatchedPublicationsWithSales(true);
   }
 })();
