@@ -31,7 +31,7 @@ export default [
     "plugin:vue/recommended",
     "plugin:prettier-vue/recommended",
     "prettier",
-    "plugin:@typescript-eslint/recommended"
+    "plugin:@typescript-eslint/recommended",
   ),
 
   {

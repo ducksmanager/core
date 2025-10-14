@@ -16,7 +16,6 @@ export const getPlayer = async (cookies?: {
 }) => {
   let player: player | null = null;
   if (cookies?.token) {
-    console.log(process.env.TOKEN_SECRET);
     try {
       const { id: ducksmanagerId, username } = jwt.verify(
         cookies.token,

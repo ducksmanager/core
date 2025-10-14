@@ -5,7 +5,7 @@ import { useSocketEvents } from "socket-call-server";
 import prisma from "../prisma/client";
 import { type entryurlDetailsDecision } from "../prisma/client_duckguessr/browser";
 import namespaces from "./namespaces";
-import { getPlayer } from "get-player";
+import { getPlayer } from "../get-player";
 
 export type MaintenanceServices = NamespaceProxyTarget<
   Socket<typeof listenEvents>,
