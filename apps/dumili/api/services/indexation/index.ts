@@ -756,7 +756,7 @@ const listenEvents = (services: IndexationServices) => ({
       ),
 
   updateIndexation: async (
-    indexation: Pick<indexation, "price" | "releaseDate"> & {
+    indexation: Pick<indexation, "price" | "releaseDate"|"title"> & {
       numberOfPages: number;
     },
   ) => {

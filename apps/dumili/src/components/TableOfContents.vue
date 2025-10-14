@@ -11,6 +11,7 @@
       <b-dropdown
         :auto-close="false"
         variant="light"
+        menu-class="vw-20 p-2"
         class="position-absolute h-100 end-0 d-flex"
         style="z-index: 1030"
       >
@@ -27,9 +28,31 @@
               )
             }}</b-alert
           >
-          <b-dropdown-item
-            >{{ $t("Date de publication") }}
-            <input
+          <b-form-group
+            class="mt-2"
+            label-for="title"
+            label-cols="4"
+            content-cols="8"
+            :label="$t('Titre')"
+          >
+            <b-form-input
+              id="title"
+              v-model="indexationEdit.title"
+              type="text"
+              maxlength="158"
+              v-bind="getInputProps()"
+              @click.stop="() => {}"
+            />
+          </b-form-group>
+          <b-form-group
+            class="mt-2"
+            label-for="release-date"
+            label-cols="4"
+            content-cols="8"
+            :label="$t('Date de publication')"
+          >
+            <b-form-input
+              id="release-date"
               :value="(indexationEdit.releaseDate as unknown as string)?.split('T')[0]"
               type="date"
               v-bind="getInputProps()"
@@ -39,26 +62,41 @@
                 }
               "
               @click.stop="() => {}"
-          /></b-dropdown-item>
-          <b-dropdown-item
-            >{{ $t("Prix") }}
-            <input
+            />
+          </b-form-group>
+          <b-form-group
+            class="mt-2"
+            maxlength="150"
+            label-for="price"
+            label-cols="4"
+            content-cols="8"
+            :label="$t('Prix')"
+          >
+            <b-form-input
+              id="price"
               v-model="indexationEdit.price"
               type="text"
               v-bind="getInputProps()"
               @click.stop="() => {}"
-          /></b-dropdown-item>
-          <b-dropdown-item
-            >{{ $t("Nombre de pages") }}
-            <input
+            />
+          </b-form-group>
+          <b-form-group
+            class="mt-2"
+            label-for="number-of-pages"
+            label-cols="4"
+            content-cols="8"
+            :label="$t('Nombre de pages')"
+          >
+            <b-form-input
               v-model.number="indexationEdit.numberOfPages"
               type="number"
               min="4"
               max="996"
               step="2"
               @click.stop="() => {}"
-          /></b-dropdown-item>
-          <b-dropdown-item>
+            />
+          </b-form-group>
+          <b-dropdown-item class="text-center">
             <b-button type="submit" variant="primary">{{ $t("OK") }}</b-button>
           </b-dropdown-item>
         </b-form>
@@ -121,7 +159,7 @@ const { indexationSocket } = inject(dumiliSocketInjectionKey)!;
 const { currentEntry } = storeToRefs(ui());
 const indexation = storeToRefs(suggestions()).indexation as Ref<FullIndexation>;
 const indexationEdit = ref() as Ref<
-  Pick<FullIndexation, "price" | "releaseDate"> & {
+  Pick<FullIndexation, "price" | "releaseDate" | "title"> & {
     numberOfPages: number;
   }
 >;
@@ -129,11 +167,12 @@ const indexationEdit = ref() as Ref<
 watch(
   indexation,
   () => {
-    const { price, releaseDate } = indexation.value;
+    const { price, releaseDate, title } = indexation.value;
     indexationEdit.value = {
       numberOfPages: indexation.value.pages.length,
       price,
       releaseDate,
+      title,
     };
   },
   { immediate: true },
@@ -274,5 +313,9 @@ watch(
 
 .page {
   border-top: 1px solid black;
+}
+
+:deep(.vw-20) {
+  width: 20vw;
 }
 </style>
