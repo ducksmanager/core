@@ -73,12 +73,6 @@ export default defineNuxtConfig({
       "~web/src/composables",
       "~web/src/stores",
     ],
-    presets: [
-      {
-        from: "~web/src/stores/coa",
-        imports: ["coa"],
-      },
-    ],
   },
 
   // TypeScript

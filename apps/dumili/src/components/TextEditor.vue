@@ -156,6 +156,7 @@ const issueRow = computed(() => ({
   issuecode: issuecode.value,
   details: [
     "h3",
+    ...[indexation.value!.title ? [indexation.value!.title] : []],
     ...[indexation.value!.price ? [`[price:${indexation.value!.price}]`] : []],
     ...[
       indexation.value!.releaseDate

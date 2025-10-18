@@ -69,13 +69,11 @@ export type DumiliIssueData = DumiliData<typeof issueColumns>;
 
 export type DumiliEntryData = DumiliData<typeof entryColumns>;
 
-export type DumiliOutput = [DumiliIssueData, ...DumiliEntryData[]] | [];
-
 export default () => {
-  const unText = (text?: string): DumiliOutput => {
+  const unText = (text?: string) => {
     const bracketRegex = /(?<=\[)([^:\]]+:[^\]]+)/gm;
 
-    if (!text) return [];
+    if (!text) return [] as const;
     const lines = text.split("\n");
     const result = lines.map((line, idx) => {
       let pos = 0;
@@ -101,10 +99,10 @@ export default () => {
                       return contents;
                     }
                   })
-                  ?.pop() || "";
+                  ?.reverse()
+                  .pop() || "";
             } else {
-              // TODO
-              value = "";
+              value = line.match(/(?<=h3 ).+?(?= \[)/)?.[0] || "";
             }
             entries.push([fieldName, value]);
           }

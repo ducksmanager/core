@@ -80,7 +80,14 @@ export default defineConfig({
   ],
 
   resolve: {
-    dedupe: ['pinia', 'vue', 'vue-i18n', 'vue-router', '@vueuse/core', 'bootstrap-vue-next'],
+    dedupe: [
+      "pinia",
+      "vue",
+      "vue-i18n",
+      "vue-router",
+      "@vueuse/core",
+      "bootstrap-vue-next",
+    ],
     alias: getViteAliases(path.resolve(__dirname, "../.."), {
       "~": path.resolve(__dirname, "src"),
       "~dumili-services": path.resolve(__dirname, "api/services"),

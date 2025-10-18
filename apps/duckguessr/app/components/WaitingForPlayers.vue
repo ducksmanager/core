@@ -67,7 +67,6 @@
 </template>
 
 <script lang="ts" setup>
-import { useSeoMeta } from "@unhead/vue";
 import { getDuckguessrUsername } from "~/composables/user";
 import { playerStore } from "~/stores/player";
 import type { player, userMedalPoints } from "~duckguessr-prisma-browser";

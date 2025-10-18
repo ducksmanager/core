@@ -1,7 +1,7 @@
 {
     "manifest_version": 3,
     "name": "Dumili Auto-indexer",
-    "version": "1.0",
+    "version": "1.0.1",
     "description": "Fills the Inducks online indexing form using Dumili output",
     "permissions": [
         "activeTab"

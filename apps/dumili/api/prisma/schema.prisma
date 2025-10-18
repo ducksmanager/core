@@ -1,7 +1,7 @@
 generator client {
-  provider      = "prisma-client"
-  output        = "client_dumili"
-  binaryTargets = ["native", "debian-openssl-1.1.x", "debian-openssl-3.0.x"]
+  provider   = "prisma-client"
+  output     = "client_dumili"
+  engineType = "client"
 }
 
 datasource db {
@@ -65,6 +65,7 @@ model indexation {
   id                        String            @id @db.VarChar(20)
   acceptedIssueSuggestionId Int?              @map("accepted_issue_suggestion_id")
   dmUserId                  Int               @map("dm_user_id")
+  title                     String?           @db.VarChar(158)
   price                     String?           @db.VarChar(150)
   releaseDate               String?           @map("release_date") @db.VarChar(10)
   entries                   entry[]
