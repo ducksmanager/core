@@ -130,7 +130,10 @@ export const collection = defineStore("collection", () => {
       await loadCollection(true);
     },
     createPurchase = async (date: string, description: string) => {
-      await collectionEvents.createPurchase(date, description);
+      const result = await collectionEvents.createPurchase(date, description);
+      if (typeof result === "object" && result?.error) {
+        return { error: result.error };
+      }
       await loadPurchases(true);
     },
     deletePurchase = async (id: number) => {
@@ -138,7 +141,10 @@ export const collection = defineStore("collection", () => {
       await loadPurchases(true);
     },
     createLabel = async (description: string) => {
-      await collectionEvents.createLabel(description);
+      const result = await collectionEvents.createLabel(description);
+      if (typeof result === "object" && result?.error) {
+        return { error: result.error };
+      }
       await loadLabels(true);
     },
     deleteLabel = async (description: string) => {

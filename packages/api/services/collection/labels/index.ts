@@ -28,10 +28,13 @@ export default ({ _socket }: UserServices) => ({
     };
     if (
       (await prismaDm.label.count({
-        where: criteria,
+        where: {
+          OR: [{ userId: null, description }, criteria],
+          description,
+        },
       })) > 0
     ) {
-      return { error: "Label already exists" };
+      return { error: "Label already exists" } as const;
     }
 
     await prismaDm.label.create({

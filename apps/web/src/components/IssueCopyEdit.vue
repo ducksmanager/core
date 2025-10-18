@@ -45,62 +45,67 @@
             <i-bi-calendar v-if="typeof stateId === 'number'" />
             {{ stateText }}
           </template>
-          <v-contextmenu-group :title="$t('Date d\'achat')">
+          <v-contextmenu-group>
             <v-contextmenu-item
               v-if="!newPurchase.context"
               :hide-on-click="false"
               class="clickable"
               @click.stop="
-                newPurchase.context = !newPurchase.context;
+                newPurchase.context = { error: undefined };
                 newPurchase.date = today;
               "
             >
               <b>{{ $t("Nouvelle date d'achat...") }}</b>
             </v-contextmenu-item>
-            <v-contextmenu-item
-              v-else
-              class="purchase-date"
-              @click.stop="() => {}"
-            >
-              <b-form-input
-                v-model="newPurchase.date"
-                type="text"
-                lazy-formatter
-                :formatter="formatDate"
-                pattern="[0-9]{4}-[0-9]{2}-[0-9]{2}"
-                required
-                class="form-control date px-0"
-                maxlength="10"
-                :placeholder="$t(`Date d'achat`)"
-                @click.stop="() => {}"
-              />
-              <input
-                v-model="newPurchase.description"
-                required
-                type="text"
-                class="form-control text-center"
-                maxlength="30"
-                :placeholder="$t('Description')"
-                @click.stop="() => {}"
-              />
-              <b-button
-                variant="success"
-                class="btn-sm"
-                @click.stop="
-                  createPurchase(newPurchase.date!, newPurchase.description!);
-                  newPurchase = newPurchaseDefault;
+            <template v-else>
+              <b-alert v-if="newPurchase.context?.error" variant="danger" show>
+                {{ newPurchase.context.error }}
+              </b-alert>
+              <v-contextmenu-item class="purchase-date" @click.stop="() => {}">
+                <b-form-input
+                  v-model="newPurchase.date"
+                  type="text"
+                  lazy-formatter
+                  :formatter="formatDate"
+                  pattern="[0-9]{4}-[0-9]{2}-[0-9]{2}"
+                  required
+                  class="form-control date px-0"
+                  maxlength="10"
+                  :placeholder="$t(`Date d'achat`)"
+                  @click.stop="() => {}"
+                />
+                <input
+                  v-model="newPurchase.description"
+                  required
+                  type="text"
+                  class="form-control text-center"
+                  maxlength="30"
+                  :placeholder="$t('Description')"
+                  @click.stop="() => {}"
+                />
+                <b-button
+                  variant="success"
+                  class="btn-sm"
+                  @click.stop="
+                  createPurchase(newPurchase.date!, newPurchase.description!)
+                  .then(() => {
+                    newPurchase = newPurchaseDefault;
+                  })
+                  .catch(({error}: {error: string}) => {
+                    newPurchase.context = { error };
+                  });
                 "
-              >
-                <i-bi-check />
-              </b-button>
-              <b-button
-                variant="warning"
-                class="btn-sm"
-                @click.stop="newPurchase.context = false"
-              >
-                <i-bi-x />
-              </b-button>
-            </v-contextmenu-item>
+                >
+                  <i-bi-check />
+                </b-button>
+                <b-button
+                  variant="warning"
+                  class="btn-sm"
+                  @click.stop="newPurchase = newPurchaseDefault"
+                >
+                  <i-bi-x />
+                </b-button> </v-contextmenu-item
+            ></template>
             <v-contextmenu-item
               v-for="{ id, date, description } in purchases"
               :key="`copy-purchase-${id}`"
@@ -127,20 +132,24 @@
         </v-contextmenu-submenu>
       </template>
     </v-contextmenu-group>
-    <v-contextmenu-group :title="$t('Étiquettes')">
+    <v-contextmenu-divider />
+    <v-contextmenu-group :title="$t('Étiquettes')" class="text-wrap">
       <b-button
-        v-for="{ description, ...label } in [
-          { id: 1, description: $t('À vendre'), icon: IBiCart },
-          { id: 2, description: $t('À lire'), icon: IBiBookmarkCheck },
-          ...[...newCopyState.labelDescriptions]
-            .filter((label) => !['À vendre', 'À lire'].includes(label))
-            .map((description) => ({
-              description,
-            })),
-        ]"
+        v-for="{ description, icon } in labels
+          ?.filter(
+            ({ userId, description }) =>
+              !userId || newCopyState.labelDescriptions.has(description),
+          )
+          .map(({ description }) =>
+            description === 'À vendre'
+              ? { icon: IBiCart, description: $t('À vendre') }
+              : description === 'À lire'
+                ? { icon: IBiBookmarkCheck, description: $t('À lire') }
+                : { description },
+          )"
         :key="description"
         :pressed="newCopyState.labelDescriptions.has(description)"
-        class="mx-2 border rounded-pill d-inline-flex align-items-center"
+        class="mt-1 mx-2 border rounded-pill align-items-center"
         toggle-class=" rounded-pill"
         variant="light"
         text-variant="secondary"
@@ -152,58 +161,66 @@
           class="me-2"
           color="green"
         />
-        <component :is="label.icon" v-if="'icon' in label" class="me-2" />{{
-          description
-        }}
+        <component :is="icon" v-if="icon" class="me-2" />{{ description }}
       </b-button>
       <v-contextmenu-submenu
         :title="$t(`Mes étiquettes`)"
         @mouseleave.prevent="() => {}"
       >
         <template #title> <i-bi-tags />{{ $t(`Mes étiquettes`) }} </template>
-        <v-contextmenu-group :title="$t('Étiquettes')">
+        <v-contextmenu-group>
           <v-contextmenu-item
             v-if="!newLabel.context"
             :hide-on-click="false"
             class="clickable"
-            @click.stop="newLabel.context = !newLabel.context"
+            @click.stop="newLabel.context = { error: undefined }"
           >
-            <b>{{ $t("Nouvelle étiquette...") }}</b>
-          </v-contextmenu-item>
-          <v-contextmenu-item
-            v-else
-            class="label-description"
-            @click.stop="() => {}"
-          >
-            <input
-              v-model="newLabel.description"
-              required
-              type="text"
-              class="form-control text-center"
-              maxlength="30"
-              :placeholder="$t('Description')"
+            <b>{{ $t("Nouvelle étiquette...") }}</b> </v-contextmenu-item
+          ><template v-else>
+            <b-alert v-if="newLabel.context?.error" variant="danger" show>
+              {{ newLabel.context.error }}
+            </b-alert>
+            <v-contextmenu-item
+              class="label-description"
               @click.stop="() => {}"
-            />
-            <b-button
-              variant="success"
-              class="btn-sm"
-              @click.stop="
-                  createLabel(newLabel.description!);
-                  newLabel = newLabelDefault;
+            >
+              <input
+                v-model="newLabel.description"
+                required
+                type="text"
+                class="form-control text-center"
+                maxlength="30"
+                :placeholder="$t('Description')"
+                @click.stop="() => {}"
+              />
+              <b-button
+                variant="success"
+                class="btn-sm"
+                @click.stop="
+                  createLabel(newLabel.description!)
+                    .then(() => {
+                      newLabel = newLabelDefault;
+                    })
+                    .catch(({error}: {error: string}) => {
+                      newLabel.context = { error };
+                    })
                 "
-            >
-              <i-bi-check />
-            </b-button>
-            <b-button
-              variant="warning"
-              class="btn-sm"
-              @click.stop="newLabel.context = false"
-            >
-              <i-bi-x />
-            </b-button>
-          </v-contextmenu-item>
+              >
+                <i-bi-check />
+              </b-button>
+              <b-button
+                variant="warning"
+                class="btn-sm"
+                @click.stop="newLabel = newLabelDefault"
+              >
+                <i-bi-x />
+              </b-button>
+            </v-contextmenu-item>
+          </template>
           <v-contextmenu-item
-            v-for="{ id, description } in labels"
+            v-for="{ id, description } in labels?.filter(
+              ({ userId }) => !!userId,
+            )"
             :key="`copy-label-${id}`"
             :hide-on-click="false"
             class="clickable label-description"
@@ -228,6 +245,7 @@
         </v-contextmenu-group>
       </v-contextmenu-submenu>
     </v-contextmenu-group>
+    <v-contextmenu-divider />
     <v-contextmenu-group :title="$t('Marketplace')">
       <template
         v-for="{
@@ -364,25 +382,33 @@ const today = new Date().toISOString().slice(0, 10);
 type NewPurchase = {
   description?: string;
   date?: string;
-  context?: boolean;
+  context:
+    | {
+        error: string | undefined;
+      }
+    | undefined;
 };
 
 const newPurchaseDefault: NewPurchase = {
   description: "",
   date: today,
-  context: false,
+  context: { error: undefined },
 };
 
 let newPurchase = $ref(newPurchaseDefault);
 
 type NewLabel = {
   description?: string;
-  context?: boolean;
+  context:
+    | {
+        error: string | undefined;
+      }
+    | undefined;
 };
 
 const newLabelDefault: NewLabel = {
   description: "",
-  context: false,
+  context: { error: undefined },
 };
 
 let newLabel = $ref(newLabelDefault);
