@@ -5,3 +5,16 @@ ducksmanager.net {
 sentry.ducksmanager.net {
     reverse_proxy web-sentry:80
 }
+
+outducks.ducksmanager.net {
+    # Try to serve static file first
+    file_server /server-data/covers
+    
+    # If file doesn't exist, fall back to reverse proxy
+    # rewrite * /hr.php?normalsize=1&image=https://outducks.org{http.request.uri}
+    
+    # reverse_proxy https://inducks.org {
+    #     header_up Cookie "coa-session={env.COA_SESSION}; coa-remember-me={env.COA_REMEMBER_ME}"
+    #     header_up Host "inducks.org"
+    #}
+}
