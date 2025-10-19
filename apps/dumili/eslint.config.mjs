@@ -24,6 +24,7 @@ export default [
       "**/node_modules",
       "**/*.json",
       "**/*.yml",
+      "**/*.yaml",
     ],
   },
   ...vueI18n.configs["flat/recommended"],

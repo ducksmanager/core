@@ -2,10 +2,10 @@ import type { Socket } from "socket.io";
 import type { NamespaceProxyTarget } from "socket-call-server";
 import { useSocketEvents } from "socket-call-server";
 
+import { getPlayer } from "../get-player";
 import prisma from "../prisma/client";
 import { type entryurlDetailsDecision } from "../prisma/client_duckguessr/browser";
 import namespaces from "./namespaces";
-import { getPlayer } from "../get-player";
 
 export type MaintenanceServices = NamespaceProxyTarget<
   Socket<typeof listenEvents>,

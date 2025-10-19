@@ -8,8 +8,8 @@ import { server as datasets } from "./services/datasets";
 import { createGameSocket } from "./services/game";
 // import { createMatchmakingSocket } from "./services/game";
 import { server as home } from "./services/home";
-import { server as player } from "./services/player";
 import { server as maintenance } from "./services/maintenance";
+import { server as player } from "./services/player";
 
 (BigInt.prototype as any).toJSON = function () {
   const int = Number.parseInt(this.toString());

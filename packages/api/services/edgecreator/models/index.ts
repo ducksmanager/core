@@ -36,10 +36,7 @@ export default () => ({
               options: {},
             };
           }
-          Object.assign(
-            acc[issuecode][stepNumber].options,
-            options,
-          );
+          Object.assign(acc[issuecode][stepNumber].options, options);
           return acc;
         },
         {},
