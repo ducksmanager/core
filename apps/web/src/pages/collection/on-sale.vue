@@ -38,7 +38,7 @@ alias: [/collection/a-lire]
       v-for="publicationcode in publicationCodes"
       :key="publicationcode"
       :publicationcode="publicationcode"
-      on-sale-stack-only
+      :filters="new Set([ON_SALE_LABEL_DESCRIPTION])"
     />
   </div>
   <div v-else>

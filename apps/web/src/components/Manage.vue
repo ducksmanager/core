@@ -80,16 +80,39 @@
           }}
         </b-alert>
       </template>
-      <template #non-empty-collection>
-        <div class="mb-3">
-          {{ $t("Cliquez sur l'un des magazines pour éditer sa liste !") }}
-        </div>
-      </template>
     </ShortStats>
+
+    <b-button
+      v-model:pressed="isFilterOpen"
+      class="me-2 d-flex align-items-center"
+      data-bs-theme="dark"
+    >
+      <i-bi-tags class="me-2" />{{ $t("Filter les numéros affichés") }}
+      <i-bi-caret-right v-if="isFilterOpen" class="ms-2" />
+      <i-bi-caret-right-fill v-else class="ms-2" />
+    </b-button>
+    <template v-if="isFilterOpen">
+      <label-pill-button
+        v-for="label in labelsWithIcons"
+        :key="label.description"
+        v-bind="label"
+        :pressed="label.description in labelFilters"
+        @update:pressed="
+          (pressed) => {
+            if (pressed) {
+              labelFilters[label.description] = true;
+            } else {
+              delete labelFilters[label.description];
+            }
+          }
+        "
+      />
+    </template>
     <PublicationList />
     <IssueList
       v-if="publicationcode || mostPossessedPublication"
       :publicationcode="(publicationcode || mostPossessedPublication)!"
+      :filters="new Set(Object.keys(labelFilters))"
     />
   </div>
 </template>
@@ -108,6 +131,7 @@ const { loadCollection, loadPurchases, loadMarketplaceContactMethods } =
 const {
   marketplaceContactMethods,
   issuesInOnSaleStack,
+  labelsWithIcons,
   user,
   total,
   totalPerPublication,
@@ -125,6 +149,9 @@ const {
 } = marketplace();
 
 const { buyerUserIds, sellerUserIds } = storeToRefs(marketplace());
+
+const isFilterOpen = $ref(false);
+const labelFilters = useUrlSearchParams<Record<Filter, true>>("hash-params");
 
 watch(
   totalPerPublication,

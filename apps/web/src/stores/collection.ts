@@ -16,9 +16,18 @@ import type {
   purchase,
   subscription,
 } from "~prisma-schemas/schemas/dm";
+import IBiCart from "~icons/bi/cart";
+import IBiBookmarkCheck from "~icons/bi/bookmark-check";
 
 import useCollection from "../composables/useCollection";
 import { socketInjectionKey } from "../composables/useDmSocket";
+
+export const ON_SALE_LABEL_DESCRIPTION = "À vendre";
+export const TO_READ_LABEL_DESCRIPTION = "À lire";
+export type Filter =
+  | typeof ON_SALE_LABEL_DESCRIPTION
+  | typeof TO_READ_LABEL_DESCRIPTION
+  | (string & {});
 
 export type IssueWithPublicationcodeOptionalId = Omit<
   issue,
@@ -119,6 +128,18 @@ export const collection = defineStore("collection", () => {
           user.value.marketplaceAcceptsExchanges || false,
       };
     }),
+    labelsWithIcons = computed(() =>
+      labels.value?.map(({ id, userId, description }) => ({
+        id,
+        description,
+        userId,
+        ...(description === ON_SALE_LABEL_DESCRIPTION
+          ? { icon: IBiCart }
+          : description === TO_READ_LABEL_DESCRIPTION
+            ? { icon: IBiBookmarkCheck }
+            : {}),
+      })),
+    ),
     updateCollectionSingleIssue = async (data: CollectionUpdateSingleIssue) => {
       await collectionEvents.addOrChangeCopies(data);
       await loadCollection(true);
@@ -379,6 +400,7 @@ export const collection = defineStore("collection", () => {
     isLoadingSuggestions,
     issuecodesPerPublication,
     labels,
+    labelsWithIcons,
     lastPublishedEdgesForCurrentUser,
     loadCollection,
     loadUserIssueQuotations,

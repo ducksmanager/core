@@ -343,6 +343,7 @@
 
 <script setup lang="ts">
 import type { issue } from "~prisma-schemas/schemas/dm";
+import type { Filter } from "../stores/collection";
 
 import ContextMenuOnSaleByOthers from "./ContextMenuOnSaleByOthers.vue";
 import ContextMenuOwnCollection from "./ContextMenuOwnCollection.vue";
@@ -364,21 +365,19 @@ const {
   customIssues = null,
   duplicatesOnly = false,
   groupUserCopies = true,
-  onSaleStackOnly = false,
   publicationcode,
-  readStackOnly = false,
   onSaleByOthers = false,
   readonly = false,
+  filters = new Set<Filter>(),
 } = defineProps<{
   publicationcode: string;
   duplicatesOnly?: boolean;
-  readStackOnly?: boolean;
-  onSaleStackOnly?: boolean;
   customIssues?: (issue & { issuecode: string })[];
   onSaleByOthers?: boolean;
   groupUserCopies?: boolean;
   contextMenuComponentName?: "context-menu-on-sale-by-others";
   readonly?: boolean;
+  filters?: Set<Filter>;
 }>();
 
 const {
@@ -485,9 +484,7 @@ let preselectedIndexEnd = $ref<number>();
 let currentIssuecodeOpened = $shallowRef<string>();
 const issueNumberTextPrefix = $computed(() => $t("n°"));
 const boughtOnTextPrefix = $computed(() => $t("Acheté le"));
-const showFilter = $computed(
-  () => !duplicatesOnly && !readStackOnly && !onSaleStackOnly,
-);
+const showFilter = $computed(() => !duplicatesOnly && !filters.size);
 
 const issueIds = $computed(() =>
   Object.values(copiesBySelectedIssuecode)
@@ -676,13 +673,13 @@ const loadIssues = async () => {
       );
     }
 
-    if (readStackOnly) {
+    if (filters.has(TO_READ_LABEL_DESCRIPTION)) {
       issues = issues.filter(
         ({ userCopies }) =>
           userCopies.filter(({ isToRead }) => isToRead).length,
       );
     }
-    if (onSaleStackOnly) {
+    if (filters.has(ON_SALE_LABEL_DESCRIPTION)) {
       issues = issues.filter(
         ({ userCopies }) =>
           userCopies.filter(({ isOnSale }) => isOnSale).length,
@@ -712,6 +709,14 @@ watch(
   () => loadIssues(),
   {
     immediate: true,
+  },
+);
+
+watch(
+  () => filters,
+  () => loadIssues(),
+  {
+    deep: true,
   },
 );
 

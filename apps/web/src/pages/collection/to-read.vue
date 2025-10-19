@@ -8,7 +8,7 @@ alias: [/collection/a-lire]
       v-for="publicationcode in publicationCodes"
       :key="publicationcode"
       :publicationcode="publicationcode"
-      read-stack-only
+      :filters="new Set([TO_READ_LABEL_DESCRIPTION])"
     />
   </div>
   <div v-else>

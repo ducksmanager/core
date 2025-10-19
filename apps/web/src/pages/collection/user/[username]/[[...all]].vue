@@ -11,11 +11,6 @@ meta:
           {{ $t("La collection de {username} est vide.", { username }) }}
         </b-alert>
       </template>
-      <template #non-empty-collection>
-        <div class="mb-3">
-          {{ $t("Cliquez sur l'un des magazines pour voir sa liste !") }}
-        </div>
-      </template>
     </ShortStats>
     <PublicationList is-public />
     <IssueList

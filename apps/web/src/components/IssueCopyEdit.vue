@@ -134,35 +134,18 @@
     </v-contextmenu-group>
     <v-contextmenu-divider />
     <v-contextmenu-group :title="$t('Étiquettes')" class="text-wrap">
-      <b-button
-        v-for="{ description, icon } in labels
-          ?.filter(
-            ({ userId, description }) =>
-              !userId || newCopyState.labelDescriptions.has(description),
-          )
-          .map(({ description }) =>
-            description === 'À vendre'
-              ? { icon: IBiCart, description: $t('À vendre') }
-              : description === 'À lire'
-                ? { icon: IBiBookmarkCheck, description: $t('À lire') }
-                : { description },
-          )"
-        :key="description"
-        :pressed="newCopyState.labelDescriptions.has(description)"
-        class="mt-1 mx-2 border rounded-pill align-items-center"
-        toggle-class=" rounded-pill"
-        variant="light"
-        text-variant="secondary"
-        @click.stop="
-          toggleSetElement(newCopyState.labelDescriptions, description)
+      <label-pill-button
+        v-for="label in labelsWithIcons?.filter(
+          ({ userId, description }) =>
+            !userId || newCopyState.labelDescriptions.has(description),
+        )"
+        :key="label.description"
+        v-bind="label"
+        :pressed="newCopyState.labelDescriptions.has(label.description)"
+        @update:pressed="
+          toggleSetElement(newCopyState.labelDescriptions, label.description)
         "
-        ><i-bi-check
-          v-if="newCopyState.labelDescriptions.has(description)"
-          class="me-2"
-          color="green"
-        />
-        <component :is="icon" v-if="icon" class="me-2" />{{ description }}
-      </b-button>
+      />
       <v-contextmenu-submenu
         :title="$t(`Mes étiquettes`)"
         @mouseleave.prevent="() => {}"
@@ -218,7 +201,7 @@
             </v-contextmenu-item>
           </template>
           <v-contextmenu-item
-            v-for="{ id, description } in labels?.filter(
+            v-for="{ id, description } in labelsWithIcons?.filter(
               ({ userId }) => !!userId,
             )"
             :key="`copy-label-${id}`"
@@ -343,8 +326,6 @@
   </template>
 </template>
 <script setup lang="ts">
-import IBiCart from "~icons/bi/cart";
-import IBiBookmarkCheck from "~icons/bi/bookmark-check";
 import IBiCalendar from "~icons/bi/calendar";
 import type { IssueWithPublicationcodeOptionalId } from "~/stores/collection";
 import type { CollectionUpdateMultipleIssues } from "~dm-types/CollectionUpdate";
@@ -374,7 +355,7 @@ const { issueRequestsAsSeller, buyerUserNamesById } =
 
 const { createPurchase, deletePurchase, createLabel, deleteLabel } =
   collection();
-const { issues, purchases, labels } = storeToRefs(collection());
+const { issues, purchases, labelsWithIcons } = storeToRefs(collection());
 const { issuecodeDetails } = storeToRefs(coa());
 
 const today = new Date().toISOString().slice(0, 10);
