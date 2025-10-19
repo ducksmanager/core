@@ -8,7 +8,13 @@ export default defineConfig(
   tseslint.configs.recommended,
   prettierConfig,
   {
-    ignores: ["**/node_modules", "**/dist", "**/bundle.mjs", "**/*.d.ts"],
+    ignores: [
+      "**/node_modules",
+      "**/dist",
+      "**/bundle.mjs",
+      "**/*.d.ts",
+      "prisma/client_*",
+    ],
   },
   {
     languageOptions: {

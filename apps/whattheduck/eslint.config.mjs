@@ -27,6 +27,8 @@ export default [
       'auto-imports.d.ts',
       'components.d.ts',
       '**/*.json',
+      '**/*.yml',
+      '**/*.yaml',
     ],
   },
   ...vueI18n.configs['flat/recommended'],

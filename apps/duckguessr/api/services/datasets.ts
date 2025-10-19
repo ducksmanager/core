@@ -33,7 +33,7 @@ const listenEvents = () => ({
     oldestDateFilterMin: number | undefined;
     oldestDateFilterMax: number | undefined;
   }) => {
-    let errors: string[] = [];
+    const errors: string[] = [];
     if (personNationalityFilter && !personNationalityFilter.length) {
       errors.push(
         "At least one nationality is required when using the nationality filter",

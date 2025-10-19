@@ -9,6 +9,7 @@ import {
 
 import { COVER, STORY } from "~dumili-types/storyKinds";
 import { getEntryPages } from "~dumili-utils/entryPages";
+import prisma from "~prisma/client";
 import type {
   aiKumikoResult,
   entry,
@@ -20,7 +21,6 @@ import type {
 } from "~prisma/client_dumili/client";
 
 import type { SessionDataWithIndexation } from "../../index";
-import prisma from "~prisma/client";
 import { RequiredAuthMiddleware } from "../_auth";
 import namespaces from "../namespaces";
 import { runKumikoOnPages } from "./kumiko";
@@ -756,7 +756,7 @@ const listenEvents = (services: IndexationServices) => ({
       ),
 
   updateIndexation: async (
-    indexation: Pick<indexation, "price" | "releaseDate"|"title"> & {
+    indexation: Pick<indexation, "price" | "releaseDate" | "title"> & {
       numberOfPages: number;
     },
   ) => {

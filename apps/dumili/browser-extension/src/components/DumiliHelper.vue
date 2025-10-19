@@ -98,7 +98,7 @@ if (
 ) {
   sessionData.value = { content: "", currentRow: 0, auto: false };
   alert(
-    'All the entries have been created. Review them and then click on "Submit to Inducks".'
+    'All the entries have been created. Review them and then click on "Submit to Inducks".',
   );
 }
 
@@ -107,7 +107,7 @@ const pickOption = (select: JQuery<HTMLSelectElement>, optionValue: string) => {
   if (selectElement) {
     const options = Array.from(selectElement.options) as SelectOption[];
     const matchingOption = options.find(
-      (option) => option.value.toLowerCase() === optionValue.toLowerCase()
+      (option) => option.value.toLowerCase() === optionValue.toLowerCase(),
     );
 
     if (matchingOption) {
@@ -116,7 +116,7 @@ const pickOption = (select: JQuery<HTMLSelectElement>, optionValue: string) => {
       selectElement.dispatchEvent(new Event("change", { bubbles: true }));
     } else {
       window.alert(
-        `Option with value ${optionValue} in dropdown ${select.attr("name")} not found`
+        `Option with value ${optionValue} in dropdown ${select.attr("name")} not found`,
       );
     }
   } else {
@@ -127,10 +127,12 @@ const pickOption = (select: JQuery<HTMLSelectElement>, optionValue: string) => {
 const fillFormFields = <Data extends DumiliEntryData | DumiliIssueData>(
   data: Partial<Data>,
   mappingOverride?: Partial<Record<keyof Data, string>>,
-  incrementCurrentRow = true
+  incrementCurrentRow = true,
 ): void => {
   let lastFilledInput = $();
-  for (const [key, value] of Object.entries(data).filter(([key, value]) => key !== 'entrycode' && !!value)) {
+  for (const [key, value] of Object.entries(data).filter(
+    ([key, value]) => key !== "entrycode" && !!value,
+  )) {
     const actualKey = mappingOverride?.[key as keyof Data] ?? key;
     const input = $(`[name='${actualKey}']`);
     if (input.length) {
@@ -138,7 +140,7 @@ const fillFormFields = <Data extends DumiliEntryData | DumiliIssueData>(
       input.val(value as string);
     } else {
       alert(
-        `No field match in the form, data: ${JSON.stringify({ [actualKey]: value })}`
+        `No field match in the form, data: ${JSON.stringify({ [actualKey]: value })}`,
       );
     }
   }
@@ -166,7 +168,7 @@ const handleNext = () => {
     if (ctx.entryId !== undefined) {
       // "Edit entry" page
       fillFormFields(
-        dumiliOutput.value[sessionData.value.currentRow] as DumiliEntryData
+        dumiliOutput.value[sessionData.value.currentRow] as DumiliEntryData,
       );
     } else if (ctx.hasEditedIssueDetails) {
       $(`a:contains("Edit entries")`)[0]?.click();
@@ -178,10 +180,10 @@ const handleNext = () => {
         fillFormFields(
           Object.fromEntries(
             Object.entries(dumiliOutput.value[0]).filter(
-              ([key]) => !["issNotInInducks", "h3"].includes(key)
-            )
+              ([key]) => !["issNotInInducks", "h3"].includes(key),
+            ),
           ),
-          { pages: "npages" } as Partial<DumiliIssueData>
+          { pages: "npages" } as Partial<DumiliIssueData>,
         );
       }
     }
@@ -201,7 +203,7 @@ const handleNext = () => {
           issNotInInducks: issuecodeNoCountryParts[1],
         },
         undefined,
-        false
+        false,
       );
     } else if (ctx.countrycode) {
       pickOption($('select[name="s"]'), issuecodeNoCountryParts[0]);
