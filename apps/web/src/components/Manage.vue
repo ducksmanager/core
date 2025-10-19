@@ -88,10 +88,10 @@
       data-bs-theme="dark"
     >
       <i-bi-tags class="me-2" />{{ $t("Filter les numéros affichés") }}
-      <i-bi-caret-right v-if="isFilterOpen" class="ms-2" />
-      <i-bi-caret-right-fill v-else class="ms-2" />
+      <i-bi-caret-down v-if="isFilterOpen" class="ms-2" />
+      <i-bi-caret-down-fill v-else class="ms-2" />
     </b-button>
-    <template v-if="isFilterOpen">
+    <b-collapse v-model="isFilterOpen" class="mt-1 mb-3">
       <label-pill-button
         v-for="label in labelsWithIcons"
         :key="label.description"
@@ -107,13 +107,15 @@
           }
         "
       />
+    </b-collapse>
+    <PublicationList :filtered-list="filteredPublicationcodes" />
+    <template v-if="publicationcode || mostPossessedPublication">
+      <IssueList
+        v-if="publicationcode || mostPossessedPublication"
+        :publicationcode="(publicationcode || mostPossessedPublication)!"
+        :filters="new Set(Object.keys(labelFilters))"
+      />
     </template>
-    <PublicationList />
-    <IssueList
-      v-if="publicationcode || mostPossessedPublication"
-      :publicationcode="(publicationcode || mostPossessedPublication)!"
-      :filters="new Set(Object.keys(labelFilters))"
-    />
   </div>
 </template>
 
@@ -131,6 +133,7 @@ const { loadCollection, loadPurchases, loadMarketplaceContactMethods } =
 const {
   marketplaceContactMethods,
   issuesInOnSaleStack,
+  issues,
   labelsWithIcons,
   user,
   total,
@@ -150,8 +153,31 @@ const {
 
 const { buyerUserIds, sellerUserIds } = storeToRefs(marketplace());
 
-const isFilterOpen = $ref(false);
 const labelFilters = useUrlSearchParams<Record<Filter, true>>("hash-params");
+
+const labelFiltersSet = $computed(() => new Set(Object.keys(labelFilters)));
+
+const isFilterOpen = $ref(labelFiltersSet.size > 0);
+
+const filteredPublicationcodes = $computed(() =>
+  labelFiltersSet.has(TO_READ_LABEL_DESCRIPTION)
+    ? new Set(
+        Object.keys(
+          issues.value
+            ?.filter(({ isToRead }) => isToRead)
+            .groupBy("publicationcode") || {},
+        ),
+      )
+    : labelFiltersSet.has(ON_SALE_LABEL_DESCRIPTION)
+      ? new Set(
+          Object.keys(
+            issues.value
+              ?.filter(({ isOnSale }) => isOnSale)
+              .groupBy("publicationcode") || {},
+          ),
+        )
+      : new Set(Object.keys(totalPerPublication.value || {})),
+);
 
 watch(
   totalPerPublication,
