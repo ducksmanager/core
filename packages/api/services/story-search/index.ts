@@ -14,13 +14,13 @@ export const getSession = async () => {
     console.log("Loading model...");
     try {
       session = await InferenceSession.create(
-        "./services/story-search/model/comic_embedding_model.onnx",
+        "./services/story-search/model/efficientnet_b0_comic_embedding.onnx",
       );
       console.log("Model loaded");
     } catch (error) {
       console.error("Failed to load ONNX model:", error);
       throw new Error(
-        "ONNX model not found. Please ensure the model file is downloaded from GitHub release v1.0.0-model",
+        "EfficientNet-B0 ONNX model not found. Please ensure efficientnet_b0_comic_embedding.onnx is in the model directory",
       );
     }
   }
@@ -52,9 +52,13 @@ const preprocessImage = async (input: string | Buffer) => {
   const { data } = image;
   const float32Data = new Float32Array(data.length);
 
-  // Normalize to [-1, 1] just like in training
+  // ImageNet normalization for EfficientNet: normalize to [0,1] then apply mean/std
+  const mean = [0.485, 0.456, 0.406];
+  const std = [0.229, 0.224, 0.225];
+  
   for (let i = 0; i < data.length; i++) {
-    float32Data[i] = (data[i] / 255 - 0.5) / 0.5;
+    const channel = i % 3; // R=0, G=1, B=2
+    float32Data[i] = (data[i] / 255 - mean[channel]) / std[channel];
   }
 
   // Channels first [1,3,224,224]
