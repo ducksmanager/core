@@ -223,8 +223,8 @@ importers:
         specifier: ^10.5.0
         version: 10.5.0(@typescript-eslint/parser@8.46.0(eslint@9.37.0(jiti@2.6.1))(typescript@5.9.3))(eslint@9.37.0(jiti@2.6.1))(vue-eslint-parser@10.2.0(eslint@9.37.0(jiti@2.6.1)))
       glob:
-        specifier: ^10.4.5
-        version: 10.4.5
+        specifier: ^11.0.3
+        version: 11.0.3
       globals:
         specifier: ^15.15.0
         version: 15.15.0
