@@ -1,22 +1,105 @@
 version: 2
 updates:
+  # Root
   - package-ecosystem: "npm"
     directory: "/"
     schedule:
-      interval: "daily"
+      interval: "weekly"
+
+  # Packages
   - package-ecosystem: "npm"
     directory: "/packages/api"
     schedule:
-      interval: "daily"
+      interval: "weekly"
+  - package-ecosystem: "npm"
+    directory: "/packages/backup"
+    schedule:
+      interval: "weekly"
   - package-ecosystem: "npm"
     directory: "/packages/prisma-schemas"
     schedule:
-      interval: "daily"
+      interval: "weekly"
   - package-ecosystem: "npm"
     directory: "/packages/types"
     schedule:
-      interval: "daily"
+      interval: "weekly"
+
+  # Apps
+  - package-ecosystem: "npm"
+    directory: "/apps/coa-updater"
+    schedule:
+      interval: "weekly"
+  - package-ecosystem: "npm"
+    directory: "/apps/cover-updater"
+    schedule:
+      interval: "weekly"
+  - package-ecosystem: "npm"
+    directory: "/apps/duck-estimator"
+    schedule:
+      interval: "weekly"
+  - package-ecosystem: "npm"
+    directory: "/apps/duckguessr"
+    schedule:
+      interval: "weekly"
+  - package-ecosystem: "npm"
+    directory: "/apps/dumili"
+    schedule:
+      interval: "weekly"
+  - package-ecosystem: "npm"
+    directory: "/apps/edgecreator"
+    schedule:
+      interval: "weekly"
+  - package-ecosystem: "npm"
+    directory: "/apps/edges"
+    schedule:
+      interval: "weekly"
+  - package-ecosystem: "npm"
+    directory: "/apps/stats-updater"
+    schedule:
+      interval: "weekly"
   - package-ecosystem: "npm"
     directory: "/apps/web"
     schedule:
-      interval: "daily"
+      interval: "weekly"
+  - package-ecosystem: "npm"
+    directory: "/apps/whattheduck"
+    schedule:
+      interval: "weekly"
+
+  # Utilities
+  - package-ecosystem: "npm"
+    directory: "/util/ci"
+    schedule:
+      interval: "weekly"
+  - package-ecosystem: "npm"
+    directory: "/util/group-by"
+    schedule:
+      interval: "weekly"
+
+  # Python
+  - package-ecosystem: "pip"
+    directory: "/apps/dumili/api/kumiko"
+    schedule:
+      interval: "weekly"
+  - package-ecosystem: "pip"
+    directory: "/apps/dumili/api/paddleocr"
+    schedule:
+      interval: "weekly"
+
+  # Docker
+  - package-ecosystem: "docker"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+
+  # Android (Gradle)
+  - package-ecosystem: "gradle"
+    directory: "/apps/whattheduck/android"
+    schedule:
+      interval: "weekly"
+
+  # GitHub Actions
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
