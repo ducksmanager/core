@@ -60,7 +60,7 @@ jobs:
           node-version: 22
           cache: "pnpm"
 
-      - uses: oven-sh/setup-bun@v1
+      - uses: oven-sh/setup-bun@v2
 
       - name: Check apps changed since the last successful commit
         run: |
