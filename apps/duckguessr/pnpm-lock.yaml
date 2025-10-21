@@ -76,8 +76,8 @@ importers:
         specifier: ^3.3.1
         version: 3.3.1
       '@eslint/js':
-        specifier: ^9.36.0
-        version: 9.37.0
+        specifier: ^9.38.0
+        version: 9.38.0
       '@iconify-json/bi':
         specifier: ^1.2.6
         version: 1.2.6
@@ -547,6 +547,10 @@ packages:
 
   '@eslint/js@9.37.0':
     resolution: {integrity: sha512-jaS+NJ+hximswBG6pjNX0uEJZkrT0zwpVi3BA3vX22aFGjJjmgSTSmPpZCRKmoBL5VY/M6p0xsSJx7rk7sy5gg==}
+    engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
+
+  '@eslint/js@9.38.0':
+    resolution: {integrity: sha512-UZ1VpFvXf9J06YG9xQBdnzU+kthors6KjhMAl6f4gH4usHyh31rUf2DLGInT8RFYIReYXNSydgPY0V2LuWgl7A==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
 
   '@eslint/object-schema@2.1.6':
@@ -2120,6 +2124,9 @@ packages:
 
   '@types/node@16.18.126':
     resolution: {integrity: sha512-OTcgaiwfGFBKacvfwuHzzn1KLxH/er8mluiy8/uM3sGXHaRe73RrSIj01jow9t4kJEW633Ov+cOexXeiApTyAw==}
+
+  '@types/node@22.18.12':
+    resolution: {integrity: sha512-BICHQ67iqxQGFSzfCFTT7MRQ5XcBjG5aeKh5Ok38UBbPe5fxTyE+aHFxwVrGyr8GNlqFMLKD1D3P2K/1ks8tog==}
 
   '@types/node@22.18.9':
     resolution: {integrity: sha512-5yBtK0k/q8PjkMXbTfeIEP/XVYnz1R9qZJ3yUicdEW7ppdDJfe+MqXEhpqDL3mtn4Wvs1u0KLEG0RXzCgNpsSg==}
@@ -6558,6 +6565,8 @@ snapshots:
 
   '@eslint/js@9.37.0': {}
 
+  '@eslint/js@9.38.0': {}
+
   '@eslint/object-schema@2.1.6': {}
 
   '@eslint/plugin-kit@0.3.5':
@@ -6879,7 +6888,7 @@ snapshots:
     dependencies:
       '@antfu/install-pkg': 1.1.0
       '@clack/prompts': 0.11.0
-      '@eslint/js': 9.37.0
+      '@eslint/js': 9.38.0
       '@nuxt/eslint-plugin': 1.9.0(eslint@9.37.0(jiti@2.6.1))(typescript@5.9.3)
       '@stylistic/eslint-plugin': 5.4.0(eslint@9.37.0(jiti@2.6.1))
       '@typescript-eslint/eslint-plugin': 8.46.0(@typescript-eslint/parser@8.46.0(eslint@9.37.0(jiti@2.6.1))(typescript@5.9.3))(eslint@9.37.0(jiti@2.6.1))(typescript@5.9.3)
@@ -8383,7 +8392,7 @@ snapshots:
   '@types/body-parser@1.19.6':
     dependencies:
       '@types/connect': 3.4.38
-      '@types/node': 22.18.9
+      '@types/node': 22.18.12
 
   '@types/chai@5.2.2':
     dependencies:
@@ -8422,11 +8431,11 @@ snapshots:
 
   '@types/etag@1.8.3':
     dependencies:
-      '@types/node': 22.18.9
+      '@types/node': 22.18.12
 
   '@types/express-serve-static-core@5.1.0':
     dependencies:
-      '@types/node': 22.18.9
+      '@types/node': 22.18.12
       '@types/qs': 6.14.0
       '@types/range-parser': 1.2.7
       '@types/send': 1.2.0
@@ -8456,6 +8465,10 @@ snapshots:
       '@types/node': 22.18.9
 
   '@types/node@16.18.126': {}
+
+  '@types/node@22.18.12':
+    dependencies:
+      undici-types: 6.21.0
 
   '@types/node@22.18.9':
     dependencies:
@@ -8491,12 +8504,12 @@ snapshots:
 
   '@types/send@1.2.0':
     dependencies:
-      '@types/node': 22.18.9
+      '@types/node': 22.18.12
 
   '@types/serve-static@1.15.7':
     dependencies:
       '@types/http-errors': 2.0.5
-      '@types/node': 22.18.9
+      '@types/node': 22.18.12
       '@types/send': 1.2.0
 
   '@types/shimmer@1.2.0': {}
@@ -8531,13 +8544,13 @@ snapshots:
 
   '@types/webpack-sources@3.2.3':
     dependencies:
-      '@types/node': 22.18.9
+      '@types/node': 22.18.12
       '@types/source-list-map': 0.1.6
       source-map: 0.7.6
 
   '@types/webpack@4.41.40':
     dependencies:
-      '@types/node': 22.18.9
+      '@types/node': 22.18.12
       '@types/tapable': 1.0.12
       '@types/uglify-js': 3.17.5
       '@types/webpack-sources': 3.2.3
@@ -10617,7 +10630,7 @@ snapshots:
 
   jest-worker@27.5.1:
     dependencies:
-      '@types/node': 22.18.9
+      '@types/node': 22.18.12
       merge-stream: 2.0.0
       supports-color: 8.1.1
 
