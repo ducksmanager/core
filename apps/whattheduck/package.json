@@ -75,7 +75,7 @@
     "@capgo/cli": "^7.17.6",
     "@eslint/compat": "^1.4.0",
     "@eslint/eslintrc": "^3.3.1",
-    "@eslint/js": "^9.36.0",
+    "@eslint/js": "^9.38.0",
     "@histoire/plugin-vue": "1.0.0-alpha.3",
     "@intlify/eslint-plugin-vue-i18n": "^4.1.0",
     "@intlify/unplugin-vue-i18n": "^6.0.8",
