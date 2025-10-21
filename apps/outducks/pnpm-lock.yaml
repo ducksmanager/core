@@ -1,0 +1,45 @@
+lockfileVersion: '9.0'
+
+settings:
+  autoInstallPeers: true
+  excludeLinksFromLockfile: false
+
+importers:
+
+  .:
+    dependencies:
+      dotenv:
+        specifier: ^17.2.3
+        version: 17.2.3
+      playwright-firefox:
+        specifier: ~1.56.1
+        version: 1.56.1
+      ~prisma-schemas:
+        specifier: workspace:*
+        version: link:../../packages/prisma-schemas
+
+packages:
+
+  dotenv@17.2.3:
+    resolution: {integrity: sha512-JVUnt+DUIzu87TABbhPmNfVdBDt18BLOWjMUFJMSi/Qqg7NTYtabbvSNJGOJ7afbRuv9D/lngizHtP7QyLQ+9w==}
+    engines: {node: '>=12'}
+
+  playwright-core@1.56.1:
+    resolution: {integrity: sha512-hutraynyn31F+Bifme+Ps9Vq59hKuUCz7H1kDOcBs+2oGguKkWTU50bBWrtz34OUWmIwpBTWDxaRPXrIXkgvmQ==}
+    engines: {node: '>=18'}
+    hasBin: true
+
+  playwright-firefox@1.56.1:
+    resolution: {integrity: sha512-//oekhpDBpSct8r5HiVWVO9CzTnnek5EIp6rOmsOQas1NM3HITBxCUvXnSDno2lygBHhtuqflrO+MQtymy1vdQ==}
+    engines: {node: '>=18'}
+    hasBin: true
+
+snapshots:
+
+  dotenv@17.2.3: {}
+
+  playwright-core@1.56.1: {}
+
+  playwright-firefox@1.56.1:
+    dependencies:
+      playwright-core: 1.56.1
