@@ -51,7 +51,10 @@ const existingEntryUrls = new Set<string>(
         },
       },
     })
-  ).map((v) => `${v.sitecode}/${v.url}`)
+  ).map(
+    (v) =>
+      `${v.sitecode === "webusers" ? "webusers/" : ""}${v.sitecode}/${v.url}`
+  )
 );
 console.log(`Found ${existingEntryUrls.size} existing entry URLs`);
 
