@@ -1,0 +1,12 @@
+services:
+  outducks-sync:
+    container_name: outducks-sync
+    image: ghcr.io/bperel/outducks-sync
+    volumes:
+      - /data/covers:${ENTRYURLS_DIR}
+    networks:
+      - dm-db-network
+
+networks:
+  dm-db-network:
+    external: true
