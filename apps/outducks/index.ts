@@ -4,7 +4,7 @@ dotenv.config({
   path: ".env",
 });
 
-import { readdirSync, writeFileSync } from "fs";
+import { mkdirSync, readdirSync, writeFileSync } from "fs";
 import { resolve } from "path";
 
 import {
@@ -69,37 +69,36 @@ const existingFiles = new Set<string>(
 );
 console.log(`Found ${existingFiles.size} existing files`);
 
-const filesToCreate = existingEntryUrls.difference(existingFiles);
+const filesToCreate = new Set<string>(Array.from(existingEntryUrls).filter(
+  (_, idx) => idx < 200
+));
 
 console.log(`Found ${filesToCreate.size} files to create`);
 
-// const browser = await firefox.launch();
-// const page = await browser.newPage();
-// await page.goto("https://inducks.org/maccount.php");
+const filesToActuallyCreate = new Set<string>(Array.from(existingEntryUrls).filter(
+  (_, idx) => idx < 200
+));
 
-// await page.getByRole("textbox", { name: "Login Login" }).fill("Bruno Pérel");
-// await page.getByRole("textbox", { name: "Password Password" }).fill("test");
-// await page.getByRole("button", { name: "Log in" }).click();
-// await page.getByRole("link", { name: "Home page" }).first().click();
+const browser = await firefox.launch();
+const page = await browser.newPage();
+await page.goto("https://inducks.org/maccount.php");
 
-// const subdir = "webusers/webusers/2006/03";
+await page.getByRole("textbox", { name: "Login Login" }).fill("Bruno Pérel");
+await page.getByRole("textbox", { name: "Password Password" }).fill("test");
+await page.getByRole("button", { name: "Log in" }).click();
+await page.getByRole("link", { name: "Home page" }).first().click();
 
-// for (const file of readdirSync(root, {
-//   recursive: true,
-//   withFileTypes: true,
-// })) {
-//   if (file.isDirectory()) {
-//     continue;
-//   }
+for (const file of filesToActuallyCreate) {
+  const imageUrl = `https://inducks.org/hr.php?normalsize=1&image=https://outducks.org/${file}`;
+  const response = await page.request.get(imageUrl);
+  
+  mkdirSync(resolve(root, file.split("/").slice(0, -1).join("/")), { recursive: true });
+  
+  const filename = resolve(root, file);
+  writeFileSync(filename, Buffer.from(await response.body()));
+  console.log(`Image saved to ${filename}`);
+}
 
-//   const imageUrl = `https://inducks.org/hr.php?normalsize=1&image=https://outducks.org/${subdir}/${file.name}`;
-
-//   const response = await page.request.get(imageUrl);
-//   const filename = resolve(root, file.name);
-//   writeFileSync(filename, Buffer.from(await response.body()));
-//   console.log(`Image saved to ${filename}`);
-// }
-
-// await browser.close();
+await browser.close();
 
 process.exit(0);
