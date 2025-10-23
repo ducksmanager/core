@@ -46,7 +46,7 @@ const existingEntryUrls = new Set<string>(
       `${v.sitecode === "webusers" ? "webusers/" : ""}${v.sitecode}/${v.url}`
   )
 );
-console.log(`Found ${existingEntryUrls.size} existing entry URLs`);
+console.log(`Found ${existingEntryUrls.size} existing entry URLs, first one is ${existingEntryUrls.values().next().value}`);
 
 const existingFiles = new Set<string>(
   files
@@ -57,19 +57,19 @@ const existingFiles = new Set<string>(
     )
     .map((file) => `${file.parentPath.replace(root + "/", "")}/${file.name}`)
 );
-console.log(`Found ${existingFiles.size} existing files`);
+console.log(`Found ${existingFiles.size} existing files, first one is ${existingFiles.values().next().value}`);
 
 const filesToCreate = new Set<string>(
   Array.from(existingEntryUrls).filter((_, idx) => idx < 200)
 );
 
-console.log(`Found ${filesToCreate.size} files to create`);
+console.log(`Found ${filesToCreate.size} files to create, first one is ${filesToCreate.values().next().value}`);
 
 const filesToActuallyCreate = new Set<string>(
   Array.from(existingEntryUrls).filter((_, idx) => idx < 200)
 );
 
-console.log(`Will create ${filesToActuallyCreate.size} files`);
+console.log(`Will create ${filesToActuallyCreate.size} files, first one is ${filesToActuallyCreate.values().next().value}`);
 
 const browser = await firefox.launch();
 const page = await browser.newPage();
