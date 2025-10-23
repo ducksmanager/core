@@ -5,22 +5,10 @@ dotenv.config({
 });
 
 import { mkdirSync, readdirSync, writeFileSync } from "fs";
-import { resolve } from "path";
-
-import {
-  type inducks_entry,
-  type inducks_entryurl,
-  Prisma,
-} from "~prisma-schemas/client_coa/client";
+import { dirname, resolve } from "path";
+import { fileURLToPath } from "url";
 import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa/client";
-
 import { firefox } from "playwright-firefox";
-
-declare global {
-  interface ImportMeta {
-    dir: string;
-  }
-}
 
 const excludedSitecodes = [
   "thumbnails",
@@ -29,9 +17,11 @@ const excludedSitecodes = [
   "renamed",
 ];
 
+const __dirname = dirname(fileURLToPath(import.meta.url));
+
 const root =
   process.env.ENTRYURLS_DIR ||
-  resolve(`${import.meta.dir}/../../packages/api/services/story-search/covers`);
+  resolve(`${__dirname}/../../packages/api/services/story-search/covers`);
 
 const files = readdirSync(root, {
   recursive: true,
@@ -79,12 +69,14 @@ const filesToActuallyCreate = new Set<string>(Array.from(existingEntryUrls).filt
   (_, idx) => idx < 200
 ));
 
+console.log(`Will create ${filesToActuallyCreate.size} files`);
+
 const browser = await firefox.launch();
 const page = await browser.newPage();
 await page.goto("https://inducks.org/maccount.php");
 
-await page.getByRole("textbox", { name: "Login Login" }).fill("Bruno Pérel");
-await page.getByRole("textbox", { name: "Password Password" }).fill("test");
+await page.getByRole("textbox", { name: "Login Login" }).fill(process.env.INDUCKS_USERNAME!);
+await page.getByRole("textbox", { name: "Password Password" }).fill(process.env.INDUCKS_PASSWORD!);
 await page.getByRole("button", { name: "Log in" }).click();
 await page.getByRole("link", { name: "Home page" }).first().click();
 
