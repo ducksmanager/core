@@ -52,22 +52,22 @@ const existingFiles = new Set<string>(
   files
     .filter(
       (file) =>
-        !file.isDirectory() ||
-        excludedSitecodes.includes(file.parentPath.split("/").pop()!)
+        !file.isDirectory() &&
+        !excludedSitecodes.includes(file.parentPath.split("/").pop()!)
     )
     .map((file) => `${file.parentPath.replace(root + "/", "")}/${file.name}`)
 );
 console.log(`Found ${existingFiles.size} existing files`);
 
-const filesToCreate = new Set<string>(Array.from(existingEntryUrls).filter(
-  (_, idx) => idx < 200
-));
+const filesToCreate = new Set<string>(
+  Array.from(existingEntryUrls).filter((_, idx) => idx < 200)
+);
 
 console.log(`Found ${filesToCreate.size} files to create`);
 
-const filesToActuallyCreate = new Set<string>(Array.from(existingEntryUrls).filter(
-  (_, idx) => idx < 200
-));
+const filesToActuallyCreate = new Set<string>(
+  Array.from(existingEntryUrls).filter((_, idx) => idx < 200)
+);
 
 console.log(`Will create ${filesToActuallyCreate.size} files`);
 
@@ -75,17 +75,23 @@ const browser = await firefox.launch();
 const page = await browser.newPage();
 await page.goto("https://inducks.org/maccount.php");
 
-await page.getByRole("textbox", { name: "Login Login" }).fill(process.env.INDUCKS_USERNAME!);
-await page.getByRole("textbox", { name: "Password Password" }).fill(process.env.INDUCKS_PASSWORD!);
+await page
+  .getByRole("textbox", { name: "Login Login" })
+  .fill(process.env.INDUCKS_USERNAME!);
+await page
+  .getByRole("textbox", { name: "Password Password" })
+  .fill(process.env.INDUCKS_PASSWORD!);
 await page.getByRole("button", { name: "Log in" }).click();
 await page.getByRole("link", { name: "Home page" }).first().click();
 
 for (const file of filesToActuallyCreate) {
   const imageUrl = `https://inducks.org/hr.php?normalsize=1&image=https://outducks.org/${file}`;
   const response = await page.request.get(imageUrl);
-  
-  mkdirSync(resolve(root, file.split("/").slice(0, -1).join("/")), { recursive: true });
-  
+
+  mkdirSync(resolve(root, file.split("/").slice(0, -1).join("/")), {
+    recursive: true,
+  });
+
   const filename = resolve(root, file);
   writeFileSync(filename, Buffer.from(await response.body()));
   console.log(`Image saved to ${filename}`);
