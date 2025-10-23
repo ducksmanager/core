@@ -59,9 +59,7 @@ const existingFiles = new Set<string>(
 );
 console.log(`Found ${existingFiles.size} existing files, first one is ${existingFiles.values().next().value}`);
 
-const filesToCreate = new Set<string>(
-  Array.from(existingEntryUrls).filter((_, idx) => idx < 200)
-);
+const filesToCreate = existingEntryUrls.difference(existingFiles);
 
 console.log(`Found ${filesToCreate.size} files to create, first one is ${filesToCreate.values().next().value}`);
 
