@@ -9,7 +9,7 @@
     "start": "bun --inspect run --watch index.ts",
     "dev": "PWDEBUG=1 bun --inspect run --watch index.ts",
     "prod:build-docker": "REPO_NAME=ghcr.io/bperel/outducks-sync pnpm -F '~ci' prod:build-docker -f apps/outducks/Dockerfile",
-    "prod:docker-compose-run": "SERVICE=outducks-sync pnpm -F '~ci' prod:docker-compose-run",
+    "prod:docker-compose-run": "DIR=apps/outducks SERVICE=outducks-sync pnpm -F '~ci' prod:docker-compose-run",
     "prod:transfer-files-pre": "pnpm -F '~ci' prod:transfer-files @apps/outducks/.env:apps/outducks/.env",
     "prod:transfer-files-post": "pnpm -F '~ci' prod:transfer-files apps/outducks/docker-compose.yml:@apps/outducks/docker-compose.yml apps/outducks/Caddyfile:@apps/outducks/Caddyfile"
   },
