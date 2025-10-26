@@ -18,7 +18,6 @@ dependencies {
     implementation project(':capacitor-keyboard')
     implementation project(':capacitor-preferences')
     implementation project(':capacitor-status-bar')
-    implementation project(':capawesome-capacitor-android-edge-to-edge-support')
     implementation project(':capawesome-capacitor-app-update')
     implementation project(':capawesome-capacitor-file-picker')
     implementation project(':capgo-capacitor-updater')
