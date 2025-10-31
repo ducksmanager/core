@@ -13,7 +13,6 @@ import '@ionic/vue/css/flex-utils.css';
 import './theme/variables.scss';
 import './theme/global.scss';
 import 'vue-virtual-scroller/dist/vue-virtual-scroller.css';
-import { EdgeToEdge } from '@capawesome/capacitor-android-edge-to-edge-support';
 
 import { Capacitor } from '@capacitor/core';
 import { Device } from '@capacitor/device';
@@ -51,35 +50,32 @@ const app = createApp(App)
   .provide('dmSocket', new SocketClient(socketUrl));
 
 router.isReady().then(async () => {
-  if (Capacitor.isNativePlatform()) {
-    await EdgeToEdge.enable();
-    if (!import.meta.env.VITE_DM_SOCKET_URL_NATIVE) {
-      // Lazy load Sentry only when needed
-      const currentBundleVersion = (await CapacitorUpdater.current())?.bundle.version;
-      const { init: initSentry, browserTracingIntegration, replayIntegration } = await import('@sentry/capacitor');
-      const { init: initSentryVue } = await import('@sentry/vue');
+  if (Capacitor.isNativePlatform() && !import.meta.env.VITE_DM_SOCKET_URL_NATIVE) {
+    // Lazy load Sentry only when needed
+    const currentBundleVersion = (await CapacitorUpdater.current())?.bundle.version;
+    const { init: initSentry, browserTracingIntegration, replayIntegration } = await import('@sentry/capacitor');
+    const { init: initSentryVue } = await import('@sentry/vue');
 
-      initSentry(
-        {
-          dsn: import.meta.env.VITE_SENTRY_DSN,
-          app,
-          debug: true,
-          release: `whattheduck@${currentBundleVersion}`,
-          dist: currentBundleVersion,
-          integrations: [
-            browserTracingIntegration(),
-            replayIntegration({
-              maskAllText: false,
-              blockAllMedia: false,
-            }),
-          ],
-          tracesSampleRate: 1.0,
-          replaysSessionSampleRate: 1.0,
-          replaysOnErrorSampleRate: 1.0,
-        },
-        initSentryVue,
-      );
-    }
+    initSentry(
+      {
+        dsn: import.meta.env.VITE_SENTRY_DSN,
+        app,
+        debug: true,
+        release: `whattheduck@${currentBundleVersion}`,
+        dist: currentBundleVersion,
+        integrations: [
+          browserTracingIntegration(),
+          replayIntegration({
+            maskAllText: false,
+            blockAllMedia: false,
+          }),
+        ],
+        tracesSampleRate: 1.0,
+        replaysSessionSampleRate: 1.0,
+        replaysOnErrorSampleRate: 1.0,
+      },
+      initSentryVue,
+    );
   }
 
   const locale = (await Device.getLanguageCode()).value;
