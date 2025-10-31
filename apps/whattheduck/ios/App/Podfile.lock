@@ -22,11 +22,11 @@ PODS:
     - Capacitor
   - CapacitorStatusBar (7.0.3):
     - Capacitor
-  - CapawesomeCapacitorAppUpdate (7.0.1):
+  - CapawesomeCapacitorAppUpdate (7.2.0):
     - Capacitor
   - CapawesomeCapacitorFilePicker (7.2.0):
     - Capacitor
-  - CapgoCapacitorUpdater (7.23.3):
+  - CapgoCapacitorUpdater (7.23.13):
     - Alamofire (= 5.10.2)
     - BigInt (= 5.2.0)
     - Capacitor
@@ -51,9 +51,9 @@ DEPENDENCIES:
   - "CapacitorKeyboard (from `../../node_modules/.pnpm/@capacitor+keyboard@7.0.3_@capacitor+core@7.4.4/node_modules/@capacitor/keyboard`)"
   - "CapacitorPreferences (from `../../node_modules/.pnpm/@capacitor+preferences@7.0.2_@capacitor+core@7.4.4/node_modules/@capacitor/preferences`)"
   - "CapacitorStatusBar (from `../../node_modules/.pnpm/@capacitor+status-bar@7.0.3_@capacitor+core@7.4.4/node_modules/@capacitor/status-bar`)"
-  - "CapawesomeCapacitorAppUpdate (from `../../node_modules/.pnpm/@capawesome+capacitor-app-update@7.0.1_@capacitor+core@7.4.4/node_modules/@capawesome/capacitor-app-update`)"
+  - "CapawesomeCapacitorAppUpdate (from `../../node_modules/.pnpm/@capawesome+capacitor-app-update@7.2.0_@capacitor+core@7.4.4/node_modules/@capawesome/capacitor-app-update`)"
   - "CapawesomeCapacitorFilePicker (from `../../node_modules/.pnpm/@capawesome+capacitor-file-picker@7.2.0_@capacitor+core@7.4.4/node_modules/@capawesome/capacitor-file-picker`)"
-  - "CapgoCapacitorUpdater (from `../../node_modules/.pnpm/@capgo+capacitor-updater@7.23.3_@capacitor+core@7.4.4/node_modules/@capgo/capacitor-updater`)"
+  - "CapgoCapacitorUpdater (from `../../node_modules/.pnpm/@capgo+capacitor-updater@7.23.13_@capacitor+core@7.4.4/node_modules/@capgo/capacitor-updater`)"
   - "SentryCapacitor (from `../../node_modules/.pnpm/@sentry+capacitor@2.4.0_@capacitor+core@7.4.4_@sentry+vue@9.46.0_pinia@3.0.3_typescript@5.9.3_b7lol22s24gk5ufjwl3azxn4sm/node_modules/@sentry/capacitor`)"
 
 SPEC REPOS:
@@ -88,11 +88,11 @@ EXTERNAL SOURCES:
   CapacitorStatusBar:
     :path: "../../node_modules/.pnpm/@capacitor+status-bar@7.0.3_@capacitor+core@7.4.4/node_modules/@capacitor/status-bar"
   CapawesomeCapacitorAppUpdate:
-    :path: "../../node_modules/.pnpm/@capawesome+capacitor-app-update@7.0.1_@capacitor+core@7.4.4/node_modules/@capawesome/capacitor-app-update"
+    :path: "../../node_modules/.pnpm/@capawesome+capacitor-app-update@7.2.0_@capacitor+core@7.4.4/node_modules/@capawesome/capacitor-app-update"
   CapawesomeCapacitorFilePicker:
     :path: "../../node_modules/.pnpm/@capawesome+capacitor-file-picker@7.2.0_@capacitor+core@7.4.4/node_modules/@capawesome/capacitor-file-picker"
   CapgoCapacitorUpdater:
-    :path: "../../node_modules/.pnpm/@capgo+capacitor-updater@7.23.3_@capacitor+core@7.4.4/node_modules/@capgo/capacitor-updater"
+    :path: "../../node_modules/.pnpm/@capgo+capacitor-updater@7.23.13_@capacitor+core@7.4.4/node_modules/@capgo/capacitor-updater"
   SentryCapacitor:
     :path: "../../node_modules/.pnpm/@sentry+capacitor@2.4.0_@capacitor+core@7.4.4_@sentry+vue@9.46.0_pinia@3.0.3_typescript@5.9.3_b7lol22s24gk5ufjwl3azxn4sm/node_modules/@sentry/capacitor"
 
@@ -110,14 +110,14 @@ SPEC CHECKSUMS:
   CapacitorKeyboard: 3822c3a0c6b58168f96ca562f9534ed095d40860
   CapacitorPreferences: b583b5deb74e564c35968189d25d32c0fd41200d
   CapacitorStatusBar: 7d8fcbd6768db014bd721d75e246590b014928e8
-  CapawesomeCapacitorAppUpdate: 8ba98e54b0c5c43e9bdeeb0cbf97ef32465be321
+  CapawesomeCapacitorAppUpdate: deee9aa6bd4d1a2167a000e5008f71adc3cb1b73
   CapawesomeCapacitorFilePicker: 005c33082078c1dd528ba9204aa49e97d62b68b7
-  CapgoCapacitorUpdater: 18e2759b379cb9c99f90414ba99a6d8561922195
+  CapgoCapacitorUpdater: 8414aa28b2e3d734b8a87615f7601bc377e728ae
   Sentry: b53951377b78e21a734f5dc8318e333dbfc682d7
   SentryCapacitor: 21560ab5b4745aacc0a17567047779fe685b093a
   SSZipArchive: fe6a26b2a54d5a0890f2567b5cc6de5caa600aef
   Version: de5907f2c5d0f3cf21708db7801d1d5401139486
 
-PODFILE CHECKSUM: 8fdbdce65ff78fc78e206ff2f6dcf2c93539b910
+PODFILE CHECKSUM: b3c422dcb83bd0b288f2a7cfab58d143d23cb980
 
 COCOAPODS: 1.16.2
