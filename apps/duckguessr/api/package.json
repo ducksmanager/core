@@ -9,7 +9,7 @@
   "main": "index.ts",
   "scripts": {
     "build": "bun build index.ts --entry-naming index.mjs --target node --sourcemap=linked --outdir dist",
-    "dev": "concurrently -n api,docker-compose,db \"bun --inspect run index.ts\" \"docker compose -f docker-compose-dev.yml up\" \"pnpm -F ~prisma-schemas dev\"",
+    "dev:setup": "docker compose -f docker-compose-dev.yml up --force-recreate -d",
     "lint": "eslint .",
     "prisma-pull-generate": "prisma db pull && prisma generate",
     "prisma-generate": "prisma generate"

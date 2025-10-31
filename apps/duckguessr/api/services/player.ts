@@ -24,6 +24,9 @@ export type PlayerServices = NamespaceProxyTarget<
 >;
 
 const listenEvents = ({ _socket }: PlayerServices) => ({
+  getPlayer: () => {
+     return Promise.resolve(_socket.data.user); },
+
   updateUser: async (updatedPlayer: player) =>
     updatePlayer(updatedPlayer.id, updatedPlayer),
 
@@ -67,13 +70,17 @@ const { client, server } = useSocketEvents<
 >(namespaces.PLAYER, {
   listenEvents,
   middlewares: [
-    ({ _socket }) => {
-      getPlayer(_socket.handshake.auth.cookie).then((player) => {
-        if (player) {
+    ({ _socket }, next: (error?: Error) => void) => {
+      getPlayer({ token: _socket.handshake.auth.token })
+        .then((player) => {
           _socket.data.user = player;
-          _socket.emit("logged", player);
-        }
-      });
+        })
+        .then(() => {
+          next();
+        })
+        .catch((e) => {
+          next(e);
+        });
     },
   ],
 });

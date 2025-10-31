@@ -17,19 +17,22 @@ export const getPlayer = async (cookies?: {
   let player: player | null = null;
   if (cookies?.token) {
     try {
-      const { id: ducksmanagerId, username } = jwt.verify(
+      const { id: ducksmanagerId, username } = (jwt.verify(
         cookies.token,
         process.env.TOKEN_SECRET as string,
-      ) as jwt.JwtPayload;
-      player = await prisma.player.findFirst({
+      ) as jwt.JwtPayload)?.data;
+      if (!username) {
+        throw new Error("No username provided");
+      }
+      player = await prisma.player.findUnique({
         where: {
-          ducksmanagerId,
+          username,
         },
       });
       if (player) {
         console.log("Player exists");
       } else {
-        console.log("Player is created");
+        console.log("Player will be created");
         player = await prisma.player.create({
           data: {
             ducksmanagerId,
@@ -40,27 +43,27 @@ export const getPlayer = async (cookies?: {
       return player;
     } catch (error) {
       console.error(error);
-      return null;
+      throw new Error("No token provided");
     }
   }
-  const duckguessrName = cookies?.["duckguessr-user"];
-  if (duckguessrName && /^user\d+$/.test(duckguessrName)) {
-    player = await prisma.player.findFirst({
-      where: {
-        username: duckguessrName,
-      },
-    });
-    if (!player) {
-      player = await prisma.player.create({
-        data: {
-          username: duckguessrName,
-        },
-      });
-    }
-  }
-  if (!player) {
-    throw new Error("No token provided");
-  }
+  // const duckguessrName = cookies?.["duckguessr-user"];
+  // if (duckguessrName && /^user\d+$/.test(duckguessrName)) {
+  //   player = await prisma.player.findFirst({
+  //     where: {
+  //       username: duckguessrName,
+  //     },
+  //   });
+  //   if (!player) {
+  //     player = await prisma.player.create({
+  //       data: {
+  //         username: duckguessrName,
+  //       },
+  //     });
+  //   }
+  // }
+  // if (!player) {
+  //   throw new Error("No token provided");
+  // }
   return player!;
 };
 
