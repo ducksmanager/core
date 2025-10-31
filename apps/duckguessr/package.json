@@ -46,7 +46,7 @@
   "devDependencies": {
     "@bootstrap-vue-next/nuxt": "^0.40.5",
     "@eslint/eslintrc": "^3.3.1",
-    "@eslint/js": "^9.36.0",
+    "@eslint/js": "^9.39.0",
     "@iconify-json/bi": "^1.2.6",
     "@nuxt/devtools": "^2.6.5",
     "@nuxt/eslint": "^1.9.0",
@@ -60,7 +60,7 @@
     "bootstrap": "^5.3.8",
     "bootstrap-vue-next": "^0.40.5",
     "concurrently": "^9.2.1",
-    "eslint": "^9.36.0",
+    "eslint": "^9.39.0",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-prettier": "^5.5.4",
     "eslint-plugin-prettier-vue": "^5.0.0",
