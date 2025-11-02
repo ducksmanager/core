@@ -41,7 +41,7 @@
                     'text-decoration-line-through text-secondary':
                       !filteredPublicationcodes?.includes(publicationcode),
                   }"
-                  :to="`${publicationUrlRoot}/${publicationcode}`"
+                  :to="`${publicationUrlRoot}/${publicationcode}${hash}`"
                 >
                   {{
                     publicationNames[publicationcode] ||
@@ -87,6 +87,8 @@ const route = useRoute();
 const username = $computed(
   () => "username" in route.params && route.params.username,
 );
+
+const hash = $computed(() => route.hash);
 
 const { totalPerCountry, totalPerPublication, publicationUrlRoot } =
   storeToRefs(isPublic ? publicCollection() : collection());

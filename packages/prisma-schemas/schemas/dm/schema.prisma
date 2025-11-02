@@ -145,7 +145,7 @@ model issue {
   /// @deprecated
   short_issuecode String?         @ignore @db.VarChar(25)
   issuecode       String?         @map("issuecode") @db.VarChar(25)
-  issueLabel      issueLabel[]
+  labels          issueLabel[]
 
   @@index([country, magazine, issuenumber, userId], map: "Numero_Utilisateur")
   @@index([country, magazine, issuenumber], map: "Pays_Magazine_Numero")
@@ -352,13 +352,14 @@ model numeros_popularite {
 
 model issueLabel {
   id      Int   @id @default(autoincrement())
-  labelId Int
-  issueId Int
+  labelId Int   @map("ID_Etiquette")
+  issueId Int   @map("ID_Numero")
   label   label @relation(fields: [labelId], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "numeros_etiquettes_etiquettes_ID_fk")
   issue   issue @relation(fields: [issueId], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "numeros_etiquettes_numeros_ID_fk")
 
   @@index([labelId], map: "numeros_etiquettes_ID_Etiquette_index")
   @@index([issueId], map: "numeros_etiquettes_ID_numero_index")
+  @@map("numeros_etiquettes")
 }
 
 enum userOptionType {

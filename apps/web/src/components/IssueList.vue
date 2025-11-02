@@ -76,7 +76,7 @@
               </ul>
             </b-alert>
             <b-alert
-              v-if="showFilter"
+              v-if="showFilter && issues.length"
               v-once
               :model-value="true"
               variant="info"
@@ -284,7 +284,14 @@
       </div>
     </div>
     <div v-if="!publicationNameLoading && issues && !issues.length">
-      <b-alert variant="danger" :model-value="true">
+      <b-alert
+        v-if="Object.keys(labelIdFilters).length"
+        variant="info"
+        :model-value="true"
+      >
+        {{ $t("Aucun numéro ne correspond aux filtres appliqués.") }}
+      </b-alert>
+      <b-alert v-else variant="danger" :model-value="true">
         <div class="mb-4">
           {{ $t("Aucun numéro n'est répertorié pour") }}
           {{ publicationcode.split("/")[1] }} ({{ $t("Pays de publication") }} :
@@ -342,11 +349,11 @@
 </template>
 
 <script setup lang="ts">
-import type { issue } from "~prisma-schemas/schemas/dm";
-import type { Filter } from "../stores/collection";
+import type { ClientEvents as CollectionServices } from "~dm-services/collection";
 
 import ContextMenuOnSaleByOthers from "./ContextMenuOnSaleByOthers.vue";
 import ContextMenuOwnCollection from "./ContextMenuOwnCollection.vue";
+import { EventOutput } from "socket-call-client";
 
 type simpleIssue = {
   issuecode: string;
@@ -355,7 +362,7 @@ type simpleIssue = {
   key: string;
 };
 type issueWithCopies = simpleIssue & {
-  userCopies: ((issue & { issuecode: string; issuenumber: string }) & {
+  userCopies: (NonNullable<typeof collectionIssues.value>[number] & {
     copyIndex: number;
   })[];
 };
@@ -368,16 +375,14 @@ const {
   publicationcode,
   onSaleByOthers = false,
   readonly = false,
-  filters = new Set<Filter>(),
 } = defineProps<{
   publicationcode: string;
   duplicatesOnly?: boolean;
-  customIssues?: (issue & { issuecode: string })[];
+  customIssues?: EventOutput<CollectionServices, "getIssues">;
   onSaleByOthers?: boolean;
   groupUserCopies?: boolean;
   contextMenuComponentName?: "context-menu-on-sale-by-others";
   readonly?: boolean;
-  filters?: Set<Filter>;
 }>();
 
 const {
@@ -390,6 +395,7 @@ const {
 const {
   issues: collectionIssues,
   purchases,
+  labelIdFilters,
   labels,
 } = storeToRefs(readonly ? publicCollection() : collection());
 const { watchedPublicationsWithSales } = storeToRefs(collection());
@@ -446,34 +452,29 @@ const contextmenuInstance = $ref<{
   show: (e: MouseEvent) => void;
 }>();
 let issues = $shallowRef<issueWithCopies[]>();
-let userIssuesForPublication = $shallowRef<(issue & { issuecode: string })[]>();
+let userIssuesForPublication = $shallowRef<typeof collectionIssues.value>();
 let userIssuecodesNotFoundForPublication = $shallowRef<string[] | null>([]);
 let selected = $shallowRef<string[]>([]);
 const filteredUserCopies = $computed(() =>
-  filteredIssues.reduce<(issue & { issuecode: string })[]>(
-    (acc, { userCopies }) => {
-      acc.push(...userCopies);
-      return acc;
-    },
-    [],
-  ),
+  filteredIssues.flatMap(({ userCopies }) => userCopies),
 );
 
 const copiesBySelectedIssuecode = $computed(() =>
-  selected.reduce<{ [issuecode: string]: issue[] }>((acc, issueKey) => {
+  selected.reduce<{
+    [issuecode: string]: typeof filteredUserCopies;
+  }>((acc, issueKey) => {
     const [issuecode, maybeIssueId] = issueKey.split("-id-");
     const issueId = (maybeIssueId && parseInt(maybeIssueId)) || null;
     return {
       ...acc,
       [issuecode]: [
         ...(acc[issuecode] || []),
-        ...filteredUserCopies
-          .filter(({ id: copyId, issuecode: copyIssuecode }) =>
+        ...filteredUserCopies.filter(
+          ({ id: copyId, issuecode: copyIssuecode }) =>
             issueId !== null
               ? issueId === copyId
               : issuecode.replaceAll("_", " ") === copyIssuecode,
-          )
-          .map((issue) => ({ ...issue, labelDescriptions: new Set<string>() })),
+        ),
       ],
     };
   }, {}),
@@ -484,7 +485,9 @@ let preselectedIndexEnd = $ref<number>();
 let currentIssuecodeOpened = $shallowRef<string>();
 const issueNumberTextPrefix = $computed(() => $t("n°"));
 const boughtOnTextPrefix = $computed(() => $t("Acheté le"));
-const showFilter = $computed(() => !duplicatesOnly && !filters.size);
+const showFilter = $computed(
+  () => !duplicatesOnly && !labelIdFilters.value.size,
+);
 
 const issueIds = $computed(() =>
   Object.values(copiesBySelectedIssuecode)
@@ -595,7 +598,7 @@ const deletePublicationIssues = async (issuecodesToDelete: string[]) => {
       isToRead: false,
       isOnSale: false,
       purchaseId: null,
-      labelDescriptions: new Set<string>(),
+      labelIds: [],
     });
     selected = [];
     if (!issues?.length) {
@@ -645,8 +648,8 @@ const loadIssues = async () => {
       ];
       issues = coaIssues
         .filter(({ issuecode }) => userIssuecodes.includes(issuecode))
-        .reduce<issueWithCopies[]>((acc, { issuecode }) => {
-          const filteredIssues = userIssuesForPublication!
+        .flatMap(({ issuecode }) =>
+          userIssuesForPublication!
             .filter(
               ({ issuecode: userIssuecode }) => userIssuecode === issuecode,
             )
@@ -654,10 +657,8 @@ const loadIssues = async () => {
               ...issue,
               key: `${issue.issuecode.replaceAll(" ", "_")}-id-${issue.id}`,
               userCopies: [{ ...issue, copyIndex: 0 }],
-            }));
-          acc.push(...filteredIssues);
-          return acc;
-        }, []);
+            })),
+        );
     }
 
     if (duplicatesOnly) {
@@ -673,18 +674,37 @@ const loadIssues = async () => {
       );
     }
 
-    if (filters.has(TO_READ_LABEL_DESCRIPTION)) {
-      issues = issues.filter(
-        ({ userCopies }) =>
-          userCopies.filter(({ isToRead }) => isToRead).length,
-      );
-    }
-    if (filters.has(ON_SALE_LABEL_DESCRIPTION)) {
-      issues = issues.filter(
-        ({ userCopies }) =>
-          userCopies.filter(({ isOnSale }) => isOnSale).length,
-      );
-    }
+    issues = issues.filter(
+      ({ userCopies }) =>
+        userCopies.filter(({ labelIds }) =>
+          new Set(labelIds).isSubsetOf(labelIdFilters.value),
+        ).length,
+    );
+
+    // if (
+    //   labelIdFilters.value.has(
+    //     labels.value!.find(
+    //       ({ description }) => description === TO_READ_LABEL_DESCRIPTION,
+    //     )!.id!,
+    //   )
+    // ) {
+    //   issues = issues.filter(
+    //     ({ userCopies }) =>
+    //       userCopies.filter(({ isToRead }) => isToRead).length,
+    //   );
+    // }
+    // if (
+    //   labelIdFilters.value.has(
+    //     labels.value!.find(
+    //       ({ description }) => description === ON_SALE_LABEL_DESCRIPTION,
+    //     )!.id!,
+    //   )
+    // ) {
+    //   issues = issues.filter(
+    //     ({ userCopies }) =>
+    //       userCopies.filter(({ isOnSale }) => isOnSale).length,
+    //   );
+    // }
 
     userIssuecodesNotFoundForPublication = userIssuesForPublication
       .filter(
@@ -705,20 +725,14 @@ watch($$(preselectedIndexEnd), () => {
 });
 
 watch(
-  () => [publicationcode, userIssues],
+  () => [publicationcode, userIssues, labels],
   () => loadIssues(),
   {
     immediate: true,
   },
 );
 
-watch(
-  () => filters,
-  () => loadIssues(),
-  {
-    deep: true,
-  },
-);
+watch(labelIdFilters, () => loadIssues());
 
 watch(
   () => publicationcode,

@@ -136,15 +136,12 @@
     <v-contextmenu-group :title="$t('Étiquettes')" class="text-wrap">
       <label-pill-button
         v-for="label in labelsWithIcons?.filter(
-          ({ userId, description }) =>
-            !userId || newCopyState.labelDescriptions.has(description),
+          ({ userId, id }) => !userId || newCopyState.labelIds.includes(id),
         )"
         :key="label.description"
         v-bind="label"
-        :pressed="newCopyState.labelDescriptions.has(label.description)"
-        @update:pressed="
-          toggleSetElement(newCopyState.labelDescriptions, label.description)
-        "
+        :pressed="newCopyState.labelIds.includes(label.id)"
+        @update:pressed="toggleSetElement(newCopyState.labelIds, label.id)"
       />
       <v-contextmenu-submenu
         :title="$t(`Mes étiquettes`)"
@@ -208,11 +205,9 @@
             :hide-on-click="false"
             class="clickable label-description"
             :class="{
-              selected: newCopyState.labelDescriptions.has(description),
+              selected: newCopyState.labelIds.includes(id),
             }"
-            @click.stop="
-              toggleSetElement(newCopyState.labelDescriptions, description)
-            "
+            @click.stop="toggleSetElement(newCopyState.labelIds, id)"
           >
             <div class="mx-2">
               {{ description }}
@@ -340,6 +335,7 @@ const { copy: copyState, copyIndex = null } = defineProps<{
 }>();
 
 let newCopyState = $ref(copyState);
+debugger;
 
 const emit = defineEmits<{
   (
@@ -394,11 +390,11 @@ const newLabelDefault: NewLabel = {
 
 let newLabel = $ref(newLabelDefault);
 
-const toggleSetElement = (set: Set<string>, element: string) => {
-  if (set.has(element)) {
-    set.delete(element);
+const toggleSetElement = <T,>(set: T[], element: T): void => {
+  if (set.includes(element)) {
+    set.splice(set.indexOf(element), 1);
   } else {
-    set.add(element);
+    set.push(element);
   }
 };
 

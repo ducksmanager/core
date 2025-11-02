@@ -13,10 +13,10 @@
 
 <script lang="ts" setup>
 import dayjs from "dayjs";
+import { EventOutput } from "socket-call-client";
+import type { ClientEvents as CollectionServices } from "~dm-services/collection";
 
-import type { issue } from "~prisma-schemas/schemas/dm";
-
-const customIssues: (issue & { issuecode: string })[] = [
+const customIssues: EventOutput<CollectionServices, "getIssues"> = [
   {
     id: 167808,
     country: "fr",
@@ -31,6 +31,8 @@ const customIssues: (issue & { issuecode: string })[] = [
     isSubscription: false,
     userId: 1348,
     creationDate: dayjs("2017-02-10T14:31:02.000Z").toDate(),
+    labelIds: [],
+    title: "",
   },
   {
     id: 167809,
@@ -46,6 +48,8 @@ const customIssues: (issue & { issuecode: string })[] = [
     isSubscription: false,
     userId: 1348,
     creationDate: dayjs("2017-02-10T14:31:02.000Z").toDate(),
+    labelIds: [],
+    title: "",
   },
   {
     id: 167812,
@@ -61,6 +65,8 @@ const customIssues: (issue & { issuecode: string })[] = [
     isSubscription: false,
     userId: 1348,
     creationDate: dayjs("2017-02-10T14:31:02.000Z").toDate(),
+    labelIds: [],
+    title: "",
   },
   {
     id: 167818,
@@ -76,6 +82,8 @@ const customIssues: (issue & { issuecode: string })[] = [
     isSubscription: false,
     userId: 1348,
     creationDate: dayjs("2017-02-10T14:31:02.000Z").toDate(),
+    labelIds: [],
+    title: "",
   },
   {
     id: 167819,
@@ -91,6 +99,8 @@ const customIssues: (issue & { issuecode: string })[] = [
     isSubscription: false,
     userId: 1348,
     creationDate: dayjs("2017-02-10T14:31:02.000Z").toDate(),
+    labelIds: [],
+    title: "",
   },
   {
     id: 167821,
@@ -106,6 +116,8 @@ const customIssues: (issue & { issuecode: string })[] = [
     isSubscription: false,
     userId: 1348,
     creationDate: dayjs("2017-02-10T14:31:02.000Z").toDate(),
+    labelIds: [],
+    title: "",
   },
   {
     id: 167822,
@@ -121,6 +133,8 @@ const customIssues: (issue & { issuecode: string })[] = [
     isSubscription: false,
     userId: 1348,
     creationDate: dayjs("2017-02-10T14:31:02.000Z").toDate(),
+    labelIds: [],
+    title: "",
   },
   {
     id: 385707,
@@ -136,6 +150,8 @@ const customIssues: (issue & { issuecode: string })[] = [
     isSubscription: false,
     userId: 1073,
     creationDate: dayjs("2022-01-08T09:54:39.000Z").toDate(),
+    labelIds: [],
+    title: "",
   },
   {
     id: 385715,
@@ -151,6 +167,8 @@ const customIssues: (issue & { issuecode: string })[] = [
     isSubscription: false,
     userId: 1861,
     creationDate: dayjs("2022-01-08T12:13:40.000Z").toDate(),
+    labelIds: [],
+    title: "",
   },
-];
+] as const;
 </script>

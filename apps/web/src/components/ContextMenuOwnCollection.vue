@@ -93,7 +93,7 @@
               isSubscription: false,
               userId: user!.id,
               creationDate: new Date(),
-              ...defaultCopyState
+              ...defaultCopyState,
             } as IssueWithPublicationcodeOptionalId);
             nextTick(() => {
               currentCopyIndex = initialCopies!.copies.length - 1;
@@ -159,7 +159,7 @@ const defaultCopyState = {
   isToRead: false,
   isOnSale: false,
   purchaseId: null,
-  labelDescriptions: new Set<string>(),
+  labelIds: [],
 };
 
 const defaultIssueState = {
@@ -167,7 +167,7 @@ const defaultIssueState = {
   isToRead: undefined,
   isOnSale: undefined,
   purchaseId: undefined,
-  labelDescriptions: new Set<string>(),
+  labelIds: [],
 };
 
 let initialIssues = $ref<CollectionUpdateMultipleIssues>();
@@ -248,6 +248,7 @@ watch(
         issuecode: newValue[0],
         copies: selectedIssueIdsByIssuecode[newValue[0]],
       };
+      console.log(selectedIssueIdsByIssuecode[newValue[0]]);
     } else {
       editedCopies = initialCopies = undefined;
       editedIssues = initialIssues = {
@@ -255,6 +256,7 @@ watch(
         ...defaultIssueState,
       };
     }
+    debugger;
   },
   { immediate: true },
 );

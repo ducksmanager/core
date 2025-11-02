@@ -9,7 +9,7 @@ import type {
 import type { InducksIssueQuotationSimple } from "~dm-types/InducksIssueQuotationSimple";
 import type { TransactionResults } from "~dm-types/TransactionResults";
 import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa/client";
-import type { issue, user } from "~prisma-schemas/schemas/dm";
+import type { user } from "~prisma-schemas/schemas/dm";
 import { issue_condition } from "~prisma-schemas/schemas/dm";
 import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
 
@@ -28,6 +28,9 @@ export default ({ _socket }: UserServices) => ({
     }
     return prismaDm.issue
       .findMany({
+        include: {
+          labels: true,
+        },
         where: {
           userId: _socket.data.user.id,
           issuecode: {
@@ -37,10 +40,10 @@ export default ({ _socket }: UserServices) => ({
           },
         },
       })
-      .then((issues) =>
+      .then(<T extends { labels: { labelId: number }[] }>(issues: T[]) =>
         prismaCoa.augmentIssueArrayWithInducksData(
-          issues as (issue & { issuecode: string })[],
-        ),
+          issues as (T & { issuecode: string })[],
+        ).then((issues) => prismaDm.replaceLabelsWithLabelIds(issues)),
       );
   },
 

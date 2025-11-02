@@ -96,13 +96,13 @@
         v-for="label in labelsWithIcons"
         :key="label.description"
         v-bind="label"
-        :pressed="label.description in labelFilters"
+        :pressed="labelIdFilters.has(label.id)"
         @update:pressed="
           (pressed) => {
             if (pressed) {
-              labelFilters[label.description] = true;
+              labelFiltersHashParams[label.description] = 'true';
             } else {
-              delete labelFilters[label.description];
+              delete labelFiltersHashParams[label.description];
             }
           }
         "
@@ -113,7 +113,7 @@
       <IssueList
         v-if="publicationcode || mostPossessedPublication"
         :publicationcode="(publicationcode || mostPossessedPublication)!"
-        :filters="new Set(Object.keys(labelFilters))"
+        :filters="new Set(labelIdFilters)"
       />
     </template>
   </div>
@@ -135,6 +135,8 @@ const {
   issuesInOnSaleStack,
   issues,
   labelsWithIcons,
+  labelIdFilters,
+  labelFiltersHashParams,
   user,
   total,
   totalPerPublication,
@@ -153,9 +155,9 @@ const {
 
 const { buyerUserIds, sellerUserIds } = storeToRefs(marketplace());
 
-const labelFilters = useUrlSearchParams<Record<Filter, true>>("hash-params");
-
-const labelFiltersSet = $computed(() => new Set(Object.keys(labelFilters)));
+const labelFiltersSet = $computed(
+  () => new Set(Object.keys(labelIdFilters.value)),
+);
 
 const isFilterOpen = $ref(labelFiltersSet.size > 0);
 

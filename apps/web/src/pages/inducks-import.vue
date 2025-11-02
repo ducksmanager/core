@@ -354,7 +354,7 @@ const importIssues = async () => {
         isOnSale: undefined,
         isToRead: undefined,
         purchaseId: undefined,
-        labelDescriptions: new Set(),
+        labelIds: [],
       });
       importProgress +=
         100 / Object.keys(importableIssuesByPublicationCode).length;

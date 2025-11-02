@@ -4,14 +4,12 @@ import type { ShallowRef } from "vue";
 import type { ClientEvents as CollectionServices } from "~dm-services/collection";
 import type { SubscriptionTransformedStringDates } from "~dm-services/collection/subscriptions";
 import type { ClientEvents as StatsServices } from "~dm-services/stats";
-import type { AugmentedIssue } from "~dm-types/AugmentedIssue";
 import type {
   CollectionUpdateMultipleIssues,
   CollectionUpdateSingleIssue,
 } from "~dm-types/CollectionUpdate";
 import type {
   authorUser,
-  issue,
   label,
   purchase,
   subscription,
@@ -30,11 +28,10 @@ export type Filter =
   | (string & {});
 
 export type IssueWithPublicationcodeOptionalId = Omit<
-  issue,
-  "id" | "issuenumber"
+  EventOutput<CollectionServices, "getIssues">[number],
+  "id" | "country" | "magazine" | "title" | "issuenumber"
 > & {
   id: number | null;
-  labelDescriptions: Set<string>;
 };
 
 export type purchaseWithStringDate = Omit<purchase, "date"> & {
@@ -51,12 +48,29 @@ export const collection = defineStore("collection", () => {
 
   const issues = shallowRef<EventOutput<CollectionServices, "getIssues">>();
 
+  const labelFiltersHashParams =
+    useUrlSearchParams<Record<Filter, "true">>("hash-params");
+
   const collectionUtils = useCollection(
-      issues as ShallowRef<AugmentedIssue<issue>[]>,
+      issues as ShallowRef<EventOutput<CollectionServices, "getIssues">>,
     ),
     watchedPublicationsWithSales = shallowRef<string[]>(),
     purchases = shallowRef<purchase[]>(),
     labels = shallowRef<label[]>(),
+    labelIdFilters = computed(
+      () =>
+        new Set(
+          Object.entries(labelFiltersHashParams)
+            .filter(([, value]) => value === "true")
+            .map(
+              ([labelDescription]) =>
+                labels.value?.find(
+                  ({ description }) => description === labelDescription,
+                )?.id,
+            )
+            .filter((id) => id !== undefined),
+        ) as Set<number>,
+    ),
     watchedAuthors = shallowRef<authorUser[]>(),
     marketplaceContactMethods = ref<string[]>(),
     suggestions =
@@ -399,6 +413,8 @@ export const collection = defineStore("collection", () => {
     copiesPerIssuecode,
     isLoadingSuggestions,
     issuecodesPerPublication,
+    labelIdFilters,
+    labelFiltersHashParams,
     labels,
     labelsWithIcons,
     lastPublishedEdgesForCurrentUser,
