@@ -37,14 +37,14 @@
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.1",
-    "@eslint/js": "^9.36.0",
+    "@eslint/js": "^9.39.0",
     "@types/express": "^4.17.23",
     "@types/i18n": "^0.13.12",
     "@types/jsdom": "^21.1.7",
     "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^22.18.6",
     "concurrently": "^9.2.1",
-    "eslint": "^9.36.0",
+    "eslint": "^9.39.0",
     "eslint-config-prettier": "^10.1.8",
     "typescript": "^5.9.2",
     "typescript-eslint": "^8.44.1"

@@ -11,8 +11,8 @@ RUN npm install -g pm2
 
 COPY ./packages/api/node_modules/.pnpm/onnxruntime-node@*/node_modules/onnxruntime-node/bin/napi-v6/linux/x64 /bin/napi-v6/linux/x64
 
-# ONNX model will be downloaded during CI/CD from GitHub release
-# COPY ./packages/api/services/story-search/model/comic_embedding_model.onnx /app/services/story-search/model/comic_embedding_model.onnx
+# ONNX model is downloaded during CI/CD from GitHub release
+COPY ./packages/api/services/story-search/model/efficientnet_b0_comic_embedding.onnx /app/services/story-search/model/efficientnet_b0_comic_embedding.onnx
 
 RUN npm install --os=linux --cpu=x64 sharp
 

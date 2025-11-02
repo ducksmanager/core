@@ -53,7 +53,7 @@
   "devDependencies": {
     "@eslint/compat": "^1.4.0",
     "@eslint/eslintrc": "^3.3.1",
-    "@eslint/js": "^9.36.0",
+    "@eslint/js": "^9.39.0",
     "@histoire/plugin-vue": "1.0.0-alpha.3",
     "@iconify-json/bi": "^1.2.6",
     "@intlify/unplugin-vue-i18n": "^6.0.8",
@@ -67,7 +67,7 @@
     "@vue/test-utils": "^2.4.6",
     "concurrently": "^9.2.1",
     "ejs-lint": "^2.0.1",
-    "eslint": "^9.36.0",
+    "eslint": "^9.39.0",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-pinia": "^0.4.1",
     "eslint-plugin-prettier-vue": "^5.0.0",

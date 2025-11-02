@@ -1,0 +1,4 @@
+outducks.ducksmanager.net {
+    root * /server-data/covers
+    file_server
+}

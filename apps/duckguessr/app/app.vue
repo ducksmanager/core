@@ -5,12 +5,12 @@
 <script setup lang="ts">
 import { buildWebStorage, SocketClient } from "socket-call-client";
 import { stores as webStores, composables } from "~web";
+import { playerStore } from "~/stores/player";
 const { useDmSocket } = composables;
 import { socketInjectionKey as dmSocketInjectionKey } from "~web/src/composables/useDmSocket";
 import { duckguessrSocketInjectionKey } from "~/composables/useDuckguessrSocket";
 import Cookies from "js-cookie";
 
-// Import the socket types directly
 import { type ClientEmitEvents as DatasetsEmitEvents } from "~duckguessr-services/datasets";
 import {
   type ClientEmitEvents as GameEmitEvents,
@@ -84,19 +84,18 @@ const getGameSocketFromId = (id: number) =>
     },
   );
 
-let playerSocket;
-try {
-  playerSocket = duckguessrSocketClient.addNamespace<
-    PlayerEmitEvents,
-    PlayerListenEvents
-  >(namespaces.PLAYER, {
-    session,
-    onConnectError,
-  });
-} catch (error) {
-  console.error("Error creating player socket:", error);
-  throw error;
-}
+const playerSocket = duckguessrSocketClient.addNamespace<
+  PlayerEmitEvents,
+  PlayerListenEvents
+>(namespaces.PLAYER, {
+  session,
+  onConnectError,
+  onConnected: () => {
+    playerSocket.getPlayer().then((player) => {
+      playerStore().playerUser = player;
+    });
+  },
+});
 
 const maintenanceSocket =
   duckguessrSocketClient.addNamespace<MaintenanceEmitEvents>(

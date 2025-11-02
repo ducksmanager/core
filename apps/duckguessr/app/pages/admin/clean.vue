@@ -46,7 +46,7 @@
                   <b-tr>
                     <b-td>
                       <img
-                        src="https://res.cloudinary.com/dl7hskxab/image/upload/v1623338718/inducks-covers/thumbnails3/webusers/2017/08/gr_mm_0721d_001.jpg"
+                        :src="`${CLOUDINARY_URL_ROOT}/thumbnails3/webusers/2017/08/gr_mm_0721d_001.jpg`"
                         class="img-thumbnail"
                         style="height: 100px"
                       />
@@ -58,7 +58,7 @@
                   <b-tr>
                     <b-td>
                       <img
-                        src="https://res.cloudinary.com/dl7hskxab/image/upload/v1623338718/inducks-covers/thumbnails3/webusers/2019/09/it_cts_017dd_001.jpg"
+                        :src="`${CLOUDINARY_URL_ROOT}/thumbnails3/webusers/2019/09/it_cts_017dd_001.jpg`"
                         class="img-thumbnail"
                         style="height: 100px"
                       />
@@ -72,7 +72,7 @@
                   <b-tr>
                     <b-td>
                       <img
-                        src="https://res.cloudinary.com/dl7hskxab/image/upload/v1623338718/inducks-covers/thumbnails3/webusers/2014/02/es_pd1_11i_001.jpg"
+                        :src="`${CLOUDINARY_URL_ROOT}/thumbnails3/webusers/2014/02/es_pd1_11i_001.jpg`"
                         class="img-thumbnail"
                         style="height: 100px"
                       />
@@ -198,6 +198,12 @@
                       fluid
                       class="rounded shadow-sm mb-2"
                       style="aspect-ratio: 1; object-fit: cover"
+                      @error="
+                        entryurlsPendingMaintenanceWithUrls =
+                          entryurlsPendingMaintenanceWithUrls.filter(
+                            (item) => item.sitecodeUrl !== sitecodeUrl,
+                          )
+                      "
                     />
                     <b-button-group vertical size="sm" class="w-100">
                       <b-button
@@ -267,17 +273,17 @@ interface Decision {
 }
 
 const { t } = useI18n();
-const datasetsGroupedByDecision = ref(
-  {} as { [key: string]: DatasetWithDecisionCounts },
-);
-const datasets = ref([] as { text: string; value: string | null }[]);
-const entryurlsPendingMaintenanceWithUrls = ref(
-  [] as {
+const datasetsGroupedByDecision = ref<{
+  [key: string]: DatasetWithDecisionCounts;
+}>({});
+const datasets = ref<{ text: string; value: string | null }[]>([]);
+const entryurlsPendingMaintenanceWithUrls = ref<
+  {
     sitecodeUrl: string;
     decision: entryurlDetailsDecision;
     url: string;
-  }[],
-);
+  }[]
+>([]);
 const validatedAndRemainingImageCount = ref<{
   not_validated: number;
   validated: number;
@@ -301,31 +307,33 @@ const isAllowed = computed(
       "Picsou22",
     ].includes(user.value.username),
 );
-const decisions = {
+
+const CLOUDINARY_URL_ROOT = import.meta.env.VITE_CLOUDINARY_URL_ROOT;
+const decisions: Record<entryurlDetailsDecision, Decision> = {
   ok: {
     pressed: false,
-    title: "OK",
-    variant: "outline-success" as keyof BaseButtonVariant,
+    title: t("Correct image"),
+    variant: "outline-success",
   },
   no_drawing: {
     pressed: false,
-    title: t("Image doesn't have a drawing").toString(),
-    variant: "outline-warning" as keyof BaseButtonVariant,
+    title: t("Image doesn't have a drawing"),
+    variant: "outline-warning",
   },
   shows_author: {
     pressed: false,
-    title: t("Image contains author").toString(),
-    variant: "outline-warning" as keyof BaseButtonVariant,
+    title: t("Image contains author"),
+    variant: "outline-warning",
   },
 };
 const decisionsWithNonValidated = ref({
   null: {
     pressed: true,
-    title: t("Non-validated images").toString(),
-    variant: "secondary" as keyof BaseButtonVariant,
+    title: t("Non-validated image"),
+    variant: "secondary",
   },
   ...decisions,
-});
+} satisfies Record<entryurlDetailsDecision | "null", Decision>);
 const loadDatasets = async () => {
   datasetsGroupedByDecision.value = (
     await maintenanceSocket.getMaintenanceData()

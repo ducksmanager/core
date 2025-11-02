@@ -1,0 +1,14 @@
+{
+    debug
+    email admin@ducksmanager.net
+	log default {
+		output stdout
+		format json
+		include http.log.access
+	}
+}
+
+import /etc/caddy/apps/*/Caddyfile
+import /etc/caddy/apps/dm/apps/*/Caddyfile
+import /etc/caddy/apps/dm/apps/*/api/Caddyfile
+import /etc/caddy/apps/dm/packages/*/Caddyfile

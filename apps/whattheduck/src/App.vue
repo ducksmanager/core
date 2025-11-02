@@ -25,6 +25,7 @@ import { collection } from '~web/src/stores/collection';
 import AppWithPersistedData from './views/AppWithPersistedData.vue';
 
 import namespaces from '~dm-services/namespaces';
+import { useBackButton } from '@ionic/vue';
 
 const storage = injectLocal<IonicStorage>('storage')!;
 
@@ -36,6 +37,11 @@ const route = useRoute();
 const router = useRouter();
 
 const bundleDownloadProgress = ref<number>();
+const previousRoute = ref<string>();
+
+router.beforeEach((_, from) => {
+  previousRoute.value = from.path;
+});
 
 const cacheStorage = buildStorage({
   set: (key, data, currentRequest) => {
@@ -133,5 +139,12 @@ updateBundle().finally(() => {
     },
     { immediate: true },
   );
+});
+
+useBackButton(5, (processNextHandler) => {
+  if ([route.path, previousRoute.value].includes('/login')) {
+    return;
+  }
+  processNextHandler();
 });
 </script>
