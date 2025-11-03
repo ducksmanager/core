@@ -5,12 +5,11 @@ import type { UserServices } from "../../../index";
 export const getUserLabel = async (description: string, userId: number) =>
   prismaDm.label.findUnique({
     where: {
-      userId_description: {
+      description_userId: {
         description,
-        userId,
-      },
-    },
-  });
+      userId,
+    }
+  }});
 
 export default ({ _socket }: UserServices) => ({
   getLabels: () =>
@@ -53,7 +52,7 @@ export default ({ _socket }: UserServices) => ({
     }
     await prismaDm.label.delete({
       where: {
-        userId_description: criteria,
+        description_userId: criteria,
       },
     });
   },

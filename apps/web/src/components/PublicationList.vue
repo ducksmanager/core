@@ -100,7 +100,7 @@ const title = $computed(() =>
 );
 
 const filteredCountrycodes = $computed(() =>
-  Object.keys(totalPerCountry.value).filter((countrycode) =>
+  Object.keys(totalPerCountry.value || {}).filter((countrycode) =>
     !filteredList
       ? true
       : [...filteredList]

@@ -6,7 +6,7 @@ import type { issue, issue_condition } from "~prisma-schemas/schemas/dm";
 
 import { coa } from "../stores/coa";
 
-export default (issues: ShallowRef<AugmentedIssue<issue>[]>) => {
+export default (issues: ShallowRef<AugmentedIssue<issue>[] | undefined>) => {
   const total = computed(() => issues.value?.length);
 
   const getTotalPerCountry = (includeDuplicates = true) => {

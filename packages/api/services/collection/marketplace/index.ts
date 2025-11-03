@@ -121,6 +121,9 @@ export const getIssuesForSale = async (buyerId: number) =>
     .then(
       (idsForSale) =>
         prismaDm.issue.findMany({
+          include: {
+            labels: true,
+          },
           select: {
             userId: true,
             id: true,
@@ -131,6 +134,10 @@ export const getIssuesForSale = async (buyerId: number) =>
               in: idsForSale.map(({ id }) => id),
             },
           },
-        }) as Promise<(issue & { issuecode: string })[]>,
+        }),
     )
-    .then(prismaCoa.augmentIssueArrayWithInducksData);
+    .then(<T extends { labels: { labelId: number }[] }>(issues: T[]) =>
+      prismaCoa.augmentIssueArrayWithInducksData(
+        issues as (T & { issuecode: string })[],
+      ).then(prismaDm.replaceLabelsWithLabelIds),
+    );

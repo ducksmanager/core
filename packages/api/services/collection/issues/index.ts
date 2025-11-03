@@ -43,7 +43,7 @@ export default ({ _socket }: UserServices) => ({
       .then(<T extends { labels: { labelId: number }[] }>(issues: T[]) =>
         prismaCoa.augmentIssueArrayWithInducksData(
           issues as (T & { issuecode: string })[],
-        ).then((issues) => prismaDm.replaceLabelsWithLabelIds(issues)),
+        ).then(prismaDm.replaceLabelsWithLabelIds),
       );
   },
 

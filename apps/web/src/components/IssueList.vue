@@ -353,7 +353,7 @@ import type { ClientEvents as CollectionServices } from "~dm-services/collection
 
 import ContextMenuOnSaleByOthers from "./ContextMenuOnSaleByOthers.vue";
 import ContextMenuOwnCollection from "./ContextMenuOwnCollection.vue";
-import { EventOutput } from "socket-call-client";
+import type { EventOutput } from "socket-call-client";
 
 type simpleIssue = {
   issuecode: string;
