@@ -41,7 +41,7 @@
                     'text-decoration-line-through text-secondary':
                       !filteredPublicationcodes?.includes(publicationcode),
                   }"
-                  :to="`${publicationUrlRoot}/${publicationcode}${hash}`"
+                  :to="`${publicationUrlRoot}/${publicationcode}${searchParams}`"
                 >
                   {{
                     publicationNames[publicationcode] ||
@@ -79,7 +79,7 @@ const { t: $t } = useI18n();
 
 const { isPublic, filteredList = undefined } = defineProps<{
   isPublic?: boolean;
-  filteredList?: Set<string>;
+  filteredList?: string[];
 }>();
 
 const route = useRoute();
@@ -88,7 +88,7 @@ const username = $computed(
   () => "username" in route.params && route.params.username,
 );
 
-const hash = $computed(() => route.hash);
+const searchParams = $computed(() => document.location.search);
 
 const { totalPerCountry, totalPerPublication, publicationUrlRoot } =
   storeToRefs(isPublic ? publicCollection() : collection());
@@ -111,7 +111,8 @@ const filteredCountrycodes = $computed(() =>
 
 const filteredPublicationcodes = $computed(() =>
   Object.keys(totalPerPublication.value || {}).filter(
-    (publicationcode) => !filteredList || filteredList.has(publicationcode),
+    (publicationcode) =>
+      !filteredList || filteredList.includes(publicationcode),
   ),
 );
 let hasPublicationNames = $ref(false);

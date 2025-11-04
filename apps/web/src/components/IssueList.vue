@@ -15,7 +15,7 @@
           @toggled="toggleWatched(publicationcode)"
       /></Publication>
       <div v-if="issues && purchases">
-        <div v-if="showFilter" v-once class="issue-filter">
+        <div v-if="showFilter" class="issue-filter">
           <table>
             <tbody>
               <tr
@@ -77,7 +77,6 @@
             </b-alert>
             <b-alert
               v-if="showFilter && issues.length"
-              v-once
               :model-value="true"
               variant="info"
               class="mb-0"
@@ -200,7 +199,7 @@
                   <div
                     v-for="{
                       condition: copyCondition,
-                      isToRead,
+                      labelIds,
                       purchaseId,
                       id,
                       copyIndex,
@@ -238,7 +237,7 @@
                       />
                     </svg>
                     <i-bi-bookmark-check
-                      v-if="isToRead && !onSaleByOthers"
+                      v-if="labelIds.includes(2) && !onSaleByOthers"
                       class="issue-to-read"
                     />
 
@@ -284,11 +283,7 @@
       </div>
     </div>
     <div v-if="!publicationNameLoading && issues && !issues.length">
-      <b-alert
-        v-if="Object.keys(labelIdFilters).length"
-        variant="info"
-        :model-value="true"
-      >
+      <b-alert v-if="labelIdFilters.size" variant="info" :model-value="true">
         {{ $t("Aucun numéro ne correspond aux filtres appliqués.") }}
       </b-alert>
       <b-alert v-else variant="danger" :model-value="true">
@@ -677,34 +672,9 @@ const loadIssues = async () => {
     issues = issues.filter(
       ({ userCopies }) =>
         userCopies.filter(({ labelIds }) =>
-          new Set(labelIds).isSubsetOf(labelIdFilters.value),
+          new Set(labelIds).isSupersetOf(labelIdFilters.value),
         ).length,
     );
-
-    // if (
-    //   labelIdFilters.value.has(
-    //     labels.value!.find(
-    //       ({ description }) => description === TO_READ_LABEL_DESCRIPTION,
-    //     )!.id!,
-    //   )
-    // ) {
-    //   issues = issues.filter(
-    //     ({ userCopies }) =>
-    //       userCopies.filter(({ isToRead }) => isToRead).length,
-    //   );
-    // }
-    // if (
-    //   labelIdFilters.value.has(
-    //     labels.value!.find(
-    //       ({ description }) => description === ON_SALE_LABEL_DESCRIPTION,
-    //     )!.id!,
-    //   )
-    // ) {
-    //   issues = issues.filter(
-    //     ({ userCopies }) =>
-    //       userCopies.filter(({ isOnSale }) => isOnSale).length,
-    //   );
-    // }
 
     userIssuecodesNotFoundForPublication = userIssuesForPublication
       .filter(

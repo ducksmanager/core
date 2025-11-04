@@ -48,7 +48,7 @@ export const collection = defineStore("collection", () => {
 
   const issues = shallowRef<EventOutput<CollectionServices, "getIssues">>();
 
-  const labelFiltersHashParams =
+  const labelFiltersQueryParams =
     useUrlSearchParams<Record<Filter, "true">>("hash-params");
 
   const collectionUtils = useCollection(
@@ -60,7 +60,7 @@ export const collection = defineStore("collection", () => {
     labelIdFilters = computed(
       () =>
         new Set(
-          Object.entries(labelFiltersHashParams)
+          Object.entries(labelFiltersQueryParams)
             .filter(([, value]) => value === "true")
             .map(
               ([labelDescription]) =>
@@ -414,7 +414,7 @@ export const collection = defineStore("collection", () => {
     isLoadingSuggestions,
     issuecodesPerPublication,
     labelIdFilters,
-    labelFiltersHashParams,
+    labelFiltersQueryParams,
     labels,
     labelsWithIcons,
     lastPublishedEdgesForCurrentUser,

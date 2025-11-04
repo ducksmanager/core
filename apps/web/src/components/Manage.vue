@@ -100,9 +100,9 @@
         @update:pressed="
           (pressed) => {
             if (pressed) {
-              labelFiltersHashParams[label.description] = 'true';
+              labelFiltersQueryParams[label.description] = 'true';
             } else {
-              delete labelFiltersHashParams[label.description];
+              delete labelFiltersQueryParams[label.description];
             }
           }
         "
@@ -136,7 +136,7 @@ const {
   issues,
   labelsWithIcons,
   labelIdFilters,
-  labelFiltersHashParams,
+  labelFiltersQueryParams,
   user,
   total,
   totalPerPublication,
@@ -155,30 +155,26 @@ const {
 
 const { buyerUserIds, sellerUserIds } = storeToRefs(marketplace());
 
-const labelFiltersSet = $computed(
-  () => new Set(Object.keys(labelIdFilters.value)),
+const isFilterOpen = ref(false);
+
+watch(
+  labelFiltersQueryParams,
+  (newValue) => {
+    if (newValue) {
+      isFilterOpen.value = true;
+    }
+  },
+  { immediate: true },
 );
 
-const isFilterOpen = $ref(labelFiltersSet.size > 0);
-
 const filteredPublicationcodes = $computed(() =>
-  labelFiltersSet.has(TO_READ_LABEL_DESCRIPTION)
-    ? new Set(
-        Object.keys(
-          issues.value
-            ?.filter(({ isToRead }) => isToRead)
-            .groupBy("publicationcode") || {},
-        ),
+  Object.keys(
+    issues.value
+      ?.filter(({ labelIds }) =>
+        new Set(labelIds).isSupersetOf(labelIdFilters.value),
       )
-    : labelFiltersSet.has(ON_SALE_LABEL_DESCRIPTION)
-      ? new Set(
-          Object.keys(
-            issues.value
-              ?.filter(({ isOnSale }) => isOnSale)
-              .groupBy("publicationcode") || {},
-          ),
-        )
-      : new Set(Object.keys(totalPerPublication.value || {})),
+      .groupBy("publicationcode") || {},
+  ),
 );
 
 watch(
