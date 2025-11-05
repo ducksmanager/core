@@ -126,8 +126,8 @@ import { trashOutline, trashSharp } from 'ionicons/icons';
 
 import { app } from '~/stores/app';
 import { wtdcollection } from '~/stores/wtdcollection';
-import { TO_READ_LABEL_ID } from '~web/src/composables/useCollection';
 import useSet from '~web/src/composables/useSet';
+import { TO_READ_LABEL_ID } from '~dm-types/Labels';
 
 const { toggleSetElement } = useSet();
 

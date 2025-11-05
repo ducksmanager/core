@@ -122,6 +122,12 @@ export const marketplace = defineStore("marketplace", () => {
     },
     deleteRequestToSeller = async (issueId: number) => {
       await collectionEvents.deleteRequests(issueId);
+    },
+    transferIssuesTo = async (issueIds: number[], userId: number) => {
+      await collectionEvents.transferIssues(issueIds, userId);
+    },
+    setIssuesAsideFor = async (issueIds: number[], userId: number) => {
+      await collectionEvents.setIssuesAside(issueIds, userId);
     };
 
   return {
@@ -145,5 +151,7 @@ export const marketplace = defineStore("marketplace", () => {
     loadIssueRequestsAsSeller,
     loadIssuesOnSaleByOthers,
     deleteRequestToSeller,
+    transferIssuesTo,
+    setIssuesAsideFor,
   };
 });

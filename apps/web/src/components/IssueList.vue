@@ -590,8 +590,6 @@ const deletePublicationIssues = async (issuecodesToDelete: string[]) => {
     await updateCollectionMultipleIssues({
       issuecodes: issuecodesToDelete,
       condition: null,
-      isToRead: false,
-      isOnSale: false,
       purchaseId: null,
       labelIds: [],
     });

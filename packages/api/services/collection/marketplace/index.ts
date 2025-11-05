@@ -5,6 +5,9 @@ import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
 import type { UserServices } from "../../../index";
 import contactMethods from "./contact-methods";
 
+export const ON_SALE_LABEL_ID = 1;
+export const TO_READ_LABEL_ID = 2;
+
 export default (services: UserServices) => {
   const { _socket } = services;
   return {
@@ -26,7 +29,7 @@ export default (services: UserServices) => {
       const issues = await prismaDm.issue.findMany({
         where: {
           id: { in: issueIds },
-          isOnSale: true,
+          labels: { some: { labelId: ON_SALE_LABEL_ID } },
         },
       });
       if (issues.length !== issueIds.length) {

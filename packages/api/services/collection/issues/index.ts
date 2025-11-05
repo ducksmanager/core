@@ -18,7 +18,6 @@ import { getShownQuotations } from "../../coa/quotations";
 import {
   checkPurchaseIdsBelongToUser,
   deleteIssues,
-  handleIsOnSale,
 } from "./util";
 
 export default ({ _socket }: UserServices) => ({
@@ -28,6 +27,10 @@ export default ({ _socket }: UserServices) => ({
     }
     return prismaDm.issue
       .findMany({
+        omit: {
+          isToRead: true,
+          isOnSale: true,
+        },
         include: {
           labels: true,
         },
@@ -49,12 +52,41 @@ export default ({ _socket }: UserServices) => ({
       );
   },
 
+  setIssuesAside: async (issueIds: number[], buyerId: number) => {
+    await prismaDm.requestedIssue.createMany({
+      data: issueIds.map((issueId) => ({
+        issueId,
+        buyerId,
+        isBooked: true,
+      })),
+    });
+  },
+  transferIssues: async (issueIds: number[], buyerId: number) => {
+    await prismaDm.issue.updateMany({
+      data: {
+        userId: buyerId,
+        purchaseId: -1,
+        isSubscription: false,
+      },
+      where: { id: { in: issueIds } },
+    });
+    await prismaDm.issueLabel.deleteMany({
+      where: {
+        issueId: { in: issueIds },
+      },
+    });
+    await prismaDm.requestedIssue.deleteMany({
+      where: {
+        issueId: { in: issueIds },
+        buyerId,
+      },
+    });
+  },
+
   addOrChangeIssues: async ({
     issuecodes,
     purchaseId,
-    isOnSale,
     condition,
-    isToRead,
     labelIds,
   }: CollectionUpdateMultipleIssues) => {
     const user = _socket.data.user;
@@ -66,25 +98,6 @@ export default ({ _socket }: UserServices) => ({
       )[0];
     }
 
-    if (isOnSale !== undefined) {
-      const issueIds = (
-        await prismaDm.issue.findMany({
-          select: {
-            id: true,
-          },
-          where: {
-            userId: user.id,
-            issuecode: {
-              in: issuecodes,
-            },
-          },
-        })
-      ).map(({ id }) => id);
-      for (const issueId of issueIds) {
-        await handleIsOnSale(issueId, isOnSale);
-      }
-    }
-
     if (condition === null) {
       await deleteIssues(user.id, issuecodes);
       return Promise.resolve({});
@@ -93,8 +106,6 @@ export default ({ _socket }: UserServices) => ({
       user.id,
       issuecodes,
       condition,
-      isOnSale === undefined ? undefined : isOnSale !== false,
-      isToRead,
       checkedPurchaseId,
       labelIds
     );
@@ -117,32 +128,10 @@ export default ({ _socket }: UserServices) => ({
       issuecode,
       copies.map(({ id }) => id),
       copies.map(({ condition }) => condition),
-      copies.map(({ isOnSale }) =>
-        isOnSale === undefined ? undefined : isOnSale !== false
-      ),
-      copies.map(({ isToRead }) => isToRead),
       checkedPurchaseIds,
       copies.map(({ labelIds }) => labelIds)
     );
 
-    const currentCopyIds = (
-      await prismaDm.issue.findMany({
-        select: {
-          id: true,
-        },
-        where: {
-          issuecode,
-          userId: userId,
-        },
-      })
-    ).map(({ id }) => id);
-
-    for (const issueId of currentCopyIds) {
-      const idx = currentCopyIds.indexOf(issueId);
-      if (copies[idx]) {
-        await handleIsOnSale(issueId, copies[idx].isOnSale);
-      }
-    }
     return output;
   },
 
@@ -168,8 +157,6 @@ const addOrChangeIssues = async (
   userId: number,
   issuecodes: string[],
   condition: issue_condition | undefined,
-  isOnSale: boolean | undefined,
-  isToRead: boolean | undefined,
   purchaseId: number | null | undefined,
   _labelIds: number[] | undefined
 ): Promise<TransactionResults> => {
@@ -190,8 +177,6 @@ const addOrChangeIssues = async (
       data: {
         ...existingIssueWithoutId,
         condition,
-        isOnSale,
-        isToRead,
         purchaseId: purchaseId === null ? -1 : purchaseId,
         // TODO handle labels on multiple issues
         // labels: {
@@ -218,8 +203,6 @@ const addOrChangeIssues = async (
           issuenumber: "",
           issuecode,
           condition: condition || issue_condition.indefini,
-          isOnSale: isOnSale || false,
-          isToRead: isToRead || false,
           purchaseId: purchaseId === null ? -1 : purchaseId,
           userId,
           creationDate: new Date(),
@@ -258,8 +241,6 @@ const addOrChangeCopies = async (
   issuecode: string,
   issueIds: (number | null)[],
   conditions: (issue_condition | null)[],
-  areOnSale: (boolean | undefined)[],
-  areToRead: (boolean | undefined)[],
   purchaseIds: (number | null)[],
   labelIds: (number[] | undefined)[]
 ): Promise<TransactionResults> => {
@@ -272,10 +253,6 @@ const addOrChangeCopies = async (
 
     const common = {
       condition: conditions[copyNumber]!,
-      isOnSale:
-        areOnSale[copyNumber] !== undefined ? areOnSale[copyNumber] : false,
-      isToRead:
-        areToRead[copyNumber] !== undefined ? areToRead[copyNumber] : false,
       purchaseId: purchaseIds[copyNumber] || -2,
     };
 
@@ -375,7 +352,6 @@ export const resetDemo = async () => {
       issuecode,
       condition,
       purchaseId: parseInt(purchaseId),
-      isOnSale: false,
     })),
   });
 

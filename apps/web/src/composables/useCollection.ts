@@ -1,7 +1,7 @@
 import type { ShallowRef } from "vue";
 
 import type { QuotedIssue } from "~dm-types/QuotedIssue";
-import type { issue, issue_condition } from "~prisma-schemas/schemas/dm";
+import type { issue_condition } from "~prisma-schemas/schemas/dm";
 import type { ClientEvents as CollectionServices } from "~dm-services/collection";
 
 import { coa } from "../stores/coa";
@@ -9,12 +9,10 @@ import { EventOutput } from "socket-call-client";
 
 export const ON_SALE_LABEL_DESCRIPTION = "À vendre";
 export const TO_READ_LABEL_DESCRIPTION = "À lire";
-export const ON_SALE_LABEL_ID = 1;
-export const TO_READ_LABEL_ID = 2;
 
-export default (
-  issues: ShallowRef<EventOutput<CollectionServices, "getIssues"> | undefined>,
-) => {
+type ServiceIssues = EventOutput<CollectionServices, "getIssues">;
+
+export default (issues: ShallowRef<ServiceIssues | undefined>) => {
   const total = computed(() => issues.value?.length);
 
   const getTotalPerCountry = (includeDuplicates = true) => {
@@ -70,7 +68,7 @@ export default (
     ),
     duplicateIssues = computed(() => {
       const issues = issuesByIssuecode.value || {};
-      return Object.keys(issues).reduce<{ [issuecode: string]: issue[] }>(
+      return Object.keys(issues).reduce<{ [issuecode: string]: ServiceIssues }>(
         (acc, issuecode) => {
           if (issues[issuecode].length > 1) {
             acc[issuecode] = issues[issuecode];

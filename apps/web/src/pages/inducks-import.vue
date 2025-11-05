@@ -351,8 +351,6 @@ const importIssues = async () => {
           ({ issuecode }) => issuecode,
         ),
         condition: issueDefaultCondition,
-        isOnSale: undefined,
-        isToRead: undefined,
         purchaseId: undefined,
         labelIds: [],
       });

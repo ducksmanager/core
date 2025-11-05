@@ -259,31 +259,11 @@
           :class="{
             clickable: !disabled,
             disabled,
-            selected: newCopyState.isOnSale === stateId,
             [`state-${stateId}`]: true,
           }"
-          @click="
-            newCopyState.isOnSale = disabled
-              ? newCopyState.isOnSale
-              : stateId === undefined
-                ? undefined
-                : false
-          "
         >
-          <i-bi-lock
-            v-if="
-              disabled &&
-              typeof newCopyState.isOnSale === 'object' &&
-              'setAsideFor' in newCopyState.isOnSale
-            "
-          />
-          <i-bi-arrow-bar-right
-            v-if="
-              disabled &&
-              typeof newCopyState.isOnSale === 'object' &&
-              'transferTo' in newCopyState.isOnSale
-            "
-          />
+          <i-bi-lock v-if="'setAsideFor' in stateId" />
+          <i-bi-arrow-bar-right v-if="'transferTo' in stateId" />
 
           <span :title="tooltip">{{ stateText }}</span>
         </v-contextmenu-item>
@@ -293,9 +273,10 @@
           class="cursor-help"
           :class="{
             clickable: true,
-            selected:
-              typeof newCopyState.isOnSale === 'object' &&
-              Object.keys(stateId)[0] in newCopyState.isOnSale,
+            selected: issueRequestsAsSeller?.some(
+              ({ issueId }) =>
+                'id' in newCopyState && issueId === newCopyState.id,
+            ),
           }"
           @mouseleave.prevent="() => {}"
         >
@@ -312,19 +293,14 @@
               class="clickable"
               :class="{
                 selected:
-                  typeof newCopyState.isOnSale === 'object' &&
-                  ((Object.keys(stateId)[0] === 'transferTo' &&
-                    'transferTo' in newCopyState.isOnSale &&
-                    newCopyState.isOnSale.transferTo === userId) ||
-                    (Object.keys(stateId)[0] === 'setAsideFor' &&
-                      'setAsideFor' in newCopyState.isOnSale &&
-                      newCopyState.isOnSale.setAsideFor === userId)),
+                  'transferTo' in stateId
+                    ? false
+                    : userIdsWhoSentRequestsForAllSelected?.includes(userId),
               }"
               @click.prevent="
-                newCopyState.isOnSale =
-                  typeof stateId === 'object' && 'transferTo' in stateId
-                    ? { transferTo: userId }
-                    : { setAsideFor: userId }
+                'transferTo' in stateId
+                  ? transferIssuesToConfirm(userId)
+                  : setIssuesAsideForConfirm(userId)
               "
               >{{ buyerUserNamesById?.[userId] }}</v-contextmenu-item
             >
@@ -364,6 +340,7 @@ const emit = defineEmits<{
 
 const { issueRequestsAsSeller, buyerUserNamesById } =
   storeToRefs(marketplace());
+const { transferIssuesTo, setIssuesAsideFor } = marketplace();
 
 const { createPurchase, deletePurchase, createLabel, deleteLabel } =
   collection();
@@ -453,7 +430,6 @@ const purchaseStates = $computed(() => [
   { value: null, label: $t("Ne pas associer avec une date d'achat") },
 ]);
 const marketplaceStates = $computed(() => [
-  { value: undefined, text: $t("Ne rien changer"), disabled: false },
   {
     value: { setAsideFor: null },
     text: $t("Réserver pour"),
@@ -480,38 +456,16 @@ const marketplaceStates = $computed(() => [
   },
 ]);
 
-const userIdsWhoSentRequestsForAllSelected = $computed(() =>
-  issueIds.reduce<number[]>(
-    (acc, issueId, idx) =>
-      idx === 0
-        ? [
-            ...new Set(
-              (receivedRequests || [])
-                .filter(
-                  ({ issueId: receivedRequestIssueId }) =>
-                    receivedRequestIssueId === issueId,
-                )
-                .map(({ buyerId }) => buyerId),
-            ),
-          ]
-        : acc.filter((buyerId) =>
-            (receivedRequests || []).filter(
-              ({
-                issueId: receivedRequestIssueId,
-                buyerId: receivedRequestBuyerId,
-              }) =>
-                receivedRequestIssueId === issueId &&
-                receivedRequestBuyerId === buyerId,
-            ),
-          ),
-    [],
-  ),
-);
-
 const receivedRequests = $computed(() =>
   issueRequestsAsSeller.value?.filter(({ issueId }) =>
     issueIds.includes(issueId),
   ),
+);
+
+const userIdsWhoSentRequestsForAllSelected = $computed(() =>
+  (receivedRequests || [])
+    .filter(({ issueId }) => issueIds.includes(issueId))
+    .map(({ buyerId }) => buyerId),
 );
 
 const formatDate = (value: string) =>
@@ -532,6 +486,26 @@ const issueIds = $computed((): (number | null)[] =>
     : [],
 );
 
+const transferIssuesToConfirm = async (userId: number) => {
+  if (
+    confirm(
+      $t(
+        "Les numéros sélectionnés vont être transférés à un ou plusieurs autres utilisateurs et n'apparaitront plus dans votre collection. Confirmer ?",
+      ),
+    )
+  ) {
+    await transferIssuesTo(issueIds.filter(Boolean) as number[], userId);
+  }
+};
+
+const setIssuesAsideForConfirm = async (userId: number) => {
+  if (
+    confirm($t("Voulez-vous vraiment réserver ces numéros à cet utilisateur ?"))
+  ) {
+    await setIssuesAsideFor(issueIds.filter(Boolean) as number[], userId);
+  }
+};
+
 watch(
   () => copyState,
   (copyState) => {
@@ -545,19 +519,5 @@ watch(
     emit("update", newCopyState);
   },
   { deep: true },
-);
-watch(
-  issueRequestsAsSeller,
-  (newValue) => {
-    const buyerId = newValue?.find(
-      ({ issueId, isBooked }) =>
-        issueId === (copyState as IssueWithPublicationcodeOptionalId).id &&
-        isBooked,
-    )?.buyerId;
-    if (buyerId) {
-      newCopyState.isOnSale = { setAsideFor: buyerId };
-    }
-  },
-  { immediate: true },
 );
 </script>
