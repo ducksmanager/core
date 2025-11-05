@@ -11,14 +11,8 @@
 <script setup lang="ts">
 const { loadSubscriptions } = collection();
 
-const {
-  subscriptions,
-  issuesInToReadStack,
-  issuesInOnSaleStack,
-  total,
-  totalUniqueIssues,
-  user,
-} = storeToRefs(collection());
+const { subscriptions, total, totalUniqueIssues, user } =
+  storeToRefs(collection());
 
 const { t: $t } = useI18n();
 const router = useRouter();

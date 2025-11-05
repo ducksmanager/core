@@ -20,8 +20,6 @@ import IBiBookmarkCheck from "~icons/bi/bookmark-check";
 import useCollection from "../composables/useCollection";
 import { socketInjectionKey } from "../composables/useDmSocket";
 
-const ON_SALE_LABEL_DESCRIPTION = "À vendre";
-const TO_READ_LABEL_DESCRIPTION = "À lire";
 export type Filter =
   | typeof ON_SALE_LABEL_DESCRIPTION
   | typeof TO_READ_LABEL_DESCRIPTION

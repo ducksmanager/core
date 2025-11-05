@@ -340,6 +340,9 @@ import type { IssueWithPublicationcodeOptionalId } from "~/stores/collection";
 import type { CollectionUpdateMultipleIssues } from "~dm-types/CollectionUpdate";
 import type { issue_condition } from "~prisma-schemas/schemas/dm";
 import { BButton } from "bootstrap-vue-next";
+import useSet from "~/composables/useSet";
+
+const { toggleSetElement } = useSet();
 
 const { conditions } = useCondition();
 
@@ -402,14 +405,6 @@ const newLabelDefault: NewLabel = {
 };
 
 let newLabel = $ref(newLabelDefault);
-
-const toggleSetElement = <T,>(set: T[], element: T): void => {
-  if (set.includes(element)) {
-    set.splice(set.indexOf(element), 1);
-  } else {
-    set.push(element);
-  }
-};
 
 const { t: $t } = useI18n();
 const isSaleDisabledGlobally = $computed(

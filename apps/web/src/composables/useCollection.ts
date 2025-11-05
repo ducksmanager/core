@@ -7,6 +7,11 @@ import type { ClientEvents as CollectionServices } from "~dm-services/collection
 import { coa } from "../stores/coa";
 import { EventOutput } from "socket-call-client";
 
+export const ON_SALE_LABEL_DESCRIPTION = "À vendre";
+export const TO_READ_LABEL_DESCRIPTION = "À lire";
+export const ON_SALE_LABEL_ID = 1;
+export const TO_READ_LABEL_ID = 2;
+
 export default (
   issues: ShallowRef<EventOutput<CollectionServices, "getIssues"> | undefined>,
 ) => {
@@ -75,11 +80,10 @@ export default (
         {},
       );
     }),
-    issuesInToReadStack = computed(() =>
-      issues.value?.filter(({ isToRead }) => isToRead),
-    ),
     issuesInOnSaleStack = computed(() =>
-      issues.value?.filter(({ isOnSale }) => isOnSale),
+      issues.value?.filter(({ labelIds }) =>
+        labelIds.includes(ON_SALE_LABEL_ID),
+      ),
     ),
     totalUniqueIssues = computed(
       () =>
@@ -161,7 +165,6 @@ export default (
   return {
     duplicateIssues,
     issuesInOnSaleStack,
-    issuesInToReadStack,
     issuesByIssuecode,
     mostPossessedPublication,
     numberPerCondition,
