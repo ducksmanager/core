@@ -87,7 +87,7 @@
       class="me-2 d-flex align-items-center"
       data-bs-theme="dark"
     >
-      <i-bi-tags class="me-2" />{{ $t("Filter les numéros affichés") }}
+      <i-bi-tags class="me-2" />{{ $t("Filtrer les numéros affichés") }}
       <i-bi-caret-down v-if="isFilterOpen" class="ms-2" />
       <i-bi-caret-down-fill v-else class="ms-2" />
     </b-button>
@@ -95,7 +95,10 @@
       <label-pill-button
         v-for="label in labelsWithIcons"
         :key="label.description"
-        v-bind="label"
+        v-bind="{
+          ...label,
+          description: `${label.description} (${getIssueCountForLabel(label.id)})`,
+        }"
         :pressed="labelIdFilters.has(label.id)"
         @update:pressed="
           (pressed) => {
@@ -166,6 +169,10 @@ watch(
   },
   { immediate: true },
 );
+
+const getIssueCountForLabel = (labelId: number) =>
+  issues.value?.filter(({ labelIds }) => labelIds.includes(labelId)).length ||
+  0;
 
 const filteredPublicationcodes = $computed(() =>
   Object.keys(

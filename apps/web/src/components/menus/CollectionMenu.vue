@@ -42,20 +42,6 @@ const items = $computed(
               ]),
       },
       {
-        route: "/collection/to-read",
-        text: !issuesInToReadStack.value
-          ? $t("Mes numéros à lire")
-          : $t("Mes numéros à lire ({0})", [issuesInToReadStack.value.length]),
-      },
-      {
-        route: "/collection/on-sale",
-        text: !issuesInOnSaleStack.value
-          ? $t("Mes numéros à vendre")
-          : $t("Mes numéros à vendre ({0})", [
-              issuesInOnSaleStack.value.length,
-            ]),
-      },
-      {
         route: "/collection/subscriptions",
         text:
           subscriptions.value == undefined
