@@ -1,18 +1,22 @@
 <template>
   <v-contextmenu-group :title="$t('Etat')">
-    <v-contextmenu-item
-      v-for="{ value, getLabelContextMenu } in conditionStates"
-      :key="`condition-${value}`"
-      :hide-on-click="false"
-      class="clickable"
-      :class="{ selected: newCopyState.condition === value }"
-      @click="newCopyState.condition = value"
+    <template
+      v-for="{ value: stateId, getLabelContextMenu } in conditionStates"
+      :key="`condition-${stateId}`"
     >
-      <template v-if="value === undefined" />
-      <Condition v-else :value="value || undefined" />&nbsp;{{
-        getLabelContextMenu()
-      }}
-    </v-contextmenu-item>
+      <template v-if="isSingleIssueSelected && stateId === undefined" />
+      <v-contextmenu-item
+        v-else
+        :hide-on-click="false"
+        class="clickable"
+        :class="{ selected: newCopyState.condition === stateId }"
+        @click="newCopyState.condition = stateId"
+      >
+        <Condition :value="stateId || undefined" />&nbsp;{{
+          getLabelContextMenu()
+        }}</v-contextmenu-item
+      >
+    </template>
     <v-contextmenu-divider v-show="newCopyState.condition !== null" />
   </v-contextmenu-group>
   <template v-if="newCopyState.condition !== null">
@@ -133,15 +137,27 @@
       </template>
     </v-contextmenu-group>
     <v-contextmenu-divider />
-    <v-contextmenu-group :title="$t('Étiquettes')" class="text-wrap">
+    <v-contextmenu-group
+      v-if="!isSingleIssueSelected"
+      :title="$t('Étiquettes')"
+    >
+      <b-alert variant="primary" show>
+        {{
+          $t(
+            "Les étiquettes ne peuvent pas être changées lorsque plusieurs numéros sont sélectionnés.",
+          )
+        }}
+      </b-alert>
+    </v-contextmenu-group>
+    <v-contextmenu-group v-else :title="$t('Étiquettes')">
       <label-pill-button
         v-for="label in labelsWithIcons?.filter(
-          ({ userId, id }) => !userId || newCopyState.labelIds.includes(id),
+          ({ userId, id }) => !userId || newCopyState.labelIds!.includes(id),
         )"
         :key="label.description"
         v-bind="label"
-        :pressed="newCopyState.labelIds.includes(label.id)"
-        @update:pressed="toggleSetElement(newCopyState.labelIds, label.id)"
+        :pressed="newCopyState.labelIds!.includes(label.id)"
+        @update:pressed="toggleSetElement(newCopyState.labelIds!, label.id)"
       />
       <v-contextmenu-submenu
         :title="$t(`Mes étiquettes`)"
@@ -205,9 +221,9 @@
             :hide-on-click="false"
             class="clickable label-description"
             :class="{
-              selected: newCopyState.labelIds.includes(id),
+              selected: newCopyState.labelIds!.includes(id),
             }"
-            @click.stop="toggleSetElement(newCopyState.labelIds, id)"
+            @click.stop="toggleSetElement(newCopyState.labelIds!, id)"
           >
             <div class="mx-2">
               {{ description }}
@@ -237,9 +253,7 @@
         }`"
       >
         <v-contextmenu-item
-          v-if="
-            typeof stateId === 'boolean' || stateId === undefined || disabled
-          "
+          v-if="stateId === undefined || disabled"
           :hide-on-click="false"
           class="marketplace-state"
           :class="{
@@ -335,7 +349,6 @@ const { copy: copyState, copyIndex = null } = defineProps<{
 }>();
 
 let newCopyState = $ref(copyState);
-debugger;
 
 const emit = defineEmits<{
   (
@@ -420,7 +433,9 @@ const collectionForCurrentPublication = $computed(() =>
   ),
 );
 
-let isSingleIssueSelected = $computed(() => "copyIndex" in copyState);
+let isSingleIssueSelected = $computed(
+  () => copyState && "copyIndex" in copyState,
+);
 
 const conditionStates = $computed(
   (): {

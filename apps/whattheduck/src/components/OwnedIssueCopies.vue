@@ -121,6 +121,7 @@ const addCopy = () => {
       purchaseId: null,
       isToRead: false,
       isOnSale: false,
+      labelIds: [],
     },
   ];
 };

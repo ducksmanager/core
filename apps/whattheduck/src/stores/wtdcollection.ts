@@ -1,5 +1,4 @@
 import { defineStore } from 'pinia';
-import type { ShallowRef } from 'vue';
 
 import type { EntryPartInfo } from '~dm-types/EntryPartInfo';
 import type { IssueWithIssuecodeOnly } from '~dm-types/IssueWithIssuecodeOnly';
@@ -46,9 +45,7 @@ export const wtdcollection = defineStore('wtdcollection', () => {
   } = storeToRefs(webCollectionStore);
   const statsStore = webStores.stats();
   const usersStore = webStores.users();
-  const { quotedIssues, quotationSum } = webComposables.useCollection(
-    issues as ShallowRef<(issue & { issuecode: string })[]>,
-  );
+  const { quotedIssues, quotationSum } = webComposables.useCollection(issues);
 
   const ownedCountries = computed(() =>
       ownedPublications.value

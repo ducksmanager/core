@@ -19,7 +19,7 @@ export type CopyStateWithUndefined = {
   isToRead: boolean | undefined;
   isOnSale: SaleState | undefined;
   purchaseId: number | null | undefined;
-  labelIds: number[];
+  labelIds: number[]|undefined;
 };
 
 export type CollectionUpdateSingleIssue = {

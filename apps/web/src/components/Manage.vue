@@ -158,7 +158,7 @@ const { buyerUserIds, sellerUserIds } = storeToRefs(marketplace());
 const isFilterOpen = ref(false);
 
 watch(
-  labelFiltersQueryParams,
+  () => Object.keys(labelFiltersQueryParams.value).length,
   (newValue) => {
     if (newValue) {
       isFilterOpen.value = true;

@@ -32,7 +32,7 @@ const listenEvents = () => ({
           issues as (issue & { issuecode: string })[],
         )).then((issues) => issues.map((issue) => ({
           ...issue,
-          labelIds: [],
+          labelIds: [] as number[],
         })))
     };
   },

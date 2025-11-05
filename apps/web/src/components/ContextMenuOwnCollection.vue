@@ -256,7 +256,6 @@ watch(
         ...defaultIssueState,
       };
     }
-    debugger;
   },
   { immediate: true },
 );

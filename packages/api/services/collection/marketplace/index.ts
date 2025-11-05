@@ -121,10 +121,8 @@ export const getIssuesForSale = async (buyerId: number) =>
     .then(
       (idsForSale) =>
         prismaDm.issue.findMany({
-          include: {
-            labels: true,
-          },
           select: {
+            labels: true,
             userId: true,
             id: true,
             issuecode: true,
