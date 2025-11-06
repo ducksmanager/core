@@ -45,6 +45,32 @@ type GroupByResultType<
           ? R
           : never;
 
+// Extract common types to avoid duplication
+type GroupByKeyType<
+  T,
+  K extends null | (keyof T & (string | number)) | ((item: T) => string),
+> = K extends null
+  ? T & string
+  : K extends (item: T) => string
+    ? string
+    : T[K & (keyof T & (string | number))] & (string | number);
+
+type GroupByMapperFn<T, V extends null | "[]" | NestedKeyOf<T> | `${NestedKeyOf<T>}[]`, R> = (
+  value: GroupByValueType<T, V> extends (infer U)[]
+    ? U
+    : V extends keyof T
+      ? T[V]
+      : T,
+  index: number,
+) => R;
+
+type GroupByReturnType<
+  T,
+  K extends null | (keyof T & (string | number)) | ((item: T) => string),
+  V extends null | "[]" | NestedKeyOf<T> | `${NestedKeyOf<T>}[]`,
+  R,
+> = Record<GroupByKeyType<T, K>, GroupByResultType<T, V, R>>;
+
 declare global {
   interface Array<T> {
     /**
@@ -106,22 +132,8 @@ declare global {
     >(
       fieldName: K,
       valueFieldName?: V,
-      mapperFn?: (
-        value: GroupByValueType<T, V> extends (infer U)[]
-          ? U
-          : V extends keyof T
-            ? T[V]
-            : T,
-        index: number,
-      ) => R,
-    ): Record<
-      K extends null
-        ? T & string
-        : K extends (item: T) => string
-          ? string
-          : T[K & (keyof T & (string | number))] & (string | number),
-      GroupByResultType<T, V, R>
-    >;
+      mapperFn?: GroupByMapperFn<T, V, R>,
+    ): GroupByReturnType<T, K, V, R>;
   }
 }
 
@@ -143,43 +155,81 @@ export const getNestedValue = <T extends Record<string, any>, P extends string>(
   return current as NestedValue<T, P> | undefined;
 };
 
-Array.prototype.groupBy = function (fieldNameOrCallback, mapper, mapperFn) {
+
+
+Object.defineProperty(Array.prototype, 'groupBy', {
+  value: function groupByImpl<
+  T,
+  K extends null | (keyof T & (string | number)) | ((item: T) => string),
+  V extends null | "[]" | NestedKeyOf<T> | `${NestedKeyOf<T>}[]` = null,
+  R = never,
+>(
+  this: T[],
+  fieldName: K,
+  valueFieldName?: V,
+  mapperFn?: GroupByMapperFn<T, V, R>,
+) { 
   return this.reduce((acc, object, idx) => {
-    const key =
-      fieldNameOrCallback === null
+    const key = (
+      fieldName === null
         ? object
-        : typeof fieldNameOrCallback === "function"
-          ? fieldNameOrCallback(object)
-          : object[fieldNameOrCallback];
-    if (mapper === "[]" || mapper?.endsWith("[]")) {
+        : typeof fieldName === "function"
+          ? fieldName(object)
+          : object[fieldName as keyof T & (string | number)]
+    ) as GroupByKeyType<T, K>;
+    
+    if (valueFieldName === "[]" || valueFieldName?.endsWith("[]")) {
       if (!acc[key]) {
-        acc[key] = [];
+        (acc as Record<string, GroupByResultType<T, V, R>[]>)[key as string] = [];
       }
     }
-    if (fieldNameOrCallback === null) {
-      const value = (mapperFn || ((val) => val))(object, idx);
-      if (mapper === "[]") {
-        acc[key].push(value);
-      } else {
-        acc[key] = value;
-      }
-    }
-    if (mapper === "[]" || mapper?.endsWith("[]")) {
-      acc[key].push(
-        (mapperFn || ((value) => value))(
-          mapper === "[]"
-            ? object
-            : getNestedValue(object, mapper.slice(0, -"[]".length)),
-          idx,
-        ),
-      );
-    } else {
-      acc[key] = (mapperFn || ((value) => value))(
-        mapper ? getNestedValue(object, mapper) : object,
+    if (fieldName === null) {
+      const value = (mapperFn || ((val) => val))(
+        object as GroupByValueType<T, V> extends (infer U)[]
+          ? U
+          : V extends keyof T
+            ? T[V]
+            : T,
         idx,
       );
+      if (valueFieldName === "[]") {
+        (acc[key] as R[]).push(value as R);
+      } else {
+        acc[key] = value as GroupByResultType<T, V, R>;
+      }
+    }
+    if (valueFieldName === "[]" || valueFieldName?.endsWith("[]")) {
+      const extractedValue = valueFieldName === "[]"
+        ? object
+        : getNestedValue(object as Record<string, T>, valueFieldName.slice(0, -"[]".length));
+      (acc[key] as R[]).push(
+        (mapperFn || ((value) => value))(
+          extractedValue as GroupByValueType<T, V> extends (infer U)[]
+            ? U
+            : V extends keyof T
+              ? T[V]
+              : T,
+          idx,
+        ) as R,
+      );
+    } else {
+      const extractedValue = valueFieldName
+        ? getNestedValue(object as Record<string, T>, valueFieldName)
+        : object;
+      acc[key] = (mapperFn || ((value) => value))(
+        extractedValue as GroupByValueType<T, V> extends (infer U)[]
+          ? U
+          : V extends keyof T
+            ? T[V]
+            : T,
+        idx,
+      ) as GroupByResultType<T, V, R>;
     }
     return acc;
-  }, {});
-};
+  }, {} as GroupByReturnType<T, K, V, R>);
+},
+  writable: true,
+  enumerable: false,
+  configurable: true,
+});
 export default {};
