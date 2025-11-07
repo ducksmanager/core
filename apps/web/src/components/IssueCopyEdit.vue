@@ -171,10 +171,10 @@
         <template #title> <i-bi-tags />{{ $t(`Mes étiquettes`) }} </template>
         <v-contextmenu-group>
           <v-contextmenu-item
-            v-if="!newLabel.context"
+            v-if="!newLabel"
             :hide-on-click="false"
             class="clickable"
-            @click.stop="newLabel.context = { error: undefined }"
+            @click.stop="newLabel = { context: { error: undefined } }"
           >
             <b>{{ $t("Nouvelle étiquette...") }}</b> </v-contextmenu-item
           ><template v-else>
@@ -200,10 +200,10 @@
                 @click.stop="
                   createLabel(newLabel.description!)
                     .then(() => {
-                      newLabel = newLabelDefault;
+                      newLabel = undefined;
                     })
                     .catch(({error}: {error: string}) => {
-                      newLabel.context = { error };
+                      newLabel!.context = { error };
                     })
                 "
               >
@@ -212,7 +212,7 @@
               <b-button
                 variant="warning"
                 class="btn-sm"
-                @click.stop="newLabel = newLabelDefault"
+                @click.stop="newLabel = undefined"
               >
                 <i-bi-x />
               </b-button>
@@ -236,7 +236,7 @@
             <b-button
               class="delete-label btn-sm"
               :title="$t('Supprimer')"
-              @click="deleteLabel(description)"
+              @click="deleteLabel(description); toggleSetElement(newCopyState.labelIds!, id)"
             >
               <i-bi-trash />
             </b-button>
@@ -383,13 +383,7 @@ type NewLabel = {
       }
     | undefined;
 };
-
-const newLabelDefault: NewLabel = {
-  description: "",
-  context: { error: undefined },
-};
-
-let newLabel = $ref(newLabelDefault);
+let newLabel = $ref<NewLabel>();
 
 const { t: $t } = useI18n();
 const isSaleDisabledGlobally = $computed(
