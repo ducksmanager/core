@@ -56,7 +56,7 @@ const buyerStats = $computed(
 );
 
 const isOnSale = $computed(() =>
-  issuesInOnSaleStack.value?.find(({ id }) => id === issueId),
+  issuesInOnSaleStack.value?.some(({ id }) => id === issueId),
 );
 </script>
 

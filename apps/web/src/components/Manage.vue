@@ -80,21 +80,58 @@
           }}
         </b-alert>
       </template>
-      <template #non-empty-collection>
-        <div class="mb-3">
-          {{ $t("Cliquez sur l'un des magazines pour éditer sa liste !") }}
-        </div>
-      </template>
     </ShortStats>
-    <PublicationList />
-    <IssueList
-      v-if="publicationcode || mostPossessedPublication"
-      :publicationcode="(publicationcode || mostPossessedPublication)!"
-    />
+
+    <b-button
+      v-model:pressed="isFilterOpen"
+      class="me-2 d-flex align-items-center"
+      data-bs-theme="dark"
+    >
+      <i-bi-tags class="me-2" />{{ $t("Filtrer les numéros affichés") }}
+      <i-bi-caret-down v-if="isFilterOpen" class="ms-2" />
+      <i-bi-caret-down-fill v-else class="ms-2" />
+    </b-button>
+    <b-collapse v-model="isFilterOpen" class="mt-1 mb-3">
+      <label-pill-button
+        v-for="label in labels"
+        :key="label.description"
+        v-bind="{
+          ...label,
+          description: `${label.description} (${getIssueCountForLabel(label.id)})`,
+        }"
+        :icon="
+          label.description === ON_SALE_LABEL_DESCRIPTION
+            ? IBiCart
+            : IBiBookmarkCheck
+        "
+        :pressed="labelIdFilters.has(label.id)"
+        @update:pressed="
+          (pressed) => {
+            if (pressed) {
+              labelFiltersQueryParams[label.description] = 'true';
+            } else {
+              delete labelFiltersQueryParams[label.description];
+            }
+          }
+        "
+      />
+    </b-collapse>
+    <PublicationList :filtered-list="filteredPublicationcodes" />
+    <template v-if="publicationcode || mostPossessedPublication">
+      <IssueList
+        v-if="publicationcode || mostPossessedPublication"
+        :publicationcode="(publicationcode || mostPossessedPublication)!"
+        :filters="new Set(labelIdFilters)"
+      />
+    </template>
   </div>
 </template>
 
 <script setup lang="ts">
+import { ON_SALE_LABEL_DESCRIPTION } from "~dm-types/Labels";
+import IBiCart from "~icons/bi/cart";
+import IBiBookmarkCheck from "~icons/bi/bookmark-check";
+
 const { publicationcode = null } = defineProps<{
   publicationcode?: string;
 }>();
@@ -108,6 +145,10 @@ const { loadCollection, loadPurchases, loadMarketplaceContactMethods } =
 const {
   marketplaceContactMethods,
   issuesInOnSaleStack,
+  issues,
+  labels,
+  labelIdFilters,
+  labelFiltersQueryParams,
   user,
   total,
   totalPerPublication,
@@ -125,6 +166,32 @@ const {
 } = marketplace();
 
 const { buyerUserIds, sellerUserIds } = storeToRefs(marketplace());
+
+const isFilterOpen = ref(false);
+
+watch(
+  () => Object.keys(labelFiltersQueryParams.value).length,
+  (newValue) => {
+    if (newValue) {
+      isFilterOpen.value = true;
+    }
+  },
+  { immediate: true },
+);
+
+const getIssueCountForLabel = (labelId: number) =>
+  issues.value?.filter(({ labelIds }) => labelIds.includes(labelId)).length ||
+  0;
+
+const filteredPublicationcodes = $computed(() =>
+  Object.keys(
+    issues.value
+      ?.filter(({ labelIds }) =>
+        new Set(labelIds).isSupersetOf(labelIdFilters.value),
+      )
+      .groupBy("publicationcode") || {},
+  ),
+);
 
 watch(
   totalPerPublication,

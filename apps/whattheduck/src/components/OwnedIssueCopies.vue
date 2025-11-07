@@ -119,8 +119,7 @@ const addCopy = () => {
       id: null,
       condition: 'indefini',
       purchaseId: null,
-      isToRead: false,
-      isOnSale: false,
+      labelIds: [],
     },
   ];
 };

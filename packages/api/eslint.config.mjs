@@ -12,7 +12,7 @@ export default defineConfig(
       "**/node_modules",
       "**/dist",
       "**/bundle.mjs",
-      "**/model",
+     "**/model",
       "**/*.d.ts",
       "prisma/client_*",
     ],

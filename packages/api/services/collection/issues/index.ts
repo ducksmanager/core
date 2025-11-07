@@ -9,7 +9,7 @@ import type {
 import type { InducksIssueQuotationSimple } from "~dm-types/InducksIssueQuotationSimple";
 import type { TransactionResults } from "~dm-types/TransactionResults";
 import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa/client";
-import type { issue, user } from "~prisma-schemas/schemas/dm";
+import type { user } from "~prisma-schemas/schemas/dm";
 import { issue_condition } from "~prisma-schemas/schemas/dm";
 import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
 
@@ -18,7 +18,6 @@ import { getShownQuotations } from "../../coa/quotations";
 import {
   checkPurchaseIdsBelongToUser,
   deleteIssues,
-  handleIsOnSale,
 } from "./util";
 
 export default ({ _socket }: UserServices) => ({
@@ -28,6 +27,13 @@ export default ({ _socket }: UserServices) => ({
     }
     return prismaDm.issue
       .findMany({
+        omit: {
+          isToRead: true,
+          isOnSale: true,
+        },
+        include: {
+          labels: true,
+        },
         where: {
           userId: _socket.data.user.id,
           issuecode: {
@@ -37,19 +43,51 @@ export default ({ _socket }: UserServices) => ({
           },
         },
       })
-      .then((issues) =>
-        prismaCoa.augmentIssueArrayWithInducksData(
-          issues as (issue & { issuecode: string })[],
-        ),
+      .then(<T extends { labels: { labelId: number }[] }>(issues: T[]) =>
+        prismaCoa
+          .augmentIssueArrayWithInducksData(
+            issues as (T & { issuecode: string })[]
+          )
+          .then(prismaDm.replaceLabelsWithLabelIds)
       );
+  },
+
+  setIssuesAside: async (issueIds: number[], buyerId: number) => {
+    await prismaDm.requestedIssue.createMany({
+      data: issueIds.map((issueId) => ({
+        issueId,
+        buyerId,
+        isBooked: true,
+      })),
+    });
+  },
+  transferIssues: async (issueIds: number[], buyerId: number) => {
+    await prismaDm.issue.updateMany({
+      data: {
+        userId: buyerId,
+        purchaseId: -1,
+        isSubscription: false,
+      },
+      where: { id: { in: issueIds } },
+    });
+    await prismaDm.issueLabel.deleteMany({
+      where: {
+        issueId: { in: issueIds },
+      },
+    });
+    await prismaDm.requestedIssue.deleteMany({
+      where: {
+        issueId: { in: issueIds },
+        buyerId,
+      },
+    });
   },
 
   addOrChangeIssues: async ({
     issuecodes,
     purchaseId,
-    isOnSale,
     condition,
-    isToRead,
+    labelIds,
   }: CollectionUpdateMultipleIssues) => {
     const user = _socket.data.user;
 
@@ -60,25 +98,6 @@ export default ({ _socket }: UserServices) => ({
       )[0];
     }
 
-    if (isOnSale !== undefined) {
-      const issueIds = (
-        await prismaDm.issue.findMany({
-          select: {
-            id: true,
-          },
-          where: {
-            userId: user.id,
-            issuecode: {
-              in: issuecodes,
-            },
-          },
-        })
-      ).map(({ id }) => id);
-      for (const issueId of issueIds) {
-        await handleIsOnSale(issueId, isOnSale);
-      }
-    }
-
     if (condition === null) {
       await deleteIssues(user.id, issuecodes);
       return Promise.resolve({});
@@ -87,9 +106,8 @@ export default ({ _socket }: UserServices) => ({
       user.id,
       issuecodes,
       condition,
-      isOnSale === undefined ? undefined : isOnSale !== false,
-      isToRead,
       checkedPurchaseId,
+      labelIds
     );
   },
   addOrChangeCopies: async ({
@@ -102,7 +120,7 @@ export default ({ _socket }: UserServices) => ({
       copies
         .map(({ purchaseId }) => purchaseId)
         .filter((purchaseId) => !!purchaseId) as number[],
-      userId,
+      userId
     );
 
     const output = await addOrChangeCopies(
@@ -110,31 +128,10 @@ export default ({ _socket }: UserServices) => ({
       issuecode,
       copies.map(({ id }) => id),
       copies.map(({ condition }) => condition),
-      copies.map(({ isOnSale }) =>
-        isOnSale === undefined ? undefined : isOnSale !== false,
-      ),
-      copies.map(({ isToRead }) => isToRead),
       checkedPurchaseIds,
+      copies.map(({ labelIds }) => labelIds)
     );
 
-    const currentCopyIds = (
-      await prismaDm.issue.findMany({
-        select: {
-          id: true,
-        },
-        where: {
-          issuecode,
-          userId: userId,
-        },
-      })
-    ).map(({ id }) => id);
-
-    for (const issueId of currentCopyIds) {
-      const idx = currentCopyIds.indexOf(issueId);
-      if (copies[idx]) {
-        await handleIsOnSale(issueId, copies[idx].isOnSale);
-      }
-    }
     return output;
   },
 
@@ -160,9 +157,8 @@ const addOrChangeIssues = async (
   userId: number,
   issuecodes: string[],
   condition: issue_condition | undefined,
-  isOnSale: boolean | undefined,
-  isToRead: boolean | undefined,
   purchaseId: number | null | undefined,
+  _labelIds: number[] | undefined
 ): Promise<TransactionResults> => {
   const existingIssues = await prismaDm.issue.findMany({
     where: {
@@ -181,9 +177,11 @@ const addOrChangeIssues = async (
       data: {
         ...existingIssueWithoutId,
         condition,
-        isOnSale,
-        isToRead,
         purchaseId: purchaseId === null ? -1 : purchaseId,
+        // TODO handle labels on multiple issues
+        // labels: {
+        //   deleteMany: {},
+        // },
       },
       where: { id: existingIssue.id },
     });
@@ -195,7 +193,7 @@ const addOrChangeIssues = async (
       (issuecode) =>
         !existingIssues
           .map(({ issuecode: existingIssuecode }) => existingIssuecode)
-          .includes(issuecode),
+          .includes(issuecode)
     )
     .map((issuecode) =>
       prismaDm.issue.create({
@@ -205,15 +203,32 @@ const addOrChangeIssues = async (
           issuenumber: "",
           issuecode,
           condition: condition || issue_condition.indefini,
-          isOnSale: isOnSale || false,
-          isToRead: isToRead || false,
           purchaseId: purchaseId === null ? -1 : purchaseId,
           userId,
           creationDate: new Date(),
         },
-      }),
+      })
     );
-  await prismaDm.$transaction(insertOperations);
+  // TODO handle labels on multiple issues
+  // await prismaDm.$transaction(insertOperations);
+
+  // const issueIds = (
+  //   await prismaDm.issue.findMany({
+  //     where: {
+  //       issuecode: {
+  //         in: issuecodes,
+  //       },
+  //       userId,
+  //     },
+  //   })
+  // ).map(({ id }) => id);
+
+  // const newIssueLabelsOperations = issueIds.map((issueId) =>
+  //   prismaDm.issueLabel.createMany({
+  //     data: labelIds?.map((labelId) => ({ labelId, issueId })) || [],
+  //   })
+  // );
+  // await prismaDm.$transaction(newIssueLabelsOperations);
 
   return {
     updateOperations: updateOperations.length,
@@ -226,9 +241,8 @@ const addOrChangeCopies = async (
   issuecode: string,
   issueIds: (number | null)[],
   conditions: (issue_condition | null)[],
-  areOnSale: (boolean | undefined)[],
-  areToRead: (boolean | undefined)[],
   purchaseIds: (number | null)[],
+  labelIds: (number[] | undefined)[]
 ): Promise<TransactionResults> => {
   const operations = issueIds.map((issueId, copyNumber) => {
     if (issueId && conditions[copyNumber] === null) {
@@ -236,46 +250,55 @@ const addOrChangeCopies = async (
         where: { id: issueId },
       });
     }
+
     const common = {
       condition: conditions[copyNumber]!,
-      isOnSale:
-        areOnSale[copyNumber] !== undefined ? areOnSale[copyNumber] : false,
-      isToRead:
-        areToRead[copyNumber] !== undefined ? areToRead[copyNumber] : false,
       purchaseId: purchaseIds[copyNumber] || -2,
     };
+
+    const createInput = {
+      ...common,
+      country: "",
+      magazine: "",
+      issuenumber: "",
+      publicationcode: "",
+      issuecode,
+      userId,
+      creationDate: new Date(),
+    };
+    const updateInput = {
+      ...common,
+      labels: {
+        deleteMany: {},
+      },
+    };
     console.log("upsert", {
-      create: {
-        ...common,
-        country: "",
-        magazine: "",
-        issuenumber: "",
-        issuecode,
-        userId,
-        creationDate: new Date(),
-      },
-      update: common,
-      where: {
-        id: issueId || 0,
-      },
+      create: createInput,
+      update: updateInput,
+      where: { id: issueId || 0 },
     });
     return prismaDm.issue.upsert({
-      create: {
-        ...common,
-        country: "",
-        magazine: "",
-        issuenumber: "",
-        issuecode,
-        userId,
-        creationDate: new Date(),
-      },
-      update: common,
+      create: createInput,
+      update: updateInput,
       where: {
         id: issueId || 0,
       },
     });
   });
   await prismaDm.$transaction(operations);
+
+  const newIssueLabelsOperations = issueIds
+    .filter((issueId) => issueId !== null)
+    .map((issueId, copyNumber) =>
+      prismaDm.issueLabel.createMany({
+        data:
+          labelIds[copyNumber]?.map((labelId) => ({
+            labelId,
+            issueId,
+          })) || [],
+      })
+    );
+  await prismaDm.$transaction(newIssueLabelsOperations);
 
   return {
     operations: operations.length,
@@ -329,7 +352,6 @@ export const resetDemo = async () => {
       issuecode,
       condition,
       purchaseId: parseInt(purchaseId),
-      isOnSale: false,
     })),
   });
 
@@ -340,7 +362,7 @@ export const resetDemo = async () => {
 
   const csvPurchases = parse<CsvPurchase>(
     readFileSync(`${csvPath}demo_purchases.csv`),
-    { columns: true },
+    { columns: true }
   );
   await prismaDm.purchase.createMany({
     data: csvPurchases.map(({ date, description }) => ({
@@ -353,7 +375,7 @@ export const resetDemo = async () => {
 
 const deleteUserData = async (
   user: user,
-  issuesOnly = false,
+  issuesOnly = false
 ): Promise<void> => {
   await prismaDm.issue.deleteMany({ where: { userId: user.id } });
 

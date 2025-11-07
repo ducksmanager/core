@@ -7,6 +7,7 @@ import type { UserServices } from "../../index";
 import { RequiredAuthMiddleware } from "../auth/util";
 import namespaces from "../namespaces";
 import issues from "./issues";
+import labels from "./labels";
 import marketplace from "./marketplace";
 import options from "./options";
 import purchases from "./purchases";
@@ -25,7 +26,7 @@ const listenEvents = (services: UserServices) => {
     ...options(services),
     ...purchases(services),
     ...subscriptions(services),
-
+    ...labels(services),
     emptyCollection: () =>
       prismaDm.issue
         .deleteMany({

@@ -351,9 +351,8 @@ const importIssues = async () => {
           ({ issuecode }) => issuecode,
         ),
         condition: issueDefaultCondition,
-        isOnSale: undefined,
-        isToRead: undefined,
         purchaseId: undefined,
+        labelIds: [],
       });
       importProgress +=
         100 / Object.keys(importableIssuesByPublicationCode).length;

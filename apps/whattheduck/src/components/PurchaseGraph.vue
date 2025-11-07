@@ -40,9 +40,9 @@ const compareDates = (a: string, b: string) =>
     `rgb(${Array.from({ length: 3 })
       .map(() => Math.floor(Math.random() * 255))
       .join(',')})`,
-  getIssueMonth = (issue: dm_issue): string =>
+  getIssueMonth = (issue: Pick<dm_issue, 'purchaseId' | 'creationDate'>): string =>
     getIssueDate(issue).isValid() ? getIssueDate(issue).format('YYYY-MM') : '?',
-  getIssueDate = (issue: dm_issue) =>
+  getIssueDate = (issue: Pick<dm_issue, 'purchaseId' | 'creationDate'>) =>
     dayjs((issue.purchaseId && purchasesById.value![issue.purchaseId]?.date) || issue.creationDate),
   publicationNames = computed(() => webCoa().publicationNames),
   publicationCodesWithOther = computed(

@@ -44,7 +44,7 @@ a {
   }
 }
 
-.dropdown ul li a {
+.dropdown ul li a:not(.text-secondary) {
   color: black !important;
 }
 

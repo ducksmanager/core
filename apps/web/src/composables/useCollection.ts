@@ -1,12 +1,16 @@
 import type { ShallowRef } from "vue";
 
-import type { AugmentedIssue } from "~dm-types/AugmentedIssue";
 import type { QuotedIssue } from "~dm-types/QuotedIssue";
-import type { issue, issue_condition } from "~prisma-schemas/schemas/dm";
+import type { issue_condition } from "~prisma-schemas/schemas/dm";
+import type { ClientEvents as CollectionServices } from "~dm-services/collection";
+import { ON_SALE_LABEL_ID } from "~dm-types/Labels";
 
 import { coa } from "../stores/coa";
+import { EventOutput } from "socket-call-client";
 
-export default (issues: ShallowRef<AugmentedIssue<issue>[]>) => {
+export type ServiceIssues = EventOutput<CollectionServices, "getIssues">;
+
+export default (issues: ShallowRef<ServiceIssues | undefined>) => {
   const total = computed(() => issues.value?.length);
 
   const getTotalPerCountry = (includeDuplicates = true) => {
@@ -62,7 +66,7 @@ export default (issues: ShallowRef<AugmentedIssue<issue>[]>) => {
     ),
     duplicateIssues = computed(() => {
       const issues = issuesByIssuecode.value || {};
-      return Object.keys(issues).reduce<{ [issuecode: string]: issue[] }>(
+      return Object.keys(issues).reduce<{ [issuecode: string]: ServiceIssues }>(
         (acc, issuecode) => {
           if (issues[issuecode].length > 1) {
             acc[issuecode] = issues[issuecode];
@@ -72,11 +76,10 @@ export default (issues: ShallowRef<AugmentedIssue<issue>[]>) => {
         {},
       );
     }),
-    issuesInToReadStack = computed(() =>
-      issues.value?.filter(({ isToRead }) => isToRead),
-    ),
     issuesInOnSaleStack = computed(() =>
-      issues.value?.filter(({ isOnSale }) => isOnSale),
+      issues.value?.filter(({ labelIds }) =>
+        labelIds.includes(ON_SALE_LABEL_ID),
+      ),
     ),
     totalUniqueIssues = computed(
       () =>
@@ -158,7 +161,6 @@ export default (issues: ShallowRef<AugmentedIssue<issue>[]>) => {
   return {
     duplicateIssues,
     issuesInOnSaleStack,
-    issuesInToReadStack,
     issuesByIssuecode,
     mostPossessedPublication,
     numberPerCondition,

@@ -11,14 +11,8 @@
 <script setup lang="ts">
 const { loadSubscriptions } = collection();
 
-const {
-  subscriptions,
-  issuesInToReadStack,
-  issuesInOnSaleStack,
-  total,
-  totalUniqueIssues,
-  user,
-} = storeToRefs(collection());
+const { subscriptions, total, totalUniqueIssues, user } =
+  storeToRefs(collection());
 
 const { t: $t } = useI18n();
 const router = useRouter();
@@ -40,20 +34,6 @@ const items = $computed(
             : $t("Mes numéros en double ({0})", [
                 total.value - totalUniqueIssues.value,
               ]),
-      },
-      {
-        route: "/collection/to-read",
-        text: !issuesInToReadStack.value
-          ? $t("Mes numéros à lire")
-          : $t("Mes numéros à lire ({0})", [issuesInToReadStack.value.length]),
-      },
-      {
-        route: "/collection/on-sale",
-        text: !issuesInOnSaleStack.value
-          ? $t("Mes numéros à vendre")
-          : $t("Mes numéros à vendre ({0})", [
-              issuesInOnSaleStack.value.length,
-            ]),
       },
       {
         route: "/collection/subscriptions",

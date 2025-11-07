@@ -25,6 +25,10 @@
             <b-dropdown variant="outline-light">
               <template #button-content
                 ><Country
+                  :class="{
+                    'text-decoration-line-through text-secondary':
+                      !filteredCountrycodes?.includes(country),
+                  }"
                   :country="country"
                   :country-name="countryNames[country]"
               /></template>
@@ -33,8 +37,11 @@
                 :key="publicationcode"
               >
                 <router-link
-                  class="dropdown-item"
-                  :to="`${publicationUrlRoot}/${publicationcode}`"
+                  :class="{
+                    'text-decoration-line-through text-secondary':
+                      !filteredPublicationcodes?.includes(publicationcode),
+                  }"
+                  :to="`${publicationUrlRoot}/${publicationcode}${searchParams}`"
                 >
                   {{
                     publicationNames[publicationcode] ||
@@ -70,8 +77,9 @@
 <script setup lang="ts">
 const { t: $t } = useI18n();
 
-const { isPublic } = defineProps<{
+const { isPublic, filteredList = undefined } = defineProps<{
   isPublic?: boolean;
+  filteredList?: string[];
 }>();
 
 const route = useRoute();
@@ -79,6 +87,8 @@ const route = useRoute();
 const username = $computed(
   () => "username" in route.params && route.params.username,
 );
+
+const searchParams = $computed(() => document.location.search);
 
 const { totalPerCountry, totalPerPublication, publicationUrlRoot } =
   storeToRefs(isPublic ? publicCollection() : collection());
@@ -89,6 +99,22 @@ const title = $computed(() =>
   isPublic ? $t("Collection de {username}", { username }) : $t("Collection"),
 );
 
+const filteredCountrycodes = $computed(() =>
+  Object.keys(totalPerCountry.value || {}).filter((countrycode) =>
+    !filteredList
+      ? true
+      : [...filteredList]
+          .map((publicationcode) => publicationcode.split("/")[0])
+          .includes(countrycode),
+  ),
+);
+
+const filteredPublicationcodes = $computed(() =>
+  Object.keys(totalPerPublication.value || {}).filter(
+    (publicationcode) =>
+      !filteredList || filteredList.includes(publicationcode),
+  ),
+);
 let hasPublicationNames = $ref(false);
 const sortedCountries = $computed(
   () =>

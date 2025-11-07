@@ -4,24 +4,32 @@ import type { ShallowRef } from "vue";
 import type { ClientEvents as CollectionServices } from "~dm-services/collection";
 import type { SubscriptionTransformedStringDates } from "~dm-services/collection/subscriptions";
 import type { ClientEvents as StatsServices } from "~dm-services/stats";
-import type { AugmentedIssue } from "~dm-types/AugmentedIssue";
 import type {
   CollectionUpdateMultipleIssues,
   CollectionUpdateSingleIssue,
 } from "~dm-types/CollectionUpdate";
 import type {
   authorUser,
-  issue,
+  label,
   purchase,
   subscription,
 } from "~prisma-schemas/schemas/dm";
+import {
+  ON_SALE_LABEL_DESCRIPTION,
+  TO_READ_LABEL_DESCRIPTION,
+} from "~dm-types/Labels";
 
 import useCollection from "../composables/useCollection";
 import { socketInjectionKey } from "../composables/useDmSocket";
 
+export type Filter =
+  | typeof ON_SALE_LABEL_DESCRIPTION
+  | typeof TO_READ_LABEL_DESCRIPTION
+  | (string & {});
+
 export type IssueWithPublicationcodeOptionalId = Omit<
-  issue,
-  "id" | "issuenumber"
+  EventOutput<CollectionServices, "getIssues">[number],
+  "id" | "country" | "magazine" | "title" | "issuenumber"
 > & {
   id: number | null;
 };
@@ -40,11 +48,29 @@ export const collection = defineStore("collection", () => {
 
   const issues = shallowRef<EventOutput<CollectionServices, "getIssues">>();
 
+  const labelFiltersQueryParams =
+    useUrlSearchParams<Record<Filter, "true">>("hash-params");
+
   const collectionUtils = useCollection(
-      issues as ShallowRef<AugmentedIssue<issue>[]>,
+      issues as ShallowRef<EventOutput<CollectionServices, "getIssues">>,
     ),
     watchedPublicationsWithSales = shallowRef<string[]>(),
     purchases = shallowRef<purchase[]>(),
+    labels = shallowRef<label[]>(),
+    labelIdFilters = computed(
+      () =>
+        new Set(
+          Object.entries(labelFiltersQueryParams)
+            .filter(([, value]) => value === "true")
+            .map(
+              ([labelDescription]) =>
+                labels.value?.find(
+                  ({ description }) => description === labelDescription,
+                )?.id,
+            )
+            .filter((id) => id !== undefined),
+        ) as Set<number>,
+    ),
     watchedAuthors = shallowRef<authorUser[]>(),
     marketplaceContactMethods = ref<string[]>(),
     suggestions =
@@ -60,6 +86,7 @@ export const collection = defineStore("collection", () => {
     isLoadingWatchedPublicationsWithSales = ref(false),
     isLoadingMarketplaceContactMethods = ref(false),
     isLoadingPurchases = ref(false),
+    isLoadingLabels = ref(false),
     isLoadingSuggestions = ref(false),
     isLoadingSubscriptions = ref(false),
     user = shallowRef<
@@ -115,6 +142,13 @@ export const collection = defineStore("collection", () => {
           user.value.marketplaceAcceptsExchanges || false,
       };
     }),
+    labelsWithIcons = computed(() =>
+      labels.value?.map(({ id, userId, description }) => ({
+        id,
+        description,
+        userId,
+      })),
+    ),
     updateCollectionSingleIssue = async (data: CollectionUpdateSingleIssue) => {
       await collectionEvents.addOrChangeCopies(data);
       await loadCollection(true);
@@ -126,12 +160,26 @@ export const collection = defineStore("collection", () => {
       await loadCollection(true);
     },
     createPurchase = async (date: string, description: string) => {
-      await collectionEvents.createPurchase(date, description);
+      const result = await collectionEvents.createPurchase(date, description);
+      if (typeof result === "object" && result?.error) {
+        return { error: result.error };
+      }
       await loadPurchases(true);
     },
     deletePurchase = async (id: number) => {
       await collectionEvents.deletePurchase(id);
       await loadPurchases(true);
+    },
+    createLabel = async (description: string) => {
+      const result = await collectionEvents.createLabel(description);
+      if (typeof result === "object" && result?.error) {
+        return { error: result.error };
+      }
+      await loadLabels(true);
+    },
+    deleteLabel = async (description: string) => {
+      await collectionEvents.deleteLabel(description);
+      await loadLabels(true);
     },
     loadPreviousVisit = async () => {
       const result = await collectionEvents.getLastVisit();
@@ -203,6 +251,15 @@ export const collection = defineStore("collection", () => {
           date: new Date(purchase.date),
         }));
         isLoadingPurchases.value = false;
+      }
+    },
+    loadLabels = async (ignoreCache = false) => {
+      if (ignoreCache || (!isLoadingLabels.value && !labels.value)) {
+        isLoadingLabels.value = true;
+        labels.value = await collectionEvents.getLabels({
+          disableCache: ignoreCache,
+        });
+        isLoadingLabels.value = false;
       }
     },
     loadWatchedPublicationsWithSales = async (ignoreCache = false) => {
@@ -341,7 +398,9 @@ export const collection = defineStore("collection", () => {
     ...collectionUtils,
     issues,
     publicationUrlRoot,
+    createLabel,
     createPurchase,
+    deleteLabel,
     deletePurchase,
     hasRole,
     hasSuggestions,
@@ -349,9 +408,14 @@ export const collection = defineStore("collection", () => {
     copiesPerIssuecode,
     isLoadingSuggestions,
     issuecodesPerPublication,
+    labelIdFilters,
+    labelFiltersQueryParams,
+    labels,
+    labelsWithIcons,
     lastPublishedEdgesForCurrentUser,
     loadCollection,
     loadUserIssueQuotations,
+    loadLabels,
     loadLastPublishedEdgesForCurrentUser,
     loadMarketplaceContactMethods,
     loadPopularIssuesInCollection,

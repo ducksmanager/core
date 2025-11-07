@@ -32,7 +32,7 @@ export default ({ _socket }: UserServices) => ({
         where: criteria,
       })) > 0
     ) {
-      return { error: "Purchase already exists" };
+      return { error: "Purchase already exists" } as const;
     }
 
     await prismaDm.purchase.create({

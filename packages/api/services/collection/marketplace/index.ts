@@ -4,6 +4,7 @@ import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
 
 import type { UserServices } from "../../../index";
 import contactMethods from "./contact-methods";
+import { ON_SALE_LABEL_ID } from "~dm-types/Labels";
 
 export default (services: UserServices) => {
   const { _socket } = services;
@@ -26,7 +27,7 @@ export default (services: UserServices) => {
       const issues = await prismaDm.issue.findMany({
         where: {
           id: { in: issueIds },
-          isOnSale: true,
+          labels: { some: { labelId: ON_SALE_LABEL_ID } },
         },
       });
       if (issues.length !== issueIds.length) {
@@ -122,6 +123,7 @@ export const getIssuesForSale = async (buyerId: number) =>
       (idsForSale) =>
         prismaDm.issue.findMany({
           select: {
+            labels: true,
             userId: true,
             id: true,
             issuecode: true,
@@ -131,6 +133,10 @@ export const getIssuesForSale = async (buyerId: number) =>
               in: idsForSale.map(({ id }) => id),
             },
           },
-        }) as Promise<(issue & { issuecode: string })[]>,
+        }),
     )
-    .then(prismaCoa.augmentIssueArrayWithInducksData);
+    .then(<T extends { labels: { labelId: number }[] }>(issues: T[]) =>
+      prismaCoa.augmentIssueArrayWithInducksData(
+        issues as (T & { issuecode: string })[],
+      ).then(prismaDm.replaceLabelsWithLabelIds),
+    );

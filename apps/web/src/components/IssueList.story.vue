@@ -13,10 +13,10 @@
 
 <script lang="ts" setup>
 import dayjs from "dayjs";
+import { EventOutput } from "socket-call-client";
+import type { ClientEvents as CollectionServices } from "~dm-services/collection";
 
-import type { issue } from "~prisma-schemas/schemas/dm";
-
-const customIssues: (issue & { issuecode: string })[] = [
+const customIssues: EventOutput<CollectionServices, "getIssues"> = [
   {
     id: 167808,
     country: "fr",
@@ -26,11 +26,11 @@ const customIssues: (issue & { issuecode: string })[] = [
     issuecode: "fr/MP 303",
     condition: "moyen",
     purchaseId: -1,
-    isOnSale: true,
-    isToRead: false,
     isSubscription: false,
     userId: 1348,
     creationDate: dayjs("2017-02-10T14:31:02.000Z").toDate(),
+    labelIds: [ON_SALE_LABEL_ID],
+    title: "",
   },
   {
     id: 167809,
@@ -41,11 +41,11 @@ const customIssues: (issue & { issuecode: string })[] = [
     issuecode: "fr/MP 304",
     condition: "moyen",
     purchaseId: -1,
-    isOnSale: true,
-    isToRead: false,
     isSubscription: false,
     userId: 1348,
     creationDate: dayjs("2017-02-10T14:31:02.000Z").toDate(),
+    labelIds: [ON_SALE_LABEL_ID],
+    title: "",
   },
   {
     id: 167812,
@@ -56,11 +56,11 @@ const customIssues: (issue & { issuecode: string })[] = [
     issuecode: "fr/MP 307",
     condition: "mauvais",
     purchaseId: -1,
-    isOnSale: true,
-    isToRead: false,
     isSubscription: false,
     userId: 1348,
     creationDate: dayjs("2017-02-10T14:31:02.000Z").toDate(),
+    labelIds: [ON_SALE_LABEL_ID],
+    title: "",
   },
   {
     id: 167818,
@@ -71,11 +71,11 @@ const customIssues: (issue & { issuecode: string })[] = [
     issuecode: "fr/MP 313",
     condition: "mauvais",
     purchaseId: -1,
-    isOnSale: true,
-    isToRead: false,
     isSubscription: false,
     userId: 1348,
     creationDate: dayjs("2017-02-10T14:31:02.000Z").toDate(),
+    labelIds: [ON_SALE_LABEL_ID],
+    title: "",
   },
   {
     id: 167819,
@@ -86,11 +86,11 @@ const customIssues: (issue & { issuecode: string })[] = [
     issuecode: "fr/MP 314",
     condition: "mauvais",
     purchaseId: -1,
-    isOnSale: true,
-    isToRead: false,
     isSubscription: false,
     userId: 1348,
     creationDate: dayjs("2017-02-10T14:31:02.000Z").toDate(),
+    labelIds: [ON_SALE_LABEL_ID],
+    title: "",
   },
   {
     id: 167821,
@@ -101,11 +101,11 @@ const customIssues: (issue & { issuecode: string })[] = [
     issuecode: "fr/MP 316",
     condition: "moyen",
     purchaseId: -1,
-    isOnSale: true,
-    isToRead: false,
     isSubscription: false,
     userId: 1348,
     creationDate: dayjs("2017-02-10T14:31:02.000Z").toDate(),
+    labelIds: [ON_SALE_LABEL_ID],
+    title: "",
   },
   {
     id: 167822,
@@ -116,11 +116,11 @@ const customIssues: (issue & { issuecode: string })[] = [
     issuecode: "fr/MP 317",
     condition: "mauvais",
     purchaseId: -1,
-    isOnSale: true,
-    isToRead: false,
     isSubscription: false,
     userId: 1348,
     creationDate: dayjs("2017-02-10T14:31:02.000Z").toDate(),
+    labelIds: [ON_SALE_LABEL_ID],
+    title: "",
   },
   {
     id: 385707,
@@ -131,11 +131,11 @@ const customIssues: (issue & { issuecode: string })[] = [
     issuecode: "fr/MP 386",
     condition: "bon",
     purchaseId: -1,
-    isOnSale: true,
-    isToRead: false,
     isSubscription: false,
     userId: 1073,
     creationDate: dayjs("2022-01-08T09:54:39.000Z").toDate(),
+    labelIds: [ON_SALE_LABEL_ID],
+    title: "",
   },
   {
     id: 385715,
@@ -146,11 +146,11 @@ const customIssues: (issue & { issuecode: string })[] = [
     issuecode: "fr/MP 387",
     condition: "bon",
     purchaseId: -1,
-    isOnSale: true,
-    isToRead: false,
     isSubscription: false,
     userId: 1861,
     creationDate: dayjs("2022-01-08T12:13:40.000Z").toDate(),
+    labelIds: [ON_SALE_LABEL_ID],
+    title: "",
   },
-];
+] as const;
 </script>

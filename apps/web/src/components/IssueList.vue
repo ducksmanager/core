@@ -15,7 +15,7 @@
           @toggled="toggleWatched(publicationcode)"
       /></Publication>
       <div v-if="issues && purchases">
-        <div v-if="showFilter" v-once class="issue-filter">
+        <div v-if="showFilter" class="issue-filter">
           <table>
             <tbody>
               <tr
@@ -76,8 +76,7 @@
               </ul>
             </b-alert>
             <b-alert
-              v-if="showFilter"
-              v-once
+              v-if="showFilter && issues.length"
               :model-value="true"
               variant="info"
               class="mb-0"
@@ -200,7 +199,7 @@
                   <div
                     v-for="{
                       condition: copyCondition,
-                      isToRead,
+                      labelIds,
                       purchaseId,
                       id,
                       copyIndex,
@@ -238,7 +237,7 @@
                       />
                     </svg>
                     <i-bi-bookmark-check
-                      v-if="isToRead && !onSaleByOthers"
+                      v-if="labelIds.includes(2) && !onSaleByOthers"
                       class="issue-to-read"
                     />
 
@@ -284,7 +283,10 @@
       </div>
     </div>
     <div v-if="!publicationNameLoading && issues && !issues.length">
-      <b-alert variant="danger" :model-value="true">
+      <b-alert v-if="labelIdFilters.size" variant="info" :model-value="true">
+        {{ $t("Aucun numéro ne correspond aux filtres appliqués.") }}
+      </b-alert>
+      <b-alert v-else variant="danger" :model-value="true">
         <div class="mb-4">
           {{ $t("Aucun numéro n'est répertorié pour") }}
           {{ publicationcode.split("/")[1] }} ({{ $t("Pays de publication") }} :
@@ -342,8 +344,6 @@
 </template>
 
 <script setup lang="ts">
-import type { issue } from "~prisma-schemas/schemas/dm";
-
 import ContextMenuOnSaleByOthers from "./ContextMenuOnSaleByOthers.vue";
 import ContextMenuOwnCollection from "./ContextMenuOwnCollection.vue";
 
@@ -354,7 +354,7 @@ type simpleIssue = {
   key: string;
 };
 type issueWithCopies = simpleIssue & {
-  userCopies: ((issue & { issuecode: string; issuenumber: string }) & {
+  userCopies: (NonNullable<typeof collectionIssues.value>[number] & {
     copyIndex: number;
   })[];
 };
@@ -364,17 +364,13 @@ const {
   customIssues = null,
   duplicatesOnly = false,
   groupUserCopies = true,
-  onSaleStackOnly = false,
   publicationcode,
-  readStackOnly = false,
   onSaleByOthers = false,
   readonly = false,
 } = defineProps<{
   publicationcode: string;
   duplicatesOnly?: boolean;
-  readStackOnly?: boolean;
-  onSaleStackOnly?: boolean;
-  customIssues?: (issue & { issuecode: string })[];
+  customIssues?: ServiceIssues;
   onSaleByOthers?: boolean;
   groupUserCopies?: boolean;
   contextMenuComponentName?: "context-menu-on-sale-by-others";
@@ -385,10 +381,15 @@ const {
   loadWatchedPublicationsWithSales,
   updateWatchedPublicationsWithSales,
   updateCollectionMultipleIssues,
+  loadLabels,
   loadPurchases,
 } = collection();
-const { issues: collectionIssues, purchases: collectionPurchases } =
-  storeToRefs(readonly ? publicCollection() : collection());
+const {
+  issues: collectionIssues,
+  purchases,
+  labelIdFilters,
+  labels,
+} = storeToRefs(readonly ? publicCollection() : collection());
 const { watchedPublicationsWithSales } = storeToRefs(collection());
 
 const { conditions } = useCondition();
@@ -443,21 +444,17 @@ const contextmenuInstance = $ref<{
   show: (e: MouseEvent) => void;
 }>();
 let issues = $shallowRef<issueWithCopies[]>();
-let userIssuesForPublication = $shallowRef<(issue & { issuecode: string })[]>();
+let userIssuesForPublication = $shallowRef<typeof collectionIssues.value>();
 let userIssuecodesNotFoundForPublication = $shallowRef<string[] | null>([]);
 let selected = $shallowRef<string[]>([]);
 const filteredUserCopies = $computed(() =>
-  filteredIssues.reduce<(issue & { issuecode: string })[]>(
-    (acc, { userCopies }) => {
-      acc.push(...userCopies);
-      return acc;
-    },
-    [],
-  ),
+  filteredIssues.flatMap(({ userCopies }) => userCopies),
 );
 
 const copiesBySelectedIssuecode = $computed(() =>
-  selected.reduce<{ [issuecode: string]: issue[] }>((acc, issueKey) => {
+  selected.reduce<{
+    [issuecode: string]: typeof filteredUserCopies;
+  }>((acc, issueKey) => {
     const [issuecode, maybeIssueId] = issueKey.split("-id-");
     const issueId = (maybeIssueId && parseInt(maybeIssueId)) || null;
     return {
@@ -481,7 +478,7 @@ let currentIssuecodeOpened = $shallowRef<string>();
 const issueNumberTextPrefix = $computed(() => $t("n°"));
 const boughtOnTextPrefix = $computed(() => $t("Acheté le"));
 const showFilter = $computed(
-  () => !duplicatesOnly && !readStackOnly && !onSaleStackOnly,
+  () => !duplicatesOnly && !labelIdFilters.value.size,
 );
 
 const issueIds = $computed(() =>
@@ -492,7 +489,6 @@ const issueIds = $computed(() =>
 
 let contextMenuKey = $ref<string>("context-menu");
 const userIssues = $computed(() => customIssues || collectionIssues.value);
-let purchases = $computed(() => collectionPurchases.value);
 const country = $computed(() => publicationcode.split("/")[0]);
 const publicationName = $computed(
   () => publicationNames.value[publicationcode],
@@ -591,9 +587,8 @@ const deletePublicationIssues = async (issuecodesToDelete: string[]) => {
     await updateCollectionMultipleIssues({
       issuecodes: issuecodesToDelete,
       condition: null,
-      isToRead: false,
-      isOnSale: false,
       purchaseId: null,
+      labelIds: [],
     });
     selected = [];
     if (!issues?.length) {
@@ -643,8 +638,8 @@ const loadIssues = async () => {
       ];
       issues = coaIssues
         .filter(({ issuecode }) => userIssuecodes.includes(issuecode))
-        .reduce<issueWithCopies[]>((acc, { issuecode }) => {
-          const filteredIssues = userIssuesForPublication!
+        .flatMap(({ issuecode }) =>
+          userIssuesForPublication!
             .filter(
               ({ issuecode: userIssuecode }) => userIssuecode === issuecode,
             )
@@ -652,10 +647,8 @@ const loadIssues = async () => {
               ...issue,
               key: `${issue.issuecode.replaceAll(" ", "_")}-id-${issue.id}`,
               userCopies: [{ ...issue, copyIndex: 0 }],
-            }));
-          acc.push(...filteredIssues);
-          return acc;
-        }, []);
+            })),
+        );
     }
 
     if (duplicatesOnly) {
@@ -671,18 +664,12 @@ const loadIssues = async () => {
       );
     }
 
-    if (readStackOnly) {
-      issues = issues.filter(
-        ({ userCopies }) =>
-          userCopies.filter(({ isToRead }) => isToRead).length,
-      );
-    }
-    if (onSaleStackOnly) {
-      issues = issues.filter(
-        ({ userCopies }) =>
-          userCopies.filter(({ isOnSale }) => isOnSale).length,
-      );
-    }
+    issues = issues.filter(
+      ({ userCopies }) =>
+        userCopies.filter(({ labelIds }) =>
+          new Set(labelIds).isSupersetOf(labelIdFilters.value),
+        ).length,
+    );
 
     userIssuecodesNotFoundForPublication = userIssuesForPublication
       .filter(
@@ -703,12 +690,14 @@ watch($$(preselectedIndexEnd), () => {
 });
 
 watch(
-  () => [publicationcode, userIssues],
+  () => [publicationcode, userIssues, labels],
   () => loadIssues(),
   {
     immediate: true,
   },
 );
+
+watch(labelIdFilters, () => loadIssues());
 
 watch(
   () => publicationcode,
@@ -738,9 +727,11 @@ const toggleWatched = async (key: string) => {
 
 (async () => {
   if (customIssues) {
-    collectionPurchases.value = [];
+    purchases.value = [];
+    labels.value = [];
   } else {
     await loadPurchases();
+    await loadLabels();
     await loadWatchedPublicationsWithSales(true);
   }
 })();

@@ -20,7 +20,7 @@
       <template v-if="'issueDate' in item && item.issueDate">
         <ion-icon :ios="calendarOutline" :md="calendarSharp" />&nbsp;{{ item.issueDate }}
       </template>
-      <template v-if="'isToRead' in item && item.isToRead">
+      <template v-if="'labelIds' in item && (item as IssueItem).labelIds.includes(TO_READ_LABEL_ID)">
         &nbsp;<ion-icon style="color: green" :ios="bookmarkOutline" :md="bookmarkSharp" />
       </template>
     </template>
@@ -66,6 +66,9 @@ import { stores as webStores, components as webComponents } from '~web';
 
 import { app } from '~/stores/app';
 import { wtdcollection } from '~/stores/wtdcollection';
+import type { ClientEvents as CollectionServices } from '~dm-services/collection';
+import type { EventOutput } from 'socket-call-client';
+import { TO_READ_LABEL_ID } from '~dm-types/Labels';
 
 const { Bookcase } = webComponents;
 const filteredIssuenumbers = ref<string[]>([]);
@@ -105,7 +108,7 @@ const hasData = ref(false);
 
 const getItemTextFn = (item: Item) => issuecodeDetails.value[item.issuecode]!.issuenumber;
 
-const getIssueDate = (issue: issue) => {
+const getIssueDate = (issue: IssueItem) => {
   let date =
     (issue.purchaseId && purchasesById.value?.[issue.purchaseId]?.date) || (issue.creationDate as Date | string);
   return !date ? date : (typeof date === 'string' ? date : date.toISOString()).split('T')?.[0];
@@ -122,7 +125,7 @@ const userIssues = computed(() =>
     .filter(
       currentFilter.value.id === 'all'
         ? () => true
-        : ({ isToRead }) => isToRead === (currentFilter.value.id === 'unreadBooksOnly'),
+        : ({ labelIds }) => labelIds.includes(TO_READ_LABEL_ID) === (currentFilter.value.id === 'unreadBooksOnly'),
     )
     .map((issue) => {
       (issue as typeof issue & { issueDate: string }).issueDate = getIssueDate(issue);
@@ -134,9 +137,14 @@ watch(isCoaView, () => {
   selectedIssuecodes.value = [];
 });
 
-type Item =
-  | (Pick<issue, 'condition' | 'creationDate' | 'isOnSale' | 'isToRead' | 'isSubscription'> & { issuecode: string })
-  | IssueWithIssuecodeOnly;
+type IssueItem = Pick<
+  EventOutput<CollectionServices, 'getIssues'>[number],
+  'purchaseId' | 'condition' | 'creationDate' | 'labelIds' | 'isSubscription'
+> & {
+  issuecode: string;
+};
+
+type Item = IssueItem | IssueWithIssuecodeOnly;
 
 const items = computed(() => {
   if (!hasData.value) {

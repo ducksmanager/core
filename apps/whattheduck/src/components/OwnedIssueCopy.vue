@@ -29,7 +29,11 @@
         <ion-label>{{ translations.toRead }}</ion-label></ion-col
       >
       <ion-col size="8" style="display: flex" class="ion-padding ion-justify-content-end"
-        ><ion-checkbox v-model="issue.isToRead" :disabled="isOffline" :aria-label="translations.toRead" /></ion-col
+        ><ion-checkbox
+          :model-value="issue.labelIds.includes(TO_READ_LABEL_ID)"
+          :disabled="isOffline"
+          :aria-label="translations.toRead"
+          @update:model-value="toggleSetElement(issue.labelIds, TO_READ_LABEL_ID)" /></ion-col
     ></ion-row>
     <ion-row class="ion-align-items-start">
       <ion-col size="4" class="ion-padding ion-text-left">
@@ -122,6 +126,10 @@ import { trashOutline, trashSharp } from 'ionicons/icons';
 
 import { app } from '~/stores/app';
 import { wtdcollection } from '~/stores/wtdcollection';
+import useSet from '~web/src/composables/useSet';
+import { TO_READ_LABEL_ID } from '~dm-types/Labels';
+
+const { toggleSetElement } = useSet();
 
 const { t } = useI18n();
 const issue = defineModel<SingleCopyState>({

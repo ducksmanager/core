@@ -93,7 +93,7 @@
               isSubscription: false,
               userId: user!.id,
               creationDate: new Date(),
-              ...defaultCopyState
+              ...defaultCopyState,
             } as IssueWithPublicationcodeOptionalId);
             nextTick(() => {
               currentCopyIndex = initialCopies!.copies.length - 1;
@@ -120,7 +120,7 @@
     <li
       v-if="editedCopies?.copies.length || editedIssues?.issuecodes.length"
       class="footer clickable px-3"
-      @click="updateSelectedIssues()"
+      @click="updateIssues()"
     >
       {{ $t("Enregistrer les changements") }}
     </li>
@@ -132,7 +132,6 @@ import type { IssueWithPublicationcodeOptionalId } from "~/stores/collection";
 import type {
   CollectionUpdateMultipleIssues,
   CollectionUpdateSingleIssue,
-  SaleState,
 } from "~dm-types/CollectionUpdate";
 
 const { loadIssuesOnSaleByOthers, loadIssueRequestsAsSeller } = marketplace();
@@ -156,16 +155,14 @@ const { t: $t } = useI18n();
 
 const defaultCopyState = {
   condition: "indefini",
-  isToRead: false,
-  isOnSale: false,
   purchaseId: null,
+  labelIds: [],
 };
 
 const defaultIssueState = {
   condition: undefined,
-  isToRead: undefined,
-  isOnSale: undefined,
   purchaseId: undefined,
+  labelIds: undefined,
 };
 
 let initialIssues = $ref<CollectionUpdateMultipleIssues>();
@@ -196,26 +193,6 @@ const hasMultipleCopiesAndMultipleIssues = $computed(
       (issues) => issues.length > 1,
     ),
 );
-const updateSelectedIssues = async () => {
-  const isIssueTransfer = (isOnSale: SaleState | undefined) =>
-    typeof isOnSale === "object" && "transferTo" in isOnSale;
-
-  const hasIssuesToTransfer = initialIssues
-    ? isIssueTransfer(initialIssues.isOnSale)
-    : initialCopies!.copies.some(({ isOnSale }) => isIssueTransfer(isOnSale));
-  if (hasIssuesToTransfer) {
-    const isConfirmed = confirm(
-      $t(
-        "Les numéros sélectionnés vont être transférés à un ou plusieurs autres utilisateurs et n'apparaitront plus dans votre collection.",
-      ),
-    );
-    if (!isConfirmed) {
-      return;
-    }
-  }
-
-  await updateIssues();
-};
 
 const updateIssues = async () => {
   if (initialIssues) {

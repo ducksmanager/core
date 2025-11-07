@@ -7,7 +7,7 @@
     "
   >
     <div v-if="total > 0 && totalPerPublication" id="short-stats">
-      <div>
+      <div class="mt-4">
         <template v-if="isPublic">{{
           $t("{username} possède", { username })
         }}</template
@@ -17,7 +17,7 @@
         {{ totalUniqueIssues }}
         {{ t("numéro unique | numéros uniques", totalUniqueIssues) }}.
       </div>
-      <div>
+      <div class="mt-2 mb-4">
         <template v-if="isPublic">{{
           $t("La collection de {username} est composée de", { username })
         }}</template

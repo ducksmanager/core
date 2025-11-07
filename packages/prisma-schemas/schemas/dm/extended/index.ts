@@ -17,6 +17,18 @@ const parseIssueCode = (issuecode: string) => {
 
 export default (prismaClient: PrismaClient) =>
   prismaClient.$extends({
+    client: {
+      replaceLabelsWithLabelIds: <
+        T,
+        Entity extends T & { labels: { labelId: number }[] },
+      >(
+        issues: Entity[],
+      ): (Omit<Entity, "labels"> & { labelIds: number[] })[] =>
+        issues.map(({ labels, ...issue }) => ({
+          ...issue,
+          labelIds: labels.map(({ labelId }) => labelId),
+        })),
+    },
     query: {
       issue: {
         create({ args, query }) {
