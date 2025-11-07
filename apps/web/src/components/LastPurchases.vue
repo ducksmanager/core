@@ -39,7 +39,7 @@
 </template>
 
 <script setup lang="ts">
-import type { issue } from "~prisma-schemas/schemas/dm";
+import { ServiceIssues } from "~/composables/useCollection";
 
 const { publicationNames } = storeToRefs(coa());
 const { purchasesById, issues: allIssues } = storeToRefs(collection());
@@ -53,7 +53,7 @@ const hasPublicationNames = $computed(() => Object.keys(publicationNames)),
         ?.reduce<
           {
             purchase: { date: Date; description: string };
-            issues: (issue & { issuecode: string })[];
+            issues: (ServiceIssues[number] & { issuecode: string })[];
           }[]
         >((acc, issue) => {
           const existingPurchase =

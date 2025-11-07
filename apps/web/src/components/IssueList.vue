@@ -344,11 +344,8 @@
 </template>
 
 <script setup lang="ts">
-import type { ClientEvents as CollectionServices } from "~dm-services/collection";
-
 import ContextMenuOnSaleByOthers from "./ContextMenuOnSaleByOthers.vue";
 import ContextMenuOwnCollection from "./ContextMenuOwnCollection.vue";
-import type { EventOutput } from "socket-call-client";
 
 type simpleIssue = {
   issuecode: string;
@@ -373,7 +370,7 @@ const {
 } = defineProps<{
   publicationcode: string;
   duplicatesOnly?: boolean;
-  customIssues?: EventOutput<CollectionServices, "getIssues">;
+  customIssues?: ServiceIssues;
   onSaleByOthers?: boolean;
   groupUserCopies?: boolean;
   contextMenuComponentName?: "context-menu-on-sale-by-others";

@@ -10,7 +10,7 @@ import { EventOutput } from "socket-call-client";
 export const ON_SALE_LABEL_DESCRIPTION = "À vendre";
 export const TO_READ_LABEL_DESCRIPTION = "À lire";
 
-type ServiceIssues = EventOutput<CollectionServices, "getIssues">;
+export type ServiceIssues = EventOutput<CollectionServices, "getIssues">;
 
 export default (issues: ShallowRef<ServiceIssues | undefined>) => {
   const total = computed(() => issues.value?.length);

@@ -114,8 +114,8 @@ alias: [/agrandir/marketplace]
       :publicationcode="publicationcode"
       :custom-issues="
         userIdFilter
-          ? issues?.filter(({ userId }) => userId === userIdFilter) || []
-          : issues
+          ? (issues as ServiceIssues)?.filter(({ userId }) => userId === userIdFilter) || []
+          : (issues as ServiceIssues)
       "
       on-sale-by-others
       :group-user-copies="false"

@@ -89,7 +89,6 @@
 <script setup lang="ts">
 import type { IssueWithIssuecodeOnly } from "~dm-types/IssueWithIssuecodeOnly";
 import type { SimpleStory } from "~dm-types/SimpleStory";
-import type { issue } from "~prisma-schemas/schemas/dm";
 
 import { socketInjectionKey } from "../composables/useDmSocket";
 
@@ -117,7 +116,7 @@ onClickOutside(nav, () => {
 });
 
 type SimpleStoryWithCollectionIssues = SimpleStory & {
-  collectionIssues: issue[];
+  collectionIssues: ServiceIssues;
 };
 
 const collectionIssuesByIssuecode = $computed(() =>
