@@ -664,12 +664,14 @@ const loadIssues = async () => {
       );
     }
 
-    issues = issues.filter(
-      ({ userCopies }) =>
-        userCopies.filter(({ labelIds }) =>
-          new Set(labelIds).isSupersetOf(labelIdFilters.value),
-        ).length,
-    );
+    if (labelIdFilters.value.size) {
+      issues = issues.filter(
+        ({ userCopies }) =>
+          userCopies.filter(({ labelIds }) =>
+            new Set(labelIds).isSupersetOf(labelIdFilters.value),
+          ).length,
+      );
+    }
 
     userIssuecodesNotFoundForPublication = userIssuesForPublication
       .filter(
