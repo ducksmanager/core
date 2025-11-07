@@ -14,8 +14,10 @@ import type {
   purchase,
   subscription,
 } from "~prisma-schemas/schemas/dm";
-import IBiCart from "~icons/bi/cart";
-import IBiBookmarkCheck from "~icons/bi/bookmark-check";
+import {
+  ON_SALE_LABEL_DESCRIPTION,
+  TO_READ_LABEL_DESCRIPTION,
+} from "~dm-types/Labels";
 
 import useCollection from "../composables/useCollection";
 import { socketInjectionKey } from "../composables/useDmSocket";
@@ -145,11 +147,6 @@ export const collection = defineStore("collection", () => {
         id,
         description,
         userId,
-        ...(description === ON_SALE_LABEL_DESCRIPTION
-          ? { icon: IBiCart }
-          : description === TO_READ_LABEL_DESCRIPTION
-            ? { icon: IBiBookmarkCheck }
-            : {}),
       })),
     ),
     updateCollectionSingleIssue = async (data: CollectionUpdateSingleIssue) => {

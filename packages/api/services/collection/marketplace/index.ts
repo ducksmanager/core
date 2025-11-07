@@ -4,9 +4,7 @@ import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
 
 import type { UserServices } from "../../../index";
 import contactMethods from "./contact-methods";
-
-export const ON_SALE_LABEL_ID = 1;
-export const TO_READ_LABEL_ID = 2;
+import { ON_SALE_LABEL_ID } from "~dm-types/Labels";
 
 export default (services: UserServices) => {
   const { _socket } = services;

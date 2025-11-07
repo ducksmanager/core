@@ -93,12 +93,17 @@
     </b-button>
     <b-collapse v-model="isFilterOpen" class="mt-1 mb-3">
       <label-pill-button
-        v-for="label in labelsWithIcons"
+        v-for="label in labels"
         :key="label.description"
         v-bind="{
           ...label,
           description: `${label.description} (${getIssueCountForLabel(label.id)})`,
         }"
+        :icon="
+          label.description === ON_SALE_LABEL_DESCRIPTION
+            ? IBiCart
+            : IBiBookmarkCheck
+        "
         :pressed="labelIdFilters.has(label.id)"
         @update:pressed="
           (pressed) => {
@@ -123,6 +128,10 @@
 </template>
 
 <script setup lang="ts">
+import { ON_SALE_LABEL_DESCRIPTION } from "~dm-types/Labels";
+import IBiCart from "~icons/bi/cart";
+import IBiBookmarkCheck from "~icons/bi/bookmark-check";
+
 const { publicationcode = null } = defineProps<{
   publicationcode?: string;
 }>();
@@ -137,7 +146,7 @@ const {
   marketplaceContactMethods,
   issuesInOnSaleStack,
   issues,
-  labelsWithIcons,
+  labels,
   labelIdFilters,
   labelFiltersQueryParams,
   user,

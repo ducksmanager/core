@@ -3,12 +3,10 @@ import type { ShallowRef } from "vue";
 import type { QuotedIssue } from "~dm-types/QuotedIssue";
 import type { issue_condition } from "~prisma-schemas/schemas/dm";
 import type { ClientEvents as CollectionServices } from "~dm-services/collection";
+import { ON_SALE_LABEL_ID } from "~dm-types/Labels";
 
 import { coa } from "../stores/coa";
 import { EventOutput } from "socket-call-client";
-
-export const ON_SALE_LABEL_DESCRIPTION = "À vendre";
-export const TO_READ_LABEL_DESCRIPTION = "À lire";
 
 export type ServiceIssues = EventOutput<CollectionServices, "getIssues">;
 

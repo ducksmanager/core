@@ -151,11 +151,16 @@
     </v-contextmenu-group>
     <v-contextmenu-group v-else :title="$t('Étiquettes')">
       <label-pill-button
-        v-for="label in labelsWithIcons?.filter(
+        v-for="label in labels?.filter(
           ({ userId, id }) => !userId || newCopyState.labelIds!.includes(id),
         )"
         :key="label.description"
         v-bind="label"
+        :icon="
+          label.description === ON_SALE_LABEL_DESCRIPTION
+            ? IBiCart
+            : IBiBookmarkCheck
+        "
         :pressed="newCopyState.labelIds!.includes(label.id)"
         @update:pressed="toggleSetElement(newCopyState.labelIds!, label.id)"
       />
@@ -214,7 +219,7 @@
             </v-contextmenu-item>
           </template>
           <v-contextmenu-item
-            v-for="{ id, description } in labelsWithIcons?.filter(
+            v-for="{ id, description } in labels?.filter(
               ({ userId }) => !!userId,
             )"
             :key="`copy-label-${id}`"
@@ -317,6 +322,9 @@ import type { CollectionUpdateMultipleIssues } from "~dm-types/CollectionUpdate"
 import type { issue_condition } from "~prisma-schemas/schemas/dm";
 import { BButton } from "bootstrap-vue-next";
 import useSet from "~/composables/useSet";
+import { ON_SALE_LABEL_DESCRIPTION } from "~dm-types/Labels";
+import IBiCart from "~icons/bi/cart";
+import IBiBookmarkCheck from "~icons/bi/bookmark-check";
 
 const { toggleSetElement } = useSet();
 
@@ -344,7 +352,7 @@ const { transferIssuesTo, setIssuesAsideFor } = marketplace();
 
 const { createPurchase, deletePurchase, createLabel, deleteLabel } =
   collection();
-const { issues, purchases, labelsWithIcons } = storeToRefs(collection());
+const { issues, purchases, labels } = storeToRefs(collection());
 const { issuecodeDetails } = storeToRefs(coa());
 
 const today = new Date().toISOString().slice(0, 10);
