@@ -223,7 +223,6 @@ watch(
         issuecode: newValue[0],
         copies: selectedIssueIdsByIssuecode[newValue[0]],
       };
-      console.log(selectedIssueIdsByIssuecode[newValue[0]]);
     } else {
       editedCopies = initialCopies = undefined;
       editedIssues = initialIssues = {
