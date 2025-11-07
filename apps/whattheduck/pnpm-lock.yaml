@@ -161,7 +161,7 @@ importers:
         version: 9.39.0
       '@histoire/plugin-vue':
         specifier: 1.0.0-alpha.3
-        version: 1.0.0-alpha.3(histoire@1.0.0-alpha.3(@types/node@22.18.13)(sass@1.93.3)(vite@7.1.12(@types/node@22.18.13)(jiti@2.6.1)(sass@1.93.3)(yaml@2.8.1))(yaml@2.8.1))(vite@7.1.12(@types/node@22.18.13)(jiti@2.6.1)(sass@1.93.3)(yaml@2.8.1))(vue@3.5.22(typescript@5.9.3))
+        version: 1.0.0-alpha.3(histoire@1.0.0-alpha.4(@types/node@22.18.13)(sass@1.93.3)(vite@7.1.12(@types/node@22.18.13)(jiti@2.6.1)(sass@1.93.3)(yaml@2.8.1))(yaml@2.8.1))(vite@7.1.12(@types/node@22.18.13)(jiti@2.6.1)(sass@1.93.3)(yaml@2.8.1))(vue@3.5.22(typescript@5.9.3))
       '@intlify/eslint-plugin-vue-i18n':
         specifier: ^4.1.0
         version: 4.1.0(eslint@9.39.0(jiti@2.6.1))(jsonc-eslint-parser@2.4.1)(vue-eslint-parser@10.2.0(eslint@9.39.0(jiti@2.6.1)))(yaml-eslint-parser@1.3.0)
@@ -232,8 +232,8 @@ importers:
         specifier: ^15.15.0
         version: 15.15.0
       histoire:
-        specifier: 1.0.0-alpha.3
-        version: 1.0.0-alpha.3(@types/node@22.18.13)(sass@1.93.3)(vite@7.1.12(@types/node@22.18.13)(jiti@2.6.1)(sass@1.93.3)(yaml@2.8.1))(yaml@2.8.1)
+        specifier: 1.0.0-alpha.4
+        version: 1.0.0-alpha.4(@types/node@22.18.13)(sass@1.93.3)(vite@7.1.12(@types/node@22.18.13)(jiti@2.6.1)(sass@1.93.3)(yaml@2.8.1))(yaml@2.8.1)
       imagemin:
         specifier: 9.0.1
         version: 9.0.1
@@ -413,8 +413,8 @@ packages:
   '@codemirror/language@6.11.3':
     resolution: {integrity: sha512-9HBM2XnwDj7fnu0551HkGdrUrrqmYq/WC5iv6nbY2WdicXdGbhR/gfbZOH73Aqj4351alY1+aoG9rCNfiwS1RA==}
 
-  '@codemirror/lint@6.9.1':
-    resolution: {integrity: sha512-te7To1EQHePBQQzasDKWmK2xKINIXpk+xAiSYr9ZN+VB4KaT+/Hi2PEkeErTk5BV3PTz1TLyQL4MtJfPkKZ9sw==}
+  '@codemirror/lint@6.9.2':
+    resolution: {integrity: sha512-sv3DylBiIyi+xKwRCJAAsBZZZWo82shJ/RTMymLabAdtbkV5cSKwWDeCgtUq3v8flTaXS2y1kKkICuRYtUswyQ==}
 
   '@codemirror/state@6.5.2':
     resolution: {integrity: sha512-FVqsPqtPWKVVL3dPSxy8wEF/ymIEuVzF1PK3VbUgrxXpJUSHQWWZz4JMToquRxnkw+36LTamCZG2iua2Ptq0fA==}
@@ -893,8 +893,8 @@ packages:
   '@lezer/json@1.0.3':
     resolution: {integrity: sha512-BP9KzdF9Y35PDpv04r0VeSTKDeox5vVr3efE7eBbx3r4s3oNLfunchejZhjArmeieBH+nVOpgIiBJpEAv8ilqQ==}
 
-  '@lezer/lr@1.4.2':
-    resolution: {integrity: sha512-pu0K1jCIdnQ12aWNaAVU5bzi7Bd1w54J3ECgANPmYLtQKP0HBj2cE/5coBD66MT10xbtIuUr7tg0Shbsvk0mDA==}
+  '@lezer/lr@1.4.3':
+    resolution: {integrity: sha512-yenN5SqAxAPv/qMnpWW0AT7l+SxVrgG+u0tNsRQWqbrz66HIl8DnEbBObvy21J5K7+I1v7gsAnlE2VQ5yYVSeA==}
 
   '@marijn/find-cluster-break@1.0.2':
     resolution: {integrity: sha512-l0h88YhZFyKdXIFNfSWpyjStDjGHwZ/U7iobcK1cQQD8sejsONdQtTVU+1wVN1PBw40PiiHB1vA5S7VTfQiP9g==}
@@ -1297,23 +1297,23 @@ packages:
       pinia:
         optional: true
 
-  '@shikijs/core@3.14.0':
-    resolution: {integrity: sha512-qRSeuP5vlYHCNUIrpEBQFO7vSkR7jn7Kv+5X3FO/zBKVDGQbcnlScD3XhkrHi/R8Ltz0kEjvFR9Szp/XMRbFMw==}
+  '@shikijs/core@3.15.0':
+    resolution: {integrity: sha512-8TOG6yG557q+fMsSVa8nkEDOZNTSxjbbR8l6lF2gyr6Np+jrPlslqDxQkN6rMXCECQ3isNPZAGszAfYoJOPGlg==}
 
-  '@shikijs/engine-javascript@3.14.0':
-    resolution: {integrity: sha512-3v1kAXI2TsWQuwv86cREH/+FK9Pjw3dorVEykzQDhwrZj0lwsHYlfyARaKmn6vr5Gasf8aeVpb8JkzeWspxOLQ==}
+  '@shikijs/engine-javascript@3.15.0':
+    resolution: {integrity: sha512-ZedbOFpopibdLmvTz2sJPJgns8Xvyabe2QbmqMTz07kt1pTzfEvKZc5IqPVO/XFiEbbNyaOpjPBkkr1vlwS+qg==}
 
-  '@shikijs/engine-oniguruma@3.14.0':
-    resolution: {integrity: sha512-TNcYTYMbJyy+ZjzWtt0bG5y4YyMIWC2nyePz+CFMWqm+HnZZyy9SWMgo8Z6KBJVIZnx8XUXS8U2afO6Y0g1Oug==}
+  '@shikijs/engine-oniguruma@3.15.0':
+    resolution: {integrity: sha512-HnqFsV11skAHvOArMZdLBZZApRSYS4LSztk2K3016Y9VCyZISnlYUYsL2hzlS7tPqKHvNqmI5JSUJZprXloMvA==}
 
-  '@shikijs/langs@3.14.0':
-    resolution: {integrity: sha512-DIB2EQY7yPX1/ZH7lMcwrK5pl+ZkP/xoSpUzg9YC8R+evRCCiSQ7yyrvEyBsMnfZq4eBzLzBlugMyTAf13+pzg==}
+  '@shikijs/langs@3.15.0':
+    resolution: {integrity: sha512-WpRvEFvkVvO65uKYW4Rzxs+IG0gToyM8SARQMtGGsH4GDMNZrr60qdggXrFOsdfOVssG/QQGEl3FnJ3EZ+8w8A==}
 
-  '@shikijs/themes@3.14.0':
-    resolution: {integrity: sha512-fAo/OnfWckNmv4uBoUu6dSlkcBc+SA1xzj5oUSaz5z3KqHtEbUypg/9xxgJARtM6+7RVm0Q6Xnty41xA1ma1IA==}
+  '@shikijs/themes@3.15.0':
+    resolution: {integrity: sha512-8ow2zWb1IDvCKjYb0KiLNrK4offFdkfNVPXb1OZykpLCzRU6j+efkY+Y7VQjNlNFXonSw+4AOdGYtmqykDbRiQ==}
 
-  '@shikijs/types@3.14.0':
-    resolution: {integrity: sha512-bQGgC6vrY8U/9ObG1Z/vTro+uclbjjD/uG58RvfxKZVD5p9Yc1ka3tVyEFy7BNJLzxuWyHH5NWynP9zZZS59eQ==}
+  '@shikijs/types@3.15.0':
+    resolution: {integrity: sha512-BnP+y/EQnhihgHy4oIAN+6FFtmfTekwOLsQbRw9hOKwqgNy8Bdsjq8B05oAt/ZgvIWWFrshV71ytOrlPfYjIJw==}
 
   '@shikijs/vscode-textmate@10.0.2':
     resolution: {integrity: sha512-83yeghZ2xxin3Nj8z1NMd/NCuca+gsYXswywDy5bHvwlWL8tpTQmzGeUuHd9FC3E/SBEMvzJRwWEOz5gGes9Qg==}
@@ -1921,8 +1921,8 @@ packages:
   birpc@0.2.19:
     resolution: {integrity: sha512-5WeXXAvTmitV1RqJFppT5QtUiz2p1mRSYU000Jkft5ZUCLJIk4uQriYNO50HknxKwM6jd8utNc66K1qGIwwWBQ==}
 
-  birpc@2.6.1:
-    resolution: {integrity: sha512-LPnFhlDpdSH6FJhJyn4M0kFO7vtQ5iPw24FnG0y21q09xC7e8+1LeR31S1MAIrDAHp4m7aas4bEkTDTvMAtebQ==}
+  birpc@2.7.0:
+    resolution: {integrity: sha512-tub/wFGH49vNCm0xraykcY3TcRgX/3JsALYq/Lwrtti+bTyFHkCUAWF5wgYoie8P41wYwig2mIKiqoocr1EkEQ==}
 
   bl@1.2.3:
     resolution: {integrity: sha512-pvcNpa0UU69UT341rO6AYy4FVAIkUHuZXRIWbq+zHnsVcRzDDjIAhGuuYoi0d//cwIwtt4pkpKycWEfjdV+vww==}
@@ -3203,8 +3203,8 @@ packages:
     resolution: {integrity: sha512-F/1DnUGPopORZi0ni+CvrCgHQ5FyEAHRLSApuYWMmrbSwoN2Mn/7k+Gl38gJnR7yyDZk6WLXwiGod1JOWNDKGw==}
     hasBin: true
 
-  histoire@1.0.0-alpha.3:
-    resolution: {integrity: sha512-YuvZbYQiMGoQAPLk7F2NiWe4jI1puo/us8egOchH7+ontimk36fzDVEzQR/T0zw/M+VTGuspcYjSs1JdE3Q+vQ==}
+  histoire@1.0.0-alpha.4:
+    resolution: {integrity: sha512-9MighHIeJaHJjdqyRXFVQnVcwXIISHgPGKdOKG5skH3AI6LD9N2ka2RYn/3r1JMxXgBcPx/J83XQ1SadsUIIdg==}
     hasBin: true
     peerDependencies:
       vite: ^7.0.0
@@ -4760,8 +4760,8 @@ packages:
     resolution: {integrity: sha512-ObmnIF4hXNg1BqhnHmgbDETF8dLPCggZWBjkQfhZpbszZnYur5DUljTcCHii5LC3J5E0yeO/1LIMyH+UvHQgyw==}
     engines: {node: '>= 0.4'}
 
-  shiki@3.14.0:
-    resolution: {integrity: sha512-J0yvpLI7LSig3Z3acIuDLouV5UCKQqu8qOArwMx+/yPVC3WRMgrP67beaG8F+j4xfEWE0eVC4GeBCIXeOPra1g==}
+  shiki@3.15.0:
+    resolution: {integrity: sha512-kLdkY6iV3dYbtPwS9KXU7mjfmDm25f5m0IPNFnaXO7TBPcvbUOY72PYXSuSqDzwp+vlH/d7MXpHlKO/x+QoLXw==}
 
   side-channel-list@1.0.0:
     resolution: {integrity: sha512-FCLHtRD/gnpCiCHEiJLOwdmFP+wzCmDEkc9y7NsYxeF4u7Btsn1ZuwgwJGxImImHicJArLP4R0yX4c2KCrMrTA==}
@@ -5950,10 +5950,10 @@ snapshots:
       '@codemirror/view': 6.38.6
       '@lezer/common': 1.3.0
       '@lezer/highlight': 1.2.3
-      '@lezer/lr': 1.4.2
+      '@lezer/lr': 1.4.3
       style-mod: 4.1.3
 
-  '@codemirror/lint@6.9.1':
+  '@codemirror/lint@6.9.2':
     dependencies:
       '@codemirror/state': 6.5.2
       '@codemirror/view': 6.38.6
@@ -6137,7 +6137,7 @@ snapshots:
       '@histoire/shared': 1.0.0-alpha.4(vite@7.1.12(@types/node@22.18.13)(jiti@2.6.1)(sass@1.93.3)(yaml@2.8.1))
       '@histoire/vendors': 1.0.0-alpha.4
       fuse.js: 7.1.0
-      shiki: 3.14.0
+      shiki: 3.15.0
     transitivePeerDependencies:
       - vite
 
@@ -6146,7 +6146,7 @@ snapshots:
       '@codemirror/commands': 6.10.0
       '@codemirror/lang-json': 6.0.2
       '@codemirror/language': 6.11.3
-      '@codemirror/lint': 6.9.1
+      '@codemirror/lint': 6.9.2
       '@codemirror/state': 6.5.2
       '@codemirror/theme-one-dark': 6.1.3
       '@codemirror/view': 6.38.6
@@ -6155,14 +6155,14 @@ snapshots:
     transitivePeerDependencies:
       - vite
 
-  '@histoire/plugin-vue@1.0.0-alpha.3(histoire@1.0.0-alpha.3(@types/node@22.18.13)(sass@1.93.3)(vite@7.1.12(@types/node@22.18.13)(jiti@2.6.1)(sass@1.93.3)(yaml@2.8.1))(yaml@2.8.1))(vite@7.1.12(@types/node@22.18.13)(jiti@2.6.1)(sass@1.93.3)(yaml@2.8.1))(vue@3.5.22(typescript@5.9.3))':
+  '@histoire/plugin-vue@1.0.0-alpha.3(histoire@1.0.0-alpha.4(@types/node@22.18.13)(sass@1.93.3)(vite@7.1.12(@types/node@22.18.13)(jiti@2.6.1)(sass@1.93.3)(yaml@2.8.1))(yaml@2.8.1))(vite@7.1.12(@types/node@22.18.13)(jiti@2.6.1)(sass@1.93.3)(yaml@2.8.1))(vue@3.5.22(typescript@5.9.3))':
     dependencies:
       '@histoire/controls': 1.0.0-alpha.4(vite@7.1.12(@types/node@22.18.13)(jiti@2.6.1)(sass@1.93.3)(yaml@2.8.1))
       '@histoire/shared': 1.0.0-alpha.4(vite@7.1.12(@types/node@22.18.13)(jiti@2.6.1)(sass@1.93.3)(yaml@2.8.1))
       '@histoire/vendors': 1.0.0-alpha.4
       change-case: 5.4.4
       globby: 14.1.0
-      histoire: 1.0.0-alpha.3(@types/node@22.18.13)(sass@1.93.3)(vite@7.1.12(@types/node@22.18.13)(jiti@2.6.1)(sass@1.93.3)(yaml@2.8.1))(yaml@2.8.1)
+      histoire: 1.0.0-alpha.4(@types/node@22.18.13)(sass@1.93.3)(vite@7.1.12(@types/node@22.18.13)(jiti@2.6.1)(sass@1.93.3)(yaml@2.8.1))(yaml@2.8.1)
       launch-editor: 2.12.0
       pathe: 1.1.2
       vue: 3.5.22(typescript@5.9.3)
@@ -6439,7 +6439,7 @@ snapshots:
       '@ionic/utils-stream': 3.1.6
       '@ionic/utils-terminal': 2.3.4
       cross-spawn: 7.0.6
-      debug: 4.4.3
+      debug: 4.3.4
       tslib: 2.8.1
     transitivePeerDependencies:
       - supports-color
@@ -6554,9 +6554,9 @@ snapshots:
     dependencies:
       '@lezer/common': 1.3.0
       '@lezer/highlight': 1.2.3
-      '@lezer/lr': 1.4.2
+      '@lezer/lr': 1.4.3
 
-  '@lezer/lr@1.4.2':
+  '@lezer/lr@1.4.3':
     dependencies:
       '@lezer/common': 1.3.0
 
@@ -6860,33 +6860,33 @@ snapshots:
     optionalDependencies:
       pinia: 3.0.3(typescript@5.9.3)(vue@3.5.22(typescript@5.9.3))
 
-  '@shikijs/core@3.14.0':
+  '@shikijs/core@3.15.0':
     dependencies:
-      '@shikijs/types': 3.14.0
+      '@shikijs/types': 3.15.0
       '@shikijs/vscode-textmate': 10.0.2
       '@types/hast': 3.0.4
       hast-util-to-html: 9.0.5
 
-  '@shikijs/engine-javascript@3.14.0':
+  '@shikijs/engine-javascript@3.15.0':
     dependencies:
-      '@shikijs/types': 3.14.0
+      '@shikijs/types': 3.15.0
       '@shikijs/vscode-textmate': 10.0.2
       oniguruma-to-es: 4.3.3
 
-  '@shikijs/engine-oniguruma@3.14.0':
+  '@shikijs/engine-oniguruma@3.15.0':
     dependencies:
-      '@shikijs/types': 3.14.0
+      '@shikijs/types': 3.15.0
       '@shikijs/vscode-textmate': 10.0.2
 
-  '@shikijs/langs@3.14.0':
+  '@shikijs/langs@3.15.0':
     dependencies:
-      '@shikijs/types': 3.14.0
+      '@shikijs/types': 3.15.0
 
-  '@shikijs/themes@3.14.0':
+  '@shikijs/themes@3.15.0':
     dependencies:
-      '@shikijs/types': 3.14.0
+      '@shikijs/types': 3.15.0
 
-  '@shikijs/types@3.14.0':
+  '@shikijs/types@3.15.0':
     dependencies:
       '@shikijs/vscode-textmate': 10.0.2
       '@types/hast': 3.0.4
@@ -7216,7 +7216,7 @@ snapshots:
   '@vue/devtools-kit@7.7.7':
     dependencies:
       '@vue/devtools-shared': 7.7.7
-      birpc: 2.6.1
+      birpc: 2.7.0
       hookable: 5.5.3
       mitt: 3.0.1
       perfect-debounce: 1.0.0
@@ -7575,7 +7575,7 @@ snapshots:
 
   birpc@0.2.19: {}
 
-  birpc@2.6.1: {}
+  birpc@2.7.0: {}
 
   bl@1.2.3:
     dependencies:
@@ -9133,7 +9133,7 @@ snapshots:
 
   he@1.2.0: {}
 
-  histoire@1.0.0-alpha.3(@types/node@22.18.13)(sass@1.93.3)(vite@7.1.12(@types/node@22.18.13)(jiti@2.6.1)(sass@1.93.3)(yaml@2.8.1))(yaml@2.8.1):
+  histoire@1.0.0-alpha.4(@types/node@22.18.13)(sass@1.93.3)(vite@7.1.12(@types/node@22.18.13)(jiti@2.6.1)(sass@1.93.3)(yaml@2.8.1))(yaml@2.8.1):
     dependencies:
       '@akryum/tinypool': 0.3.1
       '@histoire/app': 1.0.0-alpha.4(vite@7.1.12(@types/node@22.18.13)(jiti@2.6.1)(sass@1.93.3)(yaml@2.8.1))
@@ -9161,7 +9161,7 @@ snapshots:
       pathe: 1.1.2
       picocolors: 1.1.1
       sade: 1.8.1
-      shiki: 3.14.0
+      shiki: 3.15.0
       sirv: 3.0.2
       vite: 7.1.12(@types/node@22.18.13)(jiti@2.6.1)(sass@1.93.3)(yaml@2.8.1)
       vite-node: 3.2.4(@types/node@22.18.13)(jiti@2.6.1)(sass@1.93.3)(yaml@2.8.1)
@@ -10773,14 +10773,14 @@ snapshots:
 
   shell-quote@1.8.3: {}
 
-  shiki@3.14.0:
+  shiki@3.15.0:
     dependencies:
-      '@shikijs/core': 3.14.0
-      '@shikijs/engine-javascript': 3.14.0
-      '@shikijs/engine-oniguruma': 3.14.0
-      '@shikijs/langs': 3.14.0
-      '@shikijs/themes': 3.14.0
-      '@shikijs/types': 3.14.0
+      '@shikijs/core': 3.15.0
+      '@shikijs/engine-javascript': 3.15.0
+      '@shikijs/engine-oniguruma': 3.15.0
+      '@shikijs/langs': 3.15.0
+      '@shikijs/themes': 3.15.0
+      '@shikijs/types': 3.15.0
       '@shikijs/vscode-textmate': 10.0.2
       '@types/hast': 3.0.4
 
