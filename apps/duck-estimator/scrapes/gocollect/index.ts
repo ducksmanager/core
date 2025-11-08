@@ -91,7 +91,7 @@ export async function scrape() {
                 try {
                   await issuePage.waitForSelector(
                     '[wire\\:key*="view-state-company-overview-"]',
-                    { timeout: 5000 },
+                    { timeout: 3000 },
                   );
                   return _contents;
                 } catch (e) {
@@ -116,7 +116,14 @@ export async function scrape() {
               select: { issuecode: true },
               where: {
                 publicationcode,
-                issuenumber,
+                OR: [
+                  {
+                    issuenumber,
+                  },
+                  {
+                    issuenumber: `${issuenumber}A`,
+                  },
+                ],
               },
             })
             .catch((_e) => {
