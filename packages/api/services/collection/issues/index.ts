@@ -209,8 +209,8 @@ const addOrChangeIssues = async (
         },
       })
     );
+    await prismaDm.$transaction(insertOperations);
   // TODO handle labels on multiple issues
-  // await prismaDm.$transaction(insertOperations);
 
   // const issueIds = (
   //   await prismaDm.issue.findMany({
