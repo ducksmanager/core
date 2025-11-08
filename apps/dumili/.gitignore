@@ -28,3 +28,6 @@ dist-ssr
 auto-imports.d.ts
 components.d.ts
 api/prisma/client_*
+
+*storybook.log
+storybook-static

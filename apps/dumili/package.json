@@ -17,7 +17,9 @@
     "prod:build-docker": "pnpm run '/^prod:build-docker-/'",
     "prod:transfer-files-pre": "pnpm -F '~ci' prod:transfer-files @apps/dumili/.env:apps/dumili/.env",
     "prod:transfer-files-post": "pnpm -F '~ci' prod:transfer-files apps/dumili/docker-compose.yml:@apps/dumili/docker-compose.yml apps/dumili/Caddyfile:@apps/dumili/Caddyfile",
-    "sentry:sourcemaps": "sentry-cli sourcemaps inject --org bruno-perel --project dumili ./dist && sentry-cli sourcemaps upload --org bruno-perel --project dumili ./dist"
+    "sentry:sourcemaps": "sentry-cli sourcemaps inject --org bruno-perel --project dumili ./dist && sentry-cli sourcemaps upload --org bruno-perel --project dumili ./dist",
+    "storybook": "NODE_ENV=development storybook dev -p 6006",
+    "build-storybook": "storybook build"
   },
   "dependencies": {
     "@iconify-json/bi": "^1.2.6",
@@ -43,11 +45,15 @@
     "~web": "workspace:*"
   },
   "devDependencies": {
+    "@chromatic-com/storybook": "^4.1.2",
     "@eslint/eslintrc": "^3.3.1",
     "@eslint/js": "^9.39.0",
     "@intlify/eslint-plugin-vue-i18n": "^4.1.0",
     "@intlify/unplugin-vue-i18n": "^6.0.8",
     "@sentry/cli": "^2.55.0",
+    "@storybook/addon-a11y": "^10.0.6",
+    "@storybook/addon-docs": "^10.0.6",
+    "@storybook/vue3-vite": "^10.0.6",
     "@types/js-cookie": "^3.0.6",
     "@vitejs/plugin-vue": "^6.0.1",
     "concurrently": "^9.2.1",
@@ -55,9 +61,11 @@
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-prettier": "^5.5.4",
     "eslint-plugin-prettier-vue": "^5.0.0",
+    "eslint-plugin-storybook": "^10.0.6",
     "eslint-plugin-vue": "^10.5.0",
     "prettier": "^3.6.2",
     "sass": "^1.93.2",
+    "storybook": "^10.0.6",
     "typescript": "^5.9.2",
     "typescript-eslint": "^8.44.1",
     "unplugin-auto-import": "^20.2.0",
