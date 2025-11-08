@@ -1,5 +1,4 @@
 import { promises as fs } from "node:fs";
-
 import VueI18n from "@intlify/unplugin-vue-i18n/vite";
 import vue from "@vitejs/plugin-vue";
 import { BootstrapVueNextResolver } from "bootstrap-vue-next";
@@ -13,7 +12,6 @@ import eslintPlugin from "vite-plugin-eslint";
 import mkcert from "vite-plugin-mkcert";
 import Pages from "vite-plugin-pages";
 import Layouts from "vite-plugin-vue-layouts";
-
 import getViteAliases from "../../vite-aliases";
 
 export default defineConfig({
@@ -49,8 +47,7 @@ export default defineConfig({
     },
     AutoImport({
       dts: true,
-      imports: ["vue", "vue-router", "vue-i18n", "pinia"],
-
+      imports: ["vue", "vue-router", "vue-i18n", "pinia", "@vueuse/core"],
       vueTemplate: true,
       eslintrc: {
         enabled: true,
@@ -65,12 +62,9 @@ export default defineConfig({
       resolvers: [BootstrapVueNextResolver(), IconsResolver({})],
       dts: true,
     }),
-
     Pages(),
-
     // https://github.com/JohnCampionJr/vite-plugin-vue-layouts
     Layouts(),
-
     // https://github.com/intlify/bundle-tools/tree/main/packages/unplugin-vue-i18n
     VueI18n({
       runtimeOnly: false,
@@ -78,7 +72,6 @@ export default defineConfig({
       include: [path.resolve(__dirname, "..", "translations/**")],
     }),
   ],
-
   resolve: {
     dedupe: [
       "pinia",
