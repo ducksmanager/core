@@ -1,8 +1,12 @@
 import type { Meta, StoryObj } from "@storybook/vue3-vite";
-import { storeToRefs } from "pinia";
 import EntryStoryKindTooltip from "./EntryStoryKindTooltip.vue";
-import { suggestions } from "~/stores/suggestions";
 import type { FullEntry, FullIndexation } from "~dumili-services/indexation";
+import {
+  createMockEntry,
+  createMockPage,
+  createMockImage,
+  createIndexationDecorator,
+} from "../../.storybook/utils/mocks";
 
 const meta: Meta<typeof EntryStoryKindTooltip> = {
   title: "Components/EntryStoryKindTooltip",
@@ -18,67 +22,15 @@ const meta: Meta<typeof EntryStoryKindTooltip> = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-const createMockIndexation = (
-  overrides: Partial<FullIndexation> = {},
-): FullIndexation => {
-  const base: FullIndexation = {
-    id: "mock-indexation-id",
-    dmUserId: 1,
-    acceptedIssueSuggestionId: null,
-    title: null,
-    releaseDate: null,
-    price: null,
-    user: {
-      dmId: 1,
-      inducksUsername: "mock-user",
-    },
-    issueSuggestions: [],
-    acceptedIssueSuggestion: null,
-    pages: [],
-    entries: [],
-  };
-  return Object.assign(base, overrides);
-};
-
-const createMockEntry = (
-  overrides: Partial<FullEntry> = {},
-): Partial<FullEntry> => ({
-  id: 1,
-  storyKindSuggestions: [],
-  ...overrides,
-});
 
 export const Default: Story = {
   args: {
-    entry: createMockEntry(),
+    entry: createMockEntry({ id: 1 }),
   },
   decorators: [
-    (story) => ({
-      components: { StoryComponent: story() },
-      setup() {
-        // Mock the indexation store to provide pages
-        const suggestionsStore = suggestions();
-        const indexation = createMockIndexation({
-          pages: [
-            {
-              id: 1,
-              pageNumber: 1,
-              indexationId: "mock-indexation-id",
-              imageId: null,
-              image: null,
-            },
-          ],
-          entries: [
-            {
-              id: 1,
-              pages: [1],
-            },
-          ],
-        });
-        const { indexation: indexationRef } = storeToRefs(suggestionsStore);
-        indexationRef.value = indexation;
-      },
-      template: "<StoryComponent />",
+    createIndexationDecorator({
+      pages: [createMockPage()],
+      entries: [createMockEntry({ id: 1 })],
     }),
   ],
   render: (args) => ({
@@ -97,6 +49,7 @@ export const Default: Story = {
 export const WithImage: Story = {
   args: {
     entry: createMockEntry({
+      id: 2,
       storyKindSuggestions: [
         {
           id: 1,
@@ -105,55 +58,36 @@ export const WithImage: Story = {
             kind: "n" as const,
             numberOfRows: 2,
           },
+          storyKindRowsStr: "n1",
+          entryId: 2,
           aiKumikoResultId: 1,
         },
       ],
     }),
   },
   decorators: [
-    (story) => ({
-      components: { StoryComponent: story() },
-      setup() {
-        const suggestionsStore = suggestions();
-        const indexation = createMockIndexation({
-          pages: [
-            {
+    createIndexationDecorator({
+      pages: [
+        createMockPage({
+          id: 1,
+          imageId: 1,
+          image: createMockImage({
+            id: 1,
+            aiKumikoResult: {
               id: 1,
-              pageNumber: 1,
-              indexationId: "mock-indexation-id",
-              imageId: 1,
-              image: {
-                id: 1,
-                url: "https://via.placeholder.com/150",
-                aiKumikoResult: {
-                  id: 1,
-                  inferredStoryKindRowsStr: "n1",
-                  inferredStoryKindRows: {
-                    id: "1",
-                    kind: "n" as const,
-                    numberOfRows: 2,
-                  },
-                  detectedPanels: [],
-                },
-                aiOcrResult: null,
-                aiStorySearchResult: null,
-                aiKumikoResultId: 1,
-                aiOcrResultId: null,
-                aiStorySearchResultId: null,
+              inferredStoryKindRowsStr: "n1",
+              inferredStoryKindRows: {
+                id: "1",
+                kind: "n" as const,
+                numberOfRows: 2,
               },
+              detectedPanels: [],
             },
-          ],
-          entries: [
-            {
-              id: 1,
-              pages: [1],
-            },
-          ],
-        });
-        const { indexation: indexationRef } = storeToRefs(suggestionsStore);
-        indexationRef.value = indexation;
-      },
-      template: "<StoryComponent />",
+            aiKumikoResultId: 1,
+          }) as FullIndexation["pages"][number]["image"],
+        }),
+      ],
+      entries: [createMockEntry({ id: 2 })],
     }),
   ],
   render: (args) => ({
@@ -172,6 +106,9 @@ export const WithImage: Story = {
 export const WithMultiplePages: Story = {
   args: {
     entry: createMockEntry({
+      id: 3,
+      position: 1,
+      entirepages: 2,
       storyKindSuggestions: [
         {
           id: 1,
@@ -180,80 +117,56 @@ export const WithMultiplePages: Story = {
             kind: "n" as const,
             numberOfRows: 2,
           },
+          storyKindRowsStr: "n1",
+          entryId: 3,
           aiKumikoResultId: 1,
         },
       ],
     }),
   },
   decorators: [
-    (story) => ({
-      components: { StoryComponent: story() },
-      setup() {
-        const suggestionsStore = suggestions();
-        const indexation = createMockIndexation({
-          pages: [
-            {
+    createIndexationDecorator({
+      pages: [
+        createMockPage({
+          id: 1,
+          pageNumber: 1,
+          imageId: 1,
+          image: createMockImage({
+            id: 1,
+            aiKumikoResult: {
               id: 1,
-              pageNumber: 1,
-              indexationId: "mock-indexation-id",
-              imageId: 1,
-              image: {
-                id: 1,
-                url: "https://via.placeholder.com/150",
-                aiKumikoResult: {
-                  id: 1,
-                  inferredStoryKindRowsStr: "n1",
-                  inferredStoryKindRows: {
-                    id: "1",
-                    kind: "n" as const,
-                    numberOfRows: 2,
-                  },
-                  detectedPanels: [],
-                },
-                aiOcrResult: null,
-                aiStorySearchResult: null,
-                aiKumikoResultId: 1,
-                aiOcrResultId: null,
-                aiStorySearchResultId: null,
+              inferredStoryKindRowsStr: "n1",
+              inferredStoryKindRows: {
+                id: "1",
+                kind: "n" as const,
+                numberOfRows: 2,
               },
+              detectedPanels: [],
             },
-            {
+            aiKumikoResultId: 1,
+          }) as FullIndexation["pages"][number]["image"],
+        }),
+        createMockPage({
+          id: 2,
+          pageNumber: 2,
+          imageId: 2,
+          image: createMockImage({
+            id: 2,
+            aiKumikoResult: {
               id: 2,
-              pageNumber: 2,
-              indexationId: "mock-indexation-id",
-              imageId: 2,
-              image: {
-                id: 2,
-                url: "https://via.placeholder.com/150",
-                aiKumikoResult: {
-                  id: 2,
-                  inferredStoryKindRowsStr: "c1",
-                  inferredStoryKindRows: {
-                    id: "2",
-                    kind: "c" as const,
-                    numberOfRows: 1,
-                  },
-                  detectedPanels: [],
-                },
-                aiOcrResult: null,
-                aiStorySearchResult: null,
-                aiKumikoResultId: 2,
-                aiOcrResultId: null,
-                aiStorySearchResultId: null,
+              inferredStoryKindRowsStr: "c1",
+              inferredStoryKindRows: {
+                id: "2",
+                kind: "c" as const,
+                numberOfRows: 1,
               },
+              detectedPanels: [],
             },
-          ],
-          entries: [
-            {
-              id: 1,
-              pages: [1, 2],
-            },
-          ],
-        });
-        const { indexation: indexationRef } = storeToRefs(suggestionsStore);
-        indexationRef.value = indexation;
-      },
-      template: "<StoryComponent />",
+            aiKumikoResultId: 2,
+          }),
+        }),
+      ],
+      entries: [createMockEntry({ id: 3, position: 1, entirepages: 2 })],
     }),
   ],
   render: (args) => ({

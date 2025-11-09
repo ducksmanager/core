@@ -1,9 +1,12 @@
 import type { Meta, StoryObj } from "@storybook/vue3-vite";
 import { ref } from "vue";
-import { storeToRefs } from "pinia";
 import StoryKindSuggestionList from "./StoryKindSuggestionList.vue";
-import { suggestions } from "~/stores/suggestions";
-import type { FullIndexation, FullEntry } from "~dumili-services/indexation";
+import type { FullEntry } from "~dumili-services/indexation";
+import {
+  createMockEntry,
+  createMockPage,
+  createIndexationDecorator,
+} from "../../../.storybook/utils/mocks";
 
 const meta: Meta<typeof StoryKindSuggestionList> = {
   title: "Components/suggestions/StoryKindSuggestionList",
@@ -16,41 +19,10 @@ const meta: Meta<typeof StoryKindSuggestionList> = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-const createMockIndexation = (
-  overrides: Partial<FullIndexation> = {},
-): FullIndexation => {
-  const base: FullIndexation = {
-    id: "mock-indexation-id",
-    dmUserId: 1,
-    acceptedIssueSuggestionId: null,
-    title: null,
-    releaseDate: null,
-    price: null,
-    user: {
-      dmId: 1,
-      inducksUsername: "mock-user",
-    },
-    issueSuggestions: [],
-    acceptedIssueSuggestion: null,
-    pages: [],
-    entries: [],
-  };
-  return Object.assign(base, overrides);
-};
-
-const createMockEntry = (overrides: Partial<FullEntry> = {}): FullEntry => {
-  const base: FullEntry = {
-    id: 1,
-    title: null,
-    acceptedStorySuggestionId: null,
-    acceptedStoryKindSuggestionId: null,
-    indexationId: "mock-indexation-id",
-    position: 1,
-    entrycomment: null,
-    part: null,
-    entirepages: 1,
-    brokenpagenumerator: 0,
-    brokenpagedenominator: 1,
+const createMockEntryWithStoryKinds = (
+  overrides: Partial<FullEntry> = {},
+): FullEntry => {
+  return createMockEntry({
     storyKindSuggestions: [
       {
         id: 1,
@@ -75,58 +47,23 @@ const createMockEntry = (overrides: Partial<FullEntry> = {}): FullEntry => {
         storyKindRowsStr: "c1",
       },
     ],
-    acceptedStoryKind: null,
-    acceptedStory: null,
-    storySuggestions: [],
-  };
-  return Object.assign(base, overrides);
+    ...overrides,
+  });
 };
 
 export const Default: Story = {
   args: {
-    entry: createMockEntry(),
+    entry: createMockEntryWithStoryKinds(),
     editable: true,
   },
   decorators: [
-    (story) => ({
-      components: { StoryComponent: story() },
-      setup() {
-        const suggestionsStore = suggestions();
-        const indexation = createMockIndexation({
-          entries: [
-            {
-              id: 1,
-              position: 1,
-              entirepages: 1,
-              title: null,
-              acceptedStorySuggestionId: null,
-              acceptedStoryKindSuggestionId: null,
-              indexationId: "mock-indexation-id",
-              entrycomment: null,
-              part: null,
-              brokenpagenumerator: 0,
-              brokenpagedenominator: 1,
-              storyKindSuggestions: [],
-              acceptedStoryKind: null,
-              acceptedStory: null,
-              storySuggestions: [],
-            },
-          ],
-          pages: [
-            {
-              id: 1,
-              pageNumber: 1,
-              indexationId: "mock-indexation-id",
-              imageId: null,
-              image: null,
-            },
-          ],
-        });
-        const { indexation: indexationRef } = storeToRefs(suggestionsStore);
-        indexationRef.value = indexation;
+    createIndexationDecorator(
+      {
+        entries: [createMockEntry()],
+        pages: [createMockPage()],
       },
-      template: "<StoryComponent />",
-    }),
+      { initializeSocket: true },
+    ),
   ],
   render: (args) => ({
     components: { StoryKindSuggestionList },
@@ -144,7 +81,7 @@ export const Default: Story = {
 
 export const NotEditable: Story = {
   args: {
-    entry: createMockEntry({
+    entry: createMockEntryWithStoryKinds({
       acceptedStoryKind: {
         id: 1,
         storyKindRowsStr: "n1",
@@ -160,45 +97,13 @@ export const NotEditable: Story = {
     editable: false,
   },
   decorators: [
-    (story) => ({
-      components: { StoryComponent: story() },
-      setup() {
-        const suggestionsStore = suggestions();
-        const indexation = createMockIndexation({
-          entries: [
-            {
-              id: 1,
-              position: 1,
-              entirepages: 1,
-              title: null,
-              acceptedStorySuggestionId: null,
-              acceptedStoryKindSuggestionId: null,
-              indexationId: "mock-indexation-id",
-              entrycomment: null,
-              part: null,
-              brokenpagenumerator: 0,
-              brokenpagedenominator: 1,
-              storyKindSuggestions: [],
-              acceptedStoryKind: null,
-              acceptedStory: null,
-              storySuggestions: [],
-            },
-          ],
-          pages: [
-            {
-              id: 1,
-              pageNumber: 1,
-              indexationId: "mock-indexation-id",
-              imageId: null,
-              image: null,
-            },
-          ],
-        });
-        const { indexation: indexationRef } = storeToRefs(suggestionsStore);
-        indexationRef.value = indexation;
+    createIndexationDecorator(
+      {
+        entries: [createMockEntry()],
+        pages: [createMockPage()],
       },
-      template: "<StoryComponent />",
-    }),
+      { initializeSocket: true },
+    ),
   ],
   render: (args) => ({
     components: { StoryKindSuggestionList },
@@ -216,7 +121,7 @@ export const NotEditable: Story = {
 
 export const WithSelected: Story = {
   args: {
-    entry: createMockEntry({
+    entry: createMockEntryWithStoryKinds({
       acceptedStoryKind: {
         id: 2,
         storyKindRowsStr: "c1",
@@ -232,45 +137,13 @@ export const WithSelected: Story = {
     editable: true,
   },
   decorators: [
-    (story) => ({
-      components: { StoryComponent: story() },
-      setup() {
-        const suggestionsStore = suggestions();
-        const indexation = createMockIndexation({
-          entries: [
-            {
-              id: 1,
-              position: 1,
-              entirepages: 1,
-              title: null,
-              acceptedStorySuggestionId: null,
-              acceptedStoryKindSuggestionId: null,
-              indexationId: "mock-indexation-id",
-              entrycomment: null,
-              part: null,
-              brokenpagenumerator: 0,
-              brokenpagedenominator: 1,
-              storyKindSuggestions: [],
-              acceptedStoryKind: null,
-              acceptedStory: null,
-              storySuggestions: [],
-            },
-          ],
-          pages: [
-            {
-              id: 1,
-              pageNumber: 1,
-              indexationId: "mock-indexation-id",
-              imageId: null,
-              image: null,
-            },
-          ],
-        });
-        const { indexation: indexationRef } = storeToRefs(suggestionsStore);
-        indexationRef.value = indexation;
+    createIndexationDecorator(
+      {
+        entries: [createMockEntry()],
+        pages: [createMockPage()],
       },
-      template: "<StoryComponent />",
-    }),
+      { initializeSocket: true },
+    ),
   ],
   render: (args) => ({
     components: { StoryKindSuggestionList },

@@ -1,46 +1,31 @@
 import type { Meta, StoryObj } from "@storybook/vue3-vite";
-import { storeToRefs } from "pinia";
 import IssueSuggestionList from "./IssueSuggestionList.vue";
-import { suggestions } from "~/stores/suggestions";
 import type { FullIndexation } from "~dumili-services/indexation";
+import { createIndexationDecorator } from "../../../.storybook/utils/mocks";
 
 const meta: Meta<typeof IssueSuggestionList> = {
   title: "Components/suggestions/IssueSuggestionList",
   tags: ["autodocs"],
   parameters: {
     layout: "padded",
+    docs: {
+      story: {
+        inline: false,
+        iframeHeight: 200,
+      },
+    },
   },
 };
 
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-const createMockIndexation = (
-  overrides: Partial<FullIndexation> = {},
-): FullIndexation => {
-  const base: FullIndexation = {
-    id: "mock-indexation-id",
-    dmUserId: 1,
-    acceptedIssueSuggestionId: null,
-    title: null,
-    releaseDate: null,
-    price: null,
-    user: {
-      dmId: 1,
-      inducksUsername: "mock-user",
-    },
-    issueSuggestions: [],
-    acceptedIssueSuggestion: null,
-    pages: [],
-    entries: [],
-  };
-  return Object.assign(base, overrides);
-};
+const createDecorator = (indexationOverrides: Partial<FullIndexation> = {}) =>
+  createIndexationDecorator(indexationOverrides, { initializeSocket: true });
 
 export const Default: Story = {
-  render: () => {
-    const suggestionsStore = suggestions();
-    const indexation = createMockIndexation({
+  decorators: [
+    createDecorator({
       issueSuggestions: [
         {
           id: 1,
@@ -57,35 +42,29 @@ export const Default: Story = {
           indexationId: "mock-indexation-id",
         },
       ],
-    });
-    // Set the reactive ref value before component renders
-    const { indexation: indexationRef } = storeToRefs(suggestionsStore);
-    indexationRef.value = indexation;
-
-    return {
-      components: { IssueSuggestionList },
-      template: `
-        <div style="width: 300px; position: relative;">
-          <IssueSuggestionList />
-        </div>
-      `,
-    };
-  },
+    }),
+  ],
+  render: () => ({
+    components: { IssueSuggestionList },
+    template: `
+      <div style="width: 300px; position: relative;">
+        <IssueSuggestionList />
+      </div>
+    `,
+  }),
 };
 
 export const WithSelected: Story = {
-  render: () => {
-    const suggestionsStore = suggestions();
-    const acceptedIssueSuggestion = {
-      id: 1,
-      publicationcode: "us/DD",
-      issuenumber: "1",
-      aiStorySearchPossibleStoryId: null,
-      indexationId: "mock-indexation-id",
-    };
-    const indexation = createMockIndexation({
+  decorators: [
+    createDecorator({
       issueSuggestions: [
-        acceptedIssueSuggestion,
+        {
+          id: 1,
+          publicationcode: "us/DD",
+          issuenumber: "1",
+          aiStorySearchPossibleStoryId: null,
+          indexationId: "mock-indexation-id",
+        },
         {
           id: 2,
           publicationcode: "fr/PM",
@@ -94,19 +73,21 @@ export const WithSelected: Story = {
           indexationId: "mock-indexation-id",
         },
       ],
-      acceptedIssueSuggestion,
-    });
-    // Set the reactive ref value before component renders
-    const { indexation: indexationRef } = storeToRefs(suggestionsStore);
-    indexationRef.value = indexation;
-
-    return {
-      components: { IssueSuggestionList },
-      template: `
-        <div style="width: 300px; position: relative;">
-          <IssueSuggestionList />
-        </div>
-      `,
-    };
-  },
+      acceptedIssueSuggestion: {
+        id: 1,
+        publicationcode: "us/DD",
+        issuenumber: "1",
+        aiStorySearchPossibleStoryId: null,
+        indexationId: "mock-indexation-id",
+      },
+    }),
+  ],
+  render: () => ({
+    components: { IssueSuggestionList },
+    template: `
+      <div style="width: 300px; position: relative;">
+        <IssueSuggestionList />
+      </div>
+    `,
+  }),
 };

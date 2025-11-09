@@ -1,9 +1,10 @@
 import type { Meta, StoryObj } from "@storybook/vue3-vite";
-import { type Component } from "vue";
-import { storeToRefs } from "pinia";
 import StorySuggestionsTooltip from "./StorySuggestionsTooltip.vue";
-import { suggestions } from "~/stores/suggestions";
-import type { FullEntry, FullIndexation } from "~dumili-services/indexation";
+import {
+  createMockEntry,
+  createMockPage,
+  createIndexationDecorator,
+} from "../../../.storybook/utils/mocks";
 
 const meta: Meta<typeof StorySuggestionsTooltip> = {
   title: "Components/suggestions/StorySuggestionsTooltip",
@@ -23,33 +24,10 @@ type TooltipEntry = InstanceType<
   typeof StorySuggestionsTooltip
 >["$props"]["entry"];
 
-const createMockIndexation = (
-  overrides: Partial<FullIndexation> = {},
-): FullIndexation => {
-  const base: FullIndexation = {
-    id: "mock-indexation-id",
-    dmUserId: 1,
-    acceptedIssueSuggestionId: null,
-    title: null,
-    releaseDate: null,
-    price: null,
-    user: {
-      dmId: 1,
-      inducksUsername: "mock-user",
-    },
-    issueSuggestions: [],
-    acceptedIssueSuggestion: null,
-    pages: [],
-    entries: [],
-  };
-  return Object.assign(base, overrides);
-};
-
-const createMockEntry = (
+const createMockTooltipEntry = (
   overrides: Partial<TooltipEntry> = {},
 ): TooltipEntry => {
-  const base: TooltipEntry = {
-    id: 1,
+  return createMockEntry({
     storySuggestions: [
       {
         id: 1,
@@ -60,66 +38,19 @@ const createMockEntry = (
       },
     ],
     acceptedStoryKind: null,
-  };
-  return Object.assign(base, overrides);
+    ...overrides,
+  }) as TooltipEntry;
 };
 
-const createMockIndexationEntry = (
-  overrides: Partial<FullEntry> = {},
-): FullEntry => {
-  const base: FullEntry = {
-    id: 1,
-    position: 1,
-    entirepages: 1,
-    title: null,
-    acceptedStorySuggestionId: null,
-    acceptedStoryKindSuggestionId: null,
-    indexationId: "mock-indexation-id",
-    entrycomment: null,
-    part: null,
-    brokenpagenumerator: 0,
-    brokenpagedenominator: 1,
-    storyKindSuggestions: [],
-    acceptedStoryKind: null,
-    acceptedStory: null,
-    storySuggestions: [],
-  };
-  return Object.assign(base, overrides);
-};
-
-const createMockPage = (
-  overrides: Partial<FullIndexation["pages"][number]> = {},
-) => ({
-  id: 1,
-  pageNumber: 1,
-  indexationId: "mock-indexation-id",
-  imageId: null,
-  image: null,
-  ...overrides,
-});
-
-const setupIndexationStore = (
-  indexationOverrides: Partial<FullIndexation> = {},
-) => {
-  const suggestionsStore = suggestions();
-  const indexation = createMockIndexation({
-    pages: [createMockPage()],
-    entries: [createMockIndexationEntry()],
-    ...indexationOverrides,
-  });
-  const { indexation: indexationRef } = storeToRefs(suggestionsStore);
-  indexationRef.value = indexation;
-};
-
-const createDecorator =
-  (indexationOverrides: Partial<FullIndexation> = {}) =>
-  (story: () => Component) => ({
-    components: { StoryComponent: story() },
-    setup() {
-      setupIndexationStore(indexationOverrides);
+const createDecorator = (indexationOverrides = {}) =>
+  createIndexationDecorator(
+    {
+      pages: [createMockPage()],
+      entries: [createMockEntry()],
+      ...indexationOverrides,
     },
-    template: "<StoryComponent />",
-  });
+    { initializeSocket: false },
+  );
 
 const createRenderFunction = () => (args: { entry: TooltipEntry }) => ({
   components: { StorySuggestionsTooltip },
@@ -135,7 +66,7 @@ const createRenderFunction = () => (args: { entry: TooltipEntry }) => ({
 
 export const Default: Story = {
   args: {
-    entry: createMockEntry(),
+    entry: createMockTooltipEntry(),
   },
   decorators: [createDecorator()],
   render: createRenderFunction(),
@@ -143,7 +74,7 @@ export const Default: Story = {
 
 export const WithStoryKind: Story = {
   args: {
-    entry: createMockEntry({
+    entry: createMockTooltipEntry({
       acceptedStoryKind: {
         id: 1,
         storyKindRowsStr: "n1",
@@ -163,7 +94,7 @@ export const WithStoryKind: Story = {
 
 export const WithImageAndOcrResult: Story = {
   args: {
-    entry: createMockEntry({
+    entry: createMockTooltipEntry({
       acceptedStoryKind: {
         id: 1,
         storyKindRowsStr: "n1",

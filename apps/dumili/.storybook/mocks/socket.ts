@@ -1,3 +1,5 @@
+/// <reference types="vite/client" />
+
 /**
  * WebSocket mocks for Storybook
  * These mocks prevent components from trying to connect to a real WebSocket server
@@ -73,6 +75,52 @@ class MockSocketNamespace {
   async getIndexation() {
     return null;
   }
+
+  async acceptIssueSuggestion(suggestionId: number | null) {
+    if (import.meta.env.DEV) {
+      console.log(`[MockSocket] acceptIssueSuggestion:`, suggestionId);
+    }
+    return { status: "OK" };
+  }
+
+  async createIssueSuggestion(suggestion: {
+    publicationcode: string;
+    issuenumber: string;
+  }) {
+    if (import.meta.env.DEV) {
+      console.log(`[MockSocket] createIssueSuggestion:`, suggestion);
+    }
+    return {
+      createdIssueSuggestion: {
+        id: Math.floor(Math.random() * 1000),
+        ...suggestion,
+        indexationId: "mock-indexation-id",
+        aiStorySearchPossibleStoryId: null,
+      },
+    };
+  }
+
+  async acceptStoryKindSuggestion(
+    entryId: number,
+    storyKindSuggestionId: number | null,
+  ) {
+    if (import.meta.env.DEV) {
+      console.log(
+        `[MockSocket] acceptStoryKindSuggestion:`,
+        entryId,
+        storyKindSuggestionId,
+      );
+    }
+    return { status: "OK" };
+  }
+
+  _connect() {
+    if (import.meta.env.DEV) {
+      console.log(`[MockSocket] _connect called for ${this.namespace}`);
+    }
+  }
+
+  indexationUpdated?: (indexation: unknown) => void;
 }
 
 export const buildWebStorage = (_storage: Storage) => ({

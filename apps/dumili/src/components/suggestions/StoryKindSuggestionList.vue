@@ -72,7 +72,7 @@ const acceptedStoryKind = defineModel<FullEntry["acceptedStoryKind"]>();
 watch(
   () => acceptedStoryKind.value?.id,
   (storyKindId) => {
-    indexationSocket.value!.acceptStoryKindSuggestion(
+    indexationSocket.value?.acceptStoryKindSuggestion(
       props.entry.id,
       storyKindId || null,
     );

@@ -6,6 +6,7 @@ const meta: Meta<typeof TableOfContentsPage> = {
   title: "Components/TableOfContentsPage",
   component: TableOfContentsPage,
   tags: ["autodocs"],
+
   argTypes: {
     page: {
       control: "object",
@@ -27,6 +28,17 @@ export const Default: Story = {
       image: null,
     },
   },
+  render: (args) => ({
+    components: { TableOfContentsPage },
+    setup() {
+      return { args };
+    },
+    template: `
+      <div style="height: 50px;">
+        <TableOfContentsPage :page="args.page" />
+      </div>
+    `,
+  }),
 };
 
 export const Page5: Story = {
@@ -39,6 +51,17 @@ export const Page5: Story = {
       image: null,
     },
   },
+  render: (args) => ({
+    components: { TableOfContentsPage },
+    setup() {
+      return { args };
+    },
+    template: `
+      <div style="height: 50px;">
+        <TableOfContentsPage :page="args.page" />
+      </div>
+    `,
+  }),
 };
 
 export const Visible: Story = {
@@ -61,4 +84,15 @@ export const Visible: Story = {
       template: "<StoryComponent />",
     }),
   ],
+  render: (args) => ({
+    components: { TableOfContentsPage },
+    setup() {
+      return { args };
+    },
+    template: `
+      <div style="height: 50px;">
+        <TableOfContentsPage :page="args.page" />
+      </div>
+    `,
+  }),
 };

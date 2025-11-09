@@ -21,21 +21,21 @@ import type { AxiosStorage } from "socket-call-client";
 import { defineStore } from "pinia";
 import { images } from "~web/src/stores/images";
 
-// Create a mock router
-const router = createRouter({
-  history: createWebHistory(),
-  routes: [
-    {
-      path: "/",
-      name: "home",
-      component: { template: "<div>Home</div>" },
-    },
-  ],
-});
-
 setup((app) => {
   const pinia = createPinia();
   const head = createHead();
+
+  // Create a mock router for this app instance
+  const router = createRouter({
+    history: createWebHistory(),
+    routes: [
+      {
+        path: "/",
+        name: "home",
+        component: { template: "<div>Home</div>" },
+      },
+    ],
+  });
 
   // Configure app for DevTools compatibility
   // This helps Vue DevTools extension track the app instance properly
