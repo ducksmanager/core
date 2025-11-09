@@ -21,8 +21,8 @@ type Story = StoryObj<typeof meta>;
 
 const createMockEntryWithStories = (
   overrides: Partial<FullEntry> = {},
-): FullEntry => {
-  return createMockEntry({
+): FullEntry =>
+  createMockEntry({
     storySuggestions: [
       {
         id: 1,
@@ -45,7 +45,6 @@ const createMockEntryWithStories = (
     ],
     ...overrides,
   });
-};
 
 const createDecorator = (indexationOverrides = {}) =>
   createIndexationDecorator(

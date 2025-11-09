@@ -22,7 +22,6 @@ const meta: Meta<typeof EntryStoryKindTooltip> = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-
 export const Default: Story = {
   args: {
     entry: createMockEntry({ id: 1 }),

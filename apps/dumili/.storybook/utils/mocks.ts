@@ -74,7 +74,9 @@ export const createMockPage = (
  * Creates a mock image with AI results
  */
 export const createMockImage = (
-  overrides: Partial<NonNullable<FullIndexation["pages"][number]["image"]>> = {},
+  overrides: Partial<
+    NonNullable<FullIndexation["pages"][number]["image"]>
+  > = {},
 ): NonNullable<FullIndexation["pages"][number]["image"]> => {
   const base: NonNullable<FullIndexation["pages"][number]["image"]> = {
     id: 1,
@@ -121,4 +123,3 @@ export const createIndexationDecorator =
     },
     template: "<StoryComponent />",
   });
-

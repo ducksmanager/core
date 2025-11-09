@@ -26,8 +26,8 @@ type TooltipEntry = InstanceType<
 
 const createMockTooltipEntry = (
   overrides: Partial<TooltipEntry> = {},
-): TooltipEntry => {
-  return createMockEntry({
+): TooltipEntry =>
+  createMockEntry({
     storySuggestions: [
       {
         id: 1,
@@ -40,7 +40,6 @@ const createMockTooltipEntry = (
     acceptedStoryKind: null,
     ...overrides,
   }) as TooltipEntry;
-};
 
 const createDecorator = (indexationOverrides = {}) =>
   createIndexationDecorator(

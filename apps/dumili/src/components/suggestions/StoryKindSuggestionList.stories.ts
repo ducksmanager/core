@@ -21,8 +21,8 @@ type Story = StoryObj<typeof meta>;
 
 const createMockEntryWithStoryKinds = (
   overrides: Partial<FullEntry> = {},
-): FullEntry => {
-  return createMockEntry({
+): FullEntry =>
+  createMockEntry({
     storyKindSuggestions: [
       {
         id: 1,
@@ -49,7 +49,6 @@ const createMockEntryWithStoryKinds = (
     ],
     ...overrides,
   });
-};
 
 export const Default: Story = {
   args: {
