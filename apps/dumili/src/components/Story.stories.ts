@@ -8,7 +8,7 @@ const meta: Meta<typeof Story> = {
   argTypes: {
     storycode: {
       control: "text",
-      description: "The story code (e.g., 'I TL 1234-A')",
+      description: "The story code (e.g., 'I TL  116-AP')",
     },
   },
 };
@@ -18,7 +18,7 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
   args: {
-    storycode: "I TL 1234-A",
+    storycode: "I TL  116-AP",
   },
 };
 
@@ -30,7 +30,7 @@ export const WithoutTitle: Story = {
 
 export const WithSuffix: Story = {
   args: {
-    storycode: "I TL 1234-A",
+    storycode: "I TL  116-AP",
   },
   render: (args) => ({
     components: { Story },

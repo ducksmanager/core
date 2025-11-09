@@ -8,8 +8,7 @@
       },
       {
         eventName: 'reportRunOcrOnImage',
-        checkMatch: (imageId) =>
-          imageId === getEntryPages(indexation!, entry.id)[0].image?.id,
+        checkMatch: (imageId) => imageId === firstPage.image?.id,
       },
     ]"
     :status="
@@ -97,7 +96,7 @@ import { COVER, STORY } from "~dumili-types/storyKinds";
 import { getEntryPages } from "~dumili-utils/entryPages";
 
 const { entry } = defineProps<{
-  entry: FullEntry;
+  entry: Pick<FullEntry, "id" | "storySuggestions" | "acceptedStoryKind">;
 }>();
 
 const { indexation } = storeToRefs(suggestions());

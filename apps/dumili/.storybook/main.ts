@@ -21,7 +21,6 @@ const config: StorybookConfig = {
   addons: [
     // Load core addons first to ensure proper state initialization
     getAbsolutePath("@storybook/addon-docs"),
-    getAbsolutePath("@storybook/addon-a11y"),
     // Load Chromatic addon last to avoid state synchronization issues
     getAbsolutePath("@chromatic-com/storybook"),
   ],

@@ -18,57 +18,49 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Story: Story = {
-  render: () => ({
-    components: { StoryKindBadge },
-    template: '<StoryKindBadge kind="n" />',
-  }),
+  args: {
+    kind: "n",
+  },
 };
 
 export const NewspaperStrip: Story = {
-  render: () => ({
-    components: { StoryKindBadge },
-    template: '<StoryKindBadge kind="k" />',
-  }),
+  args: {
+    kind: "k",
+  },
 };
 
 export const Cover: Story = {
-  render: () => ({
-    components: { StoryKindBadge },
-    template: '<StoryKindBadge kind="c" />',
-  }),
+  args: {
+    kind: "c",
+  },
 };
 
 export const Illustration: Story = {
-  render: () => ({
-    components: { StoryKindBadge },
-    template: '<StoryKindBadge kind="i" />',
-  }),
+  args: {
+    kind: "i",
+  },
 };
 
 export const GameOrPuzzle: Story = {
-  render: () => ({
-    components: { StoryKindBadge },
-    template: '<StoryKindBadge kind="g" />',
-  }),
+  args: {
+    kind: "g",
+  },
 };
 
 export const TextStory: Story = {
-  render: () => ({
-    components: { StoryKindBadge },
-    template: '<StoryKindBadge kind="t" />',
-  }),
+  args: {
+    kind: "t",
+  },
 };
 
 export const Article: Story = {
-  render: () => ({
-    components: { StoryKindBadge },
-    template: '<StoryKindBadge kind="a" />',
-  }),
+  args: {
+    kind: "a",
+  },
 };
 
 export const Unknown: Story = {
-  render: () => ({
-    components: { StoryKindBadge },
-    template: "<StoryKindBadge />",
-  }),
+  args: {
+    kind: undefined,
+  },
 };

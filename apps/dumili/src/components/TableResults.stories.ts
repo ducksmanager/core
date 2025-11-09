@@ -30,47 +30,26 @@ export const Empty: Story = {
   args: {
     data: [],
   },
-  render: (args) => ({
-    components: { TableResults },
-    setup() {
-      return { args };
+  parameters: {
+    docs: {
+      description: {
+        story: "When data is empty, the 'no-data' slot is shown",
+      },
     },
-    template: `
-      <TableResults v-bind="args">
-        <template #no-data>
-          <p>No data available</p>
-        </template>
-      </TableResults>
-    `,
-  }),
+  },
 };
 
 export const SingleRow: Story = {
   args: {
-    data: [{ id: 1, name: "Test", value: "123" }],
+    data: [{ id: 1, status: "active", count: 42 }],
   },
 };
 
-export const ManyColumns: Story = {
+export const WithNoDataSlot: Story = {
   args: {
-    data: [
-      {
-        id: 1,
-        name: "Item 1",
-        category: "A",
-        price: 10.99,
-        stock: 100,
-        description: "First item",
-      },
-      {
-        id: 2,
-        name: "Item 2",
-        category: "B",
-        price: 20.99,
-        stock: 50,
-        description: "Second item",
-      },
-    ],
+    data: [],
+    $slots: {
+      "no-data": "No results found",
+    },
   },
 };
-

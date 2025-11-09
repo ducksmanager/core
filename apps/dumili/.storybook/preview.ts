@@ -9,7 +9,6 @@ import VueDraggableResizable from "vue-draggable-resizable";
 import i18n from "../src/i18n";
 import "bootstrap/dist/css/bootstrap.css";
 import "bootstrap-vue-next/dist/bootstrap-vue-next.css";
-// Import SCSS after Bootstrap to ensure proper cascade
 import "../src/style.scss";
 import { SocketClient, buildWebStorage } from "./mocks/socket";
 import useDumiliSocket, {
@@ -34,7 +33,6 @@ const router = createRouter({
   ],
 });
 
-// Setup global decorator
 setup((app) => {
   const pinia = createPinia();
   const head = createHead();
@@ -57,36 +55,32 @@ setup((app) => {
     }
   }
 
-  // Setup Bootstrap
   app.use(createBootstrap());
-
-  // Setup i18n
   app.use(i18n);
-
-  // Setup Pinia
   app.use(pinia);
 
-  // Setup mock stores for Storybook
-  // Use real images store (no mocking needed)
-  images(pinia);
+  images();
 
-  // Mock coa store
   const coaStore = defineStore("coa", () => ({
-    storyDetails: ref<Record<string, { title?: string; storycode: string }>>({
-      "I TL 1234-A": {
+    storyDetails: ref({
+      "I TL  116-AP": {
         title: "A Sample Story",
-        storycode: "I TL 1234-A",
+        storycode: "I TL  116-AP",
       },
       "I TL 5678-B": {
         title: "Another Story",
         storycode: "I TL 5678-B",
       },
-    }),
-    publicationNames: ref<Record<string, string>>({
+    } as const),
+    storyUrls: ref({
+      "I TL  116-AP": "webusers/webusers/2005/12/us_mad_006b_001.jpg",
+      "I TL 5678-B": "mock-url-2",
+    } as const),
+    publicationNames: ref({
       "us/DD": "Donald Duck",
       "fr/PM": "Picsou Magazine",
       "dk/AND": "Anders And & Co.",
-    }),
+    } as const),
   }));
   coaStore(pinia);
 

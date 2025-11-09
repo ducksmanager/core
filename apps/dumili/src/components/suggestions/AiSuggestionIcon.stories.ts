@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/vue3-vite";
 import AiSuggestionIcon from "./AiSuggestionIcon.vue";
 
 const meta: Meta<typeof AiSuggestionIcon> = {
-  title: "Components/AiSuggestionIcon",
+  title: "Components/suggestions/AiSuggestionIcon",
   component: AiSuggestionIcon,
   tags: ["autodocs"],
   argTypes: {
@@ -68,10 +68,9 @@ export const LoadingSuccess: Story = {
   },
 };
 
-export const ButtonWithId: Story = {
+export const ButtonWithSuccess: Story = {
   args: {
     status: "success",
     button: true,
-    id: "ai-suggestion-icon-1",
   },
 };

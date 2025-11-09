@@ -55,7 +55,6 @@ export const Visible: Story = {
     (story) => ({
       components: { StoryComponent: story() },
       setup() {
-        // Set this page as visible
         const uiStore = ui();
         uiStore.visiblePages = new Set([3]);
       },
