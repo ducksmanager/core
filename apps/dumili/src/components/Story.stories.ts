@@ -34,9 +34,7 @@ export const WithSuffix: Story = {
   },
   render: (args) => ({
     components: { Story },
-    setup() {
-      return { args };
-    },
+    setup: () => ({ args }),
     template: `
       <Story v-bind="args">
         <template #suffix>

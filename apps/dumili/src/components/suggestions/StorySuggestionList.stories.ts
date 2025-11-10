@@ -43,6 +43,30 @@ const createMockEntryWithStories = (
         },
       },
     ],
+    storyKindSuggestions: [
+      {
+        id: 1,
+        storyKindRowsStr: "n1",
+        entryId: 1,
+        aiKumikoResultId: null,
+        storyKindRows: {
+          id: "n1",
+          kind: "n" as const,
+          numberOfRows: 1,
+        },
+      },
+      {
+        id: 2,
+        storyKindRowsStr: "c1",
+        entryId: 1,
+        aiKumikoResultId: null,
+        storyKindRows: {
+          id: "c1",
+          kind: "c" as const,
+          numberOfRows: 1,
+        },
+      },
+    ],
     ...overrides,
   });
 

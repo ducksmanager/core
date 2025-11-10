@@ -1,13 +1,7 @@
 /// <reference types="vite/client" />
 
-/**
- * WebSocket mocks for Storybook
- * These mocks prevent components from trying to connect to a real WebSocket server
- */
-
-// Mock SocketClient class - this replaces the real SocketClient from socket-call-client
 export class SocketClient {
-  private namespaces: Map<string, unknown> = new Map();
+  public namespaces: Map<string, MockSocketNamespace> = new Map();
 
   constructor() {}
 
@@ -27,7 +21,6 @@ export class SocketClient {
   }
 }
 
-// Mock SocketNamespace
 class MockSocketNamespace {
   private listeners: Map<string, Set<() => void>> = new Map();
   public connected = true; // Mock as always connected
@@ -112,6 +105,98 @@ class MockSocketNamespace {
       );
     }
     return { status: "OK" };
+  }
+
+  async createStorySuggestion(suggestion: {
+    entryId: number;
+    storycode: string;
+  }) {
+    if (import.meta.env.DEV) {
+      console.log(`[MockSocket] createStorySuggestion:`, suggestion);
+    }
+    return {
+      createdStorySuggestion: {
+        id: Math.floor(Math.random() * 1000),
+        storycode: suggestion.storycode,
+        entryId: suggestion.entryId,
+        aiStorySuggestionId: null,
+      },
+    };
+  }
+
+  async acceptStorySuggestion(entryId: number, suggestionId: number | null) {
+    if (import.meta.env.DEV) {
+      console.log(`[MockSocket] acceptStorySuggestion:`, entryId, suggestionId);
+    }
+    return { status: "OK" };
+  }
+
+  async searchStory(
+    keywords: string[],
+    options: { withIssues?: boolean; kind?: string } = {},
+  ) {
+    if (import.meta.env.DEV) {
+      console.log(`[MockSocket] searchStory:`, keywords, options);
+    }
+    return {
+      results: [
+        {
+          storycode: "I TL  116-AP",
+          title: "Mock Story Title",
+          kind: options.kind || "n",
+          entirepages: 1,
+          score: 1.0,
+        },
+        {
+          storycode: "I TL  117-AP",
+          title: "Another Mock Story",
+          kind: options.kind || "c",
+          entirepages: 2,
+          score: 0.8,
+        },
+      ] as const,
+      hasMore: false,
+    };
+  }
+
+  async searchStoryByStorycode(partialStorycode: string) {
+    if (import.meta.env.DEV) {
+      console.log(`[MockSocket] searchStoryByStorycode:`, partialStorycode);
+    }
+    return {
+      results: [
+        {
+          storycode: partialStorycode + "-AP",
+          title: "Mock Story by Code",
+          kind: "n" as const,
+          entirepages: 1,
+          score: 1.0,
+        },
+      ],
+      hasMore: false,
+    };
+  }
+
+  async getStoryjobs(storyversioncode: string) {
+    if (import.meta.env.DEV) {
+      console.log(`[MockSocket] getStoryjobs:`, storyversioncode);
+    }
+    return {
+      data: [
+        {
+          storyversioncode,
+          personcode: "CB",
+          plotwritartink: "w",
+          storyjobcomment: null,
+        },
+        {
+          storyversioncode,
+          personcode: "DR",
+          plotwritartink: "a",
+          storyjobcomment: null,
+        },
+      ],
+    };
   }
 
   _connect() {

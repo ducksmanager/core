@@ -21,11 +21,50 @@ import type { AxiosStorage } from "socket-call-client";
 import { defineStore } from "pinia";
 import { images } from "~web/src/stores/images";
 
+// Mock Cloudinary global object
+if (typeof window !== "undefined") {
+  (window as any).cloudinary = {
+    openUploadWidget: (
+      _options: unknown,
+      callback: (error: unknown, result: unknown) => void,
+    ) => ({
+      close: () => {
+        if (import.meta.env.DEV) {
+          console.log("[MockCloudinary] Widget closed");
+        }
+      },
+      _simulateUpload: (fileCount: number = 1, isPdf: boolean = false) => {
+        for (let i = 0; i < fileCount; i++) {
+          callback(null, {
+            event: "upload-added",
+            info: {
+              id: `mock-file-${i + 1}`,
+              secure_url: `https://via.placeholder.com/150?text=Page+${i + 1}`,
+            },
+          });
+        }
+        callback(null, {
+          event: "queues-start",
+        });
+        setTimeout(() => {
+          callback(null, {
+            event: "success",
+            info: {
+              id: "mock-file-1",
+              secure_url: "https://via.placeholder.com/150?text=Uploaded+Page",
+              pages: isPdf ? fileCount : undefined,
+            },
+          });
+        }, 100);
+      },
+    }),
+  };
+}
+
 setup((app) => {
   const pinia = createPinia();
   const head = createHead();
 
-  // Create a mock router for this app instance
   const router = createRouter({
     history: createWebHistory(),
     routes: [
@@ -81,10 +120,71 @@ setup((app) => {
       "fr/PM": "Picsou Magazine",
       "dk/AND": "Anders And & Co.",
     } as const),
+    countryNames: ref({
+      us: "United States",
+      fr: "France",
+      dk: "Denmark",
+    } as const),
+    publicationNamesFullCountries: ref(["us", "fr", "dk"]),
+    issuecodesByPublicationcode: ref({
+      "us/DD": ["us/DD 1", "us/DD 2", "us/DD 3"],
+      "fr/PM": ["fr/PM 1", "fr/PM 2", "fr/PM 3"],
+      "dk/AND": ["dk/AND 1", "dk/AND 2", "dk/AND 3"],
+    }),
+    issuecodeDetails: ref({
+      "us/DD 1": {
+        issuecode: "us/DD 1",
+        publicationcode: "us/DD",
+        issuenumber: "1",
+      },
+      "us/DD 2": {
+        issuecode: "us/DD 2",
+        publicationcode: "us/DD",
+        issuenumber: "2",
+      },
+      "us/DD 3": {
+        issuecode: "us/DD 3",
+        publicationcode: "us/DD",
+        issuenumber: "3",
+      },
+      "fr/PM 1": {
+        issuecode: "fr/PM 1",
+        publicationcode: "fr/PM",
+        issuenumber: "1",
+      },
+      "fr/PM 2": {
+        issuecode: "fr/PM 2",
+        publicationcode: "fr/PM",
+        issuenumber: "2",
+      },
+      "fr/PM 3": {
+        issuecode: "fr/PM 3",
+        publicationcode: "fr/PM",
+        issuenumber: "3",
+      },
+      "dk/AND 1": {
+        issuecode: "dk/AND 1",
+        publicationcode: "dk/AND",
+        issuenumber: "1",
+      },
+      "dk/AND 2": {
+        issuecode: "dk/AND 2",
+        publicationcode: "dk/AND",
+        issuenumber: "2",
+      },
+      "dk/AND 3": {
+        issuecode: "dk/AND 3",
+        publicationcode: "dk/AND",
+        issuenumber: "3",
+      },
+    }),
+    fetchCountryNames: async () => {},
+    fetchPublicationNamesFromCountry: async (_countrycode: string) => {},
+    fetchIssuecodesByPublicationcode: async (_publicationcode: string) => {},
+    fetchIssuecodeDetails: async (_issuecodes: string[]) => {},
   }));
   coaStore(pinia);
 
-  // Mock ui store
   const uiStore = defineStore("ui", () => ({
     currentPage: ref(0),
     visiblePages: ref(new Set<number>()),
@@ -94,16 +194,25 @@ setup((app) => {
   }));
   uiStore(pinia);
 
-  // Setup router
+  const collectionStore = defineStore("collection", () => ({
+    user: ref({
+      id: 1,
+      username: "storybook-user",
+      inducksUsername: "storybook-user",
+    }),
+    isLoadingUser: ref(false),
+    loadUser: async () => {},
+    loadUserPermissions: async () => {},
+    login: async () => {},
+  }));
+  collectionStore(pinia);
+
   app.use(router);
 
-  // Setup head
   app.use(head);
 
-  // Register vue-draggable-resizable component
   app.component("VueDraggableResizable", VueDraggableResizable);
 
-  // Provide mocked sockets - these will be injected by composables
   const dmSocket = new SocketClient();
   const dumiliSocket = new SocketClient();
   const storySearchSocket = new SocketClient();
@@ -121,54 +230,43 @@ const preview: Preview = {
         date: /Date$/i,
       },
     },
-    a11y: {
-      // 'todo' - show a11y violations in the test UI only
-      // 'error' - fail CI on a11y violations
-      // 'off' - skip a11y checks entirely
-      test: "todo",
-    },
   },
   decorators: [
-    (story) => {
-      const StoryComponent = story();
-      return {
-        components: { StoryComponent },
-        setup() {
-          // This runs in component context, so inject() will work
-          const mockSession = {
-            getToken: () => Promise.resolve("mock-token"),
-            clearSession: () => {},
-            sessionExists: () => Promise.resolve(true),
-          };
+    (story) => ({
+      components: { StoryComponent: story() },
+      setup() {
+        const mockSession = {
+          getToken: () => Promise.resolve("mock-token"),
+          clearSession: () => {},
+          sessionExists: () => Promise.resolve(true),
+        };
 
-          const onConnectError = () => {};
+        const onConnectError = () => {};
 
-          // Setup composables in component context
-          const dumiliSocketInstance = useDumiliSocket({
-            session: mockSession,
-            onConnectError,
-          });
+        const dumiliSocketInstance = useDumiliSocket({
+          session: mockSession,
+          onConnectError,
+        });
 
-          const dmSocketInstance = useDmSocket({
-            cacheStorage: buildWebStorage(
-              sessionStorage,
-            ) as unknown as AxiosStorage,
-            session: mockSession,
-            onConnectError,
-          });
+        const dmSocketInstance = useDmSocket({
+          cacheStorage: buildWebStorage(
+            sessionStorage,
+          ) as unknown as AxiosStorage,
+          session: mockSession,
+          onConnectError,
+        });
 
-          getCurrentInstance()!.appContext.app.provide(
-            dumiliSocketInjectionKey,
-            dumiliSocketInstance,
-          );
-          getCurrentInstance()!.appContext.app.provide(
-            dmSocketInjectionKey,
-            dmSocketInstance,
-          );
-        },
-        template: "<StoryComponent />",
-      };
-    },
+        getCurrentInstance()!.appContext.app.provide(
+          dumiliSocketInjectionKey,
+          dumiliSocketInstance,
+        );
+        getCurrentInstance()!.appContext.app.provide(
+          dmSocketInjectionKey,
+          dmSocketInstance,
+        );
+      },
+      template: "<StoryComponent />",
+    }),
   ],
 };
 

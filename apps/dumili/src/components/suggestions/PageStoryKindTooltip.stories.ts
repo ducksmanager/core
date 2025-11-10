@@ -27,9 +27,7 @@ export const Default: Story = {
   },
   render: (args) => ({
     components: { PageStoryKindTooltip },
-    setup() {
-      return { args };
-    },
+    setup: () => ({ args }),
     template: `
       <div style="position: relative; width: 200px; height: 100px; padding: 20px;">
         <PageStoryKindTooltip :page="args.page" />
@@ -70,9 +68,7 @@ export const WithDetectedPanels: Story = {
   },
   render: (args) => ({
     components: { PageStoryKindTooltip },
-    setup() {
-      return { args };
-    },
+    setup: () => ({ args }),
     template: `
       <div style="position: relative; width: 200px; height: 100px; padding: 20px;">
         <PageStoryKindTooltip :page="args.page" />

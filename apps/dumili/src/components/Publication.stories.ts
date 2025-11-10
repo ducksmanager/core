@@ -57,9 +57,7 @@ export const WithSlot: Story = {
   },
   render: (args) => ({
     components: { Publication },
-    setup() {
-      return { args };
-    },
+    setup: () => ({ args }),
     template: `
       <Publication v-bind="args">
         <span class="ms-2 text-muted">(1934-)</span>

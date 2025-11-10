@@ -55,9 +55,7 @@ export const WithSlot: Story = {
   },
   render: (args) => ({
     components: { Issue },
-    setup() {
-      return { args };
-    },
+    setup: () => ({ args }),
     template: `
       <Issue v-bind="args">
         <template #title-suffix>

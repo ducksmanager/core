@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/vue3-vite";
 import EntryStoryKindTooltip from "./EntryStoryKindTooltip.vue";
-import type { FullEntry, FullIndexation } from "~dumili-services/indexation";
+import type { FullIndexation } from "~dumili-services/indexation";
 import {
   createMockEntry,
   createMockPage,
@@ -34,9 +34,7 @@ export const Default: Story = {
   ],
   render: (args) => ({
     components: { EntryStoryKindTooltip },
-    setup() {
-      return { args };
-    },
+    setup: () => ({ args }),
     template: `
       <div style="position: relative; width: 300px; height: 200px; padding: 20px;">
         <EntryStoryKindTooltip :entry="args.entry" />
@@ -91,9 +89,7 @@ export const WithImage: Story = {
   ],
   render: (args) => ({
     components: { EntryStoryKindTooltip },
-    setup() {
-      return { args };
-    },
+    setup: () => ({ args }),
     template: `
       <div style="position: relative; width: 300px; height: 200px; padding: 20px;">
         <EntryStoryKindTooltip :entry="args.entry" />
@@ -170,9 +166,7 @@ export const WithMultiplePages: Story = {
   ],
   render: (args) => ({
     components: { EntryStoryKindTooltip },
-    setup() {
-      return { args };
-    },
+    setup: () => ({ args }),
     template: `
       <div style="position: relative; width: 300px; height: 200px; padding: 20px;">
         <EntryStoryKindTooltip :entry="args.entry" />

@@ -30,9 +30,7 @@ export const Default: Story = {
   },
   render: (args) => ({
     components: { TableOfContentsPage },
-    setup() {
-      return { args };
-    },
+    setup: () => ({ args }),
     template: `
       <div style="height: 50px;">
         <TableOfContentsPage :page="args.page" />
@@ -53,9 +51,7 @@ export const Page5: Story = {
   },
   render: (args) => ({
     components: { TableOfContentsPage },
-    setup() {
-      return { args };
-    },
+    setup: () => ({ args }),
     template: `
       <div style="height: 50px;">
         <TableOfContentsPage :page="args.page" />
@@ -86,9 +82,7 @@ export const Visible: Story = {
   ],
   render: (args) => ({
     components: { TableOfContentsPage },
-    setup() {
-      return { args };
-    },
+    setup: () => ({ args }),
     template: `
       <div style="height: 50px;">
         <TableOfContentsPage :page="args.page" />
