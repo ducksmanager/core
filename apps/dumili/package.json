@@ -50,7 +50,7 @@
     "@eslint/eslintrc": "^3.3.1",
     "@eslint/js": "^9.39.0",
     "@intlify/eslint-plugin-vue-i18n": "^4.1.0",
-    "@intlify/unplugin-vue-i18n": "^6.0.8",
+    "@intlify/unplugin-vue-i18n": "^11.0.1",
     "@sentry/cli": "^2.55.0",
     "@storybook/addon-docs": "^10.0.6",
     "@storybook/vue3-vite": "^10.0.6",
