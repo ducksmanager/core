@@ -18,7 +18,7 @@
     "prod:build-docker-web": "REPO_NAME=ghcr.io/bperel/dumili-app pnpm -F '~ci' prod:build-docker --target web -f apps/dumili/Dockerfile",
     "prod:build-docker": "pnpm run '/^prod:build-docker-/'",
     "prod:transfer-files-pre": "pnpm -F '~ci' prod:transfer-files @apps/dumili/.env:apps/dumili/.env",
-    "prod:transfer-files-post": "pnpm -F '~ci' prod:transfer-files apps/dumili/docker-compose.yml:@apps/dumili/docker-compose.yml apps/dumili/Caddyfile:@apps/dumili/Caddyfile apps/dumili/sentry-relay/projects/4508868506222592.json:@apps/dumili/sentry-relay/projects/4508868506222592.json apps/dumili/sentry-relay/config.yml:@apps/dumili/sentry-relay/config.yml",
+    "prod:transfer-files-post": "pnpm -F '~ci' prod:transfer-files apps/dumili/docker-compose.yml:@apps/dumili/docker-compose.yml apps/dumili/Caddyfile:@apps/dumili/Caddyfile apps/dumili/config/sentry-relay/projects/4508868506222592.json:@apps/dumili/config/sentry-relay/projects/4508868506222592.json apps/dumili/config/sentry-relay/config.yml:@apps/dumili/config/sentry-relay/config.yml",
     "sentry:sourcemaps": "sentry-cli sourcemaps inject --org bruno-perel --project dumili ./dist && sentry-cli sourcemaps upload --org bruno-perel --project dumili ./dist",
     "storybook": "NODE_ENV=development storybook dev -p 6006"
   },
