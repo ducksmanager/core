@@ -33,7 +33,7 @@ const createMockEntryWithStories = (
       },
       {
         id: 2,
-        storycode: "I TL 5678-B",
+        storycode: "D  6665",
         aiStorySuggestionId: 1,
         entryId: 1,
         aiStorySuggestion: {

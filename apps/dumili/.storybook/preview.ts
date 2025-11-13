@@ -21,9 +21,8 @@ import type { AxiosStorage } from "socket-call-client";
 import { defineStore } from "pinia";
 import { images } from "~web/src/stores/images";
 
-// Mock Cloudinary global object
 if (typeof window !== "undefined") {
-  (window as any).cloudinary = {
+  (window as unknown as Record<string, unknown>).cloudinary = {
     openUploadWidget: (
       _options: unknown,
       callback: (error: unknown, result: unknown) => void,
@@ -39,7 +38,7 @@ if (typeof window !== "undefined") {
             event: "upload-added",
             info: {
               id: `mock-file-${i + 1}`,
-              secure_url: `https://via.placeholder.com/150?text=Page+${i + 1}`,
+              secure_url: `https://placehold.co/150?text=Page+${i + 1}`,
             },
           });
         }
@@ -51,7 +50,7 @@ if (typeof window !== "undefined") {
             event: "success",
             info: {
               id: "mock-file-1",
-              secure_url: "https://via.placeholder.com/150?text=Uploaded+Page",
+              secure_url: "https://placehold.co/150?text=Uploaded+Page",
               pages: isPdf ? fileCount : undefined,
             },
           });
@@ -106,14 +105,14 @@ setup((app) => {
         title: "A Sample Story",
         storycode: "I TL  116-AP",
       },
-      "I TL 5678-B": {
-        title: "Another Story",
-        storycode: "I TL 5678-B",
+      "D  6665": {
+        storycode: "D  6665",
+        title: "Ice cream trolley at beach",
       },
     } as const),
     storyUrls: ref({
       "I TL  116-AP": "webusers/webusers/2005/12/us_mad_006b_001.jpg",
-      "I TL 5678-B": "mock-url-2",
+      "D  6665": "no/dd/1985/no_dd1985b27a_001.jpg",
     } as const),
     publicationNames: ref({
       "us/DD": "Donald Duck",

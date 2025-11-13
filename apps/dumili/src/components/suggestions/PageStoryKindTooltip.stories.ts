@@ -1,5 +1,10 @@
 import type { Meta, StoryObj } from "@storybook/vue3-vite";
 import PageStoryKindTooltip from "./PageStoryKindTooltip.vue";
+import {
+  createMockPage,
+  createMockEntry,
+  createIndexationDecorator,
+} from "../../../.storybook/utils/mocks";
 
 const meta: Meta<typeof PageStoryKindTooltip> = {
   title: "Components/suggestions/PageStoryKindTooltip",
@@ -25,6 +30,15 @@ export const Default: Story = {
       image: null,
     },
   },
+  decorators: [
+    createIndexationDecorator(
+      {
+        pages: [createMockPage({ id: 1, pageNumber: 1 })],
+        entries: [createMockEntry({ id: 1, position: 1, entirepages: 1 })],
+      },
+      { initializeSocket: false },
+    ),
+  ],
   render: (args) => ({
     components: { PageStoryKindTooltip },
     setup: () => ({ args }),
@@ -45,7 +59,7 @@ export const WithDetectedPanels: Story = {
       imageId: 1,
       image: {
         id: 1,
-        url: "https://via.placeholder.com/150",
+        url: "https://placehold.co/150",
         aiOcrResult: null,
         aiStorySearchResult: null,
         aiKumikoResultId: 1,

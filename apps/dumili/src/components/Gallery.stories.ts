@@ -26,7 +26,7 @@ const createMockPages = (count: number) =>
         i % 2 === 0
           ? createMockImage({
               id: i + 1,
-              url: `https://via.placeholder.com/150?text=Page+${i + 1}`,
+              url: `https://placehold.co/150?text=Page+${i + 1}`,
             })
           : null,
     }),
@@ -73,7 +73,7 @@ export const WithAllImages: Story = {
         imageId: i + 1,
         image: createMockImage({
           id: i + 1,
-          url: `https://via.placeholder.com/150?text=Page+${i + 1}`,
+          url: `https://placehold.co/150?text=Page+${i + 1}`,
         }),
       }),
     ),

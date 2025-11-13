@@ -114,7 +114,7 @@ export const WithImageAndOcrResult: Story = {
           imageId: 1,
           image: {
             id: 1,
-            url: "https://via.placeholder.com/150",
+            url: "https://placehold.co/150",
             aiOcrResult: {
               id: 1,
               matches: [

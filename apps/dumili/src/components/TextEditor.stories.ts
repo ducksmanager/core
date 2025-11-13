@@ -45,6 +45,17 @@ export const Default: Story = {
               },
             },
           }),
+          createMockEntry({
+            id: 2,
+            position: 3,
+            entirepages: 2,
+            acceptedStory: {
+              id: 2,
+              storycode: "I TL  5678-B",
+              aiStorySuggestionId: null,
+              entryId: 2,
+            },
+          }),
         ],
         acceptedIssueSuggestion: {
           id: 1,

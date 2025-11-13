@@ -88,28 +88,40 @@ defineEmits<{
   "update:opened": [value: boolean];
 }>();
 
-watch(visiblePages, () => {
-  for (const pageId of visiblePages.value || []) {
-    const pageIndex = indexation.pages.findIndex(({ id }) => id === pageId);
-    if (indexation.pages[pageIndex].image) {
-      const img = new Image();
-      img.src = indexation.pages[pageIndex].image!.url;
+watch(
+  visiblePages,
+  () => {
+    for (const pageId of visiblePages.value || []) {
+      const pageIndex = indexation.pages.findIndex(({ id }) => id === pageId);
+      if (indexation.pages[pageIndex].image) {
+        const img = new Image();
+        img.src = indexation.pages[pageIndex].image!.url;
 
-      img.onload = () => {
-        pageDimensions.value[indexation.pages[pageIndex].image!.url] = {
-          width: img.naturalWidth,
-          height: img.naturalHeight,
+        img.onload = () => {
+          pageDimensions.value[indexation.pages[pageIndex].image!.url] = {
+            width: img.naturalWidth,
+            height: img.naturalHeight,
+          };
         };
-      };
+      }
     }
-  }
-});
+  },
+  { immediate: true },
+);
 
 const coverRatio = computed(
   () => firstPageDimensions.height / firstPageDimensions.width,
 );
 
 const getPanelCss = (panel: aiKumikoResultPanel, pageUrl: string) => {
+  if (!(pageUrl in pageDimensions.value)) {
+    return {
+      left: "0",
+      top: "0",
+      width: "0",
+      height: "0",
+    };
+  }
   const { width: pageWidth, height: pageHeight } =
     pageDimensions.value[pageUrl]!;
   const { x, y, width, height } = panel;

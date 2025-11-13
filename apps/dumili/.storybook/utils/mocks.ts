@@ -80,7 +80,7 @@ export const createMockImage = (
 ): NonNullable<FullIndexation["pages"][number]["image"]> => {
   const base: NonNullable<FullIndexation["pages"][number]["image"]> = {
     id: 1,
-    url: "https://via.placeholder.com/150",
+    url: "https://placehold.co/150",
     aiKumikoResult: null,
     aiOcrResult: null,
     aiStorySearchResult: null,

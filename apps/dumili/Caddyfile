@@ -1,3 +1,7 @@
 dumili.ducksmanager.net {
     reverse_proxy dumili-app
 }
+
+storybook.dumili.ducksmanager.net {
+    reverse_proxy dumili-storybook
+}

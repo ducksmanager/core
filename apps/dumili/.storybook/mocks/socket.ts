@@ -142,16 +142,16 @@ class MockSocketNamespace {
       results: [
         {
           storycode: "I TL  116-AP",
-          title: "Mock Story Title",
+          title: "Double secret",
           kind: options.kind || "n",
-          entirepages: 1,
+          entirepages: 20,
           score: 1.0,
         },
         {
-          storycode: "I TL  117-AP",
-          title: "Another Mock Story",
+          storycode: "D  6665",
+          title: "Ice cream trolley at beach",
           kind: options.kind || "c",
-          entirepages: 2,
+          entirepages: 1,
           score: 0.8,
         },
       ] as const,

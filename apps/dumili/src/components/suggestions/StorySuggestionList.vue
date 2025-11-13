@@ -10,7 +10,7 @@
     @toggle-customize-form="showEntrySelect = $event"
   >
     <template #default="{ suggestion, location }">
-      <b-row class="w-100">
+      <b-row class="w-100 h-100">
         <b-col
           cols="6"
           class="d-flex flex-column justify-content-center text-wrap"
