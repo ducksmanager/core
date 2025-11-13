@@ -15,7 +15,7 @@
     "lint": "eslint --fix .",
     "prod:deploy": "DIR=apps/dumili pnpm -F '~ci' prod:docker-compose-up",
     "prod:build-docker-storybook": "REPO_NAME=ghcr.io/bperel/dumili-storybook pnpm -F '~ci' prod:build-docker --target storybook -f apps/dumili/Dockerfile",
-    "prod:build-docker-web": "REPO_NAME=ghcr.io/bperel/dumili-app pnpm -F '~ci' prod:build-docker -f apps/dumili/Dockerfile",
+    "prod:build-docker-web": "REPO_NAME=ghcr.io/bperel/dumili-app pnpm -F '~ci' prod:build-docker --target web -f apps/dumili/Dockerfile",
     "prod:build-docker": "pnpm run '/^prod:build-docker-/'",
     "prod:transfer-files-pre": "pnpm -F '~ci' prod:transfer-files @apps/dumili/.env:apps/dumili/.env",
     "prod:transfer-files-post": "pnpm -F '~ci' prod:transfer-files apps/dumili/docker-compose.yml:@apps/dumili/docker-compose.yml apps/dumili/Caddyfile:@apps/dumili/Caddyfile",

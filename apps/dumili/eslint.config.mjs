@@ -28,6 +28,7 @@ export default [
       "**/*.json",
       "**/*.yml",
       "**/*.yaml",
+      "storybook-static",
     ],
   },
   ...vueI18n.configs["flat/recommended"],
