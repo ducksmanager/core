@@ -10,7 +10,7 @@
     @toggle-customize-form="showEntrySelect = $event"
   >
     <template #default="{ suggestion, location }">
-      <b-row class="w-100">
+      <b-row class="w-100 h-100">
         <b-col
           cols="6"
           class="d-flex flex-column justify-content-center text-wrap"
@@ -177,11 +177,13 @@ const acceptStory = async (storycode: storySuggestion["storycode"] | null) => {
           storyDetails.value[storySuggestion.storycode]
             .originalstoryversioncode!
         ].kind,
-    )!.id;
-    await indexationSocket.value!.acceptStoryKindSuggestion(
-      entry.value.id,
-      correspondingStoryKindId,
-    );
+    )?.id;
+    if (correspondingStoryKindId) {
+      await indexationSocket.value!.acceptStoryKindSuggestion(
+        entry.value.id,
+        correspondingStoryKindId,
+      );
+    }
   }
 };
 

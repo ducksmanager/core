@@ -1,8 +1,5 @@
 <template>
-  <span
-    :class="{ [size]: true, [displayClass]: true }"
-    class="align-items-center"
-  >
+  <span :class="{ [displayClass]: true }" class="align-items-center">
     <img
       :alt="countrycode"
       :src="images().getFlagsPath(`${countrycode}.png`)"
@@ -13,14 +10,9 @@
 </template>
 
 <script setup lang="ts">
-const {
-  publicationcode,
-  size = "md",
-  displayClass = "d-inline-flex",
-} = defineProps<{
+const { publicationcode, displayClass = "d-inline-flex" } = defineProps<{
   publicationcode: string;
   publicationname: string;
-  size?: string;
   displayClass?: string;
 }>();
 const countrycode = computed(() => publicationcode.split("/")[0]);

@@ -1,3 +1,6 @@
+// For more info, see https://github.com/storybookjs/eslint-plugin-storybook#configuration-flat-config-format
+import storybook from "eslint-plugin-storybook";
+
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -34,7 +37,6 @@ export default [
     "prettier",
     "plugin:@typescript-eslint/recommended",
   ),
-
   {
     plugins: {
       "@typescript-eslint": tseslint.plugin,
@@ -54,6 +56,14 @@ export default [
     rules: {
       "@typescript-eslint/consistent-type-imports": "error",
       "@typescript-eslint/no-non-null-assertion": "off",
+      "@typescript-eslint/no-unused-vars": [
+        "warn",
+        {
+          argsIgnorePattern: "^_",
+          varsIgnorePattern: "^_",
+          caughtErrorsIgnorePattern: "^_",
+        },
+      ],
       "arrow-body-style": ["error", "as-needed"],
       "vue/multi-word-component-names": "off",
       "vue/no-dupe-keys": "off",
@@ -101,4 +111,5 @@ export default [
   {
     files: ["**/*.ts", "**/*.vue"],
   },
+  ...storybook.configs["flat/recommended"],
 ];
