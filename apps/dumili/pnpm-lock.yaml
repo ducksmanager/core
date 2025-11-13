@@ -12,8 +12,8 @@ importers:
         specifier: ^1.2.6
         version: 1.2.6
       '@prisma/adapter-mariadb':
-        specifier: ^6.16.2
-        version: 6.17.1
+        specifier: ^6.18.0
+        version: 6.18.0
       '@sentry/browser':
         specifier: ^9.46.0
         version: 9.46.0
@@ -101,7 +101,7 @@ importers:
         version: 3.0.6
       '@vitejs/plugin-vue':
         specifier: ^6.0.1
-        version: 6.0.1(vite@7.1.9(@types/node@24.7.1)(sass@1.93.2)(yaml@2.8.1))(vue@3.5.22(typescript@5.9.3))
+        version: 6.0.1(vite@7.1.9(@types/node@24.10.0)(sass@1.93.2)(yaml@2.8.1))(vue@3.5.22(typescript@5.9.3))
       concurrently:
         specifier: ^9.2.1
         version: 9.2.1
@@ -149,19 +149,19 @@ importers:
         version: 28.8.0(@babel/parser@7.28.5)(vue@3.5.22(typescript@5.9.3))
       vite:
         specifier: ^7.1.7
-        version: 7.1.9(@types/node@24.7.1)(sass@1.93.2)(yaml@2.8.1)
+        version: 7.1.9(@types/node@24.10.0)(sass@1.93.2)(yaml@2.8.1)
       vite-plugin-eslint:
         specifier: ^1.8.1
-        version: 1.8.1(eslint@9.39.0)(vite@7.1.9(@types/node@24.7.1)(sass@1.93.2)(yaml@2.8.1))
+        version: 1.8.1(eslint@9.39.0)(vite@7.1.9(@types/node@24.10.0)(sass@1.93.2)(yaml@2.8.1))
       vite-plugin-mkcert:
         specifier: ^1.17.8
-        version: 1.17.9(vite@7.1.9(@types/node@24.7.1)(sass@1.93.2)(yaml@2.8.1))
+        version: 1.17.9(vite@7.1.9(@types/node@24.10.0)(sass@1.93.2)(yaml@2.8.1))
       vite-plugin-pages:
         specifier: ^0.33.1
-        version: 0.33.1(@vue/compiler-sfc@3.5.22)(vite@7.1.9(@types/node@24.7.1)(sass@1.93.2)(yaml@2.8.1))(vue-router@4.5.1(vue@3.5.22(typescript@5.9.3)))
+        version: 0.33.1(@vue/compiler-sfc@3.5.22)(vite@7.1.9(@types/node@24.10.0)(sass@1.93.2)(yaml@2.8.1))(vue-router@4.5.1(vue@3.5.22(typescript@5.9.3)))
       vite-plugin-vue-layouts:
         specifier: ^0.11.0
-        version: 0.11.0(vite@7.1.9(@types/node@24.7.1)(sass@1.93.2)(yaml@2.8.1))(vue-router@4.5.1(vue@3.5.22(typescript@5.9.3)))(vue@3.5.22(typescript@5.9.3))
+        version: 0.11.0(vite@7.1.9(@types/node@24.10.0)(sass@1.93.2)(yaml@2.8.1))(vue-router@4.5.1(vue@3.5.22(typescript@5.9.3)))(vue@3.5.22(typescript@5.9.3))
       vue-tsc:
         specifier: ^3.1.0
         version: 3.1.1(typescript@5.9.3)
@@ -629,14 +629,14 @@ packages:
   '@popperjs/core@2.11.8':
     resolution: {integrity: sha512-P1st0aksCrn9sGZhp8GMYwBnQsbvAWsZAX44oXNNvLHGqAOcoVxmjZiohstwQ7SqKnbR47akdNi+uleWD8+g6A==}
 
-  '@prisma/adapter-mariadb@6.17.1':
-    resolution: {integrity: sha512-G7vqntgbYjYs9DhsptPnAQvLvNXneHJB3Uejdwc/w7u+J2UcgF0Qxvcvvc4cWFGagJaafxdLh8h4/5CDwH52AQ==}
+  '@prisma/adapter-mariadb@6.18.0':
+    resolution: {integrity: sha512-uhUG1OeoMJcCBL0DwjsDiFMA8wu7HEwmycZ6tU7BUFJAFT5g5QZxjPRabCcPAegIGPFsWwyICku1VG5Iz6YiTg==}
 
-  '@prisma/debug@6.17.1':
-    resolution: {integrity: sha512-Vf7Tt5Wh9XcndpbmeotuqOMLWPTjEKCsgojxXP2oxE1/xYe7PtnP76hsouG9vis6fctX+TxgmwxTuYi/+xc7dQ==}
+  '@prisma/debug@6.18.0':
+    resolution: {integrity: sha512-PMVPMmxPj0ps1VY75DIrT430MoOyQx9hmm174k6cmLZpcI95rAPXOQ+pp8ANQkJtNyLVDxnxVJ0QLbrm/ViBcg==}
 
-  '@prisma/driver-adapter-utils@6.17.1':
-    resolution: {integrity: sha512-GT4QbVUyJa5sXj5vjrBPnZ68v1P/FoKBCSIkrFrCPrOi6OSzk+567XDZyBtWIECKxruuMTa7fU4wwNmtMQylrg==}
+  '@prisma/driver-adapter-utils@6.18.0':
+    resolution: {integrity: sha512-9wgSriEKs4j1ePxlv1/RNfJV9Gu5rzG37Neshg+DfrCcUY3amroERvTjyR04w5J1THdGdOTgGL9VdJcVaKRMmQ==}
 
   '@rolldown/pluginutils@1.0.0-beta.29':
     resolution: {integrity: sha512-NIJgOsMjbxAXvoGq/X0gD7VPMQ8j9g0BiDaNjVNVjvl+iKXxL3Jre0v31RmBYeLEmkbj2s02v8vFTbUXi5XS2Q==}
@@ -958,8 +958,8 @@ packages:
   '@types/ms@2.1.0':
     resolution: {integrity: sha512-GsCCIZDE/p3i96vtEqx+7dBUGXrc7zeSK3wwPHIaRThS+9OhWIXRqzs4d6k1SVU8g91DrNRWxWUGhp5KXQb2VA==}
 
-  '@types/node@24.7.1':
-    resolution: {integrity: sha512-CmyhGZanP88uuC5GpWU9q+fI61j2SkhO3UGMUdfYRE6Bcy0ccyzn1Rqj9YAB/ZY4kOXmNf0ocah5GtphmLMP6Q==}
+  '@types/node@24.10.0':
+    resolution: {integrity: sha512-qzQZRBqkFsYyaSWXuEHc2WR9c0a0CXwiE5FWUvn7ZM+vdy1uZLfCunD38UzhuB7YN/J11ndbDBcTmOdxJo9Q7A==}
 
   '@types/react@19.2.2':
     resolution: {integrity: sha512-6mDvHUFSjyT2B2yeNx2nUgMxh9LtOWvkhIU3uePn2I2oyNymUAX1NIsdgviM4CH+JSrp2D2hsMvJOkxY+0wNRA==}
@@ -2519,8 +2519,8 @@ packages:
   ufo@1.6.1:
     resolution: {integrity: sha512-9a4/uxlTWJ4+a5i0ooc1rU7C7YOw3wT+UGqdeNNHWnOF9qcMBgLRS+4IYUqbczewFx4mLEig6gawh7X6mFlEkA==}
 
-  undici-types@7.14.0:
-    resolution: {integrity: sha512-QQiYxHuyZ9gQUIrmPo3IA+hUl4KYk8uSA7cHrcKd/l3p1OTpZcM0Tbp9x7FAtXdAYhlasd60ncPpgu6ihG6TOA==}
+  undici-types@7.16.0:
+    resolution: {integrity: sha512-Zz+aZWSj8LE6zoxD+xrjh4VfkIG8Ya6LvYkZqtUQGJPZjYl53ypCaUwWqo7eI0x66KBGeRo+mlBEkMSeSZ38Nw==}
 
   unhead@1.11.20:
     resolution: {integrity: sha512-3AsNQC0pjwlLqEYHLjtichGWankK8yqmocReITecmpB1H0aOabeESueyy+8X1gyJx4ftZVwo9hqQ4O3fPWffCA==}
@@ -3240,16 +3240,16 @@ snapshots:
 
   '@popperjs/core@2.11.8': {}
 
-  '@prisma/adapter-mariadb@6.17.1':
+  '@prisma/adapter-mariadb@6.18.0':
     dependencies:
-      '@prisma/driver-adapter-utils': 6.17.1
+      '@prisma/driver-adapter-utils': 6.18.0
       mariadb: 3.4.5
 
-  '@prisma/debug@6.17.1': {}
+  '@prisma/debug@6.18.0': {}
 
-  '@prisma/driver-adapter-utils@6.17.1':
+  '@prisma/driver-adapter-utils@6.18.0':
     dependencies:
-      '@prisma/debug': 6.17.1
+      '@prisma/debug': 6.18.0
 
   '@rolldown/pluginutils@1.0.0-beta.29': {}
 
@@ -3542,9 +3542,9 @@ snapshots:
 
   '@types/ms@2.1.0': {}
 
-  '@types/node@24.7.1':
+  '@types/node@24.10.0':
     dependencies:
-      undici-types: 7.14.0
+      undici-types: 7.16.0
 
   '@types/react@19.2.2':
     dependencies:
@@ -3668,10 +3668,10 @@ snapshots:
       unhead: 1.11.20
       vue: 3.5.22(typescript@5.9.3)
 
-  '@vitejs/plugin-vue@6.0.1(vite@7.1.9(@types/node@24.7.1)(sass@1.93.2)(yaml@2.8.1))(vue@3.5.22(typescript@5.9.3))':
+  '@vitejs/plugin-vue@6.0.1(vite@7.1.9(@types/node@24.10.0)(sass@1.93.2)(yaml@2.8.1))(vue@3.5.22(typescript@5.9.3))':
     dependencies:
       '@rolldown/pluginutils': 1.0.0-beta.29
-      vite: 7.1.9(@types/node@24.7.1)(sass@1.93.2)(yaml@2.8.1)
+      vite: 7.1.9(@types/node@24.10.0)(sass@1.93.2)(yaml@2.8.1)
       vue: 3.5.22(typescript@5.9.3)
 
   '@vitest/expect@3.2.4':
@@ -4623,7 +4623,7 @@ snapshots:
   mariadb@3.4.5:
     dependencies:
       '@types/geojson': 7946.0.16
-      '@types/node': 24.7.1
+      '@types/node': 24.10.0
       denque: 2.1.0
       iconv-lite: 0.6.3
       lru-cache: 10.4.3
@@ -5156,7 +5156,7 @@ snapshots:
 
   ufo@1.6.1: {}
 
-  undici-types@7.14.0: {}
+  undici-types@7.16.0: {}
 
   unhead@1.11.20:
     dependencies:
@@ -5251,24 +5251,24 @@ snapshots:
 
   util-deprecate@1.0.2: {}
 
-  vite-plugin-eslint@1.8.1(eslint@9.39.0)(vite@7.1.9(@types/node@24.7.1)(sass@1.93.2)(yaml@2.8.1)):
+  vite-plugin-eslint@1.8.1(eslint@9.39.0)(vite@7.1.9(@types/node@24.10.0)(sass@1.93.2)(yaml@2.8.1)):
     dependencies:
       '@rollup/pluginutils': 4.2.1
       '@types/eslint': 8.56.12
       eslint: 9.39.0
       rollup: 2.79.2
-      vite: 7.1.9(@types/node@24.7.1)(sass@1.93.2)(yaml@2.8.1)
+      vite: 7.1.9(@types/node@24.10.0)(sass@1.93.2)(yaml@2.8.1)
 
-  vite-plugin-mkcert@1.17.9(vite@7.1.9(@types/node@24.7.1)(sass@1.93.2)(yaml@2.8.1)):
+  vite-plugin-mkcert@1.17.9(vite@7.1.9(@types/node@24.10.0)(sass@1.93.2)(yaml@2.8.1)):
     dependencies:
       axios: 1.12.2(debug@4.4.3)
       debug: 4.4.3
       picocolors: 1.1.1
-      vite: 7.1.9(@types/node@24.7.1)(sass@1.93.2)(yaml@2.8.1)
+      vite: 7.1.9(@types/node@24.10.0)(sass@1.93.2)(yaml@2.8.1)
     transitivePeerDependencies:
       - supports-color
 
-  vite-plugin-pages@0.33.1(@vue/compiler-sfc@3.5.22)(vite@7.1.9(@types/node@24.7.1)(sass@1.93.2)(yaml@2.8.1))(vue-router@4.5.1(vue@3.5.22(typescript@5.9.3))):
+  vite-plugin-pages@0.33.1(@vue/compiler-sfc@3.5.22)(vite@7.1.9(@types/node@24.10.0)(sass@1.93.2)(yaml@2.8.1))(vue-router@4.5.1(vue@3.5.22(typescript@5.9.3))):
     dependencies:
       '@types/debug': 4.1.12
       debug: 4.4.3
@@ -5279,7 +5279,7 @@ snapshots:
       micromatch: 4.0.8
       picocolors: 1.1.1
       tinyglobby: 0.2.15
-      vite: 7.1.9(@types/node@24.7.1)(sass@1.93.2)(yaml@2.8.1)
+      vite: 7.1.9(@types/node@24.10.0)(sass@1.93.2)(yaml@2.8.1)
       yaml: 2.8.1
     optionalDependencies:
       '@vue/compiler-sfc': 3.5.22
@@ -5287,17 +5287,17 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  vite-plugin-vue-layouts@0.11.0(vite@7.1.9(@types/node@24.7.1)(sass@1.93.2)(yaml@2.8.1))(vue-router@4.5.1(vue@3.5.22(typescript@5.9.3)))(vue@3.5.22(typescript@5.9.3)):
+  vite-plugin-vue-layouts@0.11.0(vite@7.1.9(@types/node@24.10.0)(sass@1.93.2)(yaml@2.8.1))(vue-router@4.5.1(vue@3.5.22(typescript@5.9.3)))(vue@3.5.22(typescript@5.9.3)):
     dependencies:
       debug: 4.4.3
       fast-glob: 3.3.3
-      vite: 7.1.9(@types/node@24.7.1)(sass@1.93.2)(yaml@2.8.1)
+      vite: 7.1.9(@types/node@24.10.0)(sass@1.93.2)(yaml@2.8.1)
       vue: 3.5.22(typescript@5.9.3)
       vue-router: 4.5.1(vue@3.5.22(typescript@5.9.3))
     transitivePeerDependencies:
       - supports-color
 
-  vite@7.1.9(@types/node@24.7.1)(sass@1.93.2)(yaml@2.8.1):
+  vite@7.1.9(@types/node@24.10.0)(sass@1.93.2)(yaml@2.8.1):
     dependencies:
       esbuild: 0.25.10
       fdir: 6.5.0(picomatch@4.0.3)
@@ -5306,7 +5306,7 @@ snapshots:
       rollup: 4.52.4
       tinyglobby: 0.2.15
     optionalDependencies:
-      '@types/node': 24.7.1
+      '@types/node': 24.10.0
       fsevents: 2.3.3
       sass: 1.93.2
       yaml: 2.8.1
