@@ -16,6 +16,13 @@ services:
     networks:
       - public-network
 
+  storybook:
+    container_name: dumili-storybook
+    image: ghcr.io/bperel/dumili-storybook
+    restart: always
+    networks:
+      - public-network
+
 networks:
   dumili-network:
   public-network:
