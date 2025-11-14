@@ -123,7 +123,7 @@ const retrieveBookstoreCreations = async (): Promise<BookstoreCommentEvent[]> =>
                UNIX_TIMESTAMP(bouquineries_commentaires.DateAjout) AS timestamp
         FROM bouquineries_commentaires
                  INNER JOIN bouquineries ON bouquineries_commentaires.ID_Bouquinerie = bouquineries.ID
-                 INNER JOIN users_contributions uc ON bouquineries_commentaires.ID = uc.ID_bookstore_comment
+                 LEFT JOIN users_contributions uc ON bouquineries_commentaires.ID = uc.ID_bookstore_comment
         WHERE bouquineries_commentaires.Actif = 1
           AND bouquineries_commentaires.DateAjout > date_add(now(), interval -1 month)
     `
