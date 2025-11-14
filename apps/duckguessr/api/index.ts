@@ -36,25 +36,23 @@ player(io);
 maintenance(io);
 // createMatchmakingSocket(io);
 
-(async () => {
-  const pendingGames = await prisma.game.findMany({
-    where: {
-      rounds: {
-        some: {
-          finishedAt: { gt: new Date() },
-        },
+const pendingGames = await prisma.game.findMany({
+  where: {
+    rounds: {
+      some: {
+        finishedAt: { gt: new Date() },
       },
     },
-  });
-  for (const pendingGame of pendingGames) {
-    console.debug(
-      `Creating socket for unfinished game with ID ${pendingGame.id}`,
-    );
-    const socket = await createGameSocket(pendingGame.id);
-    if (socket) {
-      socket.server(io);
-    }
+  },
+});
+for (const pendingGame of pendingGames) {
+  console.debug(
+    `Creating socket for unfinished game with ID ${pendingGame.id}`,
+  );
+  const socket = await createGameSocket(pendingGame.id);
+  if (socket) {
+    socket.server(io);
   }
-})();
+}
 
 io.listen(3003);

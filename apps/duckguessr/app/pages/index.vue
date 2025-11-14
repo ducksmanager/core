@@ -110,10 +110,8 @@ watch(
   { immediate: true },
 );
 
-(async () => {
-  datasets.value =
-    ((await datasetsSocket.getDatasets()) as DatasetWithCounts[]) || [];
-})();
+datasets.value =
+  ((await datasetsSocket.getDatasets()) as DatasetWithCounts[]) || [];
 </script>
 
 <style scoped lang="scss">
