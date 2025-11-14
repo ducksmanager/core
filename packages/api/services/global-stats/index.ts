@@ -42,16 +42,17 @@ const getUsersQuickStats = async (userIds: number[]) =>
         numberOfPublications: number;
       }[]
     >`
-    select issue.ID_Utilisateur                        AS userId,
-           count(distinct Pays) AS numberOfCountries,
-           count(distinct concat(Pays, '/', Magazine)) AS numberOfPublications
+    select
+      issue.ID_Utilisateur                        AS userId,
+      count(distinct substring_index(issuecode, '/', 1)) AS numberOfCountries,
+      count(distinct substring_index(issuecode, ' ', 1)) AS numberOfPublications
     from numeros AS issue
     where issue.ID_Utilisateur IN (${Prisma.join(userIds)})
     group by issue.ID_Utilisateur`,
 
     prismaDm.$queryRaw<{ userId: number; numberOfPublications: number }[]>`
-    select issue.ID_Utilisateur                        AS userId,
-           count(distinct concat(Pays, '/', Magazine)) AS numberOfPublications
+    select issue.ID_Utilisateur                               AS userId,
+           count(distinct substring_index(issuecode, ' ', 1)) AS numberOfPublications
     from numeros AS issue
     where issue.ID_Utilisateur IN (${Prisma.join(userIds)})
     group by issue.ID_Utilisateur`,

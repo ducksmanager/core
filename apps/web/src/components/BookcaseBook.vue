@@ -3,7 +3,7 @@
     <img
       :src="edgeUrl"
       @load="
-        ({ target }) => {
+        ({ target }: { target: EventTarget|null }) => {
           edgeWidth = (target as HTMLImageElement).naturalWidth;
           coverHeight = (target as HTMLImageElement).naturalHeight;
         }
@@ -13,7 +13,7 @@
       v-if="entries?.length"
       :src="cloudinaryBaseUrl + entries[0].url"
       @load="
-        ({ target }) => {
+        ({ target }: { target: EventTarget|null }) => {
           coverRatio =
             (target as HTMLImageElement).naturalHeight /
             (target as HTMLImageElement).naturalWidth;

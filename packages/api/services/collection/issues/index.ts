@@ -198,9 +198,6 @@ const addOrChangeIssues = async (
     .map((issuecode) =>
       prismaDm.issue.create({
         data: {
-          country: "",
-          magazine: "",
-          issuenumber: "",
           issuecode,
           condition: condition || issue_condition.indefini,
           purchaseId: purchaseId === null ? -1 : purchaseId,
@@ -258,10 +255,6 @@ const addOrChangeCopies = async (
 
     const createInput = {
       ...common,
-      country: "",
-      magazine: "",
-      issuenumber: "",
-      publicationcode: "",
       issuecode,
       userId,
       creationDate: new Date(),
