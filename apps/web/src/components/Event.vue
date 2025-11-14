@@ -1,6 +1,9 @@
 <template>
   <div class="event" :class="{ [`event_${event.type}`]: true }">
-    <span v-for="(userId, index) in event.users" :key="userId || 0">
+    <span v-if="event.users.length === 0">
+      {{ $t("Un visiteur anonyme") }}
+    </span>
+    <span v-for="(userId, index) in event.users" v-else :key="userId || 0">
       <template v-if="event.users.length > 1">
         <template v-if="index === event.users.length - 1">
           {{ ` ${$t("et")} ` }}
@@ -8,7 +11,7 @@
         <template v-else-if="index > 0">, </template>
       </template>
       <span v-if="userId === null" class="text-capitalize">
-        {{ $t("un visiteur anonyme") }}
+        {{ $t("Un visiteur anonyme") }}
       </span>
       <UserPopover
         v-else-if="stats[userId]"
@@ -41,9 +44,10 @@
     <template v-else-if="bookstoreCommentEvent"
       >&nbsp;{{ $t("a visité la bouquinerie") }}
       <i
-        ><router-link to="/bookstores">{{
-          bookstoreCommentEvent.name
-        }}</router-link></i
+        ><router-link
+          :to="`/bookstores?id=${bookstoreCommentEvent.bookstoreId}`"
+          >{{ bookstoreCommentEvent.name }}</router-link
+        ></i
       >
     </template>
     <template v-else-if="collectionUpdateEvent"

@@ -120,6 +120,7 @@ const retrieveBookstoreCreations = async (): Promise<BookstoreCommentEvent[]> =>
         SELECT 'bookstore_comment'                                 as type,
                uc.ID_user                                          AS userId,
                bouquineries.Nom                                    AS name,
+               bouquineries.ID                                     AS bookstoreId,
                UNIX_TIMESTAMP(bouquineries_commentaires.DateAjout) AS timestamp
         FROM bouquineries_commentaires
                  INNER JOIN bouquineries ON bouquineries_commentaires.ID_Bouquinerie = bouquineries.ID

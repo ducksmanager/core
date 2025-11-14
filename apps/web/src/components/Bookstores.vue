@@ -23,6 +23,9 @@
             :key="currentBookstore.id"
             :lng-lat="[currentBookstore.coordY, currentBookstore.coordX]"
             anchor="bottom"
+            :color="
+              Number(bookstoreId) === currentBookstore.id ? 'red' : 'blue'
+            "
             :offset="[0, 6]"
           >
             <mapbox-popup anchor="top">
@@ -46,7 +49,7 @@
                     <b v-if="userId && userStats[userId]">{{
                       userStats[userId].username
                     }}</b>
-                    <span v-else>{{ $t("un visiteur anonyme") }}</span
+                    <span v-else>{{ $t("Un visiteur anonyme") }}</span
                     >&nbsp;<i>{{ formatDate(creationDate) }}</i>
                     <blockquote class="px-3 clearfix">
                       {{ comment }}
@@ -185,6 +188,9 @@ let bookstores = $shallowRef<SimpleBookstore[]>();
 let existingBookstore = $ref<SimpleBookstore>();
 let newBookstoreSent = $ref(false);
 let existingBookstoreSent = $ref(false);
+
+const route = useRoute();
+const bookstoreId = computed(() => route.query.id as string);
 
 const { t: $t } = useI18n();
 let loaded = $ref(false);
