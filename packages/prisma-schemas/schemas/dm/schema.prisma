@@ -130,7 +130,8 @@ model issue {
   country         String          @map("Pays") @ignore @db.VarChar(3)
   /// @deprecated
   magazine        String          @map("Magazine") @ignore @db.VarChar(10)
-  publicationcode String          @default(dbgenerated("(concat(convert(`Pays` using utf8mb3),'/',convert(`Magazine` using utf8mb3)))")) @db.VarChar(14)
+  /// @deprecated
+  publicationcode String          @default(dbgenerated("(concat(convert(`Pays` using utf8mb3),'/',convert(`Magazine` using utf8mb3)))")) @ignore @db.VarChar(14)
   /// @deprecated
   issuenumber     String          @map("Numero") @ignore @db.VarChar(12)
   /// @deprecated
@@ -138,9 +139,9 @@ model issue {
   condition       issue_condition @default(indefini) @map("Etat")
   purchaseId      Int?            @default(-1) @map("ID_Acquisition")
   /// @deprecated
-  isOnSale        Boolean         @default(false) @map("AV")
+  isOnSale        Boolean         @default(false) @map("AV") @ignore
   /// @deprecated
-  isToRead        Boolean         @default(false) @map("A_Lire")
+  isToRead        Boolean         @default(false) @map("A_Lire") @ignore
   isSubscription  Boolean         @default(false) @map("Abonnement")
   userId          Int             @map("ID_Utilisateur")
   creationDate    DateTime?       @default(now()) @map("DateAjout") @db.Timestamp(0)
@@ -176,6 +177,7 @@ model tranches_doublons {
 
   @@unique([Pays, Magazine, Numero], map: "tranches_doublons_Pays_Magazine_Numero_uindex")
   @@index([TrancheReference], map: "tranches_doublons_tranches_pretes_ID_fk")
+  @@ignore
 }
 
 model edge {

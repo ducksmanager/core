@@ -29,7 +29,7 @@ export type Filter =
 
 export type IssueWithPublicationcodeOptionalId = Omit<
   EventOutput<CollectionServices, "getIssues">[number],
-  "id" | "title"
+  "id" | "title" | "publicationcode" | "issuenumber"
 > & {
   id: number | null;
 };

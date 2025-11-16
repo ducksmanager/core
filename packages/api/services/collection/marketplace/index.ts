@@ -110,7 +110,7 @@ export const getIssuesForSale = async (buyerId: number) =>
         SELECT 1 FROM users_options uo
         WHERE uo.ID_User = ${buyerId}
           AND uo.Option_nom = 'sales_notification_publications'
-          AND uo.Option_valeur IN (distinct substring_index(issue.issuecode, ' ', 1),
+          AND uo.Option_valeur IN (substring_index(issue.issuecode, ' ', 1),
                                    issue.issuecode)
       )
       AND NOT EXISTS

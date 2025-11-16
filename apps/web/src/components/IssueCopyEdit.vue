@@ -408,7 +408,9 @@ const collectionForCurrentPublication = $computed(() =>
 );
 
 let isSingleIssueSelected = $computed(
-  () => copyState && "copyIndex" in copyState,
+  () =>
+    copyState &&
+    ("copyIndex" in copyState || ("id" in copyState && copyState.id === null)),
 );
 
 const conditionStates = $computed(
