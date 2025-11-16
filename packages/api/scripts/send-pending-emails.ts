@@ -125,3 +125,5 @@ console.log(
     })),
   }),
 );
+
+await prismaDmClient.$disconnect();
