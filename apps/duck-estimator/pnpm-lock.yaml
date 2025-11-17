@@ -21,8 +21,8 @@ importers:
         specifier: ^16.6.1
         version: 16.6.1
       electron:
-        specifier: ^32.3.3
-        version: 32.3.3
+        specifier: ^39.2.1
+        version: 39.2.1
       playwright-firefox:
         specifier: ~1.47.2
         version: 1.47.2
@@ -65,9 +65,6 @@ packages:
 
   '@types/keyv@3.1.4':
     resolution: {integrity: sha512-BQ5aZNSCpj7D6K2ksrRCTmKRLEpnPvWDiLPfoGyhZ++8YtiK9d/3DBKPJgry359X/P1PfruyYwvnvwFjuEiEIg==}
-
-  '@types/node@20.19.20':
-    resolution: {integrity: sha512-2Q7WS25j4pS1cS8yw3d6buNCVJukOTeQ39bAnwR6sOJbaxvyCGebzTMypDFN82CxBLnl+lSWVdCCWbRY6y9yZQ==}
 
   '@types/node@22.18.9':
     resolution: {integrity: sha512-5yBtK0k/q8PjkMXbTfeIEP/XVYnz1R9qZJ3yUicdEW7ppdDJfe+MqXEhpqDL3mtn4Wvs1u0KLEG0RXzCgNpsSg==}
@@ -208,8 +205,8 @@ packages:
     resolution: {integrity: sha512-uBq4egWHTcTt33a72vpSG0z3HnPuIl6NqYcTrKEg2azoEyl2hpW0zqlxysq2pK9HlDIHyHyakeYaYnSAwd8bow==}
     engines: {node: '>=12'}
 
-  electron@32.3.3:
-    resolution: {integrity: sha512-7FT8tDg+MueAw8dBn5LJqDvlM4cZkKJhXfgB3w7P5gvSoUQVAY6LIQcXJxgL+vw2rIRY/b9ak7ZBFbCMF2Bk4w==}
+  electron@39.2.1:
+    resolution: {integrity: sha512-5oSki3qzLBsJAcXl0yWOLRArkufugbXd1qBb2UNZRrrKkYiVhM8GLE+KE3P16PC8UxGxGqCCfaB3Y1TK1dUuHg==}
     engines: {node: '>= 12.20.55'}
     hasBin: true
 
@@ -553,10 +550,6 @@ snapshots:
     dependencies:
       '@types/node': 22.18.9
 
-  '@types/node@20.19.20':
-    dependencies:
-      undici-types: 6.21.0
-
   '@types/node@22.18.9':
     dependencies:
       undici-types: 6.21.0
@@ -727,10 +720,10 @@ snapshots:
 
   dotenv@16.6.1: {}
 
-  electron@32.3.3:
+  electron@39.2.1:
     dependencies:
       '@electron/get': 2.0.3
-      '@types/node': 20.19.20
+      '@types/node': 22.18.9
       extract-zip: 2.0.1
     transitivePeerDependencies:
       - supports-color
