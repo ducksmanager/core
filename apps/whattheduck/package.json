@@ -100,7 +100,7 @@
     "eslint-plugin-vue": "^10.5.1",
     "glob": "^10.4.5",
     "globals": "^15.15.0",
-    "histoire": "1.0.0-alpha.3",
+    "histoire": "1.0.0-alpha.4",
     "imagemin": "9.0.1",
     "imagemin-pngquant": "9.0.1",
     "jsdom": "^24.1.3",
