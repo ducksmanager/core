@@ -22,7 +22,7 @@
     "@prisma/adapter-mariadb": "^6.16.2",
     "@prisma/client": "^6.16.2",
     "dotenv": "^17.2.2",
-    "prisma": "^6.16.2",
+    "prisma": "^6.18.0",
     "~group-by": "workspace:*"
   },
   "devDependencies": {
