@@ -37,13 +37,24 @@ const files = readdirSync(root, {
   withFileTypes: true,
 });
 
-const existingVectors = (
-  await prismaCoa.inducks_entryurl_vector.findMany({
-    select: {
-      entrycode: true,
-    },
-  })
-).map((v) => v.entrycode);
+// Set RECALCULATE_ALL=true to force recalculation of all vectors (useful after model retraining)
+const RECALCULATE_ALL = process.env.RECALCULATE_ALL === "true";
+
+const existingVectors = RECALCULATE_ALL
+  ? [] // Empty array means we'll recalculate everything
+  : (
+      await prismaCoa.inducks_entryurl_vector.findMany({
+        select: {
+          entrycode: true,
+        },
+      })
+    ).map((v) => v.entrycode);
+
+if (RECALCULATE_ALL) {
+  console.log("⚠️ RECALCULATE_ALL=true: Will recalculate all vectors (existing vectors will be replaced)");
+} else {
+  console.log(`Found ${existingVectors.length} existing vectors (will skip these)`);
+}
 
 const BATCH_SIZE = 50;
 
@@ -153,19 +164,43 @@ const processBatch = async (
     return;
   }
 
-  // Batch insert vectors
+  // Batch insert/update vectors
   try {
-    const values = validVectors
-      .map(
-        (v) =>
-          `(${v.entrycode}, VEC_FromText(${v.vectorString}), ${v.isCover})`,
-      )
-      .join(", ");
+    // Escape SQL strings properly for MariaDB
+    const escapeSqlString = (str: string) => {
+      return str.replace(/\\/g, "\\\\").replace(/'/g, "''");
+    };
 
-    await prismaCoa.$executeRaw`
-      INSERT INTO inducks_entryurl_vector (entrycode, v, is_cover)
-      VALUES ${values}
-    `;
+    if (RECALCULATE_ALL) {
+      // Use INSERT ... ON DUPLICATE KEY UPDATE for MariaDB (updates existing vectors)
+      // Process individually to ensure proper escaping
+      for (const vector of validVectors) {
+        const entrycodeEscaped = escapeSqlString(vector.entrycode);
+        const vectorStringEscaped = escapeSqlString(vector.vectorString);
+        
+        await prismaCoa.$executeRawUnsafe(`
+          INSERT INTO inducks_entryurl_vector (entrycode, v, is_cover)
+          VALUES ('${entrycodeEscaped}', VEC_FromText('${vectorStringEscaped}'), ${vector.isCover})
+          ON DUPLICATE KEY UPDATE v = VALUES(v), is_cover = VALUES(is_cover)
+        `);
+      }
+    } else {
+      // Regular batch insert for new vectors only
+      const values = validVectors
+        .map(
+          (v) => {
+            const entrycodeEscaped = escapeSqlString(v.entrycode);
+            const vectorStringEscaped = escapeSqlString(v.vectorString);
+            return `('${entrycodeEscaped}', VEC_FromText('${vectorStringEscaped}'), ${v.isCover})`;
+          }
+        )
+        .join(", ");
+
+      await prismaCoa.$executeRawUnsafe(`
+        INSERT INTO inducks_entryurl_vector (entrycode, v, is_cover)
+        VALUES ${values}
+      `);
+    }
 
     console.log(
       `Successfully inserted ${validVectors.length} vectors in batch`,
@@ -180,12 +215,27 @@ const processBatch = async (
 
     // Fallback to individual inserts if batch insert fails
     console.log("Falling back to individual inserts...");
+    const escapeSqlString = (str: string) => {
+      return str.replace(/\\/g, "\\\\").replace(/'/g, "''");
+    };
+    
     for (const vector of validVectors) {
       try {
-        await prismaCoa.$executeRaw`
-          INSERT INTO inducks_entryurl_vector (entrycode, v, is_cover)
-          VALUES (${vector.entrycode}, VEC_FromText(${vector.vectorString}), ${vector.isCover})
-        `;
+        const entrycodeEscaped = escapeSqlString(vector.entrycode);
+        const vectorStringEscaped = escapeSqlString(vector.vectorString);
+        
+        if (RECALCULATE_ALL) {
+          await prismaCoa.$executeRawUnsafe(`
+            INSERT INTO inducks_entryurl_vector (entrycode, v, is_cover)
+            VALUES ('${entrycodeEscaped}', VEC_FromText('${vectorStringEscaped}'), ${vector.isCover})
+            ON DUPLICATE KEY UPDATE v = VALUES(v), is_cover = VALUES(is_cover)
+          `);
+        } else {
+          await prismaCoa.$executeRawUnsafe(`
+            INSERT INTO inducks_entryurl_vector (entrycode, v, is_cover)
+            VALUES ('${entrycodeEscaped}', VEC_FromText('${vectorStringEscaped}'), ${vector.isCover})
+          `);
+        }
         console.log(
           `Added image vector ${vector.entrycode} for ${vector.relativePath}`,
         );

@@ -147,23 +147,22 @@ export const findSimilarImages = async (
   }
 };
 
-const listenEvents = () => {
-  return {
-    getIndexSize: async (isCover: boolean) =>
-      prismaCoa.inducks_entryurl_vector.count({
-        where: {
-          isCover,
-        },
-      }),
-    findSimilarImages: async (
-      imageBufferOrBase64: string | Buffer,
-      isCover: boolean,
-    ) =>
-      session
-        ? findSimilarImages(imageBufferOrBase64, isCover)
-        : ({ error: "Session not initialized" } as const),
-  };
-};
+const listenEvents = () => ({
+  getIndexSize: async (isCover: boolean) =>
+    prismaCoa.inducks_entryurl_vector.count({
+      where: {
+        isCover,
+      },
+    }),
+
+  findSimilarImages: async (
+    imageBufferOrBase64: string | Buffer,
+    isCover: boolean,
+  ) =>
+    session
+      ? findSimilarImages(imageBufferOrBase64, isCover)
+      : ({ error: "Session not initialized" } as const)
+});
 
 export const { client, server } = useSocketEvents<
   typeof listenEvents,

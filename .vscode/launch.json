@@ -126,6 +126,9 @@
         {
             "type": "bun",
             "request": "launch",
+            "env": {
+                "RECALCULATE_ALL": "true"
+            },
             "name": "Debug import-entryurl-vectors",
             "program": "scripts/import-entryurl-vectors.ts",
             "cwd": "${workspaceFolder}/packages/api",

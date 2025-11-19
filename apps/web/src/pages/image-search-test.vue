@@ -6,10 +6,16 @@ meta:
 <template>
   <div>
     <h1>Image Search Test</h1>
-    <b-form-checkbox v-model="isCover"
-      >Search for covers (otherwise search for story first
-      pages)</b-form-checkbox
-    >
+    <div class="my-2">
+      <label>Search for</label>
+    </div>
+    <b-form-radio-group
+      v-model="isCover"
+      :options="[
+        { text: 'Covers', value: true },
+        { text: 'Story first pages', value: false },
+      ]"
+    />
     <table class="w-100">
       <tbody>
         <tr class="w-100">
@@ -25,6 +31,40 @@ meta:
               :src="example.url"
               @click="handleExampleClick(example)"
             />
+          </td>
+        </tr>
+        <tr class="w-100">
+          <td colspan="2" class="text-center">
+            <div v-if="!isWebcamActive" class="mt-3">
+              <b-button variant="primary" @click="handleStartWebcam"
+                >Start Webcam</b-button
+              >
+            </div>
+            <div v-else class="mt-3">
+              <div class="webcam-container">
+                <video
+                  ref="videoElement"
+                  autoplay
+                  playsinline
+                  class="webcam-preview"
+                />
+              </div>
+              <div class="mt-2">
+                <b-button variant="success" class="mr-2" @click="captureFrame"
+                  >Capture & Search</b-button
+                >
+                <b-button
+                  :variant="isStreaming ? 'warning' : 'info'"
+                  class="mr-2"
+                  @click="toggleStreaming"
+                >
+                  {{ isStreaming ? "Stop Streaming" : "Stream & Search" }}
+                </b-button>
+                <b-button variant="danger" @click="handleStopWebcam"
+                  >Stop Webcam</b-button
+                >
+              </div>
+            </div>
           </td>
         </tr>
       </tbody>
@@ -71,6 +111,37 @@ const { coverId: coverIdEvents, storySearch: storySearchEvents } =
 
 const currentBase64 = ref<string>();
 const isCover = ref(true);
+const videoElement = useTemplateRef<HTMLVideoElement>("videoElement");
+const isStreaming = ref(false);
+const allModelsCompleted = ref(true);
+const isSearching = ref(false);
+
+const {
+  stream,
+  start: startWebcam,
+  stop: stopWebcam,
+  enabled: isWebcamActive,
+} = useUserMedia({
+  constraints: {
+    video: { facingMode: "environment" }, // Prefer back camera on mobile
+    audio: false,
+  },
+});
+
+watchEffect(() => {
+  if (videoElement.value) {
+    videoElement.value.srcObject = stream.value || null;
+  }
+});
+
+// Stop streaming when webcam is stopped
+watch(isWebcamActive, (active) => {
+  if (!active) {
+    isStreaming.value = false;
+    isSearching.value = false;
+    allModelsCompleted.value = true;
+  }
+});
 
 type Example = {
   url: string;
@@ -115,8 +186,8 @@ const models = ref<
   {
     model: string;
     modelData: "covers" | "story first pages";
-    indexSize?: number | string;
-    getIndexSize: () => Promise<number | string>;
+    indexSize?: number | { error: string };
+    getIndexSize: () => Promise<number | { error: string }>;
     run: (base64: string) => Promise<Results>;
     time?: string;
     results?: Results;
@@ -128,9 +199,7 @@ const models = ref<
     getIndexSize: () =>
       coverIdEvents
         .getIndexSize()
-        .then((result) =>
-          "error" in result ? result.error : result.numberOfImages,
-        ),
+        .then((result) => ("error" in result ? result : result.numberOfImages)),
     run: async (base64: string) => {
       try {
         const searchResults = await coverIdEvents.searchFromCover(base64);
@@ -199,25 +268,147 @@ const handleExampleClick = (example: Example) => {
     });
 };
 
+const handleStartWebcam = async () => {
+  try {
+    await startWebcam();
+  } catch (error) {
+    console.error("Error accessing webcam:", error);
+    alert("Failed to access webcam. Please check permissions.");
+  }
+};
+
+const captureFrame = () => {
+  if (!videoElement.value) return;
+
+  const video = videoElement.value;
+  const canvas = document.createElement("canvas");
+  canvas.width = video.videoWidth;
+  canvas.height = video.videoHeight;
+  const ctx = canvas.getContext("2d");
+  if (!ctx) return;
+
+  ctx.drawImage(video, 0, 0);
+  canvas.toBlob(
+    async (blob) => {
+      if (blob) {
+        const file = new File([blob], "webcam-capture.jpg", {
+          type: "image/jpeg",
+        });
+        currentBase64.value = await toBase64(file);
+      }
+    },
+    "image/jpeg",
+    0.95,
+  );
+};
+
+const captureFrameAsync = (): Promise<string> =>
+  new Promise((resolve, reject) => {
+    if (!videoElement.value) {
+      reject(new Error("Video element not available"));
+      return;
+    }
+
+    const video = videoElement.value;
+    const canvas = document.createElement("canvas");
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) {
+      reject(new Error("Could not get canvas context"));
+      return;
+    }
+
+    ctx.drawImage(video, 0, 0);
+    canvas.toBlob(
+      async (blob) => {
+        if (blob) {
+          const file = new File([blob], "webcam-capture.jpg", {
+            type: "image/jpeg",
+          });
+          const base64 = await toBase64(file);
+          resolve(base64);
+        } else {
+          reject(new Error("Failed to create blob"));
+        }
+      },
+      "image/jpeg",
+      0.95,
+    );
+  });
+
+const streamAndSearch = async () => {
+  while (isStreaming.value) {
+    // Wait for all models to complete before capturing next frame
+    if (!allModelsCompleted.value) {
+      // Wait for completion
+      await new Promise<void>((resolve) => {
+        const unwatch = watch(allModelsCompleted, (completed) => {
+          if (completed) {
+            unwatch();
+            resolve();
+          }
+        });
+      });
+    }
+
+    // Check if streaming was stopped while waiting
+    if (!isStreaming.value) break;
+
+    // Capture and search
+    try {
+      const base64 = await captureFrameAsync();
+      currentBase64.value = base64;
+    } catch (error) {
+      console.error("Error capturing frame:", error);
+      // Continue streaming even if one capture fails
+    }
+  }
+};
+
+const toggleStreaming = () => {
+  if (isStreaming.value) {
+    isStreaming.value = false;
+  } else {
+    isStreaming.value = true;
+    allModelsCompleted.value = true; // Reset to allow immediate capture
+    streamAndSearch();
+  }
+};
+
+const handleStopWebcam = () => {
+  isStreaming.value = false;
+  stopWebcam();
+};
+
 watch(currentBase64, (base64) => {
-  if (base64) {
+  if (base64 && !isSearching.value) {
+    isSearching.value = true;
+    allModelsCompleted.value = false;
+    // Clear time to show new search is in progress, but keep previous results
     for (const model of models.value) {
       model.time = undefined;
-      model.results = undefined;
+      // Keep model.results to show previous matches
     }
     nextTick(async () => {
-      for (const model of models.value.filter(
+      const relevantModels = models.value.filter(
         ({ modelData }) =>
           modelData === (isCover.value ? "covers" : "story first pages"),
-      )) {
-        const start = performance.now();
-        const interval = setInterval(() => {
-          model.time = `${(performance.now() - start).toFixed()}ms`;
-        }, 10);
-        model.results = await model.run(base64);
-        clearInterval(interval);
-        currentBase64.value = undefined;
-      }
+      );
+      await Promise.all(
+        relevantModels.map(async (model) => {
+          const start = performance.now();
+          const interval = setInterval(() => {
+            model.time = `${(performance.now() - start).toFixed()}ms`;
+          }, 10);
+          // Update results only when new ones arrive
+          model.results = await model.run(base64);
+          clearInterval(interval);
+        }),
+      );
+      currentBase64.value = undefined;
+      allModelsCompleted.value = true;
+      isSearching.value = false;
     });
   }
 });
@@ -228,6 +419,10 @@ onMounted(async () => {
       model.indexSize = size;
     });
   }
+});
+
+onUnmounted(() => {
+  handleStopWebcam();
 });
 </script>
 
@@ -246,5 +441,26 @@ img {
     opacity: 0.5;
     cursor: not-allowed;
   }
+}
+
+.webcam-container {
+  position: relative;
+  width: 100px;
+  height: 150px;
+  margin: 0 auto; /* Center the container */
+  border: 2px solid #007bff;
+  border-radius: 4px;
+  background: #000;
+  overflow: hidden;
+}
+
+.webcam-preview {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* Crop to fill the container while maintaining video's aspect ratio */
+  display: block;
 }
 </style>
