@@ -54,10 +54,10 @@ const preprocessImage = async (input: string | Buffer) => {
   try {
     // Process image: resize to exact size
     // We'll handle alpha channel conversion manually if needed (see below)
+    // Note: fit: "fill" stretches the image to exact dimensions (no position option needed)
     image = await sharp(imageBuffer)
       .resize(224, 224, {
-        fit: "fill", // Fill the entire area, cropping if necessary
-        position: "center",
+        fit: "fill", // Fill the entire area by stretching (no cropping)
       })
       .raw() // Get raw pixel data (may be RGB or RGBA)
       .toBuffer({ resolveWithObject: true });
