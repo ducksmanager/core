@@ -50,17 +50,39 @@ const preprocessImage = async (input: string | Buffer) => {
   console.log("Image buffer stored");
 
   // Validate and process image with error handling
-  let image;
+  // For Sharp 0.34 compatibility, get buffer and metadata separately
+  let data: Buffer;
+  let info: { width: number; height: number; channels: number };
+  
   try {
     // Process image: resize to exact size
-    // We'll handle alpha channel conversion manually if needed (see below)
-    // Note: fit: "fill" stretches the image to exact dimensions (no position option needed)
-    image = await sharp(imageBuffer)
-      .resize(224, 224, {
-        fit: "fill", // Fill the entire area by stretching (no cropping)
-      })
-      .raw() // Get raw pixel data (may be RGB or RGBA)
-      .toBuffer({ resolveWithObject: true });
+    // Using simple resize(width, height) which stretches to exact dimensions
+    // This avoids potential issues with options objects in different sharp versions
+    const buffer = await sharp(imageBuffer)
+      .resize(224, 224)
+      .raw()
+      .toBuffer();
+    
+    // For raw buffers, calculate dimensions from buffer size
+    // Buffer size = width * height * channels
+    // We know width=224, height=224, so channels = buffer.length / (224 * 224)
+    const expectedSize = 224 * 224;
+    const channels = Math.floor(buffer.length / expectedSize);
+    
+    if (channels < 3 || channels > 4) {
+      throw new Error(
+        `Unexpected buffer size: ${buffer.length} bytes. Expected ${expectedSize * 3} (RGB) or ${expectedSize * 4} (RGBA), got ${expectedSize * channels}`
+      );
+    }
+    
+    // Extract info from calculated values (not metadata, which may return original dimensions)
+    info = {
+      width: 224,
+      height: 224,
+      channels: channels,
+    };
+    
+    data = buffer;
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : String(error);
     const errorStack = error instanceof Error ? error.stack : undefined;
@@ -68,8 +90,6 @@ const preprocessImage = async (input: string | Buffer) => {
       `Failed to process image with sharp: ${errorMessage}${errorStack ? `\nStack: ${errorStack}` : ""}`
     );
   }
-
-  const { data, info } = image;
   
   // Validate image dimensions
   if (info.width !== 224 || info.height !== 224) {
