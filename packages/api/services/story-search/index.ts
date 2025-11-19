@@ -52,39 +52,66 @@ const preprocessImage = async (input: string | Buffer) => {
   // Validate and process image with error handling
   let image;
   try {
+    // Process image: resize to exact size
+    // We'll handle alpha channel conversion manually if needed (see below)
     image = await sharp(imageBuffer)
-      .resize(224, 224, { fit: "fill" }) // Ensure exact size
-      .removeAlpha() // Remove alpha channel if present (ensures RGB, 3 channels)
-      .raw()
+      .resize(224, 224, {
+        fit: "fill", // Fill the entire area, cropping if necessary
+        position: "center",
+      })
+      .raw() // Get raw pixel data (may be RGB or RGBA)
       .toBuffer({ resolveWithObject: true });
   } catch (error) {
-    throw new Error(`Failed to process image with sharp: ${error}`);
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    const errorStack = error instanceof Error ? error.stack : undefined;
+    throw new Error(
+      `Failed to process image with sharp: ${errorMessage}${errorStack ? `\nStack: ${errorStack}` : ""}`
+    );
   }
 
   const { data, info } = image;
   
   // Validate image dimensions
-  if (info.width !== 224 || info.height !== 224 || info.channels !== 3) {
+  if (info.width !== 224 || info.height !== 224) {
     throw new Error(
-      `Invalid image dimensions: expected 224x224x3, got ${info.width}x${info.height}x${info.channels}`
+      `Invalid image dimensions: expected 224x224, got ${info.width}x${info.height}`
     );
   }
   
-  if (data.length !== 224 * 224 * 3) {
+  // Handle RGBA (4 channels) by converting to RGB
+  let rgbData: Uint8Array;
+  if (info.channels === 4) {
+    // Convert RGBA to RGB by dropping alpha channel
+    rgbData = new Uint8Array(224 * 224 * 3);
+    for (let i = 0; i < 224 * 224; i++) {
+      rgbData[i * 3] = data[i * 4]; // R
+      rgbData[i * 3 + 1] = data[i * 4 + 1]; // G
+      rgbData[i * 3 + 2] = data[i * 4 + 2]; // B
+      // Skip alpha channel
+    }
+  } else if (info.channels === 3) {
+    rgbData = data;
+  } else {
     throw new Error(
-      `Invalid image data length: expected ${224 * 224 * 3}, got ${data.length}`
+      `Unsupported number of channels: expected 3 or 4, got ${info.channels}`
+    );
+  }
+  
+  if (rgbData.length !== 224 * 224 * 3) {
+    throw new Error(
+      `Invalid image data length: expected ${224 * 224 * 3}, got ${rgbData.length}`
     );
   }
 
-  const float32Data = new Float32Array(data.length);
+  const float32Data = new Float32Array(rgbData.length);
 
   // ImageNet normalization for EfficientNet: normalize to [0,1] then apply mean/std
   const mean = [0.485, 0.456, 0.406];
   const std = [0.229, 0.224, 0.225];
   
-  for (let i = 0; i < data.length; i++) {
+  for (let i = 0; i < rgbData.length; i++) {
     const channel = i % 3; // R=0, G=1, B=2
-    float32Data[i] = (data[i] / 255 - mean[channel]) / std[channel];
+    float32Data[i] = (rgbData[i] / 255 - mean[channel]) / std[channel];
   }
 
   // Channels first [1,3,224,224]
