@@ -5,6 +5,7 @@ dotenv.config({
 });
 
 import { readdirSync } from "fs";
+import * as fs from "fs/promises";
 import path from "path";
 
 import {
@@ -136,8 +137,27 @@ const processBatch = async (
       const url = item.relativePath.replace("webusers/webusers/", "");
       const entry = entryMap.get(url)!;
 
+      // Check if file exists and is readable
+      try {
+        await fs.access(item.filePath);
+      } catch (accessError) {
+        console.error(
+          `File not accessible: ${item.relativePath}`,
+          accessError,
+        );
+        return null;
+      }
+
       const vector = await getImageVector(item.filePath);
       const vectorString = formatVectorForDB(vector.vector);
+
+      // Validate vector
+      if (!vector.vector || vector.vector.length === 0) {
+        console.error(
+          `Empty vector generated for ${item.relativePath}`,
+        );
+        return null;
+      }
 
       return {
         entrycode: entry.entrycode,
@@ -146,10 +166,14 @@ const processBatch = async (
         relativePath: item.relativePath,
       };
     } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
       console.error(
-        `Error creating image vector for ${item.relativePath}`,
-        error,
+        `Error creating image vector for ${item.relativePath}: ${errorMessage}`,
       );
+      // Log the full error for debugging but don't fail the entire batch
+      if (error instanceof Error && error.stack) {
+        console.error(`Stack trace: ${error.stack}`);
+      }
       return null;
     }
   });

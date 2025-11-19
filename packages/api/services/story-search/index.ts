@@ -42,14 +42,40 @@ const preprocessImage = async (input: string | Buffer) => {
   } else {
     imageBuffer = input;
   }
+  
+  if (!imageBuffer || imageBuffer.length === 0) {
+    throw new Error("Empty image buffer");
+  }
+  
   console.log("Image buffer stored");
 
-  const image = await sharp(imageBuffer)
-    .resize(224, 224)
-    .raw()
-    .toBuffer({ resolveWithObject: true });
+  // Validate and process image with error handling
+  let image;
+  try {
+    image = await sharp(imageBuffer)
+      .resize(224, 224, { fit: "fill" }) // Ensure exact size
+      .removeAlpha() // Remove alpha channel if present (ensures RGB, 3 channels)
+      .raw()
+      .toBuffer({ resolveWithObject: true });
+  } catch (error) {
+    throw new Error(`Failed to process image with sharp: ${error}`);
+  }
 
-  const { data } = image;
+  const { data, info } = image;
+  
+  // Validate image dimensions
+  if (info.width !== 224 || info.height !== 224 || info.channels !== 3) {
+    throw new Error(
+      `Invalid image dimensions: expected 224x224x3, got ${info.width}x${info.height}x${info.channels}`
+    );
+  }
+  
+  if (data.length !== 224 * 224 * 3) {
+    throw new Error(
+      `Invalid image data length: expected ${224 * 224 * 3}, got ${data.length}`
+    );
+  }
+
   const float32Data = new Float32Array(data.length);
 
   // ImageNet normalization for EfficientNet: normalize to [0,1] then apply mean/std
@@ -71,13 +97,56 @@ const preprocessImage = async (input: string | Buffer) => {
 
   console.log(`preprocessImage done in ${Date.now() - startTime}ms`);
 
+  // Validate tensor before returning
+  if (transposed.length !== 3 * 224 * 224) {
+    throw new Error(
+      `Invalid tensor size: expected ${3 * 224 * 224}, got ${transposed.length}`
+    );
+  }
+
   return new Tensor("float32", transposed, [1, 3, 224, 224]);
 };
 
 const getEmbedding = async (input: string | Buffer) => {
   const inputTensor = await preprocessImage(input);
-  const output = await (await getSession()).run({ input: inputTensor });
-  return output.embedding.data as Float32Array; // normalized embedding
+  
+  // Validate session is available
+  const session = await getSession();
+  if (!session) {
+    throw new Error("ONNX session not initialized");
+  }
+  
+  // Validate tensor
+  if (!inputTensor || !inputTensor.data) {
+    throw new Error("Invalid input tensor");
+  }
+  
+  try {
+    // Run inference with explicit input name matching the model export
+    const output = await session.run({ input: inputTensor });
+    
+    // Validate output
+    if (!output || !output.embedding) {
+      throw new Error("Model output is missing 'embedding' field");
+    }
+    
+    const embeddingData = output.embedding.data;
+    if (!embeddingData || !(embeddingData instanceof Float32Array)) {
+      throw new Error(
+        `Invalid embedding data type: expected Float32Array, got ${typeof embeddingData}`
+      );
+    }
+    
+    return embeddingData; // normalized embedding
+  } catch (error) {
+    // Provide more context about the error
+    if (error instanceof Error) {
+      throw new Error(
+        `ONNX inference failed: ${error.message}. Input tensor shape: [${inputTensor.dims?.join(", ")}], type: ${inputTensor.type}`
+      );
+    }
+    throw error;
+  }
 };
 
 export const getImageVector = async (input: string | Buffer) => {
