@@ -1,6 +1,6 @@
 import * as fs from "fs/promises";
 import { InferenceSession, Tensor } from "onnxruntime-node";
-import sharp from "sharp-0-34";
+import sharp from "sharp";
 import { useSocketEvents } from "socket-call-server";
 
 import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa/client";
