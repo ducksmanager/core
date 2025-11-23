@@ -19,8 +19,6 @@ import type { ClientEvents as CollectionServices } from "~dm-services/collection
 const customIssues: EventOutput<CollectionServices, "getIssues"> = [
   {
     id: 167808,
-    country: "fr",
-    magazine: "MP",
     issuenumber: "303",
     publicationcode: "fr/MP",
     issuecode: "fr/MP 303",
@@ -34,8 +32,6 @@ const customIssues: EventOutput<CollectionServices, "getIssues"> = [
   },
   {
     id: 167809,
-    country: "fr",
-    magazine: "MP",
     issuenumber: "304",
     publicationcode: "fr/MP",
     issuecode: "fr/MP 304",
@@ -49,8 +45,6 @@ const customIssues: EventOutput<CollectionServices, "getIssues"> = [
   },
   {
     id: 167812,
-    country: "fr",
-    magazine: "MP",
     issuenumber: "307",
     publicationcode: "fr/MP",
     issuecode: "fr/MP 307",
@@ -64,8 +58,6 @@ const customIssues: EventOutput<CollectionServices, "getIssues"> = [
   },
   {
     id: 167818,
-    country: "fr",
-    magazine: "MP",
     issuenumber: "313",
     publicationcode: "fr/MP",
     issuecode: "fr/MP 313",
@@ -79,8 +71,6 @@ const customIssues: EventOutput<CollectionServices, "getIssues"> = [
   },
   {
     id: 167819,
-    country: "fr",
-    magazine: "MP",
     issuenumber: "314",
     publicationcode: "fr/MP",
     issuecode: "fr/MP 314",
@@ -94,8 +84,6 @@ const customIssues: EventOutput<CollectionServices, "getIssues"> = [
   },
   {
     id: 167821,
-    country: "fr",
-    magazine: "MP",
     issuenumber: "316",
     publicationcode: "fr/MP",
     issuecode: "fr/MP 316",
@@ -109,8 +97,6 @@ const customIssues: EventOutput<CollectionServices, "getIssues"> = [
   },
   {
     id: 167822,
-    country: "fr",
-    magazine: "MP",
     issuenumber: "317",
     publicationcode: "fr/MP",
     issuecode: "fr/MP 317",
@@ -124,8 +110,6 @@ const customIssues: EventOutput<CollectionServices, "getIssues"> = [
   },
   {
     id: 385707,
-    country: "fr",
-    magazine: "MP",
     issuenumber: "386",
     publicationcode: "fr/MP",
     issuecode: "fr/MP 386",
@@ -139,8 +123,6 @@ const customIssues: EventOutput<CollectionServices, "getIssues"> = [
   },
   {
     id: 385715,
-    country: "fr",
-    magazine: "MP",
     issuenumber: "302",
     publicationcode: "fr/MP",
     issuecode: "fr/MP 387",

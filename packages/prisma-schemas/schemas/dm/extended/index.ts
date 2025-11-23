@@ -1,19 +1,6 @@
 import type { edge as rawEdge, PrismaClient } from "../../../client_dm/client";
 import { computeTimestamp } from "./edge.timestamp";
 
-const parseIssueCode = (issuecode: string) => {
-  let splitPos = issuecode.indexOf(" ");
-  if (splitPos === -1) {
-    const firstDigitMatch = issuecode.match(/\d/);
-    splitPos = issuecode.indexOf(firstDigitMatch![0]);
-  }
-
-  const publicationcode = issuecode.slice(0, splitPos);
-  const issuenumber = issuecode.slice(splitPos).trimStart();
-  const [country, magazine] = publicationcode.split("/");
-
-  return { country, magazine, issuenumber };
-};
 
 export default (prismaClient: PrismaClient) =>
   prismaClient.$extends({
@@ -28,32 +15,6 @@ export default (prismaClient: PrismaClient) =>
           ...issue,
           labelIds: labels.map(({ labelId }) => labelId),
         })),
-    },
-    query: {
-      issue: {
-        create({ args, query }) {
-          if (!args.data.country && args.data.issuecode) {
-            const { country, magazine, issuenumber } = parseIssueCode(
-              args.data.issuecode,
-            );
-            args.data.country = country;
-            args.data.magazine = magazine;
-            args.data.issuenumber = issuenumber;
-          }
-          return query(args);
-        },
-        upsert({ args, query }) {
-          if (!args.create.country && args.create.issuecode) {
-            const { country, magazine, issuenumber } = parseIssueCode(
-              args.create.issuecode,
-            );
-            args.create.country = country;
-            args.create.magazine = magazine;
-            args.create.issuenumber = issuenumber;
-          }
-          return query(args);
-        },
-      },
     },
     result: {
       edge: computeTimestamp,

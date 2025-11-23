@@ -88,7 +88,6 @@
           @click.prevent="
             initialCopies!.copies.push({
               id: null,
-              publicationcode,
               issuecode: initialCopies!.issuecode,
               isSubscription: false,
               userId: user!.id,
@@ -139,14 +138,10 @@ const { loadIssuesOnSaleByOthers, loadIssueRequestsAsSeller } = marketplace();
 const { updateCollectionMultipleIssues, updateCollectionSingleIssue } =
   collection();
 const { user } = storeToRefs(collection());
-let {
-  publicationcode,
-  selectedIssueIdsByIssuecode: selectedIssueIdsByIssuecode,
-} = defineProps<{
+let { selectedIssueIdsByIssuecode: selectedIssueIdsByIssuecode } = defineProps<{
   selectedIssueIdsByIssuecode: {
     [issuecode: string]: IssueWithPublicationcodeOptionalId[];
   };
-  publicationcode: string;
 }>();
 const emit = defineEmits<{
   (e: "clear-selection"): void;
