@@ -6,25 +6,30 @@ import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
 import { prismaClient as prismaDmStats } from "~prisma-schemas/schemas/dm_stats/client";
 import { prismaClient as prismaEdgeCreator } from "~prisma-schemas/schemas/edgecreator/client";
 
-export const getDbStatus = async (): Promise<
-  { error: string } | { status: "ok" }
-> => {
+export const getDbStatus = async () => {
   const checks = [
-    { db: "dm", check: prismaDm.user.count() },
-    { db: "coverInfo", check: prismaCoverInfo.cover.count() },
+    { name: "userCount", db: "dm", check: prismaDm.user.count() },
+    { name: "processList", db: "dm", check: prismaDm.$queryRaw<{ count: number }[]>`SELECT COUNT(*) AS count FROM information_schema.PROCESSLIST`.then((result) => result[0].count) },
+    { name: "coverInfo", db: "coverInfo", check: prismaCoverInfo.cover.count() },
     {
       db: "dmStats",
+      name: "missingStoryForUser",
       check: prismaDmStats.missingStoryForUser.count(),
     },
     {
       db: "edgecreator",
+      name: "edgeModel",
       check: prismaEdgeCreator.edgeModel.count(),
     },
-  ];
+  ] as const;
 
+  const checkResults = {} as Record<typeof checks[number]["name"], number>;
   const failedChecks = [];
-  for (const { db, check } of checks) {
-    if ((await check) === 0) {
+  for (const { name, db, check } of checks) {
+    const checkResult = await check;
+    if (checkResult !== 0) {
+      checkResults[name] = checkResult;
+    } else {
       failedChecks.push(db);
     }
   }
@@ -63,6 +68,7 @@ export const getDbStatus = async (): Promise<
 
   return {
     status: "ok",
+    checkResults,
   };
 };
 

@@ -1,5 +1,6 @@
 import { createServer } from "http";
 import { parse } from "url";
+import * as Sentry from "@sentry/node";
 
 import type { inducks_issue } from "~prisma-schemas/client_coa/client";
 import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa/client";
@@ -18,9 +19,14 @@ export default () =>
       case "/app/updates":
         data = getUpdateFileUrl();
         break;
-      case "/status/db":
-        data = await getDbStatus();
+      case "/status/db": {
+        const dbStatus = await getDbStatus();
+        if ('checkResults' in dbStatus) {
+          Sentry.metrics.gauge("processlist", dbStatus.checkResults!.processList)
+        }
+        data = dbStatus;
         break;
+      }
       case "/status/pastecsearch":
         data = await getPastecSearchStatus();
         break;
