@@ -59,10 +59,10 @@ meta:
         />
         <Publication
           :publicationcode="publicationcode"
-          :publicationname="
-            publicationNames[publicationcode] || publicationcode
-          "
-        />
+          :publicationname="publicationcode"
+        >
+          <b class="mx-1">{{ publicationNames[publicationcode] }}</b>
+        </Publication>
         <div v-if="inducksIssuenumbers[publicationcode]">
           <Bookcase
             v-if="showEdgesForPublication.includes(publicationcode)"
@@ -130,7 +130,11 @@ const bookcaseTextures = $ref({
 
 const { edges: edgesEvents } = inject(socketInjectionKey)!;
 
-const { fetchPublicationNames, fetchIssuecodesByPublicationcode } = coa();
+const {
+  fetchPublicationNames,
+  fetchIssuecodesByPublicationcode,
+  fetchIssuecodeDetails,
+} = coa();
 const { publicationNames, issuecodesByPublicationcode, issuecodeDetails } =
   storeToRefs(coa());
 
@@ -161,9 +165,11 @@ const inducksIssuenumbers = $computed(() =>
   >((acc, publicationcode) => {
     acc[publicationcode] = Object.values(
       issuecodesByPublicationcode.value[publicationcode],
-    ).map((issuecode) =>
-      issuecodeDetails.value[issuecode].issuenumber.replaceAll(" ", ""),
-    );
+    )
+      .filter((issuecode) => issuecode in issuecodeDetails.value)
+      .map((issuecode) =>
+        issuecodeDetails.value[issuecode].issuenumber.replaceAll(" ", ""),
+      );
     return acc;
   }, {}),
 );
@@ -196,13 +202,17 @@ const sortedBookcase = computed(() =>
   mostWanted = await edgesEvents.getWantedEdges();
 
   publishedEdges = await edgesEvents.getPublishedEdges();
+  const publicationcodes = Object.keys(
+    publishedEdges.groupBy("publicationcode"),
+  );
 
   await fetchPublicationNames([
     ...mostWanted.map((mostWantedIssue) => mostWantedIssue.publicationcode),
-    ...Object.keys(publishedEdges),
+    ...publicationcodes,
   ]);
 
-  await fetchIssuecodesByPublicationcode(Object.keys(publishedEdges));
+  await fetchIssuecodesByPublicationcode(publicationcodes);
+  await fetchIssuecodeDetails(Object.keys(publishedEdges.groupBy("issuecode")));
   await loadCollection();
   hasData = true;
 })();
