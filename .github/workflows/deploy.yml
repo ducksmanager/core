@@ -33,7 +33,7 @@ jobs:
             https://github.com/ducksmanager/core/releases/download/v1.0.0-model/efficientnet_b0_comic_embedding.onnx
 
       - name: Log in to the Container registry
-        uses: docker/login-action@65b78e6e13532edd9afa3aa52ac7964289d1a9c1
+        uses: docker/login-action@28fdb31ff34708d19615a74d67103ddc2ea9725c
         with:
           registry: ghcr.io
           username: bperel
