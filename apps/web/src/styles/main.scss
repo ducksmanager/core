@@ -77,6 +77,12 @@ input.form-control {
     &.bare {
       background: white;
       margin: 2rem;
+      height: calc(100% - 4rem);
+
+      #app {
+        height: 100%;
+        overflow: auto;
+      }
     }
 
     &.no-padding {

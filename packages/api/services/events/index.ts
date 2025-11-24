@@ -82,7 +82,7 @@ const retrieveCollectionUpdates = async (): Promise<CollectionUpdateEvent[]> =>
         SELECT 'collection_update'       as type,
                users.ID                  AS userId,
                UNIX_TIMESTAMP(DateAjout) AS timestamp,
-               COUNT(Numero)             AS numberOfIssues,
+               COUNT(issuecode)          AS numberOfIssues,
                (SELECT issuecode
                 FROM numeros n
                 WHERE n.ID = numeros.ID
@@ -94,7 +94,7 @@ const retrieveCollectionUpdates = async (): Promise<CollectionUpdateEvent[]> =>
           AND users.username NOT LIKE 'test%'
           AND numeros.Abonnement = 0
         GROUP BY users.ID, DATE(DateAjout)
-        HAVING COUNT(Numero) > 0
+        HAVING COUNT(issuecode) > 0
     `
   ).map((event) => mapUsers(event));
 

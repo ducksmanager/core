@@ -16,7 +16,10 @@ export default (issues: ShallowRef<ServiceIssues | undefined>) => {
   const getTotalPerCountry = (includeDuplicates = true) => {
     if (!issues.value) return issues.value;
 
-    const groupedByCountry = issues.value.groupBy("country", "[]");
+    const groupedByCountry = issues.value.groupBy(
+      ({ issuecode }) => issuecode.split("/")[0],
+      "[]",
+    );
 
     return Object.fromEntries(
       Object.entries(groupedByCountry).map(([countrycode, countryIssues]) => [
