@@ -20,7 +20,7 @@ importers:
     devDependencies:
       '@types/bun':
         specifier: latest
-        version: 1.3.2(@types/react@19.2.2)
+        version: 1.3.3
       '@types/node':
         specifier: ^22.18.6
         version: 22.18.9
@@ -30,8 +30,8 @@ importers:
 
 packages:
 
-  '@types/bun@1.3.2':
-    resolution: {integrity: sha512-t15P7k5UIgHKkxwnMNkJbWlh/617rkDGEdSsDbu+qNHTaz9SKf7aC8fiIlUdD5RPpH6GEkP0cK7WlvmrEBRtWg==}
+  '@types/bun@1.3.3':
+    resolution: {integrity: sha512-ogrKbJ2X5N0kWLLFKeytG0eHDleBYtngtlbu9cyBKFtNL3cnpDZkNdQj8flVf6WTZUX5ulI9AY1oa7ljhSrp+g==}
 
   '@types/geojson@7946.0.16':
     resolution: {integrity: sha512-6C8nqWur3j98U6+lXDfTUWIfgvZU+EumvpHKcYjujKH7woYyLj2sUmff0tRhrqM7BohUw7Pz3ZB1jj2gW9Fvmg==}
@@ -42,16 +42,8 @@ packages:
   '@types/node@24.7.1':
     resolution: {integrity: sha512-CmyhGZanP88uuC5GpWU9q+fI61j2SkhO3UGMUdfYRE6Bcy0ccyzn1Rqj9YAB/ZY4kOXmNf0ocah5GtphmLMP6Q==}
 
-  '@types/react@19.2.2':
-    resolution: {integrity: sha512-6mDvHUFSjyT2B2yeNx2nUgMxh9LtOWvkhIU3uePn2I2oyNymUAX1NIsdgviM4CH+JSrp2D2hsMvJOkxY+0wNRA==}
-
-  bun-types@1.3.2:
-    resolution: {integrity: sha512-i/Gln4tbzKNuxP70OWhJRZz1MRfvqExowP7U6JKoI8cntFrtxg7RJK3jvz7wQW54UuvNC8tbKHHri5fy74FVqg==}
-    peerDependencies:
-      '@types/react': ^19
-
-  csstype@3.1.3:
-    resolution: {integrity: sha512-M1uQkMl8rQK/szD0LNhtqxIPLpimGm8sOBwU7lLnCpSbTyY3yeU1Vc7l4KT5zT4s/yOxHH5O7tIuuLOCnLADRw==}
+  bun-types@1.3.3:
+    resolution: {integrity: sha512-z3Xwlg7j2l9JY27x5Qn3Wlyos8YAp0kKRlrePAOjgjMGS5IG6E7Jnlx736vH9UVI4wUICwwhC9anYL++XeOgTQ==}
 
   denque@2.1.0:
     resolution: {integrity: sha512-HVQE3AAb/pxF8fQAoiqpvg9i3evqug3hoiwakOyZAwJm+6vZehbkYXZ0l4JxS+I3QxM97v5aaRNhj8v5oBhekw==}
@@ -88,11 +80,9 @@ packages:
 
 snapshots:
 
-  '@types/bun@1.3.2(@types/react@19.2.2)':
+  '@types/bun@1.3.3':
     dependencies:
-      bun-types: 1.3.2(@types/react@19.2.2)
-    transitivePeerDependencies:
-      - '@types/react'
+      bun-types: 1.3.3
 
   '@types/geojson@7946.0.16': {}
 
@@ -104,16 +94,9 @@ snapshots:
     dependencies:
       undici-types: 7.14.0
 
-  '@types/react@19.2.2':
-    dependencies:
-      csstype: 3.1.3
-
-  bun-types@1.3.2(@types/react@19.2.2):
+  bun-types@1.3.3:
     dependencies:
       '@types/node': 22.18.9
-      '@types/react': 19.2.2
-
-  csstype@3.1.3: {}
 
   denque@2.1.0: {}
 
