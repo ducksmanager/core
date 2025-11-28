@@ -11,16 +11,16 @@
     "dependencies": {
         "@vueuse/core": "^13.9.0",
         "jquery": "^3.7.1",
-        "vue": "^3.5.22",
+        "vue": "^3.5.25",
         "~dumili": "workspace:*"
     },
     "devDependencies": {
         "@types/chrome": "^0.0.313",
         "@types/jquery": "^3.5.33",
-        "@vitejs/plugin-vue": "^6.0.1",
-        "sass": "^1.93.2",
-        "typescript": "^5.9.2",
-        "vite": "^7.1.7",
+        "@vitejs/plugin-vue": "^6.0.2",
+        "sass": "^1.94.2",
+        "typescript": "^5.9.3",
+        "vite": "^7.2.4",
         "web-ext": "^8.10.0"
     }
 }

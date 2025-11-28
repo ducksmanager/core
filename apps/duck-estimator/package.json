@@ -29,8 +29,8 @@
     "~prisma-schemas": "workspace:*"
   },
   "devDependencies": {
-    "@types/node": "^22.18.6",
-    "@types/yargs": "^17.0.33",
-    "typescript": "^5.9.2"
+    "@types/node": "^22.19.1",
+    "@types/yargs": "^17.0.35",
+    "typescript": "^5.9.3"
   }
 }

@@ -108,7 +108,7 @@ meta:
     </b-alert>
     <b-row class="justify-content-center">
       <b-col sm="6">
-        <iframe src="https://inducks.org/collection.php?rawOutput=1" />
+        <iframe src="https://inducks.org/maccount.php" />
       </b-col>
       <b-col sm="6">
         <b-form-group>

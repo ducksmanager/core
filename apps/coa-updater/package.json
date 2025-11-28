@@ -15,8 +15,8 @@
   },
   "devDependencies": {
     "@types/bun": "latest",
-    "@types/node": "^22.18.6",
-    "typescript": "^5.9.2"
+    "@types/node": "^22.19.1",
+    "typescript": "^5.9.3"
   },
   "module": "index.ts",
   "type": "module"
