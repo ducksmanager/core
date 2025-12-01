@@ -15,10 +15,11 @@ import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa/client";
 import type { SessionData } from "../../index";
 import { getEdgesPath } from "../../index";
 import { getNextAvailableFile } from "../_upload_utils";
+import { checkTodayLimit } from "~dm-services/edgecreator/multiple-edge-photos";
 
 const getEdgeCreatorServices = (token: string) =>
   new SocketClient(
-    process.env.DM_SOCKET_URL!,
+    process.env.DM_SOCKET_URL!
   ).addNamespace<EdgeCreatorServices>(namespaces.EDGECREATOR, {
     session: {
       getToken: () => Promise.resolve(token),
@@ -27,9 +28,10 @@ const getEdgeCreatorServices = (token: string) =>
     },
   });
 
-const hasReachedDailyUploadLimit = async (token: string) =>
-  (await getEdgeCreatorServices(token).checkTodayLimit()).uploadedFilesToday
-    .length > 10;
+const hasReachedDailyUploadLimit = (userId: number) =>
+  checkTodayLimit(userId).then(
+    ({ uploadedFilesToday }) => uploadedFilesToday.length > 10
+  );
 
 const hasAlreadySentPhoto = async (hash: string, token: string) =>
   (await getEdgeCreatorServices(token).getImageByHash(hash)) !== null;
@@ -45,7 +47,7 @@ const calculateHash = (data: string) => {
 const _getFilenameUsagesInOtherModels = async (
   filename: string,
   currentIssuecode: string,
-  token: string,
+  token: string
 ) => {
   const issue = await prismaCoa.inducks_issue.findFirstOrThrow({
     where: { issuecode: currentIssuecode },
@@ -58,7 +60,7 @@ const _getFilenameUsagesInOtherModels = async (
 const storePhotoHash = async (
   filename: string,
   hash: string,
-  token: string,
+  token: string
 ) => {
   await getEdgeCreatorServices(token).createElementImage(hash, filename);
 };
@@ -68,13 +70,14 @@ const validateUpload = async (
   isEdgePhoto: boolean,
   filePath: string,
   token: string,
+  userId: number
 ) => {
   const hash = calculateHash(filePath);
   if (await hasAlreadySentPhoto(hash, token)) {
     return { error: "You have already sent this photo" } as const;
   }
   if (isEdgePhoto) {
-    if (await hasReachedDailyUploadLimit(token)) {
+    if (await hasReachedDailyUploadLimit(userId)) {
       return {
         error: "You have reached your daily upload limit",
       } as const;
@@ -125,7 +128,7 @@ const getTargetFilePath = async ({
   if (isEdgePhoto) {
     filePath = getNextAvailableFile(
       `${filePath}/photos/${magazinecode}.${issuenumber}.photo`,
-      "jpg",
+      "jpg"
     );
   } else {
     fileName = fileName!.normalize("NFD").replace(/[\u0300-\u036F]/g, "");
@@ -157,14 +160,14 @@ const listenEvents = ({ _socket: socket }: UploadServices) => ({
           isEdgePhoto: true;
           fileName?: undefined;
         }
-    ),
+    )
   ) => {
     const { issuecode, data, isEdgePhoto, fileName } = parameters;
     const cleanData = data.includes(",") ? data.split(",")[1] : data;
     const targetFilePath = await getTargetFilePath(
       isEdgePhoto
         ? { issuecode, isEdgePhoto }
-        : { issuecode, isEdgePhoto, fileName },
+        : { issuecode, isEdgePhoto, fileName }
     );
 
     const token = socket.data.user!.token;
@@ -175,7 +178,10 @@ const listenEvents = ({ _socket: socket }: UploadServices) => ({
       isEdgePhoto,
       cleanData,
       token,
+      socket.data.user!.id
     );
+
+    console.log("validationResults", validationResults);
 
     if ("error" in validationResults) {
       return validationResults;

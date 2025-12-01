@@ -17,6 +17,7 @@
     <div class="clearfix" />
     <form-input-row
       v-model="src"
+      class="w-100"
       option-name="src"
       :label="$t('Image').toString()"
       type="text"

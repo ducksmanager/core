@@ -6,6 +6,22 @@ import { prismaClient as prismaEdgeCreator } from "~prisma-schemas/schemas/edgec
 import EdgePhotoSent from "../../../emails/edge-photo-sent";
 import type { UserServices } from "../../../index";
 
+export const checkTodayLimit = (userId: number) =>
+  prismaEdgeCreator.elementImage
+    .findMany({
+      select: { fileName: true },
+      where: {
+        userId,
+        createdAt: {
+          gt: dayjs().hour(0).minute(0).toDate(),
+          lt: dayjs().add(1, "day").hour(0).minute(0).toDate(),
+        },
+      },
+    })
+    .then((data) => ({
+      uploadedFilesToday: data.map(({ fileName }) => fileName),
+    }))
+
 export default ({ _socket }: UserServices) => ({
   sendNewEdgePhotoEmail: async (issuecode: string) => {
     const user = await prismaDm.user.findUniqueOrThrow({
@@ -28,21 +44,7 @@ export default ({ _socket }: UserServices) => ({
       })
       .then(({ id }) => ({ photoId: id })),
 
-  checkTodayLimit: () =>
-    prismaEdgeCreator.elementImage
-      .findMany({
-        select: { fileName: true },
-        where: {
-          userId: _socket.data.user.id,
-          createdAt: {
-            gt: dayjs().hour(0).minute(0).toDate(),
-            lt: dayjs().add(1, "day").hour(0).minute(0).toDate(),
-          },
-        },
-      })
-      .then((data) => ({
-        uploadedFilesToday: data.map(({ fileName }) => fileName),
-      })),
+  checkTodayLimit: async () => checkTodayLimit(_socket.data.user.id),
 
   getImageByHash: async (hash: string) =>
     prismaEdgeCreator.elementImage.findFirst({
