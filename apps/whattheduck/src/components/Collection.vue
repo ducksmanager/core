@@ -4,7 +4,7 @@
       <CopyListButton />
       <ViewModesButton v-if="!isIOS" />
     </ion-buttons>
-    <ion-header :translucent="true" :class="{ invisible: isCameraPreviewShown }">
+    <ion-header :translucent="true" :class="{ hidden: isCameraPreviewShown }">
       <ion-toolbar>
         <ion-buttons slot="start">
           <ion-menu-button color="primary" />
@@ -154,8 +154,8 @@ a {
   text-decoration: none;
 }
 
-.invisible {
-  visibility: hidden;
+.hidden {
+  display: none;
 }
 
 ion-title {
