@@ -11,8 +11,6 @@ function getLocalIP(): string {
   }
 }
 
-// Use environment variable for port if set, otherwise default to 8008 (Vite dev server port)
-const devPort = process.env.CAPACITOR_DEV_PORT || '8008';
 const isDev = process.env.NODE_ENV !== 'production';
 
 const config: CapacitorConfig = {
@@ -22,7 +20,7 @@ const config: CapacitorConfig = {
   // Only set server URL in development mode
   ...(isDev && {
     server: {
-      url: `http://${getLocalIP()}:${devPort}`,
+      url: `http://${getLocalIP()}:8008`,
       cleartext: true,
     },
   }),

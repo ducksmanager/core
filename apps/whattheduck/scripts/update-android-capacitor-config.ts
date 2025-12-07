@@ -18,9 +18,8 @@ const getLocalIP = () => {
   }
 };
 
-const devPort = process.env.CAPACITOR_DEV_PORT || '8008';
 const localIP = getLocalIP();
-const serverUrl = `http://${localIP}:${devPort}`;
+const serverUrl = `http://${localIP}:8008`;
 
 const androidConfigPath = join(import.meta.dir, '../android/app/src/main/assets/capacitor.config.json');
 

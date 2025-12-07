@@ -1,13 +1,24 @@
 <template>
   <div id="camera-preview" ref="cameraPreview"></div>
-  <div ref="overlay" class="overlay">
+  <ion-row ref="overlay" class="overlay">
     <ion-button ref="takePhotoButton" size="large" @click="takePhoto().then(() => (isCameraPreviewShown = false))">
       <ion-icon :ios="apertureOutline" :md="apertureSharp" />
     </ion-button>
     <ion-button size="large" color="danger" @click="CameraPreview.stop().finally(() => (isCameraPreviewShown = false))">
       <ion-icon :ios="closeOutline" :md="closeSharp" />
     </ion-button>
-  </div>
+    <!-- <div id="ratio-buttons" style="display: flex; position: absolute; top: 0; right: 0" class="ion-align-items-center">
+      <ion-button
+        v-for="ratio in RATIOS"
+        :key="ratio.name"
+        :style="{ width: '50px', height: `${50 * ratio.ratio}px`, borderWidth: '5px' }"
+        class="ion-no-padding"
+        fill="outline"
+        color="light"
+        @click="currentRatio = ratio"
+      ></ion-button>
+    </div> -->
+  </ion-row>
 </template>
 
 <script setup lang="ts">
@@ -20,9 +31,22 @@ import { CameraPreview } from '@capacitor-community/camera-preview';
 
 import useCoverSearch from '~/composables/useCoverSearch';
 import { app } from '~/stores/app';
-import { onIonViewWillLeave } from '@ionic/vue';
+import { IonRow, onIonViewWillLeave } from '@ionic/vue';
 
-const overlay = useTemplateRef<HTMLElement>('overlay');
+// const RATIOS = [
+//   {
+//     name: 'A4',
+//     ratio: 297 / 210,
+//   },
+//   {
+//     name: 'REVERSED_A4',
+//     ratio: 210 / 297,
+//   },
+// ] as const;
+
+// const currentRatio = ref<(typeof RATIOS)[number]>(RATIOS[0]);
+
+const overlay = useTemplateRef<InstanceType<typeof IonRow>>('overlay');
 const { height: overlayHeight } = useElementSize(() => overlay.value);
 
 const cameraPreview = useTemplateRef<HTMLDivElement>('cameraPreview');
@@ -64,9 +88,18 @@ watch(overlayHeight, async () => {
   display: flex;
   justify-content: center;
   left: 0;
-  bottom: 0;
+  bottom: 1rem;
   z-index: 10000;
   width: 100%;
+}
+ion-button {
+  &::part(native) {
+    font-size: 2rem;
+  }
+}
+
+.button-large {
+  --min-height: initial;
 }
 
 #camera-preview {
