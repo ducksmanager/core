@@ -1,6 +1,6 @@
 <template>
   <div id="camera-preview" ref="cameraPreview"></div>
-  <ion-row ref="overlay" class="overlay">
+  <ion-row ref="overlay" class="overlay" :class="{ portrait: isPortrait, landscape: !isPortrait }">
     <ion-button ref="takePhotoButton" size="large" @click="takePhoto().then(() => (isCameraPreviewShown = false))">
       <ion-icon :ios="apertureOutline" :md="apertureSharp" />
     </ion-button>
@@ -64,6 +64,12 @@ const overlay = useTemplateRef<InstanceType<typeof IonRow>>('overlay');
 const { height: overlayHeight } = useElementSize(() => overlay.value);
 const boundingClientRect = ref<BoundingClientRect>();
 
+const { width, height } = useWindowSize();
+const isPortrait = computed(() => width.value < height.value);
+watch(isPortrait, () => {
+  currentRatioIndex.value = isPortrait.value ? 0 : 1;
+});
+
 const isCameraPreviewStarted = ref(false);
 const cameraPreview = useTemplateRef<HTMLDivElement>('cameraPreview');
 
@@ -89,9 +95,17 @@ watch([overlayHeight, currentRatioIndex], async () => {
       return acc;
     }, {} as BoundingClientRect);
     const currentRatio = RATIOS[currentRatioIndex.value];
-    const heightAccordingToRatio = Math.round(currentRatio.ratio * boundingClientRect.value.width);
-    boundingClientRect.value.y = 25 + (boundingClientRect.value.height - heightAccordingToRatio) / 2;
-    boundingClientRect.value.height = heightAccordingToRatio;
+    if (isPortrait.value) {
+      const heightAccordingToRatio = Math.round(currentRatio.ratio * boundingClientRect.value.width);
+      boundingClientRect.value.x = 0;
+      boundingClientRect.value.y = 25 + (boundingClientRect.value.height - heightAccordingToRatio) / 2;
+      boundingClientRect.value.height = heightAccordingToRatio;
+    } else {
+      const widthAccordingToRatio = Math.round(boundingClientRect.value.height / currentRatio.ratio);
+      boundingClientRect.value.x = (boundingClientRect.value.width - widthAccordingToRatio) / 2;
+      boundingClientRect.value.y = 0;
+      boundingClientRect.value.width = widthAccordingToRatio;
+    }
 
     if (boundingClientRect.value?.height) {
       const cameraPreviewOptions: CameraPreviewOptions = {
@@ -114,14 +128,21 @@ watch([overlayHeight, currentRatioIndex], async () => {
 #camera-preview,
 .overlay {
   display: flex;
+  align-items: center;
   justify-content: center;
   z-index: 10000;
   width: 100%;
+  height: 100%;
 }
 
 #camera-preview {
   display: flex;
-  height: calc(100vh - 4rem);
+  &.portrait {
+    height: calc(100vh - 4rem);
+  }
+  &.landscape {
+    width: calc(100vw - 4rem);
+  }
 
   video {
     width: 100%;
@@ -130,8 +151,14 @@ watch([overlayHeight, currentRatioIndex], async () => {
 }
 .overlay {
   position: absolute;
-  bottom: 1rem;
-  height: 4rem;
+  &.portrait {
+    bottom: 1rem;
+    height: 4rem;
+  }
+  &.landscape {
+    right: 1rem;
+    width: 4rem;
+  }
 }
 ion-button {
   &::part(native) {
