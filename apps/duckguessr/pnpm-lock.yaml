@@ -94,8 +94,8 @@ importers:
         specifier: ^9.0.1
         version: 9.0.1(@types/node@22.19.1)(eslint@9.39.1(jiti@2.6.1))(magicast@0.5.1)(nuxt@4.2.1(@parcel/watcher@2.5.1)(@types/node@22.19.1)(@vue/compiler-sfc@3.5.25)(cac@6.7.14)(db0@0.3.4)(eslint@9.39.1(jiti@2.6.1))(ioredis@5.8.2)(magicast@0.5.1)(optionator@0.9.4)(rollup@4.53.3)(sass@1.94.2)(terser@5.44.1)(typescript@5.9.3)(vite@7.2.6(@types/node@22.19.1)(jiti@2.6.1)(sass@1.94.2)(terser@5.44.1)(yaml@2.8.2))(vue-tsc@3.1.5(typescript@5.9.3))(yaml@2.8.2))(optionator@0.9.4)(rollup@4.53.3)(sass@1.94.2)(storybook@10.1.4(@testing-library/dom@10.4.1)(prettier@3.7.4)(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(terser@5.44.1)(typescript@5.9.3)(vite@7.2.6(@types/node@22.19.1)(jiti@2.6.1)(sass@1.94.2)(terser@5.44.1)(yaml@2.8.2))(vue-tsc@3.1.5(typescript@5.9.3))(vue@3.5.25(typescript@5.9.3))(yaml@2.8.2)
       '@storybook/vue3':
-        specifier: ^9.1.16
-        version: 9.1.16(storybook@10.1.4(@testing-library/dom@10.4.1)(prettier@3.7.4)(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(vue@3.5.25(typescript@5.9.3))
+        specifier: ^10.1.4
+        version: 10.1.4(storybook@10.1.4(@testing-library/dom@10.4.1)(prettier@3.7.4)(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(vue@3.5.25(typescript@5.9.3))
       '@types/eslint':
         specifier: ^9.6.1
         version: 9.6.1
@@ -2184,11 +2184,10 @@ packages:
       storybook: ^9.1.2
       vite: ^5.0.0 || ^6.0.0 || ^7.0.0
 
-  '@storybook/vue3@9.1.16':
-    resolution: {integrity: sha512-ScSDbhe5pgs+Q+oi+pHrXAph/MWvok8euW8Vp+j4P7JPf+5iFaCEL2AyXApb0gPa6Txl1mT9NR7J8BlBa7PfbQ==}
-    engines: {node: '>=20.0.0'}
+  '@storybook/vue3@10.1.4':
+    resolution: {integrity: sha512-zwOREoBsFreacuTTUC03yNE2ZwRwW4NwVpyhlbkw19Jy/MGS1N5qm7YWLUdxEF6yqMkDzw0qQ+IbleyHwdJFXw==}
     peerDependencies:
-      storybook: ^9.1.16
+      storybook: ^10.1.4
       vue: ^3.0.0
 
   '@storybook/vue3@9.1.2':
@@ -8547,7 +8546,7 @@ snapshots:
     transitivePeerDependencies:
       - vue
 
-  '@storybook/vue3@9.1.16(storybook@10.1.4(@testing-library/dom@10.4.1)(prettier@3.7.4)(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(vue@3.5.25(typescript@5.9.3))':
+  '@storybook/vue3@10.1.4(storybook@10.1.4(@testing-library/dom@10.4.1)(prettier@3.7.4)(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(vue@3.5.25(typescript@5.9.3))':
     dependencies:
       '@storybook/global': 5.0.0
       storybook: 10.1.4(@testing-library/dom@10.4.1)(prettier@3.7.4)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
