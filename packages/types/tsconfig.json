@@ -1,9 +1,12 @@
 {
   "compilerOptions": {
     "baseUrl": ".",
-    "module": "commonjs",
-    "target": "es2018",
-    "lib": ["DOM", "ESNext"],
+    "module": "ESNext",
+    "target": "ES2023",
+    "lib": [
+      "DOM",
+      "ESNext"
+    ],
     "strict": true,
     "jsx": "preserve",
     "esModuleInterop": true,
@@ -16,5 +19,8 @@
     "forceConsistentCasingInFileNames": true,
     "outDir": "dist"
   },
-  "exclude": ["node_modules", "./dist/**/*"]
+  "exclude": [
+    "node_modules",
+    "./dist/**/*"
+  ]
 }

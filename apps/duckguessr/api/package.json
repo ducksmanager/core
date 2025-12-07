@@ -22,7 +22,7 @@
     "@sentry/node": "^7.120.4",
     "cookie": "^0.5.0",
     "dotenv": "^16.6.1",
-    "jsonwebtoken": "^9.0.2",
+    "jsonwebtoken": "^9.0.3",
     "prisma": "^6.19.0",
     "sharp": "^0.33.5",
     "socket-call-server": "^0.7.7",
@@ -38,8 +38,8 @@
     "concurrently": "^8.2.2",
     "eslint": "^9.39.1",
     "eslint-config-prettier": "^10.1.8",
-    "prettier": "^3.7.1",
+    "prettier": "^3.7.4",
     "typescript": "^5.8.3",
-    "typescript-eslint": "^8.48.0"
+    "typescript-eslint": "^8.48.1"
   }
 }
