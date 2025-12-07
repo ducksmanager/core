@@ -4,5 +4,6 @@ packages:
   - "apps/*/api"
   - "apps/*/browser-extension"
   - "packages/*"
+  - "packages/prisma-schemas/schemas/*"
   - "util/*"
 shellEmulator: true

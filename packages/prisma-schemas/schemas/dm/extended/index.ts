@@ -1,4 +1,4 @@
-import type { edge as rawEdge, PrismaClient } from "../../../client_dm/client";
+import type { edge as rawEdge, PrismaClient } from "../client/client";
 import { computeTimestamp } from "./edge.timestamp";
 
 const parseIssueCode = (issuecode: string) => {

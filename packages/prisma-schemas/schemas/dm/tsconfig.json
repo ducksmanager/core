@@ -4,10 +4,7 @@
     "declaration": true,
     "module": "ESNext",
     "target": "ES2023",
-    "lib": [
-      "DOM",
-      "ESNext"
-    ],
+    "lib": ["DOM", "ESNext"],
     "strict": true,
     "jsx": "preserve",
     "esModuleInterop": true,
@@ -20,13 +17,8 @@
     "forceConsistentCasingInFileNames": true,
     "outDir": "dist",
     "paths": {
-      "~group-by": [
-        "../../util/group-by"
-      ]
-    },
+      "~group-by": ["../../util/group-by"]
+    }
   },
-  "exclude": [
-    "node_modules",
-    ".turbo"
-  ]
+  "exclude": ["node_modules", ".turbo"]
 }
