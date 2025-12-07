@@ -1,26 +1,20 @@
-import "~group-by";
-
 import { PrismaMariaDb } from "@prisma/adapter-mariadb";
-import { PrismaClient as PrismaClientDm } from "./client/client";
+import { PrismaClient } from "./client/client";
 import ensureConnectionString from "~ensure-connection-string";
-
 import prismaExtendedDm from "./extended";
 
-// Lazy initialization to prevent multiple instances
-let _prismaClient: ReturnType<typeof getDmClient> | null = null;
+let client: ReturnType<typeof prismaExtendedDm> | null = null;
 
-let dmClient: ReturnType<typeof prismaExtendedDm> | null = null;
-
-const getDmClient = () => {
-  if (!dmClient) {
+const getClient = () => {
+  if (!client) {
     try {
       console.log("Creating new DM PrismaClient instance");
       const connectionString = ensureConnectionString(
         process.env.DATABASE_URL_DM!,
       );
       console.log("DM connection string configured with pool parameters");
-      dmClient = prismaExtendedDm(
-        new PrismaClientDm({
+      client = prismaExtendedDm(
+        new PrismaClient({
           adapter: new PrismaMariaDb(connectionString),
           log:
             process.env.NODE_ENV === "development"
@@ -33,12 +27,15 @@ const getDmClient = () => {
       throw error;
     }
   }
-  return dmClient;
+  return client;
 };
-export const prismaClient = new Proxy({} as ReturnType<typeof getDmClient>, {
+
+// Lazy initialization to prevent multiple instances
+let _prismaClient: ReturnType<typeof getClient> | null = null;
+export const prismaClient = new Proxy({} as ReturnType<typeof getClient>, {
   get(_target, prop) {
     if (!_prismaClient) {
-      _prismaClient = getDmClient();
+      _prismaClient = getClient();
     }
     return _prismaClient[prop as keyof typeof _prismaClient];
   },

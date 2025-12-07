@@ -23,8 +23,7 @@
     "@prisma/adapter-mariadb": "^6.19.0",
     "@prisma/client": "^6.19.0",
     "dotenv": "^17.2.3",
-    "prisma": "^6.19.0",
-    "~group-by": "workspace:*"
+    "prisma": "^6.19.0"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.3",

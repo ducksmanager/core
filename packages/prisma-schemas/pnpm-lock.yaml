@@ -20,9 +20,6 @@ importers:
       prisma:
         specifier: ^6.19.0
         version: 6.19.0(typescript@5.9.3)
-      ~group-by:
-        specifier: workspace:*
-        version: link:../../util/group-by
     devDependencies:
       '@eslint/eslintrc':
         specifier: ^3.3.3
@@ -957,8 +954,8 @@ snapshots:
 
   '@typescript-eslint/project-service@8.46.0(typescript@5.9.3)':
     dependencies:
-      '@typescript-eslint/tsconfig-utils': 8.46.0(typescript@5.9.3)
-      '@typescript-eslint/types': 8.46.0
+      '@typescript-eslint/tsconfig-utils': 8.48.1(typescript@5.9.3)
+      '@typescript-eslint/types': 8.48.1
       debug: 4.4.3
       typescript: 5.9.3
     transitivePeerDependencies:
