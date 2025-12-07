@@ -7,13 +7,17 @@
         "dev:android": {
             "persistent": true,
             "dependsOn": [
-                "set-android-socket-url"
+                "set-android-socket-url",
+                "update-android-capacitor-config"
             ],
             "passThroughEnv": [
                 "VITE_DM_SOCKET_URL_NATIVE"
             ]
         },
         "set-android-socket-url": {
+            "cache": false
+        },
+        "update-android-capacitor-config": {
             "cache": false
         },
         "dev": {

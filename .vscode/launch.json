@@ -124,6 +124,16 @@
             "watchMode": true
         },
         {
+            "type": "node-terminal",
+            "request": "launch",
+            "name": "Start WTD on Android emulator",
+            "command": "NODE_OPTIONS='--no-inspect' turbo dev:android",
+            "presentation": {
+                "reveal": "always",
+                "panel": "shared"
+            }
+        },
+        {
             "type": "bun",
             "request": "launch",
             "env": {
@@ -143,6 +153,15 @@
                 "Debug DM API",
                 "Debug DM Story Search API",
                 "Start Web server"
+            ],
+            "stopAll": true
+        },
+        {
+            "name": "Debug DM API + WTD Android",
+            "configurations": [
+                "Debug DM API",
+                "Debug DM Story Search API",
+                "Start WTD on Android emulator"
             ],
             "stopAll": true
         },

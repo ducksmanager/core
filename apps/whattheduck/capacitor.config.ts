@@ -1,13 +1,31 @@
 import type { CapacitorConfig } from '@capacitor/cli';
+import { execSync } from 'child_process';
+
+// Get local IP address dynamically
+function getLocalIP(): string {
+  try {
+    return execSync('ipconfig getifaddr en0', { encoding: 'utf-8' }).trim();
+  } catch {
+    // Fallback to localhost if en0 is not available
+    return 'localhost';
+  }
+}
+
+// Use environment variable for port if set, otherwise default to 8008 (Vite dev server port)
+const devPort = process.env.CAPACITOR_DEV_PORT || '8008';
+const isDev = process.env.NODE_ENV !== 'production';
 
 const config: CapacitorConfig = {
   appId: 'net.ducksmanager.whattheduck',
   appName: 'What The Duck',
   webDir: 'dist',
-  // server: {
-  //   url: 'http://192.168.1.145:8003',
-  //   cleartext: true,
-  // },
+  // Only set server URL in development mode
+  ...(isDev && {
+    server: {
+      url: `http://${getLocalIP()}:${devPort}`,
+      cleartext: true,
+    },
+  }),
   android: {
     buildOptions: {
       keystorePath: '~/Documents/whattheduck.keystore',
