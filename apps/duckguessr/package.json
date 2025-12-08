@@ -77,7 +77,7 @@
     "typescript-eslint": "^8.48.1",
     "unplugin-icons": "^22.5.0",
     "vite-plugin-checker": "^0.11.0",
-    "vue-tsc": "3.1.5"
+    "vue-tsc": "3.1.7"
   },
   "eslintConfig": {
     "extends": "@antfu"
