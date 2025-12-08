@@ -161,7 +161,7 @@ importers:
         version: 9.39.1
       '@histoire/plugin-vue':
         specifier: 1.0.0-alpha.5
-        version: 1.0.0-alpha.5(histoire@1.0.0-alpha.3(@types/node@22.19.1)(sass@1.94.2)(vite@7.2.6(@types/node@22.19.1)(jiti@2.6.1)(sass@1.94.2)(yaml@2.8.2))(yaml@2.8.2))(vite@7.2.6(@types/node@22.19.1)(jiti@2.6.1)(sass@1.94.2)(yaml@2.8.2))(vue@3.5.25(typescript@5.9.3))
+        version: 1.0.0-alpha.5(histoire@1.0.0-alpha.5(@types/node@22.19.1)(sass@1.94.2)(vite@7.2.6(@types/node@22.19.1)(jiti@2.6.1)(sass@1.94.2)(yaml@2.8.2))(yaml@2.8.2))(vite@7.2.6(@types/node@22.19.1)(jiti@2.6.1)(sass@1.94.2)(yaml@2.8.2))(vue@3.5.25(typescript@5.9.3))
       '@intlify/eslint-plugin-vue-i18n':
         specifier: ^4.1.0
         version: 4.1.0(eslint@9.39.1(jiti@2.6.1))(jsonc-eslint-parser@2.4.2)(vue-eslint-parser@10.2.0(eslint@9.39.1(jiti@2.6.1)))(yaml-eslint-parser@1.3.2)
@@ -232,8 +232,8 @@ importers:
         specifier: ^15.15.0
         version: 15.15.0
       histoire:
-        specifier: 1.0.0-alpha.3
-        version: 1.0.0-alpha.3(@types/node@22.19.1)(sass@1.94.2)(vite@7.2.6(@types/node@22.19.1)(jiti@2.6.1)(sass@1.94.2)(yaml@2.8.2))(yaml@2.8.2)
+        specifier: 1.0.0-alpha.5
+        version: 1.0.0-alpha.5(@types/node@22.19.1)(sass@1.94.2)(vite@7.2.6(@types/node@22.19.1)(jiti@2.6.1)(sass@1.94.2)(yaml@2.8.2))(yaml@2.8.2)
       imagemin:
         specifier: 9.0.1
         version: 9.0.1
@@ -3206,8 +3206,8 @@ packages:
     resolution: {integrity: sha512-F/1DnUGPopORZi0ni+CvrCgHQ5FyEAHRLSApuYWMmrbSwoN2Mn/7k+Gl38gJnR7yyDZk6WLXwiGod1JOWNDKGw==}
     hasBin: true
 
-  histoire@1.0.0-alpha.3:
-    resolution: {integrity: sha512-YuvZbYQiMGoQAPLk7F2NiWe4jI1puo/us8egOchH7+ontimk36fzDVEzQR/T0zw/M+VTGuspcYjSs1JdE3Q+vQ==}
+  histoire@1.0.0-alpha.5:
+    resolution: {integrity: sha512-wjPEQaYgqES7L0dAxL439ZVugY2QZnPV2VrpXHSy2vObIgNprmdDThpEPDcVr5bQAKDDSZh+lm33yId/ipbfxA==}
     hasBin: true
     peerDependencies:
       vite: ^7.0.0
@@ -6177,14 +6177,14 @@ snapshots:
     transitivePeerDependencies:
       - vite
 
-  '@histoire/plugin-vue@1.0.0-alpha.5(histoire@1.0.0-alpha.3(@types/node@22.19.1)(sass@1.94.2)(vite@7.2.6(@types/node@22.19.1)(jiti@2.6.1)(sass@1.94.2)(yaml@2.8.2))(yaml@2.8.2))(vite@7.2.6(@types/node@22.19.1)(jiti@2.6.1)(sass@1.94.2)(yaml@2.8.2))(vue@3.5.25(typescript@5.9.3))':
+  '@histoire/plugin-vue@1.0.0-alpha.5(histoire@1.0.0-alpha.5(@types/node@22.19.1)(sass@1.94.2)(vite@7.2.6(@types/node@22.19.1)(jiti@2.6.1)(sass@1.94.2)(yaml@2.8.2))(yaml@2.8.2))(vite@7.2.6(@types/node@22.19.1)(jiti@2.6.1)(sass@1.94.2)(yaml@2.8.2))(vue@3.5.25(typescript@5.9.3))':
     dependencies:
       '@histoire/controls': 1.0.0-alpha.5(vite@7.2.6(@types/node@22.19.1)(jiti@2.6.1)(sass@1.94.2)(yaml@2.8.2))
       '@histoire/shared': 1.0.0-alpha.5(vite@7.2.6(@types/node@22.19.1)(jiti@2.6.1)(sass@1.94.2)(yaml@2.8.2))
       '@histoire/vendors': 1.0.0-alpha.5
       change-case: 5.4.4
       globby: 14.1.0
-      histoire: 1.0.0-alpha.3(@types/node@22.19.1)(sass@1.94.2)(vite@7.2.6(@types/node@22.19.1)(jiti@2.6.1)(sass@1.94.2)(yaml@2.8.2))(yaml@2.8.2)
+      histoire: 1.0.0-alpha.5(@types/node@22.19.1)(sass@1.94.2)(vite@7.2.6(@types/node@22.19.1)(jiti@2.6.1)(sass@1.94.2)(yaml@2.8.2))(yaml@2.8.2)
       launch-editor: 2.12.0
       pathe: 1.1.2
       vue: 3.5.25(typescript@5.9.3)
@@ -6461,7 +6461,7 @@ snapshots:
       '@ionic/utils-stream': 3.1.6
       '@ionic/utils-terminal': 2.3.4
       cross-spawn: 7.0.6
-      debug: 4.4.3
+      debug: 4.3.4
       tslib: 2.6.2
     transitivePeerDependencies:
       - supports-color
@@ -9151,7 +9151,7 @@ snapshots:
 
   he@1.2.0: {}
 
-  histoire@1.0.0-alpha.3(@types/node@22.19.1)(sass@1.94.2)(vite@7.2.6(@types/node@22.19.1)(jiti@2.6.1)(sass@1.94.2)(yaml@2.8.2))(yaml@2.8.2):
+  histoire@1.0.0-alpha.5(@types/node@22.19.1)(sass@1.94.2)(vite@7.2.6(@types/node@22.19.1)(jiti@2.6.1)(sass@1.94.2)(yaml@2.8.2))(yaml@2.8.2):
     dependencies:
       '@akryum/tinypool': 0.3.1
       '@histoire/app': 1.0.0-alpha.5(vite@7.2.6(@types/node@22.19.1)(jiti@2.6.1)(sass@1.94.2)(yaml@2.8.2))
