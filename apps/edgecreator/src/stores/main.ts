@@ -138,7 +138,7 @@ export const main = defineStore("main", () => {
       }
     },
     loadPublicationIssues = async () =>
-      webStores.coa().fetchIssuesByPublicationcode(publicationcode.value),
+      webStores.coa().fetchIssuesByPublicationcode(publicationcode.value!),
     getEdgePublicationStates = (issuecodes: string[]) =>
       Object.keys(publicationPublishedEdges.value || {})
         .filter((issuecode) => issuecodes.includes(issuecode))

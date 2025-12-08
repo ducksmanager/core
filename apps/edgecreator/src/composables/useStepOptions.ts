@@ -33,7 +33,7 @@ export const useStepOptions = () => {
   );
 
   const showMoveResizeToast = (
-    type: string,
+    type: "move" | "resize",
     options?: { edges: { right: number; bottom: number } } | null,
   ) => {
     if (shownTips.includes(type)) {
