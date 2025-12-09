@@ -1,6 +1,4 @@
 import { useSocketEvents } from "socket-call-server";
-
-import type { BookcaseContributor } from "~dm-types/BookcaseContributor";
 import type { QuickStatsPerUser } from "~dm-types/QuickStatsPerUser";
 import { Prisma } from "~prisma-schemas/schemas/dm";
 import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
@@ -78,16 +76,38 @@ const getUsersQuickStats = async (userIds: number[]) =>
 
 const listenEvents = () => ({
   getBookcaseContributors: () =>
-    prismaDm.$queryRaw<BookcaseContributor[]>`
-    SELECT distinct users.ID AS userId, users.username AS name, '' AS text
-    from users
-           inner join users_contributions c on users.ID = c.ID_user
-    where c.contribution IN ('photographe', 'createur')
-    UNION
-    SELECT '' as userId, Nom AS name, Texte AS text
-    FROM bibliotheque_contributeurs
-    ORDER BY name
-  `,
+    Promise.all([
+      prismaDm.user.findMany({
+        select: {
+          id: true,
+          username: true,
+        },
+        where: {
+          userContributions: {
+            some: {
+              contribution: {
+                in: ["photographe", "createur"],
+              },
+            },
+          },
+        },
+      }),
+      prismaDm.bookcaseExternalContributor.findMany({
+        omit: {
+          id: true,
+        },
+        orderBy: {
+          name: "asc",
+        },
+      }),
+    ]).then(([users, externalContributors]) =>
+      [...users, ...externalContributors]
+        .map((user) => ({
+          ...user,
+          name: "name" in user ? user.name : user.username,
+        }))
+        .sort((a, b) => a.name.localeCompare(b.name))
+    ),
 
   getUserCount: () => prismaDm.user.count(),
 
@@ -120,7 +140,7 @@ export const { client, server } = useSocketEvents<typeof listenEvents>(
   {
     listenEvents,
     middlewares: [],
-  },
+  }
 );
 
 export type ClientEvents = (typeof client)["emitEvents"];

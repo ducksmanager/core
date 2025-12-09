@@ -63,10 +63,12 @@ model authorUser {
   @@map("auteurs_pseudos")
 }
 
-model bibliotheque_contributeurs {
-  ID    Int     @id @default(autoincrement())
-  Nom   String? @db.VarChar(30)
-  Texte String? @db.Text
+model bookcaseExternalContributor {
+  id              Int    @id @default(autoincrement()) @map("ID")
+  name            String @db.VarChar(30) @map("Nom")
+  text            String @db.Text @map("Texte")
+
+  @@map("bibliotheque_contributeurs")
 }
 
 model bookcasePublicationOrder {
