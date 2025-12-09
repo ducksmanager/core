@@ -3,7 +3,7 @@
 	"appName": "What The Duck",
 	"webDir": "dist",
 	"server": {
-		"url": "http://192.168.1.12:8008",
+		"url": "http://192.168.1.23:8008",
 		"cleartext": true
 	},
 	"android": {
