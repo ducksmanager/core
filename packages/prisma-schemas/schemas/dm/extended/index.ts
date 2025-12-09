@@ -1,7 +1,6 @@
 import type { edge as rawEdge, PrismaClient } from "../../../client_dm/client";
 import { computeTimestamp } from "./edge.timestamp";
 
-
 export default (prismaClient: PrismaClient) =>
   prismaClient.$extends({
     client: {

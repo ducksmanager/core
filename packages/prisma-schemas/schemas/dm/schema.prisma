@@ -64,9 +64,9 @@ model authorUser {
 }
 
 model bookcaseExternalContributor {
-  id              Int    @id @default(autoincrement()) @map("ID")
-  name            String @db.VarChar(30) @map("Nom")
-  text            String @db.Text @map("Texte")
+  id   Int    @id @default(autoincrement()) @map("ID")
+  name String @map("Nom") @db.VarChar(30)
+  text String @map("Texte") @db.Text
 
   @@map("bibliotheque_contributeurs")
 }

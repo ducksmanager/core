@@ -15,7 +15,7 @@ alias: [/bibliotheque/contributeurs]
       }}
     </h2>
     <div
-      v-for="contributor in bookcaseContributorsSorted"
+      v-for="contributor in bookcaseContributors"
       :key="JSON.stringify(contributor)"
       class="contributor"
     >
@@ -37,19 +37,9 @@ const { fetchBookcaseContributors, fetchStats } = users();
 const { bookcaseContributors, stats, points } = storeToRefs(users());
 
 let loading = $ref(true);
-const bookcaseContributorsSorted = $computed(
-  () =>
-    (!loading &&
-      [...bookcaseContributors.value!].sort(
-        ({ name: name1 }, { name: name2 }) =>
-          name1.toLowerCase().localeCompare(name2.toLowerCase()),
-      )) ||
-    [],
-);
 
 (async () => {
   await fetchBookcaseContributors();
-  debugger;
   await fetchStats(
     bookcaseContributors
       .value!.filter((user) => "id" in user)
