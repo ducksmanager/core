@@ -20,12 +20,12 @@ alias: [/bibliotheque/contributeurs]
       class="contributor"
     >
       <UserPopover
-        v-if="contributor.userId && stats[contributor.userId]"
-        :id="contributor.userId"
-        :stats="stats[contributor.userId]"
-        :points="points[contributor.userId]"
+        v-if="'id' in contributor && stats[contributor.id]"
+        :id="contributor.id"
+        :stats="stats[contributor.id]"
+        :points="points[contributor.id]"
       />
-      <div v-else-if="contributor.text">
+      <div v-else-if="'text' in contributor">
         {{ contributor.name }} {{ contributor.text }}
       </div>
     </div>
@@ -49,10 +49,11 @@ const bookcaseContributorsSorted = $computed(
 
 (async () => {
   await fetchBookcaseContributors();
+  debugger;
   await fetchStats(
     bookcaseContributors
-      .value!.filter(({ userId }) => typeof userId === "number")
-      .map(({ userId }) => userId as number),
+      .value!.filter((user) => "id" in user)
+      .map(({ id }) => id),
   );
   loading = false;
 })();

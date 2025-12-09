@@ -63,7 +63,6 @@ for (const subscription of ongoingSubscriptions) {
         },
       }))
     ) {
-      const [countrycode, magazinecode] = release.publicationcode.split("/");
       console.log(
         "Adding issue %s to user %s",
         release.issuecode,
@@ -71,9 +70,6 @@ for (const subscription of ongoingSubscriptions) {
       );
       await prismaDm.subscriptionRelease.create({
         data: {
-          countrycode,
-          magazinecode,
-          issuenumber: release.issuenumber,
           issuecode: release.issuecode,
           releaseDate: new Date(release.filledoldestdate!),
         },
@@ -83,18 +79,15 @@ for (const subscription of ongoingSubscriptions) {
 }
 
 await prismaDm.$executeRaw`
-  INSERT IGNORE INTO numeros(Pays, Magazine, Numero, issuecode, Etat, ID_Acquisition, AV, Abonnement, ID_Utilisateur)
-  SELECT subscription.Pays,
-        subscription.Magazine,
-        issueRelease.Numero,
-        issueRelease.issuecode,
+  INSERT IGNORE INTO numeros(issuecode, Etat, ID_Acquisition, AV, Abonnement, ID_Utilisateur)
+  SELECT issueRelease.issuecode,
         'bon',
         -1,
         0,
         1,
         subscription.ID_Utilisateur
   FROM abonnements subscription
-  INNER JOIN abonnements_sorties as issueRelease using (Pays, Magazine)
+  INNER JOIN abonnements_sorties as issueRelease ON subscription.publicationcode = CONCAT(issueRelease.Pays, '/', issueRelease.Magazine)
   WHERE Date_sortie
       BETWEEN greatest(subscription.Date_debut, subdate(current_date, 14))
           AND least(current_date, subscription.Date_fin)
