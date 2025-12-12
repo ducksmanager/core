@@ -79,8 +79,6 @@ export const getRevue = async (
                   ),
                 ];
 
-                log(albumTitle, albumNum, estimationEuros);
-
                 return { albumTitle, albumNum, estimationEuros };
               }),
           )
