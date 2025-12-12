@@ -1,6 +1,5 @@
 {
   "compilerOptions": {
-    "baseUrl": ".",
     "module": "ES2022",
     "target": "esnext",
     "lib": [
@@ -20,7 +19,7 @@
     "outDir": "./dist",
     "paths": {
       "~/*": [
-        "*"
+        "./*"
       ],
       "~prisma-schemas/*": [
         "../../packages/prisma-schemas/*"
@@ -28,6 +27,7 @@
     }
   },
   "include": [
+    "eslint.config.mjs",
     "*.ts",
     "scrapes/**/*.ts"
   ]

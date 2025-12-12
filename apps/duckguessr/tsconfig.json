@@ -1,7 +1,6 @@
 {
   "extends": "./.nuxt/tsconfig.json",
   "compilerOptions": {
-    "baseUrl": ".",
     "verbatimModuleSyntax": false,
     "module": "ESNext",
     "moduleResolution": "bundler",

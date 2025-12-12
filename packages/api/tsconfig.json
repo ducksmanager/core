@@ -1,6 +1,5 @@
 {
   "compilerOptions": {
-    "baseUrl": ".",
     "module": "es2022",
     "target": "es2022",
     "lib": [
@@ -20,22 +19,22 @@
     "preserveWatchOutput": true,
     "paths": {
       "~/*": [
-        "*"
+        "./*"
       ],
       "~services/*": [
-        "services/*"
+        "./services/*"
       ],
       "~dm-types/*": [
         "../dm-types/*"
       ],
       "~emails/*": [
-        "emails/*"
+        "./emails/*"
       ],
       "~prisma-schemas/*": [
         "../prisma-schemas/*"
       ],
       "~translations/*": [
-        "translations/*"
+        "./translations/*"
       ]
     },
     "types": [
