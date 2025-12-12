@@ -13,9 +13,8 @@ export default defineConfig(
       "**/node_modules",
       "**/dist",
       "**/bundle.mjs",
-      "**/model",
       "**/*.d.ts",
-      "prisma/client_*",
+      "tsconfig.json",
     ],
   },
   {

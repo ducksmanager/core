@@ -4,7 +4,7 @@ import { syncScrapeCache } from "~/cache";
 import { readCsvMapping } from "~/csv";
 import { prismaClient } from "~prisma-schemas/schemas/coa/client";
 
-import type { CsvIssue } from ".";
+import { type CsvIssue, log, warn } from ".";
 import { getRevue } from "./get-revue";
 
 const MAPPING_FILE = "scrapes/bedetheque/coa-mapping.csv";
@@ -38,7 +38,7 @@ try {
   for (const { albumNum, albumTitle, estimationEuros } of contents.albums) {
     const storedTitle = albumNum ? "" : albumTitle;
     if (!albumNum || !estimationEuros) {
-      console.warn(pageUrl, ": Missing data on album", albumNum);
+      warn(pageUrl, ": Missing data on album", albumNum);
       continue;
     } else if (!skipNonQuoted || estimationEuros) {
       const issuecode =
@@ -58,20 +58,20 @@ try {
               issuecode,
             },
           });
-          console.log(
+          log(
             [issuecode, pageUrl, albumNum || "", storedTitle].join(","),
           );
         }
       } catch (_e) {
-        console.warn(`Issue ${issuecode} not found`);
-        console.log(
+        warn(`Issue ${issuecode} not found`);
+        log(
           ["?".repeat(10), pageUrl, albumNum || "", storedTitle].join(","),
         );
       }
     }
   }
 } catch (e) {
-  console.warn(e);
+  warn(e);
 }
 
 process.exit(0);

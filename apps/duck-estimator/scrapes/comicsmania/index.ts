@@ -2,6 +2,7 @@ import { firefox } from "playwright-firefox";
 
 import { createQuotations, deleteQuotations, getIssuecode } from "~/coa";
 import { readCsvMapping } from "~/csv";
+import type { ConsoleArgs } from "~/index";
 
 const MAPPING_FILE = "scrapes/comicsmania/coa-mapping.csv";
 const REGEX_ISSUENUMBER = /^(?:ΤΕΥΧΟΣ:|\n)?[-\d]+\b(?! ?€)/s;
@@ -11,6 +12,11 @@ type CsvIssue = {
   sectionTitle: string;
   issueCellRegex: string;
 };
+
+export const error = (...args: ConsoleArgs) => console.error(`[comicsmania]`, ...args);
+export const log = (...args: ConsoleArgs) => console.log(`[comicsmania]`, ...args);
+export const info = (...args: ConsoleArgs) => console.log(`[comicsmania]`, ...args);
+
 const publicationsWithIssues: CsvIssue[] = [];
 const quotations: Parameters<typeof createQuotations>[0] = [];
 
@@ -28,7 +34,7 @@ export async function scrape() {
   const pageLinks = await page.$$("css=a");
   let pageNumber = 0;
   for (const pageLink of pageLinks) {
-    console.log(`Page ${++pageNumber}`);
+    log(`Page ${++pageNumber}`);
     const [subPage] = await Promise.all([
       page.waitForEvent("popup"),
       pageLink.click(),
@@ -62,7 +68,7 @@ export async function scrape() {
           );
           if (publicationSection) {
             currentPublication = publicationSection;
-            console.info(
+            info(
               `Section found for ${currentPublication.publicationcode} : ${cellText}`,
             );
           }
@@ -70,7 +76,7 @@ export async function scrape() {
         }
         case "TD":
           if (!currentPublication) {
-            console.error(
+            error(
               `No current publication found in page for issue number ${cellText}`,
             );
             continue;
@@ -85,8 +91,8 @@ export async function scrape() {
       const issueTextMatch = cellText.match(REGEX_ISSUENUMBER);
       if (
         !issueTextMatch ||
-        (currentPublication!.issueCellRegex &&
-          !new RegExp(currentPublication!.issueCellRegex).test(cellText))
+        (currentPublication?.issueCellRegex &&
+          !new RegExp(currentPublication.issueCellRegex).test(cellText))
       ) {
         continue;
       }
@@ -113,11 +119,11 @@ export async function scrape() {
           priceMatch = priceText.match(REGEX_PRICE);
         }
 
-        if (!priceMatch) {
+        if (!priceMatch || !currentPublication) {
           continue;
         }
-        publicationsWithIssues.push(currentPublication!);
-        const { publicationcode: currentPublicationCode } = currentPublication!;
+        publicationsWithIssues.push(currentPublication);
+        const { publicationcode: currentPublicationCode } = currentPublication;
         const issuecode = await getIssuecode(
           currentPublicationCode,
           issuenumber,
@@ -131,10 +137,10 @@ export async function scrape() {
             scrapeDate: null,
             source: "comicsmania",
           });
-          console.log(`Found ${currentPublicationCode} ${issuenumber}`);
+          log(`Found ${currentPublicationCode} ${issuenumber}`);
         }
       } catch (e) {
-        console.error(
+        error(
           `Error for ${currentPublication!.publicationcode} ${issuenumber}: ${e}`,
         );
       }
@@ -152,7 +158,7 @@ export async function scrape() {
       ),
   );
   for (const { sectionTitle } of sectionsNotFound) {
-    console.log("Section not found: " + sectionTitle);
+    log("Section not found: " + sectionTitle);
   }
   await deleteQuotations("comicsmania");
   await createQuotations(quotations);

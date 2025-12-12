@@ -6,6 +6,12 @@ import { getScrapeCacheTime, syncScrapeCache } from "~/cache";
 import { createQuotations, deleteQuotations } from "~/coa";
 import { readCsvMapping } from "~/csv";
 import { prismaClient } from "~prisma-schemas/schemas/coa/client";
+import type { ConsoleArgs } from "~/index";
+
+export const error = (...args: ConsoleArgs) => console.error(`[gocollect]`, ...args);
+export const log = (...args: ConsoleArgs) => console.log(`[gocollect]`, ...args);
+export const info = (...args: ConsoleArgs) => console.log(`[gocollect]`, ...args);
+export const debug = (...args: ConsoleArgs) => console.debug(`[gocollect]`, ...args);
 
 const MAPPING_FILE = "scrapes/gocollect/coa-mapping.csv";
 const ROOT_URL = "https://gocollect.com/app/comics/";
@@ -20,6 +26,8 @@ const ROOT_URL = "https://gocollect.com/app/comics/";
 
 const gradingIntervalsForMinEstimation = [0.5, 5.9];
 const gradingIntervalsForMaxEstimation = [6, 10];
+
+const overviewSelector = '[wire\\:key*="view-state-company-overview-"]';
 
 type CsvIssue = { publicationcode: string; publicationUrl: string };
 
@@ -42,7 +50,7 @@ export async function scrape() {
     await page.fill("#password", process.env.GOCOLLECT_PASSWORD!);
     const submitButton = await page.$('button[type="submit"]');
     await submitButton!.click();
-    console.log("Login done.");
+    log("Login done.");
 
     await deleteQuotations("gocollect");
     for (const { publicationcode, publicationUrl } of mappedPublications) {
@@ -51,24 +59,24 @@ export async function scrape() {
 
       while (true) {
         const url = `${ROOT_URL}${publicationUrl}?page=${currentPageForPublication}`;
-        console.info(`Scraping ${url}`);
+        info(`Scraping ${url}`);
         await page.goto(url);
         const selector = `div.grid[wire\\:key*="grades"] a`;
         await page.waitForSelector(selector);
         const issueElementsLocator = page.locator(selector);
-        const issueLinks = await issueElementsLocator.evaluateAll((e) =>
+        const issueLinks = new Set(await issueElementsLocator.evaluateAll((e) =>
           e.map((el) => (el as HTMLAnchorElement).href),
-        );
+        )).values();
 
         for (const issueLinkHref of issueLinks) {
-          console.log(`Scraping ${issueLinkHref}`);
+          log(`Scraping ${issueLinkHref}`);
 
-          const cacheFileName = `${issueLinkHref!.match(/(?<=\/)[^/+]+$/)![0]}.html`;
+          const cacheFileName = `${issueLinkHref.match(/(?<=\/)[^/+]+$/)![0]}.html`;
           try {
             await syncScrapeCache(
               "gocollect",
               cacheFileName,
-              issueLinkHref!,
+              issueLinkHref,
               async (url) => {
                 try {
                   const response = await issuePage.goto(url);
@@ -78,7 +86,7 @@ export async function scrape() {
                   const body = await response.body();
                   return body.toString();
                 } catch (e) {
-                  console.error(`Error while fetching ${url}: ${e}`);
+                  error(`Error while fetching ${url}: ${e}`);
                   throw e;
                 }
               },
@@ -89,13 +97,10 @@ export async function scrape() {
               },
               async (_contents) => {
                 try {
-                  await issuePage.waitForSelector(
-                    '[wire\\:key*="view-state-company-overview-"]',
-                    { timeout: 3000 },
-                  );
+                  await issuePage.waitForSelector(overviewSelector, { timeout: 3000 });
                   return _contents;
                 } catch (e) {
-                  console.error(`Error while processing page content: ${e}`);
+                  error(`Error while processing page content: ${e}`);
                   throw e;
                 }
               },
@@ -107,7 +112,7 @@ export async function scrape() {
           const pageTitle = await issuePage.title();
           const issuenumberMatch = pageTitle.match(/(?<=#).+?(?= )/);
           if (!(issuenumberMatch && issuenumberMatch[0])) {
-            console.error(`Invalid page title : ${pageTitle}`);
+            error(`Invalid page title : ${pageTitle}`);
             break;
           }
           const issuenumber = issuenumberMatch[0];
@@ -127,7 +132,7 @@ export async function scrape() {
               },
             })
             .catch((_e) => {
-              console.error(`Issue ${issuenumber} not found`);
+              error(`Issue ${issuenumber} not found`);
               return null;
             });
           if (!issue) {
@@ -135,7 +140,7 @@ export async function scrape() {
           }
 
           const issueQuotationRows = await issuePage.$$(
-            '[wire\\:key*="view-state-company-overview-"] > .group',
+            `${overviewSelector} > .group`,
           );
 
           let estimationMin = [];
@@ -146,7 +151,7 @@ export async function scrape() {
             ))!.innerText();
             const grading = parseFloat(gradingText);
             if (isNaN(grading)) {
-              console.error(`Grading ${gradingText} is not a number`);
+              error(`Grading ${gradingText} is not a number`);
               continue;
             }
             const quotationElement = await issueQuotationRow.$(
@@ -161,10 +166,10 @@ export async function scrape() {
             );
             const quotation = parseInt(quotationText);
             if (isNaN(quotation)) {
-              console.error(`Quotation ${quotationText} is not a number`);
+              error(`Quotation ${quotationText} is not a number`);
               continue;
             }
-            console.debug(` Grading ${grading} is worth ${quotation}`);
+            debug(` Grading ${grading} is worth ${quotation}`);
             if (
               grading >= gradingIntervalsForMinEstimation[0] &&
               grading <= gradingIntervalsForMinEstimation[1]

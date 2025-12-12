@@ -2,6 +2,7 @@ import type { Album } from "bedetheque-scraper";
 import { firefox } from "playwright-firefox";
 
 import { syncScrapeCache } from "~/cache";
+import { log, error } from ".";
 
 type SimpleAlbum = Pick<Album, "albumNum" | "albumTitle" | "estimationEuros">;
 
@@ -28,7 +29,7 @@ export const getRevue = async (
               .body()
               .then((body) => body.toString())
               .catch((e) => {
-                console.error(`Error while fetching ${url}: ${e}`);
+            error(`Error while fetching ${url}: ${e}`);
                 throw e;
               }),
           ),
@@ -64,21 +65,21 @@ export const getRevue = async (
 
                 const albumNum = titleSection
                   .querySelector(".orange")!
-                  .textContent!.replace(/[#\. ]/g, "");
+                  .textContent.replace(/[#. ]/g, "");
 
                 const estimationLabel = Array.from(
                   el.querySelectorAll("label"),
-                ).find((label) => label.textContent!.includes("Estimation :"));
+                ).find((label) => label.textContent.includes("Estimation :"));
                 const estimationEuros = [
                   parseInt(
-                    estimationLabel!.parentElement!.textContent!.replace(
+                    estimationLabel!.parentElement!.textContent.replace(
                       "Estimation :",
                       "",
                     ),
                   ),
                 ];
 
-                console.log(albumTitle, albumNum, estimationEuros);
+                log(albumTitle, albumNum, estimationEuros);
 
                 return { albumTitle, albumNum, estimationEuros };
               }),
