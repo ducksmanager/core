@@ -119,20 +119,14 @@ const listenEvents = () => ({
       },
     }),
 
-  getUsersPointsAndStats: async (userIds: number[]) => {
-    if (userIds.length) {
-      const result = {
-        points: await getMedalPoints(userIds),
-        stats: await getUsersQuickStats(userIds),
-      };
-      return result;
-    } else {
-      return {
-        error: "Bad request",
-        errorDetails: "Empty user IDs list",
-      };
-    }
-  },
+  getUsersPointsAndStats: async (userIds: number[]) =>
+    userIds.length ? {
+      points: await getMedalPoints(userIds),
+      stats: await getUsersQuickStats(userIds),
+    } : {
+      error: "Bad request",
+      errorDetails: "Empty user IDs list",
+    },
 });
 
 export const { client, server } = useSocketEvents<typeof listenEvents>(

@@ -1,28 +1,44 @@
 <template>
-  <ul>
-    <template v-for="(storiesOfAuthor, author) in stories">
-      <li v-for="storyCode in storiesOfAuthor" :key="`${author}-${storyCode}`">
-        <b-badge>{{ authors[author] }}</b-badge>
-        <InducksStory
-          v-if="storyDetails"
-          show-link="inner"
-          :storycode="storyCode"
-          :title="storyDetails[storyCode].title"
-          :comment="storyDetails[storyCode].storycomment"
-        />
-      </li>
-    </template>
-  </ul>
+  <template
+    v-for="(storyAuthors, storycode) in authorsPerStory"
+    :key="storycode"
+  >
+    <div>
+      <b-badge v-for="author in storyAuthors" :key="author" class="me-1">{{
+      authors[author as keyof typeof authors]
+      }}</b-badge>
+      <InducksStory
+        v-if="storyDetails"
+        show-link="inner"
+        :storycode="storycode as string"
+        :title="storyDetails[storycode].title"
+        :comment="storyDetails[storycode].storycomment"
+      />
+    </div>
+  </template>
 </template>
 
 <script setup lang="ts">
 import type { StoryDetail } from "~dm-types/StoryDetail";
 
-const { storyDetails = undefined } = defineProps<{
-  stories: { [storycode: string]: string[] };
+const { stories } = defineProps<{
+  stories: { [personcode: string]: string[] };
   authors: { [personcode: string]: string };
-  storyDetails?: { [storycode: string]: StoryDetail };
+  storyDetails: { [storycode: string]: StoryDetail };
 }>();
+
+const authorsPerStory = computed(() => {
+  const result: { [storycode: string]: string[] } = {};
+  for (const [author, storyCodes] of Object.entries(stories)) {
+    for (const storyCode of storyCodes) {
+      if (!result[storyCode]) {
+        result[storyCode] = [];
+      }
+      result[storyCode].push(author);
+    }
+  }
+  return result;
+});
 </script>
 
 <style scoped lang="scss">
