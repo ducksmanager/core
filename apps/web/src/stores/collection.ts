@@ -227,12 +227,16 @@ export const collection = defineStore("collection", () => {
             }))
             .groupBy("issuecode"),
         );
+      } else {
+        issues.value = await collectionEvents.getIssues({
+          disableCache: ignoreCache,
+        });
       }
 
       Object.assign(
         coa().issuecodeDetails,
-        issues
-          .value!.map(({ issuecode, publicationcode, issuenumber }) => ({
+        issues.value
+          .map(({ issuecode, publicationcode, issuenumber }) => ({
             issuecode,
             publicationcode,
             issuenumber,
