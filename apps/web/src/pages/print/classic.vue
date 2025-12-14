@@ -24,19 +24,10 @@ meta:
 </template>
 
 <script setup lang="ts">
-let ownedIssuecodes = $ref<{ [publicationcode: string]: string }>();
+let ownedIssuecodes = $ref<{ [publicationcode: string]: string[] }>();
 
-const {
-  fetchCountryNames,
-  fetchPublicationNames,
-  fetchIssuecodesByPublicationcode,
-} = coa();
-const {
-  countryNames,
-  publicationNames,
-  issuecodesByPublicationcode,
-  issuecodeDetails,
-} = storeToRefs(coa());
+const { fetchCountryNames, fetchPublicationNames } = coa();
+const { countryNames, publicationNames } = storeToRefs(coa());
 
 const { loadCollection } = collection();
 const { issues } = storeToRefs(collection());
@@ -72,38 +63,21 @@ const publicationCodesOfCountry = (countrycode: string) =>
 
 watch(
   $$(publicationCodes),
-  (newValue) => {
+  async (newValue) => {
     if (newValue) {
-      fetchPublicationNames(publicationCodes!);
-      fetchIssuecodesByPublicationcode(publicationCodes!);
-    }
-  },
-  { immediate: true },
-);
+      await fetchPublicationNames(publicationCodes!);
 
-watch(
-  () => Object.keys(issuecodesByPublicationcode.value).length && issues.value,
-  (newValue) => {
-    if (newValue) {
-      const collectionWithPublicationcodes = issues.value!.groupBy(
-        "publicationcode",
-        "[]",
-      );
-      ownedIssuecodes = Object.entries(
-        issuecodesByPublicationcode.value,
-      ).reduce<Record<string, string>>(
-        (acc, [publicationcode, indexedIssuecodes]) => {
-          acc[publicationcode] = indexedIssuecodes
-            .filter((indexedIssuecode) =>
-              collectionWithPublicationcodes[publicationcode].some(
-                ({ issuecode }) => issuecode === indexedIssuecode,
-              ),
-            )
-            .map((issuecode) => issuecodeDetails.value[issuecode].issuenumber)
-            .join(", ");
-          return acc;
+      watch(
+        issues,
+        (newValue) => {
+          if (newValue) {
+            ownedIssuecodes = issues.value!.groupBy(
+              "publicationcode",
+              "issuenumber[]",
+            );
+          }
         },
-        {},
+        { immediate: true },
       );
     }
   },
