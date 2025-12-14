@@ -2,7 +2,7 @@ import type { Album } from "bedetheque-scraper";
 import { firefox } from "playwright-firefox";
 
 import { syncScrapeCache } from "~/cache";
-import { log, error } from ".";
+import { error } from ".";
 
 type SimpleAlbum = Pick<Album, "albumNum" | "albumTitle" | "estimationEuros">;
 
