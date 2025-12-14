@@ -199,7 +199,9 @@ export const collection = defineStore("collection", () => {
 
         const collectionPublicationcodes = [
           ...new Set(
-            issues.value.map(({ publicationcode }) => publicationcode),
+            issues.value
+              .map(({ publicationcode }) => publicationcode)
+              .filter((publicationcode) => !!publicationcode),
           ),
         ];
         const collectionCountrycodes = [
