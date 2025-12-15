@@ -11,6 +11,8 @@ import { scrape as comicsmania } from "./scrapes/comicsmania";
 import { scrape as gocollect } from "./scrapes/gocollect";
 import { scrape as seriesam } from "./scrapes/seriesam";
 
+export type ConsoleArgs = Parameters<typeof console.error>
+
 const scrapes = [
   { name: "bdm", scrape: bdm },
   { name: "bedetheque", scrape: bedetheque },
@@ -28,21 +30,17 @@ dotenv.config({
 
 mkdirSync(getCacheDir(), { recursive: true });
 
-let hasFailed = false;
-for (const { name, scrape } of scrapes) {
-  try {
+const results = await Promise.allSettled(
+  scrapes.map(async ({ name, scrape }) => {
     console.log(`Scraping ${name}, start date: ${new Date().toISOString()}`);
     await scrape();
     console.log(`Scrape done, end date: ${new Date().toISOString()}`);
-  } catch (e) {
-    console.error(`Scrape failed: ${e}`);
-    hasFailed = true;
-  }
-}
+  })
+);
 
-if (hasFailed) {
-  process.exit(1);
-}
+const hasFailed = results.some(
+  (result) => result.status === "rejected"
+);
 
 await writeCsvMapping(await getAll());
 exec("sh bump-dump.sh", (error, stdout, stderr) => {
@@ -55,5 +53,15 @@ exec("sh bump-dump.sh", (error, stdout, stderr) => {
     process.exit(0);
   }
   console.log(`stdout: ${stdout}`);
-  process.exit(0);
+
+  if (hasFailed) {
+    results.forEach((result, index) => {
+      if (result.status === "rejected") {
+        console.error(
+          `Scrape failed for ${scrapes[index].name}: ${result.reason}`
+        );
+      }
+    });
+    process.exit(1);
+  }
 });

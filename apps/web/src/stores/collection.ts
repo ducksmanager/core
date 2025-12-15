@@ -29,7 +29,7 @@ export type Filter =
 
 export type IssueWithPublicationcodeOptionalId = Omit<
   EventOutput<CollectionServices, "getIssues">[number],
-  "id" | "country" | "magazine" | "title" | "issuenumber"
+  "id" | "title" | "publicationcode" | "issuenumber"
 > & {
   id: number | null;
 };
@@ -199,7 +199,9 @@ export const collection = defineStore("collection", () => {
 
         const collectionPublicationcodes = [
           ...new Set(
-            issues.value.map(({ publicationcode }) => publicationcode),
+            issues.value
+              .map(({ publicationcode }) => publicationcode)
+              .filter((publicationcode) => !!publicationcode),
           ),
         ];
         const collectionCountrycodes = [
@@ -227,12 +229,16 @@ export const collection = defineStore("collection", () => {
             }))
             .groupBy("issuecode"),
         );
+      } else {
+        issues.value = await collectionEvents.getIssues({
+          disableCache: ignoreCache,
+        });
       }
 
       Object.assign(
         coa().issuecodeDetails,
-        issues
-          .value!.map(({ issuecode, publicationcode, issuenumber }) => ({
+        issues.value
+          .map(({ issuecode, publicationcode, issuenumber }) => ({
             issuecode,
             publicationcode,
             issuenumber,

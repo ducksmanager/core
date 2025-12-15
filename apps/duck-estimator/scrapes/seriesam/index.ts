@@ -7,6 +7,12 @@ import {
   getInducksIssuecodesBetween,
 } from "~/coa";
 import { readCsvMapping } from "~/csv";
+import type { ConsoleArgs } from "~/index";
+
+export const error = (...args: ConsoleArgs) => console.error(`[seriesam]`, ...args);
+export const warn = (...args: ConsoleArgs) => console.warn(`[seriesam]`, ...args);
+export const log = (...args: ConsoleArgs) => console.log(`[seriesam]`, ...args);
+export const info = (...args: ConsoleArgs) => console.log(`[seriesam]`, ...args);
 
 const MAPPING_FILE = "scrapes/seriesam/coa-mapping.csv";
 const ROOT_URL = "https://www.seriesam.com/cgi-bin/guide?s=";
@@ -38,21 +44,21 @@ export async function scrape() {
 
   for (const serieUrl of seriesUrls) {
     const url = ROOT_URL + serieUrl;
-    console.info(`Scraping ${url}...`);
+    info(`Scraping ${url}...`);
 
     const cacheFileName = `${serieUrl.replace(/[/\\?%*:|"<>]/g, "-")}.html`;
     try {
       await syncScrapeCache(
         "seriesam",
         cacheFileName,
-        url!,
+        url,
         async (url) =>
           page.goto(url).then((response) =>
             response!
               .body()
               .then((body) => body.toString())
               .catch((e) => {
-                console.error(`Error while fetching ${url}: ${e}`);
+                error(`Error while fetching ${url}: ${e}`);
                 throw e;
               }),
           ),
@@ -106,7 +112,7 @@ export async function scrape() {
           while (true) {
             column = await row.$(`td:nth-child(${cellNumber})`);
             if (column === null) {
-              console.warn(
+              warn(
                 ` Inducks issue ${issuecodeInRange}: No quotation found`,
               );
               break;
@@ -115,7 +121,7 @@ export async function scrape() {
               if (isNaN(estimation)) {
                 cellNumber++;
               } else {
-                console.info(
+                info(
                   ` Inducks issue ${issuecodeInRange}: A quotation was found`,
                 );
                 const adjustedEstimation =
@@ -138,9 +144,9 @@ export async function scrape() {
         mappedIssueRowNumber++;
       }
     }
-    console.log("Done");
+    log("Done");
   }
   await deleteQuotations("seriesam");
   await createQuotations(quotations);
-  console.log("Done for all");
+  log("Done for all");
 }

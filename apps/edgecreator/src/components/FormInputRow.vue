@@ -30,7 +30,7 @@
             :disabled="disabled || false"
             :list="listId === undefined ? undefined : String(listId)"
             @update:model-value="
-              shouldWaitForBlurToUpdate ? () => {} : onChangeValue($event)
+              shouldWaitForBlurToUpdate ? () => {} : onChangeValue($event!)
             "
             @blur="onChangeValue($event.target.value)"
           />

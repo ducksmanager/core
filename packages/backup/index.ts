@@ -29,7 +29,7 @@ console.log(
   ).toString(),
 );
 
-const client = new Client(180);
+const client = new Client(0);
 client.ftp.verbose = true;
 try {
   await client.access({

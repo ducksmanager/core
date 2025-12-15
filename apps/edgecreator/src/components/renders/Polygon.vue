@@ -57,7 +57,7 @@ const pointsArray = computed((): [number, number][] =>
 onMounted(() => {
   if (!isForm.value) {
     const { enableDragResize } = useStepOptions();
-    enableDragResize(polygon.value, {
+    enableDragResize(polygon.value!, {
       onmove: ({ dy, dx }): void => {
         points.value = pointsAsString(
           pointsArray.value.map(([x, y]) => [

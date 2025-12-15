@@ -1,7 +1,6 @@
 {
   "compilerOptions": {
     "noErrorTruncation": true,
-    "baseUrl": ".",
     "module": "ES6",
     "target": "esnext",
     "lib": [
@@ -21,7 +20,7 @@
     "preserveWatchOutput": true,
     "paths": {
       "~/*": [
-        "*"
+        "./*"
       ],
       "~dm-types/*": [
         "../../../packages/types/*"
@@ -42,7 +41,7 @@
         "../../../packages/prisma-schemas/*"
       ],
       "~prisma/*": [
-        "prisma/*"
+        "./prisma/*"
       ]
     },
     "types": [

@@ -15,17 +15,17 @@ alias: [/bibliotheque/contributeurs]
       }}
     </h2>
     <div
-      v-for="contributor in bookcaseContributorsSorted"
+      v-for="contributor in bookcaseContributors"
       :key="JSON.stringify(contributor)"
       class="contributor"
     >
       <UserPopover
-        v-if="contributor.userId && stats[contributor.userId]"
-        :id="contributor.userId"
-        :stats="stats[contributor.userId]"
-        :points="points[contributor.userId]"
+        v-if="'id' in contributor && stats[contributor.id]"
+        :id="contributor.id"
+        :stats="stats[contributor.id]"
+        :points="points[contributor.id]"
       />
-      <div v-else-if="contributor.text">
+      <div v-else-if="'text' in contributor">
         {{ contributor.name }} {{ contributor.text }}
       </div>
     </div>
@@ -37,22 +37,13 @@ const { fetchBookcaseContributors, fetchStats } = users();
 const { bookcaseContributors, stats, points } = storeToRefs(users());
 
 let loading = $ref(true);
-const bookcaseContributorsSorted = $computed(
-  () =>
-    (!loading &&
-      [...bookcaseContributors.value!].sort(
-        ({ name: name1 }, { name: name2 }) =>
-          name1.toLowerCase().localeCompare(name2.toLowerCase()),
-      )) ||
-    [],
-);
 
 (async () => {
   await fetchBookcaseContributors();
   await fetchStats(
     bookcaseContributors
-      .value!.filter(({ userId }) => typeof userId === "number")
-      .map(({ userId }) => userId as number),
+      .value!.filter((user) => "id" in user)
+      .map(({ id }) => id),
   );
   loading = false;
 })();

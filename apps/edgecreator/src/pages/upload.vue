@@ -7,7 +7,7 @@ meta:
     <div>
       <div
         :class="{ loader: true, 'max-height': !uploadedImageData }"
-        @change="change"
+        @change="change($event as { target: { files: FileList; value: string } | null })"
         @dragover="dragover"
         @drop="drop"
       >
@@ -212,7 +212,7 @@ const uploadAll = async () => {
     }
     await nextTick().then(async () => {
       const response = await saveEdgeSvg(
-        crop.issuecode,
+        crop.issuecode!,
         initialContributors.value.map((contribution) => ({
           ...contribution,
           issuecode: crop.issuecode!,

@@ -9,9 +9,14 @@ import {
 import { readCsvMapping } from "~/csv";
 
 import { getRevue } from "./get-revue";
+import type { ConsoleArgs } from "~/index";
 
 const MAPPING_FILE = "scrapes/bedetheque/coa-mapping.csv";
 const ROOT_URL = "https://www.bedetheque.com/";
+
+export const error = (...args: ConsoleArgs) => console.error(`[bedetheque]`, ...args);
+export const warn = (...args: ConsoleArgs) => console.warn(`[bedetheque]`, ...args);
+export const log = (...args: ConsoleArgs) => console.log(`[bedetheque]`, ...args);
 
 export type CsvIssue = {
   bedetheque_url: string;
@@ -51,7 +56,7 @@ export async function scrape() {
       continue;
     }
     if (!scrapeOutput) {
-      console.warn(`This page cannot be scraped: ${serieUrl}`);
+      warn(`This page cannot be scraped: ${serieUrl}`);
       continue;
     }
     const mappedIssuesForSeries = mappedIssues.filter(
@@ -63,7 +68,7 @@ export async function scrape() {
       issuecode,
     } of mappedIssuesForSeries) {
       if (await isInducksIssuecodeExisting(issuecode)) {
-        const bedethequeAlbum = scrapeOutput!.albums.find(
+        const bedethequeAlbum = scrapeOutput.albums.find(
           ({ albumNum, albumTitle }) =>
             !(
               (bedetheque_num !== "" && albumNum !== bedetheque_num) ||
@@ -71,7 +76,7 @@ export async function scrape() {
             ),
         );
         if (!bedethequeAlbum) {
-          console.warn(
+          warn(
             ` No issue found in Bedetheque series "${serieUrl}": num=${bedetheque_num}, title=${bedetheque_title}`,
           );
         } else {
@@ -89,9 +94,9 @@ export async function scrape() {
         }
       }
     }
-    console.log("Done");
+    log("Done");
   }
   await deleteQuotations("bedetheque");
   await createQuotations(quotations);
-  console.log("Done for all");
+  log("Done for all");
 }

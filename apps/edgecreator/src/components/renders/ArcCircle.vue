@@ -48,7 +48,7 @@ const ucFirst = (text: string) =>
 onMounted(() => {
   if (!isForm.value) {
     const { enableDragResize } = useStepOptions();
-    enableDragResize(ellipse.value, {
+    enableDragResize(ellipse.value!, {
       onmove: ({ dx, dy }) => {
         cx.value += dx / zoom.value;
         cy.value += dy / zoom.value;

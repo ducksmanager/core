@@ -1,6 +1,5 @@
 {
   "compilerOptions": {
-    "baseUrl": ".",
     "target": "ES2024",
     "useDefineForClassFields": true,
     "module": "ESNext",
@@ -31,7 +30,7 @@
     ],
     "paths": {
       "~/*": [
-        "src/*"
+        "./src/*"
       ],
       "~dm-services/*": [
         "../../packages/api/services/*"
@@ -40,22 +39,22 @@
         "../../packages/types/*"
       ],
       "~dumili-services/*": [
-        "api/services/*"
+        "./api/services/*"
       ],
       "~dumili-types/*": [
-        "types/*"
+        "./types/*"
       ],
       "~dumili-utils/*": [
-        "utils/*"
+        "./utils/*"
       ],
       "~web/*": [
-        "../web/*"
+        "./../web/*"
       ],
       "~translations/*": [
-        "translations/*"
+        "./translations/*"
       ],
       "~prisma/*": [
-        "api/prisma/*"
+        "./api/prisma/*"
       ],
       "~prisma-schemas/*": [
         "../../packages/prisma-schemas/*"

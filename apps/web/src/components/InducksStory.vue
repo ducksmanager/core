@@ -11,7 +11,7 @@
     <small>{{ comment }}</small
     ><template v-if="showLink === 'inner'"
       >&nbsp;<a target="_blank" :href="url">
-        {{ $t("Détails de l'histoire") }}
+        {{ $t("Détails") }}
       </a></template
     >
   </component>

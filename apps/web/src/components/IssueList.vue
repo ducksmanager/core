@@ -325,7 +325,6 @@
         :is="contextMenuComponent"
         ref="contextMenu"
         :key="contextMenuKey"
-        :publicationcode="publicationcode"
         :selected-issue-ids-by-issuecode="copiesBySelectedIssuecode"
         @clear-selection="
           contextmenuInstance!.hide();

@@ -1,6 +1,5 @@
 {
   "compilerOptions": {
-    "baseUrl": ".",
     "module": "ESNext",
     "target": "es2024",
     "lib": [
@@ -25,7 +24,7 @@
     ],
     "paths": {
       "~/*": [
-        "src/*"
+        "./src/*"
       ],
       "~dm-services/*": [
         "../../packages/api/services/*"
@@ -40,7 +39,7 @@
         "../../packages/prisma-schemas/*"
       ],
       "~web-translations/*": [
-        "translations/*"
+        "./translations/*"
       ]
     }
   },

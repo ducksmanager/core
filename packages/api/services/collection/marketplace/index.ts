@@ -103,14 +103,14 @@ export const getIssuesForSale = async (buyerId: number) =>
     LEFT JOIN numeros_demandes requested_issue
         ON issue.ID = requested_issue.ID_Numero
     WHERE
-      AV = 1
+      EXISTS(SELECT 1 FROM numeros_etiquettes labels WHERE labels.ID_Numero = issue.id AND labels.ID_Etiquette = ${ON_SALE_LABEL_ID})
       AND issue.issuecode IS NOT NULL
       AND ID_Utilisateur != ${buyerId}
       AND EXISTS(
         SELECT 1 FROM users_options uo
         WHERE uo.ID_User = ${buyerId}
           AND uo.Option_nom = 'sales_notification_publications'
-          AND uo.Option_valeur IN (CONCAT(issue.Pays, '/', issue.Magazine),
+          AND uo.Option_valeur IN (substring_index(issue.issuecode, ' ', 1),
                                    issue.issuecode)
       )
       AND NOT EXISTS

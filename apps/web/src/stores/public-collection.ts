@@ -17,7 +17,7 @@ export const publicCollection = defineStore("publicCollection", () => {
     ),
     purchases = ref([]),
     labels = ref([]),
-    labelIdFilters = new Set<number>();
+    labelIdFilters = computed(() => new Set<number>());
 
   const collectionUtils = useCollection(issues),
     loadPublicCollection = async (username: string) => {

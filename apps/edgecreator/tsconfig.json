@@ -1,6 +1,5 @@
 {
   "compilerOptions": {
-    "baseUrl": ".",
     "module": "ESNext",
     "target": "es2020",
     "lib": [
@@ -19,7 +18,7 @@
     "preserveWatchOutput": true,
     "paths": {
       "~/*": [
-        "src/*"
+        "./src/*"
       ],
       "~dm-services/*": [
         "../../packages/api/services/*"
@@ -28,7 +27,7 @@
         "../web/*"
       ],
       "~edgecreator-services/*": [
-        "api/services/*"
+        "./api/services/*"
       ],
       "~dm-types/*": [
         "../../packages/types/*"
@@ -40,7 +39,7 @@
         "../../packages/prisma-schemas/*"
       ],
       "~types/*": [
-        "types/*"
+        "./types/*"
       ],
     },
     "types": [

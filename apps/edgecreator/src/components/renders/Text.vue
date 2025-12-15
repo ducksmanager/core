@@ -228,7 +228,7 @@ if (!isForm.value) {
         waitUntil(
           () => imageRef.value,
           () => {
-            enableDragResize(imageRef.value, {
+            enableDragResize(imageRef.value!, {
               x,
               y,
               onresizemove: ({ rect }) => {

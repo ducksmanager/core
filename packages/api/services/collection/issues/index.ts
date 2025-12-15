@@ -27,10 +27,6 @@ export default ({ _socket }: UserServices) => ({
     }
     return prismaDm.issue
       .findMany({
-        omit: {
-          isToRead: true,
-          isOnSale: true,
-        },
         include: {
           labels: true,
         },
@@ -170,8 +166,7 @@ const addOrChangeIssues = async (
   });
 
   const updateOperations = existingIssues.map((existingIssue) => {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { id, publicationcode, issuecode, ...existingIssueWithoutId } =
+    const { id, issuecode: _issuecode, ...existingIssueWithoutId } =
       existingIssue;
     return prismaDm.issue.update({
       data: {
@@ -183,7 +178,7 @@ const addOrChangeIssues = async (
         //   deleteMany: {},
         // },
       },
-      where: { id: existingIssue.id },
+      where: { id },
     });
   });
   await prismaDm.$transaction(updateOperations);
@@ -198,9 +193,6 @@ const addOrChangeIssues = async (
     .map((issuecode) =>
       prismaDm.issue.create({
         data: {
-          country: "",
-          magazine: "",
-          issuenumber: "",
           issuecode,
           condition: condition || issue_condition.indefini,
           purchaseId: purchaseId === null ? -1 : purchaseId,
@@ -258,10 +250,6 @@ const addOrChangeCopies = async (
 
     const createInput = {
       ...common,
-      country: "",
-      magazine: "",
-      issuenumber: "",
-      publicationcode: "",
       issuecode,
       userId,
       creationDate: new Date(),
@@ -320,13 +308,6 @@ export const resetDemo = async () => {
     ? "/app/"
     : cwd() + "/services/auth/";
 
-  demo.lastReset = new Date();
-  await prismaDm.demo.update({
-    data: demo,
-    where: {
-      id: demo.id,
-    },
-  });
 
   const demoUser = (await prismaDm.user.findFirst({
     where: { username: "demo" },
@@ -346,9 +327,6 @@ export const resetDemo = async () => {
   await prismaDm.issue.createMany({
     data: csvIssues.map(({ issuecode, condition, purchaseId }) => ({
       userId: demoUser.id,
-      country: "",
-      magazine: "",
-      issuenumber: "",
       issuecode,
       condition,
       purchaseId: parseInt(purchaseId),
@@ -371,6 +349,14 @@ export const resetDemo = async () => {
       description,
     })),
   });
+
+  demo.lastReset = new Date();
+  await prismaDm.demo.update({
+    data: demo,
+    where: {
+      id: demo.id,
+    },
+  });
 };
 
 const deleteUserData = async (
@@ -386,6 +372,7 @@ const deleteUserData = async (
   await prismaDm.purchase.deleteMany({ where: { userId: user.id } });
   await prismaDm.userOption.deleteMany({ where: { userId: user.id } });
   await prismaDm.authorUser.deleteMany({ where: { userId: user.id } });
+  await prismaDm.label.deleteMany({ where: { userId: user.id } });
 };
 
 const getHoursFromDate = (date: Date) =>

@@ -61,10 +61,9 @@
         </div>
       </div>
       <StoryList
-        :key="`${issuecode}-stories`"
         :authors="sortedSuggestions!.authors"
         :stories="stories"
-        :story-details="sortedSuggestions!.storyDetails"
+        :story-details="sortedSuggestions!.storyDetails!"
       />
     </div>
   </template>
