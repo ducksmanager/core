@@ -1,4 +1,3 @@
-import { getCoverInfoClient } from "../../utils/singleton-clients";
 import ensureConnectionString from "~ensure-connection-string";
 import { PrismaClient } from "./client/client";
 import { PrismaMariaDb } from "@prisma/adapter-mariadb";
@@ -20,13 +19,13 @@ export const getClient = () => {
 };
 
 // Lazy initialization to prevent multiple instances
-let _prismaClient: ReturnType<typeof getCoverInfoClient> | null = null;
+let _prismaClient: ReturnType<typeof getClient> | null = null;
 export const prismaClient = new Proxy(
-  {} as ReturnType<typeof getCoverInfoClient>,
+  {} as ReturnType<typeof getClient>,
   {
     get(_target, prop) {
       if (!_prismaClient) {
-        _prismaClient = getCoverInfoClient();
+        _prismaClient = getClient();
       }
       return _prismaClient[prop as keyof typeof _prismaClient];
     },

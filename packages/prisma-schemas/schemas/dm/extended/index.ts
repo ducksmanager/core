@@ -30,4 +30,4 @@ type ExtendedType<
 
 export type edge = ExtendedType<rawEdge, typeof computeTimestamp>;
 
-export * from "../../../client_dm/client";
+export * from "../client/client";

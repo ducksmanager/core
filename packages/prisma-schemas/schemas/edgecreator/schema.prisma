@@ -1,12 +1,12 @@
 generator client {
   provider   = "prisma-client"
-  output     = "../../client_edgecreator"
+  output     = "client"
   engineType = "client"
 }
 
 datasource db {
   provider = "mysql"
-  url      = env("DATABASE_URL_EDGECREATOR")
+  url      = env("DATABASE_URL")
 }
 
 model optionInterval {

@@ -1,10 +1,12 @@
 {
   "compilerOptions": {
-    "baseUrl": ".",
     "declaration": true,
     "module": "ESNext",
     "target": "ES2023",
-    "lib": ["DOM", "ESNext"],
+    "lib": [
+      "DOM",
+      "ESNext"
+    ],
     "strict": true,
     "jsx": "preserve",
     "esModuleInterop": true,
@@ -17,5 +19,8 @@
     "forceConsistentCasingInFileNames": true,
     "outDir": "dist"
   },
-  "exclude": ["node_modules", ".turbo"]
+  "exclude": [
+    "node_modules",
+    ".turbo"
+  ]
 }
