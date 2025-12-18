@@ -85,7 +85,6 @@ processImage() {
     local path=$2
     local thread_id=$3
 
-    output=${DOWNLOAD_DIR_TMP}/cover_${id}.jpg
     path=$(echo ${path} | tr -d '\r' | tr -d '\n')
     log="\n[Thread $thread_id] id: $id, path: $path\n"
 
@@ -94,12 +93,11 @@ processImage() {
     else
         log=${log}"[Thread $thread_id] Image doesn't exist locally: ${path}\n"
         addQueryToSqlList ${thread_id} "$(getCoverLogInsertErrorQuery ${id} "Failed to download")"
-        rm -f ${output}
         echo -e ${log}
         return
     fi
 
-    PASTEC_OUTPUT=$(curl -s -S -X PUT --data-binary @${output} http://${PASTEC_HOST}:${PASTEC_PORT}/index/images/${id})
+    PASTEC_OUTPUT=$(curl -s -S -X PUT --data-binary @${path} http://${PASTEC_HOST}:${PASTEC_PORT}/index/images/${id})
     if [[ ${PASTEC_OUTPUT} == *"IMAGE_ADDED"* ]]; then
         log=${log}"[Thread $thread_id] Imported\n"
         addQueryToSqlList ${thread_id} "$(getCoverLogInsertSuccessQuery ${id})"
@@ -107,7 +105,6 @@ processImage() {
         log=${log}"[Thread $thread_id] Failed to import : $PASTEC_OUTPUT\n"
         addQueryToSqlList ${thread_id} "$(getCoverLogInsertErrorQuery ${id} ${PASTEC_OUTPUT})"
     fi
-    rm -f ${output}
     echo -e ${log}
 }
 
