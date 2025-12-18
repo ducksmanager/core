@@ -20,14 +20,11 @@ export const getClient = () => {
 
 // Lazy initialization to prevent multiple instances
 let _prismaClient: ReturnType<typeof getClient> | null = null;
-export const prismaClient = new Proxy(
-  {} as ReturnType<typeof getClient>,
-  {
-    get(_target, prop) {
-      if (!_prismaClient) {
-        _prismaClient = getClient();
-      }
-      return _prismaClient[prop as keyof typeof _prismaClient];
-    },
+export const prismaClient = new Proxy({} as ReturnType<typeof getClient>, {
+  get(_target, prop) {
+    if (!_prismaClient) {
+      _prismaClient = getClient();
+    }
+    return _prismaClient[prop as keyof typeof _prismaClient];
   },
-);
+});

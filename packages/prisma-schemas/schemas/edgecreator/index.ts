@@ -16,7 +16,9 @@ const getClient = () => {
       const connectionString = ensureConnectionString(
         process.env.DATABASE_URL!,
       );
-      console.log("EdgeCreator connection string configured with pool parameters");
+      console.log(
+        "EdgeCreator connection string configured with pool parameters",
+      );
       edgeCreatorClient = new PrismaClientEdgeCreator({
         adapter: new PrismaMariaDb(connectionString),
         log:
@@ -31,17 +33,14 @@ const getClient = () => {
   }
   return edgeCreatorClient;
 };
-export const prismaClient = new Proxy(
-  {} as ReturnType<typeof getClient>,
-  {
-    get(_target, prop) {
-      if (!_prismaClient) {
-        _prismaClient = getClient();
-      }
-      return _prismaClient[prop as keyof typeof _prismaClient];
-    },
+export const prismaClient = new Proxy({} as ReturnType<typeof getClient>, {
+  get(_target, prop) {
+    if (!_prismaClient) {
+      _prismaClient = getClient();
+    }
+    return _prismaClient[prop as keyof typeof _prismaClient];
   },
-);
+});
 
 process.on("beforeExit", async () => {
   await prismaClient.$disconnect();
