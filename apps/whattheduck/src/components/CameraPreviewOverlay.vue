@@ -1,7 +1,7 @@
 <template>
   <div id="camera-preview" ref="cameraPreview"></div>
-  <ion-row ref="overlay" class="overlay" :class="{ portrait: isPortrait, landscape: !isPortrait }">
-    <ion-button ref="takePhotoButton" size="large" @click="takePhoto().then(() => (isCameraPreviewShown = false))">
+  <ion-row id="overlay" ref="overlay" :class="{ portrait: isPortrait, landscape: !isPortrait }">
+    <ion-button ref="takePhotoButton" size="large" @click="takePhoto()">
       <ion-icon :ios="apertureOutline" :md="apertureSharp" />
     </ion-button>
     <ion-button size="large" color="danger" @click="CameraPreview.stop().finally(() => (isCameraPreviewShown = false))">
@@ -126,7 +126,7 @@ watch([overlayHeight, currentRatioIndex], async () => {
 
 <style scoped>
 #camera-preview,
-.overlay {
+#overlay {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -149,7 +149,7 @@ watch([overlayHeight, currentRatioIndex], async () => {
     height: 100%;
   }
 }
-.overlay {
+#overlay {
   position: absolute;
   &.portrait {
     bottom: 1rem;
