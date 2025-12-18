@@ -2,6 +2,8 @@ services:
   cover-updater:
     container_name: cover-updater
     image: ghcr.io/bperel/duck-cover-id-updater
+    volumes:
+      - /data/covers:/data/covers
     env_file:
       - ../../packages/api/.env
     environment:
