@@ -63,6 +63,7 @@ export default defineNuxtConfig({
     ],
     "@nuxt/eslint",
     "unplugin-icons/nuxt",
+    "@pinia/colada-nuxt",
   ],
 
   // Auto-imports
@@ -114,6 +115,31 @@ export default defineNuxtConfig({
     resolve: {
       dedupe: ["vue", "vue-i18n", "@vueuse/core", "bootstrap-vue-next"],
     },
+    server: {
+      watch: {
+        // Reduce file watching to prevent EMFILE errors
+        ignored: [
+          "**/node_modules/**",
+          "**/.git/**",
+          "**/dist/**",
+          "**/.nuxt/**",
+          "**/.output/**",
+          "**/storybook-static/**",
+          "**/.turbo/**",
+          "**/api/prisma/client_*/**",
+          "**/.pnpm-store/**",
+          "**/coverage/**",
+          "**/.storybook/**",
+          "**/.pnpm/**",
+          "**/builds/**",
+        ],
+        // Use polling as fallback if native watching fails
+        usePolling: false,
+        // Reduce the number of files watched
+        interval: 100,
+        binaryInterval: 300,
+      },
+    },
   },
 
   // App configuration
@@ -129,7 +155,20 @@ export default defineNuxtConfig({
 
   sourcemap: {
     client: "hidden",
+    server: false,
   },
 
-  ignore: ["**/node_modules", "**/dist", ".git/**", "api/prisma/client_*"],
+  ignore: [
+    "**/node_modules",
+    "**/dist",
+    ".git/**",
+    "api/prisma/client_*",
+    "**/.pnpm-store/**",
+    "**/coverage/**",
+    "**/.storybook/**",
+    "**/.nuxt/**",
+    "**/.output/**",
+    "**/storybook-static/**",
+    "**/.turbo/**",
+  ],
 });

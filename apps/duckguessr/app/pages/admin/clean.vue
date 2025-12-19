@@ -212,7 +212,10 @@
                         :disabled="isLoading"
                         :variant="variant"
                         :pressed="decision === id"
-                        @click="entryurlsPendingMaintenanceWithUrls[index]!.decision = id"
+                        @click="
+                          entryurlsPendingMaintenanceWithUrls[index]!.decision =
+                            id
+                        "
                       >
                         {{ title }}
                       </b-button>
@@ -253,18 +256,10 @@ import { getUrl } from "~/composables/url";
 import type { entryurlDetailsDecision } from "~duckguessr-prisma-browser";
 import { duckguessrSocketInjectionKey } from "~/composables/useDuckguessrSocket";
 import type { BaseButtonVariant } from "bootstrap-vue-next";
-const { maintenanceSocket } = inject(duckguessrSocketInjectionKey)!;
+import { useQuery } from "@pinia/colada";
+import "~group-by";
 
-interface DatasetWithDecisionCounts {
-  id: number;
-  name: string;
-  decisions: {
-    ok: number | null;
-    shows_author: number | null;
-    no_drawing: number | null;
-    null: number | null;
-  };
-}
+const { maintenanceSocket } = inject(duckguessrSocketInjectionKey)!;
 
 interface Decision {
   variant: keyof BaseButtonVariant;
@@ -273,23 +268,7 @@ interface Decision {
 }
 
 const { t } = useI18n();
-const datasetsGroupedByDecision = ref<{
-  [key: string]: DatasetWithDecisionCounts;
-}>({});
-const datasets = ref<{ text: string; value: string | null }[]>([]);
-const entryurlsPendingMaintenanceWithUrls = ref<
-  {
-    sitecodeUrl: string;
-    decision: entryurlDetailsDecision;
-    url: string;
-  }[]
->([]);
-const validatedAndRemainingImageCount = ref<{
-  not_validated: number;
-  validated: number;
-}>();
 const selectedDataset = ref<string>();
-const isLoading = ref(false);
 const currentPage = ref(1);
 const totalRows = ref(10000);
 const rowsPerPage = 60;
@@ -297,15 +276,17 @@ const rowsPerPage = 60;
 const user = computed(() => playerStore().playerUser);
 const isAllowed = computed(
   () =>
-    user.value &&
-    [
-      "brunoperel",
-      "Wizyx",
-      "remifanpicsou",
-      "Alex Puaud",
-      "GlxbltHugo",
-      "Picsou22",
-    ].includes(user.value.username),
+    !!(
+      user.value &&
+      [
+        "brunoperel",
+        "Wizyx",
+        "remifanpicsou",
+        "Alex Puaud",
+        "GlxbltHugo",
+        "Picsou22",
+      ].includes(user.value.username)
+    ),
 );
 
 const CLOUDINARY_URL_ROOT = import.meta.env.VITE_CLOUDINARY_URL_ROOT;
@@ -334,138 +315,137 @@ const decisionsWithNonValidated = ref({
   },
   ...decisions,
 } satisfies Record<entryurlDetailsDecision | "null", Decision>);
-const loadDatasets = async () => {
-  datasetsGroupedByDecision.value = (
-    await maintenanceSocket.getMaintenanceData()
-  ).reduce<{ [key: string]: DatasetWithDecisionCounts }>(
-    (
-      acc,
-      {
-        name,
-        decision,
-        count,
-      }: { name: string; decision: string; count: number },
-    ) => ({
-      ...acc,
-      [name]: {
-        ...(acc[name] || { name }),
-        decisions: {
-          ...((acc[name] || { decisions: {} }).decisions || {}),
-          [decision + ""]: count,
-        },
+
+const { data: maintenanceData, refresh: refreshDatasets } = useQuery({
+  key: ["maintenance", "datasets"],
+  query: () => maintenanceSocket.getMaintenanceData(),
+  enabled: () => isAllowed.value,
+});
+
+const datasetsGroupedByDecision = computed(() =>
+  Object.fromEntries(
+    Object.entries((maintenanceData.value || []).groupBy("name", "[]")).map(
+      ([name, items]) => {
+        const decisions = items.groupBy("decision", "count");
+        return [
+          name,
+          {
+            name,
+            decisions: {
+              ok: decisions.ok ?? null,
+              shows_author: decisions.shows_author ?? null,
+              no_drawing: decisions.no_drawing ?? null,
+              null: decisions.null ?? null,
+            },
+          },
+        ];
       },
-    }),
-    {},
-  );
-
-  datasets.value = [
-    { value: null, text: "Select a dataset" },
-    ...Object.values(datasetsGroupedByDecision.value).map(
-      ({ name, decisions }: DatasetWithDecisionCounts) => ({
-        value: name,
-        text:
-          name +
-          " (accepted: " +
-          (decisions.ok || 0) +
-          ", rejected: " +
-          ((decisions.shows_author || 0) + (decisions.no_drawing || 0)) +
-          ", left to validate: " +
-          (decisions.null || 0) +
-          ")",
-      }),
     ),
-  ];
-};
-const loadImagesToMaintain = async (
-  datasetName: string | null,
-  decisionsWithNonValidated: Record<entryurlDetailsDecision | "null", Decision>,
-  offset: number,
-) => {
-  if (!datasetName) {
-    validatedAndRemainingImageCount.value = undefined;
-    return;
-  }
-  isLoading.value = true;
-  const entryurlsToMaintain =
-    await maintenanceSocket.getMaintenanceDataForDataset(
-      datasetName,
-      (
-        Object.keys(decisionsWithNonValidated) as (
-          | entryurlDetailsDecision
-          | "null"
-        )[]
-      ).filter((key) => decisionsWithNonValidated[key].pressed),
-      offset,
-    );
-  await loadDatasets();
-  isLoading.value = false;
-  entryurlsPendingMaintenanceWithUrls.value = entryurlsToMaintain.map(
-    (data) => ({
-      ...data,
-      decision: data.entryurlDetails.decision || "ok",
-      url: getUrl(data.sitecodeUrl),
-    }),
-  );
-
-  const datasetsAndDecisions =
-    datasetsGroupedByDecision.value[datasetName].decisions;
-  validatedAndRemainingImageCount.value = {
-    not_validated: datasetsAndDecisions.null || 0,
-    validated:
-      (datasetsAndDecisions.ok || 0) +
-      (datasetsAndDecisions.shows_author || 0) +
-      (datasetsAndDecisions.no_drawing || 0),
-  };
-};
-
-watch(
-  decisionsWithNonValidated,
-  async (newValue) => {
-    await loadImagesToMaintain(
-      selectedDataset.value ?? null,
-      newValue,
-      (currentPage.value - 1) * rowsPerPage,
-    );
-  },
-  { deep: true },
+  ),
 );
 
-watch(selectedDataset, async (newValue) => {
-  await loadImagesToMaintain(
-    newValue ?? null,
-    decisionsWithNonValidated.value,
+const datasets = computed(() => [
+  { value: null, text: "Select a dataset" },
+  ...(!maintenanceData.value
+    ? []
+    : Object.values(datasetsGroupedByDecision.value).map(
+        ({ name, decisions }) => ({
+          value: name,
+          text: `${name} (${[
+            `accepted: ${decisions.ok || 0}`,
+            `rejected: ${(decisions.shows_author || 0) + (decisions.no_drawing || 0)}`,
+            `left to validate: ${decisions.null || 0}`,
+          ].join(",")})`,
+        }),
+      )),
+]);
+
+const activeDecisions = computed(() =>
+  (
+    Object.keys(decisionsWithNonValidated.value) as (
+      | entryurlDetailsDecision
+      | "null"
+    )[]
+  ).filter((key) => decisionsWithNonValidated.value[key].pressed),
+);
+
+const {
+  data: entryurlsToMaintain,
+  asyncStatus,
+  refresh,
+} = useQuery({
+  key: () => [
+    "maintenance",
+    "images",
+    selectedDataset.value || null,
+    activeDecisions.value,
     (currentPage.value - 1) * rowsPerPage,
-  );
+  ],
+  query: () =>
+    !selectedDataset.value
+      ? Promise.resolve([])
+      : maintenanceSocket.getMaintenanceDataForDataset(
+          selectedDataset.value,
+          activeDecisions.value,
+          (currentPage.value - 1) * rowsPerPage,
+        ),
+  enabled: () => !!selectedDataset.value && !!isAllowed.value,
 });
 
-watch(currentPage, async (newValue) => {
-  await loadImagesToMaintain(
-    selectedDataset.value ?? null,
-    decisionsWithNonValidated.value,
-    (newValue - 1) * rowsPerPage,
-  );
-});
+const entryurlsPendingMaintenanceWithUrlsBase = computed(() =>
+  (entryurlsToMaintain.value || []).map(
+    (data) =>
+      ({
+        sitecodeUrl: data.sitecodeUrl,
+        decision: data.entryurlDetails.decision || "ok",
+        url: getUrl(data.sitecodeUrl),
+      }) as const,
+  ),
+);
+
+const entryurlsPendingMaintenanceWithUrls = ref<
+  {
+    sitecodeUrl: string;
+    decision: entryurlDetailsDecision;
+    url: string;
+  }[]
+>([]);
 
 watch(
-  isAllowed,
-  async () => {
-    await loadDatasets();
+  entryurlsPendingMaintenanceWithUrlsBase,
+  (newValue) => {
+    entryurlsPendingMaintenanceWithUrls.value = [...newValue];
   },
   { immediate: true },
 );
 
-const submitInvalidations = async () => {
-  isLoading.value = true;
-  await maintenanceSocket.updateMaintenanceData(
-    entryurlsPendingMaintenanceWithUrls.value,
-  );
+const datasetsAndDecisions = computed(() =>
+  !selectedDataset.value
+    ? undefined
+    : datasetsGroupedByDecision.value[selectedDataset.value]?.decisions,
+);
 
-  await loadImagesToMaintain(
-    selectedDataset.value ?? null,
-    decisionsWithNonValidated.value,
-    currentPage.value - 1,
+const validatedAndRemainingImageCount = computed(() =>
+  !datasetsAndDecisions.value
+    ? undefined
+    : {
+        not_validated: datasetsAndDecisions.value.null || 0,
+        validated:
+          (datasetsAndDecisions.value.ok || 0) +
+          (datasetsAndDecisions.value.shows_author || 0) +
+          (datasetsAndDecisions.value.no_drawing || 0),
+      },
+);
+
+const isLoading = computed(() => asyncStatus.value === "loading");
+
+const submitInvalidations = async () => {
+  await maintenanceSocket.updateMaintenanceData(
+    entryurlsPendingMaintenanceWithUrls.value.map(
+      ({ sitecodeUrl, decision }) => ({ sitecodeUrl, decision }),
+    ),
   );
-  isLoading.value = false;
+  await Promise.all([refresh(), refreshDatasets()]);
 };
 </script>
 
