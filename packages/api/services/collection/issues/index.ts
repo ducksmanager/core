@@ -44,6 +44,7 @@ export default ({ _socket }: UserServices) => ({
           .augmentIssueArrayWithInducksData(
             issues as (T & { issuecode: string })[]
           )
+          .then(data => data.filter((issue) => 'publicationcode' in issue))
           .then(prismaDm.replaceLabelsWithLabelIds)
       );
   },
