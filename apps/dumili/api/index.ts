@@ -8,6 +8,8 @@ dotenv.config({
   override: true,
 });
 
+console.log("process.env", process.env);
+
 import "./instrument";
 
 import { v2 as cloudinary } from "cloudinary";
