@@ -9,4 +9,4 @@ COPY apps/dumili/api/dist/index.mjs /app/bundle.mjs
 COPY apps/dumili/api/dist/instrument.mjs /app/instrument.mjs
 
 EXPOSE 3003
-CMD ["node", "--import", "instrument.mjs", "bundle.mjs"]
+CMD ["node", "--import", "./instrument.mjs", "bundle.mjs"]
