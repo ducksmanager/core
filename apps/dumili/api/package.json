@@ -29,7 +29,7 @@
     "@sentry/node": "^9.47.1",
     "@sentry/profiling-node": "^9.47.1",
     "axios": "^1.13.2",
-    "axios-cache-interceptor": "^1.9.0",
+    "axios-cache-interceptor": "^1.10.0",
     "busboy": "^1.6.0",
     "cloudinary": "^1.41.3",
     "dotenv": "^16.6.1",
@@ -55,6 +55,6 @@
     "eslint-config-prettier": "^10.1.8",
     "prisma": "^6.19.1",
     "typescript": "^5.9.3",
-    "typescript-eslint": "^8.49.0"
+    "typescript-eslint": "^8.50.0"
   }
 }
