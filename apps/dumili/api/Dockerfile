@@ -8,4 +8,4 @@ COPY apps/dumili/api/.env /app/
 COPY apps/dumili/api/dist/index.mjs /app/bundle.mjs
 
 EXPOSE 3003
-CMD ["node", "bundle.mjs"]
+CMD ["node", "--import", "@sentry/node/preload", "bundle.mjs"]
