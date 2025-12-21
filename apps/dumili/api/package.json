@@ -7,7 +7,7 @@
   },
   "scripts": {
     "clean": "rm -rf dist",
-    "build": "prisma generate && bun build --entry-naming [dir]/[name].mjs --sourcemap=linked --target node index.ts --outdir dist && pnpm sentry:sourcemaps",
+    "build": "prisma generate && for source in index.ts instrument.ts; do bun build --entry-naming [dir]/[name].mjs --sourcemap=linked --target node $source --outdir dist; done && pnpm sentry:sourcemaps",
     "prisma-pull-generate": "prisma db pull && prisma generate",
     "prisma-generate": "prisma generate",
     "prisma-migrate": "prisma migrate deploy",
