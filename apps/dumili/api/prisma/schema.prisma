@@ -136,7 +136,7 @@ model aiStorySearchResult {
 model aiStorySearchPossibleStory {
   id                  Int                 @id @default(autoincrement())
   resultId            Int                 @map("result_id")
-  score               Int                 @db.SmallInt
+  score               Float               @db.Float
   aiStorySearchResult aiStorySearchResult @relation(fields: [resultId], references: [id], onUpdate: Restrict, map: "ai_story_search_result_ai_story_search_result_id_fk")
   aiStorySuggestion   aiStorySuggestion?
 
@@ -146,7 +146,7 @@ model aiStorySearchPossibleStory {
 
 model aiOcrPossibleStory {
   id                Int                @id @default(autoincrement())
-  score             Int                @db.SmallInt
+  score             Float              @db.Float
   resultId          Int                @map("result_id")
   aiOcrResult       aiOcrResult        @relation(fields: [resultId], references: [id], onUpdate: Restrict, map: "ai_ocr_possible_story_ai_ocr_result_id_fk")
   aiStorySuggestion aiStorySuggestion?
