@@ -29,7 +29,7 @@
     "node-base64-image": "^2.2.0",
     "socket-call-client": "^0.7.7",
     "socket-call-server": "^0.7.7",
-    "socket.io": "^4.8.1",
+    "socket.io": "^4.8.3",
     "universal-cookie": "^4.0.4",
     "~api": "workspace:*",
     "~dm-types": "workspace:*",
@@ -47,6 +47,6 @@
     "eslint": "^9.39.2",
     "eslint-config-prettier": "^10.1.8",
     "typescript": "^5.9.3",
-    "typescript-eslint": "^8.50.0"
+    "typescript-eslint": "^8.50.1"
   }
 }
