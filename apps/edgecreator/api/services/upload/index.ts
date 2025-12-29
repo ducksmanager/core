@@ -57,13 +57,11 @@ const _getFilenameUsagesInOtherModels = async (
   ).filter((otherUse) => issue.issuenumber !== otherUse.issuenumberStart);
 };
 
-const storePhotoHash = async (
+const storePhotoHash = (
   filename: string,
   hash: string,
   token: string
-) => {
-  await getEdgeCreatorServices(token).createElementImage(hash, filename);
-};
+) => getEdgeCreatorServices(token).createElementImage(hash, filename);
 
 const validateUpload = async (
   filename: string,

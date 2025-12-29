@@ -135,24 +135,19 @@ meta:
 <script lang="ts" setup>
 import "cropperjs/dist/cropper.css";
 
-import { useToast } from "bootstrap-vue-next";
 import type Cropper from "cropperjs";
 import { nextTick } from "vue";
 import VueCropper from "vue-cropperjs";
-import type { CropperData } from "vue-cropperjs";
 import { useI18n } from "vue-i18n";
 
 import { edgecreatorSocketInjectionKey } from "~/composables/useEdgecreatorSocket";
 import useSaveEdge from "~/composables/useSaveEdge";
-import type { ModelContributor } from "~types/ModelContributor";
 
 const i18n = useI18n();
 
 const { upload: uploadEvents } = inject(edgecreatorSocketInjectionKey)!;
 
 const { saveEdgeSvg } = useSaveEdge();
-
-const toast = useToast();
 
 interface Crop {
   width: number;
@@ -176,42 +171,27 @@ const cropper = ref<Cropper>();
 
 const isWidthBiggerThanHeight = ref(false);
 
-const initialContributors = computed(
-  (): Omit<ModelContributor, "issuecode">[] =>
-    !collection().user
-      ? []
-      : [
-          {
-            contributionType: "photographe",
-            user: {
-              id: collection().user!.id,
-              username: collection().user!.username,
-            },
+const initialContributors = computed(() =>
+  !collection().user
+    ? []
+    : [
+        {
+          contributionType: "photographe" as const,
+          user: {
+            id: collection().user!.id,
+            username: collection().user!.username,
           },
-        ],
+        },
+      ],
 );
 
 const addCrop = () => {
-  const data = cropper.value!.getData() as CropperData;
-  if (data.height < data.width) {
-    toast.create({
-      props: {
-        body: i18n
-          .t(
-            `The width of your selection is bigger than its height! Make sure that the edges appear vertically on the photo.`,
-          )
-          .toString(),
-        title: i18n.t("Error").toString(),
-      },
-    });
-  } else {
-    crops.value.push({
-      ...currentCrop.value,
-      sent: false,
-      url: cropper.value!.getCroppedCanvas().toDataURL("image/jpeg"),
-    });
-    currentCrop.value = { width: 15, height: 200 };
-  }
+  crops.value.push({
+    ...currentCrop.value,
+    sent: false,
+    url: cropper.value!.getCroppedCanvas().toDataURL("image/jpeg"),
+  });
+  currentCrop.value = { width: 15, height: 200 };
 };
 const uploadAll = async () => {
   for (const crop of crops.value.filter(({ sent }) => !sent)) {
@@ -286,8 +266,9 @@ const update = (data: { url: string }) => {
 
 onMounted(() => {
   setInterval(() => {
-    isWidthBiggerThanHeight.value =
-      cropper.value?.getData().width > cropper.value?.getData().height;
+    isWidthBiggerThanHeight.value = !cropper.value?.getData()
+      ? false
+      : cropper.value.getData().width > cropper.value.getData().height;
   }, 100);
 });
 </script>
