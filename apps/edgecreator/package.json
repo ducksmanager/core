@@ -63,7 +63,7 @@
     "@intlify/unplugin-vue-i18n": "^6.0.8",
     "@rushstack/eslint-patch": "^1.15.0",
     "@types/js-cookie": "^3.0.6",
-    "@types/node": "^22.19.3",
+    "@types/node": "^25.0.3",
     "@types/vue-cropperjs": "^4.1.6",
     "@typescript-eslint/eslint-plugin": "^8.50.1",
     "@vitejs/plugin-vue": "^6.0.3",
