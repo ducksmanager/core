@@ -33,7 +33,7 @@
     "@vueuse/integrations": "^13.9.0",
     "axios-cache-interceptor": "^1.11.2",
     "bootstrap": "^5.3.8",
-    "bootstrap-vue-next": "^0.30.5",
+    "bootstrap-vue-next": "^0.42.0",
     "js-cookie": "^3.0.5",
     "pinia": "^3.0.4",
     "socket-call-client": "^0.7.7",

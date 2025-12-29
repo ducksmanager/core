@@ -34,27 +34,39 @@ meta:
             :zoomable="false"
           />
         </div>
-        <b-container fluid>
+        <b-alert variant="info" :model-value="true">
           {{
             // eslint-disable-next-line max-len
             $t(
               'For each edge present on the picture, please select the part of the picture corresponding to the edge, fill in the information related to the edge hereunder then click on "Add". Once all the edges on the picture have been indicated, click on "Send the edge pictures".',
             )
           }}
-        </b-container>
-        <issue-select
-          :key="crops.length"
-          disable-ongoing-or-published
-          :disable-not-ongoing-nor-published="false"
-          @change="currentCrop.issuecode = $event.issuecode"
+        </b-alert>
+        <b-alert
+          v-if="isWidthBiggerThanHeight"
+          variant="danger"
+          :model-value="true"
         >
-          <template #dimensions>
-            <dimensions v-model="currentCrop" />
-          </template>
-        </issue-select>
-        <b-button :disabled="!currentCrop" class="mt-3 mb-4" @click="addCrop">
-          {{ $t("Add") }}
-        </b-button>
+          {{
+            $t(
+              "The width of your selection is bigger than its height! Make sure that the edges appear vertically on the photo.",
+            )
+          }}
+        </b-alert>
+        <template v-else>
+          <issue-select
+            disable-ongoing-or-published
+            :disable-not-ongoing-nor-published="false"
+            @change="currentCrop.issuecode = $event.issuecode"
+          >
+            <template #dimensions>
+              <dimensions v-model="currentCrop" />
+            </template>
+          </issue-select>
+          <b-button :disabled="!currentCrop" class="mt-3 mb-4" @click="addCrop">
+            {{ $t("Add") }}
+          </b-button>
+        </template>
         <b-card-group deck columns>
           <b-card
             v-for="(crop, i) in crops"
@@ -123,7 +135,7 @@ meta:
 <script lang="ts" setup>
 import "cropperjs/dist/cropper.css";
 
-import { useToastController } from "bootstrap-vue-next";
+import { useToast } from "bootstrap-vue-next";
 import type Cropper from "cropperjs";
 import { nextTick } from "vue";
 import VueCropper from "vue-cropperjs";
@@ -139,6 +151,8 @@ const i18n = useI18n();
 const { upload: uploadEvents } = inject(edgecreatorSocketInjectionKey)!;
 
 const { saveEdgeSvg } = useSaveEdge();
+
+const toast = useToast();
 
 interface Crop {
   width: number;
@@ -160,6 +174,8 @@ const crops = ref<CropWithData[]>([]);
 const uploadedImageData = ref<{ url: string }>();
 const cropper = ref<Cropper>();
 
+const isWidthBiggerThanHeight = ref(false);
+
 const initialContributors = computed(
   (): Omit<ModelContributor, "issuecode">[] =>
     !collection().user
@@ -178,7 +194,7 @@ const initialContributors = computed(
 const addCrop = () => {
   const data = cropper.value!.getData() as CropperData;
   if (data.height < data.width) {
-    useToastController().show({
+    toast.create({
       props: {
         body: i18n
           .t(
@@ -267,6 +283,13 @@ const drop = (e: DragEvent) => {
 const update = (data: { url: string }) => {
   uploadedImageData.value = { url: data.url };
 };
+
+onMounted(() => {
+  setInterval(() => {
+    isWidthBiggerThanHeight.value =
+      cropper.value?.getData().width > cropper.value?.getData().height;
+  }, 100);
+});
 </script>
 
 <style scoped lang="scss">

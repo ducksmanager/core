@@ -35,6 +35,12 @@ importers:
       axios-cache-interceptor:
         specifier: ^1.11.2
         version: 1.11.2(axios@1.12.2)
+      bootstrap:
+        specifier: ^5.3.8
+        version: 5.3.8(@popperjs/core@2.11.8)
+      bootstrap-vue-next:
+        specifier: ^0.42.0
+        version: 0.42.0(@vueuse/core@14.1.0(vue@3.5.26(typescript@5.9.3)))(vue-router@4.6.4(vue@3.5.26(typescript@5.9.3)))(vue@3.5.26(typescript@5.9.3))
       js-cookie:
         specifier: ^3.0.5
         version: 3.0.5
@@ -71,7 +77,7 @@ importers:
     devDependencies:
       '@bootstrap-vue-next/nuxt':
         specifier: ^0.40.9
-        version: 0.40.9(bootstrap-vue-next@0.40.9(@vueuse/core@14.1.0(vue@3.5.26(typescript@5.9.3)))(vue-router@4.6.4(vue@3.5.26(typescript@5.9.3)))(vue@3.5.26(typescript@5.9.3)))(magicast@0.5.1)
+        version: 0.40.9(bootstrap-vue-next@0.42.0(@vueuse/core@14.1.0(vue@3.5.26(typescript@5.9.3)))(vue-router@4.6.4(vue@3.5.26(typescript@5.9.3)))(vue@3.5.26(typescript@5.9.3)))(magicast@0.5.1)
       '@eslint/eslintrc':
         specifier: ^3.3.3
         version: 3.3.3
@@ -108,12 +114,6 @@ importers:
       '@types/node':
         specifier: ^22.19.3
         version: 22.19.3
-      bootstrap:
-        specifier: ^5.3.8
-        version: 5.3.8(@popperjs/core@2.11.8)
-      bootstrap-vue-next:
-        specifier: ^0.40.9
-        version: 0.40.9(@vueuse/core@14.1.0(vue@3.5.26(typescript@5.9.3)))(vue-router@4.6.4(vue@3.5.26(typescript@5.9.3)))(vue@3.5.26(typescript@5.9.3))
       concurrently:
         specifier: ^9.2.1
         version: 9.2.1
@@ -3016,8 +3016,8 @@ packages:
   boolbase@1.0.0:
     resolution: {integrity: sha512-JZOSA7Mo9sNGB8+UjSgzdLtokWAky1zbztM3WRLCbZ70/3cTANmQmOdR7y2g+J0e2WXywy1yS468tY+IruqEww==}
 
-  bootstrap-vue-next@0.40.9:
-    resolution: {integrity: sha512-m4EODlKWIkCFiQzICmKpOTjl3mxqKIpIbsBX0liFsMUip7huZkHDmaZUm6PrqJM2PHrZ7n8l6YRUgBPzFKUcYg==}
+  bootstrap-vue-next@0.42.0:
+    resolution: {integrity: sha512-CSkk2jL8Y2U9zgdutxjbBx4DRhKFmxTmaTQhhMYXVvczkVksw2mzRu1MU//950z0lvUwSqJo3R7y0opoyEA8zg==}
     peerDependencies:
       '@floating-ui/vue': '*'
       '@vueuse/core': '*'
@@ -6517,10 +6517,10 @@ snapshots:
       cac: 6.7.14
       citty: 0.1.6
 
-  '@bootstrap-vue-next/nuxt@0.40.9(bootstrap-vue-next@0.40.9(@vueuse/core@14.1.0(vue@3.5.26(typescript@5.9.3)))(vue-router@4.6.4(vue@3.5.26(typescript@5.9.3)))(vue@3.5.26(typescript@5.9.3)))(magicast@0.5.1)':
+  '@bootstrap-vue-next/nuxt@0.40.9(bootstrap-vue-next@0.42.0(@vueuse/core@14.1.0(vue@3.5.26(typescript@5.9.3)))(vue-router@4.6.4(vue@3.5.26(typescript@5.9.3)))(vue@3.5.26(typescript@5.9.3)))(magicast@0.5.1)':
     dependencies:
       '@nuxt/kit': 3.20.2(magicast@0.5.1)
-      bootstrap-vue-next: 0.40.9(@vueuse/core@14.1.0(vue@3.5.26(typescript@5.9.3)))(vue-router@4.6.4(vue@3.5.26(typescript@5.9.3)))(vue@3.5.26(typescript@5.9.3))
+      bootstrap-vue-next: 0.42.0(@vueuse/core@14.1.0(vue@3.5.26(typescript@5.9.3)))(vue-router@4.6.4(vue@3.5.26(typescript@5.9.3)))(vue@3.5.26(typescript@5.9.3))
     transitivePeerDependencies:
       - magicast
 
@@ -9557,7 +9557,7 @@ snapshots:
 
   boolbase@1.0.0: {}
 
-  bootstrap-vue-next@0.40.9(@vueuse/core@14.1.0(vue@3.5.26(typescript@5.9.3)))(vue-router@4.6.4(vue@3.5.26(typescript@5.9.3)))(vue@3.5.26(typescript@5.9.3)):
+  bootstrap-vue-next@0.42.0(@vueuse/core@14.1.0(vue@3.5.26(typescript@5.9.3)))(vue-router@4.6.4(vue@3.5.26(typescript@5.9.3)))(vue@3.5.26(typescript@5.9.3)):
     dependencies:
       vue: 3.5.26(typescript@5.9.3)
     optionalDependencies:

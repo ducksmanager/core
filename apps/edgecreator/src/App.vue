@@ -1,6 +1,7 @@
 <template>
-  <BToastOrchestrator />
-  <suspense><router-view /></suspense>
+  <suspense
+    ><BApp><router-view /></BApp
+  ></suspense>
 </template>
 
 <script setup lang="ts">
