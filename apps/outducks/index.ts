@@ -13,7 +13,6 @@ import { firefox } from "playwright-firefox";
 const excludedSitecodes = [
   "thumbnails",
   "thumbnails2",
-  "thumbnails3",
   "renamed",
 ];
 
