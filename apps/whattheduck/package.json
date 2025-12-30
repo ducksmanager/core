@@ -52,7 +52,7 @@
     "@sentry/capacitor": "^2.4.1",
     "@sentry/vue": "9.46.0",
     "@vueuse/components": "^13.9.0",
-    "@vueuse/core": "^13.9.0",
+    "@vueuse/core": "^14.1.0",
     "@vueuse/integrations": "^13.9.0",
     "axios-cache-interceptor": "^1.11.2",
     "chart.js": "^4.5.1",
