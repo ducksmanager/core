@@ -7,7 +7,7 @@
   "version": "1.0.0",
   "scripts": {
     "duckguessr": "concurrently -p \"[duckguessr-{name}]\" --kill-others-on-fail -n web,api,dm \"pnpm -F ~duckguessr dev\" \"pnpm -F ~duckguessr-api dev\" \"pnpm -F ~web web\"",
-    "dev": "nuxt dev --port 8007",
+    "dev": "nuxt dev --port 8007 --host 0.0.0.0",
     "dev-storybook": "concurrently \"pnpm -F ~duckguessr-api dev\" \"storybook dev\"",
     "build": "nuxt build && pnpm build-storybook",
     "build-storybook": "storybook build",
@@ -22,6 +22,7 @@
     "prod:transfer-files-post": "pnpm -F '~ci' prod:transfer-files apps/duckguessr/docker-compose.yml:@apps/duckguessr/docker-compose.yml apps/duckguessr/Caddyfile:@apps/duckguessr/Caddyfile"
   },
   "dependencies": {
+    "@bootstrap-vue-next/nuxt": "^0.42.0",
     "@nuxtjs/i18n": "^10.2.1",
     "@nuxtjs/storybook": "^9.0.1",
     "@pinia/nuxt": "^0.11.3",
@@ -46,7 +47,6 @@
     "~web": "workspace:*"
   },
   "devDependencies": {
-    "@bootstrap-vue-next/nuxt": "^0.40.9",
     "@eslint/eslintrc": "^3.3.3",
     "@eslint/js": "^9.39.2",
     "@iconify-json/bi": "^1.2.7",
