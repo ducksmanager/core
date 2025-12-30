@@ -15,10 +15,7 @@ import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
 
 import type { UserServices } from "../../../index";
 import { getShownQuotations } from "../../coa/quotations";
-import {
-  checkPurchaseIdsBelongToUser,
-  deleteIssues,
-} from "./util";
+import { checkPurchaseIdsBelongToUser, deleteIssues } from "./util";
 
 export default ({ _socket }: UserServices) => ({
   getIssues: async () => {
@@ -44,7 +41,7 @@ export default ({ _socket }: UserServices) => ({
           .augmentIssueArrayWithInducksData(
             issues as (T & { issuecode: string })[]
           )
-          .then(data => data.filter((issue) => 'publicationcode' in issue))
+          .then((data) => data.filter((issue) => "publicationcode" in issue))
           .then(prismaDm.replaceLabelsWithLabelIds)
       );
   },
@@ -167,8 +164,11 @@ const addOrChangeIssues = async (
   });
 
   const updateOperations = existingIssues.map((existingIssue) => {
-    const { id, issuecode: _issuecode, ...existingIssueWithoutId } =
-      existingIssue;
+    const {
+      id,
+      issuecode: _issuecode,
+      ...existingIssueWithoutId
+    } = existingIssue;
     return prismaDm.issue.update({
       data: {
         ...existingIssueWithoutId,
@@ -202,7 +202,7 @@ const addOrChangeIssues = async (
         },
       })
     );
-    await prismaDm.$transaction(insertOperations);
+  await prismaDm.$transaction(insertOperations);
   // TODO handle labels on multiple issues
 
   // const issueIds = (
@@ -274,11 +274,11 @@ const addOrChangeCopies = async (
       },
     });
   });
-  await prismaDm.$transaction(operations);
-
-  const newIssueLabelsOperations = issueIds
-    .filter((issueId) => issueId !== null)
-    .map((issueId, copyNumber) =>
+  const upsertResults = await prismaDm.$transaction(operations);
+  const newIssueLabelsOperations = upsertResults
+    .map((result, copyNumber) => ({ result, copyNumber }))
+    .filter(({ result }) => "id" in result)
+    .map(({ result: { id: issueId }, copyNumber }) =>
       prismaDm.issueLabel.createMany({
         data:
           labelIds[copyNumber]?.map((labelId) => ({
@@ -308,7 +308,6 @@ export const resetDemo = async () => {
   const csvPath = existsSync("/app/demo_issues.csv")
     ? "/app/"
     : cwd() + "/services/auth/";
-
 
   const demoUser = (await prismaDm.user.findFirst({
     where: { username: "demo" },
