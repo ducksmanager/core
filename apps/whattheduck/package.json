@@ -43,7 +43,7 @@
     "@capawesome/capacitor-android-edge-to-edge-support": "^7.2.3",
     "@capawesome/capacitor-app-update": "^7.2.0",
     "@capawesome/capacitor-file-picker": "^7.2.0",
-    "@capgo/capacitor-updater": "^7.40.5",
+    "@capgo/capacitor-updater": "7.39.0",
     "@ionic/pwa-elements": "^3.3.0",
     "@ionic/storage": "^4.0.0",
     "@ionic/vue": "^8.7.15",

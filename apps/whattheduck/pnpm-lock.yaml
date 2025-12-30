@@ -57,8 +57,8 @@ importers:
         specifier: ^7.2.0
         version: 7.2.0(@capacitor/core@7.4.4)
       '@capgo/capacitor-updater':
-        specifier: ^7.40.5
-        version: 7.40.5(@capacitor/core@7.4.4)
+        specifier: 7.39.0
+        version: 7.39.0(@capacitor/core@7.4.4)
       '@ionic/pwa-elements':
         specifier: ^3.3.0
         version: 3.3.0
@@ -394,8 +394,8 @@ packages:
     peerDependencies:
       '@capacitor/core': '>=7.0.0'
 
-  '@capgo/capacitor-updater@7.40.5':
-    resolution: {integrity: sha512-1S5nYCSKlkgLMe+LD4EL8j5eLn8cfHcGFIApO5I9Z8vqtRCjwG0S8oPu86L7HIu4TfSwOohph9r35xELBkGoeg==}
+  '@capgo/capacitor-updater@7.39.0':
+    resolution: {integrity: sha512-c0n5p1BPFYhcN1m0mtu1zaYwlwUPgT47q2PY7NeIAAXiXYk50veS2y6Vg7zii58FPZ65LNiGu6ONmz6n59HF8A==}
     peerDependencies:
       '@capacitor/core': '>=7.0.0'
 
@@ -5932,7 +5932,7 @@ snapshots:
     dependencies:
       '@capacitor/core': 7.4.4
 
-  '@capgo/capacitor-updater@7.40.5(@capacitor/core@7.4.4)':
+  '@capgo/capacitor-updater@7.39.0(@capacitor/core@7.4.4)':
     dependencies:
       '@capacitor/core': 7.4.4
 
