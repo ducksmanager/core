@@ -23,7 +23,13 @@ export default defineNuxtConfig({
 
   devtools: { enabled: false },
   compatibilityDate: "2025-09-09",
-  css: ["bootstrap/dist/css/bootstrap.min.css"],
+  css: [
+    path.resolve(
+      __dirname,
+      "node_modules/bootstrap/dist/css/bootstrap.min.css",
+    ),
+    path.resolve(__dirname, "styles/main.scss"),
+  ],
 
   // Modules
   modules: [
