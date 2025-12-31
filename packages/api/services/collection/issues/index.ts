@@ -237,60 +237,76 @@ const addOrChangeCopies = async (
   purchaseIds: (number | null)[],
   labelIds: (number[] | undefined)[]
 ): Promise<TransactionResults> => {
-  const operations = issueIds.map((issueId, copyNumber) => {
-    if (issueId && conditions[copyNumber] === null) {
-      return prismaDm.issue.delete({
-        where: { id: issueId },
-      });
-    }
-
-    const common = {
-      condition: conditions[copyNumber]!,
-      purchaseId: purchaseIds[copyNumber] || -2,
-    };
-
-    const createInput = {
-      ...common,
-      issuecode,
+  let operations = [], deleteOperations = [];
+  const previousIssueIds = await prismaDm.issue.findMany({
+    where: {
       userId,
-      creationDate: new Date(),
-    };
-    const updateInput = {
-      ...common,
-      labels: {
-        deleteMany: {},
-      },
-    };
-    console.log("upsert", {
-      create: createInput,
-      update: updateInput,
-      where: { id: issueId || 0 },
-    });
-    return prismaDm.issue.upsert({
-      create: createInput,
-      update: updateInput,
-      where: {
-        id: issueId || 0,
-      },
-    });
+      issuecode,
+    },
   });
-  const upsertResults = await prismaDm.$transaction(operations);
-  const newIssueLabelsOperations = upsertResults
-    .map((result, copyNumber) => ({ result, copyNumber }))
-    .filter(({ result }) => "id" in result)
-    .map(({ result: { id: issueId }, copyNumber }) =>
-      prismaDm.issueLabel.createMany({
-        data:
-          labelIds[copyNumber]?.map((labelId) => ({
-            labelId,
-            issueId,
-          })) || [],
-      })
-    );
-  await prismaDm.$transaction(newIssueLabelsOperations);
+  const deletedIssueIds = previousIssueIds.filter(({ id }) => !issueIds.includes(id));
+  if (deletedIssueIds.length) {
+    deleteOperations = deletedIssueIds.map(({ id }) => prismaDm.issue.delete({
+      where: { id },
+    }));
+    await prismaDm.$transaction(deleteOperations);
+  }
+  if (issueIds.length) {
+    operations = issueIds.map((issueId, copyNumber) => {
+      if (issueId && conditions[copyNumber] === null) {
+        return prismaDm.issue.delete({
+          where: { id: issueId },
+        });
+      }
+
+      const common = {
+        condition: conditions[copyNumber]!,
+        purchaseId: purchaseIds[copyNumber] || -2,
+      };
+
+      const createInput = {
+        ...common,
+        issuecode,
+        userId,
+        creationDate: new Date(),
+      };
+      const updateInput = {
+        ...common,
+        labels: {
+          deleteMany: {},
+        },
+      };
+      console.log("upsert", {
+        create: createInput,
+        update: updateInput,
+        where: { id: issueId || 0 },
+      });
+      return prismaDm.issue.upsert({
+        create: createInput,
+        update: updateInput,
+        where: {
+          id: issueId || 0,
+        },
+      });
+    });
+    const upsertResults = await prismaDm.$transaction(operations);
+    const newIssueLabelsOperations = upsertResults
+      .map((result, copyNumber) => ({ result, copyNumber }))
+      .filter(({ result }) => "id" in result)
+      .map(({ result: { id: issueId }, copyNumber }) =>
+        prismaDm.issueLabel.createMany({
+          data:
+            labelIds[copyNumber]?.map((labelId) => ({
+              labelId,
+              issueId,
+            })) || [],
+        })
+      );
+    await prismaDm.$transaction(newIssueLabelsOperations);
+  }
 
   return {
-    operations: operations.length,
+    operations: operations.length + deleteOperations.length,
   };
 };
 
