@@ -83,6 +83,9 @@ export default {
       where: {
         publicationcode,
       },
+      orderBy: {
+        issuecode: "asc",
+      },
     }),
 
   getIssuesByStorycode: async (storycode: string) =>
