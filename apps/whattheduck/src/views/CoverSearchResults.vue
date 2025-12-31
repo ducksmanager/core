@@ -10,7 +10,7 @@
     </ion-header>
     <ion-content :fullscreen="true">
       <camera-preview-overlay v-if="isCameraPreviewShown" />
-      <div v-if="!covers.length"></div>
+      <div v-else-if="!covers.length"></div>
       <template v-else>
         <div>
           <Carousel3d @after-slide-change="(index: number) => (cover = covers[index])">
