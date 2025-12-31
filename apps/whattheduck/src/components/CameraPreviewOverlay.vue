@@ -70,7 +70,6 @@ watch(isPortrait, () => {
   currentRatioIndex.value = isPortrait.value ? 0 : 1;
 });
 
-const isCameraPreviewStarted = ref(false);
 const cameraPreview = useTemplateRef<HTMLDivElement>('cameraPreview');
 
 const { coverId: coverIdEvents } = inject(dmSocketInjectionKey)!;
@@ -96,29 +95,34 @@ watch([overlayHeight, currentRatioIndex], async () => {
     }, {} as BoundingClientRect);
     const currentRatio = RATIOS[currentRatioIndex.value];
     if (isPortrait.value) {
-      const heightAccordingToRatio = Math.round(currentRatio.ratio * boundingClientRect.value.width);
+      const heightAccordingToRatio = currentRatio.ratio * boundingClientRect.value.width;
       boundingClientRect.value.x = 0;
-      boundingClientRect.value.y = 25 + (boundingClientRect.value.height - heightAccordingToRatio) / 2;
+      boundingClientRect.value.y = 25 + Math.round((boundingClientRect.value.height - heightAccordingToRatio) / 2);
       boundingClientRect.value.height = heightAccordingToRatio;
     } else {
-      const widthAccordingToRatio = Math.round(boundingClientRect.value.height / currentRatio.ratio);
+      const widthAccordingToRatio = boundingClientRect.value.height / currentRatio.ratio;
       boundingClientRect.value.x = (boundingClientRect.value.width - widthAccordingToRatio) / 2;
-      boundingClientRect.value.y = 0;
+      boundingClientRect.value.y = 25;
       boundingClientRect.value.width = widthAccordingToRatio;
     }
 
     if (boundingClientRect.value?.height) {
+      boundingClientRect.value.x = Math.round(boundingClientRect.value.x);
+      boundingClientRect.value.y = Math.round(boundingClientRect.value.y);
+
+      boundingClientRect.value.width = Math.round(boundingClientRect.value.width);
+      boundingClientRect.value.height = Math.round(boundingClientRect.value.height);
+
       const cameraPreviewOptions: CameraPreviewOptions = {
         parent: 'camera-preview',
         disableAudio: true,
         position: 'rear',
         ...boundingClientRect.value,
       } as const;
-      if (isCameraPreviewStarted.value) {
+      if ((await CameraPreview.isCameraStarted()).value) {
         await CameraPreview.stop();
       }
       await CameraPreview.start(cameraPreviewOptions);
-      isCameraPreviewStarted.value = true;
     }
   }
 });
