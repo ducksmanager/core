@@ -229,7 +229,9 @@
                       <title :id="`purchase-${purchaseId}`">
                         {{ boughtOnTextPrefix }}
                         {{
-                          purchases.find(({ id }) => id === purchaseId)!.date
+                          dayjs(
+                            purchases.find(({ id }) => id === purchaseId)!.date
+                          ).format("L")
                         }}
                       </title>
                       <path
@@ -310,7 +312,7 @@
             variant="danger"
             @click="
               deletePublicationIssues(
-                userIssuesForPublication!.map(({ issuecode }) => issuecode),
+                userIssuesForPublication!.map(({ issuecode }) => issuecode)
               )
             "
           >
@@ -345,6 +347,9 @@
 <script setup lang="ts">
 import ContextMenuOnSaleByOthers from "./ContextMenuOnSaleByOthers.vue";
 import ContextMenuOwnCollection from "./ContextMenuOwnCollection.vue";
+import dayjs from "dayjs";
+import localizedFormat from "dayjs/plugin/localizedFormat";
+dayjs.extend(localizedFormat);
 
 type simpleIssue = {
   issuecode: string;
