@@ -65,7 +65,7 @@ export const getDmClient = () => {
       console.log('DM connection string configured with pool parameters');
       dmClient = prismaExtendedDm(new PrismaClientDm({
         adapter: new PrismaMariaDb(connectionString),
-        log: process.env.NODE_ENV === 'development' ? ['error', 'warn'] : ['error'],
+        log: process.env.NODE_ENV === 'local' ? ['error', 'warn'] : ['error'],
       }));
     } catch (error) {
       console.error('Failed to create DM PrismaClient:', error);
@@ -81,7 +81,7 @@ export const getDmStatsClient = () => {
     const connectionString = ensureConnectionString(process.env.DATABASE_URL_DM_STATS!);
     dmStatsClient = new PrismaClientDmStats({
       adapter: new PrismaMariaDb(connectionString),
-      log: process.env.NODE_ENV === 'development' ? ['error', 'warn'] : ['error'],
+      log: process.env.NODE_ENV === 'local' ? ['error', 'warn'] : ['error'],
     });
   }
   return dmStatsClient;
@@ -96,7 +96,7 @@ export const getCoaClient = () => {
       const bareClient = new PrismaClientCoa({
         adapter: new PrismaMariaDb(connectionString),
         log:
-          process.env.NODE_ENV === "development"
+          process.env.NODE_ENV === "local"
             ? ["error", "warn", "query"]
             : ["error"],
       });
@@ -119,7 +119,7 @@ export const getEdgeCreatorClient = () => {
     const connectionString = ensureConnectionString(process.env.DATABASE_URL_EDGECREATOR!);
     edgeCreatorClient = new PrismaClientEdgeCreator({
       adapter: new PrismaMariaDb(connectionString),
-      log: process.env.NODE_ENV === 'development' ? ['error', 'warn'] : ['error'],
+      log: process.env.NODE_ENV === 'local' ? ['error', 'warn'] : ['error'],
     });
   }
   return edgeCreatorClient;
@@ -131,7 +131,7 @@ export const getCoverInfoClient = () => {
     const connectionString = ensureConnectionString(process.env.DATABASE_URL_COVER_INFO!);
     coverInfoClient = new PrismaClientCoverInfo({
       adapter: new PrismaMariaDb(connectionString),
-      log: process.env.NODE_ENV === 'development' ? ['error', 'warn'] : ['error'],
+      log: process.env.NODE_ENV === 'local' ? ['error', 'warn'] : ['error'],
     });
   }
   return coverInfoClient;

@@ -11,7 +11,7 @@ function getLocalIP(): string {
   }
 }
 
-const isDev = process.env.NODE_ENV !== 'production';
+const isDev = process.env.NODE_ENV === 'local';
 
 const config: CapacitorConfig = {
   appId: 'net.ducksmanager.whattheduck',
