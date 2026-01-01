@@ -3,7 +3,6 @@ import dotenv from "dotenv";
 dotenv.config({
   path: ".env",
 });
-
 import { readdirSync } from "fs";
 import * as fs from "fs/promises";
 import path from "path";
@@ -11,7 +10,6 @@ import path from "path";
 import {
   type inducks_entry,
   type inducks_entryurl,
-  Prisma,
 } from "~prisma-schemas/client_coa/client";
 import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa/client";
 
@@ -41,23 +39,12 @@ const files = readdirSync(root, {
 // Set RECALCULATE_ALL=true to force recalculation of all vectors (useful after model retraining)
 const RECALCULATE_ALL = process.env.RECALCULATE_ALL === "true";
 
-const existingVectors = RECALCULATE_ALL
-  ? [] // Empty array means we'll recalculate everything
-  : (
-      await prismaCoa.inducks_entryurl_vector.findMany({
-        select: {
-          entrycode: true,
-        },
-      })
-    ).map((v) => v.entrycode);
-
 if (RECALCULATE_ALL) {
   console.log("⚠️ RECALCULATE_ALL=true: Will recalculate all vectors (existing vectors will be replaced)");
 } else {
-  console.log(`Found ${existingVectors.length} existing vectors (will skip these)`);
+  const existingVectorCount = await prismaCoa.inducks_entryurl_vector.count();
+  console.log(`Found ${existingVectorCount} existing vectors (will skip these)`);
 }
-
-const BATCH_SIZE = 50;
 
 const filesToProcess: {
   filePath: string;
@@ -80,64 +67,70 @@ for (const file of files) {
 
 console.log(`Found ${filesToProcess.length} files to process`);
 
-const processBatch = async (
-  batch: {
-    filePath: string;
-    relativePath: string;
-    file: { isDirectory: () => boolean; parentPath: string; name: string };
-  }[],
-  existingVectors: string[],
-) => {
-  const relativePaths = batch.map((item) =>
-    item.relativePath.replace("webusers/webusers/", ""),
-  );
+const tableName = `temp_files_to_process_${Date.now()}`;
 
-  const entries = await prismaCoa.$queryRaw<
-    {
-      entrycode: Exclude<inducks_entryurl["entrycode"], null>;
-      isCover: inducks_entry["isCover"];
-      url: string;
-    }[]
-  >`
-    SELECT entrycode, is_cover as isCover, url
-    FROM inducks_entryurl eu
-    INNER JOIN inducks_entry e USING (entrycode)
-    WHERE sitecode='webusers' AND url IN (${Prisma.join(relativePaths)})
-  `;
+const processFiles = async (tableName: string) => {
+  const filesWithEntries = RECALCULATE_ALL
+    ? await prismaCoa.$queryRawUnsafe<
+        {
+          filePath: string;
+          relativePath: string;
+          entrycode: Exclude<inducks_entryurl["entrycode"], null>;
+          isCover: inducks_entry["isCover"];
+          url: string;
+        }[]
+      >(`
+        SELECT 
+          tf.file_path AS filePath,
+          tf.relative_path AS relativePath,
+          eu.entrycode,
+          e.is_cover as isCover,
+          tf.url
+        FROM ${tableName} tf
+        INNER JOIN inducks_entryurl eu ON eu.sitecode = 'webusers' AND eu.url = tf.url
+        INNER JOIN inducks_entry e USING (entrycode)
+      `)
+    : await prismaCoa.$queryRawUnsafe<
+        {
+          filePath: string;
+          relativePath: string;
+          entrycode: Exclude<inducks_entryurl["entrycode"], null>;
+          isCover: inducks_entry["isCover"];
+          url: string;
+        }[]
+      >(`
+        SELECT 
+          tf.file_path AS filePath,
+          tf.relative_path AS relativePath,
+          eu.entrycode,
+          e.is_cover as isCover,
+          tf.url
+        FROM ${tableName} tf
+        INNER JOIN inducks_entryurl eu ON eu.sitecode = 'webusers' AND eu.url = tf.url
+        INNER JOIN inducks_entry e USING (entrycode)
+        LEFT JOIN inducks_entryurl_vector ev ON ev.entrycode = eu.entrycode
+        WHERE ev.entrycode IS NULL
+      `);
 
-  // Create a map for quick lookup
-  const entryMap = new Map(entries.map((entry) => [entry.url, entry]));
-
-  // Filter out files that don't have entries or already have vectors
-  const validFiles = batch.filter((item) => {
-    const url = item.relativePath.replace("webusers/webusers/", "");
-    const entry = entryMap.get(url);
-
-    if (!entry) {
-      console.log(`Entry not found for ${item.relativePath}`);
-      return false;
-    }
-
-    if (existingVectors.includes(entry.entrycode)) {
-      console.log(`Vector already exists for ${item.relativePath}`);
-      return false;
-    }
-
-    return true;
-  });
-
-  if (validFiles.length === 0) {
-    console.log("No valid files in this batch");
+  if (filesWithEntries.length === 0) {
+    console.log("No valid files to process");
     return;
   }
 
-  // Process vectors in parallel for this batch
-  const vectorPromises = validFiles.map(async (item) => {
-    try {
-      const url = item.relativePath.replace("webusers/webusers/", "");
-      const entry = entryMap.get(url)!;
+  const filesWithEntriesUrls = new Set(filesWithEntries.map(f => f.url));
+  const allFiles = await prismaCoa.$queryRawUnsafe<{ url: string; relativePath: string }[]>(`
+    SELECT url, relative_path AS relativePath
+    FROM ${tableName}
+  `);
+  
+  for (const file of allFiles) {
+    if (!filesWithEntriesUrls.has(file.url)) {
+      console.log(`Entry not found for ${file.relativePath}`);
+    }
+  }
 
-      // Check if file exists and is readable
+  const vectorPromises = filesWithEntries.map(async (item) => {
+    try {
       try {
         await fs.access(item.filePath);
       } catch (accessError) {
@@ -151,7 +144,6 @@ const processBatch = async (
       const vector = await getImageVector(item.filePath);
       const vectorString = formatVectorForDB(vector.vector);
 
-      // Validate vector
       if (!vector.vector || vector.vector.length === 0) {
         console.error(
           `Empty vector generated for ${item.relativePath}`,
@@ -159,10 +151,12 @@ const processBatch = async (
         return null;
       }
 
+      console.log(`Vector generated for ${item.relativePath}`);
+
       return {
-        entrycode: entry.entrycode,
+        entrycode: item.entrycode,
         vectorString,
-        isCover: entry.isCover,
+        isCover: item.isCover,
         relativePath: item.relativePath,
       };
     } catch (error) {
@@ -170,7 +164,6 @@ const processBatch = async (
       console.error(
         `Error creating image vector for ${item.relativePath}: ${errorMessage}`,
       );
-      // Log the full error for debugging but don't fail the entire batch
       if (error instanceof Error && error.stack) {
         console.error(`Stack trace: ${error.stack}`);
       }
@@ -184,32 +177,25 @@ const processBatch = async (
   );
 
   if (validVectors.length === 0) {
-    console.log("No valid vectors generated in this batch");
+    console.log("No valid vectors generated");
     return;
   }
 
-  // Batch insert/update vectors
-  try {
-    // Escape SQL strings properly for MariaDB
-    const escapeSqlString = (str: string) => {
-      return str.replace(/\\/g, "\\\\").replace(/'/g, "''");
-    };
+  await prismaCoa.$transaction(async (tx) => {
+    const escapeSqlString = (str: string) => str.replace(/\\/g, "\\\\").replace(/'/g, "''");
 
     if (RECALCULATE_ALL) {
-      // Use INSERT ... ON DUPLICATE KEY UPDATE for MariaDB (updates existing vectors)
-      // Process individually to ensure proper escaping
       for (const vector of validVectors) {
         const entrycodeEscaped = escapeSqlString(vector.entrycode);
         const vectorStringEscaped = escapeSqlString(vector.vectorString);
         
-        await prismaCoa.$executeRawUnsafe(`
+        await tx.$executeRawUnsafe(`
           INSERT INTO inducks_entryurl_vector (entrycode, v, is_cover)
           VALUES ('${entrycodeEscaped}', VEC_FromText('${vectorStringEscaped}'), ${vector.isCover})
           ON DUPLICATE KEY UPDATE v = VALUES(v), is_cover = VALUES(is_cover)
         `);
       }
     } else {
-      // Regular batch insert for new vectors only
       const values = validVectors
         .map(
           (v) => {
@@ -220,64 +206,61 @@ const processBatch = async (
         )
         .join(", ");
 
-      await prismaCoa.$executeRawUnsafe(`
+      await tx.$executeRawUnsafe(`
         INSERT INTO inducks_entryurl_vector (entrycode, v, is_cover)
         VALUES ${values}
       `);
     }
 
     console.log(
-      `Successfully inserted ${validVectors.length} vectors in batch`,
+      `Successfully inserted ${validVectors.length} vectors`,
     );
-
-    // Update existing vectors set to avoid reprocessing
-    validVectors.forEach((v) => {
-      existingVectors.push(v.entrycode);
-    });
-  } catch (error) {
-    console.error("Error in batch insert:", error);
-
-    // Fallback to individual inserts if batch insert fails
-    console.log("Falling back to individual inserts...");
-    const escapeSqlString = (str: string) => {
-      return str.replace(/\\/g, "\\\\").replace(/'/g, "''");
-    };
-    
-    for (const vector of validVectors) {
-      try {
-        const entrycodeEscaped = escapeSqlString(vector.entrycode);
-        const vectorStringEscaped = escapeSqlString(vector.vectorString);
-        
-        if (RECALCULATE_ALL) {
-          await prismaCoa.$executeRawUnsafe(`
-            INSERT INTO inducks_entryurl_vector (entrycode, v, is_cover)
-            VALUES ('${entrycodeEscaped}', VEC_FromText('${vectorStringEscaped}'), ${vector.isCover})
-            ON DUPLICATE KEY UPDATE v = VALUES(v), is_cover = VALUES(is_cover)
-          `);
-        } else {
-          await prismaCoa.$executeRawUnsafe(`
-            INSERT INTO inducks_entryurl_vector (entrycode, v, is_cover)
-            VALUES ('${entrycodeEscaped}', VEC_FromText('${vectorStringEscaped}'), ${vector.isCover})
-          `);
-        }
-        console.log(
-          `Added image vector ${vector.entrycode} for ${vector.relativePath}`,
-        );
-      } catch (insertError) {
-        console.error(
-          `Error adding image vector for ${vector.relativePath}`,
-          insertError,
-        );
-      }
-    }
-  }
+  }).catch((error) => {
+    console.error("Error in insert:", error);
+  });
 };
 
-for (let i = 0; i < filesToProcess.length; i += BATCH_SIZE) {
-  const batch = filesToProcess.slice(i, i + BATCH_SIZE);
-  console.log(
-    `Processing batch ${Math.floor(i / BATCH_SIZE) + 1}/${Math.ceil(filesToProcess.length / BATCH_SIZE)} (${batch.length} files)`,
-  );
+await prismaCoa.$transaction(
+  async (tx) => {
+    await tx.$executeRawUnsafe(`
+      CREATE TABLE ${tableName} (
+        file_path VARCHAR(500) NOT NULL,
+        relative_path VARCHAR(500) NOT NULL,
+        url VARCHAR(500) NOT NULL,
+        INDEX idx_url (url)
+      )
+    `);
 
-  await processBatch(batch, existingVectors);
+    const escapeSqlString = (str: string) => str.replace(/\\/g, "\\\\").replace(/'/g, "''");
+
+    const values = filesToProcess
+      .map((item) => {
+        const url = item.relativePath.replace("webusers/webusers/", "");
+        const filePathEscaped = escapeSqlString(item.filePath);
+        const relativePathEscaped = escapeSqlString(item.relativePath);
+        const urlEscaped = escapeSqlString(url);
+        return `('${filePathEscaped}', '${relativePathEscaped}', '${urlEscaped}')`;
+      })
+      .join(", ");
+
+    if (values) {
+      await tx.$executeRawUnsafe(`
+        INSERT INTO ${tableName} (file_path, relative_path, url)
+        VALUES ${values}
+      `);
+    }
+
+    console.log(`Inserted ${filesToProcess.length} files into table ${tableName}`);
+  },
+  {
+    timeout: 30000
+  }
+);
+
+try {
+  await processFiles(tableName);
+} finally {
+  console.log(`Dropping table ${tableName}...`);
+  await prismaCoa.$executeRawUnsafe(`DROP TABLE IF EXISTS ${tableName}`);
+  console.log(`Table ${tableName} dropped`);
 }
