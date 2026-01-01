@@ -2,7 +2,7 @@ name: "DucksManager every 15 minutes"
 
 on:
   schedule:
-    - cron: "0/15 * * * *"
+    - cron: "0 0/2 * * *"
   workflow_dispatch:
 jobs:
   ducksmanager-daily:
@@ -34,8 +34,7 @@ jobs:
         run: |
           pnpm -r i
 
-      - name: Run outducks-sync
+      - name: Restart DB
         timeout-minutes: 5
-        continue-on-error: true
         run: |
-          pnpm -r -F '~outducks' prod:docker-compose-run
+          pnpm -r -F '~prisma-schemas' prod:deploy
