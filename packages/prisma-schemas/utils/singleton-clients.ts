@@ -100,9 +100,9 @@ export const getCoaClient = () => {
             ? ["error", "warn", "query"]
             : ["error"],
       });
-      bareClient.$on("query", async (e) => {
-        console.log(`${e.query} ${e.params}`);
-      });
+      // bareClient.$on("query", async (e) => {
+      //   console.log(`${e.query} ${e.params}`);
+      // });
       coaClient = prismaExtendedCoa(bareClient); 
     } catch (error) {
       console.error('Failed to create COA PrismaClient:', error);
