@@ -1,4 +1,4 @@
-name: "DucksManager every 15 minutes"
+name: "Restart DB"
 
 on:
   schedule:
