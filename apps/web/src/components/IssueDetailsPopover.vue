@@ -70,13 +70,17 @@ const cloudinaryBaseUrl =
 
 const loadIssueUrls = async () => {
   isCoverLoading = true;
-  await fetchIssueUrls(issuecode);
-  isCoverLoading = false;
+  nextTick(async () => {
+    await fetchIssueUrls(issuecode);
+    isCoverLoading = false;
 
-  const possibleCoverUrl = issueDetails.value?.[issuecode]?.entries?.find(
-    ({ position }) => !/^p/.test(position),
-  )?.url;
-  fullUrl = possibleCoverUrl ? cloudinaryBaseUrl + possibleCoverUrl : undefined;
+    const possibleCoverUrl = issueDetails.value?.[issuecode]?.entries?.find(
+      ({ kind }) => kind === "c",
+    )?.url;
+    fullUrl = possibleCoverUrl
+      ? cloudinaryBaseUrl + possibleCoverUrl
+      : undefined;
+  });
 };
 
 watch($$(fullUrl), (value) => {
