@@ -233,24 +233,29 @@ await prismaCoa.$transaction(
 
     const escapeSqlString = (str: string) => str.replace(/\\/g, "\\\\").replace(/'/g, "''");
 
-    const values = filesToProcess
-      .map((item) => {
-        const url = item.relativePath.replace("webusers/webusers/", "");
-        const filePathEscaped = escapeSqlString(item.filePath);
-        const relativePathEscaped = escapeSqlString(item.relativePath);
-        const urlEscaped = escapeSqlString(url);
-        return `('${filePathEscaped}', '${relativePathEscaped}', '${urlEscaped}')`;
-      })
-      .join(", ");
+    const INSERT_BATCH_SIZE = 1000;
+    let insertedCount = 0;
 
-    if (values) {
+    for (let i = 0; i < filesToProcess.length; i += INSERT_BATCH_SIZE) {
+      const batch = filesToProcess.slice(i, i + INSERT_BATCH_SIZE);
+      const values = batch
+        .map((item) => {
+          const url = item.relativePath.replace("webusers/webusers/", "");
+          const filePathEscaped = escapeSqlString(item.filePath);
+          const relativePathEscaped = escapeSqlString(item.relativePath);
+          const urlEscaped = escapeSqlString(url);
+          return `('${filePathEscaped}', '${relativePathEscaped}', '${urlEscaped}')`;
+        })
+        .join(", ");
+
       await tx.$executeRawUnsafe(`
         INSERT INTO ${tableName} (file_path, relative_path, url)
         VALUES ${values}
       `);
+      insertedCount += batch.length;
     }
 
-    console.log(`Inserted ${filesToProcess.length} files into table ${tableName}`);
+    console.log(`Inserted ${insertedCount} files into table ${tableName}`);
   },
   {
     timeout: 30000
@@ -263,4 +268,5 @@ try {
   console.log(`Dropping table ${tableName}...`);
   await prismaCoa.$executeRawUnsafe(`DROP TABLE IF EXISTS ${tableName}`);
   console.log(`Table ${tableName} dropped`);
+  process.exit(0);
 }
