@@ -212,14 +212,12 @@ export const getImageVector = async (input: string | Buffer) => {
 export const formatVectorForDB = (embedding: Float32Array): string =>
   `[${Array.from(embedding).join(",")}]`;
 
-export const findSimilarImages = async (
-  imageBufferOrBase64: string | Buffer,
+const findSimilarImagesFromVector = async (
+  vector: Float32Array,
   isCover: boolean,
 ) => {
   try {
-    const queryVector = await getImageVector(imageBufferOrBase64);
-    console.log("getImageVector done");
-    const vectorString = formatVectorForDB(queryVector.vector);
+    const vectorString = formatVectorForDB(vector);
     console.log("formatVectorForDB done");
 
     const results = await prismaCoa.$queryRaw<
@@ -231,7 +229,7 @@ export const findSimilarImages = async (
         fullUrl: string;
       }[]
     >`
-    WITH 
+      WITH 
       inputVector AS (SELECT vec_fromtext(${vectorString}) as v),
       vector_similarity AS (
         SELECT 
@@ -263,6 +261,22 @@ export const findSimilarImages = async (
   }
 };
 
+export const findSimilarImages = async (
+  imageBufferOrBase64: string | Buffer,
+  isCover: boolean,
+) => {
+  try {
+    const queryVector = await getImageVector(imageBufferOrBase64);
+    console.log("getImageVector done");
+    return await findSimilarImagesFromVector(queryVector.vector, isCover);
+  } catch (error) {
+    console.error("Error finding similar images:", error);
+    return {
+      error: error as string,
+    } as const;
+  }
+};
+
 const listenEvents = () => ({
   getIndexSize: async (isCover: boolean) =>
     prismaCoa.inducks_entryurl_vector.count({
@@ -277,7 +291,22 @@ const listenEvents = () => ({
   ) =>
     session
       ? findSimilarImages(imageBufferOrBase64, isCover)
-      : ({ error: "Session not initialized" } as const)
+      : ({ error: "Session not initialized" } as const),
+
+  findSimilarImagesFromVector: async (
+    vector: number[],
+    isCover: boolean,
+  ) => {
+    try {
+      const float32Vector = new Float32Array(vector);
+      return await findSimilarImagesFromVector(float32Vector, isCover);
+    } catch (error) {
+      console.error("Error finding similar images from vector:", error);
+      return {
+        error: error as string,
+      } as const;
+    }
+  },
 });
 
 export const { client, server } = useSocketEvents<

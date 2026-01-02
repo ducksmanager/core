@@ -105,6 +105,7 @@ meta:
 
 <script setup lang="ts">
 import { socketInjectionKey } from "../composables/useDmSocket";
+import { getImageVector } from "../utils/wasm-image-search";
 
 const { coverId: coverIdEvents, storySearch: storySearchEvents } =
   inject(socketInjectionKey)!;
@@ -206,7 +207,7 @@ const models = ref<
 
         return "error" in searchResults
           ? { error: searchResults.errorDetails || "Error" }
-          : searchResults.covers;
+          : searchResults.covers.filter((_, index) => index < 5);
       } catch (error) {
         return typeof error === "object" && "errorDetails" in error!
           ? { error: (error.errorDetails as string) || "Error" }
@@ -240,6 +241,60 @@ const models = ref<
       if ("error" in searchResults) {
         return { error: searchResults.error! };
       } else return searchResults.results;
+    },
+  },
+  {
+    model: "Experimental (WASM)",
+    modelData: "covers",
+    getIndexSize: () => storySearchEvents.getIndexSize(true),
+    run: async (base64: string) => {
+      try {
+        const vector = await getImageVector(base64);
+        const vectorArray = Array.from(vector);
+        const searchResults =
+          await storySearchEvents.findSimilarImagesFromVector(
+            vectorArray,
+            true,
+          );
+        if ("error" in searchResults) {
+          return { error: searchResults.error! };
+        } else return searchResults.results;
+      } catch (error) {
+        return {
+          error:
+            error instanceof Error ? error.message : "WASM inference failed",
+        };
+      }
+    },
+  },
+  {
+    model: "Experimental (WASM)",
+    modelData: "story first pages",
+    getIndexSize: () => storySearchEvents.getIndexSize(false),
+    run: async (base64: string) => {
+      try {
+        const vector = await getImageVector(base64);
+        const vectorArray = Array.from(vector);
+        const searchResults = await (
+          storySearchEvents as typeof storySearchEvents & {
+            findSimilarImagesFromVector: (
+              vector: number[],
+              isCover: boolean,
+            ) => Promise<
+              | { error: string }
+              | { results: { score: number; fullUrl: string }[] }
+            >;
+          }
+        ).findSimilarImagesFromVector(vectorArray, false);
+        if ("error" in searchResults) {
+          return { error: searchResults.error! };
+        } else return searchResults.results;
+      } catch (error) {
+        return {
+          error:
+            error instanceof Error ? error.message : "WASM inference failed",
+        };
+      }
     },
   },
 ]);
