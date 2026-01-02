@@ -32,6 +32,8 @@ export const app = defineStore('app', () => {
   const filterText = ref('');
   const isCameraPreviewShown = ref(false);
 
+  const isFastCoverSearchEnabled = useSessionStorage('isFastCoverSearchEnabled', false);
+
   const isCoaView = ref(route.hash.startsWith('#coa-'));
 
   const currentNavigationItem = ref<
@@ -211,6 +213,7 @@ export const app = defineStore('app', () => {
     filterText,
     isCameraPreviewShown,
     isCoaView,
+    isFastCoverSearchEnabled,
     isIOS,
     isOffline,
     isOfflineMode,

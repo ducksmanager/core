@@ -72,8 +72,8 @@ watch(isPortrait, () => {
 
 const cameraPreview = useTemplateRef<HTMLDivElement>('cameraPreview');
 
-const { coverId: coverIdEvents } = inject(dmSocketInjectionKey)!;
-const { takePhoto } = useCoverSearch(useRouter(), coverIdEvents);
+const { coverId: coverIdEvents, storySearch: storySearchEvents } = inject(dmSocketInjectionKey)!;
+const { takePhoto } = useCoverSearch(useRouter(), coverIdEvents, storySearchEvents);
 const { isCameraPreviewShown } = storeToRefs(app());
 
 onIonViewWillLeave(() => {

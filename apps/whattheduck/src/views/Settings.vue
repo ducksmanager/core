@@ -25,6 +25,11 @@
             }}</ion-text
           ></ion-item
         >
+        <ion-row>
+          <ion-col size="10" class="ion-padding"> <ion-label>Fast cover search (experimental)</ion-label></ion-col>
+          <ion-col size="2" style="display: flex" class="ion-padding ion-justify-content-end"
+            ><ion-checkbox v-model="isFastCoverSearchEnabled" /></ion-col
+        ></ion-row>
         <a id="link-to-dm" target="_blank" :href="storeUrl" class="ion-padding">
           <template v-if="storeName === 'Play Store'">{{
             $t("Notez What The Duck sur le Play Store si vous l'appréciez :-)")
@@ -85,7 +90,7 @@ const storeName = ref<'App Store' | 'Play Store'>();
 
 const storeUrl = computed(() => (storeName.value === 'Play Store' ? playStoreUrl : appStoreUrl));
 
-const { socket, token, isOfflineMode } = storeToRefs(app());
+const { socket, token, isOfflineMode, isFastCoverSearchEnabled } = storeToRefs(app());
 const router = useRouter();
 
 AppUpdate.getAppUpdateInfo()

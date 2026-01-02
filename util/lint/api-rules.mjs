@@ -1,6 +1,8 @@
 export default {
   "eslint-comments/no-unused-disable": "off",
 
+  "@typescript-eslint/no-inferrable-types": "error",
+
   "@typescript-eslint/no-unnecessary-type-assertion": "error",
 
   "@typescript-eslint/consistent-type-imports": "error",
