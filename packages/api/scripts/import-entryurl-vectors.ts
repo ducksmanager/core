@@ -68,6 +68,9 @@ for (const file of files) {
 console.log(`Found ${filesToProcess.length} files to process`);
 
 const tableName = `temp_files_to_process_${Date.now()}`;
+const PROCESS_BATCH_SIZE = 50;
+const INSERT_BATCH_SIZE = 1000;
+const VECTOR_INSERT_BATCH_SIZE = 100;
 
 const processFiles = async (tableName: string) => {
   const filesWithEntries = RECALCULATE_ALL
@@ -129,95 +132,107 @@ const processFiles = async (tableName: string) => {
     }
   }
 
-  const vectorPromises = filesWithEntries.map(async (item) => {
-    try {
+  let totalProcessed = 0;
+
+  for (let i = 0; i < filesWithEntries.length; i += PROCESS_BATCH_SIZE) {
+    const batch = filesWithEntries.slice(i, i + PROCESS_BATCH_SIZE);
+    const batchNumber = Math.floor(i / PROCESS_BATCH_SIZE) + 1;
+    const totalBatches = Math.ceil(filesWithEntries.length / PROCESS_BATCH_SIZE);
+    
+    console.log(`Processing batch ${batchNumber}/${totalBatches} (${batch.length} files)`);
+
+    const vectorPromises = batch.map(async (item) => {
       try {
-        await fs.access(item.filePath);
-      } catch (accessError) {
+        try {
+          await fs.access(item.filePath);
+        } catch (accessError) {
+          console.error(
+            `File not accessible: ${item.relativePath}`,
+            accessError,
+          );
+          return null;
+        }
+
+        const vector = await getImageVector(item.filePath);
+        const vectorString = formatVectorForDB(vector.vector);
+
+        if (!vector.vector || vector.vector.length === 0) {
+          console.error(
+            `Empty vector generated for ${item.relativePath}`,
+          );
+          return null;
+        }
+
+        return {
+          entrycode: item.entrycode,
+          vectorString,
+          isCover: item.isCover,
+          relativePath: item.relativePath,
+        };
+      } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : String(error);
         console.error(
-          `File not accessible: ${item.relativePath}`,
-          accessError,
+          `Error creating image vector for ${item.relativePath}: ${errorMessage}`,
         );
+        if (error instanceof Error && error.stack) {
+          console.error(`Stack trace: ${error.stack}`);
+        }
         return null;
       }
+    });
 
-      const vector = await getImageVector(item.filePath);
-      const vectorString = formatVectorForDB(vector.vector);
-
-      if (!vector.vector || vector.vector.length === 0) {
-        console.error(
-          `Empty vector generated for ${item.relativePath}`,
-        );
-        return null;
-      }
-
-      console.log(`Vector generated for ${item.relativePath}`);
-
-      return {
-        entrycode: item.entrycode,
-        vectorString,
-        isCover: item.isCover,
-        relativePath: item.relativePath,
-      };
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : String(error);
-      console.error(
-        `Error creating image vector for ${item.relativePath}: ${errorMessage}`,
-      );
-      if (error instanceof Error && error.stack) {
-        console.error(`Stack trace: ${error.stack}`);
-      }
-      return null;
-    }
-  });
-
-  const vectorResults = await Promise.all(vectorPromises);
-  const validVectors = vectorResults.filter(
-    (result): result is NonNullable<typeof result> => result !== null,
-  );
-
-  if (validVectors.length === 0) {
-    console.log("No valid vectors generated");
-    return;
-  }
-
-  await prismaCoa.$transaction(async (tx) => {
-    const escapeSqlString = (str: string) => str.replace(/\\/g, "\\\\").replace(/'/g, "''");
-
-    if (RECALCULATE_ALL) {
-      for (const vector of validVectors) {
-        const entrycodeEscaped = escapeSqlString(vector.entrycode);
-        const vectorStringEscaped = escapeSqlString(vector.vectorString);
-        
-        await tx.$executeRawUnsafe(`
-          INSERT INTO inducks_entryurl_vector (entrycode, v, is_cover)
-          VALUES ('${entrycodeEscaped}', VEC_FromText('${vectorStringEscaped}'), ${vector.isCover})
-          ON DUPLICATE KEY UPDATE v = VALUES(v), is_cover = VALUES(is_cover)
-        `);
-      }
-    } else {
-      const values = validVectors
-        .map(
-          (v) => {
-            const entrycodeEscaped = escapeSqlString(v.entrycode);
-            const vectorStringEscaped = escapeSqlString(v.vectorString);
-            return `('${entrycodeEscaped}', VEC_FromText('${vectorStringEscaped}'), ${v.isCover})`;
-          }
-        )
-        .join(", ");
-
-      await tx.$executeRawUnsafe(`
-        INSERT INTO inducks_entryurl_vector (entrycode, v, is_cover)
-        VALUES ${values}
-      `);
-    }
-
-    console.log(
-      `Successfully inserted ${validVectors.length} vectors`,
+    const vectorResults = await Promise.all(vectorPromises);
+    const validVectors = vectorResults.filter(
+      (result): result is NonNullable<typeof result> => result !== null,
     );
-  }).catch((error) => {
-    console.error("Error in insert:", error);
-  });
+
+    if (validVectors.length === 0) {
+      console.log(`No valid vectors generated in batch ${batchNumber}`);
+      continue;
+    }
+
+    await prismaCoa.$transaction(async (tx) => {
+      const escapeSqlString = (str: string) => str.replace(/\\/g, "\\\\").replace(/'/g, "''");
+
+      if (RECALCULATE_ALL) {
+        for (const vector of validVectors) {
+          const entrycodeEscaped = escapeSqlString(vector.entrycode);
+          const vectorStringEscaped = escapeSqlString(vector.vectorString);
+          
+          await tx.$executeRawUnsafe(`
+            INSERT INTO inducks_entryurl_vector (entrycode, v, is_cover)
+            VALUES ('${entrycodeEscaped}', VEC_FromText('${vectorStringEscaped}'), ${vector.isCover})
+            ON DUPLICATE KEY UPDATE v = VALUES(v), is_cover = VALUES(is_cover)
+          `);
+        }
+      } else {
+        for (let j = 0; j < validVectors.length; j += VECTOR_INSERT_BATCH_SIZE) {
+          const vectorBatch = validVectors.slice(j, j + VECTOR_INSERT_BATCH_SIZE);
+          const values = vectorBatch
+            .map(
+              (v) => {
+                const entrycodeEscaped = escapeSqlString(v.entrycode);
+                const vectorStringEscaped = escapeSqlString(v.vectorString);
+                return `('${entrycodeEscaped}', VEC_FromText('${vectorStringEscaped}'), ${v.isCover})`;
+              }
+            )
+            .join(", ");
+
+          await tx.$executeRawUnsafe(`
+            INSERT INTO inducks_entryurl_vector (entrycode, v, is_cover)
+            VALUES ${values}
+          `);
+        }
+      }
+
+      totalProcessed += validVectors.length;
+      console.log(
+        `Successfully inserted ${validVectors.length} vectors (total: ${totalProcessed})`,
+      );
+    }).catch((error) => {
+      console.error(`Error inserting vectors from batch ${batchNumber}:`, error);
+    });
+  }
 };
 
 await prismaCoa.$transaction(
@@ -233,7 +248,6 @@ await prismaCoa.$transaction(
 
     const escapeSqlString = (str: string) => str.replace(/\\/g, "\\\\").replace(/'/g, "''");
 
-    const INSERT_BATCH_SIZE = 1000;
     let insertedCount = 0;
 
     for (let i = 0; i < filesToProcess.length; i += INSERT_BATCH_SIZE) {
