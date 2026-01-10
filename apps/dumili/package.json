@@ -24,7 +24,7 @@
   },
   "dependencies": {
     "@iconify-json/bi": "^1.2.7",
-    "@prisma/adapter-mariadb": "^6.19.1",
+    "@prisma/adapter-mariadb": "^7.2.0",
     "@sentry/browser": "^9.47.1",
     "@sentry/vue": "^9.47.1",
     "@unhead/vue": "^1.11.20",
