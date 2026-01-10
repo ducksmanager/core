@@ -222,6 +222,28 @@ export const findSimilarImages = async (
     const vectorString = formatVectorForDB(queryVector.vector);
     console.log("formatVectorForDB done");
 
+    // NOTE: Vector index optimization is currently not working in MariaDB 11.8.5
+    // Even with FORCE INDEX, the vector index is not used by the optimizer.
+    // EXPLAIN shows: type=ALL, key=NULL (full table scan)
+    // This appears to be a bug/incomplete implementation in MariaDB 11.8.5.
+    // 
+    // Related issues:
+    // - MDEV-35305: Vector search queries incorrectly logged as "not using index"
+    //   (https://jira.mariadb.org/browse/MDEV-35305)
+    //   Note: That issue shows EXPLAIN correctly uses the index, but slow log reports incorrectly.
+    //   Our issue is more severe - EXPLAIN itself shows the index is NOT being used.
+    // 
+    // Workaround: Use the is_cover index to filter first (~238k rows instead of 667k),
+    // then compute distances on the filtered subset. This is still much better than
+    // scanning all rows, but not as optimal as using the vector index would be.
+    //
+    // To investigate:
+    // - Check MariaDB JIRA: https://jira.mariadb.org (search for "vector index" + "11.8")
+    // - Check if upgrading to a newer 11.8.x patch version fixes the issue
+    // - See vector-index-diagnostics.sql for diagnostic queries
+    //
+    // Store the vector once to avoid recomputing it multiple times
+    // Compute distances only on rows filtered by is_cover, then filter by similarity
     const results = await prismaCoa.$queryRaw<
       {
         entrycode: string;
@@ -233,25 +255,29 @@ export const findSimilarImages = async (
     >`
     WITH 
       inputVector AS (SELECT vec_fromtext(${vectorString}) as v),
-      vector_similarity AS (
+      filtered_vectors AS (
         SELECT 
           ev.entrycode,
-          VEC_DISTANCE_COSINE(ev.v, (SELECT v from inputVector)) as similarity
-        FROM inducks_entryurl_vector ev WHERE is_cover=${isCover} 
+          VEC_DISTANCE_COSINE(ev.v, (SELECT v FROM inputVector)) as similarity
+        FROM inducks_entryurl_vector ev USE INDEX (inducks_entryurl_vector_is_cover_index)
+        CROSS JOIN inputVector
+        WHERE ev.is_cover = ${isCover}
+        HAVING similarity < 0.15
+        ORDER BY similarity
+        LIMIT 50
       )
-      SELECT
-        vector_similarity.entrycode,
-        1 - vector_similarity.similarity as score,
-        e.issuecode,
-        sv.storyversioncode,
-        CONCAT('webusers/webusers/', eu.url) as fullUrl
-      FROM vector_similarity
-      INNER JOIN inducks_entry e ON e.entrycode = vector_similarity.entrycode
-      INNER JOIN inducks_entryurl eu ON (eu.entrycode = e.entrycode AND eu.sitecode = 'webusers')
-      INNER JOIN inducks_storyversion sv ON sv.storyversioncode = e.storyversioncode
-      WHERE similarity < 0.15
-      ORDER BY similarity
-      LIMIT 5
+    SELECT
+      fv.entrycode,
+      1 - fv.similarity as score,
+      e.issuecode,
+      sv.storyversioncode,
+      CONCAT('webusers/webusers/', eu.url) as fullUrl
+    FROM filtered_vectors fv
+    INNER JOIN inducks_entry e ON e.entrycode = fv.entrycode
+    INNER JOIN inducks_entryurl eu ON (eu.entrycode = e.entrycode AND eu.sitecode = 'webusers')
+    INNER JOIN inducks_storyversion sv ON sv.storyversioncode = e.storyversioncode
+    ORDER BY fv.similarity
+    LIMIT 5
     `;
     console.log("Query done, results:", results);
     return { results } as const;
