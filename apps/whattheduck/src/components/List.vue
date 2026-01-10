@@ -3,7 +3,8 @@
     {{ $t('Chargement…') }}
   </ion-content>
   <template v-else>
-    <ion-content v-if="!items.length" ref="content">
+    <camera-preview-overlay v-if="isCameraPreviewShown" />
+    <ion-content v-else-if="!items.length" ref="content">
       <slot v-if="$slots.empty" name="empty" />
       <template v-else>{{ $t('Cette liste est vide.') }}</template>
     </ion-content>
@@ -15,7 +16,6 @@
       @ion-scroll="onScroll"
       @ion-scroll-end="isScrolling = false"
     >
-      <camera-preview-overlay v-if="isCameraPreviewShown" />
       <template v-if="$slots['row-label']">
         <RecycleScroller
           v-slot="{ item: { key, item, isOwned, nextItemType } }"

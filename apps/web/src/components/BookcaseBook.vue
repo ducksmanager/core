@@ -102,7 +102,7 @@
 </template>
 
 <script setup lang="ts">
-import { useToastController } from "bootstrap-vue-next";
+import { useToast } from "bootstrap-vue-next";
 import type { PageFlip } from "page-flip";
 
 const { issuecode } = defineProps<{
@@ -117,7 +117,7 @@ const cloudinaryBaseUrl =
 const { fetchIssueUrls } = coa();
 const { getImagePath } = images();
 
-const toast = useToastController();
+const toast = useToast();
 const edgeWidth = ref<number>();
 const coverHeight = ref<number>();
 const coverRatio = ref<number>();
@@ -204,16 +204,12 @@ watch(
   pagesWithUrl,
   (newValue) => {
     if (newValue && !newValue.length) {
-      toast.show!({
-        props: {
-          body: $t(
-            "DucksManager n'a pas pu trouver d'informations sur le contenu de ce livre. Essayez-en un autre !",
-          ),
-          title: $t("Pas d'informations sur le contenu du livre"),
-          noCloseButton: true,
-          pos: "top-center",
-          variant: "warning",
-        },
+      toast.create({
+        body: $t(
+          "DucksManager n'a pas pu trouver d'informations sur le contenu de ce livre. Essayez-en un autre !",
+        ),
+        title: $t("Pas d'informations sur le contenu du livre"),
+        variant: "warning",
       });
       emit("close-book");
     }

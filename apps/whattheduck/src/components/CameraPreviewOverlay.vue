@@ -1,7 +1,7 @@
 <template>
   <div id="camera-preview" ref="cameraPreview"></div>
-  <ion-row ref="overlay" class="overlay" :class="{ portrait: isPortrait, landscape: !isPortrait }">
-    <ion-button ref="takePhotoButton" size="large" @click="takePhoto().then(() => (isCameraPreviewShown = false))">
+  <ion-row id="overlay" ref="overlay" :class="{ portrait: isPortrait, landscape: !isPortrait }">
+    <ion-button ref="takePhotoButton" size="large" @click="takePhoto()">
       <ion-icon :ios="apertureOutline" :md="apertureSharp" />
     </ion-button>
     <ion-button size="large" color="danger" @click="CameraPreview.stop().finally(() => (isCameraPreviewShown = false))">
@@ -70,11 +70,10 @@ watch(isPortrait, () => {
   currentRatioIndex.value = isPortrait.value ? 0 : 1;
 });
 
-const isCameraPreviewStarted = ref(false);
 const cameraPreview = useTemplateRef<HTMLDivElement>('cameraPreview');
 
-const { coverId: coverIdEvents } = inject(dmSocketInjectionKey)!;
-const { takePhoto } = useCoverSearch(useRouter(), coverIdEvents);
+const { coverId: coverIdEvents, storySearch: storySearchEvents } = inject(dmSocketInjectionKey)!;
+const { takePhoto } = useCoverSearch(useRouter(), coverIdEvents, storySearchEvents);
 const { isCameraPreviewShown } = storeToRefs(app());
 
 onIonViewWillLeave(() => {
@@ -96,29 +95,34 @@ watch([overlayHeight, currentRatioIndex], async () => {
     }, {} as BoundingClientRect);
     const currentRatio = RATIOS[currentRatioIndex.value];
     if (isPortrait.value) {
-      const heightAccordingToRatio = Math.round(currentRatio.ratio * boundingClientRect.value.width);
+      const heightAccordingToRatio = currentRatio.ratio * boundingClientRect.value.width;
       boundingClientRect.value.x = 0;
-      boundingClientRect.value.y = 25 + (boundingClientRect.value.height - heightAccordingToRatio) / 2;
+      boundingClientRect.value.y = 25 + Math.round((boundingClientRect.value.height - heightAccordingToRatio) / 2);
       boundingClientRect.value.height = heightAccordingToRatio;
     } else {
-      const widthAccordingToRatio = Math.round(boundingClientRect.value.height / currentRatio.ratio);
+      const widthAccordingToRatio = boundingClientRect.value.height / currentRatio.ratio;
       boundingClientRect.value.x = (boundingClientRect.value.width - widthAccordingToRatio) / 2;
-      boundingClientRect.value.y = 0;
+      boundingClientRect.value.y = 25;
       boundingClientRect.value.width = widthAccordingToRatio;
     }
 
     if (boundingClientRect.value?.height) {
+      boundingClientRect.value.x = Math.round(boundingClientRect.value.x);
+      boundingClientRect.value.y = Math.round(boundingClientRect.value.y);
+
+      boundingClientRect.value.width = Math.round(boundingClientRect.value.width);
+      boundingClientRect.value.height = Math.round(boundingClientRect.value.height);
+
       const cameraPreviewOptions: CameraPreviewOptions = {
         parent: 'camera-preview',
         disableAudio: true,
         position: 'rear',
         ...boundingClientRect.value,
       } as const;
-      if (isCameraPreviewStarted.value) {
+      if ((await CameraPreview.isCameraStarted()).value) {
         await CameraPreview.stop();
       }
       await CameraPreview.start(cameraPreviewOptions);
-      isCameraPreviewStarted.value = true;
     }
   }
 });
@@ -126,7 +130,7 @@ watch([overlayHeight, currentRatioIndex], async () => {
 
 <style scoped>
 #camera-preview,
-.overlay {
+#overlay {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -149,7 +153,7 @@ watch([overlayHeight, currentRatioIndex], async () => {
     height: 100%;
   }
 }
-.overlay {
+#overlay {
   position: absolute;
   &.portrait {
     bottom: 1rem;

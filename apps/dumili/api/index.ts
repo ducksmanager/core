@@ -3,13 +3,6 @@ dotenv.config({
   path: ".env",
 });
 
-dotenv.config({
-  path: ".env.local",
-  override: true,
-});
-
-import "./instrument";
-
 import { v2 as cloudinary } from "cloudinary";
 import { createServer } from "http";
 import { Server } from "socket.io";

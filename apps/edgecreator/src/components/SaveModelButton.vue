@@ -39,7 +39,8 @@
         "
         ok-only
         :ok-disabled="
-          !contributors.photographe.size || !contributors.createur.size
+          !contributorsByContributionType.photographe.size ||
+          !contributorsByContributionType.createur.size
         "
         :ok-title="$t(action === 'export' ? 'Export' : 'Submit')"
         @ok="onOK"
@@ -59,7 +60,9 @@
         >
           <h2>{{ $t(ucFirst(userContributionEnL10n[contributionType])) }}</h2>
           <b-alert
-            :model-value="!contributors[contributionType].size"
+            :model-value="
+              !contributorsByContributionType[contributionType].size
+            "
             variant="warning"
           >
             {{ $t("You should select at least one user") }} </b-alert
@@ -70,20 +73,20 @@
             :min-input-length="0"
             @select-item="
               (user: SimpleUser) => {
-                contributors[contributionType as contribution].add(user);
+                contributorsByContributionType[contributionType as contribution].add(user);
               }
             "
           />
           <ul>
             <li
-              v-for="contributor in contributors[contributionType]"
+              v-for="contributor in contributorsByContributionType[contributionType as contribution]"
               :key="contributor.username"
             >
               {{ contributor.username }}
               <i-bi-x-square-fill
                 class="clickable"
                 @click="
-                  contributors[contributionType as contribution].delete(
+                  contributorsByContributionType[contributionType as contribution].delete(
                     contributor,
                   );
                 "
@@ -107,16 +110,17 @@ import type { contribution } from "~prisma-schemas/schemas/edgecreator";
 import type { SimpleUser } from "~types/SimpleUser";
 import { stores as webStores } from "~web";
 
-const userContributionEnL10n: Record<contribution, string> = {
+const userContributionEnL10n = {
   photographe: "photographers",
   createur: "designers",
-};
+} as const;
 
 const { saveEdgeSvg } = saveEdge();
 
 const { t: $t } = useI18n();
 const userStore = webStores.users();
 const mainStore = main();
+const { issuecodes, contributors } = storeToRefs(mainStore);
 
 const { action } = defineProps<{
   action: "save" | "submit" | "export";
@@ -127,10 +131,10 @@ const progress = ref(0);
 const issueIndexToSave = ref<number>();
 const result = ref<string>();
 
-const contributors = ref<Record<contribution, Set<SimpleUser>>>({
-  photographe: new Set(),
-  createur: new Set(),
-});
+const contributorsByContributionType = ref({
+  photographe: new Set<SimpleUser>(),
+  createur: new Set<SimpleUser>(),
+} as const);
 
 const label = computed(() => $t(ucFirst(action)));
 
@@ -150,8 +154,7 @@ watch(progress, (newValue) => {
   }
 });
 watch(issueIndexToSave, (newValue) => {
-  console.log("issueIndexToSave", newValue);
-  const currentIssuecode = mainStore.issuecodes[newValue!];
+  const currentIssuecode = issuecodes.value[newValue!];
 
   if (currentIssuecode === undefined) {
     return;
@@ -161,7 +164,7 @@ watch(issueIndexToSave, (newValue) => {
   nextTick(() => {
     saveEdgeSvg(
       currentIssuecode,
-      Array.from(mainStore.contributors).filter(
+      Array.from(contributors.value).filter(
         ({ issuecode }) => issuecode === currentIssuecode,
       ),
       action === "export",
@@ -169,7 +172,7 @@ watch(issueIndexToSave, (newValue) => {
     ).then((response) => {
       const isSuccess = response!.paths.svgPath;
       if (isSuccess) {
-        progress.value += 100 / mainStore.issuecodes.length;
+        progress.value += 100 / issuecodes.value.length;
         issueIndexToSave.value!++;
       } else {
         progress.value = 0;
@@ -185,8 +188,10 @@ const onOK = () => {
     for (const contributionType of Object.keys(
       contributors.value,
     ) as contribution[]) {
-      for (const contributor of contributors.value[contributionType]) {
-        for (const issuecode of mainStore.issuecodes) {
+      for (const contributor of contributorsByContributionType.value[
+        contributionType
+      ]) {
+        for (const issuecode of issuecodes.value) {
           mainStore.addContributor({
             issuecode,
             contributionType,
@@ -204,7 +209,8 @@ const ucFirst = (text: string) =>
 
 const getUsersWithoutContributors = (contributionType: contribution) =>
   userStore.allUsers!.filter(
-    (contributor) => !contributors.value[contributionType].has(contributor),
+    (contributor) =>
+      !contributorsByContributionType.value[contributionType].has(contributor),
   );
 
 const onClick = () => {
@@ -214,6 +220,21 @@ const onClick = () => {
     issueIndexToSave.value = 0;
   }
 };
+
+onMounted(() => {
+  contributorsByContributionType.value = {
+    photographe: new Set(
+      Array.from(contributors.value)
+        .filter(({ contributionType }) => contributionType === "photographe")
+        .map(({ user }) => user),
+    ),
+    createur: new Set(
+      Array.from(contributors.value)
+        .filter(({ contributionType }) => contributionType === "createur")
+        .map(({ user }) => user),
+    ),
+  };
+});
 </script>
 <style scoped lang="scss">
 :deep(.btn) {

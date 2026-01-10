@@ -51,6 +51,7 @@
   "include": [
     "eslint.config.mjs",
     "index.ts",
+    "instrument.ts",
     "services/**/*.ts",
     "prisma/client.ts",
     "prisma/client_dumili/**/*.ts"

@@ -19,11 +19,14 @@ deleteNonIndexedCovers() {
             "select coverid from cover_imports where import_error is null" | sed 's/[^0-9]//g' | sort) \
         <(curl -X GET http://${PASTEC_HOST}:${PASTEC_PORT}/index/imageIds | head | jq '.image_ids' | grep -Po '[\d]+' | sort))
 
-    # Delete referenced covers that are not in the index, by chunks of 20
-    echo "$coversInDbButNotInIndex" | tr ' ' '\n' | paste -sd',,,,,,,,,,,,,,,,,,,,\n' | while read -r chunk; do
-        nonIndexedCoversQuery="DELETE FROM cover_imports where coverid in ($chunk);"
-        mysql -uroot -p${MYSQL_ROOT_PASSWORD} -h ${MYSQL_COVER_INFO_HOST} ${MYSQL_COVER_INFO_DATABASE} -e "$nonIndexedCoversQuery"
-    done
+    if [ -n "$coversInDbButNotInIndex" ]; then
+        # Delete referenced covers that are not in the index, by chunks of 20
+        echo "$coversInDbButNotInIndex" | tr ' ' '\n' | paste -sd',,,,,,,,,,,,,,,,,,,,\n' | while read -r chunk; do
+            nonIndexedCoversQuery="DELETE FROM cover_imports where coverid in ($chunk);"
+            echo "Deleting non-indexed covers: $nonIndexedCoversQuery"
+            mysql -uroot -p${MYSQL_ROOT_PASSWORD} -h ${MYSQL_COVER_INFO_HOST} ${MYSQL_COVER_INFO_DATABASE} -e "$nonIndexedCoversQuery"
+        done
+    fi
 
 }
 
@@ -42,8 +45,8 @@ processCovers() {
     mysql -uroot -p${MYSQL_ROOT_PASSWORD} -h ${MYSQL_COVER_INFO_HOST} ${MYSQL_COVER_INFO_DATABASE} -se "$coverquery" >${RESULTS_FILE}
 
     if [ -s ${RESULTS_FILE} ]; then
-        while read id fullurl; do
-            processImage ${id} ${fullurl} ${thread_id} &
+        while read id path; do
+            processImage ${id} ${path} ${thread_id} &
         done <${RESULTS_FILE}
         wait
 
@@ -71,20 +74,6 @@ getCoverLogInsertErrorQuery() {
     echo $(cat ${DIR}/sql/log-cover-import-error.sql | sed "s/_COVERID_/$id/" | sed "s/_ERROR_MESSAGE_/$error/")
 }
 
-downloadPicture() {
-    local url=$1
-    local output=$2
-    if wget -q "${url}" -O ${output} >/dev/null; then
-        if [[ "$(wc -m ${output} | awk '{print $1}')" -lt 200 ]]; then
-            return -1
-        else
-            return 0
-        fi
-    else
-        return -1
-    fi
-}
-
 addQueryToSqlList() {
     SHM_FILE=${SHM_DIR}/coversqls-$1
     str=$2
@@ -93,30 +82,22 @@ addQueryToSqlList() {
 
 processImage() {
     local id=$1
-    local fullurl=$2
+    local path=$2
     local thread_id=$3
 
-    output=${DOWNLOAD_DIR_TMP}/cover_${id}.jpg
-    fullurl=$(echo ${fullurl} | tr -d '\r' | tr -d '\n')
-    fullurlHr="https://inducks.org/hr.php?normalsize=1&image="${fullurl}
-    log="\n[Thread $thread_id] id: $id, fullurl: $fullurl, fullurlHr: $fullurlHr\n"
+    path=$(echo ${path} | tr -d '\r' | tr -d '\n')
+    log="\n[Thread $thread_id] id: $id, path: $path\n"
 
-    if downloadPicture ${fullurlHr} ${output}; then
-        log=${log}"[Thread $thread_id] Downloaded HR version ${fullurlHr}\n"
+    if [ -f ${path} ]; then
+        log=${log}"[Thread $thread_id] Image exists locally: ${path}\n"
     else
-        log=${log}"[Thread $thread_id] Failed to download HR version ${fullurlHr}\n"
-        if downloadPicture ${fullurl} ${output}; then
-            log=${log}"[Thread $thread_id] Downloaded ${fullurl}\n"
-        else
-            log=${log}"[Thread $thread_id] Failed to download ${fullurl}\n"
-            addQueryToSqlList ${thread_id} "$(getCoverLogInsertErrorQuery ${id} "Failed to download")"
-            rm -f ${output}
-            echo -e ${log}
-            return
-        fi
+        log=${log}"[Thread $thread_id] Image doesn't exist locally: ${path}\n"
+        addQueryToSqlList ${thread_id} "$(getCoverLogInsertErrorQuery ${id} "Failed to download")"
+        echo -e ${log}
+        return
     fi
 
-    PASTEC_OUTPUT=$(curl -s -S -X PUT --data-binary @${output} http://${PASTEC_HOST}:${PASTEC_PORT}/index/images/${id})
+    PASTEC_OUTPUT=$(curl -s -S -X PUT --data-binary @${path} http://${PASTEC_HOST}:${PASTEC_PORT}/index/images/${id})
     if [[ ${PASTEC_OUTPUT} == *"IMAGE_ADDED"* ]]; then
         log=${log}"[Thread $thread_id] Imported\n"
         addQueryToSqlList ${thread_id} "$(getCoverLogInsertSuccessQuery ${id})"
@@ -124,7 +105,6 @@ processImage() {
         log=${log}"[Thread $thread_id] Failed to import : $PASTEC_OUTPUT\n"
         addQueryToSqlList ${thread_id} "$(getCoverLogInsertErrorQuery ${id} ${PASTEC_OUTPUT})"
     fi
-    rm -f ${output}
     echo -e ${log}
 }
 

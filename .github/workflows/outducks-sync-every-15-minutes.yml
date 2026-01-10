@@ -1,0 +1,40 @@
+name: "Outducks sync"
+
+on:
+  schedule:
+    - cron: "0/15 * * * *"
+  workflow_dispatch:
+jobs:
+  ducksmanager-daily:
+    runs-on: ubuntu-latest
+    environment: production
+    env:
+      REMOTE_ROOT: apps/dm
+      PRODUCTION_SSH_HOST: ${{ secrets.PRODUCTION_SSH_HOST }}
+      PRODUCTION_SSH_USER: ${{ secrets.PRODUCTION_SSH_USER }}
+      PRODUCTION_SSH_KEY: ${{ secrets.PRODUCTION_SSH_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          lfs: false
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9.8.0
+
+      - name: Use Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: "pnpm"
+
+      - name: Install dependencies
+        run: |
+          pnpm -r i
+
+      - name: Run outducks-sync
+        timeout-minutes: 5
+        run: |
+          pnpm -r -F '~outducks' prod:docker-compose-run

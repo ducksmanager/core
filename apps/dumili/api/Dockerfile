@@ -6,6 +6,7 @@ RUN apt-get update && apt-get install -y openssl && apt-get clean && rm -rf /var
 
 COPY apps/dumili/api/.env /app/
 COPY apps/dumili/api/dist/index.mjs /app/bundle.mjs
+COPY apps/dumili/api/dist/instrument.mjs /app/instrument.mjs
 
 EXPOSE 3003
-CMD ["node", "bundle.mjs"]
+CMD ["node", "--import", "./instrument.mjs", "bundle.mjs"]

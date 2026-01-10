@@ -10,7 +10,7 @@
     </ion-header>
     <ion-content :fullscreen="true">
       <camera-preview-overlay v-if="isCameraPreviewShown" />
-      <div v-if="!covers.length"></div>
+      <div v-else-if="!covers.length"></div>
       <template v-else>
         <div>
           <Carousel3d @after-slide-change="(index: number) => (cover = covers[index])">
@@ -73,7 +73,7 @@ import FullIssue from '~/components/FullIssue.vue';
 import router from '~/router';
 import { app } from '~/stores/app';
 import { wtdcollection } from '~/stores/wtdcollection';
-import type { ClientEvents as CoverIdServices } from '~dm-services/cover-id';
+import type { ClientEvents as StorySearchServices } from '~dm-services/story-search';
 import { SuccessfulEventOutput } from 'socket-call-client';
 
 const hasCoaData = ref(false);
@@ -93,23 +93,23 @@ const setWidth = (event: Event) => {
   slideWidths.value.push((event.target as HTMLImageElement).clientWidth + 32);
 };
 
-const { coverId: coverIdEvents } = inject(dmSocketInjectionKey)!;
+const { coverId: coverIdEvents, storySearch: storySearchEvents } = inject(dmSocketInjectionKey)!;
 
-const { pickCoverFile } = useCoverSearch(useRouter(), coverIdEvents);
+const { pickCoverFile } = useCoverSearch(useRouter(), coverIdEvents, storySearchEvents);
 
 const route = useRoute();
 
 const { getCollectionIssues } = wtdcollection();
 
-const searchResults = computed<SuccessfulEventOutput<CoverIdServices, 'searchFromCover'>>(() =>
-  JSON.parse(route.query.searchResults as string),
+const searchResults = computed<SuccessfulEventOutput<StorySearchServices, 'findSimilarImages'>['results']>(() =>
+  'searchResults' in route.query ? JSON.parse(route.query.searchResults as string) : [],
 );
 
 const coverOrigin = computed(() => route.query.origin as 'pickCoverFile' | 'takePhoto');
 
 const covers = computed(() =>
   Object.keys(publicationNames.value).length
-    ? searchResults.value.covers.map((cover) => ({
+    ? searchResults.value.map((cover) => ({
         ...cover,
         collectionIssues: getCollectionIssues(cover.issuecode),
       }))
@@ -119,12 +119,12 @@ const covers = computed(() =>
 watch(
   searchResults,
   async () => {
-    const issuecodes = searchResults.value.covers.map((cover) => cover.issuecode);
+    const issuecodes = searchResults.value.map((cover) => cover.issuecode);
     await fetchIssuePopularities(issuecodes);
     await fetchIssueQuotations(issuecodes);
     await fetchIssuecodeDetails(issuecodes);
     await fetchPublicationNames(
-      searchResults.value.covers.map(({ issuecode }) => issuecodeDetails.value[issuecode].publicationcode),
+      searchResults.value.map(({ issuecode }) => issuecodeDetails.value[issuecode].publicationcode),
     );
     hasCoaData.value = true;
   },

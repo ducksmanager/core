@@ -97,8 +97,8 @@ const assignSocket = () => {
 };
 
 const updateBundle = async () => {
-  const currentBundleVersion = (await CapacitorUpdater.current())?.bundle.version;
   try {
+    const currentBundleVersion = (await CapacitorUpdater.current())?.bundle.version;
     const bundle = await socket.value!.app.getBundleUrl({ version: currentBundleVersion });
     console.info('Latest bundle', bundle);
     if (Capacitor.isNativePlatform() && 'url' in bundle && bundle.url) {

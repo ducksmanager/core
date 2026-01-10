@@ -178,11 +178,11 @@ model inducks_entryurl {
 }
 
 model inducks_entryurl_vector {
-  id        Int                         @id @default(autoincrement()) @map("ID")
-  entrycode String                      @db.VarChar(46)
-  vector    Unsupported("vector(1536)") @map("v")
-  createdAt DateTime                    @default(now()) @map("created_At") @db.Timestamp(0)
-  isCover   Boolean                     @map("is_cover")
+  id        Int                        @id @default(autoincrement()) @map("ID")
+  entrycode String                     @db.VarChar(46)
+  vector    Unsupported("vector(512)") @map("v")
+  createdAt DateTime                   @default(now()) @map("created_At") @db.Timestamp(0)
+  isCover   Boolean                    @map("is_cover")
 
   @@map("inducks_entryurl_vector")
 }

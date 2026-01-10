@@ -72,7 +72,10 @@ const indexationPayloadInclude = {
       acceptedStory: true,
       acceptedStoryKind: { include: { storyKindRows: true } },
       storyKindSuggestions: { include: { storyKindRows: true } },
-      storySuggestions: { include: { aiStorySuggestion: true } },
+      storySuggestions: { include: { aiStorySuggestion: {
+        include: {
+          aiStorySearchPossibleStory: true
+      } }}},
     },
   },
 } as const;
@@ -107,7 +110,7 @@ const isAiRunning: Record<string, boolean> = {};
 export const getFullIndexation = (
   services: IndexationServices,
   indexationId: string,
-  runAi: boolean = true,
+  runAi = true,
 ) =>
   prisma.indexation
     .findUnique({
@@ -137,7 +140,7 @@ export const getFullIndexation = (
 
 export const refreshIndexation = async (
   services: IndexationServices,
-  runAi: boolean = true,
+  runAi = true,
   id = services._socket.data.indexation.id,
 ) => {
   services._socket.data.indexation = (await getFullIndexation(
@@ -321,7 +324,10 @@ const createAiStorySuggestions = async (
                 },
               });
 
-              for (const story of results.stories) {
+              const storiesWithScores = results.stories.groupBy("storycode", "score[]");
+
+              for (const storycode of Object.keys(storiesWithScores)) {
+                console.log("Creating story suggestion for storycode", storycode);
                 await prisma.storySuggestion.create({
                   data: {
                     aiStorySuggestion: {
@@ -335,12 +341,12 @@ const createAiStorySuggestions = async (
                                 id: aiResultId,
                               },
                             },
-                            score: story.score,
+                            score: storiesWithScores[storycode].sort((a, b) => b - a)[0],
                           },
                         },
                       },
                     },
-                    storycode: story.storycode,
+                    storycode,
                     entry: {
                       connect: {
                         id: entry.id,

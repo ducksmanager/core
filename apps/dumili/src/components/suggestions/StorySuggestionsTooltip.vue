@@ -48,6 +48,10 @@
         <h4>{{ $t("Résultats de la recherche par image") }}</h4>
         <b-table
           :fields="[
+            {
+              key: 'aiStorySuggestion.aiStorySearchPossibleStory.score',
+              label: $t('Score'),
+            },
             { key: 'storycode', label: $t('Code histoire') },
             { key: 'title', label: $t('Titre') },
           ]"
@@ -63,15 +67,14 @@
               >{{ row.item!.storycode }}</a
             ></template
           ><template #cell(title)="row">
-            {{ storyDetails[row.item!.storycode].title }}
-            <b-col
-              cols="6"
-              class="d-flex justify-content-center story-first-page"
-              :style="{
-            backgroundImage: `url(${inducksCoverRoot.replace('f_auto', 'c_crop,h_0.5,x_0,w_1') + storyUrls[row.item!.storycode]})`,
-          }"
-            >
-            </b-col>
+            <div class="d-flex flex-column align-items-center">
+              <div>
+                {{ row.item!.storycode in storyDetails ? storyDetails[row.item!.storycode].title : row.item!.storycode }}
+              </div>
+              <img
+                :src="inducksCoverRoot.replace('f_auto', 'c_crop,h_0.5,x_0,w_1') + storyUrls[row.item!.storycode]"
+              />
+            </div>
           </template> </b-table
       ></template>
       <template v-if="!firstPage.image">{{

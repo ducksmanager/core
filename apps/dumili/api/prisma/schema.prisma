@@ -22,8 +22,8 @@ model entry {
   brokenpagenumerator           Int                   @default(0)
   brokenpagedenominator         Int                   @default(1)
   indexation                    indexation            @relation(fields: [indexationId], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "entry_indexation_id_fk")
-  acceptedStoryKind             storyKindSuggestion?  @relation("entry_accepted_story_kind_suggested_idTostory_kind_suggestion", fields: [acceptedStoryKindSuggestionId], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "entry_story_kind_suggestion_id_fk")
-  acceptedStory                 storySuggestion?      @relation("entry_accepted_story_suggested_idTostory_suggestion", fields: [acceptedStorySuggestionId], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "entry_story_suggestion_id_fk")
+  acceptedStoryKind             storyKindSuggestion?  @relation("entry_accepted_story_kind_suggested_idTostory_kind_suggestion", fields: [acceptedStoryKindSuggestionId], references: [id], onDelete: SetNull, onUpdate: Restrict, map: "entry_story_kind_suggestion_id_fk")
+  acceptedStory                 storySuggestion?      @relation("entry_accepted_story_suggested_idTostory_suggestion", fields: [acceptedStorySuggestionId], references: [id], onDelete: SetNull, onUpdate: Restrict, map: "entry_story_suggestion_id_fk")
   storyKindSuggestions          storyKindSuggestion[] @relation("story_kind_suggestion_entry_idToentry")
   storySuggestions              storySuggestion[]
 
@@ -136,7 +136,7 @@ model aiStorySearchResult {
 model aiStorySearchPossibleStory {
   id                  Int                 @id @default(autoincrement())
   resultId            Int                 @map("result_id")
-  score               Int                 @db.SmallInt
+  score               Float               @db.Float
   aiStorySearchResult aiStorySearchResult @relation(fields: [resultId], references: [id], onUpdate: Restrict, map: "ai_story_search_result_ai_story_search_result_id_fk")
   aiStorySuggestion   aiStorySuggestion?
 
@@ -146,7 +146,7 @@ model aiStorySearchPossibleStory {
 
 model aiOcrPossibleStory {
   id                Int                @id @default(autoincrement())
-  score             Int                @db.SmallInt
+  score             Float              @db.Float
   resultId          Int                @map("result_id")
   aiOcrResult       aiOcrResult        @relation(fields: [resultId], references: [id], onUpdate: Restrict, map: "ai_ocr_possible_story_ai_ocr_result_id_fk")
   aiStorySuggestion aiStorySuggestion?

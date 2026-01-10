@@ -35,19 +35,16 @@
               <b-dropdown-item
                 v-for="publicationcode in getSortedPublications(country)"
                 :key="publicationcode"
+                :link-class="{
+                  'text-decoration-line-through text-secondary':
+                    !filteredPublicationcodes?.includes(publicationcode),
+                }"
+                :to="`${publicationUrlRoot}/${publicationcode}${searchParams}`"
               >
-                <router-link
-                  :class="{
-                    'text-decoration-line-through text-secondary':
-                      !filteredPublicationcodes?.includes(publicationcode),
-                  }"
-                  :to="`${publicationUrlRoot}/${publicationcode}${searchParams}`"
-                >
-                  {{
-                    publicationNames[publicationcode] ||
-                    publicationcode.split("/")[1]
-                  }}
-                </router-link></b-dropdown-item
+                {{
+                  publicationNames[publicationcode] ||
+                  publicationcode.split("/")[1]
+                }}</b-dropdown-item
               ></b-dropdown
             >
           </li>

@@ -1,4 +1,7 @@
 @use "sass:color";
+.popover {
+  --bs-popover-max-width: initial !important;
+}
 
 textarea::placeholder {
   color: black !important;

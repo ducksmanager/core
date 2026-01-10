@@ -23,9 +23,13 @@ export default defineNuxtConfig({
 
   devtools: { enabled: false },
   compatibilityDate: "2025-09-09",
-
-  // CSS
-  css: ["bootstrap/dist/css/bootstrap.min.css", "./styles/main.scss"],
+  css: [
+    path.resolve(
+      __dirname,
+      "node_modules/bootstrap/dist/css/bootstrap.min.css",
+    ),
+    path.resolve(__dirname, "styles/main.scss"),
+  ],
 
   // Modules
   modules: [
@@ -114,6 +118,21 @@ export default defineNuxtConfig({
     resolve: {
       dedupe: ["vue", "vue-i18n", "@vueuse/core", "bootstrap-vue-next"],
     },
+    server: {
+      fs: {
+        allow: [
+          "..",
+          path.resolve(__dirname, "node_modules"),
+          path.resolve(__dirname, "../.."),
+        ],
+      },
+    },
+  },
+
+  // Dev server config - use 0.0.0.0 to listen on both IPv4 and IPv6
+  devServer: {
+    host: "0.0.0.0", // Listen on all interfaces (IPv4 and IPv6)
+    port: 8007,
   },
 
   // App configuration

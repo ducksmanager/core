@@ -7,7 +7,7 @@
   },
   "scripts": {
     "clean": "rm -rf dist",
-    "build": "prisma generate && bun build --entry-naming [dir]/[name].mjs --sourcemap=linked --target node index.ts --outdir dist && pnpm sentry:sourcemaps",
+    "build": "prisma generate && for source in index.ts instrument.ts; do bun build --entry-naming [dir]/[name].mjs --sourcemap=linked --target node $source --outdir dist; done && pnpm sentry:sourcemaps",
     "prisma-pull-generate": "prisma db pull && prisma generate",
     "prisma-generate": "prisma generate",
     "prisma-migrate": "prisma migrate deploy",
@@ -29,7 +29,7 @@
     "@sentry/node": "^9.47.1",
     "@sentry/profiling-node": "^9.47.1",
     "axios": "^1.13.2",
-    "axios-cache-interceptor": "^1.9.0",
+    "axios-cache-interceptor": "^1.11.3",
     "busboy": "^1.6.0",
     "cloudinary": "^1.41.3",
     "dotenv": "^16.6.1",
@@ -37,7 +37,7 @@
     "sharp": "^0.33.5",
     "socket-call-client": "^0.7.7",
     "socket-call-server": "^0.7.7",
-    "socket.io": "^4.8.1",
+    "socket.io": "^4.8.3",
     "~api": "workspace:*",
     "~prisma-schemas": "workspace:*"
   },
@@ -49,12 +49,12 @@
     "@types/busboy": "^1.5.4",
     "@types/i18n": "^0.13.12",
     "@types/jsonwebtoken": "^9.0.10",
-    "@types/node": "^22.19.3",
+    "@types/node": "^22.19.5",
     "concurrently": "^9.2.1",
     "eslint": "^9.39.2",
     "eslint-config-prettier": "^10.1.8",
     "prisma": "^6.19.1",
     "typescript": "^5.9.3",
-    "typescript-eslint": "^8.49.0"
+    "typescript-eslint": "^8.52.0"
   }
 }

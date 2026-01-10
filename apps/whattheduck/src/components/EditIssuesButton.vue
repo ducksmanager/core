@@ -74,11 +74,11 @@ import useCoverSearch from '../composables/useCoverSearch';
 
 import { app } from '~/stores/app';
 
-const { coverId: coverIdEvents } = inject(dmSocketInjectionKey)!;
+const { coverId: coverIdEvents, storySearch: storySearchEvents } = inject(dmSocketInjectionKey)!;
 
 const emit = defineEmits<(e: 'show-camera-preview') => void>();
 
-const { pickCoverFile } = useCoverSearch(useRouter(), coverIdEvents);
+const { pickCoverFile } = useCoverSearch(useRouter(), coverIdEvents, storySearchEvents);
 const { isCoaView, isOfflineMode, selectedIssuecodes } = storeToRefs(app());
 
 const fab = shallowRef<ComponentPublicInstance<HTMLIonFabElement>>();

@@ -19,8 +19,7 @@ const listenEvents = () => ({
         ).data
       : Buffer.from(urlOrBase64.split(";base64,").pop()!, "base64");
 
-    const pastecResponse: SimilarImagesResult | null =
-      await getSimilarImages(buffer);
+    const pastecResponse = await getSimilarImages(buffer);
 
     console.log("Cover ID search: processing done");
 
@@ -34,18 +33,18 @@ const listenEvents = () => ({
       };
     }
     console.log(
-      `Cover ID search: matched cover IDs ${pastecResponse?.image_ids}`,
+      `Cover ID search: matched cover IDs ${pastecResponse?.image_ids}`
     );
     console.log(
-      `Cover ID search: scores=${JSON.stringify(pastecResponse.scores)}`,
+      `Cover ID search: scores=${JSON.stringify(pastecResponse.scores)}`
     );
 
     const coversByIssuecode = await getIssuesCodesFromCoverIds(
-      pastecResponse.image_ids,
+      pastecResponse.image_ids
     )
-      .then(async (covers) => {
-        const coverIdByIssuecode = covers.groupBy("issuecode", "id");
-        return getCoverUrls(Object.keys(coverIdByIssuecode)).then((coverUrls) =>
+      .then((covers) => covers.groupBy("issuecode", "id"))
+      .then((coverIdByIssuecode) =>
+        getCoverUrls(Object.keys(coverIdByIssuecode)).then((coverUrls) =>
           coverUrls.map(({ issuecode, fullUrl }) => ({
             issuecode,
             fullUrl,
@@ -54,20 +53,22 @@ const listenEvents = () => ({
               pastecResponse.scores[
                 pastecResponse.image_ids.indexOf(coverIdByIssuecode[issuecode])
               ],
-          })),
-        );
-      })
+          }))
+        )
+      )
       .then((covers) =>
         covers.sort((cover1, cover2) =>
           Math.sign(
             pastecResponse.image_ids.indexOf(cover1.id) -
-              pastecResponse.image_ids.indexOf(cover2.id),
-          ),
-        ),
+              pastecResponse.image_ids.indexOf(cover2.id)
+          )
+        )
       );
 
     console.log(
-      `Cover ID search: matched issue codes ${coversByIssuecode.map(({ issuecode }) => issuecode).join(",")}`,
+      `Cover ID search: matched issue codes ${coversByIssuecode
+        .map(({ issuecode }) => issuecode)
+        .join(",")}`
     );
 
     return {
@@ -81,7 +82,7 @@ const listenEvents = () => ({
   getIndexSize: async () => getPastecStatus(),
   getCoverUrl: async (coverId: number) =>
     getCoverUrl(coverId).then(
-      (url) => `${process.env.INDUCKS_COVERS_ROOT}/${url}`,
+      (url) => `${process.env.INDUCKS_COVERS_ROOT}/${url}`
     ),
 
   downloadCover: (coverId: number) =>
@@ -102,7 +103,7 @@ const listenEvents = () => ({
                 //at this point data is an array of Buffers so Buffer.concat() can make us a new Buffer of all of them together
                 resolve({ buffer: Buffer.concat(data) });
               });
-          },
+          }
         );
         externalRequest.on("error", function (err) {
           console.error(err);
@@ -118,7 +119,7 @@ export const { client, server } = useSocketEvents<typeof listenEvents>(
   {
     listenEvents,
     middlewares: [],
-  },
+  }
 );
 
 export type ClientEvents = (typeof client)["emitEvents"];
@@ -141,13 +142,13 @@ const getCoverUrl = async (coverId: number) =>
     })
     .then(
       (cover) =>
-        `${cover.sitecode}/${
-          cover.sitecode === "webusers" ? "webusers" : ""
-        }${cover.url}`,
+        `${cover.sitecode}/${cover.sitecode === "webusers" ? "webusers" : ""}${
+          cover.url
+        }`
     );
 
 const getSimilarImages = async (
-  cover: Buffer,
+  cover: Buffer
 ): Promise<SimilarImagesResult | null> =>
   axios
     .post(
@@ -159,7 +160,7 @@ const getSimilarImages = async (
         headers: {
           "Content-Type": "application/octet-stream",
         },
-      },
+      }
     )
     .then(({ data }) => data)
     .catch((e) => {

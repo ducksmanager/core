@@ -91,9 +91,17 @@ const playerSocket = duckguessrSocketClient.addNamespace<
   session,
   onConnectError,
   onConnected: () => {
-    playerSocket.getPlayer().then((player) => {
-      playerStore().playerUser = player;
-    });
+    if (import.meta.client) {
+      playerSocket.getPlayer().then((player) => {
+        // Use nextTick to ensure Pinia is initialized
+        nextTick(() => {
+          const store = playerStore();
+          if (store) {
+            store.playerUser = player;
+          }
+        });
+      });
+    }
   },
 });
 

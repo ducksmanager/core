@@ -15,10 +15,7 @@ import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
 
 import type { UserServices } from "../../../index";
 import { getShownQuotations } from "../../coa/quotations";
-import {
-  checkPurchaseIdsBelongToUser,
-  deleteIssues,
-} from "./util";
+import { checkPurchaseIdsBelongToUser, deleteIssues } from "./util";
 
 export default ({ _socket }: UserServices) => ({
   getIssues: async () => {
@@ -44,6 +41,7 @@ export default ({ _socket }: UserServices) => ({
           .augmentIssueArrayWithInducksData(
             issues as (T & { issuecode: string })[]
           )
+          .then((data) => data.filter((issue) => "publicationcode" in issue))
           .then(prismaDm.replaceLabelsWithLabelIds)
       );
   },
@@ -166,8 +164,11 @@ const addOrChangeIssues = async (
   });
 
   const updateOperations = existingIssues.map((existingIssue) => {
-    const { id, issuecode: _issuecode, ...existingIssueWithoutId } =
-      existingIssue;
+    const {
+      id,
+      issuecode: _issuecode,
+      ...existingIssueWithoutId
+    } = existingIssue;
     return prismaDm.issue.update({
       data: {
         ...existingIssueWithoutId,
@@ -201,7 +202,7 @@ const addOrChangeIssues = async (
         },
       })
     );
-    await prismaDm.$transaction(insertOperations);
+  await prismaDm.$transaction(insertOperations);
   // TODO handle labels on multiple issues
 
   // const issueIds = (
@@ -236,60 +237,76 @@ const addOrChangeCopies = async (
   purchaseIds: (number | null)[],
   labelIds: (number[] | undefined)[]
 ): Promise<TransactionResults> => {
-  const operations = issueIds.map((issueId, copyNumber) => {
-    if (issueId && conditions[copyNumber] === null) {
-      return prismaDm.issue.delete({
-        where: { id: issueId },
-      });
-    }
-
-    const common = {
-      condition: conditions[copyNumber]!,
-      purchaseId: purchaseIds[copyNumber] || -2,
-    };
-
-    const createInput = {
-      ...common,
-      issuecode,
+  let operations = [], deleteOperations = [];
+  const previousIssueIds = await prismaDm.issue.findMany({
+    where: {
       userId,
-      creationDate: new Date(),
-    };
-    const updateInput = {
-      ...common,
-      labels: {
-        deleteMany: {},
-      },
-    };
-    console.log("upsert", {
-      create: createInput,
-      update: updateInput,
-      where: { id: issueId || 0 },
-    });
-    return prismaDm.issue.upsert({
-      create: createInput,
-      update: updateInput,
-      where: {
-        id: issueId || 0,
-      },
-    });
+      issuecode,
+    },
   });
-  await prismaDm.$transaction(operations);
+  const deletedIssueIds = previousIssueIds.filter(({ id }) => !issueIds.includes(id));
+  if (deletedIssueIds.length) {
+    deleteOperations = deletedIssueIds.map(({ id }) => prismaDm.issue.delete({
+      where: { id },
+    }));
+    await prismaDm.$transaction(deleteOperations);
+  }
+  if (issueIds.length) {
+    operations = issueIds.map((issueId, copyNumber) => {
+      if (issueId && conditions[copyNumber] === null) {
+        return prismaDm.issue.delete({
+          where: { id: issueId },
+        });
+      }
 
-  const newIssueLabelsOperations = issueIds
-    .filter((issueId) => issueId !== null)
-    .map((issueId, copyNumber) =>
-      prismaDm.issueLabel.createMany({
-        data:
-          labelIds[copyNumber]?.map((labelId) => ({
-            labelId,
-            issueId,
-          })) || [],
-      })
-    );
-  await prismaDm.$transaction(newIssueLabelsOperations);
+      const common = {
+        condition: conditions[copyNumber]!,
+        purchaseId: purchaseIds[copyNumber] || -2,
+      };
+
+      const createInput = {
+        ...common,
+        issuecode,
+        userId,
+        creationDate: new Date(),
+      };
+      const updateInput = {
+        ...common,
+        labels: {
+          deleteMany: {},
+        },
+      };
+      console.log("upsert", {
+        create: createInput,
+        update: updateInput,
+        where: { id: issueId || 0 },
+      });
+      return prismaDm.issue.upsert({
+        create: createInput,
+        update: updateInput,
+        where: {
+          id: issueId || 0,
+        },
+      });
+    });
+    const upsertResults = await prismaDm.$transaction(operations);
+    const newIssueLabelsOperations = upsertResults
+      .map((result, copyNumber) => ({ result, copyNumber }))
+      .filter(({ result }) => "id" in result)
+      .map(({ result: { id: issueId }, copyNumber }) =>
+        prismaDm.issueLabel.createMany({
+          data:
+            labelIds[copyNumber]?.map((labelId) => ({
+              labelId,
+              issueId,
+            })) || [],
+        })
+      );
+    await prismaDm.$transaction(newIssueLabelsOperations);
+  }
 
   return {
-    operations: operations.length,
+    operations: operations.length + deleteOperations.length,
   };
 };
 
@@ -307,7 +324,6 @@ export const resetDemo = async () => {
   const csvPath = existsSync("/app/demo_issues.csv")
     ? "/app/"
     : cwd() + "/services/auth/";
-
 
   const demoUser = (await prismaDm.user.findFirst({
     where: { username: "demo" },
