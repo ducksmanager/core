@@ -49,15 +49,15 @@
     "@types/ejs": "^3.1.5",
     "@types/i18n": "^0.13.12",
     "@types/jsonwebtoken": "^9.0.10",
-    "@types/node": "^22.19.3",
-    "@types/nodemailer": "^7.0.4",
-    "@typescript-eslint/eslint-plugin": "^8.50.1",
+    "@types/node": "^22.19.5",
+    "@types/nodemailer": "^7.0.5",
+    "@typescript-eslint/eslint-plugin": "^8.52.0",
     "concurrently": "^9.2.1",
     "eslint": "^9.39.2",
     "eslint-config-prettier": "^10.1.8",
     "nodemon": "^3.1.11",
     "typescript": "^5.9.3",
-    "typescript-eslint": "^8.50.1",
+    "typescript-eslint": "^8.52.0",
     "wait-on": "^8.0.5"
   }
 }

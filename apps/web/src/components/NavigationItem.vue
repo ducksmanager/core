@@ -12,16 +12,11 @@
         'sub-menu-item': isInSubMenu,
         active: isActive,
       }"
+      :to="'route' in item ? item.route! : undefined"
+      :v-b-toggle="!('route' in item) ? item.title : undefined"
+      @click="'onClick' in item ? item.onClick : undefined"
     >
-      <router-link v-if="'route' in item" :to="item.route!">
-        <ReuseTemplate
-      /></router-link>
-      <span v-else-if="'onClick' in item" @click="item.onClick">
-        <ReuseTemplate />
-      </span>
-      <span v-else :v-b-toggle="item.title">
-        <ReuseTemplate />
-      </span>
+      <ReuseTemplate />
     </BNavItem>
   </BNavbarNav>
 </template>
@@ -71,19 +66,19 @@ li {
     background-color: #020203;
   }
 
-  &.active,
-  &.active a {
-    color: #c88964 !important;
-  }
-
-  a,
-  span {
+  :deep(a),
+  :deep(span) {
     display: flex;
     align-items: center;
     text-decoration: none !important;
     color: white !important;
     border-bottom: 0 !important;
     margin-left: 1.5rem;
+
+    &.active,
+    &.active a {
+      color: #c88964 !important;
+    }
 
     svg {
       position: absolute;
