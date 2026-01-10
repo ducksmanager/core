@@ -110,7 +110,7 @@ const isAiRunning: Record<string, boolean> = {};
 export const getFullIndexation = (
   services: IndexationServices,
   indexationId: string,
-  runAi: boolean = true,
+  runAi = true,
 ) =>
   prisma.indexation
     .findUnique({
@@ -140,7 +140,7 @@ export const getFullIndexation = (
 
 export const refreshIndexation = async (
   services: IndexationServices,
-  runAi: boolean = true,
+  runAi = true,
   id = services._socket.data.indexation.id,
 ) => {
   services._socket.data.indexation = (await getFullIndexation(
