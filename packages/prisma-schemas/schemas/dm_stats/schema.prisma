@@ -1,12 +1,12 @@
 generator client {
   provider   = "prisma-client"
-  output     = "../../client_dm_stats"
+  output     = "client"
   engineType = "client"
 }
 
 datasource db {
   provider = "mysql"
-  url      = env("DATABASE_URL_DM_STATS")
+  url      = env("DATABASE_URL")
 }
 
 model authorStory {

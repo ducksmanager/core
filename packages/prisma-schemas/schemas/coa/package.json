@@ -1,0 +1,35 @@
+{
+  "name": "~schema-coa",
+  "engines": {
+    "node": ">=22.0.0 <23.0.0"
+  },
+  "type": "module",
+  "files": [
+    "index.*"
+  ],
+  "scripts": {
+    "build": "prisma generate",
+    "prisma-pull-generate": "prisma db pull && prisma generate",
+    "prisma-generate": "prisma generate && rm -rf dist",
+    "prisma-migrate": "prisma migrate deploy",
+    "dev:setup": "docker compose -f docker-compose-dev.yml up --force-recreate -d",
+    "dev:blocking-up": "pnpm prisma-generate && pnpm prisma-migrate"
+  },
+  "dependencies": {
+    "@prisma/adapter-mariadb": "^6.19.0",
+    "@prisma/client": "^6.19.0",
+    "prisma": "^6.19.0",
+    "~ensure-connection-string": "workspace:*",
+    "~group-by": "workspace:*"
+  },
+  "devDependencies": {
+    "@eslint/eslintrc": "^3.3.3",
+    "@eslint/js": "^9.39.1",
+    "@types/node": "^22.19.1",
+    "@typescript-eslint/eslint-plugin": "^8.48.1",
+    "eslint-config-prettier": "^10.1.8",
+    "prettier": "^3.7.4",
+    "prettier-plugin-prisma": "^5.0.0",
+    "typescript": "^5.9.3"
+  }
+}

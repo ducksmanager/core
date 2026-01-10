@@ -1,4 +1,4 @@
-import type { edge } from "../../../client_dm/client";
+import type { edge } from "../client/client";
 
 export const computeTimestamp = {
   timestamp: {

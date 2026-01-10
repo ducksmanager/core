@@ -1,4 +1,4 @@
-import type { edge as rawEdge, PrismaClient } from "../../../client_dm/client";
+import type { edge as rawEdge, PrismaClient } from "../client/client";
 import { computeTimestamp } from "./edge.timestamp";
 
 export default (prismaClient: PrismaClient) =>
@@ -30,4 +30,4 @@ type ExtendedType<
 
 export type edge = ExtendedType<rawEdge, typeof computeTimestamp>;
 
-export * from "../../../client_dm/client";
+export * from "../client/client";
