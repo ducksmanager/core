@@ -1,6 +1,6 @@
 import type { UserContributionTypeEn } from "~dm-types/UserContributionTypeEn";
-import { Prisma } from "~prisma-schemas/schemas/dm";
-import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
+import { Prisma } from "~prisma-schemas/schemas/dm/client/client";
+import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm";
 
 export const getMedalPoints = async (userIds: number[]) =>
   (

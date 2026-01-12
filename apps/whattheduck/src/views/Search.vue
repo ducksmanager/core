@@ -64,7 +64,7 @@ import { arrowBackOutline, arrowBackSharp } from 'ionicons/icons';
 import type { EntryPartInfo } from '~dm-types/EntryPartInfo';
 import type { SimpleStory } from '~dm-types/SimpleStory';
 import type { StorySearchResults } from '~dm-types/StorySearchResults';
-import type { issue_condition } from '~prisma-schemas/schemas/dm';
+import type { issue_condition } from '~prisma-schemas/schemas/dm/client/client';
 import { stores } from '~web';
 import { socketInjectionKey as dmSocketInjectionKey } from '~web/src/composables/useDmSocket';
 

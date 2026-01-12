@@ -1,7 +1,7 @@
 import type { ModelSteps } from "~dm-types/ModelSteps";
-import { Prisma } from "~prisma-schemas/schemas/dm";
-import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
-import { prismaClient as prismaEdgeCreator } from "~prisma-schemas/schemas/edgecreator/client";
+import { Prisma } from "~prisma-schemas/schemas/dm/client/client";
+import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm";
+import { prismaClient as prismaEdgeCreator } from "~prisma-schemas/schemas/edgecreator";
 
 export default () => ({
   getModelsSteps: async (modelIds: number[]) =>

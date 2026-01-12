@@ -3,8 +3,8 @@ import jwt from "jsonwebtoken";
 import type { Socket } from "socket.io";
 
 import type { SessionUser } from "~dm-types/SessionUser";
-import type { user } from "~prisma-schemas/schemas/dm";
-import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
+import type { user } from "~prisma-schemas/schemas/dm/client/client";
+import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm";
 
 type SocketWithUser = Socket<
   Record<string, never>,

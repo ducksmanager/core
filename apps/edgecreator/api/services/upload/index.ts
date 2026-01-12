@@ -10,7 +10,7 @@ import { useSocketEvents } from "socket-call-server";
 import { RequiredAuthMiddleware } from "~dm-services/auth/util";
 import type { ClientEvents as EdgeCreatorServices } from "~dm-services/edgecreator";
 import namespaces from "~dm-services/namespaces";
-import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa/client";
+import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa";
 
 import type { SessionData } from "../../index";
 import { getEdgesPath } from "../../index";

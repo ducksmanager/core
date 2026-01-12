@@ -319,7 +319,7 @@
 import IBiCalendar from "~icons/bi/calendar";
 import type { IssueWithPublicationcodeOptionalId } from "~/stores/collection";
 import type { CollectionUpdateMultipleIssues } from "~dm-types/CollectionUpdate";
-import type { issue_condition } from "~prisma-schemas/schemas/dm";
+import type { issue_condition } from "~prisma-schemas/schemas/dm/client/client";
 import { BButton } from "bootstrap-vue-next";
 import useSet from "~/composables/useSet";
 import { ON_SALE_LABEL_DESCRIPTION } from "~dm-types/Labels";

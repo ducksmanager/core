@@ -1,5 +1,5 @@
 import type { IssueWithIssuecodeOnly } from "~dm-types/IssueWithIssuecodeOnly";
-import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa/client";
+import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa";
 
 export default {
   getIssues: (issuecodes: string[], withTitles: boolean) =>

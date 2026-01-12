@@ -1,6 +1,6 @@
 import { useSocketEvents } from "socket-call-server";
 
-import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
+import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm";
 
 import feedbackSent from "../../emails/feedback-sent";
 import type { UserServices } from "../../index";

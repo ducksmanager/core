@@ -3,7 +3,7 @@ import type { NamespaceProxyTarget } from "socket-call-server";
 import { useSocketEvents } from "socket-call-server";
 
 import { Prisma } from "~prisma-schemas/client_dm/client";
-import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa/client";
+import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa";
 
 import prisma from "../prisma/client";
 import namespaces from "./namespaces";

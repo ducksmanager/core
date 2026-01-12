@@ -1,7 +1,7 @@
 import "dotenv/config";
 
-import type { inducks_issuequotation_raw } from "~prisma-schemas/schemas/coa";
-import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa/client";
+import type { inducks_issuequotation_raw } from "~prisma-schemas/schemas/coa/client/client";
+import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa";
 
 export const createQuotations = async (
   data: Omit<

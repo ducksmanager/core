@@ -9,7 +9,7 @@ services:
     ports:
       - "127.0.0.1:64999:3306"
     env_file:
-      - .env
+      - .env.db
     command:
       [
         "mariadbd",

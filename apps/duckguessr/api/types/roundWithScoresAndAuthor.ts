@@ -1,4 +1,4 @@
-import type { inducks_person } from "~prisma-schemas/schemas/coa";
+import type { inducks_person } from "~prisma-schemas/schemas/coa/client/client";
 
 import type { round, roundScore } from "../prisma/client_duckguessr/browser";
 

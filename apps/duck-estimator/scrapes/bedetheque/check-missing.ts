@@ -2,7 +2,7 @@ import { Scraper } from "bedetheque-scraper";
 
 import { syncScrapeCache } from "~/cache";
 import { readCsvMapping } from "~/csv";
-import { prismaClient } from "~prisma-schemas/schemas/coa/client";
+import { prismaClient } from "~prisma-schemas/schemas/coa";
 
 import { type CsvIssue, log, warn } from ".";
 import { getRevue } from "./get-revue";

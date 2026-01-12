@@ -1,5 +1,5 @@
-import type { inducks_issuequotation } from "~prisma-schemas/schemas/coa";
-import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa/client";
+import type { inducks_issuequotation } from "~prisma-schemas/schemas/coa/client/client";
+import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa";
 
 const ISSUE_CODE_REGEX = /[a-z]+\/[-A-Z0-9 ]+/g;
 

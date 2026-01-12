@@ -86,7 +86,7 @@ alias: [/collection/abonnements]
 import dayjs from "dayjs";
 
 import { SubscriptionTransformedStringDates } from "~dm-services/collection/subscriptions";
-import type { subscription } from "~prisma-schemas/schemas/dm";
+import type { subscription } from "~prisma-schemas/schemas/dm/client/client";
 type AssociatedPublication = {
   referencePublicationcode: string;
   publicationcode: string;

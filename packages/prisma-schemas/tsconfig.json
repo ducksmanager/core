@@ -17,16 +17,10 @@
     "strictNullChecks": true,
     "allowJs": true,
     "forceConsistentCasingInFileNames": true,
-    "outDir": "dist",
-    "paths": {
-      "~group-by": [
-        "../../util/group-by"
-      ]
-    },
+    "outDir": "dist"
   },
   "exclude": [
     "node_modules",
-    "client_*",
     ".turbo"
   ]
 }

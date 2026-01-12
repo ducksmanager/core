@@ -1,4 +1,4 @@
-import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
+import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm";
 
 export const getUserPurchase = async (id: number | null, userId: number) =>
   id === null

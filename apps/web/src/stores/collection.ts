@@ -13,7 +13,7 @@ import type {
   label,
   purchase,
   subscription,
-} from "~prisma-schemas/schemas/dm";
+} from "~prisma-schemas/schemas/dm/client/client";
 import {
   ON_SALE_LABEL_DESCRIPTION,
   TO_READ_LABEL_DESCRIPTION,

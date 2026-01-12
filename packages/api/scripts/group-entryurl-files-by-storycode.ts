@@ -8,7 +8,7 @@ dotenv.config({
 import { existsSync, mkdirSync, readdirSync } from "fs";
 
 import type { inducks_storyversion } from "~prisma-schemas/client_coa/client";
-import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa/client";
+import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa";
 
 declare global {
   interface ImportMeta {

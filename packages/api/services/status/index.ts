@@ -1,10 +1,10 @@
 import axios from "axios";
 
-import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa/client";
-import { prismaClient as prismaCoverInfo } from "~prisma-schemas/schemas/cover_info/client";
-import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
-import { prismaClient as prismaDmStats } from "~prisma-schemas/schemas/dm_stats/client";
-import { prismaClient as prismaEdgeCreator } from "~prisma-schemas/schemas/edgecreator/client";
+import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa";
+import { prismaClient as prismaCoverInfo } from "~prisma-schemas/schemas/cover_info";
+import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm";
+import { prismaClient as prismaDmStats } from "~prisma-schemas/schemas/dm_stats";
+import { prismaClient as prismaEdgeCreator } from "~prisma-schemas/schemas/edgecreator";
 
 export const getDbStatus = async () => {
   const checks = [

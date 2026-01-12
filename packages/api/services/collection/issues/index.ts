@@ -8,10 +8,10 @@ import type {
 } from "~dm-types/CollectionUpdate";
 import type { InducksIssueQuotationSimple } from "~dm-types/InducksIssueQuotationSimple";
 import type { TransactionResults } from "~dm-types/TransactionResults";
-import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa/client";
-import type { user } from "~prisma-schemas/schemas/dm";
-import { issue_condition } from "~prisma-schemas/schemas/dm";
-import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
+import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa";
+import type { user } from "~prisma-schemas/schemas/dm/client/client";
+import { issue_condition } from "~prisma-schemas/schemas/dm/client/client";
+import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm";
 
 import type { UserServices } from "../../../index";
 import { getShownQuotations } from "../../coa/quotations";

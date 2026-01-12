@@ -1,7 +1,7 @@
 import { useSocketEvents } from "socket-call-server";
 import type { QuickStatsPerUser } from "~dm-types/QuickStatsPerUser";
-import { Prisma } from "~prisma-schemas/schemas/dm";
-import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
+import { Prisma } from "~prisma-schemas/schemas/dm/client/client";
+import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm";
 
 import { getMedalPoints } from "../collection/util";
 import namespaces from "../namespaces";

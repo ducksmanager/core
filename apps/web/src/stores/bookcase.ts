@@ -2,7 +2,7 @@ import type { SuccessfulEventOutput } from "socket-call-client";
 
 import type { ClientEvents as BookcaseEvents } from "~dm-services/bookcase";
 import type { BookcaseEdge } from "~dm-types/BookcaseEdge";
-import type { issue_condition } from "~prisma-schemas/schemas/dm";
+import type { issue_condition } from "~prisma-schemas/schemas/dm/client/client";
 
 import { socketInjectionKey } from "../composables/useDmSocket";
 import { collection } from "./collection";

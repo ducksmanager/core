@@ -1,4 +1,4 @@
-import type { issue_condition } from "~prisma-schemas/schemas/dm";
+import type { issue_condition } from "~prisma-schemas/schemas/dm/client/client";
 
 export type SingleCopyState = {
   id: number | null;
