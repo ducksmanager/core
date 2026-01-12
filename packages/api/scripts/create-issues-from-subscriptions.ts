@@ -5,8 +5,8 @@ dotenv.config({
 
 import dayjs from "dayjs";
 
-import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa/client";
-import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
+import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa";
+import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm";
 
 const ongoingSubscriptions = await prismaDm.$queryRaw<
   {
@@ -71,7 +71,7 @@ for (const subscription of ongoingSubscriptions) {
       await prismaDm.subscriptionRelease.create({
         data: {
           issuecode: release.issuecode,
-          releaseDate: new Date(release.filledoldestdate!),
+          releaseDate: new Date(release.filledoldestdate),
         },
       });
     }

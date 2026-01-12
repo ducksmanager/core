@@ -6,8 +6,8 @@ import type { NamespaceProxyTarget } from "socket-call-server";
 import { useSocketEvents } from "socket-call-server";
 
 import { OptionalAuthMiddleware } from "~dm-services/auth/util";
-import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa/client";
-import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
+import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa";
+import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm";
 
 import type { SessionData } from "../../index";
 import { getEdgesPath } from "../../index";

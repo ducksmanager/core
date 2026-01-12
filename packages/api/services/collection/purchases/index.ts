@@ -1,4 +1,4 @@
-import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
+import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm";
 
 import type { UserServices } from "../../../index";
 import { getUserPurchase } from "../issues/util";

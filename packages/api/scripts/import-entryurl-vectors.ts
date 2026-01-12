@@ -11,7 +11,7 @@ import {
   type inducks_entry,
   type inducks_entryurl,
 } from "~prisma-schemas/client_coa/client";
-import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa/client";
+import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa";
 
 import {
   formatVectorForDB,

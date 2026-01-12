@@ -1,4 +1,4 @@
-import type { user } from "~prisma-schemas/schemas/dm";
+import type { user } from "~prisma-schemas/schemas/dm/client/client";
 
 import { Email } from "../email";
 

@@ -2,7 +2,7 @@ import type { EventOutput, SuccessfulEventOutput } from "socket-call-client";
 
 import type { ClientEvents as GlobalStatsServices } from "~dm-services/global-stats";
 import type { AbstractEvent } from "~dm-types/events/AbstractEvent";
-import type { user } from "~prisma-schemas/schemas/dm";
+import type { user } from "~prisma-schemas/schemas/dm/client/client";
 
 import { socketInjectionKey } from "../composables/useDmSocket";
 

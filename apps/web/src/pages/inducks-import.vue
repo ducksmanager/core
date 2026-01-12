@@ -273,7 +273,7 @@ meta:
 </template>
 
 <script setup lang="ts">
-import type { issue_condition } from "~prisma-schemas/schemas/dm";
+import type { issue_condition } from "~prisma-schemas/schemas/dm/client/client";
 
 import { socketInjectionKey } from "../composables/useDmSocket";
 

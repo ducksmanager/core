@@ -21,10 +21,7 @@ const getClient = () => {
       );
       edgeCreatorClient = new PrismaClientEdgeCreator({
         adapter: new PrismaMariaDb(connectionString),
-        log:
-          process.env.NODE_ENV === "development"
-            ? ["error", "warn"]
-            : ["error"],
+        log: process.env.NODE_ENV === "local" ? ["error", "warn"] : ["error"],
       });
     } catch (error) {
       console.error("Failed to create EdgeCreator PrismaClient:", error);

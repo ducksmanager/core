@@ -11,8 +11,7 @@ export const getClient = () => {
     );
     client = new PrismaClient({
       adapter: new PrismaMariaDb(connectionString),
-      log:
-        process.env.NODE_ENV === "development" ? ["error", "warn"] : ["error"],
+      log: process.env.NODE_ENV === "local" ? ["error", "warn"] : ["error"],
     });
   }
   return client;

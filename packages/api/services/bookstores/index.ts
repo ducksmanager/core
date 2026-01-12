@@ -1,13 +1,11 @@
 import { useSocketEvents } from "socket-call-server";
 
 import type { SimpleBookstore } from "~dm-types/SimpleBookstore";
-import type {
-  bookstore,
+import type { bookstore,
   bookstoreComment,
-  user,
-} from "~prisma-schemas/schemas/dm";
-import { userContributionType } from "~prisma-schemas/schemas/dm";
-import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
+  user } from "~prisma-schemas/schemas/dm/client/client";
+import { userContributionType } from "~prisma-schemas/schemas/dm/client/client";
+import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm";
 
 import BookstoreSuggested from "../../emails/bookstore-suggested";
 import type { UserServices } from "../../index";

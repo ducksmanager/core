@@ -1,4 +1,4 @@
-import type { edge } from "~prisma-schemas/schemas/dm";
+import type { edge } from "~prisma-schemas/schemas/dm/client/client";
 
 export interface BookcaseEdgeSprite {
   name: string;

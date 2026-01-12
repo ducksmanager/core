@@ -1,7 +1,7 @@
 import dayjs from "dayjs";
 
-import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
-import { prismaClient as prismaEdgeCreator } from "~prisma-schemas/schemas/edgecreator/client";
+import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm";
+import { prismaClient as prismaEdgeCreator } from "~prisma-schemas/schemas/edgecreator";
 
 import EdgePhotoSent from "../../../emails/edge-photo-sent";
 import type { UserServices } from "../../../index";

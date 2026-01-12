@@ -1,6 +1,6 @@
 import type { SimpleEntry } from "~dm-types/SimpleEntry";
-import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa/client";
-import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
+import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa";
+import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm";
 
 export const getPopularityByIssuecodes = async (issuecodes: string[]) =>
   prismaDm.issue
@@ -111,7 +111,7 @@ export const getCoverUrls = async (issuecodes: string[]) => {
     .filter(([issuecode]) => !!entryurls[entrycodeByIssuecode[issuecode]]?.url)
     .map(([issuecode, issue]) => {
       const coverEntryUrl = entryurls[entrycodeByIssuecode[issuecode]];
-      const urlPrefix = /^\d/.test(coverEntryUrl.url!)
+      const urlPrefix = /^\d/.test(coverEntryUrl.url)
         ? "webusers/webusers"
         : coverEntryUrl.url!.startsWith("webusers")
           ? "webusers"

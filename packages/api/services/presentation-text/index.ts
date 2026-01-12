@@ -1,6 +1,6 @@
 import { useSocketEvents } from "socket-call-server";
 
-import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
+import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm";
 
 import PresentationSentenceApproved from "../../emails/presentation-sentence-approved";
 import PresentationSentenceRefused from "../../emails/presentation-sentence-refused";

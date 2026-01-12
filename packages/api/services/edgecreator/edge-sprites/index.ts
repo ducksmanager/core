@@ -1,8 +1,8 @@
 import { v2 as cloudinaryV2 } from "cloudinary";
 
-import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa/client";
-import type { edge } from "~prisma-schemas/schemas/dm";
-import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
+import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa";
+import type { edge } from "~prisma-schemas/schemas/dm/client/client";
+import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm";
 
 const SPRITE_SIZES = [10, 20, 50, 100, "full"] as const;
 const MAX_SPRITE_SIZE = 100;
@@ -181,7 +181,7 @@ const updateTags = async (edges: edge[]) => {
       if (!tagsToAdd[spriteName]) {
         tagsToAdd[spriteName] = { slugs: [], spriteSize: actualSpriteSize };
       }
-      tagsToAdd[spriteName].slugs.push(edge.slug!);
+      tagsToAdd[spriteName].slugs.push(edge.slug);
       insertOperations.push(
         prismaDm.edgeSprite.create({
           data: {

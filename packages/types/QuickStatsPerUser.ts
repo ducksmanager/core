@@ -1,4 +1,4 @@
-import type { Prisma } from "~prisma-schemas/schemas/dm";
+import type { Prisma } from "~prisma-schemas/schemas/dm/client/client";
 
 export type QuickStatsPerUser = Record<
   string,

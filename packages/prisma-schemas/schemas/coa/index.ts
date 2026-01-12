@@ -22,10 +22,7 @@ const getCoaClient = () => {
       coaClient = prismaExtendedCoa(
         new PrismaClientCoa({
           adapter: new PrismaMariaDb(connectionString),
-          log:
-            process.env.NODE_ENV === "development"
-              ? ["error", "warn"]
-              : ["error"],
+          log: process.env.NODE_ENV === "local" ? ["error", "warn"] : ["error"],
         }),
       );
     } catch (error) {

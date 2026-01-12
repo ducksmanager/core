@@ -7,7 +7,7 @@ dotenv.config({
 import { mkdirSync, readdirSync, writeFileSync } from "fs";
 import { dirname, resolve } from "path";
 import { fileURLToPath } from "url";
-import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa/client";
+import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa";
 import { firefox } from "playwright-firefox";
 
 const excludedSitecodes = [

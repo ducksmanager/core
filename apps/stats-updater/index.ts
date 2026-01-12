@@ -11,11 +11,11 @@ import {
   type inducks_storyjob,
   Prisma,
 } from "~prisma-schemas/schemas/coa";
-import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa/client";
-import type { authorUser } from "~prisma-schemas/schemas/dm";
-import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
-import type { authorStory } from "~prisma-schemas/schemas/dm_stats";
-import { prismaClient as prismaDmStats } from "~prisma-schemas/schemas/dm_stats/client";
+import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa";
+import type { authorUser } from "~prisma-schemas/schemas/dm/client/client";
+import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm";
+import type { authorStory } from "~prisma-schemas/schemas/dm_stats/client/client";
+import { prismaClient as prismaDmStats } from "~prisma-schemas/schemas/dm_stats";
 
 dotenv.config();
 

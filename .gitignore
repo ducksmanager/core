@@ -13,6 +13,7 @@
 **/.turbo/
 **/.venv
 **/*.js.map
+**/.env.prod.local
 **/auto-imports.d.ts
 **/bundle.mjs
 **/components.d.ts

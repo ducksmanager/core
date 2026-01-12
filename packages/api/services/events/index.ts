@@ -21,7 +21,7 @@ import type {
 import type { MedalEvent } from "~dm-types/events/MedalEvent";
 import type { SignupEvent } from "~dm-types/events/SignupEvent";
 import MEDAL_LEVELS from "~dm-types/MedalLevels";
-import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
+import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm";
 
 import namespaces from "../namespaces";
 

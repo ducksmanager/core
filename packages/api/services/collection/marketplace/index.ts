@@ -1,6 +1,6 @@
-import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa/client";
-import type { issue } from "~prisma-schemas/schemas/dm";
-import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
+import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa";
+import type { issue } from "~prisma-schemas/schemas/dm/client/client";
+import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm";
 
 import type { UserServices } from "../../../index";
 import contactMethods from "./contact-methods";

@@ -1,4 +1,4 @@
-import type { inducks_issue } from "~prisma-schemas/schemas/coa";
+import type { inducks_issue } from "~prisma-schemas/schemas/coa/client/client";
 
 export type SimpleInducksIssue = Pick<
   inducks_issue,

@@ -2,11 +2,11 @@ import type { IssueSuggestion } from "~dm-types/IssueSuggestion";
 import { IssueSuggestionList } from "~dm-types/IssueSuggestionList";
 import type { StoryDetail } from "~dm-types/StoryDetail";
 import type { SuggestionList } from "~dm-types/SuggestionList";
-import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa/client";
-import { userOptionType } from "~prisma-schemas/schemas/dm";
-import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
+import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa";
+import { userOptionType } from "~prisma-schemas/schemas/dm/client/client";
+import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm";
 import type { Prisma as PrismaDmStats } from "~prisma-schemas/schemas/dm_stats";
-import { prismaClient as prismaDmStats } from "~prisma-schemas/schemas/dm_stats/client";
+import { prismaClient as prismaDmStats } from "~prisma-schemas/schemas/dm_stats";
 
 import type { UserServices } from "../../index";
 

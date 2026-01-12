@@ -1,4 +1,4 @@
-import { prismaClient as prismaDmStats } from "~prisma-schemas/schemas/dm_stats/client";
+import { prismaClient as prismaDmStats } from "~prisma-schemas/schemas/dm_stats";
 
 import type { UserServices } from "../../index";
 import { getAuthorFullNames } from "../coa/authors";

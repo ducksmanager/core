@@ -19,10 +19,7 @@ const getClient = () => {
       console.log("DM_STATS connection string configured with pool parameters");
       dmStatsClient = new PrismaClientDmStats({
         adapter: new PrismaMariaDb(connectionString),
-        log:
-          process.env.NODE_ENV === "development"
-            ? ["error", "warn"]
-            : ["error"],
+        log: process.env.NODE_ENV === "local" ? ["error", "warn"] : ["error"],
       });
     } catch (error) {
       console.error("Failed to create DM_STATS PrismaClient:", error);

@@ -12,7 +12,7 @@
 </template>
 
 <script setup lang="ts">
-import type { issue_condition } from "~prisma-schemas/schemas/dm";
+import type { issue_condition } from "~prisma-schemas/schemas/dm/client/client";
 const {
   issuecode = null,
   value = undefined,

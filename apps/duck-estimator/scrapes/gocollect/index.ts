@@ -5,7 +5,7 @@ import { firefox } from "playwright-firefox";
 import { getScrapeCacheTime, syncScrapeCache } from "~/cache";
 import { createQuotations, deleteQuotations } from "~/coa";
 import { readCsvMapping } from "~/csv";
-import { prismaClient } from "~prisma-schemas/schemas/coa/client";
+import { prismaClient } from "~prisma-schemas/schemas/coa";
 import type { ConsoleArgs } from "~/index";
 
 export const error = (...args: ConsoleArgs) => console.error(`[gocollect]`, ...args);

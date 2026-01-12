@@ -3,7 +3,7 @@ import https from "https";
 import { useSocketEvents } from "socket-call-server";
 
 import type { SimilarImagesResult } from "~dm-types/CoverSearchResults";
-import { prismaClient as prismaCoverInfo } from "~prisma-schemas/schemas/cover_info/client";
+import { prismaClient as prismaCoverInfo } from "~prisma-schemas/schemas/cover_info";
 
 import { getCoverUrls } from "../coa/issue-details";
 import namespaces from "../namespaces";

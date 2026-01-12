@@ -1,9 +1,9 @@
 import type { SimpleIssueWithPartInfo } from "~dm-types/SimpleIssue";
 import type { SimpleStory } from "~dm-types/SimpleStory";
 import type { StorySearchResults } from "~dm-types/StorySearchResults";
-import type { inducks_story } from "~prisma-schemas/schemas/coa";
-import { Prisma } from "~prisma-schemas/schemas/coa";
-import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa/client";
+import type { inducks_story } from "~prisma-schemas/schemas/coa/client/client";
+import { Prisma } from "~prisma-schemas/schemas/coa/client/client";
+import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa";
 
 export default {
   getStoryDetails: async (storycodes: string[]) =>

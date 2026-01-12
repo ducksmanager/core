@@ -95,7 +95,7 @@
 </template>
 
 <script setup lang="ts">
-import type { issue } from "~prisma-schemas/schemas/dm";
+import type { issue } from "~prisma-schemas/schemas/dm/client/client";
 
 const { selectedIssueIdsByIssuecode } = defineProps<{
   selectedIssueIdsByIssuecode: {

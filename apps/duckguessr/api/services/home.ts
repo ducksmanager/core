@@ -1,7 +1,7 @@
 import { type Socket } from "socket.io";
 import { type NamespaceProxyTarget, useSocketEvents } from "socket-call-server";
 
-import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa/client";
+import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa";
 
 import prisma from "../prisma/client";
 import namespaces from "./namespaces";

@@ -2,8 +2,8 @@ import { createServer } from "http";
 import { parse } from "url";
 import * as Sentry from "@sentry/node";
 
-import type { inducks_issue } from "~prisma-schemas/client_coa/client";
-import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa/client";
+import type { inducks_issue } from "~prisma-schemas/schemas/coa/client/client";
+import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa";
 
 import { getUpdateFileUrl } from "./services/app";
 import {
