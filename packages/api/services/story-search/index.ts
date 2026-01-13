@@ -222,25 +222,17 @@ export const findSimilarImages = async (
     const vectorString = formatVectorForDB(queryVector.vector);
     console.log("formatVectorForDB done");
 
-    // NOTE: Vector index optimization is currently not working in MariaDB 11.8.5
-    // Even with FORCE INDEX, the vector index is not used by the optimizer.
-    // EXPLAIN shows: type=ALL, key=NULL (full table scan)
-    // This appears to be a bug/incomplete implementation in MariaDB 11.8.5.
-    // 
-    // Related issues:
-    // - MDEV-35305: Vector search queries incorrectly logged as "not using index"
-    //   (https://jira.mariadb.org/browse/MDEV-35305)
-    //   Note: That issue shows EXPLAIN correctly uses the index, but slow log reports incorrectly.
-    //   Our issue is more severe - EXPLAIN itself shows the index is NOT being used.
-    // 
-    // Workaround: Use the is_cover index to filter first (~238k rows instead of 667k),
-    // then compute distances on the filtered subset. This is still much better than
-    // scanning all rows, but not as optimal as using the vector index would be.
+    // NOTE: Vector index configuration requirements (discovered via MariaDB maintainer feedback):
+    // 1. The index must specify DISTANCE=cosine to match VEC_DISTANCE_COSINE function
+    //    Migration updated: create index v on inducks_entryurl_vector (v) using vector distance=cosine
+    //    See fix-vector-index.sql for updating existing indexes
+    // 2. LIMIT must be smaller than the number of rows for optimizer to choose the index
+    //    (with 667k rows, LIMIT 5 should work fine)
     //
-    // To investigate:
-    // - Check MariaDB JIRA: https://jira.mariadb.org (search for "vector index" + "11.8")
-    // - Check if upgrading to a newer 11.8.x patch version fixes the issue
-    // - See vector-index-diagnostics.sql for diagnostic queries
+    // Current approach: Use the is_cover index to filter first (~238k rows instead of 667k),
+    // then compute distances on the filtered subset. This works well and is efficient.
+    // The vector index could potentially be used directly, but filtering by is_cover first
+    // is still beneficial for our use case.
     //
     // Store the vector once to avoid recomputing it multiple times
     // Compute distances only on rows filtered by is_cover, then filter by similarity

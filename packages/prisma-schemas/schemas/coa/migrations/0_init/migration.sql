@@ -163,7 +163,7 @@ create table inducks_entryurl_vector (
     constraint inducks_entryurl_vector_entrycode_uindex unique (entrycode)
 );
 create index inducks_entryurl_vector_is_cover_index on inducks_entryurl_vector (is_cover);
-create index v on inducks_entryurl_vector (v) using vector;
+create index v on inducks_entryurl_vector (v) using vector distance = cosine;
 create table inducks_equiv (
     issuecode varchar(15) null,
     equivid int(7) null,
