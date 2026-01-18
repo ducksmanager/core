@@ -7,16 +7,19 @@ meta:
   <b-table v-if="bookstores" :items="bookstores">
     <template #cell(comments)="{ value }">
       <div
-        v-for="comment in value"
-        :key="`comment-${(comment as bookstoreComment).id}`"
+        v-for="comment in (value as typeof bookstores[number]['comments'])"
+        :key="`comment-${comment.id}`"
+        class="mb-2"
       >
-        <u
-          >{{ (comment as bookstoreComment).userId }} on
-          {{ (comment as bookstoreComment).creationDate }}</u
-        >: {{ (comment as bookstoreComment).comment }}
+        <u>{{ comment.userId }} on {{ comment.creationDate }}</u
+        >:
+        <div>
+          <quote>{{ comment.comment }}</quote>
+        </div>
+        <BookstoreRatings dark :model-value="comment" readonly />
         <b-button
-          v-if="!(comment as bookstoreComment).isActive"
-          @click="validateBookstoreComment((comment as bookstoreComment))"
+          v-if="!comment.isActive"
+          @click="validateBookstoreComment(comment)"
         >
           {{ $t("Valider") }}
         </b-button>
@@ -26,10 +29,12 @@ meta:
 </template>
 
 <script setup lang="ts">
-import type { SimpleBookstore } from "~dm-types/SimpleBookstore";
+import { EventOutput } from "socket-call-client";
+import { type AdminClientEvents as AdminBookstoreEvents } from "~dm-services/bookstores";
 import type { bookstoreComment } from "~prisma-schemas/schemas/dm";
 
-let bookstores = $shallowRef<SimpleBookstore[]>();
+let bookstores =
+  $shallowRef<EventOutput<AdminBookstoreEvents, "getBookstores">>();
 
 const { adminBookstore: adminBookstoreEvents } = inject(socketInjectionKey)!;
 

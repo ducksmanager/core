@@ -76,6 +76,7 @@ model bookstore {
   address             String             @map("AdresseComplete") @db.Text
   coordX              Float              @map("CoordX")
   coordY              Float              @map("CoordY")
+  reportedAsClosed    DateTime?          @map("IndiqueeFermee") @db.Timestamp(0)
   comments            bookstoreComment[]
   users_contributions userContribution[]
 
@@ -87,6 +88,9 @@ model bookstoreComment {
   userId              Int?               @map("ID_Utilisateur")
   comment             String             @map("Commentaire") @db.Text
   creationDate        DateTime           @default(now()) @map("DateAjout") @db.Timestamp(0)
+  atmosphereRating    Int?               @map("NoteAmbiance")
+  pricesRating        Int?               @map("NotePrix")
+  selectionRating     Int?               @map("NoteSelection")
   isActive            Boolean            @default(false) @map("Actif")
   bookstoreId         Int                @map("ID_Bouquinerie")
   bouquineries        bookstore          @relation(fields: [bookstoreId], references: [id], onUpdate: Restrict, map: "bouquineries_commentaires_bouquineries_ID_fk")

@@ -24,22 +24,40 @@
             :lng-lat="[currentBookstore.coordY, currentBookstore.coordX]"
             anchor="bottom"
             :color="
-              Number(bookstoreId) === currentBookstore.id ? 'red' : 'blue'
+              currentBookstore.reportedAsClosed
+                ? 'grey'
+                : openedPopupId === currentBookstore.id
+                  ? 'red'
+                  : 'blue'
             "
             :offset="[0, 6]"
           >
-            <mapbox-popup anchor="top">
-              <div>
-                <h2>{{ currentBookstore.name }}</h2>
+            <mapbox-popup
+              anchor="top"
+              @open="openedPopupId = currentBookstore.id"
+              @close="
+                openedPopupId = undefined;
+                existingBookstore = undefined;
+              "
+            >
+              <div :class="{ 'striped-bg': currentBookstore.reportedAsClosed }">
+                <b-alert
+                  v-if="currentBookstore.reportedAsClosed"
+                  variant="warning"
+                  :model-value="true"
+                >
+                  {{ $t("Cette bouquinerie est fermée.") }}
+                </b-alert>
+                <h2>{{ decodeText(currentBookstore.name) }}</h2>
                 <div>
                   <p class="text-secondary">
-                    {{ currentBookstore.address }}
+                    {{ decodeText(currentBookstore.address) }}
                   </p>
                   <div
                     v-for="{
                       userId,
                       creationDate,
-                      comment,
+                      ...comment
                     } in currentBookstore.comments.filter(
                       ({ creationDate }) => creationDate,
                     )"
@@ -52,56 +70,93 @@
                     <span v-else>{{ $t("Un visiteur anonyme") }}</span
                     >&nbsp;<i>{{ formatDate(creationDate) }}</i>
                     <blockquote class="px-3 clearfix">
-                      {{ comment }}
+                      {{ decodeText(comment.comment) }}
+                      <BookstoreRatings dark :model-value="comment" readonly />
                     </blockquote>
+                    <hr />
                   </div>
-                  <b-alert
-                    v-if="existingBookstoreSent"
-                    variant="success"
-                    :model-value="true"
-                  >
-                    {{ $t("Un e-mail vient d'être envoyé au webmaster.") }}
-                    {{
-                      $t(
-                        "Si votre commentaire est valide, il sera ajouté sur le site très prochainement.",
-                      )
-                    }}
-                    {{ $t("Merci pour votre contribution !") }}
-                  </b-alert>
-                  <form
-                    v-else-if="existingBookstore"
-                    class="mb-2"
-                    @submit.prevent="suggestComment(currentBookstore)"
-                  >
-                    <b-form-textarea
-                      v-model="
-                        currentBookstore.comments[
-                          currentBookstore.comments.length - 1
-                        ].comment
-                      "
-                      required
-                      cols="41"
-                      rows="5"
-                      minlength="50"
-                      maxlength="1000"
-                      type="text"
-                      :placeholder="
-                        $t('Commentaires (ambiance, exemples de prix,...)')
-                      "
-                    />
-                    <b-button type="submit">
-                      {{ $t("Ajouter un commentaire") }}
-                    </b-button>
-                    <b-button @click="existingBookstore = undefined">
-                      {{ $t("Annuler") }}
-                    </b-button>
-                  </form>
-                  <b-button
-                    v-else
-                    @click="initCommentOnExistingBookstore(currentBookstore)"
-                  >
-                    {{ $t("Ajouter un commentaire") }}
-                  </b-button>
+                  <template v-if="!currentBookstore.reportedAsClosed">
+                    <b-alert
+                      v-if="existingBookstoreSent"
+                      variant="success"
+                      :model-value="true"
+                    >
+                      {{ $t("Un e-mail vient d'être envoyé au webmaster.") }}
+                      {{
+                        $t(
+                          "Si votre commentaire est valide, il sera ajouté sur le site très prochainement.",
+                        )
+                      }}
+                      {{ $t("Merci pour votre contribution !") }}
+                    </b-alert>
+                    <b-alert
+                      v-else-if="closedBookstoreReportedSent"
+                      variant="success"
+                      :model-value="true"
+                    >
+                      {{ $t("Un e-mail vient d'être envoyé au webmaster.") }}
+                      {{ $t("Une vérification sera effectuée prochainement.") }}
+                      {{ $t("Merci pour votre contribution !") }}
+                    </b-alert>
+                    <form
+                      v-else-if="existingBookstore?.id === currentBookstore.id"
+                      class="mb-2"
+                      @submit.prevent="suggestComment(currentBookstore)"
+                    >
+                      <ReuseTemplate dark />
+                      <b-row class="mt-4 d-flex flex-row">
+                        <b-col cols="6" class="d-flex justify-content-center">
+                          <b-button type="submit" variant="primary">
+                            {{ $t("Ajouter un commentaire") }}
+                          </b-button>
+                        </b-col>
+                        <b-col cols="6" class="d-flex justify-content-center">
+                          <b-button
+                            variant="danger"
+                            @click="existingBookstore = undefined"
+                          >
+                            {{ $t("Annuler") }}
+                          </b-button>
+                        </b-col>
+                      </b-row>
+                    </form>
+                    <b-row v-else>
+                      <b-col cols="6" class="d-flex justify-content-center">
+                        <b-button
+                          v-if="
+                            !user ||
+                            isAllowedToCreateBookstoreComment(
+                              user.id,
+                              currentBookstore,
+                            )
+                          "
+                          @click="
+                            initCommentOnExistingBookstore(currentBookstore)
+                          "
+                        >
+                          {{ $t("Ajouter un commentaire") }}
+                        </b-button>
+                        <span
+                          v-else
+                          v-b-tooltip="
+                            'Vous ne pouvez pas ajouter un commentaire sur cette bouquinerie car vous avez déjà ajouté un commentaire il y a moins de 6 mois.'
+                          "
+                        >
+                          <b-button disabled>
+                            {{ $t("Ajouter un commentaire") }}
+                          </b-button>
+                        </span>
+                      </b-col>
+                      <b-col cols="6" class="d-flex justify-content-center">
+                        <b-button
+                          variant="warning"
+                          @click="reportBookstoreAsClosed(currentBookstore.id)"
+                        >
+                          {{ $t("Indiquer comme fermée") }}
+                        </b-button>
+                      </b-col>
+                    </b-row>
+                  </template>
                 </div>
               </div>
             </mapbox-popup>
@@ -111,97 +166,156 @@
     </div>
     <br />
     <br />
-    <h2>
-      {{ $t("Proposer une bouquinerie") }}
-    </h2>
-    {{
-      $t(
-        "Vous connaissez une bouquinerie sympa ? Faites-en profiter d'autres collectionneurs !",
-      )
-    }}
-    <br />
-    {{
-      $t(
-        "Entrez ci-dessous les informations sur la bouquinerie que vous connaissez, puis entrez des exemples de prix de magazines.",
-      )
-    }}
-    <br />
-    {{
-      $t(
-        "Nous comptons sur votre honnêteté concernant les prix si vous en mentionnez.",
-      )
-    }}
-    <br />
-    <br />
-    <b-alert v-if="newBookstoreSent" variant="success" :model-value="true">
-      {{ $t("Un e-mail vient d'être envoyé au webmaster.") }}
-      {{
-        $t(
-          "Si votre bouquinerie est valide, elle sera ajoutée sur le site très prochainement.",
-        )
-      }}
-      {{ $t("Merci pour votre contribution !") }}
-    </b-alert>
-    <form v-else @submit.prevent="suggestComment(newBookstore)">
-      <input v-model="newBookstore.coordX" type="hidden" />
-      <input v-model="newBookstore.coordY" type="hidden" />
-      <b-form-input
-        v-model="newBookstore.name"
-        required
-        maxlength="25"
-        type="text"
-        :placeholder="$t('Nom de la bouquinerie')"
-      />
+    <b-row>
+      <b-col cols="6">
+        <h2>
+          {{ $t("Proposer une bouquinerie") }}
+        </h2>
+        <b-alert variant="info" :model-value="true">
+          <div>
+            {{
+              $t(
+                "Vous connaissez une bouquinerie sympa ? Faites-en profiter d'autres collectionneurs !",
+              )
+            }}
+          </div>
+          <div>
+            {{
+              $t(
+                "Entrez ci-dessous les informations sur la bouquinerie que vous connaissez, puis entrez des exemples de prix de magazines.",
+              )
+            }}
+          </div>
+          <div>
+            {{
+              $t(
+                "Nous comptons sur votre honnêteté concernant les prix si vous en mentionnez.",
+              )
+            }}
+          </div>
+          <div>
+            {{
+              $t(
+                "Vérifiez que la bouquinerie n'existe pas déjà sur la carte. Si c'est le cas, ajoutez un commentaire à la bouquinerie.",
+              )
+            }}
+          </div>
+        </b-alert>
+        <b-alert
+          v-if="newBookstoreSent"
+          variant="success"
+          :model-value="true"
+          class="mt-2"
+        >
+          {{ $t("Un e-mail vient d'être envoyé au webmaster.") }}
+          {{
+            $t(
+              "Si votre bouquinerie est valide, elle sera ajoutée sur le site très prochainement.",
+            )
+          }}
+          {{ $t("Merci pour votre contribution !") }}
+        </b-alert>
+        <form v-else @submit.prevent="suggestComment(newBookstore)">
+          <input v-model="newBookstore.coordX" type="hidden" />
+          <input v-model="newBookstore.coordY" type="hidden" />
+          <b-form-input
+            v-model="newBookstore.name"
+            required
+            maxlength="25"
+            type="text"
+            :placeholder="$t('Nom de la bouquinerie')"
+          />
 
-      <div id="address" class="mb-2" />
-      <b-form-textarea
-        v-model="newBookstore.comments[0].comment"
-        required
-        cols="41"
-        rows="5"
-        minlength="50"
-        maxlength="1000"
-        type="text"
-        :placeholder="$t('Commentaires (ambiance, exemples de prix,...)')"
-      />
-      <b-button type="submit">
-        {{ $t("Ajouter la bouquinerie") }}
-      </b-button>
-    </form>
+          <div id="address" class="mb-2" />
+          <DefineTemplate v-slot="{ dark }">
+            <b-form-textarea
+              v-model="newComment.comment"
+              required
+              cols="41"
+              rows="5"
+              minlength="50"
+              maxlength="1000"
+              type="text"
+              :placeholder="$t('Commentaires')"
+            />
+            <b-table-simple hover responsive class="mt-2"
+              ><b-tbody>
+                <BookstoreRatings
+                  :dark="dark"
+                  :model-value="newComment"
+                  :readonly="false"
+                />
+              </b-tbody>
+            </b-table-simple>
+          </DefineTemplate>
+          <ReuseTemplate :dark="false" />
+          <b-button type="submit">
+            {{ $t("Ajouter la bouquinerie") }}
+          </b-button>
+        </form>
+      </b-col>
+    </b-row>
   </div>
 </template>
 
 <script setup lang="ts">
 import MapboxGeocoder from "@mapbox/mapbox-gl-geocoder";
 import { MapboxMap, MapboxMarker, MapboxPopup } from "vue-mapbox-ts";
-
-import type { SimpleBookstore } from "~dm-types/SimpleBookstore";
-
+import type {
+  NewBookstore,
+  NewComment,
+  SimpleBookstore,
+} from "~dm-types/SimpleBookstore";
 import { socketInjectionKey } from "../composables/useDmSocket";
+import { isAllowedToCreateBookstoreComment } from "~dm-services/bookstores/util";
+import type { EventOutput } from "socket-call-client";
+import type { ClientEvents as BookstoreServices } from "~dm-services/bookstores";
+import { createReusableTemplate } from "@vueuse/core";
+
+const [DefineTemplate, ReuseTemplate] = createReusableTemplate({
+  props: {
+    dark: Boolean,
+  },
+});
 
 const { bookstore: bookstoreEvents } = inject(socketInjectionKey)!;
 
 const { fetchStats } = users();
 const { stats: userStats } = storeToRefs(users());
+const { user } = storeToRefs(collection());
 
-let bookstores = $shallowRef<SimpleBookstore[]>();
+let bookstores =
+  $shallowRef<EventOutput<BookstoreServices, "getActiveBookstores">>();
 let existingBookstore = $ref<SimpleBookstore>();
 let newBookstoreSent = $ref(false);
 let existingBookstoreSent = $ref(false);
+let closedBookstoreReportedSent = $ref(false);
 
 const route = useRoute();
-const bookstoreId = computed(() => route.query.id as string);
+const openedPopupId = $ref<number | undefined>(
+  route.query.id ? parseInt(route.query.id as string) : undefined,
+);
 
 const { t: $t } = useI18n();
 let loaded = $ref(false);
-const newBookstore = $ref<SimpleBookstore>({
-  id: null,
+
+const newBookstoreDefaults = {
   name: "",
   address: "",
   coordX: 0,
   coordY: 0,
-  comments: [{ comment: "", userId: null, creationDate: null }],
-});
+} as const;
+
+const newCommentDefaults = {
+  comment: "",
+  atmosphereRating: 5,
+  pricesRating: 5,
+  selectionRating: 5,
+} as const;
+
+const newBookstore = $ref<NewBookstore>(newBookstoreDefaults);
+const newComment = $ref<NewComment>(newCommentDefaults);
+
 const accessToken =
   "pk.eyJ1IjoiYnBlcmVsIiwiYSI6ImNqbmhubHVrdDBlZ20zcG8zYnQydmZwMnkifQ.suaRi8ln1w_DDDlTlQH0vQ";
 const mapCenter = [1.73584, 46.754917];
@@ -229,19 +343,10 @@ const decodeText = (value: string) => {
   }
 };
 const fetchBookstores = async () => {
-  bookstores = (await bookstoreEvents.getActiveBookstores())
-    .map((bookstore) => {
-      bookstore.name = decodeText(bookstore.name);
-      bookstore.address = decodeText(bookstore.address);
-      bookstore.comments.forEach((comment, commentNumber) => {
-        bookstore.comments[commentNumber].comment = decodeText(comment.comment);
-      });
-      return bookstore;
-    })
-    .filter((bookstore) => !!bookstore);
+  bookstores = await bookstoreEvents.getActiveBookstores();
 };
-const suggestComment = async (bookstore: SimpleBookstore) => {
-  if (!bookstore.id && !bookstore.coordX) {
+const suggestComment = async (bookstore: NewBookstore | SimpleBookstore) => {
+  if (!bookstore.coordX) {
     window.alert(
       $t(
         'Vous devez sélectionner une adresse dans la liste lorsque vous l\'entrez dans le champ "Adresse"',
@@ -249,19 +354,25 @@ const suggestComment = async (bookstore: SimpleBookstore) => {
     );
     return false;
   }
-  await bookstoreEvents.createBookstoreComment(bookstore);
-  if (bookstore.id) {
+  await bookstoreEvents.createBookstoreComment(bookstore, newComment);
+  if ("id" in bookstore) {
     existingBookstoreSent = true;
     existingBookstore = undefined;
+    setTimeout(() => {
+      existingBookstoreSent = false;
+    }, 10000);
   } else {
     newBookstoreSent = true;
   }
 };
-const formatDate = (date: Date | null) =>
+const formatDate = (date: string | Date | null) =>
   date === null
     ? $t("il y a longtemps")
     : $t("le {date}", {
-        date: new Date(date).toLocaleDateString(),
+        date: (typeof date === "string"
+          ? new Date(date)
+          : date
+        ).toLocaleDateString(),
       });
 
 const initCommentOnExistingBookstore = (bookstore: SimpleBookstore) => {
@@ -274,7 +385,19 @@ const initCommentOnExistingBookstore = (bookstore: SimpleBookstore) => {
     });
   }
 };
-
+const reportBookstoreAsClosed = async (bookstoreId: number) => {
+  if (
+    window.confirm(
+      $t("Voulez-vous vraiment indiquer cette bouquinerie comme fermée ?"),
+    )
+  ) {
+    await bookstoreEvents.reportBookstoreAsClosed(bookstoreId);
+    closedBookstoreReportedSent = true;
+    setTimeout(() => {
+      closedBookstoreReportedSent = false;
+    }, 10000);
+  }
+};
 watch(
   $$(bookstoreCommentsUserIds),
   async (value) => {
@@ -297,8 +420,8 @@ onMounted(async () => {
   await fetchBookstores();
   geocoder.addTo("#address");
   let element = window.document.querySelector(".mapboxgl-ctrl-geocoder--input");
-  if (element as HTMLElement) {
-    element!.setAttribute("required", "true");
+  if (element) {
+    element.setAttribute("required", "true");
   }
   geocoder.on("result", ({ result: { place_name, center } }) => {
     newBookstore.address = place_name;
@@ -308,6 +431,16 @@ onMounted(async () => {
 </script>
 
 <style lang="scss">
+.striped-bg {
+  background-image: repeating-linear-gradient(
+    45deg,
+    transparent,
+    transparent 10px,
+    rgba(0, 0, 0, 0.05) 10px,
+    rgba(0, 0, 0, 0.05) 20px
+  );
+}
+
 #map {
   height: 500px;
 
@@ -316,7 +449,12 @@ onMounted(async () => {
   }
 
   .mapboxgl-popup-content {
+    padding: 0;
     color: black;
+
+    > div > div {
+      padding: 10px 10px 15px;
+    }
   }
 }
 

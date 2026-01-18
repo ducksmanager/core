@@ -1,6 +1,6 @@
 import { useSocketEvents } from "socket-call-server";
 
-import type { SimpleBookstore } from "~dm-types/SimpleBookstore";
+import type { NewBookstore, NewComment, SimpleBookstore } from "~dm-types/SimpleBookstore";
 import type {
   bookstore,
   bookstoreComment,
@@ -10,6 +10,7 @@ import { userContributionType } from "~prisma-schemas/schemas/dm";
 import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
 
 import BookstoreSuggested from "../../emails/bookstore-suggested";
+import BookstoreReportedClosed from "../../emails/bookstore-reported-closed";
 import type { UserServices } from "../../index";
 import {
   OptionalAuthMiddleware,
@@ -17,6 +18,8 @@ import {
   UserIsAdminMiddleware,
 } from "../auth/util";
 import namespaces from "../namespaces";
+import { isAllowedToCreateBookstoreComment } from "./util";
+
 
 const persistContribution = async (
   user: user,
@@ -48,14 +51,14 @@ const persistContribution = async (
   });
 };
 
-const getBookstores = async (onlyActive?: true) =>
+const getBookstores = (onlyActive?: true): Promise<(bookstore & { comments: bookstoreComment[] })[]> =>
   prismaDm.bookstore.findMany({
-    select: {
-      id: true,
-      name: true,
-      address: true,
-      coordX: true,
-      coordY: true,
+    include: onlyActive ? { comments: {
+        where: {
+          isActive: true,
+        },
+      }
+    } : {
       comments: true,
     },
     where: onlyActive
@@ -116,38 +119,20 @@ export const { client: adminClient, server: adminServer } = useSocketEvents<
 const listenEvents = ({ _socket }: UserServices) => ({
   getActiveBookstores: () => getBookstores(true),
 
-  createBookstoreComment: async ({
-    id,
-    name,
-    address,
-    coordX,
-    coordY,
-    comments,
-  }: SimpleBookstore) => {
-    if (!id && !name) {
+  reportBookstoreAsClosed: async (bookstoreId: number) => {
+    const bookstore = await prismaDm.bookstore.findUniqueOrThrow({
+      where: { id: bookstoreId },
+    });
+    await new BookstoreReportedClosed({
+      username: _socket.data.user?.username || "Anonymous",
+      bookstoreId,
+      bookstoreName: bookstore.name,
+    }).send();
+  },
+
+  createBookstoreComment: async (bookstore: NewBookstore|SimpleBookstore, comment: NewComment) => {
+    if (!bookstore.name || (('id' in bookstore) && !bookstore.id)) {
       return { error: "No bookstore ID or name was provided" };
-    }
-    let dbBookstore: bookstore;
-    if (id) {
-      try {
-        dbBookstore = await prismaDm.bookstore.findUniqueOrThrow({
-          where: { id },
-        });
-      } catch (_e) {
-        return {
-          error: "No bookstore exists",
-          errorDetails: `ID: ${id}`,
-        };
-      }
-    } else {
-      dbBookstore = await prismaDm.bookstore.create({
-        data: {
-          name,
-          address,
-          coordX,
-          coordY,
-        },
-      });
     }
     const user = _socket.data.user
       ? await prismaDm.user.findUnique({
@@ -156,16 +141,51 @@ const listenEvents = ({ _socket }: UserServices) => ({
           },
         })
       : null;
+
+    let dbBookstore: bookstore & { comments: bookstoreComment[] };
+    if ('id' in bookstore) {
+      try {
+        dbBookstore = await prismaDm.bookstore.findUniqueOrThrow({
+          include: {
+            comments: true,
+          },
+          where: { id: bookstore.id },
+        });
+        if (user && !isAllowedToCreateBookstoreComment(user.id, dbBookstore)) {
+          return {
+            error: "You are not allowed to create a comment on this bookstore",
+          };
+        }
+      } catch (_e) {
+        return {
+          error: "No bookstore exists",
+          errorDetails: `ID: ${bookstore.id}`,
+        };
+      }
+    } else {
+      const { name, address, coordX, coordY } = bookstore;
+      dbBookstore = await prismaDm.bookstore.create({
+        include: {
+          comments: true,
+        },
+        data: {
+          name,
+          address,
+          coordX,
+          coordY,
+        },
+      });
+    }
     const createdComment = await prismaDm.bookstoreComment.create({
       data: {
         bookstoreId: dbBookstore.id,
         isActive: false,
         userId: user?.id,
-        comment: comments[comments.length - 1].comment,
+        ...comment,
       },
     });
 
-    new BookstoreSuggested({
+    await new BookstoreSuggested({
       user,
     }).send();
 
