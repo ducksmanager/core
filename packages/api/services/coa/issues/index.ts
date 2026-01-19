@@ -71,6 +71,9 @@ export default {
             in: publicationcodes,
           },
         },
+        orderBy: {
+          issuecode: "asc",
+        },
       })
       .then((data) => data.groupBy("publicationcode", "issuecode[]")),
 
