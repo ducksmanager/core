@@ -52,7 +52,7 @@ export default (
             message: t('Aucun résultat pour votre photo, veuillez réessayer.'),
             duration: 2000,
             cssClass: 'toast-error',
-            positionAnchor: 'overlay',
+            positionAnchor: document.getElementById('overlay') ? 'overlay' : undefined,
             position: 'bottom',
             translucent: true,
           });
