@@ -1,10 +1,15 @@
 <template>
   <div id="camera-preview" ref="cameraPreview"></div>
   <ion-row id="overlay" ref="overlay" :class="{ portrait: isPortrait, landscape: !isPortrait }">
-    <ion-button ref="takePhotoButton" size="large" @click="takePhoto()">
+    <ion-button ref="takePhotoButton" size="large" :disabled="isSearching" @click="takePhoto()">
       <ion-icon :ios="apertureOutline" :md="apertureSharp" />
     </ion-button>
-    <ion-button size="large" color="danger" @click="CameraPreview.stop().finally(() => (isCameraPreviewShown = false))">
+    <ion-button
+      size="large"
+      color="danger"
+      :disabled="isSearching"
+      @click="CameraPreview.stop().finally(() => (isCameraPreviewShown = false))"
+    >
       <ion-icon :ios="closeOutline" :md="closeSharp" />
     </ion-button>
     <div
@@ -73,7 +78,7 @@ watch(isPortrait, () => {
 const cameraPreview = useTemplateRef<HTMLDivElement>('cameraPreview');
 
 const { coverId: coverIdEvents, storySearch: storySearchEvents } = inject(dmSocketInjectionKey)!;
-const { takePhoto } = useCoverSearch(useRouter(), coverIdEvents, storySearchEvents);
+const { takePhoto, isSearching } = useCoverSearch(useRouter(), coverIdEvents, storySearchEvents);
 const { isCameraPreviewShown } = storeToRefs(app());
 
 onIonViewWillLeave(() => {

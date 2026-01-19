@@ -9,21 +9,25 @@ export default (
   router: Router,
   coverIdEvents: ReturnType<typeof useDmSocket>['coverId'],
   storySearchEvents: ReturnType<typeof useDmSocket>['storySearch'],
-): {
-  pickCoverFile: () => Promise<void>;
-  takePhoto: () => Promise<void>;
-} => {
+) => {
+  const isSearching = ref(false);
   const { t } = useI18n();
 
   const normalizeBase64 = (input: string): string =>
     input.startsWith('data:') ? input : `data:image/jpeg;base64,${input}`;
 
-  const searchFromCover = async (base64: string) =>
-    app().isFastCoverSearchEnabled
-      ? storySearchEvents
-          .findSimilarImages(base64, true)
-          .then((results) => ('results' in results ? results.results : null))
-      : coverIdEvents.searchFromCover(base64).then((results) => ('covers' in results ? results.covers : null));
+  const searchFromCover = async (base64: string) => {
+    isSearching.value = true;
+    return (
+      app().isFastCoverSearchEnabled
+        ? storySearchEvents
+            .findSimilarImages(base64, true)
+            .then((results) => ('results' in results ? results.results : null))
+        : coverIdEvents.searchFromCover(base64).then((results) => ('covers' in results ? results.covers : null))
+    ).finally(() => {
+      isSearching.value = false;
+    });
+  };
 
   let results: Awaited<ReturnType<typeof searchFromCover>> = null;
   const searchCoverFromBase64String = async (base64: string, origin: 'pickCoverFile' | 'takePhoto') =>
@@ -55,9 +59,11 @@ export default (
 
           await toast.present();
         }
+        isSearching.value = false;
         return Promise.resolve();
       });
   return {
+    isSearching,
     pickCoverFile: async () => {
       const coverFile = await FilePicker.pickImages({ readData: true });
       if (coverFile.files.length) {
@@ -74,7 +80,7 @@ export default (
     takePhoto: () =>
       new Promise((resolve) => {
         CameraPreview.captureSample({ quality: 50 }).then(({ value: photoBase64 }) => {
-          resolve();
+          resolve('photo taken');
           return searchCoverFromBase64String(photoBase64, 'takePhoto');
         });
       }),
