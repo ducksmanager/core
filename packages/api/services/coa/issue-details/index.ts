@@ -115,7 +115,7 @@ export const getCoverUrls = async (issuecodes: string[]) => {
         ? "webusers/webusers"
         : coverEntryUrl.url!.startsWith("webusers")
           ? "webusers"
-          : coverEntryUrl.sitecode;
+          : coverEntryUrl.sitecode?.replace(/thumbnails2?/, "");
       return {
         issuecode,
         title: issue.title!,
