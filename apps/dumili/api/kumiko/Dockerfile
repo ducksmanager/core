@@ -1,4 +1,4 @@
-FROM python:3.9-slim
+FROM python:3.14-slim
 
 RUN apt-get update && apt-get install -y --no-install-recommends git && apt-get clean
 RUN git clone --depth 1 --single-branch https://github.com/njean42/kumiko
