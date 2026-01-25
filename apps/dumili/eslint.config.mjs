@@ -7,6 +7,7 @@ import { fileURLToPath } from "node:url";
 import { FlatCompat } from "@eslint/eslintrc";
 import js from "@eslint/js";
 import vueI18n from "@intlify/eslint-plugin-vue-i18n";
+import pluginVue from "eslint-plugin-vue";
 import tseslint from "typescript-eslint";
 import parser from "vue-eslint-parser";
 
@@ -32,8 +33,8 @@ export default [
     ],
   },
   ...vueI18n.configs["flat/recommended"],
+  ...pluginVue.configs["flat/recommended"],
   ...compat.extends(
-    "plugin:vue/recommended",
     "plugin:prettier-vue/recommended",
     "prettier",
     "plugin:@typescript-eslint/recommended",

@@ -6,6 +6,7 @@ import { FlatCompat } from "@eslint/eslintrc";
 import js from "@eslint/js";
 import typescriptEslint from "@typescript-eslint/eslint-plugin";
 import _import from "eslint-plugin-import";
+import pluginVue from "eslint-plugin-vue";
 import parser from "vue-eslint-parser";
 
 const __filename = fileURLToPath(import.meta.url);
@@ -28,11 +29,11 @@ export default [
       "**/vite.config.ts",
     ],
   },
+  ...pluginVue.configs["flat/recommended"],
   ...fixupConfigRules(
     compat.extends(
       "plugin:@typescript-eslint/recommended",
       "plugin:@typescript-eslint/stylistic",
-      "plugin:vue/recommended",
       "plugin:prettier-vue/recommended",
       "prettier",
     ),
