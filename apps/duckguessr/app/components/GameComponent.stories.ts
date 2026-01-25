@@ -1,9 +1,8 @@
-import preview from "../../.storybook/preview";
 import type { Meta, StoryObj } from "@nuxtjs/storybook";
 
 import GameComponent from "./GameComponent.vue";
 
-const meta = preview.meta({
+const meta: Meta<typeof GameComponent> = {
   title: "GameComponent",
   component: GameComponent,
 
@@ -22,9 +21,12 @@ const meta = preview.meta({
       control: "boolean",
     },
   },
-});
+};
 
-export const Default = meta.story({
+export default meta;
+type Story = StoryObj<typeof meta>;
+
+export const Default: Story = {
   args: {
     availableTime: 15,
     currentRound: {
@@ -119,4 +121,4 @@ export const Default = meta.story({
     remainingTime: 5,
     hasEverybodyGuessed: false,
   },
-});
+};

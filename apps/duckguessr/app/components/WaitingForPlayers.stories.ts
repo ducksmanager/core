@@ -1,9 +1,8 @@
-import preview from "../../.storybook/preview";
 import type { Meta, StoryObj } from "@nuxtjs/storybook";
 
 import WaitingForPlayers from "./WaitingForPlayers.vue";
 
-const meta = preview.meta({
+const meta: Meta<typeof WaitingForPlayers> = {
   title: "WaitingForPlayers",
   component: WaitingForPlayers,
   parameters: {
@@ -18,9 +17,12 @@ const meta = preview.meta({
       control: "boolean",
     },
   },
-});
+};
 
-export const Default = meta.story({
+export default meta;
+type Story = StoryObj<typeof meta>;
+
+export const Default: Story = {
   args: {
     gameId: 123,
     players: [
@@ -34,9 +36,9 @@ export const Default = meta.story({
       { medalType: "fast", playerId: 33, playerPoints: 5 },
     ],
   },
-});
+};
 
-export const WithPotentialBot = meta.story({
+export const WithPotentialBot: Story = {
   args: {
     gameId: 123,
     players: [
@@ -51,4 +53,4 @@ export const WithPotentialBot = meta.story({
       { medalType: "ultra_fast", playerId: 34, playerPoints: 12 },
     ],
   },
-});
+};

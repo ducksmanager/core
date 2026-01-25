@@ -1,9 +1,8 @@
-import preview from "../../.storybook/preview";
 import type { Meta, StoryObj } from "@nuxtjs/storybook";
 
 import DuckguessrGameInterface from "./DuckguessrGameInterface.vue";
 
-const meta = preview.meta({
+const meta: Meta<typeof DuckguessrGameInterface> = {
   title: "DuckguessrGameInterface",
   component: DuckguessrGameInterface,
   parameters: {
@@ -35,9 +34,12 @@ const meta = preview.meta({
       description: "Array of player objects",
     },
   },
-});
+};
 
-export const Default = meta.story({
+export default meta;
+type Story = StoryObj<typeof meta>;
+
+export const Default: Story = {
   args: {
     userAvatar: "/avatars/DD.png",
     comicImage:
@@ -51,11 +53,11 @@ export const Default = meta.story({
       { name: "Player 3", avatar: "/avatars/DD.png", score: 45 },
     ],
   },
-});
+};
 
-export const WithFilledCards = meta.story({
+export const WithFilledCards: Story = {
   args: {
-    ...Default.input.args,
+    ...Default.args,
     cardSlots: [
       { filled: true, image: "/avatars/DD.png" },
       { filled: true, image: "/avatars/DD.png" },
@@ -68,43 +70,43 @@ export const WithFilledCards = meta.story({
       { filled: true, image: "/avatars/DD.png" },
     ],
   },
-});
+};
 
-export const LowTimer = meta.story({
+export const LowTimer: Story = {
   args: {
-    ...Default.input.args,
+    ...Default.args,
     timerProgress: 5,
   },
-});
+};
 
-export const HighTimer = meta.story({
+export const HighTimer: Story = {
   args: {
-    ...Default.input.args,
+    ...Default.args,
     timerProgress: 85,
   },
-});
+};
 
-export const DifferentPlayers = meta.story({
+export const DifferentPlayers: Story = {
   args: {
-    ...Default.input.args,
+    ...Default.args,
     players: [
       { name: "Alice", avatar: "/avatars/DD.png", score: 90 },
       { name: "Bob", avatar: "/avatars/DD.png", score: 30 },
       { name: "Charlie", avatar: "/avatars/DD.png", score: 65 },
     ],
   },
-});
+};
 
-export const EmptyCardSlots = meta.story({
+export const EmptyCardSlots: Story = {
   args: {
-    ...Default.input.args,
+    ...Default.args,
     cardSlots: Array(9).fill({ filled: false }),
   },
-});
+};
 
-export const MixedCardSlots = meta.story({
+export const MixedCardSlots: Story = {
   args: {
-    ...Default.input.args,
+    ...Default.args,
     cardSlots: [
       { filled: true, image: "/avatars/DD.png" },
       { filled: false },
@@ -117,4 +119,4 @@ export const MixedCardSlots = meta.story({
       { filled: false },
     ],
   },
-});
+};

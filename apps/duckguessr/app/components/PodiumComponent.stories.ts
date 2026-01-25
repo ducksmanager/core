@@ -1,18 +1,20 @@
-import preview from "../../.storybook/preview";
 import type { Meta, StoryObj } from "@nuxtjs/storybook";
 
 import PodiumComponent from "./PodiumComponent.vue";
 
-const meta = preview.meta({
+const meta: Meta<typeof PodiumComponent> = {
   title: "Podium",
   component: PodiumComponent,
   parameters: {
     layout: "centered",
   },
   tags: ["autodocs"],
-});
+};
 
-export const Default = meta.story({
+export default meta;
+type Story = StoryObj<typeof meta>;
+
+export const Default: Story = {
   args: {
     players: [
       {
@@ -164,4 +166,4 @@ export const Default = meta.story({
       },
     ],
   },
-});
+};

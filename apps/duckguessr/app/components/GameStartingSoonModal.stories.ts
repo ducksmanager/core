@@ -1,9 +1,8 @@
-import preview from "../../.storybook/preview";
 import type { Meta, StoryObj } from "@nuxtjs/storybook";
 
 import GameStartingSoonModal from "./GameStartingSoonModal.vue";
 
-const meta = preview.meta({
+const meta: Meta<typeof GameStartingSoonModal> = {
   title: "GameStartingSoonModal",
   component: GameStartingSoonModal,
   parameters: {
@@ -15,9 +14,12 @@ const meta = preview.meta({
       control: "date",
     },
   },
-});
+};
 
-export const Default = meta.story({
+export default meta;
+type Story = StoryObj<typeof meta>;
+
+export const Default: Story = {
   args: {
     authors: [
       {
@@ -72,4 +74,4 @@ export const Default = meta.story({
       return futureDate;
     })(),
   },
-});
+};

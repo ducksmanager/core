@@ -1,9 +1,8 @@
-import preview from "../../.storybook/preview";
 import type { Meta, StoryObj } from "@nuxtjs/storybook";
 
 import RoundScore from "./RoundScore.vue";
 
-const meta = preview.meta({
+const meta: Meta<typeof RoundScore> = {
   title: "RoundScore",
   component: RoundScore,
   parameters: {
@@ -18,9 +17,12 @@ const meta = preview.meta({
       control: "number",
     },
   },
-});
+};
 
-export const Default = meta.story({
+export default meta;
+type Story = StoryObj<typeof meta>;
+
+export const Default: Story = {
   args: {
     players: [
       {
@@ -41,9 +43,9 @@ export const Default = meta.story({
     },
     roundDuration: 1000,
   },
-});
+};
 
-export const InGame = meta.story({
+export const InGame: Story = {
   args: {
     inGame: true,
     players: [
@@ -65,9 +67,9 @@ export const InGame = meta.story({
     },
     roundDuration: 10000,
   },
-});
+};
 
-export const InGameNotGuessedYet = meta.story({
+export const InGameNotGuessedYet: Story = {
   args: {
     inGame: true,
     players: [
@@ -89,9 +91,9 @@ export const InGameNotGuessedYet = meta.story({
     },
     roundDuration: 10000,
   },
-});
+};
 
-export const InGameWrongAuthor = meta.story({
+export const InGameWrongAuthor: Story = {
   args: {
     inGame: true,
     players: [
@@ -113,4 +115,4 @@ export const InGameWrongAuthor = meta.story({
     },
     roundDuration: 10000,
   },
-});
+};

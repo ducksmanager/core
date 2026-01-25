@@ -1,7 +1,6 @@
-import { defineMain } from "@storybook-vue/nuxt/node";
 import type { StorybookConfig } from "@nuxtjs/storybook";
 
-export default defineMain({
+const config: StorybookConfig = {
   stories: ["../app/**/*.stories.ts"],
   addons: [],
   framework: {
@@ -11,4 +10,6 @@ export default defineMain({
   core: {
     builder: "@storybook/builder-vite",
   },
-});
+};
+
+export default config;

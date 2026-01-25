@@ -1,11 +1,10 @@
-import preview from "../../.storybook/preview";
 import type { Meta, StoryObj } from "@nuxtjs/storybook";
 
 import type { MedalLevelAndProgress } from "~duckguessr-types/playerStats";
 
 import Medal from "./Medal.vue";
 
-const meta = preview.meta({
+const meta: Meta<typeof Medal> = {
   title: "Medal",
   component: Medal,
   parameters: {
@@ -21,9 +20,12 @@ const meta = preview.meta({
       control: "boolean",
     },
   },
-});
+};
 
-export const GoldPlus100Points = meta.story({
+export default meta;
+type Story = StoryObj<typeof meta>;
+
+export const GoldPlus100Points: Story = {
   args: {
     medalLevelAndProgress: {
       level: 3,
@@ -32,9 +34,9 @@ export const GoldPlus100Points = meta.story({
     } as MedalLevelAndProgress,
     type: "published-fr-recent",
   },
-});
+};
 
-export const Gold = meta.story({
+export const Gold: Story = {
   args: {
     medalLevelAndProgress: {
       level: 3,
@@ -43,9 +45,9 @@ export const Gold = meta.story({
     } as MedalLevelAndProgress,
     type: "published-fr-recent",
   },
-});
+};
 
-export const GoldItalian = meta.story({
+export const GoldItalian: Story = {
   args: {
     medalLevelAndProgress: {
       level: 3,
@@ -54,9 +56,9 @@ export const GoldItalian = meta.story({
     } as MedalLevelAndProgress,
     type: "it",
   },
-});
+};
 
-export const GoldAmerican = meta.story({
+export const GoldAmerican: Story = {
   args: {
     medalLevelAndProgress: {
       level: 3,
@@ -65,9 +67,9 @@ export const GoldAmerican = meta.story({
     } as MedalLevelAndProgress,
     type: "us",
   },
-});
+};
 
-export const SilverPlus10Points = meta.story({
+export const SilverPlus10Points: Story = {
   args: {
     medalLevelAndProgress: {
       level: 2,
@@ -76,9 +78,9 @@ export const SilverPlus10Points = meta.story({
     } as MedalLevelAndProgress,
     type: "published-fr-recent",
   },
-});
+};
 
-export const SilverPlus90Points = meta.story({
+export const SilverPlus90Points: Story = {
   args: {
     medalLevelAndProgress: {
       level: 2,
@@ -87,9 +89,9 @@ export const SilverPlus90Points = meta.story({
     } as MedalLevelAndProgress,
     type: "published-fr-recent",
   },
-});
+};
 
-export const SilverPlus90PointsProgress20Points = meta.story({
+export const SilverPlus90PointsProgress20Points: Story = {
   args: {
     medalLevelAndProgress: {
       level: 2,
@@ -99,9 +101,9 @@ export const SilverPlus90PointsProgress20Points = meta.story({
     type: "published-fr-recent",
     withGameData: true,
   },
-});
+};
 
-export const Silver = meta.story({
+export const Silver: Story = {
   args: {
     medalLevelAndProgress: {
       level: 2,
@@ -110,9 +112,9 @@ export const Silver = meta.story({
     } as MedalLevelAndProgress,
     type: "fast",
   },
-});
+};
 
-export const Bronze = meta.story({
+export const Bronze: Story = {
   args: {
     medalLevelAndProgress: {
       level: 1,
@@ -121,9 +123,9 @@ export const Bronze = meta.story({
     } as MedalLevelAndProgress,
     type: "ultra_fast",
   },
-});
+};
 
-export const NoMedalPlus20Points = meta.story({
+export const NoMedalPlus20Points: Story = {
   args: {
     medalLevelAndProgress: {
       level: 0,
@@ -133,9 +135,9 @@ export const NoMedalPlus20Points = meta.story({
     type: "ultra_fast",
     withGameData: true,
   },
-});
+};
 
-export const NoMedal = meta.story({
+export const NoMedal: Story = {
   args: {
     medalLevelAndProgress: {
       level: 0,
@@ -144,4 +146,4 @@ export const NoMedal = meta.story({
     } as MedalLevelAndProgress,
     type: "ultra_fast",
   },
-});
+};
