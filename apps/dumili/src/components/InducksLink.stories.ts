@@ -1,7 +1,7 @@
-import type { Meta, StoryObj } from "@storybook/vue3-vite";
+import preview from "../../.storybook/preview";
 import InducksLink from "./InducksLink.vue";
 
-const meta: Meta<typeof InducksLink> = {
+const meta = preview.meta({
   title: "Components/InducksLink",
   component: InducksLink,
   tags: ["autodocs"],
@@ -11,19 +11,16 @@ const meta: Meta<typeof InducksLink> = {
       description: "The URL-encoded story code for Inducks",
     },
   },
-};
+});
 
-export default meta;
-type Story = StoryObj<typeof meta>;
-
-export const Default: Story = {
+export const Default = meta.story({
   args: {
     urlEncodedStorycode: "I+TL+1234-A",
   },
-};
+});
 
-export const WithSpecialCharacters: Story = {
+export const WithSpecialCharacters = meta.story({
   args: {
     urlEncodedStorycode: "I+TL+1234-A%2FB",
   },
-};
+});

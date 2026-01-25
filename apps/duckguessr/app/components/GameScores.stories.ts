@@ -1,10 +1,11 @@
+import preview from "../../.storybook/preview";
 import type { Meta, StoryObj } from "@nuxtjs/storybook";
 
 import type { player } from "~duckguessr-prisma-browser";
 
 import GameScores from "./GameScores.vue";
 
-const meta: Meta<typeof GameScores> = {
+const meta = preview.meta({
   title: "GameScores",
   component: GameScores,
   parameters: {
@@ -12,10 +13,7 @@ const meta: Meta<typeof GameScores> = {
   },
   tags: ["autodocs"],
   argTypes: {},
-};
-
-export default meta;
-type Story = StoryObj<typeof meta>;
+});
 
 const players: player[] = [
   {
@@ -32,7 +30,7 @@ const players: player[] = [
   },
 ] as const;
 
-export const Default: Story = {
+export const Default = meta.story({
   args: {
     game: {
       datasetId: 1,
@@ -141,4 +139,4 @@ export const Default: Story = {
       ],
     },
   },
-};
+});

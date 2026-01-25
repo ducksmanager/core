@@ -1,7 +1,7 @@
-import type { Meta, StoryObj } from "@storybook/vue3-vite";
+import preview from "../../.storybook/preview";
 import StorySearch from "./StorySearch.vue";
 
-const meta: Meta<typeof StorySearch> = {
+const meta = preview.meta({
   title: "Components/StorySearch",
   tags: ["autodocs"],
   argTypes: {
@@ -11,10 +11,7 @@ const meta: Meta<typeof StorySearch> = {
       description: "Filter by story kind",
     },
   },
-};
-
-export default meta;
-type Story = StoryObj<typeof meta>;
+});
 
 const render = (args: { kind?: string }) => ({
   components: { StorySearch },
@@ -26,16 +23,16 @@ const render = (args: { kind?: string }) => ({
   `,
 });
 
-export const Default: Story = {
+export const Default = meta.story({
   args: {
     kind: undefined,
   },
   render,
-};
+});
 
-export const WithKindFilter: Story = {
+export const WithKindFilter = meta.story({
   args: {
     kind: "n" as const,
   },
   render,
-};
+});

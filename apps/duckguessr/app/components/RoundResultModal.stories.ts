@@ -1,8 +1,9 @@
+import preview from "../../.storybook/preview";
 import type { Meta, StoryObj } from "@nuxtjs/storybook";
 
 import RoundResultModal from "./RoundResultModal.vue";
 
-const meta: Meta<typeof RoundResultModal> = {
+const meta = preview.meta({
   title: "RoundResultModal",
   component: RoundResultModal,
   parameters: {
@@ -24,12 +25,9 @@ const meta: Meta<typeof RoundResultModal> = {
       control: "boolean",
     },
   },
-};
+});
 
-export default meta;
-type Story = StoryObj<typeof meta>;
-
-export const Default: Story = {
+export const Default = meta.story({
   args: {
     status: "success",
     roundNumber: 1,
@@ -47,9 +45,9 @@ export const Default: Story = {
     })(),
     hasEverybodyGuessed: false,
   },
-};
+});
 
-export const Incorrect: Story = {
+export const Incorrect = meta.story({
   args: {
     status: "danger",
     roundNumber: 1,
@@ -67,9 +65,9 @@ export const Incorrect: Story = {
     })(),
     hasEverybodyGuessed: false,
   },
-};
+});
 
-export const LastRound: Story = {
+export const LastRound = meta.story({
   args: {
     status: "success",
     roundNumber: 7,
@@ -83,4 +81,4 @@ export const LastRound: Story = {
     nextRoundStartDate: null,
     hasEverybodyGuessed: false,
   },
-};
+});

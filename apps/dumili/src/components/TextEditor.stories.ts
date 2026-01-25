@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from "@storybook/vue3-vite";
+import preview from "../../.storybook/preview";
 import TextEditor from "./TextEditor.vue";
 import {
   createMockEntry,
@@ -6,15 +6,12 @@ import {
   createIndexationDecorator,
 } from "../../.storybook/utils/mocks";
 
-const meta: Meta<typeof TextEditor> = {
+const meta = preview.meta({
   title: "Components/TextEditor",
   tags: ["autodocs"],
-};
+});
 
-export default meta;
-type Story = StoryObj<typeof meta>;
-
-export const Default: Story = {
+export const Default = meta.story({
   decorators: [
     createIndexationDecorator(
       {
@@ -76,4 +73,4 @@ export const Default: Story = {
       </div>
     `,
   }),
-};
+});

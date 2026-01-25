@@ -1,5 +1,4 @@
-// This file has been automatically migrated to valid ESM format by Storybook.
-import type { StorybookConfig } from "@storybook/vue3-vite";
+import { defineMain } from "@storybook/vue3-vite/node";
 import { dirname } from "path";
 import { fileURLToPath } from "url";
 import path from "path";
@@ -16,7 +15,7 @@ function getAbsolutePath(value: string): string {
   return dirname(fileURLToPath(import.meta.resolve(`${value}/package.json`)));
 }
 
-const config: StorybookConfig = {
+export default defineMain({
   stories: ["../src/**/*.stories.ts"],
   addons: [
     // Load core addons first to ensure proper state initialization
@@ -74,5 +73,4 @@ const config: StorybookConfig = {
     };
     return config;
   },
-};
-export default config;
+});

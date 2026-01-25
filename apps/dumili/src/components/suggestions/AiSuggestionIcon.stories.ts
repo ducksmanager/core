@@ -1,7 +1,7 @@
-import type { Meta, StoryObj } from "@storybook/vue3-vite";
+import preview from "../../../.storybook/preview";
 import AiSuggestionIcon from "./AiSuggestionIcon.vue";
 
-const meta: Meta<typeof AiSuggestionIcon> = {
+const meta = preview.meta({
   title: "Components/suggestions/AiSuggestionIcon",
   component: AiSuggestionIcon,
   tags: ["autodocs"],
@@ -24,53 +24,50 @@ const meta: Meta<typeof AiSuggestionIcon> = {
       description: "Optional ID for the icon element",
     },
   },
-};
+});
 
-export default meta;
-type Story = StoryObj<typeof meta>;
-
-export const Idle: Story = {
+export const Idle = meta.story({
   args: {
     status: "idle",
   },
-};
+});
 
-export const Success: Story = {
+export const Success = meta.story({
   args: {
     status: "success",
   },
-};
+});
 
-export const Failure: Story = {
+export const Failure = meta.story({
   args: {
     status: "failure",
   },
-};
+});
 
-export const AsButton: Story = {
+export const AsButton = meta.story({
   args: {
     status: "idle",
     button: true,
   },
-};
+});
 
-export const Loading: Story = {
+export const Loading = meta.story({
   args: {
     status: "idle",
     isLoading: true,
   },
-};
+});
 
-export const LoadingSuccess: Story = {
+export const LoadingSuccess = meta.story({
   args: {
     status: "success",
     isLoading: true,
   },
-};
+});
 
-export const ButtonWithSuccess: Story = {
+export const ButtonWithSuccess = meta.story({
   args: {
     status: "success",
     button: true,
   },
-};
+});

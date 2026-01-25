@@ -1,8 +1,9 @@
+import preview from "../../.storybook/preview";
 import type { Meta, StoryObj } from "@nuxtjs/storybook";
 
 import AuthorCard from "./AuthorCard.vue";
 
-const meta: Meta<typeof AuthorCard> = {
+const meta = preview.meta({
   title: "AuthorCard",
   component: AuthorCard,
   parameters: {
@@ -17,12 +18,9 @@ const meta: Meta<typeof AuthorCard> = {
       control: "boolean",
     },
   },
-};
+});
 
-export default meta;
-type Story = StoryObj<typeof meta>;
-
-export const Default: Story = {
+export const Default = meta.story({
   args: {
     enabled: true,
     selectable: true,
@@ -32,9 +30,9 @@ export const Default: Story = {
       nationalitycountrycode: "us",
     },
   },
-};
+});
 
-export const NotEnabled: Story = {
+export const NotEnabled = meta.story({
   args: {
     enabled: false,
     selectable: false,
@@ -44,9 +42,9 @@ export const NotEnabled: Story = {
       nationalitycountrycode: "us",
     },
   },
-};
+});
 
-export const NotSelectable: Story = {
+export const NotSelectable = meta.story({
   args: {
     enabled: true,
     selectable: false,
@@ -56,4 +54,4 @@ export const NotSelectable: Story = {
       nationalitycountrycode: "us",
     },
   },
-};
+});

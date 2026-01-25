@@ -1,8 +1,8 @@
-import type { Meta, StoryObj } from "@storybook/vue3-vite";
+import preview from "../../.storybook/preview";
 import Gallery from "./Gallery.vue";
 import { createMockPage, createMockImage } from "../../.storybook/utils/mocks";
 
-const meta: Meta<typeof Gallery> = {
+const meta = preview.meta({
   title: "Components/Gallery",
   tags: ["autodocs"],
   argTypes: {
@@ -11,10 +11,7 @@ const meta: Meta<typeof Gallery> = {
       description: "Whether pages are selectable",
     },
   },
-};
-
-export default meta;
-type Story = StoryObj<typeof meta>;
+});
 
 const createMockPages = (count: number) =>
   Array.from({ length: count }, (_, i) =>
@@ -32,7 +29,7 @@ const createMockPages = (count: number) =>
     }),
   );
 
-export const Default: Story = {
+export const Default = meta.story({
   args: {
     pages: createMockPages(6),
     selectable: false,
@@ -46,9 +43,9 @@ export const Default: Story = {
       </div>
     `,
   }),
-};
+});
 
-export const Selectable: Story = {
+export const Selectable = meta.story({
   args: {
     pages: createMockPages(6),
     selectable: true,
@@ -62,9 +59,9 @@ export const Selectable: Story = {
       </div>
     `,
   }),
-};
+});
 
-export const WithAllImages: Story = {
+export const WithAllImages = meta.story({
   args: {
     pages: Array.from({ length: 4 }, (_, i) =>
       createMockPage({
@@ -88,4 +85,4 @@ export const WithAllImages: Story = {
       </div>
     `,
   }),
-};
+});

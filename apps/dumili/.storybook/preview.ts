@@ -1,5 +1,5 @@
-import type { Preview } from "@storybook/vue3-vite";
-import { setup } from "@storybook/vue3-vite";
+import addonDocs from "@storybook/addon-docs";
+import { setup, definePreview } from "@storybook/vue3-vite";
 import { getCurrentInstance, ref } from "vue";
 import { createPinia } from "pinia";
 import { createBootstrap } from "bootstrap-vue-next";
@@ -221,7 +221,7 @@ setup((app) => {
   app.provide("storySearchSocket", storySearchSocket);
 });
 
-const preview: Preview = {
+export default definePreview({
   parameters: {
     controls: {
       matchers: {
@@ -230,6 +230,7 @@ const preview: Preview = {
       },
     },
   },
+
   decorators: [
     (story) => ({
       components: { StoryComponent: story() },
@@ -267,6 +268,6 @@ const preview: Preview = {
       template: "<StoryComponent />",
     }),
   ],
-};
 
-export default preview;
+  addons: [addonDocs()],
+});

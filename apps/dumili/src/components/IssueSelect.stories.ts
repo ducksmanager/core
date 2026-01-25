@@ -1,7 +1,7 @@
-import type { Meta, StoryObj } from "@storybook/vue3-vite";
+import preview from "../../.storybook/preview";
 import IssueSelect from "./IssueSelect.vue";
 
-const meta: Meta<typeof IssueSelect> = {
+const meta = preview.meta({
   title: "Components/IssueSelect",
   tags: ["autodocs"],
   argTypes: {
@@ -10,12 +10,9 @@ const meta: Meta<typeof IssueSelect> = {
       description: "The current issue selection",
     },
   },
-};
+});
 
-export default meta;
-type Story = StoryObj<typeof meta>;
-
-export const Default: Story = {
+export const Default = meta.story({
   args: {
     issue: null,
   },
@@ -28,9 +25,9 @@ export const Default: Story = {
       </div>
     `,
   }),
-};
+});
 
-export const WithIssue: Story = {
+export const WithIssue = meta.story({
   args: {
     issue: {
       publicationcode: "us/DD",
@@ -46,4 +43,4 @@ export const WithIssue: Story = {
       </div>
     `,
   }),
-};
+});

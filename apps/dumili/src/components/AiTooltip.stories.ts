@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from "@storybook/vue3-vite";
+import preview from "../../.storybook/preview";
 import type { DefineComponent } from "vue";
 import AiTooltip from "./AiTooltip.vue";
 
@@ -13,7 +13,7 @@ type AiTooltipComponent = DefineComponent<{
   }>;
 }>;
 
-const meta: Meta<AiTooltipComponent> = {
+const meta = preview.meta({
   title: "Components/AiTooltip",
   // component is omitted to avoid generic type issues
   tags: ["autodocs"],
@@ -36,10 +36,7 @@ const meta: Meta<AiTooltipComponent> = {
       description: "Array of loading events to watch",
     },
   },
-};
-
-export default meta;
-type Story = StoryObj<typeof meta>;
+});
 
 type AiTooltipArgs = {
   id: string;
@@ -72,7 +69,7 @@ const renderTooltip = (content: string) => (args: AiTooltipArgs) => ({
   `,
 });
 
-export const Success: Story = {
+export const Success = meta.story({
   args: {
     id: "ai-tooltip-success",
     status: "success",
@@ -82,9 +79,9 @@ export const Success: Story = {
     <strong>AI Results</strong>
     <p>This is a success tooltip with AI results.</p>
   `),
-};
+});
 
-export const Failure: Story = {
+export const Failure = meta.story({
   args: {
     id: "ai-tooltip-failure",
     status: "failure",
@@ -94,9 +91,9 @@ export const Failure: Story = {
     <strong>Error</strong>
     <p>AI processing failed. Please try again.</p>
   `),
-};
+});
 
-export const Idle: Story = {
+export const Idle = meta.story({
   args: {
     id: "ai-tooltip-idle",
     status: "idle",
@@ -106,9 +103,9 @@ export const Idle: Story = {
     <strong>Waiting</strong>
     <p>AI processing has not started yet.</p>
   `),
-};
+});
 
-export const TopCenter: Story = {
+export const TopCenter = meta.story({
   args: {
     id: "ai-tooltip-top-center",
     status: "success",
@@ -118,9 +115,9 @@ export const TopCenter: Story = {
     <strong>AI Results</strong>
     <p>Tooltip positioned at top center.</p>
   `),
-};
+});
 
-export const WithLoadingEvents: Story = {
+export const WithLoadingEvents = meta.story({
   args: {
     id: "ai-tooltip-loading",
     status: "idle",
@@ -136,4 +133,4 @@ export const WithLoadingEvents: Story = {
     <strong>Loading</strong>
     <p>This tooltip watches for loading events.</p>
   `),
-};
+});

@@ -1,7 +1,8 @@
-import type { Meta, StoryObj } from "@storybook/vue3-vite";
+import preview from "../../.storybook/preview";
+import type { StoryObj } from "@storybook/vue3-vite";
 import Story from "./Story.vue";
 
-const meta: Meta<typeof Story> = {
+const meta = preview.meta({
   title: "Components/Story",
   component: Story,
   tags: ["autodocs"],
@@ -11,24 +12,23 @@ const meta: Meta<typeof Story> = {
       description: "The story code (e.g., 'I TL  116-AP')",
     },
   },
-};
+});
 
-export default meta;
 type Story = StoryObj<typeof meta>;
 
-export const Default: Story = {
+export const Default = meta.story({
   args: {
     storycode: "I TL  116-AP",
   },
-};
+});
 
-export const WithoutTitle: Story = {
+export const WithoutTitle = meta.story({
   args: {
     storycode: "I TL 9999-Z",
   },
-};
+});
 
-export const WithSuffix: Story = {
+export const WithSuffix = meta.story({
   args: {
     storycode: "I TL  116-AP",
   },
@@ -43,4 +43,4 @@ export const WithSuffix: Story = {
       </Story>
     `,
   }),
-};
+});

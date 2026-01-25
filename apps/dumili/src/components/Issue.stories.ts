@@ -1,7 +1,7 @@
-import type { Meta, StoryObj } from "@storybook/vue3-vite";
+import preview from "../../.storybook/preview";
 import Issue from "./Issue.vue";
 
-const meta: Meta<typeof Issue> = {
+const meta = preview.meta({
   title: "Components/Issue",
   component: Issue,
   tags: ["autodocs"],
@@ -15,12 +15,9 @@ const meta: Meta<typeof Issue> = {
       description: "Whether to display inline or block",
     },
   },
-};
+});
 
-export default meta;
-type Story = StoryObj<typeof meta>;
-
-export const Default: Story = {
+export const Default = meta.story({
   args: {
     issue: {
       publicationcode: "us/DD",
@@ -28,9 +25,9 @@ export const Default: Story = {
     },
     noWrap: false,
   },
-};
+});
 
-export const Inline: Story = {
+export const Inline = meta.story({
   args: {
     issue: {
       publicationcode: "fr/PM",
@@ -38,15 +35,15 @@ export const Inline: Story = {
     },
     noWrap: true,
   },
-};
+});
 
-export const Unknown: Story = {
+export const Unknown = meta.story({
   args: {
     issue: undefined,
   },
-};
+});
 
-export const WithSlot: Story = {
+export const WithSlot = meta.story({
   args: {
     issue: {
       publicationcode: "us/DD",
@@ -65,4 +62,4 @@ export const WithSlot: Story = {
       </Issue>
     `,
   }),
-};
+});

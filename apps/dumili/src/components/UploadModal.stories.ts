@@ -1,11 +1,11 @@
-import type { Meta, StoryObj } from "@storybook/vue3-vite";
+import preview from "../../.storybook/preview";
 import UploadModal from "./UploadModal.vue";
 import {
   createMockPage,
   createIndexationDecorator,
 } from "../../.storybook/utils/mocks";
 
-const meta: Meta<typeof UploadModal> = {
+const meta = preview.meta({
   title: "Components/UploadModal",
   tags: ["autodocs"],
   argTypes: {
@@ -22,10 +22,7 @@ const meta: Meta<typeof UploadModal> = {
       description: "Pages that can be overwritten",
     },
   },
-};
-
-export default meta;
-type Story = StoryObj<typeof meta>;
+});
 
 const createMockPages = (count: number) =>
   Array.from({ length: count }, (_, i) => ({
@@ -33,7 +30,7 @@ const createMockPages = (count: number) =>
     pageNumber: i + 1,
   }));
 
-export const Default: Story = {
+export const Default = meta.story({
   args: {
     uploadPageNumber: 1,
     pagesWithoutOverwrite: createMockPages(5),
@@ -63,4 +60,4 @@ export const Default: Story = {
       </div>
     `,
   }),
-};
+});

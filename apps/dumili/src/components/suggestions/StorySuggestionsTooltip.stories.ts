@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from "@storybook/vue3-vite";
+import preview from "../../../.storybook/preview";
 import StorySuggestionsTooltip from "./StorySuggestionsTooltip.vue";
 import {
   createMockEntry,
@@ -6,7 +6,7 @@ import {
   createIndexationDecorator,
 } from "../../../.storybook/utils/mocks";
 
-const meta: Meta<typeof StorySuggestionsTooltip> = {
+const meta = preview.meta({
   title: "Components/suggestions/StorySuggestionsTooltip",
   tags: ["autodocs"],
   argTypes: {
@@ -15,10 +15,7 @@ const meta: Meta<typeof StorySuggestionsTooltip> = {
       description: "The entry object",
     },
   },
-};
-
-export default meta;
-type Story = StoryObj<typeof meta>;
+});
 
 type TooltipEntry = InstanceType<
   typeof StorySuggestionsTooltip
@@ -63,15 +60,15 @@ const createRenderFunction = () => (args: { entry: TooltipEntry }) => ({
   `,
 });
 
-export const Default: Story = {
+export const Default = meta.story({
   args: {
     entry: createMockTooltipEntry(),
   },
   decorators: [createDecorator()],
   render: createRenderFunction(),
-};
+});
 
-export const WithStoryKind: Story = {
+export const WithStoryKind = meta.story({
   args: {
     entry: createMockTooltipEntry({
       acceptedStoryKind: {
@@ -89,9 +86,9 @@ export const WithStoryKind: Story = {
   },
   decorators: [createDecorator()],
   render: createRenderFunction(),
-};
+});
 
-export const WithImageAndOcrResult: Story = {
+export const WithImageAndOcrResult = meta.story({
   args: {
     entry: createMockTooltipEntry({
       acceptedStoryKind: {
@@ -142,4 +139,4 @@ export const WithImageAndOcrResult: Story = {
     }),
   ],
   render: createRenderFunction(),
-};
+});

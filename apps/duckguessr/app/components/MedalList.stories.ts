@@ -1,8 +1,9 @@
+import preview from "../../.storybook/preview";
 import type { Meta, StoryObj } from "@nuxtjs/storybook";
 
 import MedalList from "./MedalList.vue";
 
-const meta: Meta<typeof MedalList> = {
+const meta = preview.meta({
   title: "MedalList",
   component: MedalList,
   parameters: {
@@ -17,12 +18,9 @@ const meta: Meta<typeof MedalList> = {
       control: "number",
     },
   },
-};
+});
 
-export default meta;
-type Story = StoryObj<typeof meta>;
-
-export const WithoutDataset: Story = {
+export const WithoutDataset = meta.story({
   args: {
     dataset: null,
     withDetails: false,
@@ -35,9 +33,9 @@ export const WithoutDataset: Story = {
     ],
     cols: 4,
   },
-};
+});
 
-export const WithoutDatasetLowPoints: Story = {
+export const WithoutDatasetLowPoints = meta.story({
   args: {
     dataset: null,
     withDetails: false,
@@ -50,4 +48,4 @@ export const WithoutDatasetLowPoints: Story = {
     ],
     cols: 4,
   },
-};
+});

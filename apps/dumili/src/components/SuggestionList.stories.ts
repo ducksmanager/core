@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from "@storybook/vue3-vite";
+import preview from "../../.storybook/preview";
 import { ref } from "vue";
 import SuggestionList from "./SuggestionList.vue";
 
@@ -9,7 +9,7 @@ type MockSuggestion = {
   isAi?: boolean;
 };
 
-const meta: Meta<typeof SuggestionList> = {
+const meta = preview.meta({
   title: "Components/SuggestionList",
   // component is omitted to avoid generic type issues
   tags: ["autodocs"],
@@ -37,10 +37,7 @@ const meta: Meta<typeof SuggestionList> = {
       description: "Whether to show the customize form",
     },
   },
-};
-
-export default meta;
-type Story = StoryObj<typeof meta>;
+});
 
 const mockSuggestions: MockSuggestion[] = [
   { id: 1, name: "Suggestion 1", isAi: false },
@@ -49,7 +46,7 @@ const mockSuggestions: MockSuggestion[] = [
   { id: 4, name: "AI Suggestion 2", isAi: true },
 ];
 
-export const Default: Story = {
+export const Default = meta.story({
   args: {
     suggestions: mockSuggestions,
     isAiSource: (suggestion: MockSuggestion) => suggestion.isAi === true,
@@ -80,9 +77,9 @@ export const Default: Story = {
       </div>
     `,
   }),
-};
+});
 
-export const WithSelected: Story = {
+export const WithSelected = meta.story({
   args: {
     suggestions: mockSuggestions,
     isAiSource: (suggestion: MockSuggestion) => suggestion.isAi === true,
@@ -113,9 +110,9 @@ export const WithSelected: Story = {
       </div>
     `,
   }),
-};
+});
 
-export const WithCustomizeForm: Story = {
+export const WithCustomizeForm = meta.story({
   args: {
     suggestions: mockSuggestions,
     isAiSource: (suggestion: MockSuggestion) => suggestion.isAi === true,
@@ -153,9 +150,9 @@ export const WithCustomizeForm: Story = {
       </div>
     `,
   }),
-};
+});
 
-export const OnlyUserSuggestions: Story = {
+export const OnlyUserSuggestions = meta.story({
   args: {
     suggestions: mockSuggestions.filter((s) => !s.isAi),
     isAiSource: (suggestion: MockSuggestion) => suggestion.isAi === true,
@@ -186,9 +183,9 @@ export const OnlyUserSuggestions: Story = {
       </div>
     `,
   }),
-};
+});
 
-export const OnlyAiSuggestions: Story = {
+export const OnlyAiSuggestions = meta.story({
   args: {
     suggestions: mockSuggestions.filter((s) => s.isAi),
     isAiSource: (suggestion: MockSuggestion) => suggestion.isAi === true,
@@ -219,4 +216,4 @@ export const OnlyAiSuggestions: Story = {
       </div>
     `,
   }),
-};
+});

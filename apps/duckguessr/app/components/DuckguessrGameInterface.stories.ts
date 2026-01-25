@@ -1,8 +1,9 @@
+import preview from "../../.storybook/preview";
 import type { Meta, StoryObj } from "@nuxtjs/storybook";
 
 import DuckguessrGameInterface from "./DuckguessrGameInterface.vue";
 
-const meta: Meta<typeof DuckguessrGameInterface> = {
+const meta = preview.meta({
   title: "DuckguessrGameInterface",
   component: DuckguessrGameInterface,
   parameters: {
@@ -34,12 +35,9 @@ const meta: Meta<typeof DuckguessrGameInterface> = {
       description: "Array of player objects",
     },
   },
-};
+});
 
-export default meta;
-type Story = StoryObj<typeof meta>;
-
-export const Default: Story = {
+export const Default = meta.story({
   args: {
     userAvatar: "/avatars/DD.png",
     comicImage:
@@ -53,11 +51,11 @@ export const Default: Story = {
       { name: "Player 3", avatar: "/avatars/DD.png", score: 45 },
     ],
   },
-};
+});
 
-export const WithFilledCards: Story = {
+export const WithFilledCards = meta.story({
   args: {
-    ...Default.args,
+    ...Default.input.args,
     cardSlots: [
       { filled: true, image: "/avatars/DD.png" },
       { filled: true, image: "/avatars/DD.png" },
@@ -70,43 +68,43 @@ export const WithFilledCards: Story = {
       { filled: true, image: "/avatars/DD.png" },
     ],
   },
-};
+});
 
-export const LowTimer: Story = {
+export const LowTimer = meta.story({
   args: {
-    ...Default.args,
+    ...Default.input.args,
     timerProgress: 5,
   },
-};
+});
 
-export const HighTimer: Story = {
+export const HighTimer = meta.story({
   args: {
-    ...Default.args,
+    ...Default.input.args,
     timerProgress: 85,
   },
-};
+});
 
-export const DifferentPlayers: Story = {
+export const DifferentPlayers = meta.story({
   args: {
-    ...Default.args,
+    ...Default.input.args,
     players: [
       { name: "Alice", avatar: "/avatars/DD.png", score: 90 },
       { name: "Bob", avatar: "/avatars/DD.png", score: 30 },
       { name: "Charlie", avatar: "/avatars/DD.png", score: 65 },
     ],
   },
-};
+});
 
-export const EmptyCardSlots: Story = {
+export const EmptyCardSlots = meta.story({
   args: {
-    ...Default.args,
+    ...Default.input.args,
     cardSlots: Array(9).fill({ filled: false }),
   },
-};
+});
 
-export const MixedCardSlots: Story = {
+export const MixedCardSlots = meta.story({
   args: {
-    ...Default.args,
+    ...Default.input.args,
     cardSlots: [
       { filled: true, image: "/avatars/DD.png" },
       { filled: false },
@@ -119,4 +117,4 @@ export const MixedCardSlots: Story = {
       { filled: false },
     ],
   },
-};
+});

@@ -39,6 +39,8 @@
     "MedalLevels": true,
     "MedalPointsPerUser": true,
     "ModelSteps": true,
+    "NewBookstore": true,
+    "NewComment": true,
     "ON_SALE_LABEL_DESCRIPTION": true,
     "ON_SALE_LABEL_ID": true,
     "PropType": true,

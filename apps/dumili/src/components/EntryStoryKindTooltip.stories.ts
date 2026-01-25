@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from "@storybook/vue3-vite";
+import preview from "../../.storybook/preview";
 import EntryStoryKindTooltip from "./EntryStoryKindTooltip.vue";
 import type { FullIndexation } from "~dumili-services/indexation";
 import {
@@ -8,7 +8,7 @@ import {
   createIndexationDecorator,
 } from "../../.storybook/utils/mocks";
 
-const meta: Meta<typeof EntryStoryKindTooltip> = {
+const meta = preview.meta({
   title: "Components/EntryStoryKindTooltip",
   tags: ["autodocs"],
   argTypes: {
@@ -17,12 +17,9 @@ const meta: Meta<typeof EntryStoryKindTooltip> = {
       description: "The entry object",
     },
   },
-};
+});
 
-export default meta;
-type Story = StoryObj<typeof meta>;
-
-export const Default: Story = {
+export const Default = meta.story({
   args: {
     entry: createMockEntry({ id: 1 }),
   },
@@ -41,9 +38,9 @@ export const Default: Story = {
       </div>
     `,
   }),
-};
+});
 
-export const WithImage: Story = {
+export const WithImage = meta.story({
   args: {
     entry: createMockEntry({
       id: 2,
@@ -96,9 +93,9 @@ export const WithImage: Story = {
       </div>
     `,
   }),
-};
+});
 
-export const WithMultiplePages: Story = {
+export const WithMultiplePages = meta.story({
   args: {
     entry: createMockEntry({
       id: 3,
@@ -173,4 +170,4 @@ export const WithMultiplePages: Story = {
       </div>
     `,
   }),
-};
+});

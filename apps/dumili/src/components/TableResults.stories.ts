@@ -1,7 +1,7 @@
-import type { Meta, StoryObj } from "@storybook/vue3-vite";
+import preview from "../../.storybook/preview";
 import TableResults from "./TableResults.vue";
 
-const meta: Meta<typeof TableResults> = {
+const meta = preview.meta({
   title: "Components/TableResults",
   component: TableResults,
   tags: ["autodocs"],
@@ -11,12 +11,9 @@ const meta: Meta<typeof TableResults> = {
       description: "Array of objects to display in the table",
     },
   },
-};
+});
 
-export default meta;
-type Story = StoryObj<typeof meta>;
-
-export const Default: Story = {
+export const Default = meta.story({
   args: {
     data: [
       { name: "John", age: 30, city: "New York" },
@@ -24,9 +21,9 @@ export const Default: Story = {
       { name: "Bob", age: 35, city: "Paris" },
     ],
   },
-};
+});
 
-export const Empty: Story = {
+export const Empty = meta.story({
   args: {
     data: [],
   },
@@ -37,19 +34,19 @@ export const Empty: Story = {
       },
     },
   },
-};
+});
 
-export const SingleRow: Story = {
+export const SingleRow = meta.story({
   args: {
     data: [{ id: 1, status: "active", count: 42 }],
   },
-};
+});
 
-export const WithNoDataSlot: Story = {
+export const WithNoDataSlot = meta.story({
   args: {
     data: [],
     $slots: {
       "no-data": "No results found",
     },
   },
-};
+});

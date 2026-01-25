@@ -1,7 +1,7 @@
-import type { Meta, StoryObj } from "@storybook/vue3-vite";
+import preview from "../../.storybook/preview";
 import Publication from "./Publication.vue";
 
-const meta: Meta<typeof Publication> = {
+const meta = preview.meta({
   title: "Components/Publication",
   component: Publication,
   tags: ["autodocs"],
@@ -20,36 +20,33 @@ const meta: Meta<typeof Publication> = {
       description: "The CSS display class",
     },
   },
-};
+});
 
-export default meta;
-type Story = StoryObj<typeof meta>;
-
-export const Default: Story = {
+export const Default = meta.story({
   args: {
     publicationcode: "us/DD",
     publicationname: "Donald Duck",
     displayClass: "d-inline-flex",
   },
-};
+});
 
-export const Large: Story = {
+export const Large = meta.story({
   args: {
     publicationcode: "fr/PM",
     publicationname: "Picsou Magazine",
     displayClass: "d-inline-flex",
   },
-};
+});
 
-export const Small: Story = {
+export const Small = meta.story({
   args: {
     publicationcode: "dk/AND",
     publicationname: "Anders And & Co.",
     displayClass: "d-inline-flex",
   },
-};
+});
 
-export const WithSlot: Story = {
+export const WithSlot = meta.story({
   args: {
     publicationcode: "us/DD",
     publicationname: "Donald Duck",
@@ -64,4 +61,4 @@ export const WithSlot: Story = {
       </Publication>
     `,
   }),
-};
+});

@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from "@storybook/vue3-vite";
+import preview from "../../.storybook/preview";
 import { ref } from "vue";
 import Entry from "./Entry.vue";
 import {
@@ -7,7 +7,7 @@ import {
   createIndexationDecorator,
 } from "../../.storybook/utils/mocks";
 
-const meta: Meta<typeof Entry> = {
+const meta = preview.meta({
   title: "Components/Entry",
   tags: ["autodocs"],
   argTypes: {
@@ -16,10 +16,7 @@ const meta: Meta<typeof Entry> = {
       description: "Whether the entry is editable",
     },
   },
-};
-
-export default meta;
-type Story = StoryObj<typeof meta>;
+});
 
 const template = `
   <div style="width: 100%; height: 100px;">
@@ -27,7 +24,7 @@ const template = `
   </div>
 `;
 
-export const Default: Story = {
+export const Default = meta.story({
   args: {
     editable: true,
   },
@@ -48,9 +45,9 @@ export const Default: Story = {
     },
     template,
   }),
-};
+});
 
-export const NotEditable: Story = {
+export const NotEditable = meta.story({
   args: {
     editable: false,
   },
@@ -71,9 +68,9 @@ export const NotEditable: Story = {
     },
     template,
   }),
-};
+});
 
-export const WithStory: Story = {
+export const WithStory = meta.story({
   args: {
     editable: true,
   },
@@ -112,4 +109,4 @@ export const WithStory: Story = {
     },
     template,
   }),
-};
+});

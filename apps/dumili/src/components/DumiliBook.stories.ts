@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from "@storybook/vue3-vite";
+import preview from "../../.storybook/preview";
 import { storeToRefs } from "pinia";
 import DumiliBook from "./DumiliBook.vue";
 import {
@@ -11,7 +11,7 @@ import {
 import type { FullIndexation } from "~dumili-services/indexation";
 import { ui } from "~/stores/ui";
 
-const meta: Meta<typeof DumiliBook> = {
+const meta = preview.meta({
   title: "Components/DumiliBook",
   tags: ["autodocs"],
   argTypes: {
@@ -24,10 +24,7 @@ const meta: Meta<typeof DumiliBook> = {
       description: "Dimensions of the first page",
     },
   },
-};
-
-export default meta;
-type Story = StoryObj<typeof meta>;
+});
 
 // Shared constants
 const FIRST_PAGE_DIMENSIONS = {
@@ -146,7 +143,7 @@ const createBasicIndexationOverrides = () => ({
   entries: [MOCK_ENTRY],
 });
 
-export const Default: Story = {
+export const Default = meta.story({
   args: {
     indexation: createMockIndexation(createBasicIndexationOverrides()),
     firstPageDimensions: FIRST_PAGE_DIMENSIONS,
@@ -157,7 +154,7 @@ export const Default: Story = {
     }),
   ],
   render: createDefaultRender(),
-};
+});
 
 const createIndexationWithPanels = () => ({
   pages: [
@@ -175,7 +172,7 @@ const createIndexationWithPanels = () => ({
   entries: [MOCK_ENTRY],
 });
 
-export const WithPanelsOverlay: Story = {
+export const WithPanelsOverlay = meta.story({
   args: {
     indexation: createMockIndexation(createIndexationWithPanels()),
     firstPageDimensions: FIRST_PAGE_DIMENSIONS,
@@ -206,4 +203,4 @@ export const WithPanelsOverlay: Story = {
       </div>
     `,
   }),
-};
+});

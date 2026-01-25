@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from "@storybook/vue3-vite";
+import preview from "../../../.storybook/preview";
 import PageStoryKindTooltip from "./PageStoryKindTooltip.vue";
 import {
   createMockPage,
@@ -6,7 +6,7 @@ import {
   createIndexationDecorator,
 } from "../../../.storybook/utils/mocks";
 
-const meta: Meta<typeof PageStoryKindTooltip> = {
+const meta = preview.meta({
   title: "Components/suggestions/PageStoryKindTooltip",
   tags: ["autodocs"],
   argTypes: {
@@ -15,12 +15,9 @@ const meta: Meta<typeof PageStoryKindTooltip> = {
       description: "The page object",
     },
   },
-};
+});
 
-export default meta;
-type Story = StoryObj<typeof meta>;
-
-export const Default: Story = {
+export const Default = meta.story({
   args: {
     page: {
       id: 1,
@@ -48,9 +45,9 @@ export const Default: Story = {
       </div>
     `,
   }),
-};
+});
 
-export const WithDetectedPanels: Story = {
+export const WithDetectedPanels = meta.story({
   args: {
     page: {
       id: 2,
@@ -89,4 +86,4 @@ export const WithDetectedPanels: Story = {
       </div>
     `,
   }),
-};
+});

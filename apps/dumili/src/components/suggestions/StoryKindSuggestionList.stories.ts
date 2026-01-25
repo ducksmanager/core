@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from "@storybook/vue3-vite";
+import preview from "../../../.storybook/preview";
 import { ref } from "vue";
 import StoryKindSuggestionList from "./StoryKindSuggestionList.vue";
 import type { FullEntry } from "~dumili-services/indexation";
@@ -8,16 +8,13 @@ import {
   createIndexationDecorator,
 } from "../../../.storybook/utils/mocks";
 
-const meta: Meta<typeof StoryKindSuggestionList> = {
+const meta = preview.meta({
   title: "Components/suggestions/StoryKindSuggestionList",
   tags: ["autodocs"],
   parameters: {
     layout: "padded",
   },
-};
-
-export default meta;
-type Story = StoryObj<typeof meta>;
+});
 
 const createMockEntryWithStoryKinds = (
   overrides: Partial<FullEntry> = {},
@@ -50,7 +47,7 @@ const createMockEntryWithStoryKinds = (
     ...overrides,
   });
 
-export const Default: Story = {
+export const Default = meta.story({
   args: {
     entry: createMockEntryWithStoryKinds(),
     editable: true,
@@ -76,9 +73,9 @@ export const Default: Story = {
       </div>
     `,
   }),
-};
+});
 
-export const NotEditable: Story = {
+export const NotEditable = meta.story({
   args: {
     entry: createMockEntryWithStoryKinds({
       acceptedStoryKind: {
@@ -116,9 +113,9 @@ export const NotEditable: Story = {
       </div>
     `,
   }),
-};
+});
 
-export const WithSelected: Story = {
+export const WithSelected = meta.story({
   args: {
     entry: createMockEntryWithStoryKinds({
       acceptedStoryKind: {
@@ -156,4 +153,4 @@ export const WithSelected: Story = {
       </div>
     `,
   }),
-};
+});

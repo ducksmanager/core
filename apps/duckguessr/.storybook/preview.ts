@@ -1,6 +1,6 @@
-import type { Preview } from "@storybook/vue3";
+import { definePreview } from "@storybook-vue/nuxt";
 
-const preview: Preview = {
+export default definePreview({
   parameters: {
     actions: { argTypesRegex: "^on[A-Z].*" },
     controls: {
@@ -10,6 +10,6 @@ const preview: Preview = {
       },
     },
   },
-};
 
-export default preview;
+  addons: []
+});

@@ -1,7 +1,8 @@
-import type { Meta, StoryObj } from "@storybook/vue3-vite";
+import preview from "../../.storybook/preview";
+import type { StoryObj } from "@storybook/vue3-vite";
 import StoryKindBadge from "./StoryKindBadge.vue";
 
-const meta: Meta<typeof StoryKindBadge> = {
+const meta = preview.meta({
   title: "Components/StoryKindBadge",
   component: StoryKindBadge,
   tags: ["autodocs"],
@@ -12,55 +13,54 @@ const meta: Meta<typeof StoryKindBadge> = {
       description: "The story kind identifier",
     },
   },
-};
+});
 
-export default meta;
 type Story = StoryObj<typeof meta>;
 
-export const Story: Story = {
+export const Story = meta.story({
   args: {
     kind: "n",
   },
-};
+});
 
-export const NewspaperStrip: Story = {
+export const NewspaperStrip = meta.story({
   args: {
     kind: "k",
   },
-};
+});
 
-export const Cover: Story = {
+export const Cover = meta.story({
   args: {
     kind: "c",
   },
-};
+});
 
-export const Illustration: Story = {
+export const Illustration = meta.story({
   args: {
     kind: "i",
   },
-};
+});
 
-export const GameOrPuzzle: Story = {
+export const GameOrPuzzle = meta.story({
   args: {
     kind: "g",
   },
-};
+});
 
-export const TextStory: Story = {
+export const TextStory = meta.story({
   args: {
     kind: "t",
   },
-};
+});
 
-export const Article: Story = {
+export const Article = meta.story({
   args: {
     kind: "a",
   },
-};
+});
 
-export const Unknown: Story = {
+export const Unknown = meta.story({
   args: {
     kind: undefined,
   },
-};
+});

@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from "@storybook/vue3-vite";
+import preview from "../../.storybook/preview";
 import TableOfContents from "./TableOfContents.vue";
 import {
   createMockEntry,
@@ -6,15 +6,12 @@ import {
   createIndexationDecorator,
 } from "../../.storybook/utils/mocks";
 
-const meta: Meta<typeof TableOfContents> = {
+const meta = preview.meta({
   title: "Components/TableOfContents",
   tags: ["autodocs"],
-};
+});
 
-export default meta;
-type Story = StoryObj<typeof meta>;
-
-export const Default: Story = {
+export const Default = meta.story({
   decorators: [
     createIndexationDecorator(
       {
@@ -39,9 +36,9 @@ export const Default: Story = {
       </div>
     `,
   }),
-};
+});
 
-export const WithMultipleEntries: Story = {
+export const WithMultipleEntries = meta.story({
   decorators: [
     createIndexationDecorator(
       {
@@ -66,4 +63,4 @@ export const WithMultipleEntries: Story = {
       </div>
     `,
   }),
-};
+});

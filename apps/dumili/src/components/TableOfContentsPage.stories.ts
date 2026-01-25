@@ -1,8 +1,8 @@
-import type { Meta, StoryObj } from "@storybook/vue3-vite";
+import preview from "../../.storybook/preview";
 import TableOfContentsPage from "./TableOfContentsPage.vue";
 import { ui } from "~/stores/ui";
 
-const meta: Meta<typeof TableOfContentsPage> = {
+const meta = preview.meta({
   title: "Components/TableOfContentsPage",
   component: TableOfContentsPage,
   tags: ["autodocs"],
@@ -13,12 +13,9 @@ const meta: Meta<typeof TableOfContentsPage> = {
       description: "The page object with id and pageNumber",
     },
   },
-};
+});
 
-export default meta;
-type Story = StoryObj<typeof meta>;
-
-export const Default: Story = {
+export const Default = meta.story({
   args: {
     page: {
       id: 1,
@@ -37,9 +34,9 @@ export const Default: Story = {
       </div>
     `,
   }),
-};
+});
 
-export const Page5: Story = {
+export const Page5 = meta.story({
   args: {
     page: {
       id: 5,
@@ -58,9 +55,9 @@ export const Page5: Story = {
       </div>
     `,
   }),
-};
+});
 
-export const Visible: Story = {
+export const Visible = meta.story({
   args: {
     page: {
       id: 3,
@@ -89,4 +86,4 @@ export const Visible: Story = {
       </div>
     `,
   }),
-};
+});

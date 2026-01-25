@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from "@storybook/vue3-vite";
+import preview from "../../../.storybook/preview";
 import { ref } from "vue";
 import StorySuggestionList from "./StorySuggestionList.vue";
 import type { FullEntry } from "~dumili-services/indexation";
@@ -8,16 +8,13 @@ import {
   createIndexationDecorator,
 } from "../../../.storybook/utils/mocks";
 
-const meta: Meta<typeof StorySuggestionList> = {
+const meta = preview.meta({
   title: "Components/suggestions/StorySuggestionList",
   tags: ["autodocs"],
   parameters: {
     layout: "padded",
   },
-};
-
-export default meta;
-type Story = StoryObj<typeof meta>;
+});
 
 const createMockEntryWithStories = (
   overrides: Partial<FullEntry> = {},
@@ -80,7 +77,7 @@ const createDecorator = (indexationOverrides = {}) =>
     { initializeSocket: false },
   );
 
-export const Default: Story = {
+export const Default = meta.story({
   args: {
     modelValue: createMockEntryWithStories(),
   },
@@ -97,9 +94,9 @@ export const Default: Story = {
       </div>
     `,
   }),
-};
+});
 
-export const WithSelected: Story = {
+export const WithSelected = meta.story({
   args: {
     modelValue: createMockEntryWithStories({
       acceptedStory: {
@@ -123,4 +120,4 @@ export const WithSelected: Story = {
       </div>
     `,
   }),
-};
+});

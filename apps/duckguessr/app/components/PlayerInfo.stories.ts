@@ -1,8 +1,9 @@
+import preview from "../../.storybook/preview";
 import type { Meta, StoryObj } from "@nuxtjs/storybook";
 
 import PlayerInfo from "./PlayerInfo.vue";
 
-const meta: Meta<typeof PlayerInfo> = {
+const meta = preview.meta({
   title: "PlayerInfo",
   component: PlayerInfo,
   parameters: {
@@ -23,46 +24,43 @@ const meta: Meta<typeof PlayerInfo> = {
       control: "text",
     },
   },
-};
+});
 
-export default meta;
-type Story = StoryObj<typeof meta>;
-
-export const Default: Story = {
+export const Default = meta.story({
   args: {
     username: "remifanpicsou",
   },
-};
+});
 
-export const TopPlayer: Story = {
+export const TopPlayer = meta.story({
   args: {
     username: "remifanpicsou",
     topPlayer: true,
   },
-};
+});
 
-export const Bot: Story = {
+export const Bot = meta.story({
   args: {
     username: "bot_us",
   },
-};
+});
 
-export const BotRemovable: Story = {
+export const BotRemovable = meta.story({
   args: {
     username: "bot_us",
     toggleable: true,
   },
-};
+});
 
-export const PotentialBot: Story = {
+export const PotentialBot = meta.story({
   args: {
     username: "potential_bot",
   },
-};
+});
 
-export const CustomAvatar: Story = {
+export const CustomAvatar = meta.story({
   args: {
     username: "brunoperel",
     avatar: "US",
   },
-};
+});

@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from "@storybook/vue3-vite";
+import preview from "../../.storybook/preview";
 import { ref } from "vue";
 import TableOfContentsEntry from "./TableOfContentsEntry.vue";
 import {
@@ -7,7 +7,7 @@ import {
   createIndexationDecorator,
 } from "../../.storybook/utils/mocks";
 
-const meta: Meta<typeof TableOfContentsEntry> = {
+const meta = preview.meta({
   title: "Components/TableOfContentsEntry",
   tags: ["autodocs"],
   argTypes: {
@@ -16,12 +16,9 @@ const meta: Meta<typeof TableOfContentsEntry> = {
       description: "The entry object",
     },
   },
-};
+});
 
-export default meta;
-type Story = StoryObj<typeof meta>;
-
-export const Default: Story = {
+export const Default = meta.story({
   args: {
     entry: createMockEntry(),
   },
@@ -46,9 +43,9 @@ export const Default: Story = {
       </div>
     `,
   }),
-};
+});
 
-export const WithStoryKind: Story = {
+export const WithStoryKind = meta.story({
   args: {
     entry: createMockEntry({
       acceptedStoryKind: {
@@ -99,9 +96,9 @@ export const WithStoryKind: Story = {
       </div>
     `,
   }),
-};
+});
 
-export const MultiplePages: Story = {
+export const MultiplePages = meta.story({
   args: {
     entry: createMockEntry({
       position: 1,
@@ -133,4 +130,4 @@ export const MultiplePages: Story = {
       </div>
     `,
   }),
-};
+});

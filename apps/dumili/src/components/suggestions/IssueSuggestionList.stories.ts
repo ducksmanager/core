@@ -1,9 +1,9 @@
-import type { Meta, StoryObj } from "@storybook/vue3-vite";
+import preview from "../../../.storybook/preview";
 import IssueSuggestionList from "./IssueSuggestionList.vue";
 import type { FullIndexation } from "~dumili-services/indexation";
 import { createIndexationDecorator } from "../../../.storybook/utils/mocks";
 
-const meta: Meta<typeof IssueSuggestionList> = {
+const meta = preview.meta({
   title: "Components/suggestions/IssueSuggestionList",
   tags: ["autodocs"],
   parameters: {
@@ -15,15 +15,12 @@ const meta: Meta<typeof IssueSuggestionList> = {
       },
     },
   },
-};
-
-export default meta;
-type Story = StoryObj<typeof meta>;
+});
 
 const createDecorator = (indexationOverrides: Partial<FullIndexation> = {}) =>
   createIndexationDecorator(indexationOverrides, { initializeSocket: true });
 
-export const Default: Story = {
+export const Default = meta.story({
   decorators: [
     createDecorator({
       issueSuggestions: [
@@ -52,9 +49,9 @@ export const Default: Story = {
       </div>
     `,
   }),
-};
+});
 
-export const WithSelected: Story = {
+export const WithSelected = meta.story({
   decorators: [
     createDecorator({
       issueSuggestions: [
@@ -90,4 +87,4 @@ export const WithSelected: Story = {
       </div>
     `,
   }),
-};
+});
