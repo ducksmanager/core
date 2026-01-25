@@ -1,11 +1,11 @@
 {
     "name": "dumili-browser-extension",
-    "version": "1.0.0",
+    "version": "1.0.5",
     "description": "Browser extension for Dumili",
     "scripts": {
         "dev": "vite",
         "build": "vite build",
-        "publish": "(cd dist && zip ../extension.zip content.* manifest.json) && cp ../src/components/TextEditor.vue src/components/ && zip -r extension-sources.zip *.json src && rm src/components/TextEditor.vue",
+        "build-publish": "bun scripts/build-publish.ts",
         "watch": "vite build --watch"
     },
     "dependencies": {
@@ -17,10 +17,10 @@
     "devDependencies": {
         "@types/chrome": "^0.0.313",
         "@types/jquery": "^3.5.33",
+        "@types/node": "^22.19.5",
         "@vitejs/plugin-vue": "^6.0.3",
         "sass": "^1.97.2",
         "typescript": "^5.9.3",
-        "vite": "^7.3.1",
-        "web-ext": "^8.10.0"
+        "vite": "^7.3.1"
     }
 }
