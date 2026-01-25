@@ -131,7 +131,7 @@ const fillFormFields = <Data extends DumiliEntryData | DumiliIssueData>(
 ): void => {
   let lastFilledInput = $();
   for (const [key, value] of Object.entries(data).filter(
-    ([key, value]) => key !== "entrycode" && !!value,
+    ([key, value]) => key !== "entrycode" && value !== undefined,
   )) {
     const actualKey = mappingOverride?.[key as keyof Data] ?? key;
     const input = $(`[name='${actualKey}']`);

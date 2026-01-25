@@ -99,10 +99,9 @@ export default () => {
                       return contents;
                     }
                   })
-                  ?.reverse()
-                  .pop() || "";
+                  ?.find(Boolean) || "";
             } else {
-              value = line.match(/(?<=h3 ).+?(?= \[)/)?.[0] || "";
+              value = line.match(/(?<=h3 )(?!\[).+?(?= \[)/)?.[0] || "";
             }
             entries.push([fieldName, value]);
           }
