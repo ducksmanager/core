@@ -25,7 +25,7 @@
     "@popperjs/core": "^2.11.8",
     "@sentry/tracing": "^7.120.4",
     "@sentry/vue": "^9.47.1",
-    "@unhead/vue": "^1.11.20",
+    "@unhead/vue": "^2.1.2",
     "@vueuse/core": "^13.9.0",
     "axios-cache-interceptor": "^1.11.4",
     "bootstrap": "^5.3.8",
