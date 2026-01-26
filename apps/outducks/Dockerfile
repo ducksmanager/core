@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/playwright:v1.56.1-noble AS deployer
+FROM mcr.microsoft.com/playwright:v1.58.0-noble AS deployer
 LABEL org.opencontainers.image.authors="Bruno Perel"
 
 WORKDIR /workspace
@@ -11,7 +11,7 @@ COPY util/group-by ./util/group-by/
 RUN npm install -g pnpm
 RUN pnpm deploy --filter=~outducks --prod --ignore-scripts /app
 
-FROM mcr.microsoft.com/playwright:v1.56.1-noble
+FROM mcr.microsoft.com/playwright:v1.58.0-noble
 
 WORKDIR /app/apps/outducks
 COPY --from=deployer /app /app
