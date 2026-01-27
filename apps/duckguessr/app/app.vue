@@ -1,8 +1,10 @@
 <template>
   <NuxtPage />
+  <PiniaColadaDevtools />
 </template>
 
 <script setup lang="ts">
+import { PiniaColadaDevtools } from "@pinia/colada-devtools";
 import { buildWebStorage, SocketClient } from "socket-call-client";
 import { stores as webStores, composables } from "~web";
 import { playerStore } from "~/stores/player";

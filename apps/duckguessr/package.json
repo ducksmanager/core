@@ -24,8 +24,8 @@
   "dependencies": {
     "@nuxtjs/i18n": "^10.2.1",
     "@nuxtjs/storybook": "^9.0.1",
-    "@pinia/colada": "^0.19.1",
-    "@pinia/colada-nuxt": "0.2.6",
+    "@pinia/colada": "^0.21.2",
+    "@pinia/colada-nuxt": "^0.3.1",
     "@pinia/nuxt": "^0.11.3",
     "@sentry/nuxt": "^10.30.0",
     "@unhead/vue": "^2.0.19",
@@ -53,6 +53,7 @@
     "@nuxt/devtools": "^3.1.1",
     "@nuxt/eslint": "^1.12.1",
     "@nuxt/typescript-build": "^3.0.2",
+    "@pinia/colada-devtools": "^0.4.2",
     "@storybook-vue/nuxt": "^9.0.1",
     "@storybook/vue3": "^9.1.16",
     "@types/eslint": "^9.6.1",
