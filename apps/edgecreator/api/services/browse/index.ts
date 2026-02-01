@@ -24,12 +24,12 @@ const parser = new XMLParser({
 
 const getSvgMetadata = (
   metadataNodes: { "#text": string; type?: string }[],
-  metadataType: string,
+  metadataType: string
 ) =>
   metadataNodes
     .filter(
       ({ type, "#text": text }) =>
-        type === metadataType && typeof text === "string",
+        type === metadataType && typeof text === "string"
     )
     .map(({ "#text": text }) => text.trim());
 
@@ -55,12 +55,7 @@ const findPublishedEdges = async (publicationcode: string) => {
         },
       },
     })
-  )
-    .map((edge) => ({
-      ...edge,
-      shortIssuecode: edge.issuecode.replace(/[ ]+/, " "),
-    }))
-    .groupBy("shortIssuecode");
+  ).groupBy("issuecode");
 
   const coaIssuecodesByShortIssuecode = (
     await prismaCoa.inducks_issue.findMany({
@@ -123,7 +118,7 @@ const findOngoingEdges = async (currentUsername?: string) => {
   })
     .filter(
       (file) =>
-        file.isDirectory() && existsSync(`${getEdgesPath()}/${file.name}/gen`),
+        file.isDirectory() && existsSync(`${getEdgesPath()}/${file.name}/gen`)
     )
     .flatMap((countryDir) => {
       const genDir = `${getEdgesPath()}/${countryDir.name}/gen`;
@@ -139,7 +134,7 @@ const findOngoingEdges = async (currentUsername?: string) => {
             .replace("_", "")
             .split(".");
           const publicationcode = `${countryDir.name}/${magazinecode}`;
-          const shortIssuecode = `${publicationcode} ${issuenumberShort}`;
+          const shortIssuecode = `${publicationcode}${issuenumberShort}`;
 
           const doc = parser.parse(readFileSync(filePath));
           let metadataNodes = doc.svg.metadata || [];
@@ -150,11 +145,11 @@ const findOngoingEdges = async (currentUsername?: string) => {
 
           const designers = getSvgMetadata(
             metadataNodes,
-            "contributor-designer",
+            "contributor-designer"
           );
           const photographers = getSvgMetadata(
             metadataNodes,
-            "contributor-photographer",
+            "contributor-photographer"
           );
 
           return {
@@ -190,22 +185,26 @@ const findOngoingEdges = async (currentUsername?: string) => {
   )
     .map((issue) => ({
       ...issue,
-      shortIssuecode: issue.issuecode.replace(/[ ]+/, " "),
+      shortIssuecode: issue.issuecode.replaceAll(" ", ""),
     }))
     .groupBy("shortIssuecode", "issuecode");
 
   return edges
-    .map(({ shortIssuecode, ...edge }) => ({
-      ...edge,
-      issuecode: coaIssuecodesByShortIssuecode[shortIssuecode],
-    }))
-    .filter(({ issuecode }) => !!issuecode)
+    .flatMap(({ shortIssuecode, ...edge }) => {
+      const issuecode = coaIssuecodesByShortIssuecode[shortIssuecode];
+      if (!issuecode) {
+        console.log("No issuecode found for", shortIssuecode);
+        return [];
+      }
+      return [{ ...edge, issuecode }];
+    })
+    .sort((a, b) => a.issuecode.localeCompare(b.issuecode))
     .groupBy("issuecode");
 };
 
 const listenEvents = (services: BrowseServices) => ({
   listPublishedEdgeModels: async (
-    publicationcode: string,
+    publicationcode: string
   ): Promise<
     | {
         error: "Generic error";
@@ -263,9 +262,9 @@ const listenEvents = (services: BrowseServices) => ({
     try {
       return {
         results: readdirSync(
-          `${getEdgesPath()}/${country}/${imageType}`,
+          `${getEdgesPath()}/${country}/${imageType}`
         ).filter((item) =>
-          new RegExp(`(?:^|[. ])${magazine}(?:[. ]|$)`).test(item),
+          new RegExp(`(?:^|[. ])${magazine}(?:[. ]|$)`).test(item)
         ),
       };
     } catch (_e) {
