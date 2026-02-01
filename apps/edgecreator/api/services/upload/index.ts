@@ -57,11 +57,8 @@ const _getFilenameUsagesInOtherModels = async (
   ).filter((otherUse) => issue.issuenumber !== otherUse.issuenumberStart);
 };
 
-const storePhotoHash = (
-  filename: string,
-  hash: string,
-  token: string
-) => getEdgeCreatorServices(token).createElementImage(hash, filename);
+const storePhotoHash = (filename: string, hash: string, token: string) =>
+  getEdgeCreatorServices(token).createElementImage(hash, filename);
 
 const validateUpload = async (
   filename: string,
@@ -195,7 +192,9 @@ const listenEvents = ({ _socket: socket }: UploadServices) => ({
 
     await storePhotoHash(targetFileName, hash, token);
 
-    await getEdgeCreatorServices(token).sendNewEdgePhotoEmail(issuecode);
+    if (isEdgePhoto) {
+      await getEdgeCreatorServices(token).sendNewEdgePhotoEmail(issuecode);
+    }
 
     return { fileName: targetFileName };
   },
