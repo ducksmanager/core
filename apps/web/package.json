@@ -22,6 +22,7 @@
   "dependencies": {
     "@bperel/vue3-popper-teleport": "^1.4.3",
     "@mapbox/mapbox-gl-geocoder": "^5.1.2",
+    "@pinia/colada": "^0.21.2",
     "@popperjs/core": "^2.11.8",
     "@sentry/tracing": "^7.120.4",
     "@sentry/vue": "^9.47.1",

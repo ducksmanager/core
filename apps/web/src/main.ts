@@ -13,6 +13,7 @@ import { SocketClient } from "socket-call-client";
 import contextmenu from "v-contextmenu";
 import { createRouter, createWebHistory } from "vue-router";
 import { routes } from "vue-router/auto-routes";
+import { PiniaColada } from "@pinia/colada";
 
 import App from "~/App.vue";
 import i18n from "~/i18n";
@@ -36,6 +37,7 @@ const store = createPinia();
 const app = createApp(App)
   .use(i18n("fr", localStorage.getItem("locale") || "fr", { en }).instance)
   .use(store)
+  .use(PiniaColada)
   .use(createBootstrap())
   .use(contextmenu)
   .use(head)

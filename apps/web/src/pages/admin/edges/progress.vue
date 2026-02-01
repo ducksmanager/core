@@ -6,7 +6,7 @@ meta:
 <template>
   <div v-if="hasData">
     <div
-      v-for="mostWantedIssue in mostWanted"
+      v-for="mostWantedIssue in mostWantedData"
       :key="`wanted-${mostWantedIssue.issuecode.replaceAll(' ', '_')}`"
     >
       <div>
@@ -111,24 +111,34 @@ meta:
 </template>
 
 <script setup lang="ts">
+import { useQuery } from "@pinia/colada";
 import type { BookcaseEdgeWithPopularity } from "~/stores/bookcase";
-import type { SimpleInducksIssue } from "~dm-types/AugmentedIssue";
-import type { WantedEdge } from "~dm-types/WantedEdge";
 
 import { socketInjectionKey } from "../../../composables/useDmSocket";
 
 const { getImagePath } = images();
 
-let hasData = $ref(false);
-let mostWanted = $shallowRef<WantedEdge[]>();
-let publishedEdges = $ref<SimpleInducksIssue[]>([]);
-const showEdgesForPublication = $ref<string[]>([]);
-const bookcaseTextures = $ref({
+let hasData = ref(false);
+const showEdgesForPublication = ref<string[]>([]);
+const bookcaseTextures = {
   bookcase: "bois/HONDURAS MAHOGANY",
   bookshelf: "bois/KNOTTY PINE",
-});
+};
 
 const { edges: edgesEvents } = inject(socketInjectionKey)!;
+
+const { asyncStatus: mostWantedStatus, data: mostWantedData } = useQuery({
+  key: ["edges", "wanted"],
+  query: () => edgesEvents.getWantedEdges(),
+});
+
+const { asyncStatus: publishedEdgesStatus, data: publishedEdgesData } =
+  useQuery({
+    key: ["edges", "published"],
+    query: () => edgesEvents.getPublishedEdges(),
+  });
+
+const publishedEdges = computed(() => publishedEdgesData.value ?? []);
 
 const {
   fetchPublicationNames,
@@ -141,8 +151,8 @@ const { publicationNames, issuecodesByPublicationcode, issuecodeDetails } =
 const { loadCollection } = collection();
 const { issuesByIssuecode } = storeToRefs(collection());
 
-const publishedEdgesByPublicationcode = $computed(() =>
-  publishedEdges.groupBy("publicationcode", "[]"),
+const publishedEdgesByPublicationcode = computed(() =>
+  publishedEdges.value.groupBy("publicationcode", "[]"),
 );
 
 const getEdgeUrl = (issuecode: string): string => {
@@ -154,12 +164,14 @@ const getEdgeUrl = (issuecode: string): string => {
 };
 const open = (inducksIssuecode: string) => {
   if (
-    publishedEdges.map(({ issuecode }) => issuecode).includes(inducksIssuecode)
+    publishedEdges.value
+      .map(({ issuecode }) => issuecode)
+      .includes(inducksIssuecode)
   ) {
     window.open(getEdgeUrl(inducksIssuecode), "_blank");
   }
 };
-const inducksIssuenumbers = $computed(() =>
+const inducksIssuenumbers = computed(() =>
   Object.keys(issuecodesByPublicationcode.value).reduce<
     Record<string, string[]>
   >((acc, publicationcode) => {
@@ -181,7 +193,7 @@ const sortedBookcase = computed(() =>
     acc[publicationcode] =
       issuecodesByPublicationcode.value[publicationcode]?.map((issuecode) => ({
         id: 0,
-        edgeId: publishedEdgesByPublicationcode?.[publicationcode]
+        edgeId: publishedEdgesByPublicationcode.value?.[publicationcode]
           .map(({ issuecode }) => issuecode)
           .includes(issuecode)
           ? 1
@@ -198,24 +210,36 @@ const sortedBookcase = computed(() =>
   }, {}),
 );
 
-(async () => {
-  mostWanted = await edgesEvents.getWantedEdges();
+watchEffect(async () => {
+  if (
+    mostWantedStatus.value !== "idle" ||
+    publishedEdgesStatus.value !== "idle" ||
+    !mostWantedData.value ||
+    !publishedEdgesData.value
+  ) {
+    return;
+  }
 
-  publishedEdges = await edgesEvents.getPublishedEdges();
+  const mostWantedItems = mostWantedData.value;
+  const publishedEdgesItems = publishedEdgesData.value;
   const publicationcodes = Object.keys(
-    publishedEdges.groupBy("publicationcode"),
+    publishedEdgesItems.groupBy("publicationcode"),
   );
 
   await fetchPublicationNames([
-    ...mostWanted.map((mostWantedIssue) => mostWantedIssue.publicationcode),
+    ...mostWantedItems.map(
+      (mostWantedIssue) => mostWantedIssue.publicationcode,
+    ),
     ...publicationcodes,
   ]);
 
   await fetchIssuecodesByPublicationcode(publicationcodes);
-  await fetchIssuecodeDetails(Object.keys(publishedEdges.groupBy("issuecode")));
+  await fetchIssuecodeDetails(
+    Object.keys(publishedEdgesItems.groupBy("issuecode")),
+  );
   await loadCollection();
-  hasData = true;
-})();
+  hasData.value = true;
+});
 </script>
 
 <style scoped lang="scss">
