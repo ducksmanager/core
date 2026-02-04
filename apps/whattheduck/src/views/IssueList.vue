@@ -320,10 +320,6 @@ defineExpose({ hasItems });
   margin-bottom: 60px !important;
 }
 
-ion-grid {
-  --ion-grid-column-padding: 30px;
-}
-
 ion-checkbox {
   flex-grow: 0;
   margin-right: 0.5rem;
