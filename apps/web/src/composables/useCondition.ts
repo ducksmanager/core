@@ -72,6 +72,11 @@ export default () => {
     conditionsWithoutMissing: computed(
       () => conditions.filter(({ dbValue }) => dbValue) as Condition<false>[],
     ),
+
+    getConditionDbEnValue: (
+      givenDbValue: keyof typeof issue_condition | null,
+    ) => conditions.find(({ dbValue }) => givenDbValue === dbValue)?.dbEnValue,
+
     getConditionLabel: (givenDbValue: string) =>
       conditions
         .find(

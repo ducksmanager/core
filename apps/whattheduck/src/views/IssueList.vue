@@ -39,12 +39,14 @@
           <ion-col
             v-for="{ key, item } in sortedItemsForCovers?.filter(({ key }) => filteredIssuenumbers.includes(key))"
             :key="key"
+            v-on-long-press="() => handleLongPress(item.issuecode)"
             class="ion-text-center"
             :size="String(colSize)"
-            @click="currentNavigationItem = { type: 'issuecodes', value: [key] }"
+            @click="handleClick(key)"
             ><ion-img
               v-if="item.cover"
               :src="`${COVER_ROOT_URL}${item.cover}`"
+              :class="'condition' in item ? ['dm-condition-border', getConditionDbEnValue(item.condition)] : []"
               :alt="issuecodeDetails[item.issuecode]!.issuenumber"
               @error="item.cover = null"
             ></ion-img
@@ -59,6 +61,7 @@
 </template>
 
 <script setup lang="ts">
+import { toastController } from '@ionic/vue';
 import { bookmarkOutline, bookmarkSharp, calendarOutline, calendarSharp } from 'ionicons/icons';
 import type { IssueWithIssuecodeOnly } from '~dm-types/IssueWithIssuecodeOnly';
 import type { issue } from '~prisma-schemas/schemas/dm';
@@ -69,9 +72,21 @@ import { wtdcollection } from '~/stores/wtdcollection';
 import type { ClientEvents as CollectionServices } from '~dm-services/collection';
 import type { EventOutput } from 'socket-call-client';
 import { TO_READ_LABEL_ID } from '~dm-types/Labels';
+import { vOnLongPress } from '@vueuse/components';
+
+type IssueItem = Pick<
+  EventOutput<CollectionServices, 'getIssues'>[number],
+  'purchaseId' | 'condition' | 'creationDate' | 'labelIds' | 'isSubscription'
+> & {
+  issuecode: string;
+};
+
+type Item = IssueItem | IssueWithIssuecodeOnly;
 
 const { Bookcase } = webComponents;
 const filteredIssuenumbers = ref<string[]>([]);
+
+const { getConditionDbEnValue } = useCondition();
 
 const COVER_ROOT_URL = import.meta.env.VITE_CLOUDINARY_BASE_URL;
 
@@ -133,18 +148,38 @@ const userIssues = computed(() =>
     }),
 );
 
+const longPressJustOccurred = ref(false);
+
+const showIssueToast = (issuecode: string) => {
+  toastController
+    .create({
+      message: issuecodeDetails.value[issuecode]!.issuenumber,
+      duration: 20000,
+      cssClass: 'issue-toast',
+      position: 'bottom',
+    })
+    .then((toast) => toast.present());
+};
+
+const handleLongPress = (issuecode: string) => {
+  longPressJustOccurred.value = true;
+  showIssueToast(issuecode);
+  setTimeout(() => {
+    // Workarout for v-on-long-press.prevent not working
+    longPressJustOccurred.value = false;
+  }, 1000);
+};
+
+const handleClick = (key: string) => {
+  if (longPressJustOccurred.value) {
+    return;
+  }
+  currentNavigationItem.value = { type: 'issuecodes', value: [key] };
+};
+
 watch(isCoaView, () => {
   selectedIssuecodes.value = [];
 });
-
-type IssueItem = Pick<
-  EventOutput<CollectionServices, 'getIssues'>[number],
-  'purchaseId' | 'condition' | 'creationDate' | 'labelIds' | 'isSubscription'
-> & {
-  issuecode: string;
-};
-
-type Item = IssueItem | IssueWithIssuecodeOnly;
 
 const items = computed(() => {
   if (!hasData.value) {
@@ -283,6 +318,10 @@ defineExpose({ hasItems });
 
 :deep(ion-content) {
   margin-bottom: 60px !important;
+}
+
+ion-grid {
+  --ion-grid-column-padding: 30px;
 }
 
 ion-checkbox {

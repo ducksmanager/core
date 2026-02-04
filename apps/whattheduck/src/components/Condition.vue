@@ -1,15 +1,13 @@
 <template>
-  <span
-    :class="`dm-condition-background ${conditions.find((condition) => condition.dbValue === value)?.dbEnValue} ${noMargin ? 'ion-no-margin' : ''}`"
-  />
+  <span :class="`dm-condition-background ${getConditionDbEnValue(value)} ${noMargin ? 'ion-no-margin' : ''}`" />
 </template>
 <script setup lang="ts">
 import type { issue_condition } from '~prisma-schemas/schemas/dm';
 
-const { conditions } = useCondition();
+const { getConditionDbEnValue } = useCondition();
 
 defineProps<{
-  value?: issue_condition | null;
+  value: issue_condition | null;
   noMargin?: boolean;
 }>();
 </script>

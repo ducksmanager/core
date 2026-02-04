@@ -76,6 +76,16 @@ ion-segment-button {
   }
 }
 
+.dm-condition-border {
+  border-width: 1px;
+  border-style: solid;
+  @each $condition, $conditionColor in variables.$dmConditions {
+    &.#{$condition} {
+      border-color: $conditionColor;
+    }
+  }
+}
+
 .toast-error {
   text-align: center;
   opacity: 0.85;
