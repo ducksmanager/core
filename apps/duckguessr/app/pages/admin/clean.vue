@@ -120,9 +120,9 @@
               <BiBarChart class="me-2" />
               {{
                 t(
-                  "{validated} images from this dataset can currently be seen on Duckguessr, {notValidated} are left to maintain.",
+                  "{accepted} images from this dataset can currently be seen on Duckguessr, {notValidated} are left to maintain.",
                   {
-                    validated: validatedAndRemainingImageCount.validated || 0,
+                    accepted: validatedAndRemainingImageCount.accepted || 0,
                     notValidated:
                       validatedAndRemainingImageCount.not_validated || 0,
                   },
@@ -136,35 +136,32 @@
             class="shadow-lg border-0 mb-4"
             body-class="p-4"
           >
-            <h3 class="h5 fw-semibold text-dark mb-3 d-flex align-items-center">
-              <BiFunnel class="me-2" />
-              Filter Options
-            </h3>
-            <b-button-group class="w-100">
-              <b-button
-                v-for="(decision, id) in decisionsWithNonValidated"
-                :key="id"
-                :variant="decision.variant"
-                :pressed="decision.pressed"
-                size="lg"
-                @click="decision.pressed = !decision.pressed"
-              >
-                <BiCheck v-if="decision.pressed" class="me-2" />
-                <BiX v-else class="me-2" />
-                {{ decision.title }}
-              </b-button>
-            </b-button-group>
-          </b-card>
-
-          <b-card
-            v-if="selectedDataset"
-            class="shadow-lg border-0 mb-4"
-            body-class="p-4"
-          >
-            <h3 class="h5 fw-semibold text-dark mb-3 d-flex align-items-center">
+            <h3 class="h3 fw-semibold text-dark mb-3 d-flex align-items-center">
               <BiImages class="me-2" />
               Image Review
             </h3>
+            <b-container class="m-3">
+              <h5
+                class="h5 fw-semibold text-dark mb-3 d-flex align-items-center"
+              >
+                <BiFunnel class="me-2" />
+                Filter Options
+              </h5>
+              <b-button-group class="w-100">
+                <b-button
+                  v-for="(decision, id) in decisionsWithNonValidated"
+                  :key="id"
+                  :variant="decision.variant"
+                  :pressed="decision.pressed"
+                  size="sm"
+                  @click="decision.pressed = !decision.pressed"
+                >
+                  <BiCheck v-if="decision.pressed" class="me-2" />
+                  <BiX v-else class="me-2" />
+                  {{ decision.title }}
+                </b-button>
+              </b-button-group></b-container
+            >
 
             <div
               v-if="isLoading"
@@ -212,7 +209,10 @@
                         :disabled="isLoading"
                         :variant="variant"
                         :pressed="decision === id"
-                        @click="entryurlsPendingMaintenanceWithUrls[index]!.decision = id"
+                        @click="
+                          entryurlsPendingMaintenanceWithUrls[index]!.decision =
+                            id
+                        "
                       >
                         {{ title }}
                       </b-button>
@@ -286,7 +286,7 @@ const entryurlsPendingMaintenanceWithUrls = ref<
 >([]);
 const validatedAndRemainingImageCount = ref<{
   not_validated: number;
-  validated: number;
+  accepted: number;
 }>();
 const selectedDataset = ref<string>();
 const isLoading = ref(false);
@@ -411,10 +411,7 @@ const loadImagesToMaintain = async (
     datasetsGroupedByDecision.value[datasetName].decisions;
   validatedAndRemainingImageCount.value = {
     not_validated: datasetsAndDecisions.null || 0,
-    validated:
-      (datasetsAndDecisions.ok || 0) +
-      (datasetsAndDecisions.shows_author || 0) +
-      (datasetsAndDecisions.no_drawing || 0),
+    accepted: datasetsAndDecisions.ok || 0,
   };
 };
 

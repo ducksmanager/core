@@ -94,5 +94,5 @@
     "by DucksManager": "von DucksManager",
     "rounds out of": "Runden von",
     "won the match!": "hat die Runde gewonnen!",
-    "{validated} images from this dataset can currently be seen on Duckguessr, {notValidated} are left to maintain.": "{validated} Bilder von dieser Datenbasis können im Moment auf Duckguessr gesehen werden, {notValidated} müssen noch gewartet werden."
+    "{accepted} images from this dataset can currently be seen on Duckguessr, {notValidated} are left to maintain.": "{validated} Bilder von dieser Datenbasis können im Moment auf Duckguessr gesehen werden, {notValidated} müssen noch gewartet werden."
 }
