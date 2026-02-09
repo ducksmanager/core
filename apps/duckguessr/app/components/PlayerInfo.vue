@@ -82,6 +82,7 @@ const { t } = useI18n();
 
 <style lang="scss">
 .b-avatar {
+  z-index: 1;
   max-width: initial;
   &.top-player:after {
     position: absolute;
