@@ -25,7 +25,7 @@
   },
   "dependencies": {
     "@opentelemetry/instrumentation-socket.io": "^0.46.1",
-    "@prisma/client": "^6.19.2",
+    "@prisma/client": "^7.0.0",
     "@sentry/node": "^9.47.1",
     "@sentry/profiling-node": "^9.47.1",
     "axios": "^1.13.4",
@@ -53,7 +53,7 @@
     "concurrently": "^9.2.1",
     "eslint": "^9.39.2",
     "eslint-config-prettier": "^10.1.8",
-    "prisma": "^6.19.2",
+    "prisma": "^7.0.0",
     "typescript": "^5.9.3",
     "typescript-eslint": "^8.54.0"
   }

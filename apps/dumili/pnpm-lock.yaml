@@ -12,8 +12,8 @@ importers:
         specifier: ^1.2.7
         version: 1.2.7
       '@prisma/adapter-mariadb':
-        specifier: ^6.19.2
-        version: 6.19.2
+        specifier: ^7.0.0
+        version: 7.3.0
       '@sentry/browser':
         specifier: ^9.47.1
         version: 9.47.1
@@ -626,14 +626,14 @@ packages:
   '@popperjs/core@2.11.8':
     resolution: {integrity: sha512-P1st0aksCrn9sGZhp8GMYwBnQsbvAWsZAX44oXNNvLHGqAOcoVxmjZiohstwQ7SqKnbR47akdNi+uleWD8+g6A==}
 
-  '@prisma/adapter-mariadb@6.19.2':
-    resolution: {integrity: sha512-HK4ZODHphyHDUC22jltApidFbxp411G20mElAF3046fDccVjFJQUxsgEeDyQzt4qXkAtVmNpVsz50fHoctUHVA==}
+  '@prisma/adapter-mariadb@7.3.0':
+    resolution: {integrity: sha512-cZaNZqdnm255Di8+0ztWDVdg40zRburNEMqHN2AIP98SO0Xbo9UDqHKC7sYkmm5Rqy9fNVxMjBJnoiZJ4Ae+tw==}
 
-  '@prisma/debug@6.19.2':
-    resolution: {integrity: sha512-lFnEZsLdFLmEVCVNdskLDCL8Uup41GDfU0LUfquw+ercJC8ODTuL0WNKgOKmYxCJVvFwf0OuZBzW99DuWmoH2A==}
+  '@prisma/debug@7.3.0':
+    resolution: {integrity: sha512-yh/tHhraCzYkffsI1/3a7SHX8tpgbJu1NPnuxS4rEpJdWAUDHUH25F1EDo6PPzirpyLNkgPPZdhojQK804BGtg==}
 
-  '@prisma/driver-adapter-utils@6.19.2':
-    resolution: {integrity: sha512-tkHsL3jhx81eXg2oqtJH/1IEs8uEeUb1RpqHtwYqdNb176u9D0mnHRZM1/cKca/XhLpq49Nnd9XDxdMfWcKAYA==}
+  '@prisma/driver-adapter-utils@7.3.0':
+    resolution: {integrity: sha512-Wdlezh1ck0Rq2dDINkfSkwbR53q53//Eo1vVqVLwtiZ0I6fuWDGNPxwq+SNAIHnsU+FD/m3aIJKevH3vF13U3w==}
 
   '@rolldown/pluginutils@1.0.0-beta.53':
     resolution: {integrity: sha512-vENRlFU4YbrwVqNDZ7fLvy+JR1CRkyr01jhSiDpE1u6py3OMzQfztQU2jxykW3ALNxO4kSlqIDeYyD0Y9RcQeQ==}
@@ -3259,16 +3259,16 @@ snapshots:
 
   '@popperjs/core@2.11.8': {}
 
-  '@prisma/adapter-mariadb@6.19.2':
+  '@prisma/adapter-mariadb@7.3.0':
     dependencies:
-      '@prisma/driver-adapter-utils': 6.19.2
+      '@prisma/driver-adapter-utils': 7.3.0
       mariadb: 3.4.5
 
-  '@prisma/debug@6.19.2': {}
+  '@prisma/debug@7.3.0': {}
 
-  '@prisma/driver-adapter-utils@6.19.2':
+  '@prisma/driver-adapter-utils@7.3.0':
     dependencies:
-      '@prisma/debug': 6.19.2
+      '@prisma/debug': 7.3.0
 
   '@rolldown/pluginutils@1.0.0-beta.53': {}
 

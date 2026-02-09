@@ -20,10 +20,10 @@
     "prod:transfer-files-post": "pnpm -F '~ci' prod:transfer-files packages/prisma-schemas/docker-compose.yml:@packages/prisma-schemas/docker-compose.yml"
   },
   "dependencies": {
-    "@prisma/adapter-mariadb": "^6.19.2",
-    "@prisma/client": "^6.19.2",
+    "@prisma/adapter-mariadb": "^7.0.0",
+    "@prisma/client": "^7.0.0",
     "dotenv": "^17.2.3",
-    "prisma": "^6.19.2",
+    "prisma": "^7.0.0",
     "~group-by": "workspace:*"
   },
   "devDependencies": {

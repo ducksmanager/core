@@ -54,6 +54,7 @@
     "instrument.ts",
     "services/**/*.ts",
     "prisma/client.ts",
-    "prisma/client_dumili/**/*.ts"
+    "prisma/client_dumili/**/*.ts",
+    "prisma.config.ts"
   ]
 }

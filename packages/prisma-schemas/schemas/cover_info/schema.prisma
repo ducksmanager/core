@@ -1,12 +1,10 @@
 generator client {
-  provider   = "prisma-client"
-  output     = "../../client_cover_info"
-  engineType = "client"
+  provider = "prisma-client"
+  output   = "../../client_cover_info"
 }
 
 datasource db {
   provider = "mysql"
-  url      = env("DATABASE_URL_COVER_INFO")
 }
 
 model coverImport {

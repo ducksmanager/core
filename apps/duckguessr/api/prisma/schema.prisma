@@ -2,12 +2,10 @@ generator client {
   provider        = "prisma-client"
   output          = "client_duckguessr"
   previewFeatures = ["views"]
-  engineType      = "client"
 }
 
 datasource db {
   provider = "mysql"
-  url      = env("DATABASE_URL")
 }
 
 model dataset {
