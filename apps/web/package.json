@@ -42,7 +42,7 @@
     "vue-chartjs": "^5.3.3",
     "vue-i18n": "^11.2.8",
     "vue-mapbox-ts": "^0.9.10",
-    "vue-router": "^4.6.4",
+    "vue-router": "^5.0.2",
     "vue-slicksort": "^2.0.5",
     "~api": "workspace:*",
     "~dm-types": "workspace:*",
@@ -82,7 +82,6 @@
     "unplugin-auto-import": "^21.0.0",
     "unplugin-icons": "^22.5.0",
     "unplugin-vue-components": "^31.0.0",
-    "unplugin-vue-router": "^0.19.2",
     "vite": "^7.3.1",
     "vue-tsc": "3.1.5",
     "wait-on": "^8.0.5"
