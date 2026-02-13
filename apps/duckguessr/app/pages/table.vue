@@ -145,10 +145,10 @@ setInterval(() => {
 $card-space: 3px;
 
 $max-cards: 3; // Maximum number of cards to style
-$card-aspect-ratio: 20/29;
+$card-aspect-ratio: math.div(20, 29);
 
 $card-aspect-ratio-squared: $card-aspect-ratio * $card-aspect-ratio;
-$card-diagonal-factor: math.sqrt(1 + $card-aspect-ratio-squared) / 2;
+$card-diagonal-factor: math.div(math.sqrt(1 + $card-aspect-ratio-squared), 2);
 
 #container {
   display: flex;

@@ -104,7 +104,9 @@ export default defineNuxtConfig({
   // Vite config
   vite: {
     plugins: [
-      checker({ vueTsc: true }),
+      // Type assertion: vite-plugin-checker and unplugin-vue-components have Plugin type
+      // mismatches with Vite 7's stricter Rollup types (PluginContextMeta.viteVersion)
+      checker({ vueTsc: true }) as any,
       ViteComponents({
         resolvers: [
           IconsResolver({
@@ -113,7 +115,7 @@ export default defineNuxtConfig({
           }),
         ],
         dts: true,
-      }),
+      }) as any,
     ],
     resolve: {
       dedupe: ["vue", "vue-i18n", "@vueuse/core", "bootstrap-vue-next"],
