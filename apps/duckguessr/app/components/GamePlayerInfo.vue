@@ -11,10 +11,19 @@
     }"
     @click="toggleable ? emit('toggle') : () => {}"
   >
-    <b-col
-      cols="6"
+    <div
       class="px-0 d-flex flex-column align-items-center justify-content-center"
     >
+      <b-avatar
+        class="position-absolute ring"
+        :size="`${size + 0.5}rem`"
+        :style="{
+          background: `conic-gradient(
+          ${ringColor} 0% ${percentFilled}%,
+          #ddd ${percentFilled}% 100%
+        )`,
+        }"
+      />
       <b-avatar
         :class="{ 'top-player': topPlayer }"
         :size="`${size}rem`"
@@ -29,20 +38,8 @@
         </div>
         <div v-else :class="{ 'text-nowrap': nowrap }">{{ username }}</div>
       </div>
-    </b-col>
-    <b-col
-      v-if="!noRightPanel"
-      cols="6"
-      class="px-0 d-flex align-items-center justify-content-center h-100"
-    >
-      <div v-if="isBot(username) && toggleable">
-        {{ t("Click to remove the bot") }}
-      </div>
-      <div v-else-if="isPotentialBot(username)">
-        {{ t("Click to add a bot to the game") }}
-      </div>
-      <slot v-else />
-    </b-col>
+      <slot name="cards" />
+    </div>
   </b-row>
 </template>
 
@@ -55,7 +52,6 @@ const {
   topPlayer = false,
   toggleable = false,
   size = 4,
-  noRightPanel = false,
   nowrap = true,
 } = defineProps<{
   username: string;
@@ -63,13 +59,30 @@ const {
   avatar?: string;
   toggleable?: boolean;
   size?: number;
-  noRightPanel?: boolean;
   nowrap?: boolean;
+}>();
+
+const hasPlayed = defineModel<boolean>("hasPlayed", { required: true });
+
+const slots = defineSlots<{
+  cards: () => VNode[];
 }>();
 
 const emit = defineEmits<{
   (e: "toggle"): void;
 }>();
+
+const percentFilled = ref(100);
+
+const ringColor = computed(() => {
+  if (percentFilled.value < 30) {
+    return "#f44336";
+  }
+  if (percentFilled.value < 50) {
+    return "#ff9800";
+  }
+  return "#4caf50";
+});
 
 const src = computed(() =>
   isBot(username) || isPotentialBot(username)
@@ -77,10 +90,19 @@ const src = computed(() =>
     : `/avatars/${avatar}.png`,
 );
 
-const { t } = useI18n();
+onMounted(() => {
+  setInterval(() => {
+    if (!hasPlayed.value) {
+      percentFilled.value -= 10;
+      if (percentFilled.value < 0) {
+        percentFilled.value = 0;
+      }
+    }
+  }, 1000);
+});
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 .b-avatar {
   z-index: 1;
   max-width: initial;
@@ -95,6 +117,10 @@ const { t } = useI18n();
     background: url("/hat.png") no-repeat;
     background-size: contain;
   }
+
+  &.ring {
+    top: -0.25rem;
+  }
 }
 
 .username {
@@ -102,8 +128,16 @@ const { t } = useI18n();
   flex-direction: column;
   max-width: 100%;
   align-items: stretch;
-  height: 1.5rem;
   font-size: small;
+  border: 2px solid black;
+  background-color: lightgray;
+  margin-top: -0.5rem;
+  padding: 0.5rem;
+  text-transform: uppercase;
+  font-weight: bold;
+  font-style: italic;
+  font-family: "Comic Sans MS", cursive;
+  letter-spacing: 0.1em;
 }
 
 .opacity50 {

@@ -42,17 +42,23 @@
         v-show="player.id !== 1"
         :style="{ '--index': index + 1 }"
       >
-        <player-info v-bind="player" />
-        <div class="cards other-player">
-          <ReuseTemplate
-            v-for="card in player.cards"
-            :key="card.id"
-            :id="card.id"
-            :flipped="card.flipped"
-            :played="card.played"
-            :personcode="card.personcode"
-          />
-        </div>
+        <game-player-info
+          v-bind="player"
+          :has-played="player.cards.some((card) => card.played)"
+        >
+          <template #cards>
+            <div class="cards other-player">
+              <ReuseTemplate
+                v-for="card in player.cards"
+                :key="card.id"
+                :id="card.id"
+                :flipped="card.flipped"
+                :played="card.played"
+                :personcode="card.personcode"
+              />
+            </div>
+          </template>
+        </game-player-info>
       </div>
       <div class="cards">
         <ReuseTemplate
@@ -117,26 +123,27 @@ const players = ref([
       { id: 2, personcode: "CB", flipped: true, played: false },
       { id: 3, personcode: "GCa", flipped: true, played: false },
     ],
-    played: false,
   },
 ]);
 
-setInterval(() => {
-  progress.value = Math.min(progress.value + 10, 100);
-  if (progress.value === 20) {
-    players.value[1].cards[0].played = true;
-  }
-  if (progress.value === 50) {
-    players.value[2].cards[0].played = true;
-  }
-  if (progress.value === 100) {
-    for (const player of players.value) {
-      for (const card of player.cards) {
-        players.value[player.id - 1].cards[card.id - 1].flipped = false;
+onMounted(() => {
+  setInterval(() => {
+    progress.value = Math.min(progress.value + 10, 100);
+    if (progress.value === 20) {
+      players.value[1].cards[0].played = true;
+    }
+    if (progress.value === 70) {
+      players.value[2].cards[0].played = true;
+    }
+    if (progress.value === 100) {
+      for (const player of players.value) {
+        for (const card of player.cards) {
+          players.value[player.id - 1].cards[card.id - 1].flipped = false;
+        }
       }
     }
-  }
-}, 1000);
+  }, 1000);
+});
 </script>
 
 <style lang="scss">
@@ -188,7 +195,7 @@ $card-diagonal-factor: math.div(math.sqrt(1 + $card-aspect-ratio-squared), 2);
     background: hsl(201deg, 100%, 32%);
     --board-half-size: calc(var(--board-size) / 2);
     --table-outer-radius: var(--board-half-size);
-    --avatar-size-px: 64px; // from PlayerInfo
+    --avatar-size-px: 64px; // from GamePlayerInfo
     --avatar-radius-px: calc(var(--avatar-size-px) / 2);
     --player-radius: var(--table-outer-radius);
   }
@@ -202,11 +209,9 @@ $card-diagonal-factor: math.div(math.sqrt(1 + $card-aspect-ratio-squared), 2);
 
   .board > .player-position {
     position: absolute;
-    padding-top: 15px;
-    padding-left: 54px;
     offset-path: circle(var(--player-radius));
     offset-distance: calc(
-      26% + (var(--index) - 1) * (100% / v-bind("players.length"))
+      25% + (var(--index) - 1) * (100% / v-bind("players.length"))
     );
     offset-rotate: 0deg;
 
@@ -238,9 +243,8 @@ $card-diagonal-factor: math.div(math.sqrt(1 + $card-aspect-ratio-squared), 2);
     --card-width: min(200px, 12vmin);
 
     &.other-player {
-      top: 24px;
-      bottom: unset;
-      left: 40px;
+      top: 10px;
+      left: 10px;
       --card-width: min(200px, 4vmin);
 
       .card {
