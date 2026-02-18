@@ -55,7 +55,7 @@ try {
 
   const getBackupFiles = () =>
     client
-      .list(DUMP_DIR)
+      .list(".") // CWD is already ./dumps after ensureDir
       .then((files) =>
         files.filter((file) => file.name.startsWith(DUMP_FILE_PREFIX))
       )
@@ -64,7 +64,6 @@ try {
           name: file.name,
           size: file.size,
           date: file.rawModifiedAt || file.modifiedAt,
-          fullPath: `${DUMP_DIR}/${file.name}`,
         }))
       )
       .then((files) =>
@@ -92,7 +91,7 @@ try {
             1024
           ).toFixed(2)} MB)`
         );
-        await client.remove(file.fullPath);
+        await client.remove(file.name);
         freedSpace += file.size;
         deletedFiles.push(file.name);
       } catch (err) {
@@ -113,8 +112,7 @@ try {
 
   const uploadBackup = async () => {
     const backupFileName = `${DUMP_FILE_PREFIX}${new Date().toISOString()}.gz`;
-    const backupPath = `${DUMP_DIR}/${backupFileName}`;
-    await client.uploadFrom(DUMP_FILE, backupPath);
+    await client.uploadFrom(DUMP_FILE, backupFileName);
     console.log(`Successfully uploaded backup: ${backupFileName}`);
   };
 
