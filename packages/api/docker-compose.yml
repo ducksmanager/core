@@ -37,9 +37,24 @@ services:
     container_name: pastec
     image: "bperel/pastec-ubuntu-1704-timestamps"
     restart: always
-    ports:
-      - "127.0.0.1:4212:4212"
     command: "./pastec -p 4212 -i /pastec-index-last.dat /pastec/data/visualWordsORB.dat"
+    volumes:
+      - ./pastec-index-last.dat:/pastec-index-last.dat:ro
+    networks:
+      - dm-api-network
+
+  pastec-improved:
+    container_name: pastec-improved
+    image: "bperel/pastec:improved"
+    restart: always
+    command:
+      [
+        "-p",
+        "4212",
+        "-i",
+        "/pastec-index-last.dat",
+        "/pastec/visualWordsORB.dat",
+      ]
     volumes:
       - ./pastec-index-last.dat:/pastec-index-last.dat:ro
     networks:

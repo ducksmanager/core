@@ -78,7 +78,7 @@ export const getPastecStatus = async (): Promise<
   try {
     const response = (
       await axios.get(
-        `http://${process.env.PASTEC_HOSTS}:${process.env.PASTEC_PORT}/index/imageIds`,
+        `http://${process.env.PASTEC_HOSTS_AND_PORTS!.split(",")[0]}/index/imageIds`,
       )
     ).data;
     if (response) {
@@ -102,7 +102,7 @@ export const getPastecSearchStatus = async (): Promise<
   try {
     const response = (
       await axios.post(
-        `${process.env.PASTEC_HOSTS}:${process.env.PASTEC_PORT}/searcher`,
+        `${process.env.PASTEC_HOSTS_AND_PORTS!.split(",")[0]}/searcher`,
         `${process.env.INDUCKS_COVERS_ROOT}/au/bp/001/au_bp_001a_001.jpg`,
       )
     ).data;

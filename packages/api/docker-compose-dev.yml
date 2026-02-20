@@ -8,6 +8,22 @@ services:
     volumes:
       - ./pastec-index-last.dat:/pastec-index-last.dat:ro
 
+  pastec-improved:
+    container_name: pastec-improved
+    image: "pastec:improved"
+    ports:
+      - "4213:4212"
+    command:
+      [
+        "-p",
+        "4212",
+        "-i",
+        "/pastec-index-last.dat",
+        "/pastec/visualWordsORB.dat",
+      ]
+    volumes:
+      - ./pastec-index-last.dat:/pastec-index-last.dat:ro
+
   mailcatcher:
     container_name: mailcatcher
     image: stpaquet/alpinemailcatcher
