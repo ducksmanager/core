@@ -11,7 +11,7 @@
   },
   "dependencies": {
     "dotenv": "^16.6.1",
-    "mariadb": "^3.4.5",
+    "mariadb": "^3.5.1",
     "~prisma-schemas": "workspace:*"
   },
   "devDependencies": {
