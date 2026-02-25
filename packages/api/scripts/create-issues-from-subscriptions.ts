@@ -87,7 +87,7 @@ await prismaDm.$executeRaw`
         1,
         subscription.ID_Utilisateur
   FROM abonnements subscription
-  INNER JOIN abonnements_sorties as issueRelease ON subscription.publicationcode = CONCAT(issueRelease.Pays, '/', issueRelease.Magazine)
+  INNER JOIN abonnements_sorties as issueRelease USING (publicationcode)
   WHERE Date_sortie
       BETWEEN greatest(subscription.Date_debut, subdate(current_date, 14))
           AND least(current_date, subscription.Date_fin)

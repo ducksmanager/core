@@ -10,7 +10,7 @@ datasource db {
 model subscription {
   id              Int      @id @default(autoincrement()) @map("ID")
   userId          Int      @map("ID_Utilisateur")
-  publicationcode String   @default(dbgenerated("(concat(convert(`Pays` using utf8mb3),'/',convert(`Magazine` using utf8mb3)))")) @db.VarChar(14)
+  publicationcode String   @db.VarChar(14)
   startDate       DateTime @map("Date_debut") @db.Date
   endDate         DateTime @map("Date_fin") @db.Date
   users           user     @relation(fields: [userId], references: [id], onDelete: Cascade, map: "abonnements_users_ID_fk")
@@ -21,12 +21,11 @@ model subscription {
 }
 
 model subscriptionRelease {
-  id                  Int      @id @default(autoincrement()) @map("ID")
+  issuecode           String   @id @db.VarChar(25)
+  publicationcode     String   @db.VarChar(14)
   releaseDate         DateTime @map("Date_sortie") @db.Date
   haveIssuesBeenAdded Boolean  @default(false) @map("Numeros_ajoutes")
-  issuecode           String   @db.VarChar(25)
 
-  @@index([issuecode], map: "abonnements_sorties_issuecode_unique")
   @@map("abonnements_sorties")
 }
 
@@ -86,9 +85,9 @@ model bookstoreComment {
   userId              Int?               @map("ID_Utilisateur")
   comment             String             @map("Commentaire") @db.Text
   creationDate        DateTime           @default(now()) @map("DateAjout") @db.Timestamp(0)
-  atmosphereRating    Int?               @map("NoteAmbiance")
-  pricesRating        Int?               @map("NotePrix")
-  selectionRating     Int?               @map("NoteSelection")
+  atmosphereRating    Int?               @map("NoteAmbiance") @db.UnsignedTinyInt
+  pricesRating        Int?               @map("NotePrix") @db.UnsignedTinyInt
+  selectionRating     Int?               @map("NoteSelection") @db.UnsignedTinyInt
   isActive            Boolean            @default(false) @map("Actif")
   bookstoreId         Int                @map("ID_Bouquinerie")
   bouquineries        bookstore          @relation(fields: [bookstoreId], references: [id], onUpdate: Restrict, map: "bouquineries_commentaires_bouquineries_ID_fk")
@@ -106,11 +105,11 @@ model demo {
 }
 
 model label {
-  id          Int          @id @default(autoincrement()) @map("ID")
-  description String       @map("Description") @db.VarChar(50)
-  userId      Int?         @map("ID_Utilisateur")
-  user        user?        @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "labels_users_ID_fk")
-  issueLabels issueLabel[]
+  id                 Int          @id @default(autoincrement()) @map("ID")
+  description        String       @map("Description") @db.VarChar(50)
+  userId             Int?         @map("ID_Utilisateur")
+  user               user?        @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "labels_users_ID_fk")
+  numeros_etiquettes issueLabel[]
 
   @@unique([description, userId], map: "etiquettes_unique")
   @@index([userId], map: "etiquettes_users_ID_fk")
@@ -118,30 +117,30 @@ model label {
 }
 
 model issue {
-  id              Int             @id @default(autoincrement()) @map("ID")
+  id                 Int             @id @default(autoincrement()) @map("ID")
   /// @deprecated
-  country         String          @map("Pays") @ignore @db.VarChar(3)
+  country            String?         @map("Pays") @ignore @db.VarChar(3)
   /// @deprecated
-  magazine        String          @map("Magazine") @ignore @db.VarChar(10)
+  magazine           String?         @map("Magazine") @ignore @db.VarChar(10)
   /// @deprecated
-  publicationcode String          @default(dbgenerated("(concat(convert(`Pays` using utf8mb3),'/',convert(`Magazine` using utf8mb3)))")) @ignore @db.VarChar(14)
+  publicationcode    String?         @default(dbgenerated("(concat(convert(`Pays` using utf8mb3),'/',convert(`Magazine` using utf8mb3)))")) @ignore @db.VarChar(14)
   /// @deprecated
-  issuenumber     String          @map("Numero") @ignore @db.VarChar(12)
+  issuenumber        String?         @map("Numero") @ignore @db.VarChar(12)
   /// @deprecated
-  Numero_nospace  String?         @ignore @db.VarChar(12)
-  condition       issue_condition @default(indefini) @map("Etat")
-  purchaseId      Int?            @default(-1) @map("ID_Acquisition")
+  Numero_nospace     String?         @ignore @db.VarChar(12)
+  condition          issue_condition @default(indefini) @map("Etat")
+  purchaseId         Int?            @default(-1) @map("ID_Acquisition")
   /// @deprecated
-  isOnSale        Boolean         @default(false) @map("AV") @ignore
+  isOnSale           Boolean?        @default(false) @map("AV") @ignore
   /// @deprecated
-  isToRead        Boolean         @default(false) @map("A_Lire") @ignore
-  isSubscription  Boolean         @default(false) @map("Abonnement")
-  userId          Int             @map("ID_Utilisateur")
-  creationDate    DateTime?       @default(now()) @map("DateAjout") @db.Timestamp(0)
+  isToRead           Int?            @default(0) @map("A_Lire") @ignore @db.TinyInt
+  isSubscription     Int             @default(0) @map("Abonnement") @db.TinyInt
+  userId             Int             @map("ID_Utilisateur")
+  creationDate       DateTime?       @default(now()) @map("DateAjout") @db.Timestamp(0)
   /// @deprecated
-  short_issuecode String?         @ignore @db.VarChar(25)
-  issuecode       String?         @map("issuecode") @db.VarChar(25)
-  labels          issueLabel[]
+  short_issuecode    String?         @ignore @db.VarChar(25)
+  issuecode          String?         @map("issuecode") @db.VarChar(25)
+  numeros_etiquettes issueLabel[]
 
   @@index([country, magazine, issuenumber, userId], map: "Numero_Utilisateur")
   @@index([country, magazine, issuenumber], map: "Pays_Magazine_Numero")
@@ -348,14 +347,14 @@ model numeros_popularite {
 }
 
 model issueLabel {
-  id      Int   @id @default(autoincrement())
-  labelId Int   @map("ID_Etiquette")
-  issueId Int   @map("ID_Numero")
-  label   label @relation(fields: [labelId], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "numeros_etiquettes_etiquettes_ID_fk")
-  issue   issue @relation(fields: [issueId], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "numeros_etiquettes_numeros_ID_fk")
+  id           Int   @id @default(autoincrement())
+  ID_etiquette Int
+  ID_numero    Int
+  etiquettes   label @relation(fields: [ID_etiquette], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "numeros_etiquettes_etiquettes_ID_fk")
+  numeros      issue @relation(fields: [ID_numero], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "numeros_etiquettes_numeros_ID_fk")
 
-  @@index([labelId], map: "numeros_etiquettes_ID_Etiquette_index")
-  @@index([issueId], map: "numeros_etiquettes_ID_numero_index")
+  @@index([ID_etiquette], map: "numeros_etiquettes_ID_Etiquette_index")
+  @@index([ID_numero], map: "numeros_etiquettes_ID_numero_index")
   @@map("numeros_etiquettes")
 }
 
