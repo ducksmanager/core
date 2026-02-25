@@ -22,7 +22,7 @@ model authorUser {
   personcode String @map("NomAuteurAbrege") @db.VarChar(79)
   notation   Int?   @map("Notation") @db.TinyInt
 
-  @@id([ID_User, personcode])
+  @@id([userId, personcode])
   @@map("auteurs_pseudos")
 }
 
