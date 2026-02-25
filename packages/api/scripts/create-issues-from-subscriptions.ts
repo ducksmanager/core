@@ -49,6 +49,9 @@ for (const subscription of ongoingSubscriptions) {
     },
   });
   for (const release of releases) {
+    if (!release.filledoldestdate) {
+      continue;
+    }
     console.log(
       "Released issue: user %s, issue %s, release date",
       subscription.userId,
@@ -71,7 +74,8 @@ for (const subscription of ongoingSubscriptions) {
       await prismaDm.subscriptionRelease.create({
         data: {
           issuecode: release.issuecode,
-          releaseDate: new Date(release.filledoldestdate!),
+          releaseDate: new Date(release.filledoldestdate), 
+          publicationcode: release.publicationcode,
         },
       });
     }

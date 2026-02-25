@@ -7,147 +7,117 @@ datasource db {
   provider = "mysql"
 }
 
-/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
 model inducks_appearance {
-  storyversioncode  String?                   @db.VarChar(20)
-  charactercode     String?                   @db.VarChar(117)
+  storyversioncode  String                    @db.VarChar(20)
+  charactercode     String                    @db.VarChar(62)
   number            Int?
   appearancecomment String?                   @db.VarChar(209)
   doubt             inducks_appearance_doubt?
 
-  @@index([charactercode], map: "fk0")
-  @@index([appearancecomment], map: "fk1")
-  @@index([storyversioncode, charactercode], map: "pk0")
-  @@ignore
+  @@id([storyversioncode, charactercode])
+  @@index([charactercode], map: "fk_inducks_appearance0")
+  @@index([appearancecomment], map: "fk_inducks_appearance1")
 }
 
-/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
 model inducks_character {
-  charactercode    String?                     @db.VarChar(117)
+  charactercode    String                      @id @db.VarChar(69)
   charactername    String?                     @db.Text
   official         inducks_character_official?
   onetime          inducks_character_onetime?
   heroonly         inducks_character_heroonly?
   charactercomment String?                     @db.VarChar(671)
 
-  @@index([charactercode], map: "pk0")
-  @@fulltext([charactername], map: "fulltext_inducks_character")
-  @@ignore
+  // @@index([charactername], map: "fulltext_inducks_character")
 }
 
-/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
 model inducks_characteralias {
   charactercode String? @db.VarChar(31)
-  charactername String? @db.VarChar(58)
+  charactername String  @id @db.VarChar(58)
 
-  @@index([charactercode], map: "fk0")
-  @@index([charactername], map: "pk0")
-  @@ignore
+  @@index([charactercode], map: "fk_inducks_characteralias0")
 }
 
-/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
 model inducks_characterdetail {
   charactername String? @db.VarChar(7)
-  charactercode String? @db.VarChar(6)
+  charactercode String  @id @db.VarChar(6)
   number        Int?
 
-  @@index([charactername], map: "fk0")
-  @@index([charactercode], map: "pk0")
-  @@ignore
+  @@index([charactername], map: "fk_inducks_characterdetail0")
 }
 
-/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
 model inducks_charactername {
-  charactercode        String?                          @db.VarChar(45)
-  languagecode         String?                          @db.VarChar(7)
-  charactername        String?                          @db.VarChar(89)
+  charactercode        String                           @db.VarChar(45)
+  languagecode         String                           @db.VarChar(7)
+  charactername        String                           @db.VarChar(83)
   preferred            inducks_charactername_preferred?
   characternamecomment String?                          @db.VarChar(99)
 
-  @@index([languagecode], map: "fk0")
-  @@index([charactercode, languagecode, charactername], map: "pk0")
-  @@ignore
+  @@id([charactercode, languagecode, charactername])
+  @@index([languagecode], map: "fk_inducks_charactername0")
 }
 
-/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
 model inducks_characterreference {
-  fromcharactercode   String?                                         @db.VarChar(36)
-  tocharactercode     String?                                         @db.VarChar(36)
+  fromcharactercode   String                                          @db.VarChar(36)
+  tocharactercode     String                                          @db.VarChar(36)
   isgroupofcharacters inducks_characterreference_isgroupofcharacters?
 
-  @@index([tocharactercode], map: "fk0")
-  @@index([fromcharactercode, tocharactercode], map: "pk0")
-  @@ignore
+  @@id([fromcharactercode, tocharactercode])
+  @@index([tocharactercode], map: "fk_inducks_characterreference0")
 }
 
-/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
 model inducks_characterurl {
-  charactercode String? @db.VarChar(1)
-  sitecode      String? @db.VarChar(1)
+  charactercode String  @db.VarChar(1)
+  sitecode      String  @db.VarChar(1)
   url           String? @db.VarChar(1)
 
-  @@index([sitecode], map: "fk0")
-  @@index([charactercode, sitecode], map: "pk0")
-  @@ignore
+  @@id([charactercode, sitecode])
+  @@index([sitecode], map: "fk_inducks_characterurl0")
 }
 
-/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
 model inducks_country {
-  countrycode            String? @db.VarChar(2)
+  countrycode            String  @id @db.VarChar(2)
   countryname            String? @db.VarChar(20)
   defaultlanguage        String? @db.VarChar(7)
   defaultmaintenanceteam String? @db.VarChar(8)
-
-  @@index([countrycode], map: "pk0")
-  @@ignore
 }
 
-/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
 model inducks_countryname {
-  countrycode  String? @db.VarChar(2)
-  languagecode String? @db.VarChar(5)
+  countrycode  String  @db.VarChar(2)
+  languagecode String  @db.VarChar(5)
   countryname  String? @db.VarChar(56)
 
-  @@index([languagecode], map: "fk0")
-  @@index([countrycode, languagecode], map: "pk0")
-  @@ignore
+  @@id([countrycode, languagecode])
+  @@index([languagecode], map: "fk_inducks_countryname0")
 }
 
-/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
 model inducks_currency {
-  currencycode String? @db.VarChar(3)
-  currencyname String? @db.VarChar(15)
-
-  @@index([currencycode], map: "pk0")
-  @@ignore
+  currencycode String  @id @db.VarChar(3)
+  currencyname String? @db.VarChar(18)
 }
 
-/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
 model inducks_currencyname {
-  currencycode      String? @db.VarChar(3)
-  languagecode      String? @db.VarChar(2)
+  currencycode      String  @db.VarChar(3)
+  languagecode      String  @db.VarChar(2)
   shortcurrencyname String? @db.VarChar(19)
   longcurrencyname  String? @db.VarChar(20)
 
-  @@index([languagecode], map: "fk0")
-  @@index([currencycode, languagecode], map: "pk0")
-  @@ignore
+  @@id([currencycode, languagecode])
+  @@index([languagecode], map: "fk_inducks_currencyname0")
 }
 
-/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
 model inducks_entry {
-  entrycode               String?                                @db.VarChar(22)
+  entrycode               String                                 @id @db.VarChar(37)
   issuecode               String?                                @db.VarChar(19)
-  storyversioncode        String?                                @db.VarChar(20)
+  storyversioncode        String?                                @db.VarChar(37)
   languagecode            String?                                @db.VarChar(7)
-  includedinentrycode     String?                                @db.VarChar(26)
-  position                String?                                @db.VarChar(8)
+  includedinentrycode     String?                                @db.VarChar(36)
+  position                String?                                @db.VarChar(25)
   printedcode             String?                                @db.VarChar(88)
   guessedcode             String?                                @db.VarChar(39)
   title                   String?                                @db.VarChar(284)
   reallytitle             inducks_entry_reallytitle?
   printedhero             String?                                @db.VarChar(96)
-  changes                 String?                                @db.VarChar(802)
+  changes                 String?                                @db.VarChar(628)
   cut                     String?                                @db.VarChar(295)
   minorchanges            String?                                @db.VarChar(558)
   missingpanels           String?                                @db.VarChar(2)
@@ -157,45 +127,37 @@ model inducks_entry {
   enddate                 String?                                @db.VarChar(10)
   identificationuncertain inducks_entry_identificationuncertain?
   alsoreprint             String?                                @db.VarChar(336)
-  part                    String?                                @db.VarChar(7)
+  part                    String?                                @db.VarChar(5)
   entrycomment            String?                                @db.VarChar(2009)
   error                   inducks_entry_error?
   isCover                 Boolean                                @map("is_cover")
 
-  @@index([issuecode], map: "fk0")
-  @@index([storyversioncode], map: "fk1")
-  @@index([languagecode], map: "fk2")
-  @@index([includedinentrycode], map: "fk3")
-  @@index([position], map: "fk4")
-  @@index([isCover], map: "inducks_entry_is_cover_index")
-  @@index([issuecode, position], map: "inducks_entry_issuecode_position_index")
-  @@index([entrycode], map: "pk0")
-  @@fulltext([title], map: "entryTitleFullText")
-  @@ignore
+  @@index([title], map: "entryTitleFullText")
+  @@index([issuecode], map: "fk_inducks_entry0")
+  @@index([storyversioncode], map: "fk_inducks_entry1")
+  @@index([languagecode], map: "fk_inducks_entry2")
+  @@index([includedinentrycode], map: "fk_inducks_entry3")
+  @@index([position], map: "fk_inducks_entry4")
 }
 
-/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
 model inducks_entrycharactername {
-  entrycode     String? @db.VarChar(22)
-  charactercode String? @db.VarChar(61)
+  entrycode     String  @db.VarChar(22)
+  charactercode String  @db.VarChar(49)
   charactername String? @db.VarChar(131)
 
-  @@index([charactercode], map: "fk0")
-  @@index([entrycode, charactercode], map: "pk0")
-  @@ignore
+  @@id([entrycode, charactercode])
+  @@index([charactercode], map: "fk_inducks_entrycharactername0")
 }
 
-/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
 model inducks_entryjob {
-  entrycode       String?                 @db.VarChar(20)
-  personcode      String?                 @db.VarChar(50)
-  transletcol     String?                 @db.VarChar(1)
+  entrycode       String                  @db.VarChar(20)
+  personcode      String                  @db.VarChar(50)
+  transletcol     String                  @db.VarChar(1)
   entryjobcomment String?                 @db.VarChar(85)
   doubt           inducks_entryjob_doubt?
 
-  @@index([personcode], map: "fk0")
-  @@index([entrycode, personcode, transletcol], map: "pk0")
-  @@ignore
+  @@id([entrycode, personcode, transletcol])
+  @@index([personcode], map: "fk_inducks_entryjob0")
 }
 
 model inducks_entryurl {
@@ -207,50 +169,43 @@ model inducks_entryurl {
   public     inducks_entryurl_public?
   id         Int                      @id @default(autoincrement())
 
-  @@index([entrycode], map: "fk0")
-  @@index([sitecode], map: "fk1")
-  @@index([url], map: "fk2")
-  @@index([storycode], map: "fk3")
+  @@index([entrycode], map: "fk_inducks_entryurl0")
+  @@index([sitecode], map: "fk_inducks_entryurl1")
+  @@index([url], map: "fk_inducks_entryurl2")
+  @@index([storycode], map: "fk_inducks_entryurl3")
 }
 
 model inducks_entryurl_vector {
-  id         Int                        @id @default(autoincrement()) @map("ID")
-  entrycode  String                     @unique(map: "inducks_entryurl_vector_entrycode_uindex") @db.VarChar(21)
-  vector     Unsupported("vector(512)") @map("v")
-  created_at DateTime?                  @default(now()) @db.Timestamp(0)
-  isCover    Boolean?                   @map("is_cover")
+  id        Int                        @id @default(autoincrement()) @map("ID")
+  entrycode String                     @db.VarChar(46)
+  vector    Unsupported("vector(512)") @map("v")
+  createdAt DateTime                   @default(now()) @map("created_At") @db.Timestamp(0)
+  isCover   Boolean                    @map("is_cover")
 
-  @@index([isCover], map: "inducks_entryurl_vector_is_cover_index")
-  @@index([vector], map: "v")
   @@map("inducks_entryurl_vector")
 }
 
-/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
 model inducks_equiv {
-  issuecode    String? @db.VarChar(15)
-  equivid      Int?
+  issuecode    String  @db.VarChar(15)
+  equivid      Int
   equivcomment String? @db.VarChar(3)
 
-  @@index([equivid], map: "fk0")
-  @@index([issuecode, equivid], map: "pk0")
-  @@ignore
+  @@id([issuecode, equivid])
+  @@index([equivid], map: "fk_inducks_equiv0")
 }
 
-/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
 model inducks_herocharacter {
-  storycode     String?                      @db.VarChar(18)
-  charactercode String?                      @db.VarChar(39)
+  storycode     String                       @db.VarChar(18)
+  charactercode String                       @db.VarChar(54)
   number        Int?
   doubt         inducks_herocharacter_doubt?
 
-  @@index([charactercode], map: "fk0")
-  @@index([storycode, charactercode], map: "pk0")
-  @@ignore
+  @@id([storycode, charactercode])
+  @@index([charactercode], map: "fk_inducks_herocharacter0")
 }
 
-/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
 model inducks_inputfile {
-  inputfilecode       Int?
+  inputfilecode       Int                          @id
   path                String?                      @db.VarChar(11)
   filename            String?                      @db.VarChar(22)
   layout              String?                      @db.VarChar(10)
@@ -260,14 +215,10 @@ model inducks_inputfile {
   languagecode        String?                      @db.VarChar(7)
   producercode        String?                      @db.VarChar(15)
   secundary           inducks_inputfile_secundary?
-
-  @@index([inputfilecode], map: "pk0")
-  @@ignore
 }
 
-/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
 model inducks_issue {
-  issuecode           String?                     @db.VarChar(19)
+  issuecode           String                      @id @db.VarChar(19)
   issuerangecode      String?                     @db.VarChar(15)
   publicationcode     String?                     @db.VarChar(12)
   issuenumber         String?                     @db.VarChar(13)
@@ -275,7 +226,7 @@ model inducks_issue {
   size                String?                     @db.VarChar(82)
   pages               String?                     @db.VarChar(94)
   price               String?                     @db.VarChar(160)
-  printrun            String?                     @db.VarChar(149)
+  printrun            String?                     @db.VarChar(142)
   attached            String?                     @db.VarChar(288)
   oldestdate          String?                     @db.VarChar(10)
   fullyindexed        inducks_issue_fullyindexed?
@@ -287,57 +238,46 @@ model inducks_issue {
   inputfilecode       Int?
   maintenanceteamcode String?                     @db.VarChar(8)
 
-  @@index([issuerangecode], map: "fk0")
-  @@index([publicationcode], map: "fk1")
-  @@index([publicationcode], map: "inducks_issue_publicationcode_index")
-  @@index([issuecode], map: "pk0")
-  @@ignore
+  @@index([issuerangecode], map: "fk_inducks_issue0")
+  @@index([publicationcode], map: "fk_inducks_issue1")
 }
 
-/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
 model inducks_issuecollecting {
-  collectingissuecode String? @db.VarChar(17)
-  collectedissuecode  String? @db.VarChar(16)
+  collectingissuecode String @db.VarChar(17)
+  collectedissuecode  String @db.VarChar(15)
 
-  @@index([collectedissuecode], map: "fk0")
-  @@index([collectingissuecode, collectedissuecode], map: "pk0")
-  @@ignore
+  @@id([collectingissuecode, collectedissuecode])
+  @@index([collectedissuecode], map: "fk_inducks_issuecollecting0")
 }
 
-/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
 model inducks_issuedate {
-  issuecode  String?                  @db.VarChar(19)
-  date       String?                  @db.VarChar(10)
+  issuecode  String                   @db.VarChar(19)
+  date       String                   @db.VarChar(10)
   kindofdate String?                  @db.VarChar(76)
   doubt      inducks_issuedate_doubt?
 
-  @@index([issuecode, date], map: "pk0")
-  @@ignore
+  @@id([issuecode, date])
 }
 
-/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
 model inducks_issuejob {
-  issuecode       String?                 @db.VarChar(19)
-  personcode      String?                 @db.VarChar(55)
-  inxtransletcol  String?                 @db.VarChar(1)
+  issuecode       String                  @db.VarChar(19)
+  personcode      String                  @db.VarChar(48)
+  inxtransletcol  String                  @db.VarChar(1)
   issuejobcomment String?                 @db.VarChar(48)
   doubt           inducks_issuejob_doubt?
 
-  @@index([personcode], map: "fk0")
-  @@index([issuecode, personcode, inxtransletcol], map: "pk0")
-  @@ignore
+  @@id([issuecode, personcode, inxtransletcol])
+  @@index([personcode], map: "fk_inducks_issuejob0")
 }
 
-/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
 model inducks_issueprice {
-  issuecode      String? @db.VarChar(17)
-  amount         String? @db.VarChar(86)
+  issuecode      String  @db.VarChar(17)
+  amount         String  @db.VarChar(86)
   currency       String? @db.VarChar(14)
   comment        String? @db.VarChar(75)
   sequencenumber Int?
 
-  @@index([issuecode, amount], map: "pk0")
-  @@ignore
+  @@id([issuecode, amount])
 }
 
 model inducks_issuequotation_raw {
@@ -350,30 +290,28 @@ model inducks_issuequotation_raw {
   estimationMax   Float?    @map("estimationmax") @db.Float
   scrapeDate      DateTime? @map("scrapedate") @db.DateTime(0)
   source          String?   @db.VarChar(15)
-  issuecode       String?   @db.VarChar(28)
+  issuecode       String    @db.VarChar(28)
 
-  @@index([issuecode, estimationMax], map: "inducks_issuequotation_raw_issuecode_estimationmax")
-  @@index([issuecode, estimationMin], map: "inducks_issuequotation_raw_issuecode_estimationmin_index")
-  @@index([issuecode], map: "inducks_issuequotation_raw_issuecode_index")
+  @@index([publicationcode], map: "inducks_issuequotation_raw__index_publication")
+  @@index([issuecode, source], map: "inducks_issuequotation_raw__uindex_issuecode_source")
 }
 
-/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
 model inducks_issuequotation {
-  id              Int?    @map("ID")
+  id              Int     @id @default(autoincrement()) @map("ID")
   /// @deprecated
   publicationcode String? @db.VarChar(15)
   /// @deprecated
   issuenumber     String? @db.VarChar(12)
-  estimationMin   Float?  @map("estimationmin")
-  estimationMax   Float?  @map("estimationmax")
-  issuecode       String? @db.VarChar(28)
+  estimationMin   Float?  @map("estimationmin") @db.Float
+  estimationMax   Float?  @map("estimationmax") @db.Float
+  issuecode       String  @unique(map: "inducks_issuequotation__uindex_issuecode") @db.VarChar(28)
 
-  @@ignore
+  /// @deprecated
+  @@index([publicationcode], map: "inducks_issuequotation__index_publication")
 }
 
-/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
 model inducks_issuerange {
-  issuerangecode    String?                            @db.VarChar(15)
+  issuerangecode    String                             @id @db.VarChar(15)
   publicationcode   String?                            @db.VarChar(9)
   title             String?                            @db.VarChar(186)
   circulation       String?                            @db.VarChar(6)
@@ -381,48 +319,38 @@ model inducks_issuerange {
   numbersarefake    inducks_issuerange_numbersarefake?
   error             inducks_issuerange_error?
 
-  @@index([publicationcode], map: "fk0")
-  @@index([issuerangecode], map: "pk0")
-  @@ignore
+  @@index([publicationcode], map: "fk_inducks_issuerange0")
 }
 
-/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
 model inducks_issueurl {
-  issuecode String? @db.VarChar(14)
-  sitecode  String? @db.VarChar(12)
-  url       String? @db.VarChar(16)
+  issuecode String  @db.VarChar(14)
+  sitecode  String  @db.VarChar(12)
+  url       String? @db.VarChar(12)
 
-  @@index([sitecode], map: "fk0")
-  @@index([issuecode, sitecode], map: "pk0")
-  @@ignore
+  @@id([issuecode, sitecode])
+  @@index([sitecode], map: "fk_inducks_issueurl0")
 }
 
-/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
 model inducks_language {
-  languagecode        String? @db.VarChar(7)
+  languagecode        String  @id @db.VarChar(7)
   defaultlanguagecode String? @db.VarChar(5)
   languagename        String? @db.VarChar(20)
 
-  @@index([defaultlanguagecode], map: "fk0")
-  @@index([languagecode], map: "pk0")
-  @@ignore
+  @@index([defaultlanguagecode], map: "fk_inducks_language0")
 }
 
-/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
 model inducks_languagename {
-  desclanguagecode String? @db.VarChar(5)
-  languagecode     String? @db.VarChar(7)
+  desclanguagecode String  @db.VarChar(5)
+  languagecode     String  @db.VarChar(7)
   languagename     String? @db.VarChar(57)
 
-  @@index([languagecode], map: "fk0")
-  @@index([desclanguagecode, languagecode], map: "pk0")
-  @@ignore
+  @@id([desclanguagecode, languagecode])
+  @@index([languagecode], map: "fk_inducks_languagename0")
 }
 
-/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
 model inducks_log {
-  number              Int?
-  logkey              String?             @db.VarChar(56)
+  number              Int                 @id
+  logkey              String?             @db.VarChar(53)
   storycode           String?             @db.VarChar(39)
   logid               String?             @db.VarChar(4)
   logtype             String?             @db.VarChar(1)
@@ -432,37 +360,27 @@ model inducks_log {
   marked              inducks_log_marked?
   inputfilecode       Int?
   maintenanceteamcode String?             @db.VarChar(13)
-
-  @@index([number], map: "pk0")
-  @@ignore
 }
 
-/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
 model inducks_logdata {
-  logid    String? @db.VarChar(4)
+  logid    String  @id @db.VarChar(4)
   category Int?
   logtext  String? @db.VarChar(108)
-
-  @@index([logid], map: "pk0")
-  @@ignore
 }
 
-/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
 model inducks_logocharacter {
-  entrycode            String?                              @db.VarChar(22)
-  charactercode        String?                              @db.VarChar(47)
+  entrycode            String                               @db.VarChar(36)
+  charactercode        String                               @db.VarChar(54)
   reallyintitle        inducks_logocharacter_reallyintitle?
   number               Int?
   logocharactercomment String?                              @db.VarChar(28)
 
-  @@index([charactercode], map: "fk0")
-  @@index([entrycode, charactercode], map: "pk0")
-  @@ignore
+  @@id([entrycode, charactercode])
+  @@index([charactercode], map: "fk_inducks_logocharacter0")
 }
 
-/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
 model inducks_movie {
-  moviecode           String?                  @db.VarChar(14)
+  moviecode           String                   @id @db.VarChar(14)
   title               String?                  @db.Text
   moviecomment        String?                  @db.Text
   appsummary          String?                  @db.Text
@@ -481,52 +399,43 @@ model inducks_movie {
   source              String?                  @db.VarChar(91)
   tim                 String?                  @db.VarChar(6)
 
-  @@index([moviecode], map: "pk0")
-  @@fulltext([title, moviecomment, appsummary, moviejobsummary, moviedescription], map: "fulltext_inducks_movie")
-  @@ignore
+  // @@index([title, moviecomment, appsummary, moviejobsummary, moviedescription], map: "fulltext_inducks_movie")
 }
 
-/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
 model inducks_moviecharacter {
-  moviecode        String?                                  @db.VarChar(14)
-  charactercode    String?                                  @db.VarChar(38)
+  moviecode        String                                   @db.VarChar(14)
+  charactercode    String                                   @db.VarChar(38)
   istitlecharacter inducks_moviecharacter_istitlecharacter?
 
-  @@index([charactercode], map: "fk0")
-  @@index([moviecode, charactercode], map: "pk0")
-  @@ignore
+  @@id([moviecode, charactercode])
+  @@index([charactercode], map: "fk_inducks_moviecharacter0")
 }
 
-/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
 model inducks_moviejob {
-  moviecode       String?                    @db.VarChar(13)
-  personcode      String?                    @db.VarChar(39)
-  role            String?                    @db.VarChar(15)
+  moviecode       String                     @db.VarChar(13)
+  personcode      String                     @db.VarChar(39)
+  role            String                     @db.VarChar(15)
   moviejobcomment String?                    @db.VarChar(82)
   indirect        inducks_moviejob_indirect?
   doubt           inducks_moviejob_doubt?
 
-  @@index([personcode], map: "fk0")
-  @@index([moviecode, personcode, role], map: "pk0")
-  @@ignore
+  @@id([moviecode, personcode, role])
+  @@index([personcode], map: "fk_inducks_moviejob0")
 }
 
-/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
 model inducks_moviereference {
-  storycode         String?                                  @db.VarChar(17)
-  moviecode         String?                                  @db.VarChar(14)
+  storycode         String                                   @db.VarChar(17)
+  moviecode         String                                   @db.VarChar(14)
   referencereasonid Int?
   frommovietostory  inducks_moviereference_frommovietostory?
 
-  @@index([moviecode], map: "fk0")
-  @@index([referencereasonid], map: "fk1")
-  @@index([storycode, moviecode], map: "pk0")
-  @@ignore
+  @@id([storycode, moviecode])
+  @@index([moviecode], map: "fk_inducks_moviereference0")
+  @@index([referencereasonid], map: "fk_inducks_moviereference1")
 }
 
-/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
 model inducks_person {
-  personcode             String?                             @db.VarChar(79)
+  personcode             String                              @id @db.VarChar(79)
   nationalitycountrycode String?                             @db.VarChar(2)
   fullname               String?                             @db.VarChar(79)
   official               inducks_person_official?
@@ -547,32 +456,27 @@ model inducks_person {
   photocomment           String?                             @db.VarChar(68)
   photosource            String?                             @db.VarChar(67)
   personrefs             String?                             @db.VarChar(179)
+  // @@index([fullname, birthname], map: "fulltext_inducks_person")
 
-  @@index([nationalitycountrycode], map: "fk0")
-  @@index([personcode], map: "pk0")
-  @@fulltext([fullname, birthname], map: "fulltext_inducks_person")
-  @@ignore
+  @@index([nationalitycountrycode], map: "fk_inducks_person0")
 }
 
-/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
 model inducks_personurl {
-  personcode String? @db.VarChar(24)
-  sitecode   String? @db.VarChar(15)
+  personcode String  @db.VarChar(24)
+  sitecode   String  @db.VarChar(15)
   url        String? @db.VarChar(31)
 
-  @@index([sitecode], map: "fk0")
-  @@index([personcode, sitecode], map: "pk0")
-  @@ignore
+  @@id([personcode, sitecode])
+  @@index([sitecode], map: "fk_inducks_personurl0")
 }
 
-/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
 model inducks_publication {
-  publicationcode     String?                             @db.VarChar(12)
+  publicationcode     String                              @id @db.VarChar(12)
   countrycode         String?                             @db.VarChar(2)
   languagecode        String?                             @db.VarChar(7)
   title               String?                             @db.Text
   size                String?                             @db.VarChar(82)
-  publicationcomment  String?                             @db.VarChar(2234)
+  publicationcomment  String?                             @db.VarChar(1449)
   circulation         String?                             @db.VarChar(15)
   numbersarefake      inducks_publication_numbersarefake?
   error               inducks_publication_error?
@@ -581,182 +485,140 @@ model inducks_publication {
   inputfilecode       Int?
   maintenanceteamcode String?                             @db.VarChar(9)
 
-  @@index([countrycode], map: "fk0")
-  @@index([languagecode], map: "fk1")
-  @@index([publicationcode], map: "pk0")
-  @@fulltext([title], map: "fulltext_inducks_publication")
-  @@ignore
+  // @@index([title], map: "fulltext_inducks_publication")
+  @@index([countrycode], map: "fk_inducks_publication0")
+  @@index([languagecode], map: "fk_inducks_publication1")
 }
 
-/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
 model inducks_publicationcategory {
-  publicationcode String? @db.VarChar(12)
+  publicationcode String  @id @db.VarChar(12)
   category        String? @db.VarChar(61)
-
-  @@index([publicationcode], map: "pk0")
-  @@ignore
 }
 
-/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
 model inducks_publicationname {
-  publicationcode String? @db.VarChar(9)
+  publicationcode String  @id @db.VarChar(9)
   publicationname String? @db.VarChar(62)
-
-  @@index([publicationcode], map: "pk0")
-  @@ignore
 }
 
-/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
 model inducks_publicationurl {
-  publicationcode String? @db.VarChar(9)
-  sitecode        String? @db.VarChar(16)
+  publicationcode String  @db.VarChar(10)
+  sitecode        String  @db.VarChar(16)
   url             String? @db.VarChar(236)
 
-  @@index([sitecode], map: "fk0")
-  @@index([publicationcode, sitecode], map: "pk0")
-  @@ignore
+  @@id([publicationcode, sitecode])
+  @@index([sitecode], map: "fk_inducks_publicationurl0")
 }
 
-/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
 model inducks_publisher {
-  publisherid   String? @db.VarChar(96)
+  publisherid   String  @id @db.VarChar(94)
   publishername String? @db.Text
 
-  @@index([publisherid], map: "pk0")
-  @@fulltext([publishername], map: "fulltext_inducks_publisher")
-  @@ignore
+  // @@index([publishername], map: "fulltext_inducks_publisher")
 }
 
-/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
 model inducks_publishingjob {
-  publisherid          String? @db.VarChar(96)
-  issuecode            String? @db.VarChar(17)
+  publisherid          String  @db.VarChar(94)
+  issuecode            String  @db.VarChar(17)
   publishingjobcomment String? @db.VarChar(67)
 
-  @@index([issuecode], map: "fk0")
-  @@index([publisherid, issuecode], map: "pk0")
-  @@ignore
+  @@id([publisherid, issuecode])
+  @@index([issuecode], map: "fk_inducks_publishingjob0")
 }
 
-/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
 model inducks_referencereason {
-  referencereasonid   Int?
-  referencereasontext String? @db.VarChar(142)
-
-  @@index([referencereasonid], map: "pk0")
-  @@ignore
+  referencereasonid   Int     @id
+  referencereasontext String? @db.VarChar(129)
 }
 
-/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
 model inducks_referencereasonname {
-  referencereasonid          Int?
-  languagecode               String? @db.VarChar(2)
-  referencereasontranslation String? @db.VarChar(29)
+  referencereasonid          Int
+  languagecode               String  @db.VarChar(2)
+  referencereasontranslation String? @db.VarChar(28)
 
-  @@index([languagecode], map: "fk0")
-  @@index([referencereasonid, languagecode], map: "pk0")
-  @@ignore
+  @@id([referencereasonid, languagecode])
+  @@index([languagecode], map: "fk_inducks_referencereasonname0")
 }
 
-/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
 model inducks_site {
-  sitecode   String?              @db.VarChar(16)
+  sitecode   String               @id @db.VarChar(16)
   urlbase    String?              @db.VarChar(51)
   images     inducks_site_images?
   sitename   String?              @db.VarChar(85)
   sitelogo   String?              @db.VarChar(107)
-  properties String?              @db.VarChar(13)
-
-  @@index([sitecode], map: "pk0")
-  @@ignore
+  properties String?              @db.VarChar(1)
 }
 
-/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
 model inducks_statcharactercharacter {
-  charactercode   String? @db.VarChar(58)
+  charactercode   String  @db.VarChar(58)
   cocharactercode String? @db.VarChar(58)
-  total           Int?
+  total           Int
   yearrange       String? @db.VarChar(152)
 
-  @@index([charactercode, total], map: "pk0")
-  @@ignore
+  @@id([charactercode, total])
 }
 
-/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
 model inducks_statcharactercountry {
-  charactercode String? @db.VarChar(58)
-  countrycode   String? @db.VarChar(2)
+  charactercode String @db.VarChar(58)
+  countrycode   String @db.VarChar(2)
   total         Int?
 
-  @@index([charactercode, countrycode], map: "pk0")
-  @@ignore
+  @@id([charactercode, countrycode])
 }
 
-/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
 model inducks_statcharacterstory {
-  charactercode   String? @db.VarChar(58)
-  storyheadercode String? @db.VarChar(3)
+  charactercode   String  @db.VarChar(58)
+  storyheadercode String  @db.VarChar(3)
   total           Int?
-  yearrange       String? @db.VarChar(116)
+  yearrange       String? @db.VarChar(108)
 
-  @@index([charactercode, storyheadercode], map: "pk0")
-  @@ignore
+  @@id([charactercode, storyheadercode])
 }
 
-/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
 model inducks_statpersoncharacter {
-  personcode    String? @db.VarChar(79)
+  personcode    String  @db.VarChar(79)
   charactercode String? @db.VarChar(58)
-  total         Int?
+  total         Int
   yearrange     String? @db.VarChar(113)
 
-  @@index([personcode, total], map: "pk0")
-  @@ignore
+  @@id([personcode, total])
 }
 
-/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
 model inducks_statpersoncountry {
-  personcode  String? @db.VarChar(79)
-  countrycode String? @db.VarChar(2)
+  personcode  String @db.VarChar(79)
+  countrycode String @db.VarChar(2)
   total       Int?
 
-  @@index([personcode, countrycode], map: "pk0")
-  @@ignore
+  @@id([personcode, countrycode])
 }
 
-/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
 model inducks_statpersonperson {
-  personcode   String? @db.VarChar(79)
+  personcode   String  @db.VarChar(79)
   copersoncode String? @db.VarChar(79)
-  total        Int?
+  total        Int
   yearrange    String? @db.VarChar(59)
 
-  @@index([personcode, total], map: "pk0")
-  @@ignore
+  @@id([personcode, total])
 }
 
-/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
 model inducks_statpersonstory {
-  personcode      String? @db.VarChar(79)
-  storyheadercode String? @db.VarChar(3)
+  personcode      String  @db.VarChar(79)
+  storyheadercode String  @db.VarChar(3)
   total           Int?
   yearrange       String? @db.VarChar(62)
 
-  @@index([personcode, storyheadercode], map: "pk0")
-  @@ignore
+  @@id([personcode, storyheadercode])
 }
 
-/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
 model inducks_story {
-  storycode                String?               @db.VarChar(19)
+  storycode                String                @id @db.VarChar(19)
   originalstoryversioncode String?               @db.VarChar(19)
   firstpublicationdate     String?               @db.VarChar(10)
   endpublicationdate       String?               @db.VarChar(10)
-  title                    String?               @db.VarChar(265)
-  usedifferentcode         String?               @db.Text
-  storycomment             String?               @db.VarChar(905)
+  title                    String?               @db.Text
+  usedifferentcode         String?               @db.VarChar(20)
+  storycomment             String?               @db.VarChar(903)
   error                    inducks_story_error?
-  repcountrysummary        String?               @db.VarChar(106)
+  repcountrysummary        String?               @db.Text
   storyparts               Int?
   locked                   inducks_story_locked?
   inputfilecode            Int?
@@ -764,100 +626,82 @@ model inducks_story {
   maintenanceteamcode      String?               @db.VarChar(10)
   storyheadercode          String?               @db.VarChar(3)
 
-  @@index([originalstoryversioncode], map: "fk0")
-  @@index([endpublicationdate], map: "fk1")
-  @@index([storycode], map: "pk0")
-  @@fulltext([usedifferentcode], map: "fulltext_inducks_story")
-  @@fulltext([storycode], map: "storycode")
-  @@ignore
+  // @@index([title, repcountrysummary], map: "fulltext_inducks_story")
+  @@index([originalstoryversioncode], map: "fk_inducks_story0")
+  @@index([firstpublicationdate], map: "fk_inducks_story1")
 }
 
-/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
 model inducks_storycodes {
-  storycode       String? @db.VarChar(19)
-  alternativecode String? @db.VarChar(72)
+  storycode       String  @db.VarChar(19)
+  alternativecode String  @db.VarChar(72)
   unpackedcode    String? @db.VarChar(82)
   codecomment     String? @db.VarChar(45)
 
-  @@index([alternativecode], map: "fk0")
-  @@index([storycode, alternativecode], map: "pk0")
-  @@ignore
+  @@id([storycode, alternativecode])
+  @@index([alternativecode], map: "fk_inducks_storycodes0")
 }
 
-/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
 model inducks_storydescription {
-  storyversioncode String? @db.VarChar(19)
-  languagecode     String? @db.VarChar(7)
+  storyversioncode String  @db.VarChar(19)
+  languagecode     String  @db.VarChar(7)
   desctext         String? @db.VarChar(2814)
 
-  @@index([languagecode], map: "fk0")
-  @@index([storyversioncode, languagecode], map: "pk0")
-  @@ignore
+  @@id([storyversioncode, languagecode])
+  @@index([languagecode], map: "fk_inducks_storydescription0")
 }
 
-/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
 model inducks_storyheader {
-  storyheadercode    String? @db.VarChar(12)
-  level              String? @db.VarChar(1)
+  storyheadercode    String  @db.VarChar(12)
+  level              String  @db.VarChar(1)
   title              String? @db.VarChar(96)
-  storyheadercomment String? @db.VarChar(655)
+  storyheadercomment String? @db.VarChar(582)
   countrycode        String? @db.VarChar(2)
 
-  @@index([storyheadercode, level], map: "pk0")
-  @@ignore
+  @@id([storyheadercode, level])
 }
 
-/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
 model inducks_storyjob {
-  storyversioncode String?                    @db.VarChar(20)
-  personcode       String?                    @db.VarChar(79)
-  plotwritartink   String?                    @db.VarChar(1)
+  storyversioncode String                     @db.VarChar(20)
+  personcode       String                     @db.VarChar(79)
+  plotwritartink   String                     @db.VarChar(1)
   storyjobcomment  String?                    @db.VarChar(141)
   indirect         inducks_storyjob_indirect?
   doubt            inducks_storyjob_doubt?
 
-  @@index([personcode], map: "fk0")
-  @@index([storyversioncode, personcode, plotwritartink], map: "pk0")
-  @@ignore
+  @@id([storyversioncode, personcode, plotwritartink])
+  @@index([personcode], map: "fk_inducks_storyjob0")
 }
 
-/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
 model inducks_storyreference {
-  fromstorycode     String? @db.VarChar(18)
-  tostorycode       String? @db.VarChar(17)
+  fromstorycode     String @db.VarChar(18)
+  tostorycode       String @db.VarChar(17)
   referencereasonid Int?
 
-  @@index([tostorycode], map: "fk0")
-  @@index([referencereasonid], map: "fk1")
-  @@index([fromstorycode, tostorycode], map: "pk0")
-  @@ignore
+  @@id([fromstorycode, tostorycode])
+  @@index([tostorycode], map: "fk_inducks_storyreference0")
+  @@index([referencereasonid], map: "fk_inducks_storyreference1")
 }
 
-/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
 model inducks_storysubseries {
-  storycode             String? @db.VarChar(18)
-  subseriescode         String? @db.VarChar(144)
-  storysubseriescomment String? @db.VarChar(36)
+  storycode             String  @db.VarChar(18)
+  subseriescode         String  @db.VarChar(144)
+  storysubseriescomment String? @db.VarChar(33)
 
-  @@index([subseriescode], map: "fk0")
-  @@index([storycode, subseriescode], map: "pk0")
-  @@ignore
+  @@id([storycode, subseriescode])
+  @@index([subseriescode], map: "fk_inducks_storysubseries0")
 }
 
-/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
 model inducks_storyurl {
-  storycode String? @db.VarChar(13)
-  sitecode  String? @db.VarChar(15)
+  storycode String  @db.VarChar(13)
+  sitecode  String  @db.VarChar(15)
   url       String? @db.VarChar(43)
 
-  @@index([sitecode], map: "fk0")
-  @@index([storycode, sitecode], map: "pk0")
-  @@ignore
+  @@id([storycode, sitecode])
+  @@index([sitecode], map: "fk_inducks_storyurl0")
 }
 
-/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
 model inducks_storyversion {
-  storyversioncode      String?                                     @db.VarChar(20)
+  storyversioncode      String                                      @id @db.VarChar(37)
   storycode             String?                                     @db.VarChar(19)
   entirepages           Int?
   brokenpagenumerator   Int?
@@ -877,15 +721,12 @@ model inducks_storyversion {
   keywordsummary        String?                                     @db.Text
   estimatedpanels       Int?
 
-  @@index([storycode], map: "fk1")
-  @@index([storyversioncode], map: "pk0")
-  @@fulltext([appsummary, plotsummary, writsummary, artsummary, inksummary, creatorrefsummary, keywordsummary], map: "fulltext_inducks_storyversion")
-  @@ignore
+  // @@index([appsummary, plotsummary, writsummary, artsummary, inksummary, creatorrefsummary, keywordsummary], map: "fulltext_inducks_storyversion")
+  @@index([storycode], map: "fk_inducks_storyversion1")
 }
 
-/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
 model inducks_studio {
-  studiocode    String? @db.VarChar(23)
+  studiocode    String  @id @db.VarChar(23)
   countrycode   String? @db.VarChar(2)
   studioname    String? @db.VarChar(24)
   city          String? @db.VarChar(12)
@@ -896,49 +737,38 @@ model inducks_studio {
   photosource   String? @db.VarChar(42)
   studiorefs    String? @db.VarChar(204)
 
-  @@index([countrycode], map: "fk0")
-  @@index([studiocode], map: "pk0")
-  @@ignore
+  @@index([countrycode], map: "fk_inducks_studio0")
 }
 
-/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
 model inducks_studiowork {
-  studiocode String? @db.VarChar(23)
-  personcode String? @db.VarChar(24)
+  studiocode String @db.VarChar(23)
+  personcode String @db.VarChar(24)
 
-  @@index([personcode], map: "fk0")
-  @@index([studiocode, personcode], map: "pk0")
-  @@ignore
+  @@id([studiocode, personcode])
+  @@index([personcode], map: "fk_inducks_studiowork0")
 }
 
-/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
 model inducks_subseries {
-  subseriescode     String?                     @db.VarChar(54)
-  subseriesname     String?                     @db.VarChar(54)
+  subseriescode     String                      @id @db.VarChar(59)
+  subseriesname     String?                     @db.VarChar(59)
   official          inducks_subseries_official?
   subseriescomment  String?                     @db.VarChar(410)
   subseriescategory String?                     @db.VarChar(46)
-
-  @@index([subseriescode], map: "pk0")
-  @@ignore
 }
 
-/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
 model inducks_subseriesname {
-  subseriescode        String?                          @db.VarChar(54)
-  languagecode         String?                          @db.VarChar(7)
+  subseriescode        String                           @db.VarChar(54)
+  languagecode         String                           @db.VarChar(7)
   subseriesname        String?                          @db.VarChar(294)
   preferred            inducks_subseriesname_preferred?
   subseriesnamecomment String?                          @db.VarChar(28)
 
-  @@index([languagecode], map: "fk0")
-  @@index([subseriescode, languagecode], map: "pk0")
-  @@ignore
+  @@id([subseriescode, languagecode])
+  @@index([languagecode], map: "fk_inducks_subseriesname0")
 }
 
-/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
 model inducks_substory {
-  storycode                String?                  @db.VarChar(13)
+  storycode                String                   @id @db.VarChar(13)
   originalstoryversioncode String?                  @db.VarChar(13)
   superstorycode           String?                  @db.VarChar(13)
   part                     String?                  @db.VarChar(3)
@@ -950,172 +780,40 @@ model inducks_substory {
   inputfilecode            Int?
   maintenanceteamcode      String?                  @db.VarChar(8)
 
-  @@index([firstpublicationdate], map: "fk0")
-  @@index([storycode], map: "pk0")
-  @@ignore
+  @@index([firstpublicationdate], map: "fk_inducks_substory0")
 }
 
-/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
 model inducks_team {
-  teamcode            String? @db.VarChar(13)
+  teamcode            String  @id @db.VarChar(13)
   teamdescriptionname String? @db.VarChar(25)
   teamshortname       String? @db.VarChar(7)
-
-  @@index([teamcode], map: "pk0")
-  @@ignore
 }
 
-/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
 model inducks_teammember {
-  teamcode   String? @db.VarChar(13)
+  teamcode   String  @id @db.VarChar(13)
   personcode String? @db.VarChar(3)
-
-  @@index([teamcode], map: "pk0")
-  @@ignore
 }
 
-/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
 model inducks_ucrelation {
-  universecode  String? @db.VarChar(35)
-  charactercode String? @db.VarChar(45)
+  universecode  String @db.VarChar(28)
+  charactercode String @db.VarChar(45)
 
-  @@index([charactercode], map: "fk0")
-  @@index([universecode, charactercode], map: "pk0")
-  @@ignore
+  @@id([universecode, charactercode])
+  @@index([charactercode], map: "fk_inducks_ucrelation0")
 }
 
-/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
 model inducks_universe {
-  universecode    String? @db.VarChar(35)
+  universecode    String  @id @db.VarChar(28)
   universecomment String? @db.VarChar(1)
-
-  @@index([universecode], map: "pk0")
-  @@ignore
 }
 
-/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
 model inducks_universename {
-  universecode String? @db.VarChar(35)
-  languagecode String? @db.VarChar(5)
-  universename String? @db.VarChar(78)
+  universecode String  @db.VarChar(28)
+  languagecode String  @db.VarChar(5)
+  universename String? @db.VarChar(76)
 
-  @@index([languagecode], map: "fk0")
-  @@index([universecode, languagecode], map: "pk0")
-  @@ignore
-}
-
-model inducks_entryurl_vector_old {
-  ID         Int                        @id @default(autoincrement())
-  entrycode  String                     @unique(map: "inducks_entryurl_vector_entrycode_uindex") @db.VarChar(21)
-  v          Unsupported("vector(512)")
-  created_at DateTime?                  @default(now()) @db.Timestamp(0)
-  is_cover   Boolean?
-
-  @@index([is_cover], map: "inducks_entryurl_vector_is_cover_index")
-}
-
-/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
-model inducks_issue2 {
-  issuecode           String?                      @db.VarChar(19)
-  issuerangecode      String?                      @db.VarChar(15)
-  publicationcode     String?                      @db.VarChar(12)
-  issuenumber         String?                      @db.VarChar(13)
-  title               String?                      @db.VarChar(158)
-  size                String?                      @db.VarChar(82)
-  pages               String?                      @db.VarChar(94)
-  price               String?                      @db.VarChar(160)
-  printrun            String?                      @db.VarChar(142)
-  attached            String?                      @db.VarChar(288)
-  oldestdate          String?                      @db.VarChar(10)
-  fullyindexed        inducks_issue2_fullyindexed?
-  issuecomment        String?                      @db.VarChar(1516)
-  error               inducks_issue2_error?
-  filledoldestdate    String?                      @db.VarChar(10)
-  locked              inducks_issue2_locked?
-  inxforbidden        inducks_issue2_inxforbidden?
-  inputfilecode       Int?
-  maintenanceteamcode String?                      @db.VarChar(8)
-  short_issuecode     String?                      @db.VarChar(19)
-
-  @@ignore
-}
-
-/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
-model inducks_personalias {
-  personcode String?                       @db.VarChar(31)
-  surname    String?                       @db.VarChar(48)
-  givenname  String?                       @db.VarChar(31)
-  official   inducks_personalias_official?
-
-  @@index([personcode], map: "fk0")
-  @@ignore
-}
-
-/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
-model inducks_storycreationdate {
-  storycode       String? @db.VarChar(17)
-  creationdate    String? @db.VarChar(10)
-  creationcomment String? @db.VarChar(26)
-
-  @@index([storycode, creationdate], map: "pk0")
-  @@ignore
-}
-
-/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
-model induckspriv_entry {
-  entrycode    String? @db.VarChar(22)
-  entrycomment String? @db.VarChar(1936)
-
-  @@index([entrycode], map: "pk0")
-  @@ignore
-}
-
-/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
-model induckspriv_issue {
-  issuecode    String? @db.VarChar(19)
-  issuecomment String? @db.VarChar(1167)
-
-  @@index([issuecode], map: "pk0")
-  @@ignore
-}
-
-/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
-model induckspriv_story {
-  storycode    String? @db.VarChar(18)
-  storycomment String? @db.VarChar(4098)
-
-  @@index([storycode], map: "pk0")
-  @@ignore
-}
-
-/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
-model temp_files_to_process_1767302554990 {
-  file_path     String @db.VarChar(500)
-  relative_path String @db.VarChar(500)
-  url           String @db.VarChar(500)
-
-  @@index([url], map: "idx_url")
-  @@ignore
-}
-
-/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
-model temp_files_to_process_1767339665249 {
-  file_path     String @db.VarChar(500)
-  relative_path String @db.VarChar(500)
-  url           String @db.VarChar(500)
-
-  @@index([url], map: "idx_url")
-  @@ignore
-}
-
-/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
-model temp_files_to_process_1767339868704 {
-  file_path     String @db.VarChar(500)
-  relative_path String @db.VarChar(500)
-  url           String @db.VarChar(500)
-
-  @@index([url], map: "idx_url")
-  @@ignore
+  @@id([universecode, languagecode])
+  @@index([languagecode], map: "fk_inducks_universename0")
 }
 
 enum inducks_logocharacter_reallyintitle {
@@ -1363,32 +1061,12 @@ enum inducks_entry_error {
   N
 }
 
-enum inducks_movie_appisxapp {
-  Y
-  N
-}
-
 enum inducks_personalias_official {
   Y
   N
 }
 
-enum inducks_issue2_fullyindexed {
-  Y
-  N
-}
-
-enum inducks_issue2_error {
-  Y
-  N
-}
-
-enum inducks_issue2_locked {
-  Y
-  N
-}
-
-enum inducks_issue2_inxforbidden {
+enum inducks_movie_appisxapp {
   Y
   N
 }
