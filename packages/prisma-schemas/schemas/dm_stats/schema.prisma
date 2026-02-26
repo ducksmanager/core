@@ -18,7 +18,7 @@ model authorStory {
 }
 
 model authorUser {
-  userId     Int    @map("ID_user")
+  userId     Int    @map("ID_User")
   personcode String @map("NomAuteurAbrege") @db.VarChar(79)
   notation   Int?   @map("Notation") @db.TinyInt
 

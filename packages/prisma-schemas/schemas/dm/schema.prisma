@@ -130,17 +130,13 @@ model issue {
   Numero_nospace  String?         @ignore @db.VarChar(12)
   condition       issue_condition @default(indefini) @map("Etat")
   purchaseId      Int?            @default(-1) @map("ID_Acquisition")
-  /// @deprecated
-  isOnSale        Boolean?        @default(false) @map("AV") @ignore
-  /// @deprecated
-  isToRead        Int?            @default(0) @map("A_Lire") @ignore @db.TinyInt
   isSubscription  Boolean         @default(false) @map("Abonnement")
   userId          Int             @map("ID_Utilisateur")
   creationDate    DateTime?       @default(now()) @map("DateAjout") @db.Timestamp(0)
   /// @deprecated
   short_issuecode String?         @ignore @db.VarChar(25)
   issuecode       String?         @map("issuecode") @db.VarChar(25)
-  labels          issueLabel[]    @relation
+  labels          issueLabel[]
 
   @@index([country, magazine, issuenumber, userId], map: "Numero_Utilisateur")
   @@index([country, magazine, issuenumber], map: "Pays_Magazine_Numero")
@@ -348,8 +344,8 @@ model numeros_popularite {
 
 model issueLabel {
   id      Int   @id @default(autoincrement())
-  labelId Int   @map("ID_Etiquette")
-  issueId Int   @map("ID_Numero")
+  labelId Int   @map("ID_etiquette")
+  issueId Int   @map("ID_numero")
   label   label @relation(fields: [labelId], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "numeros_etiquettes_etiquettes_ID_fk")
   issue   issue @relation(fields: [issueId], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "numeros_etiquettes_numeros_ID_fk")
 
