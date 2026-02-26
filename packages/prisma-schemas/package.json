@@ -9,6 +9,7 @@
   ],
   "scripts": {
     "build": "pnpm prisma-generate",
+    "prisma-format": "bun scripts/prisma-all.ts format",
     "prisma-pull-generate": "bun scripts/prisma-all.ts 'db pull' && pnpm prisma-generate",
     "prisma-generate": "bun scripts/prisma-all.ts generate && rm -rf dist",
     "prisma-migrate": "bun scripts/prisma-all.ts 'migrate deploy'",
