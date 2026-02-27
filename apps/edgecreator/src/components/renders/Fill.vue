@@ -5,7 +5,7 @@
     option-name="fill"
     :label="$t('Fill color').toString()"
   />
-  <svg v-else>
+  <g v-else>
     <rect
       ref="rect"
       stroke-width="0"
@@ -17,7 +17,7 @@
     >
       <metadata>{{ $props }}</metadata>
     </rect>
-  </svg>
+  </g>
 </template>
 
 <script setup lang="ts">

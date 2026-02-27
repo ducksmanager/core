@@ -23,6 +23,7 @@ apps/edges/edges
 covers
 covers-by-storycode
 dist
+dist-generate-svg
 dist-ssr
 local.properties
 node_modules

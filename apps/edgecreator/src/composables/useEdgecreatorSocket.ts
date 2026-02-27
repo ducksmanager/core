@@ -3,6 +3,7 @@ import { inject, type InjectionKey } from "vue";
 
 import type { ClientEvents as BrowseServices } from "~edgecreator-services/browse";
 import type { ClientEvents as ImageInfoServices } from "~edgecreator-services/image-info";
+import type { ClientEvents as LegacyServices } from "~edgecreator-services/legacy";
 import namespaces from "~edgecreator-services/namespaces";
 import type { ClientEvents as SaveServices } from "~edgecreator-services/save";
 import type { ClientEvents as TextServices } from "~edgecreator-services/text";
@@ -29,6 +30,7 @@ const defaultExport = (options: {
     browse: socket.addNamespace<BrowseServices>(namespaces.BROWSE, {
       session,
     }),
+    legacy: socket.addNamespace<LegacyServices>(namespaces.LEGACY),
     save: socket.addNamespace<SaveServices>(namespaces.SAVE, {
       session,
     }),

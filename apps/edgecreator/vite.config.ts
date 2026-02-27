@@ -16,7 +16,7 @@ import Layouts from "vite-plugin-vue-layouts";
 import getViteAliases from "../../vite-aliases";
 
 // https://vitejs.dev/config/
-export default defineConfig({
+export default defineConfig(({ mode }) => ({
   resolve: {
     dedupe: [
       "pinia",
@@ -107,4 +107,18 @@ export default defineConfig({
       ignored: ["**/api/**", "**/.idea/**"],
     },
   },
-});
+
+  ...(mode === "generate-svg" && {
+    build: {
+      ssr: "scripts/generate-svg-from-v1-models.ts",
+      outDir: "dist-generate-svg",
+      emptyOutDir: true,
+      rollupOptions: {
+        input: "scripts/generate-svg-from-v1-models.ts",
+        output: {
+          entryFileNames: "generate-svg.js",
+        },
+      },
+    },
+  }),
+}));

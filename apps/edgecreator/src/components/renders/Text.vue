@@ -78,7 +78,7 @@
       {{ $t("Reset position and size") }}
     </b-button>
   </template>
-  <svg v-else-if="height !== null">
+  <g v-else-if="height !== null">
     <image
       v-if="image"
       ref="imageRef"
@@ -93,7 +93,7 @@
     >
       <metadata>{{ { ...textOptions, ...imageOptions } }}</metadata>
     </image>
-  </svg>
+  </g>
 </template>
 
 <script setup lang="ts">

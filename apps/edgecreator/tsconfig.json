@@ -53,6 +53,7 @@
   "include": [
     "auto-imports.d.ts",
     "eslint.config.mjs",
+    "scripts/**/*.ts",
     "src/**/*.d.ts",
     "src/**/*.ts",
     "src/**/*.vue",

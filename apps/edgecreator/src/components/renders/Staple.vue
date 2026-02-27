@@ -2,7 +2,7 @@
   <template v-if="isForm">
     {{ $t("Move and resize the staples directly on the edge.") }}
   </template>
-  <svg v-else>
+  <g v-else>
     <g>
       <metadata>{{ $props }}</metadata>
       <rect
@@ -31,7 +31,7 @@
         }"
       />
     </g>
-  </svg>
+  </g>
 </template>
 
 <script setup lang="ts">
@@ -48,6 +48,7 @@ const { stepNumber = undefined } = defineProps<{
 
 provide("stepNumber", stepNumber);
 
+const issuecode = inject<string>("issuecode")!;
 const isForm = computed(() => stepNumber !== undefined);
 
 const yDistanceFromCenter = defineModel<number>("yDistanceFromCenter", {
@@ -58,7 +59,7 @@ const height = defineModel<number>("height", { default: 15 });
 const dimensions = computed(
   () =>
     step().getFilteredDimensions({
-      issuecodes: [inject<string>("issuecode")!],
+      issuecodes: [issuecode],
     })[0],
 );
 

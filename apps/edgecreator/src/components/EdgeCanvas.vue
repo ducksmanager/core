@@ -7,6 +7,7 @@
       'edge-canvas': true,
       'hide-overflow': !showEdgeOverflow,
       'position-relative': true,
+      'legacy-import': legacyImport,
       editing: issuecodes.includes(issuecode),
     }"
     :viewBox="`0 0 ${width} ${height}`"
@@ -97,12 +98,14 @@ const {
   dimensions,
   photoUrl = undefined,
   steps,
+  legacyImport = false,
 } = defineProps<{
   issuecode: string;
   dimensions: { width: number; height: number };
   steps: StepOption[];
   photoUrl?: string;
   contributors: Omit<ModelContributor, "issuecode">[];
+  legacyImport?: boolean;
 }>();
 
 const optionsPerStepNumber = computed(() => steps.groupBy("stepNumber", "[]"));

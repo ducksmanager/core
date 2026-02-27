@@ -30,7 +30,7 @@
       />
     </form-input-row>
   </template>
-  <svg v-else>
+  <g v-else>
     <image
       v-if="imageDetails"
       ref="image"
@@ -40,7 +40,7 @@
     >
       <metadata>{{ $props }}</metadata>
     </image>
-  </svg>
+  </g>
 </template>
 <script setup lang="ts">
 import useBase64Legacy from "~/composables/useBase64Legacy";

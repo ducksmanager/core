@@ -13,11 +13,11 @@
       can-be-transparent
     />
   </template>
-  <svg v-else>
+  <g v-else>
     <rect ref="rect" v-bind="{ x, y, width, height, fill, stroke }">
       <metadata>{{ $props }}</metadata>
     </rect>
-  </svg>
+  </g>
 </template>
 
 <script setup lang="ts">
