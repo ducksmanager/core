@@ -83,11 +83,10 @@ for (const subscription of ongoingSubscriptions) {
 }
 
 await prismaDm.$executeRaw`
-  INSERT IGNORE INTO numeros(issuecode, Etat, ID_Acquisition, AV, Abonnement, ID_Utilisateur)
+  INSERT IGNORE INTO numeros(issuecode, Etat, ID_Acquisition, Abonnement, ID_Utilisateur)
   SELECT issueRelease.issuecode,
         'bon',
         -1,
-        0,
         1,
         subscription.ID_Utilisateur
   FROM abonnements subscription

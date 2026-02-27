@@ -105,8 +105,6 @@ create table numeros
     Numero_nospace  varchar(12) as (replace(`Numero`, ' ', '')),
     Etat            enum ('mauvais', 'moyen', 'bon', 'indefini') default 'indefini'                                not null,
     ID_Acquisition  int                                          default -1                                        null,
-    AV              tinyint(1)                                   default 0                                         not null,
-    A_Lire          tinyint                                      default 0                                         not null,
     Abonnement      tinyint                                      default 0                                         not null,
     ID_Utilisateur  int                                                                                            not null,
     DateAjout       timestamp                                    default current_timestamp()                       null,
