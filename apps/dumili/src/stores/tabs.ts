@@ -1,11 +1,11 @@
 export const tabs = defineStore("tabs", () => {
   const { t: $t } = useI18n();
 
-  const tabNames = [
+  const tabNames = computed(() => [
     { id: "pageGallery", label: $t("Galerie des pages") },
     { id: "book", label: $t("Livre") },
     { id: "textEditor", label: $t("Editeur de texte") },
-  ] as const;
+  ]);
 
   const activeTabIndex = ref(0);
 

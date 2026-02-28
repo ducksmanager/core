@@ -214,18 +214,17 @@ const rows = computed(() =>
 const text = computed(() =>
   [Object.entries(issueRow.value)]
     .concat((rows.value || []).map(Object.entries))
-    .map((row, rowIndex) => {
-      const columns = rowIndex === 0 ? issueColumns : entryColumns;
-      return row
+    .map((row, rowIndex) =>
+      row
         .map(([thisField, text]) =>
           String(text || "").padEnd(
-            columns.find(
+            (rowIndex === 0 ? issueColumns : entryColumns).find(
               (column) => "field" in column && column.field === thisField,
             )?.width || 0,
           ),
         )
-        .join("");
-    })
+        .join(""),
+    )
     .join("\n"),
 );
 

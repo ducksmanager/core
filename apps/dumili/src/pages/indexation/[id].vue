@@ -42,8 +42,7 @@ const route = useRoute();
 const router = useRouter();
 const { t: $t } = useI18n();
 
-const { activeTabIndex } = storeToRefs(tabs());
-const { tabNames } = tabs();
+const { activeTabIndex, tabNames } = storeToRefs(tabs());
 
 const { fetchPublicationNames, fetchStoryDetails, fetchStoryversionDetails } =
   coa();
@@ -104,7 +103,7 @@ watch(
   () => route.hash,
   (hash) => {
     activeTabIndex.value = Math.max(
-      tabNames.findIndex(({ id: tabId }) => `#${tabId}` === hash),
+      tabNames.value.findIndex(({ id: tabId }) => `#${tabId}` === hash),
       0,
     );
   },
@@ -112,8 +111,8 @@ watch(
 );
 
 watch(activeTabIndex, (value) => {
-  if (tabNames[value]) {
-    router.push(`#${tabNames[value].id}`);
+  if (tabNames.value[value]) {
+    router.push(`#${tabNames.value[value].id}`);
   }
 });
 </script>
