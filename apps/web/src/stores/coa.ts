@@ -7,6 +7,7 @@ import type {
   ExtraSelectField,
   inducks_story,
   inducks_storyversion,
+  IssuecodeDetail,
 } from "~prisma-schemas/schemas/coa";
 
 import { socketInjectionKey } from "../composables/useDmSocket";
@@ -54,9 +55,7 @@ export const coa = defineStore("coa", () => {
     personNames = shallowRef<EventOutput<CoaClientEvents, "getAuthorList">>(),
     issueDetails = ref<{ [issuecode: string]: InducksIssueDetails }>({}),
     isLoadingCountryNames = ref(false),
-    issuecodeDetails = shallowRef<EventOutput<CoaClientEvents, "getIssues">>(
-      {},
-    ),
+    issuecodeDetails = shallowRef<Record<string, IssuecodeDetail>>({}),
     issuePopularities = shallowRef<
       EventOutput<CoaClientEvents, "getIssuePopularities">
     >({}),

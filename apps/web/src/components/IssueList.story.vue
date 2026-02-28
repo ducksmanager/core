@@ -28,7 +28,6 @@ const customIssues: EventOutput<CollectionServices, "getIssues"> = [
     userId: 1348,
     creationDate: dayjs("2017-02-10T14:31:02.000Z").toDate(),
     labelIds: [ON_SALE_LABEL_ID],
-    title: "",
   },
   {
     id: 167809,
@@ -41,7 +40,6 @@ const customIssues: EventOutput<CollectionServices, "getIssues"> = [
     userId: 1348,
     creationDate: dayjs("2017-02-10T14:31:02.000Z").toDate(),
     labelIds: [ON_SALE_LABEL_ID],
-    title: "",
   },
   {
     id: 167812,
@@ -54,7 +52,6 @@ const customIssues: EventOutput<CollectionServices, "getIssues"> = [
     userId: 1348,
     creationDate: dayjs("2017-02-10T14:31:02.000Z").toDate(),
     labelIds: [ON_SALE_LABEL_ID],
-    title: "",
   },
   {
     id: 167818,
@@ -67,7 +64,6 @@ const customIssues: EventOutput<CollectionServices, "getIssues"> = [
     userId: 1348,
     creationDate: dayjs("2017-02-10T14:31:02.000Z").toDate(),
     labelIds: [ON_SALE_LABEL_ID],
-    title: "",
   },
   {
     id: 167819,
@@ -80,7 +76,6 @@ const customIssues: EventOutput<CollectionServices, "getIssues"> = [
     userId: 1348,
     creationDate: dayjs("2017-02-10T14:31:02.000Z").toDate(),
     labelIds: [ON_SALE_LABEL_ID],
-    title: "",
   },
   {
     id: 167821,
@@ -93,7 +88,6 @@ const customIssues: EventOutput<CollectionServices, "getIssues"> = [
     userId: 1348,
     creationDate: dayjs("2017-02-10T14:31:02.000Z").toDate(),
     labelIds: [ON_SALE_LABEL_ID],
-    title: "",
   },
   {
     id: 167822,
@@ -106,7 +100,6 @@ const customIssues: EventOutput<CollectionServices, "getIssues"> = [
     userId: 1348,
     creationDate: dayjs("2017-02-10T14:31:02.000Z").toDate(),
     labelIds: [ON_SALE_LABEL_ID],
-    title: "",
   },
   {
     id: 385707,
@@ -119,7 +112,6 @@ const customIssues: EventOutput<CollectionServices, "getIssues"> = [
     userId: 1073,
     creationDate: dayjs("2022-01-08T09:54:39.000Z").toDate(),
     labelIds: [ON_SALE_LABEL_ID],
-    title: "",
   },
   {
     id: 385715,
@@ -132,7 +124,6 @@ const customIssues: EventOutput<CollectionServices, "getIssues"> = [
     userId: 1861,
     creationDate: dayjs("2022-01-08T12:13:40.000Z").toDate(),
     labelIds: [ON_SALE_LABEL_ID],
-    title: "",
   },
 ] as const;
 </script>

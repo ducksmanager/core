@@ -158,6 +158,7 @@ const listenEvents = ({ _socket }: UserServices<true>) => ({
       .then((edges) =>
         prismaCoa.augmentIssueArrayWithInducksData(
           edges.filter(({ issuecode }) => !!issuecode),
+          ["title"],
         ),
       )
       .then((edges) =>

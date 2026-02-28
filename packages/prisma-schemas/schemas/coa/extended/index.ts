@@ -8,13 +8,16 @@ import {
   computePublicationcode,
 } from "./overrideNullableCodes";
 
-type Augmented = {
+export type Augmented = {
   issuecode: string;
   publicationcode: string;
   issuenumber: string;
 };
 
 export type ExtraSelectField = Exclude<keyof rawInducksIssue, keyof Augmented>;
+
+export type IssuecodeDetail = Augmented &
+  Partial<Pick<rawInducksIssue, ExtraSelectField>>;
 
 export default (prismaClient: PrismaClient) =>
   prismaClient
