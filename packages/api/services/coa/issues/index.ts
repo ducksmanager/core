@@ -1,12 +1,13 @@
 import type { IssueWithIssuecodeOnly } from "~dm-types/IssueWithIssuecodeOnly";
 import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa/client";
+import type { ExtraSelectField } from "~prisma-schemas/schemas/coa/extended";
 
 export default {
-  getIssues: (issuecodes: string[], withTitles: boolean) =>
+  getIssues: (issuecodes: string[], withFields: ExtraSelectField[] = []) =>
     prismaCoa
       .augmentIssueArrayWithInducksData(
         issuecodes.map((issuecode) => ({ issuecode })),
-        withTitles,
+        withFields.filter((field) => ["title", "fullyindexed"].includes(field)),
       )
       .then((data) => data.groupBy("issuecode")),
 

@@ -12,8 +12,9 @@ type Augmented = {
   issuecode: string;
   publicationcode: string;
   issuenumber: string;
-  title: string | null;
 };
+
+export type ExtraSelectField = Exclude<keyof rawInducksIssue, keyof Augmented>;
 
 export default (prismaClient: PrismaClient) =>
   prismaClient
@@ -62,10 +63,11 @@ export default (prismaClient: PrismaClient) =>
                 ),
         augmentIssueArrayWithInducksData: async function <
           Entity extends { issuecode: string },
+          SelectFields extends ExtraSelectField[] = [],
         >(
           issues: Entity[],
-          withTitle: boolean = false,
-        ): Promise<(Entity & Augmented)[]> {
+          selectFields: SelectFields = [] as unknown as SelectFields,
+        ) {
           const issuecodes = [
             ...new Set(
               issues.map(({ issuecode }) => issuecode).filter(Boolean),
@@ -79,7 +81,9 @@ export default (prismaClient: PrismaClient) =>
                 publicationcode: true,
                 issuenumber: true,
                 issuecode: true,
-                title: withTitle,
+                ...Object.fromEntries(
+                  selectFields.map((field) => [field, true]),
+                ),
               },
               where: {
                 issuecode: {
@@ -91,7 +95,8 @@ export default (prismaClient: PrismaClient) =>
 
           return issues.map((issue) => ({
             ...issue,
-            ...(inducksIssues[issue.issuecode] as Augmented),
+            ...(inducksIssues[issue.issuecode] as Augmented &
+              Pick<rawInducksIssue, (typeof selectFields)[number]>),
           }));
         },
       },

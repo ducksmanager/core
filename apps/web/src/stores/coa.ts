@@ -4,6 +4,7 @@ import type { ClientEvents as CoaClientEvents } from "~dm-services/coa";
 import type { InducksIssueDetails } from "~dm-types/InducksIssueDetails";
 import type { InducksIssueQuotationSimple } from "~dm-types/InducksIssueQuotationSimple";
 import type {
+  ExtraSelectField,
   inducks_story,
   inducks_storyversion,
 } from "~prisma-schemas/schemas/coa";
@@ -185,17 +186,19 @@ export const coa = defineStore("coa", () => {
     },
     fetchIssuecodeDetails = async (
       issuecodes: string[],
-      withTitles: boolean = false,
+      withFields: ExtraSelectField[] = [],
     ) => {
-      const newIssuecodes = issuecodes.filter((issuecode) =>
-        withTitles
-          ? !("title" in (issuecodeDetails.value[issuecode] || {}))
-          : !issuecodeDetails.value[issuecode],
+      const newIssuecodes = issuecodes.filter(
+        (issuecode) =>
+          !(issuecode in issuecodeDetails.value) ||
+          withFields.some(
+            (field) => !(field in issuecodeDetails.value[issuecode]),
+          ),
       );
       if (newIssuecodes.length) {
         Object.assign(
           issuecodeDetails.value,
-          await events.getIssues(newIssuecodes, withTitles),
+          await events.getIssues(newIssuecodes, withFields),
         );
       }
     },

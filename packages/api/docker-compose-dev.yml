@@ -10,7 +10,7 @@ services:
 
   pastec-improved:
     container_name: pastec-improved
-    image: "pastec:improved"
+    image: "bperel/pastec:improved"
     ports:
       - "4213:4212"
     command:

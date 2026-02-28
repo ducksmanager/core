@@ -31,10 +31,16 @@
         {{ $t("Veuillez entrer le numéro") }}
       </b-alert>
       <b-alert
-        v-else-if="isIssueAlreadyReferenced"
-        :model-value="isIssueAlreadyReferenced"
+        v-else-if="isIssueAlreadyFullyIndexed"
+        :model-value="isIssueAlreadyFullyIndexed"
         variant="warning"
         >{{ $t("Ce numéro est déjà référencé") }}
+      </b-alert>
+      <b-alert
+        v-else-if="isIssueAlreadyIndexed"
+        :model-value="isIssueAlreadyIndexed"
+        variant="success"
+        >{{ $t("Ce numéro est partiellement référencé") }}
       </b-alert>
     </template>
     <b-button
@@ -97,7 +103,7 @@ const {
   fetchCountryNames,
 } = coa();
 
-const issues = ref<{ issuecode: string; issuenumber: string }[]>([]);
+const issues = ref<(typeof issuecodeDetails.value)[string][]>([]);
 
 const countryNames = computed(
   () =>
@@ -130,9 +136,16 @@ const publicationNamesForCurrentCountry = computed(() =>
     : [],
 );
 
-const isIssueAlreadyReferenced = computed(() =>
+const isIssueAlreadyIndexed = computed(() =>
   issues.value?.some(
     ({ issuenumber }) => issuenumber === currentIssue.value.issuenumber,
+  ),
+);
+
+const isIssueAlreadyFullyIndexed = computed(() =>
+  issues.value?.some(
+    ({ fullyindexed, issuenumber }) =>
+      fullyindexed === "Y" && issuenumber === currentIssue.value.issuenumber,
   ),
 );
 
@@ -165,13 +178,10 @@ watch(
       }
       await fetchIssuecodesByPublicationcode([newValue]);
       const publicationIssues = issuecodesByPublicationcode.value[newValue];
-      await fetchIssuecodeDetails(publicationIssues);
+      await fetchIssuecodeDetails(publicationIssues, ["fullyindexed"]);
       issues.value = issuecodesByPublicationcode.value[
         currentIssue.value.publicationcode!
-      ].map((issuecode) => ({
-        issuecode,
-        issuenumber: issuecodeDetails.value[issuecode]!.issuenumber,
-      }));
+      ].map((issuecode) => issuecodeDetails.value[issuecode]);
     }
   },
   {

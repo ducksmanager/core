@@ -17,6 +17,7 @@
     "Aucune suggestion car cette entrée n'est pas une histoire.": "Нет предложений, так как эта запись не является историей.",
     "Cases détectées": "Обнаруженные случаи",
     "Ce numéro est déjà référencé": "Этот номер уже указан в списке",
+    "Ce numéro est partiellement référencé": "Этот номер частично указан в списке",
     "Cette histoire fait généralement {originalPagesCount} pages mais l'entrée de votre indexation en contient {entryPagesCount}.": "Эта история обычно занимает {originalPagesCount} страниц, но ваша индексация содержит {entryPagesCount}.",
     "Cette indexation n'existe pas ou appartient à un autre utilisateur.": "Эта индексация не существует или принадлежит другому пользователю.",
     "Code histoire": "Код истории",

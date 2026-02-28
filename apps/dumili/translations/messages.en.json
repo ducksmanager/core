@@ -19,6 +19,7 @@
   "Aucune suggestion car cette entrée n'est pas une histoire ni une couverture.": "No suggestion because this entry is not a story nor a cover.",
   "Cases détectées": "Detected panels",
   "Ce numéro est déjà référencé": "This issue is already referenced",
+  "Ce numéro est partiellement référencé": "This issue is partially referenced",
   "Cette histoire fait généralement {originalPagesCount} pages mais l'entrée de votre indexation en contient {entryPagesCount}.": "This story usually has {originalPagesCount} pages but the entry in your index contains {entryPagesCount} pages.",
   "Cette indexation n'existe pas ou appartient à un autre utilisateur.": "This indexation doesn't exist or belongs to another user.",
   "Code histoire": "Story code",
