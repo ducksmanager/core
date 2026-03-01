@@ -4,7 +4,6 @@ import { SocketClient } from "socket-call-client";
 import type { ClientEvents as CoaEvents } from "~dm-services/coa";
 import dmNamespaces from "~dm-services/namespaces";
 import type { ClientEvents as StorySearchEvents } from "~dm-services/story-search";
-import { STORY } from "~dumili-types/storyKinds";
 import type { image } from "~prisma/client_dumili/client";
 
 const socket = new SocketClient(process.env.DM_SOCKET_URL!);
@@ -17,45 +16,14 @@ const storySearchEvents = storySearchSocket.addNamespace<StorySearchEvents>(
   dmNamespaces.STORY_SEARCH,
 );
 
-export const getStoriesFromKeywords = async (keywords: string[]) => {
-  const { results: searchResults } = await coaEvents.searchStory(keywords, {
-    withIssues: false,
-  });
-
-  const storyDetailsOutput = await coaEvents.getStoryDetails(
-    searchResults.map(({ storycode }) => storycode),
-  );
-
-  if (!("stories" in storyDetailsOutput)) {
+export const getFullStoriesFromKeywords = async (keywords: string[]) => {
+  const response = await coaEvents.getFullStoriesFromKeywords(keywords);
+  if ("error" in response) {
     return {
-      error: `Error when calling getStoryDetails`,
+      error: `Error running story search: ${response.error}`,
     };
   }
-  const storyDetails = storyDetailsOutput.stories;
-
-  const storyversionDetailsOutput = await coaEvents.getStoryversionsDetails(
-    searchResults.map(
-      ({ storycode }) => storyDetails[storycode].originalstoryversioncode!,
-    ),
-  );
-
-  if (!("storyversions" in storyversionDetailsOutput)) {
-    return {
-      error: `Error when calling getStoryversionsDetails`,
-    };
-  }
-
-  const storyversionDetails = storyversionDetailsOutput.storyversions;
-
-  const stories = searchResults.filter(
-    ({ storycode }) =>
-      storyversionDetails[storyDetails[storycode].originalstoryversioncode!]
-        .kind === STORY,
-  );
-
-  return {
-    stories,
-  };
+  return response;
 };
 
 export const getStoriesFromImage = async (image: image, isCover: boolean) => {
