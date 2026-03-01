@@ -1,6 +1,6 @@
 {
     "name": "dumili-browser-extension",
-    "version": "1.0.5",
+    "version": "1.0.6",
     "description": "Browser extension for Dumili",
     "scripts": {
         "dev": "vite",
