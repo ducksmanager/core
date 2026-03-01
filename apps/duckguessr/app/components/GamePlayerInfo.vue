@@ -14,16 +14,19 @@
     <div
       class="px-0 d-flex flex-column align-items-center justify-content-center"
     >
-      <b-avatar
-        class="position-absolute ring"
-        :size="`${size + 0.5}rem`"
-        :style="{
-          background: `conic-gradient(
-          ${ringColor} 0% ${percentFilled}%,
-          #ddd ${percentFilled}% 100%
-        )`,
-        }"
-      />
+      <div class="ring-wrapper" :class="{ 'hasnt-played': !hasPlayed }">
+        <b-avatar
+          class="position-absolute ring"
+          :size="`${size + 0.5}rem`"
+          :style="{
+            '--ring-color': ringColorVar,
+            background: `conic-gradient(
+            var(--ring-color) 0% ${percentFilled}%,
+            #ddd ${percentFilled}% 100%
+          )`,
+          }"
+        />
+      </div>
       <b-avatar
         :class="{ 'top-player': topPlayer }"
         :size="`${size}rem`"
@@ -74,14 +77,10 @@ const emit = defineEmits<{
 
 const percentFilled = ref(100);
 
-const ringColor = computed(() => {
-  if (percentFilled.value < 30) {
-    return "#f44336";
-  }
-  if (percentFilled.value < 50) {
-    return "#ff9800";
-  }
-  return "#4caf50";
+const ringColorVar = computed(() => {
+  if (percentFilled.value < 30) return "var(--ring-red)";
+  if (percentFilled.value < 70) return "var(--ring-orange)";
+  return "var(--ring-green)";
 });
 
 const src = computed(() =>
@@ -93,16 +92,18 @@ const src = computed(() =>
 onMounted(() => {
   setInterval(() => {
     if (!hasPlayed.value) {
-      percentFilled.value -= 10;
+      percentFilled.value--;
       if (percentFilled.value < 0) {
         percentFilled.value = 0;
       }
     }
-  }, 1000);
+  }, 100);
 });
 </script>
 
 <style lang="scss">
+@import "../../styles/progress.scss";
+
 .b-avatar {
   z-index: 1;
   max-width: initial;

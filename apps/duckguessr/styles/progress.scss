@@ -1,0 +1,12 @@
+.ring-wrapper {
+  display: contents;
+  --ring-red: var(--bs-danger);
+  --ring-orange: var(--bs-warning);
+  --ring-green: var(--bs-success);
+
+  &.hasnt-played {
+    --ring-red: color-mix(in srgb, #fff 30%, var(--bs-danger));
+    --ring-orange: color-mix(in srgb, #fff 30%, var(--bs-warning));
+    --ring-green: color-mix(in srgb, #fff 30%, var(--bs-success));
+  }
+}

@@ -23,7 +23,7 @@
   </DefineTemplate>
   <div id="container">
     <div id="progress-container">
-      <b-progress :value="progress" :max="100" />
+      <b-progress :value="progress" :max="100" :variant="progressVariant" />
     </div>
     <article
       class="board"
@@ -126,9 +126,15 @@ const players = ref([
   },
 ]);
 
+const progressVariant = computed(() => {
+  if (progress.value <= 30) return "success";
+  if (progress.value <= 70) return "warning";
+  return "danger";
+});
+
 onMounted(() => {
   setInterval(() => {
-    progress.value = Math.min(progress.value + 10, 100);
+    progress.value = Math.min(progress.value + 1, 100);
     if (progress.value === 20) {
       players.value[1].cards[0].played = true;
     }
@@ -142,7 +148,7 @@ onMounted(() => {
         }
       }
     }
-  }, 1000);
+  }, 100);
 });
 </script>
 
