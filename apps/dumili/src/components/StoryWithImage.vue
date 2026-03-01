@@ -2,7 +2,11 @@
   <b-row class="w-100 h-100">
     <b-col cols="6" class="d-flex flex-column justify-content-center text-wrap">
       <slot name="prefix" />
-      <Story :storycode="storycode" />
+      <Story :storycode="storycode">
+        <template #suffix>
+          <slot />
+        </template>
+      </Story>
     </b-col>
     <b-col
       cols="6"

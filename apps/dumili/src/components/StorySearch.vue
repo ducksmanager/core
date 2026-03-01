@@ -37,9 +37,6 @@
             <template #prefix>
               <story-kind-badge :kind="searchResult.kind as storyKind" />
             </template>
-            <span>
-              {{ searchResult.title }}
-            </span>
           </StoryWithImage>
         </b-dropdown-item>
       </datalist>
