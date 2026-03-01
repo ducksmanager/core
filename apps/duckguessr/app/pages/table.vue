@@ -243,8 +243,8 @@ $card-diagonal-factor: math.div(math.sqrt(1 + $card-aspect-ratio-squared), 2);
     --card-width: min(200px, 12vmin);
 
     &.other-player {
-      top: 10px;
-      left: 10px;
+      top: 2px;
+      left: 16px;
       --card-width: min(200px, 4vmin);
 
       .card {

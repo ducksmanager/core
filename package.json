@@ -9,7 +9,7 @@
     "husky": "^9.1.7"
   },
   "devDependencies": {
-    "turbo": "^2.8.7"
+    "turbo": "^2.8.12"
   },
   "scripts": {
     "prepare": "husky",
@@ -27,7 +27,7 @@
     "overrides": {
       "@vercel/nft": "^0.27.4",
       "@types/node": "^22.18.6",
-    "@sentry/vue": "9.46.0"
+      "@sentry/vue": "9.46.0"
     }
   }
 }
