@@ -33,7 +33,7 @@ export const entryColumns = [
       { field: "let", brackets: { withPrefix: true } },
       { field: "trans", brackets: { withPrefix: true } },
       { field: "xapp", brackets: { withPrefix: true } },
-      { field: "desc", brackets: { withPrefix: true } },
+      { field: "description", brackets: { withPrefix: true } },
     ],
   },
 ] as const;

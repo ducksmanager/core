@@ -139,7 +139,7 @@ const fillFormFields = <Data extends DumiliEntryData | DumiliIssueData>(
       lastFilledInput = input;
       input.val(value as string);
     } else {
-      alert(
+      console.warn(
         `No field match in the form, data: ${JSON.stringify({ [actualKey]: value })}`,
       );
     }

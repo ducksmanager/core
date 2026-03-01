@@ -121,25 +121,30 @@ const entrycodesWithPageNumbers = computed(() =>
   ),
 );
 
-const toLetters = (n: number): string =>
+const toPosition = (n: number): string =>
   n < 26
     ? String.fromCharCode(97 + n)
-    : toLetters(Math.floor(n / 26) - 1) + String.fromCharCode(97 + (n % 26));
+    : toPosition(Math.floor(n / 26) - 1) + String.fromCharCode(97 + (n % 26));
 
-const entrycodesWithLetters = computed(() =>
-  indexation.value!.entries.map(
-    (_entry, idx) => `${issuecode.value}${toLetters(idx)}`,
-  ),
+// const entrycodesWithPositions = computed(() =>
+//   indexation.value!.entries.map(
+//     (_entry, idx) => `${issuecode.value}${toPosition(idx)}`,
+//   ),
+// );
+
+const positions = computed(() =>
+  indexation.value!.entries.map((_entry, idx) => toPosition(idx)),
 );
 
-const hasEntrycodesLongerThanFirstColumnMaxWidth = computed(() =>
-  entrycodesWithPageNumbers.value.some(
-    (entrycode) =>
-      entrycode.length >
-      entryColumns.find(
-        (column) => "field" in column && column.field === "entrycode",
-      )!.width,
-  ),
+const hasEntrycodesLongerThanFirstColumnMaxWidth = computed(
+  () => false,
+  // entrycodesWithPageNumbers.value.some(
+  //   (entrycode) =>
+  //     entrycode.length >
+  //     entryColumns.find(
+  //       (column) => "field" in column && column.field === "entrycode",
+  //     )!.width,
+  // ),
 );
 
 watch(
@@ -182,7 +187,7 @@ const rows = computed(() =>
             idx === 0 ||
             (showEntryLetters.value &&
               !hasEntrycodesLongerThanFirstColumnMaxWidth.value)
-              ? entrycodesWithLetters.value[idx]
+              ? positions.value[idx]
               : hasEntrycodesLongerThanFirstColumnMaxWidth.value
                 ? "->"
                 : entrycodesWithPageNumbers.value[idx],
@@ -194,13 +199,13 @@ const rows = computed(() =>
               : entry.acceptedStoryKind?.storyKindRows.kind,
           _: " ",
           ...(Object.fromEntries(
-            (["plot", "writer", "artist", "ink"] as const).map((job) => [
+            (["plot", "writ", "art", "ink"] as const).map((job) => [
               job,
               storyWithDetails?.storyjobs?.find(
                 ({ plotwritartink }) => plotwritartink === job,
               )?.personcode,
             ]),
-          ) as { plot: string; writer: string; artist: string; ink: string }),
+          ) as { plot: string; writ: string; art: string; ink: string }),
           hero: "", //story!.printedhero,
           title: `${entry.title || ""}${
             hasEntrycodesLongerThanFirstColumnMaxWidth.value && idx > 0
