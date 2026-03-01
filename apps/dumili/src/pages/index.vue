@@ -49,7 +49,7 @@
     <template v-else>{{ $t("Chargement...") }}</template></b-container
   >
   <b-container fluid class="position-absolute bottom-0 start-0">
-    <div>
+    <div class="p-5">
       <b-button @click="modal = !modal">{{
         $t("Nouvelle indexation")
       }}</b-button>
@@ -61,7 +61,7 @@
       :cancel-title="$t('Annuler')"
       align="center"
       centered
-      @ok.prevent="form!.$el.reportValidity() && (createIndexation())"
+      @ok.prevent="form!.$el.reportValidity() && createIndexation()"
     >
       <b-form ref="form" @submit.prevent.stop="createIndexation">
         {{
