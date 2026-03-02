@@ -38,20 +38,20 @@ export const create = async (datasetName: string) => {
       sitecodeUrl: string;
     }>
   >`
-    SELECT random_images.personcode, random_images.sitecodeUrl
+    SELECT random_images.personcode, random_images.sitecode_url AS sitecodeUrl
     FROM (
       SELECT DISTINCT entryurlDetails.personcode
-      FROM entryurlDetails
-      INNER JOIN dataset_entryurl ON entryurlDetails.sitecodeUrl = dataset_entryurl.sitecodeUrl
-      WHERE datasetId = ${dataset.id}
+      FROM entryurl_details entryurlDetails
+      INNER JOIN dataset_entryurl USING (sitecode_url)
+      WHERE dataset_id = ${dataset.id}
       ORDER BY RAND()
       LIMIT 100
     ) AS random_authors
     INNER JOIN (
-      SELECT DISTINCT entryurlDetails.personcode, entryurlDetails.sitecodeUrl
-      FROM entryurlDetails
-      INNER JOIN dataset_entryurl ON entryurlDetails.sitecodeUrl = dataset_entryurl.sitecodeUrl
-      WHERE datasetId = ${dataset.id}
+      SELECT DISTINCT entryurlDetails.personcode, entryurlDetails.sitecode_url
+      FROM entryurl_details entryurlDetails
+      INNER JOIN dataset_entryurl USING (sitecode_url)
+      WHERE dataset_id = ${dataset.id}
       AND decision = 'ok'
       ORDER BY RAND()
     ) AS random_images ON random_authors.personcode = random_images.personcode

@@ -8,7 +8,14 @@
         :src="`https://www.youtube.com/embed/${youtubeVideoId}?controls=0&autohide=1`"
         title="Duckguessr trailer"
         frameborder="0"
-        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+        allow="
+          accelerometer;
+          autoplay;
+          clipboard-write;
+          encrypted-media;
+          gyroscope;
+          picture-in-picture;
+        "
         allowfullscreen
       />
     </b-container>
@@ -65,14 +72,15 @@
 
 <script lang="ts" setup>
 import { playerStore } from "~/stores/player";
-import type { DatasetWithCounts } from "~duckguessr-types/dataset";
+import type { ClientEmitEvents as DatasetsEmitEvents } from "~duckguessr-services/datasets";
 import { duckguessrSocketInjectionKey } from "~/composables/useDuckguessrSocket";
+import { EventOutput } from "socket-call-client";
 
 const router = useRouter();
 
 const { t, locale } = useI18n();
 
-const datasets = ref([] as DatasetWithCounts[]);
+const datasets = ref<EventOutput<DatasetsEmitEvents, "getDatasets">>();
 
 const { isAnonymous, playerUser } = storeToRefs(playerStore());
 
@@ -83,35 +91,32 @@ if (!duckguessrSocket) {
   );
 }
 const { datasetsSocket, createMatchmakingSocket } = duckguessrSocket;
-const matchCreationSocket = ref();
+const matchCreationSocket = ref<ReturnType<typeof createMatchmakingSocket>>();
 
 const youtubeVideoId = computed(() =>
   locale.value === "fr" ? "21Zfy5bOQkA" : "F0j-MMTiT3w",
 );
 
 const createMatch = (datasetName: string) => {
-  matchCreationSocket.value?.emit(
-    "createMatch",
-    datasetName,
-    (gameId: number) => {
-      matchCreationSocket.value!.close();
-      router.replace(`/matchmaking/${gameId}`);
-    },
-  );
+  matchCreationSocket.value
+    ?.createMatch(datasetName, { disableCache: true })
+    .then(async (gameId) => {
+      matchCreationSocket.value!._socket!.close();
+      await navigateTo(`/game/${gameId}`);
+    });
 };
 
 watch(
   () => playerUser.value?.username,
   (username) => {
     if (username) {
-      matchCreationSocket.value = createMatchmakingSocket().value;
+      matchCreationSocket.value = createMatchmakingSocket();
     }
   },
   { immediate: true },
 );
 
-datasets.value =
-  ((await datasetsSocket.getDatasets()) as DatasetWithCounts[]) || [];
+datasets.value = await datasetsSocket.getDatasets();
 </script>
 
 <style scoped lang="scss">

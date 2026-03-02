@@ -55,6 +55,15 @@
     :game-socket="gameSocket"
     @start-match="loadGame()"
   />
+  <b-container
+    v-else
+    fluid
+    class="d-flex align-items-center justify-content-center"
+  >
+    <b-alert show align="center" variant="info">
+      {{ t("Game not found.") }}
+    </b-alert>
+  </b-container>
 </template>
 
 <script lang="ts" setup>
@@ -185,6 +194,8 @@ gameSocket.playerGuessed = ({ roundScore, answer }) => {
     roundScore,
   );
 };
+
+gameSocket._connect();
 
 const currentRoundNumber = ref<number>();
 
