@@ -51,8 +51,8 @@ importers:
         specifier: ^9.0.3
         version: 9.0.3
       nodemailer:
-        specifier: ^7.0.13
-        version: 7.0.13
+        specifier: ^8.0.1
+        version: 8.0.1
       onnxruntime-node:
         specifier: 1.22.0-rev
         version: 1.22.0-rev
@@ -1750,8 +1750,8 @@ packages:
       encoding:
         optional: true
 
-  nodemailer@7.0.13:
-    resolution: {integrity: sha512-PNDFSJdP+KFgdsG3ZzMXCgquO7I6McjY2vlqILjtJd0hy8wEvtugS9xKRF2NWlPNGxvLCXlTNIae4serI7dinw==}
+  nodemailer@8.0.1:
+    resolution: {integrity: sha512-5kcldIXmaEjZcHR6F28IKGSgpmZHaF1IXLWFTG+Xh3S+Cce4MiakLtWY+PlBU69fLbRa8HlaGIrC/QolUpHkhg==}
     engines: {node: '>=6.0.0'}
 
   nodemon@3.1.14:
@@ -3915,7 +3915,7 @@ snapshots:
     dependencies:
       whatwg-url: 5.0.0
 
-  nodemailer@7.0.13: {}
+  nodemailer@8.0.1: {}
 
   nodemon@3.1.14:
     dependencies:
