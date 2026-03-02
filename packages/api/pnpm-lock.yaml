@@ -121,8 +121,8 @@ importers:
         specifier: ^8.56.1
         version: 8.56.1(eslint@9.39.3)(typescript@5.9.3)
       wait-on:
-        specifier: ^8.0.5
-        version: 8.0.5
+        specifier: ^9.0.4
+        version: 9.0.4
 
 packages:
 
@@ -2116,9 +2116,9 @@ packages:
     resolution: {integrity: sha512-BNGbWLfd0eUPabhkXUVm0j8uuvREyTh5ovRa/dyow/BqAbZJyC+5fU+IzQOzmAKzYqYRAISoRhdQr3eIZ/PXqg==}
     engines: {node: '>= 0.8'}
 
-  wait-on@8.0.5:
-    resolution: {integrity: sha512-J3WlS0txVHkhLRb2FsmRg3dkMTCV1+M6Xra3Ho7HzZDHpE7DCOnoSoCJsZotrmW3uRMhvIJGSKUKrh/MeF4iag==}
-    engines: {node: '>=12.0.0'}
+  wait-on@9.0.4:
+    resolution: {integrity: sha512-k8qrgfwrPVJXTeFY8tl6BxVHiclK11u72DVKhpybHfUL/K6KM4bdyK9EhIVYGytB5MJe/3lq4Tf0hrjM+pvJZQ==}
+    engines: {node: '>=20.0.0'}
     hasBin: true
 
   webidl-conversions@3.0.1:
@@ -4314,7 +4314,7 @@ snapshots:
 
   vary@1.1.2: {}
 
-  wait-on@8.0.5:
+  wait-on@9.0.4:
     dependencies:
       axios: 1.13.6
       joi: 18.0.2
