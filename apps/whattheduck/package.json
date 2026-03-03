@@ -27,7 +27,7 @@
     "sentry:sourcemaps": "sentry-cli sourcemaps inject --org bruno-perel --project whattheduck ./dist && sentry-cli sourcemaps upload --org bruno-perel --project whattheduck ./dist"
   },
   "dependencies": {
-    "@capacitor-community/camera-preview": "^7.0.5",
+    "@capgo/camera-preview": "^7.0.0",
     "@capacitor/android": "^7.5.0",
     "@capacitor/app": "^7.1.2",
     "@capacitor/camera": "^7.0.4",

@@ -8,9 +8,6 @@ importers:
 
   .:
     dependencies:
-      '@capacitor-community/camera-preview':
-        specifier: ^7.0.5
-        version: 7.0.5(@capacitor/core@7.5.0)
       '@capacitor/android':
         specifier: ^7.5.0
         version: 7.5.0(@capacitor/core@7.5.0)
@@ -56,6 +53,9 @@ importers:
       '@capawesome/capacitor-file-picker':
         specifier: ^7.2.0
         version: 7.2.0(@capacitor/core@7.5.0)
+      '@capgo/camera-preview':
+        specifier: ^7.0.0
+        version: 7.26.4(@capacitor/core@7.5.0)
       '@capgo/capacitor-updater':
         specifier: 7.39.0
         version: 7.39.0(@capacitor/core@7.5.0)
@@ -321,12 +321,6 @@ packages:
   '@borewit/text-codec@0.2.1':
     resolution: {integrity: sha512-k7vvKPbf7J2fZ5klGRD9AeKfUvojuZIQ3BT5u7Jfv+puwXkUBUT5PVyMDfJZpy30CBDXGMgw7fguK/lpOMBvgw==}
 
-  '@capacitor-community/camera-preview@7.0.5':
-    resolution: {integrity: sha512-yxHoCs5ZmPOrELQSFc+A5mFwjwm9JPU1WFsfpxaFnh6RMeClF8tZDk6EcrlRKdymi1w9X/DGWE/Q8Tn8OJ/k+Q==}
-    engines: {node: '>=18.0.0', npm: '>=9.0.0'}
-    peerDependencies:
-      '@capacitor/core': '>=7.0.0'
-
   '@capacitor/android@7.5.0':
     resolution: {integrity: sha512-VjESuJYzQQH4vxvrOQV0yXuDv3Gx1bfb6YpAkoGfUHe0kiw0LY5nh5Kn7I5bI9hlht9SJ8YmSsCgFeMNyzKoWQ==}
     peerDependencies:
@@ -407,6 +401,11 @@ packages:
 
   '@capawesome/capacitor-file-picker@7.2.0':
     resolution: {integrity: sha512-qUNa+Ypem575xSNiJwgiOaaHXzAHaxMtERySRIsIC0HggoCa11xGS3xEVtMooQ3fS0cDXfl4/17DYoHQtkDjXA==}
+    peerDependencies:
+      '@capacitor/core': '>=7.0.0'
+
+  '@capgo/camera-preview@7.26.4':
+    resolution: {integrity: sha512-fbBZ0NnrJWq3Oo4fZJpRhvC/Ct7aapTXyw1423u5jaQKkqi9JsxZEm4YQ6LHEihJwpQKjcINFl+/HgMh74cpvA==}
     peerDependencies:
       '@capacitor/core': '>=7.0.0'
 
@@ -6082,10 +6081,6 @@ snapshots:
 
   '@borewit/text-codec@0.2.1': {}
 
-  '@capacitor-community/camera-preview@7.0.5(@capacitor/core@7.5.0)':
-    dependencies:
-      '@capacitor/core': 7.5.0
-
   '@capacitor/android@7.5.0(@capacitor/core@7.5.0)':
     dependencies:
       '@capacitor/core': 7.5.0
@@ -6208,6 +6203,10 @@ snapshots:
       '@capacitor/core': 7.5.0
 
   '@capawesome/capacitor-file-picker@7.2.0(@capacitor/core@7.5.0)':
+    dependencies:
+      '@capacitor/core': 7.5.0
+
+  '@capgo/camera-preview@7.26.4(@capacitor/core@7.5.0)':
     dependencies:
       '@capacitor/core': 7.5.0
 

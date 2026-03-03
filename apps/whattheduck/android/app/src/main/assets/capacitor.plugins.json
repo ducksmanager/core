@@ -1,7 +1,7 @@
 [
 	{
-		"pkg": "@capacitor-community/camera-preview",
-		"classpath": "com.ahm.capacitor.camera.preview.CameraPreview"
+		"pkg": "@capgo/camera-preview",
+		"classpath": "app.capgo.capacitor.camera.preview.CameraPreview"
 	},
 	{
 		"pkg": "@capacitor/app",

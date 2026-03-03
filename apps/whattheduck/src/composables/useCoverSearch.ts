@@ -1,4 +1,4 @@
-import { CameraPreview } from '@capacitor-community/camera-preview';
+import { CameraPreview } from '@capgo/camera-preview';
 import { Capacitor } from '@capacitor/core';
 import { FilePicker } from '@capawesome/capacitor-file-picker';
 import { toastController } from '@ionic/vue';
@@ -38,7 +38,7 @@ export default (
       .finally(async () => {
         if (results?.length) {
           if (Capacitor.isNativePlatform()) {
-            if ((await CameraPreview.isCameraStarted()).value) {
+            if ((await CameraPreview.isRunning()).isRunning) {
               await CameraPreview.stop();
             }
           }

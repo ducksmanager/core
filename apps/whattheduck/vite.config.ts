@@ -34,7 +34,7 @@ export default defineConfig({
             '@capacitor/status-bar',
             '@capacitor/camera',
             '@capacitor/clipboard',
-            '@capacitor-community/camera-preview',
+            '@capgo/camera-preview',
             '@capawesome/capacitor-app-update',
             '@capawesome/capacitor-file-picker',
             '@capgo/capacitor-updater',

@@ -41,7 +41,7 @@ import {
   tabletLandscapeOutline,
   tabletPortraitOutline,
 } from 'ionicons/icons';
-import { CameraPreview, CameraPreviewOptions } from '@capacitor-community/camera-preview';
+import { CameraPreview, CameraPreviewOptions } from '@capgo/camera-preview';
 
 import useCoverSearch from '~/composables/useCoverSearch';
 import { app } from '~/stores/app';
@@ -124,7 +124,7 @@ watch([overlayHeight, currentRatioIndex], async () => {
         position: 'rear',
         ...boundingClientRect.value,
       } as const;
-      if ((await CameraPreview.isCameraStarted()).value) {
+      if ((await CameraPreview.isRunning()).isRunning) {
         await CameraPreview.stop();
       }
       await CameraPreview.start(cameraPreviewOptions);
