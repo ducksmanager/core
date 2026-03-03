@@ -160,6 +160,22 @@ ion-checkbox {
   opacity: 0.5;
 }
 
+/* Required for @capgo/camera-preview: camera is rendered behind WebView (toBack: true),
+   so WebView must have transparent background to see through to the camera */
+body.camera-preview-active,
+body.camera-preview-active #app,
+ion-app.camera-preview-active,
+ion-app.camera-preview-active ion-content,
+ion-app.camera-preview-active .ion-content,
+ion-app.camera-preview-active .ion-page,
+ion-app.camera-preview-active .ion-content::part(scroll),
+ion-app.camera-preview-active ion-split-pane {
+  --ion-background-color: transparent !important;
+  --background: transparent !important;
+  background: transparent !important;
+  background-color: transparent !important;
+}
+
 .item-wrapper {
   &:has(> .is-owned.is-next-item-owned),
   &:has(> .is-owned.is-next-item-same) {

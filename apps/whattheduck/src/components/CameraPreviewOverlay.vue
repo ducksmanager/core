@@ -146,6 +146,7 @@ watch([overlayHeight, currentRatioIndex], async () => {
 
 #camera-preview {
   display: flex;
+  background: transparent !important;
   &.portrait {
     height: calc(100vh - 4rem);
   }

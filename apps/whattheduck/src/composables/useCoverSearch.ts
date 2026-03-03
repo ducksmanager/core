@@ -23,7 +23,7 @@ export default (
         ? storySearchEvents
             .findSimilarImages(base64, true)
             .then((results) => ('results' in results ? results.results : null))
-        : coverIdEvents.searchFromCover(base64).then((results) => ('covers' in results ? results.covers : null))
+        : coverIdEvents.searchFromCover(base64, 1).then((results) => ('covers' in results ? results.covers : null))
     ).finally(() => {
       isSearching.value = false;
     });
