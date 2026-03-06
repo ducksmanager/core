@@ -6,7 +6,7 @@ meta:
 <template>
   <div v-if="hasData">
     <div
-      v-for="mostWantedIssue in mostWantedData"
+      v-for="mostWantedIssue in mostWantedItems"
       :key="`wanted-${mostWantedIssue.issuecode.replaceAll(' ', '_')}`"
     >
       <div>
@@ -27,7 +27,7 @@ meta:
     </div>
     <div
       v-if="
-        publishedEdges &&
+        publishedEdgesByPublicationcode &&
         issuesByIssuecode &&
         inducksIssuenumbers &&
         Object.keys(inducksIssuenumbers).length
@@ -46,7 +46,7 @@ meta:
       >
         <i-bi-eye-fill
           v-if="!showEdgesForPublication.includes(publicationcode)"
-          @click="showEdgesForPublication.push(publicationcode)"
+          @click="expandPublication(publicationcode)"
         />
         <i-bi-eye-slash-fill
           v-else
@@ -97,7 +97,7 @@ meta:
         </div>
       </div>
       <br /><br />
-      <b>{{ publishedEdges.length }} tranches prêtes.</b><br />
+      <b>{{ publishedEdges.data.value?.length ?? 0 }} tranches prêtes.</b><br />
       <br /><br />
       <u>Légende : </u><br />
       <span class="num">&nbsp;</span> Nous avons besoin d'une photo de cette
@@ -118,7 +118,6 @@ import { socketInjectionKey } from "../../../composables/useDmSocket";
 
 const { getImagePath } = images();
 
-let hasData = ref(false);
 const showEdgesForPublication = ref<string[]>([]);
 const bookcaseTextures = {
   bookcase: "bois/HONDURAS MAHOGANY",
@@ -127,18 +126,19 @@ const bookcaseTextures = {
 
 const { edges: edgesEvents } = inject(socketInjectionKey)!;
 
-const { asyncStatus: mostWantedStatus, data: mostWantedData } = useQuery({
+const mostWanted = useQuery({
   key: ["edges", "wanted"],
   query: () => edgesEvents.getWantedEdges(),
 });
 
-const { asyncStatus: publishedEdgesStatus, data: publishedEdgesData } =
-  useQuery({
-    key: ["edges", "published"],
-    query: () => edgesEvents.getPublishedEdges(),
-  });
+const mostWantedItems = computed(
+  () => mostWanted.data.value?.filter((item) => item != null) ?? [],
+);
 
-const publishedEdges = computed(() => publishedEdgesData.value ?? []);
+const publishedEdges = useQuery({
+  key: ["edges", "published"],
+  query: () => edgesEvents.getPublishedEdges(),
+});
 
 const {
   fetchPublicationNames,
@@ -152,7 +152,7 @@ const { loadCollection } = collection();
 const { issuesByIssuecode } = storeToRefs(collection());
 
 const publishedEdgesByPublicationcode = computed(() =>
-  publishedEdges.value.groupBy("publicationcode", "[]"),
+  publishedEdges.data.value?.groupBy("publicationcode", "[]"),
 );
 
 const getEdgeUrl = (issuecode: string): string => {
@@ -164,8 +164,8 @@ const getEdgeUrl = (issuecode: string): string => {
 };
 const open = (inducksIssuecode: string) => {
   if (
-    publishedEdges.value
-      .map(({ issuecode }) => issuecode)
+    publishedEdges.data.value
+      ?.map(({ issuecode }) => issuecode)
       .includes(inducksIssuecode)
   ) {
     window.open(getEdgeUrl(inducksIssuecode), "_blank");
@@ -210,35 +210,96 @@ const sortedBookcase = computed(() =>
   }, {}),
 );
 
+const isValidCode = (code: string | undefined): code is string =>
+  Boolean(code && code !== "undefined");
+
+const expandPublication = async (publicationcode: string) => {
+  if (showEdgesForPublication.value.includes(publicationcode)) return;
+  const issuecodes = (
+    issuecodesByPublicationcode.value[publicationcode] ?? []
+  ).filter(isValidCode);
+  await fetchIssuecodeDetails(issuecodes);
+  showEdgesForPublication.value.push(publicationcode);
+};
+
+const hasData = computed(() => {
+  const mostWantedItemsData = mostWantedItems.value;
+  const publishedEdgesItems = publishedEdges.data.value ?? [];
+
+  if (!mostWantedItemsData.length && !publishedEdgesItems.length) return false;
+
+  const mostWantedPublicationcodes = mostWantedItemsData
+    .map((m) => m.publicationcode)
+    .filter(isValidCode);
+  const publishedPublicationcodes = Object.keys(
+    publishedEdgesItems.groupBy?.("publicationcode") ?? {},
+  ).filter(isValidCode);
+  const allPublicationcodes = [
+    ...new Set([...mostWantedPublicationcodes, ...publishedPublicationcodes]),
+  ];
+
+  const hasPublicationNames =
+    allPublicationcodes.every((pc) => publicationNames.value[pc]) ||
+    !allPublicationcodes.length;
+  const hasIssuecodes =
+    !publishedPublicationcodes.length ||
+    publishedPublicationcodes.every(
+      (pc) => issuecodesByPublicationcode.value[pc],
+    );
+
+  const issuecodes = Object.keys(
+    publishedEdgesItems.groupBy?.("issuecode") ?? {},
+  ).filter(isValidCode);
+  const hasIssuecodeDetails =
+    !issuecodes.length ||
+    issuecodes.every((ic) => ic in issuecodeDetails.value);
+
+  const hasCollection =
+    !publishedPublicationcodes.length || !!issuesByIssuecode.value;
+
+  const inducksKeys = Object.keys(inducksIssuenumbers.value);
+  const hasInducksIssuenumbers =
+    !publishedPublicationcodes.length || inducksKeys.length;
+
+  return (
+    hasPublicationNames &&
+    hasIssuecodes &&
+    hasIssuecodeDetails &&
+    hasCollection &&
+    hasInducksIssuenumbers
+  );
+});
+
 watchEffect(async () => {
   if (
-    mostWantedStatus.value !== "idle" ||
-    publishedEdgesStatus.value !== "idle" ||
-    !mostWantedData.value ||
-    !publishedEdgesData.value
+    mostWanted.asyncStatus.value !== "idle" ||
+    publishedEdges.asyncStatus.value !== "idle" ||
+    !mostWanted.data ||
+    !publishedEdges.data
   ) {
     return;
   }
 
-  const mostWantedItems = mostWantedData.value;
-  const publishedEdgesItems = publishedEdgesData.value;
+  const mostWantedItems = mostWanted.data.value ?? [];
+  const publishedEdgesItems = publishedEdges.data.value ?? [];
   const publicationcodes = Object.keys(
     publishedEdgesItems.groupBy("publicationcode"),
-  );
+  ).filter(isValidCode);
 
-  await fetchPublicationNames([
-    ...mostWantedItems.map(
-      (mostWantedIssue) => mostWantedIssue.publicationcode,
-    ),
+  const publicationcodesToFetch = [
+    ...mostWantedItems
+      .map((mostWantedIssue) => mostWantedIssue.publicationcode)
+      .filter(isValidCode),
     ...publicationcodes,
-  ]);
+  ];
+
+  await fetchPublicationNames(publicationcodesToFetch);
 
   await fetchIssuecodesByPublicationcode(publicationcodes);
   await fetchIssuecodeDetails(
-    Object.keys(publishedEdgesItems.groupBy("issuecode")),
+    Object.keys(publishedEdgesItems.groupBy("issuecode")).filter(isValidCode),
   );
   await loadCollection();
-  hasData.value = true;
 });
 </script>
 
