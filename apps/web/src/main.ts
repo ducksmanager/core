@@ -37,7 +37,7 @@ const store = createPinia();
 const app = createApp(App)
   .use(i18n("fr", localStorage.getItem("locale") || "fr", { en }).instance)
   .use(store)
-  .use(PiniaColada)
+  .use(PiniaColada, {})
   .use(createBootstrap())
   .use(contextmenu)
   .use(head)
