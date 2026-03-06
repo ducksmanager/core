@@ -14,6 +14,7 @@ import contextmenu from "v-contextmenu";
 import { createRouter, createWebHistory } from "vue-router";
 import { routes } from "vue-router/auto-routes";
 import { PiniaColada } from "@pinia/colada";
+import { PiniaColadaCachePersister } from "@pinia/colada-plugin-cache-persister";
 
 import App from "~/App.vue";
 import i18n from "~/i18n";
@@ -37,7 +38,15 @@ const store = createPinia();
 const app = createApp(App)
   .use(i18n("fr", localStorage.getItem("locale") || "fr", { en }).instance)
   .use(store)
-  .use(PiniaColada, {})
+  .use(PiniaColada, {
+    plugins: [
+      PiniaColadaCachePersister({
+        key: "pinia-colada-cache",
+        debounce: 1000,
+        storage: sessionStorage,
+      }),
+    ],
+  })
   .use(createBootstrap())
   .use(contextmenu)
   .use(head)

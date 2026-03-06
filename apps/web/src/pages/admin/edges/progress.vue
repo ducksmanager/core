@@ -112,8 +112,6 @@ meta:
 
 <script setup lang="ts">
 import { useQuery } from "@pinia/colada";
-import type { BookcaseEdgeWithPopularity } from "~/stores/bookcase";
-
 import { socketInjectionKey } from "../../../composables/useDmSocket";
 
 const { getImagePath } = images();
@@ -155,6 +153,68 @@ const publishedEdgesByPublicationcode = computed(() =>
   publishedEdges.data.value?.groupBy("publicationcode", "[]"),
 );
 
+const isValidCode = (code: string | undefined): code is string =>
+  Boolean(code && code !== "undefined");
+
+const publicationcodesToFetch = computed(() => [
+  ...new Set([
+    ...(mostWanted.data.value ?? []).map((m) => m.publicationcode),
+    ...Object.keys(
+      (publishedEdges.data.value ?? []).groupBy?.("publicationcode") ?? {},
+    ).filter(isValidCode),
+  ]),
+]);
+
+const publishedPublicationcodes = computed(() =>
+  Object.keys(
+    (publishedEdges.data.value ?? []).groupBy?.("publicationcode") ?? {},
+  ).filter(isValidCode),
+);
+
+const publishedIssuecodes = computed(() =>
+  Object.keys(
+    (publishedEdges.data.value ?? []).groupBy?.("issuecode") ?? {},
+  ).filter(isValidCode),
+);
+
+// Dependent queries – run when primary data is ready
+useQuery({
+  key: () => [
+    "progress",
+    "publicationNames",
+    [...publicationcodesToFetch.value].sort().join(","),
+  ],
+  query: () => fetchPublicationNames(publicationcodesToFetch.value),
+  enabled: () => publicationcodesToFetch.value.length > 0,
+});
+
+useQuery({
+  key: () => [
+    "progress",
+    "issuecodesByPublicationcode",
+    [...publishedPublicationcodes.value].sort().join(","),
+  ],
+  query: () =>
+    fetchIssuecodesByPublicationcode(publishedPublicationcodes.value),
+  enabled: () => publishedPublicationcodes.value.length > 0,
+});
+
+useQuery({
+  key: () => [
+    "progress",
+    "issuecodeDetails",
+    [...publishedIssuecodes.value].sort().join(","),
+  ],
+  query: () => fetchIssuecodeDetails(publishedIssuecodes.value),
+  enabled: () => publishedIssuecodes.value.length > 0,
+});
+
+useQuery({
+  key: ["progress", "collection"],
+  query: () => loadCollection(),
+  enabled: () => publicationcodesToFetch.value.length > 0,
+});
+
 const getEdgeUrl = (issuecode: string): string => {
   const { publicationcode, issuenumber } = issuecodeDetails.value[issuecode];
   const [country, magazine] = publicationcode.split("/");
@@ -172,46 +232,45 @@ const open = (inducksIssuecode: string) => {
   }
 };
 const inducksIssuenumbers = computed(() =>
-  Object.keys(issuecodesByPublicationcode.value).reduce<
-    Record<string, string[]>
-  >((acc, publicationcode) => {
-    acc[publicationcode] = Object.values(
-      issuecodesByPublicationcode.value[publicationcode],
+  Object.entries(issuecodesByPublicationcode.value)
+    .flatMap(([publicationcode, issuecodes]) =>
+      (issuecodes ?? [])
+        .filter((issuecode) => issuecode in issuecodeDetails.value)
+        .map((issuecode) => ({
+          publicationcode,
+          issuenumber: issuecodeDetails.value[issuecode].issuenumber.replaceAll(
+            " ",
+            "",
+          ),
+        })),
     )
-      .filter((issuecode) => issuecode in issuecodeDetails.value)
-      .map((issuecode) =>
-        issuecodeDetails.value[issuecode].issuenumber.replaceAll(" ", ""),
-      );
-    return acc;
-  }, {}),
+    .groupBy("publicationcode", "issuenumber[]"),
 );
 
 const sortedBookcase = computed(() =>
-  Object.values(showEdgesForPublication).reduce<
-    Record<string, BookcaseEdgeWithPopularity[]>
-  >((acc, publicationcode) => {
-    acc[publicationcode] =
-      issuecodesByPublicationcode.value[publicationcode]?.map((issuecode) => ({
-        id: 0,
-        edgeId: publishedEdgesByPublicationcode.value?.[publicationcode]
-          .map(({ issuecode }) => issuecode)
-          .includes(issuecode)
-          ? 1
-          : 0,
-        publicationcode,
-        issuecode,
-        creationDate: new Date(),
-        sprites: [],
-        points: 0,
-        slug: "",
-        timestamp: new Date().getTime(),
-      })) || [];
-    return acc;
-  }, {}),
+  showEdgesForPublication.value
+    .flatMap((publicationcode) =>
+      (issuecodesByPublicationcode.value[publicationcode] ?? []).map(
+        (issuecode) =>
+          ({
+            id: 0,
+            edgeId: publishedEdgesByPublicationcode.value?.[publicationcode]
+              ?.map((e) => e.issuecode)
+              .includes(issuecode)
+              ? 1
+              : 0,
+            publicationcode,
+            issuecode,
+            creationDate: new Date(),
+            sprites: [],
+            points: 0,
+            slug: "",
+            timestamp: new Date().getTime(),
+          }) as const,
+      ),
+    )
+    .groupBy("publicationcode", "[]"),
 );
-
-const isValidCode = (code: string | undefined): code is string =>
-  Boolean(code && code !== "undefined");
 
 const expandPublication = async (publicationcode: string) => {
   if (showEdgesForPublication.value.includes(publicationcode)) return;
@@ -268,38 +327,6 @@ const hasData = computed(() => {
     hasCollection &&
     hasInducksIssuenumbers
   );
-});
-
-watchEffect(async () => {
-  if (
-    mostWanted.asyncStatus.value !== "idle" ||
-    publishedEdges.asyncStatus.value !== "idle" ||
-    !mostWanted.data ||
-    !publishedEdges.data
-  ) {
-    return;
-  }
-
-  const mostWantedItems = mostWanted.data.value ?? [];
-  const publishedEdgesItems = publishedEdges.data.value ?? [];
-  const publicationcodes = Object.keys(
-    publishedEdgesItems.groupBy("publicationcode"),
-  ).filter(isValidCode);
-
-  const publicationcodesToFetch = [
-    ...mostWantedItems
-      .map((mostWantedIssue) => mostWantedIssue.publicationcode)
-      .filter(isValidCode),
-    ...publicationcodes,
-  ];
-
-  await fetchPublicationNames(publicationcodesToFetch);
-
-  await fetchIssuecodesByPublicationcode(publicationcodes);
-  await fetchIssuecodeDetails(
-    Object.keys(publishedEdgesItems.groupBy("issuecode")).filter(isValidCode),
-  );
-  await loadCollection();
 });
 </script>
 

@@ -17,6 +17,9 @@ importers:
       '@pinia/colada':
         specifier: ^1.0.0
         version: 1.0.0(pinia@3.0.4(typescript@5.9.3)(vue@3.5.29(typescript@5.9.3)))(vue@3.5.29(typescript@5.9.3))
+      '@pinia/colada-plugin-cache-persister':
+        specifier: ^0.1.4
+        version: 0.1.4(@pinia/colada@1.0.0(pinia@3.0.4(typescript@5.9.3)(vue@3.5.29(typescript@5.9.3)))(vue@3.5.29(typescript@5.9.3)))
       '@popperjs/core':
         specifier: ^2.11.8
         version: 2.11.8
@@ -827,6 +830,11 @@ packages:
 
   '@pinia/colada-devtools@0.4.5':
     resolution: {integrity: sha512-YSUa5nVmtbcQG+to7qysixNcB49bxEMUo+VvkU9YFrUNFPhPVUl+tMx3Xx79J024MEV46nQkyf1+hpQ4kwSsyg==}
+
+  '@pinia/colada-plugin-cache-persister@0.1.4':
+    resolution: {integrity: sha512-/8OOd66FqVfYOD9p3Xd1Nq4bVmf88hnsuAFUVIsKQXHKYElYm2Biu5Pm0lnCi+va8Mm2rVPcHtRH06kkTH283w==}
+    peerDependencies:
+      '@pinia/colada': '>=1.0.0'
 
   '@pinia/colada@1.0.0':
     resolution: {integrity: sha512-YKSybA6wusFK4CAUPzItoSgPCfScVnnnO2MSlmaaisE/L7luE77GxFyhTzipM8IbvbXh4zkCy97OE7w9WX34wA==}
@@ -4172,6 +4180,10 @@ snapshots:
     optional: true
 
   '@pinia/colada-devtools@0.4.5': {}
+
+  '@pinia/colada-plugin-cache-persister@0.1.4(@pinia/colada@1.0.0(pinia@3.0.4(typescript@5.9.3)(vue@3.5.29(typescript@5.9.3)))(vue@3.5.29(typescript@5.9.3)))':
+    dependencies:
+      '@pinia/colada': 1.0.0(pinia@3.0.4(typescript@5.9.3)(vue@3.5.29(typescript@5.9.3)))(vue@3.5.29(typescript@5.9.3))
 
   '@pinia/colada@1.0.0(pinia@3.0.4(typescript@5.9.3)(vue@3.5.29(typescript@5.9.3)))(vue@3.5.29(typescript@5.9.3))':
     dependencies:
