@@ -32,42 +32,33 @@ export default defineNuxtConfig({
   ],
 
   // Modules
-  modules: [
-    "@bootstrap-vue-next/nuxt",
-    [
-      "@nuxtjs/i18n",
-      {
-        locales: [
-          { code: "fr", file: "fr-FR.json" },
-          { code: "en", file: "en-US.json" },
-          { code: "de", file: "de.json" },
-          { code: "es", file: "es.json" },
-        ],
-        langDir: "../locales",
-        defaultLocale: "fr",
-        strategy: "prefix_except_default",
-        detectBrowserLanguage: {
-          useCookie: true,
-          cookieKey: "locale",
-          redirectOn: "root",
-        },
+  modules: ["@bootstrap-vue-next/nuxt", [
+    "@nuxtjs/i18n",
+    {
+      locales: [
+        { code: "fr", file: "fr-FR.json" },
+        { code: "en", file: "en-US.json" },
+        { code: "de", file: "de.json" },
+        { code: "es", file: "es.json" },
+      ],
+      langDir: "../locales",
+      defaultLocale: "fr",
+      strategy: "prefix_except_default",
+      detectBrowserLanguage: {
+        useCookie: true,
+        cookieKey: "locale",
+        redirectOn: "root",
       },
-    ],
-    "@pinia/nuxt",
-    "@vueuse/nuxt",
-    "@nuxtjs/storybook",
-    [
-      "@sentry/nuxt/module",
-      {
-        sourceMapsUploadOptions: {
-          org: "bruno-perel",
-          project: "duckguessr",
-        },
+    },
+  ], "@pinia/nuxt", "@vueuse/nuxt", "@nuxtjs/storybook", [
+    "@sentry/nuxt/module",
+    {
+      sourceMapsUploadOptions: {
+        org: "bruno-perel",
+        project: "duckguessr",
       },
-    ],
-    "@nuxt/eslint",
-    "unplugin-icons/nuxt",
-  ],
+    },
+  ], "@nuxt/eslint", "unplugin-icons/nuxt", "nuxt-typed-router"],
 
   // Auto-imports
   imports: {
@@ -104,7 +95,9 @@ export default defineNuxtConfig({
   // Vite config
   vite: {
     plugins: [
-      checker({ vueTsc: true }),
+      // Type assertion: vite-plugin-checker and unplugin-vue-components have Plugin type
+      // mismatches with Vite 7's stricter Rollup types (PluginContextMeta.viteVersion)
+      checker({ vueTsc: true }) as any,
       ViteComponents({
         resolvers: [
           IconsResolver({
@@ -113,7 +106,7 @@ export default defineNuxtConfig({
           }),
         ],
         dts: true,
-      }),
+      }) as any,
     ],
     resolve: {
       dedupe: ["vue", "vue-i18n", "@vueuse/core", "bootstrap-vue-next"],

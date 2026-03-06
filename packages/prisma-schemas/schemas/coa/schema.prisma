@@ -1,12 +1,10 @@
 generator client {
-  provider   = "prisma-client"
-  output     = "../../client_coa"
-  engineType = "client"
+  provider = "prisma-client"
+  output   = "../../client_coa"
 }
 
 datasource db {
   provider = "mysql"
-  url      = env("DATABASE_URL_COA")
 }
 
 model inducks_appearance {

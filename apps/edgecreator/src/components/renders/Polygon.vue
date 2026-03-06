@@ -5,11 +5,11 @@
     option-name="fill"
     :label="$t('Fill color').toString()"
   />
-  <svg v-else>
+  <g v-else>
     <polygon ref="polygon" :points="pointsAsString(pointsArray)" :fill="fill">
       <metadata>{{ $props }}</metadata>
     </polygon>
-  </svg>
+  </g>
 </template>
 
 <script setup lang="ts">

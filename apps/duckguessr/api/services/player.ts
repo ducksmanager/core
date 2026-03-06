@@ -1,10 +1,11 @@
 import type { Socket } from "socket.io";
 import { type NamespaceProxyTarget, useSocketEvents } from "socket-call-server";
 
-import { getPlayer, getPlayerStatistics, updatePlayer } from "../get-player";
+import { getPlayerStatistics, updatePlayer } from "../get-player";
 import prisma from "../prisma/client";
 import { type player } from "../prisma/client_duckguessr/browser";
 import namespaces from "./namespaces";
+import { RequiredPlayerMiddleware } from "../middlewares/required-player";
 
 export type ClientListenEvents = {
   logged: (player: player) => void;
@@ -70,18 +71,7 @@ const { client, server } = useSocketEvents<
 >(namespaces.PLAYER, {
   listenEvents,
   middlewares: [
-    ({ _socket }, next: (error?: Error) => void) => {
-      getPlayer({ token: _socket.handshake.auth.token })
-        .then((player) => {
-          _socket.data.user = player;
-        })
-        .then(() => {
-          next();
-        })
-        .catch((e) => {
-          next(e);
-        });
-    },
+    RequiredPlayerMiddleware,
   ],
 });
 

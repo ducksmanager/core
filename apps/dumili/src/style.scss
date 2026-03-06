@@ -118,6 +118,11 @@ button:hover {
 .dropdown-toggle {
   display: flex !important;
   align-items: center;
+
+  &::after {
+    right: 4px !important;
+    position: absolute;
+  }
 }
 
 .card {

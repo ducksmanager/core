@@ -1,3 +1,5 @@
+name: duckguessr-api
+
 services:
   db:
     restart: always

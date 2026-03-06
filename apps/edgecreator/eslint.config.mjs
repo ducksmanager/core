@@ -23,6 +23,7 @@ export default [
       "**/api",
       "**/node_modules",
       "**/dist",
+      "**/dist-generate-svg",
       "**/bundle.mjs",
       "**/*.d.ts",
       "**/vendor",

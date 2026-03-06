@@ -10,9 +10,8 @@
     "build": "prisma generate && for source in index.ts instrument.ts; do bun build --entry-naming [dir]/[name].mjs --sourcemap=linked --target node $source --outdir dist; done && pnpm sentry:sourcemaps",
     "prisma-pull-generate": "prisma db pull && prisma generate",
     "prisma-generate": "prisma generate",
-    "prisma-migrate": "prisma migrate deploy",
     "lint": "eslint --fix .",
-    "dev": "docker compose -f docker-compose-dev.yml up --force-recreate -d && bash ../../../packages/prisma-schemas/wait-until-db-ready.bash && prisma migrate deploy && prisma generate && concurrently --kill-others-on-fail -n docker-compose,typecheck \"docker compose -f docker-compose-dev.yml logs -f\" \"tsc --noEmit\"",
+    "dev": "docker compose -f docker-compose-dev.yml up --force-recreate -d && bash ../../../packages/prisma-schemas/wait-until-db-ready.bash && prisma generate && concurrently --kill-others-on-fail -n docker-compose,typecheck \"docker compose -f docker-compose-dev.yml logs -f\" \"tsc --noEmit\"",
     "dev:bun": "bun --inspect run index.ts",
     "prod:deploy": "DIR=apps/dumili/api pnpm -F '~ci' prod:docker-compose-up",
     "prod-build-docker-api": "REPO_NAME=ghcr.io/bperel/dumili-api pnpm -F '~ci' prod:build-docker -f apps/dumili/api/Dockerfile",
@@ -25,10 +24,10 @@
   },
   "dependencies": {
     "@opentelemetry/instrumentation-socket.io": "^0.46.1",
-    "@prisma/client": "^6.19.2",
+    "@prisma/client": "^7.4.2",
     "@sentry/node": "^9.47.1",
     "@sentry/profiling-node": "^9.47.1",
-    "axios": "^1.13.2",
+    "axios": "^1.13.6",
     "axios-cache-interceptor": "^1.11.4",
     "busboy": "^1.6.0",
     "cloudinary": "^1.41.3",
@@ -42,19 +41,19 @@
     "~prisma-schemas": "workspace:*"
   },
   "devDependencies": {
-    "@eslint/eslintrc": "^3.3.3",
-    "@eslint/js": "^9.39.2",
-    "@sentry/cli": "^2.58.4",
+    "@eslint/eslintrc": "^3.3.4",
+    "@eslint/js": "^9.39.3",
+    "@sentry/cli": "^2.58.5",
     "@socket.io/admin-ui": "^0.5.1",
     "@types/busboy": "^1.5.4",
     "@types/i18n": "^0.13.12",
     "@types/jsonwebtoken": "^9.0.10",
-    "@types/node": "^22.19.7",
+    "@types/node": "^22.19.13",
     "concurrently": "^9.2.1",
-    "eslint": "^9.39.2",
+    "eslint": "^9.39.3",
     "eslint-config-prettier": "^10.1.8",
-    "prisma": "^6.19.2",
+    "prisma": "^7.4.2",
     "typescript": "^5.9.3",
-    "typescript-eslint": "^8.53.1"
+    "typescript-eslint": "^8.56.1"
   }
 }

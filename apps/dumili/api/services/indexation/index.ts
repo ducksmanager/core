@@ -25,7 +25,7 @@ import { RequiredAuthMiddleware } from "../_auth";
 import namespaces from "../namespaces";
 import { runKumikoOnPages } from "./kumiko";
 import { runOcrOnImage } from "./ocr";
-import { getStoriesFromImage, getStoriesFromKeywords } from "./story-search";
+import { getStoriesFromImage, getFullStoriesFromKeywords } from "./story-search";
 
 const indexationPayloadInclude = {
   user: true,
@@ -228,7 +228,7 @@ const createAiStorySuggestions = async (
                   firstPageOfEntry.image,
                   entry.acceptedStoryKind?.storyKindRows?.kind === COVER,
                 )
-              : await getStoriesFromKeywords(
+              : await getFullStoriesFromKeywords(
                   (
                     await runOcrOnImage(
                       services,

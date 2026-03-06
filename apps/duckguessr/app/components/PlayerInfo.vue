@@ -80,8 +80,9 @@ const src = computed(() =>
 const { t } = useI18n();
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .b-avatar {
+  z-index: 1;
   max-width: initial;
   &.top-player:after {
     position: absolute;

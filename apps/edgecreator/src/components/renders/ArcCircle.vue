@@ -13,11 +13,11 @@
       can-be-transparent
     />
   </template>
-  <svg v-else>
+  <g v-else>
     <ellipse ref="ellipse" v-bind="{ cx, cy, rx, ry, fill, stroke }">
       <metadata>{{ $props }}</metadata>
     </ellipse>
-  </svg>
+  </g>
 </template>
 
 <script setup lang="ts">

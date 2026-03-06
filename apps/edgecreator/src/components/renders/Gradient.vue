@@ -19,7 +19,7 @@
       :select-options="[$t('Vertical'), $t('Horizontal')]"
     />
   </template>
-  <svg v-else>
+  <g v-else>
     <g>
       <defs>
         <linearGradient
@@ -43,7 +43,7 @@
         <metadata>{{ $props }}</metadata>
       </rect>
     </g>
-  </svg>
+  </g>
 </template>
 
 <script setup lang="ts">

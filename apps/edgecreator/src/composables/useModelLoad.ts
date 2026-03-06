@@ -140,6 +140,7 @@ export default () => {
     if (!dimensions.length) {
       throw new Error("No dimensions");
     }
+    const { publicationcode, issuenumber } = coa().issuecodeDetails[issuecode];
     const steps: OptionNameAndValue[][] = [];
     let stepNumber = 0;
     for (const {
@@ -149,30 +150,31 @@ export default () => {
     } of Object.values(apiSteps).filter(
       ({ stepNumber: originalStepNumber }) => originalStepNumber !== -1,
     )) {
-      const componentName = Object.keys(rendersStore.supportedRenders).find(
-        (componentName) => {
-          const component =
-            rendersStore.supportedRenders[
-              componentName as keyof typeof rendersStore.supportedRenders
-            ];
-          return (
-            "originalName" in component &&
-            originalComponentName === component.originalName
-          );
-        },
-      );
+      const componentName = (
+        Object.keys(
+          rendersStore.supportedRenders,
+        ) as (keyof typeof rendersStore.supportedRenders)[]
+      ).find((componentName) => {
+        const component = rendersStore.supportedRenders[componentName];
+        return (
+          "originalName" in component &&
+          originalComponentName === component.originalName
+        );
+      });
       if (componentName) {
         try {
           stepStore.setOptionValues(
             optionObjectToArray(
               (await getOptionsFromDb(
-                issuecode,
+                publicationcode,
+                issuenumber,
                 stepNumber,
                 {
                   component: componentName,
                   options: originalOptions,
                 } as LegacyComponent,
                 dimensions[0],
+                edgeCreatorEvents.getImageInfo,
                 calculateBase64,
               ))!,
             ),

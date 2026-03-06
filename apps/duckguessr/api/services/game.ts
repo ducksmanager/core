@@ -378,7 +378,7 @@ export const createGameSocket = async (gameId: number) => {
           { _socket, playerConnectedToMatch: playerConnectedToMatchEvent },
           next: (error?: Error) => void,
         ) => {
-          getPlayer(_socket.handshake.auth.cookie).then((user) => {
+          getPlayer(_socket.handshake.auth).then((user) => {
             if (user) {
               _socket.data.user = user;
               _socket.data.currentGame = currentGame;

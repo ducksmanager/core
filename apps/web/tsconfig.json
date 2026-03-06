@@ -19,8 +19,7 @@
     "types": [
       "vite/client",
       "unplugin-icons/types/vue",
-      "@vue-macros/reactivity-transform/macros-global",
-      "unplugin-vue-router/client"
+      "@vue-macros/reactivity-transform/macros-global"
     ],
     "paths": {
       "~/*": [
@@ -53,7 +52,7 @@
     "src/**/*.vue",
     "auto-imports.d.ts",
     "vite.config.ts",
-    "typed-router.d.ts"
+    "src/route-map.d.ts"
   ],
   "exclude": [
     "dist",

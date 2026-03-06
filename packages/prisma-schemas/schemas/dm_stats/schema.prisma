@@ -1,12 +1,10 @@
 generator client {
-  provider   = "prisma-client"
-  output     = "../../client_dm_stats"
-  engineType = "client"
+  provider = "prisma-client"
+  output   = "../../client_dm_stats"
 }
 
 datasource db {
   provider = "mysql"
-  url      = env("DATABASE_URL_DM_STATS")
 }
 
 model authorStory {
@@ -20,33 +18,30 @@ model authorStory {
 }
 
 model authorUser {
+  userId     Int    @map("ID_User")
   personcode String @map("NomAuteurAbrege") @db.VarChar(79)
-  userId     Int    @map("ID_user")
-  notation   Int    @default(-1) @map("Notation")
+  notation   Int?   @map("Notation") @db.TinyInt
 
-  @@unique([userId, personcode], map: "auteurs_pseudos_uindex")
-  @@index([userId], map: "auteurs_pseudos_ID_user_index")
+  @@id([userId, personcode])
   @@map("auteurs_pseudos")
 }
 
 model issueSimple {
-  id        Int     @id @default(autoincrement()) @map("ID")
-  userId    Int     @map("ID_Utilisateur")
-  issuecode String? @default(dbgenerated("(concat(convert(`Pays` using utf8mb3),'/',convert(`Magazine` using utf8mb3),' ',`Numero`))")) @map("issuecode") @db.VarChar(25)
+  userId          Int    @map("ID_Utilisateur")
+  Publicationcode String @db.VarChar(12)
+  Numero          String @db.VarChar(12)
 
-  @@index([userId], map: "Utilisateur")
-  @@index([issuecode], map: "issuecode")
-  @@index([issuecode, userId], map: "issuecode_user")
+  @@id([userId, Publicationcode, Numero])
+  @@index([userId], map: "ID_Utilisateur")
+  @@index([Publicationcode, Numero], map: "user_issue")
   @@map("numeros_simple")
 }
 
 model storyIssue {
-  ID              Int     @id @default(autoincrement())
-  storycode       String  @db.VarChar(19)
-  publicationcode String? @db.VarChar(12)
-  issuenumber     String? @db.VarChar(12)
-  issuecode       String  @db.VarChar(25)
-  oldestdate      String? @db.VarChar(10)
+  ID         Int     @id @default(autoincrement())
+  storycode  String  @db.VarChar(19)
+  issuecode  String  @db.VarChar(25)
+  oldestdate String? @db.VarChar(10)
 
   @@unique([issuecode, storycode], map: "unique_index")
   @@index([issuecode], map: "index_issue")
@@ -78,13 +73,10 @@ model missingIssueForUser {
   oldestdate      String? @db.VarChar(10)
   notation        Int     @map("Notation") @db.UnsignedTinyInt
 
-  @@unique([userId, personcode, storycode, publicationcode, issuenumber], map: "unique_index")
-  @@unique([userId, personcode, storycode, issuecode], map: "unique_index_issuecode")
-  @@index([userId, publicationcode, issuenumber], map: "missing_user_issue")
-  @@index([userId, publicationcode, issuenumber, oldestdate], map: "suggested")
+  @@unique([userId, personcode, storycode, issuecode], map: "unique_index")
+  @@index([userId, issuecode], map: "missing_user_issue")
+  @@index([userId, issuecode, oldestdate], map: "suggested")
   @@index([userId, personcode, storycode], map: "user_stories")
-  @@index([userId, issuecode], map: "missing_user_issue_issuecode")
-  @@index([userId, issuecode, oldestdate], map: "suggested_issuecode")
   @@map("utilisateurs_publications_manquantes")
 }
 
@@ -99,8 +91,7 @@ model suggestedIssueForUser {
   oldestdate      String? @db.VarChar(10)
   score           Int     @map("Score")
 
-  @@unique([userId, publicationcode, issuenumber], map: "suggested_issue_for_user")
-  @@unique([userId, issuecode], map: "suggested_issue_for_user_issuecode")
+  @@unique([userId, issuecode], map: "suggested_issue_for_user")
   @@index([userId], map: "suggested_issue_user")
   @@map("utilisateurs_publications_suggerees")
 }

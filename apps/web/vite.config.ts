@@ -8,8 +8,8 @@ import AutoImport from "unplugin-auto-import/vite";
 import IconsResolve from "unplugin-icons/resolver";
 import Icons from "unplugin-icons/vite";
 import Components from "unplugin-vue-components/vite";
-import { VueRouterAutoImports } from "unplugin-vue-router";
-import VueRouter from "unplugin-vue-router/vite";
+import VueRouter from "vue-router/vite";
+import { VueRouterAutoImports } from "vue-router/unplugin";
 import { defineConfig } from "vite";
 
 import getViteAliases from "../../vite-aliases";
@@ -27,7 +27,9 @@ export default defineConfig({
   },
   plugins: [
     ReactivityTransform(),
-    VueRouter(),
+    VueRouter({
+      dts: "src/route-map.d.ts",
+    }),
     Vue(),
 
     // https://github.com/intlify/bundle-tools/tree/main/packages/unplugin-vue-i18n

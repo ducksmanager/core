@@ -16,15 +16,15 @@ meta:
     <IssueList
       v-if="publicationcode || mostPossessedPublication"
       readonly
-      :publicationcode="(publicationcode || mostPossessedPublication)!"
+      :publicationcode="(publicationcode || mostPossessedPublication) as string"
     />
   </div>
 </template>
 
 <script lang="ts" setup>
 const route = useRoute<"/collection/user/[username]/[[...all]]">();
-const username = computed(() => route.params.username);
-const publicationcode = computed(() => route.params.all);
+const username = computed(() => route.params.username as string);
+const publicationcode = computed(() => route.params.all as string);
 
 const { loadPublicCollection } = publicCollection();
 const { mostPossessedPublication, issues } = storeToRefs(publicCollection());

@@ -1,12 +1,10 @@
 generator client {
-  provider   = "prisma-client"
-  output     = "../../client_cover_info"
-  engineType = "client"
+  provider = "prisma-client"
+  output   = "../../client_cover_info"
 }
 
 datasource db {
   provider = "mysql"
-  url      = env("DATABASE_URL_COVER_INFO")
 }
 
 model coverImport {
@@ -19,11 +17,19 @@ model coverImport {
 }
 
 model cover {
-  id        Int    @id @default(autoincrement()) @map("ID")
-  issuecode String @map("issuecode") @db.VarChar(17)
-  sitecode  String @db.VarChar(11)
-  url       String @db.VarChar(98)
+  id              Int     @id @default(autoincrement()) @map("ID")
+  issuecode       String  @map("issuecode") @db.VarChar(17)
+  sitecode        String  @db.VarChar(11)
+  url             String  @db.VarChar(98)
+  short_issuecode String? @db.VarChar(19)
 
   @@unique([issuecode, url], map: "uniquefieldset_covers")
   @@map("covers")
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+model covers_in_index_tmp {
+  id Int?
+
+  @@ignore
 }

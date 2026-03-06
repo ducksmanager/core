@@ -6,6 +6,7 @@ import { useSocketEvents } from "socket-call-server";
 import game from "../game";
 import type { SessionUser } from "../types/SessionUser";
 import namespaces from "./namespaces";
+import { RequiredPlayerMiddleware } from "../middlewares/required-player";
 
 export type MatchServices = NamespaceProxyTarget<
   Socket<
@@ -31,7 +32,7 @@ const { client, server } = useSocketEvents<
   Record<string, never>
 >(namespaces.MATCH, {
   listenEvents,
-  middlewares: [],
+  middlewares: [RequiredPlayerMiddleware],
 });
 
 export { client, server };

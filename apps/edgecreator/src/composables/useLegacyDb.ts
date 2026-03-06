@@ -1,9 +1,9 @@
 import type { EdgeDimensions } from "~/types/EdgeDimensions";
 import type { LegacyComponent } from "~/types/LegacyComponent";
 import type { StepOptions } from "~/types/StepOptions";
-import { coa } from "~web/src/stores/coa";
-
-import { edgecreatorSocketInjectionKey } from "./useEdgecreatorSocket";
+import type { ClientEvents as EdgeCreatorClientEvents } from "~edgecreator-services/image-info";
+import type { EventOutput } from "socket-call-client";
+import useTextTemplate from "~/composables/useTextTemplate";
 
 const { resolveIssueNumberTemplate } = useTextTemplate();
 
@@ -20,8 +20,6 @@ const rgbToHex = (color: string) => {
 };
 
 export default () => {
-  const { imageInfo: imageInfoEvents } = inject(edgecreatorSocketInjectionKey)!;
-
   const getImageSize = (url: string): Promise<EdgeDimensions> =>
     new Promise((resolve, reject) => {
       const img = new Image();
@@ -39,11 +37,15 @@ export default () => {
     }
   };
   const getOptionsFromDb = async (
-    issuecode: string,
+    publicationcode: string,
+    issuenumber: string,
     stepNumber: number,
     { component: targetComponent, options: dbOptions }: LegacyComponent,
     edgeDimensions: EdgeDimensions,
-    calculateBase64 = true,
+    getImageInfoFn: (
+      elementPath: string,
+    ) => Promise<EventOutput<EdgeCreatorClientEvents, "getImageInfo">>,
+    calculateBase64: boolean,
   ) => {
     switch (targetComponent) {
       case "ArcCircle": {
@@ -112,8 +114,6 @@ export default () => {
         };
       }
       case "Image": {
-        const { publicationcode, issuenumber } =
-          coa().issuecodeDetails[issuecode];
         const [country] = publicationcode.split("/");
         validateOptions(
           [
@@ -134,7 +134,7 @@ export default () => {
 
           let image;
           if (calculateBase64) {
-            image = await imageInfoEvents.getImageInfo(elementPath);
+            image = await getImageInfoFn(elementPath);
             if ("errorDetails" in image) {
               console.error(
                 `Image could not be retrieved : ${image.errorDetails}`,
@@ -216,10 +216,11 @@ export default () => {
       }
       case "Staple": {
         validateOptions(["Y1", "Y2", "Taille_agrafe"], dbOptions);
+        const yDistanceFromCenter =
+          parseFloat(String(dbOptions.Y2)) - edgeDimensions.height / 2;
         return {
           component: targetComponent,
-          y1: dbOptions.Y1,
-          y2: dbOptions.Y2,
+          yDistanceFromCenter,
           height: dbOptions.Taille_agrafe,
         };
       }

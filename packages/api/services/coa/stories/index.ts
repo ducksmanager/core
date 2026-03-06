@@ -5,20 +5,88 @@ import type { inducks_story } from "~prisma-schemas/schemas/coa";
 import { Prisma } from "~prisma-schemas/schemas/coa";
 import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa/client";
 
-export default {
-  getStoryDetails: async (storycodes: string[]) =>
-    !storycodes.length
-      ? {
-          stories: {} as Record<string, inducks_story>,
-          storyUrls: {} as Record<string, string>,
-        }
-      : Promise.all([
-          prismaCoa.inducks_story.findMany({
-            where: {
-              storycode: { in: storycodes },
-            },
-          }),
-          prismaCoa.$queryRaw<{ storycode: string; url: string }[]>`
+const STORY = "n";
+
+const getStoryAndStoryversionDetails = async (
+  searchResults: StorySearchResults<false>["results"],
+) => {
+  const storyDetailsOutput = await getStoryDetails(
+    searchResults.map(({ storycode }) => storycode),
+  );
+
+  if (!("stories" in storyDetailsOutput)) {
+    return {
+      error: `Error when calling getStoryDetails`,
+    };
+  }
+  const storyDetails = storyDetailsOutput.stories;
+  const storyUrls = storyDetailsOutput.storyUrls;
+
+  const storyversionDetailsOutput = await getStoryversionsDetails(
+    searchResults.map(
+      ({ storycode }) => storyDetails[storycode].originalstoryversioncode!,
+    ),
+  );
+
+  if (!("storyversions" in storyversionDetailsOutput)) {
+    return {
+      error: `Error when calling getStoryversionsDetails`,
+    };
+  }
+
+  const storyversionDetails = storyversionDetailsOutput.storyversions;
+
+  return searchResults
+    .filter(
+      ({ storycode }) =>
+        storyversionDetails[storyDetails[storycode].originalstoryversioncode!]
+          .kind === STORY,
+    )
+    .map(({ storycode, score }) => {
+      const storyversion = storyversionDetails[storyDetails[storycode].originalstoryversioncode!];
+    return ({
+      ...storyDetails[storycode],
+      ...storyversion,
+      kind: storyversion.kind!,
+      score,
+      storycode,
+      url: storyUrls[storycode],
+    });
+  });
+};
+
+const getFullStoriesFromKeywords = async (keywords: string[]) => {
+  const { results: searchResults, hasMore } = await searchStory(keywords, {
+    withIssues: false,
+  });
+
+  const stories = await getStoryAndStoryversionDetails(searchResults);
+
+  if ("error" in stories) {
+    return {
+      error: `Error when calling getStoryAndStoryversionDetails`,
+    };
+  }
+
+  return {
+    stories,
+    hasMore,
+  };
+};
+
+const getStoryDetails = async (storycodes: string[]) =>
+  !storycodes.length
+    ? {
+        stories: {} as Record<string, inducks_story>,
+        storyUrls: {} as Record<string, string>,
+      }
+    : Promise.all([
+        prismaCoa.inducks_story.findMany({
+          where: {
+            storycode: { in: storycodes },
+          },
+        }),
+        prismaCoa.$queryRaw<{ storycode: string; url: string }[]>`
             SELECT s.storycode,
                    MIN(CONCAT('webusers/webusers/', eu.url)) AS url
             FROM inducks_story s
@@ -29,45 +97,45 @@ export default {
               AND s.storycode IN (${Prisma.join(storycodes)})
               AND eu.sitecode = 'webusers'
             GROUP BY s.storycode`,
-        ])
-          .then(([stories, storyUrls]) => ({
-            stories: stories.groupBy("storycode"),
-            storyUrls: storyUrls.groupBy("storycode", "url"),
-          }))
-          .catch((e) => ({ error: "Error", errorDetails: e })),
+      ])
+        .then(([stories, storyUrls]) => ({
+          stories: stories.groupBy("storycode"),
+          storyUrls: storyUrls.groupBy("storycode", "url"),
+        }))
+        .catch((e) => ({ error: "Error", errorDetails: e }));
 
-  getStoryversionsDetails: (storyversioncodes: string[]) =>
-    prismaCoa.inducks_storyversion
-      .findMany({
-        where: {
-          storyversioncode: { in: storyversioncodes },
-        },
-      })
-      .then((data) => ({ storyversions: data.groupBy("storyversioncode") }))
-      .catch((e) => ({ error: "Error", errorDetails: e })),
+const getStoryversionsDetails = (storyversioncodes: string[]) =>
+  prismaCoa.inducks_storyversion
+    .findMany({
+      where: {
+        storyversioncode: { in: storyversioncodes },
+      },
+    })
+    .then((data) => ({ storyversions: data.groupBy("storyversioncode") }))
+    .catch((e) => ({ error: "Error", errorDetails: e }));
 
-  getStoryjobs: (storyversioncode: string) =>
-    prismaCoa.inducks_storyjob
-      .findMany({
-        where: {
-          storyversioncode,
-        },
-      })
-      .then((data) => ({ data }))
-      .catch((e) => ({ error: "Error", errorDetails: e })),
+const getStoryjobs = (storyversioncode: string) =>
+  prismaCoa.inducks_storyjob
+    .findMany({
+      where: {
+        storyversioncode,
+      },
+    })
+    .then((data) => ({ data }))
+    .catch((e) => ({ error: "Error", errorDetails: e }));
 
-  searchStory: async <WithIssues extends boolean>(
-    keywords: string[],
-    options: {
-      withIssues: WithIssues;
-      kind?: SimpleStory["kind"];
-    },
-  ) => {
-    const limit = 10;
-    const joinedKeywords = keywords.join(" ");
-    let results = await prismaCoa.$queryRaw<
-      StorySearchResults<WithIssues>["results"]
-    >`
+const searchStory = async <WithIssues extends boolean>(
+  keywords: string[],
+  options: {
+    withIssues: WithIssues;
+    kind?: SimpleStory["kind"];
+  },
+) => {
+  const limit = 10;
+  const joinedKeywords = keywords.join(" ");
+  let results = await prismaCoa.$queryRaw<
+    StorySearchResults<WithIssues>["results"]
+  >`
       SELECT inducks_storyversion.storycode,
              inducks_storyversion.entirepages,
              inducks_storyversion.kind,
@@ -84,35 +152,35 @@ export default {
       LIMIT ${limit + 1}
   `;
 
-    const hasMore = results.length > limit;
-    results = results.slice(0, limit);
+  const hasMore = results.length > limit;
+  results = results.slice(0, limit);
 
-    if (options.withIssues) {
-      const resultsWithIssues: StorySearchResults<true>["results"] = [];
-      for (const idx of results.keys()) {
-        resultsWithIssues[idx] = {
-          ...results[idx],
-          issues: await listIssuesFromStoryCode(results[idx].storycode),
-        };
-      }
-
-      return {
-        results: resultsWithIssues,
-        hasMore,
-      };
-    } else {
-      return {
-        results,
-        hasMore,
+  if (options.withIssues) {
+    const resultsWithIssues: StorySearchResults<true>["results"] = [];
+    for (const idx of results.keys()) {
+      resultsWithIssues[idx] = {
+        ...results[idx],
+        issues: await listIssuesFromStoryCode(results[idx].storycode),
       };
     }
-  },
 
-  searchStoryByStorycode: async (partialStorycode: string) => {
-    const limit = 10;
-    let results = await prismaCoa.$queryRaw<
-      StorySearchResults<false>["results"]
-    >`
+    return {
+      results: resultsWithIssues,
+      hasMore,
+    };
+  } else {
+    return {
+      results,
+      hasMore,
+    };
+  }
+};
+
+const searchStoryByStorycode = async (partialStorycode: string) => {
+  const limit = 10;
+  const results = await prismaCoa.$queryRaw<
+    StorySearchResults<false>["results"]
+  >`
       SELECT storycode, title,
       MATCH (storycode) AGAINST (${partialStorycode}) as score
       FROM inducks_story
@@ -122,13 +190,21 @@ export default {
       LIMIT ${limit + 1}
   `;
 
-    const hasMore = results.length > limit;
-    results = results.slice(0, limit);
+  const hasMore = results.length > limit;
+  const resultsWithDetails = await getStoryAndStoryversionDetails(
+    results.slice(0, limit),
+  );
+
+  if ("error" in resultsWithDetails) {
     return {
-      results,
-      hasMore,
+      error: `Error when calling getStoryAndStoryversionDetails`,
     };
-  },
+  }
+
+  return {
+    stories: resultsWithDetails,
+    hasMore,
+  };
 };
 
 const listIssuesFromStoryCode = async (storycode: string) =>
@@ -145,3 +221,13 @@ const listIssuesFromStoryCode = async (storycode: string) =>
     WHERE sv.storycode = ${storycode}
     GROUP BY i.issuecode
   `;
+
+export default {
+  getFullStoriesFromKeywords,
+  getStoryDetails,
+  getStoryversionsDetails,
+  getStoryjobs,
+  searchStory,
+  searchStoryByStorycode,
+  listIssuesFromStoryCode,
+};

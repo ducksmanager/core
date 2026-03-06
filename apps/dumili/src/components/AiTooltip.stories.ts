@@ -1,17 +1,5 @@
 import preview from "../../.storybook/preview";
-import type { DefineComponent } from "vue";
 import AiTooltip from "./AiTooltip.vue";
-
-// Type alias for the generic component to avoid type issues
-type AiTooltipComponent = DefineComponent<{
-  id: string;
-  status: "success" | "failure" | "idle";
-  topCenter?: boolean;
-  loadingEvents?: Array<{
-    eventName: string;
-    checkMatch: (id: number) => boolean;
-  }>;
-}>;
 
 const meta = preview.meta({
   title: "Components/AiTooltip",

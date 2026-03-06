@@ -1,3 +1,5 @@
+name: dumili-api
+
 services:
   kumiko:
     restart: always

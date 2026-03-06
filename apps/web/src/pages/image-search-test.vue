@@ -193,27 +193,38 @@ const models = ref<
     results?: Results;
   }[]
 >([
-  {
-    model: "Legacy (WTD 2-3)",
-    modelData: "covers",
-    getIndexSize: () =>
-      coverIdEvents
-        .getIndexSize()
-        .then((result) => ("error" in result ? result : result.numberOfImages)),
-    run: async (base64: string) => {
-      try {
-        const searchResults = await coverIdEvents.searchFromCover(base64);
+  ...[0, 1].map(
+    (pastecIndex) =>
+      ({
+        model: `Legacy (WTD 2-3) - Pastec server ${pastecIndex}`,
+        modelData: "covers",
+        getIndexSize: () =>
+          coverIdEvents
+            .getIndexSize()
+            .then((result) =>
+              "error" in result ? result : result.numberOfImages,
+            ),
+        run: async (base64: string) => {
+          console.log(
+            `Running search from cover with pastec server ${pastecIndex}`,
+          );
+          try {
+            const searchResults = await coverIdEvents.searchFromCover(
+              base64,
+              pastecIndex,
+            );
 
-        return "error" in searchResults
-          ? { error: searchResults.errorDetails || "Error" }
-          : searchResults.covers;
-      } catch (error) {
-        return typeof error === "object" && "errorDetails" in error!
-          ? { error: (error.errorDetails as string) || "Error" }
-          : { error: "Error" };
-      }
-    },
-  },
+            return "error" in searchResults
+              ? { error: searchResults.errorDetails || "Error" }
+              : searchResults.covers;
+          } catch (error) {
+            return typeof error === "object" && "errorDetails" in error!
+              ? { error: (error.errorDetails as string) || "Error" }
+              : { error: "Error" };
+          }
+        },
+      }) as const,
+  ),
   {
     model: "Experimental",
     modelData: "covers",

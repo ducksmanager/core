@@ -17,7 +17,7 @@ export default (issues: ShallowRef<ServiceIssues | undefined>) => {
     if (!issues.value) return issues.value;
 
     const groupedByCountry = issues.value.groupBy(
-      ({ issuecode }) => issuecode.split("/")[0],
+      ({ issuecode }) => issuecode?.split("/")[0],
       "[]",
     );
 
