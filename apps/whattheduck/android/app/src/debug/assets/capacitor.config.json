@@ -1,0 +1,17 @@
+{
+	"appId": "net.ducksmanager.whattheduck.debug",
+	"appName": "What The Duck",
+	"webDir": "dist",
+	"server": {
+		"url": "http://192.168.1.147:8008",
+		"cleartext": true,
+		"androidScheme": "http"
+	},
+	"android": {
+		"webContentsDebuggingEnabled": true,
+		"allowMixedContent": true
+	},
+	"ios": {
+		"scheme": "What The Duck"
+	}
+}

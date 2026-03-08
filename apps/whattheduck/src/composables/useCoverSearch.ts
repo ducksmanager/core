@@ -38,9 +38,7 @@ export default (
       .finally(async () => {
         if (results?.length) {
           if (Capacitor.isNativePlatform()) {
-            if ((await CameraPreview.isRunning()).isRunning) {
-              await CameraPreview.stop();
-            }
+            await CameraPreview.stop().catch(() => {});
           }
           app().isCameraPreviewShown = false;
           await router.push({

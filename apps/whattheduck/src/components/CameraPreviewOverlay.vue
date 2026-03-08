@@ -1,55 +1,57 @@
 <template>
-  <div v-if="boundingClientRect" id="camera-bg-overlays" aria-hidden="true">
-    <div class="camera-bg-overlay camera-bg-top" :style="{ height: `${boundingClientRect.y}px` }" />
-    <div
-      class="camera-bg-overlay camera-bg-bottom"
-      :style="{ top: `${boundingClientRect.y + boundingClientRect.height}px` }"
-    />
-    <div
-      class="camera-bg-overlay camera-bg-left"
-      :style="{
-        top: `${boundingClientRect.y}px`,
-        width: `${boundingClientRect.x}px`,
-        height: `${boundingClientRect.height}px`,
-      }"
-    />
-    <div
-      class="camera-bg-overlay camera-bg-right"
-      :style="{
-        top: `${boundingClientRect.y}px`,
-        left: `${boundingClientRect.x + boundingClientRect.width}px`,
-        height: `${boundingClientRect.height}px`,
-      }"
-    />
-  </div>
-  <div id="camera-preview" ref="cameraPreview"></div>
-  <ion-row id="overlay" ref="overlay" :class="{ portrait: isPortrait, landscape: !isPortrait }">
-    <ion-button ref="takePhotoButton" size="large" :disabled="isSearching" @click="takePhoto()">
-      <ion-icon :ios="apertureOutline" :md="apertureSharp" />
-    </ion-button>
-    <ion-button
-      size="large"
-      color="danger"
-      :disabled="isSearching"
-      @click="CameraPreview.stop().finally(() => (isCameraPreviewShown = false))"
-    >
-      <ion-icon :ios="closeOutline" :md="closeSharp" />
-    </ion-button>
-    <div
-      id="ratio-buttons"
-      style="display: flex; position: absolute; bottom: 0; right: 0"
-      class="ion-align-items-center"
-    >
-      <ion-button color="light" fill="clear" @click="currentRatioIndex = 1 - currentRatioIndex"
-        ><ion-icon
-          v-for="(ratio, index) in RATIOS"
-          :key="ratio.name"
-          :icon="ratio.icon"
-          :class="{ selected: currentRatioIndex === index }"
-        ></ion-icon
-      ></ion-button>
+  <div id="camera-preview-container" :class="{ portrait: isPortrait, landscape: !isPortrait }">
+    <div v-if="boundingClientRect" id="camera-bg-overlays" aria-hidden="true">
+      <div class="camera-bg-overlay camera-bg-top" :style="{ height: `${boundingClientRect.y}px` }" />
+      <div
+        class="camera-bg-overlay camera-bg-bottom"
+        :style="{ top: `${boundingClientRect.y + boundingClientRect.height}px` }"
+      />
+      <div
+        class="camera-bg-overlay camera-bg-left"
+        :style="{
+          top: `${boundingClientRect.y}px`,
+          width: `${boundingClientRect.x}px`,
+          height: `${boundingClientRect.height}px`,
+        }"
+      />
+      <div
+        class="camera-bg-overlay camera-bg-right"
+        :style="{
+          top: `${boundingClientRect.y}px`,
+          left: `${boundingClientRect.x + boundingClientRect.width}px`,
+          height: `${boundingClientRect.height}px`,
+        }"
+      />
     </div>
-  </ion-row>
+    <div id="camera-preview" ref="cameraPreview"></div>
+    <ion-row id="overlay" ref="overlay" :class="{ portrait: isPortrait, landscape: !isPortrait }">
+      <ion-button ref="takePhotoButton" size="large" :disabled="isSearching" @click="takePhoto()">
+        <ion-icon :ios="apertureOutline" :md="apertureSharp" />
+      </ion-button>
+      <ion-button
+        size="large"
+        color="danger"
+        :disabled="isSearching"
+        @click="CameraPreview.stop().finally(() => (isCameraPreviewShown = false))"
+      >
+        <ion-icon :ios="closeOutline" :md="closeSharp" />
+      </ion-button>
+      <div
+        id="ratio-buttons"
+        style="display: flex; position: absolute; bottom: 0; right: 0"
+        class="ion-align-items-center"
+      >
+        <ion-button color="light" fill="clear" @click="currentRatioIndex = 1 - currentRatioIndex"
+          ><ion-icon
+            v-for="(ratio, index) in RATIOS"
+            :key="ratio.name"
+            :icon="ratio.icon"
+            :class="{ selected: currentRatioIndex === index }"
+          ></ion-icon
+        ></ion-button>
+      </div>
+    </ion-row>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -115,8 +117,9 @@ watch(isCameraPreviewShown, () => {
 });
 
 watch([overlayHeight, currentRatioIndex], async () => {
-  if (overlayHeight.value) {
-    const rect = cameraPreview.value!.getBoundingClientRect();
+  if (overlayHeight.value && cameraPreview.value) {
+    await nextTick();
+    const rect = cameraPreview.value.getBoundingClientRect();
     boundingClientRect.value = Object.entries(rect.toJSON()).reduce((acc, [key, value]) => {
       acc[key as keyof BoundingClientRect] = parseInt((value as number).toFixed());
       return acc;
@@ -145,18 +148,37 @@ watch([overlayHeight, currentRatioIndex], async () => {
         parent: 'camera-preview',
         disableAudio: true,
         position: 'rear',
+        force: true,
+        toBack: true,
         ...boundingClientRect.value,
       } as const;
-      if ((await CameraPreview.isRunning()).isRunning) {
-        await CameraPreview.stop();
+      try {
+        await CameraPreview.start(cameraPreviewOptions);
+      } catch (err) {
+        console.error('CameraPreview.start failed:', err);
       }
-      await CameraPreview.start(cameraPreviewOptions);
     }
   }
 });
 </script>
 
 <style scoped>
+#camera-preview-container {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  background: transparent;
+}
+#camera-preview-container.portrait #camera-preview {
+  flex: 1;
+  min-height: 0;
+}
+#camera-preview-container.landscape #camera-preview {
+  flex: 1;
+  min-width: 0;
+}
 #camera-bg-overlays {
   position: fixed;
   inset: 0;

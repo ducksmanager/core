@@ -2,4 +2,6 @@
 <resources>
     <string name="app_name">_What The Duck</string>
     <string name="title_activity_main">_What The Duck</string>
+    <string name="package_name">net.ducksmanager.whattheduck.debug</string>
+    <string name="custom_url_scheme">net.ducksmanager.whattheduck.debug</string>
 </resources>

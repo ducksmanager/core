@@ -169,7 +169,8 @@ ion-app.camera-preview-active ion-content,
 ion-app.camera-preview-active .ion-content,
 ion-app.camera-preview-active .ion-page,
 ion-app.camera-preview-active .ion-content::part(scroll),
-ion-app.camera-preview-active ion-split-pane {
+ion-app.camera-preview-active ion-split-pane,
+#camera-preview-container {
   --ion-background-color: transparent !important;
   --background: transparent !important;
   background: transparent !important;
