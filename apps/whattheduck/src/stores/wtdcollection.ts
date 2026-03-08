@@ -71,14 +71,18 @@ export const wtdcollection = defineStore('wtdcollection', () => {
         // TODO register for notifications
       })();
     },
-    highestQuotedIssue = computedAsync(async () => {
-      const issue = quotedIssues.value?.sort((a, b) => b.estimationGivenCondition - a.estimationGivenCondition)[0];
-      if (issue) {
-        await coa().fetchIssuecodeDetails([issue.issuecode]);
-        return { ...issue, ...coa().issuecodeDetails[issue.issuecode] };
-      }
-      return issue;
-    }),
+    highestQuotedIssue = computedAsync(
+      async () => {
+        const issue = quotedIssues.value?.sort((a, b) => b.estimationGivenCondition - a.estimationGivenCondition)[0];
+        if (issue) {
+          await coa().fetchIssuecodeDetails([issue.issuecode]);
+          return { ...issue, ...coa().issuecodeDetails[issue.issuecode] };
+        }
+        return issue;
+      },
+      undefined,
+      { flush: 'post' },
+    ),
     getCollectionIssues = (issuecode: string) =>
       issues.value!.filter(({ issuecode: collectionIssuecode }) => collectionIssuecode === issuecode);
 

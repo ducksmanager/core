@@ -16,8 +16,7 @@ Dumili Auto-indexer is a Chrome/Firefox extension that helps you fill the Induck
 
 ## Permissions
 
-- **activeTab:** Used only when you use the extension, to read and fill form fields on the current Inducks page.
-- **Content script on inducks.org:** The extension runs solely on inducks.org/onlineinx.php to provide the helper interface.
+- **Content script on inducks.org:** The extension runs solely on inducks.org/onlineinx.php to provide the helper interface. No additional permissions are required.
 
 ## Third-Party Sharing
 

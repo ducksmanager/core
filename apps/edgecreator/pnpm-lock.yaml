@@ -42,11 +42,11 @@ importers:
         specifier: ^3.1.2
         version: 3.1.2(vue@3.5.29(typescript@5.9.3))
       '@vueuse/core':
-        specifier: ^13.9.0
-        version: 13.9.0(vue@3.5.29(typescript@5.9.3))
+        specifier: ^14.2.1
+        version: 14.2.1(vue@3.5.29(typescript@5.9.3))
       '@vueuse/integrations':
-        specifier: ^13.9.0
-        version: 13.9.0(axios@1.13.6)(universal-cookie@7.2.2)(vue@3.5.29(typescript@5.9.3))
+        specifier: ^14.2.1
+        version: 14.2.1(axios@1.13.6)(universal-cookie@7.2.2)(vue@3.5.29(typescript@5.9.3))
       axios:
         specifier: ^1.13.6
         version: 1.13.6
@@ -58,7 +58,7 @@ importers:
         version: 5.3.8(@popperjs/core@2.11.8)
       bootstrap-vue-next:
         specifier: ^0.42.0
-        version: 0.42.0(@vueuse/core@13.9.0(vue@3.5.29(typescript@5.9.3)))(vue-router@5.0.3(@vue/compiler-sfc@3.5.29)(pinia@3.0.4(typescript@5.9.3)(vue@3.5.29(typescript@5.9.3)))(vue@3.5.29(typescript@5.9.3)))(vue@3.5.29(typescript@5.9.3))
+        version: 0.42.0(@vueuse/core@14.2.1(vue@3.5.29(typescript@5.9.3)))(vue-router@5.0.3(@vue/compiler-sfc@3.5.29)(pinia@3.0.4(typescript@5.9.3)(vue@3.5.29(typescript@5.9.3)))(vue@3.5.29(typescript@5.9.3)))(vue@3.5.29(typescript@5.9.3))
       cropperjs:
         specifier: ^1.6.2
         version: 1.6.2
@@ -185,7 +185,7 @@ importers:
         version: 5.9.3
       unplugin-auto-import:
         specifier: ^21.0.0
-        version: 21.0.0(@vueuse/core@13.9.0(vue@3.5.29(typescript@5.9.3)))
+        version: 21.0.0(@vueuse/core@14.2.1(vue@3.5.29(typescript@5.9.3)))
       unplugin-icons:
         specifier: ^22.5.0
         version: 22.5.0(@vue/compiler-sfc@3.5.29)
@@ -1106,19 +1106,19 @@ packages:
   '@vue/shared@3.5.29':
     resolution: {integrity: sha512-w7SR0A5zyRByL9XUkCfdLs7t9XOHUyJ67qPGQjOou3p6GvBeBW+AVjUUmlxtZ4PIYaRvE+1LmK44O4uajlZwcg==}
 
-  '@vueuse/core@13.9.0':
-    resolution: {integrity: sha512-ts3regBQyURfCE2BcytLqzm8+MmLlo5Ln/KLoxDVcsZ2gzIwVNnQpQOL/UKV8alUqjSZOlpFZcRNsLRqj+OzyA==}
+  '@vueuse/core@14.2.1':
+    resolution: {integrity: sha512-3vwDzV+GDUNpdegRY6kzpLm4Igptq+GA0QkJ3W61Iv27YWwW/ufSlOfgQIpN6FZRMG0mkaz4gglJRtq5SeJyIQ==}
     peerDependencies:
       vue: ^3.5.0
 
-  '@vueuse/integrations@13.9.0':
-    resolution: {integrity: sha512-SDobKBbPIOe0cVL7QxMzGkuUGHvWTdihi9zOrrWaWUgFKe15cwEcwfWmgrcNzjT6kHnNmWuTajPHoIzUjYNYYQ==}
+  '@vueuse/integrations@14.2.1':
+    resolution: {integrity: sha512-2LIUpBi/67PoXJGqSDQUF0pgQWpNHh7beiA+KG2AbybcNm+pTGWT6oPGlBgUoDWmYwfeQqM/uzOHqcILpKL7nA==}
     peerDependencies:
       async-validator: ^4
       axios: ^1
       change-case: ^5
       drauu: ^0.4
-      focus-trap: ^7
+      focus-trap: ^7 || ^8
       fuse.js: ^7
       idb-keyval: ^6
       jwt-decode: ^4
@@ -1153,11 +1153,11 @@ packages:
       universal-cookie:
         optional: true
 
-  '@vueuse/metadata@13.9.0':
-    resolution: {integrity: sha512-1AFRvuiGphfF7yWixZa0KwjYH8ulyjDCC0aFgrGRz8+P4kvDFSdXLVfTk5xAN9wEuD1J6z4/myMoYbnHoX07zg==}
+  '@vueuse/metadata@14.2.1':
+    resolution: {integrity: sha512-1ButlVtj5Sb/HDtIy1HFr1VqCP4G6Ypqt5MAo0lCgjokrk2mvQKsK2uuy0vqu/Ks+sHfuHo0B9Y9jn9xKdjZsw==}
 
-  '@vueuse/shared@13.9.0':
-    resolution: {integrity: sha512-e89uuTLMh0U5cZ9iDpEI2senqPGfbPRTHM/0AaQkcxnpqjkZqDYP8rpfm7edOz8s+pOCOROEy1PIveSW8+fL5g==}
+  '@vueuse/shared@14.2.1':
+    resolution: {integrity: sha512-shTJncjV9JTI4oVNyF1FQonetYAiTBd+Qj7cY89SWbXSkx7gyhrgtEdF2ZAVWS1S3SHlaROO6F2IesJxQEkZBw==}
     peerDependencies:
       vue: ^3.5.0
 
@@ -3876,25 +3876,25 @@ snapshots:
 
   '@vue/shared@3.5.29': {}
 
-  '@vueuse/core@13.9.0(vue@3.5.29(typescript@5.9.3))':
+  '@vueuse/core@14.2.1(vue@3.5.29(typescript@5.9.3))':
     dependencies:
       '@types/web-bluetooth': 0.0.21
-      '@vueuse/metadata': 13.9.0
-      '@vueuse/shared': 13.9.0(vue@3.5.29(typescript@5.9.3))
+      '@vueuse/metadata': 14.2.1
+      '@vueuse/shared': 14.2.1(vue@3.5.29(typescript@5.9.3))
       vue: 3.5.29(typescript@5.9.3)
 
-  '@vueuse/integrations@13.9.0(axios@1.13.6)(universal-cookie@7.2.2)(vue@3.5.29(typescript@5.9.3))':
+  '@vueuse/integrations@14.2.1(axios@1.13.6)(universal-cookie@7.2.2)(vue@3.5.29(typescript@5.9.3))':
     dependencies:
-      '@vueuse/core': 13.9.0(vue@3.5.29(typescript@5.9.3))
-      '@vueuse/shared': 13.9.0(vue@3.5.29(typescript@5.9.3))
+      '@vueuse/core': 14.2.1(vue@3.5.29(typescript@5.9.3))
+      '@vueuse/shared': 14.2.1(vue@3.5.29(typescript@5.9.3))
       vue: 3.5.29(typescript@5.9.3)
     optionalDependencies:
       axios: 1.13.6
       universal-cookie: 7.2.2
 
-  '@vueuse/metadata@13.9.0': {}
+  '@vueuse/metadata@14.2.1': {}
 
-  '@vueuse/shared@13.9.0(vue@3.5.29(typescript@5.9.3))':
+  '@vueuse/shared@14.2.1(vue@3.5.29(typescript@5.9.3))':
     dependencies:
       vue: 3.5.29(typescript@5.9.3)
 
@@ -4018,11 +4018,11 @@ snapshots:
 
   boolbase@1.0.0: {}
 
-  bootstrap-vue-next@0.42.0(@vueuse/core@13.9.0(vue@3.5.29(typescript@5.9.3)))(vue-router@5.0.3(@vue/compiler-sfc@3.5.29)(pinia@3.0.4(typescript@5.9.3)(vue@3.5.29(typescript@5.9.3)))(vue@3.5.29(typescript@5.9.3)))(vue@3.5.29(typescript@5.9.3)):
+  bootstrap-vue-next@0.42.0(@vueuse/core@14.2.1(vue@3.5.29(typescript@5.9.3)))(vue-router@5.0.3(@vue/compiler-sfc@3.5.29)(pinia@3.0.4(typescript@5.9.3)(vue@3.5.29(typescript@5.9.3)))(vue@3.5.29(typescript@5.9.3)))(vue@3.5.29(typescript@5.9.3)):
     dependencies:
       vue: 3.5.29(typescript@5.9.3)
     optionalDependencies:
-      '@vueuse/core': 13.9.0(vue@3.5.29(typescript@5.9.3))
+      '@vueuse/core': 14.2.1(vue@3.5.29(typescript@5.9.3))
       vue-router: 5.0.3(@vue/compiler-sfc@3.5.29)(pinia@3.0.4(typescript@5.9.3)(vue@3.5.29(typescript@5.9.3)))(vue@3.5.29(typescript@5.9.3))
 
   bootstrap@5.3.8(@popperjs/core@2.11.8):
@@ -5588,7 +5588,7 @@ snapshots:
 
   universalify@0.2.0: {}
 
-  unplugin-auto-import@21.0.0(@vueuse/core@13.9.0(vue@3.5.29(typescript@5.9.3))):
+  unplugin-auto-import@21.0.0(@vueuse/core@14.2.1(vue@3.5.29(typescript@5.9.3))):
     dependencies:
       local-pkg: 1.1.2
       magic-string: 0.30.21
@@ -5597,7 +5597,7 @@ snapshots:
       unplugin: 2.3.11
       unplugin-utils: 0.3.1
     optionalDependencies:
-      '@vueuse/core': 13.9.0(vue@3.5.29(typescript@5.9.3))
+      '@vueuse/core': 14.2.1(vue@3.5.29(typescript@5.9.3))
 
   unplugin-icons@22.5.0(@vue/compiler-sfc@3.5.29):
     dependencies:
