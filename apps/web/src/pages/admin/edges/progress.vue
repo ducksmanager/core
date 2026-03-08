@@ -282,51 +282,21 @@ const expandPublication = async (publicationcode: string) => {
 };
 
 const hasData = computed(() => {
-  const mostWantedItemsData = mostWantedItems.value;
-  const publishedEdgesItems = publishedEdges.data.value ?? [];
+  if (!mostWantedItems.value.length || !publishedEdges.data.value?.length)
+    return false;
 
-  if (!mostWantedItemsData.length && !publishedEdgesItems.length) return false;
+  const publicationcodes = publicationcodesToFetch.value.filter(isValidCode);
+  const hasPubNames =
+    !publicationcodes.length ||
+    publicationcodes.every((pc) => publicationNames.value[pc]);
 
-  const mostWantedPublicationcodes = mostWantedItemsData
-    .map((m) => m.publicationcode)
-    .filter(isValidCode);
-  const publishedPublicationcodes = Object.keys(
-    publishedEdgesItems.groupBy?.("publicationcode") ?? {},
-  ).filter(isValidCode);
-  const allPublicationcodes = [
-    ...new Set([...mostWantedPublicationcodes, ...publishedPublicationcodes]),
-  ];
+  const secondSectionReady =
+    !publishedPublicationcodes.value.length ||
+    (publishedEdgesByPublicationcode.value &&
+      issuesByIssuecode.value &&
+      Object.keys(inducksIssuenumbers.value).length);
 
-  const hasPublicationNames =
-    allPublicationcodes.every((pc) => publicationNames.value[pc]) ||
-    !allPublicationcodes.length;
-  const hasIssuecodes =
-    !publishedPublicationcodes.length ||
-    publishedPublicationcodes.every(
-      (pc) => issuecodesByPublicationcode.value[pc],
-    );
-
-  const issuecodes = Object.keys(
-    publishedEdgesItems.groupBy?.("issuecode") ?? {},
-  ).filter(isValidCode);
-  const hasIssuecodeDetails =
-    !issuecodes.length ||
-    issuecodes.every((ic) => ic in issuecodeDetails.value);
-
-  const hasCollection =
-    !publishedPublicationcodes.length || !!issuesByIssuecode.value;
-
-  const inducksKeys = Object.keys(inducksIssuenumbers.value);
-  const hasInducksIssuenumbers =
-    !publishedPublicationcodes.length || inducksKeys.length;
-
-  return (
-    hasPublicationNames &&
-    hasIssuecodes &&
-    hasIssuecodeDetails &&
-    hasCollection &&
-    hasInducksIssuenumbers
-  );
+  return hasPubNames && secondSectionReady;
 });
 </script>
 
