@@ -29,7 +29,10 @@ try {
   const config = JSON.parse(readFileSync(androidConfigPath, 'utf-8'));
   config.server = {
     url: serverUrl,
+    cleartext: true,
+    androidScheme: 'http',
   };
+  config.android = { ...config.android, allowMixedContent: true };
   writeFileSync(androidConfigPath, JSON.stringify(config, null, '\t') + '\n');
   console.log('✓ Android capacitor.config.json updated successfully');
 } catch (error) {

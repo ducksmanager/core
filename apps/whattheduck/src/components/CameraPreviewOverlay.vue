@@ -1,4 +1,27 @@
 <template>
+  <div v-if="boundingClientRect" id="camera-bg-overlays" aria-hidden="true">
+    <div class="camera-bg-overlay camera-bg-top" :style="{ height: `${boundingClientRect.y}px` }" />
+    <div
+      class="camera-bg-overlay camera-bg-bottom"
+      :style="{ top: `${boundingClientRect.y + boundingClientRect.height}px` }"
+    />
+    <div
+      class="camera-bg-overlay camera-bg-left"
+      :style="{
+        top: `${boundingClientRect.y}px`,
+        width: `${boundingClientRect.x}px`,
+        height: `${boundingClientRect.height}px`,
+      }"
+    />
+    <div
+      class="camera-bg-overlay camera-bg-right"
+      :style="{
+        top: `${boundingClientRect.y}px`,
+        left: `${boundingClientRect.x + boundingClientRect.width}px`,
+        height: `${boundingClientRect.height}px`,
+      }"
+    />
+  </div>
   <div id="camera-preview" ref="cameraPreview"></div>
   <ion-row id="overlay" ref="overlay" :class="{ portrait: isPortrait, landscape: !isPortrait }">
     <ion-button ref="takePhotoButton" size="large" :disabled="isSearching" @click="takePhoto()">
@@ -134,6 +157,38 @@ watch([overlayHeight, currentRatioIndex], async () => {
 </script>
 
 <style scoped>
+#camera-bg-overlays {
+  position: fixed;
+  inset: 0;
+  z-index: 9998;
+  pointer-events: none;
+}
+
+.camera-bg-overlay {
+  position: absolute;
+  background: var(--dm-background-color);
+}
+
+.camera-bg-top {
+  top: 0;
+  left: 0;
+  right: 0;
+}
+
+.camera-bg-bottom {
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+
+.camera-bg-left {
+  left: 0;
+}
+
+.camera-bg-right {
+  right: 0;
+}
+
 #camera-preview,
 #overlay {
   display: flex;
@@ -161,6 +216,7 @@ watch([overlayHeight, currentRatioIndex], async () => {
 }
 #overlay {
   position: absolute;
+  background: var(--dm-background-color);
   &.portrait {
     bottom: 1rem;
     height: 4rem;

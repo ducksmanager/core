@@ -11,17 +11,18 @@ function getLocalIP(): string {
   }
 }
 
-const isDev = process.env.NODE_ENV === 'local';
+const isDev = process.env.NODE_ENV !== 'production';
 
 const config: CapacitorConfig = {
   appId: 'net.ducksmanager.whattheduck',
   appName: 'What The Duck',
   webDir: 'dist',
-  // Only set server URL in development mode
+  // Only set server URL in development mode (so cap sync copies it to android)
   ...(isDev && {
     server: {
       url: `http://${getLocalIP()}:8008`,
       cleartext: true,
+      androidScheme: 'http',
     },
   }),
   android: {
@@ -30,6 +31,7 @@ const config: CapacitorConfig = {
       keystoreAlias: 'whattheduck',
     },
     webContentsDebuggingEnabled: true,
+    ...(isDev && { allowMixedContent: true }),
   },
   ios: {
     scheme: 'What The Duck',

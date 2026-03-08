@@ -11,3 +11,10 @@
   - The DM Web interface
   - The DM API
   - The native WTD Android app.
+
+### Android dev (WebSocket)
+
+The `dev:android` script loads the app from the dev server (HTTP), so WebSocket connections (`ws://`) work via `server.url` on the same network. Prerequisites:
+
+1. Start the API (e.g. "Debug DM API + WTD Android" compound, or `pnpm dev:whattheduck` in another terminal)
+2. Run: `pnpm dev:whattheduck:android` or `pnpm dev:android`
