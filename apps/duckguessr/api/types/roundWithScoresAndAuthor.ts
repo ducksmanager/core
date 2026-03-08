@@ -10,7 +10,6 @@ export type Author = Pick<
 export interface UnfinishedRound
   extends Omit<round, "sitecodeUrl" | "personcode"> {
   roundScores: roundScore[];
-  personcode: null;
 }
 
 export interface RoundWithScoresAndAuthor extends round {

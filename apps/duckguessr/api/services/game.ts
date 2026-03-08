@@ -18,10 +18,13 @@ import { guess } from "../round";
 import type { GuessResponse } from "../types/guess";
 import type { CurrentGame, SocketGameData } from "../types/socketEvents";
 import namespaces from "./namespaces";
+import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa/client";
+
+import { io } from "..";
 
 export type ClientListenEvents = {
   playerJoined: (player: player) => void;
-  playerConnectedToMatch: () => void;
+  sendGame: (game: Awaited<ReturnType<typeof getPublicGame>>) => void;
   playerLeft: (player: player) => void;
   matchStarts: () => void;
   gameEnds: () => void;
@@ -41,7 +44,7 @@ export type GameServices = NamespaceProxyTarget<
 
 export type ClientEmitEvents = NonNullable<
   Awaited<ReturnType<typeof createGameSocket>>
->["client"]["emitEvents"];
+>["client"]["emitEvents"]; 
 
 const checkAndAssociatePlayer = async (
   currentGame: CurrentGame,
@@ -137,7 +140,6 @@ const startRound = (socket: GameServices) => {
   const roundWithoutPersoncode: UnfinishedRound = {
     ...currentRound,
     roundScores: [],
-    personcode: null,
   };
   setTimeout(async () => {
     _socket.broadcast.emit("roundStarts", roundWithoutPersoncode);
@@ -201,14 +203,13 @@ const finishRound = async (gameServices: GameServices) => {
   } else {
     currentRound = await setRoundTimes(
       currentGame!.rounds.find(
-        ({ roundNumber }: round) =>
+        ({ roundNumber }) =>
           roundNumber === currentRound.roundNumber! + 1,
-      ) as round,
+      )!,
     );
     const roundWithoutPersoncode: UnfinishedRound = {
       ...currentRound,
       roundScores: [],
-      personcode: null,
     };
     _socket.broadcast.emit(
       "roundEnds",
@@ -349,7 +350,7 @@ const listenEvents = ({ _socket, ...events }: GameServices) => ({
   disconnect: async ({ _socket }: GameServices, reason: string) => {
     if (reason !== "client namespace disconnect") {
       if (
-        _socket.data.currentGame!.gamePlayers.findIndex(
+        _socket && _socket.data.currentGame.gamePlayers.findIndex(
           ({ player }) => player.id === _socket.data.user.id,
         ) > 0
       ) {
@@ -362,6 +363,42 @@ const listenEvents = ({ _socket, ...events }: GameServices) => ({
   },
 });
 
+const getPublicGame = async (game: Awaited<ReturnType<typeof getGameWithRoundsDatasetPlayers>>) => {
+  if (!game) {
+    return null;
+  }
+
+  const personDetails = await prismaCoa.inducks_person.findMany({
+    select: {
+      personcode: true,
+      fullname: true,
+      nationalitycountrycode: true,
+    },
+    where: {
+      personcode: {
+        in: game.rounds.map(({ personcode }) => personcode),
+      },
+    },
+  });
+
+  return {
+    ...game,
+    rounds: game.rounds
+      .filter(({ roundNumber }) => roundNumber !== null)
+      .map((round) => {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const { personcode, sitecodeUrl, ...unfinishedRound } = round;
+        return round.finishedAt && round.finishedAt.getTime() <= Date.now()
+          ? round
+          : unfinishedRound;
+      }),
+    authors: personDetails.sort(
+      ({ personcode: personcode1 }, { personcode: personcode2 }) =>
+        personcode1 < personcode2 ? -1 : 1,
+    ),
+  };
+};
+
 export const createGameSocket = async (gameId: number) => {
   const currentGame = await getGameWithRoundsDatasetPlayers(gameId);
   if (!currentGame) {
@@ -369,20 +406,23 @@ export const createGameSocket = async (gameId: number) => {
     return;
   }
 
-  return useSocketEvents<typeof listenEvents, ClientListenEvents>(
+  console.log(`Creating game socket for game ${gameId}`);
+
+  const { server, client } = useSocketEvents<typeof listenEvents, ClientListenEvents>(
     namespaces.GAME.replace("{id}", gameId.toString()),
     {
       listenEvents,
       middlewares: [
         (
-          { _socket, playerConnectedToMatch: playerConnectedToMatchEvent },
+          { _socket, sendGame: sendGameEvent },
           next: (error?: Error) => void,
         ) => {
-          getPlayer(_socket.handshake.auth).then((user) => {
+          getPlayer(_socket.handshake.auth).then(async (user) => {
             if (user) {
               _socket.data.user = user;
               _socket.data.currentGame = currentGame;
-              playerConnectedToMatchEvent();
+              sendGameEvent(await getPublicGame(currentGame));
+              next()
             } else {
               next(new Error("User not found"));
             }
@@ -390,5 +430,7 @@ export const createGameSocket = async (gameId: number) => {
         },
       ],
     },
-  );
+  )
+  server(io);
+  return { client };
 };

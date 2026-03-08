@@ -2,8 +2,8 @@ import prisma from "./prisma/client";
 import type { player } from "./prisma/client_duckguessr/browser";
 export const numberOfRounds = 8;
 
-export const getGameWithRoundsDatasetPlayers = async (gameId: number) =>
-  await prisma.game.findUnique({
+export const getGameWithRoundsDatasetPlayers = (gameId: number) =>
+ prisma.game.findUnique({
     include: {
       rounds: {
         include: {

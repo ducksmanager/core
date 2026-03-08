@@ -29,7 +29,7 @@
         img-top
         align="center"
         body-class="d-flex flex-column"
-        :style="matchCreationSocket ? '' : 'pointer-events: none'"
+        :style="isMounted && matchCreationSocket ? '' : 'pointer-events: none'"
         @click="createMatch(dataset.name)"
       >
         <b-card-body
@@ -92,6 +92,10 @@ if (!duckguessrSocket) {
 }
 const { datasetsSocket, createMatchmakingSocket } = duckguessrSocket;
 const matchCreationSocket = ref<ReturnType<typeof createMatchmakingSocket>>();
+const isMounted = ref(false);
+onMounted(() => {
+  isMounted.value = true;
+});
 
 const youtubeVideoId = computed(() =>
   locale.value === "fr" ? "21Zfy5bOQkA" : "F0j-MMTiT3w",

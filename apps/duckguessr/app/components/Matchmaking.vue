@@ -59,7 +59,7 @@ watch(
   () => playerStore().playerUser,
   (value) => {
     if (value) {
-      gameSocket.playerConnectedToMatch = () => {
+      gameSocket.sendGame = () => {
         gameSocket
           .joinMatch()
           .then(({ players, isBotAvailable, playerStats }: MatchDetails) => {
