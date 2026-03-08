@@ -4,7 +4,7 @@
       <CopyListButton />
       <ViewModesButton v-if="!isIOS" />
     </ion-buttons>
-    <ion-header :translucent="true" :class="{ hidden: isCameraPreviewShown }">
+    <ion-header :key="headerKey" :translucent="true" :class="{ hidden: isCameraPreviewShown }">
       <ion-toolbar>
         <ion-buttons slot="start">
           <ion-menu-button color="primary" />
@@ -86,6 +86,15 @@ const componentName = computed(() =>
 
 watch(componentName, () => {
   filterText.value = '';
+});
+
+// Force header re-render when camera preview is closed
+const headerKey = ref(0);
+watch(isCameraPreviewShown, async (shown, wasShown) => {
+  if (wasShown && !shown) {
+    await nextTick();
+    headerKey.value++;
+  }
 });
 
 const showOfflineToast = async () => {

@@ -1,6 +1,6 @@
 <template>
   <ion-page>
-    <ion-header :translucent="true">
+    <ion-header :key="headerKey" :translucent="true">
       <ion-toolbar>
         <ion-buttons slot="start">
           <ion-menu-button color="primary" />
@@ -80,6 +80,14 @@ const hasCoaData = ref(false);
 const { issuecodeDetails, publicationNames, issuePopularities, issueQuotations } = storeToRefs(webStores.coa());
 const { fetchPublicationNames, fetchIssuecodeDetails, fetchIssuePopularities, fetchIssueQuotations } = webStores.coa();
 const { currentNavigationItem, isCameraPreviewShown } = storeToRefs(app());
+
+const headerKey = ref(0);
+watch(isCameraPreviewShown, async (shown, wasShown) => {
+  if (wasShown && !shown) {
+    await nextTick();
+    headerKey.value++;
+  }
+});
 
 const { IssueQuotation } = webComponents;
 

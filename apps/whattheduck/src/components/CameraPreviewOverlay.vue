@@ -28,12 +28,7 @@
       <ion-button ref="takePhotoButton" size="large" :disabled="isSearching" @click="takePhoto()">
         <ion-icon :ios="apertureOutline" :md="apertureSharp" />
       </ion-button>
-      <ion-button
-        size="large"
-        color="danger"
-        :disabled="isSearching"
-        @click="CameraPreview.stop().finally(() => (isCameraPreviewShown = false))"
-      >
+      <ion-button size="large" color="danger" :disabled="isSearching" @click="closeCamera">
         <ion-icon :ios="closeOutline" :md="closeSharp" />
       </ion-button>
       <div
@@ -105,6 +100,12 @@ const cameraPreview = useTemplateRef<HTMLDivElement>('cameraPreview');
 const { coverId: coverIdEvents, storySearch: storySearchEvents } = inject(dmSocketInjectionKey)!;
 const { takePhoto, isSearching } = useCoverSearch(useRouter(), coverIdEvents, storySearchEvents);
 const { isCameraPreviewShown } = storeToRefs(app());
+
+const closeCamera = () => {
+  CameraPreview.stop().finally(() => {
+    isCameraPreviewShown.value = false;
+  });
+};
 
 onIonViewWillLeave(() => {
   isCameraPreviewShown.value = false;
