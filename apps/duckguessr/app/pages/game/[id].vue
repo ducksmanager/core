@@ -74,7 +74,7 @@ import { getDuckguessrId } from "~/composables/user";
 import { useScoreToVariant as scoreToVariant } from "~/composables/use-score-to-variant";
 import type { GameFullNoPersoncode } from "~duckguessr-types/game";
 import { duckguessrSocketInjectionKey } from "~/composables/useDuckguessrSocket";
-import { RoundWithScoresAndAuthor } from "~duckguessr-types/roundWithScoresAndAuthor";
+import type { RoundWithScoresAndAuthor } from "~duckguessr-types/roundWithScoresAndAuthor";
 
 const { getGameSocketFromId } = inject(duckguessrSocketInjectionKey)!;
 

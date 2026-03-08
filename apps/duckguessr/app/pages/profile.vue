@@ -182,7 +182,7 @@ const onTreeLoad = (event: Event) => {
 
 const onSelectAvatar = () => {
   playerStore().playerUser!.avatar = closestAvatar.value!.character;
-  // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
+
   playerSocket.updateUser(playerStore().playerUser!).then((updatedUser) => {
     playerStore().playerUser = updatedUser;
   });

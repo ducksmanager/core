@@ -12,7 +12,7 @@ export type MaintenanceServices = NamespaceProxyTarget<
   Record<string, never>
 >;
 
-const listenEvents = ({}: MaintenanceServices) => ({
+const listenEvents = () => ({
   getMaintenanceData: async () => prisma.$queryRaw<
     { name: string; decision: string; count: number }[]
   >`
@@ -84,9 +84,7 @@ const { client, server } = useSocketEvents<
   Record<string, never>
 >(namespaces.MAINTENANCE, {
   listenEvents,
-  middlewares: [
-    RequiredPlayerMiddleware,
-  ],
+  middlewares: [RequiredPlayerMiddleware],
 });
 
 export { client, server };

@@ -44,7 +44,7 @@ export type GameServices = NamespaceProxyTarget<
 
 export type ClientEmitEvents = NonNullable<
   Awaited<ReturnType<typeof createGameSocket>>
->["client"]["emitEvents"]; 
+>["client"]["emitEvents"];
 
 const checkAndAssociatePlayer = async (
   currentGame: CurrentGame,
@@ -178,7 +178,8 @@ const startRound = (socket: GameServices) => {
 
 const finishRound = async (gameServices: GameServices) => {
   const { _socket, ...events } = gameServices;
-  let { currentRound, currentGame } = _socket.data;
+  let { currentRound } = _socket.data;
+  const currentGame = _socket.data.currentGame;
   console.log(`Round ${currentRound.id} finished`);
   const missingScores = await getPlayersMissingRoundScore(
     _socket.data.currentRound,
@@ -203,8 +204,7 @@ const finishRound = async (gameServices: GameServices) => {
   } else {
     currentRound = await setRoundTimes(
       currentGame!.rounds.find(
-        ({ roundNumber }) =>
-          roundNumber === currentRound.roundNumber! + 1,
+        ({ roundNumber }) => roundNumber === currentRound.roundNumber! + 1,
       )!,
     );
     const roundWithoutPersoncode: UnfinishedRound = {
@@ -350,7 +350,8 @@ const listenEvents = ({ _socket, ...events }: GameServices) => ({
   disconnect: async ({ _socket }: GameServices, reason: string) => {
     if (reason !== "client namespace disconnect") {
       if (
-        _socket && _socket.data.currentGame.gamePlayers.findIndex(
+        _socket &&
+        _socket.data.currentGame.gamePlayers.findIndex(
           ({ player }) => player.id === _socket.data.user.id,
         ) > 0
       ) {
@@ -363,7 +364,9 @@ const listenEvents = ({ _socket, ...events }: GameServices) => ({
   },
 });
 
-const getPublicGame = async (game: Awaited<ReturnType<typeof getGameWithRoundsDatasetPlayers>>) => {
+const getPublicGame = async (
+  game: Awaited<ReturnType<typeof getGameWithRoundsDatasetPlayers>>,
+) => {
   if (!game) {
     return null;
   }
@@ -408,29 +411,26 @@ export const createGameSocket = async (gameId: number) => {
 
   console.log(`Creating game socket for game ${gameId}`);
 
-  const { server, client } = useSocketEvents<typeof listenEvents, ClientListenEvents>(
-    namespaces.GAME.replace("{id}", gameId.toString()),
-    {
-      listenEvents,
-      middlewares: [
-        (
-          { _socket, sendGame: sendGameEvent },
-          next: (error?: Error) => void,
-        ) => {
-          getPlayer(_socket.handshake.auth).then(async (user) => {
-            if (user) {
-              _socket.data.user = user;
-              _socket.data.currentGame = currentGame;
-              sendGameEvent(await getPublicGame(currentGame));
-              next()
-            } else {
-              next(new Error("User not found"));
-            }
-          });
-        },
-      ],
-    },
-  )
+  const { server, client } = useSocketEvents<
+    typeof listenEvents,
+    ClientListenEvents
+  >(namespaces.GAME.replace("{id}", gameId.toString()), {
+    listenEvents,
+    middlewares: [
+      ({ _socket, sendGame: sendGameEvent }, next: (error?: Error) => void) => {
+        getPlayer(_socket.handshake.auth).then(async (user) => {
+          if (user) {
+            _socket.data.user = user;
+            _socket.data.currentGame = currentGame;
+            sendGameEvent(await getPublicGame(currentGame));
+            next();
+          } else {
+            next(new Error("User not found"));
+          }
+        });
+      },
+    ],
+  });
   server(io);
   return { client };
 };

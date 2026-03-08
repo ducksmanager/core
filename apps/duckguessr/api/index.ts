@@ -12,7 +12,7 @@ import { server as maintenance } from "./services/maintenance";
 import { server as player } from "./services/player";
 import { server as match } from "./services/match";
 
-(BigInt.prototype as any).toJSON = function () {
+(BigInt.prototype as unknown as { toJSON: () => number }).toJSON = function () {
   const int = Number.parseInt(this.toString());
   return int ?? this.toString();
 };

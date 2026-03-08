@@ -17,10 +17,12 @@ export const getPlayer = async (cookies?: {
   let player: player | null = null;
   if (cookies?.token) {
     try {
-      const { id: ducksmanagerId, username } = (jwt.verify(
-        cookies.token,
-        process.env.TOKEN_SECRET as string,
-      ) as jwt.JwtPayload)?.data;
+      const { id: ducksmanagerId, username } = (
+        jwt.verify(
+          cookies.token,
+          process.env.TOKEN_SECRET as string,
+        ) as jwt.JwtPayload
+      ).data;
       if (!username) {
         throw new Error("No username provided");
       }

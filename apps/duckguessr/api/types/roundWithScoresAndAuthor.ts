@@ -7,8 +7,10 @@ export type Author = Pick<
   "personcode" | "fullname" | "nationalitycountrycode"
 >;
 
-export interface UnfinishedRound
-  extends Omit<round, "sitecodeUrl" | "personcode"> {
+export interface UnfinishedRound extends Omit<
+  round,
+  "sitecodeUrl" | "personcode"
+> {
   roundScores: roundScore[];
 }
 

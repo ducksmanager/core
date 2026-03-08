@@ -74,7 +74,7 @@
 import { playerStore } from "~/stores/player";
 import type { ClientEmitEvents as DatasetsEmitEvents } from "~duckguessr-services/datasets";
 import { duckguessrSocketInjectionKey } from "~/composables/useDuckguessrSocket";
-import { EventOutput } from "socket-call-client";
+import type { EventOutput } from "socket-call-client";
 
 const router = useRouter();
 

@@ -10,13 +10,13 @@
     >
       <span class="wrapper"
         ><span class="content">
-          <span class="face back"></span>
+          <span class="face back" />
           <span
             class="face front"
             :style="{
               backgroundImage: `url('https://inducks.org/creators/photos/${personcode}.jpg')`,
             }"
-          ></span>
+          />
         </span>
       </span>
     </button>
@@ -36,10 +36,10 @@
         :src="`${CLOUDINARY_URL_ROOT}/thumbnails3/webusers/2008/09/us_zz1966b23x_001.jpg`"
       />
       <div
-        class="player-position"
         v-for="(player, index) in players"
-        :key="player.id"
         v-show="player.id !== 1"
+        :key="player.id"
+        class="player-position"
         :style="{ '--index': index + 1 }"
       >
         <game-player-info
@@ -50,8 +50,8 @@
             <div class="cards other-player">
               <ReuseTemplate
                 v-for="card in player.cards"
-                :key="card.id"
                 :id="card.id"
+                :key="card.id"
                 :flipped="card.flipped"
                 :played="card.played"
                 :personcode="card.personcode"
@@ -63,8 +63,8 @@
       <div class="cards">
         <ReuseTemplate
           v-for="card in players[0].cards"
-          :key="card.id"
           :id="card.id"
+          :key="card.id"
           :flipped="card.flipped"
           :played="card.played"
           :personcode="card.personcode"
