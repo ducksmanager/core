@@ -1,11 +1,8 @@
 {
     "manifest_version": 3,
     "name": "Dumili Auto-indexer",
-    "version": "1.0.6",
+    "version": "1.0.7",
     "description": "Fills the Inducks online indexing form using Dumili output",
-    "permissions": [
-        "activeTab"
-    ],
     "browser_specific_settings": {
         "gecko": {
             "id": "@dumili-auto-indexer",
