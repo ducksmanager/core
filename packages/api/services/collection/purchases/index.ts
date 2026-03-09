@@ -27,6 +27,10 @@ export default ({ _socket }: UserServices) => ({
       date: new Date(date),
       description,
     };
+    if (Number.isNaN(criteria.date.getTime())) {
+      return { error: `Invalid date: ${date}` } as const;
+    }
+  
     if (
       (await prismaDm.purchase.count({
         where: criteria,
