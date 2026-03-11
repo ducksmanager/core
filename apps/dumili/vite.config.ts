@@ -33,7 +33,9 @@ export default defineConfig({
     }),
     {
       // default settings on build (i.e. fail on error)
-      ...eslintPlugin(),
+      ...eslintPlugin({
+        overrideConfigFile: path.resolve(__dirname, "eslint.config.mjs"),
+      }),
       apply: "build",
     },
     {
@@ -41,6 +43,7 @@ export default defineConfig({
       ...eslintPlugin({
         failOnWarning: false,
         failOnError: false,
+        overrideConfigFile: path.resolve(__dirname, "eslint.config.mjs"),
       }),
       apply: "serve",
       enforce: "post",
