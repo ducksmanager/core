@@ -21,6 +21,7 @@ export const getSession = async () => {
       console.error("Failed to load ONNX model:", error);
       throw new Error(
         "EfficientNet-B0 ONNX model not found. Please ensure efficientnet_b0_comic_embedding.onnx is in the model directory",
+        { cause: error },
       );
     }
   }
@@ -87,7 +88,8 @@ const preprocessImage = async (input: string | Buffer) => {
     const errorMessage = error instanceof Error ? error.message : String(error);
     const errorStack = error instanceof Error ? error.stack : undefined;
     throw new Error(
-      `Failed to process image with sharp: ${errorMessage}${errorStack ? `\nStack: ${errorStack}` : ""}`
+      `Failed to process image with sharp: ${errorMessage}${errorStack ? `\nStack: ${errorStack}` : ""}`,
+      { cause: error },
     );
   }
   
@@ -189,7 +191,8 @@ const getEmbedding = async (input: string | Buffer) => {
     // Provide more context about the error
     if (error instanceof Error) {
       throw new Error(
-        `ONNX inference failed: ${error.message}. Input tensor shape: [${inputTensor.dims?.join(", ")}], type: ${inputTensor.type}`
+        `ONNX inference failed: ${error.message}. Input tensor shape: [${inputTensor.dims?.join(", ")}], type: ${inputTensor.type}`,
+        { cause: error },
       );
     }
     throw error;
@@ -205,7 +208,7 @@ export const getImageVector = async (input: string | Buffer) => {
     const output = await getEmbedding(input);
     return { vector: output };
   } catch (error) {
-    throw new Error(`Error processing image: ${error}`);
+    throw new Error(`Error processing image: ${error}`, { cause: error });
   }
 };
 

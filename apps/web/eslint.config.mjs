@@ -25,6 +25,7 @@ export default [
       "**/shims.d.ts",
       "**/auto-imports.d.ts",
       "**/components.d.ts",
+      "eslint.config.mjs",
     ],
   },
   ...pluginVue.configs["flat/recommended"],
@@ -48,7 +49,7 @@ export default [
       parserOptions: {
         parser: "@typescript-eslint/parser",
         extraFileExtensions: [".vue"],
-        project: path.join(__dirname, "tsconfig.json"),
+        projectService: true,
         tsconfigRootDir: __dirname,
       },
     },

@@ -41,10 +41,12 @@
       "./.eslint.d.ts"
     ]
   },
+  "include": ["**/*.ts"],
   "exclude": [
     ".idea",
     ".turbo",
     "dist",
     "node_modules",
+    "**/model"
   ]
 }

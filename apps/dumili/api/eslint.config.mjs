@@ -16,6 +16,7 @@ export default defineConfig(
       "**/*.d.ts",
       "prisma/client_dumili/client",
       "paddleocr",
+      "eslint.config.mjs",
     ],
   },
   {

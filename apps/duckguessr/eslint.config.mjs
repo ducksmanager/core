@@ -31,6 +31,7 @@ export default defineConfig(
       "**/shims.d.ts",
       "sentry.server.config.ts",
       "storybook-static",
+      "eslint.config.mjs",
     ],
   },
   ...pluginVue.configs["flat/recommended"],
@@ -53,7 +54,7 @@ export default defineConfig(
       parserOptions: {
         parser: "@typescript-eslint/parser",
         extraFileExtensions: [".vue"],
-        project: path.join(__dirname, "tsconfig.json"),
+        projectService: true,
         tsconfigRootDir: __dirname,
       },
     },

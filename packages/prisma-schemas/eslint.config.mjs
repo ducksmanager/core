@@ -13,7 +13,7 @@ const compat = new FlatCompat({
 });
 
 export default [{
-    ignores: ["**/node_modules", "**/dist", "**/*.d.ts", "**/client_*"],
+    ignores: ["**/node_modules", "**/dist", "**/*.d.ts", "**/client_*", "eslint.config.mjs"],
 }, ...compat.extends("plugin:@typescript-eslint/recommended", "prettier"), {
     plugins: {
         "@typescript-eslint": typescriptEslint,
@@ -25,7 +25,7 @@ export default [{
 
         parserOptions: {
             parser: "@typescript-eslint/parser",
-            project: path.join(__dirname, "tsconfig.json"),
+            projectService: true,
             tsconfigRootDir: __dirname,
         },
     },

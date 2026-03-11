@@ -185,12 +185,12 @@ const createAiStorySuggestions = async (
           _storySuggestionRelationship: "ocrDetails",
         },
       ] as const) {
-        let cachedResults:
+        const cachedResults:
           | {
               type: typeof _storySuggestionRelationship;
               storycode: string;
             }[]
-          | undefined; /*firstPageOfEntry.image[field]?.stories
+          | undefined = undefined; /*firstPageOfEntry.image[field]?.stories
           .filter(
             (
               story
@@ -210,17 +210,17 @@ const createAiStorySuggestions = async (
           );*/
 
         if (cachedResults) {
-          if (cachedResults.length) {
-            console.log(
-              `Entry starting at page ${entry.position}: ${cachedResults.length} ${name} matches found (cached)`,
-            );
-            break;
-          } else {
-            console.log(
-              `Entry starting at page ${entry.position}: No ${name} matches found (cached)`,
-            );
-            continue;
-          }
+          // if (cachedResults.length) {
+          //   console.log(
+          //     `Entry starting at page ${entry.position}: ${cachedResults.length} ${name} matches found (cached)`,
+          //   );
+          //   break;
+          // } else {
+          //   console.log(
+          //     `Entry starting at page ${entry.position}: No ${name} matches found (cached)`,
+          //   );
+          //   continue;
+          // }
         } else {
           const results =
             field === "aiStorySearchResult"
