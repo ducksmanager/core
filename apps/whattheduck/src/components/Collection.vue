@@ -49,7 +49,7 @@ import { arrowBackOutline, arrowBackSharp, cloudOfflineOutline, cloudOfflineShar
 import FilterButton from './FilterButton.vue';
 import OwnedIssueCopies from './OwnedIssueCopies.vue';
 
-import { toastController } from '@ionic/vue';
+import { onIonViewDidEnter, toastController } from '@ionic/vue';
 import { app } from '~/stores/app';
 import { wtdcollection } from '~/stores/wtdcollection';
 import CountryList from '~/views/CountryList.vue';
@@ -95,6 +95,12 @@ watch(isCameraPreviewShown, async (shown, wasShown) => {
     await nextTick();
     headerKey.value++;
   }
+});
+
+// Force header re-render when navigating to this page
+onIonViewDidEnter(async () => {
+  await nextTick();
+  headerKey.value++;
 });
 
 const showOfflineToast = async () => {
