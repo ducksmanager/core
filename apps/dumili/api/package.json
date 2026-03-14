@@ -42,7 +42,7 @@
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.5",
-    "@eslint/js": "^10.0.0",
+    "@eslint/js": "^10.0.1",
     "@sentry/cli": "^2.58.5",
     "@socket.io/admin-ui": "^0.5.1",
     "@types/busboy": "^1.5.4",
@@ -50,7 +50,7 @@
     "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^22.19.15",
     "concurrently": "^9.2.1",
-    "eslint": "^10.0.0",
+    "eslint": "^10.0.3",
     "eslint-config-prettier": "^10.1.8",
     "prisma": "^7.5.0",
     "typescript": "^5.9.3",

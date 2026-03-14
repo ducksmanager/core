@@ -61,7 +61,7 @@
   "devDependencies": {
     "@eslint/compat": "^2.0.3",
     "@eslint/eslintrc": "^3.3.5",
-    "@eslint/js": "^10.0.0",
+    "@eslint/js": "^10.0.1",
     "@iconify-json/bi": "^1.2.7",
     "@intlify/unplugin-vue-i18n": "^6.0.8",
     "@rushstack/eslint-patch": "^1.16.1",
@@ -70,11 +70,11 @@
     "@types/node": "^22.19.15",
     "@types/vue-cropperjs": "^4.1.6",
     "@typescript-eslint/eslint-plugin": "^8.57.0",
-    "@vitejs/plugin-vue": "^6.0.4",
+    "@vitejs/plugin-vue": "^6.0.5",
     "@vue/eslint-config-prettier": "^10.2.0",
     "@vue/eslint-config-typescript": "^14.7.0",
     "concurrently": "^9.2.1",
-    "eslint": "^10.0.0",
+    "eslint": "^10.0.3",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-import": "^2.32.0",
     "eslint-plugin-prettier-vue": "^5.0.0",
@@ -89,6 +89,6 @@
     "vite-node": "^3.2.4",
     "vite-plugin-pages": "^0.33.3",
     "vite-plugin-vue-layouts": "^0.11.0",
-    "vue-tsc": "3.1.5"
+    "vue-tsc": "^3.2.5"
   }
 }
