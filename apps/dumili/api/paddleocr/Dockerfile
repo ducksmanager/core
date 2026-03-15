@@ -1,4 +1,4 @@
-FROM python:3.9-slim-trixie
+FROM python:3.14-slim-trixie
 
 RUN apt update && apt install -y --no-install-recommends libgl1 libglx-mesa0 libgomp1 libglib2.0-0 gcc python3-dev patch && apt clean
 
