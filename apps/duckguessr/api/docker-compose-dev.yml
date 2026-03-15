@@ -3,7 +3,7 @@ name: duckguessr-api
 services:
   db:
     restart: always
-    image: mariadb:11.8
+    image: mariadb:12.2
     container_name: duckguessr-db
     ports:
       - "64098:3306"
@@ -12,6 +12,7 @@ services:
     environment:
       MYSQL_DATABASE: duckguessr
       MYSQL_ROOT_PASSWORD: $MYSQL_ROOT_PASSWORD
+      MARIADB_AUTO_UPGRADE: 1
     networks:
       - db-network
 

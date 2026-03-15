@@ -27,7 +27,7 @@ services:
   db:
     container_name: dumili-db
     restart: always
-    image: mariadb:11.8
+    image: mariadb:12.2
     ports:
       - "127.0.0.1:64097:3306"
     volumes:
