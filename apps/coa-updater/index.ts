@@ -174,16 +174,16 @@ set global max_allowed_packet=1000000000; `,
 
   const tables = (
     await newDbConnection.query(
-      `SELECT table_name FROM information_schema.tables WHERE table_schema = ?`,
+      `SELECT table_name FROM information_schema.tables WHERE table_schema = ? ORDER BY table_name`,
       [process.env.MYSQL_DATABASE_NEW],
     )
   ).map((row: { table_name: string }) => row.table_name);
-  newDbConnection.release();
+  await newDbConnection.release();
 
-  // Get a fresh connection for the rename loop - the original connection was idle
-  // during the long SQL phase and may have been closed by the server (wait_timeout)
-  connection.release();
+  // Get a fresh connection BEFORE releasing the original - otherwise the pool may
+  // return the same stale connection that was idle for 30+ min during the SQL phase
   const renameConnection = await pool.getConnection();
+  await connection.release();
   await renameConnection.query(
     "SET SESSION net_read_timeout = 7200; SET SESSION net_write_timeout = 7200; SET SESSION wait_timeout = 28800",
   );
@@ -200,7 +200,7 @@ set global max_allowed_packet=1000000000; `,
   }
 
   await renameConnection.query(`drop database ${process.env.MYSQL_DATABASE_NEW}`);
-  renameConnection.release();
+  await renameConnection.release();
 
   console.log("mariadb-check...");
   await $`mariadb-check -h ${process.env.MYSQL_HOST} -uroot -p${process.env.MYSQL_ROOT_PASSWORD} -v ${process.env.MYSQL_DATABASE}`;
