@@ -162,6 +162,10 @@ set global max_allowed_packet=1000000000; `,
     database: process.env.MYSQL_DATABASE_NEW,
   });
   const newDbConnection = await newDbPool.getConnection();
+  // Explicitly set timeouts on this connection (sessionVariables may not apply reliably)
+  await newDbConnection.query(
+    "SET SESSION net_read_timeout = 1800; SET SESSION net_write_timeout = 1800; SET SESSION wait_timeout = 3600",
+  );
   for (const statement of cleanSqlStatements) {
     console.log(`Executing statement: ${statement}`);
     await newDbConnection.query(statement);
