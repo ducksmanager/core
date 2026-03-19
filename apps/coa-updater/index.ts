@@ -15,6 +15,13 @@ const poolParams = {
   password: process.env.MYSQL_ROOT_PASSWORD,
   multipleStatements: true,
   permitLocalInfile: true,
+  // Prevent "socket has unexpectedly been closed" during long LOAD DATA operations
+  // (inducks_entry is large; default net_read_timeout/net_write_timeout is 60s)
+  sessionVariables: {
+    net_read_timeout: 1800, // 30 minutes
+    net_write_timeout: 1800, // 30 minutes
+    wait_timeout: 3600, // 1 hour
+  },
 };
 const pool = createPool(poolParams);
 
